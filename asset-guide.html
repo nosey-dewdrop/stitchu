@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stitchu Asset Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: #1a1a1a;
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media print {
+    body { padding: 20px; }
+    .page-break { page-break-before: always; }
+    .no-print { display: none; }
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 30px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 36px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #eee;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #666;
+    margin: 20px 0 8px;
+  }
+
+  .asset-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .asset-box {
+    flex-shrink: 0;
+    border: 1.5px dashed #ccc;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #bbb;
+    background: #fafafa;
+    overflow: hidden;
+  }
+
+  .asset-info {
+    flex: 1;
+  }
+
+  .asset-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+
+  .asset-desc {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  .asset-size {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6FB3DE;
+    white-space: nowrap;
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+  }
+
+  .color-info {
+    font-size: 13px;
+  }
+
+  .color-hex {
+    font-weight: 600;
+    font-family: monospace;
+  }
+
+  .note-box {
+    background: #F5FAFF;
+    border: 1.5px solid #DCEEFA;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4F6B84;
+  }
+
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  .summary-table th, .summary-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  .summary-table th {
+    font-weight: 600;
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .summary-table tr:last-child td {
+    font-weight: 700;
+    border-top: 2px solid #ddd;
+  }
+
+  .print-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: #2C3E50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .print-btn:hover { opacity: 0.9; }
+
+  /* Scale helper: show boxes at 1/3 scale */
+  .scale-note { font-size: 10px; color: #bbb; text-align: center; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Save as PDF</button>
+
+<h1>Stitchu Asset Guide</h1>
+<p class="subtitle">92 assets &middot; iPhone 15 Pro (393x852px) &middot; PNG transparent bg &middot; Doodle/hand-drawn style</p>
+
+<div class="note-box">
+  <strong>Style rules:</strong> Hand-drawn, slightly wobbly lines. Baby blue pastel tones. Dashed/stitched borders = sewing feel. NOT clinical or corporate. Think sketchbook, not Figma. Body silhouette: friendly & proportional, NOT medical diagram.
+</div>
+
+<!-- ==================== -->
+<h2>1. Global Assets</h2>
+<p style="font-size:12px;color:#888;margin-bottom:12px">Used across every page in the app</p>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:67px;height:13px">200x40</div>
+  <div class="asset-info"><div class="asset-name">Logo "Stitchu"</div><div class="asset-desc">Hand-drawn lettering. Main brand mark.</div></div>
+  <div class="asset-size">200 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px;border-radius:50%">40x40</div>
+  <div class="asset-info"><div class="asset-name">Avatar Frame</div><div class="asset-desc">Doodle circle, dashed border. User initial goes inside.</div></div>
+  <div class="asset-size">40 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:38px;height:38px;border-radius:50%">&#8592;</div>
+  <div class="asset-info"><div class="asset-name">Back Button</div><div class="asset-desc">Hand-drawn left arrow in a circle. Used on every detail page.</div></div>
+  <div class="asset-size">38 x 38</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:24px;height:24px">&#8594;</div>
+  <div class="asset-info"><div class="asset-name">Forward Arrow</div><div class="asset-desc">Small hand-drawn right arrow. On card right side.</div></div>
+  <div class="asset-size">24 x 24</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:67px;height:67px">tileable</div>
+  <div class="asset-info"><div class="asset-name">Background Texture</div><div class="asset-desc">Subtle fabric/paper texture, tileable. Color: #F5FAFF base.</div></div>
+  <div class="asset-size">200 x 200 (tile)</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:4px">- - - - - - - -</div>
+  <div class="asset-info"><div class="asset-name">Doodle Divider Line</div><div class="asset-desc">Stitched/dashed decorative horizontal line separator.</div></div>
+  <div class="asset-size">345 x 8</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:17px;background:#2C3E50;color:#F5FAFF;font-size:8px">PRIMARY BTN</div>
+  <div class="asset-info"><div class="asset-name">Primary Button Shape</div><div class="asset-desc">Rounded rect, hand-drawn wobbly edges. Dark fill.</div></div>
+  <div class="asset-size">345 x 52</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:17px;font-size:8px">SECONDARY BTN</div>
+  <div class="asset-info"><div class="asset-name">Secondary Button Shape</div><div class="asset-desc">Outlined version, no fill, dashed or solid border.</div></div>
+  <div class="asset-size">345 x 52</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:40px">CARD BG</div>
+  <div class="asset-info"><div class="asset-name">Card Background</div><div class="asset-desc">Slightly wobbly rounded rectangle. White fill, subtle shadow.</div></div>
+  <div class="asset-size">345 x variable</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:33px;height:13px;border-radius:10px">pill</div>
+  <div class="asset-info"><div class="asset-name">Pill Shapes (x3)</div><div class="asset-desc">Navigation pills: inspire, create, closet. Active = filled, inactive = outlined.</div></div>
+  <div class="asset-size">~100 x 38 each</div>
+</div>
+
+<!-- ==================== -->
+<h2 class="page-break">2. Onboarding</h2>
+<p style="font-size:12px;color:#888;margin-bottom:12px">10 slides, one question per screen, slide-in animation</p>
+
+<h3>Slide 0 — Welcome</h3>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#9986;</div>
+  <div class="asset-info"><div class="asset-name">Scissors Icon (Hero)</div><div class="asset-desc">Large decorative scissors. Center of welcome screen. Floating animation.</div></div>
+  <div class="asset-size">80 x 80</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:100px;height:67px">thread, needle, buttons...</div>
+  <div class="asset-info"><div class="asset-name">Decorative Doodles</div><div class="asset-desc">Scattered sewing items: thread spool, needle, buttons, pins. Background decoration.</div></div>
+  <div class="asset-size">300 x 200</div>
+</div>
+
+<h3>Slide 1 — How It Works</h3>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:36px">&#128247;</div>
+  <div class="asset-info"><div class="asset-name">Step 1: Camera/Photo</div><div class="asset-desc">"Show us what you love" — camera or photo doodle.</div></div>
+  <div class="asset-size">36 x 36</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:36px">&#128207;</div>
+  <div class="asset-info"><div class="asset-name">Step 2: Pattern/Ruler</div><div class="asset-desc">"We create your pattern" — ruler or pattern piece doodle.</div></div>
+  <div class="asset-size">36 x 36</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:36px">&#9986;</div>
+  <div class="asset-info"><div class="asset-name">Step 3: Cut & Sew</div><div class="asset-desc">"Print, cut & sew" — scissors cutting fabric doodle.</div></div>
+  <div class="asset-size">36 x 36</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:36px;border-radius:50%;font-size:14px;font-weight:700;color:#6FB3DE">1</div>
+  <div class="asset-info"><div class="asset-name">Step Number Circles (1, 2, 3)</div><div class="asset-desc">Hand-drawn circles with numbers inside. Baby blue fill (#6FB3DE), white number.</div></div>
+  <div class="asset-size">36 x 36 each</div>
+</div>
+
+<h3>Slide 2 — Why Measurements</h3>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#128207;</div>
+  <div class="asset-info"><div class="asset-name">Measuring Tape Icon</div><div class="asset-desc">Cute curled measuring tape doodle. Center of screen.</div></div>
+  <div class="asset-size">60 x 60</div>
+</div>
+
+<h3>Slides 3–9 — Body Measurements</h3>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:53px;height:100px">body</div>
+  <div class="asset-info"><div class="asset-name">Body Silhouette (Female)</div><div class="asset-desc">Full doodle body, front view. Cute, proportional, friendly. Used in onboarding AND designer page. ONE drawing, reused everywhere.</div></div>
+  <div class="asset-size">160 x 300</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:53px;height:100px;border-color:#6FB3DE">7 overlays</div>
+  <div class="asset-info"><div class="asset-name">Measurement Highlight Overlays (x7)</div><div class="asset-desc">Separate layers for each measurement area: bust, waist, hip, shoulder, back length, arm, neck. Dashed circle/line in baby blue (#6FB3DE). Each overlaid on the same body silhouette.</div></div>
+  <div class="asset-size">160 x 300 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:14px">&#8592; bust</div>
+  <div class="asset-info"><div class="asset-name">Arrow Labels (x7)</div><div class="asset-desc">Small hand-drawn arrows with measurement name. Points to the highlighted area.</div></div>
+  <div class="asset-size">~60 x 20 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:19px">92</div>
+  <div class="asset-info"><div class="asset-name">Input Field Frame</div><div class="asset-desc">Hand-drawn rounded rectangle for number input. Big, center of screen.</div></div>
+  <div class="asset-size">120 x 56</div>
+</div>
+
+<h3>Slide 10 — Celebration</h3>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#127881;</div>
+  <div class="asset-info"><div class="asset-name">Confetti / Party Popper</div><div class="asset-desc">Celebration doodle. Burst animation when slide appears.</div></div>
+  <div class="asset-size">60 x 60</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:50px;border-style:dashed;border-color:#6FB3DE">summary</div>
+  <div class="asset-info"><div class="asset-name">Summary Card Frame</div><div class="asset-desc">Dashed border card showing all 7 measurements. Baby blue dashed border.</div></div>
+  <div class="asset-size">345 x 280</div>
+</div>
+
+<!-- ==================== -->
+<h2 class="page-break">3. Inspire Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:63px;background:linear-gradient(135deg,#DCEEFA,#CFE7F8)">hero banner</div>
+  <div class="asset-info"><div class="asset-name">Hero Banner Illustration</div><div class="asset-desc">Fashion/sewing themed. "Linen & Wide Legs Are Everywhere". Baby blue gradient bg.</div></div>
+  <div class="asset-size">345 x 190</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:50px;background:#FFF0F1">&#128087;</div>
+  <div class="asset-info"><div class="asset-name">Trend Cards (x4)</div><div class="asset-desc">Puff sleeves (pink), Wide leg (sage), A-line midi (lavender), Corset top (sky). Each a small fashion illustration.</div></div>
+  <div class="asset-size">120 x 150 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:27px;height:27px">&#128248;</div>
+  <div class="asset-info"><div class="asset-name">Fabric Camera Icon</div><div class="asset-desc">Camera with fabric/textile feel for "What can I make?" CTA.</div></div>
+  <div class="asset-size">40 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:26px;height:26px;background:#DCEEFA">&#9986;</div>
+  <div class="asset-info"><div class="asset-name">Blog Thumbnails (x3)</div><div class="asset-desc">Scissors (baby blue), Thread spool (sage), Sun/summer (lavender). Small doodle icons for blog cards.</div></div>
+  <div class="asset-size">52 x 52 each</div>
+</div>
+
+<!-- ==================== -->
+<h2>4. Create Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#128247;</div>
+  <div class="asset-info"><div class="asset-name">Upload Photo Icon</div><div class="asset-desc">Camera doodle for "upload a photo" card.</div></div>
+  <div class="asset-size">40 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#9986;</div>
+  <div class="asset-info"><div class="asset-name">Design It Icon</div><div class="asset-desc">Scissors + pencil doodle for "design it" card.</div></div>
+  <div class="asset-size">40 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:40px">&#10024;</div>
+  <div class="asset-info"><div class="asset-name">Imagine It Icon</div><div class="asset-desc">Sparkle/magic wand doodle for premium "imagine it" card.</div></div>
+  <div class="asset-size">40 x 40</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:40px;height:14px;background:rgba(255,255,255,0.3);border-radius:10px;font-size:7px">PREMIUM</div>
+  <div class="asset-info"><div class="asset-name">Premium Badge</div><div class="asset-desc">Small crown or star tag. Sits on premium card.</div></div>
+  <div class="asset-size">60 x 20</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:30px;height:30px">&#128087;</div>
+  <div class="asset-info"><div class="asset-name">In-Progress Thumbnail</div><div class="asset-desc">Small dress doodle for "in progress" card.</div></div>
+  <div class="asset-size">46 x 46</div>
+</div>
+
+<!-- ==================== -->
+<h2 class="page-break">5. Closet Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:53px;height:47px;background:#DCEEFA">&#128087;</div>
+  <div class="asset-info"><div class="asset-name">Closet Thumbnails (x6)</div><div class="asset-desc">Summer dress, Pencil skirt, Linen blouse, Wide leg pants, Wrap top, Tote bag. Each on its own colored background.</div></div>
+  <div class="asset-size">160 x 140 each</div>
+</div>
+
+<!-- ==================== -->
+<h2>6. Pattern Detail Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:67px;background:#DCEEFA">&#128087;</div>
+  <div class="asset-info"><div class="asset-name">Pattern Hero Image</div><div class="asset-desc">Large dress illustration at top of pattern detail.</div></div>
+  <div class="asset-size">345 x 200</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:20px;height:20px">&#129525;</div>
+  <div class="asset-info"><div class="asset-name">Inline Icons (x4)</div><div class="asset-desc">Thread spool, measuring tape, needle+thread, scissors. Small inline doodles next to fabric/material info.</div></div>
+  <div class="asset-size">20 x 20 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:24px;height:24px">&#128196;</div>
+  <div class="asset-info"><div class="asset-name">PDF Download Icon</div><div class="asset-desc">Document/paper doodle for download button.</div></div>
+  <div class="asset-size">24 x 24</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:24px;height:24px">&#128424;</div>
+  <div class="asset-info"><div class="asset-name">Print Icon</div><div class="asset-desc">Printer doodle for print button.</div></div>
+  <div class="asset-size">24 x 24</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:36px;border-radius:50%;background:#6FB3DE;color:white;font-weight:700">1</div>
+  <div class="asset-info"><div class="asset-name">Guide Step Circles (1–8)</div><div class="asset-desc">Hand-drawn numbered circles. Baby blue fill, white number. Same style as onboarding steps.</div></div>
+  <div class="asset-size">36 x 36 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:20px;height:20px">&#128161;</div>
+  <div class="asset-info"><div class="asset-name">Pro Tip Lightbulb</div><div class="asset-desc">Small lightbulb doodle. Appears next to pro tips in sewing guide.</div></div>
+  <div class="asset-size">20 x 20</div>
+</div>
+
+<!-- ==================== -->
+<h2>7. Upload Photo Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:53px;height:53px">&#128247;&#10024;</div>
+  <div class="asset-info"><div class="asset-name">Camera Illustration (Large)</div><div class="asset-desc">Doodle camera with sparkles. Center of upload area.</div></div>
+  <div class="asset-size">80 x 80</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:60px;border-style:dashed;border-color:#6FB3DE">tap to upload</div>
+  <div class="asset-info"><div class="asset-name">Upload Area Frame</div><div class="asset-desc">Large dashed border rectangle. Baby blue dashed border (#6FB3DE).</div></div>
+  <div class="asset-size">345 x 180</div>
+</div>
+
+<!-- ==================== -->
+<h2 class="page-break">8. Designer Page (Stardoll Carousel)</h2>
+<div class="note-box">
+  <strong>Layout:</strong> Body silhouette at top center. Below it, horizontal carousels for each category. Each option is a VISUAL CARD with illustration, not a text chip. User taps a card to select, selection shows on the silhouette.
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:53px;height:100px">body</div>
+  <div class="asset-info"><div class="asset-name">Body Silhouette (Center)</div><div class="asset-desc">Same body doodle from onboarding. Reuse. Centered at top of designer screen.</div></div>
+  <div class="asset-size">160 x 300</div>
+</div>
+
+<h3>Neckline Carousel (4 cards)</h3>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#FFF0F1">V</div>
+  <div class="asset-info"><div class="asset-name">V-Neck Card</div><div class="asset-desc">Upper torso with V-shaped neckline drawn. Doodle style.</div></div>
+  <div class="asset-size">100 x 120</div>
+</div>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#EDF3E8">O</div>
+  <div class="asset-info"><div class="asset-name">Crew Neck Card</div><div class="asset-desc">Upper torso with round/crew neckline.</div></div>
+  <div class="asset-size">100 x 120</div>
+</div>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#F0EAF5">&#9634;</div>
+  <div class="asset-info"><div class="asset-name">Square Neck Card</div><div class="asset-desc">Upper torso with square neckline.</div></div>
+  <div class="asset-size">100 x 120</div>
+</div>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#E8F0F5">~</div>
+  <div class="asset-info"><div class="asset-name">Off-Shoulder Card</div><div class="asset-desc">Upper torso with off-shoulder neckline.</div></div>
+  <div class="asset-size">100 x 120</div>
+</div>
+
+<h3>Sleeve Carousel (4 cards)</h3>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#FFF0F1">short</div>
+  <div class="asset-info"><div class="asset-name">Short Sleeve / Puff / Bell / Sleeveless</div><div class="asset-desc">Each card shows arm+shoulder area with that sleeve type drawn. 4 separate cards.</div></div>
+  <div class="asset-size">100 x 120 each</div>
+</div>
+
+<h3>Skirt Carousel (4 cards)</h3>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#EDF3E8">A</div>
+  <div class="asset-info"><div class="asset-name">A-Line / Pencil / Pleated / Circle</div><div class="asset-desc">Each card shows waist-down with that skirt shape. 4 separate cards.</div></div>
+  <div class="asset-size">100 x 120 each</div>
+</div>
+
+<h3>Length Carousel (3 cards)</h3>
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;background:#F0EAF5">midi</div>
+  <div class="asset-info"><div class="asset-name">Mini / Midi / Maxi</div><div class="asset-desc">Each card shows legs with hem line at different heights. 3 separate cards.</div></div>
+  <div class="asset-size">100 x 120 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:50px;height:60px;border-color:#6FB3DE;border-width:3px">&#10003;</div>
+  <div class="asset-info"><div class="asset-name">Selected State Overlay</div><div class="asset-desc">Baby blue doodle border/glow around selected card. Thicker border + checkmark or highlight.</div></div>
+  <div class="asset-size">100 x 120</div>
+</div>
+
+<!-- ==================== -->
+<h2>9. Imagine It Page</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:47px">describe your dream...</div>
+  <div class="asset-info"><div class="asset-name">Textarea Frame</div><div class="asset-desc">Hand-drawn rectangle for text input area.</div></div>
+  <div class="asset-size">345 x 140</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:100px;height:20px">&#10024; &#10024; &#10024;</div>
+  <div class="asset-info"><div class="asset-name">Sparkle Decoration</div><div class="asset-desc">Scattered sparkles/stars around textarea. Magic feel.</div></div>
+  <div class="asset-size">300 x 40</div>
+</div>
+
+<!-- ==================== -->
+<h2>10. Blog Article Hero Images (x3)</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:67px;background:#DCEEFA">cutting</div>
+  <div class="asset-info"><div class="asset-name">Fabric Cutting Scene</div><div class="asset-desc">Doodle illustration of fabric being cut. Baby blue bg.</div></div>
+  <div class="asset-size">345 x 200</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:67px;background:#EDF3E8">grain</div>
+  <div class="asset-info"><div class="asset-name">Fabric Grain Illustration</div><div class="asset-desc">Showing warp/weft/bias directions. Sage bg.</div></div>
+  <div class="asset-size">345 x 200</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:67px;background:#F0EAF5">summer</div>
+  <div class="asset-info"><div class="asset-name">Summer Fabrics Illustration</div><div class="asset-desc">Flowing fabrics, linen/cotton vibes. Lavender bg.</div></div>
+  <div class="asset-size">345 x 200</div>
+</div>
+
+<!-- ==================== -->
+<h2>11. Trend Detail</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:115px;height:67px;background:#DCEEFA">puff sleeves</div>
+  <div class="asset-info"><div class="asset-name">Puff Sleeve Trend Hero</div><div class="asset-desc">Large fashion illustration showing puff sleeve trend.</div></div>
+  <div class="asset-size">345 x 200</div>
+</div>
+
+<!-- ==================== -->
+<h2>12. Profile Sheet</h2>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:24px;height:24px">&#128207;</div>
+  <div class="asset-info"><div class="asset-name">Menu Icons (x4)</div><div class="asset-desc">Measuring tape, Star/crown, Gear/settings, Question mark. Small doodle icons for profile menu items.</div></div>
+  <div class="asset-size">24 x 24 each</div>
+</div>
+
+<div class="asset-row">
+  <div class="checkbox"></div>
+  <div class="asset-box" style="width:36px;height:4px;background:#DDD4CB;border:none;border-radius:2px"></div>
+  <div class="asset-info"><div class="asset-name">Sheet Handle Bar</div><div class="asset-desc">Small grab bar at top of bottom sheet.</div></div>
+  <div class="asset-size">36 x 4</div>
+</div>
+
+<!-- ==================== -->
+<h2 class="page-break">Color Palette</h2>
+
+<div class="color-row"><div class="color-swatch" style="background:#F5FAFF"></div><div class="color-info"><span class="color-hex">#F5FAFF</span> — Background</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#FFFFFF"></div><div class="color-info"><span class="color-hex">#FFFFFF</span> — Card</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#2C3E50"></div><div class="color-info"><span class="color-hex">#2C3E50</span> — Text / Primary button</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#7B8FA3"></div><div class="color-info"><span class="color-hex">#7B8FA3</span> — Text secondary</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#6FB3DE"></div><div class="color-info"><span class="color-hex">#6FB3DE</span> — Baby blue accent (highlights, active states)</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#DCEEFA"></div><div class="color-info"><span class="color-hex">#DCEEFA</span> — Baby blue light (card bg, hero bg)</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#FFF0F1"></div><div class="color-info"><span class="color-hex">#FFF0F1</span> — Pink light</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#EDF3E8"></div><div class="color-info"><span class="color-hex">#EDF3E8</span> — Sage light</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#F0EAF5"></div><div class="color-info"><span class="color-hex">#F0EAF5</span> — Lavender light</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#E8F0F5"></div><div class="color-info"><span class="color-hex">#E8F0F5</span> — Sky light</div></div>
+<div class="color-row"><div class="color-swatch" style="background:#DDD4CB"></div><div class="color-info"><span class="color-hex">#DDD4CB</span> — Border / inactive</div></div>
+
+<!-- ==================== -->
+<h2>Summary</h2>
+
+<table class="summary-table">
+  <tr><th>Category</th><th>Assets</th></tr>
+  <tr><td>Global</td><td>10</td></tr>
+  <tr><td>Onboarding (10 slides)</td><td>16</td></tr>
+  <tr><td>Inspire page</td><td>10</td></tr>
+  <tr><td>Create page</td><td>5</td></tr>
+  <tr><td>Closet page</td><td>6</td></tr>
+  <tr><td>Pattern detail</td><td>10</td></tr>
+  <tr><td>Upload page</td><td>2</td></tr>
+  <tr><td>Designer (Stardoll)</td><td>17</td></tr>
+  <tr><td>Imagine page</td><td>2</td></tr>
+  <tr><td>Blog articles</td><td>3</td></tr>
+  <tr><td>Trend detail</td><td>1</td></tr>
+  <tr><td>Profile sheet</td><td>5</td></tr>
+  <tr><td><strong>TOTAL</strong></td><td><strong>87</strong></td></tr>
+</table>
+
+</body>
+</html>
