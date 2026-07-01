@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Stitchu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #F5FAFF;
+    --card: #FFFFFF;
+    --text: #2C3E50;
+    --text-sec: #7B8FA3;
+    --warm: #6FB3DE;
+    --warm-light: #DCEEFA;
+    --warm-dark: #4A88B5;
+    --pink: #E8B4B8;
+    --pink-light: #FFF0F1;
+    --sage: #B5C4A8;
+    --sage-light: #EDF3E8;
+    --lavender: #C4B5D4;
+    --lavender-light: #F0EAF5;
+    --sky: #A8C4D4;
+    --sky-light: #E8F0F5;
+    --shadow: 0 2px 16px rgba(44,62,80,0.06);
+    --shadow-lg: 0 8px 32px rgba(44,62,80,0.1);
+    --r: 20px;
+    --rs: 14px;
+    --font-hand: 'Quicksand', sans-serif;
+    --font-body: 'Quicksand', sans-serif;
+    --font-ui: 'Quicksand', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: #2C3E50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .phone {
+    width: 393px;
+    height: 852px;
+    background: var(--bg);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 4px #444, 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .status-bar {
+    height: 54px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-ui);
+    color: var(--text);
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    padding: 4px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: var(--font-hand);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--warm-light);
+    border: 2px dashed var(--warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-hand);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .avatar:active { transform: scale(0.9) rotate(-5deg); }
+
+  /* ===== PILLS ===== */
+  .pills {
+    padding: 0 24px 14px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .pill {
+    padding: 9px 22px;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+    user-select: none;
+  }
+
+  .pill.active {
+    background: var(--text);
+    color: #F5FAFF;
+    border-color: var(--text);
+    transform: rotate(-1deg);
+  }
+
+  .pill:not(.active) {
+    background: transparent;
+    color: var(--text-sec);
+    border-color: #C9DDEC;
+  }
+
+  .pill:nth-child(2).active { transform: rotate(0.5deg); }
+  .pill:nth-child(3).active { transform: rotate(-0.5deg); }
+
+  /* ===== ROOMS ===== */
+  .rooms-wrap {
+    position: relative;
+    height: calc(852px - 54px - 52px - 48px);
+    overflow: hidden;
+  }
+
+  .rooms-track {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .room {
+    width: 393px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 24px 60px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .room::-webkit-scrollbar { display: none; }
+
+  /* ===== SECTION TITLES ===== */
+  .stitle {
+    font-family: var(--font-hand);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 22px 0 12px;
+    transform: rotate(-0.5deg);
+  }
+  .stitle:first-child { margin-top: 0; }
+
+  /* ===== DOODLE DECORATIONS ===== */
+  .doodle-line {
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--warm) 0, var(--warm) 6px, transparent 6px, transparent 12px);
+    margin: 16px 0;
+    opacity: 0.4;
+  }
+
+  /* ===== INSPIRE ROOM ===== */
+  .hero-card {
+    width: 100%;
+    height: 190px;
+    border-radius: var(--r);
+    background: linear-gradient(135deg, #DCEEFA, #CFE7F8, #BFDFF4);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 4px;
+    border: 2px solid rgba(212,149,106,0.2);
+  }
+
+  .hero-card::after {
+    content: '~ ~ ~';
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: var(--font-hand);
+    font-size: 24px;
+    color: rgba(212,149,106,0.3);
+    letter-spacing: 4px;
+  }
+
+  .hero-text {
+    position: absolute;
+    bottom: 18px;
+    left: 20px;
+    right: 20px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.8);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--warm-dark);
+    margin-bottom: 8px;
+  }
+
+  .hero-text h2 {
+    font-family: var(--font-hand);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  .trend-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 4px 0 8px;
+    margin: 0 -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .trend-scroll::-webkit-scrollbar { display: none; }
+
+  .trend-item {
+    min-width: 120px;
+    height: 150px;
+    border-radius: var(--rs);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid rgba(0,0,0,0.04);
+  }
+  .trend-item:active { transform: scale(0.95) rotate(-1deg); }
+
+  .trend-item:nth-child(1) { background: var(--pink-light); }
+  .trend-item:nth-child(2) { background: var(--sage-light); }
+  .trend-item:nth-child(3) { background: var(--lavender-light); }
+  .trend-item:nth-child(4) { background: var(--sky-light); }
+
+  .trend-item .ti-icon { position: absolute; top: 12px; left: 14px; font-size: 28px; }
+  .trend-item .ti-label {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  /* Fabric CTA */
+  .fabric-cta {
+    background: var(--card);
+    border: 2px dashed var(--warm);
+    border-radius: var(--r);
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .fabric-cta:active { transform: scale(0.98) rotate(-0.5deg); background: #EFF7FD; }
+  .fabric-cta .fc-icon { font-size: 36px; margin-bottom: 6px; }
+  .fabric-cta h3 { font-family: var(--font-hand); font-size: 22px; color: var(--text); margin-bottom: 4px; }
+  .fabric-cta p { font-family: var(--font-body); font-size: 15px; color: var(--text-sec); }
+
+  /* Blog cards */
+  .blog-card {
+    background: var(--card);
+    border-radius: var(--rs);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1.5px solid rgba(0,0,0,0.03);
+  }
+  .blog-card:active { transform: scale(0.97) rotate(-0.3deg); }
+
+  .blog-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .blog-card:nth-child(1) .blog-thumb { background: var(--warm-light); }
+  .blog-card:nth-child(2) .blog-thumb { background: var(--sage-light); }
+  .blog-card:nth-child(3) .blog-thumb { background: var(--lavender-light); }
+
+  .blog-info h3 { font-family: var(--font-body); font-size: 16px; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+  .blog-info p { font-family: var(--font-ui); font-size: 12px; color: var(--text-sec); }
+
+  /* ===== CREATE ROOM ===== */
+  .create-card {
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 24px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    border: 1.5px solid rgba(0,0,0,0.03);
+  }
+  .create-card:active { transform: scale(0.97) rotate(-0.5deg); }
+
+  .cc-icon { font-size: 40px; margin-bottom: 10px; }
+  .create-card h3 { font-family: var(--font-hand); font-size: 24px; color: var(--text); margin-bottom: 4px; }
+  .create-card p { font-family: var(--font-body); font-size: 15px; color: var(--text-sec); line-height: 1.4; padding-right: 30px; }
+  .cc-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 24px; color: var(--text-sec); font-family: var(--font-hand); }
+
+  .create-card.premium {
+    background: linear-gradient(135deg, #6FB3DE, #8AC2E6, #A8D3EF);
+    border: none;
+  }
+  .create-card.premium h3, .create-card.premium p { color: #FFF; }
+  .create-card.premium .cc-arrow { color: rgba(255,255,255,0.6); }
+
+  .premium-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    color: #FFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  /* Progress */
+  .prog-card {
+    background: var(--card);
+    border-radius: var(--rs);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .prog-card:active { transform: scale(0.97); }
+  .prog-thumb { width: 46px; height: 46px; border-radius: 12px; background: var(--warm-light); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .prog-info { flex: 1; }
+  .prog-info h3 { font-family: var(--font-body); font-size: 16px; color: var(--text); }
+  .prog-info p { font-family: var(--font-ui); font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+  .prog-bar { width: 100%; height: 4px; background: #E1EDF6; border-radius: 2px; margin-top: 6px; }
+  .prog-fill { height: 100%; background: var(--warm); border-radius: 2px; width: 60%; }
+
+  /* ===== CLOSET ROOM ===== */
+  .filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0 10px;
+    margin: 0 -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+
+  .fchip {
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .fchip.active { background: var(--text); color: var(--bg); }
+  .fchip:not(.active) { background: var(--card); color: var(--text-sec); border: 1.5px solid #C9DDEC; }
+
+  .closet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .closet-item {
+    background: var(--card);
+    border-radius: var(--rs);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1.5px solid rgba(0,0,0,0.03);
+  }
+  .closet-item:active { transform: scale(0.95) rotate(-1deg); }
+
+  .ci-img {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+  }
+
+  .closet-item:nth-child(1) .ci-img { background: var(--warm-light); }
+  .closet-item:nth-child(2) .ci-img { background: var(--lavender-light); }
+  .closet-item:nth-child(3) .ci-img { background: var(--sky-light); }
+  .closet-item:nth-child(4) .ci-img { background: var(--sage-light); }
+  .closet-item:nth-child(5) .ci-img { background: var(--pink-light); }
+  .closet-item:nth-child(6) .ci-img { background: var(--warm-light); }
+
+  .ci-info { padding: 10px 12px; }
+  .ci-info h3 { font-family: var(--font-body); font-size: 15px; color: var(--text); }
+  .ci-info p { font-family: var(--font-ui); font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+
+  /* ===== DETAIL PAGES (overlay screens) ===== */
+  .detail-page {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    z-index: 30;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .detail-page.open { transform: translateX(0); }
+  .detail-page::-webkit-scrollbar { display: none; }
+
+  .detail-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 58px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 5;
+    border-bottom: 1.5px solid rgba(0,0,0,0.04);
+  }
+
+  .back-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1.5px solid #C9DDEC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:active { transform: scale(0.9) rotate(-5deg); }
+
+  .detail-title {
+    font-family: var(--font-hand);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .detail-body { padding: 20px 24px 60px; }
+
+  .detail-hero-img {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--r);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+  }
+
+  .detail-body h2 {
+    font-family: var(--font-hand);
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .detail-body p {
+    font-family: var(--font-body);
+    font-size: 17px;
+    color: var(--text-sec);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .detail-body .meta {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    color: var(--text-sec);
+    margin-bottom: 16px;
+  }
+
+  /* Pattern detail specific */
+  .pattern-pieces {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .pattern-piece {
+    background: var(--card);
+    border: 2px dashed #C9DDEC;
+    border-radius: var(--rs);
+    padding: 20px;
+    text-align: center;
+  }
+  .pattern-piece .pp-icon { font-size: 32px; margin-bottom: 6px; }
+  .pattern-piece .pp-label { font-family: var(--font-body); font-size: 14px; color: var(--text); }
+
+  .action-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--rs);
+    font-family: var(--font-body);
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.primary { background: var(--text); color: var(--bg); }
+  .action-btn.secondary { background: var(--card); color: var(--text); border: 2px solid #C9DDEC; }
+
+  /* Sewing guide steps */
+  .guide-step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--warm);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-hand);
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-content h4 { font-family: var(--font-body); font-size: 17px; color: var(--text); margin-bottom: 4px; }
+  .step-content p { font-family: var(--font-body); font-size: 15px; color: var(--text-sec); line-height: 1.5; }
+
+  .pro-tip {
+    background: var(--warm-light);
+    border-radius: var(--rs);
+    padding: 14px 16px;
+    margin: 6px 0 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .pro-tip .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .pro-tip p { font-family: var(--font-body); font-size: 14px; color: var(--warm-dark); margin: 0; }
+
+  /* ===== PROFILE SHEET ===== */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44,62,80,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 40;
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+
+  .profile-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 12px 24px 44px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    z-index: 41;
+  }
+  .profile-sheet.show { transform: translateY(0); }
+
+  .sheet-bar { width: 36px; height: 4px; background: #C9DDEC; border-radius: 2px; margin: 0 auto 20px; }
+
+  .prof-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .prof-av { width: 52px; height: 52px; border-radius: 50%; background: var(--warm-light); border: 2px dashed var(--warm); display: flex; align-items: center; justify-content: center; font-family: var(--font-hand); font-size: 26px; font-weight: 700; color: var(--warm-dark); }
+  .prof-name { font-family: var(--font-hand); font-size: 24px; font-weight: 700; color: var(--text); }
+  .prof-sub { font-family: var(--font-ui); font-size: 12px; color: var(--warm); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .prof-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 0;
+    border-bottom: 1.5px solid #E3EEF7;
+    cursor: pointer;
+  }
+  .prof-item:active { opacity: 0.6; }
+  .prof-item:last-child { border: none; }
+  .prof-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .prof-label { flex: 1; font-family: var(--font-body); font-size: 17px; color: var(--text); }
+
+  /* ===== ONBOARDING ===== */
+  .onboarding {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .onboarding.gone { transform: translateY(100%); pointer-events: none; }
+
+  .ob-progress {
+    padding: 12px 24px 0;
+    display: flex;
+    gap: 4px;
+  }
+  .ob-progress .bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #D6E7F3;
+    transition: background 0.4s;
+  }
+  .ob-progress .bar.done { background: var(--warm); }
+  .ob-progress .bar.active { background: var(--warm); animation: barPulse 1.5s ease infinite; }
+
+  @keyframes barPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .ob-slides {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ob-slide {
+    position: absolute;
+    inset: 0;
+    padding: 20px 28px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    pointer-events: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ob-slide::-webkit-scrollbar { display: none; }
+  .ob-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .ob-slide.left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  .ob-icon-big {
+    font-size: 72px;
+    margin-bottom: 16px;
+    animation: obFloat 3s ease-in-out infinite;
+  }
+  @keyframes obFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
+
+  .ob-title {
+    font-family: var(--font-hand);
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+
+  .ob-sub {
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--text-sec);
+    line-height: 1.5;
+    max-width: 300px;
+  }
+
+  .ob-doodle-text {
+    font-family: var(--font-hand);
+    font-size: 18px;
+    color: var(--warm);
+    opacity: 0.5;
+    margin: 16px 0;
+  }
+
+  /* How it works steps */
+  .ob-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+    text-align: left;
+  }
+  .ob-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: stepIn 0.5s ease forwards;
+  }
+  .ob-step:nth-child(1) { animation-delay: 0.2s; }
+  .ob-step:nth-child(2) { animation-delay: 0.5s; }
+  .ob-step:nth-child(3) { animation-delay: 0.8s; }
+  @keyframes stepIn { to { opacity: 1; transform: translateY(0); } }
+
+  .ob-step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--warm);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-hand);
+    font-size: 20px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .ob-step-text h4 { font-family: var(--font-hand); font-size: 22px; color: var(--text); }
+  .ob-step-text p { font-family: var(--font-body); font-size: 16px; color: var(--text-sec); }
+
+  /* Body SVG */
+  .body-wrap {
+    position: relative;
+    width: 160px;
+    height: 300px;
+    margin: 10px auto 16px;
+  }
+
+  .body-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .body-highlight {
+    animation: highlightPulse 1.5s ease infinite;
+  }
+  @keyframes highlightPulse { 0%,100%{opacity:1;stroke-width:3} 50%{opacity:0.6;stroke-width:5} }
+
+  .body-label {
+    position: absolute;
+    font-family: var(--font-hand);
+    font-size: 16px;
+    color: var(--warm-dark);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ob-measure-title {
+    font-family: var(--font-hand);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ob-measure-hint {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--text-sec);
+    margin-bottom: 16px;
+  }
+
+  .ob-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .ob-input {
+    width: 120px;
+    padding: 14px;
+    border: 2.5px solid #C9DDEC;
+    border-radius: var(--rs);
+    font-family: var(--font-hand);
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    transition: all 0.3s;
+  }
+  .ob-input:focus { border-color: var(--warm); transform: scale(1.05); }
+  .ob-input::placeholder { color: #B7CFE2; }
+
+  .ob-unit {
+    font-family: var(--font-body);
+    font-size: 20px;
+    color: var(--text-sec);
+  }
+
+  /* Celebration */
+  .ob-confetti {
+    font-size: 48px;
+    animation: confettiBurst 0.6s ease;
+  }
+  @keyframes confettiBurst { 0%{transform:scale(0) rotate(-30deg);opacity:0} 60%{transform:scale(1.2) rotate(5deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+
+  .ob-done-body {
+    margin: 16px 0;
+    padding: 16px 24px;
+    background: var(--card);
+    border-radius: var(--r);
+    border: 2px dashed var(--warm);
+    width: 100%;
+  }
+  .ob-done-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #E3EEF7;
+    font-family: var(--font-body);
+    font-size: 16px;
+  }
+  .ob-done-row:last-child { border: none; }
+  .ob-done-row .label { color: var(--text-sec); }
+  .ob-done-row .val { color: var(--text); font-weight: 600; }
+
+  /* Onboarding footer */
+  .ob-footer {
+    padding: 12px 24px 36px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .ob-btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: var(--rs);
+    font-family: var(--font-hand);
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ob-btn:active { transform: scale(0.96) rotate(-0.5deg); }
+  .ob-btn.primary { background: var(--text); color: var(--bg); }
+  .ob-btn.secondary { background: transparent; color: var(--text-sec); border: 2px solid #C9DDEC; }
+  .ob-btn.celebrate { background: var(--warm); color: white; animation: celebrateBtn 0.5s ease 0.3s both; }
+  @keyframes celebrateBtn { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
+
+  @media (max-width: 420px) {
+    .phone { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ===== ONBOARDING ===== -->
+  <div class="onboarding" id="onboarding">
+    <div class="status-bar"><span>9:41</span><span style="font-size:12px">5G</span></div>
+
+    <!-- Progress bars -->
+    <div class="ob-progress" id="obProgress">
+      <div class="bar active"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+
+    <div class="ob-slides" id="obSlides">
+
+      <!-- Slide 0: Welcome -->
+      <div class="ob-slide active" data-slide="0">
+        <div class="ob-icon-big">&#9986;&#65039;</div>
+        <div class="ob-title">Stitchu</div>
+        <div class="ob-sub">every dream starts with a pattern</div>
+        <div class="ob-doodle-text">~ snip snip ~</div>
+      </div>
+
+      <!-- Slide 1: How it works -->
+      <div class="ob-slide" data-slide="1">
+        <div class="ob-title" style="font-size:28px;margin-bottom:4px">how it works</div>
+        <div class="ob-sub" style="margin-bottom:8px">three steps to your custom pattern</div>
+        <div class="ob-steps">
+          <div class="ob-step"><div class="ob-step-num">1</div><div class="ob-step-text"><h4>show us what you love</h4><p>upload a photo, design it, or describe it</p></div></div>
+          <div class="ob-step"><div class="ob-step-num">2</div><div class="ob-step-text"><h4>we create your pattern</h4><p>custom-fitted to your body measurements</p></div></div>
+          <div class="ob-step"><div class="ob-step-num">3</div><div class="ob-step-text"><h4>print, cut & sew</h4><p>download A4 PDF + step-by-step sewing guide</p></div></div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Why measurements -->
+      <div class="ob-slide" data-slide="2">
+        <div style="font-size:56px;margin-bottom:12px">&#128207;</div>
+        <div class="ob-title" style="font-size:26px">let's take your measurements</div>
+        <div class="ob-sub">grab a measuring tape and 3 minutes. we need these to create patterns that fit YOU perfectly.</div>
+        <div class="ob-doodle-text">~ it'll be quick, promise ~</div>
+      </div>
+
+      <!-- Slide 3: Bust -->
+      <div class="ob-slide" data-slide="3">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <ellipse cx="80" cy="85" rx="38" ry="8" fill="none" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+          </svg>
+          <div class="body-label" style="right:-20px;top:76px">&#8592; bust</div>
+        </div>
+        <div class="ob-measure-title">bust circumference</div>
+        <div class="ob-measure-hint">measure around the fullest part of your chest</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="92" id="m-bust"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 4: Waist -->
+      <div class="ob-slide" data-slide="4">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <ellipse cx="80" cy="130" rx="32" ry="6" fill="none" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+          </svg>
+          <div class="body-label" style="right:-24px;top:122px">&#8592; waist</div>
+        </div>
+        <div class="ob-measure-title">waist circumference</div>
+        <div class="ob-measure-hint">measure at the narrowest part of your waist</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="74" id="m-waist"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 5: Hip -->
+      <div class="ob-slide" data-slide="5">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <ellipse cx="80" cy="168" rx="40" ry="8" fill="none" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+          </svg>
+          <div class="body-label" style="right:-16px;top:160px">&#8592; hip</div>
+        </div>
+        <div class="ob-measure-title">hip circumference</div>
+        <div class="ob-measure-hint">measure around the widest part of your hips</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="98" id="m-hip"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 6: Shoulder -->
+      <div class="ob-slide" data-slide="6">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <line x1="42" y1="50" x2="118" y2="50" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+            <circle cx="42" cy="50" r="4" fill="var(--warm)"/>
+            <circle cx="118" cy="50" r="4" fill="var(--warm)"/>
+          </svg>
+          <div class="body-label" style="left:50%;top:36px;transform:translateX(-50%)">shoulder &#8596;</div>
+        </div>
+        <div class="ob-measure-title">shoulder width</div>
+        <div class="ob-measure-hint">measure from shoulder tip to shoulder tip</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="40" id="m-shoulder"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 7: Back waist length -->
+      <div class="ob-slide" data-slide="7">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <line x1="80" y1="30" x2="80" y2="130" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+            <circle cx="80" cy="30" r="4" fill="var(--warm)"/>
+            <circle cx="80" cy="130" r="4" fill="var(--warm)"/>
+          </svg>
+          <div class="body-label" style="right:-36px;top:72px">&#8592; length</div>
+        </div>
+        <div class="ob-measure-title">back waist length</div>
+        <div class="ob-measure-hint">measure from the base of your neck to your waist</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="42" id="m-bwl"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 8: Arm length -->
+      <div class="ob-slide" data-slide="8">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <line x1="118" y1="50" x2="140" y2="170" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+            <circle cx="118" cy="50" r="4" fill="var(--warm)"/>
+            <circle cx="140" cy="170" r="4" fill="var(--warm)"/>
+          </svg>
+          <div class="body-label" style="right:-10px;top:105px">arm &#8595;</div>
+        </div>
+        <div class="ob-measure-title">arm length</div>
+        <div class="ob-measure-hint">measure from shoulder tip to your wrist</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="60" id="m-arm"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 9: Neck -->
+      <div class="ob-slide" data-slide="9">
+        <div class="body-wrap">
+          <svg class="body-svg" viewBox="0 0 160 300">
+            <path d="M80 20 C80 20 65 22 60 30 C55 38 52 50 52 50 L48 90 C46 100 40 110 38 120 L36 140 C36 150 38 155 42 160 L44 200 L42 260 C42 270 50 280 60 280 L100 280 C110 280 118 270 118 260 L116 200 L118 160 C122 155 124 150 124 140 L122 120 C120 110 114 100 112 90 L108 50 C108 50 105 38 100 30 C95 22 80 20 80 20Z" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <circle cx="80" cy="16" r="14" fill="#DCEEFA" stroke="#C9DDEC" stroke-width="1.5"/>
+            <ellipse cx="80" cy="28" rx="14" ry="6" fill="none" stroke="var(--warm)" stroke-width="3" stroke-dasharray="4,3" class="body-highlight"/>
+          </svg>
+          <div class="body-label" style="right:-20px;top:18px">&#8592; neck</div>
+        </div>
+        <div class="ob-measure-title">neck circumference</div>
+        <div class="ob-measure-hint">measure around the base of your neck</div>
+        <div class="ob-input-wrap"><input class="ob-input" type="number" placeholder="36" id="m-neck"><div class="ob-unit">cm</div></div>
+      </div>
+
+      <!-- Slide 10: Done! -->
+      <div class="ob-slide" data-slide="10">
+        <div class="ob-confetti">&#127881;</div>
+        <div class="ob-title">you're all set!</div>
+        <div class="ob-sub" style="margin-bottom:12px">your measurements are saved. every pattern will be custom-fitted to you.</div>
+        <div class="ob-done-body">
+          <div class="ob-done-row"><span class="label">Bust</span><span class="val" id="v-bust">92 cm</span></div>
+          <div class="ob-done-row"><span class="label">Waist</span><span class="val" id="v-waist">74 cm</span></div>
+          <div class="ob-done-row"><span class="label">Hip</span><span class="val" id="v-hip">98 cm</span></div>
+          <div class="ob-done-row"><span class="label">Shoulder</span><span class="val" id="v-shoulder">40 cm</span></div>
+          <div class="ob-done-row"><span class="label">Back length</span><span class="val" id="v-bwl">42 cm</span></div>
+          <div class="ob-done-row"><span class="label">Arm</span><span class="val" id="v-arm">60 cm</span></div>
+          <div class="ob-done-row"><span class="label">Neck</span><span class="val" id="v-neck">36 cm</span></div>
+        </div>
+        <div class="ob-doodle-text">~ happy sewing! ~</div>
+      </div>
+
+    </div>
+
+    <!-- Footer buttons -->
+    <div class="ob-footer" id="obFooter">
+      <button class="ob-btn primary" id="obNext" onclick="obNext()">next</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div class="status-bar"><span>9:41</span><span style="font-size:12px">5G</span></div>
+
+  <div class="header">
+    <div class="logo">Stitchu</div>
+    <div class="avatar" onclick="toggleProfile()">D</div>
+  </div>
+
+  <div class="pills">
+    <div class="pill active" onclick="go(0)">inspire</div>
+    <div class="pill" onclick="go(1)">create</div>
+    <div class="pill" onclick="go(2)">closet</div>
+  </div>
+
+  <div class="rooms-wrap">
+    <div class="rooms-track" id="track">
+
+      <!-- INSPIRE -->
+      <div class="room">
+        <div class="hero-card" style="cursor:pointer" onclick="openDetail('trend-detail')">
+          <div class="hero-text">
+            <div class="hero-tag">Summer 2026</div>
+            <h2>Linen & Wide Legs<br>Are Everywhere</h2>
+          </div>
+        </div>
+
+        <div class="stitle">trending now</div>
+        <div class="trend-scroll">
+          <div class="trend-item" onclick="openDetail('trend-detail')"><div class="ti-icon">&#128087;</div><div class="ti-label">Puff Sleeves</div></div>
+          <div class="trend-item"><div class="ti-icon">&#127940;</div><div class="ti-label">Wide Leg</div></div>
+          <div class="trend-item"><div class="ti-icon">&#128090;</div><div class="ti-label">A-Line Midi</div></div>
+          <div class="trend-item"><div class="ti-icon">&#9986;</div><div class="ti-label">Corset Top</div></div>
+        </div>
+
+        <div class="stitle">what can i make?</div>
+        <div class="fabric-cta" onclick="openDetail('fabric-detail')">
+          <div class="fc-icon">&#128248;</div>
+          <h3>upload a fabric photo</h3>
+          <p>we'll suggest what to sew with it</p>
+        </div>
+
+        <div class="stitle">from the blog</div>
+        <div class="blog-card" onclick="openDetail('blog-detail')"><div class="blog-thumb">&#9986;</div><div class="blog-info"><h3>5 Beginner Mistakes When Cutting Fabric</h3><p>3 min read</p></div></div>
+        <div class="blog-card" onclick="openDetail('blog-detail-2')"><div class="blog-thumb">&#129525;</div><div class="blog-info"><h3>Understanding Fabric Grain Direction</h3><p>4 min read</p></div></div>
+        <div class="blog-card" onclick="openDetail('blog-detail-3')"><div class="blog-thumb">&#127774;</div><div class="blog-info"><h3>Best Fabrics for Summer Dresses</h3><p>5 min read</p></div></div>
+      </div>
+
+      <!-- CREATE -->
+      <div class="room">
+        <div class="create-card" onclick="openDetail('upload-detail')"><div class="cc-icon">&#128247;</div><h3>upload a photo</h3><p>snap or pick any garment. we'll create a pattern from it.</p><div class="cc-arrow">&#8594;</div></div>
+        <div class="create-card" onclick="openDetail('designer-detail')"><div class="cc-icon">&#9986;&#65039;</div><h3>design it</h3><p>pick neckline, sleeves, bodice, skirt. build piece by piece.</p><div class="cc-arrow">&#8594;</div></div>
+        <div class="create-card premium" onclick="openDetail('imagine-detail')"><div class="premium-tag">premium</div><h3>imagine it</h3><p>describe your dream garment. AI brings it to life.</p><div class="cc-arrow">&#8594;</div></div>
+
+        <div class="stitle">in progress</div>
+        <div class="prog-card" onclick="openDetail('pattern-detail')">
+          <div class="prog-thumb">&#128087;</div>
+          <div class="prog-info"><h3>Linen A-Line Dress</h3><p>Pattern ready &middot; Step 3/8</p><div class="prog-bar"><div class="prog-fill"></div></div></div>
+        </div>
+      </div>
+
+      <!-- CLOSET -->
+      <div class="room">
+        <div class="filters">
+          <div class="fchip active" onclick="filt(this)">All</div>
+          <div class="fchip" onclick="filt(this)">Dresses</div>
+          <div class="fchip" onclick="filt(this)">Skirts</div>
+          <div class="fchip" onclick="filt(this)">Tops</div>
+          <div class="fchip" onclick="filt(this)">Pants</div>
+        </div>
+        <div class="closet-grid">
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#128087;</div><div class="ci-info"><h3>Summer Dress</h3><p>May 28</p></div></div>
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#128090;</div><div class="ci-info"><h3>Pencil Skirt</h3><p>May 25</p></div></div>
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#128085;</div><div class="ci-info"><h3>Linen Blouse</h3><p>May 20</p></div></div>
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#128086;</div><div class="ci-info"><h3>Wide Leg Pants</h3><p>May 18</p></div></div>
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#129509;</div><div class="ci-info"><h3>Wrap Top</h3><p>May 15</p></div></div>
+          <div class="closet-item" onclick="openDetail('pattern-detail')"><div class="ci-img">&#128092;</div><div class="ci-info"><h3>Tote Bag</h3><p>May 10</p></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Blog Article ===== -->
+  <div class="detail-page" id="blog-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('blog-detail')">&#8592;</div><div class="detail-title">blog</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--warm-light)">&#9986;</div>
+      <h2>5 Beginner Mistakes When Cutting Fabric</h2>
+      <div class="meta">3 min read &middot; by Stitchu Team</div>
+      <p>Cutting fabric is where your sewing project truly begins, and it's also where many beginners make costly mistakes. Here's what to watch out for.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">1. Not washing your fabric first</strong></p>
+      <p>Fabric shrinks after the first wash. If you cut before washing, your finished garment will be too small. Always pre-wash and iron your fabric before cutting.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">2. Ignoring the grain line</strong></p>
+      <p>The grain line on your pattern should always be parallel to the selvage. Cutting off-grain causes your garment to twist and hang poorly.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">3. Using the wrong scissors</strong></p>
+      <p>Paper scissors and fabric scissors are not the same. Fabric shears have a specific angle and sharpness. Using paper scissors on fabric will give you jagged, uneven edges.</p>
+      <div class="doodle-line"></div>
+      <p>The best investment you can make as a beginner is a good pair of fabric shears and a self-healing cutting mat. Your cuts will be cleaner and your sewing life will be so much easier.</p>
+    </div>
+  </div>
+
+  <div class="detail-page" id="blog-detail-2">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('blog-detail-2')">&#8592;</div><div class="detail-title">blog</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--sage-light)">&#129525;</div>
+      <h2>Understanding Fabric Grain Direction</h2>
+      <div class="meta">4 min read &middot; by Stitchu Team</div>
+      <p>Every woven fabric has three grain directions: lengthwise (warp), crosswise (weft), and bias. Understanding these is essential for proper pattern placement.</p>
+      <p>The <strong>lengthwise grain</strong> runs parallel to the selvage and has the least stretch. Most pattern pieces are cut on this grain for stability.</p>
+      <p>The <strong>crosswise grain</strong> runs perpendicular to the selvage and has slightly more give. Some pattern pieces may use this direction.</p>
+      <p>The <strong>bias</strong> runs at a 45-degree angle and has the most stretch. It's used for binding, cowl necklines, and draped garments.</p>
+    </div>
+  </div>
+
+  <div class="detail-page" id="blog-detail-3">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('blog-detail-3')">&#8592;</div><div class="detail-title">blog</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--lavender-light)">&#127774;</div>
+      <h2>Best Fabrics for Summer Dresses</h2>
+      <div class="meta">5 min read &middot; by Stitchu Team</div>
+      <p>When the heat rises, your fabric choice matters more than ever. Here are the top fabrics for breezy, comfortable summer dresses.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">Linen</strong> — The king of summer. Breathable, gets softer with every wash, and has that effortlessly chic look. Wrinkles are part of its charm.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">Cotton lawn</strong> — Lightweight, silky-smooth, drapes beautifully. Perfect for flowy summer dresses.</p>
+      <p><strong style="font-family:var(--font-hand);font-size:22px">Rayon/Viscose</strong> — Drapes like silk at a fraction of the price. Great for wrap dresses and A-line silhouettes.</p>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Pattern Result ===== -->
+  <div class="detail-page" id="pattern-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('pattern-detail')">&#8592;</div><div class="detail-title">pattern</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--warm-light)">&#128087;</div>
+      <h2>Summer Dress</h2>
+      <div class="meta">A-Line &middot; V-Neck &middot; Short Sleeve &middot; Midi Length</div>
+
+      <div class="stitle">fabric & materials</div>
+      <p style="font-size:18px;color:var(--text)">&#129525; Linen or cotton lawn<br>&#128207; 2.4 meters (150cm wide)<br>&#129697; Matching thread + invisible zipper<br>&#9986; 6 pattern pieces &middot; 1.5cm seam allowance</p>
+
+      <div class="stitle">pattern</div>
+      <button class="action-btn primary" style="display:flex;align-items:center;justify-content:center;gap:10px">&#128196; download A4 PDF</button>
+      <button class="action-btn secondary" style="display:flex;align-items:center;justify-content:center;gap:10px">&#128424; print pattern</button>
+      <div style="background:var(--card);border:2px dashed #C9DDEC;border-radius:var(--rs);padding:14px;text-align:center;margin:6px 0 16px">
+        <p style="font-family:var(--font-body);font-size:15px;color:var(--text-sec);margin:0">&#9634; calibration square: print this page and measure the square. it should be exactly 3cm x 3cm.</p>
+      </div>
+
+      <div class="stitle">sewing guide</div>
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Cut your pieces</h4>
+          <p>Pin pattern pieces to fabric following the grain line arrows. Cut with sharp fabric shears. Transfer all notches and markings.</p>
+          <div class="pro-tip"><div class="tip-icon">&#128161;</div><p>Use pattern weights instead of pins for faster cutting on slippery fabrics.</p></div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Apply interfacing</h4>
+          <p>Iron fusible interfacing to the wrong side of the facing pieces. This gives the neckline structure and prevents stretching.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Sew the darts</h4>
+          <p>Fold each dart right sides together, matching the dart legs. Stitch from the wide end to the point. Press bust darts down, waist darts toward center.</p>
+          <div class="pro-tip"><div class="tip-icon">&#128161;</div><p>Don't backstitch at the dart point. Tie the thread tails in a knot for a smooth finish.</p></div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Join front & back bodice</h4>
+          <p>Place front and back bodice pieces right sides together. Sew shoulder seams and side seams at 1.5cm seam allowance. Press seams open.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Attach the sleeves</h4>
+          <p>Ease the sleeve cap into the armhole, matching notches. Pin generously, then stitch. Trim and finish the seam with zigzag or overlock.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Join the skirt</h4>
+          <p>Sew front and back skirt pieces at side seams. Attach skirt to bodice at waistline, matching side seams and center points.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>Insert the zipper</h4>
+          <p>Install invisible zipper on the center back seam. Place zipper face-down on the right side of fabric, coil aligned with seam line.</p>
+          <div class="pro-tip"><div class="tip-icon">&#128161;</div><p>Press the zipper coils open with a warm iron before sewing for a truly invisible finish.</p></div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">8</div>
+        <div class="step-content">
+          <h4>Finish neckline & hem</h4>
+          <p>Attach facing to neckline, understitch, and press to inside. Hem the dress by folding 1cm then another 2cm. Press and topstitch or hand-stitch.</p>
+        </div>
+      </div>
+
+      <div class="doodle-line"></div>
+      <p style="text-align:center;font-family:var(--font-hand);font-size:22px;color:var(--warm)">~ happy sewing! ~</p>
+    </div>
+  </div>
+
+  <!-- Guide is now inline in pattern-detail -->
+
+  <!-- ===== DETAIL: Trend ===== -->
+  <div class="detail-page" id="trend-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('trend-detail')">&#8592;</div><div class="detail-title">trend</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--warm-light)">&#128087;</div>
+      <h2>Puff Sleeves Are Back</h2>
+      <div class="meta">Summer 2026 Trend</div>
+      <p>From subtle gathers to dramatic volumes, puff sleeves dominate runways and street style this season. They add instant drama to even the simplest bodice.</p>
+      <p>Pair with a fitted bodice and A-line skirt for a balanced silhouette, or go full romantic with a tiered midi dress.</p>
+      <button class="action-btn primary" onclick="closeDetail('trend-detail');go(1);">create a puff sleeve pattern</button>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Fabric Suggestion ===== -->
+  <div class="detail-page" id="fabric-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('fabric-detail')">&#8592;</div><div class="detail-title">fabric ideas</div></div>
+    <div class="detail-body">
+      <div class="detail-hero-img" style="background:var(--sage-light)">&#128248;</div>
+      <h2>what can you make?</h2>
+      <p>Upload a photo of your fabric and we'll suggest what to sew with it, how much you need, and which patterns work best.</p>
+      <div style="background:var(--card);border:2px dashed #C9DDEC;border-radius:var(--r);padding:40px;text-align:center;margin:20px 0">
+        <div style="font-size:48px;margin-bottom:12px">&#128247;</div>
+        <p style="font-family:var(--font-hand);font-size:22px;color:var(--text);margin:0">tap to upload a photo</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Upload Flow ===== -->
+  <div class="detail-page" id="upload-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('upload-detail')">&#8592;</div><div class="detail-title">upload a photo</div></div>
+    <div class="detail-body">
+      <h2>show us what you love</h2>
+      <p>Pick a photo of any garment — from Pinterest, Instagram, or your camera roll. We'll analyze it and create a custom pattern in your measurements.</p>
+      <div style="background:var(--card);border:2px dashed var(--warm);border-radius:var(--r);padding:50px 20px;text-align:center;margin:20px 0">
+        <div style="font-size:56px;margin-bottom:12px">&#128247;</div>
+        <p style="font-family:var(--font-hand);font-size:24px;color:var(--text);margin:0 0 8px">tap to choose a photo</p>
+        <p style="font-family:var(--font-body);font-size:15px;color:var(--text-sec);margin:0">camera, gallery, or paste a link</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Designer Flow ===== -->
+  <div class="detail-page" id="designer-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('designer-detail')">&#8592;</div><div class="detail-title">design it</div></div>
+    <div class="detail-body">
+      <h2>build your garment</h2>
+      <p>Pick each element and watch your design come together. Like dressing up, but you're making the clothes.</p>
+
+      <div class="stitle">neckline</div>
+      <div class="filters" style="margin:0 0 12px;padding-left:0">
+        <div class="fchip active" onclick="filt(this)">V-Neck</div>
+        <div class="fchip" onclick="filt(this)">Crew</div>
+        <div class="fchip" onclick="filt(this)">Square</div>
+        <div class="fchip" onclick="filt(this)">Off-Shoulder</div>
+      </div>
+
+      <div class="stitle">sleeves</div>
+      <div class="filters" style="margin:0 0 12px;padding-left:0">
+        <div class="fchip active" onclick="filt(this)">Short</div>
+        <div class="fchip" onclick="filt(this)">Puff</div>
+        <div class="fchip" onclick="filt(this)">Bell</div>
+        <div class="fchip" onclick="filt(this)">Sleeveless</div>
+      </div>
+
+      <div class="stitle">skirt</div>
+      <div class="filters" style="margin:0 0 12px;padding-left:0">
+        <div class="fchip active" onclick="filt(this)">A-Line</div>
+        <div class="fchip" onclick="filt(this)">Pencil</div>
+        <div class="fchip" onclick="filt(this)">Pleated</div>
+        <div class="fchip" onclick="filt(this)">Circle</div>
+      </div>
+
+      <div class="stitle">length</div>
+      <div class="filters" style="margin:0 0 20px;padding-left:0">
+        <div class="fchip" onclick="filt(this)">Mini</div>
+        <div class="fchip active" onclick="filt(this)">Midi</div>
+        <div class="fchip" onclick="filt(this)">Maxi</div>
+      </div>
+
+      <button class="action-btn primary" onclick="closeDetail('designer-detail');openDetail('pattern-detail')">generate pattern</button>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL: Imagine Flow ===== -->
+  <div class="detail-page" id="imagine-detail">
+    <div class="detail-header"><div class="back-btn" onclick="closeDetail('imagine-detail')">&#8592;</div><div class="detail-title">imagine it</div></div>
+    <div class="detail-body">
+      <h2>describe your dream</h2>
+      <p>Tell us what you're imagining and AI will bring it to life. Be as specific or as vague as you want.</p>
+      <div style="margin:20px 0">
+        <textarea style="width:100%;height:140px;padding:16px;border:2px solid #C9DDEC;border-radius:var(--rs);font-family:var(--font-body);font-size:17px;background:var(--card);color:var(--text);outline:none;resize:none" placeholder="a flowy red midi dress with puff sleeves, sweetheart neckline, fitted waist with a thin belt, in lightweight crepe fabric..."></textarea>
+      </div>
+      <button class="action-btn primary">generate visual</button>
+      <p style="text-align:center;font-family:var(--font-hand);font-size:16px;color:var(--warm);margin-top:12px">~ premium feature ~</p>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE SHEET ===== -->
+  <div class="overlay" id="ov" onclick="toggleProfile()"></div>
+  <div class="profile-sheet" id="ps">
+    <div class="sheet-bar"></div>
+    <div class="prof-head">
+      <div class="prof-av">D</div>
+      <div><div class="prof-name">Damla</div><div class="prof-sub">Premium</div></div>
+    </div>
+    <div class="prof-item"><div class="prof-icon">&#128207;</div><div class="prof-label">My Measurements</div></div>
+    <div class="prof-item"><div class="prof-icon">&#11088;</div><div class="prof-label">Subscription</div></div>
+    <div class="prof-item"><div class="prof-icon">&#9881;&#65039;</div><div class="prof-label">Settings</div></div>
+    <div class="prof-item"><div class="prof-icon">&#10067;</div><div class="prof-label">Help & Support</div></div>
+  </div>
+
+</div>
+
+<script>
+// ===== MAIN APP =====
+let cur = 0;
+
+function go(i) {
+  cur = i;
+  document.getElementById('track').style.transform = `translateX(-${i*393}px)`;
+  document.querySelectorAll('.pill').forEach((p,j) => p.classList.toggle('active', j===i));
+}
+
+function toggleProfile() {
+  document.getElementById('ps').classList.toggle('show');
+  document.getElementById('ov').classList.toggle('show');
+}
+
+function openDetail(id) { document.getElementById(id).classList.add('open'); }
+function closeDetail(id) { document.getElementById(id).classList.remove('open'); }
+
+function filt(el) {
+  el.parentElement.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Swipe rooms
+let sx=0;
+document.querySelector('.rooms-wrap').addEventListener('touchstart', e => sx=e.changedTouches[0].screenX);
+document.querySelector('.rooms-wrap').addEventListener('touchend', e => {
+  const d = sx - e.changedTouches[0].screenX;
+  if(Math.abs(d)>60){ if(d>0&&cur<2)go(cur+1); if(d<0&&cur>0)go(cur-1); }
+});
+
+// ===== ONBOARDING =====
+let obCur = 0;
+const obTotal = 11; // slides 0-10
+
+function obNext() {
+  if (obCur >= 10) {
+    // Done — close onboarding
+    document.getElementById('onboarding').classList.add('gone');
+    return;
+  }
+
+  // Move current slide to left
+  const slides = document.querySelectorAll('.ob-slide');
+  slides[obCur].classList.remove('active');
+  slides[obCur].classList.add('left');
+
+  obCur++;
+
+  // Activate next slide
+  slides[obCur].classList.remove('left');
+  slides[obCur].classList.add('active');
+
+  // Update progress bars
+  const bars = document.querySelectorAll('.ob-progress .bar');
+  bars.forEach((b, i) => {
+    b.classList.remove('done', 'active');
+    if (i < obCur) b.classList.add('done');
+    if (i === obCur) b.classList.add('active');
+  });
+
+  // Update footer
+  updateObFooter();
+}
+
+function obPrev() {
+  if (obCur <= 0) return;
+
+  const slides = document.querySelectorAll('.ob-slide');
+  slides[obCur].classList.remove('active');
+  slides[obCur].classList.remove('left');
+
+  obCur--;
+
+  slides[obCur].classList.remove('left');
+  slides[obCur].classList.add('active');
+
+  const bars = document.querySelectorAll('.ob-progress .bar');
+  bars.forEach((b, i) => {
+    b.classList.remove('done', 'active');
+    if (i < obCur) b.classList.add('done');
+    if (i === obCur) b.classList.add('active');
+  });
+
+  updateObFooter();
+}
+
+function updateObFooter() {
+  const footer = document.getElementById('obFooter');
+
+  if (obCur === 0) {
+    footer.innerHTML = '<button class="ob-btn primary" onclick="obNext()">next</button>';
+  } else if (obCur === 10) {
+    // Update summary values
+    const ids = ['bust','waist','hip','shoulder','bwl','arm','neck'];
+    const defaults = ['92','74','98','40','42','60','36'];
+    ids.forEach((id, i) => {
+      const input = document.getElementById('m-' + id);
+      const val = input ? (input.value || defaults[i]) : defaults[i];
+      const vEl = document.getElementById('v-' + id);
+      if (vEl) vEl.textContent = val + ' cm';
+    });
+
+    footer.innerHTML = '<button class="ob-btn celebrate" onclick="document.getElementById(\'onboarding\').classList.add(\'gone\')">let\'s create!</button>';
+  } else {
+    footer.innerHTML = '<button class="ob-btn secondary" onclick="obPrev()">back</button><button class="ob-btn primary" onclick="obNext()">next</button>';
+  }
+}
+</script>
+
+</body>
+</html>
