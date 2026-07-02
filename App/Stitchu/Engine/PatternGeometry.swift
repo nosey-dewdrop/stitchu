@@ -99,6 +99,41 @@ struct PatternPiece: Codable, Identifiable, Equatable {
     }
 }
 
+/// Approximate length of a command path in mm (cubic beziers flattened to 24 segments).
+/// Used for the verified iterative-convergence technique: fit sleeve caps and
+/// necklines by matching drafted curve length to a target.
+func pathLength(of commands: [PathCommand]) -> Double {
+    var length: Double = 0
+    var current = CGPoint.zero
+    var subpathStart = CGPoint.zero
+    for cmd in commands {
+        switch cmd {
+        case .move(let p):
+            current = p; subpathStart = p
+        case .line(let p):
+            length += hypot(p.x - current.x, p.y - current.y)
+            current = p
+        case .curve(let to, let cp1, let cp2):
+            var prev = current
+            let steps = 24
+            for i in 1...steps {
+                let t = CGFloat(i) / CGFloat(steps)
+                let mt = 1 - t
+                let x = mt*mt*mt*current.x + 3*mt*mt*t*cp1.x + 3*mt*t*t*cp2.x + t*t*t*to.x
+                let y = mt*mt*mt*current.y + 3*mt*mt*t*cp1.y + 3*mt*t*t*cp2.y + t*t*t*to.y
+                let p = CGPoint(x: x, y: y)
+                length += hypot(p.x - prev.x, p.y - prev.y)
+                prev = p
+            }
+            current = to
+        case .close:
+            length += hypot(subpathStart.x - current.x, subpathStart.y - current.y)
+            current = subpathStart
+        }
+    }
+    return length
+}
+
 struct DraftedPattern: Codable {
     var garment: String
     var pieces: [PatternPiece]
