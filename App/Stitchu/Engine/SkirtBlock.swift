@@ -5,13 +5,15 @@ import CoreGraphics
 /// direct body measurements + percentage ease, no chest-fraction constants.
 /// (knowledge/stitchu.db: drafting_formulas, engine_techniques)
 enum SkirtStyle: String, CaseIterable, Identifiable {
-    case aLine, straight
+    case aLine, straight, gathered, halfCircle
 
     var id: String { rawValue }
     var title: String {
         switch self {
         case .aLine: "A-line"
         case .straight: "straight"
+        case .gathered: "gathered"
+        case .halfCircle: "half circle"
         }
     }
 }
@@ -40,38 +42,52 @@ struct SkirtBlock {
     /// Below this dart width the dart is dropped and folded into the side seam,
     /// same guard-clause approach as Bella's back dart.
     static let minDartWidth: Double = 8
+    /// Gather ratio for gathered skirts (fabric = waist * ratio).
+    static let gatherRatio = 1.9
 
     static func draft(measurements m: BodyMeasurementsSnapshot, style: SkirtStyle, length: SkirtLength) -> DraftedPattern {
+        let pieces = pieces(measurements: m, style: style, length: length, includeWaistband: true)
+        return DraftedPattern(
+            garment: "\(style.title) skirt",
+            pieces: pieces,
+            fabricAdviceKey: "skirt",
+            fabricMeters140: fabricEstimate(measurements: m, style: style, length: length),
+            guideSteps: guide(style: style)
+        )
+    }
+
+    /// Skirt pieces alone, reusable by the dress block (waistband optional).
+    static func pieces(measurements m: BodyMeasurementsSnapshot, style: SkirtStyle, length: SkirtLength, includeWaistband: Bool) -> [PatternPiece] {
         let waistQuarter = m.waistMM * (1 + waistEase) / 4
         let hipQuarter = m.hipMM * (1 + hipEase) / 4
         let len = length.millimeters
 
-        let front = draftQuarter(
-            name: "Front", waistQuarter: waistQuarter, hipQuarter: hipQuarter,
-            length: len, style: style, dartLength: 90
-        )
-        let back = draftQuarter(
-            name: "Back", waistQuarter: waistQuarter, hipQuarter: hipQuarter,
-            length: len, style: style, dartLength: 130
-        )
-        let waistband = waistbandPiece(waistMM: m.waistMM)
-
-        let hemWidth = hipQuarter + flare(for: style)
-        let meters = fabricEstimate(pieceLength: len, hemWidth: hemWidth)
-
-        return DraftedPattern(
-            garment: "\(style.title) skirt",
-            pieces: [front, back, waistband],
-            fabricAdviceKey: "skirt",
-            fabricMeters140: meters,
-            guideSteps: guide(style: style)
-        )
+        var result: [PatternPiece]
+        switch style {
+        case .aLine, .straight:
+            result = [
+                draftQuarter(name: "Front", waistQuarter: waistQuarter, hipQuarter: hipQuarter, length: len, style: style, dartLength: 90),
+                draftQuarter(name: "Back", waistQuarter: waistQuarter, hipQuarter: hipQuarter, length: len, style: style, dartLength: 130),
+            ]
+        case .gathered:
+            let panel = gatheredPanel(waistQuarter: waistQuarter, length: len)
+            var back = panel
+            back.name = "Back"
+            back.id = UUID()
+            result = [panel, back]
+        case .halfCircle:
+            result = [halfCirclePanel(waistMM: m.waistMM, length: len)]
+        }
+        if includeWaistband {
+            result.append(waistbandPiece(waistMM: m.waistMM))
+        }
+        return result
     }
 
     private static func flare(for style: SkirtStyle) -> Double {
         switch style {
         case .aLine: 60
-        case .straight: 0
+        case .straight, .gathered, .halfCircle: 0
         }
     }
 
@@ -104,29 +120,24 @@ struct SkirtBlock {
         let hemSide = CGPoint(x: hemX, y: length - hemSideRise)
         let hemCenter = CGPoint(x: 0, y: length)
 
-        var commands: [PathCommand] = [
+        let commands: [PathCommand] = [
             .move(centerWaist),
-            // waistline curves gently up toward the side seam
             .curve(to: sideWaist,
                    cp1: CGPoint(x: waistlineWidth * 0.45, y: 0),
                    cp2: CGPoint(x: waistlineWidth * 0.8, y: -sideWaistRise * 0.8)),
-            // side seam: waist to hip is a concave curve, hip to hem straight (with flare)
             .curve(to: hipPoint,
                    cp1: CGPoint(x: waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, y: hipDepth * 0.3 - sideWaistRise),
                    cp2: CGPoint(x: hipQuarter, y: hipDepth * 0.65)),
             .line(hemSide),
-            // hem sweeps back to square with the fold line
             .curve(to: hemCenter,
                    cp1: CGPoint(x: hemX * 0.6, y: length),
                    cp2: CGPoint(x: hemX * 0.3, y: length)),
             .line(centerWaist),
             .close,
         ]
-        _ = commands // silence mutation warning if markings stay empty
 
         var markings: [PathCommand] = []
         if dartWidth > 0 {
-            // Dart centered on the waistline
             let dartCenterX = waistlineWidth / 2
             let dartTip = CGPoint(x: dartCenterX, y: dartLength)
             let legA = CGPoint(x: dartCenterX - dartWidth / 2, y: -sideWaistRise * Double(dartCenterX / waistlineWidth) * 0.5)
@@ -146,7 +157,58 @@ struct SkirtBlock {
         )
     }
 
-    private static func waistbandPiece(waistMM: Double) -> PatternPiece {
+    /// Gathered skirt: a simple rectangle, fabric = waist * gather ratio.
+    private static func gatheredPanel(waistQuarter: Double, length: Double) -> PatternPiece {
+        let width = waistQuarter * gatherRatio
+        let commands: [PathCommand] = [
+            .move(.zero),
+            .line(CGPoint(x: width, y: 0)),
+            .line(CGPoint(x: width, y: length)),
+            .line(CGPoint(x: 0, y: length)),
+            .close,
+        ]
+        return PatternPiece(
+            name: "Front",
+            cutInstruction: "cut 1 on fold",
+            commands: commands,
+            markings: [.move(CGPoint(x: 0, y: 18)), .line(CGPoint(x: width, y: 18))],
+            grainline: Grainline(from: CGPoint(x: 50, y: 80), to: CGPoint(x: 50, y: length - 80)),
+            seamAllowance: 15
+        )
+    }
+
+    /// Half-circle skirt: two quarter-circle panels (this piece cut twice on fold).
+    /// Waist radius r = eased waist / pi (half-circle geometry).
+    private static func halfCirclePanel(waistMM: Double, length: Double) -> PatternPiece {
+        let r = waistMM * (1 + waistEase) / Double.pi
+        let R = r + length
+        let k = 0.5523 // circle-to-bezier kappa
+
+        let commands: [PathCommand] = [
+            .move(CGPoint(x: r, y: 0)),
+            // waist arc (quarter circle)
+            .curve(to: CGPoint(x: 0, y: r),
+                   cp1: CGPoint(x: r, y: r * k),
+                   cp2: CGPoint(x: r * k, y: r)),
+            // fold edge out to hem
+            .line(CGPoint(x: 0, y: R)),
+            // hem arc back
+            .curve(to: CGPoint(x: R, y: 0),
+                   cp1: CGPoint(x: R * k, y: R),
+                   cp2: CGPoint(x: R, y: R * k)),
+            .close,
+        ]
+        return PatternPiece(
+            name: "Skirt Panel (quarter circle)",
+            cutInstruction: "cut 2 on fold",
+            commands: commands,
+            markings: [],
+            grainline: Grainline(from: CGPoint(x: r * 0.8, y: r * 0.8), to: CGPoint(x: R * 0.62, y: R * 0.62)),
+            seamAllowance: 15
+        )
+    }
+
+    static func waistbandPiece(waistMM: Double) -> PatternPiece {
         let bandLength = waistMM * (1 + waistEase) / 2 + 30 // half band (cut 2) + button stand
         let bandHeight: Double = 80 // folds to 4cm
         let rect: [PathCommand] = [
@@ -170,25 +232,61 @@ struct SkirtBlock {
         )
     }
 
-    /// Rough fabric estimate for 140cm-wide fabric: front + back stacked lengthwise
-    /// plus waistband and 10% cutting margin.
-    private static func fabricEstimate(pieceLength: Double, hemWidth: Double) -> Double {
-        let halfWidth: Double = 700
-        let piecesPerWidth = hemWidth * 2 < halfWidth ? 2.0 : 1.0
-        let lengthNeeded = (pieceLength * 2) / piecesPerWidth + 120
-        return ((lengthNeeded * 1.10) / 1000).rounded(toPlaces: 1)
+    /// Rough estimate for 140cm-wide fabric, 10% cutting margin.
+    static func fabricEstimate(measurements m: BodyMeasurementsSnapshot, style: SkirtStyle, length: SkirtLength) -> Double {
+        let len = length.millimeters
+        let meters: Double
+        switch style {
+        case .aLine, .straight:
+            let hemWidth = m.hipMM * (1 + hipEase) / 4 + flare(for: style)
+            let piecesPerWidth = hemWidth * 2 < 700 ? 2.0 : 1.0
+            meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000
+        case .gathered:
+            let panelWidth = m.waistMM * (1 + waistEase) / 4 * gatherRatio * 2
+            let piecesPerWidth = panelWidth < 700 ? 2.0 : 1.0
+            meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000
+        case .halfCircle:
+            let R = m.waistMM * (1 + waistEase) / Double.pi + len
+            meters = (R * 2 + 120) * 1.10 / 1000
+        }
+        return meters.rounded(toPlaces: 1)
     }
 
     private static func guide(style: SkirtStyle) -> [String] {
-        [
+        var steps = [
             "Print the pattern and check the 3 cm calibration square with a ruler before cutting anything.",
-            "Fold your fabric and cut the front and back on the fold. Cut 2 waistband pieces, interface 1.",
-            "Sew any darts first, pressing them toward the center.",
-            "Stitch the side seams (1.5 cm seam allowance), leaving the top 20 cm of the left seam open for the zipper.",
-            "Insert an invisible zipper in the left seam: install the zipper BEFORE closing the seam below it, then close the seam.",
-            "Attach the interfaced waistband, right sides together, then fold and topstitch or hand-finish the inside.",
-            "Try it on. Adjust side seams if needed, then finish the hem with a 2 cm double-fold.",
         ]
+        switch style {
+        case .aLine, .straight:
+            steps += [
+                "Fold your fabric and cut the front and back on the fold. Cut 2 waistband pieces, interface 1.",
+                "Sew any darts first, pressing them toward the center.",
+                "Stitch the side seams (1.5 cm seam allowance), leaving the top 20 cm of the left seam open for the zipper.",
+                "Insert an invisible zipper in the left seam: install the zipper BEFORE closing the seam below it, then close the seam.",
+                "Attach the interfaced waistband, right sides together, then fold and topstitch or hand-finish the inside.",
+                "Try it on. Adjust side seams if needed, then finish the hem with a 2 cm double-fold.",
+            ]
+        case .gathered:
+            steps += [
+                "Cut front and back panels on the fold. Cut 2 waistband pieces, interface 1.",
+                "Sew the side seams, leaving the top 20 cm of the left seam open for the zipper.",
+                "Run two rows of long gathering stitches along the marked line at the top edge.",
+                "Pull the bobbin threads and gather each panel until it matches the waistband length, distributing gathers evenly.",
+                "Insert an invisible zipper in the left seam BEFORE closing the seam below it.",
+                "Attach the interfaced waistband over the gathers, then finish the inside.",
+                "Hem with a 2 cm double-fold.",
+            ]
+        case .halfCircle:
+            steps += [
+                "Cut 2 quarter-circle panels on the fold. Cut 2 waistband pieces, interface 1.",
+                "Stitch the two side seams, leaving the top 20 cm of the left seam open for the zipper.",
+                "Staystitch the curved waist edge so it doesn't stretch while you work.",
+                "Insert an invisible zipper in the left seam BEFORE closing the seam below it.",
+                "Attach the interfaced waistband.",
+                "IMPORTANT: let the skirt hang for 24 hours before hemming — bias-cut areas drop, then trim the hem even and finish with a narrow 1 cm hem.",
+            ]
+        }
+        return steps
     }
 }
 
