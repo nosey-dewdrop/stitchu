@@ -30,6 +30,7 @@
 		9B544EA3B25A834309923BDC /* BodiceBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DA53FFAD7E9B9AC3116FCA8 /* BodiceBlock.swift */; };
 		9F1AE5A37877C01652B00E83 /* PatternResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEC490DBA501F8BA304C847 /* PatternResultView.swift */; };
 		B0C529327B5F104D44EF6197 /* fabrics.json in Resources */ = {isa = PBXBuildFile; fileRef = 990F04DC625DA09189ACAAEE /* fabrics.json */; };
+		B16D8431E34CF6070C05EB86 /* SleeveBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */; };
 		BD1B37AF760A2CA1597CB678 /* InspireRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA4EAF59E21133D670D19FE /* InspireRoomView.swift */; };
 		C36F2D38D71083CAA11D0152 /* KnowledgeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */; };
 		D263738EEDD401500AB904E7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C74BAC321F06048EF89D92A /* OnboardingView.swift */; };
@@ -44,6 +45,7 @@
 		4527D8E5F12DD0B1F1D84A46 /* SavedPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPattern.swift; sourceTree = "<group>"; };
 		48121B6A2AAC15266FEFCC2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4DA53FFAD7E9B9AC3116FCA8 /* BodiceBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodiceBlock.swift; sourceTree = "<group>"; };
+		4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleeveBlock.swift; sourceTree = "<group>"; };
 		4F027D15E1A479E7E0775C4E /* ProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSheet.swift; sourceTree = "<group>"; };
 		4FF236FE7997DB903450D882 /* ClosetRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosetRoomView.swift; sourceTree = "<group>"; };
 		5CEC490DBA501F8BA304C847 /* PatternResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternResultView.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				EBAC865484C605EEC89D9ADF /* GarmentDrafter.swift */,
 				836D3DC78D28A11B951218A7 /* PatternGeometry.swift */,
 				A6F1ACF5511AE60F2E946AAB /* SkirtBlock.swift */,
+				4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				4AAC1CA7964B11159F413C90 /* RootView.swift in Sources */,
 				8777B07F6B216C26126E86ED /* SavedPattern.swift in Sources */,
 				96F6A746F3922704369D9767 /* SkirtBlock.swift in Sources */,
+				B16D8431E34CF6070C05EB86 /* SleeveBlock.swift in Sources */,
 				9194858C7590206249364E44 /* StitchuApp.swift in Sources */,
 				84842E4F4E37914F1428D2D0 /* Theme.swift in Sources */,
 			);

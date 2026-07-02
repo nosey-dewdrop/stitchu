@@ -10,11 +10,7 @@ struct PhotoAnalysisView: View {
     @Query(sort: \BodyMeasurements.createdAt) private var measurements: [BodyMeasurements]
 
     @State private var phase: Phase = .idle
-    @State private var garment: GarmentType = .dress
-    @State private var skirtStyle: SkirtStyle = .aLine
-    @State private var skirtLength: SkirtLength = .midi
-    @State private var topLength: TopLength = .hip
-    @State private var hasSleeves = false
+    @State private var spec = GarmentSpec()
     @State private var analysisNote: String?
     @State private var errorMessage: String?
     @State private var draft: DraftedPattern?
@@ -89,31 +85,53 @@ struct PhotoAnalysisView: View {
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                Text("garment")
-                    .font(Quicksand.medium(14))
-                    .foregroundStyle(Palette.inkSecondary)
-                Picker("garment", selection: $garment) {
+                pickerLabel("garment")
+                Picker("garment", selection: $spec.garment) {
                     ForEach(GarmentType.allCases) { type in
                         Text(type.title).tag(type)
                     }
                 }
                 .pickerStyle(.segmented)
 
-                if garment == .skirt || garment == .dress {
-                    Text("skirt style")
-                        .font(Quicksand.medium(14))
-                        .foregroundStyle(Palette.inkSecondary)
-                    Picker("style", selection: $skirtStyle) {
+                if spec.garment != .skirt {
+                    pickerLabel("neckline")
+                    Picker("neckline", selection: $spec.neckline) {
+                        ForEach(Neckline.allCases) { neckline in
+                            Text(neckline.title).tag(neckline)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    pickerLabel("sleeves")
+                    Picker("sleeves", selection: $spec.sleeveStyle) {
+                        ForEach(SleeveStyle.allCases) { style in
+                            Text(style.title).tag(style)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    if spec.sleeveStyle != .none {
+                        pickerLabel("sleeve length")
+                        Picker("sleeve length", selection: $spec.sleeveLength) {
+                            ForEach(SleeveLength.allCases) { length in
+                                Text(length.rawValue).tag(length)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                }
+
+                if spec.garment == .skirt || spec.garment == .dress {
+                    pickerLabel("skirt style")
+                    Picker("style", selection: $spec.skirtStyle) {
                         ForEach(SkirtStyle.allCases) { style in
                             Text(style.title).tag(style)
                         }
                     }
                     .pickerStyle(.segmented)
 
-                    Text("length")
-                        .font(Quicksand.medium(14))
-                        .foregroundStyle(Palette.inkSecondary)
-                    Picker("length", selection: $skirtLength) {
+                    pickerLabel("length")
+                    Picker("length", selection: $spec.skirtLength) {
                         ForEach(SkirtLength.allCases) { length in
                             Text(length.rawValue).tag(length)
                         }
@@ -121,22 +139,14 @@ struct PhotoAnalysisView: View {
                     .pickerStyle(.segmented)
                 }
 
-                if garment == .top {
-                    Text("length")
-                        .font(Quicksand.medium(14))
-                        .foregroundStyle(Palette.inkSecondary)
-                    Picker("length", selection: $topLength) {
+                if spec.garment == .top {
+                    pickerLabel("length")
+                    Picker("length", selection: $spec.topLength) {
                         ForEach(TopLength.allCases) { length in
                             Text(length.rawValue).tag(length)
                         }
                     }
                     .pickerStyle(.segmented)
-                }
-
-                if hasSleeves && garment != .skirt {
-                    Text("this looks sleeved — the sleeve block isn't ready yet, so I'll draft the sleeveless version with bound armholes")
-                        .font(Quicksand.regular(13))
-                        .foregroundStyle(Palette.inkSecondary)
                 }
             }
             .padding(18)
@@ -156,6 +166,12 @@ struct PhotoAnalysisView: View {
         }
     }
 
+    private func pickerLabel(_ text: String) -> some View {
+        Text(text)
+            .font(Quicksand.medium(14))
+            .foregroundStyle(Palette.inkSecondary)
+    }
+
     private func startAnalysis() {
         guard phase == .idle else { return }
         guard ClaudeService.hasKey else {
@@ -167,11 +183,13 @@ struct PhotoAnalysisView: View {
         Task {
             do {
                 let result = try await ClaudeService.analyzeGarment(imageData: photoData)
-                if let parsed = GarmentType(rawValue: result.garment) { garment = parsed }
-                if let style = result.skirtStyle, let parsed = SkirtStyle(rawValue: style) { skirtStyle = parsed }
-                if let length = result.length, let parsed = SkirtLength(rawValue: length) { skirtLength = parsed }
-                if let top = result.topLength, let parsed = TopLength(rawValue: top) { topLength = parsed }
-                hasSleeves = result.hasSleeves ?? false
+                if let parsed = GarmentType(rawValue: result.garment) { spec.garment = parsed }
+                if let neckline = result.neckline, let parsed = Neckline(rawValue: neckline) { spec.neckline = parsed }
+                if let sleeve = result.sleeveStyle, let parsed = SleeveStyle(rawValue: sleeve) { spec.sleeveStyle = parsed }
+                if let sleeveLen = result.sleeveLength, let parsed = SleeveLength(rawValue: sleeveLen) { spec.sleeveLength = parsed }
+                if let style = result.skirtStyle, let parsed = SkirtStyle(rawValue: style) { spec.skirtStyle = parsed }
+                if let length = result.length, let parsed = SkirtLength(rawValue: length) { spec.skirtLength = parsed }
+                if let top = result.topLength, let parsed = TopLength(rawValue: top) { spec.topLength = parsed }
                 analysisNote = result.details
             } catch {
                 errorMessage = error.localizedDescription
@@ -185,13 +203,7 @@ struct PhotoAnalysisView: View {
             errorMessage = "no measurements found — complete onboarding first"
             return
         }
-        draft = GarmentDrafter.draft(
-            garment: garment,
-            measurements: BodyMeasurementsSnapshot(from: m),
-            skirtStyle: skirtStyle,
-            skirtLength: skirtLength,
-            topLength: topLength
-        )
+        draft = GarmentDrafter.draft(spec: spec, measurements: BodyMeasurementsSnapshot(from: m))
     }
 }
 

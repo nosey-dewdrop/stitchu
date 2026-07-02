@@ -2,10 +2,12 @@ import Foundation
 
 struct GarmentAnalysis: Codable {
     var garment: String
+    var neckline: String?
+    var sleeveStyle: String?
+    var sleeveLength: String?
     var skirtStyle: String?
     var length: String?
     var topLength: String?
-    var hasSleeves: Bool?
     var details: String?
 }
 
@@ -40,11 +42,13 @@ struct ClaudeService {
         let prompt = """
         Analyze the garment in this photo for sewing pattern drafting. Respond with ONLY a JSON object, no prose:
         {"garment": "skirt" | "dress" | "top" | "trousers" | "other",
-         "skirtStyle": "aLine" | "straight" | null,
+         "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | null,
+         "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
+         "sleeveLength": "short" | "elbow" | "long" | null,
+         "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | null (halfCircle covers full/flared circle skirts),
          "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
          "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
-         "hasSleeves": true | false,
-         "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, sleeve type)"}
+         "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}
         """
 
         let body: [String: Any] = [
