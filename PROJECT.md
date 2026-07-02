@@ -56,8 +56,10 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - [x] skirt block (A-line + straight, darts, waistband)
 - [x] dress block (bodice + skirt, waist seam, CB invisible zipper)
 - [x] top block (bodice extended to cropped/hip/tunic hem)
-- [ ] sleeve block (no verified formulas yet — v1 garments are sleeveless with bound armholes)
+- [x] sleeve block (straight + balloon; cap fitted to drafted armhole length by iterative convergence; biceps assumption documented)
+- [x] manipulation layer v1: necklines (crew/scoop/v/square/boat), skirt styles (A-line/straight/gathered/half-circle), sleeves — photo details now shape the pattern
 - [ ] validate blocks against a known-good commercial pattern (MUST before launch)
+- [ ] pleats, wrap styles, collars, pockets (manipulation layer v2)
 - [x] pattern rendering (SwiftUI Canvas)
 - [x] PDF export with A4 splitting + calibration square
 
