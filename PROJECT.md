@@ -5,8 +5,22 @@ Sewing pattern app for iOS. Upload a photo of any garment (or design one) and ge
 Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 
 ## Status
-Current phase: Foundation (pre-code)
-Last session: 2026-07-02 — renamed to Stitchu, rebranded mock + asset guides to baby blue palette and Quicksand font, created this file, set up git/GitHub
+Current phase: Core (app builds and runs the photo → skirt pattern path end-to-end)
+Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 4 rooms, photo → confirm → skirt pattern → tiled A4 PDF with calibration square, closet with save/delete, profile with measurement editing + API key. Research knowledge base (verified formulas) shipped in-app. Fabric research round still in progress.
+
+### What works today
+- Onboarding: 7 measurements with body silhouette highlights, validation, back navigation
+- Create → photo path: pick photo → Claude analysis (if API key set) or manual pick → user confirms → A-line/straight skirt drafted from real measurements (FreeSewing-verified formula philosophy: measurement + % ease)
+- Pattern result: piece previews with darts/grainline, fabric meters estimate, step-by-step sewing guide (invisible zipper order from verified source), true-scale tiled A4 PDF with 3 cm calibration square
+- Closet: saved patterns, delete, reopen
+- Profile: edit measurements, Anthropic API key stored in Keychain only
+
+### Honest gaps (v0)
+- Skirt only; dress/top/trousers pickers show "soon"
+- Modular designer + describe paths are placeholder cards
+- Fabric intelligence waiting on verified research (fabrics.json empty)
+- All doodle assets are placeholders until Damla draws them
+- No onboarding sign-in (local only), no paywall yet
 
 ## Brand
 - Name: Stitchu
@@ -31,17 +45,17 @@ Last session: 2026-07-02 — renamed to Stitchu, rebranded mock + asset guides t
 - [x] interactive mock (mock.html)
 - [x] asset checklist + drawing guide (101 assets)
 - [x] rebrand: Stitchu, baby blue, Quicksand
-- [ ] Xcode project setup
-- [ ] data models (Measurement, Pattern, PatternPiece)
-- [ ] onboarding flow (measurement input)
-- [ ] room navigation skeleton
+- [x] Xcode project setup (xcodegen, Quicksand bundled, builds clean)
+- [x] data models (BodyMeasurements, SavedPattern, PatternPiece)
+- [x] onboarding flow (measurement input)
+- [x] room navigation skeleton
 
 ### Phase 2: Pattern Engine
-- [ ] bodice block from measurements
-- [ ] skirt block
+- [ ] bodice block from measurements (formulas verified & in DB, code pending)
+- [x] skirt block (A-line + straight, darts, waistband)
 - [ ] sleeve block
-- [ ] SVG pattern rendering
-- [ ] PDF export with A4 splitting + calibration square
+- [x] pattern rendering (SwiftUI Canvas)
+- [x] PDF export with A4 splitting + calibration square
 
 ### Phase 3: Modular Designer
 - [ ] body silhouette view from measurements
@@ -50,20 +64,21 @@ Last session: 2026-07-02 — renamed to Stitchu, rebranded mock + asset guides t
 - [ ] designer selections → engine → pattern
 
 ### Phase 4: Photo Analysis
-- [ ] photo upload/capture UI
-- [ ] Claude API garment analysis
-- [ ] map analysis to engine components
-- [ ] pattern from photo end-to-end
+- [x] photo upload UI (PhotosPicker)
+- [x] Claude API garment analysis (key in Keychain, user confirms result)
+- [x] map analysis to engine components (skirt style + length)
+- [x] pattern from photo end-to-end (skirts)
 
 ### Phase 5: Sewing Guide
-- [ ] step-by-step instruction generation
-- [ ] instruction UI (steps, pro tips, materials list)
-- [ ] fabric estimation + meter calculation
+- [x] step-by-step guide (skirt, incl. verified invisible zipper order)
+- [x] instruction UI (numbered steps)
+- [x] fabric meter estimate (rough, refine later)
+- [ ] fabric suitability advice (waiting on verified fabric research)
 
 ### Phase 6: Persistence & Polish
-- [ ] save/load patterns (SwiftData)
-- [ ] pattern history in Closet
-- [ ] PDF re-download
+- [x] save/load patterns (SwiftData)
+- [x] pattern history in Closet (+ delete)
+- [x] PDF re-download from saved patterns
 
 ### Phase 7: Premium
 - [ ] describe → AI visual path
