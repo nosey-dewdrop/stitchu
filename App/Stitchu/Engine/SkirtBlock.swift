@@ -208,6 +208,12 @@ struct BodyMeasurementsSnapshot {
     var backLengthMM: Double { backLengthCM * 10 }
     var neckMM: Double { neckCM * 10 }
 
+    init(bustCM: Double, waistCM: Double, hipCM: Double, shoulderCM: Double, backLengthCM: Double, armLengthCM: Double, neckCM: Double) {
+        self.bustCM = bustCM; self.waistCM = waistCM; self.hipCM = hipCM
+        self.shoulderCM = shoulderCM; self.backLengthCM = backLengthCM
+        self.armLengthCM = armLengthCM; self.neckCM = neckCM
+    }
+
     init(from m: BodyMeasurements) {
         bustCM = m.bust; waistCM = m.waist; hipCM = m.hip
         shoulderCM = m.shoulderWidth; backLengthCM = m.backLength
