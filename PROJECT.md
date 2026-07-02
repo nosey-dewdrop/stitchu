@@ -16,11 +16,12 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - Profile: edit measurements, Anthropic API key stored in Keychain only
 
 ### Honest gaps (v0)
-- Skirt only; dress/top/trousers pickers show "soon"
+- Trousers not drafted (needs 2 measurements we don't collect: crotch depth + cross seam); sleeves not drafted (no verified formulas) — v1 dress/top are sleeveless with bound armholes
+- Bodice uses documented assumptions (underbust = bust - 7cm, standard shoulder slope); guide tells users to sew a muslin first; block validation vs a commercial pattern still pending
 - Modular designer + describe paths are placeholder cards
-- Fabric intelligence waiting on verified research (fabrics.json empty)
-- All doodle assets are placeholders until Damla draws them
+- Crepe missing from fabric knowledge (no authoritative source reachable)
 - No onboarding sign-in (local only), no paywall yet
+- Doodle assets are v1 (drawn by Claude); Damla may add 2 butterflies for personalization
 
 ## Brand
 - Name: Stitchu
@@ -51,9 +52,12 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - [x] room navigation skeleton
 
 ### Phase 2: Pattern Engine
-- [ ] bodice block from measurements (formulas verified & in DB, code pending)
+- [x] bodice block from measurements (Bella formulas; underbust/shoulder-slope assumptions documented, muslin warning in guide)
 - [x] skirt block (A-line + straight, darts, waistband)
-- [ ] sleeve block
+- [x] dress block (bodice + skirt, waist seam, CB invisible zipper)
+- [x] top block (bodice extended to cropped/hip/tunic hem)
+- [ ] sleeve block (no verified formulas yet — v1 garments are sleeveless with bound armholes)
+- [ ] validate blocks against a known-good commercial pattern (MUST before launch)
 - [x] pattern rendering (SwiftUI Canvas)
 - [x] PDF export with A4 splitting + calibration square
 
@@ -70,10 +74,10 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - [x] pattern from photo end-to-end (skirts)
 
 ### Phase 5: Sewing Guide
-- [x] step-by-step guide (skirt, incl. verified invisible zipper order)
+- [x] step-by-step guide (skirt/dress/top, incl. verified invisible zipper order)
 - [x] instruction UI (numbered steps)
 - [x] fabric meter estimate (rough, refine later)
-- [ ] fabric suitability advice (waiting on verified fabric research)
+- [x] fabric suitability advice (5 fabrics from university extension sources; crepe pending a reachable source)
 
 ### Phase 6: Persistence & Polish
 - [x] save/load patterns (SwiftData)
