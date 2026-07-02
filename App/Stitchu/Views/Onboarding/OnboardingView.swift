@@ -49,7 +49,10 @@ struct OnboardingView: View {
     private var welcome: some View {
         VStack(spacing: 20) {
             Spacer()
-            DoodlePlaceholder(label: "welcome illustration\n(sewing table doodle)", height: 180)
+            Image("DoodleWelcome")
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 220)
                 .padding(.horizontal, 40)
             Text("Stitchu")
                 .font(Quicksand.bold(40))

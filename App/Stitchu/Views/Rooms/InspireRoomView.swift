@@ -8,7 +8,11 @@ struct InspireRoomView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 18) {
-                DoodlePlaceholder(label: "hero banner illustration\n(seasonal trend)", height: 170)
+                Image("DoodleHero")
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                    .stitchedBorder(cornerRadius: 22)
 
                 Text("sewing wisdom")
                     .font(Quicksand.bold(20))
@@ -34,7 +38,11 @@ struct InspireRoomView: View {
                     .foregroundStyle(Palette.ink)
                     .padding(.top, 4)
 
-                DoodlePlaceholder(label: "fabric camera CTA\n(coming with suggestion engine)", height: 110)
+                Image("DoodleFabricCTA")
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                    .stitchedBorder(cornerRadius: 22)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)

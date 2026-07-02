@@ -67,7 +67,10 @@ struct ClosetRoomView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Spacer()
-            DoodlePlaceholder(label: "empty closet illustration\n(open wardrobe doodle)", height: 160)
+            Image("DoodleCloset")
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 200)
                 .padding(.horizontal, 48)
             Text("your closet is waiting")
                 .font(Quicksand.bold(22))
