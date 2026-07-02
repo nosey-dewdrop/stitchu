@@ -1,0 +1,23 @@
+[
+  {
+    "type": "conventional",
+    "descriptionText": "One end open. 18-23 cm recommended for pants and skirts.",
+    "garmentUse": "pants, skirts, dresses with seam openings",
+    "constructionNotes": "Standard insertion in an open seam.",
+    "source": "University of Kentucky Cooperative Extension FCS2-842"
+  },
+  {
+    "type": "separating",
+    "descriptionText": "Both ends open so the garment opens fully.",
+    "garmentUse": "jackets, coats, blouses",
+    "constructionNotes": "",
+    "source": "University of Kentucky Cooperative Extension FCS2-842"
+  },
+  {
+    "type": "invisible",
+    "descriptionText": "Only the pull shows on the right side; the coil hides in the seam.",
+    "garmentUse": "dresses, skirts, fitted garments",
+    "constructionNotes": "Inverted order: install the zipper BEFORE closing the seam below it. Use an invisible zipper foot (a conventional zipper foot can substitute). On stretch fabric, stabilize the seam allowance with lightweight nonwoven interfacing first.",
+    "source": "University of Kentucky Cooperative Extension FCS2-842"
+  }
+]
