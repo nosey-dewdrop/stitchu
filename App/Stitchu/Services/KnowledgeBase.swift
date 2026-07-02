@@ -50,4 +50,19 @@ final class KnowledgeBase {
         else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
     }
+
+    /// Fabrics recommended and warned-against for a garment key ("skirt", "dress", "top").
+    func fabricAdvice(for garmentKey: String) -> (suggested: [FabricInfo], avoid: [FabricInfo]) {
+        let key = garmentKey.lowercased()
+        var suggested: [FabricInfo] = []
+        var avoid: [FabricInfo] = []
+        for fabric in fabrics {
+            if fabric.badFor.contains(where: { $0.lowercased().contains(key) }) {
+                avoid.append(fabric)
+            } else if fabric.goodFor.contains(where: { $0.lowercased().contains(key) }) {
+                suggested.append(fabric)
+            }
+        }
+        return (suggested, avoid)
+    }
 }

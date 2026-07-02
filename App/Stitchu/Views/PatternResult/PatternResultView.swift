@@ -71,21 +71,56 @@ struct PatternResultView: View {
     }
 
     private var fabricCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let advice = KnowledgeBase.shared.fabricAdvice(for: draft.fabricAdviceKey)
+        return VStack(alignment: .leading, spacing: 10) {
             Text("fabric")
                 .font(Quicksand.bold(20))
                 .foregroundStyle(Palette.ink)
             Text(String(format: "you'll need about %.1f m of 140 cm wide fabric", draft.fabricMeters140))
                 .font(Quicksand.medium(16))
                 .foregroundStyle(Palette.ink)
-            Text("detailed fabric matching (what works, what to avoid) is on its way — the knowledge base is being verified right now")
-                .font(Quicksand.regular(14))
-                .foregroundStyle(Palette.inkSecondary)
+
+            if !advice.suggested.isEmpty {
+                Text("works beautifully")
+                    .font(Quicksand.semiBold(14))
+                    .foregroundStyle(Palette.blueDark)
+                ForEach(advice.suggested) { fabric in
+                    fabricRow(fabric, warn: false)
+                }
+            }
+            if !advice.avoid.isEmpty {
+                Text("think twice")
+                    .font(Quicksand.semiBold(14))
+                    .foregroundStyle(Palette.pink)
+                    .padding(.top, 4)
+                ForEach(advice.avoid) { fabric in
+                    fabricRow(fabric, warn: true)
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: 20))
         .stitchedBorder(cornerRadius: 20)
+    }
+
+    private func fabricRow(_ fabric: FabricInfo, warn: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(fabric.name)
+                .font(Quicksand.semiBold(15))
+                .foregroundStyle(Palette.ink)
+            Text(warn
+                 ? (fabric.badFor.first.map { "not ideal here: \($0)" } ?? "")
+                 : "\(fabric.drape) · \(fabric.beginnerDifficulty)")
+                .font(Quicksand.regular(13))
+                .foregroundStyle(Palette.inkSecondary)
+            if warn, let mistake = fabric.commonMistakes.first {
+                Text(mistake)
+                    .font(Quicksand.regular(12))
+                    .foregroundStyle(Palette.inkSecondary)
+            }
+        }
+        .padding(.vertical, 2)
     }
 
     private var guideCard: some View {
