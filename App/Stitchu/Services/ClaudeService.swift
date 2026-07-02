@@ -4,6 +4,8 @@ struct GarmentAnalysis: Codable {
     var garment: String
     var skirtStyle: String?
     var length: String?
+    var topLength: String?
+    var hasSleeves: Bool?
     var details: String?
 }
 
@@ -39,8 +41,10 @@ struct ClaudeService {
         Analyze the garment in this photo for sewing pattern drafting. Respond with ONLY a JSON object, no prose:
         {"garment": "skirt" | "dress" | "top" | "trousers" | "other",
          "skirtStyle": "aLine" | "straight" | null,
-         "length": "mini" | "midi" | "maxi" | null,
-         "details": "one sentence: notable construction details (zipper, darts, pleats, waistband)"}
+         "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
+         "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
+         "hasSleeves": true | false,
+         "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, sleeve type)"}
         """
 
         let body: [String: Any] = [

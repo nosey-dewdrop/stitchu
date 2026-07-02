@@ -10,9 +10,11 @@ struct PhotoAnalysisView: View {
     @Query(sort: \BodyMeasurements.createdAt) private var measurements: [BodyMeasurements]
 
     @State private var phase: Phase = .idle
-    @State private var garment: String = "skirt"
+    @State private var garment: GarmentType = .dress
     @State private var skirtStyle: SkirtStyle = .aLine
     @State private var skirtLength: SkirtLength = .midi
+    @State private var topLength: TopLength = .hip
+    @State private var hasSleeves = false
     @State private var analysisNote: String?
     @State private var errorMessage: String?
     @State private var draft: DraftedPattern?
@@ -26,7 +28,7 @@ struct PhotoAnalysisView: View {
                 VStack(spacing: 18) {
                     photo
                     switch phase {
-                    case .idle: startSection
+                    case .idle: ProgressView().tint(Palette.blue).padding(.top, 20)
                     case .analyzing: analyzing
                     case .confirm: confirmSection
                     case .done: EmptyView()
@@ -64,10 +66,6 @@ struct PhotoAnalysisView: View {
         }
     }
 
-    private var startSection: some View {
-        ProgressView().tint(Palette.blue).padding(.top, 20)
-    }
-
     private var analyzing: some View {
         VStack(spacing: 10) {
             ProgressView().tint(Palette.blue)
@@ -95,15 +93,14 @@ struct PhotoAnalysisView: View {
                     .font(Quicksand.medium(14))
                     .foregroundStyle(Palette.inkSecondary)
                 Picker("garment", selection: $garment) {
-                    Text("skirt").tag("skirt")
-                    Text("dress (soon)").tag("dress")
-                    Text("top (soon)").tag("top")
-                    Text("trousers (soon)").tag("trousers")
+                    ForEach(GarmentType.allCases) { type in
+                        Text(type.title).tag(type)
+                    }
                 }
                 .pickerStyle(.segmented)
 
-                if garment == "skirt" {
-                    Text("style")
+                if garment == .skirt || garment == .dress {
+                    Text("skirt style")
                         .font(Quicksand.medium(14))
                         .foregroundStyle(Palette.inkSecondary)
                     Picker("style", selection: $skirtStyle) {
@@ -122,9 +119,23 @@ struct PhotoAnalysisView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                } else {
-                    Text("this garment type is coming in a future update — skirts are ready today")
-                        .font(Quicksand.regular(14))
+                }
+
+                if garment == .top {
+                    Text("length")
+                        .font(Quicksand.medium(14))
+                        .foregroundStyle(Palette.inkSecondary)
+                    Picker("length", selection: $topLength) {
+                        ForEach(TopLength.allCases) { length in
+                            Text(length.rawValue).tag(length)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+
+                if hasSleeves && garment != .skirt {
+                    Text("this looks sleeved — the sleeve block isn't ready yet, so I'll draft the sleeveless version with bound armholes")
+                        .font(Quicksand.regular(13))
                         .foregroundStyle(Palette.inkSecondary)
                 }
             }
@@ -140,9 +151,8 @@ struct PhotoAnalysisView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
-                    .background(garment == "skirt" ? Palette.blue : Palette.line, in: Capsule())
+                    .background(Palette.blue, in: Capsule())
             }
-            .disabled(garment != "skirt")
         }
     }
 
@@ -157,9 +167,11 @@ struct PhotoAnalysisView: View {
         Task {
             do {
                 let result = try await ClaudeService.analyzeGarment(imageData: photoData)
-                garment = result.garment
+                if let parsed = GarmentType(rawValue: result.garment) { garment = parsed }
                 if let style = result.skirtStyle, let parsed = SkirtStyle(rawValue: style) { skirtStyle = parsed }
                 if let length = result.length, let parsed = SkirtLength(rawValue: length) { skirtLength = parsed }
+                if let top = result.topLength, let parsed = TopLength(rawValue: top) { topLength = parsed }
+                hasSleeves = result.hasSleeves ?? false
                 analysisNote = result.details
             } catch {
                 errorMessage = error.localizedDescription
@@ -173,10 +185,12 @@ struct PhotoAnalysisView: View {
             errorMessage = "no measurements found — complete onboarding first"
             return
         }
-        draft = SkirtBlock.draft(
+        draft = GarmentDrafter.draft(
+            garment: garment,
             measurements: BodyMeasurementsSnapshot(from: m),
-            style: skirtStyle,
-            length: skirtLength
+            skirtStyle: skirtStyle,
+            skirtLength: skirtLength,
+            topLength: topLength
         )
     }
 }
