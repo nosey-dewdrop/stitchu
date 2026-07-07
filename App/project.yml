@@ -34,5 +34,4 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        NSCameraUsageDescription: Stitchu uses the camera to photograph garments so it can draft your sewing pattern.
         ITSAppUsesNonExemptEncryption: false

@@ -35,12 +35,14 @@
 		C36F2D38D71083CAA11D0152 /* KnowledgeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */; };
 		CCB6D1F0741C009DC7DFF138 /* PatternValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2611F0386FEC6253135AB8 /* PatternValidator.swift */; };
 		D263738EEDD401500AB904E7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C74BAC321F06048EF89D92A /* OnboardingView.swift */; };
+		E1F237C1FA61C2D984A3BE9F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 20113B78A184BE4824F67057 /* PrivacyInfo.xcprivacy */; };
 		E5AF319CE21F2DBD5865E3D2 /* GarmentDrafter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAC865484C605EEC89D9ADF /* GarmentDrafter.swift */; };
 		FF0668F4C4727B2DCF55BDEB /* CommunityRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF49A794456FCAA27554C8 /* CommunityRoomView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0A1A510BD17CD10F76FCFCB5 /* PatternPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternPDFExporter.swift; sourceTree = "<group>"; };
+		20113B78A184BE4824F67057 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3C74BAC321F06048EF89D92A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		3CEF49A794456FCAA27554C8 /* CommunityRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityRoomView.swift; sourceTree = "<group>"; };
 		4527D8E5F12DD0B1F1D84A46 /* SavedPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPattern.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				48121B6A2AAC15266FEFCC2D /* Assets.xcassets */,
 				978B07425B4A22EE5AB39F1B /* Info.plist */,
+				20113B78A184BE4824F67057 /* PrivacyInfo.xcprivacy */,
 				87950AAAD0C2B2E1506E0B8E /* StitchuApp.swift */,
 				C42E33AFA1A61B9A8719C3B3 /* Theme.swift */,
 				5592AD37098C1F9D14715A3E /* Engine */,
@@ -287,6 +290,7 @@
 			files = (
 				601960558725BF7A5D275486 /* Assets.xcassets in Resources */,
 				15C452744D2626797C0E10CB /* OFL.txt in Resources */,
+				E1F237C1FA61C2D984A3BE9F /* PrivacyInfo.xcprivacy in Resources */,
 				32C5D9C2F1691E01C6331DF2 /* Quicksand-Variable.ttf in Resources */,
 				B0C529327B5F104D44EF6197 /* fabrics.json in Resources */,
 				09A05DAF6910F41B42BDB456 /* tips.json in Resources */,

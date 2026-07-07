@@ -22,8 +22,6 @@
 	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Stitchu uses the camera to photograph garments so it can draft your sewing pattern.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Quicksand-Variable.ttf</string>
