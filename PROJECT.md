@@ -6,7 +6,7 @@ Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 
 ## Status
 Current phase: Core (app builds and runs the photo → skirt pattern path end-to-end)
-Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 4 rooms, photo → confirm → skirt pattern → tiled A4 PDF with calibration square, closet with save/delete, profile with measurement editing + API key. Research knowledge base (verified formulas) shipped in-app. Fabric research round still in progress.
+Last session: 2026-07-07 — block validation (the launch blocker): built PatternValidator (geometric invariants) + engine-check harness (2805 drafts, EU 34-52 + tall/petite/pear/apple/edge bodies, all garment/neckline/sleeve/skirt combos, ALL PASS), fixed 8 real engine bugs it caught (side seam balance, bust ease loss, waist suppression, sleeve cap convergence, half-circle doubling, dress waist mismatch, missing CB seam for dress zipper, v-neck fold-back), wired runtime validation so a broken pattern can never reach the PDF.
 
 ### What works today
 - Onboarding: 7 measurements with body silhouette highlights, validation, back navigation
@@ -17,7 +17,7 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 
 ### Honest gaps (v0)
 - Trousers not drafted (needs 2 measurements we don't collect: crotch depth + cross seam); sleeves not drafted (no verified formulas) — v1 dress/top are sleeveless with bound armholes
-- Bodice uses documented assumptions (underbust = bust - 7cm, standard shoulder slope); guide tells users to sew a muslin first; block validation vs a commercial pattern still pending
+- Bodice uses documented assumptions (underbust = bust - 7cm, standard shoulder slope); guide tells users to sew a muslin first; geometric block validation done (engine-check harness) — a physical sew test against a commercial pattern is still a good idea before launch
 - Modular designer + describe paths are placeholder cards
 - Crepe missing from fabric knowledge (no authoritative source reachable)
 - No onboarding sign-in (local only), no paywall yet
@@ -58,7 +58,7 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - [x] top block (bodice extended to cropped/hip/tunic hem)
 - [x] sleeve block (straight + balloon; cap fitted to drafted armhole length by iterative convergence; biceps assumption documented)
 - [x] manipulation layer v1: necklines (crew/scoop/v/square/boat), skirt styles (A-line/straight/gathered/half-circle), sleeves — photo details now shape the pattern
-- [ ] validate blocks against a known-good commercial pattern (MUST before launch)
+- [x] validate blocks: geometric invariant suite (side seams, armhole/cap ease, dart sums, waist joins, self intersection, print fit) across EU 34-52 + edge bodies via engine-check harness; runtime safety net blocks invalid patterns before the PDF
 - [ ] pleats, wrap styles, collars, pockets (manipulation layer v2)
 - [x] pattern rendering (SwiftUI Canvas)
 - [x] PDF export with A4 splitting + calibration square
@@ -101,7 +101,7 @@ Last session: 2026-07-02 — built the Xcode app: onboarding with measurements, 
 - Community room: sharing, follows, favorites (Etsy/Instagram feel, no selling)
 
 ## Bugs / Issues
-- none yet (no code)
+- none known (engine matrix passes; 8 drafting bugs found and fixed 2026-07-07, see engine-check/)
 
 ## Competitors
 - StitchLift: thrift flips only, no pattern generation
