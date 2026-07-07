@@ -52,10 +52,18 @@ enum GarmentDrafter {
 struct DressBlock {
     static func draft(spec: GarmentSpec, measurements m: BodyMeasurementsSnapshot) -> DraftedPattern {
         let bodice = BodiceBlock.draft(measurements: m, neckline: spec.neckline)
-        let skirtPieces = SkirtBlock.pieces(measurements: m, style: spec.skirtStyle, length: spec.skirtLength, includeWaistband: false)
+        // The skirt is drafted against the bodice's measured sewn waist so the
+        // waist seam lengths agree exactly where the two join.
+        let bodiceSewnWaist = (bodice.frontSewnWaist + bodice.backSewnWaist) * 2
+        let skirtPieces = SkirtBlock.pieces(measurements: m, style: spec.skirtStyle, length: spec.skirtLength, includeWaistband: false, targetWaistMM: bodiceSewnWaist)
             .map { piece in
                 var renamed = piece
                 renamed.name = "Skirt \(piece.name)"
+                // The invisible zipper continues from the bodice center back
+                // into the skirt, so the skirt back needs a CB seam (no fold).
+                if piece.name == "Back" {
+                    renamed.cutInstruction = "cut 2 (center back seam)"
+                }
                 return renamed
             }
         let sleeves = SleeveBlock.draft(
@@ -82,8 +90,11 @@ struct DressBlock {
         if spec.skirtStyle == .gathered {
             steps.append("Gather the skirt panels along the marked line until they match the bodice waist.")
         }
+        if spec.skirtStyle == .halfCircle {
+            steps.append("Place the two skirt panel seams at center front and center back (cut the panels flat, not on fold) so the zipper can continue into the back seam.")
+        }
         steps += [
-            "Sew the skirt seams, then join bodice to skirt at the waist seam, matching side seams.",
+            "Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the waist seam, matching side seams.",
             "Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.",
         ]
         if !sleeves.isEmpty {
@@ -116,8 +127,8 @@ struct TopBlock {
         let extra = spec.topLength.belowWaist
         let hipHalfQuarter = (m.hipMM / 4) * 1.04
 
-        let front = extend(bodice.front, from: bodice.frontLength, by: extra, toWidth: hipHalfQuarter)
-        let back = extend(bodice.back, from: bodice.backLength, by: extra, toWidth: hipHalfQuarter)
+        let front = extend(bodice.front, sideWaistY: bodice.sideWaistY, centerWaistY: bodice.frontLength, by: extra, toWidth: hipHalfQuarter)
+        let back = extend(bodice.back, sideWaistY: bodice.sideWaistY, centerWaistY: bodice.backLength, by: extra, toWidth: hipHalfQuarter)
         let sleeves = SleeveBlock.draft(
             measurements: m,
             style: spec.sleeveStyle,
@@ -133,7 +144,11 @@ struct TopBlock {
             "Print and check the 3 cm calibration square before cutting.",
             "This block uses standard assumptions for shoulder slope and underbust — sew a quick muslin first and adjust before cutting your real fabric.",
             "Cut front on fold, back twice (or on fold if it slips over your head — check the neck opening against your head circumference)\(sleeves.isEmpty ? "" : ", sleeves twice").",
-            "Sew darts, pressing toward the center.",
+        ]
+        if extra == 0 {
+            steps.append("Sew the waist darts, pressing toward the center.")
+        }
+        steps += [
             "Sew shoulder seams, then side seams.",
             "Finish the neckline with bias binding.",
         ]
@@ -158,8 +173,10 @@ struct TopBlock {
     }
 
     /// Extends a bodice half-piece below the waist: side seam flows out to the
-    /// hip width, hem squares back to the center edge.
-    private static func extend(_ piece: PatternPiece, from waistY: Double, by extra: Double, toWidth hipWidth: Double) -> PatternPiece {
+    /// hip width, hem squares back to the center edge. The hem side sits at the
+    /// SAME depth for front and back (measured from the shared side waist) so
+    /// the side seams stay equal; the front's center hem keeps the balance drop.
+    private static func extend(_ piece: PatternPiece, sideWaistY: Double, centerWaistY: Double, by extra: Double, toWidth hipWidth: Double) -> PatternPiece {
         guard extra > 0 else {
             var cropped = piece
             cropped.name = piece.name.replacingOccurrences(of: "Bodice", with: "Top")
@@ -167,22 +184,25 @@ struct TopBlock {
         }
         var result = piece
         result.name = piece.name.replacingOccurrences(of: "Bodice", with: "Top")
+        // A waist dart's legs must sit on a seam edge; once the piece extends
+        // past the waist there is no edge there, so the top goes boxy.
+        result.markings = []
 
         var commands: [PathCommand] = []
         var index = 0
         while index < result.commands.count {
             let cmd = result.commands[index]
-            if case .line(let p) = cmd, abs(p.y - (waistY - 8)) < 0.5 {
-                let hemSide = CGPoint(x: hipWidth, y: waistY + extra - 10)
-                let hemCenter = CGPoint(x: 0, y: waistY + extra)
+            if case .line(let p) = cmd, abs(p.y - (sideWaistY - 8)) < 0.5 {
+                let hemSide = CGPoint(x: hipWidth, y: sideWaistY + extra - 10)
+                let hemCenter = CGPoint(x: 0, y: centerWaistY + extra)
                 commands.append(.curve(to: hemSide,
-                                       cp1: CGPoint(x: p.x, y: waistY + extra * 0.35),
-                                       cp2: CGPoint(x: hipWidth, y: waistY + extra * 0.7)))
+                                       cp1: CGPoint(x: p.x, y: sideWaistY + extra * 0.35),
+                                       cp2: CGPoint(x: hipWidth, y: sideWaistY + extra * 0.7)))
                 commands.append(.curve(to: hemCenter,
-                                       cp1: CGPoint(x: hipWidth * 0.6, y: waistY + extra),
-                                       cp2: CGPoint(x: hipWidth * 0.25, y: waistY + extra)))
+                                       cp1: CGPoint(x: hipWidth * 0.6, y: hemCenter.y),
+                                       cp2: CGPoint(x: hipWidth * 0.25, y: hemCenter.y)))
                 index += 2
-                if index < result.commands.count, case .curve(let to, _, _) = result.commands[index], to.y < waistY {
+                if index < result.commands.count, case .curve(let to, _, _) = result.commands[index], to.y < sideWaistY {
                     commands.append(.line(CGPoint(x: 0, y: to.y)))
                     index += 1
                 }
