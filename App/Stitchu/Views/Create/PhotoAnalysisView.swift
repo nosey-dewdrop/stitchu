@@ -203,7 +203,19 @@ struct PhotoAnalysisView: View {
             errorMessage = "no measurements found — complete onboarding first"
             return
         }
-        draft = GarmentDrafter.draft(spec: spec, measurements: BodyMeasurementsSnapshot(from: m))
+        let snapshot = BodyMeasurementsSnapshot(from: m)
+        let drafted = GarmentDrafter.draft(spec: spec, measurements: snapshot)
+        // Safety net: never hand the user a geometrically broken pattern.
+        let issues = PatternValidator.issues(spec: spec, measurements: snapshot, draft: drafted)
+        guard issues.isEmpty else {
+            #if DEBUG
+            for issue in issues { print("pattern validation: \(issue)") }
+            #endif
+            errorMessage = "hmm, this combination didn't draft cleanly for your measurements — try a different style, or double-check your measurements in Profile"
+            return
+        }
+        errorMessage = nil
+        draft = drafted
     }
 }
 
