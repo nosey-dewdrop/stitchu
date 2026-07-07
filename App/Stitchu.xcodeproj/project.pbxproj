@@ -33,6 +33,7 @@
 		B16D8431E34CF6070C05EB86 /* SleeveBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */; };
 		BD1B37AF760A2CA1597CB678 /* InspireRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA4EAF59E21133D670D19FE /* InspireRoomView.swift */; };
 		C36F2D38D71083CAA11D0152 /* KnowledgeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */; };
+		CCB6D1F0741C009DC7DFF138 /* PatternValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2611F0386FEC6253135AB8 /* PatternValidator.swift */; };
 		D263738EEDD401500AB904E7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C74BAC321F06048EF89D92A /* OnboardingView.swift */; };
 		E5AF319CE21F2DBD5865E3D2 /* GarmentDrafter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAC865484C605EEC89D9ADF /* GarmentDrafter.swift */; };
 		FF0668F4C4727B2DCF55BDEB /* CommunityRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF49A794456FCAA27554C8 /* CommunityRoomView.swift */; };
@@ -69,6 +70,7 @@
 		DD76FD25E0F505871D6178BF /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
 		E952167997A454D1E93DD92A /* Stitchu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Stitchu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBAC865484C605EEC89D9ADF /* GarmentDrafter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarmentDrafter.swift; sourceTree = "<group>"; };
+		FE2611F0386FEC6253135AB8 /* PatternValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternValidator.swift; sourceTree = "<group>"; };
 		FF317EEECE8CEBD00E0C2BB8 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -87,6 +89,7 @@
 				4DA53FFAD7E9B9AC3116FCA8 /* BodiceBlock.swift */,
 				EBAC865484C605EEC89D9ADF /* GarmentDrafter.swift */,
 				836D3DC78D28A11B951218A7 /* PatternGeometry.swift */,
+				FE2611F0386FEC6253135AB8 /* PatternValidator.swift */,
 				A6F1ACF5511AE60F2E946AAB /* SkirtBlock.swift */,
 				4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */,
 			);
@@ -313,6 +316,7 @@
 				1E9E768240E23438C24CB7C8 /* PatternGeometry.swift in Sources */,
 				02762152C6975681527C84C5 /* PatternPDFExporter.swift in Sources */,
 				9F1AE5A37877C01652B00E83 /* PatternResultView.swift in Sources */,
+				CCB6D1F0741C009DC7DFF138 /* PatternValidator.swift in Sources */,
 				5A76999188E7FAAD374C81B7 /* PhotoAnalysisView.swift in Sources */,
 				64056FEEF19EAE4CFCB2C86A /* ProfileSheet.swift in Sources */,
 				4AAC1CA7964B11159F413C90 /* RootView.swift in Sources */,
