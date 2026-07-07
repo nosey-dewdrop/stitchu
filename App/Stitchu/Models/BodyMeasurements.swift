@@ -35,6 +35,19 @@ final class BodyMeasurements {
     }
 }
 
+/// Bridge from the SwiftData model to the engine's plain snapshot. Lives here
+/// (not in the engine) so the engine stays SwiftData-free and compiles
+/// standalone for the engine-check validation harness.
+extension BodyMeasurementsSnapshot {
+    init(from m: BodyMeasurements) {
+        self.init(
+            bustCM: m.bust, waistCM: m.waist, hipCM: m.hip,
+            shoulderCM: m.shoulderWidth, backLengthCM: m.backLength,
+            armLengthCM: m.armLength, neckCM: m.neck
+        )
+    }
+}
+
 enum MeasurementField: String, CaseIterable, Identifiable {
     case bust, waist, hip, shoulder, backLength, arm, neck
 

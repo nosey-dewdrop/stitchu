@@ -57,9 +57,14 @@ struct SkirtBlock {
     }
 
     /// Skirt pieces alone, reusable by the dress block (waistband optional).
-    static func pieces(measurements m: BodyMeasurementsSnapshot, style: SkirtStyle, length: SkirtLength, includeWaistband: Bool) -> [PatternPiece] {
-        let waistQuarter = m.waistMM * (1 + waistEase) / 4
-        let hipQuarter = m.hipMM * (1 + hipEase) / 4
+    /// The dress block passes the bodice's measured sewn waist as
+    /// targetWaistMM so the skirt waist seam matches the seam it attaches to.
+    static func pieces(measurements m: BodyMeasurementsSnapshot, style: SkirtStyle, length: SkirtLength, includeWaistband: Bool, targetWaistMM: Double? = nil) -> [PatternPiece] {
+        let fullWaist = targetWaistMM ?? m.waistMM * (1 + waistEase)
+        let waistQuarter = fullWaist / 4
+        // The skirt must pass over the waist: for waist > hip bodies the
+        // widest drafting line is the waist itself.
+        let hipQuarter = max(m.hipMM * (1 + hipEase) / 4, waistQuarter)
         let len = length.millimeters
 
         var result: [PatternPiece]
@@ -76,7 +81,7 @@ struct SkirtBlock {
             back.id = UUID()
             result = [panel, back]
         case .halfCircle:
-            result = [halfCirclePanel(waistMM: m.waistMM, length: len)]
+            result = [halfCirclePanel(easedWaistMM: fullWaist, length: len)]
         }
         if includeWaistband {
             result.append(waistbandPiece(waistMM: m.waistMM))
@@ -177,10 +182,12 @@ struct SkirtBlock {
         )
     }
 
-    /// Half-circle skirt: two quarter-circle panels (this piece cut twice on fold).
+    /// Half-circle skirt: two quarter-circle panels cut FLAT (not on fold —
+    /// on fold the two panels would unfold into a full circle with twice the
+    /// waist). The two straight edges become the two seams.
     /// Waist radius r = eased waist / pi (half-circle geometry).
-    private static func halfCirclePanel(waistMM: Double, length: Double) -> PatternPiece {
-        let r = waistMM * (1 + waistEase) / Double.pi
+    private static func halfCirclePanel(easedWaistMM: Double, length: Double) -> PatternPiece {
+        let r = easedWaistMM / Double.pi
         let R = r + length
         let k = 0.5523 // circle-to-bezier kappa
 
@@ -190,7 +197,7 @@ struct SkirtBlock {
             .curve(to: CGPoint(x: 0, y: r),
                    cp1: CGPoint(x: r, y: r * k),
                    cp2: CGPoint(x: r * k, y: r)),
-            // fold edge out to hem
+            // straight seam edge out to hem
             .line(CGPoint(x: 0, y: R)),
             // hem arc back
             .curve(to: CGPoint(x: R, y: 0),
@@ -200,7 +207,7 @@ struct SkirtBlock {
         ]
         return PatternPiece(
             name: "Skirt Panel (quarter circle)",
-            cutInstruction: "cut 2 on fold",
+            cutInstruction: "cut 2",
             commands: commands,
             markings: [],
             grainline: Grainline(from: CGPoint(x: r * 0.8, y: r * 0.8), to: CGPoint(x: R * 0.62, y: R * 0.62)),
@@ -278,7 +285,7 @@ struct SkirtBlock {
             ]
         case .halfCircle:
             steps += [
-                "Cut 2 quarter-circle panels on the fold. Cut 2 waistband pieces, interface 1.",
+                "Cut 2 quarter-circle panels (flat, not on fold). Cut 2 waistband pieces, interface 1.",
                 "Stitch the two side seams, leaving the top 20 cm of the left seam open for the zipper.",
                 "Staystitch the curved waist edge so it doesn't stretch while you work.",
                 "Insert an invisible zipper in the left seam BEFORE closing the seam below it.",
@@ -310,12 +317,6 @@ struct BodyMeasurementsSnapshot {
         self.bustCM = bustCM; self.waistCM = waistCM; self.hipCM = hipCM
         self.shoulderCM = shoulderCM; self.backLengthCM = backLengthCM
         self.armLengthCM = armLengthCM; self.neckCM = neckCM
-    }
-
-    init(from m: BodyMeasurements) {
-        bustCM = m.bust; waistCM = m.waist; hipCM = m.hip
-        shoulderCM = m.shoulderWidth; backLengthCM = m.backLength
-        armLengthCM = m.armLength; neckCM = m.neck
     }
 }
 
