@@ -9,11 +9,13 @@ import CoreGraphics
 /// Verified formulas used (FreeSewing Bella + Muller & Sohn, all 3-0):
 /// - back armhole depth = hpsToWaistBack * 44% + shoulder drop
 /// - chest ease 11%, waist ease 5% (percent of body, not fixed cm)
-/// - back waist dart = (backWidth - waistWidth) * 0.825, 35% of the
+/// - back waist dart = (backWidth - waistWidth) * 0.825, the rest of the
 ///   reduction taken at the center-back seam; dart omitted if <= 0
 /// - back neck width = neck * 0.197, front neck width = neck * 0.17,
 ///   back neck cutout = neck * 6%
-/// - front/back balance: front waist length = back waist length + 40mm (M&S chart)
+/// - front/back balance: front waist length = back waist length + 40mm (M&S
+///   chart) — the drop lives at CENTER front only; the side seams stay equal
+///   so front and back can be sewn together.
 
 enum Neckline: String, CaseIterable, Identifiable {
     case crew, scoop, vNeck, square, boat
@@ -40,6 +42,20 @@ struct BodiceDraft {
     /// One arm's armhole sewing-line length (front half + back half), mm.
     var armholeLength: Double
     var armholeDepth: Double
+    /// Side waist basis in y for both pieces (= backLength). The front's extra
+    /// balance length lives at center front only.
+    var sideWaistY: Double
+    // Audit values consumed by PatternValidator.
+    var frontSideSeam: Double
+    var backSideSeam: Double
+    /// Waist edge measured along the drafted curve, dart intake excluded.
+    var frontSewnWaist: Double
+    var backSewnWaist: Double
+    /// Straight waist span minus dart intake (should equal the waist target).
+    var frontStraightWaist: Double
+    var backStraightWaist: Double
+    var frontChestWidth: Double
+    var backChestWidth: Double
 }
 
 struct BodiceBlock {
@@ -58,6 +74,8 @@ struct BodiceBlock {
     static let frontBalanceDrop: Double = 40
     /// ASSUMPTION: waist splits ~48% back / 52% front of full circumference.
     static let backWaistShare = 0.48
+    /// A neckline can never eat the shoulder seam (big neck + small shoulder).
+    static let maxNeckShoulderShare = 0.72
 
     static func draft(measurements m: BodyMeasurementsSnapshot, neckline: Neckline = .crew) -> BodiceDraft {
         let neck = m.neckMM
@@ -72,7 +90,7 @@ struct BodiceBlock {
         let widthMultiplier = neckline == .boat ? 1.35 : 1.0
 
         // ---- BACK (cut 2, center back seam carries part of the suppression) ----
-        let backNeckW = neck * backNeckWidthFactor * widthMultiplier
+        let backNeckW = min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare)
         let backCutout = neck * backNeckCutoutFactor
         let backWidth = (underbust / 4) * (1 + chestEase)
         let backWaistTarget = (m.waistMM * backWaistShare / 2) * (1 + waistEase)
@@ -80,9 +98,11 @@ struct BodiceBlock {
         var backDart = backReduction * (1 - centerBackReduction * 0.5)
         let cbTakeIn = backReduction * centerBackReduction * 0.5
         if backDart <= 0 { backDart = 0 }
-        let backWaistlineWidth = backWaistTarget + backDart
+        // Waist edge spans from the CB take-in to the side; folding the dart
+        // out leaves exactly the waist target: cbTakeIn + target + dart.
+        let backWaistlineWidth = cbTakeIn + backWaistTarget + backDart
 
-        let (back, backArmholeLen) = piece(
+        let back = piece(
             name: "Bodice Back",
             cutInstruction: "cut 2",
             neckline: .crew, // back neckline stays a shallow curve for every style
@@ -92,25 +112,28 @@ struct BodiceBlock {
             shoulderDrop: shoulderDrop,
             chestWidth: backWidth,
             armholeY: armholeY,
-            waistY: backLength,
+            sideWaistY: backLength,
+            centerWaistY: backLength,
             waistlineWidth: backWaistlineWidth,
             dartWidth: backDart,
             dartLength: backLength - armholeY + 40,
             centerTakeIn: cbTakeIn
         )
 
-        // ---- FRONT (cut 1 on fold, all suppression in the waist dart) ----
-        let frontNeckW = neck * frontNeckWidthFactor * widthMultiplier
+        // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
+        let frontNeckW = min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare)
         let frontCutout = frontNeckDepth(neckline: neckline, neckW: frontNeckW)
         let frontLength = backLength + frontBalanceDrop
         let frontWidth = (m.bustMM / 4) * (1 + chestEase)
         let frontWaistTarget = (m.waistMM * (1 - backWaistShare) / 2) * (1 + waistEase)
         let frontReduction = max(0, frontWidth - frontWaistTarget)
+        // Up to 15mm of the reduction slants the side seam in at the WAIST
+        // (never at the chest — that would eat the bust ease), rest is dart.
         let sideTake = min(frontReduction, 15.0)
         let frontDart = frontReduction - sideTake
         let frontWaistlineWidth = frontWaistTarget + frontDart
 
-        let (front, frontArmholeLen) = piece(
+        let front = piece(
             name: "Bodice Front",
             cutInstruction: "cut 1 on fold",
             neckline: neckline,
@@ -118,9 +141,10 @@ struct BodiceBlock {
             neckCutout: frontCutout,
             shoulderHalf: shoulderHalf,
             shoulderDrop: shoulderDrop,
-            chestWidth: frontWidth - sideTake,
+            chestWidth: frontWidth,
             armholeY: armholeY,
-            waistY: frontLength,
+            sideWaistY: backLength,
+            centerWaistY: frontLength,
             waistlineWidth: frontWaistlineWidth,
             dartWidth: frontDart,
             dartLength: frontLength - armholeY - 40,
@@ -128,14 +152,23 @@ struct BodiceBlock {
         )
 
         return BodiceDraft(
-            back: back,
-            front: front,
+            back: back.piece,
+            front: front.piece,
             backWaistHalf: backWaistTarget,
             frontWaistHalf: frontWaistTarget,
             frontLength: frontLength,
             backLength: backLength,
-            armholeLength: backArmholeLen + frontArmholeLen,
-            armholeDepth: armholeY - shoulderDrop
+            armholeLength: back.armholeLength + front.armholeLength,
+            armholeDepth: armholeY - shoulderDrop,
+            sideWaistY: backLength,
+            frontSideSeam: front.sideSeam,
+            backSideSeam: back.sideSeam,
+            frontSewnWaist: front.sewnWaist,
+            backSewnWaist: back.sewnWaist,
+            frontStraightWaist: front.straightWaist,
+            backStraightWaist: back.straightWaist,
+            frontChestWidth: frontWidth,
+            backChestWidth: backWidth
         )
     }
 
@@ -169,8 +202,17 @@ struct BodiceBlock {
         }
     }
 
-    /// Shared half-bodice outline: center edge at x=0, waist at y=waistY.
-    /// Returns the piece and its armhole curve length (sewing line, mm).
+    struct HalfBodice {
+        var piece: PatternPiece
+        var armholeLength: Double
+        var sideSeam: Double
+        var sewnWaist: Double
+        var straightWaist: Double
+    }
+
+    /// Shared half-bodice outline: center edge at x=0. The side waist sits at
+    /// sideWaistY (same for front and back so side seams match); the center
+    /// waist sits at centerWaistY (front carries the M&S balance drop there).
     private static func piece(
         name: String,
         cutInstruction: String,
@@ -181,18 +223,19 @@ struct BodiceBlock {
         shoulderDrop: Double,
         chestWidth: Double,
         armholeY: Double,
-        waistY: Double,
+        sideWaistY: Double,
+        centerWaistY: Double,
         waistlineWidth: Double,
         dartWidth: Double,
         dartLength: Double,
         centerTakeIn: Double
-    ) -> (PatternPiece, Double) {
+    ) -> HalfBodice {
         let centerNeck = CGPoint(x: 0, y: neckCutout)
         let neckPoint = CGPoint(x: neckW, y: 0)
         let shoulderTip = CGPoint(x: shoulderHalf, y: shoulderDrop)
         let armholeBottom = CGPoint(x: chestWidth, y: armholeY)
-        let sideWaist = CGPoint(x: waistlineWidth, y: waistY - 8)
-        let centerWaist = CGPoint(x: centerTakeIn, y: waistY)
+        let sideWaist = CGPoint(x: waistlineWidth, y: sideWaistY - 8)
+        let centerWaist = CGPoint(x: centerTakeIn, y: centerWaistY)
 
         let armholeCurve = PathCommand.curve(
             to: armholeBottom,
@@ -201,28 +244,40 @@ struct BodiceBlock {
         )
         let armholeLen = pathLength(of: [.move(shoulderTip), armholeCurve])
 
+        let waistSpan = waistlineWidth - centerTakeIn
+        let waistCurve = PathCommand.curve(
+            to: centerWaist,
+            cp1: CGPoint(x: centerTakeIn + waistSpan * 0.6, y: sideWaist.y + (centerWaist.y - sideWaist.y) * 0.55),
+            cp2: CGPoint(x: centerTakeIn + waistSpan * 0.25, y: centerWaist.y)
+        )
+
         var commands: [PathCommand] = [.move(centerNeck)]
         commands += neckCommands(neckline: neckline, centerNeck: centerNeck, neckPoint: neckPoint)
         commands += [
             .line(shoulderTip),
             armholeCurve,
             .line(sideWaist),
-            .curve(to: centerWaist,
-                   cp1: CGPoint(x: waistlineWidth * 0.6, y: waistY),
-                   cp2: CGPoint(x: waistlineWidth * 0.25, y: waistY)),
+            waistCurve,
+            // Control points interpolate between waist and neck cutout so a
+            // deep neckline on a short body can never fold the edge back.
             .curve(to: centerNeck,
-                   cp1: CGPoint(x: centerTakeIn * 0.6, y: waistY * 0.6),
-                   cp2: CGPoint(x: 0, y: waistY * 0.3)),
+                   cp1: CGPoint(x: centerTakeIn * 0.6, y: neckCutout + (centerWaistY - neckCutout) * 0.6),
+                   cp2: CGPoint(x: 0, y: neckCutout + (centerWaistY - neckCutout) * 0.3)),
             .close,
         ]
 
         var markings: [PathCommand] = []
         if dartWidth > 0 {
-            let dartCenterX = waistlineWidth * 0.5
-            let apex = CGPoint(x: dartCenterX, y: waistY - dartLength)
-            markings.append(.move(CGPoint(x: dartCenterX - dartWidth / 2, y: waistY - 4)))
+            let dartCenterX = centerTakeIn + waistSpan * 0.5
+            // Put the dart legs on the drafted waist curve.
+            let legAX = dartCenterX - dartWidth / 2
+            let legBX = dartCenterX + dartWidth / 2
+            let legA = CGPoint(x: legAX, y: waistCurveY(atX: legAX, sideWaist: sideWaist, curve: waistCurve))
+            let legB = CGPoint(x: legBX, y: waistCurveY(atX: legBX, sideWaist: sideWaist, curve: waistCurve))
+            let apex = CGPoint(x: dartCenterX, y: min(legA.y, legB.y) - dartLength)
+            markings.append(.move(legA))
             markings.append(.line(apex))
-            markings.append(.line(CGPoint(x: dartCenterX + dartWidth / 2, y: waistY - 4)))
+            markings.append(.line(legB))
         }
 
         let piece = PatternPiece(
@@ -232,10 +287,33 @@ struct BodiceBlock {
             markings: markings,
             grainline: Grainline(
                 from: CGPoint(x: max(centerTakeIn, 20) + 20, y: armholeY),
-                to: CGPoint(x: max(centerTakeIn, 20) + 20, y: waistY - 30)
+                to: CGPoint(x: max(centerTakeIn, 20) + 20, y: sideWaistY - 30)
             ),
             seamAllowance: 15
         )
-        return (piece, armholeLen)
+        let sideSeam = Double(hypot(sideWaist.x - armholeBottom.x, sideWaist.y - armholeBottom.y))
+        let sewnWaist = pathLength(of: [.move(sideWaist), waistCurve]) - dartWidth
+        let straightWaist = waistSpan - dartWidth
+        return HalfBodice(piece: piece, armholeLength: armholeLen, sideSeam: sideSeam, sewnWaist: sewnWaist, straightWaist: straightWaist)
+    }
+
+    /// y on the waist bezier at a given x (the curve is monotonic in x).
+    private static func waistCurveY(atX x: Double, sideWaist: CGPoint, curve: PathCommand) -> Double {
+        guard case .curve(let to, let cp1, let cp2) = curve else { return Double(sideWaist.y) }
+        var best = sideWaist
+        var bestDistance = Double.greatestFiniteMagnitude
+        let steps = 32
+        for i in 0...steps {
+            let t = CGFloat(i) / CGFloat(steps)
+            let mt = 1 - t
+            let px = mt*mt*mt*sideWaist.x + 3*mt*mt*t*cp1.x + 3*mt*t*t*cp2.x + t*t*t*to.x
+            let py = mt*mt*mt*sideWaist.y + 3*mt*mt*t*cp1.y + 3*mt*t*t*cp2.y + t*t*t*to.y
+            let distance = abs(Double(px) - x)
+            if distance < bestDistance {
+                bestDistance = distance
+                best = CGPoint(x: px, y: py)
+            }
+        }
+        return Double(best.y)
     }
 }
