@@ -31,7 +31,7 @@ struct SleeveBlock {
     static let bicepsRatio = 0.30       // ASSUMPTION (anthropometric)
     static let bicepsEase = 0.15        // verified Brian default
     static let capEase = 0.04           // classic 3-5% cap ease for setting in
-    static let convergenceTolerance = 1.0
+    static let convergenceTolerance = 0.5
 
     /// Returns the sleeve pieces (sleeve + cuff for balloon).
     static func draft(
@@ -48,16 +48,20 @@ struct SleeveBlock {
         let targetCapLength = armholeLength * (1 + capEase)
 
         // Converge cap width so the cap curve length matches the armhole.
-        var width = max(bicepsEstimate, 200)
-        var tweak = 1.0
-        var delta = capCurveLength(width: width, capHeight: capHeight) - targetCapLength
-        var runs = 0
-        while abs(delta) > convergenceTolerance && runs < 40 {
-            if delta > 0 { tweak *= 0.98 } else { tweak *= 1.02 }
-            delta = capCurveLength(width: width * tweak, capHeight: capHeight) - targetCapLength
-            runs += 1
+        // Cap length grows monotonically with width, so bisect: a fixed-step
+        // multiplicative walk oscillates and can miss the tolerance.
+        var lo = 60.0
+        var hi = max(bicepsEstimate, 200) * 3
+        while capCurveLength(width: hi, capHeight: capHeight) < targetCapLength && hi < 8000 {
+            hi *= 1.5
         }
-        width *= tweak
+        var width = max(bicepsEstimate, 200)
+        for _ in 0..<60 {
+            width = (lo + hi) / 2
+            let delta = capCurveLength(width: width, capHeight: capHeight) - targetCapLength
+            if abs(delta) <= convergenceTolerance { break }
+            if delta > 0 { hi = width } else { lo = width }
+        }
 
         let sleeveLength = totalLength(for: length, armLengthMM: m.armLengthCM * 10, capHeight: capHeight)
         let balloon = style == .balloon
