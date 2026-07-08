@@ -192,7 +192,12 @@ struct PhotoAnalysisView: View {
                 if let top = result.topLength, let parsed = TopLength(rawValue: top) { spec.topLength = parsed }
                 analysisNote = result.details
             } catch {
-                errorMessage = error.localizedDescription
+                #if DEBUG
+                if let serviceError = error as? ClaudeServiceError {
+                    print("garment analysis failed: \(serviceError.debugDetail)")
+                }
+                #endif
+                analysisNote = error.localizedDescription
             }
             phase = .confirm
         }

@@ -13,14 +13,32 @@ struct GarmentAnalysis: Codable {
 
 enum ClaudeServiceError: LocalizedError {
     case missingKey
+    case invalidKey
+    case rateLimited
+    case network
     case badResponse(String)
 
+    /// User-facing copy — never leaks a raw API error body to the screen.
     var errorDescription: String? {
         switch self {
         case .missingKey:
-            "No API key set. Add your Anthropic API key in Profile → Settings."
-        case .badResponse(let message):
-            "The analysis didn't come back right: \(message)"
+            "No API key set yet — add your Anthropic key in Profile to turn on auto-detection, or just pick the garment below."
+        case .invalidKey:
+            "That API key didn't work — double-check it in Profile. You can still pick the garment below by hand."
+        case .rateLimited:
+            "Anthropic is busy right now — try again in a moment, or pick the garment below by hand."
+        case .network:
+            "Couldn't reach the analysis service — check your connection, or pick the garment below by hand."
+        case .badResponse:
+            "Auto-detection hiccuped — no worries, just pick the garment below by hand."
+        }
+    }
+
+    /// Detail kept for logs only, never shown to the user.
+    var debugDetail: String {
+        switch self {
+        case .badResponse(let message): message
+        default: String(describing: self)
         }
     }
 }
@@ -74,10 +92,24 @@ struct ClaudeService {
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         request.timeoutInterval = 60
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw ClaudeServiceError.network
+        }
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            let status = (response as? HTTPURLResponse)?.statusCode ?? -1
             let text = String(data: data, encoding: .utf8) ?? "unknown error"
-            throw ClaudeServiceError.badResponse(text)
+            #if DEBUG
+            print("ClaudeService HTTP \(status): \(text)")
+            #endif
+            switch status {
+            case 401, 403: throw ClaudeServiceError.invalidKey
+            case 429, 529: throw ClaudeServiceError.rateLimited
+            default: throw ClaudeServiceError.badResponse(text)
+            }
         }
 
         guard

@@ -83,7 +83,7 @@ struct ProfileSheet: View {
 
     private var aboutSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Stitchu 0.1")
+            Text("Stitchu 1.0")
                 .font(Quicksand.semiBold(15))
                 .foregroundStyle(Palette.ink)
             Text("patterns drafted with verified formulas — every rule in the engine traces back to a checked source")
