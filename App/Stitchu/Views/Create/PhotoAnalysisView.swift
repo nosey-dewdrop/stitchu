@@ -174,9 +174,9 @@ struct PhotoAnalysisView: View {
 
     private func startAnalysis() {
         guard phase == .idle else { return }
-        guard ClaudeService.hasKey else {
+        guard ClaudeService.isConfigured else {
             phase = .confirm
-            analysisNote = "no API key set, so tell me what this is — auto-detection turns on once you add a key in Profile"
+            analysisNote = "auto-detection is off in this build — just tell me what this is"
             return
         }
         phase = .analyzing

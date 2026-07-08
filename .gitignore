@@ -5,3 +5,8 @@ xcuserdata/
 *.xcuserstate
 DerivedData/
 build/
+
+# App secrets — real backend URL + app token. Never commit.
+App/Stitchu/Secrets.swift
+backend/.wrangler/
+backend/node_modules/

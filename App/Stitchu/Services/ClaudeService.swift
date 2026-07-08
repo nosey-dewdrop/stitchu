@@ -12,21 +12,19 @@ struct GarmentAnalysis: Codable {
 }
 
 enum ClaudeServiceError: LocalizedError {
-    case missingKey
-    case invalidKey
+    case notConfigured
     case rateLimited
     case network
     case badResponse(String)
 
     /// User-facing copy — never leaks a raw API error body to the screen.
+    /// Every case ends with the manual fallback so the user is never stuck.
     var errorDescription: String? {
         switch self {
-        case .missingKey:
-            "No API key set yet — add your Anthropic key in Profile to turn on auto-detection, or just pick the garment below."
-        case .invalidKey:
-            "That API key didn't work — double-check it in Profile. You can still pick the garment below by hand."
+        case .notConfigured:
+            "Auto-detection isn't set up in this build — just pick the garment below."
         case .rateLimited:
-            "Anthropic is busy right now — try again in a moment, or pick the garment below by hand."
+            "The analysis service is busy right now — try again in a moment, or pick the garment below by hand."
         case .network:
             "Couldn't reach the analysis service — check your connection, or pick the garment below by hand."
         case .badResponse:
@@ -43,52 +41,32 @@ enum ClaudeServiceError: LocalizedError {
     }
 }
 
-/// Garment photo analysis through the Claude API.
-/// The key lives in the Keychain only — never bundled, never committed.
+/// Garment photo analysis through our managed backend proxy (a Cloudflare
+/// Worker holding the Anthropic key). The app only knows the Worker URL and a
+/// shared app token — never an Anthropic key. Works out of the box for users.
 struct ClaudeService {
-    static let keychainKey = "anthropic-api-key"
-
-    static var hasKey: Bool {
-        !(KeychainHelper.read(keychainKey) ?? "").isEmpty
+    /// True when the app is pointed at a real deployed Worker.
+    static var isConfigured: Bool {
+        !Secrets.backendURL.isEmpty
+            && !Secrets.appToken.isEmpty
+            && !Secrets.appToken.contains("REPLACE")
+            && !Secrets.backendURL.contains("REPLACE")
     }
 
     static func analyzeGarment(imageData: Data) async throws -> GarmentAnalysis {
-        guard let apiKey = KeychainHelper.read(keychainKey), !apiKey.isEmpty else {
-            throw ClaudeServiceError.missingKey
+        guard isConfigured, let url = URL(string: Secrets.backendURL) else {
+            throw ClaudeServiceError.notConfigured
         }
 
-        let prompt = """
-        Analyze the garment in this photo for sewing pattern drafting. Respond with ONLY a JSON object, no prose:
-        {"garment": "skirt" | "dress" | "top" | "trousers" | "other",
-         "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | null,
-         "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
-         "sleeveLength": "short" | "elbow" | "long" | null,
-         "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | null (halfCircle covers full/flared circle skirts),
-         "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
-         "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
-         "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}
-        """
-
         let body: [String: Any] = [
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 500,
-            "messages": [[
-                "role": "user",
-                "content": [
-                    ["type": "image", "source": [
-                        "type": "base64", "media_type": "image/jpeg",
-                        "data": imageData.base64EncodedString(),
-                    ]],
-                    ["type": "text", "text": prompt],
-                ],
-            ]],
+            "image": imageData.base64EncodedString(),
+            "mediaType": "image/jpeg",
         ]
 
-        var request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
-        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue(Secrets.appToken, forHTTPHeaderField: "x-app-token")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         request.timeoutInterval = 60
 
@@ -106,12 +84,12 @@ struct ClaudeService {
             print("ClaudeService HTTP \(status): \(text)")
             #endif
             switch status {
-            case 401, 403: throw ClaudeServiceError.invalidKey
             case 429, 529: throw ClaudeServiceError.rateLimited
             default: throw ClaudeServiceError.badResponse(text)
             }
         }
 
+        // The Worker returns the raw Anthropic /v1/messages body unchanged.
         guard
             let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
             let content = json["content"] as? [[String: Any]],

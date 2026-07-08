@@ -1,0 +1,14 @@
+name = "stitchu-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Secrets (set via wrangler secret put — never commit these):
+#   CLAUDE_API_KEY   your Anthropic sk-ant- key
+#   APP_TOKEN        any long random string, also placed in the app's Secrets.swift
+
+# Rate-limit KV. Create with: npx wrangler kv namespace create RATE_LIMIT
+# then paste the returned id below. (Optional — the Worker runs without it,
+# just with no rate limiting.)
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

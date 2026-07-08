@@ -11,7 +11,6 @@
 		09A05DAF6910F41B42BDB456 /* tips.json in Resources */ = {isa = PBXBuildFile; fileRef = A5D01FE703C7B7E6665E5FD3 /* tips.json */; };
 		15974F1BA272A51C447B31C4 /* BodySilhouetteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB912F9D4934AD65A4CB1FFE /* BodySilhouetteView.swift */; };
 		15C452744D2626797C0E10CB /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FF317EEECE8CEBD00E0C2BB8 /* OFL.txt */; };
-		1C600C332A862A4357EF6C64 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA025428E529B0C1E4C6C6A /* KeychainHelper.swift */; };
 		1E9E768240E23438C24CB7C8 /* PatternGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836D3DC78D28A11B951218A7 /* PatternGeometry.swift */; };
 		284438A81FE7D109981C9F5E /* BodyMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6953D98E813B3B600F495177 /* BodyMeasurements.swift */; };
 		32C5D9C2F1691E01C6331DF2 /* Quicksand-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9447BCB804509FC908AF669B /* Quicksand-Variable.ttf */; };
@@ -22,6 +21,7 @@
 		5A99485145E1233711C47E84 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD76FD25E0F505871D6178BF /* ClaudeService.swift */; };
 		601960558725BF7A5D275486 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48121B6A2AAC15266FEFCC2D /* Assets.xcassets */; };
 		64056FEEF19EAE4CFCB2C86A /* ProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F027D15E1A479E7E0775C4E /* ProfileSheet.swift */; };
+		6708C9EF938232A9CA43097B /* Secrets.example.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6AAF314A55A247C5F63ECA11 /* Secrets.example.txt */; };
 		7054F000941B0A65DAA47554 /* zippers.json in Resources */ = {isa = PBXBuildFile; fileRef = 8FA11A052DBDDEE6683DCF11 /* zippers.json */; };
 		84842E4F4E37914F1428D2D0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C42E33AFA1A61B9A8719C3B3 /* Theme.swift */; };
 		8777B07F6B216C26126E86ED /* SavedPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4527D8E5F12DD0B1F1D84A46 /* SavedPattern.swift */; };
@@ -31,6 +31,7 @@
 		9F1AE5A37877C01652B00E83 /* PatternResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEC490DBA501F8BA304C847 /* PatternResultView.swift */; };
 		B0C529327B5F104D44EF6197 /* fabrics.json in Resources */ = {isa = PBXBuildFile; fileRef = 990F04DC625DA09189ACAAEE /* fabrics.json */; };
 		B16D8431E34CF6070C05EB86 /* SleeveBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77D4F7A8AC69C5DBFA02A6 /* SleeveBlock.swift */; };
+		B38AE0F6519FF8D89BE9CEDA /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4404F85A874D631A3CC7DE2 /* Secrets.swift */; };
 		BD1B37AF760A2CA1597CB678 /* InspireRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA4EAF59E21133D670D19FE /* InspireRoomView.swift */; };
 		C36F2D38D71083CAA11D0152 /* KnowledgeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */; };
 		CCB6D1F0741C009DC7DFF138 /* PatternValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2611F0386FEC6253135AB8 /* PatternValidator.swift */; };
@@ -54,6 +55,7 @@
 		5CEC490DBA501F8BA304C847 /* PatternResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternResultView.swift; sourceTree = "<group>"; };
 		5EF63CC3E00E2126174D7AF3 /* PhotoAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAnalysisView.swift; sourceTree = "<group>"; };
 		6953D98E813B3B600F495177 /* BodyMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMeasurements.swift; sourceTree = "<group>"; };
+		6AAF314A55A247C5F63ECA11 /* Secrets.example.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.example.txt; sourceTree = "<group>"; };
 		7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeBase.swift; sourceTree = "<group>"; };
 		836D3DC78D28A11B951218A7 /* PatternGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGeometry.swift; sourceTree = "<group>"; };
 		87950AAAD0C2B2E1506E0B8E /* StitchuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StitchuApp.swift; sourceTree = "<group>"; };
@@ -66,7 +68,7 @@
 		A5D01FE703C7B7E6665E5FD3 /* tips.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tips.json; sourceTree = "<group>"; };
 		A6F1ACF5511AE60F2E946AAB /* SkirtBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkirtBlock.swift; sourceTree = "<group>"; };
 		AB912F9D4934AD65A4CB1FFE /* BodySilhouetteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodySilhouetteView.swift; sourceTree = "<group>"; };
-		BFA025428E529B0C1E4C6C6A /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		B4404F85A874D631A3CC7DE2 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		C42E33AFA1A61B9A8719C3B3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		D4751621802B65640665BFAB /* CreateRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRoomView.swift; sourceTree = "<group>"; };
 		DD76FD25E0F505871D6178BF /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
@@ -104,6 +106,8 @@
 				48121B6A2AAC15266FEFCC2D /* Assets.xcassets */,
 				978B07425B4A22EE5AB39F1B /* Info.plist */,
 				20113B78A184BE4824F67057 /* PrivacyInfo.xcprivacy */,
+				6AAF314A55A247C5F63ECA11 /* Secrets.example.txt */,
+				B4404F85A874D631A3CC7DE2 /* Secrets.swift */,
 				87950AAAD0C2B2E1506E0B8E /* StitchuApp.swift */,
 				C42E33AFA1A61B9A8719C3B3 /* Theme.swift */,
 				5592AD37098C1F9D14715A3E /* Engine */,
@@ -221,7 +225,6 @@
 			isa = PBXGroup;
 			children = (
 				DD76FD25E0F505871D6178BF /* ClaudeService.swift */,
-				BFA025428E529B0C1E4C6C6A /* KeychainHelper.swift */,
 				7B6B0B5A67C4229F22E065C3 /* KnowledgeBase.swift */,
 				0A1A510BD17CD10F76FCFCB5 /* PatternPDFExporter.swift */,
 			);
@@ -292,6 +295,7 @@
 				15C452744D2626797C0E10CB /* OFL.txt in Resources */,
 				E1F237C1FA61C2D984A3BE9F /* PrivacyInfo.xcprivacy in Resources */,
 				32C5D9C2F1691E01C6331DF2 /* Quicksand-Variable.ttf in Resources */,
+				6708C9EF938232A9CA43097B /* Secrets.example.txt in Resources */,
 				B0C529327B5F104D44EF6197 /* fabrics.json in Resources */,
 				09A05DAF6910F41B42BDB456 /* tips.json in Resources */,
 				7054F000941B0A65DAA47554 /* zippers.json in Resources */,
@@ -314,7 +318,6 @@
 				4975D8981F23990C0E2392CA /* CreateRoomView.swift in Sources */,
 				E5AF319CE21F2DBD5865E3D2 /* GarmentDrafter.swift in Sources */,
 				BD1B37AF760A2CA1597CB678 /* InspireRoomView.swift in Sources */,
-				1C600C332A862A4357EF6C64 /* KeychainHelper.swift in Sources */,
 				C36F2D38D71083CAA11D0152 /* KnowledgeBase.swift in Sources */,
 				D263738EEDD401500AB904E7 /* OnboardingView.swift in Sources */,
 				1E9E768240E23438C24CB7C8 /* PatternGeometry.swift in Sources */,
@@ -325,6 +328,7 @@
 				64056FEEF19EAE4CFCB2C86A /* ProfileSheet.swift in Sources */,
 				4AAC1CA7964B11159F413C90 /* RootView.swift in Sources */,
 				8777B07F6B216C26126E86ED /* SavedPattern.swift in Sources */,
+				B38AE0F6519FF8D89BE9CEDA /* Secrets.swift in Sources */,
 				96F6A746F3922704369D9767 /* SkirtBlock.swift in Sources */,
 				B16D8431E34CF6070C05EB86 /* SleeveBlock.swift in Sources */,
 				9194858C7590206249364E44 /* StitchuApp.swift in Sources */,

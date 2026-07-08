@@ -6,8 +6,6 @@ struct ProfileSheet: View {
     @Query(sort: \BodyMeasurements.createdAt) private var measurements: [BodyMeasurements]
 
     @State private var editedValues: [MeasurementField: String] = [:]
-    @State private var apiKey: String = ""
-    @State private var savedFeedback = false
 
     var body: some View {
         NavigationStack {
@@ -16,7 +14,6 @@ struct ProfileSheet: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         measurementsSection
-                        apiSection
                         aboutSection
                     }
                     .padding(.horizontal, 24)
@@ -63,24 +60,6 @@ struct ProfileSheet: View {
         .stitchedBorder(cornerRadius: 20)
     }
 
-    private var apiSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("photo analysis")
-                .font(Quicksand.bold(20))
-                .foregroundStyle(Palette.ink)
-            Text("add your Anthropic API key to turn on automatic garment detection. The key is stored only in your device keychain.")
-                .font(Quicksand.regular(13))
-                .foregroundStyle(Palette.inkSecondary)
-            SecureField("sk-ant-…", text: $apiKey)
-                .font(Quicksand.medium(15))
-                .padding(12)
-                .background(Palette.bg, in: RoundedRectangle(cornerRadius: 12))
-        }
-        .padding(18)
-        .background(Palette.card, in: RoundedRectangle(cornerRadius: 20))
-        .stitchedBorder(cornerRadius: 20)
-    }
-
     private var aboutSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Stitchu 1.0")
@@ -114,7 +93,6 @@ struct ProfileSheet: View {
             .arm: String(format: "%.0f", m.armLength),
             .neck: String(format: "%.0f", m.neck),
         ]
-        apiKey = KeychainHelper.read(ClaudeService.keychainKey) ?? ""
     }
 
     private func saveAll() {
@@ -132,6 +110,5 @@ struct ProfileSheet: View {
             m.neck = value(.neck, m.neck)
             m.updatedAt = .now
         }
-        KeychainHelper.save(apiKey.trimmingCharacters(in: .whitespacesAndNewlines), for: ClaudeService.keychainKey)
     }
 }
