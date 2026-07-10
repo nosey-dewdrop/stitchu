@@ -10,7 +10,8 @@ nav { display: flex; gap: 28px; font-size: var(--size-small); }
 nav a { color: var(--ink); text-decoration: none; }
 nav a:hover { border-bottom: 1px dashed var(--teal); }
 
-.hero { padding: 48px 0 20px; }
+.hero { padding: 48px 0 0; }
+.hero-zone { padding-bottom: 170px; } /* the sewing band below the copy */
 .hero-zone { position: relative; overflow: hidden; }
 /* the sewing canvas bleeds edge to edge: margins get patterns too */
 #hero-sew {
@@ -18,7 +19,7 @@ nav a:hover { border-bottom: 1px dashed var(--teal); }
   width: 100%; height: 100%;
   cursor: crosshair; touch-action: none;
 }
-.hero-copy { position: relative; pointer-events: none; padding-bottom: 130px; }
+.hero-copy { position: relative; pointer-events: none; }
 .hero-copy a, .hero-copy .cta { pointer-events: auto; }
 .hero-in { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
 .hero-copy { max-width: 620px; }

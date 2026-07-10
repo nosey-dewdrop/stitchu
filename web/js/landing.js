@@ -1,7 +1,7 @@
 // Hero sewing space, full bleed. Guides live in non-overlapping CELLS so
 // shapes never collide at any screen size, and your sewn stitches survive
 // resizes (stored normalized, redrawn on rebuild).
-import { drawRun, makeSewable } from './stitch.js?v=9';
+import { drawRun, makeSewable } from './stitch.js?v=10';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';
@@ -102,7 +102,7 @@ function placeInBox(x0, y0, x1, y1, cols, rows, names) {
       const row = Math.floor(i / cols);
       const cx = x0 + cw * (col + 0.5);
       const cy = y0 + ch * (row + 0.5);
-      SHAPES[name](cx, cy, Math.min(cw, ch) * 0.62);
+      SHAPES[name](cx, cy, Math.min(cw, ch) * 0.72);
     }
     i += 1;
   }
@@ -116,7 +116,11 @@ function build() {
 
   const wl = Math.max((w - 1060) / 2, 0) + 24; // wrap left edge
   const textRight = wl + 690;                   // text column ends here
-  const textBottom = h * 0.72;                  // copy block ends here
+  // measure where the copy actually ends — the band hugs it, no dead gap
+  const copyEl = document.querySelector('.hero-copy');
+  const textBottom = copyEl
+    ? Math.min(h - 120, copyEl.getBoundingClientRect().bottom - hero.getBoundingClientRect().top + 6)
+    : h * 0.7;
 
   // left screen margin: one narrow column of cells
   if (wl > 80) {
