@@ -78,7 +78,7 @@ Design spec locked in Brand above (flat, Helvetica, white/black + teal, sharp co
 - [x] 12. landing: drag-to-sew hero + STITCH WALL — communal embroidery, per-visitor thread color, stitches persist for everyone (Worker + KV, just path coordinates), guestbook seam of short notes underneath; guardrails built in: length cap, per-IP rate limit, TR/EN profanity filter, anonymous (no accounts, no PII — KVKK-clean)
 - [x] 13. onboarding: 7 measurements with silhouette highlights, validation, stored locally (IndexedDB) — no sign-up
 - [x] 14. create flow: photo upload → Worker vision → user confirms analysis → WASM draft → result (manual-pick fallback stays for when the Worker is unreachable)
-- [ ] 15. pattern result: SVG pieces (darts, grainline, labels), fabric meters estimate, step-by-step sewing guide (ported content incl. verified invisible-zipper order), fabric suitability advice
+- [x] 15. pattern result: SVG pieces (darts, grainline, labels), fabric meters estimate, step-by-step sewing guide (ported content incl. verified invisible-zipper order), fabric suitability advice
 - [x] 16. print pipeline: client-side tiled A4 PDF, 3 cm calibration square, page map showing taping order
 - [x] 17. closet: saved patterns — reopen, delete, re-download (full CRUD, local)
 - [ ] 18. stitch micro-interactions only where they earn their place: loading = a seam being sewn, section dividers = stitch lines; not on every surface
