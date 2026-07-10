@@ -3,12 +3,15 @@
 export const STITCH_SPACING = 10;
 export const STITCH_HALF = 4.5;
 
-export function stitchSeg(svg, cx, cy, ang, color) {
+// One even dash from a toward b, covering 55% of the step — reads like a
+// dotted pen following the hand, no spikes.
+export function stitchDash(svg, a, b, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  s.setAttribute('x1', (cx - Math.cos(ang) * STITCH_HALF).toFixed(1));
-  s.setAttribute('y1', (cy - Math.sin(ang) * STITCH_HALF).toFixed(1));
-  s.setAttribute('x2', (cx + Math.cos(ang) * STITCH_HALF).toFixed(1));
-  s.setAttribute('y2', (cy + Math.sin(ang) * STITCH_HALF).toFixed(1));
+  const t = 0.55;
+  s.setAttribute('x1', a[0].toFixed(1));
+  s.setAttribute('y1', a[1].toFixed(1));
+  s.setAttribute('x2', (a[0] + (b[0] - a[0]) * t).toFixed(1));
+  s.setAttribute('y2', (a[1] + (b[1] - a[1]) * t).toFixed(1));
   s.setAttribute('stroke', color);
   s.setAttribute('stroke-width', '1.6');
   s.setAttribute('stroke-linecap', 'round');
@@ -96,10 +99,7 @@ export function drawRun(svg, run, w, h) {
     return;
   }
   for (let i = 1; i < pts.length; i++) {
-    const [ax, ay] = pts[i - 1];
-    const [bx, by] = pts[i];
-    const ang = Math.atan2(by - ay, bx - ax);
-    stitchSeg(svg, bx, by, ang, run.color);
+    stitchDash(svg, pts[i - 1], pts[i], run.color);
   }
 }
 
@@ -147,8 +147,7 @@ export function makeSewable(svg, color, onStitchRun, getKind = () => 'run') {
       zigFlip *= -1;
       zigLeg(svg, last, [x, y], color);
     } else {
-      const ang = Math.atan2(py - last[1], px - last[0]) + (Math.random() - 0.5) * 0.18;
-      stitchSeg(svg, x, y, ang, color);
+      stitchDash(svg, last, [px, py], color);
     }
     last = [x, y];
     sampled.push([x, y]);
