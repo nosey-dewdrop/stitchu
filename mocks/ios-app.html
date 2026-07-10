@@ -25,14 +25,32 @@
   ::selection { background: var(--teal); color: var(--paper); }
   .board { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
   .phone {
-    width: 375px; height: 780px;
+    width: 375px; height: 812px;
     background: var(--paper);
-    border: 1px solid var(--ink);
-    border-radius: 2px;
+    border: 2px solid var(--ink);
+    border-radius: 46px; /* device shell, not app UI — iPhones are round */
     display: flex; flex-direction: column;
     overflow: hidden;
     flex: none;
+    position: relative;
   }
+  .phone::after { /* home indicator */
+    content: ""; position: absolute; bottom: 9px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 4px; background: var(--ink); border-radius: 2px;
+  }
+  .statusbar {
+    position: relative;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 30px 4px;
+    font-size: 13.5px;
+  }
+  .statusbar .island {
+    position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
+    width: 98px; height: 28px; background: #111; border-radius: 14px;
+  }
+  .statusbar .stat { font-size: 12px; letter-spacing: 1px; }
+  .bottom { margin-bottom: 20px; }
   .phone-label { text-align: center; font-size: 13px; color: var(--gray); margin-top: 10px; }
   .col { flex: none; }
 
@@ -129,6 +147,7 @@
   <!-- 0: welcome / drag-to-sew onboarding start -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="screen welcome">
         <h1>stitchu</h1>
         <p class="sub">Photograph a garment. Sew it yourself, drafted to your body.</p>
@@ -150,6 +169,7 @@
   <!-- 1: measurement with tape -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
@@ -198,6 +218,7 @@
   <!-- 2: create / spec picker -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
@@ -236,6 +257,7 @@
   <!-- 3: confirm analysis -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
@@ -272,6 +294,7 @@
   <!-- 4: pattern result -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
@@ -308,6 +331,7 @@
   <!-- 5: closet -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
@@ -336,6 +360,7 @@
   <!-- 6: describe — the premium path -->
   <div class="col">
     <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="island"></span><span class="stat">▁▃▅ ⌁</span></div>
       <div class="appbar">
         <div class="mark">stitchu
           <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
