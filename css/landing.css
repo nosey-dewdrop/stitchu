@@ -36,7 +36,7 @@ nav a:hover { border-bottom: 1px dashed var(--teal); }
 
 .sew-strip { padding: 0 0 30px; }
 .sew-hint { font-size: var(--size-fine); color: var(--gray); margin-bottom: 4px; }
-#hero-sew { display: block; width: 100%; height: 230px; cursor: crosshair; touch-action: none; }
+#hero-sew { display: block; width: 100%; height: 280px; cursor: crosshair; touch-action: none; }
 #hero-sew, #wall-canvas, .sew-strip, .wall-frame { user-select: none; -webkit-user-select: none; }
 
 .seam { border: 0; border-top: var(--seam); }
