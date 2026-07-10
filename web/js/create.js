@@ -1,6 +1,7 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
+import { analyzePhoto, photoAvailable } from './analyze.js';
 import { draft } from './engine.js';
 import { printPattern } from './print.js';
 import { renderResult } from './render.js';
@@ -147,6 +148,48 @@ function showSpec() {
   edit.addEventListener('click', (e) => { e.preventDefault(); showMeasurement(0); });
   sub.appendChild(edit);
   screen.appendChild(sub);
+
+  // Photo path: upload -> AI reads the garment -> picks below get prefilled,
+  // user confirms or fixes. Hidden entirely until the Worker is live.
+  if (photoAvailable()) {
+    const photoBlock = el('div', 'spec-group');
+    photoBlock.style.marginTop = '30px';
+    photoBlock.appendChild(el('div', 'group-label', 'or start from a photo'));
+    const row = el('div', 'choice-row');
+    const pick = el('button', 'choice', 'Upload a garment photo');
+    const status = el('div', 'field-error', '');
+    status.style.color = 'var(--gray)';
+    const file = document.createElement('input');
+    file.type = 'file';
+    file.accept = 'image/*';
+    file.style.display = 'none';
+    pick.addEventListener('click', () => file.click());
+    file.addEventListener('change', async () => {
+      if (!file.files[0]) return;
+      pick.disabled = true;
+      status.textContent = 'Reading the garment…';
+      try {
+        const seen = await analyzePhoto(file.files[0]);
+        spec.garment = seen.garment;
+        if (seen.neckline) spec.neckline = seen.neckline;
+        if (seen.sleeveStyle) spec.sleeveStyle = seen.sleeveStyle;
+        if (seen.sleeveLength) spec.sleeveLength = seen.sleeveLength;
+        if (seen.skirtStyle) spec.skirtStyle = seen.skirtStyle;
+        if (seen.length) spec.skirtLength = seen.length;
+        if (seen.topLength) spec.topLength = seen.topLength;
+        status.textContent = (seen.details ? seen.details + ' — ' : '') + 'Check the picks below, fix anything I got wrong.';
+        rebuild();
+      } catch (err) {
+        status.textContent = err.message;
+      }
+      pick.disabled = false;
+    });
+    row.appendChild(pick);
+    photoBlock.appendChild(row);
+    photoBlock.appendChild(file);
+    photoBlock.appendChild(status);
+    screen.appendChild(photoBlock);
+  }
 
   const groups = el('div', 'spec-groups');
   groups.style.marginTop = '34px';

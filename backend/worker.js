@@ -39,6 +39,26 @@ export default {
         return handleWallNote(request, env);
       }
 
+      // Public photo analysis for the web app (a browser cannot keep the app
+      // token secret). OFF unless the PUBLIC_ANALYZE var is set to "on" at
+      // deploy — every call costs Claude vision money, so it ships throttled:
+      // 3/min and 15/day per IP, ~2 MB image cap.
+      if (url.pathname === '/api/analyze' && request.method === 'POST' &&
+          !request.headers.get('x-app-token')) {
+        if (env.PUBLIC_ANALYZE !== 'on') {
+          return jsonResponse({ error: 'Photo analysis is not open yet' }, 403);
+        }
+        if (await rateLimited(env, `puban:${ip}`, 3) ||
+            await rateLimitedDaily(env, `pubanday:${ip}`, 15)) {
+          return jsonResponse({ error: 'Rate limit exceeded. Please wait.' }, 429);
+        }
+        const length = parseInt(request.headers.get('content-length') || '0');
+        if (length > 2_800_000) {
+          return jsonResponse({ error: 'Image too large' }, 413);
+        }
+        return handleAnalyze(request, env);
+      }
+
       // ---- Authenticated app endpoints (shared-secret app token).
       const appToken = request.headers.get('x-app-token');
       if (!env.APP_TOKEN || appToken !== env.APP_TOKEN) {
@@ -67,6 +87,16 @@ async function rateLimited(env, keyBase, perMinute) {
   const count = current ? parseInt(current) : 0;
   if (count >= perMinute) return true;
   await env.RATE_LIMIT?.put(key, String(count + 1), { expirationTtl: 120 });
+  return false;
+}
+
+// Per-IP-per-day cap (UTC day) — the cost fuse for public vision calls.
+async function rateLimitedDaily(env, keyBase, perDay) {
+  const key = `${keyBase}:${Math.floor(Date.now() / 86400000)}`;
+  const current = await env.RATE_LIMIT?.get(key);
+  const count = current ? parseInt(current) : 0;
+  if (count >= perDay) return true;
+  await env.RATE_LIMIT?.put(key, String(count + 1), { expirationTtl: 90000 });
   return false;
 }
 
