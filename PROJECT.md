@@ -1,8 +1,9 @@
 # Stitchu
 
-Sewing pattern app for iOS. Upload a photo of any garment (or design one) and get a custom sewing pattern fitted to your body, plus fabric recommendations, notions (zipper, interfacing, thread), and a step-by-step sewing guide. A pocket sewing teacher.
+Sewing pattern app. Upload a photo of any garment (or design one) and get a custom sewing pattern fitted to your body, plus fabric recommendations, notions (zipper, interfacing, thread), and a step-by-step sewing guide. A pocket sewing teacher.
 
 Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
+2026-07-10: platform decision — Stitchu moves to the WEB (see Web Rework below). The printed-PDF workflow lives on desktop/printer, not on a phone. iOS code stays in the repo as reference; the web app is the product.
 
 ## Status
 Current phase: Core (app builds and runs the photo → skirt pattern path end-to-end)
@@ -39,6 +40,46 @@ Last session: 2026-07-07 — block validation (the launch blocker): built Patter
 - Revenue: freemium + subscription ($5-10/mo) — premium unlocks describe-path, visual guide diagrams, unlimited patterns
 - Pattern engine: parametric drafting compiled from Muller & Sohn + Winifred Aldrich + FreeSewing.org formulas
 - Tech: SwiftUI + SwiftData, Claude API (photo analysis + guide), Gemini/DALL-E (visual generation), SVG + PDFKit, StoreKit 2
+
+## Web Rework (decided 2026-07-10)
+Goal: make Stitchu genuinely usable. Web-first because the output is a print-at-home PDF (desktop/printer context), App Store review friction disappears, and patterns become shareable URLs.
+
+Architecture: pattern engine in C++ compiled to WebAssembly (Emscripten), running client-side in the browser — zero server cost per draft, measurements/photos never need to leave the device for drafting. Pattern rendering in SVG. Vision analysis keeps the existing Cloudflare Worker (server-side Claude key, app-token auth). C++ chosen over Rust deliberately: synergy with Damla's CS201 coursework.
+
+### Phase W1: C++ engine port (the backbone)
+- [ ] port drafting blocks from Swift to C++: bodice, skirt (A-line/straight/gathered/half-circle), dress, top, sleeve
+- [ ] port manipulation layer v1 (necklines, skirt styles, sleeves)
+- [ ] port PatternValidator (geometric invariants) as C++ tests
+- [ ] port engine-check harness: the same 2805-draft matrix (EU 34-52 + edge bodies) must pass in C++ before anything else proceeds — this is the port's definition of done
+- [ ] Emscripten build → WASM module + thin JS bindings
+
+### Phase W2: web app
+- [ ] app shell: onboarding (7 measurements, silhouette highlights), Create/Closet rooms — design direction from Damla, whimsy doodle style, sharp corners
+- [ ] photo upload → Cloudflare Worker vision → user confirms → WASM engine → pattern
+- [ ] SVG pattern rendering (pieces, darts, grainline)
+- [ ] client-side tiled A4 PDF with 3 cm calibration square
+- [ ] sewing guide + fabric advice content ported from iOS
+- [ ] local persistence (saved patterns in IndexedDB/localStorage)
+
+### Phase W3: money + launch
+- [ ] merchant of record paywall — Paddle or Lemon Squeezy (both work from Turkey; pick after comparing fees) — gating via the existing Worker
+- [ ] privacy policy + KVKK/GDPR consent (photo leaves device only for vision analysis) — ships in the same session the upload flow does
+- [ ] hosting decision: Cloudflare Pages (pairs with the Worker) vs GitHub Pages
+- [ ] ship-check before public launch
+
+### Phase W4: AI eval pipeline (Python, learning project)
+- [ ] fixed test set: garment photos with hand-labeled expected analysis (garment type, neckline, sleeve, skirt style)
+- [ ] Python harness: send set through the Worker, score outputs against labels, report accuracy
+- [ ] regression compare: prompt/model change → score diff (answers "can we drop opus → sonnet" with numbers)
+- [ ] format: Claude teaches, Damla writes the critical code
+- [ ] once proven, copy the harness pattern to lingolingo
+
+### Feature candidates (Damla picks which make the cut)
+- projector mode: full-screen true-scale pattern with calibration grid, for projecting straight onto fabric (big sewing-community trend; kills A4 taping)
+- A0/copyshop single-sheet PDF export
+- fabric yardage + cutting layout plan ("1.8 m at 150 cm width, place pieces like this") — fabric DB already exists
+- fit warnings from measurement profile ("this may run tight at the waist")
+- shareable pattern links (free marketing loop; free tier = watermarked PDF)
 
 ## Roadmap
 ### Phase 1: Foundation
