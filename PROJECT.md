@@ -54,22 +54,22 @@ Architecture: pattern engine in C++ compiled to WebAssembly (Emscripten), runnin
 Stitchu exists so a person who sews can photograph a garment, get a pattern drafted to HER OWN measurements, print it (or project it) at true scale, and sew a garment that actually fits. Every item below serves that sentence; anything that doesn't is a cut candidate. "Done" for the whole rework = a real garment, sewn from a Stitchu web pattern, fits its owner.
 
 ### Phase W0: ground work
-- [ ] repo layout: engine/ (C++), web/ (site), backend/ (existing Worker); iOS app stays in App/ as reference
-- [ ] toolchain on Damla's machine: CMake + Emscripten SDK (Claude writes the setup script, Damla runs it in her terminal)
-- [ ] extract the Swift engine's formulas/constants into a reference sheet (ease tables, dart rules, documented assumptions) so the port is spec-driven, not line-by-line translation
+- [x] repo layout: engine/ (C++), web/ (site), backend/ (existing Worker); iOS app stays in App/ as reference
+- [x] toolchain on Damla's machine: CMake + Emscripten SDK (Claude writes the setup script, Damla runs it in her terminal)
+- [x] extract the Swift engine's formulas/constants into a reference sheet (ease tables, dart rules, documented assumptions) so the port is spec-driven, not line-by-line translation
 
 ### Phase W1: C++ engine port (the backbone)
 Definition of done: the same 2805-draft matrix that passes in Swift passes in C++, then a draft runs in a browser.
-- [ ] 1. geometry core: Point/Path/Bezier, seam-length measurement, offsets, intersection checks — unit tests first, these primitives carry everything
-- [ ] 2. measurement model + size matrix loader (EU 34-52, tall/petite/pear/apple/edge bodies)
-- [ ] 3. skirt blocks: A-line, straight, gathered, half-circle (darts, waistband)
-- [ ] 4. bodice block (assumptions carried over and documented: underbust = bust - 7 cm, standard shoulder slope)
-- [ ] 5. dress (bodice + skirt join, CB invisible zipper) and top (cropped/hip/tunic hems)
-- [ ] 6. sleeve block (straight + balloon, iterative cap-to-armhole convergence)
-- [ ] 7. manipulation layer v1: necklines (crew/scoop/v/square/boat), skirt styles, sleeves
-- [ ] 8. PatternValidator port: all geometric invariants (side-seam balance, dart sums, armhole/cap ease, waist joins, self-intersection, print fit)
-- [ ] 9. engine-check harness port → full matrix green; keep Swift outputs as golden files and diff deterministic values against them
-- [ ] 10. Emscripten build: WASM + thin embind bindings, size budget under ~1 MB, smoke page proving a draft runs in the browser
+- [x] 1. geometry core: Point/Path/Bezier, seam-length measurement, offsets, intersection checks — unit tests first, these primitives carry everything
+- [x] 2. measurement model + size matrix loader (EU 34-52, tall/petite/pear/apple/edge bodies)
+- [x] 3. skirt blocks: A-line, straight, gathered, half-circle (darts, waistband)
+- [x] 4. bodice block (assumptions carried over and documented: underbust = bust - 7 cm, standard shoulder slope)
+- [x] 5. dress (bodice + skirt join, CB invisible zipper) and top (cropped/hip/tunic hems)
+- [x] 6. sleeve block (straight + balloon, iterative cap-to-armhole convergence)
+- [x] 7. manipulation layer v1: necklines (crew/scoop/v/square/boat), skirt styles, sleeves
+- [x] 8. PatternValidator port: all geometric invariants (side-seam balance, dart sums, armhole/cap ease, waist joins, self-intersection, print fit)
+- [x] 9. engine-check harness port → full matrix green; keep Swift outputs as golden files and diff deterministic values against them
+- [x] 10. Emscripten build: WASM + thin embind bindings, size budget under ~1 MB, smoke page proving a draft runs in the browser
 Working style: engine code is Claude's; Damla reviews formulas as the sewing domain expert.
 
 ### Phase W2: web app (where "işe yaramaz" dies)
