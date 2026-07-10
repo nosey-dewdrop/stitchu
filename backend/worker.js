@@ -18,23 +18,36 @@ export default {
     }
 
     const url = new URL(request.url);
+    const ip = request.headers.get('cf-connecting-ip') || 'unknown';
 
     try {
-      // Shared-secret app authentication on every call.
+      // ---- Public stitch wall (landing page): no app token — a public web
+      // page cannot keep a secret. Guarded by strict rate limits + validation.
+      if (url.pathname === '/api/wall' && request.method === 'GET') {
+        return handleWallGet(env);
+      }
+      if (url.pathname === '/api/wall/stitch' && request.method === 'POST') {
+        if (await rateLimited(env, `wallstitch:${ip}`, 30)) {
+          return jsonResponse({ error: 'Rate limit exceeded. Please wait.' }, 429);
+        }
+        return handleWallStitch(request, env);
+      }
+      if (url.pathname === '/api/wall/note' && request.method === 'POST') {
+        if (await rateLimited(env, `wallnote:${ip}`, 2)) {
+          return jsonResponse({ error: 'Rate limit exceeded. Please wait.' }, 429);
+        }
+        return handleWallNote(request, env);
+      }
+
+      // ---- Authenticated app endpoints (shared-secret app token).
       const appToken = request.headers.get('x-app-token');
       if (!env.APP_TOKEN || appToken !== env.APP_TOKEN) {
         return jsonResponse({ error: 'Unauthorized' }, 401);
       }
 
-      // Rate limiting by IP (best-effort; no-op if KV not bound).
-      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-      const rateLimitKey = `rate:${ip}:${Math.floor(Date.now() / 60000)}`;
-      const current = await env.RATE_LIMIT?.get(rateLimitKey);
-      const count = current ? parseInt(current) : 0;
-      if (count >= RATE_LIMIT_PER_MIN) {
+      if (await rateLimited(env, `rate:${ip}`, RATE_LIMIT_PER_MIN)) {
         return jsonResponse({ error: 'Rate limit exceeded. Please wait.' }, 429);
       }
-      await env.RATE_LIMIT?.put(rateLimitKey, String(count + 1), { expirationTtl: 120 });
 
       if (url.pathname === '/api/analyze' && request.method === 'POST') {
         return handleAnalyze(request, env);
@@ -46,6 +59,93 @@ export default {
     }
   },
 };
+
+// Best-effort per-IP-per-minute rate limit; no-op if KV is not bound.
+async function rateLimited(env, keyBase, perMinute) {
+  const key = `${keyBase}:${Math.floor(Date.now() / 60000)}`;
+  const current = await env.RATE_LIMIT?.get(key);
+  const count = current ? parseInt(current) : 0;
+  if (count >= perMinute) return true;
+  await env.RATE_LIMIT?.put(key, String(count + 1), { expirationTtl: 120 });
+  return false;
+}
+
+// ---- Stitch wall ----------------------------------------------------------
+// Storage: two KV JSON arrays, newest last, capped. KV read-modify-write has
+// a small race window under simultaneous writes; at wall scale losing one
+// stitch to a race is acceptable and invisible.
+
+const WALL_STITCH_CAP = 2000;
+const WALL_NOTE_CAP = 300;
+const WALL_COLORS = ['#3EB8AF', '#C4767B', '#B8963E', '#7A8450', '#3E5C76', '#7E5A75'];
+// Minimal TR/EN profanity screen for the public guestbook (normalized match).
+const BANNED = ['amk', 'aq', 'orospu', 'sik', 'piç', 'pic', 'yarrak', 'göt', 'got',
+  'amcik', 'amcık', 'fuck', 'shit', 'bitch', 'cunt', 'dick', 'porn', 'nazi', 'hitler'];
+
+function normalizeForFilter(text) {
+  return text.toLowerCase()
+    .replaceAll('ı', 'i').replaceAll('ğ', 'g').replaceAll('ü', 'u')
+    .replaceAll('ş', 's').replaceAll('ö', 'o').replaceAll('ç', 'c')
+    .replace(/[^a-z0-9]/g, ' ');
+}
+
+function containsBanned(text) {
+  const words = normalizeForFilter(text).split(/\s+/);
+  return BANNED.some((bad) => words.includes(bad));
+}
+
+async function readWall(env, key, fallback) {
+  const raw = await env.RATE_LIMIT?.get(key);
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
+async function handleWallGet(env) {
+  const stitches = await readWall(env, 'wall:stitches', []);
+  const notes = await readWall(env, 'wall:notes', []);
+  return jsonResponse({ stitches, notes });
+}
+
+// Body: { color, points: [[x,y], ...] } — coords normalized 0..1 so the wall
+// renders at any canvas size.
+async function handleWallStitch(request, env) {
+  const body = await request.json();
+  if (!WALL_COLORS.includes(body.color)) return jsonResponse({ error: 'Invalid color' }, 400);
+  const points = body.points;
+  if (!Array.isArray(points) || points.length < 2 || points.length > 80) {
+    return jsonResponse({ error: 'Invalid stitch' }, 400);
+  }
+  for (const p of points) {
+    if (!Array.isArray(p) || p.length !== 2 ||
+        typeof p[0] !== 'number' || typeof p[1] !== 'number' ||
+        p[0] < 0 || p[0] > 1 || p[1] < 0 || p[1] > 1) {
+      return jsonResponse({ error: 'Invalid stitch' }, 400);
+    }
+  }
+  const stitches = await readWall(env, 'wall:stitches', []);
+  stitches.push({
+    color: body.color,
+    points: points.map(([x, y]) => [Number(x.toFixed(4)), Number(y.toFixed(4))]),
+    at: Date.now(),
+  });
+  while (stitches.length > WALL_STITCH_CAP) stitches.shift();
+  await env.RATE_LIMIT?.put('wall:stitches', JSON.stringify(stitches));
+  return jsonResponse({ ok: true, count: stitches.length });
+}
+
+// Body: { color, text } — anonymous, 80 chars, filtered.
+async function handleWallNote(request, env) {
+  const body = await request.json();
+  if (!WALL_COLORS.includes(body.color)) return jsonResponse({ error: 'Invalid color' }, 400);
+  const text = typeof body.text === 'string' ? body.text.trim() : '';
+  if (!text || text.length > 80) return jsonResponse({ error: 'Note must be 1-80 characters' }, 400);
+  if (containsBanned(text)) return jsonResponse({ error: 'Keep it kind' }, 400);
+  const notes = await readWall(env, 'wall:notes', []);
+  notes.push({ color: body.color, text, at: Date.now() });
+  while (notes.length > WALL_NOTE_CAP) notes.shift();
+  await env.RATE_LIMIT?.put('wall:notes', JSON.stringify(notes));
+  return jsonResponse({ ok: true });
+}
 
 // Garment photo analysis. The app sends a base64 JPEG; we prompt Claude and
 // return the raw Anthropic response so the app parses it exactly as before.
@@ -104,7 +204,7 @@ function jsonResponse(data, status = 200) {
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, x-app-token',
   };
 }
