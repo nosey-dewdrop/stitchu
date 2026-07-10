@@ -1,5 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
+import { fabricAdvice } from './fabrics.js';
+
 const PREVIEW_SCALE = 0.28;
 
 export function pathD(commands, scale) {
@@ -124,4 +126,43 @@ export function renderResult(container, result) {
     ol.appendChild(li);
   }
   container.appendChild(ol);
+
+  appendFabricAdvice(container, p.fabricAdviceKey);
+}
+
+async function appendFabricAdvice(container, garmentKey) {
+  const { suggested, avoid } = await fabricAdvice(garmentKey);
+  if (!suggested.length && !avoid.length) return;
+
+  const title = document.createElement('h2');
+  title.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
+  title.textContent = 'Fabric advice';
+  container.appendChild(title);
+
+  const list = document.createElement('ul');
+  list.className = 'result-meta';
+  list.style.maxWidth = '640px';
+  for (const fabric of suggested) {
+    const li = document.createElement('li');
+    li.style.display = 'block';
+    const name = document.createElement('span');
+    name.textContent = `${fabric.name} — ${fabric.drape}, ${fabric.beginnerDifficulty} to sew. `;
+    const note = document.createElement('span');
+    note.className = 'k';
+    note.textContent = fabric.commonMistakes[0] || '';
+    li.append(name, note);
+    list.appendChild(li);
+  }
+  for (const fabric of avoid) {
+    const li = document.createElement('li');
+    li.style.display = 'block';
+    const name = document.createElement('span');
+    name.textContent = `avoid ${fabric.name} here — `;
+    const note = document.createElement('span');
+    note.className = 'k';
+    note.textContent = `works against this shape (${fabric.drape}).`;
+    li.append(name, note);
+    list.appendChild(li);
+  }
+  container.appendChild(list);
 }
