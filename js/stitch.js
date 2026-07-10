@@ -33,6 +33,28 @@ export function heartStamp(svg, cx, cy, color) {
   return p;
 }
 
+// One cursive loop from `from` to `to` — the "kıvırcık" stitch.
+export function curlSeg(svg, from, to, color) {
+  const dx = to[0] - from[0];
+  const dy = to[1] - from[1];
+  const len = Math.hypot(dx, dy) || 1;
+  const px = -dy / len;
+  const py = dx / len;
+  const h = 13;
+  const cp1x = from[0] + dx * 1.35 + px * h;
+  const cp1y = from[1] + dy * 1.35 + py * h;
+  const cp2x = from[0] - dx * 0.35 + px * h;
+  const cp2y = from[1] - dy * 0.35 + py * h;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', `M ${from[0].toFixed(1)} ${from[1].toFixed(1)} C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)} ${cp2x.toFixed(1)} ${cp2y.toFixed(1)} ${to[0].toFixed(1)} ${to[1].toFixed(1)}`);
+  p.setAttribute('fill', 'none');
+  p.setAttribute('stroke', color);
+  p.setAttribute('stroke-width', '1.8');
+  p.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(p);
+  return p;
+}
+
 function lineSeg(svg, x1, y1, x2, y2, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
   s.setAttribute('x1', x1.toFixed(1));
@@ -62,6 +84,10 @@ export function drawRun(svg, run, w, h) {
     }
     return;
   }
+  if (kind === 'curly') {
+    for (let i = 1; i < pts.length; i++) curlSeg(svg, pts[i - 1], pts[i], run.color);
+    return;
+  }
   for (let i = 1; i < pts.length; i++) {
     const [ax, ay] = pts[i - 1];
     const [bx, by] = pts[i];
@@ -73,7 +99,7 @@ export function drawRun(svg, run, w, h) {
 // Freehand sewing on an svg element. getKind() is read at each drag start so a
 // picker can switch styles live. Calls onStitchRun({kind, points}) with
 // normalized coords when the drag ends.
-const SPACING_BY_KIND = { run: STITCH_SPACING, zigzag: 9, heart: 26 };
+const SPACING_BY_KIND = { run: STITCH_SPACING, zigzag: 9, heart: 26, curly: 16 };
 const ZIG_AMPLITUDE = 5;
 
 export function makeSewable(svg, color, onStitchRun, getKind = () => 'run') {
@@ -104,6 +130,8 @@ export function makeSewable(svg, color, onStitchRun, getKind = () => 'run') {
     let y = py;
     if (kind === 'heart') {
       heartStamp(svg, x, y, color);
+    } else if (kind === 'curly') {
+      curlSeg(svg, last, [px, py], color);
     } else if (kind === 'zigzag') {
       // offset the vertex perpendicular to the drag direction, alternating
       const dir = Math.atan2(py - last[1], px - last[0]);
