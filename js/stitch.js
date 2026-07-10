@@ -1,7 +1,7 @@
 // Shared stitch drawing: discrete, evenly spaced hand stitches — never one
 // long continuous line (brand rule from the approved mock).
-export const STITCH_SPACING = 8;
-export const STITCH_HALF = 3.2;
+export const STITCH_SPACING = 10;
+export const STITCH_HALF = 4.5;
 
 export function stitchSeg(svg, cx, cy, ang, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -10,7 +10,7 @@ export function stitchSeg(svg, cx, cy, ang, color) {
   s.setAttribute('x2', (cx + Math.cos(ang) * STITCH_HALF).toFixed(1));
   s.setAttribute('y2', (cy + Math.sin(ang) * STITCH_HALF).toFixed(1));
   s.setAttribute('stroke', color);
-  s.setAttribute('stroke-width', '2.4');
+  s.setAttribute('stroke-width', '1.6');
   s.setAttribute('stroke-linecap', 'round');
   svg.appendChild(s);
   return s;
@@ -49,7 +49,7 @@ export function curlSeg(svg, from, to, color) {
   p.setAttribute('d', `M ${from[0].toFixed(1)} ${from[1].toFixed(1)} C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)} ${cp2x.toFixed(1)} ${cp2y.toFixed(1)} ${to[0].toFixed(1)} ${to[1].toFixed(1)}`);
   p.setAttribute('fill', 'none');
   p.setAttribute('stroke', color);
-  p.setAttribute('stroke-width', '1.8');
+  p.setAttribute('stroke-width', '1.4');
   p.setAttribute('stroke-linecap', 'round');
   svg.appendChild(p);
   return p;
@@ -71,7 +71,7 @@ function lineSeg(svg, x1, y1, x2, y2, color) {
   s.setAttribute('x2', x2.toFixed(1));
   s.setAttribute('y2', y2.toFixed(1));
   s.setAttribute('stroke', color);
-  s.setAttribute('stroke-width', '2');
+  s.setAttribute('stroke-width', '1.6');
   s.setAttribute('stroke-linecap', 'round');
   svg.appendChild(s);
   return s;

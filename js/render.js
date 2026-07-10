@@ -1,7 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=3';
-import { getLang, t } from './i18n.js?v=3';
+import { fabricAdvice } from './fabrics.js?v=4';
+import { getLang, t } from './i18n.js?v=4';
 
 const PREVIEW_SCALE = 0.28;
 

@@ -2,7 +2,7 @@
 // exactly where your finger drags (freehand, can wobble, can miss). The faint
 // shapes are just targets scattered around the space: a heart up top, a tilted
 // line, an angled S, a zigzag, buttons. Staying on the line is up to you.
-import { makeSewable } from './stitch.js?v=3';
+import { makeSewable } from './stitch.js?v=4';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';
