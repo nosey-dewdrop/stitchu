@@ -4,13 +4,13 @@ const MEASURE_KEY = 'stitchu:measurements';
 const CLOSET_KEY = 'stitchu:closet';
 
 export const MEASUREMENTS = [
-  { key: 'bust', label: 'Bust', help: 'Around the fullest part of your chest, tape parallel to the floor.', min: 60, max: 160 },
-  { key: 'waist', label: 'Waist', help: 'At the narrowest point, tape snug but not tight.', min: 45, max: 140 },
-  { key: 'hip', label: 'Hips', help: 'Around the fullest part of your seat.', min: 60, max: 170 },
-  { key: 'shoulder', label: 'Shoulder width', help: 'Across your back, shoulder bone to shoulder bone.', min: 26, max: 52 },
-  { key: 'backLength', label: 'Back length', help: 'From the bone at the base of your neck down to your waist.', min: 28, max: 55 },
-  { key: 'armLength', label: 'Arm length', help: 'Shoulder bone to wrist, arm slightly bent.', min: 40, max: 75 },
-  { key: 'neck', label: 'Neck', help: 'Around the base of your neck, one finger of ease.', min: 26, max: 55 },
+  { key: 'bust', label: 'Bust', trLabel: 'Göğüs', help: 'Around the fullest part of your chest, tape parallel to the floor.', trHelp: 'Göğsünün en dolgun yerinden, mezura yere paralel.', min: 60, max: 160 },
+  { key: 'waist', label: 'Waist', trLabel: 'Bel', help: 'At the narrowest point, tape snug but not tight.', trHelp: 'En ince noktadan; mezura otursun ama sıkmasın.', min: 45, max: 140 },
+  { key: 'hip', label: 'Hips', trLabel: 'Kalça', help: 'Around the fullest part of your seat.', trHelp: 'Kalçanın en dolgun yerinden.', min: 60, max: 170 },
+  { key: 'shoulder', label: 'Shoulder width', trLabel: 'Omuz genişliği', help: 'Across your back, shoulder bone to shoulder bone.', trHelp: 'Sırtından, bir omuz kemiğinden diğerine.', min: 26, max: 52 },
+  { key: 'backLength', label: 'Back length', trLabel: 'Sırt boyu', help: 'From the bone at the base of your neck down to your waist.', trHelp: 'Ense kökündeki kemikten beline kadar.', min: 28, max: 55 },
+  { key: 'armLength', label: 'Arm length', trLabel: 'Kol boyu', help: 'Shoulder bone to wrist, arm slightly bent.', trHelp: 'Omuz kemiğinden bileğe, kol hafif bükülü.', min: 40, max: 75 },
+  { key: 'neck', label: 'Neck', trLabel: 'Boyun', help: 'Around the base of your neck, one finger of ease.', trHelp: 'Boyun kökünün çevresinden, bir parmak boşlukla.', min: 26, max: 55 },
 ];
 
 export function loadMeasurements() {

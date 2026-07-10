@@ -77,6 +77,22 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
   .choice { padding: 10px 12px; }
 }
 
+/* loading = a seam being sewn: stitches appear left to right */
+.sewing-loader { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+.sewing-loader .seam-track {
+  position: relative; width: 180px; height: 4px; overflow: hidden;
+}
+.sewing-loader .seam-track::before {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, var(--teal) 0 12px, transparent 12px 20px);
+  animation: sew-reveal 1.4s linear infinite;
+}
+@keyframes sew-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.sewing-loader .loader-text { font-size: var(--size-fine); color: var(--gray); }
+
 /* ---- true-scale printing ---- */
 #print-root { display: none; }
 .print-title { font-size: 20px; }

@@ -2,7 +2,11 @@
 // Backend present -> shared wall via Worker KV. Backend absent/unreachable ->
 // honest local-only mode (stitches stay on this device, UI says so).
 import { BACKEND_URL, THREADS } from './config.js';
+import { applyStatic, mountLangToggle, t } from './i18n.js';
 import { drawRun, makeSewable } from './stitch.js';
+
+applyStatic();
+mountLangToggle();
 
 const yourThread = THREADS[Math.floor(Math.random() * THREADS.length)];
 let online = false;
@@ -18,9 +22,7 @@ const statusEl = document.getElementById('wall-status');
 document.getElementById('your-thread-line').setAttribute('stroke', yourThread);
 
 function setCount() {
-  countEl.textContent = stitchCount === 1
-    ? '1 stitch sewn by visitors'
-    : `${stitchCount} stitches sewn by visitors`;
+  countEl.textContent = stitchCount === 1 ? t('wall.count1') : t('wall.count', { n: stitchCount });
 }
 
 function noteRow(note) {
@@ -46,7 +48,7 @@ async function api(path, options) {
 async function load() {
   const { width, height } = wall.getBoundingClientRect();
   if (!BACKEND_URL) {
-    statusEl.textContent = 'the shared wall wakes up at launch — until then your stitches stay on this device';
+    statusEl.textContent = t('wall.localmode');
     return;
   }
   try {
@@ -57,7 +59,7 @@ async function load() {
     online = true;
     setCount();
   } catch {
-    statusEl.textContent = 'the wall is unreachable right now — your stitches stay on this device';
+    statusEl.textContent = t('wall.unreachable');
   }
 }
 
@@ -97,7 +99,7 @@ form.addEventListener('submit', async (e) => {
         body: JSON.stringify({ color: yourThread, text }),
       });
     } catch (err) {
-      statusEl.textContent = err.message === 'Keep it kind' ? 'keep it kind' : 'could not stitch the note, try later';
+      statusEl.textContent = err.message === 'Keep it kind' ? t('wall.keepkind') : t('wall.notefail');
       return;
     }
   }
