@@ -104,8 +104,9 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 - [ ] 32. copy the harness pattern to lingolingo (separate session)
 
 ### Phase W5: iOS on the shared core (after web launch)
+- [x] DESIGN APPROVED (Damla, 2026-07-10): mocks/ios-app.html — 7 screens: welcome (sew-the-heart to start, no sign-up), measurements (draggable tape + haptic tick per cm), create (camera first, centered hand-pick chips), confirm analysis (tap row to fix, details feed fabric advice), pattern (swipeable pieces + reading legend, PDF via share sheet), closet (swipe-delete with undo), describe→design (PREMIUM: voice/text → AI sketch → confirm → pattern). iPhone-shell frames; app UI stays sharp-cornered.
 - [ ] build the C++ engine as a native library for iOS (same code, no WASM); delete the Swift drafting code once parity is proven by the harness
-- [ ] reskin the existing SwiftUI app to the new brand (flat, Helvetica, white/black + teal, sharp corners, anti-generic bans)
+- [ ] reskin the existing SwiftUI app to the approved design above
 - [ ] port web-decided features (tape input, stitch micro-interactions in native gestures)
 - [ ] StoreKit 2 paywall mapped to the same premium entitlements as the web (one premium, both platforms)
 - [ ] App Store ship-check + submission
