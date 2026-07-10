@@ -1,11 +1,11 @@
-// Hero sewing space — a SKILL game, not a fill game. Your stitches sew
-// exactly where your finger drags (freehand, can wobble, can miss). The faint
-// shapes are just targets scattered around the space: a heart up top, a tilted
-// line, an angled S, a zigzag, buttons. Staying on the line is up to you.
-import { makeSewable } from './stitch.js?v=7';
+// Hero sewing space, full bleed. Guides live in non-overlapping CELLS so
+// shapes never collide at any screen size, and your sewn stitches survive
+// resizes (stored normalized, redrawn on rebuild).
+import { drawRun, makeSewable } from './stitch.js?v=8';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';
+const sewnRuns = []; // normalized {kind, points, color}
 
 function faintPath(d) {
   const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -54,90 +54,96 @@ function faintButton(cx, cy, r) {
   }
 }
 
+// ---- shape painters: each draws CENTERED in its cell, sized to fit it ----
+const SHAPES = {
+  heart(cx, cy, s) {
+    faintPath(pathFrom(sample((t) => heartPoint(t, cx, cy, s / 30), 240)));
+  },
+  scurve(cx, cy, s) {
+    const ang = -0.5;
+    const c = Math.cos(ang);
+    const n = Math.sin(ang);
+    faintPath(pathFrom(sample((t) => {
+      const lx = (t - 0.5) * s;
+      const ly = Math.sin(t * Math.PI * 2) * s * 0.3;
+      return [cx + lx * c - ly * n, cy + lx * n + ly * c];
+    }, 160)));
+  },
+  curl(cx, cy, s) {
+    faintPath(pathFrom(sample((t) => {
+      const a = t * Math.PI * 3.2;
+      const r = (s / 2) * (1 - t * 0.5);
+      return [cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.85];
+    }, 200)));
+  },
+  zigzag(cx, cy, s) {
+    const pts = [];
+    for (let i = 0; i <= 6; i++) {
+      pts.push([cx - s / 2 + (s / 6) * i, cy + (i % 2 ? -s * 0.18 : s * 0.12)]);
+    }
+    faintPath(pathFrom(pts));
+  },
+  line(cx, cy, s) {
+    faintPath(pathFrom([[cx - s / 2, cy + s * 0.18], [cx + s / 2, cy - s * 0.18]]));
+  },
+  button(cx, cy, s) {
+    faintButton(cx, cy, Math.min(13, s / 3));
+  },
+};
+
+// place shapes into a grid of non-overlapping cells inside a box
+function placeInBox(x0, y0, x1, y1, cols, rows, names) {
+  const cw = (x1 - x0) / cols;
+  const ch = (y1 - y0) / rows;
+  let i = 0;
+  for (const name of names) {
+    if (name) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const cx = x0 + cw * (col + 0.5);
+      const cy = y0 + ch * (row + 0.5);
+      SHAPES[name](cx, cy, Math.min(cw, ch) * 0.62);
+    }
+    i += 1;
+  }
+}
+
 function build() {
   hero.innerHTML = '';
   const w = hero.clientWidth;
   const h = hero.clientHeight;
   if (w < 120) return;
-  // Full-bleed canvas. The text lives inside the centered 1060px column, left
-  // ~660px of its upper part — everything else gets the pattern chain:
-  // left screen margin, right of the headline out to the screen edge, and the
-  // band below. Shapes sit close, tiny connector seams stitch them together.
+
   const wl = Math.max((w - 1060) / 2, 0) + 24; // wrap left edge
-  const textRight = wl + 680;                   // free space starts here
-  const rx = (textRight + Math.min(w, textRight + 620)) / 2; // right flow line
+  const textRight = wl + 690;                   // text column ends here
+  const textBottom = h * 0.66;                  // copy block ends here
 
-  const connect = (a, b) => faintPath(pathFrom([a, b]));
-
-  // -- left screen margin (only when there is one) --
-  if (wl > 70) {
-    faintPath(pathFrom(sample((t) => {
-      const a = t * Math.PI * 3;
-      const r = wl * 0.3 * (1 - t * 0.5);
-      return [wl * 0.5 + Math.cos(a) * r, h * 0.18 + Math.sin(a) * r * 0.9];
-    }, 200)));
-    connect([wl * 0.5, h * 0.28], [wl * 0.45, h * 0.38]);
-    faintPath(pathFrom([[wl * 0.25, h * 0.52], [wl * 0.7, h * 0.4]]));
-    faintButton(wl * 0.5, h * 0.62, 11);
+  // left screen margin: one narrow column of cells
+  if (wl > 80) {
+    placeInBox(8, h * 0.06, wl - 8, textBottom, 1, 3, ['curl', 'line', 'button']);
   }
 
-  // -- right of the headline, top to bottom --
-  faintButton(textRight + 30, h * 0.09, 11);
-  connect([textRight + 42, h * 0.12], [rx - w * 0.045, h * 0.16]);
-
-  faintPath(pathFrom(sample((t) => heartPoint(t, rx, h * 0.25, h * 0.0075), 240)));
-  connect([rx, h * 0.37], [rx - w * 0.02, h * 0.42]);
-
-  const sAng = -0.55;
-  const cosA = Math.cos(sAng);
-  const sinA = Math.sin(sAng);
-  faintPath(pathFrom(sample((t) => {
-    const lx = (t - 0.5) * w * 0.11;
-    const ly = Math.sin(t * Math.PI * 2) * h * 0.08;
-    return [rx - w * 0.04 + lx * cosA - ly * sinA, h * 0.5 + lx * sinA + ly * cosA];
-  }, 160)));
-  connect([rx + 10, h * 0.55], [rx + w * 0.06, h * 0.56]);
-
-  faintPath(pathFrom(sample((t) => {
-    const a = t * Math.PI * 3.2;
-    const r = h * 0.09 * (1 - t * 0.5);
-    return [rx + w * 0.1 + Math.cos(a) * r, h * 0.58 + Math.sin(a) * r * 0.8];
-  }, 200)));
-
-  // right screen edge ornament
-  if (w - textRight > 500) {
-    faintButton(w - 40, h * 0.32, 10);
-    faintPath(pathFrom([[w - 70, h * 0.42], [w - 20, h * 0.52]]));
+  // right of the headline out to the screen edge
+  const rw = w - textRight - 16;
+  if (rw > 420) {
+    placeInBox(textRight + 8, h * 0.04, w - 8, textBottom, 2, 2,
+      ['heart', 'curl', 'scurve', 'button']);
+  } else if (rw > 160) {
+    placeInBox(textRight + 8, h * 0.04, w - 8, textBottom, 1, 2, ['heart', 'scurve']);
   }
 
-  faintButton(textRight + 50, h * 0.58, 10);
-  connect([textRight + 45, h * 0.62], [w * 0.6, h * 0.7]);
+  // the band under everything, full width
+  placeInBox(16, textBottom + 6, w - 16, h - 8, 5, 1,
+    ['line', 'heart', 'zigzag', 'button', 'curl']);
 
-  // -- lower band, full width, flowing right to left --
-  const zig = [];
-  for (let i = 0; i <= 6; i++) {
-    zig.push([w * 0.46 + i * w * 0.03, h * 0.75 + (i % 2 ? -h * 0.06 : h * 0.01)]);
-  }
-  faintPath(pathFrom(zig));
-  connect([w * 0.46, h * 0.75], [w * 0.42, h * 0.78]);
-
-  faintPath(pathFrom(sample((t) => heartPoint(t, w * 0.36, h * 0.81, h * 0.0035), 240)));
-  connect([w * 0.31, h * 0.81], [w * 0.27, h * 0.83]);
-
-  faintPath(pathFrom([[w * 0.08, h * 0.93], [w * 0.26, h * 0.83]]));
-
-  faintButton(w * 0.15, h * 0.8, 11);
-  faintButton(w * 0.57, h * 0.88, 10);
-  faintButton(w * 0.8, h * 0.85, 11);
-  faintPath(pathFrom(sample((t) => {
-    const a = t * Math.PI * 3;
-    const r = h * 0.07 * (1 - t * 0.5);
-    return [w * 0.92 + Math.cos(a) * r, h * 0.86 + Math.sin(a) * r * 0.8];
-  }, 200)));
+  // re-sew everything the visitor already stitched (normalized -> px)
+  for (const run of sewnRuns) drawRun(hero, run, w, h);
 }
 
 build();
 window.addEventListener('resize', build);
 
-// freehand: teal stitches land exactly where you drag
-makeSewable(hero, '#3EB8AF', null, () => 'run');
+// freehand dotted-pen stitching; runs are kept so resize never eats them
+makeSewable(hero, '#3EB8AF', (run) => {
+  sewnRuns.push({ kind: run.kind, points: run.points, color: '#3EB8AF' });
+}, () => 'run');
