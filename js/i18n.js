@@ -90,11 +90,13 @@ export function setLang(lang) {
   try { localStorage.setItem(LANG_KEY, lang); } catch { /* private mode */ }
 }
 
-// t('key', {n: 3}) — falls back to English, then to the key itself.
+// t('key', {n: 3}) — TR falls back to English; EN with no entry returns the
+// key so applyStatic leaves the original English markup untouched (never
+// leak Turkish into English mode).
 export function t(key, vars) {
   const entry = STRINGS[key] || {};
   let s = getLang() === 'tr' ? (entry.tr ?? entry.en) : entry.en;
-  if (s === undefined) s = entry.tr ?? key;
+  if (s === undefined) s = key;
   if (vars) for (const [k, v] of Object.entries(vars)) s = s.replaceAll(`{${k}}`, String(v));
   return s;
 }
