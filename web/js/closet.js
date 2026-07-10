@@ -1,4 +1,5 @@
 // Closet: saved patterns — open inline, delete, or start a new one.
+import { applyStatic, mountLangToggle, t } from './i18n.js';
 import { printPattern } from './print.js';
 import { renderResult } from './render.js';
 import { loadCloset, deleteFromCloset } from './store.js';
@@ -14,23 +15,23 @@ function el(tag, className, text) {
 
 function when(ts) {
   const days = Math.floor((Date.now() - ts) / 86400000);
-  if (days === 0) return 'today';
-  if (days === 1) return 'yesterday';
-  if (days < 7) return `${days}d ago`;
+  if (days === 0) return t('closet.today');
+  if (days === 1) return t('closet.yesterday');
+  if (days < 7) return t('closet.daysago', { n: days });
   return new Date(ts).toLocaleDateString();
 }
 
 function render() {
   screen.textContent = '';
-  screen.appendChild(el('h1', 'screen-title', 'Closet'));
+  screen.appendChild(el('h1', 'screen-title', t('closet.title')));
   const closet = loadCloset();
 
   if (!closet.length) {
     const empty = el('div', 'empty-state');
-    empty.appendChild(el('h2', '', 'No patterns yet.'));
-    empty.appendChild(el('p', '', 'Draft your first one — it takes a photo or three taps, and it stays on this device.'));
+    empty.appendChild(el('h2', '', t('closet.empty.title')));
+    empty.appendChild(el('p', '', t('closet.empty.body')));
     const nav = el('div', 'step-nav');
-    const go = el('a', 'btn primary', 'Start a pattern');
+    const go = el('a', 'btn primary', t('closet.start'));
     go.href = 'create.html';
     nav.appendChild(go);
     empty.appendChild(nav);
@@ -38,7 +39,7 @@ function render() {
     return;
   }
 
-  screen.appendChild(el('p', 'screen-sub', `${closet.length} saved · stored in this browser only`));
+  screen.appendChild(el('p', 'screen-sub', t('closet.sub', { n: closet.length })));
   const list = el('div', 'closet-list');
   const detail = el('div');
   detail.style.marginTop = '40px';
@@ -56,7 +57,7 @@ function render() {
       renderResult(body, entry.result);
       if (!entry.result.issues.length) {
         const nav = el('div', 'step-nav');
-        const print = el('button', 'btn primary', 'Print — true scale A4');
+        const print = el('button', 'btn primary', t('create.print'));
         print.addEventListener('click', () => printPattern(entry.result));
         nav.appendChild(print);
         detail.appendChild(nav);
@@ -65,7 +66,7 @@ function render() {
     });
     row.appendChild(open);
     row.appendChild(el('span', 'when', when(entry.savedAt)));
-    const del = el('button', '', 'delete');
+    const del = el('button', '', t('closet.delete'));
     del.addEventListener('click', () => {
       deleteFromCloset(entry.id);
       render();
@@ -77,4 +78,6 @@ function render() {
   screen.appendChild(detail);
 }
 
+applyStatic();
+mountLangToggle();
 render();

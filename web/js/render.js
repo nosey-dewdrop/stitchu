@@ -1,6 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
 import { fabricAdvice } from './fabrics.js';
+import { getLang, t } from './i18n.js';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -83,7 +84,7 @@ export function renderResult(container, result) {
     const box = document.createElement('div');
     box.className = 'issues-box';
     const head = document.createElement('p');
-    head.textContent = 'This draft did not pass the safety checks, so it cannot be printed. This should not happen — the combination has been logged in your browser console.';
+    head.textContent = t('result.blocked');
     box.appendChild(head);
     console.error('stitchu validation issues:', result.issues);
     container.appendChild(box);
@@ -93,9 +94,9 @@ export function renderResult(container, result) {
   const meta = document.createElement('ul');
   meta.className = 'result-meta';
   const rows = [
-    ['pieces', `${p.pieces.length} · numbered in sewing order`],
-    ['fabric', `${p.fabricMeters140} m at 140 cm width`],
-    ['seam allowance', `${p.pieces[0].seamAllowance / 10} cm included in the guide, not drawn`],
+    [t('result.pieces'), t('result.piecesv', { n: p.pieces.length })],
+    [t('result.fabric'), t('result.fabricv', { n: p.fabricMeters140 })],
+    [t('result.sa'), t('result.sav', { n: p.pieces[0].seamAllowance / 10 })],
   ];
   for (const [k, v] of rows) {
     const li = document.createElement('li');
@@ -116,8 +117,14 @@ export function renderResult(container, result) {
 
   const guideTitle = document.createElement('h2');
   guideTitle.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
-  guideTitle.textContent = 'Sewing guide';
+  guideTitle.textContent = t('result.guide');
   container.appendChild(guideTitle);
+  if (getLang() === 'tr') {
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:13px;color:#8a8a8a;margin-top:6px';
+    note.textContent = t('result.guidetrnote');
+    container.appendChild(note);
+  }
   const ol = document.createElement('ol');
   ol.className = 'guide-list';
   for (const step of p.guideSteps) {
@@ -136,7 +143,7 @@ async function appendFabricAdvice(container, garmentKey) {
 
   const title = document.createElement('h2');
   title.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
-  title.textContent = 'Fabric advice';
+  title.textContent = t('result.fabricadvice');
   container.appendChild(title);
 
   const list = document.createElement('ul');
