@@ -1,7 +1,7 @@
 // Shared stitch drawing: discrete, evenly spaced hand stitches — never one
 // long continuous line (brand rule from the approved mock).
-export const STITCH_SPACING = 11;
-export const STITCH_HALF = 4;
+export const STITCH_SPACING = 8;
+export const STITCH_HALF = 3.2;
 
 export function stitchSeg(svg, cx, cy, ang, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -19,7 +19,7 @@ export function stitchSeg(svg, cx, cy, ang, color) {
 // A tiny stitched heart stamped at (cx, cy).
 export function heartStamp(svg, cx, cy, color) {
   const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  const s = 1.1; // scale
+  const s = 0.8; // scale
   p.setAttribute('d',
     `M ${cx} ${cy + 3 * s} C ${cx} ${cy + 0.5 * s} ${cx - 4 * s} ${cy - 1.5 * s} ${cx - 6 * s} ${cy + 1.5 * s} ` +
     `C ${cx - 7.5 * s} ${cy + 4.5 * s} ${cx - 3 * s} ${cy + 8 * s} ${cx} ${cy + 11 * s} ` +
@@ -27,8 +27,8 @@ export function heartStamp(svg, cx, cy, color) {
     `C ${cx + 4 * s} ${cy - 1.5 * s} ${cx} ${cy + 0.5 * s} ${cx} ${cy + 3 * s} Z`);
   p.setAttribute('fill', 'none');
   p.setAttribute('stroke', color);
-  p.setAttribute('stroke-width', '1.8');
-  p.setAttribute('stroke-dasharray', '3 2');
+  p.setAttribute('stroke-width', '1.6');
+  p.setAttribute('stroke-dasharray', '2.2 1.6');
   svg.appendChild(p);
   return p;
 }
@@ -55,6 +55,15 @@ export function curlSeg(svg, from, to, color) {
   return p;
 }
 
+// Zigzag leg shortened at both ends so vertices read as needle holes.
+function zigLeg(svg, a, b, color) {
+  const t0 = 0.14;
+  const t1 = 0.86;
+  return lineSeg(svg,
+    a[0] + (b[0] - a[0]) * t0, a[1] + (b[1] - a[1]) * t0,
+    a[0] + (b[0] - a[0]) * t1, a[1] + (b[1] - a[1]) * t1, color);
+}
+
 function lineSeg(svg, x1, y1, x2, y2, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
   s.setAttribute('x1', x1.toFixed(1));
@@ -79,9 +88,7 @@ export function drawRun(svg, run, w, h) {
     return;
   }
   if (kind === 'zigzag') {
-    for (let i = 1; i < pts.length; i++) {
-      lineSeg(svg, pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1], run.color);
-    }
+    for (let i = 1; i < pts.length; i++) zigLeg(svg, pts[i - 1], pts[i], run.color);
     return;
   }
   if (kind === 'curly') {
@@ -99,7 +106,7 @@ export function drawRun(svg, run, w, h) {
 // Freehand sewing on an svg element. getKind() is read at each drag start so a
 // picker can switch styles live. Calls onStitchRun({kind, points}) with
 // normalized coords when the drag ends.
-const SPACING_BY_KIND = { run: STITCH_SPACING, zigzag: 9, heart: 26, curly: 16 };
+const SPACING_BY_KIND = { run: STITCH_SPACING, zigzag: 9, heart: 21, curly: 16 };
 const ZIG_AMPLITUDE = 5;
 
 export function makeSewable(svg, color, onStitchRun, getKind = () => 'run') {
@@ -138,7 +145,7 @@ export function makeSewable(svg, color, onStitchRun, getKind = () => 'run') {
       x = px + Math.cos(dir + Math.PI / 2) * ZIG_AMPLITUDE * zigFlip;
       y = py + Math.sin(dir + Math.PI / 2) * ZIG_AMPLITUDE * zigFlip;
       zigFlip *= -1;
-      lineSeg(svg, last[0], last[1], x, y, color);
+      zigLeg(svg, last, [x, y], color);
     } else {
       const ang = Math.atan2(py - last[1], px - last[0]) + (Math.random() - 0.5) * 0.18;
       stitchSeg(svg, x, y, ang, color);
