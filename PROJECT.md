@@ -67,7 +67,7 @@ Architecture: pattern engine in C++ compiled to WebAssembly (Emscripten), runnin
 ### Phase W3: money + launch
 - [ ] merchant of record paywall — Paddle or Lemon Squeezy (both work from Turkey; pick after comparing fees) — gating via the existing Worker
 - [ ] privacy policy + KVKK/GDPR consent (photo leaves device only for vision analysis) — ships in the same session the upload flow does
-- [ ] hosting decision: Cloudflare Pages (pairs with the Worker) vs GitHub Pages
+- [x] hosting decision (2026-07-10): Cloudflare Pages — one provider with the Worker + KV (vision API, stitch wall, paywall checks), zero monthly cost, no Supabase/Vercel needed
 - [ ] ship-check before public launch
 
 ### Phase W4: AI eval pipeline (Python, learning project)
