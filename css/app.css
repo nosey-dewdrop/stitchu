@@ -32,9 +32,10 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .privacy-note { margin-top: 14px; font-size: var(--size-fine); color: var(--gray); }
 
 /* spec pick */
-.spec-groups { display: grid; gap: 26px; max-width: 720px; }
-.spec-group .group-label { font-size: var(--size-fine); color: var(--gray); margin-bottom: 8px; }
-.choice-row { display: flex; flex-wrap: wrap; }
+.spec-groups { display: grid; gap: 26px; max-width: 720px; margin-left: auto; margin-right: auto; }
+.spec-group { max-width: 720px; margin-left: auto; margin-right: auto; width: 100%; }
+.spec-group .group-label { font-size: var(--size-fine); color: var(--gray); margin-bottom: 8px; text-align: center; }
+.choice-row { display: flex; flex-wrap: wrap; justify-content: center; }
 .choice {
   padding: 10px 16px; border: var(--hairline); border-radius: var(--radius);
   background: var(--paper); font: inherit; font-size: var(--size-small); cursor: pointer;
