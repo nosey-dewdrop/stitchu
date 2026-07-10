@@ -1,7 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=10';
-import { getLang, t } from './i18n.js?v=10';
+import { fabricAdvice } from './fabrics.js?v=11';
+import { getLang, t } from './i18n.js?v=11';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -114,6 +114,11 @@ export function renderResult(container, result) {
   grid.className = 'pieces-grid';
   for (const piece of p.pieces) grid.appendChild(pieceCard(piece));
   container.appendChild(grid);
+
+  const legend = document.createElement('p');
+  legend.style.cssText = 'font-size:13px;color:#8a8a8a;margin-top:14px;max-width:640px';
+  legend.textContent = t('result.legend');
+  container.appendChild(legend);
 
   const guideTitle = document.createElement('h2');
   guideTitle.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';

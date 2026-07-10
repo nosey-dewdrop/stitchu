@@ -68,6 +68,7 @@ export const STRINGS = {
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Rehber adımları şimdilik İngilizce — Türkçesi geliyor.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
+  'result.legend': { en: 'How to read the pieces: solid line = cutting/seam line · dashed teal = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: düz çizgi = kesim/dikiş hattı · kesikli turkuaz = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
   'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. This should not happen — the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. Bunun olmaması gerekirdi — kombinasyon tarayıcı konsoluna kaydedildi.' },
 
   // closet
