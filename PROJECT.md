@@ -31,6 +31,7 @@ Web rework direction (Damla, 2026-07-10, reference: terminal-teal screenshot): f
 - Style: flat, simple, no decoration; sharp corners (0-3px radius house rule)
 - BUT dynamic, and unmistakably about stitching: interactive stitch moments — e.g. the user drags to sew a running stitch (landing hero, loading states, section dividers as seam lines, dashed stitch motifs). Flat visual language, alive in motion.
 - ANTI-GENERIC bans (Damla, hard rules): no single colored word inside black text; no bold weights / loud saturated tones; no pill badges, no gradient hero, no emoji bullets, no element with a single colored edge (left-accent-border cards etc. — a border is either full or not there), none of the usual AI-site tells. Layout uses space WELL: not cramped, not airy-everywhere — deliberate density, generous only where it earns it.
+- NO human figure drawings anywhere (Damla, 2026-07-10, after 3 rejected croquis attempts) — measurement visuals use sewing objects instead (measuring tape with a stitch marker)
 - Old iOS brand (baby blue + Quicksand + doodles, 101-asset checklist) retired with the iOS app
 
 ## Product
