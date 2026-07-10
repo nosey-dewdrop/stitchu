@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>stitchu engine — wasm smoke test</title>
+<style>
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+         color: #111; background: #fff; margin: 40px; }
+  h1 { font-weight: 400; font-size: 22px; }
+  .meta { font-size: 14px; color: #8a8a8a; margin: 6px 0 24px; }
+  .pieces { display: flex; flex-wrap: wrap; gap: 24px; }
+  .piece { border: 1px solid #111; border-radius: 2px; padding: 12px; }
+  .piece .label { font-size: 13px; margin-bottom: 8px; }
+  .piece .cut { color: #8a8a8a; }
+</style>
+</head>
+<body>
+<h1>stitchu engine — wasm smoke test</h1>
+<div class="meta" id="meta">loading engine…</div>
+<div class="pieces" id="pieces"></div>
+
+<script src="dist/stitchu-engine.js"></script>
+<script>
+createStitchuEngine().then(engine => {
+  const t0 = performance.now();
+  const result = JSON.parse(engine.draftJSON(
+    'dress', 'vNeck', 'balloon', 'short', 'aLine', 'midi', 'hip',
+    88, 70, 94, 37, 40.5, 58, 35)); // EU38
+  const ms = (performance.now() - t0).toFixed(1);
+
+  const p = result.pattern;
+  document.getElementById('meta').textContent =
+    p.garment + ' · EU38 · ' + p.pieces.length + ' pieces · ' + p.fabricMeters140 +
+    ' m fabric · drafted in ' + ms + ' ms in this browser · validation issues: ' + result.issues.length;
+
+  const SCALE = 0.28; // mm -> px for preview
+  function d(commands) {
+    return commands.map(c => {
+      switch (c.type) {
+        case 'move': return `M ${c.x * SCALE} ${c.y * SCALE}`;
+        case 'line': return `L ${c.x * SCALE} ${c.y * SCALE}`;
+        case 'curve': return `C ${c.cp1x * SCALE} ${c.cp1y * SCALE} ${c.cp2x * SCALE} ${c.cp2y * SCALE} ${c.x * SCALE} ${c.y * SCALE}`;
+        case 'close': return 'Z';
+      }
+    }).join(' ');
+  }
+
+  for (const piece of p.pieces) {
+    const xs = [], ys = [];
+    for (const c of piece.commands) {
+      if (c.x !== undefined) { xs.push(c.x); ys.push(c.y); }
+      if (c.cp1x !== undefined) { xs.push(c.cp1x, c.cp2x); ys.push(c.cp1y, c.cp2y); }
+    }
+    const minX = Math.min(...xs) * SCALE - 10, minY = Math.min(...ys) * SCALE - 10;
+    const w = (Math.max(...xs) - Math.min(...xs)) * SCALE + 20;
+    const h = (Math.max(...ys) - Math.min(...ys)) * SCALE + 20;
+
+    const div = document.createElement('div');
+    div.className = 'piece';
+    div.innerHTML = `<div class="label">${piece.name} <span class="cut">· ${piece.cutInstruction}</span></div>` +
+      `<svg width="${w}" height="${h}" viewBox="${minX} ${minY} ${w} ${h}">` +
+      `<path d="${d(piece.commands)}" fill="none" stroke="#111" stroke-width="1.6"/>` +
+      (piece.markings.length ? `<path d="${d(piece.markings)}" fill="none" stroke="#3EB8AF" stroke-width="1.4" stroke-dasharray="6 4"/>` : '') +
+      `</svg>`;
+    document.getElementById('pieces').appendChild(div);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+// C++ side of the golden dump: identical CSV format to engine-check/dump.swift.
+// engine/golden-diff.py compares the two outputs within 0.1 mm.
+#include <cstdio>
+#include <string>
+#include <vector>
+
+#include "../src/garment.hpp"
+
+using namespace stitchu;
+
+namespace {
+
+void dumpCommands(const char* kind, const std::vector<PathCommand>& commands, const std::string& prefix) {
+    for (size_t i = 0; i < commands.size(); ++i) {
+        const auto& cmd = commands[i];
+        switch (cmd.type) {
+            case CmdType::Move:
+                std::printf("%s,%s,%zu,move,%.4f,%.4f\n", prefix.c_str(), kind, i, cmd.to.x, cmd.to.y);
+                break;
+            case CmdType::Line:
+                std::printf("%s,%s,%zu,line,%.4f,%.4f\n", prefix.c_str(), kind, i, cmd.to.x, cmd.to.y);
+                break;
+            case CmdType::Curve:
+                std::printf("%s,%s,%zu,curve,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n", prefix.c_str(), kind, i,
+                            cmd.to.x, cmd.to.y, cmd.cp1.x, cmd.cp1.y, cmd.cp2.x, cmd.cp2.y);
+                break;
+            case CmdType::Close:
+                std::printf("%s,%s,%zu,close\n", prefix.c_str(), kind, i);
+                break;
+        }
+    }
+}
+
+} // namespace
+
+int main() {
+    const std::vector<std::pair<std::string, BodyMeasurementsSnapshot>> bodies = {
+        {"EU38", {88, 70, 94, 37, 40.5, 58, 35}},
+        {"pear", {96, 70, 116, 37, 41, 58, 36}},
+        {"bigNeckSmallShoulder", {100, 84, 104, 30, 40, 58, 50}},
+    };
+
+    const std::vector<SkirtStyle> skirtStyles = {
+        SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered, SkirtStyle::HalfCircle};
+    const std::vector<SkirtLength> skirtLengths = {SkirtLength::Mini, SkirtLength::Midi, SkirtLength::Maxi};
+    const std::vector<Neckline> necklines = {
+        Neckline::Crew, Neckline::Scoop, Neckline::VNeck, Neckline::Square, Neckline::Boat};
+    const std::vector<TopLength> topLengths = {TopLength::Cropped, TopLength::Hip, TopLength::Tunic};
+    const std::vector<std::pair<SleeveStyle, SleeveLength>> sleeveCombos = {
+        {SleeveStyle::None, SleeveLength::Short},
+        {SleeveStyle::Straight, SleeveLength::Short},
+        {SleeveStyle::Straight, SleeveLength::Long},
+        {SleeveStyle::Balloon, SleeveLength::Short},
+        {SleeveStyle::Balloon, SleeveLength::Elbow},
+    };
+
+    std::vector<std::pair<std::string, GarmentSpec>> specs;
+    for (auto style : skirtStyles) {
+        for (auto length : skirtLengths) {
+            GarmentSpec spec;
+            spec.garment = GarmentType::Skirt;
+            spec.skirtStyle = style;
+            spec.skirtLength = length;
+            specs.push_back({std::string("skirt/") + raw(style) + "/" + raw(length), spec});
+        }
+    }
+    for (auto neckline : necklines) {
+        for (auto style : skirtStyles) {
+            for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                GarmentSpec spec;
+                spec.garment = GarmentType::Dress;
+                spec.neckline = neckline;
+                spec.skirtStyle = style;
+                spec.skirtLength = SkirtLength::Midi;
+                spec.sleeveStyle = sleeve;
+                spec.sleeveLength = sleeveLength;
+                specs.push_back({std::string("dress/") + raw(neckline) + "/" + raw(style) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+            }
+        }
+        for (auto topLength : topLengths) {
+            for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                GarmentSpec spec;
+                spec.garment = GarmentType::Top;
+                spec.neckline = neckline;
+                spec.topLength = topLength;
+                spec.sleeveStyle = sleeve;
+                spec.sleeveLength = sleeveLength;
+                specs.push_back({std::string("top/") + raw(neckline) + "/" + raw(topLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+            }
+        }
+    }
+
+    for (const auto& [bodyName, m] : bodies) {
+        for (const auto& [label, spec] : specs) {
+            const DraftedPattern draft = GarmentDrafter::draft(spec, m);
+            std::printf("%s|%s|fabric,%.4f\n", bodyName.c_str(), label.c_str(), draft.fabricMeters140);
+            for (size_t p = 0; p < draft.pieces.size(); ++p) {
+                const auto& piece = draft.pieces[p];
+                const std::string prefix = bodyName + "|" + label + "|piece" + std::to_string(p) + ":" + piece.name;
+                dumpCommands("outline", piece.commands, prefix);
+                dumpCommands("marking", piece.markings, prefix);
+            }
+        }
+    }
+    return 0;
+}
