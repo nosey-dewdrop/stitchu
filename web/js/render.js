@@ -2,7 +2,7 @@
 // the print pipeline's job, not this preview's).
 const PREVIEW_SCALE = 0.28;
 
-function pathD(commands, scale) {
+export function pathD(commands, scale) {
   return commands.map((c) => {
     switch (c.type) {
       case 'move': return `M ${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
@@ -16,7 +16,7 @@ function pathD(commands, scale) {
   }).join(' ');
 }
 
-function bounds(piece) {
+export function bounds(piece) {
   const xs = [];
   const ys = [];
   for (const c of [...piece.commands, ...piece.markings]) {

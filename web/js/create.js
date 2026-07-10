@@ -2,6 +2,7 @@
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
 import { draft } from './engine.js';
+import { printPattern } from './print.js';
 import { renderResult } from './render.js';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
@@ -204,12 +205,15 @@ function showResult(result) {
   again.addEventListener('click', showSpec);
   nav.appendChild(again);
   if (!result.issues.length) {
-    const save = el('button', 'btn primary', 'Save to closet');
+    const save = el('button', 'btn', 'Save to closet');
     save.addEventListener('click', () => {
       saveToCloset({ spec: { ...spec }, result });
       window.location.href = 'closet.html';
     });
     nav.appendChild(save);
+    const print = el('button', 'btn primary', 'Print — true scale A4');
+    print.addEventListener('click', () => printPattern(result));
+    nav.appendChild(print);
   }
   screen.appendChild(nav);
 }
