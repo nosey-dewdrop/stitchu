@@ -1,0 +1,52 @@
+/* stitchu design tokens — the single source for the visual language.
+   Spec: PROJECT.md "Brand". Flat, Helvetica, white/black + teal, sharp
+   corners, no bold weights anywhere. */
+:root {
+  /* color */
+  --ink: #111111;
+  --paper: #ffffff;
+  --teal: #3EB8AF;
+  --gray: #8a8a8a;
+  --faint: #d9d9d9;
+
+  /* thread palette (muted, never loud) — mirrors the Worker's WALL_COLORS */
+  --thread-teal: #3EB8AF;
+  --thread-rose: #C4767B;
+  --thread-ochre: #B8963E;
+  --thread-olive: #7A8450;
+  --thread-navy: #3E5C76;
+  --thread-plum: #7E5A75;
+
+  /* type — Helvetica only, weight 400 only (bold is banned) */
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --size-hero: 46px;
+  --size-h2: 26px;
+  --size-body: 16px;
+  --size-small: 14px;
+  --size-fine: 13px;
+
+  /* shape — sharp corners: 2px is the house maximum */
+  --radius: 2px;
+  --hairline: 1px solid var(--ink);
+  --seam: 1px dashed var(--ink);
+
+  /* space */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 72px;
+  --measure: 1060px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: var(--size-body);
+  line-height: 1.5;
+}
+::selection { background: var(--teal); color: var(--paper); }
+b, strong { font-weight: 400; } /* bold is banned; neutralize accidents */
+.wrap { max-width: var(--measure); margin: 0 auto; padding: 0 var(--space-3); }

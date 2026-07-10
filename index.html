@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu — photograph a garment, sew it yourself</title>
+<meta name="description" content="Photograph a garment and get its sewing pattern drafted to your own measurements. True-scale printing, fabric advice, step-by-step sewing guide.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap header-in">
+    <div class="wordmark">
+      stitchu
+      <svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="7 5"/></svg>
+    </div>
+    <nav>
+      <a href="create.html">create</a>
+      <a href="closet.html">closet</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Photograph a garment. Get its sewing pattern, drafted to your body.</h1>
+    <p class="sub">True-scale A4 printing, fabric advice and a step-by-step sewing guide. Your measurements never leave this browser.</p>
+    <a class="cta" href="create.html">Start a pattern</a>
+    <p class="platforms">web · iOS app · Android coming soon</p>
+  </div>
+</section>
+
+<section class="sew-strip">
+  <div class="wrap">
+    <div class="sew-hint">drag along the line to sew your first stitch</div>
+    <svg id="hero-sew"></svg>
+  </div>
+</section>
+
+<div class="wrap"><hr class="seam"></div>
+
+<section class="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="num">01</span>
+        <h3>Upload a photo</h3>
+        <p>Any skirt, dress or top. Stitchu reads the neckline, sleeves and silhouette, and you confirm what it saw.</p>
+        <svg class="thread" width="70" height="4" viewBox="0 0 70 4"><line x1="0" y1="2" x2="70" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="7 5"/></svg>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h3>Drafted to your measurements</h3>
+        <p>The pattern is calculated from your own seven measurements, right here in the browser. Nothing is uploaded.</p>
+        <svg class="thread" width="70" height="4" viewBox="0 0 70 4"><line x1="0" y1="2" x2="70" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="7 5"/></svg>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h3>Print and sew</h3>
+        <p>Tiled A4 sheets with a calibration square, fabric meters, and a sewing order that starts at the right seam.</p>
+        <svg class="thread" width="70" height="4" viewBox="0 0 70 4"><line x1="0" y1="2" x2="70" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="7 5"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><hr class="seam"></div>
+
+<section class="wall">
+  <div class="wrap">
+    <h2>The stitch wall</h2>
+    <p class="lede">Every visitor sews a few stitches and they stay. Drag inside the frame — this thread color is yours.</p>
+    <div class="wall-frame">
+      <svg id="wall-canvas"></svg>
+      <div class="wall-meta">
+        <span id="stitch-count">0 stitches sewn by visitors</span>
+        <span class="your-thread">your thread
+          <svg width="34" height="4" viewBox="0 0 34 4"><line id="your-thread-line" x1="0" y1="2" x2="34" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
+        </span>
+      </div>
+    </div>
+    <p id="wall-status"></p>
+  </div>
+</section>
+
+<section class="guestbook">
+  <div class="wrap">
+    <div class="notes" id="notes"></div>
+    <form class="note-form" id="note-form">
+      <input id="note-input" maxlength="80" placeholder="Leave a note under the wall (80 chars)">
+      <button type="submit">Stitch it</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>stitchu — a pocket sewing teacher</span>
+    <span><a href="privacy.html">privacy</a> · damlahelloworld</span>
+  </div>
+</footer>
+
+<script type="module" src="js/landing.js"></script>
+<script type="module" src="js/wall.js"></script>
+</body>
+</html>
