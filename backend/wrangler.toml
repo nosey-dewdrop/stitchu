@@ -2,6 +2,10 @@ name = "stitchu-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
+[vars]
+# Public photo analysis for the web app (throttled hard in worker.js).
+PUBLIC_ANALYZE = "on"
+
 # Secrets (set via wrangler secret put — never commit these):
 #   CLAUDE_API_KEY   your Anthropic sk-ant- key
 #   APP_TOKEN        any long random string, also placed in the app's Secrets.swift
@@ -11,4 +15,4 @@ compatibility_date = "2024-01-01"
 # just with no rate limiting.)
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "2927eef779f343eea0fea0bd348fde9e"

@@ -10,3 +10,4 @@ build/
 App/Stitchu/Secrets.swift
 backend/.wrangler/
 backend/node_modules/
+App/Stitchu/.app-token-note.txt
