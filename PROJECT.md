@@ -4,6 +4,7 @@ Sewing pattern app. Upload a photo of any garment (or design one) and get a cust
 
 Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 2026-07-10: platform decision — Stitchu moves to the WEB (see Web Rework below). The printed-PDF workflow lives on desktop/printer, not on a phone. iOS code stays in the repo as reference; the web app is the product.
+2026-07-10 (later, Damla): Stitchu is ALL THREE platforms — web + iOS + Android. One C++ engine core feeds every platform: WASM for web, native static lib for iOS, NDK for Android. Ship order: web first (fastest to revenue, everything decided), then iOS reskin on the C++ core (Phase W5), then Android (Phase W6). Landing says "iOS app · Android coming soon".
 
 ## Status
 Current phase: Core (app builds and runs the photo → skirt pattern path end-to-end)
@@ -101,6 +102,18 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 - [ ] 30. regression mode: two prompts or two models in, score diff out — answers "opus → sonnet?" with numbers instead of vibes
 - [ ] 31. act on it: pick the cheapest model that holds accuracy, update the Worker
 - [ ] 32. copy the harness pattern to lingolingo (separate session)
+
+### Phase W5: iOS on the shared core (after web launch)
+- [ ] build the C++ engine as a native library for iOS (same code, no WASM); delete the Swift drafting code once parity is proven by the harness
+- [ ] reskin the existing SwiftUI app to the new brand (flat, Helvetica, white/black + teal, sharp corners, anti-generic bans)
+- [ ] port web-decided features (tape input, stitch micro-interactions in native gestures)
+- [ ] StoreKit 2 paywall mapped to the same premium entitlements as the web (one premium, both platforms)
+- [ ] App Store ship-check + submission
+
+### Phase W6: Android (coming soon becomes real)
+- [ ] C++ engine via NDK, Kotlin UI on the same design spec
+- [ ] Play Billing mapped to the same entitlements
+- [ ] Play Store ship-check + launch
 
 ### Feature candidates (Damla picks which make the cut)
 - projector mode: full-screen true-scale pattern with calibration grid, projecting straight onto fabric (big sewing-community trend; kills A4 taping)
