@@ -25,11 +25,12 @@ Last session: 2026-07-07 — block validation (the launch blocker): built Patter
 - Doodle assets are v1 (drawn by Claude); Damla may add 2 butterflies for personalization
 
 ## Brand
-- Name: Stitchu
-- Palette: baby blue — bg #F5FAFF, accent #6FB3DE, light #DCEEFA, text #2C3E50 (pastel pink/sage/lavender as secondary)
-- Font: Quicksand (400/500/600/700)
-- Style: whimsical, hand-drawn doodles, dashed/stitched borders, sketchbook feel
-- Assets: 101 items in checklist.md, Damla draws them (placeholders until then)
+Web rework direction (Damla, 2026-07-10, reference: terminal-teal screenshot): flat and plain.
+- Palette: white and black dominant, teal accent (~#3EB8AF, matched from reference; final hex locked with Damla in W2). Other colors allowed as free accents.
+- Font: Helvetica
+- Style: flat, simple, no decoration; sharp corners (0-3px radius house rule)
+- BUT dynamic, and unmistakably about stitching: interactive stitch moments — e.g. the user drags to sew a running stitch (landing hero, loading states, section dividers as seam lines, dashed stitch motifs). Flat visual language, alive in motion.
+- Old iOS brand (baby blue + Quicksand + doodles, 101-asset checklist) retired with the iOS app
 
 ## Product
 - 3 creation paths: photo upload → AI analysis → pattern (free), Stardoll-style modular designer (free), describe → AI visual → pattern (premium)
