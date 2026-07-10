@@ -2,7 +2,7 @@
 // exactly where your finger drags (freehand, can wobble, can miss). The faint
 // shapes are just targets scattered around the space: a heart up top, a tilted
 // line, an angled S, a zigzag, buttons. Staying on the line is up to you.
-import { makeSewable } from './stitch.js?v=5';
+import { makeSewable } from './stitch.js?v=6';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';
@@ -59,47 +59,59 @@ function build() {
   const w = hero.clientWidth;
   const h = hero.clientHeight;
   if (w < 120) return;
-  // The text block owns roughly the left 58% of the upper 55%; patterns
-  // scatter through the rest: the void right of the headline and the band
-  // below it. Positions are fractions of the free zones, never over text.
-  const rightX = w * 0.62;             // start of the right void
-  const lowY = h * 0.62;               // start of the lower band
+  // One flowing chain of patterns through the free space (right void + lower
+  // band), shapes almost touching, tiny connector seams stitching them
+  // together. Text zone (left ~58% of upper half) stays clear.
 
-  // heart, big, floating in the right void beside the headline
-  faintPath(pathFrom(sample((t) => heartPoint(t, w * 0.8, h * 0.26, h * 0.0085), 240)));
+  const connect = (a, b) => faintPath(pathFrom([a, b]));
 
-  // an S at an angle, right void lower part
+  // -- right void, top to bottom --
+  faintButton(w * 0.655, h * 0.09, 11);
+  connect([w * 0.67, h * 0.12], [w * 0.72, h * 0.16]);
+
+  const heartC = [w * 0.8, h * 0.25];
+  faintPath(pathFrom(sample((t) => heartPoint(t, heartC[0], heartC[1], h * 0.0075), 240)));
+  connect([w * 0.8, h * 0.37], [w * 0.78, h * 0.42]);
+
+  // S angled under the heart
   const sAng = -0.55;
   const cosA = Math.cos(sAng);
   const sinA = Math.sin(sAng);
   faintPath(pathFrom(sample((t) => {
-    const lx = (t - 0.5) * w * 0.16;
-    const ly = Math.sin(t * Math.PI * 2) * h * 0.1;
-    return [rightX + w * 0.08 + lx * cosA - ly * sinA, h * 0.52 + lx * sinA + ly * cosA];
+    const lx = (t - 0.5) * w * 0.13;
+    const ly = Math.sin(t * Math.PI * 2) * h * 0.08;
+    return [w * 0.74 + lx * cosA - ly * sinA, h * 0.5 + lx * sinA + ly * cosA];
   }, 160)));
+  connect([w * 0.79, h * 0.55], [w * 0.85, h * 0.55]);
 
-  // a plain tilted line, lower-left band
-  faintPath(pathFrom([[w * 0.06, h * 0.92], [w * 0.24, lowY + h * 0.06]]));
-
-  // zigzag drifting across the lower middle
-  const zig = [];
-  for (let i = 0; i <= 6; i++) {
-    zig.push([w * 0.34 + i * w * 0.04, h * 0.88 + (i % 2 ? -h * 0.08 : h * 0.01)]);
-  }
-  faintPath(pathFrom(zig));
-
-  // a loose curl in the lower right
+  // curl to its right
   faintPath(pathFrom(sample((t) => {
     const a = t * Math.PI * 3.2;
-    const r = h * 0.16 * (1 - t * 0.55);
-    return [w * 0.83 + Math.cos(a) * r, h * 0.8 + Math.sin(a) * r * 0.7];
+    const r = h * 0.09 * (1 - t * 0.5);
+    return [w * 0.9 + Math.cos(a) * r, h * 0.57 + Math.sin(a) * r * 0.8];
   }, 200)));
 
-  // buttons in the quiet corners of the free zones
-  faintButton(w * 0.66, h * 0.12, 12);
-  faintButton(w * 0.96, h * 0.45, 10);
-  faintButton(w * 0.16, lowY + h * 0.05, 12);
-  faintButton(w * 0.55, h * 0.72, 10);
+  faintButton(w * 0.68, h * 0.58, 10);
+  connect([w * 0.67, h * 0.62], [w * 0.63, h * 0.68]);
+
+  // -- lower band, flowing right to left --
+  const zig = [];
+  for (let i = 0; i <= 6; i++) {
+    zig.push([w * 0.44 + i * w * 0.032, h * 0.74 + (i % 2 ? -h * 0.06 : h * 0.01)]);
+  }
+  faintPath(pathFrom(zig));
+  connect([w * 0.44, h * 0.74], [w * 0.4, h * 0.76]);
+
+  // small heart in the band
+  faintPath(pathFrom(sample((t) => heartPoint(t, w * 0.34, h * 0.8, h * 0.0035), 240)));
+  connect([w * 0.29, h * 0.8], [w * 0.25, h * 0.82]);
+
+  // tilted line running out to the left
+  faintPath(pathFrom([[w * 0.08, h * 0.92], [w * 0.24, h * 0.82]]));
+
+  faintButton(w * 0.13, h * 0.8, 11);
+  faintButton(w * 0.55, h * 0.87, 10);
+  faintButton(w * 0.93, h * 0.74, 10);
 }
 
 build();
