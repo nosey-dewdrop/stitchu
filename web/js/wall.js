@@ -61,7 +61,18 @@ async function load() {
   }
 }
 
-makeSewable(wall, yourThread, async (points) => {
+// stitch style picker (running / zigzag / hearts)
+let currentKind = 'run';
+for (const button of document.querySelectorAll('.kind')) {
+  button.addEventListener('click', () => {
+    currentKind = button.dataset.kind;
+    for (const b of document.querySelectorAll('.kind')) {
+      b.setAttribute('aria-pressed', String(b === button));
+    }
+  });
+}
+
+makeSewable(wall, yourThread, async (run) => {
   stitchCount += 1;
   setCount();
   if (!online) return;
@@ -69,10 +80,10 @@ makeSewable(wall, yourThread, async (points) => {
     await api('/api/wall/stitch', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ color: yourThread, points }),
+      body: JSON.stringify({ color: yourThread, kind: run.kind, points: run.points }),
     });
   } catch { /* stitch stays local; next visitor load just won't include it */ }
-});
+}, () => currentKind);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();

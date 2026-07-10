@@ -61,6 +61,18 @@ nav a:hover { border-bottom: 1px dashed var(--teal); }
 }
 .your-thread { display: flex; align-items: center; gap: 8px; color: var(--ink); }
 .your-thread svg { display: block; }
+.stitch-kinds { display: flex; }
+.kind {
+  display: flex; align-items: center;
+  padding: 5px 9px;
+  border: var(--hairline);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.kind + .kind { margin-left: -1px; }
+.kind[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 #wall-status { font-size: var(--size-fine); color: var(--gray); margin-top: 8px; min-height: 1.4em; }
 
 .guestbook { padding: 8px 0 80px; }

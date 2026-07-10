@@ -136,11 +136,15 @@ async function handleWallGet(env) {
   return jsonResponse({ stitches, notes });
 }
 
-// Body: { color, points: [[x,y], ...] } — coords normalized 0..1 so the wall
-// renders at any canvas size.
+const WALL_KINDS = ['run', 'zigzag', 'heart'];
+
+// Body: { color, kind, points: [[x,y], ...] } — coords normalized 0..1 so the
+// wall renders at any canvas size.
 async function handleWallStitch(request, env) {
   const body = await request.json();
   if (!WALL_COLORS.includes(body.color)) return jsonResponse({ error: 'Invalid color' }, 400);
+  const kind = body.kind || 'run';
+  if (!WALL_KINDS.includes(kind)) return jsonResponse({ error: 'Invalid stitch kind' }, 400);
   const points = body.points;
   if (!Array.isArray(points) || points.length < 2 || points.length > 80) {
     return jsonResponse({ error: 'Invalid stitch' }, 400);
@@ -155,6 +159,7 @@ async function handleWallStitch(request, env) {
   const stitches = await readWall(env, 'wall:stitches', []);
   stitches.push({
     color: body.color,
+    kind,
     points: points.map(([x, y]) => [Number(x.toFixed(4)), Number(y.toFixed(4))]),
     at: Date.now(),
   });
