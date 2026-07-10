@@ -1,4 +1,5 @@
 // Closet: saved patterns — open inline, delete, or start a new one.
+import { printPattern } from './print.js';
 import { renderResult } from './render.js';
 import { loadCloset, deleteFromCloset } from './store.js';
 
@@ -53,6 +54,13 @@ function render() {
       const body = el('div');
       detail.appendChild(body);
       renderResult(body, entry.result);
+      if (!entry.result.issues.length) {
+        const nav = el('div', 'step-nav');
+        const print = el('button', 'btn primary', 'Print — true scale A4');
+        print.addEventListener('click', () => printPattern(entry.result));
+        nav.appendChild(print);
+        detail.appendChild(nav);
+      }
       detail.scrollIntoView({ behavior: 'smooth' });
     });
     row.appendChild(open);
