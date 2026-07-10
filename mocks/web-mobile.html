@@ -154,28 +154,30 @@
         </div>
         <h1>Your waist</h1>
         <p class="hint" style="margin-top:6px">Measure at the narrowest point, tape snug but not tight.</p>
-        <svg class="silhouette" width="122" height="305" viewBox="0 0 160 400">
-          <g fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round">
+        <svg class="silhouette" width="136" height="300" viewBox="0 0 200 440">
+          <g fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <!-- head + neck -->
-            <ellipse cx="80" cy="26" rx="13" ry="20"/>
-            <path d="M74 44 C 74 50 75 53 73 56"/>
-            <path d="M86 44 C 86 50 85 53 87 56"/>
-            <!-- torso + legs, right side -->
-            <path d="M87 56 C 96 60 104 64 107 71 C 103 80 100 86 99 94 C 103 100 104 112 101 124 C 98 138 96 146 95 154 C 100 170 104 188 103 208 C 101 250 96 275 93 300 C 95 320 93 350 88 378 L 87 384 L 96 390"/>
-            <!-- torso + legs, left side (mirror) -->
-            <path d="M73 56 C 64 60 56 64 53 71 C 57 80 60 86 61 94 C 57 100 56 112 59 124 C 62 138 64 146 65 154 C 60 170 56 188 57 208 C 59 250 64 275 67 300 C 65 320 67 350 72 378 L 73 384 L 64 390"/>
-            <!-- inner legs -->
-            <path d="M80 222 C 79 250 78 280 78 305 C 78 335 79 360 80 384"/>
-            <path d="M80 222 C 81 250 82 280 82 305 C 82 335 81 360 80 384" opacity="0"/>
-            <!-- arms -->
-            <path d="M104 76 C 110 86 112 105 110 128 C 108 150 106 168 105 186 L 104 194 C 103 199 100 198 101 190 C 101 182 100 172 100 160 C 100 140 100 118 99 96"/>
-            <path d="M56 76 C 50 86 48 105 50 128 C 52 150 54 168 55 186 L 56 194 C 57 199 60 198 59 190 C 59 182 60 172 60 160 C 60 140 60 118 61 96"/>
+            <ellipse cx="100" cy="28" rx="15" ry="22"/>
+            <path d="M94 49 C 94 55 95 59 93 62"/>
+            <path d="M106 49 C 106 55 105 59 107 62"/>
+            <!-- right half: shoulder, side, hip, outer leg, foot -->
+            <path d="M107 62 C 118 64 128 69 134 77 C 131 87 128 96 127 106 C 128 118 126 130 123 140 C 121 146 120 150 120 154 C 125 168 130 184 130 202 C 130 224 127 244 122 268 C 119 284 118 294 118 304 C 120 320 120 348 116 380 L 115 396 C 119 399 124 402 127 405 L 111 405"/>
+            <!-- right inner leg -->
+            <path d="M100 228 C 103 248 105 272 106 304 C 107 334 109 364 111 396 L 111 405"/>
+            <!-- left half (mirror) -->
+            <path d="M93 62 C 82 64 72 69 66 77 C 69 87 72 96 73 106 C 72 118 74 130 77 140 C 79 146 80 150 80 154 C 75 168 70 184 70 202 C 70 224 73 244 78 268 C 81 284 82 294 82 304 C 80 320 80 348 84 380 L 85 396 C 81 399 76 402 73 405 L 89 405"/>
+            <!-- left inner leg -->
+            <path d="M100 228 C 97 248 95 272 94 304 C 93 334 91 364 89 396 L 89 405"/>
+            <!-- right arm: shoulder around hand to armpit, one stroke -->
+            <path d="M134 77 C 141 91 143 121 141 155 C 139 181 138 201 137 218 C 137 232 134 241 131 239 C 128 237 128 227 129 216 C 130 196 130 176 131 158 C 132 140 130 121 127 107"/>
+            <!-- left arm (mirror) -->
+            <path d="M66 77 C 59 91 57 121 59 155 C 61 181 62 201 63 218 C 63 232 66 241 69 239 C 72 237 72 227 71 216 C 70 196 70 176 69 158 C 68 140 70 121 73 107"/>
           </g>
           <!-- other measurements, faint -->
-          <line x1="58" y1="110" x2="102" y2="110" stroke="#d9d9d9" stroke-width="1.4" stroke-dasharray="5 5"/>
-          <line x1="54" y1="205" x2="106" y2="205" stroke="#d9d9d9" stroke-width="1.4" stroke-dasharray="5 5"/>
+          <line x1="69" y1="110" x2="131" y2="110" stroke="#d9d9d9" stroke-width="1.6" stroke-dasharray="6 6"/>
+          <line x1="66" y1="200" x2="134" y2="200" stroke="#d9d9d9" stroke-width="1.6" stroke-dasharray="6 6"/>
           <!-- the one being measured: waist -->
-          <line x1="58" y1="151" x2="102" y2="151" stroke="#3EB8AF" stroke-width="2.6" stroke-dasharray="10 7" stroke-linecap="round"/>
+          <line x1="76" y1="151" x2="124" y2="151" stroke="#3EB8AF" stroke-width="3" stroke-dasharray="11 8" stroke-linecap="round"/>
         </svg>
         <div class="measure-row">
           <input value="68" inputmode="decimal">
