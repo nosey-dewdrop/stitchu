@@ -154,19 +154,29 @@
         </div>
         <h1>Your waist</h1>
         <p class="hint" style="margin-top:6px">Measure at the narrowest point, tape snug but not tight.</p>
-        <svg class="silhouette" width="150" height="210" viewBox="0 0 200 280">
-          <g fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <!-- torso form only: reads like a dress form / bodice block -->
-            <path d="M86 20 C 92 27 108 27 114 20"/>
-            <path d="M114 20 C 122 24 132 28 140 34 C 138 50 133 64 128 78 C 131 84 132 92 131 102 C 128 122 122 138 120 150 C 122 164 128 182 131 200 C 133 216 132 228 130 242 L 128 260"/>
-            <path d="M86 20 C 78 24 68 28 60 34 C 62 50 67 64 72 78 C 69 84 68 92 69 102 C 72 122 78 138 80 150 C 78 164 72 182 69 200 C 67 216 68 228 70 242 L 72 260"/>
-            <path d="M72 260 L 128 260"/>
+        <svg class="silhouette" width="100%" height="120" viewBox="0 0 340 120" preserveAspectRatio="xMidYMid meet">
+          <!-- measuring tape, marker on the current value -->
+          <rect x="10" y="35" width="304" height="46" fill="none" stroke="#111" stroke-width="1.8"/>
+          <rect x="314" y="31" width="10" height="54" fill="none" stroke="#111" stroke-width="1.8"/>
+          <g stroke="#111" stroke-width="1.4">
+            <line x1="42" y1="35" x2="42" y2="53"/>
+            <line x1="74" y1="35" x2="74" y2="61"/>
+            <line x1="106" y1="35" x2="106" y2="53"/>
+            <line x1="138" y1="35" x2="138" y2="61"/>
+            <line x1="170" y1="35" x2="170" y2="53"/>
+            <line x1="202" y1="35" x2="202" y2="61"/>
+            <line x1="234" y1="35" x2="234" y2="53"/>
+            <line x1="266" y1="35" x2="266" y2="61"/>
+            <line x1="298" y1="35" x2="298" y2="53"/>
           </g>
-          <!-- other measurements, faint -->
-          <line x1="64" y1="95" x2="136" y2="95" stroke="#d9d9d9" stroke-width="1.6" stroke-dasharray="6 6"/>
-          <line x1="62" y1="210" x2="138" y2="210" stroke="#d9d9d9" stroke-width="1.6" stroke-dasharray="6 6"/>
-          <!-- the one being measured: waist -->
-          <line x1="72" y1="151" x2="128" y2="151" stroke="#3EB8AF" stroke-width="3" stroke-dasharray="11 8" stroke-linecap="round"/>
+          <g font-family="Helvetica" font-size="12" fill="#8a8a8a" text-anchor="middle">
+            <text x="74" y="75">64</text>
+            <text x="138" y="75">66</text>
+            <text x="202" y="75">68</text>
+            <text x="266" y="75">70</text>
+          </g>
+          <!-- teal stitch marker at the current value -->
+          <line x1="202" y1="18" x2="202" y2="98" stroke="#3EB8AF" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round"/>
         </svg>
         <div class="measure-row">
           <input value="68" inputmode="decimal">
