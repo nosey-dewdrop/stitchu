@@ -62,6 +62,7 @@ Architecture: pattern engine in C++ compiled to WebAssembly (Emscripten), runnin
 - [ ] client-side tiled A4 PDF with 3 cm calibration square
 - [ ] sewing guide + fabric advice content ported from iOS
 - [ ] local persistence (saved patterns in IndexedDB/localStorage)
+- [ ] STITCH WALL (Damla, confirmed 2026-07-10): communal embroidery on the landing — every visitor drags to sew real stitches, each visitor gets their own thread color, stitches persist for everyone (Worker + KV, just path coordinates). Beneath it a guestbook seam: short notes accumulate (community vibe). Guardrails built-in, not warned about: length cap, rate limit per IP, TR/EN profanity filter in the Worker, anonymous by default (no accounts, no PII — KVKK-clean)
 
 ### Phase W3: money + launch
 - [ ] merchant of record paywall — Paddle or Lemon Squeezy (both work from Turkey; pick after comparing fees) — gating via the existing Worker
