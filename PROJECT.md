@@ -8,7 +8,8 @@ Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 
 ## Status
 Current phase: Core (app builds and runs the photo → skirt pattern path end-to-end)
-Last session: 2026-07-07 — block validation (the launch blocker): built PatternValidator (geometric invariants) + engine-check harness (2805 drafts, EU 34-52 + tall/petite/pear/apple/edge bodies, all garment/neckline/sleeve/skirt combos, ALL PASS), fixed 8 real engine bugs it caught (side seam balance, bust ease loss, waist suppression, sleeve cap convergence, half-circle doubling, dress waist mismatch, missing CB seam for dress zipper, v-neck fold-back), wired runtime validation so a broken pattern can never reach the PDF.
+Last session: 2026-07-10 — THE BIG DAY: web rework decided AND shipped live in one day. Theme locked (flat/Helvetica/teal + anti-generic bans + no human figures), C++ engine ported (2805 drafts pass, 0.0001mm golden diff vs Swift), WASM built, real landing + create + closet + privacy + EN/TR live on GitHub Pages, Worker deployed with vision key (photo->pattern VERIFIED live), shared stitch wall live, packed A4 print pipeline, iOS design approved (7 screens). Damla's validation idea: sew MINIATURE garments first (scaled-down patterns = cheap fabric test before full muslins) — added to roadmap 24.
+Previous session: 2026-07-07 — block validation (the launch blocker): built PatternValidator (geometric invariants) + engine-check harness (2805 drafts, EU 34-52 + tall/petite/pear/apple/edge bodies, all garment/neckline/sleeve/skirt combos, ALL PASS), fixed 8 real engine bugs it caught (side seam balance, bust ease loss, waist suppression, sleeve cap convergence, half-circle doubling, dress waist mismatch, missing CB seam for dress zipper, v-neck fold-back), wired runtime validation so a broken pattern can never reach the PDF.
 
 ### What works today
 - Onboarding: 7 measurements with body silhouette highlights, validation, back navigation
@@ -89,7 +90,7 @@ Design spec locked in Brand above (flat, Helvetica, white/black + teal, sharp co
 - [ ] 21. free/premium line (proposal, Damla decides): free = full flow, 1 saved pattern, watermarked PDF; premium = unlimited, clean PDF, projector mode, fabric layout plan
 - [ ] 22. merchant of record: compare Paddle vs Lemon Squeezy (fees, TR payout), pick, integrate checkout; premium token validated by the Worker (KV)
 - [ ] 23. privacy policy + KVKK/GDPR consent (photo leaves the device only for vision; stitch wall anonymous) — ships with the upload flow, never after
-- [ ] 24. THE REAL TEST: physical sew validation — draft 2-3 patterns (skirt, top, dress), sew muslins against a commercial-pattern equivalent; the promise is fit and only fabric proves it; findings feed back into engine constants
+- [ ] 24. THE REAL TEST: physical sew validation — Damla's plan: start with MINIATURE garments (print at reduced scale, sew doll-size versions — cheap fabric, fast, catches assembly errors early), then 2-3 full muslins (skirt, top, dress) against a commercial-pattern equivalent; the promise is fit and only fabric proves it; findings feed back into engine constants. NOTE for minis: a simple scale % on the print pipeline is enough for geometry, but seam allowance and zipper lengths do NOT scale linearly — print mini at 30-50% and treat it as an assembly test, not a fit test
 - [ ] 25. Worker deploy (Damla: wrangler steps in backend/DEPLOY.md) + custom domain decision
 - [x] hosting decision (2026-07-10): Cloudflare Pages — one provider with the Worker + KV, zero monthly cost, no Supabase/Vercel needed
 - [ ] 26. full ship-check (Five Doors included) → blockers to zero → launch
