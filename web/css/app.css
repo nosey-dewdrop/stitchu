@@ -36,6 +36,10 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .spec-group { max-width: 720px; margin-left: auto; margin-right: auto; width: 100%; }
 .spec-group .group-label { font-size: var(--size-fine); color: var(--gray); margin-bottom: 8px; text-align: center; }
 .choice-row { display: flex; flex-wrap: wrap; justify-content: center; }
+/* the whole spec screen shares one centered axis */
+.spec-screen h1.screen-title, .spec-screen .screen-sub { text-align: center; }
+.spec-screen .step-nav { max-width: 360px; margin-left: auto; margin-right: auto; }
+.spec-screen .sewing-loader { justify-content: center; }
 .choice {
   padding: 10px 16px; border: var(--hairline); border-radius: var(--radius);
   background: var(--paper); font: inherit; font-size: var(--size-small); cursor: pointer;

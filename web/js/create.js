@@ -79,6 +79,7 @@ function tapeSVG(value, min, max) {
 }
 
 function showMeasurement(index) {
+  screen.className = 'wrap';
   const m = MEASUREMENTS[index];
   const tr = getLang() === 'tr';
   const mLabel = tr ? m.trLabel : m.label;
@@ -147,6 +148,7 @@ function showMeasurement(index) {
 
 function showSpec() {
   screen.textContent = '';
+  screen.className = 'wrap spec-screen';
   screen.appendChild(el('h1', 'screen-title', t('create.spec.title')));
   const sub = el('p', 'screen-sub', t('create.spec.sub'));
   const edit = el('a', '', t('create.spec.edit'));
@@ -248,6 +250,7 @@ function showSpec() {
 
 function showResult(result) {
   screen.textContent = '';
+  screen.className = 'wrap';
   const head = el('div', 'result-head');
   head.appendChild(el('h1', 'screen-title', t('create.result.title', { garment: result.pattern.garment.charAt(0).toUpperCase() + result.pattern.garment.slice(1) })));
   screen.appendChild(head);
