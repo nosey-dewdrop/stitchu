@@ -1,7 +1,7 @@
-// Hero: ONE interactive piece in the space beside the headline — a big heart
-// outlined in faint stitch marks. Landing a stitch ON the line is the game:
-// drag close to the outline and that stitch sews in teal; stray drags sew
-// nothing.
+// Hero: one interactive composition in the space beside the headline — a big
+// stitched heart in the middle, an S-curve and a zigzag winding around it,
+// sew-on buttons in the corners. Landing a stitch ON a line is the game:
+// drag close to a guide and that stitch sews in teal; stray drags sew nothing.
 const hero = document.getElementById('hero-sew');
 const TEAL = '#3EB8AF';
 const FAINT = '#d9d9d9';
@@ -31,30 +31,13 @@ function heartPoint(t, cx, cy, scale) {
   return [cx + x * scale, cy - y * scale];
 }
 
-function build() {
-  hero.innerHTML = '';
-  slots = [];
-  filled = 0;
-  done = false;
-  const w = hero.clientWidth;
-  const h = hero.clientHeight;
-  if (w < 60) return;
-  const cx = w / 2;
-  const cy = h / 2 - 6;
-  const scale = Math.min((h / 2 - 16) / 17, (w / 2 - 10) / 18);
-
-  const dense = [];
-  const N = 720;
-  for (let i = 0; i <= N; i++) dense.push(heartPoint(i / N, cx, cy, scale));
-
-  const STITCH = 13;
-  const GAP = 8;
+function stitchTrail(dense, stitchLen = 13, gapLen = 8) {
   let acc = 0;
   let start = dense[0];
   let sewing = true;
   for (let i = 1; i < dense.length; i++) {
     acc += Math.hypot(dense[i][0] - dense[i - 1][0], dense[i][1] - dense[i - 1][1]);
-    if (acc >= (sewing ? STITCH : GAP)) {
+    if (acc >= (sewing ? stitchLen : gapLen)) {
       if (sewing) {
         const [a, b] = [start, dense[i]];
         seg(a[0], a[1], b[0], b[1], FAINT, 1.2);
@@ -69,6 +52,97 @@ function build() {
       sewing = !sewing;
     }
   }
+}
+
+function sample(fn, n) {
+  const points = [];
+  for (let i = 0; i <= n; i++) points.push(fn(i / n));
+  return points;
+}
+
+// a sew-on button: faint circle + 4 holes; tracing it sews the cross threads
+function button(cx, cy, r) {
+  const circle = (color, width) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', cx);
+    c.setAttribute('cy', cy);
+    c.setAttribute('r', r);
+    c.setAttribute('fill', 'none');
+    c.setAttribute('stroke', color);
+    c.setAttribute('stroke-width', width);
+    hero.appendChild(c);
+  };
+  const hole = (hx, hy, color) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', hx);
+    c.setAttribute('cy', hy);
+    c.setAttribute('r', 1.5);
+    c.setAttribute('fill', color);
+    hero.appendChild(c);
+  };
+  const d = r * 0.38;
+  circle(FAINT, 1.2);
+  hole(cx - d, cy - d, FAINT); hole(cx + d, cy - d, FAINT);
+  hole(cx - d, cy + d, FAINT); hole(cx + d, cy + d, FAINT);
+  slots.push({
+    x: cx,
+    y: cy,
+    draw: () => {
+      circle(TEAL, 2.2);
+      seg(cx - d, cy - d, cx + d, cy + d, TEAL, 2);
+      seg(cx + d, cy - d, cx - d, cy + d, TEAL, 2);
+      hole(cx - d, cy - d, TEAL); hole(cx + d, cy - d, TEAL);
+      hole(cx - d, cy + d, TEAL); hole(cx + d, cy + d, TEAL);
+    },
+  });
+}
+
+function build() {
+  hero.innerHTML = '';
+  slots = [];
+  filled = 0;
+  done = false;
+  const w = hero.clientWidth;
+  const h = hero.clientHeight;
+  if (w < 60) return;
+  const cx = w / 2;
+  const cy = h / 2 + 6;
+  const scale = Math.min((h / 2 - 34) / 17, (w / 2 - 34) / 18);
+
+  // center: the heart
+  stitchTrail(sample((t) => heartPoint(t, cx, cy, scale), 720));
+
+  // an S-curve sweeping along the upper-left of the heart
+  stitchTrail(sample((t) => {
+    const a = Math.PI * 0.55 + t * Math.PI * 0.85;
+    const r = scale * (21.5 + Math.sin(t * Math.PI * 2) * 3.2);
+    return [cx + Math.cos(a) * r, cy - 4 * scale - Math.sin(a) * r * 0.72];
+  }, 240), 11, 7);
+
+  // a zigzag arcing under the right side of the heart
+  const zig = [];
+  const steps = 7;
+  for (let i = 0; i <= steps; i++) {
+    const a = -Math.PI * 0.18 + (i / steps) * Math.PI * 0.5;
+    const r = scale * (20 + (i % 2 ? 3.4 : -1.2));
+    zig.push([cx + Math.cos(a) * r, cy + 2 * scale + Math.sin(a) * r * 0.8]);
+  }
+  const fine = [];
+  for (let i = 1; i < zig.length; i++) {
+    for (let k = 0; k <= 12; k++) {
+      const t = k / 12;
+      fine.push([
+        zig[i - 1][0] + (zig[i][0] - zig[i - 1][0]) * t,
+        zig[i - 1][1] + (zig[i][1] - zig[i - 1][1]) * t,
+      ]);
+    }
+  }
+  stitchTrail(fine, 10, 6);
+
+  // buttons in the quiet corners
+  const br = Math.max(9, scale * 1.6);
+  button(cx - scale * 15, cy + scale * 12, br);
+  button(cx + scale * 16, cy - scale * 13, br * 0.85);
 }
 
 function celebrate() {
