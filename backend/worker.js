@@ -136,7 +136,7 @@ async function handleWallGet(env) {
   return jsonResponse({ stitches, notes });
 }
 
-const WALL_KINDS = ['run', 'zigzag', 'heart'];
+const WALL_KINDS = ['run', 'zigzag', 'heart', 'curly'];
 
 // Body: { color, kind, points: [[x,y], ...] } — coords normalized 0..1 so the
 // wall renders at any canvas size.

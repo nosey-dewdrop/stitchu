@@ -65,10 +65,10 @@ async function load() {
 
 // stitch style picker (running / zigzag / hearts)
 let currentKind = 'run';
-for (const button of document.querySelectorAll('.kind')) {
+for (const button of document.querySelectorAll('.wall-meta .kind')) {
   button.addEventListener('click', () => {
     currentKind = button.dataset.kind;
-    for (const b of document.querySelectorAll('.kind')) {
+    for (const b of document.querySelectorAll('.wall-meta .kind')) {
       b.setAttribute('aria-pressed', String(b === button));
     }
   });
