@@ -48,41 +48,76 @@ Goal: make Stitchu genuinely usable. Web-first because the output is a print-at-
 
 Architecture: pattern engine in C++ compiled to WebAssembly (Emscripten), running client-side in the browser — zero server cost per draft, measurements/photos never need to leave the device for drafting. Pattern rendering in SVG. Vision analysis keeps the existing Cloudflare Worker (server-side Claude key, app-token auth). C++ chosen over Rust deliberately: synergy with Damla's CS201 coursework.
 
+### North Star (the purpose, so we never lose it)
+Stitchu exists so a person who sews can photograph a garment, get a pattern drafted to HER OWN measurements, print it (or project it) at true scale, and sew a garment that actually fits. Every item below serves that sentence; anything that doesn't is a cut candidate. "Done" for the whole rework = a real garment, sewn from a Stitchu web pattern, fits its owner.
+
+### Phase W0: ground work
+- [ ] repo layout: engine/ (C++), web/ (site), backend/ (existing Worker); iOS app stays in App/ as reference
+- [ ] toolchain on Damla's machine: CMake + Emscripten SDK (Claude writes the setup script, Damla runs it in her terminal)
+- [ ] extract the Swift engine's formulas/constants into a reference sheet (ease tables, dart rules, documented assumptions) so the port is spec-driven, not line-by-line translation
+
 ### Phase W1: C++ engine port (the backbone)
-- [ ] port drafting blocks from Swift to C++: bodice, skirt (A-line/straight/gathered/half-circle), dress, top, sleeve
-- [ ] port manipulation layer v1 (necklines, skirt styles, sleeves)
-- [ ] port PatternValidator (geometric invariants) as C++ tests
-- [ ] port engine-check harness: the same 2805-draft matrix (EU 34-52 + edge bodies) must pass in C++ before anything else proceeds — this is the port's definition of done
-- [ ] Emscripten build → WASM module + thin JS bindings
+Definition of done: the same 2805-draft matrix that passes in Swift passes in C++, then a draft runs in a browser.
+- [ ] 1. geometry core: Point/Path/Bezier, seam-length measurement, offsets, intersection checks — unit tests first, these primitives carry everything
+- [ ] 2. measurement model + size matrix loader (EU 34-52, tall/petite/pear/apple/edge bodies)
+- [ ] 3. skirt blocks: A-line, straight, gathered, half-circle (darts, waistband)
+- [ ] 4. bodice block (assumptions carried over and documented: underbust = bust - 7 cm, standard shoulder slope)
+- [ ] 5. dress (bodice + skirt join, CB invisible zipper) and top (cropped/hip/tunic hems)
+- [ ] 6. sleeve block (straight + balloon, iterative cap-to-armhole convergence)
+- [ ] 7. manipulation layer v1: necklines (crew/scoop/v/square/boat), skirt styles, sleeves
+- [ ] 8. PatternValidator port: all geometric invariants (side-seam balance, dart sums, armhole/cap ease, waist joins, self-intersection, print fit)
+- [ ] 9. engine-check harness port → full matrix green; keep Swift outputs as golden files and diff deterministic values against them
+- [ ] 10. Emscripten build: WASM + thin embind bindings, size budget under ~1 MB, smoke page proving a draft runs in the browser
+Working style: engine code is Claude's; Damla reviews formulas as the sewing domain expert.
 
-### Phase W2: web app
-- [ ] app shell: onboarding (7 measurements, silhouette highlights), Create/Closet rooms — design direction from Damla, whimsy doodle style, sharp corners
-- [ ] photo upload → Cloudflare Worker vision → user confirms → WASM engine → pattern
-- [ ] SVG pattern rendering (pieces, darts, grainline)
-- [ ] client-side tiled A4 PDF with 3 cm calibration square
-- [ ] sewing guide + fabric advice content ported from iOS
-- [ ] local persistence (saved patterns in IndexedDB/localStorage)
-- [ ] STITCH WALL (Damla, confirmed 2026-07-10): communal embroidery on the landing — every visitor drags to sew real stitches, each visitor gets their own thread color, stitches persist for everyone (Worker + KV, just path coordinates). Beneath it a guestbook seam: short notes accumulate (community vibe). Guardrails built-in, not warned about: length cap, rate limit per IP, TR/EN profanity filter in the Worker, anonymous by default (no accounts, no PII — KVKK-clean)
+### Phase W2: web app (where "işe yaramaz" dies)
+Design spec locked in Brand above (flat, Helvetica, white/black + teal, sharp corners, anti-generic bans, dynamic stitch identity). Damla approves every screen.
+- [ ] 11. design tokens + base layout: single CSS token file, same discipline as the YKS app
+- [ ] 12. landing: drag-to-sew hero + STITCH WALL — communal embroidery, per-visitor thread color, stitches persist for everyone (Worker + KV, just path coordinates), guestbook seam of short notes underneath; guardrails built in: length cap, per-IP rate limit, TR/EN profanity filter, anonymous (no accounts, no PII — KVKK-clean)
+- [ ] 13. onboarding: 7 measurements with silhouette highlights, validation, stored locally (IndexedDB) — no sign-up
+- [ ] 14. create flow: photo upload → Worker vision → user confirms analysis → WASM draft → result (manual-pick fallback stays for when the Worker is unreachable)
+- [ ] 15. pattern result: SVG pieces (darts, grainline, labels), fabric meters estimate, step-by-step sewing guide (ported content incl. verified invisible-zipper order), fabric suitability advice
+- [ ] 16. print pipeline: client-side tiled A4 PDF, 3 cm calibration square, page map showing taping order
+- [ ] 17. closet: saved patterns — reopen, delete, re-download (full CRUD, local)
+- [ ] 18. stitch micro-interactions only where they earn their place: loading = a seam being sewn, section dividers = stitch lines; not on every surface
+- [ ] 19. EN/TR, keyboard + screen-reader pass, empty states, error states (photo too dark, analysis failed, print quirks)
+- [ ] 20. responsive: desktop-first (printing context) but fully usable on a phone
 
-### Phase W3: money + launch
-- [ ] merchant of record paywall — Paddle or Lemon Squeezy (both work from Turkey; pick after comparing fees) — gating via the existing Worker
-- [ ] privacy policy + KVKK/GDPR consent (photo leaves device only for vision analysis) — ships in the same session the upload flow does
-- [x] hosting decision (2026-07-10): Cloudflare Pages — one provider with the Worker + KV (vision API, stitch wall, paywall checks), zero monthly cost, no Supabase/Vercel needed
-- [ ] ship-check before public launch
+### Phase W3: money + launch (sellable, not just live)
+- [ ] 21. free/premium line (proposal, Damla decides): free = full flow, 1 saved pattern, watermarked PDF; premium = unlimited, clean PDF, projector mode, fabric layout plan
+- [ ] 22. merchant of record: compare Paddle vs Lemon Squeezy (fees, TR payout), pick, integrate checkout; premium token validated by the Worker (KV)
+- [ ] 23. privacy policy + KVKK/GDPR consent (photo leaves the device only for vision; stitch wall anonymous) — ships with the upload flow, never after
+- [ ] 24. THE REAL TEST: physical sew validation — draft 2-3 patterns (skirt, top, dress), sew muslins against a commercial-pattern equivalent; the promise is fit and only fabric proves it; findings feed back into engine constants
+- [ ] 25. Worker deploy (Damla: wrangler steps in backend/DEPLOY.md) + custom domain decision
+- [x] hosting decision (2026-07-10): Cloudflare Pages — one provider with the Worker + KV, zero monthly cost, no Supabase/Vercel needed
+- [ ] 26. full ship-check (Five Doors included) → blockers to zero → launch
+- [ ] 27. launch loop: shareable pattern links if picked; Pinterest/IG content is Damla's side
 
-### Phase W4: AI eval pipeline (Python, learning project)
-- [ ] fixed test set: garment photos with hand-labeled expected analysis (garment type, neckline, sleeve, skirt style)
-- [ ] Python harness: send set through the Worker, score outputs against labels, report accuracy
-- [ ] regression compare: prompt/model change → score diff (answers "can we drop opus → sonnet" with numbers)
-- [ ] format: Claude teaches, Damla writes the critical code
-- [ ] once proven, copy the harness pattern to lingolingo
+### Phase W4: AI eval pipeline (Python, the learning project)
+Format: Claude teaches and reviews, Damla writes the critical code.
+- [ ] 28. label set: 30-50 garment photos with hand-labeled ground truth (garment type, neckline, sleeve, skirt style) — labels are Damla's, domain knowledge again
+- [ ] 29. harness: Python batch runner → Worker → per-field accuracy report
+- [ ] 30. regression mode: two prompts or two models in, score diff out — answers "opus → sonnet?" with numbers instead of vibes
+- [ ] 31. act on it: pick the cheapest model that holds accuracy, update the Worker
+- [ ] 32. copy the harness pattern to lingolingo (separate session)
 
 ### Feature candidates (Damla picks which make the cut)
-- projector mode: full-screen true-scale pattern with calibration grid, for projecting straight onto fabric (big sewing-community trend; kills A4 taping)
+- projector mode: full-screen true-scale pattern with calibration grid, projecting straight onto fabric (big sewing-community trend; kills A4 taping)
 - A0/copyshop single-sheet PDF export
 - fabric yardage + cutting layout plan ("1.8 m at 150 cm width, place pieces like this") — fabric DB already exists
 - fit warnings from measurement profile ("this may run tight at the waist")
-- shareable pattern links (free marketing loop; free tier = watermarked PDF)
+- shareable pattern links (free marketing loop; pairs with the watermark)
+
+### What Damla learns from this project
+1. Production C++ — real geometry code with a test suite; CS201 coursework becomes shipped product code.
+2. WebAssembly — compiling native code for the browser, JS bindings, size/perf budgets; genuinely rare junior skill.
+3. System boundaries (the CTO muscle) — one engine, multiple consumers (web UI, test harness, potentially iOS again); UI ↔ engine ↔ Worker each behind a clean contract.
+4. AI engineering past the API call — eval sets, regression testing, model/cost decisions made with data (Python).
+5. Serverless backend — Cloudflare Worker + KV: token auth, rate limiting, abuse guardrails, zero-cost scaling.
+6. Selling from Turkey — merchant-of-record payments (Paddle/LS), paywall design, free-tier psychology.
+7. Privacy as architecture — client-side drafting is simultaneously the KVKK answer and a marketing line.
+8. Cross-language golden testing — the 2805-draft matrix as a spec that survives a full rewrite; how real teams migrate engines safely.
+9. Interaction craft under constraint — flat but alive (drag-to-stitch, SVG/canvas) with zero generic tells.
 
 ## Roadmap
 ### Phase 1: Foundation
