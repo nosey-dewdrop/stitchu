@@ -1,7 +1,7 @@
 // Hero sewing space, full bleed. Guides live in non-overlapping CELLS so
 // shapes never collide at any screen size, and your sewn stitches survive
 // resizes (stored normalized, redrawn on rebuild).
-import { drawRun, makeSewable } from './stitch.js?v=8';
+import { drawRun, makeSewable } from './stitch.js?v=9';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';
@@ -116,7 +116,7 @@ function build() {
 
   const wl = Math.max((w - 1060) / 2, 0) + 24; // wrap left edge
   const textRight = wl + 690;                   // text column ends here
-  const textBottom = h * 0.66;                  // copy block ends here
+  const textBottom = h * 0.72;                  // copy block ends here
 
   // left screen margin: one narrow column of cells
   if (wl > 80) {
