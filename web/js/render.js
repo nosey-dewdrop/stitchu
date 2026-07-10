@@ -1,0 +1,127 @@
+// SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
+// the print pipeline's job, not this preview's).
+const PREVIEW_SCALE = 0.28;
+
+function pathD(commands, scale) {
+  return commands.map((c) => {
+    switch (c.type) {
+      case 'move': return `M ${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
+      case 'line': return `L ${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
+      case 'curve': return `C ${(c.cp1x * scale).toFixed(1)} ${(c.cp1y * scale).toFixed(1)} ` +
+        `${(c.cp2x * scale).toFixed(1)} ${(c.cp2y * scale).toFixed(1)} ` +
+        `${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
+      case 'close': return 'Z';
+      default: return '';
+    }
+  }).join(' ');
+}
+
+function bounds(piece) {
+  const xs = [];
+  const ys = [];
+  for (const c of [...piece.commands, ...piece.markings]) {
+    if (c.x !== undefined) { xs.push(c.x); ys.push(c.y); }
+    if (c.cp1x !== undefined) { xs.push(c.cp1x, c.cp2x); ys.push(c.cp1y, c.cp2y); }
+  }
+  if (piece.grainline) {
+    xs.push(piece.grainline.fromX, piece.grainline.toX);
+    ys.push(piece.grainline.fromY, piece.grainline.toY);
+  }
+  return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) };
+}
+
+export function pieceCard(piece) {
+  const s = PREVIEW_SCALE;
+  const b = bounds(piece);
+  const pad = 10;
+  const vx = b.minX * s - pad;
+  const vy = b.minY * s - pad;
+  const w = (b.maxX - b.minX) * s + pad * 2;
+  const h = (b.maxY - b.minY) * s + pad * 2;
+
+  let inner = `<path d="${pathD(piece.commands, s)}" fill="none" stroke="#111" stroke-width="1.6"/>`;
+  if (piece.markings.length) {
+    inner += `<path d="${pathD(piece.markings, s)}" fill="none" stroke="#3EB8AF" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+  }
+  if (piece.grainline) {
+    const g = piece.grainline;
+    inner += `<line x1="${g.fromX * s}" y1="${g.fromY * s}" x2="${g.toX * s}" y2="${g.toY * s}" stroke="#111" stroke-width="1.2"/>`;
+    // arrowheads
+    const ang = Math.atan2(g.toY - g.fromY, g.toX - g.fromX);
+    for (const [px, py, dir] of [[g.fromX * s, g.fromY * s, ang], [g.toX * s, g.toY * s, ang + Math.PI]]) {
+      const a1x = px + Math.cos(dir + 0.4) * 8;
+      const a1y = py + Math.sin(dir + 0.4) * 8;
+      const a2x = px + Math.cos(dir - 0.4) * 8;
+      const a2y = py + Math.sin(dir - 0.4) * 8;
+      inner += `<path d="M ${a1x} ${a1y} L ${px} ${py} L ${a2x} ${a2y}" fill="none" stroke="#111" stroke-width="1.2"/>`;
+    }
+  }
+
+  const div = document.createElement('div');
+  div.className = 'piece-card';
+  const label = document.createElement('div');
+  label.className = 'label';
+  label.textContent = piece.name + ' · ';
+  const cut = document.createElement('span');
+  cut.className = 'cut';
+  cut.textContent = piece.cutInstruction;
+  label.appendChild(cut);
+  div.appendChild(label);
+  const svgWrap = document.createElement('div');
+  svgWrap.innerHTML = `<svg width="${w.toFixed(0)}" height="${h.toFixed(0)}" viewBox="${vx.toFixed(1)} ${vy.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}">${inner}</svg>`;
+  div.appendChild(svgWrap.firstChild);
+  return div;
+}
+
+export function renderResult(container, result) {
+  container.textContent = '';
+  const p = result.pattern;
+
+  if (result.issues.length) {
+    const box = document.createElement('div');
+    box.className = 'issues-box';
+    const head = document.createElement('p');
+    head.textContent = 'This draft did not pass the safety checks, so it cannot be printed. This should not happen — the combination has been logged in your browser console.';
+    box.appendChild(head);
+    console.error('stitchu validation issues:', result.issues);
+    container.appendChild(box);
+    return;
+  }
+
+  const meta = document.createElement('ul');
+  meta.className = 'result-meta';
+  const rows = [
+    ['pieces', `${p.pieces.length} · numbered in sewing order`],
+    ['fabric', `${p.fabricMeters140} m at 140 cm width`],
+    ['seam allowance', `${p.pieces[0].seamAllowance / 10} cm included in the guide, not drawn`],
+  ];
+  for (const [k, v] of rows) {
+    const li = document.createElement('li');
+    const key = document.createElement('span');
+    key.className = 'k';
+    key.textContent = k;
+    const val = document.createElement('span');
+    val.textContent = v;
+    li.append(key, val);
+    meta.appendChild(li);
+  }
+  container.appendChild(meta);
+
+  const grid = document.createElement('div');
+  grid.className = 'pieces-grid';
+  for (const piece of p.pieces) grid.appendChild(pieceCard(piece));
+  container.appendChild(grid);
+
+  const guideTitle = document.createElement('h2');
+  guideTitle.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
+  guideTitle.textContent = 'Sewing guide';
+  container.appendChild(guideTitle);
+  const ol = document.createElement('ol');
+  ol.className = 'guide-list';
+  for (const step of p.guideSteps) {
+    const li = document.createElement('li');
+    li.textContent = step;
+    ol.appendChild(li);
+  }
+  container.appendChild(ol);
+}

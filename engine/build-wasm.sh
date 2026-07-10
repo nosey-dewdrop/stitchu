@@ -15,3 +15,7 @@ em++ -O2 -std=c++17 \
   -o dist/stitchu-engine.js
 
 ls -la dist/stitchu-engine.js
+
+# copy the wasm bundle where the web app serves it
+cp dist/stitchu-engine.js ../web/vendor/stitchu-engine.js
+echo "copied to web/vendor/"

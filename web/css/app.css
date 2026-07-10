@@ -1,0 +1,78 @@
+/* create + closet screens — same visual language as the landing */
+.app-main { padding: var(--space-4) 0 80px; }
+h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
+.screen-sub { margin-top: 6px; font-size: var(--size-small); color: var(--gray); }
+
+/* progress seam */
+.stepline { display: flex; align-items: center; gap: 12px; margin: 26px 0 34px; }
+.stepline .hint { font-size: var(--size-fine); color: var(--gray); white-space: nowrap; }
+.stepline svg { width: 100%; height: 4px; }
+
+/* measurement step */
+.measure-block { max-width: 560px; }
+.measure-label { font-size: 22px; margin-bottom: 4px; }
+.measure-help { font-size: var(--size-small); color: var(--gray); margin-bottom: 18px; }
+.tape { display: block; width: 100%; height: 110px; margin: 8px 0 14px; user-select: none; -webkit-user-select: none; }
+.measure-row { display: flex; max-width: 320px; }
+.measure-row input {
+  flex: 1; font: inherit; font-size: 22px; padding: 12px 14px;
+  border: var(--hairline); border-radius: var(--radius) 0 0 var(--radius); border-right: 0;
+  outline: none;
+}
+.measure-row input:focus { border-color: var(--teal); border-style: dashed; }
+.measure-row .unit { display: flex; align-items: center; padding: 0 16px; border: var(--hairline); border-radius: 0 var(--radius) var(--radius) 0; }
+.field-error { color: var(--thread-rose); font-size: var(--size-fine); margin-top: 8px; min-height: 1.2em; }
+.privacy-note { margin-top: 14px; font-size: var(--size-fine); color: var(--gray); }
+
+/* spec pick */
+.spec-groups { display: grid; gap: 26px; max-width: 720px; }
+.spec-group .group-label { font-size: var(--size-fine); color: var(--gray); margin-bottom: 8px; }
+.choice-row { display: flex; flex-wrap: wrap; }
+.choice {
+  padding: 10px 16px; border: var(--hairline); border-radius: var(--radius);
+  background: var(--paper); font: inherit; font-size: var(--size-small); cursor: pointer;
+}
+.choice + .choice { margin-left: -1px; }
+.choice[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.choice:disabled { color: var(--faint); border-color: var(--faint); cursor: default; }
+
+/* nav buttons */
+.step-nav { display: flex; margin-top: 40px; max-width: 560px; }
+.step-nav .btn {
+  flex: 1; text-align: center; padding: 14px 0; font: inherit; font-size: 15px;
+  border: var(--hairline); border-radius: var(--radius); background: var(--paper);
+  color: var(--ink); cursor: pointer; text-decoration: none;
+}
+.step-nav .btn + .btn { margin-left: -1px; }
+.step-nav .btn.primary { background: var(--ink); color: var(--paper); }
+.step-nav .btn.primary:hover { background: var(--teal); border-color: var(--teal); }
+
+/* result */
+.result-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.result-meta { list-style: none; margin: 26px 0; max-width: 560px; }
+.result-meta li { display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: var(--seam); font-size: 14.5px; }
+.result-meta li:first-child { border-top: var(--seam); }
+.result-meta .k { color: var(--gray); font-size: var(--size-fine); }
+.pieces-grid { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 10px; }
+.piece-card { border: var(--hairline); border-radius: var(--radius); padding: 12px; }
+.piece-card .label { font-size: var(--size-fine); margin-bottom: 8px; }
+.piece-card .cut { color: var(--gray); }
+.guide-list { margin: 16px 0 0 0; padding-left: 22px; max-width: 640px; }
+.guide-list li { padding: 6px 0; font-size: 15px; }
+.issues-box { border: 1px dashed var(--thread-rose); border-radius: var(--radius); padding: 14px 16px; margin: 20px 0; max-width: 640px; font-size: var(--size-small); }
+
+/* closet */
+.closet-list { margin-top: 30px; max-width: 720px; }
+.closet-item { display: flex; align-items: baseline; gap: 16px; padding: 14px 2px; border-bottom: var(--seam); }
+.closet-item:first-child { border-top: var(--seam); }
+.closet-item .when { margin-left: auto; font-size: var(--size-fine); color: var(--gray); white-space: nowrap; }
+.closet-item a { color: var(--ink); }
+.closet-item button { font: inherit; font-size: var(--size-fine); border: var(--hairline); border-radius: var(--radius); background: var(--paper); padding: 4px 10px; cursor: pointer; }
+.closet-item button:hover { background: var(--ink); color: var(--paper); }
+.empty-state { margin-top: 40px; max-width: 480px; }
+.empty-state p { color: var(--gray); font-size: 15px; margin-top: 8px; }
+
+@media (max-width: 720px) {
+  h1.screen-title { font-size: 24px; }
+  .choice { padding: 10px 12px; }
+}
