@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu — mobile app mock</title>
+<style>
+  :root {
+    --ink: #111111;
+    --paper: #ffffff;
+    --teal: #3EB8AF;
+    --gray: #8a8a8a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    background: #f2f2f2;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.45;
+    padding: 40px 24px 60px;
+  }
+  ::selection { background: var(--teal); color: var(--paper); }
+  .board {
+    display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+  }
+  .phone {
+    width: 375px; height: 760px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    flex: none;
+  }
+  .phone-label {
+    text-align: center; font-size: 13px; color: var(--gray); margin-top: 10px;
+  }
+  .col { flex: none; }
+
+  /* shared app chrome */
+  .appbar {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .appbar .mark { font-size: 16px; }
+  .appbar .mark svg { display: block; margin-top: 2px; }
+  .appbar .where { font-size: 13px; color: var(--gray); }
+  .screen { flex: 1; display: flex; flex-direction: column; padding: 22px 18px; }
+  .bottom {
+    display: flex;
+    border-top: 1px solid var(--ink);
+  }
+  .bottom .btn {
+    flex: 1;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    background: var(--paper);
+  }
+  .bottom .btn + .btn { border-left: 1px solid var(--ink); }
+  .bottom .btn.primary { background: var(--ink); color: var(--paper); }
+
+  h1 { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
+  .hint { font-size: 13px; color: var(--gray); }
+
+  /* screen 1: onboarding */
+  .stepline { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+  .stepline .hint { white-space: nowrap; }
+  .silhouette { display: block; margin: 18px auto 8px; }
+  .measure-row { display: flex; margin-top: 18px; }
+  .measure-row input {
+    flex: 1;
+    font: inherit; font-size: 22px;
+    padding: 12px 14px;
+    border: 1px solid var(--ink);
+    border-radius: 2px 0 0 2px;
+    border-right: 0;
+    outline: none;
+  }
+  .measure-row input:focus { border-color: var(--teal); border-style: dashed; }
+  .measure-row .unit {
+    display: flex; align-items: center;
+    padding: 0 16px;
+    border: 1px solid var(--ink);
+    border-radius: 0 2px 2px 0;
+    font-size: 15px;
+  }
+  .measure-note { margin-top: 14px; font-size: 13.5px; color: var(--gray); }
+
+  /* screen 2: confirm analysis */
+  .photo-slot {
+    height: 240px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 9px, #ececec 9px 10px);
+    display: flex; align-items: flex-end;
+  }
+  .photo-slot span {
+    font-size: 12.5px; color: var(--gray);
+    padding: 8px 10px;
+  }
+  .saw-title { margin: 22px 0 4px; font-size: 15px; }
+  .saw { list-style: none; }
+  .saw li {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 11px 2px;
+    border-bottom: 1px dashed var(--ink);
+    font-size: 15px;
+  }
+  .saw li:first-child { border-top: 1px dashed var(--ink); }
+  .saw .k { color: var(--gray); width: 84px; flex: none; font-size: 13.5px; }
+  .saw svg { margin-left: auto; flex: none; }
+
+  /* screen 3: pattern result */
+  .meta { list-style: none; margin-top: 18px; }
+  .meta li {
+    display: flex; justify-content: space-between;
+    padding: 10px 2px;
+    border-bottom: 1px dashed var(--ink);
+    font-size: 14.5px;
+  }
+  .meta li:first-child { border-top: 1px dashed var(--ink); }
+  .meta .k { color: var(--gray); font-size: 13.5px; }
+  .piece-wrap { margin-top: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="board">
+
+  <!-- 1: onboarding measurement -->
+  <div class="col">
+    <div class="phone">
+      <div class="appbar">
+        <div class="mark">stitchu
+          <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
+        </div>
+        <span class="where">measurements</span>
+      </div>
+      <div class="screen">
+        <div class="stepline">
+          <span class="hint">4 / 7</span>
+          <!-- progress as a seam: sewn stitches + unsewn dashes -->
+          <svg width="100%" height="4" viewBox="0 0 200 4" preserveAspectRatio="none">
+            <line x1="0" y1="2" x2="112" y2="2" stroke="#3EB8AF" stroke-width="2.4" stroke-dasharray="12 8" stroke-linecap="round"/>
+            <line x1="116" y1="2" x2="200" y2="2" stroke="#d9d9d9" stroke-width="1.5" stroke-dasharray="6 6"/>
+          </svg>
+        </div>
+        <h1>Your waist</h1>
+        <p class="hint" style="margin-top:6px">Measure at the narrowest point, tape snug but not tight.</p>
+        <svg class="silhouette" width="150" height="290" viewBox="0 0 150 290">
+          <path d="M75 18 a16 16 0 1 0 0.1 0 M75 50 C 50 58 44 78 44 100 C 44 122 52 138 52 156 C 52 178 44 206 46 236 L 60 282 M75 50 C 100 58 106 78 106 100 C 106 122 98 138 98 156 C 98 178 106 206 104 236 L 90 282 M52 152 L 98 152"
+                fill="none" stroke="#111" stroke-width="1.6"/>
+          <line x1="40" y1="132" x2="110" y2="132" stroke="#3EB8AF" stroke-width="2.4" stroke-dasharray="10 7" stroke-linecap="round"/>
+        </svg>
+        <div class="measure-row">
+          <input value="68" inputmode="decimal">
+          <span class="unit">cm</span>
+        </div>
+        <p class="measure-note">Stored on this phone only. Nothing is uploaded.</p>
+      </div>
+      <div class="bottom">
+        <a class="btn" href="#">Back</a>
+        <a class="btn primary" href="#">Next — hips</a>
+      </div>
+    </div>
+    <div class="phone-label">onboarding · 7 measurements</div>
+  </div>
+
+  <!-- 2: confirm analysis -->
+  <div class="col">
+    <div class="phone">
+      <div class="appbar">
+        <div class="mark">stitchu
+          <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
+        </div>
+        <span class="where">create</span>
+      </div>
+      <div class="screen">
+        <div class="photo-slot"><span>your photo</span></div>
+        <p class="saw-title">Here is what I saw. Correct me if I'm wrong.</p>
+        <ul class="saw">
+          <li><span class="k">garment</span> dress
+            <svg width="22" height="4" viewBox="0 0 22 4"><line x1="0" y1="2" x2="22" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="5 4"/></svg>
+          </li>
+          <li><span class="k">neckline</span> v-neck
+            <svg width="22" height="4" viewBox="0 0 22 4"><line x1="0" y1="2" x2="22" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="5 4"/></svg>
+          </li>
+          <li><span class="k">sleeves</span> sleeveless
+            <svg width="22" height="4" viewBox="0 0 22 4"><line x1="0" y1="2" x2="22" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="5 4"/></svg>
+          </li>
+          <li><span class="k">skirt</span> a-line, knee length
+            <svg width="22" height="4" viewBox="0 0 22 4"><line x1="0" y1="2" x2="22" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="5 4"/></svg>
+          </li>
+        </ul>
+      </div>
+      <div class="bottom">
+        <a class="btn" href="#">Fix it</a>
+        <a class="btn primary" href="#">Looks right, draft it</a>
+      </div>
+    </div>
+    <div class="phone-label">create · confirm the analysis</div>
+  </div>
+
+  <!-- 3: pattern result -->
+  <div class="col">
+    <div class="phone">
+      <div class="appbar">
+        <div class="mark">stitchu
+          <svg width="46" height="3" viewBox="0 0 46 3"><line x1="0" y1="1.5" x2="46" y2="1.5" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
+        </div>
+        <span class="where">pattern</span>
+      </div>
+      <div class="screen">
+        <h1 style="font-size:24px">Your dress, drafted.</h1>
+        <div class="piece-wrap">
+          <!-- front skirt piece: cut line solid black, seam line dashed teal, darts + grainline -->
+          <svg width="230" height="300" viewBox="0 0 230 300">
+            <path d="M55 20 L175 20 C 178 90 208 180 214 278 L16 278 C 22 180 52 90 55 20 Z"
+                  fill="none" stroke="#111" stroke-width="1.8"/>
+            <path d="M65 32 L165 32 C 168 96 196 182 201 266 L29 266 C 34 182 62 96 65 32 Z"
+                  fill="none" stroke="#3EB8AF" stroke-width="1.6" stroke-dasharray="9 6"/>
+            <path d="M95 20 L99 62 L103 20 M127 20 L131 62 L135 20" fill="none" stroke="#111" stroke-width="1.4"/>
+            <line x1="115" y1="90" x2="115" y2="240" stroke="#111" stroke-width="1.4"/>
+            <path d="M109 100 L115 90 L121 100 M109 230 L115 240 L121 230" fill="none" stroke="#111" stroke-width="1.4"/>
+            <text x="60" y="160" font-family="Helvetica" font-size="12" fill="#8a8a8a">FRONT SKIRT — cut 1 on fold</text>
+          </svg>
+        </div>
+        <ul class="meta">
+          <li><span class="k">pieces</span><span>6 · numbered</span></li>
+          <li><span class="k">fabric</span><span>2.1 m at 150 cm width</span></li>
+          <li><span class="k">notions</span><span>55 cm invisible zipper</span></li>
+          <li><span class="k">print</span><span>12 × A4, calibration square</span></li>
+        </ul>
+      </div>
+      <div class="bottom">
+        <a class="btn" href="#">Sewing guide</a>
+        <a class="btn primary" href="#">Download PDF</a>
+      </div>
+    </div>
+    <div class="phone-label">pattern result · print + guide</div>
+  </div>
+
+</div>
+
+</body>
+</html>

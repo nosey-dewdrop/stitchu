@@ -79,6 +79,10 @@
     cursor: crosshair;
     touch-action: none;
   }
+  #hero-sew, #wall-canvas, .sew-strip, .wall-frame {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
   /* seam divider */
   .seam { border: 0; border-top: 1px dashed var(--ink); }
@@ -270,86 +274,109 @@
   const yourThread = THREADS[Math.floor(Math.random() * THREADS.length)];
   document.getElementById('your-thread-line').setAttribute('stroke', yourThread);
 
-  function stitchPath(svg, points, color) {
-    if (points.length < 2) return;
-    const d = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', color);
-    path.setAttribute('stroke-width', '2');
-    path.setAttribute('stroke-dasharray', '9 6');
-    path.setAttribute('stroke-linecap', 'butt');
-    svg.appendChild(path);
-    return path;
+  // one short hand-sewn stitch mark — never a long continuous line
+  function stitchSeg(svg, cx, cy, ang, color) {
+    const HALF = 5.5;
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    s.setAttribute('x1', (cx - Math.cos(ang) * HALF).toFixed(1));
+    s.setAttribute('y1', (cy - Math.sin(ang) * HALF).toFixed(1));
+    s.setAttribute('x2', (cx + Math.cos(ang) * HALF).toFixed(1));
+    s.setAttribute('y2', (cy + Math.sin(ang) * HALF).toFixed(1));
+    s.setAttribute('stroke', color);
+    s.setAttribute('stroke-width', '2.4');
+    s.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(s);
+    return s;
   }
 
-  // generic drag-to-sew on an svg element
+  // freehand sewing: discrete, evenly spaced stitches with a little hand jitter
   function makeSewable(svg, color, onStitch) {
-    let drawing = false, pts = [], livePath = null;
+    let drawing = false, last = null, sewn = 0;
     const pos = e => {
       const r = svg.getBoundingClientRect();
       return [e.clientX - r.left, e.clientY - r.top];
     };
     svg.addEventListener('pointerdown', e => {
-      drawing = true; pts = [pos(e)]; livePath = null;
+      e.preventDefault();
+      drawing = true; last = pos(e); sewn = 0;
       svg.setPointerCapture(e.pointerId);
     });
     svg.addEventListener('pointermove', e => {
       if (!drawing) return;
-      const p = pos(e), last = pts[pts.length - 1];
-      if (Math.hypot(p[0] - last[0], p[1] - last[1]) < 6) return;
-      pts.push(p);
-      if (livePath) livePath.remove();
-      livePath = stitchPath(svg, pts, color);
+      const p = pos(e);
+      if (Math.hypot(p[0] - last[0], p[1] - last[1]) < 22) return;
+      const ang = Math.atan2(p[1] - last[1], p[0] - last[0]) + (Math.random() - 0.5) * 0.18;
+      stitchSeg(svg, p[0], p[1], ang, color);
+      last = p; sewn++;
     });
     const end = () => {
-      if (drawing && pts.length > 1 && onStitch) onStitch(pts);
+      if (drawing && sewn && onStitch) onStitch(sewn);
       drawing = false;
     };
     svg.addEventListener('pointerup', end);
     svg.addEventListener('pointerleave', end);
   }
 
-  // hero strip: faint dashed guide line, user sews over it in teal
+  // hero strip: coloring-book feel — rub along the guide and neat slots fill in
   const hero = document.getElementById('hero-sew');
+  const SLOT = 26, GUIDE_Y = 45;
+  let slots = [];
   function heroGuide() {
     hero.innerHTML = '';
     const w = hero.clientWidth;
+    slots = new Array(Math.max(1, Math.floor(w / SLOT))).fill(false);
     const guide = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    guide.setAttribute('x1', 0); guide.setAttribute('y1', 45);
-    guide.setAttribute('x2', w); guide.setAttribute('y2', 45);
+    guide.setAttribute('x1', 0); guide.setAttribute('y1', GUIDE_Y);
+    guide.setAttribute('x2', w); guide.setAttribute('y2', GUIDE_Y);
     guide.setAttribute('stroke', '#d9d9d9');
     guide.setAttribute('stroke-width', '1');
     guide.setAttribute('stroke-dasharray', '9 6');
     hero.appendChild(guide);
   }
+  function heroSew(e) {
+    const r = hero.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (Math.abs(y - GUIDE_Y) > 34) return; // near the seam only
+    const i = Math.floor(x / SLOT);
+    if (i < 0 || i >= slots.length || slots[i]) return;
+    slots[i] = true;
+    const jitter = (Math.random() - 0.5) * 3;
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    s.setAttribute('x1', i * SLOT + 5); s.setAttribute('y1', GUIDE_Y + jitter);
+    s.setAttribute('x2', i * SLOT + SLOT - 9); s.setAttribute('y2', GUIDE_Y + jitter);
+    s.setAttribute('stroke', '#3EB8AF');
+    s.setAttribute('stroke-width', '2.4');
+    s.setAttribute('stroke-linecap', 'round');
+    hero.appendChild(s);
+  }
+  let heroDown = false;
+  hero.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    heroDown = true; hero.setPointerCapture(e.pointerId); heroSew(e);
+  });
+  hero.addEventListener('pointermove', e => { if (heroDown) heroSew(e); });
+  hero.addEventListener('pointerup', () => heroDown = false);
   heroGuide();
   window.addEventListener('resize', heroGuide);
-  makeSewable(hero, '#3EB8AF');
 
-  // stitch wall: prefilled visitor stitches, then yours on top
+  // stitch wall: prefilled visitor stitch runs, then yours on top
   const wall = document.getElementById('wall-canvas');
   let stitchCount = 0;
-  function wiggleLine(x1, y1, x2, y2, n) {
-    const pts = [];
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
-      pts.push([x1 + (x2 - x1) * t, y1 + (y2 - y1) * t + Math.sin(t * 7 + x1) * 4]);
-    }
-    return pts;
-  }
   function seedWall() {
     const w = wall.clientWidth, h = 300;
-    // deterministic-ish scatter of previous visitors' stitches
     for (let i = 0; i < 26; i++) {
       const color = THREADS[i % THREADS.length];
       const x = (i * 137.5) % (w - 120);
       const y = 20 + ((i * 83) % (h - 50));
       const len = 60 + (i * 29) % 110;
       const ang = ((i * 47) % 60 - 30) * Math.PI / 180;
-      stitchPath(wall, wiggleLine(x, y, x + Math.cos(ang) * len, y + Math.sin(ang) * len, 8), color);
-      stitchCount++;
+      const n = Math.floor(len / 20);
+      for (let k = 0; k <= n; k++) {
+        const t = k / Math.max(1, n);
+        const wiggle = Math.sin(t * 7 + x) * 0.15;
+        stitchSeg(wall, x + Math.cos(ang) * len * t, y + Math.sin(ang) * len * t, ang + wiggle, color);
+        stitchCount++;
+      }
     }
     updateCount();
   }
@@ -357,7 +384,7 @@
     document.getElementById('stitch-count').textContent = stitchCount + ' stitches sewn by visitors';
   }
   seedWall();
-  makeSewable(wall, yourThread, () => { stitchCount++; updateCount(); });
+  makeSewable(wall, yourThread, n => { stitchCount += n; updateCount(); });
 
   // guestbook — sample notes so the layout can be judged (mock data, replaced by KV)
   const NOTES = [
