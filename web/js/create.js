@@ -45,14 +45,11 @@ function sewingLoader(text) {
 function progressSeam(done, total) {
   const wrap = el('div', 'stepline');
   wrap.appendChild(el('span', 'hint', `${done} / ${total}`));
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 200 4');
-  svg.setAttribute('preserveAspectRatio', 'none');
-  const sewn = Math.round((done / total) * 200);
-  svg.innerHTML =
-    `<line x1="0" y1="2" x2="${sewn}" y2="2" stroke="#3EB8AF" stroke-width="2.4" stroke-dasharray="12 8" stroke-linecap="round"/>` +
-    `<line x1="${sewn + 4}" y1="2" x2="200" y2="2" stroke="#d9d9d9" stroke-width="1.5" stroke-dasharray="6 6"/>`;
-  wrap.appendChild(svg);
+  const track = el('span', 'seam-progress');
+  const sewn = el('span', 'sewn');
+  sewn.style.width = `${Math.round((done / total) * 100)}%`;
+  track.appendChild(sewn);
+  wrap.appendChild(track);
   return wrap;
 }
 
@@ -62,7 +59,7 @@ function tapeSVG(value, min, max) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('class', 'tape');
   svg.setAttribute('viewBox', '0 0 340 110');
-  const lo = Math.max(min, Math.floor(value) - 4);
+  const lo = Math.max(min, Math.min(Math.floor(value) - 3, max - 8));
   let inner = '<rect x="10" y="30" width="304" height="46" fill="none" stroke="#111" stroke-width="1.8"/>' +
               '<rect x="314" y="26" width="10" height="54" fill="none" stroke="#111" stroke-width="1.8"/>';
   for (let i = 0; i <= 8; i++) {
@@ -71,7 +68,7 @@ function tapeSVG(value, min, max) {
     if (cm > max) break;
     const tall = cm % 2 === 0;
     inner += `<line x1="${x}" y1="30" x2="${x}" y2="${tall ? 56 : 48}" stroke="#111" stroke-width="1.4"/>`;
-    if (tall) inner += `<text x="${x}" y="70" font-family="Helvetica" font-size="12" fill="#8a8a8a" text-anchor="middle">${cm}</text>`;
+    if (tall && x <= 296) inner += `<text x="${x}" y="70" font-family="Helvetica" font-size="12" fill="#8a8a8a" text-anchor="middle">${cm}</text>`;
   }
   const mx = 26 + (value - lo) * 36;
   if (mx >= 10 && mx <= 324) {
