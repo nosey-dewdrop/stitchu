@@ -1,0 +1,17 @@
+# Keep GitHub's language stats honest: stitchu is a C++/Swift/JS engine project,
+# not an HTML project. The big HTML below is design scaffolding + docs, not product
+# code, so we exclude it from Linguist. Reversible — delete a line to re-count it.
+
+# design mockups (not shipped product)
+mocks/**            linguist-vendored
+assets-src/**       linguist-vendored
+mock.html           linguist-vendored
+engine/smoke.html   linguist-vendored
+
+# documentation / guides
+asset-guide.html    linguist-documentation
+asset-guide-tr.html linguist-documentation
+*.md                linguist-documentation
+
+# vendored engine build output
+web/vendor/**       linguist-vendored
