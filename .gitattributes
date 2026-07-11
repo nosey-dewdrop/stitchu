@@ -15,3 +15,8 @@ asset-guide-tr.html linguist-documentation
 
 # vendored engine build output
 web/vendor/**       linguist-vendored
+
+# native iOS app: real but parked (implementation not started). Not the repo's
+# current identity, which is the live web app + C++ engine. Delete to re-count.
+App/**              linguist-vendored
+engine-check/**     linguist-vendored
