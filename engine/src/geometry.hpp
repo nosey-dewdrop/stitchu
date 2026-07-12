@@ -68,4 +68,30 @@ Rect boundingBox(const std::vector<PathCommand>& commands);
 
 double distance(Point a, Point b);
 
+// Point on a cubic (from -> cmd.to with cmd.cp1/cp2) at parameter t.
+Point cubicPoint(Point from, const PathCommand& cmd, double t);
+
+// De Casteljau split of a cubic at t: two cubics that together retrace the
+// original exactly. first runs from `from` to the split point, second from the
+// split point to cmd.to.
+struct CubicSplit {
+    PathCommand first;
+    PathCommand second;
+    Point at; // the split point (== first.to)
+};
+CubicSplit splitCubic(Point from, const PathCommand& cmd, double t);
+
+// Parameter t where the cubic reaches the given x (coarse scan + bisection;
+// intended for curves monotonic in x like waist curves).
+double cubicTForX(Point from, const PathCommand& cmd, double x);
+// Same for y (armhole curves are monotonic in y).
+double cubicTForY(Point from, const PathCommand& cmd, double y);
+
+// The same cubic traversed in the opposite direction (cp1/cp2 swapped).
+// `from` is the original start point, which becomes the new target.
+PathCommand reverseCubic(Point from, const PathCommand& cmd);
+
+// Shift every coordinate (outline + markings + grainline) by (dx, dy).
+void translatePiece(PatternPiece& piece, double dx, double dy);
+
 } // namespace stitchu

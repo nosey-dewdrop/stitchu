@@ -224,6 +224,24 @@ std::vector<ValidationIssue> bodiceIssues(const BodiceDraft& bodice, const BodyM
     if (bodice.armholeLength <= 0 || !std::isfinite(bodice.armholeLength)) {
         issues.push_back({"armhole", "Bodice", fmt("armhole length %.1f is not sane", bodice.armholeLength)});
     }
+
+    // Princess panels: the two edges of one seam must sew together.
+    if (bodice.frontPrincess) {
+        const double delta = std::fabs(bodice.frontSeamCenterLen - bodice.frontSeamSideLen);
+        if (delta > princessSeamTolerance) {
+            issues.push_back({"princess", "Bodice Front",
+                fmt("princess edge center %.1f vs side %.1f differ by %.1f mm (max %.1f)",
+                    bodice.frontSeamCenterLen, bodice.frontSeamSideLen, delta, princessSeamTolerance)});
+        }
+    }
+    if (bodice.backPrincess) {
+        const double delta = std::fabs(bodice.backSeamCenterLen - bodice.backSeamSideLen);
+        if (delta > princessSeamTolerance) {
+            issues.push_back({"princess", "Bodice Back",
+                fmt("princess edge center %.1f vs side %.1f differ by %.1f mm (max %.1f)",
+                    bodice.backSeamCenterLen, bodice.backSeamSideLen, delta, princessSeamTolerance)});
+        }
+    }
     return issues;
 }
 
@@ -338,7 +356,11 @@ std::vector<ValidationIssue> skirtIssues(
     std::vector<ValidationIssue> issues;
     std::vector<const PatternPiece*> skirtPieces;
     for (const auto& piece : draft.pieces) {
-        if (piece.name == "Front" || piece.name == "Back" || hasPrefix(piece.name, "Skirt")) {
+        // Standalone skirts: everything but the waistband is a skirt piece
+        // (Front / Center Front / Side Front / panels...). In a dress the
+        // skirt pieces all carry the "Skirt" prefix.
+        if (spec.garment == GarmentType::Skirt ? piece.name != "Waistband"
+                                               : hasPrefix(piece.name, "Skirt")) {
             skirtPieces.push_back(&piece);
         }
     }
@@ -393,13 +415,21 @@ std::vector<ValidationIssue> skirtIssues(
         }
     }
 
-    // Quarter skirts: front and back side seams must match.
+    // Quarter skirts: front and back side seams must match. In gore mode the
+    // side seam lives on the side panels; otherwise on the single quarters.
     if (spec.skirtStyle == SkirtStyle::ALine || spec.skirtStyle == SkirtStyle::Straight) {
         const PatternPiece* front = nullptr;
         const PatternPiece* back = nullptr;
         for (const auto* piece : skirtPieces) {
-            if (!front && hasSuffix(piece->name, "Front")) front = piece;
-            if (!back && hasSuffix(piece->name, "Back")) back = piece;
+            if (contains(piece->name, "Side Front")) front = piece;
+            else if (contains(piece->name, "Side Back")) back = piece;
+        }
+        if (!front || !back) {
+            front = back = nullptr;
+            for (const auto* piece : skirtPieces) {
+                if (!front && hasSuffix(piece->name, "Front")) front = piece;
+                if (!back && hasSuffix(piece->name, "Back")) back = piece;
+            }
         }
         if (front && back) {
             const auto f = skirtSideSeamLength(*front);
@@ -407,6 +437,39 @@ std::vector<ValidationIssue> skirtIssues(
             if (f && b && std::fabs(*f - *b) > pairedSeamTolerance) {
                 issues.push_back({"sideseam", "Skirt",
                     fmt("front side seam %.1f vs back %.1f", *f, *b)});
+            }
+        }
+
+        // Gore pairs: the center panel's seam edge must match the side
+        // panel's. Center layout: [1]=waist, [2]=line(tip), [3]=line(hem).
+        // Side layout: [4]=hem curve, [5]=line(tip), [6]=line(waist leg).
+        for (const char* half : {"Front", "Back"}) {
+            const PatternPiece* center = nullptr;
+            const PatternPiece* side = nullptr;
+            for (const auto* piece : skirtPieces) {
+                if (contains(piece->name, std::string("Center ") + half)) center = piece;
+                if (contains(piece->name, std::string("Side ") + half)) side = piece;
+            }
+            if (!center || !side) continue;
+            if (center->commands.size() < 4 ||
+                center->commands[2].type != CmdType::Line ||
+                center->commands[3].type != CmdType::Line ||
+                side->commands.size() < 7 ||
+                side->commands[4].type != CmdType::Curve ||
+                side->commands[5].type != CmdType::Line ||
+                side->commands[6].type != CmdType::Line) {
+                issues.push_back({"gorepair", std::string("Skirt ") + half,
+                    "unexpected gore panel layout, cannot measure the seam"});
+                continue;
+            }
+            const double centerLen = pathLength({
+                PathCommand::move(center->commands[1].to), center->commands[2], center->commands[3]});
+            const double sideLen = pathLength({
+                PathCommand::move(side->commands[4].to), side->commands[5], side->commands[6]});
+            if (std::fabs(centerLen - sideLen) > pairedSeamTolerance) {
+                issues.push_back({"gorepair", std::string("Skirt ") + half,
+                    fmt("gore seam center %.1f vs side %.1f differ by %.1f mm",
+                        centerLen, sideLen, std::fabs(centerLen - sideLen))});
             }
         }
     }
@@ -538,14 +601,15 @@ std::vector<ValidationIssue> issues(
             break;
         }
         case GarmentType::Dress: {
-            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline);
+            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, spec.shaping);
             for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEase, &bodice)) result.push_back(issue);
             break;
         }
         case GarmentType::Top: {
-            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline);
+            // Tops draft dart-shaped regardless of the spec (see TopBlock).
+            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, Shaping::Dart);
             for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);

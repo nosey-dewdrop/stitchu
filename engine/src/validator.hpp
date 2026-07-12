@@ -21,6 +21,7 @@ namespace PatternValidator {
 
 // Tolerances in mm unless noted.
 inline constexpr double pairedSeamTolerance = 3.0;
+inline constexpr double princessSeamTolerance = 2.5; // center vs side panel edge of one seam
 inline constexpr double waistJoinTolerance = 12.0;   // absorbable by easing while sewing
 inline constexpr double dartSumTolerance = 2.0;
 inline constexpr double chestWidthTolerance = 1.5;

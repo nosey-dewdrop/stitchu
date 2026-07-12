@@ -15,7 +15,8 @@ inline constexpr double maxSideTake = 25;    // per quarter
 inline constexpr double minDartWidth = 8;    // below this the dart folds into the side seam
 inline constexpr double gatherRatio = 1.9;
 
-DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length);
+DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                     Shaping shaping = Shaping::Princess);
 
 // Skirt pieces alone, reusable by the dress block (waistband optional).
 // The dress block passes the bodice's measured sewn waist as targetWaistMM so
@@ -25,14 +26,16 @@ std::vector<PatternPiece> pieces(
     SkirtStyle style,
     SkirtLength length,
     bool includeWaistband,
-    std::optional<double> targetWaistMM = std::nullopt);
+    std::optional<double> targetWaistMM = std::nullopt,
+    Shaping shaping = Shaping::Princess);
 
 PatternPiece waistbandPiece(double waistMM);
 
 // Rough estimate for 140cm-wide fabric, 10% cutting margin.
-double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length);
+double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                      Shaping shaping = Shaping::Princess);
 
-std::vector<std::string> guide(SkirtStyle style);
+std::vector<std::string> guide(SkirtStyle style, Shaping shaping = Shaping::Princess);
 
 } // namespace SkirtBlock
 } // namespace stitchu

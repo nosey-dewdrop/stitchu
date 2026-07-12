@@ -35,3 +35,13 @@ Bu işin en büyük kanıtı bir ekran görüntüsü olamaz. Bir landing "biz sl
 O yüzden build-in-public'in yayı şu: motoru kurduk, landing'i çıkardık, sıradaki bölüm kumaşı kesip elbiseyi dikmek. Kamera kalıbın A4'ten çıkışını, kumaşın üstüne serilişini, makinede dikilişini, giyilişini görecek. İzleyen kişi "demek gerçekten çalışıyormuş" diyecek — çünkü kanıtı üstümüzde.
 
 Ve güzel yanı: bu aynı zamanda ürünün fiziksel doğrulama testi. İçerik ve validasyon aynı dikişte.
+
+---
+
+## 03 — Prenses dikişi artık kodda: motor ilk kez "dikilemez"i yakaladı
+
+Karar loglanmıştı, bugün cerrahi yapıldı. Motorun bodice bloğu artık pensli tek parça yerine dört panel çıkarıyor: ön ortası, ön yanı, arka ortası, arka yanı. Pens payı, kol evinden göğüs noktasına inen ve oradan bele akan gerçek bir prenses dikişine dönüştü. Etek de aynı dili konuşuyor: gore panelleri, pens ucunun olduğu yerden etek ucuna akan dikey dikişler. Fermuar arka ortadan hem korsajı hem eteği geçiyor, gore dikişi korsajdaki prenses dikişiyle buluşuyor.
+
+En güzel an şuydu: ilk koşuda validator 1400 taslağı reddetti. Sebep ince bir kalıpçılık gerçeği — ön bel kavisi ortaya doğru düştüğü için dikişin iki kenarı arasında 10 milimetre fark oluşuyordu. Pens olarak katlarken kimsenin fark etmediği bu fark, gerçek bir dikişte kumaşın birleşmemesi demek. Gerçek kalıpçıların "truing" dediği düzeltmeyi ekledik: yan panelin bel ucu, iki kenar milimetrik eşitlenene kadar iniyor ve bel kavisi oraya yeniden harmanlanıyor. Sonra 4485 taslağın hepsi yeşil.
+
+Yani motor sadece prenses dikişi öğrenmedi; dikilemez kalıbı sayıyla yakalayan bir göz kazandı. Pens modu da duruyor (ileri seviye seçenek) ve Swift referansıyla milimetrenin onda biri içinde birebir. Sıradaki durak: bu motorun çizdiği prenses dikişli elbiseyi gerçekten dikmek.

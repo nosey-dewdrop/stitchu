@@ -12,3 +12,4 @@ backend/.wrangler/
 backend/node_modules/
 App/Stitchu/.app-token-note.txt
 CLAUDE.context.md
+engine/.cache/

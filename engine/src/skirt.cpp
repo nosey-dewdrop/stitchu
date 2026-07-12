@@ -84,6 +84,116 @@ PatternPiece draftQuarter(
     return piece;
 }
 
+// Extra width each gore panel gains at the hem (per edge). A-line gores flare
+// like the side seam does; straight skirts keep the seam vertical.
+double goreFlare(SkirtStyle style) {
+    return style == SkirtStyle::ALine ? 40 : 0;
+}
+
+// Princess/gore version of draftQuarter: the waist dart becomes a seam from
+// the waist through the old dart tip straight down to the hem, splitting the
+// quarter into a center and a side panel. Falls back to the plain quarter
+// when the intake is too small to be worth a seam.
+std::vector<PatternPiece> goreQuarter(
+    const std::string& baseName,
+    double waistQuarter,
+    double hipQuarter,
+    double length,
+    SkirtStyle style,
+    double dartLength
+) {
+    const double suppression = std::max(0.0, hipQuarter - waistQuarter);
+    double sideTake = std::min(suppression * 0.6, maxSideTake);
+    double dartWidth = suppression - sideTake;
+    if (dartWidth < minDartWidth) {
+        return {draftQuarter(baseName, waistQuarter, hipQuarter, length, style, dartLength)};
+    }
+
+    const double waistlineWidth = waistQuarter + dartWidth;
+    const double sideWaistRise = 12;
+    const double flareOut = flare(style);
+    const double hemX = hipQuarter + flareOut;
+    const double hemSideRise = flareOut > 0 ? 18 : 0;
+
+    const Point centerWaist{0, 0};
+    const Point sideWaist{waistlineWidth, -sideWaistRise};
+    const Point hipPoint{hipQuarter, hipDepth};
+    const Point hemSide{hemX, length - hemSideRise};
+    const Point hemCenter{0, length};
+
+    const PathCommand waistCurve = PathCommand::curve(
+        sideWaist,
+        {waistlineWidth * 0.45, 0},
+        {waistlineWidth * 0.8, -sideWaistRise * 0.8});
+
+    const double cx = waistlineWidth / 2;
+    const CubicSplit waistAtA = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, cx - dartWidth / 2));
+    const CubicSplit waistAtB = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, cx + dartWidth / 2));
+    const Point legA = waistAtA.at;
+    const Point legB = waistAtB.at;
+    const Point tip{cx, dartLength};
+    const double gf = goreFlare(style);
+    const Point goreHemCenter{cx + gf, length};
+    const Point goreHemSide{cx - gf, length};
+
+    // True the gore seam: the waist rises toward the side, so the raw side
+    // edge would come up short against the center edge. Drop the side panel's
+    // waist end until both edges measure the same and re-blend its curve.
+    const double targetLegLen = distance(tip, legA);
+    const double legDrop = std::sqrt(std::max(0.0, targetLegLen * targetLegLen - (dartWidth / 2) * (dartWidth / 2)));
+    const Point legBTrued{legB.x, tip.y - legDrop};
+    PathCommand sideWaistEdge = waistAtB.second; // legB -> sideWaist
+    // The start point lives in the preceding move; keep the departure tangent.
+    sideWaistEdge.cp1.y += legBTrued.y - legB.y;
+
+    // ---- center panel ----
+    PatternPiece center;
+    center.name = "Center " + baseName;
+    center.cutInstruction = "cut 1 on fold";
+    center.commands = {
+        PathCommand::move(centerWaist),
+        waistAtA.first,               // waist: center -> legA
+        PathCommand::line(tip),       // gore seam upper (old dart leg)
+        PathCommand::line(goreHemCenter),
+        PathCommand::line(hemCenter),
+        PathCommand::line(centerWaist),
+        PathCommand::close(),
+    };
+    center.markings = {PathCommand::move(tip), PathCommand::line({tip.x - 12, tip.y + 4})};
+    center.hasGrainline = true;
+    center.grainline = Grainline{{40, hipDepth}, {40, length - 60}};
+    center.seamAllowance = 15;
+
+    // ---- side panel ----
+    PatternPiece side;
+    side.name = "Side " + baseName;
+    side.cutInstruction = "cut 2";
+    const double hemT = goreHemSide.x;
+    side.commands = {
+        PathCommand::move(legBTrued),
+        sideWaistEdge,                // waist: legB (trued) -> side
+        PathCommand::curve(hipPoint,
+                           {waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, hipDepth * 0.3 - sideWaistRise},
+                           {hipQuarter, hipDepth * 0.65}),
+        PathCommand::line(hemSide),
+        PathCommand::curve(goreHemSide,
+                           {hemT + (hemX - hemT) * 0.6, length},
+                           {hemT + (hemX - hemT) * 0.3, length}),
+        PathCommand::line(tip),
+        PathCommand::line(legBTrued),
+        PathCommand::close(),
+    };
+    side.markings = {PathCommand::move(tip), PathCommand::line({tip.x + 12, tip.y + 4})};
+    side.hasGrainline = true;
+    const double grainX = (legB.x + hipQuarter) / 2;
+    side.grainline = Grainline{{grainX, hipDepth + 10}, {grainX, length - 60}};
+    side.seamAllowance = 15;
+    const Rect sideBox = boundingBox(side.commands);
+    translatePiece(side, -sideBox.x, -sideBox.y);
+
+    return {center, side};
+}
+
 // Gathered skirt: a simple rectangle, fabric = waist * gather ratio.
 PatternPiece gatheredPanel(double waistQuarter, double length) {
     const double width = waistQuarter * gatherRatio;
@@ -161,7 +271,8 @@ std::vector<PatternPiece> pieces(
     SkirtStyle style,
     SkirtLength length,
     bool includeWaistband,
-    std::optional<double> targetWaistMM
+    std::optional<double> targetWaistMM,
+    Shaping shaping
 ) {
     const double fullWaist = targetWaistMM.value_or(m.waistMM() * (1 + waistEase));
     const double waistQuarter = fullWaist / 4;
@@ -174,8 +285,13 @@ std::vector<PatternPiece> pieces(
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
-            result.push_back(draftQuarter("Front", waistQuarter, hipQuarter, len, style, 90));
-            result.push_back(draftQuarter("Back", waistQuarter, hipQuarter, len, style, 130));
+            if (shaping == Shaping::Princess) {
+                for (auto& piece : goreQuarter("Front", waistQuarter, hipQuarter, len, style, 90)) result.push_back(piece);
+                for (auto& piece : goreQuarter("Back", waistQuarter, hipQuarter, len, style, 130)) result.push_back(piece);
+            } else {
+                result.push_back(draftQuarter("Front", waistQuarter, hipQuarter, len, style, 90));
+                result.push_back(draftQuarter("Back", waistQuarter, hipQuarter, len, style, 130));
+            }
             break;
         case SkirtStyle::Gathered: {
             PatternPiece panel = gatheredPanel(waistQuarter, len);
@@ -195,13 +311,14 @@ std::vector<PatternPiece> pieces(
     return result;
 }
 
-double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length) {
+double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length, Shaping shaping) {
     const double len = millimeters(length);
     double meters = 0;
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight: {
-            const double hemWidth = m.hipMM() * (1 + hipEase) / 4 + flare(style);
+            const double hemWidth = m.hipMM() * (1 + hipEase) / 4 + flare(style) +
+                                    (shaping == Shaping::Princess ? 2 * goreFlare(style) : 0);
             const double piecesPerWidth = hemWidth * 2 < 700 ? 2.0 : 1.0;
             meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000;
             break;
@@ -221,21 +338,32 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
     return roundToPlaces(meters, 1);
 }
 
-std::vector<std::string> guide(SkirtStyle style) {
+std::vector<std::string> guide(SkirtStyle style, Shaping shaping) {
     std::vector<std::string> steps{
         "Print the pattern and check the 3 cm calibration square with a ruler before cutting anything.",
     };
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
-            steps.insert(steps.end(), {
-                "Fold your fabric and cut the front and back on the fold. Cut 2 waistband pieces, interface 1.",
-                "Sew any darts first, pressing them toward the center.",
-                "Stitch the side seams (1.5 cm seam allowance), leaving the top 20 cm of the left seam open for the zipper.",
-                "Insert an invisible zipper in the left seam: install the zipper BEFORE closing the seam below it, then close the seam.",
-                "Attach the interfaced waistband, right sides together, then fold and topstitch or hand-finish the inside.",
-                "Try it on. Adjust side seams if needed, then finish the hem with a 2 cm double-fold.",
-            });
+            if (shaping == Shaping::Princess) {
+                steps.insert(steps.end(), {
+                    "Cut the panels as labelled: center panels on the fold, side panels twice. Cut 2 waistband pieces, interface 1.",
+                    "Sew each gore seam (center panel to its side panel), matching the notch at the seam tip. Press the seams toward the center.",
+                    "Stitch the side seams (1.5 cm seam allowance), leaving the top 20 cm of the left seam open for the zipper.",
+                    "Insert an invisible zipper in the left seam: install the zipper BEFORE closing the seam below it, then close the seam.",
+                    "Attach the interfaced waistband, right sides together, then fold and topstitch or hand-finish the inside.",
+                    "Try it on. Adjust side seams if needed, then finish the hem with a 2 cm double-fold.",
+                });
+            } else {
+                steps.insert(steps.end(), {
+                    "Fold your fabric and cut the front and back on the fold. Cut 2 waistband pieces, interface 1.",
+                    "Sew any darts first, pressing them toward the center.",
+                    "Stitch the side seams (1.5 cm seam allowance), leaving the top 20 cm of the left seam open for the zipper.",
+                    "Insert an invisible zipper in the left seam: install the zipper BEFORE closing the seam below it, then close the seam.",
+                    "Attach the interfaced waistband, right sides together, then fold and topstitch or hand-finish the inside.",
+                    "Try it on. Adjust side seams if needed, then finish the hem with a 2 cm double-fold.",
+                });
+            }
             break;
         case SkirtStyle::Gathered:
             steps.insert(steps.end(), {
@@ -262,13 +390,13 @@ std::vector<std::string> guide(SkirtStyle style) {
     return steps;
 }
 
-DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length) {
+DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length, Shaping shaping) {
     DraftedPattern pattern;
     pattern.garment = std::string(title(style)) + " skirt";
-    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true);
+    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping);
     pattern.fabricAdviceKey = "skirt";
-    pattern.fabricMeters140 = fabricEstimate(m, style, length);
-    pattern.guideSteps = guide(style);
+    pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping);
+    pattern.guideSteps = guide(style, shaping);
     return pattern;
 }
 

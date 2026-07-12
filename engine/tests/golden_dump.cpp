@@ -54,11 +54,14 @@ int main() {
         {SleeveStyle::Balloon, SleeveLength::Elbow},
     };
 
+    // The golden reference is the validated Swift engine, which drafts darts;
+    // every spec pins shaping to Dart so the diff stays meaningful.
     std::vector<std::pair<std::string, GarmentSpec>> specs;
     for (auto style : skirtStyles) {
         for (auto length : skirtLengths) {
             GarmentSpec spec;
             spec.garment = GarmentType::Skirt;
+            spec.shaping = Shaping::Dart;
             spec.skirtStyle = style;
             spec.skirtLength = length;
             specs.push_back({std::string("skirt/") + raw(style) + "/" + raw(length), spec});
@@ -69,6 +72,7 @@ int main() {
             for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
                 GarmentSpec spec;
                 spec.garment = GarmentType::Dress;
+                spec.shaping = Shaping::Dart;
                 spec.neckline = neckline;
                 spec.skirtStyle = style;
                 spec.skirtLength = SkirtLength::Midi;
@@ -81,6 +85,7 @@ int main() {
             for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
                 GarmentSpec spec;
                 spec.garment = GarmentType::Top;
+                spec.shaping = Shaping::Dart;
                 spec.neckline = neckline;
                 spec.topLength = topLength;
                 spec.sleeveStyle = sleeve;

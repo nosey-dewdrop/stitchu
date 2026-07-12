@@ -23,6 +23,10 @@ enum class SleeveStyle { None, Straight, Balloon };
 enum class SleeveLength { Short, Elbow, Long };
 enum class GarmentType { Skirt, Dress, Top };
 enum class TopLength { Cropped, Hip, Tunic };
+// How waist suppression is shaped. Princess is the default: seams a person can
+// actually sew and the look that justifies the engine; darts are the advanced
+// legacy option (also the golden-diff reference against the Swift engine).
+enum class Shaping { Princess, Dart };
 
 inline const char* raw(Neckline n) {
     switch (n) {
@@ -108,8 +112,17 @@ inline double belowWaist(TopLength t) {
     return 0;
 }
 
+inline const char* raw(Shaping s) {
+    switch (s) {
+        case Shaping::Princess: return "princess";
+        case Shaping::Dart: return "dart";
+    }
+    return "";
+}
+
 struct GarmentSpec {
     GarmentType garment = GarmentType::Dress;
+    Shaping shaping = Shaping::Princess;
     Neckline neckline = Neckline::Crew;
     SleeveStyle sleeveStyle = SleeveStyle::None;
     SleeveLength sleeveLength = SleeveLength::Short;

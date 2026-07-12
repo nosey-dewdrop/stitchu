@@ -94,6 +94,36 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
 - fitted bodice + skirt joined at the waist seam, invisible zipper runs CB through both
 - fabric = skirt estimate + 0.7 bodice (+0.4 short/elbow or +0.7 long sleeves)
 
+## Princess shaping (DEFAULT since 2026-07-13; darts = advanced/legacy option)
+Applies to bodice halves and A-line/straight skirt quarters; gathered/half-circle have no
+waist shaping; tops still draft dart-only (princess-through-hem is the next engine step).
+- Bodice: the waist dart becomes an armhole princess seam. Same skeleton as the dart piece;
+  split point on the armhole at shoulderDrop + armholeDepth * 0.38, clamped >= 30 mm above
+  the apex and >= 15 mm below the shoulder tip (de Casteljau split of the armhole cubic).
+- Seam = shared upper cubic split->apex (cp1 = split + 0.3/0.25 of the delta, cp2 vertical
+  above apex at 0.30 of the rise; identical on both panels) + straight leg apex->waist.
+- TRUING (the key correctness step): the waist curve sits deeper on the center side (front
+  balance drop), so the raw side leg would be up to ~10 mm shorter than the center leg --
+  irrelevant folded as a dart, unsewable as a seam. The side panel's waist end drops to
+  apexY + sqrt(centerLeg^2 - (dart/2)^2) so both edges measure EQUAL; the side waist curve
+  re-blends into the trued point (cp2 shifted by the same delta).
+- Center front = cut 1 on fold, side front / center back / side back = cut 2. Side panels
+  rebased to their own top-left origin. Bust-apex match notch marked on both edges.
+- Skirt gore: dart legs become the gore seam legA/legB -> old dart tip -> straight to hem
+  at the dart center x; A-line adds 40 mm flare per gore edge at the hem (straight adds 0);
+  same truing applied against the 12 mm side-waist rise. Center panels on fold, side cut 2.
+  Dress mode: skirt CENTER back carries the CB zipper seam (cut 2).
+- Audit values: sewn waist measured along the actual split+trued curves (dress skirt is
+  drafted against this); straight waist span basis unchanged (dartsum check identical).
+- Armhole length, side seams, sleeve drafting: identical to dart mode by construction.
+- Validator adds: princess edge pair |center - side| <= 2.5 mm (bodice, from audit values);
+  gore seam pair <= 3.0 mm (skirt, measured from piece geometry: center [1].to+[2]+[3],
+  side [4].to+[5]+[6]); skirt side-seam pairing prefers the "Side Front/Back" panels.
+- Intake floor: bodice halves under 12 mm intake and skirt quarters under the 8 mm dart
+  minimum stay unsplit (a seam that shapes nothing only adds pieces).
+- Golden diff vs Swift runs with shaping pinned to Dart (Swift engine has no princess);
+  princess correctness is covered by the doubled engine-check matrix (4485 drafts).
+
 ## Validator invariants (port 1:1, tolerances in mm)
 pairedSeam 3.0 · waistJoin 12.0 · dartSum 2.0 · chestWidth 1.5 · capLength 2.5 ·
 capEase 1–9% · kink max 25 deg per flattened step (24 steps, skip steps < 0.3 mm) ·

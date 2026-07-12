@@ -91,11 +91,15 @@ TopLength topLengthFrom(const std::string& s) {
     if (s == "tunic") return TopLength::Tunic;
     return TopLength::Hip;
 }
+Shaping shapingFrom(const std::string& s) {
+    if (s == "dart") return Shaping::Dart;
+    return Shaping::Princess;
+}
 
 // Returns {"pattern": {...}, "issues": [...]} — issues non-empty means the
 // runtime safety net caught an invalid draft; the UI must not show the PDF.
 std::string draftJSON(
-    std::string garment, std::string neckline,
+    std::string garment, std::string shaping, std::string neckline,
     std::string sleeveStyle, std::string sleeveLength,
     std::string skirtStyle, std::string skirtLength, std::string topLength,
     double bustCM, double waistCM, double hipCM, double shoulderCM,
@@ -103,6 +107,7 @@ std::string draftJSON(
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
+    spec.shaping = shapingFrom(shaping);
     spec.neckline = necklineFrom(neckline);
     spec.sleeveStyle = sleeveStyleFrom(sleeveStyle);
     spec.sleeveLength = sleeveLengthFrom(sleeveLength);

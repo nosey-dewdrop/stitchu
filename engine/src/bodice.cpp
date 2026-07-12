@@ -151,11 +151,168 @@ HalfBodice makePiece(
     return half;
 }
 
+struct PrincessHalf {
+    PatternPiece center;
+    PatternPiece side;
+    double armholeLength = 0;
+    double sideSeam = 0;
+    double sewnWaist = 0;      // center part + side part, along the drafted curve
+    double straightWaist = 0;  // waist span minus intake, same basis as dart mode
+    double seamCenterLen = 0;  // princess edge on the center panel
+    double seamSideLen = 0;    // princess edge on the side panel
+};
+
+// Princess split of the same half-bodice skeleton makePiece draws: the waist
+// dart becomes a seam from the armhole through the bust apex to the waist.
+// Above the apex both panel edges share one cubic (identical length); below it
+// the old dart legs become the panel edges, so the intake is sewn out exactly
+// like the dart it replaces.
+PrincessHalf makePrincessPieces(
+    const std::string& baseName,
+    const std::string& centerCut,
+    const std::string& sideCut,
+    Neckline neckline,
+    double neckW,
+    double neckCutout,
+    double shoulderHalf,
+    double shoulderDrop,
+    double chestWidth,
+    double armholeY,
+    double sideWaistY,
+    double centerWaistY,
+    double waistlineWidth,
+    double dartWidth,
+    double dartLength,
+    double centerTakeIn
+) {
+    const Point centerNeck{0, neckCutout};
+    const Point neckPoint{neckW, 0};
+    const Point shoulderTip{shoulderHalf, shoulderDrop};
+    const Point armholeBottom{chestWidth, armholeY};
+    const Point sideWaist{waistlineWidth, sideWaistY - 8};
+    const Point centerWaist{centerTakeIn, centerWaistY};
+
+    const PathCommand armholeCurve = PathCommand::curve(
+        armholeBottom,
+        {shoulderHalf + (chestWidth - shoulderHalf) * 0.25, shoulderDrop + (armholeY - shoulderDrop) * 0.55},
+        {chestWidth - (chestWidth - shoulderHalf) * 0.45, armholeY - (armholeY - shoulderDrop) * 0.12});
+    const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
+
+    const double waistSpan = waistlineWidth - centerTakeIn;
+    const PathCommand waistCurve = PathCommand::curve(
+        centerWaist,
+        {centerTakeIn + waistSpan * 0.6, sideWaist.y + (centerWaist.y - sideWaist.y) * 0.55},
+        {centerTakeIn + waistSpan * 0.25, centerWaist.y});
+
+    // Old dart geometry becomes the seam geometry.
+    const double dartCenterX = centerTakeIn + waistSpan * 0.5;
+    const CubicSplit waistAtA = splitCubic(sideWaist, waistCurve, cubicTForX(sideWaist, waistCurve, dartCenterX - dartWidth / 2));
+    const CubicSplit waistAtB = splitCubic(sideWaist, waistCurve, cubicTForX(sideWaist, waistCurve, dartCenterX + dartWidth / 2));
+    const Point legA = waistAtA.at; // center-side seam end on the waist
+    const Point legB = waistAtB.at; // side-panel seam end on the waist
+    const Point apex{dartCenterX, std::min(legA.y, legB.y) - dartLength};
+
+    // True the seam: the waist curve sits deeper on the center side (front
+    // balance drop), so the raw legB edge would be shorter than the legA edge
+    // by up to ~10 mm — fine folded as a dart, unsewable as a seam. Drop the
+    // side panel's waist end until both seam edges measure the same, and
+    // re-blend its waist curve into the new end point.
+    const double targetLegLen = distance(apex, legA);
+    const double legDrop = std::sqrt(std::max(0.0, targetLegLen * targetLegLen - (dartWidth / 2) * (dartWidth / 2)));
+    const Point legBTrued{legB.x, apex.y + legDrop};
+    PathCommand sideWaistEdge = waistAtB.first; // sideWaist -> legB
+    sideWaistEdge.cp2.y += legBTrued.y - legB.y;
+    sideWaistEdge.to = legBTrued;
+
+    // Where the seam leaves the armhole: a fixed share of the armhole depth,
+    // but always safely above the apex.
+    const double splitTargetY = std::max(
+        shoulderDrop + 15.0,
+        std::min(shoulderDrop + (armholeY - shoulderDrop) * BodiceBlock::princessArmholeShare,
+                 apex.y - BodiceBlock::princessApexClearance));
+    const CubicSplit armSplit = splitCubic(shoulderTip, armholeCurve, cubicTForY(shoulderTip, armholeCurve, splitTargetY));
+    const Point split = armSplit.at;
+
+    // Shared upper seam cubic, arriving at the apex near-vertically so it
+    // flows into the straight leg below.
+    const PathCommand seamUpper = PathCommand::curve(
+        apex,
+        {split.x + (apex.x - split.x) * 0.3, split.y + (apex.y - split.y) * 0.25},
+        {apex.x, apex.y - (apex.y - split.y) * 0.30});
+    const double seamUpperLen = pathLength({PathCommand::move(split), seamUpper});
+
+    // ---- center panel ----
+    std::vector<PathCommand> centerCommands{PathCommand::move(centerNeck)};
+    for (const auto& cmd : neckCommands(neckline, centerNeck, neckPoint)) centerCommands.push_back(cmd);
+    centerCommands.push_back(PathCommand::line(shoulderTip));
+    centerCommands.push_back(armSplit.first);
+    centerCommands.push_back(seamUpper);
+    centerCommands.push_back(PathCommand::line(legA));
+    centerCommands.push_back(waistAtA.second);
+    centerCommands.push_back(PathCommand::curve(
+        centerNeck,
+        {centerTakeIn * 0.6, neckCutout + (centerWaistY - neckCutout) * 0.6},
+        {0, neckCutout + (centerWaistY - neckCutout) * 0.3}));
+    centerCommands.push_back(PathCommand::close());
+
+    PatternPiece center;
+    center.name = "Bodice Center " + baseName;
+    center.cutInstruction = centerCut;
+    center.commands = centerCommands;
+    // Bust-apex match notch, pointing into the panel.
+    center.markings = {PathCommand::move(apex), PathCommand::line({apex.x - 12, apex.y + 3})};
+    center.hasGrainline = true;
+    center.grainline = Grainline{
+        {std::max(centerTakeIn, 20.0) + 20, armholeY},
+        {std::max(centerTakeIn, 20.0) + 20, sideWaistY - 30}};
+    center.seamAllowance = 15;
+
+    // ---- side panel ----
+    std::vector<PathCommand> sideCommands{PathCommand::move(split)};
+    sideCommands.push_back(armSplit.second);
+    sideCommands.push_back(PathCommand::line(sideWaist));
+    sideCommands.push_back(sideWaistEdge);
+    sideCommands.push_back(PathCommand::line(apex));
+    sideCommands.push_back(reverseCubic(split, seamUpper));
+    sideCommands.push_back(PathCommand::close());
+
+    PatternPiece side;
+    side.name = "Bodice Side " + baseName;
+    side.cutInstruction = sideCut;
+    side.commands = sideCommands;
+    side.markings = {PathCommand::move(apex), PathCommand::line({apex.x + 12, apex.y + 3})};
+    side.hasGrainline = true;
+    const double grainX = (legB.x + chestWidth) / 2;
+    side.grainline = Grainline{
+        {grainX, std::max(armholeY, apex.y) + 25},
+        {grainX, sideWaistY - 30}};
+    side.seamAllowance = 15;
+    // Rebase to a local top-left origin like every other piece.
+    const Rect sideBox = boundingBox(side.commands);
+    translatePiece(side, -sideBox.x, -sideBox.y);
+
+    PrincessHalf half;
+    half.center = center;
+    half.side = side;
+    half.armholeLength = armholeLen;
+    half.sideSeam = std::hypot(sideWaist.x - armholeBottom.x, sideWaist.y - armholeBottom.y);
+    half.sewnWaist = pathLength({PathCommand::move(legA), waistAtA.second}) +
+                     pathLength({PathCommand::move(sideWaist), sideWaistEdge});
+    half.straightWaist = waistSpan - dartWidth;
+    half.seamCenterLen = seamUpperLen + distance(apex, legA);
+    half.seamSideLen = seamUpperLen + distance(apex, legBTrued);
+    return half;
+}
+
+// Below this intake a princess seam adds pieces without adding shape; the
+// half stays a single dart-mode piece (the dart itself may also be ~zero).
+constexpr double minPrincessIntake = 12;
+
 } // namespace
 
 namespace BodiceBlock {
 
-BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline) {
+BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping shaping) {
     const double neck = m.neckMM();
     const double backLength = m.backLengthMM();
     const double shoulderHalf = m.shoulderCM * 10 / 2;
@@ -180,15 +337,32 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline) {
     // leaves exactly the waist target: cbTakeIn + target + dart.
     const double backWaistlineWidth = cbTakeIn + backWaistTarget + backDart;
 
-    const HalfBodice back = makePiece(
-        "Bodice Back", "cut 2",
-        Neckline::Crew, // back neckline stays a shallow curve for every style
-        backNeckW, backCutout, shoulderHalf, shoulderDrop,
-        backWidth, armholeY,
-        backLength, backLength,
-        backWaistlineWidth, backDart,
-        backLength - armholeY + 40,
-        cbTakeIn);
+    const double backDartLength = backLength - armholeY + 40;
+    const bool backPrincess = shaping == Shaping::Princess && backDart >= minPrincessIntake;
+
+    HalfBodice back;
+    PrincessHalf backSplit;
+    if (backPrincess) {
+        backSplit = makePrincessPieces(
+            "Back", "cut 2", "cut 2",
+            Neckline::Crew, // back neckline stays a shallow curve for every style
+            backNeckW, backCutout, shoulderHalf, shoulderDrop,
+            backWidth, armholeY,
+            backLength, backLength,
+            backWaistlineWidth, backDart,
+            backDartLength,
+            cbTakeIn);
+    } else {
+        back = makePiece(
+            "Bodice Back", "cut 2",
+            Neckline::Crew,
+            backNeckW, backCutout, shoulderHalf, shoulderDrop,
+            backWidth, armholeY,
+            backLength, backLength,
+            backWaistlineWidth, backDart,
+            backDartLength,
+            cbTakeIn);
+    }
 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
     const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
@@ -203,32 +377,72 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline) {
     const double frontDart = frontReduction - sideTake;
     const double frontWaistlineWidth = frontWaistTarget + frontDart;
 
-    const HalfBodice front = makePiece(
-        "Bodice Front", "cut 1 on fold",
-        neckline,
-        frontNeckW, frontCutout, shoulderHalf, shoulderDrop,
-        frontWidth, armholeY,
-        backLength, frontLength,
-        frontWaistlineWidth, frontDart,
-        frontLength - armholeY - 40,
-        0);
+    const double frontDartLength = frontLength - armholeY - 40;
+    const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake;
+
+    HalfBodice front;
+    PrincessHalf frontSplit;
+    if (frontPrincess) {
+        frontSplit = makePrincessPieces(
+            "Front", "cut 1 on fold", "cut 2",
+            neckline,
+            frontNeckW, frontCutout, shoulderHalf, shoulderDrop,
+            frontWidth, armholeY,
+            backLength, frontLength,
+            frontWaistlineWidth, frontDart,
+            frontDartLength,
+            0);
+    } else {
+        front = makePiece(
+            "Bodice Front", "cut 1 on fold",
+            neckline,
+            frontNeckW, frontCutout, shoulderHalf, shoulderDrop,
+            frontWidth, armholeY,
+            backLength, frontLength,
+            frontWaistlineWidth, frontDart,
+            frontDartLength,
+            0);
+    }
 
     BodiceDraft draft;
-    draft.back = back.piece;
-    draft.front = front.piece;
+    draft.frontPrincess = frontPrincess;
+    draft.backPrincess = backPrincess;
+    if (backPrincess) {
+        draft.back = backSplit.center;
+        draft.backSide = backSplit.side;
+        draft.backSideSeam = backSplit.sideSeam;
+        draft.backSewnWaist = backSplit.sewnWaist;
+        draft.backStraightWaist = backSplit.straightWaist;
+        draft.backSeamCenterLen = backSplit.seamCenterLen;
+        draft.backSeamSideLen = backSplit.seamSideLen;
+    } else {
+        draft.back = back.piece;
+        draft.backSideSeam = back.sideSeam;
+        draft.backSewnWaist = back.sewnWaist;
+        draft.backStraightWaist = back.straightWaist;
+    }
+    if (frontPrincess) {
+        draft.front = frontSplit.center;
+        draft.frontSide = frontSplit.side;
+        draft.frontSideSeam = frontSplit.sideSeam;
+        draft.frontSewnWaist = frontSplit.sewnWaist;
+        draft.frontStraightWaist = frontSplit.straightWaist;
+        draft.frontSeamCenterLen = frontSplit.seamCenterLen;
+        draft.frontSeamSideLen = frontSplit.seamSideLen;
+    } else {
+        draft.front = front.piece;
+        draft.frontSideSeam = front.sideSeam;
+        draft.frontSewnWaist = front.sewnWaist;
+        draft.frontStraightWaist = front.straightWaist;
+    }
     draft.backWaistHalf = backWaistTarget;
     draft.frontWaistHalf = frontWaistTarget;
     draft.frontLength = frontLength;
     draft.backLength = backLength;
-    draft.armholeLength = back.armholeLength + front.armholeLength;
+    draft.armholeLength = (backPrincess ? backSplit.armholeLength : back.armholeLength) +
+                          (frontPrincess ? frontSplit.armholeLength : front.armholeLength);
     draft.armholeDepth = armholeY - shoulderDrop;
     draft.sideWaistY = backLength;
-    draft.frontSideSeam = front.sideSeam;
-    draft.backSideSeam = back.sideSeam;
-    draft.frontSewnWaist = front.sewnWaist;
-    draft.backSewnWaist = back.sewnWaist;
-    draft.frontStraightWaist = front.straightWaist;
-    draft.backStraightWaist = back.straightWaist;
     draft.frontChestWidth = frontWidth;
     draft.backChestWidth = backWidth;
     return draft;
