@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=11';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=11';
-import { draft } from './engine.js?v=11';
-import { printPattern } from './print.js?v=11';
-import { renderResult } from './render.js?v=11';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=12';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=12';
+import { draft } from './engine.js?v=12';
+import { printPattern } from './print.js?v=12';
+import { renderResult } from './render.js?v=12';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=11';
+} from './store.js?v=12';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -22,10 +22,14 @@ const SPEC_GROUPS = [
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş']], for: (s) => s.garment !== 'top' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
+  // Princess is the engine default; darts are the legacy/advanced option.
+  // Gathered and half-circle skirts have no waist shaping to convert; tops
+  // draft dart-only for now (engine limitation, princess tops are next).
+  { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['princess', 'princess seams', 'prenses dikiş'], ['dart', 'darts', 'pens']], for: (s) => s.garment === 'dress' || (s.garment === 'skirt' && (s.skirtStyle === 'aLine' || s.skirtStyle === 'straight')) },
 ];
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
-  skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+  skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
 };
 
 function el(tag, className, text) {
