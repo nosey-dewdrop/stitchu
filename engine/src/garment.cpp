@@ -84,10 +84,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             piece.cutInstruction = "cut 2 (center back seam)";
         }
     }
+    const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
+        m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth);
 
-    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping) + 0.7;
+    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping) + 0.7 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
 
     const bool sleeveless = sleeves.empty();
@@ -99,17 +101,23 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             " — sew a quick muslin (test version) from cheap fabric first and adjust before cutting your real fabric.",
         std::string("Cut every piece as labelled: pieces marked 'on fold' on the fabric fold, 'cut 2' twice") +
             (sleeveless ? "" : ", sleeves twice") + ".",
+        "Fuse interfacing to the neck facings.",
+        "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
     };
     if (princess) {
-        steps.push_back("Staystitch the curved princess edges just inside the seam line so they don't stretch while you handle them.");
-        steps.push_back("Sew each bodice princess seam: pin center panel to side panel matching the bust notch, sew, clip the side panel's curve inside the seam allowance, press toward the center.");
+        steps.push_back("Staystitch the curved princess edges too, for the same reason.");
+        steps.push_back("Sew each bodice princess seam: pin center panel to side panel matching the bust notch, sew, clip the side panel's curve over the bust inside the seam allowance, press toward the center.");
         if (!bodice.frontPrincess || !bodice.backPrincess) {
             steps.push_back("Sew the remaining waist darts (where a panel wasn't split), pressing toward the center.");
         }
     } else {
         steps.push_back("Sew all darts first, pressing toward the center.");
     }
-    steps.push_back("Sew bodice shoulder and side seams.");
+    steps.push_back("Sew the bodice shoulder seams and press them open.");
+    steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
+    steps.push_back("Attach the facing to the neckline right sides together, leaving the last 2 cm free at each center back edge (the zipper goes there later). Trim to 6 mm, clip into the curve every 2 cm.");
+    steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this keeps the facing rolled inside. Turn, press, tack at the shoulder seams.");
+    steps.push_back("Sew the bodice side seams.");
     if (sleeveless) {
         steps.push_back("Finish armholes with bias binding (sleeveless).");
     }
@@ -125,6 +133,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     steps.push_back("Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the waist seam, matching side seams" +
         std::string(princess ? " and lining the gore seams up with the bodice princess seams as closely as possible" : "") + ".");
     steps.push_back("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.");
+    steps.push_back("Fold the free facing ends back over the zipper tape and hand-tack them down so the facing edge sits clean against the zipper.");
     if (!sleeveless) {
         steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
@@ -146,6 +155,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (bodice.frontPrincess) pattern.pieces.push_back(bodice.frontSide);
     pattern.pieces.push_back(bodice.back);
     if (bodice.backPrincess) pattern.pieces.push_back(bodice.backSide);
+    pattern.pieces.insert(pattern.pieces.end(), facings.begin(), facings.end());
     pattern.pieces.insert(pattern.pieces.end(), skirtPieces.begin(), skirtPieces.end());
     pattern.pieces.insert(pattern.pieces.end(), sleeves.begin(), sleeves.end());
     pattern.fabricAdviceKey = "dress";
@@ -159,33 +169,67 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
 namespace TopBlock {
 
 DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
-    // Tops stay dart-shaped: a princess seam would have to continue through
-    // the hem extension (gore-style), which is its own drafting job. Logged as
-    // the next engine step; extendPiece assumes the single-piece layout.
-    const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, Shaping::Dart);
     const double extra = belowWaist(spec.topLength);
     const double hipHalfQuarter = (m.hipMM() / 4) * 1.04;
+    // Princess panels extend through the waist inside the bodice block and
+    // stay fitted; dart-mode pieces use the classic (boxy) hem extension.
+    const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, spec.shaping, extra, hipHalfQuarter);
 
-    const PatternPiece front = extendPiece(bodice.front, bodice.sideWaistY, bodice.frontLength, extra, hipHalfQuarter);
-    const PatternPiece back = extendPiece(bodice.back, bodice.sideWaistY, bodice.backLength, extra, hipHalfQuarter);
+    std::vector<PatternPiece> tops;
+    if (bodice.frontPrincess) {
+        PatternPiece center = bodice.front;
+        center.name = replaceBodice(center.name);
+        PatternPiece side = bodice.frontSide;
+        side.name = replaceBodice(side.name);
+        tops.push_back(center);
+        tops.push_back(side);
+    } else {
+        tops.push_back(extendPiece(bodice.front, bodice.sideWaistY, bodice.frontLength, extra, hipHalfQuarter));
+    }
+    if (bodice.backPrincess) {
+        PatternPiece center = bodice.back;
+        center.name = replaceBodice(center.name);
+        PatternPiece side = bodice.backSide;
+        side.name = replaceBodice(side.name);
+        tops.push_back(center);
+        tops.push_back(side);
+    } else {
+        tops.push_back(extendPiece(bodice.back, bodice.sideWaistY, bodice.backLength, extra, hipHalfQuarter));
+    }
+    const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
+        m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth);
 
-    double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000;
+    double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
 
     const bool sleeveless = sleeves.empty();
+    const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
         "Print and check the 3 cm calibration square before cutting.",
         "This block uses standard assumptions for shoulder slope and underbust — sew a quick muslin first and adjust before cutting your real fabric.",
-        std::string("Cut front on fold, back twice (or on fold if it slips over your head — check the neck opening against your head circumference)") +
-            (sleeveless ? "" : ", sleeves twice") + ".",
+        std::string("Cut every piece as labelled ('on fold' on the fabric fold, 'cut 2' twice)") +
+            (sleeveless ? "" : ", sleeves twice") +
+            ". Check the neck opening against your head circumference — a top has no zipper, it must slip over your head.",
+        "Fuse interfacing to the neck facings.",
+        "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
     };
-    if (extra == 0) {
+    if (princess) {
+        steps.push_back("Sew each princess seam: pin center panel to side panel matching the bust notch, sew from armhole to hem in one pass, clip the curve over the bust inside the seam allowance, press toward the center.");
+        if (!bodice.frontPrincess || !bodice.backPrincess) {
+            steps.push_back(extra == 0
+                ? "Sew the remaining waist darts (where a panel wasn't split), pressing toward the center."
+                : "The unsplit half has no waist shaping below the bust — that is expected at this intake.");
+        }
+    } else if (extra == 0) {
         steps.push_back("Sew the waist darts, pressing toward the center.");
     }
-    steps.push_back("Sew shoulder seams, then side seams.");
-    steps.push_back("Finish the neckline with bias binding.");
+    steps.push_back("Sew the shoulder seams and press them open.");
+    steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
+    steps.push_back("Attach the facing to the neckline right sides together, sewing exactly on the seam line. Trim to 6 mm, clip into the curve every 2 cm.");
+    steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this is what keeps the facing rolled inside. Turn, press, and tack the facing down at the shoulder seams.");
+    steps.push_back("Sew the side seams.");
     if (sleeveless) {
         steps.push_back("Finish the armholes with bias binding.");
     } else {
@@ -201,7 +245,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
 
     DraftedPattern pattern;
     pattern.garment = std::string(raw(spec.topLength)) + sleeveWord + " top";
-    pattern.pieces = {front, back};
+    pattern.pieces = tops;
+    pattern.pieces.insert(pattern.pieces.end(), facings.begin(), facings.end());
     pattern.pieces.insert(pattern.pieces.end(), sleeves.begin(), sleeves.end());
     pattern.fabricAdviceKey = "top";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);

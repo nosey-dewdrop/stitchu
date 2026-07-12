@@ -92,16 +92,18 @@ int main() {
                 }
             }
         }
-        for (auto topLength : topLengths) {
-            for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
-                GarmentSpec spec;
-                spec.garment = GarmentType::Top;
-                spec.shaping = Shaping::Dart;
-                spec.neckline = neckline;
-                spec.topLength = topLength;
-                spec.sleeveStyle = sleeve;
-                spec.sleeveLength = sleeveLength;
-                specs.push_back({std::string("top/") + raw(neckline) + "/" + raw(topLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+        for (auto shaping : shapings) {
+            for (auto topLength : topLengths) {
+                for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                    GarmentSpec spec;
+                    spec.garment = GarmentType::Top;
+                    spec.shaping = shaping;
+                    spec.neckline = neckline;
+                    spec.topLength = topLength;
+                    spec.sleeveStyle = sleeve;
+                    spec.sleeveLength = sleeveLength;
+                    specs.push_back({std::string("top/") + raw(shaping) + "/" + raw(neckline) + "/" + raw(topLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                }
             }
         }
     }

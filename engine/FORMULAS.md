@@ -95,8 +95,8 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
 - fabric = skirt estimate + 0.7 bodice (+0.4 short/elbow or +0.7 long sleeves)
 
 ## Princess shaping (DEFAULT since 2026-07-13; darts = advanced/legacy option)
-Applies to bodice halves and A-line/straight skirt quarters; gathered/half-circle have no
-waist shaping; tops still draft dart-only (princess-through-hem is the next engine step).
+Applies to bodice halves (dress AND top) and A-line/straight skirt quarters;
+gathered/half-circle have no waist shaping to convert.
 - Bodice: the waist dart becomes an armhole princess seam. Same skeleton as the dart piece;
   split point on the armhole at shoulderDrop + armholeDepth * 0.38, clamped >= 30 mm above
   the apex and >= 15 mm below the shoulder tip (de Casteljau split of the armhole cubic).
@@ -121,8 +121,24 @@ waist shaping; tops still draft dart-only (princess-through-hem is the next engi
   side [4].to+[5]+[6]); skirt side-seam pairing prefers the "Side Front/Back" panels.
 - Intake floor: bodice halves under 12 mm intake and skirt quarters under the 8 mm dart
   minimum stay unsplit (a seam that shapes nothing only adds pieces).
+- Princess TOPS: the panels continue through the waist; the seam gap closes linearly to
+  zero at hip depth (200), the side seam nips at the waist and flares to hip/4 * 1.04 in
+  one curve (same construction as the dart-mode extension), sewn hem = hip quarter exactly.
+  Trued legs share one y, so the below-waist edges mirror and measure equal by symmetry.
+  A half under the 12 mm intake floor stays unsplit and uses the classic boxy extension
+  (its audit side seam is reported extended so front/back stay comparable).
 - Golden diff vs Swift runs with shaping pinned to Dart (Swift engine has no princess);
-  princess correctness is covered by the doubled engine-check matrix (4485 drafts).
+  princess correctness is covered by the engine-check matrix (5610 drafts).
+
+## Neck facings (dress + top, all necklines)
+- Inner edge repeats the garment neckline commands VERBATIM (seam match by construction);
+  outer edge = the neckline flattened to a polyline (12 steps/curve) and offset 55 mm along
+  averaged vertex normals oriented away from the neck opening; shoulder end walks 55 mm
+  (capped at 60% of the shoulder seam) from the neck point toward the shoulder tip.
+- Front facing cut = front piece cut (cut 1 on fold), back = cut 2; both "interface".
+- Fabric adder facingFabricMeters = 0.2 on dress/top (golden dump subtracts it).
+- Validator rule "facing": both facings present; inner edge length == garment neck edge
+  within 1.5 mm (k = 2 commands for the square front neckline, else 1).
 
 ## Validator invariants (port 1:1, tolerances in mm)
 pairedSeam 3.0 · waistJoin 12.0 · dartSum 2.0 · chestWidth 1.5 · capLength 2.5 ·

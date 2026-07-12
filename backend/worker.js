@@ -200,6 +200,7 @@ async function handleAnalyze(request, env) {
  "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | null (halfCircle covers full/flared circle skirts),
  "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
  "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
+ "shaping": "princess" | "dart" | null (princess = vertical seams running over the bust or down the skirt panels; dart = visible stitched darts at waist/bust with no vertical panel seams; null if the waist shaping is not visible),
  "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}`;
 
   const anthropicBody = {

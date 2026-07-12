@@ -502,6 +502,17 @@ std::optional<double> topSideSeamLength(const PatternPiece& piece) {
     return pathLength({PathCommand::move(piece.commands[count - 5].to), piece.commands[count - 4]});
 }
 
+// Princess side panel: [0]=move(split), [1]=armhole lower half, [2]=side seam
+// (curve to hem when extended, line to the waist when cropped).
+std::optional<double> princessTopSideSeam(const PatternPiece& piece) {
+    if (piece.commands.size() < 3 ||
+        piece.commands[1].type != CmdType::Curve ||
+        (piece.commands[2].type != CmdType::Curve && piece.commands[2].type != CmdType::Line)) {
+        return std::nullopt;
+    }
+    return pathLength({PathCommand::move(piece.commands[1].to), piece.commands[2]});
+}
+
 std::vector<ValidationIssue> topIssues(
     const GarmentSpec& spec,
     const DraftedPattern& draft,
@@ -509,33 +520,96 @@ std::vector<ValidationIssue> topIssues(
 ) {
     std::vector<ValidationIssue> issues;
     const double extra = belowWaist(spec.topLength);
-    const PatternPiece* front = nullptr;
-    const PatternPiece* back = nullptr;
-    for (const auto& piece : draft.pieces) {
-        if (piece.name == "Top Front") front = &piece;
-        if (piece.name == "Top Back") back = &piece;
+    auto find = [&](const std::string& name) -> const PatternPiece* {
+        for (const auto& piece : draft.pieces) {
+            if (piece.name == name) return &piece;
+        }
+        return nullptr;
+    };
+
+    // Per half: princess halves carry center+side panels, others one piece.
+    std::optional<double> frontSide, backSide;
+    for (const bool isFront : {true, false}) {
+        const char* half = isFront ? "Front" : "Back";
+        const bool princess = isFront ? bodice.frontPrincess : bodice.backPrincess;
+        const double expected = (isFront ? bodice.frontLength : bodice.backLength) + extra;
+        auto& sideLen = isFront ? frontSide : backSide;
+        if (princess) {
+            const PatternPiece* center = find(std::string("Top Center ") + half);
+            const PatternPiece* side = find(std::string("Top Side ") + half);
+            if (!center || !side) {
+                issues.push_back({"top", draft.garment, std::string(half) + " princess panels missing"});
+                continue;
+            }
+            if (boundingBox(center->commands).height < expected - 15) {
+                issues.push_back({"top", center->name,
+                    fmt("height %.0f, expected about %.0f — hem extension did not apply",
+                        boundingBox(center->commands).height, expected)});
+            }
+            if (extra > 0 && boundingBox(side->commands).height < extra) {
+                issues.push_back({"top", side->name,
+                    fmt("height %.0f is shorter than the %.0f hem extension", boundingBox(side->commands).height, extra)});
+            }
+            sideLen = princessTopSideSeam(*side);
+        } else {
+            const PatternPiece* piece = find(std::string("Top ") + half);
+            if (!piece) {
+                issues.push_back({"top", draft.garment, std::string(half) + " piece missing"});
+                continue;
+            }
+            if (boundingBox(piece->commands).height < expected - 15) {
+                issues.push_back({"top", piece->name,
+                    fmt("height %.0f, expected about %.0f — hem extension did not apply",
+                        boundingBox(piece->commands).height, expected)});
+            }
+            if (extra > 0) sideLen = topSideSeamLength(*piece);
+        }
     }
-    if (!front || !back) {
-        return {{"top", draft.garment, "top front/back pieces missing"}};
+    if (frontSide && backSide && std::fabs(*frontSide - *backSide) > pairedSeamTolerance) {
+        issues.push_back({"sideseam", "Top", fmt("front side seam %.1f vs back %.1f", *frontSide, *backSide)});
     }
-    // Guard against the hem extension silently not applying.
-    const double expectedFront = bodice.frontLength + extra;
-    const double expectedBack = bodice.backLength + extra;
-    if (boundingBox(front->commands).height < expectedFront - 15) {
-        issues.push_back({"top", front->name,
-            fmt("height %.0f, expected about %.0f — hem extension did not apply",
-                boundingBox(front->commands).height, expectedFront)});
-    }
-    if (boundingBox(back->commands).height < expectedBack - 15) {
-        issues.push_back({"top", back->name,
-            fmt("height %.0f, expected about %.0f — hem extension did not apply",
-                boundingBox(back->commands).height, expectedBack)});
-    }
-    if (extra > 0) {
-        const auto f = topSideSeamLength(*front);
-        const auto b = topSideSeamLength(*back);
-        if (f && b && std::fabs(*f - *b) > pairedSeamTolerance) {
-            issues.push_back({"sideseam", "Top", fmt("front side seam %.1f vs back %.1f", *f, *b)});
+    return issues;
+}
+
+// MARK: Neck facings
+
+// The facing's inner edge must retrace the garment neckline exactly; both
+// start at move(centerNeck) and reach the neck point after k commands.
+std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const DraftedPattern& draft) {
+    std::vector<ValidationIssue> issues;
+    auto neckLength = [&](const PatternPiece& piece, size_t k) -> std::optional<double> {
+        if (piece.commands.size() < k + 1 || piece.commands[0].type != CmdType::Move) return std::nullopt;
+        std::vector<PathCommand> path{piece.commands[0]};
+        for (size_t i = 1; i <= k; ++i) path.push_back(piece.commands[i]);
+        return pathLength(path);
+    };
+    for (const bool isFront : {true, false}) {
+        const char* half = isFront ? "Front" : "Back";
+        const PatternPiece* facing = nullptr;
+        const PatternPiece* body = nullptr;
+        for (const auto& piece : draft.pieces) {
+            if (piece.name == std::string(half) + " Neck Facing") facing = &piece;
+            for (const char* prefix : {"Bodice Center ", "Bodice ", "Top Center ", "Top "}) {
+                if (piece.name == std::string(prefix) + half) { body = &piece; break; }
+            }
+        }
+        if (!facing || !body) {
+            issues.push_back({"facing", draft.garment,
+                std::string(half) + (facing ? " body piece" : " neck facing") + " missing"});
+            continue;
+        }
+        // The square front neckline is two commands; everything else is one.
+        const size_t k = (isFront && spec.neckline == Neckline::Square) ? 2 : 1;
+        const auto fLen = neckLength(*facing, k);
+        const auto bLen = neckLength(*body, k);
+        if (!fLen || !bLen) {
+            issues.push_back({"facing", facing->name, "unexpected layout, cannot measure the neck edge"});
+            continue;
+        }
+        if (std::fabs(*fLen - *bLen) > 1.5) {
+            issues.push_back({"facing", facing->name,
+                fmt("inner edge %.1f vs garment neckline %.1f differ by %.1f mm",
+                    *fLen, *bLen, std::fabs(*fLen - *bLen))});
         }
     }
     return issues;
@@ -605,14 +679,20 @@ std::vector<ValidationIssue> issues(
             for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEase, &bodice)) result.push_back(issue);
+            for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
             break;
         }
         case GarmentType::Top: {
-            // Tops draft dart-shaped regardless of the spec (see TopBlock).
-            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, Shaping::Dart);
+            // Recompute with the same parameters the top block drafted with.
+            const double extra = belowWaist(spec.topLength);
+            const double hipHalfQuarter = (m.hipMM() / 4) * 1.04;
+            const BodiceDraft bodice = spec.shaping == Shaping::Princess
+                ? BodiceBlock::draft(m, spec.neckline, Shaping::Princess, extra, hipHalfQuarter)
+                : BodiceBlock::draft(m, spec.neckline, Shaping::Dart);
             for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);
+            for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
             break;
         }
     }

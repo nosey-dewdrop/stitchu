@@ -98,12 +98,19 @@ int main() {
     for (const auto& [bodyName, m] : bodies) {
         for (const auto& [label, spec] : specs) {
             const DraftedPattern draft = GarmentDrafter::draft(spec, m);
-            std::printf("%s|%s|fabric,%.4f\n", bodyName.c_str(), label.c_str(), draft.fabricMeters140);
-            for (size_t p = 0; p < draft.pieces.size(); ++p) {
-                const auto& piece = draft.pieces[p];
+            // Compare only the surface shared with the Swift reference: skip
+            // the (post-Swift) neck facings and subtract their fabric adder.
+            const double fabric = spec.garment == GarmentType::Skirt
+                ? draft.fabricMeters140
+                : draft.fabricMeters140 - BodiceBlock::facingFabricMeters;
+            std::printf("%s|%s|fabric,%.4f\n", bodyName.c_str(), label.c_str(), fabric);
+            size_t p = 0;
+            for (const auto& piece : draft.pieces) {
+                if (piece.name.find("Facing") != std::string::npos) continue;
                 const std::string prefix = bodyName + "|" + label + "|piece" + std::to_string(p) + ":" + piece.name;
                 dumpCommands("outline", piece.commands, prefix);
                 dumpCommands("marking", piece.markings, prefix);
+                ++p;
             }
         }
     }

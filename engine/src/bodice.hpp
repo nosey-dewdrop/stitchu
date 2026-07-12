@@ -58,8 +58,22 @@ inline constexpr double maxNeckShoulderShare = 0.72;
 inline constexpr double princessArmholeShare = 0.38;
 inline constexpr double princessApexClearance = 30; // split at least this far above apex
 
+// extendBelowWaist/hipHalfQuarter (tops, princess only): the panels continue
+// through the waist to the hem, staying fitted. Dart mode ignores them (the
+// top block extends dart pieces with its own boxy extension).
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline = Neckline::Crew,
-                  Shaping shaping = Shaping::Princess);
+                  Shaping shaping = Shaping::Princess,
+                  double extendBelowWaist = 0, double hipHalfQuarter = 0);
+
+// Neckline facing pieces (front + back) for dress and top blocks. The inner
+// edge repeats the garment neckline commands exactly, so the seam matches by
+// construction; the outer edge is a 55 mm normal offset of the neckline.
+inline constexpr double facingDepth = 55;
+// Fabric the facings add to dress/top estimates. Golden dumps subtract this:
+// the Swift reference engine predates facings.
+inline constexpr double facingFabricMeters = 0.2;
+std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Neckline neckline,
+                                      const std::string& frontCut, const std::string& backCut);
 
 } // namespace BodiceBlock
 

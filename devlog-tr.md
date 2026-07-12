@@ -45,3 +45,17 @@ Karar loglanmıştı, bugün cerrahi yapıldı. Motorun bodice bloğu artık pen
 En güzel an şuydu: ilk koşuda validator 1400 taslağı reddetti. Sebep ince bir kalıpçılık gerçeği — ön bel kavisi ortaya doğru düştüğü için dikişin iki kenarı arasında 10 milimetre fark oluşuyordu. Pens olarak katlarken kimsenin fark etmediği bu fark, gerçek bir dikişte kumaşın birleşmemesi demek. Gerçek kalıpçıların "truing" dediği düzeltmeyi ekledik: yan panelin bel ucu, iki kenar milimetrik eşitlenene kadar iniyor ve bel kavisi oraya yeniden harmanlanıyor. Sonra 4485 taslağın hepsi yeşil.
 
 Yani motor sadece prenses dikişi öğrenmedi; dikilemez kalıbı sayıyla yakalayan bir göz kazandı. Pens modu da duruyor (ileri seviye seçenek) ve Swift referansıyla milimetrenin onda biri içinde birebir. Sıradaki durak: bu motorun çizdiği prenses dikişli elbiseyi gerçekten dikmek.
+
+---
+
+## 04 — Motor artık komple giysi düşünüyor: prenses üstler, yaka pervazı, gerçek dikiş sırası
+
+Prenses dikişi elbisede vardı ama üstlerde pens kalmıştı, çünkü üstlerde dikişin bel çizgisinde durmayıp etek ucuna kadar akması gerekiyor. Bugün o aktı: panel dikişi belde kavis yapıp kalçaya doğru açılıyor, bel oturuyor, etek ucu tam kalça genişliğinde bitiyor. Eski pensli üst bel altında kutu gibiydi; artık fit belden geçiyor.
+
+İkinci eksik daha sinsiydi: yaka. Kalıp çıkarıyorduk ama yakanın nasıl temiz biteceği bir cümleydi: "biye geç". Gerçek konfeksiyonda yakaya pervaz dikilir — yakanın kopyası, telalı, içeri kıvrılan bir parça. Motor artık her elbise ve üstle birlikte ön/arka yaka pervazını da çiziyor. İç kenarı yakanın birebir aynı komutları, yani dikiş garantili eşleşiyor; validator ayrıca ölçüp kontrol ediyor.
+
+Üçüncüsü rehber: adımlar artık gerçek terzi sırası — teyel, prenses dikişleri, omuz, pervazın omuzda birleşmesi, understitch (pervazı içeride tutan gizli dikiş), fermuar, pervaz ucunun fermuar bandına el dikişiyle tutturulması. Bunu bilmeyen biri sırayla yapsa giysi çıkar; motorun vaadi tam olarak bu.
+
+Ve son parça: fotoğraftan okuma. Vision artık "bu elbisede prenses dikişi var mı, pens mi" diye bakıp shaping alanını dönüyor. Fotoğraf çek, motor o giysinin gerçek yapım tekniğiyle kalıbını çizsin.
+
+Test matrisi 5610 taslağa çıktı, hepsi yeşil. Etek + elbise + üst, ikişer şekillendirme, on beş vücut, her yaka her kol. "Sadece etek çıkarıyor" cümlesi bugün itibarıyla tarih.
