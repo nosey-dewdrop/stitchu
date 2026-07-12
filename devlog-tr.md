@@ -25,3 +25,13 @@ Sonra fark ettik ki motorun matematiğinin doğru olması yetmiyor — çıkard�
 O yüzden default'u değiştirdik: artık şekillendirmeyi pensin içine gömmüyor, dikey bir dikiş hattına yıkıyor — prenses dikişi. Pens payı, iki panelin arasındaki yumuşak kavise dönüşüyor. O korkunç sivri uç ortadan kalkıyor; yerine çentikle eşleştirip düz gittiğin bir dikiş geliyor. Vücut sürekli kavisli bir şey, prenses dikişi de o sürekliliği takip ediyor — hem daha iyi oturuyor hem dikmesi kolay. Etekte de aynı mantık: şekil gore panellerinin dikey dikişlerine gidiyor, yine pens yok.
 
 Pens tamamen gitmedi, ileri seviye bir seçenek olarak duruyor. Ama artık motor, insanın gerçekten diktiği gibi dikiyor. En sevdiğim kısım şu: motoru "daha akıllı" yapmadık, "daha insan" yaptık.
+
+---
+
+## 02 — Build-in-public'in yayı: motordan giyilebilir elbiseye
+
+Bu işin en büyük kanıtı bir ekran görüntüsü olamaz. Bir landing "biz slopware değiliz, gerçek bir motoruz" diyebilir ama söz ucuz. Asıl kanıt fiziksel: motorun çıkardığı kalıbı gerçek kumaşa serip kesmek, prenses dikişini dikmek, ve sonunda o elbiseyi giymek.
+
+O yüzden build-in-public'in yayı şu: motoru kurduk, landing'i çıkardık, sıradaki bölüm kumaşı kesip elbiseyi dikmek. Kamera kalıbın A4'ten çıkışını, kumaşın üstüne serilişini, makinede dikilişini, giyilişini görecek. İzleyen kişi "demek gerçekten çalışıyormuş" diyecek — çünkü kanıtı üstümüzde.
+
+Ve güzel yanı: bu aynı zamanda ürünün fiziksel doğrulama testi. İçerik ve validasyon aynı dikişte.
