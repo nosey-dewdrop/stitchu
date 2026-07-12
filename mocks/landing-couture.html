@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu — couture atelier</title>
+<style>
+  :root{ --accent:#ffd2da; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:Helvetica,Arial,sans-serif;color:#fff;overflow:hidden;background:#8f2038}
+  #silk{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .mark{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:3;font-weight:700;font-size:20px;letter-spacing:.5px;text-align:center;text-shadow:0 1px 10px rgba(40,4,14,.5)}
+  .mark svg{display:block;margin:4px auto 0}
+  .wrap{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:48px}
+  .col{max-width:47ch;text-align:center;text-shadow:0 1px 12px rgba(45,5,15,.6)}
+  .kicker{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:44px;line-height:1.07;font-weight:400;margin:0 auto 22px;max-width:15ch}
+  h1 em{font-style:italic}
+  .items{max-width:44ch;margin:4px auto 0;text-align:left}
+  .item{font-size:13px;line-height:1.5;margin-bottom:13px}
+  .item .lbl{display:block;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
+  .item b{font-weight:700}
+  .cta{display:inline-block;margin-top:22px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.5);padding:14px 30px;text-decoration:none;position:relative;border-radius:4px}
+  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;pointer-events:none;border-radius:3px}
+  .cta:hover::after{inset:5px}
+  .btn{position:fixed;z-index:1;filter:drop-shadow(0 6px 12px rgba(45,5,16,.5))}
+  /* top-right cluster */
+  .t1{top:5%;right:6%;width:66px;transform:rotate(-10deg)}
+  .t2{top:15%;right:13%;width:50px;transform:rotate(12deg)}
+  .t3{top:4%;right:17%;width:44px;transform:rotate(6deg)}
+  /* bottom-left cluster */
+  .l1{bottom:6%;left:5%;width:68px;transform:rotate(8deg)}
+  .l2{bottom:16%;left:11%;width:52px;transform:rotate(-9deg)}
+  .l3{bottom:4%;left:15%;width:46px;transform:rotate(16deg)}
+  .l4{bottom:21%;left:4%;width:40px;transform:rotate(-5deg)}
+  .l5{bottom:10%;left:18%;width:38px;transform:rotate(21deg)}
+  /* accents */
+  .a1{top:9%;left:6%;width:50px;transform:rotate(-14deg)}
+  .a2{bottom:8%;right:7%;width:56px;transform:rotate(10deg)}
+</style>
+</head>
+<body>
+<canvas id="silk"></canvas>
+
+<div class="mark">stitchu</div>
+
+<!-- top-right cluster -->
+<img class="btn t1" src="assets/buttons/b6.png" alt="">
+<img class="btn t2" src="assets/buttons/b1.png" alt="">
+<img class="btn t3" src="assets/buttons/b3.png" alt="">
+<!-- bottom-left cluster -->
+<img class="btn l1" src="assets/buttons/b7.png" alt="">
+<img class="btn l2" src="assets/buttons/b2.png" alt="">
+<img class="btn l3" src="assets/buttons/b6.png" alt="">
+<img class="btn l4" src="assets/buttons/b1.png" alt="">
+<img class="btn l5" src="assets/buttons/b3.png" alt="">
+<!-- accents -->
+<img class="btn a1" src="assets/buttons/b2.png" alt="">
+<img class="btn a2" src="assets/buttons/b7.png" alt="">
+
+<div class="wrap">
+  <div class="col">
+    <h1>Photograph a garment. Get the <em>pattern</em>, drafted to your body.</h1>
+    <div class="items">
+      <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real sewing pattern, cut to your own seven measurements. Not a template.</p>
+      <p class="item"><span class="lbl">how does it work?</span>Snap the photo, confirm what it read, print the true-scale A4 sheets, then sew.</p>
+      <p class="item"><span class="lbl">what does it do?</span>It flattens the garment's 3D shape into flat panels that fit <b>your</b> body, with princess seams instead of darts to fight.</p>
+      <p class="item"><span class="lbl">how was it built?</span>A C++ drafting engine, checked draft by draft: 2805 test patterns verified to 0.0001&nbsp;mm.</p>
+      <p class="item"><span class="lbl">an api?</span><b>Coming soon.</b> The same engine, behind an endpoint for your own site.</p>
+    </div>
+    <a class="cta">Start a pattern</a>
+  </div>
+</div>
+
+<script>
+// full-background poplin gingham (pötikare) — small checks, static
+const cv=document.getElementById('silk'), ctx=cv.getContext('2d');
+const SHADE={l:[172,60,76], d:[110,30,44]};
+function draw(){
+  const W=Math.max(200, Math.round(innerWidth*0.4)), H=Math.max(200, Math.round(innerHeight*0.4));
+  cv.width=W; cv.height=H;
+  const img=ctx.createImageData(W,H), d=img.data;
+  const C=Math.max(3, Math.round(W*0.012));
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const p=(y*W+x)*4, ty=y/H;
+      const b=SHADE, f=0.55 - ty*0.07;
+      let r=b.l[0]*(0.5+f)+b.d[0]*(0.5-f), g=b.l[1]*(0.5+f)+b.d[1]*(0.5-f), bl=b.l[2]*(0.5+f)+b.d[2]*(0.5-f);
+      const lgt=((x%(C*2))<C?1:0)+((y%(C*2))<C?1:0);
+      if(lgt){ const w=lgt===2?0.42:0.20; r+=(212-r)*w; g+=(150-g)*w; bl+=(158-bl)*w; }
+      const th=((x&1)?-0.05:0.03)+((y&1)?-0.05:0.03);
+      d[p]=r*(1+th); d[p+1]=g*(1+th); d[p+2]=bl*(1+th); d[p+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
+draw(); addEventListener('resize', draw);
+</script>
+</body>
+</html>

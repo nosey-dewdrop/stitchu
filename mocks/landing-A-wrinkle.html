@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu — mock A · wrinkle</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --teal:#3EB8AF; --paper:#ffffff;
+    --f1:#ece6da; --f2:#dfe4e2; --f3:#f4f1ea; --f4:#e7ded0;
+    --seam:#3EB8AF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:Helvetica,Arial,sans-serif; color:var(--ink);
+    background:var(--paper); overflow:hidden; cursor:none;
+  }
+  .stage{height:100vh;display:flex;flex-direction:column;padding:22px}
+  /* top bar */
+  .bar{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 16px}
+  .mark{font-weight:700;font-size:20px;letter-spacing:.5px}
+  .mark svg{display:block;margin-top:4px}
+  .nav a{color:var(--ink);text-decoration:none;font-size:13px;margin-left:18px;opacity:.55}
+  /* patchwork */
+  .quilt{flex:1;display:grid;gap:0;
+    grid-template-columns:1.5fr 1fr 1fr;
+    grid-template-rows:1.3fr 1fr .7fr;
+    border:2px dashed var(--seam);}
+  .panel{position:relative;overflow:hidden;border:1px dashed var(--seam);}
+  .panel .fab{position:absolute;inset:0;background:var(--fc);}
+  .copy{grid-column:1;grid-row:1 / span 3;--fc:var(--paper);
+    display:flex;flex-direction:column;justify-content:center;padding:34px;gap:14px}
+  .p2{grid-column:2;grid-row:1;--fc:var(--f1)}
+  .p3{grid-column:3;grid-row:1 / span 2;--fc:var(--f2)}
+  .p4{grid-column:2;grid-row:2 / span 2;--fc:var(--f4)}
+  .p5{grid-column:3;grid-row:3;--fc:var(--f3)}
+  h1{font-size:34px;line-height:1.08;font-weight:700;letter-spacing:-.3px;max-width:13ch}
+  .sub{font-size:15px;line-height:1.45;max-width:34ch;opacity:.8}
+  .eng{font-size:12px;line-height:1.4;max-width:32ch;color:var(--teal);
+    border-left:2px solid var(--teal);padding-left:9px}
+  .cta{align-self:flex-start;margin-top:6px;font-size:14px;font-weight:600;
+    color:var(--ink);border:2px solid var(--teal);padding:9px 16px;text-decoration:none}
+  .hint{position:absolute;left:0;right:0;bottom:8px;text-align:center;
+    font-size:11px;letter-spacing:1.5px;text-transform:uppercase;opacity:.4}
+  /* fabric crease overlay follows cursor */
+  .fab.live{background:
+    radial-gradient(120px 90px at var(--mx) var(--my), rgba(255,255,255,.55), rgba(255,255,255,0) 60%),
+    radial-gradient(130px 100px at calc(var(--mx) + 14px) calc(var(--my) + 12px), rgba(0,0,0,.14), rgba(0,0,0,0) 62%),
+    var(--fc);}
+  canvas{position:absolute;inset:0;pointer-events:none}
+  /* thread cursor */
+  #cur{position:fixed;width:26px;height:26px;margin:-13px 0 0 -13px;pointer-events:none;z-index:9}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="bar">
+    <div class="mark">stitchu
+      <svg width="60" height="4"><line x1="0" y1="2" x2="60" y2="2" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="7 5"/></svg>
+    </div>
+    <div class="nav"><a>create</a><a>closet</a></div>
+  </div>
+
+  <div class="quilt">
+    <div class="panel copy">
+      <h1>Photograph a garment. Get the pattern, drafted to your body.</h1>
+      <p class="sub">Not a template. A drafting engine flattens the garment's 3D shape into true-scale panels for your seven measurements.</p>
+      <p class="eng">2805-draft engine · princess-seam shaping · golden-diff verified to 0.0001&nbsp;mm</p>
+      <a class="cta">Start a pattern</a>
+    </div>
+    <div class="panel p2"><div class="fab"></div></div>
+    <div class="panel p3"><div class="fab"></div></div>
+    <div class="panel p4"><div class="fab"></div></div>
+    <div class="panel p5"><div class="fab"></div></div>
+    <p class="hint">move across the fabric — press &amp; drag to sew a stitch</p>
+  </div>
+</div>
+
+<svg id="cur" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="none" stroke="#3EB8AF" stroke-width="2" stroke-dasharray="6 4"/></svg>
+
+<script>
+const cur = document.getElementById('cur');
+addEventListener('pointermove', e=>{ cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+// crease: each fabric panel reacts to cursor locally
+document.querySelectorAll('.panel:not(.copy) .fab').forEach(fab=>{
+  const p = fab.parentElement;
+  p.addEventListener('pointermove', e=>{
+    const r = p.getBoundingClientRect();
+    fab.classList.add('live');
+    fab.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    fab.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+  p.addEventListener('pointerleave', ()=> fab.classList.remove('live'));
+});
+
+// running-stitch trail on drag
+const quilt = document.querySelector('.quilt');
+let cv, ctx, drawing=false, last=null, acc=0;
+function setup(){
+  cv = document.createElement('canvas');
+  cv.width = quilt.clientWidth; cv.height = quilt.clientHeight;
+  quilt.appendChild(cv); ctx = cv.getContext('2d');
+  ctx.strokeStyle = '#3EB8AF'; ctx.lineWidth = 2; ctx.lineCap='round';
+}
+setup(); addEventListener('resize', ()=>{quilt.removeChild(cv); setup();});
+function local(e){ const r=quilt.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+quilt.addEventListener('pointerdown', e=>{ drawing=true; last=local(e); acc=0; });
+addEventListener('pointerup', ()=> drawing=false);
+quilt.addEventListener('pointermove', e=>{
+  if(!drawing) return;
+  const p=local(e), dx=p.x-last.x, dy=p.y-last.y, d=Math.hypot(dx,dy);
+  acc+=d;
+  if(acc>13){ // dashed running stitch: draw short segments spaced out
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    acc=0;
+  }
+  last=p;
+});
+</script>
+</body>
+</html>
