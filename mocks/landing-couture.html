@@ -38,6 +38,15 @@
   .a1{top:9%;left:6%;width:50px;transform:rotate(-14deg)}
   .a2{bottom:8%;right:7%;width:56px;transform:rotate(10deg)}
 
+  /* mini proof papers pinned in the hero sides */
+  .hpaper{position:absolute;z-index:2;background:#fbfaf6;color:#1a1a1a;width:198px;padding:14px 14px 15px;box-shadow:0 14px 34px rgba(45,5,16,.34)}
+  .hpaper figcaption{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#8f2038;font-weight:700;margin-bottom:9px;text-align:left}
+  .hpaper svg{width:100%;height:auto;display:block}
+  .hpaper .pin{top:-12px;left:-9px;width:30px}
+  .hpL{left:2.5%;top:27%;transform:rotate(-6deg)}
+  .hpR{right:2.5%;top:23%;transform:rotate(5deg)}
+  @media (max-width:1240px){.hpaper{display:none}}
+
   /* how it works — one row */
   .how{position:relative;z-index:1;padding:8px 48px 70px;display:flex;justify-content:center}
   .flow{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:6px 2px;max-width:960px;text-shadow:0 1px 10px rgba(45,5,15,.55)}
@@ -75,6 +84,36 @@
   <img class="btn l5" src="assets/buttons/b3.png" alt="">
   <img class="btn a1" src="assets/buttons/b2.png" alt="">
   <img class="btn a2" src="assets/buttons/b7.png" alt="">
+
+  <figure class="hpaper hpL">
+    <img class="pin" src="assets/buttons/b3.png" alt="">
+    <figcaption>your pattern</figcaption>
+    <svg viewBox="0 0 220 250" fill="none" stroke="#1a1a1a" stroke-linejoin="round">
+      <path d="M26 26 L26 226 L172 226 L182 96 Q156 46 118 32 L60 28 Q38 44 26 66 Z" stroke-width="1" stroke-dasharray="4 4" opacity=".45"/>
+      <path d="M36 34 L36 216 L162 216 L170 98 Q148 54 114 42 L66 38 Q46 52 36 72 Z" stroke-width="2"/>
+      <path d="M98 42 C 80 96, 82 158, 94 216" stroke-width="1.6"/>
+      <line x1="60" y1="74" x2="60" y2="200" stroke-width="1.3"/>
+      <path d="M56 80 L60 72 L64 80 M56 194 L60 202 L64 194" stroke-width="1.3"/>
+      <text x="45" y="118" font-size="12" fill="#1a1a1a" stroke="none" font-family="Helvetica" font-weight="bold">FRONT</text>
+      <text x="45" y="132" font-size="8.5" fill="#8f2038" stroke="none" font-family="Helvetica">cut 2 · princess seam</text>
+    </svg>
+  </figure>
+
+  <figure class="hpaper hpR">
+    <img class="pin" src="assets/buttons/b2.png" alt="">
+    <figcaption>tiled to a4</figcaption>
+    <svg viewBox="0 0 240 210" fill="none" stroke="#1a1a1a">
+      <rect x="14" y="18" width="212" height="176" stroke-width="1.6"/>
+      <line x1="67" y1="18" x2="67" y2="194" stroke-width="1"/>
+      <line x1="120" y1="18" x2="120" y2="194" stroke-width="1"/>
+      <line x1="173" y1="18" x2="173" y2="194" stroke-width="1"/>
+      <line x1="14" y1="77" x2="226" y2="77" stroke-width="1"/>
+      <line x1="14" y1="135" x2="226" y2="135" stroke-width="1"/>
+      <path d="M40 40 Q120 22 200 50 L188 148 Q120 182 46 152 Z" stroke-width="1.8"/>
+      <rect x="22" y="168" width="16" height="16" stroke-width="1.3"/>
+      <text x="43" y="180" font-size="8" fill="#1a1a1a" stroke="none" font-family="Helvetica">3 cm square</text>
+    </svg>
+  </figure>
 
   <div class="col">
     <h1>Photograph a dress. Get the <em>pattern</em>, drafted to your body.</h1>
