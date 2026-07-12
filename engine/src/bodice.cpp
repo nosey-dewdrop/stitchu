@@ -366,6 +366,22 @@ namespace BodiceBlock {
 
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping shaping,
                   double extendBelowWaist, double hipHalfQuarter) {
+    BodiceOptions options;
+    options.neckline = neckline;
+    options.shaping = shaping;
+    options.extendBelowWaist = extendBelowWaist;
+    options.hipHalfQuarter = hipHalfQuarter;
+    return draft(m, options);
+}
+
+BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& options) {
+    const Neckline neckline = options.neckline;
+    const Shaping shaping = options.shaping;
+    const double extendBelowWaist = options.extendBelowWaist;
+    const double hipHalfQuarter = options.hipHalfQuarter;
+    const double chestEase = chestEaseFor(options.fabric);
+    const double waistEase = waistEaseFor(options.fabric);
+
     const double neck = m.neckMM();
     const double backLength = m.backLengthMM();
     const double shoulderHalf = m.shoulderCM * 10 / 2;
@@ -374,6 +390,13 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
     const double armholeY = backLength * armholeDepthFactor + shoulderDrop;
 
+    // Empire: the seam sits just under the bust and the target girth is the
+    // underbust line, not the waist. Both halves share the side seam level.
+    const bool empire = options.waistline == Waistline::Empire;
+    const double seamSideY = empire ? armholeY + empireDrop : backLength;
+    const double frontSeamCenterY = empire ? seamSideY + empireBalanceDrop : backLength + frontBalanceDrop;
+    const double girth = empire ? underbust : m.waistMM();
+
     // Boat necks widen on both front and back.
     const double widthMultiplier = neckline == Neckline::Boat ? 1.35 : 1.0;
 
@@ -381,7 +404,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     const double backNeckW = std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = neck * backNeckCutoutFactor;
     const double backWidth = (underbust / 4) * (1 + chestEase);
-    const double backWaistTarget = (m.waistMM() * backWaistShare / 2) * (1 + waistEase);
+    const double backWaistTarget = (girth * backWaistShare / 2) * (1 + waistEase);
     const double backReduction = std::max(0.0, backWidth - backWaistTarget);
     double backDart = backReduction * (1 - centerBackReduction * 0.5);
     const double cbTakeIn = backReduction * centerBackReduction * 0.5;
@@ -390,7 +413,9 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     // leaves exactly the waist target: cbTakeIn + target + dart.
     const double backWaistlineWidth = cbTakeIn + backWaistTarget + backDart;
 
-    const double backDartLength = backLength - armholeY + 40;
+    // Empire: the back blade apex stays at armholeY - 40, measured from the
+    // raised seam; natural keeps the classic formula bit for bit.
+    const double backDartLength = empire ? (seamSideY - 8) - (armholeY - 40) : backLength - armholeY + 40;
     const bool backPrincess = shaping == Shaping::Princess && backDart >= minPrincessIntake;
 
     HalfBodice back;
@@ -401,7 +426,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
             Neckline::Crew, // back neckline stays a shallow curve for every style
             backNeckW, backCutout, shoulderHalf, shoulderDrop,
             backWidth, armholeY,
-            backLength, backLength,
+            seamSideY, seamSideY,
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn,
@@ -412,7 +437,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
             Neckline::Crew,
             backNeckW, backCutout, shoulderHalf, shoulderDrop,
             backWidth, armholeY,
-            backLength, backLength,
+            seamSideY, seamSideY,
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn);
@@ -421,9 +446,9 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
     const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double frontCutout = frontNeckDepth(neckline, frontNeckW);
-    const double frontLength = backLength + frontBalanceDrop;
+    const double frontLength = frontSeamCenterY;
     const double frontWidth = (m.bustMM() / 4) * (1 + chestEase);
-    const double frontWaistTarget = (m.waistMM() * (1 - backWaistShare) / 2) * (1 + waistEase);
+    const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
     const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
     // Up to 15mm of the reduction slants the side seam in at the WAIST (never
     // at the chest — that would eat the bust ease), rest is dart.
@@ -431,7 +456,11 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     const double frontDart = frontReduction - sideTake;
     const double frontWaistlineWidth = frontWaistTarget + frontDart;
 
-    const double frontDartLength = frontLength - armholeY - 40;
+    // Empire: the bust apex stays put, so the leg from the raised seam up to
+    // it is short; natural keeps the classic formula bit for bit.
+    const double frontDartLength = empire
+        ? std::max(12.0, (seamSideY - 8) - (armholeY + 40))
+        : frontLength - armholeY - 40;
     const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake;
 
     HalfBodice front;
@@ -442,7 +471,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
             neckline,
             frontNeckW, frontCutout, shoulderHalf, shoulderDrop,
             frontWidth, armholeY,
-            backLength, frontLength,
+            seamSideY, frontLength,
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0,
@@ -453,7 +482,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
             neckline,
             frontNeckW, frontCutout, shoulderHalf, shoulderDrop,
             frontWidth, armholeY,
-            backLength, frontLength,
+            seamSideY, frontLength,
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0);
@@ -465,9 +494,9 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     auto extendedDartSideLen = [&](double waistlineWidth, double chestW) {
         const Point armholeBottom{chestW, armholeY};
         return pathLength({PathCommand::move(armholeBottom), PathCommand::curve(
-            {hipHalfQuarter, backLength + extendBelowWaist - 10},
-            {waistlineWidth, backLength + extendBelowWaist * 0.35},
-            {hipHalfQuarter, backLength + extendBelowWaist * 0.7})});
+            {hipHalfQuarter, seamSideY + extendBelowWaist - 10},
+            {waistlineWidth, seamSideY + extendBelowWaist * 0.35},
+            {hipHalfQuarter, seamSideY + extendBelowWaist * 0.7})});
     };
 
     BodiceDraft draft;
@@ -508,11 +537,12 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping 
     draft.backWaistHalf = backWaistTarget;
     draft.frontWaistHalf = frontWaistTarget;
     draft.frontLength = frontLength;
-    draft.backLength = backLength;
+    draft.backLength = seamSideY; // back piece length (= natural backLength unless empire)
     draft.armholeLength = (backPrincess ? backSplit.armholeLength : back.armholeLength) +
                           (frontPrincess ? frontSplit.armholeLength : front.armholeLength);
     draft.armholeDepth = armholeY - shoulderDrop;
-    draft.sideWaistY = backLength;
+    draft.sideWaistY = seamSideY;
+    draft.waistSeamY = seamSideY;
     draft.frontChestWidth = frontWidth;
     draft.backChestWidth = backWidth;
     return draft;

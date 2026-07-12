@@ -19,7 +19,8 @@ export function loadEngine() {
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   const json = engine.draftJSON(
-    spec.garment, spec.shaping ?? 'princess', spec.neckline ?? 'crew',
+    spec.garment, spec.shaping ?? 'princess', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
+    spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
     spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,

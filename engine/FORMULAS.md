@@ -130,6 +130,25 @@ gathered/half-circle have no waist shaping to convert.
 - Golden diff vs Swift runs with shaping pinned to Dart (Swift engine has no princess);
   princess correctness is covered by the engine-check matrix (5610 drafts).
 
+## Waistline (dress): natural | empire
+- Empire: seam sits at armholeY + 60 (empireDrop), CF balance drop 15 (vs 40 natural),
+  suppression target = UNDERBUST girth (bust - 70 assumption) instead of waist.
+- Apex stays at the bust point: front dart/seam leg = max(12, seamY-8 - (armholeY+40));
+  back apex stays armholeY - 40 -> leg = empireDrop + 32. Natural formulas bit-identical.
+- The skirt makes up the height: lengthExtra = backLength - waistSeamY added to the skirt
+  length AND to the hip drafting depth (hip sits 200 below the NATURAL waist).
+- empire + gathered = "babydoll dress"; other styles = "empire <style> dress".
+
+## Fabric: woven | knit (ease scaling)
+- bodice chest ease 11% -> 4% knit, waist ease 5% -> 2%; skirt waist/hip 2% -> 1%;
+  sleeve biceps 15% -> 6%, cap ease 4% -> 2% (validator target follows fabric).
+- Guides gain knit steps (zigzag/stretch stitch, ballpoint needle, optional zipper skip).
+
+## Pleated skirt (knife pleats)
+- Rectangle width = waistQuarter * 3 (pleatRatio); pleats n = max(3, waistQuarter/55);
+  markings = vertical line PAIRS per pleat (fold on the second, bring to the first),
+  140 mm deep; validator measures sewn waist as width / pleatRatio.
+
 ## Neck facings (dress + top, all necklines)
 - Inner edge repeats the garment neckline commands VERBATIM (seam match by construction);
   outer edge = the neckline flattened to a polyline (12 steps/curve) and offset 55 mm along

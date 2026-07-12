@@ -17,7 +17,12 @@ struct BodyMeasurementsSnapshot {
 };
 
 enum class Neckline { Crew, Scoop, VNeck, Square, Boat };
-enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle };
+enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
+// Dress waist seam level. Empire sits just under the bust (underbust girth);
+// empire + gathered = the babydoll silhouette.
+enum class Waistline { Natural, Empire };
+// Fabric class scales every ease: knits stretch, so they need far less room.
+enum class Fabric { Woven, Knit };
 enum class SkirtLength { Mini, Midi, Maxi };
 enum class SleeveStyle { None, Straight, Balloon };
 enum class SleeveLength { Short, Elbow, Long };
@@ -46,6 +51,7 @@ inline const char* raw(SkirtStyle s) {
         case SkirtStyle::Straight: return "straight";
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "halfCircle";
+        case SkirtStyle::Pleated: return "pleated";
     }
     return "";
 }
@@ -55,6 +61,22 @@ inline const char* title(SkirtStyle s) {
         case SkirtStyle::Straight: return "straight";
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "half circle";
+        case SkirtStyle::Pleated: return "pleated";
+    }
+    return "";
+}
+
+inline const char* raw(Waistline w) {
+    switch (w) {
+        case Waistline::Natural: return "natural";
+        case Waistline::Empire: return "empire";
+    }
+    return "";
+}
+inline const char* raw(Fabric f) {
+    switch (f) {
+        case Fabric::Woven: return "woven";
+        case Fabric::Knit: return "knit";
     }
     return "";
 }
@@ -123,6 +145,8 @@ inline const char* raw(Shaping s) {
 struct GarmentSpec {
     GarmentType garment = GarmentType::Dress;
     Shaping shaping = Shaping::Princess;
+    Waistline waistline = Waistline::Natural; // dress only
+    Fabric fabric = Fabric::Woven;
     Neckline neckline = Neckline::Crew;
     SleeveStyle sleeveStyle = SleeveStyle::None;
     SleeveLength sleeveLength = SleeveLength::Short;

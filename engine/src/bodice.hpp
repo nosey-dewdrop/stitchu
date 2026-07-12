@@ -26,7 +26,8 @@ struct BodiceDraft {
     double backLength = 0;
     double armholeLength = 0;   // one arm, front half + back half, sewing line
     double armholeDepth = 0;
-    double sideWaistY = 0;      // shared side waist basis (= backLength)
+    double sideWaistY = 0;      // shared side waist basis (= waist seam level)
+    double waistSeamY = 0;      // absolute y of the waist seam (empire < natural)
     // Audit values consumed by the validator.
     double frontSideSeam = 0;
     double backSideSeam = 0;
@@ -42,6 +43,14 @@ namespace BodiceBlock {
 
 inline constexpr double chestEase = 0.11;
 inline constexpr double waistEase = 0.05;
+// Knits stretch; they need a fraction of the woven ease.
+inline constexpr double knitChestEase = 0.04;
+inline constexpr double knitWaistEase = 0.02;
+inline double chestEaseFor(Fabric f) { return f == Fabric::Knit ? knitChestEase : chestEase; }
+inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitWaistEase : waistEase; }
+// Empire waist seam: this far below the armhole line, girth = underbust.
+inline constexpr double empireDrop = 60;
+inline constexpr double empireBalanceDrop = 15; // CF drop at underbust (M&S balance, reduced)
 inline constexpr double armholeDepthFactor = 0.44;
 inline constexpr double backNeckWidthFactor = 0.197;
 inline constexpr double frontNeckWidthFactor = 0.17;
@@ -61,6 +70,17 @@ inline constexpr double princessApexClearance = 30; // split at least this far a
 // extendBelowWaist/hipHalfQuarter (tops, princess only): the panels continue
 // through the waist to the hem, staying fitted. Dart mode ignores them (the
 // top block extends dart pieces with its own boxy extension).
+struct BodiceOptions {
+    Neckline neckline = Neckline::Crew;
+    Shaping shaping = Shaping::Princess;
+    Waistline waistline = Waistline::Natural; // Empire: seam at underbust
+    Fabric fabric = Fabric::Woven;
+    double extendBelowWaist = 0;
+    double hipHalfQuarter = 0;
+};
+
+BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& options);
+// Convenience overload (defaults: natural waist, woven).
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline = Neckline::Crew,
                   Shaping shaping = Shaping::Princess,
                   double extendBelowWaist = 0, double hipHalfQuarter = 0);

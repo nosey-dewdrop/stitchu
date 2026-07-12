@@ -61,6 +61,7 @@ Neckline necklineFrom(const std::string& s) {
     return Neckline::Crew;
 }
 SkirtStyle skirtStyleFrom(const std::string& s) {
+    if (s == "pleated") return SkirtStyle::Pleated;
     if (s == "straight") return SkirtStyle::Straight;
     if (s == "gathered") return SkirtStyle::Gathered;
     if (s == "halfCircle") return SkirtStyle::HalfCircle;
@@ -95,11 +96,20 @@ Shaping shapingFrom(const std::string& s) {
     if (s == "dart") return Shaping::Dart;
     return Shaping::Princess;
 }
+Waistline waistlineFrom(const std::string& s) {
+    if (s == "empire") return Waistline::Empire;
+    return Waistline::Natural;
+}
+Fabric fabricFrom(const std::string& s) {
+    if (s == "knit") return Fabric::Knit;
+    return Fabric::Woven;
+}
 
 // Returns {"pattern": {...}, "issues": [...]} — issues non-empty means the
 // runtime safety net caught an invalid draft; the UI must not show the PDF.
 std::string draftJSON(
-    std::string garment, std::string shaping, std::string neckline,
+    std::string garment, std::string shaping, std::string waistline, std::string fabric,
+    std::string neckline,
     std::string sleeveStyle, std::string sleeveLength,
     std::string skirtStyle, std::string skirtLength, std::string topLength,
     double bustCM, double waistCM, double hipCM, double shoulderCM,
@@ -108,6 +118,8 @@ std::string draftJSON(
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
     spec.shaping = shapingFrom(shaping);
+    spec.waistline = waistlineFrom(waistline);
+    spec.fabric = fabricFrom(fabric);
     spec.neckline = necklineFrom(neckline);
     spec.sleeveStyle = sleeveStyleFrom(sleeveStyle);
     spec.sleeveLength = sleeveLengthFrom(sleeveLength);

@@ -185,7 +185,7 @@ std::vector<ValidationIssue> markingIssues(const PatternPiece& piece, const Rect
 
 // MARK: Bodice
 
-std::vector<ValidationIssue> bodiceIssues(const BodiceDraft& bodice, const BodyMeasurementsSnapshot& m) {
+std::vector<ValidationIssue> bodiceIssues(const GarmentSpec& spec, const BodiceDraft& bodice, const BodyMeasurementsSnapshot& m) {
     std::vector<ValidationIssue> issues;
 
     const double seamDelta = std::fabs(bodice.frontSideSeam - bodice.backSideSeam);
@@ -195,9 +195,14 @@ std::vector<ValidationIssue> bodiceIssues(const BodiceDraft& bodice, const BodyM
                 bodice.frontSideSeam, bodice.backSideSeam, seamDelta, pairedSeamTolerance)});
     }
 
+    const double chestEase = BodiceBlock::chestEaseFor(spec.fabric);
+    const double waistEase = BodiceBlock::waistEaseFor(spec.fabric);
     const double underbust = std::max(m.bustMM() - BodiceBlock::underbustOffset, m.waistMM());
-    const double expectedFrontChest = (m.bustMM() / 4) * (1 + BodiceBlock::chestEase);
-    const double expectedBackChest = (underbust / 4) * (1 + BodiceBlock::chestEase);
+    // Empire bodices suppress toward the underbust girth, not the waist.
+    const bool empire = spec.garment == GarmentType::Dress && spec.waistline == Waistline::Empire;
+    const double girth = empire ? underbust : m.waistMM();
+    const double expectedFrontChest = (m.bustMM() / 4) * (1 + chestEase);
+    const double expectedBackChest = (underbust / 4) * (1 + chestEase);
     if (std::fabs(bodice.frontChestWidth - expectedFrontChest) > chestWidthTolerance) {
         issues.push_back({"chest", "Bodice Front",
             fmt("chest width %.1f, expected %.1f — bust ease is being eaten", bodice.frontChestWidth, expectedFrontChest)});
@@ -208,8 +213,8 @@ std::vector<ValidationIssue> bodiceIssues(const BodiceDraft& bodice, const BodyM
     }
 
     // Dart + seam take-in must reproduce the waist target exactly.
-    const double frontTarget = (m.waistMM() * (1 - BodiceBlock::backWaistShare) / 2) * (1 + BodiceBlock::waistEase);
-    const double backTarget = (m.waistMM() * BodiceBlock::backWaistShare / 2) * (1 + BodiceBlock::waistEase);
+    const double frontTarget = (girth * (1 - BodiceBlock::backWaistShare) / 2) * (1 + waistEase);
+    const double backTarget = (girth * BodiceBlock::backWaistShare / 2) * (1 + waistEase);
     if (std::fabs(bodice.frontStraightWaist - frontTarget) > dartSumTolerance) {
         issues.push_back({"dartsum", "Bodice Front",
             fmt("sewn waist span %.1f vs target %.1f — dart intake inconsistent with waist reduction",
@@ -272,13 +277,14 @@ std::vector<ValidationIssue> sleeveIssues(
     }
     const double capLength = pathLength({
         PathCommand::move(sleeve->commands[0].to), sleeve->commands[1], sleeve->commands[2]});
-    const double target = bodice.armholeLength * (1 + SleeveBlock::capEase);
+    const double capEase = SleeveBlock::capEaseFor(spec.fabric);
+    const double target = bodice.armholeLength * (1 + capEase);
     const double ease = capLength / bodice.armholeLength - 1;
     std::vector<ValidationIssue> issues;
     if (std::fabs(capLength - target) > capLengthTolerance) {
         issues.push_back({"cap", sleeve->name,
             fmt("cap seam %.1f vs target %.1f (armhole %.1f + %.0f%% ease) — convergence missed by %.1f mm",
-                capLength, target, bodice.armholeLength, SleeveBlock::capEase * 100, std::fabs(capLength - target))});
+                capLength, target, bodice.armholeLength, capEase * 100, std::fabs(capLength - target))});
     }
     if (ease < capEaseMin || ease > capEaseMax) {
         issues.push_back({"cap", sleeve->name,
@@ -325,6 +331,10 @@ std::optional<double> skirtWaistLength(const PatternPiece& piece, SkirtStyle sty
         case SkirtStyle::Gathered:
             if (piece.commands[1].type != CmdType::Line) return std::nullopt;
             return std::fabs(piece.commands[1].to.x - start.x);
+        case SkirtStyle::Pleated:
+            // The panel is cut 3x wide; pleated up, it presents width / ratio.
+            if (piece.commands[1].type != CmdType::Line) return std::nullopt;
+            return std::fabs(piece.commands[1].to.x - start.x) / SkirtBlock::pleatRatio;
     }
     return std::nullopt;
 }
@@ -671,25 +681,34 @@ std::vector<ValidationIssue> issues(
 
     switch (spec.garment) {
         case GarmentType::Skirt: {
-            for (auto& issue : skirtIssues(spec, m, draft, SkirtBlock::waistEase, nullptr)) result.push_back(issue);
+            for (auto& issue : skirtIssues(spec, m, draft, SkirtBlock::waistEaseFor(spec.fabric), nullptr)) result.push_back(issue);
             break;
         }
         case GarmentType::Dress: {
-            const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, spec.shaping);
-            for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
+            BodiceBlock::BodiceOptions options;
+            options.neckline = spec.neckline;
+            options.shaping = spec.shaping;
+            options.waistline = spec.waistline;
+            options.fabric = spec.fabric;
+            const BodiceDraft bodice = BodiceBlock::draft(m, options);
+            for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
-            for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEase, &bodice)) result.push_back(issue);
+            for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEaseFor(spec.fabric), &bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
             break;
         }
         case GarmentType::Top: {
             // Recompute with the same parameters the top block drafted with.
-            const double extra = belowWaist(spec.topLength);
-            const double hipHalfQuarter = (m.hipMM() / 4) * 1.04;
-            const BodiceDraft bodice = spec.shaping == Shaping::Princess
-                ? BodiceBlock::draft(m, spec.neckline, Shaping::Princess, extra, hipHalfQuarter)
-                : BodiceBlock::draft(m, spec.neckline, Shaping::Dart);
-            for (auto& issue : bodiceIssues(bodice, m)) result.push_back(issue);
+            BodiceBlock::BodiceOptions options;
+            options.neckline = spec.neckline;
+            options.shaping = spec.shaping;
+            options.fabric = spec.fabric;
+            if (spec.shaping == Shaping::Princess) {
+                options.extendBelowWaist = belowWaist(spec.topLength);
+                options.hipHalfQuarter = (m.hipMM() / 4) * 1.04;
+            }
+            const BodiceDraft bodice = BodiceBlock::draft(m, options);
+            for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);

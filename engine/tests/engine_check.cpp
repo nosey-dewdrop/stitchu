@@ -46,7 +46,8 @@ int main() {
     };
 
     const std::vector<SkirtStyle> skirtStyles = {
-        SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered, SkirtStyle::HalfCircle};
+        SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered, SkirtStyle::HalfCircle,
+        SkirtStyle::Pleated};
     const std::vector<SkirtLength> skirtLengths = {SkirtLength::Mini, SkirtLength::Midi, SkirtLength::Maxi};
     const std::vector<Neckline> necklines = {
         Neckline::Crew, Neckline::Scoop, Neckline::VNeck, Neckline::Square, Neckline::Boat};
@@ -59,50 +60,60 @@ int main() {
         {SleeveStyle::Balloon, SleeveLength::Elbow},
     };
 
-    // Shaped garments run in BOTH shapings: princess (default) and dart
-    // (advanced + golden-diff reference). Tops draft dart-only for now.
+    // Every shaped axis runs fully crossed: shaping (princess default / dart
+    // advanced), waistline (dress: natural / empire), fabric (woven / knit).
     const std::vector<Shaping> shapings = {Shaping::Princess, Shaping::Dart};
+    const std::vector<Waistline> waistlines = {Waistline::Natural, Waistline::Empire};
+    const std::vector<Fabric> fabrics = {Fabric::Woven, Fabric::Knit};
 
     std::vector<std::pair<std::string, GarmentSpec>> specs;
-    for (auto shaping : shapings) {
-        for (auto style : skirtStyles) {
-            for (auto length : skirtLengths) {
-                GarmentSpec spec;
-                spec.garment = GarmentType::Skirt;
-                spec.shaping = shaping;
-                spec.skirtStyle = style;
-                spec.skirtLength = length;
-                specs.push_back({std::string("skirt/") + raw(shaping) + "/" + raw(style) + "/" + raw(length), spec});
+    for (auto fabric : fabrics) {
+        for (auto shaping : shapings) {
+            for (auto style : skirtStyles) {
+                for (auto length : skirtLengths) {
+                    GarmentSpec spec;
+                    spec.garment = GarmentType::Skirt;
+                    spec.shaping = shaping;
+                    spec.fabric = fabric;
+                    spec.skirtStyle = style;
+                    spec.skirtLength = length;
+                    specs.push_back({std::string("skirt/") + raw(fabric) + "/" + raw(shaping) + "/" + raw(style) + "/" + raw(length), spec});
+                }
             }
         }
     }
     for (auto neckline : necklines) {
-        for (auto shaping : shapings) {
-            for (auto style : skirtStyles) {
-                for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
-                    GarmentSpec spec;
-                    spec.garment = GarmentType::Dress;
-                    spec.shaping = shaping;
-                    spec.neckline = neckline;
-                    spec.skirtStyle = style;
-                    spec.skirtLength = SkirtLength::Midi;
-                    spec.sleeveStyle = sleeve;
-                    spec.sleeveLength = sleeveLength;
-                    specs.push_back({std::string("dress/") + raw(shaping) + "/" + raw(neckline) + "/" + raw(style) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+        for (auto fabric : fabrics) {
+            for (auto shaping : shapings) {
+                for (auto waistline : waistlines) {
+                    for (auto style : skirtStyles) {
+                        for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                            GarmentSpec spec;
+                            spec.garment = GarmentType::Dress;
+                            spec.shaping = shaping;
+                            spec.waistline = waistline;
+                            spec.fabric = fabric;
+                            spec.neckline = neckline;
+                            spec.skirtStyle = style;
+                            spec.skirtLength = SkirtLength::Midi;
+                            spec.sleeveStyle = sleeve;
+                            spec.sleeveLength = sleeveLength;
+                            specs.push_back({std::string("dress/") + raw(fabric) + "/" + raw(shaping) + "/" + raw(waistline) + "/" + raw(neckline) + "/" + raw(style) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                        }
+                    }
                 }
-            }
-        }
-        for (auto shaping : shapings) {
-            for (auto topLength : topLengths) {
-                for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
-                    GarmentSpec spec;
-                    spec.garment = GarmentType::Top;
-                    spec.shaping = shaping;
-                    spec.neckline = neckline;
-                    spec.topLength = topLength;
-                    spec.sleeveStyle = sleeve;
-                    spec.sleeveLength = sleeveLength;
-                    specs.push_back({std::string("top/") + raw(shaping) + "/" + raw(neckline) + "/" + raw(topLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                for (auto topLength : topLengths) {
+                    for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                        GarmentSpec spec;
+                        spec.garment = GarmentType::Top;
+                        spec.shaping = shaping;
+                        spec.fabric = fabric;
+                        spec.neckline = neckline;
+                        spec.topLength = topLength;
+                        spec.sleeveStyle = sleeve;
+                        spec.sleeveLength = sleeveLength;
+                        specs.push_back({std::string("top/") + raw(fabric) + "/" + raw(shaping) + "/" + raw(neckline) + "/" + raw(topLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                    }
                 }
             }
         }

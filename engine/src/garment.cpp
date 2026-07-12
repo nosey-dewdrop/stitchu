@@ -69,12 +69,22 @@ PatternPiece extendPiece(const PatternPiece& piece, double sideWaistY, double ce
 namespace DressBlock {
 
 DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
-    const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, spec.shaping);
+    BodiceBlock::BodiceOptions options;
+    options.neckline = spec.neckline;
+    options.shaping = spec.shaping;
+    options.waistline = spec.waistline;
+    options.fabric = spec.fabric;
+    const BodiceDraft bodice = BodiceBlock::draft(m, options);
+    const bool empire = spec.waistline == Waistline::Empire;
+    // Empire: the seam sits above the natural waist, so the skirt makes up
+    // the difference to keep the hem where the chosen length puts it.
+    const double skirtExtra = std::max(0.0, m.backLengthMM() - bodice.waistSeamY);
     // The skirt is drafted against the bodice's measured sewn waist so the
     // waist seam lengths agree exactly where the two join.
     const double bodiceSewnWaist = (bodice.frontSewnWaist + bodice.backSewnWaist) * 2;
     std::vector<PatternPiece> skirtPieces = SkirtBlock::pieces(
-        m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist, spec.shaping);
+        m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist,
+        spec.shaping, spec.fabric, skirtExtra);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
         piece.name = "Skirt " + original;
@@ -87,9 +97,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
         m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
-        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth);
+        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth, spec.fabric);
 
-    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping) + 0.7 + BodiceBlock::facingFabricMeters;
+    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
 
     const bool sleeveless = sleeves.empty();
@@ -104,6 +114,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         "Fuse interfacing to the neck facings.",
         "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
     };
+    if (spec.fabric == Fabric::Knit) {
+        steps.insert(steps.begin() + 2,
+            "Knit fabric: sew with a narrow zigzag or stretch stitch and a ballpoint/stretch needle so the seams stretch with the fabric.");
+    }
     if (princess) {
         steps.push_back("Staystitch the curved princess edges too, for the same reason.");
         steps.push_back("Sew each bodice princess seam: pin center panel to side panel matching the bust notch, sew, clip the side panel's curve over the bust inside the seam allowance, press toward the center.");
@@ -124,15 +138,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.skirtStyle == SkirtStyle::Gathered) {
         steps.push_back("Gather the skirt panels along the marked line until they match the bodice waist.");
     }
+    if (spec.skirtStyle == SkirtStyle::Pleated) {
+        steps.push_back("Form the knife pleats along the marked line pairs (fold on the second line of each pair, bring it to the first, all pleats toward the center), baste across the top and press.");
+    }
     if (spec.skirtStyle == SkirtStyle::HalfCircle) {
         steps.push_back("Place the two skirt panel seams at center front and center back (cut the panels flat, not on fold) so the zipper can continue into the back seam.");
     }
     if (princess && (spec.skirtStyle == SkirtStyle::ALine || spec.skirtStyle == SkirtStyle::Straight)) {
         steps.push_back("Sew each skirt gore seam (center panel to side panel, matching the tip notch), pressing toward the center.");
     }
-    steps.push_back("Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the waist seam, matching side seams" +
+    steps.push_back(std::string("Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the ") +
+        (empire ? "underbust seam (the empire line sits right under the bust)" : "waist seam") + ", matching side seams" +
         std::string(princess ? " and lining the gore seams up with the bodice princess seams as closely as possible" : "") + ".");
-    steps.push_back("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.");
+    steps.push_back(std::string("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.") +
+        (spec.fabric == Fabric::Knit ? " (Very stretchy knit? Baste the back seam closed first and test pulling the dress on — you may be able to skip the zipper and just sew the seam.)" : ""));
     steps.push_back("Fold the free facing ends back over the zipper tape and hand-tack them down so the facing edge sits clean against the zipper.");
     if (!sleeveless) {
         steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
@@ -150,7 +169,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         spec.sleeveStyle == SleeveStyle::None ? "" : std::string(title(spec.sleeveStyle)) + "-sleeve ";
 
     DraftedPattern pattern;
-    pattern.garment = std::string(title(spec.skirtStyle)) + " " + sleeveWord + "dress";
+    pattern.garment = empire
+        ? (spec.skirtStyle == SkirtStyle::Gathered
+               ? sleeveWord + "babydoll dress"
+               : "empire " + std::string(title(spec.skirtStyle)) + " " + sleeveWord + "dress")
+        : std::string(title(spec.skirtStyle)) + " " + sleeveWord + "dress";
     pattern.pieces = {bodice.front};
     if (bodice.frontPrincess) pattern.pieces.push_back(bodice.frontSide);
     pattern.pieces.push_back(bodice.back);
@@ -173,7 +196,13 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const double hipHalfQuarter = (m.hipMM() / 4) * 1.04;
     // Princess panels extend through the waist inside the bodice block and
     // stay fitted; dart-mode pieces use the classic (boxy) hem extension.
-    const BodiceDraft bodice = BodiceBlock::draft(m, spec.neckline, spec.shaping, extra, hipHalfQuarter);
+    BodiceBlock::BodiceOptions options;
+    options.neckline = spec.neckline;
+    options.shaping = spec.shaping;
+    options.fabric = spec.fabric;
+    options.extendBelowWaist = extra;
+    options.hipHalfQuarter = hipHalfQuarter;
+    const BodiceDraft bodice = BodiceBlock::draft(m, options);
 
     std::vector<PatternPiece> tops;
     if (bodice.frontPrincess) {
@@ -199,7 +228,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
         m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
-        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth);
+        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth, spec.fabric);
 
     double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
@@ -215,6 +244,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         "Fuse interfacing to the neck facings.",
         "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
     };
+    if (spec.fabric == Fabric::Knit) {
+        steps.insert(steps.begin() + 2,
+            "Knit fabric: sew with a narrow zigzag or stretch stitch and a ballpoint/stretch needle so the seams stretch with the fabric.");
+    }
     if (princess) {
         steps.push_back("Sew each princess seam: pin center panel to side panel matching the bust notch, sew from armhole to hem in one pass, clip the curve over the bust inside the seam allowance, press toward the center.");
         if (!bodice.frontPrincess || !bodice.backPrincess) {
@@ -261,7 +294,7 @@ namespace GarmentDrafter {
 DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
     switch (spec.garment) {
         case GarmentType::Skirt:
-            return SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, spec.shaping);
+            return SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
         case GarmentType::Dress:
             return DressBlock::draft(spec, m);
         case GarmentType::Top:

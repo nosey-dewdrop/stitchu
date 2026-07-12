@@ -59,3 +59,19 @@ Prenses dikişi elbisede vardı ama üstlerde pens kalmıştı, çünkü üstler
 Ve son parça: fotoğraftan okuma. Vision artık "bu elbisede prenses dikişi var mı, pens mi" diye bakıp shaping alanını dönüyor. Fotoğraf çek, motor o giysinin gerçek yapım tekniğiyle kalıbını çizsin.
 
 Test matrisi 5610 taslağa çıktı, hepsi yeşil. Etek + elbise + üst, ikişer şekillendirme, on beş vücut, her yaka her kol. "Sadece etek çıkarıyor" cümlesi bugün itibarıyla tarih.
+
+---
+
+## 05 — Silüet uzayı: babydoll, pile, streç kumaş
+
+"Motor dünyadaki her şeyi dikebilmeli" cümlesinin mühendislikteki karşılığı tek tek model eklemek değil, EKSEN eklemek. Bugün üç eksen açıldı.
+
+Bel hattı: dikiş artık gerçek belde olmak zorunda değil. Empire seçince korsaj göğsün hemen altında bitiyor, hedef çevre bel değil göğüs altı oluyor, etek yüksekten başlayıp farkı kapatıyor. Empire + büzgülü etek = babydoll. Motor ismini bile kendi koyuyor: "babydoll dress".
+
+Kumaş: şimdiye kadar motor her kumaşı esnemez varsayıyordu. Artık örgü/streç seçince tüm bolluk matematiği küçülüyor — göğüste %11 yerine %4, kolda %15 yerine %6, kol evi yedirmesi yarıya. Aynı vücut, aynı model, farklı kumaş = farklı kalıp. Gerçek terzilik tam olarak bu.
+
+Pile: büzgünün disiplinli kardeşi. Kumaş 3 katı genişlikte kesiliyor, kalıbın üstünde her pilenin kat çizgisi çifti işaretli, rehber hangi çizgiyi hangisine katlayacağını söylüyor.
+
+Vision da büyüdü: fotoğraftan artık bel hattını (babydoll mu?), kumaşın streç olup olmadığını ve pileyi de okuyor. Test matrisi 20400 taslağa çıktı — beş etek stili, iki bel hattı, iki kumaş, iki şekillendirme, on beş vücut. Hepsi yeşil, Swift referansı hâlâ milimetrenin on binde birinde.
+
+Korse hâlâ menüde yok — o negatif bolluk ve balen isteyen ayrı bir blok, biliyoruz. Ama "sadece etek" günlerinden "babydoll'unu streç kumaşa çizer" günlerine bir günde geldik.

@@ -197,10 +197,12 @@ async function handleAnalyze(request, env) {
  "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | null,
  "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
  "sleeveLength": "short" | "elbow" | "long" | null,
- "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | null (halfCircle covers full/flared circle skirts),
+ "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | "pleated" | null (halfCircle covers full/flared circle skirts; pleated covers knife/box pleats),
  "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
  "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
  "shaping": "princess" | "dart" | null (princess = vertical seams running over the bust or down the skirt panels; dart = visible stitched darts at waist/bust with no vertical panel seams; null if the waist shaping is not visible),
+ "waistline": "natural" | "empire" | null (empire = the waist seam sits right under the bust, e.g. babydoll dresses; natural = seam at the natural waist; null if no waist seam is visible),
+ "fabric": "woven" | "knit" | null (knit = visibly stretchy jersey/rib knit; woven = crisp non-stretch like poplin, denim, satin; null if unclear),
  "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}`;
 
   const anthropicBody = {

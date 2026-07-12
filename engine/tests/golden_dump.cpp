@@ -61,7 +61,7 @@ int main() {
         for (auto length : skirtLengths) {
             GarmentSpec spec;
             spec.garment = GarmentType::Skirt;
-            spec.shaping = Shaping::Dart;
+            spec.shaping = Shaping::Dart; // + default natural waistline / woven fabric
             spec.skirtStyle = style;
             spec.skirtLength = length;
             specs.push_back({std::string("skirt/") + raw(style) + "/" + raw(length), spec});

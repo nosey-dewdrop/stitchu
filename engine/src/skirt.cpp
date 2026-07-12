@@ -12,7 +12,8 @@ double flare(SkirtStyle style) {
         case SkirtStyle::ALine: return 60;
         case SkirtStyle::Straight:
         case SkirtStyle::Gathered:
-        case SkirtStyle::HalfCircle: return 0;
+        case SkirtStyle::HalfCircle:
+        case SkirtStyle::Pleated: return 0;
     }
     return 0;
 }
@@ -24,7 +25,8 @@ PatternPiece draftQuarter(
     double hipQuarter,
     double length,
     SkirtStyle style,
-    double dartLength
+    double dartLength,
+    double hipDepthMM
 ) {
     const double suppression = std::max(0.0, hipQuarter - waistQuarter);
     double sideTake = std::min(suppression * 0.6, maxSideTake);
@@ -43,7 +45,7 @@ PatternPiece draftQuarter(
 
     const Point centerWaist{0, 0};
     const Point sideWaist{waistlineWidth, -sideWaistRise};
-    const Point hipPoint{hipQuarter, hipDepth};
+    const Point hipPoint{hipQuarter, hipDepthMM};
     const Point hemSide{hemX, length - hemSideRise};
     const Point hemCenter{0, length};
 
@@ -53,8 +55,8 @@ PatternPiece draftQuarter(
                            {waistlineWidth * 0.45, 0},
                            {waistlineWidth * 0.8, -sideWaistRise * 0.8}),
         PathCommand::curve(hipPoint,
-                           {waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, hipDepth * 0.3 - sideWaistRise},
-                           {hipQuarter, hipDepth * 0.65}),
+                           {waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, hipDepthMM * 0.3 - sideWaistRise},
+                           {hipQuarter, hipDepthMM * 0.65}),
         PathCommand::line(hemSide),
         PathCommand::curve(hemCenter,
                            {hemX * 0.6, length},
@@ -79,7 +81,7 @@ PatternPiece draftQuarter(
     piece.commands = commands;
     piece.markings = markings;
     piece.hasGrainline = true;
-    piece.grainline = Grainline{{40, hipDepth}, {40, length - 60}};
+    piece.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
     piece.seamAllowance = 15;
     return piece;
 }
@@ -100,13 +102,14 @@ std::vector<PatternPiece> goreQuarter(
     double hipQuarter,
     double length,
     SkirtStyle style,
-    double dartLength
+    double dartLength,
+    double hipDepthMM
 ) {
     const double suppression = std::max(0.0, hipQuarter - waistQuarter);
     double sideTake = std::min(suppression * 0.6, maxSideTake);
     double dartWidth = suppression - sideTake;
     if (dartWidth < minDartWidth) {
-        return {draftQuarter(baseName, waistQuarter, hipQuarter, length, style, dartLength)};
+        return {draftQuarter(baseName, waistQuarter, hipQuarter, length, style, dartLength, hipDepthMM)};
     }
 
     const double waistlineWidth = waistQuarter + dartWidth;
@@ -117,7 +120,7 @@ std::vector<PatternPiece> goreQuarter(
 
     const Point centerWaist{0, 0};
     const Point sideWaist{waistlineWidth, -sideWaistRise};
-    const Point hipPoint{hipQuarter, hipDepth};
+    const Point hipPoint{hipQuarter, hipDepthMM};
     const Point hemSide{hemX, length - hemSideRise};
     const Point hemCenter{0, length};
 
@@ -161,7 +164,7 @@ std::vector<PatternPiece> goreQuarter(
     };
     center.markings = {PathCommand::move(tip), PathCommand::line({tip.x - 12, tip.y + 4})};
     center.hasGrainline = true;
-    center.grainline = Grainline{{40, hipDepth}, {40, length - 60}};
+    center.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
     center.seamAllowance = 15;
 
     // ---- side panel ----
@@ -173,8 +176,8 @@ std::vector<PatternPiece> goreQuarter(
         PathCommand::move(legBTrued),
         sideWaistEdge,                // waist: legB (trued) -> side
         PathCommand::curve(hipPoint,
-                           {waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, hipDepth * 0.3 - sideWaistRise},
-                           {hipQuarter, hipDepth * 0.65}),
+                           {waistlineWidth + (hipQuarter - waistlineWidth) * 0.6, hipDepthMM * 0.3 - sideWaistRise},
+                           {hipQuarter, hipDepthMM * 0.65}),
         PathCommand::line(hemSide),
         PathCommand::curve(goreHemSide,
                            {hemT + (hemX - hemT) * 0.6, length},
@@ -186,7 +189,7 @@ std::vector<PatternPiece> goreQuarter(
     side.markings = {PathCommand::move(tip), PathCommand::line({tip.x + 12, tip.y + 4})};
     side.hasGrainline = true;
     const double grainX = (legB.x + hipQuarter) / 2;
-    side.grainline = Grainline{{grainX, hipDepth + 10}, {grainX, length - 60}};
+    side.grainline = Grainline{{grainX, hipDepthMM + 10}, {grainX, length - 60}};
     side.seamAllowance = 15;
     const Rect sideBox = boundingBox(side.commands);
     translatePiece(side, -sideBox.x, -sideBox.y);
@@ -210,6 +213,38 @@ PatternPiece gatheredPanel(double waistQuarter, double length) {
     piece.markings = {PathCommand::move({0, 18}), PathCommand::line({width, 18})};
     piece.hasGrainline = true;
     piece.grainline = Grainline{{50, 80}, {50, length - 80}};
+    piece.seamAllowance = 15;
+    return piece;
+}
+
+// Knife-pleated skirt: a rectangle 3x the sewn width. Markings are the pleat
+// lines for the top 140 mm: fold on the solid pair's SECOND line, bring it to
+// the FIRST (the guide explains the direction); pleats are basted, then the
+// panel behaves like a straight panel.
+PatternPiece pleatedPanel(double waistQuarter, double length) {
+    const int pleats = std::max(3, static_cast<int>(std::lround(waistQuarter / 55.0)));
+    const double face = waistQuarter / pleats;
+    const double width = waistQuarter * pleatRatio;
+    PatternPiece piece;
+    piece.name = "Front";
+    piece.cutInstruction = "cut 1 on fold";
+    piece.commands = {
+        PathCommand::move({0, 0}),
+        PathCommand::line({width, 0}),
+        PathCommand::line({width, length}),
+        PathCommand::line({0, length}),
+        PathCommand::close(),
+    };
+    const double markDepth = 140;
+    for (int i = 0; i < pleats; ++i) {
+        const double unit = i * face * 3;
+        piece.markings.push_back(PathCommand::move({unit, 0}));
+        piece.markings.push_back(PathCommand::line({unit, markDepth}));
+        piece.markings.push_back(PathCommand::move({unit + face * 2, 0}));
+        piece.markings.push_back(PathCommand::line({unit + face * 2, markDepth}));
+    }
+    piece.hasGrainline = true;
+    piece.grainline = Grainline{{width - 50, 80}, {width - 50, length - 80}};
     piece.seamAllowance = 15;
     return piece;
 }
@@ -243,8 +278,8 @@ PatternPiece halfCirclePanel(double easedWaistMM, double length) {
 
 } // namespace
 
-PatternPiece waistbandPiece(double waistMM) {
-    const double bandLength = waistMM * (1 + waistEase) / 2 + 30; // half band (cut 2) + button stand
+PatternPiece waistbandPiece(double waistMM, Fabric fabric) {
+    const double bandLength = waistMM * (1 + waistEaseFor(fabric)) / 2 + 30; // half band (cut 2) + button stand
     const double bandHeight = 80;                                 // folds to 4cm
     PatternPiece piece;
     piece.name = "Waistband";
@@ -272,29 +307,42 @@ std::vector<PatternPiece> pieces(
     SkirtLength length,
     bool includeWaistband,
     std::optional<double> targetWaistMM,
-    Shaping shaping
+    Shaping shaping,
+    Fabric fabric,
+    double lengthExtraMM
 ) {
-    const double fullWaist = targetWaistMM.value_or(m.waistMM() * (1 + waistEase));
+    const double fullWaist = targetWaistMM.value_or(m.waistMM() * (1 + waistEaseFor(fabric)));
     const double waistQuarter = fullWaist / 4;
     // The skirt must pass over the waist: for waist > hip bodies the widest
     // drafting line is the waist itself.
-    const double hipQuarter = std::max(m.hipMM() * (1 + hipEase) / 4, waistQuarter);
-    const double len = millimeters(length);
+    const double hipQuarter = std::max(m.hipMM() * (1 + hipEaseFor(fabric)) / 4, waistQuarter);
+    // Empire dresses: the seam sits higher, so the skirt runs longer and the
+    // hip line sits deeper below the seam.
+    const double len = millimeters(length) + lengthExtraMM;
+    const double hipDepthMM = hipDepth + lengthExtraMM;
 
     std::vector<PatternPiece> result;
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
             if (shaping == Shaping::Princess) {
-                for (auto& piece : goreQuarter("Front", waistQuarter, hipQuarter, len, style, 90)) result.push_back(piece);
-                for (auto& piece : goreQuarter("Back", waistQuarter, hipQuarter, len, style, 130)) result.push_back(piece);
+                for (auto& piece : goreQuarter("Front", waistQuarter, hipQuarter, len, style, 90, hipDepthMM)) result.push_back(piece);
+                for (auto& piece : goreQuarter("Back", waistQuarter, hipQuarter, len, style, 130, hipDepthMM)) result.push_back(piece);
             } else {
-                result.push_back(draftQuarter("Front", waistQuarter, hipQuarter, len, style, 90));
-                result.push_back(draftQuarter("Back", waistQuarter, hipQuarter, len, style, 130));
+                result.push_back(draftQuarter("Front", waistQuarter, hipQuarter, len, style, 90, hipDepthMM));
+                result.push_back(draftQuarter("Back", waistQuarter, hipQuarter, len, style, 130, hipDepthMM));
             }
             break;
         case SkirtStyle::Gathered: {
             PatternPiece panel = gatheredPanel(waistQuarter, len);
+            PatternPiece back = panel;
+            back.name = "Back";
+            result.push_back(panel);
+            result.push_back(back);
+            break;
+        }
+        case SkirtStyle::Pleated: {
+            PatternPiece panel = pleatedPanel(waistQuarter, len);
             PatternPiece back = panel;
             back.name = "Back";
             result.push_back(panel);
@@ -306,31 +354,38 @@ std::vector<PatternPiece> pieces(
             break;
     }
     if (includeWaistband) {
-        result.push_back(waistbandPiece(m.waistMM()));
+        result.push_back(waistbandPiece(m.waistMM(), fabric));
     }
     return result;
 }
 
-double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length, Shaping shaping) {
-    const double len = millimeters(length);
+double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                      Shaping shaping, Fabric fabric, double lengthExtraMM) {
+    const double len = millimeters(length) + lengthExtraMM;
     double meters = 0;
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight: {
-            const double hemWidth = m.hipMM() * (1 + hipEase) / 4 + flare(style) +
+            const double hemWidth = m.hipMM() * (1 + hipEaseFor(fabric)) / 4 + flare(style) +
                                     (shaping == Shaping::Princess ? 2 * goreFlare(style) : 0);
             const double piecesPerWidth = hemWidth * 2 < 700 ? 2.0 : 1.0;
             meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000;
             break;
         }
         case SkirtStyle::Gathered: {
-            const double panelWidth = m.waistMM() * (1 + waistEase) / 4 * gatherRatio * 2;
+            const double panelWidth = m.waistMM() * (1 + waistEaseFor(fabric)) / 4 * gatherRatio * 2;
+            const double piecesPerWidth = panelWidth < 700 ? 2.0 : 1.0;
+            meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000;
+            break;
+        }
+        case SkirtStyle::Pleated: {
+            const double panelWidth = m.waistMM() * (1 + waistEaseFor(fabric)) / 4 * pleatRatio * 2;
             const double piecesPerWidth = panelWidth < 700 ? 2.0 : 1.0;
             meters = ((len * 2) / piecesPerWidth + 120) * 1.10 / 1000;
             break;
         }
         case SkirtStyle::HalfCircle: {
-            const double R = m.waistMM() * (1 + waistEase) / M_PI + len;
+            const double R = m.waistMM() * (1 + waistEaseFor(fabric)) / M_PI + len;
             meters = (R * 2 + 120) * 1.10 / 1000;
             break;
         }
@@ -338,10 +393,13 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
     return roundToPlaces(meters, 1);
 }
 
-std::vector<std::string> guide(SkirtStyle style, Shaping shaping) {
+std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric) {
     std::vector<std::string> steps{
         "Print the pattern and check the 3 cm calibration square with a ruler before cutting anything.",
     };
+    if (fabric == Fabric::Knit) {
+        steps.push_back("Knit fabric: sew with a narrow zigzag or stretch stitch and a ballpoint/stretch needle so the seams stretch with the fabric.");
+    }
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
@@ -376,6 +434,17 @@ std::vector<std::string> guide(SkirtStyle style, Shaping shaping) {
                 "Hem with a 2 cm double-fold.",
             });
             break;
+        case SkirtStyle::Pleated:
+            steps.insert(steps.end(), {
+                "Cut front and back panels on the fold. Cut 2 waistband pieces, interface 1.",
+                "Form the knife pleats along the marked line pairs: fold the fabric on the SECOND line of each pair and bring the fold to the FIRST line, all pleats facing the same direction (toward the center). Pin as you go.",
+                "Baste across the top of the pleats inside the seam allowance, then press the folds sharply through the marked depth.",
+                "Sew the side seams, leaving the top 20 cm of the left seam open for the zipper.",
+                "Insert an invisible zipper in the left seam BEFORE closing the seam below it.",
+                "Attach the interfaced waistband over the basted pleats, then finish the inside.",
+                "Hem with a 2 cm double-fold, then press the pleat creases again from hip to hem if you want sharp pleats all the way down.",
+            });
+            break;
         case SkirtStyle::HalfCircle:
             steps.insert(steps.end(), {
                 "Cut 2 quarter-circle panels (flat, not on fold). Cut 2 waistband pieces, interface 1.",
@@ -390,13 +459,14 @@ std::vector<std::string> guide(SkirtStyle style, Shaping shaping) {
     return steps;
 }
 
-DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length, Shaping shaping) {
+DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                     Shaping shaping, Fabric fabric) {
     DraftedPattern pattern;
     pattern.garment = std::string(title(style)) + " skirt";
-    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping);
+    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping, fabric);
     pattern.fabricAdviceKey = "skirt";
-    pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping);
-    pattern.guideSteps = guide(style, shaping);
+    pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping, fabric);
+    pattern.guideSteps = guide(style, shaping, fabric);
     return pattern;
 }
 

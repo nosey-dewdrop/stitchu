@@ -44,13 +44,14 @@ std::vector<PatternPiece> draft(
     SleeveStyle style,
     SleeveLength length,
     double armholeLength,
-    double armholeDepth
+    double armholeDepth,
+    Fabric fabric
 ) {
     if (style == SleeveStyle::None) return {};
 
-    const double bicepsEstimate = m.bustMM() * bicepsRatio * (1 + bicepsEase);
+    const double bicepsEstimate = m.bustMM() * bicepsRatio * (1 + bicepsEaseFor(fabric));
     const double capHeight = armholeDepth * 0.75;
-    const double targetCapLength = armholeLength * (1 + capEase);
+    const double targetCapLength = armholeLength * (1 + capEaseFor(fabric));
 
     // Converge cap width so the cap curve length matches the armhole.
     // Cap length grows monotonically with width, so bisect: a fixed-step
