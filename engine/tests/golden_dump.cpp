@@ -107,7 +107,14 @@ int main() {
             size_t p = 0;
             for (const auto& piece : draft.pieces) {
                 if (piece.name.find("Facing") != std::string::npos) continue;
-                const std::string prefix = bodyName + "|" + label + "|piece" + std::to_string(p) + ":" + piece.name;
+                // The Swift reference carries a double-prefix bug ("Skirt Skirt
+                // Panel...") that the C++ engine fixed post-port; mirror it so
+                // the name metadata lines up and the diff stays about geometry.
+                std::string dumpName = piece.name;
+                if (spec.garment == GarmentType::Dress && dumpName == "Skirt Panel (quarter circle)") {
+                    dumpName = "Skirt Skirt Panel (quarter circle)";
+                }
+                const std::string prefix = bodyName + "|" + label + "|piece" + std::to_string(p) + ":" + dumpName;
                 dumpCommands("outline", piece.commands, prefix);
                 dumpCommands("marking", piece.markings, prefix);
                 ++p;

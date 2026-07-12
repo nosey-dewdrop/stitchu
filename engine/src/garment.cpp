@@ -87,7 +87,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         spec.shaping, spec.fabric, skirtExtra);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
-        piece.name = "Skirt " + original;
+        // Half-circle panels already carry the word; avoid "Skirt Skirt Panel".
+        if (original.rfind("Skirt", 0) != 0) piece.name = "Skirt " + original;
         // The invisible zipper continues from the bodice center back into the
         // skirt, so the skirt back needs a CB seam (no fold).
         if (original == "Back" || original == "Center Back") {
