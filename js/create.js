@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=13';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=13';
-import { draft } from './engine.js?v=13';
-import { printPattern } from './print.js?v=13';
-import { renderResult } from './render.js?v=13';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=14';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=14';
+import { draft } from './engine.js?v=14';
+import { printPattern } from './print.js?v=14';
+import { renderResult } from './render.js?v=14';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=13';
+} from './store.js?v=14';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -19,16 +19,19 @@ const SPEC_GROUPS = [
   { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık']], for: (s) => s.garment !== 'skirt' },
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.sleeveStyle !== 'none' },
-  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş']], for: (s) => s.garment !== 'top' },
+  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
+  { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
   { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['princess', 'princess seams', 'prenses dikiş'], ['dart', 'darts', 'pens']], for: (s) => s.garment !== 'skirt' || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
+  { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
 ];
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
+  waistline: 'natural', fabric: 'woven',
 };
 
 function el(tag, className, text) {
@@ -192,6 +195,8 @@ function showSpec() {
         if (seen.length) spec.skirtLength = seen.length;
         if (seen.topLength) spec.topLength = seen.topLength;
         if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
+        if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
+        if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
