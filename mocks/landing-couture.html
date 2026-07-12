@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>stitchu — couture atelier</title>
+<title>stitchu - pattern making engine</title>
 <style>
   :root{ --accent:#ffd2da; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -15,8 +15,10 @@
   .wrap{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:48px}
   .col{max-width:47ch;text-align:center;text-shadow:0 1px 12px rgba(45,5,15,.6)}
   .kicker{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px}
-  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:44px;line-height:1.07;font-weight:400;margin:0 auto 22px;max-width:15ch}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:44px;line-height:1.07;font-weight:400;margin:0 auto 18px;max-width:15ch}
   h1 em{font-style:italic}
+  .lead{font-size:14.5px;line-height:1.5;max-width:42ch;margin:0 auto 20px;opacity:.96}
+  .lead b{font-weight:700}
   .items{max-width:44ch;margin:4px auto 0;text-align:left}
   .item{font-size:13px;line-height:1.5;margin-bottom:13px}
   .item .lbl{display:block;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
@@ -62,11 +64,13 @@
 <div class="wrap">
   <div class="col">
     <h1>Photograph a garment. Get the <em>pattern</em>, drafted to your body.</h1>
+    <p class="lead">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body.</p>
     <div class="items">
-      <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real sewing pattern, cut to your own seven measurements. Not a template.</p>
+      <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</p>
+      <p class="item"><span class="lbl">why we built it?</span>Store-bought patterns fit a standard mannequin, never you. You should be able to sew the thing you actually love, cut to your own body.</p>
       <p class="item"><span class="lbl">how does it work?</span>Snap the photo, confirm what it read, print the true-scale A4 sheets, then sew.</p>
-      <p class="item"><span class="lbl">what does it do?</span>It flattens the garment's 3D shape into flat panels that fit <b>your</b> body, with princess seams instead of darts to fight.</p>
-      <p class="item"><span class="lbl">how was it built?</span>A C++ drafting engine, checked draft by draft: 2805 test patterns verified to 0.0001&nbsp;mm.</p>
+      <p class="item"><span class="lbl">what's under the hood?</span>Real geometry. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts.</p>
+      <p class="item"><span class="lbl">is it slopware?</span>No. A hand-built C++ drafting engine, checked draft by draft: <b>2805 test patterns, verified to 0.0001&nbsp;mm</b>. The site is just the window. The engine is the product.</p>
       <p class="item"><span class="lbl">an api?</span><b>Coming soon.</b> The same engine, behind an endpoint for your own site.</p>
     </div>
     <a class="cta">Start a pattern</a>
