@@ -189,3 +189,30 @@ I5 · HOOK: "halter'ın pervazı yok. şerit var."
 - fiziksel dikim: motorun kalıbından gerçek elbise, kamerada
 - kendi göz v1: damıtılmış model tarayıcıda
 - sıradaki kelimeler: off-shoulder, cowl, peplum, wrap (spec ajanı çalışıyor)
+
+## seri J — dikiş payı ve mikrometre günü
+
+J1 · HOOK: "kalıplarımda artık İKİ çizgi var ve bu bir tartışmayı bitirdi."
+- dış kalın çizgi: kesim (pay dahil). içteki ince: dikiş. düşünmek yok: dıştan kes, içten dik.
+- neden: acemi payı eklemeyi unutur, kumaşı dar keser, elbise çöp. en kötü hata modunu sildik. [render]
+
+J2 · HOOK: "payı çizen kodum ilk denemede İÇERİ çizdi ve testler bunu yakaladı."
+- kesim çizgisi = dikiş çizgisinin dışa ötelenmişi. hangi taraf 'dışarı'? çizim yönüne güvendim, yanıldım.
+- artık motor kendisi yokluyor: en uzun kenardan bir adım at, poligonun içinde mi kaldın? o zaman öbür taraf.
+- ders: yön varsayılmaz, sorgulanır.
+
+J3 · HOOK: "kol altı kavisi payı yedi: içbükey köşenin intikamı."
+- kavisin yarıçapı paydan küçükse ötelenen çizgi kendi üstüne kıvrılıyor.
+- çözüm: zarf garantisi — her nokta dikiş çizgisine tam pay mesafesine İTİLİYOR, üç geçişte yakınsıyor.
+- katlama kenarı istisna: orası dikiş değil, pay sıfır. motor bunu da biliyor. [render]
+
+J4 · HOOK: "terzinin mikrometresini yazdım ve motorumda 10 milimetrelik bir açık buldum."
+- yeni araç: dikişçinin GERÇEKTEN birbirine iğneleyeceği her çifti ölçüyor. omuz, yan, prenses, bel, kol, pervaz.
+- ilk rapor: ön omuz 148, arka omuz 138. on milimetre. yıllardır kimsenin bakmadığı dikiş.
+- sebep zarif: arka yaka anatomik olarak daha geniş, ama omuz ucu iki tarafta aynı yerdeydi.
+
+J5 · HOOK: "iki düzeltme, sıfır milimetre."
+- omuz: arka uç kendi dikiş doğrultusunda kayıyor, ön=arka.
+- empire yan dikişi: kısa dikişte 2mm birikiyordu; kısa tarafın bel ucu delta kadar iniyor.
+- son rapor: en kötü çift farkı 0.00 mm. yetmiş bin taslak yeşil.
+- bonus: imkansız sanılan bazı vücut kombinasyonları artık geçerli çıkıyor, çünkü sorun vücut değil bizim dikişimizmiş.
