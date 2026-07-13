@@ -194,7 +194,7 @@ async function handleAnalyze(request, env) {
 
   const prompt = `Analyze the garment in this photo for sewing pattern drafting. Respond with ONLY a JSON object, no prose:
 {"garment": "skirt" | "dress" | "top" | "trousers" | "other",
- "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | null,
+ "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | "sweetheart" | null (sweetheart = heart-shaped decollete: a notch/dip at center front with rounded lobes arcing over the bust),
  "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
  "sleeveLength": "short" | "elbow" | "long" | null,
  "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | "pleated" | null (halfCircle covers full/flared circle skirts; pleated covers knife/box pleats),

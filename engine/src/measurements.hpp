@@ -16,7 +16,7 @@ struct BodyMeasurementsSnapshot {
     double neckMM() const { return neckCM * 10; }
 };
 
-enum class Neckline { Crew, Scoop, VNeck, Square, Boat };
+enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart };
 enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
 // Dress waist seam level. Empire sits just under the bust (underbust girth);
 // empire + gathered = the babydoll silhouette.
@@ -40,6 +40,7 @@ inline const char* raw(Neckline n) {
         case Neckline::VNeck: return "vNeck";
         case Neckline::Square: return "square";
         case Neckline::Boat: return "boat";
+        case Neckline::Sweetheart: return "sweetheart";
     }
     return "";
 }

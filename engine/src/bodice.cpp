@@ -7,6 +7,16 @@
 namespace stitchu {
 namespace {
 
+// Boat necks widen on both front and back; sweetheart opens the shoulders a
+// little so the heart lobes have width to live in. Both sides widen together
+// so the shoulder seams keep matching. ONE definition — the bodice and the
+// facings must never disagree on this.
+double neckWidthMultiplier(Neckline neckline) {
+    if (neckline == Neckline::Boat) return 1.35;
+    if (neckline == Neckline::Sweetheart) return 1.2;
+    return 1.0;
+}
+
 double frontNeckDepth(Neckline neckline, double neckW) {
     switch (neckline) {
         case Neckline::Crew: return neckW + 15;
@@ -14,6 +24,9 @@ double frontNeckDepth(Neckline neckline, double neckW) {
         case Neckline::VNeck: return neckW + 75;
         case Neckline::Square: return neckW + 40;
         case Neckline::Boat: return 28;
+        // neckW already carries the 1.2 width multiplier, so a smaller offset
+        // still lands the cleft between scoop and v-neck.
+        case Neckline::Sweetheart: return neckW + 50;
     }
     return neckW + 15;
 }
@@ -29,6 +42,11 @@ std::vector<PathCommand> neckCommands(Neckline neckline, Point centerNeck, Point
             return {PathCommand::line({w, d}), PathCommand::line(neckPoint)};
         case Neckline::Boat:
             return {PathCommand::curve(neckPoint, {w * 0.5, d}, {w * 0.85, d * 0.5})};
+        // Heart shape: the tangent at center front is steep, so the mirrored
+        // halves meet in the cleft notch; the curve then arcs convexly over
+        // the bust (the lobe) and eases into the shoulder strap.
+        case Neckline::Sweetheart:
+            return {PathCommand::curve(neckPoint, {w * 0.22, d * 0.48}, {w * 0.5, d * 0.12})};
         case Neckline::Crew:
         case Neckline::Scoop:
             return {PathCommand::curve(neckPoint, {w * 0.55, d}, {w * 0.9, d * 0.35})};
@@ -399,8 +417,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double frontSeamCenterY = empire ? seamSideY + empireBalanceDrop : backLength + frontBalanceDrop;
     const double girth = empire ? underbust : m.waistMM();
 
-    // Boat necks widen on both front and back.
-    const double widthMultiplier = neckline == Neckline::Boat ? 1.35 : 1.0;
+    const double widthMultiplier = neckWidthMultiplier(neckline);
 
     // ---- BACK (cut 2, center back seam carries part of the suppression) ----
     const double backNeckW = std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
@@ -634,7 +651,7 @@ std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Necklin
     const double neck = m.neckMM();
     const double shoulderHalf = m.shoulderCM * 10 / 2;
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
-    const double widthMultiplier = neckline == Neckline::Boat ? 1.35 : 1.0;
+    const double widthMultiplier = neckWidthMultiplier(neckline);
     const Point shoulderTip{shoulderHalf, shoulderDrop};
 
     const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);

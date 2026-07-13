@@ -214,3 +214,18 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Pieces named "Ruffle tier N (fırfır)" so the validator's trim exclusion still applies.
 - Covered by tests/tiered_ruffle_check (opt-in, tiers=1 byte-identical to single, per-tier
   cascade math, seam-vs-hem heights, validity, printability).
+
+## Sweetheart neckline (kalp yaka) (2026-07-13)
+- Neckline::Sweetheart, front only (back stays a crew curve, as with every style).
+- Width: neckWidthMultiplier 1.2 on BOTH front and back neck widths (boat 1.35 precedent) so
+  the shoulder seams keep matching; ONE shared helper feeds the bodice AND neckFacings —
+  they must never disagree or the facing validator fires.
+- Depth: frontNeckDepth = neckW + 50 (neckW already widened) → the cleft lands between
+  scoop and v-neck.
+- Curve: one cubic from centerNeck(0,d) to neckPoint(w,0), cp1=(0.22w, 0.48d),
+  cp2=(0.5w, 0.12d). Steep tangent at CF = the mirrored halves meet in the heart cleft;
+  the mid-curve arcs >15 mm above the chord = the bust lobe (scoop stays on the chord).
+  Candidates were rendered side by side first (engine/tools note) — "rounder" won.
+- Facing: makeFacing reuses neckCommands verbatim, so the facing follows automatically.
+- Covered by tests/sweetheart_check (depth ordering, cleft tangent, lobe lift vs scoop,
+  facing match via validator, dress + sleeved top).

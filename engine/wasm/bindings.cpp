@@ -58,6 +58,7 @@ Neckline necklineFrom(const std::string& s) {
     if (s == "vNeck") return Neckline::VNeck;
     if (s == "square") return Neckline::Square;
     if (s == "boat") return Neckline::Boat;
+    if (s == "sweetheart") return Neckline::Sweetheart;
     return Neckline::Crew;
 }
 SkirtStyle skirtStyleFrom(const std::string& s) {
