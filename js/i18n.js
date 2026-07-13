@@ -64,14 +64,14 @@ export const STRINGS = {
   'result.fabric': { en: 'fabric', tr: 'kumaş' },
   'result.fabricv': { en: '{n} m at 140 cm width', tr: '140 cm ende {n} m' },
   'result.sa': { en: 'seam allowance', tr: 'dikiş payı' },
-  'result.sav': { en: '{n} cm included in the guide, not drawn', tr: '{n} cm — rehberde var, çizimde yok' },
+  'result.sav': { en: '{n} cm — drawn in: cut the outer line, sew the inner', tr: '{n} cm — çizili: dış çizgiden kes, iç çizgiden dik' },
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Rehber adımları şimdilik İngilizce — Türkçesi geliyor.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
   'result.photofabric.good': { en: 'The fabric in your photo looks like {name} — a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu proje için uygun. Dikkat: {note}' },
   'result.photofabric.bad': { en: 'The fabric in your photo looks like {name} — it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
   'result.photofabric.unknown': { en: 'The fabric in your photo looks like {name}. No verified guide for it here yet — handle it by its stretch (the knit/woven choice you made) and test on a scrap first.', tr: 'Fotoğraftaki kumaş {name} görünüyor. Bunun için doğrulanmış rehber henüz yok — esnekliğine göre davran (seçtiğin örgü/dokuma ayarı) ve önce artık parçada dene.' },
-  'result.legend': { en: 'How to read the pieces: solid line = cutting/seam line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: düz çizgi = kesim/dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
+  'result.legend': { en: 'How to read the pieces: OUTER solid line = cutting line (seam allowance included) · inner fine line = sewing line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: DIŞ kalın çizgi = kesim hattı (dikiş payı dahil) · içteki ince çizgi = dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
   'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist) — please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi) — lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
 
   // closet

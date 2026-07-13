@@ -4,7 +4,7 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=26';
+import { pathD, bounds } from './render.js?v=27';
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
 const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
@@ -83,7 +83,13 @@ function packPieces(pieces) {
 }
 
 function pieceGroup(d) {
-  let inner = `<path d="${pathD(d.p.commands, 1)}" fill="none" stroke="#111" stroke-width="0.6"/>`;
+  // Outer solid = CUTTING line (allowance included); inner fine = SEWING line.
+  // Old closet saves have no cutLine and print the single line as before.
+  const hasCut = (d.p.cutLine || []).length > 0;
+  let inner = hasCut
+    ? `<path d="${pathD(d.p.cutLine, 1)}" fill="none" stroke="#111" stroke-width="0.6"/>` +
+      `<path d="${pathD(d.p.commands, 1)}" fill="none" stroke="#555" stroke-width="0.35"/>`
+    : `<path d="${pathD(d.p.commands, 1)}" fill="none" stroke="#111" stroke-width="0.6"/>`;
   if (d.p.markings.length) {
     inner += `<path d="${pathD(d.p.markings, 1)}" fill="none" stroke="#111" stroke-width="0.45" stroke-dasharray="4 3"/>`;
   }
@@ -172,8 +178,12 @@ export function printPattern(result) {
   // Cover sheet
   const cover = el('div', 'print-page');
   cover.appendChild(el('div', 'print-title', `${p.garment} — stitchu pattern`));
+  const hasCutLines = p.pieces.some((piece) => (piece.cutLine || []).length > 0);
   cover.appendChild(el('div', 'print-sub',
-    `${p.pieces.length} pieces · ${p.fabricMeters140} m fabric at 140 cm · seam allowance ${p.pieces[0].seamAllowance / 10} cm NOT drawn, add it while cutting`));
+    `${p.pieces.length} pieces · ${p.fabricMeters140} m fabric at 140 cm · ` +
+    (hasCutLines
+      ? `seam allowance ${p.pieces[0].seamAllowance / 10} cm INCLUDED — cut on the OUTER line, sew on the inner fine line`
+      : `seam allowance ${p.pieces[0].seamAllowance / 10} cm NOT drawn, add it while cutting`)));
   const map = el('ul', 'print-map');
   for (const piece of paper.length ? paper : p.pieces) {
     map.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));

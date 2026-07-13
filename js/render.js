@@ -1,7 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=26';
-import { getLang, t } from './i18n.js?v=26';
+import { fabricAdvice } from './fabrics.js?v=27';
+import { getLang, t } from './i18n.js?v=27';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -22,7 +22,8 @@ export function pathD(commands, scale) {
 export function bounds(piece) {
   const xs = [];
   const ys = [];
-  for (const c of [...piece.commands, ...piece.markings]) {
+  // cutLine may be absent on closet entries saved before the double line.
+  for (const c of [...piece.commands, ...piece.markings, ...(piece.cutLine || [])]) {
     if (c.x !== undefined) { xs.push(c.x); ys.push(c.y); }
     if (c.cp1x !== undefined) { xs.push(c.cp1x, c.cp2x); ys.push(c.cp1y, c.cp2y); }
   }
@@ -42,7 +43,13 @@ export function pieceCard(piece) {
   const w = (b.maxX - b.minX) * s + pad * 2;
   const h = (b.maxY - b.minY) * s + pad * 2;
 
-  let inner = `<path d="${pathD(piece.commands, s)}" fill="none" stroke="#111" stroke-width="1.6"/>`;
+  // Double line: outer solid = CUTTING line (allowance included), inner
+  // fine line = the SEWING line. Old closet saves keep the single line.
+  const hasCut = (piece.cutLine || []).length > 0;
+  let inner = hasCut
+    ? `<path d="${pathD(piece.cutLine, s)}" fill="none" stroke="#111" stroke-width="1.6"/>` +
+      `<path d="${pathD(piece.commands, s)}" fill="none" stroke="#8a8a8a" stroke-width="1"/>`
+    : `<path d="${pathD(piece.commands, s)}" fill="none" stroke="#111" stroke-width="1.6"/>`;
   if (piece.markings.length) {
     inner += `<path d="${pathD(piece.markings, s)}" fill="none" stroke="#8f2038" stroke-width="1.4" stroke-dasharray="6 4"/>`;
   }
