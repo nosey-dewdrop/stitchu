@@ -160,6 +160,7 @@ std::string draftJSON(
         }
         out += R"(,"commands":)" + commandsJSON(piece.commands);
         out += R"(,"markings":)" + commandsJSON(piece.markings);
+        out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
         out += "}";
     }
     out += R"(]},"issues":[)";

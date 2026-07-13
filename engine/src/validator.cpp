@@ -677,6 +677,78 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
     return issues;
 }
 
+// MARK: Cutting line
+
+// Cheap per-piece invariant (the deep sampled-distance check lives in
+// tests/cutline_check): every real piece carries a cut line whose bounding box
+// extends past the sewing line by ~the seam allowance on every free side —
+// except across a fold, where it must sit exactly on x = 0.
+std::vector<ValidationIssue> cutLineIssues(const DraftedPattern& draft) {
+    std::vector<ValidationIssue> issues;
+    for (const auto& piece : draft.pieces) {
+        const bool strip = piece.name.find("Ruffle") != std::string::npos ||
+                           piece.name.find("Bias binding") != std::string::npos;
+        const bool zeroSA = piece.seamAllowance <= 0.01;
+        if (strip || zeroSA) {
+            if (!piece.cutLine.empty()) {
+                issues.push_back({"cutline", piece.name, "unexpected cut line on a strip/zero-allowance piece"});
+            }
+            continue;
+        }
+        if (piece.cutLine.empty()) {
+            issues.push_back({"cutline", piece.name, "cutting line missing"});
+            continue;
+        }
+        for (const auto& cmd : piece.cutLine) {
+            if (cmd.type == CmdType::Close) continue;
+            if (!std::isfinite(cmd.to.x) || !std::isfinite(cmd.to.y)) {
+                issues.push_back({"cutline", piece.name, "non-finite cut line coordinate"});
+                break;
+            }
+        }
+        // Flattened boxes: boundingBox() counts curve CONTROL points, which sit
+        // outside bulgy curves (balloon sleeve) and would fake a violation.
+        auto flatBox = [](const std::vector<PathCommand>& cmds) {
+            double minX = 1e18, minY = 1e18, maxX = -1e18, maxY = -1e18;
+            Point cur{0, 0};
+            auto eat = [&](Point p) {
+                minX = std::min(minX, p.x); maxX = std::max(maxX, p.x);
+                minY = std::min(minY, p.y); maxY = std::max(maxY, p.y);
+            };
+            for (const auto& c : cmds) {
+                if (c.type == CmdType::Move || c.type == CmdType::Line) { eat(c.to); cur = c.to; }
+                else if (c.type == CmdType::Curve) {
+                    for (const Point& p : flattenCubic(cur, c.to, c.cp1, c.cp2, 12)) eat(p);
+                    cur = c.to;
+                }
+            }
+            return Rect{minX, minY, maxX - minX, maxY - minY};
+        };
+        const Rect sew = flatBox(piece.commands);
+        const Rect cut = flatBox(piece.cutLine);
+        const bool onFold = piece.cutInstruction.find("on fold") != std::string::npos;
+        // Guardrail only (sharp tips legitimately grow less along an axis than
+        // the full allowance — the sampled distance audit lives in
+        // tests/cutline_check): the cut box must grow OUTWARD on every free
+        // side, and never cross a fold.
+        const double minGrow = 1.0;
+        if (onFold) {
+            if (cut.x < -0.1) {
+                issues.push_back({"cutline", piece.name,
+                    fmt("cut line crosses the fold by %.1f mm", -cut.x)});
+            }
+        } else if (sew.x - cut.x < minGrow) {
+            issues.push_back({"cutline", piece.name, "cut line does not clear the sewing line (left)"});
+        }
+        if (cut.x + cut.width - (sew.x + sew.width) < minGrow ||
+            sew.y - cut.y < minGrow ||
+            cut.y + cut.height - (sew.y + sew.height) < minGrow) {
+            issues.push_back({"cutline", piece.name, "cut line does not clear the sewing line on every side"});
+        }
+    }
+    return issues;
+}
+
 // MARK: Keyhole
 
 // When the keyhole is requested it must be REAL: the teardrop stitch line on
@@ -792,6 +864,7 @@ std::vector<ValidationIssue> issues(
     for (const auto& piece : draft.pieces) {
         for (auto& issue : geometryIssues(piece)) result.push_back(issue);
     }
+    for (auto& issue : cutLineIssues(draft)) result.push_back(issue);
 
     switch (spec.garment) {
         case GarmentType::Skirt: {

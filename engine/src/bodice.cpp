@@ -451,6 +451,23 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         : std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = halter ? 8 : neck * backNeckCutoutFactor;
     const double backWidth = (underbust / 4) * (1 + chestEase);
+
+    // SHOULDER TRUING (2026-07-13, precision pass): the back neck is wider
+    // than the front (anatomy), so with a shared shoulder tip the back seam
+    // came out 8-10 mm SHORTER than the front it must sew onto. Slide the back
+    // tip outward along its own seam direction until both measure the same.
+    // Halter has no shoulder seam and keeps its own frame.
+    const double frontNeckWEarly = std::min(neck * frontNeckWidthFactor * widthMultiplier,
+                                            shoulderHalf * maxNeckShoulderShare);
+    double bTipHalf = shoulderHalf, bTipDrop = shoulderDrop;
+    if (!halter) {
+        const double frontShoulderLen = std::hypot(shoulderHalf - frontNeckWEarly, shoulderDrop);
+        const double backRunX = shoulderHalf - backNeckW;
+        const double backLen = std::hypot(backRunX, shoulderDrop);
+        const double scale = backLen > 1e-9 ? frontShoulderLen / backLen : 1.0;
+        bTipHalf = backNeckW + backRunX * scale;
+        bTipDrop = shoulderDrop * scale;
+    }
     const double backWaistTarget = (girth * backWaistShare / 2) * (1 + waistEase);
     const double backReduction = std::max(0.0, backWidth - backWaistTarget);
     double backDart = backReduction * (1 - centerBackReduction * 0.5);
@@ -460,9 +477,40 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // leaves exactly the waist target: cbTakeIn + target + dart.
     const double backWaistlineWidth = cbTakeIn + backWaistTarget + backDart;
 
+    // Front waist numbers, needed EARLY for the side-seam truing below.
+    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase);
+    const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
+    const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
+    // Up to 15mm of the reduction slants the side seam in at the WAIST (never
+    // at the chest — that would eat the bust ease), rest is dart.
+    const double sideTake = std::min(frontReduction, 15.0);
+    const double frontDart = frontReduction - sideTake;
+    const double frontWaistlineWidth = frontWaistTarget + frontDart;
+
+    // SIDE-SEAM TRUING (2026-07-13, precision pass): the two halves slant
+    // inward by different amounts, so on short (empire) bodices the seams
+    // mismatched by up to ~2 mm. Drop the SHORTER half's side-waist end until
+    // both measure the same — the legBTrued move, applied to the side seam.
+    const double sideH = (seamSideY - 8) - armholeY; // frame shifts cancel
+    const double runF = frontWidth - frontWaistlineWidth;
+    const double runB = backWidth - backWaistlineWidth;
+    const double sideLenF = std::hypot(runF, sideH);
+    const double sideLenB = std::hypot(runB, sideH);
+    double deltaBack = 0, deltaFront = 0;
+    // Extended tops (hip/tunic) sew the EXTENDED side seam, whose own curves
+    // already pair up — moving the waist anchor would skew them. True only
+    // where the waist end IS the seam end.
+    if (extendBelowWaist <= 0) {
+        if (sideLenF > sideLenB) {
+            deltaBack = std::sqrt(std::max(0.0, sideLenF * sideLenF - runB * runB)) - sideH;
+        } else if (sideLenB > sideLenF) {
+            deltaFront = std::sqrt(std::max(0.0, sideLenB * sideLenB - runF * runF)) - sideH;
+        }
+    }
+
     // Halter back frame: local y = 0 at the low top edge.
-    const double bShoulderHalf = halter ? backWidth * 0.85 : shoulderHalf;
-    const double bShoulderDrop = halter ? 2 : shoulderDrop;
+    const double bShoulderHalf = halter ? backWidth * 0.85 : bTipHalf;
+    const double bShoulderDrop = halter ? 2 : bTipDrop;
     const double bArmholeY = armholeY - halterBackTopY;
     const double bSeamSideY = seamSideY - halterBackTopY;
 
@@ -489,7 +537,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             Neckline::Crew, // back top edge stays a shallow curve for every style
             backNeckW, backCutout, bShoulderHalf, bShoulderDrop,
             backWidth, bArmholeY,
-            bSeamSideY, bSeamSideY,
+            bSeamSideY + deltaBack, bSeamSideY,
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn,
@@ -500,14 +548,14 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             Neckline::Crew,
             backNeckW, backCutout, bShoulderHalf, bShoulderDrop,
             backWidth, bArmholeY,
-            bSeamSideY, bSeamSideY,
+            bSeamSideY + deltaBack, bSeamSideY,
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn);
     }
 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
-    const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
+    const double frontNeckW = frontNeckWEarly; // ONE source (shoulder truing read it)
     // Halter front frame: local y = 0 at the strap top edge, so the whole
     // front shifts DOWN by the strap rise and the strap corners take the
     // neck-point / shoulder-tip roles.
@@ -518,14 +566,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double fSeamSideY = halter ? seamSideY + halterStrapRise : seamSideY;
     const double frontCutout = frontNeckDepth(neckline, frontNeckW) + (halter ? halterStrapRise : 0);
     const double frontLength = frontSeamCenterY + (halter ? halterStrapRise : 0);
-    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase);
-    const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
-    const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
-    // Up to 15mm of the reduction slants the side seam in at the WAIST (never
-    // at the chest — that would eat the bust ease), rest is dart.
-    const double sideTake = std::min(frontReduction, 15.0);
-    const double frontDart = frontReduction - sideTake;
-    const double frontWaistlineWidth = frontWaistTarget + frontDart;
+    // (front waist numbers were computed above, before the side-seam truing)
 
     // Empire: the bust apex stays put, so the leg from the raised seam up to
     // it is short; natural keeps the classic formula bit for bit. (The halter
@@ -543,7 +584,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             neckline,
             fNeckW, frontCutout, fShoulderHalf, fShoulderDrop,
             frontWidth, fArmholeY,
-            fSeamSideY, frontLength,
+            fSeamSideY + deltaFront, frontLength,
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0,
@@ -554,7 +595,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             neckline,
             fNeckW, frontCutout, fShoulderHalf, fShoulderDrop,
             frontWidth, fArmholeY,
-            fSeamSideY, frontLength,
+            fSeamSideY + deltaFront, frontLength,
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0);
@@ -612,10 +653,10 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     draft.frontWaistHalf = frontWaistTarget;
     draft.frontLength = frontSeamCenterY; // body frame (halter pieces are frame-shifted)
     draft.backLength = seamSideY; // back piece length (= natural backLength unless empire)
-    // Piece-frame waist levels: what the drawn geometry actually uses. Equal
-    // to the body frame everywhere except the halter's shifted halves.
-    draft.frontPieceWaistY = fSeamSideY;
-    draft.backPieceWaistY = bSeamSideY;
+    // Piece-frame waist levels: what the drawn geometry actually uses (halter
+    // frame shifts + the side-seam truing deltas included).
+    draft.frontPieceWaistY = fSeamSideY + deltaFront;
+    draft.backPieceWaistY = bSeamSideY + deltaBack;
     draft.frontPieceLength = frontLength;
     draft.backPieceLength = bSeamSideY;
     draft.armholeLength = (backPrincess ? backSplit.armholeLength : back.armholeLength) +

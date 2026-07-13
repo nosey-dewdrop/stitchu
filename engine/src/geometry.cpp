@@ -181,8 +181,211 @@ void translatePiece(PatternPiece& piece, double dx, double dy) {
     };
     shift(piece.commands);
     shift(piece.markings);
+    shift(piece.cutLine);
     piece.grainline.from.x += dx; piece.grainline.from.y += dy;
     piece.grainline.to.x += dx; piece.grainline.to.y += dy;
+}
+
+namespace {
+
+// Douglas-Peucker on an open polyline (first/last kept).
+void simplifyRange(const std::vector<Point>& pts, size_t lo, size_t hi, double tol,
+                   std::vector<bool>& keep) {
+    if (hi <= lo + 1) return;
+    const Point a = pts[lo], b = pts[hi];
+    const double abx = b.x - a.x, aby = b.y - a.y;
+    const double abLen = std::hypot(abx, aby);
+    double worst = -1;
+    size_t worstAt = lo;
+    for (size_t i = lo + 1; i < hi; ++i) {
+        double d;
+        if (abLen < 1e-9) {
+            d = distance(pts[i], a);
+        } else {
+            d = std::fabs((pts[i].x - a.x) * aby - (pts[i].y - a.y) * abx) / abLen;
+        }
+        if (d > worst) { worst = d; worstAt = i; }
+    }
+    if (worst > tol) {
+        keep[worstAt] = true;
+        simplifyRange(pts, lo, worstAt, tol, keep);
+        simplifyRange(pts, worstAt, hi, tol, keep);
+    }
+}
+
+} // namespace
+
+std::vector<PathCommand> offsetOutline(
+    const std::vector<PathCommand>& outline, double sa, bool clampFoldX) {
+    if (sa <= 0.01 || outline.size() < 3) return {};
+
+    // 1. Flatten the closed outline to a polygon (curves at 24 steps, the
+    // engine-wide flattening resolution).
+    std::vector<Point> poly;
+    Point current{0, 0}, start{0, 0};
+    for (const auto& cmd : outline) {
+        switch (cmd.type) {
+            case CmdType::Move:
+                current = cmd.to; start = cmd.to;
+                poly.push_back(current);
+                break;
+            case CmdType::Line:
+                poly.push_back(cmd.to);
+                current = cmd.to;
+                break;
+            case CmdType::Curve: {
+                const auto pts = flattenCubic(current, cmd.to, cmd.cp1, cmd.cp2, 24);
+                for (size_t i = 1; i < pts.size(); ++i) poly.push_back(pts[i]);
+                current = cmd.to;
+                break;
+            }
+            case CmdType::Close:
+                break;
+        }
+    }
+    // Drop a duplicated closing vertex.
+    while (poly.size() > 1 && distance(poly.front(), poly.back()) < 0.01) poly.pop_back();
+    const size_t n = poly.size();
+    if (n < 3) return {};
+
+    // 2. Which side is "outward"? Don't trust traversal direction (pieces are
+    // authored both ways) — test it: nudge the first edge's midpoint along the
+    // candidate normal and ask if it landed inside the polygon.
+    auto insidePoly = [](const std::vector<Point>& pg, Point p) {
+        bool in = false;
+        for (size_t i = 0, j = pg.size() - 1; i < pg.size(); j = i++) {
+            const Point& a = pg[i];
+            const Point& b = pg[j];
+            if ((a.y > p.y) != (b.y > p.y) &&
+                p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) in = !in;
+        }
+        return in;
+    };
+
+    // 2b. Drop zero-length edges: duplicated vertices make garbage normals.
+    std::vector<Point> clean;
+    clean.reserve(n);
+    for (const Point& p : poly) {
+        if (clean.empty() || distance(clean.back(), p) > 0.01) clean.push_back(p);
+    }
+    while (clean.size() > 1 && distance(clean.front(), clean.back()) < 0.01) clean.pop_back();
+    if (clean.size() < 3) return {};
+    const size_t cn = clean.size();
+
+    // Probe the longest edge (a stable witness) for the outward direction.
+    size_t probe = 0;
+    double probeLen = 0;
+    for (size_t i = 0; i < cn; ++i) {
+        const double len = distance(clean[i], clean[(i + 1) % cn]);
+        if (len > probeLen) { probeLen = len; probe = i; }
+    }
+    const Point pa = clean[probe], pb = clean[(probe + 1) % cn];
+    const double pex = (pb.x - pa.x) / probeLen, pey = (pb.y - pa.y) / probeLen;
+    const Point mid{(pa.x + pb.x) / 2, (pa.y + pb.y) / 2};
+    const Point tryLeft{mid.x + pey * 1.0, mid.y - pex * 1.0};
+    const double outwardSign = insidePoly(clean, tryLeft) ? -1.0 : 1.0;
+
+    // 3. Offset every EDGE along its outward normal, then join neighbours:
+    // concave corner -> offset lines intersect, take the intersection (exactly
+    // sa from both edges); convex corner -> miter if modest, else a bevel of
+    // the two edge endpoints (each exactly sa from its own edge, so a sharp
+    // gore/strap tip can never dip under the allowance the way a clamped
+    // single-vertex miter does).
+    struct Edge { Point a, b; double nx, ny; };
+    std::vector<Edge> edges(cn);
+    for (size_t i = 0; i < cn; ++i) {
+        const Point& p = clean[i];
+        const Point& q = clean[(i + 1) % cn];
+        double ex = q.x - p.x, ey = q.y - p.y;
+        const double len = std::hypot(ex, ey);
+        ex /= len; ey /= len;
+        const double nx = outwardSign * ey, ny = outwardSign * -ex;
+        edges[i] = {{p.x + nx * sa, p.y + ny * sa}, {q.x + nx * sa, q.y + ny * sa}, nx, ny};
+    }
+    std::vector<Point> off;
+    off.reserve(cn * 2);
+    for (size_t i = 0; i < cn; ++i) {
+        const Edge& e1 = edges[(i + cn - 1) % cn]; // arrives at vertex i
+        const Edge& e2 = edges[i];                 // leaves vertex i
+        // Line intersection of (e1.a->e1.b) and (e2.a->e2.b).
+        const double d1x = e1.b.x - e1.a.x, d1y = e1.b.y - e1.a.y;
+        const double d2x = e2.b.x - e2.a.x, d2y = e2.b.y - e2.a.y;
+        const double denom = d1x * d2y - d1y * d2x;
+        if (std::fabs(denom) < 1e-9) {
+            // Collinear edges: the shared endpoint is the join.
+            off.push_back(e1.b);
+            continue;
+        }
+        const double t = ((e2.a.x - e1.a.x) * d2y - (e2.a.y - e1.a.y) * d2x) / denom;
+        const Point meet{e1.a.x + t * d1x, e1.a.y + t * d1y};
+        const double miter = distance(meet, clean[i]);
+        if (miter <= sa * 2.5) {
+            off.push_back(meet); // concave trim or modest convex miter
+        } else {
+            off.push_back(e1.b); // sharp convex tip: bevel with both endpoints
+            off.push_back(e2.a);
+        }
+    }
+    if (clampFoldX) {
+        for (auto& p : off)
+            if (p.x < 0) p.x = 0;
+    }
+
+    // 3b. ENVELOPE GUARANTEE: a concave stretch whose radius is tighter than
+    // the allowance makes the raw offset curl back toward the outline (the
+    // sleeve underarm, skirt gore valleys). Relax every offset point out to
+    // the true distance-sa envelope: push any point that measures closer than
+    // sa (against the sewing outline, fold edges excluded) straight away from
+    // its nearest outline point. Three passes converge well below 0.1 mm.
+    struct Seg { Point a, b; };
+    std::vector<Seg> sew;
+    sew.reserve(cn);
+    for (size_t i = 0; i < cn; ++i) {
+        const Point& a = clean[i];
+        const Point& b = clean[(i + 1) % cn];
+        if (clampFoldX && a.x < 0.5 && b.x < 0.5) continue; // the fold is not a seam
+        sew.push_back({a, b});
+    }
+    auto nearestOnSeg = [](Point p, const Seg& s) {
+        const double abx = s.b.x - s.a.x, aby = s.b.y - s.a.y;
+        const double len2 = abx * abx + aby * aby;
+        double t = len2 < 1e-12 ? 0 : ((p.x - s.a.x) * abx + (p.y - s.a.y) * aby) / len2;
+        t = std::max(0.0, std::min(1.0, t));
+        return Point{s.a.x + t * abx, s.a.y + t * aby};
+    };
+    for (int pass = 0; pass < 3; ++pass) {
+        bool moved = false;
+        for (auto& p : off) {
+            if (clampFoldX && p.x < 0.1) continue; // on-fold points stay on the fold
+            double bestD = 1e18;
+            Point bestQ{0, 0};
+            for (const auto& s : sew) {
+                const Point q = nearestOnSeg(p, s);
+                const double d = distance(p, q);
+                if (d < bestD) { bestD = d; bestQ = q; }
+            }
+            if (bestD < sa - 0.05 && bestD > 1e-9) {
+                const double push = sa / bestD;
+                p = {bestQ.x + (p.x - bestQ.x) * push, bestQ.y + (p.y - bestQ.y) * push};
+                if (clampFoldX && p.x < 0) p.x = 0;
+                moved = true;
+            }
+        }
+        if (!moved) break;
+    }
+    const size_t on = off.size();
+
+    // 4. Simplify (0.2 mm) so the cut line stays light for JSON/print.
+    std::vector<bool> keep(on, false);
+    keep[0] = keep[on - 1] = true;
+    simplifyRange(off, 0, on - 1, 0.2, keep);
+
+    std::vector<PathCommand> result;
+    result.push_back(PathCommand::move(off[0]));
+    for (size_t i = 1; i < on; ++i)
+        if (keep[i]) result.push_back(PathCommand::line(off[i]));
+    result.push_back(PathCommand::close());
+    return result;
 }
 
 } // namespace stitchu

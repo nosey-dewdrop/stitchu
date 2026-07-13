@@ -399,6 +399,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 hemMM * lenMultiplier * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
             1);
     }
+    // CUTTING LINES (last, so every post-pass piece is covered): each real
+    // piece gets its sewing line offset outward by its seam allowance — cut on
+    // the outer line, sew on the inner. Strip pieces (ruffle, bias binding)
+    // carry every allowance inside their cut note, and zero-allowance pieces
+    // (keyhole facing) are sewn ON the drawn line, so those stay single-line.
+    for (auto& piece : pattern.pieces) {
+        if (piece.name.find("Ruffle") != std::string::npos ||
+            piece.name.find("Bias binding") != std::string::npos) continue;
+        const bool onFold = piece.cutInstruction.find("on fold") != std::string::npos;
+        piece.cutLine = offsetOutline(piece.commands, piece.seamAllowance, onFold);
+    }
     return pattern;
 }
 

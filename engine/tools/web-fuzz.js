@@ -22,7 +22,7 @@ const BODIES = [
 
 function bounds(piece) {
   const xs = [], ys = [];
-  for (const c of [...piece.commands, ...piece.markings]) {
+  for (const c of [...piece.commands, ...piece.markings, ...(piece.cutLine || [])]) {
     if (c.x !== undefined) { xs.push(c.x); ys.push(c.y); }
     if (c.cp1x !== undefined) { xs.push(c.cp1x, c.cp2x); ys.push(c.cp1y, c.cp2y); }
   }

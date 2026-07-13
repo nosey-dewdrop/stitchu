@@ -38,11 +38,15 @@ struct Grainline {
 struct PatternPiece {
     std::string name;
     std::string cutInstruction;
-    std::vector<PathCommand> commands;   // outline (sewing line)
+    std::vector<PathCommand> commands;   // outline (SEWING line)
     std::vector<PathCommand> markings;   // darts, fold lines, notches
+    // CUTTING line: the sewing line offset outward by seamAllowance (empty for
+    // strip pieces whose cut note already includes every allowance). Cut on
+    // this line, sew on `commands`.
+    std::vector<PathCommand> cutLine;
     bool hasGrainline = false;
     Grainline grainline;
-    double seamAllowance = 15.0;         // mm, metadata
+    double seamAllowance = 15.0;         // mm, drawn into cutLine
 };
 
 struct DraftedPattern {
@@ -93,5 +97,14 @@ PathCommand reverseCubic(Point from, const PathCommand& cmd);
 
 // Shift every coordinate (outline + markings + grainline) by (dx, dy).
 void translatePiece(PatternPiece& piece, double dx, double dy);
+
+// CUTTING line: offset the closed sewing outline outward by `sa` mm.
+// Cubics are flattened, vertices move along averaged edge normals with a
+// clamped miter (sharp corners like strap tips can't spike), and the result
+// is simplified (Douglas-Peucker, 0.2 mm) back into a line path.
+// clampFoldX: for "on fold" pieces the fold edge lives at x = 0 — the cut
+// line is clamped to x >= 0 so no allowance is ever added across the fold.
+std::vector<PathCommand> offsetOutline(
+    const std::vector<PathCommand>& outline, double sa, bool clampFoldX);
 
 } // namespace stitchu

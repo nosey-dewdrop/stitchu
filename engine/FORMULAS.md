@@ -278,3 +278,43 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   sleeveIssues expects none, topIssues heights use the piece-frame lengths.
 - Covered by tests/halter_check (dress/top, princess/dart, natural/empire, knit, petite +
   plus bodies: valid, sleeves skipped honestly, strap width, low back vs crew, binding).
+
+## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
+- PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
+  cut on the outer solid line, sew on the inner fine line. Strip pieces
+  (Ruffle*/Bias binding — allowances already in their cut note) and
+  zero-allowance pieces (Keyhole Facing) stay single-line on purpose.
+- geometry offsetOutline(): flatten (24 steps) → dedupe → outward side found
+  EMPIRICALLY (probe the longest edge's normal with point-in-polygon; NEVER
+  trust traversal direction — pieces are authored both ways, the area-sign
+  heuristic shipped an inward offset) → per-EDGE offset joined by intersection
+  (concave) / miter ≤2.5×sa / bevel (sharp gore & strap tips) → ENVELOPE
+  GUARANTEE: 3 relax passes push any point measuring < sa (against non-fold
+  outline edges) out to exactly sa — this is what tames concave curves whose
+  radius < sa (sleeve underarm) → Douglas-Peucker 0.2 mm.
+- "on fold" pieces: fold edge is NOT a seam — cut line clamped to x >= 0,
+  fold-clamped points exempt from the envelope audit.
+- Validator "cutline" (cheap, all 70200 drafts): present on real pieces, absent
+  on strips, finite, FLATTENED bbox clears the sewing bbox on every free side
+  (boundingBox() counts curve control points — balloon sleeves fake-fail with
+  it), never crosses the fold. Deep sampled-distance audit: tests/cutline_check
+  (min ≥ sa-1.5, max ≤ 2.5×sa across dress/halter/ruffle/keyhole cases).
+- PRECISION TRUING found by tools/precision-report.js (the tailor's micrometer;
+  run it after any bodice change):
+  1. SHOULDER: back neck is wider than front, shared tip made the back shoulder
+     seam 8-10 mm SHORT. Back tip now slides out along its own seam direction
+     until front == back (halter exempt: no shoulder seam).
+  2. SIDE SEAM: halves slant differently; on short empire bodices the pair
+     mismatched ~2 mm. The shorter half's side-waist end drops (legBTrued move)
+     until the pair matches — ONLY when extendBelowWaist == 0 (extended tops
+     sew the extension curves, which already pair; moving their waist anchor
+     skews them, the pear-body top caught it).
+  After truing: precision report worst pair = 0.00 mm.
+- GOLDEN RE-PINNED: engine/golden-reference.csv (committed) replaces the Swift
+  dump as the reference — the truing deliberately diverges from the Swift port
+  (compare: ./engine/build/golden_dump | python3 engine/golden-diff.py
+  engine/golden-reference.csv /dev/stdin). The Swift diff served port fidelity
+  and was PASS right up to this change.
+- Web: outer/inner line in preview + print, legend + cover updated EN/TR;
+  bounds()/packing include cutLine; old closet saves (no cutLine) render the
+  single line as before.
