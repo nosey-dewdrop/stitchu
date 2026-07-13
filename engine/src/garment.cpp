@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "ruffle.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
 
@@ -301,15 +302,38 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
 namespace GarmentDrafter {
 
 DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
+    DraftedPattern pattern;
     switch (spec.garment) {
         case GarmentType::Skirt:
-            return SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
+            pattern = SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
+            break;
         case GarmentType::Dress:
-            return DressBlock::draft(spec, m);
+            pattern = DressBlock::draft(spec, m);
+            break;
         case GarmentType::Top:
-            return TopBlock::draft(spec, m);
+            pattern = TopBlock::draft(spec, m);
+            break;
     }
-    return {};
+    // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
+    // existing draft is byte-identical. (halfCircle uses skirt length; an empire
+    // half-circle dress ruffle is approximate — noted, not silently wrong.)
+    if (spec.ruffleHem &&
+        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress)) {
+        const double hemMM = SkirtBlock::hemCircumferenceMM(
+            m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
+        pattern.pieces.push_back(
+            RuffleBlock::draft(hemMM, spec.ruffleFullness, spec.ruffleDepthMM));
+        pattern.guideSteps.push_back(
+            "Ruffle: cut the long ruffle strip as labelled. Gather its top edge with two rows "
+            "of gathering stitches and pull it down to the hem length, matching the notches so "
+            "the gathers sit evenly. Sew it to the hem right sides together, press the seam up, "
+            "then finish the strip's bottom edge with a narrow 1 cm hem.");
+        pattern.fabricMeters140 = roundToPlaces(
+            pattern.fabricMeters140 +
+                hemMM * spec.ruffleFullness * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
+            1);
+    }
+    return pattern;
 }
 
 } // namespace GarmentDrafter

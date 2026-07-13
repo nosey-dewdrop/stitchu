@@ -369,6 +369,8 @@ std::vector<ValidationIssue> skirtIssues(
         // Standalone skirts: everything but the waistband is a skirt piece
         // (Front / Center Front / Side Front / panels...). In a dress the
         // skirt pieces all carry the "Skirt" prefix.
+        // A hem ruffle is a trim, not a waist-bearing piece — never count it.
+        if (piece.name.find("Ruffle") != std::string::npos) continue;
         if (spec.garment == GarmentType::Skirt ? piece.name != "Waistband"
                                                : hasPrefix(piece.name, "Skirt")) {
             skirtPieces.push_back(&piece);

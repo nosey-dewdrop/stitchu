@@ -55,6 +55,11 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
                       Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
                       double lengthExtraMM = 0);
 
+// Finished (sewn) hem circumference in mm — the edge a hem ruffle trims.
+double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                          Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
+                          double lengthExtraMM = 0);
+
 std::vector<std::string> guide(SkirtStyle style, Shaping shaping = Shaping::Princess,
                                Fabric fabric = Fabric::Woven);
 

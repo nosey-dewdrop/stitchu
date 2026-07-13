@@ -10,6 +10,7 @@ add_library(engine
     src/geometry.cpp
     src/bodice.cpp
     src/skirt.cpp
+    src/ruffle.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -27,3 +28,7 @@ add_test(NAME engine_check COMMAND engine_check)
 
 add_executable(golden_dump tests/golden_dump.cpp)
 target_link_libraries(golden_dump PRIVATE engine)
+
+add_executable(ruffle_check tests/ruffle_check.cpp)
+target_link_libraries(ruffle_check PRIVATE engine)
+add_test(NAME ruffle_check COMMAND ruffle_check)

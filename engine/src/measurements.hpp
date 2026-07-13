@@ -153,6 +153,10 @@ struct GarmentSpec {
     SkirtStyle skirtStyle = SkirtStyle::ALine;
     SkirtLength skirtLength = SkirtLength::Midi;
     TopLength topLength = TopLength::Hip;
+    // Opt-in hem ruffle (fırfır). Off by default → existing drafts unchanged.
+    bool ruffleHem = false;
+    double ruffleFullness = 2.5; // gather ratio 2.0–3.0
+    double ruffleDepthMM = 80;   // how deep the ruffle hangs
 };
 
 inline double roundToPlaces(double value, int places) {

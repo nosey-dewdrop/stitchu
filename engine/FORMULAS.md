@@ -192,3 +192,13 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   serialization to JSON at the WASM boundary only.
 - No floating-point platform tricks: plain doubles, same flattening step counts as Swift,
   so golden diffs stay meaningful.
+
+## Ruffle (fırfır) — opt-in hem trim (2026-07-13)
+- GarmentSpec.ruffleHem (default false → every existing draft byte-identical).
+- Attaches to a skirt/dress hem. Edge = SkirtBlock::hemCircumferenceMM (per style:
+  ALine/Straight hipQuarter+flare(+gore) ×4; gathered/pleated waist×ratio×4; halfCircle πR).
+- Cut length = hem × fullness (2.0–3.0). Cut in fabric-width segments ≤1400 mm, joined
+  end to end (each piece printable, under the 3000 mm tile cap); gathered it returns to hem.
+- Depth = ruffleDepthMM (+10 hem +12 SA in the strip height). Notches = even gather segments.
+- Validator excludes "Ruffle" pieces from the skirt-waist sum (it's a trim, not waist-bearing).
+- Covered by tests/ruffle_check (dress/skirt/babydoll: valid, printable, base unchanged, math).

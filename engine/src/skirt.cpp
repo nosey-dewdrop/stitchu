@@ -420,6 +420,29 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
     return roundToPlaces(meters, 1);
 }
 
+double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
+                          Shaping shaping, Fabric fabric, double lengthExtraMM) {
+    const double len = millimeters(length) + lengthExtraMM;
+    switch (style) {
+        case SkirtStyle::ALine:
+        case SkirtStyle::Straight: {
+            // quarter hem width (mirrors fabricEstimate) x 4 quarters
+            const double hemQuarter = m.hipMM() * (1 + hipEaseFor(fabric)) / 4 + flare(style) +
+                                      (shaping == Shaping::Princess ? 2 * goreFlare(style) : 0);
+            return hemQuarter * 4;
+        }
+        case SkirtStyle::Gathered:
+            return m.waistMM() * (1 + waistEaseFor(fabric)) / 4 * gatherRatio * 4;
+        case SkirtStyle::Pleated:
+            return m.waistMM() * (1 + waistEaseFor(fabric)) / 4 * pleatRatio * 4;
+        case SkirtStyle::HalfCircle: {
+            const double R = m.waistMM() * (1 + waistEaseFor(fabric)) / M_PI + len;
+            return M_PI * R; // half-circle hem is the outer arc
+        }
+    }
+    return 0;
+}
+
 std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric) {
     std::vector<std::string> steps{
         "Print the pattern and check the 3 cm calibration square with a ruler before cutting anything.",
