@@ -1,7 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=17';
-import { getLang, t } from './i18n.js?v=17';
+import { fabricAdvice } from './fabrics.js?v=18';
+import { getLang, t } from './i18n.js?v=18';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -44,7 +44,7 @@ export function pieceCard(piece) {
 
   let inner = `<path d="${pathD(piece.commands, s)}" fill="none" stroke="#111" stroke-width="1.6"/>`;
   if (piece.markings.length) {
-    inner += `<path d="${pathD(piece.markings, s)}" fill="none" stroke="#3EB8AF" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+    inner += `<path d="${pathD(piece.markings, s)}" fill="none" stroke="#8f2038" stroke-width="1.4" stroke-dasharray="6 4"/>`;
   }
   if (piece.grainline) {
     const g = piece.grainline;

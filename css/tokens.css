@@ -1,16 +1,15 @@
 /* stitchu design tokens — the single source for the visual language.
-   Spec: PROJECT.md "Brand". Flat, Helvetica, white/black + teal, sharp
-   corners, no bold weights anywhere. */
+   Brand 2026-07-13 (Damla): couture everywhere — vişne is THE accent, teal is
+   retired. Flat Helvetica on pattern paper, sharp corners, no bold. */
 :root {
   /* color */
   --ink: #111111;
   --paper: #ffffff;
-  --teal: #3EB8AF;
+  --accent: #8f2038; /* vişne — the couture fabric itself */
   --gray: #8a8a8a;
   --faint: #d9d9d9;
 
   /* thread palette (muted, never loud) — mirrors the Worker's WALL_COLORS */
-  --thread-teal: #3EB8AF;
   --thread-rose: #C4767B;
   --thread-ochre: #B8963E;
   --thread-olive: #7A8450;
@@ -47,6 +46,6 @@ body {
   font-size: var(--size-body);
   line-height: 1.5;
 }
-::selection { background: var(--teal); color: var(--paper); }
+::selection { background: var(--accent); color: var(--paper); }
 b, strong { font-weight: 400; } /* bold is banned; neutralize accidents */
 .wrap { max-width: var(--measure); margin: 0 auto; padding: 0 var(--space-3); }

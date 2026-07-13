@@ -12,7 +12,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 }
 .seam-progress .sewn {
   position: absolute; top: 0; bottom: 0; left: 0;
-  background: repeating-linear-gradient(90deg, var(--teal) 0 12px, transparent 12px 20px);
+  background: repeating-linear-gradient(90deg, var(--accent) 0 12px, transparent 12px 20px);
 }
 
 /* measurement step */
@@ -26,7 +26,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
   border: var(--hairline); border-radius: var(--radius) 0 0 var(--radius); border-right: 0;
   outline: none;
 }
-.measure-row input:focus { border-color: var(--teal); border-style: dashed; }
+.measure-row input:focus { border-color: var(--accent); border-style: dashed; }
 .measure-row .unit { display: flex; align-items: center; padding: 0 16px; border: var(--hairline); border-radius: 0 var(--radius) var(--radius) 0; }
 .field-error { color: var(--thread-rose); font-size: var(--size-fine); margin-top: 8px; min-height: 1.2em; }
 .privacy-note { margin-top: 14px; font-size: var(--size-fine); color: var(--gray); }
@@ -57,7 +57,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 }
 .step-nav .btn + .btn { margin-left: -1px; }
 .step-nav .btn.primary { background: var(--ink); color: var(--paper); }
-.step-nav .btn.primary:hover { background: var(--teal); border-color: var(--teal); }
+.step-nav .btn.primary:hover { background: var(--accent); border-color: var(--accent); }
 
 /* result */
 .result-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
@@ -96,7 +96,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 }
 .sewing-loader .seam-track::before {
   content: ""; position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, var(--teal) 0 12px, transparent 12px 20px);
+  background: repeating-linear-gradient(90deg, var(--accent) 0 12px, transparent 12px 20px);
   animation: sew-reveal 1.4s linear infinite;
 }
 @keyframes sew-reveal {
