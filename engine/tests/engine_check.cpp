@@ -87,18 +87,20 @@ int main() {
             for (auto shaping : shapings) {
                 for (auto waistline : waistlines) {
                     for (auto style : skirtStyles) {
-                        for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
-                            GarmentSpec spec;
-                            spec.garment = GarmentType::Dress;
-                            spec.shaping = shaping;
-                            spec.waistline = waistline;
-                            spec.fabric = fabric;
-                            spec.neckline = neckline;
-                            spec.skirtStyle = style;
-                            spec.skirtLength = SkirtLength::Midi;
-                            spec.sleeveStyle = sleeve;
-                            spec.sleeveLength = sleeveLength;
-                            specs.push_back({std::string("dress/") + raw(fabric) + "/" + raw(shaping) + "/" + raw(waistline) + "/" + raw(neckline) + "/" + raw(style) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                        for (auto skirtLength : skirtLengths) {
+                            for (const auto& [sleeve, sleeveLength] : sleeveCombos) {
+                                GarmentSpec spec;
+                                spec.garment = GarmentType::Dress;
+                                spec.shaping = shaping;
+                                spec.waistline = waistline;
+                                spec.fabric = fabric;
+                                spec.neckline = neckline;
+                                spec.skirtStyle = style;
+                                spec.skirtLength = skirtLength;
+                                spec.sleeveStyle = sleeve;
+                                spec.sleeveLength = sleeveLength;
+                                specs.push_back({std::string("dress/") + raw(fabric) + "/" + raw(shaping) + "/" + raw(waistline) + "/" + raw(neckline) + "/" + raw(style) + "/" + raw(skirtLength) + "/" + raw(sleeve) + "." + raw(sleeveLength), spec});
+                            }
                         }
                     }
                 }

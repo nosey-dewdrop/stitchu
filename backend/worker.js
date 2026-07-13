@@ -198,12 +198,14 @@ async function handleAnalyze(request, env) {
  "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
  "sleeveLength": "short" | "elbow" | "long" | null,
  "skirtStyle": "aLine" | "straight" | "gathered" | "halfCircle" | "pleated" | null (halfCircle covers full/flared circle skirts; pleated covers knife/box pleats),
- "length": "mini" | "midi" | "maxi" | null (skirt/dress hem length),
+ "length": "mini" | "midi" | "maxi" | null (hem length relative to the BODY: mini = above the knee, midi = knee to mid-calf, maxi = ankle or floor; evening gowns, bridal gowns and any floor-sweeping dress are ALWAYS maxi),
  "topLength": "cropped" | "hip" | "tunic" | null (only for tops),
  "shaping": "princess" | "dart" | null (princess = vertical seams running over the bust or down the skirt panels; dart = visible stitched darts at waist/bust with no vertical panel seams; null if the waist shaping is not visible),
  "waistline": "natural" | "empire" | null (empire = the waist seam sits right under the bust, e.g. babydoll dresses; natural = seam at the natural waist; null if no waist seam is visible),
  "fabric": "woven" | "knit" | null (knit = visibly stretchy jersey/rib knit; woven = crisp non-stretch like poplin, denim, satin; null if unclear),
- "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}`;
+ "fabricName": "cotton poplin" | "linen" | "viscose" | "satin" | "jersey" | "chiffon" | "denim" | "wool" | "lace" | "tulle" | "brocade" | "leather" | "other" | null (best guess of the MAIN fashion fabric),
+ "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}
+Mapping rules: if the garment is MORE complex than these fields allow (couture, layered, corseted, heavily draped, a wedding gown), do NOT give up — return the CLOSEST base silhouette a sewing pattern could start from (e.g. corseted gown -> dress + princess + natural + the closest skirt style + maxi) and say exactly what you approximated in details. Reserve garment "other" for things that are truly not a skirt, dress or top: trousers, jumpsuits, coats, wrapped saris, swimwear.`;
 
   const anthropicBody = {
     model: MODEL,

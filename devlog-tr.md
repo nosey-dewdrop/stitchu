@@ -75,3 +75,17 @@ Pile: büzgünün disiplinli kardeşi. Kumaş 3 katı genişlikte kesiliyor, kal
 Vision da büyüdü: fotoğraftan artık bel hattını (babydoll mu?), kumaşın streç olup olmadığını ve pileyi de okuyor. Test matrisi 20400 taslağa çıktı — beş etek stili, iki bel hattı, iki kumaş, iki şekillendirme, on beş vücut. Hepsi yeşil, Swift referansı hâlâ milimetrenin on binde birinde.
 
 Korse hâlâ menüde yok — o negatif bolluk ve balen isteyen ayrı bir blok, biliyoruz. Ama "sadece etek" günlerinden "babydoll'unu streç kumaşa çizer" günlerine bir günde geldik.
+
+---
+
+## 06 — Vision'ı sahaya sürdük: defile, gelinlik, ve dürüstlük
+
+Bugün motoru değil, motorun gözünü sertleştirdik. Yöntem basitti: internetten rastgele fotoğraflar, sonra defile fotoğrafları (couture parçalar, gece elbiseleri), sonra gelinlikler — her turda hatayı bul, düzelt, tekrar dene.
+
+İlk turlar üç hata çıkardı. Bir: yerde süzülen bir gece elbisesine "mini" diyebiliyordu, çünkü boyu kadrajdan tahmin ediyordu; kurala bağladık, artık boy vücuda göre okunuyor ve gelinlik/gece elbisesi her zaman maxi. İki: karmaşık bir parça görünce ya pes ediyor ya uyduruyordu; şimdi talimatı net — couture bile olsa dikilebilecek EN YAKIN taban silüeti döndür ve neyi yaklaştırdığını açıkça söyle. Üç: motorun kendi çıktısında yarım kloş elbise parçasının adı "Skirt Skirt Panel" çıkıyordu — canlı fotoğraf testi olmasa fark etmeyecektik.
+
+Sonuç şöyle bir şey: Dior/Balenciaga vitrininden bir gece elbisesi "empire bel + kolon etek + satin, korsaj işlemesini yaklaştırdım" diye dönüyor. Heykelsi bir couture parça "prenses dikişli maxi'ye yaklaştırdım, omuz yapısını dikemezsin" diyor. Gelinlik "prenses + A kesim maxi + satin; kuyruk ve korse kapamayı sadeleştirdim" diyor. Palto gibi gerçekten menü dışı şeylerde de dürüstçe "bu bir palto, çizemem" diyor.
+
+Ve asistanlık: vision artık kumaşın ADINI da tahmin ediyor (satin, şifon, jarse...). Sonuç ekranı bunu doğrulanmış kumaş veritabanıyla çaprazlıyor — "fotoğraftaki kumaş satin görünüyor, bu form için uygun, şuna dikkat" ya da tersi "bu forma ters çalışır, şunları düşün". Bilmediği kumaşta uydurmuyor, "bunun için doğrulanmış rehber yok, önce artık parçada dene" diyor.
+
+Test matrisi de bu turdan payını aldı: elbiseler artık üç boyda da taranıyor, 50400 taslak, hepsi yeşil.

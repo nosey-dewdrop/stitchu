@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=15';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=15';
-import { draft } from './engine.js?v=15';
-import { printPattern } from './print.js?v=15';
-import { renderResult } from './render.js?v=15';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=16';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=16';
+import { draft } from './engine.js?v=16';
+import { printPattern } from './print.js?v=16';
+import { renderResult } from './render.js?v=16';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=15';
+} from './store.js?v=16';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -197,6 +197,7 @@ function showSpec() {
         if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
         if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
         if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
+        if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
@@ -266,6 +267,7 @@ function showResult(result) {
 
   const body = el('div');
   screen.appendChild(body);
+  result.photoFabric = spec.photoFabric || null;
   renderResult(body, result);
 
   const nav = el('div', 'step-nav');

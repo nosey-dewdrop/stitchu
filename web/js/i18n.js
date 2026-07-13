@@ -68,6 +68,9 @@ export const STRINGS = {
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Rehber adımları şimdilik İngilizce — Türkçesi geliyor.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
+  'result.photofabric.good': { en: 'The fabric in your photo looks like {name} — a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu proje için uygun. Dikkat: {note}' },
+  'result.photofabric.bad': { en: 'The fabric in your photo looks like {name} — it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
+  'result.photofabric.unknown': { en: 'The fabric in your photo looks like {name}. No verified guide for it here yet — handle it by its stretch (the knit/woven choice you made) and test on a scrap first.', tr: 'Fotoğraftaki kumaş {name} görünüyor. Bunun için doğrulanmış rehber henüz yok — esnekliğine göre davran (seçtiğin örgü/dokuma ayarı) ve önce artık parçada dene.' },
   'result.legend': { en: 'How to read the pieces: solid line = cutting/seam line · dashed teal = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: düz çizgi = kesim/dikiş hattı · kesikli turkuaz = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
   'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. This should not happen — the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. Bunun olmaması gerekirdi — kombinasyon tarayıcı konsoluna kaydedildi.' },
 
