@@ -160,7 +160,32 @@ H3 · HOOK: "landing'imdeki kalıplar süs değil, motorun GERÇEK çıktısı."
 - pafta görselleri gerçek çizimlerden üretiliyor; sahte mockup yok.
 - "is it slopware?" bölümü de var; cevabı motor veriyor.
 
+## seri I — halter (omuz dikişini kaldırdık)
+
+I1 · HOOK: "bugün motorumdan omuz dikişini tamamen kaldırdım."
+- halter yaka: askı enseden bağlanıyor, omuzlar açık, sırt alçak. bu bir yaka değil, korsajın yeniden inşası.
+- ama korsaj iskeletini BAŞTAN yazmadım — hile: çerçeve kaydırma. [render]
+
+I2 · HOOK: "yeni bir kalıp bloğu yazmak yerine koordinat sistemini kandırdım."
+- motorun iskeleti hep aynı noktaları bilir: yaka noktası, omuz ucu, kol oyuntusu.
+- halter'da "omuz ucu" askının dış köşesi oldu, "kol oyuntusu" omzu açıkta bırakan süpürme eğrisi.
+- aynı kod, kaydırılmış çerçeve: sıfır kopya formül. bir gerçek, bir yerde yaşar.
+
+I3 · HOOK: "motorum bazen prenses dikişini REDDEDIYOR ve haklı."
+- büyük beden + empire + halter'da sırt o kadar kısalıyor ki prenses dikişine dikey yer kalmıyor; eğri kırılıyordu (70.200 taslaklık test yakaladı).
+- karar: yer yoksa BÖLME — o yarım dürüstçe pens moduna düşüyor. zorla güzellik olmaz.
+
+I4 · HOOK: "kullanıcı halter'a kol seçerse ne olur?"
+- kol takacak omuz yok. sessizce yok saymak = yalan.
+- motor kolu atlıyor VE rehbere yazıyor: "halter'da kol asılacak omuz yok, kol seçimin atlandı."
+- arayüzde de halter seçince kol seçici zaten kayboluyor. çifte dürüstlük.
+
+I5 · HOOK: "halter'ın pervazı yok. şerit var."
+- yaka pervazı yerine TEK bias şerit her ham kenarı sarıyor: askı, yaka, süpürme, sırt üstü.
+- şeridin boyu motorun kendi geometrisinden ölçülüyor (askı + yaka + süpürme + sırt, çarpı iki, artı pay).
+- ve şerit kağıda basılmıyor: kapakta "kumaşa 45 derece verevden çiz" notu. terzilik pratiği > mürekkep.
+
 ## sıradaki bölümler (geliştikçe eklenecek)
-- halter yaka: omuz dikişini tamamen kaldırmak (yapım aşamasında)
 - fiziksel dikim: motorun kalıbından gerçek elbise, kamerada
 - kendi göz v1: damıtılmış model tarayıcıda
+- sıradaki kelimeler: off-shoulder, cowl, peplum, wrap (spec ajanı çalışıyor)
