@@ -32,3 +32,7 @@ target_link_libraries(golden_dump PRIVATE engine)
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
 add_test(NAME ruffle_check COMMAND ruffle_check)
+
+add_executable(tiered_ruffle_check tests/tiered_ruffle_check.cpp)
+target_link_libraries(tiered_ruffle_check PRIVATE engine)
+add_test(NAME tiered_ruffle_check COMMAND tiered_ruffle_check)

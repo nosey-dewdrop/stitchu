@@ -321,16 +321,30 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress)) {
         const double hemMM = SkirtBlock::hemCircumferenceMM(
             m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
-        pattern.pieces.push_back(
-            RuffleBlock::draft(hemMM, spec.ruffleFullness, spec.ruffleDepthMM));
-        pattern.guideSteps.push_back(
-            "Ruffle: cut the long ruffle strip as labelled. Gather its top edge with two rows "
-            "of gathering stitches and pull it down to the hem length, matching the notches so "
-            "the gathers sit evenly. Sew it to the hem right sides together, press the seam up, "
-            "then finish the strip's bottom edge with a narrow 1 cm hem.");
+        const auto ruffles = RuffleBlock::draftTiers(
+            hemMM, spec.ruffleFullness, spec.ruffleDepthMM, spec.ruffleTiers);
+        pattern.pieces.insert(pattern.pieces.end(), ruffles.begin(), ruffles.end());
+        if (ruffles.size() == 1) {
+            pattern.guideSteps.push_back(
+                "Ruffle: cut the long ruffle strip as labelled. Gather its top edge with two rows "
+                "of gathering stitches and pull it down to the hem length, matching the notches so "
+                "the gathers sit evenly. Sew it to the hem right sides together, press the seam up, "
+                "then finish the strip's bottom edge with a narrow 1 cm hem.");
+        } else {
+            pattern.guideSteps.push_back(
+                "Tiered ruffle: cut every tier strip as labelled. Gather tier 1's top edge with "
+                "two rows of gathering stitches down to the hem length, matching the notches, and "
+                "sew it to the hem right sides together; press the seam up. Gather each next tier "
+                "onto the bottom edge of the tier above it the same way. Only the last tier gets a "
+                "narrow 1 cm rolled hem — the other tiers' bottom edges disappear into the seam "
+                "that receives the next tier.");
+        }
+        // Fabric: each tier is hem x fullness^i long and (depth + margins) deep.
+        double lenMultiplier = 0, f = 1;
+        for (size_t i = 0; i < ruffles.size(); ++i) { f *= spec.ruffleFullness; lenMultiplier += f; }
         pattern.fabricMeters140 = roundToPlaces(
             pattern.fabricMeters140 +
-                hemMM * spec.ruffleFullness * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
+                hemMM * lenMultiplier * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
             1);
     }
     return pattern;

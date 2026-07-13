@@ -202,3 +202,15 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Depth = ruffleDepthMM (+10 hem +12 SA in the strip height). Notches = even gather segments.
 - Validator excludes "Ruffle" pieces from the skirt-waist sum (it's a trim, not waist-bearing).
 - Covered by tests/ruffle_check (dress/skirt/babydoll: valid, printable, base unchanged, math).
+
+## Tiered ruffle (kademeli fırfır) — cascade (2026-07-13)
+- GarmentSpec.ruffleTiers (default 1 = the single ruffle above; clamped 1–5, active only
+  with ruffleHem).
+- Tier i (1-based) gathers onto the edge below it: edge_i = hem × fullness^(i-1), so its
+  cut length = hem × fullness^i. Fabric use grows geometrically — that is the couture look.
+- Every tier is ruffleDepthMM deep. Only the LAST tier carries the 10 mm rolled-hem
+  allowance; intermediate tiers end in a 12 mm seam that receives the next tier's gathers.
+- Same ≤1400 mm segmenting per tier; every piece stays under the 3000 mm print cap.
+- Pieces named "Ruffle tier N (fırfır)" so the validator's trim exclusion still applies.
+- Covered by tests/tiered_ruffle_check (opt-in, tiers=1 byte-identical to single, per-tier
+  cascade math, seam-vs-hem heights, validity, printability).
