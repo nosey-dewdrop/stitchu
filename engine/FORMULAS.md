@@ -248,3 +248,33 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   with neither the pieces nor the skip note fails validation.
 - Covered by tests/keyhole_check (dress princess, petite babydoll empire with the unsplit
   front, boat top; order of guide steps; margins; opt-in byte-identity).
+
+## Halter (2026-07-13)
+- Neckline::Halter — MORE than a neck shape: no shoulder seam, nape strap, low back,
+  sleeves impossible (engine forces None + honest guide note when sleeves were picked).
+- FRAME SHIFT reuses the whole makePiece/makePrincessPieces skeleton, no signature change:
+  FRONT: local y=0 = the strap top edge; whole front drops by halterStrapRise (55).
+  neckPoint := strap inner corner (fNeckW = frontNeckW × 0.55), shoulderTip := strap outer
+  corner (fNeckW + halterStrapWidth 40, drop 10 → that short "shoulder" line IS the nape
+  closure edge), "armhole" := the bare-shoulder sweep to the underarm (same shared
+  armholeCurveFor cubic — ONE definition used by both piece builders AND the binding
+  measure). Halter neck curve: cubic cp1=(0.75w, 0.5d), cp2=(w, 0.08d); depth = neckW+65
+  (+ rise at the call site).
+  BACK: local y=0 = the low top edge; backTopY = armholeY × halterBackDropShare (0.55).
+  backCutout := 8 (slight CB dip), backNeckW := 0.7 × backWidth, shoulder stub at 0.85 ×
+  backWidth / drop 2, short "armhole" stub to the underarm. Crew curve reused for the top
+  edge. All returned scalars stay in BODY frame; piece-frame values live in
+  frontPieceWaistY/backPieceWaistY/frontPieceLength/backPieceLength (extendPiece + top
+  validator use these — identical to body frame off-halter).
+- CRAMPED BACK RULE: when the princess split's exit point would be pushed down against the
+  blade apex (splitTarget > apexY − princessApexClearance), the low back has no room for a
+  princess seam and that half honestly falls back to dart mode (the EU50+empire kink).
+- FACINGS → BINDING: one "Bias binding (halter)" strip (halterBindingWidth 32, bias, center
+  fold marking, segmented ≤1400) replaces the neck facings. Its length comes from
+  BodiceDraft.halterBindingEdgeMM = 2×(front neck + strap top + sweep + back top + stub)
+  + 150 trim ease, measured in BodiceBlock::draft from the SAME geometry (never recomputed
+  elsewhere). Print treats it as a chalk piece (no pattern paper).
+- Validator: facingIssues halter branch (binding present, sane strip, NO neck facings),
+  sleeveIssues expects none, topIssues heights use the piece-frame lengths.
+- Covered by tests/halter_check (dress/top, princess/dart, natural/empire, knit, petite +
+  plus bodies: valid, sleeves skipped honestly, strap width, low back vs crew, binding).

@@ -4,7 +4,7 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=25';
+import { pathD, bounds } from './render.js?v=26';
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
 const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
@@ -54,11 +54,11 @@ function countSheets(layout) {
   return used;
 }
 
-// A plain rectangle strip (ruffle tiers) never earns pattern paper: its cut
-// note fully describes it, so it goes on the cover as a chalk-and-ruler line
-// instead of eating a row of near-empty sheets.
+// A plain rectangle strip (ruffle tiers, halter bias binding) never earns
+// pattern paper: its cut note fully describes it, so it goes on the cover as
+// a chalk-and-ruler line instead of eating a row of near-empty sheets.
 export function isChalkPiece(p) {
-  return p.name.includes('Ruffle');
+  return p.name.includes('Ruffle') || p.name.includes('Bias binding');
 }
 
 // Try every strip width and keep whichever wastes the fewest printed sheets —

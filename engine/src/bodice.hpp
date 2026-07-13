@@ -24,6 +24,15 @@ struct BodiceDraft {
     double frontWaistHalf = 0;
     double frontLength = 0;
     double backLength = 0;
+    // Piece-frame waist levels/lengths (== body frame except the halter's
+    // shifted halves) — what extendPiece must match against the geometry.
+    double frontPieceWaistY = 0;
+    double backPieceWaistY = 0;
+    double frontPieceLength = 0;
+    double backPieceLength = 0;
+    // Halter: total raw edge (both sides, front neck + strap + sweep, back
+    // top + stub) the bias binding must cover, measured from THIS geometry.
+    double halterBindingEdgeMM = 0;
     double armholeLength = 0;   // one arm, front half + back half, sewing line
     double armholeDepth = 0;
     double sideWaistY = 0;      // shared side waist basis (= waist seam level)
@@ -71,6 +80,14 @@ inline constexpr double maxNeckShoulderShare = 0.72;
 inline constexpr double princessArmholeShare = 0.38;
 inline constexpr double princessApexClearance = 30; // split at least this far above apex
 
+// Halter (no shoulder seam): the front rises this far above the shoulder line
+// into a nape strap this wide; the back top edge is cut down to this share of
+// the armhole depth. Edges are finished with one bias binding strip.
+inline constexpr double halterStrapRise = 55;
+inline constexpr double halterStrapWidth = 40;
+inline constexpr double halterBackDropShare = 0.55;
+inline constexpr double halterBindingWidth = 32;
+
 // extendBelowWaist/hipHalfQuarter (tops, princess only): the panels continue
 // through the waist to the hem, staying fitted. Dart mode ignores them (the
 // top block extends dart pieces with its own boxy extension).
@@ -98,6 +115,11 @@ inline constexpr double facingDepth = 55;
 inline constexpr double facingFabricMeters = 0.2;
 std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Neckline neckline,
                                       const std::string& frontCut, const std::string& backCut);
+
+// Halter replaces the facings: ONE bias strip binds every raw edge (neckline,
+// strap, sweep, back top). edgeMM comes from BodiceDraft.halterBindingEdgeMM
+// so the strip can never drift from the drawn geometry.
+PatternPiece halterBinding(double edgeMM);
 
 } // namespace BodiceBlock
 

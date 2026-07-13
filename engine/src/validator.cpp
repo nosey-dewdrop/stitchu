@@ -257,7 +257,9 @@ std::vector<ValidationIssue> sleeveIssues(
     const DraftedPattern& draft,
     const BodiceDraft& bodice
 ) {
-    if (spec.sleeveStyle == SleeveStyle::None) return {};
+    // A halter has no shoulders to hang a sleeve from — the engine skips the
+    // sleeve choice (and says so in the guide), so none is expected here.
+    if (spec.sleeveStyle == SleeveStyle::None || spec.neckline == Neckline::Halter) return {};
     const PatternPiece* sleeve = nullptr;
     for (const auto& piece : draft.pieces) {
         if (contains(piece.name, "Sleeve") && !contains(piece.name, "Cuff")) {
@@ -566,7 +568,9 @@ std::vector<ValidationIssue> topIssues(
     for (const bool isFront : {true, false}) {
         const char* half = isFront ? "Front" : "Back";
         const bool princess = isFront ? bodice.frontPrincess : bodice.backPrincess;
-        const double expected = (isFront ? bodice.frontLength : bodice.backLength) + extra;
+        // Piece-frame lengths: identical to the body frame except the halter's
+        // shifted halves (low back, strap-raised front).
+        const double expected = (isFront ? bodice.frontPieceLength : bodice.backPieceLength) + extra;
         auto& sideLen = isFront ? frontSide : backSide;
         if (princess) {
             const PatternPiece* center = find(std::string("Top Center ") + half);
@@ -611,6 +615,30 @@ std::vector<ValidationIssue> topIssues(
 // start at move(centerNeck) and reach the neck point after k commands.
 std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const DraftedPattern& draft) {
     std::vector<ValidationIssue> issues;
+
+    // Halter: one bias strip binds every raw edge instead of neck facings.
+    // The strip must exist, be a sane strip, and be honestly long enough for
+    // the edges the bodice reports.
+    if (spec.neckline == Neckline::Halter) {
+        const PatternPiece* binding = nullptr;
+        for (const auto& piece : draft.pieces)
+            if (piece.name == "Bias binding (halter)") binding = &piece;
+        if (!binding) {
+            issues.push_back({"facing", draft.garment, "halter bias binding piece missing"});
+            return issues;
+        }
+        const Rect box = boundingBox(binding->commands);
+        if (box.height < 20 || box.height > 45 || box.width > 1500) {
+            issues.push_back({"facing", binding->name,
+                fmt("binding strip %.0f x %.0f mm is not a sane bias strip", box.width, box.height)});
+        }
+        for (const auto& piece : draft.pieces) {
+            if (piece.name.find("Neck Facing") != std::string::npos) {
+                issues.push_back({"facing", piece.name, "neck facing drafted on a halter (binding replaces it)"});
+            }
+        }
+        return issues;
+    }
     auto neckLength = [&](const PatternPiece& piece, size_t k) -> std::optional<double> {
         if (piece.commands.size() < k + 1 || piece.commands[0].type != CmdType::Move) return std::nullopt;
         std::vector<PathCommand> path{piece.commands[0]};

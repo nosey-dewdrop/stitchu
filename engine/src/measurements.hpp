@@ -16,7 +16,9 @@ struct BodyMeasurementsSnapshot {
     double neckMM() const { return neckCM * 10; }
 };
 
-enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart };
+// Halter is more than a neck shape: the front rises into a nape strap, the
+// shoulders are bare (no shoulder seam, no sleeves) and the back is cut low.
+enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart, Halter };
 enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
 // Dress waist seam level. Empire sits just under the bust (underbust girth);
 // empire + gathered = the babydoll silhouette.
@@ -41,6 +43,7 @@ inline const char* raw(Neckline n) {
         case Neckline::Square: return "square";
         case Neckline::Boat: return "boat";
         case Neckline::Sweetheart: return "sweetheart";
+        case Neckline::Halter: return "halter";
     }
     return "";
 }

@@ -105,10 +105,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             piece.cutInstruction = "cut 2 (center back seam)";
         }
     }
-    const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
-        m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
+    // Halter: shoulders bare by construction — sleeves are impossible, and one
+    // bias strip binds every raw edge instead of the neck facings.
+    const bool halter = spec.neckline == Neckline::Halter;
+    const std::vector<PatternPiece> facings = halter
+        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
+        : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
-        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth, spec.fabric);
+        m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
+        bodice.armholeLength, bodice.armholeDepth, spec.fabric);
 
     double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
@@ -122,9 +127,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             " — sew a quick muslin (test version) from cheap fabric first and adjust before cutting your real fabric.",
         std::string("Cut every piece as labelled: pieces marked 'on fold' on the fabric fold, 'cut 2' twice") +
             (sleeveless ? "" : ", sleeves twice") + ".",
-        "Fuse interfacing to the neck facings.",
-        "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
     };
+    if (halter) {
+        if (spec.sleeveStyle != SleeveStyle::None) {
+            steps.push_back("A halter has no shoulders to hang a sleeve from — the sleeve choice was skipped.");
+        }
+        steps.push_back("Staystitch the neckline, the strap edges and the back top edge just inside the seam line — every one of these is a bias-ish raw edge that stretches if you look at it wrong.");
+    } else {
+        steps.push_back("Fuse interfacing to the neck facings.");
+        steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
+    }
     if (spec.fabric == Fabric::Knit) {
         steps.insert(steps.begin() + 2,
             "Knit fabric: sew with a narrow zigzag or stretch stitch and a ballpoint/stretch needle so the seams stretch with the fabric.");
@@ -138,13 +150,23 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     } else {
         steps.push_back("Sew all darts first, pressing toward the center.");
     }
-    steps.push_back("Sew the bodice shoulder seams and press them open.");
-    steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
-    steps.push_back("Attach the facing to the neckline right sides together, leaving the last 2 cm free at each center back edge (the zipper goes there later). Trim to 6 mm, clip into the curve every 2 cm.");
-    steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this keeps the facing rolled inside. Turn, press, tack at the shoulder seams.");
-    steps.push_back("Sew the bodice side seams.");
-    if (sleeveless) {
-        steps.push_back("Finish armholes with bias binding (sleeveless).");
+    if (halter) {
+        // No shoulder seams; one bias strip binds neckline, straps, sweep and
+        // back top edge. Ends stay free at the CB for the zipper, like facings.
+        steps.push_back("Sew the bodice side seams.");
+        steps.push_back("Sew the bias strip ends together as needed and press it in half lengthwise along the marked fold line.");
+        steps.push_back("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge — leaving the last 2 cm free at each center back edge (the zipper goes there later). Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
+        steps.push_back("Run a stay tape or clear elastic inside the back top edge binding so the low back hugs the body instead of gaping.");
+        steps.push_back("Close the straps at the nape: try the dress on, pin the strap ends to length, then sew hooks (or a button) — or extend the binding into ties if you prefer a tied halter.");
+    } else {
+        steps.push_back("Sew the bodice shoulder seams and press them open.");
+        steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
+        steps.push_back("Attach the facing to the neckline right sides together, leaving the last 2 cm free at each center back edge (the zipper goes there later). Trim to 6 mm, clip into the curve every 2 cm.");
+        steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this keeps the facing rolled inside. Turn, press, tack at the shoulder seams.");
+        steps.push_back("Sew the bodice side seams.");
+        if (sleeveless) {
+            steps.push_back("Finish armholes with bias binding (sleeveless).");
+        }
     }
     if (spec.skirtStyle == SkirtStyle::Gathered) {
         steps.push_back("Gather the skirt panels along the marked line until they match the bodice waist.");
@@ -163,7 +185,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         std::string(princess ? " and lining the gore seams up with the bodice princess seams as closely as possible" : "") + ".");
     steps.push_back(std::string("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.") +
         (spec.fabric == Fabric::Knit ? " (Very stretchy knit? Baste the back seam closed first and test pulling the dress on — you may be able to skip the zipper and just sew the seam.)" : ""));
-    steps.push_back("Fold the free facing ends back over the zipper tape and hand-tack them down so the facing edge sits clean against the zipper.");
+    steps.push_back(std::string("Fold the free ") + (halter ? "binding" : "facing") +
+        " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
     if (!sleeveless) {
         steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
@@ -176,8 +199,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Try it on, then hem with a 2 cm double fold.");
     }
 
-    const std::string sleeveWord =
-        spec.sleeveStyle == SleeveStyle::None ? "" : std::string(title(spec.sleeveStyle)) + "-sleeve ";
+    const std::string sleeveWord = halter
+        ? "halter "
+        : (spec.sleeveStyle == SleeveStyle::None ? "" : std::string(title(spec.sleeveStyle)) + "-sleeve ");
 
     DraftedPattern pattern;
     pattern.garment = empire
@@ -224,7 +248,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         tops.push_back(center);
         tops.push_back(side);
     } else {
-        tops.push_back(extendPiece(bodice.front, bodice.sideWaistY, bodice.frontLength, extra, hipHalfQuarter));
+        tops.push_back(extendPiece(bodice.front, bodice.frontPieceWaistY, bodice.frontPieceLength, extra, hipHalfQuarter));
     }
     if (bodice.backPrincess) {
         PatternPiece center = bodice.back;
@@ -234,12 +258,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         tops.push_back(center);
         tops.push_back(side);
     } else {
-        tops.push_back(extendPiece(bodice.back, bodice.sideWaistY, bodice.backLength, extra, hipHalfQuarter));
+        tops.push_back(extendPiece(bodice.back, bodice.backPieceWaistY, bodice.backPieceLength, extra, hipHalfQuarter));
     }
-    const std::vector<PatternPiece> facings = BodiceBlock::neckFacings(
-        m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
+    const bool halter = spec.neckline == Neckline::Halter;
+    const std::vector<PatternPiece> facings = halter
+        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
+        : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
-        m, spec.sleeveStyle, spec.sleeveLength, bodice.armholeLength, bodice.armholeDepth, spec.fabric);
+        m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
+        bodice.armholeLength, bodice.armholeDepth, spec.fabric);
 
     double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
@@ -251,10 +278,18 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         "This block uses standard assumptions for shoulder slope and underbust — sew a quick muslin first and adjust before cutting your real fabric.",
         std::string("Cut every piece as labelled ('on fold' on the fabric fold, 'cut 2' twice)") +
             (sleeveless ? "" : ", sleeves twice") +
-            ". Check the neck opening against your head circumference — a top has no zipper, it must slip over your head.",
-        "Fuse interfacing to the neck facings.",
-        "Staystitch the neckline just inside the seam line so it doesn't stretch while you work.",
+            (halter ? ". The neck strap closes at the nape, so this top slips on without a head-opening worry."
+                    : ". Check the neck opening against your head circumference — a top has no zipper, it must slip over your head."),
     };
+    if (halter) {
+        if (spec.sleeveStyle != SleeveStyle::None) {
+            steps.push_back("A halter has no shoulders to hang a sleeve from — the sleeve choice was skipped.");
+        }
+        steps.push_back("Staystitch the neckline, the strap edges and the back top edge just inside the seam line — every one of these is a bias-ish raw edge that stretches if you look at it wrong.");
+    } else {
+        steps.push_back("Fuse interfacing to the neck facings.");
+        steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
+    }
     if (spec.fabric == Fabric::Knit) {
         steps.insert(steps.begin() + 2,
             "Knit fabric: sew with a narrow zigzag or stretch stitch and a ballpoint/stretch needle so the seams stretch with the fabric.");
@@ -269,12 +304,22 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     } else if (extra == 0) {
         steps.push_back("Sew the waist darts, pressing toward the center.");
     }
+    if (halter) {
+        steps.push_back("Sew the side seams.");
+        steps.push_back("Press the bias strip in half lengthwise along the marked fold line.");
+        steps.push_back("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge. Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
+        steps.push_back("Run a stay tape or clear elastic inside the back top edge binding so the low back hugs the body instead of gaping.");
+        steps.push_back("Close the straps at the nape: try it on, pin the strap ends to length, then sew hooks (or a button) — or extend the binding into ties.");
+    } else {
     steps.push_back("Sew the shoulder seams and press them open.");
     steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
     steps.push_back("Attach the facing to the neckline right sides together, sewing exactly on the seam line. Trim to 6 mm, clip into the curve every 2 cm.");
     steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this is what keeps the facing rolled inside. Turn, press, and tack the facing down at the shoulder seams.");
     steps.push_back("Sew the side seams.");
-    if (sleeveless) {
+    }
+    if (halter) {
+        // binding covered the armhole sweeps above; nothing to add
+    } else if (sleeveless) {
         steps.push_back("Finish the armholes with bias binding.");
     } else {
         steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");

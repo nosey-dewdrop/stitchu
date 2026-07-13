@@ -45,3 +45,7 @@ add_test(NAME sweetheart_check COMMAND sweetheart_check)
 add_executable(keyhole_check tests/keyhole_check.cpp)
 target_link_libraries(keyhole_check PRIVATE engine)
 add_test(NAME keyhole_check COMMAND keyhole_check)
+
+add_executable(halter_check tests/halter_check.cpp)
+target_link_libraries(halter_check PRIVATE engine)
+add_test(NAME halter_check COMMAND halter_check)

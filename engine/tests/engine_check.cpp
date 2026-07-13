@@ -51,7 +51,7 @@ int main() {
     const std::vector<SkirtLength> skirtLengths = {SkirtLength::Mini, SkirtLength::Midi, SkirtLength::Maxi};
     const std::vector<Neckline> necklines = {
         Neckline::Crew, Neckline::Scoop, Neckline::VNeck, Neckline::Square, Neckline::Boat,
-        Neckline::Sweetheart};
+        Neckline::Sweetheart, Neckline::Halter};
     const std::vector<TopLength> topLengths = {TopLength::Cropped, TopLength::Hip, TopLength::Tunic};
     const std::vector<std::pair<SleeveStyle, SleeveLength>> sleeveCombos = {
         {SleeveStyle::None, SleeveLength::Short},
