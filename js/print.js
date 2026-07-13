@@ -4,7 +4,7 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=19';
+import { pathD, bounds } from './render.js?v=20';
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
 const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
@@ -18,20 +18,13 @@ function el(tag, className, text) {
 }
 
 // Shelf packing: tallest first, left to right, new shelf when the row is full.
-function packPieces(pieces) {
-  const dims = pieces.map((p) => {
-    const b = bounds(p);
-    return { p, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
-  });
-  const maxW = Math.max(...dims.map((d) => d.w));
-  const cols = Math.min(5, Math.max(3, Math.ceil(maxW / PAGE_W)));
+function shelfPack(dims, cols) {
   const stripW = cols * PAGE_W;
-  dims.sort((a, b) => b.h - a.h);
-
+  const sorted = [...dims].sort((a, b) => b.h - a.h);
   let shelfY = 0;
   let shelfH = 0;
   let x = 0;
-  for (const d of dims) {
+  for (const d of sorted) {
     if (x > 0 && x + d.w > stripW) {
       shelfY += shelfH + GUTTER;
       x = 0;
@@ -44,7 +37,40 @@ function packPieces(pieces) {
     x += d.w + GUTTER;
     shelfH = Math.max(shelfH, d.h);
   }
-  return { placed: dims, cols, stripW, stripH: shelfY + shelfH };
+  return { placed: sorted, cols, stripW, stripH: shelfY + shelfH };
+}
+
+function countSheets(layout) {
+  const rows = Math.ceil(layout.stripH / PAGE_H);
+  let used = 0;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < layout.cols; col++) {
+      const x0 = col * PAGE_W;
+      const y0 = row * PAGE_H;
+      if (layout.placed.some((d) =>
+        d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) used++;
+    }
+  }
+  return used;
+}
+
+// Try every strip width and keep whichever wastes the fewest printed sheets —
+// a fixed 3-wide strip left half the pages nearly empty on tall garments.
+function packPieces(pieces) {
+  const dims = pieces.map((p) => {
+    const b = bounds(p);
+    return { p, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
+  });
+  const maxW = Math.max(...dims.map((d) => d.w));
+  const minCols = Math.min(5, Math.max(1, Math.ceil(maxW / PAGE_W)));
+  let bestCols = minCols;
+  let bestSheets = Infinity;
+  for (let cols = minCols; cols <= 5; cols++) {
+    const sheets = countSheets(shelfPack(dims, cols));
+    if (sheets < bestSheets) { bestCols = cols; bestSheets = sheets; }
+  }
+  // re-place at the winning width: the trial runs mutate the shared dims
+  return shelfPack(dims, bestCols);
 }
 
 function pieceGroup(d) {
@@ -53,11 +79,14 @@ function pieceGroup(d) {
     inner += `<path d="${pathD(d.p.markings, 1)}" fill="none" stroke="#111" stroke-width="0.45" stroke-dasharray="4 3"/>`;
   }
   if (d.p.grainline) {
+    // grainline with real arrowheads (the legend promises an arrow)
     const g = d.p.grainline;
-    inner += `<line x1="${g.fromX}" y1="${g.fromY}" x2="${g.toX}" y2="${g.toY}" stroke="#111" stroke-width="0.45"/>`;
+    inner += `<line x1="${g.fromX}" y1="${g.fromY}" x2="${g.toX}" y2="${g.toY}" stroke="#111" stroke-width="0.45"/>` +
+      `<path d="M ${g.fromX - 2.5} ${g.fromY + 4} L ${g.fromX} ${g.fromY} L ${g.fromX + 2.5} ${g.fromY + 4} ` +
+      `M ${g.toX - 2.5} ${g.toY - 4} L ${g.toX} ${g.toY} L ${g.toX + 2.5} ${g.toY - 4}" fill="none" stroke="#111" stroke-width="0.45"/>`;
   }
   inner += `<text x="${d.b.minX + 6}" y="${d.b.minY + 14}" font-family="Helvetica" font-size="7" fill="#555">${d.p.name}</text>` +
-           `<text x="${d.b.minX + 6}" y="${d.b.minY + 21}" font-family="Helvetica" font-size="4.5" fill="#888">${d.p.cutInstruction}</text>`;
+           `<text x="${d.b.minX + 6}" y="${d.b.minY + 21}" font-family="Helvetica" font-size="6" fill="#888">${d.p.cutInstruction}</text>`;
   return `<g transform="translate(${d.ox.toFixed(1)} ${d.oy.toFixed(1)})">${inner}</g>`;
 }
 
@@ -71,11 +100,23 @@ function sheetSVG(layout, col, row) {
   svg.setAttribute('viewBox', `${x0} ${y0} ${PAGE_W} ${PAGE_H}`);
 
   let inner = '';
+  const ghosts = [];
   for (const d of layout.placed) {
     if (d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0) {
       inner += pieceGroup(d);
+      // the piece's own label lives at its top-left corner; on every OTHER
+      // sheet the piece touches, whisper its name so no page is anonymous
+      const labelX = d.x0 + 6, labelY = d.y0 + 14;
+      if (labelX < x0 || labelX > x0 + PAGE_W || labelY < y0 || labelY > y0 + PAGE_H) {
+        ghosts.push(d.p.name);
+      }
     }
   }
+  if (ghosts.length) {
+    inner += `<text x="${x0 + 4}" y="${y0 + 6}" font-family="Helvetica" font-size="4" fill="#999">on this sheet: ${ghosts.join(' · ')}</text>`;
+  }
+  // sheet code inside the drawing area, bottom-left, so a loose page is never anonymous
+  inner += `<text x="${x0 + 4}" y="${y0 + PAGE_H - 3}" font-family="Helvetica" font-size="4" fill="#999">sheet ${String.fromCharCode(65 + row)}${col + 1}</text>`;
   // join ticks at every shared edge midpoint (match tick to tick, no overlap)
   const t = 6;
   inner += `<line x1="${x0}" y1="${y0 + PAGE_H / 2}" x2="${x0 + t}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
