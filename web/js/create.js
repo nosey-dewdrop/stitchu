@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=21';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=21';
-import { draft } from './engine.js?v=21';
-import { printPattern } from './print.js?v=21';
-import { renderResult } from './render.js?v=21';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=22';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=22';
+import { draft } from './engine.js?v=22';
+import { printPattern } from './print.js?v=22';
+import { renderResult } from './render.js?v=22';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=21';
+} from './store.js?v=22';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -22,6 +22,7 @@ const SPEC_GROUPS = [
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
+  { key: 'ruffle', label: 'hem ruffle', trLabel: 'fırfır', options: [['none', 'none', 'yok'], ['single', 'hem ruffle', 'etek ucu fırfır'], ['tiered', 'tiered (3)', 'kademeli (3 kat)']], for: (s) => s.garment !== 'top' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -31,7 +32,7 @@ const SPEC_GROUPS = [
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
-  waistline: 'natural', fabric: 'woven',
+  waistline: 'natural', fabric: 'woven', ruffle: 'none',
 };
 
 function el(tag, className, text) {
@@ -197,6 +198,7 @@ function showSpec() {
         if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
         if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
         if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
+        if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) spec.ruffle = seen.hemRuffle;
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
