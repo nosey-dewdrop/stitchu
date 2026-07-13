@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=23';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=23';
-import { draft } from './engine.js?v=23';
-import { printPattern } from './print.js?v=23';
-import { renderResult } from './render.js?v=23';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=24';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=24';
+import { draft } from './engine.js?v=24';
+import { printPattern } from './print.js?v=24';
+import { renderResult } from './render.js?v=24';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=23';
+} from './store.js?v=24';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -17,6 +17,7 @@ const values = { ...(saved || {}) };
 const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
   { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka']], for: (s) => s.garment !== 'skirt' },
+  { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => s.garment !== 'skirt' },
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.sleeveStyle !== 'none' },
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
@@ -32,7 +33,7 @@ const SPEC_GROUPS = [
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
-  waistline: 'natural', fabric: 'woven', ruffle: 'none',
+  waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none',
 };
 
 function el(tag, className, text) {
@@ -199,6 +200,7 @@ function showSpec() {
         if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
         if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
         if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) spec.ruffle = seen.hemRuffle;
+        if (typeof seen.keyhole === 'boolean') spec.keyhole = seen.keyhole ? 'keyhole' : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
