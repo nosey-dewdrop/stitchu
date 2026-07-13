@@ -86,7 +86,7 @@ function sheetSVG(layout, col, row) {
   return `<?xml version="1.0"?>\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x0} ${y0} ${PAGE_W} ${PAGE_H}">${inner}</svg>`;
 }
 createEngine().then(e => {
-  const p = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, ...M)).pattern;
+  const p = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, false, ...M)).pattern;
   const layout = packPieces(p.pieces);
   const rows = Math.ceil(layout.stripH / PAGE_H);
   fs.mkdirSync('/tmp/pdf', { recursive: true });

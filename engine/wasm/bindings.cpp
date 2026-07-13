@@ -113,7 +113,7 @@ std::string draftJSON(
     std::string neckline,
     std::string sleeveStyle, std::string sleeveLength,
     std::string skirtStyle, std::string skirtLength, std::string topLength,
-    bool ruffleHem, int ruffleTiers,
+    bool ruffleHem, int ruffleTiers, bool keyhole,
     double bustCM, double waistCM, double hipCM, double shoulderCM,
     double backLengthCM, double armLengthCM, double neckCM
 ) {
@@ -130,6 +130,7 @@ std::string draftJSON(
     spec.topLength = topLengthFrom(topLength);
     spec.ruffleHem = ruffleHem;
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
+    spec.keyhole = keyhole;
 
     const BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     const DraftedPattern draft = GarmentDrafter::draft(spec, m);

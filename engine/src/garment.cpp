@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "keyhole.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
@@ -313,6 +314,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         case GarmentType::Top:
             pattern = TopBlock::draft(spec, m);
             break;
+    }
+    // Opt-in keyhole: a teardrop opening below the front neckline. Post-pass
+    // like the ruffle, so the base draft is byte-identical with it off.
+    if (spec.keyhole &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        KeyholeBlock::apply(pattern);
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

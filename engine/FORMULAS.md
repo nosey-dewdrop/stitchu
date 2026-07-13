@@ -229,3 +229,22 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Facing: makeFacing reuses neckCommands verbatim, so the facing follows automatically.
 - Covered by tests/sweetheart_check (depth ordering, cleft tangent, lobe lift vs scoop,
   facing match via validator, dress + sleeved top).
+
+## Keyhole (anahtar deliği) — opt-in front opening (2026-07-13)
+- GarmentSpec.keyhole (default false → base draft byte-identical). Dress + top only.
+- Post-pass like the ruffle (KeyholeBlock::apply on the finished pattern), so BodiceBlock
+  and the golden dumps are untouched by construction.
+- Geometry: half teardrop MARKING on the front center piece against the CF fold — top point
+  15 mm below the CF neck edge, length min(85, room above the waist − 60), half-width 0.26 L,
+  slit-narrow at the top / round at the bottom (two cubics). Mirrored on CF = the keyhole.
+- "Keyhole Facing" piece: the same teardrop offset +32 mm all around, solid, cut 1 on fold,
+  interfaced, stitch line marked so it aligns; grainline vertical; seamAllowance 0 (you sew
+  ON the line, slash inside, turn through, understitch).
+- Construction steps insert right AFTER the neckline understitch step (a keyhole is worked
+  before the side seams close), not appended at the end.
+- Too little room (< 40 mm) → honest "Keyhole: skipped" guide note, never a silent no-op.
+- Validator rule "keyhole": front teardrop present on the CF fold, below the neck edge,
+  clear of the waist, inside the piece; facing covers it with ≥ 20 mm margin; a request
+  with neither the pieces nor the skip note fails validation.
+- Covered by tests/keyhole_check (dress princess, petite babydoll empire with the unsplit
+  front, boat top; order of guide steps; margins; opt-in byte-identity).

@@ -649,6 +649,68 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
     return issues;
 }
 
+// MARK: Keyhole
+
+// When the keyhole is requested it must be REAL: the teardrop stitch line on
+// the front center piece (inside the piece, below the neck edge) plus a facing
+// that covers the line with margin all around — or an honest "skipped" note.
+std::vector<ValidationIssue> keyholeIssues(const GarmentSpec& spec, const DraftedPattern& draft) {
+    std::vector<ValidationIssue> issues;
+    if (!spec.keyhole) return issues;
+
+    const PatternPiece* facing = nullptr;
+    const PatternPiece* front = nullptr;
+    for (const auto& piece : draft.pieces) {
+        if (piece.name == "Keyhole Facing") facing = &piece;
+        for (const char* name : {"Bodice Center Front", "Bodice Front",
+                                 "Top Center Front", "Top Front"}) {
+            if (piece.name == name) front = &piece;
+        }
+    }
+    if (!facing) {
+        for (const auto& step : draft.guideSteps)
+            if (step.rfind("Keyhole: skipped", 0) == 0) return issues; // honest skip
+        issues.push_back({"keyhole", draft.garment,
+            "keyhole requested but neither drafted nor declared skipped"});
+        return issues;
+    }
+    if (!front || front->markings.size() < 3) {
+        issues.push_back({"keyhole", draft.garment, "front piece missing the keyhole stitch line"});
+        return issues;
+    }
+
+    // The teardrop is the last three marking commands: move + two curves,
+    // starting and ending on the CF fold (x = 0).
+    const auto& mk = front->markings;
+    const PathCommand& a = mk[mk.size() - 3];
+    const PathCommand& b = mk[mk.size() - 2];
+    const PathCommand& c = mk[mk.size() - 1];
+    if (a.type != CmdType::Move || b.type != CmdType::Curve || c.type != CmdType::Curve ||
+        std::fabs(a.to.x) > 0.01 || std::fabs(c.to.x) > 0.01) {
+        issues.push_back({"keyhole", front->name, "keyhole stitch line is not a CF teardrop"});
+        return issues;
+    }
+    const Rect pieceBox = boundingBox(front->commands);
+    const Rect holeBox = boundingBox({PathCommand::move(a.to), b, c});
+    if (a.to.y <= front->commands[0].to.y) {
+        issues.push_back({"keyhole", front->name, "keyhole starts above the neck edge"});
+    }
+    if (holeBox.y + holeBox.height > pieceBox.y + pieceBox.height - 40) {
+        issues.push_back({"keyhole", front->name, "keyhole runs into the waist area"});
+    }
+    if (holeBox.x + holeBox.width > pieceBox.x + pieceBox.width) {
+        issues.push_back({"keyhole", front->name, "keyhole wider than the piece"});
+    }
+    const Rect facingBox = boundingBox(facing->commands);
+    if (facingBox.y > holeBox.y - 20 ||
+        facingBox.y + facingBox.height < holeBox.y + holeBox.height + 20 ||
+        facingBox.x + facingBox.width < holeBox.x + holeBox.width + 20) {
+        issues.push_back({"keyhole", facing->name,
+            "facing does not cover the keyhole stitch line with enough margin"});
+    }
+    return issues;
+}
+
 } // namespace
 
 // MARK: Per piece geometry
@@ -719,6 +781,7 @@ std::vector<ValidationIssue> issues(
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEaseFor(spec.fabric), &bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
+            for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);
             break;
         }
         case GarmentType::Top: {
@@ -736,6 +799,7 @@ std::vector<ValidationIssue> issues(
             for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
+            for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);
             break;
         }
     }

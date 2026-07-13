@@ -159,6 +159,8 @@ struct GarmentSpec {
     double ruffleFullness = 2.5; // gather ratio 2.0–3.0
     double ruffleDepthMM = 80;   // how deep the ruffle hangs
     int ruffleTiers = 1;         // cascading tiers (kademeli); 1 = single ruffle
+    // Opt-in keyhole (anahtar deliği) opening below the front neckline.
+    bool keyhole = false;
 };
 
 inline double roundToPlaces(double value, int places) {

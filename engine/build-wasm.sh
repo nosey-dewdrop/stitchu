@@ -7,7 +7,7 @@ source "$HOME/emsdk/emsdk_env.sh" >/dev/null 2>&1
 
 mkdir -p dist
 em++ -O2 -std=c++17 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \

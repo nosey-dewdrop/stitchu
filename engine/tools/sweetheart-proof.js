@@ -19,7 +19,7 @@ function path(cmds, mirror) {
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','sweetheart','none','short','aLine','midi','hip', false, 1, ...M));
+  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','sweetheart','none','short','aLine','midi','hip', false, 1, false, ...M));
   if (out.issues.length) { console.error('VALIDATOR ISSUES:', out.issues); process.exit(1); }
   const pieces = out.pattern.pieces;
   const front = pieces.find(p => p.name.includes('Bodice Center Front')) || pieces.find(p => p.name.includes('Bodice Front'));

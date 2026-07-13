@@ -11,6 +11,7 @@ add_library(engine
     src/bodice.cpp
     src/skirt.cpp
     src/ruffle.cpp
+    src/keyhole.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -40,3 +41,7 @@ add_test(NAME tiered_ruffle_check COMMAND tiered_ruffle_check)
 add_executable(sweetheart_check tests/sweetheart_check.cpp)
 target_link_libraries(sweetheart_check PRIVATE engine)
 add_test(NAME sweetheart_check COMMAND sweetheart_check)
+
+add_executable(keyhole_check tests/keyhole_check.cpp)
+target_link_libraries(keyhole_check PRIVATE engine)
+add_test(NAME keyhole_check COMMAND keyhole_check)

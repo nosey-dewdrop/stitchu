@@ -31,7 +31,7 @@ function cmdLen(cmds, i) { // length of command index i (must not be move)
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, ...M));
+  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, false, ...M));
   const p = out.pattern;
   const g = n => p.pieces.find(x => x.name === n);
   console.log('=== VIRTUAL SEW: princess A-line dress, EU38 ===');

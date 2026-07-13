@@ -120,7 +120,7 @@ function tilingSVG(piece, label) {
 }
 
 createEngine().then(e => {
-  const draft = (args) => JSON.parse(e.draftJSON(...args, false, 1, ...M)).pattern;
+  const draft = (args) => JSON.parse(e.draftJSON(...args, false, 1, false, ...M)).pattern;
   const dress = draft(['dress','princess','natural','woven','scoop','none','short','aLine','midi','hip']);
   const babydoll = draft(['dress','princess','empire','woven','scoop','balloon','short','gathered','midi','hip']);
   const top = draft(['top','princess','natural','woven','scoop','none','short','aLine','midi','cropped']);
