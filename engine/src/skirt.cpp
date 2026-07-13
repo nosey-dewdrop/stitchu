@@ -103,7 +103,8 @@ std::vector<PatternPiece> goreQuarter(
     double length,
     SkirtStyle style,
     double dartLength,
-    double hipDepthMM
+    double hipDepthMM,
+    double seamArcTarget = 0 // >0: put the gore seam at this arc from the center edge
 ) {
     const double suppression = std::max(0.0, hipQuarter - waistQuarter);
     double sideTake = std::min(suppression * 0.6, maxSideTake);
@@ -129,9 +130,26 @@ std::vector<PatternPiece> goreQuarter(
         {waistlineWidth * 0.45, 0},
         {waistlineWidth * 0.8, -sideWaistRise * 0.8});
 
-    const double cx = waistlineWidth / 2;
-    const CubicSplit waistAtA = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, cx - dartWidth / 2));
-    const CubicSplit waistAtB = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, cx + dartWidth / 2));
+    // Gore seam position: centered by default; a dress passes the bodice's
+    // princess-seam arc so the two seams line up when the waist is sewn.
+    double legAX = waistlineWidth / 2 - dartWidth / 2;
+    if (seamArcTarget > 0) {
+        // walk the waist curve until the sewn arc reaches the target
+        const auto samples = flattenCubic(centerWaist, waistCurve.to, waistCurve.cp1, waistCurve.cp2, 64);
+        double arc = 0;
+        Point prev = centerWaist;
+        for (const Point& q : samples) {
+            const double step = distance(prev, q);
+            if (arc + step >= seamArcTarget) { legAX = prev.x + (q.x - prev.x) * ((seamArcTarget - arc) / std::max(step, 1e-6)); break; }
+            arc += step;
+            prev = q;
+            legAX = q.x;
+        }
+        legAX = std::min(std::max(legAX, 15.0), waistlineWidth - dartWidth - 15.0);
+    }
+    const double cx = legAX + dartWidth / 2;
+    const CubicSplit waistAtA = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, legAX));
+    const CubicSplit waistAtB = splitCubic(centerWaist, waistCurve, cubicTForX(centerWaist, waistCurve, legAX + dartWidth));
     const Point legA = waistAtA.at;
     const Point legB = waistAtB.at;
     const Point tip{cx, dartLength};
@@ -309,7 +327,8 @@ std::vector<PatternPiece> pieces(
     std::optional<double> targetWaistMM,
     Shaping shaping,
     Fabric fabric,
-    double lengthExtraMM
+    double lengthExtraMM,
+    const SkirtJoin* join
 ) {
     const double fullWaist = targetWaistMM.value_or(m.waistMM() * (1 + waistEaseFor(fabric)));
     const double waistQuarter = fullWaist / 4;
@@ -326,8 +345,16 @@ std::vector<PatternPiece> pieces(
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
             if (shaping == Shaping::Princess) {
-                for (auto& piece : goreQuarter("Front", waistQuarter, hipQuarter, len, style, 90, hipDepthMM)) result.push_back(piece);
-                for (auto& piece : goreQuarter("Back", waistQuarter, hipQuarter, len, style, 130, hipDepthMM)) result.push_back(piece);
+                // With a join, each quarter matches ITS bodice half exactly and
+                // the gore seam sits where the princess seam lands.
+                const double fq = join ? join->frontQuarterWaist : waistQuarter;
+                const double bq = join ? join->backQuarterWaist : waistQuarter;
+                const double fArc = join ? join->frontSeamArc : 0;
+                const double bArc = join ? join->backSeamArc : 0;
+                const double fHip = std::max(m.hipMM() * (1 + hipEaseFor(fabric)) / 4, fq);
+                const double bHip = std::max(m.hipMM() * (1 + hipEaseFor(fabric)) / 4, bq);
+                for (auto& piece : goreQuarter("Front", fq, fHip, len, style, 90, hipDepthMM, fArc)) result.push_back(piece);
+                for (auto& piece : goreQuarter("Back", bq, bHip, len, style, 130, hipDepthMM, bArc)) result.push_back(piece);
             } else {
                 result.push_back(draftQuarter("Front", waistQuarter, hipQuarter, len, style, 90, hipDepthMM));
                 result.push_back(draftQuarter("Back", waistQuarter, hipQuarter, len, style, 130, hipDepthMM));

@@ -89,3 +89,15 @@ Sonuç şöyle bir şey: Dior/Balenciaga vitrininden bir gece elbisesi "empire b
 Ve asistanlık: vision artık kumaşın ADINI da tahmin ediyor (satin, şifon, jarse...). Sonuç ekranı bunu doğrulanmış kumaş veritabanıyla çaprazlıyor — "fotoğraftaki kumaş satin görünüyor, bu form için uygun, şuna dikkat" ya da tersi "bu forma ters çalışır, şunları düşün". Bilmediği kumaşta uydurmuyor, "bunun için doğrulanmış rehber yok, önce artık parçada dene" diyor.
 
 Test matrisi de bu turdan payını aldı: elbiseler artık üç boyda da taranıyor, 50400 taslak, hepsi yeşil.
+
+---
+
+## 07 — Sanal terzi: motoru dikmeden dikmek
+
+"Kalıpları dik, hata bul" dendi. Kumaşımız yok ama dikişin matematiği var: bugün motorun çıktısını dikiş dikiş monte eden bir sanal terzi yazdık. Uzunlukları zaten ölçüyorduk; sanal terzi daha zalim bir soru soruyor — parçalar birleşince dikişler NEREDE buluşuyor?
+
+İlk koşuda üç gerçek hata çıkardı. En önemlisi: korsajdaki prenses dikişi ile etekteki gore dikişi bel birleşiminde aynı noktaya gelmiyordu — önde 3, arkada 6, yanda 8 milimetre kayık. Elbiseyi diken biri bunu hemen görür: yukarıdan gelen dikiş, aşağıda devam etmiyor. Sebep inceydi: korsaj beli önü %52 arkayı %48 bölüyor, etek ise dört eşit çeyrek çiziyordu. Düzeltme: her etek çeyreği artık kendi korsaj yarısına göre çiziliyor ve gore dikişi, prenses dikişinin bel üzerindeki yay mesafesi neredeyse tam oraya yerleştiriliyor. Sonuç: 0.0 milimetre. Dikişler buluşuyor.
+
+PDF de aynı muameleyi gördü: 24 sayfalık baskıyı sayfa sayfa görüntüye çevirip GÖZLE inceledik. Kimliksiz sayfalar bulundu — üzerinde sadece iki çizgi olan, hangi parçaya ait olduğu belirsiz kağıtlar. Artık her sayfa köşesinde kodu yazıyor, üzerinden geçen parçaların adları fısıldanıyor, boy iplik çizgileri gerçek ok başları taşıyor ve sayfa sayısı optimize ediliyor.
+
+Ders şu: testleri geçmek yetmiyor; çıktıya bir terzinin gözüyle ve bir terzinin eliyle bakmak gerekiyor. Sanal terzi artık kalıcı — her yeni giysi tipi ondan geçecek.

@@ -33,6 +33,10 @@ struct BodiceDraft {
     double backSideSeam = 0;
     double frontSewnWaist = 0;  // along drafted curve, dart intake excluded
     double backSewnWaist = 0;
+    // Arc from the center edge to the princess seam along the sewn waist —
+    // the skirt places its gore seam at the same arc so the seams meet.
+    double frontWaistCenterArc = 0;
+    double backWaistCenterArc = 0;
     double frontStraightWaist = 0;
     double backStraightWaist = 0;
     double frontChestWidth = 0;

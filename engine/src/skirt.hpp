@@ -19,6 +19,16 @@ inline constexpr double pleatRatio = 3.0;    // knife pleats take 3x their sewn 
 inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : waistEase; }
 inline double hipEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : hipEase; }
 
+// Dress-mode join targets (princess shaping only): each quarter drafts
+// against its own bodice half-waist and places the gore seam at the same arc
+// as the bodice princess seam, so the two seams MEET at the waist join.
+struct SkirtJoin {
+    double frontQuarterWaist = 0; // bodice front sewn half-waist, mm
+    double backQuarterWaist = 0;
+    double frontSeamArc = 0;      // center edge -> princess seam, along the waist
+    double backSeamArc = 0;
+};
+
 DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
                      Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven);
 
@@ -35,7 +45,8 @@ std::vector<PatternPiece> pieces(
     std::optional<double> targetWaistMM = std::nullopt,
     Shaping shaping = Shaping::Princess,
     Fabric fabric = Fabric::Woven,
-    double lengthExtraMM = 0);
+    double lengthExtraMM = 0,
+    const SkirtJoin* join = nullptr);
 
 PatternPiece waistbandPiece(double waistMM, Fabric fabric = Fabric::Woven);
 

@@ -80,11 +80,19 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // the difference to keep the hem where the chosen length puts it.
     const double skirtExtra = std::max(0.0, m.backLengthMM() - bodice.waistSeamY);
     // The skirt is drafted against the bodice's measured sewn waist so the
-    // waist seam lengths agree exactly where the two join.
+    // waist seam lengths agree exactly where the two join. Princess mode goes
+    // further: each quarter matches its bodice half and the gore seam is
+    // placed at the princess seam's arc, so the seams MEET when sewn.
     const double bodiceSewnWaist = (bodice.frontSewnWaist + bodice.backSewnWaist) * 2;
+    SkirtBlock::SkirtJoin join;
+    join.frontQuarterWaist = bodice.frontSewnWaist;
+    join.backQuarterWaist = bodice.backSewnWaist;
+    join.frontSeamArc = bodice.frontPrincess ? bodice.frontWaistCenterArc : 0;
+    join.backSeamArc = bodice.backPrincess ? bodice.backWaistCenterArc : 0;
+    const bool useJoin = spec.shaping == Shaping::Princess;
     std::vector<PatternPiece> skirtPieces = SkirtBlock::pieces(
         m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist,
-        spec.shaping, spec.fabric, skirtExtra);
+        spec.shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
         // Half-circle panels already carry the word; avoid "Skirt Skirt Panel".

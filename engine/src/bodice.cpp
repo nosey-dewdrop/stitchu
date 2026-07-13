@@ -157,6 +157,7 @@ struct PrincessHalf {
     double armholeLength = 0;
     double sideSeam = 0;
     double sewnWaist = 0;      // center part + side part, along the drafted curve
+    double centerArc = 0;      // center-edge -> princess-seam leg, along the curve
     double straightWaist = 0;  // waist span minus intake, same basis as dart mode
     double seamCenterLen = 0;  // princess edge on the center panel
     double seamSideLen = 0;    // princess edge on the side panel
@@ -348,6 +349,7 @@ PrincessHalf makePrincessPieces(
         : std::hypot(sideWaist.x - armholeBottom.x, sideWaist.y - armholeBottom.y);
     half.sewnWaist = pathLength({PathCommand::move(legA), waistAtA.second}) +
                      pathLength({PathCommand::move(sideWaist), sideWaistEdge});
+    half.centerArc = pathLength({PathCommand::move(legA), waistAtA.second});
     half.straightWaist = waistSpan - dartWidth;
     half.seamCenterLen = seamUpperLen + distance(apex, legA) +
         (extra > 0 ? pathLength({PathCommand::move(legA), lowerSeamCenter}) : 0);
@@ -510,6 +512,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         draft.backStraightWaist = backSplit.straightWaist;
         draft.backSeamCenterLen = backSplit.seamCenterLen;
         draft.backSeamSideLen = backSplit.seamSideLen;
+        draft.backWaistCenterArc = backSplit.centerArc;
     } else {
         draft.back = back.piece;
         draft.backSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)
@@ -526,6 +529,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         draft.frontStraightWaist = frontSplit.straightWaist;
         draft.frontSeamCenterLen = frontSplit.seamCenterLen;
         draft.frontSeamSideLen = frontSplit.seamSideLen;
+        draft.frontWaistCenterArc = frontSplit.centerArc;
     } else {
         draft.front = front.piece;
         draft.frontSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)

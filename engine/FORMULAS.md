@@ -115,6 +115,11 @@ gathered/half-circle have no waist shaping to convert.
   Dress mode: skirt CENTER back carries the CB zipper seam (cut 2).
 - Audit values: sewn waist measured along the actual split+trued curves (dress skirt is
   drafted against this); straight waist span basis unchanged (dartsum check identical).
+- WAIST-JOIN ALIGNMENT (princess dress, A-line/straight): each skirt quarter drafts
+  against ITS bodice half-waist (48/52 split respected) and the gore seam is placed by
+  arc-walk so arc(CF -> gore) == arc(CF -> princess seam). Found by the virtual-sew
+  audit (offsets up to ~8 mm before); validator rule "waistalign" <= 2.5 mm. Dart mode
+  keeps the legacy centered dart (golden-diff surface, and a folded dart is internal).
 - Armhole length, side seams, sleeve drafting: identical to dart mode by construction.
 - Validator adds: princess edge pair |center - side| <= 2.5 mm (bodice, from audit values);
   gore seam pair <= 3.0 mm (skirt, measured from piece geometry: center [1].to+[2]+[3],

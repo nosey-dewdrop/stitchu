@@ -450,6 +450,28 @@ std::vector<ValidationIssue> skirtIssues(
             }
         }
 
+        // Waist-join alignment (dress): the skirt's gore seam must land where
+        // the bodice's princess seam lands, measured as the sewn arc from the
+        // center edge. A sewist matches these two seams by eye at the waist.
+        if (bodice) {
+            for (const bool isFront : {true, false}) {
+                const bool princess = isFront ? bodice->frontPrincess : bodice->backPrincess;
+                if (!princess) continue;
+                const double bodiceArc = isFront ? bodice->frontWaistCenterArc : bodice->backWaistCenterArc;
+                const PatternPiece* center = nullptr;
+                for (const auto* piece : skirtPieces) {
+                    if (contains(piece->name, std::string("Center ") + (isFront ? "Front" : "Back"))) { center = piece; break; }
+                }
+                if (!center || center->commands.size() < 2 || center->commands[1].type != CmdType::Curve) continue;
+                const double skirtArc = pathLength({PathCommand::move(center->commands[0].to), center->commands[1]});
+                if (std::fabs(skirtArc - bodiceArc) > princessSeamTolerance) {
+                    issues.push_back({"waistalign", std::string("Skirt ") + (isFront ? "Front" : "Back"),
+                        fmt("gore seam sits %.1f mm from the center edge, princess seam %.1f — off by %.1f",
+                            skirtArc, bodiceArc, std::fabs(skirtArc - bodiceArc))});
+                }
+            }
+        }
+
         // Gore pairs: the center panel's seam edge must match the side
         // panel's. Center layout: [1]=waist, [2]=line(tip), [3]=line(hem).
         // Side layout: [4]=hem curve, [5]=line(tip), [6]=line(waist leg).
