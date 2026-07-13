@@ -60,7 +60,7 @@ export const STRINGS = {
 
   // result labels
   'result.pieces': { en: 'pieces', tr: 'parçalar' },
-  'result.piecesv': { en: '{n} · numbered in sewing order', tr: '{n} · dikim sırasına göre numaralı' },
+  'result.piecesv': { en: '{n} · each labeled with its cutting note', tr: '{n} · her biri kesim notuyla etiketli' },
   'result.fabric': { en: 'fabric', tr: 'kumaş' },
   'result.fabricv': { en: '{n} m at 140 cm width', tr: '140 cm ende {n} m' },
   'result.sa': { en: 'seam allowance', tr: 'dikiş payı' },
@@ -72,7 +72,7 @@ export const STRINGS = {
   'result.photofabric.bad': { en: 'The fabric in your photo looks like {name} — it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
   'result.photofabric.unknown': { en: 'The fabric in your photo looks like {name}. No verified guide for it here yet — handle it by its stretch (the knit/woven choice you made) and test on a scrap first.', tr: 'Fotoğraftaki kumaş {name} görünüyor. Bunun için doğrulanmış rehber henüz yok — esnekliğine göre davran (seçtiğin örgü/dokuma ayarı) ve önce artık parçada dene.' },
   'result.legend': { en: 'How to read the pieces: solid line = cutting/seam line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: düz çizgi = kesim/dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
-  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. This should not happen — the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. Bunun olmaması gerekirdi — kombinasyon tarayıcı konsoluna kaydedildi.' },
+  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist) — please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi) — lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
 
   // closet
   'closet.title': { en: 'Closet', tr: 'Dolap' },

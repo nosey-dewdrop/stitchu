@@ -4,7 +4,7 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=24';
+import { pathD, bounds } from './render.js?v=25';
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
 const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
@@ -54,18 +54,27 @@ function countSheets(layout) {
   return used;
 }
 
+// A plain rectangle strip (ruffle tiers) never earns pattern paper: its cut
+// note fully describes it, so it goes on the cover as a chalk-and-ruler line
+// instead of eating a row of near-empty sheets.
+export function isChalkPiece(p) {
+  return p.name.includes('Ruffle');
+}
+
 // Try every strip width and keep whichever wastes the fewest printed sheets —
 // a fixed 3-wide strip left half the pages nearly empty on tall garments.
+// The widest piece always fits: cols never drops below what it needs (a 1.4 m
+// ruffle segment used to be silently CLIPPED at the old 5-column cap).
 function packPieces(pieces) {
   const dims = pieces.map((p) => {
     const b = bounds(p);
     return { p, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
   });
   const maxW = Math.max(...dims.map((d) => d.w));
-  const minCols = Math.min(5, Math.max(1, Math.ceil(maxW / PAGE_W)));
+  const minCols = Math.max(1, Math.ceil((maxW + 1) / PAGE_W));
   let bestCols = minCols;
   let bestSheets = Infinity;
-  for (let cols = minCols; cols <= 5; cols++) {
+  for (let cols = minCols; cols <= Math.max(5, minCols); cols++) {
     const sheets = countSheets(shelfPack(dims, cols));
     if (sheets < bestSheets) { bestCols = cols; bestSheets = sheets; }
   }
@@ -140,7 +149,9 @@ function calibrationSVG() {
 
 export function printPattern(result) {
   const p = result.pattern;
-  const layout = packPieces(p.pieces);
+  const chalk = p.pieces.filter(isChalkPiece);
+  const paper = p.pieces.filter((piece) => !isChalkPiece(piece));
+  const layout = packPieces(paper.length ? paper : p.pieces);
   const rows = Math.ceil(layout.stripH / PAGE_H);
 
   // keep only sheets that actually contain geometry
@@ -164,10 +175,23 @@ export function printPattern(result) {
   cover.appendChild(el('div', 'print-sub',
     `${p.pieces.length} pieces · ${p.fabricMeters140} m fabric at 140 cm · seam allowance ${p.pieces[0].seamAllowance / 10} cm NOT drawn, add it while cutting`));
   const map = el('ul', 'print-map');
-  for (const piece of p.pieces) {
+  for (const piece of paper.length ? paper : p.pieces) {
     map.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
   }
   cover.appendChild(map);
+
+  // Straight strips need a ruler, not pattern paper: their cut note IS the
+  // pattern, so they live here instead of adding a row of near-empty sheets.
+  if (chalk.length && paper.length) {
+    cover.appendChild(el('div', 'print-sub',
+      'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips — no printed piece needed). ' +
+      'Space the gather notches evenly along each strip’s top edge:'));
+    const chalkMap = el('ul', 'print-map');
+    for (const piece of chalk) {
+      chalkMap.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
+    }
+    cover.appendChild(chalkMap);
+  }
   cover.appendChild(el('div', 'print-sub',
     `${sheets.length} sheets. Lay them in a grid ${layout.cols} across (sheet code = row letter + column number: A1 top-left). ` +
     'Tape edge to edge, matching the small edge ticks — no overlap. ' +

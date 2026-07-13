@@ -21,8 +21,14 @@ export default {
     const ip = request.headers.get('cf-connecting-ip') || 'unknown';
 
     try {
-      // ---- Public stitch wall (landing page): no app token — a public web
-      // page cannot keep a secret. Guarded by strict rate limits + validation.
+      // ---- Public stitch wall: no app token — a public web page cannot keep
+      // a secret. Guarded by strict rate limits + validation. The landing
+      // dropped the wall (party trick later), so the endpoints sleep behind
+      // PUBLIC_WALL until a client actually uses them — no client, no public
+      // write surface.
+      if (url.pathname.startsWith('/api/wall') && env.PUBLIC_WALL !== 'on') {
+        return jsonResponse({ error: 'The wall is asleep' }, 403);
+      }
       if (url.pathname === '/api/wall' && request.method === 'GET') {
         return handleWallGet(env);
       }
@@ -184,10 +190,15 @@ async function handleWallNote(request, env) {
 
 // Garment photo analysis. The app sends a base64 JPEG; we prompt Claude and
 // return the raw Anthropic response so the app parses it exactly as before.
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
 async function handleAnalyze(request, env) {
-  const body = await request.json();
+  let body;
+  try { body = await request.json(); } catch {
+    return jsonResponse({ error: 'Invalid request' }, 400);
+  }
   const imageBase64 = body.image;
-  const mediaType = body.mediaType || 'image/jpeg';
+  const mediaType = IMAGE_TYPES.includes(body.mediaType) ? body.mediaType : 'image/jpeg';
   if (!imageBase64 || typeof imageBase64 !== 'string') {
     return jsonResponse({ error: 'Invalid request' }, 400);
   }
