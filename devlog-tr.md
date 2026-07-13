@@ -101,3 +101,41 @@ Test matrisi de bu turdan payını aldı: elbiseler artık üç boyda da taranı
 PDF de aynı muameleyi gördü: 24 sayfalık baskıyı sayfa sayfa görüntüye çevirip GÖZLE inceledik. Kimliksiz sayfalar bulundu — üzerinde sadece iki çizgi olan, hangi parçaya ait olduğu belirsiz kağıtlar. Artık her sayfa köşesinde kodu yazıyor, üzerinden geçen parçaların adları fısıldanıyor, boy iplik çizgileri gerçek ok başları taşıyor ve sayfa sayısı optimize ediliyor.
 
 Ders şu: testleri geçmek yetmiyor; çıktıya bir terzinin gözüyle ve bir terzinin eliyle bakmak gerekiyor. Sanal terzi artık kalıcı — her yeni giysi tipi ondan geçecek.
+
+---
+
+## 08 — Couture kelime dağarcığı: fırfır, kalp yaka, anahtar deliği
+
+Bugünün sorusu şuydu: Etsy'de "custom pattern" diye para kazanan herkesin çizdiği şeyleri biz çizebiliyor muyuz? Üç yeni kelimeyle başladık.
+
+Kademeli fırfır: tek fırfırı geçen oturum eklemiştik; bugün kaskad geldi. Matematik zalim — her kat, üstündeki katın alt kenarına büzülüyor, yani i'inci katın kumaş boyu etek ucu çarpı büzgü oranının i'inci kuvveti. Üç katlı bir fırfırda en alt kat 23 metre şerit demek. Quinceañera elbiselerinin o köpük köpük eteği işte bu yüzden o kadar kumaş yiyor; motor artık bunu hem çiziyor hem dürüstçe metreye yansıtıyor. Sadece en alt kat baskı payı taşıyor; ara katların alt kenarı bir sonraki katı karşılayan dikişte kayboluyor.
+
+Kalp yaka: ilk deneme V yakaya benzedi, beğenmedik. Dört aday eğriyi yan yana çizdirip baktık — kazanan, merkezde dik teğetle çentik yapıp göğüs üzerinde belirgin lob çizen eğri oldu. Bir de ince bir tuzak: yaka genişliğini korsaj ile pervaz AYRI AYRI hesaplıyordu; genişlik çarpanını ekleyince pervaz yakayla buluşamadı, validator yakaladı. Tek yardımcı fonksiyona bağladık — ikisi artık aynı sayıyı okuyor.
+
+Anahtar deliği: yakanın altında kapalı bir gözyaşı damlası. Bunu kalıp kağıdına parça olarak değil, ön parçanın üzerine dikiş çizgisi olarak çiziyoruz — gerçek dikişte de öyle yapılır: pervazı çizginin üzerine dik, içini yar, içeri çevir, ütüle. Motor pervaz parçasını üretiyor, adımları rehberin doğru yerine (yaka pervazından hemen sonra) sokuyor, yer yoksa dürüstçe "bu korsaj anahtar deliğine kısa" diyor.
+
+Üçü de aynı disiplinle: motor + test + gözle bakılmış çizim + WASM + arayüz + vision etiketi. Matris 60300 taslağa çıktı, hepsi yeşil. Ve gün sonunda kanıt: gerçek bir quinceañera fotoğrafı canlı sisteme girdi, cevap "kalp yaka + kademeli fırfır + prenses" diye döndü — bugün eklediğimiz üç kelimenin üçü de.
+
+---
+
+## 09 — Gemiyi kontrol ettik: baskı makasının yediği 45 santim
+
+Bugün ürünü müşteri gibi gezdik ve bir kabus bulduk: A4 paketleyicimiz düzeni en fazla 5 sütuna (95 santim) sığdırıyordu. Fırfır şeritleri 140 santime kadar çıkıyor. Yani 95'ten sonrası... hiç basılmıyordu. Sessizce. Müşteri şeridi eksik kesecekti ve bunu ancak kumaşta anlayacaktı.
+
+Düzeltmenin iki yarısı var. Bir: paketleyici artık en geniş parçaya ihtiyacı kadar sütun veriyor, sığmayan parça diye bir şey kalmadı. İki — ve bence güzeli: düz dikdörtgen şeritler artık kalıp kağıdı YEMİYOR. Gerçek terziler fırfır şeridi için kağıt kesmez; cetvel ve tebeşirle direkt kumaşa çizer. Kapak sayfası artık "bu şeritleri kumaşa şöyle çiz" diye liste veriyor; yirmi küsur bomboş sayfa çöpe gitmekten kurtuldu.
+
+Kanıt için tek fotoğraf yetmez: web katmanının gönderdiği HER kombinasyonu — 16.795 taslak, beş uç vücutla — gerçek motordan geçirip baskı matematiğini simüle eden bir fuzz aracı yazdık. Sıfır kırpılma, sıfır hata. Bir de dürüstlük düzeltmesi: imkansız ölçüler girildiğinde (bel 140, göğüs 60) sistem taslağı zaten güvenlik kontrolünde durduruyordu ama mesaj "bu olmamalıydı" diyordu. Artık doğrusunu söylüyor: "en sık neden ölçü yazım hatası — yedi ölçünü kontrol et."
+
+Worker da payını aldı: kullanılmayan halka açık duvar uçları uyutuldu, bozuk istekler 500 yerine 400 dönüyor. Küçük şeyler; ama gemi kontrolü tam da küçük şeylerin ürünü batırdığı yer.
+
+---
+
+## 10 — Kendi gözümüz: ilk deneme ve dürüst bir yenilgi
+
+Vizyon hâlâ kiralık — her fotoğrafı Opus okuyor, her okuma para. Plan bunu değiştirmek: kendi gözümüz. Bugün v0'ı denedik: CLIP denen açık model, hiç eğitim verisi olmadan, "bu fotoğrafta kalp yaka mı var" gibi sorulara cevap verebiliyor... teoride.
+
+Önce dürüst bir test seti kurduk: Wikimedia'dan gerçek giysi fotoğrafları indirdik, on dokuz tanesini tek tek GÖZLE etiketledik — yaka, kol, etek, bel, kumaş, fırfır, anahtar deliği. Uydurma etiket yok; bakmadığımız hiçbir şeye cevap yazmadık.
+
+Sonuç: çıplak CLIP yüzde 44 tutturdu. Yakada yüzde 6 — neredeyse her şeye "kayık yaka" diyor. Daha iyi model (SigLIP) yüzde 65'e çıktı; kol ve kumaşta fena değil, ama etek stili, boy, fırfır hâlâ zar atmak gibi. Ürün çıtası yüzde 95 civarı; arada dağ var.
+
+Bu bir yenilgi ama planlı bir yenilgi: v0'ın işi zaten çıtayı ölçmekti. Yol haritası netleşti — v1'de Opus'a binlerce fotoğraf etiketletip o etiketlerle KÜÇÜK bir modeli eğiteceğiz. Öğretmen pahalı ama bir kez ödenir; öğrenci bedava koşar. Bugün öğretmenin kendisini de ölçtük: canlı sistemden geçen fotoğraflarda Opus bizim göz etiketlerimizle nerede anlaşıyor, nerede ayrışıyor — o sayı v1'in tavanı.
