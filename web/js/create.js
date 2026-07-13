@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=17';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=17';
-import { draft } from './engine.js?v=17';
-import { printPattern } from './print.js?v=17';
-import { renderResult } from './render.js?v=17';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=18';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=18';
+import { draft } from './engine.js?v=18';
+import { printPattern } from './print.js?v=18';
+import { renderResult } from './render.js?v=18';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=17';
+} from './store.js?v=18';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -78,7 +78,7 @@ function tapeSVG(value, min, max) {
   }
   const mx = 26 + (value - lo) * 36;
   if (mx >= 10 && mx <= 324) {
-    inner += `<line x1="${mx}" y1="12" x2="${mx}" y2="94" stroke="#3EB8AF" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round"/>`;
+    inner += `<line x1="${mx}" y1="12" x2="${mx}" y2="94" stroke="#8f2038" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round"/>`;
   }
   svg.innerHTML = inner;
   return svg;

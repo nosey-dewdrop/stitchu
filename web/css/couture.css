@@ -1,6 +1,6 @@
 /* Couture wrap for the functional pages: vişne gingham behind, the app on a
    white pattern-paper sheet pinned with one of Damla's buttons. The paper's
-   INSIDE keeps the flat Helvetica/teal engine language untouched. */
+   INSIDE keeps the flat Helvetica engine language, accented in vişne. */
 body.couture { background: #8f2038; }
 #couture-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
 
