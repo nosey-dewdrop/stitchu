@@ -23,6 +23,7 @@ export async function draft(spec, measurements) {
     spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
     spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
+    (spec.ruffle ?? 'none') !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
     measurements.backLength, measurements.armLength, measurements.neck,
   );
