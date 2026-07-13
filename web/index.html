@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>stitchu - pattern making engine</title>
+<title>stitchu · pattern-making engine</title>
+<meta name="description" content="Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine: princess seams, true-scale A4 printing, fabric-aware drafting.">
+<meta property="og:title" content="stitchu · pattern-making engine">
+<meta property="og:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <style>
   :root{ --accent:#ffd2da; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -22,8 +25,8 @@
   .item{font-size:13px;line-height:1.5;margin-bottom:13px}
   .item .lbl{display:block;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
   .item b{font-weight:700}
-  .cta{display:inline-block;margin-top:22px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.5);padding:14px 30px;text-decoration:none;position:relative;border-radius:4px}
-  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;pointer-events:none;border-radius:3px}
+  .cta{display:inline-block;margin-top:22px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.5);padding:14px 30px;text-decoration:none;position:relative;border-radius:2px}
+  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;pointer-events:none;border-radius:2px}
   .cta:hover::after{inset:5px}
 
   .btn{position:absolute;z-index:2;filter:drop-shadow(0 6px 12px rgba(45,5,16,.5))}
@@ -122,8 +125,8 @@
       <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</p>
       <p class="item"><span class="lbl">why we built it?</span>Store-bought patterns fit a standard mannequin, never you. You should be able to sew the thing you actually love, cut to your own body.</p>
       <p class="item"><span class="lbl">how does it work?</span>Snap the photo, confirm what it read, print the true-scale A4 sheets, then sew.</p>
-      <p class="item"><span class="lbl">what's under the hood?</span>Real geometry. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts.</p>
-      <p class="item"><span class="lbl">is it slopware?</span>No. A hand-built C++ drafting engine, checked draft by draft: <b>2805 test patterns, verified to 0.0001&nbsp;mm</b>. The site is just the window. The engine is the product.</p>
+      <p class="item"><span class="lbl">what's under the hood?</span>Real geometry. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts. It reads the fabric too — a stretch knit and a crisp poplin get different patterns.</p>
+      <p class="item"><span class="lbl">is it slopware?</span>No. A hand-built C++ drafting engine, checked draft by draft: <b>50,400 test patterns, verified to 0.0001&nbsp;mm</b>. The site is just the window. The engine is the product.</p>
       <p class="item"><span class="lbl">an api?</span><b>Coming soon.</b> The same engine, behind an endpoint for your own site.</p>
     </div>
     <a class="cta" href="create.html">Start a pattern</a>
@@ -196,9 +199,9 @@
   </div>
 </section>
 
-<footer
+<footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="#">privacy</a> · en / tr · @damlahelloworld</span>
+  <span><a href="privacy.html">privacy</a> · @damlahelloworld</span>
 </footer>
 
 <script>
