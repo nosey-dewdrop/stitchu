@@ -1,7 +1,7 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=15';
-import { getLang, t } from './i18n.js?v=15';
+import { fabricAdvice } from './fabrics.js?v=16';
+import { getLang, t } from './i18n.js?v=16';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -139,17 +139,41 @@ export function renderResult(container, result) {
   }
   container.appendChild(ol);
 
-  appendFabricAdvice(container, p.fabricAdviceKey);
+  appendFabricAdvice(container, p.fabricAdviceKey, result.photoFabric || null);
 }
 
-async function appendFabricAdvice(container, garmentKey) {
+// Verified-DB aliases for the vision's fabric vocabulary.
+const FABRIC_ALIASES = {
+  'jersey': 'jersey (knit)',
+  'viscose': 'viscose / rayon',
+};
+
+async function appendFabricAdvice(container, garmentKey, photoFabric) {
   const { suggested, avoid } = await fabricAdvice(garmentKey);
-  if (!suggested.length && !avoid.length) return;
+  if (!suggested.length && !avoid.length && !photoFabric) return;
 
   const title = document.createElement('h2');
   title.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
   title.textContent = t('result.fabricadvice');
   container.appendChild(title);
+
+  // Sewing-assistant line: what the photo's fabric means for THIS project.
+  // Only verified-DB facts are stated; unknown fabrics get an honest note.
+  if (photoFabric) {
+    const canonical = FABRIC_ALIASES[photoFabric] || photoFabric;
+    const inSuggested = suggested.find((f) => f.name === canonical);
+    const inAvoid = avoid.find((f) => f.name === canonical);
+    const line = document.createElement('p');
+    line.style.maxWidth = '640px';
+    if (inSuggested) {
+      line.textContent = t('result.photofabric.good', { name: photoFabric, note: inSuggested.commonMistakes[0] || inSuggested.drape });
+    } else if (inAvoid) {
+      line.textContent = t('result.photofabric.bad', { name: photoFabric, drape: inAvoid.drape });
+    } else {
+      line.textContent = t('result.photofabric.unknown', { name: photoFabric });
+    }
+    container.appendChild(line);
+  }
 
   const list = document.createElement('ul');
   list.className = 'result-meta';
