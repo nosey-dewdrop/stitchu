@@ -1,0 +1,77 @@
+# stitchu architecture
+
+How a garment photo becomes a printable, body-fitted sewing pattern. Companion docs: `engine/FORMULAS.md` (every drafting formula and its gotchas — the engine's spec), `PROJECT.md` (roadmap), `PLAN.md` (track A/B directives).
+
+## Layers
+
+```
+photo ──> Cloudflare Worker (Claude vision) ──> confirmed GarmentSpec
+                                                      │
+7 measurements (local) ───────────────────────────────┤
+                                                      ▼
+                        C++ engine (WASM, in-browser)
+                        geometry core → blocks → garment drafter → validator
+                                                      │
+                                                      ▼
+                        web app: SVG render → tiled A4 PDF print
+```
+
+### 1. Geometry core (`engine/src/geometry.*`)
+Point/Path/cubic-Bezier primitives, seam-length measurement, outline offsetting, intersection and self-intersection checks. Everything above is built on these; they were unit-tested first (`tests/test_geometry.cpp`). Conventions (from `FORMULAS.md`): all geometry in millimeters, each piece in its own local space, curves flattened to 24 segments for length measurement (16 for self-intersection). Gotcha: `boundingBox()` counts curve control points, so comparisons must use flattened boxes.
+
+### 2. Blocks (`bodice.cpp`, `skirt.cpp`, `sleeve.cpp`)
+Parametric drafting blocks from published sources (FreeSewing Bella/Titan, Muller & Sohn, Aldrich), driven by 7 measurements plus percent ease (never fixed cm). Documented assumptions (underbust = bust − 70 mm, shoulder drop ≈ 13°) are flagged in `FORMULAS.md` and covered by the muslin warning in the sewing guide.
+
+### 3. Garment drafter + manipulation layer (`garment.cpp`, `ruffle.cpp`, `keyhole.cpp`)
+Combines blocks into garments (dress = bodice + skirt + CB invisible zipper; tops with hem variants) and applies the couture vocabulary: necklines (crew/scoop/v/square/boat/sweetheart), keyhole cut-out with shaped facing, halter (a frame-shift over the same bodice skeleton — no separate block), tiered ruffles (tier i edge = edge × fullness^(i−1)), pleats, gathers. Every vocabulary feature is an opt-in `GarmentSpec` field defaulting OFF, so the base draft is byte-identical without it.
+
+### 4. Seam allowance / cut line (`geometry.cpp offsetOutline`)
+The piece outline IS the sewing line; the cut line is a drawn outward offset. The outward side is found empirically (probe the longest edge's normal with point-in-polygon — traversal direction is not trusted, an area-sign heuristic once shipped an inward offset). Per-edge offset with miter/bevel joins, then an envelope guarantee: relax passes push any point closer than the allowance back out to exactly it (tames concave curves with radius < allowance, e.g. sleeve underarm). Fold edges are not seams: clamped, exempt from the audit. Strip pieces (ruffles, bias binding) stay single-line — their allowance lives in the cut note.
+
+### 5. Validator (`validator.cpp`)
+Geometric invariants run on every draft, and at runtime before any PDF: side-seam balance, dart sums, armhole/cap ease, waist joins, self-intersection, print fit, cut-line sanity. A broken pattern cannot reach the printer. Trim pieces (names containing "Ruffle") are excluded from structural sums by design.
+
+### 6. Verification (tests, golden, fuzz, precision)
+- `tests/engine_check.cpp`: the matrix — EU 34-52 + edge bodies × the full spec space = 70,200 drafts, all must validate. Per-feature checks (`ruffle_check`, `sweetheart_check`, `keyhole_check`, `halter_check`, `cutline_check`, ...) assert piece geometry, printability (≤3000 mm tile cap) and a byte-identical base draft. 8 ctest suites.
+- Golden: `engine/golden-reference.csv` (committed) is the pinned deterministic reference; `golden-diff.py` compares at 0.1 mm tolerance. History: the C++ engine was ported from Swift against a Swift golden dump (2805 drafts, port fidelity), then the golden was re-pinned to the C++ output when precision truing deliberately improved on the Swift geometry.
+- `tools/precision-report.js` ("the tailor's micrometer"): measures every seam pair a sewist pins; >1.0 mm fails. Found and zeroed a 8-10 mm shoulder-pair gap and a ~2 mm empire side-seam gap; worst pair is now 0.00 mm. Run it after any bodice change.
+- `tools/web-fuzz.js`: fuzzes the WEB layer's spec mapping (what `create.js` actually sends to `draftJSON`) across body-corner measurements and simulates the print packer's math — 19,555 drafts, 0 failures.
+
+The required loop after engine changes: `engine_check` + `cutline_check` + `precision-report.js` + `web-fuzz.js` + golden diff.
+
+### 7. WASM boundary (`engine/wasm/bindings.cpp`)
+A thin embind layer exposing `draftJSON(measurements, spec) → JSON pieces`. Built by `engine/build-wasm.sh` into a single-file bundle (`engine/dist/stitchu-engine.js`, ~218 KB), copied to `web/vendor/`. The same file is `require()`-able from Node, which is how the fuzz/precision/proof tools drive the real engine — no parallel JS implementation to drift.
+
+### 8. Web app (`web/`)
+Static, framework-free, GitHub Pages. `store.js` (measurements + closet, local), `analyze.js`/`create.js` (photo → Worker → confirm → draft), `render.js` (SVG pieces with darts, grainline, double cut/sew line), `print.js` (client-side tiled A4 PDF, 3 cm calibration square, 190×250 mm printable page, page map), `wall.js` (communal stitch wall via Worker KV). EN/TR i18n. Cache-busting is manual: bump `?v=N` on every deploy (deploy = `git subtree split --prefix web` → `gh-pages`).
+
+### 9. Backend (`backend/worker.js`)
+One Cloudflare Worker: proxies garment analysis to Claude vision. The browser never holds the API key — it sends a shared app token; the key is a Worker secret. Rate-limited (20/min app-token; public mode 3/min, 15/day per IP), hardened per the 2026-07-13 ship-check. Also serves the stitch wall (KV). Planned: `POST /api/draft` running the same WASM engine server-side — the sellable API.
+
+### 10. Track B — owning the vision (`vision/`)
+Goal: kill the per-call LLM cost. The vision step is bounded classification into a fixed vocabulary. Measured on a hand-labeled eval set: zero-shot CLIP 44%, SigLIP 65% (dead end vs a ~95% product bar); Opus via the live worker 86%. v1 plan: Opus as teacher auto-labels a licensed image corpus (70 images + pipeline in `vision/corpus`) → train small per-attribute heads → ship as browser ONNX next to the WASM engine, zero marginal vision cost. Numbers and method: `vision/README.md`.
+
+## Data flow summary
+
+- Measurements: entered once, IndexedDB/local only, never leave the device for drafting.
+- Photo: leaves the device only for the vision call (Worker → Anthropic), user confirms the classification before drafting.
+- Drafting: 100% client-side (WASM) — zero server cost per draft, and simultaneously the KVKK/privacy answer.
+- Pattern: SVG + PDF generated in the browser; saved patterns live in the local closet (full CRUD).
+- Knowledge: `knowledge/schema.sql` + seeds → `stitchu.db`; formula claims enter as `verified` only after adversarial source-checking, refuted claims kept so they are never reused.
+
+## Key design decisions
+
+- C++ core, multiple consumers: one engine feeds web (WASM), Node tooling (same bundle), later iOS (static lib) and Android (NDK). Chosen over Rust deliberately (synergy with coursework); the golden matrix is what made a full Swift→C++ rewrite safe.
+- Client-side drafting: no server cost, no measurement upload, shareable static hosting.
+- Spec-driven port: `FORMULAS.md` is the source of truth, not line-by-line translation — the port implements the spec.
+- Opt-in vocabulary: every new feature defaults off and must keep the matrix ALL PASS and the base draft byte-identical.
+- Prove, don't claim: a feature exists only when it is in `engine/src`, has a passing `_check` test, renders correctly, and survives the matrix + golden + precision + fuzz loop (discipline codified in `PLAN.md`).
+- One truth, one place: neck width, armhole curve, binding length each have a single computing site; derived values are measured from the same geometry, never recomputed.
+
+## Known limits
+
+- Trousers not drafted (needs crotch depth + cross seam, not collected); no wrap/collar/pocket/off-shoulder/cowl yet (`engine/SPECS-next-vocabulary.md` is an UNVERIFIED agent draft — review before building).
+- Bodice carries documented assumptions (underbust offset, shoulder slope); geometric validation is complete but a physical sew test against a commercial pattern is still pending (roadmap item 24 — miniature garments first).
+- Vision is rented (Opus per call) until the Track B student ships; its accuracy ceiling is the 86% teacher.
+- Keyhole ships as stitch-line + facing with an honest skip note; halter's cramped-back case falls back to dart mode by rule.
+- Deploy/cache is manual and fragile: forgetting the `?v=N` bump serves stale assets (Safari).
