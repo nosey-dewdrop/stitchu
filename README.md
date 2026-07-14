@@ -2,7 +2,7 @@
 
 *from a photo of a garment to a sewing pattern in your size, printed true-scale on A4.*
 
-### live: https://damlahelloworld.github.io/stitchu/
+### live: https://nosey-dewdrop.github.io/stitchu/
 
 ## what is this?
 you see a design you love, you photograph it, stitchu reads it and drafts a pattern to your own measurements — ready to print on regular A4 paper at true scale, tape together and cut. drafting rules that pattern makers keep in their heads, written down in code.
