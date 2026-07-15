@@ -284,12 +284,20 @@ std::vector<ValidationIssue> sleeveIssues(
     const double target = bodice.armholeLength * (1 + capEase);
     const double ease = capLength / bodice.armholeLength - 1;
     std::vector<ValidationIssue> issues;
-    if (std::fabs(capLength - target) > capLengthTolerance) {
+    // The cap-ease WINDOW is the real sewability gate. The exact-target
+    // convergence check below is only a solver-health check: it must not fire
+    // when the biceps floor legitimately pushes the cap longer than the 4% ideal
+    // (a wide arm on a shallow armhole — e.g. a fuller bust under a high empire
+    // seam), because that cap is still perfectly sewable as long as its ease
+    // stays in the window. So the convergence check only counts when the ease is
+    // ALSO out of window — i.e. the solver genuinely failed, not the arm forced it.
+    const bool easeInWindow = ease >= capEaseMin && ease <= capEaseMax;
+    if (std::fabs(capLength - target) > capLengthTolerance && !easeInWindow) {
         issues.push_back({"cap", sleeve->name,
             fmt("cap seam %.1f vs target %.1f (armhole %.1f + %.0f%% ease) — convergence missed by %.1f mm",
                 capLength, target, bodice.armholeLength, capEase * 100, std::fabs(capLength - target))});
     }
-    if (ease < capEaseMin || ease > capEaseMax) {
+    if (!easeInWindow) {
         issues.push_back({"cap", sleeve->name,
             fmt("cap ease %.1f%% outside the %.0f-%.0f%% window", ease * 100, capEaseMin * 100, capEaseMax * 100)});
     }

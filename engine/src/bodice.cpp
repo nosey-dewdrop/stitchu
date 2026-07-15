@@ -430,7 +430,13 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double underbust = std::max(m.bustMM() - underbustOffset, m.waistMM());
 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
-    double armholeY = backLength * armholeDepthFactor + shoulderDrop;
+    // The torso-only armhole depth (before any arm deepening). The empire seam is
+    // anchored to THIS, not the deepened armhole — the empire/babydoll line sits
+    // just under the BUST, and must not move when the armhole is lowered to seat a
+    // fuller arm (else on a fuller-bust short-back body the "empire" seam slides
+    // down to or below the natural waist and it stops being an empire dress).
+    const double torsoArmholeY = backLength * armholeDepthFactor + shoulderDrop;
+    double armholeY = torsoArmholeY;
     // Deepen the armscye when the arm needs it. The torso-only depth
     // (backLength * 0.44) leaves the armhole too shallow to seat a fuller arm on
     // a short-backed body — the set-in sleeve then can't ease its biceps into
@@ -441,13 +447,20 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // the biceps and clamp it so the underarm never drops past the waist.
     const double bicepsGirth = m.bustMM() * BodiceBlock::bicepsRatioForArmscye;
     const double armholeDepthForArm = bicepsGirth * armscyeArmFactor + shoulderDrop;
-    const double armholeDepthCap = backLength * armscyeMaxDepthShare + shoulderDrop;
-    armholeY = std::min(armholeDepthCap, std::max(armholeY, armholeDepthForArm));
+    double armholeDepthCap = backLength * armscyeMaxDepthShare + shoulderDrop;
 
     // Empire: the seam sits just under the bust and the target girth is the
-    // underbust line, not the waist. Both halves share the side seam level.
+    // underbust line, not the waist. Both halves share the side seam level. The
+    // seam anchors to the TORSO armhole (bust line), not the arm-deepened one, so
+    // the babydoll line stays just under the bust on every body.
     const bool empire = options.waistline == Waistline::Empire;
-    const double seamSideY = empire ? armholeY + empireDrop : backLength;
+    const double seamSideY = empire ? torsoArmholeY + empireDrop : backLength;
+    // The empire bodice ENDS at that seam, so the (possibly deepened) armhole must
+    // stay above it — otherwise the armhole curve runs past the waist seam and the
+    // piece self-intersects. Tighten the deepening cap for empire.
+    if (empire) armholeDepthCap = std::min(armholeDepthCap, seamSideY - 8);
+    armholeY = std::min(armholeDepthCap, std::max(armholeY, armholeDepthForArm));
+
     const double frontSeamCenterY = empire ? seamSideY + empireBalanceDrop : backLength + frontBalanceDrop;
     const double girth = empire ? underbust : m.waistMM();
 
