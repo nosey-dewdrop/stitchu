@@ -28,6 +28,17 @@ export function collarEdgeValue(spec) {
   return COLLAR_EDGE[spec && spec.collarEdge] || 0;
 }
 
+// GatherType enum (must match engine/src/gather.hpp order). 0 = None.
+const GATHER_TYPE = { none: 0, drawstring: 1, shirred: 2, smocked: 3 };
+export function gatherTypeValue(spec) {
+  return GATHER_TYPE[spec && spec.gatherType] || 0;
+}
+// GatherZone enum. 0 = Neckline.
+const GATHER_ZONE = { neckline: 0, bust: 1, waist: 2, sleeve: 3 };
+export function gatherZoneValue(spec) {
+  return GATHER_ZONE[spec && spec.gatherZone] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -58,6 +69,8 @@ export async function grade(spec, fromLabel, toLabel) {
     sleeveCapValue(spec),  // Loop 6: gathered/puff sleeve head
     collarTypeValue(spec), // Loop 7/8: collar family
     collarEdgeValue(spec), // Loop 7/8: flat-family outer edge
+    gatherTypeValue(spec), // Loop 8: drawstring/shirred/smocked gathering
+    gatherZoneValue(spec), // Loop 8: gather zone
   );
   return JSON.parse(json);
 }
@@ -79,6 +92,8 @@ export async function draft(spec, measurements) {
     sleeveCapValue(spec),        // Loop 6: gathered/puff sleeve head
     collarTypeValue(spec),       // Loop 7/8: collar family
     collarEdgeValue(spec),       // Loop 7/8: flat-family outer edge
+    gatherTypeValue(spec),       // Loop 8: drawstring/shirred/smocked gathering
+    gatherZoneValue(spec),       // Loop 8: gather zone
   );
   return JSON.parse(json);
 }

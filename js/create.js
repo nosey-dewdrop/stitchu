@@ -36,6 +36,11 @@ const SPEC_GROUPS = [
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
   { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
+  // Loop 8: drawstring / shirred / smocked gathering (büzgü) — a separate gathered
+  // panel (+ a drawstring cord) whose gathered edge is trued to the zone. Only on
+  // a dress/top (needs a bodice to gather onto).
+  { key: 'gatherType', label: 'gathering', trLabel: 'büzgü', options: [['none', 'none', 'yok'], ['drawstring', 'drawstring', 'ip büzgü'], ['shirred', 'shirred', 'lastik büzgü'], ['smocked', 'smocked', 'smok']], for: (s) => s.garment !== 'skirt' },
+  { key: 'gatherZone', label: 'gather zone', trLabel: 'büzgü yeri', options: [['neckline', 'neckline', 'yaka'], ['bust', 'bust', 'büst'], ['waist', 'waist', 'bel'], ['sleeve', 'sleeve', 'kol']], for: (s) => s.garment !== 'skirt' && s.gatherType && s.gatherType !== 'none' },
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
@@ -51,7 +56,41 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
+  gatherType: 'none', gatherZone: 'neckline',
 };
+
+// Map the vision's yoke / straps / closure / oov terms to a drawable gathering
+// (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
+// whose gathered edge is trued to the drafted zone edge — for a drawstring/tie
+// gathered neckline, a shirred/smocked yoke, a gathered bust panel, or gathered
+// straps read as a gathered neck. Returns { type, zone } or null (stays honest).
+function pickGather(seen) {
+  const words = [
+    seen.yoke && seen.yoke.type, seen.yoke && seen.yoke.name,
+    seen.straps && seen.straps.type,
+    seen.closure && seen.closure.type, seen.closure && seen.closure.location,
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // Which construction gathers the panel?
+  let type = null;
+  if (words.includes('drawstring')) type = 'drawstring';
+  else if (words.includes('smock')) type = 'smocked';
+  else if (words.includes('shirr') || words.includes('gathered') || words.includes('gather'))
+    type = 'shirred';
+  if (!type) return null;
+  // Which zone? Prefer the most explicit body word in the terms.
+  let zone = null;
+  if (words.includes('neck') || words.includes('yoke') || words.includes('milkmaid') ||
+      words.includes('babydoll') || words.includes('strap')) zone = 'neckline';
+  else if (words.includes('bust') || words.includes('chest')) zone = 'bust';
+  else if (words.includes('waist')) zone = 'waist';
+  else if (words.includes('sleeve')) zone = 'sleeve';
+  // A drawstring/gathered SLEEVE is its own honest case elsewhere (needs the arm
+  // casing); only draw sleeve gathering when the term clearly says sleeve AND is
+  // a shirred/smocked panel, otherwise fall back to a neckline panel default.
+  if (!zone) zone = 'neckline';
+  return { type, zone };
+}
 
 // Map the vision's closure / backDetail to a drawable tie placement (Loop 4b).
 // Only SIMPLE APPLIED ties become pieces; a drawstring that GATHERS the fabric
@@ -403,6 +442,13 @@ function showSpec() {
         const collar = pickCollar(seen);
         if (collar) { spec.collarType = collar.type; spec.collarEdge = collar.edge; }
         else { spec.collarType = 'none'; spec.collarEdge = 'round'; }
+        // Drawstring / shirred / smocked gathering (büzgü, Loop 8): the engine now
+        // draws a SEPARATE gathered panel (+ a drawstring cord) whose gathered
+        // edge is trued to the drafted zone edge. Map the vision yoke / drawstring
+        // neckline / gathered bust to a gathering; leave it honest otherwise.
+        const gather = pickGather(seen);
+        if (gather) { spec.gatherType = gather.type; spec.gatherZone = gather.zone; }
+        else { spec.gatherType = 'none'; spec.gatherZone = 'neckline'; }
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -431,6 +477,10 @@ function showSpec() {
           // real piece, so the honesty layer must NOT list it as missing. A
           // bias-bound / notched / sailor finish stays honest (collarType none).
           collarDrawn: !!(spec.collarType && spec.collarType !== 'none'),
+          // Loop 8: a drawstring/shirred/smocked gathered panel is now DRAWN, so
+          // the honesty layer must NOT list that gathering as missing. A special
+          // sub-type the engine still can't draft stays honest (gatherType none).
+          gatherDrawn: !!(spec.gatherType && spec.gatherType !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
