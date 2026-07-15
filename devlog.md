@@ -340,3 +340,17 @@ R1 · HOOK: "'yayınlanmış benchmark' diyordum ama tıklayacak bir sayfa yoktu
 R2 · HOOK: "rakip ayda 34-49 dolar alıyor ve tek bir doğruluk sayısı yayınlamıyor."
 - matematik herkeste aynı. kimsenin yapmadığı: ölçmek, literatüre karşı denetlemek, sayıyı okunabilir yere koymak.
 - artı ölçüler cihazdan hiç çıkmıyor. hendek bu. [benchmark.html]
+
+## seri S — BENCHMARK-58 (58 gerçek fotoğrafla "yaptım" sayacı)
+
+S1 · HOOK: "ürünüme karne verdim: 6/54. ve buna sevindim."
+- 59 gerçek etsy ekran görüntüsü: 54 giysi + 5 tuzak (çanta, uygulama ekranı, kalıp çizimi). hepsini tek tek etiketledim, canlı sistemden geçirdim.
+- 6 tam kalıp, 45 eksik öğeli, 3 yanlış. sayı acı ama teşhis net: görme değil, çizim dağarcığı eksik. [terminal]
+
+S2 · HOOK: "yapay zekam fotoğrafı doğru okuyor ama motorum o kelimeyi çizemiyor."
+- 45 "eksik öğeli"nin çoğunda yaka/kol/etek doğru okundu. eksik olan düğme patı, boyun bağı, yaka gibi öğelerin ÇİZİM formülü.
+- en sık eksikler: bağ/kurdele 20 fotoğraf, düğme patı 19, yaka 9, yoke 9. sıradaki loop'lar bu listeden. [terminal]
+
+S3 · HOOK: "benchmark koşumu kendi güvenlik korumam engelledi."
+- api'me koyduğum rate-limit füzesi (3/dk) kendi benchmark'ımı da yedi. kendi kv sayaçlarımı resetledim; ama kv eventual-consistent, silme ~60 sn'de yayılıyor.
+- çözüm: 21 sn/çağrı tempo. kendi korumanla yarışmak da bir dağıtık sistemler dersi. [terminal]
