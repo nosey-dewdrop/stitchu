@@ -28,6 +28,8 @@ const ENUMS = {
   keyhole: ['none', 'keyhole'],
   tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies'],
   sleeveCap: ['plain', 'gathered', 'puffed'],
+  collarType: ['none', 'stand', 'mock', 'flat', 'peterPan', 'shirt'],
+  collarEdge: ['round', 'pointed', 'scallop'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -36,6 +38,11 @@ const tieInt = (s) => TIE_PLACEMENT[s] || 0;
 // SleeveCap enum int (must match engine/src/measurements.hpp order). 0 = Plain.
 const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2 };
 const sleeveCapInt = (s) => SLEEVE_CAP[s] || 0;
+// CollarType/CollarEdge enum ints (must match engine/src/collar.hpp order).
+const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5 };
+const collarTypeInt = (s) => COLLAR_TYPE[s] || 0;
+const COLLAR_EDGE = { round: 0, pointed: 1, scallop: 2 };
+const collarEdgeInt = (s) => COLLAR_EDGE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -137,6 +144,8 @@ export function validateDraftRequest(body) {
       frontPlacket: spec.frontPlacket === true,
       tieClosure: spec.tieClosure ?? 'none',
       sleeveCap: spec.sleeveCap ?? 'plain',
+      collarType: spec.collarType ?? 'none',
+      collarEdge: spec.collarEdge ?? 'round',
     },
     measurements,
   };
@@ -157,6 +166,8 @@ export async function runDraft(spec, measurements) {
     spec.frontPlacket === true,  // Loop 3: front button placket
     tieInt(spec.tieClosure),     // Loop 4b: fabric ties / sash / bow
     sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
+    collarTypeInt(spec.collarType), // Loop 7/8: collar family
+    collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
   );
   return JSON.parse(json);
 }

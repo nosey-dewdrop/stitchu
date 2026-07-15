@@ -61,6 +61,17 @@ const SPECS = [
   { name: 'gathered-head-top', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'elbow', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, sleeveCap: 1 /* gathered */ },
+  // Loop 7/8: collar family DRAWN — a separate collar piece, neck edge trued to
+  // the neckline (a band for stand, a shaped flat/peter-pan, a two-piece shirt).
+  { name: 'stand-collar-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, collarType: 1 /* stand */ },
+  { name: 'peterpan-collar-top', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, collarType: 4 /* peterPan */, collarEdge: 0 /* round */ },
+  { name: 'shirt-collar-top', garment: 'top', shaping: 'dart', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, collarType: 5 /* shirt */, collarEdge: 1 /* pointed */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -74,7 +85,7 @@ for (const s of SPECS) {
     s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
     s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
     BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
-    s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0));
+    s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

@@ -109,6 +109,14 @@ function classify(entry, spec) {
     // NOT drawn. Both of those stay honest/missing.
     (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
            !/cap sleeve|drawstring|shirr|smock|casing|channel/i.test(t),
+    // loop 7/8: the collar FAMILY — a separate collar piece, neck edge trued to
+    // the neckline: stand / mock / mandarin / flat / peter-pan / shirt collars,
+    // with a round / pointed / scalloped outer edge. A special FINISH the engine
+    // does NOT draft stays missing: a bias-bound neckline (a bound raw edge, no
+    // collar piece), a notched/sailor/lapel tailored collar. The phrase must name
+    // a collar (so a non-collar oov term never matches).
+    (t) => /collar/i.test(t) &&
+           !/bias-?bound|bound neckline|notch|sailor|lapel/i.test(t),
   ];
   const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
   const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));

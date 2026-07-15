@@ -187,6 +187,11 @@ struct GarmentSpec {
     // pieces (self-fabric strips) + a placement notch. Off by default (None) →
     // byte-identical. See tie.hpp / FORMULAS.md "Fabric ties / sashes".
     int tieClosure = 0; // TiePlacement enum value; 0 = None
+    // Opt-in collar family (yaka, Loop 7/8): adds a separate collar piece whose
+    // neck edge is trued to the neckline. Off by default (None) → byte-identical.
+    // See collar.hpp / FORMULAS.md "Collar family".
+    int collarType = 0; // CollarType enum value; 0 = None
+    int collarEdge = 0; // CollarEdge enum value (flat family outer edge); 0 = Round
 };
 
 inline double roundToPlaces(double value, int places) {

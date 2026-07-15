@@ -124,7 +124,7 @@ GarmentSpec buildSpec(
     const std::string& sleeveStyle, const std::string& sleeveLength,
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
-    int sleeveCap
+    int sleeveCap, int collarType, int collarEdge
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -143,6 +143,8 @@ GarmentSpec buildSpec(
     spec.frontPlacket = frontPlacket;
     spec.tieClosure = tieClosure; // TiePlacement enum value; 0 = None
     spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6: 0=Plain 1=Gathered 2=Puffed
+    spec.collarType = collarType; // Loop 7/8: CollarType enum; 0=None 1=Stand 2=Mock 3=Flat 4=PeterPan 5=Shirt
+    spec.collarEdge = collarEdge; // CollarEdge enum (flat family outer edge); 0=Round 1=Pointed 2=Scallop
     return spec;
 }
 
@@ -198,10 +200,12 @@ std::string draftJSON(
     double upperBustCM,
     bool frontPlacket, // appended so existing positional callers stay valid
     int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
-    int sleeveCap      // Loop 6: gathered/puff sleeve head; 0 = Plain
+    int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
+    int collarType,    // Loop 7/8: collar family; 0 = None
+    int collarEdge     // Loop 7/8: flat-family outer edge; 0 = Round
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -220,10 +224,12 @@ std::string gradeJSON(
     std::string fromLabel, std::string toLabel,
     bool frontPlacket, // appended so existing positional callers stay valid
     int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
-    int sleeveCap      // Loop 6: gathered/puff sleeve head; 0 = Plain
+    int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
+    int collarType,    // Loop 7/8: collar family; 0 = None
+    int collarEdge     // Loop 7/8: flat-family outer edge; 0 = Round
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

@@ -382,6 +382,49 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   (seen.tieDrawn set by create.js when spec.tieClosure ≠ none). Drawstring-gathered ties,
   open-back cutouts and every non-tie back detail stay honest.
 
+## Collar family (yaka) — opt-in (BENCHMARK-58 Loop 7/8: stand + flat/peter-pan/shirt)
+- GarmentSpec.collarType (int CollarType enum: 0=None 1=Stand 2=Mock 3=Flat 4=PeterPan
+  5=Shirt, default 0 → every existing draft byte-identical) + collarEdge (int CollarEdge:
+  0=Round 1=Pointed 2=Scallop, flat-family outer edge only). Post-pass like the tie/placket
+  (CollarBlock::apply on the finished pattern): it only ADDS the collar piece(s) + a
+  neckline placement notch, never touches an existing outline, so BodiceBlock and the golden
+  dumps are untouched with it off. Runs only for Dress/Top.
+- Research: Aldrich (Metric Pattern Cutting) + Joseph-Armstrong (Patternmaking for Fashion
+  Design) + Müller & Sohn + couture (Dior/Chanel tailored collar, YSL) + high street
+  (Zara/Bershka peter-pan, shirt collars). Two structural families:
+  - STAND / MOCK — a band standing up at the neckline. Band height: Stand 35 mm, Mock 30 mm
+    (mandarin). The bottom (attach) edge is drafted STRAIGHT to the exact neckline length,
+    and the CF top edge is pulled in by cfRise = 15 mm so the finished band hugs the neck
+    (Aldrich/M&S: raise/tilt the front to close the band round the throat). Cut 2 on the CB
+    fold (self + interfacing).
+  - FLAT family (Flat / PeterPan / Shirt) — a collar piece lying on the shoulders. Finished
+    width 60 mm (peter-pan). The NECK (attach) edge is drafted STRAIGHT to the neckline
+    length; the free OUTER edge is shaped Round (peter-pan curve), Pointed (shirt-style
+    corner) or Scallop (a run of 4 arcs). Cut 2 + interfacing (upper + under). A SHIRT collar
+    is a two-piece convertible: a stand band (28 mm) + a turnover blade (48 mm = stand + 20,
+    so the blade covers the stand seam), the blade drawn pointed.
+- THE GOVERNING CONSTRAINT (trued, MEASURED — not asserted): the collar's neck-edge
+  sewing-line length == the garment neckline length (back neck arc + front neck arc, both
+  sides). We measure the neckline straight off the FINISHED front + back centre pieces —
+  the neckline is commands[0]..the min-y (neck-point) vertex of each piece, exactly the
+  outline the bodice drew — so the collar can NEVER drift from the neckline it sews to. Each
+  on-fold collar half covers neckFull/2. collar_check re-measures neckEdge − half to 0.0000
+  mm across stand/mock/flat/peter-pan/shirt on standard/petite/plus bodies.
+- SCOPE / honest boundary: a BIAS-BOUND neckline (a bound raw edge, no collar piece) and a
+  notched / sailor / lapel tailored collar are NOT drafted → they stay in the honesty layer
+  (missing.js); pickCollar() returns null for them. The engine draws the stand/mock/flat/
+  peter-pan/shirt family only.
+- Fabric: +0.15 m for the collar + interfacing.
+- Vision→spec: create.js pickCollar(seen) maps the vision collar type + oov terms (peter pan,
+  mock/mandarin, stand, shirt, scallop, rounded, pointed, flat) to collarType/collarEdge;
+  bias-bound/notched/sailor/lapel → null (honest). A manual collar picker (+ edge picker for
+  flat/peter-pan) covers the no-photo path. seen.collarDrawn suppresses the missing.js note
+  when a drawable collar was chosen.
+- Covered by tests/collar_check (stand/mock/flat/peter-pan/shirt on standard/petite/plus:
+  exactly N extra pieces, existing outlines byte-identical, neck edge trued to half-neckline
+  0.0000 mm, placement notch, flat sits wider off the neck than the stand band, scallop adds
+  curve segments). render-pages adds stand-collar-dress + peterpan-collar-top + shirt-collar-top.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

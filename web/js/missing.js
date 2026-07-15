@@ -69,6 +69,12 @@ const COLLAR_NOTE = {
   en: { applied: 'the plain neckline edge', note: 'the separate collar piece is not drafted — draft/buy a collar to that neckline yourself' },
   tr: { applied: 'düz yaka oyuğu kenarı', note: 'ayrı yaka parçası çizili değil — o oyuğa yakayı kendin çiz/ekle' },
 };
+// Loop 7/8: the collar family the engine now draws as a REAL separate piece
+// (neck edge trued to the neckline). A vision collar of one of these types is no
+// longer listed as missing. Special finishes the engine does NOT draft — a
+// bias-bound neckline (a bound raw edge, no collar piece), a notched/sailor
+// tailored collar — stay honest here.
+const COLLAR_DRAWN = ['stand', 'mock', 'mandarin', 'flat', 'peterPan', 'scallop', 'shirt'];
 
 // straps.type → derivative. The engine draws a plain sleeveless shoulder edge,
 // so a normal shoulder/wide strap is effectively drawn; frills, halter framing,
@@ -187,8 +193,12 @@ export function missingFeatures(seen, lang) {
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
   }
 
-  // collar (only when a real collar, not "none")
-  if (seen.collar && seen.collar.type && seen.collar.type !== 'none') {
+  // collar — only when a real collar the engine does NOT draw. The stand/mock/
+  // flat/peter-pan/shirt family is now a real drafted piece (seen.collarDrawn set
+  // by create.js when the vision collar maps to a drawable type), so it is not
+  // listed; bias-bound / notched / sailor finishes stay honest.
+  if (seen.collar && seen.collar.type && seen.collar.type !== 'none' &&
+      !seen.collarDrawn && !COLLAR_DRAWN.includes(seen.collar.type)) {
     const name = seen.collar.name ? seen.collar.name : (L === 'tr' ? 'yaka' : 'collar');
     push(name, COLLAR_NOTE[L]);
   }

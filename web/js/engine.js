@@ -17,6 +17,17 @@ export function sleeveCapValue(spec) {
   return SLEEVE_CAP[spec && spec.sleeveCap] || 0;
 }
 
+// CollarType enum (must match engine/src/collar.hpp order). 0 = None.
+const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5 };
+export function collarTypeValue(spec) {
+  return COLLAR_TYPE[spec && spec.collarType] || 0;
+}
+// CollarEdge enum (flat family outer edge). 0 = Round.
+const COLLAR_EDGE = { round: 0, pointed: 1, scallop: 2 };
+export function collarEdgeValue(spec) {
+  return COLLAR_EDGE[spec && spec.collarEdge] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -45,6 +56,8 @@ export async function grade(spec, fromLabel, toLabel) {
     spec.frontPlacket === true,
     tieClosureValue(spec), // Loop 4b: fabric ties / sash / bow
     sleeveCapValue(spec),  // Loop 6: gathered/puff sleeve head
+    collarTypeValue(spec), // Loop 7/8: collar family
+    collarEdgeValue(spec), // Loop 7/8: flat-family outer edge
   );
   return JSON.parse(json);
 }
@@ -64,6 +77,8 @@ export async function draft(spec, measurements) {
     spec.frontPlacket === true,  // Loop 3: front button placket
     tieClosureValue(spec),       // Loop 4b: fabric ties / sash / bow
     sleeveCapValue(spec),        // Loop 6: gathered/puff sleeve head
+    collarTypeValue(spec),       // Loop 7/8: collar family
+    collarEdgeValue(spec),       // Loop 7/8: flat-family outer edge
   );
   return JSON.parse(json);
 }

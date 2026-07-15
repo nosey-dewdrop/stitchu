@@ -548,3 +548,12 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 
 **Görsel:** yan yana üç kol silüeti (düz / gathered / puffed), puffed belirgin kabarık + crown'da kesikli büzgü çizgisi; altta '14/54 → 14/54' sabit. Alt yazı: "shipped a real capability, moved zero — and said so".
 **Format:** reel
+
+## Reel — yaka ailesini çizdim, sayım yine 14 (ve tam olarak neden biliyorum) (loop 7)
+
+**Hook (ilk 2 sn):** "Kalıp motoruma bütün bir yaka ailesini öğrettim. Ürün sayım 14'ten... 14'e geçti. Yine sıfır."
+
+**Anlatı (~45 sn):** Bu oturumda motoruma yaka çizmeyi öğrettim — dik yaka, mandarin, yatık, bebe (peter pan) ve gömlek yakası, hepsi tek ailede. Kilit ölçü şu: yakanın boyun kenarı, kalıbın boyun oyuğu ile TAM aynı uzunlukta olmak zorunda, yoksa dikilmez. Bunu tahmin etmedim — yakayı, gövdenin bittiği boyun oyuğunu doğrudan ÖLÇEREK çizdim, yani bire bir eşleşme inşadan geliyor. Testim yeni yakanın boyun kenarını yeniden ölçtü: sapma 0.0000 mm. Dik/mandarin bir bant (önden içeri kıvrılıp boynu sarıyor), bebe/gömlek yatık bir parça (yuvarlak / sivri / fisto dış kenar). Dürüst sınırı da çizdim: biye-bantlı (bias-bound) oyuk ayrı parça değil, çizmiyorum, honest kalıyor. Sonra 54 fotoyu ölçtüm: 14/54, kımıldamadı. AMA kritik olan şu — yakası olan 9 fotonun HEPSİNDE 'yaka' artık engel listesinden çıktı. Her biri BAŞKA bir kümelenmiş öğeyle tıkalı: peplum, büzgülü roba, çift-sıra düğme, drawstring kol, pinafore katmanı. Bu sette 'tek eksiği yaka olan' foto yok. Ders: bir kabiliyet gerçek olabilir, kanıtlı olabilir, canlı olabilir ve yine de o setin son boşluğuna denk gelmeyebilir — ve sen sahte bir artış uydurmak yerine bunu net söylersin.
+
+**Görsel:** beş yaka silüeti (dik / mandarin / yatık / bebe / gömlek), her birinin boyun kenarında '= oyuk, 0.00mm' etiketi; altta '14/54 → 14/54' sabit, yanında '9 collar foto: yaka artık engel DEĞİL'. Alt yazı: "shipped a whole collar family, moved zero — and I can tell you exactly why".
+**Format:** reel

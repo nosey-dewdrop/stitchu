@@ -24,6 +24,11 @@ const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
   { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)']], for: (s) => s.garment !== 'skirt' },
   { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  // Loop 7/8: collar family — a separate collar piece, neck edge trued to the
+  // neckline. Only for non-skirt, non-halter garments (a halter has no neckline
+  // band to carry a collar).
+  { key: 'collarType', label: 'collar', trLabel: 'yaka biçimi', options: [['none', 'none', 'yok'], ['stand', 'stand', 'dik'], ['mock', 'mock / mandarin', 'mandarin'], ['flat', 'flat', 'yatık'], ['peterPan', 'peter pan', 'bebe'], ['shirt', 'shirt', 'gömlek']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  { key: 'collarEdge', label: 'collar edge', trLabel: 'yaka kenarı', options: [['round', 'round', 'yuvarlak'], ['pointed', 'pointed', 'sivri'], ['scallop', 'scalloped', 'fisto']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (s.collarType === 'flat' || s.collarType === 'peterPan') },
   // A halter has no shoulders to hang a sleeve from — the pickers hide.
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
@@ -45,7 +50,7 @@ const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
-  sleeveCap: 'plain',
+  sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
 };
 
 // Map the vision's closure / backDetail to a drawable tie placement (Loop 4b).
@@ -79,6 +84,41 @@ function pickTiePlacement(seen) {
     return 'backWaistBow';
   }
   return 'none';
+}
+
+// Map the vision's collar + oov terms to a drawable collar (Loop 7/8). The engine
+// draws a SEPARATE collar piece, neck edge trued to the neckline, for the stand/
+// mock/flat/peter-pan/shirt family. A special finish the engine does NOT draft —
+// a bias-bound neckline (a bound raw edge, no piece), a notched/sailor tailored
+// collar — returns {type:'none'} and stays in the honesty layer. Returns
+// { type: spec collarType string, edge: collarEdge string } or null.
+function pickCollar(seen) {
+  const words = [
+    seen.collar && seen.collar.type, seen.collar && seen.collar.name,
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!words.includes('collar') && !(seen.collar && seen.collar.type &&
+      seen.collar.type !== 'none')) return null;
+  // Special finishes we do NOT draft — stay honest.
+  if (words.includes('bias-bound') || words.includes('bias bound') ||
+      words.includes('bound neckline') || words.includes('notch') ||
+      words.includes('sailor') || words.includes('lapel')) return null;
+  // Outer-edge shape.
+  let edge = 'round';
+  if (words.includes('scallop')) edge = 'scallop';
+  else if (words.includes('point')) edge = 'pointed';
+  // Collar family.
+  let type = null;
+  if (words.includes('peter pan') || words.includes('peter-pan') || words.includes('bebe'))
+    type = 'peterPan';
+  else if (words.includes('mock') || words.includes('mandarin')) type = 'mock';
+  else if (words.includes('stand')) type = 'stand';
+  else if (words.includes('shirt') || words.includes('gömlek')) type = 'shirt';
+  else if (words.includes('scallop')) type = 'peterPan';   // scallop = a flat collar edge
+  else if (words.includes('rounded') || words.includes('round')) type = 'peterPan';
+  else if (words.includes('flat') || words.includes('collar')) type = 'flat';
+  if (!type) return null;
+  return { type, edge };
 }
 
 function el(tag, className, text) {
@@ -356,6 +396,13 @@ function showSpec() {
         // shirring) is NOT this — that stays honest. Map the vision closure/back
         // detail to a tie placement; leave it for the honesty layer otherwise.
         spec.tieClosure = pickTiePlacement(seen);
+        // Collar family (yaka, Loop 7/8): the engine now draws a SEPARATE collar
+        // piece (stand/mock/flat/peter-pan/shirt), neck edge trued to the
+        // neckline. A bias-bound / notched / sailor finish is NOT drafted and
+        // stays honest (pickCollar returns null).
+        const collar = pickCollar(seen);
+        if (collar) { spec.collarType = collar.type; spec.collarEdge = collar.edge; }
+        else { spec.collarType = 'none'; spec.collarEdge = 'round'; }
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -380,6 +427,10 @@ function showSpec() {
           // cap + crown gather), so the honesty layer must NOT list it as missing.
           // A cap sleeve / drawstring-gathered sleeve stays honest (still true).
           sleeveCapDrawn: !!(spec.sleeveCap && spec.sleeveCap !== 'plain'),
+          // Loop 7/8: a stand/mock/flat/peter-pan/shirt collar is now DRAWN as a
+          // real piece, so the honesty layer must NOT list it as missing. A
+          // bias-bound / notched / sailor finish stays honest (collarType none).
+          collarDrawn: !!(spec.collarType && spec.collarType !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();

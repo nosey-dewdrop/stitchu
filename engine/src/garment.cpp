@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "collar.hpp"
 #include "keyhole.hpp"
 #include "placket.hpp"
 #include "ruffle.hpp"
@@ -391,6 +392,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // simple applied ties are drawn — drawstring-gathered types stay honest.
     if (spec.tieClosure != static_cast<int>(TiePlacement::None)) {
         TieBlock::apply(pattern, static_cast<TiePlacement>(spec.tieClosure), m.waistMM());
+    }
+    // Opt-in collar family (yaka, Loop 7/8): stand/mock band or flat/peter-pan/
+    // shirt collar as a SEPARATE piece, neck edge trued to the neckline. Post-pass
+    // on the finished draft, so the base is byte-identical with it off
+    // (collarType == None). Bias-bound/knit/grown-on bands stay honest (missing.js).
+    if (spec.collarType != static_cast<int>(CollarType::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        CollarBlock::apply(pattern, static_cast<CollarType>(spec.collarType),
+                           static_cast<CollarEdge>(spec.collarEdge));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire
