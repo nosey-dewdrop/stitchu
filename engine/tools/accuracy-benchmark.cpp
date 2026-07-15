@@ -99,6 +99,27 @@ int main() {
 
     std::printf("\nsleeve cap ease outside the 1-9%% sewable window: %d of %d (%.1f%%)\n",
                 capOutOfWindow, drafts, drafts ? 100.0 * capOutOfWindow / drafts : 0);
+
+    // Proportional integrity — the survey's #1 fit complaint is that graded
+    // patterns get "giant armholes and wide shoulders" at larger sizes because
+    // they SCALE a small block. stitchu drafts each body from scratch, so along a
+    // realistic size run (every measurement grows together) the armhole depth
+    // should stay a near-constant share of the back length, not balloon with the
+    // bust. Report that share across a size-6-to-24 progression.
+    std::printf("\nproportional integrity (armhole depth / back length across a realistic size run):\n");
+    struct Size { double bu, sh, ne, bl; };
+    const Size run[] = {{80,36,33,38},{92,39,36,41},{104,42,39,44},{116,45,42,47},{128,47,44,49},{140,49,46,51}};
+    double minShare = 1e9, maxShare = -1e9;
+    for (const Size& z : run) {
+        const BodyMeasurementsSnapshot m{z.bu, z.bu * 0.8, z.bu * 1.08, z.sh, z.bl, 58, z.ne};
+        const BodiceDraft bod = BodiceBlock::draft(m, {});
+        const double share = bod.armholeDepth / (z.bl * 10);
+        minShare = std::min(minShare, share); maxShare = std::max(maxShare, share);
+        std::printf("  bust %.0f cm -> armhole depth %.0f mm = %.2f x back length\n", z.bu, bod.armholeDepth, share);
+    }
+    std::printf("  share range %.2f-%.2f: %s (a scaled block would balloon this well past 0.6)\n",
+                minShare, maxShare, (maxShare - minShare) < 0.12 ? "STABLE — no grading distortion"
+                                                                  : "drifts — investigate");
     std::printf("\nverdict: waist lands within %.1f mm on average (worst %.1f mm); every princess\n"
                 "seam pair matches to %.2f mm and side seams to %.2f mm, so the pieces sew together;\n"
                 "%s\n",
