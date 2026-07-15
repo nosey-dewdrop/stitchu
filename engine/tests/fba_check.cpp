@@ -46,6 +46,26 @@ int main() {
             std::to_string((int)fullBack) + " < " + std::to_string((int)assumedBack) + ")");
     }
 
+    // (2b) The FRONT half of a real FBA: a bigger cup gets a wider front, a longer
+    // front (fabric over the bust) and a bigger bust dart than a small cup at the
+    // same bust — the shaping that stops the front riding up and the neck gaping.
+    {
+        BodyMeasurementsSnapshot big{122, 80, 128, 42, 42, 60, 38};   big.upperBustCM = 100;
+        BodyMeasurementsSnapshot small{122, 80, 128, 42, 42, 60, 38}; small.upperBustCM = 116;
+        const BodiceDraft b = BodiceBlock::draft(big, {});
+        const BodiceDraft s = BodiceBlock::draft(small, {});
+        check(b.frontChestWidth > s.frontChestWidth, "bigger cup: wider front bust");
+        check(b.frontLength > s.frontLength, "bigger cup: longer front (fabric over the bust)");
+    }
+
+    // (2c) Guard: an upper bust >= the full bust (a typo/swap) is clamped so the
+    // back never comes out wider than the front.
+    {
+        BodyMeasurementsSnapshot typo{100, 78, 104, 40, 44, 58, 36}; typo.upperBustCM = 110;
+        const BodiceDraft d = BodiceBlock::draft(typo, {});
+        check(d.backChestWidth < d.frontChestWidth, "upperBust >= bust clamped (back not wider than front)");
+    }
+
     // (3) FBA bodies across necklines validate clean.
     int clean = 0, total = 0;
     for (double bu = 100; bu <= 150; bu += 10)

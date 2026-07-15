@@ -197,15 +197,20 @@ std::vector<ValidationIssue> bodiceIssues(const GarmentSpec& spec, const BodiceD
 
     const double chestEase = BodiceBlock::chestEaseFor(spec.fabric);
     const double waistEase = BodiceBlock::waistEaseFor(spec.fabric);
-    // Mirror the drafter's frame girth: the real upper bust when given (full-bust
-    // adjustment), else the bust-minus-cup assumption.
-    const double frameGirth = m.upperBustMM() > 0 ? m.upperBustMM()
-                                                  : (m.bustMM() - BodiceBlock::underbustOffset);
+    // Mirror the drafter's frame girth EXACTLY (incl. the clamp): the real upper
+    // bust when given (full-bust adjustment), else the bust-minus-cup assumption.
+    const double rawFrame = m.upperBustMM() > 0 ? m.upperBustMM()
+                                                : (m.bustMM() - BodiceBlock::underbustOffset);
+    const double frameGirth = std::min(rawFrame, m.bustMM() - 20.0);
     const double underbust = std::max(frameGirth, m.waistMM());
     // Empire bodices suppress toward the underbust girth, not the waist.
     const bool empire = spec.garment == GarmentType::Dress && spec.waistline == Waistline::Empire;
     const double girth = empire ? underbust : m.waistMM();
-    const double expectedFrontChest = (m.bustMM() / 4) * (1 + chestEase);
+    // The full-bust adjustment adds a share of the cup fullness to the front, so
+    // the expected front chest must include it (else it reads as eaten ease).
+    const double cupFullness = std::max(0.0, m.bustMM() - underbust);
+    const double frontCupAdd = m.upperBustMM() > 0 ? cupFullness * 0.35 : 0.0;
+    const double expectedFrontChest = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd;
     const double expectedBackChest = (underbust / 4) * (1 + chestEase);
     if (std::fabs(bodice.frontChestWidth - expectedFrontChest) > chestWidthTolerance) {
         issues.push_back({"chest", "Bodice Front",

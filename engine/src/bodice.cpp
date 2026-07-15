@@ -431,9 +431,18 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // measurement when the user gave it — that's the full-bust adjustment. Only
     // fall back to the bust-minus-cup-offset assumption when it's absent, so an
     // existing 7-measurement draft is unchanged.
-    const double frameGirth = m.upperBustMM() > 0 ? m.upperBustMM()
-                                                  : (m.bustMM() - underbustOffset);
+    // The upper bust is the frame ABOVE the bust, so it must be smaller than the
+    // full bust. Clamp it (a typo entering the full bust here would otherwise make
+    // the back wider than the front); keep at least a 20 mm cup so a near-equal
+    // value doesn't degenerate to a no-cup body.
+    const double rawFrame = m.upperBustMM() > 0 ? m.upperBustMM()
+                                                : (m.bustMM() - underbustOffset);
+    const double frameGirth = std::min(rawFrame, m.bustMM() - 20.0);
     const double underbust = std::max(frameGirth, m.waistMM());
+    // Cup fullness = how far the bust projects past the ribcage frame. Drives the
+    // front-only full-bust adjustment below (extra front width + a bigger bust
+    // dart + a little front length) so a fuller bust does not ride up and gape.
+    const double cupFullness = std::max(0.0, m.bustMM() - underbust); // mm of extra bust girth
 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
     // The torso-only armhole depth (before any arm deepening). The empire seam is
@@ -467,7 +476,12 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     if (empire) armholeDepthCap = std::min(armholeDepthCap, seamSideY - 8);
     armholeY = std::min(armholeDepthCap, std::max(armholeY, armholeDepthForArm));
 
-    const double frontSeamCenterY = empire ? seamSideY + empireBalanceDrop : backLength + frontBalanceDrop;
+    // A fuller bust also needs a little extra FRONT LENGTH at center front — the
+    // fabric that goes up and over the bust — or the front rides up and pulls the
+    // neckline open. Add a share of the cup fullness to the front balance drop.
+    const double cupFrontDrop = m.upperBustMM() > 0 ? std::max(0.0, m.bustMM() - underbust) * 0.15 : 0.0;
+    const double frontSeamCenterY = empire ? seamSideY + empireBalanceDrop
+                                           : backLength + frontBalanceDrop + cupFrontDrop;
     const double girth = empire ? underbust : m.waistMM();
 
     const double widthMultiplier = neckWidthMultiplier(neckline);
@@ -518,7 +532,13 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double backWaistlineWidth = cbTakeIn + backWaistTarget + backDart;
 
     // Front waist numbers, needed EARLY for the side-seam truing below.
-    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase);
+    // Front bust width. On a full bust the girth is NOT evenly split front/back —
+    // the bust projects forward, so the front quarter needs extra. Add a share of
+    // the cup fullness to the front (it flows into a bigger bust dart below, which
+    // is where a full-bust adjustment puts the extra: dart intake, not a wider
+    // silhouette). Only engages when the real upper bust was given.
+    const double frontCupAdd = m.upperBustMM() > 0 ? cupFullness * 0.35 : 0.0;
+    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd;
     const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
     const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
     // Up to 15mm of the reduction slants the side seam in at the WAIST (never

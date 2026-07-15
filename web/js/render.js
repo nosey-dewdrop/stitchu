@@ -1,9 +1,9 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=42';
-import { getLang, t } from './i18n.js?v=42';
-import { GUIDE_TR } from './guide-tr.js?v=42';
-import { GLOSSARY } from './glossary.js?v=42';
+import { fabricAdvice } from './fabrics.js?v=43';
+import { getLang, t } from './i18n.js?v=43';
+import { GUIDE_TR } from './guide-tr.js?v=43';
+import { GLOSSARY } from './glossary.js?v=43';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip) — a beginner can learn a word without leaving
