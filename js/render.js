@@ -1,7 +1,8 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=32';
-import { getLang, t } from './i18n.js?v=32';
+import { fabricAdvice } from './fabrics.js?v=33';
+import { getLang, t } from './i18n.js?v=33';
+import { GUIDE_TR } from './guide-tr.js?v=33';
 
 const PREVIEW_SCALE = 0.28;
 
@@ -131,7 +132,11 @@ export function renderResult(container, result) {
   guideTitle.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
   guideTitle.textContent = t('result.guide');
   container.appendChild(guideTitle);
-  if (getLang() === 'tr') {
+  const tr = getLang() === 'tr';
+  // Any step without a Turkish translation yet falls back to English, and we
+  // only show the "some steps still English" note when that actually happens.
+  const untranslated = tr && p.guideSteps.some((s) => !GUIDE_TR[s]);
+  if (untranslated) {
     const note = document.createElement('p');
     note.style.cssText = 'font-size:13px;color:#8a8a8a;margin-top:6px';
     note.textContent = t('result.guidetrnote');
@@ -141,7 +146,7 @@ export function renderResult(container, result) {
   ol.className = 'guide-list';
   for (const step of p.guideSteps) {
     const li = document.createElement('li');
-    li.textContent = step;
+    li.textContent = tr ? (GUIDE_TR[step] || step) : step;
     ol.appendChild(li);
   }
   container.appendChild(ol);

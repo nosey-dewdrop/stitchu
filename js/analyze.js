@@ -1,6 +1,6 @@
 // Photo -> garment spec via the Worker (Claude vision behind our proxy).
 // Downscales client-side so no full-resolution photo ever leaves the device.
-import { BACKEND_URL } from './config.js?v=32';
+import { BACKEND_URL } from './config.js?v=33';
 
 export const photoAvailable = () => Boolean(BACKEND_URL);
 
