@@ -28,6 +28,7 @@ export async function grade(spec, fromLabel, toLabel) {
     (spec.ruffle ?? 'none') !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
     spec.keyhole === 'keyhole',
     fromLabel, toLabel,
+    spec.frontPlacket === true,
   );
   return JSON.parse(json);
 }
@@ -44,6 +45,7 @@ export async function draft(spec, measurements) {
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
     measurements.backLength, measurements.armLength, measurements.neck,
     measurements.upperBust || 0, // optional full-bust adjustment
+    spec.frontPlacket === true,  // Loop 3: front button placket
   );
   return JSON.parse(json);
 }
