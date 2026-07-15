@@ -220,8 +220,14 @@ std::string gradeJSON(
     std::string out = R"({"sizes":[)";
     for (size_t i = lo; i <= hi && i < chart.size(); ++i) {
         if (i > lo) out += ",";
-        out += R"({"size":")" + escape(chart[i].label) + R"(","draft":)";
-        out += patternJSON(spec, chart[i].body);
+        const auto& b = chart[i].body;
+        out += R"({"size":")" + escape(chart[i].label) + "\"";
+        // The standard body for this size (cm) — the buyer picks their size by
+        // their own measurements, so the size run must publish this chart.
+        out += R"(,"body":{"bust":)" + num(b.bustCM) + R"(,"waist":)" + num(b.waistCM) +
+               R"(,"hip":)" + num(b.hipCM) + "}";
+        out += R"(,"draft":)";
+        out += patternJSON(spec, b);
         out += "}";
     }
     out += "]}";

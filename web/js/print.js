@@ -4,8 +4,8 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=45';
-import { getLang } from './i18n.js?v=45';
+import { pathD, bounds } from './render.js?v=46';
+import { getLang } from './i18n.js?v=46';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -53,9 +53,16 @@ const P = {
     tr: `Tek tasarım, şu bedenlere serilendi: ${labels}. Sadece ihtiyacın olan bedenleri yazdır.`,
   }),
   gradeAssemble: {
-    en: 'Each size starts with its own cover sheet and calibration square. Keep printer scale at 100% and verify the 3 cm square on every size before cutting.',
-    tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula.',
+    en: 'Each size starts with its own cover sheet and calibration square. Keep printer scale at 100% and verify the 3 cm square on every size before cutting. Every interior sheet is stamped with its size — cut only the sheets for the size you need.',
+    tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula. Her iç sayfada bedeni yazılıdır — sadece ihtiyacın olan bedenin sayfalarını kes.',
   },
+  gradeChartTitle: {
+    en: 'Size chart — pick your size by your own measurements (standard body, cm):',
+    tr: 'Beden tablosu — kendi ölçünle bedenini seç (standart vücut, cm):',
+  },
+  chartSize: { en: 'size', tr: 'beden' },
+  chartWaist: { en: 'waist', tr: 'bel' },
+  chartFabric: { en: 'fabric', tr: 'kumaş' },
 };
 const L = () => (getLang() === 'tr' ? 'tr' : 'en');
 
@@ -260,6 +267,10 @@ function buildPrintPages(result, root, sizeLabel) {
     const page = el('div', 'print-page');
     page.appendChild(el('div', 'print-label',
       P.sheet(titleGarment, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
+    // In a graded run every sheet must SHOUT its size on the artwork itself: if
+    // the label strip is trimmed or the sheets get shuffled, a buyer must never
+    // cut EU44 sheets thinking they are EU38 (that is fabric on the floor).
+    if (sizeLabel) page.appendChild(el('div', 'print-size-stamp', sizeLabel));
     page.appendChild(sheetSVG(layout, col, row));
     root.appendChild(page);
   }
@@ -274,11 +285,30 @@ export function printGrade(sizes, garmentLabel) {
   const cover = el('div', 'print-page');
   cover.appendChild(el('div', 'print-title', P.gradeCover(garmentLabel, sizes.length)[lang]));
   cover.appendChild(el('div', 'print-sub', P.gradeIntro(sizes.map((s) => s.size).join(', '))[lang]));
-  const map = el('ul', 'print-map');
-  for (const s of sizes) {
-    map.appendChild(el('li', '', `${s.size} — ${s.draft.pattern.pieces.length} ${lang === 'tr' ? 'parça' : 'pieces'}, ${s.draft.pattern.fabricMeters140} m`));
+
+  // Size chart: the buyer picks their size by their OWN body, so publish the
+  // standard bust/waist/hip (cm) for every size next to its fabric estimate.
+  cover.appendChild(el('div', 'print-sub', P.gradeChartTitle[lang]));
+  const table = el('table', 'print-sizechart');
+  const head = el('tr', '');
+  for (const h of [P.chartSize[lang], 'bust', P.chartWaist[lang], 'hip', P.chartFabric[lang]]) {
+    head.appendChild(el('th', '', h));
   }
-  cover.appendChild(map);
+  table.appendChild(head);
+  for (const s of sizes) {
+    const tr = el('tr', '');
+    const b = s.body || {};
+    const cells = [
+      s.size,
+      b.bust != null ? `${b.bust} cm` : '—',
+      b.waist != null ? `${b.waist} cm` : '—',
+      b.hip != null ? `${b.hip} cm` : '—',
+      `${s.draft.pattern.fabricMeters140} m`,
+    ];
+    for (const c of cells) tr.appendChild(el('td', '', c));
+    table.appendChild(tr);
+  }
+  cover.appendChild(table);
   cover.appendChild(el('div', 'print-sub', P.gradeAssemble[lang]));
   cover.appendChild(calibrationSVG());
   root.appendChild(cover);
