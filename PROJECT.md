@@ -494,3 +494,15 @@ Damla worried: they spent millions, we can't. Reverse is true:
   went — stitchu does NOT need that. User wants a pattern for THEIR OWN body, not "which RTW size";
   a rough-correct scan + a user confirm (or one tape check) beats hand-entry. Just needs to be BETTER
   THAN typing 7 numbers, not perfect.
+
+## PRECISION DECISION + NIGHT LOOP (2026-07-15, Damla: "both, but in order" + "start the loop, be precise now")
+- Precision order: (1) PATTERN correct first (engine, law-aligned + fits), scan can be rough+confirm;
+  (2) raise SCAN precision months later while the pattern already sits. Both, sequenced.
+- NIGHT LOOP started (separate window): a MEASURE-ONLY audit — compares every bodice formula/constant
+  to Aldrich + Armstrong, outputs a deviation table to reports/2026-07-16-stitchu-aldrich-armstrong-sapma.md.
+  RULES: does NOT modify the engine, does NOT deploy/commit/push, does NOT fabricate reference values
+  (marks "DOĞRULANMALI" when unsure), STOPS when bodice measures are all tabled (task-bound, not clock).
+  This is what "precise" means tonight = gather PROOF first, fix later with Damla's eyes. Avoids the
+  gymgyme trap (won't grow an unproven engine; measures where it stands vs the law first).
+- Good news from reading code: FORMULAS.md already traces constants to FreeSewing/Müller&Sohn/ALDRICH —
+  written but never MEASURED against the law. The loop measures the gap.
