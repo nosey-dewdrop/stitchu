@@ -4,8 +4,8 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=46';
-import { getLang } from './i18n.js?v=46';
+import { pathD, bounds } from './render.js?v=47';
+import { getLang } from './i18n.js?v=47';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -63,7 +63,37 @@ const P = {
   chartSize: { en: 'size', tr: 'beden' },
   chartWaist: { en: 'waist', tr: 'bel' },
   chartFabric: { en: 'fabric', tr: 'kumaş' },
+  nestedCover: (g, n) => ({
+    en: `${g} — nested size run, ${n} sizes on one set of sheets`,
+    tr: `${g} — iç içe beden serisi, ${n} beden tek sayfa setinde`,
+  }),
+  nestedIntro: {
+    en: 'Every size is drawn ON TOP of the others, each in its own line colour. Print once, then trace the ONE colour for the size you need onto your fabric or a copy — no separate print per size.',
+    tr: 'Her beden diğerlerinin ÜZERİNE, kendi çizgi renginde çizildi. Bir kez yazdır, sonra ihtiyacın olan bedenin TEK rengini kumaşına ya da bir kopyaya geçir — her beden için ayrı baskı yok.',
+  },
+  nestedLegend: { en: 'line colour → size', tr: 'çizgi rengi → beden' },
+  nestedAssemble: (n, cols) => ({
+    en: `${n} sheets, grid ${cols} across (A1 top-left). Tape edge to edge matching the ticks. PRINTER: scale 100%, headers/footers OFF, verify the 3 cm square. Then follow ONE colour per size.`,
+    tr: `${n} sayfa, ${cols} sütunlu ızgara (A1 sol üst). İşaretleri eşleştirerek kenar kenara bantla. YAZICI: ölçek %100, üstbilgi/altbilgi KAPALI, 3 cm kareyi doğrula. Sonra her beden için TEK rengi takip et.`,
+  }),
 };
+
+// Distinct line colours for nested sizes (vişne brand colour leads). Up to 10
+// EU sizes; the palette is colour-blind-aware (no red/green adjacency) and
+// pairs a dash pattern with each so a mono printer still separates them.
+const NEST_STYLES = [
+  { c: '#8f2038', d: '' },        // vişne (brand) — solid
+  { c: '#1f6feb', d: '5 3' },     // blue
+  { c: '#c26b00', d: '' },        // amber — solid
+  { c: '#5a2a82', d: '4 3' },     // purple
+  { c: '#0a7d6b', d: '' },        // teal-green — solid
+  { c: '#b02a6f', d: '6 3' },     // magenta
+  { c: '#3a5a1f', d: '' },        // olive — solid
+  { c: '#2b4a7a', d: '2 3' },     // navy
+  { c: '#8a5a00', d: '' },        // brown — solid
+  { c: '#444444', d: '3 2' },     // grey
+];
+const nestStyle = (i) => NEST_STYLES[i % NEST_STYLES.length];
 const L = () => (getLang() === 'tr' ? 'tr' : 'en');
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
@@ -323,6 +353,144 @@ export function printGrade(sizes, garmentLabel) {
     root.remove();
     window.removeEventListener('afterprint', cleanup);
   };
+  window.addEventListener('afterprint', cleanup);
+  window.print();
+}
+
+// The cutting outline of a piece (allowance-included line if present, else the
+// sewing line) — nested print shows outlines only, one colour per size.
+function outlineD(piece) {
+  const cmds = (piece.cutLine || []).length ? piece.cutLine : piece.commands;
+  return pathD(cmds, 1);
+}
+
+// One nested A4 sheet: the SAME viewBox window as a normal sheet, but every
+// size's same-named piece is drawn over the largest size's placement, each in
+// its own colour. `slots` are the largest size's placed dims; each slot knows
+// which piece (by name) to pull from every size and how to register it.
+function nestedSheetSVG(slots, sizes, styleByLabel, col, row) {
+  const x0 = col * PAGE_W;
+  const y0 = row * PAGE_H;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', `${PAGE_W}mm`);
+  svg.setAttribute('height', `${PAGE_H}mm`);
+  svg.setAttribute('viewBox', `${x0} ${y0} ${PAGE_W} ${PAGE_H}`);
+
+  let inner = '';
+  for (const d of slots) {
+    if (!(d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) continue;
+    // Draw largest -> smallest so smaller sizes sit visibly on top.
+    for (let si = sizes.length - 1; si >= 0; si--) {
+      const piece = sizes[si].byName.get(d.p.name);
+      if (!piece) continue;
+      const pb = bounds(piece);
+      // Register every size at the SAME point: align each piece's top-left to
+      // the largest's placed top-left (d.ox/d.oy translate largest-local ->
+      // strip; subtract this size's own minX/minY so its corner lands there).
+      const tx = (d.b.minX + d.ox) - pb.minX;
+      const ty = (d.b.minY + d.oy) - pb.minY;
+      const st = styleByLabel.get(sizes[si].size);
+      const dash = st.d ? ` stroke-dasharray="${st.d}"` : '';
+      inner += `<g transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)})">` +
+        `<path d="${outlineD(piece)}" fill="none" stroke="${st.c}" stroke-width="0.5"${dash}/></g>`;
+    }
+    // Piece name once, at the largest placement corner.
+    inner += `<text x="${(d.b.minX + d.ox + 6).toFixed(1)}" y="${(d.b.minY + d.oy + 14).toFixed(1)}" font-family="Helvetica" font-size="7" fill="#555">${d.p.name}</text>`;
+  }
+  inner += `<text x="${x0 + 4}" y="${y0 + PAGE_H - 3}" font-family="Helvetica" font-size="4" fill="#999">sheet ${String.fromCharCode(65 + row)}${col + 1}</text>`;
+  const t = 6;
+  inner += `<line x1="${x0}" y1="${y0 + PAGE_H / 2}" x2="${x0 + t}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
+           `<line x1="${x0 + PAGE_W - t}" y1="${y0 + PAGE_H / 2}" x2="${x0 + PAGE_W}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
+           `<line x1="${x0 + PAGE_W / 2}" y1="${y0}" x2="${x0 + PAGE_W / 2}" y2="${y0 + t}" stroke="#111" stroke-width="0.4"/>` +
+           `<line x1="${x0 + PAGE_W / 2}" y1="${y0 + PAGE_H - t}" x2="${x0 + PAGE_W / 2}" y2="${y0 + PAGE_H}" stroke="#111" stroke-width="0.4"/>`;
+  svg.innerHTML = inner;
+  return svg;
+}
+
+// Nested/stacked size run: every size overlaid on ONE set of sheets, each in
+// its own line colour — the industry-standard multi-size PDF. Print once, trace
+// the one colour you need. `sizes` = [{size, body, draft:{pattern,issues}}].
+export function printGradeNested(sizes, garmentLabel) {
+  const root = el('div', '');
+  root.id = 'print-root';
+  const lang = L();
+
+  // Index each size's paper pieces by name; the largest size defines the
+  // envelope the sheets are packed to (it contains every smaller size).
+  const prepared = sizes.map((s) => {
+    const paper = s.draft.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const byName = new Map(paper.map((p) => [p.name, p]));
+    return { size: s.size, body: s.body, pattern: s.draft.pattern, paper, byName };
+  });
+  // Largest = last size (grade is monotonic, EU34<...<EU52); guard by area.
+  const area = (pr) => pr.paper.reduce((a, p) => {
+    const b = bounds(p); return a + (b.maxX - b.minX) * (b.maxY - b.minY);
+  }, 0);
+  const largest = prepared.reduce((m, pr) => (area(pr) > area(m) ? pr : m), prepared[0]);
+  const layout = packPieces(largest.paper);
+  const styleByLabel = new Map(prepared.map((pr, i) => [pr.size, nestStyle(i)]));
+
+  const rows = Math.ceil(layout.stripH / PAGE_H);
+  const sheets = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < layout.cols; col++) {
+      const x0 = col * PAGE_W, y0 = row * PAGE_H;
+      if (layout.placed.some((d) =>
+        d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) sheets.push({ col, row });
+    }
+  }
+
+  // ---- cover ----
+  const cover = el('div', 'print-page');
+  cover.appendChild(el('div', 'print-title', P.nestedCover(garmentLabel, prepared.length)[lang]));
+  cover.appendChild(el('div', 'print-sub', P.nestedIntro[lang]));
+
+  // Legend: colour swatch -> size.
+  cover.appendChild(el('div', 'print-sub', P.nestedLegend[lang]));
+  const legend = el('div', 'print-nest-legend');
+  for (const pr of prepared) {
+    const st = styleByLabel.get(pr.size);
+    const item = el('div', 'nest-legend-item');
+    const sw = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    sw.setAttribute('width', '30'); sw.setAttribute('height', '10'); sw.setAttribute('viewBox', '0 0 30 10');
+    sw.innerHTML = `<line x1="1" y1="5" x2="29" y2="5" stroke="${st.c}" stroke-width="1.6"${st.d ? ` stroke-dasharray="${st.d}"` : ''}/>`;
+    item.appendChild(sw);
+    item.appendChild(el('span', '', pr.size));
+    legend.appendChild(item);
+  }
+  cover.appendChild(legend);
+
+  // Size chart (same as the sequential run — the buyer picks by their body).
+  cover.appendChild(el('div', 'print-sub', P.gradeChartTitle[lang]));
+  const table = el('table', 'print-sizechart');
+  const head = el('tr', '');
+  for (const h of [P.chartSize[lang], 'bust', P.chartWaist[lang], 'hip', P.chartFabric[lang]]) head.appendChild(el('th', '', h));
+  table.appendChild(head);
+  for (const pr of prepared) {
+    const tr = el('tr', '');
+    const b = pr.body || {};
+    const cells = [pr.size, b.bust != null ? `${b.bust} cm` : '—', b.waist != null ? `${b.waist} cm` : '—',
+      b.hip != null ? `${b.hip} cm` : '—', `${pr.pattern.fabricMeters140} m`];
+    for (const c of cells) tr.appendChild(el('td', '', c));
+    table.appendChild(tr);
+  }
+  cover.appendChild(table);
+  cover.appendChild(el('div', 'print-sub', P.nestedAssemble(sheets.length, layout.cols)[lang]));
+  cover.appendChild(calibrationSVG());
+  root.appendChild(cover);
+
+  // ---- nested sheets ----
+  const sizesForSheet = prepared; // largest..smallest handled inside the sheet
+  for (const { col, row } of sheets) {
+    const page = el('div', 'print-page');
+    page.appendChild(el('div', 'print-label',
+      P.sheet(garmentLabel, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
+    page.appendChild(nestedSheetSVG(layout.placed, sizesForSheet, styleByLabel, col, row));
+    root.appendChild(page);
+  }
+
+  document.body.appendChild(root);
+  const cleanup = () => { root.remove(); window.removeEventListener('afterprint', cleanup); };
   window.addEventListener('afterprint', cleanup);
   window.print();
 }

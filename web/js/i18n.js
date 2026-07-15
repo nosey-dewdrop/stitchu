@@ -77,6 +77,8 @@ export const STRINGS = {
   'create.grade.done.some': { en: '{n} sizes drafted ({dropped} skipped as unsewable at that size). Print dialog has the run.', tr: '{n} beden çizildi ({dropped} beden o ölçüde dikilemez diye atlandı). Yazdırma penceresinde seri var.' },
   'create.grade.none': { en: 'This design cannot be sewn at any size in that range — try a narrower range or a simpler spec.', tr: 'Bu tasarım o aralıkta hiçbir bedende dikilemiyor — daha dar bir aralık ya da daha sade bir seçim dene.' },
   'create.grade.error': { en: 'Grading failed. Refresh and try again.', tr: 'Serileme başarısız. Sayfayı yenileyip tekrar dene.' },
+  'create.grade.layout.nested': { en: 'Nested (all sizes on one set of sheets)', tr: 'İç içe (tüm bedenler tek sayfa setinde)' },
+  'create.grade.layout.per': { en: 'Per size (each size its own sheets)', tr: 'Beden başına (her beden kendi sayfası)' },
 
   // result labels
   'result.pieces': { en: 'pieces', tr: 'parçalar' },
