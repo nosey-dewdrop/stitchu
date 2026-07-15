@@ -386,6 +386,17 @@ S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi do�
 **Görsel:** solda fotoğraf (düğmeli bluz), sağda kalıp + altında vişne kart: "gördüm: düğme patı — verilen en yakın: düz dikişli açıklık, düğmeleri elle işaretle". Alt yazı: "sessiz fallback öldü".
 **Format:** reel
 
+## Reel — motorum ilk kez düğme patını ÇİZDİ (loop 03)
+
+**Hook (ilk 2 sn):** "Geçen hafta ürünüm 'düğme patını çizemiyorum' diyordu. Bugün çizdi — ve tek bir eski kalıbın biti bile oynamadı."
+
+**Anlatı (~45 sn):** Motorum bir bluzun düğme patını çizemiyordu, dürüstçe "bunu elle ekle" diyordu. Bu oturumda gerçekten çizmeyi öğretmek istedim. Ama önce ARAŞTIRMA: Aldrich ve Armstrong'un kalıp kitaplarında düğme patı nasıl çıkar? Öğrendiğim: pat genişliği düğme çapı kadardır; couture bir bluz "grown-on" yapar yani pat ön parçadan büyür ve içeri katlanır — Zara'nın diktiği ayrı bant değil. Düğmeler tam ortada, orta-ön çizgisinde durur; ilikler oradan 3 mm dışa kayar; ve GÖĞÜS hizasına ZORUNLU bir düğme konur yoksa bluz açılır. Kadın giyimi sağ-üstte-sol kapanır. Bunları motora formül olarak yazdım: ön parçanın orta-ön kenarını 18 mm dışa taşıdım, katlama çizgisini işaretledim, düğmeleri orta-ön'e, ilikleri 3 mm dışa dizdim, göğüs hizasına bir düğme kilitledim. Kritik karar: bunu keyhole'da yaptığım gibi bir "post-pass" yaptım — motorun ana çizimi bittikten SONRA çalışan opsiyonel bir ek. Kapalıyken tek bir sayı değişmiyor: golden testim 23 bin satırda 0.000000 mm fark verdi. Ve SADECE ön parçayı büyüttüm, yakaya dokunmadım — çünkü dokunsaydım yaka pervazının ölçüsü tutmaz, testim patlardı. Ders: yeni bir özellik eklemek, eskisinin tek milimetresini bozmadan olmalı; "opsiyonel post-pass" mimarisi bunu garantiliyor.
+
+**Anlatı terim notu:** "grown-on pat" = pat ayrı bant değil, ön parçanın kendisi uzatılıp içeri katlanır. "post-pass" = ana çizim bittikten sonra çalışan, kapatılabilen ek adım; kapalıyken çıktı bit bit aynı kalır. "golden test" = eski çıktının donmuş kopyası; yeni kod onu 0.000000 mm oynatmamalı.
+
+**Görsel:** solda düğmeli bluz fotoğrafı, sağda kalıp — ön parçada dışa taşan pat, ortada kesikli katlama çizgisi, düğme çaprazları ve yanlarında ilik çizgileri; göğüs hizasındaki düğme kırmızı halka ile işaretli. Alt yazı: "ilk çizim: düğme patı. golden: 0.000000 mm".
+**Format:** reel
+
 ## Reel — kendi güvenlik duvarıma takıldım
 
 **Hook (ilk 2 sn):** "Testim 19 dakika sürdü. Suçlu: kendi yazdığım güvenlik önlemi."

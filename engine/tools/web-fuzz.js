@@ -79,10 +79,10 @@ createEngine().then((e) => {
   let drafts = 0, blocked = 0, failures = 0, maxSheets = 0;
   const blockedExamples = [];
 
-  const run = (label, args, m) => {
+  const run = (label, args, m, placket = false) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck));
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0, placket));
     if (out.issues.length) {
       blocked++;
       if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`);
@@ -133,6 +133,15 @@ createEngine().then((e) => {
             run(`b${bi} top/${neckline}/${topLen}/${key}/${fabric}`,
                 ['top', 'princess', 'natural', fabric, neckline, 'straight', 'long', 'aLine', 'midi', topLen,
                  false, 1, key === 'keyhole'], m);
+    // Loop 3: front button placket across necklines, dresses + tops, princess + dart.
+    for (const neckline of necklines) {
+      if (neckline === 'halter') continue; // no CF placket on a halter
+      run(`b${bi} placket dress/${neckline}`,
+          ['dress', 'princess', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, true);
+      run(`b${bi} placket top/${neckline}`,
+          ['top', 'princess', 'natural', 'woven', neckline, 'straight', 'long', 'aLine', 'midi', 'hip', false, 1, false], m, true);
+    }
+    run(`b${bi} placket dart dress`, ['dress', 'dart', 'natural', 'woven', 'vNeck', 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, true);
     run(`b${bi} dart dress`, ['dress', 'dart', 'natural', 'woven', 'sweetheart', 'none', 'short', 'aLine', 'midi', 'hip', true, 3, true], m);
     run(`b${bi} knit babydoll`, ['dress', 'princess', 'empire', 'knit', 'crew', 'balloon', 'short', 'gathered', 'mini', 'hip', true, 1, true], m);
   }

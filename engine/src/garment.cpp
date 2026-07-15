@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "keyhole.hpp"
+#include "placket.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
@@ -365,6 +366,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.keyhole &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         KeyholeBlock::apply(pattern);
+    }
+    // Opt-in front button placket (düğme patı): grown-on button stand + fold line
+    // + buttons/buttonholes on the front. Post-pass on the finished front piece,
+    // so the base draft is byte-identical with it off. The bust level is read
+    // from the piece's own apex notch inside PlacketBlock (0 = "use the notch /
+    // fall back to the run midpoint").
+    if (spec.frontPlacket &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        PlacketBlock::apply(pattern, 0.0);
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

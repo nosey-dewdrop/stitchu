@@ -175,8 +175,9 @@ export function missingFeatures(seen, lang) {
   const push = (label, derivative) =>
     out.push({ label, applied: derivative ? derivative.applied : null, note: derivative ? derivative.note : null });
 
-  // closure
-  if (seen.closure && seen.closure.type && seen.closure.type !== 'none') {
+  // closure — skipped when the engine DREW it (Loop 3: front button placket is
+  // now a real drawn stand + buttons/buttonholes, no longer "missing").
+  if (seen.closure && seen.closure.type && seen.closure.type !== 'none' && !seen.closureDrawn) {
     const d = CLOSURE_DERIVATIVE[seen.closure.type];
     const loc = seen.closure.location ? ` (${seen.closure.location})` : '';
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);

@@ -7,7 +7,7 @@ source "$HOME/emsdk/emsdk_env.sh" >/dev/null 2>&1
 
 mkdir -p dist
 em++ -O2 -std=c++17 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \
@@ -25,7 +25,7 @@ echo "copied to web/vendor/"
 # the glue via instantiateWasm (the browser bundle's fetch/XHR path does not
 # exist in the Workers runtime, so it needs its own build).
 em++ -O2 -std=c++17 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/sleeve.cpp src/garment.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine \

@@ -9,6 +9,11 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
+Durum (2026-07-15 Loop 3 — İLK ÇİZİM): motor artık ÖN düğme patını ÇİZİYOR (grown-on
+stand + fold + düğme/ilik, Aldrich/Armstrong). Sayı **BLOKE: kredi**; offline ön-kontrol
+(canlı değil) manifest oov'una karşı: 19 pat'lı fotodan 7 saf-ön-pat artık tam kalıp
+adayı, 2 arka pat honest kalır, 10 ön-pat+başka eksik pat çizildi kalanı eksik. 6/54 son
+ölçülen değer. Önceki durum:
 Durum (2026-07-15 manuel ölçüm): **6/54 TAM KALIP** — canlı Opus zinciri kredi bitik
 olduğu için 59 foto Claude aboneliği üstünden EL İLE (worker prompt kurallarıyla)
 okundu: 6 TAM + 48 eksik öğeli + 0 yanlış; doğru-red 5/5. TAM'lar Loop 0/1'le aynı
@@ -90,7 +95,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 1 | Vision köprüsü | worker şemasına yapısal alanlar: closure, collar, straps, cupSeams, sleeveHead, yoke, backDetail, outOfVocab[] — serbest metin details ölür, alan doğar. worker.js:285. | **bitti** (15 Tem Loop 1; worker GERÇEK deploy edildi v7c3511e6, PUBLIC_ANALYZE on; create.js spec.seen borusu; 2 Loop 0 vision hatası prompt'ta düzeldi; golden byte-identity, web-fuzz 19555/0) | **6/54** (DEĞİŞMEDİ — motor çizmiyor, NORMAL) + **SCHEMA BRIDGE 51/69 öğe yakalandı** |
 | 1b | Benchmark hız token'ı | Ölçüm 21sn/foto sürünüyor (kendi rate-limit sigortamız + KV eventual consistency). Worker'a gizli bypass header (wrangler secret, SADECE engine/tools/benchmark-58.mjs kullanır); gerçek kullanıcı limiti AYNEN kalır. 54 foto dakikalara iner — "her patch sonrası sayı" kuralı ucuzlar. | **bitti** (15 Tem Loop 1b; worker GERÇEK deploy v82498f3a; gizli header `x-sb-bench`, secret `BENCH_BYPASS` = wrangler secret + gitignore'lu benchmark-58/.benchmark-token; sabit-uzunluk XOR karşılaştırma, secret loglanmaz; token'lı=fuse atlanır, token'sız/yanlış=aynen 3/dk+15/gün; ~1.5sn/çağrı → 54 foto ~90sn vs eski 21sn/çağrı) | — (BLOKE aşağıda: kredi) |
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | **bitti** (15 Tem Loop 2; TEK KAYNAK web/js/missing.js: closure/collar/straps/cupSeams/sleeveHead/yoke/backDetail her biri için EN-YAKIN-TÜREV eşleme + "verilen en yakın X, şunu elle ekle" notu, EN+TR. Ekranda vişne kart (render.js appendMissing) + PRINT KAPAĞINDA aynı liste (print.js appendMissingToCover, vişne başlık). outOfVocab dedupe (fırfırlı askı iki kez gelmez). Motor C++ dokunulmadı → golden byte-identical; web-fuzz 19555/0; render-pages temiz; 5 temsili spec + 1 temiz-kontrol EN+TR doğru mesaj ürettti. Sayı BLOKE: kredi.) | — (sayı BLOKE: kredi) |
-| 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | bekliyor | — |
+| 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | **bitti** (15 Tem Loop 3; PlacketBlock::apply keyhole-tarzı post-pass, spec.frontPlacket default false → golden BYTE-IDENTICAL 0.000000mm/23034 satır; GROWN-ON stand 18mm=düğme Ø (Aldrich/Armstrong araştırması, couture default), CF kenarı dışa taşınır + fold çizgisi CF'de + düğme CF üstünde + ilik 3mm dışa + zorunlu göğüs düğmesi; sadece ön parça büyür, yaka/facing DOKUNULMAZ; ctest 13/13, placket_check 4 gövde yeşil, precision 0.00mm, web-fuzz 19620/0 (65 pat draft'ı), vocab-sweep 37800/0, render-pages pat'lı dress+top strip'te çizili; missing.js ÖN düğme/pat'ı artık listelemez (seen.closureDrawn), arka/yan pat honest kalır) | **sayı BLOKE: kredi** (offline ön-kontrol: manifest'te 19 pat'lı fotodan 2 ARKA→honest kalır, 7 saf-ÖN-pat→artık tam kalıp adayı, 10 ön-pat+başka eksik→pat çizildi kalanı eksik) |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
 | 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | bekliyor | — |
 | 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | bekliyor | — |
@@ -120,6 +125,20 @@ benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
   değil vision belirsizliği KANITLANDI. NOT: bu sayı canlı Opus zinciriyle birebir
   aynı olmayabilir (model≠ben, vision varyansı gerçek); kredi gelince tek FAST koşuyla
   (~90sn) canlı sayı teyit edilecek. Beklenti aynı: 6/54.
+- 2026-07-15 Loop 3 (İLK ÇİZİM): **çizim shipped, sayı BLOKE: kredi** (canlı vision
+  400 döner). Motor artık ÖN düğme patını çiziyor (grown-on 18mm stand + fold çizgisi +
+  düğme/ilik işaretleri, göğüs hizasında zorunlu düğme; Aldrich/Armstrong formülü,
+  FORMULAS.md "Front button placket"). Kanıt: golden BYTE-IDENTICAL 0.000000mm (23034
+  satır, C++ closure-off yolları dokunulmadı), placket_check 4 gövde (dress/top,
+  princess/dart, petite/plus) yeşil, ctest 13/13, precision-report worst pair 0.00mm/0
+  fail, web-fuzz 19620 draft/0 fail (65 pat draft'ı dahil), vocab-sweep 37800/0,
+  render-pages pat'lı dress+top strip'te düğme+fold çizili. OFFLINE ÖN-KONTROL (canlı
+  koşu DEĞİL, manifest oov'una karşı): 19 pat'lı fotodan 2 ARKA pat (honest layer'da
+  kalır — location gate ön dışını çizmez), 7 saf-ÖN-pat (tek eksik pat'tı → artık TAM
+  KALIP ADAYI), 10 ön-pat + başka eksik (pat çizildi, kalan öğeler hâlâ eksik).
+  Asimetrik (Jackie ×6) ve double-breasted (Ruby ×3) STANDART tek-sıra pat olarak
+  çizilir = en-yakın-türev, birebir değil. 6/54 son ÖLÇÜLEN değer kalır; kredi gelince
+  tek FAST koşuyla canlı sayı çıkar. Rapor: reports/2026-07-15-stitchu-benchmark-loop3.md.
 - 2026-07-15 Loop 2: **ÖLÇÜLEMEDİ — BLOKE: Anthropic kredisi bitik** (canlı vision
   çağrısı 400 döner, tam kalıp sayısı ölçülemez). Loop 2 ürün metriği DEĞİL dürüstlük
   katmanı: motor çizemediği her öğe için EN-YAKIN-TÜREV verilir + kullanıcıya (ekran +

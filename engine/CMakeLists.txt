@@ -12,6 +12,7 @@ add_library(engine
     src/skirt.cpp
     src/ruffle.cpp
     src/keyhole.cpp
+    src/placket.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -45,6 +46,10 @@ add_test(NAME sweetheart_check COMMAND sweetheart_check)
 add_executable(keyhole_check tests/keyhole_check.cpp)
 target_link_libraries(keyhole_check PRIVATE engine)
 add_test(NAME keyhole_check COMMAND keyhole_check)
+
+add_executable(placket_check tests/placket_check.cpp)
+target_link_libraries(placket_check PRIVATE engine)
+add_test(NAME placket_check COMMAND placket_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

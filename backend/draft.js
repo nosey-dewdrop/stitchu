@@ -125,6 +125,7 @@ export function validateDraftRequest(body) {
       topLength: spec.topLength ?? 'hip',
       ruffle: spec.ruffle ?? 'none',
       keyhole: spec.keyhole ?? 'none',
+      frontPlacket: spec.frontPlacket === true,
     },
     measurements,
   };
@@ -142,6 +143,7 @@ export async function runDraft(spec, measurements) {
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
     measurements.backLength, measurements.armLength, measurements.neck,
     measurements.upperBust || 0, // optional full-bust adjustment
+    spec.frontPlacket === true,  // Loop 3: front button placket
   );
   return JSON.parse(json);
 }
@@ -174,6 +176,7 @@ export async function handleGrade(request) {
       spec.skirtStyle, spec.skirtLength, spec.topLength,
       spec.ruffle !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
       spec.keyhole === 'keyhole', from, to,
+      spec.frontPlacket === true, // Loop 3: front button placket
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

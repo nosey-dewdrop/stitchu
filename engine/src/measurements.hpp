@@ -171,6 +171,9 @@ struct GarmentSpec {
     int ruffleTiers = 1;         // cascading tiers (kademeli); 1 = single ruffle
     // Opt-in keyhole (anahtar deliği) opening below the front neckline.
     bool keyhole = false;
+    // Opt-in front button placket (düğme patı): grown-on button stand + fold line
+    // + button/buttonhole markings on the front. Off by default → byte-identical.
+    bool frontPlacket = false;
 };
 
 inline double roundToPlaces(double value, int places) {

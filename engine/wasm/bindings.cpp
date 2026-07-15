@@ -116,7 +116,7 @@ GarmentSpec buildSpec(
     const std::string& fabric, const std::string& neckline,
     const std::string& sleeveStyle, const std::string& sleeveLength,
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole
+    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -132,6 +132,7 @@ GarmentSpec buildSpec(
     spec.ruffleHem = ruffleHem;
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
     spec.keyhole = keyhole;
+    spec.frontPlacket = frontPlacket;
     return spec;
 }
 
@@ -184,10 +185,11 @@ std::string draftJSON(
     bool ruffleHem, int ruffleTiers, bool keyhole,
     double bustCM, double waistCM, double hipCM, double shoulderCM,
     double backLengthCM, double armLengthCM, double neckCM,
-    double upperBustCM
+    double upperBustCM,
+    bool frontPlacket // appended so existing positional callers stay valid
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -203,10 +205,11 @@ std::string gradeJSON(
     std::string sleeveStyle, std::string sleeveLength,
     std::string skirtStyle, std::string skirtLength, std::string topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole,
-    std::string fromLabel, std::string toLabel
+    std::string fromLabel, std::string toLabel,
+    bool frontPlacket // appended so existing positional callers stay valid
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

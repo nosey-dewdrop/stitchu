@@ -279,6 +279,44 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Covered by tests/halter_check (dress/top, princess/dart, natural/empire, knit, petite +
   plus bodies: valid, sleeves skipped honestly, strap width, low back vs crew, binding).
 
+## Front button placket (düğme patı) — opt-in grown-on button stand (BENCHMARK-58 Loop 3)
+- GarmentSpec.frontPlacket (default false → every existing draft byte-identical).
+  Dress + top only. Post-pass like the keyhole (PlacketBlock::apply on the finished
+  pattern), so BodiceBlock and the golden dumps are untouched with it off.
+- Research: Aldrich (Metric Pattern Cutting for Women's Wear) + Armstrong
+  (Patternmaking for Fashion Design, ch.16 buttons/buttonholes/facings). The stand
+  is button-diameter driven; couture blouse/dress fronts use a GROWN-ON stand
+  (self-facing folds back), fast fashion (Stradivarius/Bershka shirting) uses an
+  applied band. We chose GROWN-ON (couture default, one piece, no seam at the
+  finished edge). No button size is collected → 18 mm blouse button ASSUMPTION,
+  documented; the guide's muslin note + placket step cover swapping it.
+- Geometry (front piece, CF at x = 0): the CF EDGE (the last outline curve, waist
+  → neck point) is offset outward by standWidth = 18 mm (= button Ø) so the
+  finished front edge lands at x = -18; a short horizontal LINE joins the grown
+  stand top back to the TRUE neck point. The neckline itself and every other edge
+  are UNTOUCHED → the neck facing still matches (its validator would fire otherwise).
+- Markings: fold line at the true CF (x = 0, neck→bottom); fold-back facing line at
+  x = +18 (facing turns back this far); buttons = short cross ticks ON the CF line;
+  buttonholes = horizontal slits starting buttonholeOffset = 3 mm past CF toward the
+  edge (Aldrich/Armstrong horizontal-hole rule), buttonholeLength = 21 mm (Ø + thickness
+  + 2 mm ease). Womenswear laps RIGHT over LEFT: this front is the buttonhole side,
+  the mirror is the button underlap (stated in the guide step).
+- Placement: first button topFromNeck = 20 mm below the CF neck edge, last hemClearance
+  = 20 mm above the CF bottom; ~90 mm target spacing (gaps = round(run/90), floor 3);
+  the run is SHIFTED so a button lands exactly on the bust level (mandatory bust button
+  = anti-gape, Aldrich/Armstrong). Bust level read from the piece's own apex NOTCH
+  (princess + dart both stamp it) with a run-midpoint fallback (empire waist seam above
+  the apex).
+- Fabric: +0.1 m for the stand + fold-back facing.
+- Too short (CF run < 60 mm) → honest "Front placket: skipped" guide note, never a
+  silent no-op (same discipline as the keyhole skip).
+- Covered by tests/placket_check (dress/top, princess/dart, petite/plus: base
+  byte-identity except the front, stand extends past CF, fold line at CF, ≥3 buttons +
+  matching buttonholes, valid). web-fuzz adds a placket axis (65 drafts, 0 issues).
+- Honesty layer: web/js/missing.js no longer lists a FRONT buttons/placket closure
+  (seen.closureDrawn set by create.js when spec.frontPlacket is on) — it is DRAWN now.
+  Back/side button closures stay in the honesty layer.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

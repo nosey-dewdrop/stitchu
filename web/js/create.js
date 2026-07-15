@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=52';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=52';
-import { draft, grade } from './engine.js?v=52';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=52';
-import { renderResult } from './render.js?v=52';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=53';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=53';
+import { draft, grade } from './engine.js?v=53';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=53';
+import { renderResult } from './render.js?v=53';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=52';
+} from './store.js?v=53';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -290,6 +290,16 @@ function showSpec() {
         if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
         if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) spec.ruffle = seen.hemRuffle;
         if (typeof seen.keyhole === 'boolean') spec.keyhole = seen.keyhole ? 'keyhole' : 'none';
+        // Front button placket (düğme patı): the engine now draws the grown-on
+        // button stand + buttons/buttonholes when the vision reads a front
+        // button/placket closure (Loop 3). A back/side closure is not a front
+        // placket, so it stays in the honesty layer.
+        if (seen.closure && (seen.closure.type === 'buttons' || seen.closure.type === 'placket')) {
+          const loc = (seen.closure.location || '').toLowerCase();
+          if (!loc || loc.includes('front') || loc.includes('center') || loc.includes('ön')) {
+            spec.frontPlacket = true;
+          }
+        }
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -303,6 +313,9 @@ function showSpec() {
           yoke: seen.yoke || null,
           backDetail: seen.backDetail || null,
           outOfVocab: Array.isArray(seen.outOfVocab) ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12) : [],
+          // Loop 3: the front button placket is now DRAWN, so the honesty layer
+          // must NOT list it as missing. Every other closure stays honest.
+          closureDrawn: spec.frontPlacket === true,
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();

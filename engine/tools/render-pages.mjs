@@ -39,6 +39,14 @@ const SPECS = [
   { name: 'boatneck-buttondown-top', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'boat', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false },
+  // Loop 3: front button placket DRAWN — the front piece carries the grown-on
+  // button stand + fold line + buttons/buttonholes in the printed sheets.
+  { name: 'placket-shirt-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'vNeck', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, frontPlacket: true },
+  { name: 'placket-button-top', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, frontPlacket: true },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -51,7 +59,8 @@ for (const s of SPECS) {
   const out = JSON.parse(engine.draftJSON(
     s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
     s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
-    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0));
+    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
+    s.frontPlacket === true));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }
