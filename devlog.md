@@ -264,9 +264,12 @@ M1 · HOOK: "rakibim tam benim yaptığım şeyi satıyordu ve bu iyi haberdi."
 - sitesini didikledim: HİÇBİR doğruluk iddiası yok. ne benchmark, ne sew-test, ne yorum. herkes "yapay zeka kalıp çiziyor" diyor, kimse "şu kadar doğru" demiyor. moat orada.
 
 M2 · HOOK: "kimsenin yayınlamadığı sayıyı yayınladım: kalıbım ne kadar oturuyor."
-- 220 kalıbı tüm vücut ızgarasında çizip gerçek geometriden ölçtüm.
-- bitmiş bel: vücut+pay'a 13mm yakın. her prenses+yan dikiş çifti: 0.00mm (parçalar dikiliyor). 220 kolun 220'si dikilebilir pencerede. [terminal]
+- yüzlerce kalıbı pear/apple/hourglass vücut ızgarasında çizip ölçtüm.
+- her prenses+yan dikiş çifti eşleşiyor, bitmiş bel vücut+pay'a medyan 9mm yakın, kolların hepsi dikilebilir pencerede. [terminal]
 
-M3 · HOOK: "ölçemediğim şeyi rapora YAZMADIM ve bu bir güç."
-- bust çevresini bilerek atladım: dar-büst geniş-omuzlu vücutta 2B parçadan omuz hattını yakalıyor, temiz ölçülemiyor.
-- benchmark sadece dürüstçe ölçebildiğini iddia ediyor. güven, abartıdan değil, neyi bilmediğini söylemekten gelir.
+M3 · HOOK: "kendi benchmark'ımı denetledim ve kendimi hile yaparken yakaladım."
+- "0.00mm dikiş eşleşmesi" aslında motorun içinde eşitlediği TEK sayıyı iki kez okuyordu: x eksi x. sıfır çıkması matematik, kanıt değil.
+- yeniden yazdım: artık her kenar KENDİ çizilen parçasından bağımsız ölçülüyor. 0.00mm artık gerçek (max 0.000023mm). en tehlikeli hile kendini kanıtladığını sandığın ölçüdür.
+
+M4 · HOOK: "ölçemediğim şeyi rapora YAZMADIM ve bu bir güç."
+- bust çevresini bilerek atladım: 2B parçadan temiz ölçülemiyor. güven, abartıdan değil, neyi bilmediğini söylemekten gelir.
