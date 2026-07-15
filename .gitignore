@@ -13,3 +13,7 @@ backend/node_modules/
 App/Stitchu/.app-token-note.txt
 CLAUDE.context.md
 engine/.cache/
+
+# 58-photo benchmark set: Damla's screenshots (personal browser content) +
+# purchased BugraPatterns PDFs (paid IP) — NEVER push these to the public repo.
+benchmark-58/
