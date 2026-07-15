@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=53';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=53';
-import { draft, grade } from './engine.js?v=53';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=53';
-import { renderResult } from './render.js?v=53';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=54';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=54';
+import { draft, grade } from './engine.js?v=54';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=54';
+import { renderResult } from './render.js?v=54';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=53';
+} from './store.js?v=54';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -40,8 +40,41 @@ const SPEC_GROUPS = [
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
-  waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none',
+  waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
 };
+
+// Map the vision's closure / backDetail to a drawable tie placement (Loop 4b).
+// Only SIMPLE APPLIED ties become pieces; a drawstring that GATHERS the fabric
+// (needs a casing + shirring the engine cannot draft) returns 'none' and stays
+// in the honesty layer. A back-waist bow/sash, an open-back tie-back closure, a
+// front neck bow and cuff ties are drawn; a neckline/waist DRAWSTRING is not.
+function pickTiePlacement(seen) {
+  const isDrawstring = (s) => {
+    const t = (s || '').toLowerCase();
+    return t.includes('drawstring') || t.includes('gathered') || t.includes('shirr') || t.includes('smock');
+  };
+  // A drawstring named anywhere in the honesty channel = gathering construction.
+  const oov = Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '';
+  // Back tie-back closure (open-back dress that ties shut at the back).
+  if (seen.backDetail === 'tieBack') return 'tieBack';
+  const c = seen.closure;
+  if (c && c.type === 'ties') {
+    const loc = (c.location || '').toLowerCase();
+    // A drawstring GATHERED neckline/waist is NOT a simple applied tie.
+    if (isDrawstring(c.location) || (isDrawstring(oov) && (loc.includes('neck') || loc.includes('waist')))) {
+      // only bail if the drawstring is the SAME location as this tie
+      if (loc.includes('neck') && isDrawstring(oov)) return 'none';
+    }
+    if (loc.includes('waist')) return 'backWaistBow';
+    if (loc.includes('back')) return 'backWaistBow';
+    if (loc.includes('neck')) return isDrawstring(oov) ? 'none' : 'frontNeckBow';
+    if (loc.includes('front') || loc.includes('center')) return 'frontNeckBow';
+    // ties with no clear location: default to a back-waist sash (the manifest's
+    // most common tie), still a simple applied strip.
+    return 'backWaistBow';
+  }
+  return 'none';
+}
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -300,6 +333,12 @@ function showSpec() {
             spec.frontPlacket = true;
           }
         }
+        // Fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): the engine
+        // now draws SIMPLE APPLIED ties as separate self-fabric strips + a
+        // placement notch. A drawstring that GATHERS the fabric (needs a casing +
+        // shirring) is NOT this — that stays honest. Map the vision closure/back
+        // detail to a tie placement; leave it for the honesty layer otherwise.
+        spec.tieClosure = pickTiePlacement(seen);
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -316,6 +355,10 @@ function showSpec() {
           // Loop 3: the front button placket is now DRAWN, so the honesty layer
           // must NOT list it as missing. Every other closure stays honest.
           closureDrawn: spec.frontPlacket === true,
+          // Loop 4b: a simple applied tie/sash/bow is now DRAWN as strips, so
+          // the honesty layer must NOT list that tie/back-tie as missing.
+          // Drawstring-gathered ties are NOT drawn → tieDrawn false, stay honest.
+          tieDrawn: spec.tieClosure && spec.tieClosure !== 'none',
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();

@@ -3,6 +3,14 @@
 // means the validator blocked the draft — callers must not show a PDF.
 let enginePromise = null;
 
+// TiePlacement enum (must match engine/src/tie.hpp order). 0 = None.
+const TIE_PLACEMENT = {
+  none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5,
+};
+export function tieClosureValue(spec) {
+  return TIE_PLACEMENT[spec && spec.tieClosure] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -29,6 +37,7 @@ export async function grade(spec, fromLabel, toLabel) {
     spec.keyhole === 'keyhole',
     fromLabel, toLabel,
     spec.frontPlacket === true,
+    tieClosureValue(spec), // Loop 4b: fabric ties / sash / bow
   );
   return JSON.parse(json);
 }
@@ -46,6 +55,7 @@ export async function draft(spec, measurements) {
     measurements.backLength, measurements.armLength, measurements.neck,
     measurements.upperBust || 0, // optional full-bust adjustment
     spec.frontPlacket === true,  // Loop 3: front button placket
+    tieClosureValue(spec),       // Loop 4b: fabric ties / sash / bow
   );
   return JSON.parse(json);
 }
