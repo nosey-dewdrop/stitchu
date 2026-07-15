@@ -153,6 +153,14 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .print-label { font-size: 11px; margin-bottom: 4px; }
 .print-map { padding-left: 18px; font-size: 12px; margin: 8px 0; }
 .print-map li { padding: 2px 0; }
+.print-sizechart { border-collapse: collapse; font-size: 12px; margin: 8px 0 12px; }
+.print-sizechart th, .print-sizechart td { border: 1px solid #999; padding: 4px 12px; text-align: left; }
+.print-sizechart th { background: #f0e9ea; font-weight: 700; }
+/* Interior grade sheet: the size stamp rides in the top-right corner, bold and
+   unmistakable, so a cut piece is never mistaken for another size. */
+.print-size-stamp { position: absolute; top: 4mm; right: 6mm; font-size: 24px; font-weight: 800;
+  letter-spacing: 1px; color: #8f2038; border: 2px solid #8f2038; border-radius: 3px; padding: 2px 8px; }
+.print-page { position: relative; }
 
 @media print {
   @page { size: A4 portrait; margin: 10mm; }
