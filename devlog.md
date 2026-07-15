@@ -216,3 +216,29 @@ J5 · HOOK: "iki düzeltme, sıfır milimetre."
 - empire yan dikişi: kısa dikişte 2mm birikiyordu; kısa tarafın bel ucu delta kadar iniyor.
 - son rapor: en kötü çift farkı 0.00 mm. yetmiş bin taslak yeşil.
 - bonus: imkansız sanılan bazı vücut kombinasyonları artık geçerli çıkıyor, çünkü sorun vücut değil bizim dikişimizmiş.
+
+## seri K — testler yeşildi, ürün bozuktu (adversarial denetim gecesi)
+
+K1 · HOOK: "60.300 testim yeşildi ve her kolum dardı."
+- motoruma dışarıdan usta terzi gözüyle sert denetim koşturdum. tek cümle döndü: kol, oyuntuya sadece UZUNLUĞUYLA oturuyor, GENİŞLİĞİ hiç kontrol edilmiyor.
+- pazı çizgisi hesaplanıyordu ama sadece aramanın başlangıç sınırı olarak; sonra unutuluyordu. [terminal]
+
+K2 · HOOK: "bust 116 bir vücutta kol 76 milimetre dardı. koltuk altı dikişi kapanmaz."
+- kol 324mm çıkıyordu, pazı çizgisi 400mm. her kollu parça etkileniyordu.
+- matris niye yeşildi? tek kol kontrolü "cap uzunluğu" ve "cap payı"ydı — zaten aramanın çözdüğü iki şey. test kendi çözdüğünü doğruluyordu.
+
+K3 · HOOK: "düzeltme klasik terzilik: önce pazı çizgisini çiz."
+- genişliği pazıya sabitle, cap'i bu kez YÜKSEKLİĞİNİ alçaltarak oyuntuya oturt. geniş kol + sığ cap = gevşek takmanın doğru, dikilebilir hali.
+- kol artık her vücutta pazıya tam oturuyor, cap payı hâlâ %1-9 penceresinde. [terminal: ctest 9/9]
+
+K4 · HOOK: "bir hatayı düzeltmek yetmez, geri gelemeyeceğini garantile."
+- motora "kol pazıdan darsa testi patlat" kuralı + tüm vücut/kumaş/kol boyu kombinasyonlarını gezen sleeve_check ekledim.
+- golden yeniden sabitlendi: SADECE kol ve manşet satırları değişti, diğer her parça bit-bit aynı. yani düzeltme temiz.
+
+K5 · HOOK: "halter kalıbında gizli bir kırık vardı, 552 taslağı bloke ediyordu."
+- kısa halter sırtında prenses dikişi cap'e varırken son adımda sertçe kırılıyordu (25° kuralını 26°'ye taşıyordu).
+- sebep: dikey iniş payı sırtın yüksekliğine bağlıydı, halter sırtı alçalınca pay yetmiyordu. payı yatay mesafeye tabanladım. golden bit-bit aynı, kırık gitti.
+
+K6 · HOOK: "imkansız bir vücut girersen artık tek net cümle görüyorsun, 8 şifreli hata değil."
+- göğsü 160 beli 45 olan bir vücut (yazım hatası) motoru kilitliyordu ve kullanıcı "kendi kendine kesişti" gibi anlamsız hatalar görüyordu.
+- daha kötüsü: bu taslakların çoğu doğrulamayı geçip SESSİZCE hatalı kalıp basıyordu. artık en başta "ölçülerini kontrol et" diyen tek okunur sebep çıkıyor.
