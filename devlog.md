@@ -291,3 +291,18 @@ N3 · HOOK: "dolgun göğüslü her kadının ömür boyu derdini motorumda buld
 N4 · HOOK: "acemi jargonda boğuluyordu, ürün 'cep dikiş öğretmeni' diyordu."
 - pens, biye, kol başı, ara dikiş — her terim artık tıklanınca düz açıklama veriyor. LinkedIn'den gelen meraklı takip edebiliyor.
 - bir de her ölçünün nereden alındığını gösteren minik manken diyagramı. kimse nereden ölçeceğini bilemez kalmasın.
+
+## seri O — bir tasarım, bütün beden serisi (grading)
+
+O1 · HOOK: "Etsy'de kalıp satacaksan bir bedeni çizmen yetmez, EU34'ten 52'ye hepsini çizmen lazım."
+- buna "grading" (bedenleme) deniyor. normalde ayrı bir kurallar tablosuyla elle yapılır.
+- ben ayrı kural yazmadım: motorum zaten her vücuda çiziyor, o yüzden bedenleme = tasarımı her standart bedene tek tek çizdirmek. tek tık, bütün seri. [canlı]
+
+O2 · HOOK: "bedenlenmiş seri gerçekten büyüyor mu, yoksa aynı kalıbı mı çoğaltıyorum? test ettim."
+- kandırmama testi: her bedeni çizip ön panel genişliğini ölçtüm.
+- EU34'te 188.6mm, EU52'de 236.2mm — monoton büyüyor, her beden temiz. golden referans bit-bit aynı kaldı. [terminal]
+
+O3 · HOOK: "bir Etsy satıcısı gözüyle denettim, iki kere kumaşı çöpe attıracak hata buldu."
+- (1) kapakta her bedenin bust/waist/hip cm'si yoktu — alıcı hangi beden benim diye bilemez.
+- (2) iç sayfalarda beden yazmıyordu — karışan sayfalar yanlış bedenden kesilir.
+- ikisini de kapattım: kapakta gerçek beden tablosu + her sayfanın köşesinde vişne beden damgası. [baskı]
