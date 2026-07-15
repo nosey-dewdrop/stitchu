@@ -28,6 +28,10 @@ bağlı, PUBLIC_ANALYZE=on). Damla henüz canlıda denemedi — vision accuracy 
 
 ## LOOP (sırayla, her blok tek commit+push+deploy, deploy limiti)
 
+### Blok 1 — REGISTER — TAMAMLANDI 2026-07-15 (v50 canlı)
+Aşağıdaki her madde shipped: sheet.js (yeni tek-kaynak modül) + render-pages.mjs
+harness ile kanıtlandı, rapor 2026-07-15-stitchu-canli-zincir-testi-ve-register.md.
+
 ### Blok 1 — REGISTER (ilk, en yüksek değer, puzzle birleşir)
 print.js `sheetSVG`'e ekle (canlı ürün, /tmp script değil):
 - Görünür A4 çerçevesi (ince kesik çizgi, sayfa sınırı belli).
