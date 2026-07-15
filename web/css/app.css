@@ -20,6 +20,12 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .measure-label { font-size: 22px; margin-bottom: 4px; }
 .measure-optional { font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
 .measure-diagram { width: 120px; height: 144px; display: block; margin: 4px 0 14px; }
+/* named bodies (multi-client): compact, unobtrusive */
+.profile-bar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 14px 0 6px; }
+.profile-select, .profile-name { padding: 8px 12px; border: 1px dashed #c7a6ac; border-radius: var(--radius); font: inherit; font-size: 13px; background: transparent; }
+.profile-select:focus, .profile-name:focus { border-color: var(--accent); outline: none; }
+.profile-save { padding: 8px 16px; border: 1px solid var(--accent); border-radius: var(--radius); background: transparent; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
+.profile-save:hover { background: var(--accent); color: #fbfaf6; }
 .measure-help { font-size: var(--size-small); color: var(--gray); margin-bottom: 18px; }
 .tape { display: block; width: 100%; height: 110px; margin: 8px 0 14px; user-select: none; -webkit-user-select: none; }
 .measure-row { display: flex; max-width: 320px; }

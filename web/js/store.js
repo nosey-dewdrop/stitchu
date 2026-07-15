@@ -29,6 +29,38 @@ export function saveMeasurements(m) {
   localStorage.setItem(MEASURE_KEY, JSON.stringify(m));
 }
 
+// Named measurement profiles — so a seller (or anyone drafting for others) can
+// keep several bodies ("me", "Ayşe", "Client B") instead of overwriting one set.
+// The default MEASURE_KEY is the active/last-used body; PROFILES_KEY holds the
+// named library. Backward compatible: with no named profiles the app behaves
+// exactly as before (one body in MEASURE_KEY).
+const PROFILES_KEY = 'stitchu:profiles';
+
+export function loadProfiles() {
+  try {
+    const raw = localStorage.getItem(PROFILES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+// Save/overwrite a named body. Also becomes the active measurements.
+export function saveProfile(name, m) {
+  const clean = (name || '').trim().slice(0, 40);
+  if (!clean) return loadProfiles();
+  const profiles = loadProfiles().filter((p) => p.name.toLowerCase() !== clean.toLowerCase());
+  profiles.unshift({ name: clean, m: { ...m }, savedAt: Date.now() });
+  while (profiles.length > 30) profiles.pop();
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+  saveMeasurements(m);
+  return profiles;
+}
+
+export function deleteProfile(name) {
+  const profiles = loadProfiles().filter((p) => p.name.toLowerCase() !== (name || '').toLowerCase());
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+  return profiles;
+}
+
 export function loadCloset() {
   try {
     const raw = localStorage.getItem(CLOSET_KEY);

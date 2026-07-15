@@ -1,14 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=41';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=41';
-import { draft } from './engine.js?v=41';
-import { printPattern } from './print.js?v=41';
-import { renderResult } from './render.js?v=41';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=42';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=42';
+import { draft } from './engine.js?v=42';
+import { printPattern } from './print.js?v=42';
+import { renderResult } from './render.js?v=42';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=41';
+  loadProfiles, saveProfile, deleteProfile,
+} from './store.js?v=42';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -213,6 +214,46 @@ function showSpec() {
   edit.addEventListener('click', (e) => { e.preventDefault(); showMeasurement(0); });
   sub.appendChild(edit);
   screen.appendChild(sub);
+
+  // Named bodies: for anyone drafting for OTHERS (a seller, a friend) — keep
+  // several measurement sets instead of overwriting one. Hidden until there's a
+  // reason to show it (a saved profile exists, or the user has real measurements
+  // worth naming), so a first-timer isn't cluttered.
+  const profiles = loadProfiles();
+  if (!usingDemo || profiles.length) {
+    const pbar = el('div', 'profile-bar');
+    if (profiles.length) {
+      const sel = document.createElement('select');
+      sel.className = 'profile-select';
+      const optCur = el('option', '', t('create.profile.current'));
+      optCur.value = '';
+      sel.appendChild(optCur);
+      for (const p of profiles) {
+        const o = el('option', '', p.name);
+        o.value = p.name;
+        sel.appendChild(o);
+      }
+      sel.addEventListener('change', () => {
+        const p = profiles.find((x) => x.name === sel.value);
+        if (p) { Object.assign(values, p.m); usingDemo = false; saveMeasurements(values); showSpec(); }
+      });
+      pbar.appendChild(sel);
+    }
+    // Save the current body under a name (for a client / a friend).
+    const nameInput = document.createElement('input');
+    nameInput.className = 'profile-name';
+    nameInput.placeholder = t('create.profile.nameph');
+    const saveBtn = el('button', 'profile-save', t('create.profile.save'));
+    saveBtn.addEventListener('click', () => {
+      const nm = nameInput.value.trim();
+      if (!nm) { nameInput.focus(); return; }
+      saveProfile(nm, values);
+      showSpec();
+    });
+    pbar.appendChild(nameInput);
+    pbar.appendChild(saveBtn);
+    screen.appendChild(pbar);
+  }
 
   // Photo path: upload -> AI reads the garment -> picks below get prefilled,
   // user confirms or fixes. Hidden entirely until the Worker is live.
