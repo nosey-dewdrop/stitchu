@@ -42,6 +42,8 @@ export const STRINGS = {
   'create.measure.rangeerror': { en: "That doesn't look like a {label} in cm (expected {min}–{max}).", tr: 'Bu cm cinsinden bir {label} gibi durmuyor ({min}–{max} arası bekleniyor).' },
   'create.back': { en: 'Back', tr: 'Geri' },
   'create.next': { en: 'Next — {label}', tr: 'Sıradaki — {label}' },
+  'create.skip': { en: 'Skip — pick your garment', tr: 'Atla — kıyafetini seç' },
+  'create.optional': { en: 'optional', tr: 'isteğe bağlı' },
   'create.done': { en: 'Done — pick your garment', tr: 'Bitti — kıyafetini seç' },
   'create.spec.title': { en: 'What are we sewing?', tr: 'Ne dikiyoruz?' },
   'create.spec.sub': { en: 'Pick the garment; the pattern is drafted to your saved measurements. ', tr: 'Kıyafeti seç; kalıp kayıtlı ölçülerine çizilir. ' },

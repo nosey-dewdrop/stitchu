@@ -101,6 +101,16 @@ export function validateDraftRequest(body) {
     measurements[key] = v;
   }
 
+  // Optional 8th: upper/high bust for a full-bust adjustment. If given it must be
+  // numeric and in range; if omitted the draft uses the B/C-cup assumption.
+  if (m.upperBust !== undefined && m.upperBust !== null) {
+    const ub = m.upperBust;
+    if (typeof ub !== 'number' || !Number.isFinite(ub) || ub < 60 || ub > 150) {
+      return { error: 'invalid_measurement', detail: 'measurements.upperBust must be a number 60–150 cm', field: 'measurements.upperBust' };
+    }
+    measurements.upperBust = ub;
+  }
+
   return {
     spec: {
       garment: spec.garment,
@@ -131,6 +141,7 @@ export async function runDraft(spec, measurements) {
     spec.keyhole === 'keyhole',
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
     measurements.backLength, measurements.armLength, measurements.neck,
+    measurements.upperBust || 0, // optional full-bust adjustment
   );
   return JSON.parse(json);
 }

@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=38';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=38';
-import { draft } from './engine.js?v=38';
-import { printPattern } from './print.js?v=38';
-import { renderResult } from './render.js?v=38';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=39';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=39';
+import { draft } from './engine.js?v=39';
+import { printPattern } from './print.js?v=39';
+import { renderResult } from './render.js?v=39';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=38';
+} from './store.js?v=39';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -103,7 +103,12 @@ function showMeasurement(index) {
   screen.appendChild(progressSeam(index + 1, MEASUREMENTS.length));
 
   const block = el('div', 'measure-block');
-  block.appendChild(el('div', 'measure-label', mLabel));
+  const lblRow = el('div', 'measure-label', mLabel);
+  if (m.optional) {
+    const opt = el('span', 'measure-optional', ' · ' + t('create.optional'));
+    lblRow.appendChild(opt);
+  }
+  block.appendChild(lblRow);
   block.appendChild(el('div', 'measure-help', tr ? m.trHelp : m.help));
 
   const initial = values[m.key] ?? '';
@@ -137,23 +142,31 @@ function showMeasurement(index) {
     back.addEventListener('click', () => showMeasurement(index - 1));
     nav.appendChild(back);
   }
-  const nextLabel = index === MEASUREMENTS.length - 1 ? t('create.done') : t('create.next', { label: (tr ? MEASUREMENTS[index + 1].trLabel : MEASUREMENTS[index + 1].label).toLowerCase() });
+  const isLast = index === MEASUREMENTS.length - 1;
+  const nextLabel = isLast ? t('create.done')
+    : (m.optional ? t('create.skip') : t('create.next', { label: (tr ? MEASUREMENTS[index + 1].trLabel : MEASUREMENTS[index + 1].label).toLowerCase() }));
   const next = el('button', 'btn primary', nextLabel);
-  next.addEventListener('click', () => {
-    const v = parseFloat(input.value.replace(',', '.'));
-    if (Number.isNaN(v)) { error.textContent = t('create.measure.numerror'); return; }
-    if (v < m.min || v > m.max) {
-      error.textContent = t('create.measure.rangeerror', { label: mLabel.toLowerCase(), min: m.min, max: m.max });
-      return;
-    }
-    values[m.key] = v;
-    if (index === MEASUREMENTS.length - 1) {
+  const advance = () => {
+    if (isLast) {
       saveMeasurements(values);
       usingDemo = false; // the pattern is now drafted to the real person
       showSpec();
     } else {
       showMeasurement(index + 1);
     }
+  };
+  next.addEventListener('click', () => {
+    const raw = input.value.trim();
+    // Optional field left blank: skip it (drop any old value) and move on.
+    if (m.optional && raw === '') { delete values[m.key]; advance(); return; }
+    const v = parseFloat(raw.replace(',', '.'));
+    if (Number.isNaN(v)) { error.textContent = t('create.measure.numerror'); return; }
+    if (v < m.min || v > m.max) {
+      error.textContent = t('create.measure.rangeerror', { label: mLabel.toLowerCase(), min: m.min, max: m.max });
+      return;
+    }
+    values[m.key] = v;
+    advance();
   });
   nav.appendChild(next);
   block.appendChild(nav);
