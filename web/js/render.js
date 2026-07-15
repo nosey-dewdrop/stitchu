@@ -1,9 +1,9 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=49';
-import { getLang, t } from './i18n.js?v=49';
-import { GUIDE_TR } from './guide-tr.js?v=49';
-import { GLOSSARY } from './glossary.js?v=49';
+import { fabricAdvice } from './fabrics.js?v=50';
+import { getLang, t } from './i18n.js?v=50';
+import { GUIDE_TR } from './guide-tr.js?v=50';
+import { GLOSSARY } from './glossary.js?v=50';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip) — a beginner can learn a word without leaving
@@ -38,34 +38,10 @@ function withGlossary(text) {
 
 const PREVIEW_SCALE = 0.28;
 
-export function pathD(commands, scale) {
-  return commands.map((c) => {
-    switch (c.type) {
-      case 'move': return `M ${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
-      case 'line': return `L ${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
-      case 'curve': return `C ${(c.cp1x * scale).toFixed(1)} ${(c.cp1y * scale).toFixed(1)} ` +
-        `${(c.cp2x * scale).toFixed(1)} ${(c.cp2y * scale).toFixed(1)} ` +
-        `${(c.x * scale).toFixed(1)} ${(c.y * scale).toFixed(1)}`;
-      case 'close': return 'Z';
-      default: return '';
-    }
-  }).join(' ');
-}
-
-export function bounds(piece) {
-  const xs = [];
-  const ys = [];
-  // cutLine may be absent on closet entries saved before the double line.
-  for (const c of [...piece.commands, ...piece.markings, ...(piece.cutLine || [])]) {
-    if (c.x !== undefined) { xs.push(c.x); ys.push(c.y); }
-    if (c.cp1x !== undefined) { xs.push(c.cp1x, c.cp2x); ys.push(c.cp1y, c.cp2y); }
-  }
-  if (piece.grainline) {
-    xs.push(piece.grainline.fromX, piece.grainline.toX);
-    ys.push(piece.grainline.fromY, piece.grainline.toY);
-  }
-  return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) };
-}
+// pathD/bounds live in sheet.js (the pure print-geometry module) — one truth,
+// one place; imported and re-exported so existing imports keep working.
+import { pathD, bounds } from './sheet.js?v=50';
+export { pathD, bounds };
 
 export function pieceCard(piece) {
   const s = PREVIEW_SCALE;

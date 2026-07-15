@@ -4,8 +4,8 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=49';
-import { getLang } from './i18n.js?v=49';
+import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner } from './sheet.js?v=50';
+import { getLang } from './i18n.js?v=50';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -33,8 +33,8 @@ const P = {
     tr: 'BUNLARI DOĞRUDAN KUMAŞA tebeşir ve cetvelle çiz (düz şeritler — basılı parça gerekmez). Büzgü çentiklerini her şeridin üst kenarına eşit aralıkla yerleştir:',
   },
   assemble: (n, cols) => ({
-    en: `${n} sheets. Lay them in a grid ${cols} across (sheet code = row letter + column number: A1 top-left). Tape edge to edge, matching the small edge ticks — no overlap. PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.`,
-    tr: `${n} sayfa. Bunları ${cols} sütunlu bir ızgaraya diz (sayfa kodu = satır harfi + sütun numarası: A1 sol üst). Kenar kenara, küçük kenar işaretlerini eşleştirerek bantla — üst üste bindirme. YAZICI AYARLARI: ölçek %100, üstbilgi/altbilgi KAPALI, sonra aşağıdaki 3 cm'lik kareyi doğrula.`,
+    en: `${n} sheets. Lay them in a grid ${cols} across (big corner code = row letter + column number: A1 top-left). Cut or fold along the dashed page frame, tape edge to edge: the black corner squares and edge ticks must COMPLETE across the joint — a piece running off a page tells you which sheet it continues on. PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.`,
+    tr: `${n} sayfa. Bunları ${cols} sütunlu bir ızgaraya diz (köşedeki büyük kod = satır harfi + sütun numarası: A1 sol üst). Kesikli sayfa çerçevesinden kes ya da katla, kenar kenara bantla: siyah köşe kareleri ve kenar işaretleri ek yerinde TAMAMLANMALI — sayfadan taşan parça hangi sayfada devam ettiğini söyler. YAZICI AYARLARI: ölçek %100, üstbilgi/altbilgi KAPALI, sonra aşağıdaki 3 cm'lik kareyi doğrula.`,
   }),
   sheet: (g, code, cols) => ({
     en: `${g} — sheet ${code} (grid ${cols} across)`,
@@ -73,8 +73,8 @@ const P = {
   },
   nestedLegend: { en: 'line colour → size', tr: 'çizgi rengi → beden' },
   nestedAssemble: (n, cols) => ({
-    en: `${n} sheets, grid ${cols} across (A1 top-left). Tape edge to edge matching the ticks. PRINTER: scale 100%, headers/footers OFF, verify the 3 cm square. Then follow ONE colour per size.`,
-    tr: `${n} sayfa, ${cols} sütunlu ızgara (A1 sol üst). İşaretleri eşleştirerek kenar kenara bantla. YAZICI: ölçek %100, üstbilgi/altbilgi KAPALI, 3 cm kareyi doğrula. Sonra her beden için TEK rengi takip et.`,
+    en: `${n} sheets, grid ${cols} across (A1 top-left). Tape edge to edge: the black corner squares and edge ticks must complete across the joint. PRINTER: scale 100%, headers/footers OFF, verify the 3 cm square. Then follow ONE colour per size.`,
+    tr: `${n} sayfa, ${cols} sütunlu ızgara (A1 sol üst). Kenar kenara bantla: siyah köşe kareleri ve kenar işaretleri ek yerinde tamamlanmalı. YAZICI: ölçek %100, üstbilgi/altbilgi KAPALI, 3 cm kareyi doğrula. Sonra her beden için TEK rengi takip et.`,
   }),
 };
 
@@ -96,52 +96,11 @@ const NEST_STYLES = [
 const nestStyle = (i) => NEST_STYLES[i % NEST_STYLES.length];
 const L = () => (getLang() === 'tr' ? 'tr' : 'en');
 
-const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
-const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
-const GUTTER = 12;    // space between packed pieces, mm
-
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (text !== undefined) node.textContent = text;
   return node;
-}
-
-// Shelf packing: tallest first, left to right, new shelf when the row is full.
-function shelfPack(dims, cols) {
-  const stripW = cols * PAGE_W;
-  const sorted = [...dims].sort((a, b) => b.h - a.h);
-  let shelfY = 0;
-  let shelfH = 0;
-  let x = 0;
-  for (const d of sorted) {
-    if (x > 0 && x + d.w > stripW) {
-      shelfY += shelfH + GUTTER;
-      x = 0;
-      shelfH = 0;
-    }
-    d.x0 = x;
-    d.y0 = shelfY;
-    d.ox = x - d.b.minX;   // translate piece-local -> strip coords
-    d.oy = shelfY - d.b.minY;
-    x += d.w + GUTTER;
-    shelfH = Math.max(shelfH, d.h);
-  }
-  return { placed: sorted, cols, stripW, stripH: shelfY + shelfH };
-}
-
-function countSheets(layout) {
-  const rows = Math.ceil(layout.stripH / PAGE_H);
-  let used = 0;
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < layout.cols; col++) {
-      const x0 = col * PAGE_W;
-      const y0 = row * PAGE_H;
-      if (layout.placed.some((d) =>
-        d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) used++;
-    }
-  }
-  return used;
 }
 
 // A plain rectangle strip (ruffle tiers, halter bias binding) never earns
@@ -151,84 +110,16 @@ export function isChalkPiece(p) {
   return p.name.includes('Ruffle') || p.name.includes('Bias binding');
 }
 
-// Try every strip width and keep whichever wastes the fewest printed sheets —
-// a fixed 3-wide strip left half the pages nearly empty on tall garments.
-// The widest piece always fits: cols never drops below what it needs (a 1.4 m
-// ruffle segment used to be silently CLIPPED at the old 5-column cap).
-function packPieces(pieces) {
-  const dims = pieces.map((p) => {
-    const b = bounds(p);
-    return { p, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
-  });
-  const maxW = Math.max(...dims.map((d) => d.w));
-  const minCols = Math.max(1, Math.ceil((maxW + 1) / PAGE_W));
-  let bestCols = minCols;
-  let bestSheets = Infinity;
-  for (let cols = minCols; cols <= Math.max(5, minCols); cols++) {
-    const sheets = countSheets(shelfPack(dims, cols));
-    if (sheets < bestSheets) { bestCols = cols; bestSheets = sheets; }
-  }
-  // re-place at the winning width: the trial runs mutate the shared dims
-  return shelfPack(dims, bestCols);
-}
-
-function pieceGroup(d) {
-  // Outer solid = CUTTING line (allowance included); inner fine = SEWING line.
-  // Old closet saves have no cutLine and print the single line as before.
-  const hasCut = (d.p.cutLine || []).length > 0;
-  let inner = hasCut
-    ? `<path d="${pathD(d.p.cutLine, 1)}" fill="none" stroke="#111" stroke-width="0.6"/>` +
-      `<path d="${pathD(d.p.commands, 1)}" fill="none" stroke="#555" stroke-width="0.35"/>`
-    : `<path d="${pathD(d.p.commands, 1)}" fill="none" stroke="#111" stroke-width="0.6"/>`;
-  if (d.p.markings.length) {
-    inner += `<path d="${pathD(d.p.markings, 1)}" fill="none" stroke="#111" stroke-width="0.45" stroke-dasharray="4 3"/>`;
-  }
-  if (d.p.grainline) {
-    // grainline with real arrowheads (the legend promises an arrow)
-    const g = d.p.grainline;
-    inner += `<line x1="${g.fromX}" y1="${g.fromY}" x2="${g.toX}" y2="${g.toY}" stroke="#111" stroke-width="0.45"/>` +
-      `<path d="M ${g.fromX - 2.5} ${g.fromY + 4} L ${g.fromX} ${g.fromY} L ${g.fromX + 2.5} ${g.fromY + 4} ` +
-      `M ${g.toX - 2.5} ${g.toY - 4} L ${g.toX} ${g.toY} L ${g.toX + 2.5} ${g.toY - 4}" fill="none" stroke="#111" stroke-width="0.45"/>`;
-  }
-  inner += `<text x="${d.b.minX + 6}" y="${d.b.minY + 14}" font-family="Helvetica" font-size="7" fill="#555">${d.p.name}</text>` +
-           `<text x="${d.b.minX + 6}" y="${d.b.minY + 21}" font-family="Helvetica" font-size="6" fill="#888">${d.p.cutInstruction}</text>`;
-  return `<g transform="translate(${d.ox.toFixed(1)} ${d.oy.toFixed(1)})">${inner}</g>`;
-}
-
-// One A4 sheet: a viewBox window over the packed strip + edge join ticks.
-function sheetSVG(layout, col, row) {
+// One A4 sheet: a viewBox window over the packed strip; all markup (pieces +
+// register system) comes from sheet.js so node tests render the same pixels.
+function sheetSVG(layout, col, row, used) {
   const x0 = col * PAGE_W;
   const y0 = row * PAGE_H;
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', `${PAGE_W}mm`);
   svg.setAttribute('height', `${PAGE_H}mm`);
   svg.setAttribute('viewBox', `${x0} ${y0} ${PAGE_W} ${PAGE_H}`);
-
-  let inner = '';
-  const ghosts = [];
-  for (const d of layout.placed) {
-    if (d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0) {
-      inner += pieceGroup(d);
-      // the piece's own label lives at its top-left corner; on every OTHER
-      // sheet the piece touches, whisper its name so no page is anonymous
-      const labelX = d.x0 + 6, labelY = d.y0 + 14;
-      if (labelX < x0 || labelX > x0 + PAGE_W || labelY < y0 || labelY > y0 + PAGE_H) {
-        ghosts.push(d.p.name);
-      }
-    }
-  }
-  if (ghosts.length) {
-    inner += `<text x="${x0 + 4}" y="${y0 + 6}" font-family="Helvetica" font-size="4" fill="#999">on this sheet: ${ghosts.join(' · ')}</text>`;
-  }
-  // sheet code inside the drawing area, bottom-left, so a loose page is never anonymous
-  inner += `<text x="${x0 + 4}" y="${y0 + PAGE_H - 3}" font-family="Helvetica" font-size="4" fill="#999">sheet ${String.fromCharCode(65 + row)}${col + 1}</text>`;
-  // join ticks at every shared edge midpoint (match tick to tick, no overlap)
-  const t = 6;
-  inner += `<line x1="${x0}" y1="${y0 + PAGE_H / 2}" x2="${x0 + t}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W - t}" y1="${y0 + PAGE_H / 2}" x2="${x0 + PAGE_W}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W / 2}" y1="${y0}" x2="${x0 + PAGE_W / 2}" y2="${y0 + t}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W / 2}" y1="${y0 + PAGE_H - t}" x2="${x0 + PAGE_W / 2}" y2="${y0 + PAGE_H}" stroke="#111" stroke-width="0.4"/>`;
-  svg.innerHTML = inner;
+  svg.innerHTML = sheetInner(layout, col, row, used);
   return svg;
 }
 
@@ -251,18 +142,7 @@ function buildPrintPages(result, root, sizeLabel) {
   const chalk = p.pieces.filter(isChalkPiece);
   const paper = p.pieces.filter((piece) => !isChalkPiece(piece));
   const layout = packPieces(paper.length ? paper : p.pieces);
-  const rows = Math.ceil(layout.stripH / PAGE_H);
-
-  const sheets = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < layout.cols; col++) {
-      const x0 = col * PAGE_W;
-      const y0 = row * PAGE_H;
-      const used = layout.placed.some((d) =>
-        d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0);
-      if (used) sheets.push({ col, row });
-    }
-  }
+  const { sheets, used } = usedCells(layout);
 
   const lang = L();
   const cover = el('div', 'print-page');
@@ -296,12 +176,12 @@ function buildPrintPages(result, root, sizeLabel) {
   for (const { col, row } of sheets) {
     const page = el('div', 'print-page');
     page.appendChild(el('div', 'print-label',
-      P.sheet(titleGarment, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
+      P.sheet(titleGarment, sheetCode(row, col), layout.cols)[lang]));
     // In a graded run every sheet must SHOUT its size on the artwork itself: if
     // the label strip is trimmed or the sheets get shuffled, a buyer must never
     // cut EU44 sheets thinking they are EU38 (that is fabric on the floor).
     if (sizeLabel) page.appendChild(el('div', 'print-size-stamp', sizeLabel));
-    page.appendChild(sheetSVG(layout, col, row));
+    page.appendChild(sheetSVG(layout, col, row, used));
     root.appendChild(page);
   }
 }
@@ -357,53 +237,17 @@ export function printGrade(sizes, garmentLabel) {
   window.print();
 }
 
-// The cutting outline of a piece (allowance-included line if present, else the
-// sewing line) — nested print shows outlines only, one colour per size.
-function outlineD(piece) {
-  const cmds = (piece.cutLine || []).length ? piece.cutLine : piece.commands;
-  return pathD(cmds, 1);
-}
-
 // One nested A4 sheet: the SAME viewBox window as a normal sheet, but every
 // size's same-named piece is drawn over the largest size's placement, each in
-// its own colour. `slots` are the largest size's placed dims; each slot knows
-// which piece (by name) to pull from every size and how to register it.
-function nestedSheetSVG(slots, sizes, styleByLabel, col, row) {
+// its own colour. Markup comes from sheet.js (single source, node-testable).
+function nestedSheetSVG(layout, sizes, styleByLabel, col, row, used) {
   const x0 = col * PAGE_W;
   const y0 = row * PAGE_H;
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', `${PAGE_W}mm`);
   svg.setAttribute('height', `${PAGE_H}mm`);
   svg.setAttribute('viewBox', `${x0} ${y0} ${PAGE_W} ${PAGE_H}`);
-
-  let inner = '';
-  for (const d of slots) {
-    if (!(d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) continue;
-    // Draw largest -> smallest so smaller sizes sit visibly on top.
-    for (let si = sizes.length - 1; si >= 0; si--) {
-      const piece = sizes[si].byName.get(d.p.name);
-      if (!piece) continue;
-      const pb = bounds(piece);
-      // Register every size at the SAME point: align each piece's top-left to
-      // the largest's placed top-left (d.ox/d.oy translate largest-local ->
-      // strip; subtract this size's own minX/minY so its corner lands there).
-      const tx = (d.b.minX + d.ox) - pb.minX;
-      const ty = (d.b.minY + d.oy) - pb.minY;
-      const st = styleByLabel.get(sizes[si].size);
-      const dash = st.d ? ` stroke-dasharray="${st.d}"` : '';
-      inner += `<g transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)})">` +
-        `<path d="${outlineD(piece)}" fill="none" stroke="${st.c}" stroke-width="0.5"${dash}/></g>`;
-    }
-    // Piece name once, at the largest placement corner.
-    inner += `<text x="${(d.b.minX + d.ox + 6).toFixed(1)}" y="${(d.b.minY + d.oy + 14).toFixed(1)}" font-family="Helvetica" font-size="7" fill="#555">${d.p.name}</text>`;
-  }
-  inner += `<text x="${x0 + 4}" y="${y0 + PAGE_H - 3}" font-family="Helvetica" font-size="4" fill="#999">sheet ${String.fromCharCode(65 + row)}${col + 1}</text>`;
-  const t = 6;
-  inner += `<line x1="${x0}" y1="${y0 + PAGE_H / 2}" x2="${x0 + t}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W - t}" y1="${y0 + PAGE_H / 2}" x2="${x0 + PAGE_W}" y2="${y0 + PAGE_H / 2}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W / 2}" y1="${y0}" x2="${x0 + PAGE_W / 2}" y2="${y0 + t}" stroke="#111" stroke-width="0.4"/>` +
-           `<line x1="${x0 + PAGE_W / 2}" y1="${y0 + PAGE_H - t}" x2="${x0 + PAGE_W / 2}" y2="${y0 + PAGE_H}" stroke="#111" stroke-width="0.4"/>`;
-  svg.innerHTML = inner;
+  svg.innerHTML = nestedSheetInner(layout, sizes, styleByLabel, col, row, used);
   return svg;
 }
 
@@ -429,16 +273,7 @@ export function printGradeNested(sizes, garmentLabel) {
   const largest = prepared.reduce((m, pr) => (area(pr) > area(m) ? pr : m), prepared[0]);
   const layout = packPieces(largest.paper);
   const styleByLabel = new Map(prepared.map((pr, i) => [pr.size, nestStyle(i)]));
-
-  const rows = Math.ceil(layout.stripH / PAGE_H);
-  const sheets = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < layout.cols; col++) {
-      const x0 = col * PAGE_W, y0 = row * PAGE_H;
-      if (layout.placed.some((d) =>
-        d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0)) sheets.push({ col, row });
-    }
-  }
+  const { sheets, used } = usedCells(layout);
 
   // ---- cover ----
   const cover = el('div', 'print-page');
@@ -484,8 +319,8 @@ export function printGradeNested(sizes, garmentLabel) {
   for (const { col, row } of sheets) {
     const page = el('div', 'print-page');
     page.appendChild(el('div', 'print-label',
-      P.sheet(garmentLabel, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
-    page.appendChild(nestedSheetSVG(layout.placed, sizesForSheet, styleByLabel, col, row));
+      P.sheet(garmentLabel, sheetCode(row, col), layout.cols)[lang]));
+    page.appendChild(nestedSheetSVG(layout, sizesForSheet, styleByLabel, col, row, used));
     root.appendChild(page);
   }
 
