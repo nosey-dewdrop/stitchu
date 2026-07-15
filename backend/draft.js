@@ -32,6 +32,7 @@ const ENUMS = {
   collarEdge: ['round', 'pointed', 'scallop'],
   gatherType: ['none', 'drawstring', 'shirred', 'smocked'],
   gatherZone: ['neckline', 'bust', 'waist', 'sleeve'],
+  backOpening: ['none', 'round', 'lowV', 'square', 'keyhole'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -50,6 +51,9 @@ const GATHER_TYPE = { none: 0, drawstring: 1, shirred: 2, smocked: 3 };
 const gatherTypeInt = (s) => GATHER_TYPE[s] || 0;
 const GATHER_ZONE = { neckline: 0, bust: 1, waist: 2, sleeve: 3 };
 const gatherZoneInt = (s) => GATHER_ZONE[s] || 0;
+// BackOpening enum int (must match engine/src/openback.hpp order). 0 = None.
+const BACK_OPENING = { none: 0, round: 1, lowV: 2, square: 3, keyhole: 4 };
+const backOpeningInt = (s) => BACK_OPENING[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -155,6 +159,7 @@ export function validateDraftRequest(body) {
       collarEdge: spec.collarEdge ?? 'round',
       gatherType: spec.gatherType ?? 'none',
       gatherZone: spec.gatherZone ?? 'neckline',
+      backOpening: spec.backOpening ?? 'none',
     },
     measurements,
   };
@@ -179,6 +184,7 @@ export async function runDraft(spec, measurements) {
     collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
     gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
     gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
+    backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
   );
   return JSON.parse(json);
 }
@@ -218,6 +224,7 @@ export async function handleGrade(request) {
       collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
       gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
       gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
+      backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

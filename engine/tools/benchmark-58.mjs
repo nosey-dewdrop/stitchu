@@ -111,6 +111,14 @@ const DRAWN_SINCE = [
   // "drawstring gathered sleeves" stays missing.
   (t) => /drawstring|shirr|smock|gathered|gathering/i.test(t) &&
          !/sleeve/i.test(t),
+  // loop 9b: open-back cutout — the engine now opens a shaped cutout (round /
+  // low-V / square / keyhole) in the BACK piece + a facing trued to the opening.
+  // "open-back circular cutout", "low open back", "open back", "back cutout" all
+  // draw. A tie-BACK CLOSURE is a DIFFERENT term (Loop 4b draws the tie strips),
+  // so this rule must NOT match it — the tie-back rule above already covers it,
+  // and both can be present on the same photo (each its own oov term).
+  (t) => /open-?back|back ?cutout|backless|open back/i.test(t) &&
+         !/\btie\b|\bties\b|lace/i.test(t),
 ];
 
 function classify(entry, spec) {

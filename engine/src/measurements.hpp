@@ -199,6 +199,12 @@ struct GarmentSpec {
     // smocked gathering".
     int gatherType = 0; // GatherType enum value; 0 = None
     int gatherZone = 0; // GatherZone enum value; 0 = Neckline
+    // Opt-in open-back cutout (açık sırt oyuğu, Loop 9b): a shaped opening in the
+    // BACK center piece below the nape + a facing whose inner edge is trued to
+    // the opening. Off by default (None) → byte-identical. See openback.hpp /
+    // FORMULAS.md "Open-back cutout". Can coexist with a tie-back (Loop 4b): the
+    // tie draws the closure, this draws the opening it fastens over.
+    int backOpening = 0; // BackOpening enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

@@ -479,6 +479,45 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   gathered SLEEVE stays honest. A manual gathering + zone picker covers the no-photo path.
   seen.gatherDrawn suppresses the missing.js note when a drawable gathering was chosen.
 
+## Open-back cutout (açık sırt oyuğu) — opt-in (BENCHMARK-58 Loop 9b)
+- WHAT: a shaped opening in the BACK center piece, below the nape, finished with a
+  facing — the back-panel analogue of the front keyhole. Four shapes (couture back
+  décolletage — Dior/YSL backless; high-street backless — Zara/Bershka):
+  `BackOpening { None, RoundCutout, LowV, Square, Keyhole }`. Opt-in
+  (GarmentSpec.backOpening); None → golden BYTE-IDENTICAL. openback.hpp/.cpp,
+  post-pass in garment.cpp after the gather block. Off/on both stay byte-identical.
+- ANATOMY (research — Aldrich/Armstrong + couture/high-street backless): the opening
+  NEVER starts at the neck edge — a yoke of fabric at the shoulders hangs the
+  garment. Top of the opening = `gapBelowNape = 40 mm` below the CB nape; it must
+  clear the waist seam (`waistClearance = 55 mm`). Length = the back span between
+  those, clamped to `[55, 320] mm` (55 = shorter reads as a keyhole/slit; 320 = a
+  deep backless span). Half-width / length by shape: round 0.42, low-V 0.34,
+  square 0.36, keyhole 0.24. The opening is drawn as the HALF against the CB fold
+  (x=0..+halfW); the back is cut 2 with a CB SEAM (the mirror axis), so the half
+  unfolds into the full symmetric cutout — same on-fold convention as the keyhole.
+- SHAPES: round = a wide oval bulging out to halfW at mid-height, rounding back to
+  the CB; low-V = narrow at the nape, straight edges widening to a low point;
+  square = a rectangular scoop with a softened bottom corner; keyhole = a teardrop
+  (slit-narrow top, round bottom), the front keyhole mirrored onto the back.
+- FACING + TRUING: a solid facing piece (cut 1 on fold, interface) = the opening
+  silhouette pushed OUT by `facingMargin = 34 mm` on every side, so it covers the
+  opening + margin. The facing carries the SAME opening stitch line as a MARKING;
+  that marked line is BYTE-IDENTICAL to the opening drawn on the back → truing
+  0.00 mm (backopen_check), the facing can never drift from the hole it finishes.
+  seamAllowance = 0 (sewn ON the marked line, then slashed + turned). Construction
+  steps inserted right after the neckline facing understitch (same slot as the
+  keyhole): fuse → pin RST on the marked line → slash inside → turn + understitch.
+- COEXISTS WITH A TIE-BACK (Loop 4b): a Tie Back Mini Dress has BOTH — the tie
+  (TieBlock) draws the closure strips, this draws the round opening it fastens over.
+  Independent enums, independent post-passes; both pieces appear on the same draft.
+- HONEST LIMIT: a back with side-seam POCKETS or another undrawn feature clustered
+  with the cutout still lists that feature (missing.js) — only the open-back itself
+  is suppressed (seen.backOpeningDrawn). A laced back / back button placket stay honest.
+- Vision→spec (create.js pickBackOpening): reads seen.backDetail (openBack) + oov
+  terms (open-back / back cutout / backless / low open back) → a shape; keyhole/
+  square/low-V descriptors pick the silhouette, else round (the set's common case).
+  A manual "open back" shape picker covers the no-photo path.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

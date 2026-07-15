@@ -5,6 +5,7 @@
 #include "collar.hpp"
 #include "gather.hpp"
 #include "keyhole.hpp"
+#include "openback.hpp"
 #include "placket.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
@@ -412,6 +413,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         GatherBlock::apply(pattern, static_cast<GatherType>(spec.gatherType),
                            static_cast<GatherZone>(spec.gatherZone));
+    }
+    // Opt-in open-back cutout (açık sırt oyuğu, Loop 9b): a shaped opening in the
+    // back center piece + a facing whose inner edge is trued to the opening.
+    // Post-pass on the finished draft, so the base is byte-identical with it off
+    // (backOpening == None). Coexists with a tie-back (the tie draws the closure,
+    // this draws the opening it fastens over) — both can be on the same garment.
+    if (spec.backOpening != static_cast<int>(BackOpening::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        OpenBackBlock::apply(pattern, static_cast<BackOpening>(spec.backOpening));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

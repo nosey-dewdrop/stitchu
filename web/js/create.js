@@ -41,6 +41,10 @@ const SPEC_GROUPS = [
   // a dress/top (needs a bodice to gather onto).
   { key: 'gatherType', label: 'gathering', trLabel: 'büzgü', options: [['none', 'none', 'yok'], ['drawstring', 'drawstring', 'ip büzgü'], ['shirred', 'shirred', 'lastik büzgü'], ['smocked', 'smocked', 'smok']], for: (s) => s.garment !== 'skirt' },
   { key: 'gatherZone', label: 'gather zone', trLabel: 'büzgü yeri', options: [['neckline', 'neckline', 'yaka'], ['bust', 'bust', 'büst'], ['waist', 'waist', 'bel'], ['sleeve', 'sleeve', 'kol']], for: (s) => s.garment !== 'skirt' && s.gatherType && s.gatherType !== 'none' },
+  // Loop 9b: open-back cutout (açık sırt oyuğu) — a shaped opening in the back
+  // piece + a facing trued to the opening. Only on a dress/top (needs a back
+  // bodice). Independent of a tie-back: a dress can have both.
+  { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
@@ -56,7 +60,7 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
-  gatherType: 'none', gatherZone: 'neckline',
+  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none',
 };
 
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
@@ -158,6 +162,27 @@ function pickCollar(seen) {
   else if (words.includes('flat') || words.includes('collar')) type = 'flat';
   if (!type) return null;
   return { type, edge };
+}
+
+// Map the vision's backDetail + oov terms to a drawable open-back cutout shape
+// (Loop 9b). The engine opens a shaped cutout in the BACK center piece + a facing
+// whose inner edge is trued to the opening. This is INDEPENDENT of a tie-back
+// (Loop 4b): a Tie Back Mini Dress has BOTH — the tie draws the closure, this
+// draws the round opening it fastens over. Returns a spec backOpening string
+// ('round'|'lowV'|'square'|'keyhole') or null (stays honest).
+function pickBackOpening(seen) {
+  const words = [
+    seen.backDetail,
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  const named = /open.?back|back.?cutout|backless|open .?back|low open back/.test(words) ||
+                seen.backDetail === 'openBack';
+  if (!named) return null;
+  // Shape from any descriptor; default to a round cutout (the set's common case).
+  if (/keyhole/.test(words)) return 'keyhole';
+  if (/square/.test(words)) return 'square';
+  if (/\bv-?\b|low-?v|deep v|v cut|v-cut|plunge/.test(words)) return 'lowV';
+  return 'round';
 }
 
 function el(tag, className, text) {
@@ -449,6 +474,11 @@ function showSpec() {
         const gather = pickGather(seen);
         if (gather) { spec.gatherType = gather.type; spec.gatherZone = gather.zone; }
         else { spec.gatherType = 'none'; spec.gatherZone = 'neckline'; }
+        // Open-back cutout (açık sırt oyuğu, Loop 9b): the engine now opens a
+        // shaped cutout in the BACK piece + a facing trued to the opening. This is
+        // INDEPENDENT of a tie-back (Loop 4b) — a Tie Back Mini Dress gets both.
+        const backOpen = pickBackOpening(seen);
+        spec.backOpening = backOpen || 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -481,6 +511,11 @@ function showSpec() {
           // the honesty layer must NOT list that gathering as missing. A special
           // sub-type the engine still can't draft stays honest (gatherType none).
           gatherDrawn: !!(spec.gatherType && spec.gatherType !== 'none'),
+          // Loop 9b: an open-back cutout (round/low-V/square/keyhole) is now DRAWN
+          // as a facing-finished opening in the back piece, so the honesty layer
+          // must NOT list the open-back as missing. A pocket / special back
+          // finish clustered with it stays honest (its own oov term still shows).
+          backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();

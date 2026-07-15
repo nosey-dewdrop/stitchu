@@ -113,7 +113,7 @@ createEngine().then((e) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, gatherType, gatherZone));
+      false, 0, 0, 0, 0, gatherType, gatherZone, 0));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -126,6 +126,27 @@ createEngine().then((e) => {
     // Use the same USED-SET sheet count the main run() uses (countSheets), not a
     // bounding-box product — a long thin drawstring cord spans a wide bbox but
     // only touches a handful of real sheets, so the product wildly overcounts.
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
+  // Loop 9b open-back variant: appends the full trailing arg list with the
+  // backOpening enum LAST so the open-back cutout facing is drafted + packed.
+  const backOpenRun = (label, args, m, backOpening) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, backOpening));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
     const sheets = countSheets(layout);
     maxSheets = Math.max(maxSheets, sheets);
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
@@ -181,6 +202,14 @@ createEngine().then((e) => {
           gz === 3 ? 'straight' : 'none', 'long', 'aLine', 'midi', 'hip', false, 1, false];
         gatherRun(`b${bi} gather-${gtName}-${gzName} top`, topArgs, m, gt, gz);
       }
+    }
+    // Loop 9b: open-back cutout across the 4 shapes, dress + top, princess + dart.
+    // The facing is a fresh piece that must pack without clipping.
+    for (const [bo, boName] of [[1, 'round'], [2, 'lowV'], [3, 'square'], [4, 'keyhole']]) {
+      backOpenRun(`b${bi} openback-${boName} dress`,
+        ['dress', 'princess', 'natural', 'woven', 'scoop', 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, bo);
+      backOpenRun(`b${bi} openback-${boName} top`,
+        ['top', 'dart', 'natural', 'woven', 'crew', 'straight', 'long', 'aLine', 'midi', 'hip', false, 1, false], m, bo);
     }
   }
 

@@ -566,3 +566,12 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 
 **Görsel:** beş yaka silüeti (dik / mandarin / yatık / bebe / gömlek), her birinin boyun kenarında '= oyuk, 0.00mm' etiketi; altta '14/54 → 14/54' sabit, yanında '9 collar foto: yaka artık engel DEĞİL'. Alt yazı: "shipped a whole collar family, moved zero — and I can tell you exactly why".
 **Format:** reel
+
+## Reel — açık sırtı çizdim ve tam +3 nereye gitti biliyorum (loop 9b)
+
+**Hook (ilk 2 sn):** "Motoruma açık sırt oyuğunu öğrettim. Kuyruk +4 dedi, gerçek +3 çıktı — ve eksik +1'in nereye kaçtığını tam biliyorum."
+
+**Anlatı (~45 sn):** Bu oturumda motoruma açık sırt oyuğunu öğrettim — sırtın ortasında yuvarlak, düşük-V, kare ya da damla şeklinde bir açıklık, kenarı bir facing'le (pervaz) bitiyor. Bu aslında ön yakadaki keyhole'un sırt hâli: oyuğu kâğıttan kesmiyorsun, sırt parçasına dikiş çizgisi olarak işaretliyorsun, üstüne şekilli bir facing dikip içeriden yarıp çeviriyorsun. Kilit ölçü şu: oyuk boyun deliğinden değil, nape'ten 40mm AŞAĞI başlar — omuzda kumaştan bir yoke kalır, giysiyi o asar; yoksa elbise düşer. Facing'i oyuğun tam kopyasını marking olarak taşıyacak şekilde çizdim: sırta çizilen oyuk çizgisiyle bit-bit aynı, sapma 0.00mm — facing kapattığı delikten asla kayamaz. Bir de şuna dikkat ettim: Tie Back elbisesinde HEM bağ HEM oyuk var; bağı Loop 4b zaten çiziyordu, ben oyuğu ekledim, ikisi aynı kalıba çıkıyor, birbirini ezmiyor. Sonra 54 fotoyu ölçtüm: 19'dan 22'ye, +3. Kuyruk +4 demişti. Eksik +1 nerede? 3. Tie Back fotosunda (polka, sırt görünümü) vision yakayı 'halter' okumuş, manifest 'boat' bekliyor — oyuğu ve bağı çiziyorum ama yaka alanı yanlış olduğu için foto TAM sayılmıyor. Bu motor kusuru değil, vision varyansı; oyuk geometrik olarak orada. Ders: bir öğeyi çizmek ile bir fotoyu tam yapmak ayrı şeyler — ve tahminle gerçek arasındaki farkı örtmek yerine tam olarak nereye gittiğini söylersin.
+
+**Görsel:** sırt parçası + üstünde vişne yarım-oval oyuk çizgisi (CB katına yaslı), yanında D-şekilli facing (oyuk çizgisi içeride offset); altta '19/54 → 22/54 (+3)', küçük not 'kuyruk +4 dedi, 1 foto vision yaka varyansına takıldı'. Alt yazı: "shipped the cutout, moved +3, and I can point at the missing +1".
+**Format:** reel

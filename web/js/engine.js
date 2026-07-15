@@ -39,6 +39,12 @@ export function gatherZoneValue(spec) {
   return GATHER_ZONE[spec && spec.gatherZone] || 0;
 }
 
+// BackOpening enum (must match engine/src/openback.hpp order). 0 = None.
+const BACK_OPENING = { none: 0, round: 1, lowV: 2, square: 3, keyhole: 4 };
+export function backOpeningValue(spec) {
+  return BACK_OPENING[spec && spec.backOpening] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -71,6 +77,7 @@ export async function grade(spec, fromLabel, toLabel) {
     collarEdgeValue(spec), // Loop 7/8: flat-family outer edge
     gatherTypeValue(spec), // Loop 8: drawstring/shirred/smocked gathering
     gatherZoneValue(spec), // Loop 8: gather zone
+    backOpeningValue(spec), // Loop 9b: open-back cutout
   );
   return JSON.parse(json);
 }
@@ -94,6 +101,7 @@ export async function draft(spec, measurements) {
     collarEdgeValue(spec),       // Loop 7/8: flat-family outer edge
     gatherTypeValue(spec),       // Loop 8: drawstring/shirred/smocked gathering
     gatherZoneValue(spec),       // Loop 8: gather zone
+    backOpeningValue(spec),      // Loop 9b: open-back cutout
   );
   return JSON.parse(json);
 }

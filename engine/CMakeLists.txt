@@ -16,6 +16,7 @@ add_library(engine
     src/tie.cpp
     src/collar.cpp
     src/gather.cpp
+    src/openback.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -65,6 +66,10 @@ add_test(NAME collar_check COMMAND collar_check)
 add_executable(gather_check tests/gather_check.cpp)
 target_link_libraries(gather_check PRIVATE engine)
 add_test(NAME gather_check COMMAND gather_check)
+
+add_executable(backopen_check tests/backopen_check.cpp)
+target_link_libraries(backopen_check PRIVATE engine)
+add_test(NAME backopen_check COMMAND backopen_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

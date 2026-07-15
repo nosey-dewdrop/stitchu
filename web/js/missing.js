@@ -239,9 +239,15 @@ export function missingFeatures(seen, lang) {
   }
 
   // back detail — a tieBack is now DRAWN as strips (Loop 4b), so skip it when
-  // tieDrawn; every other back detail (open/laced/keyhole back) stays honest.
+  // tieDrawn; an open/keyhole/V back cut-out is now DRAWN as a facing-finished
+  // opening (Loop 9b), so skip it when backOpeningDrawn. A laced back / back
+  // button placket stays honest. (A tie-back photo often has BOTH a tie AND an
+  // open cut-out — the tie is suppressed by tieDrawn, the cut-out by
+  // backOpeningDrawn; a laced back stays honest either way.)
   const tieBackDrawn = seen.tieDrawn && seen.backDetail === 'tieBack';
-  if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn) {
+  const openBackDrawn = seen.backOpeningDrawn &&
+    ['openBack', 'keyholeBack', 'vBack'].includes(seen.backDetail);
+  if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn && !openBackDrawn) {
     const d = BACKDETAIL_DERIVATIVE[seen.backDetail];
     push((L === 'tr' ? backLabelTr(seen.backDetail) : backLabelEn(seen.backDetail)), d ? d[L] : null);
   }
@@ -258,9 +264,16 @@ export function missingFeatures(seen, lang) {
   // honest even when gatherDrawn (a neckline/bust panel was drawn, not the sleeve).
   const gatherTerm = (t) => /drawstring|shirr|smock|gathered|gathering/i.test(t);
   const sleeveGather = (t) => /sleeve/i.test(t) && /drawstring|gathered|shirr/i.test(t);
+  // Loop 9b: an open-back cut-out (round / low-V / square / keyhole back) is now
+  // drawn as a facing-finished opening, so an outOfVocab term naming that opening
+  // is no longer missing. A tie-back closure term is a DIFFERENT construction
+  // (Loop 4b handles the tie) and is not suppressed here.
+  const openBackTerm = (t) => /open.?back|back.?cutout|backless|low open back/i.test(t) &&
+    !/tie|lace/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
+    if (seen.backOpeningDrawn && openBackTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);
