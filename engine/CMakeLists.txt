@@ -57,3 +57,7 @@ add_test(NAME cutline_check COMMAND cutline_check)
 add_executable(sleeve_check tests/sleeve_check.cpp)
 target_link_libraries(sleeve_check PRIVATE engine)
 add_test(NAME sleeve_check COMMAND sleeve_check)
+
+add_executable(fit_proof tests/fit_proof.cpp)
+target_link_libraries(fit_proof PRIVATE engine)
+add_test(NAME fit_proof COMMAND fit_proof)
