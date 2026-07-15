@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=46';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=46';
-import { draft, grade } from './engine.js?v=46';
-import { printPattern, printGrade } from './print.js?v=46';
-import { renderResult } from './render.js?v=46';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=47';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=47';
+import { draft, grade } from './engine.js?v=47';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=47';
+import { renderResult } from './render.js?v=47';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=46';
+} from './store.js?v=47';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -425,6 +425,24 @@ function gradePanel(result) {
   row.appendChild(toLabel);
   panel.appendChild(row);
 
+  // Output layout: nested (all sizes on one set of sheets, one colour each —
+  // the industry-standard multi-size PDF) or per-size (each size its own
+  // cover + sheets). Nested is the default: it's the seller's real deliverable.
+  const layoutRow = el('div', 'grade-row grade-layout');
+  const nestWrap = el('label', 'grade-radio');
+  const nestRadio = document.createElement('input');
+  nestRadio.type = 'radio'; nestRadio.name = 'gradeLayout'; nestRadio.value = 'nested'; nestRadio.checked = true;
+  nestWrap.appendChild(nestRadio);
+  nestWrap.appendChild(el('span', '', t('create.grade.layout.nested')));
+  const perWrap = el('label', 'grade-radio');
+  const perRadio = document.createElement('input');
+  perRadio.type = 'radio'; perRadio.name = 'gradeLayout'; perRadio.value = 'per';
+  perWrap.appendChild(perRadio);
+  perWrap.appendChild(el('span', '', t('create.grade.layout.per')));
+  layoutRow.appendChild(nestWrap);
+  layoutRow.appendChild(perWrap);
+  panel.appendChild(layoutRow);
+
   const go = el('button', 'btn primary', t('create.grade.go'));
   const msg = el('p', 'grade-msg');
   go.addEventListener('click', async () => {
@@ -448,7 +466,8 @@ function gradePanel(result) {
       msg.textContent = dropped
         ? t('create.grade.done.some', { n: sizes.length, dropped })
         : t('create.grade.done', { n: sizes.length });
-      printGrade(sizes, result.pattern.garment);
+      if (nestRadio.checked) printGradeNested(sizes, result.pattern.garment);
+      else printGrade(sizes, result.pattern.garment);
     } catch (err) {
       msg.style.color = '#8f2038';
       msg.textContent = t('create.grade.error');

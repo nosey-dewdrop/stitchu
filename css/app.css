@@ -161,6 +161,13 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .print-size-stamp { position: absolute; top: 4mm; right: 6mm; font-size: 24px; font-weight: 800;
   letter-spacing: 1px; color: #8f2038; border: 2px solid #8f2038; border-radius: 3px; padding: 2px 8px; }
 .print-page { position: relative; }
+/* Nested run: colour → size legend on the cover. */
+.print-nest-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 4px 0 12px; }
+.nest-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+/* Grade output-layout radios. */
+.grade-layout { gap: 20px; margin: -4px 0 16px; }
+.grade-radio { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-size: 14px; }
+.grade-radio input { accent-color: #8f2038; }
 
 @media print {
   @page { size: A4 portrait; margin: 10mm; }
