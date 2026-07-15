@@ -11,6 +11,11 @@ export const MEASUREMENTS = [
   { key: 'backLength', label: 'Back length', trLabel: 'Sırt boyu', help: 'From the bone at the base of your neck down to your waist.', trHelp: 'Ense kökündeki kemikten beline kadar.', min: 28, max: 55 },
   { key: 'armLength', label: 'Arm length', trLabel: 'Kol boyu', help: 'Shoulder bone to wrist, arm slightly bent.', trHelp: 'Omuz kemiğinden bileğe, kol hafif bükülü.', min: 40, max: 75 },
   { key: 'neck', label: 'Neck', trLabel: 'Boyun', help: 'Around the base of your neck, one finger of ease.', trHelp: 'Boyun kökünün çevresinden, bir parmak boşlukla.', min: 26, max: 55 },
+  // OPTIONAL 8th: the high/upper bust (above the bust, under the arms). Skippable.
+  // When given, the pattern fits your ribcage frame while keeping the full bust —
+  // the fix for a gaping neckline on a fuller bust. Left blank = the old B/C-cup
+  // assumption, unchanged.
+  { key: 'upperBust', label: 'Upper bust', trLabel: 'Üst göğüs', help: 'ABOVE the bust, high under the arms and across the top of the chest. Skip if unsure — but if your bust is fuller than a B/C cup, this stops the neckline gaping.', trHelp: 'Göğsünün ÜSTÜNDEN, kolların altından ve göğsün üst kısmından. Emin değilsen atla — ama göğsün B/C kaptan dolgunsa, bu yakanın açılmasını önler.', min: 60, max: 150, optional: true },
 ];
 
 export function loadMeasurements() {
