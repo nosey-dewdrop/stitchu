@@ -40,12 +40,33 @@ npx wrangler secret put APP_TOKEN
 npx wrangler deploy
 ```
 
-> **2026-07-15 — redeploy needed:** the worker gained a new `POST /api/waitlist`
-> endpoint (the landing + api.html API waitlist) and the `POST /api/draft`
-> engine endpoint. Until you `wrangler deploy`, the landing's "Request early
-> access" form fails gracefully ("email hello@ instead"). Run the deploy to
-> activate both. The waitlist stores emails in the RATE_LIMIT KV under the key
-> `waitlist` (read them with `npx wrangler kv key get waitlist --binding RATE_LIMIT`).
+> **2026-07-15 — REDEPLOY RUNBOOK (safe, no secret re-entry):** the worker gained
+> three things not yet live: `POST /api/draft` (the engine runs in the worker,
+> zero LLM cost), `POST /api/waitlist` (the landing/api.html email capture), and a
+> couture-hardened vision prompt (better photo reading). Until you deploy, the
+> waitlist form fails gracefully and `/api/draft` returns 404. To activate:
+>
+> ```
+> cd backend
+> npx wrangler deploy
+> ```
+>
+> That's the whole thing. Your secrets (`CLAUDE_API_KEY`, `APP_TOKEN`) and the
+> `RATE_LIMIT` KV persist across deploys — nothing to re-enter. It's an ESM module
+> worker importing `engine/stitchu-worker.wasm` via the `[[rules]] CompiledWasm`
+> block in wrangler.toml (already set); the engine glue has zero node `require`s,
+> so the bundler won't choke.
+>
+> **Smoke-test after deploy (paste, expect a pattern JSON):**
+> ```
+> curl -s https://stitchu-api.<you>.workers.dev/api/draft \
+>   -H 'content-type: application/json' \
+>   -d '{"spec":{"garment":"dress","neckline":"sweetheart"},
+>        "measurements":{"bust":92,"waist":74,"hip":98,"shoulder":39,"backLength":42,"armLength":58,"neck":36}}'
+> ```
+> A JSON body with `"pattern"` and `"pieces"` = success. `{"error":"draft_closed"}`
+> would mean `PUBLIC_DRAFT` isn't "on" (it is, in wrangler.toml). Read waitlist
+> emails: `npx wrangler kv key get waitlist --binding RATE_LIMIT`.
 
 Wrangler prints the Worker URL, e.g. `https://stitchu-api.<you>.workers.dev`.
 Put that URL in `App/Stitchu/Secrets.swift` (`backendURL`), pointing at the
