@@ -50,12 +50,18 @@ std::vector<PatternPiece> draft(
     if (style == SleeveStyle::None) return {};
 
     const double bicepsEstimate = m.bustMM() * bicepsRatio * (1 + bicepsEaseFor(fabric));
-    const double capHeight = armholeDepth * 0.75;
+    double capHeight = armholeDepth * 0.75;
     const double targetCapLength = armholeLength * (1 + capEaseFor(fabric));
 
-    // Converge cap width so the cap curve length matches the armhole.
-    // Cap length grows monotonically with width, so bisect: a fixed-step
-    // multiplicative walk oscillates and can miss the tolerance.
+    // Fit the cap to the armhole while keeping the sleeve wide enough for the
+    // arm. The biceps line is the HARD floor: a sleeve narrower than the biceps
+    // girth + ease binds or won't close at the underarm. Classic set-in drafting
+    // (Aldrich/Brian) draws the biceps line first, then trues the cap to the
+    // armhole by adjusting the cap HEIGHT — not the width.
+    //
+    // Step 1: solve width by length-matching at the default cap height. Cap
+    // length grows monotonically with width, so bisect (a multiplicative walk
+    // oscillates and can miss the tolerance).
     double lo = 60.0;
     double hi = std::max(bicepsEstimate, 200.0) * 3;
     while (capCurveLength(hi, capHeight) < targetCapLength && hi < 8000) {
@@ -67,6 +73,24 @@ std::vector<PatternPiece> draft(
         const double delta = capCurveLength(width, capHeight) - targetCapLength;
         if (std::fabs(delta) <= convergenceTolerance) break;
         if (delta > 0) hi = width; else lo = width;
+    }
+
+    // Step 2: if that width is below the biceps floor (the common case — a
+    // length-matched cap on the default height comes out too narrow for the
+    // arm), widen to the biceps and instead lower the cap height until the cap
+    // length matches again. A wider sleeve on a shallower cap is the correct,
+    // sewable relaxed-set trade; the cap ease stays inside the validator window.
+    if (width < bicepsEstimate) {
+        width = bicepsEstimate;
+        double chLo = 20.0, chHi = capHeight; // shallower cap => shorter cap length
+        // At width=biceps the default height overshoots the target, so the
+        // answer sits below capHeight; bisect the height down to the target.
+        for (int i = 0; i < 60; ++i) {
+            capHeight = (chLo + chHi) / 2;
+            const double delta = capCurveLength(width, capHeight) - targetCapLength;
+            if (std::fabs(delta) <= convergenceTolerance) break;
+            if (delta > 0) chHi = capHeight; else chLo = capHeight;
+        }
     }
 
     const double sleeveLength = totalLength(length, m.armLengthCM * 10, capHeight);

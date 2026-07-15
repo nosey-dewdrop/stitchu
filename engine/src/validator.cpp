@@ -254,6 +254,7 @@ std::vector<ValidationIssue> bodiceIssues(const GarmentSpec& spec, const BodiceD
 
 std::vector<ValidationIssue> sleeveIssues(
     const GarmentSpec& spec,
+    const BodyMeasurementsSnapshot& m,
     const DraftedPattern& draft,
     const BodiceDraft& bodice
 ) {
@@ -291,6 +292,18 @@ std::vector<ValidationIssue> sleeveIssues(
     if (ease < capEaseMin || ease > capEaseMax) {
         issues.push_back({"cap", sleeve->name,
             fmt("cap ease %.1f%% outside the %.0f-%.0f%% window", ease * 100, capEaseMin * 100, capEaseMax * 100)});
+    }
+    // Biceps floor: the sleeve must be at least as wide as the biceps girth +
+    // ease, or it binds / won't close at the underarm. The cap chord (capLeft ->
+    // capRight) IS the finished biceps width. This guards the length-only cap
+    // fit from ever silently returning a too-narrow sleeve.
+    const double bicepsEstimate =
+        m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(spec.fabric));
+    const double capWidth = distance(sleeve->commands[0].to, sleeve->commands[2].to);
+    if (capWidth < bicepsEstimate - 1.0) {
+        issues.push_back({"biceps", sleeve->name,
+            fmt("sleeve %.0f mm wide is narrower than the %.0f mm biceps line — it would bind on the arm",
+                capWidth, bicepsEstimate)});
     }
     return issues;
 }
@@ -902,7 +915,7 @@ std::vector<ValidationIssue> issues(
             options.fabric = spec.fabric;
             const BodiceDraft bodice = BodiceBlock::draft(m, options);
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
-            for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
+            for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);
             for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEaseFor(spec.fabric), &bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
             for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);
@@ -920,7 +933,7 @@ std::vector<ValidationIssue> issues(
             }
             const BodiceDraft bodice = BodiceBlock::draft(m, options);
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
-            for (auto& issue : sleeveIssues(spec, draft, bodice)) result.push_back(issue);
+            for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);
             for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
             for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);

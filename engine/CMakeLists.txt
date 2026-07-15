@@ -53,3 +53,7 @@ add_test(NAME halter_check COMMAND halter_check)
 add_executable(cutline_check tests/cutline_check.cpp)
 target_link_libraries(cutline_check PRIVATE engine)
 add_test(NAME cutline_check COMMAND cutline_check)
+
+add_executable(sleeve_check tests/sleeve_check.cpp)
+target_link_libraries(sleeve_check PRIVATE engine)
+add_test(NAME sleeve_check COMMAND sleeve_check)
