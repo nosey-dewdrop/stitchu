@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%238f2038%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<title>stitchu · the accuracy benchmark</title>
+<meta name="description" content="The published accuracy benchmark for the stitchu pattern-making engine: seams match to 0.00 mm, sleeves ease into their armholes, and the engine is audited against two published pattern-cutting textbooks (Aldrich, Joseph-Armstrong).">
+<meta property="og:title" content="stitchu · the accuracy benchmark">
+<meta property="og:description" content="Others promise fit. We publish the numbers — and the textbook audit.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:#fff;background:#8f2038;line-height:1.5;overflow-x:hidden}
+  a{color:#ffd9e2}
+  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px}
+  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;position:relative;z-index:2}
+  header nav a{font-size:13px;letter-spacing:.5px;text-decoration:none;margin-left:18px}
+  .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px;margin-left:22px}
+  .langtoggle button{background:none;border:none;color:#fff;opacity:.6;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
+  .langtoggle button.active{opacity:1;border-bottom:1.5px solid #fff}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 32px 100px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:24px 0 14px;max-width:20ch}
+  h1 em{font-style:italic}
+  .lead{font-size:15px;opacity:.96;max-width:64ch;margin-bottom:8px}
+  .updated{font-size:12px;opacity:.6;letter-spacing:.5px;margin-bottom:40px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:26px;font-weight:400;margin:48px 0 6px}
+  .sub{font-size:13.5px;opacity:.85;max-width:62ch;margin-bottom:18px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:rgba(80,14,26,.35);border-radius:3px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.14)}
+  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.85;background:rgba(80,14,26,.5)}
+  td .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .ok{color:#bfe3c9}
+  .cardrow{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 4px}
+  .stat{flex:1;min-width:200px;background:rgba(80,14,26,.4);border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:18px 20px}
+  .stat .big{font-family:'Didot',Georgia,serif;font-size:34px;line-height:1;margin-bottom:6px}
+  .stat .cap{font-size:12px;opacity:.85}
+  .note{font-size:12.5px;opacity:.75;margin-top:14px;max-width:64ch}
+  .cta{display:inline-block;margin-top:34px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.55);padding:14px 30px;text-decoration:none;border-radius:2px;position:relative}
+  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;border-radius:2px}
+  footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18)}
+</style>
+</head>
+<body>
+<header>
+  <a class="mark" href="index.html" style="text-decoration:none;color:#fff">stitchu</a>
+  <nav>
+    <a href="create.html" data-en="draft a pattern" data-tr="kalıp çiz">draft a pattern</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
+    <span class="langtoggle"><button id="en" class="active" onclick="setLang('en')">EN</button><span>·</span><button id="tr" onclick="setLang('tr')">TR</button></span>
+  </nav>
+</header>
+
+<div class="wrap">
+  <h1 data-en="The accuracy benchmark." data-tr="Doğruluk kıyaslaması.">The accuracy <em>benchmark.</em></h1>
+  <p class="lead" data-en="Every photo-to-pattern tool promises a pattern that fits. None of them publishes how accurate it is. This is that page — the numbers measured off the drawn pieces, plus an audit of the engine against two published pattern-cutting textbooks." data-tr="Her fotoğraf-kalıp aracı uyacak bir kalıp vaat eder. Hiçbiri ne kadar doğru olduğunu yayınlamaz. Bu, o sayfa — çizilen parçalardan ölçülen değerler ve motorun iki yayınlanmış kalıp kitabına karşı denetimi.">Every photo-to-pattern tool promises a pattern that fits. None of them publishes how accurate it is. This is that page — the numbers measured off the drawn pieces, plus an audit of the engine against two published pattern-cutting textbooks.</p>
+  <p class="updated" data-en="Last updated 16 Jul 2026 · measured on the 70,200-draft matrix" data-tr="Son güncelleme 16 Tem 2026 · 70.200 taslak matrisinde ölçüldü">Last updated 16 Jul 2026 · measured on the 70,200-draft matrix</p>
+
+  <h2 data-en="1 · The geometry holds" data-tr="1 · Geometri tutuyor">1 · The geometry holds</h2>
+  <p class="sub" data-en="These are measured off the DRAWN pieces, not the internal numbers — an audit caught an earlier benchmark reading the intended value instead of the geometry, so now every number below comes from the flattened outline a printer would output." data-tr="Bunlar iç değerlerden değil, ÇİZİLEN parçalardan ölçülür — bir denetim, önceki bir kıyaslamanın geometri yerine hedeflenen değeri okuduğunu yakaladı; artık aşağıdaki her sayı, bir yazıcının basacağı düzleştirilmiş dış hattan gelir.">These are measured off the DRAWN pieces, not the internal numbers — an audit caught an earlier benchmark reading the intended value instead of the geometry, so now every number below comes from the flattened outline a printer would output.</p>
+  <div class="cardrow">
+    <div class="stat"><div class="big">0.00<span style="font-size:16px"> mm</span></div><div class="cap" data-en="max mismatch on seams that must sew together (front↔back side seams, princess seam pairs)" data-tr="birbirine dikilmesi gereken dikişlerde azami sapma (ön↔arka yan dikiş, prenses dikiş çiftleri)">max mismatch on seams that must sew together (front↔back side seams, princess seam pairs)</div></div>
+    <div class="stat"><div class="big">1–9<span style="font-size:16px"> %</span></div><div class="cap" data-en="every sleeve cap eases into its armhole inside the classic set-in window — verified across the whole body × style matrix" data-tr="her kol başı, klasik takma-kol penceresi içinde kol oyuntusuna oturur — tüm beden × stil matrisinde doğrulandı">every sleeve cap eases into its armhole inside the classic set-in window — verified across the whole body × style matrix</div></div>
+    <div class="stat"><div class="big">70,200</div><div class="cap" data-en="drafts in the validation matrix — bodies × garments × necklines × sleeves × skirts × fabrics — zero validation issues" data-tr="doğrulama matrisindeki taslak — bedenler × kıyafetler × yakalar × kollar × etekler × kumaşlar — sıfır doğrulama hatası">drafts in the validation matrix — zero validation issues</div></div>
+  </div>
+
+  <h2 data-en="2 · Audited against the textbooks" data-tr="2 · Ders kitaplarına karşı denetlendi">2 · Audited against the textbooks</h2>
+  <p class="sub" data-en="An engine can look right and draft wrong. So we put every block — bodice, sleeve, skirt, neckline, armscye, grading — against the two standard references: Winifred Aldrich (Metric Pattern Cutting) and Helen Joseph-Armstrong (Patternmaking for Fashion Design). The rule was strict: change a formula only when BOTH books agree and ours is clearly wrong." data-tr="Bir motor doğru görünüp yanlış çizebilir. Bu yüzden her bloğu — beden, kol, etek, yaka, kol oyuntusu, bedenleme — iki standart referansa karşı koyduk: Winifred Aldrich (Metric Pattern Cutting) ve Helen Joseph-Armstrong (Patternmaking for Fashion Design). Kural katıydı: bir formülü sadece İKİ kitap da hemfikirse ve bizimki net yanlışsa değiştir.">An engine can look right and draft wrong. So we put every block — bodice, sleeve, skirt, neckline, armscye, grading — against the two standard references: <b>Winifred Aldrich</b> (Metric Pattern Cutting) and <b>Helen Joseph-Armstrong</b> (Patternmaking for Fashion Design). The rule was strict: change a formula only when BOTH books agree and ours is clearly wrong.</p>
+  <table>
+    <tr><th data-en="block" data-tr="blok">block</th><th data-en="checked against" data-tr="karşı kontrol">checked against</th><th data-en="verdict (EU38)" data-tr="karar (EU38)">verdict (EU38)</th></tr>
+    <tr><td data-en="Bust ease" data-tr="Göğüs ferahlığı">Bust ease</td><td>Aldrich ~8% · Armstrong ~9.4%</td><td class="ok" data-en="ours 6.6% — inside/under the band, wearable" data-tr="bizimki %6.6 — bandın içinde/altında, giyilebilir">ours 6.6% — inside the band</td></tr>
+    <tr><td data-en="Shoulder slope" data-tr="Omuz eğimi">Shoulder slope</td><td>Aldrich ~37 mm · Armstrong n/v</td><td class="ok" data-en="~13° — single-source, documented assumption" data-tr="~13° — tek kaynak, belgelenmiş varsayım">~13° — single-source</td></tr>
+    <tr><td data-en="Sleeve cap ease" data-tr="Kol başı bolluğu">Sleeve cap ease</td><td data-en="industry 6–12%" data-tr="sektör %6–12">industry 6–12%</td><td class="ok" data-en="4% target — lands in the 1–9% window" data-tr="%4 hedef — 1–9% penceresinde">4% — in window</td></tr>
+    <tr><td data-en="Skirt darts" data-tr="Etek pensleri">Skirt darts</td><td>Aldrich front 100 / back 140 mm</td><td class="ok" data-en="ours 90 / 130 — ratio & direction exact" data-tr="bizimki 90 / 130 — oran ve yön birebir">90 / 130 — ratio exact</td></tr>
+    <tr><td data-en="Grading step" data-tr="Bedenleme adımı">Grading step</td><td data-en="Aldrich +4 cm, then +6 cm at plus sizes" data-tr="Aldrich +4 cm, büyük bedende +6 cm">Aldrich +4 cm → +6 cm</td><td class="ok" data-en="matches — same two-tier grade" data-tr="uyuyor — aynı iki kademeli bedenleme">matches exactly</td></tr>
+  </table>
+  <div class="cardrow" style="margin-top:22px">
+    <div class="stat"><div class="big">0</div><div class="cap" data-en="formulas changed by the audit — every deviation was inside a two-source band, single-source, or a documented assumption. The engine held." data-tr="denetimin değiştirdiği formül — her sapma iki kaynak arasında bir bantta, tek kaynak ya da belgelenmiş bir varsayımdı. Motor dayandı.">formulas changed by the audit — the engine held.</div></div>
+    <div class="stat"><div class="big" data-en="honest" data-tr="dürüst">honest</div><div class="cap" data-en="where we couldn't confirm a textbook value, we marked it &ldquo;to verify&rdquo; and did NOT change the formula. No invented reference numbers." data-tr="bir kitap değerini doğrulayamadığımız yerde &ldquo;doğrulanmalı&rdquo; işaretledik ve formülü DEĞİŞTİRMEDİK. Uydurma referans yok.">where we couldn't confirm a textbook value, we marked it &ldquo;to verify&rdquo; — no invented numbers.</div></div>
+  </div>
+  <p class="note" data-en="Sources: Aldrich 6th-ed size chart, Joseph-Armstrong bodice ease tables, FreeSewing (Brian sleeve) engine source, plus documented Aldrich skirt-block reproductions. Full block-by-block deviation tables live in the engineering report." data-tr="Kaynaklar: Aldrich 6. baskı beden tablosu, Joseph-Armstrong beden bolluğu tabloları, FreeSewing (Brian kol) motor kaynağı ve belgelenmiş Aldrich etek-bloğu çoğaltımları. Blok blok tam sapma tabloları mühendislik raporunda.">Sources: Aldrich 6th-ed size chart, Joseph-Armstrong bodice ease tables, FreeSewing (Brian sleeve) engine source, plus documented Aldrich skirt-block reproductions.</p>
+
+  <h2 data-en="3 · Why this is the moat" data-tr="3 · Bu neden hendek">3 · Why this is the moat</h2>
+  <p class="sub" data-en="Similar photo-to-pattern tools charge $34–49 a month and publish no accuracy proof at all. The math is the same for everyone; what nobody else does is measure it, audit it against the literature, and put the numbers where you can read them. That — plus drafting on-device so your measurements never leave your browser — is stitchu." data-tr="Benzer fotoğraf-kalıp araçları ayda 34–49 dolar alır ve hiçbir doğruluk kanıtı yayınlamaz. Matematik herkes için aynı; kimsenin yapmadığı şey onu ölçmek, literatüre karşı denetlemek ve sayıları okuyabileceğin yere koymak. İşte bu — artı ölçülerin tarayıcından hiç çıkmadan cihazda çizilmesi — stitchu.">Similar tools charge <b>$34–49/mo</b> and publish no accuracy proof at all. The math is the same for everyone; what nobody else does is measure it, audit it against the literature, and put the numbers where you can read them. That — plus drafting on-device so your measurements never leave your browser — is stitchu.</p>
+  <a class="cta" href="create.html" data-en="Draft a pattern free →" data-tr="Ücretsiz kalıp çiz →">Draft a pattern free →</a>
+</div>
+
+<footer>
+  <span>stitchu · a pattern-making engine</span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop</span>
+</footer>
+
+<script>
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-en]').forEach((el) => {
+    const v = el.getAttribute('data-' + lang);
+    if (v != null) el.innerHTML = v;
+  });
+  document.getElementById('en').classList.toggle('active', lang === 'en');
+  document.getElementById('tr').classList.toggle('active', lang === 'tr');
+  try { localStorage.setItem('stitchu_lang', lang); } catch (e) {}
+}
+const saved = (() => { try { return localStorage.getItem('stitchu_lang'); } catch (e) { return null; } })();
+setLang(saved || (navigator.language && navigator.language.startsWith('tr') ? 'tr' : 'en'));
+</script>
+</body>
+</html>

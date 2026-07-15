@@ -1,8 +1,8 @@
 // Closet: saved patterns — open inline, delete, or start a new one.
-import { applyStatic, mountLangToggle, t } from './i18n.js?v=48';
-import { printPattern } from './print.js?v=48';
-import { renderResult } from './render.js?v=48';
-import { loadCloset, deleteFromCloset } from './store.js?v=48';
+import { applyStatic, mountLangToggle, t } from './i18n.js?v=49';
+import { printPattern } from './print.js?v=49';
+import { renderResult } from './render.js?v=49';
+import { loadCloset, deleteFromCloset } from './store.js?v=49';
 
 const screen = document.getElementById('screen');
 
