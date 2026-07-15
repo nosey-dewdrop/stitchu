@@ -264,3 +264,154 @@ Damla's engineering thesis, and it is correct:
    - Moat framing: Optitex locks 3D-correct drape behind expert+factory; stitchu = same 3D
      correctness but auto-built from measurements, open to everyone.
    - Damla note: 3D body SCAN (photo→body) = LATER phase, not scrapped, still on the roadmap.
+
+## DIRECTION INSIGHT (2026-07-15, Damla) — stitchu is an API, everything derives from it
+Damla, after seeing AccuMark/Lectra/Optitex/CLO3D: "let's build stitchu as an API — all of these
+feel like things that can DERIVE from that API." Correct, and it matches the earlier engine-as-moat call.
+- Every competitor's core is the SAME thing: a geometry ENGINE (measurements/pattern → 3D-correct
+  geometry: grade, drape, unwrap). Their UIs (CLO's designer canvas, AccuMark's factory flow) are
+  just FACES on that engine. stitchu's value = the engine, not the UI. Engine = API.
+- Why API-first fits the three-audience vision: home sewist wants a simple web form, Etsy seller
+  wants a batch/multi-body panel, brand wants INTEGRATION. One API + three thin UIs, not three apps.
+  Everything (photo→pattern, measure→block, grade, bag family, couture) = different CALLS to one engine.
+- B2B door: a brand doesn't want "the stitchu app", it wants "an API that drafts patterns into our
+  system". API = that door. App for home, API for brands, one core.
+- MENTOR FRED (do not skip): API is an INTERFACE decision, not a QUALITY one. Building an API does
+  NOT create the trust the engine currently lacks ("can't cut fabric on it"). ORDER MUST BE:
+  (1) make the engine CORRECT (Aldrich+Armstrong + 3D→2D), THEN (2) package it as the API.
+  Reverse = gymgyme's "grew it but it didn't work". Validate → package, never package → hope.
+- Good news: the API core ALREADY EXISTS — POST /api/draft runs the WASM engine server-side today.
+  Not from scratch; the skeleton is live. Work = validate engine, then turn that endpoint into a
+  real product API (documented, versioned, open to all three audiences).
+
+## WHY DIFFERENT BRANDS USE DIFFERENT CAD (2026-07-15) — the "mafya?" question
+Not a cartel. Four real reasons — and each is also the incumbents' WEAKNESS = stitchu's opening.
+1. They are NOT the same — different centers of gravity:
+   - Gerber/Lectra (Zara): deep in GRADE + MARKER + CUT (factory throughput, min fabric waste).
+   - CLO3D (Dior/couture): deep in real-time 3D DRAPE + visuals (aesthetics, fast iteration).
+   - Browzwear/Optitex (Adidas): deep in TECHNICAL product + function + PLM INTEGRATION.
+   Everyone buys the one that solves THEIR pain; nobody wants the others' strength.
+2. Switching cost = the real "lock-in" (legal, not mafia): staff trained, thousands of patterns in
+   that format, whole factory flow wired to it. Changing = redo everything, $M + downtime. Picked
+   20yrs ago = still on it.
+3. History/geography: Gerber US, Lectra FR (EU luxury), CLO Korea (Asia manufacturing boom).
+4. Price/segment: same tech sliced to different pockets; Gerber won't sell to a home sewist,
+   CLO won't sell to a factory line.
+=> These 4 reasons are ALSO the weakness: locked-in, segment-siloed, expert-required, expensive/old
+   (desktop, license). stitchu breaks all four: API-first (no lock-in, plugs into anything),
+   ONE engine for three segments (home+Etsy+brand), AUTOMATIC (no expert), web/cheap.
+   The market is 50yrs old, locked, siloed, undemocratized — the opening is exactly where Damla stands:
+   same geometric correctness, but open, automatic, for everyone.
+
+## AI-speeds-it-up note (2026-07-15, Damla) — half true, channel it right
+Damla: "with AI, 20 years of work became 2 days." Partly true, partly a trap:
+- TRUE: cloth sim needn't be written from scratch (NVIDIA Warp/PhysX/three.js cloth exist; AI makes
+  INTEGRATION go from months to days; neural cloth sim now approximates physics fast).
+- TRAP: "2 days" is hype. AI speeds up WIRING a known thing, not producing Dior-grade correctness in
+  2 days. Demo ≠ product (gymgyme lesson). And physics/wrinkle sim does NOT fix the real problem —
+  it only SHOWS drape, it does not make the PATTERN fit. Fastest cloth sim still can't save a pattern
+  that doesn't sit right.
+- CHANNEL IT: aim the AI speed at the GEOMETRIC UNWRAP engine (measure→3D surface→2D pattern),
+  where ready mesh-flattening libs + AI genuinely accelerate, and the output IS the product (a
+  pattern that fits). Wrinkle RENDER = last, optional showroom; maybe plug a cloth API someday.
+  Order: fitting pattern FIRST, pretty render later.
+- DECISION (rebuild-3D vs extend-2D vs physics) DEFERRED until competitor tour finishes.
+
+## Competitor CLUSTER 1 CLOSED (2026-07-15, Damla's framing) — "the industry's Figma"
+6. TUKAcad = cheap industrial CAD, no new lesson (just a half-attempt at democratizing pricey CAD).
+Damla's verdict on the WHOLE cluster (Gerber, Lectra, Optitex, CLO3D, Browzwear, TUKAcad):
+"these are CAD — the industry's FIGMA, not us." Correct framing:
+- They are the PRO'S DRAWING BENCH: an expert opens them and DRAFTS by hand (like Figma = a designer
+  tool). Not stitchu's product — stitchu's user is the person who does NOT want to learn "Figma".
+- So they are NOT rivals — they are the QUALITY BAR the engine envies. stitchu doesn't compete with
+  Figma; it produces Figma-grade OUTPUT without an expert.
+- Lessons banked from this cluster: grade rules (AccuMark), 3D→2D drape works (Optitex/CLO), API/PLM
+  integration is a real model (Browzwear), democratizing is unfinished (TUKAcad). All reference, not rival.
+NEXT CLUSTER = the REAL rivals: consumer auto-drafters (Valentina/Seamly, Tailornova, Bootstrap,
+Sewist, MyBodyModel) — tools that draft FOR the user. Moat fight is here.
+
+## Competitor tour — cluster 2 (real rivals: consumer auto-drafters)
+7. **Valentina / Seamly2D** — VERDICT: NOT a rival (relieved Damla's "free open-source exists, why me?").
+   - What: free open-source parametric pattern tool. Sounds made-to-measure but is SEMI-automatic:
+     you enter a measurement table, but SOMEONE must build the formula ("put this point at bust/4+2cm");
+     once built, changing measurements updates parametrically. = smart drawing board + calculator,
+     user brings the drafting knowledge. A zero-knowledge person opens it and sees a blank page.
+   - Two lenses: 3D→2D = NONE (flat 2D formula, opposite of stitchu's thesis); automatic = NO (human
+     sets formula); API = no (desktop); user = hobbyist/semi-pro who can draft.
+   - Why not a rival: it gives an EXPERT a free bench (open-source Figma); stitchu gives a
+     ZERO-knowledge person AUTOMATIC couture. Different sentence. And stitchu goes beyond technically
+     (3D-derived vs flat 2D).
+## NEW IDEA (2026-07-15, Damla) — fuse gymgyme's camera engine with stitchu's geometry engine
+Damla: "gymgyme has camera body-tracking, stitchu has the geometry engine — let me turn in front of
+the camera, it projects/reads my body, then preview with photo." Two motors, one chain. Split it:
+- GOLD half: camera → MEASUREMENTS. gymgyme's pose engine already finds body points (shoulder/waist/
+  hip width, One Euro, IK). Derive measurements from a turn → feed stitchu → pattern. Kills Damla's
+  biggest pain (entering 7 measurements by hand). KEY: earlier we said "photo→3D body = million-$
+  problem" — but Damla ALREADY has a working pose engine from gymgyme, so part of it is done.
+  Nobody in the competitor tour does "camera-measure + draft pattern" in one product (Tailornova =
+  manual measure; 3DLOOK = measures but no pattern). Real moat, real fusion of her two engines.
+- TRAP half: camera → GARMENT PREVIEW (drape it on you). That's CLO's cloth-physics/AR — the thing we
+  just closed as "can't/needn't". Classic gymgyme trap (chasing the flashy visual, forgetting the
+  fitting pattern). Later/never.
+- Correct version: camera→measurement (gymgyme) → pattern (stitchu). NOT camera→drape preview.
+
+## PREVIEW split (2026-07-15) — one is a trap, one is doable
+Damla revisited "preview it on me". Two different previews, do NOT conflate:
+- TRAP: LIVE dressing = AR + real-time cloth simulation (elbise moves as you turn, drapes/wrinkles).
+  = CLO's physics + AR. Can't build, shadows the real job (fitting pattern). Confirmed trap.
+- DOABLE: STATIC GEOMETRIC preview = the engine already builds a 3D body surface from measurements;
+  wrap the pattern pieces onto it and SHOW the static silhouette ("here's how it'll sit on your
+  size"). No wrinkles, not live, no physics — just visualizing geometry the engine already computes
+  (like Tailornova's simple avatar preview). Comes ~free from the geometric engine.
+- Rule: live+physics = trap; static+geometric = doable. Couture needs to see FIT, not wrinkles;
+  static geometric preview shows fit. Damla's "see it on me" is satisfied by the DOABLE one.
+
+## Competitor tour — cluster 2 finished (rapid, 2026-07-15)
+9. **Bootstrap Fashion** — Tailornova's uncoated ancestor: measure→pattern PDF, weak 3D, tool-like UX,
+   flat-2D, no photo, no API. Same job done worse. No new lesson.
+10. **Sewist** — web measure→pattern + in-browser edit; between Tailornova & Valentina. 3D weak, no
+    photo, no API. Lesson: "edit pattern in browser" UX is nice (editor inspiration); core still 2D+catalog.
+11. **MyBodyModel** — does NOT draft; draws a personal croquis/figure from your measurements, you design
+    on it by hand. Supports the static-preview idea; not a pattern engine. Neighbor, not rival.
+12. **3DLOOK / Bold Metrics** — extracts BODY MEASUREMENTS from a photo (not a pattern); e-commerce
+    "what size fits you". KEY: commercial proof that photo→measurement is SOLVED. They don't tie it to
+    patterns (suggest ready-to-wear size). If stitchu ties measurement→PATTERN, it builds the chain
+    nobody does. Proof that Damla's camera→measure→pattern idea is buildable.
+
+CLUSTER 2 VERDICT: real rivals = Tailornova (closest: auto + polished, but catalog-limited, no photo,
+likely 2D+decoration-3D, no API) and its weaker cousins. NONE combine: photo→pattern + true 3D-derived
+correctness + camera-measure + API. That intersection = stitchu's moat. Tailornova's catalog is Etsy-like
+(closed showroom); stitchu = closed catalog PLUS open photo path.
+
+## SCOPE DECISION (2026-07-15, Damla) — 2D first, defer 3D & cloth
+- 3D-derived thesis is right but DEFERRED: start from 2D, make today's engine Tailornova-reliable
+  first (jumping to 3D now = gymgyme trap again).
+- Camera → body MEASUREMENT: KEEP (good, for projection/auto-fill measurements). Buildable now
+  (gymgyme pose engine + 3DLOOK proof). Not the 3D rebuild — just measurement capture.
+- Cloth/physics motor: LATER (coming months), not scrapped, correctly sequenced.
+- ORDER LOCKED: (1) 2D engine reliable + reduce measurement pain (camera-measure) → (2) 3D-derived
+  correctness → (3) cloth/preview. Ship trust before spectacle.
+
+## TECH STACK TODAY (2026-07-15, read from code) + what's missing for Tailornova-parity
+Engine (core value): C++ 4258 lines — bodice/sleeve/skirt/ruffle/keyhole/garment modules +
+geometry.cpp + validator.cpp + sizechart.hpp. 2D drafting, tested, works.
+Web: plain JS (16 files, no framework) + WASM (runs C++ engine in browser, build-wasm.sh).
+Backend: Cloudflare Worker (worker.js) proxies Anthropic photo analysis; POST /api/draft = API skeleton EXISTS.
+Vision: CLIP/SigLIP dead (zero-shot 44-65%); photo recognition currently via Opus API.
+HAVE: 2D engine, WASM (zero server cost — advantage over Tailornova), API skeleton, true-scale A4 PDF.
+MISSING for parity: (1) STYLE CATALOG UX (Tailornova's strength, biggest gap), (2) static preview,
+(3) camera→measure, (4) grade-flow polish. NO new framework/language needed — 4 things on top of what exists.
+
+## HOW TO BUILD THE CATALOG (2026-07-15) — you DON'T draw it, the engine does
+Damla asked "how do I draw a catalog". Answer: you DON'T draw styles — you DEFINE them; the engine draws.
+Three layers, none is hand-drawing:
+- A) STYLE = a recipe (JSON data), e.g. {name:"Halter Midi", neck:"halter", bodice:"fitted",
+  skirt:"a-line", length:"midi"}. Engine already knows these parts — new style = new COMBINATION, not
+  new code. 20 styles = 20 recipe lines.
+- B) CARD IMAGE = engine-generated. Feed the recipe to the engine → it outputs the flat technical
+  sketch (like Etsy's line-drawing icons) → put it on the card. You don't draw; the engine draws.
+- C) FLOW = simple UI: grid of cards → tap → take measurements → engine drafts that style at your
+  size → PDF. create.js already does half of this.
+So catalog = a GALLERY of the engine's own output (this is exactly what Tailornova does — they don't
+hand-draw the catalog, their engine renders it). Only decision: which styles ship first (Etsy tour
+already answered: linen dress, halter, wrap, tank, palazzo, corset...). NEXT-SESSION first task.
