@@ -24,6 +24,11 @@
     font-family:'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.6;color:#ffe7ee}
   .k{color:#ff9db0}.s{color:#c8f0c8}
   .cards{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}
+  .play{margin-top:14px}
+  .play-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+  .play-row label{display:flex;flex-direction:column;gap:5px;font-size:12px;letter-spacing:.5px;opacity:.85}
+  .play select,.play input{padding:9px 12px;border:none;border-radius:4px;font-size:14px;width:auto;min-width:90px}
+  #pg-run{margin-top:0}
   .card{background:rgba(42,8,16,.6);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:20px;flex:1;min-width:220px}
   .card h3{font-family:'Didot',Georgia,serif;font-weight:400;font-size:18px;margin:0 0 8px}
   .card p{font-size:13.5px;line-height:1.5;margin:0;opacity:.92}
@@ -78,6 +83,33 @@
     <div class="card"><h3>Private by design</h3><p>Send only measurements; nothing about your customer's body is stored or logged.</p></div>
   </div>
 
+  <h2>Try it live</h2>
+  <p class="sub">Draft a real pattern against the live endpoint — the same call your product would make. No key needed for this demo (rate-limited).</p>
+  <div class="play">
+    <div class="play-row">
+      <label>garment
+        <select id="pg-garment"><option value="dress">dress</option><option value="top">top</option><option value="skirt">skirt</option></select>
+      </label>
+      <label>neckline
+        <select id="pg-neck"><option value="crew">crew</option><option value="scoop">scoop</option><option value="vNeck">v-neck</option><option value="sweetheart">sweetheart</option><option value="halter">halter</option></select>
+      </label>
+      <label>bust <input id="pg-bust" type="number" value="92"></label>
+      <label>waist <input id="pg-waist" type="number" value="74"></label>
+      <label>hip <input id="pg-hip" type="number" value="98"></label>
+    </div>
+    <button id="pg-run" type="button">POST /api/draft →</button>
+    <pre id="pg-out" style="margin-top:14px;max-height:320px">the response appears here…</pre>
+  </div>
+
+  <h2>Pricing</h2>
+  <p class="sub">Simple, and cheaper than a per-call AI tool — because the engine has no per-call AI cost. Indicative, launching with early partners:</p>
+  <div class="cards">
+    <div class="card"><h3>Maker</h3><p><b>$19/mo</b> · 500 patterns/mo · for a solo Etsy/made-to-measure shop.</p></div>
+    <div class="card"><h3>Studio</h3><p><b>$49/mo</b> · unlimited patterns · priority support · for a growing brand.</p></div>
+    <div class="card"><h3>Volume</h3><p><b>Let's talk</b> · high-volume / white-label · tell us your numbers below.</p></div>
+  </div>
+  <p class="sub" style="font-size:12px;opacity:.75">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost — so we can be cheaper.</p>
+
   <h2>Get early API access</h2>
   <p class="sub">Studios, made-to-measure brands and pattern shops — tell us your volume and we'll set you up.</p>
   <form onsubmit="return apiWaitlist(event)">
@@ -91,6 +123,45 @@
 
 <script>
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
+
+// Live playground: fire a real /api/draft and show the JSON. Honest states — if
+// the endpoint isn't deployed yet it says so instead of pretending.
+document.getElementById('pg-run').addEventListener('click', async () => {
+  const out = document.getElementById('pg-out');
+  const g = document.getElementById('pg-garment').value;
+  const body = {
+    spec: { garment: g, neckline: document.getElementById('pg-neck').value },
+    measurements: {
+      bust: +document.getElementById('pg-bust').value,
+      waist: +document.getElementById('pg-waist').value,
+      hip: +document.getElementById('pg-hip').value,
+      shoulder: 39, backLength: 42, armLength: 58, neck: 36,
+    },
+  };
+  out.textContent = 'POST /api/draft …';
+  try {
+    const r = await fetch(API_BASE + '/api/draft', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (r.status === 404 || data.error === 'draft_closed') {
+      out.textContent = '// The draft endpoint isn\'t live yet — it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      return;
+    }
+    // Trim the piece geometry so the demo output is readable.
+    if (data.pattern && data.pattern.pieces) {
+      data.pattern.pieces = data.pattern.pieces.map((p) => ({
+        name: p.name, cutInstruction: p.cutInstruction, seamAllowance: p.seamAllowance,
+        commands: `[${p.commands.length} drawing commands]`,
+      }));
+      if (data.pattern.guideSteps) data.pattern.guideSteps = `[${data.pattern.guideSteps.length} sewing steps]`;
+    }
+    out.textContent = `HTTP ${r.status}\n` + JSON.stringify(data, null, 2);
+  } catch (_) {
+    out.textContent = '// Could not reach the endpoint. It may not be deployed yet — request access below.';
+  }
+});
+
 async function apiWaitlist(e){
   e.preventDefault();
   const email = document.getElementById('apiemail').value.trim();
