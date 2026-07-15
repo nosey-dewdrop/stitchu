@@ -4,7 +4,44 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=33';
+import { pathD, bounds } from './render.js?v=34';
+import { getLang } from './i18n.js?v=34';
+
+// The print cover carries the MOST critical instructions (printer scale,
+// assembly) — a Turkish sewist must read these in Turkish or the pattern comes
+// out the wrong size. Localised inline here (print.js builds raw DOM, not i18n
+// data-attrs). EN kept as the fallback.
+const P = {
+  cover: {
+    en: (g) => `${g} — stitchu pattern`,
+    tr: (g) => `${g} — stitchu kalıbı`,
+  },
+  saIncluded: (cm) => ({
+    en: `seam allowance ${cm} cm INCLUDED — cut on the OUTER line, sew on the inner fine line`,
+    tr: `dikiş payı ${cm} cm DAHİL — DIŞ çizgiden kes, içteki ince çizgiden dik`,
+  }),
+  saNot: (cm) => ({
+    en: `seam allowance ${cm} cm NOT drawn, add it while cutting`,
+    tr: `dikiş payı ${cm} cm çizili DEĞİL, keserken ekle`,
+  }),
+  piecesFabric: (n, m) => ({
+    en: `${n} pieces · ${m} m fabric at 140 cm · `,
+    tr: `${n} parça · 140 cm eninde ${m} m kumaş · `,
+  }),
+  chalkNote: {
+    en: 'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips — no printed piece needed). Space the gather notches evenly along each strip’s top edge:',
+    tr: 'BUNLARI DOĞRUDAN KUMAŞA tebeşir ve cetvelle çiz (düz şeritler — basılı parça gerekmez). Büzgü çentiklerini her şeridin üst kenarına eşit aralıkla yerleştir:',
+  },
+  assemble: (n, cols) => ({
+    en: `${n} sheets. Lay them in a grid ${cols} across (sheet code = row letter + column number: A1 top-left). Tape edge to edge, matching the small edge ticks — no overlap. PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.`,
+    tr: `${n} sayfa. Bunları ${cols} sütunlu bir ızgaraya diz (sayfa kodu = satır harfi + sütun numarası: A1 sol üst). Kenar kenara, küçük kenar işaretlerini eşleştirerek bantla — üst üste bindirme. YAZICI AYARLARI: ölçek %100, üstbilgi/altbilgi KAPALI, sonra aşağıdaki 3 cm'lik kareyi doğrula.`,
+  }),
+  sheet: (g, code, cols) => ({
+    en: `${g} — sheet ${code} (grid ${cols} across)`,
+    tr: `${g} — sayfa ${code} (${cols} sütunlu ızgara)`,
+  }),
+};
+const L = () => (getLang() === 'tr' ? 'tr' : 'en');
 
 const PAGE_W = 190;   // printable width, mm (A4 210 minus 2x10 margins)
 const PAGE_H = 250;   // printable height, mm (margin + label strip safety)
@@ -177,13 +214,13 @@ export function printPattern(result) {
 
   // Cover sheet
   const cover = el('div', 'print-page');
-  cover.appendChild(el('div', 'print-title', `${p.garment} — stitchu pattern`));
+  const lang = L();
+  cover.appendChild(el('div', 'print-title', P.cover[lang](p.garment)));
   const hasCutLines = p.pieces.some((piece) => (piece.cutLine || []).length > 0);
+  const saCm = p.pieces[0].seamAllowance / 10;
   cover.appendChild(el('div', 'print-sub',
-    `${p.pieces.length} pieces · ${p.fabricMeters140} m fabric at 140 cm · ` +
-    (hasCutLines
-      ? `seam allowance ${p.pieces[0].seamAllowance / 10} cm INCLUDED — cut on the OUTER line, sew on the inner fine line`
-      : `seam allowance ${p.pieces[0].seamAllowance / 10} cm NOT drawn, add it while cutting`)));
+    P.piecesFabric(p.pieces.length, p.fabricMeters140)[lang] +
+    (hasCutLines ? P.saIncluded(saCm)[lang] : P.saNot(saCm)[lang])));
   const map = el('ul', 'print-map');
   for (const piece of paper.length ? paper : p.pieces) {
     map.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
@@ -193,26 +230,21 @@ export function printPattern(result) {
   // Straight strips need a ruler, not pattern paper: their cut note IS the
   // pattern, so they live here instead of adding a row of near-empty sheets.
   if (chalk.length && paper.length) {
-    cover.appendChild(el('div', 'print-sub',
-      'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips — no printed piece needed). ' +
-      'Space the gather notches evenly along each strip’s top edge:'));
+    cover.appendChild(el('div', 'print-sub', P.chalkNote[lang]));
     const chalkMap = el('ul', 'print-map');
     for (const piece of chalk) {
       chalkMap.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
     }
     cover.appendChild(chalkMap);
   }
-  cover.appendChild(el('div', 'print-sub',
-    `${sheets.length} sheets. Lay them in a grid ${layout.cols} across (sheet code = row letter + column number: A1 top-left). ` +
-    'Tape edge to edge, matching the small edge ticks — no overlap. ' +
-    'PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.'));
+  cover.appendChild(el('div', 'print-sub', P.assemble(sheets.length, layout.cols)[lang]));
   cover.appendChild(calibrationSVG());
   root.appendChild(cover);
 
   for (const { col, row } of sheets) {
     const page = el('div', 'print-page');
     page.appendChild(el('div', 'print-label',
-      `${p.garment} — sheet ${String.fromCharCode(65 + row)}${col + 1} (grid ${layout.cols} across)`));
+      P.sheet(p.garment, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
     page.appendChild(sheetSVG(layout, col, row));
     root.appendChild(page);
   }
