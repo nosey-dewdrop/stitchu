@@ -260,7 +260,10 @@ async function handleAnalyze(request, env) {
  "keyhole": true | false | null (true = an enclosed teardrop/round CUT-OUT opening in the fabric below the front neckline, its edges fully closed; a plunge or open V that reaches the neckline edge is NOT a keyhole),
  "fabricName": "cotton poplin" | "linen" | "viscose" | "satin" | "jersey" | "chiffon" | "denim" | "wool" | "lace" | "tulle" | "brocade" | "leather" | "other" | null (best guess of the MAIN fashion fabric),
  "details": "one sentence: notable construction details (zipper, darts, pleats, waistband, fabric guess)"}
-Mapping rules: if the garment is MORE complex than these fields allow (couture, layered, corseted, heavily draped, a wedding gown), do NOT give up — return the CLOSEST base silhouette a sewing pattern could start from (e.g. corseted gown -> dress + princess + natural + the closest skirt style + maxi) and say exactly what you approximated in details. Reserve garment "other" for things that are truly not a skirt, dress or top: trousers, jumpsuits, coats, wrapped saris, swimwear.`;
+Mapping rules — READ CAREFULLY, "garment" is the most important field:
+- ALWAYS map to the closest of skirt / dress / top. If ANYTHING covers the torso and hangs from the shoulders (a gown, a robe, a kaftan, a qipao/cheongsam, a wrap dress, a tunic, a jumpsuit's top half, a draped or asymmetric one-piece), it is a "dress" (or a "top" if it clearly ends at/above the hip). If it covers the lower body only, it is a "skirt".
+- "garment" must NEVER be null. Use "other" ONLY for things a dress/skirt/top pattern truly cannot start from: trousers/pants, shorts, structured tailored coats/blazers, swimwear, and accessories. When unsure between "other" and "dress", ALWAYS choose "dress" — a wearer can adjust a close silhouette, but "other" gives them nothing.
+- If the garment is MORE complex than these fields allow (couture, layered, corseted, heavily draped, a wedding gown), do NOT give up — return the CLOSEST base silhouette (e.g. corseted gown -> dress + princess + natural + the closest skirt style + maxi) and say exactly what you approximated in "details".`;
 
   const anthropicBody = {
     model: MODEL,
