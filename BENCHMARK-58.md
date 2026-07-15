@@ -9,7 +9,11 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum: **14/54 TAM KALIP (CANLI, 2026-07-15, Loop 4b sonrası — +3)**
+Durum: **14/54 TAM KALIP — DENETİM A (Loop 5) TEYİT ETTİ, 2026-07-15.** Bağımsız taze
+agent 8/8 maddeyi kendi koştu: golden byte-identical + ctest 14/14 + precision 0.00mm +
+web-fuzz 19620/0 + vocab-sweep 37800/0 + render strip'lerde tie/placket/register gözle +
+live hash=local v54 + 0-çağrı reclassify 14/54 birebir. KIRILAN YOK. Önceki Loop 4b durumu:
+**14/54 (CANLI, Loop 4b sonrası — +3)**
 Motor artık BASİT UYGULANAN kumaş bağını/kuşağını/fiyonkunu AYRI PARÇA olarak ÇİZİYOR
 (öz-kumaş dikdörtgen (2W+2·SA)×(L+2·SA), bel sash/fiyonk + tie-back + ön/boyun fiyonku +
 manşet; Aldrich/Armstrong). DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring gerektiren)
@@ -101,7 +105,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | **bitti** (15 Tem Loop 3; PlacketBlock::apply keyhole-tarzı post-pass, spec.frontPlacket default false → golden BYTE-IDENTICAL 0.000000mm/23034 satır; GROWN-ON stand 18mm=düğme Ø (Aldrich/Armstrong araştırması, couture default), CF kenarı dışa taşınır + fold çizgisi CF'de + düğme CF üstünde + ilik 3mm dışa + zorunlu göğüs düğmesi; sadece ön parça büyür, yaka/facing DOKUNULMAZ; ctest 13/13, placket_check 4 gövde yeşil, precision 0.00mm, web-fuzz 19620/0 (65 pat draft'ı), vocab-sweep 37800/0, render-pages pat'lı dress+top strip'te çizili; missing.js ÖN düğme/pat'ı artık listelemez (seen.closureDrawn), arka/yan pat honest kalır) | **sayı BLOKE: kredi** (offline ön-kontrol: manifest'te 19 pat'lı fotodan 2 ARKA→honest kalır, 7 saf-ÖN-pat→artık tam kalıp adayı, 10 ön-pat+başka eksik→pat çizildi kalanı eksik) |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
 | 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | **bitti** (15 Tem Loop 4b; TieBlock::apply placket-tarzı opt-in post-pass, spec.tieClosure=0 default → golden BYTE-IDENTICAL 0.000000mm/23034 satır; öz-kumaş dikdörtgen kuralı (2W+2·SA)×(L+2·SA), 4 placement: bel sash/fiyonk + tie-back + ön/boyun fiyonku + manşet; ayrı "cut 2" parça + gövde yerleşim işareti; DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring) ÇİZİLMEZ honest kalır; ctest 14/14 (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie dress+tie-back strip'te çizili; missing.js tieDrawn iken ties/tieBack listelemez; engine.js+backend/draft.js int tieClosure param, worker DEĞİŞMEDİ; FORMULAS.md "Fabric ties / sashes") | **14/54** (+3: 2 Jackie back-tie + Emma; WRONG 10 vision varyansı, doğru-red 4/5) |
-| 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | bekliyor | — |
+| 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | **geçti** (15 Tem; 8/8 madde bağımsız doğrulandı, kırılan yok, yeniden açılacak loop yok. Golden byte-identical (23034 satır kendim regen+diff), ctest 14/14 kendim derledim, precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages strip'lerde tie parçası (fold+grainline+cut-2 note) ve placket (CF fold+facing+6 buton tick+6 ilik slit, bust-anchored) + register (grid kodu+register kareleri+devam okları) GÖZLE teyit; live create.js/missing.js hash=local hash v54; benchmark 0-çağrı reclassify **14/54** birebir; DRAWN_SINCE her manifest oov terimine karşı test — back/double/asymmetric placket + drawstring MISSING kalıyor, LEAK YOK; 14 FULL'ün her biri gerekçeli; sayı serisi results snapshot'larıyla destekli; /api/draft engine_error teyit = ayrı worker-wasm build sorunu, tie/motor kodu değil, önceden var) | **14/54** (teyit) |
 | 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | bekliyor | — |
 | 7 | Stand/mock yaka | Yeni parça ailesi (yaka parçası + yaka oyuğu eşleşme ölçüsü). Referans: Buttoned Blouse fotoğrafı + Bugra Locket Top. | bekliyor | — |
 | 8 | Flat/shirt yaka | Stand üstüne ikinci yaka tipi; parça ailesi genelleşir. | bekliyor | — |
@@ -114,6 +118,17 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-15 DENETİM A (Loop 5, bağımsız taze agent, 0-4b kodunu görmemiş):
+  **14/54 TEYİT** (0-çağrı cache reclassify; correct-reject 4/5, WRONG 10, MISSING 30).
+  8/8 denetim maddesi geçti, KIRILAN YOK, yeniden açılacak loop yok. Golden'ı kendim
+  regen+diff ettim (byte-identical 23034 satır), ctest 14/14 kendim derledim, precision
+  0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0. Tie parçası + placket buton/ilik +
+  register işaretleri SVG kaynağından gözle teyit. Live create.js/missing.js hash =
+  local hash (v54, bayat değil). DRAWN_SINCE filtresi manifest oov terimlerine karşı
+  tek tek: back/double/asymmetric placket + drawstring MISSING kalıyor (leak yok);
+  14 FULL'ün her biri gerekçeli (6 placket + 5 tie + 5 in-vocab). /api/draft engine_error
+  teyit edildi = ayrı worker-wasm build sorunu (tie/motor kodu değil, önceden var, ürün
+  akışı kullanmıyor). Rapor: reports/2026-07-15-stitchu-denetim-a.md.
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
 - 2026-07-15 CANLI (Loop 4b sonrası, taze koşu 8m22s/59 çağrı, FAST): **14/54 TAM** (+3
   Loop 3 üzerine). Motor basit uygulanan bağı/kuşağı/fiyonku AYRI PARÇA çiziyor (TieBlock,
