@@ -72,6 +72,11 @@ the default shown above. Measurements are all seven, in **centimetres**.
 `bust` 60–160, `waist` 45–140, `hip` 60–170, `shoulder` 26–52,
 `backLength` 28–55, `armLength` 40–75, `neck` 26–55.
 
+**Optional:** `upperBust` (60–150 cm) — the high/upper bust girth, above the
+bust and under the arms. When supplied, the back and armhole size to the ribcage
+frame while the front keeps the full bust — a full-bust adjustment for a fuller
+bust (stops the neckline gaping). Omit it and the draft uses a B/C-cup assumption.
+
 ### Response `200`
 
 ```json
