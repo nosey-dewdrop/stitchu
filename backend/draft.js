@@ -30,6 +30,8 @@ const ENUMS = {
   sleeveCap: ['plain', 'gathered', 'puffed'],
   collarType: ['none', 'stand', 'mock', 'flat', 'peterPan', 'shirt'],
   collarEdge: ['round', 'pointed', 'scallop'],
+  gatherType: ['none', 'drawstring', 'shirred', 'smocked'],
+  gatherZone: ['neckline', 'bust', 'waist', 'sleeve'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -43,6 +45,11 @@ const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5
 const collarTypeInt = (s) => COLLAR_TYPE[s] || 0;
 const COLLAR_EDGE = { round: 0, pointed: 1, scallop: 2 };
 const collarEdgeInt = (s) => COLLAR_EDGE[s] || 0;
+// GatherType/GatherZone enum ints (must match engine/src/gather.hpp order).
+const GATHER_TYPE = { none: 0, drawstring: 1, shirred: 2, smocked: 3 };
+const gatherTypeInt = (s) => GATHER_TYPE[s] || 0;
+const GATHER_ZONE = { neckline: 0, bust: 1, waist: 2, sleeve: 3 };
+const gatherZoneInt = (s) => GATHER_ZONE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -146,6 +153,8 @@ export function validateDraftRequest(body) {
       sleeveCap: spec.sleeveCap ?? 'plain',
       collarType: spec.collarType ?? 'none',
       collarEdge: spec.collarEdge ?? 'round',
+      gatherType: spec.gatherType ?? 'none',
+      gatherZone: spec.gatherZone ?? 'neckline',
     },
     measurements,
   };
@@ -168,6 +177,8 @@ export async function runDraft(spec, measurements) {
     sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
     collarTypeInt(spec.collarType), // Loop 7/8: collar family
     collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
+    gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
+    gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
   );
   return JSON.parse(json);
 }
@@ -203,6 +214,10 @@ export async function handleGrade(request) {
       spec.frontPlacket === true, // Loop 3: front button placket
       tieInt(spec.tieClosure),    // Loop 4b: fabric ties / sash / bow
       sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
+      collarTypeInt(spec.collarType), // Loop 7/8: collar family
+      collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
+      gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
+      gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

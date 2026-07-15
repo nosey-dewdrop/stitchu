@@ -15,6 +15,7 @@ add_library(engine
     src/placket.cpp
     src/tie.cpp
     src/collar.cpp
+    src/gather.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -60,6 +61,10 @@ add_test(NAME tie_check COMMAND tie_check)
 add_executable(collar_check tests/collar_check.cpp)
 target_link_libraries(collar_check PRIVATE engine)
 add_test(NAME collar_check COMMAND collar_check)
+
+add_executable(gather_check tests/gather_check.cpp)
+target_link_libraries(gather_check PRIVATE engine)
+add_test(NAME gather_check COMMAND gather_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

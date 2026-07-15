@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "collar.hpp"
+#include "gather.hpp"
 #include "keyhole.hpp"
 #include "placket.hpp"
 #include "ruffle.hpp"
@@ -401,6 +402,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         CollarBlock::apply(pattern, static_cast<CollarType>(spec.collarType),
                            static_cast<CollarEdge>(spec.collarEdge));
+    }
+    // Opt-in drawstring / shirred / smocked gathering (büzgü, Loop 8): adds a
+    // separate gathered panel (+ a drawstring cord when drawstring) whose
+    // gathered edge is trued to the drafted zone edge. Post-pass on the finished
+    // draft, so the base is byte-identical with it off (gatherType == None).
+    // A fully smocked couture panel with shaped honeycomb stays approximate.
+    if (spec.gatherType != static_cast<int>(GatherType::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        GatherBlock::apply(pattern, static_cast<GatherType>(spec.gatherType),
+                           static_cast<GatherZone>(spec.gatherZone));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

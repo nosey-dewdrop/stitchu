@@ -531,6 +531,15 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 **Görsel:** üç kutu: FOTO → GÖRÜ ('front button placket' vurgulu) → MOTOR (düğmesiz kalıp). ortadaki boru kırık çizili. Alt yazı: "the eye sees, the hand can't — the pipe is the bug".
 **Format:** reel
 
+## Reel — büzgü: fırfır değil, kumaşın KENDİSİ toplanıyor (loop 9a)
+
+**Hook (ilk 2 sn):** "Bir yıldır fırfır çizen motoruma sordum: peki kumaşın kendisi büzülünce?"
+
+**Anlatı (~40 sn):** Babydoll ve milkmaid elbiselerin sırrı büzgü: boyun kenarı ya da büst panosu, içinden ip geçen bir kanaldan ya da lastikli dikiş sıralarından TOPLANIYOR. Fırfırdan farkı şu — fırfır ayrı bir şerit, burada panonun KENDİSİ geniş kesiliyor ve büzülüp yerine oturuyor. Formül tek satır: kesim genişliği = bitmiş kenar × büzgü oranı (ip 1.8, lastik 2.0, smok 3.0). En kritik kısım oranın kaynağı değil, o bitmiş kenarı NEREDEN aldığım: motorun az önce çizdiği boyun oyuğundan birebir ÖLÇÜYORUM. Yani pano diktiği yere göre otomatik doğrulanıyor, elle 'herhalde bu kadardır' demiyorum — test kesim/oran = bitmiş kenar eşitliğini 0.005 mm'ye kadar teyit ediyor. Dürüst sınır: kol büzgüsü (kola kanal gerek) ve gerçek el-smoku hâlâ 'çizemedim' diyor.
+
+**Görsel:** geniş dikdörtgen pano → üstten büzülüp dar boyun oyuğuna oturuyor; yanında "kesim / oran = bitmiş kenar ✓ 0.00 mm". Alt yazı: "the panel itself gathers — cut width ÷ ratio == the neckline it sews to".
+**Format:** reel
+
 ## Reel — hiçbir formülü değiştirmemek de karar
 
 **Hook (ilk 2 sn):** "Motorumu iki ders kitabına karşı denetledim. Sıfır formül değiştirdim. Bilerek."

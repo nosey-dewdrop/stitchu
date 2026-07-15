@@ -192,6 +192,13 @@ struct GarmentSpec {
     // See collar.hpp / FORMULAS.md "Collar family".
     int collarType = 0; // CollarType enum value; 0 = None
     int collarEdge = 0; // CollarEdge enum value (flat family outer edge); 0 = Round
+    // Opt-in drawstring / shirred / smocked gathering (büzgü, Loop 8): adds a
+    // separate gathered PANEL piece (+ a drawstring cord when drawstring) whose
+    // gathered edge is trued to the drafted zone edge. Off by default (None) →
+    // byte-identical. See gather.hpp / FORMULAS.md "Drawstring / shirred /
+    // smocked gathering".
+    int gatherType = 0; // GatherType enum value; 0 = None
+    int gatherZone = 0; // GatherZone enum value; 0 = Neckline
 };
 
 inline double roundToPlaces(double value, int places) {

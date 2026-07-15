@@ -226,10 +226,16 @@ export function missingFeatures(seen, lang) {
     }
   }
 
-  // yoke
+  // yoke — a shirred/smocked yoke is now DRAWN as a gathered panel (Loop 8),
+  // flagged by seen.gatherDrawn, so skip it there. A plain shoulderYoke seam is
+  // NOT gathering and stays honest (still not a separate drafted piece).
   if (seen.yoke && seen.yoke.type && seen.yoke.type !== 'none') {
-    const d = YOKE_DERIVATIVE[seen.yoke.type];
-    push((L === 'tr' ? yokeLabelTr(seen.yoke.type) : yokeLabelEn(seen.yoke.type)), d ? d[L] : null);
+    const gatheredYoke = seen.gatherDrawn &&
+      (seen.yoke.type === 'shirring' || seen.yoke.type === 'smocking');
+    if (!gatheredYoke) {
+      const d = YOKE_DERIVATIVE[seen.yoke.type];
+      push((L === 'tr' ? yokeLabelTr(seen.yoke.type) : yokeLabelEn(seen.yoke.type)), d ? d[L] : null);
+    }
   }
 
   // back detail — a tieBack is now DRAWN as strips (Loop 4b), so skip it when
@@ -246,8 +252,15 @@ export function missingFeatures(seen, lang) {
   // a structured field already reported (the prompt sometimes lists e.g.
   // "ruffled straps" in BOTH straps.type and outOfVocab — one line, not two).
   const already = out.map((o) => norm(o.label));
+  // Loop 8: a drawstring / shirred / smocked / gathered PANEL is now drawn, so an
+  // outOfVocab term naming that gathering is no longer missing. A gathered SLEEVE
+  // that needs an arm casing is a different (undrawn) construction and stays
+  // honest even when gatherDrawn (a neckline/bust panel was drawn, not the sleeve).
+  const gatherTerm = (t) => /drawstring|shirr|smock|gathered|gathering/i.test(t);
+  const sleeveGather = (t) => /sleeve/i.test(t) && /drawstring|gathered|shirr/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
+    if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

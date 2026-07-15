@@ -33,7 +33,22 @@ başarı beyanı = FULL PATTERN %80.
 > ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
 > her tek-öğe kazanımını sayar → doğru günlük pusula.
 
-Durum: **14/54 TAM KALIP — Loop 7 (yaka ailesi) sonrası DEĞİŞMEDİ, DÜRÜST, 2026-07-16.**
+Durum: **19/54 TAM KALIP — Loop 9a (drawstring/shirred büzgü) sonrası +5, 2026-07-16.**
+Motor artık panonun KENDİSİNİN büzüldüğü yapıyı çiziyor (fırfır ayrı şerit, bağ ayrı strip
+değil; boyun/büst/roba panosu geniş kesilip kanaldan/lastikten toplanıyor). GatherBlock opt-in
+post-pass, GatherType {None,Drawstring,Shirred,Smocked} × GatherZone; kesim genişliği = bitmiş
+kenar × oran (ip 1.8 / lastik 2.0 / smok 3.0), bitmiş kenar boyun oyuğundan ÖLÇÜLÜ → truing
+inşadan (gather_check kesim/oran=bitmiş kenar 0.005mm). Golden BYTE-IDENTICAL 23034 satır
+gathersiz. CANLI SAYI (0-çağrı cache reclassify, kredi harcanmadı — cache güncel, sadece
+DRAWN_SINCE verdict'i oynadı, Loop 6/7 ile aynı yöntem): **19/54 (+5)** = Mira ×3 (gathered
+bust) + Blair ×2 (shirred yoke). Kuyruk +6 tahmin etmişti; GERÇEK +5 çünkü Priscilla babydoll
+kümelenmiş (drawstring boyun VE fırfırlı askı, hâlâ MISSING) — tahmin bir foto şişmiş, bu
+kümelenmenin ta kendisi. ELEMENT ACCURACY 37→48/103 (%35.9→%46.6). Kanıt: ctest 16/16, golden
+byte-identical, web-fuzz 19740/0, vocab-sweep 37800/0, render drawstring-neck+shirred-bust+
+smocked-yoke. NOT: iki agent aynı loop'a düştü (paralel çakışma); engine+create.js+engine.js
+paralel agent'tan, FORMULAS+devlog-restore+web-fuzz-fix+essay+ölçüm+deploy bu agent'tan.
+Rapor: reports/2026-07-16-stitchu-benchmark-loop9a.md. Önceki durum (Loop 7):
+**14/54 TAM KALIP — Loop 7 (yaka ailesi) sonrası DEĞİŞMEDİ, DÜRÜST, 2026-07-16.**
 Motor artık bütün yaka ailesini (dik/mandarin/yatık/bebe/gömlek) AYRI PARÇA olarak çiziyor,
 boyun kenarı boyun oyuğuna 0.0000 mm trued (oyuk bitmiş gövde parçasından ÖLÇÜLÜ, drift edemez);
 opt-in CollarBlock post-pass, golden BYTE-IDENTICAL (23034 satır) yakasız yollarda. AMA bu
@@ -174,7 +189,7 @@ elbise/top/etek olduğu için gathering+open-back önce gelir.
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | **bitti** (15 Tem Loop 2; TEK KAYNAK web/js/missing.js: closure/collar/straps/cupSeams/sleeveHead/yoke/backDetail her biri için EN-YAKIN-TÜREV eşleme + "verilen en yakın X, şunu elle ekle" notu, EN+TR. Ekranda vişne kart (render.js appendMissing) + PRINT KAPAĞINDA aynı liste (print.js appendMissingToCover, vişne başlık). outOfVocab dedupe (fırfırlı askı iki kez gelmez). Motor C++ dokunulmadı → golden byte-identical; web-fuzz 19555/0; render-pages temiz; 5 temsili spec + 1 temiz-kontrol EN+TR doğru mesaj ürettti. Sayı BLOKE: kredi.) | — (sayı BLOKE: kredi) |
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | **bitti** (15 Tem Loop 3; PlacketBlock::apply keyhole-tarzı post-pass, spec.frontPlacket default false → golden BYTE-IDENTICAL 0.000000mm/23034 satır; GROWN-ON stand 18mm=düğme Ø (Aldrich/Armstrong araştırması, couture default), CF kenarı dışa taşınır + fold çizgisi CF'de + düğme CF üstünde + ilik 3mm dışa + zorunlu göğüs düğmesi; sadece ön parça büyür, yaka/facing DOKUNULMAZ; ctest 13/13, placket_check 4 gövde yeşil, precision 0.00mm, web-fuzz 19620/0 (65 pat draft'ı), vocab-sweep 37800/0, render-pages pat'lı dress+top strip'te çizili; missing.js ÖN düğme/pat'ı artık listelemez (seen.closureDrawn), arka/yan pat honest kalır) | **sayı BLOKE: kredi** (offline ön-kontrol: manifest'te 19 pat'lı fotodan 2 ARKA→honest kalır, 7 saf-ÖN-pat→artık tam kalıp adayı, 10 ön-pat+başka eksik→pat çizildi kalanı eksik) |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor (DÜŞÜK ÖNCELİK: bu sette fermuar neredeyse görünmüyor — marjinal kazanç ~0) | — |
-| 9a | **Drawstring / shirred gathering** (YENİ 1. ÖNCELİK, marjinal +6) | Kanal (casing) + büzgü/shirring: babydoll/milkmaid boyun + büst panosu. En yüksek marjinal kazanç. Aldrich shirring + casing; couture (smock) + high-street (babydoll). | **bekliyor — SIRADAKİ** | — |
+| 9a | **Drawstring / shirred gathering** (YENİ 1. ÖNCELİK, marjinal +6→GERÇEK +5) | Kanal (casing) + büzgü/shirring: babydoll/milkmaid boyun + büst panosu. En yüksek marjinal kazanç. Aldrich shirring + casing; couture (smock) + high-street (babydoll). | **bitti** (16 Tem Loop 9a; GatherBlock::apply opt-in post-pass, GatherType enum {None,Drawstring,Shirred,Smocked} + GatherZone {Neckline,Bust,Waist,Sleeve}, default None → golden BYTE-IDENTICAL 0.000000mm/23034 satır. Pano KENDİSİ büzülüyor (fırfır ayrı şerit, bağ ayrı strip; burada panonun kesim genişliği = bitmiş kenar × oran: ip 1.8, lastik 2.0, smok 3.0). Bitmiş kenar motorun çizdiği boyun oyuğundan/büst bandından ÖLÇÜLÜ (aynı neck-point taraması collar'dan) → truing inşadan. Drawstring = pano + kanal (2 paralel çizgi + kordon delikleri) + ayrı kordon parçası; shirred/smocked = pano + paralel büzgü sıraları (+smok nokta gridi). DÜRÜST SINIR: kol drawstring'i (kola kanal) + gathered STRAP + gerçek el-smok dokusu ÇİZİLMEZ honest kalır. Kanıt: ctest 16/16 (yeni gather_check: kesim/oran=bitmiş kenar 0.005mm, drawstring cord ekler shirred eklemez, oran sırası smok>lastik>ip, mevcut outline byte-identical, yerleşim notch), golden byte-identical, web-fuzz 19740/0 (gather sweep 3 tip×4 zone×2 garment dahil, gatherRun sheet-count countSheets'e düzeltildi), vocab-sweep 37800/0, render-pages drawstring-neck + shirred-bust + smocked-yoke pano+kordon çizili. create.js pickGather(seen) vision→spec + manuel büzgü/zone picker + seen.gatherDrawn, missing.js gatherDrawn yoke/oov büzgü suppression (sleeve gather honest kalır), engine.js/backend/bindings int gatherType/gatherZone param. İki wasm yeniden derlendi. Worker VISION DEĞİŞMEDİ. FORMULAS.md "Drawstring / shirred gathering". NOT: 2 agent aynı loop'a düştü (paralel çakışma), engine+wiring paralel agent'tan, FORMULAS+devlog-restore+web-fuzz-fix+essay+ölçüm+deploy bu agent'tan) | **19/54 (+5)**: Mira ×3 (gathered bust panel) + Blair ×2 (shirred/smocked yoke). Kuyruk +6 demişti, GERÇEK +5 — Priscilla babydoll kümelenmiş (drawstring boyun VE fırfırlı askı → hâlâ MISSING), tahmin bir foto şişmişti. ELEMENT ACCURACY 37→48/103 (%35.9→%46.6, +11). |
 | 9b | **Open-back cutout** (YENİ 2. ÖNCELİK, marjinal +4) | Dairesel/düşük açık sırt oyuğu + facing/binding kenarı. Tie-back'lerle birlikte (bağ zaten çizili, oyuk kalıyor). | bekliyor | — |
 | 9c | **Peplum + hem slit** (YENİ 3-4. ÖNCELİK, marjinal +2+2) | Peplum = bele oturan aşağı açılan pano (pointed hem dahil); hem slit = etek yırtmacı. İki küçük post-pass. | bekliyor | — |
 | 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | **bitti** (15 Tem Loop 4b; TieBlock::apply placket-tarzı opt-in post-pass, spec.tieClosure=0 default → golden BYTE-IDENTICAL 0.000000mm/23034 satır; öz-kumaş dikdörtgen kuralı (2W+2·SA)×(L+2·SA), 4 placement: bel sash/fiyonk + tie-back + ön/boyun fiyonku + manşet; ayrı "cut 2" parça + gövde yerleşim işareti; DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring) ÇİZİLMEZ honest kalır; ctest 14/14 (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie dress+tie-back strip'te çizili; missing.js tieDrawn iken ties/tieBack listelemez; engine.js+backend/draft.js int tieClosure param, worker DEĞİŞMEDİ; FORMULAS.md "Fabric ties / sashes") | **14/54** (+3: 2 Jackie back-tie + Emma; WRONG 10 vision varyansı, doğru-red 4/5) |
@@ -190,6 +205,28 @@ elbise/top/etek olduğu için gathering+open-back önce gelir.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-16 CANLI (Loop 9a sonrası, 0-çağrı cache reclassify — cache güncel, sadece
+  DRAWN_SINCE loop-9a verdict'i oynadı, kredi harcanmadı, Loop 6/7 ile aynı yöntem):
+  **19/54 TAM (+5)** — MISSING 25, WRONG 10, correct-reject 3/5 (2 REJECT-FAIL = canlı vision
+  iki kontrol görselini elbise sandı, vision noise). ELEMENT ACCURACY **48/103 = %46.6** (37'den
+  +11). +5 FULL: Mira ×3 (gathered bust panel) + Blair ×2 (shirred/smocked yoke) — tek eksiği
+  büzgü olan fotolar. Kuyruk marjinal +6 demişti; GERÇEK +5: Priscilla babydoll İKİ eksikli
+  (drawstring boyun VE fırfırlı askı) → büzgü çizildi ama askı hâlâ MISSING, foto TAM olmadı;
+  tahmin bir foto şişmiş = kümelenme kanıtı (analizim bile kümelenmeden etkilenmiş, saklamıyorum).
+  Motor artık panonun KENDİSİNİN büzüldüğü yapıyı çiziyor: GatherBlock opt-in post-pass, kesim
+  genişliği = bitmiş kenar × oran (ip 1.8/lastik 2.0/smok 3.0), bitmiş kenar boyun oyuğundan/büst
+  bandından ÖLÇÜLÜ → truing inşadan (gather_check kesim/oran=bitmiş kenar 0.005mm). DRAWN_SINCE
+  loop-9a kuralı drawstring/shirr/smock/gathered PANEL çizer, SLEEVE gather'ı DIŞLAR (Alli
+  drawstring sleeve hâlâ MISSING, sızıntı=0). Kanıt: ctest 16/16 (yeni gather_check), golden
+  byte-identical 23034 satır, web-fuzz 19740/0 (gather sweep dahil, gatherRun sheet-count
+  countSheets'e düzeltildi — uzun kordon şeridi bbox-çarpımıyla 110-130 sayfa sanılıyordu,
+  gerçek used-set 91), vocab-sweep 37800/0, render-pages drawstring-neck+shirred-bust+
+  smocked-yoke pano+kordon çizili. Deploy v57. Worker VISION DEĞİŞMEDİ (redeploy sadece
+  /api/draft için gerekir, ürün akışı tarayıcı wasm'ı kullanıyor). NOT: iki agent aynı loop'a
+  düştü (paralel çakışma, git status birebir aynı iş); engine+create.js+engine.js+bindings
+  paralel agent'tan, FORMULAS+devlog-reel-restore(silinen 2 reel geri)+web-fuzz-fix+essay 10+
+  ölçüm+docs+deploy bu agent'tan; çakışan yazımlar dışında tek commit'e birleşti.
+  Rapor: reports/2026-07-16-stitchu-benchmark-loop9a.md.
 - 2026-07-16 METRİK REFORMU (offline teşhis, 0 vision çağrısı — manifest oov[] ×
   DRAWN_SINCE loop 3/4b/6/7): **ELEMENT ACCURACY (ilk ölçüm) D/N = 37/103 = %35.9.**
   Yani 58 fotodaki tüm dağarcık-dışı öğelerin (tekrarlarıyla 103) motorun ARTIK

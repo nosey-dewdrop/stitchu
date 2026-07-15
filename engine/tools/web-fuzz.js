@@ -106,6 +106,31 @@ createEngine().then((e) => {
     }
   };
 
+  // Loop 8 gather variant: appends the full trailing arg list (frontPlacket,
+  // tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone) so the
+  // gathered panel + drawstring cord are drafted and packed like any other piece.
+  const gatherRun = (label, args, m, gatherType, gatherZone) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, gatherType, gatherZone));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
+    // Use the same USED-SET sheet count the main run() uses (countSheets), not a
+    // bounding-box product — a long thin drawstring cord spans a wide bbox but
+    // only touches a handful of real sheets, so the product wildly overcounts.
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
   for (const [bi, m] of BODIES.entries()) {
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
@@ -144,6 +169,19 @@ createEngine().then((e) => {
     run(`b${bi} placket dart dress`, ['dress', 'dart', 'natural', 'woven', 'vNeck', 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, true);
     run(`b${bi} dart dress`, ['dress', 'dart', 'natural', 'woven', 'sweetheart', 'none', 'short', 'aLine', 'midi', 'hip', true, 3, true], m);
     run(`b${bi} knit babydoll`, ['dress', 'princess', 'empire', 'knit', 'crew', 'balloon', 'short', 'gathered', 'mini', 'hip', true, 1, true], m);
+    // Loop 8: drawstring / shirred / smocked gathering across zones, dress + top,
+    // princess + dart. The gather panel (+ drawstring cord) is a fresh piece that
+    // must pack without clipping. Sleeve zone gets a real sleeve so it draws.
+    for (const [gt, gtName] of [[1, 'drawstring'], [2, 'shirred'], [3, 'smocked']]) {
+      for (const [gz, gzName] of [[0, 'neck'], [1, 'bust'], [2, 'waist'], [3, 'sleeve']]) {
+        const dressArgs = ['dress', 'princess', 'natural', 'woven', 'crew',
+          gz === 3 ? 'straight' : 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false];
+        gatherRun(`b${bi} gather-${gtName}-${gzName} dress`, dressArgs, m, gt, gz);
+        const topArgs = ['top', 'dart', 'natural', 'woven', 'crew',
+          gz === 3 ? 'straight' : 'none', 'long', 'aLine', 'midi', 'hip', false, 1, false];
+        gatherRun(`b${bi} gather-${gtName}-${gzName} top`, topArgs, m, gt, gz);
+      }
+    }
   }
 
   console.log(`\nweb fuzz: ${drafts} drafts | ${blocked} validator-blocked (honest) | max ${maxSheets} sheets | ${failures} FAILURES`);

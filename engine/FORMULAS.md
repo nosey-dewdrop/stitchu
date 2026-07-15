@@ -425,6 +425,60 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   0.0000 mm, placement notch, flat sits wider off the neck than the stand band, scallop adds
   curve segments). render-pages adds stand-collar-dress + peterpan-collar-top + shirt-collar-top.
 
+## Drawstring / shirred / smocked gathering (büzgü / kanal / shirring) — opt-in (BENCHMARK-58 Loop 8 / queue 9a)
+- GarmentSpec.gatherType (int GatherType enum: 0=None 1=Drawstring 2=Shirred 3=Smocked,
+  default 0=None → every existing draft byte-identical) + gatherZone (0=Neckline 1=Bust
+  2=Waist 3=Sleeve). Post-pass like the tie/collar (GatherBlock::apply on the finished
+  pattern): it ADDS a gathered PANEL piece (+ a drawstring cord piece when Drawstring) + a
+  placement notch, and NEVER touches an existing outline, so the golden dumps are untouched
+  with it off.
+- Difference from a ruffle (a separate frill strip) and a tie (a plain applied strip,
+  Loop 4b): here the PANEL ITSELF gathers — the neckline edge / the bust panel / a yoke is
+  cut WIDE and drawn up to fit. Loop 4b left drawstring-that-gathers honest; this draws it.
+- Research: Aldrich (Metric Pattern Cutting) + Armstrong + M.Müller & Sohn + ASG smocking
+  guide. High-street (Zara/Bershka babydoll/milkmaid) = elastic shirring + folded self-
+  casing; couture (Dior/Chanel) = true hand-smocking (honeycomb/lattice embroidery — a
+  surface stitch geometry, OUT OF SCOPE, honest note only).
+- GATHER RATIO r (flat cut gathered edge = finished edge × r), by construction:
+  - Drawstring (casing + cord; babydoll neckline) ... r = 1.8
+  - Shirred (parallel elastic rows; bodice/back panel) r = 2.0   [ASG "2in→1in"]
+  - Smocked (couture, simplified to a shirred grid) .. r = 3.0   [ASG "3in→1in"]
+  (Ruffle strips stay 2.0–3.0, unchanged.)
+- Panel = a rectangle cutW × cutH, cutW = segFlatW + 2·SA, cutH = panelDepth + 2·SA,
+  SA = 15 mm. panelDepth by zone: neck 130, bust 110, waist 90, sleeve 120 mm. The GATHERED
+  edge is the top; grain runs vertically. The cut note states flat edge → finished edge so
+  the sewer knows how much to draw up. SEGMENTATION: a very wide flat edge is cut in N =
+  ceil(flatEdge / 1400 mm) segments no wider than one 140 cm fabric width and joined at the
+  sides (standard practice, like a pieced ruffle); the DRAWN tile is one segment (segFlatW =
+  flatEdge/N) so it packs on A4, and the cut note gives N + the full flat edge. On the
+  benchmark bodies N=1, so gather_check's flat-edge truing is unaffected.
+- Drawstring: casing = a channel folded down casingDepth = 22 mm below the top seam line
+  (two parallel stitch lines) + two eyelet ticks at centre where the cord exits; the cord is
+  a separate self-fabric tube (same rectangle-fold construction as a tie), finished 12 ×
+  (finishedEdge + 500) mm for the pull-through/tie margin.
+- Shirred/smocked: N parallel gather rows shirRowGap = 12 mm apart from the seam line down
+  (shirred 4 rows, smocked 6 rows); smocked adds a dot grid between the top rows to gauge
+  the pleats (worked by hand — noted, not silently claimed).
+- Finished edge is MEASURED off the drafted body pieces for the zone (neckline = 2·front-
+  half + 2·back-half via the same neck-point scan the collar uses; bust/waist = the front +
+  back widths in that y-band, ×2 each; sleeve = the bicep band) — so the gathered edge can
+  never drift from what it sews to. If the edge is < 60 mm the block skips with an honest
+  guide note (never a silent no-op). Fabric: +0.2 m (a gathered panel eats fabric).
+- TRUING invariant (MEASURED on the drawn panel, ctest tests/gather_check to 0.005 mm):
+  panelFlatEdge / r == finishedEdge. Covered: dress+drawstring neckline (panel + cord = 2
+  pieces), top+shirred bust (1 piece), dress+smocked yoke (3:1), dress+shirred waist; ratio
+  ordering smocked > shirred > drawstring at the same zone; drawstring adds a cord, shirred
+  does not; existing outlines byte-identical; base draft valid; placement notch on a body
+  piece.
+- SCOPE / honest boundary: neckline / bust / yoke / back / waist PANEL gathering is drawn.
+  A drawstring GATHERED SLEEVE (a casing round the arm) and gathered STRAPS are a different
+  piece and stay honest (missing.js); a fully hand-smocked couture panel (shaped honeycomb)
+  is approximated (panel × 3 + gauge dots) with the smocking noted, not silently wrong.
+- Vision→spec (create.js pickGather): reads the vision yoke (shirring/smocking), a
+  drawstring/gathered neckline or bust from closure/oov → { gatherType, gatherZone }; a
+  gathered SLEEVE stays honest. A manual gathering + zone picker covers the no-photo path.
+  seen.gatherDrawn suppresses the missing.js note when a drawable gathering was chosen.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

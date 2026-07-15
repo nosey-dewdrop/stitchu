@@ -103,6 +103,14 @@ const DRAWN_SINCE = [
   // a collar (so a non-collar oov term never matches).
   (t) => /collar/i.test(t) &&
          !/bias-?bound|bound neckline|notch|sailor|lapel/i.test(t),
+  // loop 8: drawstring / shirred / smocked / gathered PANEL — the engine now
+  // draws a separate gathered panel (+ a drawstring cord) whose gathered edge is
+  // trued to the neckline/bust/waist. Drawstring neckline, gathered bust panel,
+  // shirred/smocked yoke, gathered yoke/straps all draw. The one honest EXCEPTION
+  // is a gathered SLEEVE (needs an arm casing/channel the engine does NOT draft):
+  // "drawstring gathered sleeves" stays missing.
+  (t) => /drawstring|shirr|smock|gathered|gathering/i.test(t) &&
+         !/sleeve/i.test(t),
 ];
 
 function classify(entry, spec) {

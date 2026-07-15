@@ -124,7 +124,7 @@ GarmentSpec buildSpec(
     const std::string& sleeveStyle, const std::string& sleeveLength,
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
-    int sleeveCap, int collarType, int collarEdge
+    int sleeveCap, int collarType, int collarEdge, int gatherType, int gatherZone
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -145,6 +145,8 @@ GarmentSpec buildSpec(
     spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6: 0=Plain 1=Gathered 2=Puffed
     spec.collarType = collarType; // Loop 7/8: CollarType enum; 0=None 1=Stand 2=Mock 3=Flat 4=PeterPan 5=Shirt
     spec.collarEdge = collarEdge; // CollarEdge enum (flat family outer edge); 0=Round 1=Pointed 2=Scallop
+    spec.gatherType = gatherType; // Loop 8: GatherType enum; 0=None 1=Drawstring 2=Shirred 3=Smocked
+    spec.gatherZone = gatherZone; // Loop 8: GatherZone enum; 0=Neckline 1=Bust 2=Waist 3=Sleeve
     return spec;
 }
 
@@ -202,10 +204,12 @@ std::string draftJSON(
     int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
     int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
     int collarType,    // Loop 7/8: collar family; 0 = None
-    int collarEdge     // Loop 7/8: flat-family outer edge; 0 = Round
+    int collarEdge,    // Loop 7/8: flat-family outer edge; 0 = Round
+    int gatherType,    // Loop 8: drawstring/shirred/smocked gathering; 0 = None
+    int gatherZone     // Loop 8: gather zone; 0 = Neckline
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -226,10 +230,12 @@ std::string gradeJSON(
     int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
     int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
     int collarType,    // Loop 7/8: collar family; 0 = None
-    int collarEdge     // Loop 7/8: flat-family outer edge; 0 = Round
+    int collarEdge,    // Loop 7/8: flat-family outer edge; 0 = Round
+    int gatherType,    // Loop 8: drawstring/shirred/smocked gathering; 0 = None
+    int gatherZone     // Loop 8: gather zone; 0 = Neckline
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.
