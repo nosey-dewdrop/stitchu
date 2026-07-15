@@ -7,8 +7,9 @@ Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 2026-07-10 (later, Damla): Stitchu is ALL THREE platforms — web + iOS + Android. One C++ engine core feeds every platform: WASM for web, native static lib for iOS, NDK for Android. Ship order: web first (fastest to revenue, everything decided), then iOS reskin on the C++ core (Phase W5), then Android (Phase W6). Landing says "iOS app · Android coming soon".
 
 ## Status
-Current phase: LIVE product, couture vocabulary + precision era (web v27)
-Last session: 2026-07-13 (full day + night, Fable) — the vocabulary + proof marathon. Track A 1-4 SHIPPED LIVE end-to-end (tiered ruffle with exponential fabric math, sweetheart via eye-picked candidate curves, keyhole as stitch-line + facing with honest skip, halter via frame-shift over the same skeleton with bias binding + cramped-back-falls-to-dart rule). Full ship-check as PM+customer: print packer CLIPPED >950mm pieces (fixed; strips now chalk notes), blocked-draft copy, worker hardening; new web-fuzz tool (19,555 drafts / 0 failures). Track B v0 MEASURED: zero-shot CLIP 44% / SigLIP 65% = dead end; Opus teacher 86% vs eye labels → v1 = distill into browser ONNX student; corpus pipeline + 70 licensed images in vision/. Live E2E proof: quinceañera photo → production → sweetheart+tiered+keyhole all correct. NIGHT: Damla decided seam allowance gets DRAWN — double line shipped (outer cut / inner sew, fold-aware offset with envelope guarantee); precision-report.js (tailor's micrometer) found and ZEROED two real gaps: shoulder pair 8-10mm, empire side seam ~2mm; golden re-pinned into repo (engine/golden-reference.csv). Matrix now 70,200 ALL PASS, ctest 8/8. Content: linkedin.md 21 essay drafts, devlog.md 40 reels units (series A-J). League analysis done: missing signals = fit proof (Damla sews), usage curve (blitz), working API (next).
+Current phase: LIVE product, customer-ready era (web v43)
+Last session: 2026-07-15 (overnight loop, ~51 commits, all pushed + deployed v43). THREE fronts. ENGINE: 6 real fit bugs fixed (halter center-back kink, set-in sleeve too narrow for the biceps, fuller-bust/short-back sleeve rejection → armscye deepened to the arm, sleeve underarm self-intersection on wide-shallow caps, impossible-body → clean proportion gate, empire seam dragged below the waist). COMPLETE FULL-BUST ADJUSTMENT: optional 8th upperBust measurement — back+armhole fit the ribcage AND front gets extra width+length+a bigger bust dart (105→182mm on a full cup); an adversarial pattern-maker audit caught my first version was back-only and I completed the front; byte-identical when omitted; ctest 11/11, golden clean, fba_check. HONEST accuracy benchmark (measures DRAWN geometry, not trued scalars — an audit caught it reading x−x and I rewrote it): seams 0.00mm max 0.000023mm independent, cap ease 3.9-4.1%, waist median 9.3mm, proportional integrity vs a real scaled block. New tools: vocab-sweep.cpp (37,800 DECOUPLED body×vocab drafts — catches bugs the balanced 70,200 matrix + 3-golden miss), fit_proof, accuracy-benchmark, fba_check. API: POST /api/draft runs the WASM engine server-side (zero LLM cost), security-hardened; /api/waitlist; api.html. LANDING now SELLS + fully TURKISH (TR/EN toggle). CUSTOMER EYE (Damla's final compass — 4-persona jury): fixed 6/7 breaks — Turkish end-to-end (landing+guide+print cover+tool), the full-bust adjustment, plus-size fit-proof card, tap-to-learn glossary, body diagram per measurement, named multi-body profiles for sellers, demo-first flow. VISION prompt couture-hardened — NEEDS WRANGLER REDEPLOY; corpus 778 photos; Track B plan written. Reports: 2026-07-15-stitchu-gece-doncusu.md, -accuracy-benchmark.md, -vision-training-plan.md. OPEN: wrangler redeploy, physical sew test, key rotation, real API playground/pricing, thousands-photo vision training. Steps toward the AccuMark-quality/triple-audience vision below (grade correctly on every body).
+Earlier session: 2026-07-13 (full day + night, Fable) — the vocabulary + proof marathon. Track A 1-4 SHIPPED LIVE end-to-end (tiered ruffle with exponential fabric math, sweetheart via eye-picked candidate curves, keyhole as stitch-line + facing with honest skip, halter via frame-shift over the same skeleton with bias binding + cramped-back-falls-to-dart rule). Full ship-check as PM+customer: print packer CLIPPED >950mm pieces (fixed; strips now chalk notes), blocked-draft copy, worker hardening; new web-fuzz tool (19,555 drafts / 0 failures). Track B v0 MEASURED: zero-shot CLIP 44% / SigLIP 65% = dead end; Opus teacher 86% vs eye labels → v1 = distill into browser ONNX student; corpus pipeline + 70 licensed images in vision/. Live E2E proof: quinceañera photo → production → sweetheart+tiered+keyhole all correct. NIGHT: Damla decided seam allowance gets DRAWN — double line shipped (outer cut / inner sew, fold-aware offset with envelope guarantee); precision-report.js (tailor's micrometer) found and ZEROED two real gaps: shoulder pair 8-10mm, empire side seam ~2mm; golden re-pinned into repo (engine/golden-reference.csv). Matrix now 70,200 ALL PASS, ctest 8/8. Content: linkedin.md 21 essay drafts, devlog.md 40 reels units (series A-J). League analysis done: missing signals = fit proof (Damla sews), usage curve (blitz), working API (next).
 Earlier session: 2026-07-12 — strategy pivot talk (deep CS + engine-as-moat: the same C++ engine sells twice, as a motorlu site AND later an API). Build-in-public started: devlog-tr.md (Turkish narrative for reels/vlogs). ENGINE DECISION logged (not yet coded): default shaping goes dart -> princess seam, skirt -> gore panels, dart demoted to an advanced option; reason = princess seam is how a real person sews (no dart apex to fight). Real surgery on the 2805-draft engine + full matrix re-run still to do. Landing COUTURE redesign in heavy iteration (mocks/landing-couture.html): full-background vişne poplin gingham (pötikare, small checks), Didot headline, centered white copy explaining what/how/engine + "api: coming soon", Damla's own red buttons (tomato/heart/flower/round, backgrounds removed into mocks/assets/buttons/) sewn at the 4 screen edges. NOT approved yet. Also added .gitattributes so GitHub shows the repo as JS/C++ (web app + engine), not HTML/Swift.
 Earlier session: 2026-07-10 — THE BIG DAY: web rework decided AND shipped live in one day. Theme locked (flat/Helvetica/teal + anti-generic bans + no human figures), C++ engine ported (2805 drafts pass, 0.0001mm golden diff vs Swift), WASM built, real landing + create + closet + privacy + EN/TR live on GitHub Pages, Worker deployed with vision key (photo->pattern VERIFIED live), shared stitch wall live, packed A4 print pipeline, iOS design approved (7 screens). Damla's validation idea: sew MINIATURE garments first (scaled-down patterns = cheap fabric test before full muslins) — added to roadmap 24.
 Previous session: 2026-07-07 — block validation (the launch blocker): built PatternValidator (geometric invariants) + engine-check harness (2805 drafts, EU 34-52 + tall/petite/pear/apple/edge bodies, all garment/neckline/sleeve/skirt combos, ALL PASS), fixed 8 real engine bugs it caught (side seam balance, bust ease loss, waist suppression, sleeve cap convergence, half-circle doubling, dress waist mismatch, missing CB seam for dress zipper, v-neck fold-back), wired runtime validation so a broken pattern can never reach the PDF.
@@ -198,9 +199,13 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 ## Ideas
 - Sewing school (people enroll, gamified lessons) — decide later whether in-app or separate app
 - Community room: sharing, follows, favorites (Etsy/Instagram feel, no selling)
+- GRADING (2026-07-15, aligns with the AccuMark vision): auto-generate every size from one block using industry grade rules — the next big engine lever for the seller/brand audience. The proportional-integrity benchmark + FBA are groundwork.
+- Full-bust adjustment polish: the FBA now does front width+length+dart+back frame; a future pass could split the cup add differently for princess vs dart, and expose a cup-based estimate when the user only knows their cup letter.
+- Real API playground on api.html (sandbox key + pricing) — persona jury's remaining seller ask; needs a payment decision.
 
 ## Bugs / Issues
-- none known (engine matrix passes; 8 drafting bugs found and fixed 2026-07-07, see engine-check/)
+- none known. 2026-07-15: 6 real fit bugs found and fixed (halter center-back kink, set-in sleeve too narrow for the biceps, fuller-bust/short-back sleeve rejection, sleeve underarm self-intersection on wide-shallow caps, impossible-body cryptic errors, empire seam below the waist) — all with tests + guards; the FBA's first version was back-only (audit-caught) and completed. Coverage: ctest 11/11, golden clean, vocab-sweep 37,800 decoupled 0 fail, web-fuzz 19,555 0 fail. (Earlier: 8 drafting bugs fixed 2026-07-07, see engine-check/.)
+- DEPLOY gotcha (fixed): after a ?v bump, `git add web/` ALL files before subtree split — staging only touched files shipped stale HTML (v41 HTML with v43 JS = cache mismatch).
 
 ## Competitors
 - StitchLift: thrift flips only, no pattern generation
@@ -208,3 +213,41 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 - Seamly2D: desktop, complex
 - Clo3D: $50/mo professional tool
 - Ribblr: crochet/knitting patterns marketplace, not generation
+
+## Competitor deep-dive (2026-07-15, one-by-one with Damla's verdict)
+VISION (Damla): stitchu must reach INDUSTRIAL grade (AccuMark-level), not "Etsy pattern maker".
+One custom engine serving THREE customers at once — home sewists + Etsy sellers + brands.
+That triple-audience-at-industrial-quality IS the moat (AccuMark only serves brands).
+
+Engine capabilities this implies (target, not all built yet):
+1. GRADING — from one block auto-generate every size (this = the "validate on every body" work).
+2. MARKER MAKING — nest pieces on fabric width with minimal waste (fabric = money). NOT BUILT.
+3. CUTTER OUTPUT — export ready for an automatic cutting machine. NOT BUILT.
+Damla open to cutting scope where needed ("kesmemiz gereken varsa keselim").
+
+1. **Gerber AccuMark** — VERDICT: this is the QUALITY BAR Damla wants to reach.
+   - What: industry factory CAD (US, now Lectra). Not consumer.
+   - How: a human pattern maker draws the block; AccuMark grades it to all sizes,
+     nests markers with min fabric waste, sends to auto cutter. Does NOT draft for you.
+   - Data: not a learned system — intelligence is (a) the maker's block, (b) decades-old
+     industry GRADE RULES (how much bust/arm grows size-to-size).
+   - Relevance: NOT a direct competitor (needs an expert; opposite user), but its grade
+     rules are the KANUN for stitchu's "grow correctly on every body" goal — reference, not copy.
+
+## CORE ARCHITECTURE INSIGHT (2026-07-15, Damla) — 3D-derived 2D
+Damla's engineering thesis, and it is correct:
+"patterns are 2D PREPARED FOR 3D" — a good pattern is the correct FLATTENING of a 3D body surface.
+- Two different "3D", do NOT confuse:
+  (a) 3D body SCAN from a photo → NOT needed (that's 3DLOOK/Zozo, a separate million-$ problem).
+  (b) 3D-DERIVED 2D pattern → REQUIRED. Engine must think in 3D (body=volume, garment=surface
+      wrapping it), then UNWRAP that surface to 2D paper with darts. Output is 2D but BORN of 3D.
+- Why cheap Etsy patterns / flat-2D tools fail: they draft straight in 2D with a fixed formula
+  ("bust/4 + x"), never modeling the body's 3D turns (bust apex, shoulder curve, waist-hip) —
+  so they gape and pull. "The ones who don't do it" = the ones who SKIP the 3D step.
+- CLO3D/Optitex DO the 3D→2D chain but drape a HUMAN-drawn pattern. Nobody builds one that
+  auto-constructs 3D from MEASUREMENTS and unwraps couture-correct 2D, open to everyone.
+- THE MOAT, one line: 3D-correct patterns, without an expert, for everyone
+  ("düz insanların bile couture dikmesi"). Target quality = AccuMark. Audience = home + Etsy + brands.
+- Correct pipeline (Damla's instinct): measurements → 3D body surface (from measurements, NOT photo)
+  → drape garment on it → unwrap to 2D + darts → grade → cut-ready. Today's engine is flat-2D; this
+  is the architecture it must move toward. DECISION PENDING: rebuild vs extend (decide after competitor tour).
