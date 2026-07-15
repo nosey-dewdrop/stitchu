@@ -15,7 +15,7 @@ export const MEASUREMENTS = [
   // When given, the pattern fits your ribcage frame while keeping the full bust —
   // the fix for a gaping neckline on a fuller bust. Left blank = the old B/C-cup
   // assumption, unchanged.
-  { key: 'upperBust', label: 'Upper bust', trLabel: 'Üst göğüs', help: 'ABOVE the bust, high under the arms and across the top of the chest. Skip if unsure — but if your bust is fuller than a B/C cup, this stops the neckline gaping.', trHelp: 'Göğsünün ÜSTÜNDEN, kolların altından ve göğsün üst kısmından. Emin değilsen atla — ama göğsün B/C kaptan dolgunsa, bu yakanın açılmasını önler.', min: 60, max: 150, optional: true },
+  { key: 'upperBust', label: 'Upper bust', trLabel: 'Üst göğüs', help: 'ABOVE the bust, high under the arms and across the top of the chest. Skip if unsure — but if your bust is fuller than a B/C cup, this fits the back and armhole to your ribcage and adds a proper bust dart, so the neckline is far less likely to gape.', trHelp: 'Göğsünün ÜSTÜNDEN, kolların altından ve göğsün üst kısmından. Emin değilsen atla — ama göğsün B/C kaptan dolgunsa, bu sırtı ve kol oyuntusunu göğüs kafesine oturtur ve gerçek bir göğüs pensi ekler; yaka çok daha az açılır.', min: 60, max: 150, optional: true },
 ];
 
 export function loadMeasurements() {
