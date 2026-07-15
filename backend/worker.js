@@ -47,6 +47,16 @@ export default {
         return handleWallNote(request, env);
       }
 
+      // ---- API waitlist: a real, throttled email capture for the B2B API.
+      // Public (a browser can't hold a secret), hard rate-limited, stored in KV
+      // as an append-only JSON list capped so it can't grow unbounded.
+      if (url.pathname === '/api/waitlist' && request.method === 'POST') {
+        if (await rateLimited(env, `wait:${ip}`, 3)) {
+          return jsonResponse({ error: 'rate_limited' }, 429);
+        }
+        return handleWaitlist(request, env);
+      }
+
       // ---- Pattern draft: the OWN-engine API core. No LLM cost, so it can be
       // public and generous. The web app (a browser that cannot keep a secret)
       // hits it without a token, throttled per IP; a paying API customer sends
@@ -277,6 +287,29 @@ Mapping rules: if the garment is MORE complex than these fields allow (couture, 
   });
   const data = await response.json();
   return jsonResponse(data, response.status);
+}
+
+// Append-only API waitlist. Validates the email shape, caps the list, dedupes.
+const WAITLIST_CAP = 5000;
+async function handleWaitlist(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return jsonResponse({ error: 'invalid_json' }, 400); }
+  const email = (body && typeof body.email === 'string') ? body.email.trim().toLowerCase() : '';
+  // Minimal but real email shape check.
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+    return jsonResponse({ error: 'invalid_email' }, 422);
+  }
+  const note = (body && typeof body.note === 'string') ? body.note.slice(0, 40) : '';
+  if (!env.RATE_LIMIT) return jsonResponse({ error: 'unavailable' }, 503); // KV is the store
+  let list = [];
+  const raw = await env.RATE_LIMIT.get('waitlist');
+  if (raw) { try { list = JSON.parse(raw); } catch { list = []; } }
+  if (!list.some((e) => e.email === email)) {
+    list.push({ email, note, day: Math.floor(Date.now() / 86400000) });
+    if (list.length > WAITLIST_CAP) list = list.slice(-WAITLIST_CAP);
+    await env.RATE_LIMIT.put('waitlist', JSON.stringify(list));
+  }
+  return jsonResponse({ ok: true }, 200);
 }
 
 function jsonResponse(data, status = 200) {

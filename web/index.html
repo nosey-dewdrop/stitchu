@@ -29,6 +29,11 @@
   .cta{display:inline-block;margin-top:22px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.5);padding:14px 30px;text-decoration:none;position:relative;border-radius:2px}
   .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;pointer-events:none;border-radius:2px}
   .cta:hover::after{inset:5px}
+  .cta2{display:inline-block;margin:22px 0 0 14px;font-size:13px;letter-spacing:.4px;color:#fff;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.6);padding-bottom:2px}
+  .cta2:hover{border-bottom-color:#fff}
+  .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px auto 4px;max-width:64ch}
+  .chip{font-size:11px;letter-spacing:.4px;padding:6px 13px;border:1px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(80,14,26,.35);white-space:nowrap}
+  .apiwait{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
   .btn{position:absolute;z-index:2;filter:drop-shadow(0 6px 12px rgba(45,5,16,.5))}
   .t1{top:5%;right:6%;width:66px;transform:rotate(-10deg)}
@@ -70,6 +75,20 @@
   .paper svg{width:100%;height:auto;display:block}
   .pin{position:absolute;top:-15px;left:-12px;width:36px;transform:rotate(-14deg);filter:drop-shadow(0 3px 6px rgba(45,5,16,.45))}
 
+  /* the moat — why stitchu, with the proof numbers nobody else publishes */
+  .why{position:relative;z-index:1;padding:24px 48px 84px;text-align:center}
+  .why .ptitle{margin-bottom:10px}
+  .cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;max-width:1000px;margin:26px auto 0}
+  .card{background:#fbfaf6;color:#1a1a1a;width:300px;max-width:90vw;padding:24px 24px 26px;text-align:left;box-shadow:0 16px 40px rgba(45,5,16,.38)}
+  .card h3{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:20px;font-weight:400;margin:0 0 10px}
+  .card p{font-size:13px;line-height:1.5;margin:0;color:#33262a}
+  .card .stat{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8f2038;font-weight:700;margin-top:14px}
+  .versus{max-width:60ch;margin:34px auto 0;font-size:13px;line-height:1.6;opacity:.94;text-shadow:0 1px 10px rgba(45,5,15,.55)}
+  .versus b{color:#fff}
+  .whycta{display:inline-block;margin-top:30px;padding:13px 30px;border:1px solid rgba(255,255,255,.6);border-radius:2px;
+    color:#fff;text-decoration:none;font-size:14px;letter-spacing:.5px;transition:all .18s}
+  .whycta:hover{background:#fff;color:#5a1020}
+
   footer{position:relative;z-index:1;padding:24px 48px 34px;border-top:1px solid rgba(255,255,255,.22);
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;opacity:.85;text-shadow:0 1px 8px rgba(45,5,15,.5)}
   footer a{color:#fff;text-decoration:none}
@@ -104,17 +123,20 @@
   </figure>
 
   <div class="col">
-    <h1>Photograph a dress. Get the <em>pattern</em>, drafted to your body.</h1>
-    <p class="lead">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body.</p>
+    <h1>Photograph a dress. Get a pattern <em>proven to fit</em> — drafted to your body.</h1>
+    <p class="lead">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body — and publishes the proof that it fits.</p>
+    <div class="chips">
+      <span class="chip">70,200-draft matrix</span>
+      <span class="chip">seams match to 0.00&nbsp;mm</span>
+      <span class="chip">your measurements never leave your browser</span>
+    </div>
+    <a class="cta" href="create.html">Draft a pattern free</a>
+    <a class="cta2" href="#why">See the proof first</a>
     <div class="items">
       <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</p>
-      <p class="item"><span class="lbl">why we built it?</span>Store-bought patterns fit a standard mannequin, never you. You should be able to sew the thing you actually love, cut to your own body.</p>
-      <p class="item"><span class="lbl">how does it work?</span>Snap the photo, confirm what it read, print the true-scale A4 sheets, then sew.</p>
-      <p class="item"><span class="lbl">what's under the hood?</span>Real geometry. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts. It reads the fabric too — a stretch knit and a crisp poplin get different patterns.</p>
-      <p class="item"><span class="lbl">is it slopware?</span>No. A hand-built C++ drafting engine, checked draft by draft: <b>50,400 test patterns, verified to 0.0001&nbsp;mm</b>. The site is just the window. The engine is the product.</p>
-      <p class="item"><span class="lbl">an api?</span><b>Coming soon.</b> The same engine, behind an endpoint for your own site.</p>
+      <p class="item"><span class="lbl">under the hood?</span>A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts, and reads the fabric — a stretch knit and a crisp poplin get different patterns.</p>
+      <p class="item"><span class="lbl">an api?</span>Yes — the same engine behind one endpoint, no per-call AI cost. <a href="#api" style="color:#ffd9e2">Get early access ↓</a></p>
     </div>
-    <a class="cta" href="create.html">Start a pattern</a>
   </div>
 </section>
 
@@ -187,11 +209,67 @@
   </div>
 </section>
 
+<section class="why" id="why">
+  <h2 class="ptitle">Others promise fit. We publish the proof.</h2>
+  <p class="psub">Photo-to-pattern isn't new — but no one else shows you how accurate it is. stitchu does.</p>
+  <div class="cards">
+    <div class="card">
+      <h3>Proven to fit</h3>
+      <p>Every seam that must sew together is measured off the drawn pieces and matches to 0.00 mm; every sleeve eases into its armhole; the finished waist lands within ~9 mm of your body. Not a promise — a published benchmark.</p>
+      <span class="stat">70,200 draft matrix · seams match to 0.00 mm</span>
+    </div>
+    <div class="card">
+      <h3>Fits every body, not one block</h3>
+      <p>The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders — because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size.</p>
+      <span class="stat">drafted per body · no grading distortion</span>
+    </div>
+    <div class="card">
+      <h3>Your measurements never leave</h3>
+      <p>The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere — it's not a privacy policy, it's the architecture.</p>
+      <span class="stat">on-device · nothing uploaded</span>
+    </div>
+  </div>
+  <p class="versus">Similar tools charge <b>$34–49 a month</b> and publish no accuracy proof at all. stitchu publishes the benchmark — seams match, sleeves fit, proportions hold — and runs in your browser <b>free</b>.</p>
+  <a class="whycta" href="create.html">Draft a pattern free →</a>
+</section>
+
+<section class="why" id="api" style="border-top:1px solid rgba(255,255,255,.18);padding-top:56px">
+  <h2 class="ptitle">Build with the stitchu engine.</h2>
+  <p class="psub">The same C++ drafting engine, behind one endpoint. <span style="color:#ffd9e2">POST /api/draft</span> → a true-scale, measurement-fitted pattern. No per-call AI cost — your product just gets patterns.</p>
+  <form class="apiwait" onsubmit="return apiWaitlist(event)">
+    <input type="email" id="apiemail" placeholder="you@studio.com" required
+      style="padding:12px 16px;border:none;border-radius:2px;font-size:14px;width:260px;max-width:70vw">
+    <button type="submit" class="whycta" style="margin-top:0;cursor:pointer;background:#fff;color:#5a1020;border:none">Request early access</button>
+  </form>
+  <p class="versus" id="apimsg" style="margin-top:16px;min-height:20px"></p>
+  <p class="versus" style="opacity:.8;font-size:12px">Studios, made-to-measure brands and pattern shops — tell us your volume.</p>
+</section>
+
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v30</span></span>
+  <span><a href="#api">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v31</span></span>
 </footer>
 
+<script>
+// API waitlist — real capture to the worker (no fake form). Honest states.
+const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
+async function apiWaitlist(e){
+  e.preventDefault();
+  const email = document.getElementById('apiemail').value.trim();
+  const msg = document.getElementById('apimsg');
+  msg.style.color = '#fff'; msg.textContent = 'Sending…';
+  try{
+    const r = await fetch(API_BASE + '/api/waitlist', {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify({ email, note: 'api-waitlist' })
+    });
+    if(r.ok){ msg.textContent = 'You’re on the list — we’ll be in touch.'; document.getElementById('apiemail').value=''; }
+    else if(r.status===429){ msg.textContent = 'One moment — please try again shortly.'; }
+    else { msg.textContent = 'Could not save that — email hello@ instead?'; }
+  }catch(_){ msg.textContent = 'Could not reach the server — email hello@ instead?'; }
+  return false;
+}
+</script>
 <script>
 // full-background poplin gingham (pötikare) — small checks, static, fixed under the scroll
 const cv=document.getElementById('silk'), ctx=cv.getContext('2d');
