@@ -40,6 +40,13 @@ npx wrangler secret put APP_TOKEN
 npx wrangler deploy
 ```
 
+> **2026-07-15 — redeploy needed:** the worker gained a new `POST /api/waitlist`
+> endpoint (the landing + api.html API waitlist) and the `POST /api/draft`
+> engine endpoint. Until you `wrangler deploy`, the landing's "Request early
+> access" form fails gracefully ("email hello@ instead"). Run the deploy to
+> activate both. The waitlist stores emails in the RATE_LIMIT KV under the key
+> `waitlist` (read them with `npx wrangler kv key get waitlist --binding RATE_LIMIT`).
+
 Wrangler prints the Worker URL, e.g. `https://stitchu-api.<you>.workers.dev`.
 Put that URL in `App/Stitchu/Secrets.swift` (`backendURL`), pointing at the
 `/api/analyze` route: `https://stitchu-api.<you>.workers.dev/api/analyze`.
