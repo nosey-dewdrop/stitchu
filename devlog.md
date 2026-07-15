@@ -320,3 +320,23 @@ P2 · HOOK: "değiştirdiğim formül sayısı: sıfır. motor denetlenmeye daya
 P3 · HOOK: "bir an 'bu bir hata mı' dedim — sonra Aldrich'in de aynı yerde durduğunu gördüm."
 - motor büyük bedenlerde beden başına +4cm yerine +6cm'ye geçiyor. tesadüf sandım.
 - Aldrich'in kendisi de büyük bedenlerde tam bu iki-kademeli artışa geçiyor. doğru sebeple aynı noktadayız. [grade tablosu]
+
+## seri Q — iç içe beden serisi (nested pdf, moat parçası)
+
+Q1 · HOOK: "Etsy'deki her kalıp satıcısı bunun için ayrı program kullanıyor, ben motora koydum."
+- endüstri standardı 'nested PDF': tüm bedenler tek sayfa setinde üst üste, her beden kendi çizgi renginde. bir kez yazdır, ihtiyacın olan rengi takip et.
+- StitchLift + her Etsy rakibi ya beden başına ayrı baskı veriyor ya hiç. stitchu tek baskıda 10 beden. [canlı v49]
+
+Q2 · HOOK: "10 bedeni üst üste çizince nasıl karışmıyor? her birine kör-dostu renk + kesikli çizgi verdim."
+- vişne marka rengi en üstte, sonra 9 ayrı renk. renk körü için her renge ayrı kesik desen — siyah-beyaz yazıcıda bile ayrışıyor.
+- hepsi ortak köşeden hizalı (küçük beden büyüğün tam içinde). kapakta renk→beden efsanesi + beden tablosu. [baskı]
+
+## seri R — motoru ders kitaplarına karşı yayınlamak (benchmark sayfası)
+
+R1 · HOOK: "'yayınlanmış benchmark' diyordum ama tıklayacak bir sayfa yoktu. artık var."
+- landing 'kanıtı yayınlıyoruz' diyor — ama kanıt gidilebilir bir yer değildi. benchmark.html'i kurdum: 0.00mm dikiş, 1-9% kol bolluğu, 70.200 taslak.
+- üstüne bugünkü Aldrich/Armstrong denetimini koydum: hangi blok, hangi kaynak, karar. [canlı]
+
+R2 · HOOK: "rakip ayda 34-49 dolar alıyor ve tek bir doğruluk sayısı yayınlamıyor."
+- matematik herkeste aynı. kimsenin yapmadığı: ölçmek, literatüre karşı denetlemek, sayıyı okunabilir yere koymak.
+- artı ölçüler cihazdan hiç çıkmıyor. hendek bu. [benchmark.html]
