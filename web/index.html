@@ -15,6 +15,10 @@
   body{font-family:Helvetica,Arial,sans-serif;color:#fff;overflow-x:hidden;background:#8f2038}
   #silk{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
   .mark{position:fixed;top:24px;left:40px;z-index:5;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;text-shadow:0 1px 10px rgba(40,4,14,.5)}
+  .langtoggle{position:fixed;top:26px;right:36px;z-index:6;display:flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px}
+  .langtoggle button{background:none;border:none;color:#fff;opacity:.6;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
+  .langtoggle button.active{opacity:1;border-bottom:1.5px solid #fff}
+  .langtoggle span{opacity:.5}
 
   .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:44px 48px 56px}
   .col{max-width:76ch;text-align:center;text-shadow:0 1px 12px rgba(45,5,15,.6)}
@@ -97,6 +101,7 @@
 <body>
 <canvas id="silk"></canvas>
 <div class="mark">stitchu</div>
+<div class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></div>
 
 <section class="hero">
   <img class="btn t1" src="assets/buttons/b6.png" alt="">
@@ -123,36 +128,36 @@
   </figure>
 
   <div class="col">
-    <h1>Photograph a dress. Get a pattern <em>proven to fit</em> — drafted to your body.</h1>
-    <p class="lead">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body — and publishes the proof that it fits.</p>
+    <h1 data-en="Photograph a dress. Get a pattern proven to fit — drafted to your body." data-tr="Bir elbisenin fotoğrafını çek. Uyacağı kanıtlanmış bir kalıp al — kendi bedenine çizilmiş.">Photograph a dress. Get a pattern <em>proven to fit</em> — drafted to your body.</h1>
+    <p class="lead" data-en="Most photo-to-fashion apps hand you a filter and a one-size template. stitchu is a real pattern-making engine that redraws the garment for your exact body — and publishes the proof that it fits." data-tr="Çoğu fotoğraf-moda uygulaması sana bir filtre ve tek beden şablon verir. stitchu gerçek bir kalıp motoru — kıyafeti tam senin bedenine yeniden çizer ve uyduğunun kanıtını yayınlar.">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body — and publishes the proof that it fits.</p>
     <div class="chips">
-      <span class="chip">70,200-draft matrix</span>
-      <span class="chip">seams match to 0.00&nbsp;mm</span>
-      <span class="chip">your measurements never leave your browser</span>
+      <span class="chip" data-en="70,200-draft matrix" data-tr="70.200 taslaklık test matrisi">70,200-draft matrix</span>
+      <span class="chip" data-en="seams match to 0.00&nbsp;mm" data-tr="dikişler 0,00&nbsp;mm ile eşleşir">seams match to 0.00&nbsp;mm</span>
+      <span class="chip" data-en="your measurements never leave your browser" data-tr="ölçülerin tarayıcından asla çıkmaz">your measurements never leave your browser</span>
     </div>
-    <a class="cta" href="create.html">Draft a pattern free</a>
-    <a class="cta2" href="#why">See the proof first</a>
+    <a class="cta" href="create.html" data-en="Draft a pattern free" data-tr="Ücretsiz kalıp çiz">Draft a pattern free</a>
+    <a class="cta2" href="#why" data-en="See the proof first" data-tr="Önce kanıta bak">See the proof first</a>
     <div class="items">
-      <p class="item"><span class="lbl">what is it?</span>A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</p>
-      <p class="item"><span class="lbl">under the hood?</span>A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts, and reads the fabric — a stretch knit and a crisp poplin get different patterns.</p>
-      <p class="item"><span class="lbl">an api?</span>Yes — the same engine behind one endpoint, no per-call AI cost. <a href="#api" style="color:#ffd9e2">Get early access ↓</a></p>
+      <p class="item"><span class="lbl" data-en="what is it?" data-tr="nedir?">what is it?</span><span data-en="A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template." data-tr="Herhangi bir etek, elbise ya da üstün fotoğrafı, senin yedi ölçüne çizilmiş gerçek, dikilebilir bir kalıba dönüşür. Filtre değil. Şablon değil.">A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</span></p>
+      <p class="item"><span class="lbl" data-en="under the hood?" data-tr="içinde ne var?">under the hood?</span><span data-en="A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit you, with princess seams instead of fiddly darts, and reads the fabric — a stretch knit and a crisp poplin get different patterns." data-tr="Elle yazılmış bir C++ kalıp motoru. Kıyafetin 3B biçimini sana uyan düz panolara açar, zahmetli pensler yerine prenses dikiş kullanır ve kumaşı okur — esnek örgü ile sert poplin farklı kalıplar alır.">A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts, and reads the fabric — a stretch knit and a crisp poplin get different patterns.</span></p>
+      <p class="item"><span class="lbl" data-en="an api?" data-tr="api var mı?">an api?</span><span data-en="Yes — the same engine behind one endpoint, no per-call AI cost. " data-tr="Evet — aynı motor tek bir uçta, çağrı başına yapay zeka maliyeti yok. ">Yes — the same engine behind one endpoint, no per-call AI cost. </span><a href="#api" style="color:#ffd9e2" data-en="Get early access ↓" data-tr="Erken erişim al ↓">Get early access ↓</a></p>
     </div>
   </div>
 </section>
 
 <section class="how">
   <div class="flow">
-    <div class="step"><span class="n">01</span>photograph a dress you love</div>
+    <div class="step"><span class="n">01</span><span data-en="photograph a dress you love" data-tr="sevdiğin bir elbisenin fotoğrafını çek">photograph a dress you love</span></div>
     <span class="seam"></span>
-    <div class="step"><span class="n">02</span>the engine drafts it to your body</div>
+    <div class="step"><span class="n">02</span><span data-en="the engine drafts it to your body" data-tr="motor onu senin bedenine çizer">the engine drafts it to your body</span></div>
     <span class="seam"></span>
-    <div class="step"><span class="n">03</span>print true-scale, then sew</div>
+    <div class="step"><span class="n">03</span><span data-en="print true-scale, then sew" data-tr="gerçek ölçekte bas, sonra dik">print true-scale, then sew</span></div>
   </div>
 </section>
 
 <section class="proof">
-  <h2 class="ptitle">This is what the engine makes.</h2>
-  <p class="psub">No filters, no clip art. Real drafting geometry, cut to your seven measurements and tiled true-scale to print.</p>
+  <h2 class="ptitle" data-en="This is what the engine makes." data-tr="Motorun ürettiği şey bu.">This is what the engine makes.</h2>
+  <p class="psub" data-en="No filters, no clip art. Real drafting geometry, cut to your seven measurements and tiled true-scale to print." data-tr="Filtre yok, çizim klibi yok. Gerçek kalıp geometrisi — senin yedi ölçüne kesilmiş ve gerçek ölçekte A4'e döşenmiş.">No filters, no clip art. Real drafting geometry, cut to your seven measurements and tiled true-scale to print.</p>
   <div class="papers">
 
     <figure class="paper">
@@ -185,7 +190,7 @@
 
   </div>
 
-  <p class="psub" style="margin-top:52px">…and it isn't a one-dress trick. Same engine, same body, other silhouettes — every line below is real output.</p>
+  <p class="psub" style="margin-top:52px" data-en="…and it isn't a one-dress trick. Same engine, same body, other silhouettes — every line below is real output." data-tr="…ve tek-elbise numarası değil. Aynı motor, aynı beden, başka siluetler — aşağıdaki her çizgi gerçek çıktı.">…and it isn't a one-dress trick. Same engine, same body, other silhouettes — every line below is real output.</p>
   <div class="papers">
 
     <figure class="paper wide">
@@ -210,46 +215,76 @@
 </section>
 
 <section class="why" id="why">
-  <h2 class="ptitle">Others promise fit. We publish the proof.</h2>
-  <p class="psub">Photo-to-pattern isn't new — but no one else shows you how accurate it is. stitchu does.</p>
+  <h2 class="ptitle" data-en="Others promise fit. We publish the proof." data-tr="Başkaları uyum vaat eder. Biz kanıtı yayınlarız.">Others promise fit. We publish the proof.</h2>
+  <p class="psub" data-en="Photo-to-pattern isn't new — but no one else shows you how accurate it is. stitchu does." data-tr="Fotoğraftan kalıp yeni değil — ama başka kimse ne kadar doğru olduğunu göstermiyor. stitchu gösteriyor.">Photo-to-pattern isn't new — but no one else shows you how accurate it is. stitchu does.</p>
   <div class="cards">
     <div class="card">
-      <h3>Proven to fit</h3>
-      <p>Every seam that must sew together is measured off the drawn pieces and matches to 0.00 mm; every sleeve eases into its armhole; the finished waist lands within ~9 mm of your body. Not a promise — a published benchmark.</p>
-      <span class="stat">70,200 draft matrix · seams match to 0.00 mm</span>
+      <h3 data-en="Proven to fit" data-tr="Uyacağı kanıtlı">Proven to fit</h3>
+      <p data-en="Every seam that must sew together is measured off the drawn pieces and matches to 0.00 mm; every sleeve eases into its armhole; the finished waist lands within ~9 mm of your body. Not a promise — a published benchmark." data-tr="Birbirine dikilmesi gereken her dikiş, çizilen parçalardan ölçülür ve 0,00 mm ile eşleşir; her kol oyuntusuna oturur; bitmiş bel vücuduna ~9 mm yakınlıkta çıkar. Vaat değil — yayınlanmış bir kıyaslama.">Every seam that must sew together is measured off the drawn pieces and matches to 0.00 mm; every sleeve eases into its armhole; the finished waist lands within ~9 mm of your body. Not a promise — a published benchmark.</p>
+      <span class="stat" data-en="70,200 draft matrix · seams match to 0.00 mm" data-tr="70.200 taslak matrisi · dikişler 0,00 mm eşleşir">70,200 draft matrix · seams match to 0.00 mm</span>
     </div>
     <div class="card">
-      <h3>Fits every body, not one block</h3>
-      <p>The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders — because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size.</p>
-      <span class="stat">drafted per body · no grading distortion</span>
+      <h3 data-en="Fits every body, not one block" data-tr="Tek kalıba değil, her bedene uyar">Fits every body, not one block</h3>
+      <p data-en="The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders — because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size." data-tr="Dikiş kalıplarına en büyük şikâyet, büyük bedenlerde dev kol oyuntuları ve geniş omuzlar çıkması — çünkü tek bir küçük kalıbı ölçekliyorlar. stitchu tüm kıyafeti senin yedi ölçüne yeniden çizer, böylece oranlar her bedende korunur.">The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders — because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size.</p>
+      <span class="stat" data-en="drafted per body · no grading distortion" data-tr="bedene göre çizilir · grading bozulması yok">drafted per body · no grading distortion</span>
     </div>
     <div class="card">
-      <h3>Your measurements never leave</h3>
-      <p>The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere — it's not a privacy policy, it's the architecture.</p>
-      <span class="stat">on-device · nothing uploaded</span>
+      <h3 data-en="Your measurements never leave" data-tr="Ölçülerin asla çıkmaz">Your measurements never leave</h3>
+      <p data-en="The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere — it's not a privacy policy, it's the architecture." data-tr="Kalıp, kendi motorumuzla senin tarayıcının içinde çizilir. Vücut ölçülerin hiçbir yere yüklenmez — bu bir gizlilik politikası değil, mimarinin kendisi.">The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere — it's not a privacy policy, it's the architecture.</p>
+      <span class="stat" data-en="on-device · nothing uploaded" data-tr="cihazda · hiçbir şey yüklenmez">on-device · nothing uploaded</span>
     </div>
   </div>
-  <p class="versus">Similar tools charge <b>$34–49 a month</b> and publish no accuracy proof at all. stitchu publishes the benchmark — seams match, sleeves fit, proportions hold — and runs in your browser <b>free</b>.</p>
-  <a class="whycta" href="create.html">Draft a pattern free →</a>
+  <p class="versus" data-en="Similar tools charge $34–49 a month and publish no accuracy proof at all. stitchu publishes the benchmark — seams match, sleeves fit, proportions hold — and runs in your browser free." data-tr="Benzer araçlar ayda 34–49 dolar alır ve hiçbir doğruluk kanıtı yayınlamaz. stitchu kıyaslamayı yayınlar — dikişler tutar, kollar oturur, oranlar korunur — ve tarayıcında ücretsiz çalışır.">Similar tools charge <b>$34–49 a month</b> and publish no accuracy proof at all. stitchu publishes the benchmark — seams match, sleeves fit, proportions hold — and runs in your browser <b>free</b>.</p>
+  <a class="whycta" href="create.html" data-en="Draft a pattern free →" data-tr="Ücretsiz kalıp çiz →">Draft a pattern free →</a>
 </section>
 
 <section class="why" id="api" style="border-top:1px solid rgba(255,255,255,.18);padding-top:56px">
-  <h2 class="ptitle">Build with the stitchu engine.</h2>
-  <p class="psub">The same C++ drafting engine, behind one endpoint. <span style="color:#ffd9e2">POST /api/draft</span> → a true-scale, measurement-fitted pattern. No per-call AI cost — your product just gets patterns.</p>
+  <h2 class="ptitle" data-en="Build with the stitchu engine." data-tr="stitchu motoruyla geliştir.">Build with the stitchu engine.</h2>
+  <p class="psub" data-en="The same C++ drafting engine, behind one endpoint. POST /api/draft → a true-scale, measurement-fitted pattern. No per-call AI cost — your product just gets patterns." data-tr="Aynı C++ kalıp motoru, tek bir uçta. POST /api/draft → gerçek ölçekli, bedene çizilmiş bir kalıp. Çağrı başına yapay zeka maliyeti yok — ürünün sadece kalıbı alır.">The same C++ drafting engine, behind one endpoint. <span style="color:#ffd9e2">POST /api/draft</span> → a true-scale, measurement-fitted pattern. No per-call AI cost — your product just gets patterns.</p>
   <form class="apiwait" onsubmit="return apiWaitlist(event)">
     <input type="email" id="apiemail" placeholder="you@studio.com" required
       style="padding:12px 16px;border:none;border-radius:2px;font-size:14px;width:260px;max-width:70vw">
-    <button type="submit" class="whycta" style="margin-top:0;cursor:pointer;background:#fff;color:#5a1020;border:none">Request early access</button>
+    <button type="submit" class="whycta" style="margin-top:0;cursor:pointer;background:#fff;color:#5a1020;border:none" data-en="Request early access" data-tr="Erken erişim iste">Request early access</button>
   </form>
   <p class="versus" id="apimsg" style="margin-top:16px;min-height:20px"></p>
-  <p class="versus" style="opacity:.8;font-size:12px">Studios, made-to-measure brands and pattern shops — tell us your volume. · <a href="api.html" style="color:#ffd9e2">see the API →</a></p>
+  <p class="versus" style="opacity:.8;font-size:12px"><span data-en="Studios, made-to-measure brands and pattern shops — tell us your volume." data-tr="Atölyeler, ısmarlama markalar ve kalıp dükkanları — hacminizi yazın.">Studios, made-to-measure brands and pattern shops — tell us your volume.</span> · <a href="api.html" style="color:#ffd9e2" data-en="see the API →" data-tr="API'yi gör →">see the API →</a></p>
 </section>
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="#api">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v34</span></span>
+  <span><a href="#api">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v36</span></span>
 </footer>
 
+<script>
+// Landing language: swap every [data-en]/[data-tr] element's text. Defaults to
+// the browser language, remembers the choice. The whole front door in Turkish
+// so a Turkish visitor isn't bounced by an English wall before the (already
+// Turkish) tool.
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-en]').forEach((el) => {
+    // Preserve the original EN innerHTML (couture <em>/<b>) — only TR replaces it
+    // with plain text. So English keeps its emphasis; Turkish reads cleanly.
+    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
+    if (lang === 'tr') {
+      const txt = el.getAttribute('data-tr');
+      if (txt != null) el.textContent = txt;
+    } else {
+      el.innerHTML = el.dataset.enHtml;
+    }
+  });
+  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
+  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
+  try { localStorage.setItem('stitchu-lang', lang); } catch (_) {}
+}
+(function initLang(){
+  let lang = 'en';
+  try { lang = localStorage.getItem('stitchu-lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'en'); } catch (_) {}
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
+  setLang(lang);
+})();
+</script>
 <script>
 // API waitlist — real capture to the worker (no fake form). Honest states.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
