@@ -366,3 +366,58 @@ S5 · HOOK: "iki eski hatamı prompt'a tek cümle yazarak düzelttim."
 S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi doğruydu."
 - FULL 6/54'te kaldı çünkü motor öğeleri hâlâ ÇİZMİYOR. bu oturum sadece boruyu döşedi: görü→spec taşıma.
 - yeni bir istatistik ekledim: yapısal alanlar çizilemeyen öğeyi kaç fotoda yakaladı. ürün sayısı ile kabiliyet sayısını AYRI ölçmek, 'ilerliyorum' yalanını söylememenin yolu. [terminal]
+
+# TECH/AI/CV STOĞU (loop'suz kavram reel'leri — şablon: BENCHMARK-58.md protokolü)
+## Reel — AI'ım her şeyi görüyor ama eli yok
+
+**Hook (ilk 2 sn):** "Yapay zekam fotoğraftaki düğmeyi gördü. Sonra düğmesiz bir kalıp çizdi. Neden?"
+
+**Anlatı (~40 sn):** Ürünüm fotoğraftan dikiş kalıbı çıkarıyor. Kullanıcılar "düğmeyi görmüyor" diye düşünüyordu. Testi yaptım: 54 gerçek ürün fotoğrafını zincirden geçirdim. Sonuç ters köşe — görme tarafı NEREDEYSE KUSURSUZ. Düğme patını, yakayı, korseyi tek tek doğru okuyor. Sorun başka yerde: gördüğünü serbest bir cümleye yazıyor, "düğmeli, hakim yakalı" diye. Ama kalıbı çizen matematik motorunun sözlüğünde "düğme patı" diye bir formül yok. Yani göz var, el yok, ikisinin arasındaki boru da taşımıyor. Ders şu: kullanıcının şikayeti hangi parçada, tahmin etme — zinciri parça parça test et. Ben "görmüyor" sanıp aylarca yanlış yeri tamir edebilirdim.
+
+**Görsel:** solda fotoğraf + vision çıktısı ("front button placket" yazısı vurgulu), sağda çizilen kalıp — düğme yok. Alt yazı: "gören göz ≠ çizen el".
+**Format:** reel
+
+## Reel — kendi güvenlik duvarıma takıldım
+
+**Hook (ilk 2 sn):** "Testim 19 dakika sürdü. Suçlu: kendi yazdığım güvenlik önlemi."
+
+**Anlatı (~35 sn):** Ürünüme kötüye kullanım sigortası koymuştum: bir kullanıcı günde en fazla 15 fotoğraf analiz edebilir. Güzel. Sonra kendi ürünümü 54 fotoğrafla test etmem gerekti — ve kendi sigortama takıldım. Çözüm sayaç sıfırlamak ama orada ikinci ders: sayaçlar Cloudflare KV'de duruyor ve KV "eventual consistency" çalışıyor. Yani sıfırladığın değerin dünyaya yayılması saniyeler alıyor; erken davranırsan hâlâ eski sayıyı görüyorsun. Foto başına 21 saniye bekleyerek yürüdüm: 19 dakika. Ders: güvenlik önlemi yazarken "bunu test ederken ben nasıl geçeceğim" sorusunu da o gün cevapla, test günü değil.
+
+**Görsel:** terminalde akan test satırları + aralarda bekleme sayacı. Alt yazı: "rate limit: 15/day. tester: me."
+**Format:** reel
+
+## Reel — 0.00mm ne demek, neden takıntılıyım
+
+**Hook (ilk 2 sn):** "Kalıbında yarım milimetre hata olsun, dikişte üç santim kayarsın. Nasıl mı?"
+
+**Anlatı (~40 sn):** Dikiş kalıbında iki parça birbirine dikilir: mesela korsajın yan dikişi ile arkanın yan dikişi. Bu iki kenarın UZUNLUĞU eşit olmak zorunda — buna truing deniyor. Eşit değilse kumaş ya büzülür ya potluk yapar, ve hata dikiş boyunca birikir. Benim motor her kalıbı çizdikten sonra bütün eş kenarları ölçüyor ve fark 0.00mm değilse test FAIL veriyor. Elle kalıp çizen biri bunu cetvelle, mezurayla kontrol eder; benim motorda bu bir matematik garantisi. Rakiplerin hiçbiri bu sayıyı yayınlamıyor. Ders: iddia herkesin, ölçüm cesaret isteyen şey.
+
+**Görsel:** iki kalıp kenarı yan yana, üstlerinde uzunluk etiketi, fark: 0.00mm yeşil tik. Alt yazı: "truing: the boring word that decides fit".
+**Format:** reel
+
+## Reel — kod değişti, çıktı bitine kadar aynı kalmalı
+
+**Hook (ilk 2 sn):** "Motoruma yeni özellik eklerken en çok korktuğum şey: eski müşterinin kalıbının BİR bit oynaması."
+
+**Anlatı (~40 sn):** Buna golden test deniyor. Motorun bilinen girdiler için ürettiği çıktıları dosya olarak donduruyorum — altın kopya. Her kod değişikliğinden sonra motor aynı girdilerle tekrar koşuyor ve yeni çıktı, altın kopyayla BYTE BYTE karşılaştırılıyor. Tek karakter fark = alarm. Neden bu kadar sert? Çünkü yeni bir yaka tipi eklerken farkında olmadan mevcut elbise formülünü de kımıldatabilirsin; kullanıcı dün indirdiği kalıbı bugün farklı alır ve bunu asla fark etmezsin. Golden test "yeni şey ekle ama eskiye dokunma" sözünün makine tarafından denetlenen hali. Ders: geriye dönük uyumluluk niyet değil, test.
+
+**Görsel:** ekranda diff çıktısı: "golden: IDENTICAL". Alt yazı: "add the new, freeze the old".
+**Format:** reel
+
+## Reel — çantaya elbise kalıbı çizmemek de başarı
+
+**Hook (ilk 2 sn):** "Test setime bilerek bir çanta fotoğrafı koydum. Neden?"
+
+**Anlatı (~35 sn):** 54 giysi fotoğrafıyla ürünümü test ederken araya giysi olmayan şeyler de kattım: bir çanta, bir uygulama ekran görüntüsü, bir kalıp çizimi. Çünkü bir sistemin ne çizdiği kadar neyi ÇİZMEYİ REDDETTİĞİ de kalite. Buna doğru red deniyor — false positive'in panzehiri. Benimki çantayı ve ekran görüntüsünü doğru reddetti ama kalıp ÇİZİMİNE bakıp "elbise" dedi: çizimden bile silüet okuyor, fazla hevesli. Bu da düzeltme listeme girdi. Ders: sadece "doğru cevabı buluyor mu" diye test etme; "cevap olmayan yerde susuyor mu" diye de test et.
+
+**Görsel:** üç kare: çanta → RED yeşil, app ekranı → RED yeşil, kalıp çizimi → "dress" kırmızı. Alt yazı: "a good model knows when to say no".
+**Format:** reel
+
+## Reel — tarayıcında çalışan C++ motoru
+
+**Hook (ilk 2 sn):** "Kalıp motorumun sunucu maliyeti sıfır. Sırrı 90'ların dili: C++."
+
+**Anlatı (~40 sn):** Ürünümün kalıp çizen beyni C++ ile yazılı — hız ve matematik hassasiyeti için. Ama kullanıcı bir web sitesine giriyor, uygulama indirmiyor. Nasıl? WASM — WebAssembly. C++ kodunu derleyip tarayıcının anladığı taşınabilir bir makine koduna çeviriyorsun; senin telefonunda, SENİN işlemcinde koşuyor. İki kazanç: ölçümlerin cihazından çıkmıyor (gizlilik) ve ben sunucu parası ödemiyorum — bin kullanıcı da gelse maliyetim aynı. Rakip bunu ayda 34 dolara abonelikle satıyor çünkü hesabı sunucuda yapıyor. Ders: mimari karar, fiyat etiketinin ta kendisi.
+
+**Görsel:** şema: fotoğraf → tarayıcı içinde motor kutusu → kalıp; sunucu kutusunun üstü çizili. Alt yazı: "your body data never leaves your device".
+**Format:** reel
