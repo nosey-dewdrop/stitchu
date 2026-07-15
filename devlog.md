@@ -256,3 +256,17 @@ L2 · HOOK: "tarayıcı sürümü sunucuda çalışmadı ve sebebi öğreticiydi
 L3 · HOOK: "çalışan endpoint ile satılabilir API ayrı şeyler."
 - girişi önce doğruluyorum: bilinmeyen bir yaka değeri sessiz varsayılana düşmüyor, net 422 dönüyor. yedi ölçü sayısal + aralıkta.
 - en önemlisi: doğrulamayı geçemeyen taslak 200'le bozuk kalıp değil, 422 "çizilemez" + sebep dönüyor. API müşterinin kumaşını harcatamaz.
+
+## seri M — moat: rakip vs kanıt
+
+M1 · HOOK: "rakibim tam benim yaptığım şeyi satıyordu ve bu iyi haberdi."
+- StitchLift: foto→kalıp, grading bile var, aylık $34-49. panik yapabilirdim.
+- sitesini didikledim: HİÇBİR doğruluk iddiası yok. ne benchmark, ne sew-test, ne yorum. herkes "yapay zeka kalıp çiziyor" diyor, kimse "şu kadar doğru" demiyor. moat orada.
+
+M2 · HOOK: "kimsenin yayınlamadığı sayıyı yayınladım: kalıbım ne kadar oturuyor."
+- 220 kalıbı tüm vücut ızgarasında çizip gerçek geometriden ölçtüm.
+- bitmiş bel: vücut+pay'a 13mm yakın. her prenses+yan dikiş çifti: 0.00mm (parçalar dikiliyor). 220 kolun 220'si dikilebilir pencerede. [terminal]
+
+M3 · HOOK: "ölçemediğim şeyi rapora YAZMADIM ve bu bir güç."
+- bust çevresini bilerek atladım: dar-büst geniş-omuzlu vücutta 2B parçadan omuz hattını yakalıyor, temiz ölçülemiyor.
+- benchmark sadece dürüstçe ölçebildiğini iddia ediyor. güven, abartıdan değil, neyi bilmediğini söylemekten gelir.
