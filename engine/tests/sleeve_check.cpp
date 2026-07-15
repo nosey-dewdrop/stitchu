@@ -44,6 +44,10 @@ static const std::vector<Body> BODIES = {
     {100, 80, 104, 44, 32, 58, 38, "mid short-back"},
     {110, 88, 108, 40, 34, 56, 38, "full petite"},
     {140, 112, 150, 52, 28, 60, 45, "extreme short-back"},
+    // Wide arm on a normal back: the deepened armscye makes a wide, shallow cap;
+    // the underarm seam used to loop back on itself here (a self-intersection the
+    // validator caught only on a broad vocabulary sweep). Keep it covered.
+    {130, 104, 140, 50, 42, 58, 38, "wide-arm normal-back"},
 };
 
 int main() {

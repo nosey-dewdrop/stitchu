@@ -100,25 +100,32 @@ std::vector<PatternPiece> draft(
     const double hemHalf = balloon ? width * 0.52 : width * 0.40;
     const double midBulge = balloon ? width * 0.62 : width * 0.46;
 
-    const Point capLeft{-width / 2, capHeight};
-    const Point capRight{width / 2, capHeight};
+    const double capHalf = width / 2;
+    const Point capLeft{-capHalf, capHeight};
+    const Point capRight{capHalf, capHeight};
     const Point top{0, 0};
     const Point hemLeft{-hemHalf, hemY};
     const Point hemRight{hemHalf, hemY};
 
+    // The underarm control point nearest the cap must not sit INSIDE the cap
+    // corner, or on a wide sleeve with a shallow cap (the biceps-floor + deepened
+    // armscye regime) the seam overshoots inward and the cubic loops back on
+    // itself. Anchor it at least as wide as the cap corner. For a balloon the
+    // bulge stays outboard as intended.
+    const double capSideX = balloon ? midBulge : std::max(midBulge, capHalf);
     std::vector<PathCommand> commands{PathCommand::move(capLeft)};
     for (const auto& c : capCurve(capLeft, top, true)) commands.push_back(c);
     for (const auto& c : capCurve(top, capRight, false)) commands.push_back(c);
     // underarm seams (bowed out for balloon)
     commands.push_back(PathCommand::curve(
         hemRight,
-        {midBulge, capHeight + (hemY - capHeight) * 0.4},
+        {capSideX, capHeight + (hemY - capHeight) * 0.4},
         {hemHalf * 1.05, hemY - (hemY - capHeight) * 0.2}));
     commands.push_back(PathCommand::line(hemLeft));
     commands.push_back(PathCommand::curve(
         capLeft,
         {-hemHalf * 1.05, hemY - (hemY - capHeight) * 0.2},
-        {-midBulge, capHeight + (hemY - capHeight) * 0.4}));
+        {-capSideX, capHeight + (hemY - capHeight) * 0.4}));
     commands.push_back(PathCommand::close());
 
     // Gather notches on the cap; balloon also gathers into the hem.
