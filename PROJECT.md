@@ -415,3 +415,68 @@ Three layers, none is hand-drawing:
 So catalog = a GALLERY of the engine's own output (this is exactly what Tailornova does — they don't
 hand-draw the catalog, their engine renders it). Only decision: which styles ship first (Etsy tour
 already answered: linen dress, halter, wrap, tank, palazzo, corset...). NEXT-SESSION first task.
+
+## Competitor tour (cont.)
+10. **Sewist** — auto + in-browser pattern EDITING; core still 2D+catalog (Tailornova's shadow).
+   WHAT PORTS TO STITCHU (Damla asked "what's addable"):
+   - ✅ ADD: controlled ADJUSTMENT SLIDERS — length short↔long, sleeve +/−cm, neck depth closed↔open,
+     ease slim↔loose. These are ALREADY engine parameters; just expose as sliders. Safe (bounded, not
+     free-draw), doesn't scare the home sewist, satisfies the tinkerer, technically easy.
+   - ⚠️ MAYBE (v2): add/remove PIECES (pocket, belt, lining) — engine must know each piece; defer.
+   - ❌ DON'T ADD (trap): free-line editing (drag points). Scares non-experts + breaks engine
+     correctness (user draws a wrong line → bad fit → "doesn't work"). It pierces the moat
+     ("the ENGINE draws the correct line"). Keep control with the engine, not the user.
+   Net: add bounded personalization sliders on top of "pick from catalog"; never free-draw.
+
+11. **MyBodyModel** — not a pattern tool: draws a personal CROQUIS (fashion figure) at YOUR
+   proportions, you design on it by hand. Neighbor, not rival. Lesson: people WANT to "see their own
+   body at correct proportion" → supports the static-preview idea. It stops at the croquis (user must
+   design by hand = expert work); stitchu wins by showing the silhouette AND giving the real pattern.
+   PORTS TO STITCHU: personal-silhouette preview before/after drafting (demand proven by MyBodyModel).
+
+## ADD-LIST (next sessions, not now — Damla: "let's add these") 
+Decided this session, build later with a fresh head (order under SCOPE DECISION):
+1. STYLE CATALOG UX (engine renders cards from style-recipe JSON; biggest gap vs Tailornova)
+2. adjustment SLIDERS (length/sleeve/neck/ease — already engine params, from Sewist)
+3. STATIC personal-silhouette preview (from MyBodyModel demand + geometric engine)
+4. CAMERA → MEASUREMENT (gymgyme pose engine, kills the 7-measure pain)
+
+## PLATFORMS — one C++ engine, three faces (confirmed 2026-07-15, matches 2026-07-10 decision)
+Damla: "after the stitchu engine, iOS and Android apps come from it too, right?" YES — that's exactly
+why C++ engine + API is the right call. ONE C++ core compiles to every platform:
+- Web → WASM (already live)
+- iOS → C++ native static lib (inside Swift)
+- Android → NDK build (inside Kotlin)
+Write the engine ONCE (done), all three share it — the garment math is identical everywhere because
+they all call the same C++. Not three engines, one. Ship order: web first (fastest, everything
+decided) → iOS reskin on the core → Android. With API-first, mobile apps can also just call the API.
+One core, infinite faces: web, mobile, brand integration.
+
+## WHY MOBILE IS THE REAL PRODUCT (2026-07-15, Damla) — "phone scans, instantly gets pattern"
+Mobile isn't a shrunk web app — the phone is the NATURAL body-scanning device (in hand, everywhere).
+Its one superpower: lift phone → turn around → app reads your body (gymgyme pose engine) → derives
+measurements → engine drafts → you hold the pattern. No measuring tape, no 7 fields. TURN AND GET IT.
+Solves every pain at once:
+- "entering measurements is torture" → phone measures.
+- "I don't trust it" → uses YOUR real scanned measurement, not a guess → actually fits.
+- Tailornova can't: it asks for manual measurements; stitchu SCANS.
+Buildable because gymgyme ALREADY has the scan engine (pose/skeleton/One Euro). "Phone scan" = fusing
+her two engines, not a from-scratch dream: stitchu geometry + gymgyme camera = "turn, scan, get pattern".
+SHARPEST MOAT: nobody says "scan your body with your phone, get a couture pattern." 3DLOOK scans but
+suggests ready-to-wear size (no pattern); Tailornova drafts but wants manual measurements (no scan).
+stitchu = the only product that fuses both.
+
+12. **3DLOOK / Bold Metrics** — extracts BODY MEASUREMENTS from phone photos; e-commerce uses it for
+   "which size fits you". ✅ photo→measurement is COMMERCIALLY SOLVED (Damla's phone-scan idea is
+   proven, not a dream). ❌ but they DON'T tie it to a pattern — they suggest ready-to-wear size.
+   stitchu adds the second half: scan→PATTERN. The chain nobody joins.
+
+## COMPETITOR TOUR COMPLETE (12 rivals, 2026-07-15)
+- Cluster 1 (Gerber/Lectra/Optitex/CLO3D/Browzwear/TUKAcad) = "industry's Figma": expert-drawn,
+  factory/brand, locked, expensive. NOT rivals — the quality bar. Banked: grade rules, 3D→2D works,
+  API/PLM model, democratizing unfinished.
+- Cluster 2 (Tailornova + Bootstrap/Sewist/MyBodyModel/3DLOOK) = consumer auto-drafters (real rivals).
+  Tailornova closest (auto + polished) BUT catalog-limited, manual measure, likely 2D+deco-3D, no API.
+- MOAT (nobody combines all): phone SCAN→measurement + true 3D-derived correctness + measure→PATTERN
+  + API/one-C++-core-many-platforms. Tailornova's catalog is Etsy-like (closed); stitchu = closed
+  catalog PLUS open photo path PLUS phone scan.
