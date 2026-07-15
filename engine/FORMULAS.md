@@ -317,6 +317,46 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   (seen.closureDrawn set by create.js when spec.frontPlacket is on) — it is DRAWN now.
   Back/side button closures stay in the honesty layer.
 
+## Fabric ties / sashes / bows (bağ / kuşak / fiyonk) — opt-in (BENCHMARK-58 Loop 4b)
+- GarmentSpec.tieClosure (int TiePlacement enum, default 0=None → every existing draft
+  byte-identical). Post-pass like the placket (TieBlock::apply on the finished pattern):
+  it only ADDS a tie piece + a placement notch, never touches an existing outline, so
+  BodiceBlock and the golden dumps are untouched with it off.
+- Research: Aldrich (Metric Pattern Cutting) + Armstrong + couture/high-street practice.
+  A tie is a SELF-FABRIC strip cut as a rectangle, folded lengthwise into a self-lined
+  tube, sewn + turned + pressed, then caught in a seam at the placement notch and knotted
+  into a bow. Couture (Dior/Chanel sashes) and high street (Stradivarius/Bershka babydolls)
+  build it the same way — a plain rectangle; the difference is only fabric/finish.
+- Master rectangle rule: a finished tie of width W and length L is cut
+  (2·W + 2·SA) wide × (L + 2·SA) long, SA = 15 mm. The lengthwise centre fold self-lines
+  it. The piece IS the cut rectangle (SA baked into the cut note, like the ruffle strip);
+  markings = the centre fold line + the two long seam lines; grain runs the tie length.
+- Placements + finished dims (mm):
+  - BackWaist / BackWaistBow: W 30, L = max(300, waist·0.5 + 250) so each of the 2 halves
+    reaches from the side seam round to a bow at centre back; notch on the Bodice/Top Back
+    waist edge.
+  - TieBack (open-back tie-back closure): W 25, L 300, 2 halves that cross + knot to close
+    the back; notch on the back waist edge.
+  - FrontNeckBow: W 25, L 350, a narrower bow at the front neckline/CF; notch near the
+    front top edge.
+  - CuffTies: W 15, L 180, ties at each sleeve opening.
+- Fabric: +0.15 m for the self-fabric ties.
+- Placement notch: a small cross tick stamped on the nearest outline vertex of the target
+  body piece (body-frame independent — finds the closest real edge point whatever block drew
+  the piece); harmless if the target piece is absent (honest guide note, never a silent
+  no-op).
+- SCOPE / honest boundary: only SIMPLE APPLIED ties are drawn. A DRAWSTRING that GATHERS
+  the fabric through a casing (drawstring/gathered/shirred/smocked neckline or sleeve) is a
+  DIFFERENT construction the engine cannot draft (needs a casing channel + shirring) → it
+  stays in the honesty layer (missing.js), pickTiePlacement() returns 'none' for it.
+- Covered by tests/tie_check (dress/top, back sash / tie-back / front bow, plus body:
+  exactly one extra piece, existing outlines byte-identical, tie is a rectangle with a
+  cut-2 note giving finished + cut size + grainline, placement notch added). render-pages
+  adds jackie-back-waist-tie-dress + tie-back-dress specs (tie strip tiles onto the sheets).
+- Honesty layer: web/js/missing.js no longer lists a DRAWN tie closure / tieBack
+  (seen.tieDrawn set by create.js when spec.tieClosure ≠ none). Drawstring-gathered ties,
+  open-back cutouts and every non-tie back detail stay honest.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

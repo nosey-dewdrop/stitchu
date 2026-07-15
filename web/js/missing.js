@@ -175,9 +175,13 @@ export function missingFeatures(seen, lang) {
   const push = (label, derivative) =>
     out.push({ label, applied: derivative ? derivative.applied : null, note: derivative ? derivative.note : null });
 
-  // closure — skipped when the engine DREW it (Loop 3: front button placket is
-  // now a real drawn stand + buttons/buttonholes, no longer "missing").
-  if (seen.closure && seen.closure.type && seen.closure.type !== 'none' && !seen.closureDrawn) {
+  // closure — skipped when the engine DREW it (Loop 3: front button placket;
+  // Loop 4b: a simple applied fabric tie/sash/bow is now real drawn strips, so a
+  // ties-closure is skipped when tieDrawn). Drawstring-gathered ties keep
+  // tieDrawn false and still report here.
+  const tieClosureDrawn = seen.tieDrawn && seen.closure && seen.closure.type === 'ties';
+  if (seen.closure && seen.closure.type && seen.closure.type !== 'none' &&
+      !seen.closureDrawn && !tieClosureDrawn) {
     const d = CLOSURE_DERIVATIVE[seen.closure.type];
     const loc = seen.closure.location ? ` (${seen.closure.location})` : '';
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
@@ -215,8 +219,10 @@ export function missingFeatures(seen, lang) {
     push((L === 'tr' ? yokeLabelTr(seen.yoke.type) : yokeLabelEn(seen.yoke.type)), d ? d[L] : null);
   }
 
-  // back detail
-  if (seen.backDetail && seen.backDetail !== 'none') {
+  // back detail — a tieBack is now DRAWN as strips (Loop 4b), so skip it when
+  // tieDrawn; every other back detail (open/laced/keyhole back) stays honest.
+  const tieBackDrawn = seen.tieDrawn && seen.backDetail === 'tieBack';
+  if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn) {
     const d = BACKDETAIL_DERIVATIVE[seen.backDetail];
     push((L === 'tr' ? backLabelTr(seen.backDetail) : backLabelEn(seen.backDetail)), d ? d[L] : null);
   }

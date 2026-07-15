@@ -9,11 +9,14 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum: **11/54 TAM KALIP (CANLI, 2026-07-15 21:00, Loop 3 sonrası — İLK ARTIŞ, +6)**
-Kredi geldi, blokör kalktı. Motor ön düğme patını ÇİZİYOR (grown-on stand + fold +
-düğme/ilik, Aldrich/Armstrong); 31 eksik öğeli / 12 yanlış (vision yaka varyansı,
-motor değil) / doğru-red 4/5. Ölçüm ~8dk (FAST token). Sayaç artık motorun güncel
-dağarcığını biliyor (DRAWN_SINCE filtresi, benchmark-58.mjs). Önceki durum:
+Durum: **14/54 TAM KALIP (CANLI, 2026-07-15, Loop 4b sonrası — +3)**
+Motor artık BASİT UYGULANAN kumaş bağını/kuşağını/fiyonkunu AYRI PARÇA olarak ÇİZİYOR
+(öz-kumaş dikdörtgen (2W+2·SA)×(L+2·SA), bel sash/fiyonk + tie-back + ön/boyun fiyonku +
+manşet; Aldrich/Armstrong). DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring gerektiren)
+bağ ÇİZİLMEZ, honest kalır. +3 tie-driven: 2 Jackie back-tie + Emma back tie closure.
+30 eksik öğeli / 10 yanlış (vision varyansı, motor değil) / doğru-red 4/5. Ölçüm 8m22s
+(FAST token, 59 çağrı). Önceki durum (Loop 3): 11/54 (ön düğme patı, grown-on stand +
+fold + düğme/ilik). Daha eski durum:
 Durum (2026-07-15 manuel ölçüm): **6/54 TAM KALIP** — canlı Opus zinciri kredi bitik
 olduğu için 59 foto Claude aboneliği üstünden EL İLE (worker prompt kurallarıyla)
 okundu: 6 TAM + 48 eksik öğeli + 0 yanlış; doğru-red 5/5. TAM'lar Loop 0/1'le aynı
@@ -97,7 +100,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | **bitti** (15 Tem Loop 2; TEK KAYNAK web/js/missing.js: closure/collar/straps/cupSeams/sleeveHead/yoke/backDetail her biri için EN-YAKIN-TÜREV eşleme + "verilen en yakın X, şunu elle ekle" notu, EN+TR. Ekranda vişne kart (render.js appendMissing) + PRINT KAPAĞINDA aynı liste (print.js appendMissingToCover, vişne başlık). outOfVocab dedupe (fırfırlı askı iki kez gelmez). Motor C++ dokunulmadı → golden byte-identical; web-fuzz 19555/0; render-pages temiz; 5 temsili spec + 1 temiz-kontrol EN+TR doğru mesaj ürettti. Sayı BLOKE: kredi.) | — (sayı BLOKE: kredi) |
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | **bitti** (15 Tem Loop 3; PlacketBlock::apply keyhole-tarzı post-pass, spec.frontPlacket default false → golden BYTE-IDENTICAL 0.000000mm/23034 satır; GROWN-ON stand 18mm=düğme Ø (Aldrich/Armstrong araştırması, couture default), CF kenarı dışa taşınır + fold çizgisi CF'de + düğme CF üstünde + ilik 3mm dışa + zorunlu göğüs düğmesi; sadece ön parça büyür, yaka/facing DOKUNULMAZ; ctest 13/13, placket_check 4 gövde yeşil, precision 0.00mm, web-fuzz 19620/0 (65 pat draft'ı), vocab-sweep 37800/0, render-pages pat'lı dress+top strip'te çizili; missing.js ÖN düğme/pat'ı artık listelemez (seen.closureDrawn), arka/yan pat honest kalır) | **sayı BLOKE: kredi** (offline ön-kontrol: manifest'te 19 pat'lı fotodan 2 ARKA→honest kalır, 7 saf-ÖN-pat→artık tam kalıp adayı, 10 ön-pat+başka eksik→pat çizildi kalanı eksik) |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
-| 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | bekliyor | — |
+| 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | **bitti** (15 Tem Loop 4b; TieBlock::apply placket-tarzı opt-in post-pass, spec.tieClosure=0 default → golden BYTE-IDENTICAL 0.000000mm/23034 satır; öz-kumaş dikdörtgen kuralı (2W+2·SA)×(L+2·SA), 4 placement: bel sash/fiyonk + tie-back + ön/boyun fiyonku + manşet; ayrı "cut 2" parça + gövde yerleşim işareti; DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring) ÇİZİLMEZ honest kalır; ctest 14/14 (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie dress+tie-back strip'te çizili; missing.js tieDrawn iken ties/tieBack listelemez; engine.js+backend/draft.js int tieClosure param, worker DEĞİŞMEDİ; FORMULAS.md "Fabric ties / sashes") | **14/54** (+3: 2 Jackie back-tie + Emma; WRONG 10 vision varyansı, doğru-red 4/5) |
 | 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | bekliyor | — |
 | 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | bekliyor | — |
 | 7 | Stand/mock yaka | Yeni parça ailesi (yaka parçası + yaka oyuğu eşleşme ölçüsü). Referans: Buttoned Blouse fotoğrafı + Bugra Locket Top. | bekliyor | — |
@@ -112,6 +115,17 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
+- 2026-07-15 CANLI (Loop 4b sonrası, taze koşu 8m22s/59 çağrı, FAST): **14/54 TAM** (+3
+  Loop 3 üzerine). Motor basit uygulanan bağı/kuşağı/fiyonku AYRI PARÇA çiziyor (TieBlock,
+  öz-kumaş dikdörtgen; bel sash + tie-back + ön/boyun fiyonku + manşet). +3 tie-driven:
+  Jackie (back, tie visible), Jackie (front full), Emma (back tie closure) — hepsi tek eksiği
+  bağ olan fotolar. DÜRÜST SINIR çizildi: drawstring-büzgülü (Priscilla neckline, Alli sleeve,
+  Lua bust drawstring) ÇİZİLMEDİ → honest kalır; açık-sırt oyuğu olan tie-back'ler (Tie Back ×3)
+  bağ çizildi ama oyuk çizilemez → MISSING kalır. WRONG 10 (vision varyansı: ör. boat flat-sketch
+  shaping princess vs dart, motor değil), doğru-red 4/5. Cache-reclassify (0 çağrı) 11→14 verdi,
+  taze koşu da 14 teyit etti. Kanıt: golden byte-identical 23034 satır/0.000000mm, ctest 14/14
+  (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie
+  strip'lerde çizili. Deploy v54. Worker DEĞİŞMEDİ. Rapor: reports/2026-07-15-stitchu-benchmark-loop4b.md.
 - 2026-07-15 21:00 CANLI (kredi geldi, Loop 3 sonrası): **11/54 TAM — İLK ARTIŞ** (+6, hepsi
   pat'lı fotolar). 31 eksik öğeli, 12 yanlış (vision yaka varyansı, motor değil; el
   ölçümünde WRONG 0'dı), doğru-red 4/5. İki koşu yapıldı: Loop 3 ÖNCESİ canlı 5/54

@@ -7,6 +7,7 @@
 #include "ruffle.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
+#include "tie.hpp"
 
 namespace stitchu {
 
@@ -375,6 +376,13 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.frontPlacket &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PlacketBlock::apply(pattern, 0.0);
+    }
+    // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): adds
+    // separate tie pieces + a placement notch. Post-pass on the finished draft,
+    // so the base is byte-identical with it off (tieClosure == None). Only
+    // simple applied ties are drawn — drawstring-gathered types stay honest.
+    if (spec.tieClosure != static_cast<int>(TiePlacement::None)) {
+        TieBlock::apply(pattern, static_cast<TiePlacement>(spec.tieClosure), m.waistMM());
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

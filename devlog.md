@@ -497,6 +497,20 @@ V3 · HOOK: "vücut ölçüsü hassas veri diye motoru API yaptım ve çağrı b
 - aynı C++ motoru Cloudflare Worker İÇİNDE koşuyor. tarayıcı wasm'ı fetch'liyordu, worker'da o yol yok → ayrı derleyip motora elle verdim.
 - POST /api/draft: bozuk kalıp yerine '422 undraftable + sebep'. satılabilir çekirdek, yapay zeka maliyeti yok. [terminal]
 
+## seri W — bağı çizdim ama drawstring'i çizmedim (loop 4b)
+
+W1 · HOOK: "60'lar elbiselerinin en sık detayı: arkada fiyonk bağlanan bir kuşak. motorum bunu artık ayrı bir parça olarak çiziyor."
+- ölçüm verimde bağ/kurdele 13+ fotoda vardı, en sık görünen kapanma. düğme patından sonra sıradaki en büyük eksik.
+- bağ aslında en basit parça: öz-kumaştan bir DİKDÖRTGEN. bitmiş genişlik W, uzunluk L → kesim (2W+pay)×(L+pay), boyuna katlayınca kendi kendine astarlanıyor. Aldrich'in kuralı. [render]
+
+W2 · HOOK: "bir 'bağ'ı çizmek kolay. zor olan HANGİ bağı çizmeyeceğine karar vermek."
+- bir DRAWSTRING (büzgü ipi) düz bir bağ değil: bir kanaldan geçip kumaşı BÜZER. motorumun büzgü makinesi yok.
+- o yüzden basit uygulanan bağı (bel kuşağı, sırt bağı, boyun fiyonku) ÇİZDİM; drawstring-büzgülü boyunları çizemedim ve bunu kullanıcıya AÇIKÇA söylüyorum. dürüst sınır özellikle çizildi. [terminal]
+
+W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitini bile değiştirmedim."
+- tie kapalıyken golden 23034 satır byte-be-byte aynı (0.000000mm). tie sadece bir parça EKLİYOR, hiçbir outline'a dokunmuyor.
+- açık-sırt oyuğu olan tie-back elbiseler hâlâ 'eksik' kalıyor — çünkü bağı çizdim ama oyuğu çizemem. hangi fotonun neden hâlâ eksik olduğunu tek tek biliyorum. [terminal]
+
 # TECH/AI/CV STOĞU — yeni parçalar
 
 ## Reel — sayı 6/54'te kaldı ve buna sevindim

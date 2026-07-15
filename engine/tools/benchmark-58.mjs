@@ -97,6 +97,11 @@ function classify(entry, spec) {
   const DRAWN_SINCE = [
     // loop 3: front button placket, grown-on stand — symmetric front only
     (t) => /placket|button front closure/i.test(t) && !/asymmetric|back|double|loop/i.test(t),
+    // loop 4b: simple applied fabric ties / sash / bow / tie-back closure, drawn
+    // as separate self-fabric strips + placement notch. A DRAWSTRING that
+    // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
+    (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
+           !/drawstring|gathered|shirr|smock/i.test(t),
   ];
   const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
   const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));

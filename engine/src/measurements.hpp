@@ -174,6 +174,10 @@ struct GarmentSpec {
     // Opt-in front button placket (düğme patı): grown-on button stand + fold line
     // + button/buttonhole markings on the front. Off by default → byte-identical.
     bool frontPlacket = false;
+    // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk): adds separate tie
+    // pieces (self-fabric strips) + a placement notch. Off by default (None) →
+    // byte-identical. See tie.hpp / FORMULAS.md "Fabric ties / sashes".
+    int tieClosure = 0; // TiePlacement enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

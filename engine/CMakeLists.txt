@@ -13,6 +13,7 @@ add_library(engine
     src/ruffle.cpp
     src/keyhole.cpp
     src/placket.cpp
+    src/tie.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -50,6 +51,10 @@ add_test(NAME keyhole_check COMMAND keyhole_check)
 add_executable(placket_check tests/placket_check.cpp)
 target_link_libraries(placket_check PRIVATE engine)
 add_test(NAME placket_check COMMAND placket_check)
+
+add_executable(tie_check tests/tie_check.cpp)
+target_link_libraries(tie_check PRIVATE engine)
+add_test(NAME tie_check COMMAND tie_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

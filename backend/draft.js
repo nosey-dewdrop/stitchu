@@ -26,7 +26,12 @@ const ENUMS = {
   topLength: ['cropped', 'hip', 'tunic'],
   ruffle: ['none', 'single', 'tiered'],
   keyhole: ['none', 'keyhole'],
+  tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies'],
 };
+
+// TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
+const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5 };
+const tieInt = (s) => TIE_PLACEMENT[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -126,6 +131,7 @@ export function validateDraftRequest(body) {
       ruffle: spec.ruffle ?? 'none',
       keyhole: spec.keyhole ?? 'none',
       frontPlacket: spec.frontPlacket === true,
+      tieClosure: spec.tieClosure ?? 'none',
     },
     measurements,
   };
@@ -144,6 +150,7 @@ export async function runDraft(spec, measurements) {
     measurements.backLength, measurements.armLength, measurements.neck,
     measurements.upperBust || 0, // optional full-bust adjustment
     spec.frontPlacket === true,  // Loop 3: front button placket
+    tieInt(spec.tieClosure),     // Loop 4b: fabric ties / sash / bow
   );
   return JSON.parse(json);
 }
@@ -177,6 +184,7 @@ export async function handleGrade(request) {
       spec.ruffle !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
       spec.keyhole === 'keyhole', from, to,
       spec.frontPlacket === true, // Loop 3: front button placket
+      tieInt(spec.tieClosure),    // Loop 4b: fabric ties / sash / bow
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

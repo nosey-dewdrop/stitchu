@@ -116,7 +116,7 @@ GarmentSpec buildSpec(
     const std::string& fabric, const std::string& neckline,
     const std::string& sleeveStyle, const std::string& sleeveLength,
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket
+    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -133,6 +133,7 @@ GarmentSpec buildSpec(
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
     spec.keyhole = keyhole;
     spec.frontPlacket = frontPlacket;
+    spec.tieClosure = tieClosure; // TiePlacement enum value; 0 = None
     return spec;
 }
 
@@ -186,10 +187,11 @@ std::string draftJSON(
     double bustCM, double waistCM, double hipCM, double shoulderCM,
     double backLengthCM, double armLengthCM, double neckCM,
     double upperBustCM,
-    bool frontPlacket // appended so existing positional callers stay valid
+    bool frontPlacket, // appended so existing positional callers stay valid
+    int tieClosure     // Loop 4b: fabric ties / sash / bow; 0 = None
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -206,10 +208,11 @@ std::string gradeJSON(
     std::string skirtStyle, std::string skirtLength, std::string topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole,
     std::string fromLabel, std::string toLabel,
-    bool frontPlacket // appended so existing positional callers stay valid
+    bool frontPlacket, // appended so existing positional callers stay valid
+    int tieClosure     // Loop 4b: fabric ties / sash / bow; 0 = None
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.
