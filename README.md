@@ -29,7 +29,7 @@ the drafting vocabulary: princess and dart shaping, natural, empire and babydoll
 - vision experiments: node + @xenova/transformers (onnx)
 - knowledge: sqlite database of drafting formulas. a formula only becomes `verified` after adversarial source checking
 
-## why i built it ❤️
+## why i built it 🌷
 
 ready-made patterns fit nobody exactly, there is no body called small-medium-large. when you see a garment and want to sew it yourself, you either buy an expensive pattern or fight the math. i wanted to close that distance: an engine that sits between the thing you saw and your own body. and measurements are personal data, so none of them go to the cloud.
 
