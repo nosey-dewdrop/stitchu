@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=39';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=39';
-import { draft } from './engine.js?v=39';
-import { printPattern } from './print.js?v=39';
-import { renderResult } from './render.js?v=39';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=41';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=41';
+import { draft } from './engine.js?v=41';
+import { printPattern } from './print.js?v=41';
+import { renderResult } from './render.js?v=41';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=39';
+} from './store.js?v=41';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -92,6 +92,33 @@ function tapeSVG(value, min, max) {
   return svg;
 }
 
+// Where on the body each measurement is taken — drawn on a dress FORM (a sewing
+// object, never a human figure, per the brand rule). The vişne line/arrow shows
+// the tape placement for the current measurement so a non-drafter doesn't guess.
+function measureDiagram(key) {
+  // Shared dress-form silhouette (front): neck, shoulders, bust, waist, hip.
+  const form = '<path d="M60 26 Q70 22 80 26 M62 30 Q70 46 70 58 Q70 70 58 82 ' +
+    'M78 30 Q70 46 70 58 Q70 70 82 82 M45 44 Q58 34 62 30 M95 44 Q82 34 78 30 ' +
+    'M45 44 Q40 64 52 84 M95 44 Q100 64 88 84 M52 84 Q50 104 56 120 M88 84 Q90 104 84 120 ' +
+    'M56 120 Q70 128 84 120 M52 84 Q70 92 88 84" fill="none" stroke="#c7a6ac" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>';
+  const V = '#8f2038';
+  const lines = {
+    bust:      `<line x1="46" y1="60" x2="94" y2="60" stroke="${V}" stroke-width="2.4" stroke-dasharray="5 3"/><ellipse cx="70" cy="60" rx="26" ry="8" fill="none" stroke="${V}" stroke-width="1.2" opacity=".5"/>`,
+    waist:     `<line x1="52" y1="86" x2="88" y2="86" stroke="${V}" stroke-width="2.4" stroke-dasharray="5 3"/><ellipse cx="70" cy="86" rx="19" ry="6" fill="none" stroke="${V}" stroke-width="1.2" opacity=".5"/>`,
+    hip:       `<line x1="55" y1="118" x2="85" y2="118" stroke="${V}" stroke-width="2.4" stroke-dasharray="5 3"/><ellipse cx="70" cy="118" rx="17" ry="6" fill="none" stroke="${V}" stroke-width="1.2" opacity=".5"/>`,
+    shoulder:  `<line x1="47" y1="43" x2="93" y2="43" stroke="${V}" stroke-width="2.4"/><circle cx="47" cy="43" r="2.4" fill="${V}"/><circle cx="93" cy="43" r="2.4" fill="${V}"/>`,
+    neck:      `<ellipse cx="70" cy="27" rx="11" ry="5" fill="none" stroke="${V}" stroke-width="2.2" stroke-dasharray="4 3"/>`,
+    backLength:`<line x1="70" y1="30" x2="70" y2="86" stroke="${V}" stroke-width="2.4"/><circle cx="70" cy="30" r="2.4" fill="${V}"/><path d="M66 84 L70 88 L74 84" fill="none" stroke="${V}" stroke-width="2"/>`,
+    armLength: `<line x1="45" y1="44" x2="34" y2="96" stroke="${V}" stroke-width="2.4"/><circle cx="45" cy="44" r="2.4" fill="${V}"/><circle cx="34" cy="96" r="2.4" fill="${V}"/>`,
+    upperBust: `<line x1="48" y1="50" x2="92" y2="50" stroke="${V}" stroke-width="2.4" stroke-dasharray="5 3"/><text x="70" y="46" font-size="6" fill="${V}" text-anchor="middle" font-family="Helvetica">above the bust</text>`,
+  };
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'measure-diagram');
+  svg.setAttribute('viewBox', '20 12 100 120');
+  svg.innerHTML = form + (lines[key] || '');
+  return svg;
+}
+
 function showMeasurement(index) {
   screen.className = 'wrap';
   const m = MEASUREMENTS[index];
@@ -110,6 +137,7 @@ function showMeasurement(index) {
   }
   block.appendChild(lblRow);
   block.appendChild(el('div', 'measure-help', tr ? m.trHelp : m.help));
+  block.appendChild(measureDiagram(m.key));
 
   const initial = values[m.key] ?? '';
   let tape = tapeSVG(Number(initial) || m.min, m.min, m.max);
