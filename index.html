@@ -252,7 +252,7 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="#api">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v36</span></span>
+  <span><a href="#api">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v37</span></span>
 </footer>
 
 <script>
@@ -275,11 +275,11 @@ function setLang(lang){
   });
   document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
   document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
-  try { localStorage.setItem('stitchu-lang', lang); } catch (_) {}
+  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
 }
 (function initLang(){
   let lang = 'en';
-  try { lang = localStorage.getItem('stitchu-lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'en'); } catch (_) {}
+  try { lang = localStorage.getItem('stitchu:lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'en'); } catch (_) {}
   document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
   document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
   setLang(lang);

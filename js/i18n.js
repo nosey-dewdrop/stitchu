@@ -92,7 +92,13 @@ export const STRINGS = {
 };
 
 export function getLang() {
-  try { return localStorage.getItem(LANG_KEY) === 'tr' ? 'tr' : 'en'; } catch { return 'en'; }
+  try {
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'tr' || stored === 'en') return stored;
+    // No stored choice yet: follow the browser so a Turkish visitor gets Turkish
+    // without hunting for the toggle (the landing shares this key).
+    return (navigator.language || '').startsWith('tr') ? 'tr' : 'en';
+  } catch { return 'en'; }
 }
 
 export function setLang(lang) {
