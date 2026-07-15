@@ -251,3 +251,16 @@ Damla's engineering thesis, and it is correct:
 - Correct pipeline (Damla's instinct): measurements → 3D body surface (from measurements, NOT photo)
   → drape garment on it → unwrap to 2D + darts → grade → cut-ready. Today's engine is flat-2D; this
   is the architecture it must move toward. DECISION PENDING: rebuild vs extend (decide after competitor tour).
+
+## Competitor tour verdicts (cont.)
+3. **Optitex** — VERDICT: not a rival, a COMPASS. Proof the 3D→2D chain works.
+   - What: industrial CAD that adds 3D DRAPE + cloth-physics simulation.
+   - How: human draws 2D pattern → Optitex sews+drapes it on a 3D avatar (fabric weight/stretch/
+     drape via physics) → two-way: edit 2D→3D updates, spot a pull in 3D→fix 2D. This IS Damla's
+     "2D prepared for 3D" loop, commercially solved.
+   - Data: pattern geometry (human) + fabric-physics tables (gramaj/stretch/bending measured).
+   - Gap vs stitchu: (1) human DRAFTS it, Optitex only drapes — Damla wants auto-from-measurements;
+     (2) factory price + expert only — opposite of the three-audience vision.
+   - Moat framing: Optitex locks 3D-correct drape behind expert+factory; stitchu = same 3D
+     correctness but auto-built from measurements, open to everyone.
+   - Damla note: 3D body SCAN (photo→body) = LATER phase, not scrapped, still on the roadmap.
