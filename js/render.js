@@ -1,9 +1,9 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=47';
-import { getLang, t } from './i18n.js?v=47';
-import { GUIDE_TR } from './guide-tr.js?v=47';
-import { GLOSSARY } from './glossary.js?v=47';
+import { fabricAdvice } from './fabrics.js?v=48';
+import { getLang, t } from './i18n.js?v=48';
+import { GUIDE_TR } from './guide-tr.js?v=48';
+import { GLOSSARY } from './glossary.js?v=48';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip) — a beginner can learn a word without leaving
@@ -226,7 +226,7 @@ async function appendFabricAdvice(container, garmentKey, photoFabric) {
     const li = document.createElement('li');
     li.style.display = 'block';
     const name = document.createElement('span');
-    name.textContent = `${fabric.name} — ${fabric.drape}, ${fabric.beginnerDifficulty} to sew. `;
+    name.textContent = t('result.fabric.suggest', { name: fabric.name, drape: fabric.drape, difficulty: fabric.beginnerDifficulty });
     const note = document.createElement('span');
     note.className = 'k';
     note.textContent = fabric.commonMistakes[0] || '';
@@ -237,10 +237,10 @@ async function appendFabricAdvice(container, garmentKey, photoFabric) {
     const li = document.createElement('li');
     li.style.display = 'block';
     const name = document.createElement('span');
-    name.textContent = `avoid ${fabric.name} here — `;
+    name.textContent = t('result.fabric.avoid', { name: fabric.name });
     const note = document.createElement('span');
     note.className = 'k';
-    note.textContent = `works against this shape (${fabric.drape}).`;
+    note.textContent = t('result.fabric.avoidnote', { drape: fabric.drape });
     li.append(name, note);
     list.appendChild(li);
   }
