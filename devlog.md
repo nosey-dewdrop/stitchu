@@ -273,3 +273,21 @@ M3 · HOOK: "kendi benchmark'ımı denetledim ve kendimi hile yaparken yakaladı
 
 M4 · HOOK: "ölçemediğim şeyi rapora YAZMADIM ve bu bir güç."
 - bust çevresini bilerek atladım: 2B parçadan temiz ölçülemiyor. güven, abartıdan değil, neyi bilmediğini söylemekten gelir.
+
+## seri N — müşteri gözü (dört gerçek insan)
+
+N1 · HOOK: "mühendis gözünü bıraktım, dört gerçek müşteri hayal ettim."
+- Ayşe (Türk, telefonda), Maria (Etsy satıcı), Jenny (plus-size), Sam (acemi). her biri tek soru: "bu benim işime yarıyor mu?"
+- dördü de bir yerde takıldı. o kırılmaları düzelttim. [canlı]
+
+N2 · HOOK: "Türk dikişçi, dikiş rehberini İngilizce alıyordu — bir adım yanlış anlaşılsa kumaş çöp."
+- landing'i tamamen Türkçeleştirdim, rehberin ve baskı talimatlarının hepsini doğru Türkçe dikiş terimleriyle çevirdim (ara dikiş, biye, tela, pens...).
+- 60.480 draft'ta 0 eksik çeviri. Türk müşteri artık uçtan uca kendi dilinde.
+
+N3 · HOOK: "dolgun göğüslü her kadının ömür boyu derdini motorumda buldum."
+- her ticari kalıp yakada açılır çünkü göğüs kafesini "göğüs eksi 7cm" varsayar. gerçekten dolgun göğüste bu sırtı 15cm büyük çizer = açılan yaka.
+- opsiyonel üst-göğüs ölçüsü ekledim: motor artık kafesi ÖLÇÜYOR, varsaymıyor. Jenny açılmayan yakayla kendi vücuduna kalıp alıyor. [terminal: golden bit-bit aynı, 72/72 valid]
+
+N4 · HOOK: "acemi jargonda boğuluyordu, ürün 'cep dikiş öğretmeni' diyordu."
+- pens, biye, kol başı, ara dikiş — her terim artık tıklanınca düz açıklama veriyor. LinkedIn'den gelen meraklı takip edebiliyor.
+- bir de her ölçünün nereden alındığını gösteren minik manken diyagramı. kimse nereden ölçeceğini bilemez kalmasın.
