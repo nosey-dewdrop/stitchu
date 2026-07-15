@@ -35,6 +35,12 @@ enum class Fabric { Woven, Knit };
 enum class SkirtLength { Mini, Midi, Maxi };
 enum class SleeveStyle { None, Straight, Balloon };
 enum class SleeveLength { Short, Elbow, Long };
+// Opt-in sleeve HEAD (cap) treatment (Loop 6). Plain = the classic set-in cap
+// (byte-identical default). Gathered = the crown is gathered but the cap height
+// is NOT raised (soft high-street puff). Puffed = the crown is gathered AND the
+// cap is raised + widened (a puff/gigot that stands up above the shoulder).
+// This is the sleeve HEAD; the balloon style gathers the HEM/wrist instead.
+enum class SleeveCap { Plain, Gathered, Puffed };
 enum class GarmentType { Skirt, Dress, Top };
 enum class TopLength { Cropped, Hip, Tunic };
 // How waist suppression is shaped. Princess is the default: seams a person can
@@ -161,6 +167,9 @@ struct GarmentSpec {
     Neckline neckline = Neckline::Crew;
     SleeveStyle sleeveStyle = SleeveStyle::None;
     SleeveLength sleeveLength = SleeveLength::Short;
+    // Opt-in gathered / puff sleeve HEAD (Loop 6). Plain by default → the cap
+    // path is byte-identical. See sleeve.hpp / FORMULAS.md "Gathered/puff sleeve cap".
+    SleeveCap sleeveCap = SleeveCap::Plain;
     SkirtStyle skirtStyle = SkirtStyle::ALine;
     SkirtLength skirtLength = SkirtLength::Midi;
     TopLength topLength = TopLength::Hip;

@@ -100,12 +100,12 @@ const STRAP_DERIVATIVE = {
 // sleeveHead → derivative. `plain` is exactly what the engine draws.
 const SLEEVEHEAD_DERIVATIVE = {
   gathered: {
-    en: { applied: 'the balloon sleeve block', note: 'if you did not pick a balloon sleeve, the gathered/puffed sleeve head is not drawn — choose the balloon sleeve for the puff' },
-    tr: { applied: 'balon kol bloğu', note: 'balon kolu seçmediysen büzgülü/puf kol başı çizili değil — puf için balon kolu seç' },
+    en: { applied: 'a plain sleeve head', note: 'the gathered sleeve head was not drawn here — pick a straight sleeve and the "gathered" sleeve head to draw it' },
+    tr: { applied: 'düz kol başı', note: 'büzgülü kol başı burada çizilmedi — düz kol + "büzgülü" kol başı seçersen çizilir' },
   },
   puffed: {
-    en: { applied: 'the balloon sleeve block', note: 'if you did not pick a balloon sleeve, the puffed sleeve head is not drawn — choose the balloon sleeve for the puff' },
-    tr: { applied: 'balon kol bloğu', note: 'balon kolu seçmediysen puf kol başı çizili değil — puf için balon kolu seç' },
+    en: { applied: 'a plain sleeve head', note: 'the puff sleeve head was not drawn here — pick a straight sleeve and the "puff" sleeve head to draw it' },
+    tr: { applied: 'düz kol başı', note: 'puf kol başı burada çizilmedi — düz kol + "puf" kol başı seçersen çizilir' },
   },
   capped: {
     en: { applied: 'the plain short sleeve block', note: 'the true cap-sleeve shape is not drawn — a short straight sleeve is the closest' },
@@ -204,10 +204,13 @@ export function missingFeatures(seen, lang) {
     push(L === 'tr' ? 'ayrı kup göğüs dikişleri' : 'separate bust-cup seams', CUPSEAM_NOTE[L]);
   }
 
-  // sleeve head — only when it is NOT plain AND the drawn sleeve does not match
+  // sleeve head — only when it is NOT plain AND the engine did not draw it.
+  // Loop 6: the engine now DRAWS a gathered/puff head directly (raised + widened
+  // cap + crown gather), flagged by seen.sleeveCapDrawn — so those no longer list
+  // as missing. A cap sleeve (true short cap SHAPE) still stays honest.
   if (seen.sleeveHead && seen.sleeveHead !== 'plain') {
-    const puffDrawn = (seen.sleeveHead === 'gathered' || seen.sleeveHead === 'puffed') && seen.sleeveStyle === 'balloon';
-    if (!puffDrawn) {
+    const headDrawn = (seen.sleeveHead === 'gathered' || seen.sleeveHead === 'puffed') && seen.sleeveCapDrawn;
+    if (!headDrawn) {
       const d = SLEEVEHEAD_DERIVATIVE[seen.sleeveHead];
       push((L === 'tr' ? sleeveHeadLabelTr(seen.sleeveHead) : sleeveHeadLabelEn(seen.sleeveHead)), d ? d[L] : null);
     }

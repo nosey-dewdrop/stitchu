@@ -539,3 +539,12 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 
 **Görsel:** motor değeri | Aldrich | Armstrong tablosu, hepsi 'karar: dokunulmadı' sütunu yeşil. Alt yazı: "changing nothing, on purpose, is also engineering".
 **Format:** reel
+
+## Reel — puf kolu çizdim ama sayım kımıldamadı (ve bu dürüst) (loop 6)
+
+**Hook (ilk 2 sn):** "Yeni bir kol tipini sıfırdan çizdirdim. Ürün sayım 14'ten 14'e geçti. Yani hiç."
+
+**Anlatı (~45 sn):** Bu oturumda motoruma puf kolu öğrettim — omuzda kabarıp yükselen o büzgülü kol başı. Balon koldan farkı şu: balon kol BİLEĞİ büzer, puf kol BAŞI (cap) büzer. Kesim kitaplarında doğrulanmış tek kural var: puf yaparken cap'i ne kadar açtıysan (slash-and-spread), o kadar da YÜKSELTİYORSUN — genişlik ve yükseklik birlikte artıyor, fazlalık kol oyuğuna büzülerek giriyor. Bunu kodladım: 'gathered' yumuşak (sadece genişler), 'puffed' tam kabarık (genişler + yükselir), crown boyunca büzgü çizgisi. Kanıtladım: eski düz kollu her kalıp bit-bit AYNI (golden byte-identical), yeni puf kol chord'u 460mm vs düz 317mm, tepe noktası 255 vs 113 — gerçekten yukarı kalkıyor. Sonra 54 fotoyu ölçtüm: sayı 14'te kaldı. Neden? Bu sette puf kolun TEK eksik olduğu foto yok. Kol büzgüsü geçen fotolar ya 'cap sleeve' (o başka bir ŞEKİL, puf değil) ya da 'drawstring' (kanal gerektirir, çizmiyorum, dürüstçe). Kabiliyet gerçek ve kanıtlı, ama bu setin son boşluğuna denk gelmiyor. Ders: bir özellik eklemek ile bir ölçüyü oynatmak AYNI şey değil — ikisini karıştırırsan kendine yalan söylersin.
+
+**Görsel:** yan yana üç kol silüeti (düz / gathered / puffed), puffed belirgin kabarık + crown'da kesikli büzgü çizgisi; altta '14/54 → 14/54' sabit. Alt yazı: "shipped a real capability, moved zero — and said so".
+**Format:** reel

@@ -9,10 +9,14 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum: **14/54 TAM KALIP — DENETİM A (Loop 5) TEYİT ETTİ, 2026-07-15.** Bağımsız taze
-agent 8/8 maddeyi kendi koştu: golden byte-identical + ctest 14/14 + precision 0.00mm +
-web-fuzz 19620/0 + vocab-sweep 37800/0 + render strip'lerde tie/placket/register gözle +
-live hash=local v54 + 0-çağrı reclassify 14/54 birebir. KIRILAN YOK. Önceki Loop 4b durumu:
+Durum: **14/54 TAM KALIP — Loop 6 (puf/büzgülü kol başı) sonrası DEĞİŞMEDİ, DÜRÜST, 2026-07-15.**
+Motor artık puf/büzgülü SLEEVE HEAD çiziyor (raised+widened cap + crown gather; SleeveBlock
+opt-in param, golden BYTE-IDENTICAL Plain'de), ama bu 58-sette puf/gathered kol başının TEK
+eksik olduğu foto YOK — sette geçen kol-büzgü terimleri motorun DOĞRU çizmediği honest sınırlar
+(cap sleeve ŞEKLİ ×5, drawstring gathered ×2). Yetenek gerçek+kanıtlı, sayı bu setin son
+boşluğunu açmıyor. Kanıt: ctest 14/14 (puf bloğu dahil) + golden byte-identical + precision
+0.00mm + web-fuzz 19620/0 + vocab-sweep 37800/0 + render Puff Sleeve chord 460 vs plain 317.
+Deploy v55. Önceki Loop 5 (DENETİM A): 14/54 teyit, 8/8 madde geçti. Önceki Loop 4b durumu:
 **14/54 (CANLI, Loop 4b sonrası — +3)**
 Motor artık BASİT UYGULANAN kumaş bağını/kuşağını/fiyonkunu AYRI PARÇA olarak ÇİZİYOR
 (öz-kumaş dikdörtgen (2W+2·SA)×(L+2·SA), bel sash/fiyonk + tie-back + ön/boyun fiyonku +
@@ -106,7 +110,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
 | 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | **bitti** (15 Tem Loop 4b; TieBlock::apply placket-tarzı opt-in post-pass, spec.tieClosure=0 default → golden BYTE-IDENTICAL 0.000000mm/23034 satır; öz-kumaş dikdörtgen kuralı (2W+2·SA)×(L+2·SA), 4 placement: bel sash/fiyonk + tie-back + ön/boyun fiyonku + manşet; ayrı "cut 2" parça + gövde yerleşim işareti; DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring) ÇİZİLMEZ honest kalır; ctest 14/14 (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie dress+tie-back strip'te çizili; missing.js tieDrawn iken ties/tieBack listelemez; engine.js+backend/draft.js int tieClosure param, worker DEĞİŞMEDİ; FORMULAS.md "Fabric ties / sashes") | **14/54** (+3: 2 Jackie back-tie + Emma; WRONG 10 vision varyansı, doğru-red 4/5) |
 | 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | **geçti** (15 Tem; 8/8 madde bağımsız doğrulandı, kırılan yok, yeniden açılacak loop yok. Golden byte-identical (23034 satır kendim regen+diff), ctest 14/14 kendim derledim, precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages strip'lerde tie parçası (fold+grainline+cut-2 note) ve placket (CF fold+facing+6 buton tick+6 ilik slit, bust-anchored) + register (grid kodu+register kareleri+devam okları) GÖZLE teyit; live create.js/missing.js hash=local hash v54; benchmark 0-çağrı reclassify **14/54** birebir; DRAWN_SINCE her manifest oov terimine karşı test — back/double/asymmetric placket + drawstring MISSING kalıyor, LEAK YOK; 14 FULL'ün her biri gerekçeli; sayı serisi results snapshot'larıyla destekli; /api/draft engine_error teyit = ayrı worker-wasm build sorunu, tie/motor kodu değil, önceden var) | **14/54** (teyit) |
-| 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | bekliyor | — |
+| 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | **bitti** (15 Tem Loop 6; SleeveCap enum {Plain,Gathered,Puffed} + `SleeveBlock::draft` opt-in cap param → Plain default golden BYTE-IDENTICAL 0.000000mm/23034 satır. VERIFIED invariant (dresspatternmaking / M.Müller gigot): cap-height RAISE = spread. Slash-spread SADECE crown'a (notch üstü): gathered spread=0.20·W (yükseltme YOK), puffed spread=0.45·W (yükseltme=spread); notch altı armhole ile 1:1, fazlalık BÜZÜLÜR. Crown gather notch'ları ±capHalf·0.60 + crown boyunca kesikli büzgü çizgisi. Validator cap-ease penceresi puf için style-band'e genişledi (spreadFrac·0.5..·2.5+0.20); biceps floor korunur. ctest 14/14 (sleeve_check'e puf bloğu: crown plain'den geniş, puf yükseltilmiş, gather marks var, validator temiz), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages puff-sleeve-dress (Puff Sleeve chord 460 vs plain 317, topY 255 vs 113) + gathered-head-top strip'te çizili; missing.js sleeveCapDrawn ile puf/gathered başı artık listelemez, cap-sleeve/drawstring honest kalır. FORMULAS.md "Gathered/puff sleeve cap". create.js sleeveCap alanı (vision sleeveHead + manuel picker), engine.js/backend int sleeveCap param. Worker VISION DEĞİŞMEDİ) | **14/54 (DEĞİŞMEDİ — DÜRÜST)**: bu 58-sette puf/gathered SLEEVE HEAD tek-eksik olan foto YOK. Sette geçen tüm kol-büzgü terimleri motorun DOĞRU çizmediği honest sınır: "cap sleeve" (5, KISA CAP ŞEKLİ, gathered head değil) + "drawstring gathered sleeves" (2, casing/kanal gerek). O 5 cap-sleeve fotosunda ayrıca "asymmetric button front closure" da var → zaten MISSING. Yani yetenek gerçek+kanıtlı ama bu setin son boşluğunu açmıyor. |
 | 7 | Stand/mock yaka | Yeni parça ailesi (yaka parçası + yaka oyuğu eşleşme ölçüsü). Referans: Buttoned Blouse fotoğrafı + Bugra Locket Top. | bekliyor | — |
 | 8 | Flat/shirt yaka | Stand üstüne ikinci yaka tipi; parça ailesi genelleşir. | bekliyor | — |
 | 9 | DENETİM B | Taze agent, 6-8 için Denetim A protokolü + tam 58 ara koşusu. %80 eşiğine mesafe rapora. | bekliyor | — |
@@ -118,6 +122,20 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-15 CANLI (Loop 6 sonrası, cache-reclassify FAST, 0 yeni çağrı — kredi VAR,
+  59 spec cache'ten güncel dağarcıkla yeniden sınıflandı): **14/54 TAM (DEĞİŞMEDİ)** —
+  MISSING 30, WRONG 10, correct-reject 4/5. DÜRÜST BULGU: motor artık puf/büzgülü SLEEVE
+  HEAD çiziyor (raised+widened cap + crown gather; SleeveBlock opt-in param, golden
+  byte-identical Plain'de), AMA bu 58-fotoluk sette puf/gathered kol başının TEK eksik
+  olduğu foto YOK. Sette geçen kol-büzgü oov terimleri motorun DOĞRU çizmediği honest
+  sınırlar: "cap sleeve" ×5 (kısa cap ŞEKLİ ≠ gathered head; ayrıca hepsinde "asymmetric
+  button front closure" var → zaten MISSING) + "drawstring gathered sleeves" ×2 (casing/
+  kanal gerektirir). DRAWN_SINCE loop-6 kuralı puf/gathered/gigot çizer, cap-sleeve +
+  drawstring'i DIŞLAR (leak yok). Yetenek gerçek+kanıtlı (ctest 14/14 puf bloğu dahil,
+  golden byte-identical, precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0,
+  render-pages Puff Sleeve chord 460 vs plain 317 + crown gather çizgisi gözle teyit),
+  sayı bu setin son boşluğunu açmadığı için 14'te kalır. Deploy v55. Worker DEĞİŞMEDİ.
+  Rapor: reports/2026-07-15-stitchu-benchmark-loop6.md.
 - 2026-07-15 DENETİM A (Loop 5, bağımsız taze agent, 0-4b kodunu görmemiş):
   **14/54 TEYİT** (0-çağrı cache reclassify; correct-reject 4/5, WRONG 10, MISSING 30).
   8/8 denetim maddesi geçti, KIRILAN YOK, yeniden açılacak loop yok. Golden'ı kendim

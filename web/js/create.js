@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=54';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=54';
-import { draft, grade } from './engine.js?v=54';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=54';
-import { renderResult } from './render.js?v=54';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=55';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=55';
+import { draft, grade } from './engine.js?v=55';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=55';
+import { renderResult } from './render.js?v=55';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=54';
+} from './store.js?v=55';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -27,6 +27,10 @@ const SPEC_GROUPS = [
   // A halter has no shoulders to hang a sleeve from — the pickers hide.
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
+  // Loop 6: sleeve HEAD (cap) treatment. Puff = raised + gathered crown; gathered
+  // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
+  // gathers the hem so the head stays plain there.
+  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
@@ -41,6 +45,7 @@ const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
+  sleeveCap: 'plain',
 };
 
 // Map the vision's closure / backDetail to a drawable tie placement (Loop 4b).
@@ -333,6 +338,18 @@ function showSpec() {
             spec.frontPlacket = true;
           }
         }
+        // Gathered / puff sleeve HEAD (Loop 6): the engine now RAISES + widens
+        // the cap and adds a crown gather when the vision reads a gathered or
+        // puffed sleeve head. `puffed` = raised puff, `gathered` = soft gather.
+        // A cap sleeve (short, not gathered) and drawstring-gathered sleeves stay
+        // in the honesty layer (the true cap SHAPE / drawstring casing aren't drawn).
+        if (seen.sleeveHead === 'puffed') spec.sleeveCap = 'puffed';
+        else if (seen.sleeveHead === 'gathered') spec.sleeveCap = 'gathered';
+        // A gathered/puff head needs an actual sleeve to sit on; if the vision
+        // read a head but no sleeve style, give it a straight sleeve to carry it.
+        if (spec.sleeveCap && spec.sleeveCap !== 'plain' && (!spec.sleeveStyle || spec.sleeveStyle === 'none')) {
+          spec.sleeveStyle = 'straight';
+        }
         // Fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): the engine
         // now draws SIMPLE APPLIED ties as separate self-fabric strips + a
         // placement notch. A drawstring that GATHERS the fabric (needs a casing +
@@ -359,6 +376,10 @@ function showSpec() {
           // the honesty layer must NOT list that tie/back-tie as missing.
           // Drawstring-gathered ties are NOT drawn → tieDrawn false, stay honest.
           tieDrawn: spec.tieClosure && spec.tieClosure !== 'none',
+          // Loop 6: a gathered/puff sleeve HEAD is now DRAWN (raised + widened
+          // cap + crown gather), so the honesty layer must NOT list it as missing.
+          // A cap sleeve / drawstring-gathered sleeve stays honest (still true).
+          sleeveCapDrawn: !!(spec.sleeveCap && spec.sleeveCap !== 'plain'),
         };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();

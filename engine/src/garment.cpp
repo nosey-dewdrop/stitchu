@@ -115,7 +115,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
-        bodice.armholeLength, bodice.armholeDepth, spec.fabric);
+        bodice.armholeLength, bodice.armholeDepth, spec.fabric, spec.sleeveCap);
 
     double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
@@ -191,6 +191,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
     if (!sleeveless) {
         steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
+        if (spec.sleeveCap != SleeveCap::Plain) {
+            steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
+                (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+        }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
             steps.push_back("Gather the sleeve hem along the marked line and attach the interfaced cuffs.");
         }
@@ -268,7 +272,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
-        bodice.armholeLength, bodice.armholeDepth, spec.fabric);
+        bodice.armholeLength, bodice.armholeDepth, spec.fabric, spec.sleeveCap);
 
     double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + BodiceBlock::facingFabricMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
@@ -325,6 +329,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Finish the armholes with bias binding.");
     } else {
         steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");
+        if (spec.sleeveCap != SleeveCap::Plain) {
+            steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
+                (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+        }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
             steps.push_back("Gather the sleeve hem along the marked line and attach the interfaced cuffs.");
         }

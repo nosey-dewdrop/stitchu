@@ -82,6 +82,31 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
 - balloon cuff: length = biceps*0.62 + 20, height 60, cut 2 interface, SA 10
 - validator window: actual cap ease must land in 1–9%
 
+## Gathered/puff sleeve cap (Loop 6, opt-in — plain default byte-identical)
+The classic slash-and-spread adds fullness across the CROWN only; the length below
+the notches stays matched 1:1 to the armhole, so the sleeve still sets into the SAME
+armhole and the surplus is GATHERED in (not eased). Two levels (SleeveCap enum):
+- **Gathered** (soft / high-street, Zara/Bershka): spread = 0.20·W, cap NOT raised.
+- **Puffed** (full / couture gigot, Dior/YSL): spread = 0.45·W, cap RAISED by the spread.
+Formula, given the fitted base cap width W and height H (from the set-in solver above):
+- `spread = capSpreadFrac · W`  (0.20 gathered, 0.45 puffed, 0 plain)
+- `capWidth = W + spread`  → the widened crown chord (also the finished biceps line)
+- `capRise = (puffed ? spread : 0)`; `capHeight = H + capRise`
+- VERIFIED invariant (dresspatternmaking.com; M.Müller & Sohn gigot): **the cap-height
+  raise equals the spread** for a puff. A plain gathered head keeps the height (depth of
+  scye unchanged → less pouf). Müller gigot corroborates: slash 3–4 cm each side of the
+  shoulder point, raise the cap 4–5 cm.
+- Crown gather runs BETWEEN the two crown notches across the top; notches at ±capHalf·0.60
+  (~7.5–9 cm from the underarm on a real cap), a dashed gather line dips toward the raised
+  top. Below the notches the seam is unchanged and matches the armhole 1:1.
+- Gather ratio (finished crown arc / armhole) lands ~1.25 soft → ~1.75–2.5 full; the arc
+  grows nonlinearly in the spread, so the validator accepts a WIDE band per style
+  (spreadFrac·0.5 .. spreadFrac·2.5+0.20) instead of the plain 1–9% ease window.
+- The biceps floor still holds (widened crown ≥ base width ≥ biceps). Hem width stays on
+  the base W so the sleeve still clears the arm. Balloon (hem gather) is a separate style;
+  its head stays plain. Honest boundary: a "cap sleeve" (short-cap SHAPE) and a
+  drawstring-gathered sleeve (needs a casing) are NOT this and stay in the honesty layer.
+
 ## Top block
 - hem extra below waist: cropped 0, hip 180, tunic 300
 - hip width per quarter = hip/4 * 1.04

@@ -45,7 +45,8 @@ std::vector<PatternPiece> draft(
     SleeveLength length,
     double armholeLength,
     double armholeDepth,
-    Fabric fabric
+    Fabric fabric,
+    SleeveCap cap
 ) {
     if (style == SleeveStyle::None) return {};
 
@@ -93,6 +94,18 @@ std::vector<PatternPiece> draft(
         }
     }
 
+    // GATHERED / PUFF HEAD (Loop 6). Slash-and-spread across the crown: the cap
+    // is widened by `spread` and the top point is drawn HIGHER so the extra arc
+    // is gathered/eased into the SAME armhole (crown gather between the notches;
+    // the underarm-to-notch length still matches the armhole 1:1). VERIFIED rule
+    // (dresspatternmaking / M.Müller): a puff RAISES the cap by the spread amount;
+    // a plain gathered head keeps the height. The biceps/hem width below is left
+    // on the fitted base `width` so the sleeve still clears the arm. See FORMULAS.
+    const double spread = capSpreadFrac(cap) * width;      // 0 when Plain
+    const double capWidth = width + spread;                // widened crown
+    const double capRise = (cap == SleeveCap::Puffed) ? spread : 0.0;
+    capHeight += capRise;                                  // Plain: +0 → identical
+
     const double sleeveLength = totalLength(length, m.armLengthCM * 10, capHeight);
     const bool balloon = style == SleeveStyle::Balloon;
 
@@ -100,7 +113,7 @@ std::vector<PatternPiece> draft(
     const double hemHalf = balloon ? width * 0.52 : width * 0.40;
     const double midBulge = balloon ? width * 0.62 : width * 0.46;
 
-    const double capHalf = width / 2;
+    const double capHalf = capWidth / 2;
     const Point capLeft{-capHalf, capHeight};
     const Point capRight{capHalf, capHeight};
     const Point top{0, 0};
@@ -135,13 +148,36 @@ std::vector<PatternPiece> draft(
         PathCommand::move({width * 0.18, capHeight * 0.18}),
         PathCommand::line({width * 0.18, capHeight * 0.05}),
     };
+    // Puff/gathered head: mark the crown gather span. The gather runs between the
+    // two crown notches ACROSS the top (the underarm-to-notch length stays matched
+    // to the armhole, so the sleeve still sets in). Notches sit at ±capWidth*0.30
+    // — roughly the 7.5–9 cm-from-underarm placement on a real cap — with a dashed
+    // gather line across the crown at the notch height so the sewer knows exactly
+    // where to run the two gathering rows and ease the fullness in.
+    if (cap != SleeveCap::Plain) {
+        const double gx = capHalf * 0.60;          // crown notch x
+        const double gy = capHeight * 0.42;        // notch depth from the top edge
+        // left crown notch
+        markings.push_back(PathCommand::move({-gx, gy + capHeight * 0.10}));
+        markings.push_back(PathCommand::line({-gx, gy - capHeight * 0.02}));
+        // right crown notch
+        markings.push_back(PathCommand::move({gx, gy + capHeight * 0.10}));
+        markings.push_back(PathCommand::line({gx, gy - capHeight * 0.02}));
+        // gather line across the crown, dipping toward the raised top
+        markings.push_back(PathCommand::move({-gx, gy}));
+        markings.push_back(PathCommand::curve(
+            {gx, gy}, {-gx * 0.4, gy * 0.35}, {gx * 0.4, gy * 0.35}));
+    }
     if (balloon) {
         markings.push_back(PathCommand::move({-hemHalf, hemY - 25}));
         markings.push_back(PathCommand::line({hemHalf, hemY - 25}));
     }
 
     PatternPiece sleeve;
-    sleeve.name = balloon ? "Balloon Sleeve" : "Sleeve";
+    sleeve.name = balloon ? "Balloon Sleeve"
+                : cap == SleeveCap::Puffed ? "Puff Sleeve"
+                : cap == SleeveCap::Gathered ? "Gathered-Head Sleeve"
+                : "Sleeve";
     sleeve.cutInstruction = "cut 2";
     sleeve.commands = commands;
     sleeve.markings = markings;

@@ -86,6 +86,13 @@ SleeveLength sleeveLengthFrom(const std::string& s) {
     if (s == "long") return SleeveLength::Long;
     return SleeveLength::Short;
 }
+// Loop 6: gathered/puff sleeve head. Int enum so the positional JS binding stays
+// simple (0 = Plain, 1 = Gathered, 2 = Puffed).
+SleeveCap sleeveCapFrom(int v) {
+    if (v == 2) return SleeveCap::Puffed;
+    if (v == 1) return SleeveCap::Gathered;
+    return SleeveCap::Plain;
+}
 GarmentType garmentFrom(const std::string& s) {
     if (s == "skirt") return GarmentType::Skirt;
     if (s == "top") return GarmentType::Top;
@@ -116,7 +123,8 @@ GarmentSpec buildSpec(
     const std::string& fabric, const std::string& neckline,
     const std::string& sleeveStyle, const std::string& sleeveLength,
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure
+    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
+    int sleeveCap
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -134,6 +142,7 @@ GarmentSpec buildSpec(
     spec.keyhole = keyhole;
     spec.frontPlacket = frontPlacket;
     spec.tieClosure = tieClosure; // TiePlacement enum value; 0 = None
+    spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6: 0=Plain 1=Gathered 2=Puffed
     return spec;
 }
 
@@ -188,10 +197,11 @@ std::string draftJSON(
     double backLengthCM, double armLengthCM, double neckCM,
     double upperBustCM,
     bool frontPlacket, // appended so existing positional callers stay valid
-    int tieClosure     // Loop 4b: fabric ties / sash / bow; 0 = None
+    int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
+    int sleeveCap      // Loop 6: gathered/puff sleeve head; 0 = Plain
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -209,10 +219,11 @@ std::string gradeJSON(
     bool ruffleHem, int ruffleTiers, bool keyhole,
     std::string fromLabel, std::string toLabel,
     bool frontPlacket, // appended so existing positional callers stay valid
-    int tieClosure     // Loop 4b: fabric ties / sash / bow; 0 = None
+    int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
+    int sleeveCap      // Loop 6: gathered/puff sleeve head; 0 = Plain
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

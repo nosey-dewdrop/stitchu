@@ -293,6 +293,34 @@ std::vector<ValidationIssue> sleeveIssues(
     const double target = bodice.armholeLength * (1 + capEase);
     const double ease = capLength / bodice.armholeLength - 1;
     std::vector<ValidationIssue> issues;
+    // GATHERED / PUFF HEAD (Loop 6): the crown arc is INTENTIONALLY longer than
+    // armhole + ease — that surplus is GATHERED in, not eased. So the plain 1–9%
+    // ease window does not apply; instead the crown surplus must land near the
+    // spread the style adds (with a generous band, since arc growth is nonlinear
+    // in the spread). The sleeve still SETS INTO the same armhole because the
+    // length below the notches is unchanged; the biceps floor still holds because
+    // the widened crown is >= the base width. Guard the gather is neither absent
+    // (looks plain) nor runaway (unsewable).
+    if (spec.sleeveCap != SleeveCap::Plain) {
+        const double spreadFrac = SleeveBlock::capSpreadFrac(spec.sleeveCap);
+        // Arc grows a bit more than the chord spread; accept a wide band.
+        const double lo = spreadFrac * 0.5;   // must actually be gathered
+        const double hi = spreadFrac * 2.5 + 0.20; // but not runaway
+        if (ease < lo || ease > hi) {
+            issues.push_back({"cap", sleeve->name,
+                fmt("gathered-head surplus %.1f%% outside the expected %.0f-%.0f%% gather band",
+                    ease * 100, lo * 100, hi * 100)});
+        }
+        const double bicepsEstimate =
+            m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(spec.fabric));
+        const double capWidth = distance(sleeve->commands[0].to, sleeve->commands[2].to);
+        if (capWidth < bicepsEstimate - 1.0) {
+            issues.push_back({"biceps", sleeve->name,
+                fmt("sleeve %.0f mm wide is narrower than the %.0f mm biceps line — it would bind on the arm",
+                    capWidth, bicepsEstimate)});
+        }
+        return issues;
+    }
     // The cap-ease WINDOW is the real sewability gate. The exact-target
     // convergence check below is only a solver-health check: it must not fire
     // when the biceps floor legitimately pushes the cap longer than the 4% ideal

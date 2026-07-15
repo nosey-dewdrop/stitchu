@@ -102,6 +102,13 @@ function classify(entry, spec) {
     // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
     (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
            !/drawstring|gathered|shirr|smock/i.test(t),
+    // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine now raises +
+    // widens the cap and gathers the crown. Only the sleeve HEAD, and only the
+    // simple gather/puff. A "cap sleeve" is a SHORT-cap SHAPE (not a gathered
+    // head) → NOT drawn. A "drawstring gathered sleeve" needs a casing/channel →
+    // NOT drawn. Both of those stay honest/missing.
+    (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
+           !/cap sleeve|drawstring|shirr|smock|casing|channel/i.test(t),
   ];
   const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
   const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));

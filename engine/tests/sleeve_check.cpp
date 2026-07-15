@@ -4,6 +4,7 @@
 // length-only cap fit from ever silently returning a too-narrow sleeve — the
 // exact defect the audit found: width fell out of length-matching and ignored
 // the arm, so every sleeve ran 8-20% narrow while the matrix stayed green.
+#include <cmath>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -96,6 +97,79 @@ int main() {
                         if (e.rule == "biceps" || e.rule == "cap") clean = false;
                     check(clean, tag + ": validator reports no sleeve issue");
                 }
+            }
+        }
+    }
+
+    // GATHERED / PUFF HEAD (Loop 6): the crown is widened (and, for a puff,
+    // raised) so the extra fullness gathers into the SAME armhole. Prove the
+    // puff draws, is genuinely bigger than the plain cap, carries crown gather
+    // marks, still clears the biceps, and passes the validator (no hard error).
+    {
+        std::printf("\ngathered/puff sleeve head\n");
+        for (const Body& b : BODIES) {
+            const BodyMeasurementsSnapshot m{b.bu, b.wa, b.hi, b.sh, b.bl, b.al, b.ne};
+            auto capWidthOf = [](const PatternPiece* s) {
+                return distance(s->commands[0].to, s->commands[2].to);
+            };
+            auto capTopY = [](const PatternPiece* s) {
+                // capLeft.y is the cap-base level; the top point is y = 0, so the
+                // cap height is capLeft.y. A raised puff has a taller base level.
+                return s->commands[0].to.y;
+            };
+            GarmentSpec base;
+            base.garment = GarmentType::Dress;
+            base.sleeveStyle = SleeveStyle::Straight;
+            base.sleeveLength = SleeveLength::Short;
+            const DraftedPattern plainD = GarmentDrafter::draft(base, m);
+            const PatternPiece* plain = sleevePiece(plainD);
+            if (!check(plain != nullptr, std::string(b.name) + ": plain cap drafts")) continue;
+            const double plainW = capWidthOf(plain);
+            const double plainH = capTopY(plain);
+
+            for (SleeveCap cap : {SleeveCap::Gathered, SleeveCap::Puffed}) {
+                GarmentSpec spec = base;
+                spec.sleeveCap = cap;
+                const DraftedPattern d = GarmentDrafter::draft(spec, m);
+                const PatternPiece* s = sleevePiece(d);
+                const std::string tag = std::string(b.name) +
+                    (cap == SleeveCap::Puffed ? " puffed" : " gathered");
+                if (!check(s != nullptr, tag + ": drafts")) continue;
+
+                // Crown is wider than the plain cap (fullness added).
+                check(capWidthOf(s) > plainW + 5.0,
+                    tag + ": crown wider than plain (" +
+                    std::to_string((int)capWidthOf(s)) + " > " + std::to_string((int)plainW) + ")");
+
+                // Puff is RAISED (taller cap); gathered keeps the height.
+                if (cap == SleeveCap::Puffed) {
+                    check(capTopY(s) > plainH + 3.0,
+                        tag + ": cap raised (" + std::to_string((int)capTopY(s)) +
+                        " > " + std::to_string((int)plainH) + ")");
+                } else {
+                    check(std::fabs(capTopY(s) - plainH) < 0.5,
+                        tag + ": cap height unchanged (soft gather)");
+                }
+
+                // Crown gather markings present (extra move/line/curve beyond the
+                // 4 base cap-notch commands).
+                check(s->markings.size() > 4, tag + ": crown gather marks present");
+
+                // Still clears the biceps line.
+                const double biceps =
+                    m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(Fabric::Woven));
+                check(capWidthOf(s) >= biceps - 1.0, tag + ": crown >= biceps");
+
+                // Named as a puff/gathered piece.
+                check(s->name.find(cap == SleeveCap::Puffed ? "Puff" : "Gathered") != std::string::npos,
+                    tag + ": piece named for the head style");
+
+                // Validator: no hard sleeve error blocks the draft.
+                const auto issues = PatternValidator::issues(spec, m, d);
+                bool clean = true;
+                for (const auto& e : issues)
+                    if (e.rule == "cap" || e.rule == "biceps" || e.rule == "sleeve") clean = false;
+                check(clean, tag + ": validator passes (no sleeve error)");
             }
         }
     }

@@ -27,11 +27,15 @@ const ENUMS = {
   ruffle: ['none', 'single', 'tiered'],
   keyhole: ['none', 'keyhole'],
   tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies'],
+  sleeveCap: ['plain', 'gathered', 'puffed'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
 const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5 };
 const tieInt = (s) => TIE_PLACEMENT[s] || 0;
+// SleeveCap enum int (must match engine/src/measurements.hpp order). 0 = Plain.
+const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2 };
+const sleeveCapInt = (s) => SLEEVE_CAP[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -132,6 +136,7 @@ export function validateDraftRequest(body) {
       keyhole: spec.keyhole ?? 'none',
       frontPlacket: spec.frontPlacket === true,
       tieClosure: spec.tieClosure ?? 'none',
+      sleeveCap: spec.sleeveCap ?? 'plain',
     },
     measurements,
   };
@@ -151,6 +156,7 @@ export async function runDraft(spec, measurements) {
     measurements.upperBust || 0, // optional full-bust adjustment
     spec.frontPlacket === true,  // Loop 3: front button placket
     tieInt(spec.tieClosure),     // Loop 4b: fabric ties / sash / bow
+    sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
   );
   return JSON.parse(json);
 }
@@ -185,6 +191,7 @@ export async function handleGrade(request) {
       spec.keyhole === 'keyhole', from, to,
       spec.frontPlacket === true, // Loop 3: front button placket
       tieInt(spec.tieClosure),    // Loop 4b: fabric ties / sash / bow
+      sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }
