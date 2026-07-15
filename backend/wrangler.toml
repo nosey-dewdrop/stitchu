@@ -2,9 +2,17 @@ name = "stitchu-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
+# Import engine/dist/stitchu-worker.wasm as a WebAssembly.Module (Cloudflare
+# gives it to us pre-compiled; draft.js instantiates it via instantiateWasm).
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+
 [vars]
 # Public photo analysis for the web app (throttled hard in worker.js).
 PUBLIC_ANALYZE = "on"
+# Public pattern-draft API (own engine, no LLM cost — safe to open, throttled).
+PUBLIC_DRAFT = "on"
 
 # Secrets (set via wrangler secret put — never commit these):
 #   CLAUDE_API_KEY   your Anthropic sk-ant- key

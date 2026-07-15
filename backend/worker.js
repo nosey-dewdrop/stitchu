@@ -6,6 +6,8 @@
 // Secrets: npx wrangler secret put CLAUDE_API_KEY   (your sk-ant- key)
 //          npx wrangler secret put APP_TOKEN         (any long random string)
 
+import { handleDraft } from './draft.js';
+
 const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
 // Vision-capable current model.
 const MODEL = 'claude-opus-4-8';
@@ -45,6 +47,28 @@ export default {
         return handleWallNote(request, env);
       }
 
+      // ---- Pattern draft: the OWN-engine API core. No LLM cost, so it can be
+      // public and generous. The web app (a browser that cannot keep a secret)
+      // hits it without a token, throttled per IP; a paying API customer sends
+      // their app token for the higher, un-throttled tier. Same handler, same
+      // engine — only the rate limit differs by who is calling.
+      if (url.pathname === '/api/draft' && request.method === 'POST' &&
+          !request.headers.get('x-app-token')) {
+        if (env.PUBLIC_DRAFT !== 'on') {
+          return jsonResponse({ error: 'draft_closed', detail: 'The public draft API is not open yet' }, 403);
+        }
+        if (await rateLimited(env, `pubdraft:${ip}`, 20) ||
+            await rateLimitedDaily(env, `pubdraftday:${ip}`, 200)) {
+          return jsonResponse({ error: 'rate_limited', detail: 'Rate limit exceeded. Please wait.' }, 429);
+        }
+        const length = parseInt(request.headers.get('content-length') || '0');
+        if (length > 20_000) {
+          return jsonResponse({ error: 'body_too_large', detail: 'Draft request body too large' }, 413);
+        }
+        const { status, payload } = await handleDraft(request);
+        return jsonResponse(payload, status);
+      }
+
       // Public photo analysis for the web app (a browser cannot keep the app
       // token secret). OFF unless the PUBLIC_ANALYZE var is set to "on" at
       // deploy — every call costs Claude vision money, so it ships throttled:
@@ -77,6 +101,10 @@ export default {
 
       if (url.pathname === '/api/analyze' && request.method === 'POST') {
         return handleAnalyze(request, env);
+      }
+      if (url.pathname === '/api/draft' && request.method === 'POST') {
+        const { status, payload } = await handleDraft(request);
+        return jsonResponse(payload, status);
       }
 
       return jsonResponse({ error: 'Not found' }, 404);
