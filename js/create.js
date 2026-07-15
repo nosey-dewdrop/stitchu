@@ -1,18 +1,23 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=31';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=31';
-import { draft } from './engine.js?v=31';
-import { printPattern } from './print.js?v=31';
-import { renderResult } from './render.js?v=31';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=32';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=32';
+import { draft } from './engine.js?v=32';
+import { printPattern } from './print.js?v=32';
+import { renderResult } from './render.js?v=32';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=31';
+} from './store.js?v=32';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
-const values = { ...(saved || {}) };
+// A standard EU38 body so a first-time visitor can SEE a real pattern before
+// being asked to measure themselves — the "aha" comes before the 7-measurement
+// ask, not after it. Replaced by the user's own numbers the moment they add them.
+const DEMO_BODY = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40, armLength: 58, neck: 35 };
+let usingDemo = !saved;
+const values = { ...(saved || DEMO_BODY) };
 
 const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
@@ -144,6 +149,7 @@ function showMeasurement(index) {
     values[m.key] = v;
     if (index === MEASUREMENTS.length - 1) {
       saveMeasurements(values);
+      usingDemo = false; // the pattern is now drafted to the real person
       showSpec();
     } else {
       showMeasurement(index + 1);
@@ -159,8 +165,8 @@ function showSpec() {
   screen.textContent = '';
   screen.className = 'wrap spec-screen';
   screen.appendChild(el('h1', 'screen-title', t('create.spec.title')));
-  const sub = el('p', 'screen-sub', t('create.spec.sub'));
-  const edit = el('a', '', t('create.spec.edit'));
+  const sub = el('p', 'screen-sub', usingDemo ? t('create.spec.subdemo') : t('create.spec.sub'));
+  const edit = el('a', '', usingDemo ? t('create.spec.addmeasure') : t('create.spec.edit'));
   edit.href = '#';
   edit.style.color = 'inherit';
   edit.addEventListener('click', (e) => { e.preventDefault(); showMeasurement(0); });
@@ -270,9 +276,21 @@ function showResult(result) {
   head.appendChild(el('h1', 'screen-title', t('create.result.title', { garment: result.pattern.garment.charAt(0).toUpperCase() + result.pattern.garment.slice(1) })));
   screen.appendChild(head);
 
+  // Demo-body users: lead with the personalize CTA — they've now SEEN a real
+  // pattern, so the ask to measure themselves has earned its place.
+  if (usingDemo) {
+    const fitBanner = el('div', 'fit-banner');
+    fitBanner.appendChild(el('span', 'fit-banner-text', t('create.demo.banner')));
+    const fitBtn = el('button', 'btn primary', t('create.demo.cta'));
+    fitBtn.addEventListener('click', () => showMeasurement(0));
+    fitBanner.appendChild(fitBtn);
+    screen.appendChild(fitBanner);
+  }
+
   const body = el('div');
   screen.appendChild(body);
   result.photoFabric = spec.photoFabric || null;
+  result.demoBody = usingDemo;
   renderResult(body, result);
 
   const nav = el('div', 'step-nav');
@@ -296,5 +314,7 @@ function showResult(result) {
 applyStatic();
 mountLangToggle();
 
-// Entry: returning users with a saved profile go straight to the garment pick.
-if (saved) showSpec(); else showMeasurement(0);
+// Entry: EVERYONE lands on the garment picker so they see a real pattern first
+// (drafted to a standard body for newcomers). The 7-measurement ask comes after
+// the aha, offered on the result as "make it fit you".
+showSpec();
