@@ -71,7 +71,7 @@ export const STRINGS = {
   'result.sa': { en: 'seam allowance', tr: 'dikiş payı' },
   'result.sav': { en: '{n} cm — drawn in: cut the outer line, sew the inner', tr: '{n} cm — çizili: dış çizgiden kes, iç çizgiden dik' },
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
-  'result.guidetrnote': { en: '', tr: 'Rehber adımları şimdilik İngilizce — Türkçesi geliyor.' },
+  'result.guidetrnote': { en: '', tr: 'Bu adımın Türkçesi henüz eklenmedi.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
   'result.photofabric.good': { en: 'The fabric in your photo looks like {name} — a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu proje için uygun. Dikkat: {note}' },
   'result.photofabric.bad': { en: 'The fabric in your photo looks like {name} — it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
