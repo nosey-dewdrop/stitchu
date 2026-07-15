@@ -306,3 +306,17 @@ O3 · HOOK: "bir Etsy satıcısı gözüyle denettim, iki kere kumaşı çöpe a
 - (1) kapakta her bedenin bust/waist/hip cm'si yoktu — alıcı hangi beden benim diye bilemez.
 - (2) iç sayfalarda beden yazmıyordu — karışan sayfalar yanlış bedenden kesilir.
 - ikisini de kapattım: kapakta gerçek beden tablosu + her sayfanın köşesinde vişne beden damgası. [baskı]
+
+## seri P — motoru ders kitaplarına karşı yargılamak (doğruluk)
+
+P1 · HOOK: "kendi kalıp motorumu iki dikiş ders kitabına karşı mahkemeye çıkardım."
+- Aldrich ve Armstrong — sektörün iki kutsal kitabı. motorun her bloğunu (beden, kol, etek, yaka, bedenleme) tek tek bu ikisine karşı ölçtüm.
+- kural: bir formülü sadece iki kitap da aynı şeyi söylüyorsa VE benimki net yanlışsa değiştir. [rapor 16 tem]
+
+P2 · HOOK: "değiştirdiğim formül sayısı: sıfır. motor denetlenmeye dayandı."
+- her sapma ya iki kaynak arasında bir bantta, ya tek kaynak, ya da kodda zaten 'varsayım' işaretli.
+- bilmediğim değeri uydurmadım, 'doğrulanmalı' diye işaretledim. yanlış referans = yanlış düzeltme. [audit]
+
+P3 · HOOK: "bir an 'bu bir hata mı' dedim — sonra Aldrich'in de aynı yerde durduğunu gördüm."
+- motor büyük bedenlerde beden başına +4cm yerine +6cm'ye geçiyor. tesadüf sandım.
+- Aldrich'in kendisi de büyük bedenlerde tam bu iki-kademeli artışa geçiyor. doğru sebeple aynı noktadayız. [grade tablosu]
