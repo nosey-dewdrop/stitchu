@@ -4,8 +4,8 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=34';
-import { getLang } from './i18n.js?v=34';
+import { pathD, bounds } from './render.js?v=35';
+import { getLang } from './i18n.js?v=35';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -40,6 +40,10 @@ const P = {
     en: `${g} — sheet ${code} (grid ${cols} across)`,
     tr: `${g} — sayfa ${code} (${cols} sütunlu ızgara)`,
   }),
+  demoWarn: {
+    en: 'STANDARD EU38 SIZE — this is not drafted to your measurements yet. Add your seven measurements on the site for a pattern that fits you.',
+    tr: 'STANDART EU38 BEDEN — bu henüz senin ölçülerine çizilmedi. Sana uyan bir kalıp için sitede yedi ölçünü ekle.',
+  },
 };
 const L = () => (getLang() === 'tr' ? 'tr' : 'en');
 
@@ -216,6 +220,12 @@ export function printPattern(result) {
   const cover = el('div', 'print-page');
   const lang = L();
   cover.appendChild(el('div', 'print-title', P.cover[lang](p.garment)));
+  // Demo body: warn loudly on the printed cover so no one cuts fabric on a
+  // standard-size pattern thinking it's drafted to them.
+  if (result.demoBody) {
+    const warn = el('div', 'print-demo-warn', P.demoWarn[lang]);
+    cover.appendChild(warn);
+  }
   const hasCutLines = p.pieces.some((piece) => (piece.cutLine || []).length > 0);
   const saCm = p.pieces[0].seamAllowance / 10;
   cover.appendChild(el('div', 'print-sub',
