@@ -242,3 +242,17 @@ K5 · HOOK: "halter kalıbında gizli bir kırık vardı, 552 taslağı bloke ed
 K6 · HOOK: "imkansız bir vücut girersen artık tek net cümle görüyorsun, 8 şifreli hata değil."
 - göğsü 160 beli 45 olan bir vücut (yazım hatası) motoru kilitliyordu ve kullanıcı "kendi kendine kesişti" gibi anlamsız hatalar görüyordu.
 - daha kötüsü: bu taslakların çoğu doğrulamayı geçip SESSİZCE hatalı kalıp basıyordu. artık en başta "ölçülerini kontrol et" diyen tek okunur sebep çıkıyor.
+
+## seri L — motor artık bir API (iş modeli)
+
+L1 · HOOK: "motorumu bir API'ya çevirdim ve çağrı başı maliyetim SIFIR."
+- aynı c++ motoru bu kez sunucuda koşuyor: POST /api/draft'e 7 ölçü + tarif, sana kalıp + dikiş rehberi + kumaş hesabı dönüyor.
+- kritik: hiçbir çağrı yapay zeka modeline gitmiyor. bir kalıp motoru satmak ile ay sonunda yapay zeka faturası ödemek arasındaki fark bu. [terminal]
+
+L2 · HOOK: "tarayıcı sürümü sunucuda çalışmadı ve sebebi öğreticiydi."
+- tarayıcı wasm'ını fetch/xhr ile çekiyor. cloudflare worker'da o API'ler yok — worker bir web worker değil, bir v8 izolatı.
+- ayrı bir derleme çıkardım, precompiled wasm modülünü motora instantiateWasm ile elle verdim. çalıştı.
+
+L3 · HOOK: "çalışan endpoint ile satılabilir API ayrı şeyler."
+- girişi önce doğruluyorum: bilinmeyen bir yaka değeri sessiz varsayılana düşmüyor, net 422 dönüyor. yedi ölçü sayısal + aralıkta.
+- en önemlisi: doğrulamayı geçemeyen taslak 200'le bozuk kalıp değil, 422 "çizilemez" + sebep dönüyor. API müşterinin kumaşını harcatamaz.
