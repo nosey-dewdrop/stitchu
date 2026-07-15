@@ -852,6 +852,29 @@ std::vector<ValidationIssue> issues(
 ) {
     std::vector<ValidationIssue> result;
 
+    // Body-plausibility gate. An anatomically impossible body (a waist far under
+    // half the bust, or a hip well under two thirds of it) is almost always a
+    // measurement typo. The drafter would still produce pieces, but the side
+    // seam has to nip so hard that the princess panels fold through themselves —
+    // the user then sees cryptic "self-intersection" geometry errors instead of
+    // the real cause. Catch it first with ONE legible reason so the web's
+    // "check your measurements" copy is the honest first thing they read. The
+    // thresholds sit far below any real adult body (measured range: waist
+    // 0.5–0.95×bust, hip 0.69–1.25×bust) so no plausible body is ever refused.
+    if (m.bustCM > 0) {
+        if (m.waistCM < 0.45 * m.bustCM) {
+            result.push_back({"proportion", draft.garment,
+                fmt("waist %.0f cm is implausibly small next to a %.0f cm bust — please re-check your measurements",
+                    m.waistCM, m.bustCM)});
+        }
+        if (m.hipCM < 0.60 * m.bustCM) {
+            result.push_back({"proportion", draft.garment,
+                fmt("hip %.0f cm is implausibly small next to a %.0f cm bust — please re-check your measurements",
+                    m.hipCM, m.bustCM)});
+        }
+        if (!result.empty()) return result; // one clear reason beats a wall of geometry noise
+    }
+
     if (draft.pieces.empty()) {
         result.push_back({"pieces", draft.garment, "no pieces drafted"});
         return result;
