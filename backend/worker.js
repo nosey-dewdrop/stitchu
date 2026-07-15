@@ -57,14 +57,18 @@ export default {
         if (env.PUBLIC_DRAFT !== 'on') {
           return jsonResponse({ error: 'draft_closed', detail: 'The public draft API is not open yet' }, 403);
         }
+        // Fail closed if the rate-limit KV is missing: the ONLY reason the public
+        // tier is open is that it is throttled, so an un-throttled public tier is
+        // never intended. (A configured deploy always has RATE_LIMIT bound.)
+        if (!env.RATE_LIMIT) {
+          return jsonResponse({ error: 'draft_closed', detail: 'The public draft API is temporarily unavailable' }, 503);
+        }
         if (await rateLimited(env, `pubdraft:${ip}`, 20) ||
             await rateLimitedDaily(env, `pubdraftday:${ip}`, 200)) {
           return jsonResponse({ error: 'rate_limited', detail: 'Rate limit exceeded. Please wait.' }, 429);
         }
-        const length = parseInt(request.headers.get('content-length') || '0');
-        if (length > 20_000) {
-          return jsonResponse({ error: 'body_too_large', detail: 'Draft request body too large' }, 413);
-        }
+        // handleDraft re-checks the real body size; this header check is a cheap
+        // early reject only.
         const { status, payload } = await handleDraft(request);
         return jsonResponse(payload, status);
       }

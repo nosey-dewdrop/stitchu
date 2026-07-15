@@ -88,10 +88,15 @@ the default shown above. Measurements are all seven, in **centimetres**.
       {
         "name": "Bodice Center Front",
         "cutInstruction": "cut 1 on fold",
-        "commands": [ { "type": "move", "to": {"x":0,"y":8} }, ... ],
+        "commands": [
+          { "type": "move", "x": 0, "y": 8 },
+          { "type": "line", "x": 61, "y": 0 },
+          { "type": "curve", "x": 120, "y": 40, "cp1x": 80, "cp1y": 10, "cp2x": 100, "cp2y": 25 },
+          { "type": "close" }
+        ],
         "markings": [ ... ],
         "cutLine": [ ... ],
-        "grainline": { "from": {...}, "to": {...} },
+        "grainline": { "fromX": 40, "fromY": 229, "toX": 40, "toY": 390 },
         "seamAllowance": 15
       }
     ]
@@ -99,9 +104,12 @@ the default shown above. Measurements are all seven, in **centimetres**.
 }
 ```
 
-Coordinates are in **millimetres**, y grows downward. `commands` is the sewing
-line; `cutLine` is the same outline offset outward by `seamAllowance`. Render
-each piece at 1 mm = 1 unit for a true-scale pattern.
+Coordinates are in **millimetres**, y grows downward, and every point is a
+**flat** key on the command — `x`/`y` for the endpoint, plus `cp1x`/`cp1y`/`cp2x`/`cp2y`
+on a `curve`. Command `type` is one of `move`, `line`, `curve`, `close`.
+`grainline` is likewise flat: `fromX`/`fromY`/`toX`/`toY`. `commands` is the
+sewing line; `cutLine` is the same outline offset outward by `seamAllowance`.
+Render each piece at 1 mm = 1 unit for a true-scale pattern.
 
 ### Errors
 

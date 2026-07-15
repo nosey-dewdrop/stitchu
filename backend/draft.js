@@ -38,6 +38,9 @@ const MEASURE_RANGE = {
 let enginePromise = null;
 function engine() {
   if (!enginePromise) {
+    // If the first instantiate rejects (corrupt wasm, cold-start OOM), clear the
+    // cache so the NEXT request retries instead of every future request awaiting
+    // a permanently-rejected promise and 500ing for the life of the isolate.
     enginePromise = createStitchuEngine({
       instantiateWasm(imports, successCallback) {
         WebAssembly.instantiate(wasmModule, imports).then((inst) =>
@@ -45,6 +48,9 @@ function engine() {
         );
         return {};
       },
+    }).catch((e) => {
+      enginePromise = null;
+      throw e;
     });
   }
   return enginePromise;
@@ -134,9 +140,21 @@ export async function runDraft(spec, measurements) {
 // the reasons, NOT a 200 with a broken pattern — the API never returns a
 // pattern that would waste a customer's fabric.
 export async function handleDraft(request) {
+  // Enforce the size cap on the ACTUAL bytes read, not the content-length header
+  // (which a caller can omit or lie about). A draft request is tiny; anything
+  // over 20 KB is abuse.
+  let raw;
+  try {
+    raw = await request.text();
+  } catch {
+    return { status: 400, payload: { error: 'invalid_body', detail: 'Could not read request body' } };
+  }
+  if (raw.length > 20_000) {
+    return { status: 413, payload: { error: 'body_too_large', detail: 'Draft request body too large' } };
+  }
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     return { status: 400, payload: { error: 'invalid_json', detail: 'Request body is not valid JSON' } };
   }
