@@ -126,11 +126,17 @@ function sheetSVG(layout, col, row, used) {
 function calibrationSVG() {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', '34mm');
-  svg.setAttribute('height', '38mm');
-  svg.setAttribute('viewBox', '0 0 34 38');
+  svg.setAttribute('height', '47mm');
+  svg.setAttribute('viewBox', '0 0 34 47');
+  // 3 cm square + a 1 inch bar: whichever ruler the sewist owns, one of the
+  // two references reads directly (imperial printers/US Letter buyers too).
   svg.innerHTML =
     '<rect x="2" y="2" width="30" height="30" fill="none" stroke="#111" stroke-width="0.5"/>' +
-    '<text x="17" y="37" font-family="Helvetica" font-size="3.2" fill="#111" text-anchor="middle">3 cm — measure me before cutting</text>';
+    '<text x="17" y="37" font-family="Helvetica" font-size="3.2" fill="#111" text-anchor="middle">3 cm — measure me before cutting</text>' +
+    '<line x1="2" y1="41" x2="27.4" y2="41" stroke="#111" stroke-width="0.5"/>' +
+    '<line x1="2" y1="39.2" x2="2" y2="42.8" stroke="#111" stroke-width="0.5"/>' +
+    '<line x1="27.4" y1="39.2" x2="27.4" y2="42.8" stroke="#111" stroke-width="0.5"/>' +
+    '<text x="14.7" y="46.2" font-family="Helvetica" font-size="3.2" fill="#111" text-anchor="middle">1 inch</text>';
   return svg;
 }
 
