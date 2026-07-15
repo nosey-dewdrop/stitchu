@@ -519,3 +519,18 @@ Damla worried: they spent millions, we can't. Reverse is true:
   list + top 10 deviations + top 5 logic errors, each with a one-line suggested fix (SUGGEST only).
 - This is the RIGHT loop (accuracy+logic = loop's strength, safe asleep). Product/client loop = LATER,
   by day, with Damla present (needs her eyes; running it asleep = gymgyme trap).
+
+## NIGHT LOOP FINAL (2026-07-15, Damla: "fix it if there's an important problem, I'm in" + "batch pushes, 5-10 not 100")
+Loop MAY fix + push, under TWO SAFETY LOCKS (Damla's "important problem" made precise):
+- LOCK 1 (only undisputed fixes): change a formula ONLY if Aldrich AND Armstrong AGREE and the engine
+  is clearly wrong (or a physically-impossible logic error). NEVER touch "disputed" (sources differ) —
+  report only. No fabricated reference values ("DOGRULANMALI" when unsure).
+- LOCK 2 (tests gate push): after any change, ctest must be FULLY GREEN. If a test breaks, REVERT that
+  change, don't push. Only green-staying fixes get pushed.
+- DEPLOY-LIMIT GUARD (Damla): batch changes, ONE commit per block, MAX ~6 pushes total (5-10, not 100
+  micro-pushes; gymgyme burned 82). Whole engine order: bodice, sleeve, skirt, necklines, armscye-match,
+  grade — measure + logic audit each vs both laws.
+- Output: reports/2026-07-16-stitchu-drafting-denetim.md (per-block tables + logic errors + what changed
+  & why & which source approved + disputed-untouched list). STOP when 6 blocks done (task-bound).
+- Keeps Damla's "fix it" but safe: only two-law-approved, test-green fixes reach live; nothing that
+  breaks the engine can push. Product/client loop = later, by day, with Damla present.
