@@ -272,11 +272,20 @@ PrincessHalf makePrincessPieces(
     const Point split = armSplit.at;
 
     // Shared upper seam cubic, arriving at the apex near-vertically so it
-    // flows into the straight leg below.
+    // flows into the straight leg below. The vertical lead of the apex-side
+    // control point is normally 30% of the seam's height, but on a compressed
+    // back (halter drops the whole frame) that height shrinks while the
+    // horizontal reach to the apex does not — the curve then stays too flat and
+    // snaps vertical only in its last step (a kink). Floor the lead at a third
+    // of the horizontal reach so the turn spreads across the whole cubic. On a
+    // normal back the height term dominates, so the golden is untouched; the
+    // floor only engages when the frame is genuinely cramped.
+    const double seamUpperLead = std::max((apex.y - split.y) * 0.30,
+                                          std::abs(apex.x - split.x) * 0.34);
     const PathCommand seamUpper = PathCommand::curve(
         apex,
         {split.x + (apex.x - split.x) * 0.3, split.y + (apex.y - split.y) * 0.25},
-        {apex.x, apex.y - (apex.y - split.y) * 0.30});
+        {apex.x, apex.y - seamUpperLead});
     const double seamUpperLen = pathLength({PathCommand::move(split), seamUpper});
 
     // Below-waist continuation (tops): the seam gap shrinks linearly to zero
