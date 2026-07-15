@@ -45,22 +45,47 @@ Durum: **~5-10/58 (tahmin, 2026-07-15)** — henüz etiketlenmedi, oturum 0 öl�
   repoya pushlanmaz.
 - Canlı vision çıktıları (7 foto, ham JSON): rapor 2026-07-15 bölüm 1.
 
-## OTURUM PLANI (sıra Damla onaylı: frekans × zorluk)
-0. **Etiketleme + sayaç:** 58 fotonun her birine ground-truth (garment, dağarcık
-   içi alanlar, dağarcık DIŞI öğeler listesi). tools/ altında ölçüm scripti:
-   zincirden geçir → tam kalıp / eksik öğeli / yanlış say. İlk gerçek sayı buradan.
-1. **Dürüstlük + deneme katmanı:** vision şemasına yapısal alanlar (closure,
-   collar, straps, cupSeams, sleeveHead...) + motor çizemediğini KULLANICIYA
-   söyleyen missingFeatures çıktısı (web'de görünür).
-2. **Düğme patı** (en sık + en kolay geometri) — Closure::FrontButton post-pass.
-   NOT: yarım kalmış bir strapless+pat denemesi 15 Tem'de geri alındı (revert);
-   tasarım notları bu commit'in konuşma geçmişinde, mimari karar: makePrincessPieces'e
-   opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur.
-3. **Puf/büzgülü kol başı** (balon kol var; cap büzgüsü + yükseltilmiş cap).
-4. **Strapless/bustier** (halter "frame shift" deseni şablon; kup ayrımı sonrası).
-5. **Yaka ailesi** (stand collar önce — Buttoned Blouse fotoğrafı; sonra flat/shirt collar).
-6. **Kup ayrımı** (upper/lower cup, dikiş uzunluğu eşitliği ölçülü) — en zor.
-7. Sonrası etikete göre: pile, fiyonk, arka detaylar, asimetrik kapanma...
+## LOOP KUYRUĞU (sıra Damla onaylı: frekans × zorluk; 15 loop, 2026-07-15 akşam)
+
+Her loop = TEK oturum/agent, taze context. Bir loop bitmeden sıradaki başlamaz.
+Loop bitince context TEMİZLENİR (agent ölür / session clear), sıradaki loop SIFIR
+context'le açılır; loop'lar arası hafıza taşınmaz — tek taşıyıcı bu dosya + repo.
+Yapan agent kendi işini "oldu" diye onaylayamaz; denetim loop'ları (A/B/C) AYRI,
+kodu yazmamış bir agent tarafından koşulur — sadece çıktıya, benchmark sayısına
+ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
+
+### Her loop'un protokolü (istisnasız)
+- GİRDİ: önce CLAUDE.md, sonra bu dosya, sonra kendi satırındaki referanslar. Başka bir şey okuma.
+- İŞ: sadece kendi öğesi. Kuyruktan ikinci öğe almak YASAK (context şişer, kalite düşer).
+- ARAŞTIRMA (dağarcık loop'ları): öğenin couture (Dior/Chanel/YSL/Prada/Armani) +
+  high street (Stradivarius/Bershka) yapımı + Aldrich/Armstrong/M&S formülü. Formül buradan çıkar.
+- KANIT: golden byte-identity + truing 0.00mm + ctest tamamı + web-fuzz 0 fail +
+  render-pages strip + **58'lik benchmark koşusu, sayı aşağıdaki tabloya işlenir**.
+- KAPANIŞ: tabloyu + Durum satırını güncelle, CLAUDE.md status, devlog/linkedin malzeme,
+  commit + push, deploy (?v bump + git add web/ ALL + subtree gh-pages).
+- Blokör çıkarsa (veri erişimi, Damla kararı gereken şey): durur, tabloya "BLOKE: neden" yazar, push'lar.
+
+### Kuyruk
+| # | Loop | İş | Durum | 58'de |
+|---|------|-----|-------|-------|
+| 0 | Etiketleme + sayaç | photos-1024'teki her foto için ground-truth manifest (garment, dağarcık-içi alanlar, dağarcık-DIŞI öğeler; Slowly ekranı 13.30.50 + çanta 13.51.19 + kalıp-çizimleri = doğru-red testleri). tools/ altında ölçüm scripti: zincirden geçir → tam kalıp / eksik öğeli / yanlış. İLK GERÇEK SAYI buradan. | bekliyor | — |
+| 1 | Vision köprüsü | worker şemasına yapısal alanlar: closure, collar, straps, cupSeams, sleeveHead, gathering, outOfVocab[] — serbest metin details ölür, alan doğar. worker.js:285. Wrangler redeploy gerekir → Damla'ya not. | bekliyor | — |
+| 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | bekliyor | — |
+| 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | bekliyor | — |
+| 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
+| 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | bekliyor | — |
+| 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | bekliyor | — |
+| 7 | Stand/mock yaka | Yeni parça ailesi (yaka parçası + yaka oyuğu eşleşme ölçüsü). Referans: Buttoned Blouse fotoğrafı + Bugra Locket Top. | bekliyor | — |
+| 8 | Flat/shirt yaka | Stand üstüne ikinci yaka tipi; parça ailesi genelleşir. | bekliyor | — |
+| 9 | DENETİM B | Taze agent, 6-8 için Denetim A protokolü + tam 58 ara koşusu. %80 eşiğine mesafe rapora. | bekliyor | — |
+| 10 | Strapless/bustier | Halter "frame shift" deseni şablon. Bugra Plain Bustier Dress (bugra-ref/) birebir kıyas hakemi. | bekliyor | — |
+| 11 | Kup ayrımı temeli | Upper/lower cup, dikiş uzunluğu eşitliği ÖLÇÜLÜ (truing kapsamına girer). | bekliyor | — |
+| 12 | Korse/bustier tamamlama | Kup + strapless + pat birleşimi; Bugra Buttoned Corset Bustier hakem. EN ZOR — taşarsa tek seferlik ek loop açılır, kuyruğa yazılır. | bekliyor | — |
+| 13 | DENETİM C | Adversarial: 10-12'yi kırmaya çalışır (uç bedenler, vocab-sweep, truing sapması avı, golden diff). | bekliyor | — |
+| 14 | Konsolidasyon | Etiket manifestindeki kalan uzun kuyruk (pile, fiyonk, arka detaylar, asimetrik kapanma) frekansa göre; tam 58 final koşusu; dürüst final rapor reports/ altına. 58/58 değilse kalan liste + yeni kuyruk önerisi. | bekliyor | — |
+
+### Sayı serisi (her loop sonunda buraya bir satır)
+- 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
 
 ## HER OTURUMUN KAPANIŞI
 - benchmark sayısını ölç, bu dosyanın Durum satırını güncelle.
