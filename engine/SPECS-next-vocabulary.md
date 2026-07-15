@@ -55,6 +55,19 @@ line at the underarm level for a small amount"), so no bound-armhole gap in v1.
   piece length = capHeight + 19, hem half-width = 0.40 x width − 6 (the A/B inset),
   hem edge a shallow cubic sagging ~8 mm at center (proposed).
 - Underarm seam survives (length ≈ 19 mm) so construction stays the standard set-in flow.
+
+> **v1 ATTEMPT 2026-07-15 — REVERTED, spec is incomplete.** Building it as written
+> exposed a geometric contradiction: to length-match the FULL armhole at biceps
+> width, the cap curve MUST be tall (measured capHeight 124-178 mm → total piece
+> 143-235 mm), because a wide chord needs a tall cap to reach the armhole length.
+> That is a *short set-in sleeve*, not the flat ~90-114 mm shoulder-cover a cap
+> sleeve is. You cannot have all three of {biceps-wide, spans the full armhole,
+> flat short cap} — the sources' 89-114 mm finished length assumes the sleeve does
+> NOT span the full armhole. So the REAL cap sleeve is the v2 path the spec lists:
+> open/bound lower armhole (the sleeve covers only the top of the armscye, the
+> underarm is bound like a sleeveless edge — reuse `halterBinding`). v1-as-written
+> is not shippable; do v2 (bound lower armhole) or drop cap sleeve. Keeping the
+> engine clean beat shipping a 235 mm "cap".
 - v2 option (not v1): open underarm + bias-bound lower armhole (In the Folds binding
   method), reusing the halterBinding strip generator.
 
