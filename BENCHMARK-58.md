@@ -84,7 +84,8 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 13 | DENETİM C | Adversarial: 10-12'yi kırmaya çalışır (uç bedenler, vocab-sweep, truing sapması avı, golden diff). | bekliyor | — |
 | 14 | Konsolidasyon | Etiket manifestindeki kalan uzun kuyruk (pile, fiyonk, arka detaylar, asimetrik kapanma) frekansa göre; tam 58 final koşusu; dürüst final rapor reports/ altına. 58/58 değilse kalan liste + yeni kuyruk önerisi. | bekliyor | — |
 
-### Sayı serisi (her loop sonunda buraya bir satır)
+### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
+benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
 
 ## HER OTURUMUN KAPANIŞI
