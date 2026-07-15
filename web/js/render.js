@@ -1,9 +1,10 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=51';
-import { getLang, t } from './i18n.js?v=51';
-import { GUIDE_TR } from './guide-tr.js?v=51';
-import { GLOSSARY } from './glossary.js?v=51';
+import { fabricAdvice } from './fabrics.js?v=52';
+import { getLang, t } from './i18n.js?v=52';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=52';
+import { GUIDE_TR } from './guide-tr.js?v=52';
+import { GLOSSARY } from './glossary.js?v=52';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip) — a beginner can learn a word without leaving
@@ -40,7 +41,7 @@ const PREVIEW_SCALE = 0.28;
 
 // pathD/bounds live in sheet.js (the pure print-geometry module) — one truth,
 // one place; imported and re-exported so existing imports keep working.
-import { pathD, bounds } from './sheet.js?v=51';
+import { pathD, bounds } from './sheet.js?v=52';
 export { pathD, bounds };
 
 export function pieceCard(piece) {
@@ -126,6 +127,11 @@ export function renderResult(container, result) {
   }
   container.appendChild(meta);
 
+  // Honesty layer: the vision saw elements the engine cannot draft yet. Say so
+  // out loud — the closest derivative given + what to add by hand. Silent
+  // fallback is the trust killer this card removes.
+  appendMissing(container, result.seen);
+
   const grid = document.createElement('div');
   grid.className = 'pieces-grid';
   for (const piece of p.pieces) grid.appendChild(pieceCard(piece));
@@ -160,6 +166,47 @@ export function renderResult(container, result) {
   container.appendChild(ol);
 
   appendFabricAdvice(container, p.fabricAdviceKey, result.photoFabric || null);
+}
+
+// The honest "what I saw vs what the pattern draws" card. Only appears when the
+// vision actually saw something the engine could not draft. vişne #8f2038 to
+// match the couture brand voice — plain, no invented ornament.
+function appendMissing(container, seen) {
+  const lang = getLang() === 'tr' ? 'tr' : 'en';
+  const items = missingFeatures(seen, lang);
+  if (!items.length) return;
+
+  const card = document.createElement('div');
+  card.className = 'missing-card';
+  const title = document.createElement('h2');
+  title.className = 'missing-title';
+  title.textContent = MISSING_STRINGS.heading[lang];
+  card.appendChild(title);
+  const intro = document.createElement('p');
+  intro.className = 'missing-intro';
+  intro.textContent = MISSING_STRINGS.intro[lang];
+  card.appendChild(intro);
+
+  const list = document.createElement('ul');
+  list.className = 'missing-list';
+  for (const it of items) {
+    const li = document.createElement('li');
+    const label = document.createElement('span');
+    label.className = 'missing-label';
+    label.textContent = it.label;
+    li.appendChild(label);
+    const detail = document.createElement('span');
+    detail.className = 'missing-detail';
+    if (it.applied) {
+      detail.textContent = ` — ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`;
+    } else {
+      detail.textContent = ` — ${MISSING_STRINGS.notInPattern[lang]}`;
+    }
+    li.appendChild(detail);
+    list.appendChild(li);
+  }
+  card.appendChild(list);
+  container.appendChild(card);
 }
 
 // Verified-DB aliases for the vision's fabric vocabulary.

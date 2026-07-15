@@ -4,8 +4,9 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner } from './sheet.js?v=51';
-import { getLang } from './i18n.js?v=51';
+import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner } from './sheet.js?v=52';
+import { getLang } from './i18n.js?v=52';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=52';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -103,6 +104,23 @@ function el(tag, className, text) {
   return node;
 }
 
+// The honest "seen vs drawn" block on the print cover — same content as the
+// on-screen card, drawn as plain cover text so the person cutting the pattern
+// reads exactly what was approximated. Silent on a clean draft.
+function appendMissingToCover(cover, seen, lang) {
+  const items = missingFeatures(seen, lang);
+  if (!items.length) return;
+  cover.appendChild(el('div', 'print-sub print-missing-head', MISSING_STRINGS.heading[lang]));
+  const list = el('ul', 'print-map');
+  for (const it of items) {
+    const tail = it.applied
+      ? ` — ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`
+      : ` — ${MISSING_STRINGS.notInPattern[lang]}`;
+    list.appendChild(el('li', '', it.label + tail));
+  }
+  cover.appendChild(list);
+}
+
 // A plain rectangle strip (ruffle tiers, halter bias binding) never earns
 // pattern paper: its cut note fully describes it, so it goes on the cover as
 // a chalk-and-ruler line instead of eating a row of near-empty sheets.
@@ -175,6 +193,10 @@ function buildPrintPages(result, root, sizeLabel) {
     }
     cover.appendChild(chalkMap);
   }
+  // Honesty on paper: whoever cuts this must read what the vision saw but the
+  // pattern could not draw, and the closest derivative given. Same single
+  // source (missing.js) as the on-screen card.
+  appendMissingToCover(cover, result.seen, lang);
   cover.appendChild(el('div', 'print-sub', P.assemble(sheets.length, layout.cols)[lang]));
   cover.appendChild(calibrationSVG());
   root.appendChild(cover);

@@ -377,6 +377,15 @@ S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi do�
 **Görsel:** solda fotoğraf + vision çıktısı ("front button placket" yazısı vurgulu), sağda çizilen kalıp — düğme yok. Alt yazı: "gören göz ≠ çizen el".
 **Format:** reel
 
+## Reel — ürünüme yalan söyletmeyi bıraktım (loop 2)
+
+**Hook (ilk 2 sn):** "Ürünüm çizemediği şeyi sessizce en yakınıyla değiştirip sanki senin istediğini yapmış gibi davranıyordu. Bugün ona sustuğu yeri söylettim."
+
+**Anlatı (~45 sn):** Motorum bir fotoğraftan dikiş kalıbı çıkarıyor. Ama bazı şeyleri henüz çizemiyor — düğme patı, ayrı yaka parçası, fırfırlı askı, korsenin kup dikişi. Eski hâlinde ne yapıyordu biliyor musunuz? Çizemediği zaman en yakın bloğu SESSİZCE veriyordu. Sen düğmeli bir bluz fotoğrafı yüklüyorsun, o düğmesiz düz bir kenar çiziyor ve tek kelime etmiyor. En büyük güven kıran buydu. Bu oturumda dürüstlük katmanı ekledim, tek bir kaynaktan: motor çizemediği her öğe için ÖNCE en yakın türevini deniyor — düğme yerine düz dikişli açıklık, puf istenirse balon kol, korse yerine pensli göğüs — SONRA sana açıkça yazıyor: "bunu gördüm, kalıpta çizemedim, sana en yakın şunu verdim, kalanını elle şöyle ekle." Hem ekranda vişne bir kartta, hem de baskı kapağında — çünkü kalıbı kesen kişi de bunu görmeli. Motorun C++ koduna hiç dokunmadım; bu tamamen görünürlük katmanı, o yüzden eski kalıpların tek biti bile oynamadı. Ders: bir ürün eksiğini saklarsa kullanıcı onu güvensizlik olarak yaşar; aynı eksiği açıkça söylerse dürüstlük olarak yaşar. Aynı eksik, iki farklı ürün.
+
+**Görsel:** solda fotoğraf (düğmeli bluz), sağda kalıp + altında vişne kart: "gördüm: düğme patı — verilen en yakın: düz dikişli açıklık, düğmeleri elle işaretle". Alt yazı: "sessiz fallback öldü".
+**Format:** reel
+
 ## Reel — kendi güvenlik duvarıma takıldım
 
 **Hook (ilk 2 sn):** "Testim 19 dakika sürdü. Suçlu: kendi yazdığım güvenlik önlemi."
