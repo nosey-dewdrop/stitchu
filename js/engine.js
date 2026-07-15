@@ -11,6 +11,12 @@ export function tieClosureValue(spec) {
   return TIE_PLACEMENT[spec && spec.tieClosure] || 0;
 }
 
+// SleeveCap enum (must match engine/src/measurements.hpp order). 0 = Plain.
+const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2 };
+export function sleeveCapValue(spec) {
+  return SLEEVE_CAP[spec && spec.sleeveCap] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -38,6 +44,7 @@ export async function grade(spec, fromLabel, toLabel) {
     fromLabel, toLabel,
     spec.frontPlacket === true,
     tieClosureValue(spec), // Loop 4b: fabric ties / sash / bow
+    sleeveCapValue(spec),  // Loop 6: gathered/puff sleeve head
   );
   return JSON.parse(json);
 }
@@ -56,6 +63,7 @@ export async function draft(spec, measurements) {
     measurements.upperBust || 0, // optional full-bust adjustment
     spec.frontPlacket === true,  // Loop 3: front button placket
     tieClosureValue(spec),       // Loop 4b: fabric ties / sash / bow
+    sleeveCapValue(spec),        // Loop 6: gathered/puff sleeve head
   );
   return JSON.parse(json);
 }
