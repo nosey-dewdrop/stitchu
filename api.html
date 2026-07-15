@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>stitchu API — one endpoint, real patterns, no AI bill</title>
+<meta name="description" content="The stitchu drafting engine behind one endpoint. POST /api/draft turns measurements + a garment spec into a true-scale, measurement-fitted sewing pattern. No per-call AI cost.">
+<link rel="icon" href="assets/buttons/b6.png">
+<style>
+  :root{--visne:#8f2038}
+  *{box-sizing:border-box}
+  body{margin:0;background:#5a1020;color:#fff;font-family:'Helvetica Neue',Arial,sans-serif;
+    background-image:radial-gradient(circle at 30% 10%,rgba(143,32,56,.5),transparent 60%);min-height:100vh}
+  a{color:#ffd9e2}
+  .wrap{max-width:900px;margin:0 auto;padding:48px 28px 80px}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;letter-spacing:1px;opacity:.85}
+  .top a{text-decoration:none;color:#fff}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:40px;margin:40px 0 8px;line-height:1.1}
+  .sub{font-size:16px;opacity:.94;max-width:56ch;line-height:1.5}
+  .tag{display:inline-block;margin-top:20px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
+    color:#ffd9e2;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 15px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:24px;margin:48px 0 14px}
+  pre{background:#2a0810;border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:18px 20px;overflow:auto;
+    font-family:'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.6;color:#ffe7ee}
+  .k{color:#ff9db0}.s{color:#c8f0c8}
+  .cards{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}
+  .card{background:rgba(42,8,16,.6);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:20px;flex:1;min-width:220px}
+  .card h3{font-family:'Didot',Georgia,serif;font-weight:400;font-size:18px;margin:0 0 8px}
+  .card p{font-size:13.5px;line-height:1.5;margin:0;opacity:.92}
+  form{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+  input{padding:13px 16px;border:none;border-radius:4px;font-size:14px;width:280px;max-width:80vw}
+  button{padding:13px 26px;border:none;border-radius:4px;background:#fff;color:#5a1020;font-size:14px;font-weight:700;cursor:pointer}
+  button:hover{background:#ffd9e2}
+  .msg{min-height:20px;font-size:13px;margin-top:12px;opacity:.95}
+  footer{margin-top:64px;font-size:12px;opacity:.75;letter-spacing:1px}
+  footer a{color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="index.html">← stitchu</a>
+    <span><a href="index.html">home</a> · <a href="privacy.html">privacy</a></span>
+  </div>
+
+  <h1>One endpoint. Real patterns. No AI bill.</h1>
+  <p class="sub">The same C++ drafting engine stitchu runs in the browser, behind one HTTP endpoint. Send seven measurements and a garment spec; get back a true-scale, measurement-fitted sewing pattern — pieces, a construction guide, and a fabric estimate. The engine does the drafting, so there is <b>no per-call AI cost</b>.</p>
+  <span class="tag">POST /api/draft · zero marginal cost</span>
+
+  <h2>Request</h2>
+  <pre>curl https://stitchu-api.&lt;account&gt;.workers.dev/api/draft \
+  -H <span class="s">'content-type: application/json'</span> \
+  -d <span class="s">'{
+    "spec": { "garment": <span class="k">"dress"</span>, "neckline": <span class="k">"sweetheart"</span>, "ruffle": <span class="k">"tiered"</span> },
+    "measurements": { "bust": 92, "waist": 74, "hip": 98,
+                      "shoulder": 39, "backLength": 42, "armLength": 58, "neck": 36 }
+  }'</span></pre>
+
+  <h2>Response</h2>
+  <pre>{
+  <span class="k">"apiVersion"</span>: "1",
+  <span class="k">"pattern"</span>: {
+    <span class="k">"garment"</span>: "sweetheart dress",
+    <span class="k">"fabricMeters140"</span>: 7.0,
+    <span class="k">"guideSteps"</span>: [ "Print and check the 3 cm calibration square…", … ],
+    <span class="k">"pieces"</span>: [
+      { <span class="k">"name"</span>: "Bodice Center Front", <span class="k">"cutInstruction"</span>: "cut 1 on fold",
+        <span class="k">"commands"</span>: [ {"type":"move","x":0,"y":8}, {"type":"curve","x":61,"y":0,"cp1x":34,…} ],
+        <span class="k">"seamAllowance"</span>: 15 }
+    ]
+  }
+}</pre>
+  <p class="sub" style="font-size:13.5px">Coordinates are in millimetres; every point is a flat key on the command. An impossible body or an unsewable combination returns <b>422 <code>undraftable</code></b> with the reasons — the API never returns a pattern that would waste a customer's fabric.</p>
+
+  <div class="cards">
+    <div class="card"><h3>No LLM cost</h3><p>The drafting is our own engine, not a model call. Your margin doesn't erode per request.</p></div>
+    <div class="card"><h3>Proven output</h3><p>Every pattern passes the same published accuracy benchmark — seams match, sleeves fit, proportions hold.</p></div>
+    <div class="card"><h3>Private by design</h3><p>Send only measurements; nothing about your customer's body is stored or logged.</p></div>
+  </div>
+
+  <h2>Get early API access</h2>
+  <p class="sub">Studios, made-to-measure brands and pattern shops — tell us your volume and we'll set you up.</p>
+  <form onsubmit="return apiWaitlist(event)">
+    <input type="email" id="apiemail" placeholder="you@studio.com" required>
+    <button type="submit">Request access</button>
+  </form>
+  <p class="msg" id="apimsg"></p>
+
+  <footer>stitchu · a pattern-making engine · <a href="index.html">stitchu.dev</a></footer>
+</div>
+
+<script>
+const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
+async function apiWaitlist(e){
+  e.preventDefault();
+  const email = document.getElementById('apiemail').value.trim();
+  const msg = document.getElementById('apimsg');
+  msg.style.color='#fff'; msg.textContent='Sending…';
+  try{
+    const r = await fetch(API_BASE + '/api/waitlist', {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify({ email, note: 'api-page' })
+    });
+    if(r.ok){ msg.textContent='You’re on the list — we’ll be in touch.'; document.getElementById('apiemail').value=''; }
+    else if(r.status===429){ msg.textContent='One moment — please try again shortly.'; }
+    else { msg.textContent='Could not save that — email hello@ instead?'; }
+  }catch(_){ msg.textContent='Could not reach the server — email hello@ instead?'; }
+  return false;
+}
+</script>
+</body>
+</html>
