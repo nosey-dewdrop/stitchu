@@ -430,7 +430,19 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double underbust = std::max(m.bustMM() - underbustOffset, m.waistMM());
 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
-    const double armholeY = backLength * armholeDepthFactor + shoulderDrop;
+    double armholeY = backLength * armholeDepthFactor + shoulderDrop;
+    // Deepen the armscye when the arm needs it. The torso-only depth
+    // (backLength * 0.44) leaves the armhole too shallow to seat a fuller arm on
+    // a short-backed body — the set-in sleeve then can't ease its biceps into
+    // the armhole and the draft is refused. A real pattern-maker lowers the
+    // underarm point for a fuller arm. The armhole circumference must be able to
+    // accept the biceps line (bust * bicepsRatio); floor the armhole depth so it
+    // does. armholeLength runs roughly linear in depth, so scale the floor to
+    // the biceps and clamp it so the underarm never drops past the waist.
+    const double bicepsGirth = m.bustMM() * BodiceBlock::bicepsRatioForArmscye;
+    const double armholeDepthForArm = bicepsGirth * armscyeArmFactor + shoulderDrop;
+    const double armholeDepthCap = backLength * armscyeMaxDepthShare + shoulderDrop;
+    armholeY = std::min(armholeDepthCap, std::max(armholeY, armholeDepthForArm));
 
     // Empire: the seam sits just under the bust and the target girth is the
     // underbust line, not the waist. Both halves share the side seam level.

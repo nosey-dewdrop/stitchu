@@ -65,6 +65,15 @@ inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitWaistEase 
 inline constexpr double empireDrop = 60;
 inline constexpr double empireBalanceDrop = 15; // CF drop at underbust (M&S balance, reduced)
 inline constexpr double armholeDepthFactor = 0.44;
+// Armscye-for-arm floor: the armhole must be deep enough to seat the biceps on
+// a short-backed, fuller-armed body (else the set-in sleeve can't ease in).
+// bicepsRatioForArmscye mirrors the sleeve's biceps ratio (bare arm, no ease);
+// armscyeArmFactor sets how much armhole depth one unit of biceps girth needs
+// (tuned so the sleeve cap ease lands in 1-9%); armscyeMaxDepthShare clamps the
+// underarm above the waist so deepening never eats the whole bodice.
+inline constexpr double bicepsRatioForArmscye = 0.30;
+inline constexpr double armscyeArmFactor = 0.60;
+inline constexpr double armscyeMaxDepthShare = 0.72;
 inline constexpr double backNeckWidthFactor = 0.197;
 inline constexpr double frontNeckWidthFactor = 0.17;
 inline constexpr double backNeckCutoutFactor = 0.06;

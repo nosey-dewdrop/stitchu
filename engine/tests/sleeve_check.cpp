@@ -36,6 +36,14 @@ static const std::vector<Body> BODIES = {
     {160, 128, 168, 52, 55, 75, 55, "max"},
     {92, 74, 98, 39, 42, 58, 36, "mid"},
     {130, 104, 120, 34, 46, 60, 40, "big-bust narrow-shoulder"},
+    // DECOUPLED corner: fuller bust on a SHORT back — bust and backLength do not
+    // scale together (real petite-full figures). The armhole is otherwise too
+    // shallow to seat the arm; these caught the over-ease regression the
+    // balanced bodies missed. Keep them so it can never come back.
+    {130, 110, 138, 50, 30, 60, 44, "petite-torso fuller-bust"},
+    {100, 80, 104, 44, 32, 58, 38, "mid short-back"},
+    {110, 88, 108, 40, 34, 56, 38, "full petite"},
+    {140, 112, 150, 52, 28, 60, 45, "extreme short-back"},
 };
 
 int main() {
