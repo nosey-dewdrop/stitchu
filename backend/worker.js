@@ -245,7 +245,7 @@ async function handleAnalyze(request, env) {
     return jsonResponse({ error: 'Invalid request' }, 400);
   }
 
-  const prompt = `Analyze the garment in this photo for sewing pattern drafting. Respond with ONLY a JSON object, no prose:
+  const prompt = `You are a couture pattern-cutter reading a garment for sewing-pattern drafting. The photo is often a RUNWAY or EDITORIAL shot — a model in a dramatic pose, strong styling, theatrical lighting, a busy background, accessories, a train or a cape. Read only the GARMENT's construction; ignore the pose, the model, the lighting, the background, the hair/jewellery, and any styling drama. A cape, train, veil, gloves or overlay is STYLING, not the base garment — draft the dress/top/skirt underneath. Respond with ONLY a JSON object, no prose:
 {"garment": "skirt" | "dress" | "top" | "trousers" | "other",
  "neckline": "crew" | "scoop" | "vNeck" | "square" | "boat" | "sweetheart" | "halter" | null (sweetheart = heart-shaped decollete: a notch/dip at center front with rounded lobes arcing over the bust; halter = straps rise from the front and wrap/tie behind the NECK, shoulders fully bare — a halter is always sleeveless, report sleeveStyle "none"),
  "sleeveStyle": "none" | "straight" | "balloon" | null (balloon covers puff/bishop/gathered sleeves),
@@ -263,7 +263,7 @@ async function handleAnalyze(request, env) {
 Mapping rules — READ CAREFULLY, "garment" is the most important field:
 - ALWAYS map to the closest of skirt / dress / top. If ANYTHING covers the torso and hangs from the shoulders (a gown, a robe, a kaftan, a qipao/cheongsam, a wrap dress, a tunic, a jumpsuit's top half, a draped or asymmetric one-piece), it is a "dress" (or a "top" if it clearly ends at/above the hip). If it covers the lower body only, it is a "skirt".
 - "garment" must NEVER be null. Use "other" ONLY for things a dress/skirt/top pattern truly cannot start from: trousers/pants, shorts, structured tailored coats/blazers, swimwear, and accessories. When unsure between "other" and "dress", ALWAYS choose "dress" — a wearer can adjust a close silhouette, but "other" gives them nothing.
-- If the garment is MORE complex than these fields allow (couture, layered, corseted, heavily draped, a wedding gown), do NOT give up — return the CLOSEST base silhouette (e.g. corseted gown -> dress + princess + natural + the closest skirt style + maxi) and say exactly what you approximated in "details".`;
+- If the garment is MORE complex than these fields allow (couture, layered, corseted, heavily draped, a wedding gown), do NOT give up — return the CLOSEST base silhouette and say exactly what you approximated in "details". Couture silhouette map: ball gown / princess gown -> dress + princess + natural + gathered or halfCircle + maxi; mermaid / fishtail / column / sheath gown -> dress + princess + natural + straight + maxi; A-line gown -> dress + aLine + maxi; fit-and-flare -> dress + natural + aLine; peplum or corseted bodice -> the bodice's shaping + the closest skirt. A strapless bodice with no visible neckline detail -> neckline null. A one-shoulder or asymmetric neck -> pick the closest of the seven and note it in "details".`;
 
   const anthropicBody = {
     model: MODEL,
