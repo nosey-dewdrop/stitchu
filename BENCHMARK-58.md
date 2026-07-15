@@ -9,10 +9,12 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum (Loop 2 sonrası): **6/54 son ÖLÇÜLEN değer** — Loop 2'de sayı BLOKE (Anthropic
-kredisi bitik, canlı vision 400). Loop 2 ürün sayısı değil DÜRÜSTLÜK katmanı ekledi:
-motor çizemediği öğeyi en-yakın-türevle verir + ekranda ve print kapağında açıkça söyler
-(tek kaynak web/js/missing.js, EN+TR). Önceki ölçüm (Loop 1) altta:
+Durum (2026-07-15 manuel ölçüm): **6/54 TAM KALIP** — canlı Opus zinciri kredi bitik
+olduğu için 59 foto Claude aboneliği üstünden EL İLE (worker prompt kurallarıyla)
+okundu: 6 TAM + 48 eksik öğeli + 0 yanlış; doğru-red 5/5. TAM'lar Loop 0/1'le aynı
+(Heloise, Hallie tank, Boat Neck Top×4). WRONG 0 → canlı zincirin 10 WRONG'u saf vision
+varyansıymış (insan gözü yaka sınırını doğru okuyunca sıfırlandı). Bu bir el-ölçümü;
+kredi gelince tek FAST koşuyla canlı sayı teyit edilecek, beklenti 6/54. Önceki durumlar altta:
 Durum: **6/54 TAM KALIP (ÖLÇÜLDÜ, 2026-07-15 Loop 1 — Loop 0'la AYNI)** — motor
 henüz yapısal alanları ÇİZMİYOR, o yüzden FULL değişmiyor ve bu NORMAL. Loop 1'in
 ölçüsü ürün metriği değil ŞEMA KÖPRÜSÜ: **51/69 dağarcık-dışı öğe artık yeni yapısal
@@ -105,6 +107,19 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
+- 2026-07-15 MANUEL ÖLÇÜM (canlı zincir DEĞİL, Anthropic kredisi bitik olduğu için
+  59 foto Claude aboneliği üstünden el ile worker prompt kurallarıyla okundu):
+  **6/54 TAM** + 48 eksik öğeli + 0 yanlış; doğru-red **5/5** (Slowly×2 + çanta +
+  talimat sayfası + kalıp çizimi hepsi reddedildi). TAM'lar Loop 0/1'le AYNI: Heloise
+  (boat princess fit&flare denim), Hallie yeşil tank mini, Boat Neck Top (4 foto).
+  Kalan 48 hepsi MISSING — motor gövdeyi çiziyor, çizemediği: düğme/asimetrik pat (19
+  foto), bağ/kurdele/drawstring kapanma (13), yaka (peter pan/scallop/pointed/flat, 8),
+  roba/shirring/gathered panel (7), cap/puf kol başı (7), açık/bağlı sırt (5), kup/korse
+  (1). WRONG 0 = canlı zincirin 10 WRONG'u SAF VISION VARYANSIYDI (halter/boat/square
+  belirsiz yaka); insan gözü o sınırı doğru okuyunca WRONG sıfırlandı → motor kusuru
+  değil vision belirsizliği KANITLANDI. NOT: bu sayı canlı Opus zinciriyle birebir
+  aynı olmayabilir (model≠ben, vision varyansı gerçek); kredi gelince tek FAST koşuyla
+  (~90sn) canlı sayı teyit edilecek. Beklenti aynı: 6/54.
 - 2026-07-15 Loop 2: **ÖLÇÜLEMEDİ — BLOKE: Anthropic kredisi bitik** (canlı vision
   çağrısı 400 döner, tam kalıp sayısı ölçülemez). Loop 2 ürün metriği DEĞİL dürüstlük
   katmanı: motor çizemediği her öğe için EN-YAKIN-TÜREV verilir + kullanıcıya (ekran +
