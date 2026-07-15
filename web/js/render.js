@@ -1,8 +1,40 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=38';
-import { getLang, t } from './i18n.js?v=38';
-import { GUIDE_TR } from './guide-tr.js?v=38';
+import { fabricAdvice } from './fabrics.js?v=40';
+import { getLang, t } from './i18n.js?v=40';
+import { GUIDE_TR } from './guide-tr.js?v=40';
+import { GLOSSARY } from './glossary.js?v=40';
+
+// Turn plain text into a node where known sewing terms are tappable (dotted
+// underline + a native tooltip) — a beginner can learn a word without leaving
+// the step. Case-insensitive, whole-word, first occurrence per term per line.
+const GLOSSARY_RE = new RegExp('\\b(' + Object.keys(GLOSSARY).join('|') + ')\\b', 'i');
+function withGlossary(text) {
+  const lang = getLang() === 'tr' ? 'tr' : 'en';
+  const frag = document.createDocumentFragment();
+  let rest = text;
+  const usedTerms = new Set();
+  while (rest.length) {
+    const m = GLOSSARY_RE.exec(rest);
+    if (!m) { frag.appendChild(document.createTextNode(rest)); break; }
+    const key = m[1].toLowerCase();
+    if (usedTerms.has(key)) {
+      frag.appendChild(document.createTextNode(rest.slice(0, m.index + m[1].length)));
+      rest = rest.slice(m.index + m[1].length);
+      continue;
+    }
+    usedTerms.add(key);
+    frag.appendChild(document.createTextNode(rest.slice(0, m.index)));
+    const term = document.createElement('span');
+    term.className = 'gloss';
+    term.textContent = m[1];
+    term.title = GLOSSARY[key][lang];
+    term.setAttribute('tabindex', '0');
+    frag.appendChild(term);
+    rest = rest.slice(m.index + m[1].length);
+  }
+  return frag;
+}
 
 const PREVIEW_SCALE = 0.28;
 
@@ -146,7 +178,7 @@ export function renderResult(container, result) {
   ol.className = 'guide-list';
   for (const step of p.guideSteps) {
     const li = document.createElement('li');
-    li.textContent = tr ? (GUIDE_TR[step] || step) : step;
+    li.appendChild(withGlossary(tr ? (GUIDE_TR[step] || step) : step));
     ol.appendChild(li);
   }
   container.appendChild(ol);
