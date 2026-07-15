@@ -92,6 +92,9 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .piece-card .cut { color: var(--gray); }
 .guide-list { margin: 16px 0 0 0; padding-left: 22px; max-width: 640px; }
 .guide-list li { padding: 6px 0; font-size: 15px; }
+/* tap-to-learn sewing term: subtle dotted underline, tooltip on hover/focus */
+.gloss { border-bottom: 1px dotted var(--accent); cursor: help; }
+.gloss:hover, .gloss:focus { color: var(--accent); outline: none; }
 .issues-box { border: 1px dashed var(--thread-rose); border-radius: var(--radius); padding: 14px 16px; margin: 20px 0; max-width: 640px; font-size: var(--size-small); }
 
 /* closet */
