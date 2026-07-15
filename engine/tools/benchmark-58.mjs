@@ -76,6 +76,35 @@ function analyze(file) {
 // Same acceptance rule as web/js/analyze.js: skirt|dress|top proceeds, else rejected.
 const DRAFTABLE = ['skirt', 'dress', 'top'];
 
+// Engine vocabulary grows loop by loop: manifest oov terms the engine can NOW
+// draw are filtered out (each drawing loop appends its rule; the manifest itself
+// stays frozen ground truth). Module-scope so both classify() and the summary's
+// element-accuracy metric share ONE source of truth.
+const DRAWN_SINCE = [
+  // loop 3: front button placket, grown-on stand — symmetric front only
+  (t) => /placket|button front closure/i.test(t) && !/asymmetric|back|double|loop/i.test(t),
+  // loop 4b: simple applied fabric ties / sash / bow / tie-back closure, drawn
+  // as separate self-fabric strips + placement notch. A DRAWSTRING that
+  // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
+  (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
+         !/drawstring|gathered|shirr|smock/i.test(t),
+  // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine now raises +
+  // widens the cap and gathers the crown. Only the sleeve HEAD, and only the
+  // simple gather/puff. A "cap sleeve" is a SHORT-cap SHAPE (not a gathered
+  // head) → NOT drawn. A "drawstring gathered sleeve" needs a casing/channel →
+  // NOT drawn. Both of those stay honest/missing.
+  (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
+         !/cap sleeve|drawstring|shirr|smock|casing|channel/i.test(t),
+  // loop 7/8: the collar FAMILY — a separate collar piece, neck edge trued to
+  // the neckline: stand / mock / mandarin / flat / peter-pan / shirt collars,
+  // with a round / pointed / scalloped outer edge. A special FINISH the engine
+  // does NOT draft stays missing: a bias-bound neckline (a bound raw edge, no
+  // collar piece), a notched/sailor/lapel tailored collar. The phrase must name
+  // a collar (so a non-collar oov term never matches).
+  (t) => /collar/i.test(t) &&
+         !/bias-?bound|bound neckline|notch|sailor|lapel/i.test(t),
+];
+
 function classify(entry, spec) {
   if (entry.category === 'reject') {
     return DRAFTABLE.includes(spec.garment)
@@ -91,33 +120,6 @@ function classify(entry, spec) {
     if (!accepted.includes(got)) misses.push(`${field}=${JSON.stringify(got)} not in ${JSON.stringify(accepted)}`);
   }
   if (misses.length) return { cls: 'WRONG', why: misses.join('; ') };
-  // Engine vocabulary grows loop by loop: manifest oov terms the engine can NOW
-  // draw are filtered out here (each drawing loop appends its rule; the manifest
-  // itself stays frozen ground truth).
-  const DRAWN_SINCE = [
-    // loop 3: front button placket, grown-on stand — symmetric front only
-    (t) => /placket|button front closure/i.test(t) && !/asymmetric|back|double|loop/i.test(t),
-    // loop 4b: simple applied fabric ties / sash / bow / tie-back closure, drawn
-    // as separate self-fabric strips + placement notch. A DRAWSTRING that
-    // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
-    (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
-           !/drawstring|gathered|shirr|smock/i.test(t),
-    // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine now raises +
-    // widens the cap and gathers the crown. Only the sleeve HEAD, and only the
-    // simple gather/puff. A "cap sleeve" is a SHORT-cap SHAPE (not a gathered
-    // head) → NOT drawn. A "drawstring gathered sleeve" needs a casing/channel →
-    // NOT drawn. Both of those stay honest/missing.
-    (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
-           !/cap sleeve|drawstring|shirr|smock|casing|channel/i.test(t),
-    // loop 7/8: the collar FAMILY — a separate collar piece, neck edge trued to
-    // the neckline: stand / mock / mandarin / flat / peter-pan / shirt collars,
-    // with a round / pointed / scalloped outer edge. A special FINISH the engine
-    // does NOT draft stays missing: a bias-bound neckline (a bound raw edge, no
-    // collar piece), a notched/sailor/lapel tailored collar. The phrase must name
-    // a collar (so a non-collar oov term never matches).
-    (t) => /collar/i.test(t) &&
-           !/bias-?bound|bound neckline|notch|sailor|lapel/i.test(t),
-  ];
   const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
   const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));
   if (oovLeft.length) return { cls: 'MISSING', why: `engine cannot draw: ${oovLeft.join(', ')}` };
@@ -218,6 +220,33 @@ console.log('\n== SUMMARY ==');
 console.log(`garment photos: ${garmentTotal}  |  control (must-reject): ${rejectTotal}`);
 for (const [cls, n] of Object.entries(counts).sort()) console.log(`${cls.padEnd(11)} ${n}`);
 console.log(`\nFULL PATTERN: ${counts.FULL || 0}/${garmentTotal}   correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
+
+// ELEMENT ACCURACY (Metric Reform, 2026-07-16): the FULL-PATTERN count is the
+// upper target but it is CLUSTERED — one photo with 3 missing items stays
+// "not full" even when the engine adds one of them, so single-element loops
+// look like they moved nothing. The daily compass is element-level accuracy:
+// of EVERY out-of-vocab element across the set (with repeats = N), what
+// fraction can the engine NOW draw (D)? This does not punish clustering and
+// shows the engine's real progress loop by loop. Computed straight from the
+// frozen manifest oov[] against the same DRAWN_SINCE filter used above — zero
+// vision calls, so it is stable and reclassify-friendly.
+{
+  let N = 0, D = 0;
+  const remaining = {}; // canonical-ish remaining term -> photo count
+  for (const p of MANIFEST.photos) {
+    if (p.category !== 'garment') continue;
+    for (const t of (p.oov || [])) {
+      N += 1;
+      if (DRAWN_SINCE.some((fn) => fn(t))) D += 1;
+      else remaining[t] = (remaining[t] || 0) + 1;
+    }
+  }
+  console.log('\n== ELEMENT ACCURACY (daily compass) ==');
+  console.log(`engine now draws ${D}/${N} of all out-of-vocab elements (${(100 * D / N).toFixed(1)}%)`);
+  const top = Object.entries(remaining).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  console.log('top still-missing elements (freq):');
+  for (const [t, n] of top) console.log(`  ${String(n).padStart(2)}  ${t}`);
+}
 
 // Loop 1 SCHEMA-BRIDGE metric: how many out-of-vocab construction elements the
 // new structured fields captured. This is the number that should MOVE this loop

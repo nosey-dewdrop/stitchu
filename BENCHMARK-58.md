@@ -3,11 +3,35 @@
 Damla'nın kararı, 2026-07-15 akşam. Bu dosya sonraki TÜM oturumların anayasası.
 Önce CLAUDE.md'yi, sonra bunu oku. Rapor: reports/2026-07-15-stitchu-canli-zincir-testi-ve-register.md
 
-## TEK METRİK
-Damla'nın attığı 58 gerçek ürün fotoğrafından (benchmark-58/photos-1024/) kaçında
-zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az **%80 (47/58)**.
-Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
-yeniden ölçülür ve buraya işlenir.
+## İKİ METRİK (metrik reformu 2026-07-16)
+
+**1) FULL PATTERN (üst hedef)** — Damla'nın 58 gerçek ürün fotoğrafından
+(benchmark-58/photos-1024/) kaçında zincir **O ÜRÜNÜN tam kalıbını** veriyor.
+Hedef **58/58**; ara eşik en az **%80 (47/58)**. Bu üst hedeftir ama GÜNLÜK
+pusula DEĞİL — çünkü **kümelenme** var: bir foto 3-4 eksikli olabilir, motor
+o öğelerden birini eklese bile foto TAM olmaz, yani sayı OYNAMAZ. Loop 4b'den
+7'ye kadar motor tie + puf kol başı + tüm yaka ailesini kazandı ama FULL
+14/54'te dondu — çünkü eklenen her öğe hep BAŞKA eksiklerle kümelenmiş bir
+fotoya denk geldi. Yanlış pusula (Damla haklıydı, 15 Tem).
+
+**2) ELEMENT ACCURACY (günlük pusula, ASIL ilerleme metriği)** — 58 fotodaki
+TÜM dağarcık-dışı öğelerin (tekrarlarıyla = N) yüzde kaçını motor ARTIK çiziyor
+(D). **D/N**. Kümelenmeyi cezalandırmaz: bir fotoda 3 öğeden 1'ini çizebilir
+hale gelince bu metrik +1 alır, motorun gerçek ilerlemesini gösterir.
+Manifest oov[] üstünden benchmark-58.mjs'teki DRAWN_SINCE filtresiyle OFFLINE
+hesaplanır (sıfır vision çağrısı, stabil). **İlk ölçüm (2026-07-16): D/N =
+37/103 = %35.9.**
+
+Bu iki sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda
+İKİSİ birden ölçülür ve buraya işlenir. Günlük ilerleme = ELEMENT ACCURACY;
+başarı beyanı = FULL PATTERN %80.
+
+> **Metrik neden değişti — KÜMELENME.** 58-sette eksik öğeler tek foto başına
+> yığılıyor: 18 foto 1-eksik, 16 foto 2-eksik, 4 foto 3+-eksik. Tek-öğe
+> loop'ları (tie, puf, yaka) bu yüzden FULL sayısını oynatamadı — eklenen öğe
+> hep başka eksikle tıkalı fotoya denk geldi. FULL "kaç foto tam" sorusu doğru
+> ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
+> her tek-öğe kazanımını sayar → doğru günlük pusula.
 
 Durum: **14/54 TAM KALIP — Loop 7 (yaka ailesi) sonrası DEĞİŞMEDİ, DÜRÜST, 2026-07-16.**
 Motor artık bütün yaka ailesini (dik/mandarin/yatık/bebe/gömlek) AYRI PARÇA olarak çiziyor,
@@ -112,6 +136,35 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
   Loop'a bağlı olmayan kavram reel'leri devlog sonundaki "TECH/AI/CV STOĞU"
   bölümüne, başlıkta loop numarası olmadan.
 
+### SIRADAKİ LOOP KUYRUĞU — MARJİNAL KAZANÇ SIRASI (2026-07-16 reformu)
+
+Frekans + kümelenme analizinden (offline, manifest oov[] × DRAWN_SINCE).
+"Marjinal kazanç" = o öğe eklenince kaç foto FULL'a geçer (o öğenin TEK kalan
+eksik olduğu foto sayısı). Kümelenme yüzünden en sık eksik (placket 11 foto,
+gathering 10 foto) MUTLAKA en yüksek marjinal kazanç DEĞİL — çünkü çok-eksikli
+fotolara yığılıyorlar. Bu yüzden sıra marjinal kazanca göre kurulur:
+
+| Sıra | Öğe | Kaç fotoda eksik | Marjinal kazanç (FULL'a geçen) |
+|------|-----|:---:|:---:|
+| 1 | **drawstring/shirred gathering** (kanal + büzgü; babydoll/milkmaid boyun+büst) | 10 | **+6** |
+| 2 | **open-back cutout** (dairesel/düşük açık sırt oyuğu) | 5 | **+4** |
+| 3 | **peplum** (bele oturan + aşağı açılan pano) | 2 | **+2** |
+| 4 | **hem slit** (etek/elbise etek yırtmacı) | 2 | **+2** |
+| 5 | **bias-cut slip** (verev kesim askılı slip) | 1 | **+1** |
+| 6 | **shorts / two-piece** (Hallie set: şort + tank) | 1 | **+1** |
+| 7 | **drawstring/gathered sleeve** (kol kanalı) | 2 | +1 |
+| — | yoke (front/back/gathered/shirred) | 6 | 0 (hepsi kümelenmiş) |
+| — | cap sleeve (kısa cap şekli) | 5 | 0 (hepsi placket'le kümelenmiş) |
+| — | asymmetric/double-breasted placket | 11 | +1 (10'u kümelenmiş) |
+
+NOT — üst-hedef ile pusula ayrışması: gathering + open-back + peplum + hem-slit
+sırayla eklenirse FULL 14 → ~28 (**+14 foto**, %26→%52), ELEMENT ACCURACY ise
+her tek öğede de artar. Placket ve yoke frekansta yüksek ama marjinal kazançları
+düşük (çok-eksikli fotolara yığılı) → onlar SON, tek başlarına sayıyı oynatmaz;
+ancak bir fotonun İKİNCİ eksiği de kapanınca değer verir. Couture taksonomisi
+genişlemesi (pantolon/ceket blokları, korse/kup) ayrı üst-hedef; bu set ağırlıklı
+elbise/top/etek olduğu için gathering+open-back önce gelir.
+
 ### Kuyruk
 | # | Loop | İş | Durum | 58'de |
 |---|------|-----|-------|-------|
@@ -120,7 +173,10 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | 1b | Benchmark hız token'ı | Ölçüm 21sn/foto sürünüyor (kendi rate-limit sigortamız + KV eventual consistency). Worker'a gizli bypass header (wrangler secret, SADECE engine/tools/benchmark-58.mjs kullanır); gerçek kullanıcı limiti AYNEN kalır. 54 foto dakikalara iner — "her patch sonrası sayı" kuralı ucuzlar. | **bitti** (15 Tem Loop 1b; worker GERÇEK deploy v82498f3a; gizli header `x-sb-bench`, secret `BENCH_BYPASS` = wrangler secret + gitignore'lu benchmark-58/.benchmark-token; sabit-uzunluk XOR karşılaştırma, secret loglanmaz; token'lı=fuse atlanır, token'sız/yanlış=aynen 3/dk+15/gün; ~1.5sn/çağrı → 54 foto ~90sn vs eski 21sn/çağrı) | — (BLOKE aşağıda: kredi) |
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | **bitti** (15 Tem Loop 2; TEK KAYNAK web/js/missing.js: closure/collar/straps/cupSeams/sleeveHead/yoke/backDetail her biri için EN-YAKIN-TÜREV eşleme + "verilen en yakın X, şunu elle ekle" notu, EN+TR. Ekranda vişne kart (render.js appendMissing) + PRINT KAPAĞINDA aynı liste (print.js appendMissingToCover, vişne başlık). outOfVocab dedupe (fırfırlı askı iki kez gelmez). Motor C++ dokunulmadı → golden byte-identical; web-fuzz 19555/0; render-pages temiz; 5 temsili spec + 1 temiz-kontrol EN+TR doğru mesaj ürettti. Sayı BLOKE: kredi.) | — (sayı BLOKE: kredi) |
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | **bitti** (15 Tem Loop 3; PlacketBlock::apply keyhole-tarzı post-pass, spec.frontPlacket default false → golden BYTE-IDENTICAL 0.000000mm/23034 satır; GROWN-ON stand 18mm=düğme Ø (Aldrich/Armstrong araştırması, couture default), CF kenarı dışa taşınır + fold çizgisi CF'de + düğme CF üstünde + ilik 3mm dışa + zorunlu göğüs düğmesi; sadece ön parça büyür, yaka/facing DOKUNULMAZ; ctest 13/13, placket_check 4 gövde yeşil, precision 0.00mm, web-fuzz 19620/0 (65 pat draft'ı), vocab-sweep 37800/0, render-pages pat'lı dress+top strip'te çizili; missing.js ÖN düğme/pat'ı artık listelemez (seen.closureDrawn), arka/yan pat honest kalır) | **sayı BLOKE: kredi** (offline ön-kontrol: manifest'te 19 pat'lı fotodan 2 ARKA→honest kalır, 7 saf-ÖN-pat→artık tam kalıp adayı, 10 ön-pat+başka eksik→pat çizildi kalanı eksik) |
-| 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
+| 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor (DÜŞÜK ÖNCELİK: bu sette fermuar neredeyse görünmüyor — marjinal kazanç ~0) | — |
+| 9a | **Drawstring / shirred gathering** (YENİ 1. ÖNCELİK, marjinal +6) | Kanal (casing) + büzgü/shirring: babydoll/milkmaid boyun + büst panosu. En yüksek marjinal kazanç. Aldrich shirring + casing; couture (smock) + high-street (babydoll). | **bekliyor — SIRADAKİ** | — |
+| 9b | **Open-back cutout** (YENİ 2. ÖNCELİK, marjinal +4) | Dairesel/düşük açık sırt oyuğu + facing/binding kenarı. Tie-back'lerle birlikte (bağ zaten çizili, oyuk kalıyor). | bekliyor | — |
+| 9c | **Peplum + hem slit** (YENİ 3-4. ÖNCELİK, marjinal +2+2) | Peplum = bele oturan aşağı açılan pano (pointed hem dahil); hem slit = etek yırtmacı. İki küçük post-pass. | bekliyor | — |
 | 4b | Bağ/kurdele kapanması | Loop 0 verisinin 1 numarası (20 foto) — kuyruğa 15 Tem eklendi. Bağ/kuşak parçaları (dikdörtgen türev) + bağ konumu/payı; couture + high-street referans, Aldrich formülü. | **bitti** (15 Tem Loop 4b; TieBlock::apply placket-tarzı opt-in post-pass, spec.tieClosure=0 default → golden BYTE-IDENTICAL 0.000000mm/23034 satır; öz-kumaş dikdörtgen kuralı (2W+2·SA)×(L+2·SA), 4 placement: bel sash/fiyonk + tie-back + ön/boyun fiyonku + manşet; ayrı "cut 2" parça + gövde yerleşim işareti; DÜRÜST SINIR: drawstring-büzgülü (kanal+shirring) ÇİZİLMEZ honest kalır; ctest 14/14 (yeni tie_check), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages tie dress+tie-back strip'te çizili; missing.js tieDrawn iken ties/tieBack listelemez; engine.js+backend/draft.js int tieClosure param, worker DEĞİŞMEDİ; FORMULAS.md "Fabric ties / sashes") | **14/54** (+3: 2 Jackie back-tie + Emma; WRONG 10 vision varyansı, doğru-red 4/5) |
 | 5 | DENETİM A | Taze agent, 0-4'ün kodunu görmemiş. Benchmark'ı kendisi koşar, sayıyı tabloyla kıyaslar, render strip'leri gözle kırar, truing/golden'ı doğrular. Uyuşmazlık = ilgili loop yeniden açılır. | **geçti** (15 Tem; 8/8 madde bağımsız doğrulandı, kırılan yok, yeniden açılacak loop yok. Golden byte-identical (23034 satır kendim regen+diff), ctest 14/14 kendim derledim, precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages strip'lerde tie parçası (fold+grainline+cut-2 note) ve placket (CF fold+facing+6 buton tick+6 ilik slit, bust-anchored) + register (grid kodu+register kareleri+devam okları) GÖZLE teyit; live create.js/missing.js hash=local hash v54; benchmark 0-çağrı reclassify **14/54** birebir; DRAWN_SINCE her manifest oov terimine karşı test — back/double/asymmetric placket + drawstring MISSING kalıyor, LEAK YOK; 14 FULL'ün her biri gerekçeli; sayı serisi results snapshot'larıyla destekli; /api/draft engine_error teyit = ayrı worker-wasm build sorunu, tie/motor kodu değil, önceden var) | **14/54** (teyit) |
 | 6 | Puf/büzgülü kol başı | Balon kol var; cap büzgüsü + yükseltilmiş cap. Büzgü oranı Aldrich'ten. | **bitti** (15 Tem Loop 6; SleeveCap enum {Plain,Gathered,Puffed} + `SleeveBlock::draft` opt-in cap param → Plain default golden BYTE-IDENTICAL 0.000000mm/23034 satır. VERIFIED invariant (dresspatternmaking / M.Müller gigot): cap-height RAISE = spread. Slash-spread SADECE crown'a (notch üstü): gathered spread=0.20·W (yükseltme YOK), puffed spread=0.45·W (yükseltme=spread); notch altı armhole ile 1:1, fazlalık BÜZÜLÜR. Crown gather notch'ları ±capHalf·0.60 + crown boyunca kesikli büzgü çizgisi. Validator cap-ease penceresi puf için style-band'e genişledi (spreadFrac·0.5..·2.5+0.20); biceps floor korunur. ctest 14/14 (sleeve_check'e puf bloğu: crown plain'den geniş, puf yükseltilmiş, gather marks var, validator temiz), precision 0.00mm, web-fuzz 19620/0, vocab-sweep 37800/0, render-pages puff-sleeve-dress (Puff Sleeve chord 460 vs plain 317, topY 255 vs 113) + gathered-head-top strip'te çizili; missing.js sleeveCapDrawn ile puf/gathered başı artık listelemez, cap-sleeve/drawstring honest kalır. FORMULAS.md "Gathered/puff sleeve cap". create.js sleeveCap alanı (vision sleeveHead + manuel picker), engine.js/backend int sleeveCap param. Worker VISION DEĞİŞMEDİ) | **14/54 (DEĞİŞMEDİ — DÜRÜST)**: bu 58-sette puf/gathered SLEEVE HEAD tek-eksik olan foto YOK. Sette geçen tüm kol-büzgü terimleri motorun DOĞRU çizmediği honest sınır: "cap sleeve" (5, KISA CAP ŞEKLİ, gathered head değil) + "drawstring gathered sleeves" (2, casing/kanal gerek). O 5 cap-sleeve fotosunda ayrıca "asymmetric button front closure" da var → zaten MISSING. Yani yetenek gerçek+kanıtlı ama bu setin son boşluğunu açmıyor. |
@@ -134,6 +190,20 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-16 METRİK REFORMU (offline teşhis, 0 vision çağrısı — manifest oov[] ×
+  DRAWN_SINCE loop 3/4b/6/7): **ELEMENT ACCURACY (ilk ölçüm) D/N = 37/103 = %35.9.**
+  Yani 58 fotodaki tüm dağarcık-dışı öğelerin (tekrarlarıyla 103) motorun ARTIK
+  %35.9'unu çiziyor. FULL PATTERN 14/54'te sabit KALIR (manifest-teorik tavan 16;
+  canlı 14 çünkü 2 fotoda vision WRONG). KÜMELENME HİSTOGRAMI (giysi fotoları):
+  16 foto ZATEN tam (0 eksik) · 18 foto 1-eksik · 16 foto 2-eksik · 4 foto 3+-eksik.
+  MARJİNAL KAZANÇ sırası (bir öğe eklenince kaç foto FULL'a geçer): drawstring/
+  shirred gathering +6, open-back cutout +4, peplum +2, hem slit +2, bias-cut slip
+  +1, shorts/two-piece +1. Frekansta en yüksek (asymmetric/double-breasted placket
+  11 foto, gathering 10 foto) ama placket marjinali +1 çünkü 10'u çok-eksikli
+  fotolara yığılı — kümelenme kanıtı. Yeni günlük pusula ELEMENT ACCURACY;
+  FULL PATTERN %80 üst hedef kalır. benchmark-58.mjs SUMMARY artık iki metriği de
+  basıyor (kod değişmedi, sadece raporlama; golden etkilenmez). Rapor:
+  reports/2026-07-16-stitchu-metrik-reformu.md.
 - 2026-07-16 CANLI (Loop 7 sonrası, taze koşu FAST token, worker vision DEĞİŞMEDİ):
   **14/54 TAM (DEĞİŞMEDİ)** — MISSING 30, WRONG 10, correct-reject 3/5 (2 REJECT-FAIL =
   canlı vision iki kontrol görselini elbise sandı; vision noise, motor değil). Motor artık
