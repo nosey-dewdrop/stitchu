@@ -67,6 +67,16 @@ export const STRINGS = {
   'create.changegarment': { en: 'Change garment', tr: 'Kıyafeti değiştir' },
   'create.save': { en: 'Save to closet', tr: 'Dolaba kaydet' },
   'create.print': { en: 'Print — true scale A4', tr: 'Yazdır — gerçek ölçek A4' },
+  'create.grade.title': { en: 'Grade to a size run', tr: 'Beden serisine seril' },
+  'create.grade.sub': { en: 'Selling this design? Draft it across a full EU size range in one click — every size from the same engine, true to fit.', tr: 'Bu tasarımı satacak mısın? Tek tıkla EU beden aralığında çiz — her beden aynı motordan, doğru kalıpla.' },
+  'create.grade.from': { en: 'from', tr: 'başlangıç' },
+  'create.grade.to': { en: 'to', tr: 'bitiş' },
+  'create.grade.go': { en: 'Generate size run', tr: 'Beden serisini oluştur' },
+  'create.grade.working': { en: 'grading every size…', tr: 'her beden çiziliyor…' },
+  'create.grade.done': { en: '{n} sizes drafted — the print dialog has the full run.', tr: '{n} beden çizildi — yazdırma penceresinde tüm seri var.' },
+  'create.grade.done.some': { en: '{n} sizes drafted ({dropped} skipped as unsewable at that size). Print dialog has the run.', tr: '{n} beden çizildi ({dropped} beden o ölçüde dikilemez diye atlandı). Yazdırma penceresinde seri var.' },
+  'create.grade.none': { en: 'This design cannot be sewn at any size in that range — try a narrower range or a simpler spec.', tr: 'Bu tasarım o aralıkta hiçbir bedende dikilemiyor — daha dar bir aralık ya da daha sade bir seçim dene.' },
+  'create.grade.error': { en: 'Grading failed. Refresh and try again.', tr: 'Serileme başarısız. Sayfayı yenileyip tekrar dene.' },
 
   // result labels
   'result.pieces': { en: 'pieces', tr: 'parçalar' },

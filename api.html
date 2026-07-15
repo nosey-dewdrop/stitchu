@@ -101,6 +101,27 @@
     <pre id="pg-out" style="margin-top:14px;max-height:320px">the response appears here…</pre>
   </div>
 
+  <h2>Grade a size run</h2>
+  <p class="sub">One design, a whole size chart. <code>POST /api/grade</code> drafts a spec across an EU size range — every size from the same engine, so a seller gets a full run without maintaining grade rules.</p>
+  <div class="play">
+    <div class="play-row">
+      <label>garment
+        <select id="gr-garment"><option value="dress">dress</option><option value="top">top</option><option value="skirt">skirt</option></select>
+      </label>
+      <label>neckline
+        <select id="gr-neck"><option value="sweetheart">sweetheart</option><option value="crew">crew</option><option value="scoop">scoop</option><option value="vNeck">v-neck</option></select>
+      </label>
+      <label>from
+        <select id="gr-from"><option>EU34</option><option selected>EU36</option><option>EU38</option><option>EU40</option><option>EU42</option></select>
+      </label>
+      <label>to
+        <select id="gr-to"><option>EU40</option><option>EU42</option><option selected>EU44</option><option>EU46</option><option>EU48</option><option>EU50</option><option>EU52</option></select>
+      </label>
+    </div>
+    <button id="gr-run" type="button">POST /api/grade →</button>
+    <pre id="gr-out" style="margin-top:14px;max-height:320px">the size run appears here…</pre>
+  </div>
+
   <h2>Pricing</h2>
   <p class="sub">Simple, and cheaper than a per-call AI tool — because the engine has no per-call AI cost. Indicative, launching with early partners:</p>
   <div class="cards">
@@ -155,6 +176,40 @@ document.getElementById('pg-run').addEventListener('click', async () => {
         commands: `[${p.commands.length} drawing commands]`,
       }));
       if (data.pattern.guideSteps) data.pattern.guideSteps = `[${data.pattern.guideSteps.length} sewing steps]`;
+    }
+    out.textContent = `HTTP ${r.status}\n` + JSON.stringify(data, null, 2);
+  } catch (_) {
+    out.textContent = '// Could not reach the endpoint. It may not be deployed yet — request access below.';
+  }
+});
+
+// Live grade playground: fire /api/grade and summarise the size run. Same honest
+// states as the draft playground — if the endpoint isn't live it says so.
+document.getElementById('gr-run').addEventListener('click', async () => {
+  const out = document.getElementById('gr-out');
+  const body = {
+    spec: { garment: document.getElementById('gr-garment').value, neckline: document.getElementById('gr-neck').value },
+    from: document.getElementById('gr-from').value,
+    to: document.getElementById('gr-to').value,
+  };
+  out.textContent = 'POST /api/grade …';
+  try {
+    const r = await fetch(API_BASE + '/api/grade', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (r.status === 404 || data.error === 'draft_closed') {
+      out.textContent = '// The grade endpoint isn\'t live yet — it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      return;
+    }
+    if (data.sizes) {
+      // Summarise each size instead of dumping every drawing command.
+      data.sizes = data.sizes.map((s) => ({
+        size: s.size,
+        pieces: s.draft.pattern.pieces.length,
+        fabric_m: s.draft.pattern.fabricMeters140,
+        issues: s.draft.issues.length,
+      }));
     }
     out.textContent = `HTTP ${r.status}\n` + JSON.stringify(data, null, 2);
   } catch (_) {

@@ -16,6 +16,22 @@ export function loadEngine() {
   return enginePromise;
 }
 
+// Grade a design across a standard EU size run (fromLabel..toLabel). Returns
+// { sizes: [{ size, draft: {pattern, issues} }, ...] } — the seller deliverable.
+export async function grade(spec, fromLabel, toLabel) {
+  const engine = await loadEngine();
+  const json = engine.gradeJSON(
+    spec.garment, spec.shaping ?? 'princess', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
+    spec.neckline ?? 'crew',
+    spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
+    spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
+    (spec.ruffle ?? 'none') !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
+    spec.keyhole === 'keyhole',
+    fromLabel, toLabel,
+  );
+  return JSON.parse(json);
+}
+
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   const json = engine.draftJSON(

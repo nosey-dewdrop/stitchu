@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=44';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=44';
-import { draft } from './engine.js?v=44';
-import { printPattern } from './print.js?v=44';
-import { renderResult } from './render.js?v=44';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=45';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=45';
+import { draft, grade } from './engine.js?v=45';
+import { printPattern, printGrade } from './print.js?v=45';
+import { renderResult } from './render.js?v=45';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=44';
+} from './store.js?v=45';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -391,6 +391,74 @@ function showResult(result) {
     nav.appendChild(print);
   }
   screen.appendChild(nav);
+
+  // Grade: sellers turn one design into a full EU size run from the same engine.
+  // Only offered for a valid draft (a blocked draft has nothing to grade).
+  if (!result.issues.length) {
+    screen.appendChild(gradePanel(result));
+  }
+}
+
+const EU_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48', 'EU50', 'EU52'];
+
+// A seller-facing panel under the result: pick a size range, generate the run,
+// print all sizes as one document. Honest states — errors say so, no fake run.
+function gradePanel(result) {
+  const panel = el('div', 'grade-panel');
+  panel.appendChild(el('h2', 'grade-title', t('create.grade.title')));
+  panel.appendChild(el('p', 'grade-sub', t('create.grade.sub')));
+
+  const row = el('div', 'grade-row');
+  const fromSel = el('select', 'grade-select');
+  const toSel = el('select', 'grade-select');
+  for (const s of EU_SIZES) {
+    fromSel.appendChild(new Option(s, s));
+    toSel.appendChild(new Option(s, s));
+  }
+  fromSel.value = 'EU36';
+  toSel.value = 'EU44';
+  const fromLabel = el('label', 'grade-label', t('create.grade.from'));
+  fromLabel.appendChild(fromSel);
+  const toLabel = el('label', 'grade-label', t('create.grade.to'));
+  toLabel.appendChild(toSel);
+  row.appendChild(fromLabel);
+  row.appendChild(toLabel);
+  panel.appendChild(row);
+
+  const go = el('button', 'btn primary', t('create.grade.go'));
+  const msg = el('p', 'grade-msg');
+  go.addEventListener('click', async () => {
+    let from = fromSel.value;
+    let to = toSel.value;
+    // Keep the range ordered so a seller can't ask for EU44..EU36.
+    if (EU_SIZES.indexOf(from) > EU_SIZES.indexOf(to)) [from, to] = [to, from];
+    go.disabled = true;
+    msg.style.color = '';
+    msg.textContent = t('create.grade.working');
+    try {
+      const graded = await grade(spec, from, to);
+      const sizes = (graded.sizes || []).filter((s) => !s.draft.issues.length);
+      if (!sizes.length) {
+        msg.style.color = '#8f2038';
+        msg.textContent = t('create.grade.none');
+        go.disabled = false;
+        return;
+      }
+      const dropped = (graded.sizes || []).length - sizes.length;
+      msg.textContent = dropped
+        ? t('create.grade.done.some', { n: sizes.length, dropped })
+        : t('create.grade.done', { n: sizes.length });
+      printGrade(sizes, result.pattern.garment);
+    } catch (err) {
+      msg.style.color = '#8f2038';
+      msg.textContent = t('create.grade.error');
+      console.error(err);
+    }
+    go.disabled = false;
+  });
+  panel.appendChild(go);
+  panel.appendChild(msg);
+  return panel;
 }
 
 applyStatic();

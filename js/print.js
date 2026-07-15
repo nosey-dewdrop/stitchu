@@ -4,8 +4,8 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
 // far fewer, far fuller pages than tiling each piece separately.
-import { pathD, bounds } from './render.js?v=44';
-import { getLang } from './i18n.js?v=44';
+import { pathD, bounds } from './render.js?v=45';
+import { getLang } from './i18n.js?v=45';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly) — a Turkish sewist must read these in Turkish or the pattern comes
@@ -43,6 +43,18 @@ const P = {
   demoWarn: {
     en: 'STANDARD EU38 SIZE — this is not drafted to your measurements yet. Add your seven measurements on the site for a pattern that fits you.',
     tr: 'STANDART EU38 BEDEN — bu henüz senin ölçülerine çizilmedi. Sana uyan bir kalıp için sitede yedi ölçünü ekle.',
+  },
+  gradeCover: (g, n) => ({
+    en: `${g} — size run, ${n} sizes`,
+    tr: `${g} — beden serisi, ${n} beden`,
+  }),
+  gradeIntro: (labels) => ({
+    en: `One design, graded across: ${labels}. Print only the sizes you need.`,
+    tr: `Tek tasarım, şu bedenlere serilendi: ${labels}. Sadece ihtiyacın olan bedenleri yazdır.`,
+  }),
+  gradeAssemble: {
+    en: 'Each size starts with its own cover sheet and calibration square. Keep printer scale at 100% and verify the 3 cm square on every size before cutting.',
+    tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula.',
   },
 };
 const L = () => (getLang() === 'tr' ? 'tr' : 'en');
@@ -194,14 +206,16 @@ function calibrationSVG() {
   return svg;
 }
 
-export function printPattern(result) {
+// Build one pattern's cover + sheets into `root`. Shared by a single print and
+// by a graded size run (each size appends its own block, labelled by size).
+// `sizeLabel` (e.g. "EU40"), when given, is stamped on the cover title.
+function buildPrintPages(result, root, sizeLabel) {
   const p = result.pattern;
   const chalk = p.pieces.filter(isChalkPiece);
   const paper = p.pieces.filter((piece) => !isChalkPiece(piece));
   const layout = packPieces(paper.length ? paper : p.pieces);
   const rows = Math.ceil(layout.stripH / PAGE_H);
 
-  // keep only sheets that actually contain geometry
   const sheets = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < layout.cols; col++) {
@@ -213,18 +227,12 @@ export function printPattern(result) {
     }
   }
 
-  const root = el('div', '');
-  root.id = 'print-root';
-
-  // Cover sheet
-  const cover = el('div', 'print-page');
   const lang = L();
-  cover.appendChild(el('div', 'print-title', P.cover[lang](p.garment)));
-  // Demo body: warn loudly on the printed cover so no one cuts fabric on a
-  // standard-size pattern thinking it's drafted to them.
+  const cover = el('div', 'print-page');
+  const titleGarment = sizeLabel ? `${p.garment} · ${sizeLabel}` : p.garment;
+  cover.appendChild(el('div', 'print-title', P.cover[lang](titleGarment)));
   if (result.demoBody) {
-    const warn = el('div', 'print-demo-warn', P.demoWarn[lang]);
-    cover.appendChild(warn);
+    cover.appendChild(el('div', 'print-demo-warn', P.demoWarn[lang]));
   }
   const hasCutLines = p.pieces.some((piece) => (piece.cutLine || []).length > 0);
   const saCm = p.pieces[0].seamAllowance / 10;
@@ -236,9 +244,6 @@ export function printPattern(result) {
     map.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
   }
   cover.appendChild(map);
-
-  // Straight strips need a ruler, not pattern paper: their cut note IS the
-  // pattern, so they live here instead of adding a row of near-empty sheets.
   if (chalk.length && paper.length) {
     cover.appendChild(el('div', 'print-sub', P.chalkNote[lang]));
     const chalkMap = el('ul', 'print-map');
@@ -254,11 +259,48 @@ export function printPattern(result) {
   for (const { col, row } of sheets) {
     const page = el('div', 'print-page');
     page.appendChild(el('div', 'print-label',
-      P.sheet(p.garment, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
+      P.sheet(titleGarment, `${String.fromCharCode(65 + row)}${col + 1}`, layout.cols)[lang]));
     page.appendChild(sheetSVG(layout, col, row));
     root.appendChild(page);
   }
+}
 
+// Print a whole graded size run in one document: a run cover, then every size's
+// full cover + sheets, each labelled with its EU size. The seller deliverable.
+export function printGrade(sizes, garmentLabel) {
+  const root = el('div', '');
+  root.id = 'print-root';
+  const lang = L();
+  const cover = el('div', 'print-page');
+  cover.appendChild(el('div', 'print-title', P.gradeCover(garmentLabel, sizes.length)[lang]));
+  cover.appendChild(el('div', 'print-sub', P.gradeIntro(sizes.map((s) => s.size).join(', '))[lang]));
+  const map = el('ul', 'print-map');
+  for (const s of sizes) {
+    map.appendChild(el('li', '', `${s.size} — ${s.draft.pattern.pieces.length} ${lang === 'tr' ? 'parça' : 'pieces'}, ${s.draft.pattern.fabricMeters140} m`));
+  }
+  cover.appendChild(map);
+  cover.appendChild(el('div', 'print-sub', P.gradeAssemble[lang]));
+  cover.appendChild(calibrationSVG());
+  root.appendChild(cover);
+
+  for (const s of sizes) {
+    const r = { pattern: s.draft.pattern, issues: s.draft.issues };
+    buildPrintPages(r, root, s.size);
+  }
+
+  document.body.appendChild(root);
+  const cleanup = () => {
+    root.remove();
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  window.print();
+}
+
+export function printPattern(result) {
+  const root = el('div', '');
+  root.id = 'print-root';
+  buildPrintPages(result, root);
   document.body.appendChild(root);
   const cleanup = () => {
     root.remove();
