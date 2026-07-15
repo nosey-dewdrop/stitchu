@@ -55,6 +55,23 @@ TERMS=(
   "lace dress"                  # fabricName lace
   "ruffle hem dress"            # hemRuffle single
   "tiered ruffle dress"         # hemRuffle tiered
+  # --- runway / couture: the HARD real-user condition (model, pose, editorial
+  # light, dramatic garments). Named houses + fashion-week terms. This is what a
+  # user actually photographs, and what Track B must learn to read.
+  "Versace runway"
+  "Dior haute couture runway"
+  "Chanel fashion show"
+  "Yves Saint Laurent runway"
+  "Schiaparelli couture"
+  "Armani runway"
+  "Valentino runway gown"
+  "fashion week runway dress"
+  "haute couture gown runway"
+  "evening gown red carpet"
+  "runway model dress"
+  "couture ball gown"
+  "cocktail dress fashion"
+  "designer evening dress"
 )
 NTERMS=${#TERMS[@]}
 # Ask each source for ~1.5x headroom per term so misses/dupes still fill LIMIT.
