@@ -74,6 +74,13 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 
 /* result */
 .result-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+/* Demo-body result: the "make it fit you" banner is the loud next step. */
+.fit-banner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+  margin: 8px 0 24px; padding: 16px 20px; border: 1.5px dashed var(--accent); border-radius: 4px; background: rgba(143,32,56,.05); }
+.fit-banner-text { font-size: 15px; color: var(--accent); font-weight: 600; }
+.fit-banner .btn.primary { background: var(--accent); color: #fbfaf6; border: 1px solid var(--accent);
+  padding: 11px 22px; border-radius: 3px; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.fit-banner .btn.primary:hover { background: #761a2f; }
 .result-meta { list-style: none; margin: 26px 0; max-width: 560px; }
 .result-meta li { display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: var(--seam); font-size: 14.5px; }
 .result-meta li:first-child { border-top: var(--seam); }
