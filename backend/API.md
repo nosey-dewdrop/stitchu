@@ -147,3 +147,60 @@ curl -s https://stitchu-api.<account>.workers.dev/api/draft \
   -d '{"spec":{"garment":"dress","neckline":"halter","skirtStyle":"aLine","skirtLength":"mini"},
        "measurements":{"bust":100,"waist":78,"hip":104,"shoulder":42,"backLength":44,"armLength":60,"neck":38}}'
 ```
+
+## POST /api/grade
+
+One design, a whole size run. Send a `spec` (same vocabulary as `/api/draft`,
+no measurements) and an EU size range; get back the design drafted against every
+standard size in the range — the seller/brand deliverable. Same zero-LLM engine
+as `/api/draft`; grading a design is drafting it against each standard body, so
+there are no separate grade rules to drift out of sync.
+
+### Request
+
+```json
+{
+  "spec": { "garment": "dress", "neckline": "sweetheart", "shaping": "princess" },
+  "from": "EU36",
+  "to":   "EU44"
+}
+```
+
+`spec` follows the same accepted values as `/api/draft` (garment required; the
+rest fall back to engine defaults). `from`/`to` are EU sizes from `EU34` to
+`EU52` in steps of two; an unknown or omitted label falls back to the full
+chart, and a reversed range is ordered automatically.
+
+### Response `200`
+
+```json
+{
+  "apiVersion": "1",
+  "spec": { ... the normalised spec ... },
+  "from": "EU36",
+  "to":   "EU44",
+  "sizes": [
+    { "size": "EU36", "draft": { "pattern": { ...same shape as /api/draft... }, "issues": [] } },
+    { "size": "EU38", "draft": { "pattern": { ... }, "issues": [] } }
+  ]
+}
+```
+
+Each entry's `draft` is exactly the `/api/draft` payload for that standard body:
+`pattern` (pieces, guide, fabric estimate) plus `issues`. A size whose `issues`
+is non-empty was drafted but flagged unsewable at that size — a caller shipping
+a size run should drop those, exactly as the web app does.
+
+### Errors
+
+Same shape and codes as `/api/draft`. `422 missing_spec` if `spec.garment` is
+absent; `422 invalid_value` if a spec field is outside its vocabulary. Rate
+limits are tighter than draft (one grade fans out to up to ten drafts).
+
+### Example
+
+```bash
+curl -s https://stitchu-api.<account>.workers.dev/api/grade \
+  -H 'content-type: application/json' \
+  -d '{"spec":{"garment":"dress","neckline":"sweetheart","shaping":"princess"},"from":"EU34","to":"EU52"}'
+```

@@ -2,9 +2,11 @@
 // JSON only exists at this boundary; the engine itself stays plain structs.
 #include <emscripten/bind.h>
 
+#include <algorithm>
 #include <string>
 
 #include "../src/garment.hpp"
+#include "../src/sizechart.hpp"
 #include "../src/validator.hpp"
 
 namespace {
@@ -109,15 +111,12 @@ Fabric fabricFrom(const std::string& s) {
 
 // Returns {"pattern": {...}, "issues": [...]} — issues non-empty means the
 // runtime safety net caught an invalid draft; the UI must not show the PDF.
-std::string draftJSON(
-    std::string garment, std::string shaping, std::string waistline, std::string fabric,
-    std::string neckline,
-    std::string sleeveStyle, std::string sleeveLength,
-    std::string skirtStyle, std::string skirtLength, std::string topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole,
-    double bustCM, double waistCM, double hipCM, double shoulderCM,
-    double backLengthCM, double armLengthCM, double neckCM,
-    double upperBustCM
+GarmentSpec buildSpec(
+    const std::string& garment, const std::string& shaping, const std::string& waistline,
+    const std::string& fabric, const std::string& neckline,
+    const std::string& sleeveStyle, const std::string& sleeveLength,
+    const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
+    bool ruffleHem, int ruffleTiers, bool keyhole
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -133,9 +132,12 @@ std::string draftJSON(
     spec.ruffleHem = ruffleHem;
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
     spec.keyhole = keyhole;
+    return spec;
+}
 
-    BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
-    m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
+// The {pattern, issues} JSON for one drafted body — shared by draftJSON and the
+// per-size entries of gradeJSON.
+std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
     const DraftedPattern draft = GarmentDrafter::draft(spec, m);
     const auto issues = PatternValidator::issues(spec, m, draft);
 
@@ -174,8 +176,61 @@ std::string draftJSON(
     return out;
 }
 
+std::string draftJSON(
+    std::string garment, std::string shaping, std::string waistline, std::string fabric,
+    std::string neckline,
+    std::string sleeveStyle, std::string sleeveLength,
+    std::string skirtStyle, std::string skirtLength, std::string topLength,
+    bool ruffleHem, int ruffleTiers, bool keyhole,
+    double bustCM, double waistCM, double hipCM, double shoulderCM,
+    double backLengthCM, double armLengthCM, double neckCM,
+    double upperBustCM
+) {
+    const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole);
+    BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
+    m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
+    return patternJSON(spec, m);
+}
+
+// Grade one design across a range of standard EU sizes (fromLabel..toLabel,
+// inclusive). Returns {"sizes":[{"size":"EU38","pattern":{...},"issues":[...]}, ...]}.
+// This is the seller/brand deliverable: one design, a whole size run, from the
+// same engine that fits a custom body — no manual grade rules to maintain.
+std::string gradeJSON(
+    std::string garment, std::string shaping, std::string waistline, std::string fabric,
+    std::string neckline,
+    std::string sleeveStyle, std::string sleeveLength,
+    std::string skirtStyle, std::string skirtLength, std::string topLength,
+    bool ruffleHem, int ruffleTiers, bool keyhole,
+    std::string fromLabel, std::string toLabel
+) {
+    const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole);
+
+    const auto& chart = euSizeChart();
+    // Find the index range; default to the whole chart if a label is unknown.
+    size_t lo = 0, hi = chart.size() ? chart.size() - 1 : 0;
+    for (size_t i = 0; i < chart.size(); ++i) {
+        if (chart[i].label == fromLabel) lo = i;
+        if (chart[i].label == toLabel) hi = i;
+    }
+    if (lo > hi) std::swap(lo, hi);
+
+    std::string out = R"({"sizes":[)";
+    for (size_t i = lo; i <= hi && i < chart.size(); ++i) {
+        if (i > lo) out += ",";
+        out += R"({"size":")" + escape(chart[i].label) + R"(","draft":)";
+        out += patternJSON(spec, chart[i].body);
+        out += "}";
+    }
+    out += "]}";
+    return out;
+}
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("draftJSON", &draftJSON);
+    emscripten::function("gradeJSON", &gradeJSON);
 }

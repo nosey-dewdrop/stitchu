@@ -6,7 +6,7 @@
 // Secrets: npx wrangler secret put CLAUDE_API_KEY   (your sk-ant- key)
 //          npx wrangler secret put APP_TOKEN         (any long random string)
 
-import { handleDraft } from './draft.js';
+import { handleDraft, handleGrade } from './draft.js';
 
 const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
 // Vision-capable current model.
@@ -83,6 +83,25 @@ export default {
         return jsonResponse(payload, status);
       }
 
+      // ---- Grade: one design across a size run. Same zero-LLM engine as draft,
+      // but one call fans out to up to 10 drafts, so it is throttled harder on
+      // the public tier and gated by the same PUBLIC_DRAFT switch.
+      if (url.pathname === '/api/grade' && request.method === 'POST' &&
+          !request.headers.get('x-app-token')) {
+        if (env.PUBLIC_DRAFT !== 'on') {
+          return jsonResponse({ error: 'draft_closed', detail: 'The public draft API is not open yet' }, 403);
+        }
+        if (!env.RATE_LIMIT) {
+          return jsonResponse({ error: 'draft_closed', detail: 'The public draft API is temporarily unavailable' }, 503);
+        }
+        if (await rateLimited(env, `pubgrade:${ip}`, 6) ||
+            await rateLimitedDaily(env, `pubgradeday:${ip}`, 60)) {
+          return jsonResponse({ error: 'rate_limited', detail: 'Rate limit exceeded. Please wait.' }, 429);
+        }
+        const { status, payload } = await handleGrade(request);
+        return jsonResponse(payload, status);
+      }
+
       // Public photo analysis for the web app (a browser cannot keep the app
       // token secret). OFF unless the PUBLIC_ANALYZE var is set to "on" at
       // deploy — every call costs Claude vision money, so it ships throttled:
@@ -118,6 +137,10 @@ export default {
       }
       if (url.pathname === '/api/draft' && request.method === 'POST') {
         const { status, payload } = await handleDraft(request);
+        return jsonResponse(payload, status);
+      }
+      if (url.pathname === '/api/grade' && request.method === 'POST') {
+        const { status, payload } = await handleGrade(request);
         return jsonResponse(payload, status);
       }
 

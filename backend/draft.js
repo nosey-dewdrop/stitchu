@@ -146,6 +146,40 @@ export async function runDraft(spec, measurements) {
   return JSON.parse(json);
 }
 
+// Grade a design across a standard EU size run. The seller/brand deliverable:
+// one spec, a whole size chart, from the same engine — no manual grade rules.
+const EU_SIZES = ['EU34','EU36','EU38','EU40','EU42','EU44','EU46','EU48','EU50','EU52'];
+export async function handleGrade(request) {
+  let raw;
+  try { raw = await request.text(); } catch { return { status: 400, payload: { error: 'invalid_body' } }; }
+  if (raw.length > 20_000) return { status: 413, payload: { error: 'body_too_large' } };
+  let body;
+  try { body = JSON.parse(raw); } catch { return { status: 400, payload: { error: 'invalid_json' } }; }
+  if (!body || typeof body !== 'object' || !body.spec || !body.spec.garment) {
+    return { status: 422, payload: { error: 'missing_spec', detail: 'spec.garment is required' } };
+  }
+  // Validate the spec vocabulary with the same rules as a draft (reuse the
+  // validator by wrapping the spec with a valid dummy body).
+  const check = validateDraftRequest({ spec: body.spec, measurements: { bust: 90, waist: 70, hip: 96, shoulder: 38, backLength: 40, armLength: 58, neck: 36 } });
+  if (check.error) return { status: 422, payload: check };
+  const from = EU_SIZES.includes(body.from) ? body.from : 'EU34';
+  const to = EU_SIZES.includes(body.to) ? body.to : 'EU52';
+  const spec = check.spec;
+  let result;
+  try {
+    const eng = await engine();
+    const json = eng.gradeJSON(
+      spec.garment, spec.shaping, spec.waistline, spec.fabric,
+      spec.neckline, spec.sleeveStyle, spec.sleeveLength,
+      spec.skirtStyle, spec.skirtLength, spec.topLength,
+      spec.ruffle !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
+      spec.keyhole === 'keyhole', from, to,
+    );
+    result = JSON.parse(json);
+  } catch { return { status: 500, payload: { error: 'engine_error' } }; }
+  return { status: 200, payload: { apiVersion: '1', spec, from, to, sizes: result.sizes } };
+}
+
 // Full handler: validate -> draft -> shape the public response envelope.
 // A validator-blocked draft (impossible body, unsewable combo) is a 422 with
 // the reasons, NOT a 200 with a broken pattern — the API never returns a

@@ -65,3 +65,7 @@ add_test(NAME fit_proof COMMAND fit_proof)
 add_executable(fba_check tests/fba_check.cpp)
 target_link_libraries(fba_check PRIVATE engine)
 add_test(NAME fba_check COMMAND fba_check)
+
+add_executable(grade_check tests/grade_check.cpp)
+target_link_libraries(grade_check PRIVATE engine)
+add_test(NAME grade_check COMMAND grade_check)
