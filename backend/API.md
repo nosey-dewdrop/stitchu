@@ -73,9 +73,11 @@ the default shown above. Measurements are all seven, in **centimetres**.
 `backLength` 28–55, `armLength` 40–75, `neck` 26–55.
 
 **Optional:** `upperBust` (60–150 cm) — the high/upper bust girth, above the
-bust and under the arms. When supplied, the back and armhole size to the ribcage
-frame while the front keeps the full bust — a full-bust adjustment for a fuller
-bust (stops the neckline gaping). Omit it and the draft uses a B/C-cup assumption.
+bust and under the arms. When supplied, the engine runs a full-bust adjustment:
+the back and armhole size to the ribcage frame, the front bust gets extra width
+and length, and the bust dart grows with the cup — so a fuller bust is far less
+likely to ride up and gape. Values ≥ the full bust are clamped. Omit it and the
+draft uses a B/C-cup assumption (byte-identical to the 7-measurement draft).
 
 ### Response `200`
 
