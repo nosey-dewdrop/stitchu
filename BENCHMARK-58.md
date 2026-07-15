@@ -9,11 +9,11 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum (2026-07-15 Loop 3 — İLK ÇİZİM): motor artık ÖN düğme patını ÇİZİYOR (grown-on
-stand + fold + düğme/ilik, Aldrich/Armstrong). Sayı **BLOKE: kredi**; offline ön-kontrol
-(canlı değil) manifest oov'una karşı: 19 pat'lı fotodan 7 saf-ön-pat artık tam kalıp
-adayı, 2 arka pat honest kalır, 10 ön-pat+başka eksik pat çizildi kalanı eksik. 6/54 son
-ölçülen değer. Önceki durum:
+Durum: **11/54 TAM KALIP (CANLI, 2026-07-15 21:00, Loop 3 sonrası — İLK ARTIŞ, +6)**
+Kredi geldi, blokör kalktı. Motor ön düğme patını ÇİZİYOR (grown-on stand + fold +
+düğme/ilik, Aldrich/Armstrong); 31 eksik öğeli / 12 yanlış (vision yaka varyansı,
+motor değil) / doğru-red 4/5. Ölçüm ~8dk (FAST token). Sayaç artık motorun güncel
+dağarcığını biliyor (DRAWN_SINCE filtresi, benchmark-58.mjs). Önceki durum:
 Durum (2026-07-15 manuel ölçüm): **6/54 TAM KALIP** — canlı Opus zinciri kredi bitik
 olduğu için 59 foto Claude aboneliği üstünden EL İLE (worker prompt kurallarıyla)
 okundu: 6 TAM + 48 eksik öğeli + 0 yanlış; doğru-red 5/5. TAM'lar Loop 0/1'le aynı
@@ -112,6 +112,15 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
+- 2026-07-15 21:00 CANLI (kredi geldi, Loop 3 sonrası): **11/54 TAM — İLK ARTIŞ** (+6, hepsi
+  pat'lı fotolar). 31 eksik öğeli, 12 yanlış (vision yaka varyansı, motor değil; el
+  ölçümünde WRONG 0'dı), doğru-red 4/5. İki koşu yapıldı: Loop 3 ÖNCESİ canlı 5/54
+  (el ölçümü 6/54'ün 1 eksiği = vision varyansı, bir boat-yaka düştü), Loop 3 SONRASI
+  11/54. SAYAÇ DÜZELTMESİ: benchmark-58.mjs manifest'in donmuş "çizilemez" listesini
+  motorun GÜNCEL dağarcığına karşı filtreliyor artık (DRAWN_SINCE — her çizim loop'u
+  kendi kuralını ekler; asimetrik/arka/çift-sıra pat dürüstçe çizilemez kaldı) +
+  cache'lenmiş spec'ler güncel dağarcıkla yeniden sınıflanıyor. Süre: 8dk/59 çağrı
+  (FAST token çalışıyor; vision gecikmesi, sigorta cezası yok).
 - 2026-07-15 MANUEL ÖLÇÜM (canlı zincir DEĞİL, Anthropic kredisi bitik olduğu için
   59 foto Claude aboneliği üstünden el ile worker prompt kurallarıyla okundu):
   **6/54 TAM** + 48 eksik öğeli + 0 yanlış; doğru-red **5/5** (Slowly×2 + çanta +

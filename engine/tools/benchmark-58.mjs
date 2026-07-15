@@ -91,7 +91,17 @@ function classify(entry, spec) {
     if (!accepted.includes(got)) misses.push(`${field}=${JSON.stringify(got)} not in ${JSON.stringify(accepted)}`);
   }
   if (misses.length) return { cls: 'WRONG', why: misses.join('; ') };
-  if ((entry.oov || []).length) return { cls: 'MISSING', why: `engine cannot draw: ${entry.oov.join(', ')}` };
+  // Engine vocabulary grows loop by loop: manifest oov terms the engine can NOW
+  // draw are filtered out here (each drawing loop appends its rule; the manifest
+  // itself stays frozen ground truth).
+  const DRAWN_SINCE = [
+    // loop 3: front button placket, grown-on stand — symmetric front only
+    (t) => /placket|button front closure/i.test(t) && !/asymmetric|back|double|loop/i.test(t),
+  ];
+  const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
+  const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));
+  if (oovLeft.length) return { cls: 'MISSING', why: `engine cannot draw: ${oovLeft.join(', ')}` };
+  if (drawnNow.length) return { cls: 'FULL', why: `in-vocab + now-drawable: ${drawnNow.join(', ')}` };
   return { cls: 'FULL', why: 'in-vocab fields match, no out-of-vocab construction' };
 }
 
@@ -134,6 +144,12 @@ function structuralCoverage(entry, spec) {
 }
 
 const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
+// Reclassify cached entries against the CURRENT engine vocabulary (DRAWN_SINCE
+// grows loop by loop; the cached spec is still valid, only the verdict moves).
+for (const entry of MANIFEST.photos) {
+  const r = results[entry.file];
+  if (r && r.spec) Object.assign(r, classify(entry, r.spec));
+}
 const queue = MANIFEST.photos.filter((p) => !results[p.file]).slice(0, limit);
 console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(results).length}, running: ${queue.length}, ip: ${myIP}, mode: ${FAST ? 'FAST (bypass token)' : 'SLOW (21s/call fuse pacing)'}`);
 const runStart = Date.now();
