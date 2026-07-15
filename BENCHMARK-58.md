@@ -69,11 +69,6 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 - KAPANIŞ: tabloyu + Durum satırını güncelle, CLAUDE.md status, devlog/linkedin malzeme,
   commit + push, deploy (?v bump + git add web/ ALL + subtree gh-pages).
 - Blokör çıkarsa (veri erişimi, Damla kararı gereken şey): durur, tabloya "BLOKE: neden" yazar, push'lar.
-- MİNİ-DENETİM (Damla, 15 Tem): her yapıcı loop'un ARDINDAN kodu görmemiş TAZE bir
-  agent üstünden geçer — kod yazmaz; kanıtları kendisi yeniden koşar (golden, truing,
-  benchmark, canlı örnek), kırarsa loop yeniden açılır, geçerse sıradaki başlar.
-  Sonuç ilgili loop'un tablo satırına "denetim: geçti / kırıldı+neden" diye işlenir.
-  5/9/13 büyük denetimler ayrıca kalır.
 - DEVLOG ŞABLONU (zorunlu, Damla 15 Tem): her reel girdisi AYNEN şu yapıda —
   `## Reel — [kısa başlık] (loop XX)` / `**Hook (ilk 2 sn):**` ters köşe tek cümle /
   `**Anlatı (~30-45 sn):**` Damla'nın dilinde "neyi değiştirdim → çünkü şu sorun
