@@ -480,3 +480,17 @@ stitchu = the only product that fuses both.
 - MOAT (nobody combines all): phone SCAN→measurement + true 3D-derived correctness + measure→PATTERN
   + API/one-C++-core-many-platforms. Tailornova's catalog is Etsy-like (closed); stitchu = closed
   catalog PLUS open photo path PLUS phone scan.
+
+## "3DLOOK has millions, we don't" — why that's the WRONG conclusion (2026-07-15)
+Damla worried: they spent millions, we can't. Reverse is true:
+- 3DLOOK spent millions ~2018 because photo→measurement was ZERO then (pose estimation just emerging,
+  ML scarce, phone cameras weak). They PAVED the road; the millions went into paving.
+- Today the road is OPEN & FREE: MediaPipe pose engine is free, runs in-browser; cameras are great.
+  And Damla ALREADY built the pose engine (gymgyme: tracking/skeleton/One Euro). The "find body
+  points" part 3DLOOK spent millions on = already in her hand.
+- Analogy: first car took millions/years; today you don't build a car, you take a ready engine and
+  build your own on top. 3DLOOK invented the car; stitchu drives with a ready engine.
+- Honest fence: 3DLOOK's e-commerce PRECISION (mm-accurate, return-rate grade) is where the millions
+  went — stitchu does NOT need that. User wants a pattern for THEIR OWN body, not "which RTW size";
+  a rough-correct scan + a user confirm (or one tape check) beats hand-entry. Just needs to be BETTER
+  THAN typing 7 numbers, not perfect.
