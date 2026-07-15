@@ -354,3 +354,15 @@ S2 · HOOK: "yapay zekam fotoğrafı doğru okuyor ama motorum o kelimeyi çizem
 S3 · HOOK: "benchmark koşumu kendi güvenlik korumam engelledi."
 - api'me koyduğum rate-limit füzesi (3/dk) kendi benchmark'ımı da yedi. kendi kv sayaçlarımı resetledim; ama kv eventual-consistent, silme ~60 sn'de yayılıyor.
 - çözüm: 21 sn/çağrı tempo. kendi korumanla yarışmak da bir dağıtık sistemler dersi. [terminal]
+
+S4 · HOOK: "yapay zekam elbiseyi 'düğmeli yakalı' diye bir CÜMLEYE yazıyordu. cümleyle kalıp çizemezsin."
+- o serbest metni öldürdüm. yerine yapısal alanlar: closure (nasıl kapanıyor), collar, straps, yoke, backDetail + outOfVocab[] = çizemediğim ama gördüğüm her öğenin adı.
+- alanları hisle değil frekansla seçtim: loop 0'da bağ 20 fotoda, düğme 19'da, yaka 9'da. [terminal]
+
+S5 · HOOK: "iki eski hatamı prompt'a tek cümle yazarak düzelttim."
+- loop 0'da fırfırlı askıyı 'kol' sanmıştım, boat yakaya 'square' demiştim. modele tarif yazdım: sleeve kolu SARAR, strap dar banttır kol çıplaktır; boat yüksek+geniş, square alçak+köşeli.
+- canlı 6 fotoda ikisi de düzeldi. straps=ruffled, neckline=boat. [terminal]
+
+S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi doğruydu."
+- FULL 6/54'te kaldı çünkü motor öğeleri hâlâ ÇİZMİYOR. bu oturum sadece boruyu döşedi: görü→spec taşıma.
+- yeni bir istatistik ekledim: yapısal alanlar çizilemeyen öğeyi kaç fotoda yakaladı. ürün sayısı ile kabiliyet sayısını AYRI ölçmek, 'ilerliyorum' yalanını söylememenin yolu. [terminal]

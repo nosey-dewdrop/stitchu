@@ -85,6 +85,44 @@ function classify(entry, spec) {
   return { cls: 'FULL', why: 'in-vocab fields match, no out-of-vocab construction' };
 }
 
+// Loop 1 bridge metric: the FULL count does NOT move (engine still can't draw),
+// so we measure the SCHEMA instead — for each ground-truth out-of-vocab element,
+// did the new structured vision field capture it? Maps a manifest oov phrase to
+// the structured field that should now carry it, then checks the returned spec.
+const OOV_CATEGORY = [
+  { re: /placket|button/i, field: 'closure', ok: (s) => s.closure && ['buttons', 'placket'].includes(s.closure.type) },
+  { re: /tie-?back|back .*tie|tie .*back/i, field: 'backDetail', ok: (s) => s.backDetail === 'tieBack' || (s.closure && s.closure.type === 'ties') },
+  { re: /open-?back|back .*cutout|cutout .*back/i, field: 'backDetail', ok: (s) => s.backDetail === 'openBack' },
+  { re: /tie|bow|drawstring|lace-?up|laced/i, field: 'closure', ok: (s) => s.closure && ['ties', 'lace-up'].includes(s.closure.type) },
+  { re: /collar/i, field: 'collar', ok: (s) => s.collar && s.collar.type && s.collar.type !== 'none' },
+  { re: /cap sleeve/i, field: 'sleeveHead', ok: (s) => s.sleeveHead === 'capped' },
+  { re: /yoke|shirr|smock/i, field: 'yoke', ok: (s) => s.yoke && s.yoke.type && s.yoke.type !== 'none' },
+  { re: /ruffled strap/i, field: 'straps', ok: (s) => s.straps && s.straps.type === 'ruffled' },
+  { re: /corset|cup|bustier/i, field: 'cupSeams', ok: (s) => s.cupSeams === true },
+];
+
+// Returns {expected, captured, viaOov} for a garment photo: how many of its
+// ground-truth oov elements have a matching structured category, and of those
+// how many the returned spec actually populated correctly. viaOov = whether the
+// element also showed up in the honesty-channel outOfVocab[] array.
+function structuralCoverage(entry, spec) {
+  if (entry.category !== 'garment') return null;
+  const oovList = entry.oov || [];
+  let expected = 0, captured = 0, viaOov = 0;
+  const oovText = (spec.outOfVocab || []).join(' | ').toLowerCase();
+  const seen = new Set();
+  for (const phrase of oovList) {
+    const cat = OOV_CATEGORY.find((c) => c.re.test(phrase));
+    if (!cat || seen.has(cat.field)) continue; // count each field once per photo
+    seen.add(cat.field);
+    expected += 1;
+    if (cat.ok(spec)) captured += 1;
+    const kw = phrase.toLowerCase().split(/[\s(/]+/).filter((w) => w.length > 3)[0] || '';
+    if (kw && oovText.includes(kw)) viaOov += 1;
+  }
+  return { expected, captured, viaOov };
+}
+
 const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 const queue = MANIFEST.photos.filter((p) => !results[p.file]).slice(0, limit);
 console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(results).length}, running: ${queue.length}, ip: ${myIP}`);
@@ -110,7 +148,7 @@ for (const entry of queue) {
           continue;
         }
       } else {
-        out = { ...classify(entry, res.spec), spec: res.spec };
+        out = { ...classify(entry, res.spec), spec: res.spec, coverage: structuralCoverage(entry, res.spec) };
       }
     } catch (err) {
       out = { cls: 'ERROR', why: String(err).slice(0, 200) };
@@ -131,4 +169,22 @@ console.log('\n== SUMMARY ==');
 console.log(`garment photos: ${garmentTotal}  |  control (must-reject): ${rejectTotal}`);
 for (const [cls, n] of Object.entries(counts).sort()) console.log(`${cls.padEnd(11)} ${n}`);
 console.log(`\nFULL PATTERN: ${counts.FULL || 0}/${garmentTotal}   correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
-console.log(`results: ${OUT}`);
+
+// Loop 1 SCHEMA-BRIDGE metric: how many out-of-vocab construction elements the
+// new structured fields captured. This is the number that should MOVE this loop
+// (FULL does not, since the engine still cannot draw). Also reports photos where
+// EVERY category element was captured.
+let exp = 0, cap = 0, oov = 0, photosPerfect = 0, photosWithCat = 0;
+for (const r of Object.values(results)) {
+  if (!r.coverage) continue;
+  const c = r.coverage;
+  if (c.expected === 0) continue;
+  photosWithCat += 1;
+  exp += c.expected; cap += c.captured; oov += c.viaOov;
+  if (c.captured === c.expected) photosPerfect += 1;
+}
+console.log(`\n== SCHEMA BRIDGE (Loop 1) ==`);
+console.log(`structured fields captured: ${cap}/${exp} out-of-vocab elements (${photosWithCat} photos have a mappable element)`);
+console.log(`photos where EVERY mappable element was captured: ${photosPerfect}/${photosWithCat}`);
+console.log(`also named in outOfVocab[] honesty channel: ${oov}/${exp}`);
+console.log(`\nresults: ${OUT}`);

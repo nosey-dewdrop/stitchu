@@ -9,10 +9,12 @@ zincir **O ÜRÜNÜN tam kalıbını** veriyor. Hedef **58/58**; ara eşik en az
 Bu sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda sayı
 yeniden ölçülür ve buraya işlenir.
 
-Durum: **6/54 TAM KALIP (ÖLÇÜLDÜ, 2026-07-15 Loop 0)** — 59 dosyanın 5'i giysi-dışı
-doğru-red kontrolü (doğru-red 3/5), 54 gerçek giysi fotoğrafı. Dağılım: 6 TAM /
-45 EKSİK ÖĞELİ (spec doğru ama motor dağarcık-dışı öğeyi çizemiyor) / 3 YANLIŞ
-(vision okuma hatası). Ölçüm scripti: engine/tools/benchmark-58.mjs (canlı worker).
+Durum: **6/54 TAM KALIP (ÖLÇÜLDÜ, 2026-07-15 Loop 1 — Loop 0'la AYNI)** — motor
+henüz yapısal alanları ÇİZMİYOR, o yüzden FULL değişmiyor ve bu NORMAL. Loop 1'in
+ölçüsü ürün metriği değil ŞEMA KÖPRÜSÜ: **51/69 dağarcık-dışı öğe artık yeni yapısal
+alanlarla (closure/collar/straps/cupSeams/sleeveHead/yoke/backDetail/outOfVocab[])
+YAKALANIYOR** (Loop 0'da sıfırdı). Doğru-red 4/5. Ölçüm scripti: engine/tools/
+benchmark-58.mjs (canlı worker; artık structuralCoverage() ile şema köprüsü stat'ı basar).
 
 ## TEŞHİS (kanıtlı, 2026-07-15 canlı test)
 - CV (vision) GÖRÜYOR: 7/7 canlı testte düğme patı, yaka, korse, puf doğru okundu.
@@ -72,7 +74,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 | # | Loop | İş | Durum | 58'de |
 |---|------|-----|-------|-------|
 | 0 | Etiketleme + sayaç | photos-1024'teki her foto için ground-truth manifest (garment, dağarcık-içi alanlar, dağarcık-DIŞI öğeler; Slowly ekranı 13.30.50 + çanta 13.51.19 + kalıp-çizimleri = doğru-red testleri). tools/ altında ölçüm scripti: zincirden geçir → tam kalıp / eksik öğeli / yanlış. İLK GERÇEK SAYI buradan. | **bitti** (15 Tem; manifest benchmark-58/manifest.json lokal, script engine/tools/benchmark-58.mjs; 59 foto = 54 giysi + 5 doğru-red; rate-limit füzü kendi KV'mizden resetlenerek aşıldı, wrangler authlu) | **6/54** (45 eksik öğeli, 3 yanlış; doğru-red 3/5 — talimat sayfası + kalıp çizimi giysi sanıldı) |
-| 1 | Vision köprüsü | worker şemasına yapısal alanlar: closure, collar, straps, cupSeams, sleeveHead, gathering, outOfVocab[] — serbest metin details ölür, alan doğar. worker.js:285. Wrangler redeploy gerekir → Damla'ya not. | bekliyor | — |
+| 1 | Vision köprüsü | worker şemasına yapısal alanlar: closure, collar, straps, cupSeams, sleeveHead, yoke, backDetail, outOfVocab[] — serbest metin details ölür, alan doğar. worker.js:285. | **bitti** (15 Tem Loop 1; worker GERÇEK deploy edildi v7c3511e6, PUBLIC_ANALYZE on; create.js spec.seen borusu; 2 Loop 0 vision hatası prompt'ta düzeldi; golden byte-identity, web-fuzz 19555/0) | **6/54** (DEĞİŞMEDİ — motor çizmiyor, NORMAL) + **SCHEMA BRIDGE 51/69 öğe yakalandı** |
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | bekliyor | — |
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | bekliyor | — |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
@@ -90,6 +92,15 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
+- 2026-07-15 Loop 1: **6/54 TAM** (DEĞİŞMEDİ, beklendiği gibi — motor hâlâ çizmiyor,
+  boru bu loop döşendi) + 38 eksik öğeli + 10 yanlış + doğru-red **4/5** (3/5'ten
+  arttı: çanta+2 Slowly+1 kalıp sayfası reddedildi). LOOP 1'İN GERÇEK ÖLÇÜSÜ =
+  **SCHEMA BRIDGE: 51/69 dağarcık-dışı öğe yeni yapısal alanla yakalandı** (43 foto,
+  27'sinde her öğe yakalandı; 32/69 outOfVocab[] onur kanalında da adıyla geçti) —
+  sıfırdan (Loop 0'da yapısal alan yoktu) 51/69'a. WRONG 3→10 artışı motor değil
+  VISION VARYANSI (halter/boat/square/vNeck belirsiz yaka sınırı, Loop 0 belgeledi);
+  iki hedeflenen Loop 0 hatası (fırfırlı askı→kol, boat→square) canlı 6-foto testinde
+  DÜZELDİ. Rapor: reports/2026-07-15-stitchu-benchmark-loop1.md.
 - 2026-07-15 Loop 0: **6/54 TAM** + 45 eksik öğeli + 3 yanlış; doğru-red 3/5. TAM'lar: Heloise (boat fit&flare), Hallie tank dress, Boat Neck Top (4 foto). En sık dağarcık-dışı (54 fotoda): bağ/kurdele kapanması 20, düğme patı 19, yaka 9, yoke/büzgü 9, cap kol 5, açık sırt 5. NOT: fermuar bu sette neredeyse hiç GÖRÜNMÜYOR (gizli fermuar fotoğrafta okunmaz) — Loop 4 fermuar payı hâlâ gerekli ama görünür kapanma önceliği bağ/kurdele + düğme.
 
 ## HER OTURUMUN KAPANIŞI
