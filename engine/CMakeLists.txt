@@ -61,3 +61,7 @@ add_test(NAME sleeve_check COMMAND sleeve_check)
 add_executable(fit_proof tests/fit_proof.cpp)
 target_link_libraries(fit_proof PRIVATE engine)
 add_test(NAME fit_proof COMMAND fit_proof)
+
+add_executable(fba_check tests/fba_check.cpp)
+target_link_libraries(fba_check PRIVATE engine)
+add_test(NAME fba_check COMMAND fba_check)

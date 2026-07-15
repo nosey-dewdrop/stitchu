@@ -8,12 +8,19 @@ namespace stitchu {
 struct BodyMeasurementsSnapshot {
     double bustCM = 0, waistCM = 0, hipCM = 0, shoulderCM = 0;
     double backLengthCM = 0, armLengthCM = 0, neckCM = 0;
+    // OPTIONAL high/upper-bust girth (above the bust, under the arms). This is
+    // the ribcage FRAME. When given (> 0), the back and armhole size to it while
+    // the front keeps the full bust — a real full-bust adjustment, so a fuller
+    // bust no longer gapes at the neck/armhole. When 0, we fall back to the old
+    // B/C-cup assumption (bust - 70 mm) and the draft is byte-identical.
+    double upperBustCM = 0;
 
     double bustMM() const { return bustCM * 10; }
     double waistMM() const { return waistCM * 10; }
     double hipMM() const { return hipCM * 10; }
     double backLengthMM() const { return backLengthCM * 10; }
     double neckMM() const { return neckCM * 10; }
+    double upperBustMM() const { return upperBustCM * 10; }
 };
 
 // Halter is more than a neck shape: the front rises into a nape strap, the

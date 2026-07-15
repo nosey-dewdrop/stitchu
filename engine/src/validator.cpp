@@ -197,7 +197,11 @@ std::vector<ValidationIssue> bodiceIssues(const GarmentSpec& spec, const BodiceD
 
     const double chestEase = BodiceBlock::chestEaseFor(spec.fabric);
     const double waistEase = BodiceBlock::waistEaseFor(spec.fabric);
-    const double underbust = std::max(m.bustMM() - BodiceBlock::underbustOffset, m.waistMM());
+    // Mirror the drafter's frame girth: the real upper bust when given (full-bust
+    // adjustment), else the bust-minus-cup assumption.
+    const double frameGirth = m.upperBustMM() > 0 ? m.upperBustMM()
+                                                  : (m.bustMM() - BodiceBlock::underbustOffset);
+    const double underbust = std::max(frameGirth, m.waistMM());
     // Empire bodices suppress toward the underbust girth, not the waist.
     const bool empire = spec.garment == GarmentType::Dress && spec.waistline == Waistline::Empire;
     const double girth = empire ? underbust : m.waistMM();

@@ -27,6 +27,7 @@ export async function draft(spec, measurements) {
     spec.keyhole === 'keyhole',
     measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
     measurements.backLength, measurements.armLength, measurements.neck,
+    measurements.upperBust || 0, // optional full-bust adjustment
   );
   return JSON.parse(json);
 }

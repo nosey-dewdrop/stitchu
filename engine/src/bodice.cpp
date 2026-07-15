@@ -427,7 +427,13 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double neck = m.neckMM();
     const double backLength = m.backLengthMM();
     const double shoulderHalf = m.shoulderCM * 10 / 2;
-    const double underbust = std::max(m.bustMM() - underbustOffset, m.waistMM());
+    // The frame girth (back + armhole size to this). Prefer the REAL upper-bust
+    // measurement when the user gave it — that's the full-bust adjustment. Only
+    // fall back to the bust-minus-cup-offset assumption when it's absent, so an
+    // existing 7-measurement draft is unchanged.
+    const double frameGirth = m.upperBustMM() > 0 ? m.upperBustMM()
+                                                  : (m.bustMM() - underbustOffset);
+    const double underbust = std::max(frameGirth, m.waistMM());
 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
     // The torso-only armhole depth (before any arm deepening). The empire seam is

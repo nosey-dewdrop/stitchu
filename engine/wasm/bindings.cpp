@@ -116,7 +116,8 @@ std::string draftJSON(
     std::string skirtStyle, std::string skirtLength, std::string topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole,
     double bustCM, double waistCM, double hipCM, double shoulderCM,
-    double backLengthCM, double armLengthCM, double neckCM
+    double backLengthCM, double armLengthCM, double neckCM,
+    double upperBustCM
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -133,7 +134,8 @@ std::string draftJSON(
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
     spec.keyhole = keyhole;
 
-    const BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
+    BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
+    m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     const DraftedPattern draft = GarmentDrafter::draft(spec, m);
     const auto issues = PatternValidator::issues(spec, m, draft);
 
