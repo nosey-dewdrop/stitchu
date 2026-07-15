@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=50';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=50';
-import { draft, grade } from './engine.js?v=50';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=50';
-import { renderResult } from './render.js?v=50';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=51';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=51';
+import { draft, grade } from './engine.js?v=51';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=51';
+import { renderResult } from './render.js?v=51';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=50';
+} from './store.js?v=51';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -291,6 +291,19 @@ function showSpec() {
         if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) spec.ruffle = seen.hemRuffle;
         if (typeof seen.keyhole === 'boolean') spec.keyhole = seen.keyhole ? 'keyhole' : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
+        // Structural fields the vision now reads but the engine cannot draw yet
+        // (Loop 1 pipe: carried on the spec so later loops can consume them and
+        // the honesty layer can tell the user what the pattern is missing).
+        spec.seen = {
+          closure: seen.closure || null,
+          collar: seen.collar || null,
+          straps: seen.straps || null,
+          cupSeams: typeof seen.cupSeams === 'boolean' ? seen.cupSeams : null,
+          sleeveHead: seen.sleeveHead || null,
+          yoke: seen.yoke || null,
+          backDetail: seen.backDetail || null,
+          outOfVocab: Array.isArray(seen.outOfVocab) ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12) : [],
+        };
         status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
