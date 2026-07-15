@@ -87,7 +87,7 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 |---|------|-----|-------|-------|
 | 0 | Etiketleme + sayaç | photos-1024'teki her foto için ground-truth manifest (garment, dağarcık-içi alanlar, dağarcık-DIŞI öğeler; Slowly ekranı 13.30.50 + çanta 13.51.19 + kalıp-çizimleri = doğru-red testleri). tools/ altında ölçüm scripti: zincirden geçir → tam kalıp / eksik öğeli / yanlış. İLK GERÇEK SAYI buradan. | **bitti** (15 Tem; manifest benchmark-58/manifest.json lokal, script engine/tools/benchmark-58.mjs; 59 foto = 54 giysi + 5 doğru-red; rate-limit füzü kendi KV'mizden resetlenerek aşıldı, wrangler authlu) | **6/54** (45 eksik öğeli, 3 yanlış; doğru-red 3/5 — talimat sayfası + kalıp çizimi giysi sanıldı) |
 | 1 | Vision köprüsü | worker şemasına yapısal alanlar: closure, collar, straps, cupSeams, sleeveHead, yoke, backDetail, outOfVocab[] — serbest metin details ölür, alan doğar. worker.js:285. | **bitti** (15 Tem Loop 1; worker GERÇEK deploy edildi v7c3511e6, PUBLIC_ANALYZE on; create.js spec.seen borusu; 2 Loop 0 vision hatası prompt'ta düzeldi; golden byte-identity, web-fuzz 19555/0) | **6/54** (DEĞİŞMEDİ — motor çizmiyor, NORMAL) + **SCHEMA BRIDGE 51/69 öğe yakalandı** |
-| 1b | Benchmark hız token'ı | Ölçüm 21sn/foto sürünüyor (kendi rate-limit sigortamız + KV eventual consistency). Worker'a gizli bypass header (wrangler secret, SADECE engine/tools/benchmark-58.mjs kullanır); gerçek kullanıcı limiti AYNEN kalır. 54 foto dakikalara iner — "her patch sonrası sayı" kuralı ucuzlar. | bekliyor | — |
+| 1b | Benchmark hız token'ı | Ölçüm 21sn/foto sürünüyor (kendi rate-limit sigortamız + KV eventual consistency). Worker'a gizli bypass header (wrangler secret, SADECE engine/tools/benchmark-58.mjs kullanır); gerçek kullanıcı limiti AYNEN kalır. 54 foto dakikalara iner — "her patch sonrası sayı" kuralı ucuzlar. | **bitti** (15 Tem Loop 1b; worker GERÇEK deploy v82498f3a; gizli header `x-sb-bench`, secret `BENCH_BYPASS` = wrangler secret + gitignore'lu benchmark-58/.benchmark-token; sabit-uzunluk XOR karşılaştırma, secret loglanmaz; token'lı=fuse atlanır, token'sız/yanlış=aynen 3/dk+15/gün; ~1.5sn/çağrı → 54 foto ~90sn vs eski 21sn/çağrı) | — (BLOKE aşağıda: kredi) |
 | 2 | Dürüstlük + deneme katmanı | Motor çizemediği öğeyi ÖNCE çizmeye uğraşır (en yakın türev), gerçekten formül yoksa web'de görünür missingFeatures ile kullanıcıya söyler: "şu ikisi kalıpta YOK". Sessiz fallback ölür. | bekliyor | — |
 | 3 | Düğme patı | Closure::FrontButton post-pass. DİKKAT: 15 Tem'de yarım strapless+pat denemesi revert edildi; mimari karar sabit: makePrincessPieces'e opsiyonel dal + keyhole-tarzı opt-in post-pass, golden byte-identity korunur. | bekliyor | — |
 | 4 | Fermuar payı | Kapanma zincirinin ikinci yarısı: fermuar payı + kapanma tipine göre dikiş payı farkı. Pat'la aynı post-pass mimarisi. | bekliyor | — |
@@ -106,6 +106,14 @@ ve render kanıtına bakar, kod yazmaz, kırar ve rapor eder.
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - 2026-07-15: ~5-10/58 (tahmin, ölçülmedi) — başlangıç
+- 2026-07-15 Loop 1b: **ÖLÇÜLEMEDİ — BLOKE: Anthropic kredisi bitmiş.** Hız token'ı
+  KANITLANDI (canlı): token'lı 25/25 ardışık çağrı 0×429 (fuse atlanıyor); token'sız
+  15/20 çağrı 429 + limit anında token'sız=429 iken token'lı=geçiyor; yanlış/boş
+  token=429 (bypass gated). YENİ HIZ: 6 çağrı 9sn (~1.5sn/çağrı) → 54 foto ~90sn
+  tahmini, eski 21sn/çağrı ~19dk+ (resetlerle rapordaki ~50dk). AMA vision çağrıları
+  "Your credit balance is too low" (Anthropic 400) döndüğü için TAM sayı ölçülemedi;
+  6/54 son ölçülen değer olarak kalır. Damla: Anthropic bakiyesi yüklenince tek FAST
+  koşuyla gerçek sayı ~90sn'de çıkar. Rapor: reports/2026-07-15-stitchu-benchmark-loop1b.md.
 - 2026-07-15 Loop 1: **6/54 TAM** (DEĞİŞMEDİ, beklendiği gibi — motor hâlâ çizmiyor,
   boru bu loop döşendi) + 38 eksik öğeli + 10 yanlış + doğru-red **4/5** (3/5'ten
   arttı: çanta+2 Slowly+1 kalıp sayfası reddedildi). LOOP 1'İN GERÇEK ÖLÇÜSÜ =

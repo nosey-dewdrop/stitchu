@@ -111,8 +111,18 @@ export default {
         if (env.PUBLIC_ANALYZE !== 'on') {
           return jsonResponse({ error: 'Photo analysis is not open yet' }, 403);
         }
-        if (await rateLimited(env, `puban:${ip}`, 3) ||
-            await rateLimitedDaily(env, `pubanday:${ip}`, 15)) {
+        // Internal benchmark bypass: our own measurement tool (engine/tools/
+        // benchmark-58.mjs) sends a secret bypass header so a 54-photo run does
+        // not crawl behind the public cost fuse. The secret lives ONLY as a
+        // wrangler secret (BENCH_BYPASS) and in a gitignored local file — it is
+        // never in the repo, never logged, and skips ONLY the rate-limit fuse.
+        // Real public users (no header, or a wrong one) hit the 3/min + 15/day
+        // limit exactly as before. Constant-length compare, no early-out.
+        const bypass = !!env.BENCH_BYPASS && matchesSecret(
+          request.headers.get('x-sb-bench') || '', env.BENCH_BYPASS);
+        if (!bypass &&
+            (await rateLimited(env, `puban:${ip}`, 3) ||
+             await rateLimitedDaily(env, `pubanday:${ip}`, 15))) {
           return jsonResponse({ error: 'Rate limit exceeded. Please wait.' }, 429);
         }
         const length = parseInt(request.headers.get('content-length') || '0');
@@ -150,6 +160,19 @@ export default {
     }
   },
 };
+
+// Constant-length, constant-time-ish secret compare. Returns false immediately
+// on a length mismatch (length is not secret), otherwise XORs every byte so the
+// loop runs the full width regardless of where a mismatch is — no early-out that
+// could leak position via timing. Never logs either value.
+function matchesSecret(given, expected) {
+  if (typeof given !== 'string' || given.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i += 1) {
+    diff |= given.charCodeAt(i) ^ expected.charCodeAt(i);
+  }
+  return diff === 0;
+}
 
 // Best-effort per-IP-per-minute rate limit; no-op if KV is not bound.
 async function rateLimited(env, keyBase, perMinute) {
@@ -360,6 +383,6 @@ function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, x-app-token',
+    'Access-Control-Allow-Headers': 'Content-Type, x-app-token, x-sb-bench',
   };
 }

@@ -386,6 +386,15 @@ S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi do�
 **Görsel:** terminalde akan test satırları + aralarda bekleme sayacı. Alt yazı: "rate limit: 15/day. tester: me."
 **Format:** reel
 
+## Reel — kendi güvenlik duvarımı deldim ama sadece kendime (loop 1b)
+
+**Hook (ilk 2 sn):** "Kendi ürünümün güvenlik duvarına gizli bir kapı açtım — ve o kapının anahtarı sadece bende."
+
+**Anlatı (~40 sn):** Geçen sefer testim 19 dakika sürüyordu çünkü kendi koyduğum "günde 15 fotoğraf" sigortasına kendim takılıyordum. Bu sefer düzgün çözdüm. Sunucuya gizli bir bypass koydum: istekte doğru gizli anahtar (secret) varsa sigorta atlanıyor, test uçuyor. Ama tehlike şu — bir bypass yanlış yapılırsa herkes limiti aşar. O yüzden üç kural: birincisi anahtarın DEĞERİ hiçbir zaman kodun içine yazılmıyor, Cloudflare'ın secret kasasında ve bilgisayarımda gizli bir dosyada duruyor, github'a asla çıkmıyor. İkincisi karşılaştırmayı sabit-uzunlukta yapıyorum, yani "anahtarın kaçıncı harfi tuttu" bilgisini zamanlamayla sızdırmıyorum. Üçüncüsü gerçek kullanıcının limiti tık kadar değişmedi — anahtarı olmayan, yanlış anahtarı olan herkes hâlâ günde 15'e takılıyor. Canlıda kanıtladım: anahtarımla 25 ardışık çağrı, tek bir engel yok; anahtarsız 20 çağrının 15'i duvara çarptı. Testim 19 dakikadan bir buçuk dakikaya indi. Ders: bir arka kapı açacaksan, önce onu sadece sana açık tutmanın matematiğini kur.
+
+**Görsel:** solda anahtarlı terminal (25/25 akıyor, hepsi geçiyor), sağda anahtarsız terminal (429 429 429 kırmızı duvar). Alt yazı: "secret door, but only for me".
+**Format:** reel
+
 ## Reel — 0.00mm ne demek, neden takıntılıyım
 
 **Hook (ilk 2 sn):** "Kalıbında yarım milimetre hata olsun, dikişte üç santim kayarsın. Nasıl mı?"
@@ -420,4 +429,79 @@ S6 · HOOK: "sayım değişmedi. ve buna sevindim — çünkü değişmemesi do�
 **Anlatı (~40 sn):** Ürünümün kalıp çizen beyni C++ ile yazılı — hız ve matematik hassasiyeti için. Ama kullanıcı bir web sitesine giriyor, uygulama indirmiyor. Nasıl? WASM — WebAssembly. C++ kodunu derleyip tarayıcının anladığı taşınabilir bir makine koduna çeviriyorsun; senin telefonunda, SENİN işlemcinde koşuyor. İki kazanç: ölçümlerin cihazından çıkmıyor (gizlilik) ve ben sunucu parası ödemiyorum — bin kullanıcı da gelse maliyetim aynı. Rakip bunu ayda 34 dolara abonelikle satıyor çünkü hesabı sunucuda yapıyor. Ders: mimari karar, fiyat etiketinin ta kendisi.
 
 **Görsel:** şema: fotoğraf → tarayıcı içinde motor kutusu → kalıp; sunucu kutusunun üstü çizili. Alt yazı: "your body data never leaves your device".
+**Format:** reel
+
+## seri T — puzzle birleşmiyordu (register onarımı)
+
+T1 · HOOK: "kalıbımı bastım, sayfaları yan yana koydum ve PARÇALAR BİRLEŞMEDİ."
+- sayfa sayısı sorun değildi. sorun: kenar hizalama işaretleri eksikti, hangi sayfa hangisine gelecek belirsizdi.
+- kullanıcı 25 kağıdı önüne serip "e şimdi ne" diyor. çıktı doğru, montaj imkansız. [baskı]
+
+T2 · HOOK: "rakibin 700 TL'lik kalıbını satın aldım, sadece SAYFA sistemini çözmek için."
+- onun A4'ünde olan bende olmayan her şeyi ekledim: görünür sayfa çerçevesi, dev grid kodu (A1/B2, masanın ucundan okunur), köşe register kareleri.
+- köşe kareler bantlayınca komşuyla TAM KARE oluşturuyor — hizanın kanıtı. [baskı]
+
+T3 · HOOK: "bir parça sayfadan taşıyorsa artık sana nereye gittiğini SÖYLÜYOR."
+- devam okları: '→ B2'. hangi sayfada sürdüğü yazılı.
+- ve boş (basılmayan) sayfaya asla işaret çıkmıyor — used-set kontrollü. temiz kağıt temiz kalır. [baskı]
+
+T4 · HOOK: "bu onarımı yaparken kodun mimarisini de değiştirdim, çünkü aynı geometri iki yerde çiziliyordu."
+- print (baskı) ve render (ekran) ayrı ayrı sayfa geometrisi hesaplıyordu → drift riski.
+- sheet.js'i TEK KAYNAK yaptım; ikisi de oradan okuyor. bir de headless script gerçek ürün kodundan sayfa görselini üretiyor, her oturumda rakiple kıyaslayabiliyorum. [terminal]
+
+## seri U — motoru ders kitaplarına karşı yargıladım (0 değişiklik)
+
+U1 · HOOK: "motorumu iki klasik kalıp kitabına karşı denetledim. sonuç: HİÇBİR formülü değiştirmedim. ve bu iyi haber."
+- kural: bir formülü ancak İKİ kaynak BİRDEN aynı diyorsa VE motor net yanlışsa değiştir.
+- hiçbir sapma iki şartı birden sağlamadı. tek kaynağa dayanıp 'düzelttim' demek en kolay yalandı — yapmadım. [terminal]
+
+U2 · HOOK: "eteğimin pensi ders kitabından 10mm kısa. neden düzeltmedim?"
+- oran ve yön birebir doğru (arka pens > ön pens, tam kitaptaki gibi), sadece ikisi de 10mm kısa.
+- ama bir kaynak (Aldrich) söylüyor, ikincisi (Armstrong) elimde doğrulanamadı. tek kaynakla değiştirmek kural dışı. golden'ı da bozardı. karar Damla'nın, oto yapmadım. [render]
+
+U3 · HOOK: "dokümanımda bir yalan buldum ama kodda değil."
+- FORMULAS.md 'göğüs ferahlığı %11' diyor. ama çizilen geometri %6.6 veriyor — çünkü arka panel underbust ile ölçekleniyor (full-bust mantığının parçası).
+- kod doğru, YAZI yanlış. drafting hatası değil, dokümantasyon netsizliği. ikisini karıştırmamak önemli. [terminal]
+
+## seri V — iki iş modeli (rakibi didikledik)
+
+V1 · HOOK: "rakibim bir kalıbı GÜNLERCE elle çiziyor. ben saniyede. peki neden hâlâ ondan iyi değilim?"
+- didikledik: onun elle yaptığının %80'i motorumda otomatik. ease, grading, özel beden — hepsi parametrik.
+- onun TEK üstünlüğü kalıp değil SUNUM: güzel teknik çizim + 13 sayfa illüstre talimat. benim kapatmam gereken boşluk doğruluk değil, sunum. [render]
+
+V2 · HOOK: "rakibin kalıbında 'eski sürüm dardı, müşteri şikayetiyle düzelttim' yazıyordu. bu benim en güçlü kanıtım."
+- elle ease kararı = hata payı itirafı. o dar yaptı, elle düzeltti.
+- benim motorum ease'i parametrik ekliyor (dokuma %11, örgü %4) → o hata sınıfını YAPI OLARAK yapamaz. [render]
+
+V3 · HOOK: "vücut ölçüsü hassas veri diye motoru API yaptım ve çağrı başı maliyetim SIFIR kaldı."
+- aynı C++ motoru Cloudflare Worker İÇİNDE koşuyor. tarayıcı wasm'ı fetch'liyordu, worker'da o yol yok → ayrı derleyip motora elle verdim.
+- POST /api/draft: bozuk kalıp yerine '422 undraftable + sebep'. satılabilir çekirdek, yapay zeka maliyeti yok. [terminal]
+
+# TECH/AI/CV STOĞU — yeni parçalar
+
+## Reel — sayı 6/54'te kaldı ve buna sevindim
+
+**Hook (ilk 2 sn):** "Bir oturum boyu çalıştım, ürün sayım hiç değişmedi. Ve mutluyum."
+
+**Anlatı (~40 sn):** Ürünümü 54 gerçek fotoğrafla ölçüyorum: tam doğru kalıp çıkan foto sayısı = 6. Bir sonraki oturumda yapay zekanın gördüğünü motora taşıyan bir köprü kurdum. Sayı yine 6 kaldı. Çünkü motor o öğeleri hâlâ ÇİZMİYOR — ben sadece boruyu döşedim, eli eklemedim. Değişmemesi DOĞRUYDU. Buradaki tuzak şu: herkes ilerleme grafiğini yukarı çizmek ister, ve sahte yükseltmek çok kolaydır. Ben ürün sayısı (6) ile kabiliyet sayısını (yapısal alan öğeyi kaç fotoda yakaladı) AYRI ölçüyorum, tam da kendime 'ilerliyorum' yalanını söylememek için. İlerlemenin en dürüst kanıtı bazen değişmeyen bir sayıdır — yeter ki neden değişmediğini gösterebil.
+
+**Görsel:** ekranda '6/54' sabit, altında ayrı bir çubuk 'yapısal yakalama' yükseliyor. Alt yazı: "product number vs capability number — measure them apart".
+**Format:** reel
+
+## Reel — göz var, el yok, boru taşımıyor
+
+**Hook (ilk 2 sn):** "Yapay zekam fotoğraftaki düğmeyi görüyor. Motorum düğmesiz kalıp çiziyor. Suç kimin?"
+
+**Anlatı (~40 sn):** 58 fotoğrafla zinciri parça parça test ettim. Sonuç ters köşe: görme tarafı neredeyse kusursuz — düğme patını, yakayı, korseyi tek tek okuyor. Ama gördüğünü SERBEST bir cümleye yazıyor ('düğmeli, hakim yakalı'). Kalıbı çizen matematik motorunun sözlüğünde ise 'düğme patı' diye bir formül yok. Yani göz var, el yok, ikisinin arasındaki boru da taşımıyor. Kullanıcının 'düğmeyi görmüyor' hissinin gerçek mekanizması bu: görüyor, kullanamıyor. Ders: kullanıcının şikayeti hangi HALKADA, tahmin etme — zinciri parça parça test et. Ben 'görmüyor' sanıp aylarca yanlış yeri tamir edebilirdim.
+
+**Görsel:** üç kutu: FOTO → GÖRÜ ('front button placket' vurgulu) → MOTOR (düğmesiz kalıp). ortadaki boru kırık çizili. Alt yazı: "the eye sees, the hand can't — the pipe is the bug".
+**Format:** reel
+
+## Reel — hiçbir formülü değiştirmemek de karar
+
+**Hook (ilk 2 sn):** "Motorumu iki ders kitabına karşı denetledim. Sıfır formül değiştirdim. Bilerek."
+
+**Anlatı (~40 sn):** Kalıp motorumun her bloğunu iki yayınlanmış standarda karşı ölçtüm. Kuralım sertti: bir formülü ancak İKİ kaynak birden aynı değerde diyorsa ve motorum net yanlışsa değiştir. Sonuç: hiçbir sapma iki şartı birden sağlamadı. Her fark ya tek kaynaklıydı, ya savunulabilir bir bant içindeydi, ya zaten kodda 'varsayım' diye işaretliydi. Değiştirmedim. Çünkü tek kaynağa dayanıp 'düzelttim demek' en kolay, en tatmin edici yalandır — sanki iş yapmışsın gibi hissettirir. Gerçek disiplin, elini kolunu bağlayan kuralın kendine de uygulanmasıdır. Bir de dokümanımın kod ile çeliştiği bir satır buldum: yazı yanlıştı, kod doğruydu. İkisini karıştırmamak önemli — birini düzeltip diğerini bozarsın.
+
+**Görsel:** motor değeri | Aldrich | Armstrong tablosu, hepsi 'karar: dokunulmadı' sütunu yeşil. Alt yazı: "changing nothing, on purpose, is also engineering".
 **Format:** reel

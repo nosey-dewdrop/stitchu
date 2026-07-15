@@ -18,6 +18,13 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PHOTOS = join(root, 'benchmark-58', 'photos-1024');
+// Internal benchmark bypass token (Loop 1b): read from a gitignored local file.
+// If present, the worker skips the rate-limit fuse for our calls and the run
+// flies (no 21s pacing, no KV resets). If ABSENT, we fall back to the old slow
+// path so the script never breaks in anyone else's hands.
+const TOKEN_FILE = join(root, 'benchmark-58', '.benchmark-token');
+const BENCH_TOKEN = existsSync(TOKEN_FILE) ? readFileSync(TOKEN_FILE, 'utf8').trim() : '';
+const FAST = BENCH_TOKEN.length > 0;
 const MANIFEST = JSON.parse(readFileSync(join(root, 'benchmark-58', 'manifest.json'), 'utf8'));
 const OUT = join(root, 'benchmark-58', `results-${new Date().toISOString().slice(0, 10)}.json`);
 const API = 'https://stitchu-api.damummyphus.workers.dev/api/analyze';
@@ -50,8 +57,11 @@ function analyze(file) {
   const body = JSON.stringify({ image: b64, mediaType: 'image/jpeg' });
   const tmp = join(root, 'benchmark-58', '.req.json');
   writeFileSync(tmp, body);
-  const raw = sh('curl', ['-s', '-m', '120', '-X', 'POST', API,
-    '-H', 'content-type: application/json', '--data', `@${tmp}`]);
+  const curlArgs = ['-s', '-m', '120', '-X', 'POST', API,
+    '-H', 'content-type: application/json'];
+  if (FAST) curlArgs.push('-H', `x-sb-bench: ${BENCH_TOKEN}`);
+  curlArgs.push('--data', `@${tmp}`);
+  const raw = sh('curl', curlArgs);
   const data = JSON.parse(raw);
   if (data.error) return { error: data.error };
   const text = data?.content?.[0]?.text;
@@ -125,7 +135,8 @@ function structuralCoverage(entry, spec) {
 
 const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 const queue = MANIFEST.photos.filter((p) => !results[p.file]).slice(0, limit);
-console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(results).length}, running: ${queue.length}, ip: ${myIP}`);
+console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(results).length}, running: ${queue.length}, ip: ${myIP}, mode: ${FAST ? 'FAST (bypass token)' : 'SLOW (21s/call fuse pacing)'}`);
+const runStart = Date.now();
 
 // KV is eventually consistent: deletes take up to ~60s to reach the edge.
 // So we stay under the 3/min fuse by pacing (>=21s/call) and clear the DAILY
@@ -133,8 +144,8 @@ console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(resu
 const sleep = (ms) => new Promise((r) => { setTimeout(r, ms); });
 let i = 0;
 for (const entry of queue) {
-  if (i % 8 === 0) resetFuse();
-  if (i > 0) await sleep(21000);
+  if (!FAST && i % 8 === 0) resetFuse();
+  if (i > 0) await sleep(FAST ? 250 : 21000);
   i += 1;
   let out;
   for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -143,8 +154,10 @@ for (const entry of queue) {
       if (res.error) {
         out = { cls: 'ERROR', why: JSON.stringify(res.error).slice(0, 200) };
         if (String(res.error).includes('Rate limit')) {
-          resetFuse();
-          await sleep(45000);
+          // In FAST mode the token should never hit the fuse; if it somehow
+          // does, don't spin on wrangler resets — just back off briefly.
+          if (!FAST) resetFuse();
+          await sleep(FAST ? 3000 : 45000);
           continue;
         }
       } else {
@@ -187,4 +200,6 @@ console.log(`\n== SCHEMA BRIDGE (Loop 1) ==`);
 console.log(`structured fields captured: ${cap}/${exp} out-of-vocab elements (${photosWithCat} photos have a mappable element)`);
 console.log(`photos where EVERY mappable element was captured: ${photosPerfect}/${photosWithCat}`);
 console.log(`also named in outOfVocab[] honesty channel: ${oov}/${exp}`);
-console.log(`\nresults: ${OUT}`);
+const elapsedS = Math.round((Date.now() - runStart) / 1000);
+console.log(`\nrun time: ${Math.floor(elapsedS / 60)}m ${elapsedS % 60}s over ${queue.length} calls (${FAST ? 'FAST' : 'SLOW'} mode)`);
+console.log(`results: ${OUT}`);
