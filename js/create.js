@@ -1,14 +1,14 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=27';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=27';
-import { draft } from './engine.js?v=27';
-import { printPattern } from './print.js?v=27';
-import { renderResult } from './render.js?v=27';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=28';
+import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=28';
+import { draft } from './engine.js?v=28';
+import { printPattern } from './print.js?v=28';
+import { renderResult } from './render.js?v=28';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
-} from './store.js?v=27';
+} from './store.js?v=28';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
