@@ -1,46 +1,46 @@
-# stitchu
+# stitchu 🧵
 
-bir kıyafetin fotoğrafını çekiyorsun, stitchu onu senin vücut ölçülerine göre çizilmiş bir dikiş kalıbına çeviriyor ve a4'e birebir ölçekte bastırıyor. gördüğü kıyafeti kendi bedeninde dikmek isteyen herkes için — hazır kalıp satın almadan, matematikle boğuşmadan.
+you take a photo of a garment. stitchu turns it into a sewing pattern drafted to your own body measurements and prints it true to scale on a4. for anyone who sees a garment and wants to sew it in their own size, without buying a ready-made pattern or fighting the math.
 
-canlı: https://nosey-dewdrop.github.io/stitchu (web v27)
+live: https://nosey-dewdrop.github.io/stitchu (web v27)
 
-## nasıl çalışıyor — bunun için neler kullandım
+## how it works and what i used for it
 
-1. 7 vücut ölçünü giriyorsun (göğüs, bel, kalça, omuz, sırt boyu, kol boyu, boyun) — lokal saklanıyor, hiç yüklenmiyor.
-2. kıyafet fotoğrafı yüklüyorsun. bir cloudflare worker claude vision'ı çağırıp kıyafeti sabit bir çizim sözlüğüne sınıflandırıyor (kıyafet tipi, yaka, kol, etek, bel çizgisi, kumaş davranışı). okumayı onaylıyor ya da düzeltiyorsun.
-3. c++'ta yazılıp webassembly'ye derlenmiş, tamamen tarayıcında çalışan bir çizim motoru kalıp parçalarını senin ölçülerine çiziyor — yayımlanmış kalıp formülleriyle (freesewing, muller & sohn, winifred aldrich; her sabitin kaynağı `engine/FORMULAS.md` içinde).
-4. çıktı: pens, düz iplik ve çizilmiş dikiş payı olan svg kalıp parçaları, 3 cm kalibrasyon kareli döşeli a4 pdf, kumaş metresi tahmini ve adım adım dikiş rehberi.
+1. you enter your 7 body measurements (bust, waist, hip, shoulder, back length, arm length, neck). they stay local, nothing is uploaded.
+2. you upload a garment photo. a cloudflare worker calls claude vision, which classifies the garment into a fixed drafting vocabulary (garment type, neckline, sleeve, skirt, waistline, fabric behavior). you confirm or correct the reading.
+3. a drafting engine written in c++ and compiled to webassembly, running entirely in your browser, drafts the pattern pieces to your measurements. it uses published pattern formulas (freesewing, muller & sohn, winifred aldrich, every constant is sourced in `engine/FORMULAS.md`).
+4. output: svg pattern pieces with darts, grainlines and drawn seam allowance, a tiled a4 pdf with a 3 cm calibration square, a fabric yardage estimate and a step by step sewing guide.
 
-çizim sözlüğü: princess/pens şekillendirme, natural/empire/babydoll bel çizgileri, dokuma/örme, 5 etek stili, oturtma ve balon kol, kat kat fırfır, sweetheart, keyhole, halter.
+the drafting vocabulary: princess and dart shaping, natural, empire and babydoll waistlines, woven and knit, 5 skirt styles, set-in and balloon sleeves, layered ruffles, sweetheart, keyhole, halter.
 
-## ölçüm / accuracy — iddia değil, benchmark
+## measurement and accuracy, benchmark not claims 📏
 
-- **doğrulama matrisi: 70.200 çizim, hepsi geçiyor.** eu 34-52 + uzun/kısa/armut/elma/uç bedenler × tüm spec uzayı; her biri geometrik değişmezleri geçiyor (yan dikiş dengesi, pens toplamları, kol oyuğu payı, kendini kesme, baskı sığması). 8/8 ctest yeşil.
-- **dikiş-çifti hassasiyeti: en kötü çift 0.00 mm.** `tools/precision-report.js` bir terzinin gerçekten iğnelediği her dikiş çiftini ölçüyor, 1.0 mm üstü hata veriyor. iki gerçek açık bulundu (omuz çifti 8-10 mm, empire yan dikiş ~2 mm), ikisi de sıfırlandı.
-- **web fuzz: 19.555 çizim, 0 hata.** `tools/web-fuzz.js` arayüzün tüm spec uzayını uç-beden ölçüleriyle dolaşıp baskı paketleyicisini simüle ediyor — hiçbir parça kırpılamıyor.
-- **altın referans repoda sabitli** (`engine/golden-reference.csv`, 23k satır); `golden-diff.py` deterministik çıktıyı 0.1 mm toleransla karşılaştırıyor.
-- **vision doğruluğu: opus öğretmen %86** (elle etiketlere karşı). zero-shot clip %44, siglip %65'te kaldı — çıkmaz sokak. plan opus'u tarayıcıda çalışan bir onnx öğrenciye damıtmak.
+- **validation matrix: 70,200 drafts, all passing.** eu 34-52 plus tall, short, pear, apple and extreme bodies, across the whole spec space. every draft passes geometric invariants (side seam balance, dart totals, armhole allowance, self intersection, print fit). 8/8 ctest green.
+- **seam pair precision: worst pair 0.00 mm.** `tools/precision-report.js` measures every seam pair a tailor would actually pin and fails anything above 1.0 mm. it found two real gaps (shoulder pair 8-10 mm, empire side seam ~2 mm) and both are now zero.
+- **web fuzz: 19,555 drafts, 0 failures.** `tools/web-fuzz.js` walks the whole spec space through the ui with extreme body measurements and simulates the print packer. no piece can be clipped.
+- **golden reference pinned in the repo** (`engine/golden-reference.csv`, 23k rows). `golden-diff.py` compares the deterministic output at 0.1 mm tolerance.
+- **vision accuracy: opus teacher at 86%** against hand labels. zero-shot clip stayed at 44% and siglip at 65%, a dead end. the plan is to distill opus into an onnx student that runs in the browser.
 
-## teknolojiler
+## tech
 
-- motor: c++17, cmake, ctest; emscripten/embind ile tek dosyalık wasm bundle (~218 kb)
-- web: github pages üstünde statik html/css/js, framework yok; kalıplar svg, baskı istemci tarafında döşeli a4 pdf; ölçüler ve gardırop local storage/indexeddb
-- backend: claude vision'ı bir app token + ip başına rate limit arkasında proxy'leyen tek bir cloudflare worker — tarayıcı api key'i asla tutmuyor
-- vision deneyleri: node + @xenova/transformers (onnx)
-- bilgi: sqlite çizim-formülü veritabanı; bir formül ancak çekişmeli kaynak-kontrolünden geçince `verified` oluyor
+- engine: c++17, cmake, ctest. single-file wasm bundle via emscripten/embind (~218 kb)
+- web: static html/css/js on github pages, no framework. patterns are svg, printing is client-side tiled a4 pdf. measurements and wardrobe live in local storage/indexeddb
+- backend: one cloudflare worker that proxies claude vision behind an app token and per-ip rate limits. the browser never holds an api key
+- vision experiments: node + @xenova/transformers (onnx)
+- knowledge: sqlite database of drafting formulas. a formula only becomes `verified` after adversarial source checking
 
-## neden yaptım
+## why i built it ❤️
 
-hazır kalıplar kimsenin bedenine tam olmuyor, "small-medium-large" diye bir vücut yok. istediğin kıyafeti görüp "bunu kendim dikeyim" demek isteyince ya pahalı bir kalıp satın alıyorsun ya da matematikle boğuşuyorsun. ben o mesafeyi kapatmak istedim: gördüğün şeyle senin bedenin arasına giren bir motor. ve ölçüler kişisel veri, o yüzden hiçbiri buluta gitmiyor.
+ready-made patterns fit nobody exactly, there is no body called small-medium-large. when you see a garment and want to sew it yourself, you either buy an expensive pattern or fight the math. i wanted to close that distance: an engine that sits between the thing you saw and your own body. and measurements are personal data, so none of them go to the cloud.
 
-## repo yerleşimi
+## repo layout
 
-- `engine/` — c++ motor, testler, araçlar, wasm build, `FORMULAS.md` (çizim spec'i)
-- `web/` — canlı site
-- `backend/` — cloudflare worker (vision proxy)
-- `vision/` — vision modeline sahip olmak (eval + damıtma korpusu)
-- `knowledge/` — doğrulanmış çizim-formülü veritabanı
-- `App/` — orijinal swift ios app, referans; c++ çekirdeği sonra ios/android'i besleyecek
-- `docs/ARCHITECTURE.md` — katmanlar, veri akışı, tasarım kararları
+- `engine/` c++ engine, tests, tools, wasm build, `FORMULAS.md` (the drafting spec)
+- `web/` the live site
+- `backend/` cloudflare worker (vision proxy)
+- `vision/` owning the vision model (eval + distillation corpus)
+- `knowledge/` verified drafting formula database
+- `App/` the original swift ios app, kept as reference. the c++ core will feed ios/android later
+- `docs/ARCHITECTURE.md` layers, data flow, design decisions
 
-detay `PROJECT.md` ve `PLAN.md` içinde.
+details in `PROJECT.md` and `PLAN.md`.
