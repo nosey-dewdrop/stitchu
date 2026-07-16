@@ -59,4 +59,48 @@
     document.addEventListener('DOMContentLoaded', init);
   } else { init(); }
   window.stitchuLang = { get: getLang, set: setLang };
+
+  /* Root cause #2b — the "page is loading" feeling. On hover/touch of any
+     internal link, prefetch the target document so it is already in cache by
+     the time the click lands; the navigation then feels instant instead of a
+     fresh load. <link rel="prefetch"> is honoured by Safari and Chrome; we also
+     drop a Speculation-Rules 'prerender' hint for Chromium (Safari ignores it
+     silently). Same-page anchors, downloads and external hosts are skipped, and
+     each URL is prefetched at most once. */
+  (function prefetchOnIntent() {
+    var seen = {};
+    function sameOrigin(href) {
+      try {
+        var u = new URL(href, location.href);
+        if (u.origin !== location.origin) return null;
+        if (u.pathname === location.pathname && u.search === location.search) return null;
+        if (/\.(pdf|zip|svg|png|jpe?g|webp)$/i.test(u.pathname)) return null;
+        return u.href;
+      } catch (e) { return null; }
+    }
+    function warm(a) {
+      if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      var href = sameOrigin(a.getAttribute('href') || '');
+      if (!href || seen[href]) return;
+      seen[href] = 1;
+      var l = document.createElement('link');
+      l.rel = 'prefetch';
+      l.href = href;
+      l.as = 'document';
+      document.head.appendChild(l);
+      // Chromium prerender hint (Safari ignores an unknown script type).
+      if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
+        var s = document.createElement('script');
+        s.type = 'speculationrules';
+        s.textContent = JSON.stringify({ prerender: [{ urls: [href] }] });
+        document.head.appendChild(s);
+      }
+    }
+    function onIntent(e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (a) warm(a);
+    }
+    document.addEventListener('mouseover', onIntent, { passive: true });
+    document.addEventListener('touchstart', onIntent, { passive: true });
+  })();
 })();

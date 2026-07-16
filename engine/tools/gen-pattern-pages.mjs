@@ -14,7 +14,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '62';
+const V = process.env.V || '66';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
 
@@ -188,63 +188,34 @@ const cleanPiece = (n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim();
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const bilingual = (en, tr, tag = 'span') => `<${tag} data-en="${esc(en)}" data-tr="${esc(tr)}">${esc(en)}</${tag}>`;
 
-function header(active) {
-  const link = (href, en, tr) => `<a href="${href}"${active === href ? ' style="border-bottom:1px dashed var(--bb-deep)"' : ''} data-en="${en}" data-tr="${tr}">${en}</a>`;
-  return `<header>
+// Canonical site header (create · closet · patterns · benchmark · patch notes ·
+// API + EN·TR). Byte-identical to gen-style-pages.mjs and the hand-written
+// pages; dimensions/behaviour come from ../css/shared-header.css + shared-header.js.
+// The patterns library is the "patterns" destination, so that item is sh-active.
+const HEADER = `<header class="sh-header">
   <a class="brandpatch" href="../index.html">stitchu</a>
-  <nav>
-    ${link('../create.html', 'create', 'çiz')}
-    ${link('index.html', 'patterns', 'kalıplar')}
-    ${link('../benchmark.html', 'benchmark', 'kıyaslama')}
-    ${link('../patches.html', 'patch notes', 'yama notları')}
-    ${link('../api.html', 'API', 'API')}
-    <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="../closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="index.html" class="sh-active" data-en="patterns" data-tr="kalıplar">patterns</a>
+    <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
+    <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
 </header>`;
-}
 
 const FOOTER = `<footer>
   <span>stitchu · a pattern-making engine</span>
   <span><a href="../index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> · <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
 </footer>`;
 
-const LANG_SCRIPT = `<script>
-function setLang(lang){
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-en]').forEach((el) => {
-    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
-    if (lang === 'tr') { const t = el.getAttribute('data-tr'); if (t != null) el.textContent = t; }
-    else { el.innerHTML = el.dataset.enHtml; }
-  });
-  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
-  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
-  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
-}
-(function(){
-  let lang = 'en';
-  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch(_) {}
-  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
-  setLang(lang);
-})();
-</script>`;
-
 const STYLE = `<style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
   a{color:var(--bb-deep)}
-  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;flex-wrap:wrap;gap:10px}
-  .brandpatch{position:relative;display:inline-block;box-sizing:border-box;padding:4px 12px;background:#1f3a5f;border:1px solid #1f3a5f;border-radius:2px;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.5px;line-height:1;color:#fff;text-decoration:none;white-space:nowrap;vertical-align:middle;transition:background .18s}
-  .brandpatch::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:2px;opacity:.9;pointer-events:none;transition:inset .18s}
-  .brandpatch:hover{background:#2b4f7a}
-  .brandpatch:hover::after{inset:5px}
-  header nav{display:flex;gap:16px;align-items:center;font-size:13px;letter-spacing:.5px}
-  header nav a{text-decoration:none;color:var(--navy);opacity:.82}
-  header nav a:hover{opacity:1;border-bottom:1px dashed var(--bb-deep)}
-  .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px}
-  .langtoggle button{background:none;border:none;color:var(--navy);opacity:.55;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
-  .langtoggle button.active{opacity:1;border-bottom:1.5px solid var(--navy)}
+  /* Header comes from ../css/shared-header.css (one source, byte-identical bar). */
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 100px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:16px}
   .crumbs a{text-decoration:none}
@@ -299,6 +270,7 @@ function head(title, desc, canonical, ldjson) {
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <script type="application/ld+json">${JSON.stringify(ldjson)}</script>
+<link rel="stylesheet" href="../css/shared-header.css?v=${V}">
 <link rel="stylesheet" href="../css/theme-transitions.css?v=${V}">
 ${STYLE}
 </head>
@@ -337,7 +309,7 @@ for (const m of meta) {
         tr: `Bu kalıp ilk günden çizilebiliyordu: her parça motorun temel dağarcığında, bu yüzden hiçbir yapım eksiği olmadan tam çizilir.` };
 
   const html = head(title, desc, canonical, ldjson) + `
-${header('index.html')}
+${HEADER}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
@@ -365,7 +337,7 @@ ${header('index.html')}
   <a class="cta2" href="index.html" data-en="Browse the pattern library →" data-tr="Kalıp kütüphanesine göz at →">Browse the pattern library →</a>
 </div>
 ${FOOTER}
-${LANG_SCRIPT}
+<script src="../js/shared-header.js?v=${V}"></script>
 </body>
 </html>`;
   writeFileSync(join(OUT, `${m.slug}.html`), html);
@@ -400,7 +372,7 @@ ${LANG_SCRIPT}
   };
 
   const html = head(title, desc, canonical, ldjson) + `
-${header('index.html')}
+${HEADER}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <span data-en="patterns" data-tr="kalıplar">patterns</span></p>
   <h1 data-en="The pattern library." data-tr="Kalıp kütüphanesi.">The pattern library.</h1>
@@ -415,7 +387,7 @@ ${header('index.html')}
   <a class="cta" href="../create.html" data-en="Draft one to your measurements, free." data-tr="Birini ölçülerine göre çiz, ücretsiz.">Draft one to your measurements, free.</a>
 </div>
 ${FOOTER}
-${LANG_SCRIPT}
+<script src="../js/shared-header.js?v=${V}"></script>
 </body>
 </html>`;
   writeFileSync(join(OUT, 'index.html'), html);
