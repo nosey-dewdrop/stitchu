@@ -48,7 +48,12 @@ def _load_suspect_batches(dataset_root: Path):
 
 
 def _find_photo(dataset_root: Path, pool, key):
-    """Locate the photo file for a label. Try pool/<key>.ext, else search all pools."""
+    """Locate the photo file for a label. Try pool/<key>.ext, else search all pools.
+
+    Brands may live either directly under dataset/<brand>/ or nested one level down
+    under an aggregate pool like dataset/openset/<brand>/ (e.g. deepfashion-inshop,
+    princesspolly). We therefore also search each brand dir under those aggregate dirs.
+    """
     candidates = []
     if pool:
         candidates.append(dataset_root / pool)
@@ -56,6 +61,13 @@ def _find_photo(dataset_root: Path, pool, key):
     for d in dataset_root.iterdir():
         if d.is_dir() and d.name != "labels" and d not in candidates:
             candidates.append(d)
+    # also look one level deeper: dataset/<aggregate>/<pool>/ and dataset/<aggregate>/*
+    if pool:
+        for d in dataset_root.iterdir():
+            if d.is_dir() and d.name != "labels":
+                nested = d / pool
+                if nested.is_dir() and nested not in candidates:
+                    candidates.append(nested)
     for d in candidates:
         for ext in IMAGE_EXTS:
             p = d / f"{key}{ext}"
