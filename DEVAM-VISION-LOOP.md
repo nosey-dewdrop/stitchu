@@ -17,6 +17,21 @@ doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
 sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
+> LOOP 2 (V1 NECKLINE / patch 2.2) BİTTİ (2026-07-16). worker.js vision prompt'una yaka
+> belirsizlik-giderme bloğu (ön+arka TEK garment TEK yaka; arka/giyilmiş foto önün yakasını
+> uyduramaz; nape fiyonk/oyuk = arka detay, halter değil; halter SADECE boyna dolanan bant;
+> emin değilsen boat/crew/scoop). Sıfır C++/motor. wrangler deploy (5cb94ca5). Canlı FAST
+> koşu (59 çağrı, 8dk20sn), aynı koşullar before/after: yaka yanlış-okuması 5→2,
+> vision-accuracy 46/53(%86.8)→51/54(%94.4), FULL 22→24 (+2), WRONG 7→4. Düzelen 3 arka
+> görünüm: Mira (halter→null+tieBack), Jackie gingham (vNeck→crew), TieBack polka
+> (halter→boat+tieBack, FULL'a geçti). Kalan 2 yaka hatası arka karışıklığı DEĞİL, gerçekten
+> belirsiz ÖN çekim (JACKIE front square, bir vNeck) = metin düzeltmesinin dürüst tavanı.
+> Regresyon bekçisi: FULL yükseldi, revert YOK. ELEMENT ACCURACY 53/103 sabit (vision loop).
+> web/patches.html patch 2.2 girdisi (now, EN/TR). Skor: reports/stitchu-vision-progress.md
+> (L2 V1 satırı + 4 bar). Rapor: reports/2026-07-16-stitchu-vision-loop2.md.
+> SIRADAKİ: LOOP 3 (V3 ön/arka tutarlılık / patch 2.3).
+>
+> --- ÖNCEKİ (LOOP 4 / patch 2.1) ---
 > LOOP 4 (VİTRİN / patch 2.1) BİTTİ (2026-07-16). Site vişne→bebek mavisi RESKIN
 > (yerleşim/Didot korundu, pötikare sadece hero); web/patches.html LoL yama notları
 > (1.0–2.0 geriye dolduruldu, EN/TR); hero CTA "join the beta" → canlı /api/waitlist

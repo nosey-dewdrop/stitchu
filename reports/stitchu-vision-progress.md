@@ -11,6 +11,7 @@ left out, not guessed). Bars are proportional (█ = filled), source file named.
 |---|---|---|---|---|---|---|---|
 | 1 (V0 baseline) | 2026-07-16 | 22 | 53 (51.5%) | 46/53 (86.8%) | 5 | taxonomy + baseline only; no prompt/code fix. dominant vision error = neckline (5/7 WRONG, 5/8 conflicting products); 15 front/back field conflicts | results-2026-07-16.json |
 | 4 (vitrin / patch 2.1) | 2026-07-16 | 22 | 53 (51.5%) | 46/53 (86.8%) | 5 | showcase loop — NO vision/engine change (reskin + patch-notes page + beta funnel only). numbers held by definition; the engine wasn't touched. waitlist endpoint probed live (HTTP 200). | results-2026-07-16.json (unchanged) |
+| 2 (V1 neckline / patch 2.2) | 2026-07-16 | 24 | 53 (51.5%) | 51/54 (94.4%) | 2 | neckline disambiguation block in worker prompt (front+back = ONE garment; back/worn view never invents a neckline; halter only when a band wraps the neck; default to boat/crew/scoop). Live FAST run (59 calls, 8m20s). neckline misreads 5→2, FULL 22→24 (guard: FULL rose, no revert). The 3 fixed were all back/worn outliers (Mira back, Jackie gingham back, TieBack polka back); the 2 left are genuinely-ambiguous FRONT reads (JACKIE front, one vNeck). | results-2026-07-16.json (fresh live) |
 
 ## ASCII BARS (each loop one triplet: FULL, ELEMENT ACCURACY, VISION-ACCURACY)
 
@@ -18,21 +19,25 @@ FULL PATTERN /54 (target 54)
 ```
 L1 V0  22/54  ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  40.7%   results-2026-07-16.json
 L4 VIT 22/54  ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  40.7%   vitrin loop — engine untouched, published 22/54 on the new patch-notes page
+L2 V1  24/54  ██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  44.4%   results-2026-07-16.json (fresh) — +2 from neckline flips
 ```
 
 ELEMENT ACCURACY /103 (daily compass)
 ```
 L1 V0  53/103 █████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  51.5%   results-2026-07-16.json
+L2 V1  53/103 █████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  51.5%   unchanged — vision loop, not an engine/element loop
 ```
 
-VISION-ACCURACY (critical-field clean, /53 draftable garments)
+VISION-ACCURACY (critical-field clean, /54 draftable garments)
 ```
 L1 V0  46/53  ███████████████████████████████████████████░░░░░░  86.8%   results-2026-07-16.json
+L2 V1  51/54  ███████████████████████████████████████████████░  94.4%   results-2026-07-16.json (fresh) — the ERROR photo now returns a valid spec too
 ```
 
 NECKLINE MISREADS (lower is better; the LOOP 2 target)
 ```
 L1 V0   5     █████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  5 photos   results-2026-07-16.json
+L2 V1   2     ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  2 photos   results-2026-07-16.json (fresh) — 3 back/worn outliers fixed
 ```
 
 ## READING THIS

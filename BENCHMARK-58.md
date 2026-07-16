@@ -33,7 +33,20 @@ başarı beyanı = FULL PATTERN %80.
 > ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
 > her tek-öğe kazanımını sayar → doğru günlük pusula.
 
-Durum: **22/54 TAM KALIP — DEĞİŞMEDİ (vitrin loop / patch 2.1, 2026-07-16).**
+Durum: **24/54 TAM KALIP — +2 (Vision LOOP 2 / patch 2.2 = V1 neckline, 2026-07-16).**
+worker.js vision prompt'una yaka belirsizlik-giderme kural bloğu eklendi (ön+arka TEK
+garment TEK yaka; arka/giyilmiş foto önün yakasını uyduramaz; halter SADECE boyna
+dolanan bant; emin değilsen boat/crew/scoop'a düş). Sıfır C++, sıfır motor kodu.
+wrangler deploy (version 5cb94ca5). Canlı FAST koşu (59 çağrı, 8dk20sn), aynı koşullar
+before/after: **yaka yanlış-okuması 5→2, vision-accuracy %86.8→%94.4, FULL 22→24.**
+Düzelen 3 arka görünüm: Mira arkası (halter→null+tieBack), Jackie gingham arkası
+(vNeck→crew), Tie Back polka arkası (halter→boat+tieBack, FULL'a geçti). Regresyon
+bekçisi: FULL yükseldi, revert YOK. Kalan 2 yaka hatası arka karışıklığı DEĞİL,
+gerçekten belirsiz ÖN çekimler (JACKIE front square, bir vNeck) — metin düzeltmesinin
+dürüst tavanı. web/patches.html'e patch 2.2 girdisi. Rapor:
+reports/2026-07-16-stitchu-vision-loop2.md.
+
+Durum (ÖNCEKİ): **22/54 TAM KALIP — DEĞİŞMEDİ (vitrin loop / patch 2.1, 2026-07-16).**
 Vitrin loop'u motora/vision'a DOKUNMAZ: site vişne→bebek mavisi RESKIN edildi,
 web/patches.html (LoL yama notları, 1.0–2.0 geriye dolduruldu) eklendi, hero
 CTA "join the beta" → canlı /api/waitlist (probe HTTP 200), fiyat rakamları beta
@@ -231,6 +244,15 @@ elbise/top/etek olduğu için gathering+open-back önce gelir.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-16 CANLI (Vision LOOP 2 / patch 2.2 = V1 neckline, taze FAST koşu 59 çağrı
+  8dk20sn): **FULL 22→24 (+2)**, vision-accuracy 46/53→51/54 (%86.8→%94.4), yaka
+  yanlış-okuması 5→2, WRONG 7→4. worker.js vision prompt'una yaka belirsizlik-giderme
+  bloğu (ön+arka TEK garment TEK yaka; arka/giyilmiş foto yaka uyduramaz; halter sadece
+  boyna dolanan bant; belirsizde boat/crew/scoop). Sıfır C++/motor. wrangler deploy
+  version 5cb94ca5. Düzelen 3 arka görünüm (Mira/Jackie-gingham/TieBack-polka); kalan 2
+  hata gerçekten belirsiz ÖN çekim. ELEMENT ACCURACY 53/103 sabit (vision loop, öğe
+  loop'u değil). Regresyon bekçisi: FULL yükseldi, revert yok. Rapor:
+  reports/2026-07-16-stitchu-vision-loop2.md.
 - 2026-07-16 OFFLINE (Vision LOOP 1 / patch 2.0 = V0 taksonomi, 0 yeni çağrı, sadece
   1 kredi probe): **FULL 22/54 DEĞİŞMEDİ** (taksonomi loop'u kod düzeltmez). Güncel
   DRAWN_SINCE ile reclassify: 22 FULL, 24 MISSING, 7 WRONG, 1 ERROR, 4 REJECT-OK,

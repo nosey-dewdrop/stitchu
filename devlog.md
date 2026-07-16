@@ -641,3 +641,23 @@ Y3 · HOOK: "bir markanın tenini değiştirmek, sıfırdan tasarlamaktan zordur
 - fiyatı kaldırdım: $19/$49 gitti, "join the beta" geldi — canlıda /api/waitlist 200.
 - **Görsel:** [önce/sonra] aynı hero, vişne → bebek mavisi geçişi, yerleşim tık tık aynı.
 - **Format:** carousel
+
+---
+
+## LOOP 2 / patch 2.2 — V1 neckline disambiguation
+
+Z1 · HOOK: "dört cümle yazdım. tam-kalıp sayısı 22'den 24'e çıktı. sıfır kod."
+- vision aynı elbisenin önünü ve arkasını iki ayrı kıyafet gibi okuyordu.
+- nape'teki fiyonk "halter" oluyordu, sırt oyuğu "vNeck" — önde olmayan yaka uyduruyordu.
+- kural: yakaya ÖNden karar ver; arka fotoğraf önün yakasını ezemez; halter sadece boyna dolanan bant.
+- emin değilsen dramatik biçime uzanma, sık görülen boat/crew/scoop'a düş.
+- **Görsel:** [ekran] aynı elbisenin arka fotosu; "halter" etiketi üstü çizilir, "boat + tieBack" belirir.
+- **Format:** reel
+
+Z2 · HOOK: "en pahalı +2 motor değil, kelime çıktı. aylarca yanlış yeri cilaladım."
+- puf, yaka, açık sırt — motora kabiliyet ekledim, FULL kımıldamadı. asıl fren vision'dı.
+- canlı before/after (aynı 59 foto, 8dk): yaka hatası 5→2, vision-accuracy %86.8→%94.4.
+- FULL 22→24. üç arka görünüm düzeldi. regresyon bekçisi: düşseydi geri alırdım, yükseldi.
+- kalan iki hata arka karışıklığı DEĞİL, gerçekten belirsiz ön çekimler — dürüst tavan.
+- **Görsel:** [ekran] terminal SUMMARY; "FULL 22/54 → 24/54", "neckline misreads 5 → 2" satırları parlar.
+- **Format:** reel

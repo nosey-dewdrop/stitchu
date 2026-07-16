@@ -188,3 +188,17 @@
 4. **Fiyatı kaldırdım. Şimdilik.** Sitede $19/$49 rakamları vardı. Karar: beta önce, satış sonra. Rakamları kaldırdım, "beta partners: free while we build" çerçevesine çevirdim. Sitenin tek dönüşüm metriği artık waitlist kaydı — hero'daki birincil CTA "join the beta", gerçek /api/waitlist endpoint'ine bağlı, canlıda HTTP 200 ile doğruladım. Fiyat rakamları kaybolmadı; rapora saklandı. Bir ürünü satmadan önce, birinin onu istediğini kanıtlaman gerekir.
 
 5. **Ders: görünmeyen kanıt kanıt değildir.** Haftalardır motorun doğruluğunu ölçüp yayınlıyordum, ama yayınladığım yer kimsenin bakmadığı bir sayfaydı. Mühendislik işinin yarısı doğru olanı yapmak; diğer yarısı doğru olanı görünür kılmak. Yama notları bunu tek hamlede çözdü: hem bilgi mimarisini düzeltti, hem de tarihçemi — dürüstlüğü dahil — ziyaretçinin waitlist'e yazılma sebebine çevirdi.
+
+---
+
+## Essay 15 — "Tek kelimelik bir kural, tam-kalıp sayısını ikiye çıkardı: yaka belirsizliğini prompt'la çözdüm" (LOOP 2 / patch 2.2 — V1 neckline)
+
+1. **Ölçüm loop'u bana adresi vermişti.** Bir önceki loop (V0) hiçbir sayı kımıldatmamıştı ama en değerli işi yapmıştı: yakayı işaret etti. 7 vision hatasının 5'i tek alan — neckline — ve hepsi aynı örüntü: bir ürünün ön yüzü doğru okunuyor, arka/giyilmiş fotoğrafı yakayı uyduruyor. Bu loop körlemesine başlamadı; elimde dosya adlarıyla 5 hedef fotoğraf, "önce" değeri 46/53, ve tek cümlelik bir hipotez vardı.
+
+2. **Kök neden mekanikti, sihir değil.** Vision aynı elbisenin önünü ve arkasını iki ayrı kıyafet gibi okuyordu. Nape'teki bir fiyonk "halter" oluyordu; sırttaki bir oyuk "vNeck". Çünkü prompt yakayı hangi yüzden okuyacağını söylemiyordu — model arka fotoğrafa bakıp önde olmayan bir yaka icat ediyordu. Motor o yanlış spec'i kusursuz çiziyordu; suç motorun değildi, kelimenindi.
+
+3. **Dört cümlelik bir kural bloğu.** worker.js prompt'una ekledim: (a) yakaya ÖNden karar ver, ürünün tek yakası var; (b) fotoğraf arka görünümse, önde olmayan bir yaka uydurma — nape'teki fiyonk/oyuk arka detaydır, halter değil; (c) halter SADECE boyna dolanan bir bant görünüyorsa; (d) emin değilsen dramatik bir biçime (kare/vNeck) uzanma, sık görülen boat/crew/scoop'a düş. Sıfır C++, sıfır motor kodu. wrangler deploy.
+
+4. **Kanıt: canlı, aynı koşullar, before/after.** 59 fotoğrafı taze koşturdum (FAST token, 8dk20sn). Yaka yanlış-okuması 5→2. Vision-accuracy %86.8→%94.4. Ve asıl ödül: FULL 22→24. Üç arka görünüm düzeldi — fiyonklu Mira arkası artık yakayı doğru bırakıyor, gingham arkası "crew", polka Tie Back arkası "boat" (bu FULL'a geçti). Regresyon bekçisi: FULL düşseydi geri alacaktım; yükseldi, kalıyor.
+
+5. **Ders: en pahalı +2 motor değil, kelimedir.** Aylarca motora kabiliyet ekledim — puf, yaka, açık sırt — ve FULL kımıldamadı çünkü asıl fren vision'ın kararsızlığıydı. Dört cümle, sıfır kod riski, +2 tam kalıp. Kalan iki yaka hatası artık arka görünüm karışıklığı değil, gerçekten belirsiz ÖN çekimler — bir metin düzeltmesinin dürüst tavanı. Bir sonraki adım burada değil: ön/arka aynı ürünü grupla (V3).
