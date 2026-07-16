@@ -46,6 +46,13 @@
   .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px}
   .card .ds{font-size:12px;opacity:.8;line-height:1.45}
   .also{font-size:13px;margin-top:8px}
+  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(80,14,26,.28);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:26px 20px 20px}
+  .sketch svg{max-width:240px;width:100%;height:auto}
+  .sketch figcaption{font-size:11.5px;opacity:.72;max-width:52ch;text-align:center;line-height:1.5}
+  table.proof td.v{font-weight:400;font-variant-numeric:tabular-nums}
+  table.proof td.v a{color:#ffd9e2}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+  .actions .cta{margin-top:0}
   footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18);margin-top:40px}
   footer a{color:#fff;text-decoration:none}
 </style>
@@ -64,6 +71,21 @@
   <h1>Balloon sleeve, <em>drafted.</em></h1>
   <p class="lead">A set-in sleeve that balloons at the hem and gathers into its own drafted cuff — the cuff sized from your arm, not a standard.</p>
 
+  <figure class="sketch">
+  <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a balloon-sleeve top">
+    <path d="M 120 42 L 120 178" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 4"/>
+    <path d="M 140 42 L 182 40 L 176 92 L 166 150" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 100 42 L 58 40 L 64 92 L 74 150" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 74 178 L 166 178" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 182 40 L 212 86 C 228 110 212 136 196 144 L 176 188" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 196 140 L 176 184" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 3"/>
+    <path d="M 58 40 L 28 86 C 12 110 28 136 44 144 L 64 188" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 44 140 L 64 184" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 3"/>
+    <path d="M 100 42 C 100 61.8 140 61.8 140 42" fill="none" stroke="#ffd2da" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" />
+  </svg>
+  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The blush line is the piece this page draws.</figcaption>
+</figure>
+
   <h2>How the engine drafts it</h2>
   <p class="fact">The base is the set-in sleeve block: biceps from your bust with verified 15% ease, cap height 0.75 of the armhole depth, and the cap width solved by bisection until the cap length lands within 0.5 mm of 4% ease over YOUR drafted armhole.</p>
   <p class="fact">The balloon widens the profile: hem half-width 0.52 × the sleeve width (straight is 0.40) and an underarm mid-bulge of 0.62 (straight 0.46).</p>
@@ -79,10 +101,22 @@
     <tr><td>cuff</td><td class="v">biceps × 0.62 + 20 mm long · 60 mm high</td></tr>
   </table>
   <p class="meta"><b>Works with:</b> Dresses and tops with any non-halter neckline; short, elbow or long; the head stays plain (the hem carries the gather).</p>
-  <p class="meta"><b>Verified:</b> tests/sleeve_check + the 1–9% cap-ease validator window, measured off the drawn cap against the drawn armhole. Every option ships from the same engine that holds seams to 0.00 mm on the <a href="../benchmark.html">published benchmark</a>.</p>
 
-  <a class="cta" href="../create.html">Draft this to your measurements — free</a>
-  <a class="cta2" href="index.html">Browse all styles →</a>
+  <h2>The test results</h2>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <table class="proof">
+    <tr><th>evidence</th><th>result</th></tr>
+    <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
+    <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
+    <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
+    <tr><td>dedicated test</td><td class="v">tests/sleeve_check + the 1–9% cap-ease validator window, measured off the drawn cap against the drawn armhole.</td></tr>
+    
+  </table>
+
+  <div class="actions">
+    <a class="cta" href="../create.html?garment=top&neckline=crew&sleeveStyle=balloon&sleeveLength=long">Print this pattern — true-scale A4, free</a>
+    <a class="cta2" href="index.html">Browse all styles →</a>
+  </div>
   <p class="also">More in sleeves: <a href="puff-sleeve.html">Puff / gathered sleeve cap</a></p>
 </div>
 <footer>

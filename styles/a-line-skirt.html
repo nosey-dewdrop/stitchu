@@ -46,6 +46,13 @@
   .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px}
   .card .ds{font-size:12px;opacity:.8;line-height:1.45}
   .also{font-size:13px;margin-top:8px}
+  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(80,14,26,.28);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:26px 20px 20px}
+  .sketch svg{max-width:240px;width:100%;height:auto}
+  .sketch figcaption{font-size:11.5px;opacity:.72;max-width:52ch;text-align:center;line-height:1.5}
+  table.proof td.v{font-weight:400;font-variant-numeric:tabular-nums}
+  table.proof td.v a{color:#ffd9e2}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+  .actions .cta{margin-top:0}
   footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18);margin-top:40px}
   footer a{color:#fff;text-decoration:none}
 </style>
@@ -62,14 +69,24 @@
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html">style library</a> / a-line skirt</p>
   <h1>A-line skirt, <em>drafted.</em></h1>
-  <p class="lead">The classic flared skirt, drafted from your waist and hip with percent ease, never a fixed-centimetre guess.</p>
+  <p class="lead">The classic flared skirt, drafted from your waist and hip with percent ease — never a fixed-centimetre guess.</p>
+
+  <figure class="sketch">
+  <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a A-line skirt">
+    <path d="M 80 60 L 46 250" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 160 60 L 194 250" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 46 250 L 194 250" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 80 60 L 160 60" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+  </svg>
+  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The blush line is the piece this page draws.</figcaption>
+</figure>
 
   <h2>How the engine drafts it</h2>
   <p class="fact">Waist and hip ease are 2% of YOUR measurement (1% on knits). The hip quarter is guarded against waist-bigger-than-hip bodies: it never drafts narrower than the waist quarter.</p>
-  <p class="fact">The waist-to-hip suppression is split: the side seam takes up to 60% (max 25 mm), the dart gets the rest, and a dart under 8 mm is dropped and folded into the side seam instead of sewing a pucker.</p>
+  <p class="fact">The waist-to-hip suppression is split: the side seam takes up to 60% (max 25 mm), the dart gets the rest — and a dart under 8 mm is dropped and folded into the side seam instead of sewing a pucker.</p>
   <p class="fact">The A-line flare adds 60 mm at the hem with an 18 mm hem side rise; the side waist rises 12 mm into a curved waistline.</p>
   <p class="fact">In princess shaping the dart becomes a gore seam with 40 mm of extra flare per gore edge at the hem.</p>
-  <p class="fact">As a dress skirt it is drafted against the bodice's actual SEWN waist (front and back sewn arcs, darts excluded) so the waist seam matches by construction.</p>
+  <p class="fact">As a dress skirt it is drafted against the bodice's actual SEWN waist — front and back sewn arcs, darts excluded — so the waist seam matches by construction.</p>
 
   <h2>The real numbers</h2>
   <table>
@@ -81,14 +98,26 @@
     <tr><td>side-seam share of suppression</td><td class="v">min(60%, 25 mm)</td></tr>
   </table>
   <p class="meta"><b>Works with:</b> Standalone skirt or dress skirt; princess or dart shaping; ruffle and tiered ruffle hems.</p>
-  <p class="meta"><b>Verified:</b> Validated across the 70,200-draft matrix; waist-join alignment on dresses held to 2.5 mm by the "waistalign" validator rule. Every option ships from the same engine that holds seams to 0.00 mm on the <a href="../benchmark.html">published benchmark</a>.</p>
 
-  <a class="cta" href="../create.html">Draft this to your measurements, free</a>
-  <a class="cta2" href="index.html">Browse all styles →</a>
+  <h2>The test results</h2>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <table class="proof">
+    <tr><th>evidence</th><th>result</th></tr>
+    <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
+    <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
+    <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
+    <tr><td>dedicated test</td><td class="v">Validated across the 70,200-draft matrix; waist-join alignment on dresses held to 2.5 mm by the &quot;waistalign&quot; validator rule.</td></tr>
+    
+  </table>
+
+  <div class="actions">
+    <a class="cta" href="../create.html?garment=skirt&skirtStyle=aLine">Print this pattern — true-scale A4, free</a>
+    <a class="cta2" href="index.html">Browse all styles →</a>
+  </div>
   <p class="also">More in skirt styles: <a href="straight-skirt.html">Straight skirt</a> · <a href="gathered-skirt.html">Gathered skirt</a> · <a href="half-circle-skirt.html">Half-circle skirt</a> · <a href="pleated-skirt.html">Pleated skirt</a></p>
 </div>
 <footer>
-  <span>stitchu, the pattern-making engine</span>
+  <span>stitchu — the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
 </body>

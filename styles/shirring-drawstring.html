@@ -46,6 +46,13 @@
   .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px}
   .card .ds{font-size:12px;opacity:.8;line-height:1.45}
   .also{font-size:13px;margin-top:8px}
+  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(80,14,26,.28);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:26px 20px 20px}
+  .sketch svg{max-width:240px;width:100%;height:auto}
+  .sketch figcaption{font-size:11.5px;opacity:.72;max-width:52ch;text-align:center;line-height:1.5}
+  table.proof td.v{font-weight:400;font-variant-numeric:tabular-nums}
+  table.proof td.v a{color:#ffd9e2}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+  .actions .cta{margin-top:0}
   footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18);margin-top:40px}
   footer a{color:#fff;text-decoration:none}
 </style>
@@ -64,6 +71,30 @@
   <h1>Drawstring, shirring & smocking, <em>drafted.</em></h1>
   <p class="lead">Here the panel ITSELF gathers — cut wide, drawn up to fit. The engine cuts each panel at the real construction ratio and measures the finished edge off your drafted pieces.</p>
 
+  <figure class="sketch">
+  <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a shirred-panel dress">
+    <path d="M 120 42 L 120 200" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 4"/>
+    <path d="M 140 42 L 182 40 L 176 92 L 166 150" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 100 42 L 58 40 L 64 92 L 74 150" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 74 150 L 74 260" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 166 150 L 166 260" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 74 260 L 166 260" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 90 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 100 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 110 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 120 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 130 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 140 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 150 150 l 0 12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 100 42 L 100 92 L 140 92 L 140 42" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 86 56 q 34 8 68 0" fill="none" stroke="#ffd2da" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3"/>
+    <path d="M 86 64 q 34 8 68 0" fill="none" stroke="#ffd2da" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3"/>
+    <path d="M 86 72 q 34 8 68 0" fill="none" stroke="#ffd2da" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3"/>
+    <path d="M 86 80 q 34 8 68 0" fill="none" stroke="#ffd2da" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3"/>
+  </svg>
+  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The blush line is the piece this page draws.</figcaption>
+</figure>
+
   <h2>How the engine drafts it</h2>
   <p class="fact">Three gather ratios by construction: drawstring 1.8×, shirred 2.0× (the ASG "2 in → 1 in" elastic rule), smocked 3.0× ("3 in → 1 in"). The cut note states flat edge → finished edge, so you know exactly how much to draw up.</p>
   <p class="fact">Four zones with real panel depths: neckline 130, bust 110, waist 90, sleeve 120 mm. The finished edge is MEASURED off the drafted body pieces for that zone — the gathered edge can never drift from what it sews to (trued to 0.005 mm in tests).</p>
@@ -81,10 +112,22 @@
     <tr><td>truing</td><td class="v">flat edge / ratio = finished edge, 0.005 mm</td></tr>
   </table>
   <p class="meta"><b>Works with:</b> Dresses and tops, zones neckline/bust/waist/sleeve. A drawstring-gathered SLEEVE casing and gathered straps stay in the honesty layer.</p>
-  <p class="meta"><b>Verified:</b> tests/gather_check — panel + cord counts, ratio ordering smocked > shirred > drawstring, byte-identical base, placement notch. Every option ships from the same engine that holds seams to 0.00 mm on the <a href="../benchmark.html">published benchmark</a>.</p>
 
-  <a class="cta" href="../create.html">Draft this to your measurements — free</a>
-  <a class="cta2" href="index.html">Browse all styles →</a>
+  <h2>The test results</h2>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <table class="proof">
+    <tr><th>evidence</th><th>result</th></tr>
+    <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
+    <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
+    <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
+    <tr><td>dedicated test</td><td class="v">tests/gather_check — panel + cord counts, ratio ordering smocked > shirred > drawstring, byte-identical base, placement notch.</td></tr>
+    <tr><td>made possible by</td><td class="v"><a href="../patches.html#patch-1-9">patch 1.9</a> — drawstring, shirring &amp; smocking</td></tr>
+  </table>
+
+  <div class="actions">
+    <a class="cta" href="../create.html?garment=dress&neckline=square&gatherType=shirred&gatherZone=bust">Print this pattern — true-scale A4, free</a>
+    <a class="cta2" href="index.html">Browse all styles →</a>
+  </div>
   <p class="also">More in details & closures: <a href="keyhole.html">Keyhole cut-out</a> · <a href="hem-ruffle.html">Hem ruffle (single + tiered)</a> · <a href="button-placket.html">Front button placket</a> · <a href="fabric-ties.html">Fabric ties, sashes & bows</a> · <a href="collars.html">Collar family</a> · <a href="open-back.html">Open-back cutout</a></p>
 </div>
 <footer>

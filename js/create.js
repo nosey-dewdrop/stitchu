@@ -63,6 +63,31 @@ const spec = {
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none',
 };
 
+// Preset from a style-library page: a link like create.html?garment=dress&
+// neckline=sweetheart carries that page's exact style into the flow, so a
+// visitor lands on the garment they were reading about, ready to print. Bridge
+// layer only, no engine touched. We whitelist the keys the spec actually holds
+// and coerce a couple of non-picker flags (frontPlacket bool) so a crafted URL
+// can never inject an unknown field.
+(function applyPreset() {
+  const q = new URLSearchParams(location.search);
+  if (![...q.keys()].length) return;
+  const pickerVals = Object.fromEntries(
+    SPEC_GROUPS.map((g) => [g.key, new Set(g.options.map((o) => o[0]))]),
+  );
+  for (const [k, raw] of q) {
+    if (!(k in spec)) continue;
+    const v = raw.trim();
+    if (k === 'frontPlacket') { spec.frontPlacket = v === 'true' || v === '1' || v === 'on'; continue; }
+    if (k === 'tieClosure') {
+      if (['none', 'backWaistBow', 'tieBack', 'frontNeckBow', 'cuffTies'].includes(v)) spec.tieClosure = v;
+      continue;
+    }
+    // Everything else must be a real option value for a real picker.
+    if (pickerVals[k] && pickerVals[k].has(v)) spec[k] = v;
+  }
+})();
+
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
 // whose gathered edge is trued to the drafted zone edge, for a drawstring/tie
