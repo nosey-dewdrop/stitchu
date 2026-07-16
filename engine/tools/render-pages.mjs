@@ -91,6 +91,15 @@ const SPECS = [
   { name: 'openback-lowv-tieback-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'mini',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, backOpening: 2 /* lowV */, tie: 2 /* back tie coexists */ },
+  // Loop M1: back hem slit / walking vent — the back skirt piece flips to a CB
+  // seam, marks the top-point bar tack, and (for a vent) grows the lapped
+  // extension with a 45 degree top corner.
+  { name: 'vent-straight-dress', garment: 'dress', shaping: 'dart', waistline: 'natural', fabric: 'woven',
+    neckline: 'boat', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, backSlit: 1 /* vent */ },
+  { name: 'slit-straight-skirt', garment: 'skirt', shaping: 'dart', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'maxi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, backSlit: 2 /* plain slit */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -105,7 +114,7 @@ for (const s of SPECS) {
     s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
     BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
     s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0));
+    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

@@ -45,6 +45,12 @@ export function backOpeningValue(spec) {
   return BACK_OPENING[spec && spec.backOpening] || 0;
 }
 
+// HemSlit enum (must match engine/src/slit.hpp order). 0 = None.
+const HEM_SLIT = { none: 0, vent: 1, slit: 2 };
+export function backSlitValue(spec) {
+  return HEM_SLIT[spec && spec.backSlit] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -78,6 +84,7 @@ export async function grade(spec, fromLabel, toLabel) {
     gatherTypeValue(spec), // Loop 8: drawstring/shirred/smocked gathering
     gatherZoneValue(spec), // Loop 8: gather zone
     backOpeningValue(spec), // Loop 9b: open-back cutout
+    backSlitValue(spec),    // Loop M1: back hem slit / walking vent
   );
   return JSON.parse(json);
 }
@@ -102,6 +109,7 @@ export async function draft(spec, measurements) {
     gatherTypeValue(spec),       // Loop 8: drawstring/shirred/smocked gathering
     gatherZoneValue(spec),       // Loop 8: gather zone
     backOpeningValue(spec),      // Loop 9b: open-back cutout
+    backSlitValue(spec),         // Loop M1: back hem slit / walking vent
   );
   return JSON.parse(json);
 }

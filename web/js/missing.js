@@ -270,10 +270,17 @@ export function missingFeatures(seen, lang) {
   // (Loop 4b handles the tie) and is not suppressed here.
   const openBackTerm = (t) => /open.?back|back.?cutout|backless|low open back/i.test(t) &&
     !/tie|lace/i.test(t);
+  // Loop M1: a back hem slit / walking vent is now drawn (CB seam + bar tack +
+  // lapped extension), so an outOfVocab term naming that back slit is no longer
+  // missing. A FRONT or SIDE slit is a different (undrawn) opening and stays
+  // honest even when hemSlitDrawn (only the center-back walking vent is drawn).
+  const hemSlitTerm = (t) => /(back|hem|walking)[\s-]*(hem[\s-]*)?(slit|vent)|kick[\s-]*(pleat|vent)/i.test(t) &&
+    !/front|side/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
+    if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

@@ -9,6 +9,7 @@
 #include "placket.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
+#include "slit.hpp"
 #include "sleeve.hpp"
 #include "tie.hpp"
 
@@ -422,6 +423,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.backOpening != static_cast<int>(BackOpening::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         OpenBackBlock::apply(pattern, static_cast<BackOpening>(spec.backOpening));
+    }
+    // Opt-in back hem slit / walking vent (arka etek yırtmacı, Loop M1): a walking
+    // opening up the center-back seam of the back skirt/dress piece. Post-pass on
+    // the finished draft, so the base is byte-identical with it off (backSlit ==
+    // None). Only a straight/A-line skirt (or dress skirt) hosts a CB vent —
+    // gathered/pleated/half-circle skirts have walking ease already and are gated
+    // out here (SlitBlock also skips honestly if it finds no CB seam candidate).
+    if (spec.backSlit != static_cast<int>(HemSlit::None) &&
+        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress) &&
+        (spec.skirtStyle == SkirtStyle::Straight || spec.skirtStyle == SkirtStyle::ALine)) {
+        SlitBlock::apply(pattern, static_cast<HemSlit>(spec.backSlit));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

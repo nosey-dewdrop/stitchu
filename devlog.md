@@ -685,3 +685,15 @@ Z5 · HOOK: "etiketlerim hazırdı. eğitime SOKMADIM. çünkü damgasız."
 - etiket gerçek değil önbellek; asıl varlık fotoğraf + kaynak kaydı. kredi gelince tek komut: --anchor 10.
 - **Görsel:** [ekran] rapor dosyasında "ANCHOR HEALTH TEST — NOT RUN" bloğu, altında kırmızı "SUSPECT / NOT-FOR-TRAINING" damgası.
 - **Format:** reel
+
+## FAZ M / LOOP M1, back hem slit / walking vent (patch 3.0)
+
+M1 · HOOK: "aylarca vision'ı cilaladım. ilk kez motora bir şey öğrettim: yürüyebilesin diye eteğe yırtmaç."
+- Anlatı (~45sn): dar kalem etekle yürüyemezsin, arkasında bir açıklık şart. motorumda arka parça katlı kesiliyordu, katlıya yırtmaç açılmaz. önce arkayı arka-orta dikişe çevirdim: belden aşağı bir durak noktasına kadar dik, altını açık bırak. körük yırtmaç 40 mm geri-katlanan kanat, 45 derecelik köşe, iki arka üst üste kapansın diye. ilk denemede kanadı işaret çizdim, doğrulayıcı fırladı, çünkü kanat gerçek kumaş, kesilmesi gerek, o yüzden markaya değil kesim çizgisine ait. outline'ı yeniden kurdum. truing: kanat her noktada tam 40.00 mm, dikiş çizgisinden ölçülü, drift edemez. ve opt-in: kapalıyken altın referans 23034 satır byte-birebir, tek mevcut kalıp değişmedi. büzgülü etek zaten yürür, motor orada dürüstçe atlıyor. sonuç: tam-kalıp 24'ten 26'ya, tam olarak o iki Laura fotoğrafı, tek eksikleri buydu.
+- **Görsel:** [ekran] terminal: "FULL 24 → 26" yeşil; yanında Skirt Back SVG'si, arka orta kenarda 40 mm kanat ve 45 derecelik köşe belirir, üst-noktada bar tack çakar; altta "golden byte-identical 23034 satır" satırı.
+- **Format:** reel
+
+M1b · HOOK: "yeni bir kabiliyet ekledim. ama tek bir eski kalıp bile değişmedi. bu tesadüf değil, kural."
+- Anlatı (~40sn): her yeni motor parçası opt-in post-pass. yırtmaç varsayılan kapalı; kapalıyken çizim, aylardır sabit olan altın referansla milimetrenin milyonda birine kadar aynı, 23034 satır byte-birebir. yeni özellik eskiyi bozarsa güven biter. o yüzden her loop tek testte kanıtlanır: 18 motor testi geçiyor, golden diff sıfır, 19.960 rastgele draft'ta sıfır hata. "yaptım" demeden önce bir derleme + bir diff. kanıtlıyorum, iddia etmiyorum.
+- **Görsel:** [ekran] iki golden CSV yan yana, "diff: 0 bytes / 23034 lines" yeşil; solda ctest listesi "18/18 passed", slit_check satırı vurgulu.
+- **Format:** reel

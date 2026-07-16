@@ -16,6 +16,7 @@ left out, not guessed). Bars are proportional (█ = filled), source file named.
 | D1 (data pipeline / patch 2.5) | 2026-07-16 | 24 (unchanged — no vision/engine code) | 53 (51.5%) | 51/54 (94.4%) | 2 | FAZ D collector shipped: 392 garment photos from 2 public high-street sources (dress 167 / top 108 / skirt 117), hash-dedup 392 unique, all LOCAL (dataset/ gitignored before first download). Sources anonymized publicly per red line; the 4 requested majors were all bot-walled (probed politely, skipped). Unblocks D2 vocab mining → new FAZ M compass. | dataset/manifest.json (local) + reports/2026-07-16-stitchu-data-loop-d1.md |
 | D1b (data SCALE / patch 2.6) | 2026-07-16 | 24 (unchanged — no vision/engine code) | 53 (51.5%) | 51/54 (94.4%) | 2 | Pool scaled to the tens of thousands: 26,954 women's garment photos from an open research dataset (dress 6990 / blouse 6000 / sweater 3036 / tee 3000 / skirt 2045 / jacket 1895 / romper 1696 / cardigan 1436 / sweatshirt 856) + 900 from one more public brand (dress/top/skirt 300 each). FINAL POOL 28,246 photos (27,854 open-set + 392 brand), 382 MB, every hash unique, 0 cross-source dupes, manifests reconcile 1:1 to files. All resized <=1024px, sha1-deduped, LOCAL (dataset/ gitignored), pool="training". License recorded per source; non-commercial-research use honored (local-only, never redistributed). Gives D2 vocab mining real market-frequency material and D3 a training corpus. | dataset/openset/manifest.json (local) + reports/2026-07-16-stitchu-data-loop-d1b.md |
 | D2 (vocab mining night tour) | 2026-07-16 | 24 (unchanged — no vision/engine code) | 53 (51.5%) | 51/54 (94.4%) | 2 | PARTIAL (credit died 227/2500): 230 open-set labels banked (balanced 22-24 per category × 10 categories), warehouse 389 total. 1,142 raw oov instances → 840 CANONICAL terms (new canonicalizer: vocab-canonical.json overrides + rule normalizer). Market map top: button cuff 33, hood 17, dropped shoulder 15, side+patch pocket 27 — a DIFFERENT compass than the 58-set marginal list; the two AGREE on gathering (shirred bodice panel 8 + elastic waistband 9) and placket (10). ANCHOR TEST NOT RUN (credit) → batch stamped SUSPECT/not-for-training per AMBAR YASASI until --anchor 10 passes after refill; labels valid as frequency signal only. | dataset/vocab-frequency.md (local) + reports/2026-07-16-stitchu-data-loop-d2-tour.md |
+| M1 (back hem slit / walking vent / patch 3.0) | 2026-07-16 | 26 | 55 (53.4%) | 51/54 (94.4%) | 2 | FIRST FAZ M motor branch: the engine now cuts the back with a center-back seam and opens a walking slit up from the hem — a lapped 40 mm extension with a 45° top corner for a VENT, a plain faced opening for a SLIT, plus the top-point bar tack. Only a fitted straight/A-line back hosts one (gathered/pleated/half-circle walk freely → skipped honestly). Opt-in (backSlit), None default → golden BYTE-IDENTICAL 0.000000mm/23034 lines. Cache reclassify (0 credits): FULL 24→26 (+2 = Laura ×2, both single-term "back hem slit"), ELEMENT ACC 53→55. ctest 18/18 (new slit_check), web-fuzz 19960/0, vocab-sweep 37800/0. | results-2026-07-16.json (reclassify) + reports/2026-07-16-stitchu-benchmark-loopM1.md |
 
 ## ASCII BARS (each loop one triplet: FULL, ELEMENT ACCURACY, VISION-ACCURACY)
 
@@ -25,6 +26,7 @@ L1 V0  22/54  ████████████████████░░
 L4 VIT 22/54  ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  40.7%   vitrin loop — engine untouched, published 22/54 on the new patch-notes page
 L2 V1  24/54  ██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  44.4%   results-2026-07-16.json (fresh) — +2 from neckline flips
 L3 V3  24/54  ██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  44.4%   REVERTED — broad null rule measured 21/54 live, guard fired, rolled back to 2.2
+M1 SLT 26/54  ███████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░  48.1%   results-2026-07-16.json (reclassify) — +2 = Laura ×2 back hem slit, first FAZ M motor branch
 ```
 
 ELEMENT ACCURACY /103 (daily compass)
@@ -32,6 +34,7 @@ ELEMENT ACCURACY /103 (daily compass)
 L1 V0  53/103 █████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  51.5%   results-2026-07-16.json
 L2 V1  53/103 █████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  51.5%   unchanged — vision loop, not an engine/element loop
 L3 V3  53/103 █████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░  51.5%   unchanged — reverted vision loop, engine untouched
+M1 SLT 55/103 ██████████████████████████░░░░░░░░░░░░░░░░░░░░░░░  53.4%   results-2026-07-16.json (reclassify) — +2 elements (both Laura back hem slits now drawn)
 ```
 
 VISION-ACCURACY (critical-field clean, /54 draftable garments)

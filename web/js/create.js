@@ -49,6 +49,10 @@ const SPEC_GROUPS = [
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
   { key: 'ruffle', label: 'hem ruffle', trLabel: 'fırfır', options: [['none', 'none', 'yok'], ['single', 'hem ruffle', 'etek ucu fırfır'], ['tiered', 'tiered (3)', 'kademeli (3 kat)']], for: (s) => s.garment !== 'top' },
+  // Loop M1: back hem slit / walking vent (arka etek yırtmacı). Only a fitted
+  // straight/A-line skirt or dress hosts a center-back walking vent; gathered/
+  // pleated/half-circle skirts walk freely and the engine skips it honestly.
+  { key: 'backSlit', label: 'back slit', trLabel: 'arka yırtmaç', options: [['none', 'none', 'yok'], ['vent', 'walking vent', 'körük yırtmaç'], ['slit', 'plain slit', 'düz yırtmaç']], for: (s) => s.garment !== 'top' && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine') },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -60,7 +64,7 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
-  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none',
+  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -208,6 +212,23 @@ function pickBackOpening(seen) {
   if (/square/.test(words)) return 'square';
   if (/\bv-?\b|low-?v|deep v|v cut|v-cut|plunge/.test(words)) return 'lowV';
   return 'round';
+}
+
+// Map the vision's oov terms to a back hem slit / walking vent (Loop M1). The
+// engine cuts the back with a center-back seam and opens a walking slit from the
+// hem; a "vent"/"kick" reads as a lapped walking vent, else a plain slit (the
+// set's common "back hem slit"). Only a straight/A-line skirt hosts one — the
+// caller and the engine both gate on that. Returns 'vent'|'slit' or null (honest).
+function pickHemSlit(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A back hem slit / vent / walking slit; a "kick pleat" reads as a vent too.
+  const named = /back .?(hem )?slit|hem slit|walking (slit|vent)|back vent|kick (pleat|vent)|\bvent\b/.test(words);
+  if (!named) return null;
+  if (/vent|kick/.test(words)) return 'vent';
+  return 'slit';
 }
 
 function el(tag, className, text) {
@@ -504,6 +525,15 @@ function showSpec() {
         // INDEPENDENT of a tie-back (Loop 4b), a Tie Back Mini Dress gets both.
         const backOpen = pickBackOpening(seen);
         spec.backOpening = backOpen || 'none';
+        // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
+        // cuts the back with a center-back seam and opens a walking slit from the
+        // hem. Only a fitted straight/A-line skirt hosts one; a gathered/pleated
+        // skirt walks freely (engine skips honestly). Gate on the skirt style so a
+        // "slit" read on a gathered skirt stays in the honesty channel.
+        const slit = pickHemSlit(seen);
+        const slitHostable = spec.garment !== 'top' &&
+          (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine');
+        spec.backSlit = (slit && slitHostable) ? slit : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -541,6 +571,12 @@ function showSpec() {
           // must NOT list the open-back as missing. A pocket / special back
           // finish clustered with it stays honest (its own oov term still shows).
           backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
+          // Loop M1: a back hem slit / walking vent is now DRAWN (CB seam +
+          // top-point bar tack + a lapped extension for a vent), so the honesty
+          // layer must NOT list the back slit as missing. A front/side slit stays
+          // honest (only the CB walking vent is drawn). Also false when the slit
+          // was read on a non-hosting (gathered) skirt → stays honest.
+          hemSlitDrawn: !!(spec.backSlit && spec.backSlit !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

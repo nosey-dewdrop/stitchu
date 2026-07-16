@@ -119,6 +119,14 @@ const DRAWN_SINCE = [
   // and both can be present on the same photo (each its own oov term).
   (t) => /open-?back|back ?cutout|backless|open back/i.test(t) &&
          !/\btie\b|\bties\b|lace/i.test(t),
+  // loop M1: back hem slit / walking vent — the engine now cuts the back with a
+  // center-back seam and opens a walking slit from the hem (a lapped extension
+  // for a vent, a plain faced opening for a slit). "back hem slit", "walking
+  // vent/slit", "back vent", "kick pleat/vent" all draw. A FRONT or SIDE slit is
+  // a DIFFERENT undrawn opening → stays missing (only the center-back walking
+  // vent is drawn).
+  (t) => /(back|hem|walking)[\s-]*(hem[\s-]*)?(slit|vent)|kick[\s-]*(pleat|vent)/i.test(t) &&
+         !/front|side/i.test(t),
 ];
 
 function classify(entry, spec) {

@@ -205,6 +205,12 @@ struct GarmentSpec {
     // FORMULAS.md "Open-back cutout". Can coexist with a tie-back (Loop 4b): the
     // tie draws the closure, this draws the opening it fastens over.
     int backOpening = 0; // BackOpening enum value; 0 = None
+    // Opt-in back hem slit / walking vent (arka etek yırtmacı, Loop M1): a walking
+    // opening up the center-back seam of a fitted/straight skirt or dress back.
+    // Off by default (None) → byte-identical. Only a straight/A-line back with a CB
+    // seam candidate hosts one; gathered/pleated/half-circle skirts are skipped
+    // honestly. See slit.hpp / FORMULAS.md "Back hem slit / walking vent".
+    int backSlit = 0; // HemSlit enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

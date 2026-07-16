@@ -17,6 +17,7 @@ add_library(engine
     src/collar.cpp
     src/gather.cpp
     src/openback.cpp
+    src/slit.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -70,6 +71,10 @@ add_test(NAME gather_check COMMAND gather_check)
 add_executable(backopen_check tests/backopen_check.cpp)
 target_link_libraries(backopen_check PRIVATE engine)
 add_test(NAME backopen_check COMMAND backopen_check)
+
+add_executable(slit_check tests/slit_check.cpp)
+target_link_libraries(slit_check PRIVATE engine)
+add_test(NAME slit_check COMMAND slit_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

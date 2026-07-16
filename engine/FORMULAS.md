@@ -518,6 +518,59 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   square/low-V descriptors pick the silhouette, else round (the set's common case).
   A manual "open back" shape picker covers the no-photo path.
 
+## Back hem slit / walking vent (arka etek yırtmacı) — opt-in (BENCHMARK-58 Loop M1)
+- WHAT: a walking slit (vent) rising from the hem up the CENTER-BACK seam of a
+  fitted/straight skirt or dress back, so the wearer can walk. `HemSlit { None,
+  Vent, Slit }`. Opt-in (GarmentSpec.backSlit); None → golden BYTE-IDENTICAL.
+  slit.hpp/.cpp, post-pass in garment.cpp after the open-back block. Off/on both
+  stay byte-identical.
+- WHY IT NEEDS A CB SEAM: a slit is an opening in a SEAM. In this engine the back
+  is cut on the fold (one CB fold). A slit converts that back to `cut 2` with a
+  CENTER-BACK SEAM: the seam is stitched from the waist down to the slit TOP
+  POINT, and left open below it. So SlitBlock's first job is to change the back's
+  cut note (on fold → cut 2 CB seam) and draw the seam/opening markings; the
+  outline geometry (waist, hip, hem) is unchanged → the fold-side outline is
+  byte-identical, only the cut note + markings differ. (A gathered/flared skirt
+  already has walking room and no CB seam to host a vent — SlitBlock skips it
+  honestly rather than forcing a seam into a fold panel.)
+- ANATOMY (research — Aldrich/Armstrong + fabrics-store/Professor Pincushion vent
+  tutorials): the slit rises from the hem `height` up the CB seam, clamped to
+  `[100, 350] mm` (≈4–14 in; the rule of thumb is "hem to just above the knee",
+  and it must clear the seat — kept `seatClearance = 60 mm` below the hip line so
+  it never opens over the seat). Two finishes:
+  - VENT: a folded-back EXTENSION (underlap/overlap) `ventExtension = 40 mm` wide
+    (≈1.5 in) grown onto the CB below the top point, with a 45° angled top corner
+    (the classic tailored vent that laps closed). The extension is drawn OUTSIDE
+    the CB line (x = 0 → −extension on the fold-mirror, i.e. added width on the
+    seam side) and folds back on the CB, so the two backs lap and the vent stays
+    closed when standing.
+  - SLIT: a plain faced opening, no extension — the CB seam simply stops at the
+    top point and both edges are turned under (a straight hem slit, common on
+    dresses / high-street). Drawn as a facing-free marking; the hem allowance
+    turns up the open edges.
+- TOP POINT + BAR TACK: the seam/opening boundary at `y = hemY − height` is marked
+  with a horizontal top bar (a bar-tack line) so the sewer knows exactly where the
+  seam stops and the opening begins — the single most-missed vent detail. A "cut 2
+  / CB seam, leave open below the mark" note carries the change.
+- TRUING: the vent extension's fold line is drawn ON the CB (x = 0); the extension
+  edge is the CB offset OUT by `ventExtension`, so the extension width is exactly
+  `ventExtension` at every y (slit_check measures fold-to-edge = 40.00 mm). The
+  top-point y is `hemY − height` measured off the piece's own hem (deepest CB
+  outline point), so the bar tack, the seam stop, and the extension top corner
+  all share one measured y and cannot drift.
+- COEXISTS: a back tie (Loop 4b) and an open-back cutout (Loop 9b) sit ABOVE on the
+  bodice; the hem slit sits at the skirt hem — independent, both draw on the same
+  dress. The slit only touches the back skirt/dress piece.
+- HONEST LIMIT: only a straight/fitted back with a CB seam candidate (straight or
+  A-line skirt, princess Center Back panel, or a plain Back panel) gets a vent; a
+  gathered/pleated/half-circle skirt has walking ease already and is skipped with
+  an honest guide note (never a silent no-op). A front slit / side slit stay honest
+  (missing.js) — only the CB walking vent is drawn.
+- Vision→spec (create.js pickHemSlit): reads seen.oov terms (back hem slit / back
+  vent / walking slit / kick pleat-ish "slit") → Vent when "vent/kick" wording,
+  else Slit (the set's common "back hem slit"). A manual "back slit / vent" picker
+  covers the no-photo path; seen.hemSlitDrawn suppresses the missing.js note.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

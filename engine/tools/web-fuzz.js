@@ -152,6 +152,27 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
+  // Loop M1 back hem slit variant: appends the full trailing arg list with the
+  // backSlit enum LAST (backOpening 0 before it) so the vent/slit is drafted.
+  const backSlitRun = (label, args, m, backSlit) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, backSlit));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
   for (const [bi, m] of BODIES.entries()) {
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
@@ -210,6 +231,22 @@ createEngine().then((e) => {
         ['dress', 'princess', 'natural', 'woven', 'scoop', 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, bo);
       backOpenRun(`b${bi} openback-${boName} top`,
         ['top', 'dart', 'natural', 'woven', 'crew', 'straight', 'long', 'aLine', 'midi', 'hip', false, 1, false], m, bo);
+    }
+    // Loop M1: back hem slit / walking vent — the vent grows the back outline with
+    // a lapped extension; both finishes flip the back to a CB seam. Sweep vent +
+    // slit across straight/A-line, princess/dart, dress/skirt, every length. Only
+    // a straight/A-line back hosts it (the engine gates + skips gathered honestly).
+    for (const [sl, slName] of [[1, 'vent'], [2, 'slit']]) {
+      for (const skirt of ['straight', 'aLine']) {
+        for (const len of lengths) {
+          backSlitRun(`b${bi} slit-${slName} dress/${skirt}/${len} princess`,
+            ['dress', 'princess', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, sl);
+          backSlitRun(`b${bi} slit-${slName} dress/${skirt}/${len} dart`,
+            ['dress', 'dart', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, sl);
+          backSlitRun(`b${bi} slit-${slName} skirt/${skirt}/${len}`,
+            ['skirt', 'dart', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, sl);
+        }
+      }
     }
   }
 

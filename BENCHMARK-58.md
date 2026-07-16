@@ -52,6 +52,27 @@ web/patches.html (LoL yama notları, 1.0–2.0 geriye dolduruldu) eklendi, hero
 CTA "join the beta" → canlı /api/waitlist (probe HTTP 200), fiyat rakamları beta
 çerçevesine çevrildi, sayfa geçişleri (View Transitions) eklendi. FULL 22/54
 tanım gereği sabit. Deploy v59. Rapor: reports/2026-07-16-stitchu-vitrin-loop.md.
+Durum (motor): **26/54 TAM KALIP — Loop M1 (back hem slit / walking vent) sonrası +2, 2026-07-16.**
+İLK FAZ M motor dalı (K2 köprü denetiminden sonra EN UCUZ +2). Motor artık oturan düz/A kesim
+eteğin ARKA parçasını arka-orta dikişle keser ve etek ucundan yukarı bir yürüme yırtmacı açar:
+VENT için 40mm geri-katlanan 45° üst köşeli kanat (iki arka üst üste kapanır), SLIT için düz faced
+açıklık, her ikisinde üst-nokta bar tack. Sadece oturan düz/A kesim arka barındırır (büzgülü/pileli/
+yarım-kloş yürüme payı zaten var → dürüstçe atlanır, sessiz no-op yok). SlitBlock::apply placket/
+openback-tarzı opt-in post-pass, HemSlit enum {None,Vent,Slit}, default None → golden BYTE-IDENTICAL
+0.000000mm/23034 satır. TRUING: kanat = CB dikişinin ventExtension=40mm dışa offset'i (her y'de tam
+40.00mm, drift edemez); üst-nokta y = hemY − height parçanın kendi ucundan ölçülü. Kanıt: ctest 18/18
+(yeni slit_check: cut note→CB seam, bar tack hemY−height'ta, kanat 40.00mm truing, 45° köşe, gathered
+red + dürüst not, tie-back+open-back+slit coexist, plain slit outline dokunmaz), golden byte-identical,
+web-fuzz 19960/0 (slit sweep 2 finish×2 skirt×3 length×3 body dahil), vocab-sweep 37800/0, render-pages
+vent-straight-dress (Skirt Back min-x −40.00mm) + slit-straight-skirt çizili. create.js pickHemSlit(seen)
+vision→spec + manuel "arka yırtmaç" picker (straight/aLine gate) + seen.hemSlitDrawn, missing.js
+hemSlitDrawn back/hem/walking slit suppression (front/side slit honest kalır), engine.js/backend/bindings
+int backSlit param. İki wasm yeniden derlendi. Worker VISION DEĞİŞMEDİ (ürün akışı tarayıcı wasm'ini
+kullanır). FORMULAS.md "Back hem slit / walking vent". CANLI SAYI (0-çağrı cache reclassify, kredi
+harcanmadı): 24→26/54 (+2 = Laura ×2, ikisi de tek-terimli "back hem slit"). ELEMENT ACCURACY 53→55/103
+(%51.5→%53.4). Patch 3.0. Deploy: web/index.html sayaç 22→26, patches.html patch 3.0, style-lint temiz.
+Rapor: reports/2026-07-16-stitchu-benchmark-loopM1.md.
+
 Önceki motor durumu (Loop 9b) aşağıda:
 
 Durum (motor): **22/54 TAM KALIP — Loop 9b (open-back cutout) sonrası +3, 2026-07-16.**
