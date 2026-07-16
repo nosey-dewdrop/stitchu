@@ -17,6 +17,20 @@ doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
 sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
+> LOOP 4 (VİTRİN / patch 2.1) BİTTİ (2026-07-16). Site vişne→bebek mavisi RESKIN
+> (yerleşim/Didot korundu, pötikare sadece hero); web/patches.html LoL yama notları
+> (1.0–2.0 geriye dolduruldu, EN/TR); hero CTA "join the beta" → canlı /api/waitlist
+> (probe HTTP 200 {"ok":true}); fiyat rakamları beta çerçevesine; sayfa geçişleri
+> (View Transitions + CSS fallback, 260ms); pattern galerisi sayacı 22/54 (sadece
+> motorun kendi SVG'leri, Etsy fotoğrafı YOK). FULL 22/54 DEĞİŞMEDİ (vitrin motora/
+> vision'a dokunmaz). Deploy v59, github.io doğrulandı. TAŞINMAYANLAR: MJ düğmeler
+> (Damla üretecek, CSS placeholder), style-library 24 sayfa gövdesi (backlog),
+> waitlist KV-sayaç script (worker gerektirir, backlog). Rapor:
+> reports/2026-07-16-stitchu-vitrin-loop.md. SIRADAKİ: LOOP 2 (V1 neckline
+> disambiguation) — before=vision-accuracy 46/53, neckline-misreads 5, 5 hedef
+> foto (JACKIE/Mira-back/Jackie-gingham-back/TieBack-polka-back/Ruby-Pea-Coat).
+>
+> --- ÖNCEKİ (LOOP 1 / patch 2.0) ---
 > LOOP 1 (V0 / patch 2.0) BİTTİ (2026-07-16). Taksonomi + baseline kuruldu, sıfır
 > kod düzeltmesi (V0 kuralı). KREDİ VAR (probe geçerli vision döndü). Güncel
 > DRAWN_SINCE reclassify: FULL 22/54, 7 vision-kaynaklı (WRONG) / 24 motor-kaynaklı

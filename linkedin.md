@@ -174,3 +174,17 @@
 4. **Yeni bir metrik doğurdum: vision-accuracy.** FULL sayısı motoru suçluyor (çizemediği kümelenmiş öğeler). Vision katmanını izole eden bir sayı lazımdı: kritik alanları (yaka, şekillendirme, siluet, kapanma) manifest'le eşleşen fotoğraf oranı. Baseline: 46/53 = %86.8, yaka yanlış-okuması 5. Bu sayı LOOP 2'nin "önce" değeri; benchmark script'ine üçüncü özet satırı olarak ekledim, DRAWN_SINCE mantığına dokunmadan.
 
 5. **Ders: taksonomi sıkıcıdır ve en değerli loop'tur.** Hiçbir şey "yaptım" hissi vermedi — ne yeni kabiliyet, ne kımıldayan FULL. Ama artık LOOP 2 körlemesine değil: dosya adlarıyla 5 hedef fotoğraf, tek alan, tek kural. Bir sonraki oturum "yakayı düzelt" diye başlamayacak; "bu 5 fotoğraftaki yakayı düzelt, before=46/53" diye başlayacak. Ölçmeden düzeltmek cesaret değil, savurganlık.
+
+---
+
+## Essay 14 — "Yama notlarını satmıyorum, bağ kuruyorlar: siteyi vişneden bebek mavisine, satıştan beta'ya çevirdim" (vitrin loop)
+
+1. **Sorun içerik değildi, yerleşimdi.** Benchmark sayfası vardı, API sayfası vardı, 0.00 mm kanıtı vardı — hepsi sitede duruyordu. Ama ben, geliştiricisi, siteye bakınca bulamıyordum. Müşteri hiç bulamazdı. Yeni bir özellik icat etmek değil, var olanı görünür kılmak gerekiyordu. Bu loop tek bir şey yaptı: bilgi mimarisini düzeltti.
+
+2. **League of Legends'ten çaldığım fikir: yama notları.** LoL her değişikliği yama notu olarak yazar ve oyuncu bunu OKUMAYA gelir. Benim benchmark tarihçem zaten hazır yama notu malzemesiydi — dürüst, sayılı, "+4 dedik +3 çıktı, kaçan +1 şu fotoda" diyen bir tarihçe. Bunu siteye hiç koymamıştım. Koyunca ürün "canlı ve gelişiyor" hissi verdi. patches.html: 1.0'dan 2.0'a on iki yama, her biri sayı öncesi→sonrası, ve en önemlisi her birinin altında dürüst not — sayının KIMILDAMADIĞI yamalar dahil (yaka ailesi +0, çünkü o sette yaka tek başına eksik değildi). Kaçırdığını gizleyen bir araç dürüst bir kıyaslama yayınlayamaz; kaçırdığını yayınlayan bir araç güven satar.
+
+3. **Renk dünyasını çevirdim ama yerleşimi çevirmedim.** Damla'nın kararı netti: vişnenin yerleşimi ve Didot tipografisi güzeldi, ona dokunma — sadece rengi değiştir. Bu bir redesign değil, RESKIN. Vişne #8f2038 gitti, bebek mavisi geldi; metin beyazdan lacivere döndü (kontrast şart, WCAG AA). Pötikare duvar kağıdını sadece girişe — mail toplanan hero'ya — sakladım; diğer her bölüm ve sayfa sakin beyaz-mavi. Kompozisyonun ruhunu bozmadan bir markanın tenini değiştirmek, sıfırdan tasarlamaktan zordur: neyin dokunulmaz olduğunu bilmek gerekir.
+
+4. **Fiyatı kaldırdım. Şimdilik.** Sitede $19/$49 rakamları vardı. Karar: beta önce, satış sonra. Rakamları kaldırdım, "beta partners: free while we build" çerçevesine çevirdim. Sitenin tek dönüşüm metriği artık waitlist kaydı — hero'daki birincil CTA "join the beta", gerçek /api/waitlist endpoint'ine bağlı, canlıda HTTP 200 ile doğruladım. Fiyat rakamları kaybolmadı; rapora saklandı. Bir ürünü satmadan önce, birinin onu istediğini kanıtlaman gerekir.
+
+5. **Ders: görünmeyen kanıt kanıt değildir.** Haftalardır motorun doğruluğunu ölçüp yayınlıyordum, ama yayınladığım yer kimsenin bakmadığı bir sayfaydı. Mühendislik işinin yarısı doğru olanı yapmak; diğer yarısı doğru olanı görünür kılmak. Yama notları bunu tek hamlede çözdü: hem bilgi mimarisini düzeltti, hem de tarihçemi — dürüstlüğü dahil — ziyaretçinin waitlist'e yazılma sebebine çevirdi.

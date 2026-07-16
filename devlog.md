@@ -617,3 +617,27 @@ X3 · HOOK: "vision aynı elbisenin önü ve arkasını iki AYRI elbise sanıyor
 - artık LOOP 2 körlemesine değil: dosya adlarıyla 5 hedef, tek alan, tek kural.
 - **Görsel:** [render] aynı elbisenin ön/arka fotosu yan yana, ok ile "boat ↔ halter?" çelişki işareti.
 - **Format:** carousel
+
+## seri Y — yama notlarını satmıyorum, bağ kuruyorlar (vitrin loop)
+
+Y1 · HOOK: "sitede benchmark de vardı, kanıt da. ben, geliştiricisi, bulamıyordum. müşteri hiç bulamazdı."
+- sorun içerik değildi, YERLEŞİMDİ. yeni özellik değil, var olanı görünür kılmak.
+- League of Legends'ten çaldım: her değişikliği yama notu yaz, oyuncu OKUMAYA gelsin.
+- patches.html: 1.0'dan 2.0'a on iki yama, her biri sayı öncesi→sonrası + dürüst not.
+- **Görsel:** [ekran] patches.html yukarı kayıyor, her patch kartında "14/54 → 22/54" delta rozeti.
+- **Format:** reel
+
+Y2 · HOOK: "sayının KIMILDAMADIĞI yamaları da yayınladım. +0'ı gizlemek güveni öldürür."
+- yaka ailesi +0 çıktı — o sette yaka tek başına eksik değildi, kümelenmişti. yazdım.
+- kaçırdığını gizleyen araç dürüst kıyaslama yayınlayamaz; yayınlayan araç güven satar.
+- "+4 dedik, +3 çıktı, kaçan +1 şu fotoda" — markanın sesi bu cümleler.
+- **Görsel:** [ekran] patch 1.7 kartı, italik dürüst not "no number moved — and that is the point" parlıyor.
+- **Format:** reel
+
+Y3 · HOOK: "bir markanın tenini değiştirmek, sıfırdan tasarlamaktan zordur."
+- vişne #8f2038 gitti, bebek mavisi geldi. metin beyazdan lacivere (kontrast şart).
+- ama YERLEŞİM aynı kaldı — Didot yapısı, kompozisyon dokunulmadı. reskin, redesign değil.
+- pötikare sadece girişte (mail toplanan hero); gerisi sakin beyaz-mavi.
+- fiyatı kaldırdım: $19/$49 gitti, "join the beta" geldi — canlıda /api/waitlist 200.
+- **Görsel:** [önce/sonra] aynı hero, vişne → bebek mavisi geçişi, yerleşim tık tık aynı.
+- **Format:** carousel

@@ -33,7 +33,15 @@ başarı beyanı = FULL PATTERN %80.
 > ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
 > her tek-öğe kazanımını sayar → doğru günlük pusula.
 
-Durum: **22/54 TAM KALIP — Loop 9b (open-back cutout) sonrası +3, 2026-07-16.**
+Durum: **22/54 TAM KALIP — DEĞİŞMEDİ (vitrin loop / patch 2.1, 2026-07-16).**
+Vitrin loop'u motora/vision'a DOKUNMAZ: site vişne→bebek mavisi RESKIN edildi,
+web/patches.html (LoL yama notları, 1.0–2.0 geriye dolduruldu) eklendi, hero
+CTA "join the beta" → canlı /api/waitlist (probe HTTP 200), fiyat rakamları beta
+çerçevesine çevrildi, sayfa geçişleri (View Transitions) eklendi. FULL 22/54
+tanım gereği sabit. Deploy v59. Rapor: reports/2026-07-16-stitchu-vitrin-loop.md.
+Önceki motor durumu (Loop 9b) aşağıda:
+
+Durum (motor): **22/54 TAM KALIP — Loop 9b (open-back cutout) sonrası +3, 2026-07-16.**
 Motor artık SIRT parçasında şekilli açık-sırt oyuğu (yuvarlak/düşük-V/kare/damla) çiziyor +
 facing (oyuk kenarını bitiren offset parça); OpenBackBlock opt-in post-pass, default None →
 golden BYTE-IDENTICAL 23034 satır. Oyuk nape'ten 40mm aşağı başlar (omuzda yoke), CB fold'a
