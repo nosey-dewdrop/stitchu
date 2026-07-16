@@ -194,6 +194,27 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
+  // R1.1 peplum variant: appends the full trailing arg list with the peplum enum
+  // LAST (backSlit 0, ruffledStraps 0 before it) so the flared peplum is drafted.
+  const peplumRun = (label, args, m, peplum) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, peplum));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
   for (const [bi, m] of BODIES.entries()) {
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
@@ -280,6 +301,17 @@ createEngine().then((e) => {
         ['dress', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
       strapRun(`b${bi} straps top/${neckline}`,
         ['top', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+    }
+    // R1.1: peplum — a flared circular flounce hung from the waist of a top/dress,
+    // across the 3 styles (full/half/pointed), necklines and shaping. The peplum
+    // piece is fresh fabric (a large doughnut) that must pack without clipping.
+    for (const [pe, peName] of [[1, 'full'], [2, 'half'], [3, 'pointed']]) {
+      for (const neckline of ['vNeck', 'crew', 'square']) {
+        peplumRun(`b${bi} peplum-${peName} top/${neckline} princess`,
+          ['top', 'princess', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, pe);
+        peplumRun(`b${bi} peplum-${peName} dress/${neckline} dart`,
+          ['dress', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, pe);
+      }
     }
   }
 

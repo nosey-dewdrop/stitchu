@@ -19,6 +19,7 @@ add_library(engine
     src/openback.cpp
     src/slit.cpp
     src/strap.cpp
+    src/peplum.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/validator.cpp)
@@ -80,6 +81,10 @@ add_test(NAME slit_check COMMAND slit_check)
 add_executable(strap_check tests/strap_check.cpp)
 target_link_libraries(strap_check PRIVATE engine)
 add_test(NAME strap_check COMMAND strap_check)
+
+add_executable(peplum_check tests/peplum_check.cpp)
+target_link_libraries(peplum_check PRIVATE engine)
+add_test(NAME peplum_check COMMAND peplum_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

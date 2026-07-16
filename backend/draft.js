@@ -38,6 +38,7 @@ const ENUMS = {
   backOpening: ['none', 'round', 'lowV', 'square', 'keyhole'],
   backSlit: ['none', 'vent', 'slit'],
   ruffledStraps: ['none', 'ruffled'],
+  peplum: ['none', 'full', 'half', 'pointed'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -65,6 +66,9 @@ const backSlitInt = (s) => HEM_SLIT[s] || 0;
 // StrapStyle enum int (must match engine/src/strap.hpp order). 0 = None.
 const STRAP_STYLE = { none: 0, ruffled: 1 };
 const ruffledStrapsInt = (s) => STRAP_STYLE[s] || 0;
+// PeplumStyle enum int (must match engine/src/peplum.hpp order). 0 = None.
+const PEPLUM_STYLE = { none: 0, full: 1, half: 2, pointed: 3 };
+const peplumInt = (s) => PEPLUM_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -173,6 +177,7 @@ export function validateDraftRequest(body) {
       backOpening: spec.backOpening ?? 'none',
       backSlit: spec.backSlit ?? 'none',
       ruffledStraps: spec.ruffledStraps ?? 'none',
+      peplum: spec.peplum ?? 'none',
     },
     measurements,
   };
@@ -200,6 +205,7 @@ export async function runDraft(spec, measurements) {
     backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
     backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
     ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
+    peplumInt(spec.peplum),           // R1.1: peplum flare
   );
   return JSON.parse(json);
 }
@@ -242,6 +248,7 @@ export async function handleGrade(request) {
       backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
       backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
       ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
+      peplumInt(spec.peplum),           // R1.1: peplum flare
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

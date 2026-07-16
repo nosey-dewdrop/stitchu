@@ -6,6 +6,7 @@
 #include "gather.hpp"
 #include "keyhole.hpp"
 #include "openback.hpp"
+#include "peplum.hpp"
 #include "placket.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
@@ -444,6 +445,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.ruffledStraps != static_cast<int>(StrapStyle::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         StrapBlock::apply(pattern, static_cast<StrapStyle>(spec.ruffledStraps));
+    }
+    // Opt-in peplum (bele takılan volan, R1.1): a flat circular/part-circular
+    // flare hung from the waist as a separate piece, inner arc trued to the
+    // finished waist (m.waistMM(), passed like the tie sash). Post-pass on the
+    // finished draft, so the base is byte-identical with it off (peplum == None).
+    // Only a waisted bodice/top hosts one (PeplumBlock skips honestly if it finds
+    // no front+back body). A pleated/gathered/draped peplum stays honest.
+    if (spec.peplum != static_cast<int>(PeplumStyle::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        PeplumBlock::apply(pattern, static_cast<PeplumStyle>(spec.peplum), m.waistMM());
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

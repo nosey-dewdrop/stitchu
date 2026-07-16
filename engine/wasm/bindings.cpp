@@ -125,7 +125,7 @@ GarmentSpec buildSpec(
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
     int sleeveCap, int collarType, int collarEdge, int gatherType, int gatherZone,
-    int backOpening, int backSlit, int ruffledStraps
+    int backOpening, int backSlit, int ruffledStraps, int peplum
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -151,6 +151,7 @@ GarmentSpec buildSpec(
     spec.backOpening = backOpening; // Loop 9b: BackOpening enum; 0=None 1=Round 2=LowV 3=Square 4=Keyhole
     spec.backSlit = backSlit; // Loop M1: HemSlit enum; 0=None 1=Vent 2=Slit
     spec.ruffledStraps = ruffledStraps; // queue #3: StrapStyle enum; 0=None 1=Ruffled
+    spec.peplum = peplum; // R1.1: PeplumStyle enum; 0=None 1=Full 2=Half 3=Pointed
     return spec;
 }
 
@@ -213,10 +214,11 @@ std::string draftJSON(
     int gatherZone,    // Loop 8: gather zone; 0 = Neckline
     int backOpening,   // Loop 9b: open-back cutout; 0 = None
     int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
-    int ruffledStraps  // queue #3: ruffled shoulder straps; 0 = None
+    int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
+    int peplum         // R1.1: peplum flare; 0 = None
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -242,10 +244,11 @@ std::string gradeJSON(
     int gatherZone,    // Loop 8: gather zone; 0 = Neckline
     int backOpening,   // Loop 9b: open-back cutout; 0 = None
     int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
-    int ruffledStraps  // queue #3: ruffled shoulder straps; 0 = None
+    int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
+    int peplum         // R1.1: peplum flare; 0 = None
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

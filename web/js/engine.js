@@ -57,6 +57,12 @@ export function ruffledStrapsValue(spec) {
   return STRAP_STYLE[spec && spec.ruffledStraps] || 0;
 }
 
+// PeplumStyle enum (must match engine/src/peplum.hpp order). 0 = None.
+const PEPLUM_STYLE = { none: 0, full: 1, half: 2, pointed: 3 };
+export function peplumValue(spec) {
+  return PEPLUM_STYLE[spec && spec.peplum] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -92,6 +98,7 @@ export async function grade(spec, fromLabel, toLabel) {
     backOpeningValue(spec), // Loop 9b: open-back cutout
     backSlitValue(spec),    // Loop M1: back hem slit / walking vent
     ruffledStrapsValue(spec), // queue #3: ruffled shoulder straps
+    peplumValue(spec),      // R1.1: peplum flare
   );
   return JSON.parse(json);
 }
@@ -118,6 +125,7 @@ export async function draft(spec, measurements) {
     backOpeningValue(spec),      // Loop 9b: open-back cutout
     backSlitValue(spec),         // Loop M1: back hem slit / walking vent
     ruffledStrapsValue(spec),    // queue #3: ruffled shoulder straps
+    peplumValue(spec),           // R1.1: peplum flare
   );
   return JSON.parse(json);
 }

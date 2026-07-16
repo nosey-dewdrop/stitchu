@@ -134,6 +134,13 @@ const DRAWN_SINCE = [
   // construction → stays missing.
   (t) => /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i.test(t) &&
          !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/i.test(t),
+  // R1.1: peplum — the engine now hangs a flared circular flounce from the waist
+  // as a separate piece, inner arc trued to the finished waist (full circle, half
+  // circle, and a pointed/handkerchief hem). "peplum construction", "pointed
+  // peplum hem", "peplum ruffle at waist" all draw. A PLEATED / GATHERED / DRAPED
+  // / TIERED peplum is a DIFFERENT construction → stays missing.
+  (t) => /peplum|waist flounce|waist frill/i.test(t) &&
+         !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t),
 ];
 
 function classify(entry, spec) {

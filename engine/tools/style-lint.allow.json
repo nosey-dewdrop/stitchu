@@ -1,5 +1,6 @@
 {
   "_note": "Allowlist for style-lint.mjs. Keep entries minimal and justified.",
+  "_note_vintage": "collection-60s70s.html h2s are garment-name labels (like product names in a catalog), not statement sentences, so they stay bare per DESIGN-RULES rule 4.",
   "heading": [
     "Patch notes",
     "Patch Notes",
@@ -10,7 +11,11 @@
     "Pattern library",
     "Benchmark",
     "Privacy",
-    "API"
+    "API",
+    "Sleeveless shift mini dress",
+    "Empire-seam knit mini dress",
+    "Empire gathered babydoll dress",
+    "Stand-collar tent mini dress"
   ],
   "pill": [],
   "weOur": []

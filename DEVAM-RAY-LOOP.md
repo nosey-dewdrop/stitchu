@@ -126,6 +126,19 @@ bloklardan (tie/slit/strap/peplum) damıtılır + terim→tarif tablosu. R2.2 pa
 > (zinciri koşturan orkestratör her loop sonunda burayı günceller: hangi loop bitti,
 > sayı kaç, kredi durumu, açılan mikro-looplar, sıradaki)
 
+- **R1.1 PEPLUM BİTTİ (patch 3.5, deploy v73).** FULL **29→31/54 (+2)** = Cloe
+  Puffed Sleeve Peplum Top + Serene Fit Blouse (ikisi de tek-terimli peplum, başka
+  oov'ları zaten çizilir durumdaydı). ELEMENT 58→60/103 (%58.3). 0 vision çağrısı
+  (cache reclassify, kredi harcanmadı). PeplumStyle {None,Full,Half,Pointed} opt-in
+  post-pass, iç bel yayı bitmiş bele trued (r0=share/π), golden byte-identical. ctest
+  20/20 (peplum_check truing 0.07mm), web-fuzz 20110/0, vocab-sweep 37800/0, render
+  peplum-full-top + peplum-pointed-top (PNG gözle onaylandı: çember + sivri variant).
+  İki wasm derlendi. 2 mikro-loop (waist truing → m.waistMM() pass-in; arc flatten
+  24→64 segment). NOT: paralel A4 loop patch 3.4'ü aldığı için peplum 3.5 oldu; rebase
+  ile A4+sewing-guide üzerine layer'landı (create.js/patches/index/?v origin üzerine
+  yeniden uygulandı). Rapor: reports/2026-07-17-stitchu-loop-peplum.md. SIRADAKİ RAY 1:
+  **R1.2 Jackie kombo** (asimetrik pat + cap sleeve, +6 → ~37/54).
+
 - A4 STRATEJİ LOOP BİTTİ (patch 3.4, deploy edildi, canlı v72 curl teyitli). Sabit
   22-çizimlik test takımında toplam A4 sayfa sayısı 456 -> 430 (-26, -5.7%), sıfır
   kalıp gerilemesi. Seri: 456 -> 442 (skyline packer) -> 439 (min-waste fit) -> 436

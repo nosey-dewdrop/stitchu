@@ -217,6 +217,12 @@ struct GarmentSpec {
     // sleeveless dress/top carries one; a sleeved/halter garment is skipped
     // honestly. See strap.hpp / FORMULAS.md "Ruffled straps".
     int ruffledStraps = 0; // StrapStyle enum value; 0 = None
+    // Opt-in peplum (bele takılan volan, R1.1): a flat circular/part-circular
+    // flare hung from the waist as a separate piece, inner arc trued to the
+    // finished waist. Off by default (None) → byte-identical. Only a waisted
+    // bodice/top hosts one; a pleated/gathered/draped peplum stays honest. See
+    // peplum.hpp / FORMULAS.md "Peplum".
+    int peplum = 0; // PeplumStyle enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

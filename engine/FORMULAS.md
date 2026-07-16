@@ -618,6 +618,46 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   garment. A manual "ruffled straps" picker covers the no-photo path;
   seen.ruffledStrapsDrawn suppresses the missing.js note + the outOfVocab strap term.
 
+## Peplum (bele takılan volan) — opt-in (BENCHMARK-58 RAY 1 / R1.1)
+- WHAT: a flared peplum flounce hung from the waist, drawn as a SEPARATE cut
+  piece (a flat circular / part-circular annular sector), inner arc trued to the
+  finished waist. `PeplumStyle { None, Full, Half, Pointed }`. Opt-in
+  (GarmentSpec.peplum); None → golden BYTE-IDENTICAL. peplum.hpp/.cpp, post-pass
+  in garment.cpp after the ruffled-straps block. It only ADDS a piece, never
+  touches an existing outline, so off/on both stay byte-identical.
+- RESEARCH (Aldrich Metric Pattern Cutting "circular flare" + Armstrong
+  "circular peplum" + high-street practice): a peplum is a circle-skirt segment
+  scaled to the waist. It is NOT gathered — it is cut so its INNER arc equals the
+  finished waist and its OUTER arc is longer, and the difference falls into ripples
+  below the waist seam. A full circle spreads the waist through the maximum flare;
+  a half circle spreads the same waist over a softer flare; a pointed (handkerchief)
+  hem is the full-circle cut worn to points on the true bias.
+- MASTER SECTOR RULE: finished waist W (the wearer's measured waist, passed in like
+  the tie sash) and depth D = 180 mm. Each drawn piece is an annular sector swept
+  through π radians, carrying HALF the waist (share = W/2). Inner radius
+  `r0 = share / π` so the inner arc = `r0 · π = share`; outer radius `r0 + D`,
+  outer arc `(r0 + D) · π`. Full/Pointed = one piece cut twice (two halves seam at
+  the sides into a full circle); Half = two on-fold pieces (front + back). SA = 15 mm.
+  The pointed variant keeps the same inner arc + swept angle; only the hem line
+  dips to a corner on the downward axis instead of a smooth arc.
+- TRUING: the inner (waist) arc of the drawn outline equals the finished waist to
+  0.00 mm (peplum_check flattens the outline arc and measures it; the arc is built
+  from `r0 = share / π`, so the waist edge can never drift). The finished waist is
+  clamped to `[minWaist 500, maxWaist 1400]` mm.
+- COEXISTS: the peplum sits at the waist; a front placket (Loop 3) and ruffled
+  straps (queue #3) sit on the bodice — all independent opt-in post-passes, all
+  draw on one waisted top.
+- HONEST LIMIT: only the FULL-circle, HALF-circle and POINTED (handkerchief)
+  circular flare is drawn. A PLEATED / GATHERED / DRAPED / TIERED peplum is a
+  DIFFERENT construction that stays in the honesty layer (missing.js). A garment
+  with no waisted bodice/top (a skirt) carries no peplum → PeplumBlock skips it with
+  an honest guide note (never a silent no-op).
+- Vision→spec (create.js pickPeplum): reads seen.oov terms ("peplum", "waist
+  flounce/frill", not pleated/gathered/draped/tiered/box-pleat) → full / half /
+  pointed (pointed on "pointed/handkerchief/dip/asymmetric"), gated off a skirt. A
+  manual "peplum" picker covers the no-photo path; seen.peplumDrawn suppresses the
+  missing.js note + the outOfVocab peplum term.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces
