@@ -166,6 +166,10 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .print-sizechart { border-collapse: collapse; font-size: 12px; margin: 8px 0 12px; }
 .print-sizechart th, .print-sizechart td { border: 1px solid #999; padding: 4px 12px; text-align: left; }
 .print-sizechart th { background: #e6eef7; font-weight: 700; }
+.print-cuttable { border-collapse: collapse; font-size: 11px; margin: 6px 0 12px; }
+.print-cuttable th, .print-cuttable td { border: 1px solid #999; padding: 3px 10px; text-align: left; vertical-align: top; }
+.print-cuttable th { background: #f3ecec; font-weight: 700; }
+.print-cuttable td:first-child { text-align: right; font-weight: 700; color: #8f2038; }
 /* Interior grade sheet: the size stamp rides in the top-right corner, bold and
    unmistakable, so a cut piece is never mistaken for another size. */
 .print-size-stamp { position: absolute; top: 4mm; right: 6mm; font-size: 24px; font-weight: 800;
