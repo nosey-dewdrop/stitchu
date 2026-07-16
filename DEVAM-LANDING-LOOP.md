@@ -44,19 +44,36 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
   included" ruhu (tam cümleyi session yazar, deniz-abartı yok).
 - EN/TR (mevcut data-en/data-tr düzenini kullan), nav'a "patch notes" linki.
 
-### B — index.html yerleşim: görünürlük onarımı (redesign DEĞİL)
-- KIRMIZI ÇİZGİ: görsel dil AYNEN kalır — vişne #8f2038, tipografi, mevcut
-  bileşen stili, whimsy yok. Kör redesign YASAK; bu loop sadece HİYERARŞİ ve
-  YERLEŞİM taşır. Şüphede kalırsan taşıma, rapora yaz.
-- Hedef durum (müşteri 5 saniyede görmeli): (1) ne bu → (2) kanıt bar'ı
-  (0.00mm · 70,200 draft · on-device) tıklanabilir, benchmark.html'e →
-  (3) TEK birincil CTA: beta waitlist. İkincil linkler (benchmark / API /
-  patch notes / privacy) kalıcı görünür nav'da — şu an sayfanın dibinde
-  kaybolan her şey yukarıda adresli olsun.
+### B — index.html + tüm sayfalar: BABY BLUE TEMA + yerleşim (Damla onayı, 16 Tem)
+- TEMA: vişne gider, BABY BLUE gelir — kontrat mocks/babyblue-stil-1.html'deki
+  Damla'nın SEÇTİĞİ varyant (NEREDEYİZ altına hangi varyant yazılacak; seçim
+  yazılmadan bu loop BAŞLAMAZ). Pötikare zemin CSS'ten, Didot serif korunur.
+  Düğme MJ assetleri gelene dek CSS placeholder (docs/mj-button-prompts.md).
+  Tema TÜM sayfalara uygulanır: index, benchmark, api, patches, privacy,
+  create — yarım boyama yok.
+- SAYFA GEÇİŞLERİ (Damla istedi): sayfalar arası yumuşak geçiş (View
+  Transitions API + CSS fallback), sekmeler/bölümler arasında premium-akıcı
+  his; abartı yok, 200-300ms.
+- Hedef akış (Damla'nın sırası): girişte İLK ÖNCE WAITLIST — hero'da beta
+  kaydı en üstte → hemen altında KANIT (0.00mm · 70,200 draft · on-device,
+  tıklanabilir → benchmark.html) → sonra ÜRETİLMİŞ PATTERN GALERİSİ (madde C2)
+  → nasıl çalışır → API şeridi. İkincil linkler (benchmark / API / patch
+  notes / privacy) kalıcı görünür nav'da.
 - Fiyat bölümü (api.html'deki indicative $19/$49 dahil): "beta" çerçevesine
   çevrilir — "beta partners: free, tell us your volume". Fiyat rakamları
   kaldırılır (Damla kararı: beta önce, satış sonra). Rakamlar raporda saklanır.
 - Sayfaya görünür sürüm etiketi (v++) — Damla canlıda hard-refresh ile görür.
+
+### C2 — ÜRETİLMİŞ PATTERN GALERİSİ (Damla, 16 Tem: "22 olmuşsun, onları koy")
+- Benchmark'ta FULL çıkan her foto = motorun GERÇEKTEN çizdiği bir kalıp.
+  Galeri bunları sergiler: her kart = kalıbın parça yerleşimi SVG'si
+  (render-pages.mjs ile cached spec'lerden, gerçek ürün kodundan) + dürüst
+  etiket ("halter mini dress — 9 pieces, drafted to EU38") + sayaç
+  "22 of 54 real product photos → full pattern, and counting" (patch
+  notes'a link; sayı results-*.json'dan, elle yazılmaz).
+- TELİF KIRMIZI ÇİZGİ: kaynak Etsy ürün FOTOĞRAFLARI ASLA siteye konmaz
+  (satın alınmış/telifli, benchmark-58/ gitignore). Sergilenen şey SADECE
+  motorun kendi çıktısı (bizim SVG'ler) + jenerik stil adı.
 
 ### C — beta hunisi: tek kapı
 - Landing'deki "Draft a pattern free" kalır (ürün ücretsiz, kanıt bu) ama
