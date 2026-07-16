@@ -30,7 +30,8 @@ vision'a zor; onlar İKİNCİ dalga ve amaçları farklı: inşa TERİMİ çeşi
 
 ## DALGA 2 — DEFİLE/DERGİ (Damla direktifi, 17 Tem)
 - Kaynak: Vogue Runway benzeri HERKESE AÇIK defile/koleksiyon sayfaları + marka
-  lookbook'ları. Markalar (Damla'nın listesi): **Moschino, Dior, Chanel, Versace.**
+  lookbook'ları. Markalar: ~30 tanınan marka, TAM LİSTE İÇ DOSYADA **dataset/brands.md**
+  (gitignore'lu; çekirdek Damla'nın saydığı Moschino/Dior/Chanel/Versace).
   Kırmızı çizgiler aynen geçerli: paywall arkasına girme, robots.txt, rate-limit,
   fotolar LOKAL/gitignore, marka isimleri sadece iç manifest'te.
 - FİLTRE (Damla, aynen): "gelinlik dikmiyoruz" — gelinlik, düğün, Met Gala / kırmızı
