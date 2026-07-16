@@ -62,21 +62,40 @@ returned empty (bot-blocked) and COS returned HTTP Access Denied. Not forced.
   brand collector's `dataset/manifest.json`, deliberately, so this scale pass never
   races the live brand-collector process writing its own manifest.
 
-## Evidence
-- Total photos added this loop: **26,954 (open-set) + ~PP_COUNT (Princess Polly)**.
-  Combined with the existing brand pool (uniqlo, ~120+, still streaming), the pool is
-  now in the tens of thousands.
-- Dedup: 0 duplicates within the open-set extraction (all 26,954 unique by content
-  hash); dedup is enforced going forward on every re-run.
-- Disk: `dataset/` = ~DISK_TOTAL total, far under the ~10GB cap. DeepFashion source
-  images are small (~256px), so 26,954 images cost only ~246MB.
-- Errors: 0 during open-set extraction.
+## FINAL ACCOUNTING (D1b close — verified against files on disk, downloaders stopped)
+Both manifests reconciled 1:1 against the files. No orphan photos, no manifest gaps.
+- Files on disk: **28,246** garment photos.
+- Open-set manifest (`dataset/openset/manifest.json`): 27,854 entries, all hashes unique.
+- Brand manifest (`dataset/manifest.json`): 392 entries, all hashes unique.
+- 27,854 + 392 = 28,246 → matches the file count EXACTLY (0 unmanifested files).
+- Cross-source dedup: 0 brand hashes also present in the open-set (content-hash sha1).
+- Disk: `dataset/` = **382 MB** total, far under the ~10GB cap.
 
-## Source distribution (this loop)
-| source | pool | count | note |
-|---|---|---|---|
-| deepfashion-inshop (open) | training | 26,954 | HF public, non-commercial research license |
-| princesspolly (brand) | training | ~PP_COUNT | public Shopify products.json, robots-clean |
+## Source distribution (final pool)
+Open dataset names are kept LOCAL; publicly this is described only as "an open dataset".
+
+| source | pool | count | disk | note |
+|---|---|---|---|---|
+| open dataset (in-shop e-commerce, women) | training | 26,954 | 236 MB | public academic mirror, non-commercial research/educational license |
+| open dataset (public Shopify brand) | training | 900 | 108 MB | robots-clean paginated products.json, first image only, 2s delay |
+| brand — uniqlo | training | 122 | 11 MB | public product CDN |
+| brand — handm | training | 270 | 17 MB | public product CDN |
+| **total** | | **28,246** | **382 MB** | |
+
+### Open-dataset category balance (women, in-shop)
+dresses 6,990 · blouses 6,000 · tees(capped) 3,000 · sweaters 3,036 · skirts 2,045 ·
+jackets 1,895 · rompers 1,696 · cardigans 1,436 · sweatshirts 856 (= 26,954);
+Shopify brand: dresses 300 · tops 300 · skirts 300 (= 900).
+
+### Brand category balance
+uniqlo: dress 77 · top 18 · skirt 27 (=122). handm: dress 90 · top 90 · skirt 90 (=270).
+
+## Evidence
+- Dedup: 0 duplicates within the open-set (all 27,854 unique by content hash);
+  0 duplicates within the brand pool (392 unique); 0 cross-source collisions.
+- Disk: 382 MB total — the open-set source images are small (~256px), so 26,954
+  images cost only ~236 MB.
+- Errors: 0 during open-set extraction; manifests reconcile exactly to files.
 
 ## Red-line check
 - `dataset/` gitignored — confirmed (`.gitignore` line for `dataset/`).

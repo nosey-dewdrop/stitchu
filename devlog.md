@@ -668,3 +668,20 @@ Z3 · HOOK: "bir değişikliği ölçtüm, vision doğruluğu ARTTI, ve yine de 
 - Anlatı (~45sn): vision arka fotoğrafı ayrı okuyup önde olmayan yakayı/biçimi uyduruyordu. iki cümlelik kural ekledim: kısmi görünümde önden okunan alanları null bırak. deploy, canlı ölçüm (aynı 59 foto, 8dk): vision-accuracy %86.8→%87.0, kural çalıştı. AMA FULL 24→21 düştü, çünkü benchmark arka fotoğrafı hâlâ önün yakasıyla ödüllendiriyor, dürüst "null" bir puan kaybettiriyor. regresyon bekçisi çalıştı: geri aldım, 2.2 worker'ı yeniden deploy ettim, results'ı geri yükledim. yama notunu "reverted" yayınladım, kaçanlar dahil. loop'un çıktısı +N değil, bir kanıt: bu bir prompt sorunu değil, ölçüm artefaktı. doğru çözüm ölçüm tarafında çoğunluk oyu (V3-b).
 - **Görsel:** [ekran] terminal SUMMARY iki koşu yan yana; "FULL 24 → 21" kırmızı yanıp söner, sonra "reverted" damgası; patch-notes sayfasında 2.3 girdisi "reverted" rozetiyle görünür.
 - **Format:** reel
+
+## FAZ D / D2 gece turu, 28k foto → ilk pazar haritası (kredi ortada öldü)
+
+Z4 · HOOK: "2.500 foto etiketleyecektim. 227'ncide kredi bitti. yine de haritayı çıkardım."
+- 28.246 fotoluk lokal havuzdan dengeli örneklem: her turda her kategoriden bir foto, 10 kategori.
+- 230 etiket bankada, kategori başına 22-24, sıfır uydurma; kalan 2.270 kredi gelince aynı komutla devam.
+- kanonikleştirme: "buttoned barrel cuffs" + 3 kardeşi = tek terim; 1.142 ham örnek → 840 kanonik terim.
+- sonuç: pazarın 1 numarası button cuff (33), benim benchmark'ımın 1 numarası büzgü. iki pusula sadece büzgüde anlaşıyor.
+- **Görsel:** [ekran] terminal frekans tablosu; "button cuff 33" satırı parlar, yanına 58-set marjinal listesi gelir, kesişen satırlar yıldızlanır.
+- **Format:** reel
+
+Z5 · HOOK: "etiketlerim hazırdı. eğitime SOKMADIM. çünkü damgasız."
+- ambar yasası: her etiket partisi insan-etiketli çıpadan sağlık testi geçer, geçemeyen parti eğitim dışı.
+- kredi bitti, test koşamadı → parti ŞÜPHELI damgalı: frekans sinyali olarak geçerli, öğrenci eğitimi için yasak.
+- etiket gerçek değil önbellek; asıl varlık fotoğraf + kaynak kaydı. kredi gelince tek komut: --anchor 10.
+- **Görsel:** [ekran] rapor dosyasında "ANCHOR HEALTH TEST — NOT RUN" bloğu, altında kırmızı "SUSPECT / NOT-FOR-TRAINING" damgası.
+- **Format:** reel
