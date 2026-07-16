@@ -204,6 +204,16 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 - Full-bust adjustment polish: the FBA now does front width+length+dart+back frame; a future pass could split the cup add differently for princess vs dart, and expose a cup-based estimate when the user only knows their cup letter.
 - Real API playground on api.html (sandbox key + pricing) — persona jury's remaining seller ask; needs a payment decision.
 
+## Sewing companion + content hub — SHIPPED 2026-07-17 (v72, live)
+Damla's directive: "kalıp çıktı, tamam dikicem, ama hangi kumaşla, hangi sırayla? blog/içerik/pattern hep bunun üzerinden." The layer that turns a drafted pattern into a sew-able one, and the content spine built on it. Deterministic, ZERO runtime LLM cost.
+- Finding on read: the engine ALREADY emitted an ordered construction guide (garment.cpp guideSteps: staystitch → darts/princess → shoulders → facing/understitch → side seams → skirt → zipper → sleeves → hem) and fabric advice (fabrics.json goodFor/badFor). The gap was (1) the "why" (weight/drape reasoning Damla asked for) and (2) an extractable knowledge base + content pages.
+- knowledge/sewing-guide.md — source of truth: fabric weight/drape logic per garment×silhouette + the 9-phase construction order + a block→step map (Aldrich, Armstrong, Reader's Digest, NMSU/SDSU/UKY Extension). English (repo rule).
+- web/data/sewing-guide.json — 5 fabric profiles (structured/fluid/gathered/knit/tailored) + 9 phases, EN and TR.
+- web/js/sewing.js — fabricProfile(spec) maps the drafted garment+silhouette to a profile; appendSewingCompanion() renders "Why this fabric" (weight/drape reasoning) + "The order it comes together" (9 phases) on the result page. Wired via render.js (chained after fabric advice), create.js (result.spec), i18n (sew.* EN+TR).
+- web/guide/ — the content hub: index + 6 pages (2 pillars: choosing-fabric, construction-order; 4 garment guides: fitted-dress, babydoll-dress, a-line-skirt, collared-top) from engine/tools/gen-guide.mjs (one source, regenerable, never hand-edit). Article + BreadcrumbList JSON-LD, canonical, OG/Twitter. sitemap +7 URLs; styles/index footer cross-link; style-lint scans guide/.
+- Engine C++, golden, vision, print flow UNTOUCHED (version bump only) — no collision with the parallel peplum engine loop.
+- NEXT (Damla's call): guide into the main nav (index.html/patches.html, coordinated with the engine loops so header-diff stays single-header); TR translation of the guide page bodies; a per-garment pattern example gallery on each guide page.
+
 ## Bugs / Issues
 - none known. 2026-07-15: 6 real fit bugs found and fixed (halter center-back kink, set-in sleeve too narrow for the biceps, fuller-bust/short-back sleeve rejection, sleeve underarm self-intersection on wide-shallow caps, impossible-body cryptic errors, empire seam below the waist) — all with tests + guards; the FBA's first version was back-only (audit-caught) and completed. Coverage: ctest 11/11, golden clean, vocab-sweep 37,800 decoupled 0 fail, web-fuzz 19,555 0 fail. (Earlier: 8 drafting bugs fixed 2026-07-07, see engine-check/.)
 - DEPLOY gotcha (fixed): after a ?v bump, `git add web/` ALL files before subtree split — staging only touched files shipped stale HTML (v41 HTML with v43 JS = cache mismatch).
