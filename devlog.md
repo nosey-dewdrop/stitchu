@@ -575,3 +575,21 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 
 **Görsel:** sırt parçası + üstünde vişne yarım-oval oyuk çizgisi (CB katına yaslı), yanında D-şekilli facing (oyuk çizgisi içeride offset); altta '19/54 → 22/54 (+3)', küçük not 'kuyruk +4 dedi, 1 foto vision yaka varyansına takıldı'. Alt yazı: "shipped the cutout, moved +3, and I can point at the missing +1".
 **Format:** reel
+
+## Reel — benchmark %40'ta çakıldı, motoru suçladım, suçlu dil çıktı (layer denetimi)
+
+**Hook (ilk 2 sn):** "Benchmark'ım haftalardır %40'ta çakılı. Motoru suçladım. Katmanları tek tek açtım — suçlu motor değilmiş."
+
+**Anlatı (~45 sn):** Kalıp motoruma dört loop üst üste yeni kabiliyet öğrettim: puf kol, koca bir yaka ailesi, büzgü, açık sırt. Sayı ya hiç kımıldadı ya tahminin altında kaldı. Sonunda durup projeyi katman katman denetledim: fotoğrafı okuyan vision, okumayı spec'e çeviren köprü, spec'i çizen C++ motoru, A4'e döşeyen çıktı. Mimari temiz çıktı — ve tam da bu yüzden her hatayı tek bir katmana atfedebildim. Tablo ters döndü: 7 yanlış kalıbın 6'sı motorun değil, vision'ın kelime kararsızlığı. Aynı elbiseye bir fotoda "square", ötekinde "halter" diyor; motor o yanlış tarifi kusursuz çiziyor. 27 eksiğin hepsi de aynı cümle: "engine cannot draw X" — vision görüyor, motorun sözlüğünde kelime yok. Yani katmanlar sağlam, aralarındaki DİL bozuk. En acı kanıt: oyuğu da bağı da çizdiğim bir elbise, vision yakayı yanlış okuduğu için hâlâ yanlış sayılıyor. Pivot yaptım: motor cilalamayı bıraktım, sıradaki üç loop vision'ın diline gidiyor. Ders: sayı kımıldamıyorsa daha sert itme — nereye ittiğini ölç.
+
+**Görsel:** dört kutu yan yana (vision → köprü → motor → çıktı), motor kutusunda büyük yeşil tik, vision kutusunda kırmızı "square? halter?" etiketi; altta '7 WRONG'un 6'sı vision, 27 MISSING = kelime yok'. Alt yazı: "the engine was innocent — the language between layers wasn't".
+**Format:** reel
+
+## Reel — üç loop, üç oturum, tek grafik (vision zinciri + skor tablosu)
+
+**Hook (ilk 2 sn):** "Artık her loop tek oturumda koşuyor ve bitince tek bir grafiğe bir çubuk ekliyor. Uydurma yok."
+
+**Anlatı (~45 sn):** Teşhis netleşince üç loop'luk bir zincir kurdum, hepsi vision katmanına: birincisi hiçbir şeyi düzeltmiyor, sadece her hatayı etiketliyor — vision mı, motor mu, köprü mü — ve bir baseline sayısı yazıyor. İkincisi en büyük hata sınıfına nişan alıyor: yaka okuma kararsızlığı; prompt'a "ön ve arka aynı elbise, TEK karar" kuralı. Üçüncüsü kararsızlığın köküne gidiyor: arka görünüm fotoğrafının ön yakayı ezmesini bitiriyor. Kurallar sert: her loop TEK oturum, taze hafıza; motor ve golden'a dokunmak yasak; sayı düşerse değişiklik geri alınır. Ve en sevdiğim kısım: her loop bitince ortak bir ilerleme dosyasına bir satır ekliyor — tam kalıp sayısı, öğe doğruluğu, vision doğruluğu — altında da ASCII bar grafiği loop loop uzuyor. Her satırın yanında kaynak ölçüm dosyasının adı yazıyor; grafik hikâye değil, snapshot. Bir loop bitiyor, oturum kapanıyor, temiz hafızayla sıradaki başlıyor. İlerleme artık his değil, çubuk.
+
+**Görsel:** terminal görünümünde ASCII bar grafik, üç satır (baseline / loop 2 / loop 3), çubuklar uzuyor; yanda 'her satır = 1 oturum, kaynak: results-*.json'. Alt yazı: "one loop, one session, one honest bar".
+**Format:** reel

@@ -27,6 +27,12 @@ En ucuz +N motor değil vision kararlılığı. Kanıt: benchmark-58/results-202
   kısmı yap, canlı ölçümü "KREDİ BEKLİYOR" bırak — uydurma sayı yok.
 - Session sonu teslimat: reports/YYYY-MM-DD-stitchu-vision-loopN.md + linkedin.md
   essay + devlog.md reel + CLAUDE.md status bloğu + NEREDEYİZ güncelle + push.
+- İÇERİK LOGU ZORUNLU (Damla kuralı, 2026-07-16): her session kendi gelişmesini,
+  pivotunu, +N'ini ve teşhisini POST olarak loglar — linkedin.md'ye 300-500 kelime
+  numaralı-zincir essay (ne + neden + karar, gerçek tarihçeden, uydurma yok) ve
+  devlog.md'ye şablonlu reel (Hook 2sn + Anlatı ~45sn + Görsel + Format). Sayı
+  kımıldamadıysa o da içerik: "neden kımıldamadı"nın kendisi post olur (Essay
+  9/Loop 7 örneği). Önce mevcut dosyayı oku, çift kayıt açma.
 - SKOR TABLOSU (Damla kuralı, 2026-07-16): tek ortak ilerleme dosyası
   **reports/stitchu-vision-progress.md** — her loop sonunda AYNI dosyaya bir satır
   eklenir (loop, tarih, FULL x/54, ELEMENT ACCURACY d/103, vision-accuracy,
