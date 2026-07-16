@@ -15,6 +15,16 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
 3. **Sorun içerik değil YERLEŞİM.** Benchmark sayfası, API sayfası, kanıtlar —
    hepsi var ama Damla (developer!) bile siteye bakınca göremiyor. Müşteri
    hiç göremez. İş: bilgi mimarisini düzeltmek, yeni şey icat etmek değil.
+4. **Hedef yol = StitchLift'in yolu (Damla, 16 Tem): hayali sat + SEO'yu patlat.**
+   Asıl müşteri Etsy'de dükkan hayali kuran kişi; copy "para kazan" umuduna
+   konuşur ("turn one photo into a sellable size run" ruhu). SEO altyapısı bu
+   loop'a dahil: her sayfaya doğru title/meta/canonical, ld+json (SoftwareApplication
+   + FAQ), sitemap.xml, patch notes = ilk içerik motoru. Blog/rehber yazıları
+   (Etsy nasıl satılır vb.) AYRI bir iş, bu loop'ta değil — rapora backlog yaz.
+5. **Evrensel beden (Damla, 16 Tem):** made-to-measure TEK mod olmaz; Etsy
+   satıcısı XS-XL/EU34-52 size-run ister — motor /api/grade ile bunu ZATEN
+   yapıyor, landing bunu görünür satsın ("one photo → a full size run").
+   Ürün UI'ına standart-beden modu eklemek AYRI loop, burada sadece copy.
 
 ## İŞLER (sırayla)
 
