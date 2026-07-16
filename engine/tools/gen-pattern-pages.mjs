@@ -17,6 +17,11 @@ const BASE = 'https://nosey-dewdrop.github.io/stitchu';
 const V = process.env.V || '68';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
+// Phase 2: the printable PDF pack, one set of three per pattern (gen-pattern-pdfs.mjs).
+// File sizes shown to the visitor come straight from this manifest, never guessed.
+const pdfManifest = JSON.parse(readFileSync(join(OUT, 'pdf', 'pdf-manifest.json'), 'utf8'));
+const pdfBySlug = Object.fromEntries(pdfManifest.map((p) => [p.slug, p]));
+const kb = (bytes) => `${Math.round(bytes / 1024)} KB`;
 
 // Per-pattern editorial copy. Each entry keys off the slug from meta.json.
 // lead / facts / fabric are the honest description of the ENGINE output; drawnBy
@@ -236,6 +241,11 @@ const STYLE = `<style>
   /* CTA look lives in ../css/shared-button.css (.sb-btn). Layout-only helpers here. */
   .sb-btn{margin-top:30px}
   .cta2{display:inline-block;margin:30px 0 0 16px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .dl .sb-btn{margin-top:14px}
+  .dl-alt{margin:16px 0 0;display:flex;flex-wrap:wrap;gap:22px}
+  .dl-link{font-size:13px;letter-spacing:.3px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .dl-size{font-size:12px;color:#5b7089;letter-spacing:.3px}
+  .dl .honest{margin-top:16px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
   .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
@@ -309,6 +319,23 @@ for (const m of meta) {
     : { en: `This pattern was drawable from day one: every piece is in the engine's core vocabulary, so it drafts complete with no missing construction.`,
         tr: `Bu kalıp ilk günden çizilebiliyordu: her parça motorun temel dağarcığında, bu yüzden hiçbir yapım eksiği olmadan tam çizilir.` };
 
+  // Download pack: printable PDFs built by the engine (gen-pattern-pdfs.mjs).
+  // A4 tiled pack is the primary CTA; A0 single sheet and the sewing guide are
+  // dashed text-links. Sizes are read from the PDF manifest, not guessed.
+  const pdf = pdfBySlug[m.slug];
+  const dlSection = pdf ? `
+  <h2 data-en="Download the printable pattern." data-tr="Baskıya hazır kalıbı indir.">Download the printable pattern.</h2>
+  <div class="dl">
+    <a class="sb-btn sb-primary" href="pdf/${m.slug}-a4.pdf" download data-en="A4 print pack (EU38)" data-tr="A4 baskı paketi (EU38)">A4 print pack (EU38)</a>
+    <span class="dl-size" data-en=" A4, ${pdf.a4pages} pages, ${kb(pdf.a4bytes)}." data-tr=" A4, ${pdf.a4pages} sayfa, ${kb(pdf.a4bytes)}."> A4, ${pdf.a4pages} pages, ${kb(pdf.a4bytes)}.</span>
+    <div class="dl-alt">
+      <a class="dl-link" href="pdf/${m.slug}-a0.pdf" download data-en="A0 single sheet (${kb(pdf.a0bytes)})" data-tr="A0 tek sayfa (${kb(pdf.a0bytes)})">A0 single sheet (${kb(pdf.a0bytes)})</a>
+      <a class="dl-link" href="pdf/${m.slug}-guide.pdf" download data-en="sewing guide (${pdf.guideSteps} steps, ${kb(pdf.guidebytes)})" data-tr="dikiş kılavuzu (${pdf.guideSteps} adım, ${kb(pdf.guidebytes)})">sewing guide (${pdf.guideSteps} steps, ${kb(pdf.guidebytes)})</a>
+    </div>
+    <p class="honest" data-en="Every sheet carries a 3 cm calibration square. Measure it after printing at 100 percent scale, no fit-to-page, so the pattern comes out true to size." data-tr="Her sayfada 3 cm’lik bir kalibrasyon karesi var. Yüzde 100 ölçekte, sayfaya sığdırmadan bastıktan sonra ölç; böylece kalıp gerçek boyutunda çıkar.">Every sheet carries a 3 cm calibration square. Measure it after printing at 100 percent scale, no fit-to-page, so the pattern comes out true to size.</p>
+  </div>
+` : '';
+
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
@@ -333,7 +360,7 @@ ${HEADER}
   <h2 data-en="The honest note." data-tr="Dürüst not.">The honest note.</h2>
   <p class="honest" data-en="${esc(patchNote.en)}" data-tr="${esc(patchNote.tr)}">${esc(patchNote.en)}</p>
   <p class="honest">${m.patch ? `<a href="../patches.html" data-en="See patch ${m.patch} in the patch notes →" data-tr="Yama notlarında ${m.patch} yamasına bak →">See patch ${m.patch} in the patch notes →</a>` : `<a href="../patches.html" data-en="See the full patch history →" data-tr="Tüm yama geçmişine bak →">See the full patch history →</a>`}</p>
-
+${dlSection}
   <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
   <a class="cta2" href="index.html" data-en="Browse the pattern library →" data-tr="Kalıp kütüphanesine göz at →">Browse the pattern library →</a>
 </div>
