@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "boat-neck-linen-shell",
+    "pieces": 4,
+    "a4pages": 12,
+    "a4bytes": 46550,
+    "a0bytes": 5825,
+    "guidebytes": 3744,
+    "guideSteps": 12,
+    "cols": 3
+  },
+  {
+    "slug": "scoop-neck-tank-mini-dress",
+    "pieces": 6,
+    "a4pages": 15,
+    "a4bytes": 54635,
+    "a0bytes": 7496,
+    "guidebytes": 5536,
+    "guideSteps": 17,
+    "cols": 3
+  },
+  {
+    "slug": "boat-neck-button-down-top",
+    "pieces": 6,
+    "a4pages": 16,
+    "a4bytes": 74694,
+    "a0bytes": 9613,
+    "guidebytes": 5337,
+    "guideSteps": 14,
+    "cols": 3
+  },
+  {
+    "slug": "gingham-button-blouse",
+    "pieces": 4,
+    "a4pages": 13,
+    "a4bytes": 51120,
+    "a0bytes": 6412,
+    "guidebytes": 4588,
+    "guideSteps": 13,
+    "cols": 2
+  },
+  {
+    "slug": "mandarin-collar-fitted-blouse",
+    "pieces": 8,
+    "a4pages": 20,
+    "a4bytes": 94133,
+    "a0bytes": 11841,
+    "guidebytes": 6350,
+    "guideSteps": 15,
+    "cols": 3
+  },
+  {
+    "slug": "back-tie-shift-mini-dress",
+    "pieces": 7,
+    "a4pages": 21,
+    "a4bytes": 74955,
+    "a0bytes": 7949,
+    "guidebytes": 5818,
+    "guideSteps": 17,
+    "cols": 2
+  },
+  {
+    "slug": "square-neck-back-tie-babydoll-top",
+    "pieces": 7,
+    "a4pages": 18,
+    "a4bytes": 80344,
+    "a0bytes": 8974,
+    "guidebytes": 5268,
+    "guideSteps": 14,
+    "cols": 3
+  },
+  {
+    "slug": "empire-waist-tie-back-dress",
+    "pieces": 9,
+    "a4pages": 38,
+    "a4bytes": 132484,
+    "a0bytes": 9073,
+    "guidebytes": 7595,
+    "guideSteps": 21,
+    "cols": 5
+  },
+  {
+    "slug": "square-neck-drawstring-babydoll-dress",
+    "pieces": 8,
+    "a4pages": 25,
+    "a4bytes": 87133,
+    "a0bytes": 7217,
+    "guidebytes": 6505,
+    "guideSteps": 18,
+    "cols": 3
+  },
+  {
+    "slug": "open-back-princess-mini-dress",
+    "pieces": 11,
+    "a4pages": 23,
+    "a4bytes": 89032,
+    "a0bytes": 11299,
+    "guidebytes": 7217,
+    "guideSteps": 22,
+    "cols": 5
+  },
+  {
+    "slug": "open-back-tie-back-mini-dress",
+    "pieces": 12,
+    "a4pages": 29,
+    "a4bytes": 121791,
+    "a0bytes": 12392,
+    "guidebytes": 7970,
+    "guideSteps": 23,
+    "cols": 4
+  },
+  {
+    "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
+    "pieces": 10,
+    "a4pages": 41,
+    "a4bytes": 262965,
+    "a0bytes": 21095,
+    "guidebytes": 8481,
+    "guideSteps": 22,
+    "cols": 6
+  }
+]
