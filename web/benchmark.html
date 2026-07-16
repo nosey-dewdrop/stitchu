@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stitchu · the accuracy benchmark">
 <meta name="twitter:description" content="Others promise fit. We publish the numbers, and the textbook audit.">
-<link rel="stylesheet" href="css/theme-transitions.css?v=59">
+<link rel="stylesheet" href="css/theme-transitions.css?v=60">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). */
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
@@ -63,10 +63,12 @@
 <header>
   <a class="mark" href="index.html" style="text-decoration:none">stitchu</a>
   <nav>
-    <a href="create.html" data-en="draft a pattern" data-tr="kalıp çiz">draft a pattern</a>
+    <a href="create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama" style="border-bottom:1px dashed var(--bb-deep)">benchmark</a>
     <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
-    <span class="langtoggle"><button id="en" class="active" onclick="setLang('en')">EN</button><span>·</span><button id="tr" onclick="setLang('tr')">TR</button></span>
+    <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
 </header>
 
@@ -106,22 +108,28 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v59</span></span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v60</span></span>
 </footer>
 
 <script>
 function setLang(lang){
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-en]').forEach((el) => {
-    const v = el.getAttribute('data-' + lang);
-    if (v != null) el.innerHTML = v;
+    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
+    if (lang === 'tr') { const t = el.getAttribute('data-tr'); if (t != null) el.textContent = t; }
+    else { el.innerHTML = el.dataset.enHtml; }
   });
-  document.getElementById('en').classList.toggle('active', lang === 'en');
-  document.getElementById('tr').classList.toggle('active', lang === 'tr');
-  try { localStorage.setItem('stitchu_lang', lang); } catch (e) {}
+  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
+  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
+  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
 }
-const saved = (() => { try { return localStorage.getItem('stitchu_lang'); } catch (e) { return null; } })();
-setLang(saved || 'en');
+(function(){
+  let lang = 'en';
+  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch(_) {}
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
+  setLang(lang);
+})();
 </script>
 </body>
 </html>
