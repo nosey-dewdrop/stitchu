@@ -15,11 +15,12 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stitchu · create a pattern">
 <meta name="twitter:description" content="Draft a sewing pattern to your own 7 measurements, in your browser.">
-<link rel="stylesheet" href="css/tokens.css?v=62">
-<link rel="stylesheet" href="css/landing.css?v=62">
-<link rel="stylesheet" href="css/app.css?v=62">
-<link rel="stylesheet" href="css/couture.css?v=62">
-<link rel="stylesheet" href="css/theme-transitions.css?v=62">
+<link rel="stylesheet" href="css/tokens.css?v=65">
+<link rel="stylesheet" href="css/landing.css?v=65">
+<link rel="stylesheet" href="css/app.css?v=65">
+<link rel="stylesheet" href="css/couture.css?v=65">
+<link rel="stylesheet" href="css/theme-transitions.css?v=65">
+<link rel="stylesheet" href="css/shared-header.css?v=65">
 <style>
   body.couture footer{border-top:1px solid var(--bb-line);margin-top:40px;padding:0;position:relative;z-index:2;
     font-size:11px;letter-spacing:1px;color:#5b7089}
@@ -29,21 +30,17 @@
 </head>
 <body class="couture">
 
-<header>
-  <div class="wrap header-in">
-    <div class="wordmark">
-      <a href="index.html" style="color:inherit;text-decoration:none">stitchu</a>
-      <svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#3f74a8" stroke-width="2" stroke-dasharray="7 5"/></svg>
-    </div>
-    <nav>
-      <a href="create.html" data-i18n="nav.create" style="border-bottom:1px dashed var(--bb-deep)">create</a>
-      <a href="closet.html" data-i18n="nav.closet">closet</a>
-      <a href="patterns/index.html">patterns</a>
-      <a href="benchmark.html">benchmark</a>
-      <a href="patches.html">patch notes</a>
-      <a href="api.html">API</a>
-    </nav>
-  </div>
+<header class="sh-header">
+  <a class="brandpatch" href="index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="create.html" class="sh-active" data-en="create" data-tr="çiz">create</a>
+    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
+    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
+    <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
 </header>
 
 <main class="app-main">
@@ -53,11 +50,12 @@
 <footer>
   <div class="wrap">
     <span>stitchu · a pattern-making engine</span>
-    <span><a href="index.html">home</a> · <a href="benchmark.html">benchmark</a> · <a href="patches.html">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v62</span></span>
+    <span><a href="index.html">home</a> · <a href="benchmark.html">benchmark</a> · <a href="patches.html">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v65</span></span>
   </div>
 </footer>
 
-<script type="module" src="js/create.js?v=62"></script>
-<script src="js/couture-bg.js?v=62"></script>
+<script src="js/shared-header.js?v=65"></script>
+<script type="module" src="js/create.js?v=65"></script>
+<script src="js/couture-bg.js?v=65"></script>
 </body>
 </html>
