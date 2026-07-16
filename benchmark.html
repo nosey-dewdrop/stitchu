@@ -114,7 +114,7 @@ function setLang(lang){
   try { localStorage.setItem('stitchu_lang', lang); } catch (e) {}
 }
 const saved = (() => { try { return localStorage.getItem('stitchu_lang'); } catch (e) { return null; } })();
-setLang(saved || (navigator.language && navigator.language.startsWith('tr') ? 'tr' : 'en'));
+setLang(saved || 'en');
 </script>
 </body>
 </html>
