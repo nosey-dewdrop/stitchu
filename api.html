@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>stitchu API — one endpoint, real patterns, no AI bill</title>
+<title>stitchu API, one endpoint, real patterns, no AI bill</title>
 <meta name="description" content="The stitchu drafting engine behind one endpoint: POST /api/draft turns measurements + a garment spec into a true-scale sewing pattern. No per-call AI cost.">
 <link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/api.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="stitchu">
-<meta property="og:title" content="stitchu API — one endpoint, real patterns, no AI bill">
+<meta property="og:title" content="stitchu API, one endpoint, real patterns, no AI bill">
 <meta property="og:description" content="POST /api/draft: measurements + a garment spec in, a true-scale sewing pattern out.">
 <meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/api.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="stitchu API — one endpoint, real patterns, no AI bill">
+<meta name="twitter:title" content="stitchu API, one endpoint, real patterns, no AI bill">
 <meta name="twitter:description" content="POST /api/draft: measurements + a garment spec in, a true-scale sewing pattern out.">
 <link rel="icon" href="assets/buttons/b6.png">
 <link rel="stylesheet" href="css/theme-transitions.css?v=59">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). Code blocks
-     stay dark navy for readability — standard API-doc contrast. */
+     stay dark navy for readability, standard API-doc contrast. */
   :root{--bb:#8fbfe8;--bb-deep:#3f74a8;--bb-pale:#dceaf7;--bb-line:#bcd7ee;--navy:#1f3a5f;--ink:#2b4a6b}
   *{box-sizing:border-box}
   body{margin:0;background:#fff;color:var(--navy);font-family:'Helvetica Neue',Arial,sans-serif;
@@ -51,6 +51,13 @@
   .msg{min-height:20px;font-size:13px;margin-top:12px;color:var(--navy)}
   footer{margin-top:64px;font-size:12px;color:#5b7089;letter-spacing:1px}
   footer a{color:var(--navy);text-decoration:none}
+
+    /* gingham signature band (Damla, 16 Jul): thin texture strip on white pages */
+    body::before{content:"";display:block;height:12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        #fff;}
 </style>
 </head>
 <body>
@@ -61,7 +68,7 @@
   </div>
 
   <h1>One endpoint. Real patterns. No AI bill.</h1>
-  <p class="sub">The same C++ drafting engine stitchu runs in the browser, behind one HTTP endpoint. Send seven measurements and a garment spec; get back a true-scale, measurement-fitted sewing pattern — pieces, a construction guide, and a fabric estimate. The engine does the drafting, so there is <b>no per-call AI cost</b>.</p>
+  <p class="sub">The same C++ drafting engine stitchu runs in the browser, behind one HTTP endpoint. Send seven measurements and a garment spec; get back a true-scale, measurement-fitted sewing pattern, pieces, a construction guide, and a fabric estimate. The engine does the drafting, so there is <b>no per-call AI cost</b>.</p>
   <span class="tag">POST /api/draft · zero marginal cost</span>
 
   <h2>Request</h2>
@@ -87,16 +94,16 @@
     ]
   }
 }</pre>
-  <p class="sub" style="font-size:13.5px">Coordinates are in millimetres; every point is a flat key on the command. An impossible body or an unsewable combination returns <b>422 <code>undraftable</code></b> with the reasons — the API never returns a pattern that would waste a customer's fabric.</p>
+  <p class="sub" style="font-size:13.5px">Coordinates are in millimetres; every point is a flat key on the command. An impossible body or an unsewable combination returns <b>422 <code>undraftable</code></b> with the reasons, the API never returns a pattern that would waste a customer's fabric.</p>
 
   <div class="cards">
     <div class="card"><h3>No LLM cost</h3><p>The drafting is our own engine, not a model call. Your margin doesn't erode per request.</p></div>
-    <div class="card"><h3>Proven output</h3><p>Every pattern passes the same published accuracy benchmark — seams match, sleeves fit, proportions hold.</p></div>
+    <div class="card"><h3>Proven output</h3><p>Every pattern passes the same published accuracy benchmark, seams match, sleeves fit, proportions hold.</p></div>
     <div class="card"><h3>Private by design</h3><p>Send only measurements; nothing about your customer's body is stored or logged.</p></div>
   </div>
 
   <h2>Try it live</h2>
-  <p class="sub">Draft a real pattern against the live endpoint — the same call your product would make. No key needed for this demo (rate-limited).</p>
+  <p class="sub">Draft a real pattern against the live endpoint, the same call your product would make. No key needed for this demo (rate-limited).</p>
   <div class="play">
     <div class="play-row">
       <label>garment
@@ -114,7 +121,7 @@
   </div>
 
   <h2>Grade a size run</h2>
-  <p class="sub">One design, a whole size chart. <code>POST /api/grade</code> drafts a spec across an EU size range — every size from the same engine, so a seller gets a full run without maintaining grade rules.</p>
+  <p class="sub">One design, a whole size chart. <code>POST /api/grade</code> drafts a spec across an EU size range, every size from the same engine, so a seller gets a full run without maintaining grade rules.</p>
   <div class="play">
     <div class="play-row">
       <label>garment
@@ -135,16 +142,16 @@
   </div>
 
   <h2>Beta partners</h2>
-  <p class="sub">We're in beta, so pricing comes later — right now we're onboarding a handful of early partners for free. The engine has no per-call AI cost, so we can stay cheap when pricing lands. Tell us your volume and what you're building.</p>
+  <p class="sub">We're in beta, so pricing comes later, right now we're onboarding a handful of early partners for free. The engine has no per-call AI cost, so we can stay cheap when pricing lands. Tell us your volume and what you're building.</p>
   <div class="cards">
     <div class="card"><h3>Maker</h3><p>A solo Etsy / made-to-measure shop. One photo → a full size run (XS–XL / EU34–52) via <b>/api/grade</b>.</p></div>
     <div class="card"><h3>Studio</h3><p>A growing brand drafting at volume. Priority support while we build together.</p></div>
     <div class="card"><h3>Volume</h3><p>High-volume or white-label. Tell us your numbers below and we'll shape it with you.</p></div>
   </div>
-  <p class="sub" style="font-size:12px;color:#5b7089">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost — beta is free while we build.</p>
+  <p class="sub" style="font-size:12px;color:#5b7089">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost, beta is free while we build.</p>
 
   <h2>Become a beta partner</h2>
-  <p class="sub">Studios, made-to-measure brands and pattern shops — tell us your volume and we'll set you up.</p>
+  <p class="sub">Studios, made-to-measure brands and pattern shops, tell us your volume and we'll set you up.</p>
   <form onsubmit="return apiWaitlist(event)">
     <input type="email" id="apiemail" placeholder="you@studio.com" required>
     <button type="submit">Join the beta</button>
@@ -157,7 +164,7 @@
 <script>
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
 
-// Live playground: fire a real /api/draft and show the JSON. Honest states — if
+// Live playground: fire a real /api/draft and show the JSON. Honest states, if
 // the endpoint isn't deployed yet it says so instead of pretending.
 document.getElementById('pg-run').addEventListener('click', async () => {
   const out = document.getElementById('pg-out');
@@ -178,7 +185,7 @@ document.getElementById('pg-run').addEventListener('click', async () => {
     });
     const data = await r.json();
     if (r.status === 404 || data.error === 'draft_closed') {
-      out.textContent = '// The draft endpoint isn\'t live yet — it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      out.textContent = '// The draft endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below and we\'ll let you know.';
       return;
     }
     // Trim the piece geometry so the demo output is readable.
@@ -191,12 +198,12 @@ document.getElementById('pg-run').addEventListener('click', async () => {
     }
     out.textContent = `HTTP ${r.status}\n` + JSON.stringify(data, null, 2);
   } catch (_) {
-    out.textContent = '// Could not reach the endpoint. It may not be deployed yet — request access below.';
+    out.textContent = '// Could not reach the endpoint. It may not be deployed yet, request access below.';
   }
 });
 
 // Live grade playground: fire /api/grade and summarise the size run. Same honest
-// states as the draft playground — if the endpoint isn't live it says so.
+// states as the draft playground, if the endpoint isn't live it says so.
 document.getElementById('gr-run').addEventListener('click', async () => {
   const out = document.getElementById('gr-out');
   const body = {
@@ -211,7 +218,7 @@ document.getElementById('gr-run').addEventListener('click', async () => {
     });
     const data = await r.json();
     if (r.status === 404 || data.error === 'draft_closed') {
-      out.textContent = '// The grade endpoint isn\'t live yet — it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      out.textContent = '// The grade endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below and we\'ll let you know.';
       return;
     }
     if (data.sizes) {
@@ -225,7 +232,7 @@ document.getElementById('gr-run').addEventListener('click', async () => {
     }
     out.textContent = `HTTP ${r.status}\n` + JSON.stringify(data, null, 2);
   } catch (_) {
-    out.textContent = '// Could not reach the endpoint. It may not be deployed yet — request access below.';
+    out.textContent = '// Could not reach the endpoint. It may not be deployed yet, request access below.';
   }
 });
 
@@ -239,10 +246,10 @@ async function apiWaitlist(e){
       method:'POST', headers:{'content-type':'application/json'},
       body: JSON.stringify({ email, note: 'api-page' })
     });
-    if(r.ok){ msg.textContent='You’re on the list — we’ll be in touch.'; document.getElementById('apiemail').value=''; }
-    else if(r.status===429){ msg.textContent='One moment — please try again shortly.'; }
-    else { msg.textContent='Could not save that — email hello@ instead?'; }
-  }catch(_){ msg.textContent='Could not reach the server — email hello@ instead?'; }
+    if(r.ok){ msg.textContent='You’re on the list, we’ll be in touch.'; document.getElementById('apiemail').value=''; }
+    else if(r.status===429){ msg.textContent='One moment, please try again shortly.'; }
+    else { msg.textContent='Could not save that, email hello@ instead?'; }
+  }catch(_){ msg.textContent='Could not reach the server, email hello@ instead?'; }
   return false;
 }
 </script>
