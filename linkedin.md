@@ -160,3 +160,17 @@
 4. **Pivot: motor cilalamayı bıraktım.** Yeni kuyruk V→K→M: önce vision kararlılığı (ucuz, risksiz, asıl fren), sonra köprü delikleri, en son motor. Üç loop hazır, her biri TEK oturumda koşuyor, bitince skor tablosuna bir satır ve bir bar ekliyor — FULL, öğe-doğruluğu, vision-accuracy yan yana, kaynağı ölçüm dosyası. Tahmin değil, grafik.
 
 5. **Ders: sayı kımıldamıyorsa daha çok itme; nereye ittiğini ölç.** Dört loop boyunca doğru şeyi yanlış katmana yaptım. Kabiliyetler gerçekti, kanıtlıydı, ve yanlış adresteydi. Mimariyi katmanlara ayırmanın getirisi hız değil, teşhis edilebilirlik — sistemin sana "sorun bende değil, komşuda" diyebilmesi. Benim sistemim bunu haftalardır söylüyordu; ben motoru parlatmakla meşguldüm.
+
+---
+
+## Essay 13 — "Düzeltmeden önce etiketledim: 7 hatanın 5'i tek kelime" (V0 vision taksonomisi)
+
+1. **Bir loop'u hiçbir şey düzeltmeye ADAMADIM.** Pivottan sonra ilk refleks "hadi yakayı düzeltelim" olurdu. Yapmadım. Çünkü nereye nişan aldığımı ölçmeden atış yapmak, tam da haftalarca yaptığım hataydı. Bu loop'un tek işi vardı: son ölçümdeki her yanlış ve eksik kalıbı etiketlemek — bu hata vision'dan mı, motordan mı, köprüden mi doğdu? Ve bir baseline sayısı bırakmak. Sıfır kod düzeltmesi, sıfır prompt değişikliği. Sadece harita.
+
+2. **İlk sürpriz: diskteki sayı yalan söylüyordu.** Ölçüm dosyasındaki eski etiketler iyimserdi — bellekte yeniden sınıflandırılıyor ama diske hiç yazılmıyordu. Güncel motor sözlüğüyle baştan sınıflandırınca gerçek tablo çıktı: 54 fotoğrafın 22'si tam kalıp, 24'ü motor eksiği, 7'si vision hatası. "Bitti" demeden önce diski değil belleği okumak — küçük ama pahalı bir ders.
+
+3. **Etiketler tek bir yere yığıldı: yaka.** 7 vision hatasının 5'i aynı alan: neckline. Ve daha keskin bir örüntü: aynı ürünün ön ve arka fotoğrafını vision iki ayrı elbise gibi okuyor. Ön "boat" diyor, arka "halter"; ön "crew", arka "vNeck". Nape'teki bir fiyonk ya da sırt oyuğu halter/vNeck yaka sanılıyor. 11 çok-fotolu üründen 8'i en az bir kritik alanda kendiyle çelişiyor — 15 alan-çelişkisi, 5'i yaka. Suçlu tek: arka görünüm fotoğrafı, önü eziyor.
+
+4. **Yeni bir metrik doğurdum: vision-accuracy.** FULL sayısı motoru suçluyor (çizemediği kümelenmiş öğeler). Vision katmanını izole eden bir sayı lazımdı: kritik alanları (yaka, şekillendirme, siluet, kapanma) manifest'le eşleşen fotoğraf oranı. Baseline: 46/53 = %86.8, yaka yanlış-okuması 5. Bu sayı LOOP 2'nin "önce" değeri; benchmark script'ine üçüncü özet satırı olarak ekledim, DRAWN_SINCE mantığına dokunmadan.
+
+5. **Ders: taksonomi sıkıcıdır ve en değerli loop'tur.** Hiçbir şey "yaptım" hissi vermedi — ne yeni kabiliyet, ne kımıldayan FULL. Ama artık LOOP 2 körlemesine değil: dosya adlarıyla 5 hedef fotoğraf, tek alan, tek kural. Bir sonraki oturum "yakayı düzelt" diye başlamayacak; "bu 5 fotoğraftaki yakayı düzelt, before=46/53" diye başlayacak. Ölçmeden düzeltmek cesaret değil, savurganlık.

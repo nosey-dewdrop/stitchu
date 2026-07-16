@@ -237,6 +237,39 @@ console.log(`garment photos: ${garmentTotal}  |  control (must-reject): ${reject
 for (const [cls, n] of Object.entries(counts).sort()) console.log(`${cls.padEnd(11)} ${n}`);
 console.log(`\nFULL PATTERN: ${counts.FULL || 0}/${garmentTotal}   correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
 
+// VISION-ACCURACY (V0 taxonomy, 2026-07-16): the FULL count blames the ENGINE
+// (clustered oov it can't draw), but the real brake is the VISION layer reading
+// a garment's CRITICAL fields wrong. vision-accuracy = fraction of garment
+// photos whose critical fields (neckline, shaping, silhouette, closure.type) all
+// match the manifest — i.e. no vision misread on a field that changes the block.
+// A photo is critical-clean when it is draftable AND none of its expect-misses
+// land in a critical field. This is LOOP 2's before value. Independent of oov.
+{
+  const CRIT_FIELDS = new Set([
+    'neckline', 'shaping', 'waistline', 'skirtStyle', 'length', 'topLength', 'closure',
+  ]);
+  let clean = 0, total = 0, necklineMiss = 0;
+  for (const p of MANIFEST.photos) {
+    if (p.category !== 'garment') continue;
+    const r = results[p.file];
+    if (!r || !r.spec) continue;
+    total += 1;
+    const spec = r.spec;
+    if (!DRAFTABLE.includes(spec.garment)) continue; // real garment rejected = not clean
+    let critBad = false;
+    for (const [field, accepted] of Object.entries(p.expect || {})) {
+      const got = spec[field] === undefined ? null : spec[field];
+      if (!accepted.includes(got) && CRIT_FIELDS.has(field)) {
+        critBad = true;
+        if (field === 'neckline') necklineMiss += 1;
+      }
+    }
+    if (!critBad) clean += 1;
+  }
+  console.log(`\n== VISION-ACCURACY (V0, critical-field clean) ==`);
+  console.log(`vision-accuracy: ${clean}/${total} = ${(100 * clean / total).toFixed(1)}%   (neckline misreads: ${necklineMiss})`);
+}
+
 // ELEMENT ACCURACY (Metric Reform, 2026-07-16): the FULL-PATTERN count is the
 // upper target but it is CLUSTERED — one photo with 3 missing items stays
 // "not full" even when the engine adds one of them, so single-element loops

@@ -593,3 +593,27 @@ W3 · HOOK: "aynı disiplin yine: bağı ekledim, mevcut kalıbın TEK bir bitin
 
 **Görsel:** terminal görünümünde ASCII bar grafik, üç satır (baseline / loop 2 / loop 3), çubuklar uzuyor; yanda 'her satır = 1 oturum, kaynak: results-*.json'. Alt yazı: "one loop, one session, one honest bar".
 **Format:** reel
+
+## seri X — düzeltmeden önce etiketledim (V0 taksonomi)
+
+X1 · HOOK: "bu loop'ta hiçbir şey düzeltmedim. sadece 7 hatayı etiketledim. ve 5'i tek kelime çıktı."
+- pivot dedim ya vision'a geçtim — ilk refleks "hadi yakayı düzelt" olurdu, YAPMADIM.
+- nereye nişan aldığımı ölçmeden atış yapmak, haftalarca yaptığım hatanın ta kendisiydi.
+- bu loop'un tek işi: her yanlış+eksik kalıbı etiketle — vision mı, motor mu, köprü mü. sıfır kod.
+- **Görsel:** [terminal] 7 WRONG satırı tek tek, 5'inin yanında kırmızı "neckline" etiketi parlıyor.
+- **Format:** reel
+
+X2 · HOOK: "ölçüm dosyam bana yalan söylüyordu. diskteki sayı bayattı."
+- eski etiketler iyimserdi — bellekte yeniden sınıflandırılıyor ama diske hiç yazılmıyordu.
+- güncel motor sözlüğüyle baştan sınıflandırdım: gerçek tablo 22 tam / 24 motor-eksiği / 7 vision-hatası.
+- "bitti" demeden önce belleği değil diski oku. küçük ama pahalı ders.
+- **Görsel:** [terminal] soldaki "FULL 19" solup, sağda gerçek "FULL 22/54" beliriyor.
+- **Format:** reel
+
+X3 · HOOK: "vision aynı elbisenin önü ve arkasını iki AYRI elbise sanıyor."
+- ön 'boat' diyor, arka 'halter'. ön 'crew', arka 'vNeck'. nape'teki fiyonk halter yaka sanılıyor.
+- 11 çok-fotolu üründen 8'i kendiyle çelişiyor — 15 alan-çelişkisi, 5'i yaka.
+- yeni metrik doğdu: vision-accuracy = kritik alanları doğru okuyan foto oranı. baseline %86.8.
+- artık LOOP 2 körlemesine değil: dosya adlarıyla 5 hedef, tek alan, tek kural.
+- **Görsel:** [render] aynı elbisenin ön/arka fotosu yan yana, ok ile "boat ↔ halter?" çelişki işareti.
+- **Format:** carousel

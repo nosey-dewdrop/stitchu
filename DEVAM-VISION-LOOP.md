@@ -17,7 +17,17 @@ doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
 sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
-> SIRADAKİ: LOOP 1 (V0). Henüz hiçbiri koşmadı.
+> LOOP 1 (V0 / patch 2.0) BİTTİ (2026-07-16). Taksonomi + baseline kuruldu, sıfır
+> kod düzeltmesi (V0 kuralı). KREDİ VAR (probe geçerli vision döndü). Güncel
+> DRAWN_SINCE reclassify: FULL 22/54, 7 vision-kaynaklı (WRONG) / 24 motor-kaynaklı
+> (MISSING) / 0 köprü-kaynaklı. YENİ baseline vision-accuracy=46/53=%86.8, neckline
+> misreads=5. dominantErrorField=NECKLINE (5/7 WRONG, 5/8 çelişen ürün),
+> frontBackConflicts=15 (8 üründe; arka/worn foto ön yakayı eziyor). LOOP 2 hedefi:
+> 5 yaka fotosu (13.47.49 JACKIE, 13.48.06 Mira back, 13.48.17 Jackie gingham back,
+> 13.50.24 TieBack polka back, 13.51.24 Ruby Pea Coat). benchmark-58.mjs'ye
+> vision-accuracy 3. SUMMARY bloğu eklendi. Taksonomi: benchmark-58/vision-error-taxonomy.md.
+> Skor: reports/stitchu-vision-progress.md. Rapor: reports/2026-07-16-stitchu-vision-loop1.md.
+> SIRADAKİ: LOOP 4 (vitrin, DEVAM-LANDING-LOOP.md).
 > VİTRİN TEMA KARARI (Damla, 16 Tem, TEYİTLİ SON HALİ — "evet" alındı):
 > RESKIN. Mevcut landing'in YERLEŞİMİ/KOMPOZİSYONU/Didot tipografi yapısı
 > korunur ("vişnenin stili yerleşimi güzeldi, ona skin"); RENK DÜNYASI

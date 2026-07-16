@@ -223,6 +223,17 @@ elbise/top/etek olduğu için gathering+open-back önce gelir.
 
 ### Sayı serisi (SADECE loop sonunda değil: her rework ve her patch sonrasında da
 benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
+- 2026-07-16 OFFLINE (Vision LOOP 1 / patch 2.0 = V0 taksonomi, 0 yeni çağrı, sadece
+  1 kredi probe): **FULL 22/54 DEĞİŞMEDİ** (taksonomi loop'u kod düzeltmez). Güncel
+  DRAWN_SINCE ile reclassify: 22 FULL, 24 MISSING, 7 WRONG, 1 ERROR, 4 REJECT-OK,
+  1 REJECT-FAIL. KATMAN ATFI: 7 vision-kaynaklı (WRONG), 24 motor-kaynaklı (MISSING),
+  0 köprü-kaynaklı. YENİ METRİK **vision-accuracy = 46/53 = %86.8** (kritik alan temiz),
+  neckline misreads=5. dominantErrorField=**neckline** (5/7 WRONG, 5/8 çelişen ürün).
+  frontBackConflicts=**15** (8 üründe, arka/worn foto ön yakayı eziyor). ELEMENT
+  ACCURACY 53/103 = %51.5. Kredi VAR (probe geçerli vision döndü). benchmark-58.mjs'ye
+  vision-accuracy 3. SUMMARY bloğu eklendi (DRAWN_SINCE dokunulmadı, deploy yok).
+  Taksonomi: benchmark-58/vision-error-taxonomy.md (lokal). Skor: reports/stitchu-vision-progress.md.
+  Rapor: reports/2026-07-16-stitchu-vision-loop1.md. SIRADAKİ: LOOP 4 (vitrin) → LOOP 2 (V1 neckline).
 - 2026-07-16 CANLI (Loop 9b sonrası, 0-çağrı cache reclassify — cache güncel, sadece
   DRAWN_SINCE loop-9b verdict'i oynadı, kredi harcanmadı, Loop 9a ile aynı yöntem):
   **22/54 TAM (+3)** — WRONG 7, correct-reject 4/5. ELEMENT ACCURACY **53/103 = %51.5**
