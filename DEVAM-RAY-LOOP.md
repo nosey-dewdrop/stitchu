@@ -7,6 +7,26 @@ session'da başlatılacak. Bu dosya o session'ın anayasası.
 > stitchu'ya devam. ~/damla_projects_2026/00_currently_on_working/stitchu/DEVAM-RAY-LOOP.md
 > oku ve zinciri otonom koştur. Ben uyuyorum, sabaha rapor.
 
+## ZORUNLU OKUMA SIRASI (orkestratör İLK İŞ; loop agent'ları da prompt'larında alır)
+1. CLAUDE.md (bu repo, gitignore'lu/lokal — en üstteki 17 Tem status'ler + GOTCHAS bölümü)
+2. BENCHMARK-58.md (anayasa: tek metrik, held-out ilkesi)
+3. reports/2026-07-16-stitchu-benchmark-loopM1.md (motor loop'unun BİREBİR şablonu)
+4. DEVAM-DATA-LOOP.md (Ray 2 arka planı + AMBAR YASASI) + dataset/brands.md (iç liste)
+5. engine/FORMULAS.md (motor loop'ları için; her yeni blok buraya bölüm ekler)
+
+## MEKANİK KOPYA KAĞIDI (bilinmeden loop açılmaz)
+- Ölçüm (0 kredi): node engine/tools/benchmark-58.mjs cache reclassify yolu — canlı
+  çağrı YAPMA, DRAWN_SINCE kuralına yeni çizilen terimleri ekle, results-*.json snapshot.
+- Deploy: ?v bump TÜM sayfalarda → git add web/ (HEPSİ, sadece dokunulan değil) →
+  `SHA=$(git subtree split --prefix=web HEAD | tail -1)` → `git push --force origin <SHA>:gh-pages`
+  → canlı curl teyit (cache-bust ?fresh=ts). Motor değiştiyse önce: engine_check +
+  cutline_check + precision + web-fuzz + golden diff + vocab-sweep, iki wasm derle
+  (build-wasm.sh; browser + worker hedefi).
+- Paralel loop'lar AYNI dosyaya dokunacaksa (patches.html/index.html): her agent kendi
+  worktree'sinde çalışır, push öncesi git pull --rebase, çakışmayı kendisi çözer.
+- Madencilik: engine/tools/mine-vocab.mjs (başındaki yorum blokunda tüm bayraklar).
+  Kredi hatası "credit balance too low" = zarif duruş, banka --aggregate ile dökülür.
+
 ## İŞLETİM KURALLARI (pazarlık yok)
 - Her loop TAZE arka plan agent (Opus 4.8), kendi worktree'sinde. Orkestratör ana
   session'dır: loop bitince NEREDEYİZ'i günceller, sıradakini açar.
