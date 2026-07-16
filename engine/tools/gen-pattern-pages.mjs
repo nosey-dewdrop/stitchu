@@ -14,7 +14,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '67';
+const V = process.env.V || '68';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
 

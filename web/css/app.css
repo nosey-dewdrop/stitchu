@@ -99,7 +99,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .grade-select { padding: 9px 12px; border: 1px solid rgba(0,0,0,.2); border-radius: 3px; font-size: 15px; background: #fff; }
 .grade-msg { min-height: 20px; font-size: 13.5px; margin: 12px 0 0; color: var(--gray); }
 .missing-card { margin: 22px 0 8px; padding: 20px 22px; border: 1px solid var(--seam-color, rgba(0,0,0,.12));
-  border-left: 2px solid var(--accent); border-radius: 4px; background: rgba(143,32,56,.03); max-width: 620px; }
+  border-radius: 4px; background: rgba(143,32,56,.03); max-width: 620px; }
 .missing-title { font-family: 'Didot','Bodoni 72',Georgia,serif; font-weight: 400; font-size: 20px; margin: 0 0 6px; color: var(--accent); }
 .missing-intro { font-size: 14px; line-height: 1.5; margin: 0 0 12px; color: var(--gray); max-width: 56ch; }
 .missing-list { list-style: none; margin: 0; padding: 0; }
