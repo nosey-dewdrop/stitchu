@@ -1,10 +1,19 @@
-# DEVAM — stitchu VISION LOOP ZİNCİRİ (3 loop, her biri TEK session)
+# DEVAM — stitchu VISION LOOP ZİNCİRİ (4 loop, her biri TEK session, OTONOM)
 
-ÇALIŞMA DÜZENİ (Damla kuralı, 2026-07-16): her loop KENDİ session'ında koşar.
-Session bu dosyayı + CLAUDE.md layer-denetimi bloğunu okur, SADECE kendi loop'unu
-yapar, bitirirken aşağıdaki NEREDEYİZ satırını günceller + commit + push eder,
-sonra Damla /clear deyip sıradaki loop'u taze session'da başlatır. Loop atlamak,
-birleştirmek, "hazır başlamışken V2'yi de yapayım" YASAK.
+ÇALIŞMA DÜZENİ (Damla kuralı, 2026-07-16 güncel): zincir OTONOM koşar — Damla
+yok. Orkestratör ana oturum her loop'u taze context'li arka plan agent olarak
+açar (taze agent = Damla'nın /clear'ı), agent bu dosyayı + CLAUDE.md
+layer-denetimi bloğunu okur, SADECE kendi loop'unu yapar, bitirirken NEREDEYİZ
+satırını günceller + commit + push eder; orkestratör sıradakini açar. Loop
+atlamak, birleştirmek, "hazır başlamışken V2'yi de yapayım" YASAK.
+SIRA: LOOP 1 (V0) → LOOP 4 (vitrin, DEVAM-LANDING-LOOP.md — krediden bağımsız,
+öne alındı) → LOOP 2 (V1) → LOOP 3 (V3).
+
+YAMA NUMARALARI (Damla kuralı: LoL yama notları gibi, bağ kurar): eski
+BENCHMARK-58 loop'ları = patch 1.x (1.0 Loop 0 etiketleme ... 1.9 Loop 9b
+open-back; LOOP 4 reports/'tan geriye doldurur). Bu zincir: **2.0 = V0, 2.1 =
+V1, 2.2 = V3, 2.3 = vitrin.** Her session raporunda ve yama notları sayfasında
+bu numarayı kullanır.
 
 ## NEREDEYİZ
 > SIRADAKİ: LOOP 1 (V0). Henüz hiçbiri koşmadı.
@@ -33,6 +42,10 @@ En ucuz +N motor değil vision kararlılığı. Kanıt: benchmark-58/results-202
   devlog.md'ye şablonlu reel (Hook 2sn + Anlatı ~45sn + Görsel + Format). Sayı
   kımıldamadıysa o da içerik: "neden kımıldamadı"nın kendisi post olur (Essay
   9/Loop 7 örneği). Önce mevcut dosyayı oku, çift kayıt açma.
+- YAMA NOTU ZORUNLU: her session kendi patch girdisini yazar (patch 2.x —
+  tarih, ne değişti, sayı öncesi→sonrası, 1-2 cümle dürüst not). Sayfa
+  web/patches.html varsa oraya ekler + deploy; henüz yoksa girdiyi raporun
+  başına PATCH bloğu olarak koyar (LOOP 4 sayfayı kurunca taşır).
 - SKOR TABLOSU (Damla kuralı, 2026-07-16): tek ortak ilerleme dosyası
   **reports/stitchu-vision-progress.md** — her loop sonunda AYNI dosyaya bir satır
   eklenir (loop, tarih, FULL x/54, ELEMENT ACCURACY d/103, vision-accuracy,
