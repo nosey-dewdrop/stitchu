@@ -1,11 +1,11 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=57';
-import { getLang, t } from './i18n.js?v=57';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=57';
-import { GUIDE_TR } from './guide-tr.js?v=57';
-import { GLOSSARY } from './glossary.js?v=57';
-import { appendSewingCompanion } from './sewing.js?v=57';
+import { fabricAdvice } from './fabrics.js?v=58';
+import { getLang, t } from './i18n.js?v=58';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=58';
+import { GUIDE_TR } from './guide-tr.js?v=58';
+import { GLOSSARY } from './glossary.js?v=58';
+import { appendSewingCompanion } from './sewing.js?v=58';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip), a beginner can learn a word without leaving
@@ -42,8 +42,15 @@ const PREVIEW_SCALE = 0.28;
 
 // pathD/bounds live in sheet.js (the pure print-geometry module), one truth,
 // one place; imported and re-exported so existing imports keep working.
-import { pathD, bounds } from './sheet.js?v=57';
+import { pathD, bounds, packPieces, usedCells, sheetInner, PAGE_W, PAGE_H } from './sheet.js?v=58';
 export { pathD, bounds };
+
+// Chalk-drawn pieces (a ruffle strip, a bias binding) are not cut on paper, so
+// the print pipeline packs only the paper pieces. Mirror that filter exactly so
+// this assembled preview shows the SAME layout the user will actually print.
+function isPaperPiece(p) {
+  return !(p.name.includes('Ruffle') || p.name.includes('Bias binding'));
+}
 
 export function pieceCard(piece) {
   const s = PREVIEW_SCALE;
@@ -94,6 +101,55 @@ export function pieceCard(piece) {
   return div;
 }
 
+// The assembled preview: pack every paper piece with the print pipeline's own
+// packer (same as print.js / render-pages.mjs), then draw every used A4 sheet
+// in place into one SVG. sheetInner already paints the light dashed page frame
+// + register grid, so the pages read as a faint grid under crisp pieces, the
+// "this is the pattern once you tape the sheets together" feel. STATIC preview:
+// true 1:1 scale is the print pipeline's job (this is scaled to fit the screen),
+// interactive zoom/pan is a later step.
+function appendAssembledPreview(container, p) {
+  const paper = p.pieces.filter(isPaperPiece);
+  const pieces = paper.length ? paper : p.pieces;
+  let layout, sheets, used;
+  try {
+    layout = packPieces(pieces);
+    ({ sheets, used } = usedCells(layout));
+  } catch (e) {
+    console.error('stitchu preview pack failed:', e);
+    return;   // never block the result on a preview
+  }
+  if (!sheets.length) return;
+
+  const rows = Math.ceil(layout.stripH / PAGE_H);
+  const stripW = layout.cols * PAGE_W;
+  const stripH = rows * PAGE_H;
+  let inner = '';
+  for (const { col, row } of sheets) inner += sheetInner(layout, col, row, used);
+
+  const title = document.createElement('h2');
+  title.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
+  title.textContent = t('result.assembled');
+  container.appendChild(title);
+
+  const note = document.createElement('p');
+  note.style.cssText = 'font-size:13px;color:#8a8a8a;margin:6px 0 14px;max-width:640px';
+  note.textContent = t('result.assemblednote');
+  container.appendChild(note);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'assembled-preview';
+  // A viewBox over the full packed strip: the SVG scales to the wrapper width,
+  // so the geometry stays byte-identical to print, only the on-screen size shrinks.
+  wrap.innerHTML =
+    `<svg viewBox="0 0 ${stripW.toFixed(1)} ${stripH.toFixed(1)}" ` +
+    `preserveAspectRatio="xMidYMid meet" width="100%" ` +
+    `style="max-height:60vh;display:block">` +
+    `<rect x="0" y="0" width="${stripW.toFixed(1)}" height="${stripH.toFixed(1)}" fill="#fff"/>` +
+    `${inner}</svg>`;
+  container.appendChild(wrap);
+}
+
 export function renderResult(container, result) {
   container.textContent = '';
   const p = result.pattern;
@@ -132,6 +188,11 @@ export function renderResult(container, result) {
   // out loud, the closest derivative given + what to add by hand. Silent
   // fallback is the trust killer this card removes.
   appendMissing(container, result.seen);
+
+  // Assembled preview: the whole pattern packed with the SAME layout the print
+  // pipeline uses, drawn into one SVG so the user sees what they will get once
+  // the A4 sheets are taped together, before printing anything.
+  appendAssembledPreview(container, p);
 
   const grid = document.createElement('div');
   grid.className = 'pieces-grid';
