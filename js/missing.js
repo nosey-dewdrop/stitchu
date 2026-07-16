@@ -287,12 +287,19 @@ export function missingFeatures(seen, lang) {
   // missing. A spaghetti / one-shoulder / off-shoulder / halter strap stays honest.
   const strapTerm = (t) => /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i.test(t) &&
     !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/i.test(t);
+  // R1.1: a full/half/pointed circular peplum is now drawn as a separate flared
+  // piece trued to the waist, so an outOfVocab term naming that peplum is no
+  // longer missing. A pleated/gathered/draped/tiered peplum is a different
+  // construction the engine does NOT draft and stays honest.
+  const peplumTerm = (t) => /peplum|waist flounce|waist frill/i.test(t) &&
+    !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
+    if (seen.peplumDrawn && peplumTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

@@ -57,6 +57,10 @@ const SPEC_GROUPS = [
   // frill strip drawn as a separate pair; only a sleeveless dress/top carries one
   // (a sleeved/halter garment frames the shoulder instead → engine skips honestly).
   { key: 'ruffledStraps', label: 'ruffled straps', trLabel: 'fırfırlı askı', options: [['none', 'none', 'yok'], ['ruffled', 'ruffled straps', 'fırfırlı askı']], for: (s) => s.sleeveStyle === 'none' && s.neckline !== 'halter' },
+  // R1.1: peplum (bele takılan volan). A flared circular flounce hung from the
+  // waist as a separate piece; only a waisted top/dress carries one (a
+  // pleated/gathered/draped peplum stays honest → not offered here).
+  { key: 'peplum', label: 'peplum', trLabel: 'peplum (bel volanı)', options: [['none', 'none', 'yok'], ['full', 'full circle', 'tam kloş'], ['half', 'half circle', 'yarım kloş'], ['pointed', 'pointed hem', 'sivri etek']], for: (s) => s.garment !== 'skirt' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -69,7 +73,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
-  ruffledStraps: 'none',
+  ruffledStraps: 'none', peplum: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -254,6 +258,25 @@ function pickRuffledStraps(seen) {
     return 'ruffled';
   }
   return null;
+}
+
+// Map the vision's oov / details to a peplum flare (R1.1). The engine draws the
+// FULL-circle, HALF-circle and POINTED (handkerchief) flared peplum as a
+// separate circular flounce trued to the waist. A pleated / gathered / draped /
+// tiered peplum is a different construction that stays honest. Returns
+// 'full'|'half'|'pointed' or null.
+function pickPeplum(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/peplum|waist flounce|waist frill/.test(words)) return null;
+  // A pleated / gathered / draped / tiered peplum is NOT the circular flare the
+  // engine drafts — leave it honest.
+  if (/pleated|gathered|draped|tiered|box[\s-]?pleat/.test(words)) return null;
+  if (/pointed|handkerchief|dip|asymmetric/.test(words)) return 'pointed';
+  if (/half[\s-]?circle/.test(words)) return 'half';
+  return 'full';
 }
 
 function el(tag, className, text) {
@@ -568,6 +591,13 @@ function showSpec() {
         const strapsHostable = (spec.sleeveStyle === 'none' || !spec.sleeveStyle) &&
           spec.neckline !== 'halter';
         spec.ruffledStraps = (straps && strapsHostable) ? straps : 'none';
+        // Peplum (bele takılan volan, R1.1): the engine now hangs a flared
+        // circular flounce from the waist as a separate piece, inner arc trued to
+        // the finished waist. Only a waisted top/dress hosts one; a pleated/
+        // gathered/draped peplum stays honest (pickPeplum null). A skirt has no
+        // waisted bodice → gate it out.
+        const peplum = pickPeplum(seen);
+        spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -616,6 +646,11 @@ function showSpec() {
           // spaghetti / one-shoulder / off-shoulder / halter strap stays honest
           // (ruffledStraps none — a different construction the engine does not draw).
           ruffledStrapsDrawn: !!(spec.ruffledStraps && spec.ruffledStraps !== 'none'),
+          // R1.1: a full/half/pointed circular peplum is now DRAWN as a separate
+          // flared piece trued to the waist, so the honesty layer must NOT list it
+          // as missing. A pleated/gathered/draped/tiered peplum stays honest
+          // (peplum none — a different construction the engine does not draw).
+          peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();
