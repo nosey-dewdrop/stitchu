@@ -15,9 +15,9 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Keyhole neckline cut-out pattern + facing · stitchu">
 <meta name="twitter:description" content="How stitchu drafts a front keyhole: teardrop 15 mm below the neck edge, up to 85 mm long, with an interfaced facing offset 32 mm all round.">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
-<link rel="stylesheet" href="../css/shared-header.css?v=67">
-<link rel="stylesheet" href="../css/shared-button.css?v=67">
+<link rel="stylesheet" href="../css/theme-transitions.css?v=69">
+<link rel="stylesheet" href="../css/shared-header.css?v=69">
+<link rel="stylesheet" href="../css/shared-button.css?v=69">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://nosey-dewdrop.github.io/stitchu/"},{"@type":"ListItem","position":2,"name":"Style library","item":"https://nosey-dewdrop.github.io/stitchu/styles/"},{"@type":"ListItem","position":3,"name":"Keyhole cut-out","item":"https://nosey-dewdrop.github.io/stitchu/styles/keyhole.html"}]}</script>
 <style>
   /* CANON 2026-07-16: baby-blue world, same palette as benchmark/patches.
@@ -31,7 +31,7 @@
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
   /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
-     white — no colour flip; only the active-underline accent is set here. */
+     white, no colour flip; only the active-underline accent is set here. */
   .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
@@ -80,7 +80,7 @@
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html">style library</a> / keyhole cut-out</p>
   <h1>Keyhole cut-out, <em>drafted.</em></h1>
-  <p class="lead">A teardrop opening below the front neckline, mirrored on the centre-front fold — with the facing piece that finishes it drawn for you.</p>
+  <p class="lead">A teardrop opening below the front neckline, mirrored on the centre-front fold, with the facing piece that finishes it drawn for you.</p>
 
   <figure class="sketch">
   <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a keyhole cut-out top">
@@ -94,11 +94,11 @@
   <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The accent line is the piece this page draws.</figcaption>
 </figure>
 
-  <h2>How the engine drafts it</h2>
+  <h2>How the engine drafts it.</h2>
   <p class="fact">The half-teardrop is marked on the front centre piece against the CF fold: top point 15 mm below the neck edge, length min(85 mm, room above the waist − 60), half-width 0.26 × length. Mirrored on the fold, it opens into the full keyhole.</p>
-  <p class="fact">A "Keyhole Facing" piece is the same teardrop offset +32 mm all around — solid, cut 1 on fold, interfaced, with the stitch line marked. Seam allowance is 0: you sew ON the line, slash inside, turn through and understitch.</p>
-  <p class="fact">The construction steps are inserted right after the neckline understitch — a keyhole is worked before the side seams close, not bolted onto the end of the guide.</p>
-  <p class="fact">Too little room (under 40 mm) and the engine skips it with an honest note in the guide — never a silent no-op. A validator rule checks the teardrop sits on the fold, below the neck, clear of the waist, inside the piece, and that the facing covers it with at least 20 mm margin.</p>
+  <p class="fact">A "Keyhole Facing" piece is the same teardrop offset +32 mm all around, solid, cut 1 on fold, interfaced, with the stitch line marked. Seam allowance is 0: you sew ON the line, slash inside, turn through and understitch.</p>
+  <p class="fact">The construction steps are inserted right after the neckline understitch, a keyhole is worked before the side seams close, not bolted onto the end of the guide.</p>
+  <p class="fact">Too little room (under 40 mm) and the engine skips it with an honest note in the guide, never a silent no-op. A validator rule checks the teardrop sits on the fold, below the neck, clear of the waist, inside the piece, and that the facing covers it with at least 20 mm margin.</p>
 
   <h2>The real numbers</h2>
   <table>
@@ -111,18 +111,18 @@
   <p class="meta"><b>Works with:</b> Dresses and tops, any neckline except halter (a halter has no CF band to open).</p>
 
   <h2>The test results</h2>
-  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
     <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
     <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
     <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
-    <tr><td>dedicated test</td><td class="v">tests/keyhole_check — princess dress, petite babydoll, boat top; guide-step order; margins; opt-in byte-identity.</td></tr>
-    <tr><td>made possible by</td><td class="v"><a href="../patches.html#patch-1-5">patch 1.5</a> — keyhole &amp; audit line</td></tr>
+    <tr><td>dedicated test</td><td class="v">tests/keyhole_check, princess dress, petite babydoll, boat top; guide-step order; margins; opt-in byte-identity.</td></tr>
+    <tr><td>made possible by</td><td class="v"><a href="../patches.html#patch-1-5">patch 1.5</a>, keyhole &amp; audit line</td></tr>
   </table>
 
   <div class="actions">
-    <a class="sb-btn sb-primary" href="../create.html?garment=top&neckline=crew&keyhole=keyhole">Print this pattern — true-scale A4, free</a>
+    <a class="sb-btn sb-primary" href="../create.html?garment=top&neckline=crew&keyhole=keyhole">Print this pattern, true-scale A4, free</a>
     <a class="cta2" href="index.html">Browse all styles →</a>
   </div>
   <p class="also">More in details & closures: <a href="hem-ruffle.html">Hem ruffle (single + tiered)</a> · <a href="button-placket.html">Front button placket</a> · <a href="fabric-ties.html">Fabric ties, sashes & bows</a> · <a href="collars.html">Collar family</a> · <a href="shirring-drawstring.html">Drawstring, shirring & smocking</a> · <a href="open-back.html">Open-back cutout</a></p>
@@ -131,6 +131,6 @@
   <span>stitchu · the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=69"></script>
 </body>
 </html>
