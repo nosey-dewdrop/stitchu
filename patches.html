@@ -69,8 +69,22 @@
   <p class="manifesto" data-en="Every change to the engine, measured and published — the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5." data-tr="Motordaki her değişiklik, ölçülmüş ve yayınlanmış — kaçanlar dahil. Bu gerçek geliştirme günlüğü: ne değişti, doğruluk sayısı ne yaptı ve +6 umduğumuz bir değişikliğin sadece +5 getirdiği yer.">Every change to the engine, measured and published — the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5.</p>
   <p class="updated" data-en="Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16." data-tr="Metrik: 54 gerçek ürün fotoğrafından kaçı tam, dikilebilir bir kalıba dönüşüyor. Son güncelleme 2026-07-16.">Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16.</p>
 
-  <!-- 2.0 -->
+  <!-- 2.2 -->
   <div class="patch now">
+    <div class="phead"><span class="pnum">2.2</span><span class="ptitle" data-en="Neckline disambiguation" data-tr="Yaka belirsizlik giderme">Neckline disambiguation</span><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Taught vision that the front and back of a garment are ONE piece with ONE neckline — a back or worn-view photo can no longer invent a different neckline than the front would show." data-tr="Görüye bir kıyafetin ön ve arkasının TEK yaka ile TEK parça olduğunu öğrettik — bir arka ya da giyilmiş fotoğraf artık önün göstereceğinden farklı bir yaka uyduramaz.">Taught vision that the front and back of a garment are ONE piece with ONE neckline — a back or worn-view photo can no longer invent a different neckline than the front would show.</li>
+        <li data-en="A bow or cut-out at the nape is now read as a back detail, not a halter; halter is reserved for a band that actually wraps the neck. When unsure, vision falls to the common boat/crew/scoop rather than reaching for a dramatic shape." data-tr="Enseki fiyonk ya da oyuk artık halter değil arka detay olarak okunuyor; halter sadece boyna gerçekten dolanan bant için. Emin değilken görü, dramatik bir biçime uzanmak yerine sık görülen kayık/bisiklet/kaşık yakaya düşüyor.">A bow or cut-out at the nape is now read as a back detail, not a halter; halter is reserved for a band that actually wraps the neck. When unsure, vision falls to the common boat/crew/scoop rather than reaching for a dramatic shape.</li>
+        <li data-en="Three back/worn-view photos that used to misread their neckline (a bow-back dress read as halter, two backs read as vNeck/square) now read the correct front neckline." data-tr="Yakasını yanlış okuyan üç arka/giyilmiş fotoğraf (fiyonklu-arka elbise halter, iki arka vNeck/kare okunuyordu) artık doğru ön yakayı okuyor.">Three back/worn-view photos that used to misread their neckline (a bow-back dress read as halter, two backs read as vNeck/square) now read the correct front neckline.</li>
+      </ul>
+      <span class="delta">FULL <span class="num">22/54</span> → <span class="num">24/54</span> · vision accuracy 86.8% → 94.4% · neckline misreads 5 → 2</span>
+      <p class="honest" data-en="A pure prompt change, zero engine code, and it moved the whole-pattern number by two. The two necklines still wrong are genuinely ambiguous FRONT shots, not back-view confusion — an honest ceiling for a wording fix." data-tr="Saf bir prompt değişikliği, sıfır motor kodu, ve tam-kalıp sayısını ikiyle oynattı. Hâlâ yanlış olan iki yaka arka görünüm karışıklığı değil, gerçekten belirsiz ÖN çekimler — bir metin düzeltmesi için dürüst bir tavan.">A pure prompt change, zero engine code, and it moved the whole-pattern number by two. The two necklines still wrong are genuinely ambiguous FRONT shots, not back-view confusion — an honest ceiling for a wording fix.</p>
+    </div>
+  </div>
+
+  <!-- 2.0 -->
+  <div class="patch">
     <div class="phead"><span class="pnum">2.0</span><span class="ptitle" data-en="Vision error taxonomy" data-tr="Görü hata taksonomisi">Vision error taxonomy</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
