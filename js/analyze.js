@@ -24,21 +24,21 @@ export async function analyzePhoto(file) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ image, mediaType: 'image/jpeg' }),
   });
-  if (res.status === 403) throw new Error('Photo analysis opens at launch — pick the garment below for now.');
-  if (res.status === 429) throw new Error('Too many photos right now — try again in a minute.');
-  if (!res.ok) throw new Error('The photo could not be analyzed — pick the garment below instead.');
+  if (res.status === 403) throw new Error('Photo analysis opens at launch, pick the garment below for now.');
+  if (res.status === 429) throw new Error('Too many photos right now, try again in a minute.');
+  if (!res.ok) throw new Error('The photo could not be analyzed, pick the garment below instead.');
 
   const data = await res.json();
   const text = data?.content?.[0]?.text;
-  if (!text) throw new Error('The photo could not be analyzed — pick the garment below instead.');
+  if (!text) throw new Error('The photo could not be analyzed, pick the garment below instead.');
   let parsed;
   try {
     parsed = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
   } catch {
-    throw new Error('The photo could not be analyzed — pick the garment below instead.');
+    throw new Error('The photo could not be analyzed, pick the garment below instead.');
   }
   if (!['skirt', 'dress', 'top'].includes(parsed.garment)) {
-    throw new Error("That looks like something I can't draft yet (I do skirts, dresses and tops) — pick below.");
+    throw new Error("That looks like something I can't draft yet (I do skirts, dresses and tops), pick below.");
   }
   return parsed;
 }

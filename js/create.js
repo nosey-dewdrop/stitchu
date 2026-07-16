@@ -14,7 +14,7 @@ import {
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
 // A standard EU38 body so a first-time visitor can SEE a real pattern before
-// being asked to measure themselves — the "aha" comes before the 7-measurement
+// being asked to measure themselves, the "aha" comes before the 7-measurement
 // ask, not after it. Replaced by the user's own numbers the moment they add them.
 const DEMO_BODY = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40, armLength: 58, neck: 35 };
 let usingDemo = !saved;
@@ -24,24 +24,24 @@ const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
   { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)']], for: (s) => s.garment !== 'skirt' },
   { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
-  // Loop 7/8: collar family — a separate collar piece, neck edge trued to the
+  // Loop 7/8: collar family, a separate collar piece, neck edge trued to the
   // neckline. Only for non-skirt, non-halter garments (a halter has no neckline
   // band to carry a collar).
   { key: 'collarType', label: 'collar', trLabel: 'yaka biçimi', options: [['none', 'none', 'yok'], ['stand', 'stand', 'dik'], ['mock', 'mock / mandarin', 'mandarin'], ['flat', 'flat', 'yatık'], ['peterPan', 'peter pan', 'bebe'], ['shirt', 'shirt', 'gömlek']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'collarEdge', label: 'collar edge', trLabel: 'yaka kenarı', options: [['round', 'round', 'yuvarlak'], ['pointed', 'pointed', 'sivri'], ['scallop', 'scalloped', 'fisto']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (s.collarType === 'flat' || s.collarType === 'peterPan') },
-  // A halter has no shoulders to hang a sleeve from — the pickers hide.
+  // A halter has no shoulders to hang a sleeve from, the pickers hide.
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
   // Loop 6: sleeve HEAD (cap) treatment. Puff = raised + gathered crown; gathered
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
   { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
-  // Loop 8: drawstring / shirred / smocked gathering (büzgü) — a separate gathered
+  // Loop 8: drawstring / shirred / smocked gathering (büzgü), a separate gathered
   // panel (+ a drawstring cord) whose gathered edge is trued to the zone. Only on
   // a dress/top (needs a bodice to gather onto).
   { key: 'gatherType', label: 'gathering', trLabel: 'büzgü', options: [['none', 'none', 'yok'], ['drawstring', 'drawstring', 'ip büzgü'], ['shirred', 'shirred', 'lastik büzgü'], ['smocked', 'smocked', 'smok']], for: (s) => s.garment !== 'skirt' },
   { key: 'gatherZone', label: 'gather zone', trLabel: 'büzgü yeri', options: [['neckline', 'neckline', 'yaka'], ['bust', 'bust', 'büst'], ['waist', 'waist', 'bel'], ['sleeve', 'sleeve', 'kol']], for: (s) => s.garment !== 'skirt' && s.gatherType && s.gatherType !== 'none' },
-  // Loop 9b: open-back cutout (açık sırt oyuğu) — a shaped opening in the back
+  // Loop 9b: open-back cutout (açık sırt oyuğu), a shaped opening in the back
   // piece + a facing trued to the opening. Only on a dress/top (needs a back
   // bodice). Independent of a tie-back: a dress can have both.
   { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
@@ -65,7 +65,7 @@ const spec = {
 
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
-// whose gathered edge is trued to the drafted zone edge — for a drawstring/tie
+// whose gathered edge is trued to the drafted zone edge, for a drawstring/tie
 // gathered neckline, a shirred/smocked yoke, a gathered bust panel, or gathered
 // straps read as a gathered neck. Returns { type, zone } or null (stays honest).
 function pickGather(seen) {
@@ -131,9 +131,9 @@ function pickTiePlacement(seen) {
 
 // Map the vision's collar + oov terms to a drawable collar (Loop 7/8). The engine
 // draws a SEPARATE collar piece, neck edge trued to the neckline, for the stand/
-// mock/flat/peter-pan/shirt family. A special finish the engine does NOT draft —
+// mock/flat/peter-pan/shirt family. A special finish the engine does NOT draft,
 // a bias-bound neckline (a bound raw edge, no piece), a notched/sailor tailored
-// collar — returns {type:'none'} and stays in the honesty layer. Returns
+// collar, returns {type:'none'} and stays in the honesty layer. Returns
 // { type: spec collarType string, edge: collarEdge string } or null.
 function pickCollar(seen) {
   const words = [
@@ -142,7 +142,7 @@ function pickCollar(seen) {
   ].filter(Boolean).join(' ').toLowerCase();
   if (!words.includes('collar') && !(seen.collar && seen.collar.type &&
       seen.collar.type !== 'none')) return null;
-  // Special finishes we do NOT draft — stay honest.
+  // Special finishes we do NOT draft, stay honest.
   if (words.includes('bias-bound') || words.includes('bias bound') ||
       words.includes('bound neckline') || words.includes('notch') ||
       words.includes('sailor') || words.includes('lapel')) return null;
@@ -167,7 +167,7 @@ function pickCollar(seen) {
 // Map the vision's backDetail + oov terms to a drawable open-back cutout shape
 // (Loop 9b). The engine opens a shaped cutout in the BACK center piece + a facing
 // whose inner edge is trued to the opening. This is INDEPENDENT of a tie-back
-// (Loop 4b): a Tie Back Mini Dress has BOTH — the tie draws the closure, this
+// (Loop 4b): a Tie Back Mini Dress has BOTH, the tie draws the closure, this
 // draws the round opening it fastens over. Returns a spec backOpening string
 // ('round'|'lowV'|'square'|'keyhole') or null (stays honest).
 function pickBackOpening(seen) {
@@ -235,7 +235,7 @@ function tapeSVG(value, min, max) {
   return svg;
 }
 
-// Where on the body each measurement is taken — drawn on a dress FORM (a sewing
+// Where on the body each measurement is taken, drawn on a dress FORM (a sewing
 // object, never a human figure, per the brand rule). The vişne line/arrow shows
 // the tape placement for the current measurement so a non-drafter doesn't guess.
 function measureDiagram(key) {
@@ -357,7 +357,7 @@ function showSpec() {
   sub.appendChild(edit);
   screen.appendChild(sub);
 
-  // Named bodies: for anyone drafting for OTHERS (a seller, a friend) — keep
+  // Named bodies: for anyone drafting for OTHERS (a seller, a friend), keep
   // several measurement sets instead of overwriting one. Hidden until there's a
   // reason to show it (a saved profile exists, or the user has real measurements
   // worth naming), so a first-timer isn't cluttered.
@@ -457,7 +457,7 @@ function showSpec() {
         // Fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): the engine
         // now draws SIMPLE APPLIED ties as separate self-fabric strips + a
         // placement notch. A drawstring that GATHERS the fabric (needs a casing +
-        // shirring) is NOT this — that stays honest. Map the vision closure/back
+        // shirring) is NOT this, that stays honest. Map the vision closure/back
         // detail to a tie placement; leave it for the honesty layer otherwise.
         spec.tieClosure = pickTiePlacement(seen);
         // Collar family (yaka, Loop 7/8): the engine now draws a SEPARATE collar
@@ -476,7 +476,7 @@ function showSpec() {
         else { spec.gatherType = 'none'; spec.gatherZone = 'neckline'; }
         // Open-back cutout (açık sırt oyuğu, Loop 9b): the engine now opens a
         // shaped cutout in the BACK piece + a facing trued to the opening. This is
-        // INDEPENDENT of a tie-back (Loop 4b) — a Tie Back Mini Dress gets both.
+        // INDEPENDENT of a tie-back (Loop 4b), a Tie Back Mini Dress gets both.
         const backOpen = pickBackOpening(seen);
         spec.backOpening = backOpen || 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
@@ -517,7 +517,7 @@ function showSpec() {
           // finish clustered with it stays honest (its own oov term still shows).
           backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
         };
-        status.textContent = (seen.details ? seen.details + ' — ' : '') + t('create.spec.checkpicks');
+        status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
         status.textContent = err.message;
@@ -584,7 +584,7 @@ function showResult(result) {
   head.appendChild(el('h1', 'screen-title', t('create.result.title', { garment: result.pattern.garment.charAt(0).toUpperCase() + result.pattern.garment.slice(1) })));
   screen.appendChild(head);
 
-  // Demo-body users: lead with the personalize CTA — they've now SEEN a real
+  // Demo-body users: lead with the personalize CTA, they've now SEEN a real
   // pattern, so the ask to measure themselves has earned its place.
   if (usingDemo) {
     const fitBanner = el('div', 'fit-banner');
@@ -632,7 +632,7 @@ function showResult(result) {
 const EU_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48', 'EU50', 'EU52'];
 
 // A seller-facing panel under the result: pick a size range, generate the run,
-// print all sizes as one document. Honest states — errors say so, no fake run.
+// print all sizes as one document. Honest states, errors say so, no fake run.
 function gradePanel(result) {
   const panel = el('div', 'grade-panel');
   panel.appendChild(el('h2', 'grade-title', t('create.grade.title')));
@@ -655,7 +655,7 @@ function gradePanel(result) {
   row.appendChild(toLabel);
   panel.appendChild(row);
 
-  // Output layout: nested (all sizes on one set of sheets, one colour each —
+  // Output layout: nested (all sizes on one set of sheets, one colour each,
   // the industry-standard multi-size PDF) or per-size (each size its own
   // cover + sheets). Nested is the default: it's the seller's real deliverable.
   const layoutRow = el('div', 'grade-row grade-layout');

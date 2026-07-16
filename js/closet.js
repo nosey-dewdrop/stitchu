@@ -1,4 +1,4 @@
-// Closet: saved patterns — open inline, delete, or start a new one.
+// Closet: saved patterns, open inline, delete, or start a new one.
 import { applyStatic, mountLangToggle, t } from './i18n.js?v=55';
 import { printPattern } from './print.js?v=55';
 import { renderResult } from './render.js?v=55';

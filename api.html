@@ -51,7 +51,8 @@
   .card p{font-size:13.5px;line-height:1.5;margin:0;color:var(--ink)}
   form{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
   input{padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:4px;font-size:14px;width:280px;max-width:80vw;color:var(--navy)}
-  button{padding:13px 26px;border:none;border-radius:4px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+  button{position:relative;padding:13px 26px;border:none;border-radius:4px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+  button::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:3px;pointer-events:none}
   button:hover{background:#2b4f7a}
   .msg{min-height:20px;font-size:13px;margin-top:12px;color:var(--navy)}
   footer{margin-top:64px;font-size:12px;color:#5b7089;letter-spacing:1px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--bb-line);padding-top:24px}

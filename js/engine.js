@@ -1,6 +1,6 @@
 // Thin loader for the WASM engine (web/vendor/stitchu-engine.js, built by
 // engine/build-wasm.sh). draft() returns {pattern, issues}; non-empty issues
-// means the validator blocked the draft — callers must not show a PDF.
+// means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
 // TiePlacement enum (must match engine/src/tie.hpp order). 0 = None.
@@ -59,7 +59,7 @@ export function loadEngine() {
 }
 
 // Grade a design across a standard EU size run (fromLabel..toLabel). Returns
-// { sizes: [{ size, draft: {pattern, issues} }, ...] } — the seller deliverable.
+// { sizes: [{ size, draft: {pattern, issues} }, ...] }, the seller deliverable.
 export async function grade(spec, fromLabel, toLabel) {
   const engine = await loadEngine();
   const json = engine.gradeJSON(

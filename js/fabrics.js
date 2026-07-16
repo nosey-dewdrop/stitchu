@@ -1,5 +1,5 @@
 // Fabric advice from the verified knowledge base (web/data/fabrics.json,
-// generated from knowledge/stitchu.db — only sourced claims ship).
+// generated from knowledge/stitchu.db, only sourced claims ship).
 // Port of KnowledgeBase.fabricAdvice(): match garment key against goodFor /
 // badFor lists; badFor wins.
 let fabricsPromise = null;

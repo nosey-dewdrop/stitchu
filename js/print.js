@@ -2,24 +2,24 @@
 // with mm dimensions prints at real size.
 //
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
-// the layout is tiled into A4 sheets. Sheets with no geometry are skipped —
+// the layout is tiled into A4 sheets. Sheets with no geometry are skipped,
 // far fewer, far fuller pages than tiling each piece separately.
 import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner } from './sheet.js?v=55';
 import { getLang } from './i18n.js?v=55';
 import { missingFeatures, MISSING_STRINGS } from './missing.js?v=55';
 
 // The print cover carries the MOST critical instructions (printer scale,
-// assembly) — a Turkish sewist must read these in Turkish or the pattern comes
+// assembly), a Turkish sewist must read these in Turkish or the pattern comes
 // out the wrong size. Localised inline here (print.js builds raw DOM, not i18n
 // data-attrs). EN kept as the fallback.
 const P = {
   cover: {
-    en: (g) => `${g} — stitchu pattern`,
-    tr: (g) => `${g} — stitchu kalıbı`,
+    en: (g) => `${g}, stitchu pattern`,
+    tr: (g) => `${g}, stitchu kalıbı`,
   },
   saIncluded: (cm) => ({
-    en: `seam allowance ${cm} cm INCLUDED — cut on the OUTER line, sew on the inner fine line`,
-    tr: `dikiş payı ${cm} cm DAHİL — DIŞ çizgiden kes, içteki ince çizgiden dik`,
+    en: `seam allowance ${cm} cm INCLUDED, cut on the OUTER line, sew on the inner fine line`,
+    tr: `dikiş payı ${cm} cm DAHİL, DIŞ çizgiden kes, içteki ince çizgiden dik`,
   }),
   saNot: (cm) => ({
     en: `seam allowance ${cm} cm NOT drawn, add it while cutting`,
@@ -30,47 +30,47 @@ const P = {
     tr: `${n} parça · 140 cm eninde ${m} m kumaş · `,
   }),
   chalkNote: {
-    en: 'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips — no printed piece needed). Space the gather notches evenly along each strip’s top edge:',
-    tr: 'BUNLARI DOĞRUDAN KUMAŞA tebeşir ve cetvelle çiz (düz şeritler — basılı parça gerekmez). Büzgü çentiklerini her şeridin üst kenarına eşit aralıkla yerleştir:',
+    en: 'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips, no printed piece needed). Space the gather notches evenly along each strip’s top edge:',
+    tr: 'BUNLARI DOĞRUDAN KUMAŞA tebeşir ve cetvelle çiz (düz şeritler, basılı parça gerekmez). Büzgü çentiklerini her şeridin üst kenarına eşit aralıkla yerleştir:',
   },
   assemble: (n, cols) => ({
-    en: `${n} sheets. Lay them in a grid ${cols} across (big corner code = row letter + column number: A1 top-left). Cut or fold along the dashed page frame, tape edge to edge: the black corner squares and edge ticks must COMPLETE across the joint — a piece running off a page tells you which sheet it continues on. PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.`,
-    tr: `${n} sayfa. Bunları ${cols} sütunlu bir ızgaraya diz (köşedeki büyük kod = satır harfi + sütun numarası: A1 sol üst). Kesikli sayfa çerçevesinden kes ya da katla, kenar kenara bantla: siyah köşe kareleri ve kenar işaretleri ek yerinde TAMAMLANMALI — sayfadan taşan parça hangi sayfada devam ettiğini söyler. YAZICI AYARLARI: ölçek %100, üstbilgi/altbilgi KAPALI, sonra aşağıdaki 3 cm'lik kareyi doğrula.`,
+    en: `${n} sheets. Lay them in a grid ${cols} across (big corner code = row letter + column number: A1 top-left). Cut or fold along the dashed page frame, tape edge to edge: the black corner squares and edge ticks must COMPLETE across the joint, a piece running off a page tells you which sheet it continues on. PRINTER SETTINGS: scale 100%, headers/footers OFF, then verify the 3 cm square below.`,
+    tr: `${n} sayfa. Bunları ${cols} sütunlu bir ızgaraya diz (köşedeki büyük kod = satır harfi + sütun numarası: A1 sol üst). Kesikli sayfa çerçevesinden kes ya da katla, kenar kenara bantla: siyah köşe kareleri ve kenar işaretleri ek yerinde TAMAMLANMALI, sayfadan taşan parça hangi sayfada devam ettiğini söyler. YAZICI AYARLARI: ölçek %100, üstbilgi/altbilgi KAPALI, sonra aşağıdaki 3 cm'lik kareyi doğrula.`,
   }),
   sheet: (g, code, cols) => ({
-    en: `${g} — sheet ${code} (grid ${cols} across)`,
-    tr: `${g} — sayfa ${code} (${cols} sütunlu ızgara)`,
+    en: `${g}, sheet ${code} (grid ${cols} across)`,
+    tr: `${g}, sayfa ${code} (${cols} sütunlu ızgara)`,
   }),
   demoWarn: {
-    en: 'STANDARD EU38 SIZE — this is not drafted to your measurements yet. Add your seven measurements on the site for a pattern that fits you.',
-    tr: 'STANDART EU38 BEDEN — bu henüz senin ölçülerine çizilmedi. Sana uyan bir kalıp için sitede yedi ölçünü ekle.',
+    en: 'STANDARD EU38 SIZE, this is not drafted to your measurements yet. Add your seven measurements on the site for a pattern that fits you.',
+    tr: 'STANDART EU38 BEDEN, bu henüz senin ölçülerine çizilmedi. Sana uyan bir kalıp için sitede yedi ölçünü ekle.',
   },
   gradeCover: (g, n) => ({
-    en: `${g} — size run, ${n} sizes`,
-    tr: `${g} — beden serisi, ${n} beden`,
+    en: `${g}, size run, ${n} sizes`,
+    tr: `${g}, beden serisi, ${n} beden`,
   }),
   gradeIntro: (labels) => ({
     en: `One design, graded across: ${labels}. Print only the sizes you need.`,
     tr: `Tek tasarım, şu bedenlere serilendi: ${labels}. Sadece ihtiyacın olan bedenleri yazdır.`,
   }),
   gradeAssemble: {
-    en: 'Each size starts with its own cover sheet and calibration square. Keep printer scale at 100% and verify the 3 cm square on every size before cutting. Every interior sheet is stamped with its size — cut only the sheets for the size you need.',
-    tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula. Her iç sayfada bedeni yazılıdır — sadece ihtiyacın olan bedenin sayfalarını kes.',
+    en: 'Each size starts with its own cover sheet and calibration square. Keep printer scale at 100% and verify the 3 cm square on every size before cutting. Every interior sheet is stamped with its size, cut only the sheets for the size you need.',
+    tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula. Her iç sayfada bedeni yazılıdır, sadece ihtiyacın olan bedenin sayfalarını kes.',
   },
   gradeChartTitle: {
-    en: 'Size chart — pick your size by your own measurements (standard body, cm):',
-    tr: 'Beden tablosu — kendi ölçünle bedenini seç (standart vücut, cm):',
+    en: 'Size chart, pick your size by your own measurements (standard body, cm):',
+    tr: 'Beden tablosu, kendi ölçünle bedenini seç (standart vücut, cm):',
   },
   chartSize: { en: 'size', tr: 'beden' },
   chartWaist: { en: 'waist', tr: 'bel' },
   chartFabric: { en: 'fabric', tr: 'kumaş' },
   nestedCover: (g, n) => ({
-    en: `${g} — nested size run, ${n} sizes on one set of sheets`,
-    tr: `${g} — iç içe beden serisi, ${n} beden tek sayfa setinde`,
+    en: `${g}, nested size run, ${n} sizes on one set of sheets`,
+    tr: `${g}, iç içe beden serisi, ${n} beden tek sayfa setinde`,
   }),
   nestedIntro: {
-    en: 'Every size is drawn ON TOP of the others, each in its own line colour. Print once, then trace the ONE colour for the size you need onto your fabric or a copy — no separate print per size.',
-    tr: 'Her beden diğerlerinin ÜZERİNE, kendi çizgi renginde çizildi. Bir kez yazdır, sonra ihtiyacın olan bedenin TEK rengini kumaşına ya da bir kopyaya geçir — her beden için ayrı baskı yok.',
+    en: 'Every size is drawn ON TOP of the others, each in its own line colour. Print once, then trace the ONE colour for the size you need onto your fabric or a copy, no separate print per size.',
+    tr: 'Her beden diğerlerinin ÜZERİNE, kendi çizgi renginde çizildi. Bir kez yazdır, sonra ihtiyacın olan bedenin TEK rengini kumaşına ya da bir kopyaya geçir, her beden için ayrı baskı yok.',
   },
   nestedLegend: { en: 'line colour → size', tr: 'çizgi rengi → beden' },
   nestedAssemble: (n, cols) => ({
@@ -83,15 +83,15 @@ const P = {
 // EU sizes; the palette is colour-blind-aware (no red/green adjacency) and
 // pairs a dash pattern with each so a mono printer still separates them.
 const NEST_STYLES = [
-  { c: '#8f2038', d: '' },        // vişne (brand) — solid
+  { c: '#8f2038', d: '' },        // vişne (brand), solid
   { c: '#1f6feb', d: '5 3' },     // blue
-  { c: '#c26b00', d: '' },        // amber — solid
+  { c: '#c26b00', d: '' },        // amber, solid
   { c: '#5a2a82', d: '4 3' },     // purple
-  { c: '#0a7d6b', d: '' },        // teal-green — solid
+  { c: '#0a7d6b', d: '' },        // teal-green, solid
   { c: '#b02a6f', d: '6 3' },     // magenta
-  { c: '#3a5a1f', d: '' },        // olive — solid
+  { c: '#3a5a1f', d: '' },        // olive, solid
   { c: '#2b4a7a', d: '2 3' },     // navy
-  { c: '#8a5a00', d: '' },        // brown — solid
+  { c: '#8a5a00', d: '' },        // brown, solid
   { c: '#444444', d: '3 2' },     // grey
 ];
 const nestStyle = (i) => NEST_STYLES[i % NEST_STYLES.length];
@@ -104,7 +104,7 @@ function el(tag, className, text) {
   return node;
 }
 
-// The honest "seen vs drawn" block on the print cover — same content as the
+// The honest "seen vs drawn" block on the print cover, same content as the
 // on-screen card, drawn as plain cover text so the person cutting the pattern
 // reads exactly what was approximated. Silent on a clean draft.
 function appendMissingToCover(cover, seen, lang) {
@@ -114,8 +114,8 @@ function appendMissingToCover(cover, seen, lang) {
   const list = el('ul', 'print-map');
   for (const it of items) {
     const tail = it.applied
-      ? ` — ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`
-      : ` — ${MISSING_STRINGS.notInPattern[lang]}`;
+      ? `, ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`
+      : `, ${MISSING_STRINGS.notInPattern[lang]}`;
     list.appendChild(el('li', '', it.label + tail));
   }
   cover.appendChild(list);
@@ -150,7 +150,7 @@ function calibrationSVG() {
   // two references reads directly (imperial printers/US Letter buyers too).
   svg.innerHTML =
     '<rect x="2" y="2" width="30" height="30" fill="none" stroke="#111" stroke-width="0.5"/>' +
-    '<text x="17" y="37" font-family="Helvetica" font-size="3.2" fill="#111" text-anchor="middle">3 cm — measure me before cutting</text>' +
+    '<text x="17" y="37" font-family="Helvetica" font-size="3.2" fill="#111" text-anchor="middle">3 cm, measure me before cutting</text>' +
     '<line x1="2" y1="41" x2="27.4" y2="41" stroke="#111" stroke-width="0.5"/>' +
     '<line x1="2" y1="39.2" x2="2" y2="42.8" stroke="#111" stroke-width="0.5"/>' +
     '<line x1="27.4" y1="39.2" x2="27.4" y2="42.8" stroke="#111" stroke-width="0.5"/>' +
@@ -182,14 +182,14 @@ function buildPrintPages(result, root, sizeLabel) {
     (hasCutLines ? P.saIncluded(saCm)[lang] : P.saNot(saCm)[lang])));
   const map = el('ul', 'print-map');
   for (const piece of paper.length ? paper : p.pieces) {
-    map.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
+    map.appendChild(el('li', '', `${piece.name}, ${piece.cutInstruction}`));
   }
   cover.appendChild(map);
   if (chalk.length && paper.length) {
     cover.appendChild(el('div', 'print-sub', P.chalkNote[lang]));
     const chalkMap = el('ul', 'print-map');
     for (const piece of chalk) {
-      chalkMap.appendChild(el('li', '', `${piece.name} — ${piece.cutInstruction}`));
+      chalkMap.appendChild(el('li', '', `${piece.name}, ${piece.cutInstruction}`));
     }
     cover.appendChild(chalkMap);
   }
@@ -238,9 +238,9 @@ export function printGrade(sizes, garmentLabel) {
     const b = s.body || {};
     const cells = [
       s.size,
-      b.bust != null ? `${b.bust} cm` : '—',
-      b.waist != null ? `${b.waist} cm` : '—',
-      b.hip != null ? `${b.hip} cm` : '—',
+      b.bust != null ? `${b.bust} cm` : ', ',
+      b.waist != null ? `${b.waist} cm` : ', ',
+      b.hip != null ? `${b.hip} cm` : ', ',
       `${s.draft.pattern.fabricMeters140} m`,
     ];
     for (const c of cells) tr.appendChild(el('td', '', c));
@@ -280,7 +280,7 @@ function nestedSheetSVG(layout, sizes, styleByLabel, col, row, used) {
 }
 
 // Nested/stacked size run: every size overlaid on ONE set of sheets, each in
-// its own line colour — the industry-standard multi-size PDF. Print once, trace
+// its own line colour, the industry-standard multi-size PDF. Print once, trace
 // the one colour you need. `sizes` = [{size, body, draft:{pattern,issues}}].
 export function printGradeNested(sizes, garmentLabel) {
   const root = el('div', '');
@@ -323,7 +323,7 @@ export function printGradeNested(sizes, garmentLabel) {
   }
   cover.appendChild(legend);
 
-  // Size chart (same as the sequential run — the buyer picks by their body).
+  // Size chart (same as the sequential run, the buyer picks by their body).
   cover.appendChild(el('div', 'print-sub', P.gradeChartTitle[lang]));
   const table = el('table', 'print-sizechart');
   const head = el('tr', '');
@@ -332,8 +332,8 @@ export function printGradeNested(sizes, garmentLabel) {
   for (const pr of prepared) {
     const tr = el('tr', '');
     const b = pr.body || {};
-    const cells = [pr.size, b.bust != null ? `${b.bust} cm` : '—', b.waist != null ? `${b.waist} cm` : '—',
-      b.hip != null ? `${b.hip} cm` : '—', `${pr.pattern.fabricMeters140} m`];
+    const cells = [pr.size, b.bust != null ? `${b.bust} cm` : ', ', b.waist != null ? `${b.waist} cm` : ', ',
+      b.hip != null ? `${b.hip} cm` : ', ', `${pr.pattern.fabricMeters140} m`];
     for (const c of cells) tr.appendChild(el('td', '', c));
     table.appendChild(tr);
   }

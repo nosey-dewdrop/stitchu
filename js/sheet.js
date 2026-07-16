@@ -1,4 +1,4 @@
-// sheet.js — PURE print-sheet geometry + SVG markup. No DOM, no imports.
+// sheet.js, PURE print-sheet geometry + SVG markup. No DOM, no imports.
 // Single source of truth for pathD/bounds, shelf packing and the A4 sheet
 // register system (frame, grid code, corner squares, join ticks, continuation
 // arrows). print.js wraps these strings in DOM nodes for the browser;
@@ -75,7 +75,7 @@ export function countSheets(layout) {
   return used;
 }
 
-// Try every strip width and keep whichever wastes the fewest printed sheets —
+// Try every strip width and keep whichever wastes the fewest printed sheets,
 // a fixed 3-wide strip left half the pages nearly empty on tall garments.
 // The widest piece always fits: cols never drops below what it needs (a 1.4 m
 // ruffle segment used to be silently CLIPPED at the old 5-column cap).
@@ -98,7 +98,7 @@ export function packPieces(pieces) {
 
 export const sheetCode = (row, col) => `${String.fromCharCode(65 + row)}${col + 1}`;
 
-// The grid cells that actually carry geometry — empty cells are never printed,
+// The grid cells that actually carry geometry, empty cells are never printed,
 // so every register mark checks its neighbour against this set first.
 export function usedCells(layout) {
   const rows = Math.ceil(layout.stripH / PAGE_H);
@@ -161,7 +161,7 @@ function registerMarks(layout, col, row, used) {
   inner += `<rect x="${x0 + 0.2}" y="${y0 + 0.2}" width="${PAGE_W - 0.4}" height="${PAGE_H - 0.4}"` +
     ` fill="none" stroke="#888" stroke-width="0.3" stroke-dasharray="2 1.6"/>`;
 
-  // BIG grid code, top-right — readable from across the table, clear of the
+  // BIG grid code, top-right, readable from across the table, clear of the
   // piece labels that live at each piece's top-left corner.
   inner += `<text x="${x0 + PAGE_W - 8}" y="${y0 + 21}" font-family="Helvetica" font-size="13" font-weight="bold" fill="#333" text-anchor="end">${sheetCode(row, col)}</text>`;
 
@@ -246,7 +246,7 @@ export function sheetInner(layout, col, row, used) {
 }
 
 // The cutting outline of a piece (allowance-included line if present, else the
-// sewing line) — nested print shows outlines only, one colour per size.
+// sewing line), nested print shows outlines only, one colour per size.
 export function outlineD(piece) {
   const cmds = (piece.cutLine || []).length ? piece.cutLine : piece.commands;
   return pathD(cmds, 1);

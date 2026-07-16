@@ -1,14 +1,12 @@
-/* Wrap for the functional pages (create, privacy). RESKIN 2026-07-16 (patch 2.1):
-   these are NOT the entry hero — no gingham wallpaper here, just a calm white-blue
-   ground (varyant 2 spirit) with the app on a white pattern-paper sheet pinned
-   with one of Damla's buttons. Header text turns navy for AA contrast. */
-body.couture { background: var(--bb-pale); }
-#couture-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0;
-  background:
-    repeating-linear-gradient(0deg, rgba(143,191,232,.10) 0 14px, transparent 14px 28px),
-    repeating-linear-gradient(90deg, rgba(143,191,232,.10) 0 14px, transparent 14px 28px),
-    var(--bb-pale);
-}
+/* Wrap for the functional pages (create, closet, privacy).
+   2026-07-16 (Damla): pull the LANDING pötikare wallpaper (baby-blue poplin
+   gingham) onto these pages too. The app sits on a white pattern-paper sheet
+   and the gingham wall shows ONLY behind that sheet, calm, never inside the
+   card. Same fixed #silk canvas + paint as index.html. Header text stays navy. */
+body.couture { background:
+  repeating-linear-gradient(0deg, rgba(143,191,232,.30) 0 14px, transparent 14px 28px),
+  repeating-linear-gradient(90deg, rgba(143,191,232,.30) 0 14px, transparent 14px 28px),
+  #ffffff; }
 
 /* header floats on the ground, landing-style */
 body.couture header { position: relative; z-index: 2; border-bottom: 0; }

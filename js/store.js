@@ -1,5 +1,5 @@
 // Local persistence: measurements profile + saved patterns (closet).
-// Everything stays on this device — that is a product promise, not a gap.
+// Everything stays on this device, that is a product promise, not a gap.
 const MEASURE_KEY = 'stitchu:measurements';
 const CLOSET_KEY = 'stitchu:closet';
 
@@ -12,10 +12,10 @@ export const MEASUREMENTS = [
   { key: 'armLength', label: 'Arm length', trLabel: 'Kol boyu', help: 'Shoulder bone to wrist, arm slightly bent.', trHelp: 'Omuz kemiğinden bileğe, kol hafif bükülü.', min: 40, max: 75 },
   { key: 'neck', label: 'Neck', trLabel: 'Boyun', help: 'Around the base of your neck, one finger of ease.', trHelp: 'Boyun kökünün çevresinden, bir parmak boşlukla.', min: 26, max: 55 },
   // OPTIONAL 8th: the high/upper bust (above the bust, under the arms). Skippable.
-  // When given, the pattern fits your ribcage frame while keeping the full bust —
+  // When given, the pattern fits your ribcage frame while keeping the full bust,
   // the fix for a gaping neckline on a fuller bust. Left blank = the old B/C-cup
   // assumption, unchanged.
-  { key: 'upperBust', label: 'Upper bust', trLabel: 'Üst göğüs', help: 'ABOVE the bust, high under the arms and across the top of the chest. Skip if unsure — but if your bust is fuller than a B/C cup, this fits the back and armhole to your ribcage and adds a proper bust dart, so the neckline is far less likely to gape.', trHelp: 'Göğsünün ÜSTÜNDEN, kolların altından ve göğsün üst kısmından. Emin değilsen atla — ama göğsün B/C kaptan dolgunsa, bu sırtı ve kol oyuntusunu göğüs kafesine oturtur ve gerçek bir göğüs pensi ekler; yaka çok daha az açılır.', min: 60, max: 150, optional: true },
+  { key: 'upperBust', label: 'Upper bust', trLabel: 'Üst göğüs', help: 'ABOVE the bust, high under the arms and across the top of the chest. Skip if unsure, but if your bust is fuller than a B/C cup, this fits the back and armhole to your ribcage and adds a proper bust dart, so the neckline is far less likely to gape.', trHelp: 'Göğsünün ÜSTÜNDEN, kolların altından ve göğsün üst kısmından. Emin değilsen atla, ama göğsün B/C kaptan dolgunsa, bu sırtı ve kol oyuntusunu göğüs kafesine oturtur ve gerçek bir göğüs pensi ekler; yaka çok daha az açılır.', min: 60, max: 150, optional: true },
 ];
 
 export function loadMeasurements() {
@@ -29,7 +29,7 @@ export function saveMeasurements(m) {
   localStorage.setItem(MEASURE_KEY, JSON.stringify(m));
 }
 
-// Named measurement profiles — so a seller (or anyone drafting for others) can
+// Named measurement profiles, so a seller (or anyone drafting for others) can
 // keep several bodies ("me", "Ayşe", "Client B") instead of overwriting one set.
 // The default MEASURE_KEY is the active/last-used body; PROFILES_KEY holds the
 // named library. Backward compatible: with no named profiles the app behaves
