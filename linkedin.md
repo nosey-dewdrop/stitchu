@@ -202,3 +202,15 @@
 4. **Kanıt: canlı, aynı koşullar, before/after.** 59 fotoğrafı taze koşturdum (FAST token, 8dk20sn). Yaka yanlış-okuması 5→2. Vision-accuracy %86.8→%94.4. Ve asıl ödül: FULL 22→24. Üç arka görünüm düzeldi — fiyonklu Mira arkası artık yakayı doğru bırakıyor, gingham arkası "crew", polka Tie Back arkası "boat" (bu FULL'a geçti). Regresyon bekçisi: FULL düşseydi geri alacaktım; yükseldi, kalıyor.
 
 5. **Ders: en pahalı +2 motor değil, kelimedir.** Aylarca motora kabiliyet ekledim — puf, yaka, açık sırt — ve FULL kımıldamadı çünkü asıl fren vision'ın kararsızlığıydı. Dört cümle, sıfır kod riski, +2 tam kalıp. Kalan iki yaka hatası artık arka görünüm karışıklığı değil, gerçekten belirsiz ÖN çekimler — bir metin düzeltmesinin dürüst tavanı. Bir sonraki adım burada değil: ön/arka aynı ürünü grupla (V3).
+
+## Essay 16 — "Bir değişikliği ölçtüm, doğru çıktı, yine de geri aldım" (LOOP 3 / patch 2.3 — V3 ön/arka, REVERTED)
+
+1. **Doğru içgüdüyle başladım.** Vision hâlâ aynı elbisenin arkasını, giyilmiş halini, düğme yakın-çekimini ayrı okuyup önde olmayan alanları uyduruyordu: bir arka fotoğraf "square" yaka, bir makro çekim "vNeck" biçim. LOOP 2 yakayı büyük ölçüde çözmüştü ama biçim, bel, etek hâlâ çelişiyordu — V0'da 15 çelişki vardı, 2.2 sonrası 8'e inmişti. Kural açıktı: bir arka/kısmi görünümde önden okunan alanları (yaka, biçim, bel, etek kesimi) tahmin etme, null bırak. Null zaten kalıbın tolere ettiği dürüst cevap.
+
+2. **İki cümle ekledim, deploy ettim, ölçtüm.** worker.js prompt'una: "kısmi görünümde önden okunan alanları null bırak; tek elbise, tek okuma." Sıfır C++, sıfır motor kodu. Canlı FAST koşu, aynı 59 fotoğraf, aynı koşullar. Vision doğruluğu %86.8'den %87.0'a çıktı — kural tam istediğim şeyi yaptı: JACKIE arkası yakayı artık uydurmuyor, Priscilla giyilmiş foto önü boş bırakıyor.
+
+3. **Ama FULL düştü: 24 → 21.** Sebebi kaba bir gerçek: bu benchmark her fotoğrafı tek tek ölçüyor ve manifest arka fotoğrafı elbisenin ÖN yakasıyla etiketliyor. Yani vision dürüstçe "önü göremiyorum, null" dediği an, benchmark — şanslı doğru tahmini ödüllendiriyordu — bir puan kaybediyor. İçgüdü doğru, ölçüm onu cezalandırıyor.
+
+4. **Regresyon bekçisi çalıştı, geri aldım.** Kuralım netti: FULL düşerse değişiklik geri alınır ve raporlanır. worker.js'i 2.2'ye döndürdüm (git diff temiz, byte-birebir), yeniden deploy ettim, results dosyasını dürüst 2.2 baseline'ına geri yükledim. Yayınlanan sayı 24/54 kalıyor. Yama notunu da "geri alındı" olarak yayınladım — kaçanlar dahil.
+
+5. **Ders: her düzeltme prompt düzeltmesi değildir.** LOOP 3'ün gerçek çıktısı +N değil, bir kanıt: kalan ön/arka çelişkiler bir prompt sorunu değil, bir ÖLÇÜM artefaktı. Doğru kaldıraç (b) — ölçüm tarafında aynı ürünün ön+arka+detay fotoğraflarını grupla, alan bazında çoğunluk oyu al ki arkadaki bir dürüst null önün gerçek okumasıyla örtülsün. Ve bu deney V4'ün (güven eşiği) lehine somut kanıt: dürüst bir null şu an cezalanıyor. Bazen bir loop'un işi bir özellik değil, bir sonraki loop'un doğru yerde durması.

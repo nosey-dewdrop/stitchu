@@ -16,7 +16,7 @@
 <meta name="twitter:title" content="stitchu · patch notes">
 <meta name="twitter:description" content="Every change, measured, published — misses included.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are stitchu patch notes?","acceptedAnswer":{"@type":"Answer","text":"A published, dated log of every change to the stitchu pattern-making engine, with the accuracy number before and after each patch — including the changes that did not move the number."}},{"@type":"Question","name":"What does the benchmark measure?","acceptedAnswer":{"@type":"Answer","text":"How many of 54 real product photos the engine turns into a complete, sewable pattern, plus element accuracy (share of individual garment features it can draft) and vision accuracy (how reliably the photo is read)."}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=59">
+<link rel="stylesheet" href="css/theme-transitions.css?v=60">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -69,8 +69,22 @@
   <p class="manifesto" data-en="Every change to the engine, measured and published — the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5." data-tr="Motordaki her değişiklik, ölçülmüş ve yayınlanmış — kaçanlar dahil. Bu gerçek geliştirme günlüğü: ne değişti, doğruluk sayısı ne yaptı ve +6 umduğumuz bir değişikliğin sadece +5 getirdiği yer.">Every change to the engine, measured and published — the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5.</p>
   <p class="updated" data-en="Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16." data-tr="Metrik: 54 gerçek ürün fotoğrafından kaçı tam, dikilebilir bir kalıba dönüşüyor. Son güncelleme 2026-07-16.">Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16.</p>
 
-  <!-- 2.2 -->
+  <!-- 2.3 -->
   <div class="patch now">
+    <div class="phead"><span class="pnum">2.3</span><span class="ptitle" data-en="Front/back consistency (reverted)" data-tr="Ön/arka tutarlılık (geri alındı)">Front/back consistency (reverted)</span><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Tried a broader rule: on a back, worn, or close-up detail photo, leave the front-only fields (neckline, shaping, waistline, skirt cut) null instead of guessing them from partial evidence." data-tr="Daha geniş bir kural denedik: bir arka, giyilmiş ya da yakın-detay fotoğrafta, önden okunan alanları (yaka, biçim, bel, etek kesimi) kısmi kanıttan tahmin etmek yerine null bırak.">Tried a broader rule: on a back, worn, or close-up detail photo, leave the front-only fields (neckline, shaping, waistline, skirt cut) null instead of guessing them from partial evidence.</li>
+        <li data-en="Measured live, same 59 photos, same conditions. Vision accuracy nudged up (86.8% → 87.0%) but the whole-pattern count fell: a back-view photo the manifest still credited for its neckline went null and dropped out of FULL." data-tr="Canlı ölçtük, aynı 59 fotoğraf, aynı koşullar. Vision doğruluğu hafif arttı (%86.8 → %87.0) ama tam-kalıp sayısı düştü: manifest'in hâlâ yakasıyla saydığı bir arka görünüm fotoğrafı null olup FULL'dan çıktı.">Measured live, same 59 photos, same conditions. Vision accuracy nudged up (86.8% → 87.0%) but the whole-pattern count fell: a back-view photo the manifest still credited for its neckline went null and dropped out of FULL.</li>
+        <li data-en="Regression guard fired. FULL dropped, so the change was reverted and the 2.2 worker redeployed. This entry stays published — misses included." data-tr="Regresyon bekçisi devreye girdi. FULL düştü, bu yüzden değişiklik geri alındı ve 2.2 worker yeniden yayınlandı. Bu girdi yayında kalıyor — kaçırılanlar dahil.">Regression guard fired. FULL dropped, so the change was reverted and the 2.2 worker redeployed. This entry stays published — misses included.</li>
+      </ul>
+      <span class="delta">FULL <span class="num">24/54</span> → <span class="num">24/54</span> · reverted · a broad null rule cost more FULL than it saved</span>
+      <p class="honest" data-en="The right instinct, the wrong lever. Blanking front-only fields on partial views is honest, but the benchmark still rewards the back photo for the front's neckline, so nulling it loses a point. The real fix is measurement-side: group the same product's front+back photos and take a majority vote — that is the next loop, not another prompt sentence." data-tr="Doğru içgüdü, yanlış kaldıraç. Kısmi görünümlerde önden okunan alanları boşaltmak dürüst, ama benchmark arka fotoğrafı hâlâ önün yakasıyla ödüllendiriyor, bu yüzden null'lamak puan kaybettiriyor. Gerçek çözüm ölçüm tarafında: aynı ürünün ön+arka fotoğraflarını grupla ve çoğunluk oyu al — bir sonraki döngü bu, bir prompt cümlesi daha değil.">The right instinct, the wrong lever. Blanking front-only fields on partial views is honest, but the benchmark still rewards the back photo for the front's neckline, so nulling it loses a point. The real fix is measurement-side: group the same product's front+back photos and take a majority vote — that is the next loop, not another prompt sentence.</p>
+    </div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="patch">
     <div class="phead"><span class="pnum">2.2</span><span class="ptitle" data-en="Neckline disambiguation" data-tr="Yaka belirsizlik giderme">Neckline disambiguation</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -224,7 +238,7 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html">benchmark</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v59</span></span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html">benchmark</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v60</span></span>
 </footer>
 
 <script>

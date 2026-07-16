@@ -661,3 +661,10 @@ Z2 · HOOK: "en pahalı +2 motor değil, kelime çıktı. aylarca yanlış yeri 
 - kalan iki hata arka karışıklığı DEĞİL, gerçekten belirsiz ön çekimler — dürüst tavan.
 - **Görsel:** [ekran] terminal SUMMARY; "FULL 22/54 → 24/54", "neckline misreads 5 → 2" satırları parlar.
 - **Format:** reel
+
+## LOOP 3 / patch 2.3 — V3 front/back consistency (REVERTED)
+
+Z3 · HOOK: "bir değişikliği ölçtüm, vision doğruluğu ARTTI — ve yine de geri aldım."
+- Anlatı (~45sn): vision arka fotoğrafı ayrı okuyup önde olmayan yakayı/biçimi uyduruyordu. iki cümlelik kural ekledim: kısmi görünümde önden okunan alanları null bırak. deploy, canlı ölçüm (aynı 59 foto, 8dk): vision-accuracy %86.8→%87.0, kural çalıştı. AMA FULL 24→21 düştü — çünkü benchmark arka fotoğrafı hâlâ önün yakasıyla ödüllendiriyor, dürüst "null" bir puan kaybettiriyor. regresyon bekçisi çalıştı: geri aldım, 2.2 worker'ı yeniden deploy ettim, results'ı geri yükledim. yama notunu "reverted" yayınladım — kaçanlar dahil. loop'un çıktısı +N değil, bir kanıt: bu bir prompt sorunu değil, ölçüm artefaktı. doğru çözüm ölçüm tarafında çoğunluk oyu (V3-b).
+- **Görsel:** [ekran] terminal SUMMARY iki koşu yan yana; "FULL 24 → 21" kırmızı yanıp söner, sonra "reverted" damgası; patch-notes sayfasında 2.3 girdisi "reverted" rozetiyle görünür.
+- **Format:** reel

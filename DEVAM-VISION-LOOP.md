@@ -17,6 +17,27 @@ doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
 sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
+> LOOP 3 (V3 ÖN/ARKA / patch 2.3) BİTTİ ve GERİ ALINDI (2026-07-16). Kredi VAR (canlı probe
+> geçerli vision döndü). Aday (a) denendi: worker prompt'una "kısmi görünümde (arka/giyilmiş/
+> yakın-detay) önden okunan alanları (neckline/shaping/waistline/skirtStyle) null bırak; tek
+> elbise tek okuma" iki cümlesi. Sıfır C++/motor, golden byte-identical. wrangler deploy
+> (d1dff290). Canlı FAST koşu (59 çağrı, ~8dk), aynı koşullar before/after: vision-accuracy
+> %86.8→%87.0, neckline misreads 5→4, AMA FULL 24→21. Sebep: benchmark arka fotoğrafı hâlâ
+> önün yakasıyla etiketliyor → dürüst null bir puan kaybettiriyor (JACKIE arkası crew→null,
+> FULL→WRONG). REGRESYON BEKÇİSİ ÇALIŞTI: worker 2.2'ye geri alındı (git diff temiz, byte-
+> birebir), yeniden deploy (c9fcc992), results-2026-07-16.json 2.2 baseline'ına geri yüklendi.
+> Yayınlanan sayı 24/54 KALIR. Ön/arka çelişki 15(V0)→8(post-2.2, bu loop'un before'u). LOOP 3'ün
+> çıktısı +N değil KANIT: kalan çelişkiler prompt değil ÖLÇÜM artefaktı → doğru kaldıraç aday (b)
+> (aynı ürünün ön+arka fotolarını grupla, alan bazında çoğunluk oyu; benchmark-script, ürün riski
+> yok). 2.3 deneyi V4 (güven eşiği) LEHİNE somut kanıt: dürüst null şu an cezalanıyor.
+> web/patches.html patch 2.3 girdisi ("reverted", EN/TR, v60, deployed). Skor:
+> reports/stitchu-vision-progress.md (L3 satırı + yeni ön/arka-çelişki barı). Rapor:
+> reports/2026-07-16-stitchu-vision-loop3.md. İçerik: linkedin Essay 16 + devlog Z3.
+> ZİNCİR SONU: V0→V3 toplam FULL 22→24 (+2), vision-accuracy 86.8%→94.4%, neckline misreads 5→2,
+> ön/arka çelişki 15→8 — hepsi prompt kelimesi, sıfır motor. SIRADAKİ FAZ KARARI DAMLA'DA:
+> V3-b (ölçüm çoğunluk oyu) / FAZ K (cupSeams/strapless köprü) / V4 (vision güven eşiği).
+>
+> --- ÖNCEKİ (LOOP 2 / patch 2.2) ---
 > LOOP 2 (V1 NECKLINE / patch 2.2) BİTTİ (2026-07-16). worker.js vision prompt'una yaka
 > belirsizlik-giderme bloğu (ön+arka TEK garment TEK yaka; arka/giyilmiş foto önün yakasını
 > uyduramaz; nape fiyonk/oyuk = arka detay, halter değil; halter SADECE boyna dolanan bant;
