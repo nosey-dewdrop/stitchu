@@ -87,6 +87,8 @@ export const STRINGS = {
   'result.fabricv': { en: '{n} m at 140 cm width', tr: '140 cm ende {n} m' },
   'result.sa': { en: 'seam allowance', tr: 'dikiş payı' },
   'result.sav': { en: '{n} cm, drawn in: cut the outer line, sew the inner', tr: '{n} cm, çizili: dış çizgiden kes, iç çizgiden dik' },
+  'result.assembled': { en: 'Your assembled pattern', tr: 'Birleştirilmiş kalıbın' },
+  'result.assemblednote': { en: 'This is the whole pattern laid out as it prints, the faint grid is the A4 page edges. At full size it prints across those A4 sheets you tape together; this preview is scaled to fit the screen.', tr: 'Bu, kalıbın basıldığı haliyle birleşik görünümü; silik ızgara A4 sayfa kenarlarıdır. Gerçek boyutta bantlayıp birleştirdiğin A4 sayfalara basılır; bu önizleme ekrana sığacak şekilde ölçeklidir.' },
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Bu adımın Türkçesi henüz eklenmedi.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
