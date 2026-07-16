@@ -16,8 +16,8 @@
 <meta name="twitter:title" content="stitchu · patch notes">
 <meta name="twitter:description" content="Every change, measured, published, misses included.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are stitchu patch notes?","acceptedAnswer":{"@type":"Answer","text":"A published, dated log of every change to the stitchu pattern-making engine, with the accuracy number before and after each patch, including the changes that did not move the number."}},{"@type":"Question","name":"What does the benchmark measure?","acceptedAnswer":{"@type":"Answer","text":"How many of 54 real product photos the engine turns into a complete, sewable pattern, plus element accuracy (share of individual garment features it can draft) and vision accuracy (how reliably the photo is read)."}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=66">
-<link rel="stylesheet" href="css/shared-header.css?v=66">
+<link rel="stylesheet" href="css/theme-transitions.css?v=67">
+<link rel="stylesheet" href="css/shared-header.css?v=67">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -71,8 +71,21 @@
   <p class="manifesto" data-en="Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5." data-tr="Motordaki her değişiklik, ölçülmüş ve yayınlanmış, kaçanlar dahil. Bu gerçek geliştirme günlüğü: ne değişti, doğruluk sayısı ne yaptı ve +6 umduğumuz bir değişikliğin sadece +5 getirdiği yer.">Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5.</p>
   <p class="updated" data-en="Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16." data-tr="Metrik: 54 gerçek ürün fotoğrafından kaçı tam, dikilebilir bir kalıba dönüşüyor. Son güncelleme 2026-07-16.">Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16.</p>
 
-  <!-- 2.9 -->
-  <div class="patch now" id="patch-2-10">
+  <!-- 2.11 -->
+  <div class="patch now" id="patch-2-11">
+    <div class="phead"><span class="pnum">2.11</span><span class="ptitle" data-en="The style library joins the baby-blue world" data-tr="Stil kütüphanesi bebek mavisi dünyaya katıldı">The style library joins the baby-blue world</span><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="The 24 style-library pages were the last corner of the site still wearing the old cherry colour and an off-brand button. They are now regenerated into the same baby-blue world as every other page: navy ink on white, baby-blue accents, and the technical flat sketches redrawn in navy line with a baby-blue accent instead of the old blush. Nothing about the content, the numbers or the layout changed, only the colour and the button." data-tr="24 stil kütüphanesi sayfası, sitenin hâlâ eski vişne rengini ve markaya uymayan bir düğmeyi taşıyan son köşesiydi. Artık her sayfayla aynı bebek mavisi dünyaya yeniden üretildiler: beyaz üstüne lacivert mürekkep, bebek mavisi vurgular ve teknik çizimler eski pembe yerine lacivert çizgiyle bebek mavisi vurguyla yeniden çizildi. İçerik, sayılar ya da yerleşim hiç değişmedi, yalnızca renk ve düğme.">The 24 style-library pages were the last corner of the site still wearing the old cherry colour and an off-brand button. They are now regenerated into the same baby-blue world as every other page: navy ink on white, baby-blue accents, and the technical flat sketches redrawn in navy line with a baby-blue accent instead of the old blush. Nothing about the content, the numbers or the layout changed, only the colour and the button.</li>
+        <li data-en="Every call-to-action button on the site now comes from one shared stylesheet, the same filled-navy button with an inner dashed frame you see on the drafter. We swept every page for a button that did not wear it; the style library was the only offender left, and now the count is zero." data-tr="Sitedeki her eylem düğmesi artık tek bir ortak stil dosyasından geliyor, çizim ekranında gördüğünüz iç kesikli çerçeveli, dolu lacivert düğmenin aynısı. Her sayfayı bunu taşımayan bir düğme için taradık; stil kütüphanesi kalan tek aykırıydı, artık sayı sıfır.">Every call-to-action button on the site now comes from one shared stylesheet, the same filled-navy button with an inner dashed frame you see on the drafter. We swept every page for a button that did not wear it; the style library was the only offender left, and now the count is zero.</li>
+      </ul>
+      <span class="delta" data-en="24 style pages → baby-blue canon · off-canon CTAs across the site → 0" data-tr="24 stil sayfası → bebek mavisi kanon · site genelinde kanon dışı düğme → 0">24 style pages → baby-blue canon · off-canon CTAs across the site → 0</span>
+      <p class="honest" data-en="No accuracy number moves here; this is the shell, not the engine. A recolour and a shared button cannot make a pattern more correct. But one product should look like one product, and these pages had been left behind on purpose until the rest of the world was settled; now they match. The header stays byte-identical across all 44 pages, verified by diff." data-tr="Burada hiçbir doğruluk sayısı oynamıyor; bu kabuk, motor değil. Bir renk değişimi ve ortak bir düğme bir kalıbı daha doğru yapamaz. Ama tek bir ürün tek bir ürün gibi görünmeli; bu sayfalar, dünyanın geri kalanı oturana kadar bilerek geride bırakılmıştı, artık uyuyorlar. Üst menü 44 sayfanın tümünde bayt-aynı, diff'le doğrulandı.">No accuracy number moves here; this is the shell, not the engine. A recolour and a shared button cannot make a pattern more correct. But one product should look like one product, and these pages had been left behind on purpose until the rest of the world was settled; now they match. The header stays byte-identical across all 44 pages, verified by diff.</p>
+    </div>
+  </div>
+
+  <!-- 2.10 -->
+  <div class="patch" id="patch-2-10">
     <div class="phead"><span class="pnum">2.10</span><span class="ptitle" data-en="Pages that stay still, and arrive before you click" data-tr="Yerinde duran, tıklamadan önce gelen sayfalar">Pages that stay still, and arrive before you click</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -334,6 +347,6 @@
   <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v66</span></span>
 </footer>
 
-<script src="js/shared-header.js?v=66"></script>
+<script src="js/shared-header.js?v=67"></script>
 </body>
 </html>

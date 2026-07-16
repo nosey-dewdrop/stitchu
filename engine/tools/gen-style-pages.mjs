@@ -497,50 +497,48 @@ const GROUPS = [
 const ICON = `<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">`;
 
 const CSS = `
+  /* CANON 2026-07-16: baby-blue world, same palette as benchmark/patches.
+     navy ink on white; bb-pale accents; CTA look lives in ../css/shared-button.css. */
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:Helvetica,Arial,sans-serif;color:#fff;background:#8f2038;line-height:1.55;overflow-x:hidden}
-  a{color:#ffd9e2}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
+  a{color:var(--bb-deep)}
   .brandpatch{position:relative;display:inline-block;box-sizing:border-box;padding:4px 12px;background:#1f3a5f;border:1px solid #1f3a5f;border-radius:2px;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.5px;line-height:1;color:#fff;text-decoration:none;white-space:nowrap;vertical-align:middle;transition:background .18s}
   .brandpatch::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:2px;opacity:.9;pointer-events:none;transition:inset .18s}
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
-  /* Shared header comes from ../css/shared-header.css (one source, byte-identical
-     bar). On the vişne ground the ink flips to white; dimensions stay shared. */
-  .sh-nav a,.sh-lang button{color:#fff}
-  .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:#ffd9e2}
-  .sh-lang button.sh-langon,.sh-lang button.active{border-bottom-color:#fff}
+  /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
+     white — no colour flip; only the active-underline accent is set here. */
+  .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
-  .crumbs{font-size:12px;opacity:.75;letter-spacing:.4px;margin-bottom:20px}
-  .crumbs a{text-decoration:none}
-  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:38px;line-height:1.14;font-weight:400;margin:10px 0 14px;max-width:24ch}
+  .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
+  .crumbs a{text-decoration:none;color:var(--bb-deep)}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:38px;line-height:1.14;font-weight:400;margin:10px 0 14px;max-width:24ch;color:var(--navy)}
   h1 em{font-style:italic}
-  .lead{font-size:15px;opacity:.96;max-width:64ch;margin-bottom:34px}
-  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;font-weight:400;margin:40px 0 12px}
-  .fact{font-size:13.5px;opacity:.94;max-width:66ch;margin-bottom:12px}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;background:rgba(80,14,26,.35);border-radius:3px;overflow:hidden;margin-top:6px}
-  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.14)}
-  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.85;background:rgba(80,14,26,.5)}
-  td.v{font-variant-numeric:tabular-nums;font-weight:700}
-  .meta{font-size:12.5px;opacity:.78;max-width:66ch;margin-top:10px}
-  .cta{display:inline-block;margin-top:36px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.55);padding:14px 30px;text-decoration:none;border-radius:2px;position:relative}
-  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;border-radius:2px;pointer-events:none}
-  .cta:hover::after{inset:5px}
-  .cta2{display:inline-block;margin:36px 0 0 16px;font-size:13px;letter-spacing:.4px;color:#fff;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.6);padding-bottom:2px}
+  .lead{font-size:15px;color:var(--ink);max-width:64ch;margin-bottom:34px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;font-weight:400;margin:40px 0 12px;color:var(--navy)}
+  .fact{font-size:13.5px;color:var(--ink);max-width:66ch;margin-bottom:12px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border:1px solid var(--bb-line);border-radius:3px;overflow:hidden;margin-top:6px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--bb-line);color:var(--ink)}
+  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);background:var(--bb-pale)}
+  td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .meta{font-size:12.5px;color:#5b7089;max-width:66ch;margin-top:10px}
+  .cta2{display:inline-block;font-size:13px;letter-spacing:.4px;color:var(--bb-deep);text-decoration:none;border-bottom:1px dashed var(--bb);padding-bottom:2px}
+  .cta2:hover{border-bottom-color:var(--bb-deep)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:14px 0 6px}
-  .card{display:block;background:rgba(80,14,26,.4);border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:16px 18px;text-decoration:none;color:#fff}
-  .card:hover{border-color:rgba(255,255,255,.45)}
-  .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px}
-  .card .ds{font-size:12px;opacity:.8;line-height:1.45}
-  .also{font-size:13px;margin-top:8px}
-  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(80,14,26,.28);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:26px 20px 20px}
+  .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:3px;padding:16px 18px;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.09);transition:border-color .18s,box-shadow .18s}
+  .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px;color:var(--navy)}
+  .card .ds{font-size:12px;color:var(--ink);line-height:1.45}
+  .also{font-size:13px;margin-top:8px;color:var(--ink)}
+  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:var(--bb-pale);border:1px solid var(--bb-line);border-radius:4px;padding:26px 20px 20px}
   .sketch svg{max-width:240px;width:100%;height:auto}
-  .sketch figcaption{font-size:11.5px;opacity:.72;max-width:52ch;text-align:center;line-height:1.5}
+  .sketch figcaption{font-size:11.5px;color:#5b7089;max-width:52ch;text-align:center;line-height:1.5}
   table.proof td.v{font-weight:400;font-variant-numeric:tabular-nums}
-  table.proof td.v a{color:#ffd9e2}
-  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
-  .actions .cta{margin-top:0}
-  footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18);margin-top:40px}
-  footer a{color:#fff;text-decoration:none}
+  table.proof td.v a{color:var(--bb-deep)}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:16px}
+  footer{padding:26px 40px;font-size:12px;color:#5b7089;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--bb-line);margin-top:40px}
+  footer a{color:var(--navy);text-decoration:none}
 `;
 
 const header = `<header class="sh-header">
@@ -570,11 +568,12 @@ const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, 
 // page ground), and each style feeds it neckline / sleeve / skirt / detail
 // params. The technique the page is about is drawn as a HEAVIER accent line so
 // the eye lands on it. Everything below is pure geometry against a shared
-// coordinate frame, so 24 pages share one drawing engine.
+// coordinate frame, so 24 pages share one drawing engine. CANON: navy ink on a
+// bb-pale ground, bb-deep accent — same world as benchmark/patches.
 // ---------------------------------------------------------------------------
-const INK = '#fff';                 // main garment outline (page ground is vişne)
-const INK_SOFT = 'rgba(255,255,255,.4)';   // construction / fold / centre lines
-const INK_ACCENT = '#ffd2da';       // the technique this page teaches (couture blush)
+const INK = '#1f3a5f';              // main garment outline (navy on the bb-pale sketch ground)
+const INK_SOFT = 'rgba(31,58,95,.35)';     // construction / fold / centre lines
+const INK_ACCENT = '#3f74a8';       // the technique this page teaches (canon bb-deep accent)
 
 // Front necklines, expressed as an SVG path from the left neck point (LNP) to
 // the right neck point (RNP), drawn across a bodice whose shoulders sit at
@@ -731,7 +730,7 @@ function flatSketch(sk) {
   <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Technical flat sketch showing a ${sk.aria || 'garment'}">
     ${inner}
   </svg>
-  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The blush line is the piece this page draws.</figcaption>
+  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The accent line is the piece this page draws.</figcaption>
 </figure>`;
 }
 
@@ -778,7 +777,7 @@ function presetQuery(preset) {
 }
 function printBlock(s) {
   const href = `../create.html${presetQuery(s.preset)}`;
-  return `<a class="cta" href="${href}">Print this pattern — true-scale A4, free</a>`;
+  return `<a class="sb-btn sb-primary" href="${href}">Print this pattern — true-scale A4, free</a>`;
 }
 
 function headBlock({ title, desc, canonical }) {
@@ -796,7 +795,9 @@ ${ICON}
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<link rel="stylesheet" href="../css/shared-header.css?v=65">`;
+<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
+<link rel="stylesheet" href="../css/shared-header.css?v=67">
+<link rel="stylesheet" href="../css/shared-button.css?v=67">`;
 }
 
 function breadcrumbLd(name, url) {
@@ -887,7 +888,7 @@ ${header}
   ${also}
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=65"></script>
+<script src="../js/shared-header.js?v=67"></script>
 </body>
 </html>
 `;
@@ -925,10 +926,10 @@ ${header}
   <h1>The style <em>library.</em></h1>
   <p class="lead">Every style below is drafted by the same engine — real pattern-cutting geometry computed against your seven measurements, validated on a 70,200-draft matrix, seams held to 0.00 mm. Each page shows the actual drafting numbers, straight from the engine's formula spec.</p>
 ${sections}
-  <a class="cta" href="../create.html">Draft a pattern to your measurements — free</a>
+  <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements — free</a>
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=65"></script>
+<script src="../js/shared-header.js?v=67"></script>
 </body>
 </html>
 `;
