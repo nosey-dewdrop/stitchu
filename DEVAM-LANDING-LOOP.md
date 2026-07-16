@@ -1,4 +1,4 @@
-# DEVAM — LOOP 4 / PATCH 2.3: VİTRİN LOOP'U (yama notları + yerleşim + beta hunisi)
+# DEVAM — LOOP 4 / PATCH 2.1: VİTRİN LOOP'U (yama notları + yerleşim + beta hunisi)
 
 Zincirin parçası: DEVAM-VISION-LOOP.md'deki ortak kuralları oku (içerik logu,
 yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, otonom.
@@ -29,7 +29,7 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
   1.0 etiketleme/ilk sayı 6/54 → 1.1 vision köprüsü → 1.2 dürüstlük katmanı →
   1.3 düğme patı → 1.4 bağ/kurdele → 1.5 denetim A → 1.6 puf kol →
   1.7 yaka ailesi → 1.8 metrik reformu → 1.9 büzgü + open-back (19→22/54).
-  Zincirdeki 2.0/2.1 bittiyse onları da ekle (NEREDEYİZ'e bak).
+  Zincirdeki 2.0 bittiyse onu da ekle (NEREDEYİZ'e bak).
 - EN üstte kısa manifesto satırı: "every change, measured, published — misses
   included" ruhu (tam cümleyi session yazar, deniz-abartı yok).
 - EN/TR (mevcut data-en/data-tr düzenini kullan), nav'a "patch notes" linki.
@@ -64,5 +64,5 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
   Damla dönünce canlıda kendisi gezer; "bitti" değil "canlıda, gezilmeyi
   bekliyor" denir.
 - İçerik logu: essay ("yama notları neden bağ kurar / beta kararı") + reel +
-  patch 2.3 girdisi (artık sayfa var, oraya).
+  patch 2.1 girdisi (artık sayfa var, oraya).
 - NEREDEYİZ güncelle (DEVAM-VISION-LOOP.md) + commit + push.

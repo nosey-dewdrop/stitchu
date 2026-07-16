@@ -9,11 +9,12 @@ atlamak, birleştirmek, "hazır başlamışken V2'yi de yapayım" YASAK.
 SIRA: LOOP 1 (V0) → LOOP 4 (vitrin, DEVAM-LANDING-LOOP.md — krediden bağımsız,
 öne alındı) → LOOP 2 (V1) → LOOP 3 (V3).
 
-YAMA NUMARALARI (Damla kuralı: LoL yama notları gibi, bağ kurar): eski
-BENCHMARK-58 loop'ları = patch 1.x (1.0 Loop 0 etiketleme ... 1.9 Loop 9b
-open-back; LOOP 4 reports/'tan geriye doldurur). Bu zincir: **2.0 = V0, 2.1 =
-V1, 2.2 = V3, 2.3 = vitrin.** Her session raporunda ve yama notları sayfasında
-bu numarayı kullanır.
+YAMA NUMARALARI (Damla kuralı: LoL yama notları gibi, bağ kurar; numara =
+YAPILMA SIRASI): eski BENCHMARK-58 loop'ları = patch 1.x (1.0 Loop 0
+etiketleme ... 1.9 Loop 9b open-back; vitrin loop'u reports/'tan geriye
+doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
+2.2 = V1 neckline, 2.3 = V3 ön/arka.** Her session raporunda ve yama notları
+sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
 > SIRADAKİ: LOOP 1 (V0). Henüz hiçbiri koşmadı.
