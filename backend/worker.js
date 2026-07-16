@@ -9,8 +9,13 @@
 import { handleDraft, handleGrade } from './draft.js';
 
 const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
-// Vision-capable current model.
+// Vision-capable current model (default teacher).
 const MODEL = 'claude-opus-4-8';
+// Internal-only model override whitelist. Our own mining/anchor tool may ask for
+// a cheaper teacher (e.g. Sonnet) via the x-sb-model header, but ONLY on the
+// authenticated bench-bypass path (see handleAnalyze) — a public caller can
+// never pick the model. Whitelist keeps it to known vision-capable ids.
+const MODEL_WHITELIST = new Set(['claude-opus-4-8', 'claude-sonnet-4-6', 'claude-haiku-4-5']);
 const RATE_LIMIT_PER_MIN = 20;
 
 export default {
@@ -129,7 +134,10 @@ export default {
         if (length > 2_800_000) {
           return jsonResponse({ error: 'Image too large' }, 413);
         }
-        return handleAnalyze(request, env);
+        // A model override is honoured ONLY when the bench bypass proved this is
+        // our own internal tool (never for a public user). Falls back to MODEL.
+        const overrideModel = bypass ? pickModel(request.headers.get('x-sb-model')) : null;
+        return handleAnalyze(request, env, overrideModel);
       }
 
       // ---- Authenticated app endpoints (shared-secret app token).
@@ -143,7 +151,7 @@ export default {
       }
 
       if (url.pathname === '/api/analyze' && request.method === 'POST') {
-        return handleAnalyze(request, env);
+        return handleAnalyze(request, env, pickModel(request.headers.get('x-sb-model')));
       }
       if (url.pathname === '/api/draft' && request.method === 'POST') {
         const { status, payload } = await handleDraft(request);
@@ -280,7 +288,12 @@ async function handleWallNote(request, env) {
 // return the raw Anthropic response so the app parses it exactly as before.
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-async function handleAnalyze(request, env) {
+// Resolve a requested model header to a whitelisted id, else null (use default).
+function pickModel(requested) {
+  return requested && MODEL_WHITELIST.has(requested) ? requested : null;
+}
+
+async function handleAnalyze(request, env, overrideModel = null) {
   let body;
   try { body = await request.json(); } catch {
     return jsonResponse({ error: 'Invalid request' }, 400);
@@ -328,7 +341,7 @@ Mapping rules — READ CAREFULLY, "garment" is the most important field:
   * Examples (words, not photos): a wide shallow line skimming the collarbones from shoulder to shoulder = boat. A plain rounded opening at the base of the neck = crew. A rounded opening dropping lower onto the chest = scoop. A back photo of a boat-neck dress with a bow at the nape = neckline "boat" (front shape) + the bow noted in backDetail/closure — NOT halter. A back cut-out with straps meeting at the neck seen from behind = still read the FRONT neckline (boat/crew/scoop or null), not "halter", and note the open back in backDetail.`;
 
   const anthropicBody = {
-    model: MODEL,
+    model: overrideModel || MODEL,
     max_tokens: 900,
     messages: [
       {

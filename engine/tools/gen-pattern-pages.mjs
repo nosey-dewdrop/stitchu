@@ -191,7 +191,7 @@ const bilingual = (en, tr, tag = 'span') => `<${tag} data-en="${esc(en)}" data-t
 function header(active) {
   const link = (href, en, tr) => `<a href="${href}"${active === href ? ' style="border-bottom:1px dashed var(--bb-deep)"' : ''} data-en="${en}" data-tr="${tr}">${en}</a>`;
   return `<header>
-  <a class="mark" href="../index.html">stitchu</a>
+  <a class="brandpatch" href="../index.html">stitchu</a>
   <nav>
     ${link('../create.html', 'create', 'çiz')}
     ${link('index.html', 'patterns', 'kalıplar')}
@@ -235,7 +235,10 @@ const STYLE = `<style>
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
   a{color:var(--bb-deep)}
   header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;flex-wrap:wrap;gap:10px}
-  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;color:var(--navy);text-decoration:none}
+  .brandpatch{position:relative;display:inline-block;box-sizing:border-box;padding:4px 12px;background:#1f3a5f;border:1px solid #1f3a5f;border-radius:2px;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.5px;line-height:1;color:#fff;text-decoration:none;white-space:nowrap;vertical-align:middle;transition:background .18s}
+  .brandpatch::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:2px;opacity:.9;pointer-events:none;transition:inset .18s}
+  .brandpatch:hover{background:#2b4f7a}
+  .brandpatch:hover::after{inset:5px}
   header nav{display:flex;gap:16px;align-items:center;font-size:13px;letter-spacing:.5px}
   header nav a{text-decoration:none;color:var(--navy);opacity:.82}
   header nav a:hover{opacity:1;border-bottom:1px dashed var(--bb-deep)}

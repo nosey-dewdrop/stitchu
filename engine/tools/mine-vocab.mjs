@@ -49,6 +49,13 @@ const has = (f) => args.includes(f);
 const val = (f, d) => (has(f) ? args[args.indexOf(f) + 1] : d);
 const limit = has('--limit') ? parseInt(val('--limit')) : Infinity;
 const poolArg = val('--pool', 'training');
+// Teacher model: default Opus. --teacher sonnet uses the cheaper vision teacher
+// (worker honours x-sb-model ONLY on the bench-bypass path). Maps short names to
+// the worker whitelist. teacherVersion in each label records the ACTUAL model.
+const TEACHER_MAP = { opus: 'claude-opus-4-8', sonnet: 'claude-sonnet-4-6', haiku: 'claude-haiku-4-5' };
+const teacherArg = val('--teacher', 'opus');
+const TEACHER_MODEL = TEACHER_MAP[teacherArg] || teacherArg;
+const WORKER_VERSION_TAGGED = `${WORKER_VERSION}+${TEACHER_MODEL}`;
 
 if (!existsSync(LABELS)) mkdirSync(LABELS, { recursive: true });
 
@@ -65,6 +72,8 @@ function analyze(absPath) {
   writeFileSync(tmp, body);
   const curlArgs = ['-s', '-m', '120', '-X', 'POST', API, '-H', 'content-type: application/json'];
   if (FAST) curlArgs.push('-H', `x-sb-bench: ${BENCH_TOKEN}`);
+  // Model override rides the bench-bypass path only (worker ignores it otherwise).
+  if (TEACHER_MODEL && TEACHER_MODEL !== 'claude-opus-4-8') curlArgs.push('-H', `x-sb-model: ${TEACHER_MODEL}`);
   curlArgs.push('--data', `@${tmp}`);
   const raw = sh('curl', curlArgs);
   let data;
@@ -89,7 +98,8 @@ function labelRecord({ hash, brand, category, source, spec, pool }) {
     source,
     pool,
     workerVersion: WORKER_VERSION,
-    teacherVersion: WORKER_VERSION, // alias kept for the warehouse spec wording
+    teacherVersion: WORKER_VERSION_TAGGED, // AMBAR YASASI: records the ACTUAL model used
+    teacherModel: TEACHER_MODEL,
     date: new Date().toISOString().slice(0, 10),
     spec: structural,
     outOfVocab,
@@ -112,7 +122,7 @@ function anchorTest(n) {
   // deterministic-ish random sample
   const shuffled = garments.map((p) => [Math.random(), p]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
   const sample = shuffled.slice(0, Math.min(n, shuffled.length));
-  console.log(`\n== ANCHOR HEALTH TEST (${sample.length} human-labelled benchmark photos) ==`);
+  console.log(`\n== ANCHOR HEALTH TEST (${sample.length} human-labelled benchmark photos) — teacher: ${TEACHER_MODEL} ==`);
   let totalFields = 0, agreeFields = 0, photoOK = 0;
   for (let i = 0; i < sample.length; i++) {
     const entry = sample[i];

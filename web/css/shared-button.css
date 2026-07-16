@@ -1,0 +1,44 @@
+/* Canonical stitchu BUTTON SYSTEM. ONE source of truth for every call-to-action
+   on the site (index hero + bottom CTAs, api form, style/pattern page buttons,
+   benchmark buttons). Same discipline as shared-header.css: prefixed .sb-* names
+   so no page style can shift them, one signature that never drifts page to page.
+
+   The signature is the couture "basted" stitch — a filled navy button with an
+   inner 1.5px dashed white frame (the exact "Start a pattern" / step-nav primary
+   button from the drafter). Two variants, every CTA wears one:
+
+     .sb-btn.sb-primary   filled navy + inner dashed white frame
+     .sb-btn.sb-secondary transparent + outer dashed navy border, fills on hover
+
+   RESKIN 2026-07-16: navy #1f3a5f, no vişne. */
+:root { --sb-navy:#1f3a5f; --sb-deep:#3f74a8; --sb-hover:#2b4f7a; }
+
+.sb-btn{
+  display:inline-block; position:relative;
+  padding:14px 30px; border-radius:2px;
+  font-family:Helvetica,Arial,sans-serif;
+  font-size:13px; font-weight:700; letter-spacing:.6px;
+  text-decoration:none; text-align:center; cursor:pointer;
+  transition:background .18s, color .18s, border-color .18s;
+}
+
+/* PRIMARY — filled navy, inner dashed white frame (the basted signature) */
+.sb-btn.sb-primary{
+  background:var(--sb-navy); color:#fff; border:1px solid var(--sb-navy);
+}
+.sb-btn.sb-primary::after{
+  content:""; position:absolute; inset:4px;
+  border:1.5px dashed rgba(255,255,255,.85); border-radius:2px;
+  opacity:.9; pointer-events:none; transition:inset .18s;
+}
+.sb-btn.sb-primary:hover{ background:var(--sb-hover); }
+.sb-btn.sb-primary:hover::after{ inset:5px; }
+
+/* SECONDARY — transparent, outer dashed navy border; fills navy on hover */
+.sb-btn.sb-secondary{
+  background:transparent; color:var(--sb-navy);
+  border:1.5px dashed var(--sb-navy);
+}
+.sb-btn.sb-secondary:hover{
+  background:var(--sb-navy); color:#fff; border-color:var(--sb-navy);
+}
