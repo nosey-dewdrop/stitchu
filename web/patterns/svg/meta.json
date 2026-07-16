@@ -1,0 +1,238 @@
+[
+  {
+    "slug": "boat-neck-linen-shell",
+    "style": "Boat neck linen shell top",
+    "pieces": 4,
+    "pieceNames": [
+      "Top Front",
+      "Top Back",
+      "Front Neck Facing",
+      "Back Neck Facing"
+    ],
+    "fabric": 1.6,
+    "garment": "top",
+    "patch": null,
+    "drawnBy": "in-vocab from day one",
+    "photos": 4
+  },
+  {
+    "slug": "scoop-neck-tank-mini-dress",
+    "style": "Scoop neck tank mini dress",
+    "pieces": 6,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabric": 1.5,
+    "garment": "dress",
+    "patch": null,
+    "drawnBy": "in-vocab from day one",
+    "photos": 1
+  },
+  {
+    "slug": "boat-neck-button-down-top",
+    "style": "Boat neck button-down top",
+    "pieces": 6,
+    "pieceNames": [
+      "Top Center Front",
+      "Top Side Front",
+      "Top Center Back",
+      "Top Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing"
+    ],
+    "fabric": 1.7,
+    "garment": "top",
+    "patch": "1.3",
+    "drawnBy": "the front button placket",
+    "photos": 4
+  },
+  {
+    "slug": "gingham-button-blouse",
+    "style": "Sleeveless gingham button blouse",
+    "pieces": 4,
+    "pieceNames": [
+      "Top Front",
+      "Top Back",
+      "Front Neck Facing",
+      "Back Neck Facing"
+    ],
+    "fabric": 1.7,
+    "garment": "top",
+    "patch": "1.3",
+    "drawnBy": "the front button placket",
+    "photos": 1
+  },
+  {
+    "slug": "mandarin-collar-fitted-blouse",
+    "style": "Mandarin-collar fitted blouse",
+    "pieces": 8,
+    "pieceNames": [
+      "Top Center Front",
+      "Top Side Front",
+      "Top Center Back",
+      "Top Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Sleeve",
+      "Stand Collar (dik yaka)"
+    ],
+    "fabric": 2.3,
+    "garment": "top",
+    "patch": "1.7",
+    "drawnBy": "the collar family and the button placket",
+    "photos": 1
+  },
+  {
+    "slug": "back-tie-shift-mini-dress",
+    "style": "Back-tie shift mini dress",
+    "pieces": 7,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Front",
+      "Skirt Back",
+      "Waist Tie (bel bağı)"
+    ],
+    "fabric": 1.7,
+    "garment": "dress",
+    "patch": "1.4",
+    "drawnBy": "the fabric back-waist tie",
+    "photos": 2
+  },
+  {
+    "slug": "square-neck-back-tie-babydoll-top",
+    "style": "Square-neck back-tie babydoll top",
+    "pieces": 7,
+    "pieceNames": [
+      "Top Center Front",
+      "Top Side Front",
+      "Top Center Back",
+      "Top Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Back Tie (sırt bağı)"
+    ],
+    "fabric": 1.8,
+    "garment": "top",
+    "patch": "1.4",
+    "drawnBy": "the fabric back tie",
+    "photos": 1
+  },
+  {
+    "slug": "empire-waist-tie-back-dress",
+    "style": "Empire-waist tie-back dress",
+    "pieces": 9,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Front",
+      "Skirt Back",
+      "Waist Tie (bel bağı)",
+      "Shirred Bust Panel (büzgü büst panosu)"
+    ],
+    "fabric": 2.3,
+    "garment": "dress",
+    "patch": "1.9",
+    "drawnBy": "the gathered bust panel and the back-waist bow",
+    "photos": 3
+  },
+  {
+    "slug": "square-neck-drawstring-babydoll-dress",
+    "style": "Square-neck drawstring babydoll dress",
+    "pieces": 8,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Front",
+      "Skirt Back",
+      "Drawstring Bust Panel (büzgü büst panosu)",
+      "Drawstring Cord (büzgü bağı)"
+    ],
+    "fabric": 1.9,
+    "garment": "dress",
+    "patch": "1.8",
+    "drawnBy": "the front bust drawstring gather",
+    "photos": 1
+  },
+  {
+    "slug": "open-back-princess-mini-dress",
+    "style": "Open-back princess mini dress",
+    "pieces": 11,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Open Back Facing (round)"
+    ],
+    "fabric": 2.1,
+    "garment": "dress",
+    "patch": "2.0",
+    "drawnBy": "the shaped open-back cutout",
+    "photos": 1
+  },
+  {
+    "slug": "open-back-tie-back-mini-dress",
+    "style": "Open-back tie-back mini dress",
+    "pieces": 12,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Waist Tie (bel bağı)",
+      "Open Back Facing (round)"
+    ],
+    "fabric": 2.3,
+    "garment": "dress",
+    "patch": "2.0",
+    "drawnBy": "the open-back cutout with a tie-back closure",
+    "photos": 3
+  },
+  {
+    "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
+    "style": "Peter-pan collar puff-sleeve babydoll dress",
+    "pieces": 10,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Skirt Front",
+      "Skirt Back",
+      "Puff Sleeve",
+      "Peter Pan Collar (bebe yaka)",
+      "Smocked Yoke Panel (büzgü yaka panosu)"
+    ],
+    "fabric": 2.6,
+    "garment": "dress",
+    "patch": "1.8",
+    "drawnBy": "the peter-pan collar, the puff sleeve head and the smocked yoke",
+    "photos": 2
+  }
+]

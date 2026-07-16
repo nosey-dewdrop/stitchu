@@ -1,0 +1,422 @@
+// gen-pattern-pages.mjs — builds the pattern library blog: one SEO page per FULL
+// benchmark pattern (web/patterns/<slug>.html) + the index (web/patterns/index.html).
+// Shell = the canonical baby-blue site universe (header/footer/theme, EN/TR toggle).
+// Content is the engine's OWN drafted output; source photos are never named or shown.
+// Writing rules (Damla): no em dash; sentence-headings get a full stop; question
+// headings a question mark; "i" not "we".
+//   run:  node engine/tools/render-patterns.mjs && node engine/tools/gen-pattern-pages.mjs
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const WEB = join(here, '../../web');
+const OUT = join(WEB, 'patterns');
+mkdirSync(OUT, { recursive: true });
+const BASE = 'https://nosey-dewdrop.github.io/stitchu';
+const V = process.env.V || '62';
+
+const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
+
+// Per-pattern editorial copy. Each entry keys off the slug from meta.json.
+// lead / facts / fabric are the honest description of the ENGINE output; drawnBy
+// links back to the patch that made it possible. TR mirrors EN.
+const COPY = {
+  'boat-neck-linen-shell': {
+    en: { lead: 'A clean sleeveless shell with a wide boat neckline that sits high on the shoulder. There is no closure to draft: it drops over the head, so the whole pattern is four pieces.',
+      fabric: 'Light to mid-weight woven linen or cotton, roughly 1.6 m at 140 cm.',
+      facts: ['The boat neckline is cut wide and shallow, so the shoulder seam stays short and the neck opening clears the head without a zip.',
+        'Bust and waist darts shape a soft, close fit through the body; the side seams follow the same shaping so the shell skims rather than boxes.',
+        'A front and back neck facing finish the neckline cleanly, cut from the same drafted neck curve so they cannot drift from the edge they finish.'] },
+    tr: { lead: 'Omuzda yüksek oturan geniş kayık yakalı, sade kolsuz bir bluz. Çizilecek kapama yok: baştan geçer, bu yüzden tüm kalıp dört parça.',
+      fabric: 'Hafif ya da orta gramajlı dokuma keten veya pamuk, 140 cm ende yaklaşık 1.6 m.',
+      facts: ['Kayık yaka geniş ve sığ kesilir, böylece omuz dikişi kısa kalır ve yaka açıklığı fermuar olmadan baştan geçer.',
+        'Büst ve bel pensleri gövdeyi yumuşak, vücuda yakın biçimlendirir; yan dikişler aynı biçimi izler, bluz sarkmadan siner.',
+        'Ön ve arka yaka pervazı yakayı temizce bitirir; bitirdikleri yaka eğrisinin aynısından kesilir, o kenardan kaymaları imkânsızdır.'] },
+  },
+  'scoop-neck-tank-mini-dress': {
+    en: { lead: 'A soft scoop-neck tank dress cut in knit jersey. The stretch does the fitting, so it is a pull-on with a straight mini skirt and no closure.',
+      fabric: 'Medium-weight knit jersey with recovery, roughly 1.5 m at 140 cm.',
+      facts: ['Because the fabric is knit, the block is drafted with negative ease: the pattern sits smaller than the body and the jersey stretches to fit.',
+        'The scoop neckline is dropped and rounded at the front and lifted at the back, finished with facings cut to the same curve.',
+        'The straight mini skirt joins the bodice at the natural waist and falls without flare for a close column line.'] },
+    tr: { lead: 'Örme jarseden kesilmiş yumuşak oval yakalı bir atlet elbise. Esneklik biçimlendirmeyi yapar, bu yüzden kapamasız, düz mini etekli, baştan geçen bir model.',
+      fabric: 'Toparlayan orta gramajlı örme jarse, 140 cm ende yaklaşık 1.5 m.',
+      facts: ['Kumaş örme olduğu için blok negatif bollukla çizilir: kalıp vücuttan küçük durur, jarse esneyerek oturur.',
+        'Oval yaka önde düşük ve yuvarlak, arkada yükseltilmiş kesilir; aynı eğriden kesilen pervazlarla bitirilir.',
+        'Düz mini etek doğal belde gövdeye eklenir ve yakın bir kolon çizgisi için kloşsuz düşer.'] },
+  },
+  'boat-neck-button-down-top': {
+    en: { lead: 'A boat-neck top that buttons all the way down the front. The button placket is drafted, not implied: a grown-on stand carries the buttons and buttonholes on the printed piece.',
+      fabric: 'Crisp mid-weight woven cotton, roughly 1.7 m at 140 cm.',
+      facts: ['The front button placket grows on to the centre-front edge as an 18 mm stand, with a fold line, a fold-back facing line and the buttons and buttonholes marked directly on the piece.',
+        'A button is forced at the bust line so the front cannot gape, following the womenswear right-over-left rule.',
+        'Princess seams over the bust shape the fit vertically, so the top follows the body without darts pulling at the button line.'] },
+    tr: { lead: 'Önden boydan boya düğmeli, kayık yakalı bir üst. Düğme patı ima değil, çizilmiş: parça üzerinde büyüyen bir bant düğmeleri ve ilikleri taşır.',
+      fabric: 'Diri, orta gramajlı dokuma pamuk, 140 cm ende yaklaşık 1.7 m.',
+      facts: ['Ön düğme patı ön orta kenara 18 mm’lik bir bant olarak büyür; katlama çizgisi, geri katlanan pervaz çizgisi ve düğmelerle ilikler doğrudan parçaya işlenir.',
+        'Büst hizasında zorunlu bir düğme konur, böylece ön açılmaz; kadın giyimindeki sağ-üste-sol kuralı izlenir.',
+        'Büst üzerindeki prenses dikişleri biçimi dikey olarak verir; üst, düğme çizgisini geren pensler olmadan vücudu izler.'] },
+  },
+  'gingham-button-blouse': {
+    en: { lead: 'A sleeveless button blouse with a wide boat neckline and a full front placket. A boxy, forgiving fit shaped only by soft darts.',
+      fabric: 'Mid-weight woven cotton or poplin, roughly 1.7 m at 140 cm.',
+      facts: ['The full-length front button placket is drawn as a grown-on stand with the fold line, facing and every button and buttonhole placed on the piece.',
+        'Light bust and waist darts give a soft, boxy fit rather than a fitted one, so the blouse hangs cleanly from the shoulder.',
+        'The boat neckline and armholes are finished with facings cut from the same drafted edges they bind.'] },
+    tr: { lead: 'Geniş kayık yakalı ve boydan boya ön patlı, kolsuz düğmeli bir bluz. Sadece yumuşak penslerle biçimlenen bol, affedici bir kesim.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 1.7 m.',
+      facts: ['Boydan boya ön düğme patı, katlama çizgisi, pervaz ve her düğme ile ilik parçaya yerleştirilerek büyüyen bir bant olarak çizilir.',
+        'Hafif büst ve bel pensleri oturmuş değil yumuşak, bol bir kesim verir; bluz omuzdan temizce düşer.',
+        'Kayık yaka ve kol oyukları, bağladıkları aynı çizilmiş kenarlardan kesilen pervazlarla bitirilir.'] },
+  },
+  'mandarin-collar-fitted-blouse': {
+    en: { lead: 'A fitted button blouse with short set-in sleeves and a low mandarin stand collar. Every added piece, collar and placket, is drafted from the same neck and centre-front the bodice already drew.',
+      fabric: 'Crisp mid-weight woven cotton, roughly 2.3 m at 140 cm.',
+      facts: ['The stand collar is a separate piece whose neck edge is measured straight off the drafted neckline, so it cannot come out longer or shorter than the opening it sits on.',
+        'The front button placket grows on to the centre front with its fold line, facing and marked buttons and buttonholes.',
+        'Princess seams and a short set-in sleeve give a tailored, close fit through the bust and upper arm.'] },
+    tr: { lead: 'Kısa oturtma kollu ve alçak dik yakalı, oturmuş düğmeli bir bluz. Eklenen her parça, yaka ve pat, gövdenin çizdiği aynı yaka ve ön ortadan çizilir.',
+      fabric: 'Diri, orta gramajlı dokuma pamuk, 140 cm ende yaklaşık 2.3 m.',
+      facts: ['Dik yaka ayrı bir parçadır; yaka kenarı doğrudan çizilmiş yakadan ölçülür, oturduğu açıklıktan uzun ya da kısa çıkamaz.',
+        'Ön düğme patı, katlama çizgisi, pervazı ve işaretli düğmeleriyle ön ortaya büyür.',
+        'Prenses dikişleri ve kısa oturtma kol, büst ve üst kolda oturmuş, yakın bir kesim verir.'] },
+  },
+  'back-tie-shift-mini-dress': {
+    en: { lead: 'A sleeveless shift mini dress with a boat neckline and a fabric tie at the back waist. The tie is a real cut piece, not a drawn-on suggestion.',
+      fabric: 'Mid-weight woven linen, roughly 1.7 m at 140 cm.',
+      facts: ['The back-waist tie is drafted as its own self-fabric rectangle, cut twice and folded into a self-lined tube, with a placement notch marked on the back where it attaches.',
+        'The shift silhouette skims from a boat neckline to a straight mini hem, shaped lightly with darts rather than seams.',
+        'A centre-back closure and neck facings finish the dress; the tie sits at the natural waist to draw the shift in.'] },
+    tr: { lead: 'Kayık yakalı, arka belinde kumaş bağı olan kolsuz salaş mini elbise. Bağ çizilmiş bir öneri değil, gerçek bir kesim parçası.',
+      fabric: 'Orta gramajlı dokuma keten, 140 cm ende yaklaşık 1.7 m.',
+      facts: ['Arka bel bağı kendi kumaşından bir dikdörtgen olarak çizilir, iki kez kesilir ve kendinden astarlı bir tüpe katlanır; arkada bağlandığı yere yerleşim çentiği işlenir.',
+        'Salaş siluet kayık yakadan düz mini eteğe siner; dikişlerle değil, hafif penslerle biçimlenir.',
+        'Arka orta kapama ve yaka pervazları elbiseyi bitirir; bağ, salaşı toplamak için doğal belde durur.'] },
+  },
+  'square-neck-back-tie-babydoll-top': {
+    en: { lead: 'A square-neck babydoll top with an empire seam and a fabric tie that closes at the back. A flared, romantic line drawn with princess seams.',
+      fabric: 'Mid-weight woven cotton or poplin, roughly 1.8 m at 140 cm.',
+      facts: ['The back tie is a separate self-fabric strip, cut twice and self-lined, placed at the back with a marked attachment point.',
+        'The square neckline is drafted with crisp corners and finished by facings cut to the same shape.',
+        'Princess seams and an empire waist raise the fit line under the bust and let the lower body flare softly.'] },
+    tr: { lead: 'Empire dikişli ve arkadan bağlanan kumaş bağlı, kare yakalı bir babydoll üst. Prenses dikişleriyle çizilmiş kloş, romantik bir çizgi.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 1.8 m.',
+      facts: ['Arka bağ ayrı bir kendinden kumaş şeridir; iki kez kesilir, kendinden astarlanır, arkaya işaretli bir bağlanma noktasıyla yerleştirilir.',
+        'Kare yaka net köşelerle çizilir ve aynı biçimden kesilen pervazlarla bitirilir.',
+        'Prenses dikişleri ve empire bel, oturma çizgisini büstün altına taşır ve alt gövdenin yumuşakça kloşlanmasına izin verir.'] },
+  },
+  'empire-waist-tie-back-dress': {
+    en: { lead: 'An empire-waist dress with a gathered bust panel and a fabric bow at the back waist. The gather and the bow are both drafted pieces, not just markings.',
+      fabric: 'Mid-weight woven cotton or poplin, roughly 2.3 m at 140 cm.',
+      facts: ['The bust panel is cut wider than the finished bust edge and gathered down to it; the cut width is measured from the drafted edge, so the gather ratio cannot drift.',
+        'The back-waist bow is a separate self-lined tie piece with its own placement notch on the back.',
+        'A high empire seam sits the gather under the bust; below it the gathered skirt falls full from the raised waist.'] },
+    tr: { lead: 'Büzgülü büst panosu ve arka belinde kumaş fiyongu olan empire belli bir elbise. Büzgü de fiyonk da sadece işaret değil, çizilmiş parçalar.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 2.3 m.',
+      facts: ['Büst panosu bitmiş büst kenarından geniş kesilir ve ona kadar büzülür; kesim genişliği çizilmiş kenardan ölçülür, büzgü oranı kayamaz.',
+        'Arka bel fiyongu, arkada kendi yerleşim çentiği olan ayrı bir kendinden astarlı bağ parçasıdır.',
+        'Yüksek empire dikişi büzgüyü büstün altına oturtur; altında büzgülü etek yükseltilmiş belden dolgun düşer.'] },
+  },
+  'square-neck-drawstring-babydoll-dress': {
+    en: { lead: 'A square-neck babydoll dress gathered at the bust by a drawstring. The panel is cut wide and drawn in by a cord that runs through its own casing.',
+      fabric: 'Mid-weight woven cotton or seersucker, roughly 1.9 m at 140 cm.',
+      facts: ['The bust panel carries a drawstring casing drawn as two parallel channel lines with cord exit holes; a separate cord piece is drafted alongside.',
+        'The cut width of the panel is the finished bust edge times the drawstring ratio, measured from the drafted edge so the gather stays true.',
+        'The empire seam sets the drawstring under the bust and the gathered mini skirt falls full below it.'] },
+    tr: { lead: 'Büstten bir büzgü bağıyla toplanan, kare yakalı bir babydoll elbise. Pano geniş kesilir ve kendi kanalından geçen bir kordonla içeri çekilir.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da seersucker, 140 cm ende yaklaşık 1.9 m.',
+      facts: ['Büst panosu, iki paralel kanal çizgisi ve kordon çıkış delikleriyle çizilen bir büzgü kanalı taşır; yanında ayrı bir kordon parçası çizilir.',
+        'Panonun kesim genişliği, bitmiş büst kenarı çarpı büzgü oranıdır; çizilmiş kenardan ölçülür, böylece büzgü doğru kalır.',
+        'Empire dikişi büzgüyü büstün altına oturtur ve büzgülü mini etek altında dolgun düşer.'] },
+  },
+  'open-back-princess-mini-dress': {
+    en: { lead: 'A princess-seam mini dress with a shaped open back. The cutout is drawn into the back piece and finished by a facing cut to the exact same line.',
+      fabric: 'Mid-weight woven, roughly 2.1 m at 140 cm.',
+      facts: ['The open-back cutout starts 40 mm below the nape so the shoulder still carries fabric, and clears the waist by 55 mm; its depth and width follow a round shape.',
+        'The cutout is drawn half against the centre-back fold, so it opens to a fully symmetric shape when the piece is cut on the fold.',
+        'A back facing carries the cutout line as a marking, byte-identical to the edge it finishes, so the finished opening cannot drift from what was drawn.'] },
+    tr: { lead: 'Şekilli açık sırtı olan, prenses dikişli bir mini elbise. Oyuk arka parçaya çizilir ve tam aynı çizgiden kesilen bir pervazla bitirilir.',
+      fabric: 'Orta gramajlı dokuma, 140 cm ende yaklaşık 2.1 m.',
+      facts: ['Açık sırt oyuğu enseden 40 mm aşağıda başlar, böylece omuz hâlâ kumaş taşır; beli 55 mm boşlukla geçer; derinliği ve genişliği yuvarlak bir biçimi izler.',
+        'Oyuk arka orta katlamaya karşı yarım çizilir, böylece parça katlamada kesildiğinde tamamen simetrik bir biçime açılır.',
+        'Arka pervaz oyuk çizgisini bir işaret olarak taşır; bitirdiği kenarla bayt-birebir aynıdır, bitmiş oyuk çizilenden kayamaz.'] },
+  },
+  'open-back-tie-back-mini-dress': {
+    en: { lead: 'A princess-seam mini dress with a round open back and a fabric tie at the back. The cutout and the tie are drafted together, on the same back piece.',
+      fabric: 'Mid-weight woven linen, roughly 2.3 m at 140 cm.',
+      facts: ['The round open-back cutout is drawn half against the centre-back fold and clears the nape by 40 mm and the waist by 55 mm.',
+        'A separate self-fabric tie closes the upper back, drafted as its own cut-twice piece with a placement notch, and it coexists on the same draft as the cutout.',
+        'A back facing carries the cutout line as a marking so the finished opening matches the drawn line exactly.'] },
+    tr: { lead: 'Yuvarlak açık sırtı ve arkasında kumaş bağı olan, prenses dikişli bir mini elbise. Oyuk ve bağ birlikte, aynı arka parçada çizilir.',
+      fabric: 'Orta gramajlı dokuma keten, 140 cm ende yaklaşık 2.3 m.',
+      facts: ['Yuvarlak açık sırt oyuğu arka orta katlamaya karşı yarım çizilir; enseyi 40 mm, beli 55 mm boşlukla geçer.',
+        'Ayrı bir kendinden kumaş bağ üst sırtı kapatır; kendi iki-kez-kes parçası olarak yerleşim çentiğiyle çizilir ve oyukla aynı kalıpta bir arada durur.',
+        'Arka pervaz oyuk çizgisini bir işaret olarak taşır, böylece bitmiş oyuk çizilen çizgiyle tam eşleşir.'] },
+  },
+  'peter-pan-collar-puff-sleeve-babydoll-dress': {
+    en: { lead: 'A babydoll dress that pulls three added pieces together at once: a round peter-pan collar, a puff sleeve head and a smocked yoke. This is the pattern that proves several construction pieces can be drafted on one garment without any of them drifting.',
+      fabric: 'Mid-weight woven cotton or poplin, roughly 2.6 m at 140 cm.',
+      facts: ['The peter-pan collar is a separate flat piece with a round outer edge; its neck edge is measured straight off the drafted neckline so it fits the opening exactly.',
+        'The puff sleeve raises and widens the cap and gathers the crown, drawn from the plain sleeve rather than guessed at.',
+        'The smocked yoke panel is cut wider than the finished neck yoke and gathered down to it, the cut width taken from the drafted edge.'] },
+    tr: { lead: 'Üç eklenen parçayı aynı anda bir araya getiren bir babydoll elbise: yuvarlak bebe yaka, puf kol başı ve büzgülü roba. Bu, birkaç yapım parçasının hiçbiri kaymadan tek bir giyside çizilebildiğini kanıtlayan kalıp.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 2.6 m.',
+      facts: ['Bebe yaka, yuvarlak dış kenarı olan ayrı bir yatık parçadır; yaka kenarı doğrudan çizilmiş yakadan ölçülür, açıklığa tam oturur.',
+        'Puf kol, kol başını yükseltip genişletir ve tacı büzer; tahminle değil, düz koldan çizilir.',
+        'Büzgülü roba panosu bitmiş yaka robasından geniş kesilir ve ona kadar büzülür; kesim genişliği çizilmiş kenardan alınır.'] },
+  },
+};
+
+// TR phrasing of "drawnBy" for the honest-note sentence, keyed by slug.
+const DRAWN_BY_TR = {
+  'boat-neck-button-down-top': 'ön düğme patını',
+  'gingham-button-blouse': 'ön düğme patını',
+  'mandarin-collar-fitted-blouse': 'yaka ailesini ve düğme patını',
+  'back-tie-shift-mini-dress': 'kumaş arka bel bağını',
+  'square-neck-back-tie-babydoll-top': 'kumaş arka bağı',
+  'empire-waist-tie-back-dress': 'büzgülü büst panosunu ve arka bel fiyongunu',
+  'square-neck-drawstring-babydoll-dress': 'ön büst büzgü bağını',
+  'open-back-princess-mini-dress': 'şekilli açık sırt oyuğunu',
+  'open-back-tie-back-mini-dress': 'açık sırt oyuğunu ve arka bağ kapamasını',
+  'peter-pan-collar-puff-sleeve-babydoll-dress': 'bebe yakayı, puf kol başını ve büzgülü robayı',
+};
+
+// Human piece names for the piece list (strip the parenthetical TR the engine adds).
+const cleanPiece = (n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim();
+
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const bilingual = (en, tr, tag = 'span') => `<${tag} data-en="${esc(en)}" data-tr="${esc(tr)}">${esc(en)}</${tag}>`;
+
+function header(active) {
+  const link = (href, en, tr) => `<a href="${href}"${active === href ? ' style="border-bottom:1px dashed var(--bb-deep)"' : ''} data-en="${en}" data-tr="${tr}">${en}</a>`;
+  return `<header>
+  <a class="mark" href="../index.html">stitchu</a>
+  <nav>
+    ${link('../create.html', 'create', 'çiz')}
+    ${link('index.html', 'patterns', 'kalıplar')}
+    ${link('../benchmark.html', 'benchmark', 'kıyaslama')}
+    ${link('../patches.html', 'patch notes', 'yama notları')}
+    ${link('../api.html', 'API', 'API')}
+    <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>`;
+}
+
+const FOOTER = `<footer>
+  <span>stitchu · a pattern-making engine</span>
+  <span><a href="../index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> · <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
+</footer>`;
+
+const LANG_SCRIPT = `<script>
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-en]').forEach((el) => {
+    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
+    if (lang === 'tr') { const t = el.getAttribute('data-tr'); if (t != null) el.textContent = t; }
+    else { el.innerHTML = el.dataset.enHtml; }
+  });
+  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
+  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
+  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
+}
+(function(){
+  let lang = 'en';
+  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch(_) {}
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
+  setLang(lang);
+})();
+</script>`;
+
+const STYLE = `<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;flex-wrap:wrap;gap:10px}
+  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;color:var(--navy);text-decoration:none}
+  header nav{display:flex;gap:16px;align-items:center;font-size:13px;letter-spacing:.5px}
+  header nav a{text-decoration:none;color:var(--navy);opacity:.82}
+  header nav a:hover{opacity:1;border-bottom:1px dashed var(--bb-deep)}
+  .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px}
+  .langtoggle button{background:none;border:none;color:var(--navy);opacity:.55;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
+  .langtoggle button.active{opacity:1;border-bottom:1.5px solid var(--navy)}
+  .wrap{max-width:840px;margin:0 auto;padding:14px 32px 100px}
+  .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:16px}
+  .crumbs a{text-decoration:none}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:38px;line-height:1.14;font-weight:400;margin:8px 0 12px;color:var(--navy);max-width:26ch}
+  .lead{font-size:15.5px;color:var(--ink);max-width:64ch;margin-bottom:26px}
+  .drawing{border:1px solid var(--bb-line);border-radius:4px;background:#fff;box-shadow:0 8px 26px rgba(63,116,168,.10);padding:18px;margin:6px 0 10px}
+  .drawing img{display:block;width:100%;height:auto}
+  .cap{font-size:12px;color:#5b7089;margin-top:10px;letter-spacing:.3px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:23px;font-weight:400;margin:38px 0 12px;color:var(--navy)}
+  .fact{font-size:14px;color:var(--ink);max-width:66ch;margin-bottom:12px;position:relative;padding-left:18px}
+  .fact::before{content:"";position:absolute;left:2px;top:10px;width:8px;height:2px;background:var(--bb-deep)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
+  th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--bb-line)}
+  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5b7089;background:var(--bb-pale)}
+  td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .honest{font-size:13.5px;color:#5b7089;font-style:italic;border-left:2px solid var(--bb-line);padding-left:14px;margin:6px 0 4px;max-width:66ch}
+  .honest a{font-style:normal}
+  .cta{display:inline-block;margin-top:30px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:var(--bb-deep);padding:14px 30px;text-decoration:none;border-radius:3px}
+  .cta:hover{background:var(--navy)}
+  .cta2{display:inline-block;margin:30px 0 0 16px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
+  .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
+  .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
+  .card .thumb{background:#fff;border-bottom:1px solid var(--bb-line);padding:14px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+  .card .thumb img{max-width:100%;max-height:100%}
+  .card .body{padding:14px 16px}
+  .card .nm{font-family:'Didot',Georgia,serif;font-size:17px;margin-bottom:5px;line-height:1.2}
+  .card .ds{font-size:12px;color:#5b7089;line-height:1.45}
+  .counter{font-size:14px;color:var(--ink);max-width:60ch;margin:2px 0 4px}
+  .counter b{color:var(--navy)}
+  footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+  body::before{content:"";display:block;height:12px;background:repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),#fff;}
+</style>`;
+
+function head(title, desc, canonical, ldjson) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${canonical}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:url" content="${canonical}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(desc)}">
+<script type="application/ld+json">${JSON.stringify(ldjson)}</script>
+<link rel="stylesheet" href="../css/theme-transitions.css?v=${V}">
+${STYLE}
+</head>
+<body>`;
+}
+
+// ---- per-pattern pages ----
+const totalPhotos = meta.reduce((a, m) => a + (m.photos || 1), 0);
+for (const m of meta) {
+  const c = COPY[m.slug];
+  if (!c) { console.log('NO COPY for', m.slug); continue; }
+  const canonical = `${BASE}/patterns/${m.slug}.html`;
+  const title = `${m.style} sewing pattern · stitchu`;
+  const desc = c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead;
+  const svgUrl = `svg/${m.slug}.svg`;
+  const pieces = m.pieceNames.map(cleanPiece);
+
+  const ldjson = {
+    '@context': 'https://schema.org', '@type': 'Article',
+    headline: title, description: desc,
+    image: `${BASE}/patterns/${svgUrl}`,
+    author: { '@type': 'Organization', name: 'stitchu' },
+    publisher: { '@type': 'Organization', name: 'stitchu' },
+    datePublished: '2026-07-17', mainEntityOfPage: canonical,
+    articleSection: 'Pattern library', inLanguage: 'en',
+    about: { '@type': 'Thing', name: m.style },
+    isBasedOn: `${BASE}/benchmark.html`,
+  };
+
+  const facts = c.en.facts.map((f, i) => `<p class="fact" data-en="${esc(f)}" data-tr="${esc(c.tr.facts[i])}">${esc(f)}</p>`).join('\n  ');
+  const pieceRows = pieces.map((p) => `<li>${esc(p)}</li>`).join('');
+  const patchNote = m.patch
+    ? { en: `This pattern became possible in patch ${m.patch}, when the engine learned to draft ${m.drawnBy}. Before that, ${m.style.toLowerCase()} came out missing that piece.`,
+        tr: `Bu kalıp, motor ${DRAWN_BY_TR[m.slug] || m.drawnBy} çizmeyi öğrendiğinde, ${m.patch} yamasında mümkün oldu. Ondan önce bu model o parça eksik çıkıyordu.` }
+    : { en: `This pattern was drawable from day one: every piece is in the engine's core vocabulary, so it drafts complete with no missing construction.`,
+        tr: `Bu kalıp ilk günden çizilebiliyordu: her parça motorun temel dağarcığında, bu yüzden hiçbir yapım eksiği olmadan tam çizilir.` };
+
+  const html = head(title, desc, canonical, ldjson) + `
+${header('index.html')}
+<div class="wrap">
+  <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> / ${esc(m.style)}</p>
+  <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
+  <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
+
+  <div class="drawing">
+    <img src="${svgUrl}" alt="${esc(m.style)} pattern pieces drafted by the stitchu engine" loading="lazy">
+    <p class="cap" data-en="The engine's own drafted pieces for this style, laid out for cutting. Drawn to an EU38 demo body." data-tr="Bu model için motorun kendi çizdiği parçalar, kesim için yerleştirilmiş. EU38 örnek beden üzerine çizildi.">The engine's own drafted pieces for this style, laid out for cutting. Drawn to an EU38 demo body.</p>
+  </div>
+
+  <h2 data-en="How the engine drafts it." data-tr="Motor bunu nasıl çizer.">How the engine drafts it.</h2>
+  ${facts}
+
+  <h2 data-en="What is in the pattern." data-tr="Kalıpta ne var.">What is in the pattern.</h2>
+  <table>
+    <tr><th data-en="pattern pieces" data-tr="kalıp parçaları">pattern pieces</th><th data-en="fabric estimate" data-tr="kumaş tahmini">fabric estimate</th></tr>
+    <tr><td><ul style="list-style:none;margin:0">${pieceRows}</ul></td><td class="v"><span data-en="${esc(c.en.fabric)}" data-tr="${esc(c.tr.fabric)}">${esc(c.en.fabric)}</span><br><span style="font-weight:400;color:#5b7089;font-size:12px" data-en="${m.pieces} pieces · fabric scales to your measurements" data-tr="${m.pieces} parça · kumaş ölçülerinize göre değişir">${m.pieces} pieces · fabric scales to your measurements</span></td></tr>
+  </table>
+
+  <h2 data-en="The honest note." data-tr="Dürüst not.">The honest note.</h2>
+  <p class="honest" data-en="${esc(patchNote.en)}" data-tr="${esc(patchNote.tr)}">${esc(patchNote.en)}</p>
+  <p class="honest">${m.patch ? `<a href="../patches.html" data-en="See patch ${m.patch} in the patch notes →" data-tr="Yama notlarında ${m.patch} yamasına bak →">See patch ${m.patch} in the patch notes →</a>` : `<a href="../patches.html" data-en="See the full patch history →" data-tr="Tüm yama geçmişine bak →">See the full patch history →</a>`}</p>
+
+  <a class="cta" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
+  <a class="cta2" href="index.html" data-en="Browse the pattern library →" data-tr="Kalıp kütüphanesine göz at →">Browse the pattern library →</a>
+</div>
+${FOOTER}
+${LANG_SCRIPT}
+</body>
+</html>`;
+  writeFileSync(join(OUT, `${m.slug}.html`), html);
+}
+
+// ---- index (pattern library) ----
+{
+  const canonical = `${BASE}/patterns/`;
+  const title = 'Pattern library · stitchu';
+  const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} real product styles, drawn by the engine and published, with the honest patch that made each one possible.`;
+  const cards = meta.map((m) => {
+    const c = COPY[m.slug];
+    const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
+    const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
+    return `<a class="card" href="${m.slug}.html">
+    <div class="thumb"><img src="svg/${m.slug}.svg" alt="${esc(m.style)} pattern" loading="lazy"></div>
+    <div class="body"><div class="nm" data-en="${esc(m.style)}" data-tr="${esc(m.style)}">${esc(m.style)}</div>
+    <div class="ds" data-en="${esc(short)}" data-tr="${esc(shortTr)}">${esc(short)}</div></div>
+  </a>`;
+  }).join('\n  ');
+
+  const ldjson = {
+    '@context': 'https://schema.org', '@type': 'CollectionPage',
+    name: title, description: desc, url: canonical, inLanguage: 'en',
+    mainEntity: {
+      '@type': 'ItemList', numberOfItems: meta.length,
+      itemListElement: meta.map((m, i) => ({
+        '@type': 'ListItem', position: i + 1, name: m.style,
+        url: `${BASE}/patterns/${m.slug}.html`,
+      })),
+    },
+  };
+
+  const html = head(title, desc, canonical, ldjson) + `
+${header('index.html')}
+<div class="wrap">
+  <p class="crumbs"><a href="../index.html">stitchu</a> / <span data-en="patterns" data-tr="kalıplar">patterns</span></p>
+  <h1 data-en="The pattern library." data-tr="Kalıp kütüphanesi.">The pattern library.</h1>
+  <p class="lead" data-en="Every one of these is a real product style the engine read from a photo and drafted into a complete, sewable pattern. The drawings below are the engine's own output, nothing traced or mocked." data-tr="Bunların her biri, motorun bir fotoğraftan okuyup tam, dikilebilir bir kalıba çizdiği gerçek bir ürün modeli. Aşağıdaki çizimler motorun kendi çıktısı, hiçbiri kopyalanmış ya da taklit değil.">Every one of these is a real product style the engine read from a photo and drafted into a complete, sewable pattern. The drawings below are the engine's own output, nothing traced or mocked.</p>
+  <p class="counter" data-en="${totalPhotos} of 54 real product photos turn into a full pattern, and counting." data-tr="54 gerçek ürün fotoğrafının ${totalPhotos}’i tam kalıba dönüşüyor, ve artıyor.">${totalPhotos} of 54 real product photos turn into a full pattern, and counting.</p>
+  <p class="counter"><a href="../patches.html" data-en="Follow the number in the patch notes →" data-tr="Sayıyı yama notlarında takip et →">Follow the number in the patch notes →</a></p>
+
+  <div class="grid">
+  ${cards}
+  </div>
+
+  <a class="cta" href="../create.html" data-en="Draft one to your measurements, free." data-tr="Birini ölçülerine göre çiz, ücretsiz.">Draft one to your measurements, free.</a>
+</div>
+${FOOTER}
+${LANG_SCRIPT}
+</body>
+</html>`;
+  writeFileSync(join(OUT, 'index.html'), html);
+}
+
+console.log(`generated ${meta.length} pattern pages + index -> ${OUT}`);
+console.log(`total photos counter: ${totalPhotos} of 54`);
