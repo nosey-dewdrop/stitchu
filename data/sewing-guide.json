@@ -1,0 +1,109 @@
+{
+  "_source": "knowledge/sewing-guide.md. Deterministic, no runtime LLM cost. Fabric facts from web/data/fabrics.json (NMSU/SDSU/UKY Extension); construction order from Reader's Digest / Aldrich / Armstrong.",
+  "fabricLogic": {
+    "structured": {
+      "en": {
+        "want": "a medium, crisp woven that holds its shape",
+        "why": "the fitted seams and the stand-away shape read as clean lines only if the cloth holds them; a fluid fabric goes limp and the fitted lines collapse.",
+        "ask": "medium weight, crisp, holds a fold (about 150 to 250 g/m2)",
+        "families": "cotton poplin, linen, wool suiting or gabardine",
+        "tradeoff": "crisp cloth creases (linen especially) and needs pressing as you go."
+      },
+      "tr": {
+        "want": "orta gramajlı, formunu tutan sert dokuma bir kumaş",
+        "why": "oturan dikişler ve gövdeden duran form ancak kumaş şekli tutarsa temiz çizgi verir; akışkan kumaş sarkar ve oturan çizgiler dağılır.",
+        "ask": "orta gramaj, sert, katı tutan (yaklaşık 150-250 g/m2)",
+        "families": "pamuklu poplin, keten, yün kumaş",
+        "tradeoff": "sert kumaş buruşur (özellikle keten) ve dikerken ütü ister."
+      }
+    },
+    "fluid": {
+      "en": {
+        "want": "a light, fluid woven that pours",
+        "why": "the fall of the cloth IS the design here; a crisp poplin would stand out in a stiff bell instead of flowing close to the body.",
+        "ask": "light weight, fluid, drapes (about 80 to 140 g/m2)",
+        "families": "viscose or rayon, crepe, cotton lawn",
+        "tradeoff": "fluid cloth shifts while you cut and sew, so cut single layer and use a walking foot."
+      },
+      "tr": {
+        "want": "hafif, akışkan, dökümlü bir dokuma kumaş",
+        "why": "burada kumaşın dökümü tasarımın kendisi; sert bir poplin vücuda yakın akmak yerine katı bir çan gibi durur.",
+        "ask": "hafif gramaj, akışkan, dökümlü (yaklaşık 80-140 g/m2)",
+        "families": "viskon, krep, ince pamuklu (lawn)",
+        "tradeoff": "akışkan kumaş keserken kayar; tek kat kes ve besleme ayağı kullan."
+      }
+    },
+    "gathered": {
+      "en": {
+        "want": "a soft-medium woven with body but movement",
+        "why": "gathers and babydoll fullness need enough body to fill out but enough softness to fall; too crisp and they jut like cardboard, too heavy and they sag at the seam.",
+        "ask": "light to medium, soft with a little body",
+        "families": "cotton lawn, voile, chambray, soft crepe",
+        "tradeoff": "get the weight wrong and the gathers either stick out or drag the seam down."
+      },
+      "tr": {
+        "want": "gövdesi olan ama hareket eden yumuşak-orta bir dokuma",
+        "why": "büzgü ve babydoll bolluğu, dolgun durmaya yetecek gövdeyi ama dökülmeye yetecek yumuşaklığı ister; çok sert olursa mukavva gibi durur, çok ağır olursa dikişten sarkar.",
+        "ask": "hafif-orta, biraz gövdeli yumuşak",
+        "families": "ince pamuklu, vual, şambre, yumuşak krep",
+        "tradeoff": "gramajı kaçırırsan büzgü ya diken diken durur ya da dikişi aşağı çeker."
+      }
+    },
+    "knit": {
+      "en": {
+        "want": "a stable knit for structure, a soft jersey for close drapey shapes",
+        "why": "the pattern is drafted with less ease because the cloth stretches; a stable ponte holds a shape, a soft jersey hugs.",
+        "ask": "ponte or double knit for structure, jersey for a close fit",
+        "families": "ponte, double knit, jersey",
+        "tradeoff": "knits need a ballpoint needle and a stretch or zigzag stitch or the seams pop; the zipper is often optional (pulls on over the head)."
+      },
+      "tr": {
+        "want": "yapı için sabit bir örme, yakın dökümlü formlar için yumuşak süprem",
+        "why": "kumaş esnediği için kalıp daha az bollukla çizilir; sabit ponte formu tutar, yumuşak süprem sarar.",
+        "ask": "yapı için ponte veya çift örme, yakın kalıp için süprem",
+        "families": "ponte, çift örme, süprem",
+        "tradeoff": "örmede yuvarlak uçlu iğne ve esnek/zikzak dikiş şart yoksa dikişler patlar; fermuar çoğu zaman opsiyonel (kafadan geçer)."
+      }
+    },
+    "tailored": {
+      "en": {
+        "want": "a crisp, medium woven that presses sharp",
+        "why": "the collar stand and the placket fold need a fabric that takes a hard press; a soft viscose collar will not stand up.",
+        "ask": "medium weight shirting, crisp, presses flat",
+        "families": "cotton poplin, shirting, linen",
+        "tradeoff": "interfacing matters as much as the cloth: fuse a crisp interfacing to the collar and placket."
+      },
+      "tr": {
+        "want": "keskin ütü alan, sert orta gramajlı bir dokuma",
+        "why": "yaka bandı ve pat katı sert ütü alan bir kumaş ister; yumuşak bir viskon yaka dik durmaz.",
+        "ask": "orta gramaj gömleklik, sert, düz ütülenen",
+        "families": "pamuklu poplin, gömleklik, keten",
+        "tradeoff": "tela kumaş kadar önemli: yakaya ve pata sert tela yapıştır."
+      }
+    }
+  },
+  "phases": {
+    "en": [
+      { "n": 1, "name": "Prep", "note": "Check the calibration square, cut every piece as labelled, muslin first if the fit matters." },
+      { "n": 2, "name": "Stabilise", "note": "Staystitch curved raw edges so they cannot stretch; fuse interfacing while flat." },
+      { "n": 3, "name": "Shape", "note": "Sew darts or princess seams and form gathers first, while each panel is still flat." },
+      { "n": 4, "name": "Flat add-ons", "note": "Work plackets, keyholes and back cutouts before the side seams close the tube." },
+      { "n": 5, "name": "Neck finish", "note": "Sew the shoulders, then the facing, collar or binding while the garment still opens flat." },
+      { "n": 6, "name": "Close the tube", "note": "Side seams, set-in sleeves, straps." },
+      { "n": 7, "name": "Skirt + join", "note": "Sew the skirt, join it to the bodice at the waist matching side seams." },
+      { "n": 8, "name": "Closure", "note": "Insert the zipper before closing the seam below it; sew and catch the ties." },
+      { "n": 9, "name": "Hem last", "note": "Try on, mark, hem; a half-circle hangs 24 h first so the bias drops." }
+    ],
+    "tr": [
+      { "n": 1, "name": "Hazırlık", "note": "Kalibrasyon karesini kontrol et, her parçayı etiketine göre kes, önem varsa önce muslin dik." },
+      { "n": 2, "name": "Sabitle", "note": "Kavisli ham kenarları esnememesi için teyelle; düzken telayı yapıştır." },
+      { "n": 3, "name": "Form ver", "note": "Pens veya prenses dikişleri ve büzgüleri parça hâlâ düzken önce dik." },
+      { "n": 4, "name": "Düz eklentiler", "note": "Pat, anahtar deliği ve sırt oyuğunu yan dikişler kapanmadan önce işle." },
+      { "n": 5, "name": "Yaka bitişi", "note": "Omuzları dik, sonra pervaz/yaka/biye'yi giysi hâlâ düz açılırken işle." },
+      { "n": 6, "name": "Tüpü kapat", "note": "Yan dikişler, kolların takılması, askılar." },
+      { "n": 7, "name": "Etek + birleştir", "note": "Eteği dik, bele belden birleştir, yan dikişleri hizala." },
+      { "n": 8, "name": "Kapama", "note": "Fermuarı alt dikişi kapatmadan önce tak; bağları dik ve çentiğine tuttur." },
+      { "n": 9, "name": "En son etek ucu", "note": "Giy, işaretle, ucunu kıvır; yarım kloş 24 saat asılı kalır ki verev düşsün." }
+    ]
+  }
+}

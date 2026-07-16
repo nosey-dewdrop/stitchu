@@ -101,6 +101,16 @@ export const STRINGS = {
   'result.legend': { en: 'How to read the pieces: OUTER solid line = cutting line (seam allowance included) · inner fine line = sewing line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: DIŞ kalın çizgi = kesim hattı (dikiş payı dahil) · içteki ince çizgi = dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
   'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist), please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi), lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
 
+  // sewing companion (web/js/sewing.js): why this fabric + construction order.
+  'sew.whyfabric': { en: 'Why this fabric', tr: 'Neden bu kumaş' },
+  'sew.want': { en: 'For this shape, look for {want}.', tr: 'Bu form için {want} ara.' },
+  'sew.families': { en: 'families', tr: 'kumaş ailesi' },
+  'sew.ask': { en: 'ask for', tr: 'kumaşçıya söyle' },
+  'sew.tradeoff': { en: 'trade-off', tr: 'ödünleşim' },
+  'sew.order': { en: 'The order it comes together', tr: 'Hangi sırayla birleşir' },
+  'sew.orderintro': { en: 'Build flat for as long as you can: every seam is easier to sew and press while the piece is still open. Close it into a tube (side seams, sleeves) only near the end.', tr: 'Olabildiğince düz kur: her dikiş parça açıkken dikmesi ve ütülemesi daha kolaydır. Tüpe dönüştürmeyi (yan dikişler, kollar) en sona bırak.' },
+  'sew.morelink': { en: 'Read the full sewing companion →', tr: 'Dikiş rehberinin tamamını oku →' },
+
   // closet
   'closet.title': { en: 'Closet', tr: 'Dolap' },
   'closet.sub': { en: '{n} saved · stored in this browser only', tr: '{n} kayıtlı · yalnızca bu tarayıcıda' },
