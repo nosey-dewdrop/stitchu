@@ -100,6 +100,144 @@ export function shelfPack(dims, cols, allowRotate = true) {
   return { placed: sorted, cols, stripW, stripH: shelfY + shelfH };
 }
 
+// Set the rigid placement fields on a dim `d` given its chosen top-left (x,y)
+// in strip coords and rotation. Shared by shelf and skyline packers so a placed
+// piece looks identical to downstream code (countSheets, register, pieceGroup).
+function placeDim(d, x, y) {
+  d.x0 = x;
+  d.y0 = y;
+  if (d.rot === 90) {
+    // 90 deg CW: local (x,y) -> (-y, x). Rotated bbox top-left lands at (x,y).
+    d.tx = x + d.b.maxY;
+    d.ty = y - d.b.minX;
+    d.ox = undefined; d.oy = undefined;
+  } else {
+    d.ox = x - d.b.minX;
+    d.oy = y - d.b.minY;
+    d.tx = undefined; d.ty = undefined;
+  }
+}
+
+// Choose a piece's orientation the SAME way the shelf packer does (rigid 0/90,
+// only genuinely long-and-thin pieces rotate, and only if the rotated footprint
+// still fits one strip). Sets d.w/d.h to the chosen-orientation footprint.
+function orient(d, stripW, allowRotate) {
+  const w = rawW(d), h = rawH(d);
+  let rot = 0;
+  if (allowRotate) {
+    const longThin = Math.max(w, h) / Math.min(w, h) >= 2.2;
+    if (longThin && h > w && h <= stripW) rot = 90;
+    else if (w > stripW && h <= stripW) rot = 90;
+  }
+  d.rot = rot;
+  d.w = rot === 90 ? h : w;
+  d.h = rot === 90 ? w : h;
+}
+
+// Skyline bottom-left packer (guillotine's tighter cousin): keeps a piecewise
+// height profile of the strip and drops each piece into the lowest feasible
+// slot, so a short piece can tuck ABOVE nothing / beside a tall one instead of
+// wasting the whole shelf's height. Same rigid orientation rule as shelfPack;
+// GUTTER kept on right and top of every placed piece. Returns the same layout
+// shape as shelfPack so all downstream render/register code is unchanged.
+export function skylinePack(dims, cols, allowRotate = true, fit = 'bl', sort = 'area', perPieceRot = false) {
+  const stripW = cols * PAGE_W;
+  for (const d of dims) orient(d, stripW, allowRotate);
+  // Placement order matters: big pieces set the terrain, small ones fill gaps.
+  // Different garments pack tightest under different orders, so packPieces races
+  // several and keeps the fewest-sheets result (a new order can only ever help).
+  const key = sort === 'height' ? (d) => d.h
+    : sort === 'width' ? (d) => d.w
+    : sort === 'maxside' ? (d) => Math.max(d.w, d.h)
+    : (d) => d.w * d.h;                    // 'area' (default)
+  const sorted = [...dims].sort((a, b) => key(b) - key(a));
+  // Skyline = array of segments {x, w, y} spanning [0, stripW), y = current top.
+  let sky = [{ x: 0, w: stripW, y: 0 }];
+  const heightAt = (x0, w) => {
+    // The max skyline y over [x0, x0+w): a piece must sit above all of it.
+    let top = 0;
+    for (const seg of sky) {
+      if (seg.x + seg.w <= x0 + 1e-9) continue;
+      if (seg.x >= x0 + w - 1e-9) break;
+      if (seg.y > top) top = seg.y;
+    }
+    return top;
+  };
+  const raise = (x0, w, newY) => {
+    // Flatten the skyline over [x0, x0+w) to newY, splitting boundary segments.
+    const next = [];
+    for (const seg of sky) {
+      const segR = seg.x + seg.w, wR = x0 + w;
+      if (segR <= x0 + 1e-9 || seg.x >= wR - 1e-9) { next.push(seg); continue; }
+      if (seg.x < x0 - 1e-9) next.push({ x: seg.x, w: x0 - seg.x, y: seg.y });
+      if (segR > wR + 1e-9) next.push({ x: wR, w: segR - wR, y: seg.y });
+    }
+    next.push({ x: x0, w, y: newY });
+    next.sort((a, b) => a.x - b.x);
+    // Merge equal-height neighbours to keep the skyline short.
+    sky = next.reduce((acc, s) => {
+      const last = acc[acc.length - 1];
+      if (last && Math.abs(last.y - s.y) < 1e-9 && Math.abs(last.x + last.w - s.x) < 1e-9) last.w += s.w;
+      else acc.push({ ...s });
+      return acc;
+    }, []);
+  };
+  // Wasted space beneath a piece resting at top `y0` across [x0, x0+fw): the
+  // area of skyline valleys it bridges over. A 'minwaste' fit prefers the slot
+  // that buries the fewest empty pockets; 'bl' just wants the lowest-leftmost.
+  const wasteAt = (x0, fw, y0) => {
+    let area = 0;
+    for (const seg of sky) {
+      const l = Math.max(seg.x, x0), r = Math.min(seg.x + seg.w, x0 + fw);
+      if (r - l > 1e-9 && y0 - seg.y > 1e-9) area += (r - l) * (y0 - seg.y);
+    }
+    return area;
+  };
+  for (const d of sorted) {
+    const rw = rawW(d), rh = rawH(d);
+    // Orientation candidates for THIS placement. Default: the single orientation
+    // orient() already chose. perPieceRot (rigid 0/90 only) also tries the swap,
+    // as long as it fits the strip, letting a medium-aspect piece tuck lower.
+    const oris = [{ rot: d.rot, w: d.w, h: d.h }];
+    if (perPieceRot && allowRotate) {
+      const swap = d.rot === 90 ? { rot: 0, w: rw, h: rh } : { rot: 90, w: rh, h: rw };
+      if (swap.w <= stripW + 1e-6 && !(Math.abs(swap.w - d.w) < 1e-9 && Math.abs(swap.h - d.h) < 1e-9)) {
+        oris.push(swap);
+      }
+    }
+    // Candidate x positions = every skyline segment left edge (bottom-left rule).
+    let best = null;
+    for (const o of oris) {
+      const fw = o.w + GUTTER;
+      for (const seg of sky) {
+        const x0 = seg.x;
+        if (x0 + o.w > stripW + 1e-6) continue;    // would overflow the strip
+        const y0 = heightAt(x0, fw);               // sit above the gutter-wide span
+        let better;
+        if (!best) better = true;
+        else if (fit === 'minwaste') {
+          // Least dead space first, then lowest top, then leftmost.
+          const wNew = wasteAt(x0, fw, y0), wOld = wasteAt(best.x0, best.o.w + GUTTER, best.y0);
+          better = wNew < wOld - 1e-6
+            || (Math.abs(wNew - wOld) < 1e-6 && (y0 < best.y0 - 1e-9
+            || (Math.abs(y0 - best.y0) < 1e-9 && x0 < best.x0)));
+        } else {
+          // 'bl': lowest top, then leftmost (classic bottom-left compaction).
+          better = y0 < best.y0 - 1e-9 || (Math.abs(y0 - best.y0) < 1e-9 && x0 < best.x0);
+        }
+        if (better) best = { x0, y0, o };
+      }
+    }
+    if (!best) best = { x0: 0, o: oris[0], y0: heightAt(0, oris[0].w + GUTTER) }; // safety
+    // Commit the chosen orientation to the dim so placeDim/render use it.
+    d.rot = best.o.rot; d.w = best.o.w; d.h = best.o.h;
+    placeDim(d, best.x0, best.y0);
+    raise(best.x0, best.o.w + GUTTER, best.y0 + best.o.h + GUTTER);
+  }
+  const stripH = Math.max(...sorted.map((d) => d.y0 + d.h), 0);
+  return { placed: sorted, cols, stripW, stripH };
+}
+
 export function countSheets(layout) {
   const rows = Math.ceil(layout.stripH / PAGE_H);
   let used = 0;
@@ -134,29 +272,50 @@ export function packPieces(pieces, allowRotate = true) {
   // ever HELP: if a rotated shelf wastes more, the unrotated result wins the tie
   // and nothing regresses. `allowRotate=false` (nested run) forbids it outright.
   const rotModes = allowRotate ? [true, false] : [false];
-  let best = { cols: minCols, rot: false, sheets: Infinity };
+  // Two packers race: shelf (guillotine rows) and skyline (bottom-left fill).
+  // Trying BOTH means a strategy can only ever HELP, never regress: whichever
+  // prints fewer sheets wins, ties keep the simpler shelf result.
+  // Shelf plus a fan of skyline variants (fit heuristic x placement order).
+  // Every variant is a cheap candidate: the min-sheets pick means more variants
+  // can only ever tighten the result, never regress it.
+  const packers = [{ name: 'shelf', fn: shelfPack }];
+  for (const fit of ['bl', 'minwaste']) {
+    for (const sort of ['area', 'height', 'maxside', 'width']) {
+      packers.push({ name: `sky-${fit}-${sort}`, fn: (dm, c, r) => skylinePack(dm, c, r, fit, sort, false) });
+      // A per-piece-rotation twin: each piece may also flip 90 deg (rigid) if it
+      // tucks lower. Only meaningful when rotation is allowed for this run.
+      packers.push({ name: `sky-${fit}-${sort}-pr`, fn: (dm, c, r) => skylinePack(dm, c, r, fit, sort, true) });
+    }
+  }
+  let best = { cols: minCols, rot: false, pack: 'shelf', sheets: Infinity };
   // Search up to 7 strip widths: a taller garment can pack tighter on a wider
   // strip; the min-sheets pick means extra candidates never hurt.
   for (let cols = minCols; cols <= Math.max(7, minCols); cols++) {
     const stripW = cols * PAGE_W;
     for (const rot of rotModes) {
-      const layout = shelfPack(dims, cols, rot);
-      // REJECT any candidate where a piece footprint is wider than the strip:
-      // countSheets would silently under-count the clipped overflow, so such a
-      // layout must never win. A wide gathered yoke panel is the trap here.
-      if (layout.placed.some((d) => d.x0 + d.w > stripW + 1e-6)) continue;
-      const s = countSheets(layout);
-      if (s < best.sheets) best = { cols, rot, sheets: s };
+      for (const packer of packers) {
+        const layout = packer.fn(dims, cols, rot);
+        // REJECT any candidate where a piece footprint is wider than the strip:
+        // countSheets would silently under-count the clipped overflow, so such a
+        // layout must never win. A wide gathered yoke panel is the trap here.
+        if (layout.placed.some((d) => d.x0 + d.w > stripW + 1e-6)) continue;
+        const s = countSheets(layout);
+        // Strict `<`: shelf (listed first) keeps ties, so a skyline layout only
+        // wins when it genuinely saves at least one sheet.
+        if (s < best.sheets) best = { cols, rot, pack: packer.name, sheets: s };
+      }
     }
   }
   // Fallback: if every trial clipped (a piece wider than 7 strips, rotation
   // off), widen to exactly fit the widest unrotated piece so nothing is lost.
   if (best.sheets === Infinity) {
     const widest = Math.max(...dims.map((d) => d.w));
-    best = { cols: Math.ceil((widest + 1) / PAGE_W), rot: false };
+    best = { cols: Math.ceil((widest + 1) / PAGE_W), rot: false, pack: 'shelf' };
   }
-  // re-place at the winning width + rotation: trial runs mutate the shared dims
-  return shelfPack(dims, best.cols, best.rot);
+  // re-place at the winning width + rotation with the winning packer: trial runs
+  // mutate the shared dims, so the last call defines the returned placement.
+  const winner = packers.find((pk) => pk.name === best.pack) || packers[0];
+  return winner.fn(dims, best.cols, best.rot);
 }
 
 export const sheetCode = (row, col) => `${String.fromCharCode(65 + row)}${col + 1}`;
