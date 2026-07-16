@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%238f2038%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
 <title>Empire waist pattern — seam at underbust girth · stitchu</title>
 <meta name="description" content="How stitchu drafts an empire line: seam 60 mm below the armhole, suppression fitted to your underbust, skirt lengthened to make up the height.">
 <link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/styles/empire-waist.html">
@@ -15,14 +15,21 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Empire waist pattern — seam at underbust girth · stitchu">
 <meta name="twitter:description" content="How stitchu drafts an empire line: seam 60 mm below the armhole, suppression fitted to your underbust, skirt lengthened to make up the height.">
+<link rel="stylesheet" href="../css/shared-header.css?v=65">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://nosey-dewdrop.github.io/stitchu/"},{"@type":"ListItem","position":2,"name":"Style library","item":"https://nosey-dewdrop.github.io/stitchu/styles/"},{"@type":"ListItem","position":3,"name":"Empire waistline","item":"https://nosey-dewdrop.github.io/stitchu/styles/empire-waist.html"}]}</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Helvetica,Arial,sans-serif;color:#fff;background:#8f2038;line-height:1.55;overflow-x:hidden}
   a{color:#ffd9e2}
-  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px}
-  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px}
-  header nav a{font-size:13px;letter-spacing:.5px;text-decoration:none;margin-left:18px}
+  .brandpatch{position:relative;display:inline-block;box-sizing:border-box;padding:4px 12px;background:#1f3a5f;border:1px solid #1f3a5f;border-radius:2px;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.5px;line-height:1;color:#fff;text-decoration:none;white-space:nowrap;vertical-align:middle;transition:background .18s}
+  .brandpatch::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:2px;opacity:.9;pointer-events:none;transition:inset .18s}
+  .brandpatch:hover{background:#2b4f7a}
+  .brandpatch:hover::after{inset:5px}
+  /* Shared header comes from ../css/shared-header.css (one source, byte-identical
+     bar). On the vişne ground the ink flips to white; dimensions stay shared. */
+  .sh-nav a,.sh-lang button{color:#fff}
+  .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:#ffd9e2}
+  .sh-lang button.sh-langon,.sh-lang button.active{border-bottom-color:#fff}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;opacity:.75;letter-spacing:.4px;margin-bottom:20px}
   .crumbs a{text-decoration:none}
@@ -58,12 +65,16 @@
 </style>
 </head>
 <body>
-<header>
-  <a class="mark" href="../index.html" style="text-decoration:none;color:#fff">stitchu</a>
-  <nav>
-    <a href="index.html">style library</a>
-    <a href="../create.html">draft a pattern</a>
-    <a href="../benchmark.html">benchmark</a>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="../closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="index.html" class="sh-active" data-en="patterns" data-tr="kalıplar">patterns</a>
+    <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
+    <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
 </header>
 <div class="wrap">
@@ -127,8 +138,9 @@
   <p class="also">More in construction: <a href="princess-seams.html">Princess seams</a></p>
 </div>
 <footer>
-  <span>stitchu — the pattern-making engine</span>
+  <span>stitchu · the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
+<script src="../js/shared-header.js?v=65"></script>
 </body>
 </html>

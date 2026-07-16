@@ -2,7 +2,7 @@
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
 import { analyzePhoto, photoAvailable } from './analyze.js?v=55';
-import { applyStatic, getLang, mountLangToggle, t } from './i18n.js?v=55';
+import { applyStatic, getLang, t } from './i18n.js?v=55';
 import { draft, grade } from './engine.js?v=55';
 import { printPattern, printGrade, printGradeNested } from './print.js?v=55';
 import { renderResult } from './render.js?v=55';
@@ -736,7 +736,8 @@ function gradePanel(result) {
 }
 
 applyStatic();
-mountLangToggle();
+// Language toggle is owned by the canonical header (js/shared-header.js);
+// mounting it here too would double the EN/TR control.
 
 // Entry: EVERYONE lands on the garment picker so they see a real pattern first
 // (drafted to a standard body for newcomers). The 7-measurement ask comes after

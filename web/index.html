@@ -16,7 +16,9 @@
 <meta name="twitter:title" content="stitchu · pattern-making engine">
 <meta name="twitter:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"stitchu","url":"https://nosey-dewdrop.github.io/stitchu/","description":"Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=62">
+<link rel="stylesheet" href="css/theme-transitions.css?v=65">
+<link rel="stylesheet" href="css/shared-button.css?v=65">
+<link rel="stylesheet" href="css/shared-header.css?v=65">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
      structure preserved from the vişne landing; only the color turns. Gingham
@@ -27,14 +29,9 @@
   html,body{min-height:100%}
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);overflow-x:hidden;background:#fff}
   #silk{position:fixed;inset:0;width:100%;height:100vh;display:block;z-index:0}
-  .mark{position:fixed;top:24px;left:40px;z-index:5;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;color:var(--navy)}
-  .topnav{position:fixed;top:24px;right:36px;z-index:6;display:flex;gap:16px;align-items:center;font-size:13px;letter-spacing:.5px}
-  .topnav a{color:var(--navy);text-decoration:none;opacity:.82}
-  .topnav a:hover{opacity:1;border-bottom:1px dashed var(--bb-deep)}
-  .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px}
-  .langtoggle button{background:none;border:none;color:var(--navy);opacity:.55;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
-  .langtoggle button.active{opacity:1;border-bottom:1.5px solid var(--navy)}
-  .langtoggle span{opacity:.4}
+  /* Canonical header floats over the hero canvas on the landing only; the bar's
+     own height/padding/font come from shared-header.css (one source, no drift). */
+  .sh-header{position:fixed;top:0;left:0;z-index:6}
 
   .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:44px 48px 56px}
   .col{max-width:76ch;text-align:center}
@@ -46,11 +43,9 @@
   .item{font-size:13px;line-height:1.5;margin-bottom:13px;color:#2b4a6b}
   .item .lbl{display:block;color:var(--bb-deep);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
   .item b{font-weight:700}
-  .cta{display:inline-block;margin-top:22px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:var(--navy);padding:14px 30px;text-decoration:none;position:relative;border-radius:2px}
-  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);opacity:.9;pointer-events:none;border-radius:2px}
-  .cta:hover::after{inset:5px}
-  .cta2{display:inline-block;margin:22px 0 0 14px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
-  .cta2:hover{border-bottom-color:var(--navy)}
+  /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
+  .cta{margin-top:22px}
+  .cta2{margin:22px 0 0 14px}
   .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px auto 4px;max-width:64ch}
   .chip{font-size:11px;letter-spacing:.4px;padding:6px 13px;border:1px solid var(--bb-line);border-radius:999px;background:#fff;color:var(--navy);white-space:nowrap;text-decoration:none}
   a.chip:hover{background:var(--bb-pale);border-color:var(--bb-deep)}
@@ -121,10 +116,9 @@
   .card .stat{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bb-deep);font-weight:700;margin-top:14px}
   .versus{max-width:60ch;margin:34px auto 0;font-size:13px;line-height:1.6;color:#2b4a6b}
   .versus b{color:var(--navy)}
-  .whycta{display:inline-block;margin-top:30px;padding:13px 30px;border:1.5px solid var(--navy);border-radius:2px;
-    color:var(--navy);text-decoration:none;font-size:14px;letter-spacing:.5px;transition:all .18s}
-  .whycta.solid{background:var(--navy);color:#fff}
-  .whycta:hover{background:var(--navy);color:#fff}
+  /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
+  .whycta{margin-top:30px}
+  .whycta.sb-secondary{margin-left:14px}
 
   footer{position:relative;z-index:1;padding:24px 48px 34px;border-top:1px solid var(--bb-line);background:#fff;
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
@@ -133,15 +127,18 @@
 </head>
 <body>
 <canvas id="silk"></canvas>
-<div class="mark">stitchu</div>
-<nav class="topnav">
-  <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
-  <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-  <a href="api.html" data-en="API" data-tr="API">API</a>
-  <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
-  <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a>
-  <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
-</nav>
+<header class="sh-header">
+  <a class="brandpatch" href="index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
+    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
+    <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
 
 <section class="hero">
   <img class="btn t1" src="assets/buttons/b6.png" alt="">
@@ -178,7 +175,7 @@
     <form class="betaform" onsubmit="return betaWaitlist(event)">
       <input type="email" id="betaemail" required
         data-en-ph="you@example.com" data-tr-ph="sen@ornek.com" placeholder="you@example.com">
-      <button type="submit" class="cta betabtn" data-en="Join the beta" data-tr="Beta'ya katıl">Join the beta</button>
+      <button type="submit" class="cta betabtn sb-btn sb-primary" data-en="Join the beta" data-tr="Beta'ya katıl">Join the beta</button>
     </form>
     <p class="betamsg" id="betamsg"></p>
     <a class="cta2" href="create.html" data-en="or draft a pattern free →" data-tr="ya da ücretsiz kalıp çiz →">or draft a pattern free →</a>
@@ -278,19 +275,19 @@
       <a href="benchmark.html" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--bb-deep);border-bottom:1px dashed var(--bb-line);text-decoration:none" data-en="Read the benchmark + textbook audit →" data-tr="Kıyaslamayı + kitap denetimini oku →">Read the benchmark + textbook audit →</a>
     </div>
     <div class="card">
-      <h3 data-en="Fits every body, not one block" data-tr="Tek kalıba değil, her bedene uyar">Fits every body, not one block</h3>
+      <h3 data-en="Fits every body, not one block." data-tr="Tek kalıba değil, her bedene uyar.">Fits every body, not one block.</h3>
       <p data-en="The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders, because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size." data-tr="Dikiş kalıplarına en büyük şikâyet, büyük bedenlerde dev kol oyuntuları ve geniş omuzlar çıkması, çünkü tek bir küçük kalıbı ölçekliyorlar. stitchu tüm kıyafeti senin yedi ölçüne yeniden çizer, böylece oranlar her bedende korunur.">The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders, because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size.</p>
       <span class="stat" data-en="drafted per body · no grading distortion" data-tr="bedene göre çizilir · grading bozulması yok">drafted per body · no grading distortion</span>
     </div>
     <div class="card">
-      <h3 data-en="Your measurements never leave" data-tr="Ölçülerin asla çıkmaz">Your measurements never leave</h3>
+      <h3 data-en="Your measurements never leave." data-tr="Ölçülerin asla çıkmaz.">Your measurements never leave.</h3>
       <p data-en="The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere, it's not a privacy policy, it's the architecture." data-tr="Kalıp, kendi motorumuzla senin tarayıcının içinde çizilir. Vücut ölçülerin hiçbir yere yüklenmez, bu bir gizlilik politikası değil, mimarinin kendisi.">The pattern is drafted inside your browser by our own engine. Your body measurements are never uploaded anywhere, it's not a privacy policy, it's the architecture.</p>
       <span class="stat" data-en="on-device · nothing uploaded" data-tr="cihazda · hiçbir şey yüklenmez">on-device · nothing uploaded</span>
     </div>
   </div>
   <p class="versus" data-en="Similar tools charge $34–49 a month and publish no accuracy proof at all. stitchu publishes the benchmark, seams match, sleeves fit, proportions hold, and runs in your browser free." data-tr="Benzer araçlar ayda 34–49 dolar alır ve hiçbir doğruluk kanıtı yayınlamaz. stitchu kıyaslamayı yayınlar, dikişler tutar, kollar oturur, oranlar korunur, ve tarayıcında ücretsiz çalışır.">Similar tools charge <b>$34–49 a month</b> and publish no accuracy proof at all. stitchu publishes the benchmark, seams match, sleeves fit, proportions hold, and runs in your browser <b>free</b>.</p>
-  <a class="whycta solid" href="#top" onclick="document.getElementById('betaemail').focus();return false" data-en="Join the beta →" data-tr="Beta'ya katıl →">Join the beta →</a>
-  <a class="whycta" href="benchmark.html" data-en="See the full benchmark →" data-tr="Tüm kıyaslamayı gör →">See the full benchmark →</a>
+  <a class="whycta sb-btn sb-primary" href="#top" onclick="document.getElementById('betaemail').focus();return false" data-en="Join the beta →" data-tr="Beta'ya katıl →">Join the beta →</a>
+  <a class="whycta sb-btn sb-secondary" href="benchmark.html" data-en="See the full benchmark →" data-tr="Tüm kıyaslamayı gör →">See the full benchmark →</a>
 </section>
 
 <section class="why" id="api" style="border-top:1px solid var(--bb-line);padding-top:56px">
@@ -299,7 +296,7 @@
   <form class="apiwait" onsubmit="return apiWaitlist(event)">
     <input type="email" id="apiemail" placeholder="you@studio.com" required
       style="padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:2px;font-size:14px;width:260px;max-width:70vw;color:var(--navy)">
-    <button type="submit" class="whycta solid" style="margin-top:0;cursor:pointer" data-en="Become a beta partner" data-tr="Beta ortağı ol">Become a beta partner</button>
+    <button type="submit" class="whycta sb-btn sb-primary" style="margin-top:0;cursor:pointer" data-en="Become a beta partner" data-tr="Beta ortağı ol">Become a beta partner</button>
   </form>
   <p class="versus" id="apimsg" style="margin-top:16px;min-height:20px"></p>
   <p class="versus" style="opacity:.85;font-size:12px"><span data-en="Beta partners: free while we build. Studios, made-to-measure brands and pattern shops, tell us your volume." data-tr="Beta ortakları: biz inşa ederken ücretsiz. Atölyeler, ısmarlama markalar ve kalıp dükkanları, hacminizi yazın.">Beta partners: free while we build. Studios, made-to-measure brands and pattern shops, tell us your volume.</span> · <a href="api.html" style="color:var(--bb-deep)" data-en="see the API →" data-tr="API'yi gör →">see the API →</a></p>
@@ -307,45 +304,12 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="benchmark.html">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · <a href="styles/index.html" data-en="style library" data-tr="stil kütüphanesi">style library</a> · @nosey-dewdrop · <span style="opacity:.55">v62</span></span>
+  <span><a href="benchmark.html">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · <a href="styles/index.html" data-en="style library" data-tr="stil kütüphanesi">style library</a> · @nosey-dewdrop · <span style="opacity:.55">v65</span></span>
 </footer>
 </div>
 <!-- /.rest -->
 
-<script>
-// Landing language: swap every [data-en]/[data-tr] element's text. Defaults to
-// the browser language, remembers the choice. The whole front door in Turkish
-// so a Turkish visitor isn't bounced by an English wall before the (already
-// Turkish) tool.
-function setLang(lang){
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-en]').forEach((el) => {
-    // Preserve the original EN innerHTML (couture <em>/<b>), only TR replaces it
-    // with plain text. So English keeps its emphasis; Turkish reads cleanly.
-    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
-    if (lang === 'tr') {
-      const txt = el.getAttribute('data-tr');
-      if (txt != null) el.textContent = txt;
-    } else {
-      el.innerHTML = el.dataset.enHtml;
-    }
-  });
-  document.querySelectorAll('[data-en-ph]').forEach((el) => {
-    const ph = lang === 'tr' ? el.getAttribute('data-tr-ph') : el.getAttribute('data-en-ph');
-    if (ph != null) el.setAttribute('placeholder', ph);
-  });
-  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
-  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
-  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
-}
-(function initLang(){
-  let lang = 'en';
-  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch (_) {}
-  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
-  setLang(lang);
-})();
-</script>
+<script src="js/shared-header.js?v=65"></script>
 <script>
 // Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';

@@ -15,20 +15,15 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stitchu · the accuracy benchmark">
 <meta name="twitter:description" content="Others promise fit. We publish the numbers, and the textbook audit.">
-<link rel="stylesheet" href="css/theme-transitions.css?v=62">
+<link rel="stylesheet" href="css/theme-transitions.css?v=65">
+<link rel="stylesheet" href="css/shared-header.css?v=65">
+<link rel="stylesheet" href="css/shared-button.css?v=65">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). */
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
   a{color:var(--bb-deep)}
-  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;color:var(--navy)}
-  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;position:relative;z-index:2;flex-wrap:wrap;gap:10px}
-  header nav a{font-size:13px;letter-spacing:.5px;text-decoration:none;margin-left:18px;color:var(--navy);opacity:.82}
-  header nav a:hover{opacity:1}
-  .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px;margin-left:22px}
-  .langtoggle button{background:none;border:none;color:var(--navy);opacity:.55;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
-  .langtoggle button.active{opacity:1;border-bottom:1.5px solid var(--navy)}
   .wrap{max-width:900px;margin:0 auto;padding:20px 32px 100px}
   h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:24px 0 14px;max-width:20ch;color:var(--navy)}
   h1 em{font-style:italic}
@@ -46,8 +41,8 @@
   .stat .big{font-family:'Didot',Georgia,serif;font-size:34px;line-height:1;margin-bottom:6px;color:var(--navy)}
   .stat .cap{font-size:12px;color:var(--ink)}
   .note{font-size:12.5px;color:#5b7089;margin-top:14px;max-width:64ch}
-  .cta{display:inline-block;margin-top:34px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:var(--navy);padding:14px 30px;text-decoration:none;border-radius:2px;position:relative}
-  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);opacity:.9;border-radius:2px}
+  /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
+  .cta{margin-top:34px}
   footer{padding:26px 40px;font-size:12px;color:#5b7089;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--bb-line)}
   footer a{color:var(--navy);text-decoration:none}
 
@@ -60,16 +55,16 @@
 </style>
 </head>
 <body>
-<header>
-  <a class="mark" href="index.html" style="text-decoration:none">stitchu</a>
-  <nav>
+<header class="sh-header">
+  <a class="brandpatch" href="index.html">stitchu</a>
+  <nav class="sh-nav">
     <a href="create.html" data-en="create" data-tr="çiz">create</a>
     <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
     <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
-    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama" style="border-bottom:1px dashed var(--bb-deep)">benchmark</a>
+    <a href="benchmark.html" class="sh-active" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
     <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
-    <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
 </header>
 
@@ -104,33 +99,14 @@
 
   <h2 data-en="3. Why is this the moat?" data-tr="3. Bu neden hendek?">3. Why is this the moat?</h2>
   <p class="sub" data-en="Similar photo-to-pattern tools charge $34–49 a month and publish no accuracy proof at all. The math is the same for everyone; what nobody else does is measure it, audit it against the literature, and put the numbers where you can read them. That, plus drafting on-device so your measurements never leave your browser, is stitchu." data-tr="Benzer fotoğraf-kalıp araçları ayda 34–49 dolar alır ve hiçbir doğruluk kanıtı yayınlamaz. Matematik herkes için aynı; kimsenin yapmadığı şey onu ölçmek, literatüre karşı denetlemek ve sayıları okuyabileceğin yere koymak. İşte bu, artı ölçülerin tarayıcından hiç çıkmadan cihazda çizilmesi, stitchu.">Similar tools charge <b>$34–49/mo</b> and publish no accuracy proof at all. The math is the same for everyone; what nobody else does is measure it, audit it against the literature, and put the numbers where you can read them. That, plus drafting on-device so your measurements never leave your browser, is stitchu.</p>
-  <a class="cta" href="create.html" data-en="Draft a pattern free →" data-tr="Ücretsiz kalıp çiz →">Draft a pattern free →</a>
+  <a class="cta sb-btn sb-primary" href="create.html" data-en="Draft a pattern free →" data-tr="Ücretsiz kalıp çiz →">Draft a pattern free →</a>
 </div>
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v62</span></span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v65</span></span>
 </footer>
 
-<script>
-function setLang(lang){
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-en]').forEach((el) => {
-    if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML;
-    if (lang === 'tr') { const t = el.getAttribute('data-tr'); if (t != null) el.textContent = t; }
-    else { el.innerHTML = el.dataset.enHtml; }
-  });
-  document.getElementById('lang-en').classList.toggle('active', lang !== 'tr');
-  document.getElementById('lang-tr').classList.toggle('active', lang === 'tr');
-  try { localStorage.setItem('stitchu:lang', lang); } catch (_) {}
-}
-(function(){
-  let lang = 'en';
-  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch(_) {}
-  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-  document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
-  setLang(lang);
-})();
-</script>
+<script src="js/shared-header.js?v=65"></script>
 </body>
 </html>
