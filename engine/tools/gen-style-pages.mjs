@@ -18,11 +18,11 @@ const STYLES = [
     slug: 'sweetheart-neckline', group: 'necklines', name: 'Sweetheart neckline',
     title: 'Sweetheart neckline pattern, drafted to size · stitchu',
     desc: 'How stitchu drafts a sweetheart (heart-shaped) neckline: 1.2× neck width, depth between scoop and V, a bust lobe arcing 15 mm above the chord.',
-    lead: 'The heart-shaped front neckline — a steep centre-front tangent so the mirrored halves meet in a cleft, and a curve that arcs above the chord to form the bust lobe.',
+    lead: 'The heart-shaped front neckline, a steep centre-front tangent so the mirrored halves meet in a cleft, and a curve that arcs above the chord to form the bust lobe.',
     facts: [
-      'The neck width is multiplied by 1.2 on BOTH the front and the back, so the shoulder seams keep matching — one shared helper feeds the bodice and the neck facings, and they can never disagree.',
+      'The neck width is multiplied by 1.2 on BOTH the front and the back, so the shoulder seams keep matching, one shared helper feeds the bodice and the neck facings, and they can never disagree.',
       'The front depth is the widened neck width + 50 mm, which lands the cleft between a scoop and a v-neck.',
-      'The curve is a single cubic from the centre-front cleft to the neck point. Its tangent at centre front is steep, so the two mirrored halves meet in the heart cleft; the mid-curve arcs more than 15 mm above the chord — that lift is the bust lobe a scoop does not have.',
+      'The curve is a single cubic from the centre-front cleft to the neck point. Its tangent at centre front is steep, so the two mirrored halves meet in the heart cleft; the mid-curve arcs more than 15 mm above the chord, that lift is the bust lobe a scoop does not have.',
       'The neck facing reuses the neckline commands verbatim, so the facing follows the heart shape automatically and the seam matches by construction.',
     ],
     numbers: [
@@ -32,18 +32,18 @@ const STYLES = [
       ['curve control points', 'cp1 (0.22w, 0.48d) · cp2 (0.5w, 0.12d)'],
     ],
     compat: 'Dresses and tops (not skirts). Works with sleeves, collars are drafted against the neckline it draws.',
-    tests: 'tests/sweetheart_check — depth ordering, cleft tangent, lobe lift vs scoop, facing match, dress + sleeved top.',
+    tests: 'tests/sweetheart_check, depth ordering, cleft tangent, lobe lift vs scoop, facing match, dress + sleeved top.',
   },
   {
     slug: 'halter-neckline', group: 'necklines', name: 'Halter neckline',
-    title: 'Halter neck pattern — nape strap, low back · stitchu',
+    title: 'Halter neck pattern, nape strap, low back · stitchu',
     desc: 'How stitchu drafts a halter: 40 mm nape strap, front dropped 55 mm, back top at 55% of armhole depth, bias binding instead of facings. Sleeves impossible.',
-    lead: 'A halter is more than a neck shape: no shoulder seam, a strap that closes at the nape, a low back — and sleeves are physically impossible, so the engine refuses them honestly.',
+    lead: 'A halter is more than a neck shape: no shoulder seam, a strap that closes at the nape, a low back, and sleeves are physically impossible, so the engine refuses them honestly.',
     facts: [
       'The whole front drops by a 55 mm strap rise; the strap is 40 mm wide and its short top edge IS the nape closure edge. The bare-shoulder sweep down to the underarm uses the same shared armhole curve definition as every other bodice.',
-      'The back top sits at 55% of the armhole depth — the low halter back — with a slight 8 mm centre-back dip.',
-      'Neck facings are replaced by one bias binding strip, 32 mm wide, cut in segments up to 1400 mm. Its length is measured from the same drafted geometry (2× front neck + strap top + sweep + back top + stub, + 150 mm trim ease) — never recomputed elsewhere.',
-      'If a sleeve was picked, the engine forces sleeveless and says so in the sewing guide — there is no shoulder to hang a sleeve from.',
+      'The back top sits at 55% of the armhole depth, the low halter back, with a slight 8 mm centre-back dip.',
+      'Neck facings are replaced by one bias binding strip, 32 mm wide, cut in segments up to 1400 mm. Its length is measured from the same drafted geometry (2× front neck + strap top + sweep + back top + stub, + 150 mm trim ease), never recomputed elsewhere.',
+      'If a sleeve was picked, the engine forces sleeveless and says so in the sewing guide, there is no shoulder to hang a sleeve from.',
       'Cramped-back rule: when the low back leaves no room for a princess seam above the blade apex, that half honestly falls back to dart shaping instead of drawing an unsewable seam.',
     ],
     numbers: [
@@ -54,7 +54,7 @@ const STYLES = [
       ['binding length allowance', '+150 mm trim ease'],
     ],
     compat: 'Dresses and tops. Excludes sleeves, collars and front keyholes by construction (no neckline band, no shoulder).',
-    tests: 'tests/halter_check — dress/top, princess/dart, natural/empire, knit, petite + plus bodies; binding length; honest sleeve skip.',
+    tests: 'tests/halter_check, dress/top, princess/dart, natural/empire, knit, petite + plus bodies; binding length; honest sleeve skip.',
   },
   {
     slug: 'v-neck', group: 'necklines', name: 'V-neck',
@@ -62,10 +62,10 @@ const STYLES = [
     desc: 'How stitchu drafts a v-neck: front depth = neck width + 75 mm, the deepest straight-family neckline, with a guarded centre-front edge on short bodies.',
     lead: 'The deepest of the classic neckline family. The engine cuts it to your own neck measurement, then guards the centre-front edge so a deep V on a short body cannot fold back on itself.',
     facts: [
-      'Front neck width is your neck measurement × 0.17, capped at 72% of the half shoulder — a neckline can never eat the shoulder seam.',
-      'The front depth is the neck width + 75 mm — deeper than scoop (+50) and square (+40).',
+      'Front neck width is your neck measurement × 0.17, capped at 72% of the half shoulder, a neckline can never eat the shoulder seam.',
+      'The front depth is the neck width + 75 mm, deeper than scoop (+50) and square (+40).',
       'The centre front/back edge is a cubic whose control points interpolate between the waist and the neck cutout; that guard keeps deep necklines on short bodies from folding the edge back.',
-      'The neck facing repeats the garment neckline commands verbatim and its inner edge must match the neck edge within 1.5 mm — a validator rule, checked on every draft.',
+      'The neck facing repeats the garment neckline commands verbatim and its inner edge must match the neck edge within 1.5 mm, a validator rule, checked on every draft.',
     ],
     numbers: [
       ['front neck width', 'neck × 0.17 (cap: 72% of half shoulder)'],
@@ -74,15 +74,15 @@ const STYLES = [
       ['facing match tolerance', '1.5 mm (validated)'],
     ],
     compat: 'Dresses and tops. Works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix — facing match, self-intersection, chest-width ease all checked per draft.',
+    tests: 'Validated across the full 70,200-draft matrix, facing match, self-intersection, chest-width ease all checked per draft.',
   },
   {
     slug: 'scoop-neckline', group: 'necklines', name: 'Scoop neckline',
     title: 'Scoop neckline pattern, cut to your neck size · stitchu',
     desc: 'How stitchu drafts a scoop neckline: front depth = neck width + 50 mm, curve on the chord, width capped so it never eats the shoulder seam.',
-    lead: 'The round, open everyday neckline. Deeper than a crew, shallower than a V — and unlike a sweetheart, its curve stays on the chord.',
+    lead: 'The round, open everyday neckline. Deeper than a crew, shallower than a V, and unlike a sweetheart, its curve stays on the chord.',
     facts: [
-      'The front depth is the neck width + 50 mm — the same depth band as the sweetheart, but without the bust lobe: the scoop curve stays on its chord.',
+      'The front depth is the neck width + 50 mm, the same depth band as the sweetheart, but without the bust lobe: the scoop curve stays on its chord.',
       'Front neck width = neck × 0.17, back = neck × 0.197, both capped at 72% of the half shoulder.',
       'The back neckline is always a shallow crew curve regardless of the front style, so the back facing and any collar stay stable across the whole neckline family.',
     ],
@@ -98,10 +98,10 @@ const STYLES = [
     slug: 'square-neckline', group: 'necklines', name: 'Square neckline',
     title: 'Square neckline pattern to your measurements · stitchu',
     desc: 'How stitchu drafts a square neckline: front depth = neck width + 40 mm, straight edges, and a facing matched with a two-command tolerance rule.',
-    lead: 'Straight edges, square corner. Structurally the simplest front neckline the engine draws — and the one with its own facing-validation rule.',
+    lead: 'Straight edges, square corner. Structurally the simplest front neckline the engine draws, and the one with its own facing-validation rule.',
     facts: [
-      'The front depth is the neck width + 40 mm — between crew (+15) and scoop (+50).',
-      'Because the square front runs in two straight commands (down, then across), the facing validator matches the inner edge with k = 2 commands instead of 1 — the seam-match rule adapts to the geometry.',
+      'The front depth is the neck width + 40 mm, between crew (+15) and scoop (+50).',
+      'Because the square front runs in two straight commands (down, then across), the facing validator matches the inner edge with k = 2 commands instead of 1, the seam-match rule adapts to the geometry.',
       'Width follows the family rule: front neck × 0.17, capped at 72% of the half shoulder.',
     ],
     numbers: [
@@ -114,11 +114,11 @@ const STYLES = [
   },
   {
     slug: 'boat-neckline', group: 'necklines', name: 'Boat neckline',
-    title: 'Boat neck pattern — wide, shallow, drafted · stitchu',
+    title: 'Boat neck pattern, wide, shallow, drafted · stitchu',
     desc: 'How stitchu drafts a boat neck: both neck widths × 1.35, a fixed 28 mm front depth, and a hard cap so the neckline never reaches the shoulder seam.',
-    lead: 'Wide and shallow — the boat neck stretches toward the shoulders instead of dropping toward the bust.',
+    lead: 'Wide and shallow, the boat neck stretches toward the shoulders instead of dropping toward the bust.',
     facts: [
-      'Both the front and back neck widths are multiplied by 1.35 — the widest neckline in the vocabulary.',
+      'Both the front and back neck widths are multiplied by 1.35, the widest neckline in the vocabulary.',
       'The front depth is a fixed 28 mm, the shallowest the engine draws.',
       'Both widths are capped at 72% of the half shoulder, so even on narrow shoulders the boat neck never eats the shoulder seam.',
     ],
@@ -133,11 +133,11 @@ const STYLES = [
   {
     slug: 'crew-neckline', group: 'necklines', name: 'Crew neckline',
     title: 'Crew neck pattern drafted to your neck size · stitchu',
-    desc: 'How stitchu drafts a crew neck: front depth = neck width + 15 mm, back cutout = neck × 0.06 — the base curve every other neckline builds on.',
-    lead: 'The default. Every back neckline in the engine is a crew curve — this page is the front one.',
+    desc: 'How stitchu drafts a crew neck: front depth = neck width + 15 mm, back cutout = neck × 0.06, the base curve every other neckline builds on.',
+    lead: 'The default. Every back neckline in the engine is a crew curve, this page is the front one.',
     facts: [
-      'The front depth is the neck width + 15 mm — the closest-fitting front neckline.',
-      'The back cutout is neck × 0.06, a shallow crew curve — and that same back curve is reused behind every front style, from V to sweetheart.',
+      'The front depth is the neck width + 15 mm, the closest-fitting front neckline.',
+      'The back cutout is neck × 0.06, a shallow crew curve, and that same back curve is reused behind every front style, from V to sweetheart.',
       'Front width = neck × 0.17, back = neck × 0.197, capped at 72% of the half shoulder.',
     ],
     numbers: [
@@ -152,12 +152,12 @@ const STYLES = [
     slug: 'keyhole', group: 'details', name: 'Keyhole cut-out',
     title: 'Keyhole neckline cut-out pattern + facing · stitchu',
     desc: 'How stitchu drafts a front keyhole: teardrop 15 mm below the neck edge, up to 85 mm long, with an interfaced facing offset 32 mm all round.',
-    lead: 'A teardrop opening below the front neckline, mirrored on the centre-front fold — with the facing piece that finishes it drawn for you.',
+    lead: 'A teardrop opening below the front neckline, mirrored on the centre-front fold, with the facing piece that finishes it drawn for you.',
     facts: [
       'The half-teardrop is marked on the front centre piece against the CF fold: top point 15 mm below the neck edge, length min(85 mm, room above the waist − 60), half-width 0.26 × length. Mirrored on the fold, it opens into the full keyhole.',
-      'A "Keyhole Facing" piece is the same teardrop offset +32 mm all around — solid, cut 1 on fold, interfaced, with the stitch line marked. Seam allowance is 0: you sew ON the line, slash inside, turn through and understitch.',
-      'The construction steps are inserted right after the neckline understitch — a keyhole is worked before the side seams close, not bolted onto the end of the guide.',
-      'Too little room (under 40 mm) and the engine skips it with an honest note in the guide — never a silent no-op. A validator rule checks the teardrop sits on the fold, below the neck, clear of the waist, inside the piece, and that the facing covers it with at least 20 mm margin.',
+      'A "Keyhole Facing" piece is the same teardrop offset +32 mm all around, solid, cut 1 on fold, interfaced, with the stitch line marked. Seam allowance is 0: you sew ON the line, slash inside, turn through and understitch.',
+      'The construction steps are inserted right after the neckline understitch, a keyhole is worked before the side seams close, not bolted onto the end of the guide.',
+      'Too little room (under 40 mm) and the engine skips it with an honest note in the guide, never a silent no-op. A validator rule checks the teardrop sits on the fold, below the neck, clear of the waist, inside the piece, and that the facing covers it with at least 20 mm margin.',
     ],
     numbers: [
       ['top point', '15 mm below CF neck edge'],
@@ -166,20 +166,20 @@ const STYLES = [
       ['facing offset', '+32 mm all round, ≥ 20 mm cover margin'],
     ],
     compat: 'Dresses and tops, any neckline except halter (a halter has no CF band to open).',
-    tests: 'tests/keyhole_check — princess dress, petite babydoll, boat top; guide-step order; margins; opt-in byte-identity.',
+    tests: 'tests/keyhole_check, princess dress, petite babydoll, boat top; guide-step order; margins; opt-in byte-identity.',
   },
   // ---- skirts --------------------------------------------------------------
   {
     slug: 'a-line-skirt', group: 'skirts', name: 'A-line skirt',
     title: 'A-line skirt pattern drafted to waist and hip · stitchu',
     desc: 'How stitchu drafts an A-line skirt: 2% ease on your waist and hip, +60 mm hem flare, darts dropped honestly under 8 mm, three lengths.',
-    lead: 'The classic flared skirt, drafted from your waist and hip with percent ease — never a fixed-centimetre guess.',
+    lead: 'The classic flared skirt, drafted from your waist and hip with percent ease, never a fixed-centimetre guess.',
     facts: [
       'Waist and hip ease are 2% of YOUR measurement (1% on knits). The hip quarter is guarded against waist-bigger-than-hip bodies: it never drafts narrower than the waist quarter.',
-      'The waist-to-hip suppression is split: the side seam takes up to 60% (max 25 mm), the dart gets the rest — and a dart under 8 mm is dropped and folded into the side seam instead of sewing a pucker.',
+      'The waist-to-hip suppression is split: the side seam takes up to 60% (max 25 mm), the dart gets the rest, and a dart under 8 mm is dropped and folded into the side seam instead of sewing a pucker.',
       'The A-line flare adds 60 mm at the hem with an 18 mm hem side rise; the side waist rises 12 mm into a curved waistline.',
       'In princess shaping the dart becomes a gore seam with 40 mm of extra flare per gore edge at the hem.',
-      'As a dress skirt it is drafted against the bodice\'s actual SEWN waist — front and back sewn arcs, darts excluded — so the waist seam matches by construction.',
+      'As a dress skirt it is drafted against the bodice\'s actual SEWN waist, front and back sewn arcs, darts excluded, so the waist seam matches by construction.',
     ],
     numbers: [
       ['waist / hip ease', '2% woven · 1% knit'],
@@ -195,11 +195,11 @@ const STYLES = [
     slug: 'straight-skirt', group: 'skirts', name: 'Straight skirt',
     title: 'Straight skirt pattern with drafted darts · stitchu',
     desc: 'How stitchu drafts a straight (pencil) skirt: zero hem flare, 2% ease, side seam takes up to 25 mm of suppression, darts 90/130 mm.',
-    lead: 'The pencil silhouette: the A-line block with the flare set to zero, so everything hangs from how well the darts fit — and those are drafted, not averaged.',
+    lead: 'The pencil silhouette: the A-line block with the flare set to zero, so everything hangs from how well the darts fit, and those are drafted, not averaged.',
     facts: [
-      'Same drafting skeleton as the A-line with hem flare 0 — the side seam falls straight from the hip.',
+      'Same drafting skeleton as the A-line with hem flare 0, the side seam falls straight from the hip.',
       'Suppression between your waist and hip splits between the side seam (up to 60%, max 25 mm) and the dart; a dart under 8 mm is dropped and folded into the side seam.',
-      'Dart lengths are 90 mm front, 130 mm back — the Aldrich ratio and direction, verified in the published textbook audit.',
+      'Dart lengths are 90 mm front, 130 mm back, the Aldrich ratio and direction, verified in the published textbook audit.',
       'The side waist rises 12 mm and the dart legs follow the raised waist curve, so the darts sew closed without a step at the waistline.',
     ],
     numbers: [
@@ -209,18 +209,18 @@ const STYLES = [
       ['hip depth', '200 mm'],
     ],
     compat: 'Standalone skirt or dress skirt; princess gore or dart shaping; ruffle hems.',
-    tests: 'Validated across the 70,200-draft matrix; dart values audited against Aldrich (front 100/back 140) — ratio and direction exact.',
+    tests: 'Validated across the 70,200-draft matrix; dart values audited against Aldrich (front 100/back 140), ratio and direction exact.',
   },
   {
     slug: 'gathered-skirt', group: 'skirts', name: 'Gathered skirt',
-    title: 'Gathered skirt pattern — 1.9× fullness rectangle · stitchu',
+    title: 'Gathered skirt pattern, 1.9× fullness rectangle · stitchu',
     desc: 'How stitchu drafts a gathered skirt: a rectangle 1.9× your eased waist quarter with the gather line marked 18 mm below the top edge.',
     lead: 'A rectangle drawn up to your waist. The engine cuts it at 1.9× fullness and marks the gather line so you know exactly where to run the threads.',
     facts: [
-      'Each quarter panel is a rectangle whose width = your eased waist quarter × 1.9 — the fullness is in the cut, not left to guesswork.',
+      'Each quarter panel is a rectangle whose width = your eased waist quarter × 1.9, the fullness is in the cut, not left to guesswork.',
       'The gather line is marked 18 mm below the top edge.',
-      'Combined with an empire waistline on a dress, this is the babydoll — the engine names it that way in the guide.',
-      'Gathered skirts have no waist shaping to convert, so princess/dart shaping does not apply — the fullness IS the shaping.',
+      'Combined with an empire waistline on a dress, this is the babydoll, the engine names it that way in the guide.',
+      'Gathered skirts have no waist shaping to convert, so princess/dart shaping does not apply, the fullness IS the shaping.',
     ],
     numbers: [
       ['panel width', 'waist quarter × 1.9'],
@@ -232,14 +232,14 @@ const STYLES = [
   },
   {
     slug: 'half-circle-skirt', group: 'skirts', name: 'Half-circle skirt',
-    title: 'Half circle skirt pattern — r = waist/π, cut flat · stitchu',
+    title: 'Half circle skirt pattern, r = waist/π, cut flat · stitchu',
     desc: 'How stitchu drafts a half-circle skirt: inner radius = eased waist / π, two quarter panels cut flat (never on fold), true bezier arcs.',
-    lead: 'Real circle-skirt maths: the waist becomes the inner arc of a ring. And one trap the engine refuses to fall into — these panels are never cut on the fold.',
+    lead: 'Real circle-skirt maths: the waist becomes the inner arc of a ring. And one trap the engine refuses to fall into, these panels are never cut on the fold.',
     facts: [
       'The inner radius r = your eased waist / π; the outer radius R = r + the skirt length. Two quarter-circle panels make the half circle.',
-      'The panels are cut FLAT, cut 2 — on the fold they would unfold into a FULL circle and double the waist. The engine encodes that as a rule, not a guide warning.',
-      'The arcs are cubic beziers with kappa 0.5523 — the standard circle approximation — so the printed curve is a true arc, not a polygon.',
-      'Fabric estimate: (R × 2 + 120 mm) × 1.10 on a 140 cm width — printed on the pattern cover.',
+      'The panels are cut FLAT, cut 2, on the fold they would unfold into a FULL circle and double the waist. The engine encodes that as a rule, not a guide warning.',
+      'The arcs are cubic beziers with kappa 0.5523, the standard circle approximation, so the printed curve is a true arc, not a polygon.',
+      'Fabric estimate: (R × 2 + 120 mm) × 1.10 on a 140 cm width, printed on the pattern cover.',
     ],
     numbers: [
       ['inner radius', 'eased waist / π'],
@@ -254,10 +254,10 @@ const STYLES = [
     slug: 'pleated-skirt', group: 'skirts', name: 'Pleated skirt',
     title: 'Knife-pleat skirt pattern with fold markings · stitchu',
     desc: 'How stitchu drafts a knife-pleated skirt: a 3× fullness rectangle, pleat count from your waist (max(3, quarter/55)), 140 mm deep fold pairs.',
-    lead: 'Knife pleats with the fold lines drawn in pairs — fold on the second line, bring it to the first — so pleating is mechanical, not eyeballed.',
+    lead: 'Knife pleats with the fold lines drawn in pairs, fold on the second line, bring it to the first, so pleating is mechanical, not eyeballed.',
     facts: [
       'Each panel is a rectangle at 3× your eased waist quarter (the pleat ratio).',
-      'The number of pleats scales with your body: n = max(3, waist quarter / 55) — a wider waist gets more pleats, not deeper ones.',
+      'The number of pleats scales with your body: n = max(3, waist quarter / 55), a wider waist gets more pleats, not deeper ones.',
       'Markings are vertical line PAIRS per pleat, 140 mm deep: fold on the second line, bring it to the first.',
       'The validator measures the sewn waist as the panel width divided by the pleat ratio, so the pleated waist is checked on every draft, not assumed.',
     ],
@@ -271,15 +271,15 @@ const STYLES = [
   },
   {
     slug: 'hem-ruffle', group: 'details', name: 'Hem ruffle (single + tiered)',
-    title: 'Ruffle hem pattern — measured strips, 1–5 tiers · stitchu',
+    title: 'Ruffle hem pattern, measured strips, 1–5 tiers · stitchu',
     desc: 'How stitchu drafts hem ruffles: strip length = your hem × 2.0–3.0 fullness, tiers cascade geometrically, segments cut ≤ 1400 mm so they print.',
-    lead: 'The ruffle strip is measured off YOUR drafted hem — per skirt style — then cut in printable segments. Tiers cascade geometrically, which is exactly why the couture look eats fabric.',
+    lead: 'The ruffle strip is measured off YOUR drafted hem, per skirt style, then cut in printable segments. Tiers cascade geometrically, which is exactly why the couture look eats fabric.',
     facts: [
       'The attach edge is the real hem circumference of your draft, computed per skirt style (A-line/straight quarters + flare, gathered/pleated through their ratios, half-circle πR).',
-      'Cut length = hem × fullness (2.0–3.0). The strip is cut in fabric-width segments of at most 1400 mm, joined end to end — every piece stays printable under the 3000 mm tile cap.',
-      'Tiered (1–5): tier i gathers onto the edge below it, so its cut length = hem × fullness^i. The fabric use grows geometrically — that cascade is the couture look, and the engine prints the true cost instead of hiding it.',
+      'Cut length = hem × fullness (2.0–3.0). The strip is cut in fabric-width segments of at most 1400 mm, joined end to end, every piece stays printable under the 3000 mm tile cap.',
+      'Tiered (1–5): tier i gathers onto the edge below it, so its cut length = hem × fullness^i. The fabric use grows geometrically, that cascade is the couture look, and the engine prints the true cost instead of hiding it.',
       'Only the LAST tier carries the 10 mm rolled-hem allowance; intermediate tiers end in a 12 mm seam that receives the next tier\'s gathers.',
-      'Ruffle pieces are excluded from the skirt-waist validation sum — a trim is not waist-bearing, and the validator knows the difference.',
+      'Ruffle pieces are excluded from the skirt-waist validation sum, a trim is not waist-bearing, and the validator knows the difference.',
     ],
     numbers: [
       ['fullness', '2.0–3.0×'],
@@ -287,15 +287,15 @@ const STYLES = [
       ['segment cap', '≤ 1400 mm per cut piece'],
       ['hem allowance', 'last tier 10 mm · inner tiers 12 mm seam'],
     ],
-    compat: 'Any skirt or dress hem, every skirt style — the strip length adapts to each hem formula.',
-    tests: 'tests/ruffle_check + tests/tiered_ruffle_check — per-tier cascade math, seam-vs-hem heights, printability, opt-in byte-identity.',
+    compat: 'Any skirt or dress hem, every skirt style, the strip length adapts to each hem formula.',
+    tests: 'tests/ruffle_check + tests/tiered_ruffle_check, per-tier cascade math, seam-vs-hem heights, printability, opt-in byte-identity.',
   },
   // ---- sleeves -------------------------------------------------------------
   {
     slug: 'balloon-sleeve', group: 'sleeves', name: 'Balloon sleeve',
     title: 'Balloon sleeve pattern with drafted cuff · stitchu',
     desc: 'How stitchu drafts a balloon sleeve: hem half-width 0.52 vs 0.40 straight, gather line 25 mm up, cuff = biceps × 0.62 + 20 mm, interfaced.',
-    lead: 'A set-in sleeve that balloons at the hem and gathers into its own drafted cuff — the cuff sized from your arm, not a standard.',
+    lead: 'A set-in sleeve that balloons at the hem and gathers into its own drafted cuff, the cuff sized from your arm, not a standard.',
     facts: [
       'The base is the set-in sleeve block: biceps from your bust with verified 15% ease, cap height 0.75 of the armhole depth, and the cap width solved by bisection until the cap length lands within 0.5 mm of 4% ease over YOUR drafted armhole.',
       'The balloon widens the profile: hem half-width 0.52 × the sleeve width (straight is 0.40) and an underarm mid-bulge of 0.62 (straight 0.46).',
@@ -313,15 +313,15 @@ const STYLES = [
   },
   {
     slug: 'puff-sleeve', group: 'sleeves', name: 'Puff / gathered sleeve cap',
-    title: 'Puff sleeve pattern — slash-and-spread crown · stitchu',
+    title: 'Puff sleeve pattern, slash-and-spread crown · stitchu',
     desc: 'How stitchu drafts puff and gathered sleeve caps: crown spread 0.20× soft or 0.45× full, cap raised by the spread, armhole match kept 1:1.',
     lead: 'The classic slash-and-spread, done by the engine: fullness goes into the crown only, the underarm still matches the armhole 1:1, and the surplus is gathered in.',
     facts: [
       'Two levels: GATHERED (soft, high-street) spreads the crown by 0.20 × the fitted cap width with NO raise; PUFFED (full, gigot) spreads 0.45 × and RAISES the cap height by the spread.',
       'The cap-raise-equals-spread rule is a verified invariant (dresspatternmaking.com; Müller & Sohn gigot corroborates: slash 3–4 cm each side, raise 4–5 cm).',
-      'Below the crown notches the seam is unchanged and matches the armhole 1:1 — the sleeve still sets into the SAME armhole; only the crown carries fullness.',
+      'Below the crown notches the seam is unchanged and matches the armhole 1:1, the sleeve still sets into the SAME armhole; only the crown carries fullness.',
       'The crown gather runs between two notches at ±0.60 of the half-cap (about 7.5–9 cm from the underarm on a real cap), with a dashed gather line dipping toward the raised top.',
-      'The finished crown-to-armhole gather ratio lands around 1.25 soft to 1.75–2.5 full, so the validator uses a style-band window instead of the plain 1–9% ease rule — otherwise the engine would reject its own puff as unsewable.',
+      'The finished crown-to-armhole gather ratio lands around 1.25 soft to 1.75–2.5 full, so the validator uses a style-band window instead of the plain 1–9% ease rule, otherwise the engine would reject its own puff as unsewable.',
     ],
     numbers: [
       ['crown spread', 'gathered 0.20×W · puffed 0.45×W'],
@@ -329,21 +329,21 @@ const STYLES = [
       ['crown notches', '± 0.60 × half-cap'],
       ['gather ratio', '~1.25 soft → ~1.75–2.5 full'],
     ],
-    compat: 'Straight sleeves on dresses and tops (balloon keeps a plain head — its gather lives at the hem). Cap-sleeve shapes and drawstring-gathered sleeves are NOT drafted; the pattern says so honestly.',
-    tests: 'tests/sleeve_check puff block — crown wider than plain, puff raised, gathered not raised, gather marks present, validator clean.',
+    compat: 'Straight sleeves on dresses and tops (balloon keeps a plain head, its gather lives at the hem). Cap-sleeve shapes and drawstring-gathered sleeves are NOT drafted; the pattern says so honestly.',
+    tests: 'tests/sleeve_check puff block, crown wider than plain, puff raised, gathered not raised, gather marks present, validator clean.',
   },
   // ---- details / construction ---------------------------------------------
   {
     slug: 'button-placket', group: 'details', name: 'Front button placket',
-    title: 'Button placket pattern — grown-on stand, anti-gape · stitchu',
+    title: 'Button placket pattern, grown-on stand, anti-gape · stitchu',
     desc: 'How stitchu drafts a front placket: grown-on 18 mm stand, horizontal 21 mm buttonholes 3 mm past CF, and a mandatory button at bust level.',
-    lead: 'The couture front closure: a grown-on button stand folded back on itself — with the one placement rule that stops gaping: a button must land exactly at bust level.',
+    lead: 'The couture front closure: a grown-on button stand folded back on itself, with the one placement rule that stops gaping: a button must land exactly at bust level.',
     facts: [
-      'The stand is GROWN-ON (the couture default per Aldrich and Armstrong — one piece, self-facing folds back, no seam at the finished edge) rather than the fast-fashion applied band. Width = 18 mm, driven by the assumed 18 mm blouse button.',
+      'The stand is GROWN-ON (the couture default per Aldrich and Armstrong, one piece, self-facing folds back, no seam at the finished edge) rather than the fast-fashion applied band. Width = 18 mm, driven by the assumed 18 mm blouse button.',
       'The CF edge is offset outward by the stand width; the neckline and every other edge are untouched, so the neck facing still matches its validator.',
       'Markings: fold line at true CF, fold-back facing line at +18 mm, buttons as cross ticks ON the CF line, buttonholes as horizontal slits starting 3 mm past CF toward the edge (the Aldrich/Armstrong horizontal-hole rule), 21 mm long (Ø + thickness + 2 mm ease).',
-      'Placement: first button 20 mm below the neck edge, last 20 mm above the hem, ~90 mm spacing — and the whole run is SHIFTED so one button lands exactly on the bust level, read from the piece\'s own apex notch. That is the anti-gape rule.',
-      'Womenswear laps right over left: this front is the buttonhole side, the mirror is the button underlap — stated in the guide. A CF run under 60 mm skips with an honest note.',
+      'Placement: first button 20 mm below the neck edge, last 20 mm above the hem, ~90 mm spacing, and the whole run is SHIFTED so one button lands exactly on the bust level, read from the piece\'s own apex notch. That is the anti-gape rule.',
+      'Womenswear laps right over left: this front is the buttonhole side, the mirror is the button underlap, stated in the guide. A CF run under 60 mm skips with an honest note.',
     ],
     numbers: [
       ['stand width', '18 mm (= button Ø)'],
@@ -352,20 +352,20 @@ const STYLES = [
       ['clearances', '20 mm below neck · 20 mm above hem'],
       ['fabric adder', '+0.1 m'],
     ],
-    compat: 'Dresses and tops. Back and side button closures are not drafted — they stay in the honesty layer.',
-    tests: 'tests/placket_check — dress/top, princess/dart, petite/plus; ≥3 buttons with matching holes; base byte-identity off.',
+    compat: 'Dresses and tops. Back and side button closures are not drafted, they stay in the honesty layer.',
+    tests: 'tests/placket_check, dress/top, princess/dart, petite/plus; ≥3 buttons with matching holes; base byte-identity off.',
   },
   {
     slug: 'fabric-ties', group: 'details', name: 'Fabric ties, sashes & bows',
     title: 'Fabric tie & sash pattern pieces, sized to you · stitchu',
-    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm — back sash reaches from your waist, tie-back, neck bow and cuff ties.',
-    lead: 'A tie is a rectangle — cut wide enough to fold into a self-lined tube, and long enough to actually reach around YOUR body and knot.',
+    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm, back sash reaches from your waist, tie-back, neck bow and cuff ties.',
+    lead: 'A tie is a rectangle, cut wide enough to fold into a self-lined tube, and long enough to actually reach around YOUR body and knot.',
     facts: [
       'Master rule: a finished tie of width W and length L is cut (2W + 2×15) × (L + 2×15) mm. The lengthwise centre fold self-lines it; markings give the fold line and both long seam lines, grain runs the tie length.',
-      'The back waist sash is sized from your body: each half is max(300, waist × 0.5 + 250) mm long, so it reaches from the side seam round to a bow at centre back — not a fixed strip that comes up short on a real waist.',
+      'The back waist sash is sized from your body: each half is max(300, waist × 0.5 + 250) mm long, so it reaches from the side seam round to a bow at centre back, not a fixed strip that comes up short on a real waist.',
       'Four placements: back waist sash/bow (W 30), tie-back closure (W 25 × 300, two halves that cross and knot), front neck bow (W 25 × 350), cuff ties (W 15 × 180 each).',
       'A placement notch is stamped on the nearest outline vertex of the target piece, so you know exactly which seam catches the tie.',
-      'Honest boundary: a DRAWSTRING that gathers fabric through a casing is a different construction — the gathering page covers what is drafted; simple applied ties only here.',
+      'Honest boundary: a DRAWSTRING that gathers fabric through a casing is a different construction, the gathering page covers what is drafted; simple applied ties only here.',
     ],
     numbers: [
       ['cut rule', '(2W + 30) × (L + 30) mm, SA 15'],
@@ -374,18 +374,18 @@ const STYLES = [
       ['fabric adder', '+0.15 m'],
     ],
     compat: 'Dresses and tops; the tie-back coexists with an open-back cutout on the same draft (independent pieces).',
-    tests: 'tests/tie_check — exactly one extra piece, existing outlines byte-identical, cut-2 note with finished + cut size, placement notch.',
+    tests: 'tests/tie_check, exactly one extra piece, existing outlines byte-identical, cut-2 note with finished + cut size, placement notch.',
   },
   {
     slug: 'collars', group: 'details', name: 'Collar family',
     title: 'Collar patterns trued to your neckline (0.00 mm) · stitchu',
-    desc: 'Stand, mandarin, flat, peter-pan and two-piece shirt collars — every neck edge measured off your drafted neckline and trued to 0.0000 mm.',
-    lead: 'Five collars, one governing constraint: the collar\'s neck edge is measured off the finished neckline of YOUR draft — so it can never be the wrong length for the garment it sews to.',
+    desc: 'Stand, mandarin, flat, peter-pan and two-piece shirt collars, every neck edge measured off your drafted neckline and trued to 0.0000 mm.',
+    lead: 'Five collars, one governing constraint: the collar\'s neck edge is measured off the finished neckline of YOUR draft, so it can never be the wrong length for the garment it sews to.',
     facts: [
-      'Two structural families. STAND/MOCK: a band standing at the neckline — stand 35 mm, mandarin 30 mm — with the centre-front top edge pulled in 15 mm so the finished band hugs the throat (the Aldrich/Müller & Sohn tilt). Cut 2 on the centre-back fold, self + interfacing.',
+      'Two structural families. STAND/MOCK: a band standing at the neckline, stand 35 mm, mandarin 30 mm, with the centre-front top edge pulled in 15 mm so the finished band hugs the throat (the Aldrich/Müller & Sohn tilt). Cut 2 on the centre-back fold, self + interfacing.',
       'FLAT family (flat / peter-pan / shirt): a 60 mm collar lying on the shoulders, outer edge shaped round, pointed, or scalloped (a run of 4 arcs). The SHIRT collar is a two-piece convertible: 28 mm stand band + 48 mm turnover blade, the blade covering the stand seam.',
-      'The neck edge is not computed from a formula — it is MEASURED off the finished front and back centre pieces, exactly the outline the bodice drew. The test suite re-measures collar edge minus half-neckline to 0.0000 mm across all five collars on standard, petite and plus bodies.',
-      'Honest boundary: bias-bound necklines and notched/sailor/lapel tailored collars are NOT drafted — they are declared missing rather than drawn wrong.',
+      'The neck edge is not computed from a formula, it is MEASURED off the finished front and back centre pieces, exactly the outline the bodice drew. The test suite re-measures collar edge minus half-neckline to 0.0000 mm across all five collars on standard, petite and plus bodies.',
+      'Honest boundary: bias-bound necklines and notched/sailor/lapel tailored collars are NOT drafted, they are declared missing rather than drawn wrong.',
     ],
     numbers: [
       ['stand / mock band', '35 / 30 mm, CF rise 15 mm'],
@@ -395,18 +395,18 @@ const STYLES = [
       ['fabric adder', '+0.15 m incl. interfacing'],
     ],
     compat: 'Dresses and tops with any neckline except halter. Edge shapes (round/pointed/scallop) apply to the flat family.',
-    tests: 'tests/collar_check — N extra pieces, outlines byte-identical, neck edge trued to 0.0000 mm, flat sits wider than the stand, scallop adds curves.',
+    tests: 'tests/collar_check, N extra pieces, outlines byte-identical, neck edge trued to 0.0000 mm, flat sits wider than the stand, scallop adds curves.',
   },
   {
     slug: 'shirring-drawstring', group: 'details', name: 'Drawstring, shirring & smocking',
     title: 'Shirred & drawstring panel patterns · stitchu',
-    desc: 'How stitchu drafts gathering: panels cut at 1.8× (drawstring), 2.0× (shirred), 3.0× (smocked) the finished edge — measured off your draft.',
-    lead: 'Here the panel ITSELF gathers — cut wide, drawn up to fit. The engine cuts each panel at the real construction ratio and measures the finished edge off your drafted pieces.',
+    desc: 'How stitchu drafts gathering: panels cut at 1.8× (drawstring), 2.0× (shirred), 3.0× (smocked) the finished edge, measured off your draft.',
+    lead: 'Here the panel ITSELF gathers, cut wide, drawn up to fit. The engine cuts each panel at the real construction ratio and measures the finished edge off your drafted pieces.',
     facts: [
       'Three gather ratios by construction: drawstring 1.8×, shirred 2.0× (the ASG "2 in → 1 in" elastic rule), smocked 3.0× ("3 in → 1 in"). The cut note states flat edge → finished edge, so you know exactly how much to draw up.',
-      'Four zones with real panel depths: neckline 130, bust 110, waist 90, sleeve 120 mm. The finished edge is MEASURED off the drafted body pieces for that zone — the gathered edge can never drift from what it sews to (trued to 0.005 mm in tests).',
+      'Four zones with real panel depths: neckline 130, bust 110, waist 90, sleeve 120 mm. The finished edge is MEASURED off the drafted body pieces for that zone, the gathered edge can never drift from what it sews to (trued to 0.005 mm in tests).',
       'Drawstring adds a casing channel folded 22 mm below the top seam line (two parallel stitch lines + two eyelet ticks) and a separate self-fabric cord piece, finished 12 mm × (finished edge + 500) for pull-through and tying.',
-      'Shirred panels carry 4 parallel gather rows, smocked 6, spaced 12 mm from the seam line down; smocked adds a dot grid to gauge the pleats — hand-worked, and the guide says so instead of silently claiming machine smocking.',
+      'Shirred panels carry 4 parallel gather rows, smocked 6, spaced 12 mm from the seam line down; smocked adds a dot grid to gauge the pleats, hand-worked, and the guide says so instead of silently claiming machine smocking.',
       'Very wide edges are cut in segments no wider than one 140 cm fabric width and joined at the sides, so every piece still packs onto A4.',
     ],
     numbers: [
@@ -417,18 +417,18 @@ const STYLES = [
       ['truing', 'flat edge / ratio = finished edge, 0.005 mm'],
     ],
     compat: 'Dresses and tops, zones neckline/bust/waist/sleeve. A drawstring-gathered SLEEVE casing and gathered straps stay in the honesty layer.',
-    tests: 'tests/gather_check — panel + cord counts, ratio ordering smocked > shirred > drawstring, byte-identical base, placement notch.',
+    tests: 'tests/gather_check, panel + cord counts, ratio ordering smocked > shirred > drawstring, byte-identical base, placement notch.',
   },
   {
     slug: 'open-back', group: 'details', name: 'Open-back cutout',
-    title: 'Open back dress pattern — 4 cutout shapes + facing · stitchu',
+    title: 'Open back dress pattern, 4 cutout shapes + facing · stitchu',
     desc: 'How stitchu drafts an open back: round, low-V, square or teardrop cutout starting 40 mm below the nape, with a facing trued to 0.00 mm.',
-    lead: 'A shaped opening in the back piece — the back-panel sibling of the front keyhole — with the anatomy rule most tutorials skip: the opening never starts at the neck edge.',
+    lead: 'A shaped opening in the back piece, the back-panel sibling of the front keyhole, with the anatomy rule most tutorials skip: the opening never starts at the neck edge.',
     facts: [
       'A yoke of fabric at the shoulders is what hangs the garment, so the opening starts 40 mm below the centre-back nape and must clear the waist seam by 55 mm. Length is clamped to 55–320 mm: shorter reads as a keyhole, longer than 320 is a full backless span.',
       'Four shapes with real half-width-to-length ratios: round 0.42, low-V 0.34, square 0.36, teardrop keyhole 0.24.',
-      'The opening is drawn as a HALF against the centre-back seam — the back is cut 2, and the mirror axis unfolds it into the full symmetric cutout (the same on-fold convention as the front keyhole).',
-      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0 — sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing is byte-identical to the opening drawn on the back: truing 0.00 mm, tested.',
+      'The opening is drawn as a HALF against the centre-back seam, the back is cut 2, and the mirror axis unfolds it into the full symmetric cutout (the same on-fold convention as the front keyhole).',
+      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0, sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing is byte-identical to the opening drawn on the back: truing 0.00 mm, tested.',
       'It coexists with a tie-back closure on the same draft: the tie draws the strips, this draws the opening they fasten over.',
     ],
     numbers: [
@@ -439,18 +439,18 @@ const STYLES = [
       ['facing margin', '+34 mm, truing 0.00 mm'],
     ],
     compat: 'Dresses and tops (needs a back bodice). Laced backs and back button plackets stay in the honesty layer.',
-    tests: 'tests/backopen_check — facing stitch line byte-identical to the opening, base outlines untouched, all four shapes rendered.',
+    tests: 'tests/backopen_check, facing stitch line byte-identical to the opening, base outlines untouched, all four shapes rendered.',
   },
   {
     slug: 'princess-seams', group: 'construction', name: 'Princess seams',
-    title: 'Princess seam pattern — trued, equal-length edges · stitchu',
+    title: 'Princess seam pattern, trued, equal-length edges · stitchu',
     desc: 'How stitchu converts darts to princess seams: armhole split at 0.38 of armhole depth, both edges trued to equal length, pairs held to 2.5 mm.',
-    lead: 'The default shaping. A waist dart becomes an armhole princess seam — and the step most home drafts skip is the whole point here: both edges of that seam must MEASURE equal, or it will not sew.',
+    lead: 'The default shaping. A waist dart becomes an armhole princess seam, and the step most home drafts skip is the whole point here: both edges of that seam must MEASURE equal, or it will not sew.',
     facts: [
       'The split point sits on the armhole at shoulder drop + 0.38 × armhole depth, clamped at least 30 mm above the bust apex and 15 mm below the shoulder tip, found by a de Casteljau split of the armhole cubic.',
-      'TRUING: the waist curve sits deeper on the centre side (the front balance drop), so the raw side leg would be up to ~10 mm shorter than the centre leg — irrelevant folded as a dart, unsewable as a seam. The side panel\'s waist end is dropped until both edges measure EQUAL, and the waist curve re-blends into the trued point.',
-      'On a princess dress each skirt quarter drafts against ITS bodice half-waist, and the gore seam is placed by arc-walk so the skirt gore meets the bodice princess seam exactly — a virtual-sew audit found offsets up to 8 mm before this rule; the validator now holds it to 2.5 mm.',
-      'Intake floor: a bodice half under 12 mm of intake stays unsplit — a seam that shapes nothing only adds pieces.',
+      'TRUING: the waist curve sits deeper on the centre side (the front balance drop), so the raw side leg would be up to ~10 mm shorter than the centre leg, irrelevant folded as a dart, unsewable as a seam. The side panel\'s waist end is dropped until both edges measure EQUAL, and the waist curve re-blends into the trued point.',
+      'On a princess dress each skirt quarter drafts against ITS bodice half-waist, and the gore seam is placed by arc-walk so the skirt gore meets the bodice princess seam exactly, a virtual-sew audit found offsets up to 8 mm before this rule; the validator now holds it to 2.5 mm.',
+      'Intake floor: a bodice half under 12 mm of intake stays unsplit, a seam that shapes nothing only adds pieces.',
       'Validator rules: princess edge pairs within 2.5 mm, skirt gore pairs within 3.0 mm, measured from the actual piece geometry on every draft.',
     ],
     numbers: [
@@ -465,13 +465,13 @@ const STYLES = [
   },
   {
     slug: 'empire-waist', group: 'construction', name: 'Empire waistline',
-    title: 'Empire waist pattern — seam at underbust girth · stitchu',
+    title: 'Empire waist pattern, seam at underbust girth · stitchu',
     desc: 'How stitchu drafts an empire line: seam 60 mm below the armhole, suppression fitted to your underbust, skirt lengthened to make up the height.',
     lead: 'The under-bust seam, drafted against the measurement that actually lives there: the empire bodice is suppressed to your underbust girth, not your waist.',
     facts: [
-      'The seam sits at the armhole depth + 60 mm — just under the bust, wherever that lands on YOUR back length.',
-      'Suppression targets the UNDERBUST girth (bust − 70 mm, a documented B/C-cup assumption) instead of the natural waist — an empire bodice fitted to the waist measurement would sag.',
-      'The centre-front balance drop shrinks to 15 mm (vs 40 natural) — there is far less bust below the seam to balance over.',
+      'The seam sits at the armhole depth + 60 mm, just under the bust, wherever that lands on YOUR back length.',
+      'Suppression targets the UNDERBUST girth (bust − 70 mm, a documented B/C-cup assumption) instead of the natural waist, an empire bodice fitted to the waist measurement would sag.',
+      'The centre-front balance drop shrinks to 15 mm (vs 40 natural), there is far less bust below the seam to balance over.',
       'The skirt makes up the height: the removed bodice length is added to the skirt length AND to its hip-drafting depth, so the hip is still fitted 200 mm below your NATURAL waist.',
       'Empire + gathered skirt = the babydoll dress; the natural-waist formulas stay bit-identical when empire is off.',
     ],
@@ -508,7 +508,7 @@ const CSS = `
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
   /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
-     white — no colour flip; only the active-underline accent is set here. */
+     white, no colour flip; only the active-underline accent is set here. */
   .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
@@ -720,7 +720,7 @@ function flatSketch(sk) {
     case 'ruffle':
       acc(`M ${CX - 60} 258 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0`, 2);
       break;
-    case 'skirt': // the skirt hem style is the accent — redraw hem heavier
+    case 'skirt': // the skirt hem style is the accent, redraw hem heavier
       break;
     default: break;
   }
@@ -750,10 +750,10 @@ function testBlock(s) {
     ? `<a href="../patches.html#patch-${s.patch.replace(/\./g, '-')}">patch ${s.patch}</a>`
     : `<a href="../patches.html">patch notes</a>`;
   const madeBy = s.patchNote
-    ? `<tr><td>made possible by</td><td class="v">${patchLink} — ${esc(s.patchNote)}</td></tr>`
+    ? `<tr><td>made possible by</td><td class="v">${patchLink}, ${esc(s.patchNote)}</td></tr>`
     : '';
   return `<h2>The test results</h2>
-  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
     <tr><td>seam-pair precision</td><td class="v">${GOLDEN}</td></tr>
@@ -777,7 +777,7 @@ function presetQuery(preset) {
 }
 function printBlock(s) {
   const href = `../create.html${presetQuery(s.preset)}`;
-  return `<a class="sb-btn sb-primary" href="${href}">Print this pattern — true-scale A4, free</a>`;
+  return `<a class="sb-btn sb-primary" href="${href}">Print this pattern, true-scale A4, free</a>`;
 }
 
 function headBlock({ title, desc, canonical }) {
@@ -869,7 +869,7 @@ ${header}
 
   ${flatSketch(S.sketch)}
 
-  <h2>How the engine drafts it</h2>
+  <h2>How the engine drafts it.</h2>
   ${s.facts.map((f) => `<p class="fact">${f}</p>`).join('\n  ')}
 
   <h2>The real numbers</h2>
@@ -896,8 +896,8 @@ ${footer}
 
 function hubPage() {
   const url = `${BASE}/styles/`;
-  const title = 'Sewing pattern style library — every drafted style · stitchu';
-  const desc = `${STYLES.length} garment styles the stitchu engine drafts to your measurements — necklines, skirts, sleeves, collars, shirring — with the real numbers behind each.`;
+  const title = 'Sewing pattern style library, every drafted style · stitchu';
+  const desc = `${STYLES.length} garment styles the stitchu engine drafts to your measurements, necklines, skirts, sleeves, collars, shirring, with the real numbers behind each.`;
   const sections = GROUPS.map(([key, label]) => {
     const items = STYLES.filter((s) => s.group === key);
     if (!items.length) return '';
@@ -924,9 +924,9 @@ ${header}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / style library</p>
   <h1>The style <em>library.</em></h1>
-  <p class="lead">Every style below is drafted by the same engine — real pattern-cutting geometry computed against your seven measurements, validated on a 70,200-draft matrix, seams held to 0.00 mm. Each page shows the actual drafting numbers, straight from the engine's formula spec.</p>
+  <p class="lead">Every style below is drafted by the same engine, real pattern-cutting geometry computed against your seven measurements, validated on a 70,200-draft matrix, seams held to 0.00 mm. Each page shows the actual drafting numbers, straight from the engine's formula spec.</p>
 ${sections}
-  <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements — free</a>
+  <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements, free</a>
 </div>
 ${footer}
 <script src="../js/shared-header.js?v=67"></script>

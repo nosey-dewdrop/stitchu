@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
-<title>Ruffle hem pattern — measured strips, 1–5 tiers · stitchu</title>
+<title>Ruffle hem pattern, measured strips, 1–5 tiers · stitchu</title>
 <meta name="description" content="How stitchu drafts hem ruffles: strip length = your hem × 2.0–3.0 fullness, tiers cascade geometrically, segments cut ≤ 1400 mm so they print.">
 <link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/styles/hem-ruffle.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="stitchu">
-<meta property="og:title" content="Ruffle hem pattern — measured strips, 1–5 tiers · stitchu">
+<meta property="og:title" content="Ruffle hem pattern, measured strips, 1–5 tiers · stitchu">
 <meta property="og:description" content="How stitchu drafts hem ruffles: strip length = your hem × 2.0–3.0 fullness, tiers cascade geometrically, segments cut ≤ 1400 mm so they print.">
 <meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/styles/hem-ruffle.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ruffle hem pattern — measured strips, 1–5 tiers · stitchu">
+<meta name="twitter:title" content="Ruffle hem pattern, measured strips, 1–5 tiers · stitchu">
 <meta name="twitter:description" content="How stitchu drafts hem ruffles: strip length = your hem × 2.0–3.0 fullness, tiers cascade geometrically, segments cut ≤ 1400 mm so they print.">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
-<link rel="stylesheet" href="../css/shared-header.css?v=67">
-<link rel="stylesheet" href="../css/shared-button.css?v=67">
+<link rel="stylesheet" href="../css/theme-transitions.css?v=69">
+<link rel="stylesheet" href="../css/shared-header.css?v=69">
+<link rel="stylesheet" href="../css/shared-button.css?v=69">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://nosey-dewdrop.github.io/stitchu/"},{"@type":"ListItem","position":2,"name":"Style library","item":"https://nosey-dewdrop.github.io/stitchu/styles/"},{"@type":"ListItem","position":3,"name":"Hem ruffle (single + tiered)","item":"https://nosey-dewdrop.github.io/stitchu/styles/hem-ruffle.html"}]}</script>
 <style>
   /* CANON 2026-07-16: baby-blue world, same palette as benchmark/patches.
@@ -31,7 +31,7 @@
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
   /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
-     white — no colour flip; only the active-underline accent is set here. */
+     white, no colour flip; only the active-underline accent is set here. */
   .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
@@ -80,7 +80,7 @@
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html">style library</a> / hem ruffle (single + tiered)</p>
   <h1>Hem ruffle (single + tiered), <em>drafted.</em></h1>
-  <p class="lead">The ruffle strip is measured off YOUR drafted hem — per skirt style — then cut in printable segments. Tiers cascade geometrically, which is exactly why the couture look eats fabric.</p>
+  <p class="lead">The ruffle strip is measured off YOUR drafted hem, per skirt style, then cut in printable segments. Tiers cascade geometrically, which is exactly why the couture look eats fabric.</p>
 
   <figure class="sketch">
   <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a ruffle-hem skirt">
@@ -93,12 +93,12 @@
   <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The accent line is the piece this page draws.</figcaption>
 </figure>
 
-  <h2>How the engine drafts it</h2>
+  <h2>How the engine drafts it.</h2>
   <p class="fact">The attach edge is the real hem circumference of your draft, computed per skirt style (A-line/straight quarters + flare, gathered/pleated through their ratios, half-circle πR).</p>
-  <p class="fact">Cut length = hem × fullness (2.0–3.0). The strip is cut in fabric-width segments of at most 1400 mm, joined end to end — every piece stays printable under the 3000 mm tile cap.</p>
-  <p class="fact">Tiered (1–5): tier i gathers onto the edge below it, so its cut length = hem × fullness^i. The fabric use grows geometrically — that cascade is the couture look, and the engine prints the true cost instead of hiding it.</p>
+  <p class="fact">Cut length = hem × fullness (2.0–3.0). The strip is cut in fabric-width segments of at most 1400 mm, joined end to end, every piece stays printable under the 3000 mm tile cap.</p>
+  <p class="fact">Tiered (1–5): tier i gathers onto the edge below it, so its cut length = hem × fullness^i. The fabric use grows geometrically, that cascade is the couture look, and the engine prints the true cost instead of hiding it.</p>
   <p class="fact">Only the LAST tier carries the 10 mm rolled-hem allowance; intermediate tiers end in a 12 mm seam that receives the next tier's gathers.</p>
-  <p class="fact">Ruffle pieces are excluded from the skirt-waist validation sum — a trim is not waist-bearing, and the validator knows the difference.</p>
+  <p class="fact">Ruffle pieces are excluded from the skirt-waist validation sum, a trim is not waist-bearing, and the validator knows the difference.</p>
 
   <h2>The real numbers</h2>
   <table>
@@ -108,21 +108,21 @@
     <tr><td>segment cap</td><td class="v">≤ 1400 mm per cut piece</td></tr>
     <tr><td>hem allowance</td><td class="v">last tier 10 mm · inner tiers 12 mm seam</td></tr>
   </table>
-  <p class="meta"><b>Works with:</b> Any skirt or dress hem, every skirt style — the strip length adapts to each hem formula.</p>
+  <p class="meta"><b>Works with:</b> Any skirt or dress hem, every skirt style, the strip length adapts to each hem formula.</p>
 
   <h2>The test results</h2>
-  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
     <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
     <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
     <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
-    <tr><td>dedicated test</td><td class="v">tests/ruffle_check + tests/tiered_ruffle_check — per-tier cascade math, seam-vs-hem heights, printability, opt-in byte-identity.</td></tr>
+    <tr><td>dedicated test</td><td class="v">tests/ruffle_check + tests/tiered_ruffle_check, per-tier cascade math, seam-vs-hem heights, printability, opt-in byte-identity.</td></tr>
     
   </table>
 
   <div class="actions">
-    <a class="sb-btn sb-primary" href="../create.html?garment=skirt&skirtStyle=aLine&ruffle=single">Print this pattern — true-scale A4, free</a>
+    <a class="sb-btn sb-primary" href="../create.html?garment=skirt&skirtStyle=aLine&ruffle=single">Print this pattern, true-scale A4, free</a>
     <a class="cta2" href="index.html">Browse all styles →</a>
   </div>
   <p class="also">More in details & closures: <a href="keyhole.html">Keyhole cut-out</a> · <a href="button-placket.html">Front button placket</a> · <a href="fabric-ties.html">Fabric ties, sashes & bows</a> · <a href="collars.html">Collar family</a> · <a href="shirring-drawstring.html">Drawstring, shirring & smocking</a> · <a href="open-back.html">Open-back cutout</a></p>
@@ -131,6 +131,6 @@
   <span>stitchu · the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=69"></script>
 </body>
 </html>

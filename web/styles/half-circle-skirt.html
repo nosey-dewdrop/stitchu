@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
-<title>Half circle skirt pattern — r = waist/π, cut flat · stitchu</title>
+<title>Half circle skirt pattern, r = waist/π, cut flat · stitchu</title>
 <meta name="description" content="How stitchu drafts a half-circle skirt: inner radius = eased waist / π, two quarter panels cut flat (never on fold), true bezier arcs.">
 <link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/styles/half-circle-skirt.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="stitchu">
-<meta property="og:title" content="Half circle skirt pattern — r = waist/π, cut flat · stitchu">
+<meta property="og:title" content="Half circle skirt pattern, r = waist/π, cut flat · stitchu">
 <meta property="og:description" content="How stitchu drafts a half-circle skirt: inner radius = eased waist / π, two quarter panels cut flat (never on fold), true bezier arcs.">
 <meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/styles/half-circle-skirt.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Half circle skirt pattern — r = waist/π, cut flat · stitchu">
+<meta name="twitter:title" content="Half circle skirt pattern, r = waist/π, cut flat · stitchu">
 <meta name="twitter:description" content="How stitchu drafts a half-circle skirt: inner radius = eased waist / π, two quarter panels cut flat (never on fold), true bezier arcs.">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
-<link rel="stylesheet" href="../css/shared-header.css?v=67">
-<link rel="stylesheet" href="../css/shared-button.css?v=67">
+<link rel="stylesheet" href="../css/theme-transitions.css?v=69">
+<link rel="stylesheet" href="../css/shared-header.css?v=69">
+<link rel="stylesheet" href="../css/shared-button.css?v=69">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://nosey-dewdrop.github.io/stitchu/"},{"@type":"ListItem","position":2,"name":"Style library","item":"https://nosey-dewdrop.github.io/stitchu/styles/"},{"@type":"ListItem","position":3,"name":"Half-circle skirt","item":"https://nosey-dewdrop.github.io/stitchu/styles/half-circle-skirt.html"}]}</script>
 <style>
   /* CANON 2026-07-16: baby-blue world, same palette as benchmark/patches.
@@ -31,7 +31,7 @@
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
   /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
-     white — no colour flip; only the active-underline accent is set here. */
+     white, no colour flip; only the active-underline accent is set here. */
   .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
@@ -80,7 +80,7 @@
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html">style library</a> / half-circle skirt</p>
   <h1>Half-circle skirt, <em>drafted.</em></h1>
-  <p class="lead">Real circle-skirt maths: the waist becomes the inner arc of a ring. And one trap the engine refuses to fall into — these panels are never cut on the fold.</p>
+  <p class="lead">Real circle-skirt maths: the waist becomes the inner arc of a ring. And one trap the engine refuses to fall into, these panels are never cut on the fold.</p>
 
   <figure class="sketch">
   <svg viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Technical flat sketch showing a half-circle skirt">
@@ -92,11 +92,11 @@
   <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The accent line is the piece this page draws.</figcaption>
 </figure>
 
-  <h2>How the engine drafts it</h2>
+  <h2>How the engine drafts it.</h2>
   <p class="fact">The inner radius r = your eased waist / π; the outer radius R = r + the skirt length. Two quarter-circle panels make the half circle.</p>
-  <p class="fact">The panels are cut FLAT, cut 2 — on the fold they would unfold into a FULL circle and double the waist. The engine encodes that as a rule, not a guide warning.</p>
-  <p class="fact">The arcs are cubic beziers with kappa 0.5523 — the standard circle approximation — so the printed curve is a true arc, not a polygon.</p>
-  <p class="fact">Fabric estimate: (R × 2 + 120 mm) × 1.10 on a 140 cm width — printed on the pattern cover.</p>
+  <p class="fact">The panels are cut FLAT, cut 2, on the fold they would unfold into a FULL circle and double the waist. The engine encodes that as a rule, not a guide warning.</p>
+  <p class="fact">The arcs are cubic beziers with kappa 0.5523, the standard circle approximation, so the printed curve is a true arc, not a polygon.</p>
+  <p class="fact">Fabric estimate: (R × 2 + 120 mm) × 1.10 on a 140 cm width, printed on the pattern cover.</p>
 
   <h2>The real numbers</h2>
   <table>
@@ -109,7 +109,7 @@
   <p class="meta"><b>Works with:</b> Standalone skirt or dress skirt; no waist shaping (the circle is the shaping); ruffle hems supported.</p>
 
   <h2>The test results</h2>
-  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
     <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
@@ -120,7 +120,7 @@
   </table>
 
   <div class="actions">
-    <a class="sb-btn sb-primary" href="../create.html?garment=skirt&skirtStyle=halfCircle">Print this pattern — true-scale A4, free</a>
+    <a class="sb-btn sb-primary" href="../create.html?garment=skirt&skirtStyle=halfCircle">Print this pattern, true-scale A4, free</a>
     <a class="cta2" href="index.html">Browse all styles →</a>
   </div>
   <p class="also">More in skirt styles: <a href="a-line-skirt.html">A-line skirt</a> · <a href="straight-skirt.html">Straight skirt</a> · <a href="gathered-skirt.html">Gathered skirt</a> · <a href="pleated-skirt.html">Pleated skirt</a></p>
@@ -129,6 +129,6 @@
   <span>stitchu · the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=69"></script>
 </body>
 </html>

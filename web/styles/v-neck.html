@@ -15,9 +15,9 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="V-neck pattern drafted to your measurements · stitchu">
 <meta name="twitter:description" content="How stitchu drafts a v-neck: front depth = neck width + 75 mm, the deepest straight-family neckline, with a guarded centre-front edge on short bodies.">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
-<link rel="stylesheet" href="../css/shared-header.css?v=67">
-<link rel="stylesheet" href="../css/shared-button.css?v=67">
+<link rel="stylesheet" href="../css/theme-transitions.css?v=69">
+<link rel="stylesheet" href="../css/shared-header.css?v=69">
+<link rel="stylesheet" href="../css/shared-button.css?v=69">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://nosey-dewdrop.github.io/stitchu/"},{"@type":"ListItem","position":2,"name":"Style library","item":"https://nosey-dewdrop.github.io/stitchu/styles/"},{"@type":"ListItem","position":3,"name":"V-neck","item":"https://nosey-dewdrop.github.io/stitchu/styles/v-neck.html"}]}</script>
 <style>
   /* CANON 2026-07-16: baby-blue world, same palette as benchmark/patches.
@@ -31,7 +31,7 @@
   .brandpatch:hover{background:#2b4f7a}
   .brandpatch:hover::after{inset:5px}
   /* Shared header comes from ../css/shared-header.css (one source). Navy ink on
-     white — no colour flip; only the active-underline accent is set here. */
+     white, no colour flip; only the active-underline accent is set here. */
   .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
@@ -95,11 +95,11 @@
   <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The accent line is the piece this page draws.</figcaption>
 </figure>
 
-  <h2>How the engine drafts it</h2>
-  <p class="fact">Front neck width is your neck measurement × 0.17, capped at 72% of the half shoulder — a neckline can never eat the shoulder seam.</p>
-  <p class="fact">The front depth is the neck width + 75 mm — deeper than scoop (+50) and square (+40).</p>
+  <h2>How the engine drafts it.</h2>
+  <p class="fact">Front neck width is your neck measurement × 0.17, capped at 72% of the half shoulder, a neckline can never eat the shoulder seam.</p>
+  <p class="fact">The front depth is the neck width + 75 mm, deeper than scoop (+50) and square (+40).</p>
   <p class="fact">The centre front/back edge is a cubic whose control points interpolate between the waist and the neck cutout; that guard keeps deep necklines on short bodies from folding the edge back.</p>
-  <p class="fact">The neck facing repeats the garment neckline commands verbatim and its inner edge must match the neck edge within 1.5 mm — a validator rule, checked on every draft.</p>
+  <p class="fact">The neck facing repeats the garment neckline commands verbatim and its inner edge must match the neck edge within 1.5 mm, a validator rule, checked on every draft.</p>
 
   <h2>The real numbers</h2>
   <table>
@@ -112,18 +112,18 @@
   <p class="meta"><b>Works with:</b> Dresses and tops. Works with every sleeve, collar, gathering and skirt option.</p>
 
   <h2>The test results</h2>
-  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
     <tr><td>seam-pair precision</td><td class="v">0.000000 mm</td></tr>
     <tr><td>validation matrix</td><td class="v">70,200 body × option drafts, 0 failures</td></tr>
     <tr><td>web fuzz sweep</td><td class="v">19,780 / 0 · vocab sweep 37,800 / 0</td></tr>
-    <tr><td>dedicated test</td><td class="v">Validated across the full 70,200-draft matrix — facing match, self-intersection, chest-width ease all checked per draft.</td></tr>
+    <tr><td>dedicated test</td><td class="v">Validated across the full 70,200-draft matrix, facing match, self-intersection, chest-width ease all checked per draft.</td></tr>
     
   </table>
 
   <div class="actions">
-    <a class="sb-btn sb-primary" href="../create.html?garment=dress&neckline=vNeck">Print this pattern — true-scale A4, free</a>
+    <a class="sb-btn sb-primary" href="../create.html?garment=dress&neckline=vNeck">Print this pattern, true-scale A4, free</a>
     <a class="cta2" href="index.html">Browse all styles →</a>
   </div>
   <p class="also">More in necklines: <a href="sweetheart-neckline.html">Sweetheart neckline</a> · <a href="halter-neckline.html">Halter neckline</a> · <a href="scoop-neckline.html">Scoop neckline</a> · <a href="square-neckline.html">Square neckline</a> · <a href="boat-neckline.html">Boat neckline</a> · <a href="crew-neckline.html">Crew neckline</a></p>
@@ -132,6 +132,6 @@
   <span>stitchu · the pattern-making engine</span>
   <span><a href="../index.html">home</a> · <a href="index.html">style library</a> · <a href="../api.html">API</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=69"></script>
 </body>
 </html>

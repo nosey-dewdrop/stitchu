@@ -15,9 +15,9 @@
 <meta name="twitter:title" content="stitchu API, one endpoint, real patterns, no AI bill">
 <meta name="twitter:description" content="POST /api/draft: measurements + a garment spec in, a true-scale sewing pattern out.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
-<link rel="stylesheet" href="css/theme-transitions.css?v=68">
-<link rel="stylesheet" href="css/shared-header.css?v=68">
-<link rel="stylesheet" href="css/shared-button.css?v=68">
+<link rel="stylesheet" href="css/theme-transitions.css?v=69">
+<link rel="stylesheet" href="css/shared-header.css?v=69">
+<link rel="stylesheet" href="css/shared-button.css?v=69">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). Code blocks
      stay dark navy for readability, standard API-doc contrast. */
@@ -30,7 +30,7 @@
   h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:40px;margin:40px 0 8px;line-height:1.1;color:var(--navy)}
   .sub{font-size:16px;color:var(--ink);max-width:56ch;line-height:1.5}
   .tag{display:inline-block;margin-top:20px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--bb-deep);border:1px solid var(--bb-line);border-radius:999px;padding:7px 15px}
+    color:var(--bb-deep);border:1px solid var(--bb-line);border-radius:2px;padding:7px 15px}
   h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:24px;margin:48px 0 14px;color:var(--navy)}
   pre{background:#16233a;border:1px solid #24365a;border-radius:6px;padding:18px 20px;overflow:auto;
     font-family:'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.6;color:#e7eefb}
@@ -107,7 +107,7 @@
   <p class="sub" style="font-size:13.5px">Coordinates are in millimetres; every point is a flat key on the command. An impossible body or an unsewable combination returns <b>422 <code>undraftable</code></b> with the reasons, the API never returns a pattern that would waste a customer's fabric.</p>
 
   <div class="cards">
-    <div class="card"><h3>No LLM cost</h3><p>The drafting is our own engine, not a model call. Your margin doesn't erode per request.</p></div>
+    <div class="card"><h3>No LLM cost</h3><p>The drafting runs on the engine itself, not a model call. Your margin doesn't erode per request.</p></div>
     <div class="card"><h3>Proven output</h3><p>Every pattern passes the same published accuracy benchmark, seams match, sleeves fit, proportions hold.</p></div>
     <div class="card"><h3>Private by design</h3><p>Send only measurements; nothing about your customer's body is stored or logged.</p></div>
   </div>
@@ -130,7 +130,7 @@
     <pre id="pg-out" style="margin-top:14px;max-height:320px">the response appears here…</pre>
   </div>
 
-  <h2>Grade a size run</h2>
+  <h2>Grade a size run.</h2>
   <p class="sub">One design, a whole size chart. <code>POST /api/grade</code> drafts a spec across an EU size range, every size from the same engine, so a seller gets a full run without maintaining grade rules.</p>
   <div class="play">
     <div class="play-row">
@@ -152,17 +152,17 @@
   </div>
 
   <h2>Beta partners</h2>
-  <p class="sub">We're in beta, so pricing comes later, right now we're onboarding a handful of early partners for free. The engine has no per-call AI cost, so we can stay cheap when pricing lands. Tell us your volume and what you're building.</p>
+  <p class="sub">stitchu is in beta, so pricing comes later; right now a handful of early partners are being onboarded for free. The engine has no per-call AI cost, so pricing can stay low when it lands. Tell us your volume and what you're building.</p>
   <div class="cards">
     <div class="card"><h3>Maker</h3><p>A solo Etsy / made-to-measure shop. One photo → a full size run (XS–XL / EU34–52) via <b>/api/grade</b>.</p></div>
-    <div class="card"><h3>Studio</h3><p>A growing brand drafting at volume. Priority support while we build together.</p></div>
-    <div class="card"><h3>Volume</h3><p>High-volume or white-label. Tell us your numbers below and we'll shape it with you.</p></div>
+    <div class="card"><h3>Studio</h3><p>A growing brand drafting at volume. Priority support during the build.</p></div>
+    <div class="card"><h3>Volume</h3><p>High-volume or white-label. Send your numbers below and it gets shaped with you.</p></div>
   </div>
-  <p class="sub" style="font-size:12px;color:#5b7089">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost, beta is free while we build.</p>
+  <p class="sub" style="font-size:12px;color:#5b7089">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. stitchu publishes the benchmark and runs the engine at zero marginal cost; beta is free during the build.</p>
 
   <div class="beta-cta">
-    <h2>Become a beta partner</h2>
-    <p class="sub">Studios, made-to-measure brands and pattern shops, tell us your volume and we'll set you up.</p>
+    <h2>Become a beta partner.</h2>
+    <p class="sub">Studios, made-to-measure brands and pattern shops, send your volume and you'll be set up.</p>
     <form onsubmit="return apiWaitlist(event)">
       <input type="email" id="apiemail" placeholder="you@studio.com" required>
       <button type="submit" class="sb-btn sb-primary">Join the beta</button>
@@ -197,7 +197,7 @@ document.getElementById('pg-run').addEventListener('click', async () => {
     });
     const data = await r.json();
     if (r.status === 404 || data.error === 'draft_closed') {
-      out.textContent = '// The draft endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      out.textContent = '// The draft endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below to be notified.';
       return;
     }
     // Trim the piece geometry so the demo output is readable.
@@ -230,7 +230,7 @@ document.getElementById('gr-run').addEventListener('click', async () => {
     });
     const data = await r.json();
     if (r.status === 404 || data.error === 'draft_closed') {
-      out.textContent = '// The grade endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below and we\'ll let you know.';
+      out.textContent = '// The grade endpoint isn\'t live yet, it activates on the next deploy.\n// Request access below to be notified.';
       return;
     }
     if (data.sizes) {
@@ -258,13 +258,13 @@ async function apiWaitlist(e){
       method:'POST', headers:{'content-type':'application/json'},
       body: JSON.stringify({ email, note: 'api-page' })
     });
-    if(r.ok){ msg.textContent='You’re on the list, we’ll be in touch.'; document.getElementById('apiemail').value=''; }
+    if(r.ok){ msg.textContent='You’re on the list. A reply will follow shortly.'; document.getElementById('apiemail').value=''; }
     else if(r.status===429){ msg.textContent='One moment, please try again shortly.'; }
     else { msg.textContent='Could not save that, email hello@ instead?'; }
   }catch(_){ msg.textContent='Could not reach the server, email hello@ instead?'; }
   return false;
 }
 </script>
-<script src="js/shared-header.js?v=68"></script>
+<script src="js/shared-header.js?v=69"></script>
 </body>
 </html>
