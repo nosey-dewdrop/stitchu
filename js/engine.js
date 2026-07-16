@@ -51,6 +51,12 @@ export function backSlitValue(spec) {
   return HEM_SLIT[spec && spec.backSlit] || 0;
 }
 
+// StrapStyle enum (must match engine/src/strap.hpp order). 0 = None.
+const STRAP_STYLE = { none: 0, ruffled: 1 };
+export function ruffledStrapsValue(spec) {
+  return STRAP_STYLE[spec && spec.ruffledStraps] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -85,6 +91,7 @@ export async function grade(spec, fromLabel, toLabel) {
     gatherZoneValue(spec), // Loop 8: gather zone
     backOpeningValue(spec), // Loop 9b: open-back cutout
     backSlitValue(spec),    // Loop M1: back hem slit / walking vent
+    ruffledStrapsValue(spec), // queue #3: ruffled shoulder straps
   );
   return JSON.parse(json);
 }
@@ -110,6 +117,7 @@ export async function draft(spec, measurements) {
     gatherZoneValue(spec),       // Loop 8: gather zone
     backOpeningValue(spec),      // Loop 9b: open-back cutout
     backSlitValue(spec),         // Loop M1: back hem slit / walking vent
+    ruffledStrapsValue(spec),    // queue #3: ruffled shoulder straps
   );
   return JSON.parse(json);
 }

@@ -53,6 +53,10 @@ const SPEC_GROUPS = [
   // straight/A-line skirt or dress hosts a center-back walking vent; gathered/
   // pleated/half-circle skirts walk freely and the engine skips it honestly.
   { key: 'backSlit', label: 'back slit', trLabel: 'arka yırtmaç', options: [['none', 'none', 'yok'], ['vent', 'walking vent', 'körük yırtmaç'], ['slit', 'plain slit', 'düz yırtmaç']], for: (s) => s.garment !== 'top' && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine') },
+  // queue #3: ruffled shoulder straps (fırfırlı askı). A gathered self-fabric
+  // frill strip drawn as a separate pair; only a sleeveless dress/top carries one
+  // (a sleeved/halter garment frames the shoulder instead → engine skips honestly).
+  { key: 'ruffledStraps', label: 'ruffled straps', trLabel: 'fırfırlı askı', options: [['none', 'none', 'yok'], ['ruffled', 'ruffled straps', 'fırfırlı askı']], for: (s) => s.sleeveStyle === 'none' && s.neckline !== 'halter' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -65,6 +69,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
+  ruffledStraps: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -229,6 +234,26 @@ function pickHemSlit(seen) {
   if (!named) return null;
   if (/vent|kick/.test(words)) return 'vent';
   return 'slit';
+}
+
+// Map the vision's straps / oov terms to a ruffled shoulder strap (queue #3).
+// The engine draws ONLY the ruffled (gathered-strip) strap as a separate pair;
+// a plain shoulder/wide strap is the engine's plain edge, and a spaghetti /
+// one-shoulder / off-shoulder / halter strap is a different construction that
+// stays in the honesty layer. Returns 'ruffled' or null.
+function pickRuffledStraps(seen) {
+  if (seen.straps && seen.straps.type === 'ruffled') return 'ruffled';
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A ruffled / frilled / gathered / flutter shoulder strap. A spaghetti / halter
+  // / one-shoulder / off-shoulder strap is NOT this (stays honest).
+  if (/(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/.test(words) &&
+      !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/.test(words)) {
+    return 'ruffled';
+  }
+  return null;
 }
 
 function el(tag, className, text) {
@@ -534,6 +559,15 @@ function showSpec() {
         const slitHostable = spec.garment !== 'top' &&
           (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine');
         spec.backSlit = (slit && slitHostable) ? slit : 'none';
+        // Ruffled shoulder straps (fırfırlı askı, queue #3): the engine now draws a
+        // gathered self-fabric frill strip as a separate strap pair + a placement
+        // notch. Only a sleeveless dress/top carries one; a sleeved/halter garment
+        // frames the shoulder instead (engine skips honestly). A plain/spaghetti/
+        // one-shoulder strap stays in the honesty layer (pickRuffledStraps null).
+        const straps = pickRuffledStraps(seen);
+        const strapsHostable = (spec.sleeveStyle === 'none' || !spec.sleeveStyle) &&
+          spec.neckline !== 'halter';
+        spec.ruffledStraps = (straps && strapsHostable) ? straps : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -577,6 +611,11 @@ function showSpec() {
           // honest (only the CB walking vent is drawn). Also false when the slit
           // was read on a non-hosting (gathered) skirt → stays honest.
           hemSlitDrawn: !!(spec.backSlit && spec.backSlit !== 'none'),
+          // queue #3: a ruffled shoulder strap is now DRAWN as a separate gathered
+          // strip pair, so the honesty layer must NOT list it as missing. A plain /
+          // spaghetti / one-shoulder / off-shoulder / halter strap stays honest
+          // (ruffledStraps none — a different construction the engine does not draw).
+          ruffledStrapsDrawn: !!(spec.ruffledStraps && spec.ruffledStraps !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();
