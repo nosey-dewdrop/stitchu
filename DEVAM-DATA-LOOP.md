@@ -28,6 +28,18 @@ vision'a zor; onlar İKİNCİ dalga ve amaçları farklı: inşa TERİMİ çeşi
   Vogue/on binler HEDEF DEĞİL şimdilik — önce boru çalışsın, ölçek sonra.
 - dataset/ .gitignore'a eklenir (İLK İŞ, foto inmeden önce).
 
+## DALGA 2 — DEFİLE/DERGİ (Damla direktifi, 17 Tem)
+- Kaynak: Vogue Runway benzeri HERKESE AÇIK defile/koleksiyon sayfaları + marka
+  lookbook'ları. Markalar (Damla'nın listesi): **Moschino, Dior, Chanel, Versace.**
+  Kırmızı çizgiler aynen geçerli: paywall arkasına girme, robots.txt, rate-limit,
+  fotolar LOKAL/gitignore, marka isimleri sadece iç manifest'te.
+- FİLTRE (Damla, aynen): "gelinlik dikmiyoruz" — gelinlik, düğün, Met Gala / kırmızı
+  halı / gala tuvaleti TOPLANMAZ. Hedef estetik: **zarif Fransız kadını** — giyilebilir
+  ready-to-wear zarafet (Chanel tweed takım, Dior günlük elbise ruhu). Kate Middleton
+  jüri süzgeci: "bunu giyip hareket edebilir miydi?"
+- Amaç sayı değil DAĞARCIK: inşa terimi çeşitliliği (yaka/kol/kesim/kapama) →
+  vocab-frequency tablosuna marka etiketiyle girer, FAZ M/P kuyruğunu besler.
+
 ## D2 — KELİME MADENCİLİĞİ (dağarcık haritası, token harcar)
 - Toplanan fotolardan örneklem (ilk tur ~50-100) canlı /api/analyze'dan geçir
   (x-sb-bench token, FAST tempo), outOfVocab terimlerini topla.
