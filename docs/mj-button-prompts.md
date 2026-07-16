@@ -34,3 +34,19 @@ Notlar:
 - "no text" kalsın; MJ yazı uydurursa eleriz.
 - Ton tutmazsa ekle: `deep teal #1f6f78` / `navy #1f3a5f` / zemin `pale powder blue #8fbfe8`.
 - Parlaklık plastik kaçarsa `matte finish` ekle, pearl'ü çıkar.
+
+## EK (16 Tem akşam, Damla): kırmızı düğme yönü
+Damla canlıdaki "mavi üzerine kırmızı düğme" görünümünü çok sevdi; asset'i kendimiz
+üreteceğiz. Teal/navy setine ek, KIRMIZI varyantlar:
+
+6. TEKLİ KİRAZ KIRMIZISI DÜĞME (kart köşesi, mühür hissi):
+   macro photograph of a single deep cherry red sewing button, four holes,
+   slight vintage sheen, soft studio light, pure white background, centered,
+   product photography, no text
+
+7. KIRMIZI DÜĞME PÖTİKARE ÜSTÜNDE (uyum testi):
+   deep cherry red sewing buttons scattered on pale baby blue gingham fabric,
+   soft daylight, flat lay, shallow depth of field, no text
+
+Ton için gerekirse: `deep cherry red #a31f34`. Seçim Damla'nın; teal/navy ve
+kırmızı setlerinden hangisi üretilirse onu yerleştiririm.

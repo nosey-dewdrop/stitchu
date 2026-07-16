@@ -99,3 +99,15 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
 - İçerik logu: essay ("yama notları neden bağ kurar / beta kararı") + reel +
   patch 2.1 girdisi (artık sayfa var, oraya).
 - NEREDEYİZ güncelle (DEVAM-VISION-LOOP.md) + commit + push.
+
+## SONRAKİ VİTRİN DALI (Damla, 16 Tem akşam): PATCH KANITLARI
+Damla kararı: "patch notes yanlarına düğme koy; okla bu patch'in benchmark
+testlerini koy, SVG'leri koy. kanıt lazım." Her patch girdisinin yanına kanıt
+düğmesi: tıklayınca o patch'in getirdiği yetenek için (a) motorun gerçek çıktı
+SVG'si (render-pages.mjs ile üretilmiş, telifsiz kendi çıktımız), (b) sayı
+delta'sı (FULL öncesi/sonrası, kaynak results dosyası adı), (c) varsa ilgili
+test adı (ctest). Geçiş, ana sayfa→patches geçişindeki evren hissini korur
+(Damla o geçişi övdü: nav ve yerleşim değişmiyor; standart bu). Başlık kuralı:
+"Patch Notes" gibi gerçek başlıklar çıplak kalır; cümle-başlıklar noktalanır
+(nokta/soru işareti/iki nokta gramerine göre). TEK EVREN denetim agent'ı
+bittikten SONRA koşulur (çakışma yasağı).
