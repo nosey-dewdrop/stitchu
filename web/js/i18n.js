@@ -1,7 +1,7 @@
 // Two languages, one tiny dictionary. Default English; "tr" persisted in
 // localStorage. Static pages translate via data-i18n attributes, dynamic
 // screens call t(). Sewing-guide steps stay English for now: correct Turkish
-// sewing terminology is content, and content is Damla's — flagged in TR mode.
+// sewing terminology is content, and content is Damla's, flagged in TR mode.
 const LANG_KEY = 'stitchu:lang';
 
 export const STRINGS = {
@@ -21,41 +21,41 @@ export const STRINGS = {
   'how.3.title': { en: 'Print and sew', tr: 'Bas ve dik' },
   'how.3.body': { en: 'Tiled A4 sheets with a calibration square, fabric meters, and a sewing order that starts at the right seam.', tr: 'Kalibrasyon kareli A4 yapraklar, kumaş metresi ve doğru dikişten başlayan dikim sırası.' },
   'wall.title': { en: 'The stitch wall', tr: 'Dikiş duvarı' },
-  'wall.lede': { en: 'Every visitor sews a few stitches and they stay. Drag inside the frame — this thread color is yours.', tr: 'Her ziyaretçi birkaç ilmek atar ve ilmekler kalır. Çerçevenin içinde sürükle — bu iplik rengi senin.' },
+  'wall.lede': { en: 'Every visitor sews a few stitches and they stay. Drag inside the frame, this thread color is yours.', tr: 'Her ziyaretçi birkaç ilmek atar ve ilmekler kalır. Çerçevenin içinde sürükle, bu iplik rengi senin.' },
   'wall.yourthread': { en: 'your thread', tr: 'senin ipliğin' },
   'wall.noteplaceholder': { en: 'Leave a note under the wall (80 chars)', tr: 'Duvarın altına bir not bırak (80 karakter)' },
   'wall.stitchit': { en: 'Stitch it', tr: 'Dik gitsin' },
-  'wall.localmode': { en: 'the shared wall wakes up at launch — until then your stitches stay on this device', tr: 'ortak duvar lansmanla uyanacak — o zamana dek ilmeklerin bu cihazda kalır' },
-  'wall.unreachable': { en: 'the wall is unreachable right now — your stitches stay on this device', tr: 'duvara şu an ulaşılamıyor — ilmeklerin bu cihazda kalır' },
+  'wall.localmode': { en: 'the shared wall wakes up at launch, until then your stitches stay on this device', tr: 'ortak duvar lansmanla uyanacak, o zamana dek ilmeklerin bu cihazda kalır' },
+  'wall.unreachable': { en: 'the wall is unreachable right now, your stitches stay on this device', tr: 'duvara şu an ulaşılamıyor, ilmeklerin bu cihazda kalır' },
   'wall.keepkind': { en: 'keep it kind', tr: 'kibar kalalım' },
   'wall.notefail': { en: 'could not stitch the note, try later', tr: 'not dikilemedi, sonra dene' },
   'wall.count': { en: '{n} stitches sewn by visitors', tr: 'ziyaretçiler {n} ilmek dikti' },
   'wall.count1': { en: '1 stitch sewn by visitors', tr: 'ziyaretçiler 1 ilmek dikti' },
-  'footer.tag': { en: 'stitchu — a pocket sewing teacher', tr: 'stitchu — cep terzisi öğretmenin' },
+  'footer.tag': { en: 'stitchu, a pocket sewing teacher', tr: 'stitchu, cep terzisi öğretmenin' },
   'footer.privacy': { tr: 'gizlilik' },
 
   // create flow
   'create.measure.title': { en: 'Your measurements', tr: 'Ölçülerin' },
-  'create.measure.sub': { en: 'Seven measurements, once — saved on this device only.', tr: 'Yedi ölçü, bir kez — yalnızca bu cihazda saklanır.' },
+  'create.measure.sub': { en: 'Seven measurements, once, saved on this device only.', tr: 'Yedi ölçü, bir kez, yalnızca bu cihazda saklanır.' },
   'create.measure.privacy': { en: 'Stored in this browser only. Nothing is uploaded.', tr: 'Yalnızca bu tarayıcıda saklanır. Hiçbir şey yüklenmez.' },
   'create.measure.numerror': { en: 'Enter a number in centimeters.', tr: 'Santimetre cinsinden bir sayı gir.' },
   'create.measure.rangeerror': { en: "That doesn't look like a {label} in cm (expected {min}–{max}).", tr: 'Bu cm cinsinden bir {label} gibi durmuyor ({min}–{max} arası bekleniyor).' },
   'create.back': { en: 'Back', tr: 'Geri' },
-  'create.next': { en: 'Next — {label}', tr: 'Sıradaki — {label}' },
-  'create.skip': { en: 'Skip — pick your garment', tr: 'Atla — kıyafetini seç' },
+  'create.next': { en: 'Next, {label}', tr: 'Sıradaki, {label}' },
+  'create.skip': { en: 'Skip, pick your garment', tr: 'Atla, kıyafetini seç' },
   'create.optional': { en: 'optional', tr: 'isteğe bağlı' },
   'create.profile.current': { en: 'current body', tr: 'aktif beden' },
   'create.profile.nameph': { en: 'name this body (e.g. a client)', tr: 'bu bedene ad ver (örn. bir müşteri)' },
   'create.profile.save': { en: 'Save body', tr: 'Bedeni kaydet' },
-  'create.done': { en: 'Done — pick your garment', tr: 'Bitti — kıyafetini seç' },
+  'create.done': { en: 'Done, pick your garment', tr: 'Bitti, kıyafetini seç' },
   'create.spec.title': { en: 'What are we sewing?', tr: 'Ne dikiyoruz?' },
   'create.spec.sub': { en: 'Pick the garment; the pattern is drafted to your saved measurements. ', tr: 'Kıyafeti seç; kalıp kayıtlı ölçülerine çizilir. ' },
-  'create.spec.subdemo': { en: 'Pick a garment (or upload a photo) and see a real pattern — drafted to a standard size for now. ', tr: 'Bir kıyafet seç (ya da fotoğraf yükle) ve gerçek bir kalıp gör — şimdilik standart bedene çizilir. ' },
+  'create.spec.subdemo': { en: 'Pick a garment (or upload a photo) and see a real pattern, drafted to a standard size for now. ', tr: 'Bir kıyafet seç (ya da fotoğraf yükle) ve gerçek bir kalıp gör, şimdilik standart bedene çizilir. ' },
   'create.spec.edit': { en: 'Edit measurements', tr: 'Ölçüleri düzenle' },
   'create.spec.addmeasure': { en: 'add your measurements', tr: 'ölçülerini ekle' },
   'create.demo.banner': { en: 'This is a standard EU38. Make it fit you →', tr: 'Bu standart EU38 beden. Kendine göre çizdir →' },
   'create.demo.cta': { en: 'Draft it to my measurements', tr: 'Benim ölçülerime çiz' },
-  'create.demo.badge': { en: 'standard size — not yet yours', tr: 'standart beden — henüz senin değil' },
+  'create.demo.badge': { en: 'standard size, not yet yours', tr: 'standart beden, henüz senin değil' },
   'create.spec.photo': { en: 'or start from a photo', tr: 'ya da fotoğraftan başla' },
   'create.spec.photobtn': { en: 'Upload a garment photo', tr: 'Kıyafet fotoğrafı yükle' },
   'create.spec.reading': { en: 'reading the garment…', tr: 'kıyafet okunuyor…' },
@@ -63,19 +63,19 @@ export const STRINGS = {
   'create.draft': { en: 'Draft my pattern', tr: 'Kalıbımı çiz' },
   'create.drafting': { en: 'drafting your pattern…', tr: 'kalıbın çiziliyor…' },
   'create.engineerror': { en: 'The engine failed to load. Refresh and try again.', tr: 'Motor yüklenemedi. Sayfayı yenileyip tekrar dene.' },
-  'create.result.title': { en: '{garment}, drafted for you.', tr: '{garment} — senin için çizildi.' },
+  'create.result.title': { en: '{garment}, drafted for you.', tr: '{garment}, senin için çizildi.' },
   'create.changegarment': { en: 'Change garment', tr: 'Kıyafeti değiştir' },
   'create.save': { en: 'Save to closet', tr: 'Dolaba kaydet' },
-  'create.print': { en: 'Print — true scale A4', tr: 'Yazdır — gerçek ölçek A4' },
+  'create.print': { en: 'Print, true scale A4', tr: 'Yazdır, gerçek ölçek A4' },
   'create.grade.title': { en: 'Grade to a size run', tr: 'Beden serisine seril' },
-  'create.grade.sub': { en: 'Selling this design? Draft it across a full EU size range in one click — every size from the same engine, true to fit.', tr: 'Bu tasarımı satacak mısın? Tek tıkla EU beden aralığında çiz — her beden aynı motordan, doğru kalıpla.' },
+  'create.grade.sub': { en: 'Selling this design? Draft it across a full EU size range in one click, every size from the same engine, true to fit.', tr: 'Bu tasarımı satacak mısın? Tek tıkla EU beden aralığında çiz, her beden aynı motordan, doğru kalıpla.' },
   'create.grade.from': { en: 'from', tr: 'başlangıç' },
   'create.grade.to': { en: 'to', tr: 'bitiş' },
   'create.grade.go': { en: 'Generate size run', tr: 'Beden serisini oluştur' },
   'create.grade.working': { en: 'grading every size…', tr: 'her beden çiziliyor…' },
-  'create.grade.done': { en: '{n} sizes drafted — the print dialog has the full run.', tr: '{n} beden çizildi — yazdırma penceresinde tüm seri var.' },
+  'create.grade.done': { en: '{n} sizes drafted, the print dialog has the full run.', tr: '{n} beden çizildi, yazdırma penceresinde tüm seri var.' },
   'create.grade.done.some': { en: '{n} sizes drafted ({dropped} skipped as unsewable at that size). Print dialog has the run.', tr: '{n} beden çizildi ({dropped} beden o ölçüde dikilemez diye atlandı). Yazdırma penceresinde seri var.' },
-  'create.grade.none': { en: 'This design cannot be sewn at any size in that range — try a narrower range or a simpler spec.', tr: 'Bu tasarım o aralıkta hiçbir bedende dikilemiyor — daha dar bir aralık ya da daha sade bir seçim dene.' },
+  'create.grade.none': { en: 'This design cannot be sewn at any size in that range, try a narrower range or a simpler spec.', tr: 'Bu tasarım o aralıkta hiçbir bedende dikilemiyor, daha dar bir aralık ya da daha sade bir seçim dene.' },
   'create.grade.error': { en: 'Grading failed. Refresh and try again.', tr: 'Serileme başarısız. Sayfayı yenileyip tekrar dene.' },
   'create.grade.layout.nested': { en: 'Nested (all sizes on one set of sheets)', tr: 'İç içe (tüm bedenler tek sayfa setinde)' },
   'create.grade.layout.per': { en: 'Per size (each size its own sheets)', tr: 'Beden başına (her beden kendi sayfası)' },
@@ -86,26 +86,26 @@ export const STRINGS = {
   'result.fabric': { en: 'fabric', tr: 'kumaş' },
   'result.fabricv': { en: '{n} m at 140 cm width', tr: '140 cm ende {n} m' },
   'result.sa': { en: 'seam allowance', tr: 'dikiş payı' },
-  'result.sav': { en: '{n} cm — drawn in: cut the outer line, sew the inner', tr: '{n} cm — çizili: dış çizgiden kes, iç çizgiden dik' },
+  'result.sav': { en: '{n} cm, drawn in: cut the outer line, sew the inner', tr: '{n} cm, çizili: dış çizgiden kes, iç çizgiden dik' },
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Bu adımın Türkçesi henüz eklenmedi.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
-  'result.photofabric.good': { en: 'The fabric in your photo looks like {name} — a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu proje için uygun. Dikkat: {note}' },
-  'result.photofabric.bad': { en: 'The fabric in your photo looks like {name} — it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor — bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
-  'result.photofabric.unknown': { en: 'The fabric in your photo looks like {name}. No verified guide for it here yet — handle it by its stretch (the knit/woven choice you made) and test on a scrap first.', tr: 'Fotoğraftaki kumaş {name} görünüyor. Bunun için doğrulanmış rehber henüz yok — esnekliğine göre davran (seçtiğin örgü/dokuma ayarı) ve önce artık parçada dene.' },
+  'result.photofabric.good': { en: 'The fabric in your photo looks like {name}, a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor, bu proje için uygun. Dikkat: {note}' },
+  'result.photofabric.bad': { en: 'The fabric in your photo looks like {name}, it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor, bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
+  'result.photofabric.unknown': { en: 'The fabric in your photo looks like {name}. No verified guide for it here yet, handle it by its stretch (the knit/woven choice you made) and test on a scrap first.', tr: 'Fotoğraftaki kumaş {name} görünüyor. Bunun için doğrulanmış rehber henüz yok, esnekliğine göre davran (seçtiğin örgü/dokuma ayarı) ve önce artık parçada dene.' },
   // Fabric names/drape terms come from the sourced knowledge base (English);
   // only the connective UI text localises so the sentence reads in Turkish.
-  'result.fabric.suggest': { en: '{name} — {drape}, {difficulty} to sew. ', tr: '{name} — {drape}, dikimi {difficulty}. ' },
-  'result.fabric.avoid': { en: 'avoid {name} here — ', tr: 'burada {name} kullanma — ' },
+  'result.fabric.suggest': { en: '{name}, {drape}, {difficulty} to sew. ', tr: '{name}, {drape}, dikimi {difficulty}. ' },
+  'result.fabric.avoid': { en: 'avoid {name} here, ', tr: 'burada {name} kullanma, ' },
   'result.fabric.avoidnote': { en: 'works against this shape ({drape}).', tr: 'bu forma ters çalışır ({drape}).' },
   'result.legend': { en: 'How to read the pieces: OUTER solid line = cutting line (seam allowance included) · inner fine line = sewing line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: DIŞ kalın çizgi = kesim hattı (dikiş payı dahil) · içteki ince çizgi = dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
-  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist) — please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi) — lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
+  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist), please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi), lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
 
   // closet
   'closet.title': { en: 'Closet', tr: 'Dolap' },
   'closet.sub': { en: '{n} saved · stored in this browser only', tr: '{n} kayıtlı · yalnızca bu tarayıcıda' },
   'closet.empty.title': { en: 'No patterns yet.', tr: 'Henüz kalıp yok.' },
-  'closet.empty.body': { en: 'Draft your first one — it takes a photo or three taps, and it stays on this device.', tr: 'İlkini çiz — bir fotoğraf ya da üç dokunuş yeter, ve bu cihazda kalır.' },
+  'closet.empty.body': { en: 'Draft your first one, it takes a photo or three taps, and it stays on this device.', tr: 'İlkini çiz, bir fotoğraf ya da üç dokunuş yeter, ve bu cihazda kalır.' },
   'closet.start': { en: 'Start a pattern', tr: 'Kalıba başla' },
   'closet.delete': { en: 'delete', tr: 'sil' },
   'closet.today': { en: 'today', tr: 'bugün' },
@@ -127,7 +127,7 @@ export function setLang(lang) {
   try { localStorage.setItem(LANG_KEY, lang); } catch { /* private mode */ }
 }
 
-// t('key', {n: 3}) — TR falls back to English; EN with no entry returns the
+// t('key', {n: 3}), TR falls back to English; EN with no entry returns the
 // key so applyStatic leaves the original English markup untouched (never
 // leak Turkish into English mode).
 export function t(key, vars) {

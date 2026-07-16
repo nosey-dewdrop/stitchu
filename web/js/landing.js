@@ -116,7 +116,7 @@ function build() {
 
   const wl = Math.max((w - 1060) / 2, 0) + 24; // wrap left edge
   const textRight = wl + 690;                   // text column ends here
-  // measure where the copy actually ends — the band hugs it, no dead gap
+  // measure where the copy actually ends, the band hugs it, no dead gap
   const copyEl = document.querySelector('.hero-copy');
   const textBottom = copyEl
     ? Math.min(h - 120, copyEl.getBoundingClientRect().bottom - hero.getBoundingClientRect().top + 6)

@@ -7,7 +7,7 @@ import { GUIDE_TR } from './guide-tr.js?v=55';
 import { GLOSSARY } from './glossary.js?v=55';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
-// underline + a native tooltip) — a beginner can learn a word without leaving
+// underline + a native tooltip), a beginner can learn a word without leaving
 // the step. Case-insensitive, whole-word, first occurrence per term per line.
 const GLOSSARY_RE = new RegExp('\\b(' + Object.keys(GLOSSARY).join('|') + ')\\b', 'i');
 function withGlossary(text) {
@@ -39,7 +39,7 @@ function withGlossary(text) {
 
 const PREVIEW_SCALE = 0.28;
 
-// pathD/bounds live in sheet.js (the pure print-geometry module) — one truth,
+// pathD/bounds live in sheet.js (the pure print-geometry module), one truth,
 // one place; imported and re-exported so existing imports keep working.
 import { pathD, bounds } from './sheet.js?v=55';
 export { pathD, bounds };
@@ -128,7 +128,7 @@ export function renderResult(container, result) {
   container.appendChild(meta);
 
   // Honesty layer: the vision saw elements the engine cannot draft yet. Say so
-  // out loud — the closest derivative given + what to add by hand. Silent
+  // out loud, the closest derivative given + what to add by hand. Silent
   // fallback is the trust killer this card removes.
   appendMissing(container, result.seen);
 
@@ -170,7 +170,7 @@ export function renderResult(container, result) {
 
 // The honest "what I saw vs what the pattern draws" card. Only appears when the
 // vision actually saw something the engine could not draft. vişne #8f2038 to
-// match the couture brand voice — plain, no invented ornament.
+// match the couture brand voice, plain, no invented ornament.
 function appendMissing(container, seen) {
   const lang = getLang() === 'tr' ? 'tr' : 'en';
   const items = missingFeatures(seen, lang);
@@ -198,9 +198,9 @@ function appendMissing(container, seen) {
     const detail = document.createElement('span');
     detail.className = 'missing-detail';
     if (it.applied) {
-      detail.textContent = ` — ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`;
+      detail.textContent = `, ${MISSING_STRINGS.gaveClosest[lang]}: ${it.applied}. ${it.note}`;
     } else {
-      detail.textContent = ` — ${MISSING_STRINGS.notInPattern[lang]}`;
+      detail.textContent = `, ${MISSING_STRINGS.notInPattern[lang]}`;
     }
     li.appendChild(detail);
     list.appendChild(li);

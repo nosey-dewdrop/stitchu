@@ -1,9 +1,9 @@
-// Shared stitch drawing: discrete, evenly spaced hand stitches — never one
+// Shared stitch drawing: discrete, evenly spaced hand stitches, never one
 // long continuous line (brand rule from the approved mock).
 export const STITCH_SPACING = 10;
 export const STITCH_HALF = 4.5;
 
-// One even dash from a toward b, covering 55% of the step — reads like a
+// One even dash from a toward b, covering 55% of the step, reads like a
 // dotted pen following the hand, no spikes.
 export function stitchDash(svg, a, b, color) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -36,7 +36,7 @@ export function heartStamp(svg, cx, cy, color) {
   return p;
 }
 
-// One cursive loop from `from` to `to` — the "kıvırcık" stitch.
+// One cursive loop from `from` to `to`, the "kıvırcık" stitch.
 export function curlSeg(svg, from, to, color) {
   const dx = to[0] - from[0];
   const dy = to[1] - from[1];
