@@ -5,6 +5,17 @@
    from page to page. Active page marks its own link with .sh-active. */
 :root { --sh-navy:#1f3a5f; --sh-deep:#3f74a8; }
 
+/* Flow fixes — mirrored from theme-transitions.css so the ~24 style-library
+   pages (which load THIS file but not theme-transitions.css) get them too.
+   Both files carry the identical rules; double-loading on main pages is inert.
+   #1 reserve the scrollbar gutter so the header never shifts left when a long
+   page grows a scrollbar and a short one doesn't. #2 name the header/footer so a
+   cross-document view transition pins them in place instead of redrawing them. */
+html { scrollbar-gutter: stable; }
+@supports not (scrollbar-gutter: stable) { html { overflow-y: scroll; } }
+.sh-header, body > header { view-transition-name: site-header; }
+body > footer { view-transition-name: site-footer; }
+
 .sh-header{
   display:flex; justify-content:space-between; align-items:center;
   box-sizing:border-box; width:100%;

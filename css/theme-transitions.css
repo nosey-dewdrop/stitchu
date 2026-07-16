@@ -11,6 +11,30 @@
   animation-timing-function: cubic-bezier(.4, 0, .2, 1);
 }
 
+/* Root cause #1 — the header used to jump on navigation. On short pages
+   (closet/create) there is no scrollbar; on long ones there is. When the bar
+   appears it steals ~15px of viewport width and the whole page (header
+   included) shifts left. Reserve the gutter on EVERY page so the layout width
+   never changes between a short and a long page — no horizontal jump. This file
+   is the only stylesheet loaded by every page (main + generated pattern pages),
+   so one rule here covers the whole site. */
+html { scrollbar-gutter: stable; }
+/* Fallback for engines without scrollbar-gutter (older Safari): always show the
+   vertical scrollbar track so its width is constant. Harmless where the gutter
+   rule already works — the modern rule wins, and this only forces the track. */
+@supports not (scrollbar-gutter: stable) {
+  html { overflow-y: scroll; }
+}
+
+/* Root cause #2a — keep the bar visually PINNED across a cross-document view
+   transition. Naming the header (and footer) gives each its own snapshot, so
+   the API morphs it in place instead of cross-fading the whole root through it.
+   The bar stays; only the content between them slides. In browsers without
+   cross-document view transitions this is inert. Both the shared .sh-header and
+   the generated pattern pages' plain <header>/<footer> are covered. */
+.sh-header, body > header { view-transition-name: site-header; }
+body > footer { view-transition-name: site-footer; }
+
 /* Fallback: browsers without cross-document View Transitions get a soft fade-in
    on load. The View-Transitions path overrides this (no double animation) since
    it snapshots before the new document's animations run. */
