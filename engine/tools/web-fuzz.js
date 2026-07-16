@@ -173,6 +173,27 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
+  // queue #3 ruffled-strap variant: appends the full trailing arg list with the
+  // ruffledStraps enum LAST so the separate gathered strap pair is drafted + packed.
+  const strapRun = (label, args, m) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 1));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
   for (const [bi, m] of BODIES.entries()) {
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
@@ -247,6 +268,18 @@ createEngine().then((e) => {
             ['skirt', 'dart', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, sl);
         }
       }
+    }
+    // queue #3: ruffled shoulder straps — a separate gathered strap pair on a
+    // sleeveless dress/top, across necklines + skirt styles + shaping. The strap
+    // piece is fresh fabric that must pack without clipping. Sleeved/halter are
+    // gated out (engine skips honestly), so only sleeveless variants sweep here.
+    for (const neckline of ['crew', 'scoop', 'square', 'sweetheart']) {
+      strapRun(`b${bi} straps dress/${neckline}/gathered`,
+        ['dress', 'princess', 'empire', 'woven', neckline, 'none', 'short', 'gathered', 'mini', 'hip', false, 1, false], m);
+      strapRun(`b${bi} straps dress/${neckline}/aline dart`,
+        ['dress', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+      strapRun(`b${bi} straps top/${neckline}`,
+        ['top', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
     }
   }
 

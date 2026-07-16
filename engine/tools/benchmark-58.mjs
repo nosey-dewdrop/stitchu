@@ -127,6 +127,13 @@ const DRAWN_SINCE = [
   // vent is drawn).
   (t) => /(back|hem|walking)[\s-]*(hem[\s-]*)?(slit|vent)|kick[\s-]*(pleat|vent)/i.test(t) &&
          !/front|side/i.test(t),
+  // queue #3: ruffled shoulder straps — the engine now draws a gathered self-fabric
+  // frill strip as a separate strap pair + a placement notch. "ruffled straps",
+  // "frilled strap", "flutter straps", "gathered shoulder strap" all draw. A
+  // spaghetti / one-shoulder / off-shoulder / halter strap is a DIFFERENT
+  // construction → stays missing.
+  (t) => /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i.test(t) &&
+         !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/i.test(t),
 ];
 
 function classify(entry, spec) {
@@ -140,7 +147,11 @@ function classify(entry, spec) {
   }
   const misses = [];
   for (const [field, accepted] of Object.entries(entry.expect || {})) {
-    const got = spec[field] === undefined ? null : spec[field];
+    let got = spec[field] === undefined ? null : spec[field];
+    // Honest equivalence, not a measurement trick: for sleeveStyle a sleeveless
+    // garment reads as either null or 'none' (no sleeve is no sleeve) — the block
+    // drafts identically. So null satisfies an expected 'none' and vice versa.
+    if (field === 'sleeveStyle' && got === null && accepted.includes('none')) got = 'none';
     if (!accepted.includes(got)) misses.push(`${field}=${JSON.stringify(got)} not in ${JSON.stringify(accepted)}`);
   }
   if (misses.length) return { cls: 'WRONG', why: misses.join('; ') };

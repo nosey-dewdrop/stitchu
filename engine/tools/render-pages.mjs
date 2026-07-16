@@ -100,6 +100,11 @@ const SPECS = [
   { name: 'slit-straight-skirt', garment: 'skirt', shaping: 'dart', waistline: 'natural', fabric: 'woven',
     neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'maxi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, backSlit: 2 /* plain slit */ },
+  // queue #3: ruffled shoulder straps — a separate gathered strap pair on a
+  // sleeveless babydoll dress, with a placement notch at each shoulder point.
+  { name: 'ruffled-straps-babydoll', garment: 'dress', shaping: 'dart', waistline: 'empire', fabric: 'woven',
+    neckline: 'square', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, ruffledStraps: 1 /* ruffled */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -114,7 +119,7 @@ for (const s of SPECS) {
     s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
     BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
     s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0));
+    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0, s.ruffledStraps || 0));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

@@ -11,6 +11,7 @@
 #include "skirt.hpp"
 #include "slit.hpp"
 #include "sleeve.hpp"
+#include "strap.hpp"
 #include "tie.hpp"
 
 namespace stitchu {
@@ -434,6 +435,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress) &&
         (spec.skirtStyle == SkirtStyle::Straight || spec.skirtStyle == SkirtStyle::ALine)) {
         SlitBlock::apply(pattern, static_cast<HemSlit>(spec.backSlit));
+    }
+    // Opt-in ruffled shoulder straps (fırfırlı askı, queue #3): a gathered
+    // self-fabric frill strip drawn as a separate pair + a placement notch at each
+    // shoulder point. Post-pass on the finished draft, so the base is byte-identical
+    // with it off (ruffledStraps == None). Only a sleeveless dress/top carries one
+    // (StrapBlock skips honestly if it finds a sleeve or no top edge).
+    if (spec.ruffledStraps != static_cast<int>(StrapStyle::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        StrapBlock::apply(pattern, static_cast<StrapStyle>(spec.ruffledStraps));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

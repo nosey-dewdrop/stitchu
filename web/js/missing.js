@@ -203,10 +203,16 @@ export function missingFeatures(seen, lang) {
     push(name, COLLAR_NOTE[L]);
   }
 
-  // straps, only the ones the plain edge does NOT fairly cover
+  // straps, only the ones the plain edge does NOT fairly cover. queue #3: a
+  // RUFFLED strap is now DRAWN as a separate gathered strip pair (seen.
+  // ruffledStrapsDrawn), so it no longer lists as missing. A spaghetti / one-
+  // shoulder / off-shoulder / halter strap stays honest (a different construction).
   if (seen.straps && seen.straps.type && !STRAP_DRAWN.includes(seen.straps.type)) {
-    const d = STRAP_DERIVATIVE[seen.straps.type];
-    push((L === 'tr' ? strapLabelTr(seen.straps.type) : strapLabelEn(seen.straps.type)), d ? d[L] : null);
+    const strapDrawn = seen.ruffledStrapsDrawn && seen.straps.type === 'ruffled';
+    if (!strapDrawn) {
+      const d = STRAP_DERIVATIVE[seen.straps.type];
+      push((L === 'tr' ? strapLabelTr(seen.straps.type) : strapLabelEn(seen.straps.type)), d ? d[L] : null);
+    }
   }
 
   // cup seams
@@ -276,11 +282,17 @@ export function missingFeatures(seen, lang) {
   // honest even when hemSlitDrawn (only the center-back walking vent is drawn).
   const hemSlitTerm = (t) => /(back|hem|walking)[\s-]*(hem[\s-]*)?(slit|vent)|kick[\s-]*(pleat|vent)/i.test(t) &&
     !/front|side/i.test(t);
+  // queue #3: a ruffled shoulder strap is now drawn as a separate gathered strip
+  // pair, so an outOfVocab term naming a ruffled/frilled/flutter strap is no longer
+  // missing. A spaghetti / one-shoulder / off-shoulder / halter strap stays honest.
+  const strapTerm = (t) => /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i.test(t) &&
+    !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
+    if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

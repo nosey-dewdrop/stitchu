@@ -37,6 +37,7 @@ const ENUMS = {
   gatherZone: ['neckline', 'bust', 'waist', 'sleeve'],
   backOpening: ['none', 'round', 'lowV', 'square', 'keyhole'],
   backSlit: ['none', 'vent', 'slit'],
+  ruffledStraps: ['none', 'ruffled'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -61,6 +62,9 @@ const backOpeningInt = (s) => BACK_OPENING[s] || 0;
 // HemSlit enum int (must match engine/src/slit.hpp order). 0 = None.
 const HEM_SLIT = { none: 0, vent: 1, slit: 2 };
 const backSlitInt = (s) => HEM_SLIT[s] || 0;
+// StrapStyle enum int (must match engine/src/strap.hpp order). 0 = None.
+const STRAP_STYLE = { none: 0, ruffled: 1 };
+const ruffledStrapsInt = (s) => STRAP_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -168,6 +172,7 @@ export function validateDraftRequest(body) {
       gatherZone: spec.gatherZone ?? 'neckline',
       backOpening: spec.backOpening ?? 'none',
       backSlit: spec.backSlit ?? 'none',
+      ruffledStraps: spec.ruffledStraps ?? 'none',
     },
     measurements,
   };
@@ -194,6 +199,7 @@ export async function runDraft(spec, measurements) {
     gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
     backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
     backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
+    ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
   );
   return JSON.parse(json);
 }
@@ -235,6 +241,7 @@ export async function handleGrade(request) {
       gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
       backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
       backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
+      ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

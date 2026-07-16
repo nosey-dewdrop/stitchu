@@ -211,6 +211,12 @@ struct GarmentSpec {
     // seam candidate hosts one; gathered/pleated/half-circle skirts are skipped
     // honestly. See slit.hpp / FORMULAS.md "Back hem slit / walking vent".
     int backSlit = 0; // HemSlit enum value; 0 = None
+    // Opt-in ruffled shoulder straps (fırfırlı askı, queue #3): a gathered
+    // self-fabric frill strip drawn as a separate strap pair + a placement notch
+    // at each shoulder point. Off by default (None) → byte-identical. Only a
+    // sleeveless dress/top carries one; a sleeved/halter garment is skipped
+    // honestly. See strap.hpp / FORMULAS.md "Ruffled straps".
+    int ruffledStraps = 0; // StrapStyle enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

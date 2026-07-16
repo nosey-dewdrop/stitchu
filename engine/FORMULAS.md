@@ -571,6 +571,53 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   else Slit (the set's common "back hem slit"). A manual "back slit / vent" picker
   covers the no-photo path; seen.hemSlitDrawn suppresses the missing.js note.
 
+## Ruffled straps (fırfırlı askı) — opt-in (BENCHMARK-58 queue #3)
+- WHAT: a gathered self-fabric frilled shoulder strap, drawn as a SEPARATE cut
+  piece (a pair) plus a placement notch at each shoulder point on the front and
+  back. `StrapStyle { None, Ruffled }`. Opt-in (GarmentSpec.ruffledStraps); None →
+  golden BYTE-IDENTICAL. strap.hpp/.cpp, post-pass in garment.cpp after the hem
+  slit block. It only ADDS a piece + notches, never touches an existing outline, so
+  off/on both stay byte-identical.
+- RESEARCH (Aldrich Metric Pattern Cutting + Armstrong + high-street babydoll/
+  camisole practice): a ruffled strap is a straight self-fabric strip cut LONGER
+  than the finished strap span, then gathered down along its length so it ruffles,
+  and attached at the front and back top edges. Couture (Dior/Chanel camisole
+  straps) and high street (Stradivarius/Bershka babydolls) build it the same way —
+  a plain rectangle gathered to length; the difference is only fabric/finish.
+- MASTER RECTANGLE RULE: a finished strap of width W = 22 mm and over-shoulder span
+  L, gathered at fullness F = 2.2, is cut `(2·W + 2·SA)` wide × `(round(L·F) + 2·SA)`
+  long, SA = 15 mm. The lengthwise centre fold self-lines it (a tube like the tie);
+  the extra length (L·F − L) becomes the ruffle when gathered back down to L.
+  Markings = the centre fold line + the two long seam lines + a gather line just
+  inside one long edge (where the two rows of gathering pull the strip to L); grain
+  runs the strap length. cut note = "cut 2 ... gathered down to a L mm strap".
+- SPAN (finished, mm): the over-shoulder run, `defaultSpan = 130` nudged a little by
+  the front/back shoulder-point x (wider shoulder → slightly longer strap), clamped
+  to `[minSpan 90, maxSpan 220]`, then ROUNDED to a whole mm so the cut note and the
+  trued cut length are derived from the same value.
+- TRUING: the cut length carries the fullness — `cutL − 2·SA == round(span · fullness)`
+  exactly (strap_check measures it to 0.00 mm), and the cut width is exactly
+  `2·finishedWidth + 2·SA` (a self-lined tube). The span is read from the drafted
+  front/back shoulder points, so the strap tracks the real body, not a scalar.
+- PLACEMENT NOTCH: a small cross tick is stamped at each shoulder point (the top-of-
+  piece vertex furthest from the centre fold) on the front AND back — stamped BEFORE
+  the strap piece is pushed (push_back can reallocate pattern.pieces and invalidate
+  the piece pointers). Harmless-by-refusal if no front/back top edge exists.
+- COEXISTS: the strap sits on the bodice; a hem slit (Loop M1) sits on the back
+  skirt and an open-back cutout (Loop 9b) on the back bodice — all independent
+  opt-in post-passes, all draw on the same sleeveless dress.
+- HONEST LIMIT: only the RUFFLED (gathered-strip) strap is drawn. A plain shoulder /
+  wide strap is already the engine's plain sleeveless edge; a spaghetti / one-
+  shoulder / off-shoulder / halter strap is a DIFFERENT construction that stays in
+  the honesty layer (missing.js). A sleeved or halter garment carries no separate
+  shoulder strap → StrapBlock skips it with an honest guide note (never a silent
+  no-op).
+- Vision→spec (create.js pickRuffledStraps): reads seen.straps.type === 'ruffled'
+  and seen.oov terms ("ruffled/frilled/flutter/gathered shoulder strap", not
+  spaghetti/halter/one-/off-shoulder) → 'ruffled', gated on a sleeveless non-halter
+  garment. A manual "ruffled straps" picker covers the no-photo path;
+  seen.ruffledStrapsDrawn suppresses the missing.js note + the outOfVocab strap term.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces
