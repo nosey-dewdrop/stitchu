@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%238f2038%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
 <title>stitchu · the accuracy benchmark</title>
 <meta name="description" content="The published accuracy benchmark of the stitchu engine: seams match to 0.00 mm, sleeve caps ease in-window, audited against Aldrich and Joseph-Armstrong.">
 <link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/benchmark.html">
@@ -15,43 +15,49 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stitchu · the accuracy benchmark">
 <meta name="twitter:description" content="Others promise fit. We publish the numbers — and the textbook audit.">
+<link rel="stylesheet" href="css/theme-transitions.css?v=59">
 <style>
+  /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). */
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:Helvetica,Arial,sans-serif;color:#fff;background:#8f2038;line-height:1.5;overflow-x:hidden}
-  a{color:#ffd9e2}
-  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px}
-  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;position:relative;z-index:2}
-  header nav a{font-size:13px;letter-spacing:.5px;text-decoration:none;margin-left:18px}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .mark{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:.5px;color:var(--navy)}
+  header{display:flex;justify-content:space-between;align-items:center;padding:22px 40px;position:relative;z-index:2;flex-wrap:wrap;gap:10px}
+  header nav a{font-size:13px;letter-spacing:.5px;text-decoration:none;margin-left:18px;color:var(--navy);opacity:.82}
+  header nav a:hover{opacity:1}
   .langtoggle{display:inline-flex;gap:8px;align-items:center;font-size:13px;letter-spacing:1px;margin-left:22px}
-  .langtoggle button{background:none;border:none;color:#fff;opacity:.6;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
-  .langtoggle button.active{opacity:1;border-bottom:1.5px solid #fff}
+  .langtoggle button{background:none;border:none;color:var(--navy);opacity:.55;cursor:pointer;font-size:13px;letter-spacing:1px;padding:2px 4px}
+  .langtoggle button.active{opacity:1;border-bottom:1.5px solid var(--navy)}
   .wrap{max-width:900px;margin:0 auto;padding:20px 32px 100px}
-  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:24px 0 14px;max-width:20ch}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:24px 0 14px;max-width:20ch;color:var(--navy)}
   h1 em{font-style:italic}
-  .lead{font-size:15px;opacity:.96;max-width:64ch;margin-bottom:8px}
-  .updated{font-size:12px;opacity:.6;letter-spacing:.5px;margin-bottom:40px}
-  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:26px;font-weight:400;margin:48px 0 6px}
-  .sub{font-size:13.5px;opacity:.85;max-width:62ch;margin-bottom:18px}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;background:rgba(80,14,26,.35);border-radius:3px;overflow:hidden}
-  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.14)}
-  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.85;background:rgba(80,14,26,.5)}
-  td .num{font-variant-numeric:tabular-nums;font-weight:700}
-  .ok{color:#bfe3c9}
+  .lead{font-size:15px;color:var(--ink);max-width:64ch;margin-bottom:8px}
+  .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:40px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:26px;font-weight:400;margin:48px 0 6px;color:var(--navy)}
+  .sub{font-size:13.5px;color:var(--ink);max-width:62ch;margin-bottom:18px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border:1px solid var(--bb-line);border-radius:3px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--bb-line);color:var(--ink)}
+  th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);background:var(--bb-pale)}
+  td .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .ok{color:#2f7d54}
   .cardrow{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 4px}
-  .stat{flex:1;min-width:200px;background:rgba(80,14,26,.4);border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:18px 20px}
-  .stat .big{font-family:'Didot',Georgia,serif;font-size:34px;line-height:1;margin-bottom:6px}
-  .stat .cap{font-size:12px;opacity:.85}
-  .note{font-size:12.5px;opacity:.75;margin-top:14px;max-width:64ch}
-  .cta{display:inline-block;margin-top:34px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:rgba(80,14,26,.55);padding:14px 30px;text-decoration:none;border-radius:2px;position:relative}
-  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed #fff;opacity:.9;border-radius:2px}
-  footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18)}
+  .stat{flex:1;min-width:200px;background:var(--bb-pale);border:1px solid var(--bb-line);border-radius:3px;padding:18px 20px}
+  .stat .big{font-family:'Didot',Georgia,serif;font-size:34px;line-height:1;margin-bottom:6px;color:var(--navy)}
+  .stat .cap{font-size:12px;color:var(--ink)}
+  .note{font-size:12.5px;color:#5b7089;margin-top:14px;max-width:64ch}
+  .cta{display:inline-block;margin-top:34px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:var(--navy);padding:14px 30px;text-decoration:none;border-radius:2px;position:relative}
+  .cta::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);opacity:.9;border-radius:2px}
+  footer{padding:26px 40px;font-size:12px;color:#5b7089;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--bb-line)}
+  footer a{color:var(--navy);text-decoration:none}
 </style>
 </head>
 <body>
 <header>
-  <a class="mark" href="index.html" style="text-decoration:none;color:#fff">stitchu</a>
+  <a class="mark" href="index.html" style="text-decoration:none">stitchu</a>
   <nav>
     <a href="create.html" data-en="draft a pattern" data-tr="kalıp çiz">draft a pattern</a>
+    <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
     <span class="langtoggle"><button id="en" class="active" onclick="setLang('en')">EN</button><span>·</span><button id="tr" onclick="setLang('tr')">TR</button></span>
   </nav>
@@ -93,7 +99,7 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop</span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v59</span></span>
 </footer>
 
 <script>
