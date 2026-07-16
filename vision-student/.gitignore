@@ -1,0 +1,6 @@
+# Never commit the virtualenv, trained weights, or exported models.
+.venv/
+runs/
+*.pt
+*.onnx
+__pycache__/
