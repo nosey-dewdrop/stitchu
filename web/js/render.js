@@ -1,10 +1,11 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=56';
-import { getLang, t } from './i18n.js?v=56';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=56';
-import { GUIDE_TR } from './guide-tr.js?v=56';
-import { GLOSSARY } from './glossary.js?v=56';
+import { fabricAdvice } from './fabrics.js?v=57';
+import { getLang, t } from './i18n.js?v=57';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=57';
+import { GUIDE_TR } from './guide-tr.js?v=57';
+import { GLOSSARY } from './glossary.js?v=57';
+import { appendSewingCompanion } from './sewing.js?v=57';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip), a beginner can learn a word without leaving
@@ -41,7 +42,7 @@ const PREVIEW_SCALE = 0.28;
 
 // pathD/bounds live in sheet.js (the pure print-geometry module), one truth,
 // one place; imported and re-exported so existing imports keep working.
-import { pathD, bounds } from './sheet.js?v=56';
+import { pathD, bounds } from './sheet.js?v=57';
 export { pathD, bounds };
 
 export function pieceCard(piece) {
@@ -165,7 +166,11 @@ export function renderResult(container, result) {
   }
   container.appendChild(ol);
 
-  appendFabricAdvice(container, p.fabricAdviceKey, result.photoFabric || null);
+  // Fabric advice (the sourced good/avoid list) then the sewing companion
+  // (WHY this fabric + construction order). Chained so the DOM order is stable:
+  // list first, reasoning + order after.
+  appendFabricAdvice(container, p.fabricAdviceKey, result.photoFabric || null)
+    .then(() => appendSewingCompanion(container, result.spec || null));
 }
 
 // The honest "what I saw vs what the pattern draws" card. Only appears when the

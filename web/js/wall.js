@@ -1,9 +1,9 @@
 // Stitch wall: communal embroidery + guestbook seam.
 // Backend present -> shared wall via Worker KV. Backend absent/unreachable ->
 // honest local-only mode (stitches stay on this device, UI says so).
-import { BACKEND_URL, THREADS } from './config.js?v=56';
-import { applyStatic, mountLangToggle, t } from './i18n.js?v=56';
-import { drawRun, makeSewable } from './stitch.js?v=56';
+import { BACKEND_URL, THREADS } from './config.js?v=57';
+import { applyStatic, mountLangToggle, t } from './i18n.js?v=57';
+import { drawRun, makeSewable } from './stitch.js?v=57';
 
 applyStatic();
 mountLangToggle();
