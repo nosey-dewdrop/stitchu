@@ -66,3 +66,11 @@ D2: kaç terim/frekans tablosu, D3: uyum yüzdesi), rapor + yama notu + skor sat
 Öncelik sırası beklenen kazanç/maliyet: D1 (ucuz, her şeyin önkoşulu) → D2 küçük tur
 (orta token, FAZ M pusulasını düzeltir) → D3 aşama 1 (bedava, D2'nin yan ürünü) →
 D2 büyük tur / D3 aşama 2 (Damla onaylı token).
+
+## KREDİ KİLİDİ (16 Tem gece dersi, ihlal = loop geçersiz)
+API kredisi TEK agent'ın kilidindedir: aynı anda /api/analyze harcayan birden
+fazla agent/süreç YASAK. Yeni kredi geldiğinde harcama sırası: (1) Sonnet
+öğretmen çıpa sınavı (%90+ ise ucuz öğretmen), (2) tek madenci, resumable,
+500'de bir log. Ders: 16 Tem'de eski tur agent'ı taze krediyi Sonnet sınavı
+beklemeden Opus'la bitirdi; 230 etiket alındı ama 5 kat pahalıya. Orkestratör
+yeni kredi stratejisi kurduğunda ESKİ izleyici/agent'ları önce durdurur.
