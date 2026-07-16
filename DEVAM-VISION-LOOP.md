@@ -17,6 +17,16 @@ doldurur). Bu zincir yapılma sırasıyla: **2.0 = V0 taksonomi, 2.1 = vitrin,
 sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
+> ZİNCİR BİTTİ (V0→V4-karar, 2026-07-16). ÖNERİ: FAZ K. Gerekçe: zincir sonu ölçümü
+> (son FAST koşusundan, kredi vardı) vision-accuracy 86.8%→94.4% (>=%85) AMA FULL
+> zincir boyunca 22→24 sadece +2 (<+3) → ruler dalı (a): kelimeler temizlendi, fren
+> artık köprü/kümelenme (24 MISSING: L1 görüyor L3 çizemiyor — cupSeams/strapless/cap
+> sleeve/asymmetric placket/yoke). WRONG 7→4, sadece 2'si neckline → vision baskın
+> kaldıraç DEĞİL, dolayısıyla V4 birincil değil ama 2.3 kanıtı (dürüst null cezalanıyor)
+> onu FAZ K sonrası NOTLU runner-up yapar. Karar bloğu: reports/stitchu-vision-progress.md
+> (CHAIN-END DECISION tablosu + öneri). Bu agent karar agent'ı — içerik logu YAZMAZ.
+>
+> --- ÖNCEKİ (LOOP 3 / patch 2.3, reverted) ---
 > LOOP 3 (V3 ÖN/ARKA / patch 2.3) BİTTİ ve GERİ ALINDI (2026-07-16). Kredi VAR (canlı probe
 > geçerli vision döndü). Aday (a) denendi: worker prompt'una "kısmi görünümde (arka/giyilmiş/
 > yakın-detay) önden okunan alanları (neckline/shaping/waistline/skirtStyle) null bırak; tek

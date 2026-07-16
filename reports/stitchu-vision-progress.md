@@ -51,6 +51,32 @@ L1 V0   5     █████░░░░░░░░░░░░░░░░░
 L2 V1   2     ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  2 photos   results-2026-07-16.json (fresh) — 3 back/worn outliers fixed
 ```
 
+## CHAIN-END DECISION (2026-07-16, patch 2.x chain closed)
+
+Measured off the last FAST run of the chain (LOOP 3, 59 live calls; credit was
+confirmed available there — no separate final run needed, numbers fresh and
+consistent). The 2.2 worker is what's live and published.
+
+| metric | chain start (V0 baseline) | chain end (2.2, held) | delta |
+|---|---|---|---|
+| FULL /54 | 22 | 24 | **+2** |
+| ELEMENT ACCURACY /103 | 53 (51.5%) | 53 (51.5%) | 0 (vision chain) |
+| vision-accuracy | 46/53 (86.8%) | 51/54 (94.4%) | **+7.6pt** |
+| neckline misreads | 5 | 2 | -3 |
+| front/back field conflicts | 15 (8 products) | 8 (4 products) | -7 |
+| WRONG | 7 | 4 | -3 |
+| MISSING (engine can't draw) | 24 | 24 | 0 — the real brake now |
+
+**RECOMMENDATION: FAZ K.** Ruler branch (a): vision-accuracy is high (94.4% ≥ 85%)
+AND the whole chain moved FULL only +2 (< +3). The words are now clean; the brake
+has moved to the bridge/clustering — the 24 MISSING photos where L1 sees the element
+and L3 has no geometry for it (cupSeams/strapless, cap sleeve, asymmetric placket,
+yokes). Vision is no longer the dominant lever (WRONG fell 7→4, only 2 of them
+neckline), so branch (b)/V4 does not fire as primary. The 2.3 experiment is real
+evidence FOR a later V4 (honest-null is currently penalized by the manifest), so
+V4 stays the noted runner-up after FAZ K — but FAZ K is the next lever by the ruler.
+Keypoint / backend-move / morphing remain proven-rejected.
+
 ## READING THIS
 - FULL is the true product metric (whole pattern, no missing element) — clustered,
   moves slowly. ELEMENT ACCURACY is the daily compass (per-element).
