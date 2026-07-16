@@ -37,6 +37,12 @@ import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DATASET = join(root, 'dataset');
 const LABELS = join(DATASET, 'labels');
+// HELD-OUT GUARD: never mine (=never label) a photo reserved for the term-end exam.
+let HELDOUT = new Set();
+try {
+  const hm = JSON.parse(readFileSync(join(DATASET, 'heldout', 'manifest.json'), 'utf8'));
+  HELDOUT = new Set((hm.photos || []).map((p) => p.hash || p));
+} catch { /* no heldout set yet */ }
 const API = 'https://stitchu-api.damummyphus.workers.dev/api/analyze';
 const TOKEN_FILE = join(root, 'benchmark-58', '.benchmark-token');
 const BENCH_TOKEN = existsSync(TOKEN_FILE) ? readFileSync(TOKEN_FILE, 'utf8').trim() : '';
@@ -261,7 +267,7 @@ async function main() {
     const srcMan = join(DATASET, 'openset', 'manifest.json');
     if (!existsSync(srcMan)) { console.error('no dataset/openset/manifest.json'); process.exit(1); }
     const manifest = JSON.parse(readFileSync(srcMan, 'utf8'));
-    const unl = manifest.filter((m) => !existsSync(join(LABELS, `${m.hash}.json`)));
+    const unl = manifest.filter((m) => !HELDOUT.has(m.hash) && !existsSync(join(LABELS, `${m.hash}.json`)));
     // group by category, shuffle each, then round-robin draw until we hit the limit
     const byCat = {};
     for (const m of unl) { (byCat[m.category] = byCat[m.category] || []).push(m); }
@@ -289,7 +295,7 @@ async function main() {
     const tmpMan = join('/tmp', `.mine-manifest-${Date.now()}.json`);
     copyFileSync(srcMan, tmpMan);
     const manifest = JSON.parse(readFileSync(tmpMan, 'utf8'));
-    queue = manifest.filter((m) => !existsSync(join(LABELS, `${m.hash}.json`))).slice(0, limit);
+    queue = manifest.filter((m) => !HELDOUT.has(m.hash) && !existsSync(join(LABELS, `${m.hash}.json`))).slice(0, limit);
     console.log(`dataset photos: ${manifest.length}, already labelled: ${manifest.length - queue.length}, running: ${queue.length}, mode: ${FAST ? 'FAST' : 'SLOW'}, pool: ${poolArg}`);
   }
   if (!FAST) console.warn('WARNING: no bench token — will hit the public rate-limit fuse.');
