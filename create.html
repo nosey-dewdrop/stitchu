@@ -15,11 +15,17 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stitchu · create a pattern">
 <meta name="twitter:description" content="Draft a sewing pattern to your own 7 measurements, in your browser.">
-<link rel="stylesheet" href="css/tokens.css?v=59">
-<link rel="stylesheet" href="css/landing.css?v=59">
-<link rel="stylesheet" href="css/app.css?v=59">
-<link rel="stylesheet" href="css/couture.css?v=59">
-<link rel="stylesheet" href="css/theme-transitions.css?v=59">
+<link rel="stylesheet" href="css/tokens.css?v=61">
+<link rel="stylesheet" href="css/landing.css?v=61">
+<link rel="stylesheet" href="css/app.css?v=61">
+<link rel="stylesheet" href="css/couture.css?v=61">
+<link rel="stylesheet" href="css/theme-transitions.css?v=61">
+<style>
+  body.couture footer{border-top:1px solid var(--bb-line);margin-top:40px;padding:0;position:relative;z-index:2;
+    font-size:11px;letter-spacing:1px;color:#5b7089}
+  body.couture footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 34px}
+  body.couture footer a{color:var(--navy);text-decoration:none}
+</style>
 </head>
 <body class="couture">
 
@@ -27,14 +33,14 @@
   <div class="wrap header-in">
     <div class="wordmark">
       <a href="index.html" style="color:inherit;text-decoration:none">stitchu</a>
-      <svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#fff" stroke-width="2" stroke-dasharray="7 5"/></svg>
+      <svg width="64" height="4" viewBox="0 0 64 4"><line x1="0" y1="2" x2="64" y2="2" stroke="#3f74a8" stroke-width="2" stroke-dasharray="7 5"/></svg>
     </div>
     <nav>
-      <a href="create.html" data-i18n="nav.create">create</a>
+      <a href="create.html" data-i18n="nav.create" style="border-bottom:1px dashed var(--bb-deep)">create</a>
       <a href="closet.html" data-i18n="nav.closet">closet</a>
       <a href="benchmark.html">benchmark</a>
       <a href="patches.html">patch notes</a>
-      <a href="api.html">api</a>
+      <a href="api.html">API</a>
     </nav>
   </div>
 </header>
@@ -43,7 +49,14 @@
   <div class="wrap" id="screen"></div>
 </main>
 
-<script type="module" src="js/create.js?v=59"></script>
-<script src="js/couture-bg.js?v=59"></script>
+<footer>
+  <div class="wrap">
+    <span>stitchu · a pattern-making engine</span>
+    <span><a href="index.html">home</a> · <a href="benchmark.html">benchmark</a> · <a href="patches.html">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v61</span></span>
+  </div>
+</footer>
+
+<script type="module" src="js/create.js?v=61"></script>
+<script src="js/couture-bg.js?v=61"></script>
 </body>
 </html>
