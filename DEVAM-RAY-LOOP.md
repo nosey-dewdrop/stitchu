@@ -125,3 +125,20 @@ bloklardan (tie/slit/strap/peplum) damıtılır + terim→tarif tablosu. R2.2 pa
 ## NEREDEYİZ
 > (zinciri koşturan orkestratör her loop sonunda burayı günceller: hangi loop bitti,
 > sayı kaç, kredi durumu, açılan mikro-looplar, sıradaki)
+
+- A4 STRATEJİ LOOP BİTTİ (patch 3.4, deploy edildi, canlı v72 curl teyitli). Sabit
+  22-çizimlik test takımında toplam A4 sayfa sayısı 456 -> 430 (-26, -5.7%), sıfır
+  kalıp gerilemesi. Seri: 456 -> 442 (skyline packer) -> 439 (min-waste fit) -> 436
+  (sıralama varyantları) -> 431 (parça bazlı katı 90° döndürme) -> 430 (genişlik
+  sırası). Loop -1 sayfa marjinal kazançta kapandı (eşik 5). Tasarım: packPieces
+  içinde min-sheets YARIŞI (shelf + skyline varyant yelpazesi), yeni strateji ancak
+  yardım edebilir asla geriletemez, o yüzden geri alınan strateji YOK. Kutsal kural
+  korundu: 1:1 gerçek ölçek/dış hat dokunulmadı (sadece grup transform), register
+  continuity 139 çift <0.01mm, 22 çizim/57 döndürülmüş yerleşim 0 bütünlük hatası,
+  boşluk tam 12mm. Kod: web/js/sheet.js (skylinePack + placeDim + orient, packPieces
+  race). Rapor: reports/2026-07-17-stitchu-a4-strateji-loop.md. İçerik: linkedin
+  Essay 21 + devlog seri BD. Rebase çakışması (render.js, paralel loop sewing.js
+  import ekledi) çözüldü, ikisi de v=57'ye bump'lamış. Kredi harcanmadı (tamamen
+  lokal/deterministik ray). SIRADAKI (kaldıysa): FAZ P primitif katmanı ya da
+  MaxRects packer (rapor "Next ideas"); ama A4 sayfa rayı marjinal kazanç <5 ile
+  PARK edildi, sayfa sayısı yeniden canı yakana dek açılmaz.
