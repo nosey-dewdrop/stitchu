@@ -38,9 +38,39 @@ export function bounds(piece) {
   return { minX: Math.min(...xs), minY: Math.min(...ys), maxX: Math.max(...xs), maxY: Math.max(...ys) };
 }
 
+// Rotation (Blok 3): a piece may be placed 90 degrees clockwise so a long, thin
+// piece (a 670 mm waist tie, a maxi skirt panel) lies along a shelf instead of
+// eating three rows of near-empty sheets. The OUTLINE is never edited; only a
+// rigid transform is applied at render time. `rot` is 0 or 90. `d.w`/`d.h` are
+// the piece footprint in the CHOSEN orientation (all overlap/sheet math reads
+// these, so it stays correct after rotation). The grainline arrow is drawn with
+// the piece, so on-grain cutting stays unambiguous whatever the page angle.
+const rawW = (d) => d.b.maxX - d.b.minX;
+const rawH = (d) => d.b.maxY - d.b.minY;
+
 // Shelf packing: tallest first, left to right, new shelf when the row is full.
-export function shelfPack(dims, cols) {
+// `allowRotate` (default true) lets a piece pick the orientation with the
+// smaller height (fewer shelves) as long as it still fits one strip width.
+export function shelfPack(dims, cols, allowRotate = true) {
   const stripW = cols * PAGE_W;
+  // Choose each piece's orientation up front, independent of shelf state.
+  for (const d of dims) {
+    const w = rawW(d), h = rawH(d);
+    let rot = 0;
+    if (allowRotate) {
+      // Only rotate a genuinely LONG-AND-THIN piece (a waist tie, a maxi panel):
+      // laid on its side it drops from spanning many rows to one, a clear sheet
+      // win. Near-square pieces (bodices, skirts) are left as drafted, rotating
+      // them just trades rows for columns with no gain. The rotated footprint
+      // width must still fit one strip or the piece would be clipped.
+      const longThin = Math.max(w, h) / Math.min(w, h) >= 2.2;
+      if (longThin && h > w && h <= stripW) rot = 90;      // lie the tall thin piece flat
+      else if (w > stripW && h <= stripW) rot = 90;        // only fits rotated
+    }
+    d.rot = rot;
+    d.w = rot === 90 ? h : w;   // footprint width in chosen orientation
+    d.h = rot === 90 ? w : h;   // footprint height
+  }
   const sorted = [...dims].sort((a, b) => b.h - a.h);
   let shelfY = 0;
   let shelfH = 0;
@@ -53,8 +83,17 @@ export function shelfPack(dims, cols) {
     }
     d.x0 = x;
     d.y0 = shelfY;
-    d.ox = x - d.b.minX;   // translate piece-local -> strip coords
-    d.oy = shelfY - d.b.minY;
+    if (d.rot === 90) {
+      // 90 deg CW: local (x,y) -> (-y, x). Rotated bbox top-left lands at
+      // (x0,y0) with transform = translate(x0 + b.maxY, y0 - b.minX) rotate(90).
+      d.tx = x + d.b.maxY;
+      d.ty = shelfY - d.b.minX;
+      d.ox = undefined; d.oy = undefined;
+    } else {
+      d.ox = x - d.b.minX;   // translate piece-local -> strip coords
+      d.oy = shelfY - d.b.minY;
+      d.tx = undefined; d.ty = undefined;
+    }
     x += d.w + GUTTER;
     shelfH = Math.max(shelfH, d.h);
   }
@@ -79,24 +118,68 @@ export function countSheets(layout) {
 // a fixed 3-wide strip left half the pages nearly empty on tall garments.
 // The widest piece always fits: cols never drops below what it needs (a 1.4 m
 // ruffle segment used to be silently CLIPPED at the old 5-column cap).
-export function packPieces(pieces) {
+// `allowRotate` defaults on for a single pattern; the nested multi-size run
+// passes false so every size registers on the SAME unrotated placement.
+export function packPieces(pieces, allowRotate = true) {
   const dims = pieces.map((p) => {
     const b = bounds(p);
     return { p, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
   });
-  const maxW = Math.max(...dims.map((d) => d.w));
-  const minCols = Math.max(1, Math.ceil((maxW + 1) / PAGE_W));
-  let bestCols = minCols;
-  let bestSheets = Infinity;
-  for (let cols = minCols; cols <= Math.max(5, minCols); cols++) {
-    const sheets = countSheets(shelfPack(dims, cols));
-    if (sheets < bestSheets) { bestCols = cols; bestSheets = sheets; }
+  // With rotation a piece can always turn its NARROWER side across the strip, so
+  // the minimum column count is set by the smallest achievable footprint width.
+  const maxNarrow = Math.max(...dims.map((d) => (allowRotate ? Math.min(d.w, d.h) : d.w)));
+  const minCols = Math.max(1, Math.ceil((maxNarrow + 1) / PAGE_W));
+  // Search cols x {rotation on, rotation off} and keep the layout that prints the
+  // fewest sheets. Trying BOTH orientations per width means rotation can only
+  // ever HELP: if a rotated shelf wastes more, the unrotated result wins the tie
+  // and nothing regresses. `allowRotate=false` (nested run) forbids it outright.
+  const rotModes = allowRotate ? [true, false] : [false];
+  let best = { cols: minCols, rot: false, sheets: Infinity };
+  // Search up to 7 strip widths: a taller garment can pack tighter on a wider
+  // strip; the min-sheets pick means extra candidates never hurt.
+  for (let cols = minCols; cols <= Math.max(7, minCols); cols++) {
+    const stripW = cols * PAGE_W;
+    for (const rot of rotModes) {
+      const layout = shelfPack(dims, cols, rot);
+      // REJECT any candidate where a piece footprint is wider than the strip:
+      // countSheets would silently under-count the clipped overflow, so such a
+      // layout must never win. A wide gathered yoke panel is the trap here.
+      if (layout.placed.some((d) => d.x0 + d.w > stripW + 1e-6)) continue;
+      const s = countSheets(layout);
+      if (s < best.sheets) best = { cols, rot, sheets: s };
+    }
   }
-  // re-place at the winning width: the trial runs mutate the shared dims
-  return shelfPack(dims, bestCols);
+  // Fallback: if every trial clipped (a piece wider than 7 strips, rotation
+  // off), widen to exactly fit the widest unrotated piece so nothing is lost.
+  if (best.sheets === Infinity) {
+    const widest = Math.max(...dims.map((d) => d.w));
+    best = { cols: Math.ceil((widest + 1) / PAGE_W), rot: false };
+  }
+  // re-place at the winning width + rotation: trial runs mutate the shared dims
+  return shelfPack(dims, best.cols, best.rot);
 }
 
 export const sheetCode = (row, col) => `${String.fromCharCode(65 + row)}${col + 1}`;
+
+// Which printed sheets each piece lands on (Blok 2 cutting table): for every
+// placed piece, the grid codes of the cells its footprint overlaps, in reading
+// order. Lets the cover tell the sewist "Piece 3 Skirt Back: sheets A2, B2" so a
+// piece split across pages is never hunted for.
+export function pieceSheetMap(layout) {
+  const rows = Math.ceil(layout.stripH / PAGE_H);
+  return layout.placed.map((d) => {
+    const codes = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < layout.cols; col++) {
+        const x0 = col * PAGE_W, y0 = row * PAGE_H;
+        if (d.x0 < x0 + PAGE_W && d.x0 + d.w > x0 && d.y0 < y0 + PAGE_H && d.y0 + d.h > y0) {
+          codes.push(sheetCode(row, col));
+        }
+      }
+    }
+    return { name: d.p.name, cutInstruction: d.p.cutInstruction, sheets: codes };
+  });
+}
 
 // The grid cells that actually carry geometry, empty cells are never printed,
 // so every register mark checks its neighbour against this set first.
@@ -138,7 +221,23 @@ export function pieceGroup(d) {
   }
   inner += `<text x="${d.b.minX + 6}" y="${d.b.minY + 14}" font-family="Helvetica" font-size="7" fill="#555">${d.p.name}</text>` +
            `<text x="${d.b.minX + 6}" y="${d.b.minY + 21}" font-family="Helvetica" font-size="6" fill="#888">${d.p.cutInstruction}</text>`;
-  return `<g transform="translate(${d.ox.toFixed(1)} ${d.oy.toFixed(1)})">${inner}</g>`;
+  return `<g transform="${pieceTransform(d)}">${inner}</g>`;
+}
+
+// The rigid transform that places a piece's LOCAL geometry into strip coords.
+// Unrotated: a plain translate. Rotated 90 CW: translate then rotate(90); the
+// outline path strings are byte-identical, only the group transform differs.
+export function pieceTransform(d) {
+  return d.rot === 90
+    ? `translate(${d.tx.toFixed(1)} ${d.ty.toFixed(1)}) rotate(90)`
+    : `translate(${d.ox.toFixed(1)} ${d.oy.toFixed(1)})`;
+}
+
+// A piece's LOCAL point (x,y) mapped into strip coordinates, honouring rotation.
+// Used by verification harnesses to prove a rotated piece's outline is the same
+// rigid image of the unrotated one (translate/rotate only, no reshaping).
+export function toStrip(d, x, y) {
+  return d.rot === 90 ? { x: d.tx - y, y: d.ty + x } : { x: x + d.ox, y: y + d.oy };
 }
 
 // ---- register system (the puzzle glue) -------------------------------------

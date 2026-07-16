@@ -4,9 +4,9 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped,
 // far fewer, far fuller pages than tiling each piece separately.
-import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner } from './sheet.js?v=55';
-import { getLang } from './i18n.js?v=55';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=55';
+import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner, pieceSheetMap } from './sheet.js?v=56';
+import { getLang } from './i18n.js?v=56';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=56';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly), a Turkish sewist must read these in Turkish or the pattern comes
@@ -29,6 +29,14 @@ const P = {
     en: `${n} pieces · ${m} m fabric at 140 cm · `,
     tr: `${n} parça · 140 cm eninde ${m} m kumaş · `,
   }),
+  cutTableTitle: {
+    en: 'Cutting list, every piece numbered with the sheets it prints on:',
+    tr: 'Kesim listesi, her parça numaralı ve hangi sayfalarda basıldığı:',
+  },
+  cutTableHead: {
+    en: ['no', 'piece', 'cut', 'sheets'],
+    tr: ['no', 'parça', 'kes', 'sayfalar'],
+  },
   chalkNote: {
     en: 'MARK THESE DIRECTLY ON THE FABRIC with chalk and a ruler (straight strips, no printed piece needed). Space the gather notches evenly along each strip’s top edge:',
     tr: 'BUNLARI DOĞRUDAN KUMAŞA tebeşir ve cetvelle çiz (düz şeritler, basılı parça gerekmez). Büzgü çentiklerini her şeridin üst kenarına eşit aralıkla yerleştir:',
@@ -180,11 +188,22 @@ function buildPrintPages(result, root, sizeLabel) {
   cover.appendChild(el('div', 'print-sub',
     P.piecesFabric(p.pieces.length, p.fabricMeters140)[lang] +
     (hasCutLines ? P.saIncluded(saCm)[lang] : P.saNot(saCm)[lang])));
-  const map = el('ul', 'print-map');
-  for (const piece of paper.length ? paper : p.pieces) {
-    map.appendChild(el('li', '', `${piece.name}, ${piece.cutInstruction}`));
-  }
-  cover.appendChild(map);
+  // Numbered cutting table (Blok 2): every piece gets a number and the sheets it
+  // prints on, so a piece split across pages is found at a glance, not hunted.
+  cover.appendChild(el('div', 'print-sub', P.cutTableTitle[lang]));
+  const cutRows = pieceSheetMap(layout);
+  const cutTable = el('table', 'print-cuttable');
+  const cutHead = el('tr', '');
+  for (const h of P.cutTableHead[lang]) cutHead.appendChild(el('th', '', h));
+  cutTable.appendChild(cutHead);
+  cutRows.forEach((row, i) => {
+    const tr = el('tr', '');
+    for (const c of [String(i + 1), row.name, row.cutInstruction, row.sheets.join(', ')]) {
+      tr.appendChild(el('td', '', c));
+    }
+    cutTable.appendChild(tr);
+  });
+  cover.appendChild(cutTable);
   if (chalk.length && paper.length) {
     cover.appendChild(el('div', 'print-sub', P.chalkNote[lang]));
     const chalkMap = el('ul', 'print-map');
@@ -299,7 +318,8 @@ export function printGradeNested(sizes, garmentLabel) {
     const b = bounds(p); return a + (b.maxX - b.minX) * (b.maxY - b.minY);
   }, 0);
   const largest = prepared.reduce((m, pr) => (area(pr) > area(m) ? pr : m), prepared[0]);
-  const layout = packPieces(largest.paper);
+  // No rotation for nested runs: every size registers on the SAME placement.
+  const layout = packPieces(largest.paper, false);
   const styleByLabel = new Map(prepared.map((pr, i) => [pr.size, nestStyle(i)]));
   const { sheets, used } = usedCells(layout);
 
