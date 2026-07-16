@@ -94,3 +94,12 @@ Aynı elbisenin ön+arka fotoları şu an AYRI okunup çelişiyor (manifest'te a
 3. Zincir sonu raporu: 3 loop'un toplam etkisi tek tabloda (FULL, ELEMENT
    ACCURACY, vision-accuracy: zincir öncesi → sonrası). Sıradaki faz kararını
    Damla'ya bırak: FAZ K (köprü delikleri: cupSeams/strapless) veya V4 (güven eşiği).
+
+## ZİNCİR SONRASI YÖN (16 Tem derin analiz — reports/2026-07-16-stitchu-mimari-derin-analiz.md)
+Sıra: V (kelimeleri kararla) → K (köprü TEK KAYNAK sözlük: worker şeması +
+create.js pick* + missing.js + enum uyumu tek vocab dosyasından denetlenir) →
+FAZ P (ORAN KATMANI, yeni): şemaya kelime + boyutsuz SAYI (neckline.depth,
+skirt.length oranı, puf fullness, ease sınıfı fitted/regular/oversized) —
+enum kayıplılığına gerçek cevap; motor zaten sürekli girdiyle çalışıyor,
+kitap clamp'leri dikilebilirliği korur → M (motor, marjinal kazanç sırası).
+Keypoint / backend-taşıma / morphing KANITLA REDDEDİLDİ (rapora bak), yeniden açma.
