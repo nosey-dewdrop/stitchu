@@ -18,6 +18,10 @@ sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
 > SIRADAKİ: LOOP 1 (V0). Henüz hiçbiri koşmadı.
+> VİTRİN TEMA KARARI (Damla, 16 Tem, KESİN): pötikare DUVAR KAĞIDI sadece
+> GİRİŞTE — hero/waitlist (mail toplanan) bölümünde, varyant 1'deki gibi.
+> Onun dışında HER YERDE ve HER SAYFADA varyant 2 (beyaz gövde + pötikare
+> şerit imza, iki ton baby blue + Didot). MJ düğmeler gelene dek CSS placeholder.
 
 ## TEŞHİS (2026-07-16, kanıtlı — zincirin varlık sebebi)
 Katmanlar kod olarak ayrık ve temiz (L1 vision / L2 köprü / L3 motor / L4 çıktı).
