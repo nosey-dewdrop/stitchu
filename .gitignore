@@ -20,4 +20,6 @@ benchmark-58/
 
 # collected garment photos (D-phase data pipeline): scraped public product
 # images, local-only for vocab mining + student-model training. NEVER push.
+# The real collector config names the sources — also local-only.
 dataset/
+engine/tools/collect.config.json

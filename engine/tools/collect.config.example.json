@@ -1,0 +1,34 @@
+{
+  "note": "Template for collect.config.json (which is LOCAL and gitignored — it names the real photo sources, and source names never go public per the FAZ D red lines). Copy this file to collect.config.json and fill in your sources. Only public product-listing JSON APIs; the collector checks robots.txt, waits 1.5-3s between all requests, and skips a source on any error.",
+  "userAgent": "<a normal desktop browser user agent>",
+  "minDelayMs": 1500,
+  "maxDelayMs": 3000,
+  "targetPerCategory": 90,
+  "resizeLongEdge": 1024,
+  "sources": [
+    {
+      "brand": "<local nickname, becomes dataset/<brand>/ dir + manifest field>",
+      "robots": "https://example.com/robots.txt",
+      "robotsProbePath": "/api/path/that/will/be/hit",
+      "listUrlTemplate": "https://example.com/api/products?q={query}&offset={offset}&limit={limit}",
+      "pagination": "offset  — or 'page' for 1-based page params",
+      "pageSize": 24,
+      "itemsPath": "result.items — dotted path to the item array in the listing JSON",
+      "totalPath": "result.pagination.total — for pagination='offset'",
+      "totalPagesPath": "pagination.totalPages — for pagination='page'",
+      "extract": {
+        "strategy": "firstImageOfMap | fieldWithFallback | firstOfArray",
+        "imageMapPath": "images.main — for firstImageOfMap: object of variants, first one taken",
+        "imageArrayPath": "images — for firstOfArray: array of images, first one taken (e.g. Shopify products.json), query string stripped",
+        "imageField": "image — the URL field (on the variant/array element, or on the item itself)",
+        "imageFallbackField": "modelImage — for fieldWithFallback only"
+      },
+      "categories": [
+        {
+          "category": "dress | top | skirt — manifest label",
+          "query": "any keys here fill {placeholders} in listUrlTemplate"
+        }
+      ]
+    }
+  ]
+}

@@ -36,6 +36,20 @@ vision'a zor; onlar İKİNCİ dalga ve amaçları farklı: inşa TERİMİ çeşi
 - Her tur BENCHMARK'a DOKUNMAZ (58-set ayrı, held-out ilkesi); istersek yeni setten
   20-30 foto "held-out v2" olarak kenara ayrılır, hiç optimize edilmez.
 
+## AMBAR YASASI (Damla + teşhis, 16 Tem akşam — D2 başlamadan anayasa)
+Etiket ambarı en tehlikeli varlık: hata bileşik büyür (frekans→FAZ M önceliği→
+öğrenci→öğrencinin etiketleri). Yasa: **etiket GERÇEK değil ÖNBELLEKTİR; asıl
+varlık fotoğraf + kaynak kaydıdır.**
+- Her etiket kaydında: teacherVersion (prompt sürümü) + tarih + confidence.
+- Öğretmen emin değilse alan "belirsiz" yazılır ve EĞİTİME GİRMEZ (benchmark'ta
+  cezalanan dürüst-null, ambarda altın kural).
+- Her etiketleme partisi sağlık testi verir: aynı öğretmen 58'lik insan-etiketli
+  çıpadan örneklem geçer; çıpa notu düşükse parti "şüpheli" damgalı, eğitim dışı.
+- Ham foto asla ezilmez; şüpheli parti tek komutla daha iyi öğretmenle YENİDEN
+  etiketlenebilir olmalı (etiket = yeniden üretilebilir).
+- Öğrenci doğunca: öğrenci-öğretmen anlaşmazlığı otomatik şüpheli listesi,
+  periyodik denetim (Denetim A deseni).
+
 ## D3 — KENDİ CV'MİZ (Track B damıtma, yavaş yavaş)
 - Aşama 1: etiket ambarı — D2'de Opus'un verdiği her yapısal etiket (garment/neckline/
   sleeve/closure/...) dataset/labels/*.json olarak birikir. Her analiz çift işe yarar:
