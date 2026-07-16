@@ -2,31 +2,37 @@
 
 you take a photo of a garment. stitchu turns it into a sewing pattern drafted to your own body measurements and prints it true to scale on a4. for anyone who sees a garment and wants to sew it in their own size, without buying a ready-made pattern or fighting the math.
 
-live: https://nosey-dewdrop.github.io/stitchu (web v27)
+live: https://nosey-dewdrop.github.io/stitchu (free in beta). every change ships with a public [patch note](https://nosey-dewdrop.github.io/stitchu/patches.html).
 
-## how it works and what i used for it
+## how it's engineered: layers that talk 🧠
 
-1. you enter your 7 body measurements (bust, waist, hip, shoulder, back length, arm length, neck). they stay local, nothing is uploaded.
-2. you upload a garment photo. a cloudflare worker calls claude vision, which classifies the garment into a fixed drafting vocabulary (garment type, neckline, sleeve, skirt, waistline, fabric behavior). you confirm or correct the reading.
-3. a drafting engine written in c++ and compiled to webassembly, running entirely in your browser, drafts the pattern pieces to your measurements. it uses published pattern formulas (freesewing, muller & sohn, winifred aldrich, every constant is sourced in `engine/FORMULAS.md`).
-4. output: svg pattern pieces with darts, grainlines and drawn seam allowance, a tiled a4 pdf with a 3 cm calibration square, a fabric yardage estimate and a step by step sewing guide.
+stitchu is not one model and not one script. it is four layers with strict contracts between them, and i develop the whole project by making those layers talk. every layer has its own job, its own vocabulary, and its own benchmark. when something fails, the architecture can say *which layer the failure was born in*, and that is what gets fixed.
 
-the drafting vocabulary: princess and dart shaping, natural, empire and babydoll waistlines, woven and knit, 5 skirt styles, set-in and balloon sleeves, layered ruffles, sweetheart, keyhole, halter.
+1. **vision layer.** a vision model reads the photo and speaks a fixed drafting vocabulary: garment type, neckline, sleeve, shaping, closures, plus out-of-vocabulary elements it can see but can't name yet. it never draws anything; it only classifies. you confirm or correct the reading.
+2. **bridge layer.** translates the vision reading into a typed engine spec. what the engine can't draw yet is never silently dropped: it's surfaced honestly to the user ("closest given, add X by hand").
+3. **calculation engine.** a deterministic c++ drafting engine (compiled to webassembly, running entirely in your browser) drafts the pieces to your seven measurements using published pattern-cutting formulas, audited against the standard references (aldrich, joseph-armstrong). same input, same output, byte for byte. that is what makes millimetre claims provable.
+4. **output layer.** svg pieces with darts, grainlines and seam allowance, tiled a4 pdf with registration marks and a 3 cm calibration square, fabric estimate, sewing guide.
 
-## measurement and accuracy, benchmark not claims 📏
+each boundary is measured separately: the vision layer has an accuracy score against hand-labeled photos, the bridge has a coverage audit, the engine has geometric invariants and a golden reference, the output has print-fit fuzzing. a metric per boundary is the whole method. a boundary without a number does not exist.
 
-- **validation matrix: 70,200 drafts, all passing.** eu 34-52 plus tall, short, pear, apple and extreme bodies, across the whole spec space. every draft passes geometric invariants (side seam balance, dart totals, armhole allowance, self intersection, print fit). 8/8 ctest green.
-- **seam pair precision: worst pair 0.00 mm.** `tools/precision-report.js` measures every seam pair a tailor would actually pin and fails anything above 1.0 mm. it found two real gaps (shoulder pair 8-10 mm, empire side seam ~2 mm) and both are now zero.
-- **web fuzz: 19,555 drafts, 0 failures.** `tools/web-fuzz.js` walks the whole spec space through the ui with extreme body measurements and simulates the print packer. no piece can be clipped.
-- **golden reference pinned in the repo** (`engine/golden-reference.csv`, 23k rows). `golden-diff.py` compares the deterministic output at 0.1 mm tolerance.
-- **vision accuracy: opus teacher at 86%** against hand labels. zero-shot clip stayed at 44% and siglip at 65%, a dead end. the plan is to distill opus into an onnx student that runs in the browser.
+## measured, not claimed 📏
+
+- **validation matrix: 70,200 drafts, all passing.** eu 34-52 plus tall, short, pear, apple and extreme bodies, across the whole spec space. geometric invariants on every draft (seam balance, dart totals, armhole allowance, self-intersection, print fit). ctest 17/17 green.
+- **seam pair precision: worst pair 0.00 mm.** every seam pair a tailor would actually pin is measured off the drawn geometry, not the intended numbers. an audit once caught the benchmark reading intentions instead of geometry; it reads geometry now.
+- **web fuzz: 19,780 drafts through the real ui, 0 failures.** extreme bodies, whole spec space, simulated print packer. no piece can be clipped.
+- **golden reference pinned in the repo** (23k rows, 0.1 mm tolerance diff). new capabilities are opt-in post-passes: with them off, output stays byte-identical.
+- **real-product benchmark:** a hand-labeled set of real garment photos, measured live end-to-end. current: 24/54 full patterns and climbing. the misses are published too, in the patch notes. vision accuracy on critical fields: 94% against hand labels.
+
+## the data flywheel 🗃️
+
+the engine's vocabulary grows by evidence, not by whim. a growing photo corpus is mined for construction terms; term frequency decides which capability the engine learns next (expected gain per unit of work, nothing else). every vision reading is also stored as a labeled example in a versioned label store. labels are treated as a regenerable cache, never as ground truth. that store is training data for an on-device student model, so photo analysis itself is on the path to running fully in the browser. one benchmark set stays hand-labeled and untouched as the human anchor everything else is graded against.
 
 ## tech
 
 - engine: c++17, cmake, ctest. single-file wasm bundle via emscripten/embind (~218 kb)
-- web: static html/css/js on github pages, no framework. patterns are svg, printing is client-side tiled a4 pdf. measurements and wardrobe live in local storage/indexeddb
-- backend: one cloudflare worker that proxies claude vision behind an app token and per-ip rate limits. the browser never holds an api key
-- vision experiments: node + @xenova/transformers (onnx)
+- web: static html/css/js on github pages, no framework. patterns are svg, printing is client-side tiled a4 pdf. measurements live in local storage. nothing about your body is uploaded, by architecture not by policy
+- backend: one cloudflare worker that proxies the vision model behind an app token and per-ip rate limits. the browser never holds an api key
+- student vision: pytorch training + onnx export, browser target
 - knowledge: sqlite database of drafting formulas. a formula only becomes `verified` after adversarial source checking
 
 ## why i built it 🌷
@@ -36,11 +42,7 @@ ready-made patterns fit nobody exactly, there is no body called small-medium-lar
 ## repo layout
 
 - `engine/` c++ engine, tests, tools, wasm build, `FORMULAS.md` (the drafting spec)
-- `web/` the live site
+- `web/` the live site (including `patches.html`, the public changelog)
 - `backend/` cloudflare worker (vision proxy)
-- `vision/` owning the vision model (eval + distillation corpus)
-- `knowledge/` verified drafting formula database
-- `App/` the original swift ios app, kept as reference. the c++ core will feed ios/android later
-- `docs/ARCHITECTURE.md` layers, data flow, design decisions
-
-details in `PROJECT.md` and `PLAN.md`.
+- `vision-student/` on-device student model training + onnx export
+- photo corpora and label stores are local-only and never committed

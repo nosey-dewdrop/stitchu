@@ -255,7 +255,7 @@ function setLang(lang){
 }
 (function(){
   let lang = 'en';
-  try { lang = localStorage.getItem('stitchu:lang') || ((navigator.language||'').startsWith('tr') ? 'tr' : 'en'); } catch(_) {}
+  try { lang = localStorage.getItem('stitchu:lang') || 'en'; } catch(_) {}
   document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
   document.getElementById('lang-tr').addEventListener('click', () => setLang('tr'));
   setLang(lang);

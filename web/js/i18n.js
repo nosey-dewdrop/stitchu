@@ -117,9 +117,9 @@ export function getLang() {
   try {
     const stored = localStorage.getItem(LANG_KEY);
     if (stored === 'tr' || stored === 'en') return stored;
-    // No stored choice yet: follow the browser so a Turkish visitor gets Turkish
-    // without hunting for the toggle (the landing shares this key).
-    return (navigator.language || '').startsWith('tr') ? 'tr' : 'en';
+    // No stored choice yet: default to English (Damla, 16 Jul). The EN/TR
+    // toggle is always visible for Turkish visitors.
+    return 'en';
   } catch { return 'en'; }
 }
 
