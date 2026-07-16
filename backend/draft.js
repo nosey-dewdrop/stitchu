@@ -5,8 +5,11 @@
 //
 // The .wasm is imported as a Workers WASM module (a pre-compiled
 // WebAssembly.Module) and handed to the emscripten glue through instantiateWasm
-// so nothing ever fetches at runtime. The engine is instantiated once per
-// isolate and reused across requests.
+// so nothing ever fetches or compiles at runtime (the Workers runtime forbids
+// runtime wasm compilation from bytes). The glue is built with -sENVIRONMENT=web
+// (NOT web,worker): the WebWorker branch reads self.location.href, which is
+// undefined in CF Workers and threw engine_error before instantiateWasm ran.
+// The engine is instantiated once per isolate and reused across requests.
 import createStitchuEngine from './engine/stitchu-worker.js';
 import wasmModule from './engine/stitchu-worker.wasm';
 

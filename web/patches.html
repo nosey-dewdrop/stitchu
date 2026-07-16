@@ -16,7 +16,7 @@
 <meta name="twitter:title" content="stitchu · patch notes">
 <meta name="twitter:description" content="Every change, measured, published, misses included.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are stitchu patch notes?","acceptedAnswer":{"@type":"Answer","text":"A published, dated log of every change to the stitchu pattern-making engine, with the accuracy number before and after each patch, including the changes that did not move the number."}},{"@type":"Question","name":"What does the benchmark measure?","acceptedAnswer":{"@type":"Answer","text":"How many of 54 real product photos the engine turns into a complete, sewable pattern, plus element accuracy (share of individual garment features it can draft) and vision accuracy (how reliably the photo is read)."}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=60">
+<link rel="stylesheet" href="css/theme-transitions.css?v=61">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -63,10 +63,11 @@
 <header>
   <a class="mark" href="index.html">stitchu</a>
   <nav>
+    <a href="create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
     <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="api.html">API</a>
     <a href="patches.html" data-en="patch notes" data-tr="yama notları" style="border-bottom:1px dashed var(--bb-deep)">patch notes</a>
-    <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
     <span class="langtoggle"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
 </header>
@@ -76,8 +77,34 @@
   <p class="manifesto" data-en="Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5." data-tr="Motordaki her değişiklik, ölçülmüş ve yayınlanmış, kaçanlar dahil. Bu gerçek geliştirme günlüğü: ne değişti, doğruluk sayısı ne yaptı ve +6 umduğumuz bir değişikliğin sadece +5 getirdiği yer.">Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5.</p>
   <p class="updated" data-en="Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16." data-tr="Metrik: 54 gerçek ürün fotoğrafından kaçı tam, dikilebilir bir kalıba dönüşüyor. Son güncelleme 2026-07-16.">Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16.</p>
 
-  <!-- 2.3 -->
+  <!-- 2.5 -->
   <div class="patch now">
+    <div class="phead"><span class="pnum">2.5</span><span class="ptitle" data-en="Data pipeline online" data-tr="Veri hattı kuruldu">Data pipeline online</span><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Built a respectful photo collector: it reads public product-listing pages, checks robots.txt, waits 1.5–3 s between every request, and skips any source that objects. First batch: 392 real garment photos (dresses, tops, skirts) from public high-street sources, deduplicated by content hash." data-tr="Saygılı bir fotoğraf toplayıcı kurduk: herkese açık ürün listeleme sayfalarını okur, robots.txt'e bakar, her istek arasında 1.5–3 sn bekler ve itiraz eden kaynağı atlar. İlk parti: herkese açık high-street kaynaklardan 392 gerçek giysi fotoğrafı (elbise, üst, etek), içerik hash'iyle tekilleştirilmiş.">Built a respectful photo collector: it reads public product-listing pages, checks robots.txt, waits 1.5–3 s between every request, and skips any source that objects. First batch: 392 real garment photos (dresses, tops, skirts) from public high-street sources, deduplicated by content hash.</li>
+        <li data-en="Every photo stays local and private — none is published, shown, or shipped anywhere. They exist for two internal jobs only: mining the construction vocabulary the engine still lacks, and later training our own on-device vision model." data-tr="Her fotoğraf yerelde ve gizli kalıyor — hiçbiri yayınlanmıyor, gösterilmiyor, hiçbir yere gönderilmiyor. Sadece iki iç iş için varlar: motorun hâlâ eksik olduğu dikim dağarcığını madenlemek ve ileride kendi cihaz-içi görü modelimizi eğitmek.">Every photo stays local and private — none is published, shown, or shipped anywhere. They exist for two internal jobs only: mining the construction vocabulary the engine still lacks, and later training our own on-device vision model.</li>
+      </ul>
+      <span class="delta">FULL <span class="num">24/54</span> → <span class="num">24/54</span> · infrastructure — 392 photos banked, no engine or vision change</span>
+      <p class="honest" data-en="This patch moves no accuracy number — by design. It is the supply line for the next phase: the pattern number is now held back by vocabulary the engine has never seen, and you cannot fix a vocabulary you have not measured in the wild." data-tr="Bu yama hiçbir doğruluk sayısını oynatmıyor — bilerek. Bir sonraki fazın ikmal hattı bu: kalıp sayısını artık motorun hiç görmediği dağarcık tutuyor ve sahada ölçmediğin bir dağarcığı düzeltemezsin.">This patch moves no accuracy number — by design. It is the supply line for the next phase: the pattern number is now held back by vocabulary the engine has never seen, and you cannot fix a vocabulary you have not measured in the wild.</p>
+    </div>
+  </div>
+
+  <!-- 2.4 -->
+  <div class="patch">
+    <div class="phead"><span class="pnum">2.4</span><span class="ptitle" data-en="API draft endpoint fixed" data-tr="API draft ucu düzeltildi">API draft endpoint fixed</span><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="The public /api/draft and /api/grade endpoints were returning 500 engine_error live: the WASM engine crashed inside the Cloudflare Workers runtime. The browser flow was never affected." data-tr="Herkese açık /api/draft ve /api/grade uçları canlıda 500 engine_error dönüyordu: WASM motoru Cloudflare Workers ortamında çöküyordu. Tarayıcı akışı hiç etkilenmedi.">The public /api/draft and /api/grade endpoints were returning 500 engine_error live: the WASM engine crashed inside the Cloudflare Workers runtime. The browser flow was never affected.</li>
+        <li data-en="Root cause was two stacked runtime bans, no C++ or golden change: the worker build read self.location.href (undefined in Workers), and embind built call invokers with new Function (code generation is forbidden). Rebuilt the worker WASM with the web-only environment and no dynamic execution." data-tr="Kök neden iki katmanlı çalışma-zamanı yasağıydı, C++ ya da golden değişmedi: worker derlemesi self.location.href okuyordu (Workers'ta tanımsız) ve embind çağrı fonksiyonlarını new Function ile kuruyordu (kod üretimi yasak). Worker WASM'ı web-only ortam ve dinamik yürütme kapalı olarak yeniden derlendi.">Root cause was two stacked runtime bans, no C++ or golden change: the worker build read self.location.href (undefined in Workers), and embind built call invokers with new Function (code generation is forbidden). Rebuilt the worker WASM with the web-only environment and no dynamic execution.</li>
+      </ul>
+      <span class="delta">/api/draft <span class="num">500</span> → <span class="num">200</span> · 10 pieces · /api/grade 200 · packaging-only fix, engine unchanged</span>
+      <p class="honest" data-en="A packaging bug, not an engine bug: the same C++ engine that draws every browser pattern was fine, only its Cloudflare build was miscompiled for that runtime. The B2B API is now live and verified end to end." data-tr="Bir paketleme hatası, motor hatası değil: her tarayıcı kalıbını çizen aynı C++ motoru sağlamdı, sadece Cloudflare derlemesi o ortam için yanlış derlenmişti. B2B API artık canlı ve uçtan uca doğrulandı.">A packaging bug, not an engine bug: the same C++ engine that draws every browser pattern was fine, only its Cloudflare build was miscompiled for that runtime. The B2B API is now live and verified end to end.</p>
+    </div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="patch">
     <div class="phead"><span class="pnum">2.3</span><span class="ptitle" data-en="Front/back consistency (reverted)" data-tr="Ön/arka tutarlılık (geri alındı)">Front/back consistency (reverted)</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -245,7 +272,7 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html">benchmark</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v60</span></span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v60</span></span>
 </footer>
 
 <script>
