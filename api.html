@@ -15,46 +15,49 @@
 <meta name="twitter:title" content="stitchu API — one endpoint, real patterns, no AI bill">
 <meta name="twitter:description" content="POST /api/draft: measurements + a garment spec in, a true-scale sewing pattern out.">
 <link rel="icon" href="assets/buttons/b6.png">
+<link rel="stylesheet" href="css/theme-transitions.css?v=59">
 <style>
-  :root{--visne:#8f2038}
+  /* RESKIN 2026-07-16 (patch 2.1): calm white-blue (non-hero page). Code blocks
+     stay dark navy for readability — standard API-doc contrast. */
+  :root{--bb:#8fbfe8;--bb-deep:#3f74a8;--bb-pale:#dceaf7;--bb-line:#bcd7ee;--navy:#1f3a5f;--ink:#2b4a6b}
   *{box-sizing:border-box}
-  body{margin:0;background:#5a1020;color:#fff;font-family:'Helvetica Neue',Arial,sans-serif;
-    background-image:radial-gradient(circle at 30% 10%,rgba(143,32,56,.5),transparent 60%);min-height:100vh}
-  a{color:#ffd9e2}
+  body{margin:0;background:#fff;color:var(--navy);font-family:'Helvetica Neue',Arial,sans-serif;
+    background-image:linear-gradient(180deg,var(--bb-pale) 0%,#fff 220px);min-height:100vh}
+  a{color:var(--bb-deep)}
   .wrap{max-width:900px;margin:0 auto;padding:48px 28px 80px}
-  .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;letter-spacing:1px;opacity:.85}
-  .top a{text-decoration:none;color:#fff}
-  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:40px;margin:40px 0 8px;line-height:1.1}
-  .sub{font-size:16px;opacity:.94;max-width:56ch;line-height:1.5}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;letter-spacing:1px}
+  .top a{text-decoration:none;color:var(--navy)}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:40px;margin:40px 0 8px;line-height:1.1;color:var(--navy)}
+  .sub{font-size:16px;color:var(--ink);max-width:56ch;line-height:1.5}
   .tag{display:inline-block;margin-top:20px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
-    color:#ffd9e2;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 15px}
-  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:24px;margin:48px 0 14px}
-  pre{background:#2a0810;border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:18px 20px;overflow:auto;
-    font-family:'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.6;color:#ffe7ee}
-  .k{color:#ff9db0}.s{color:#c8f0c8}
+    color:var(--bb-deep);border:1px solid var(--bb-line);border-radius:999px;padding:7px 15px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:24px;margin:48px 0 14px;color:var(--navy)}
+  pre{background:#16233a;border:1px solid #24365a;border-radius:6px;padding:18px 20px;overflow:auto;
+    font-family:'SF Mono',Menlo,monospace;font-size:12.5px;line-height:1.6;color:#e7eefb}
+  .k{color:#8fbfe8}.s{color:#a8e0c0}
   .cards{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}
   .play{margin-top:14px}
   .play-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
-  .play-row label{display:flex;flex-direction:column;gap:5px;font-size:12px;letter-spacing:.5px;opacity:.85}
-  .play select,.play input{padding:9px 12px;border:none;border-radius:4px;font-size:14px;width:auto;min-width:90px}
+  .play-row label{display:flex;flex-direction:column;gap:5px;font-size:12px;letter-spacing:.5px;color:var(--ink)}
+  .play select,.play input{padding:9px 12px;border:1.5px solid var(--bb-line);border-radius:4px;font-size:14px;width:auto;min-width:90px;color:var(--navy)}
   #pg-run{margin-top:0}
-  .card{background:rgba(42,8,16,.6);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:20px;flex:1;min-width:220px}
-  .card h3{font-family:'Didot',Georgia,serif;font-weight:400;font-size:18px;margin:0 0 8px}
-  .card p{font-size:13.5px;line-height:1.5;margin:0;opacity:.92}
+  .card{background:var(--bb-pale);border:1px solid var(--bb-line);border-radius:8px;padding:20px;flex:1;min-width:220px}
+  .card h3{font-family:'Didot',Georgia,serif;font-weight:400;font-size:18px;margin:0 0 8px;color:var(--navy)}
+  .card p{font-size:13.5px;line-height:1.5;margin:0;color:var(--ink)}
   form{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-  input{padding:13px 16px;border:none;border-radius:4px;font-size:14px;width:280px;max-width:80vw}
-  button{padding:13px 26px;border:none;border-radius:4px;background:#fff;color:#5a1020;font-size:14px;font-weight:700;cursor:pointer}
-  button:hover{background:#ffd9e2}
-  .msg{min-height:20px;font-size:13px;margin-top:12px;opacity:.95}
-  footer{margin-top:64px;font-size:12px;opacity:.75;letter-spacing:1px}
-  footer a{color:#fff;text-decoration:none}
+  input{padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:4px;font-size:14px;width:280px;max-width:80vw;color:var(--navy)}
+  button{padding:13px 26px;border:none;border-radius:4px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+  button:hover{background:#2b4f7a}
+  .msg{min-height:20px;font-size:13px;margin-top:12px;color:var(--navy)}
+  footer{margin-top:64px;font-size:12px;color:#5b7089;letter-spacing:1px}
+  footer a{color:var(--navy);text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <a href="index.html">← stitchu</a>
-    <span><a href="index.html">home</a> · <a href="privacy.html">privacy</a></span>
+    <span><a href="index.html">home</a> · <a href="benchmark.html">benchmark</a> · <a href="patches.html">patch notes</a> · <a href="privacy.html">privacy</a></span>
   </div>
 
   <h1>One endpoint. Real patterns. No AI bill.</h1>
@@ -131,24 +134,24 @@
     <pre id="gr-out" style="margin-top:14px;max-height:320px">the size run appears here…</pre>
   </div>
 
-  <h2>Pricing</h2>
-  <p class="sub">Simple, and cheaper than a per-call AI tool — because the engine has no per-call AI cost. Indicative, launching with early partners:</p>
+  <h2>Beta partners</h2>
+  <p class="sub">We're in beta, so pricing comes later — right now we're onboarding a handful of early partners for free. The engine has no per-call AI cost, so we can stay cheap when pricing lands. Tell us your volume and what you're building.</p>
   <div class="cards">
-    <div class="card"><h3>Maker</h3><p><b>$19/mo</b> · 500 patterns/mo · for a solo Etsy/made-to-measure shop.</p></div>
-    <div class="card"><h3>Studio</h3><p><b>$49/mo</b> · unlimited patterns · priority support · for a growing brand.</p></div>
-    <div class="card"><h3>Volume</h3><p><b>Let's talk</b> · high-volume / white-label · tell us your numbers below.</p></div>
+    <div class="card"><h3>Maker</h3><p>A solo Etsy / made-to-measure shop. One photo → a full size run (XS–XL / EU34–52) via <b>/api/grade</b>.</p></div>
+    <div class="card"><h3>Studio</h3><p>A growing brand drafting at volume. Priority support while we build together.</p></div>
+    <div class="card"><h3>Volume</h3><p>High-volume or white-label. Tell us your numbers below and we'll shape it with you.</p></div>
   </div>
-  <p class="sub" style="font-size:12px;opacity:.75">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost — so we can be cheaper.</p>
+  <p class="sub" style="font-size:12px;color:#5b7089">Rivals charge $34–49/mo for a photo-to-pattern tool and publish no accuracy proof. We publish the benchmark and run the engine at zero marginal cost — beta is free while we build.</p>
 
-  <h2>Get early API access</h2>
+  <h2>Become a beta partner</h2>
   <p class="sub">Studios, made-to-measure brands and pattern shops — tell us your volume and we'll set you up.</p>
   <form onsubmit="return apiWaitlist(event)">
     <input type="email" id="apiemail" placeholder="you@studio.com" required>
-    <button type="submit">Request access</button>
+    <button type="submit">Join the beta</button>
   </form>
   <p class="msg" id="apimsg"></p>
 
-  <footer>stitchu · a pattern-making engine · <a href="index.html">stitchu.dev</a></footer>
+  <footer>stitchu · a pattern-making engine · <a href="index.html">home</a> · <a href="benchmark.html">benchmark</a> · <a href="patches.html">patch notes</a> · <a href="privacy.html">privacy</a> · <span style="opacity:.55">v59</span></footer>
 </div>
 
 <script>

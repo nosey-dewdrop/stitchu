@@ -1,13 +1,22 @@
 /* stitchu design tokens — the single source for the visual language.
-   Brand 2026-07-13 (Damla): couture everywhere — vişne is THE accent, teal is
-   retired. Flat Helvetica on pattern paper, sharp corners, no bold. */
+   RESKIN 2026-07-16 (Damla, patch 2.1): baby-blue world replaces vişne. Layout
+   and Didot structure unchanged; only the color world turns. Text is navy for
+   WCAG-AA contrast on white/pale-blue. Flat Helvetica on pattern paper. */
 :root {
   /* color */
-  --ink: #111111;
+  --ink: #1f3a5f;        /* navy body ink (AA on white) */
   --paper: #ffffff;
-  --accent: #8f2038; /* vişne — the couture fabric itself */
-  --gray: #8a8a8a;
-  --faint: #d9d9d9;
+  --accent: #2f6f7e;     /* teal/navy accent (was vişne #8f2038) */
+  --gray: #5b7089;
+  --faint: #cfe0ef;
+
+  /* baby-blue reskin palette (single source) */
+  --bb: #8fbfe8;
+  --bb-deep: #3f74a8;    /* AA-readable baby blue for labels/links */
+  --bb-pale: #dceaf7;
+  --bb-line: #bcd7ee;
+  --navy: #1f3a5f;
+  --teal: #2f6f7e;
 
   /* thread palette (muted, never loud) — mirrors the Worker's WALL_COLORS */
   --thread-rose: #C4767B;
