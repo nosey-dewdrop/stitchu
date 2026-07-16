@@ -16,7 +16,7 @@
 <meta name="twitter:title" content="stitchu · patch notes">
 <meta name="twitter:description" content="Every change, measured, published, misses included.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are stitchu patch notes?","acceptedAnswer":{"@type":"Answer","text":"A published, dated log of every change to the stitchu pattern-making engine, with the accuracy number before and after each patch, including the changes that did not move the number."}},{"@type":"Question","name":"What does the benchmark measure?","acceptedAnswer":{"@type":"Answer","text":"How many of 54 real product photos the engine turns into a complete, sewable pattern, plus element accuracy (share of individual garment features it can draft) and vision accuracy (how reliably the photo is read)."}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=61">
+<link rel="stylesheet" href="css/theme-transitions.css?v=62">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -65,6 +65,7 @@
   <nav>
     <a href="create.html" data-en="create" data-tr="çiz">create</a>
     <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
+    <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
     <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
     <a href="patches.html" data-en="patch notes" data-tr="yama notları" style="border-bottom:1px dashed var(--bb-deep)">patch notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
@@ -77,8 +78,21 @@
   <p class="manifesto" data-en="Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5." data-tr="Motordaki her değişiklik, ölçülmüş ve yayınlanmış, kaçanlar dahil. Bu gerçek geliştirme günlüğü: ne değişti, doğruluk sayısı ne yaptı ve +6 umduğumuz bir değişikliğin sadece +5 getirdiği yer.">Every change to the engine, measured and published, the misses included. This is the real development log: what changed, what the accuracy number did, and where a change we hoped for +6 only bought +5.</p>
   <p class="updated" data-en="Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16." data-tr="Metrik: 54 gerçek ürün fotoğrafından kaçı tam, dikilebilir bir kalıba dönüşüyor. Son güncelleme 2026-07-16.">Metric: how many of 54 real product photos become a complete, sewable pattern. Last updated 2026-07-16.</p>
 
+  <!-- 2.8 -->
+  <div class="patch now" id="patch-2-8">
+    <div class="phead"><span class="pnum">2.8</span><span class="ptitle" data-en="The pattern library goes live" data-tr="Kalıp kütüphanesi yayında">The pattern library goes live</span><span class="pdate">2026-07-17</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Every product photo that now becomes a full pattern gets its own page. The library publishes each drafted style, twelve distinct garments so far, with the engine's own pieces laid out for cutting, a piece list, a fabric estimate, and the honest note on which patch made it drawable." data-tr="Artık tam kalıba dönüşen her ürün fotoğrafı kendi sayfasını alıyor. Kütüphane, çizilmiş her modeli, şimdilik on iki ayrı giysi, motorun kendi parçaları kesim için yerleştirilmiş, parça listesi, kumaş tahmini ve onu hangi yamanın çizilebilir kıldığına dair dürüst notla yayınlıyor.">Every product photo that now becomes a full pattern gets its own page. The library publishes each drafted style, twelve distinct garments so far, with the engine's own pieces laid out for cutting, a piece list, a fabric estimate, and the honest note on which patch made it drawable.</li>
+        <li data-en="The drawings are the engine's own output, drafted live from the same specs the benchmark scored. No source photo is shown or named, only a generic style name, so nothing copyrighted is republished. Each page carries its own search metadata and structured data, so the library is the site's first real content engine." data-tr="Çizimler motorun kendi çıktısı, kıyaslamanın puanladığı aynı spec'lerden canlı çizildi. Hiçbir kaynak fotoğraf gösterilmiyor ya da adlandırılmıyor, sadece jenerik bir stil adı, böylece telifli hiçbir şey yeniden yayınlanmıyor. Her sayfa kendi arama meta verisini ve yapılandırılmış verisini taşıyor, böylece kütüphane sitenin ilk gerçek içerik motoru.">The drawings are the engine's own output, drafted live from the same specs the benchmark scored. No source photo is shown or named, only a generic style name, so nothing copyrighted is republished. Each page carries its own search metadata and structured data, so the library is the site's first real content engine.</li>
+      </ul>
+      <span class="delta" data-en="24 / 54 photos → full pattern, now published as 12 pattern pages" data-tr="24 / 54 fotoğraf → tam kalıp, artık 12 kalıp sayfası olarak yayında">24 / 54 photos → full pattern, now published as 12 pattern pages</span>
+      <p class="honest" data-en="This patch moves no accuracy number, it publishes the ones already earned. A benchmark that climbs in private is a claim; a library anyone can open and read the pieces of is proof." data-tr="Bu yama hiçbir doğruluk sayısını oynatmıyor, zaten kazanılmışları yayınlıyor. Gizlide tırmanan bir kıyaslama bir iddiadır; herkesin açıp parçalarını okuyabileceği bir kütüphane kanıttır.">This patch moves no accuracy number, it publishes the ones already earned. A benchmark that climbs in private is a claim; a library anyone can open and read the pieces of is proof.</p>
+    </div>
+  </div>
+
   <!-- 2.7 -->
-  <div class="patch now">
+  <div class="patch" id="patch-2-7">
     <div class="phead"><span class="pnum">2.7</span><span class="ptitle" data-en="Data pipeline scaled to the thousands" data-tr="Veri hattı binlere ölçeklendi">Data pipeline scaled to the thousands</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -91,7 +105,7 @@
   </div>
 
   <!-- 2.6 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-6">
     <div class="phead"><span class="pnum">2.6</span><span class="ptitle" data-en="One universe: shared shell across every page" data-tr="Tek evren: her sayfada ortak kabuk">One universe: shared shell across every page</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -104,7 +118,7 @@
   </div>
 
   <!-- 2.5 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-5">
     <div class="phead"><span class="pnum">2.5</span><span class="ptitle" data-en="Data pipeline online" data-tr="Veri hattı kuruldu">Data pipeline online</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -117,7 +131,7 @@
   </div>
 
   <!-- 2.4 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-4">
     <div class="phead"><span class="pnum">2.4</span><span class="ptitle" data-en="API draft endpoint fixed" data-tr="API draft ucu düzeltildi">API draft endpoint fixed</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -130,7 +144,7 @@
   </div>
 
   <!-- 2.3 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-3">
     <div class="phead"><span class="pnum">2.3</span><span class="ptitle" data-en="Front/back consistency (reverted)" data-tr="Ön/arka tutarlılık (geri alındı)">Front/back consistency (reverted)</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -144,7 +158,7 @@
   </div>
 
   <!-- 2.2 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-2">
     <div class="phead"><span class="pnum">2.2</span><span class="ptitle" data-en="Neckline disambiguation" data-tr="Yaka belirsizlik giderme">Neckline disambiguation</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -158,7 +172,7 @@
   </div>
 
   <!-- 2.0 -->
-  <div class="patch">
+  <div class="patch" id="patch-2-0">
     <div class="phead"><span class="pnum">2.0</span><span class="ptitle" data-en="Vision error taxonomy" data-tr="Görü hata taksonomisi">Vision error taxonomy</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -172,7 +186,7 @@
   </div>
 
   <!-- 1.9 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-9">
     <div class="phead"><span class="pnum">1.9</span><span class="ptitle" data-en="Gathering + open-back cutout" data-tr="Büzgü + açık sırt oyuğu">Gathering + open-back cutout</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -185,7 +199,7 @@
   </div>
 
   <!-- 1.8 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-8">
     <div class="phead"><span class="pnum">1.8</span><span class="ptitle" data-en="Metric reform: element accuracy" data-tr="Metrik reformu: öğe doğruluğu">Metric reform: element accuracy</span><span class="pdate">2026-07-16</span></div>
     <div class="pbody">
       <ul>
@@ -198,7 +212,7 @@
   </div>
 
   <!-- 1.7 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-7">
     <div class="phead"><span class="pnum">1.7</span><span class="ptitle" data-en="Collar family" data-tr="Yaka ailesi">Collar family</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -210,7 +224,7 @@
   </div>
 
   <!-- 1.6 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-6">
     <div class="phead"><span class="pnum">1.6</span><span class="ptitle" data-en="Puff / gathered sleeve cap" data-tr="Puf / büzgülü kol başı">Puff / gathered sleeve cap</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -222,7 +236,7 @@
   </div>
 
   <!-- 1.5 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-5">
     <div class="phead"><span class="pnum">1.5</span><span class="ptitle" data-en="Audit A, nothing broke" data-tr="Denetim A, hiçbir şey kırılmadı">Audit A, nothing broke</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -234,7 +248,7 @@
   </div>
 
   <!-- 1.4 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-4">
     <div class="phead"><span class="pnum">1.4</span><span class="ptitle" data-en="Fabric ties, sashes & bows" data-tr="Kumaş bağlar, kuşaklar & fiyonklar">Fabric ties, sashes &amp; bows</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -247,7 +261,7 @@
   </div>
 
   <!-- 1.3 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-3">
     <div class="phead"><span class="pnum">1.3</span><span class="ptitle" data-en="Front button placket" data-tr="Ön düğme patı">Front button placket</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -259,7 +273,7 @@
   </div>
 
   <!-- 1.2 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-2">
     <div class="phead"><span class="pnum">1.2</span><span class="ptitle" data-en="The honesty layer" data-tr="Dürüstlük katmanı">The honesty layer</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -271,7 +285,7 @@
   </div>
 
   <!-- 1.1 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-1">
     <div class="phead"><span class="pnum">1.1</span><span class="ptitle" data-en="The vision bridge" data-tr="Görü köprüsü">The vision bridge</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -283,7 +297,7 @@
   </div>
 
   <!-- 1.0 -->
-  <div class="patch">
+  <div class="patch" id="patch-1-0">
     <div class="phead"><span class="pnum">1.0</span><span class="ptitle" data-en="The first real number" data-tr="İlk gerçek sayı">The first real number</span><span class="pdate">2026-07-15</span></div>
     <div class="pbody">
       <ul>
@@ -298,7 +312,7 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v61</span></span>
+  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v62</span></span>
 </footer>
 
 <script>

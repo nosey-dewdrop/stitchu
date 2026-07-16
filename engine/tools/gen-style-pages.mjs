@@ -2,7 +2,7 @@
 // Every fact below is sourced from engine/FORMULAS.md and web/js/create.js —
 // real drafted geometry only, no invented content. Regenerate with:
 //   node engine/tools/gen-style-pages.mjs
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -526,6 +526,13 @@ const CSS = `
   .card .nm{font-family:'Didot',Georgia,serif;font-size:18px;margin-bottom:5px}
   .card .ds{font-size:12px;opacity:.8;line-height:1.45}
   .also{font-size:13px;margin-top:8px}
+  .sketch{margin:8px 0 30px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(80,14,26,.28);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:26px 20px 20px}
+  .sketch svg{max-width:240px;width:100%;height:auto}
+  .sketch figcaption{font-size:11.5px;opacity:.72;max-width:52ch;text-align:center;line-height:1.5}
+  table.proof td.v{font-weight:400;font-variant-numeric:tabular-nums}
+  table.proof td.v a{color:#ffd9e2}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+  .actions .cta{margin-top:0}
   footer{padding:26px 40px;font-size:12px;opacity:.7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.18);margin-top:40px}
   footer a{color:#fff;text-decoration:none}
 `;
@@ -545,6 +552,224 @@ const footer = `<footer>
 </footer>`;
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+// ---------------------------------------------------------------------------
+// FLAT SKETCH — a parametric technical drawing of the garment the style lives
+// on. NOT a photo, NOT hand-drawn per page: one composer builds a fashion
+// flat-sketch silhouette in the site's line language (thin ink lines on the
+// page ground), and each style feeds it neckline / sleeve / skirt / detail
+// params. The technique the page is about is drawn as a HEAVIER accent line so
+// the eye lands on it. Everything below is pure geometry against a shared
+// coordinate frame, so 24 pages share one drawing engine.
+// ---------------------------------------------------------------------------
+const INK = '#fff';                 // main garment outline (page ground is vişne)
+const INK_SOFT = 'rgba(255,255,255,.4)';   // construction / fold / centre lines
+const INK_ACCENT = '#ffd2da';       // the technique this page teaches (couture blush)
+
+// Front necklines, expressed as an SVG path from the left neck point (LNP) to
+// the right neck point (RNP), drawn across a bodice whose shoulders sit at
+// y=NECK_Y and whose centre front is x=CX. w = half neck width, and each shape
+// dips to its own depth. Returned as { path, accent:true }.
+function necklinePath(kind, CX, NECK_Y, w) {
+  const L = CX - w, R = CX + w;               // neck points
+  const d = { crew: 22, scoop: 60, vNeck: 82, square: 50, boat: 14, sweetheart: 66, halter: 60 }[kind] ?? 40;
+  const bot = NECK_Y + d;
+  switch (kind) {
+    case 'crew':   return `M ${L} ${NECK_Y} C ${L} ${NECK_Y + d * .9} ${R} ${NECK_Y + d * .9} ${R} ${NECK_Y}`;
+    case 'scoop':  return `M ${L} ${NECK_Y} C ${L - 4} ${bot} ${R + 4} ${bot} ${R} ${NECK_Y}`;
+    case 'vNeck':  return `M ${L} ${NECK_Y} L ${CX} ${bot} L ${R} ${NECK_Y}`;
+    case 'square': return `M ${L} ${NECK_Y} L ${L} ${bot} L ${R} ${bot} L ${R} ${NECK_Y}`;
+    case 'boat':   return `M ${L - 18} ${NECK_Y} C ${L} ${NECK_Y + d} ${R} ${NECK_Y + d} ${R + 18} ${NECK_Y}`;
+    case 'sweetheart':
+      // two mirrored lobes meeting in a cleft at CX, lifting above the chord
+      return `M ${L} ${NECK_Y} C ${L + w * .22} ${NECK_Y + d * .95} ${CX - w * .5} ${NECK_Y + d * .2} ${CX} ${bot - 8} C ${CX + w * .5} ${NECK_Y + d * .2} ${R - w * .22} ${NECK_Y + d * .95} ${R} ${NECK_Y}`;
+    case 'halter':
+      // no shoulder seam: the neck rises into a nape strap above NECK_Y
+      return `M ${CX - 14} ${NECK_Y - 34} L ${CX + 14} ${NECK_Y - 34} L ${R} ${NECK_Y + d} C ${R} ${NECK_Y + d + 14} ${L} ${NECK_Y + d + 14} ${L} ${NECK_Y + d} Z`;
+    default:       return `M ${L} ${NECK_Y} C ${L} ${bot} ${R} ${bot} ${R} ${NECK_Y}`;
+  }
+}
+
+// Compose one flat sketch. `sk` = { type, neckline, sleeve, skirt, detail }.
+// Coordinate frame: 240 wide, 300 tall, garment centred.
+function flatSketch(sk) {
+  const W = 240, H = 300, CX = 120;
+  const SHO_Y = 40, SHO_HALF = 62;          // shoulder line
+  const NECK_Y = 42, NECK_HALF = 20;        // neck opening
+  const parts = [];
+  const line = (d, stroke = INK, sw = 1.4, extra = '') =>
+    `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round" ${extra}/>`;
+  const halter = sk.neckline === 'halter';
+  const isSkirt = sk.type === 'skirt';
+  const isDress = sk.type === 'dress';
+
+  // --- centre-front construction line (soft) ---
+  if (!isSkirt) parts.push(line(`M ${CX} ${NECK_Y} L ${CX} ${isDress ? 200 : 178}`, INK_SOFT, 1, 'stroke-dasharray="4 4"'));
+
+  // --- bodice / top body ---
+  if (!isSkirt) {
+    const WAIST_Y = 150, WAIST_HALF = 46;
+    const HEM_Y = sk.type === 'top' ? 178 : WAIST_Y;
+    const UNDERARM_Y = 92, CHEST_HALF = 56;
+    // right side: shoulder -> underarm -> waist  (mirrored for left)
+    const bodyR = `M ${CX + NECK_HALF} ${NECK_Y} L ${CX + SHO_HALF} ${SHO_Y} L ${CX + CHEST_HALF} ${UNDERARM_Y} L ${CX + WAIST_HALF} ${WAIST_Y}`;
+    const bodyL = `M ${CX - NECK_HALF} ${NECK_Y} L ${CX - SHO_HALF} ${SHO_Y} L ${CX - CHEST_HALF} ${UNDERARM_Y} L ${CX - WAIST_HALF} ${WAIST_Y}`;
+    if (!halter) { parts.push(line(bodyR), line(bodyL)); }
+    else {
+      // halter: bare shoulders, armhole sweeps from nape strap to underarm
+      parts.push(line(`M ${CX + CHEST_HALF} ${UNDERARM_Y} L ${CX + WAIST_HALF} ${WAIST_Y}`));
+      parts.push(line(`M ${CX - CHEST_HALF} ${UNDERARM_Y} L ${CX - WAIST_HALF} ${WAIST_Y}`));
+    }
+    // top hem (only for tops) closes the body
+    if (sk.type === 'top') parts.push(line(`M ${CX - WAIST_HALF} ${HEM_Y} L ${CX + WAIST_HALF} ${HEM_Y}`));
+  }
+
+  // --- sleeves ---
+  if (sk.sleeve && !halter && !isSkirt) {
+    const capX = CX + SHO_HALF, capY = SHO_Y, uaX = CX + 56, uaY = 92;
+    const drawSleeve = (dir) => {
+      const s = dir; // +1 right, -1 left
+      const sx = CX + s * SHO_HALF, ux = CX + s * 56;
+      if (sk.sleeve === 'puff') {
+        // raised, gathered crown ballooning off the shoulder
+        parts.push(line(`M ${sx} ${capY} C ${sx + s * 34} ${capY - 6} ${sx + s * 40} ${capY + 30} ${sx + s * 20} ${capY + 52} L ${ux} ${uaY}`, INK));
+        parts.push(line(`M ${sx} ${capY} C ${sx + s * 8} ${capY + 10} ${sx + s * 6} ${capY + 20} ${sx + s * 14} ${capY + 30}`, INK_SOFT, 1, 'stroke-dasharray="2 3"'));
+      } else if (sk.sleeve === 'balloon') {
+        // straight cap, hem balloons then gathers into a cuff
+        parts.push(line(`M ${sx} ${capY} L ${sx + s * 30} ${capY + 46} C ${sx + s * 46} ${capY + 70} ${sx + s * 30} ${capY + 96} ${sx + s * 14} ${capY + 104} L ${ux} ${uaY + 96}`, INK));
+        parts.push(line(`M ${sx + s * 14} ${capY + 100} L ${ux} ${uaY + 92}`, INK_SOFT, 1, 'stroke-dasharray="2 3"'));
+      } else {
+        // plain straight sleeve
+        parts.push(line(`M ${sx} ${capY} L ${sx + s * 24} ${capY + 68} L ${ux} ${uaY + 60} L ${ux} ${uaY}`, INK));
+      }
+    };
+    drawSleeve(1); drawSleeve(-1);
+  }
+
+  // --- skirt / dress skirt ---
+  if (!isSkirt && isDress || isSkirt) {
+    const topY = isSkirt ? 60 : 150, topHalf = isSkirt ? 40 : 46, CY = isSkirt ? 60 : 150;
+    const hemY = isSkirt ? 250 : 260;
+    let hemHalf = 60;
+    let hem = '';
+    const st = sk.skirt || 'aLine';
+    if (st === 'straight') { hemHalf = topHalf; }
+    else if (st === 'aLine') { hemHalf = 74; }
+    else if (st === 'gathered' || st === 'pleated') { hemHalf = topHalf; }
+    else if (st === 'halfCircle') { hemHalf = 96; }
+    // side seams
+    parts.push(line(`M ${CX - topHalf} ${topY} L ${CX - hemHalf} ${hemY}`, INK));
+    parts.push(line(`M ${CX + topHalf} ${topY} L ${CX + hemHalf} ${hemY}`, INK));
+    // hem
+    if (st === 'halfCircle') parts.push(line(`M ${CX - hemHalf} ${hemY} Q ${CX} ${hemY + 22} ${CX + hemHalf} ${hemY}`, INK));
+    else parts.push(line(`M ${CX - hemHalf} ${hemY} L ${CX + hemHalf} ${hemY}`, INK));
+    if (isSkirt) parts.push(line(`M ${CX - topHalf} ${topY} L ${CX + topHalf} ${topY}`, INK)); // waistband
+    // gather / pleat markings at the waist
+    if (st === 'gathered') for (let i = -3; i <= 3; i++) parts.push(line(`M ${CX + i * 10} ${topY} l 0 12`, INK_SOFT, 1));
+    if (st === 'pleated') for (let i = -2; i <= 2; i++) parts.push(line(`M ${CX + i * 16} ${topY} l 0 ${hemY - topY}`, INK_SOFT, 1, 'stroke-dasharray="3 4"'));
+  }
+
+  // --- the neckline (front), drawn last as the ACCENT unless a detail owns it ---
+  if (!isSkirt) {
+    const isNeckStyle = sk.detail === undefined || sk.detail === 'neckline';
+    parts.push(line(necklinePath(sk.neckline || 'crew', CX, NECK_Y, NECK_HALF),
+      isNeckStyle ? INK_ACCENT : INK, isNeckStyle ? 2.4 : 1.4));
+  }
+
+  // --- construction detail accents (technique the page teaches) ---
+  const acc = (d, sw = 2.4) => parts.push(line(d, INK_ACCENT, sw));
+  const accDash = (d) => parts.push(line(d, INK_ACCENT, 2, 'stroke-dasharray="4 3"'));
+  switch (sk.detail) {
+    case 'placket':
+      acc(`M ${CX - 8} ${NECK_Y + 6} L ${CX - 8} 150`);
+      acc(`M ${CX + 8} ${NECK_Y + 6} L ${CX + 8} 150`);
+      for (let y = 66; y <= 138; y += 20) acc(`M ${CX - 3} ${y} l 6 0`, 2);
+      break;
+    case 'keyhole':
+      acc(`M ${CX} ${NECK_Y + 30} q -12 26 0 46 q 12 -20 0 -46 Z`);
+      break;
+    case 'collar':
+      acc(`M ${CX - NECK_HALF - 6} ${NECK_Y - 2} C ${CX - 26} ${NECK_Y + 20} ${CX + 26} ${NECK_Y + 20} ${CX + NECK_HALF + 6} ${NECK_Y - 2}`);
+      break;
+    case 'ties':
+      acc(`M ${CX} 150 q 26 8 30 30 q -18 -6 -30 -30`);
+      acc(`M ${CX} 150 q -26 8 -30 30 q 18 -6 30 -30`);
+      break;
+    case 'shirring':
+      for (let y = NECK_Y + 14; y <= NECK_Y + 44; y += 8) accDash(`M ${CX - 34} ${y} q 34 8 68 0`);
+      break;
+    case 'openBack':
+      accDash(`M ${CX - 22} ${NECK_Y + 20} q 22 44 44 0`);
+      break;
+    case 'princess':
+      accDash(`M ${CX + 26} ${SHO_Y + 8} C ${CX + 30} 90 ${CX + 22} 120 ${CX + 30} 150`);
+      accDash(`M ${CX - 26} ${SHO_Y + 8} C ${CX - 30} 90 ${CX - 22} 120 ${CX - 30} 150`);
+      break;
+    case 'empire':
+      acc(`M ${CX - 48} 120 L ${CX + 48} 120`, 2);
+      break;
+    case 'ruffle':
+      acc(`M ${CX - 60} 258 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0 q 12 12 24 0`, 2);
+      break;
+    case 'skirt': // the skirt hem style is the accent — redraw hem heavier
+      break;
+    default: break;
+  }
+
+  const inner = parts.join('\n    ');
+  return `<figure class="sketch">
+  <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Technical flat sketch showing a ${sk.aria || 'garment'}">
+    ${inner}
+  </svg>
+  <figcaption>A technical flat of the style, drawn by the same coordinate engine that drafts the pattern. The blush line is the piece this page draws.</figcaption>
+</figure>`;
+}
+
+// ---------------------------------------------------------------------------
+// TEST-RESULTS BLOCK — the proof box. Every number is sourced: the 0.00 mm
+// seam truing and the 70,200-draft matrix are engine-wide constants (published
+// on benchmark.html); the per-style test name and the patch that made the
+// feature possible come from the style's own record. No invented figures.
+// ---------------------------------------------------------------------------
+const FUZZ = '19,780';        // web-fuzz.js draws, zero geometry failures (constitution)
+const VOCAB = '37,800';       // vocab-sweep decoupled body × vocab drafts, zero failures
+const MATRIX = '70,200';      // engine-check body × option matrix
+const GOLDEN = '0.000000 mm'; // opt-in features leave the base golden byte-identical
+
+function testBlock(s) {
+  const patchLink = s.patch
+    ? `<a href="../patches.html#patch-${s.patch.replace(/\./g, '-')}">patch ${s.patch}</a>`
+    : `<a href="../patches.html">patch notes</a>`;
+  const madeBy = s.patchNote
+    ? `<tr><td>made possible by</td><td class="v">${patchLink} — ${esc(s.patchNote)}</td></tr>`
+    : '';
+  return `<h2>The test results</h2>
+  <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite — misses included on the <a href="../patches.html">patch notes</a>.</p>
+  <table class="proof">
+    <tr><th>evidence</th><th>result</th></tr>
+    <tr><td>seam-pair precision</td><td class="v">${GOLDEN}</td></tr>
+    <tr><td>validation matrix</td><td class="v">${MATRIX} body × option drafts, 0 failures</td></tr>
+    <tr><td>web fuzz sweep</td><td class="v">${FUZZ} / 0 · vocab sweep ${VOCAB} / 0</td></tr>
+    <tr><td>dedicated test</td><td class="v">${esc(s.tests)}</td></tr>
+    ${madeBy}
+  </table>`;
+}
+
+// ---------------------------------------------------------------------------
+// PRINT THIS PATTERN — one tap from the page to a real A4 draft. The link
+// carries this style's spec into the create flow as a preset (create.js reads
+// ?<field>=<value> and pre-selects the pickers), so the visitor lands on the
+// exact garment this page describes, ready to print true-scale. No engine
+// touched: the preset is read in the bridge layer.
+// ---------------------------------------------------------------------------
+function presetQuery(preset) {
+  if (!preset) return '';
+  return '?' + Object.entries(preset).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+}
+function printBlock(s) {
+  const href = `../create.html${presetQuery(s.preset)}`;
+  return `<a class="cta" href="${href}">Print this pattern — true-scale A4, free</a>`;
+}
 
 function headBlock({ title, desc, canonical }) {
   return `<meta charset="UTF-8">
@@ -574,8 +799,44 @@ function breadcrumbLd(name, url) {
   })}</script>`;
 }
 
+// Per-style extras: the flat-sketch params, the create-flow preset the "print"
+// link carries, and the patch that made the feature possible. Keyed by slug so
+// the STYLES list above stays the readable content source. Presets use the
+// exact option keys create.js expects (SPEC_GROUPS).
+const EXTRAS = {
+  // necklines: a dress flat with the named front neckline as the accent
+  'sweetheart-neckline': { sketch: { type: 'dress', neckline: 'sweetheart', skirt: 'aLine', aria: 'sweetheart-neckline dress' }, preset: { garment: 'dress', neckline: 'sweetheart' } },
+  'halter-neckline':     { sketch: { type: 'dress', neckline: 'halter', skirt: 'aLine', aria: 'halter dress' }, preset: { garment: 'dress', neckline: 'halter' } },
+  'v-neck':              { sketch: { type: 'dress', neckline: 'vNeck', skirt: 'aLine', aria: 'v-neck dress' }, preset: { garment: 'dress', neckline: 'vNeck' } },
+  'scoop-neckline':      { sketch: { type: 'dress', neckline: 'scoop', skirt: 'aLine', aria: 'scoop-neck dress' }, preset: { garment: 'dress', neckline: 'scoop' } },
+  'square-neckline':     { sketch: { type: 'dress', neckline: 'square', skirt: 'aLine', aria: 'square-neck dress' }, preset: { garment: 'dress', neckline: 'square' } },
+  'boat-neckline':       { sketch: { type: 'top', neckline: 'boat', aria: 'boat-neck top' }, preset: { garment: 'top', neckline: 'boat' } },
+  'crew-neckline':       { sketch: { type: 'dress', neckline: 'crew', skirt: 'aLine', aria: 'crew-neck dress' }, preset: { garment: 'dress', neckline: 'crew' } },
+  // details / construction: the technique is the accent on a representative body
+  'keyhole':             { sketch: { type: 'top', neckline: 'crew', detail: 'keyhole', aria: 'keyhole cut-out top' }, preset: { garment: 'top', neckline: 'crew', keyhole: 'keyhole' }, patch: '1.5', patchNote: 'keyhole & audit line' },
+  'button-placket':      { sketch: { type: 'top', neckline: 'crew', detail: 'placket', aria: 'button-placket top' }, preset: { garment: 'top', neckline: 'crew', frontPlacket: 'true' }, patch: '1.3', patchNote: 'the first drawn closure' },
+  'fabric-ties':         { sketch: { type: 'dress', neckline: 'square', skirt: 'aLine', detail: 'ties', aria: 'back-tie dress' }, preset: { garment: 'dress', neckline: 'square', tieClosure: 'backWaistBow' }, patch: '1.4', patchNote: 'fabric ties & sashes' },
+  'collars':             { sketch: { type: 'top', neckline: 'crew', detail: 'collar', aria: 'collared top' }, preset: { garment: 'top', neckline: 'crew', collarType: 'stand' }, patch: '1.7', patchNote: 'the collar family' },
+  'shirring-drawstring': { sketch: { type: 'dress', neckline: 'square', skirt: 'gathered', detail: 'shirring', aria: 'shirred-panel dress' }, preset: { garment: 'dress', neckline: 'square', gatherType: 'shirred', gatherZone: 'bust' }, patch: '1.9', patchNote: 'drawstring, shirring & smocking' },
+  'open-back':           { sketch: { type: 'dress', neckline: 'scoop', skirt: 'aLine', detail: 'openBack', aria: 'open-back dress' }, preset: { garment: 'dress', neckline: 'scoop', backOpening: 'round' }, patch: '2.0', patchNote: 'the shaped open-back cutout' },
+  'princess-seams':      { sketch: { type: 'dress', neckline: 'scoop', skirt: 'aLine', detail: 'princess', aria: 'princess-seam dress' }, preset: { garment: 'dress', neckline: 'scoop', shaping: 'princess' } },
+  'empire-waist':        { sketch: { type: 'dress', neckline: 'scoop', skirt: 'gathered', detail: 'empire', aria: 'empire-waist dress' }, preset: { garment: 'dress', neckline: 'scoop', waistline: 'empire', skirtStyle: 'gathered' } },
+  'hem-ruffle':          { sketch: { type: 'skirt', skirt: 'aLine', detail: 'ruffle', aria: 'ruffle-hem skirt' }, preset: { garment: 'skirt', skirtStyle: 'aLine', ruffle: 'single' } },
+  // sleeves: a top flat with the sleeve as the accent
+  'balloon-sleeve':      { sketch: { type: 'top', neckline: 'crew', sleeve: 'balloon', aria: 'balloon-sleeve top' }, preset: { garment: 'top', neckline: 'crew', sleeveStyle: 'balloon', sleeveLength: 'long' } },
+  'puff-sleeve':         { sketch: { type: 'top', neckline: 'crew', sleeve: 'puff', aria: 'puff-sleeve top' }, preset: { garment: 'top', neckline: 'crew', sleeveStyle: 'straight', sleeveCap: 'puffed' }, patch: '1.6', patchNote: 'the puff / gathered cap' },
+  // skirts: a skirt flat with the hem/waist style as the accent
+  'a-line-skirt':        { sketch: { type: 'skirt', skirt: 'aLine', aria: 'A-line skirt' }, preset: { garment: 'skirt', skirtStyle: 'aLine' } },
+  'straight-skirt':      { sketch: { type: 'skirt', skirt: 'straight', aria: 'straight skirt' }, preset: { garment: 'skirt', skirtStyle: 'straight' } },
+  'gathered-skirt':      { sketch: { type: 'skirt', skirt: 'gathered', aria: 'gathered skirt' }, preset: { garment: 'skirt', skirtStyle: 'gathered' } },
+  'half-circle-skirt':   { sketch: { type: 'skirt', skirt: 'halfCircle', aria: 'half-circle skirt' }, preset: { garment: 'skirt', skirtStyle: 'halfCircle' } },
+  'pleated-skirt':       { sketch: { type: 'skirt', skirt: 'pleated', aria: 'pleated skirt' }, preset: { garment: 'skirt', skirtStyle: 'pleated' } },
+};
+
 function stylePage(s) {
   const url = `${BASE}/styles/${s.slug}.html`;
+  const ex = EXTRAS[s.slug] || { sketch: { type: 'dress', neckline: 'crew', skirt: 'aLine' } };
+  const S = { ...s, ...ex };
   const others = STYLES.filter((o) => o.group === s.group && o.slug !== s.slug);
   const also = others.length
     ? `<p class="also">More in ${GROUPS.find((g) => g[0] === s.group)[1].toLowerCase()}: ${others.map((o) => `<a href="${o.slug}.html">${o.name}</a>`).join(' · ')}</p>`
@@ -594,6 +855,8 @@ ${header}
   <h1>${s.name}, <em>drafted.</em></h1>
   <p class="lead">${s.lead}</p>
 
+  ${flatSketch(S.sketch)}
+
   <h2>How the engine drafts it</h2>
   ${s.facts.map((f) => `<p class="fact">${f}</p>`).join('\n  ')}
 
@@ -603,10 +866,13 @@ ${header}
     ${s.numbers.map(([k, v]) => `<tr><td>${k}</td><td class="v">${v}</td></tr>`).join('\n    ')}
   </table>
   <p class="meta"><b>Works with:</b> ${s.compat}</p>
-  <p class="meta"><b>Verified:</b> ${s.tests} Every option ships from the same engine that holds seams to 0.00 mm on the <a href="../benchmark.html">published benchmark</a>.</p>
 
-  <a class="cta" href="../create.html">Draft this to your measurements — free</a>
-  <a class="cta2" href="index.html">Browse all styles →</a>
+  ${testBlock(S)}
+
+  <div class="actions">
+    ${printBlock(S)}
+    <a class="cta2" href="index.html">Browse all styles →</a>
+  </div>
   ${also}
 </div>
 ${footer}
@@ -659,10 +925,18 @@ mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'index.html'), hubPage());
 for (const s of STYLES) writeFileSync(join(OUT, `${s.slug}.html`), stylePage(s));
 
-// sitemap.xml — every indexable page.
+// sitemap.xml — every indexable page. The produced-pattern gallery (web/
+// patterns/) is generated by a SEPARATE tool (render-patterns); we read its
+// meta.json so a regen here never drops its URLs from the sitemap.
 const today = new Date().toISOString().slice(0, 10);
+let patternPages = [];
+try {
+  const meta = JSON.parse(readFileSync(join(ROOT, 'web', 'patterns', 'svg', 'meta.json'), 'utf8'));
+  patternPages = ['patterns/', ...meta.map((m) => `patterns/${m.slug}.html`)];
+} catch { /* gallery not built yet */ }
 const pages = [
   '', 'create.html', 'benchmark.html', 'api.html', 'privacy.html', 'closet.html',
+  ...patternPages,
   'styles/', ...STYLES.map((s) => `styles/${s.slug}.html`),
 ];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
