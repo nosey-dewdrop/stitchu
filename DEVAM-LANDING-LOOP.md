@@ -44,13 +44,19 @@ yama notu, kanıt zorunluluğu, NEREDEYİZ güncelleme). Bu loop TEK session, ot
   included" ruhu (tam cümleyi session yazar, deniz-abartı yok).
 - EN/TR (mevcut data-en/data-tr düzenini kullan), nav'a "patch notes" linki.
 
-### B — index.html + tüm sayfalar: BABY BLUE TEMA + yerleşim (Damla onayı, 16 Tem)
-- TEMA: vişne gider, BABY BLUE gelir — kontrat mocks/babyblue-stil-1.html'deki
-  Damla'nın SEÇTİĞİ varyant (NEREDEYİZ altına hangi varyant yazılacak; seçim
-  yazılmadan bu loop BAŞLAMAZ). Pötikare zemin CSS'ten, Didot serif korunur.
-  Düğme MJ assetleri gelene dek CSS placeholder (docs/mj-button-prompts.md).
-  Tema TÜM sayfalara uygulanır: index, benchmark, api, patches, privacy,
-  create — yarım boyama yok.
+### B — index.html + tüm sayfalar: RESKIN (Damla teyitli, 16 Tem — "evet" alındı)
+- KONTRAT: mevcut landing'in YERLEŞİMİ/KOMPOZİSYONU/Didot yapısı KORUNUR
+  ("vişnenin stili yerleşimi güzeldi, ona skin") — bu bir redesign değil
+  RESKIN. Renk dünyası değişir: vişne #8f2038 → baby blue; metin beyazdan
+  LACİVERT/NAVY'ye (kontrast şart, WCAG AA); #ffd2da accent'in yerini
+  teal/navy vurgu alır. Pötikare duvar kağıdı SADECE girişte (hero/waitlist,
+  mail toplanan bölüm); diğer bölümler ve TÜM diğer sayfalar sakin beyaz-mavi
+  (mocks/babyblue-stil-1.html varyant 2 ruhu). Gerekli renk/font ve yerleşim
+  değişiklikleri SERBEST (Damla onayı) ama kompozisyonun ruhu bozulmaz.
+- MJ düğmeler TEAL/NAVY (docs/mj-button-prompts.md) — Damla üretecek; gelene
+  dek CSS placeholder, geldiğinde PNG-alfa kesim + yerleştirme.
+- Tema TÜM sayfalara: index, benchmark, api, patches, privacy, create —
+  yarım boyama yok.
 - SAYFA GEÇİŞLERİ (Damla istedi): sayfalar arası yumuşak geçiş (View
   Transitions API + CSS fallback), sekmeler/bölümler arasında premium-akıcı
   his; abartı yok, 200-300ms.

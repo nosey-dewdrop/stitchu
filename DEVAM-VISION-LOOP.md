@@ -18,10 +18,15 @@ sayfasında bu numarayı kullanır.
 
 ## NEREDEYİZ
 > SIRADAKİ: LOOP 1 (V0). Henüz hiçbiri koşmadı.
-> VİTRİN TEMA KARARI (Damla, 16 Tem, KESİN): pötikare DUVAR KAĞIDI sadece
-> GİRİŞTE — hero/waitlist (mail toplanan) bölümünde, varyant 1'deki gibi.
-> Onun dışında HER YERDE ve HER SAYFADA varyant 2 (beyaz gövde + pötikare
-> şerit imza, iki ton baby blue + Didot). MJ düğmeler gelene dek CSS placeholder.
+> VİTRİN TEMA KARARI (Damla, 16 Tem, TEYİTLİ SON HALİ — "evet" alındı):
+> RESKIN. Mevcut landing'in YERLEŞİMİ/KOMPOZİSYONU/Didot tipografi yapısı
+> korunur ("vişnenin stili yerleşimi güzeldi, ona skin"); RENK DÜNYASI
+> DEĞİŞİR: vişne #8f2038 → baby blue dünyası, metin beyazdan LACİVERT/NAVY'ye
+> (kontrast şart). Pötikare duvar kağıdı SADECE girişte (hero/waitlist);
+> diğer bölüm ve sayfalar sakin beyaz-mavi (varyant 2 ruhu). Gerekli
+> renk/font ve yerleşim değişiklikleri SERBEST (Damla onayı) ama kompozisyon
+> ruhu bozulmaz. MJ düğmeler TEAL/NAVY BLUE üretilecek (Damla tasarlatır,
+> docs/mj-button-prompts.md); gelene dek CSS placeholder.
 
 ## TEŞHİS (2026-07-16, kanıtlı — zincirin varlık sebebi)
 Katmanlar kod olarak ayrık ve temiz (L1 vision / L2 köprü / L3 motor / L4 çıktı).

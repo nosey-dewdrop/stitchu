@@ -1,37 +1,36 @@
-# midjourney prompt paketi — baby blue düğme assetleri
+# midjourney prompt paketi — teal / navy blue düğme assetleri (16 Tem, teyitli)
 
-Hedef: babyblue stil çalışmasındaki (mocks/babyblue-stil-1.html) CSS placeholder
-düğmelerin yerine geçecek gerçek görseller. Zemin beyaz ya da baby blue pötikare
-(#8fbfe8 tonu); kesip PNG-alfa yapacağız, o yüzden temiz zemin şart.
+Hedef: baby blue reskin'de kullanılacak dikiş düğmesi görselleri. Renk: TEAL /
+NAVY BLUE (Damla kararı). Zemin beyaz ya da baby blue pötikare; PNG-alfa
+kesilecek, temiz zemin şart. Seçim Damla'nın; yerleştirme + kesim benim.
 
-Ortak son ek (hepsine ekle):
-`--v 7 --style raw --ar 1:1` (tekli düğmelerde) / `--ar 3:2` (flat lay'lerde)
+Ortak son ek: `--v 7 --style raw --ar 1:1` (tekli) / `--ar 3:2` (flat lay)
 
 1. TEKLİ MAKRO DÜĞME (hero yanı, büyük):
-   macro photograph of a single pastel baby blue sewing button, four holes,
-   subtle pearl sheen, soft studio light, pure white background, centered,
+   macro photograph of a single deep teal sewing button, four holes, subtle
+   mother-of-pearl sheen, soft studio light, pure white background, centered,
    product photography, no text
 
-2. DÜĞME SIRASI (hero üstü üçlü):
-   three pastel baby blue sewing buttons in a neat row, different sizes,
-   mother-of-pearl finish, soft shadows, pure white background, flat lay,
+2. NAVY-TEAL ÜÇLÜ SIRA (hero üstü):
+   three sewing buttons in a neat row, deep teal and navy blue, different
+   sizes, pearl finish, soft shadows, pure white background, flat lay,
    product photography, no text
 
 3. SAÇILMIŞ DÜĞMELER (bölüm arası dokusu):
-   scattered pastel baby blue and white sewing buttons on white background,
+   scattered deep teal and navy blue sewing buttons on white background,
    loose arrangement with breathing room, soft natural light from top left,
    flat lay, no text
 
-4. PÖTİKARE ÜZERİNDE (tam uyum testi):
-   pastel baby blue sewing buttons and a wooden spool of white thread on
-   light blue gingham fabric, cozy sewing room, soft daylight, flat lay,
+4. PÖTİKARE ÜZERİNDE (giriş bölümüyle uyum testi):
+   deep teal and navy sewing buttons with a wooden spool of navy thread on
+   pale baby blue gingham fabric, cozy sewing room, soft daylight, flat lay,
    shallow depth of field, no text
 
-5. DÜĞME + MEZURA (kanıt/ölçüm bölümü için):
-   single baby blue sewing button beside a white measuring tape curled
+5. DÜĞME + MEZURA (kanıt/benchmark bölümü):
+   single navy blue sewing button beside a white measuring tape curled
    loosely, pure white background, minimal, soft studio light, no text
 
 Notlar:
-- "no text" her prompt'ta kalsın; MJ yazı uydurursa eleriz.
-- Renk tutmazsa prompt'a `pale powder blue #8fbfe8` ekle.
-- Seçim ve onay Damla'nın; ben yerleştirme + kesim (alfa) yaparım.
+- "no text" kalsın; MJ yazı uydurursa eleriz.
+- Ton tutmazsa ekle: `deep teal #1f6f78` / `navy #1f3a5f` / zemin `pale powder blue #8fbfe8`.
+- Parlaklık plastik kaçarsa `matte finish` ekle, pearl'ü çıkar.
