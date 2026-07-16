@@ -14,7 +14,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '66';
+const V = process.env.V || '67';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
 
@@ -231,10 +231,10 @@ const STYLE = `<style>
   th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--bb-line)}
   th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5b7089;background:var(--bb-pale)}
   td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
-  .honest{font-size:13.5px;color:#5b7089;font-style:italic;border-left:2px solid var(--bb-line);padding-left:14px;margin:6px 0 4px;max-width:66ch}
+  .honest{font-size:13.5px;color:#5b7089;font-style:italic;margin:6px 0 4px;max-width:66ch}
   .honest a{font-style:normal}
-  .cta{display:inline-block;margin-top:30px;font-size:13px;font-weight:700;letter-spacing:.6px;color:#fff;background:var(--bb-deep);padding:14px 30px;text-decoration:none;border-radius:3px}
-  .cta:hover{background:var(--navy)}
+  /* CTA look lives in ../css/shared-button.css (.sb-btn). Layout-only helpers here. */
+  .sb-btn{margin-top:30px}
   .cta2{display:inline-block;margin:30px 0 0 16px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
@@ -272,6 +272,7 @@ function head(title, desc, canonical, ldjson) {
 <script type="application/ld+json">${JSON.stringify(ldjson)}</script>
 <link rel="stylesheet" href="../css/shared-header.css?v=${V}">
 <link rel="stylesheet" href="../css/theme-transitions.css?v=${V}">
+<link rel="stylesheet" href="../css/shared-button.css?v=${V}">
 ${STYLE}
 </head>
 <body>`;
@@ -333,7 +334,7 @@ ${HEADER}
   <p class="honest" data-en="${esc(patchNote.en)}" data-tr="${esc(patchNote.tr)}">${esc(patchNote.en)}</p>
   <p class="honest">${m.patch ? `<a href="../patches.html" data-en="See patch ${m.patch} in the patch notes →" data-tr="Yama notlarında ${m.patch} yamasına bak →">See patch ${m.patch} in the patch notes →</a>` : `<a href="../patches.html" data-en="See the full patch history →" data-tr="Tüm yama geçmişine bak →">See the full patch history →</a>`}</p>
 
-  <a class="cta" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
+  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
   <a class="cta2" href="index.html" data-en="Browse the pattern library →" data-tr="Kalıp kütüphanesine göz at →">Browse the pattern library →</a>
 </div>
 ${FOOTER}
@@ -384,7 +385,7 @@ ${HEADER}
   ${cards}
   </div>
 
-  <a class="cta" href="../create.html" data-en="Draft one to your measurements, free." data-tr="Birini ölçülerine göre çiz, ücretsiz.">Draft one to your measurements, free.</a>
+  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft one to your measurements, free." data-tr="Birini ölçülerine göre çiz, ücretsiz.">Draft one to your measurements, free.</a>
 </div>
 ${FOOTER}
 <script src="../js/shared-header.js?v=${V}"></script>
