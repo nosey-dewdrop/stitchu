@@ -168,4 +168,16 @@ All three read as clean, few-piece, sewable patterns — not fragmented.
 
 ## Deploy
 
-(commit SHA + gh-pages subtree + live curl recorded below after commit)
+- Commit (main): `b22967685139e752eec5252a30ad09614c54f906`, author
+  `nosey-dewdrop <damummyphus@gmail.com>`, body EMPTY — **no Co-Authored-By
+  trailer** (verified with `git log -1 --format='%b'`).
+- Pushed main: `00e967e..b229676`.
+- gh-pages: `git subtree split --prefix=web HEAD` -> `5f698049...` ->
+  `git push --force origin 5f69804:gh-pages` (`c75be2b..5f69804`).
+- Live curl-verified (github.io, cache-busted):
+  - meta.json now serves the new counts (babydoll top 5, open-back-tie-back 8,
+    button-down 4, mandarin 6, peter-pan 9, empire 8; open-back-princess still 11).
+  - `patterns/square-neck-back-tie-babydoll-top.html` HTTP 200, 0 princess mentions.
+  - `create.html` serves `create.js?v=79` (new dart default loads).
+- Protected files (DEVAM-RAY-LOOP.md, backend/worker.js, web/css/landing.css)
+  left exactly as found (still dirty, never staged/committed/deployed).
