@@ -107,7 +107,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=78';
+      script.src = 'vendor/stitchu-engine.js?v=79';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -121,7 +121,7 @@ export function loadEngine() {
 export async function grade(spec, fromLabel, toLabel) {
   const engine = await loadEngine();
   const json = engine.gradeJSON(
-    spec.garment, spec.shaping ?? 'princess', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
+    spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
     spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
     spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
@@ -152,7 +152,7 @@ export async function grade(spec, fromLabel, toLabel) {
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   const json = engine.draftJSON(
-    spec.garment, spec.shaping ?? 'princess', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
+    spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
     spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
     spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
