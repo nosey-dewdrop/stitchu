@@ -108,12 +108,22 @@ for (const s of PATTERNS) {
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
 
-  // (1) The scattered nested-piece layout (gallery thumbnail).
-  writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
-  // (2) The clean FRONT + BACK flat technical sketch (STEP 2).
-  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces));
-
   const closures = [...new Set(p.pieces.filter((x) => x.closure).map((x) => x.closure))];
+  // Spec passed to the assembled-flat renderer so it can draw interior detail
+  // lines (darts / princess seams / button row / empire seam / zip / tie).
+  const flatSpec = {
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, neckline: s.neckline,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength,
+    sleeveStyle: s.sleeveStyle, sleeveCap: s.sleeveCap || 0, collarType: s.collarType || 0,
+    frontPlacket: s.frontPlacket === true, placketStyle: s.placketStyle || 0,
+    tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
+    backOpening: s.backOpening || 0, closure: closures[0] || null,
+  };
+  // (1) The scattered nested-piece layout — the CUTTING LAYOUT (secondary/PDF).
+  writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
+  // (2) The ASSEMBLED front + back garment flat sketch — the HERO image.
+  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
+
   meta.push({ slug: s.slug, style: s.style, pieces: p.pieces.length,
     pieceNames: p.pieces.map((x) => x.name), fabric: p.fabricMeters140,
     garment: s.garment, patch: s.patch, drawnBy: s.drawnBy, photos: s.photos,
