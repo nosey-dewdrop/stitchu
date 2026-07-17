@@ -31,6 +31,13 @@ Previous session: 2026-07-07 — block validation (the launch blocker): built Pa
 - No onboarding sign-in (local only), no paywall yet
 - Doodle assets are v1 (drawn by Claude); Damla may add 2 butterflies for personalization
 
+## North Star + build discipline (folded in from PLAN.md, 2026-07-17)
+North Star (non-negotiable): photo + YOUR measurements = a custom, sewable pattern for ANY garment — especially the curved/couture details a person cannot self-draft (necklines, cut-outs, halters, tiered ruffles, sleeves, facings). Own the whole stack (own vision + own engine) so the sold API has ZERO per-call LLM cost. A plain skirt drafter is a toy; the value is democratising the expert part (pattern-making) + a construction guide you can't self-know.
+
+The moat is attribute-multiplication: the engine draws ANY garment as a composition of independent, tested post-passes (collar, placket, peplum, pocket, cutout, ruffle...), not a fixed catalogue. Do NOT amputate this to "one flat skirt". The current shift is BREADTH -> DEPTH: stop adding more patterns/showcase surfaces; start proving the patterns the engine draws actually FIT and sew up. Breadth is procrastination; depth is finishing.
+
+Ironclad per-feature discipline (learned the hard way; do not break): a feature exists only when it is (1) real in the C++ engine and drafting a real PatternPiece, (2) covered by a passing test that asserts the pieces + validator-clean + printable + geometry, (3) opt-in and default OFF so the golden diff stays byte-identical and the draft matrix stays ALL PASS, (4) validator-aware, (5) segmented for A4 print, (6) rendered and looked at (render-pages -> PNG -> eyes), (7) then committed + pushed. Only after push, report — precisely (what's done vs not), never a blanket "done". Two engine tracks: Track A = curved vocabulary (one proven feature at a time), Track B = own the vision (kill the rented Opus worker: CLIP zero-shot -> distilled on-device classifier trained on Opus-labelled corpus). Grow the vision label in lockstep with every Track A attribute.
+
 ## Brand
 Web rework direction (Damla, 2026-07-10, reference: terminal-teal screenshot): flat and plain.
 - Palette: white and black dominant, teal accent (~#3EB8AF, matched from reference; final hex locked with Damla in W2). Other colors allowed as free accents.
