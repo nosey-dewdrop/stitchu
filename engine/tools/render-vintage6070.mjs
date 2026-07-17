@@ -224,11 +224,22 @@ for (const s of LOOKS) {
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
 
+  const closures = [...new Set(p.pieces.filter((x) => x.closure).map((x) => x.closure))];
+  // Spec passed to the finished-garment flat renderer so it draws the correct
+  // silhouette (neckline / sleeve present-or-absent / collar / placket / tie /
+  // gather / empire seam) parametrically — NOT the mirrored pattern piece.
+  const flatSpec = {
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, neckline: s.neckline,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0,
+    collarType: s.collarType || 0, frontPlacket: s.frontPlacket === true,
+    tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
+    backOpening: s.backOpening || 0, closure: closures[0] || null,
+  };
   // (1) scattered nested layout, (2) FRONT + BACK flat technical sketch (STEP 2).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
-  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces));
+  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
 
-  const closures = [...new Set(p.pieces.filter((x) => x.closure).map((x) => x.closure))];
   meta.push({ slug: s.slug, en: s.en, tr: s.tr, period: s.period, house: s.house,
     pieces: p.pieces.length, pieceNames: p.pieces.map((x) => x.name),
     fabric: p.fabricMeters140, garment: s.garment, full: s.full,

@@ -132,8 +132,8 @@ for (const s of PATTERNS) {
   // lines (darts / princess seams / button row / empire seam / zip / tie).
   const flatSpec = {
     garment: s.garment, shaping: s.shaping, waistline: s.waistline, neckline: s.neckline,
-    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength,
-    sleeveStyle: s.sleeveStyle, sleeveCap: s.sleeveCap || 0, collarType: s.collarType || 0,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0, collarType: s.collarType || 0,
     frontPlacket: s.frontPlacket === true, placketStyle: s.placketStyle || 0,
     tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
     backOpening: s.backOpening || 0, closure: closures[0] || null,

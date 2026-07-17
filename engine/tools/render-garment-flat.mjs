@@ -1,308 +1,354 @@
-// render-garment-flat.mjs — the ASSEMBLED garment flat sketch (the Etsy line-art
-// look). This is the HERO image on every pattern / collection detail page.
+// render-garment-flat.mjs — the FINISHED-GARMENT flat technical sketch (the Etsy
+// line-art hero on every pattern / collection page).
 //
-// The other renderer (render-flat.mjs renderScattered / the cutting layout) lays
-// the drafted pieces APART on a sheet — that is a cutting layout, NOT what a
-// commercial pattern shows as its cover figure. A commercial flat shows ONE clean
-// line drawing of the FINISHED garment: the front silhouette (shoulders, neckline,
-// smooth armholes, side seams, waist/empire seam, hem) with interior seams/darts/
-// buttons as thin lines, and the same for the BACK — as if the pieces were sewn
-// together at their seams and laid flat.
+// IMPORTANT (the fix, 2026-07-17): a technical flat is NOT the pattern piece
+// reflected. The pattern piece is a MANUFACTURING drawing (seam allowance, darts
+// open, grainline, notches, cut-on-fold). The technical flat is the FINISHED
+// garment as if worn on a body — darts closed, shoulder seam on top, a clean
+// silhouette. You cannot get the flat by "mirror + union" of the drafted piece:
+// for a SLEEVELESS garment the mirrored armhole curve reads as a fake long sleeve.
 //
-// We DERIVE that silhouette from the engine's own drafted pieces: every bodice /
-// skirt / top piece is drafted on the center-front (or center-back) FOLD, so its
-// outline is a garment HALF. Mirroring the half about x=0 gives the full front
-// (or back) silhouette; stacking the bodice over the skirt at the waist seam gives
-// the whole garment. No piece is laid apart; the shapes are the real drafted
-// curves (smooth beziers from the upstream armhole fix). Thin navy lines on white,
-// the commercial flat convention.
+// So this renderer draws the flat PARAMETRICALLY FROM THE STYLE SPEC, never from
+// the pieces. It reads neckline / sleeveStyle / sleeveLength / sleeveCap / shaping
+// / skirtStyle / topLength / collar / placket / tie / gather / backOpening / closure
+// and draws a clean finished-garment FRONT and BACK.
 //
-// Exports renderGarmentFlat(pieces, spec). render-flat.mjs re-exports it as
-// renderFrontBack so the page/collection generators pick up the new hero without
-// any template change.
+// Silhouette families (one parametric template each): TOP/SHELL, DRESS. Each is a
+// single continuous outline drawn as the RIGHT half in cubic beziers, then mirrored
+// with transform="scale(-1,1)" so it is perfectly symmetric. Interior design lines
+// (darts, princess seams, button row, empire seam, zip, ties) overlay as separate
+// thin <path>s. Stroke hierarchy: outer silhouette 2, interior 1, navy on white,
+// round joins/caps.
+//
+// Exports renderGarmentFlat(pieces, spec). `pieces` is accepted for signature
+// compatibility but NOT used to derive the outline — the flat is spec-driven.
 
 const NAVY = '#1f3a5f';
-const SEAM = '#4a6b93';   // interior seam / dart / detail lines (thin)
-const FAINT = '#9fb6d0';  // notches, grainline hints
+const SEAM = '#5c7aa0';   // interior seam / dart / detail lines (thin)
 
 const svgDoc = (w, h, inner) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
   `width="100%" role="img"><rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#fff"/>${inner}</svg>`;
 
-// ---- outline sampling ------------------------------------------------------
-// Flatten a piece's outline commands into a dense polyline of {x,y} points so we
-// can mirror it and re-emit a single smooth path. Beziers are sampled; the visual
-// smoothness comes from the engine's own control points (the upstream bezier fix).
-function sampleOutline(commands, steps = 14) {
-  const pts = [];
-  let cx = 0, cy = 0, sx = 0, sy = 0;
-  for (const c of commands) {
-    if (c.type === 'move') { cx = c.x; cy = c.y; sx = cx; sy = cy; pts.push({ x: cx, y: cy }); }
-    else if (c.type === 'line') { cx = c.x; cy = c.y; pts.push({ x: cx, y: cy }); }
-    else if (c.type === 'curve') {
-      const x0 = cx, y0 = cy;
-      for (let i = 1; i <= steps; i++) {
-        const t = i / steps, u = 1 - t;
-        const x = u*u*u*x0 + 3*u*u*t*c.cp1x + 3*u*t*t*c.cp2x + t*t*t*c.x;
-        const y = u*u*u*y0 + 3*u*u*t*c.cp1y + 3*u*t*t*c.cp2y + t*t*t*c.y;
-        pts.push({ x, y });
-      }
-      cx = c.x; cy = c.y;
-    } else if (c.type === 'close') { pts.push({ x: sx, y: sy }); }
+const n = (v) => (Math.round(v * 10) / 10).toFixed(1);
+
+// ---------------------------------------------------------------------------
+// Body proportions for the flat (illustration units, NOT mm — this is a fashion
+// drawing, not the pattern). x=0 is center front/back; y grows downward from the
+// shoulder line. We draw the RIGHT half (positive x) and mirror it.
+// ---------------------------------------------------------------------------
+const U = {
+  shoulderW: 78,     // half shoulder width (shoulder tip x)
+  neckBase: 30,      // half neck width at a crew/round base
+  chestW: 74,        // half chest / bust width
+  waistW: 60,        // half waist width
+  hipW: 76,          // half hip width
+  shoulderY: 0,      // shoulder line
+  neckDrop: 4,       // how far the shoulder-neck point sits below the shoulder line
+};
+
+// Resolve the finished-garment geometry from the spec into numbers the templates
+// use. Everything is in illustration units.
+function geom(spec) {
+  const garment = spec.garment || 'top';
+  const isDress = garment === 'dress';
+
+  // --- body length (shoulder -> hem) -------------------------------------
+  // top/shell lengths, then dress skirt length adds on below the waist.
+  const topLen = spec.topLength || 'hip';
+  const bodyToWaist = 150;                 // shoulder to natural waist
+  const empire = spec.waistline === 'empire';
+  const waistY = empire ? bodyToWaist * 0.66 : bodyToWaist;
+
+  let hemY, hemHalf;
+  if (isDress) {
+    const skLen = spec.skirtLength || 'midi';
+    const skDrop = skLen === 'mini' ? 150 : skLen === 'midi' ? 250 : skLen === 'maxi' ? 360 : 190;
+    hemY = waistY + skDrop;
+    const st = spec.skirtStyle || 'aLine';
+    const flare = st === 'straight' ? 1.02 : st === 'gathered' ? 1.9
+      : (st === 'circle' || st === 'full') ? 2.2 : 1.4;    // aLine default
+    hemHalf = U.waistW * flare;
+  } else {
+    // a top / shell / blouse / tunic ends at hip / waist / tunic length.
+    const drop = topLen === 'crop' ? 24 : topLen === 'waist' ? 0
+      : topLen === 'tunic' ? 120 : 56;     // hip default
+    hemY = waistY + drop;
+    // a shell hem is close to the hip width, a touch of shaping.
+    hemHalf = spec.shaping === 'princess' ? U.hipW * 1.02 : U.hipW * 0.98;
   }
-  return pts;
-}
 
-const xr = (pts) => { const xs = pts.map((p) => p.x); return { min: Math.min(...xs), max: Math.max(...xs) }; };
-const yr = (pts) => { const ys = pts.map((p) => p.y); return { min: Math.min(...ys), max: Math.max(...ys) }; };
+  // --- neckline (half width, depth of the dip below the neck base) --------
+  const neck = necklineGeom(spec.neckline || 'crew');
 
-// A polyline -> SVG path string, mapped through fn(pt) -> {x,y}.
-function poly(pts, fn) {
-  return pts.map((p, i) => {
-    const q = fn(p);
-    return `${i === 0 ? 'M' : 'L'} ${q.x.toFixed(1)} ${q.y.toFixed(1)}`;
-  }).join(' ');
-}
+  // --- sleeve ------------------------------------------------------------
+  const hasSleeve = spec.sleeveStyle && spec.sleeveStyle !== 'none';
 
-// Isolate the outer garment boundary of an on-fold half: the arc from the
-// fold-TOP (neckline at center) around neck/shoulder/armhole/side down to the
-// fold-BOTTOM (waist at center), dropping the closing center-fold edge (x~=0)
-// that would otherwise draw a line down the middle. `H` is the half's height.
-function outerBoundary(pts, H) {
-  const foldTol = Math.max(6, H * 0.02);
-  // fold points are those hugging x~0; the boundary runs from the topmost fold
-  // point to the bottommost fold point THE LONG WAY (through the wide outer arc).
-  const foldIdx = pts.map((p, i) => ({ p, i })).filter(({ p }) => p.x <= foldTol);
-  if (foldIdx.length < 2) return pts;                 // no clear fold; use as-is
-  let top = foldIdx[0], bot = foldIdx[0];
-  for (const f of foldIdx) { if (f.p.y < top.p.y) top = f; if (f.p.y > bot.p.y) bot = f; }
-  // Walk both directions from top to bot; keep the arc whose points reach widest.
-  const walk = (from, to, step) => {
-    const out = [];
-    for (let i = from; i !== to; i = (i + step + pts.length) % pts.length) out.push(pts[i]);
-    out.push(pts[to]); return out;
+  return {
+    isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve,
+    shoulderW: U.shoulderW, neckBase: U.neckBase, chestW: U.chestW,
+    waistW: U.waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
   };
-  const fwd = walk(top.i, bot.i, 1);
-  const bwd = walk(top.i, bot.i, -1);
-  const width = (arr) => Math.max(...arr.map((p) => p.x));
-  return width(fwd) >= width(bwd) ? fwd : bwd;
 }
 
-// ---- garment assembly ------------------------------------------------------
-// Build one VIEW (front or back). The BODICE uses the real drafted on-fold half
-// (mirrored) so the neckline / armhole / side-seam are the engine's own smooth
-// curves. The SKIRT is drawn as the FINISHED garment skirt — a clean silhouette
-// that hangs from the bodice waist and flares to a hem — NOT the raw cut piece.
-// A gathered skirt is cut as a wide flat rectangle; drawing that rectangle makes
-// a sandwich-board box, not a dress. So we synthesize the worn drape: waist =
-// bodice finished waist, hem width set by the skirt style, a soft curved hem.
-// Returns geometry in a local, mm-scaled, x-centered coordinate.
-function assembleView(bodice, skirt, side, spec) {
-  // Bodice half sampled, normalised so the fold is at x=0, shoulder at y=0.
-  const bpts0 = sampleOutline(bodice.commands);
-  const bx = xr(bpts0), by = yr(bpts0);
-  const foldX = Math.max(0, bx.min);
-  const normed = bpts0.map((p) => ({ x: p.x - foldX, y: p.y - by.min }));
-  const bH = by.max - by.min;
-  // Keep only the OUTER boundary (neck-top -> shoulder -> armhole -> side -> waist).
-  // The drafted half closes up the center fold (x~0) back to the neck; that fold
-  // edge, if left in, draws a spurious line down the middle and crosses its mirror.
-  let bodiceRight = outerBoundary(normed, bH);
-
-  // Bodice waist half-width = the drafted half at its lowest edge (the seam that
-  // meets the skirt / the garment's finished waist on that side).
-  const waistBand = bodiceRight.filter((p) => Math.abs(p.y - bH) < bH * 0.08);
-  const waistHalf = waistBand.length
-    ? Math.max(...waistBand.map((p) => p.x)) : Math.max(...bodiceRight.map((p) => p.x));
-
-  // The boundary of a CENTER panel (princess / multi-panel bodice) runs down the
-  // side seam to the waist then BACK IN along the waist to the center fold (x~0).
-  // That inward return leaves the silhouette ending at the waist-center, so the
-  // skirt (which starts at the outer waist half-width) begins with a step/notch.
-  // Trim any trailing points after the LAST time the boundary reaches its widest
-  // waist point, so the chain ends exactly at the side-seam waist the skirt joins.
-  {
-    let cut = bodiceRight.length - 1;
-    for (let i = bodiceRight.length - 1; i >= 0; i--) {
-      if (bodiceRight[i].x >= waistHalf - 0.5 && bodiceRight[i].y > bH * 0.6) { cut = i; break; }
-    }
-    if (cut < bodiceRight.length - 1) bodiceRight = bodiceRight.slice(0, cut + 1);
+// neckline shape: how wide the half-neck opening is, how deep it dips at CF, and a
+// `kind` tag so we can draw the correct curve (U scoop, V vNeck, square, boat line,
+// sweetheart, cowl, off-shoulder).
+function necklineGeom(kind) {
+  switch (kind) {
+    case 'scoop':      return { kind, half: 34, depth: 46 };
+    case 'vNeck':      return { kind, half: 30, depth: 66 };
+    case 'square':     return { kind, half: 34, depth: 40 };
+    case 'boat':       return { kind, half: 52, depth: 12 };
+    case 'sweetheart': return { kind, half: 40, depth: 44 };
+    case 'halter':     return { kind, half: 18, depth: 64 };
+    case 'cowl':       return { kind, half: 36, depth: 50 };
+    case 'offShoulder':return { kind, half: 62, depth: 20 };
+    case 'crew':
+    default:           return { kind: 'crew', half: 30, depth: 22 };
   }
+}
 
-  // Skirt silhouette (finished drape), if a skirt piece exists.
-  let skirtRight = null, skH = 0, hipHalf = 0;
-  if (skirt) {
-    const sp = sampleOutline(skirt.commands);
-    const syr = yr(sp);
-    skH = syr.max - syr.min;                         // true drafted skirt LENGTH
-    // Hem flare relative to the finished waist. Straight = column, aLine = flare,
-    // gathered = fullest sweep. Read from spec.skirtStyle; default a gentle A.
-    const style = (spec.skirtStyle || 'aLine');
-    const flare = style === 'straight' ? 1.06
-      : style === 'gathered' ? 1.9
-      : style === 'circle' || style === 'full' ? 2.2
-      : 1.42;                                          // aLine / default
-    const hemHalf = waistHalf * flare;
-    hipHalf = Math.max(waistHalf, hemHalf * 0.7);
-    // A clean skirt half: waist -> side seam gently bowing out -> hem, with a soft
-    // hem curve. Sampled so it re-emits as one smooth polyline.
-    const seg = [];
-    const N = 16;
-    for (let i = 0; i <= N; i++) {
-      const t = i / N;
-      // ease the widen so it flows out of the waist, not a hard V.
-      const w = waistHalf + (hemHalf - waistHalf) * Math.pow(t, style === 'straight' ? 1 : 0.82);
-      seg.push({ x: w, y: t * skH });
-    }
-    // Soft hem dip toward the fold (a gathered/flared hem hangs a touch lower at CF).
-    skirtRight = seg;
-  }
+// ---------------------------------------------------------------------------
+// Right-half outline as cubic beziers. Returns the SVG path `d` for ONE half:
+// from the CF neckline point, up/out along the neckline to the shoulder-neck
+// point, out the shoulder to the shoulder tip, down the armhole, down the side
+// seam (through waist) to the hem, then in along the hem to CF, closing up the
+// center line. The mirror is applied by the caller via transform="scale(-1,1)".
+//
+// `view` = 'front' | 'back'. Back necklines sit higher (shallower) than front.
+// ---------------------------------------------------------------------------
+function halfOutline(g, view) {
+  const { neck } = g;
+  const isBack = view === 'back';
+  // back neck is shallow regardless of the front style (a real garment's back
+  // neck is a small scoop) EXCEPT wide styles (boat/offShoulder) stay wide.
+  const wide = neck.kind === 'boat' || neck.kind === 'offShoulder';
+  const nHalf = neck.half;
+  const nDepth = isBack ? (wide ? Math.min(neck.depth, 14) : 16) : neck.depth;
+  const cfY = nDepth;                         // CF neckline point y
+  const shoulderNeckX = nHalf;
+  const shoulderNeckY = g.shoulderY + g.neckDrop;
+  const shoulderTipX = g.shoulderW;
+  const shoulderTipY = g.shoulderY + 6;       // slight shoulder slope
+  const armDeepY = 92;                          // underarm / bottom of armhole
+  const chestX = g.chestW;
+  const waistX = g.waistW;
+  const hemX = g.hemHalf;
 
-  const waistY = bH;
-  const totalH = bH + skH;
+  const underX = chestX;
+  const dip = g.isDress ? 10 : 4;
 
-  // Full silhouette: right side = bodice half then (offset) skirt half, then the
-  // curved hem across to the fold, then the mirrored left side back up.
-  const skirtAtWaist = skirtRight ? skirtRight.map((p) => ({ x: p.x, y: p.y + waistY })) : null;
-  const rightChain = skirtAtWaist ? [...bodiceRight, ...skirtAtWaist] : bodiceRight;
-
-  let d = poly(rightChain, (p) => p);
-  if (skirtAtWaist) {
-    // Curved hem from the right hem point across to the mirrored-left hem point,
-    // dipping slightly at center for a garment-like hang.
-    const hem = skirtAtWaist[skirtAtWaist.length - 1];
-    const dip = (skirt && ((spec.skirtStyle || 'aLine') !== 'straight')) ? skH * 0.06 : skH * 0.02;
-    d += ` Q ${(hem.x * 0.5).toFixed(1)} ${(hem.y + dip).toFixed(1)} 0 ${(hem.y + dip).toFixed(1)}`;
-    d += ` Q ${(-hem.x * 0.5).toFixed(1)} ${(hem.y + dip).toFixed(1)} ${(-hem.x).toFixed(1)} ${hem.y.toFixed(1)}`;
-    // up the mirrored left side (skirt then bodice), skipping the duplicate hem pt.
-    const revUp = [...skirtAtWaist].slice(0, -1).reverse().concat([...bodiceRight].reverse());
-    d += ' ' + revUp.map((p) => `L ${(-p.x).toFixed(1)} ${p.y.toFixed(1)}`).join(' ') + ' Z';
+  // Build the right-half boundary as an ordered SEGMENT list, from the CF neck
+  // point (0,cfY) down to the CF hem point (0, hemY+dip). NO center-line edge —
+  // the caller stitches this to its mirror so the CF join is invisible (there is
+  // no fake center-front seam stroked down the garment).
+  const segs = [];
+  // neckline CF -> shoulder-neck point
+  segs.push(...necklineSegs(neck.kind, isBack, nHalf, cfY, shoulderNeckX, shoulderNeckY));
+  // shoulder seam (neck point -> shoulder tip)
+  segs.push({ t: 'L', p: [[shoulderTipX, shoulderTipY]] });
+  // armhole: shoulder tip -> underarm (sleeveless = clean scooped armhole, NOT a sleeve)
+  segs.push({ t: 'C', p: [[shoulderTipX + 4, shoulderTipY + 30], [underX + 12, armDeepY - 26], [underX, armDeepY]] });
+  // side seam: underarm -> waist
+  segs.push({ t: 'C', p: [[underX, g.waistY - 40], [waistX + 2, g.waistY - 30], [waistX, g.waistY]] });
+  if (g.isDress) {
+    segs.push({ t: 'C', p: [[waistX + (hemX - waistX) * 0.25, g.waistY + (g.hemY - g.waistY) * 0.35],
+                            [hemX, g.hemY - (g.hemY - g.waistY) * 0.25], [hemX, g.hemY]] });
   } else {
-    const rev = [...rightChain].reverse();
-    d += ' ' + rev.map((p) => `L ${(-p.x).toFixed(1)} ${p.y.toFixed(1)}`).join(' ') + ' Z';
+    segs.push({ t: 'C', p: [[waistX + 4, g.waistY + (g.hemY - g.waistY) * 0.4], [hemX, g.hemY - 12], [hemX, g.hemY]] });
   }
-
-  const allX = rightChain.map((p) => p.x);
-  const W = Math.max(...allX) * 2;
-  const neckPts = bodiceRight.filter((p) => p.y < bH * 0.14);
-  const neckHalf = neckPts.length ? Math.max(...neckPts.map((p) => p.x)) : 40;
-
-  // Armhole geometry for seating a sleeve flush. Shoulder tip = the outer point
-  // of the shoulder line (widest point in the upper third, at its own x). Underarm
-  // = where the side seam begins (widest point in the mid band). The sleeve is
-  // drawn between THOSE two points so it attaches to the real armhole edge.
-  const shoulderX = Math.max(...bodiceRight.map((p) => p.x));
-  const upper = bodiceRight.filter((p) => p.y < bH * 0.34);
-  const tip = upper.length ? upper.reduce((a, p) => (p.x > a.x ? p : a), upper[0]) : { x: shoulderX, y: bH * 0.1 };
-  const midBand = bodiceRight.filter((p) => p.y >= bH * 0.3 && p.y < bH * 0.62);
-  const under = midBand.length ? midBand.reduce((a, p) => (p.x > a.x ? p : a), midBand[0]) : { x: shoulderX, y: bH * 0.4 };
-
-  return { d, W, H: totalH, waistY, hasSkirt: !!skirtRight, bodiceH: bH,
-    neckHalf, waistHalf, hipHalf, shoulderX,
-    shoulderTipX: tip.x, shoulderTipY: tip.y, underArmX: under.x, underArmY: under.y };
+  // hem: hem point in to the CF hem point (with a slight worn-hang dip at center)
+  segs.push({ t: 'Q', p: [[hemX * 0.5, g.hemY + dip], [0, g.hemY + dip]] });
+  return { segs, cfNeckY: cfY, cfHemY: g.hemY + dip };
 }
 
-// ---- interior detail lines -------------------------------------------------
-// Thin construction lines drawn INSIDE the silhouette: waist/empire seam, princess
-// seams, darts, button row, drawstring channel. All in view-local mm coords.
-function interior(view, spec, pieces) {
+// A right-half segment list -> a single closed full outline path `d`. The right
+// half runs CF-neck -> ... -> CF-hem; we then walk it BACKWARD mirrored (x -> -x)
+// from CF-hem up to CF-neck, closing the loop. Result: one continuous silhouette
+// with no interior center line.
+function fullOutlinePath(half) {
+  const { segs, cfNeckY, cfHemY } = half;
+  let d = `M 0 ${n(cfNeckY)} `;
+  for (const s of segs) {
+    if (s.t === 'L') d += `L ${n(s.p[0][0])} ${n(s.p[0][1])} `;
+    else if (s.t === 'Q') d += `Q ${n(s.p[0][0])} ${n(s.p[0][1])} ${n(s.p[1][0])} ${n(s.p[1][1])} `;
+    else if (s.t === 'C') d += `C ${n(s.p[0][0])} ${n(s.p[0][1])} ${n(s.p[1][0])} ${n(s.p[1][1])} ${n(s.p[2][0])} ${n(s.p[2][1])} `;
+  }
+  // now at CF-hem (0, cfHemY); walk the mirror backward up to CF-neck.
+  // a segment from A -> B with controls c1,c2 becomes, reversed & mirrored,
+  // B' -> A' with controls c2',c1' (all x negated).
+  const mx = (pt) => [-pt[0], pt[1]];
+  // reconstruct start points to reverse cleanly: track the running "from" point.
+  const pts = [[0, cfNeckY]];
+  for (const s of segs) pts.push(s.p[s.p.length - 1]);
+  for (let i = segs.length - 1; i >= 0; i--) {
+    const s = segs[i];
+    const from = pts[i];              // mirror target (we END here going backward)
+    const to = mx(from);
+    if (s.t === 'L') d += `L ${n(to[0])} ${n(to[1])} `;
+    else if (s.t === 'Q') {
+      const c = mx(s.p[0]);
+      d += `Q ${n(c[0])} ${n(c[1])} ${n(to[0])} ${n(to[1])} `;
+    } else if (s.t === 'C') {
+      const c2 = mx(s.p[1]), c1 = mx(s.p[0]);
+      d += `C ${n(c2[0])} ${n(c2[1])} ${n(c1[0])} ${n(c1[1])} ${n(to[0])} ${n(to[1])} `;
+    }
+  }
+  d += 'Z';
+  return d;
+}
+
+// neckline as a segment list (CF point -> shoulder-neck point).
+function necklineSegs(kind, isBack, nHalf, cfY, snX, snY) {
+  if (isBack) {
+    return [{ t: 'C', p: [[nHalf * 0.35, cfY], [nHalf * 0.7, snY + (cfY - snY) * 0.4], [snX, snY]] }];
+  }
+  switch (kind) {
+    case 'vNeck':
+      return [{ t: 'L', p: [[snX, snY]] }];
+    case 'square':
+      return [{ t: 'L', p: [[nHalf, cfY]] }, { t: 'L', p: [[snX, snY]] }];
+    case 'boat':
+    case 'offShoulder':
+      return [{ t: 'Q', p: [[nHalf * 0.55, cfY - 2], [snX, snY]] }];
+    case 'sweetheart':
+      return [{ t: 'C', p: [[nHalf * 0.22, cfY - 20], [nHalf * 0.6, cfY - 6], [nHalf * 0.66, cfY - 16]] },
+              { t: 'C', p: [[nHalf * 0.8, snY + (cfY - snY) * 0.3], [snX, snY + 6], [snX, snY]] }];
+    case 'halter':
+      return [{ t: 'C', p: [[nHalf * 0.6, cfY - 6], [snX, snY + 24], [snX, snY]] }];
+    case 'scoop':
+    case 'cowl':
+    case 'crew':
+    default:
+      return [{ t: 'C', p: [[nHalf * 0.28, cfY], [snX, snY + (cfY - snY) * 0.55], [snX, snY]] }];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sleeve: an ACTUAL sleeve shape attached at the shoulder, drawn only when the
+// spec HAS a sleeve. Sleeveless -> nothing (the clean armhole in halfOutline is
+// the whole story). Right-half only; mirrored by the caller.
+// ---------------------------------------------------------------------------
+function sleeveHalf(g, spec) {
+  if (!g.hasSleeve) return '';
+  const shoulderTipX = g.shoulderW, shoulderTipY = g.shoulderY + 6;
+  const underX = g.chestW, underY = 92;
+  const style = spec.sleeveStyle;
+  const len = spec.sleeveLength || 'short';
+  const puff = spec.sleeveCap === 2 || style === 'puff';
+  const cap = style === 'cap' || spec.sleeveCap === 4;
+
+  // sleeve length (how far the hem drops below the shoulder tip)
+  const drop = cap ? 34 : len === 'long' ? 300 : len === 'threeQuarter' ? 220
+    : len === 'elbow' ? 150 : 96;            // short default
+  // how far the sleeve projects outward at the hem
+  const outW = cap ? 30 : puff ? 62 : 48;
+  const hemX = shoulderTipX + outW;
+  const hemTopY = shoulderTipY + drop * 0.5;
+  const hemBotY = shoulderTipY + drop;
+
+  // cap head: puff rises above the shoulder; plain/cap follows the shoulder line
+  const capRise = puff ? 22 : cap ? 6 : 8;
+  let d = `M ${n(shoulderTipX)} ${n(shoulderTipY)} `;
+  // over the cap head, out to the outer shoulder of the sleeve
+  d += `C ${n(shoulderTipX + outW * 0.4)} ${n(shoulderTipY - capRise)} ${n(hemX - outW * 0.1)} ${n(shoulderTipY + 6)} ${n(hemX)} ${n(hemTopY)} `;
+  // down the outer sleeve edge to the hem
+  d += `L ${n(hemX - (cap ? 6 : 4))} ${n(hemBotY)} `;
+  // along the sleeve hem back toward the body
+  d += `Q ${n((hemX + underX) * 0.5)} ${n(hemBotY + (cap ? 4 : 8))} ${n(underX + (cap ? 6 : 10))} ${n(cap ? underY + 6 : hemBotY - drop * 0.12)} `;
+  // up the underarm seam back to the underarm point on the body
+  d += `L ${n(underX)} ${n(underY)} `;
+
+  let s = `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="2" ` +
+    `stroke-linejoin="round" stroke-linecap="round"/>`;
+  if (puff) {
+    // gather ticks at the cap head
+    for (let t = 0.2; t <= 0.85; t += 0.16) {
+      const gx = shoulderTipX + outW * t;
+      s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="1"/>`;
+    }
+  }
+  return s;
+}
+
+// ---------------------------------------------------------------------------
+// Interior design lines (thin). Darts / princess seams / button row / empire
+// seam / back zip / ties / gather. Drawn on BOTH halves (x and -x) explicitly
+// because they are not part of the mirrored outline group.
+// ---------------------------------------------------------------------------
+function interior(g, spec, view) {
+  const isBack = view === 'back';
   let s = '';
-  const { W, waistY, bodiceH, neckHalf, waistHalf } = view;
-  const cx = 0; // center is x=0 in view space; caller translates
+  const waistY = g.waistY, bodyBottom = g.isDress ? g.waistY : g.hemY;
 
-  // Waist / empire seam line (only if the garment has a skirt joined to a bodice).
-  if (view.hasSkirt) {
-    const label = spec.waistline === 'empire' ? waistY * 0.82 : waistY;
-    s += `<line x1="${(-waistHalf * 1.02).toFixed(1)}" y1="${label.toFixed(1)}" ` +
-      `x2="${(waistHalf * 1.02).toFixed(1)}" y2="${label.toFixed(1)}" ` +
-      `stroke="${SEAM}" stroke-width="1" stroke-dasharray="6 4"/>`;
+  // empire / waist seam
+  if (g.isDress) {
+    s += `<line x1="${n(-g.waistW * 1.02)}" y1="${n(waistY)}" x2="${n(g.waistW * 1.02)}" y2="${n(waistY)}" ` +
+      `stroke="${SEAM}" stroke-width="1" stroke-dasharray="7 4"/>`;
   }
 
-  // Princess seams (shaping === 'princess'): two curved lines shoulder->hem.
   if (spec.shaping === 'princess') {
+    // two curved princess seams shoulder-ish -> hem on each side
     for (const dir of [-1, 1]) {
-      const x = dir * neckHalf * 0.72;
-      const xh = dir * waistHalf * 0.5;
-      s += `<path d="M ${x.toFixed(1)} ${(bodiceH * 0.06).toFixed(1)} ` +
-        `Q ${(dir * neckHalf * 0.95).toFixed(1)} ${(bodiceH * 0.5).toFixed(1)} ` +
-        `${xh.toFixed(1)} ${(bodiceH * 0.98).toFixed(1)}" fill="none" stroke="${SEAM}" stroke-width="1"/>`;
+      const xTop = dir * g.neck.half * 0.9;
+      const xMid = dir * g.chestW * 0.62;
+      const xBot = dir * (g.isDress ? g.hemHalf * 0.42 : g.waistW * 0.5);
+      s += `<path d="M ${n(xTop)} ${n(20)} C ${n(xMid)} ${n(70)} ${n(xMid)} ${n(waistY - 30)} ${n(xBot)} ${n(g.isDress ? g.hemY : g.hemY - 6)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
     }
-  } else {
-    // Waist / bust darts (dart shaping): two short tapered lines from waist up.
+  } else if (!isBack) {
+    // front bust/waist darts: short tapered lines from the waist up toward the bust
     for (const dir of [-1, 1]) {
-      const x = dir * waistHalf * 0.45;
-      s += `<path d="M ${x.toFixed(1)} ${(bodiceH * 0.98).toFixed(1)} ` +
-        `L ${(x * 0.9).toFixed(1)} ${(bodiceH * 0.55).toFixed(1)}" fill="none" ` +
-        `stroke="${SEAM}" stroke-width="0.9"/>`;
+      const x = dir * g.waistW * 0.5;
+      s += `<path d="M ${n(x)} ${n(bodyBottom * 0.99)} L ${n(x * 0.86)} ${n(waistY * 0.6)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
     }
   }
 
-  // Button placket: a vertical row of small circles down center front, plus the
-  // fold/closure line. Read real button y-positions from the placket piece's
-  // markings if available; else evenly space them.
+  // button row / placket (front only)
   const hasPlacket = spec.frontPlacket || (spec.placketStyle && spec.placketStyle > 0);
-  if (hasPlacket && spec.__view === 'front') {
-    const front = pieces.find((p) => /front/i.test(p.name) && /(bodice|top)/i.test(p.name));
-    let ys = [];
-    if (front && front.markings) {
-      // Buttonhole ticks sit at x in [-4,4] pairs; collect their y once.
-      const seen = new Set();
-      for (const c of front.markings) {
-        if (c.type === 'line' && Math.abs(c.x) <= 5 && !seen.has(Math.round(c.y))) {
-          seen.add(Math.round(c.y)); ys.push(c.y);
-        }
+  if (hasPlacket && !isBack) {
+    const top = g.neck.depth + 6;
+    const bot = (g.isDress ? g.hemY : g.hemY) * 0.94;
+    s += `<line x1="0" y1="${n(g.neck.depth)}" x2="0" y2="${n(bot + 8)}" stroke="${SEAM}" stroke-width="1"/>`;
+    const nb = 6;
+    for (let i = 0; i < nb; i++) {
+      const y = top + (bot - top) * i / (nb - 1);
+      s += `<circle cx="0" cy="${n(y)}" r="3.4" fill="none" stroke="${NAVY}" stroke-width="1"/>`;
+    }
+  }
+
+  // gather (drawstring / shirred / smocked) — thin horizontal or tick band
+  if (spec.gatherType) {
+    const zoneY = spec.gatherZone === 1 ? 60 : spec.gatherZone === 2 ? waistY - 6 : g.neck.depth + 14;
+    const halfW = g.chestW * 0.9;
+    if (spec.gatherType === 1) {                 // drawstring: two parallel channels
+      for (const off of [-5, 5]) {
+        s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="1"/>`;
       }
-      // normalise against the piece's own y-min.
-      const ymin = Math.min(...front.commands.filter((c) => c.y !== undefined).map((c) => c.y));
-      ys = ys.map((y) => y - ymin).filter((y) => y > 4 && y < bodiceH * (view.hasSkirt ? 1.6 : 1));
-    }
-    if (!ys.length) {
-      const n = 5, top = bodiceH * 0.14, bot = (view.hasSkirt ? view.H : bodiceH) * 0.92;
-      for (let i = 0; i < n; i++) ys.push(top + (bot - top) * i / (n - 1));
-    }
-    const bottom = Math.max(...ys, bodiceH);
-    s += `<line x1="0" y1="${(bodiceH * 0.1).toFixed(1)}" x2="0" y2="${(bottom + 10).toFixed(1)}" ` +
-      `stroke="${SEAM}" stroke-width="1"/>`;
-    for (const y of ys) s += `<circle cx="0" cy="${y.toFixed(1)}" r="4.5" fill="none" stroke="${NAVY}" stroke-width="1"/>`;
-  }
-
-  // Drawstring channel (gatherType drawstring at neck/bust): two thin parallel
-  // lines across the gathered zone.
-  if (spec.gatherType === 1) {
-    const zy = spec.gatherZone === 0 ? bodiceH * 0.16 : bodiceH * 0.34;
-    for (const off of [-6, 6]) {
-      s += `<line x1="${(-waistHalf).toFixed(1)}" y1="${(zy + off).toFixed(1)}" ` +
-        `x2="${waistHalf.toFixed(1)}" y2="${(zy + off).toFixed(1)}" stroke="${SEAM}" stroke-width="0.8"/>`;
-    }
-  } else if (spec.gatherType && (spec.gatherType === 2 || spec.gatherType === 3)) {
-    // Shirred / smocked yoke: a band of short vertical gather ticks.
-    const zy = spec.gatherZone === 0 ? bodiceH * 0.14 : bodiceH * 0.3;
-    for (let k = -Math.floor(waistHalf / 14); k <= Math.floor(waistHalf / 14); k++) {
-      const x = k * 14;
-      s += `<line x1="${x.toFixed(1)}" y1="${(zy - 7).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(zy + 7).toFixed(1)}" ` +
-        `stroke="${SEAM}" stroke-width="0.7"/>`;
+    } else {                                      // shirred / smocked: tick band
+      for (let x = -halfW; x <= halfW; x += 13) {
+        s += `<line x1="${n(x)}" y1="${n(zoneY - 7)}" x2="${n(x)}" y2="${n(zoneY + 7)}" stroke="${SEAM}" stroke-width="0.9"/>`;
+      }
     }
   }
 
-  // Back-view specifics: center-back seam + invisible-zip line, or the back tie.
-  if (spec.__view === 'back') {
+  // back-view specifics: center-back zip, back ties, open-back cutout
+  if (isBack) {
     if (spec.closure && /zip/i.test(spec.closure)) {
-      s += `<line x1="0" y1="${(bodiceH * 0.06).toFixed(1)}" x2="0" y2="${(view.hasSkirt ? view.H * 0.6 : bodiceH).toFixed(1)}" ` +
+      s += `<line x1="0" y1="${n(g.neck.depth + 4)}" x2="0" y2="${n(g.isDress ? waistY + 40 : g.hemY * 0.8)}" ` +
         `stroke="${SEAM}" stroke-width="1" stroke-dasharray="2 3"/>`;
     }
     if (spec.tie && spec.tie > 0) {
-      // Two back-tie straps meeting at center back near the waist.
-      const ty = view.hasSkirt ? waistY : bodiceH * 0.9;
+      const ty = g.isDress ? waistY : g.hemY * 0.86;
       for (const dir of [-1, 1]) {
-        s += `<path d="M ${(dir * waistHalf).toFixed(1)} ${(ty - 6).toFixed(1)} ` +
-          `Q ${(dir * waistHalf * 0.4).toFixed(1)} ${ty.toFixed(1)} 0 ${(ty + 2).toFixed(1)}" ` +
-          `fill="none" stroke="${SEAM}" stroke-width="1.4"/>`;
+        s += `<path d="M ${n(dir * g.waistW)} ${n(ty - 6)} Q ${n(dir * g.waistW * 0.4)} ${n(ty)} 0 ${n(ty + 2)}" ` +
+          `fill="none" stroke="${SEAM}" stroke-width="1.4" stroke-linecap="round"/>`;
       }
     }
     if (spec.backOpening && spec.backOpening > 0) {
-      // Shaped open-back cutout at the upper back.
-      s += `<path d="M ${(-neckHalf * 0.7).toFixed(1)} ${(bodiceH * 0.12).toFixed(1)} ` +
-        `Q 0 ${(bodiceH * 0.5).toFixed(1)} ${(neckHalf * 0.7).toFixed(1)} ${(bodiceH * 0.12).toFixed(1)}" ` +
+      s += `<path d="M ${n(-g.neck.half * 0.72)} ${n(g.neck.depth + 6)} Q 0 ${n(waistY * 0.5)} ${n(g.neck.half * 0.72)} ${n(g.neck.depth + 6)}" ` +
         `fill="none" stroke="${SEAM}" stroke-width="1" stroke-dasharray="4 3"/>`;
     }
   }
@@ -310,117 +356,86 @@ function interior(view, spec, pieces) {
   return s;
 }
 
-// ---- sleeve -----------------------------------------------------------------
-// A short/cap sleeve reads on the flat as a small sleeve projecting from each
-// armhole. It must ATTACH flush to the silhouette: it springs from the shoulder
-// tip and folds back to the underarm point, hugging the armhole edge (no floating
-// wing). Sleeveless -> nothing. The armhole shoulder tip and underarm are read
-// from the drafted bodice half so the sleeve seats on the real armhole.
-function sleeves(view, spec) {
-  if (!spec.sleeveStyle || spec.sleeveStyle === 'none') return '';
-  const { shoulderX, bodiceH, armTop, armBot } = view;
-  // shoulder tip (top of the armhole) and underarm point, in view coords.
-  const topY = armTop !== undefined ? armTop : bodiceH * 0.1;
-  const underY = armBot !== undefined ? armBot : bodiceH * 0.34;
-  const puff = spec.sleeveCap === 2;
-  const width = shoulderX * (puff ? 0.62 : 0.5);       // how far the sleeve projects
-  const drop = (underY - topY) * (puff ? 1.15 : 1.0);  // sleeve hem length
-  let s = '';
-  for (const dir of [-1, 1]) {
-    const sx = dir * shoulderX;
-    // From shoulder tip: out over a (puffed) cap head, down the outer sleeve edge
-    // to the hem, along the hem, then back IN to the underarm point on the body.
-    const capBow = puff ? 1.2 : 0.85;
-    s += `<path d="M ${sx.toFixed(1)} ${topY.toFixed(1)} ` +
-      `Q ${(sx + dir * width * capBow).toFixed(1)} ${(topY - (puff ? bodiceH * 0.03 : 0)).toFixed(1)} ` +
-      `${(sx + dir * width).toFixed(1)} ${(topY + drop * 0.5).toFixed(1)} ` +
-      `L ${(sx + dir * width * 0.82).toFixed(1)} ${(topY + drop).toFixed(1)} ` +
-      `Q ${(sx + dir * width * 0.4).toFixed(1)} ${(underY + drop * 0.18).toFixed(1)} ` +
-      `${sx.toFixed(1)} ${underY.toFixed(1)}" ` +
-      `fill="#fbfcfe" stroke="${NAVY}" stroke-width="1.6" stroke-linejoin="round"/>`;
-    if (puff) {
-      for (let t = 0.18; t < 0.9; t += 0.16) {
-        const gx = sx + dir * width * t;
-        s += `<line x1="${gx.toFixed(1)}" y1="${(topY + 2).toFixed(1)}" x2="${gx.toFixed(1)}" y2="${(topY + 11).toFixed(1)}" stroke="${SEAM}" stroke-width="0.6"/>`;
-      }
-    }
-  }
-  return s;
-}
-
-// ---- collar ---------------------------------------------------------------
-function collar(view, spec) {
-  if (!spec.collarType || spec.collarType === 0) return '';
-  const { neckHalf, bodiceH } = view;
-  const ny = bodiceH * 0.06;
-  // A simple collar band / flat collar hugging the neckline.
-  if (spec.collarType === 4) { // peter-pan: two rounded flat collar leaves
+// ---------------------------------------------------------------------------
+// collar (front only, hugs the neckline). Peter-pan = two rounded leaves; stand /
+// mock / shirt = a band along the neckline.
+// ---------------------------------------------------------------------------
+function collar(g, spec) {
+  const t = spec.collarType || 0;
+  if (!t) return '';
+  const nHalf = g.neck.half, ny = g.neck.depth * 0.5 + 2;
+  if (t === 4) {                                  // peter-pan: rounded flat leaves
     let s = '';
     for (const dir of [-1, 1]) {
-      s += `<path d="M 0 ${(ny + 2).toFixed(1)} ` +
-        `Q ${(dir * neckHalf * 0.8).toFixed(1)} ${(ny - 6).toFixed(1)} ` +
-        `${(dir * neckHalf * 1.15).toFixed(1)} ${(ny + bodiceH * 0.12).toFixed(1)} ` +
-        `Q ${(dir * neckHalf * 0.9).toFixed(1)} ${(ny + bodiceH * 0.16).toFixed(1)} ` +
-        `${(dir * neckHalf * 0.3).toFixed(1)} ${(ny + bodiceH * 0.09).toFixed(1)} Z" ` +
-        `fill="#fff" stroke="${NAVY}" stroke-width="1.4"/>`;
+      s += `<path d="M 0 ${n(ny + 4)} Q ${n(dir * nHalf * 0.9)} ${n(ny - 4)} ${n(dir * nHalf * 1.2)} ${n(ny + 34)} ` +
+        `Q ${n(dir * nHalf * 0.85)} ${n(ny + 44)} ${n(dir * nHalf * 0.32)} ${n(ny + 20)} Z" ` +
+        `fill="#fff" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round"/>`;
     }
     return s;
   }
-  // stand / mock / shirt collar: a band along the neckline.
-  return `<path d="M ${(-neckHalf).toFixed(1)} ${(ny + bodiceH * 0.03).toFixed(1)} ` +
-    `Q 0 ${(ny - bodiceH * 0.05).toFixed(1)} ${neckHalf.toFixed(1)} ${(ny + bodiceH * 0.03).toFixed(1)}" ` +
-    `fill="none" stroke="${NAVY}" stroke-width="1.6"/>`;
+  // stand / mock / shirt band along the neckline
+  return `<path d="M ${n(-nHalf)} ${n(ny + 10)} Q 0 ${n(ny - 8)} ${n(nHalf)} ${n(ny + 10)}" ` +
+    `fill="none" stroke="${NAVY}" stroke-width="2" stroke-linecap="round"/>`;
 }
 
-// ---- one labelled view panel ----------------------------------------------
-function viewPanel(bodice, skirt, spec, side, pieces) {
-  const view = assembleView(bodice, skirt, side, spec);
-  const vspec = { ...spec, __view: side };
-  const body =
-    `<path d="${view.d}" fill="#fbfcfe" stroke="${NAVY}" stroke-width="1.8" stroke-linejoin="round"/>` +
-    sleeves(view, vspec) +
-    collar(view, vspec) +
-    interior(view, vspec, pieces);
-  // Center the silhouette: view coords are centered on x=0, so shift right by W/2.
-  const padX = view.W * 0.62;
-  return { inner: `<g transform="translate(${padX.toFixed(1)} 8)">${body}</g>`,
-    w: view.W * 1.24, h: view.H + 24 };
+// ---------------------------------------------------------------------------
+// One VIEW (front or back): the mirrored outline group + sleeves + interior.
+// Returns { inner, w, h } in view-local coords (centered on x=0).
+// ---------------------------------------------------------------------------
+function viewPanel(spec, view) {
+  const g = geom(spec);
+  g.skirtStyle = spec.skirtStyle;
+
+  const half = halfOutline(g, view);
+  // outline: ONE continuous closed silhouette (right half + reversed mirror),
+  // so there is no stroked center-front line / fake seam down the garment.
+  const outline =
+    `<path d="${fullOutlinePath(half)}" fill="#fbfcfe" stroke="${NAVY}" ` +
+    `stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+  const slv = sleeveHalf(g, spec);
+  const sleeves = slv
+    ? `<g>${slv}<g transform="scale(-1,1)">${slv}</g></g>`
+    : '';
+
+  const details = collar(g, spec) + interior(g, spec, view);
+
+  const bottom = g.hemY + (g.isDress ? 10 : 4);
+  // widest extent: outline hem/hip/chest, or sleeve reach if sleeved
+  let maxX = Math.max(g.hemHalf, g.chestW, g.shoulderW);
+  if (g.hasSleeve) maxX = Math.max(maxX, g.shoulderW + (spec.sleeveCap === 2 || spec.sleeveStyle === 'puff' ? 62 : 48));
+  const pad = 20;
+  const w = (maxX + pad) * 2;
+  const h = bottom + pad;
+  // shift so x=0 maps to w/2, y starts at pad
+  const inner = `<g transform="translate(${n(w / 2)} ${pad})">${outline}${sleeves}${details}</g>`;
+  return { inner, w, h };
 }
 
-// ---- public: assembled front + back garment flat --------------------------
+// ---------------------------------------------------------------------------
+// public: assembled FRONT + BACK finished-garment flat, spec-driven.
+// `pieces` is unused for the outline (kept for signature compatibility).
+// ---------------------------------------------------------------------------
 export function renderGarmentFlat(pieces, spec = {}) {
-  // Pick the silhouette-defining pieces.
-  const find = (re) => pieces.find((p) => re.test(p.name));
-  const bodiceF = find(/^(bodice (center )?front|top front)$/i) || find(/bodice.*front|top front/i) || find(/front/i);
-  const bodiceB = find(/^(bodice (center )?back|top back)$/i) || find(/bodice.*back|top back/i) || find(/back/i);
-  // Any skirt panel (front / center-front / side-front) means the garment has a
-  // skirt; the silhouette is synthesized from the bodice waist + skirt LENGTH, so
-  // one representative panel per side is enough.
-  const skirtF = find(/^skirt (center )?front$/i) || find(/skirt.*front/i);
-  const skirtB = find(/^skirt (center )?back$/i) || find(/skirt.*back/i);
-  if (!bodiceF) return svgDoc(400, 300, `<text x="200" y="150" text-anchor="middle" fill="${NAVY}">flat unavailable</text>`);
+  const fp = viewPanel(spec, 'front');
+  const bp = viewPanel(spec, 'back');
 
-  const fp = viewPanel(bodiceF, skirtF, spec, 'front', pieces);
-  const bp = bodiceB ? viewPanel(bodiceB, skirtB, spec, 'back', pieces) : null;
-
-  const HEAD = 44, GAP = 70, PAD = 24;
-  const panelH = Math.max(fp.h, bp ? bp.h : 0);
-  const W = PAD + fp.w + GAP + (bp ? bp.w : 0) + PAD;
+  const HEAD = 40, GAP = 56, PAD = 24;
+  const panelH = Math.max(fp.h, bp.h);
+  const W = PAD + fp.w + GAP + bp.w + PAD;
   const H = HEAD + panelH + PAD;
   const head = (x, w, label) =>
-    `<text x="${(x + w / 2).toFixed(1)}" y="30" text-anchor="middle" ` +
-    `font-family="Helvetica,Arial,sans-serif" font-size="24" font-weight="600" ` +
+    `<text x="${n(x + w / 2)}" y="28" text-anchor="middle" ` +
+    `font-family="Helvetica,Arial,sans-serif" font-size="22" font-weight="600" ` +
     `letter-spacing="3" fill="${NAVY}">${label}</text>`;
 
   let inner = head(PAD, fp.w, 'FRONT');
-  inner += `<g transform="translate(${PAD} ${HEAD})">${fp.inner}</g>`;
-  if (bp) {
-    const bx = PAD + fp.w + GAP;
-    inner += head(bx, bp.w, 'BACK');
-    inner += `<g transform="translate(${bx} ${HEAD})">${bp.inner}</g>`;
-    const dx = (PAD + fp.w + GAP / 2).toFixed(1);
-    inner += `<line x1="${dx}" y1="${HEAD}" x2="${dx}" y2="${(HEAD + panelH).toFixed(1)}" ` +
-      `stroke="#e2e9f2" stroke-width="1"/>`;
-  }
+  inner += `<g transform="translate(${n(PAD)} ${HEAD})">${fp.inner}</g>`;
+  const bx = PAD + fp.w + GAP;
+  inner += head(bx, bp.w, 'BACK');
+  inner += `<g transform="translate(${n(bx)} ${HEAD})">${bp.inner}</g>`;
+  const dx = PAD + fp.w + GAP / 2;
+  inner += `<line x1="${n(dx)}" y1="${HEAD}" x2="${n(dx)}" y2="${n(HEAD + panelH)}" stroke="#e2e9f2" stroke-width="1"/>`;
+
   return svgDoc(W, H, inner);
 }
