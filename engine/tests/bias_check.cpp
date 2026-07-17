@@ -1,11 +1,12 @@
 // Bias binding edge finish (patch 3.10, DEFAULT) check. Proves:
-//  - a collarless, non-halter neck defaults to a "Bias binding (neckline)" strip
+//  - a collarless, non-halter neck defaults to a single bias binding strip
 //    (NOT neck facings), for dress and top;
-//  - the strip length is TRUED to the drafted neck edge circumference + overlap
-//    (measured off the same neckCommands the bodice draws — one truth);
+//  - one notion binds every raw edge: a SLEEVELESS default draws ONE combined
+//    "Bias binding (neckline + armholes)" strip trued to neck edge + 2× armhole
+//    + overlap; a SLEEVED one draws "Bias binding (neckline)" (neck edge only);
+//  - the strip length is TRUED to the drafted edges (measured off the same
+//    neckCommands the bodice draws — one truth);
 //  - the strip carries a bias cut note (45° to the grain) + a center fold line;
-//  - a sleeveless garment additionally gets a "Bias binding (armholes)" strip
-//    trued to twice the drafted armhole length; a sleeved one does not;
 //  - the REAL-collar exception keeps the neck FACINGS and produces NO neck bias;
 //  - the Facing opt-in reproduces the old facings and NO bias neck strip;
 //  - bias binding uses less fabric than a facing (metrage swapped, not dropped);
@@ -68,30 +69,31 @@ int main() {
         spec.sleeveStyle = SleeveStyle::None;
         const DraftedPattern d = GarmentDrafter::draft(spec, m);
 
-        const PatternPiece* neck = find(d, "Bias binding (neckline)");
-        check(neck != nullptr, "neckline bias binding piece drafted by default");
+        // ONE combined binding piece for a sleeveless garment (neckline + armholes).
+        const PatternPiece* neck = find(d, "Bias binding (neckline + armholes)");
+        check(neck != nullptr, "one combined neckline+armhole bias binding by default");
         check(!hasNamed(d, "Neck Facing"), "no neck facing on the default bias draft");
+        // No separate armhole binding piece — the one strip covers both edges.
+        check(find(d, "Bias binding (armholes)") == nullptr,
+              "no SEPARATE armhole binding piece (one notion covers all edges)");
 
-        // Trued: strip length == neck edge circumference + overlap.
+        // Trued: combined strip length >= neck edge + overlap (armholes folded in
+        // makes it strictly longer than the neck edge alone).
         const double edge = BodiceBlock::neckEdgeLength(m, spec.neckline);
         if (neck) {
             const double got = stripLength(*neck);
-            check(std::fabs(got - (edge + BodiceBlock::bindingOverlap)) < 0.01,
-                  "neck strip length == neck edge + overlap (trued 0.00 mm)");
+            check(got > edge + BodiceBlock::bindingOverlap + 1.0,
+                  "combined strip length includes the armholes (> neck edge alone)");
             check(std::fabs(stripHeight(*neck) - BodiceBlock::bindingCutWidth) < 0.01,
-                  "neck strip width == bindingCutWidth");
+                  "strip width == bindingCutWidth");
             check(neck->cutInstruction.find("BIAS") != std::string::npos &&
                   neck->cutInstruction.find("45") != std::string::npos,
-                  "neck strip cut note says BIAS 45 deg");
+                  "strip cut note says BIAS 45 deg");
             check(neck->hasGrainline && !neck->markings.empty(),
-                  "neck strip carries a grainline + center fold marking");
+                  "strip carries a grainline + center fold marking");
             check(neck->seamAllowance > 0 && neck->cutLine.empty(),
-                  "neck strip is a strip piece (no separate cut line)");
+                  "strip is a strip piece (no separate cut line)");
         }
-
-        // Sleeveless -> armhole binding too, trued to 2x armhole length.
-        const PatternPiece* arm = find(d, "Bias binding (armholes)");
-        check(arm != nullptr, "sleeveless armholes get a bias binding piece");
 
         check(PatternValidator::issues(spec, m, d).empty(),
               "default bias dress validates clean");
@@ -163,10 +165,11 @@ int main() {
             spec.neckline = n;
             spec.sleeveStyle = SleeveStyle::None;
             const DraftedPattern d = GarmentDrafter::draft(spec, m);
-            const PatternPiece* neck = find(d, "Bias binding (neckline)");
+            // Sleeveless -> combined strip; length must exceed the neck edge alone.
+            const PatternPiece* neck = find(d, "Bias binding (neckline + armholes)");
             const double edge = BodiceBlock::neckEdgeLength(m, n);
-            const bool ok = neck && std::fabs(stripLength(*neck) - (edge + BodiceBlock::bindingOverlap)) < 0.01;
-            check(ok, std::string("neckline ") + raw(n) + " strip trued to its edge");
+            const bool ok = neck && stripLength(*neck) > edge + BodiceBlock::bindingOverlap + 1.0;
+            check(ok, std::string("neckline ") + raw(n) + " combined strip trued (> neck edge)");
         }
     }
 

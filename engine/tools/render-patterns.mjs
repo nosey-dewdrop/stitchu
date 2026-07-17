@@ -104,7 +104,7 @@ export const PATTERNS = [
     patch: '3.1', drawnBy: 'the pointed shirt collar, the smocked chest yoke and the gathered puff sleeve head', photos: 1 },
 
   { slug: 'gathered-bust-empire-mini-dress', style: 'Gathered-bust empire mini dress', garment: 'dress',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
     tie: 2 /* backWaistBow */, gatherType: 2 /* shirred */, gatherZone: 1 /* bust */,
     patch: '1.9', drawnBy: 'the gathered bust panel under the empire seam and the back-waist bow', photos: 3 },

@@ -96,17 +96,25 @@ std::vector<PatternPiece> edgeFinishPieces(
     if (useFacing) {
         auto facings = BodiceBlock::neckFacings(m, spec.neckline, frontFacingCut, backFacingCut);
         out.insert(out.end(), facings.begin(), facings.end());
+        // A REAL collar (useFacing via collar, not the Facing opt-in) still binds
+        // the sleeveless armholes with bias — armhole facings aren't drafted.
+        // The explicit Facing opt-in keeps the pre-3.10 behavior (no armhole strip).
+        if (sleeveless && spec.edgeFinish != static_cast<int>(EdgeFinish::Facing)) {
+            out.push_back(BodiceBlock::biasBinding(armholeLength * 2, "armholes"));
+        }
     } else {
-        // Default: one bias strip binds the neckline edge (trued to the drafted
-        // neck edge circumference). A real collar would have set useFacing.
-        out.push_back(BodiceBlock::biasBinding(
-            BodiceBlock::neckEdgeLength(m, spec.neckline), "neckline"));
-    }
-    // Sleeveless armholes always finish with bias binding by default. With a
-    // facing neck this still binds the armhole (armhole facings aren't drafted).
-    // armholeLength is one arm (front + back half); both armholes = 2×.
-    if (sleeveless && spec.edgeFinish != static_cast<int>(EdgeFinish::Facing)) {
-        out.push_back(BodiceBlock::biasBinding(armholeLength * 2, "armholes"));
+        // Default finish: ONE bias binding piece serves every raw edge. A sewist
+        // cuts a single continuous length of bias strip and binds the neckline
+        // and — when sleeveless — both armholes from it (join end to end). No
+        // reason to list two separate binding "pieces" for one notion. Lengths
+        // are trued to the drafted edges (neck circumference + 2× armhole).
+        double edge = BodiceBlock::neckEdgeLength(m, spec.neckline);
+        const char* label = "neckline";
+        if (sleeveless) {
+            edge += armholeLength * 2;
+            label = "neckline + armholes";
+        }
+        out.push_back(BodiceBlock::biasBinding(edge, label));
     }
     return out;
 }

@@ -714,16 +714,17 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
     std::vector<ValidationIssue> issues;
 
     // Bias binding edge finish (patch 3.10, DEFAULT). A collarless, non-halter
-    // neck bound with edgeFinish == BiasBinding carries a "Bias binding
-    // (neckline)" strip trued to the neck edge circumference (+ overlap) and,
-    // when sleeveless, a "Bias binding (armholes)" strip — no neck facings.
+    // neck bound with edgeFinish == BiasBinding carries ONE bias binding strip —
+    // "Bias binding (neckline)" when sleeved, "Bias binding (neckline + armholes)"
+    // when sleeveless (one notion binds every raw edge). No neck facings.
     const bool realCollar = spec.collarType != static_cast<int>(CollarType::None);
     const bool biasNeck = spec.neckline != Neckline::Halter && !realCollar &&
                           spec.edgeFinish != static_cast<int>(EdgeFinish::Facing);
     if (biasNeck) {
         const PatternPiece* neckBias = nullptr;
         for (const auto& piece : draft.pieces) {
-            if (piece.name == "Bias binding (neckline)") neckBias = &piece;
+            if (piece.name == "Bias binding (neckline)" ||
+                piece.name == "Bias binding (neckline + armholes)") neckBias = &piece;
             if (piece.name.find("Neck Facing") != std::string::npos)
                 issues.push_back({"facing", piece.name, "neck facing drafted with a bias binding finish"});
         }

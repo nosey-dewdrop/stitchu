@@ -20,11 +20,21 @@ static void check(bool ok, const std::string& what) {
     if (!ok) failures++;
 }
 
-// Total drafted width of a pattern: the summed bounding-box width of its pieces.
-// A larger body grades to a wider pattern, so this must rise size to size.
+// Total drafted width of a pattern: the summed bounding-box width of its GRADED
+// panels. A larger body grades to a wider pattern, so this must rise size to
+// size. Strip/notion pieces (bias binding, ties, cords) are cut-to-length and
+// drawn at a capped segment width — their drawn width is NOT a grade dimension
+// (a long strip splits into more segments, shrinking one segment's width), so
+// they are excluded from the monotonic-growth measure.
 static double totalWidth(const DraftedPattern& d) {
     double w = 0.0;
-    for (const auto& piece : d.pieces) w += boundingBox(piece.commands).width;
+    for (const auto& piece : d.pieces) {
+        if (piece.name.find("Bias binding") != std::string::npos ||
+            piece.name.find("Tie") != std::string::npos ||
+            piece.name.find("Cord") != std::string::npos ||
+            piece.name.find("Binding") != std::string::npos) continue;
+        w += boundingBox(piece.commands).width;
+    }
     return w;
 }
 
