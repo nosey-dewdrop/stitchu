@@ -9,6 +9,9 @@
    file is loaded on every page, so a visited link always inherits its own
    unvisited colour instead of falling through to the UA purple. */
 a:visited { color: inherit; }
+/* The brandpatch is white-on-navy; "inherit" above resolves the visited state
+   against the parent (navy on navy = invisible logo). Pin the patch to white. */
+.brandpatch:visited { color: #fff; }
 
 /* Flow fixes — mirrored from theme-transitions.css so the ~24 style-library
    pages (which load THIS file but not theme-transitions.css) get them too.
