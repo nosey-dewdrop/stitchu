@@ -63,6 +63,12 @@ export function peplumValue(spec) {
   return PEPLUM_STYLE[spec && spec.peplum] || 0;
 }
 
+// PocketStyle enum (must match engine/src/pocket.hpp order). 0 = None.
+const POCKET_STYLE = { none: 0, patch: 1, sideSeam: 2 };
+export function pocketStyleValue(spec) {
+  return POCKET_STYLE[spec && spec.pocketStyle] || 0;
+}
+
 // PlacketStyle enum (must match engine/src/placket.hpp order). 0 = None.
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
 const PLACKET_STYLE = { none: 0, standard: 1, asymmetric: 2 };
@@ -117,6 +123,7 @@ export async function grade(spec, fromLabel, toLabel) {
     peplumValue(spec),      // R1.1: peplum flare
     placketStyleValue(spec), // R1.2: asymmetric placket
     edgeFinishValue(spec),  // patch 3.10: neckline/armhole edge finish
+    pocketStyleValue(spec),  // patch 3.12: patch / side-seam pocket
   );
   return JSON.parse(json);
 }
@@ -146,6 +153,7 @@ export async function draft(spec, measurements) {
     peplumValue(spec),           // R1.1: peplum flare
     placketStyleValue(spec),     // R1.2: asymmetric placket
     edgeFinishValue(spec),       // patch 3.10: neckline/armhole edge finish
+    pocketStyleValue(spec),      // patch 3.12: patch / side-seam pocket
   );
   return JSON.parse(json);
 }
