@@ -59,8 +59,11 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
   .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
-  .card .thumb{background:#fff;border-bottom:1px solid var(--bb-line);padding:14px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
-  .card .thumb img{max-width:100%;max-height:100%}
+  .card .thumb{background:#faf6ee;border-bottom:1px solid var(--bb-line);display:flex;align-items:stretch;justify-content:center}
+  .card .thumb img{width:100%;height:auto;display:block}
+  /* The listing card SVG is the tile (Etsy-shop feel). It already carries the
+     name + badges, so the body caption below stays minimal. */
+  .card.listing .thumb{padding:0;border-bottom:none}
   .card .body{padding:14px 16px}
   .card .nm{font-family:'Didot',Georgia,serif;font-size:17px;margin-bottom:5px;line-height:1.2}
   .card .ds{font-size:12px;color:#5b7089;line-height:1.45}
@@ -109,49 +112,49 @@
   <p class="counter"><a href="../patches.html" data-en="Follow The Number In The Patch Notes" data-tr="Sayıyı Yama Notlarında Takip Et">Follow The Number In The Patch Notes</a></p>
 
   <div class="grid9">
-  <a class="card" href="boat-neck-linen-shell.html">
-    <div class="thumb"><img src="svg/boat-neck-linen-shell.svg" alt="Boat neck linen shell top pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Boat neck linen shell top" data-tr="Boat neck linen shell top">Boat neck linen shell top</div>
+  <a class="card listing" href="boat-neck-linen-shell.html">
+    <div class="thumb"><img src="svg/boat-neck-linen-shell-card.svg" alt="Boat neck linen shell top sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A clean sleeveless shell with a wide boat neckline that sits high on the shoulder." data-tr="Omuzda yüksek oturan geniş kayık yakalı, sade kolsuz bir bluz.">A clean sleeveless shell with a wide boat neckline that sits high on the shoulder.</div></div>
   </a>
-  <a class="card" href="scoop-neck-tank-mini-dress.html">
-    <div class="thumb"><img src="svg/scoop-neck-tank-mini-dress.svg" alt="Scoop neck tank mini dress pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Scoop neck tank mini dress" data-tr="Scoop neck tank mini dress">Scoop neck tank mini dress</div>
+  <a class="card listing" href="scoop-neck-tank-mini-dress.html">
+    <div class="thumb"><img src="svg/scoop-neck-tank-mini-dress-card.svg" alt="Scoop neck tank mini dress sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A soft scoop-neck tank dress cut in knit jersey." data-tr="Örme jarseden kesilmiş yumuşak oval yakalı bir atlet elbise.">A soft scoop-neck tank dress cut in knit jersey.</div></div>
   </a>
-  <a class="card" href="boat-neck-button-down-top.html">
-    <div class="thumb"><img src="svg/boat-neck-button-down-top.svg" alt="Boat neck button-down top pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Boat neck button-down top" data-tr="Boat neck button-down top">Boat neck button-down top</div>
+  <a class="card listing" href="boat-neck-button-down-top.html">
+    <div class="thumb"><img src="svg/boat-neck-button-down-top-card.svg" alt="Boat neck button-down top sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A boat-neck top that buttons all the way down the front." data-tr="Önden boydan boya düğmeli, kayık yakalı bir üst.">A boat-neck top that buttons all the way down the front.</div></div>
   </a>
-  <a class="card" href="gingham-button-blouse.html">
-    <div class="thumb"><img src="svg/gingham-button-blouse.svg" alt="Sleeveless gingham button blouse pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Sleeveless gingham button blouse" data-tr="Sleeveless gingham button blouse">Sleeveless gingham button blouse</div>
+  <a class="card listing" href="gingham-button-blouse.html">
+    <div class="thumb"><img src="svg/gingham-button-blouse-card.svg" alt="Sleeveless gingham button blouse sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A sleeveless button blouse with a wide boat neckline and a full front placket." data-tr="Geniş kayık yakalı ve boydan boya ön patlı, kolsuz düğmeli bir bluz.">A sleeveless button blouse with a wide boat neckline and a full front placket.</div></div>
   </a>
-  <a class="card" href="mandarin-collar-fitted-blouse.html">
-    <div class="thumb"><img src="svg/mandarin-collar-fitted-blouse.svg" alt="Mandarin-collar fitted blouse pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Mandarin-collar fitted blouse" data-tr="Mandarin-collar fitted blouse">Mandarin-collar fitted blouse</div>
+  <a class="card listing" href="mandarin-collar-fitted-blouse.html">
+    <div class="thumb"><img src="svg/mandarin-collar-fitted-blouse-card.svg" alt="Mandarin-collar fitted blouse sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A fitted button blouse with short set-in sleeves and a low mandarin stand collar." data-tr="Kısa oturtma kollu ve alçak dik yakalı, oturmuş düğmeli bir bluz.">A fitted button blouse with short set-in sleeves and a low mandarin stand collar.</div></div>
   </a>
-  <a class="card" href="back-tie-shift-mini-dress.html">
-    <div class="thumb"><img src="svg/back-tie-shift-mini-dress.svg" alt="Back-tie shift mini dress pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Back-tie shift mini dress" data-tr="Back-tie shift mini dress">Back-tie shift mini dress</div>
+  <a class="card listing" href="back-tie-shift-mini-dress.html">
+    <div class="thumb"><img src="svg/back-tie-shift-mini-dress-card.svg" alt="Back-tie shift mini dress sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A sleeveless shift mini dress with a boat neckline and a fabric tie at the back waist." data-tr="Kayık yakalı, arka belinde kumaş bağı olan kolsuz salaş mini elbise.">A sleeveless shift mini dress with a boat neckline and a fabric tie at the back waist.</div></div>
   </a>
-  <a class="card" href="square-neck-back-tie-babydoll-top.html">
-    <div class="thumb"><img src="svg/square-neck-back-tie-babydoll-top.svg" alt="Square-neck back-tie babydoll top pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Square-neck back-tie babydoll top" data-tr="Square-neck back-tie babydoll top">Square-neck back-tie babydoll top</div>
+  <a class="card listing" href="square-neck-back-tie-babydoll-top.html">
+    <div class="thumb"><img src="svg/square-neck-back-tie-babydoll-top-card.svg" alt="Square-neck back-tie babydoll top sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A square-neck babydoll top with an empire seam and a fabric tie that closes at the back." data-tr="Empire dikişli ve arkadan bağlanan kumaş bağlı, kare yakalı bir babydoll üst.">A square-neck babydoll top with an empire seam and a fabric tie that closes at the back.</div></div>
   </a>
-  <a class="card" href="empire-waist-tie-back-dress.html">
-    <div class="thumb"><img src="svg/empire-waist-tie-back-dress.svg" alt="Empire-waist tie-back dress pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Empire-waist tie-back dress" data-tr="Empire-waist tie-back dress">Empire-waist tie-back dress</div>
+  <a class="card listing" href="empire-waist-tie-back-dress.html">
+    <div class="thumb"><img src="svg/empire-waist-tie-back-dress-card.svg" alt="Empire-waist tie-back dress sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="An empire-waist dress with a gathered bust panel and a fabric bow at the back waist." data-tr="Büzgülü büst panosu ve arka belinde kumaş fiyongu olan empire belli bir elbise.">An empire-waist dress with a gathered bust panel and a fabric bow at the back waist.</div></div>
   </a>
-  <a class="card" href="square-neck-drawstring-babydoll-dress.html">
-    <div class="thumb"><img src="svg/square-neck-drawstring-babydoll-dress.svg" alt="Square-neck drawstring babydoll dress pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="Square-neck drawstring babydoll dress" data-tr="Square-neck drawstring babydoll dress">Square-neck drawstring babydoll dress</div>
+  <a class="card listing" href="square-neck-drawstring-babydoll-dress.html">
+    <div class="thumb"><img src="svg/square-neck-drawstring-babydoll-dress-card.svg" alt="Square-neck drawstring babydoll dress sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="A square-neck babydoll dress gathered at the bust by a drawstring." data-tr="Büstten bir büzgü bağıyla toplanan, kare yakalı bir babydoll elbise.">A square-neck babydoll dress gathered at the bust by a drawstring.</div></div>
   </a>
   </div>

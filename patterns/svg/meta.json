@@ -15,6 +15,7 @@
     "photos": 4,
     "flat": "boat-neck-linen-shell-flat.svg",
     "onFigure": "boat-neck-linen-shell-figure.svg",
+    "card": "boat-neck-linen-shell-card.svg",
     "closure": null
   },
   {
@@ -35,6 +36,7 @@
     "photos": 1,
     "flat": "scoop-neck-tank-mini-dress-flat.svg",
     "onFigure": "scoop-neck-tank-mini-dress-figure.svg",
+    "card": "scoop-neck-tank-mini-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -53,6 +55,7 @@
     "photos": 4,
     "flat": "boat-neck-button-down-top-flat.svg",
     "onFigure": "boat-neck-button-down-top-figure.svg",
+    "card": "boat-neck-button-down-top-card.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -71,6 +74,7 @@
     "photos": 1,
     "flat": "gingham-button-blouse-flat.svg",
     "onFigure": "gingham-button-blouse-figure.svg",
+    "card": "gingham-button-blouse-card.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -92,6 +96,7 @@
     "photos": 1,
     "flat": "mandarin-collar-fitted-blouse-flat.svg",
     "onFigure": "mandarin-collar-fitted-blouse-figure.svg",
+    "card": "mandarin-collar-fitted-blouse-card.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -113,6 +118,7 @@
     "photos": 2,
     "flat": "back-tie-shift-mini-dress-flat.svg",
     "onFigure": "back-tie-shift-mini-dress-figure.svg",
+    "card": "back-tie-shift-mini-dress-card.svg",
     "closure": null
   },
   {
@@ -132,6 +138,7 @@
     "photos": 1,
     "flat": "square-neck-back-tie-babydoll-top-flat.svg",
     "onFigure": "square-neck-back-tie-babydoll-top-figure.svg",
+    "card": "square-neck-back-tie-babydoll-top-card.svg",
     "closure": null
   },
   {
@@ -154,6 +161,7 @@
     "photos": 3,
     "flat": "empire-waist-tie-back-dress-flat.svg",
     "onFigure": "empire-waist-tie-back-dress-figure.svg",
+    "card": "empire-waist-tie-back-dress-card.svg",
     "closure": null
   },
   {
@@ -176,6 +184,7 @@
     "photos": 1,
     "flat": "square-neck-drawstring-babydoll-dress-flat.svg",
     "onFigure": "square-neck-drawstring-babydoll-dress-figure.svg",
+    "card": "square-neck-drawstring-babydoll-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -201,6 +210,7 @@
     "photos": 1,
     "flat": "open-back-princess-mini-dress-flat.svg",
     "onFigure": "open-back-princess-mini-dress-figure.svg",
+    "card": "open-back-princess-mini-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -223,6 +233,7 @@
     "photos": 3,
     "flat": "open-back-tie-back-mini-dress-flat.svg",
     "onFigure": "open-back-tie-back-mini-dress-figure.svg",
+    "card": "open-back-tie-back-mini-dress-card.svg",
     "closure": null
   },
   {
@@ -247,6 +258,7 @@
     "photos": 2,
     "flat": "peter-pan-collar-puff-sleeve-babydoll-dress-flat.svg",
     "onFigure": "peter-pan-collar-puff-sleeve-babydoll-dress-figure.svg",
+    "card": "peter-pan-collar-puff-sleeve-babydoll-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -270,6 +282,7 @@
     "photos": 1,
     "flat": "ruffled-strap-milkmaid-babydoll-dress-flat.svg",
     "onFigure": "ruffled-strap-milkmaid-babydoll-dress-figure.svg",
+    "card": "ruffled-strap-milkmaid-babydoll-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -293,6 +306,7 @@
     "photos": 1,
     "flat": "shirt-collar-smocked-babydoll-top-flat.svg",
     "onFigure": "shirt-collar-smocked-babydoll-top-figure.svg",
+    "card": "shirt-collar-smocked-babydoll-top-card.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -315,6 +329,7 @@
     "photos": 3,
     "flat": "gathered-bust-empire-mini-dress-flat.svg",
     "onFigure": "gathered-bust-empire-mini-dress-figure.svg",
+    "card": "gathered-bust-empire-mini-dress-card.svg",
     "closure": null
   },
   {
@@ -336,6 +351,7 @@
     "photos": 2,
     "flat": "patch-pocket-shift-dress-flat.svg",
     "onFigure": "patch-pocket-shift-dress-figure.svg",
+    "card": "patch-pocket-shift-dress-card.svg",
     "closure": "invisible zipper (center back)"
   }
 ]
