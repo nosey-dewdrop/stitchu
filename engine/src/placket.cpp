@@ -132,6 +132,14 @@ bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
     for (auto& piece : pattern.pieces)
         if (piece.name == "Front Neck Facing") openCF(piece.cutInstruction);
 
+    // Record the opening on the front piece so the pattern's metadata reports an
+    // honest closure. The buttons/buttonholes drawn below ARE the closure that
+    // lets a head enter a non-stretch front — without this tag the front reads
+    // as having no way in even though the geometry opens.
+    front->closure = asymmetric
+        ? "button placket (off-center front)"
+        : "button placket (center front)";
+
     const double firstY = neckY + topFromNeck;
     const double lastY = cfBottom - hemClearance;
 
