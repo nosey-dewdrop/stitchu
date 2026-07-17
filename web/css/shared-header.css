@@ -5,6 +5,11 @@
    from page to page. Active page marks its own link with .sh-active. */
 :root { --sh-navy:#1f3a5f; --sh-deep:#3f74a8; }
 
+/* Kill the browser-default purple/violet visited-link colour sitewide. This
+   file is loaded on every page, so a visited link always inherits its own
+   unvisited colour instead of falling through to the UA purple. */
+a:visited { color: inherit; }
+
 /* Flow fixes — mirrored from theme-transitions.css so the ~24 style-library
    pages (which load THIS file but not theme-transitions.css) get them too.
    Both files carry the identical rules; double-loading on main pages is inert.

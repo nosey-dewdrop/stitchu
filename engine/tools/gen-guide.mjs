@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = join(here, '..', '..', 'web', 'guide');
-const V = 'v72'; // shared asset cache stamp (bump on deploy with the rest)
+const V = 'v80'; // shared asset cache stamp (bump on deploy with the rest)
 
 // The 9-phase construction order (mirrors knowledge/sewing-guide.md section 2).
 const ORDER = [
@@ -167,7 +167,11 @@ function head(p) {
 <meta property="og:title" content="${esc(p.title)} · stitchu">
 <meta property="og:description" content="${desc}">
 <meta property="og:url" content="${url}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="${esc(p.title)} · stitchu">
 <meta name="twitter:description" content="${desc}">
 <link rel="stylesheet" href="../css/theme-transitions.css?${V}">
@@ -213,11 +217,11 @@ function head(p) {
 <header class="sh-header">
   <a class="brandpatch" href="../index.html">stitchu</a>
   <nav class="sh-nav">
-    <a href="../create.html" data-en="create" data-tr="çiz">create</a>
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="index.html" class="sh-active" data-en="guide" data-tr="rehber">guide</a>
     <a href="../styles/index.html" data-en="styles" data-tr="stiller">styles</a>
-    <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>

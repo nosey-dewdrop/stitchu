@@ -44,11 +44,11 @@ function normalise(header) {
     // collapse the patterns link href to one canonical token: from root it is
     // "patterns/index.html", from a subdir it is "index.html"
     .replace(/href="patterns\/index\.html"/g, 'href="__PATTERNS__"')
-    .replace(/(<a href=")index\.html(" data-en="patterns")/g, '$1__PATTERNS__$2')
+    .replace(/(<a href=")index\.html(" data-en="Patterns")/g, '$1__PATTERNS__$2')
     // same for the blog link: "blog/index.html" from root/subdir vs "index.html"
     // (after the active-marker strip) on the blog page itself.
     .replace(/href="blog\/index\.html"/g, 'href="__BLOG__"')
-    .replace(/(<a href=")index\.html(" data-en="blog")/g, '$1__BLOG__$2')
+    .replace(/(<a href=")index\.html(" data-en="Blog")/g, '$1__BLOG__$2')
     // brand link: "index.html" (root) vs "../index.html"->"index.html" (subdir),
     // already aligned by the prefix strip above.
     .trim();

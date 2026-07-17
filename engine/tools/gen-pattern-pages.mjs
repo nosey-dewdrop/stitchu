@@ -14,7 +14,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '68';
+const V = process.env.V || '80';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
 // Phase 2: the printable PDF pack, one set of three per pattern (gen-pattern-pdfs.mjs).
@@ -200,12 +200,12 @@ const bilingual = (en, tr, tag = 'span') => `<${tag} data-en="${esc(en)}" data-t
 const HEADER = `<header class="sh-header">
   <a class="brandpatch" href="../index.html">stitchu</a>
   <nav class="sh-nav">
-    <a href="../create.html" data-en="create" data-tr="çiz">create</a>
-    <a href="../closet.html" data-en="closet" data-tr="dolap">closet</a>
-    <a href="index.html" class="sh-active" data-en="patterns" data-tr="kalıplar">patterns</a>
-    <a href="../blog/index.html" data-en="blog" data-tr="günlük">blog</a>
-    <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="../blog/index.html" data-en="Blog" data-tr="Günlük">Blog</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
@@ -213,7 +213,7 @@ const HEADER = `<header class="sh-header">
 
 const FOOTER = `<footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="../index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> · <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
+  <span><a href="../index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
 </footer>`;
 
 const STYLE = `<style>
@@ -277,7 +277,11 @@ function head(title, desc, canonical, ldjson) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
+<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <script type="application/ld+json">${JSON.stringify(ldjson)}</script>
@@ -340,7 +344,7 @@ for (const m of meta) {
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
-  <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="patterns" data-tr="kalıplar">patterns</a> / ${esc(m.style)}</p>
+  <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
 

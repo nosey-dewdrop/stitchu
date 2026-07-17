@@ -2,7 +2,7 @@
 // Every fact below is sourced from engine/FORMULAS.md and web/js/create.js —
 // real drafted geometry only, no invented content. Regenerate with:
 //   node engine/tools/gen-style-pages.mjs
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -544,11 +544,11 @@ const CSS = `
 const header = `<header class="sh-header">
   <a class="brandpatch" href="../index.html">stitchu</a>
   <nav class="sh-nav">
-    <a href="../create.html" data-en="create" data-tr="çiz">create</a>
-    <a href="../closet.html" data-en="closet" data-tr="dolap">closet</a>
-    <a href="index.html" class="sh-active" data-en="patterns" data-tr="kalıplar">patterns</a>
-    <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
@@ -792,12 +792,16 @@ ${ICON}
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=67">
-<link rel="stylesheet" href="../css/shared-header.css?v=67">
-<link rel="stylesheet" href="../css/shared-button.css?v=67">`;
+<link rel="stylesheet" href="../css/theme-transitions.css?v=80">
+<link rel="stylesheet" href="../css/shared-header.css?v=80">
+<link rel="stylesheet" href="../css/shared-button.css?v=80">`;
 }
 
 function breadcrumbLd(name, url) {
@@ -888,7 +892,7 @@ ${header}
   ${also}
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=80"></script>
 </body>
 </html>
 `;
@@ -929,7 +933,7 @@ ${sections}
   <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements, free</a>
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=67"></script>
+<script src="../js/shared-header.js?v=80"></script>
 </body>
 </html>
 `;
@@ -948,10 +952,18 @@ try {
   const meta = JSON.parse(readFileSync(join(ROOT, 'web', 'patterns', 'svg', 'meta.json'), 'utf8'));
   patternPages = ['patterns/', ...meta.map((m) => `patterns/${m.slug}.html`)];
 } catch { /* gallery not built yet */ }
+let guidePages = [];
+try {
+  guidePages = ['guide/', ...readdirSync(join(ROOT, 'web', 'guide'))
+    .filter((f) => f.endsWith('.html') && f !== 'index.html')
+    .map((f) => `guide/${f}`)];
+} catch { /* guide not built yet */ }
 const pages = [
-  '', 'create.html', 'benchmark.html', 'api.html', 'privacy.html', 'closet.html',
+  '', 'create.html', 'patches.html', 'benchmark.html', 'api.html', 'privacy.html',
+  'closet.html', 'showcase.html', 'collection-60s70s.html', 'blog/',
   ...patternPages,
   'styles/', ...STYLES.map((s) => `styles/${s.slug}.html`),
+  ...guidePages,
 ];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

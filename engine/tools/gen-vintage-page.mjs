@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const here = dirname(fileURLToPath(import.meta.url));
 const VDIR = join(here, '../../web/patterns/vintage6070');
 const meta = JSON.parse(readFileSync(join(VDIR, 'meta.json'), 'utf8'));
-const V = (process.argv[2] || 'v=74').replace(/^\?/, '');
+const V = (process.argv[2] || 'v=80').replace(/^\?/, '');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -61,7 +61,11 @@ const html = `<!DOCTYPE html>
 <meta property="og:title" content="Sixties seventies collection · stitchu">
 <meta property="og:description" content="Twelve 1960s and 1970s silhouettes, every pattern piece drafted by the engine.">
 <meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/collection-60s70s.html">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="Sixties seventies collection · stitchu">
 <meta name="twitter:description" content="Twelve 1960s and 1970s silhouettes, drafted by the engine.">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
@@ -104,11 +108,11 @@ const html = `<!DOCTYPE html>
 <header class="sh-header">
   <a class="brandpatch" href="index.html">stitchu</a>
   <nav class="sh-nav">
-    <a href="create.html" data-en="create" data-tr="çiz">create</a>
-    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
-    <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
-    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="patterns/index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
@@ -123,7 +127,7 @@ ${looks}
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="home" data-tr="ana sayfa">home</a> · <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a> · <a href="showcase.html" data-en="showcase" data-tr="vitrin">showcase</a> · <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · @nosey-dewdrop · <span style="opacity:.55">${V.replace('v=', 'v')}</span></span>
+  <span><a href="index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="patterns/index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="showcase.html" data-en="Showcase" data-tr="Vitrin">Showcase</a> · <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">${V.replace('v=', 'v')}</span></span>
 </footer>
 
 <script src="js/shared-header.js?${V}"></script>
