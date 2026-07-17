@@ -25,8 +25,7 @@ const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
   'patches.html', 'showcase.html', 'collection-60s70s.html', 'api.html', 'privacy.html'];
 const stylePages = readdirSync(join(WEB, 'styles')).filter((f) => f.endsWith('.html')).map((f) => `styles/${f}`);
 const patternPages = readdirSync(join(WEB, 'patterns')).filter((f) => f.endsWith('.html')).map((f) => `patterns/${f}`);
-const blogPages = readdirSync(join(WEB, 'blog')).filter((f) => f.endsWith('.html')).map((f) => `blog/${f}`);
-const pages = [...mainPages, ...stylePages, ...patternPages, ...blogPages];
+const pages = [...mainPages, ...stylePages, ...patternPages];
 
 function extractHeader(html, rel) {
   const m = html.match(/<header class="sh-header">[\s\S]*?<\/header>/);
@@ -45,10 +44,6 @@ function normalise(header) {
     // "patterns/index.html", from a subdir it is "index.html"
     .replace(/href="patterns\/index\.html"/g, 'href="__PATTERNS__"')
     .replace(/(<a href=")index\.html(" data-en="Patterns")/g, '$1__PATTERNS__$2')
-    // same for the blog link: "blog/index.html" from root/subdir vs "index.html"
-    // (after the active-marker strip) on the blog page itself.
-    .replace(/href="blog\/index\.html"/g, 'href="__BLOG__"')
-    .replace(/(<a href=")index\.html(" data-en="Blog")/g, '$1__BLOG__$2')
     // brand link: "index.html" (root) vs "../index.html"->"index.html" (subdir),
     // already aligned by the prefix strip above.
     .trim();
@@ -72,7 +67,7 @@ for (const rel of pages) {
 
 const variants = Object.keys(shared);
 if (variants.length === 1 && fail === 0) {
-  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles + ${patternPages.length} patterns + ${blogPages.length} blog).`);
+  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles + ${patternPages.length} patterns).`);
   process.exit(0);
 }
 

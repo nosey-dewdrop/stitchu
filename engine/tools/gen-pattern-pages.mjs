@@ -5,7 +5,7 @@
 // Writing rules (Damla): no em dash; sentence-headings get a full stop; question
 // headings a question mark; "i" not "we".
 //   run:  node engine/tools/render-patterns.mjs && node engine/tools/gen-pattern-pages.mjs
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -14,9 +14,12 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '80';
+const V = process.env.V || '82';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
+// The sixties/seventies looks are folded into this same Patterns page (Damla:
+// "60 70 de oraya koy"), so the vintage collection is not a separate island.
+const vintageMeta = JSON.parse(readFileSync(join(OUT, 'vintage6070', 'meta.json'), 'utf8'));
 // Phase 2: the printable PDF pack, one set of three per pattern (gen-pattern-pdfs.mjs).
 // File sizes shown to the visitor come straight from this manifest, never guessed.
 const pdfManifest = JSON.parse(readFileSync(join(OUT, 'pdf', 'pdf-manifest.json'), 'utf8'));
@@ -203,7 +206,6 @@ const HEADER = `<header class="sh-header">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
     <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
-    <a href="../blog/index.html" data-en="Blog" data-tr="Günlük">Blog</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
@@ -257,6 +259,22 @@ const STYLE = `<style>
   .card .ds{font-size:12px;color:#5b7089;line-height:1.45}
   .counter{font-size:14px;color:var(--ink);max-width:60ch;margin:2px 0 4px}
   .counter b{color:var(--navy)}
+  /* 3x3 grid, nine patterns per page. auto-fill keeps it responsive but caps at
+     three columns so the page always reads as the old 3x3 layout on desktop. */
+  .grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:22px 0 6px}
+  @media (max-width:760px){ .grid9{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .grid9{grid-template-columns:1fr} }
+  .sec{margin:52px 0 0;padding-top:8px}
+  h2.sec-h{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:26px;font-weight:400;margin:0 0 8px;color:var(--navy)}
+  .sec-line{font-size:15px;color:var(--ink);max-width:66ch;margin-bottom:8px}
+  .sec-link{font-size:13.5px;letter-spacing:.3px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .card .era{font-size:11px;letter-spacing:.4px;color:#5b7089;margin-top:6px}
+  .card .era .period{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .pager{display:flex;align-items:center;gap:14px;margin:34px 0 4px;font-size:13px;letter-spacing:.3px}
+  .pager a,.pager span{color:var(--navy);text-decoration:none}
+  .pager a{border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .pager .cur{font-variant-numeric:tabular-nums;color:#5b7089}
+  .pager .off{opacity:.4}
   footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
   footer a{color:var(--navy);text-decoration:none}
   body::before{content:"";display:block;height:12px;background:repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),#fff;}
@@ -294,7 +312,12 @@ ${STYLE}
 }
 
 // ---- per-pattern pages ----
-const totalPhotos = meta.reduce((a, m) => a + (m.photos || 1), 0);
+// The public benchmark number (photos that draft to a full pattern) is the
+// canonical counter shown site-wide (index hero, benchmark page). It is NOT the
+// count of curated detail pages, so it stays 37 independent of dedup. Source:
+// the live benchmark reclassify (BENCHMARK-58 / patch history).
+const FULL_PATTERN_COUNT = 37;
+const totalPhotos = FULL_PATTERN_COUNT;
 for (const m of meta) {
   const c = COPY[m.slug];
   if (!c) { console.log('NO COPY for', m.slug); continue; }
@@ -376,55 +399,128 @@ ${FOOTER}
   writeFileSync(join(OUT, `${m.slug}.html`), html);
 }
 
-// ---- index (pattern library) ----
-{
-  const canonical = `${BASE}/patterns/`;
-  const title = 'Pattern library · stitchu';
-  const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} real product styles, drawn by the engine and published, with the honest patch that made each one possible.`;
-  const cards = meta.map((m) => {
-    const c = COPY[m.slug];
-    const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
-    const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
-    return `<a class="card" href="${m.slug}.html">
+// ---- Patterns page (the single Patterns/journal home, paginated 9 per page) ----
+// Damla: the pattern page IS the blog. There is no separate /blog/. Nine cards
+// per page in a 3x3 grid, paginated (page 1 = index.html, page 2 = page-2.html,
+// ...). The sixties/seventies looks are folded onto page 1 as their own section.
+const PER_PAGE = 9;
+
+// Title Case for headings/labels/nav (Damla design rule). Body sentences stay
+// sentence case; this only touches headings and the vintage house line.
+const MINOR = new Set(['a', 'an', 'and', 'the', 'of', 'to', 'in', 'on', 'with', 'for']);
+function titleCase(s) {
+  return s.split(' ').map((w, i) => w.split('-').map((seg) => {
+    const low = seg.toLowerCase();
+    if (i !== 0 && MINOR.has(low)) return low;
+    return seg.charAt(0).toUpperCase() + seg.slice(1);
+  }).join('-')).join(' ');
+}
+
+function patternCard(m) {
+  const c = COPY[m.slug];
+  const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
+  const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
+  return `<a class="card" href="${m.slug}.html">
     <div class="thumb"><img src="svg/${m.slug}.svg" alt="${esc(m.style)} pattern" loading="lazy"></div>
     <div class="body"><div class="nm" data-en="${esc(m.style)}" data-tr="${esc(m.style)}">${esc(m.style)}</div>
     <div class="ds" data-en="${esc(short)}" data-tr="${esc(shortTr)}">${esc(short)}</div></div>
   </a>`;
-  }).join('\n  ');
+}
+
+// Vintage cards link to the collection page anchors (the 60s/70s looks live on
+// collection-60s70s.html, no per-look detail page). Thumbnails are the same
+// engine SVGs, served from patterns/vintage6070/.
+function vintageCard(m) {
+  return `<a class="card" href="../collection-60s70s.html#${m.slug}">
+    <div class="thumb"><img src="vintage6070/${m.slug}.svg" alt="${esc(m.en)} pattern" loading="lazy"></div>
+    <div class="body"><div class="nm" data-en="${esc(m.en)}" data-tr="${esc(m.tr)}">${esc(m.en)}</div>
+    <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p></div>
+  </a>`;
+}
+
+const pageCount = Math.max(1, Math.ceil(meta.length / PER_PAGE));
+
+function pager(cur) {
+  if (pageCount <= 1) return '';
+  const links = [];
+  links.push(cur > 1
+    ? `<a href="${cur === 2 ? 'index.html' : `page-${cur - 1}.html`}" data-en="Previous" data-tr="Önceki">Previous</a>`
+    : `<span class="off" data-en="Previous" data-tr="Önceki">Previous</span>`);
+  for (let p = 1; p <= pageCount; p++) {
+    const href = p === 1 ? 'index.html' : `page-${p}.html`;
+    links.push(p === cur ? `<span class="cur">${p}</span>` : `<a href="${href}">${p}</a>`);
+  }
+  links.push(cur < pageCount
+    ? `<a href="${cur === pageCount ? '' : `page-${cur + 1}.html`}" data-en="Next" data-tr="Sonraki">Next</a>`
+    : `<span class="off" data-en="Next" data-tr="Sonraki">Next</span>`);
+  return `<nav class="pager">${links.join('\n    ')}</nav>`;
+}
+
+for (let page = 1; page <= pageCount; page++) {
+  const slice = meta.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const isFirst = page === 1;
+  const file = isFirst ? 'index.html' : `page-${page}.html`;
+  const canonical = isFirst ? `${BASE}/patterns/` : `${BASE}/patterns/${file}`;
+  const title = isFirst ? 'Patterns · stitchu' : `Patterns, Page ${page} · stitchu`;
+  const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} distinct product styles plus the sixties seventies collection, each drawn by the engine and published, with the honest patch that made it possible.`;
+  const cards = slice.map(patternCard).join('\n  ');
 
   const ldjson = {
     '@context': 'https://schema.org', '@type': 'CollectionPage',
     name: title, description: desc, url: canonical, inLanguage: 'en',
     mainEntity: {
-      '@type': 'ItemList', numberOfItems: meta.length,
-      itemListElement: meta.map((m, i) => ({
-        '@type': 'ListItem', position: i + 1, name: m.style,
+      '@type': 'ItemList', numberOfItems: slice.length,
+      itemListElement: slice.map((m, i) => ({
+        '@type': 'ListItem', position: (page - 1) * PER_PAGE + i + 1, name: m.style,
         url: `${BASE}/patterns/${m.slug}.html`,
       })),
     },
   };
 
+  // The sixties/seventies section is folded onto page 1 only.
+  const vintageSection = isFirst ? `
+  <section class="sec">
+    <h2 class="sec-h" data-en="The Sixties Seventies Collection." data-tr="Altmışlar Yetmişler Koleksiyonu.">The Sixties Seventies Collection.</h2>
+    <p class="sec-line" data-en="The vintage silhouettes, sixteen looks read from museum photographs of real 1960s and 1970s dresses and skirts, each drafted to a full pattern piece by piece." data-tr="Vintage siluetler, 1960 ve 1970'lerin gerçek elbise ve eteklerinin müze fotoğraflarından okunan on altı görünüm, her biri parça parça tam kalıba çizildi.">The vintage silhouettes, sixteen looks read from museum photographs of real 1960s and 1970s dresses and skirts, each drafted to a full pattern piece by piece.</p>
+    <div class="grid9">
+  ${vintageMeta.map(vintageCard).join('\n  ')}
+    </div>
+    <p class="counter" style="margin-top:14px"><a class="sec-link" href="../collection-60s70s.html" data-en="Open The Full Sixties Seventies Collection" data-tr="Altmışlar Yetmişler Koleksiyonunun Tamamını Aç">Open The Full Sixties Seventies Collection</a></p>
+  </section>
+` : '';
+
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
-  <p class="crumbs"><a href="../index.html">stitchu</a> / <span data-en="patterns" data-tr="kalıplar">patterns</span></p>
-  <h1 data-en="The pattern library." data-tr="Kalıp kütüphanesi.">The pattern library.</h1>
-  <p class="lead" data-en="Every one of these is a real product style the engine read from a photo and drafted into a complete, sewable pattern. The drawings below are the engine's own output, nothing traced or mocked." data-tr="Bunların her biri, motorun bir fotoğraftan okuyup tam, dikilebilir bir kalıba çizdiği gerçek bir ürün modeli. Aşağıdaki çizimler motorun kendi çıktısı, hiçbiri kopyalanmış ya da taklit değil.">Every one of these is a real product style the engine read from a photo and drafted into a complete, sewable pattern. The drawings below are the engine's own output, nothing traced or mocked.</p>
-  <p class="counter" data-en="${totalPhotos} of 54 real product photos turn into a full pattern, and counting." data-tr="54 gerçek ürün fotoğrafının ${totalPhotos}’i tam kalıba dönüşüyor, ve artıyor.">${totalPhotos} of 54 real product photos turn into a full pattern, and counting.</p>
-  <p class="counter"><a href="../patches.html" data-en="Follow the number in the patch notes →" data-tr="Sayıyı yama notlarında takip et →">Follow the number in the patch notes →</a></p>
+  <p class="crumbs"><a href="../index.html">stitchu</a> / <span data-en="patterns" data-tr="kalıplar">patterns</span>${isFirst ? '' : ` / <span data-en="page ${page}" data-tr="sayfa ${page}">page ${page}</span>`}</p>
+  <h1 data-en="Patterns." data-tr="Kalıplar.">Patterns.</h1>
+  <p class="lead" data-en="This is where the engine's work is collected as something you can read. Every pattern below was drafted end to end from a single photo, and every drawing is the engine's own output, nothing traced or mocked." data-tr="Burası, motorun işinin okunabilir bir şeye dönüştüğü yer. Aşağıdaki her kalıp tek bir fotoğraftan baştan sona çizildi ve her çizim motorun kendi çıktısı, hiçbiri kopyalanmış ya da taklit değil.">This is where the engine's work is collected as something you can read. Every pattern below was drafted end to end from a single photo, and every drawing is the engine's own output, nothing traced or mocked.</p>
+  <p class="counter" data-en="${totalPhotos} of 54 real product photos turn into a full pattern, and counting." data-tr="54 gerçek ürün fotoğrafının ${totalPhotos}'i tam kalıba dönüşüyor, ve artıyor.">${totalPhotos} of 54 real product photos turn into a full pattern, and counting.</p>
+  <p class="counter"><a href="../patches.html" data-en="Follow The Number In The Patch Notes" data-tr="Sayıyı Yama Notlarında Takip Et">Follow The Number In The Patch Notes</a></p>
 
-  <div class="grid">
+  <div class="grid9">
   ${cards}
   </div>
-
-  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft one to your measurements, free." data-tr="Birini ölçülerine göre çiz, ücretsiz.">Draft one to your measurements, free.</a>
+  ${pager(page)}
+  ${vintageSection}
+  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft One To Your Measurements, Free." data-tr="Birini Ölçülerine Göre Çiz, Ücretsiz." style="margin-top:36px">Draft One To Your Measurements, Free.</a>
 </div>
 ${FOOTER}
 <script src="../js/shared-header.js?v=${V}"></script>
 </body>
 </html>`;
-  writeFileSync(join(OUT, 'index.html'), html);
+  writeFileSync(join(OUT, file), html);
 }
 
-console.log(`generated ${meta.length} pattern pages + index -> ${OUT}`);
+// Remove any stale page-N.html that a previous (larger) catalog left behind, so
+// a shrunken catalog never leaves an orphan page live.
+{
+  const existing = readdirSync(OUT).filter((f) => /^page-\d+\.html$/.test(f));
+  for (const f of existing) {
+    const n = Number(f.match(/^page-(\d+)\.html$/)[1]);
+    if (n > pageCount) { rmSync(join(OUT, f)); console.log(`removed stale ${f}`); }
+  }
+}
+
+console.log(`generated ${meta.length} pattern pages + ${pageCount} listing page(s) -> ${OUT}`);
 console.log(`total photos counter: ${totalPhotos} of 54`);

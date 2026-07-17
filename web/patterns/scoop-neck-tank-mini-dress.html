@@ -20,9 +20,9 @@
 <meta name="twitter:title" content="Scoop neck tank mini dress sewing pattern · stitchu">
 <meta name="twitter:description" content="A soft scoop-neck tank dress cut in knit jersey. The stretch does the fitting, so it is a pull-on with a straight mini skirt and no closure.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Scoop neck tank mini dress sewing pattern · stitchu","description":"A soft scoop-neck tank dress cut in knit jersey. The stretch does the fitting, so it is a pull-on with a straight mini skirt and no closure.","image":"https://nosey-dewdrop.github.io/stitchu/patterns/svg/scoop-neck-tank-mini-dress.svg","author":{"@type":"Organization","name":"stitchu"},"publisher":{"@type":"Organization","name":"stitchu"},"datePublished":"2026-07-17","mainEntityOfPage":"https://nosey-dewdrop.github.io/stitchu/patterns/scoop-neck-tank-mini-dress.html","articleSection":"Pattern library","inLanguage":"en","about":{"@type":"Thing","name":"Scoop neck tank mini dress"},"isBasedOn":"https://nosey-dewdrop.github.io/stitchu/benchmark.html"}</script>
-<link rel="stylesheet" href="../css/shared-header.css?v=80">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=80">
-<link rel="stylesheet" href="../css/shared-button.css?v=80">
+<link rel="stylesheet" href="../css/shared-header.css?v=82">
+<link rel="stylesheet" href="../css/theme-transitions.css?v=82">
+<link rel="stylesheet" href="../css/shared-button.css?v=82">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -64,6 +64,22 @@
   .card .ds{font-size:12px;color:#5b7089;line-height:1.45}
   .counter{font-size:14px;color:var(--ink);max-width:60ch;margin:2px 0 4px}
   .counter b{color:var(--navy)}
+  /* 3x3 grid, nine patterns per page. auto-fill keeps it responsive but caps at
+     three columns so the page always reads as the old 3x3 layout on desktop. */
+  .grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:22px 0 6px}
+  @media (max-width:760px){ .grid9{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .grid9{grid-template-columns:1fr} }
+  .sec{margin:52px 0 0;padding-top:8px}
+  h2.sec-h{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:26px;font-weight:400;margin:0 0 8px;color:var(--navy)}
+  .sec-line{font-size:15px;color:var(--ink);max-width:66ch;margin-bottom:8px}
+  .sec-link{font-size:13.5px;letter-spacing:.3px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .card .era{font-size:11px;letter-spacing:.4px;color:#5b7089;margin-top:6px}
+  .card .era .period{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .pager{display:flex;align-items:center;gap:14px;margin:34px 0 4px;font-size:13px;letter-spacing:.3px}
+  .pager a,.pager span{color:var(--navy);text-decoration:none}
+  .pager a{border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .pager .cur{font-variant-numeric:tabular-nums;color:#5b7089}
+  .pager .off{opacity:.4}
   footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
   footer a{color:var(--navy);text-decoration:none}
   body::before{content:"";display:block;height:12px;background:repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),#fff;}
@@ -76,7 +92,6 @@
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
     <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
-    <a href="../blog/index.html" data-en="Blog" data-tr="Günlük">Blog</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
@@ -124,8 +139,8 @@
 </div>
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="../index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v80</span></span>
+  <span><a href="../index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v82</span></span>
 </footer>
-<script src="../js/shared-header.js?v=80"></script>
+<script src="../js/shared-header.js?v=82"></script>
 </body>
 </html>

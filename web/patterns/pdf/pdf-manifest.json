@@ -60,16 +60,6 @@
     "cols": 4
   },
   {
-    "slug": "square-neck-back-tie-babydoll-top",
-    "pieces": 5,
-    "a4pages": 11,
-    "a4bytes": 38941,
-    "a0bytes": 4426,
-    "guidebytes": 4085,
-    "guideSteps": 11,
-    "cols": 3
-  },
-  {
     "slug": "empire-waist-tie-back-dress",
     "pieces": 8,
     "a4pages": 28,
@@ -98,16 +88,6 @@
     "guidebytes": 6915,
     "guideSteps": 20,
     "cols": 5
-  },
-  {
-    "slug": "open-back-tie-back-mini-dress",
-    "pieces": 8,
-    "a4pages": 20,
-    "a4bytes": 65608,
-    "a0bytes": 7066,
-    "guidebytes": 6613,
-    "guideSteps": 19,
-    "cols": 3
   },
   {
     "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",

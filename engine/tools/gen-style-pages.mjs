@@ -799,9 +799,9 @@ ${ICON}
 <meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=80">
-<link rel="stylesheet" href="../css/shared-header.css?v=80">
-<link rel="stylesheet" href="../css/shared-button.css?v=80">`;
+<link rel="stylesheet" href="../css/theme-transitions.css?v=82">
+<link rel="stylesheet" href="../css/shared-header.css?v=82">
+<link rel="stylesheet" href="../css/shared-button.css?v=82">`;
 }
 
 function breadcrumbLd(name, url) {
@@ -892,7 +892,7 @@ ${header}
   ${also}
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=80"></script>
+<script src="../js/shared-header.js?v=82"></script>
 </body>
 </html>
 `;
@@ -933,7 +933,7 @@ ${sections}
   <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements, free</a>
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=80"></script>
+<script src="../js/shared-header.js?v=82"></script>
 </body>
 </html>
 `;
@@ -950,7 +950,11 @@ const today = new Date().toISOString().slice(0, 10);
 let patternPages = [];
 try {
   const meta = JSON.parse(readFileSync(join(ROOT, 'web', 'patterns', 'svg', 'meta.json'), 'utf8'));
-  patternPages = ['patterns/', ...meta.map((m) => `patterns/${m.slug}.html`)];
+  // patterns/ listing is paginated (9 per page): index + page-N.html for the rest.
+  const listingPages = Math.max(1, Math.ceil(meta.length / 9));
+  const listing = ['patterns/'];
+  for (let p = 2; p <= listingPages; p++) listing.push(`patterns/page-${p}.html`);
+  patternPages = [...listing, ...meta.map((m) => `patterns/${m.slug}.html`)];
 } catch { /* gallery not built yet */ }
 let guidePages = [];
 try {
@@ -960,7 +964,7 @@ try {
 } catch { /* guide not built yet */ }
 const pages = [
   '', 'create.html', 'patches.html', 'benchmark.html', 'api.html', 'privacy.html',
-  'closet.html', 'showcase.html', 'collection-60s70s.html', 'blog/',
+  'closet.html', 'showcase.html', 'collection-60s70s.html',
   ...patternPages,
   'styles/', ...STYLES.map((s) => `styles/${s.slug}.html`),
   ...guidePages,
