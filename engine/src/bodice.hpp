@@ -137,6 +137,11 @@ inline constexpr double armholeHollowShareBack  = 0.24;
 // the side seam so the underarm is a smooth turn, not a corner).
 inline constexpr double armholeUpperDropShare = 0.30; // cp1 y, below shoulder
 inline constexpr double armholeLowerDropShare = 0.78; // cp2 y, above underarm
+// How far cp1 reaches out along the SHOULDER-SEAM tangent before the hollow
+// pulls it back in. This is what makes the scye leave the shoulder tip tangent-
+// continuous with the shoulder seam (kills the old ~77 deg V-kink / spike the
+// render-audit flagged). A fraction of the shoulder->underarm chord.
+inline constexpr double armholeShoulderTangentShare = 0.26;
 // Sleeveless cut-in: shoulder tip moved in, underarm raised, so a bare-shoulder
 // armhole sits close to the body instead of gaping.
 inline constexpr double sleevelessShoulderCutInMM = 9.0;

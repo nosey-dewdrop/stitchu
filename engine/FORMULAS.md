@@ -73,9 +73,19 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
   raised 8 mm above the waist line
 - darts: legs ON the drafted waist curve (project x to curve y), apex above legs;
   back dart length = backLength - armholeY + 40; front = frontLength - armholeY - 40
-- armhole curve: cubic from shoulderTip to (chestWidth, armholeY),
-  cp1 = (shoulderHalf + (chest-shoulderHalf)*0.25, drop + (armholeY-drop)*0.55),
-  cp2 = (chest - (chest-shoulderHalf)*0.45, armholeY - (armholeY-drop)*0.12)
+- armhole curve: ONE cubic from shoulderTip to (chestWidth, armholeY), the
+  concave scye. TANGENT-CONTINUOUS with the shoulder seam: cp1 leaves the tip
+  PURELY along the shoulder-seam direction (neckPoint->shoulderTip unit vector)
+  by armholeShoulderTangentShare (0.26) of the shoulder->underarm chord — so the
+  seam and the scye share a tangent and there is NO angular V-kink at the
+  shoulder point (the old cp1 dived straight down, a ~77 deg spike the external
+  render-audit flagged). The scye HOLLOW is carried entirely by cp2:
+  cp1 = shoulderTip + tangentUnit * chord*0.26,
+  cp2 = (chest - dx*0.06 - hollow, drop + dy*0.78),
+  hollow = (front 0.34 | back 0.24) * dx  (front scooped deeper than back).
+  Measurements (armholeY depth, chestWidth, underarm point) are UNCHANGED — only
+  the drawn smoothness. The sleeve cap resizes to the (slightly changed) armhole
+  arc length via the one-truth armholeLength, so it still seats 1:1.
 - waist curve: side -> center cubic, cp1 = (takeIn + span*0.6, sideY + (centerY-sideY)*0.55),
   cp2 = (takeIn + span*0.25, centerY)
 - center front/back edge: cubic whose cps interpolate between waist and neck cutout

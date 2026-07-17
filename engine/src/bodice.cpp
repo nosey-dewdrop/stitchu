@@ -99,16 +99,23 @@ struct HalfBodice {
 // split (splitCubic) can keep assuming a single cubic.
 //
 // This is a proper scye, not a lazy diagonal (the old control points produced a
-// near-straight bulge). The curve leaves the shoulder tip heading DOWN and
-// slightly out, hollows INWARD in the middle (the concave scye), and arrives at
-// the underarm near-tangent to the side seam so the underarm is a smooth turn.
-// The FRONT scye is scooped deeper than the BACK (anatomy). Rendered as a native
-// SVG cubic, so it is perfectly smooth; the control points carry the shape.
+// near-straight bulge). The curve leaves the shoulder tip TANGENT-CONTINUOUS
+// with the shoulder seam (no angular V-kink at the shoulder point — the old
+// cp1 dived straight down while the shoulder seam ran out nearly horizontal, a
+// ~77 degree corner the external render-audit flagged as a "spike"), rolls
+// smoothly downward, hollows INWARD in the middle (the concave scye), and
+// arrives at the underarm near-tangent to the side seam so the underarm is a
+// smooth turn. The FRONT scye is scooped deeper than the BACK (anatomy).
+// Rendered as a native SVG cubic, so it is perfectly smooth; the control points
+// carry both the tangent continuity and the scye hollow.
+//   neckPoint — the shoulder-neck point; shoulderTip->this direction reversed is
+//               the shoulder seam's incoming tangent, which the curve leaves along.
 //   isFront   — deeper hollow on the front piece.
 //   sleeveless — cut the shoulder tip in and raise the underarm so a bare
 //                shoulder edge sits close to the body instead of gaping.
 PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
-                            const Point& armholeBottomIn, bool isFront, bool sleeveless) {
+                            const Point& armholeBottomIn, const Point& neckPoint,
+                            bool isFront, bool sleeveless) {
     Point shoulder{shoulderHalf, shoulderDrop};
     Point armholeBottom = armholeBottomIn;
     if (sleeveless) {
@@ -121,14 +128,31 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     const double dy = armholeBottom.y - shoulder.y;   // vertical drop   (>0)
     const double hollow = (isFront ? BodiceBlock::armholeHollowShareFront
                                    : BodiceBlock::armholeHollowShareBack) * dx;
-    // cp1: below the shoulder, pulled INWARD by the hollow (curve dives in).
+    const double chord = std::hypot(dx, dy);
+
+    // Shoulder-seam tangent AT the tip: the seam runs neckPoint -> shoulderTip,
+    // so its outgoing direction (continuing past the tip) is that unit vector.
+    // The armhole leaves the tip ALONG this direction so the seam and the scye
+    // share a tangent — no corner. cp1 sits a modest reach out along it, then
+    // the hollow pulls it back inward so the curve still dives into the scye.
+    double stx = shoulder.x - neckPoint.x;
+    double sty = shoulder.y - neckPoint.y;
+    const double slen = std::hypot(stx, sty);
+    if (slen > 1e-6) { stx /= slen; sty /= slen; }
+    else { stx = 1.0; sty = 0.0; }
+    // cp1 leaves the tip PURELY along the shoulder-seam tangent — nothing pulls
+    // it sideways, so the seam and the scye share a tangent and the old ~77 deg
+    // spike is gone. The scye hollow is carried entirely by cp2 (mid/lower),
+    // which keeps the belly concave without breaking the shoulder tangent.
+    const double tanReach = chord * BodiceBlock::armholeShoulderTangentShare;
     const Point cp1{
-        shoulder.x + dx * 0.10 - hollow * 0.55,
-        shoulder.y + dy * BodiceBlock::armholeUpperDropShare};
-    // cp2: near the underarm, still inside the chord (deepest hollow), rising
-    // toward the underarm near-vertically so the turn into the side seam is smooth.
+        shoulder.x + stx * tanReach,
+        shoulder.y + sty * tanReach};
+    // cp2: near the underarm, pulled deep INSIDE the chord (the concave scye
+    // belly), rising toward the underarm near-vertically so the turn into the
+    // side seam is smooth. All of the hollow lives here now.
     const Point cp2{
-        armholeBottom.x - dx * 0.06 - hollow * 0.35,
+        armholeBottom.x - dx * 0.06 - hollow,
         shoulder.y + dy * BodiceBlock::armholeLowerDropShare};
     return PathCommand::curve(armholeBottom, cp1, cp2);
 }
@@ -190,7 +214,7 @@ HalfBodice makePiece(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, isFront, /*sleeveless=*/false);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -302,7 +326,7 @@ PrincessHalf makePrincessPieces(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, isFront, /*sleeveless=*/false);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
