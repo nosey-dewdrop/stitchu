@@ -16,7 +16,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'collections');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '84';
+const V = process.env.V || '90';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

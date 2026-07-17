@@ -24,7 +24,7 @@ const SVGDIR = join(WEB, 'patterns', 'svg');
 const OUT = join(WEB, 'collections');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '88';
+const V = process.env.V || '90';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -39,6 +39,21 @@ const cleanPiece = (n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim();
 // A pattern can appear in more than one collection. `line` is a one-line reason
 // each look belongs here (EN + TR). Skip a collection with too few real matches.
 const COLLECTIONS = [
+  {
+    slug: 'babydoll',
+    nameEn: 'Babydoll', nameTr: 'Babydoll',
+    descEn: 'The babydoll silhouette: a high empire or bust yoke that flares soft and short, gathered or smocked, in every neckline the engine drafts.',
+    descTr: 'Babydoll silueti: yüksek bir empire ya da büst robasından yumuşak ve kısa açılan, büzgülü ya da robalı, motorun çizdiği her yakada.',
+    manifestoEn: 'A babydoll sits its fit high, at an empire seam or a bust yoke, then falls away loose and short. The bust is gathered, smocked or drawn on a drawstring, and the neckline is free to be square, round or collared. These are the babydoll patterns from the Pattern Blog, each drafted complete by the engine with every gathered and yoked piece drawn, not implied.',
+    manifestoTr: 'Bir babydoll oturmayı yükseğe, bir empire dikişe ya da büst robasına taşır, sonra bol ve kısa dökülür. Büst büzülür, robalanır ya da bir büzgü bağıyla toplanır; yaka kare, yuvarlak ya da yakalı olmakta serbesttir. Bunlar Kalıp Günlüğü’nden babydoll kalıpları, her biri motor tarafından tam çizildi; büzülen ve robalanan her parça ima değil, çizilmiş.',
+    looks: [
+      { slug: 'ruffled-strap-milkmaid-babydoll-dress', en: 'Ruffled straps, a shirred bust yoke and a soft front tie.', tr: 'Fırfırlı askılar, büzgülü büst robası ve yumuşak ön bağ.' },
+      { slug: 'square-neck-drawstring-babydoll-dress', en: 'A square neckline gathered soft at the bust by a drawstring.', tr: 'Büstten bir büzgü bağıyla yumuşak toplanan kare yaka.' },
+      { slug: 'square-neck-back-tie-babydoll-top', en: 'A square-neck babydoll top that closes with a back tie.', tr: 'Arka bağla kapanan kare yakalı bir babydoll üst.' },
+      { slug: 'shirt-collar-smocked-babydoll-top', en: 'A pointed shirt collar over a smocked babydoll yoke.', tr: 'Büzgülü bir babydoll robasının üstünde sivri gömlek yakası.' },
+      { slug: 'peter-pan-collar-puff-sleeve-babydoll-dress', en: 'A round peter-pan collar, puff sleeves and a smocked yoke.', tr: 'Yuvarlak bebe yaka, puf kollar ve büzgülü roba.' },
+    ],
+  },
   {
     slug: 'mod-mini',
     nameEn: 'Mod Mini', nameTr: 'Mod Mini',
