@@ -95,14 +95,42 @@ struct HalfBodice {
 };
 
 // The armhole cubic both piece builders share — ONE definition so the halter
-// binding measure can never drift from the drawn geometry.
-PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop, const Point& armholeBottom) {
-    return PathCommand::curve(
-        armholeBottom,
-        {shoulderHalf + (armholeBottom.x - shoulderHalf) * 0.25,
-         shoulderDrop + (armholeBottom.y - shoulderDrop) * 0.55},
-        {armholeBottom.x - (armholeBottom.x - shoulderHalf) * 0.45,
-         armholeBottom.y - (armholeBottom.y - shoulderDrop) * 0.12});
+// binding measure can never drift from the drawn geometry, and the princess
+// split (splitCubic) can keep assuming a single cubic.
+//
+// This is a proper scye, not a lazy diagonal (the old control points produced a
+// near-straight bulge). The curve leaves the shoulder tip heading DOWN and
+// slightly out, hollows INWARD in the middle (the concave scye), and arrives at
+// the underarm near-tangent to the side seam so the underarm is a smooth turn.
+// The FRONT scye is scooped deeper than the BACK (anatomy). Rendered as a native
+// SVG cubic, so it is perfectly smooth; the control points carry the shape.
+//   isFront   — deeper hollow on the front piece.
+//   sleeveless — cut the shoulder tip in and raise the underarm so a bare
+//                shoulder edge sits close to the body instead of gaping.
+PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
+                            const Point& armholeBottomIn, bool isFront, bool sleeveless) {
+    Point shoulder{shoulderHalf, shoulderDrop};
+    Point armholeBottom = armholeBottomIn;
+    if (sleeveless) {
+        // Cut the armhole in: pull the shoulder tip toward the neck and raise the
+        // underarm point, so the finished (bias-bound) edge hugs the body.
+        shoulder.x -= BodiceBlock::sleevelessShoulderCutInMM;
+        armholeBottom.y -= BodiceBlock::sleevelessUnderarmRaiseMM;
+    }
+    const double dx = armholeBottom.x - shoulder.x;   // horizontal span (>0)
+    const double dy = armholeBottom.y - shoulder.y;   // vertical drop   (>0)
+    const double hollow = (isFront ? BodiceBlock::armholeHollowShareFront
+                                   : BodiceBlock::armholeHollowShareBack) * dx;
+    // cp1: below the shoulder, pulled INWARD by the hollow (curve dives in).
+    const Point cp1{
+        shoulder.x + dx * 0.10 - hollow * 0.55,
+        shoulder.y + dy * BodiceBlock::armholeUpperDropShare};
+    // cp2: near the underarm, still inside the chord (deepest hollow), rising
+    // toward the underarm near-vertically so the turn into the side seam is smooth.
+    const Point cp2{
+        armholeBottom.x - dx * 0.06 - hollow * 0.35,
+        shoulder.y + dy * BodiceBlock::armholeLowerDropShare};
+    return PathCommand::curve(armholeBottom, cp1, cp2);
 }
 
 // y on the waist bezier at a given x (the curve is monotonic in x).
@@ -143,16 +171,26 @@ HalfBodice makePiece(
     double waistlineWidth,
     double dartWidth,
     double dartLength,
-    double centerTakeIn
+    double centerTakeIn,
+    bool isFront = false,
+    bool sleeveless = false
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
-    const Point shoulderTip{shoulderHalf, shoulderDrop};
-    const Point armholeBottom{chestWidth, armholeY};
+    // Sleeveless: cut the shoulder tip in and raise the underarm so a bare-
+    // shoulder armhole hugs the body (a real sleeveless scye). Sleeved keeps the
+    // full width so the sleeve cap seats. The shoulder VERTEX moves so the drawn
+    // outline itself carries the cut-in (not just the curve control points).
+    const double shoulderTipX = sleeveless
+        ? shoulderHalf - BodiceBlock::sleevelessShoulderCutInMM : shoulderHalf;
+    const double underarmY = sleeveless
+        ? armholeY - BodiceBlock::sleevelessUnderarmRaiseMM : armholeY;
+    const Point shoulderTip{shoulderTipX, shoulderDrop};
+    const Point armholeBottom{chestWidth, underarmY};
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderHalf, shoulderDrop, armholeBottom);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, isFront, /*sleeveless=*/false);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -248,16 +286,23 @@ PrincessHalf makePrincessPieces(
     double dartLength,
     double centerTakeIn,
     double extendBelowWaist = 0,
-    double hipHalfQuarter = 0
+    double hipHalfQuarter = 0,
+    bool isFront = false,
+    bool sleeveless = false
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
-    const Point shoulderTip{shoulderHalf, shoulderDrop};
-    const Point armholeBottom{chestWidth, armholeY};
+    // Sleeveless cut-in (see makePiece): shoulder in, underarm up.
+    const double shoulderTipX = sleeveless
+        ? shoulderHalf - BodiceBlock::sleevelessShoulderCutInMM : shoulderHalf;
+    const double underarmY = sleeveless
+        ? armholeY - BodiceBlock::sleevelessUnderarmRaiseMM : armholeY;
+    const Point shoulderTip{shoulderTipX, shoulderDrop};
+    const Point armholeBottom{chestWidth, underarmY};
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderHalf, shoulderDrop, armholeBottom);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, isFront, /*sleeveless=*/false);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -445,6 +490,9 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const Shaping shaping = options.shaping;
     const double extendBelowWaist = options.extendBelowWaist;
     const double hipHalfQuarter = options.hipHalfQuarter;
+    // Sleeveless scye cut-in applies to the front + back pieces (not halter,
+    // which has its own bare-shoulder frame). Front deeper than back either way.
+    const bool sleevelessScye = options.sleeveless && neckline != Neckline::Halter;
     const double chestEase = chestEaseFor(options.fabric);
     const double waistEase = waistEaseFor(options.fabric);
 
@@ -645,7 +693,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn,
-            extendBelowWaist, hipHalfQuarter);
+            extendBelowWaist, hipHalfQuarter,
+            /*isFront=*/false, sleevelessScye);
     } else {
         back = makePiece(
             "Bodice Back", "cut 2",
@@ -655,7 +704,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             bSeamSideY + deltaBack, bSeamSideY,
             backWaistlineWidth, backDart,
             backDartLength,
-            cbTakeIn);
+            cbTakeIn,
+            /*isFront=*/false, sleevelessScye);
     }
 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
@@ -692,7 +742,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0,
-            extendBelowWaist, hipHalfQuarter);
+            extendBelowWaist, hipHalfQuarter,
+            /*isFront=*/true, sleevelessScye);
     } else {
         front = makePiece(
             "Bodice Front", "cut 1 on fold",
@@ -702,7 +753,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             fSeamSideY + deltaFront, frontLength,
             frontWaistlineWidth, frontDart,
             frontDartLength,
-            0);
+            0,
+            /*isFront=*/true, sleevelessScye);
     }
 
     // A half that stays unsplit under princess+extension is extended later by

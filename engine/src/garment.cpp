@@ -127,6 +127,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.neckline != Neckline::Halter &&
         static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
         options.shoulderStyle = ShoulderStyle::Dropped;
+    // Sleeveless: cut the scye in slightly so the bare-shoulder edge hugs the
+    // body (a real sleeveless armhole). A set-in sleeve keeps the full armhole so
+    // the cap seats. Halter has its own bare-shoulder frame.
+    options.sleeveless = spec.neckline != Neckline::Halter &&
+                         spec.sleeveStyle == SleeveStyle::None;
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
     const bool empire = spec.waistline == Waistline::Empire;
     // Empire: the seam sits above the natural waist, so the skirt makes up
@@ -324,6 +329,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.neckline != Neckline::Halter &&
         static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
         options.shoulderStyle = ShoulderStyle::Dropped;
+    // Sleeveless: cut the scye in slightly so the bare-shoulder edge hugs the
+    // body (a real sleeveless armhole). A set-in sleeve keeps the full armhole so
+    // the cap seats. Halter has its own bare-shoulder frame.
+    options.sleeveless = spec.neckline != Neckline::Halter &&
+                         spec.sleeveStyle == SleeveStyle::None;
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
 
     std::vector<PatternPiece> tops;

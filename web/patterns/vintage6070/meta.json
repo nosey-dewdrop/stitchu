@@ -5,21 +5,20 @@
     "tr": "Vücuda oturan, etek ucu açılan örme elbise",
     "period": "1960s",
     "house": "Mary Quant style",
-    "pieces": 11,
+    "pieces": 10,
     "pieceNames": [
       "Bodice Center Front",
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
       "Skirt Side Back",
       "Sleeve"
     ],
-    "fabric": 2.7,
+    "fabric": 2.6,
     "garment": "dress",
     "full": true,
     "note_en": "A crew-neck knit dress with princess seams, long fitted sleeves and a short A-line skirt. Every piece is in the engine’s core vocabulary, so it drafts complete.",
@@ -38,12 +37,12 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
-    "fabric": 1.5,
+    "fabric": 1.4,
     "garment": "dress",
     "full": true,
     "note_en": "A boat-neck sleeveless shift that swings into a boxy A-line mini. Pure silhouette, drafted complete.",
@@ -58,21 +57,20 @@
     "tr": "Kısa kollu prenses dikişli shift",
     "period": "1960s",
     "house": "Guy Laroche style",
-    "pieces": 11,
+    "pieces": 10,
     "pieceNames": [
       "Bodice Center Front",
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
       "Skirt Side Back",
       "Sleeve"
     ],
-    "fabric": 2.4,
+    "fabric": 2.3,
     "garment": "dress",
     "full": true,
     "note_en": "A wool shift with short set-in sleeves and curved princess seams shaping the bust. Drafts complete.",
@@ -87,17 +85,16 @@
     "tr": "Empire dikişli örme mini elbise",
     "period": "1960s",
     "house": "sweater-knit style",
-    "pieces": 7,
+    "pieces": 6,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
       "Skirt Front",
       "Skirt Back",
       "Sleeve"
     ],
-    "fabric": 2.1,
+    "fabric": 2,
     "garment": "dress",
     "full": true,
     "note_en": "A ribbed knit bodice joined at a high empire seam to an A-line mini skirt, with smooth short set-in sleeves and a wide boat neckline.",
@@ -107,56 +104,53 @@
     ]
   },
   {
-    "slug": "sixties-stand-collar-shift",
-    "en": "Stand-collar sleeveless shift",
-    "tr": "Dik yakalı kolsuz shift",
+    "slug": "sixties-boat-neck-shift-mini",
+    "en": "Boat-neck sleeveless shift mini",
+    "tr": "Kayık yakalı kolsuz shift mini",
     "period": "1960s",
     "house": "André Courrèges style",
-    "pieces": 11,
+    "pieces": 10,
     "pieceNames": [
       "Bodice Center Front",
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
-      "Skirt Side Back",
-      "Stand Collar (dik yaka)"
+      "Skirt Side Back"
     ],
-    "fabric": 2.7,
+    "fabric": 1.9,
     "garment": "dress",
     "full": true,
-    "note_en": "A sleeveless A-line shift finished with a funnel stand collar, drafted as its own piece with the neck edge trued to the neckline.",
-    "note_tr": "Huni dik yakalı kolsuz A kesim shift; yaka ayrı parça olarak, boyun kenarı yaka çizgisine birebir çizilir.",
+    "note_en": "A clean sleeveless A-line shift mini with a wide boat neckline, finished with a plain bias-bound neck (no collar; the classic 60s space-age line is collarless).",
+    "note_tr": "Geniş kayık yakalı kolsuz A kesim shift mini; yaka biyeyle bitirilir (yaka yok; 60ların uzay-çağı çizgisi yakasızdır).",
     "oov": [
       "oval welt pockets, self-fabric belt (not drafted)"
     ]
   },
   {
-    "slug": "sixties-mandarin-collar-shift",
-    "en": "Mandarin-collar long-sleeve shift",
-    "tr": "Mandarin yakalı uzun kollu shift",
+    "slug": "sixties-crew-neck-jersey-mini",
+    "en": "Crew-neck long-sleeve jersey mini",
+    "tr": "Bisiklet yakalı uzun kollu jarse mini",
     "period": "1960s",
     "house": "Pucci style",
-    "pieces": 8,
+    "pieces": 6,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
       "Skirt Front",
       "Skirt Back",
-      "Sleeve",
-      "Mock Collar (mandarin yaka)"
+      "Sleeve"
     ],
-    "fabric": 2.6,
+    "fabric": 2.1,
     "garment": "dress",
     "full": true,
-    "note_en": "A fitted long-sleeved jersey shift with a low mandarin stand collar and a straight waist-seamed skirt.",
-    "note_tr": "Alçak mandarin dik yakalı, bele dikili düz etekli, uzun kollu oturan jarse shift.",
+    "note_en": "A fitted long-sleeved jersey mini with a simple round crew neckline and an A-line mini skirt, finished with a plain bias-bound neck (no collar).",
+    "note_tr": "Basit yuvarlak bisiklet yakalı, A kesim mini etekli, uzun kollu oturan jarse mini; yaka biyeyle bitirilir (yaka yok).",
     "oov": [
       "self-fabric tasselled tie belt (not drafted)"
     ]
@@ -196,12 +190,12 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
-    "fabric": 1.6,
+    "fabric": 1.5,
     "garment": "dress",
     "full": true,
     "note_en": "A sleeveless pinafore with a full front button placket, drafted as a grown-on stand with buttons and buttonholes.",
@@ -220,13 +214,13 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Front",
       "Skirt Back",
       "Neck/Front Tie (ön bağ)"
     ],
-    "fabric": 1.9,
+    "fabric": 1.8,
     "garment": "dress",
     "full": true,
     "note_en": "A sleeveless fit-and-flare dress shaped by waist darts, with a fabric bow drafted as a separate cut piece at the front.",
@@ -245,13 +239,13 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)"
     ],
-    "fabric": 1.9,
+    "fabric": 1.8,
     "garment": "dress",
     "full": true,
     "note_en": "A high boat-neck A-line shift in nubby wool tweed with a self-fabric tie drafted as its own cut piece.",
@@ -266,17 +260,16 @@
     "tr": "Empire büzgülü bebe elbise",
     "period": "1960s",
     "house": "Oscar de la Renta style",
-    "pieces": 7,
+    "pieces": 6,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
       "Skirt Front",
       "Skirt Back",
       "Sleeve"
     ],
-    "fabric": 2.4,
+    "fabric": 2.3,
     "garment": "dress",
     "full": true,
     "note_en": "A deep-V empire babydoll with long straight sleeves and a gathered A-line skirt, drafted from the empire seam down.",
@@ -286,28 +279,131 @@
     ]
   },
   {
-    "slug": "sixties-stand-collar-tent-mini",
-    "en": "Stand-collar tent mini dress",
-    "tr": "Dik yakalı çadır mini elbise",
+    "slug": "sixties-crew-neck-tent-mini",
+    "en": "Crew-neck tent mini dress",
+    "tr": "Bisiklet yakalı çadır mini elbise",
     "period": "1960s",
     "house": "John Bates style",
-    "pieces": 7,
+    "pieces": 6,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Front Neck Facing",
-      "Back Neck Facing",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
       "Skirt Front",
-      "Skirt Back",
-      "Stand Collar (dik yaka)"
+      "Skirt Back"
     ],
-    "fabric": 1.7,
+    "fabric": 1.4,
     "garment": "dress",
     "full": true,
-    "note_en": "A sleeveless A-line tent mini with a narrow stand collar, drafted as its own piece.",
-    "note_tr": "Dar dik yakalı kolsuz A kesim çadır mini; yaka ayrı parça olarak çizilir.",
+    "note_en": "A sleeveless A-line tent mini with a simple round crew neckline, finished with a plain bias-bound neck (no collar).",
+    "note_tr": "Basit yuvarlak bisiklet yakalı kolsuz A kesim çadır mini; yaka biyeyle bitirilir (yaka yok).",
     "oov": [
       "stacked horizontal ruffle tiers with corded edging (surface, not drafted)"
+    ]
+  },
+  {
+    "slug": "sixties-mod-colorblock-mini",
+    "en": "Mod colour-block A-line mini",
+    "tr": "Mod renk-bloklu A kesim mini",
+    "period": "1960s",
+    "house": "Mary Quant style",
+    "pieces": 10,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back"
+    ],
+    "fabric": 1.9,
+    "garment": "dress",
+    "full": true,
+    "note_en": "A sleeveless princess-seam A-line mini with a round crew neckline, bias-bound (no collar). The princess seams are exactly where the two-tone mod colour-block would run.",
+    "note_tr": "Kolsuz prenses dikişli A kesim mini, yuvarlak bisiklet yaka, biyeli (yaka yok). Prenses dikişleri iki-renk mod bloğunun geçtiği yerdir.",
+    "oov": [
+      "contrast two-tone colour-block panels (colour placement, not drafted)"
+    ]
+  },
+  {
+    "slug": "seventies-scoop-neck-shift-mini",
+    "en": "Scoop-neck shift mini dress",
+    "tr": "Oyuk yakalı shift mini elbise",
+    "period": "1970s",
+    "house": "Biba style",
+    "pieces": 6,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Skirt Front",
+      "Skirt Back",
+      "Sleeve"
+    ],
+    "fabric": 1.8,
+    "garment": "dress",
+    "full": true,
+    "note_en": "A short-sleeved scoop-neck A-line shift mini, bias-bound at the neck (no collar). The easy everyday early-70s mini.",
+    "note_tr": "Kısa kollu oyuk yakalı A kesim shift mini, boyunda biye (yaka yok). 70lerin başının rahat günlük minisi.",
+    "oov": [
+      "allover small floral print (print, not drafted)"
+    ]
+  },
+  {
+    "slug": "sixties-babydoll-scoop-mini",
+    "en": "Empire babydoll scoop mini",
+    "tr": "Empire bebe oyuk yaka mini",
+    "period": "1960s",
+    "house": "Twiggy mod style",
+    "pieces": 6,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabric": 1.6,
+    "garment": "dress",
+    "full": true,
+    "note_en": "A sleeveless scoop-neck empire babydoll mini: a high seam under the bust flares into a gathered mini skirt, bias-bound at the neck (no collar).",
+    "note_tr": "Kolsuz oyuk yakalı empire bebe mini: büst altındaki yüksek dikiş büzgülü mini eteğe açılır, boyunda biye (yaka yok).",
+    "oov": [
+      "ribbon bow trim at the empire seam (surface, not drafted)"
+    ]
+  },
+  {
+    "slug": "sixties-boat-neck-longsleeve-mini",
+    "en": "Boat-neck long-sleeve mod mini",
+    "tr": "Kayık yakalı uzun kollu mod mini",
+    "period": "1960s",
+    "house": "Courrèges style",
+    "pieces": 10,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Sleeve"
+    ],
+    "fabric": 2.6,
+    "garment": "dress",
+    "full": true,
+    "note_en": "A long-sleeved boat-neck princess-seam knit mini, bias-bound at the neck (no collar). The sharp space-age mod silhouette.",
+    "note_tr": "Uzun kollu kayık yakalı prenses dikişli örme mini, boyunda biye (yaka yok). Keskin uzay-çağı mod silueti.",
+    "oov": [
+      "contrast go-go stripe at cuff and hem (colour, not drafted)"
     ]
   }
 ]

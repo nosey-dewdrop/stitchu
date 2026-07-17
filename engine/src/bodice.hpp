@@ -115,7 +115,32 @@ struct BodiceOptions {
     // the Dropped branch only runs when this is Dropped, so every existing draft
     // is untouched. Raglan is a post-pass in garment.cpp, not here.
     ShoulderStyle shoulderStyle = ShoulderStyle::Set;
+    // Armhole shape (patch: smoother, correctly hollowed scye). A sleeveless
+    // armhole is cut in slightly at the shoulder and raised a touch at the
+    // underarm so a strapless/tank edge does not gape on the bare shoulder — the
+    // real pattern-maker's sleeveless armhole. A set-in-sleeve armhole keeps the
+    // full width so the sleeve cap seats. Set by garment.cpp from the sleeve.
+    bool sleeveless = false;
 };
+
+// Armhole scye shape (Aldrich / Armstrong bodice block). The armhole is NOT a
+// lazy diagonal — it hollows in below the shoulder, is deepest (most concave)
+// near the underarm, and the FRONT scye is scooped deeper than the BACK. These
+// shares drive the single cubic's control points so the curve renders smooth
+// AND carries the correct scye hollow.
+// hollowShare = how far the mid-armhole pulls INSIDE the shoulder->underarm
+// chord (fraction of the chest width span); front deeper than back.
+inline constexpr double armholeHollowShareFront = 0.34;
+inline constexpr double armholeHollowShareBack  = 0.24;
+// Where along the drop the two control points sit (upper leaves the shoulder
+// heading down + slightly out; lower approaches the underarm near-tangent to
+// the side seam so the underarm is a smooth turn, not a corner).
+inline constexpr double armholeUpperDropShare = 0.30; // cp1 y, below shoulder
+inline constexpr double armholeLowerDropShare = 0.78; // cp2 y, above underarm
+// Sleeveless cut-in: shoulder tip moved in, underarm raised, so a bare-shoulder
+// armhole sits close to the body instead of gaping.
+inline constexpr double sleevelessShoulderCutInMM = 9.0;
+inline constexpr double sleevelessUnderarmRaiseMM = 6.0;
 
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& options);
 // Convenience overload (defaults: natural waist, woven).
