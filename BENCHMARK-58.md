@@ -33,7 +33,24 @@ başarı beyanı = FULL PATTERN %80.
 > ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
 > her tek-öğe kazanımını sayar → doğru günlük pusula.
 
-Durum (motor): **29→31/54 TAM KALIP — RAY 1 / R1.1 (peplum) sonrası +2, 2026-07-17, patch 3.5.**
+Durum (motor): **31→37/54 TAM KALIP — RAY 1 / R1.2 (Jackie kombo: asimetrik pat + cap sleeve) sonrası +6, 2026-07-17, patch 3.7.**
+İKİ dal TEK oturumda çünkü Jackie gingham fotoları iki öğeyi BİRDEN bekliyor (tek başına biri +1/+0).
+(a) ASİMETRİK DÜĞME PATI: mevcut PlacketBlock offsetMM=55mm ile CF'den kaydırılmış kapanmaya genişledi
+(fold çizgisi -offset, grown kenar -(stand+offset), düğme/ilik kaymış, gerçek CF referans çizili);
+offsetMM=0 = simetrik pat BYTE-IDENTICAL. (b) CAP SLEEVE: SleeveCap::Cap, set-in cap KORUNUR (armhole'a
+1:1, cap kenarı == plain sleeve <0.5mm) ama gövde kesilip crown'un 55mm altında sığ yaylı KANATA iner
+(dikişsiz). CANLI SAYI (0-çağrı cache reclassify, kredi harcanmadı): **31→37/54 (+6 = altı Jackie gingham
+fotoğrafı; 5'i asimetrik+cap İKİSİNİ birden istiyor, 1'i (13.48.15) sadece asimetrik → kombo şart)**.
+ELEMENT ACCURACY 60→71/103 (%58.3→%68.9). Kanıt: ctest **22/22** (yeni placket_asym_check + cap_sleeve_check),
+golden byte-identical, web-fuzz **20190/0** (cap+asim sweep), vocab-sweep 37800/0, render-pages
+jackie-asym-cap-dress (Cap Sleeve dahil 11 parça, 0 issue) + Chrome PNG gözle onay (kanat + kaymış pat).
+create.js pickPlacket + sleeveHead capped→cap map + seen.capSleeveDrawn/placketAsymDrawn, missing.js
+suppression, engine.js/backend/bindings placketStyle param + sleeveCap 3=Cap, iki wasm derlendi. Worker
+VISION DEĞİŞMEDİ. DÜRÜST SINIR: back/double-breasted asimetrik + dropped/off-shoulder + pileli cap honest.
+DEPLOY: main e6d886a, gh-pages f5817ab, canlı sayaç 37 + patches 3.7 curl teyitli. FORMULAS.md iki bölüm.
+Rapor: reports/2026-07-17-stitchu-loop-jackie.md.
+
+Durum (önceki motor): **29→31/54 TAM KALIP — RAY 1 / R1.1 (peplum) sonrası +2, 2026-07-17, patch 3.5.**
 Motor artık bele takılan flare peplum volanını AYRI KESİM PARÇASI çiziyor: düz bir çember
 (ya da yarım-çember / sivri) annular sektör, iç (bel) yayı bitmiş bele ÖLÇÜLÜ trued. Aldrich/
 Armstrong "circular flare": peplum büzülmez, iç yayı = bitmiş bel, dış yayı daha uzun → kendiliğinden

@@ -689,6 +689,55 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   manual "peplum" picker covers the no-photo path; seen.peplumDrawn suppresses the
   missing.js note + the outOfVocab peplum term.
 
+## Asymmetric button placket (asimetrik düğme patı) — opt-in (BENCHMARK-58 RAY 1 / R1.2)
+- WHAT: the front button placket carried OFF the center front so the closure sits
+  to one side (the couture / sixties shift-dress front). `PlacketStyle { None,
+  Standard, Asymmetric }` (measurements.hpp) + `GarmentSpec.placketStyle`. Standard
+  and None mirror the legacy `frontPlacket` bool (byte-identical); Asymmetric is the
+  new mode. `PlacketBlock::apply(pattern, bustApexY, offsetMM)` — offsetMM == 0 is
+  the classic symmetric CF placket, every expression collapses to the old value, so
+  that path is BYTE-IDENTICAL to before. asymOffset = 55 mm.
+- CONSTRUCTION: the whole closure shifts out by offsetMM. The fold line sits at
+  `foldX = -offsetMM` (0 when symmetric); the grown front edge reaches
+  `-(standWidth + offsetMM)` so the button stand still sits proud of the shifted
+  fold; the fold-back facing marking is at `foldX + standWidth`; the buttons are
+  centered on `foldX` and the buttonholes start `foldX - buttonholeOffset`. When
+  asymmetric, the TRUE center front (x = 0) is ALSO marked as a reference line so
+  the sewer sees how far over the closure sits. The mirror (under) front is cut to
+  the same offset so the two fronts overlap (noted in the guide step).
+- COEXISTS: independent of every other opt-in post-pass; draws on a dress/top.
+- HONEST LIMIT: only a symmetric-or-offset FRONT button stand is drawn. A back
+  asymmetric closure, a double-breasted front, or a wrap closure stays honest
+  (benchmark rule + missing.js). No front bodice (a skirt) → skips with a note.
+- Vision→spec (create.js pickPlacket): reads an "asymmetric / offset / diagonal /
+  off-center" + "button/placket/closure/front" oov/detail → 'asymmetric'; a plain
+  front button closure → 'standard'. `spec.placketStyle` drives it; the legacy bool
+  stays in sync for symmetric. seen.closureDrawn (symmetric or asymmetric) and
+  seen.placketAsymDrawn suppress the missing.js closure note + the outOfVocab
+  asymmetric-placket term.
+
+## Cap sleeve (kısa kanat cap) — opt-in (BENCHMARK-58 RAY 1 / R1.2)
+- WHAT: a short cap-sleeve WING that covers the top of the shoulder and dies at the
+  underarm with NO underarm seam and no length. `SleeveCap::Cap` (the 4th value of
+  the existing SleeveCap enum, 0=Plain 1=Gathered 2=Puffed 3=Cap). Plain default →
+  byte-identical; the Cap branch returns its own piece and skips the full-sleeve body.
+- CONSTRUCTION: the cap sleeve keeps the ORDINARY set-in cap. The width/cap-height
+  fitting runs exactly like a plain sleeve (spread 0, no rise), so the cap edge
+  length matches the armhole 1:1 and it sets in like any sleeve (cap_sleeve_check
+  proves the cap edge == the plain sleeve's cap edge to < 0.5 mm). Instead of the
+  underarm-seamed body running down to a hem, the OUTER edge is a shallow arc a
+  short depth (capWingDepth = 55 mm) below the crown, sweeping from one underarm
+  point to the other — a little wing. Two crown notches, a center grainline, cut 2,
+  SA 15 mm. The guide step tells the sewer to finish the outer edge and set the cap
+  into the armhole (no seam to sew shut).
+- COEXISTS: it is a sleeve HEAD variant, so it composes with an asymmetric placket
+  (the Jackie combo) and any bodice post-pass.
+- HONEST LIMIT: only the plain button-stand cap wing is drawn. A dropped/off-shoulder
+  sleeve is a different shape and stays honest (benchmark rule + missing.js).
+- Vision→spec (create.js): `seen.sleeveHead === 'capped'` → sleeveCap = 'cap' (a
+  straight sleeve is assumed if none was read, to carry the head). seen.capSleeveDrawn
+  suppresses the missing.js "cap sleeve" derivative + the outOfVocab cap-sleeve term.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces

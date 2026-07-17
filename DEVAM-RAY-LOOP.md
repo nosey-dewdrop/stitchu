@@ -126,6 +126,22 @@ bloklardan (tie/slit/strap/peplum) damıtılır + terim→tarif tablosu. R2.2 pa
 > (zinciri koşturan orkestratör her loop sonunda burayı günceller: hangi loop bitti,
 > sayı kaç, kredi durumu, açılan mikro-looplar, sıradaki)
 
+- **R1.2 JACKIE KOMBO BİTTİ (patch 3.7, deploy v74).** FULL **31→37/54 (+6)** =
+  altı Jackie gingham fotoğrafı. İKİ dal TEK oturumda (kombo şart: 6 fotonun 5'i
+  asimetrik pat + cap sleeve İKİSİNİ birden istiyor; asimetrik solo yalnız
+  13.48.15'i çevirir, cap solo hiçbirini). (a) ASİMETRİK PAT: PlacketBlock
+  offsetMM=55mm, offset=0 byte-identical; fold/düğme/ilik/grown-kenar off-center,
+  gerçek CF referans çizili. (b) CAP SLEEVE: SleeveCap::Cap, set-in cap korunur
+  (armhole 1:1), gövde kesilip crown'un 55mm altında sığ kanata iner (dikişsiz).
+  ELEMENT 60→71/103 (%68.9). 0 vision çağrısı (cache reclassify, kredi harcanmadı).
+  golden byte-identical, ctest **22/22** (placket_asym_check + cap_sleeve_check),
+  web-fuzz 20190/0, vocab-sweep 37800/0, render jackie-asym-cap-dress PNG gözle onay
+  (kanat + kaymış pat). İki wasm derlendi. 2 mikro-loop (Standard==bool regresyonu →
+  koşula Standard eklendi; cap wing derinlik 75→55mm ayrım). DRAWN_SINCE reclassify
+  artık dosyaya persist ediyor. Rapor: reports/2026-07-17-stitchu-loop-jackie.md.
+  SIRADAKİ RAY 1: **R1.3 Denetim C** (bağımsız denetçi: golden regen+diff, ctest,
+  reclassify, DRAWN_SINCE sızıntı taraması).
+
 - **R1.1 PEPLUM BİTTİ (patch 3.5, deploy v73).** FULL **29→31/54 (+2)** = Cloe
   Puffed Sleeve Peplum Top + Serene Fit Blouse (ikisi de tek-terimli peplum, başka
   oov'ları zaten çizilir durumdaydı). ELEMENT 58→60/103 (%58.3). 0 vision çağrısı
