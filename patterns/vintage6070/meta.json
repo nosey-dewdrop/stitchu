@@ -22,8 +22,6 @@
     "oov": [
       "contrast waist stripe band (surface trim, not drafted)"
     ],
-    "flat": "sixties-fit-flare-knit-dress-flat.svg",
-    "onFigure": "sixties-fit-flare-knit-dress-figure.svg",
     "card": "sixties-fit-flare-knit-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -49,8 +47,6 @@
     "oov": [
       "contrast cross/grid graphic (surface applique, not drafted)"
     ],
-    "flat": "sixties-mondrian-shift-mini-flat.svg",
-    "onFigure": "sixties-mondrian-shift-mini-figure.svg",
     "card": "sixties-mondrian-shift-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -81,8 +77,6 @@
     "oov": [
       "decorative circular hip welt pockets (not drafted)"
     ],
-    "flat": "sixties-princess-seam-shift-flat.svg",
-    "onFigure": "sixties-princess-seam-shift-figure.svg",
     "card": "sixties-princess-seam-shift-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -109,8 +103,6 @@
     "oov": [
       "checkerboard pattern panel (print, not drafted)"
     ],
-    "flat": "sixties-empire-knit-mini-flat.svg",
-    "onFigure": "sixties-empire-knit-mini-figure.svg",
     "card": "sixties-empire-knit-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -136,8 +128,6 @@
     "oov": [
       "oval welt pockets, self-fabric belt (not drafted)"
     ],
-    "flat": "sixties-boat-neck-shift-mini-flat.svg",
-    "onFigure": "sixties-boat-neck-shift-mini-figure.svg",
     "card": "sixties-boat-neck-shift-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -164,8 +154,6 @@
     "oov": [
       "self-fabric tasselled tie belt (not drafted)"
     ],
-    "flat": "sixties-crew-neck-jersey-mini-flat.svg",
-    "onFigure": "sixties-crew-neck-jersey-mini-figure.svg",
     "card": "sixties-crew-neck-jersey-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -193,8 +181,6 @@
     "oov": [
       "contrast collar and cuffs, polka dot print (colour, not drafted)"
     ],
-    "flat": "sixties-pointed-collar-tunic-flat.svg",
-    "onFigure": "sixties-pointed-collar-tunic-figure.svg",
     "card": "sixties-pointed-collar-tunic-card.svg",
     "closure": null
   },
@@ -220,8 +206,6 @@
     "oov": [
       "front patch pockets, layered pussy-bow blouse (styling, not drafted)"
     ],
-    "flat": "sixties-front-button-pinafore-flat.svg",
-    "onFigure": "sixties-front-button-pinafore-figure.svg",
     "card": "sixties-front-button-pinafore-card.svg",
     "closure": "button placket (center front)"
   },
@@ -248,8 +232,6 @@
     "oov": [
       "exposed decorative front zipper, waist pleats (not drafted)"
     ],
-    "flat": "sixties-vneck-front-zip-dress-flat.svg",
-    "onFigure": "sixties-vneck-front-zip-dress-figure.svg",
     "card": "sixties-vneck-front-zip-dress-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -276,8 +258,6 @@
     "oov": [
       "coordinating matching coat (separate garment, not drafted)"
     ],
-    "flat": "sixties-side-tie-tweed-shift-flat.svg",
-    "onFigure": "sixties-side-tie-tweed-shift-figure.svg",
     "card": "sixties-side-tie-tweed-shift-card.svg",
     "closure": null
   },
@@ -304,8 +284,6 @@
     "oov": [
       "allover bead/sequin embellishment, scalloped beaded hem (not drafted)"
     ],
-    "flat": "sixties-empire-gathered-babydoll-flat.svg",
-    "onFigure": "sixties-empire-gathered-babydoll-figure.svg",
     "card": "sixties-empire-gathered-babydoll-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -331,8 +309,6 @@
     "oov": [
       "stacked horizontal ruffle tiers with corded edging (surface, not drafted)"
     ],
-    "flat": "sixties-crew-neck-tent-mini-flat.svg",
-    "onFigure": "sixties-crew-neck-tent-mini-figure.svg",
     "card": "sixties-crew-neck-tent-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -362,8 +338,6 @@
     "oov": [
       "contrast two-tone colour-block panels (colour placement, not drafted)"
     ],
-    "flat": "sixties-mod-colorblock-mini-flat.svg",
-    "onFigure": "sixties-mod-colorblock-mini-figure.svg",
     "card": "sixties-mod-colorblock-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -390,8 +364,6 @@
     "oov": [
       "allover small floral print (print, not drafted)"
     ],
-    "flat": "seventies-scoop-neck-shift-mini-flat.svg",
-    "onFigure": "seventies-scoop-neck-shift-mini-figure.svg",
     "card": "seventies-scoop-neck-shift-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -417,8 +389,6 @@
     "oov": [
       "ribbon bow trim at the empire seam (surface, not drafted)"
     ],
-    "flat": "sixties-babydoll-scoop-mini-flat.svg",
-    "onFigure": "sixties-babydoll-scoop-mini-figure.svg",
     "card": "sixties-babydoll-scoop-mini-card.svg",
     "closure": "invisible zipper (center back)"
   },
@@ -445,8 +415,6 @@
     "oov": [
       "contrast go-go stripe at cuff and hem (colour, not drafted)"
     ],
-    "flat": "sixties-boat-neck-longsleeve-mini-flat.svg",
-    "onFigure": "sixties-boat-neck-longsleeve-mini-figure.svg",
     "card": "sixties-boat-neck-longsleeve-mini-card.svg",
     "closure": "invisible zipper (center back)"
   }
