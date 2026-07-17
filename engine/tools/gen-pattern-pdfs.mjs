@@ -90,6 +90,11 @@ const PATTERNS = [
     shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
     tie: 2, gatherType: 2, gatherZone: 1 },
+
+  { slug: 'patch-pocket-shift-dress', style: 'Patch-pocket A-line shift dress', garment: 'dress',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    pocketStyle: 1 },
 ];
 
 const OUT = process.argv[2] || join(here, '../../web/patterns/pdf');

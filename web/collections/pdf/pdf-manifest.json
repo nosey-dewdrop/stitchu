@@ -24,7 +24,7 @@
   },
   {
     "slug": "sixties-mondrian-shift-mini",
-    "pieces": 6,
+    "pieces": 5,
     "a4pages": 15,
     "a4bytes": 47489,
     "a0bytes": 5850,
@@ -34,8 +34,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
@@ -85,11 +84,11 @@
   },
   {
     "slug": "sixties-boat-neck-shift-mini",
-    "pieces": 10,
+    "pieces": 9,
     "a4pages": 20,
-    "a4bytes": 73017,
-    "a0bytes": 9581,
-    "guidebytes": 5825,
+    "a4bytes": 73016,
+    "a0bytes": 9580,
+    "guidebytes": 5824,
     "guideSteps": 16,
     "cols": 7,
     "pieceNames": [
@@ -97,8 +96,7 @@
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
@@ -147,7 +145,7 @@
   },
   {
     "slug": "sixties-front-button-pinafore",
-    "pieces": 6,
+    "pieces": 5,
     "a4pages": 15,
     "a4bytes": 48272,
     "a0bytes": 6013,
@@ -157,8 +155,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
@@ -166,7 +163,7 @@
   },
   {
     "slug": "sixties-vneck-front-zip-dress",
-    "pieces": 7,
+    "pieces": 6,
     "a4pages": 19,
     "a4bytes": 71483,
     "a0bytes": 6502,
@@ -176,8 +173,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Neck/Front Tie (ön bağ)"
@@ -186,7 +182,7 @@
   },
   {
     "slug": "sixties-side-tie-tweed-shift",
-    "pieces": 7,
+    "pieces": 6,
     "a4pages": 21,
     "a4bytes": 82474,
     "a0bytes": 6588,
@@ -196,8 +192,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)"
@@ -225,7 +220,7 @@
   },
   {
     "slug": "sixties-crew-neck-tent-mini",
-    "pieces": 6,
+    "pieces": 5,
     "a4pages": 15,
     "a4bytes": 47837,
     "a0bytes": 5927,
@@ -235,8 +230,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
@@ -244,11 +238,11 @@
   },
   {
     "slug": "sixties-mod-colorblock-mini",
-    "pieces": 10,
+    "pieces": 9,
     "a4pages": 20,
-    "a4bytes": 73701,
-    "a0bytes": 9738,
-    "guidebytes": 5822,
+    "a4bytes": 73700,
+    "a0bytes": 9737,
+    "guidebytes": 5821,
     "guideSteps": 16,
     "cols": 7,
     "pieceNames": [
@@ -256,8 +250,7 @@
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
@@ -286,7 +279,7 @@
   },
   {
     "slug": "sixties-babydoll-scoop-mini",
-    "pieces": 6,
+    "pieces": 5,
     "a4pages": 19,
     "a4bytes": 61172,
     "a0bytes": 5061,
@@ -296,8 +289,7 @@
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back"
     ],

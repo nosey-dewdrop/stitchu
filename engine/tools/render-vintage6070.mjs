@@ -235,7 +235,9 @@ for (const s of LOOKS) {
     sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0,
     collarType: s.collarType || 0, collarEdge: s.collarEdge || 0, frontPlacket: s.frontPlacket === true,
     placketStyle: s.placketStyle || 0, tie: s.tie || 0, gatherType: s.gatherType || 0,
-    gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0, closure: closures[0] || null,
+    gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0,
+    ruffledStraps: s.ruffledStraps || 0, peplum: s.peplum || 0, pocketStyle: s.pocketStyle || 0,
+    hemRuffle: s.hemRuffle || 0, closure: closures[0] || null,
   };
   // (1) scattered nested layout, (2) FRONT + BACK flat technical sketch (STEP 2).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));

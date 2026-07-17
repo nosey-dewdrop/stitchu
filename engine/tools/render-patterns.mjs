@@ -109,6 +109,11 @@ export const PATTERNS = [
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
     tie: 2 /* backWaistBow */, gatherType: 2 /* shirred */, gatherZone: 1 /* bust */,
     patch: '1.9', drawnBy: 'the gathered bust panel under the empire seam and the back-waist bow', photos: 3 },
+
+  { slug: 'patch-pocket-shift-dress', style: 'Patch-pocket A-line shift dress', garment: 'dress',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    pocketStyle: 1 /* patch */, patch: '3.12', drawnBy: 'the pair of patch pockets on the front skirt', photos: 2 },
 ];
 
 const engine = await createEngine();
@@ -134,10 +139,13 @@ for (const s of PATTERNS) {
   const flatSpec = {
     garment: s.garment, shaping: s.shaping, waistline: s.waistline, neckline: s.neckline,
     skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
-    sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0, collarType: s.collarType || 0,
+    sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0,
+    collarType: s.collarType || 0, collarEdge: s.collarEdge || 0,
     frontPlacket: s.frontPlacket === true, placketStyle: s.placketStyle || 0,
     tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
-    backOpening: s.backOpening || 0, closure: closures[0] || null,
+    backOpening: s.backOpening || 0, ruffledStraps: s.ruffledStraps || 0,
+    peplum: s.peplum || 0, pocketStyle: s.pocketStyle || 0, hemRuffle: s.hemRuffle || 0,
+    closure: closures[0] || null,
   };
   // (1) The scattered nested-piece layout — the CUTTING LAYOUT (secondary/PDF).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));

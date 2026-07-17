@@ -368,16 +368,20 @@ function interiorOnFigure(spec, half) {
     }
   }
 
-  // button placket (front)
+  // button placket (front): a clean CF fold line + a row of cute round buttons,
+  // each with a tiny center dot so it reads as a real button, not just a ring.
   const hasPlacket = spec.frontPlacket || (spec.placketStyle && spec.placketStyle > 0);
   if (hasPlacket) {
     const top = F.neckBaseY + half.neck.depth + 4;
     const bot = half.hy - 8;
-    s += `<line x1="0" y1="${n(top - 4)}" x2="0" y2="${n(bot)}" stroke="${SEAM}" stroke-width="1"/>`;
+    // asymmetric plackets sit the button row a touch off the center front.
+    const bx = spec.placketStyle === 2 ? 5 : 0;
+    s += `<line x1="${n(bx)}" y1="${n(top - 4)}" x2="${n(bx)}" y2="${n(bot)}" stroke="${SEAM}" stroke-width="1"/>`;
     const nb = 6;
     for (let i = 0; i < nb; i++) {
       const y = top + (bot - top) * i / (nb - 1);
-      s += `<circle cx="0" cy="${n(y)}" r="2.6" fill="none" stroke="${NAVY}" stroke-width="1"/>`;
+      s += `<circle cx="${n(bx)}" cy="${n(y)}" r="3" fill="#fff" stroke="${NAVY}" stroke-width="1.1"/>`;
+      s += `<circle cx="${n(bx)}" cy="${n(y)}" r="0.7" fill="${NAVY}"/>`;
     }
   }
 
@@ -413,24 +417,213 @@ function interiorOnFigure(spec, half) {
   return s;
 }
 
-// collar hugging the worn neckline (front). Peter-pan = two rounded leaves;
-// stand/shirt = a band along the neckline.
+// collar hugging the worn neckline (front). Each collar type is drawn as its own
+// recognizable shape so the figure reads the real garment:
+//   stand / mock = a little upstanding band around the neck
+//   flat / peter-pan = two soft collar leaves lying on the chest (round/pointed/
+//                      scalloped outer edge per collarEdge)
+//   shirt = a small pointed shirt collar with an open V and a stand band
 function collarOnFigure(spec, half) {
   const t = spec.collarType || 0;
   if (!t) return '';
+  const edge = spec.collarEdge || 0;                   // 0 round, 1 pointed, 2 scallop
   const nHalf = half.neck.half;
   const ny = F.neckBaseY + half.neck.depth * 0.4;
-  if (t === 4) {                                       // peter-pan
+  const nbY = F.neckBaseY;
+
+  // stand / mock collar: a short band standing up around the neck base.
+  if (t === 1 || t === 2) {
     let s = '';
+    const bandTop = nbY - 12;
     for (const dir of [-1, 1]) {
-      s += `<path d="M 0 ${n(ny + 4)} Q ${n(dir * nHalf * 0.9)} ${n(ny - 4)} ${n(dir * nHalf * 1.25)} ${n(ny + 26)} ` +
-        `Q ${n(dir * nHalf * 0.85)} ${n(ny + 34)} ${n(dir * nHalf * 0.3)} ${n(ny + 16)} Z" ` +
+      s += `<path d="M ${n(dir * 2)} ${n(nbY - 2)} L ${n(dir * (nHalf * 0.7 + 2))} ${n(nbY - 2)} ` +
+        `L ${n(dir * (nHalf * 0.7))} ${n(bandTop)} L ${n(dir * 3)} ${n(bandTop)}" ` +
         `fill="#fff" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round"/>`;
     }
     return s;
   }
-  return `<path d="M ${n(-nHalf)} ${n(ny + 8)} Q 0 ${n(ny - 8)} ${n(nHalf)} ${n(ny + 8)}" ` +
-    `fill="none" stroke="${NAVY}" stroke-width="2" stroke-linecap="round"/>`;
+
+  // shirt collar: a stand band + two pointed collar leaves flopping open in a V.
+  if (t === 5) {
+    let s = '';
+    s += `<path d="M ${n(-nHalf * 0.7)} ${n(nbY - 2)} Q 0 ${n(nbY - 12)} ${n(nHalf * 0.7)} ${n(nbY - 2)}" ` +
+      `fill="none" stroke="${NAVY}" stroke-width="1.4"/>`;
+    for (const dir of [-1, 1]) {
+      // collar leaf: from the neck point out and down to a sharp point on the chest.
+      s += `<path d="M ${n(dir * 4)} ${n(nbY - 6)} L ${n(dir * nHalf * 1.15)} ${n(ny + 6)} ` +
+        `L ${n(dir * nHalf * 0.5)} ${n(ny + 30)} L ${n(dir * 3)} ${n(ny + 10)} Z" ` +
+        `fill="#fff" stroke="${NAVY}" stroke-width="1.3" stroke-linejoin="round"/>`;
+    }
+    return s;
+  }
+
+  // flat / peter-pan collar: two plump rounded leaves lying on the chest, each
+  // hugging the neckline at the top and swelling to a soft round outer edge.
+  let s = '';
+  const nx0 = 3;                                       // small gap at center front
+  for (const dir of [-1, 1]) {
+    const innerX = dir * nx0, topY = ny - 2;           // near the neck point
+    const outX = dir * nHalf * 1.28, outMidY = ny + 18;
+    const botX = dir * nHalf * 0.5, botY = ny + 34;    // where the leaf meets the chest
+    // top edge: neck point -> arc up and out to the widest outer point.
+    let outerEdge;
+    if (edge === 1) {                                  // pointed tip
+      outerEdge = `Q ${n(dir * nHalf * 1.15)} ${n(ny + 6)} ${n(dir * nHalf * 1.4)} ${n(ny + 20)} ` +
+        `Q ${n(dir * nHalf * 1.1)} ${n(ny + 28)} ${n(botX)} ${n(botY)} `;
+    } else if (edge === 2) {                           // scallop: two little bumps
+      outerEdge = `Q ${n(dir * nHalf * 1.25)} ${n(ny + 8)} ${n(dir * nHalf)} ${n(ny + 20)} ` +
+        `Q ${n(dir * nHalf * 1.15)} ${n(ny + 30)} ${n(botX)} ${n(botY)} `;
+    } else {                                           // round (default) — plump leaf
+      outerEdge = `C ${n(outX)} ${n(ny + 4)} ${n(outX)} ${n(outMidY + 8)} ${n(botX + dir * nHalf * 0.35)} ${n(botY)} ` +
+        `Q ${n(botX)} ${n(botY + 2)} ${n(botX * 0.6)} ${n(botY - 2)} `;
+    }
+    s += `<path d="M ${n(innerX)} ${n(topY)} ` +
+      `Q ${n(dir * nHalf * 0.7)} ${n(ny - 6)} ${n(outX)} ${n(ny + 4)} ` +
+      outerEdge +
+      `Q ${n(dir * nHalf * 0.2)} ${n(ny + 18)} ${n(innerX)} ${n(topY)} Z" ` +
+      `fill="#fff" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round"/>`;
+  }
+  return s;
+}
+
+// a cute little drawn BOW/RIBBON centered at (cx, cy), half-width `w`. Two soft
+// loops, a knot in the middle, and two tails hanging down — reads as a ribbon.
+function bow(cx, cy, w = 16) {
+  const lh = w;                 // loop reach to each side
+  const lv = w * 0.62;          // loop height
+  const knot = w * 0.26;        // knot half size
+  const tailLen = w * 1.35;
+  let s = `<g>`;
+  for (const dir of [-1, 1]) {
+    // one ribbon loop: knot edge -> swoop out and up -> back down to knot.
+    s += `<path d="M ${n(cx + dir * knot)} ${n(cy - knot * 0.5)} ` +
+      `C ${n(cx + dir * (lh * 0.6))} ${n(cy - lv)} ${n(cx + dir * lh)} ${n(cy - lv * 0.7)} ${n(cx + dir * lh)} ${n(cy)} ` +
+      `C ${n(cx + dir * lh)} ${n(cy + lv * 0.7)} ${n(cx + dir * (lh * 0.6))} ${n(cy + lv)} ${n(cx + dir * knot)} ${n(cy + knot * 0.5)} Z" ` +
+      `fill="#fff" stroke="${NAVY}" stroke-width="1.5" stroke-linejoin="round"/>`;
+    // a tail hanging from the knot, gently curved and notched at the tip.
+    const tx = cx + dir * knot * 0.6, ty = cy + knot;
+    const tipX = cx + dir * knot * 2.1, tipY = cy + tailLen;
+    s += `<path d="M ${n(tx)} ${n(ty)} C ${n(tx + dir * 2)} ${n(cy + tailLen * 0.5)} ${n(tipX - dir * 3)} ${n(tipY - 6)} ${n(tipX)} ${n(tipY)} ` +
+      `L ${n(tipX - dir * 4)} ${n(tipY - 4)}" fill="none" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  // the knot: a small soft rounded rectangle in the middle.
+  s += `<rect x="${n(cx - knot)}" y="${n(cy - knot)}" width="${n(knot * 2)}" height="${n(knot * 2)}" rx="${n(knot * 0.5)}" ` +
+    `fill="#fff" stroke="${NAVY}" stroke-width="1.5"/>`;
+  return s + `</g>`;
+}
+
+// a ribbon/bow drawn on the figure where the spec's tie sits. TiePlacement:
+// 1 backWaist, 2 backWaistBow, 3 frontNeckBow, 4 tieBack, 5 cuffTies,
+// 6 frontWaistTie, 7 wrapFront, 8 frontWaistBow.
+function bowsOnFigure(spec, half) {
+  const t = spec.tie || 0;
+  if (!t) return '';
+  const empire = spec.waistline === 'empire';
+  const waistY = empire ? half.bodiceWaistY : F.waistY;
+  switch (t) {
+    case 3: {                                          // front neck bow (pussy-bow)
+      const cy = F.neckBaseY + half.neck.depth + 6;
+      return bow(0, cy, 15);
+    }
+    case 2:                                            // back-waist bow (seen from back-ish, draw centered at waist)
+    case 4:                                            // tie-back (bow at center back waist)
+    case 8:                                            // front waist bow
+    case 6:                                            // front waist tie
+    case 1:                                            // back waist
+      return bow(0, waistY, 17);
+    case 7: {                                          // wrap front: bow at the side waist
+      return bow(half.hh * 0.35, waistY, 14);
+    }
+    case 5: {                                          // cuff ties: little bows at each wrist
+      let s = '';
+      for (const dir of [-1, 1]) s += bow(dir * (F.waistX + 16), F.wristY - 6, 9);
+      return s;
+    }
+    default:
+      return bow(0, waistY, 16);
+  }
+}
+
+// pockets on the figure. Patch pocket = a cute rounded pocket square on the front
+// hip; side-seam pocket = a short hint line tucked into the hip side seam.
+function pocketsOnFigure(spec, half) {
+  const ps = spec.pocketStyle || 0;
+  if (!ps) return '';
+  const isDress = spec.garment === 'dress';
+  const py = isDress ? F.hipY + 14 : F.hipY - 6;
+  let s = '';
+  if (ps === 1) {                                      // patch pocket (draw a pair)
+    const w = 20, h = 24, offX = F.hipX * 0.5;
+    for (const dir of [-1, 1]) {
+      const x = dir * offX - w / 2;
+      // rounded-bottom pocket with a top hem line.
+      s += `<path d="M ${n(x)} ${n(py)} L ${n(x + w)} ${n(py)} L ${n(x + w)} ${n(py + h * 0.6)} ` +
+        `Q ${n(x + w)} ${n(py + h)} ${n(x + w / 2)} ${n(py + h)} ` +
+        `Q ${n(x)} ${n(py + h)} ${n(x)} ${n(py + h * 0.6)} Z" ` +
+        `fill="none" stroke="${NAVY}" stroke-width="1.3" stroke-linejoin="round"/>`;
+      s += `<line x1="${n(x + 2)}" y1="${n(py + 5)}" x2="${n(x + w - 2)}" y2="${n(py + 5)}" stroke="${SEAM}" stroke-width="1"/>`;
+    }
+    return s;
+  }
+  // side-seam pocket: a short curved opening line at each hip side seam.
+  for (const dir of [-1, 1]) {
+    const x = dir * (half.hh - 2);
+    s += `<path d="M ${n(x)} ${n(py - 8)} C ${n(x - dir * 8)} ${n(py + 2)} ${n(x - dir * 8)} ${n(py + 14)} ${n(x)} ${n(py + 22)}" ` +
+      `fill="none" stroke="${SEAM}" stroke-width="1.2" stroke-linecap="round"/>`;
+  }
+  return s;
+}
+
+// a scalloped / wavy ruffle edge from (x0,y0) to (x1,y1) drawn as little bumps —
+// used for ruffled straps, hem ruffles, off-shoulder frills.
+function ruffleEdge(x0, y0, x1, y1, bumps = 5, amp = 5) {
+  const dx = (x1 - x0) / bumps, dy = (y1 - y0) / bumps;
+  // perpendicular direction for the bump to bulge outward (downward-ish).
+  const len = Math.hypot(x1 - x0, y1 - y0) || 1;
+  const nx = (y1 - y0) / len, ny = -(x1 - x0) / len;   // normal
+  let d = `M ${n(x0)} ${n(y0)} `;
+  for (let i = 0; i < bumps; i++) {
+    const sx = x0 + dx * i, sy = y0 + dy * i;
+    const ex = x0 + dx * (i + 1), ey = y0 + dy * (i + 1);
+    const mx = (sx + ex) / 2 + nx * amp, my = (sy + ey) / 2 + ny * amp;
+    d += `Q ${n(mx)} ${n(my)} ${n(ex)} ${n(ey)} `;
+  }
+  return `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round"/>`;
+}
+
+// ruffled shoulder straps: replace the plain shoulder line with a cute frilled
+// strap running from the neckline point up over each shoulder, drawn wavy.
+function ruffledStrapsOnFigure(spec, half) {
+  if (!(spec.ruffledStraps && spec.ruffledStraps > 0)) return '';
+  const nHalf = half.neck.half;
+  const shoulderX = F.shoulderX - 8, shoulderY = F.shoulderY;
+  const innerX = nHalf, innerY = F.neckBaseY + half.neck.depth * 0.3;
+  let s = '';
+  for (const dir of [-1, 1]) {
+    // a strap band with a ruffle running along its outer edge.
+    s += ruffleEdge(dir * innerX, innerY, dir * shoulderX, shoulderY, 4, dir === 1 ? -6 : 6);
+    // inner clean band line so it reads as a strap, not a loose frill.
+    s += `<path d="M ${n(dir * (innerX + 4))} ${n(innerY + 6)} L ${n(dir * (shoulderX - 2))} ${n(shoulderY + 5)}" ` +
+      `fill="none" stroke="${SEAM}" stroke-width="1"/>`;
+  }
+  return s;
+}
+
+// a hem ruffle: a wavy scalloped flounce along the garment hem.
+function hemRuffleOnFigure(spec, half) {
+  if (!(spec.hemRuffle && spec.hemRuffle > 0)) return '';
+  const hy = half.hy, hh = half.hh;
+  // draw the wavy edge across the full hem (left tip -> center -> right tip).
+  return ruffleEdge(-hh, hy + 2, 0, hy + 8, 4, 6) + ruffleEdge(0, hy + 8, hh, hy + 2, 4, 6);
+}
+
+// off-shoulder / bardot frill: a soft ruffled band across the chest for a wide
+// off-shoulder neckline, drawn as a wavy flounce sitting off both shoulders.
+function offShoulderFrillOnFigure(spec, half) {
+  if ((spec.neckline || '') !== 'offShoulder') return '';
+  const nHalf = half.neck.half;
+  const cy = F.neckBaseY + half.neck.depth;
+  return ruffleEdge(-nHalf, cy, 0, cy + 4, 4, 5) + ruffleEdge(0, cy + 4, nHalf, cy, 4, 5);
 }
 
 // ---------------------------------------------------------------------------
@@ -442,7 +635,15 @@ export function renderOnFigure(spec = {}) {
     `<path d="${fullOutlinePath(half)}" fill="#fbfcfe" stroke="${NAVY}" ` +
     `stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
   const sleeves = sleeveOnFigure(spec);
-  const details = collarOnFigure(spec, half) + interiorOnFigure(spec, half);
+  // structural interior first, then the cute surface details on top so a bow,
+  // button, pocket or ruffle always reads clearly over seams and gathers.
+  const details = interiorOnFigure(spec, half)
+    + ruffledStrapsOnFigure(spec, half)
+    + hemRuffleOnFigure(spec, half)
+    + offShoulderFrillOnFigure(spec, half)
+    + pocketsOnFigure(spec, half)
+    + collarOnFigure(spec, half)
+    + bowsOnFigure(spec, half);
 
   // z-order: figure first (behind), then garment over it.
   const inner = croquis() + outline + sleeves + details;

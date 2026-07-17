@@ -1,7 +1,7 @@
 [
   {
     "slug": "boat-neck-linen-shell",
-    "pieces": 4,
+    "pieces": 3,
     "a4pages": 10,
     "a4bytes": 36160,
     "a0bytes": 3979,
@@ -11,7 +11,7 @@
   },
   {
     "slug": "scoop-neck-tank-mini-dress",
-    "pieces": 6,
+    "pieces": 5,
     "a4pages": 13,
     "a4bytes": 44251,
     "a0bytes": 5725,
@@ -21,7 +21,7 @@
   },
   {
     "slug": "boat-neck-button-down-top",
-    "pieces": 4,
+    "pieces": 3,
     "a4pages": 13,
     "a4bytes": 48479,
     "a0bytes": 4680,
@@ -31,7 +31,7 @@
   },
   {
     "slug": "gingham-button-blouse",
-    "pieces": 4,
+    "pieces": 3,
     "a4pages": 13,
     "a4bytes": 48570,
     "a0bytes": 4687,
@@ -51,7 +51,7 @@
   },
   {
     "slug": "back-tie-shift-mini-dress",
-    "pieces": 7,
+    "pieces": 6,
     "a4pages": 16,
     "a4bytes": 56000,
     "a0bytes": 6323,
@@ -61,7 +61,7 @@
   },
   {
     "slug": "square-neck-back-tie-babydoll-top",
-    "pieces": 5,
+    "pieces": 4,
     "a4pages": 11,
     "a4bytes": 40176,
     "a0bytes": 4640,
@@ -71,7 +71,7 @@
   },
   {
     "slug": "empire-waist-tie-back-dress",
-    "pieces": 8,
+    "pieces": 7,
     "a4pages": 28,
     "a4bytes": 96937,
     "a0bytes": 6369,
@@ -81,7 +81,7 @@
   },
   {
     "slug": "square-neck-drawstring-babydoll-dress",
-    "pieces": 8,
+    "pieces": 7,
     "a4pages": 21,
     "a4bytes": 73438,
     "a0bytes": 5926,
@@ -91,7 +91,7 @@
   },
   {
     "slug": "open-back-princess-mini-dress",
-    "pieces": 11,
+    "pieces": 10,
     "a4pages": 22,
     "a4bytes": 93875,
     "a0bytes": 8732,
@@ -101,7 +101,7 @@
   },
   {
     "slug": "open-back-tie-back-mini-dress",
-    "pieces": 8,
+    "pieces": 7,
     "a4pages": 20,
     "a4bytes": 66208,
     "a0bytes": 7218,
@@ -121,7 +121,7 @@
   },
   {
     "slug": "ruffled-strap-milkmaid-babydoll-dress",
-    "pieces": 9,
+    "pieces": 8,
     "a4pages": 23,
     "a4bytes": 76472,
     "a0bytes": 6230,
@@ -141,12 +141,22 @@
   },
   {
     "slug": "gathered-bust-empire-mini-dress",
-    "pieces": 9,
+    "pieces": 8,
     "a4pages": 24,
     "a4bytes": 84935,
     "a0bytes": 7163,
     "guidebytes": 7298,
     "guideSteps": 19,
     "cols": 7
+  },
+  {
+    "slug": "patch-pocket-shift-dress",
+    "pieces": 6,
+    "a4pages": 19,
+    "a4bytes": 73389,
+    "a0bytes": 7335,
+    "guidebytes": 5712,
+    "guideSteps": 15,
+    "cols": 5
   }
 ]

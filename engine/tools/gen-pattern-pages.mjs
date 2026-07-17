@@ -209,6 +209,18 @@ const COPY = {
         'Prenses dikişleri büstün üzerinden geçerek oturmuş, yakın bir gövde kesimi verir; arkayı orta ve yan panele böler.',
         'Arka bel fiyongu, kendi yerleşim çentiği olan ayrı bir kendinden astarlı bağ parçasıdır; büzgülü mini etek yükseltilmiş belin altında dolgun düşer.'] },
   },
+  'patch-pocket-shift-dress': {
+    en: { lead: 'A scoop-neck A-line shift dress with a pair of patch pockets on the front skirt. The pockets are real cut pieces the engine drafts and places, not a printed detail.',
+      fabric: 'Mid-weight woven cotton, linen or twill, roughly 1.7 m at 140 cm.',
+      facts: ['Each patch pocket is a separate rounded-corner piece with a self-hem top edge, sized in proportion to the front skirt panel and trued to the drafted placement.',
+        'A softly flared A-line skirt gives room to reach into the pockets while keeping a clean line.',
+        'The bodice is dart-shaped with a bias-bound neckline and armholes, closing with an invisible centre-back zip.'] },
+    tr: { lead: 'Ön eteğinde bir çift yama cebi olan, oval yakalı A kesim şift elbise. Cepler baskı bir detay değil, motorun çizip yerleştirdiği gerçek kesim parçalarıdır.',
+      fabric: 'Orta gramajlı dokuma pamuk, keten ya da twill, 140 cm ende yaklaşık 1.7 m.',
+      facts: ['Her yama cebi, üst kenarı kendinden katlı, yuvarlak köşeli ayrı bir parçadır; ön etek panosuna oranlı boyutlanır ve çizilen yerleşime göre doğrulanır.',
+        'Yumuşak açılan A kesim etek, temiz bir hat korurken cebe rahatça uzanma payı bırakır.',
+        'Gövde pensli kesimdir; yaka ve kol oyukları biye ile bitirilir, arka orta gizli fermuarla kapanır.'] },
+  },
 };
 
 // TR phrasing of "drawnBy" for the honest-note sentence, keyed by slug.
@@ -226,6 +238,7 @@ const DRAWN_BY_TR = {
   'ruffled-strap-milkmaid-babydoll-dress': 'fırfırlı omuz askılarını, büzgülü büst robasını ve ön bağı',
   'shirt-collar-smocked-babydoll-top': 'sivri gömlek yakasını, büzgülü göğüs robasını ve büzgülü puf kol başını',
   'gathered-bust-empire-mini-dress': 'empire dikişinin altındaki büzgülü büst panosunu ve arka bel fiyongunu',
+  'patch-pocket-shift-dress': 'ön etekteki bir çift yama cebini',
 };
 
 // Human piece names for the piece list (strip the parenthetical TR the engine adds).
