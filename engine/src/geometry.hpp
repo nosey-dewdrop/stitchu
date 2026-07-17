@@ -44,6 +44,17 @@ struct PatternPiece {
     // strip pieces whose cut note already includes every allowance). Cut on
     // this line, sew on `commands`.
     std::vector<PathCommand> cutLine;
+    // BALANCE NOTCHES: short match marks on curved seams that must align when
+    // sewn (armhole<->sleeve cap, bodice waist<->skirt waist, princess seams).
+    // Kept SEPARATE from `markings` so the sewing/cut geometry (and the golden
+    // dump, which reads commands + markings) stays byte-identical while the
+    // technical layer is added. Convention: a "single" notch = one short line,
+    // a "double" notch = two parallel short lines (front vs back match).
+    std::vector<PathCommand> notches;
+    // CLOSURE: a human label of the donning closure this piece carries, e.g.
+    // "invisible zipper (center back)". Empty when the piece has no closure.
+    // The zipper glyph itself is drawn into `notches` at the closure edge.
+    std::string closure;
     bool hasGrainline = false;
     Grainline grainline;
     double seamAllowance = 15.0;         // mm, drawn into cutLine

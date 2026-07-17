@@ -111,6 +111,102 @@ std::vector<PatternPiece> edgeFinishPieces(
     return out;
 }
 
+// ---------------------------------------------------------------------------
+// TECHNICAL MARKINGS post-pass (STEP 3): a real sewable commercial pattern
+// carries, per piece: a GRAINLINE arrow, BALANCE NOTCHES on the curved seams
+// that must align when sewn, and a CLOSURE mark where a non-stretch fitted
+// garment needs one. These live in the new `notches`/`closure` fields, kept
+// OUT of `commands`/`markings` so the sewing + cut geometry (and the golden
+// dump) stays byte-identical. Placement is by bounding box + piece name, so it
+// is robust across every garment/shaping variant.
+
+// A single balance notch = one short line INTO the piece from the edge point.
+void notch1(std::vector<PathCommand>& into, Point edge, double dx, double dy) {
+    into.push_back(PathCommand::move(edge));
+    into.push_back(PathCommand::line({edge.x + dx, edge.y + dy}));
+}
+// A double balance notch = two short parallel lines (front/back match pair).
+void notch2(std::vector<PathCommand>& into, Point edge, double dx, double dy, double sepX, double sepY) {
+    notch1(into, {edge.x - sepX * 0.5, edge.y - sepY * 0.5}, dx, dy);
+    notch1(into, {edge.x + sepX * 0.5, edge.y + sepY * 0.5}, dx, dy);
+}
+
+bool nameHas(const PatternPiece& pc, const char* s) {
+    return pc.name.find(s) != std::string::npos;
+}
+
+// Annotate every drafted piece with grainline (fallback), balance notches and
+// (for a CB-zip garment) the closure mark. dressZipper = the garment carries an
+// invisible center-back zipper (a dress; hasDonningOpening already true).
+void annotateTechnical(DraftedPattern& pattern, bool dressZipper) {
+    const bool sleeved = [&] {
+        for (const auto& pc : pattern.pieces)
+            if (nameHas(pc, "Sleeve")) return true;
+        return false;
+    }();
+    for (auto& pc : pattern.pieces) {
+        // Strip/notion pieces (bias binding, ruffle, tie, cord, drawstring) are
+        // straight rectangles cut on the bias/straight — no balance notches.
+        const bool strip = nameHas(pc, "Bias binding") || nameHas(pc, "Ruffle") ||
+                           nameHas(pc, "Tie") || nameHas(pc, "Cord") ||
+                           nameHas(pc, "Binding");
+        // GRAINLINE — every real piece must carry one. Most already do; add a
+        // straight vertical fallback through the bbox centre for any that don't.
+        if (!pc.hasGrainline && !pc.commands.empty()) {
+            const Rect bb = boundingBox(pc.commands);
+            const double cx = bb.x + bb.width * 0.5;
+            pc.hasGrainline = true;
+            pc.grainline = Grainline{{cx, bb.y + bb.height * 0.20},
+                                     {cx, bb.y + bb.height * 0.80}};
+        }
+        if (strip || pc.commands.empty()) continue;
+        const Rect bb = boundingBox(pc.commands);
+        const bool isBack = nameHas(pc, "Back");
+        const bool isFront = nameHas(pc, "Front");
+        // --- Bodice / Top: armhole + waist balance notches on the side seam ---
+        // Side seam is the max-x edge; armhole notch sits high (near the scye),
+        // waist notch sits at the bottom edge. Front = single, back = double.
+        if ((nameHas(pc, "Bodice") || nameHas(pc, "Top")) && (isFront || isBack)) {
+            const double sideX = bb.x + bb.width;
+            if (sleeved) {
+                const Point armPt{sideX, bb.y + bb.height * 0.18};
+                if (isBack) notch2(pc.notches, armPt, -12, 0, 0, 12);
+                else notch1(pc.notches, armPt, -12, 0);
+            }
+            // Waist notch on the side seam at the bottom edge (matches the skirt).
+            const Point waistPt{sideX, bb.y + bb.height};
+            if (isBack) notch2(pc.notches, waistPt, -12, 0, 0, 12);
+            else notch1(pc.notches, waistPt, -12, 0);
+        }
+        // --- Skirt: waist balance notch on the side seam at the top edge ---
+        if (nameHas(pc, "Skirt") && (isFront || isBack)) {
+            const double sideX = bb.x + bb.width;
+            const Point waistPt{sideX, bb.y};
+            if (isBack) notch2(pc.notches, waistPt, -12, 0, 0, 12);
+            else notch1(pc.notches, waistPt, -12, 0);
+        }
+        // --- CLOSURE: a dress carries an invisible CB zipper. Mark the back
+        // pieces (bodice back + skirt back, cut on a CB seam) with the zipper
+        // glyph down the center-back edge + a human closure label. ---
+        if (dressZipper && isBack &&
+            (nameHas(pc, "Bodice") || nameHas(pc, "Skirt") || nameHas(pc, "Top"))) {
+            // Center-back seam edge = min-x for a "cut 2" back panel.
+            const double cbX = bb.x;
+            const double top = bb.y + bb.height * 0.02;
+            const double bot = nameHas(pc, "Skirt") ? bb.y + std::min(bb.height * 0.35, 180.0)
+                                                     : bb.y + bb.height;
+            // Zipper teeth glyph: a line down the CB with short ticks.
+            pc.notches.push_back(PathCommand::move({cbX + 4, top}));
+            pc.notches.push_back(PathCommand::line({cbX + 4, bot}));
+            for (double y = top; y <= bot; y += 22.0) {
+                pc.notches.push_back(PathCommand::move({cbX + 4, y}));
+                pc.notches.push_back(PathCommand::line({cbX + 12, y}));
+            }
+            pc.closure = "invisible zipper (center back)";
+        }
+    }
+}
+
 } // namespace
 
 namespace DressBlock {
@@ -670,6 +766,24 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 hemMM * lenMultiplier * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
             1);
     }
+    // TECHNICAL MARKINGS (STEP 3): grainline (fallback), balance notches on the
+    // seams that must align, and the CB-zipper closure mark on a dress. Runs
+    // after every geometry post-pass so every piece is covered, and BEFORE the
+    // cutting-line offset (notches sit on the sewing line). A dress always gets
+    // the invisible center-back zipper (see wearability::hasDonningOpening).
+    // A dress carries an invisible CB zipper UNLESS its own back opening/closure
+    // already opens the back: an open-back cutout, a back tie/back-waist bow, a
+    // front placket, or a halter (opens at the nape) — mirror hasDonningOpening
+    // so we never stamp a redundant zipper onto a garment that opens elsewhere.
+    const auto tiePl = static_cast<TiePlacement>(spec.tieClosure);
+    const bool backAlreadyOpens =
+        spec.backOpening != static_cast<int>(BackOpening::None) ||
+        spec.frontPlacket || spec.neckline == Neckline::Halter ||
+        tiePl == TiePlacement::TieBack || tiePl == TiePlacement::BackWaist ||
+        tiePl == TiePlacement::BackWaistBow;
+    annotateTechnical(pattern,
+        /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
+
     // CUTTING LINES (last, so every post-pass piece is covered): each real
     // piece gets its sewing line offset outward by its seam allowance — cut on
     // the outer line, sew on the inner. Strip pieces (ruffle, bias binding)

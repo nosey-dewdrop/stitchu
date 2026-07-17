@@ -20,6 +20,12 @@ function svgOf(slug) {
   // strip the xml width attr so CSS controls size; keep viewBox.
   return raw.replace(/ width="100%"/, '').trim();
 }
+// The clean FRONT + BACK flat technical sketch (STEP 2) — the primary figure,
+// matching the front/back view a commercial Etsy pattern shows.
+function flatSvgOf(slug) {
+  const raw = readFileSync(join(VDIR, `${slug}-flat.svg`), 'utf8');
+  return raw.replace(/ width="100%"/, '').trim();
+}
 
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'CollectionPage',
@@ -44,8 +50,11 @@ const looks = meta.map((m) => {
     <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p>
     <p class="lline" data-en="${esc(m.note_en)}" data-tr="${esc(m.note_tr)}">${esc(m.note_en)}</p>
     <div class="caps">${m.pieceNames.map((n) => `<span class="cap">${esc(n)}</span>`).join('')}</div>
-    <p class="lmeta"><span class="num">${m.pieces}</span> <span data-en="pattern pieces" data-tr="kalıp parçası">pattern pieces</span> · <span class="num">${m.fabric}</span> m <span data-en="fabric at 140 cm" data-tr="140 cm kumaş">fabric at 140 cm</span> · <span class="ok" data-en="validator clean" data-tr="validator temiz">validator clean</span></p>
+    <p class="lmeta"><span class="num">${m.pieces}</span> <span data-en="pattern pieces" data-tr="kalıp parçası">pattern pieces</span> · <span class="num">${m.fabric}</span> m <span data-en="fabric at 140 cm" data-tr="140 cm kumaş">fabric at 140 cm</span> · <span class="ok" data-en="validator clean" data-tr="validator temiz">validator clean</span>${m.closure ? ` · <span class="ok" data-en="closure: ${esc(m.closure)}" data-tr="kapanma: ${esc(m.closure)}">${esc(m.closure)}</span>` : ''}</p>
   </div>
+  <p class="viewcap" data-en="Front and back technical flat" data-tr="Ön ve arka teknik çizim">Front and back technical flat</p>
+  <a class="figwrap" href="${detail}">${flatSvgOf(m.slug)}</a>
+  <p class="viewcap" data-en="Nested pieces (cut layout)" data-tr="Yerleşimli parçalar (kesim planı)">Nested pieces (cut layout)</p>
   <a class="figwrap" href="${detail}">${svgOf(m.slug)}</a>
   ${oov ? `<p class="honest" data-en="Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:" data-tr="Siluet olarak tam çizildi. Motor bu yüzey detaylarını çizmez, bu yüzden sessizce atlanmaz, belirtilir:">Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:</p><div class="caps">${oov}</div>` : ''}
   <p class="detaillink"><a href="${detail}" data-en="See the sewing details and download the pattern →" data-tr="Dikiş detaylarını gör ve kalıbı indir →">See the sewing details and download the pattern →</a></p>
@@ -102,6 +111,7 @@ const html = `<!DOCTYPE html>
   .figwrap{display:block;border:1px solid var(--bb-line);background:#fff;box-shadow:0 6px 18px rgba(63,116,168,.08);padding:18px;margin-bottom:16px;border-radius:3px;text-decoration:none}
   a.figwrap:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
   .figwrap svg{width:100%;height:auto}
+  .viewcap{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5b7089;margin:6px 0 6px}
   .honest{font-size:13px;color:#5b7089;font-style:italic;margin:4px 0 10px;max-width:70ch}
   .detaillink{margin:12px 0 0;font-size:14px}
   .detaillink a{color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}

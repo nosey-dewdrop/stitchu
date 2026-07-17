@@ -195,6 +195,8 @@ std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
         }
         out += R"(,"commands":)" + commandsJSON(piece.commands);
         out += R"(,"markings":)" + commandsJSON(piece.markings);
+        out += R"(,"notches":)" + commandsJSON(piece.notches);
+        if (!piece.closure.empty()) out += R"(,"closure":")" + escape(piece.closure) + "\"";
         out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
         out += "}";
     }

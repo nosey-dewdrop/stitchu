@@ -13,8 +13,8 @@ import { fileURLToPath } from 'url';
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
-const sheet = await import(join(here, '../../web/js/sheet.js'));
-const { pathD, bounds, shelfPack, pieceTransform } = sheet;
+const flat = await import(join(here, 'render-flat.mjs'));
+const { renderScattered, renderFrontBack } = flat;
 
 const OUT = join(here, '../../web/patterns/vintage6070');
 mkdirSync(OUT, { recursive: true });
@@ -31,12 +31,12 @@ export const LOOKS = [
   { slug: 'sixties-fit-flare-knit-dress',
     en: 'Fit-and-flare knit dress', tr: 'Vücuda oturan, etek ucu açılan örme elbise',
     period: '1960s', house: 'Mary Quant style',
-    garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'knit',
+    garment: 'dress', shaping: 'dart', waistline: 'natural', fabric: 'knit',
     neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'long',
     skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip',
     full: true,
-    note_en: 'A crew-neck knit dress with princess seams, long fitted sleeves and a short A-line skirt. Every piece is in the engine’s core vocabulary, so it drafts complete.',
-    note_tr: 'Prenses dikişli, uzun oturan kollu, kısa A kesim etekli bisiklet yaka örme elbise. Her parça motorun temel dağarcığında, bu yüzden tam çizilir.',
+    note_en: 'A crew-neck knit dress with waist darts, long fitted sleeves and a short A-line skirt. A soft knit fit-and-flare needs no princess panels; a simple darted bodice does the shaping. Every piece is in the engine’s core vocabulary, so it drafts complete.',
+    note_tr: 'Bel pensli, uzun oturan kollu, kısa A kesim etekli bisiklet yaka örme elbise. Yumuşak örme vücuda oturan silüet prenses parça istemez; sade pensli beden biçimlendirir. Her parça motorun temel dağarcığında, bu yüzden tam çizilir.',
     oov: ['contrast waist stripe band (surface trim, not drafted)'] },
 
   { slug: 'sixties-mondrian-shift-mini',
@@ -75,12 +75,12 @@ export const LOOKS = [
   { slug: 'sixties-boat-neck-shift-mini',
     en: 'Boat-neck sleeveless shift mini', tr: 'Kayık yakalı kolsuz shift mini',
     period: '1960s', house: 'André Courrèges style',
-    garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    garment: 'dress', shaping: 'dart', waistline: 'natural', fabric: 'woven',
     neckline: 'boat', sleeveStyle: 'none', sleeveLength: 'short',
     skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip',
     full: true,
-    note_en: 'A clean sleeveless A-line shift mini with a wide boat neckline, finished with a plain bias-bound neck (no collar; the classic 60s space-age line is collarless).',
-    note_tr: 'Geniş kayık yakalı kolsuz A kesim shift mini; yaka biyeyle bitirilir (yaka yok; 60ların uzay-çağı çizgisi yakasızdır).',
+    note_en: 'A clean sleeveless A-line shift mini with a wide boat neckline, finished with a plain bias-bound neck (no collar; the classic 60s space-age line is collarless). A boxy shift is drafted with simple darts, not princess panels.',
+    note_tr: 'Geniş kayık yakalı kolsuz A kesim shift mini; yaka biyeyle bitirilir (yaka yok; 60ların uzay-çağı çizgisi yakasızdır). Kutu gibi shift, prenses parça değil sade pensle çizilir.',
     oov: ['oval welt pockets, self-fabric belt (not drafted)'] },
 
   { slug: 'sixties-crew-neck-jersey-mini',
@@ -203,18 +203,14 @@ export const LOOKS = [
   { slug: 'sixties-boat-neck-longsleeve-mini',
     en: 'Boat-neck long-sleeve mod mini', tr: 'Kayık yakalı uzun kollu mod mini',
     period: '1960s', house: 'Courrèges style',
-    garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'knit',
+    garment: 'dress', shaping: 'dart', waistline: 'natural', fabric: 'knit',
     neckline: 'boat', sleeveStyle: 'straight', sleeveLength: 'long',
     skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip',
     full: true,
-    note_en: 'A long-sleeved boat-neck princess-seam knit mini, bias-bound at the neck (no collar). The sharp space-age mod silhouette.',
-    note_tr: 'Uzun kollu kayık yakalı prenses dikişli örme mini, boyunda biye (yaka yok). Keskin uzay-çağı mod silueti.',
+    note_en: 'A long-sleeved boat-neck knit mini shaped with simple darts, bias-bound at the neck (no collar). The sharp space-age mod silhouette needs no princess seams in a soft knit.',
+    note_tr: 'Uzun kollu kayık yakalı, sade pensle biçimlenen örme mini, boyunda biye (yaka yok). Keskin uzay-çağı mod silueti yumuşak örmede prenses dikiş istemez.',
     oov: ['contrast go-go stripe at cuff and hem (colour, not drafted)'] },
 ];
-
-const svgDoc = (w, h, inner) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
-  `width="100%" role="img"><rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#fff"/>${inner}</svg>`;
 
 const engine = await createEngine();
 const meta = [];
@@ -228,46 +224,18 @@ for (const s of LOOKS) {
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
 
-  const dims = p.pieces.map((pc) => {
-    const b = bounds(pc);
-    return { p: pc, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
-  });
-  const minCols = Math.max(1, Math.ceil((Math.max(...dims.map((d) => d.w)) + 1) / 190));
-  let layout = null, bestScore = Infinity;
-  for (let c = minCols; c <= minCols + 5; c++) {
-    const l = shelfPack(dims.map((d) => ({ ...d })), c);
-    const score = Math.abs(Math.log((l.stripW / l.stripH) / 1.15));
-    if (score < bestScore) { bestScore = score; layout = l; }
-  }
+  // (1) scattered nested layout, (2) FRONT + BACK flat technical sketch (STEP 2).
+  writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
+  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces));
 
-  let inner = '';
-  for (const d of layout.placed) {
-    const off = pieceTransform(d); // rotation-safe
-    const pc = d.p;
-    if (pc.cutLine && pc.cutLine.length) {
-      inner += `<path transform="${off}" d="${pathD(pc.cutLine, 1)}" fill="none" ` +
-        `stroke="#8fbfe8" stroke-width="1.1" stroke-dasharray="5 4"/>`;
-    }
-    inner += `<path transform="${off}" d="${pathD(pc.commands, 1)}" fill="rgba(63,116,168,.06)" ` +
-      `stroke="#1f3a5f" stroke-width="1.4"/>`;
-    if (pc.markings && pc.markings.length) {
-      inner += `<path transform="${off}" d="${pathD(pc.markings, 1)}" fill="none" ` +
-        `stroke="#3f74a8" stroke-width="0.8" stroke-dasharray="3 3"/>`;
-    }
-    if (pc.grainline) {
-      const g = pc.grainline;
-      inner += `<line transform="${off}" x1="${g.fromX.toFixed(1)}" y1="${g.fromY.toFixed(1)}" ` +
-        `x2="${g.toX.toFixed(1)}" y2="${g.toY.toFixed(1)}" stroke="#3f74a8" stroke-width="0.9"/>`;
-    }
-    inner += `<text transform="${off}" x="${(d.b.minX + 4).toFixed(1)}" y="${(d.b.minY + 14).toFixed(1)}" ` +
-      `font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#1f3a5f">${pc.name}</text>`;
-  }
-  writeFileSync(join(OUT, `${s.slug}.svg`), svgDoc(layout.stripW, layout.stripH, inner));
+  const closures = [...new Set(p.pieces.filter((x) => x.closure).map((x) => x.closure))];
   meta.push({ slug: s.slug, en: s.en, tr: s.tr, period: s.period, house: s.house,
     pieces: p.pieces.length, pieceNames: p.pieces.map((x) => x.name),
     fabric: p.fabricMeters140, garment: s.garment, full: s.full,
-    note_en: s.note_en, note_tr: s.note_tr, oov: s.oov });
-  console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m  [${s.full ? 'FULL' : 'PARTIAL'}]`);
+    note_en: s.note_en, note_tr: s.note_tr, oov: s.oov,
+    flat: `${s.slug}-flat.svg`, closure: closures[0] || null });
+  console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m  [${s.full ? 'FULL' : 'PARTIAL'}]` +
+    (closures.length ? ` [closure]` : ''));
 }
 writeFileSync(join(OUT, 'meta.json'), JSON.stringify(meta, null, 2));
 console.log(`\n${meta.length} looks rendered -> ${OUT}`);

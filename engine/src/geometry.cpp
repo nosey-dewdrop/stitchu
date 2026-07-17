@@ -182,6 +182,7 @@ void translatePiece(PatternPiece& piece, double dx, double dy) {
     shift(piece.commands);
     shift(piece.markings);
     shift(piece.cutLine);
+    shift(piece.notches);
     piece.grainline.from.x += dx; piece.grainline.from.y += dy;
     piece.grainline.to.x += dx; piece.grainline.to.y += dy;
 }

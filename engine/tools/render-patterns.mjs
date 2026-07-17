@@ -13,8 +13,8 @@ import { fileURLToPath } from 'url';
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
-const sheet = await import(join(here, '../../web/js/sheet.js'));
-const { pathD, bounds, shelfPack } = sheet;
+const flat = await import(join(here, 'render-flat.mjs'));
+const { renderScattered, renderFrontBack } = flat;
 
 const OUT = join(here, '../../web/patterns/svg');
 mkdirSync(OUT, { recursive: true });
@@ -91,10 +91,6 @@ export const PATTERNS = [
     drawnBy: 'the peter-pan collar, the puff sleeve head and the smocked yoke', photos: 2 },
 ];
 
-const svgDoc = (w, h, inner) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
-  `width="100%" role="img"><rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#fff"/>${inner}</svg>`;
-
 const engine = await createEngine();
 const meta = [];
 for (const s of PATTERNS) {
@@ -112,57 +108,18 @@ for (const s of PATTERNS) {
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
 
-  // Lay every drafted piece out on one nested strip (3-wide, mm units).
-  const dims = p.pieces.map((pc) => {
-    const b = bounds(pc);
-    return { p: pc, b, w: b.maxX - b.minX, h: b.maxY - b.minY };
-  });
-  // Pick the strip width (in 190 mm columns) that gives the SQUAREST layout, so
-  // the thumbnail reads well in the gallery grid instead of a tall ribbon.
-  const minCols = Math.max(1, Math.ceil((Math.max(...dims.map((d) => d.w)) + 1) / 190));
-  let layout = null;
-  let bestScore = Infinity;
-  for (let c = minCols; c <= minCols + 5; c++) {
-    // No rotation for these gallery thumbnails: a rotated piece leaves d.ox/d.oy
-    // undefined (sheet.js uses d.tx/d.ty + rotate instead), and the piece labels
-    // below are drawn in piece-local coords that only match a plain translate.
-    const l = shelfPack(dims.map((d) => ({ ...d })), c, false);
-    const ratio = l.stripW / l.stripH;
-    const score = Math.abs(Math.log(ratio / 1.15)); // target ~1.15:1 landscape
-    if (score < bestScore) { bestScore = score; layout = l; }
-  }
+  // (1) The scattered nested-piece layout (gallery thumbnail).
+  writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
+  // (2) The clean FRONT + BACK flat technical sketch (STEP 2).
+  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces));
 
-  let inner = '';
-  for (const d of layout.placed) {
-    const off = `translate(${d.ox.toFixed(1)} ${d.oy.toFixed(1)})`;
-    const pc = d.p;
-    // seam-allowance cut line (outer, dashed) then the sewing line (solid).
-    if (pc.cutLine && pc.cutLine.length) {
-      inner += `<path transform="${off}" d="${pathD(pc.cutLine, 1)}" fill="none" ` +
-        `stroke="#8fbfe8" stroke-width="1.1" stroke-dasharray="5 4"/>`;
-    }
-    inner += `<path transform="${off}" d="${pathD(pc.commands, 1)}" fill="rgba(63,116,168,.06)" ` +
-      `stroke="#1f3a5f" stroke-width="1.4"/>`;
-    if (pc.markings && pc.markings.length) {
-      inner += `<path transform="${off}" d="${pathD(pc.markings, 1)}" fill="none" ` +
-        `stroke="#3f74a8" stroke-width="0.8" stroke-dasharray="3 3"/>`;
-    }
-    if (pc.grainline) {
-      const g = pc.grainline;
-      inner += `<line transform="${off}" x1="${g.fromX.toFixed(1)}" y1="${g.fromY.toFixed(1)}" ` +
-        `x2="${g.toX.toFixed(1)}" y2="${g.toY.toFixed(1)}" stroke="#3f74a8" stroke-width="0.9"/>`;
-    }
-    // piece label at its top-left.
-    inner += `<text transform="${off}" x="${(d.b.minX + 4).toFixed(1)}" y="${(d.b.minY + 14).toFixed(1)}" ` +
-      `font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#1f3a5f">${pc.name}</text>`;
-  }
-  const W = layout.stripW;
-  const H = layout.stripH;
-  writeFileSync(join(OUT, `${s.slug}.svg`), svgDoc(W, H, inner));
+  const closures = [...new Set(p.pieces.filter((x) => x.closure).map((x) => x.closure))];
   meta.push({ slug: s.slug, style: s.style, pieces: p.pieces.length,
     pieceNames: p.pieces.map((x) => x.name), fabric: p.fabricMeters140,
-    garment: s.garment, patch: s.patch, drawnBy: s.drawnBy, photos: s.photos });
-  console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m`);
+    garment: s.garment, patch: s.patch, drawnBy: s.drawnBy, photos: s.photos,
+    flat: `${s.slug}-flat.svg`, closure: closures[0] || null });
+  console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m` +
+    (closures.length ? ` [closure: ${closures[0]}]` : ''));
 }
 writeFileSync(join(OUT, 'meta.json'), JSON.stringify(meta, null, 2));
 console.log(`\n${meta.length} patterns rendered -> ${OUT}`);
