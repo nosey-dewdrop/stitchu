@@ -729,3 +729,10 @@ BİYE-b · HOOK: "varsayılanı değiştirdim ama eski her kalıp tek komutla ge
 - Anlatı (~40sn): motorun varsayılanını değiştirmek risklidir, aylardır sabit olan altın referansı oynatır. kolay yol sayıyı gizlemek. dürüst yol: golden'ı pervaz bitişine yeniden sabitle, böylece yüzey byte-birebir kalıyor VE pervaza opt-in yapınca eski çıktı bayt bayt geri geliyor, kanıtlı. yeni bias_check biye şerit boyunun çizilen kenar çevresine milimetrenin yüzde biri hassasiyetinde eşit olduğunu, gerçek yakanın pervazlı boynunu koruduğunu, kolsuz kol oyuntusunun biyesini aldığını ölçüyor. 21 test, 20260 web draft'ı, 37800 sözlük draft'ı, sıfır hata. "yaptım" demeden önce bir derleme + bir render + gözle onay.
 - **Görsel:** [ekran] terminal "bias_check: ALL BIAS CHECKS PASS" yeşil, "neck strip length == neck edge + overlap (trued 0.00 mm)" satırı vurgulu; yanında golden diff "0.000000 mm / 23034 lines".
 - **Format:** reel
+
+## Cep motoru, "ne çizeceğime veri karar verdi" (patch 3.12, patch + side-seam pocket)
+
+BI · HOOK: "bir sonraki özelliği sezgiyle seçmedim, iki harita da aynı yeri gösterdi: cep."
+- Anlatı (~40sn): 28 binlik havuzdan çıkan pazar pusulası ve sevdiğim altmışlar-yetmişler koleksiyonu, ikisi de aynı şeyi dedi: motorun çizemediği en sık öğe cep, yan dikiş 14 + yama 13. o yüzden cebi yaptım. iki tip: yama cep (dışa dikilen ayrı parça + gövdede yerleşim işareti) ve yan dikiş cebi (dikişe gizli torba + ağız işareti). boyut senin ölçünden: yama genişliği ön panelin bir oranı, torba derinliği çizilen yan dikişten ölçülü, öyle ki cep etek altına sarkmaz. welt/besli/kargo cebi çizmiyorum, enum bile yok, dürüstçe "elle ekle" diyor. kapalıyken motor byte-birebir aynı, 23 test + 20270 web + 37800 sözlük çizimi sıfır hata. sonra elbiseyi bastırıp gözle baktım: yama ayrı parça + işaret, torba dikişte, kopuk yok.
+- **Görsel:** [ekran-kaydı] render-pages çıktısı iki panel: solda yama cepli elbise (yuvarlak cep parçası + gövdede dashed yerleşim dikdörtgeni); sağda yan dikiş cepli etek (teardrop torba + Side Front dikişinde ağız ticks'i). üstte küçük etiket "byte-identical when off · trued to your measurements".
+- **Format:** reel

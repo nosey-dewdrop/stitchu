@@ -134,6 +134,15 @@ const SPECS = [
   { name: 'gingham-placket-blouse', garment: 'top', shaping: 'dart', waistline: 'natural', fabric: 'woven',
     neckline: 'boat', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, frontPlacket: true },
+  // patch 3.12: a PATCH pocket on a dress (a separate rounded patch piece + a
+  // placement mark on the Bodice/Skirt front) and a SIDE-SEAM in-seam pocket on a
+  // skirt (two bag pieces + a mouth mark on the side seam). Both must draw + pack.
+  { name: 'patch-pocket-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'scoop', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, pocketStyle: 1 /* patch */ },
+  { name: 'sideseam-pocket-skirt', garment: 'skirt', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, pocketStyle: 2 /* side-seam */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -150,7 +159,8 @@ for (const s of SPECS) {
     s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
     s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0,
     s.placketStyle || 0,
-    s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */));
+    s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */,
+    s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

@@ -433,6 +433,10 @@ std::vector<ValidationIssue> skirtIssues(
         // skirt pieces all carry the "Skirt" prefix.
         // A hem ruffle is a trim, not a waist-bearing piece — never count it.
         if (piece.name.find("Ruffle") != std::string::npos) continue;
+        // Pockets (patch 3.12) are attachments, not waist-bearing panels: a patch
+        // pocket sits ON a panel and an in-seam pocket bag hangs off the side seam
+        // — neither joins the waist, so they must never enter the waist sum.
+        if (piece.name.find("Pocket") != std::string::npos) continue;
         if (spec.garment == GarmentType::Skirt ? piece.name != "Waistband"
                                                : hasPrefix(piece.name, "Skirt")) {
             skirtPieces.push_back(&piece);

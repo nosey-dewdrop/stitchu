@@ -8,6 +8,7 @@
 #include "openback.hpp"
 #include "peplum.hpp"
 #include "placket.hpp"
+#include "pocket.hpp"
 #include "ruffle.hpp"
 #include "skirt.hpp"
 #include "slit.hpp"
@@ -543,6 +544,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.peplum != static_cast<int>(PeplumStyle::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PeplumBlock::apply(pattern, static_cast<PeplumStyle>(spec.peplum), m.waistMM());
+    }
+    // Opt-in pocket (cep, patch 3.12): a PATCH pocket (separate piece + placement
+    // mark) or a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). Post-
+    // pass on the finished draft, so the base is byte-identical with it off
+    // (pocketStyle == None). The patch is sized/trued to the measured front-panel
+    // width (a quarter of the bust girth — the drafted front quarter); the side-
+    // seam bag measures its own host seam. Welt/besom/cargo stay honest.
+    if (spec.pocketStyle != static_cast<int>(PocketStyle::None)) {
+        PocketBlock::apply(pattern, static_cast<PocketStyle>(spec.pocketStyle),
+                           m.bustMM() / 4.0);
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

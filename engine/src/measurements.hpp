@@ -246,6 +246,12 @@ struct GarmentSpec {
     // keeps the collar piece regardless (the collar covers the neck edge).
     // See bodice.cpp biasBinding / FORMULAS.md "Bias binding edge finish".
     int edgeFinish = 0; // EdgeFinish enum value; 0 = BiasBinding (default)
+    // Opt-in pocket (cep, patch 3.12): a PATCH pocket (a separate piece sewn onto
+    // the outside of a body panel + a placement mark) or a SIDE-SEAM in-seam
+    // pocket (two pocket-bag pieces set into the side seam + a mouth-opening
+    // mark). Off by default (None) → byte-identical. Welt/besom, cargo, kangaroo
+    // stay honest (missing.js). See pocket.hpp / FORMULAS.md "Pockets".
+    int pocketStyle = 0; // PocketStyle enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

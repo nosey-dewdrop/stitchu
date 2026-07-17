@@ -20,6 +20,7 @@ add_library(engine
     src/slit.cpp
     src/strap.cpp
     src/peplum.cpp
+    src/pocket.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
@@ -86,6 +87,10 @@ add_test(NAME strap_check COMMAND strap_check)
 add_executable(peplum_check tests/peplum_check.cpp)
 target_link_libraries(peplum_check PRIVATE engine)
 add_test(NAME peplum_check COMMAND peplum_check)
+
+add_executable(pocket_check tests/pocket_check.cpp)
+target_link_libraries(pocket_check PRIVATE engine)
+add_test(NAME pocket_check COMMAND pocket_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

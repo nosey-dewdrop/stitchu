@@ -70,6 +70,10 @@ const SPEC_GROUPS = [
   // button stand shifted off center (the Jackie gingham). Only a dress/top hosts
   // one; a symmetric CF placket is still set by the front-closure read separately.
   { key: 'placketStyle', label: 'button placket', trLabel: 'düğme patı', options: [['none', 'none', 'yok'], ['standard', 'center front', 'ortadan'], ['asymmetric', 'asymmetric (off center)', 'asimetrik (yandan)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  // patch 3.12: pocket (cep). A patch pocket (a separate piece sewn onto the
+  // outside + a placement mark) or a side-seam in-seam pocket (two bag pieces +
+  // a mouth mark). Welt/besom/cargo/kangaroo stay honest → not offered here.
+  { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi']], for: () => true },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -82,7 +86,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
-  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding',
+  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -286,6 +290,29 @@ function pickPeplum(seen) {
   if (/pointed|handkerchief|dip|asymmetric/.test(words)) return 'pointed';
   if (/half[\s-]?circle/.test(words)) return 'half';
   return 'full';
+}
+
+// Map the vision's oov / details to a pocket (patch 3.12). The engine draws a
+// PATCH pocket (a separate piece sewn onto the outside + a placement mark) and a
+// SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). A welt / besom /
+// bound / cargo / flap / kangaroo pocket is a DIFFERENT construction that stays
+// honest. Returns 'patch' | 'sideSeam' or null.
+function pickPocket(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/pocket/.test(words)) return null;
+  // Constructions the engine does NOT draft — leave them honest.
+  if (/welt|besom|bound|jetted|cargo|flap|kangaroo|patch flap|zip(per)?\s*pocket/.test(words)) {
+    return null;
+  }
+  // A side-seam / in-seam / hidden / slash pocket rides the side seam.
+  if (/side[\s-]?seam|in[\s-]?seam|inseam|hidden|slash|seam pocket/.test(words)) return 'sideSeam';
+  // A patch pocket is a piece applied to the surface (the most common read).
+  if (/patch|hip pocket|chest pocket|applied pocket/.test(words)) return 'patch';
+  // A bare "pocket" with no welt/side cue reads as the common patch pocket.
+  return 'patch';
 }
 
 // Map the vision's closure + oov to a placket style (R1.2). The engine draws a
@@ -642,6 +669,13 @@ function showSpec() {
         // waisted bodice → gate it out.
         const peplum = pickPeplum(seen);
         spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
+        // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
+        // separate piece + a placement mark) and a side-seam in-seam pocket (two
+        // bag pieces + a mouth mark). A welt/besom/cargo/kangaroo pocket stays
+        // honest (pickPocket null). The block itself skips honestly when the host
+        // has no panel / no side seam (e.g. a cropped top for a side-seam bag).
+        const pocket = pickPocket(seen);
+        spec.pocketStyle = pocket || 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -704,6 +738,12 @@ function showSpec() {
           // as missing. A pleated/gathered/draped/tiered peplum stays honest
           // (peplum none — a different construction the engine does not draw).
           peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
+          // patch 3.12: a patch pocket OR a side-seam in-seam pocket is now DRAWN
+          // as real piece(s) + a placement/mouth mark, so the honesty layer must
+          // NOT list that pocket as missing. A welt/besom/bound/cargo/kangaroo
+          // pocket stays honest (pocketStyle none — a different construction the
+          // engine does not draw).
+          pocketDrawn: !!(spec.pocketStyle && spec.pocketStyle !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

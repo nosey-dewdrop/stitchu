@@ -41,6 +41,7 @@ const ENUMS = {
   peplum: ['none', 'full', 'half', 'pointed'],
   placketStyle: ['none', 'standard', 'asymmetric'],
   edgeFinish: ['biasBinding', 'bias', 'facing'],
+  pocketStyle: ['none', 'patch', 'sideSeam'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -82,6 +83,9 @@ const placketStyleInt = (spec) => {
 // 0 = BiasBinding (patch 3.10 default), 1 = Facing (opt-in).
 const EDGE_FINISH = { biasBinding: 0, bias: 0, facing: 1 };
 const edgeFinishInt = (s) => EDGE_FINISH[s] || 0;
+// PocketStyle enum int (must match engine/src/pocket.hpp order). 0 = None.
+const POCKET_STYLE = { none: 0, patch: 1, sideSeam: 2 };
+const pocketStyleInt = (s) => POCKET_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -193,6 +197,7 @@ export function validateDraftRequest(body) {
       peplum: spec.peplum ?? 'none',
       placketStyle: spec.placketStyle ?? 'none',
       edgeFinish: spec.edgeFinish ?? 'biasBinding',
+      pocketStyle: spec.pocketStyle ?? 'none',
     },
     measurements,
   };
@@ -223,6 +228,7 @@ export async function runDraft(spec, measurements) {
     peplumInt(spec.peplum),           // R1.1: peplum flare
     placketStyleInt(spec),            // R1.2: asymmetric placket
     edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
+    pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
   );
   return JSON.parse(json);
 }
@@ -267,6 +273,8 @@ export async function handleGrade(request) {
       ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
       peplumInt(spec.peplum),           // R1.1: peplum flare
       placketStyleInt(spec),            // R1.2: asymmetric placket
+      edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
+      pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

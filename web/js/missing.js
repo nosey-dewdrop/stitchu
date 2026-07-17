@@ -307,6 +307,12 @@ export function missingFeatures(seen, lang) {
   // R1.2: the short cap-sleeve wing is now drawn, so an outOfVocab term naming a
   // "cap sleeve" is no longer missing. A dropped/off-shoulder sleeve is different.
   const capSleeveTerm = (t) => /\bcap\s*sleeve/i.test(t) && !/drop|off[\s-]?shoulder/i.test(t);
+  // patch 3.12: a patch pocket or a side-seam in-seam pocket is now drawn, so an
+  // outOfVocab term naming that pocket is no longer missing. A welt / besom /
+  // bound / jetted / cargo / flap / kangaroo / zip pocket is a DIFFERENT
+  // construction the engine does NOT draft and stays honest.
+  const pocketTerm = (t) => /pocket/i.test(t) &&
+    !/welt|besom|bound|jetted|cargo|flap|kangaroo|zip(per)?/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -316,6 +322,7 @@ export function missingFeatures(seen, lang) {
     if (seen.peplumDrawn && peplumTerm(label)) continue;
     if (seen.placketAsymDrawn && asymPlacketTerm(label)) continue;
     if (seen.capSleeveDrawn && capSleeveTerm(label)) continue;
+    if (seen.pocketDrawn && pocketTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

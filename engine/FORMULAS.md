@@ -791,6 +791,50 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   bias (a finish choice, not a garment read); missing.js treats a "bias-bound / bound"
   neck read as DRAWN now; engine.js/backend/bindings int edgeFinish param (LAST arg,
   0 = bias default); both wasm targets rebuilt.
+## Pockets (patch + side-seam) (cep) — opt-in (BENCHMARK-58 data ray, patch 3.12)
+- WHAT: two honest pocket constructions, each a SEPARATE opt-in post-pass that
+  leaves every existing outline byte-identical when off. `PocketStyle { None,
+  Patch, SideSeam }`. pocket.hpp/.cpp, post-pass in garment.cpp after the peplum
+  block. Chosen from the data: the market compass (dataset/vocab-frequency) and
+  the 60s/70s collection both flag side pocket (freq 14) + patch pocket (freq 13)
+  as the highest drawable out-of-vocab cluster.
+- PATCH (yama cep): a separate flat pocket piece sewn onto the OUTSIDE of a body
+  panel. A rounded-corner rectangle W × (H + hem), W = `clamp(frontWidth · 0.55,
+  110, 210)` mm, H = `1.12 · W`; the top folds a `patchHemDepth = 35` mm self-hem
+  for the mouth (a fold line marked above the mouth). `frontWidth` is the measured
+  front-panel width passed from the drafter = `bust / 4` (the drafted front
+  quarter) — so the patch grows with the body, TRUED to that measured width (the
+  cut note quotes it; pocket_check reproduces `clamp(bust/4 · 0.55)`). A placement
+  mark (an L-bracket of tick runs) is stamped on the front panel at its upper-hip
+  band, read from the panel's own bounding box (each piece is drafted in local
+  coordinates). SA = 15 mm; corner radius 28 mm. cut 2.
+- SIDE-SEAM (yan dikiş cebi / in-seam): a hidden bag set into the side seam. One
+  mirrored teardrop bag piece (cut 2 pairs = 4) with a straight side-seam edge and
+  a curved pouch edge that seams to its mate. The host is the SIDE panel (max-x
+  edge = the side seam); the mouth opening (`mouthOpening = 155` mm) starts
+  `min(70, sideLen·0.25)` mm below the waist, and the bag hangs `bagBelowMouth =
+  175` mm below the opening, both MEASURED from the drafted side-seam length so the
+  bag never runs past the hem. A mouth mark (two inward ticks bracketing the hand
+  opening + a dashed open run between them) is stamped on the side seam. Needs a
+  side seam ≥ `minSeamForBag = 320` mm (a cropped top is skipped honestly).
+- BYTE-IDENTICAL: with pocketStyle None (default) nothing is added and the golden
+  dump is unchanged (23034 lines). Neither pocket ever rewrites an existing
+  outline — a patch/mouth MARK is added to the host body panel's `markings`, but
+  the OUTLINE (`commands`) of every piece is byte-identical (pocket_check asserts
+  this). The validator excludes any "Pocket" piece from the skirt-waist sum (a
+  pocket is an attachment, not a waist-bearing panel) so it never distorts the
+  waist-join check.
+- HONEST LIMIT: only the patch pocket and the in-seam side-seam pocket are drawn.
+  A WELT / BESOM / BOUND / JETTED pocket, a CARGO / FLAP pocket and a KANGAROO
+  pouch are DIFFERENT constructions that stay in the honesty layer (missing.js),
+  never silently faked (there is no enum for them — the surface is exactly {None,
+  Patch, SideSeam}). The block returns false + an honest guide note when the host
+  has no panel / too-short a side seam (never a silent no-op).
+- Vision→spec (create.js pickPocket): reads seen.oov/details for "pocket" (not
+  welt/besom/bound/jetted/cargo/flap/kangaroo/zip) → sideSeam on side/in-seam/
+  hidden/slash cues, else patch (a bare "pocket" reads as the common patch). A
+  manual "cep" picker covers the no-photo path; seen.pocketDrawn suppresses the
+  missing.js pocket note + the outOfVocab pocket term (welt etc. stay honest).
 
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —

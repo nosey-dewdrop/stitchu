@@ -251,14 +251,14 @@ createEngine().then((e) => {
   };
 
   // Patch 3.10 edge finish: appends the full trailing arg list with the
-  // edgeFinish enum LAST (peplum 0, placketStyle 0 before it) so bias/facing is
-  // exercised. The bias strips (neckline + armhole) are fresh strip pieces that
-  // must pack.
+  // edgeFinish enum (peplum 0, placketStyle 0 before it, pocketStyle 0 after) so
+  // bias/facing is exercised. The bias strips (neckline + armhole) are fresh strip
+  // pieces that must pack.
   const edgeRun = (label, args, m, edgeFinish, collarType) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish));
+      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -268,12 +268,50 @@ createEngine().then((e) => {
         if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
       }
     }
+    const sheetsE = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheetsE);
+    if (sheetsE > 100) { failures++; console.log(`PAGES ${label}: ${sheetsE} sheets`); }
+  };
+
+  // patch 3.12 pocket variant: pocketStyle is the LAST trailing arg (after
+  // placketStyle, edgeFinish). The patch pocket / in-seam bag is a fresh piece
+  // that must pack without clipping; the block skips honestly (0 extra) when the
+  // host has no panel / too-short a side seam.
+  const pocketRun = (label, args, m, pocketStyle) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle));
+    if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed)
+      if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
     const sheets = countSheets(layout);
     maxSheets = Math.max(maxSheets, sheets);
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
   for (const [bi, m] of BODIES.entries()) {
+    // patch 3.12: patch + side-seam pocket across dress/skirt/top, princess+dart,
+    // several skirt styles. Patch sits on a front panel; side-seam needs a side
+    // seam (a cropped top / gathered skirt is skipped honestly, not clipped).
+    for (const [ps, psName] of [[1, 'patch'], [2, 'sideSeam']]) {
+      for (const garment of ['dress', 'skirt', 'top']) {
+        for (const shaping of ['princess', 'dart']) {
+          const skirt = garment === 'top' ? 'aLine' : 'aLine';
+          const topLen = garment === 'top' ? 'hip' : 'hip';
+          pocketRun(`b${bi} pocket-${psName} ${garment}/${shaping}`,
+            [garment, shaping, 'natural', 'woven', 'crew', 'none', 'short', skirt, 'midi', topLen, false, 1, false], m, ps);
+        }
+      }
+      // Also a straight + gathered skirt (gathered has no fitted side for a bag →
+      // honest skip; straight hosts both).
+      pocketRun(`b${bi} pocket-${psName} skirt/straight`,
+        ['skirt', 'princess', 'natural', 'woven', 'crew', 'none', 'short', 'straight', 'midi', 'hip', false, 1, false], m, ps);
+      pocketRun(`b${bi} pocket-${psName} skirt/gathered`,
+        ['skirt', 'princess', 'natural', 'woven', 'crew', 'none', 'short', 'gathered', 'midi', 'hip', false, 1, false], m, ps);
+    }
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
       for (const [sleeve, sleeveLen] of sleeves)
