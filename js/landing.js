@@ -1,7 +1,7 @@
 // Hero sewing space, full bleed. Guides live in non-overlapping CELLS so
 // shapes never collide at any screen size, and your sewn stitches survive
 // resizes (stored normalized, redrawn on rebuild).
-import { drawRun, makeSewable } from './stitch.js?v=59';
+import { drawRun, makeSewable } from './stitch.js?v=60';
 
 const hero = document.getElementById('hero-sew');
 const FAINT = '#dedede';

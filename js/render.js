@@ -1,11 +1,11 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=59';
-import { getLang, t } from './i18n.js?v=59';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=59';
-import { GUIDE_TR } from './guide-tr.js?v=59';
-import { GLOSSARY } from './glossary.js?v=59';
-import { appendSewingCompanion } from './sewing.js?v=59';
+import { fabricAdvice } from './fabrics.js?v=60';
+import { getLang, t } from './i18n.js?v=60';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=60';
+import { GUIDE_TR } from './guide-tr.js?v=60';
+import { GLOSSARY } from './glossary.js?v=60';
+import { appendSewingCompanion } from './sewing.js?v=60';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip), a beginner can learn a word without leaving
@@ -42,7 +42,7 @@ const PREVIEW_SCALE = 0.28;
 
 // pathD/bounds live in sheet.js (the pure print-geometry module), one truth,
 // one place; imported and re-exported so existing imports keep working.
-import { pathD, bounds, packPieces, usedCells, sheetInner, PAGE_W, PAGE_H } from './sheet.js?v=59';
+import { pathD, bounds, packPieces, usedCells, sheetInner, PAGE_W, PAGE_H } from './sheet.js?v=60';
 export { pathD, bounds };
 
 // Chalk-drawn pieces (a ruffle strip, a bias binding) are not cut on paper, so

@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=59';
-import { applyStatic, getLang, t } from './i18n.js?v=59';
-import { draft, grade } from './engine.js?v=59';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=59';
-import { renderResult } from './render.js?v=59';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=60';
+import { applyStatic, getLang, t } from './i18n.js?v=60';
+import { draft, grade } from './engine.js?v=60';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=60';
+import { renderResult } from './render.js?v=60';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=59';
+} from './store.js?v=60';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -22,7 +22,7 @@ const values = { ...(saved || DEMO_BODY) };
 
 const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
-  { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)']], for: (s) => s.garment !== 'skirt' },
+  { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)'], ['cowl', 'cowl (draped)', 'kowl (dökümlü)'], ['pussyBow', 'pussy-bow', 'fiyonk yaka']], for: (s) => s.garment !== 'skirt' },
   { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   // Loop 7/8: collar family, a separate collar piece, neck edge trued to the
   // neckline. Only for non-skirt, non-halter garments (a halter has no neckline
