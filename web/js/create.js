@@ -78,6 +78,11 @@ const SPEC_GROUPS = [
   // outside + a placement mark) or a side-seam in-seam pocket (two bag pieces +
   // a mouth mark). Welt/besom/cargo/kangaroo stay honest → not offered here.
   { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi']], for: () => true },
+  // patch 3.15: hem shape (etek ucu şekli). Reshapes the fitted lower edge into a
+  // shirt-tail (sides up, center long) or high-low (front short, back long). Only
+  // a fitted straight/A-line skirt/dress or a top hosts it; a gathered/pleated/
+  // circle skirt has no shaped side hem to lift (stays honest).
+  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -90,8 +95,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
-  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none',
-  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', cuffStyle: 'none',
+  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -331,6 +335,27 @@ function pickCuff(seen) {
   if (/rib(bed)?|knit|bomber|sweat/.test(words)) return 'ribbed';
   if (/button|barrel|shirt|placket/.test(words)) return 'button';
   return 'button'; // a plain "cuff" on a woven sleeve reads as the barrel cuff
+}
+
+// Map the vision's oov / details to a hem SHAPE (patch 3.15). The engine reshapes
+// the fitted lower edge into a shirt-tail (sides up, center long) or a high-low
+// (front short, back long). An asymmetric-diagonal / handkerchief / mullet hem on
+// a gathered skirt is a different construction that stays honest. Returns
+// 'shirttail' | 'highLow' or null. Gated off a fitted straight/A-line skirt/dress
+// or a top by the caller.
+function pickHemShape(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/hem|hemline|lower edge/.test(words) &&
+      !/high[\s-]?low|mullet|shirt[\s-]?tail|shirttail/.test(words)) return null;
+  // A handkerchief / pointed / asymmetric-diagonal hem is NOT the soft symmetric
+  // shirttail / front-short-back-long high-low the engine draws — leave it honest.
+  if (/handkerchief|pointed|asymmetric|diagonal|angled/.test(words)) return null;
+  if (/high[\s-]?low|mullet|dipped back|dip hem|longer at (the )?back/.test(words)) return 'highLow';
+  if (/shirt[\s-]?tail|shirttail|curved hem|cowboy|rounded hem|curved hemline/.test(words)) return 'shirttail';
+  return null;
 }
 
 // Map the vision's closure + oov to a placket style (R1.2). The engine draws a
@@ -704,6 +729,16 @@ function showSpec() {
           (spec.sleeveLength === 'long' || spec.sleeveLength === 'elbow') &&
           spec.sleeveCap !== 'cap';
         spec.cuffStyle = (cuff && cuffHostable) ? cuff : 'none';
+        // Hem shape (etek ucu şekli, patch 3.15): the engine now reshapes the
+        // fitted lower edge into a shirt-tail (sides up) or a high-low (front short,
+        // back long). Only a fitted straight/A-line skirt/dress or a top hosts one;
+        // a gathered/pleated/circle skirt has no shaped side hem to lift, and an
+        // asymmetric/handkerchief hem stays honest (pickHemShape null).
+        const hemShape = pickHemShape(seen);
+        const hemHostable = spec.garment === 'top' ||
+          ((spec.garment === 'skirt' || spec.garment === 'dress') &&
+           (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
+        spec.hemShape = (hemShape && hemHostable) ? hemShape : 'straight';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -778,6 +813,11 @@ function showSpec() {
           // ruffle cuff stays honest (cuffStyle none — a construction the engine
           // does not draft).
           cuffDrawn: !!(spec.cuffStyle && spec.cuffStyle !== 'none'),
+          // patch 3.15: a shirt-tail / high-low hem is now DRAWN by reshaping the
+          // fitted lower edge, so the honesty layer must NOT list it as missing. An
+          // asymmetric-diagonal / handkerchief / mullet-on-a-gathered-skirt hem is a
+          // different construction that stays honest (hemShape straight).
+          hemShapeDrawn: !!(spec.hemShape && spec.hemShape !== 'straight'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

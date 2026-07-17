@@ -129,7 +129,7 @@ GarmentSpec buildSpec(
     bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
     int sleeveCap, int collarType, int collarEdge, int gatherType, int gatherZone,
     int backOpening, int backSlit, int ruffledStraps, int peplum, int placketStyle,
-    int edgeFinish, int pocketStyle, int cuffStyle
+    int edgeFinish, int pocketStyle, int cuffStyle, int hemShape
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -160,6 +160,7 @@ GarmentSpec buildSpec(
     spec.edgeFinish = edgeFinish; // patch 3.10: EdgeFinish enum; 0=BiasBinding(default) 1=Facing
     spec.pocketStyle = pocketStyle; // patch 3.12: PocketStyle enum; 0=None 1=Patch 2=SideSeam
     spec.cuffStyle = cuffStyle; // patch 3.13: CuffStyle enum; 0=None 1=Button 2=Ribbed
+    spec.hemShape = hemShape; // patch 3.15: HemShape enum; 0=Straight 1=Shirttail 2=HighLow
     return spec;
 }
 
@@ -227,10 +228,11 @@ std::string draftJSON(
     int placketStyle,  // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
     int edgeFinish,    // patch 3.10: edge finish; 0 = BiasBinding (default), 1 = Facing
     int pocketStyle,   // patch 3.12: pocket; 0 = None 1 = Patch 2 = SideSeam
-    int cuffStyle      // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
+    int cuffStyle,     // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
+    int hemShape       // patch 3.15: hem shape; 0 = Straight 1 = Shirttail 2 = HighLow
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -261,10 +263,11 @@ std::string gradeJSON(
     int placketStyle,  // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
     int edgeFinish,    // patch 3.10: edge finish; 0 = BiasBinding (default), 1 = Facing
     int pocketStyle,   // patch 3.12: pocket; 0 = None 1 = Patch 2 = SideSeam
-    int cuffStyle      // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
+    int cuffStyle,     // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
+    int hemShape       // patch 3.15: hem shape; 0 = Straight 1 = Shirttail 2 = HighLow
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

@@ -23,6 +23,7 @@ add_library(engine
     src/pocket.cpp
     src/neckext.cpp
     src/cuff.cpp
+    src/hem.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
@@ -100,6 +101,10 @@ add_test(NAME cuff_check COMMAND cuff_check)
 add_executable(neckline_ext_check tests/neckline_ext_check.cpp)
 target_link_libraries(neckline_ext_check PRIVATE engine)
 add_test(NAME neckline_ext_check COMMAND neckline_ext_check)
+
+add_executable(hem_check tests/hem_check.cpp)
+target_link_libraries(hem_check PRIVATE engine)
+add_test(NAME hem_check COMMAND hem_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

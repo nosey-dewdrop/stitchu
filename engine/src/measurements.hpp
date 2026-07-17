@@ -270,6 +270,15 @@ struct GarmentSpec {
     // full-length sleeve (Straight/Long or Elbow) carries a cuff; sleeveless /
     // cap / short skip honestly. See cuff.hpp / cuff.cpp / FORMULAS.md "Cuff family".
     int cuffStyle = 0; // CuffStyle enum value; 0 = None
+    // Opt-in hem SHAPE (etek ucu şekli, patch 3.15): reshapes the LOWER-edge line
+    // of the fitted skirt/dress-skirt/top pieces. Off by default (0 = Straight) →
+    // byte-identical. Shirttail = center front + center back stay long, the sides
+    // curve up (soft shirt-tail hem); HighLow = the front is short and the back is
+    // dramatically longer. Only ADDS rise at the SIDE hem / drops the back hem; the
+    // waist, side-seam LENGTH balance and center hem stay trued. Asymmetric-diagonal
+    // and handkerchief (peplum's pointed) hems stay honest (missing.js). See
+    // hem.hpp / FORMULAS.md "Hem shape".
+    int hemShape = 0; // HemShape enum value; 0 = Straight
 };
 
 inline double roundToPlaces(double value, int places) {

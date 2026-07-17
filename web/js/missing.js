@@ -333,6 +333,13 @@ export function missingFeatures(seen, lang) {
   const cuffTerm = (t) => /\bcuff\b/i.test(t) &&
     /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
     !/french|elastic|casing|ruffle|frill|tie/i.test(t);
+  // patch 3.15: a shirt-tail / high-low hem is now drawn by reshaping the fitted
+  // lower edge, so an outOfVocab term naming that hem shape is no longer missing.
+  // A handkerchief / pointed / asymmetric-diagonal hem is a different construction
+  // the engine does NOT draw and stays honest.
+  const hemShapeTerm = (t) =>
+    /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
+    !/handkerchief|pointed|asymmetric|diagonal/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -346,6 +353,7 @@ export function missingFeatures(seen, lang) {
     if (cowlNeck && cowlTerm(label)) continue;
     if (bowNeck && bowNeckTerm(label)) continue;
     if (seen.cuffDrawn && cuffTerm(label)) continue;
+    if (seen.hemShapeDrawn && hemShapeTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

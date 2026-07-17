@@ -174,6 +174,13 @@ const DRAWN_SINCE = [
   (t) => /\bcuff\b/i.test(t) &&
          /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
          !/french|elastic|casing|ruffle|frill|tie/i.test(t),
+  // patch 3.15: hem shape — the engine now reshapes the fitted lower edge into a
+  // shirt-tail (sides up, center long) or a high-low (front short, back long).
+  // "shirt-tail hem", "high-low hemline", "mullet hem", "curved hem" all draw. A
+  // handkerchief / pointed / asymmetric-diagonal hem is a DIFFERENT construction →
+  // stays missing.
+  (t) => /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
+         !/handkerchief|pointed|asymmetric|diagonal/i.test(t),
 ];
 
 function classify(entry, spec) {

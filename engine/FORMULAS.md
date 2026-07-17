@@ -922,6 +922,51 @@ neckline shape/pieces are touched — sleeve/shoulder/armhole/pocket/hem are not
   ribbed, gated to a full-length straight sleeve (long/elbow, not a cap wing). A
   manual "cuff" picker covers the no-photo path; seen.cuffDrawn suppresses the
   missing.js note + the outOfVocab cuff term.
+## Hem shape (etek ucu / alt kenar şekli) — opt-in (patch 3.15)
+- WHAT: reshapes the LOWER-edge line of the fitted skirt / dress-skirt / top
+  pieces. It does NOT add a piece — it lifts the SIDE hem up (shirttail) or drops
+  the BACK hem down (high-low) along a smooth curve while the CENTER hem and the
+  waist stay put. `HemShape { Straight, Shirttail, HighLow }`. Opt-in
+  (GarmentSpec.hemShape); Straight → golden BYTE-IDENTICAL. hem.hpp/.cpp,
+  post-pass in garment.cpp after the peplum block, BEFORE the ruffle (so a ruffled
+  hem attaches to the reshaped edge) and BEFORE the cutting lines.
+- RESEARCH (ready-to-wear practice + Aldrich/Armstrong shaped-hem): a shirttail is
+  a level hem lifted at the sides on a soft curve (shirttailSideRise 120 mm at the
+  side, 0 at center front + center back). A high-low raises the front (highLowFrontRise
+  220 mm) and drops the back (highLowBackDrop 120 mm), the two blending at the side
+  seams. Both are cut, not gathered/draped.
+- GEOMETRY: each hem vertex in the hem band (within `band` mm of the piece's lowest
+  point) is lifted by `centerDelta + (sideRise − centerDelta)·smoothstep(t)`,
+  where t is the vertex's normalized horizontal position (0 at the piece's center
+  edge / gore seam, 1 at its outer side edge), then depth-weighted so the lift
+  tapers to 0 at the top of the band (the side seam blends in). Curve control
+  points in the band are lifted with the same function so the hem stays a smooth
+  curve.
+- GORE SEAM TRUING: a princess skirt splits each half into a Center panel (fold→
+  gore seam, all long, no lift on a shirttail) and a Side panel (gore seam→side
+  seam). The Side panel's gore edge is its min-x (t=0) and lifts by the SAME
+  centerDelta the Center panel's gore edge carries, so the two edges of every gore
+  seam stay matched (validator gorepair 0.0 mm). SIDE-SEAM BALANCE: the front and
+  back SIDE hems lift to the SAME height (shirttail: both by shirttailSideRise;
+  high-low: both to sideCommon = (front−back)/2), so a front and its back still
+  meet at the side seam (hem_check + validator sideseam < tolerance).
+- ADAPTIVE + HONEST GATES: the rises scale down for a short host so they never
+  exceed ~45% of the shortest host's length; a host shorter than minHostLength
+  (380 mm — a CROPPED top) is refused honestly (no hem to curve without
+  unbalancing the seams). A gathered / pleated / half-circle skirt has no shaped
+  side hem → gated out at the garment level + refused honestly by HemBlock. A DRESS
+  BODICE ("Bodice …") is never touched — only the dress's "Skirt …" pieces. The
+  validator's top "hem extension did not apply" height check is relaxed by
+  highLowFrontRise for a high-low front (the front is intentionally short).
+- HONEST LIMIT: only the soft symmetric shirttail and the front-short/back-long
+  high-low are drawn. An asymmetric-diagonal hem, a handkerchief / pointed hem
+  (the peplum block's pointed variant covers the flare case) and a mullet on a
+  gathered skirt stay in the honesty layer (missing.js), NOT here.
+- Vision→spec (create.js pickHemShape): reads seen.oov / details ("shirt-tail",
+  "high-low/mullet/dipped back", "curved hem"; not handkerchief/pointed/asymmetric/
+  diagonal) → shirttail / highLow, gated to a fitted straight/A-line skirt/dress or
+  a top. A manual "hem shape" picker covers the no-photo path; seen.hemShapeDrawn
+  suppresses the missing.js note + the outOfVocab hem-shape term.
 
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —

@@ -4,6 +4,7 @@
 
 #include "collar.hpp"
 #include "gather.hpp"
+#include "hem.hpp"
 #include "keyhole.hpp"
 #include "neckext.hpp"
 #include "openback.hpp"
@@ -579,6 +580,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         // validate with a muslin. The cuff band clamps to the sleeve hem so a bad
         // wrist never makes the band wider than the hem it gathers.
         CuffBlock::apply(pattern, static_cast<CuffStyle>(spec.cuffStyle), m.bustMM() * 0.155);
+    }
+    // Opt-in hem SHAPE (etek ucu şekli, patch 3.15): reshapes the lower-edge line
+    // of the fitted skirt/dress-skirt/top pieces into a shirt-tail (sides up, center
+    // long) or a high-low (front short, back long). Post-pass on the finished draft,
+    // so the base is byte-identical with it off (hemShape == Straight). Only a fitted
+    // straight/A-line lower edge hosts one; a gathered/pleated/half-circle panel is
+    // refused honestly. Runs BEFORE the ruffle so a ruffled hem attaches to the
+    // reshaped edge, and BEFORE the cutting lines so the new hem is offset too.
+    if (spec.hemShape != static_cast<int>(HemShape::Straight) &&
+        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress ||
+         spec.garment == GarmentType::Top) &&
+        (spec.garment == GarmentType::Top ||
+         spec.skirtStyle == SkirtStyle::Straight || spec.skirtStyle == SkirtStyle::ALine)) {
+        HemBlock::apply(pattern, static_cast<HemShape>(spec.hemShape));
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

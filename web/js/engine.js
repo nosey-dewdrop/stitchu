@@ -91,6 +91,12 @@ export function cuffStyleValue(spec) {
   return CUFF_STYLE[spec && spec.cuffStyle] || 0;
 }
 
+// HemShape enum (must match engine/src/hem.hpp order). 0 = Straight.
+const HEM_SHAPE = { straight: 0, shirttail: 1, highLow: 2 };
+export function hemShapeValue(spec) {
+  return HEM_SHAPE[spec && spec.hemShape] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -131,6 +137,7 @@ export async function grade(spec, fromLabel, toLabel) {
     edgeFinishValue(spec),  // patch 3.10: neckline/armhole edge finish
     pocketStyleValue(spec),  // patch 3.12: patch / side-seam pocket
     cuffStyleValue(spec),   // patch 3.13: sleeve-end cuff
+    hemShapeValue(spec),    // patch 3.15: hem shape
   );
   return JSON.parse(json);
 }
@@ -162,6 +169,7 @@ export async function draft(spec, measurements) {
     edgeFinishValue(spec),       // patch 3.10: neckline/armhole edge finish
     pocketStyleValue(spec),      // patch 3.12: patch / side-seam pocket
     cuffStyleValue(spec),        // patch 3.13: sleeve-end cuff
+    hemShapeValue(spec),         // patch 3.15: hem shape
   );
   return JSON.parse(json);
 }

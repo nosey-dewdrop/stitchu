@@ -7,6 +7,7 @@
 
 #include "bodice.hpp"
 #include "collar.hpp"
+#include "hem.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
 #include "wearability.hpp"
@@ -649,7 +650,13 @@ std::vector<ValidationIssue> topIssues(
         const bool princess = isFront ? bodice.frontPrincess : bodice.backPrincess;
         // Piece-frame lengths: identical to the body frame except the halter's
         // shifted halves (low back, strap-raised front).
-        const double expected = (isFront ? bodice.frontPieceLength : bodice.backPieceLength) + extra;
+        double expected = (isFront ? bodice.frontPieceLength : bodice.backPieceLength) + extra;
+        // patch 3.15: a high-low hem intentionally RAISES the front center hem (and
+        // a shirttail raises the sides, not the center), so the reshaped half is
+        // legitimately shorter than the drafted length — relax the "hem extension
+        // did not apply" height check by the amount the hem shape lifts that half.
+        if (isFront && spec.hemShape == static_cast<int>(HemShape::HighLow))
+            expected -= HemBlock::highLowFrontRise;
         auto& sideLen = isFront ? frontSide : backSide;
         if (princess) {
             const PatternPiece* center = find(std::string("Top Center ") + half);

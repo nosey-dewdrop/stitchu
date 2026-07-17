@@ -43,6 +43,7 @@ const ENUMS = {
   edgeFinish: ['biasBinding', 'bias', 'facing'],
   pocketStyle: ['none', 'patch', 'sideSeam'],
   cuffStyle: ['none', 'button', 'ribbed'],
+  hemShape: ['straight', 'shirttail', 'highLow'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -90,6 +91,9 @@ const pocketStyleInt = (s) => POCKET_STYLE[s] || 0;
 // CuffStyle enum int (must match engine/src/cuff.hpp order). 0 = None.
 const CUFF_STYLE = { none: 0, button: 1, ribbed: 2 };
 const cuffStyleInt = (s) => CUFF_STYLE[s] || 0;
+// HemShape enum int (must match engine/src/hem.hpp order). 0 = Straight.
+const HEM_SHAPE = { straight: 0, shirttail: 1, highLow: 2 };
+const hemShapeInt = (s) => HEM_SHAPE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -235,6 +239,7 @@ export async function runDraft(spec, measurements) {
     edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
     pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
     cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
+    hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
   );
   return JSON.parse(json);
 }
@@ -282,6 +287,7 @@ export async function handleGrade(request) {
       edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
       pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
       cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
+      hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

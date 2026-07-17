@@ -160,6 +160,15 @@ const SPECS = [
   { name: 'ribbed-cuff-knit-top', garment: 'top', shaping: 'dart', waistline: 'natural', fabric: 'knit',
     neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, cuffStyle: 2 /* ribbed */ },
+  // patch 3.15: hem shape — a shirt-tail top (sides up, center front + back long)
+  // and a high-low dress (front short, back long). The reshaped hem must pack and
+  // the side seams must meet.
+  { name: 'shirttail-top', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'tunic', ruffle: false, tiers: 1, keyhole: false, hemShape: 1 /* shirttail */ },
+  { name: 'highlow-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'scoop', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'maxi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, hemShape: 2 /* high-low */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -178,7 +187,8 @@ for (const s of SPECS) {
     s.placketStyle || 0,
     s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */,
     s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */,
-    s.cuffStyle || 0 /* patch 3.13: 0 = none, 1 = button, 2 = ribbed */));
+    s.cuffStyle || 0 /* patch 3.13: 0 = none, 1 = button, 2 = ribbed */,
+    s.hemShape || 0 /* patch 3.15: 0 = straight, 1 = shirttail, 2 = high-low */));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

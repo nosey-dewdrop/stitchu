@@ -250,56 +250,75 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
-  // Patch 3.10 edge finish: appends the full trailing arg list with the
-  // edgeFinish enum in its slot (after placketStyle; pocketStyle + cuffStyle 0
-  // after) so bias/facing is exercised. The bias strips (neckline + armhole) are
-  // fresh strip pieces that must pack.
+  // Patch 3.10 edge finish: edgeFinish sits in its slot (after placketStyle;
+  // pocketStyle + cuffStyle + hemShape 0 after) so bias/facing is exercised. The
+  // bias strips (neckline + armhole) are fresh strip pieces that must pack.
   const edgeRun = (label, args, m, edgeFinish, collarType) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0, 0));
+      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0, 0, 0));
     if (out.issues.length) { blocked++; return; }
-    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
-    const layout = packPieces(paper);
-    for (const d of layout.placed) {
-      if (d.x0 + d.w > layout.stripW + 0.001) {
-        failures++;
-        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+    {
+      const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+      const layout = packPieces(paper);
+      for (const d of layout.placed) {
+        if (d.x0 + d.w > layout.stripW + 0.001) {
+          failures++;
+          if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+        }
       }
+      const sheets = countSheets(layout);
+      maxSheets = Math.max(maxSheets, sheets);
+      if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
     }
-    const sheetsE = countSheets(layout);
-    maxSheets = Math.max(maxSheets, sheetsE);
-    if (sheetsE > 100) { failures++; console.log(`PAGES ${label}: ${sheetsE} sheets`); }
   };
 
-  // patch 3.12 pocket variant: pocketStyle is the 2nd-to-last trailing arg (after
-  // edgeFinish, before cuffStyle). The patch pocket / in-seam bag is a fresh piece
-  // that must pack without clipping; the block skips honestly (0 extra) when the
-  // host has no panel / too-short a side seam.
+  // patch 3.15 hem shape: hemShape = 1 (shirttail) / 2 (highLow) is the LAST
+  // trailing arg (after edgeFinish, pocketStyle, cuffStyle). Everything else
+  // 0/false. The reshape must not clip and must keep every draft valid.
+  const hemRun = (label, args, m, hemShape) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, hemShape));
+    if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed)
+      if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
+  // patch 3.12 pocket variant: pocketStyle is the 3rd-to-last trailing arg (after
+  // edgeFinish, before cuffStyle + hemShape). The patch pocket / in-seam bag is a
+  // fresh piece that must pack; the block skips honestly (0 extra) when the host
+  // has no panel / too-short a side seam.
   const pocketRun = (label, args, m, pocketStyle) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle, 0));
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle, 0, 0));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
-    const paperP = out.pattern.pieces.filter((p) => !isChalkPiece(p));
-    const layoutP = packPieces(paperP);
-    for (const d of layoutP.placed)
-      if (d.x0 + d.w > layoutP.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
-    const sheetsP = countSheets(layoutP);
-    maxSheets = Math.max(maxSheets, sheetsP);
-    if (sheetsP > 100) { failures++; console.log(`PAGES ${label}: ${sheetsP} sheets`); }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed)
+      if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
-  // patch 3.13 cuff variant: cuffStyle is the LAST trailing arg (after
-  // edgeFinish, pocketStyle). A full-length straight sleeve carries a Button (1)
-  // or Ribbed (2) band; the wrist band must pack without clipping.
+  // patch 3.13 cuff variant: cuffStyle is the 2nd-to-last trailing arg (after
+  // pocketStyle, before hemShape). A full-length straight sleeve carries a Button
+  // (1) or Ribbed (2) band; the wrist band must pack without clipping.
   const cuffRun = (label, args, m, cuff) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, cuff));
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, cuff, 0));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -468,6 +487,24 @@ createEngine().then((e) => {
         cuffRun(`b${bi} cuff-${cfName} ${len} top/vNeck dart`,
           ['top', 'dart', 'natural', 'knit', 'vNeck', 'straight', len, 'aLine', 'midi', 'hip', false, 1, false], m, cf);
       }
+    }
+    // patch 3.15: hem shape — shirttail + high-low reshape the fitted lower edge of
+    // a straight/A-line skirt/dress or a top, princess + dart, every length. The
+    // side seams must stay balanced (draft valid) and the reshaped hem must pack.
+    for (const [hs, hsName] of [[1, 'shirttail'], [2, 'highLow']]) {
+      for (const skirt of ['straight', 'aLine']) {
+        for (const len of lengths) {
+          hemRun(`b${bi} hem-${hsName} skirt/${skirt}/${len} princess`,
+            ['skirt', 'princess', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, hs);
+          hemRun(`b${bi} hem-${hsName} skirt/${skirt}/${len} dart`,
+            ['skirt', 'dart', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, hs);
+          hemRun(`b${bi} hem-${hsName} dress/${skirt}/${len} princess`,
+            ['dress', 'princess', 'natural', 'woven', 'crew', 'none', 'short', skirt, len, 'hip', false, 1, false], m, hs);
+        }
+      }
+      for (const topLen of ['cropped', 'hip', 'tunic'])
+        hemRun(`b${bi} hem-${hsName} top/${topLen}`,
+          ['top', 'princess', 'natural', 'woven', 'crew', 'none', 'short', 'aLine', 'midi', topLen, false, 1, false], m, hs);
     }
   }
 
