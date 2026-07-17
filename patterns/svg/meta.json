@@ -316,5 +316,26 @@
     "flat": "gathered-bust-empire-mini-dress-flat.svg",
     "onFigure": "gathered-bust-empire-mini-dress-figure.svg",
     "closure": null
+  },
+  {
+    "slug": "patch-pocket-shift-dress",
+    "style": "Patch-pocket A-line shift dress",
+    "pieces": 6,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline + armholes)",
+      "Skirt Front",
+      "Skirt Back",
+      "Patch Pocket (yama cep)"
+    ],
+    "fabric": 1.7,
+    "garment": "dress",
+    "patch": "3.12",
+    "drawnBy": "the pair of patch pockets on the front skirt",
+    "photos": 2,
+    "flat": "patch-pocket-shift-dress-flat.svg",
+    "onFigure": "patch-pocket-shift-dress-figure.svg",
+    "closure": "invisible zipper (center back)"
   }
 ]
