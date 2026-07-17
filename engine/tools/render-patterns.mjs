@@ -38,7 +38,7 @@ export const PATTERNS = [
     patch: null, drawnBy: 'in-vocab from day one', photos: 1 },
 
   { slug: 'boat-neck-button-down-top', style: 'Boat neck button-down top', garment: 'top',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     frontPlacket: true, patch: '1.3', drawnBy: 'the front button placket', photos: 4 },
 
@@ -48,7 +48,7 @@ export const PATTERNS = [
     frontPlacket: true, patch: '1.3', drawnBy: 'the front button placket', photos: 1 },
 
   { slug: 'mandarin-collar-fitted-blouse', style: 'Mandarin-collar fitted blouse', garment: 'top',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     frontPlacket: true, collarType: 1 /* stand */, collarEdge: 0, patch: '1.7', drawnBy: 'the collar family and the button placket', photos: 1 },
 
@@ -58,12 +58,12 @@ export const PATTERNS = [
     tie: 2 /* backWaistBow */, patch: '1.4', drawnBy: 'the fabric back-waist tie', photos: 2 },
 
   { slug: 'square-neck-back-tie-babydoll-top', style: 'Square-neck back-tie babydoll top', garment: 'top',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     tie: 4 /* tieBack */, patch: '1.4', drawnBy: 'the fabric back tie', photos: 1 },
 
   { slug: 'empire-waist-tie-back-dress', style: 'Empire-waist tie-back dress', garment: 'dress',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'midi', topLength: 'hip',
     tie: 2 /* backWaistBow */, gatherType: 2 /* shirred */, gatherZone: 1 /* bust */,
     patch: '1.9', drawnBy: 'the gathered bust panel and the back-waist bow', photos: 3 },
@@ -79,12 +79,12 @@ export const PATTERNS = [
     backOpening: 1 /* round */, patch: '2.0', drawnBy: 'the shaped open-back cutout', photos: 1 },
 
   { slug: 'open-back-tie-back-mini-dress', style: 'Open-back tie-back mini dress', garment: 'dress',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip',
     backOpening: 1 /* round */, tie: 2 /* backWaistBow coexists */, patch: '2.0', drawnBy: 'the open-back cutout with a tie-back closure', photos: 3 },
 
   { slug: 'peter-pan-collar-puff-sleeve-babydoll-dress', style: 'Peter-pan collar puff-sleeve babydoll dress', garment: 'dress',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'midi', topLength: 'hip',
     collarType: 4 /* peterPan */, collarEdge: 0 /* round */, sleeveCap: 2 /* puffed */,
     gatherType: 3 /* smocked */, gatherZone: 0 /* neck yoke */, patch: '1.8',
@@ -103,7 +103,12 @@ for (const s of PATTERNS) {
     s.skirtStyle, s.skirtLength, s.topLength, false, 1, false,
     BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
     s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0));
+    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0,
+    // Trailing params (backSlit..shoulderStyle). edgeFinish stays 0 = bias binding
+    // (the default finish): no separate neck-facing pieces unless a real collar
+    // forces them (the engine sets that internally when collarType != None).
+    s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0, s.placketStyle || 0,
+    s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0));
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
 
@@ -118,7 +123,10 @@ for (const s of PATTERNS) {
   let layout = null;
   let bestScore = Infinity;
   for (let c = minCols; c <= minCols + 5; c++) {
-    const l = shelfPack(dims.map((d) => ({ ...d })), c);
+    // No rotation for these gallery thumbnails: a rotated piece leaves d.ox/d.oy
+    // undefined (sheet.js uses d.tx/d.ty + rotate instead), and the piece labels
+    // below are drawn in piece-local coords that only match a plain translate.
+    const l = shelfPack(dims.map((d) => ({ ...d })), c, false);
     const ratio = l.stripW / l.stripH;
     const score = Math.abs(Math.log(ratio / 1.15)); // target ~1.15:1 landscape
     if (score < bestScore) { bestScore = score; layout = l; }

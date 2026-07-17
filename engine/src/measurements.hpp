@@ -197,7 +197,12 @@ inline const char* raw(ShoulderStyle s) {
 
 struct GarmentSpec {
     GarmentType garment = GarmentType::Dress;
-    Shaping shaping = Shaping::Princess;
+    // Minimal-piece policy (2026-07-17): darts are the DEFAULT bust/waist shaping
+    // so a plain bodice stays ONE center-cut panel per side instead of splitting
+    // into a center + side panel. Princess seams are OPT-IN (a style the vision
+    // layer or the user explicitly requests) — they double the bodice/skirt piece
+    // count, which a clean commercial pattern only spends when the style needs it.
+    Shaping shaping = Shaping::Dart;
     Waistline waistline = Waistline::Natural; // dress only
     Fabric fabric = Fabric::Woven;
     Neckline neckline = Neckline::Crew;

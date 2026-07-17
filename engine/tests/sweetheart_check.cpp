@@ -44,8 +44,11 @@ int main() {
     sweet.garment = GarmentType::Dress;
     sweet.neckline = Neckline::Sweetheart;
     // This test validates the shaped FACING geometry, so opt into the facing
-    // finish (patch 3.10 made bias binding the default neckline finish).
+    // finish (patch 3.10 made bias binding the default neckline finish) and pin
+    // princess shaping (2026-07-17 made darts the default, which renames the
+    // front panel "Bodice Front"; this test reads "Bodice Center Front").
     sweet.edgeFinish = static_cast<int>(EdgeFinish::Facing);
+    sweet.shaping = Shaping::Princess;
     GarmentSpec scoop = sweet;  scoop.neckline = Neckline::Scoop;
     GarmentSpec vneck = sweet;  vneck.neckline = Neckline::VNeck;
 

@@ -3,7 +3,7 @@
 // until then the spec picker IS the flow (same manual path the iOS app had).
 import { analyzePhoto, photoAvailable } from './analyze.js?v=78';
 import { applyStatic, getLang, t } from './i18n.js?v=78';
-import { draft, grade } from './engine.js?v=78';
+import { draft, grade } from './engine.js?v=79';
 import { printPattern, printGrade, printGradeNested } from './print.js?v=78';
 import { renderResult } from './render.js?v=78';
 import {
@@ -84,14 +84,17 @@ const SPEC_GROUPS = [
   // circle skirt has no shaped side hem to lift (stays honest).
   { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
-  // Princess is the engine default; darts are the legacy/advanced option.
+  // Darts are the DEFAULT shaping (2026-07-17 minimal-piece policy): a plain
+  // bodice stays ONE panel per side instead of splitting into a center + side
+  // panel. Princess seams are the OPT-IN style — they double the bodice/skirt
+  // piece count, so a clean pattern only spends them when the style asks for it.
   // Gathered and half-circle skirts have no waist shaping to convert.
-  { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['princess', 'princess seams', 'prenses dikiş'], ['dart', 'darts', 'pens']], for: (s) => s.garment !== 'skirt' || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
+  { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => s.garment !== 'skirt' || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
   { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
 ];
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
-  skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'princess',
+  skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',

@@ -80,11 +80,21 @@ void placementNotch(PatternPiece* piece, double targetX, double targetY) {
     piece->markings.push_back(PathCommand::line({best.x, best.y + 6}));
 }
 
-PatternPiece* findPiece(DraftedPattern& pattern, std::initializer_list<const char*> names) {
+// Returns the index of the first piece whose name matches, or -1. An INDEX (not a
+// pointer) is returned on purpose: the caller appends the tie piece with
+// push_back, which can reallocate the pieces vector and dangle any pointer taken
+// beforehand. An index stays valid across an append (only elements after it could
+// move, and we never target those), so the notch always lands on a live piece.
+int findPieceIndex(DraftedPattern& pattern, std::initializer_list<const char*> names) {
     for (const char* name : names)
-        for (auto& piece : pattern.pieces)
-            if (piece.name == name) return &piece;
-    return nullptr;
+        for (size_t i = 0; i < pattern.pieces.size(); ++i)
+            if (pattern.pieces[i].name == name) return static_cast<int>(i);
+    return -1;
+}
+
+PatternPiece* findPiece(DraftedPattern& pattern, std::initializer_list<const char*> names) {
+    const int idx = findPieceIndex(pattern, names);
+    return idx < 0 ? nullptr : &pattern.pieces[idx];
 }
 
 // The lowest edge (largest y) of a piece is its waist/hem edge; return a point
@@ -113,7 +123,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
     int count = 2;
     const char* role = "";
     std::string name;
-    PatternPiece* body = nullptr;
+    int bodyIdx = -1; // index (not pointer) so it survives the tie push_back below
 
     switch (placement) {
         case TiePlacement::BackWaist:
@@ -126,7 +136,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             count = 2;
             name = "Waist Tie (bel bağı)";
             role = "each ties from the side seam round to a bow at centre back";
-            body = findPiece(pattern, {"Bodice Back", "Bodice Side Back",
+            bodyIdx = findPieceIndex(pattern, {"Bodice Back", "Bodice Side Back",
                                        "Top Back", "Top Side Back"});
             break;
         }
@@ -138,7 +148,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             count = 2;
             name = "Back Tie (sırt bağı)";
             role = "attach at each back waist edge, cross and knot to close the back";
-            body = findPiece(pattern, {"Bodice Back", "Bodice Side Back",
+            bodyIdx = findPieceIndex(pattern, {"Bodice Back", "Bodice Side Back",
                                        "Top Back", "Top Side Back"});
             break;
         }
@@ -149,7 +159,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             count = 2;
             name = "Neck/Front Tie (ön bağ)";
             role = "attach at the front neckline/centre front and knot into a bow";
-            body = findPiece(pattern, {"Bodice Center Front", "Bodice Front",
+            bodyIdx = findPieceIndex(pattern, {"Bodice Center Front", "Bodice Front",
                                        "Top Center Front", "Top Front"});
             break;
         }
@@ -160,7 +170,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             count = 2;
             name = "Cuff Tie (manşet bağı)";
             role = "attach at each sleeve opening and knot round the arm";
-            body = findPiece(pattern, {"Sleeve", "Bodice Sleeve", "Top Sleeve"});
+            bodyIdx = findPieceIndex(pattern, {"Sleeve", "Bodice Sleeve", "Top Sleeve"});
             break;
         }
         case TiePlacement::None:
@@ -170,8 +180,11 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
     pattern.pieces.push_back(tieStrip(name, role, finishedW, finishedL, count));
 
     // Placement notch on the body piece so the sewer knows where the tie is
-    // caught. Anchored to the waist/hem edge (back sash / tie-back) or nearest
+    // caught. Resolve the pointer NOW, after the push_back above, so it points at
+    // the live (possibly reallocated) piece rather than a dangling pre-append
+    // address. Anchored to the waist/hem edge (back sash / tie-back) or nearest
     // outline point; harmless if the target piece is missing.
+    PatternPiece* body = bodyIdx >= 0 ? &pattern.pieces[bodyIdx] : nullptr;
     if (body) {
         if (placement == TiePlacement::BackWaist ||
             placement == TiePlacement::BackWaistBow ||

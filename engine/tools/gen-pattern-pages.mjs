@@ -56,12 +56,12 @@ const COPY = {
       fabric: 'Crisp mid-weight woven cotton, roughly 1.7 m at 140 cm.',
       facts: ['The front button placket grows on to the centre-front edge as an 18 mm stand, with a fold line, a fold-back facing line and the buttons and buttonholes marked directly on the piece.',
         'A button is forced at the bust line so the front cannot gape, following the womenswear right-over-left rule.',
-        'Princess seams over the bust shape the fit vertically, so the top follows the body without darts pulling at the button line.'] },
+        'Bust and waist darts shape the fit through the body, so the top follows the figure while the whole front stays one clean panel under the button placket.'] },
     tr: { lead: 'Önden boydan boya düğmeli, kayık yakalı bir üst. Düğme patı ima değil, çizilmiş: parça üzerinde büyüyen bir bant düğmeleri ve ilikleri taşır.',
       fabric: 'Diri, orta gramajlı dokuma pamuk, 140 cm ende yaklaşık 1.7 m.',
       facts: ['Ön düğme patı ön orta kenara 18 mm’lik bir bant olarak büyür; katlama çizgisi, geri katlanan pervaz çizgisi ve düğmelerle ilikler doğrudan parçaya işlenir.',
         'Büst hizasında zorunlu bir düğme konur, böylece ön açılmaz; kadın giyimindeki sağ-üste-sol kuralı izlenir.',
-        'Büst üzerindeki prenses dikişleri biçimi dikey olarak verir; üst, düğme çizgisini geren pensler olmadan vücudu izler.'] },
+        'Büst ve bel pensleri biçimi vücut boyunca verir; ön parça düğme patının altında tek temiz bir panel olarak kalır.'] },
   },
   'gingham-button-blouse': {
     en: { lead: 'A sleeveless button blouse with a wide boat neckline and a full front placket. A boxy, forgiving fit shaped only by soft darts.',
@@ -80,12 +80,12 @@ const COPY = {
       fabric: 'Crisp mid-weight woven cotton, roughly 2.3 m at 140 cm.',
       facts: ['The stand collar is a separate piece whose neck edge is measured straight off the drafted neckline, so it cannot come out longer or shorter than the opening it sits on.',
         'The front button placket grows on to the centre front with its fold line, facing and marked buttons and buttonholes.',
-        'Princess seams and a short set-in sleeve give a tailored, close fit through the bust and upper arm.'] },
+        'Bust and waist darts with a short set-in sleeve give a tailored, close fit through the bust and upper arm, keeping the front and back each a single panel.'] },
     tr: { lead: 'Kısa oturtma kollu ve alçak dik yakalı, oturmuş düğmeli bir bluz. Eklenen her parça, yaka ve pat, gövdenin çizdiği aynı yaka ve ön ortadan çizilir.',
       fabric: 'Diri, orta gramajlı dokuma pamuk, 140 cm ende yaklaşık 2.3 m.',
       facts: ['Dik yaka ayrı bir parçadır; yaka kenarı doğrudan çizilmiş yakadan ölçülür, oturduğu açıklıktan uzun ya da kısa çıkamaz.',
         'Ön düğme patı, katlama çizgisi, pervazı ve işaretli düğmeleriyle ön ortaya büyür.',
-        'Prenses dikişleri ve kısa oturtma kol, büst ve üst kolda oturmuş, yakın bir kesim verir.'] },
+        'Büst ve bel pensleri ile kısa oturtma kol, büst ve üst kolda oturmuş yakın bir kesim verir; ön ve arka her biri tek panel kalır.'] },
   },
   'back-tie-shift-mini-dress': {
     en: { lead: 'A sleeveless shift mini dress with a boat neckline and a fabric tie at the back waist. The tie is a real cut piece, not a drawn-on suggestion.',
@@ -100,16 +100,16 @@ const COPY = {
         'Arka orta kapama ve yaka pervazları elbiseyi bitirir; bağ, salaşı toplamak için doğal belde durur.'] },
   },
   'square-neck-back-tie-babydoll-top': {
-    en: { lead: 'A square-neck babydoll top with an empire seam and a fabric tie that closes at the back. A flared, romantic line drawn with princess seams.',
+    en: { lead: 'A square-neck babydoll top with an empire seam and a fabric tie that closes at the back. A flared, romantic line drawn with soft darts and a high waist seam.',
       fabric: 'Mid-weight woven cotton or poplin, roughly 1.8 m at 140 cm.',
       facts: ['The back tie is a separate self-fabric strip, cut twice and self-lined, placed at the back with a marked attachment point.',
-        'The square neckline is drafted with crisp corners and finished by facings cut to the same shape.',
-        'Princess seams and an empire waist raise the fit line under the bust and let the lower body flare softly.'] },
-    tr: { lead: 'Empire dikişli ve arkadan bağlanan kumaş bağlı, kare yakalı bir babydoll üst. Prenses dikişleriyle çizilmiş kloş, romantik bir çizgi.',
+        'The square neckline is drafted with crisp corners and finished with a trued bias binding, so no separate facing piece is needed.',
+        'Bust darts and an empire waist raise the fit line under the bust and let the lower body flare softly, while the front and back each stay a single panel.'] },
+    tr: { lead: 'Empire dikişli ve arkadan bağlanan kumaş bağlı, kare yakalı bir babydoll üst. Yumuşak pensler ve yüksek bel dikişiyle çizilmiş kloş, romantik bir çizgi.',
       fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 1.8 m.',
       facts: ['Arka bağ ayrı bir kendinden kumaş şeridir; iki kez kesilir, kendinden astarlanır, arkaya işaretli bir bağlanma noktasıyla yerleştirilir.',
-        'Kare yaka net köşelerle çizilir ve aynı biçimden kesilen pervazlarla bitirilir.',
-        'Prenses dikişleri ve empire bel, oturma çizgisini büstün altına taşır ve alt gövdenin yumuşakça kloşlanmasına izin verir.'] },
+        'Kare yaka net köşelerle çizilir ve trüe edilmiş biye ile bitirilir; ayrı bir pervaz parçasına gerek kalmaz.',
+        'Büst pensleri ve empire bel, oturma çizgisini büstün altına taşır ve alt gövdenin yumuşakça kloşlanmasına izin verir; ön ve arka her biri tek panel kalır.'] },
   },
   'empire-waist-tie-back-dress': {
     en: { lead: 'An empire-waist dress with a gathered bust panel and a fabric bow at the back waist. The gather and the bow are both drafted pieces, not just markings.',
@@ -148,12 +148,12 @@ const COPY = {
         'Arka pervaz oyuk çizgisini bir işaret olarak taşır; bitirdiği kenarla bayt-birebir aynıdır, bitmiş oyuk çizilenden kayamaz.'] },
   },
   'open-back-tie-back-mini-dress': {
-    en: { lead: 'A princess-seam mini dress with a round open back and a fabric tie at the back. The cutout and the tie are drafted together, on the same back piece.',
+    en: { lead: 'A dart-shaped mini dress with a round open back and a fabric tie at the back. The cutout and the tie are drafted together, on the same back piece.',
       fabric: 'Mid-weight woven linen, roughly 2.3 m at 140 cm.',
       facts: ['The round open-back cutout is drawn half against the centre-back fold and clears the nape by 40 mm and the waist by 55 mm.',
         'A separate self-fabric tie closes the upper back, drafted as its own cut-twice piece with a placement notch, and it coexists on the same draft as the cutout.',
         'A back facing carries the cutout line as a marking so the finished opening matches the drawn line exactly.'] },
-    tr: { lead: 'Yuvarlak açık sırtı ve arkasında kumaş bağı olan, prenses dikişli bir mini elbise. Oyuk ve bağ birlikte, aynı arka parçada çizilir.',
+    tr: { lead: 'Yuvarlak açık sırtı ve arkasında kumaş bağı olan, pensle biçimlenmiş bir mini elbise. Oyuk ve bağ birlikte, aynı arka parçada çizilir.',
       fabric: 'Orta gramajlı dokuma keten, 140 cm ende yaklaşık 2.3 m.',
       facts: ['Yuvarlak açık sırt oyuğu arka orta katlamaya karşı yarım çizilir; enseyi 40 mm, beli 55 mm boşlukla geçer.',
         'Ayrı bir kendinden kumaş bağ üst sırtı kapatır; kendi iki-kez-kes parçası olarak yerleşim çentiğiyle çizilir ve oyukla aynı kalıpta bir arada durur.',
@@ -203,6 +203,7 @@ const HEADER = `<header class="sh-header">
     <a href="../create.html" data-en="create" data-tr="çiz">create</a>
     <a href="../closet.html" data-en="closet" data-tr="dolap">closet</a>
     <a href="index.html" class="sh-active" data-en="patterns" data-tr="kalıplar">patterns</a>
+    <a href="../blog/index.html" data-en="blog" data-tr="günlük">blog</a>
     <a href="../benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
     <a href="../patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>

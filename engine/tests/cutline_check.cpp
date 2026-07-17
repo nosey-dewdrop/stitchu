@@ -118,6 +118,7 @@ int main() {
 
     GarmentSpec dress;
     dress.garment = GarmentType::Dress;
+    dress.shaping = Shaping::Princess; // opt-in princess: proves the split panels still get cut lines
     dress.sleeveStyle = SleeveStyle::Balloon;
     dress.sleeveLength = SleeveLength::Elbow;
     audit("Princess A-line dress + balloon sleeves:", dress, m);
@@ -137,6 +138,7 @@ int main() {
 
     GarmentSpec keyed;
     keyed.garment = GarmentType::Top;
+    keyed.shaping = Shaping::Princess; // opt-in princess: multiple cut pieces surround the single-line keyhole facing
     keyed.neckline = Neckline::Sweetheart;
     keyed.keyhole = true;
     keyed.topLength = TopLength::Tunic;

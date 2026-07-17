@@ -45,23 +45,23 @@ const PATTERNS = [
     shaping: 'dart', waistline: 'natural', fabric: 'knit', neckline: 'scoop', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'mini', topLength: 'hip' },
   { slug: 'boat-neck-button-down-top', style: 'Boat neck button-down top', garment: 'top',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', frontPlacket: true },
   { slug: 'gingham-button-blouse', style: 'Sleeveless gingham button blouse', garment: 'top',
     shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', frontPlacket: true },
   { slug: 'mandarin-collar-fitted-blouse', style: 'Mandarin-collar fitted blouse', garment: 'top',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     frontPlacket: true, collarType: 1, collarEdge: 0 },
   { slug: 'back-tie-shift-mini-dress', style: 'Back-tie shift mini dress', garment: 'dress',
     shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'straight', skirtLength: 'mini', topLength: 'hip', tie: 2 },
   { slug: 'square-neck-back-tie-babydoll-top', style: 'Square-neck back-tie babydoll top', garment: 'top',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', tie: 4 },
   { slug: 'empire-waist-tie-back-dress', style: 'Empire-waist tie-back dress', garment: 'dress',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'midi', topLength: 'hip',
     tie: 2, gatherType: 2, gatherZone: 1 },
   { slug: 'square-neck-drawstring-babydoll-dress', style: 'Square-neck drawstring babydoll dress', garment: 'dress',
@@ -72,10 +72,10 @@ const PATTERNS = [
     shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip', backOpening: 1 },
   { slug: 'open-back-tie-back-mini-dress', style: 'Open-back tie-back mini dress', garment: 'dress',
-    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'mini', topLength: 'hip', backOpening: 1, tie: 2 },
   { slug: 'peter-pan-collar-puff-sleeve-babydoll-dress', style: 'Peter-pan collar puff-sleeve babydoll dress', garment: 'dress',
-    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'midi', topLength: 'hip',
     collarType: 4, collarEdge: 0, sleeveCap: 2, gatherType: 3, gatherZone: 0 },
 ];
@@ -329,7 +329,10 @@ function draft(s) {
     s.skirtStyle, s.skirtLength, s.topLength, false, 1, false,
     BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
     s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0));
+    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0,
+    // Trailing params (backSlit..shoulderStyle); edgeFinish 0 = bias binding default.
+    s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0, s.placketStyle || 0,
+    s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0));
   return out;
 }
 
