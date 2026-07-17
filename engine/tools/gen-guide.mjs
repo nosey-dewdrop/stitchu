@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = join(here, '..', '..', 'web', 'guide');
-const V = 'v82'; // shared asset cache stamp (bump on deploy with the rest)
+const V = 'v83'; // shared asset cache stamp (bump on deploy with the rest)
 
 // The 9-phase construction order (mirrors knowledge/sewing-guide.md section 2).
 const ORDER = [

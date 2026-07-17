@@ -14,7 +14,7 @@ const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://nosey-dewdrop.github.io/stitchu';
-const V = process.env.V || '82';
+const V = process.env.V || '83';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
 // The sixties/seventies looks are folded into this same Patterns page (Damla:
@@ -205,7 +205,7 @@ const HEADER = `<header class="sh-header">
   <nav class="sh-nav">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
-    <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="index.html" class="sh-active" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
@@ -215,7 +215,7 @@ const HEADER = `<header class="sh-header">
 
 const FOOTER = `<footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="../index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
+  <span><a href="../index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> · <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="../api.html">API</a> · <a href="../privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">v${V}</span></span>
 </footer>`;
 
 const STYLE = `<style>
@@ -367,7 +367,7 @@ for (const m of meta) {
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
-  <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> / ${esc(m.style)}</p>
+  <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
 
@@ -461,7 +461,7 @@ for (let page = 1; page <= pageCount; page++) {
   const isFirst = page === 1;
   const file = isFirst ? 'index.html' : `page-${page}.html`;
   const canonical = isFirst ? `${BASE}/patterns/` : `${BASE}/patterns/${file}`;
-  const title = isFirst ? 'Patterns · stitchu' : `Patterns, Page ${page} · stitchu`;
+  const title = isFirst ? 'Pattern Blog · stitchu' : `Pattern Blog, Page ${page} · stitchu`;
   const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} distinct product styles plus the sixties seventies collection, each drawn by the engine and published, with the honest patch that made it possible.`;
   const cards = slice.map(patternCard).join('\n  ');
 
@@ -493,7 +493,7 @@ for (let page = 1; page <= pageCount; page++) {
 ${HEADER}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <span data-en="patterns" data-tr="kalıplar">patterns</span>${isFirst ? '' : ` / <span data-en="page ${page}" data-tr="sayfa ${page}">page ${page}</span>`}</p>
-  <h1 data-en="Patterns." data-tr="Kalıplar.">Patterns.</h1>
+  <h1 data-en="Pattern Blog." data-tr="Kalıp Günlüğü.">Pattern Blog.</h1>
   <p class="lead" data-en="This is where the engine's work is collected as something you can read. Every pattern below was drafted end to end from a single photo, and every drawing is the engine's own output, nothing traced or mocked." data-tr="Burası, motorun işinin okunabilir bir şeye dönüştüğü yer. Aşağıdaki her kalıp tek bir fotoğraftan baştan sona çizildi ve her çizim motorun kendi çıktısı, hiçbiri kopyalanmış ya da taklit değil.">This is where the engine's work is collected as something you can read. Every pattern below was drafted end to end from a single photo, and every drawing is the engine's own output, nothing traced or mocked.</p>
   <p class="counter" data-en="${totalPhotos} of 54 real product photos turn into a full pattern, and counting." data-tr="54 gerçek ürün fotoğrafının ${totalPhotos}'i tam kalıba dönüşüyor, ve artıyor.">${totalPhotos} of 54 real product photos turn into a full pattern, and counting.</p>
   <p class="counter"><a href="../patches.html" data-en="Follow The Number In The Patch Notes" data-tr="Sayıyı Yama Notlarında Takip Et">Follow The Number In The Patch Notes</a></p>

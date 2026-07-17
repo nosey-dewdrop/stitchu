@@ -110,7 +110,7 @@ const html = `<!DOCTYPE html>
   <nav class="sh-nav">
     <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
-    <a href="patterns/index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
     <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
@@ -127,7 +127,7 @@ ${looks}
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="patterns/index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a> · <a href="showcase.html" data-en="Showcase" data-tr="Vitrin">Showcase</a> · <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">${V.replace('v=', 'v')}</span></span>
+  <span><a href="index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> · <a href="showcase.html" data-en="Showcase" data-tr="Vitrin">Showcase</a> · <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop · <span style="opacity:.55">${V.replace('v=', 'v')}</span></span>
 </footer>
 
 <script src="js/shared-header.js?${V}"></script>

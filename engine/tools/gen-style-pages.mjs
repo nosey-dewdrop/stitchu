@@ -546,7 +546,7 @@ const header = `<header class="sh-header">
   <nav class="sh-nav">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
-    <a href="index.html" class="sh-active" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="index.html" class="sh-active" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
@@ -799,9 +799,9 @@ ${ICON}
 <meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<link rel="stylesheet" href="../css/theme-transitions.css?v=82">
-<link rel="stylesheet" href="../css/shared-header.css?v=82">
-<link rel="stylesheet" href="../css/shared-button.css?v=82">`;
+<link rel="stylesheet" href="../css/theme-transitions.css?v=83">
+<link rel="stylesheet" href="../css/shared-header.css?v=83">
+<link rel="stylesheet" href="../css/shared-button.css?v=83">`;
 }
 
 function breadcrumbLd(name, url) {
@@ -892,7 +892,7 @@ ${header}
   ${also}
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=82"></script>
+<script src="../js/shared-header.js?v=83"></script>
 </body>
 </html>
 `;
@@ -933,7 +933,7 @@ ${sections}
   <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements, free</a>
 </div>
 ${footer}
-<script src="../js/shared-header.js?v=82"></script>
+<script src="../js/shared-header.js?v=83"></script>
 </body>
 </html>
 `;
