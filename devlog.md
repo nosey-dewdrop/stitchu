@@ -697,3 +697,10 @@ M1b · HOOK: "yeni bir kabiliyet ekledim. ama tek bir eski kalıp bile değişme
 - Anlatı (~40sn): her yeni motor parçası opt-in post-pass. yırtmaç varsayılan kapalı; kapalıyken çizim, aylardır sabit olan altın referansla milimetrenin milyonda birine kadar aynı, 23034 satır byte-birebir. yeni özellik eskiyi bozarsa güven biter. o yüzden her loop tek testte kanıtlanır: 18 motor testi geçiyor, golden diff sıfır, 19.960 rastgele draft'ta sıfır hata. "yaptım" demeden önce bir derleme + bir diff. kanıtlıyorum, iddia etmiyorum.
 - **Görsel:** [ekran] iki golden CSV yan yana, "diff: 0 bytes / 23034 lines" yeşil; solda ctest listesi "18/18 passed", slit_check satırı vurgulu.
 - **Format:** reel
+
+## Dürüstlük katmanı, "iç tutarlılık fit kanıtı değil" (README + benchmark honesty pass)
+
+H1 · HOOK: "başka bir yapay zeka motorumu okudu ve iki cümlede beni yakaladı."
+- Anlatı (~40sn): sitemde "measured, not claimed" yazıyordu: 70.200 draft, 0.00 mm dikiş, byte-birebir altın referans. denetçi durdu: bunların hepsi motorun kendi içinde tutarlı olduğunun kanıtı, kıyafetin uyduğunun değil. haklıydı. asıl dürüst sayı, kaç gerçek fotoğrafın tam kalıba dönüştüğü, 37/54, sayfanın en dibindeydi, parlak iç sayıların arkasında. yer değiştirdim: 37/54 en üste, iç sayılar "internal consistency, not fit" etiketiyle. "uyacağı kanıtlı" başlığını sildim, prova uyarısını gizli dipnottan görünür bir satıra çıkardım. motorun tek satırına dokunmadım, sadece hangi sayının neyi kanıtladığını doğru etiketledim. gerçek moat gizlemek değil, ölçüyü göstermek.
+- **Görsel:** [ekran] önce/sonra split: solda eski sayfa (0.00 mm en üstte, 37/54 dipte, "proven to fit"); sağda yeni sayfa (37/54 en üstte, iç sayılar "not a fit proof" etiketli, altında "sew a muslin first" satırı vurgulu).
+- **Format:** reel

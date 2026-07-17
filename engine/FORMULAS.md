@@ -7,6 +7,37 @@ FreeSewing (Bella/Titan/Brian), Muller & Sohn, Winifred Aldrich. Items marked AS
 documented approximations for measurements the app does not collect; the sewing guide's muslin
 warning covers them.
 
+## Assumption ledger (source-bound vs unvalidated)
+Honesty pass 2026-07-17: every ASSUMPTION in this file is a value the app does not collect
+from the user, so the engine fills it in. Each one is classified here as either SOURCE-BOUND
+(a published pattern-cutting reference supports the value or its range) or UNVALIDATED (a design
+assumption with no confirmed published number, validate with a muslin/toile). No reference is
+invented; where a book value could not be confirmed the item stays UNVALIDATED rather than
+citing a source that does not exist. These values are NOT changed by this pass, only labelled;
+changing a constant is a separate engine decision.
+
+- shoulderDrop = shoulderHalf * 0.23 (~13 deg): UNVALIDATED design assumption. Aldrich's block
+  uses a fixed shoulder-slope drop (~37 mm at the standard size) rather than a ratio of shoulder
+  width; the ratio form here is not from a single published number. It stays in the wearable
+  range for standard bodies; validate the shoulder line with a muslin. (The benchmark page marks
+  this "single-source" for the same reason.)
+- underbust = max(bust - 70, waist), B/C cup offset 70 mm: SOURCE-BOUND (range). A ~5 cm
+  bust-to-underbust drop is the standard B/C-cup relationship in fitting references (Aldrich,
+  Armstrong bust-dart / cup sizing); 70 mm sits in that band. It is off for very full or very
+  shallow cups, which is exactly what the optional full-bust upperBust input and a muslin cover.
+- waist split back 48% / front 52%: SOURCE-BOUND (convention). Splitting the waist so the front
+  carries slightly more than the back is standard bodice practice (Aldrich, Armstrong front/back
+  balance); 48/52 is a conventional split rather than an exact cited constant, so the precise
+  ratio is a design choice inside the accepted convention.
+- biceps = bust * 0.30 * (1 + 0.15): MIXED. The 15% biceps ease is SOURCE-BOUND (FreeSewing
+  Brian / standard set-in sleeve ease); the 0.30 bust-to-biceps RATIO is an UNVALIDATED design
+  assumption, used only because arm girth is not one of the seven measurements. Biceps girth
+  varies independently of bust, so this can miss on non-average arms; validate the sleeve on a
+  muslin. A future arm-girth input would replace the ratio.
+- front placket stand = 18 mm blouse-button diameter: UNVALIDATED assumption (button size is not
+  collected). Aldrich/Armstrong drive the stand off button diameter; 18 mm is a typical blouse
+  button, documented; swap it and re-draft for a different button. See the placket section note.
+
 ## Conventions
 - All geometry in millimeters. Each piece in its own local space, origin top-left, y grows down.
 - Piece outline = the SEWING line. Seam allowance is metadata (15 mm default, 10 mm bands/cuffs), not drawn.
@@ -19,16 +50,16 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
 
 ## Bodice block (FreeSewing Bella + M&S)
 - chestEase = 11% of body, waistEase = 5% of body (percent ease, never fixed cm)
-- shoulderHalf = shoulder/2; shoulderDrop = shoulderHalf * 0.23  [ASSUMPTION ~13 deg]
+- shoulderHalf = shoulder/2; shoulderDrop = shoulderHalf * 0.23  [ASSUMPTION ~13 deg, UNVALIDATED — see ledger]
 - armholeY = backLength * 0.44 + shoulderDrop
-- underbust = max(bust - 70, waist)  [ASSUMPTION B/C cup offset 70 mm]
+- underbust = max(bust - 70, waist)  [ASSUMPTION B/C cup offset 70 mm, SOURCE-BOUND range — see ledger]
 - neck widths: back = neck * 0.197, front = neck * 0.17; boat neckline multiplies both by 1.35;
   both capped at shoulderHalf * 0.72 (a neckline can never eat the shoulder seam)
 - back neck cutout = neck * 0.06; back neckline is always a shallow crew curve
 - front neck depth by style: crew = neckW + 15, scoop = neckW + 50, v = neckW + 75,
   square = neckW + 40, boat = 28
 - widths: back = underbust/4 * (1+chestEase); front = bust/4 * (1+chestEase)
-- waist split: back 48%, front 52% of full waist  [ASSUMPTION]
+- waist split: back 48%, front 52% of full waist  [ASSUMPTION, SOURCE-BOUND convention — see ledger]
 - back suppression: reduction = backWidth - backWaistTarget (clamped >= 0);
   centerBack take-in = reduction * 0.35 * 0.5; dart = reduction - take-in (dropped if <= 0);
   waist edge width = takeIn + target + dart
@@ -68,7 +99,7 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
   half-circle (R*2 + 120)*1.10; meters rounded to 1 decimal
 
 ## Sleeve block (set-in, FreeSewing Brian technique)
-- biceps = bust * 0.30 * (1 + 0.15)  [ASSUMPTION ratio + verified 15% ease]
+- biceps = bust * 0.30 * (1 + 0.15)  [ASSUMPTION: 0.30 ratio UNVALIDATED, 15% ease SOURCE-BOUND — see ledger]
 - capHeight = armholeDepth * 0.75 (armholeDepth = armholeY - shoulderDrop)
 - target cap length = armholeLength * 1.04 (4% cap ease)
 - cap width found by BISECTION (cap length grows monotonically with width; fixed-step
@@ -313,8 +344,8 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   is button-diameter driven; couture blouse/dress fronts use a GROWN-ON stand
   (self-facing folds back), fast fashion (Stradivarius/Bershka shirting) uses an
   applied band. We chose GROWN-ON (couture default, one piece, no seam at the
-  finished edge). No button size is collected → 18 mm blouse button ASSUMPTION,
-  documented; the guide's muslin note + placket step cover swapping it.
+  finished edge). No button size is collected → 18 mm blouse button ASSUMPTION
+  (UNVALIDATED, see ledger), documented; the guide's muslin note + placket step cover swapping it.
 - Geometry (front piece, CF at x = 0): the CF EDGE (the last outline curve, waist
   → neck point) is offset outward by standWidth = 18 mm (= button Ø) so the
   finished front edge lands at x = -18; a short horizontal LINE joins the grown
