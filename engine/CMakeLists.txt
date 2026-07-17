@@ -25,6 +25,10 @@ add_library(engine
     src/cuff.cpp
     src/hem.cpp
     src/shoulder.cpp
+    src/buttonrow.cpp
+    src/exposedzip.cpp
+    src/backdetail.cpp
+    src/offshoulder.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
@@ -153,3 +157,23 @@ target_link_libraries(wearability-bench PRIVATE engine)
 add_executable(shoulder_check tests/shoulder_check.cpp)
 target_link_libraries(shoulder_check PRIVATE engine)
 add_test(NAME shoulder_check COMMAND shoulder_check)
+
+add_executable(buttonrow_check tests/buttonrow_check.cpp)
+target_link_libraries(buttonrow_check PRIVATE engine)
+add_test(NAME buttonrow_check COMMAND buttonrow_check)
+
+add_executable(exposedzip_check tests/exposedzip_check.cpp)
+target_link_libraries(exposedzip_check PRIVATE engine)
+add_test(NAME exposedzip_check COMMAND exposedzip_check)
+
+add_executable(backdetail_check tests/backdetail_check.cpp)
+target_link_libraries(backdetail_check PRIVATE engine)
+add_test(NAME backdetail_check COMMAND backdetail_check)
+
+add_executable(fronttie_check tests/fronttie_check.cpp)
+target_link_libraries(fronttie_check PRIVATE engine)
+add_test(NAME fronttie_check COMMAND fronttie_check)
+
+add_executable(offshoulder_check tests/offshoulder_check.cpp)
+target_link_libraries(offshoulder_check PRIVATE engine)
+add_test(NAME offshoulder_check COMMAND offshoulder_check)

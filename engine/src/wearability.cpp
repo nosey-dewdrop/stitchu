@@ -4,6 +4,9 @@
 #include <cmath>
 #include <optional>
 
+#include "buttonrow.hpp"
+#include "exposedzip.hpp"
+#include "offshoulder.hpp"
 #include "tie.hpp"
 #include "openback.hpp"
 #include "validator.hpp"
@@ -65,6 +68,14 @@ bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
     if (spec.neckline == Neckline::Halter) return true;
     // A front button placket is a real front opening.
     if (spec.frontPlacket) return true;
+    // A FUNCTIONAL button row is a real front opening (it grows the CF stand +
+    // buttonholes, exactly like a placket). A decorative row does NOT open.
+    if (spec.buttonRow == static_cast<int>(ButtonRow::Functional)) return true;
+    // An EXPOSED zipper (CF or CB) is a real visible closure that opens the seam.
+    if (spec.exposedZip != static_cast<int>(ExposedZip::None)) return true;
+    // An OFF-SHOULDER / bardot top is a wide elastic-cased edge — it stretches
+    // over the shoulders/head to put the garment on (a stretch donning opening).
+    if (spec.bardotStyle != static_cast<int>(BardotStyle::None)) return true;
     // A keyhole is a small opening but it releases the neck edge (the tie/button
     // at the top lets the head through a crew that would otherwise be sealed).
     if (spec.keyhole) return true;
@@ -78,6 +89,9 @@ bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
     const auto tie = static_cast<TiePlacement>(spec.tieClosure);
     if (tie == TiePlacement::TieBack || tie == TiePlacement::BackWaist ||
         tie == TiePlacement::BackWaistBow) return true;
+    // A WRAP-front tie IS the opening — the front laps over itself and opens at
+    // the wrap, so the garment is donnable without a zip (like a wrap dress).
+    if (tie == TiePlacement::WrapFront) return true;
     // A guide step that spells out an INSERTED closure (belt-and-suspenders:
     // catches a future opening block that sets a note before an enum). Match the
     // specific "insert ... zipper" phrasing, NOT the plain word "zipper" — a top's

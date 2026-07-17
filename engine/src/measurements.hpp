@@ -300,6 +300,30 @@ struct GarmentSpec {
     // and handkerchief (peplum's pointed) hems stay honest (missing.js). See
     // hem.hpp / FORMULAS.md "Hem shape".
     int hemShape = 0; // HemShape enum value; 0 = Straight
+    // Opt-in button row (düğme sırası, vocab 2026-07-17): a drawn vertical row of
+    // round button circles down the front. 0 = None (byte-identical), 1 =
+    // Functional (a real CF button opening — grown stand + buttons + buttonholes,
+    // opens for donning, reuses the placket geometry), 2 = Decorative (buttons
+    // sewn on for looks, no opening). See buttonrow.hpp / FORMULAS.md "Button rows".
+    int buttonRow = 0; // ButtonRow enum value; 0 = None
+    // Opt-in exposed/visible zipper (görünür fermuar, vocab 2026-07-17): a VISIBLE
+    // design zip drawn as a teeth glyph on the CF or CB seam, exposed-zip seam
+    // allowance, opens for donning. 0 = None (byte-identical), 1 = CenterFront,
+    // 2 = CenterBack. Distinct from the invisible CB zip a dress always carries.
+    // See exposedzip.hpp / FORMULAS.md "Exposed zipper".
+    int exposedZip = 0; // ExposedZip enum value; 0 = None
+    // Opt-in back detail (arka pelerin/fırfır, vocab 2026-07-17): a separate cut
+    // piece attached at the back neck — a gathered ruffle, a draped cape, or a
+    // circular flounce, attach edge trued to the back neck edge. 0 = None
+    // (byte-identical), 1 = Ruffle, 2 = Cape, 3 = Flounce. See backdetail.hpp /
+    // FORMULAS.md "Back detail".
+    int backDetail = 0; // BackDetail enum value; 0 = None
+    // Opt-in off-shoulder / bardot neckline (omuz açık / bardot, vocab 2026-07-17):
+    // reshapes the bodice top edge DOWN below the shoulder + an elastic casing (+
+    // optional bardot frill). 0 = None (byte-identical), 1 = Plain, 2 = Frill.
+    // Unlocks the off-shoulder gingham dress. See offshoulder.hpp / FORMULAS.md
+    // "Off-shoulder / bardot".
+    int bardotStyle = 0; // BardotStyle enum value; 0 = None
     // Opt-in shoulder/sleeve-join style: 0 = Set (classic set-in armhole,
     // byte-identical), 1 = Dropped (shoulder seam slid down the arm, armhole
     // lowered + widened, cap flattened), 2 = Raglan (no shoulder seam; diagonal

@@ -23,8 +23,18 @@
 namespace stitchu {
 
 // Where a set of ties sits on the garment; drives the finished dimensions and
-// which body piece carries the placement notch. Off = no tie drawn.
-enum class TiePlacement { None, BackWaist, BackWaistBow, FrontNeckBow, TieBack, CuffTies };
+// which body piece carries the placement notch. Off = no tie drawn. APPEND-only
+// enum — do not reorder (the JS/int bindings are positional).
+//
+// Front-tie variants (vocabulary expansion 2026-07-17, Damla: "önünden
+// bağlamalı"): FrontWaistTie = a tie-front WAIST (two waist ties that knot at the
+// center front); WrapFront = a wrap-front tie (a longer wrap tie that also SERVES
+// AS THE FRONT OPENING, so it makes the garment donnable — wrap dresses/tops);
+// FrontWaistBow = a front bow at the waist (decorative, ties at CF waist).
+enum class TiePlacement {
+    None, BackWaist, BackWaistBow, FrontNeckBow, TieBack, CuffTies,
+    FrontWaistTie, WrapFront, FrontWaistBow,
+};
 
 namespace TieBlock {
 

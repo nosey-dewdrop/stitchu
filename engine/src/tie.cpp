@@ -173,6 +173,45 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             bodyIdx = findPieceIndex(pattern, {"Sleeve", "Bodice Sleeve", "Top Sleeve"});
             break;
         }
+        case TiePlacement::FrontWaistTie: {
+            // A tie-front WAIST: two ties caught at the front waist that knot at
+            // the center front. Each reaches from the side seam round to a knot at
+            // CF — half the waist + a knot margin.
+            finishedW = 28;
+            finishedL = std::round(std::max(300.0, waistMM * 0.5 + 220.0));
+            count = 2;
+            name = "Front Waist Tie (ön bel bağı)";
+            role = "each ties from the front side seam to a knot at centre front waist";
+            bodyIdx = findPieceIndex(pattern, {"Bodice Center Front", "Bodice Front",
+                                       "Top Center Front", "Top Front"});
+            break;
+        }
+        case TiePlacement::WrapFront: {
+            // A WRAP-front tie: a long wrap tie that crosses the front and wraps
+            // round to knot at the side/back — it also SERVES AS THE OPENING (the
+            // front wraps over itself, so the garment is donnable without a zip).
+            // Long enough to wrap the full waist plus a bow.
+            finishedW = 32;
+            finishedL = std::round(std::max(500.0, waistMM + 350.0));
+            count = 2;
+            name = "Wrap Front Tie (kruvaze bağ)";
+            role = "one wraps across the front and round to knot at the side; the front laps over "
+                   "itself and opens there (no zip needed)";
+            bodyIdx = findPieceIndex(pattern, {"Bodice Center Front", "Bodice Front",
+                                       "Top Center Front", "Top Front"});
+            break;
+        }
+        case TiePlacement::FrontWaistBow: {
+            // A decorative front bow at the CF waist.
+            finishedW = 28;
+            finishedL = 380;
+            count = 2;
+            name = "Front Waist Bow (ön bel fiyonku)";
+            role = "attach at the centre-front waist and knot into a bow";
+            bodyIdx = findPieceIndex(pattern, {"Bodice Center Front", "Bodice Front",
+                                       "Top Center Front", "Top Front"});
+            break;
+        }
         case TiePlacement::None:
             return true;
     }
@@ -188,7 +227,10 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
     if (body) {
         if (placement == TiePlacement::BackWaist ||
             placement == TiePlacement::BackWaistBow ||
-            placement == TiePlacement::TieBack) {
+            placement == TiePlacement::TieBack ||
+            placement == TiePlacement::FrontWaistTie ||
+            placement == TiePlacement::WrapFront ||
+            placement == TiePlacement::FrontWaistBow) {
             const Point a = waistEdgeAnchor(body);
             placementNotch(body, a.x, a.y);
         } else {

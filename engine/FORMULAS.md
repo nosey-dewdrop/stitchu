@@ -1117,3 +1117,55 @@ permanent guardrail, not a one-time fix).
   skirt/halter. A manual "shoulder" picker covers the no-photo path;
   seen.shoulderDrawn suppresses the missing.js note + the outOfVocab shoulder term.
 
+
+## Button rows (vocab 2026-07-17)
+A drawn vertical row of round BUTTON CIRCLES down the front (distinct from the
+button PLACKET geometry — this draws the actual glyphs). Two modes:
+- Functional: reuses PlacketBlock::apply (grown 18 mm CF stand, fold line,
+  buttonholes, opens for donning — cut 2, not on fold), then draws real button
+  circles ON the CF line (x = 0, which now sits on the piece past the stand).
+- Decorative: buttons sewn on for looks, NO opening; the tube keeps its zip. The
+  circles nudge inward by r + 4 mm so the whole circle stays on the fabric (the CF
+  fold is the piece's x = 0 edge).
+Button diameter 18 mm, spacing ~90 mm on center. buttonrow_check proves: decorative
+= outline byte-identical + ≥3 circles + still needs a zip; functional = grown stand
++ circles + closure tag + wearable. None = byte-identical.
+
+## Exposed zipper (vocab 2026-07-17)
+A VISIBLE design zip (distinct from the invisible CB zip a dress always carries),
+drawn as a teeth glyph (a seam line + alternating-side teeth ticks) on the CF or CB
+seam edge. The exposed-zip seam allowance is 10 mm (turned back + topstitched flat
+over the tape, not the 15 mm an invisible zip hides). Opens the seam for donning
+(cut 2, not on fold) + tags the closure. exposedzip_check proves the glyph + open
+seam + closure + wearability. None = byte-identical.
+
+## Back detail — ruffle / cape / flounce (vocab 2026-07-17, "arkası pelerinli/fırfırlı")
+A separate cut piece attached at the back neck, attach edge TRUED to the finished
+back neck edge N (= 2 × the back center piece's neck sub-path, the same measure the
+wearability neck invariant uses). Ruffle = a strip N·2.2 long gathered to N. Cape =
+a flat on-fold panel N wide flaring to 1.5 N at a 380 mm hem. Flounce = a half-circle
+annular sector, inner (attach) arc = N (r0 = N/π), outer arc longer so it ripples.
+backdetail_check proves one trued piece per detail, outlines byte-identical, valid.
+Hood/watteau/shoulder-cape stay honest (missing.js). None = byte-identical.
+
+## Front-tie variants (vocab 2026-07-17, "önünden bağlamalı")
+Appended to TiePlacement (append-only enum): FrontWaistTie (two waist ties knotting
+at CF, each ≈ half the waist + a knot margin), WrapFront (a long wrap tie that
+crosses the front and IS the opening — it makes the garment donnable, so the dress
+drops its redundant CB zip and a top is wearable), FrontWaistBow (a decorative CF
+waist bow). Same self-fabric strip construction as the back ties, front-piece
+placement notch on the waist edge. fronttie_check proves the pieces + wrap-front
+donning. None = byte-identical.
+
+## Off-shoulder / bardot (vocab 2026-07-17, the pink gingham dress)
+The bodice top edge is REShaped DOWN by 55 mm below the shoulder point into a
+straight bardot band (shoulders bare, no shoulder seam / top-edge sleeve), from CF
+to the armhole point. The CF-returning outline vertex is retargeted to the band top
+so the CF edge stops cleanly (no self-cross). An elastic casing is marked at the top
+edge + an elastic cut length ≈ 0.85 × the finished top-edge circumference (2×(front
+half + back half)) so it holds off the shoulders. Frill adds a bardot ruffle strip
+(top·2.0 gathered to the top edge). The wide elastic top stretches over the
+shoulders → hasDonningOpening treats it as a stretch opening (donnable).
+offshoulder_check proves the dropped edge + elastic piece + frill + wearability.
+Needs a plain (dart) bodiced front + back; princess/skirt garments stay honest.
+None = byte-identical.

@@ -2,8 +2,12 @@
 
 #include <cmath>
 
+#include "backdetail.hpp"
+#include "buttonrow.hpp"
 #include "collar.hpp"
+#include "exposedzip.hpp"
 #include "gather.hpp"
+#include "offshoulder.hpp"
 #include "hem.hpp"
 #include "keyhole.hpp"
 #include "neckext.hpp"
@@ -774,6 +778,38 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 hemMM * lenMultiplier * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,
             1);
     }
+    // Opt-in off-shoulder / bardot neckline (omuz açık, vocab 2026-07-17):
+    // reshapes the bodice top edge down below the shoulder into an elastic-cased
+    // bardot band (+ optional frill). Runs on a bodiced garment only; a princess/
+    // skirt garment is refused honestly. Off (None) → byte-identical. Runs BEFORE
+    // the closure passes below only in spirit — order-independent here (it reshapes
+    // the top edge, the closures touch the CF/CB seam).
+    if (spec.bardotStyle != static_cast<int>(BardotStyle::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        OffShoulderBlock::apply(pattern, static_cast<BardotStyle>(spec.bardotStyle));
+    }
+    // Opt-in button row (düğme sırası, vocab 2026-07-17): a drawn vertical row of
+    // round button circles down the front — Functional grows the CF opening (reuses
+    // the placket geometry, opens for donning), Decorative is buttons-for-looks
+    // (no opening). Off (None) → byte-identical.
+    if (spec.buttonRow != static_cast<int>(ButtonRow::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        ButtonRowBlock::apply(pattern, static_cast<ButtonRow>(spec.buttonRow));
+    }
+    // Opt-in exposed / visible zipper (görünür fermuar, vocab 2026-07-17): a
+    // visible design zip drawn as a teeth glyph on the CF or CB seam, opens for
+    // donning. Distinct from the invisible CB zip a dress always carries. Off
+    // (None) → byte-identical.
+    if (spec.exposedZip != static_cast<int>(ExposedZip::None)) {
+        ExposedZipBlock::apply(pattern, static_cast<ExposedZip>(spec.exposedZip));
+    }
+    // Opt-in back detail (arka pelerin/fırfır, vocab 2026-07-17): a separate ruffle
+    // / cape / flounce piece attached at the back neck, attach edge trued to the
+    // back neck edge. Off (None) → byte-identical.
+    if (spec.backDetail != static_cast<int>(BackDetail::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        BackDetailBlock::apply(pattern, static_cast<BackDetail>(spec.backDetail));
+    }
     // TECHNICAL MARKINGS (STEP 3): grainline (fallback), balance notches on the
     // seams that must align, and the CB-zipper closure mark on a dress. Runs
     // after every geometry post-pass so every piece is covered, and BEFORE the
@@ -789,10 +825,19 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const auto tiePl = static_cast<TiePlacement>(spec.tieClosure);
     const bool tieOpensBack =
         tiePl == TiePlacement::TieBack || tiePl == TiePlacement::BackWaist ||
-        tiePl == TiePlacement::BackWaistBow;
+        tiePl == TiePlacement::BackWaistBow ||
+        // A wrap-front tie opens the FRONT (the front laps over itself) — the
+        // dress does not also need a redundant invisible CB zipper.
+        tiePl == TiePlacement::WrapFront;
+    // A functional button row opens the front (it reuses the placket geometry).
+    const bool buttonRowOpens = spec.buttonRow == static_cast<int>(ButtonRow::Functional);
+    // An exposed zip on CF or CB opens that seam for donning (a visible zip is a
+    // real closure, not just decoration).
+    const bool exposedZipOpens = spec.exposedZip != static_cast<int>(ExposedZip::None);
     const bool backAlreadyOpens =
         OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
-        spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack;
+        spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack ||
+        buttonRowOpens || exposedZipOpens;
     annotateTechnical(pattern,
         /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
 

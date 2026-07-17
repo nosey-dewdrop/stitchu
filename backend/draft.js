@@ -29,7 +29,7 @@ const ENUMS = {
   topLength: ['cropped', 'hip', 'tunic'],
   ruffle: ['none', 'single', 'tiered'],
   keyhole: ['none', 'keyhole'],
-  tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies'],
+  tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies', 'frontWaistTie', 'wrapFront', 'frontWaistBow'],
   sleeveCap: ['plain', 'gathered', 'puffed', 'cap'],
   collarType: ['none', 'stand', 'mock', 'flat', 'peterPan', 'shirt'],
   collarEdge: ['round', 'pointed', 'scallop'],
@@ -45,10 +45,14 @@ const ENUMS = {
   cuffStyle: ['none', 'button', 'ribbed'],
   hemShape: ['straight', 'shirttail', 'highLow'],
   shoulderStyle: ['set', 'dropped', 'raglan'],
+  buttonRow: ['none', 'functional', 'decorative'],
+  exposedZip: ['none', 'centerFront', 'centerBack'],
+  backDetail: ['none', 'ruffle', 'cape', 'flounce'],
+  bardotStyle: ['none', 'plain', 'frill'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
-const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5 };
+const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5, frontWaistTie: 6, wrapFront: 7, frontWaistBow: 8 };
 const tieInt = (s) => TIE_PLACEMENT[s] || 0;
 // SleeveCap enum int (must match engine/src/measurements.hpp order). 0 = Plain.
 const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2, cap: 3 };
@@ -98,6 +102,18 @@ const hemShapeInt = (s) => HEM_SHAPE[s] || 0;
 // ShoulderStyle enum int (must match engine/src/measurements.hpp order). 0 = Set.
 const SHOULDER_STYLE = { set: 0, dropped: 1, raglan: 2 };
 const shoulderStyleInt = (s) => SHOULDER_STYLE[s] || 0;
+// ButtonRow enum int (must match engine/src/buttonrow.hpp order). 0 = None.
+const BUTTON_ROW = { none: 0, functional: 1, decorative: 2 };
+const buttonRowInt = (s) => BUTTON_ROW[s] || 0;
+// ExposedZip enum int (must match engine/src/exposedzip.hpp order). 0 = None.
+const EXPOSED_ZIP = { none: 0, centerFront: 1, centerBack: 2 };
+const exposedZipInt = (s) => EXPOSED_ZIP[s] || 0;
+// BackDetail enum int (must match engine/src/backdetail.hpp order). 0 = None.
+const BACK_DETAIL = { none: 0, ruffle: 1, cape: 2, flounce: 3 };
+const backDetailInt = (s) => BACK_DETAIL[s] || 0;
+// BardotStyle enum int (must match engine/src/offshoulder.hpp order). 0 = None.
+const BARDOT_STYLE = { none: 0, plain: 1, frill: 2 };
+const bardotStyleInt = (s) => BARDOT_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -211,7 +227,12 @@ export function validateDraftRequest(body) {
       edgeFinish: spec.edgeFinish ?? 'biasBinding',
       pocketStyle: spec.pocketStyle ?? 'none',
       cuffStyle: spec.cuffStyle ?? 'none',
+      hemShape: spec.hemShape ?? 'straight',
       shoulderStyle: spec.shoulderStyle ?? 'set',
+      buttonRow: spec.buttonRow ?? 'none',
+      exposedZip: spec.exposedZip ?? 'none',
+      backDetail: spec.backDetail ?? 'none',
+      bardotStyle: spec.bardotStyle ?? 'none',
     },
     measurements,
   };
@@ -246,6 +267,10 @@ export async function runDraft(spec, measurements) {
     cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
     hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
     shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
+    buttonRowInt(spec.buttonRow),     // vocab: button row
+    exposedZipInt(spec.exposedZip),   // vocab: exposed zipper
+    backDetailInt(spec.backDetail),   // vocab: back detail
+    bardotStyleInt(spec.bardotStyle), // vocab: off-shoulder / bardot
   );
   return JSON.parse(json);
 }
@@ -295,6 +320,10 @@ export async function handleGrade(request) {
       cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
       hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
       shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
+      buttonRowInt(spec.buttonRow),     // vocab: button row
+      exposedZipInt(spec.exposedZip),   // vocab: exposed zipper
+      backDetailInt(spec.backDetail),   // vocab: back detail
+      bardotStyleInt(spec.bardotStyle), // vocab: off-shoulder / bardot
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }
