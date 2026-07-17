@@ -22,6 +22,7 @@ add_library(engine
     src/peplum.cpp
     src/sleeve.cpp
     src/garment.cpp
+    src/wearability.cpp
     src/validator.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
@@ -117,3 +118,10 @@ add_test(NAME fba_check COMMAND fba_check)
 add_executable(grade_check tests/grade_check.cpp)
 target_link_libraries(grade_check PRIVATE engine)
 add_test(NAME grade_check COMMAND grade_check)
+
+add_executable(wearability_check tests/wearability_check.cpp)
+target_link_libraries(wearability_check PRIVATE engine)
+add_test(NAME wearability_check COMMAND wearability_check)
+
+add_executable(wearability-bench tools/wearability-bench.cpp)
+target_link_libraries(wearability-bench PRIVATE engine)

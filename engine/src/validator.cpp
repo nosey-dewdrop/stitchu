@@ -8,6 +8,7 @@
 #include "bodice.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
+#include "wearability.hpp"
 
 namespace stitchu {
 namespace PatternValidator {
@@ -1000,6 +1001,14 @@ std::vector<ValidationIssue> issues(
             break;
         }
     }
+
+    // Wearability gate (2026-07-17): the pattern is internally consistent above;
+    // now prove a human can actually put it on and wear it (head entry, a
+    // declared opening not collapsed to a fold, a finished sleeveless armhole).
+    // An outside LLM found a green-but-unwearable draft; these turn that lesson
+    // into a permanent, deterministic, zero-cost gate.
+    for (auto& issue : Wearability::issues(spec, m, draft)) result.push_back(issue);
+
     return result;
 }
 

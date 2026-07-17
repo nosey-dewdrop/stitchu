@@ -791,3 +791,49 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Web: outer/inner line in preview + print, legend + cover updated EN/TR;
   bounds()/packing include cutLine; old closet saves (no cutLine) render the
   single line as before.
+
+## Wearability invariants (giyilebilirlik testi) — 2026-07-17
+The internal validator proves a pattern is CONSISTENT (seams sew, curves don't
+fold, waists match). Wearability proves a human can PUT IT ON and wear it — the
+gap an outside LLM found: a draft green on every internal test yet un-donnable.
+Lives in `src/wearability.cpp`, called at the end of `PatternValidator::issues`,
+so a wearability issue BLOCKS a draft exactly like a facing/keyhole issue. Reads
+only the drafted geometry (finished neckline off the front/back center pieces) +
+spec — never a recomputed ideal — so it catches a draft that drifted from its
+own intent. Thresholds set against Aldrich/Armstrong tolerances so a real
+tight-but-wearable draft never trips (proven: engine_check 2805-draft matrix,
+vocab-sweep 37800, web-fuzz 20110 — zero false positives).
+
+- **Rule 1 — HEAD ENTRY (blocking, collapsed-opening guard).** A closed-neck
+  garment that must slip over the head (a TOP with no zipper/placket/tie/back
+  opening) is refused only when its finished neck OPENING (= 2×(front half-neck +
+  back half-neck)) has collapsed below `neckOpeningDegenerateMM = 150` mm — a hole
+  no head could pass. NOT a "does a head fit" estimator: the finished perimeter is
+  a NOISY head oracle (a wide-shallow boat/bateau neck legitimately sits well
+  under the neck girth — measured 455 mm on a 500 mm neck — and the shoulder clamp
+  shrinks it further on a broad-neck/narrow-shoulder body), so any perimeter
+  threshold above trivia false-positives on real drafts. The floor sits far under
+  the smallest real draft (267 mm across every harness body/neckline). Dresses
+  (CB zipper), halters (nape closure), plackets/ties/back-cutouts are exempt via
+  `hasDonningOpening()`.
+- **Rule 2 — FOLD vs OPENING (blocking).** A declared front button placket must
+  not collapse to a plain center-front fold with nothing to open (the exact
+  outside-LLM bug: drawn front-buttoned, saved as cut-on-fold). When the placket
+  is drawn the engine grows the front edge past the CF (x < 0) and adds
+  button/fold-line markings; if `spec.frontPlacket` is set but the front is still
+  a plain fold at x = 0 with no stand/markings, the closure was dropped → FAIL.
+- **Rule 3 — EDGE FINISH (blocking).** A sleeveless bodiced garment (top/dress,
+  not skirt, not halter) leaves a raw armhole; it must carry a binding/facing
+  piece OR an honest guide note to bind it (the engine emits "bias binding
+  (sleeveless)"). Neither → the armhole is an unfinished fraying edge → FAIL.
+- **Rule 4 — WOVEN EASE (test WARN, not a blocker).** A woven garment needs real
+  chest ease (`wovenChestEaseMinMM = 20` mm total); this is already enforced
+  upstream by the chest-width invariant, so wearability keeps it as an independent
+  report line in the ctest, not a second blocker.
+
+Proof: `tests/wearability_check.cpp` (ctest #21) — real drafts across all garment
+types pass, a collapsed neckline / dropped placket / unfinished armhole each FAIL,
+golden byte-identical (the module READS geometry, mutates nothing).
+Benchmark harness: `tools/wearability-bench.{cpp,mjs}` runs the 54 vision-labelled
+specs through the gate (0 unwearable on the current benchmark — the gate is a
+permanent guardrail, not a one-time fix).
