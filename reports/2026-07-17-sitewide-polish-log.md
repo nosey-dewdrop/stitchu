@@ -178,6 +178,6 @@ disk match sitemap (no stale, no missing).
   runs in parallel).
 
 ## Commit + deploy
-- Commit SHA: __FILL__
-- gh-pages deploy SHA: __FILL__
-- Live curl verification: __FILL__
+- Commit SHA: 3f3b69280f46a63bd83f6c84e607da88b9a08d92
+- gh-pages deploy SHA: b82d4195a02844947d68efc71899ca26ace54e32
+- Live curl verification (all confirmed): index shows ">Join the Beta<", nav "Patch Notes"/"Benchmark", ?v=80, footer >v80<; blog "The Pattern Journal"; og-card.png 200 + og:image tag live; sitemap has /blog/ and /patches.html.
