@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=61';
-import { applyStatic, getLang, t } from './i18n.js?v=61';
-import { draft, grade } from './engine.js?v=61';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=61';
-import { renderResult } from './render.js?v=61';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=78';
+import { applyStatic, getLang, t } from './i18n.js?v=78';
+import { draft, grade } from './engine.js?v=78';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=78';
+import { renderResult } from './render.js?v=78';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=61';
+} from './store.js?v=78';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -307,13 +307,6 @@ function pickPeplum(seen) {
 // bound / cargo / flap / kangaroo pocket is a DIFFERENT construction that stays
 // honest. Returns 'patch' | 'sideSeam' or null.
 function pickPocket(seen) {
-// Map the vision's oov / details to a sleeve-end cuff style (patch 3.13). A
-// BUTTON (barrel/shirt) cuff → 'button'; a RIBBED (knit rib) cuff → 'ribbed'.
-// Only a real cuff term matches; a FRENCH cuff (double turn-back) and an ELASTIC
-// / casing cuff are NOT drawn → null (stay honest). Returns 'button', 'ribbed',
-// or null. The sleeve gate (must be a full-length sleeve) is applied at the call
-// site, mirroring the engine's honest skip.
-function pickCuff(seen) {
   const words = [
     Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
     seen.details || '',
@@ -329,6 +322,19 @@ function pickCuff(seen) {
   if (/patch|hip pocket|chest pocket|applied pocket/.test(words)) return 'patch';
   // A bare "pocket" with no welt/side cue reads as the common patch pocket.
   return 'patch';
+}
+
+// Map the vision's oov / details to a sleeve-end cuff style (patch 3.13). A
+// BUTTON (barrel/shirt) cuff → 'button'; a RIBBED (knit rib) cuff → 'ribbed'.
+// Only a real cuff term matches; a FRENCH cuff (double turn-back) and an ELASTIC
+// / casing cuff are NOT drawn → null (stay honest). Returns 'button', 'ribbed',
+// or null. The sleeve gate (must be a full-length sleeve) is applied at the call
+// site, mirroring the engine's honest skip.
+function pickCuff(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
   if (!/\bcuff\b/.test(words)) return null;
   // French / elastic-casing / ruffle / tie cuffs are a different construction.
   if (/french|elastic|casing|ruffle|frill|tie/.test(words)) return null;

@@ -11,8 +11,13 @@ em++ -O2 -std=c++17 \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \
-  -sALLOW_MEMORY_GROWTH=1 \
+  -sINITIAL_MEMORY=64MB -sALLOW_MEMORY_GROWTH=0 \
   -o dist/stitchu-engine.js
+# NOTE: fixed (non-growable) memory on purpose. ALLOW_MEMORY_GROWTH=1 makes the
+# WASM heap a *resizable* ArrayBuffer; modern Chromium's TextDecoder.decode()
+# rejects a resizable buffer ("must not be resizable"), which threw on every
+# draftJSON return and left create.html blank after the pattern picker. A draft
+# needs only a few MB, so a fixed 64MB heap is ample and keeps the buffer plain.
 
 ls -la dist/stitchu-engine.js
 
