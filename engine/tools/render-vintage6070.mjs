@@ -15,6 +15,7 @@ const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
 const flat = await import(join(here, 'render-flat.mjs'));
 const { renderScattered, renderFrontBack } = flat;
+const { renderOnFigure } = await import(join(here, 'render-on-figure.mjs'));
 
 const OUT = join(here, '../../web/patterns/vintage6070');
 mkdirSync(OUT, { recursive: true });
@@ -232,19 +233,21 @@ for (const s of LOOKS) {
     garment: s.garment, shaping: s.shaping, waistline: s.waistline, neckline: s.neckline,
     skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
     sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength, sleeveCap: s.sleeveCap || 0,
-    collarType: s.collarType || 0, frontPlacket: s.frontPlacket === true,
-    tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
-    backOpening: s.backOpening || 0, closure: closures[0] || null,
+    collarType: s.collarType || 0, collarEdge: s.collarEdge || 0, frontPlacket: s.frontPlacket === true,
+    placketStyle: s.placketStyle || 0, tie: s.tie || 0, gatherType: s.gatherType || 0,
+    gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0, closure: closures[0] || null,
   };
   // (1) scattered nested layout, (2) FRONT + BACK flat technical sketch (STEP 2).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
   writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
+  // ON-FIGURE croquis view — the same style worn on a fashion figure.
+  writeFileSync(join(OUT, `${s.slug}-figure.svg`), renderOnFigure(flatSpec));
 
   meta.push({ slug: s.slug, en: s.en, tr: s.tr, period: s.period, house: s.house,
     pieces: p.pieces.length, pieceNames: p.pieces.map((x) => x.name),
     fabric: p.fabricMeters140, garment: s.garment, full: s.full,
     note_en: s.note_en, note_tr: s.note_tr, oov: s.oov,
-    flat: `${s.slug}-flat.svg`, closure: closures[0] || null });
+    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`, closure: closures[0] || null });
   console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m  [${s.full ? 'FULL' : 'PARTIAL'}]` +
     (closures.length ? ` [closure]` : ''));
 }
