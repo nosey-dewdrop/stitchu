@@ -127,6 +127,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
 
     const bool sleeveless = sleeves.empty();
+    // A sleeveless (non-halter) garment bias-binds both armholes — count the
+    // self-fabric strip so the estimate covers the finish the guide prescribes.
+    if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
         "Print and check the 3 cm calibration square before cutting.",
@@ -288,6 +291,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
 
     const bool sleeveless = sleeves.empty();
+    // Sleeveless (non-halter): both armholes are bias-bound — count the strip.
+    if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
         "Print and check the 3 cm calibration square before cutting.",

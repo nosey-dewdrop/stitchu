@@ -122,6 +122,17 @@ inline constexpr double facingDepth = 55;
 // Fabric the facings add to dress/top estimates. Golden dumps subtract this:
 // the Swift reference engine predates facings.
 inline constexpr double facingFabricMeters = 0.2;
+// Fabric for the sleeveless armhole finish: both armholes are bias-bound (the
+// guide's "finish the armholes with bias binding" step). One 40 mm bias strip
+// per armhole; a self-fabric bias strip cut across the grain eats ~1.4x its
+// finished length in length once you account for the diagonal. Estimate in
+// meters from the drafted single-arm armhole length (front half + back half).
+inline constexpr double armholeBiasStripWidthMM = 40;
+inline double armholeBiasFabricMeters(double singleArmholeLengthMM) {
+    // two armholes x armhole length x 1.4 bias factor, strip 40 mm deep, +10%
+    // handling; a thin sliver of fabric, but real and now counted honestly.
+    return (2.0 * singleArmholeLengthMM * 1.4) * armholeBiasStripWidthMM / 1.0e6 * 1.1;
+}
 std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Neckline neckline,
                                       const std::string& frontCut, const std::string& backCut);
 

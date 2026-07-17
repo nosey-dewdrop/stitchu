@@ -587,13 +587,28 @@ std::vector<ValidationIssue> skirtIssues(
 // MARK: Top
 
 // Extended top layout tail: ..., armhole curve, side curve to hem,
-// hem curve to center, center line, close.
+// hem curve to center, center line, close. A front button placket grows the
+// center edge outward and inserts one extra CENTER jog line before close, so
+// the side seam sits one command earlier. Skip trailing near-center lines (the
+// center edge, |x| within the stand width of CF) so the finder lands on the
+// side-to-hem curve in every front topology.
 std::optional<double> topSideSeamLength(const PatternPiece& piece) {
     const size_t count = piece.commands.size();
-    if (count < 5 ||
-        piece.commands[count - 5].type != CmdType::Curve ||
-        piece.commands[count - 4].type != CmdType::Curve) return std::nullopt;
-    return pathLength({PathCommand::move(piece.commands[count - 5].to), piece.commands[count - 4]});
+    if (count < 5) return std::nullopt;
+    size_t hemEnd = count - 1; // index of the close command
+    // Walk back over the closing line(s) that ride the center edge.
+    while (hemEnd > 0 &&
+           (piece.commands[hemEnd].type == CmdType::Close ||
+            (piece.commands[hemEnd].type == CmdType::Line &&
+             std::fabs(piece.commands[hemEnd].to.x) <= 20.0))) {
+        --hemEnd;
+    }
+    // hemEnd now points at the hem-to-center curve; the two curves before it are
+    // side-to-hem (hemEnd-1) and armhole-lower (hemEnd-2).
+    if (hemEnd < 2 ||
+        piece.commands[hemEnd - 2].type != CmdType::Curve ||
+        piece.commands[hemEnd - 1].type != CmdType::Curve) return std::nullopt;
+    return pathLength({PathCommand::move(piece.commands[hemEnd - 2].to), piece.commands[hemEnd - 1]});
 }
 
 // Princess side panel: [0]=move(split), [1]=armhole lower half, [2]=side seam

@@ -7,12 +7,15 @@
 namespace stitchu {
 namespace {
 
-// Boat necks widen on both front and back; sweetheart opens the shoulders a
-// little so the heart lobes have width to live in. Both sides widen together
-// so the shoulder seams keep matching. ONE definition — the bodice and the
-// facings must never disagree on this.
+// Boat (bateau) necks are WIDE and shallow — the neckline runs almost straight
+// across from shoulder tip to shoulder tip. Sweetheart opens the shoulders a
+// little so the heart lobes have width to live in. Both sides widen together so
+// the shoulder seams keep matching. ONE definition — the bodice and the facings
+// must never disagree on this. (2026-07-17 external audit: the old 1.35 boat
+// read like a wide round neck, ~166 mm front opening; a true bateau opens to the
+// shoulders ~200-240 mm. Raised to 1.85, still under the shoulder-share clamp.)
 double neckWidthMultiplier(Neckline neckline) {
-    if (neckline == Neckline::Boat) return 1.35;
+    if (neckline == Neckline::Boat) return 1.85;
     if (neckline == Neckline::Sweetheart) return 1.2;
     return 1.0;
 }

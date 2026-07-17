@@ -53,8 +53,11 @@ bust, waist, hip, shoulder (full shoulder width), backLength (nape to waist), ar
 - shoulderHalf = shoulder/2; shoulderDrop = shoulderHalf * 0.23  [ASSUMPTION ~13 deg, UNVALIDATED — see ledger]
 - armholeY = backLength * 0.44 + shoulderDrop
 - underbust = max(bust - 70, waist)  [ASSUMPTION B/C cup offset 70 mm, SOURCE-BOUND range — see ledger]
-- neck widths: back = neck * 0.197, front = neck * 0.17; boat neckline multiplies both by 1.35;
+- neck widths: back = neck * 0.197, front = neck * 0.17; boat neckline multiplies both by 1.85;
   both capped at shoulderHalf * 0.72 (a neckline can never eat the shoulder seam)
+  (2026-07-17 external-audit fix: boat was 1.35 → ~166 mm front, read like a wide
+  round neck; a true bateau opens wide + shallow toward the shoulders. 1.85 → ~226 mm
+  front, still under the shoulder-share clamp. Only /boat/ golden drafts changed.)
 - back neck cutout = neck * 0.06; back neckline is always a shallow crew curve
 - front neck depth by style: crew = neckW + 15, scoop = neckW + 50, v = neckW + 75,
   square = neckW + 40, boat = 28
@@ -346,11 +349,22 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   applied band. We chose GROWN-ON (couture default, one piece, no seam at the
   finished edge). No button size is collected → 18 mm blouse button ASSUMPTION
   (UNVALIDATED, see ledger), documented; the guide's muslin note + placket step cover swapping it.
-- Geometry (front piece, CF at x = 0): the CF EDGE (the last outline curve, waist
-  → neck point) is offset outward by standWidth = 18 mm (= button Ø) so the
-  finished front edge lands at x = -18; a short horizontal LINE joins the grown
-  stand top back to the TRUE neck point. The neckline itself and every other edge
-  are UNTOUCHED → the neck facing still matches (its validator would fire otherwise).
+- Geometry (front piece, CF at x = 0): EVERY outline vertex on the CF edge (|x| <
+  1 mm) is offset outward by standWidth = 18 mm (= button Ø) so the finished front
+  edge lands at x = -18, EXCEPT the true neck point cmds[0]; a short horizontal
+  LINE joins the grown stand top back to the neck point. This geometry-driven rule
+  handles BOTH front topologies (bodice/dress returns to CF on a curve; extended
+  top returns on a straight line). The neckline itself and every other edge are
+  UNTOUCHED → the neck facing still matches (its validator would fire otherwise).
+- CUT vs FOLD (2026-07-17 external-audit fix): a placket OPENS at CF, so the front
+  cannot be cut on the fold — the two are mutually exclusive. PlacketBlock flips
+  the front AND its Front Neck Facing from "cut 1 on fold" to "cut 2 (center front
+  opening)". The old code left "cut 1 on fold" in place AND only offset "the final
+  curve, i+2 >= size" — so the extended-top CF (a line) grew no stand yet still got
+  buttonholes past CF (sewing line spilled outside the cut line; piece unwearable).
+  Both are fixed; placket_check's petite crop TOP now grows the stand it silently
+  missed before. Note: this changed topSideSeamLength in validator.cpp to skip the
+  extra CENTER jog line the placket inserts (it read the side seam by fixed index).
 - Markings: fold line at the true CF (x = 0, neck→bottom); fold-back facing line at
   x = +18 (facing turns back this far); buttons = short cross ticks ON the CF line;
   buttonholes = horizontal slits starting buttonholeOffset = 3 mm past CF toward the

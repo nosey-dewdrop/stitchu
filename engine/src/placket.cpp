@@ -64,33 +64,73 @@ bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
         return false;
     }
 
-    // Rebuild the outline: ONLY the CF edge (the last curve, which returns from
-    // the waist up to the neck point) grows outward by standWidth. The opening
-    // neck point and the whole neckline stay put, so the neck facing still
-    // matches. A short horizontal jog at the top joins the grown stand edge back
-    // to the true neck point — that is the top of the button stand.
+    // Rebuild the outline so the WHOLE center-front edge grows outward by
+    // standWidth. The CF edge is every outline vertex that sits on the fold line
+    // (x ~ 0) — whether the draft returns to CF along a curve (bodice dress) or a
+    // straight line (extended top) — EXCEPT the true neck point cmds[0], which
+    // must stay put so the neckline and the neck facing still match. The finished
+    // front edge then lands at x = -standWidth all the way from hem to neck. A
+    // short horizontal jog at the top joins the grown stand back to the true neck
+    // point — that is the top of the button stand.
+    //
+    // The old index-based heuristic (offset only "the final curve, i+2 >= size")
+    // silently missed the extended-top topology (its CF edge is a LINE, not a
+    // curve) — that draft grew NO stand yet still stamped buttonholes past CF, so
+    // the sewing line spilled past the cut line and the piece was unwearable. This
+    // geometry-driven rule handles every front topology (external audit fix,
+    // 2026-07-17).
+    constexpr double kCfEps = 1.0; // a vertex is "on the CF" within 1 mm of x = 0
     std::vector<PathCommand>& cmds = front->commands;
     const Point neckPointCF = cmds[0].to; // the true CF neck point (unchanged)
+    const bool neckOnCF = std::abs(neckPointCF.x) < kCfEps;
     std::vector<PathCommand> grown;
     grown.reserve(cmds.size() + 1);
+    // edgeGrow == standWidth when symmetric (byte-identical); standWidth+offsetMM
+    // when the closure is carried off center. Every CF vertex grows by edgeGrow.
     for (size_t i = 0; i < cmds.size(); ++i) {
         PathCommand c = cmds[i];
-        const bool isCloseEdge = (c.type == CmdType::Curve && // final CF edge curve
-                                  c.to.x < 20 && i + 2 >= cmds.size());
-        if (isCloseEdge) {
-            // Offset the CF-edge curve outward; it now arrives at (-edgeGrow,
-            // neckY) instead of the neck point, and a line closes the top jog.
-            // edgeGrow == standWidth when symmetric (byte-identical).
+        if (c.type == CmdType::Close) { grown.push_back(c); continue; }
+        // Does this command ARRIVE at the true neck point? (last CF-edge vertex.)
+        const bool arrivesAtNeck = i != 0 && neckOnCF &&
+                                   std::abs(c.to.x - neckPointCF.x) < kCfEps &&
+                                   std::abs(c.to.y - neckPointCF.y) < kCfEps;
+        // Grow any control point that sits on the CF (keeps a grown curve smooth).
+        if (c.type == CmdType::Curve) {
+            if (std::abs(c.cp1.x) < kCfEps) c.cp1 = outward(c.cp1, -edgeGrow);
+            if (std::abs(c.cp2.x) < kCfEps) c.cp2 = outward(c.cp2, -edgeGrow);
+        }
+        if (arrivesAtNeck) {
+            // This command now arrives at the grown stand top (-edgeGrow, neckY);
+            // a jog line closes it back to the true neck point.
             c.to = outward(c.to, -edgeGrow);
-            c.cp1 = outward(c.cp1, -edgeGrow);
-            c.cp2 = outward(c.cp2, -edgeGrow);
             grown.push_back(c);
             grown.push_back(PathCommand::line(neckPointCF)); // stand top -> neck point
+        } else if (i != 0 && std::abs(c.to.x) < kCfEps) {
+            // Any other CF vertex (e.g. the hem corner at x = 0) grows outward.
+            c.to = outward(c.to, -edgeGrow);
+            grown.push_back(c);
         } else {
             grown.push_back(c);
         }
     }
     front->commands = grown;
+
+    // A front button placket OPENS at the center front — it cannot be cut on the
+    // fold (a fold has no opening, and buttons/buttonholes on a fold are
+    // nonsense: the finished garment would not go over the head). Placket and
+    // "cut on fold" are MUTUALLY EXCLUSIVE. Flip the front (and its neck facing,
+    // which mirrors the front's cut) to "cut 2 (center front opening)".
+    auto openCF = [](std::string& cut) {
+        const auto fold = cut.find("on fold");
+        if (fold == std::string::npos) return; // already cut 2 (e.g. princess side)
+        std::string tail; // preserve any trailing note (", interface")
+        const auto comma = cut.find(',', fold);
+        if (comma != std::string::npos) tail = cut.substr(comma);
+        cut = "cut 2 (center front opening)" + tail;
+    };
+    openCF(front->cutInstruction);
+    for (auto& piece : pattern.pieces)
+        if (piece.name == "Front Neck Facing") openCF(piece.cutInstruction);
 
     const double firstY = neckY + topFromNeck;
     const double lastY = cfBottom - hemClearance;
@@ -160,10 +200,11 @@ bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
         front->markings.push_back(PathCommand::line({0, cfBottom}));
     }
 
-    front->cutInstruction = front->cutInstruction; // (front stays cut 1 on fold at the true CF)
-
+    // The front now OPENS at the closure (openCF flipped it to cut 2 above);
+    // both the symmetric and asymmetric guides say so.
     pattern.guideSteps.push_back(asymmetric
-        ? std::string("Asymmetric front placket: the closure is carried ") +
+        ? std::string("Asymmetric front placket: the front OPENS off-center — cut it "
+            "as TWO fronts (cut 2), NOT on the fold. The closure is carried ") +
             std::to_string(static_cast<long>(std::lround(offsetMM))) +
             " mm to one side of the center front (both the fold/button line and "
             "the grown-on 18 mm button stand are shifted off center — the true "
@@ -172,9 +213,11 @@ bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
             "at the bust level to stop gaping — and the buttons on the under front "
             "to match. Cut the mirror (under) front to the same offset so the two "
             "fronts overlap correctly. Change the button size to suit and re-space."
-        : std::string("Front placket: this front carries an 18 mm grown-on button stand past "
+        : std::string("Front placket: the front now OPENS at the center front — cut it "
+            "as TWO mirror-image fronts (cut 2), NOT on the fold, because the buttons "
+            "open the garment. Each front carries an 18 mm grown-on button stand past "
             "the center front (marked fold line at CF, fold-back facing line inside). "
-            "Interface the stand. Mark the buttonholes on THIS (right) front — one is "
+            "Interface the stand. Mark the buttonholes on the RIGHT front — one is "
             "placed at the bust level to stop gaping — and the buttons on the LEFT "
             "front on the center-front line (women's fronts lap right over left). Cut "
             "horizontal buttonholes starting 3 mm past the center front toward the "

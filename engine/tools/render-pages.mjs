@@ -119,6 +119,12 @@ const SPECS = [
   { name: 'jackie-asym-cap-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'boat', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'mini',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, sleeveCap: 3 /* cap */, placketStyle: 2 /* asymmetric */ },
+  // External-audit repro: sleeveless gingham boat-neck FRONT-PLACKET blouse. The
+  // audited bug was placket + cut-on-fold coexisting (unwearable). Renders here
+  // so the CF opening, boat neckline and armhole finish can be checked by eye.
+  { name: 'gingham-placket-blouse', garment: 'top', shaping: 'dart', waistline: 'natural', fabric: 'woven',
+    neckline: 'boat', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, frontPlacket: true },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
