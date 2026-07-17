@@ -71,11 +71,19 @@ export function placketStyleValue(spec) {
   return spec && spec.frontPlacket === true ? 1 : 0;
 }
 
+// EdgeFinish enum (must match engine/src/measurements.hpp order). 0 = BiasBinding
+// (patch 3.10 DEFAULT — Damla: bias on every dress); 1 = Facing (opt-in). A real
+// collar overrides this to a faced neck inside the engine regardless.
+const EDGE_FINISH = { biasBinding: 0, bias: 0, facing: 1 };
+export function edgeFinishValue(spec) {
+  return EDGE_FINISH[spec && spec.edgeFinish] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=74';
+      script.src = 'vendor/stitchu-engine.js?v=75';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -108,6 +116,7 @@ export async function grade(spec, fromLabel, toLabel) {
     ruffledStrapsValue(spec), // queue #3: ruffled shoulder straps
     peplumValue(spec),      // R1.1: peplum flare
     placketStyleValue(spec), // R1.2: asymmetric placket
+    edgeFinishValue(spec),  // patch 3.10: neckline/armhole edge finish
   );
   return JSON.parse(json);
 }
@@ -136,6 +145,7 @@ export async function draft(spec, measurements) {
     ruffledStrapsValue(spec),    // queue #3: ruffled shoulder straps
     peplumValue(spec),           // R1.1: peplum flare
     placketStyleValue(spec),     // R1.2: asymmetric placket
+    edgeFinishValue(spec),       // patch 3.10: neckline/armhole edge finish
   );
   return JSON.parse(json);
 }
