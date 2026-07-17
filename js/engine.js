@@ -85,11 +85,17 @@ export function edgeFinishValue(spec) {
   return EDGE_FINISH[spec && spec.edgeFinish] || 0;
 }
 
+// CuffStyle enum (must match engine/src/cuff.hpp order). 0 = None.
+const CUFF_STYLE = { none: 0, button: 1, ribbed: 2 };
+export function cuffStyleValue(spec) {
+  return CUFF_STYLE[spec && spec.cuffStyle] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=75';
+      script.src = 'vendor/stitchu-engine.js?v=76';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -124,6 +130,7 @@ export async function grade(spec, fromLabel, toLabel) {
     placketStyleValue(spec), // R1.2: asymmetric placket
     edgeFinishValue(spec),  // patch 3.10: neckline/armhole edge finish
     pocketStyleValue(spec),  // patch 3.12: patch / side-seam pocket
+    cuffStyleValue(spec),   // patch 3.13: sleeve-end cuff
   );
   return JSON.parse(json);
 }
@@ -154,6 +161,7 @@ export async function draft(spec, measurements) {
     placketStyleValue(spec),     // R1.2: asymmetric placket
     edgeFinishValue(spec),       // patch 3.10: neckline/armhole edge finish
     pocketStyleValue(spec),      // patch 3.12: patch / side-seam pocket
+    cuffStyleValue(spec),        // patch 3.13: sleeve-end cuff
   );
   return JSON.parse(json);
 }
