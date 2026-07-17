@@ -141,6 +141,25 @@ std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Necklin
 // so the strip can never drift from the drawn geometry.
 PatternPiece halterBinding(double edgeMM);
 
+// Bias binding edge finish (patch 3.10, DEFAULT). A thin 45°-bias strip cut to
+// the finished edge circumference + overlap, wrapped over a raw curved edge —
+// the couture neckline/armhole finish, cleaner than a facing on curves.
+// Finished bias width bindingFinishedWidth (6 mm), cut ~4× that so it folds
+// double and wraps. edgeMM is measured off the DRAWN edge (neck edge / armhole
+// circumference) so the strip length can never drift from the geometry.
+inline constexpr double bindingFinishedWidth = 6;          // finished bias width
+inline constexpr double bindingCutWidth = bindingFinishedWidth * 4 + 1; // 25 mm cut
+inline constexpr double bindingOverlap = 20;               // seam/overlap allowance
+// Fabric a bias binding pair adds to dress/top estimates (thin — much less than
+// a facing). Golden dumps subtract this the same way as facingFabricMeters.
+inline constexpr double bindingFabricMeters = 0.1;
+PatternPiece biasBinding(double edgeMM, const std::string& label);
+
+// The finished neck edge circumference (front neck edge + back neck edge),
+// measured off the SAME drafted neckline commands the bodice/facing use, so a
+// bias neck strip is trued to the exact edge it binds. One truth, one place.
+double neckEdgeLength(const BodyMeasurementsSnapshot& m, Neckline neckline);
+
 } // namespace BodiceBlock
 
 } // namespace stitchu

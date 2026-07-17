@@ -50,6 +50,12 @@ enum class TopLength { Cropped, Hip, Tunic };
 // actually sew and the look that justifies the engine; darts are the advanced
 // legacy option (also the golden-diff reference against the Swift engine).
 enum class Shaping { Princess, Dart };
+// How a raw curved edge (neckline / armhole) is finished. Bias binding is the
+// DEFAULT (Damla, 17 Jul): a thin 45°-bias strip wrapped over the edge — the
+// couture finish, cleaner and thinner on curves than a facing. Facing is the
+// opt-in legacy alternative (the old default). A REAL collar always overrides
+// the neckline finish (the collar covers the neck edge; no bias there).
+enum class EdgeFinish { BiasBinding, Facing };
 
 inline const char* raw(Neckline n) {
     switch (n) {
@@ -232,6 +238,14 @@ struct GarmentSpec {
     // bodice/top hosts one; a pleated/gathered/draped peplum stays honest. See
     // peplum.hpp / FORMULAS.md "Peplum".
     int peplum = 0; // PeplumStyle enum value; 0 = None
+    // Neckline + armhole edge finish (patch 3.10). Bias binding is the DEFAULT
+    // (Damla, 17 Jul): thin 45°-bias strip pieces, trued to the drafted edge
+    // circumference, replacing the neck facings on any open (collarless) neck and
+    // adding an armhole binding on any sleeveless armhole. Facing (=1) is opt-in
+    // and restores the old facing pieces. A real collar (collarType != None)
+    // keeps the collar piece regardless (the collar covers the neck edge).
+    // See bodice.cpp biasBinding / FORMULAS.md "Bias binding edge finish".
+    int edgeFinish = 0; // EdgeFinish enum value; 0 = BiasBinding (default)
 };
 
 inline double roundToPlaces(double value, int places) {

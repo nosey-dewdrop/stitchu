@@ -6,6 +6,7 @@
 #include <optional>
 
 #include "bodice.hpp"
+#include "collar.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
 #include "wearability.hpp"
@@ -687,8 +688,54 @@ std::vector<ValidationIssue> topIssues(
 
 // The facing's inner edge must retrace the garment neckline exactly; both
 // start at move(centerNeck) and reach the neck point after k commands.
-std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const DraftedPattern& draft) {
+// Total bias strip length from a strip's own geometry: width × segment count.
+// The strip is drawn as one rectangle per printable segment; the cut note also
+// carries the total, but geometry is the single truth here.
+double biasStripLength(const PatternPiece& p) {
+    const Rect box = boundingBox(p.commands);
+    return box.width; // one drawn segment; total is on the cut note
+}
+
+std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const DraftedPattern& draft,
+                                          const BodyMeasurementsSnapshot& m) {
     std::vector<ValidationIssue> issues;
+
+    // Bias binding edge finish (patch 3.10, DEFAULT). A collarless, non-halter
+    // neck bound with edgeFinish == BiasBinding carries a "Bias binding
+    // (neckline)" strip trued to the neck edge circumference (+ overlap) and,
+    // when sleeveless, a "Bias binding (armholes)" strip — no neck facings.
+    const bool realCollar = spec.collarType != static_cast<int>(CollarType::None);
+    const bool biasNeck = spec.neckline != Neckline::Halter && !realCollar &&
+                          spec.edgeFinish != static_cast<int>(EdgeFinish::Facing);
+    if (biasNeck) {
+        const PatternPiece* neckBias = nullptr;
+        for (const auto& piece : draft.pieces) {
+            if (piece.name == "Bias binding (neckline)") neckBias = &piece;
+            if (piece.name.find("Neck Facing") != std::string::npos)
+                issues.push_back({"facing", piece.name, "neck facing drafted with a bias binding finish"});
+        }
+        if (!neckBias) {
+            issues.push_back({"facing", draft.garment, "neckline bias binding piece missing"});
+            return issues;
+        }
+        // Trued: the strip's total length (drawn segment × segment count) must
+        // equal the drafted neck edge circumference + overlap. Read the total
+        // off the cut note the strip carries; fall back to the geometry length.
+        const double edge = BodiceBlock::neckEdgeLength(m, spec.neckline);
+        const double drawn = biasStripLength(*neckBias);
+        const Rect box = boundingBox(neckBias->commands);
+        if (box.height < 15 || box.height > 40 || box.width > 1500) {
+            issues.push_back({"facing", neckBias->name,
+                fmt("neck binding strip %.0f x %.0f mm is not a sane bias strip", box.width, box.height)});
+        }
+        // Single-segment necks (all in this size range) draw the full length in
+        // one rectangle, so the drawn width must cover edge + overlap.
+        if (drawn + 1.0 < edge) {
+            issues.push_back({"facing", neckBias->name,
+                fmt("neck binding %.1f mm shorter than the %.1f mm neck edge", drawn, edge)});
+        }
+        return issues;
+    }
 
     // Halter: one bias strip binds every raw edge instead of neck facings.
     // The strip must exist, be a sane strip, and be honestly long enough for
@@ -978,7 +1025,7 @@ std::vector<ValidationIssue> issues(
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);
             for (auto& issue : skirtIssues(spec, m, draft, BodiceBlock::waistEaseFor(spec.fabric), &bodice)) result.push_back(issue);
-            for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
+            for (auto& issue : facingIssues(spec, draft, m)) result.push_back(issue);
             for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);
             break;
         }
@@ -996,7 +1043,7 @@ std::vector<ValidationIssue> issues(
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);
             for (auto& issue : topIssues(spec, draft, bodice)) result.push_back(issue);
-            for (auto& issue : facingIssues(spec, draft)) result.push_back(issue);
+            for (auto& issue : facingIssues(spec, draft, m)) result.push_back(issue);
             for (auto& issue : keyholeIssues(spec, draft)) result.push_back(issue);
             break;
         }

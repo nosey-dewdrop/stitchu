@@ -91,6 +91,10 @@ add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)
 add_test(NAME halter_check COMMAND halter_check)
 
+add_executable(bias_check tests/bias_check.cpp)
+target_link_libraries(bias_check PRIVATE engine)
+add_test(NAME bias_check COMMAND bias_check)
+
 add_executable(cutline_check tests/cutline_check.cpp)
 target_link_libraries(cutline_check PRIVATE engine)
 add_test(NAME cutline_check COMMAND cutline_check)

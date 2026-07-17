@@ -789,7 +789,66 @@ PatternPiece halterBinding(double edgeMM) {
     return piece;
 }
 
+// Thin bias binding strip (patch 3.10 default finish). Same self-lined-tube
+// construction as the halter binding but sized for a plain curved edge: length
+// = finished edge circumference + overlap, width = bindingCutWidth. The strip
+// draws flat on the fabric; the cut note says BIAS (45° to grain) because the
+// give of the bias is what lets it wrap a curve without puckering.
+PatternPiece biasBinding(double edgeMM, const std::string& label) {
+    const double total = edgeMM + bindingOverlap;
+    constexpr double SEG_MAX = 1400; // printable / chalk-note segment
+    const int segments = std::max(1, static_cast<int>(std::ceil(total / SEG_MAX)));
+    const double segLen = total / segments;
+
+    PatternPiece piece;
+    piece.name = "Bias binding (" + label + ")";
+    piece.cutInstruction =
+        "cut " + std::to_string(segments) + " strip(s) " +
+        std::to_string(static_cast<long>(std::lround(segLen))) + " x " +
+        std::to_string(static_cast<long>(std::lround(bindingCutWidth))) +
+        " mm ON THE BIAS (45\xc2\xb0 to the grain), join end to end (total " +
+        std::to_string(static_cast<long>(std::lround(total))) +
+        " mm = edge " + std::to_string(static_cast<long>(std::lround(edgeMM))) +
+        " mm + overlap), press in half, wrap the edge and trim the excess";
+    piece.commands = {
+        PathCommand::move({0, 0}),
+        PathCommand::line({segLen, 0}),
+        PathCommand::line({segLen, bindingCutWidth}),
+        PathCommand::line({0, bindingCutWidth}),
+        PathCommand::close(),
+    };
+    // Center fold line: the strip folds double before it wraps the edge.
+    piece.markings = {
+        PathCommand::move({0, bindingCutWidth / 2}),
+        PathCommand::line({segLen, bindingCutWidth / 2}),
+    };
+    piece.hasGrainline = true; // drawn on the strip; the cut note says bias 45°
+    piece.grainline = Grainline{{segLen * 0.5 - 40, bindingCutWidth / 2},
+                                {segLen * 0.5 + 40, bindingCutWidth / 2}};
+    piece.seamAllowance = 6;
+    return piece;
+}
+
 namespace {
+
+// Length of a neck half from centerNeck to neckPoint, flattening the drafted
+// neckline commands exactly as makeFacing does — same samples, same truth.
+double halfNeckLength(Neckline neckline, Point centerNeck, Point neckPoint) {
+    const auto inner = neckCommands(neckline, centerNeck, neckPoint);
+    double len = 0;
+    Point current = centerNeck;
+    for (const auto& cmd : inner) {
+        if (cmd.type == CmdType::Curve) {
+            const auto s = flattenCubic(current, cmd.to, cmd.cp1, cmd.cp2, 12);
+            for (size_t i = 1; i < s.size(); ++i)
+                len += std::hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
+        } else {
+            len += std::hypot(cmd.to.x - current.x, cmd.to.y - current.y);
+        }
+        current = cmd.to;
+    }
+    return len;
+}
 
 // One facing piece. Inner edge = the garment's neckline commands verbatim
 // (seam match by construction). Outer edge = the neckline flattened to a
@@ -883,6 +942,24 @@ std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Necklin
         makeFacing("Front Neck Facing", frontCut, neckline, frontNeckW, frontCutout, shoulderTip),
         makeFacing("Back Neck Facing", backCut, Neckline::Crew, backNeckW, backCutout, shoulderTip),
     };
+}
+
+double neckEdgeLength(const BodyMeasurementsSnapshot& m, Neckline neckline) {
+    // Same front/back neck width + depth math the facings use — one truth. Each
+    // neckCommands path spans centerNeck->neckPoint (one half, drawn on fold),
+    // so the full front/back edge is twice that half.
+    const double neck = m.neckMM();
+    const double shoulderHalf = m.shoulderCM * 10 / 2;
+    const double widthMultiplier = neckWidthMultiplier(neckline);
+
+    const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
+    const double frontCutout = frontNeckDepth(neckline, frontNeckW);
+    const double backNeckW = std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
+    const double backCutout = neck * backNeckCutoutFactor;
+
+    const double frontHalf = halfNeckLength(neckline, {0, frontCutout}, {frontNeckW, 0});
+    const double backHalf = halfNeckLength(Neckline::Crew, {0, backCutout}, {backNeckW, 0});
+    return (frontHalf + backHalf) * 2;
 }
 
 } // namespace BodiceBlock

@@ -751,6 +751,46 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
 - Vision→spec (create.js): `seen.sleeveHead === 'capped'` → sleeveCap = 'cap' (a
   straight sleeve is assumed if none was read, to carry the head). seen.capSleeveDrawn
   suppresses the missing.js "cap sleeve" derivative + the outOfVocab cap-sleeve term.
+## Bias binding edge finish (biye) — DEFAULT (patch 3.10, 2026-07-17)
+- Damla's call (17 Jul, approved): the neckline + armhole finish DEFAULTS to bias
+  binding (biye) on every dress, not a facing. A separate collar piece / facing is
+  the EXCEPTION, kept only where a real collar sits on the fabric (shirt/stand/
+  mock/flat/peter-pan). `EdgeFinish { BiasBinding (default), Facing }` on the spec.
+- WHY bias on curves (Aldrich/Armstrong): a bias strip is cut at 45° to the grain,
+  so it has the give to wrap a curved raw edge (neckline, armhole) flat and thin,
+  cleaner than a facing which is a bulky shaped panel that must be understitched and
+  can roll out. The couture default finish for a bound edge.
+- STRIP CUT: `biasBinding(edgeMM, label)`. length = finished edge circumference +
+  `bindingOverlap` (20 mm join/overlap); width = `bindingCutWidth` (25 mm =
+  4·`bindingFinishedWidth`(6 mm)+1, so it folds double and wraps a 6 mm finished
+  edge). Segmented ≤1400 mm for the printable chalk note. Center fold marking +
+  grainline drawn on the strip; the cut note says ON THE BIAS (45°) — the strip is
+  DRAWN flat (rectangle) but CUT on the bias, exactly like the halter binding.
+- TRUING (one truth, one place): the strip length is measured off the DRAWN edge, not
+  a scalar. `neckEdgeLength(m, neckline)` flattens the SAME `neckCommands` the bodice
+  and the facing draw (front half + back half, ×2 for the mirrored on-fold halves),
+  so the neck strip can never drift from the neckline it binds (bias_check: strip
+  length == neckEdgeLength + overlap, 0.00 mm, across every neckline). The armhole
+  strip length = 2·`bodice.armholeLength` (both armholes, front+back half each),
+  added only when the garment is sleeveless.
+- REAL-COLLAR EXCEPTION: `collarType != None` forces the FACING back (the collar
+  attaches to a faced neck exactly as before → collar path byte-identical). So: an
+  open (collarless) neck → bias; a real collar → collar piece on a faced neck. An
+  armhole: sleeveless → bias; sleeved → the sleeve is set in, no binding.
+- HONEST LIMIT: a very sharp inner corner (a true notched collar, a sailor corner)
+  is not a bias case; those stay collar/facing pieces or honest in missing.js. No
+  silent no-op — the finish is always a real piece.
+- GOLDEN: patch 3.10 CHANGED the default (facing → bias), so golden was re-pinned by
+  making golden_dump set `edgeFinish = Facing` (the Swift reference predates bias) —
+  the surface stays BYTE-IDENTICAL (0.000000 mm / 23034 lines) AND this proves the
+  Facing opt-in reproduces the pre-3.10 output exactly. bias_check independently
+  proves the new bias default + the facing/collar exceptions.
+- Fabric: a bias pair adds `bindingFabricMeters` (0.1 m) vs the facing's 0.2 m —
+  bias uses less fabric (metrage swapped, not dropped).
+- Bridge: create.js edgeFinish picker (default bias / facing) + the vision path pins
+  bias (a finish choice, not a garment read); missing.js treats a "bias-bound / bound"
+  neck read as DRAWN now; engine.js/backend/bindings int edgeFinish param (LAST arg,
+  0 = bias default); both wasm targets rebuilt.
 
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —

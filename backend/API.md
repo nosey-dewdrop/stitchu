@@ -66,6 +66,7 @@ the default shown above. Measurements are all seven, in **centimetres**.
 | `topLength` | `cropped`, `hip`, `tunic` (top only) |
 | `ruffle` | `none`, `single`, `tiered` (hem ruffle) |
 | `keyhole` | `none`, `keyhole` (front cut-out) |
+| `edgeFinish` | `biasBinding`, `facing` — neckline + armhole finish. Bias binding (a thin trued 45° bias strip, the default) or a facing. A real collar overrides this to a faced neck. |
 
 #### Measurement ranges (cm)
 

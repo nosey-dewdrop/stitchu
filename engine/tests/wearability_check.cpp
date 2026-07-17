@@ -163,7 +163,9 @@ int main() {
         // The honest engine emits an armhole-binding guide note -> wearable.
         check(!hasWearIssue(Wearability::issues(top, m, d), "raw, fraying edge"),
               "sleeveless top with the honest bias-binding note passes");
-        // Strip every armhole-finish note -> the armhole is now unfinished.
+        // Strip every armhole-finish note AND the armhole binding PIECE (patch
+        // 3.10 draws the binding as its own piece by default) -> the armhole is
+        // now genuinely unfinished, and the gate must flag it.
         std::vector<std::string> kept;
         for (const auto& s : d.guideSteps) {
             const bool armholeFinish = (s.find("armhole") != std::string::npos) &&
@@ -172,6 +174,13 @@ int main() {
             if (!armholeFinish) kept.push_back(s);
         }
         d.guideSteps = kept;
+        std::vector<PatternPiece> keptPieces;
+        for (const auto& p : d.pieces) {
+            if (p.name.find("Bias binding") != std::string::npos ||
+                p.name.find("Armhole Facing") != std::string::npos) continue;
+            keptPieces.push_back(p);
+        }
+        d.pieces = keptPieces;
         check(hasWearIssue(Wearability::issues(top, m, d), "raw, fraying edge"),
               "sleeveless armhole with no finish + no note FAILS");
     }

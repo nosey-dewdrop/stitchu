@@ -43,6 +43,9 @@ int main() {
     GarmentSpec sweet;
     sweet.garment = GarmentType::Dress;
     sweet.neckline = Neckline::Sweetheart;
+    // This test validates the shaped FACING geometry, so opt into the facing
+    // finish (patch 3.10 made bias binding the default neckline finish).
+    sweet.edgeFinish = static_cast<int>(EdgeFinish::Facing);
     GarmentSpec scoop = sweet;  scoop.neckline = Neckline::Scoop;
     GarmentSpec vneck = sweet;  vneck.neckline = Neckline::VNeck;
 
@@ -101,6 +104,7 @@ int main() {
     GarmentSpec top;
     top.garment = GarmentType::Top;
     top.neckline = Neckline::Sweetheart;
+    top.edgeFinish = static_cast<int>(EdgeFinish::Facing);
     top.sleeveStyle = SleeveStyle::Straight;
     const DraftedPattern dTop = GarmentDrafter::draft(top, m);
     check(PatternValidator::issues(top, m, dTop).empty(), "sweetheart top (with sleeves) valid");

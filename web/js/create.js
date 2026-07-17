@@ -29,6 +29,11 @@ const SPEC_GROUPS = [
   // band to carry a collar).
   { key: 'collarType', label: 'collar', trLabel: 'yaka biçimi', options: [['none', 'none', 'yok'], ['stand', 'stand', 'dik'], ['mock', 'mock / mandarin', 'mandarin'], ['flat', 'flat', 'yatık'], ['peterPan', 'peter pan', 'bebe'], ['shirt', 'shirt', 'gömlek']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'collarEdge', label: 'collar edge', trLabel: 'yaka kenarı', options: [['round', 'round', 'yuvarlak'], ['pointed', 'pointed', 'sivri'], ['scallop', 'scalloped', 'fisto']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (s.collarType === 'flat' || s.collarType === 'peterPan') },
+  // Patch 3.10: neckline + armhole edge finish. Bias binding is the DEFAULT
+  // (thin trued 45° bias strip — the couture finish); facing is opt-in. Hidden
+  // when a real collar is chosen (a collar always sits on a faced neck) or on a
+  // halter (its own binding) or a skirt (no neckline).
+  { key: 'edgeFinish', label: 'edge finish', trLabel: 'kenar bitişi', options: [['biasBinding', 'bias binding', 'biye'], ['facing', 'facing', 'pervaz']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (!s.collarType || s.collarType === 'none') },
   // A halter has no shoulders to hang a sleeve from, the pickers hide.
   { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
@@ -77,7 +82,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
-  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none',
+  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -594,6 +599,12 @@ function showSpec() {
         const collar = pickCollar(seen);
         if (collar) { spec.collarType = collar.type; spec.collarEdge = collar.edge; }
         else { spec.collarType = 'none'; spec.collarEdge = 'round'; }
+        // Edge finish (patch 3.10): bias binding is the default on every dress
+        // (Damla's call). A real collar keeps a faced neck inside the engine
+        // regardless; a collarless neck + sleeveless armholes finish with a thin
+        // trued bias strip. The vision doesn't override this — it's a finish
+        // choice, not a garment read.
+        spec.edgeFinish = 'biasBinding';
         // Drawstring / shirred / smocked gathering (büzgü, Loop 8): the engine now
         // draws a SEPARATE gathered panel (+ a drawstring cord) whose gathered
         // edge is trued to the drafted zone edge. Map the vision yoke / drawstring

@@ -43,6 +43,10 @@ static void base(const char* label, GarmentSpec spec, CollarType type, CollarEdg
                  const BodyMeasurementsSnapshot& m, const std::string& collarName,
                  int extraPieces) {
     std::printf("%s\n", label);
+    // A real collar sits on a faced neck (patch 3.10: the collar overrides the
+    // default bias binding). Compare facing-vs-facing so the delta is exactly
+    // the collar piece, not the neckline finish swap.
+    spec.edgeFinish = static_cast<int>(EdgeFinish::Facing);
     GarmentSpec plain = spec; plain.collarType = static_cast<int>(CollarType::None);
     GarmentSpec coll = spec;  coll.collarType = static_cast<int>(type);
                               coll.collarEdge = static_cast<int>(edge);

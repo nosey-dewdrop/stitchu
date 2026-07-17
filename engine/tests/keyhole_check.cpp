@@ -84,14 +84,16 @@ static void run(const char* label, GarmentSpec base, const BodyMeasurementsSnaps
         }
     }
 
-    // Construction order: the keyhole steps follow the neckline understitch step.
-    int understitchAt = -1, keyholeAt = -1;
+    // Construction order: the keyhole steps follow the neckline finishing step —
+    // the facing understitch OR the default bias binding step (patch 3.10).
+    int neckFinishAt = -1, keyholeAt = -1;
     for (size_t i = 0; i < dKey.guideSteps.size(); ++i) {
-        if (dKey.guideSteps[i].rfind("Understitch:", 0) == 0) understitchAt = (int)i;
+        if (dKey.guideSteps[i].rfind("Understitch:", 0) == 0 ||
+            dKey.guideSteps[i].rfind("Bind the neckline", 0) == 0) neckFinishAt = (int)i;
         if (dKey.guideSteps[i].rfind("Keyhole:", 0) == 0 && keyholeAt < 0) keyholeAt = (int)i;
     }
-    check(understitchAt >= 0 && keyholeAt == understitchAt + 1,
-          "keyhole construction inserted right after the neckline facing steps");
+    check(neckFinishAt >= 0 && keyholeAt == neckFinishAt + 1,
+          "keyhole construction inserted right after the neckline finishing steps");
     std::printf("\n");
 }
 

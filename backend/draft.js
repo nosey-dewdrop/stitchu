@@ -40,6 +40,7 @@ const ENUMS = {
   ruffledStraps: ['none', 'ruffled'],
   peplum: ['none', 'full', 'half', 'pointed'],
   placketStyle: ['none', 'standard', 'asymmetric'],
+  edgeFinish: ['biasBinding', 'bias', 'facing'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -77,6 +78,10 @@ const placketStyleInt = (spec) => {
   if (spec.placketStyle) return PLACKET_STYLE[spec.placketStyle] || 0;
   return spec.frontPlacket === true ? 1 : 0;
 };
+// EdgeFinish enum int (must match engine/src/measurements.hpp order).
+// 0 = BiasBinding (patch 3.10 default), 1 = Facing (opt-in).
+const EDGE_FINISH = { biasBinding: 0, bias: 0, facing: 1 };
+const edgeFinishInt = (s) => EDGE_FINISH[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -187,6 +192,7 @@ export function validateDraftRequest(body) {
       ruffledStraps: spec.ruffledStraps ?? 'none',
       peplum: spec.peplum ?? 'none',
       placketStyle: spec.placketStyle ?? 'none',
+      edgeFinish: spec.edgeFinish ?? 'biasBinding',
     },
     measurements,
   };
@@ -216,6 +222,7 @@ export async function runDraft(spec, measurements) {
     ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
     peplumInt(spec.peplum),           // R1.1: peplum flare
     placketStyleInt(spec),            // R1.2: asymmetric placket
+    edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
   );
   return JSON.parse(json);
 }

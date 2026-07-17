@@ -74,6 +74,38 @@ PatternPiece extendPiece(const PatternPiece& piece, double sideWaistY, double ce
     return result;
 }
 
+// Neckline + armhole edge finish (patch 3.10). Bias binding is the DEFAULT:
+// a thin trued bias strip replaces the neck facings on an open (collarless)
+// neck, and a second strip binds the sleeveless armholes. Facing (edgeFinish ==
+// Facing) restores the old facing pieces. A REAL collar (collarType != None)
+// keeps the facings so the collar attaches to a faced neck edge exactly as
+// before (byte-identical collar path). Halter is handled by its own binding
+// upstream and never reaches here. Returns every finish piece for the block.
+std::vector<PatternPiece> edgeFinishPieces(
+    const GarmentSpec& spec, const BodyMeasurementsSnapshot& m,
+    const std::string& frontFacingCut, const std::string& backFacingCut,
+    double armholeLength, bool sleeveless) {
+    std::vector<PatternPiece> out;
+    const bool realCollar = spec.collarType != static_cast<int>(CollarType::None);
+    const bool useFacing = spec.edgeFinish == static_cast<int>(EdgeFinish::Facing) || realCollar;
+    if (useFacing) {
+        auto facings = BodiceBlock::neckFacings(m, spec.neckline, frontFacingCut, backFacingCut);
+        out.insert(out.end(), facings.begin(), facings.end());
+    } else {
+        // Default: one bias strip binds the neckline edge (trued to the drafted
+        // neck edge circumference). A real collar would have set useFacing.
+        out.push_back(BodiceBlock::biasBinding(
+            BodiceBlock::neckEdgeLength(m, spec.neckline), "neckline"));
+    }
+    // Sleeveless armholes always finish with bias binding by default. With a
+    // facing neck this still binds the armhole (armhole facings aren't drafted).
+    // armholeLength is one arm (front + back half); both armholes = 2×.
+    if (sleeveless && spec.edgeFinish != static_cast<int>(EdgeFinish::Facing)) {
+        out.push_back(BodiceBlock::biasBinding(armholeLength * 2, "armholes"));
+    }
+    return out;
+}
+
 } // namespace
 
 namespace DressBlock {
@@ -116,19 +148,29 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // Halter: shoulders bare by construction — sleeves are impossible, and one
     // bias strip binds every raw edge instead of the neck facings.
     const bool halter = spec.neckline == Neckline::Halter;
-    const std::vector<PatternPiece> facings = halter
-        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
-        : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
         bodice.armholeLength, bodice.armholeDepth, spec.fabric, spec.sleeveCap);
-
-    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + BodiceBlock::facingFabricMeters;
-    if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
-
     const bool sleeveless = sleeves.empty();
-    // A sleeveless (non-halter) garment bias-binds both armholes — count the
-    // self-fabric strip so the estimate covers the finish the guide prescribes.
+    // Neckline + armhole finish: bias binding by default (patch 3.10), facing
+    // opt-in, real collar keeps the facing. Halter keeps its dedicated binding.
+    const std::vector<PatternPiece> facings = halter
+        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
+        : edgeFinishPieces(spec, m, "cut 1 on fold, interface", "cut 2, interface",
+                           bodice.armholeLength, sleeveless);
+    const bool biasNeck = !halter &&
+        spec.collarType == static_cast<int>(CollarType::None) &&
+        spec.edgeFinish != static_cast<int>(EdgeFinish::Facing);
+
+    // Bias binding uses much less fabric than a facing; a real collar/facing keeps
+    // the old facing allowance. Golden dumps subtract whichever was added.
+    const double neckFinishMeters = (halter || biasNeck)
+        ? BodiceBlock::bindingFabricMeters : BodiceBlock::facingFabricMeters;
+    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + neckFinishMeters;
+    if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
+    // A sleeveless (non-halter) garment bias-binds both armholes (a real piece in
+    // the default finish, a step in the facing finish) — count the self-fabric
+    // strip either way (patch 3.8) so the estimate covers what the guide prescribes.
     if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
@@ -144,6 +186,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             steps.push_back("A halter has no shoulders to hang a sleeve from — the sleeve choice was skipped.");
         }
         steps.push_back("Staystitch the neckline, the strap edges and the back top edge just inside the seam line — every one of these is a bias-ish raw edge that stretches if you look at it wrong.");
+    } else if (biasNeck) {
+        steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
     } else {
         steps.push_back("Fuse interfacing to the neck facings.");
         steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
@@ -169,6 +213,14 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge — leaving the last 2 cm free at each center back edge (the zipper goes there later). Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
         steps.push_back("Run a stay tape or clear elastic inside the back top edge binding so the low back hugs the body instead of gaping.");
         steps.push_back("Close the straps at the nape: try the dress on, pin the strap ends to length, then sew hooks (or a button) — or extend the binding into ties if you prefer a tied halter.");
+    } else if (biasNeck) {
+        steps.push_back("Sew the bodice shoulder seams and press them open.");
+        steps.push_back("Prepare the neckline bias strip: join the ends as needed and press it in half lengthwise along the marked fold line.");
+        steps.push_back("Bind the neckline with the bias strip, right sides together and raw edges even, leaving the last 2 cm free at each center back edge (the zipper goes there later). Ease the strip gently around the curves. Trim to 6 mm, turn the folded edge to the inside and topstitch or slipstitch it down.");
+        steps.push_back("Sew the bodice side seams.");
+        if (sleeveless) {
+            steps.push_back("Finish each armhole the same way with its bias strip: press it in half, bind the armhole right sides together, ease around the curve, then turn and topstitch it to the inside.");
+        }
     } else {
         steps.push_back("Sew the bodice shoulder seams and press them open.");
         steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
@@ -196,7 +248,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         std::string(princess ? " and lining the gore seams up with the bodice princess seams as closely as possible" : "") + ".");
     steps.push_back(std::string("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.") +
         (spec.fabric == Fabric::Knit ? " (Very stretchy knit? Baste the back seam closed first and test pulling the dress on — you may be able to skip the zipper and just sew the seam.)" : ""));
-    steps.push_back(std::string("Fold the free ") + (halter ? "binding" : "facing") +
+    steps.push_back(std::string("Fold the free ") + ((halter || biasNeck) ? "binding" : "facing") +
         " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
     if (!sleeveless) {
         if (spec.sleeveCap == SleeveCap::Cap) {
@@ -280,18 +332,26 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         tops.push_back(extendPiece(bodice.back, bodice.backPieceWaistY, bodice.backPieceLength, extra, hipHalfQuarter));
     }
     const bool halter = spec.neckline == Neckline::Halter;
-    const std::vector<PatternPiece> facings = halter
-        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
-        : BodiceBlock::neckFacings(m, spec.neckline, "cut 1 on fold, interface", "cut 2, interface");
     const std::vector<PatternPiece> sleeves = SleeveBlock::draft(
         m, halter ? SleeveStyle::None : spec.sleeveStyle, spec.sleeveLength,
         bodice.armholeLength, bodice.armholeDepth, spec.fabric, spec.sleeveCap);
-
-    double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + BodiceBlock::facingFabricMeters;
-    if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
-
     const bool sleeveless = sleeves.empty();
-    // Sleeveless (non-halter): both armholes are bias-bound — count the strip.
+    // Neckline + armhole finish: bias binding by default (patch 3.10), facing
+    // opt-in, real collar keeps the facing. Halter keeps its dedicated binding.
+    const std::vector<PatternPiece> facings = halter
+        ? std::vector<PatternPiece>{BodiceBlock::halterBinding(bodice.halterBindingEdgeMM)}
+        : edgeFinishPieces(spec, m, "cut 1 on fold, interface", "cut 2, interface",
+                           bodice.armholeLength, sleeveless);
+    const bool biasNeck = !halter &&
+        spec.collarType == static_cast<int>(CollarType::None) &&
+        spec.edgeFinish != static_cast<int>(EdgeFinish::Facing);
+
+    const double neckFinishMeters = (halter || biasNeck)
+        ? BodiceBlock::bindingFabricMeters : BodiceBlock::facingFabricMeters;
+    double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + neckFinishMeters;
+    if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
+    // Sleeveless (non-halter): both armholes are bias-bound — count the strip
+    // (patch 3.8), whether the finish is the default bias piece or the facing step.
     if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
@@ -307,6 +367,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             steps.push_back("A halter has no shoulders to hang a sleeve from — the sleeve choice was skipped.");
         }
         steps.push_back("Staystitch the neckline, the strap edges and the back top edge just inside the seam line — every one of these is a bias-ish raw edge that stretches if you look at it wrong.");
+    } else if (biasNeck) {
+        steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
     } else {
         steps.push_back("Fuse interfacing to the neck facings.");
         steps.push_back("Staystitch the neckline just inside the seam line so it doesn't stretch while you work.");
@@ -331,6 +393,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge. Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
         steps.push_back("Run a stay tape or clear elastic inside the back top edge binding so the low back hugs the body instead of gaping.");
         steps.push_back("Close the straps at the nape: try it on, pin the strap ends to length, then sew hooks (or a button) — or extend the binding into ties.");
+    } else if (biasNeck) {
+        steps.push_back("Sew the shoulder seams and press them open.");
+        steps.push_back("Prepare the neckline bias strip: join the ends as needed and press it in half lengthwise along the marked fold line.");
+        steps.push_back("Bind the neckline with the bias strip, right sides together and raw edges even, easing the strip gently around the curves. Trim to 6 mm, turn the folded edge to the inside and topstitch or slipstitch it down.");
+        steps.push_back("Sew the side seams.");
     } else {
     steps.push_back("Sew the shoulder seams and press them open.");
     steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
@@ -340,6 +407,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     }
     if (halter) {
         // binding covered the armhole sweeps above; nothing to add
+    } else if (sleeveless && biasNeck) {
+        steps.push_back("Finish each armhole with its bias strip: press it in half, bind the armhole right sides together, ease around the curve, then turn and topstitch it to the inside.");
     } else if (sleeveless) {
         steps.push_back("Finish the armholes with bias binding.");
     } else {

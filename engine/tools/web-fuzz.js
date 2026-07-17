@@ -216,12 +216,13 @@ createEngine().then((e) => {
   };
 
   // R1.2 cap-sleeve variant: sleeveCap = 3 (Cap) is the 3rd trailing arg (after
-  // frontPlacket, tieClosure). Everything else 0/false.
+  // frontPlacket, tieClosure). Everything else 0/false (placketStyle + edgeFinish
+  // trail last).
   const capRun = (label, args, m) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+      false, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -232,18 +233,41 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
-  // R1.2 asymmetric-placket variant: placketStyle = 2 (Asymmetric) is the LAST
-  // trailing arg (after peplum). Everything else 0/false.
+  // R1.2 asymmetric-placket variant: placketStyle = 2 (Asymmetric) is the 2nd-last
+  // trailing arg (peplum before it, edgeFinish 0 after it). Everything else 0/false.
   const asymPlacketRun = (label, args, m) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2));
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
     for (const d of layout.placed)
       if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
+  // Patch 3.10 edge finish: appends the full trailing arg list with the
+  // edgeFinish enum LAST (peplum 0, placketStyle 0 before it) so bias/facing is
+  // exercised. The bias strips (neckline + armhole) are fresh strip pieces that
+  // must pack.
+  const edgeRun = (label, args, m, edgeFinish, collarType) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish));
+    if (out.issues.length) { blocked++; return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed) {
+      if (d.x0 + d.w > layout.stripW + 0.001) {
+        failures++;
+        if (blockedExamples.length < 8) blockedExamples.push(`CLIP ${label}`);
+      }
+    }
     const sheets = countSheets(layout);
     maxSheets = Math.max(maxSheets, sheets);
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
@@ -362,6 +386,21 @@ createEngine().then((e) => {
         ['dress', 'princess', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
       asymPlacketRun(`b${bi} asym-placket top/${neckline} dart`,
         ['top', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+    }
+    // Patch 3.10: edge finish across bias (default, sleeveless + sleeved) and
+    // facing (opt-in), dresses + tops, every neckline; plus a real collar (which
+    // keeps the faced neck regardless of the finish flag).
+    for (const neckline of necklines) {
+      if (neckline === 'halter') continue; // halter has its own binding
+      for (const [ef, efName] of [[0, 'bias'], [1, 'facing']]) {
+        edgeRun(`b${bi} edge-${efName} sleeveless dress/${neckline}`,
+          ['dress', 'princess', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, ef, 0);
+        edgeRun(`b${bi} edge-${efName} sleeved top/${neckline}`,
+          ['top', 'princess', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, ef, 0);
+      }
+      // real collar (stand) keeps a faced neck even with the bias flag on
+      edgeRun(`b${bi} edge-collar top/${neckline}`,
+        ['top', 'princess', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, 0, 1);
     }
   }
 

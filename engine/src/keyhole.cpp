@@ -100,9 +100,13 @@ bool apply(DraftedPattern& pattern) {
         "Turn the facing through the opening to the inside, roll the seam to the edge, "
         "press, then understitch or topstitch 2 mm from the opening edge.",
     };
+    // Anchor the keyhole steps right after the neckline is finished — whether
+    // that finish is a facing ("Understitch:") or the default bias binding
+    // ("Bind the neckline ..."), patch 3.10.
     auto insertAt = pattern.guideSteps.end();
     for (auto it = pattern.guideSteps.begin(); it != pattern.guideSteps.end(); ++it) {
-        if (it->rfind("Understitch:", 0) == 0) { insertAt = it + 1; break; }
+        if (it->rfind("Understitch:", 0) == 0 ||
+            it->rfind("Bind the neckline", 0) == 0) { insertAt = it + 1; break; }
     }
     pattern.guideSteps.insert(insertAt, steps.begin(), steps.end());
 

@@ -73,6 +73,11 @@ int main() {
                 GarmentSpec spec;
                 spec.garment = GarmentType::Dress;
                 spec.shaping = Shaping::Dart;
+                // Patch 3.10 made bias binding the default edge finish; the Swift
+                // reference predates it and drafted facings. Pin Facing here so
+                // the golden surface stays byte-identical AND this proves the
+                // Facing opt-in reproduces the pre-3.10 output exactly.
+                spec.edgeFinish = static_cast<int>(EdgeFinish::Facing);
                 spec.neckline = neckline;
                 spec.skirtStyle = style;
                 spec.skirtLength = SkirtLength::Midi;
@@ -86,6 +91,7 @@ int main() {
                 GarmentSpec spec;
                 spec.garment = GarmentType::Top;
                 spec.shaping = Shaping::Dart;
+                spec.edgeFinish = static_cast<int>(EdgeFinish::Facing); // see dress note (3.10)
                 spec.neckline = neckline;
                 spec.topLength = topLength;
                 spec.sleeveStyle = sleeve;

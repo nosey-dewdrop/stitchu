@@ -71,10 +71,12 @@ const COLLAR_NOTE = {
 };
 // Loop 7/8: the collar family the engine now draws as a REAL separate piece
 // (neck edge trued to the neckline). A vision collar of one of these types is no
-// longer listed as missing. Special finishes the engine does NOT draft, a
-// bias-bound neckline (a bound raw edge, no collar piece), a notched/sailor
-// tailored collar, stay honest here.
-const COLLAR_DRAWN = ['stand', 'mock', 'mandarin', 'flat', 'peterPan', 'scallop', 'shirt'];
+// longer listed as missing. Patch 3.10 also made bias binding the DEFAULT
+// neckline/armhole finish, so a "bias-bound / bound edge" read (a bound raw
+// edge, no structural collar) is now genuinely drawn and is no longer honest.
+// A notched/sailor tailored collar still stays honest here.
+const COLLAR_DRAWN = ['stand', 'mock', 'mandarin', 'flat', 'peterPan', 'scallop', 'shirt',
+                      'bias', 'biasBound', 'bound', 'binding'];
 
 // straps.type → derivative. The engine draws a plain sleeveless shoulder edge,
 // so a normal shoulder/wide strap is effectively drawn; frills, halter framing,
