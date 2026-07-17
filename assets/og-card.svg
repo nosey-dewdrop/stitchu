@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="gingham" width="48" height="48" patternUnits="userSpaceOnUse">
+      <rect width="48" height="48" fill="#ffffff"/>
+      <rect width="24" height="24" fill="#dceaf7"/>
+      <rect x="24" y="24" width="24" height="24" fill="#dceaf7"/>
+      <rect x="24" width="24" height="24" fill="#eef5fc"/>
+      <rect y="24" width="24" height="24" fill="#eef5fc"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#gingham)"/>
+  <rect width="1200" height="630" fill="#ffffff" opacity="0.35"/>
+  <rect x="64" y="64" width="1072" height="502" rx="4" fill="#ffffff" stroke="#bcd7ee" stroke-width="2"/>
+  <!-- brandpatch -->
+  <rect x="112" y="120" width="150" height="60" rx="4" fill="#1f3a5f"/>
+  <rect x="118" y="126" width="138" height="48" rx="3" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.85"/>
+  <text x="187" y="160" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">stitchu</text>
+  <!-- headline -->
+  <text x="112" y="300" font-family="Didot, 'Bodoni 72', Georgia, serif" font-size="66" fill="#1f3a5f">Photograph a dress.</text>
+  <text x="112" y="378" font-family="Didot, 'Bodoni 72', Georgia, serif" font-size="66" fill="#1f3a5f">Get a real sewing pattern.</text>
+  <!-- sub -->
+  <text x="114" y="446" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#2b4a6b">A hand-built C++ engine drafts it to your exact body.</text>
+  <!-- dashed seam -->
+  <line x1="114" y1="486" x2="1088" y2="486" stroke="#3f74a8" stroke-width="2" stroke-dasharray="9 7" opacity="0.6"/>
+  <text x="114" y="524" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#3f74a8" letter-spacing="0.5">nosey-dewdrop.github.io/stitchu</text>
+</svg>

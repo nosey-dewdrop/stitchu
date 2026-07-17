@@ -42,6 +42,8 @@ nav a:hover { border-bottom: 1px dashed var(--accent); }
   font-size: 15px;
 }
 .hero .cta:hover { background: var(--ink); color: var(--paper); }
+.cta2 { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-size: 15px; }
+.cta2:hover { color: var(--navy); text-decoration-thickness: 2px; }
 .platforms { margin-top: 18px; font-size: var(--size-fine); color: var(--gray); }
 
 .sew-hint { font-size: var(--size-fine); color: var(--gray); margin-top: 20px; }
@@ -108,14 +110,15 @@ nav a:hover { border-bottom: 1px dashed var(--accent); }
 }
 .note-form input:focus { border-color: var(--accent); border-style: dashed; }
 .note-form button {
-  font: inherit; font-size: 15px;
-  padding: 11px 20px;
-  background: var(--paper); color: var(--ink);
-  border: var(--hairline);
+  flex: none;
+  font: inherit; font-size: 14px; font-weight: 700; letter-spacing: .4px;
+  padding: 11px 22px;
+  background: var(--ink); color: var(--paper);
+  border: 1px solid var(--ink);
   border-radius: 0 var(--radius) var(--radius) 0;
   cursor: pointer;
 }
-.note-form button:hover { background: var(--ink); color: var(--paper); }
+.note-form button:hover { background: var(--navy); }
 
 footer {
   border-top: var(--hairline);

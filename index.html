@@ -12,13 +12,17 @@
 <meta property="og:title" content="stitchu · pattern-making engine">
 <meta property="og:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
 <meta name="twitter:title" content="stitchu · pattern-making engine">
 <meta name="twitter:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://nosey-dewdrop.github.io/stitchu/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://nosey-dewdrop.github.io/stitchu/","inLanguage":["en","tr"],"description":"Photograph a dress, get the sewing pattern drafted to your own measurements.","publisher":{"@id":"https://nosey-dewdrop.github.io/stitchu/#org"}},{"@type":"Organization","@id":"https://nosey-dewdrop.github.io/stitchu/#org","name":"stitchu","alternateName":"Stitchu","url":"https://nosey-dewdrop.github.io/stitchu/","description":"A photo-to-pattern sewing engine: a real C++ pattern-making engine that drafts garment patterns to your own measurements, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://nosey-dewdrop.github.io/stitchu/","description":"Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://nosey-dewdrop.github.io/stitchu/#org"}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=78">
-<link rel="stylesheet" href="css/shared-button.css?v=78">
-<link rel="stylesheet" href="css/shared-header.css?v=78">
+<link rel="stylesheet" href="css/theme-transitions.css?v=80">
+<link rel="stylesheet" href="css/shared-button.css?v=80">
+<link rel="stylesheet" href="css/shared-header.css?v=80">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
      structure preserved from the vişne landing; only the color turns. Gingham
@@ -49,9 +53,10 @@
   .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px auto 4px;max-width:64ch}
   .chip{font-size:11px;letter-spacing:.4px;padding:6px 13px;border:1px solid var(--bb-line);border-radius:2px;background:#fff;color:var(--navy);white-space:nowrap;text-decoration:none}
   a.chip:hover{background:var(--bb-pale);border-color:var(--bb-deep)}
-  .betaform{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px auto 6px;max-width:64ch}
-  .betaform input{padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:2px;font-size:14px;width:260px;max-width:70vw;color:var(--navy);background:#fff}
+  .betaform{display:flex;gap:10px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin:22px auto 6px;max-width:64ch}
+  .betaform input{height:46px;box-sizing:border-box;padding:0 16px;border:1.5px solid var(--bb-line);border-radius:2px;font-size:14px;width:260px;max-width:70vw;color:var(--navy);background:#fff}
   .betaform input:focus{outline:none;border-color:var(--bb-deep)}
+  .betaform .betabtn{height:46px;box-sizing:border-box;padding:0 30px;display:inline-flex;align-items:center;justify-content:center}
   .betamsg{min-height:20px;font-size:13px;color:var(--navy);margin-top:4px}
   .apiwait{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
@@ -130,12 +135,12 @@
 <header class="sh-header">
   <a class="brandpatch" href="index.html">stitchu</a>
   <nav class="sh-nav">
-    <a href="create.html" data-en="create" data-tr="çiz">create</a>
-    <a href="closet.html" data-en="closet" data-tr="dolap">closet</a>
-    <a href="patterns/index.html" data-en="patterns" data-tr="kalıplar">patterns</a>
-    <a href="blog/index.html" data-en="blog" data-tr="günlük">blog</a>
-    <a href="benchmark.html" data-en="benchmark" data-tr="kıyaslama">benchmark</a>
-    <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a>
+    <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="patterns/index.html" data-en="Patterns" data-tr="Kalıplar">Patterns</a>
+    <a href="blog/index.html" data-en="Blog" data-tr="Günlük">Blog</a>
+    <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
@@ -176,7 +181,7 @@
     <form class="betaform" onsubmit="return betaWaitlist(event)">
       <input type="email" id="betaemail" required
         data-en-ph="you@example.com" data-tr-ph="sen@ornek.com" placeholder="you@example.com">
-      <button type="submit" class="cta betabtn sb-btn sb-primary" data-en="Join the beta" data-tr="Beta'ya katıl">Join the beta</button>
+      <button type="submit" class="cta betabtn sb-btn sb-primary" data-en="Join the Beta" data-tr="Beta'ya Katıl">Join the Beta</button>
     </form>
     <p class="betamsg" id="betamsg"></p>
     <a class="cta2" href="create.html" data-en="or draft a pattern free →" data-tr="ya da ücretsiz kalıp çiz →">or draft a pattern free →</a>
@@ -290,8 +295,8 @@
   </div>
   <p class="versus" data-en="Similar tools charge $34–49 a month and publish no accuracy proof at all. stitchu publishes the benchmark, seams match, proportions hold, and runs in your browser free." data-tr="Benzer araçlar ayda 34–49 dolar alır ve hiçbir doğruluk kanıtı yayınlamaz. stitchu kıyaslamayı yayınlar, dikişler tutar, oranlar korunur, ve tarayıcında ücretsiz çalışır.">Similar tools charge <b>$34–49 a month</b> and publish no accuracy proof at all. stitchu publishes the benchmark, seams match, proportions hold, and runs in your browser <b>free</b>.</p>
   <p class="versus" style="margin-top:14px;font-size:13px;opacity:.85" data-en="One honest thing: every pattern is a starting block. The engine drafts to seven measurements and fills the rest from documented assumptions, so sew a muslin and check the fit before you cut your real fabric." data-tr="Dürüst bir not: her kalıp bir başlangıç bloğudur. Motor yedi ölçüye çizer ve gerisini belgelenmiş varsayımlardan doldurur, o yüzden gerçek kumaşını kesmeden önce bir prova dik ve uyumu kontrol et.">One honest thing: every pattern is a starting block. The engine drafts to seven measurements and fills the rest from documented assumptions, so sew a muslin and check the fit before you cut your real fabric.</p>
-  <a class="whycta sb-btn sb-primary" href="#top" onclick="document.getElementById('betaemail').focus();return false" data-en="Join the beta →" data-tr="Beta'ya katıl →">Join the beta →</a>
-  <a class="whycta sb-btn sb-secondary" href="benchmark.html" data-en="See the full benchmark →" data-tr="Tüm kıyaslamayı gör →">See the full benchmark →</a>
+  <a class="whycta sb-btn sb-primary" href="#top" onclick="document.getElementById('betaemail').focus();return false" data-en="Join the Beta →" data-tr="Beta'ya Katıl →">Join the Beta →</a>
+  <a class="whycta sb-btn sb-secondary" href="benchmark.html" data-en="See the Full Benchmark →" data-tr="Tüm Kıyaslamayı Gör →">See the Full Benchmark →</a>
 </section>
 
 <section class="why" id="api" style="border-top:1px solid var(--bb-line);padding-top:56px">
@@ -300,7 +305,7 @@
   <form class="apiwait" onsubmit="return apiWaitlist(event)">
     <input type="email" id="apiemail" placeholder="you@studio.com" required
       style="padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:2px;font-size:14px;width:260px;max-width:70vw;color:var(--navy)">
-    <button type="submit" class="whycta sb-btn sb-primary" style="margin-top:0;cursor:pointer" data-en="Become a beta partner" data-tr="Beta ortağı ol">Become a beta partner</button>
+    <button type="submit" class="whycta sb-btn sb-primary" style="margin-top:0;cursor:pointer" data-en="Become a Beta Partner" data-tr="Beta Ortağı Ol">Become a Beta Partner</button>
   </form>
   <p class="versus" id="apimsg" style="margin-top:16px;min-height:20px"></p>
   <p class="versus" style="opacity:.85;font-size:12px"><span data-en="Beta partners: free during the build. Studios, made-to-measure brands and pattern shops, send your volume." data-tr="Beta ortakları: inşa sürerken ücretsiz. Atölyeler, ısmarlama markalar ve kalıp dükkanları, hacminizi yazın.">Beta partners: free during the build. Studios, made-to-measure brands and pattern shops, send your volume.</span> · <a href="api.html" style="color:var(--bb-deep)" data-en="see the API →" data-tr="API'yi gör →">see the API →</a></p>
@@ -308,12 +313,12 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="benchmark.html">benchmark</a> · <a href="patches.html" data-en="patch notes" data-tr="yama notları">patch notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="privacy" data-tr="gizlilik">privacy</a> · <a href="styles/index.html" data-en="style library" data-tr="stil kütüphanesi">style library</a> · @nosey-dewdrop · <span style="opacity:.55">v78</span></span>
+  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v80</span></span>
 </footer>
 </div>
 <!-- /.rest -->
 
-<script src="js/shared-header.js?v=78"></script>
+<script src="js/shared-header.js?v=80"></script>
 <script>
 // Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
