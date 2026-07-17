@@ -173,6 +173,42 @@ const COPY = {
         'Puf kol, kol başını yükseltip genişletir ve tacı büzer; tahminle değil, düz koldan çizilir.',
         'Büzgülü roba panosu bitmiş yaka robasından geniş kesilir ve ona kadar büzülür; kesim genişliği çizilmiş kenardan alınır.'] },
   },
+  'ruffled-strap-milkmaid-babydoll-dress': {
+    en: { lead: 'A square-neck milkmaid babydoll dress with ruffled shoulder straps, a shirred bust yoke and a soft tie at the front. Every gathered piece is drafted, not implied.',
+      fabric: 'Light to mid-weight woven cotton or seersucker, roughly 2.2 m at 140 cm.',
+      facts: ['The ruffled straps are separate self-fabric strips, each cut long and gathered along its length so it ruffles, with a placement notch on the front and back shoulder.',
+        'The shirred front yoke is cut wider than the finished edge and drawn in with rows of gathering; the cut width comes from the drafted edge so the gather ratio cannot drift.',
+        'The square neckline sits above an empire seam that raises the fit line under the bust, and the mini skirt falls gathered and full below it, closed with a soft front tie.'] },
+    tr: { lead: 'Fırfırlı omuz askıları, büzgülü büst robası ve önde yumuşak bağı olan, kare yakalı bir milkmaid babydoll elbise. Büzülen her parça ima değil, çizilmiş.',
+      fabric: 'Hafif ya da orta gramajlı dokuma pamuk ya da seersucker, 140 cm ende yaklaşık 2.2 m.',
+      facts: ['Fırfırlı askılar ayrı kendinden kumaş şeritlerdir; her biri uzun kesilir ve boyunca büzülerek fırfırlanır; ön ve arka omuza yerleşim çentiğiyle konur.',
+        'Büzgülü ön roba bitmiş kenardan geniş kesilir ve büzgü sıralarıyla içeri çekilir; kesim genişliği çizilmiş kenardan gelir, büzgü oranı kayamaz.',
+        'Kare yaka, oturma çizgisini büstün altına taşıyan empire dikişinin üstünde durur; mini etek altında büzgülü ve dolgun düşer, önde yumuşak bir bağla kapanır.'] },
+  },
+  'shirt-collar-smocked-babydoll-top': {
+    en: { lead: 'A babydoll top with a pointed shirt collar, a smocked chest yoke and short gathered puff sleeves, buttoning down the front. Collar, yoke, sleeve and placket are all drafted from the pieces the bodice already drew.',
+      fabric: 'Crisp mid-weight woven cotton or poplin, roughly 2.2 m at 140 cm.',
+      facts: ['The pointed shirt collar is two separate pieces, a stand and a blade, whose neck edge is measured straight off the drafted neckline so it fits the opening exactly.',
+        'The smocked yoke panel across the chest is cut wider than the finished edge and drawn in with a smocking grid; the cut width is taken from the drafted edge.',
+        'The gathered puff sleeve head is drawn from the plain sleeve, and a grown-on front button placket carries the fold line, facing and marked buttons and buttonholes.'] },
+    tr: { lead: 'Sivri gömlek yakası, büzgülü göğüs robası ve kısa büzgülü puf kolları olan, önden düğmeli bir babydoll üst. Yaka, roba, kol ve pat, gövdenin çizdiği parçalardan çizilir.',
+      fabric: 'Diri, orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 2.2 m.',
+      facts: ['Sivri gömlek yakası, bir bant ve bir yaprak olmak üzere iki ayrı parçadır; yaka kenarı doğrudan çizilmiş yakadan ölçülür, açıklığa tam oturur.',
+        'Göğüs boyunca uzanan büzgülü roba panosu bitmiş kenardan geniş kesilir ve bir büzgü gridiyle içeri çekilir; kesim genişliği çizilmiş kenardan alınır.',
+        'Büzgülü puf kol başı düz koldan çizilir; ön orta kenara büyüyen bir düğme patı katlama çizgisini, pervazı ve işaretli düğmelerle ilikleri taşır.'] },
+  },
+  'gathered-bust-empire-mini-dress': {
+    en: { lead: 'A boat-neck empire mini dress with a gathered bust panel under the empire seam and a fabric bow at the back waist. Princess seams shape the bodice; the gather and the bow are real cut pieces.',
+      fabric: 'Mid-weight woven cotton or poplin, roughly 2.3 m at 140 cm.',
+      facts: ['The bust panel is cut wider than the finished bust edge and gathered down to it under a high empire seam; the cut width is measured from the drafted edge so the gather ratio cannot drift.',
+        'Princess seams run over the bust for a shaped, close bodice fit, splitting the back into a centre and side panel.',
+        'The back-waist bow is a separate self-lined tie piece with its own placement notch, and the gathered mini skirt falls full below the raised waist.'] },
+    tr: { lead: 'Empire dikişinin altında büzgülü büst panosu ve arka belinde kumaş fiyongu olan, kayık yakalı empire mini elbise. Prenses dikişleri gövdeyi biçimlendirir; büzgü ve fiyonk gerçek kesim parçalarıdır.',
+      fabric: 'Orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 2.3 m.',
+      facts: ['Büst panosu bitmiş büst kenarından geniş kesilir ve yüksek bir empire dikişinin altında ona kadar büzülür; kesim genişliği çizilmiş kenardan ölçülür, büzgü oranı kayamaz.',
+        'Prenses dikişleri büstün üzerinden geçerek oturmuş, yakın bir gövde kesimi verir; arkayı orta ve yan panele böler.',
+        'Arka bel fiyongu, kendi yerleşim çentiği olan ayrı bir kendinden astarlı bağ parçasıdır; büzgülü mini etek yükseltilmiş belin altında dolgun düşer.'] },
+  },
 };
 
 // TR phrasing of "drawnBy" for the honest-note sentence, keyed by slug.
@@ -187,6 +223,9 @@ const DRAWN_BY_TR = {
   'open-back-princess-mini-dress': 'şekilli açık sırt oyuğunu',
   'open-back-tie-back-mini-dress': 'açık sırt oyuğunu ve arka bağ kapamasını',
   'peter-pan-collar-puff-sleeve-babydoll-dress': 'bebe yakayı, puf kol başını ve büzgülü robayı',
+  'ruffled-strap-milkmaid-babydoll-dress': 'fırfırlı omuz askılarını, büzgülü büst robasını ve ön bağı',
+  'shirt-collar-smocked-babydoll-top': 'sivri gömlek yakasını, büzgülü göğüs robasını ve büzgülü puf kol başını',
+  'gathered-bust-empire-mini-dress': 'empire dikişinin altındaki büzgülü büst panosunu ve arka bel fiyongunu',
 };
 
 // Human piece names for the piece list (strip the parenthetical TR the engine adds).

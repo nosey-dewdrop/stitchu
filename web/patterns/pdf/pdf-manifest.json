@@ -3,8 +3,8 @@
     "slug": "boat-neck-linen-shell",
     "pieces": 4,
     "a4pages": 10,
-    "a4bytes": 35489,
-    "a0bytes": 3862,
+    "a4bytes": 36160,
+    "a0bytes": 3979,
     "guidebytes": 3317,
     "guideSteps": 10,
     "cols": 3
@@ -13,8 +13,8 @@
     "slug": "scoop-neck-tank-mini-dress",
     "pieces": 6,
     "a4pages": 13,
-    "a4bytes": 43439,
-    "a0bytes": 5510,
+    "a4bytes": 44251,
+    "a0bytes": 5725,
     "guidebytes": 5235,
     "guideSteps": 15,
     "cols": 3
@@ -23,8 +23,8 @@
     "slug": "boat-neck-button-down-top",
     "pieces": 4,
     "a4pages": 13,
-    "a4bytes": 47706,
-    "a0bytes": 4566,
+    "a4bytes": 48479,
+    "a0bytes": 4680,
     "guidebytes": 4373,
     "guideSteps": 11,
     "cols": 2
@@ -33,8 +33,8 @@
     "slug": "gingham-button-blouse",
     "pieces": 4,
     "a4pages": 13,
-    "a4bytes": 47797,
-    "a0bytes": 4573,
+    "a4bytes": 48570,
+    "a0bytes": 4687,
     "guidebytes": 4380,
     "guideSteps": 11,
     "cols": 2
@@ -43,8 +43,8 @@
     "slug": "mandarin-collar-fitted-blouse",
     "pieces": 6,
     "a4pages": 15,
-    "a4bytes": 65741,
-    "a0bytes": 8757,
+    "a4bytes": 67062,
+    "a0bytes": 8946,
     "guidebytes": 6058,
     "guideSteps": 14,
     "cols": 2
@@ -53,8 +53,8 @@
     "slug": "back-tie-shift-mini-dress",
     "pieces": 7,
     "a4pages": 16,
-    "a4bytes": 55482,
-    "a0bytes": 6187,
+    "a4bytes": 56000,
+    "a0bytes": 6323,
     "guidebytes": 5518,
     "guideSteps": 15,
     "cols": 4
@@ -63,8 +63,8 @@
     "slug": "square-neck-back-tie-babydoll-top",
     "pieces": 5,
     "a4pages": 11,
-    "a4bytes": 39056,
-    "a0bytes": 4446,
+    "a4bytes": 40176,
+    "a0bytes": 4640,
     "guidebytes": 4085,
     "guideSteps": 11,
     "cols": 3
@@ -73,8 +73,8 @@
     "slug": "empire-waist-tie-back-dress",
     "pieces": 8,
     "a4pages": 28,
-    "a4bytes": 96425,
-    "a0bytes": 6229,
+    "a4bytes": 96937,
+    "a0bytes": 6369,
     "guidebytes": 6556,
     "guideSteps": 17,
     "cols": 7
@@ -83,8 +83,8 @@
     "slug": "square-neck-drawstring-babydoll-dress",
     "pieces": 8,
     "a4pages": 21,
-    "a4bytes": 72852,
-    "a0bytes": 5766,
+    "a4bytes": 73438,
+    "a0bytes": 5926,
     "guidebytes": 6203,
     "guideSteps": 16,
     "cols": 4
@@ -92,19 +92,19 @@
   {
     "slug": "open-back-princess-mini-dress",
     "pieces": 11,
-    "a4pages": 21,
-    "a4bytes": 78935,
-    "a0bytes": 9858,
+    "a4pages": 22,
+    "a4bytes": 93875,
+    "a0bytes": 8732,
     "guidebytes": 6915,
     "guideSteps": 20,
-    "cols": 5
+    "cols": 3
   },
   {
     "slug": "open-back-tie-back-mini-dress",
     "pieces": 8,
     "a4pages": 20,
-    "a4bytes": 65690,
-    "a0bytes": 7085,
+    "a4bytes": 66208,
+    "a0bytes": 7218,
     "guidebytes": 6613,
     "guideSteps": 19,
     "cols": 3
@@ -113,10 +113,40 @@
     "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
     "pieces": 9,
     "a4pages": 34,
-    "a4bytes": 232882,
-    "a0bytes": 15108,
+    "a4bytes": 183228,
+    "a0bytes": 15491,
     "guidebytes": 7741,
     "guideSteps": 20,
-    "cols": 4
+    "cols": 5
+  },
+  {
+    "slug": "ruffled-strap-milkmaid-babydoll-dress",
+    "pieces": 9,
+    "a4pages": 23,
+    "a4bytes": 76472,
+    "a0bytes": 6230,
+    "guidebytes": 7421,
+    "guideSteps": 18,
+    "cols": 5
+  },
+  {
+    "slug": "shirt-collar-smocked-babydoll-top",
+    "pieces": 8,
+    "a4pages": 21,
+    "a4bytes": 144383,
+    "a0bytes": 14632,
+    "guidebytes": 7664,
+    "guideSteps": 16,
+    "cols": 2
+  },
+  {
+    "slug": "gathered-bust-empire-mini-dress",
+    "pieces": 9,
+    "a4pages": 24,
+    "a4bytes": 84935,
+    "a0bytes": 7163,
+    "guidebytes": 7298,
+    "guideSteps": 19,
+    "cols": 7
   }
 ]

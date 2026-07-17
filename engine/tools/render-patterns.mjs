@@ -89,6 +89,25 @@ export const PATTERNS = [
     collarType: 4 /* peterPan */, collarEdge: 0 /* round */, sleeveCap: 2 /* puffed */,
     gatherType: 3 /* smocked */, gatherZone: 0 /* neck yoke */, patch: '1.8',
     drawnBy: 'the peter-pan collar, the puff sleeve head and the smocked yoke', photos: 2 },
+
+  { slug: 'ruffled-strap-milkmaid-babydoll-dress', style: 'Ruffled-strap milkmaid babydoll dress', garment: 'dress',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
+    tie: 3 /* frontNeckBow */, gatherType: 2 /* shirred */, gatherZone: 0 /* front yoke */, ruffledStraps: 1 /* ruffled */,
+    patch: '3.1', drawnBy: 'the ruffled shoulder straps, the shirred bust yoke and the front tie', photos: 1 },
+
+  { slug: 'shirt-collar-smocked-babydoll-top', style: 'Shirt-collar smocked babydoll top', garment: 'top',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    frontPlacket: true, collarType: 5 /* shirt */, collarEdge: 1 /* pointed */, sleeveCap: 1 /* gathered */,
+    gatherType: 3 /* smocked */, gatherZone: 0 /* front yoke */,
+    patch: '3.1', drawnBy: 'the pointed shirt collar, the smocked chest yoke and the gathered puff sleeve head', photos: 1 },
+
+  { slug: 'gathered-bust-empire-mini-dress', style: 'Gathered-bust empire mini dress', garment: 'dress',
+    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
+    tie: 2 /* backWaistBow */, gatherType: 2 /* shirred */, gatherZone: 1 /* bust */,
+    patch: '1.9', drawnBy: 'the gathered bust panel under the empire seam and the back-waist bow', photos: 3 },
 ];
 
 const engine = await createEngine();

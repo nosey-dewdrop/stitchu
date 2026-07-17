@@ -78,6 +78,18 @@ const PATTERNS = [
     shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
     sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'midi', topLength: 'hip',
     collarType: 4, collarEdge: 0, sleeveCap: 2, gatherType: 3, gatherZone: 0 },
+  { slug: 'ruffled-strap-milkmaid-babydoll-dress', style: 'Ruffled-strap milkmaid babydoll dress', garment: 'dress',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'square', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
+    tie: 3, gatherType: 2, gatherZone: 0, ruffledStraps: 1 },
+  { slug: 'shirt-collar-smocked-babydoll-top', style: 'Shirt-collar smocked babydoll top', garment: 'top',
+    shaping: 'dart', waistline: 'empire', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    frontPlacket: true, collarType: 5, collarEdge: 1, sleeveCap: 1, gatherType: 3, gatherZone: 0 },
+  { slug: 'gathered-bust-empire-mini-dress', style: 'Gathered-bust empire mini dress', garment: 'dress',
+    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'boat', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
+    tie: 2, gatherType: 2, gatherZone: 1 },
 ];
 
 const OUT = process.argv[2] || join(here, '../../web/patterns/pdf');

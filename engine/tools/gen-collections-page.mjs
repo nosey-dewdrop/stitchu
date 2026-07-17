@@ -24,6 +24,11 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 // collection: draft its page, drop a thumbnail, then append an entry here. The
 // "count" is the number of looks in that collection; "thumb" is a relative path
 // from web/collections/ to a representative engine SVG.
+// The taste collections (Mod Mini, Little Frocks, Good Collars, Retro Dresses)
+// are owned by gen-taste-collections.mjs; importing it also builds their pages.
+// Run that generator first, then this one, so the index lists everything.
+import { TASTE_COLLECTIONS } from './gen-taste-collections.mjs';
+
 const COLLECTIONS = [
   {
     slug: 'sixties-seventies',
@@ -37,6 +42,7 @@ const COLLECTIONS = [
     countEn: '16 looks',
     countTr: '16 görünüm',
   },
+  ...TASTE_COLLECTIONS,
 ];
 
 const HEADER = `<header class="sh-header">

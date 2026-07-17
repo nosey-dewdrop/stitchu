@@ -246,5 +246,73 @@
     "photos": 2,
     "flat": "peter-pan-collar-puff-sleeve-babydoll-dress-flat.svg",
     "closure": "invisible zipper (center back)"
+  },
+  {
+    "slug": "ruffled-strap-milkmaid-babydoll-dress",
+    "style": "Ruffled-strap milkmaid babydoll dress",
+    "pieces": 9,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back",
+      "Neck/Front Tie (ön bağ)",
+      "Shirred Yoke Panel (büzgü yaka panosu)",
+      "Ruffled Strap (fırfırlı askı)"
+    ],
+    "fabric": 2.1,
+    "garment": "dress",
+    "patch": "3.1",
+    "drawnBy": "the ruffled shoulder straps, the shirred bust yoke and the front tie",
+    "photos": 1,
+    "flat": "ruffled-strap-milkmaid-babydoll-dress-flat.svg",
+    "closure": "invisible zipper (center back)"
+  },
+  {
+    "slug": "shirt-collar-smocked-babydoll-top",
+    "style": "Shirt-collar smocked babydoll top",
+    "pieces": 8,
+    "pieceNames": [
+      "Top Front",
+      "Top Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Gathered-Head Sleeve",
+      "Shirt Collar Stand (yaka bandı)",
+      "Shirt Collar Blade (yaka yaprağı)",
+      "Smocked Yoke Panel (büzgü yaka panosu)"
+    ],
+    "fabric": 2.5,
+    "garment": "top",
+    "patch": "3.1",
+    "drawnBy": "the pointed shirt collar, the smocked chest yoke and the gathered puff sleeve head",
+    "photos": 1,
+    "flat": "shirt-collar-smocked-babydoll-top-flat.svg",
+    "closure": "button placket (center front)"
+  },
+  {
+    "slug": "gathered-bust-empire-mini-dress",
+    "style": "Gathered-bust empire mini dress",
+    "pieces": 9,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back",
+      "Waist Tie (bel bağı)",
+      "Shirred Bust Panel (büzgü büst panosu)"
+    ],
+    "fabric": 2,
+    "garment": "dress",
+    "patch": "1.9",
+    "drawnBy": "the gathered bust panel under the empire seam and the back-waist bow",
+    "photos": 3,
+    "flat": "gathered-bust-empire-mini-dress-flat.svg",
+    "closure": null
   }
 ]
