@@ -4,6 +4,18 @@ you take a photo of a garment. stitchu turns it into a sewing pattern drafted to
 
 live: https://nosey-dewdrop.github.io/stitchu (free in beta). every change ships with a public [patch note](https://nosey-dewdrop.github.io/stitchu/patches.html).
 
+## what makes it different (honestly) 🎯
+
+the real competitor is [freesewing](https://freesewing.org): free, open-source, genuinely good, and it drafts to your own measurements in the browser. i'm not pretending it doesn't exist. so the honest question is why stitchu, and the honest answer is not "no limits" — the engine's drafting vocabulary is a closed set with a real, known boundary, and pretending otherwise would betray the whole measured-not-claimed idea. what i'm building is an engine that *knows its own limit* and can name it per boundary. nobody else in the sector does that, and that's the part that's actually sellable.
+
+three concrete differences, not slogans:
+
+1. **it's authored per attribute, not per design.** freesewing authors a human per garment — each new design is hand-coded. stitchu's vocabulary is orthogonal enums plus isolated opt-in post-passes (a placket, a collar, a peplum are each one feature that composes onto the base draft). so the human effort per unit of coverage grows by attribute, not by catalog: one new attribute lights up every draft it applies to, instead of one new design. (honest caveat: the attributes are **not fully orthogonal** — not every combination like halter × set-in-sleeve is a valid garment. the engine composes features that make sense together and refuses the ones that don't; see below.)
+2. **a photo → spec layer that exists nowhere else.** you point at a garment you saw; a vision model reads it into the drafting vocabulary; you confirm or correct. freesewing starts from *you picking a pattern*; stitchu starts from *the thing you pointed at*.
+3. **grading.** one design → a full eu size run from the same engine. freesewing rejects grading on principle (it drafts bespoke, one body at a time). stitchu grades by re-drafting the spec against each standard body, so there are no separate grade rules to drift.
+
+so: today the engine drafts 37 of 54 real garment photos end-to-end and live, and the misses are published in the patch notes. the coverage grows by multiplication (per attribute), not by catalog (per design). the photo → spec layer is unique. grading, freesewing won't touch; stitchu has it. that's the pitch, and every number in it is one you can check.
+
 ## how it's engineered: layers that talk 🧠
 
 stitchu is not one model and not one script. it is four layers with strict contracts between them, and i develop the whole project by making those layers talk. every layer has its own job, its own vocabulary, and its own benchmark. when something fails, the architecture can say *which layer the failure was born in*, and that is what gets fixed.
@@ -23,7 +35,7 @@ two different things get measured here, and it matters which is which. the outsi
 
 **internal consistency (not a fit proof).** the numbers below prove the engine is self-consistent and does not drift between builds. they do NOT prove a garment fits a real body; they prove the geometry closes on itself and stays reproducible. worth publishing, but read them as engineering stability, not fit.
 
-- **validation matrix: 70,200 drafts, all passing.** eu 34-52 plus tall, short, pear, apple and extreme bodies, across the whole spec space. geometric invariants on every draft (seam balance, dart totals, armhole allowance, self-intersection, print fit). ctest 20/20 green. this says every draft is internally valid, not that it fits.
+- **validation matrix: 70,200 drafts, all passing.** eu 34-52 plus tall, short, pear, apple and extreme bodies, swept across the vocabulary. geometric invariants on every draft (seam balance, dart totals, armhole allowance, self-intersection, print fit). ctest 20/20 green. read this honestly: it is an **isolation guarantee**, not a claim of a valid combinatorial product. it says each feature is default-off byte-identical (a new attribute can't silently change an old draft) and every draft the sweep produces stays internally valid — not that every one of the 70,200 combinations is a garment you'd actually sew. it proves the draft is buildable and reproducible, not that it fits.
 - **seam pair precision: worst pair 0.00 mm.** every seam pair a tailor would actually pin is measured off the drawn geometry, not the intended numbers. an audit once caught the benchmark reading intentions instead of geometry; it reads geometry now. this measures whether two edges that must sew together are the same length, not whether the finished garment fits.
 - **web fuzz: 19,780 drafts through the real ui, 0 failures.** extreme bodies, whole spec space, simulated print packer. no piece can be clipped.
 - **golden reference pinned in the repo** (23k rows, 0.1 mm tolerance diff). new capabilities are opt-in post-passes: with them off, output stays byte-identical. this is drift protection: a new feature cannot silently change an old pattern.
