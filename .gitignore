@@ -23,3 +23,12 @@ benchmark-58/
 # The real collector config names the sources — also local-only.
 dataset/
 engine/tools/collect.config.json
+
+# Taste-pool labeling tool (step one of the aesthetic judge that learns Damla's
+# taste): commit the labeler + index + labels, but NOT the heavy generated SVGs
+# (regenerable via engine/tools/gen-taste-pool.mjs).
+!dataset/taste-pool/
+dataset/taste-pool/*
+!dataset/taste-pool/label.html
+!dataset/taste-pool/index.json
+!dataset/taste-pool/labels.json

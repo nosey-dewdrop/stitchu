@@ -1,0 +1,76 @@
+STITCHU — TASTE MODEL, STEP ONE (data collection)                  2026-07-17
+=============================================================================
+
+THE VISION
+----------
+A small model that, given a drafted pattern's illustration, predicts
+"would Damla wear this?" — trained on DAMLA'S OWN labels. Once trained it can
+judge unlimited drafted patterns for free (zero LLM cost, no API calls). That
+is the moat: nobody else has Damla's taste model. StitchLift and every Etsy
+seller can draft garments; none can tell you, for free, whether THIS one is
+worth cutting. This model can — but only because the labels are Damla's.
+
+WHAT WAS BUILT NOW (step one only — NOT the model yet)
+-----------------------------------------------------
+1. A POOL of 180 distinct drafted garments, generated for free by the same
+   shipping engine (zero LLM cost — every image is the engine's own geometry).
+   The generator samples across the orthogonal style axes (garment x neckline
+   x sleeve x collar x shaping x waistline x skirt style/length x tie/bow x
+   button placket x gather x ruffled straps x back detail x pockets x peplum)
+   and drafts each combo through the engine, which VALIDATES it and rejects
+   anything unwearable — so every item in the pool is a real, draftable garment.
+   113 dresses + 67 tops. All 180 names distinct; all 9 necklines, 5 skirt
+   styles, 4 collar types, 4 tie types represented.
+
+   - generator:  engine/tools/gen-taste-pool.mjs   (committed, deterministic)
+   - index:      dataset/taste-pool/index.json      (committed — id, spec,
+                 image paths, human description per item)
+   - images:     dataset/taste-pool/svg/*.svg       (gitignored — heavy but
+                 regenerable: just re-run the generator)
+   Each item has BOTH views a human judges from: the ON-FIGURE croquis (how a
+   size-36 would look worn) and the technical FLAT (front + back line-art).
+
+2. A LABELING INTERFACE — dataset/taste-pool/label.html. A private local tool,
+   NOT deployed to the live site. Shows ONE garment at a time (croquis + flat +
+   name + feature chips) with three big buttons and keyboard shortcuts:
+       1 = Wear It        2 = Not for Me        3 = If Fixed
+   "If Fixed" opens an optional one-tap note ("what would fix it?"). It
+   auto-advances after each choice, shows progress (e.g. 37 / 180) and a running
+   tally (wear / no / fix), and has Undo (U). Labels accumulate in the browser's
+   localStorage so you can stop and resume; an "Export labels.json" button
+   downloads them. Calm navy-on-cream, matching the brand — function over polish
+   on purpose (it's a private tool).
+
+HOW DAMLA RUNS IT
+-----------------
+   cd dataset/taste-pool
+   python3 -m http.server
+   # then open in a browser:  http://localhost:8000/label.html
+
+   (It must be served over http, not opened as a file:// — the page fetches
+   index.json and the SVGs.)
+
+   Sit down and label. 1 = wear it, 2 = not for me, 3 = if fixed (+ optional
+   note). It auto-advances; aim for ~150 in one sitting (a few minutes). When
+   done, click "Export labels.json" and drop the downloaded file into this same
+   folder as labels.json (it's already whitelisted to commit).
+
+WHAT COMES NEXT (after ~150 labels — NOT done yet)
+--------------------------------------------------
+Once labels.json has ~150 honest labels, we train a SMALL classifier that maps
+an illustration (or, equivalently, the garment's style spec — which is what the
+index already stores per item) to wear / not-for-me. Likely first cut: a plain
+classifier on the structured spec vector (cheap, interpretable, tells us WHICH
+features drive "wear it") — then, if wanted, a tiny image model on the croquis.
+Either way it runs locally, for free, and becomes the aesthetic judge that
+scores every future drafted pattern with no LLM cost.
+
+THE HONEST PART (why the labels matter)
+---------------------------------------
+This model learns HER taste from HER labels — that is the whole point, and also
+the whole risk. Garbage in, garbage out: if the labels are rushed, inconsistent,
+or "what I think I should like" instead of "what I'd actually wear", the model
+learns noise and its judgments will be worthless. The value of the moat is
+exactly equal to the honesty of the labeling session. Label the way you really
+feel about each garment — including the boring "meh, not for me" ones. Skip
+nothing, force nothing. An honest 150 beats a polished 400.
