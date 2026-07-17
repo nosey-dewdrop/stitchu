@@ -20,9 +20,9 @@
 <meta name="twitter:title" content="stitchu · pattern-making engine">
 <meta name="twitter:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://nosey-dewdrop.github.io/stitchu/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://nosey-dewdrop.github.io/stitchu/","inLanguage":["en","tr"],"description":"Photograph a dress, get the sewing pattern drafted to your own measurements.","publisher":{"@id":"https://nosey-dewdrop.github.io/stitchu/#org"}},{"@type":"Organization","@id":"https://nosey-dewdrop.github.io/stitchu/#org","name":"stitchu","alternateName":"Stitchu","url":"https://nosey-dewdrop.github.io/stitchu/","description":"A photo-to-pattern sewing engine: a real C++ pattern-making engine that drafts garment patterns to your own measurements, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://nosey-dewdrop.github.io/stitchu/","description":"Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://nosey-dewdrop.github.io/stitchu/#org"}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=83">
-<link rel="stylesheet" href="css/shared-button.css?v=83">
-<link rel="stylesheet" href="css/shared-header.css?v=83">
+<link rel="stylesheet" href="css/theme-transitions.css?v=84">
+<link rel="stylesheet" href="css/shared-button.css?v=84">
+<link rel="stylesheet" href="css/shared-header.css?v=84">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
      structure preserved from the vişne landing; only the color turns. Gingham
@@ -49,7 +49,7 @@
   .item b{font-weight:700}
   /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
   .cta{margin-top:22px}
-  .cta2{margin:22px 0 0 14px}
+  .cta2{margin:22px 0 0 14px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
   .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px auto 4px;max-width:64ch}
   .chip{font-size:11px;letter-spacing:.4px;padding:6px 13px;border:1px solid var(--bb-line);border-radius:2px;background:#fff;color:var(--navy);white-space:nowrap;text-decoration:none}
   a.chip:hover{background:var(--bb-pale);border-color:var(--bb-deep)}
@@ -138,6 +138,7 @@
     <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
     <a href="patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
     <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="api.html" data-en="API" data-tr="API">API</a>
@@ -312,12 +313,12 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v83</span></span>
+  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v84</span></span>
 </footer>
 </div>
 <!-- /.rest -->
 
-<script src="js/shared-header.js?v=83"></script>
+<script src="js/shared-header.js?v=84"></script>
 <script>
 // Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
