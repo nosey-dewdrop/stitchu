@@ -325,6 +325,14 @@ export function missingFeatures(seen, lang) {
   const bowNeck = seen.neckline === 'pussyBow';
   const bowNeckTerm = (t) => /pussy[\s-]?bow|neck\s*bow|bow\s*(tie|neck|collar)|tie[\s-]?neck/i.test(t) &&
     !/asymmetric|asymmetrical/i.test(t);
+  // patch 3.13: a button/ribbed cuff at the sleeve end is now drawn as a separate
+  // band trued to the wrist, so an outOfVocab term naming a button/barrel/shirt/
+  // ribbed/knit cuff is no longer missing. A FRENCH cuff (double turn-back), an
+  // ELASTIC-casing cuff, and a RUFFLE/TIE cuff are a different construction the
+  // engine does NOT draft and stay honest.
+  const cuffTerm = (t) => /\bcuff\b/i.test(t) &&
+    /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
+    !/french|elastic|casing|ruffle|frill|tie/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -337,6 +345,7 @@ export function missingFeatures(seen, lang) {
     if (seen.pocketDrawn && pocketTerm(label)) continue;
     if (cowlNeck && cowlTerm(label)) continue;
     if (bowNeck && bowNeckTerm(label)) continue;
+    if (seen.cuffDrawn && cuffTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

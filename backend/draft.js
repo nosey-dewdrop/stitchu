@@ -42,6 +42,7 @@ const ENUMS = {
   placketStyle: ['none', 'standard', 'asymmetric'],
   edgeFinish: ['biasBinding', 'bias', 'facing'],
   pocketStyle: ['none', 'patch', 'sideSeam'],
+  cuffStyle: ['none', 'button', 'ribbed'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -86,6 +87,9 @@ const edgeFinishInt = (s) => EDGE_FINISH[s] || 0;
 // PocketStyle enum int (must match engine/src/pocket.hpp order). 0 = None.
 const POCKET_STYLE = { none: 0, patch: 1, sideSeam: 2 };
 const pocketStyleInt = (s) => POCKET_STYLE[s] || 0;
+// CuffStyle enum int (must match engine/src/cuff.hpp order). 0 = None.
+const CUFF_STYLE = { none: 0, button: 1, ribbed: 2 };
+const cuffStyleInt = (s) => CUFF_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -198,6 +202,7 @@ export function validateDraftRequest(body) {
       placketStyle: spec.placketStyle ?? 'none',
       edgeFinish: spec.edgeFinish ?? 'biasBinding',
       pocketStyle: spec.pocketStyle ?? 'none',
+      cuffStyle: spec.cuffStyle ?? 'none',
     },
     measurements,
   };
@@ -229,6 +234,7 @@ export async function runDraft(spec, measurements) {
     placketStyleInt(spec),            // R1.2: asymmetric placket
     edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
     pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
+    cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
   );
   return JSON.parse(json);
 }
@@ -275,6 +281,7 @@ export async function handleGrade(request) {
       placketStyleInt(spec),            // R1.2: asymmetric placket
       edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
       pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
+      cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

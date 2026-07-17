@@ -8,6 +8,7 @@
 #include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
+#include "cuff.hpp"
 #include "placket.hpp"
 #include "pocket.hpp"
 #include "ruffle.hpp"
@@ -172,7 +173,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
     // A sleeveless (non-halter) garment bias-binds both armholes (a real piece in
     // the default finish, a step in the facing finish) — count the self-fabric
-    // strip either way (patch 3.8) so the estimate covers what the guide prescribes.
+    // strip either way (patch 3.13) so the estimate covers what the guide prescribes.
     if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
@@ -353,7 +354,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     double meters = (bodice.frontLength + extra) * 2 * 1.15 / 1000 + neckFinishMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
     // Sleeveless (non-halter): both armholes are bias-bound — count the strip
-    // (patch 3.8), whether the finish is the default bias piece or the facing step.
+    // (patch 3.13), whether the finish is the default bias piece or the facing step.
     if (sleeveless && !halter) meters += BodiceBlock::armholeBiasFabricMeters(bodice.armholeLength);
     const bool princess = bodice.frontPrincess || bodice.backPrincess;
     std::vector<std::string> steps{
@@ -564,6 +565,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.pocketStyle != static_cast<int>(PocketStyle::None)) {
         PocketBlock::apply(pattern, static_cast<PocketStyle>(spec.pocketStyle),
                            m.bustMM() / 4.0);
+    }
+    // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to the
+    // wrist end of a full-length sleeve, the wider sleeve hem gathered/pleated in.
+    // Post-pass on the finished draft (the sleeve piece is already inserted), so
+    // the base is byte-identical with it off (cuffStyle == None). Only a garment
+    // with a real full-length sleeve carries one — CuffBlock skips honestly for a
+    // sleeveless / cap / short sleeve. French / elastic-casing cuffs stay honest.
+    if (spec.cuffStyle != static_cast<int>(CuffStyle::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        // Wrist girth estimate: ~0.155 * bust. ASSUMPTION (anthropometric, the
+        // wrist is roughly half the biceps and biceps ~0.30 bust) — UNVALIDATED,
+        // validate with a muslin. The cuff band clamps to the sleeve hem so a bad
+        // wrist never makes the band wider than the hem it gathers.
+        CuffBlock::apply(pattern, static_cast<CuffStyle>(spec.cuffStyle), m.bustMM() * 0.155);
     }
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire

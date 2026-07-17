@@ -251,14 +251,14 @@ createEngine().then((e) => {
   };
 
   // Patch 3.10 edge finish: appends the full trailing arg list with the
-  // edgeFinish enum (peplum 0, placketStyle 0 before it, pocketStyle 0 after) so
-  // bias/facing is exercised. The bias strips (neckline + armhole) are fresh strip
-  // pieces that must pack.
+  // edgeFinish enum in its slot (after placketStyle; pocketStyle + cuffStyle 0
+  // after) so bias/facing is exercised. The bias strips (neckline + armhole) are
+  // fresh strip pieces that must pack.
   const edgeRun = (label, args, m, edgeFinish, collarType) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0));
+      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0, 0));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -273,15 +273,33 @@ createEngine().then((e) => {
     if (sheetsE > 100) { failures++; console.log(`PAGES ${label}: ${sheetsE} sheets`); }
   };
 
-  // patch 3.12 pocket variant: pocketStyle is the LAST trailing arg (after
-  // placketStyle, edgeFinish). The patch pocket / in-seam bag is a fresh piece
+  // patch 3.12 pocket variant: pocketStyle is the 2nd-to-last trailing arg (after
+  // edgeFinish, before cuffStyle). The patch pocket / in-seam bag is a fresh piece
   // that must pack without clipping; the block skips honestly (0 extra) when the
   // host has no panel / too-short a side seam.
   const pocketRun = (label, args, m, pocketStyle) => {
     drafts++;
     const out = JSON.parse(e.draftJSON(...args,
       m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle));
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle, 0));
+    if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
+    const paperP = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layoutP = packPieces(paperP);
+    for (const d of layoutP.placed)
+      if (d.x0 + d.w > layoutP.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheetsP = countSheets(layoutP);
+    maxSheets = Math.max(maxSheets, sheetsP);
+    if (sheetsP > 100) { failures++; console.log(`PAGES ${label}: ${sheetsP} sheets`); }
+  };
+
+  // patch 3.13 cuff variant: cuffStyle is the LAST trailing arg (after
+  // edgeFinish, pocketStyle). A full-length straight sleeve carries a Button (1)
+  // or Ribbed (2) band; the wrist band must pack without clipping.
+  const cuffRun = (label, args, m, cuff) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, cuff));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -439,6 +457,17 @@ createEngine().then((e) => {
       // real collar (stand) keeps a faced neck even with the bias flag on
       edgeRun(`b${bi} edge-collar top/${neckline}`,
         ['top', 'princess', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, 0, 1);
+    }
+    // patch 3.11: sleeve-end cuff — button (woven) + ribbed (knit) on a
+    // full-length straight sleeve (long + elbow), across necklines and dress/top.
+    // The wrist band is fresh fabric that must pack without clipping.
+    for (const [cf, cfName] of [[1, 'button'], [2, 'ribbed']]) {
+      for (const len of ['long', 'elbow']) {
+        cuffRun(`b${bi} cuff-${cfName} ${len} dress/crew princess`,
+          ['dress', 'princess', 'natural', 'woven', 'crew', 'straight', len, 'aLine', 'midi', 'hip', false, 1, false], m, cf);
+        cuffRun(`b${bi} cuff-${cfName} ${len} top/vNeck dart`,
+          ['top', 'dart', 'natural', 'knit', 'vNeck', 'straight', len, 'aLine', 'midi', 'hip', false, 1, false], m, cf);
+      }
     }
   }
 

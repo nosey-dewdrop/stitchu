@@ -161,6 +161,19 @@ const DRAWN_SINCE = [
   // here, so it is never double-counted.)
   (t) => /cowl(\s*neck)?|draped?\s*(cowl|neck|neckline)/i.test(t) &&
          !/asymmetric|asymmetrical|layered|multi/i.test(t),
+  // patch 3.13: sleeve-end cuff — the engine now draws a button (barrel/shirt) or
+  // ribbed (knit) band at the wrist of a full-length sleeve, the sleeve hem
+  // gathered in. "button cuff", "barrel cuff", "shirt cuff", "ribbed cuff",
+  // "ribbed knit cuff" all draw. A FRENCH cuff (double turn-back), an ELASTIC /
+  // casing cuff, and a RUFFLE / TIE cuff are a DIFFERENT construction → stay
+  // missing. NOTE: this rule moves the 58-set FULL count by ZERO — there is no
+  // photo in the set whose ONLY out-of-vocab item is a button/ribbed cuff (the
+  // three cuff photos are balloon short-sleeve garments with "cuff ties" / "ruffle
+  // cuffs", a different construction). It is added for vocabulary/moat coverage of
+  // real long-sleeve garments, not benchmark movement — measured, not claimed.
+  (t) => /\bcuff\b/i.test(t) &&
+         /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
+         !/french|elastic|casing|ruffle|frill|tie/i.test(t),
 ];
 
 function classify(entry, spec) {

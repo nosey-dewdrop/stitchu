@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=60';
-import { applyStatic, getLang, t } from './i18n.js?v=60';
-import { draft, grade } from './engine.js?v=60';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=60';
-import { renderResult } from './render.js?v=60';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=61';
+import { applyStatic, getLang, t } from './i18n.js?v=61';
+import { draft, grade } from './engine.js?v=61';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=61';
+import { renderResult } from './render.js?v=61';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=60';
+} from './store.js?v=61';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -41,6 +41,10 @@ const SPEC_GROUPS = [
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
   { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
+  // patch 3.13: sleeve-end cuff (manşet). A separate button (barrel) or ribbed
+  // (knit) band at the wrist, the sleeve hem gathered in. Only a full-length
+  // straight sleeve (long/elbow, not a cap wing) has a wrist to cuff.
+  { key: 'cuffStyle', label: 'cuff', trLabel: 'manşet', options: [['none', 'none', 'yok'], ['button', 'button cuff', 'düğmeli (gömlek)'], ['ribbed', 'ribbed cuff', 'ribana (örme)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' && (s.sleeveLength === 'long' || s.sleeveLength === 'elbow') && s.sleeveCap !== 'cap' },
   // Loop 8: drawstring / shirred / smocked gathering (büzgü), a separate gathered
   // panel (+ a drawstring cord) whose gathered edge is trued to the zone. Only on
   // a dress/top (needs a bodice to gather onto).
@@ -87,6 +91,7 @@ const spec = {
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none',
+  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', cuffStyle: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -298,6 +303,13 @@ function pickPeplum(seen) {
 // bound / cargo / flap / kangaroo pocket is a DIFFERENT construction that stays
 // honest. Returns 'patch' | 'sideSeam' or null.
 function pickPocket(seen) {
+// Map the vision's oov / details to a sleeve-end cuff style (patch 3.13). A
+// BUTTON (barrel/shirt) cuff → 'button'; a RIBBED (knit rib) cuff → 'ribbed'.
+// Only a real cuff term matches; a FRENCH cuff (double turn-back) and an ELASTIC
+// / casing cuff are NOT drawn → null (stay honest). Returns 'button', 'ribbed',
+// or null. The sleeve gate (must be a full-length sleeve) is applied at the call
+// site, mirroring the engine's honest skip.
+function pickCuff(seen) {
   const words = [
     Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
     seen.details || '',
@@ -313,6 +325,12 @@ function pickPocket(seen) {
   if (/patch|hip pocket|chest pocket|applied pocket/.test(words)) return 'patch';
   // A bare "pocket" with no welt/side cue reads as the common patch pocket.
   return 'patch';
+  if (!/\bcuff\b/.test(words)) return null;
+  // French / elastic-casing / ruffle / tie cuffs are a different construction.
+  if (/french|elastic|casing|ruffle|frill|tie/.test(words)) return null;
+  if (/rib(bed)?|knit|bomber|sweat/.test(words)) return 'ribbed';
+  if (/button|barrel|shirt|placket/.test(words)) return 'button';
+  return 'button'; // a plain "cuff" on a woven sleeve reads as the barrel cuff
 }
 
 // Map the vision's closure + oov to a placket style (R1.2). The engine draws a
@@ -676,6 +694,16 @@ function showSpec() {
         // has no panel / no side seam (e.g. a cropped top for a side-seam bag).
         const pocket = pickPocket(seen);
         spec.pocketStyle = pocket || 'none';
+        // Cuff (manşet, patch 3.13): the engine now draws a button or ribbed band
+        // at the wrist end of a full-length sleeve, the sleeve hem gathered in.
+        // Only a real full-length sleeve (Straight, long/elbow) hosts one — a
+        // sleeveless / cap / short sleeve has no wrist, so gate it out (the engine
+        // also skips honestly). A French / elastic cuff stays honest (pickCuff null).
+        const cuff = pickCuff(seen);
+        const cuffHostable = spec.sleeveStyle === 'straight' &&
+          (spec.sleeveLength === 'long' || spec.sleeveLength === 'elbow') &&
+          spec.sleeveCap !== 'cap';
+        spec.cuffStyle = (cuff && cuffHostable) ? cuff : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -744,6 +772,12 @@ function showSpec() {
           // pocket stays honest (pocketStyle none — a different construction the
           // engine does not draw).
           pocketDrawn: !!(spec.pocketStyle && spec.pocketStyle !== 'none'),
+          // patch 3.13: a button/ribbed cuff at the sleeve end is now DRAWN as a
+          // separate band trued to the wrist (the sleeve hem gathered in), so the
+          // honesty layer must NOT list it as missing. A French / elastic-casing /
+          // ruffle cuff stays honest (cuffStyle none — a construction the engine
+          // does not draft).
+          cuffDrawn: !!(spec.cuffStyle && spec.cuffStyle !== 'none'),
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

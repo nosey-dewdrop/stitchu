@@ -263,6 +263,13 @@ struct GarmentSpec {
     // mark). Off by default (None) → byte-identical. Welt/besom, cargo, kangaroo
     // stay honest (missing.js). See pocket.hpp / FORMULAS.md "Pockets".
     int pocketStyle = 0; // PocketStyle enum value; 0 = None
+
+    // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to
+    // the wrist end of a full-length sleeve, the sleeve hem gathered/pleated in.
+    // Off by default (None) → byte-identical. Only a garment with a real
+    // full-length sleeve (Straight/Long or Elbow) carries a cuff; sleeveless /
+    // cap / short skip honestly. See cuff.hpp / cuff.cpp / FORMULAS.md "Cuff family".
+    int cuffStyle = 0; // CuffStyle enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

@@ -878,6 +878,50 @@ neckline shape/pieces are touched — sleeve/shoulder/armhole/pocket/hem are not
   missing.js suppresses a cowl/pussy-bow oov term when that neckline is drawn (an
   asymmetric cowl / asymmetric bow stays honest). worker.js vision schema adds
   the two neckline values (code ready, deploy = Damla). Two wasm targets rebuilt.
+## Cuff family (manşet) — opt-in (patch 3.13)
+- WHAT: the SLEEVE-END finish — a separate band stitched to the wrist end of a
+  full-length sleeve, the wider sleeve hem gathered/pleated in. `CuffStyle { None,
+  Button, Ribbed }`. Opt-in (GarmentSpec.cuffStyle); None → golden BYTE-IDENTICAL.
+  cuff.hpp/.cpp, post-pass in garment.cpp after the peplum block. It only ADDS a
+  piece + a wrist notch, never touches an existing outline.
+- TWO FAMILIES (Aldrich/Armstrong shirt-cuff + knit-band practice):
+  - BUTTON (barrel/shirt) cuff: a woven rectangular band, cut to the wrist girth +
+    a button/buttonhole OVERLAP, interfaced, cut 2 (+ tela). Band height 60 mm,
+    overlap 25 mm. The sleeve hem is wider, so the surplus is gathered/pleated to
+    the band. Grain runs along the band length.
+  - RIBBED (knit rib) cuff: a rib-knit band cut SHORTER than the wrist so it hugs
+    when it stretches on (the bomber/sweatshirt cuff). Cut length = wrist ×
+    `ribStretchBack 0.80`; cut height 70 mm (folds to ~35 finished). Grain runs
+    ACROSS the band (rib stretch runs around the wrist). No separate gathering row
+    — the rib's recovery draws the hem in.
+- WRIST ESTIMATE: `wrist ≈ 0.155 · bust` (passed from garment.cpp). ASSUMPTION
+  (anthropometric — the wrist is roughly half the biceps, biceps ~0.30 bust);
+  UNVALIDATED, validate with a muslin. The band clamps so it can never come out
+  wider than the sleeve hem it gathers.
+- GOVERNING CONSTRAINT / TRUING: the sleeve HEM width is measured straight off the
+  FINISHED sleeve piece (the two lowest outline vertices of "Sleeve"/"Puff Sleeve"/
+  "Gathered-Head Sleeve"), so the fullness surplus (hem − attach) is real, not
+  asserted. cuff_check proves hem > attach on every body (fullness ~1.5× woven,
+  ~2.0× knit), every existing outline byte-identical, and a sleeveless / short /
+  cap garment gets an honest "cuff skipped" note (no silent no-op). A BALLOON
+  sleeve already carries its own cuff band (drawn in the sleeve block), so the
+  post-pass targets only the straight/puff/gathered-head sleeves — never double-cuffs.
+- HONEST LIMIT: only the BUTTON (barrel) and RIBBED (knit) cuff are drawn. A FRENCH
+  cuff (double turn-back, folded band, cufflinks), an ELASTIC-CASING cuff (a
+  channel, no separate band), and a RUFFLE / TIE cuff are DIFFERENT constructions
+  that stay in the honesty layer (missing.js).
+- BENCHMARK HONESTY: this vocabulary moves the 58-set FULL count by ZERO. There is
+  no photo in the set whose ONLY out-of-vocab item is a button/ribbed cuff — the
+  three cuff photos are BALLOON SHORT-sleeve garments with "sleeve cuff ties" /
+  "sleeve ruffle cuffs" (a different construction), and "button cuff"/"ribbed cuff"
+  do not appear in the set at all. The market compass freq (button cuff 33) is
+  EXTERNAL product-demand mining, not the ground-truth set. Added for
+  vocabulary/moat coverage of real long-sleeve garments — measured, not claimed.
+- Vision→spec (create.js pickCuff): reads seen.oov/details for a "cuff" naming
+  button/barrel/shirt/rib/knit (not french/elastic/casing/ruffle/tie) → button /
+  ribbed, gated to a full-length straight sleeve (long/elbow, not a cap wing). A
+  manual "cuff" picker covers the no-photo path; seen.cuffDrawn suppresses the
+  missing.js note + the outOfVocab cuff term.
 
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —

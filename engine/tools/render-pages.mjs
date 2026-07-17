@@ -152,6 +152,14 @@ const SPECS = [
   { name: 'pussybow-blouse', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'pussyBow', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false },
+  // patch 3.13: a BUTTON cuff on a long-sleeve shirt dress + a RIBBED cuff on a
+  // long-sleeve knit top. The wrist band must appear as a separate piece and pack.
+  { name: 'button-cuff-shirt-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, frontPlacket: true, cuffStyle: 1 /* button */ },
+  { name: 'ribbed-cuff-knit-top', garment: 'top', shaping: 'dart', waistline: 'natural', fabric: 'knit',
+    neckline: 'crew', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, cuffStyle: 2 /* ribbed */ },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
@@ -169,7 +177,8 @@ for (const s of SPECS) {
     s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0,
     s.placketStyle || 0,
     s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */,
-    s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */));
+    s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */,
+    s.cuffStyle || 0 /* patch 3.13: 0 = none, 1 = button, 2 = ribbed */));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }
