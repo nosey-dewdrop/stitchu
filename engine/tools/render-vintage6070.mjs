@@ -16,6 +16,7 @@ const createEngine = require(join(here, '../dist/stitchu-engine.js'));
 const flat = await import(join(here, 'render-flat.mjs'));
 const { renderScattered, renderFrontBack } = flat;
 const { renderOnFigure } = await import(join(here, 'render-on-figure.mjs'));
+const { renderListingCard } = await import(join(here, 'render-listing-card.mjs'));
 
 const OUT = join(here, '../../web/patterns/vintage6070');
 mkdirSync(OUT, { recursive: true });
@@ -241,15 +242,23 @@ for (const s of LOOKS) {
   };
   // (1) scattered nested layout, (2) FRONT + BACK flat technical sketch (STEP 2).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
-  writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
+  const flatSvg = renderFrontBack(p.pieces, flatSpec);
+  writeFileSync(join(OUT, `${s.slug}-flat.svg`), flatSvg);
   // ON-FIGURE croquis view — the same style worn on a fashion figure.
-  writeFileSync(join(OUT, `${s.slug}-figure.svg`), renderOnFigure(flatSpec));
+  const figureSvg = renderOnFigure(flatSpec);
+  writeFileSync(join(OUT, `${s.slug}-figure.svg`), figureSvg);
+  // ETSY-STYLE LISTING CARD — cover/thumbnail from the engine's own output.
+  const cardSvg = renderListingCard(
+    { slug: s.slug, style: s.en, pieces: p.pieces.length, closure: closures[0] || null },
+    { flatSvg, figureSvg, sizeRange: 'EU34-52' });
+  writeFileSync(join(OUT, `${s.slug}-card.svg`), cardSvg);
 
   meta.push({ slug: s.slug, en: s.en, tr: s.tr, period: s.period, house: s.house,
     pieces: p.pieces.length, pieceNames: p.pieces.map((x) => x.name),
     fabric: p.fabricMeters140, garment: s.garment, full: s.full,
     note_en: s.note_en, note_tr: s.note_tr, oov: s.oov,
-    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`, closure: closures[0] || null });
+    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`,
+    card: `${s.slug}-card.svg`, closure: closures[0] || null });
   console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m  [${s.full ? 'FULL' : 'PARTIAL'}]` +
     (closures.length ? ` [closure]` : ''));
 }

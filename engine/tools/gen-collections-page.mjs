@@ -33,8 +33,8 @@ const COLLECTIONS = [
   {
     slug: 'sixties-seventies',
     href: '../collection-60s70s.html',
-    thumb: '../patterns/vintage6070/sixties-fit-flare-knit-dress.svg',
-    thumbAlt: 'Sixties fit-and-flare knit dress pattern',
+    thumb: '../patterns/vintage6070/sixties-fit-flare-knit-dress-card.svg',
+    thumbAlt: 'Sixties fit-and-flare knit dress listing card',
     nameEn: 'The Sixties Seventies Collection',
     nameTr: 'Altmışlar Yetmişler Koleksiyonu',
     descEn: 'Sixteen 1960s and 1970s dress and skirt silhouettes read from museum photographs, each drafted to a full pattern piece by piece.',
@@ -78,8 +78,8 @@ const STYLE = `<style>
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:flex;gap:16px;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
   .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
-  .card .thumb{flex:0 0 108px;background:#fff;border-right:1px solid var(--bb-line);padding:12px;display:flex;align-items:center;justify-content:center}
-  .card .thumb img{max-width:100%;max-height:100%}
+  .card .thumb{flex:0 0 150px;background:#faf6ee;border-right:1px solid var(--bb-line);display:flex;align-items:center;justify-content:center}
+  .card .thumb img{width:100%;height:auto;display:block}
   .card .body{padding:16px 18px 16px 4px;display:flex;flex-direction:column;justify-content:center}
   .card .nm{font-family:'Didot',Georgia,serif;font-size:19px;margin-bottom:6px;line-height:1.2}
   .card .ds{font-size:13px;color:#5b7089;line-height:1.5}

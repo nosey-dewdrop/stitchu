@@ -306,8 +306,11 @@ const STYLE = `<style>
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
   .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
-  .card .thumb{background:#fff;border-bottom:1px solid var(--bb-line);padding:14px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
-  .card .thumb img{max-width:100%;max-height:100%}
+  .card .thumb{background:#faf6ee;border-bottom:1px solid var(--bb-line);display:flex;align-items:stretch;justify-content:center}
+  .card .thumb img{width:100%;height:auto;display:block}
+  /* The listing card SVG is the tile (Etsy-shop feel). It already carries the
+     name + badges, so the body caption below stays minimal. */
+  .card.listing .thumb{padding:0;border-bottom:none}
   .card .body{padding:14px 16px}
   .card .nm{font-family:'Didot',Georgia,serif;font-size:17px;margin-bottom:5px;line-height:1.2}
   .card .ds{font-size:12px;color:#5b7089;line-height:1.45}
@@ -486,9 +489,12 @@ function patternCard(m) {
   const c = COPY[m.slug];
   const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
   const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
-  return `<a class="card" href="${m.slug}.html">
-    <div class="thumb"><img src="svg/${m.slug}.svg" alt="${esc(m.style)} pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="${esc(m.style)}" data-tr="${esc(m.style)}">${esc(m.style)}</div>
+  // The Etsy-style listing card SVG is the tile — it already carries the brand,
+  // name, badges, flat and on-figure croquis. The caption below stays minimal.
+  const thumb = m.card ? `svg/${m.card}` : `svg/${m.slug}.svg`;
+  return `<a class="card listing" href="${m.slug}.html">
+    <div class="thumb"><img src="${thumb}" alt="${esc(m.style)} sewing pattern listing card" loading="lazy"></div>
+    <div class="body">
     <div class="ds" data-en="${esc(short)}" data-tr="${esc(shortTr)}">${esc(short)}</div></div>
   </a>`;
 }
