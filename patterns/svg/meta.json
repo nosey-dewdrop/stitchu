@@ -2,12 +2,11 @@
   {
     "slug": "boat-neck-linen-shell",
     "style": "Boat neck linen shell top",
-    "pieces": 4,
+    "pieces": 3,
     "pieceNames": [
       "Top Front",
       "Top Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)"
+      "Bias binding (neckline + armholes)"
     ],
     "fabric": 1.6,
     "garment": "top",
@@ -20,12 +19,11 @@
   {
     "slug": "scoop-neck-tank-mini-dress",
     "style": "Scoop neck tank mini dress",
-    "pieces": 6,
+    "pieces": 5,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back"
     ],
@@ -40,12 +38,11 @@
   {
     "slug": "boat-neck-button-down-top",
     "style": "Boat neck button-down top",
-    "pieces": 4,
+    "pieces": 3,
     "pieceNames": [
       "Top Front",
       "Top Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)"
+      "Bias binding (neckline + armholes)"
     ],
     "fabric": 1.7,
     "garment": "top",
@@ -58,12 +55,11 @@
   {
     "slug": "gingham-button-blouse",
     "style": "Sleeveless gingham button blouse",
-    "pieces": 4,
+    "pieces": 3,
     "pieceNames": [
       "Top Front",
       "Top Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)"
+      "Bias binding (neckline + armholes)"
     ],
     "fabric": 1.7,
     "garment": "top",
@@ -96,12 +92,11 @@
   {
     "slug": "back-tie-shift-mini-dress",
     "style": "Back-tie shift mini dress",
-    "pieces": 7,
+    "pieces": 6,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)"
@@ -117,12 +112,11 @@
   {
     "slug": "square-neck-back-tie-babydoll-top",
     "style": "Square-neck back-tie babydoll top",
-    "pieces": 5,
+    "pieces": 4,
     "pieceNames": [
       "Top Front",
       "Top Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Back Tie (sırt bağı)"
     ],
     "fabric": 1.8,
@@ -136,12 +130,11 @@
   {
     "slug": "empire-waist-tie-back-dress",
     "style": "Empire-waist tie-back dress",
-    "pieces": 8,
+    "pieces": 7,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)",
@@ -158,12 +151,11 @@
   {
     "slug": "square-neck-drawstring-babydoll-dress",
     "style": "Square-neck drawstring babydoll dress",
-    "pieces": 8,
+    "pieces": 7,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Drawstring Bust Panel (büzgü büst panosu)",
@@ -180,14 +172,13 @@
   {
     "slug": "open-back-princess-mini-dress",
     "style": "Open-back princess mini dress",
-    "pieces": 11,
+    "pieces": 10,
     "pieceNames": [
       "Bodice Center Front",
       "Bodice Side Front",
       "Bodice Center Back",
       "Bodice Side Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Center Front",
       "Skirt Side Front",
       "Skirt Center Back",
@@ -205,12 +196,11 @@
   {
     "slug": "open-back-tie-back-mini-dress",
     "style": "Open-back tie-back mini dress",
-    "pieces": 8,
+    "pieces": 7,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)",
@@ -250,12 +240,11 @@
   {
     "slug": "ruffled-strap-milkmaid-babydoll-dress",
     "style": "Ruffled-strap milkmaid babydoll dress",
-    "pieces": 9,
+    "pieces": 8,
     "pieceNames": [
       "Bodice Front",
       "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Neck/Front Tie (ön bağ)",
@@ -295,13 +284,11 @@
   {
     "slug": "gathered-bust-empire-mini-dress",
     "style": "Gathered-bust empire mini dress",
-    "pieces": 9,
+    "pieces": 7,
     "pieceNames": [
       "Bodice Front",
-      "Bodice Center Back",
-      "Bodice Side Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
+      "Bodice Back",
+      "Bias binding (neckline + armholes)",
       "Skirt Front",
       "Skirt Back",
       "Waist Tie (bel bağı)",
