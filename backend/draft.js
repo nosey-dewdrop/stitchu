@@ -21,7 +21,7 @@ const ENUMS = {
   shaping: ['princess', 'dart'],
   waistline: ['natural', 'empire'],
   fabric: ['woven', 'knit'],
-  neckline: ['crew', 'scoop', 'vNeck', 'square', 'boat', 'sweetheart', 'halter'],
+  neckline: ['crew', 'scoop', 'vNeck', 'square', 'boat', 'sweetheart', 'halter', 'cowl', 'pussyBow'],
   sleeveStyle: ['none', 'straight', 'balloon'],
   sleeveLength: ['short', 'elbow', 'long'],
   skirtStyle: ['aLine', 'straight', 'gathered', 'halfCircle', 'pleated'],

@@ -143,6 +143,15 @@ const SPECS = [
   { name: 'sideseam-pocket-skirt', garment: 'skirt', shaping: 'princess', waistline: 'natural', fabric: 'woven',
     neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
     topLength: 'hip', ruffle: false, tiers: 1, keyhole: false, pocketStyle: 2 /* side-seam */ },
+  // patch 3.16: cowl neckline on a dress — the front is cut wide + deep on the
+  // bias with drape excess (a re-mark, no new piece). And a pussy-bow blouse — a
+  // high neck band + a long self-lined tie strip that knots into a bow.
+  { name: 'cowl-dress', garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'cowl', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false },
+  { name: 'pussybow-blouse', garment: 'top', shaping: 'princess', waistline: 'natural', fabric: 'woven',
+    neckline: 'pussyBow', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi',
+    topLength: 'hip', ruffle: false, tiers: 1, keyhole: false },
 ];
 
 const isChalk = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');

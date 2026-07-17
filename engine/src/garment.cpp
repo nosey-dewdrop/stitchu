@@ -5,6 +5,7 @@
 #include "collar.hpp"
 #include "gather.hpp"
 #include "keyhole.hpp"
+#include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
 #include "placket.hpp"
@@ -464,6 +465,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.keyhole &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         KeyholeBlock::apply(pattern);
+    }
+    // Neckline extensions (patch 3.16): Cowl re-marks the front to cut on the
+    // bias with drape excess; PussyBow adds a high neck band + a long self-lined
+    // tie strip (band trued to the neckline). Post-pass keyed on the Neckline
+    // enum — for the 7 original necklines apply() does nothing, so the base draft
+    // is byte-identical. Cowl/PussyBow only touch dress/top necklines.
+    if ((spec.neckline == Neckline::Cowl || spec.neckline == Neckline::PussyBow) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        NecklineExtBlock::apply(pattern, spec.neckline, m.neckCM);
     }
     // Opt-in front button placket (düğme patı): grown-on button stand + fold line
     // + buttons/buttonholes on the front. Post-pass on the finished front piece,

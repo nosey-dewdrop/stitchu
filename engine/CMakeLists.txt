@@ -21,6 +21,7 @@ add_library(engine
     src/strap.cpp
     src/peplum.cpp
     src/pocket.cpp
+    src/neckext.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
@@ -91,6 +92,10 @@ add_test(NAME peplum_check COMMAND peplum_check)
 add_executable(pocket_check tests/pocket_check.cpp)
 target_link_libraries(pocket_check PRIVATE engine)
 add_test(NAME pocket_check COMMAND pocket_check)
+
+add_executable(neckline_ext_check tests/neckline_ext_check.cpp)
+target_link_libraries(neckline_ext_check PRIVATE engine)
+add_test(NAME neckline_ext_check COMMAND neckline_ext_check)
 
 add_executable(halter_check tests/halter_check.cpp)
 target_link_libraries(halter_check PRIVATE engine)

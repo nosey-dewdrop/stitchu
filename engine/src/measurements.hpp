@@ -25,7 +25,12 @@ struct BodyMeasurementsSnapshot {
 
 // Halter is more than a neck shape: the front rises into a nape strap, the
 // shoulders are bare (no shoulder seam, no sleeves) and the back is cut low.
-enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart, Halter };
+// Cowl (patch 3.16): the front neck is cut wide + deep on the BIAS, with drape
+// excess so the fabric falls into soft self-facing folds (Aldrich cowl: add
+// width + depth to the neckline, bias grainline). PussyBow (patch 3.16): a high
+// neck band with a long self-lined tie strip that ties into a bow at the throat
+// (band trued to the neckline like a stand collar + a separate tie piece).
+enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart, Halter, Cowl, PussyBow };
 enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
 // Dress waist seam level. Empire sits just under the bust (underbust girth);
 // empire + gathered = the babydoll silhouette.
@@ -66,10 +71,16 @@ inline const char* raw(Neckline n) {
         case Neckline::Boat: return "boat";
         case Neckline::Sweetheart: return "sweetheart";
         case Neckline::Halter: return "halter";
+        case Neckline::Cowl: return "cowl";
+        case Neckline::PussyBow: return "pussyBow";
     }
     return "";
 }
-inline const char* title(Neckline n) { return n == Neckline::VNeck ? "v-neck" : raw(n); }
+inline const char* title(Neckline n) {
+    if (n == Neckline::VNeck) return "v-neck";
+    if (n == Neckline::PussyBow) return "pussy-bow";
+    return raw(n);
+}
 
 inline const char* raw(SkirtStyle s) {
     switch (s) {

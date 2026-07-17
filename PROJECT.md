@@ -161,7 +161,8 @@ Format: Claude teaches and reviews, Damla writes the critical code.
 - [x] validate blocks: geometric invariant suite (side seams, armhole/cap ease, dart sums, waist joins, self intersection, print fit) across EU 34-52 + edge bodies via engine-check harness; runtime safety net blocks invalid patterns before the PDF
 - [x] manipulation layer v2 (2026-07-13): pleated skirt, tiered ruffle, sweetheart, keyhole, halter — each engine+test+render+UI+vision, matrix 70,200
 - [x] seam allowance DRAWN (double line: outer cut / inner sew, fold-aware offset) + precision truing (shoulder pair + empire side seam → 0.00mm, tools/precision-report.js)
-- [ ] wrap styles, collars, pockets, off-shoulder/cowl/peplum (specs drafted in engine/SPECS-next-vocabulary.md — REVIEW before building)
+- [x] cowl + pussy-bow neckline (patch 3.16): Neckline enum appended (Cowl, PussyBow); cowl = wide+deep front cut on the bias with drape excess (a shape, no new piece); pussy-bow = high stand band trued to the neckline + a long self-lined tie strip (2 pieces). Opt-in → 7 originals byte-identical (golden 0.000000mm). ctest neckline_ext_check, 23/23 tests, web-fuzz 25730/0, vocab-sweep 48600/0, render-onay (cowl dress + pussy-bow blouse PNG by eye). Vocabulary add, not accuracy on this set (37/54 unchanged: no cowl photo, bow already an applied tie — honest). Bridge: bindings string cowl/pussyBow + draft.js ENUMS + create.js picker + missing.js suppression + worker.js vision schema (deploy Damla) + two wasm.
+- [ ] wrap styles, collars, pockets, off-shoulder/peplum (specs drafted in engine/SPECS-next-vocabulary.md — REVIEW before building)
 - [x] pattern rendering (SwiftUI Canvas)
 - [x] PDF export with A4 splitting + calibration square
 

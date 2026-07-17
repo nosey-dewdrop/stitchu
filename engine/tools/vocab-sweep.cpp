@@ -24,7 +24,8 @@ int main() {
     int shown = 0;
 
     const Neckline necks[] = {Neckline::Crew, Neckline::Sweetheart, Neckline::Halter,
-                              Neckline::VNeck, Neckline::Square, Neckline::Scoop, Neckline::Boat};
+                              Neckline::VNeck, Neckline::Square, Neckline::Scoop, Neckline::Boat,
+                              Neckline::Cowl, Neckline::PussyBow};
     const SkirtStyle skirts[] = {SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered,
                                  SkirtStyle::HalfCircle, SkirtStyle::Pleated};
     const SleeveStyle sleeves[] = {SleeveStyle::None, SleeveStyle::Straight, SleeveStyle::Balloon};

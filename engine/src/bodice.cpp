@@ -17,6 +17,9 @@ namespace {
 double neckWidthMultiplier(Neckline neckline) {
     if (neckline == Neckline::Boat) return 1.85;
     if (neckline == Neckline::Sweetheart) return 1.2;
+    // Cowl widens the neck so the drape excess has span to fold across (Aldrich
+    // cowl: add width AND depth). Wider than boat, measured not maximal.
+    if (neckline == Neckline::Cowl) return 1.4;
     return 1.0;
 }
 
@@ -33,6 +36,13 @@ double frontNeckDepth(Neckline neckline, double neckW) {
         // Plunge below the old shoulder line; the caller adds the strap rise
         // because the halter front frame is shifted down by it.
         case Neckline::Halter: return neckW + 65;
+        // Cowl drapes deep: the extra drop is the fabric that falls into folds.
+        // Measured (deeper than scoop, shy of a plunge) so it reads as a soft
+        // cowl, not a gaping hole.
+        case Neckline::Cowl: return neckW + 90;
+        // Pussy-bow sits high on the throat (the band + bow live there), so the
+        // neckline itself is a shallow crew-depth opening.
+        case Neckline::PussyBow: return neckW + 15;
     }
     return neckW + 15;
 }
@@ -58,6 +68,15 @@ std::vector<PathCommand> neckCommands(Neckline neckline, Point centerNeck, Point
         // inner edge on its way up to the nape.
         case Neckline::Halter:
             return {PathCommand::curve(neckPoint, {w * 0.75, d * 0.5}, {w, d * 0.08})};
+        // Cowl: a deep, softly rounded scoop-like drape. The excess depth (from
+        // frontNeckDepth) plus the bias grain lets the fabric fall into folds;
+        // the seam line itself is a smooth deep curve so the raw drape edge is
+        // clean. Rounder/deeper than scoop.
+        case Neckline::Cowl:
+            return {PathCommand::curve(neckPoint, {w * 0.5, d}, {w * 0.92, d * 0.28})};
+        // Pussy-bow neckline is a plain crew-shape opening; the band + bow are
+        // separate pieces (post-pass). Same curve as crew/scoop.
+        case Neckline::PussyBow:
         case Neckline::Crew:
         case Neckline::Scoop:
             return {PathCommand::curve(neckPoint, {w * 0.55, d}, {w * 0.9, d * 0.35})};

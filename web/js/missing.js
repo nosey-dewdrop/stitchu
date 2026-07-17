@@ -313,6 +313,18 @@ export function missingFeatures(seen, lang) {
   // construction the engine does NOT draft and stays honest.
   const pocketTerm = (t) => /pocket/i.test(t) &&
     !/welt|besom|bound|jetted|cargo|flap|kangaroo|zip(per)?/i.test(t);
+  // patch 3.16: a cowl neckline is now drawn (deep + wide front cut on the bias
+  // with drape excess), so an outOfVocab term naming a cowl / draped cowl neck is
+  // no longer missing. An asymmetric / multi-layer draped cowl stays honest.
+  const cowlNeck = seen.neckline === 'cowl';
+  const cowlTerm = (t) => /cowl(\s*neck)?|draped?\s*(neck|neckline)/i.test(t) &&
+    !/asymmetric|asymmetrical|layered|multi/i.test(t);
+  // patch 3.16: a pussy-bow neckline is now drawn (high neck band + a long
+  // self-lined tie strip that knots into a bow), so an outOfVocab term naming a
+  // pussy-bow / neck-tie bow is no longer missing. An asymmetric bow stays honest.
+  const bowNeck = seen.neckline === 'pussyBow';
+  const bowNeckTerm = (t) => /pussy[\s-]?bow|neck\s*bow|bow\s*(tie|neck|collar)|tie[\s-]?neck/i.test(t) &&
+    !/asymmetric|asymmetrical/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -323,6 +335,8 @@ export function missingFeatures(seen, lang) {
     if (seen.placketAsymDrawn && asymPlacketTerm(label)) continue;
     if (seen.capSleeveDrawn && capSleeveTerm(label)) continue;
     if (seen.pocketDrawn && pocketTerm(label)) continue;
+    if (cowlNeck && cowlTerm(label)) continue;
+    if (bowNeck && bowNeckTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

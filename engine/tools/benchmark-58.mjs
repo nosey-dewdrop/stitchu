@@ -153,6 +153,14 @@ const DRAWN_SINCE = [
   // / TIERED peplum is a DIFFERENT construction → stays missing.
   (t) => /peplum|waist flounce|waist frill/i.test(t) &&
          !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t),
+  // patch 3.16: cowl neckline — the engine now cuts the front wide + deep on the
+  // BIAS with drape excess so it falls into soft self-facing cowl folds. "cowl",
+  // "cowl neck", "draped cowl neckline" all draw. An ASYMMETRIC / MULTI-LAYER
+  // draped cowl is a different construction → stays missing. (A pussy-bow neck
+  // BOW is already covered by the Loop 4b tie/bow rule above — not re-matched
+  // here, so it is never double-counted.)
+  (t) => /cowl(\s*neck)?|draped?\s*(cowl|neck|neckline)/i.test(t) &&
+         !/asymmetric|asymmetrical|layered|multi/i.test(t),
 ];
 
 function classify(entry, spec) {

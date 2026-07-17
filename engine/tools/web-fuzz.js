@@ -69,7 +69,7 @@ function packPieces(pieces) {
 const isChalkPiece = (p) => p.name.includes('Ruffle') || p.name.includes('Bias binding');
 
 createEngine().then((e) => {
-  const necklines = ['crew', 'scoop', 'vNeck', 'square', 'boat', 'sweetheart', 'halter'];
+  const necklines = ['crew', 'scoop', 'vNeck', 'square', 'boat', 'sweetheart', 'halter', 'cowl', 'pussyBow'];
   const sleeves = [['none', 'short'], ['straight', 'long'], ['balloon', 'elbow']];
   const skirts = ['aLine', 'straight', 'gathered', 'halfCircle', 'pleated'];
   const lengths = ['mini', 'midi', 'maxi'];

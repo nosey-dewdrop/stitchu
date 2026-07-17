@@ -836,6 +836,49 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   manual "cep" picker covers the no-photo path; seen.pocketDrawn suppresses the
   missing.js pocket note + the outOfVocab pocket term (welt etc. stay honest).
 
+## Cowl + pussy-bow neckline (kowl / fiyonk yaka) — opt-in (patch 3.16)
+Two vocabulary necklines APPENDED to the Neckline enum (Cowl=7, PussyBow=8 after
+Crew..Halter). Both are ORTHOGONAL: for the 7 original necklines nothing changes,
+so the base draft is BYTE-IDENTICAL (golden 23034 lines, 0.000000 mm). Only
+neckline shape/pieces are touched — sleeve/shoulder/armhole/pocket/hem are not.
+- COWL (bodice.cpp shape, no new piece): the front neck is cut WIDE + DEEP and
+  the front is re-marked to cut on the BIAS with drape excess, so the fabric
+  falls into soft self-facing folds (Aldrich cowl: add width AND depth, bias
+  grainline). neckWidthMultiplier(Cowl)=1.4 (wider than boat 1.35); frontNeckDepth
+  (Cowl)=neckW+90 (deeper than scoop neckW+50, shy of a plunge); neckCommands
+  draws a deep rounded scoop-like drape curve. NecklineExtBlock::apply then rotates
+  the front piece grainline to 45° (bias) about its own grainline midpoint and
+  appends "CUT ON THE BIAS … drape excess … self-facing" to the cut note. No
+  separate facing — the bias fold self-faces the neck. Measured, not maximal: a
+  soft cowl, not a gaping hole. HONEST BOUNDARY: an asymmetric / multi-layer
+  draped cowl is NOT drawn (stays honest via missing.js).
+- PUSSYBOW (NecklineExtBlock post-pass, 2 new pieces): the neckline SHAPE is a
+  shallow crew-depth opening (the band + bow live high on the throat). Two pieces
+  are appended:
+    · Pussy-bow Band — a high stand band (bandH 55 mm, cfRise 12 mm). The bottom
+      (attach) SEAM edge is drafted STRAIGHT to the exact measured neckline length
+      (CB fold x=0 → CF x=half, on y=0), so band edge == neckline to 0.00 mm
+      (neckline measured off the finished pieces by the same neck-point scan the
+      collar uses — truing by construction, cannot drift). cut 2 on fold at CB.
+    · Pussy-bow Tie — a self-lined tube rectangle (2·W+2·SA wide × L+2·SA long,
+      finished W 55 mm). Length L = 2× neck girth (each end reaches round + hangs),
+      clamped [700, 1400] mm — MEASURED off the body, not a magic number. cut 2;
+      one end sews into each CF band end, then they knot into a bow at the throat.
+  A placement notch is stamped on the front neck point. HONEST BOUNDARY: an
+  asymmetric bow is not drawn (the tie is a symmetric self-lined tube).
+- Neither drafts on a skirt (no neckline to measure → honest skip, not a silent
+  no-op). Guarded to dress/top in garment.cpp, keyed on the Neckline enum.
+- Truing proven by neckline_ext_check (ctest): cowl front deeper than scoop +
+  bias grainline ~45° + cut note; pussy-bow band attach == half neckline (0.0000
+  mm) + tie is a self-lined cut-2 rectangle + notch on the front; the 7 originals
+  draft zero band/tie pieces; a skirt skips honestly.
+- Bridge: bindings.cpp necklineFrom "cowl"/"pussyBow" (neckline crosses as a
+  STRING, not int); backend/draft.js ENUMS neckline list; web/js/create.js manual
+  neckline picker (cowl + pussy-bow) + vision passes seen.neckline through;
+  missing.js suppresses a cowl/pussy-bow oov term when that neckline is drawn (an
+  asymmetric cowl / asymmetric bow stays honest). worker.js vision schema adds
+  the two neckline values (code ready, deploy = Damla). Two wasm targets rebuilt.
+
 ## Cutting line (dikiş payı ÇİZİLİ) + precision pass (2026-07-13 night)
 - PatternPiece.cutLine: the sewing outline offset OUTWARD by seamAllowance —
   cut on the outer solid line, sew on the inner fine line. Strip pieces
