@@ -189,6 +189,7 @@ for (const m of meta) {
   const title = `${m.en} sewing pattern · stitchu`;
   const desc = m.note_en.length > 155 ? m.note_en.slice(0, 152) + '...' : m.note_en;
   const svgUrl = `../patterns/vintage6070/${m.slug}.svg`;
+  const flatUrl = m.flat ? `../patterns/vintage6070/${m.flat}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
 
   const ldjson = {
@@ -234,6 +235,10 @@ ${HEADER}
   <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p>
   <p class="lead" data-en="${esc(m.note_en)}" data-tr="${esc(m.note_tr)}">${esc(m.note_en)}</p>
 
+  ${flatUrl ? `<div class="drawing">
+    <img src="${flatUrl}" alt="${esc(m.en)} front and back flat technical sketch drafted by the stitchu engine" loading="lazy">
+    <p class="cap" data-en="The front and back flat sketch, the way a commercial pattern shows the garment. Drawn from the engine's own pieces with grainline, balance notches and the closure mark." data-tr="Ön ve arka düz teknik çizim, ticari bir kalıbın modeli gösterdiği gibi. Motorun kendi parçalarından, düzgü, denge çentikleri ve kapanma işaretiyle çizildi.">The front and back flat sketch, the way a commercial pattern shows the garment. Drawn from the engine's own pieces with grainline, balance notches and the closure mark.</p>
+  </div>` : ''}
   <div class="drawing">
     <img src="${svgUrl}" alt="${esc(m.en)} pattern pieces drafted by the stitchu engine" loading="lazy">
     <p class="cap" data-en="The engine's own drafted pieces for this look, laid out for cutting. Drawn to an EU38 demo body." data-tr="Bu görünüm için motorun kendi çizdiği parçalar, kesim için yerleştirilmiş. EU38 örnek beden üzerine çizildi.">The engine's own drafted pieces for this look, laid out for cutting. Drawn to an EU38 demo body.</p>
