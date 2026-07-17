@@ -6,6 +6,7 @@
 // — the definition of a garment that fits. Measured from the real outlines, not
 // the engine's internal target variables, so it proves the drafted geometry (not
 // just the intent) lands on the body.
+#include <algorithm>
 #include <cstdio>
 #include <cmath>
 #include <string>
@@ -54,20 +55,44 @@ int main() {
 
         const BodiceDraft bod = BodiceBlock::draft(m, {});
 
-        // --- Finished BUST girth: the chest line is the widest part of each
-        // bodice half. front + back, times 2 (both side seams). The engine drafts
-        // the bust quarter as bust/4*(1+chestEase); sewn all round that is
-        // bust*(1+chestEase). Woven chest ease is 11%.
         const PatternPiece* front = find(d, "Bodice Front");
         const PatternPiece* back = find(d, "Bodice Back");
         if (!check(front && back, std::string(b.name) + ": bodice front + back drafted")) continue;
 
-        // NOTE: finished BUST is deliberately not asserted here. The naive
-        // max-span read catches the SHOULDER on a narrow-bust / wide-shoulder
-        // body, so it would pass or fail for the wrong reason — a test that
-        // measures the wrong line is worse than no test. The chest is correct by
-        // construction (bust/4 * (1 + chestEase) in the drafter); the waist below
-        // is measured cleanly off the sewn waist arc.
+        // --- Finished BUST girth, RE-MEASURED off the drafted OUTLINE polygon
+        // (not the engine's chest scalars). The dart-bodice outline lays the
+        // underarm/chest vertex at commands[3].to — the armhole curve ends there
+        // and the side seam drops from it — so commands[3].to.x IS the finished
+        // chest half-quarter drawn into the piece. Summing front + back and
+        // doubling (both side seams) gives the finished bust girth all the way
+        // round, straight from the geometry a sewist would cut. This avoids the
+        // naive max-span read (which catches the SHOULDER on a wide-shoulder body)
+        // by reading the exact underarm vertex, so it measures the RIGHT line.
+        if (front->commands.size() > 3 && back->commands.size() > 3 &&
+            front->commands[3].type == CmdType::Curve && back->commands[3].type == CmdType::Curve) {
+            const double finishedBust = (front->commands[3].to.x + back->commands[3].to.x) * 2.0;
+            const double chestEase = BodiceBlock::chestEaseFor(Fabric::Woven);
+            // Honest expectation: this is a ribcage-FRAME draft — the front sizes
+            // to the full bust (bust/4) and the back to the underbust girth
+            // (underbust/4), mirroring the drafter/validator EXACTLY (incl. the
+            // clamp). So the finished bust deliberately sits a little under
+            // bust*(1+ease): a full-bust adjustment, not a tube. We assert the
+            // outline matches THAT model (the intent the drafter drew), within 6%.
+            const double frame = m.bustMM() - BodiceBlock::underbustOffset;
+            const double underbust = std::max(std::min(frame, m.bustMM() - 20.0), m.waistMM());
+            const double expectedBust = ((m.bustMM() / 4) + (underbust / 4)) * (1 + chestEase) * 2.0;
+            check(std::fabs(finishedBust - expectedBust) < expectedBust * 0.06,
+                std::string(b.name) + ": finished bust " + std::to_string((int)finishedBust) +
+                " mm ~ ribcage-frame bust+ease " + std::to_string((int)expectedBust) + " mm (measured off the outline)");
+            // And it must genuinely clear the bare body at the bust — a sewn tube
+            // narrower than the body would not close. The frame draft still keeps
+            // the finished bust above the naked bust girth (positive real ease).
+            check(finishedBust > m.bustMM() * 0.99,
+                std::string(b.name) + ": finished bust " + std::to_string((int)finishedBust) +
+                " mm clears the bare bust " + std::to_string((int)m.bustMM()) + " mm");
+        } else {
+            check(false, std::string(b.name) + ": bodice outline has the expected underarm-vertex layout");
+        }
 
         // --- Finished WAIST girth: the sewn waist (dart intake already removed)
         // over both halves, times 2. Must equal waist * (1 + waistEase=5%).

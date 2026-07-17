@@ -371,6 +371,11 @@ export function pieceGroup(d) {
   if (d.p.markings.length) {
     inner += `<path d="${pathD(d.p.markings, 1)}" fill="none" stroke="#111" stroke-width="0.45" stroke-dasharray="4 3"/>`;
   }
+  // Balance notches — solid ticks so a sewer can align front-to-back seams
+  // (same convention as the technical flat, render-flat.mjs). Move/line pairs.
+  if ((d.p.notches || []).length) {
+    inner += `<path d="${pathD(d.p.notches, 1)}" fill="none" stroke="#111" stroke-width="0.5"/>`;
+  }
   if (d.p.grainline) {
     // grainline with real arrowheads (the legend promises an arrow)
     const g = d.p.grainline;

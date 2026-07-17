@@ -177,3 +177,15 @@ add_test(NAME fronttie_check COMMAND fronttie_check)
 add_executable(offshoulder_check tests/offshoulder_check.cpp)
 target_link_libraries(offshoulder_check PRIVATE engine)
 add_test(NAME offshoulder_check COMMAND offshoulder_check)
+
+add_executable(sideseam_adversarial_check tests/sideseam_adversarial_check.cpp)
+target_link_libraries(sideseam_adversarial_check PRIVATE engine)
+add_test(NAME sideseam_adversarial_check COMMAND sideseam_adversarial_check)
+
+add_executable(notch_alignment_check tests/notch_alignment_check.cpp)
+target_link_libraries(notch_alignment_check PRIVATE engine)
+add_test(NAME notch_alignment_check COMMAND notch_alignment_check)
+
+add_executable(closed_garment_check tests/closed_garment_check.cpp)
+target_link_libraries(closed_garment_check PRIVATE engine)
+add_test(NAME closed_garment_check COMMAND closed_garment_check)
