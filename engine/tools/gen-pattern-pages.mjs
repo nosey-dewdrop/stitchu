@@ -17,9 +17,8 @@ const BASE = 'https://nosey-dewdrop.github.io/stitchu';
 const V = process.env.V || '83';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
-// The sixties/seventies looks are folded into this same Patterns page (Damla:
-// "60 70 de oraya koy"), so the vintage collection is not a separate island.
-const vintageMeta = JSON.parse(readFileSync(join(OUT, 'vintage6070', 'meta.json'), 'utf8'));
+// The sixties/seventies looks live in their own top-level Collections section
+// (web/collections/ + collection-60s70s.html), no longer folded onto this page.
 // Phase 2: the printable PDF pack, one set of three per pattern (gen-pattern-pdfs.mjs).
 // File sizes shown to the visitor come straight from this manifest, never guessed.
 const pdfManifest = JSON.parse(readFileSync(join(OUT, 'pdf', 'pdf-manifest.json'), 'utf8'));
@@ -206,6 +205,7 @@ const HEADER = `<header class="sh-header">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
     <a href="index.html" class="sh-active" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
@@ -427,17 +427,6 @@ function patternCard(m) {
   </a>`;
 }
 
-// Vintage cards link to the collection page anchors (the 60s/70s looks live on
-// collection-60s70s.html, no per-look detail page). Thumbnails are the same
-// engine SVGs, served from patterns/vintage6070/.
-function vintageCard(m) {
-  return `<a class="card" href="../collection-60s70s.html#${m.slug}">
-    <div class="thumb"><img src="vintage6070/${m.slug}.svg" alt="${esc(m.en)} pattern" loading="lazy"></div>
-    <div class="body"><div class="nm" data-en="${esc(m.en)}" data-tr="${esc(m.tr)}">${esc(m.en)}</div>
-    <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p></div>
-  </a>`;
-}
-
 const pageCount = Math.max(1, Math.ceil(meta.length / PER_PAGE));
 
 function pager(cur) {
@@ -462,7 +451,7 @@ for (let page = 1; page <= pageCount; page++) {
   const file = isFirst ? 'index.html' : `page-${page}.html`;
   const canonical = isFirst ? `${BASE}/patterns/` : `${BASE}/patterns/${file}`;
   const title = isFirst ? 'Pattern Blog · stitchu' : `Pattern Blog, Page ${page} · stitchu`;
-  const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} distinct product styles plus the sixties seventies collection, each drawn by the engine and published, with the honest patch that made it possible.`;
+  const desc = `Every style the stitchu engine drafts into a complete, sewable pattern from one photo. ${meta.length} distinct product styles, each drawn by the engine and published, with the honest patch that made it possible.`;
   const cards = slice.map(patternCard).join('\n  ');
 
   const ldjson = {
@@ -477,18 +466,6 @@ for (let page = 1; page <= pageCount; page++) {
     },
   };
 
-  // The sixties/seventies section is folded onto page 1 only.
-  const vintageSection = isFirst ? `
-  <section class="sec">
-    <h2 class="sec-h" data-en="The Sixties Seventies Collection." data-tr="Altmışlar Yetmişler Koleksiyonu.">The Sixties Seventies Collection.</h2>
-    <p class="sec-line" data-en="The vintage silhouettes, sixteen looks read from museum photographs of real 1960s and 1970s dresses and skirts, each drafted to a full pattern piece by piece." data-tr="Vintage siluetler, 1960 ve 1970'lerin gerçek elbise ve eteklerinin müze fotoğraflarından okunan on altı görünüm, her biri parça parça tam kalıba çizildi.">The vintage silhouettes, sixteen looks read from museum photographs of real 1960s and 1970s dresses and skirts, each drafted to a full pattern piece by piece.</p>
-    <div class="grid9">
-  ${vintageMeta.map(vintageCard).join('\n  ')}
-    </div>
-    <p class="counter" style="margin-top:14px"><a class="sec-link" href="../collection-60s70s.html" data-en="Open The Full Sixties Seventies Collection" data-tr="Altmışlar Yetmişler Koleksiyonunun Tamamını Aç">Open The Full Sixties Seventies Collection</a></p>
-  </section>
-` : '';
-
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
@@ -502,7 +479,6 @@ ${HEADER}
   ${cards}
   </div>
   ${pager(page)}
-  ${vintageSection}
   <a class="sb-btn sb-primary" href="../create.html" data-en="Draft One To Your Measurements, Free." data-tr="Birini Ölçülerine Göre Çiz, Ücretsiz." style="margin-top:36px">Draft One To Your Measurements, Free.</a>
 </div>
 ${FOOTER}

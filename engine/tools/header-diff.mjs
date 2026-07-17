@@ -22,7 +22,8 @@ const WEB = join(here, '../../web');
 
 // Every page that MUST carry the canonical header.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'patches.html', 'showcase.html', 'collection-60s70s.html', 'api.html', 'privacy.html'];
+  'patches.html', 'showcase.html', 'collection-60s70s.html', 'collections/index.html',
+  'api.html', 'privacy.html'];
 const stylePages = readdirSync(join(WEB, 'styles')).filter((f) => f.endsWith('.html')).map((f) => `styles/${f}`);
 const patternPages = readdirSync(join(WEB, 'patterns')).filter((f) => f.endsWith('.html')).map((f) => `patterns/${f}`);
 const pages = [...mainPages, ...stylePages, ...patternPages];
@@ -44,6 +45,10 @@ function normalise(header) {
     // "patterns/index.html", from a subdir it is "index.html"
     .replace(/href="patterns\/index\.html"/g, 'href="__PATTERNS__"')
     .replace(/(<a href=")index\.html(" data-en="Pattern Blog")/g, '$1__PATTERNS__$2')
+    // collections link: "collections/index.html" (root, after "../" strip) vs
+    // "index.html" on the collections index page itself.
+    .replace(/href="collections\/index\.html"/g, 'href="__COLLECTIONS__"')
+    .replace(/(<a href=")index\.html(" data-en="Collections")/g, '$1__COLLECTIONS__$2')
     // brand link: "index.html" (root) vs "../index.html"->"index.html" (subdir),
     // already aligned by the prefix strip above.
     .trim();

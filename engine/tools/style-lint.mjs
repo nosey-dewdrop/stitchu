@@ -40,7 +40,7 @@ const htmlFiles = [];
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
   'patches.html', 'showcase.html', 'collection-60s70s.html', 'api.html', 'privacy.html'];
 for (const f of mainPages) if (existsSync(join(WEB, f))) htmlFiles.push(f);
-for (const sub of ['styles', 'patterns', 'guide', 'blog']) {
+for (const sub of ['styles', 'patterns', 'guide', 'blog', 'collections']) {
   const dir = join(WEB, sub);
   if (!existsSync(dir)) continue;
   for (const f of readdirSync(dir)) if (f.endsWith('.html')) htmlFiles.push(`${sub}/${f}`);
