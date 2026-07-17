@@ -1,0 +1,329 @@
+[
+  {
+    "slug": "sixties-fit-flare-knit-dress",
+    "pieces": 10,
+    "a4pages": 24,
+    "a4bytes": 101135,
+    "a0bytes": 9260,
+    "guidebytes": 6351,
+    "guideSteps": 17,
+    "cols": 5,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2.6
+  },
+  {
+    "slug": "sixties-mondrian-shift-mini",
+    "pieces": 6,
+    "a4pages": 15,
+    "a4bytes": 46971,
+    "a0bytes": 5721,
+    "guidebytes": 4535,
+    "guideSteps": 14,
+    "cols": 3,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabricMeters140": 1.4
+  },
+  {
+    "slug": "sixties-princess-seam-shift",
+    "pieces": 10,
+    "a4pages": 22,
+    "a4bytes": 92781,
+    "a0bytes": 10404,
+    "guidebytes": 5887,
+    "guideSteps": 16,
+    "cols": 5,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2.3
+  },
+  {
+    "slug": "sixties-empire-knit-mini",
+    "pieces": 6,
+    "a4pages": 17,
+    "a4bytes": 69198,
+    "a0bytes": 6425,
+    "guidebytes": 5344,
+    "guideSteps": 15,
+    "cols": 4,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Skirt Front",
+      "Skirt Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2
+  },
+  {
+    "slug": "sixties-boat-neck-shift-mini",
+    "pieces": 10,
+    "a4pages": 19,
+    "a4bytes": 71098,
+    "a0bytes": 9350,
+    "guidebytes": 5825,
+    "guideSteps": 16,
+    "cols": 6,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back"
+    ],
+    "fabricMeters140": 1.9
+  },
+  {
+    "slug": "sixties-crew-neck-jersey-mini",
+    "pieces": 6,
+    "a4pages": 20,
+    "a4bytes": 66825,
+    "a0bytes": 7245,
+    "guidebytes": 5302,
+    "guideSteps": 15,
+    "cols": 3,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Skirt Front",
+      "Skirt Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2.1
+  },
+  {
+    "slug": "sixties-pointed-collar-tunic",
+    "pieces": 7,
+    "a4pages": 18,
+    "a4bytes": 75106,
+    "a0bytes": 7615,
+    "guidebytes": 5011,
+    "guideSteps": 13,
+    "cols": 3,
+    "pieceNames": [
+      "Top Front",
+      "Top Back",
+      "Front Neck Facing",
+      "Back Neck Facing",
+      "Sleeve",
+      "Shirt Collar Stand (yaka bandı)",
+      "Shirt Collar Blade (yaka yaprağı)"
+    ],
+    "fabricMeters140": 2.8
+  },
+  {
+    "slug": "sixties-front-button-pinafore",
+    "pieces": 6,
+    "a4pages": 15,
+    "a4bytes": 47598,
+    "a0bytes": 5846,
+    "guidebytes": 5823,
+    "guideSteps": 15,
+    "cols": 3,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabricMeters140": 1.5
+  },
+  {
+    "slug": "sixties-vneck-front-zip-dress",
+    "pieces": 7,
+    "a4pages": 19,
+    "a4bytes": 70644,
+    "a0bytes": 6328,
+    "guidebytes": 5521,
+    "guideSteps": 15,
+    "cols": 5,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back",
+      "Neck/Front Tie (ön bağ)"
+    ],
+    "fabricMeters140": 1.8
+  },
+  {
+    "slug": "sixties-side-tie-tweed-shift",
+    "pieces": 7,
+    "a4pages": 21,
+    "a4bytes": 81840,
+    "a0bytes": 6448,
+    "guidebytes": 5518,
+    "guideSteps": 15,
+    "cols": 5,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back",
+      "Waist Tie (bel bağı)"
+    ],
+    "fabricMeters140": 1.8
+  },
+  {
+    "slug": "sixties-empire-gathered-babydoll",
+    "pieces": 6,
+    "a4pages": 23,
+    "a4bytes": 81123,
+    "a0bytes": 6142,
+    "guidebytes": 4796,
+    "guideSteps": 15,
+    "cols": 5,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Skirt Front",
+      "Skirt Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2.3
+  },
+  {
+    "slug": "sixties-crew-neck-tent-mini",
+    "pieces": 6,
+    "a4pages": 15,
+    "a4bytes": 47247,
+    "a0bytes": 5778,
+    "guidebytes": 4533,
+    "guideSteps": 14,
+    "cols": 3,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabricMeters140": 1.4
+  },
+  {
+    "slug": "sixties-mod-colorblock-mini",
+    "pieces": 10,
+    "a4pages": 19,
+    "a4bytes": 71243,
+    "a0bytes": 9407,
+    "guidebytes": 5822,
+    "guideSteps": 16,
+    "cols": 6,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back"
+    ],
+    "fabricMeters140": 1.9
+  },
+  {
+    "slug": "seventies-scoop-neck-shift-mini",
+    "pieces": 6,
+    "a4pages": 17,
+    "a4bytes": 54034,
+    "a0bytes": 7334,
+    "guidebytes": 4594,
+    "guideSteps": 14,
+    "cols": 3,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Skirt Front",
+      "Skirt Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 1.8
+  },
+  {
+    "slug": "sixties-babydoll-scoop-mini",
+    "pieces": 6,
+    "a4pages": 19,
+    "a4bytes": 60512,
+    "a0bytes": 4881,
+    "guidebytes": 4734,
+    "guideSteps": 15,
+    "cols": 4,
+    "pieceNames": [
+      "Bodice Front",
+      "Bodice Back",
+      "Bias binding (neckline)",
+      "Bias binding (armholes)",
+      "Skirt Front",
+      "Skirt Back"
+    ],
+    "fabricMeters140": 1.6
+  },
+  {
+    "slug": "sixties-boat-neck-longsleeve-mini",
+    "pieces": 10,
+    "a4pages": 25,
+    "a4bytes": 100123,
+    "a0bytes": 10959,
+    "guidebytes": 6357,
+    "guideSteps": 17,
+    "cols": 6,
+    "pieceNames": [
+      "Bodice Center Front",
+      "Bodice Side Front",
+      "Bodice Center Back",
+      "Bodice Side Back",
+      "Bias binding (neckline)",
+      "Skirt Center Front",
+      "Skirt Side Front",
+      "Skirt Center Back",
+      "Skirt Side Back",
+      "Sleeve"
+    ],
+    "fabricMeters140": 2.6
+  }
+]

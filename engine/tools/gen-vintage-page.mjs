@@ -33,17 +33,22 @@ const jsonLd = {
 
 const looks = meta.map((m) => {
   const oov = (m.oov || []).map((o) => `<span class="cap oov">${esc(o)}</span>`).join('');
+  // Each look is clickable through to its own detail page (collections/<slug>.html):
+  // sewing details + a working printable-PDF download, same depth as the Pattern
+  // Blog. Built by gen-collection-pattern.mjs.
+  const detail = `collections/${m.slug}.html`;
   return `
 <section class="look" id="${m.slug}">
   <div class="lhead">
-    <h2 data-en="${esc(m.en)}" data-tr="${esc(m.tr)}">${esc(m.en)}</h2>
+    <h2><a class="lhead-link" href="${detail}" data-en="${esc(m.en)}" data-tr="${esc(m.tr)}">${esc(m.en)}</a></h2>
     <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p>
     <p class="lline" data-en="${esc(m.note_en)}" data-tr="${esc(m.note_tr)}">${esc(m.note_en)}</p>
     <div class="caps">${m.pieceNames.map((n) => `<span class="cap">${esc(n)}</span>`).join('')}</div>
     <p class="lmeta"><span class="num">${m.pieces}</span> <span data-en="pattern pieces" data-tr="kalıp parçası">pattern pieces</span> · <span class="num">${m.fabric}</span> m <span data-en="fabric at 140 cm" data-tr="140 cm kumaş">fabric at 140 cm</span> · <span class="ok" data-en="validator clean" data-tr="validator temiz">validator clean</span></p>
   </div>
-  <div class="figwrap">${svgOf(m.slug)}</div>
+  <a class="figwrap" href="${detail}">${svgOf(m.slug)}</a>
   ${oov ? `<p class="honest" data-en="Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:" data-tr="Siluet olarak tam çizildi. Motor bu yüzey detaylarını çizmez, bu yüzden sessizce atlanmaz, belirtilir:">Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:</p><div class="caps">${oov}</div>` : ''}
+  <p class="detaillink"><a href="${detail}" data-en="See the sewing details and download the pattern →" data-tr="Dikiş detaylarını gör ve kalıbı indir →">See the sewing details and download the pattern →</a></p>
 </section>`;
 }).join('\n');
 
@@ -82,7 +87,9 @@ const html = `<!DOCTYPE html>
   .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:40px}
   .look{margin:0 0 56px;padding:0 0 40px;border-bottom:1px solid var(--bb-line)}
   .look:last-child{border-bottom:none}
-  .lhead h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:30px;font-weight:400;color:var(--cherry);margin:0 0 4px}
+  .lhead h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:30px;font-weight:400;margin:0 0 4px}
+  .lhead h2 .lhead-link{color:var(--cherry);text-decoration:none}
+  .lhead h2 .lhead-link:hover{text-decoration:underline;text-underline-offset:3px}
   .era{font-size:12.5px;letter-spacing:.4px;color:#5b7089;margin-bottom:12px}
   .era .period{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
   .lline{font-size:15.5px;color:var(--ink);max-width:64ch;margin-bottom:14px}
@@ -92,9 +99,13 @@ const html = `<!DOCTYPE html>
   .lmeta{font-size:13px;color:#5b7089;letter-spacing:.3px;margin-bottom:22px}
   .lmeta .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
   .lmeta .ok{color:var(--bb-deep)}
-  .figwrap{border:1px solid var(--bb-line);background:#fff;box-shadow:0 6px 18px rgba(63,116,168,.08);padding:18px;margin-bottom:16px;border-radius:3px}
+  .figwrap{display:block;border:1px solid var(--bb-line);background:#fff;box-shadow:0 6px 18px rgba(63,116,168,.08);padding:18px;margin-bottom:16px;border-radius:3px;text-decoration:none}
+  a.figwrap:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
   .figwrap svg{width:100%;height:auto}
   .honest{font-size:13px;color:#5b7089;font-style:italic;margin:4px 0 10px;max-width:70ch}
+  .detaillink{margin:12px 0 0;font-size:14px}
+  .detaillink a{color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .detaillink a:hover{color:var(--bb-deep)}
   footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
   footer a{color:var(--navy);text-decoration:none}
   body::before{content:"";display:block;height:12px;
