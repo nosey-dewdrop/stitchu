@@ -14,6 +14,7 @@
     "drawnBy": "in-vocab from day one",
     "photos": 4,
     "flat": "boat-neck-linen-shell-flat.svg",
+    "onFigure": "boat-neck-linen-shell-figure.svg",
     "closure": null
   },
   {
@@ -33,6 +34,7 @@
     "drawnBy": "in-vocab from day one",
     "photos": 1,
     "flat": "scoop-neck-tank-mini-dress-flat.svg",
+    "onFigure": "scoop-neck-tank-mini-dress-figure.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -50,6 +52,7 @@
     "drawnBy": "the front button placket",
     "photos": 4,
     "flat": "boat-neck-button-down-top-flat.svg",
+    "onFigure": "boat-neck-button-down-top-figure.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -67,6 +70,7 @@
     "drawnBy": "the front button placket",
     "photos": 1,
     "flat": "gingham-button-blouse-flat.svg",
+    "onFigure": "gingham-button-blouse-figure.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -87,6 +91,7 @@
     "drawnBy": "the collar family and the button placket",
     "photos": 1,
     "flat": "mandarin-collar-fitted-blouse-flat.svg",
+    "onFigure": "mandarin-collar-fitted-blouse-figure.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -107,6 +112,7 @@
     "drawnBy": "the fabric back-waist tie",
     "photos": 2,
     "flat": "back-tie-shift-mini-dress-flat.svg",
+    "onFigure": "back-tie-shift-mini-dress-figure.svg",
     "closure": null
   },
   {
@@ -125,6 +131,7 @@
     "drawnBy": "the fabric back tie",
     "photos": 1,
     "flat": "square-neck-back-tie-babydoll-top-flat.svg",
+    "onFigure": "square-neck-back-tie-babydoll-top-figure.svg",
     "closure": null
   },
   {
@@ -146,6 +153,7 @@
     "drawnBy": "the gathered bust panel and the back-waist bow",
     "photos": 3,
     "flat": "empire-waist-tie-back-dress-flat.svg",
+    "onFigure": "empire-waist-tie-back-dress-figure.svg",
     "closure": null
   },
   {
@@ -167,6 +175,7 @@
     "drawnBy": "the front bust drawstring gather",
     "photos": 1,
     "flat": "square-neck-drawstring-babydoll-dress-flat.svg",
+    "onFigure": "square-neck-drawstring-babydoll-dress-figure.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -191,6 +200,7 @@
     "drawnBy": "the shaped open-back cutout",
     "photos": 1,
     "flat": "open-back-princess-mini-dress-flat.svg",
+    "onFigure": "open-back-princess-mini-dress-figure.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -212,6 +222,7 @@
     "drawnBy": "the open-back cutout with a tie-back closure",
     "photos": 3,
     "flat": "open-back-tie-back-mini-dress-flat.svg",
+    "onFigure": "open-back-tie-back-mini-dress-figure.svg",
     "closure": null
   },
   {
@@ -235,6 +246,7 @@
     "drawnBy": "the peter-pan collar, the puff sleeve head and the smocked yoke",
     "photos": 2,
     "flat": "peter-pan-collar-puff-sleeve-babydoll-dress-flat.svg",
+    "onFigure": "peter-pan-collar-puff-sleeve-babydoll-dress-figure.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -257,6 +269,7 @@
     "drawnBy": "the ruffled shoulder straps, the shirred bust yoke and the front tie",
     "photos": 1,
     "flat": "ruffled-strap-milkmaid-babydoll-dress-flat.svg",
+    "onFigure": "ruffled-strap-milkmaid-babydoll-dress-figure.svg",
     "closure": "invisible zipper (center back)"
   },
   {
@@ -279,6 +292,7 @@
     "drawnBy": "the pointed shirt collar, the smocked chest yoke and the gathered puff sleeve head",
     "photos": 1,
     "flat": "shirt-collar-smocked-babydoll-top-flat.svg",
+    "onFigure": "shirt-collar-smocked-babydoll-top-figure.svg",
     "closure": "button placket (center front)"
   },
   {
@@ -300,6 +314,7 @@
     "drawnBy": "the gathered bust panel under the empire seam and the back-waist bow",
     "photos": 3,
     "flat": "gathered-bust-empire-mini-dress-flat.svg",
+    "onFigure": "gathered-bust-empire-mini-dress-figure.svg",
     "closure": null
   }
 ]
