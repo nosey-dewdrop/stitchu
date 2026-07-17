@@ -12,7 +12,7 @@ export function tieClosureValue(spec) {
 }
 
 // SleeveCap enum (must match engine/src/measurements.hpp order). 0 = Plain.
-const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2 };
+const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2, cap: 3 };
 export function sleeveCapValue(spec) {
   return SLEEVE_CAP[spec && spec.sleeveCap] || 0;
 }
@@ -63,6 +63,14 @@ export function peplumValue(spec) {
   return PEPLUM_STYLE[spec && spec.peplum] || 0;
 }
 
+// PlacketStyle enum (must match engine/src/placket.hpp order). 0 = None.
+// The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
+const PLACKET_STYLE = { none: 0, standard: 1, asymmetric: 2 };
+export function placketStyleValue(spec) {
+  if (spec && spec.placketStyle) return PLACKET_STYLE[spec.placketStyle] || 0;
+  return spec && spec.frontPlacket === true ? 1 : 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -99,6 +107,7 @@ export async function grade(spec, fromLabel, toLabel) {
     backSlitValue(spec),    // Loop M1: back hem slit / walking vent
     ruffledStrapsValue(spec), // queue #3: ruffled shoulder straps
     peplumValue(spec),      // R1.1: peplum flare
+    placketStyleValue(spec), // R1.2: asymmetric placket
   );
   return JSON.parse(json);
 }
@@ -126,6 +135,7 @@ export async function draft(spec, measurements) {
     backSlitValue(spec),         // Loop M1: back hem slit / walking vent
     ruffledStrapsValue(spec),    // queue #3: ruffled shoulder straps
     peplumValue(spec),           // R1.1: peplum flare
+    placketStyleValue(spec),     // R1.2: asymmetric placket
   );
   return JSON.parse(json);
 }

@@ -221,11 +221,14 @@ export function missingFeatures(seen, lang) {
   }
 
   // sleeve head, only when it is NOT plain AND the engine did not draw it.
-  // Loop 6: the engine now DRAWS a gathered/puff head directly (raised + widened
-  // cap + crown gather), flagged by seen.sleeveCapDrawn, so those no longer list
-  // as missing. A cap sleeve (true short cap SHAPE) still stays honest.
+  // Loop 6: the engine draws a gathered/puff head directly (raised + widened cap
+  // + crown gather), flagged by seen.sleeveCapDrawn. R1.2: the engine now also
+  // draws the short CAP-sleeve wing (seen.capSleeveDrawn). A drawstring-gathered
+  // sleeve stays honest.
   if (seen.sleeveHead && seen.sleeveHead !== 'plain') {
-    const headDrawn = (seen.sleeveHead === 'gathered' || seen.sleeveHead === 'puffed') && seen.sleeveCapDrawn;
+    const headDrawn =
+      ((seen.sleeveHead === 'gathered' || seen.sleeveHead === 'puffed') && seen.sleeveCapDrawn) ||
+      (seen.sleeveHead === 'capped' && seen.capSleeveDrawn);
     if (!headDrawn) {
       const d = SLEEVEHEAD_DERIVATIVE[seen.sleeveHead];
       push((L === 'tr' ? sleeveHeadLabelTr(seen.sleeveHead) : sleeveHeadLabelEn(seen.sleeveHead)), d ? d[L] : null);
@@ -293,6 +296,15 @@ export function missingFeatures(seen, lang) {
   // construction the engine does NOT draft and stays honest.
   const peplumTerm = (t) => /peplum|waist flounce|waist frill/i.test(t) &&
     !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t);
+  // R1.2: an asymmetric button placket is now drawn (the CF stand shifted off
+  // center), so an outOfVocab term naming an asymmetric/offset/diagonal button
+  // front is no longer missing. It must name a button/placket closure.
+  const asymPlacketTerm = (t) =>
+    /(asymmetric|asymmetrical|offset|off[\s-]?cent|diagonal)/i.test(t) &&
+    /(button|placket|closure|front)/i.test(t);
+  // R1.2: the short cap-sleeve wing is now drawn, so an outOfVocab term naming a
+  // "cap sleeve" is no longer missing. A dropped/off-shoulder sleeve is different.
+  const capSleeveTerm = (t) => /\bcap\s*sleeve/i.test(t) && !/drop|off[\s-]?shoulder/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -300,6 +312,8 @@ export function missingFeatures(seen, lang) {
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (seen.peplumDrawn && peplumTerm(label)) continue;
+    if (seen.placketAsymDrawn && asymPlacketTerm(label)) continue;
+    if (seen.capSleeveDrawn && capSleeveTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);
