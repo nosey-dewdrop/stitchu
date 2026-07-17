@@ -772,15 +772,19 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // cutting-line offset (notches sit on the sewing line). A dress always gets
     // the invisible center-back zipper (see wearability::hasDonningOpening).
     // A dress carries an invisible CB zipper UNLESS its own back opening/closure
-    // already opens the back: an open-back cutout, a back tie/back-waist bow, a
-    // front placket, or a halter (opens at the nape) — mirror hasDonningOpening
-    // so we never stamp a redundant zipper onto a garment that opens elsewhere.
+    // already opens the back: a DONNING open-back (a deep low-open-back), a back
+    // tie/back-waist bow, a front placket, or a halter (opens at the nape) —
+    // mirror hasDonningOpening so we never stamp a redundant zipper onto a
+    // garment that opens elsewhere. A decorative round/square/keyhole cutout is a
+    // small faced hole on the CB fold — it does NOT open the tube, so the dress
+    // still needs its zipper (opensForDonning is the single source of truth).
     const auto tiePl = static_cast<TiePlacement>(spec.tieClosure);
-    const bool backAlreadyOpens =
-        spec.backOpening != static_cast<int>(BackOpening::None) ||
-        spec.frontPlacket || spec.neckline == Neckline::Halter ||
+    const bool tieOpensBack =
         tiePl == TiePlacement::TieBack || tiePl == TiePlacement::BackWaist ||
         tiePl == TiePlacement::BackWaistBow;
+    const bool backAlreadyOpens =
+        OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
+        spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack;
     annotateTechnical(pattern,
         /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
 

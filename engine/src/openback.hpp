@@ -45,5 +45,17 @@ inline constexpr double keyholeHalfW = 0.24; // keyhole opening half-width / len
 // never fails silently.
 bool apply(DraftedPattern& pattern, BackOpening shape);
 
+// Does this back opening actually open the garment enough to DON it (get the
+// body through), or is it a decorative enclosed hole that still needs its own
+// closure? A round/square/keyhole cutout is a small faced hole worked on the CB
+// FOLD — the tube stays closed, so a fitted woven garment still needs a zipper.
+// A LowV is a deep low-open-back that spreads the CB apart far enough to step
+// into. This is the single source of truth shared by the zipper-stamp
+// (garment.cpp) and the wearability gate (wearability.cpp): a cutout that does
+// NOT don must keep the CB zipper, or the garment is unwearable.
+inline bool opensForDonning(BackOpening shape) {
+    return shape == BackOpening::LowV;
+}
+
 } // namespace OpenBackBlock
 } // namespace stitchu

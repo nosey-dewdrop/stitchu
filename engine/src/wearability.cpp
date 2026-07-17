@@ -68,8 +68,11 @@ bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
     // A keyhole is a small opening but it releases the neck edge (the tie/button
     // at the top lets the head through a crew that would otherwise be sealed).
     if (spec.keyhole) return true;
-    // A back opening (round/low-V/square/keyhole cutout) opens the back.
-    if (spec.backOpening != static_cast<int>(BackOpening::None)) return true;
+    // A back opening only donns the garment if it actually spreads the CB apart
+    // (a deep low-open-back). A round/square/keyhole cutout is a small faced hole
+    // on the CB fold — the tube stays closed, so it does NOT let the body in and
+    // is NOT a donning opening (garment.cpp keeps the CB zipper for it).
+    if (OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening))) return true;
     // A back tie-back or back-waist closure opens/ties at the back; a front-neck
     // bow or cuff tie is decorative and does NOT let a head through.
     const auto tie = static_cast<TiePlacement>(spec.tieClosure);
