@@ -103,23 +103,6 @@
     "photos": 2
   },
   {
-    "slug": "square-neck-back-tie-babydoll-top",
-    "style": "Square-neck back-tie babydoll top",
-    "pieces": 5,
-    "pieceNames": [
-      "Top Front",
-      "Top Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
-      "Back Tie (sırt bağı)"
-    ],
-    "fabric": 1.8,
-    "garment": "top",
-    "patch": "1.4",
-    "drawnBy": "the fabric back tie",
-    "photos": 1
-  },
-  {
     "slug": "empire-waist-tie-back-dress",
     "style": "Empire-waist tie-back dress",
     "pieces": 8,
@@ -181,26 +164,6 @@
     "patch": "2.0",
     "drawnBy": "the shaped open-back cutout",
     "photos": 1
-  },
-  {
-    "slug": "open-back-tie-back-mini-dress",
-    "style": "Open-back tie-back mini dress",
-    "pieces": 8,
-    "pieceNames": [
-      "Bodice Front",
-      "Bodice Back",
-      "Bias binding (neckline)",
-      "Bias binding (armholes)",
-      "Skirt Front",
-      "Skirt Back",
-      "Waist Tie (bel bağı)",
-      "Open Back Facing (round)"
-    ],
-    "fabric": 1.6,
-    "garment": "dress",
-    "patch": "2.0",
-    "drawnBy": "the open-back cutout with a tie-back closure",
-    "photos": 3
   },
   {
     "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
