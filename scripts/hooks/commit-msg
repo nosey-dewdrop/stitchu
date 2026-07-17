@@ -1,0 +1,10 @@
+#!/bin/sh
+# Rejects any commit whose message contains a "Co-Authored-By" trailer
+# (case-insensitive). Commits in this repo are authored by Damla only.
+msg_file="$1"
+if grep -iq 'co-authored-by' "$msg_file"; then
+  echo "commit-msg hook: 'Co-Authored-By' trailers are forbidden in this repo." >&2
+  echo "Remove the Co-Authored-By line and commit again." >&2
+  exit 1
+fi
+exit 0
