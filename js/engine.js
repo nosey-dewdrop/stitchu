@@ -103,6 +103,27 @@ export function shoulderStyleValue(spec) {
   return SHOULDER_STYLE[spec && spec.shoulderStyle] || 0;
 }
 
+// ButtonRow enum (must match engine/src/buttonrow.hpp order). 0 = None.
+const BUTTON_ROW = { none: 0, functional: 1, decorative: 2 };
+export function buttonRowValue(spec) {
+  return BUTTON_ROW[spec && spec.buttonRow] || 0;
+}
+// ExposedZip enum (must match engine/src/exposedzip.hpp order). 0 = None.
+const EXPOSED_ZIP = { none: 0, centerFront: 1, centerBack: 2 };
+export function exposedZipValue(spec) {
+  return EXPOSED_ZIP[spec && spec.exposedZip] || 0;
+}
+// BackDetail enum (must match engine/src/backdetail.hpp order). 0 = None.
+const BACK_DETAIL = { none: 0, ruffle: 1, cape: 2, flounce: 3 };
+export function backDetailValue(spec) {
+  return BACK_DETAIL[spec && spec.backDetail] || 0;
+}
+// BardotStyle enum (must match engine/src/offshoulder.hpp order). 0 = None.
+const BARDOT_STYLE = { none: 0, plain: 1, frill: 2 };
+export function bardotStyleValue(spec) {
+  return BARDOT_STYLE[spec && spec.bardotStyle] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
@@ -145,6 +166,10 @@ export async function grade(spec, fromLabel, toLabel) {
     cuffStyleValue(spec),   // patch 3.13: sleeve-end cuff
     hemShapeValue(spec),    // patch 3.15: hem shape
     shoulderStyleValue(spec), // patch 3.13: dropped shoulder / raglan
+    buttonRowValue(spec),   // vocab: button row
+    exposedZipValue(spec),  // vocab: exposed zipper
+    backDetailValue(spec),  // vocab: back detail
+    bardotStyleValue(spec), // vocab: off-shoulder / bardot
   );
   return JSON.parse(json);
 }
@@ -178,6 +203,10 @@ export async function draft(spec, measurements) {
     cuffStyleValue(spec),        // patch 3.13: sleeve-end cuff
     hemShapeValue(spec),         // patch 3.15: hem shape
     shoulderStyleValue(spec),    // patch 3.13: dropped shoulder / raglan
+    buttonRowValue(spec),        // vocab: button row
+    exposedZipValue(spec),       // vocab: exposed zipper
+    backDetailValue(spec),       // vocab: back detail
+    bardotStyleValue(spec),      // vocab: off-shoulder / bardot
   );
   return JSON.parse(json);
 }

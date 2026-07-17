@@ -210,7 +210,10 @@ export function missingFeatures(seen, lang) {
   // ruffledStrapsDrawn), so it no longer lists as missing. A spaghetti / one-
   // shoulder / off-shoulder / halter strap stays honest (a different construction).
   if (seen.straps && seen.straps.type && !STRAP_DRAWN.includes(seen.straps.type)) {
-    const strapDrawn = seen.ruffledStrapsDrawn && seen.straps.type === 'ruffled';
+    // vocab 2026-07-17: an off-shoulder / bardot strap read is now DRAWN as an
+    // off-shoulder band (bardotDrawn), so it no longer lists as missing.
+    const strapDrawn = (seen.ruffledStrapsDrawn && seen.straps.type === 'ruffled') ||
+      (seen.bardotDrawn && seen.straps.type === 'offShoulder');
     if (!strapDrawn) {
       const d = STRAP_DERIVATIVE[seen.straps.type];
       push((L === 'tr' ? strapLabelTr(seen.straps.type) : strapLabelEn(seen.straps.type)), d ? d[L] : null);
@@ -258,7 +261,12 @@ export function missingFeatures(seen, lang) {
   const tieBackDrawn = seen.tieDrawn && seen.backDetail === 'tieBack';
   const openBackDrawn = seen.backOpeningDrawn &&
     ['openBack', 'keyholeBack', 'vBack'].includes(seen.backDetail);
-  if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn && !openBackDrawn) {
+  // vocab 2026-07-17: a cape/ruffle/flounce back is now DRAWN as a separate piece
+  // (backDetailDrawn), so it no longer lists as missing.
+  const backDetailPieceDrawn = seen.backDetailDrawn &&
+    ['cape', 'ruffle', 'flounce', 'backCape', 'backRuffle', 'backFlounce'].includes(seen.backDetail);
+  if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn && !openBackDrawn &&
+      !backDetailPieceDrawn) {
     const d = BACKDETAIL_DERIVATIVE[seen.backDetail];
     push((L === 'tr' ? backLabelTr(seen.backDetail) : backLabelEn(seen.backDetail)), d ? d[L] : null);
   }
@@ -340,6 +348,27 @@ export function missingFeatures(seen, lang) {
   const hemShapeTerm = (t) =>
     /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
     !/handkerchief|pointed|asymmetric|diagonal/i.test(t);
+  // vocab 2026-07-17: an off-shoulder / bardot neckline is now drawn (top edge
+  // dropped below the shoulder + elastic casing), so an outOfVocab term naming an
+  // off-shoulder / bardot neck is no longer missing. A one-shoulder / strapless
+  // off-shoulder stays honest.
+  const bardotTerm = (t) => /off[\s-]?shoulder|bardot/i.test(t) &&
+    !/one[\s-]?shoulder|strapless|structured|boned/i.test(t);
+  // vocab 2026-07-17: a back ruffle / cape / flounce is now drawn as a separate
+  // piece, so an outOfVocab term naming a caped/ruffled/flounced BACK is no longer
+  // missing. A hood / watteau / shoulder cape stays honest.
+  const backDetailTerm = (t) =>
+    /(back|cape).*(cape|ruffle|frill|flounce|cascade)|caped back|cape back|pelerin/i.test(t) &&
+    !/hood|watteau|train|shoulder cape/i.test(t);
+  // vocab 2026-07-17: an exposed / visible zipper is now drawn as a teeth glyph on
+  // the CF/CB seam, so an outOfVocab term naming an exposed/visible zip is no
+  // longer missing. A separating / two-way / diagonal zip stays honest.
+  const exposedZipTerm = (t) => /(exposed|visible|statement|contrast)\s*zip(per)?/i.test(t) &&
+    !/separating|two[\s-]?way|diagonal/i.test(t);
+  // vocab 2026-07-17: a decorative / functional button row is now drawn as real
+  // button circles down the front, so an outOfVocab term naming a button
+  // row/front is no longer missing when a row was drawn.
+  const buttonRowTerm = (t) => /button\s*(row|front|down|placket|closure)|row of buttons/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
@@ -354,6 +383,10 @@ export function missingFeatures(seen, lang) {
     if (bowNeck && bowNeckTerm(label)) continue;
     if (seen.cuffDrawn && cuffTerm(label)) continue;
     if (seen.hemShapeDrawn && hemShapeTerm(label)) continue;
+    if (seen.bardotDrawn && bardotTerm(label)) continue;
+    if (seen.backDetailDrawn && backDetailTerm(label)) continue;
+    if (seen.exposedZipDrawn && exposedZipTerm(label)) continue;
+    if (seen.buttonRowDrawn && buttonRowTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

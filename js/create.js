@@ -54,6 +54,24 @@ const SPEC_GROUPS = [
   // piece + a facing trued to the opening. Only on a dress/top (needs a back
   // bodice). Independent of a tie-back: a dress can have both.
   { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
+  // vocab 2026-07-17: back detail (arka pelerin/fırfır — Damla "arkası pelerinli/
+  // fırfırlı"). A separate cut piece at the back neck: gathered ruffle, draped
+  // cape, or circular flounce. Only a dress/top (needs a back bodice).
+  { key: 'backDetail', label: 'back detail', trLabel: 'arka detay', options: [['none', 'none', 'yok'], ['ruffle', 'back ruffle', 'arka fırfır'], ['cape', 'back cape', 'arka pelerin'], ['flounce', 'back flounce', 'arka volan']], for: (s) => s.garment !== 'skirt' },
+  // vocab 2026-07-17: off-shoulder / bardot neckline (omuz açık / bardot). The
+  // bodice top edge drops below the shoulder onto an elastic casing (+ optional
+  // bardot frill) — the pink gingham dress. Needs a plain (dart) bodiced garment.
+  { key: 'bardotStyle', label: 'off-shoulder', trLabel: 'omuz açık (bardot)', options: [['none', 'none', 'yok'], ['plain', 'off-shoulder band', 'omuz açık bant'], ['frill', 'bardot (with frill)', 'bardot (fırfırlı)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.shaping === 'dart' },
+  // vocab 2026-07-17: button row (düğme sırası). A drawn vertical row of buttons —
+  // functional (a real CF opening) or decorative (buttons for looks). Dress/top.
+  { key: 'buttonRow', label: 'button row', trLabel: 'düğme sırası', options: [['none', 'none', 'yok'], ['functional', 'functional (opens)', 'fonksiyonel (açılır)'], ['decorative', 'decorative', 'süs (kapanmaz)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  // vocab 2026-07-17: exposed / visible zipper (görünür fermuar). A visible design
+  // zip on the CF or CB seam (distinct from the hidden CB zip a dress carries).
+  { key: 'exposedZip', label: 'exposed zip', trLabel: 'görünür fermuar', options: [['none', 'none', 'yok'], ['centerFront', 'center front', 'ön ortası'], ['centerBack', 'center back', 'arka ortası']], for: (s) => s.garment !== 'skirt' },
+  // vocab 2026-07-17: front tie (önden bağlamalı — Damla). A front bow / wrap-
+  // front tie / tie-front waist as self-fabric strips. A wrap-front tie also
+  // serves as the front opening. Only a dress/top (needs a front bodice).
+  { key: 'tieClosure', label: 'front tie', trLabel: 'ön bağ', options: [['none', 'none', 'yok'], ['frontNeckBow', 'front neck bow', 'ön yaka fiyonku'], ['frontWaistTie', 'tie-front waist', 'önden bel bağı'], ['frontWaistBow', 'front waist bow', 'ön bel fiyonku'], ['wrapFront', 'wrap-front tie', 'kruvaze (önden bağlı)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
@@ -383,6 +401,54 @@ function pickPlacket(seen, frontButtons) {
     /(button|placket|closure|front)/.test(words);
   if (asym) return 'asymmetric';
   return frontButtons ? 'standard' : null;
+}
+
+// vocab 2026-07-17. Map the vision oov/details to a back detail (arka pelerin/
+// fırfır). The engine draws a back-neck ruffle, cape, or circular flounce.
+// Returns 'ruffle' | 'cape' | 'flounce' or null. A hood / watteau / shoulder cape
+// stays honest.
+function pickBackDetail(seen) {
+  const words = [
+    seen.backDetail || '',
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/back.*(cape|ruffle|frill|flounce|cascade)|caped back|pelerin|cape back/.test(words)) return null;
+  if (/hood|watteau|train|shoulder cape/.test(words)) return null;
+  if (/cape|pelerin/.test(words)) return 'cape';
+  if (/flounce|cascade/.test(words)) return 'flounce';
+  if (/ruffle|frill/.test(words)) return 'ruffle';
+  return null;
+}
+
+// vocab 2026-07-17. Map the vision to an exposed/visible zipper (görünür fermuar).
+// Returns 'centerFront' | 'centerBack' or null. A separating / two-way / diagonal
+// zip stays honest.
+function pickExposedZip(seen) {
+  const words = [
+    seen.closure ? `${seen.closure.type || ''} ${seen.closure.location || ''}` : '',
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/exposed zip|visible zip|expose[d]? zipper|statement zip|contrast zip/.test(words)) return null;
+  if (/separating|two[\s-]?way|diagonal|pocket/.test(words)) return null;
+  if (/back/.test(words)) return 'centerBack';
+  return 'centerFront';
+}
+
+// vocab 2026-07-17. Map the vision to an off-shoulder / bardot neckline (omuz
+// açık). Returns 'frill' | 'plain' or null. A one-shoulder / strapless / structured
+// off-shoulder stays honest.
+function pickBardot(seen) {
+  const words = [
+    seen.neckline || '',
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (!/off[\s-]?shoulder|bardot|off the shoulder|omuz açık/.test(words)) return null;
+  if (/one[\s-]?shoulder|strapless|structured|boned/.test(words)) return null;
+  if (/frill|ruffle|flounce|bardot frill/.test(words)) return 'frill';
+  return 'plain';
 }
 
 function el(tag, className, text) {
@@ -748,6 +814,28 @@ function showSpec() {
           ((spec.garment === 'skirt' || spec.garment === 'dress') &&
            (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
         spec.hemShape = (hemShape && hemHostable) ? hemShape : 'straight';
+        // vocab 2026-07-17: back detail (arka pelerin/fırfır). A separate ruffle/
+        // cape/flounce piece at the back neck. Only a dress/top hosts one.
+        const backDet = pickBackDetail(seen);
+        spec.backDetail = (backDet && spec.garment !== 'skirt') ? backDet : 'none';
+        // vocab: exposed / visible zipper (görünür fermuar). A visible design zip.
+        spec.exposedZip = pickExposedZip(seen) || 'none';
+        // vocab: off-shoulder / bardot (omuz açık). The bodice top drops below the
+        // shoulder onto an elastic casing (+ optional frill). Needs a plain (dart)
+        // bodiced garment — a princess/skirt garment stays honest.
+        const bardot = pickBardot(seen);
+        const bardotHostable = spec.garment !== 'skirt' && spec.neckline !== 'halter' &&
+          spec.shaping !== 'princess';
+        spec.bardotStyle = (bardot && bardotHostable) ? bardot : 'none';
+        // A drawn button row is DECORATIVE from vision (a functional row is the
+        // placket path above); a visible run of buttons with no read closure reads
+        // decorative. A front placket already drew a functional row, so only add a
+        // decorative row when the placket did NOT fire.
+        const buttonsRead = /button/.test(
+          (Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' ') : '') + ' ' + (seen.details || ''),
+        );
+        spec.buttonRow = (buttonsRead && spec.placketStyle === 'none' && !spec.frontPlacket &&
+          spec.garment !== 'skirt' && spec.neckline !== 'halter') ? 'decorative' : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -810,6 +898,23 @@ function showSpec() {
           // as missing. A pleated/gathered/draped/tiered peplum stays honest
           // (peplum none — a different construction the engine does not draw).
           peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
+          // vocab 2026-07-17: an OFF-SHOULDER / bardot neckline is now DRAWN
+          // (top edge dropped below the shoulder + elastic casing + optional
+          // frill), so the honesty layer must NOT list off-shoulder as missing. A
+          // one-shoulder / strapless / structured off-shoulder stays honest.
+          bardotDrawn: !!(spec.bardotStyle && spec.bardotStyle !== 'none'),
+          // vocab 2026-07-17: a BACK DETAIL (ruffle/cape/flounce at the back neck)
+          // is now DRAWN as a separate piece, so the honesty layer must NOT list a
+          // caped/ruffled/flounced back as missing. A hood/watteau stays honest.
+          backDetailDrawn: !!(spec.backDetail && spec.backDetail !== 'none'),
+          // vocab 2026-07-17: an EXPOSED / visible zipper (CF or CB) is now DRAWN
+          // as a teeth glyph + opened seam, so the honesty layer must NOT list an
+          // exposed zip as missing. A separating/two-way zip stays honest.
+          exposedZipDrawn: !!(spec.exposedZip && spec.exposedZip !== 'none'),
+          // vocab 2026-07-17: a decorative/functional BUTTON ROW is now DRAWN as
+          // real button circles down the front, so the honesty layer must NOT list
+          // a plain button row as missing.
+          buttonRowDrawn: !!(spec.buttonRow && spec.buttonRow !== 'none'),
           // patch 3.12: a patch pocket OR a side-seam in-seam pocket is now DRAWN
           // as real piece(s) + a placement/mouth mark, so the honesty layer must
           // NOT list that pocket as missing. A welt/besom/bound/cargo/kangaroo
