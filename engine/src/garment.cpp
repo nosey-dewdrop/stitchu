@@ -196,10 +196,14 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     steps.push_back(std::string("Fold the free ") + (halter ? "binding" : "facing") +
         " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
     if (!sleeveless) {
-        steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
-        if (spec.sleeveCap != SleeveCap::Plain) {
-            steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
-                (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+        if (spec.sleeveCap == SleeveCap::Cap) {
+            steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
+        } else {
+            steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
+            if (spec.sleeveCap != SleeveCap::Plain) {
+                steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
+                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+            }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
             steps.push_back("Gather the sleeve hem along the marked line and attach the interfaced cuffs.");
@@ -334,10 +338,14 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     } else if (sleeveless) {
         steps.push_back("Finish the armholes with bias binding.");
     } else {
-        steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");
-        if (spec.sleeveCap != SleeveCap::Plain) {
-            steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
-                (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+        if (spec.sleeveCap == SleeveCap::Cap) {
+            steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
+        } else {
+            steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");
+            if (spec.sleeveCap != SleeveCap::Plain) {
+                steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
+                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+            }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
             steps.push_back("Gather the sleeve hem along the marked line and attach the interfaced cuffs.");
@@ -387,9 +395,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // so the base draft is byte-identical with it off. The bust level is read
     // from the piece's own apex notch inside PlacketBlock (0 = "use the notch /
     // fall back to the run midpoint").
-    if (spec.frontPlacket &&
+    // R1.2: an ASYMMETRIC placket (placketStyle == Asymmetric) carries the closure
+    // off center. It draws even when frontPlacket is false; a Standard placket (or
+    // the legacy bool) draws the symmetric CF stand (offset 0 → byte-identical).
+    const bool asymPlacket = spec.placketStyle == static_cast<int>(PlacketStyle::Asymmetric);
+    const bool stdPlacket = spec.frontPlacket ||
+                            spec.placketStyle == static_cast<int>(PlacketStyle::Standard);
+    if ((stdPlacket || asymPlacket) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
-        PlacketBlock::apply(pattern, 0.0);
+        PlacketBlock::apply(pattern, 0.0, asymPlacket ? PlacketBlock::asymOffset : 0.0);
     }
     // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): adds
     // separate tie pieces + a placement notch. Post-pass on the finished draft,

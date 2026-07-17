@@ -29,6 +29,15 @@ inline double capSpreadFrac(SleeveCap c) {
          : c == SleeveCap::Gathered ? gatheredSpreadFrac : 0.0;
 }
 
+// Cap sleeve (kısa kanat cap, R1.2). A cap sleeve is NOT a short straight sleeve
+// — it is a little WING that covers the top of the shoulder and dies away at the
+// underarm with no underarm seam. Its head is the ordinary set-in cap (so it
+// matches the armhole 1:1 and sets in like any sleeve), but instead of running
+// down to a hem the outer edge sweeps back up to the underarm points a short
+// depth below the cap. `capWingDepth` is how far the wing hangs below the cap
+// crown at the shoulder point (the classic 60–90 mm couture cap).
+inline constexpr double capWingDepth = 55;   // wing drop below the crown (mm)
+
 // Returns the sleeve pieces (sleeve + cuff for balloon); empty for sleeveless.
 // `cap` adds a gathered/puff head; Plain keeps the classic set-in cap exactly.
 std::vector<PatternPiece> draft(

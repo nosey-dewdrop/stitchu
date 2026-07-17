@@ -98,6 +98,14 @@ add_executable(sleeve_check tests/sleeve_check.cpp)
 target_link_libraries(sleeve_check PRIVATE engine)
 add_test(NAME sleeve_check COMMAND sleeve_check)
 
+add_executable(cap_sleeve_check tests/cap_sleeve_check.cpp)
+target_link_libraries(cap_sleeve_check PRIVATE engine)
+add_test(NAME cap_sleeve_check COMMAND cap_sleeve_check)
+
+add_executable(placket_asym_check tests/placket_asym_check.cpp)
+target_link_libraries(placket_asym_check PRIVATE engine)
+add_test(NAME placket_asym_check COMMAND placket_asym_check)
+
 add_executable(fit_proof tests/fit_proof.cpp)
 target_link_libraries(fit_proof PRIVATE engine)
 add_test(NAME fit_proof COMMAND fit_proof)

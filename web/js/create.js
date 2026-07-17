@@ -1,15 +1,15 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=58';
-import { applyStatic, getLang, t } from './i18n.js?v=58';
-import { draft, grade } from './engine.js?v=58';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=58';
-import { renderResult } from './render.js?v=58';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=59';
+import { applyStatic, getLang, t } from './i18n.js?v=59';
+import { draft, grade } from './engine.js?v=59';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=59';
+import { renderResult } from './render.js?v=59';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=58';
+} from './store.js?v=59';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -35,7 +35,7 @@ const SPEC_GROUPS = [
   // Loop 6: sleeve HEAD (cap) treatment. Puff = raised + gathered crown; gathered
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
-  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
+  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
   // Loop 8: drawstring / shirred / smocked gathering (büzgü), a separate gathered
   // panel (+ a drawstring cord) whose gathered edge is trued to the zone. Only on
   // a dress/top (needs a bodice to gather onto).
@@ -61,6 +61,10 @@ const SPEC_GROUPS = [
   // waist as a separate piece; only a waisted top/dress carries one (a
   // pleated/gathered/draped peplum stays honest → not offered here).
   { key: 'peplum', label: 'peplum', trLabel: 'peplum (bel volanı)', options: [['none', 'none', 'yok'], ['full', 'full circle', 'tam kloş'], ['half', 'half circle', 'yarım kloş'], ['pointed', 'pointed hem', 'sivri etek']], for: (s) => s.garment !== 'skirt' },
+  // R1.2: asymmetric button placket (asimetrik düğme patı). The classic front
+  // button stand shifted off center (the Jackie gingham). Only a dress/top hosts
+  // one; a symmetric CF placket is still set by the front-closure read separately.
+  { key: 'placketStyle', label: 'button placket', trLabel: 'düğme patı', options: [['none', 'none', 'yok'], ['standard', 'center front', 'ortadan'], ['asymmetric', 'asymmetric (off center)', 'asimetrik (yandan)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Princess is the engine default; darts are the legacy/advanced option.
   // Gathered and half-circle skirts have no waist shaping to convert.
@@ -73,7 +77,7 @@ const spec = {
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
-  ruffledStraps: 'none', peplum: 'none',
+  ruffledStraps: 'none', peplum: 'none', placketStyle: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -277,6 +281,24 @@ function pickPeplum(seen) {
   if (/pointed|handkerchief|dip|asymmetric/.test(words)) return 'pointed';
   if (/half[\s-]?circle/.test(words)) return 'half';
   return 'full';
+}
+
+// Map the vision's closure + oov to a placket style (R1.2). The engine draws a
+// symmetric CF button stand (Standard) and now also an ASYMMETRIC one (the CF
+// closure shifted off center — the Jackie gingham). Returns 'asymmetric',
+// 'standard', or null. `frontButtons` is whether a front button closure was read.
+function pickPlacket(seen, frontButtons) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+    seen.closure ? `${seen.closure.type || ''} ${seen.closure.location || ''}` : '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // Asymmetric = an off-center / diagonal / offset button front. It must name a
+  // button/placket closure so a non-closure "asymmetric hem" never matches.
+  const asym = /(asymmetric|asymmetrical|offset|off[\s-]?cent|diagonal)\b/.test(words) &&
+    /(button|placket|closure|front)/.test(words);
+  if (asym) return 'asymmetric';
+  return frontButtons ? 'standard' : null;
 }
 
 function el(tag, className, text) {
@@ -528,22 +550,33 @@ function showSpec() {
         if (typeof seen.keyhole === 'boolean') spec.keyhole = seen.keyhole ? 'keyhole' : 'none';
         // Front button placket (düğme patı): the engine now draws the grown-on
         // button stand + buttons/buttonholes when the vision reads a front
-        // button/placket closure (Loop 3). A back/side closure is not a front
-        // placket, so it stays in the honesty layer.
+        // button/placket closure (Loop 3), and R1.2 draws an ASYMMETRIC (off
+        // center) stand too. A back/side closure is not a front placket, so it
+        // stays in the honesty layer.
+        let frontButtons = false;
         if (seen.closure && (seen.closure.type === 'buttons' || seen.closure.type === 'placket')) {
           const loc = (seen.closure.location || '').toLowerCase();
           if (!loc || loc.includes('front') || loc.includes('center') || loc.includes('ön')) {
-            spec.frontPlacket = true;
+            frontButtons = true;
           }
         }
-        // Gathered / puff sleeve HEAD (Loop 6): the engine now RAISES + widens
-        // the cap and adds a crown gather when the vision reads a gathered or
-        // puffed sleeve head. `puffed` = raised puff, `gathered` = soft gather.
-        // A cap sleeve (short, not gathered) and drawstring-gathered sleeves stay
-        // in the honesty layer (the true cap SHAPE / drawstring casing aren't drawn).
+        // R1.2: pick the placket VARIANT. An asymmetric offset front is drawn even
+        // when the closure location was ambiguous (the oov/details name it). A
+        // symmetric front stand is Standard. Otherwise no placket.
+        const placket = pickPlacket(seen, frontButtons);
+        spec.placketStyle = placket || 'none';
+        // Keep the legacy bool in sync so the honesty layer + any bool consumer
+        // still fire for a symmetric front (asymmetric drives placketStyle only).
+        spec.frontPlacket = placket === 'standard';
+        // Gathered / puff / CAP sleeve HEAD (Loop 6 + R1.2): the engine now RAISES
+        // + widens the cap and adds a crown gather for a gathered/puffed head, and
+        // R1.2 draws the short CAP-sleeve WING. `puffed` = raised puff, `gathered`
+        // = soft gather, `capped` = a short cap wing. A drawstring-gathered sleeve
+        // (needs an arm casing) stays honest.
         if (seen.sleeveHead === 'puffed') spec.sleeveCap = 'puffed';
         else if (seen.sleeveHead === 'gathered') spec.sleeveCap = 'gathered';
-        // A gathered/puff head needs an actual sleeve to sit on; if the vision
+        else if (seen.sleeveHead === 'capped') spec.sleeveCap = 'cap';
+        // A gathered/puff/cap head needs an actual sleeve to sit on; if the vision
         // read a head but no sleeve style, give it a straight sleeve to carry it.
         if (spec.sleeveCap && spec.sleeveCap !== 'plain' && (!spec.sleeveStyle || spec.sleeveStyle === 'none')) {
           spec.sleeveStyle = 'straight';
@@ -611,17 +644,26 @@ function showSpec() {
           yoke: seen.yoke || null,
           backDetail: seen.backDetail || null,
           outOfVocab: Array.isArray(seen.outOfVocab) ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12) : [],
-          // Loop 3: the front button placket is now DRAWN, so the honesty layer
-          // must NOT list it as missing. Every other closure stays honest.
-          closureDrawn: spec.frontPlacket === true,
+          // Loop 3 + R1.2: the front button placket is now DRAWN (symmetric CF or
+          // asymmetric off-center), so the honesty layer must NOT list it as
+          // missing. Every other closure stays honest.
+          closureDrawn: spec.frontPlacket === true || spec.placketStyle === 'asymmetric',
+          // R1.2: an ASYMMETRIC button placket is now drawn, so an outOfVocab term
+          // naming it is no longer missing. A symmetric front stays covered by
+          // closureDrawn above.
+          placketAsymDrawn: spec.placketStyle === 'asymmetric',
           // Loop 4b: a simple applied tie/sash/bow is now DRAWN as strips, so
           // the honesty layer must NOT list that tie/back-tie as missing.
           // Drawstring-gathered ties are NOT drawn → tieDrawn false, stay honest.
           tieDrawn: spec.tieClosure && spec.tieClosure !== 'none',
-          // Loop 6: a gathered/puff sleeve HEAD is now DRAWN (raised + widened
-          // cap + crown gather), so the honesty layer must NOT list it as missing.
-          // A cap sleeve / drawstring-gathered sleeve stays honest (still true).
+          // Loop 6 + R1.2: a gathered/puff sleeve HEAD (raised + widened cap +
+          // crown gather) AND the short CAP-sleeve wing are now DRAWN, so the
+          // honesty layer must NOT list them as missing. A drawstring-gathered
+          // sleeve (needs an arm casing) stays honest.
           sleeveCapDrawn: !!(spec.sleeveCap && spec.sleeveCap !== 'plain'),
+          // R1.2: whether the drawn head is specifically the CAP wing (so the
+          // honesty layer can suppress the "cap sleeve" derivative note).
+          capSleeveDrawn: spec.sleeveCap === 'cap',
           // Loop 7/8: a stand/mock/flat/peter-pan/shirt collar is now DRAWN as a
           // real piece, so the honesty layer must NOT list it as missing. A
           // bias-bound / notched / sailor finish stays honest (collarType none).

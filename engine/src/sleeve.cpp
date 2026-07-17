@@ -101,10 +101,59 @@ std::vector<PatternPiece> draft(
     // (dresspatternmaking / M.Müller): a puff RAISES the cap by the spread amount;
     // a plain gathered head keeps the height. The biceps/hem width below is left
     // on the fitted base `width` so the sleeve still clears the arm. See FORMULAS.
-    const double spread = capSpreadFrac(cap) * width;      // 0 when Plain
+    const double spread = capSpreadFrac(cap) * width;      // 0 when Plain / Cap
     const double capWidth = width + spread;                // widened crown
     const double capRise = (cap == SleeveCap::Puffed) ? spread : 0.0;
-    capHeight += capRise;                                  // Plain: +0 → identical
+    capHeight += capRise;                                  // Plain/Cap: +0 → identical
+
+    // CAP SLEEVE WING (R1.2). A cap sleeve keeps the ordinary set-in cap head
+    // (the same cap curve, fitted to the armhole above so it sets in 1:1) but has
+    // NO underarm seam and NO length — the outer edge sweeps a short depth below
+    // the crown and back up to the underarm points, so a small wing covers the
+    // top of the shoulder and dies at the underarm. We draw it here as its own
+    // outline and return early; the full-sleeve body below is skipped. Only a
+    // Short cap is a cap sleeve — length is ignored (a cap has no length axis).
+    if (cap == SleeveCap::Cap) {
+        const double cHalf = width / 2;         // the fitted cap width (armhole-matched)
+        const Point cl{-cHalf, capHeight};      // left underarm point (cap base)
+        const Point cr{cHalf, capHeight};       // right underarm point
+        const Point apex{0, 0};                 // cap crown
+        // The wing hangs capWingDepth below the crown at the shoulder point and
+        // tapers to nothing at the underarm points, so the outer edge is a shallow
+        // arc from cl down past (0, capHeight + capWingDepth) back to cr.
+        const double wingY = capHeight + capWingDepth;
+        std::vector<PathCommand> capCmds{PathCommand::move(cl)};
+        // cap head (armhole edge): left underarm → crown → right underarm, the
+        // SAME S-curve the plain cap uses, so it eases into the armhole identically.
+        for (const auto& c : capCurve(cl, apex, true)) capCmds.push_back(c);
+        for (const auto& c : capCurve(apex, cr, false)) capCmds.push_back(c);
+        // outer wing edge: right underarm → wing point → left underarm (a shallow
+        // hem arc a short depth below the crown; the underarm ends meet the cap
+        // base so there is no seam to sew shut).
+        capCmds.push_back(PathCommand::curve(
+            {0, wingY}, {cHalf * 0.7, capHeight + capWingDepth * 0.55}, {cHalf * 0.35, wingY}));
+        capCmds.push_back(PathCommand::curve(
+            cl, {-cHalf * 0.35, wingY}, {-cHalf * 0.7, capHeight + capWingDepth * 0.55}));
+        capCmds.push_back(PathCommand::close());
+
+        // Notches on the cap so it matches the armhole notches when set in.
+        std::vector<PathCommand> capMarks{
+            PathCommand::move({-width * 0.18, capHeight * 0.18}),
+            PathCommand::line({-width * 0.18, capHeight * 0.05}),
+            PathCommand::move({width * 0.18, capHeight * 0.18}),
+            PathCommand::line({width * 0.18, capHeight * 0.05}),
+        };
+
+        PatternPiece capPiece;
+        capPiece.name = "Cap Sleeve";
+        capPiece.cutInstruction = "cut 2";
+        capPiece.commands = capCmds;
+        capPiece.markings = capMarks;
+        capPiece.hasGrainline = true;
+        capPiece.grainline = Grainline{{0, capHeight * 0.35}, {0, wingY - 12}};
+        capPiece.seamAllowance = 15;
+        return {capPiece};
+    }
 
     const double sleeveLength = totalLength(length, m.armLengthCM * 10, capHeight);
     const bool balloon = style == SleeveStyle::Balloon;

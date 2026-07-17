@@ -81,20 +81,32 @@ const DRAFTABLE = ['skirt', 'dress', 'top'];
 // stays frozen ground truth). Module-scope so both classify() and the summary's
 // element-accuracy metric share ONE source of truth.
 const DRAWN_SINCE = [
-  // loop 3: front button placket, grown-on stand — symmetric front only
-  (t) => /placket|button front closure/i.test(t) && !/asymmetric|back|double|loop/i.test(t),
+  // loop 3: front button placket, grown-on stand (symmetric CF). A BACK/DOUBLE
+  // placket stays missing; an ASYMMETRIC front is now drawn by its own rule below.
+  (t) => /placket|button front closure/i.test(t) && !/back|double|loop/i.test(t),
+  // R1.2: ASYMMETRIC button front placket — the engine now shifts the grown-on CF
+  // stand off center (the Jackie gingham). "asymmetric button front closure",
+  // "diagonal button placket", "asymmetric offset button placket" all draw. It
+  // must name a button/placket closure so a non-closure "asymmetric hem" never
+  // matches. A back asymmetric closure stays missing.
+  (t) => /(asymmetric|asymmetrical|offset|off[\s-]?cent|diagonal)/i.test(t) &&
+         /(button|placket|closure|front)/i.test(t) && !/back|hem/i.test(t),
   // loop 4b: simple applied fabric ties / sash / bow / tie-back closure, drawn
   // as separate self-fabric strips + placement notch. A DRAWSTRING that
   // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
   (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
          !/drawstring|gathered|shirr|smock/i.test(t),
-  // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine now raises +
-  // widens the cap and gathers the crown. Only the sleeve HEAD, and only the
-  // simple gather/puff. A "cap sleeve" is a SHORT-cap SHAPE (not a gathered
-  // head) → NOT drawn. A "drawstring gathered sleeve" needs a casing/channel →
-  // NOT drawn. Both of those stay honest/missing.
+  // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine raises + widens
+  // the cap and gathers the crown. Only the sleeve HEAD, and only the simple
+  // gather/puff. A "drawstring gathered sleeve" needs a casing/channel → NOT
+  // drawn (stays missing). The CAP sleeve is now drawn by its own rule below.
   (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
-         !/cap sleeve|drawstring|shirr|smock|casing|channel/i.test(t),
+         !/drawstring|shirr|smock|casing|channel/i.test(t),
+  // R1.2: CAP sleeve — the engine now drafts the short cap-sleeve WING (the set-in
+  // cap kept and matched to the armhole, cut off just below the notches so a small
+  // wing covers the shoulder with no underarm seam). "cap sleeve", "cap sleeves"
+  // draw. A dropped/off-shoulder sleeve is a different shape → stays missing.
+  (t) => /\bcap\s*sleeve/i.test(t) && !/drop|off[\s-]?shoulder/i.test(t),
   // loop 7/8: the collar FAMILY — a separate collar piece, neck edge trued to
   // the neckline: stand / mock / mandarin / flat / peter-pan / shirt collars,
   // with a round / pointed / scalloped outer edge. A special FINISH the engine
@@ -210,10 +222,14 @@ function structuralCoverage(entry, spec) {
 const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 // Reclassify cached entries against the CURRENT engine vocabulary (DRAWN_SINCE
 // grows loop by loop; the cached spec is still valid, only the verdict moves).
+let reclassified = 0;
 for (const entry of MANIFEST.photos) {
   const r = results[entry.file];
-  if (r && r.spec) Object.assign(r, classify(entry, r.spec));
+  if (r && r.spec) { Object.assign(r, classify(entry, r.spec)); reclassified += 1; }
 }
+// Persist the reclassified verdicts so a pure cache reclassify (0 live calls)
+// still leaves a snapshot on disk — the summary and the file agree.
+if (reclassified && existsSync(OUT)) writeFileSync(OUT, JSON.stringify(results, null, 1));
 const queue = MANIFEST.photos.filter((p) => !results[p.file]).slice(0, limit);
 console.log(`photos: ${MANIFEST.photos.length}, already done: ${Object.keys(results).length}, running: ${queue.length}, ip: ${myIP}, mode: ${FAST ? 'FAST (bypass token)' : 'SLOW (21s/call fuse pacing)'}`);
 const runStart = Date.now();

@@ -30,7 +30,7 @@ const ENUMS = {
   ruffle: ['none', 'single', 'tiered'],
   keyhole: ['none', 'keyhole'],
   tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies'],
-  sleeveCap: ['plain', 'gathered', 'puffed'],
+  sleeveCap: ['plain', 'gathered', 'puffed', 'cap'],
   collarType: ['none', 'stand', 'mock', 'flat', 'peterPan', 'shirt'],
   collarEdge: ['round', 'pointed', 'scallop'],
   gatherType: ['none', 'drawstring', 'shirred', 'smocked'],
@@ -39,13 +39,14 @@ const ENUMS = {
   backSlit: ['none', 'vent', 'slit'],
   ruffledStraps: ['none', 'ruffled'],
   peplum: ['none', 'full', 'half', 'pointed'],
+  placketStyle: ['none', 'standard', 'asymmetric'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
 const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5 };
 const tieInt = (s) => TIE_PLACEMENT[s] || 0;
 // SleeveCap enum int (must match engine/src/measurements.hpp order). 0 = Plain.
-const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2 };
+const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2, cap: 3 };
 const sleeveCapInt = (s) => SLEEVE_CAP[s] || 0;
 // CollarType/CollarEdge enum ints (must match engine/src/collar.hpp order).
 const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5 };
@@ -69,6 +70,13 @@ const ruffledStrapsInt = (s) => STRAP_STYLE[s] || 0;
 // PeplumStyle enum int (must match engine/src/peplum.hpp order). 0 = None.
 const PEPLUM_STYLE = { none: 0, full: 1, half: 2, pointed: 3 };
 const peplumInt = (s) => PEPLUM_STYLE[s] || 0;
+// PlacketStyle enum int (must match engine/src/placket.hpp order). 0 = None.
+// The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
+const PLACKET_STYLE = { none: 0, standard: 1, asymmetric: 2 };
+const placketStyleInt = (spec) => {
+  if (spec.placketStyle) return PLACKET_STYLE[spec.placketStyle] || 0;
+  return spec.frontPlacket === true ? 1 : 0;
+};
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -178,6 +186,7 @@ export function validateDraftRequest(body) {
       backSlit: spec.backSlit ?? 'none',
       ruffledStraps: spec.ruffledStraps ?? 'none',
       peplum: spec.peplum ?? 'none',
+      placketStyle: spec.placketStyle ?? 'none',
     },
     measurements,
   };
@@ -206,6 +215,7 @@ export async function runDraft(spec, measurements) {
     backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
     ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
     peplumInt(spec.peplum),           // R1.1: peplum flare
+    placketStyleInt(spec),            // R1.2: asymmetric placket
   );
   return JSON.parse(json);
 }
@@ -249,6 +259,7 @@ export async function handleGrade(request) {
       backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
       ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
       peplumInt(spec.peplum),           // R1.1: peplum flare
+      placketStyleInt(spec),            // R1.2: asymmetric placket
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

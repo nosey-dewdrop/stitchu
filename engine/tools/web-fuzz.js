@@ -215,6 +215,40 @@ createEngine().then((e) => {
     if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
   };
 
+  // R1.2 cap-sleeve variant: sleeveCap = 3 (Cap) is the 3rd trailing arg (after
+  // frontPlacket, tieClosure). Everything else 0/false.
+  const capRun = (label, args, m) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+    if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed)
+      if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
+  // R1.2 asymmetric-placket variant: placketStyle = 2 (Asymmetric) is the LAST
+  // trailing arg (after peplum). Everything else 0/false.
+  const asymPlacketRun = (label, args, m) => {
+    drafts++;
+    const out = JSON.parse(e.draftJSON(...args,
+      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
+      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2));
+    if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
+    const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
+    const layout = packPieces(paper);
+    for (const d of layout.placed)
+      if (d.x0 + d.w > layout.stripW + 0.001) { failures++; console.log(`CLIP ${label}: ${d.p.name}`); }
+    const sheets = countSheets(layout);
+    maxSheets = Math.max(maxSheets, sheets);
+    if (sheets > 100) { failures++; console.log(`PAGES ${label}: ${sheets} sheets`); }
+  };
+
   for (const [bi, m] of BODIES.entries()) {
     // dresses: the full web picker space (shaping princess default; dart spot-checked below)
     for (const neckline of necklines)
@@ -312,6 +346,22 @@ createEngine().then((e) => {
         peplumRun(`b${bi} peplum-${peName} dress/${neckline} dart`,
           ['dress', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m, pe);
       }
+    }
+    // R1.2: cap sleeve — the short wing replaces the sleeve, across necklines and
+    // dress/top, princess + dart. Must set in and pack without clipping.
+    for (const neckline of ['boat', 'crew', 'vNeck', 'square']) {
+      capRun(`b${bi} cap dress/${neckline} princess`,
+        ['dress', 'princess', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+      capRun(`b${bi} cap top/${neckline} dart`,
+        ['top', 'dart', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+    }
+    // R1.2: asymmetric button placket — the off-center CF stand across necklines
+    // and dress/top, princess + dart. The grown edge must pack without clipping.
+    for (const neckline of ['boat', 'crew', 'scoop', 'vNeck']) {
+      asymPlacketRun(`b${bi} asym-placket dress/${neckline} princess`,
+        ['dress', 'princess', 'natural', 'woven', neckline, 'straight', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
+      asymPlacketRun(`b${bi} asym-placket top/${neckline} dart`,
+        ['top', 'dart', 'natural', 'woven', neckline, 'none', 'short', 'aLine', 'midi', 'hip', false, 1, false], m);
     }
   }
 

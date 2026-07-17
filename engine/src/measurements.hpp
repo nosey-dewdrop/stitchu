@@ -35,12 +35,15 @@ enum class Fabric { Woven, Knit };
 enum class SkirtLength { Mini, Midi, Maxi };
 enum class SleeveStyle { None, Straight, Balloon };
 enum class SleeveLength { Short, Elbow, Long };
-// Opt-in sleeve HEAD (cap) treatment (Loop 6). Plain = the classic set-in cap
-// (byte-identical default). Gathered = the crown is gathered but the cap height
-// is NOT raised (soft high-street puff). Puffed = the crown is gathered AND the
-// cap is raised + widened (a puff/gigot that stands up above the shoulder).
-// This is the sleeve HEAD; the balloon style gathers the HEM/wrist instead.
-enum class SleeveCap { Plain, Gathered, Puffed };
+// Opt-in sleeve HEAD (cap) treatment (Loop 6 + R1.2). Plain = the classic
+// set-in cap (byte-identical default). Gathered = the crown is gathered but the
+// cap height is NOT raised (soft high-street puff). Puffed = the crown is
+// gathered AND the cap is raised + widened (a puff/gigot that stands up above
+// the shoulder). Cap (R1.2) = a SHORT cap-sleeve WING: the set-in cap is kept
+// and matched 1:1 to the armhole, but the sleeve is cut off just below the
+// notches so only a little wing covers the shoulder (no underarm seam). This is
+// the sleeve HEAD; the balloon style gathers the HEM/wrist instead.
+enum class SleeveCap { Plain, Gathered, Puffed, Cap };
 enum class GarmentType { Skirt, Dress, Top };
 enum class TopLength { Cropped, Hip, Tunic };
 // How waist suppression is shaped. Princess is the default: seams a person can
@@ -183,6 +186,12 @@ struct GarmentSpec {
     // Opt-in front button placket (düğme patı): grown-on button stand + fold line
     // + button/buttonhole markings on the front. Off by default → byte-identical.
     bool frontPlacket = false;
+    // Opt-in placket VARIANT (R1.2): 0 = None, 1 = Standard (== frontPlacket), 2 =
+    // Asymmetric (the CF closure shifted off center, the Jackie gingham). When
+    // Asymmetric, the placket is drawn even if frontPlacket is false. 0/1 mirror
+    // the bool so the base draft is byte-identical. See placket.hpp / FORMULAS.md
+    // "Asymmetric button placket".
+    int placketStyle = 0; // PlacketStyle enum value; 0 = None
     // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk): adds separate tie
     // pieces (self-fabric strips) + a placement notch. Off by default (None) →
     // byte-identical. See tie.hpp / FORMULAS.md "Fabric ties / sashes".

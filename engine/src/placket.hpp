@@ -15,6 +15,14 @@
 #include "geometry.hpp"
 
 namespace stitchu {
+
+// Placket variant (R1.2). None = no placket (the legacy `frontPlacket` bool off);
+// Standard = the classic symmetric CF button stand (== frontPlacket true);
+// Asymmetric = the CF button stand shifted off center (couture asymmetric front,
+// the Jackie gingham). Kept alongside the `frontPlacket` bool so old callers and
+// presets keep working: Standard/None mirror the bool, Asymmetric is the new mode.
+enum class PlacketStyle { None, Standard, Asymmetric };
+
 namespace PlacketBlock {
 
 // Aldrich / Armstrong doctrine, buttonDiameter-driven (FORMULAS.md). We do not
@@ -28,14 +36,22 @@ inline constexpr double buttonholeLength = 21;        // Ø + thickness + 2 mm e
 inline constexpr double topFromNeck = 20;             // first button below the CF neck edge
 inline constexpr double hemClearance = 20;            // last button above the CF bottom edge
 
-// Adds the front button placket to the front center piece: extends the CF edge
-// outward by standWidth (grown-on stand + fold-back facing marking), marks the
-// fold line at CF, and marks buttons (on CF) + buttonholes (3 mm past CF, at the
+// Asymmetric offset (R1.2, Jackie): a couture asymmetric placket carries the
+// button line OFF the center front, so the closure sits to one side of the body
+// instead of down the middle. This is how far past CF (toward the wearer's left,
+// i.e. more negative x on this drafted-right front) the button line is shifted.
+inline constexpr double asymOffset = 55;              // button line shift off CF (mm)
+
+// Adds the front button placket to the front center piece: extends the closure
+// edge outward by standWidth (grown-on stand + fold-back facing marking), marks
+// the fold line, and marks buttons + buttonholes (3 mm past the fold, at the
 // mandatory bust level + evenly spaced). `bustApexY` is the bust level in the
 // front piece's local frame (an existing apex notch is used when present, this
-// is the fallback). Appends construction steps. Returns false (with an honest
-// guide note) when there is no front piece or no room — never fails silently.
-bool apply(DraftedPattern& pattern, double bustApexY);
+// is the fallback). `offsetMM` shifts the whole closure OFF the center front for
+// an ASYMMETRIC placket (0 = the classic symmetric CF placket, byte-identical to
+// before). Appends construction steps. Returns false (with an honest guide note)
+// when there is no front piece or no room — never fails silently.
+bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM = 0.0);
 
 } // namespace PlacketBlock
 } // namespace stitchu

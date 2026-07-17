@@ -86,9 +86,10 @@ SleeveLength sleeveLengthFrom(const std::string& s) {
     if (s == "long") return SleeveLength::Long;
     return SleeveLength::Short;
 }
-// Loop 6: gathered/puff sleeve head. Int enum so the positional JS binding stays
-// simple (0 = Plain, 1 = Gathered, 2 = Puffed).
+// Loop 6 + R1.2: gathered/puff/cap sleeve head. Int enum so the positional JS
+// binding stays simple (0 = Plain, 1 = Gathered, 2 = Puffed, 3 = Cap).
 SleeveCap sleeveCapFrom(int v) {
+    if (v == 3) return SleeveCap::Cap;
     if (v == 2) return SleeveCap::Puffed;
     if (v == 1) return SleeveCap::Gathered;
     return SleeveCap::Plain;
@@ -125,7 +126,7 @@ GarmentSpec buildSpec(
     const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
     bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
     int sleeveCap, int collarType, int collarEdge, int gatherType, int gatherZone,
-    int backOpening, int backSlit, int ruffledStraps, int peplum
+    int backOpening, int backSlit, int ruffledStraps, int peplum, int placketStyle
 ) {
     GarmentSpec spec;
     spec.garment = garmentFrom(garment);
@@ -143,7 +144,7 @@ GarmentSpec buildSpec(
     spec.keyhole = keyhole;
     spec.frontPlacket = frontPlacket;
     spec.tieClosure = tieClosure; // TiePlacement enum value; 0 = None
-    spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6: 0=Plain 1=Gathered 2=Puffed
+    spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6+R1.2: 0=Plain 1=Gathered 2=Puffed 3=Cap
     spec.collarType = collarType; // Loop 7/8: CollarType enum; 0=None 1=Stand 2=Mock 3=Flat 4=PeterPan 5=Shirt
     spec.collarEdge = collarEdge; // CollarEdge enum (flat family outer edge); 0=Round 1=Pointed 2=Scallop
     spec.gatherType = gatherType; // Loop 8: GatherType enum; 0=None 1=Drawstring 2=Shirred 3=Smocked
@@ -152,6 +153,7 @@ GarmentSpec buildSpec(
     spec.backSlit = backSlit; // Loop M1: HemSlit enum; 0=None 1=Vent 2=Slit
     spec.ruffledStraps = ruffledStraps; // queue #3: StrapStyle enum; 0=None 1=Ruffled
     spec.peplum = peplum; // R1.1: PeplumStyle enum; 0=None 1=Full 2=Half 3=Pointed
+    spec.placketStyle = placketStyle; // R1.2: PlacketStyle enum; 0=None 1=Standard 2=Asymmetric
     return spec;
 }
 
@@ -215,10 +217,11 @@ std::string draftJSON(
     int backOpening,   // Loop 9b: open-back cutout; 0 = None
     int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
     int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
-    int peplum         // R1.1: peplum flare; 0 = None
+    int peplum,        // R1.1: peplum flare; 0 = None
+    int placketStyle   // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle);
     BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
     m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
     return patternJSON(spec, m);
@@ -245,10 +248,11 @@ std::string gradeJSON(
     int backOpening,   // Loop 9b: open-back cutout; 0 = None
     int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
     int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
-    int peplum         // R1.1: peplum flare; 0 = None
+    int peplum,        // R1.1: peplum flare; 0 = None
+    int placketStyle   // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
 ) {
     const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum);
+        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle);
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.
