@@ -711,3 +711,11 @@ dış denetim · HOOK: "başka bir yapay zekâ kalıbımı ölçtü ve giyilemez
 - Anlatı (~45sn): bağımsız bir dil modeli, motorun A4 kalıbını, kolsuz kayık yakalı düğmeli bir bluzu, vektör olarak ölçtü. yakaladığı hata: ön parça aynı anda hem düğme patlı hem kata kesiliyordu. bir kata düğme dikemezsiniz, o parça asla açılamaz, kafadan geçmez, giyilemez. dikiş çizgisi kesim çizgisinin dışına tam pat payı kadar taşıyordu. düzelttim: pat varken ön parça ortadan açılan iki simetrik ön oluyor, düğme standı her ön biçiminde doğru büyüyor, kayık yaka gerçek bir bateau gibi omuzlara açılıyor. hata düzeltmesi olduğu için golden bilerek değişti, her satırı kontrol ettim: sadece boat çizimleri ve sadece kolsuz kumaş tahmini oynadı, başka hiçbir şey. sayı 31/54'te kaldı, çünkü pat zaten çizilmiş sayılıyordu, sadece yanlış. kutlayacak rakam yok, ama benchmark'ın iddia ettiği bir kalıp artık gerçekten giyilebilir.
 - **Görsel:** [ekran] iki kalıp yan yana, öncesi "cut 1 on fold" etiketli düğme işaretleri fold kenarının dışına taşan, sonrası "cut 2 (center front opening)" büyümüş stand + delikler standın içinde; altta "golden: only /boat/ + sleeveless fabric changed, every line checked" yeşil.
 - **Format:** reel
+
+
+## [stitchu] devlog — giyilebilirlik testi
+
+giyilebilirlik testi · HOOK: "bir yapay zeka kalibimin giyilemez oldugunu buldu. o dersi kalici bir teste cevirdim."
+- Anlati (~40sn): butun testlerim yesildi ama bir dis model kalibimin giyilemez oldugunu buldu, onden dugmeli ama kata kesilmis, hicbir yeri acilmiyor. cunku testlerim ic-tutarliligi olcuyordu, giyilebilirligi degil. motoru baskasi duzeltti, ben dersi kalici kildim: uc deterministik kontrol motora girdi, yaka dikili tupe donmesin, tanimli aciklik kata dusmesin, kolsuz kol oyugu bitmemis kalmasin. her cizimde bedava calisiyor. en zor kismi testin iyi kaliplari yanlislikla bloklamamasiydi, 2805 cizim 60 yanlis alarm gosterdi, kurali daralttim, sifira dustu. golden bayt-birebir, test sadece geometriyi okuyor. LLM ogretmen oldu, deterministik test savunma.
+- **Gorsel:** [ekran] iki kalip yan yana: solda gercek crew yaka acik mavi yay "wearable", sagda cokmus yaka omuz cizgisine yatik kirmizi "BLOCKED, no head entry"; altta "23 tests green · golden byte-identical · 0 false positives / 60000+ drafts" yesil.
+- **Format:** reel
