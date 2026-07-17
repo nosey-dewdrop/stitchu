@@ -1,8 +1,8 @@
 // header-diff.mjs — proves the canonical site header is byte-identical on every
 // page that carries it: the 7 hand-written main pages, the 24 generated style
 // pages (styles/) AND the 13 generated pattern pages (patterns/). One header,
-// no drift: same brandpatch, same 6 nav items (create · closet · patterns ·
-// benchmark · patch notes · API) in the same order with the same EN/TR text,
+// no drift: same brandpatch, same 7 nav items (create · closet · patterns ·
+// blog · benchmark · patch notes · API) in the same order with the same EN/TR text,
 // same EN·TR toggle.
 //
 // Two axes are legitimately allowed to vary and are normalised away before the
@@ -25,7 +25,8 @@ const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
   'patches.html', 'showcase.html', 'collection-60s70s.html', 'api.html', 'privacy.html'];
 const stylePages = readdirSync(join(WEB, 'styles')).filter((f) => f.endsWith('.html')).map((f) => `styles/${f}`);
 const patternPages = readdirSync(join(WEB, 'patterns')).filter((f) => f.endsWith('.html')).map((f) => `patterns/${f}`);
-const pages = [...mainPages, ...stylePages, ...patternPages];
+const blogPages = readdirSync(join(WEB, 'blog')).filter((f) => f.endsWith('.html')).map((f) => `blog/${f}`);
+const pages = [...mainPages, ...stylePages, ...patternPages, ...blogPages];
 
 function extractHeader(html, rel) {
   const m = html.match(/<header class="sh-header">[\s\S]*?<\/header>/);
@@ -44,6 +45,10 @@ function normalise(header) {
     // "patterns/index.html", from a subdir it is "index.html"
     .replace(/href="patterns\/index\.html"/g, 'href="__PATTERNS__"')
     .replace(/(<a href=")index\.html(" data-en="patterns")/g, '$1__PATTERNS__$2')
+    // same for the blog link: "blog/index.html" from root/subdir vs "index.html"
+    // (after the active-marker strip) on the blog page itself.
+    .replace(/href="blog\/index\.html"/g, 'href="__BLOG__"')
+    .replace(/(<a href=")index\.html(" data-en="blog")/g, '$1__BLOG__$2')
     // brand link: "index.html" (root) vs "../index.html"->"index.html" (subdir),
     // already aligned by the prefix strip above.
     .trim();
@@ -67,7 +72,7 @@ for (const rel of pages) {
 
 const variants = Object.keys(shared);
 if (variants.length === 1 && fail === 0) {
-  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles + ${patternPages.length} patterns).`);
+  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles + ${patternPages.length} patterns + ${blogPages.length} blog).`);
   process.exit(0);
 }
 
