@@ -44,6 +44,7 @@ const ENUMS = {
   pocketStyle: ['none', 'patch', 'sideSeam'],
   cuffStyle: ['none', 'button', 'ribbed'],
   hemShape: ['straight', 'shirttail', 'highLow'],
+  shoulderStyle: ['set', 'dropped', 'raglan'],
 };
 
 // TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
@@ -94,6 +95,9 @@ const cuffStyleInt = (s) => CUFF_STYLE[s] || 0;
 // HemShape enum int (must match engine/src/hem.hpp order). 0 = Straight.
 const HEM_SHAPE = { straight: 0, shirttail: 1, highLow: 2 };
 const hemShapeInt = (s) => HEM_SHAPE[s] || 0;
+// ShoulderStyle enum int (must match engine/src/measurements.hpp order). 0 = Set.
+const SHOULDER_STYLE = { set: 0, dropped: 1, raglan: 2 };
+const shoulderStyleInt = (s) => SHOULDER_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.
@@ -207,6 +211,7 @@ export function validateDraftRequest(body) {
       edgeFinish: spec.edgeFinish ?? 'biasBinding',
       pocketStyle: spec.pocketStyle ?? 'none',
       cuffStyle: spec.cuffStyle ?? 'none',
+      shoulderStyle: spec.shoulderStyle ?? 'set',
     },
     measurements,
   };
@@ -240,6 +245,7 @@ export async function runDraft(spec, measurements) {
     pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
     cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
     hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
+    shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
   );
   return JSON.parse(json);
 }
@@ -288,6 +294,7 @@ export async function handleGrade(request) {
       pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
       cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
       hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
+      shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
     );
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }

@@ -50,6 +50,10 @@ struct BodiceDraft {
     double backStraightWaist = 0;
     double frontChestWidth = 0;
     double backChestWidth = 0;
+    // Extra chest width added to BOTH halves by a dropped shoulder (0 otherwise).
+    // The validator reads this back so its "ease being eaten" chest check knows
+    // the widen is intentional. Set/Raglan → 0 → byte-identical expectation.
+    double droppedWiden = 0;
 };
 
 namespace BodiceBlock {
@@ -107,6 +111,10 @@ struct BodiceOptions {
     Fabric fabric = Fabric::Woven;
     double extendBelowWaist = 0;
     double hipHalfQuarter = 0;
+    // Shoulder/sleeve-join style (patch 3.13). Set (default) is byte-identical:
+    // the Dropped branch only runs when this is Dropped, so every existing draft
+    // is untouched. Raglan is a post-pass in garment.cpp, not here.
+    ShoulderStyle shoulderStyle = ShoulderStyle::Set;
 };
 
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& options);

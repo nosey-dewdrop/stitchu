@@ -4,6 +4,8 @@
 #include <cmath>
 #include <limits>
 
+#include "shoulder.hpp"
+
 namespace stitchu {
 namespace {
 
@@ -448,7 +450,14 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
 
     const double neck = m.neckMM();
     const double backLength = m.backLengthMM();
-    const double shoulderHalf = m.shoulderCM * 10 / 2;
+    // Dropped shoulder (patch 3.13) extends the shoulder tip out along the
+    // shoulder line, so the half-shoulder used to place the tip grows — but the
+    // shoulder SLOPE (shoulderDrop) is taken from the natural shoulder below, so
+    // the seam runs roughly straight out onto the arm instead of steepening.
+    // Set/Raglan leave shoulderHalf exactly as before → byte-identical.
+    const bool droppedShoulder = options.shoulderStyle == ShoulderStyle::Dropped;
+    const double naturalShoulderHalf = m.shoulderCM * 10 / 2;
+    double shoulderHalf = naturalShoulderHalf;
     // The frame girth (back + armhole size to this). Prefer the REAL upper-bust
     // measurement when the user gave it — that's the full-bust adjustment. Only
     // fall back to the bust-minus-cup-offset assumption when it's absent, so an
@@ -467,6 +476,10 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double cupFullness = std::max(0.0, m.bustMM() - underbust); // mm of extra bust girth
 
     const double shoulderDrop = shoulderHalf * shoulderDropFactor;
+    // Dropped shoulder: slide the tip out now that the slope is fixed. The
+    // armhole point drop + widen is applied to armholeY and the chest widths
+    // below (all gated on droppedShoulder → Set is byte-identical).
+    if (droppedShoulder) shoulderHalf += naturalShoulderHalf * ShoulderBlock::dropExtendShare;
     // The torso-only armhole depth (before any arm deepening). The empire seam is
     // anchored to THIS, not the deepened armhole — the empire/babydoll line sits
     // just under the BUST, and must not move when the armhole is lowered to seat a
@@ -497,6 +510,15 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // piece self-intersects. Tighten the deepening cap for empire.
     if (empire) armholeDepthCap = std::min(armholeDepthCap, seamSideY - 8);
     armholeY = std::min(armholeDepthCap, std::max(armholeY, armholeDepthForArm));
+    // Dropped shoulder: lower the underarm point with the extended shoulder, still
+    // clamped above the waist seam so the armhole never runs past it. The chest
+    // widths widen a touch below (both halves equally, side seams still pair).
+    const double droppedArmholeAdd = droppedShoulder
+        ? std::min(torsoArmholeY * ShoulderBlock::dropArmholeShare,
+                   std::max(0.0, armholeDepthCap - armholeY))
+        : 0.0;
+    armholeY += droppedArmholeAdd;
+    const double droppedWiden = droppedArmholeAdd * ShoulderBlock::dropWidenShare;
 
     // A fuller bust also needs a little extra FRONT LENGTH at center front — the
     // fabric that goes up and over the bust — or the front rides up and pulls the
@@ -526,7 +548,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         ? ((underbust / 4) * (1 + chestEase)) * 0.7
         : std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = halter ? 8 : neck * backNeckCutoutFactor;
-    const double backWidth = (underbust / 4) * (1 + chestEase);
+    const double backWidth = (underbust / 4) * (1 + chestEase) + droppedWiden;
 
     // SHOULDER TRUING (2026-07-13, precision pass): the back neck is wider
     // than the front (anatomy), so with a shared shoulder tip the back seam
@@ -560,7 +582,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // is where a full-bust adjustment puts the extra: dart intake, not a wider
     // silhouette). Only engages when the real upper bust was given.
     const double frontCupAdd = m.upperBustMM() > 0 ? cupFullness * 0.35 : 0.0;
-    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd;
+    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd + droppedWiden;
     const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
     const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
     // Up to 15mm of the reduction slants the side seam in at the WAIST (never
@@ -748,6 +770,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     draft.waistSeamY = seamSideY;
     draft.frontChestWidth = frontWidth;
     draft.backChestWidth = backWidth;
+    draft.droppedWiden = droppedWiden;
     if (halter) {
         // Raw edges the binding covers, measured with the exact curves the
         // pieces were drawn with (armhole lengths come back from the builders).

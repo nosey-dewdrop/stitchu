@@ -213,8 +213,10 @@ std::vector<ValidationIssue> bodiceIssues(const GarmentSpec& spec, const BodiceD
     // the expected front chest must include it (else it reads as eaten ease).
     const double cupFullness = std::max(0.0, m.bustMM() - underbust);
     const double frontCupAdd = m.upperBustMM() > 0 ? cupFullness * 0.35 : 0.0;
-    const double expectedFrontChest = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd;
-    const double expectedBackChest = (underbust / 4) * (1 + chestEase);
+    // A dropped shoulder intentionally widens BOTH halves by the same amount
+    // (read back from the draft so this stays one source). Set/Raglan → 0.
+    const double expectedFrontChest = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd + bodice.droppedWiden;
+    const double expectedBackChest = (underbust / 4) * (1 + chestEase) + bodice.droppedWiden;
     if (std::fabs(bodice.frontChestWidth - expectedFrontChest) > chestWidthTolerance) {
         issues.push_back({"chest", "Bodice Front",
             fmt("chest width %.1f, expected %.1f — bust ease is being eaten", bodice.frontChestWidth, expectedFrontChest)});
@@ -1032,6 +1034,12 @@ std::vector<ValidationIssue> issues(
             options.shaping = spec.shaping;
             options.waistline = spec.waistline;
             options.fabric = spec.fabric;
+            // Dropped shoulder reshapes the armhole in the drafter — recompute the
+            // reference bodice the SAME way so the sleeve cap is measured against
+            // the dropped armhole it was actually fit to. Set/Raglan → unchanged.
+            if (spec.neckline != Neckline::Halter &&
+                static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
+                options.shoulderStyle = ShoulderStyle::Dropped;
             const BodiceDraft bodice = BodiceBlock::draft(m, options);
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);
@@ -1050,6 +1058,9 @@ std::vector<ValidationIssue> issues(
                 options.extendBelowWaist = belowWaist(spec.topLength);
                 options.hipHalfQuarter = (m.hipMM() / 4) * 1.04;
             }
+            if (spec.neckline != Neckline::Halter &&
+                static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
+                options.shoulderStyle = ShoulderStyle::Dropped;
             const BodiceDraft bodice = BodiceBlock::draft(m, options);
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);

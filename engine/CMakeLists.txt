@@ -24,6 +24,7 @@ add_library(engine
     src/neckext.cpp
     src/cuff.cpp
     src/hem.cpp
+    src/shoulder.cpp
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
@@ -148,3 +149,7 @@ add_test(NAME wearability_check COMMAND wearability_check)
 
 add_executable(wearability-bench tools/wearability-bench.cpp)
 target_link_libraries(wearability-bench PRIVATE engine)
+
+add_executable(shoulder_check tests/shoulder_check.cpp)
+target_link_libraries(shoulder_check PRIVATE engine)
+add_test(NAME shoulder_check COMMAND shoulder_check)

@@ -97,11 +97,17 @@ export function hemShapeValue(spec) {
   return HEM_SHAPE[spec && spec.hemShape] || 0;
 }
 
+// ShoulderStyle enum (must match engine/src/measurements.hpp order). 0 = Set.
+const SHOULDER_STYLE = { set: 0, dropped: 1, raglan: 2 };
+export function shoulderStyleValue(spec) {
+  return SHOULDER_STYLE[spec && spec.shoulderStyle] || 0;
+}
+
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=76';
+      script.src = 'vendor/stitchu-engine.js?v=77';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -138,6 +144,7 @@ export async function grade(spec, fromLabel, toLabel) {
     pocketStyleValue(spec),  // patch 3.12: patch / side-seam pocket
     cuffStyleValue(spec),   // patch 3.13: sleeve-end cuff
     hemShapeValue(spec),    // patch 3.15: hem shape
+    shoulderStyleValue(spec), // patch 3.13: dropped shoulder / raglan
   );
   return JSON.parse(json);
 }
@@ -170,6 +177,7 @@ export async function draft(spec, measurements) {
     pocketStyleValue(spec),      // patch 3.12: patch / side-seam pocket
     cuffStyleValue(spec),        // patch 3.13: sleeve-end cuff
     hemShapeValue(spec),         // patch 3.15: hem shape
+    shoulderStyleValue(spec),    // patch 3.13: dropped shoulder / raglan
   );
   return JSON.parse(json);
 }

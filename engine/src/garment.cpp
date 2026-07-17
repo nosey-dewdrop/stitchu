@@ -13,6 +13,7 @@
 #include "placket.hpp"
 #include "pocket.hpp"
 #include "ruffle.hpp"
+#include "shoulder.hpp"
 #include "skirt.hpp"
 #include "slit.hpp"
 #include "sleeve.hpp"
@@ -120,6 +121,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     options.shaping = spec.shaping;
     options.waistline = spec.waistline;
     options.fabric = spec.fabric;
+    // Dropped shoulder reshapes the armhole here (Set/Raglan leave it untouched;
+    // a halter has no shoulder seam, so it is ignored on halters). Raglan is a
+    // post-pass in GarmentDrafter::draft.
+    if (spec.neckline != Neckline::Halter &&
+        static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
+        options.shoulderStyle = ShoulderStyle::Dropped;
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
     const bool empire = spec.waistline == Waistline::Empire;
     // Empire: the seam sits above the natural waist, so the skirt makes up
@@ -312,6 +319,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     options.fabric = spec.fabric;
     options.extendBelowWaist = extra;
     options.hipHalfQuarter = hipHalfQuarter;
+    // Dropped shoulder reshapes the armhole (Set/Raglan untouched; halter has no
+    // shoulder seam). Raglan is a post-pass in GarmentDrafter::draft.
+    if (spec.neckline != Neckline::Halter &&
+        static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
+        options.shoulderStyle = ShoulderStyle::Dropped;
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
 
     std::vector<PatternPiece> tops;
@@ -461,6 +473,26 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         case GarmentType::Top:
             pattern = TopBlock::draft(spec, m);
             break;
+    }
+    // Opt-in shoulder/sleeve-join style (patch 3.13). Dropped shoulder already
+    // reshaped the armhole inside the bodice draft above; here we (a) note the
+    // dropped shoulder in the guide and (b) run the RAGLAN post-pass, which draws
+    // the diagonal raglan seam on the front/back and converts the set-in sleeve
+    // into a raglan sleeve. Set → nothing runs (byte-identical). A halter is
+    // skipped for both (no shoulder seam). Not on a skirt (no bodice).
+    if (spec.garment != GarmentType::Skirt && spec.neckline != Neckline::Halter) {
+        const ShoulderStyle ss = static_cast<ShoulderStyle>(spec.shoulderStyle);
+        if (ss == ShoulderStyle::Dropped) {
+            pattern.guideSteps.insert(
+                pattern.guideSteps.begin() + 1,
+                "Dropped shoulder: the shoulder seam runs past your natural shoulder "
+                "onto the arm and the armhole sits lower and wider, so the sleeve hangs "
+                "with a soft, relaxed head instead of a tailored set-in crown — this is "
+                "already drawn into the shoulder and armhole.");
+        } else if (ss == ShoulderStyle::Raglan) {
+            const double armholeDepth = m.backLengthMM() * 0.44;
+            ShoulderBlock::applyRaglan(pattern, armholeDepth, m.shoulderCM * 10);
+        }
     }
     // Opt-in keyhole: a teardrop opening below the front neckline. Post-pass
     // like the ruffle, so the base draft is byte-identical with it off.

@@ -49,6 +49,13 @@ enum class SleeveLength { Short, Elbow, Long };
 // notches so only a little wing covers the shoulder (no underarm seam). This is
 // the sleeve HEAD; the balloon style gathers the HEM/wrist instead.
 enum class SleeveCap { Plain, Gathered, Puffed, Cap };
+// How the sleeve joins the body at the shoulder (patch 3.13). Set = the classic
+// set-in armhole (byte-identical default). Dropped = the shoulder seam is slid
+// DOWN the upper arm (the armhole point drops + widens, the cap flattens) for a
+// relaxed/oversized look. Raglan = there is NO shoulder seam; a diagonal seam
+// runs from the underarm up to the neckline and the shoulder triangle belongs to
+// the sleeve (Aldrich/Armstrong raglan). APPEND-only enum — do not reorder.
+enum class ShoulderStyle { Set, Dropped, Raglan };
 enum class GarmentType { Skirt, Dress, Top };
 enum class TopLength { Cropped, Hip, Tunic };
 // How waist suppression is shaped. Princess is the default: seams a person can
@@ -179,6 +186,15 @@ inline const char* raw(Shaping s) {
     return "";
 }
 
+inline const char* raw(ShoulderStyle s) {
+    switch (s) {
+        case ShoulderStyle::Set: return "set";
+        case ShoulderStyle::Dropped: return "dropped";
+        case ShoulderStyle::Raglan: return "raglan";
+    }
+    return "";
+}
+
 struct GarmentSpec {
     GarmentType garment = GarmentType::Dress;
     Shaping shaping = Shaping::Princess;
@@ -279,6 +295,14 @@ struct GarmentSpec {
     // and handkerchief (peplum's pointed) hems stay honest (missing.js). See
     // hem.hpp / FORMULAS.md "Hem shape".
     int hemShape = 0; // HemShape enum value; 0 = Straight
+    // Opt-in shoulder/sleeve-join style: 0 = Set (classic set-in armhole,
+    // byte-identical), 1 = Dropped (shoulder seam slid down the arm, armhole
+    // lowered + widened, cap flattened), 2 = Raglan (no shoulder seam; diagonal
+    // seam from underarm to neckline, shoulder belongs to the sleeve). Off by
+    // default (Set) → the base draft is byte-identical. Threaded into the bodice +
+    // sleeve draft (not a post-pass) so the armhole/cap reshape trues together.
+    // See shoulder.hpp / FORMULAS.md "Dropped shoulder + raglan".
+    int shoulderStyle = 0; // ShoulderStyle enum value; 0 = Set
 };
 
 inline double roundToPlaces(double value, int places) {

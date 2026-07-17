@@ -1053,3 +1053,57 @@ golden byte-identical (the module READS geometry, mutates nothing).
 Benchmark harness: `tools/wearability-bench.{cpp,mjs}` runs the 54 vision-labelled
 specs through the gate (0 unwearable on the current benchmark — the gate is a
 permanent guardrail, not a one-time fix).
+
+## Dropped shoulder + raglan (düşük omuz + reglan) — opt-in (patch 3.13)
+- WHAT: two ways the sleeve joins the body at the shoulder.
+  `ShoulderStyle { Set, Dropped, Raglan }` (GarmentSpec.shoulderStyle, APPEND-only
+  enum). Set (default) → golden BYTE-IDENTICAL (23034 lines, 0.000000 mm): every
+  Dropped/Raglan effect is HARD-GATED behind `if (style == Dropped/Raglan)`, so
+  the Set code paths are untouched. shoulder.hpp/.cpp.
+- WHERE (deliberate, not a pure post-pass): DROPPED reshapes the ARMHOLE, so it is
+  threaded into the bodice draft (BodiceOptions.shoulderStyle) where the shoulder
+  tip, armhole curve and cap solver all live in one body frame — a post-pass
+  cannot re-fit the sleeve cap. RAGLAN is a post-pass in garment.cpp
+  (ShoulderBlock::applyRaglan) because it re-marks finished pieces + converts the
+  sleeve, without moving any body outline.
+- DROPPED (Aldrich "dropped/extended shoulder"): the shoulder tip slides OUT along
+  the shoulder line by `dropExtendShare 0.28 · half-shoulder` (the slope
+  shoulderDrop is taken from the NATURAL shoulder first, so the seam runs roughly
+  straight out onto the arm, not steeper). The underarm point DROPS by
+  `dropArmholeShare 0.22 · torso armhole depth` (clamped above the waist seam) and
+  the chest WIDENS on BOTH halves by `dropWidenShare 0.55 · that drop` (equal, so
+  the side seams still pair). The sleeve solver then reads the LONGER, DEEPER
+  armhole and flattens/widens the cap on its own — a dropped shoulder wears with
+  almost no set-in crown, which is exactly a longer armhole with a shallower cap.
+  `BodiceDraft.droppedWiden` is read back by the validator so its "ease is being
+  eaten" chest check knows the widen is intentional (Set/Raglan → 0).
+- RAGLAN (Aldrich/Armstrong raglan): NO shoulder seam. A diagonal raglan seam is
+  MARKED on the front + back from a neck point (`raglanNeckShare 0.30` of the way
+  from the neck-shoulder point back toward the centre neck) down to the underarm,
+  bowed toward the scye; the shoulder corner above it is noted "cut off" in the
+  cut instruction. The set-in sleeve OUTLINE is KEPT (it still eases into the lower
+  armhole and stays validatable) — a raglan sleeve's shoulder point is the TOP of
+  its own cap — and on the cap we MARK the two raglan seam lines (front + back cap
+  corner → cap top) + a small crown DART that rounds the flat cap into the shoulder
+  point. All raglan markings sit ON the pieces (within the bounding box), so no
+  outline moves → the body pieces are byte-identical, the sleeve is renamed
+  "Raglan …" and carries only extra markings.
+- TRUING: the raglan seam lines run from real outline vertices (neck point,
+  underarm) so the seam sews to the armhole arc it was read from; the dropped
+  armhole re-fits its sleeve cap through the existing bisection solver, so cap ease
+  stays inside the validator window (shoulder_check confirms the dropped armhole is
+  longer + deeper, both halves widen equally, and every raglan body outline is
+  byte-identical).
+- HONEST LIMITS: a halter has no shoulder seam → both styles are IGNORED
+  (byte-identical), never mis-drawn. A saddle/epaulette raglan and a halter-raglan
+  hybrid are DIFFERENT constructions and stay in the honesty layer (missing.js). A
+  sleeveless raglan draws the seam on the body only (a cut-on shoulder) with an
+  honest note. A dropped shoulder on an EXTENDED dart-mode top can unbalance the
+  front/back side seam — that draft is REFUSED by the validator with a clear reason
+  (giyilebilirlik birinci), not shipped unsewable; princess mode (the default) and
+  every dropped DRESS validate.
+- Vision→spec (create.js pickShoulder): reads "raglan" (not saddle/epaulette) →
+  raglan; "dropped/extended shoulder" (not off-shoulder) → dropped; gated off a
+  skirt/halter. A manual "shoulder" picker covers the no-photo path;
+  seen.shoulderDrawn suppresses the missing.js note + the outOfVocab shoulder term.
+

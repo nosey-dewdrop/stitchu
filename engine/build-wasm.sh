@@ -7,7 +7,7 @@ source "$HOME/emsdk/emsdk_env.sh" >/dev/null 2>&1
 
 mkdir -p dist
 em++ -O2 -std=c++17 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \
@@ -41,7 +41,7 @@ echo "copied to web/vendor/"
 # The wasm still arrives pre-compiled via instantiateWasm, so nothing is fetched
 # or compiled at runtime either. Verified end-to-end in wrangler dev + live.
 em++ -O2 -std=c++17 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine \
