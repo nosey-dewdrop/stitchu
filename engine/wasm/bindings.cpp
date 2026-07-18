@@ -124,6 +124,7 @@ GarmentSpec buildSpec(
     spec.exposedZip = parseEnumInt("exposedZip", exposedZip, kExposedZip, kExposedZipCount);
     spec.backDetail = parseEnumInt("backDetail", backDetail, kBackDetail, kBackDetailCount);
     spec.bardotStyle = parseEnumInt("bardotStyle", bardotStyle, kBardotStyle, kBardotStyleCount);
+    validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }
 

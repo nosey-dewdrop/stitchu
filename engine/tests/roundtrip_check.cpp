@@ -123,6 +123,35 @@ int main() {
         check(hasSleeve, std::string("sleeveCap '") + kSleeveCap[cap] + "' draft contains a Sleeve piece");
     }
 
+    // ---- cross-field rules: incoherent combos throw, coherent ones pass -----
+    std::printf(" cross-field rules (incoherent spec throws)\n");
+    auto crossThrows = [](void (*mutate)(GarmentSpec&)) {
+        GarmentSpec spec;
+        spec.garment = GarmentType::Dress;
+        mutate(spec);
+        try { validateSpecCross(spec); } catch (const std::invalid_argument&) { return true; }
+        return false;
+    };
+    check(crossThrows([](GarmentSpec& s) { s.sleeveCap = SleeveCap::Puffed; s.sleeveStyle = SleeveStyle::None; }),
+          "sleeveCap puffed + sleeveStyle none throws");
+    check(crossThrows([](GarmentSpec& s) { s.cuffStyle = 1; s.sleeveStyle = SleeveStyle::None; }),
+          "cuffStyle button + sleeveStyle none throws");
+    check(crossThrows([](GarmentSpec& s) { s.ruffledStraps = 1; s.sleeveStyle = SleeveStyle::Straight; }),
+          "ruffledStraps + a sleeve throws");
+    check(crossThrows([](GarmentSpec& s) { s.garment = GarmentType::Skirt; s.neckline = Neckline::VNeck; }),
+          "skirt + vNeck throws");
+    check(crossThrows([](GarmentSpec& s) { s.garment = GarmentType::Skirt; s.sleeveStyle = SleeveStyle::Straight; }),
+          "skirt + a sleeve throws");
+    {
+        GarmentSpec ok1; ok1.garment = GarmentType::Dress;
+        ok1.sleeveStyle = SleeveStyle::Straight; ok1.sleeveCap = SleeveCap::Puffed; ok1.cuffStyle = 2;
+        GarmentSpec ok2; ok2.garment = GarmentType::Dress; ok2.ruffledStraps = 1; // sleeveless
+        GarmentSpec ok3; ok3.garment = GarmentType::Skirt; // crew + none defaults
+        bool threw = false;
+        try { validateSpecCross(ok1); validateSpecCross(ok2); validateSpecCross(ok3); } catch (...) { threw = true; }
+        check(!threw, "coherent specs (puffed sleeved dress, strap sundress, plain skirt) pass");
+    }
+
     std::printf("roundtrip_check: %s (%d failures)\n", failures ? "FAIL" : "ALL PASS", failures);
     return failures ? 1 : 0;
 }

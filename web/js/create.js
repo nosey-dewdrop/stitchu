@@ -953,7 +953,14 @@ function showSpec() {
   function rebuild() {
     groups.textContent = '';
     for (const group of SPEC_GROUPS) {
-      if (!group.for(spec)) continue;
+      if (!group.for(spec)) {
+        // A hidden picker must not carry a stale choice into the draft: the
+        // engine now REFUSES incoherent specs (e.g. a v-neck skirt) instead of
+        // silently ignoring the field, so what the user can't see resets to
+        // the group default (first option).
+        spec[group.key] = group.options[0][0];
+        continue;
+      }
       const g = el('div', 'spec-group');
       g.appendChild(el('div', 'group-label', getLang() === 'tr' ? group.trLabel : group.label));
       const row = el('div', 'choice-row');

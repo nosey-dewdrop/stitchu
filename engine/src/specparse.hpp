@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "measurements.hpp"
+
 namespace stitchu {
 
 [[noreturn]] inline void vocabError(const char* field, const std::string& got,
@@ -34,6 +36,26 @@ E parseEnum(const char* field, const std::string& s, const char* const* names, i
 inline int parseEnumInt(const char* field, int v, const char* const* names, int count) {
     if (v < 0 || v >= count) vocabError(field, std::to_string(v), names, count);
     return v;
+}
+
+// Cross-field coherence. Each value may be individually valid while the
+// COMBINATION asks for something the engine would silently skip (a puffed cap
+// on a sleeveless bodice drew nothing and said nothing). An incoherent spec is
+// an error, never a silent no-op.
+inline void validateSpecCross(const GarmentSpec& spec) {
+    if (spec.sleeveCap != SleeveCap::Plain && spec.sleeveStyle == SleeveStyle::None)
+        throw std::invalid_argument(
+            "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'");
+    if (spec.cuffStyle != 0 && spec.sleeveStyle == SleeveStyle::None)
+        throw std::invalid_argument(
+            "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'");
+    if (spec.ruffledStraps != 0 && spec.sleeveStyle != SleeveStyle::None)
+        throw std::invalid_argument(
+            "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'");
+    if (spec.garment == GarmentType::Skirt &&
+        (spec.sleeveStyle != SleeveStyle::None || spec.neckline != Neckline::Crew))
+        throw std::invalid_argument(
+            "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'");
 }
 
 } // namespace stitchu
