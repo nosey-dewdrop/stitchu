@@ -160,34 +160,9 @@ function anchorTest(n) {
 //      (hand-curated; the surgeon's tool for genuine synonyms rules can't catch)
 //   2. rule-based normalization (whitespace, hyphens, trailing-plural on the last
 //      word, a few stem synonyms) — deterministic, applied when no override hits.
-const CANON_FILE = join(DATASET, 'vocab-canonical.json');
-const CANON_MAP = existsSync(CANON_FILE) ? JSON.parse(readFileSync(CANON_FILE, 'utf8')) : {};
-function ruleNormalize(term) {
-  let t = term.trim().toLowerCase();
-  t = t.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
-  // stem synonyms (verb/adjective forms of the same construction)
-  t = t.replace(/\bbuttoned\b/g, 'button');
-  t = t.replace(/\bgathered\b/g, 'gather').replace(/\bshirred\b/g, 'shirr').replace(/\bpleated\b/g, 'pleat');
-  t = t.replace(/\bruffled\b/g, 'ruffle').replace(/\bflared\b/g, 'flare');
-  t = t.replace(/\belasticated\b/g, 'elastic').replace(/\bpocketed\b/g, 'pocket');
-  // depluralize each word (simple, safe endings only)
-  t = t.split(' ').map((w) => {
-    if (w.length <= 3) return w;
-    if (/(ss|us|is)$/.test(w)) return w;           // dress, bias
-    if (/ies$/.test(w)) return w.slice(0, -3) + 'y'; // bodies -> body
-    if (/es$/.test(w) && /(ch|sh|x|z)es$/.test(w)) return w.slice(0, -2); // patches -> patch
-    if (/s$/.test(w)) return w.slice(0, -1);         // cuffs -> cuff
-    return w;
-  }).join(' ');
-  return t.replace(/\s+/g, ' ').trim();
-}
-function canonicalize(term) {
-  const raw = term.trim().toLowerCase();
-  if (CANON_MAP[raw]) return CANON_MAP[raw];
-  const norm = ruleNormalize(raw);
-  if (CANON_MAP[norm]) return CANON_MAP[norm];
-  return norm;
-}
+// K1 (2026-07-19): the implementation moved to canonicalize.mjs so the
+// benchmark's frequency-weighted coverage metric normalizes with the SAME code.
+import { canonicalize } from './canonicalize.mjs';
 
 // ---- AGGREGATE: vocab-frequency.md ------------------------------------------
 function aggregate() {
