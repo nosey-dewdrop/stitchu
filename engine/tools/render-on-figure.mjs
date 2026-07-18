@@ -302,7 +302,7 @@ function sleeveOnFigure(spec) {
   if (!hasSleeve) return '';
   const shoulderX = F.shoulderX - 2, shoulderY = F.shoulderY;
   const len = spec.sleeveLength || 'short';
-  const puff = spec.sleeveCap === 2 || spec.sleeveStyle === 'puff';
+  const puff = spec.sleeveCap === 2;
   const cap = spec.sleeveStyle === 'cap' || spec.sleeveCap === 4;
 
   // sleeve hem Y down the arm (short = upper arm, long = wrist).

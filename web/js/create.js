@@ -40,7 +40,7 @@ const SPEC_GROUPS = [
   // Loop 6: sleeve HEAD (cap) treatment. Puff = raised + gathered crown; gathered
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
-  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puff', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
+  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puffed', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
   // patch 3.13: sleeve-end cuff (manşet). A separate button (barrel) or ribbed
   // (knit) band at the wrist, the sleeve hem gathered in. Only a full-length
   // straight sleeve (long/elbow, not a cap wing) has a wrist to cuff.

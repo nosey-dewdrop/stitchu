@@ -640,7 +640,7 @@ function flatSketch(sk) {
     const drawSleeve = (dir) => {
       const s = dir; // +1 right, -1 left
       const sx = CX + s * SHO_HALF, ux = CX + s * 56;
-      if (sk.sleeve === 'puff') {
+      if (sk.sleeve === 'puffed') {
         // raised, gathered crown ballooning off the shoulder
         parts.push(line(`M ${sx} ${capY} C ${sx + s * 34} ${capY - 6} ${sx + s * 40} ${capY + 30} ${sx + s * 20} ${capY + 52} L ${ux} ${uaY}`, INK));
         parts.push(line(`M ${sx} ${capY} C ${sx + s * 8} ${capY + 10} ${sx + s * 6} ${capY + 20} ${sx + s * 14} ${capY + 30}`, INK_SOFT, 1, 'stroke-dasharray="2 3"'));
@@ -841,7 +841,7 @@ const EXTRAS = {
   'hem-ruffle':          { sketch: { type: 'skirt', skirt: 'aLine', detail: 'ruffle', aria: 'ruffle-hem skirt' }, preset: { garment: 'skirt', skirtStyle: 'aLine', ruffle: 'single' } },
   // sleeves: a top flat with the sleeve as the accent
   'balloon-sleeve':      { sketch: { type: 'top', neckline: 'crew', sleeve: 'balloon', aria: 'balloon-sleeve top' }, preset: { garment: 'top', neckline: 'crew', sleeveStyle: 'balloon', sleeveLength: 'long' } },
-  'puff-sleeve':         { sketch: { type: 'top', neckline: 'crew', sleeve: 'puff', aria: 'puff-sleeve top' }, preset: { garment: 'top', neckline: 'crew', sleeveStyle: 'straight', sleeveCap: 'puffed' }, patch: '1.6', patchNote: 'the puff / gathered cap' },
+  'puff-sleeve':         { sketch: { type: 'top', neckline: 'crew', sleeve: 'puffed', aria: 'puff-sleeve top' }, preset: { garment: 'top', neckline: 'crew', sleeveStyle: 'straight', sleeveCap: 'puffed' }, patch: '1.6', patchNote: 'the puff / gathered cap' },
   // skirts: a skirt flat with the hem/waist style as the accent
   'a-line-skirt':        { sketch: { type: 'skirt', skirt: 'aLine', aria: 'A-line skirt' }, preset: { garment: 'skirt', skirtStyle: 'aLine' } },
   'straight-skirt':      { sketch: { type: 'skirt', skirt: 'straight', aria: 'straight skirt' }, preset: { garment: 'skirt', skirtStyle: 'straight' } },

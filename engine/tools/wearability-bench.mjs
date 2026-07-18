@@ -10,6 +10,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { VOCAB, canonical } from '../../web/js/vocab.gen.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -30,8 +31,9 @@ console.error('results:', resultsPath);
 const results = JSON.parse(readFileSync(resultsPath, 'utf8'));
 
 // --- opening mapping, mirroring create.js pickTiePlacement / pickBackOpening ----
-const TIE = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5 };
-const BACK = { none: 0, round: 1, lowV: 2, square: 3, keyhole: 4 };
+// Enum ints come from the generated vocabulary (engine/vocab.json), not a local copy.
+const TIE = Object.fromEntries(VOCAB.tieClosure.values.map((v, i) => [v, i]));
+const BACK = Object.fromEntries(VOCAB.backOpening.values.map((v, i) => [v, i]));
 
 function pickTiePlacement(seen) {
   const oov = Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '';
@@ -83,10 +85,9 @@ function necklineOf(s) {
   return 'crew';
 }
 function sleeveOf(s) {
+  // Vision phrasing resolves through the shared synonym table (engine/vocab.json).
   const v = (s.sleeveStyle || '').toLowerCase();
-  if (v === 'straight' || v === 'set-in' || v === 'fitted') return 'straight';
-  if (v === 'balloon' || v === 'puff' || v === 'bishop') return 'balloon';
-  return 'none';
+  return canonical('sleeveStyle', v) || 'none';
 }
 
 const rows = [];

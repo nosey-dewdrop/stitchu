@@ -112,7 +112,7 @@ const SLEEVEHEAD_DERIVATIVE = {
     tr: { applied: 'düz kol başı', note: 'büzgülü kol başı burada çizilmedi, düz kol + "büzgülü" kol başı seçersen çizilir' },
   },
   puffed: {
-    en: { applied: 'a plain sleeve head', note: 'the puff sleeve head was not drawn here, pick a straight sleeve and the "puff" sleeve head to draw it' },
+    en: { applied: 'a plain sleeve head', note: 'the puffed sleeve head was not drawn here, pick a straight sleeve and the puffed sleeve head to draw it' },
     tr: { applied: 'düz kol başı', note: 'puf kol başı burada çizilmedi, düz kol + "puf" kol başı seçersen çizilir' },
   },
   capped: {

@@ -261,7 +261,7 @@ function sleeveHalf(g, spec) {
   const underX = g.chestW, underY = 92;
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
-  const puff = spec.sleeveCap === 2 || style === 'puff';
+  const puff = spec.sleeveCap === 2;
   const cap = style === 'cap' || spec.sleeveCap === 4;
 
   // sleeve length (how far the hem drops below the shoulder tip)
@@ -430,7 +430,7 @@ function viewPanel(spec, view) {
   const bottom = g.hemY + (g.isDress ? 10 : 4);
   // widest extent: outline hem/hip/chest, or sleeve reach if sleeved
   let maxX = Math.max(g.hemHalf, g.chestW, g.shoulderW);
-  if (g.hasSleeve) maxX = Math.max(maxX, g.shoulderW + (spec.sleeveCap === 2 || spec.sleeveStyle === 'puff' ? 62 : 48));
+  if (g.hasSleeve) maxX = Math.max(maxX, g.shoulderW + (spec.sleeveCap === 2 ? 62 : 48));
   const pad = 20;
   const w = (maxX + pad) * 2;
   const h = bottom + pad;

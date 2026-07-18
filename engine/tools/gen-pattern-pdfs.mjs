@@ -95,6 +95,14 @@ const PATTERNS = [
     shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     pocketStyle: 1 },
+
+  // "The Courtney" babydoll mini (boogiechild, £79) — foto->JSON: V yaka +
+  // cup/yaka danteli + on orta kordon fiyongu + kisa balon kol + empire bel +
+  // akan gathered mini etek. Saten (woven, akiskan drape).
+  { slug: 'courtney-lace-vneck-babydoll-dress', style: 'V-neck lace babydoll mini dress', garment: 'dress',
+    shaping: 'princess', waistline: 'empire', fabric: 'woven', neckline: 'vNeck', sleeveStyle: 'balloon',
+    sleeveLength: 'short', sleeveCap: 2, skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip',
+    tie: 2, gatherType: 2, gatherZone: 0 },
 ];
 
 const OUT = process.argv[2] || join(here, '../../web/patterns/pdf');
