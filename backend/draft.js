@@ -13,107 +13,57 @@
 import createStitchuEngine from './engine/stitchu-worker.js';
 import wasmModule from './engine/stitchu-worker.wasm';
 
-// ---- API vocabulary. Single source of truth for what the API accepts; kept in
-// lockstep with engine/wasm/bindings.cpp (*From) so an unknown value is a clear
-// 422, never a silent fallback to the default.
-const ENUMS = {
-  garment: ['dress', 'top', 'skirt'],
-  shaping: ['princess', 'dart'],
-  waistline: ['natural', 'empire'],
-  fabric: ['woven', 'knit'],
-  neckline: ['crew', 'scoop', 'vNeck', 'square', 'boat', 'sweetheart', 'halter', 'cowl', 'pussyBow'],
-  sleeveStyle: ['none', 'straight', 'balloon'],
-  sleeveLength: ['short', 'elbow', 'long'],
-  skirtStyle: ['aLine', 'straight', 'gathered', 'halfCircle', 'pleated'],
-  skirtLength: ['mini', 'midi', 'maxi'],
-  topLength: ['cropped', 'hip', 'tunic'],
-  ruffle: ['none', 'single', 'tiered'],
-  keyhole: ['none', 'keyhole'],
-  tieClosure: ['none', 'backWaist', 'backWaistBow', 'frontNeckBow', 'tieBack', 'cuffTies', 'frontWaistTie', 'wrapFront', 'frontWaistBow'],
-  sleeveCap: ['plain', 'gathered', 'puffed', 'cap'],
-  collarType: ['none', 'stand', 'mock', 'flat', 'peterPan', 'shirt'],
-  collarEdge: ['round', 'pointed', 'scallop'],
-  gatherType: ['none', 'drawstring', 'shirred', 'smocked'],
-  gatherZone: ['neckline', 'bust', 'waist', 'sleeve'],
-  backOpening: ['none', 'round', 'lowV', 'square', 'keyhole'],
-  backSlit: ['none', 'vent', 'slit'],
-  ruffledStraps: ['none', 'ruffled'],
-  peplum: ['none', 'full', 'half', 'pointed'],
-  placketStyle: ['none', 'standard', 'asymmetric'],
-  edgeFinish: ['biasBinding', 'bias', 'facing'],
-  pocketStyle: ['none', 'patch', 'sideSeam'],
-  cuffStyle: ['none', 'button', 'ribbed'],
-  hemShape: ['straight', 'shirttail', 'highLow'],
-  shoulderStyle: ['set', 'dropped', 'raglan'],
-  buttonRow: ['none', 'functional', 'decorative'],
-  exposedZip: ['none', 'centerFront', 'centerBack'],
-  backDetail: ['none', 'ruffle', 'cape', 'flounce'],
-  bardotStyle: ['none', 'plain', 'frill'],
-};
+// ---- API vocabulary. Generated from engine/vocab.json (gen-vocab.mjs) so the
+// API, the web bridge and the C++ boundary can never drift apart. An unknown
+// value is a clear 422, never a silent fallback to the default.
+import { VOCAB, canonical } from './vocab.gen.js';
 
-// TiePlacement enum int (must match engine/src/tie.hpp order). 0 = None.
-const TIE_PLACEMENT = { none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5, frontWaistTie: 6, wrapFront: 7, frontWaistBow: 8 };
-const tieInt = (s) => TIE_PLACEMENT[s] || 0;
-// SleeveCap enum int (must match engine/src/measurements.hpp order). 0 = Plain.
-const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2, cap: 3 };
-const sleeveCapInt = (s) => SLEEVE_CAP[s] || 0;
-// CollarType/CollarEdge enum ints (must match engine/src/collar.hpp order).
-const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5 };
-const collarTypeInt = (s) => COLLAR_TYPE[s] || 0;
-const COLLAR_EDGE = { round: 0, pointed: 1, scallop: 2 };
-const collarEdgeInt = (s) => COLLAR_EDGE[s] || 0;
-// GatherType/GatherZone enum ints (must match engine/src/gather.hpp order).
-const GATHER_TYPE = { none: 0, drawstring: 1, shirred: 2, smocked: 3 };
-const gatherTypeInt = (s) => GATHER_TYPE[s] || 0;
-const GATHER_ZONE = { neckline: 0, bust: 1, waist: 2, sleeve: 3 };
-const gatherZoneInt = (s) => GATHER_ZONE[s] || 0;
-// BackOpening enum int (must match engine/src/openback.hpp order). 0 = None.
-const BACK_OPENING = { none: 0, round: 1, lowV: 2, square: 3, keyhole: 4 };
-const backOpeningInt = (s) => BACK_OPENING[s] || 0;
-// HemSlit enum int (must match engine/src/slit.hpp order). 0 = None.
-const HEM_SLIT = { none: 0, vent: 1, slit: 2 };
-const backSlitInt = (s) => HEM_SLIT[s] || 0;
-// StrapStyle enum int (must match engine/src/strap.hpp order). 0 = None.
-const STRAP_STYLE = { none: 0, ruffled: 1 };
-const ruffledStrapsInt = (s) => STRAP_STYLE[s] || 0;
-// PeplumStyle enum int (must match engine/src/peplum.hpp order). 0 = None.
-const PEPLUM_STYLE = { none: 0, full: 1, half: 2, pointed: 3 };
-const peplumInt = (s) => PEPLUM_STYLE[s] || 0;
-// PlacketStyle enum int (must match engine/src/placket.hpp order). 0 = None.
+// Accepted strings per field: canonical values + documented synonyms
+// (e.g. edgeFinish 'bias' -> 'biasBinding'). ruffle/keyhole are API-level
+// conveniences that predate the vocabulary and map to bool/int in runDraft.
+const ENUMS = Object.fromEntries(
+  Object.entries(VOCAB).map(([field, def]) => [
+    field,
+    def.values.concat(Object.keys(def.synonyms || {})),
+  ]),
+);
+ENUMS.ruffle = ['none', 'single', 'tiered'];
+ENUMS.keyhole = ['none', 'keyhole'];
+
+// Enum-int lookup. Absent -> 0 (the default); a present but unknown value
+// throws — validateDraftRequest has already 422'd it, so a throw here means a
+// coding error upstream, and it must be loud, not a silent None.
+const enumIntOf = (field) => (s) => {
+  if (s === undefined || s === null || s === '') return 0;
+  const c = canonical(field, s);
+  if (c === undefined) throw new Error(`invalid ${field} '${s}' (valid: ${VOCAB[field].values.join(', ')})`);
+  return VOCAB[field].values.indexOf(c);
+};
+const tieInt = enumIntOf('tieClosure');
+const sleeveCapInt = enumIntOf('sleeveCap');
+const collarTypeInt = enumIntOf('collarType');
+const collarEdgeInt = enumIntOf('collarEdge');
+const gatherTypeInt = enumIntOf('gatherType');
+const gatherZoneInt = enumIntOf('gatherZone');
+const backOpeningInt = enumIntOf('backOpening');
+const backSlitInt = enumIntOf('backSlit');
+const ruffledStrapsInt = enumIntOf('ruffledStraps');
+const peplumInt = enumIntOf('peplum');
+const edgeFinishInt = enumIntOf('edgeFinish');
+const pocketStyleInt = enumIntOf('pocketStyle');
+const cuffStyleInt = enumIntOf('cuffStyle');
+const hemShapeInt = enumIntOf('hemShape');
+const shoulderStyleInt = enumIntOf('shoulderStyle');
+const buttonRowInt = enumIntOf('buttonRow');
+const exposedZipInt = enumIntOf('exposedZip');
+const backDetailInt = enumIntOf('backDetail');
+const bardotStyleInt = enumIntOf('bardotStyle');
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
-const PLACKET_STYLE = { none: 0, standard: 1, asymmetric: 2 };
+const placketStyleEnumInt = enumIntOf('placketStyle');
 const placketStyleInt = (spec) => {
-  if (spec.placketStyle) return PLACKET_STYLE[spec.placketStyle] || 0;
+  if (spec.placketStyle) return placketStyleEnumInt(spec.placketStyle);
   return spec.frontPlacket === true ? 1 : 0;
 };
-// EdgeFinish enum int (must match engine/src/measurements.hpp order).
-// 0 = BiasBinding (patch 3.10 default), 1 = Facing (opt-in).
-const EDGE_FINISH = { biasBinding: 0, bias: 0, facing: 1 };
-const edgeFinishInt = (s) => EDGE_FINISH[s] || 0;
-// PocketStyle enum int (must match engine/src/pocket.hpp order). 0 = None.
-const POCKET_STYLE = { none: 0, patch: 1, sideSeam: 2 };
-const pocketStyleInt = (s) => POCKET_STYLE[s] || 0;
-// CuffStyle enum int (must match engine/src/cuff.hpp order). 0 = None.
-const CUFF_STYLE = { none: 0, button: 1, ribbed: 2 };
-const cuffStyleInt = (s) => CUFF_STYLE[s] || 0;
-// HemShape enum int (must match engine/src/hem.hpp order). 0 = Straight.
-const HEM_SHAPE = { straight: 0, shirttail: 1, highLow: 2 };
-const hemShapeInt = (s) => HEM_SHAPE[s] || 0;
-// ShoulderStyle enum int (must match engine/src/measurements.hpp order). 0 = Set.
-const SHOULDER_STYLE = { set: 0, dropped: 1, raglan: 2 };
-const shoulderStyleInt = (s) => SHOULDER_STYLE[s] || 0;
-// ButtonRow enum int (must match engine/src/buttonrow.hpp order). 0 = None.
-const BUTTON_ROW = { none: 0, functional: 1, decorative: 2 };
-const buttonRowInt = (s) => BUTTON_ROW[s] || 0;
-// ExposedZip enum int (must match engine/src/exposedzip.hpp order). 0 = None.
-const EXPOSED_ZIP = { none: 0, centerFront: 1, centerBack: 2 };
-const exposedZipInt = (s) => EXPOSED_ZIP[s] || 0;
-// BackDetail enum int (must match engine/src/backdetail.hpp order). 0 = None.
-const BACK_DETAIL = { none: 0, ruffle: 1, cape: 2, flounce: 3 };
-const backDetailInt = (s) => BACK_DETAIL[s] || 0;
-// BardotStyle enum int (must match engine/src/offshoulder.hpp order). 0 = None.
-const BARDOT_STYLE = { none: 0, plain: 1, frill: 2 };
-const bardotStyleInt = (s) => BARDOT_STYLE[s] || 0;
 
 // Measurement bounds mirror the web UI ranges (web/js/store.js MEASUREMENTS).
 // Out-of-range is a typo, not a body — reject it before the engine runs.

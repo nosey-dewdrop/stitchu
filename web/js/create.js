@@ -979,6 +979,16 @@ function showSpec() {
     drafting.appendChild(sewingLoader(t('create.drafting')));
     try {
       const result = await draft(spec, values);
+      if (result.error || !result.pattern) {
+        // The engine refused the spec (unknown value / invalid combination).
+        // Show the exact sentence — it names the field and the accepted values;
+        // the missing.js honesty layer has already run on the vision path.
+        go.disabled = false;
+        go.textContent = t('create.draft');
+        drafting.textContent = '';
+        alert(result.error || (result.issues && result.issues[0]) || t('create.engineerror'));
+        return;
+      }
       showResult(result);
     } catch (err) {
       go.disabled = false;

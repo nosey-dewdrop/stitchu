@@ -7,7 +7,9 @@
 
 #include "../src/garment.hpp"
 #include "../src/sizechart.hpp"
+#include "../src/specparse.hpp"
 #include "../src/validator.hpp"
+#include "../src/vocab.gen.hpp"
 
 namespace {
 
@@ -55,69 +57,21 @@ std::string commandsJSON(const std::vector<PathCommand>& commands) {
     return out + "]";
 }
 
-Neckline necklineFrom(const std::string& s) {
-    if (s == "scoop") return Neckline::Scoop;
-    if (s == "vNeck") return Neckline::VNeck;
-    if (s == "square") return Neckline::Square;
-    if (s == "boat") return Neckline::Boat;
-    if (s == "sweetheart") return Neckline::Sweetheart;
-    if (s == "halter") return Neckline::Halter;
-    if (s == "cowl") return Neckline::Cowl;
-    if (s == "pussyBow") return Neckline::PussyBow;
-    return Neckline::Crew;
-}
-SkirtStyle skirtStyleFrom(const std::string& s) {
-    if (s == "pleated") return SkirtStyle::Pleated;
-    if (s == "straight") return SkirtStyle::Straight;
-    if (s == "gathered") return SkirtStyle::Gathered;
-    if (s == "halfCircle") return SkirtStyle::HalfCircle;
-    return SkirtStyle::ALine;
-}
-SkirtLength skirtLengthFrom(const std::string& s) {
-    if (s == "mini") return SkirtLength::Mini;
-    if (s == "maxi") return SkirtLength::Maxi;
-    return SkirtLength::Midi;
-}
-SleeveStyle sleeveStyleFrom(const std::string& s) {
-    if (s == "straight") return SleeveStyle::Straight;
-    if (s == "balloon") return SleeveStyle::Balloon;
-    return SleeveStyle::None;
-}
-SleeveLength sleeveLengthFrom(const std::string& s) {
-    if (s == "elbow") return SleeveLength::Elbow;
-    if (s == "long") return SleeveLength::Long;
-    return SleeveLength::Short;
-}
-// Loop 6 + R1.2: gathered/puff/cap sleeve head. Int enum so the positional JS
-// binding stays simple (0 = Plain, 1 = Gathered, 2 = Puffed, 3 = Cap).
-SleeveCap sleeveCapFrom(int v) {
-    if (v == 3) return SleeveCap::Cap;
-    if (v == 2) return SleeveCap::Puffed;
-    if (v == 1) return SleeveCap::Gathered;
-    return SleeveCap::Plain;
-}
-GarmentType garmentFrom(const std::string& s) {
-    if (s == "skirt") return GarmentType::Skirt;
-    if (s == "top") return GarmentType::Top;
-    return GarmentType::Dress;
-}
-TopLength topLengthFrom(const std::string& s) {
-    if (s == "cropped") return TopLength::Cropped;
-    if (s == "tunic") return TopLength::Tunic;
-    return TopLength::Hip;
-}
-Shaping shapingFrom(const std::string& s) {
-    if (s == "dart") return Shaping::Dart;
-    return Shaping::Princess;
-}
-Waistline waistlineFrom(const std::string& s) {
-    if (s == "empire") return Waistline::Empire;
-    return Waistline::Natural;
-}
-Fabric fabricFrom(const std::string& s) {
-    if (s == "knit") return Fabric::Knit;
-    return Fabric::Woven;
-}
+// Every value parses through the generated vocabulary (engine/vocab.json).
+// Unknown value -> std::invalid_argument, caught at the draftJSON/gradeJSON
+// top level and returned as {"error": ...}. No silent defaults.
+using namespace stitchu::vocab;
+Neckline necklineFrom(const std::string& s) { return parseEnum<Neckline>("neckline", s, kNeckline, kNecklineCount); }
+SkirtStyle skirtStyleFrom(const std::string& s) { return parseEnum<SkirtStyle>("skirtStyle", s, kSkirtStyle, kSkirtStyleCount); }
+SkirtLength skirtLengthFrom(const std::string& s) { return parseEnum<SkirtLength>("skirtLength", s, kSkirtLength, kSkirtLengthCount); }
+SleeveStyle sleeveStyleFrom(const std::string& s) { return parseEnum<SleeveStyle>("sleeveStyle", s, kSleeveStyle, kSleeveStyleCount); }
+SleeveLength sleeveLengthFrom(const std::string& s) { return parseEnum<SleeveLength>("sleeveLength", s, kSleeveLength, kSleeveLengthCount); }
+SleeveCap sleeveCapFrom(int v) { return static_cast<SleeveCap>(parseEnumInt("sleeveCap", v, kSleeveCap, kSleeveCapCount)); }
+GarmentType garmentFrom(const std::string& s) { return parseEnum<GarmentType>("garment", s, kGarment, kGarmentCount); }
+TopLength topLengthFrom(const std::string& s) { return parseEnum<TopLength>("topLength", s, kTopLength, kTopLengthCount); }
+Shaping shapingFrom(const std::string& s) { return parseEnum<Shaping>("shaping", s, kShaping, kShapingCount); }
+Waistline waistlineFrom(const std::string& s) { return parseEnum<Waistline>("waistline", s, kWaistline, kWaistlineCount); }
+Fabric fabricFrom(const std::string& s) { return parseEnum<Fabric>("fabric", s, kFabric, kFabricCount); }
 
 // Returns {"pattern": {...}, "issues": [...]} — issues non-empty means the
 // runtime safety net caught an invalid draft; the UI must not show the PDF.
@@ -148,26 +102,28 @@ GarmentSpec buildSpec(
     spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
     spec.keyhole = keyhole;
     spec.frontPlacket = frontPlacket;
-    spec.tieClosure = tieClosure; // TiePlacement enum value; 0 = None
-    spec.sleeveCap = sleeveCapFrom(sleeveCap); // Loop 6+R1.2: 0=Plain 1=Gathered 2=Puffed 3=Cap
-    spec.collarType = collarType; // Loop 7/8: CollarType enum; 0=None 1=Stand 2=Mock 3=Flat 4=PeterPan 5=Shirt
-    spec.collarEdge = collarEdge; // CollarEdge enum (flat family outer edge); 0=Round 1=Pointed 2=Scallop
-    spec.gatherType = gatherType; // Loop 8: GatherType enum; 0=None 1=Drawstring 2=Shirred 3=Smocked
-    spec.gatherZone = gatherZone; // Loop 8: GatherZone enum; 0=Neckline 1=Bust 2=Waist 3=Sleeve
-    spec.backOpening = backOpening; // Loop 9b: BackOpening enum; 0=None 1=Round 2=LowV 3=Square 4=Keyhole
-    spec.backSlit = backSlit; // Loop M1: HemSlit enum; 0=None 1=Vent 2=Slit
-    spec.ruffledStraps = ruffledStraps; // queue #3: StrapStyle enum; 0=None 1=Ruffled
-    spec.peplum = peplum; // R1.1: PeplumStyle enum; 0=None 1=Full 2=Half 3=Pointed
-    spec.placketStyle = placketStyle; // R1.2: PlacketStyle enum; 0=None 1=Standard 2=Asymmetric
-    spec.edgeFinish = edgeFinish; // patch 3.10: EdgeFinish enum; 0=BiasBinding(default) 1=Facing
-    spec.pocketStyle = pocketStyle; // patch 3.12: PocketStyle enum; 0=None 1=Patch 2=SideSeam
-    spec.cuffStyle = cuffStyle; // patch 3.13: CuffStyle enum; 0=None 1=Button 2=Ribbed
-    spec.hemShape = hemShape; // patch 3.15: HemShape enum; 0=Straight 1=Shirttail 2=HighLow
-    spec.shoulderStyle = shoulderStyle; // patch 3.13: ShoulderStyle enum; 0=Set 1=Dropped 2=Raglan
-    spec.buttonRow = buttonRow; // vocab 2026-07-17: ButtonRow enum; 0=None 1=Functional 2=Decorative
-    spec.exposedZip = exposedZip; // vocab: ExposedZip enum; 0=None 1=CenterFront 2=CenterBack
-    spec.backDetail = backDetail; // vocab: BackDetail enum; 0=None 1=Ruffle 2=Cape 3=Flounce
-    spec.bardotStyle = bardotStyle; // vocab: BardotStyle enum; 0=None 1=Plain 2=Frill
+    // Every int enum range-checked against the generated vocabulary; an
+    // out-of-range value is an error, never a silent None/default.
+    spec.tieClosure = parseEnumInt("tieClosure", tieClosure, kTieClosure, kTieClosureCount);
+    spec.sleeveCap = sleeveCapFrom(sleeveCap);
+    spec.collarType = parseEnumInt("collarType", collarType, kCollarType, kCollarTypeCount);
+    spec.collarEdge = parseEnumInt("collarEdge", collarEdge, kCollarEdge, kCollarEdgeCount);
+    spec.gatherType = parseEnumInt("gatherType", gatherType, kGatherType, kGatherTypeCount);
+    spec.gatherZone = parseEnumInt("gatherZone", gatherZone, kGatherZone, kGatherZoneCount);
+    spec.backOpening = parseEnumInt("backOpening", backOpening, kBackOpening, kBackOpeningCount);
+    spec.backSlit = parseEnumInt("backSlit", backSlit, kBackSlit, kBackSlitCount);
+    spec.ruffledStraps = parseEnumInt("ruffledStraps", ruffledStraps, kRuffledStraps, kRuffledStrapsCount);
+    spec.peplum = parseEnumInt("peplum", peplum, kPeplum, kPeplumCount);
+    spec.placketStyle = parseEnumInt("placketStyle", placketStyle, kPlacketStyle, kPlacketStyleCount);
+    spec.edgeFinish = parseEnumInt("edgeFinish", edgeFinish, kEdgeFinish, kEdgeFinishCount);
+    spec.pocketStyle = parseEnumInt("pocketStyle", pocketStyle, kPocketStyle, kPocketStyleCount);
+    spec.cuffStyle = parseEnumInt("cuffStyle", cuffStyle, kCuffStyle, kCuffStyleCount);
+    spec.hemShape = parseEnumInt("hemShape", hemShape, kHemShape, kHemShapeCount);
+    spec.shoulderStyle = parseEnumInt("shoulderStyle", shoulderStyle, kShoulderStyle, kShoulderStyleCount);
+    spec.buttonRow = parseEnumInt("buttonRow", buttonRow, kButtonRow, kButtonRowCount);
+    spec.exposedZip = parseEnumInt("exposedZip", exposedZip, kExposedZip, kExposedZipCount);
+    spec.backDetail = parseEnumInt("backDetail", backDetail, kBackDetail, kBackDetailCount);
+    spec.bardotStyle = parseEnumInt("bardotStyle", bardotStyle, kBardotStyle, kBardotStyleCount);
     return spec;
 }
 
@@ -245,11 +201,19 @@ std::string draftJSON(
     int backDetail,    // vocab: back detail; 0 = None 1 = Ruffle 2 = Cape 3 = Flounce
     int bardotStyle    // vocab: off-shoulder/bardot; 0 = None 1 = Plain 2 = Frill
 ) {
-    const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
-    BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
-    m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
-    return patternJSON(spec, m);
+    try {
+        const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
+            sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
+        BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
+        m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
+        return patternJSON(spec, m);
+    } catch (const std::exception& e) {
+        // Invalid spec: no pattern, the message names the field and the accepted
+        // values. issues carries it too so every existing "issues non-empty ->
+        // no PDF" guard blocks the draft without new plumbing.
+        return std::string(R"({"error":")") + escape(e.what()) +
+               R"(","pattern":null,"issues":[")" + escape(e.what()) + "\"]}";
+    }
 }
 
 // Grade one design across a range of standard EU sizes (fromLabel..toLabel,
@@ -285,8 +249,14 @@ std::string gradeJSON(
     int backDetail,    // vocab: back detail; 0 = None 1 = Ruffle 2 = Cape 3 = Flounce
     int bardotStyle    // vocab: off-shoulder/bardot; 0 = None 1 = Plain 2 = Frill
 ) {
-    const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-        sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
+    GarmentSpec spec;
+    try {
+        spec = buildSpec(garment, shaping, waistline, fabric, neckline,
+            sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
+    } catch (const std::exception& e) {
+        return std::string(R"({"error":")") + escape(e.what()) +
+               R"(","sizes":[],"issues":[")" + escape(e.what()) + "\"]}";
+    }
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

@@ -6,7 +6,11 @@ cd "$(dirname "$0")"
 source "$HOME/emsdk/emsdk_env.sh" >/dev/null 2>&1
 
 mkdir -p dist
-em++ -O2 -std=c++17 \
+# -fexceptions + DISABLE_EXCEPTION_CATCHING=0: the boundary throws
+# std::invalid_argument on an unknown spec value and catches it INSIDE
+# draftJSON/gradeJSON (returns {"error": ...}); without these flags a C++ throw
+# aborts the whole module instead of reaching that catch.
+em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
   src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
@@ -45,7 +49,7 @@ echo "copied to web/vendor/"
 #     non-eval invoker).
 # The wasm still arrives pre-compiled via instantiateWasm, so nothing is fetched
 # or compiled at runtime either. Verified end-to-end in wrangler dev + live.
-em++ -O2 -std=c++17 \
+em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
   src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
