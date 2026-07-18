@@ -139,6 +139,10 @@ add_executable(fit_proof tests/fit_proof.cpp)
 target_link_libraries(fit_proof PRIVATE engine)
 add_test(NAME fit_proof COMMAND fit_proof)
 
+add_executable(sloper_check tests/sloper_check.cpp)
+target_link_libraries(sloper_check PRIVATE engine)
+add_test(NAME sloper_check COMMAND sloper_check)
+
 add_executable(fba_check tests/fba_check.cpp)
 target_link_libraries(fba_check PRIVATE engine)
 add_test(NAME fba_check COMMAND fba_check)
