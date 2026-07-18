@@ -66,13 +66,26 @@ PatternPiece draftQuarter(
     };
 
     std::vector<PathCommand> markings;
+    // A single waist dart wider than ~30 mm CONES over the hip (Aldrich): it
+    // makes a point instead of a smooth curve. Split any intake above the cap
+    // into TWO darts, each carrying half — one nearer center front, one nearer
+    // the side. The side dart is drafted a little shorter (it sits over the
+    // higher hip curve), per standard skirt-block practice.
+    auto oneDart = [&](double centerX, double width, double length) {
+        const double legY = -sideWaistRise * (centerX / waistlineWidth) * 0.5;
+        markings.push_back(PathCommand::move({centerX - width / 2, legY}));
+        markings.push_back(PathCommand::line({centerX, length}));
+        markings.push_back(PathCommand::line({centerX + width / 2, legY}));
+    };
     if (dartWidth > 0) {
-        const double dartCenterX = waistlineWidth / 2;
-        const Point dartTip{dartCenterX, dartLength};
-        const double legY = -sideWaistRise * (dartCenterX / waistlineWidth) * 0.5;
-        markings.push_back(PathCommand::move({dartCenterX - dartWidth / 2, legY}));
-        markings.push_back(PathCommand::line(dartTip));
-        markings.push_back(PathCommand::line({dartCenterX + dartWidth / 2, legY}));
+        if (dartWidth > maxSingleDart) {
+            // Two darts at 1/3 and 2/3 of the waist span, splitting the intake.
+            const double each = dartWidth / 2;
+            oneDart(waistlineWidth / 3, each, dartLength);
+            oneDart(waistlineWidth * 2 / 3, each, dartLength * 0.82);
+        } else {
+            oneDart(waistlineWidth / 2, dartWidth, dartLength);
+        }
     }
 
     PatternPiece piece;

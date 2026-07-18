@@ -495,6 +495,13 @@ PrincessHalf makePrincessPieces(
 // half stays a single dart-mode piece (the dart itself may also be ~zero).
 constexpr double minPrincessIntake = 12;
 
+// Small-body dart fallback (mirrors how the real BugraPatterns XXS variant uses
+// a dart instead of a panel): on a small frame whose suppression is only
+// marginal, a princess panel is sewable but its curve is too shallow to earn
+// the extra seam — draft an honest dart instead. Above these it stays a panel.
+constexpr double princessSmallBustMM = 840;   // ~EU34/XS full-bust girth = "small size"
+constexpr double princessCleanIntakeMM = 20;  // suppression a small-frame panel needs to earn its curve
+
 } // namespace
 
 namespace BodiceBlock {
@@ -528,7 +535,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // the seam runs roughly straight out onto the arm instead of steepening.
     // Set/Raglan leave shoulderHalf exactly as before → byte-identical.
     const bool droppedShoulder = options.shoulderStyle == ShoulderStyle::Dropped;
-    const double naturalShoulderHalf = m.shoulderCM * 10 / 2;
+    double naturalShoulderHalf = m.shoulderCM * 10 / 2;
     double shoulderHalf = naturalShoulderHalf;
     // The frame girth (back + armhole size to this). Prefer the REAL upper-bust
     // measurement when the user gave it — that's the full-bust adjustment. Only
@@ -547,7 +554,24 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // dart + a little front length) so a fuller bust does not ride up and gape.
     const double cupFullness = std::max(0.0, m.bustMM() - underbust); // mm of extra bust girth
 
-    const double shoulderDrop = shoulderHalf * shoulderDropFactor;
+    // Shoulder slope (2026-07-18, Aldrich pass): the seam from the neck point to
+    // the shoulder tip must run at ~22 deg from horizontal over an Aldrich-length
+    // seam (~118 mm for EU38), NOT a fixed drop tied only to shoulderHalf. The old
+    // `shoulderHalf * 0.23` gave a fixed drop; on a WIDE neckline (boat pushes the
+    // neck point out to x=110) the run collapsed, so the seam came out short AND
+    // steep (78 mm / 33 deg). We anchor the tip to the FRONT neck point instead:
+    // walk out `shoulderSeamTarget` mm at `shoulderSlopeDeg` from the neck point.
+    // frontNeckWEarly is computed just below in the byte-identical order; mirror
+    // its formula here (ONE source stays the min() at frontNeckWEarly).
+    const double frontNeckWForSlope = std::min(
+        neck * frontNeckWidthFactor * neckWidthMultiplier(neckline),
+        shoulderHalf * maxNeckShoulderShare);
+    const double shoulderSlopeRad = BodiceBlock::shoulderSlopeDeg * M_PI / 180.0;
+    const double shoulderDrop = BodiceBlock::shoulderSeamTargetMM * std::sin(shoulderSlopeRad);
+    // Tip x = neck point + horizontal run of the target-length seam at target slope.
+    shoulderHalf = frontNeckWForSlope +
+                   BodiceBlock::shoulderSeamTargetMM * std::cos(shoulderSlopeRad);
+    naturalShoulderHalf = shoulderHalf; // dropped-shoulder extends off the new tip
     // Dropped shoulder: slide the tip out now that the slope is fixed. The
     // armhole point drop + widen is applied to armholeY and the chest widths
     // below (all gated on droppedShoulder → Set is byte-identical).
@@ -657,9 +681,17 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd + droppedWiden;
     const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
     const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
-    // Up to 15mm of the reduction slants the side seam in at the WAIST (never
-    // at the chest — that would eat the bust ease), rest is dart.
-    const double sideTake = std::min(frontReduction, 15.0);
+    // Bust dart (2026-07-18, Aldrich pass): a B-cup for an 88 bust wants a
+    // 15-18 deg bust dart. The old code bled up to 15 mm of the front
+    // suppression into the side seam, which flattened the single waist->apex
+    // dart to ~11.5 deg / 38 mm. Keep only a small side slant so most of the
+    // suppression stays in the dart (deepening it toward the Aldrich intake).
+    // Extended tops (hip/tunic) sew a below-waist EXTENSION curve that is not
+    // side-trued (see below); their waist X drives that curve's control point,
+    // so keep the old 15 mm side-take there to leave the front/back extension
+    // seams paired exactly as before (their fit isn't the bodice bust dart).
+    const double sideTakeCap = extendBelowWaist > 0 ? 15.0 : BodiceBlock::frontSideTakeMM;
+    const double sideTake = std::min(frontReduction, sideTakeCap);
     const double frontDart = frontReduction - sideTake;
     const double frontWaistlineWidth = frontWaistTarget + frontDart;
 
@@ -702,8 +734,10 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const bool backCramped =
         bShoulderDrop + (bArmholeY - bShoulderDrop) * princessArmholeShare >
         backApexY - princessApexClearance;
+    const bool smallBody = m.bustMM() < princessSmallBustMM;
     const bool backPrincess = shaping == Shaping::Princess && backDart >= minPrincessIntake &&
-                              (!halter || !backCramped);
+                              (!halter || !backCramped) &&
+                              !(smallBody && backDart < princessCleanIntakeMM);
 
     HalfBodice back;
     PrincessHalf backSplit;
@@ -752,7 +786,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double frontDartLength = empire
         ? std::max(12.0, (fSeamSideY - 8) - (fArmholeY + 40))
         : frontLength - fArmholeY - 40;
-    const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake;
+    const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake &&
+                               !(smallBody && frontDart < princessCleanIntakeMM);
 
     HalfBodice front;
     PrincessHalf frontSplit;

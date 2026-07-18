@@ -14,6 +14,7 @@ inline constexpr double knitEase = 0.01;     // knits stretch over waist and hip
 inline constexpr double hipDepth = 200;      // waist-to-hip drafting depth
 inline constexpr double maxSideTake = 25;    // per quarter
 inline constexpr double minDartWidth = 8;    // below this the dart folds into the side seam
+inline constexpr double maxSingleDart = 30;  // wider than this cones the hip -> split into two
 inline constexpr double gatherRatio = 1.9;
 inline constexpr double pleatRatio = 3.0;    // knife pleats take 3x their sewn width
 inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : waistEase; }

@@ -221,12 +221,20 @@ void annotateTechnical(DraftedPattern& pattern, bool dressZipper) {
 
 } // namespace
 
+// Single source of truth for the shaping decision. Every block routes its
+// shaping through here instead of reading spec.shaping directly.
+Shaping resolveShaping(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
+    // PHASE 1: pure passthrough. Auto-fallback logic comes in phase 2.
+    (void)m;
+    return spec.shaping;
+}
+
 namespace DressBlock {
 
 DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
     BodiceBlock::BodiceOptions options;
     options.neckline = spec.neckline;
-    options.shaping = spec.shaping;
+    options.shaping = resolveShaping(spec, m);
     options.waistline = spec.waistline;
     options.fabric = spec.fabric;
     // Dropped shoulder reshapes the armhole here (Set/Raglan leave it untouched;
@@ -255,10 +263,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     join.backQuarterWaist = bodice.backSewnWaist;
     join.frontSeamArc = bodice.frontPrincess ? bodice.frontWaistCenterArc : 0;
     join.backSeamArc = bodice.backPrincess ? bodice.backWaistCenterArc : 0;
-    const bool useJoin = spec.shaping == Shaping::Princess;
+    const Shaping shaping = resolveShaping(spec, m);
+    const bool useJoin = shaping == Shaping::Princess;
     std::vector<PatternPiece> skirtPieces = SkirtBlock::pieces(
         m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist,
-        spec.shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr);
+        shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
         // Half-circle panels already carry the word; avoid "Skirt Skirt Panel".
@@ -290,7 +299,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // the old facing allowance. Golden dumps subtract whichever was added.
     const double neckFinishMeters = (halter || biasNeck)
         ? BodiceBlock::bindingFabricMeters : BodiceBlock::facingFabricMeters;
-    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric, skirtExtra) + 0.7 + neckFinishMeters;
+    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, shaping, spec.fabric, skirtExtra) + 0.7 + neckFinishMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
     // A sleeveless (non-halter) garment bias-binds both armholes (a real piece in
     // the default finish, a step in the facing finish) — count the self-fabric
@@ -428,7 +437,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // stay fitted; dart-mode pieces use the classic (boxy) hem extension.
     BodiceBlock::BodiceOptions options;
     options.neckline = spec.neckline;
-    options.shaping = spec.shaping;
+    options.shaping = resolveShaping(spec, m);
     options.fabric = spec.fabric;
     options.extendBelowWaist = extra;
     options.hipHalfQuarter = hipHalfQuarter;
@@ -583,7 +592,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     DraftedPattern pattern;
     switch (spec.garment) {
         case GarmentType::Skirt:
-            pattern = SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
+            pattern = SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
             break;
         case GarmentType::Dress:
             pattern = DressBlock::draft(spec, m);
@@ -751,7 +760,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.ruffleHem &&
         (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress)) {
         const double hemMM = SkirtBlock::hemCircumferenceMM(
-            m, spec.skirtStyle, spec.skirtLength, spec.shaping, spec.fabric);
+            m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
         const auto ruffles = RuffleBlock::draftTiers(
             hemMM, spec.ruffleFullness, spec.ruffleDepthMM, spec.ruffleTiers);
         pattern.pieces.insert(pattern.pieces.end(), ruffles.begin(), ruffles.end());

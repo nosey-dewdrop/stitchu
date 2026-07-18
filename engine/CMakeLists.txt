@@ -189,3 +189,7 @@ add_test(NAME notch_alignment_check COMMAND notch_alignment_check)
 add_executable(closed_garment_check tests/closed_garment_check.cpp)
 target_link_libraries(closed_garment_check PRIVATE engine)
 add_test(NAME closed_garment_check COMMAND closed_garment_check)
+
+add_executable(sewable_census tests/sewable_census.cpp)
+target_link_libraries(sewable_census PRIVATE engine)
+add_test(NAME sewable_census COMMAND sewable_census)
