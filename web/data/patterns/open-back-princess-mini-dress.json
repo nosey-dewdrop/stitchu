@@ -1,0 +1,70 @@
+{
+  "slug": "open-back-princess-mini-dress",
+  "style": "Open-back princess mini dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "open-back-princess-mini-dress",
+    "style": "Open-back princess mini dress",
+    "garment": "dress",
+    "shaping": "princess",
+    "waistline": "natural",
+    "fabric": "woven",
+    "neckline": "square",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "mini",
+    "topLength": "hip",
+    "backOpening": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Center Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Side Front",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bodice Center Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bodice Side Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1231 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1231 mm = edge 1211 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Center Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Side Front",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Skirt Center Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Skirt Side Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Open Back Facing (round)",
+      "cut": "cut 1 on fold, interface"
+    }
+  ]
+}

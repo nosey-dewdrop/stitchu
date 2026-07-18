@@ -1,0 +1,42 @@
+{
+  "slug": "gingham-button-blouse",
+  "style": "Sleeveless gingham button blouse",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "gingham-button-blouse",
+    "style": "Sleeveless gingham button blouse",
+    "garment": "top",
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "woven",
+    "neckline": "boat",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "frontPlacket": true
+  },
+  "pieces": [
+    {
+      "name": "Top Front",
+      "cut": "cut 2 (center front opening)"
+    },
+    {
+      "name": "Top Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1218 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1218 mm = edge 1198 mm + overlap), press in half, wrap the edge and trim the excess"
+    }
+  ]
+}

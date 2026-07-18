@@ -1,0 +1,60 @@
+{
+  "slug": "empire-waist-tie-back-dress",
+  "style": "Empire-waist tie-back dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "empire-waist-tie-back-dress",
+    "style": "Empire-waist tie-back dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "boat",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "gathered",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "tie": 2,
+    "gatherType": 2,
+    "gatherZone": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1218 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1218 mm = edge 1198 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Waist Tie (bel bağı)",
+      "cut": "cut 2 rectangle(s) 90 x 630 mm (finished 30 x 600 mm), each ties from the side seam round to a bow at centre back"
+    },
+    {
+      "name": "Shirred Bust Panel (büzgü büst panosu)",
+      "cut": "cut 1 rectangle(s) 1007 x 140 mm (join to a 977 mm flat top edge that gathers down to 488 mm), gathered shirred at the bust"
+    }
+  ]
+}

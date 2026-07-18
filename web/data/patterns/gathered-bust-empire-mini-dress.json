@@ -1,0 +1,68 @@
+{
+  "slug": "gathered-bust-empire-mini-dress",
+  "style": "Gathered-bust empire mini dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "gathered-bust-empire-mini-dress",
+    "style": "Gathered-bust empire mini dress",
+    "garment": "dress",
+    "shaping": "princess",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "boat",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "gathered",
+    "skirtLength": "mini",
+    "topLength": "hip",
+    "tie": 2,
+    "gatherType": 2,
+    "gatherZone": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Center Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Side Front",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bodice Center Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bodice Side Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1218 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1218 mm = edge 1198 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Waist Tie (bel bağı)",
+      "cut": "cut 2 rectangle(s) 90 x 630 mm (finished 30 x 600 mm), each ties from the side seam round to a bow at centre back"
+    },
+    {
+      "name": "Shirred Bust Panel (büzgü büst panosu)",
+      "cut": "cut 2 rectangle(s) 1006 x 140 mm (join to a 1953 mm flat top edge that gathers down to 976 mm), gathered shirred at the bust"
+    }
+  ]
+}

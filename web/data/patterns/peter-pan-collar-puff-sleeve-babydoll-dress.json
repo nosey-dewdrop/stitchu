@@ -1,0 +1,70 @@
+{
+  "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
+  "style": "Peter-pan collar puff-sleeve babydoll dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "peter-pan-collar-puff-sleeve-babydoll-dress",
+    "style": "Peter-pan collar puff-sleeve babydoll dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "gathered",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "collarType": 4,
+    "collarEdge": 0,
+    "sleeveCap": 2,
+    "gatherType": 3,
+    "gatherZone": 0
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Front Neck Facing",
+      "cut": "cut 1 on fold, interface"
+    },
+    {
+      "name": "Back Neck Facing",
+      "cut": "cut 2, interface"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Puff Sleeve",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Peter Pan Collar (bebe yaka)",
+      "cut": "cut 2 + interfacing (1 upper, 1 under + interfacing), lies flat on the shoulders, rounded outer edge"
+    },
+    {
+      "name": "Smocked Yoke Panel (büzgü yaka panosu)",
+      "cut": "cut 1 rectangle(s) 1081 x 160 mm (join to a 1051 mm flat top edge that gathers down to 350 mm), gathered smocked at the neckline"
+    }
+  ]
+}

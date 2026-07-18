@@ -1,0 +1,56 @@
+{
+  "slug": "mandarin-collar-fitted-blouse",
+  "style": "Mandarin-collar fitted blouse",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "mandarin-collar-fitted-blouse",
+    "style": "Mandarin-collar fitted blouse",
+    "garment": "top",
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "frontPlacket": true,
+    "collarType": 1,
+    "collarEdge": 0
+  },
+  "pieces": [
+    {
+      "name": "Top Front",
+      "cut": "cut 2 (center front opening)"
+    },
+    {
+      "name": "Top Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Front Neck Facing",
+      "cut": "cut 2 (center front opening), interface"
+    },
+    {
+      "name": "Back Neck Facing",
+      "cut": "cut 2, interface"
+    },
+    {
+      "name": "Sleeve",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Stand Collar (dik yaka)",
+      "cut": "cut 2 on fold at centre back (1 self + 1 interfacing), band stands at the neckline; ease none — the bottom edge equals the neckline"
+    }
+  ]
+}

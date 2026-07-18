@@ -1,0 +1,46 @@
+{
+  "slug": "square-neck-back-tie-babydoll-top",
+  "style": "Square-neck back-tie babydoll top",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "square-neck-back-tie-babydoll-top",
+    "style": "Square-neck back-tie babydoll top",
+    "garment": "top",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "square",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "tie": 4
+  },
+  "pieces": [
+    {
+      "name": "Top Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Top Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1231 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1231 mm = edge 1211 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Back Tie (sırt bağı)",
+      "cut": "cut 2 rectangle(s) 80 x 330 mm (finished 25 x 300 mm), attach at each back waist edge, cross and knot to close the back"
+    }
+  ]
+}

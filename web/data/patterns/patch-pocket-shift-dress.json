@@ -1,0 +1,54 @@
+{
+  "slug": "patch-pocket-shift-dress",
+  "style": "Patch-pocket A-line shift dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "patch-pocket-shift-dress",
+    "style": "Patch-pocket A-line shift dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "woven",
+    "neckline": "scoop",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "pocketStyle": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1176 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1176 mm = edge 1156 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Patch Pocket (yama cep)",
+      "cut": "cut 2 rectangle(s) 121 x 171 mm (rounded lower corners, fold the top 35 mm to the inside for the mouth hem; sized to 220 mm front panel)"
+    }
+  ]
+}

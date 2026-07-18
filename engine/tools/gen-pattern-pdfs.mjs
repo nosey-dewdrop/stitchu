@@ -357,7 +357,8 @@ function draft(s) {
     s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0,
     // Trailing params (backSlit..shoulderStyle); edgeFinish 0 = bias binding default.
     s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0, s.placketStyle || 0,
-    s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0));
+    s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0,
+    s.buttonRow || 0, s.exposedZip || 0, s.backDetail || 0, s.bardotStyle || 0));
   return out;
 }
 
@@ -376,9 +377,20 @@ function a4Pdf(s, p, layout, sheets, used) {
     c.stroke(0.3, GREY); c.dash(null); c.line(M, 55, A4.w - M, 55);
     c.text(M, 66, 12, NAVY, 'Pieces', null);
     let y = 76;
+    // Header count and this list come from the same set: chalk pieces (bias
+    // binding, ruffle strips) are listed under their own heading, never
+    // silently dropped (the courtney guide sewed a piece the cut list hid).
     const paper = p.pieces.filter((x) => !isChalk(x));
-    for (const piece of (paper.length ? paper : p.pieces)) {
+    const chalkPieces = p.pieces.filter((x) => isChalk(x));
+    for (const piece of paper) {
       c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
+    }
+    if (chalkPieces.length) {
+      y += 3;
+      c.text(M, y, 10, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += 8;
+      for (const piece of chalkPieces) {
+        c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
+      }
     }
     y += 6;
     c.text(M, y, 12, NAVY, 'Assembly'); y += 9;
@@ -418,7 +430,8 @@ function a0Pdf(s, p, layout, used) {
   const scale = Math.min(1, availW / stripW, availH / stripH);
   const c = new Ctx(A0.h);
   c.text(M, 30, 30, NAVY, s.style, null);
-  c.text(M, 46, 14, GREY, `EU38  .  ${p.pieces.length} pieces  .  ${p.fabricMeters140} m at 140 cm  .  single-sheet A0 (print shop)`, null);
+  const a0Chalk = p.pieces.filter((x) => isChalk(x)).length;
+  c.text(M, 46, 14, GREY, `EU38  .  ${p.pieces.length} pieces${a0Chalk ? ` (${a0Chalk} chalked on fabric, not printed here)` : ''}  .  ${p.fabricMeters140} m at 140 cm  .  single-sheet A0 (print shop)`, null);
   if (scale < 1) c.text(M, 60, 12, INK, `NOTE: this pattern is larger than A0; printed here at ${(scale * 100).toFixed(1)}% to fit. Scale up to the calibration square before cutting.`, null);
   else c.text(M, 60, 12, GREY, 'true scale at 100%. Confirm with the calibration square, then cut.', null);
   // Draw the whole strip, all sheets, no register frames (single sheet), scaled.
@@ -470,6 +483,7 @@ function guidePdf(s, p) {
   const M = 20;
   const lineH = 5.6;
   const paper = p.pieces.filter((x) => !isChalk(x));
+  const chalkPieces = p.pieces.filter((x) => isChalk(x));
   let c = new Ctx(A4.h);
   let y = 28;
   const newPage = () => { pdf.page(A4.w, A4.h, c.s); c = new Ctx(A4.h); y = 24; };
@@ -480,8 +494,15 @@ function guidePdf(s, p) {
   c.text(M, y, 9, GREY, 'text-first guide, no illustrations in this edition. Every step is the engine\'s own instruction.', null); y += 12;
 
   c.text(M, y, 13, NAVY, 'Cut list', null); y += 8;
-  for (const piece of (paper.length ? paper : p.pieces)) {
+  for (const piece of paper) {
     need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
+  }
+  if (chalkPieces.length) {
+    need(lineH + 4);
+    c.text(M, y, 10.5, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += lineH + 1;
+    for (const piece of chalkPieces) {
+      need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
+    }
   }
   y += 8;
   need(20);
@@ -498,9 +519,18 @@ function guidePdf(s, p) {
 
 // ---- main ---------------------------------------------------------------
 const report = [];
+const SPEC_OUT = join(here, '../../web/data/patterns');
+mkdirSync(SPEC_OUT, { recursive: true });
 for (const s of PATTERNS) {
   const out = draft(s);
-  if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
+  // A refused spec or a validator-blocked draft NEVER reaches the press: a
+  // wrong pattern must not ship because a log line scrolled by.
+  if (out.error) { console.error(`${s.slug}: ENGINE REFUSED: ${out.error}`); process.exit(1); }
+  if (out.issues && out.issues.length) {
+    console.error(`${s.slug}: VALIDATOR BLOCKED:`);
+    for (const i of out.issues) console.error(`  ${i}`);
+    process.exit(1);
+  }
   const p = out.pattern;
   const paper = p.pieces.filter((x) => !isChalk(x));
   const layout = packPieces(paper.length ? paper : p.pieces);
@@ -513,6 +543,14 @@ for (const s of PATTERNS) {
   writeFileSync(join(OUT, `${s.slug}-a4.pdf`), a4);
   writeFileSync(join(OUT, `${s.slug}-a0.pdf`), a0);
   writeFileSync(join(OUT, `${s.slug}-guide.pdf`), gd);
+
+  // Reproducibility record: the exact spec + body every shipped PDF was
+  // drafted from (the courtney PDF could not be re-produced because its spec
+  // lived nowhere). One JSON per slug, committed with the PDFs.
+  writeFileSync(join(SPEC_OUT, `${s.slug}.json`), JSON.stringify({
+    slug: s.slug, style: s.style, body: BODY, spec: s,
+    pieces: p.pieces.map((x) => ({ name: x.name, cut: x.cutInstruction })),
+  }, null, 2) + '\n');
 
   report.push({ slug: s.slug, pieces: p.pieces.length, a4pages: sheets.length + 1,
     a4bytes: a4.length, a0bytes: a0.length, guidebytes: gd.length,
