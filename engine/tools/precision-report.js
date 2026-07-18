@@ -3,17 +3,17 @@
    sleeve cap, facing) across bodies and specs, and reports the worst mismatch
    in mm. Anything over 1.0 mm (outside intended ease) fails.
    run:  node engine/tools/precision-report.js */
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
 
 const BODIES = {
-  EU38: [88, 70, 94, 37, 40.5, 58, 35],
-  petite: [84, 64, 90, 34, 33, 49, 33],
-  plus: [122, 104, 128, 42, 43.5, 61.5, 41],
+  EU38: { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 },
+  petite: { bust: 84, waist: 64, hip: 90, shoulder: 34, backLength: 33, armLength: 49, neck: 33 },
+  plus: { bust: 122, waist: 104, hip: 128, shoulder: 42, backLength: 43.5, armLength: 61.5, neck: 41 },
 };
 const SPECS = {
-  'princess scoop dress': ['dress','princess','natural','woven','scoop','straight','long','aLine','midi','hip', false, 1, false],
-  'babydoll knit': ['dress','princess','empire','knit','crew','balloon','short','gathered','mini','hip', false, 1, false],
-  'halter halfcircle': ['dress','princess','natural','woven','halter','none','short','halfCircle','maxi','hip', false, 1, false],
+  'princess scoop dress': { garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'long', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false },
+  'babydoll knit': { garment: 'dress', shaping: 'princess', waistline: 'empire', fabric: 'knit', neckline: 'crew', sleeveStyle: 'balloon', sleeveLength: 'short', skirtStyle: 'gathered', skirtLength: 'mini', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false },
+  'halter halfcircle': { garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'halter', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'halfCircle', skirtLength: 'maxi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false },
 };
 
 function flat(cmds) {
@@ -53,7 +53,7 @@ function pair(label, a, b, tolerance = 1.0) {
 createEngine().then(e => {
   for (const [bodyName, M] of Object.entries(BODIES)) {
     for (const [specName, args] of Object.entries(SPECS)) {
-      const out = JSON.parse(e.draftJSON(...args, ...M));
+      const out = JSON.parse(e.draftJSON(args, M));
       if (out.issues.length) { console.log(`SKIP ${bodyName}/${specName}: blocked`); continue; }
       const P = out.pattern.pieces;
       const g = (n) => P.find(x => x.name === n);

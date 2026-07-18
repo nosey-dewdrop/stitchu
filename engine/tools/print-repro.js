@@ -1,8 +1,8 @@
 // Faithful node port of web/js/print.js pagination for visual inspection.
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
 const fs = require('fs');
 const PAGE_W = 190, PAGE_H = 250, GUTTER = 12;
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function pathD(commands, scale) {
   return commands.map((c) => {
@@ -86,7 +86,7 @@ function sheetSVG(layout, col, row) {
   return `<?xml version="1.0"?>\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x0} ${y0} ${PAGE_W} ${PAGE_H}">${inner}</svg>`;
 }
 createEngine().then(e => {
-  const p = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, false, ...M)).pattern;
+  const p = JSON.parse(e.draftJSON({ garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false }, M)).pattern;
   const layout = packPieces(p.pieces);
   const rows = Math.ceil(layout.stripH / PAGE_H);
   fs.mkdirSync('/tmp/pdf', { recursive: true });

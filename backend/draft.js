@@ -189,39 +189,36 @@ export function validateDraftRequest(body) {
 }
 
 // Run the engine. Returns the parsed engine JSON {pattern, issues}.
+// The single named-object spec the WASM boundary takes.
+function engineSpec(spec) {
+  return {
+    garment: spec.garment, shaping: spec.shaping, waistline: spec.waistline,
+    fabric: spec.fabric, neckline: spec.neckline,
+    sleeveStyle: spec.sleeveStyle, sleeveLength: spec.sleeveLength,
+    skirtStyle: spec.skirtStyle, skirtLength: spec.skirtLength, topLength: spec.topLength,
+    ruffleHem: spec.ruffle !== 'none', ruffleTiers: spec.ruffle === 'tiered' ? 3 : 1,
+    keyhole: spec.keyhole === 'keyhole', frontPlacket: spec.frontPlacket === true,
+    tieClosure: tieInt(spec.tieClosure), sleeveCap: sleeveCapInt(spec.sleeveCap),
+    collarType: collarTypeInt(spec.collarType), collarEdge: collarEdgeInt(spec.collarEdge),
+    gatherType: gatherTypeInt(spec.gatherType), gatherZone: gatherZoneInt(spec.gatherZone),
+    backOpening: backOpeningInt(spec.backOpening), backSlit: backSlitInt(spec.backSlit),
+    ruffledStraps: ruffledStrapsInt(spec.ruffledStraps), peplum: peplumInt(spec.peplum),
+    placketStyle: placketStyleInt(spec), edgeFinish: edgeFinishInt(spec.edgeFinish),
+    pocketStyle: pocketStyleInt(spec.pocketStyle), cuffStyle: cuffStyleInt(spec.cuffStyle),
+    hemShape: hemShapeInt(spec.hemShape), shoulderStyle: shoulderStyleInt(spec.shoulderStyle),
+    buttonRow: buttonRowInt(spec.buttonRow), exposedZip: exposedZipInt(spec.exposedZip),
+    backDetail: backDetailInt(spec.backDetail), bardotStyle: bardotStyleInt(spec.bardotStyle),
+  };
+}
+
 export async function runDraft(spec, measurements) {
   const eng = await engine();
-  const json = eng.draftJSON(
-    spec.garment, spec.shaping, spec.waistline, spec.fabric,
-    spec.neckline, spec.sleeveStyle, spec.sleeveLength,
-    spec.skirtStyle, spec.skirtLength, spec.topLength,
-    spec.ruffle !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
-    spec.keyhole === 'keyhole',
-    measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
-    measurements.backLength, measurements.armLength, measurements.neck,
-    measurements.upperBust || 0, // optional full-bust adjustment
-    spec.frontPlacket === true,  // Loop 3: front button placket
-    tieInt(spec.tieClosure),     // Loop 4b: fabric ties / sash / bow
-    sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
-    collarTypeInt(spec.collarType), // Loop 7/8: collar family
-    collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
-    gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
-    gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
-    backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
-    backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
-    ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
-    peplumInt(spec.peplum),           // R1.1: peplum flare
-    placketStyleInt(spec),            // R1.2: asymmetric placket
-    edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
-    pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
-    cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
-    hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
-    shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
-    buttonRowInt(spec.buttonRow),     // vocab: button row
-    exposedZipInt(spec.exposedZip),   // vocab: exposed zipper
-    backDetailInt(spec.backDetail),   // vocab: back detail
-    bardotStyleInt(spec.bardotStyle), // vocab: off-shoulder / bardot
-  );
+  const json = eng.draftJSON(engineSpec(spec), {
+    bust: measurements.bust, waist: measurements.waist, hip: measurements.hip,
+    shoulder: measurements.shoulder, backLength: measurements.backLength,
+    armLength: measurements.armLength, neck: measurements.neck,
+    upperBust: measurements.upperBust || 0,
+  });
   return JSON.parse(json);
 }
 
@@ -247,34 +244,7 @@ export async function handleGrade(request) {
   let result;
   try {
     const eng = await engine();
-    const json = eng.gradeJSON(
-      spec.garment, spec.shaping, spec.waistline, spec.fabric,
-      spec.neckline, spec.sleeveStyle, spec.sleeveLength,
-      spec.skirtStyle, spec.skirtLength, spec.topLength,
-      spec.ruffle !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
-      spec.keyhole === 'keyhole', from, to,
-      spec.frontPlacket === true, // Loop 3: front button placket
-      tieInt(spec.tieClosure),    // Loop 4b: fabric ties / sash / bow
-      sleeveCapInt(spec.sleeveCap), // Loop 6: gathered/puff sleeve head
-      collarTypeInt(spec.collarType), // Loop 7/8: collar family
-      collarEdgeInt(spec.collarEdge), // Loop 7/8: flat-family outer edge
-      gatherTypeInt(spec.gatherType), // Loop 8: drawstring/shirred/smocked gathering
-      gatherZoneInt(spec.gatherZone), // Loop 8: gather zone
-      backOpeningInt(spec.backOpening), // Loop 9b: open-back cutout
-      backSlitInt(spec.backSlit),       // Loop M1: back hem slit / walking vent
-      ruffledStrapsInt(spec.ruffledStraps), // queue #3: ruffled shoulder straps
-      peplumInt(spec.peplum),           // R1.1: peplum flare
-      placketStyleInt(spec),            // R1.2: asymmetric placket
-      edgeFinishInt(spec.edgeFinish),   // patch 3.10: neckline/armhole edge finish
-      pocketStyleInt(spec.pocketStyle), // patch 3.12: patch / side-seam pocket
-      cuffStyleInt(spec.cuffStyle),     // patch 3.13: sleeve-end cuff
-      hemShapeInt(spec.hemShape),       // patch 3.15: hem shape
-      shoulderStyleInt(spec.shoulderStyle), // patch 3.13: dropped shoulder / raglan
-      buttonRowInt(spec.buttonRow),     // vocab: button row
-      exposedZipInt(spec.exposedZip),   // vocab: exposed zipper
-      backDetailInt(spec.backDetail),   // vocab: back detail
-      bardotStyleInt(spec.bardotStyle), // vocab: off-shoulder / bardot
-    );
+    const json = eng.gradeJSON(engineSpec(spec), { from, to });
     result = JSON.parse(json);
   } catch { return { status: 500, payload: { error: 'engine_error' } }; }
   return { status: 200, payload: { apiVersion: '1', spec, from, to, sizes: result.sizes } };

@@ -1,6 +1,6 @@
 // v2: full piece SETS per garment, packed like a real pattern sheet.
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function pathD(cmds, s, dx, dy) {
   let d = '';
@@ -120,7 +120,7 @@ function tilingSVG(piece, label) {
 }
 
 createEngine().then(e => {
-  const draft = (args) => JSON.parse(e.draftJSON(...args, false, 1, false, ...M)).pattern;
+  const draft = (a) => JSON.parse(e.draftJSON({ garment: a[0], shaping: a[1], waistline: a[2], fabric: a[3], neckline: a[4], sleeveStyle: a[5], sleeveLength: a[6], skirtStyle: a[7], skirtLength: a[8], topLength: a[9], ruffleHem: false, ruffleTiers: 1, keyhole: false }, M)).pattern;
   const dress = draft(['dress','princess','natural','woven','scoop','none','short','aLine','midi','hip']);
   const babydoll = draft(['dress','princess','empire','woven','scoop','balloon','short','gathered','midi','hip']);
   const top = draft(['top','princess','natural','woven','scoop','none','short','aLine','midi','cropped']);

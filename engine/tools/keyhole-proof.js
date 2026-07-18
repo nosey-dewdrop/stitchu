@@ -1,9 +1,9 @@
 /* keyhole-proof.js — drafts a crew dress with the keyhole through the REAL
    wasm engine and renders the mirrored front (as worn) + the facing piece.
    run:  node engine/tools/keyhole-proof.js  -> engine/tools/keyhole-proof.svg */
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
 const fs = require('fs');
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function path(cmds, mirror) {
   const sx = mirror ? -1 : 1;
@@ -18,7 +18,7 @@ function path(cmds, mirror) {
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','crew','none','short','aLine','midi','hip', false, 1, true, ...M));
+  const out = JSON.parse(e.draftJSON({ garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: true }, M));
   if (out.issues.length) { console.error('VALIDATOR ISSUES:', out.issues); process.exit(1); }
   const pieces = out.pattern.pieces;
   const front = pieces.find(p => p.name === 'Bodice Center Front') || pieces.find(p => p.name === 'Bodice Front');

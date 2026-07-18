@@ -1,7 +1,7 @@
 // Virtual seamstress: assemble the garment seam by seam and measure what a
 // numeric length check can't see — WHERE things meet, not just how long.
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function flat(cmds) { // flatten to points, tracking current position
   const pts = []; let cur = null, start = null;
@@ -31,7 +31,7 @@ function cmdLen(cmds, i) { // length of command index i (must not be move)
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','straight','short','aLine','midi','hip', false, 1, false, ...M));
+  const out = JSON.parse(e.draftJSON({ garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false }, M));
   const p = out.pattern;
   const g = n => p.pieces.find(x => x.name === n);
   console.log('=== VIRTUAL SEW: princess A-line dress, EU38 ===');

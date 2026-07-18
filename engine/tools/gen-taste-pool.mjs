@@ -221,14 +221,16 @@ while (items.length < TARGET && tries < MAX_TRIES) {
   const k = key(s);
   if (seen.has(k)) continue;
 
-  const out = JSON.parse(engine.draftJSON(
-    s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
-    s.skirtStyle, s.skirtLength, s.topLength, false, 1, false,
-    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
-    s.frontPlacket === true, s.tie, s.sleeveCap, s.collarType, s.collarEdge,
-    s.gatherType, s.gatherZone, s.backOpening,
-    /* backSlit */ 0, s.ruffledStraps, s.peplum, /* placketStyle */ 0,
-    /* edgeFinish */ 0, s.pocketStyle, /* cuffStyle */ 0, /* hemShape */ 0, /* shoulderStyle */ 0));
+  const out = JSON.parse(engine.draftJSON({
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, fabric: s.fabric,
+    neckline: s.neckline, sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    ruffleHem: false, ruffleTiers: 1, keyhole: false,
+    frontPlacket: s.frontPlacket === true, tieClosure: s.tie, sleeveCap: s.sleeveCap,
+    collarType: s.collarType, collarEdge: s.collarEdge,
+    gatherType: s.gatherType, gatherZone: s.gatherZone, backOpening: s.backOpening,
+    ruffledStraps: s.ruffledStraps, peplum: s.peplum, pocketStyle: s.pocketStyle,
+  }, { bust: BODY.bust, waist: BODY.waist, hip: BODY.hip, shoulder: BODY.shoulder, backLength: BODY.backLength, armLength: BODY.armLength, neck: BODY.neck }));
 
   if (out.error) { errors++; continue; }   // engine rejected the combo — skip.
   seen.add(k);

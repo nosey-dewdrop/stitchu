@@ -3,7 +3,16 @@
    measurements, then simulates the print packer's math on every draft to prove
    no piece can be clipped and page counts stay sane.
    run:  node engine/tools/web-fuzz.js */
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const path = require('path');
+const createEngine = require(path.join(__dirname, '../dist/stitchu-engine.js'));
+
+const specOf = (a, extra = {}) => ({
+  garment: a[0], shaping: a[1], waistline: a[2], fabric: a[3], neckline: a[4],
+  sleeveStyle: a[5], sleeveLength: a[6], skirtStyle: a[7], skirtLength: a[8],
+  topLength: a[9], ruffleHem: a[10], ruffleTiers: a[11], keyhole: a[12], ...extra,
+});
+const bodyOf = (m) => ({ bust: m.bust, waist: m.waist, hip: m.hip, shoulder: m.shoulder,
+  backLength: m.backLength, armLength: m.armLength, neck: m.neck });
 
 const PAGE_W = 190, PAGE_H = 250, GUTTER = 12;
 
@@ -81,8 +90,7 @@ createEngine().then((e) => {
 
   const run = (label, args, m, placket = false) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0, placket));
+    const out = JSON.parse(e.draftJSON(specOf(args, { frontPlacket: placket }), bodyOf(m)));
     if (out.issues.length) {
       blocked++;
       if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`);
@@ -111,9 +119,7 @@ createEngine().then((e) => {
   // gathered panel + drawstring cord are drafted and packed like any other piece.
   const gatherRun = (label, args, m, gatherType, gatherZone) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, gatherType, gatherZone, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { gatherType, gatherZone }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -135,9 +141,7 @@ createEngine().then((e) => {
   // backOpening enum LAST so the open-back cutout facing is drafted + packed.
   const backOpenRun = (label, args, m, backOpening) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, backOpening));
+    const out = JSON.parse(e.draftJSON(specOf(args, { backOpening }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -156,9 +160,7 @@ createEngine().then((e) => {
   // backSlit enum LAST (backOpening 0 before it) so the vent/slit is drafted.
   const backSlitRun = (label, args, m, backSlit) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, backSlit));
+    const out = JSON.parse(e.draftJSON(specOf(args, { backSlit }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -177,9 +179,7 @@ createEngine().then((e) => {
   // ruffledStraps enum LAST so the separate gathered strap pair is drafted + packed.
   const strapRun = (label, args, m) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 1));
+    const out = JSON.parse(e.draftJSON(specOf(args, { ruffledStraps: 1 }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -198,9 +198,7 @@ createEngine().then((e) => {
   // LAST (backSlit 0, ruffledStraps 0 before it) so the flared peplum is drafted.
   const peplumRun = (label, args, m, peplum) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, peplum));
+    const out = JSON.parse(e.draftJSON(specOf(args, { peplum }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -220,9 +218,7 @@ createEngine().then((e) => {
   // trail last).
   const capRun = (label, args, m) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { sleeveCap: 3 }), bodyOf(m)));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -237,9 +233,7 @@ createEngine().then((e) => {
   // trailing arg (peplum before it, edgeFinish 0 after it). Everything else 0/false.
   const asymPlacketRun = (label, args, m) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { placketStyle: 2 }), bodyOf(m)));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -255,9 +249,7 @@ createEngine().then((e) => {
   // bias strips (neckline + armhole) are fresh strip pieces that must pack.
   const edgeRun = (label, args, m, edgeFinish, collarType) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, collarType || 0, 0, 0, 0, 0, 0, 0, 0, 0, edgeFinish, 0, 0, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { collarType: collarType || 0, edgeFinish }), bodyOf(m)));
     if (out.issues.length) { blocked++; return; }
     {
       const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
@@ -279,9 +271,7 @@ createEngine().then((e) => {
   // 0/false. The reshape must not clip and must keep every draft valid.
   const hemRun = (label, args, m, hemShape) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, hemShape));
+    const out = JSON.parse(e.draftJSON(specOf(args, { hemShape }), bodyOf(m)));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -298,9 +288,7 @@ createEngine().then((e) => {
   // has no panel / too-short a side seam.
   const pocketRun = (label, args, m, pocketStyle) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pocketStyle, 0, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { pocketStyle }), bodyOf(m)));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);
@@ -316,9 +304,7 @@ createEngine().then((e) => {
   // (1) or Ribbed (2) band; the wrist band must pack without clipping.
   const cuffRun = (label, args, m, cuff) => {
     drafts++;
-    const out = JSON.parse(e.draftJSON(...args,
-      m.bust, m.waist, m.hip, m.shoulder, m.backLength, m.armLength, m.neck, 0,
-      false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, cuff, 0));
+    const out = JSON.parse(e.draftJSON(specOf(args, { cuffStyle: cuff }), bodyOf(m)));
     if (out.issues.length) { blocked++; if (blockedExamples.length < 8) blockedExamples.push(`${label}: ${out.issues[0]}`); return; }
     const paper = out.pattern.pieces.filter((p) => !isChalkPiece(p));
     const layout = packPieces(paper);

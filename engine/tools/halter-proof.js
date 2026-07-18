@@ -2,9 +2,9 @@
    renders: the mirrored front pair (strap + plunge as worn), the low back
    pair, and the piece list. LOOK before shipping.
    run:  node engine/tools/halter-proof.js  -> engine/tools/halter-proof.svg */
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
 const fs = require('fs');
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function path(cmds, mirror) {
   const sx = mirror ? -1 : 1;
@@ -19,7 +19,7 @@ function path(cmds, mirror) {
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','halter','balloon','short','aLine','midi','hip', false, 1, false, ...M));
+  const out = JSON.parse(e.draftJSON({ garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'halter', sleeveStyle: 'balloon', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: false, ruffleTiers: 1, keyhole: false }, M));
   if (out.issues.length) { console.error('VALIDATOR ISSUES:', out.issues); process.exit(1); }
   const pieces = out.pattern.pieces;
   console.log('garment:', out.pattern.garment);

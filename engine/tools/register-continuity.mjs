@@ -38,12 +38,16 @@ const SPECS = [
 ];
 
 function draft(s) {
-  const out = JSON.parse(engine.draftJSON(
-    s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
-    s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
-    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
-    s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0));
+  const out = JSON.parse(engine.draftJSON({
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, fabric: s.fabric,
+    neckline: s.neckline, sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    ruffleHem: s.ruffle, ruffleTiers: s.tiers, keyhole: s.keyhole,
+    frontPlacket: s.frontPlacket === true, tieClosure: s.tie || 0, sleeveCap: s.sleeveCap || 0,
+    collarType: s.collarType || 0, collarEdge: s.collarEdge || 0,
+    gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0,
+    backSlit: s.backSlit || 0,
+  }, { bust: BODY.bust, waist: BODY.waist, hip: BODY.hip, shoulder: BODY.shoulder, backLength: BODY.backLength, armLength: BODY.armLength, neck: BODY.neck }));
   return out;
 }
 

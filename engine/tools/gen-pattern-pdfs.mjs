@@ -349,16 +349,19 @@ function wrap(str, size, maxMM) {
 const engine = await createEngine();
 
 function draft(s) {
-  const out = JSON.parse(engine.draftJSON(
-    s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
-    s.skirtStyle, s.skirtLength, s.topLength, false, 1, false,
-    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
-    s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0,
-    // Trailing params (backSlit..shoulderStyle); edgeFinish 0 = bias binding default.
-    s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0, s.placketStyle || 0,
-    s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0,
-    s.buttonRow || 0, s.exposedZip || 0, s.backDetail || 0, s.bardotStyle || 0));
+  const out = JSON.parse(engine.draftJSON({
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, fabric: s.fabric,
+    neckline: s.neckline, sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    frontPlacket: s.frontPlacket === true, tieClosure: s.tie || 0, sleeveCap: s.sleeveCap || 0,
+    collarType: s.collarType || 0, collarEdge: s.collarEdge || 0,
+    gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0,
+    backSlit: s.backSlit || 0, ruffledStraps: s.ruffledStraps || 0, peplum: s.peplum || 0,
+    placketStyle: s.placketStyle || 0, edgeFinish: s.edgeFinish || 0, pocketStyle: s.pocketStyle || 0,
+    cuffStyle: s.cuffStyle || 0, hemShape: s.hemShape || 0, shoulderStyle: s.shoulderStyle || 0,
+    buttonRow: s.buttonRow || 0, exposedZip: s.exposedZip || 0, backDetail: s.backDetail || 0,
+    bardotStyle: s.bardotStyle || 0,
+  }, BODY));
   return out;
 }
 

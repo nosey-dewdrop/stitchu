@@ -180,18 +180,20 @@ const svgDoc = (viewBox, wMM, hMM, inner) =>
 
 const engine = await createEngine();
 for (const s of SPECS) {
-  const out = JSON.parse(engine.draftJSON(
-    s.garment, s.shaping, s.waistline, s.fabric, s.neckline, s.sleeveStyle, s.sleeveLength,
-    s.skirtStyle, s.skirtLength, s.topLength, s.ruffle, s.tiers, s.keyhole,
-    BODY.bust, BODY.waist, BODY.hip, BODY.shoulder, BODY.backLength, BODY.armLength, BODY.neck, 0,
-    s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
-    s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0, s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0,
-    s.placketStyle || 0,
-    s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */,
-    s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */,
-    s.cuffStyle || 0 /* patch 3.13: 0 = none, 1 = button, 2 = ribbed */,
-    s.hemShape || 0 /* patch 3.15: 0 = straight, 1 = shirttail, 2 = high-low */,
-    s.shoulderStyle || 0, s.buttonRow || 0, s.exposedZip || 0, s.backDetail || 0, s.bardotStyle || 0));
+  const out = JSON.parse(engine.draftJSON({
+    garment: s.garment, shaping: s.shaping, waistline: s.waistline, fabric: s.fabric,
+    neckline: s.neckline, sleeveStyle: s.sleeveStyle, sleeveLength: s.sleeveLength,
+    skirtStyle: s.skirtStyle, skirtLength: s.skirtLength, topLength: s.topLength,
+    ruffleHem: !!s.ruffle, ruffleTiers: s.tiers || 1, keyhole: !!s.keyhole,
+    frontPlacket: s.frontPlacket === true, tieClosure: s.tie || 0, sleeveCap: s.sleeveCap || 0,
+    collarType: s.collarType || 0, collarEdge: s.collarEdge || 0,
+    gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0, backOpening: s.backOpening || 0,
+    backSlit: s.backSlit || 0, ruffledStraps: s.ruffledStraps || 0, peplum: s.peplum || 0,
+    placketStyle: s.placketStyle || 0, edgeFinish: s.edgeFinish || 0, pocketStyle: s.pocketStyle || 0,
+    cuffStyle: s.cuffStyle || 0, hemShape: s.hemShape || 0, shoulderStyle: s.shoulderStyle || 0,
+    buttonRow: s.buttonRow || 0, exposedZip: s.exposedZip || 0, backDetail: s.backDetail || 0,
+    bardotStyle: s.bardotStyle || 0,
+  }, { ...BODY, upperBust: 0 }));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }

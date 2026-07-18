@@ -74,57 +74,74 @@ Shaping shapingFrom(const std::string& s) { return parseEnum<Shaping>("shaping",
 Waistline waistlineFrom(const std::string& s) { return parseEnum<Waistline>("waistline", s, kWaistline, kWaistlineCount); }
 Fabric fabricFrom(const std::string& s) { return parseEnum<Fabric>("fabric", s, kFabric, kFabricCount); }
 
+// Spec arrives as ONE named object (emscripten::val) — the 34-positional
+// signature died 2026-07-18: a one-slot shift silently drafted a different
+// dress. Absent field = the enum default (absence is not a wrong word);
+// present-but-unknown value = error via specparse.
+using emscripten::val;
+
+std::string strField(const val& o, const char* key, const char* dflt) {
+    const val v = o[key];
+    if (v.isUndefined() || v.isNull()) return dflt;
+    return v.as<std::string>();
+}
+int intField(const val& o, const char* key) {
+    const val v = o[key];
+    if (v.isUndefined() || v.isNull()) return 0;
+    return v.as<int>();
+}
+bool boolField(const val& o, const char* key) {
+    const val v = o[key];
+    if (v.isUndefined() || v.isNull()) return false;
+    return v.as<bool>();
+}
+double numField(const val& o, const char* key) {
+    const val v = o[key];
+    if (v.isUndefined() || v.isNull()) return 0;
+    return v.as<double>();
+}
+
 // Returns {"pattern": {...}, "issues": [...]} — issues non-empty means the
 // runtime safety net caught an invalid draft; the UI must not show the PDF.
-GarmentSpec buildSpec(
-    const std::string& garment, const std::string& shaping, const std::string& waistline,
-    const std::string& fabric, const std::string& neckline,
-    const std::string& sleeveStyle, const std::string& sleeveLength,
-    const std::string& skirtStyle, const std::string& skirtLength, const std::string& topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole, bool frontPlacket, int tieClosure,
-    int sleeveCap, int collarType, int collarEdge, int gatherType, int gatherZone,
-    int backOpening, int backSlit, int ruffledStraps, int peplum, int placketStyle,
-    int edgeFinish, int pocketStyle, int cuffStyle, int hemShape,
-    int shoulderStyle,
-    int buttonRow, int exposedZip, int backDetail, int bardotStyle
-) {
+GarmentSpec buildSpec(const val& o) {
     GarmentSpec spec;
-    spec.garment = garmentFrom(garment);
-    spec.shaping = shapingFrom(shaping);
-    spec.waistline = waistlineFrom(waistline);
-    spec.fabric = fabricFrom(fabric);
-    spec.neckline = necklineFrom(neckline);
-    spec.sleeveStyle = sleeveStyleFrom(sleeveStyle);
-    spec.sleeveLength = sleeveLengthFrom(sleeveLength);
-    spec.skirtStyle = skirtStyleFrom(skirtStyle);
-    spec.skirtLength = skirtLengthFrom(skirtLength);
-    spec.topLength = topLengthFrom(topLength);
-    spec.ruffleHem = ruffleHem;
-    spec.ruffleTiers = ruffleTiers; // engine clamps 1..5; fullness/depth stay engine defaults
-    spec.keyhole = keyhole;
-    spec.frontPlacket = frontPlacket;
+    spec.garment = garmentFrom(strField(o, "garment", "dress"));
+    spec.shaping = shapingFrom(strField(o, "shaping", "dart"));
+    spec.waistline = waistlineFrom(strField(o, "waistline", "natural"));
+    spec.fabric = fabricFrom(strField(o, "fabric", "woven"));
+    spec.neckline = necklineFrom(strField(o, "neckline", "crew"));
+    spec.sleeveStyle = sleeveStyleFrom(strField(o, "sleeveStyle", "none"));
+    spec.sleeveLength = sleeveLengthFrom(strField(o, "sleeveLength", "short"));
+    spec.skirtStyle = skirtStyleFrom(strField(o, "skirtStyle", "aLine"));
+    spec.skirtLength = skirtLengthFrom(strField(o, "skirtLength", "midi"));
+    spec.topLength = topLengthFrom(strField(o, "topLength", "hip"));
+    spec.ruffleHem = boolField(o, "ruffleHem");
+    const int tiers = intField(o, "ruffleTiers");
+    spec.ruffleTiers = tiers ? tiers : 1; // engine clamps 1..5
+    spec.keyhole = boolField(o, "keyhole");
+    spec.frontPlacket = boolField(o, "frontPlacket");
     // Every int enum range-checked against the generated vocabulary; an
     // out-of-range value is an error, never a silent None/default.
-    spec.tieClosure = parseEnumInt("tieClosure", tieClosure, kTieClosure, kTieClosureCount);
-    spec.sleeveCap = sleeveCapFrom(sleeveCap);
-    spec.collarType = parseEnumInt("collarType", collarType, kCollarType, kCollarTypeCount);
-    spec.collarEdge = parseEnumInt("collarEdge", collarEdge, kCollarEdge, kCollarEdgeCount);
-    spec.gatherType = parseEnumInt("gatherType", gatherType, kGatherType, kGatherTypeCount);
-    spec.gatherZone = parseEnumInt("gatherZone", gatherZone, kGatherZone, kGatherZoneCount);
-    spec.backOpening = parseEnumInt("backOpening", backOpening, kBackOpening, kBackOpeningCount);
-    spec.backSlit = parseEnumInt("backSlit", backSlit, kBackSlit, kBackSlitCount);
-    spec.ruffledStraps = parseEnumInt("ruffledStraps", ruffledStraps, kRuffledStraps, kRuffledStrapsCount);
-    spec.peplum = parseEnumInt("peplum", peplum, kPeplum, kPeplumCount);
-    spec.placketStyle = parseEnumInt("placketStyle", placketStyle, kPlacketStyle, kPlacketStyleCount);
-    spec.edgeFinish = parseEnumInt("edgeFinish", edgeFinish, kEdgeFinish, kEdgeFinishCount);
-    spec.pocketStyle = parseEnumInt("pocketStyle", pocketStyle, kPocketStyle, kPocketStyleCount);
-    spec.cuffStyle = parseEnumInt("cuffStyle", cuffStyle, kCuffStyle, kCuffStyleCount);
-    spec.hemShape = parseEnumInt("hemShape", hemShape, kHemShape, kHemShapeCount);
-    spec.shoulderStyle = parseEnumInt("shoulderStyle", shoulderStyle, kShoulderStyle, kShoulderStyleCount);
-    spec.buttonRow = parseEnumInt("buttonRow", buttonRow, kButtonRow, kButtonRowCount);
-    spec.exposedZip = parseEnumInt("exposedZip", exposedZip, kExposedZip, kExposedZipCount);
-    spec.backDetail = parseEnumInt("backDetail", backDetail, kBackDetail, kBackDetailCount);
-    spec.bardotStyle = parseEnumInt("bardotStyle", bardotStyle, kBardotStyle, kBardotStyleCount);
+    spec.tieClosure = parseEnumInt("tieClosure", intField(o, "tieClosure"), kTieClosure, kTieClosureCount);
+    spec.sleeveCap = sleeveCapFrom(intField(o, "sleeveCap"));
+    spec.collarType = parseEnumInt("collarType", intField(o, "collarType"), kCollarType, kCollarTypeCount);
+    spec.collarEdge = parseEnumInt("collarEdge", intField(o, "collarEdge"), kCollarEdge, kCollarEdgeCount);
+    spec.gatherType = parseEnumInt("gatherType", intField(o, "gatherType"), kGatherType, kGatherTypeCount);
+    spec.gatherZone = parseEnumInt("gatherZone", intField(o, "gatherZone"), kGatherZone, kGatherZoneCount);
+    spec.backOpening = parseEnumInt("backOpening", intField(o, "backOpening"), kBackOpening, kBackOpeningCount);
+    spec.backSlit = parseEnumInt("backSlit", intField(o, "backSlit"), kBackSlit, kBackSlitCount);
+    spec.ruffledStraps = parseEnumInt("ruffledStraps", intField(o, "ruffledStraps"), kRuffledStraps, kRuffledStrapsCount);
+    spec.peplum = parseEnumInt("peplum", intField(o, "peplum"), kPeplum, kPeplumCount);
+    spec.placketStyle = parseEnumInt("placketStyle", intField(o, "placketStyle"), kPlacketStyle, kPlacketStyleCount);
+    spec.edgeFinish = parseEnumInt("edgeFinish", intField(o, "edgeFinish"), kEdgeFinish, kEdgeFinishCount);
+    spec.pocketStyle = parseEnumInt("pocketStyle", intField(o, "pocketStyle"), kPocketStyle, kPocketStyleCount);
+    spec.cuffStyle = parseEnumInt("cuffStyle", intField(o, "cuffStyle"), kCuffStyle, kCuffStyleCount);
+    spec.hemShape = parseEnumInt("hemShape", intField(o, "hemShape"), kHemShape, kHemShapeCount);
+    spec.shoulderStyle = parseEnumInt("shoulderStyle", intField(o, "shoulderStyle"), kShoulderStyle, kShoulderStyleCount);
+    spec.buttonRow = parseEnumInt("buttonRow", intField(o, "buttonRow"), kButtonRow, kButtonRowCount);
+    spec.exposedZip = parseEnumInt("exposedZip", intField(o, "exposedZip"), kExposedZip, kExposedZipCount);
+    spec.backDetail = parseEnumInt("backDetail", intField(o, "backDetail"), kBackDetail, kBackDetailCount);
+    spec.bardotStyle = parseEnumInt("bardotStyle", intField(o, "bardotStyle"), kBardotStyle, kBardotStyleCount);
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }
@@ -185,42 +202,14 @@ std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
     return out;
 }
 
-std::string draftJSON(
-    std::string garment, std::string shaping, std::string waistline, std::string fabric,
-    std::string neckline,
-    std::string sleeveStyle, std::string sleeveLength,
-    std::string skirtStyle, std::string skirtLength, std::string topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole,
-    double bustCM, double waistCM, double hipCM, double shoulderCM,
-    double backLengthCM, double armLengthCM, double neckCM,
-    double upperBustCM,
-    bool frontPlacket, // appended so existing positional callers stay valid
-    int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
-    int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
-    int collarType,    // Loop 7/8: collar family; 0 = None
-    int collarEdge,    // Loop 7/8: flat-family outer edge; 0 = Round
-    int gatherType,    // Loop 8: drawstring/shirred/smocked gathering; 0 = None
-    int gatherZone,    // Loop 8: gather zone; 0 = Neckline
-    int backOpening,   // Loop 9b: open-back cutout; 0 = None
-    int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
-    int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
-    int peplum,        // R1.1: peplum flare; 0 = None
-    int placketStyle,  // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
-    int edgeFinish,    // patch 3.10: edge finish; 0 = BiasBinding (default), 1 = Facing
-    int pocketStyle,   // patch 3.12: pocket; 0 = None 1 = Patch 2 = SideSeam
-    int cuffStyle,     // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
-    int hemShape,      // patch 3.15: hem shape; 0 = Straight 1 = Shirttail 2 = HighLow
-    int shoulderStyle, // patch 3.13: shoulder/sleeve join; 0 = Set 1 = Dropped 2 = Raglan
-    int buttonRow,     // vocab: button row; 0 = None 1 = Functional 2 = Decorative
-    int exposedZip,    // vocab: exposed zipper; 0 = None 1 = CenterFront 2 = CenterBack
-    int backDetail,    // vocab: back detail; 0 = None 1 = Ruffle 2 = Cape 3 = Flounce
-    int bardotStyle    // vocab: off-shoulder/bardot; 0 = None 1 = Plain 2 = Frill
-) {
+std::string draftJSON(val specObj, val bodyObj) {
     try {
-        const GarmentSpec spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-            sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
-        BodyMeasurementsSnapshot m{bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM};
-        m.upperBustCM = upperBustCM; // optional full-bust adjustment; 0 = old behaviour
+        const GarmentSpec spec = buildSpec(specObj);
+        BodyMeasurementsSnapshot m{
+            numField(bodyObj, "bust"), numField(bodyObj, "waist"), numField(bodyObj, "hip"),
+            numField(bodyObj, "shoulder"), numField(bodyObj, "backLength"),
+            numField(bodyObj, "armLength"), numField(bodyObj, "neck")};
+        m.upperBustCM = numField(bodyObj, "upperBust"); // optional FBA; 0 = old behaviour
         return patternJSON(spec, m);
     } catch (const std::exception& e) {
         // Invalid spec: no pattern, the message names the field and the accepted
@@ -235,43 +224,16 @@ std::string draftJSON(
 // inclusive). Returns {"sizes":[{"size":"EU38","pattern":{...},"issues":[...]}, ...]}.
 // This is the seller/brand deliverable: one design, a whole size run, from the
 // same engine that fits a custom body — no manual grade rules to maintain.
-std::string gradeJSON(
-    std::string garment, std::string shaping, std::string waistline, std::string fabric,
-    std::string neckline,
-    std::string sleeveStyle, std::string sleeveLength,
-    std::string skirtStyle, std::string skirtLength, std::string topLength,
-    bool ruffleHem, int ruffleTiers, bool keyhole,
-    std::string fromLabel, std::string toLabel,
-    bool frontPlacket, // appended so existing positional callers stay valid
-    int tieClosure,    // Loop 4b: fabric ties / sash / bow; 0 = None
-    int sleeveCap,     // Loop 6: gathered/puff sleeve head; 0 = Plain
-    int collarType,    // Loop 7/8: collar family; 0 = None
-    int collarEdge,    // Loop 7/8: flat-family outer edge; 0 = Round
-    int gatherType,    // Loop 8: drawstring/shirred/smocked gathering; 0 = None
-    int gatherZone,    // Loop 8: gather zone; 0 = Neckline
-    int backOpening,   // Loop 9b: open-back cutout; 0 = None
-    int backSlit,      // Loop M1: back hem slit / walking vent; 0 = None
-    int ruffledStraps, // queue #3: ruffled shoulder straps; 0 = None
-    int peplum,        // R1.1: peplum flare; 0 = None
-    int placketStyle,  // R1.2: asymmetric placket; 0 = None 1 = Standard 2 = Asymmetric
-    int edgeFinish,    // patch 3.10: edge finish; 0 = BiasBinding (default), 1 = Facing
-    int pocketStyle,   // patch 3.12: pocket; 0 = None 1 = Patch 2 = SideSeam
-    int cuffStyle,     // patch 3.13: sleeve-end cuff; 0 = None 1 = Button 2 = Ribbed
-    int hemShape,      // patch 3.15: hem shape; 0 = Straight 1 = Shirttail 2 = HighLow
-    int shoulderStyle, // patch 3.13: shoulder/sleeve join; 0 = Set 1 = Dropped 2 = Raglan
-    int buttonRow,     // vocab: button row; 0 = None 1 = Functional 2 = Decorative
-    int exposedZip,    // vocab: exposed zipper; 0 = None 1 = CenterFront 2 = CenterBack
-    int backDetail,    // vocab: back detail; 0 = None 1 = Ruffle 2 = Cape 3 = Flounce
-    int bardotStyle    // vocab: off-shoulder/bardot; 0 = None 1 = Plain 2 = Frill
-) {
+std::string gradeJSON(val specObj, val rangeObj) {
     GarmentSpec spec;
     try {
-        spec = buildSpec(garment, shaping, waistline, fabric, neckline,
-            sleeveStyle, sleeveLength, skirtStyle, skirtLength, topLength, ruffleHem, ruffleTiers, keyhole, frontPlacket, tieClosure, sleeveCap, collarType, collarEdge, gatherType, gatherZone, backOpening, backSlit, ruffledStraps, peplum, placketStyle, edgeFinish, pocketStyle, cuffStyle, hemShape, shoulderStyle, buttonRow, exposedZip, backDetail, bardotStyle);
+        spec = buildSpec(specObj);
     } catch (const std::exception& e) {
         return std::string(R"({"error":")") + escape(e.what()) +
                R"(","sizes":[],"issues":[")" + escape(e.what()) + "\"]}";
     }
+    const std::string fromLabel = strField(rangeObj, "from", "");
+    const std::string toLabel = strField(rangeObj, "to", "");
 
     const auto& chart = euSizeChart();
     // Find the index range; default to the whole chart if a label is unknown.

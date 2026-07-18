@@ -2,9 +2,9 @@
    ruffle through the REAL wasm engine and renders every Ruffle piece to SVG,
    so the cascade can be LOOKED at before shipping.
    run:  node engine/tools/tiered-ruffle-proof.js  -> engine/tools/tiered-ruffle-proof.svg */
-const createEngine = require(process.env.HOME + '/damla_projects_2026/00_currently_on_working/stitchu/engine/dist/stitchu-engine.js');
+const createEngine = require(require('path').join(__dirname, '../dist/stitchu-engine.js'));
 const fs = require('fs');
-const M = [88, 70, 94, 37, 40.5, 58, 35];
+const M = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
 function path(cmds) {
   let d = '';
@@ -18,7 +18,7 @@ function path(cmds) {
 }
 
 createEngine().then(e => {
-  const out = JSON.parse(e.draftJSON('dress','princess','natural','woven','scoop','none','short','aLine','midi','hip', true, 3, ...M));
+  const out = JSON.parse(e.draftJSON({ garment: 'dress', shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'none', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', ruffleHem: true, ruffleTiers: 3, keyhole: false }, M));
   if (out.issues.length) { console.error('VALIDATOR ISSUES:', out.issues); process.exit(1); }
   const ruffles = out.pattern.pieces.filter(p => p.name.includes('Ruffle'));
   console.log(`pieces: ${out.pattern.pieces.length} total, ${ruffles.length} ruffle tiers, fabric ${out.pattern.fabricMeters140} m`);
