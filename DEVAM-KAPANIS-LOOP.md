@@ -317,7 +317,45 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   reports/2026-07-19-stitchu-k4-sabitler-sloper.md. SIRADAKİ: K4
   mini-denetimi (taze agent) + K2 bitişi, sonra K3.
 
+- 2026-07-19 K2 KOMPOZİSYON RESMİLEŞTİRME: **ÜRETİM BİTTİ, MİNİ-DENETİM BEKLİYOR**
+  (patch 3.22, deploy ORKESTRATÖRDE — ?v 92→93 bump'landı, gh-pages push YOK).
+  contract/composition.json: 21 bileşen (attachment + z-order + çakışma sınıfı,
+  dosya:satır kanıtlı) + flat z-order beyanı (11 katman, "yaka en üstte" elle
+  kuralı resmileşti) + matris 74 host kuralı + 58 çift kuralı, 5 sınıf
+  (allowed/excluded/validator/honest/ignored; ignored SADECE halter×{dropped,
+  raglan,facing} belgeli üçlüsü). MANDALLAR: ctest compose_check (248 tekil +
+  465 çift gerçekten çizdirilir, beyan-gözlem drift = FAIL, beyan dışı sessiz
+  no-op = FAIL; matris composition.gen.hpp'den, gen-contract --check kapsar) +
+  ctest flat_render_lint (self-intersect/ters sarım/sıfır alan/sampleX
+  monotonluk; style-lint.mjs'e zincirli → mevcut deploy kanıt adımı otomatik
+  koşar; 2 pinli kozmetik bulgu render-lint.allow.json). MİKRO-LOOP 1 (tek
+  davranış farkı): 20 sessiz dispatcher no-op validateSpecCross'ta isimli redde
+  çevrildi (skirt×bodice-bileşenleri, top×backSlit/ruffleHem,
+  gathered×backSlit/hemShape); web picker'ları zaten engelliyordu. SAYILAR
+  DEĞİŞMEDİ (A7 düşüş yok): FULL 27/54, ELEMENT 74/103, %94.4, %6.7, 0 unmapped
+  — 0-çağrı cache reclassify ile önce/sonra kanıtlı (KREDİ: 0 vision çağrısı;
+  bir koşu foto dosyaları olmadığı için base64'te yerel hata verdi, API'ye hiç
+  ulaşmadı, beyan edildi). KANIT: ctest 43/43 (K4 rebase sonrası birleşik
+  ağaçta 44/44, golden yine byte-identical, sweep/fuzz/benchmark aynı, iki
+  wasm birleşik kaynaktan yeniden derli bayt-aynı), golden pristine-cmp
+  byte-identical 23406, vocab-sweep 48600/0, web-fuzz 26260/3 bilinen, iki wasm
+  derli, flat CLI SVG cmp bayt-aynı, render PNG gözle, style-lint 81 +
+  render-lint yeşil, header-diff 52. K0 kapanışı: 4.1 KAPANDI, 4.7 KAPANDI
+  (web-fuzz sınırı dosya başı + SUMMARY'de dürüst beyan; PAGES üst-sınır
+  garantisi yazıldı). SONRADAN BULUNDU: worker wasm deploy bekliyor (bu kez
+  motor değişti, sıradaki wrangler deploy şart); benchmark mapVisionSpec
+  "web ile aynı köprü" beyanı rebuild() sıfırlamasını içermiyor (bugün fark
+  üretmiyor). Rapor: reports/2026-07-19-stitchu-k2-kompozisyon.md.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
 > genişletmesi, yeni vocabulary çizimleri...)
+
+- PARK (K2): top×bardot hem-extension kusuru (validator-bloke, matris beyanlı);
+  skirt×tie bel/kuşak tutarsızlığı; dress(kolsuz)×dropped guideCoverage;
+  backDetail cape kink (halter/bardot kombolarında); keyhole×CF ailesinin
+  ÇİZİLEREK çözülmesi (bugün validator-bloke = doğru dürüst davranış); flat'in
+  çizmediği straps/ruffledStraps/gatherWaist bayrakları (çiz ya da şemadan düş);
+  2 pinli flat self-intersection (lace_vneck puf kol, peterpan yaka halkası);
+  web-fuzz'ın gerçek sheet.js packer'ını sürmesi (ESM/?v import engeli).
