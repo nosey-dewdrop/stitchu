@@ -9,8 +9,8 @@ Current platform/scope decisions live at the bottom of RULES.md (latest wins).
 Formerly named Pattew. Renamed to Stitchu on 2026-07-02.
 
 ## Status
-Current phase: LIVE product, benchmark era (web v75, 37/54 full patterns). BREADTH → DEPTH: prove fit, sew up.
-Detailed session logs: STRATEGY.md "Session history". Latest report: reports/2026-07-17-stitchu-cep-motoru.md.
+Current phase: LIVE product, benchmark era. Honest counter (0.9, 2026-07-18): 23/54 proof-checked FULL + 11 PARTIAL (old counting method 34; previously published 37). BREADTH → DEPTH: prove fit, sew up.
+Detailed session logs: STRATEGY.md "Session history". Latest report: reports/2026-07-18-enum-err-fix.md. Roadmap gates: YOL-HARITASI.md (FAZ 0 done incl. 0.9; NEXT = KAPI 1: the first muslin, Damla sews).
 
 ## Open suspicions (audit findings 2026-07-18 — this section is never empty; see RULES invariant 7)
 1. RENDER-ONAY claims before 2026-07-18 are UNVERIFIED: discipline step 6 ("PNG → eyes") was
@@ -40,6 +40,26 @@ Detailed session logs: STRATEGY.md "Session history". Latest report: reports/202
    pulling princess/gore text. Resolved set now lives in RULES.md; watch for stale echoes in other docs.
 6. Princess-seam/gore-panel default: DECIDED 2026-07-12, NEVER CODED. Engine still drafts dart-first.
    Any doc/guide implying princess is current behavior is wrong.
+
+
+### New findings from the 0-9 fix session (2026-07-18 night, all evidenced)
+7. GOLDEN NOT ENFORCED: no ctest compares golden_dump to golden-reference.csv; the reference is
+   STALE since 20cc289 (Aldrich two-dart refine changed plain skirt markings 10->13 commands/panel,
+   23034 vs 23406 lines, never re-pinned). Every "golden byte-identical" claim since compares
+   before/after within a session, not against the pinned reference. Needs: a golden ctest + a
+   Damla-approved re-pin.
+8. STALE SECOND WORKTREE: ~/damla_projects_2026/00_currently_on_working/stitchu (HEAD 20cc289, behind
+   main) — tools hardcoded ITS engine path, so fuzz/benchmark runs measured a stale engine. Paths
+   repointed 2026-07-18; the copy should be deleted or clearly parked (Damla's call). benchmark-58/
+   data (gitignored) was copied into the main worktree.
+9. REAL ENGINE BUG (found by the honest counter): shirred-yoke top drafts with front side seam 335.0
+   vs back 348.0 mm (validator [sideseam]); two benchmark photos blocked by it.
+10. PACKING: 3 extreme-body maxi drafts exceed the 100-sheet backstop; long strips (pussy-bow tie,
+    cords) are never rotated (same defect as DENETIM #6). Open.
+11. The published 37/54 cannot be rebuilt from the repo cache (cache says 34 with the same rules);
+    the 3-photo source is unrecorded. Open.
+12. DENETIM-2026-07-18-courtney.md items still open: A0 %69.4 scale-down is a delivery defect,
+    Turkish glyphs (ğ/ı) broken in PDF font, silent string clipping in pdf text, strip rotation.
 
 ### What works today
 - Onboarding: 7 measurements with body silhouette highlights, validation, back navigation
