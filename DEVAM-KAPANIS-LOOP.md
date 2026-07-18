@@ -249,6 +249,17 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
 > (orkestratör her loop sonunda günceller: hangi ray, YEŞİL/KIRMIZI,
 > sayılar, PARK listesi, açılan mikro-loop'lar, kredi durumu, sıradaki)
 
+- 2026-07-19 K0 ENVANTER GATE: **YEŞİL** (mini-denetim PASS, 18/18 referans
+  doğru, BLOCKER 0). Rapor: reports/2026-07-19-stitchu-k0-envanter.md.
+  Envanter satırları: çift-hakikat 11, sızıntı 8, ölü kod 9, denetimsiz
+  sınır 8, operasyonel 10; K1-K6 iş listesi 19 madde DONDU (KİLİT 1).
+  MINOR notları (düzeltilmedi, kayıt): (1) "wrangler reset yolu" env-5'te
+  satır olarak yok → K6 taramasına dahil edilecek; (2) rapor 5.1 "en az 8
+  sürüm" diyor, gerçek ayrık sürüm 7 (61,78,80,84,85,86,91); (3) untracked
+  engine/tools/render-garment-from-pieces.mjs zincir öncesi kalıntı,
+  env-3'te yok → K6 arşiv turunda değerlendirilecek.
+  Kredi: 0 çağrı. SIRADAKİ: K1 (tek kontrat + terim kaydı).
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
