@@ -1,0 +1,142 @@
+{
+  "_comment": "Prensip 1: stil bir VERİ KAYDI, kod değil. LLM sadece bu şemada JSON üretir. Motor (engine.mjs) sabit kalır. Aynı JSON hep aynı çizim.",
+  "_schema_version": 1,
+  "shared": {
+    "size": "EU38",
+    "length": "mini",
+    "bustProject": 0.5,
+    "bustHeight": 0.3,
+    "waistNip": 0.07,
+    "ink": "minimal",
+    "skirtFull": 1.95,
+    "foldCount": 10,
+    "hemWave": 1.0,
+    "drape": 1.0,
+    "hemDip": 2.0,
+    "seed": 7
+  },
+  "styles": {
+    "drawstring_babydoll": {
+      "label": "square-neck drawstring",
+      "top": "band",
+      "parts": {
+        "straps": true,
+        "ruffledStraps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": true,
+        "tie": true,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 12,
+        "strapWidth": 2.6,
+        "ruffle": 1.0,
+        "yokeDrop": 16,
+        "gatherRatio": 2.05,
+        "shirrRows": 6,
+        "tieLength": 26
+      }
+    },
+    "lace_vneck_70s": {
+      "label": "70s v-neck lace babydoll",
+      "top": "shoulder",
+      "neckline": "v",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": true,
+        "backSeam": true,
+        "gatherWaist": false,
+        "cfGather": true,
+        "laceNeck": true,
+        "laceSleeve": true,
+        "laceHem": true
+      },
+      "own": {
+        "neckWidth": 1.12,
+        "neckDepth": 13.5,
+        "neckDepthBack": 2.5,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.1,
+        "sleeveLen": 9,
+        "sleeveWidth": 6.2,
+        "capPuff": 2.2,
+        "cuffGather": 1.2,
+        "laceWidth": 1.3,
+        "laceScallops": 16,
+        "tieLength": 20,
+        "yokeDrop": 11
+      }
+    },
+    "peterpan_puff": {
+      "label": "peter-pan puff-sleeve",
+      "top": "shoulder",
+      "parts": {
+        "straps": false,
+        "ruffledStraps": false,
+        "collar": true,
+        "sleeve": true,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "neckWidth": 1.35,
+        "neckDepth": 7.5,
+        "neckDepthBack": 2.5,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.1,
+        "sleeveLen": 11,
+        "sleeveWidth": 7.0,
+        "capPuff": 2.6,
+        "cuffGather": 1.0,
+        "collarWidth": 4.6,
+        "collarGap": 0.5,
+        "yokeDrop": 9,
+        "gatherRatio": 3.0,
+        "shirrRows": 7
+      }
+    },
+    "courtney_lace_vneck": {
+      "label": "the courtney: v-neck lace babydoll (boogiechild photo, 2026-07-18)",
+      "top": "shoulder",
+      "neckline": "v",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": true,
+        "backSeam": true,
+        "gatherWaist": false,
+        "cfGather": true,
+        "laceNeck": true,
+        "laceSleeve": true,
+        "laceHem": true
+      },
+      "own": {
+        "neckWidth": 1.12,
+        "neckDepth": 13.5,
+        "neckDepthBack": 2.5,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.1,
+        "sleeveLen": 17,
+        "sleeveWidth": 8.4,
+        "capPuff": 3.4,
+        "cuffGather": 0,
+        "laceWidth": 1.55,
+        "laceScallops": 18,
+        "tieLength": 27,
+        "yokeDrop": 11
+      },
+      "note": "photo-derived: deep V + cream lace trim, short sheer puff sleeves with lace cuff frill, CF ribbon bow with long streamers, empire waist, flowy gathered mini with sheer hem edge"
+    }
+  }
+}
