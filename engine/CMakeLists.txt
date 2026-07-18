@@ -193,3 +193,7 @@ add_test(NAME closed_garment_check COMMAND closed_garment_check)
 add_executable(sewable_census tests/sewable_census.cpp)
 target_link_libraries(sewable_census PRIVATE engine)
 add_test(NAME sewable_census COMMAND sewable_census)
+
+add_executable(roundtrip_check tests/roundtrip_check.cpp)
+target_link_libraries(roundtrip_check PRIVATE engine)
+add_test(NAME roundtrip_check COMMAND roundtrip_check)

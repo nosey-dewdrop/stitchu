@@ -178,6 +178,15 @@ inline double belowWaist(TopLength t) {
     return 0;
 }
 
+inline const char* raw(GarmentType g) {
+    switch (g) {
+        case GarmentType::Skirt: return "skirt";
+        case GarmentType::Dress: return "dress";
+        case GarmentType::Top: return "top";
+    }
+    return "";
+}
+
 inline const char* raw(Shaping s) {
     switch (s) {
         case Shaping::Princess: return "princess";
