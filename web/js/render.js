@@ -2,7 +2,7 @@
 // the print pipeline's job, not this preview's).
 import { fabricAdvice } from './fabrics.js?v=61';
 import { getLang, t } from './i18n.js?v=61';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=61';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=86';
 import { GUIDE_TR } from './guide-tr.js?v=61';
 import { GLOSSARY } from './glossary.js?v=61';
 import { appendSewingCompanion } from './sewing.js?v=61';

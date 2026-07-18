@@ -553,3 +553,26 @@ benchmark koşulur ve buraya satır yazılır — sayısız değişiklik yok)
 - CLAUDE.md status + devlog.md/linkedin.md malzeme.
 - Deploy: ?v bump + git add web/ ALL + subtree gh-pages. Worker değiştiyse
   Damla'ya wrangler redeploy hatırlat.
+
+
+## SAYMA YÖNTEMİ DÜZELTİLDİ (2026-07-18, FAZ 0.9)
+
+Eski sayaç "kalıp çıktı mı" diye soruyordu, spec'i hiç ÇİZDİRMİYORDU.
+`sleeveStyle:'puff'` sessizce None'a düştüğünde kolsuz elbise de FULL sayıldı.
+Yeni sayaç FULL adayı her fotoğrafı GERÇEK motor + GERÇEK web köprüsünden
+(web/js/vision-bridge.js, create.js ile TEK kaynak) geçirir ve üç şart arar:
+1. sınıflandırma "kol var" diyorsa parça listesinde Sleeve parçası OLMALI,
+2. hiçbir alan eşlemede sessizce varsayılana düşmemeli,
+3. "çizilebilir" sayılan her öğe çizilen parçalarda KANIT bırakmalı.
+Geçemeyen FULL sayılmaz, PARTIAL sayılır.
+
+YAN YANA (sessiz düzeltme yok):
+- eski yöntem, bu cache: **34/54** (daha önce 37/54 yayınlandı; 3 fotoluk fark
+  repo cache'inden yeniden üretilemiyor, bu da başlı başına bir bulgudur)
+- dürüst yöntem: **FULL 23/54 + PARTIAL 11** (+1 ERROR: vision parse_fail cache'te)
+
+Düşen 11 PARTIAL gerçek onarım listesi: back-waist tie'lar köprüde honest-skip'e
+düşerken sayaç kuralı "çizilebilir" diyordu (kural ile köprü uyumsuz), shirred
+yoke iki fotoda validator'dan dönüyor ([sideseam] Top 335.0 vs 348.0, GERÇEK
+motor hatası), open-back cutout ve flat collar spec'e hiç girmemiş. Rakam düştü,
+düştüğü yer gerçek rakam.

@@ -12,9 +12,16 @@
 // (operational, no code/deploy change). Usage:
 //   node engine/tools/benchmark-58.mjs [--limit N] [--resume results.json]
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { VOCAB, canonical, enumInt } from '../../web/js/vocab.gen.js';
+import {
+  pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit,
+  pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape,
+  pickPlacket, pickBackDetail, pickExposedZip, pickBardot,
+} from '../../web/js/vision-bridge.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PHOTOS = join(root, 'benchmark-58', 'photos-1024');
@@ -30,6 +37,9 @@ const OUT = join(root, 'benchmark-58', `results-${new Date().toISOString().slice
 const API = 'https://stitchu-api.damummyphus.workers.dev/api/analyze';
 const KV_NS = '2927eef779f343eea0fea0bd348fde9e';
 const BACKEND_DIR = join(root, 'backend');
+
+const require2 = createRequire(import.meta.url);
+const engine = await require2(join(root, 'engine', 'dist', 'stitchu-engine.js'))();
 
 const args = process.argv.slice(2);
 const limit = args.includes('--limit') ? parseInt(args[args.indexOf('--limit') + 1]) : Infinity;
@@ -183,6 +193,105 @@ const DRAWN_SINCE = [
          !/handkerchief|pointed|asymmetric|diagonal/i.test(t),
 ];
 
+
+// ---- 0.9 DRAFT-PROOF (2026-07-18): "FULL" is no longer a count, it is a
+// measurement. A photo only counts FULL if the vision spec actually DRAFTS
+// through the real engine and (1) a promised sleeve produces a Sleeve piece,
+// (2) no classified field silently falls to a default in the mapping, (3) every
+// element the classifier says is now-drawable leaves EVIDENCE in the drafted
+// pieces. Anything that fails is PARTIAL — drafted, but not the photographed
+// garment. ('puff' -> None once made a sleeveless dress count as FULL here.)
+const SLEEVE_CAP_MAP = { plain: 0, gathered: 1, puffed: 2, puff: 2, capped: 3, cap: 3 };
+
+// Maps the vision spec to the engine spec with the SAME pick* bridge the web
+// product uses (web/js/vision-bridge.js) — the counter scores the REAL chain,
+// not a private copy of it.
+function mapVisionSpec(seen, fieldMisses) {
+  const str = (field, dflt) => {
+    const v = seen[field];
+    if (v === undefined || v === null || v === '') return dflt;
+    const c = canonical(field, v) ?? canonical(field, String(v).toLowerCase());
+    if (c === undefined) { fieldMisses.push(`${field}='${v}' has no engine mapping (would fall to '${dflt}')`); return dflt; }
+    return c;
+  };
+  const o = {
+    garment: str('garment', 'dress'),
+    shaping: str('shaping', 'dart'),
+    waistline: str('waistline', 'natural'),
+    fabric: str('fabric', 'woven'),
+    neckline: str('neckline', 'crew'),
+    sleeveStyle: str('sleeveStyle', 'none'),
+    sleeveLength: str('sleeveLength', 'short'),
+    skirtStyle: str('skirtStyle', 'aLine'),
+    skirtLength: str('skirtLength', 'midi'),
+    topLength: str('topLength', 'hip'),
+  };
+  if (seen.sleeveHead) {
+    const cap = SLEEVE_CAP_MAP[String(seen.sleeveHead).toLowerCase()];
+    if (cap === undefined) fieldMisses.push(`sleeveHead='${seen.sleeveHead}' has no engine mapping`);
+    else if (cap) { o.sleeveCap = cap; if (o.sleeveStyle === 'none' && cap !== 3) o.sleeveStyle = 'straight'; if (cap === 3) o.sleeveStyle = 'straight'; }
+  }
+  const iv = (field, name) => (name ? Math.max(0, enumInt(field, name)) : 0);
+  o.tieClosure = iv('tieClosure', pickTiePlacement(seen));
+  const collar = pickCollar(seen);
+  if (collar) { o.collarType = iv('collarType', collar.type); o.collarEdge = iv('collarEdge', collar.edge); }
+  const gather = pickGather(seen);
+  if (gather) { o.gatherType = iv('gatherType', gather.type); o.gatherZone = iv('gatherZone', gather.zone); }
+  o.backOpening = iv('backOpening', pickBackOpening(seen));
+  o.backSlit = iv('backSlit', pickHemSlit(seen));
+  if (o.sleeveStyle === 'none' && o.neckline !== 'halter') o.ruffledStraps = iv('ruffledStraps', pickRuffledStraps(seen));
+  o.peplum = iv('peplum', pickPeplum(seen));
+  o.pocketStyle = iv('pocketStyle', pickPocket(seen));
+  if (o.sleeveStyle === 'straight') o.cuffStyle = iv('cuffStyle', pickCuff(seen));
+  o.hemShape = iv('hemShape', pickHemShape(seen));
+  const frontButtons = !!(seen.closure && ['buttons', 'placket'].includes(seen.closure.type));
+  o.placketStyle = iv('placketStyle', pickPlacket(seen, frontButtons));
+  if (!o.placketStyle && frontButtons) o.frontPlacket = true;
+  o.backDetail = iv('backDetail', pickBackDetail(seen));
+  o.exposedZip = iv('exposedZip', pickExposedZip(seen));
+  if (o.shaping === 'dart' && o.neckline !== 'halter') o.bardotStyle = iv('bardotStyle', pickBardot(seen));
+  return o;
+}
+
+// drawnNow phrase -> evidence expected in the drafted pieces. Categories whose
+// output is a marking/reshape (placket lines, hem shape, cowl remark, slits,
+// keyhole) pass on a clean draft; piece-adding categories must SHOW the piece.
+const EVIDENCE = [
+  { re: /collar/i, piece: /collar/i },
+  { re: /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i, piece: /tie|bow/i },
+  { re: /drawstring|shirr|smock|gathered yoke|gathered bust|gathering/i, piece: /shirred|gathered|panel|cord/i },
+  { re: /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i, piece: /strap/i },
+  { re: /peplum|waist flounce|waist frill/i, piece: /peplum/i },
+  { re: /open-?back|back ?cutout|backless/i, piece: /open back/i },
+  { re: /\bpuff(ed)?\b|gigot|sleeve head|gathered sleeve|cap\s*sleeve/i, piece: /sleeve/i },
+  { re: /\bcuff\b/i, piece: /cuff/i },
+];
+
+function draftProof(entry, spec) {
+  const fieldMisses = [];
+  const mapped = mapVisionSpec(spec, fieldMisses);
+  const body = { bust: 90, waist: 72, hip: 98, shoulder: 38, backLength: 40, armLength: 58, neck: 36 };
+  let out;
+  try {
+    out = JSON.parse(engine.draftJSON(mapped, body));
+  } catch (e) {
+    return { ok: false, why: `engine threw: ${String(e).slice(0, 120)}` };
+  }
+  if (out.error) return { ok: false, why: `engine refused: ${out.error}` };
+  if (out.issues && out.issues.length) return { ok: false, why: `validator blocked: ${out.issues[0]}` };
+  const reasons = [...fieldMisses];
+  const names = out.pattern.pieces.map((x) => x.name).join(' | ');
+  // (1) a promised sleeve must be drawn
+  if (mapped.sleeveStyle !== 'none' && !/sleeve/i.test(names)) reasons.push('sleeve promised but no Sleeve piece drafted');
+  // (3) every now-drawable element must leave evidence
+  const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));
+  for (const phrase of drawnNow) {
+    const ev = EVIDENCE.find((c) => c.re.test(phrase));
+    if (ev && !ev.piece.test(names)) reasons.push(`'${phrase}' counted drawable but no matching piece (pieces: ${names.slice(0, 90)})`);
+  }
+  return reasons.length ? { ok: false, why: reasons.join('; ') } : { ok: true };
+}
+
 function classify(entry, spec) {
   if (entry.category === 'reject') {
     return DRAFTABLE.includes(spec.garment)
@@ -253,7 +362,15 @@ const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 let reclassified = 0;
 for (const entry of MANIFEST.photos) {
   const r = results[entry.file];
-  if (r && r.spec) { Object.assign(r, classify(entry, r.spec)); reclassified += 1; }
+  if (r && r.spec) {
+    Object.assign(r, classify(entry, r.spec));
+    r.clsOldMethod = r.cls; // the pre-0.9 counting method, published side by side
+    if (r.cls === 'FULL') {
+      const proof = draftProof(entry, r.spec);
+      if (!proof.ok) { r.cls = 'PARTIAL'; r.why = `draft-proof failed: ${proof.why}`; }
+    }
+    reclassified += 1;
+  }
 }
 // Persist the reclassified verdicts so a pure cache reclassify (0 live calls)
 // still leaves a snapshot on disk — the summary and the file agree.
@@ -305,7 +422,10 @@ const rejectTotal = MANIFEST.photos.filter((p) => p.category === 'reject').lengt
 console.log('\n== SUMMARY ==');
 console.log(`garment photos: ${garmentTotal}  |  control (must-reject): ${rejectTotal}`);
 for (const [cls, n] of Object.entries(counts).sort()) console.log(`${cls.padEnd(11)} ${n}`);
-console.log(`\nFULL PATTERN: ${counts.FULL || 0}/${garmentTotal}   correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
+const oldFull = Object.values(results).filter((r) => r.clsOldMethod === 'FULL').length;
+console.log(`\nFULL PATTERN (old method, pre-0.9 counting): ${oldFull}/${garmentTotal}`);
+console.log(`FULL PATTERN (0.9 draft-proof: sleeve drawn + no silent field fall + element evidence): ${counts.FULL || 0}/${garmentTotal}   PARTIAL: ${counts.PARTIAL || 0}`);
+console.log(`correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
 
 // VISION-ACCURACY (V0 taxonomy, 2026-07-16): the FULL count blames the ENGINE
 // (clustered oov it can't draw), but the real brake is the VISION layer reading
