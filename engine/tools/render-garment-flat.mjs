@@ -66,8 +66,8 @@ function geom(spec) {
     const skDrop = skLen === 'mini' ? 150 : skLen === 'midi' ? 250 : skLen === 'maxi' ? 360 : 190;
     hemY = waistY + skDrop;
     const st = spec.skirtStyle || 'aLine';
-    const flare = st === 'straight' ? 1.02 : st === 'gathered' ? 1.9
-      : (st === 'circle' || st === 'full') ? 2.2 : 1.4;    // aLine default
+    const flare = st === 'straight' ? 1.12 : st === 'gathered' ? 1.9
+      : (st === 'circle' || st === 'full') ? 2.2 : 1.58;    // aLine default
     hemHalf = U.waistW * flare;
   } else {
     // a top / shell / blouse / tunic ends at hip / waist / tunic length.
@@ -84,10 +84,16 @@ function geom(spec) {
   // --- sleeve ------------------------------------------------------------
   const hasSleeve = spec.sleeveStyle && spec.sleeveStyle !== 'none';
 
+  // waist width depends on shaping: a fitted/princess/empire bodice nips in at
+  // the waist; a relaxed shift barely tapers (a shift hangs from bust, so a deep
+  // waist nip reads as a wrong hourglass V on the side seam).
+  const fitted = spec.shaping === 'princess' || spec.shaping === 'darts' || empire;
+  const waistW = fitted ? U.waistW : U.chestW - 6;   // shift: only a slight taper
+
   return {
     isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve,
     shoulderW: U.shoulderW, neckBase: U.neckBase, chestW: U.chestW,
-    waistW: U.waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
+    waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
   };
 }
 
@@ -96,7 +102,7 @@ function geom(spec) {
 // sweetheart, cowl, off-shoulder).
 function necklineGeom(kind) {
   switch (kind) {
-    case 'scoop':      return { kind, half: 34, depth: 46 };
+    case 'scoop':      return { kind, half: 40, depth: 40 };
     case 'vNeck':      return { kind, half: 30, depth: 66 };
     case 'square':     return { kind, half: 34, depth: 40 };
     case 'boat':       return { kind, half: 52, depth: 12 };
@@ -125,12 +131,18 @@ function halfOutline(g, view) {
   // neck is a small scoop) EXCEPT wide styles (boat/offShoulder) stay wide.
   const wide = neck.kind === 'boat' || neck.kind === 'offShoulder';
   const nHalf = neck.half;
-  const nDepth = isBack ? (wide ? Math.min(neck.depth, 14) : 16) : neck.depth;
+  // back neck always sits shallower than the front of the same style: a small
+  // scoop about a third of the front depth (clamped), so front/back read as
+  // clearly different pieces, not mirror copies. Wide boat/off-shoulder stay wide.
+  const nDepth = isBack ? (wide ? Math.min(neck.depth, 14) : Math.max(10, Math.min(neck.depth * 0.35, 18))) : neck.depth;
   const cfY = nDepth;                         // CF neckline point y
   const shoulderNeckX = nHalf;
   const shoulderNeckY = g.shoulderY + g.neckDrop;
   const shoulderTipX = g.shoulderW;
-  const shoulderTipY = g.shoulderY + 6;       // slight shoulder slope
+  // real garment shoulder slopes DOWN from neck point to tip (~22deg). Tip must
+  // sit clearly BELOW the shoulder-neck point so the seam reads as a natural
+  // sloping shoulder, never an upward "smile" that sags at center.
+  const shoulderTipY = shoulderNeckY + (shoulderTipX - shoulderNeckX) * 0.32;
   const armDeepY = 92;                          // underarm / bottom of armhole
   const chestX = g.chestW;
   const waistX = g.waistW;
@@ -148,15 +160,22 @@ function halfOutline(g, view) {
   segs.push(...necklineSegs(neck.kind, isBack, nHalf, cfY, shoulderNeckX, shoulderNeckY));
   // shoulder seam (neck point -> shoulder tip)
   segs.push({ t: 'L', p: [[shoulderTipX, shoulderTipY]] });
-  // armhole: shoulder tip -> underarm (sleeveless = clean scooped armhole, NOT a sleeve)
-  segs.push({ t: 'C', p: [[shoulderTipX + 4, shoulderTipY + 30], [underX + 12, armDeepY - 26], [underX, armDeepY]] });
-  // side seam: underarm -> waist
-  segs.push({ t: 'C', p: [[underX, g.waistY - 40], [waistX + 2, g.waistY - 30], [waistX, g.waistY]] });
+  // armhole: shoulder tip -> underarm (sleeveless = clean scooped armhole, NOT a
+  // sleeve). First control drops STRAIGHT DOWN from the tip (x = tip, not tip+4)
+  // so the sloped shoulder flows into the armhole without an outward kink/point.
+  segs.push({ t: 'C', p: [[shoulderTipX, shoulderTipY + 26], [underX + 12, armDeepY - 26], [underX, armDeepY]] });
+  // side seam: underarm -> waist. Ease INTO the waist (control point stays near
+  // waistX, not pulled sharply in) so the bust-to-waist curve reads as a soft
+  // taper, never a hard hourglass corner that snaps in then out at the seam.
+  segs.push({ t: 'C', p: [[underX - 2, g.waistY - 46], [waistX, g.waistY - 22], [waistX, g.waistY]] });
   if (g.isDress) {
-    segs.push({ t: 'C', p: [[waistX + (hemX - waistX) * 0.25, g.waistY + (g.hemY - g.waistY) * 0.35],
-                            [hemX, g.hemY - (g.hemY - g.waistY) * 0.25], [hemX, g.hemY]] });
+    // skirt: leave the waist ALONG the waist tangent (control near waistX) then
+    // sweep OUT to the hem so the skirt visibly flares/A-lines away from the body
+    // instead of dropping as a straight tube. Deeper outward control = real flare.
+    segs.push({ t: 'C', p: [[waistX + (hemX - waistX) * 0.12, g.waistY + (g.hemY - g.waistY) * 0.28],
+                            [hemX - (hemX - waistX) * 0.28, g.hemY - (g.hemY - g.waistY) * 0.14], [hemX, g.hemY]] });
   } else {
-    segs.push({ t: 'C', p: [[waistX + 4, g.waistY + (g.hemY - g.waistY) * 0.4], [hemX, g.hemY - 12], [hemX, g.hemY]] });
+    segs.push({ t: 'C', p: [[waistX + 6, g.waistY + (g.hemY - g.waistY) * 0.4], [hemX, g.hemY - 12], [hemX, g.hemY]] });
   }
   // hem: hem point in to the CF hem point (with a slight worn-hang dip at center)
   segs.push({ t: 'Q', p: [[hemX * 0.5, g.hemY + dip], [0, g.hemY + dip]] });
@@ -211,7 +230,9 @@ function necklineSegs(kind, isBack, nHalf, cfY, snX, snY) {
       return [{ t: 'L', p: [[nHalf, cfY]] }, { t: 'L', p: [[snX, snY]] }];
     case 'boat':
     case 'offShoulder':
-      return [{ t: 'Q', p: [[nHalf * 0.55, cfY - 2], [snX, snY]] }];
+      // gentle near-horizontal boat line; control sits just BELOW cfY so the
+      // line never bows upward into a smile between the two shoulder points.
+      return [{ t: 'Q', p: [[nHalf * 0.55, cfY + 3], [snX, snY]] }];
     case 'sweetheart':
       return [{ t: 'C', p: [[nHalf * 0.22, cfY - 20], [nHalf * 0.6, cfY - 6], [nHalf * 0.66, cfY - 16]] },
               { t: 'C', p: [[nHalf * 0.8, snY + (cfY - snY) * 0.3], [snX, snY + 6], [snX, snY]] }];
@@ -232,7 +253,11 @@ function necklineSegs(kind, isBack, nHalf, cfY, snX, snY) {
 // ---------------------------------------------------------------------------
 function sleeveHalf(g, spec) {
   if (!g.hasSleeve) return '';
-  const shoulderTipX = g.shoulderW, shoulderTipY = g.shoulderY + 6;
+  // MUST match the sloped shoulder tip used in halfOutline, or the sleeve cap
+  // detaches from the body and reads as an outward kink/ear. Same formula.
+  const shoulderNeckY = g.shoulderY + g.neckDrop;
+  const shoulderTipX = g.shoulderW;
+  const shoulderTipY = shoulderNeckY + (shoulderTipX - g.neck.half) * 0.32;
   const underX = g.chestW, underY = 92;
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
@@ -242,8 +267,10 @@ function sleeveHalf(g, spec) {
   // sleeve length (how far the hem drops below the shoulder tip)
   const drop = cap ? 34 : len === 'long' ? 300 : len === 'threeQuarter' ? 220
     : len === 'elbow' ? 150 : 96;            // short default
-  // how far the sleeve projects outward at the hem
-  const outW = cap ? 30 : puff ? 62 : 48;
+  // how far the sleeve projects outward at the hem. A cap sleeve barely extends
+  // past the shoulder tip (it caps the shoulder, it does not wing out); keeping
+  // outW small stops the round "ear" kink at the shoulder.
+  const outW = cap ? 16 : puff ? 62 : 48;
   const hemX = shoulderTipX + outW;
   const hemTopY = shoulderTipY + drop * 0.5;
   const hemBotY = shoulderTipY + drop;
