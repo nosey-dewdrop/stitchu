@@ -260,8 +260,19 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   env-3'te yok → K6 arşiv turunda değerlendirilecek.
   Kredi: 0 çağrı. SIRADAKİ: K1 (tek kontrat + terim kaydı).
 
-- 2026-07-19 K1 TEK KONTRAT + TERİM KAYDI: ÜRETİM BİTTİ (mini-denetim bekler),
-  patch 3.20, deploy v92. contract/{garment-spec.schema.json, tables.json,
+- 2026-07-19 K1 TEK KONTRAT + TERİM KAYDI: **YEŞİL — KİLİTLENDİ** (mini-denetim
+  PASS, BLOCKER 0; taze denetçi bağımsız yeniden üretti: validate-contract 8/8,
+  27/54 + 74/103 + %6.7 + 0 unmapped birebir, golden iki worktree cmp
+  byte-identical, ctest 41/41, wasm md5'leri canlı kopyalarla aynı, canlıda tek
+  sürüm v92, pocket kabiliyeti f7b6dd8/patch 3.12'den A1-temiz teyitli).
+  MINOR notları (ritim gereği düzeltilmedi, kayıt): (1) A5: 12 vision çağrısı —
+  dürüst beyanlı; spec'i hiç olmayan 12 foto çağrısız sınıflandırılamazdı;
+  tekrar-önleme K6 adayı. (2) %6.7 hesabı gitignored vocab-canonical.json
+  override'ına bağımlı; o dosyasız %6.2 çıkar — K6 operasyonel not.
+  (3) rapor/statustaki "vocab-sweep 37800/0" sayısı bayat; denetçi ölçümü
+  48600/48600/0 (geçiş ayakta, sayı güncel değil). (4) working tree'de K1-dışı
+  uncommitted iş (render-listing-card.mjs modified + 2 untracked render script)
+  — ölçümleri etkilemiyor, K6 arşiv turu konusu. Patch 3.20, deploy v92. contract/{garment-spec.schema.json, tables.json,
   terms.json} + gen-contract.mjs (→ contract.gen.hpp + web/backend
   contract.gen.js) + spec-validate.js runtime kapısı + validate-contract.mjs
   MANDALI (ctest contract_check, 8 kontrol). DRAWN_SINCE 16-regex SİLİNDİ,
