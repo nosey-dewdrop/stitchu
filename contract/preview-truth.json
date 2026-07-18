@@ -94,7 +94,7 @@
         "laceHem"
       ],
       "side": "flatOnly",
-      "contractRef": "contract/terms.json (lace trim: honest / undrawable pattern vocabulary)",
+      "contractRef": "contract/composition.json flatComponents.order (laceNeck z8 / laceHem z6 are flat-only draw layers; the draft-side component registry has no lace component)",
       "justification": "lace trim bands are drawn on the flat as illustration; the pattern engine has no lace-trim piece and drawing one is a NEW capability (A1 — PARK, v1.1 candidate). PUBLISH NOTE: any listing built on these flats must state the lace trim is purchased trim, not a pattern piece."
     },
     {
