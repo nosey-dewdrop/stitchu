@@ -1,0 +1,341 @@
+<!-- kaynak: dis LLM (claude.ai) 18 Tem 2026 — "stitchu parametre paneli" (panel-A).
+     kapanis zinciri K0/K1 bu dosyaya atif yapar. elle duzenlenmez; tarihsel artefakt. -->
+<div id="app">
+<style>
+  #app{font-family:-apple-system,Helvetica,Arial,sans-serif;color:#1a1a1a;padding:16px;max-width:1180px;margin:0 auto}
+  h1{font-size:16px;font-weight:600;margin:0 0 2px}
+  .sub{font-size:11.5px;color:#666;margin:0 0 16px}
+  .wrap{display:flex;gap:18px;align-items:flex-start}
+  .panel{flex:0 0 330px;max-height:82vh;overflow-y:auto;padding-right:8px}
+  .out{flex:1;min-width:0;position:sticky;top:16px}
+  fieldset{border:1px solid #e2e2e2;border-radius:7px;padding:10px 11px 12px;margin:0 0 11px}
+  legend{font-size:10px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#777;padding:0 5px}
+  .r{display:flex;align-items:center;gap:8px;margin:7px 0}
+  .r label{flex:0 0 118px;font-size:11.5px;color:#333}
+  .r input[type=range]{flex:1;min-width:0;accent-color:#111}
+  .r .v{flex:0 0 46px;text-align:right;font-size:11px;font-variant-numeric:tabular-nums;color:#111}
+  .r select{flex:1;font-size:11.5px;padding:4px;border:1px solid #ccc;border-radius:5px;font-family:inherit;background:#fff}
+  .r input[type=checkbox]{accent-color:#111;width:15px;height:15px}
+  .canvas{border:1px solid #e5e5e5;border-radius:8px;background:#fff;padding:6px}
+  .canvas svg{display:block;width:100%;height:auto}
+  .bar{display:flex;gap:8px;margin-top:10px}
+  button{padding:7px 12px;font-size:11.5px;font-family:inherit;background:#111;color:#fff;border:none;border-radius:6px;cursor:pointer}
+  button.alt{background:#fff;color:#111;border:1px solid #ccc}
+  pre{margin-top:10px;background:#f7f7f7;border:1px solid #e5e5e5;border-radius:6px;padding:9px;
+      font-size:10.5px;line-height:1.55;white-space:pre-wrap;max-height:220px;overflow:auto}
+  .hint{font-size:10.5px;color:#888;margin:5px 0 0;line-height:1.5}
+</style>
+
+<h1>stitchu — parametre paneli</h1>
+<p class="sub">Sayıları oynat, çizim anında güncellenir. Beğendiğinde JSON'u kopyala.</p>
+
+<div class="wrap">
+  <div class="panel" id="panel"></div>
+  <div class="out">
+    <div class="canvas" id="canvas"></div>
+    <div class="bar">
+      <button id="copy">JSON kopyala</button>
+      <button class="alt" id="reset">Sıfırla</button>
+      <button class="alt" id="svg">SVG kopyala</button>
+    </div>
+    <pre id="json"></pre>
+    <p class="hint">Silüet ailesini değiştirince oranlar o ailenin varsayılanına döner. Sonra tek tek ince ayar yapabilirsin.</p>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+var S=4.4;
+
+var FAM={
+  shift:        {sh:0.66,wa:0.93,hip:1.04,hem:1.20,folds:1,flareStart:0.55,waistZone:0.30},
+  fit_and_flare:{sh:0.60,wa:0.89,hip:1.06,hem:1.27,folds:2,flareStart:0.62,waistZone:0.34},
+  fitted:       {sh:0.58,wa:0.84,hip:1.05,hem:1.00,folds:0,flareStart:0.50,waistZone:0.26},
+  oversize:     {sh:0.90,wa:1.00,hip:1.06,hem:1.12,folds:1,flareStart:0.45,waistZone:0.20}
+};
+var SIZE={EU34:{bust:21.0,wl:39.6,ad:19.6},EU36:{bust:22.0,wl:40.4,ad:20.0},
+          EU38:{bust:23.0,wl:41.0,ad:20.6},EU40:{bust:24.5,wl:41.8,ad:21.2},
+          EU42:{bust:26.0,wl:42.6,ad:21.8}};
+var LEN={mini:87,knee:104,midi:120};
+
+var P={};
+function defaults(fam){
+  var f=FAM[fam];
+  return {silhouette:fam,neckline:'scoop',neckHalfWidth:10,neckDepthFront:8,neckDepthBack:5,
+    length:'mini',closure:'cb_zip',backTie:true,fabric:'woven',size:'EU36',
+    shoulderRatio:f.sh,waistRatio:f.wa,hipRatio:f.hip,hemRatio:f.hem,
+    flareStart:f.flareStart,waistZone:f.waistZone,folds:f.folds,
+    armholeHollow:0.10,shoulderSlope:1.5,hemDip:2.2,title:'Custom dress'};
+}
+
+/* ---------- bezier ---------- */
+function seg(p0,c1,c2,p1){return [p0[0],p0[1],c1[0],c1[1],c2[0],c2[1],p1[0],p1[1]];}
+function mirror(segs,ax){var m=[],r=function(x){return 2*ax-x;};
+  for(var i=segs.length-1;i>=0;i--){var s=segs[i];
+    m.push([r(s[6]),s[7],r(s[4]),s[5],r(s[2]),s[3],r(s[0]),s[1]]);}
+  return m;}
+function enforceC1(g){g[0][3]=g[0][1];g[g.length-1][5]=g[g.length-1][7];return g;}
+function toPath(g){var d="M "+g[0][0].toFixed(1)+","+g[0][1].toFixed(1);
+  g.forEach(function(s){d+=" C "+s[2].toFixed(1)+","+s[3].toFixed(1)+" "+s[4].toFixed(1)+","+s[5].toFixed(1)+" "+s[6].toFixed(1)+","+s[7].toFixed(1);});
+  return d+" Z";}
+function cubic(s,t){var u=1-t,a=u*u*u,b=3*u*u*t,c=3*u*t*t,d=t*t*t;
+  return [a*s[0]+b*s[2]+c*s[4]+d*s[6], a*s[1]+b*s[3]+c*s[5]+d*s[7]];}
+/* eğriden X örnekle — landmark kullanma */
+function sampleX(segs,y){
+  var best=null;
+  for(var i=0;i<segs.length;i++){var s=segs[i];
+    var y0=s[1],y1=s[7];
+    if(Math.min(y0,y1)-0.5<=y && y<=Math.max(y0,y1)+0.5){
+      var lo=0,hi=1,p;
+      for(var k=0;k<26;k++){var t=(lo+hi)/2;p=cubic(s,t);
+        if((y1>y0)?(p[1]<y):(p[1]>y)) lo=t; else hi=t;}
+      if(best===null||p[0]>best) best=p[0];
+    }}
+  return best;
+}
+
+/* ---------- yaka ---------- */
+function neckSegs(cx,nx,y0,ny,kind){
+  var w=nx-cx,h=ny-y0;
+  if(kind==='v'){var m=[cx+w*0.5,ny+h*0.5];
+    return [seg([cx,ny],[cx+w*0.18,ny],[cx+w*0.34,ny-h*0.30],m),
+            seg(m,[cx+w*0.66,ny-h*0.72],[nx-w*0.10,y0+h*0.28],[nx,y0])];}
+  if(kind==='square'){var c=[cx+w*0.92,ny];
+    return [seg([cx,ny],[cx+w*0.40,ny],[cx+w*0.72,ny],c),
+            seg(c,[nx-w*0.02,ny-h*0.55],[nx,y0+h*0.40],[nx,y0])];}
+  if(kind==='boat'){var b=[cx+w*0.62,ny-h*0.22];
+    return [seg([cx,ny],[cx+w*0.30,ny],[cx+w*0.46,ny-h*0.08],b),
+            seg(b,[cx+w*0.80,ny-h*0.44],[nx-w*0.06,y0+h*0.30],[nx,y0])];}
+  var s1=[cx+w*0.58,ny-h*0.26];
+  return [seg([cx,ny],[cx+w*0.34,ny],[cx+w*0.42,ny-h*0.09],s1),
+          seg(s1,[cx+w*0.80,ny-h*0.52],[nx-w*0.07,y0+h*0.26],[nx,y0])];
+}
+
+/* ---------- gövde ---------- */
+function buildHalf(p,cx,isBack){
+  var sz=SIZE[p.size],B=sz.bust;
+  var y0=50, ny=y0+(isBack?p.neckDepthBack:p.neckDepthFront)*S, nx=cx+p.neckHalfWidth*S;
+  var stY=y0+p.shoulderSlope*S, stX=cx+B*p.shoulderRatio*S;
+  var uaY=y0+sz.ad*S, uaX=cx+B*S;
+  var wY=y0+sz.wl*S,  wX=cx+B*p.waistRatio*S;
+  var hipY=wY+18*S,   hipX=cx+B*p.hipRatio*S;
+  var hemY=y0+LEN[p.length]*S, hemX=cx+B*p.hemRatio*S;
+  var dip=p.hemDip*S;
+
+  var g=[];
+  neckSegs(cx,nx,y0,ny,p.neckline).forEach(function(s){g.push(s);});
+  g.push(seg([nx,y0],[nx+(stX-nx)*0.34,y0+(stY-y0)*0.28],[nx+(stX-nx)*0.70,y0+(stY-y0)*0.72],[stX,stY]));
+
+  /* kol oyuntusu 3 segment, koltukaltına yatay varış */
+  var H=p.armholeHollow;
+  var a1=[stX+(uaX-stX)*H, stY+(uaY-stY)*0.36];
+  var a2=[stX+(uaX-stX)*0.50, stY+(uaY-stY)*0.74];
+  g.push(seg([stX,stY],[stX+(uaX-stX)*H*0.7,stY+(uaY-stY)*0.13],[stX+(uaX-stX)*H,stY+(uaY-stY)*0.24],a1));
+  g.push(seg(a1,[a1[0]+(a2[0]-a1[0])*0.42,a1[1]+(a2[1]-a1[1])*0.48],[a1[0]+(a2[0]-a1[0])*0.66,a1[1]+(a2[1]-a1[1])*0.74],a2));
+  g.push(seg(a2,[a2[0]+(uaX-a2[0])*0.46,a2[1]+(uaY-a2[1])*0.68],[uaX-(uaX-a2[0])*0.52,uaY],[uaX,uaY]));
+
+  /* yan dikiş — bele dikey teğetle giriş, waistZone kadar düz bant */
+  var zone=p.waistZone*(wY-uaY);
+  var bY=wY-zone, bX=uaX+(wX-uaX)*0.80;
+  g.push(seg([uaX,uaY],[uaX+(bX-uaX)*0.18,uaY+(bY-uaY)*0.44],[bX,bY-(bY-uaY)*0.26],[bX,bY]));
+  g.push(seg([bX,bY],[bX,bY+(wY-bY)*0.5],[wX,wY-(wY-bY)*0.4],[wX,wY]));
+
+  /* etek — açılma flareStart'tan sonra hızlanır */
+  var fs=p.flareStart;
+  g.push(seg([wX,wY],[wX,wY+(hipY-wY)*fs],[hipX-(hipX-wX)*0.30,hipY-(hipY-wY)*0.22],[hipX,hipY]));
+  g.push(seg([hipX,hipY],[hipX+(hemX-hipX)*0.42,hipY+(hemY-hipY)*0.32],[hemX-(hemX-hipX)*0.22,hemY-(hemY-hipY)*0.28],[hemX,hemY]));
+  g.push(seg([hemX,hemY],[cx+(hemX-cx)*0.60,hemY+dip*0.85],[cx+(hemX-cx)*0.32,hemY+dip],[cx,hemY+dip]));
+
+  return {g:g,k:{cx:cx,y0:y0,ny:ny,nx:nx,stX:stX,stY:stY,uaX:uaX,uaY:uaY,wX:wX,wY:wY,
+                 hipX:hipX,hipY:hipY,hemX:hemX,hemY:hemY,dip:dip}};
+}
+
+function render(p){
+  var W=940,H=560,o='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  o+='<style>.body{fill:#fff;stroke:#111;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}'
+   +'.tie{fill:#fff;stroke:#111;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}'
+   +'.seam{fill:none;stroke:#111;stroke-width:.95;stroke-linecap:round}'
+   +'.dart{fill:none;stroke:#111;stroke-width:.85;stroke-linecap:round}'
+   +'.fold{fill:none;stroke:#111;stroke-width:.7;stroke-linecap:round}'
+   +'.st{fill:none;stroke:#111;stroke-width:.65;stroke-dasharray:3.5 3;stroke-linecap:round}'
+   +'.zip{fill:none;stroke:#111;stroke-width:.75;stroke-linecap:round}'
+   +'.lbl{font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:2.8px;fill:#111;text-anchor:middle}</style>';
+
+  [false,true].forEach(function(isBack){
+    var cx=isBack?700:240, b=buildHalf(p,cx,isBack), k=b.k;
+    var half=enforceC1(b.g.slice()), full=half.concat(mirror(half,cx));
+    o+='<path class="body" d="'+toPath(full)+'"/>';
+
+    var M=function(d,c){return '<path class="'+c+'" d="'+d+'"/>'
+      +'<g transform="translate('+(2*cx)+',0) scale(-1,1)"><path class="'+c+'" d="'+d+'"/></g>';};
+
+    /* yaka biyesi */
+    o+=M("M "+cx+","+(k.ny-6)+" C "+(cx+(k.nx-cx)*0.36)+","+(k.ny-6)
+        +" "+(cx+(k.nx-cx)*0.80)+","+(k.ny-(k.ny-k.y0)*0.50-6)
+        +" "+(k.nx-3)+","+(k.y0+4),"seam");
+    /* kol oyuntusu biyesi */
+    o+=M("M "+(k.stX-4)+","+(k.stY+2)+" C "+(k.stX-1)+","+(k.stY+(k.uaY-k.stY)*0.30)
+        +" "+(k.stX+(k.uaX-k.stX)*0.42)+","+(k.stY+(k.uaY-k.stY)*0.76)
+        +" "+(k.uaX-6)+","+(k.uaY-1),"seam");
+
+    if(p.fabric==='woven'){
+      var bp=k.uaY+(k.wY-k.uaY)*0.38;
+      o+=M("M "+(k.uaX-7)+","+(bp+8)+" C "+(k.uaX-22)+","+(bp+2)
+          +" "+(k.uaX-36)+","+(bp-3)+" "+(k.uaX-46)+","+(bp-6),"dart");
+      if(p.waistRatio<0.96){
+        var dx=cx+(k.uaX-cx)*0.50;
+        o+=M("M "+dx+","+(k.uaY+12)+" C "+(dx+3)+","+(k.wY-42)
+            +" "+(dx+3)+","+(k.wY+6)+" "+dx+","+(k.wY+30),"dart");
+      }
+    }
+
+    for(var i=0;i<p.folds;i++){
+      var t=0.62-i*0.20, fx=cx+(k.hemX-cx)*t,
+          sy=k.hipY+(k.hemY-k.hipY)*(0.34+i*0.14);
+      o+=M("M "+fx+","+sy+" C "+(fx+3)+","+(sy+(k.hemY-sy)*0.36)
+          +" "+(fx+6)+","+(sy+(k.hemY-sy)*0.72)+" "+(fx+8)+","+(k.hemY+k.dip*0.5),"fold");
+    }
+
+    o+='<path class="st" d="M '+(2*cx-k.hemX+10)+','+(k.hemY-9)
+      +' C '+(cx-(k.hemX-cx)*0.5)+','+(k.hemY+k.dip-6)
+      +' '+(cx+(k.hemX-cx)*0.5)+','+(k.hemY+k.dip-6)
+      +' '+(k.hemX-10)+','+(k.hemY-9)+'"/>';
+
+    if(isBack){
+      if(p.closure==='cb_zip'){
+        o+='<path class="seam" d="M '+cx+','+k.ny+' L '+cx+','+(k.hemY+k.dip)+'"/>';
+        o+='<g class="zip"><path d="M '+(cx-4)+','+(k.ny+8)+' L '+(cx-4)+','+(k.wY-6)+'"/>'
+          +'<path d="M '+(cx+4)+','+(k.ny+8)+' L '+(cx+4)+','+(k.wY-6)+'"/>';
+        for(var z=k.ny+18;z<k.wY-10;z+=12)
+          o+='<path d="M '+(cx-4)+','+z+' L '+(cx+4)+','+(z+4)+'"/>';
+        o+='</g>';
+      }
+      if(p.backTie){
+        var ty=k.wY-8;
+        /* BUG FIX: bandın ucu landmark'tan değil, eğriden örneklenir */
+        var edge=sampleX(half,ty+7);
+        if(edge===null) edge=k.wX;
+        edge+=1.0*S;                     /* dikiş payı kadar dışarı taşır */
+        var le=2*cx-edge;
+        o+='<path class="tie" d="M '+(cx-6)+','+(ty+16)+' C '+(cx-11)+','+(ty+54)
+          +' '+(cx-19)+','+(ty+84)+' '+(cx-31)+','+(ty+108)
+          +' L '+(cx-15)+','+(ty+114)+' C '+(cx-8)+','+(ty+84)
+          +' '+(cx-3)+','+(ty+50)+' '+(cx-1)+','+(ty+20)+' Z"/>';
+        o+='<path class="tie" d="M '+(cx+6)+','+(ty+16)+' C '+(cx+11)+','+(ty+54)
+          +' '+(cx+19)+','+(ty+84)+' '+(cx+31)+','+(ty+108)
+          +' L '+(cx+15)+','+(ty+114)+' C '+(cx+8)+','+(ty+84)
+          +' '+(cx+3)+','+(ty+50)+' '+(cx+1)+','+(ty+20)+' Z"/>';
+        o+='<path class="tie" d="M '+le+','+ty+' L '+(cx-7)+','+ty
+          +' L '+(cx-7)+','+(ty+14)+' L '+le+','+(ty+14)+' Z"/>';
+        o+='<path class="tie" d="M '+edge+','+ty+' L '+(cx+7)+','+ty
+          +' L '+(cx+7)+','+(ty+14)+' L '+edge+','+(ty+14)+' Z"/>';
+        o+='<path class="tie" d="M '+(cx-6)+','+(ty+5)+' C '+(cx-27)+','+(ty-13)
+          +' '+(cx-51)+','+(ty-6)+' '+(cx-49)+','+(ty+7)
+          +' C '+(cx-47)+','+(ty+21)+' '+(cx-23)+','+(ty+15)+' '+(cx-6)+','+(ty+10)+' Z"/>';
+        o+='<path class="tie" d="M '+(cx+6)+','+(ty+5)+' C '+(cx+27)+','+(ty-13)
+          +' '+(cx+51)+','+(ty-6)+' '+(cx+49)+','+(ty+7)
+          +' C '+(cx+47)+','+(ty+21)+' '+(cx+23)+','+(ty+15)+' '+(cx+6)+','+(ty+10)+' Z"/>';
+        o+='<path class="tie" d="M '+(cx-6)+','+(ty-2)+' L '+(cx+6)+','+(ty-2)
+          +' L '+(cx+6)+','+(ty+16)+' L '+(cx-6)+','+(ty+16)+' Z"/>';
+      }
+    }
+    o+='<text class="lbl" x="'+cx+'" y="'+(k.hemY+k.dip+42)+'">'+(isBack?'BACK':'FRONT')+'</text>';
+  });
+  return o+'</svg>';
+}
+
+/* ---------- panel ---------- */
+var SPEC=[
+ ['Silüet',[
+   ['silhouette','select',['shift','fit_and_flare','fitted','oversize']],
+   ['size','select',['EU34','EU36','EU38','EU40','EU42']],
+   ['length','select',['mini','knee','midi']],
+   ['fabric','select',['woven','knit']]]],
+ ['Oranlar',[
+   ['shoulderRatio','range',0.45,1.00,0.01],
+   ['waistRatio','range',0.70,1.10,0.01],
+   ['hipRatio','range',0.95,1.25,0.01],
+   ['hemRatio','range',0.90,1.90,0.01]]],
+ ['Yaka',[
+   ['neckline','select',['scoop','boat','v','square']],
+   ['neckHalfWidth','range',7,17,0.5],
+   ['neckDepthFront','range',3,18,0.5],
+   ['neckDepthBack','range',2,10,0.5]]],
+ ['İnce ayar',[
+   ['shoulderSlope','range',0.5,4.0,0.1],
+   ['armholeHollow','range',-0.05,0.30,0.01],
+   ['waistZone','range',0.10,0.50,0.01],
+   ['flareStart','range',0.20,0.90,0.01],
+   ['hemDip','range',0,6,0.1],
+   ['folds','range',0,3,1]]],
+ ['Detay',[
+   ['closure','select',['none','cb_zip']],
+   ['backTie','check']]]
+];
+var LBL={silhouette:'silüet',size:'beden',length:'boy',fabric:'kumaş',
+ shoulderRatio:'omuz oranı',waistRatio:'bel oranı',hipRatio:'kalça oranı',hemRatio:'etek oranı',
+ neckline:'yaka tipi',neckHalfWidth:'yaka yarı en',neckDepthFront:'ön derinlik',neckDepthBack:'arka derinlik',
+ shoulderSlope:'omuz eğimi',armholeHollow:'oyuntu içbükey',waistZone:'bel bandı',
+ flareStart:'açılma başlangıcı',hemDip:'etek sarkması',folds:'kıvrım çifti',
+ closure:'kapanma',backTie:'arka kurdele'};
+
+function build(){
+  var h='';
+  SPEC.forEach(function(grp){
+    h+='<fieldset><legend>'+grp[0]+'</legend>';
+    grp[1].forEach(function(c){
+      var key=c[0],type=c[1];
+      h+='<div class="r"><label>'+LBL[key]+'</label>';
+      if(type==='select'){
+        h+='<select data-k="'+key+'">'+c[2].map(function(v){
+          return '<option'+(P[key]===v?' selected':'')+'>'+v+'</option>';}).join('')+'</select>';
+      } else if(type==='check'){
+        h+='<input type="checkbox" data-k="'+key+'"'+(P[key]?' checked':'')+'>';
+      } else {
+        h+='<input type="range" data-k="'+key+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+P[key]+'">'
+          +'<span class="v" id="v_'+key+'">'+P[key]+'</span>';
+      }
+      h+='</div>';
+    });
+    h+='</fieldset>';
+  });
+  document.getElementById('panel').innerHTML=h;
+
+  document.querySelectorAll('#panel [data-k]').forEach(function(el){
+    el.addEventListener('input',function(){
+      var k=el.getAttribute('data-k');
+      if(el.type==='checkbox') P[k]=el.checked;
+      else if(el.type==='range'){P[k]=parseFloat(el.value);
+        document.getElementById('v_'+k).textContent=el.value;}
+      else P[k]=el.value;
+      if(k==='silhouette'){P=defaults(el.value);build();}
+      paint();
+    });
+  });
+}
+
+function paint(){
+  document.getElementById('canvas').innerHTML=render(P);
+  var o={};['silhouette','neckline','neckHalfWidth','neckDepthFront','neckDepthBack','length',
+    'closure','backTie','fabric','size','shoulderRatio','waistRatio','hipRatio','hemRatio',
+    'flareStart','waistZone','folds','armholeHollow','shoulderSlope','hemDip']
+    .forEach(function(k){o[k]=P[k];});
+  document.getElementById('json').textContent=JSON.stringify(o,null,1);
+}
+
+function copy(txt,btn,ok){
+  var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+  ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);
+  var old=btn.textContent;btn.textContent=ok;setTimeout(function(){btn.textContent=old;},1200);
+}
+document.getElementById('copy').addEventListener('click',function(){
+  copy(document.getElementById('json').textContent,this,'kopyalandı');});
+document.getElementById('svg').addEventListener('click',function(){
+  copy(render(P),this,'kopyalandı');});
+document.getElementById('reset').addEventListener('click',function(){
+  P=defaults('fit_and_flare');build();paint();});
+
+P=defaults('fit_and_flare');build();paint();
+})();
+</script>
