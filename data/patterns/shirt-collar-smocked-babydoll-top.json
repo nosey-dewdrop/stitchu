@@ -1,0 +1,67 @@
+{
+  "slug": "shirt-collar-smocked-babydoll-top",
+  "style": "Shirt-collar smocked babydoll top",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "shirt-collar-smocked-babydoll-top",
+    "style": "Shirt-collar smocked babydoll top",
+    "garment": "top",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "topLength": "hip",
+    "frontPlacket": true,
+    "collarType": 5,
+    "collarEdge": 1,
+    "sleeveCap": 1,
+    "gatherType": 3,
+    "gatherZone": 0
+  },
+  "pieces": [
+    {
+      "name": "Top Front",
+      "cut": "cut 2 (center front opening)"
+    },
+    {
+      "name": "Top Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Front Neck Facing",
+      "cut": "cut 2 (center front opening), interface"
+    },
+    {
+      "name": "Back Neck Facing",
+      "cut": "cut 2, interface"
+    },
+    {
+      "name": "Gathered-Head Sleeve",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Shirt Collar Stand (yaka bandı)",
+      "cut": "cut 2 on fold at centre back (1 self + 1 interfacing), the button-end band the blade rolls over"
+    },
+    {
+      "name": "Shirt Collar Blade (yaka yaprağı)",
+      "cut": "cut 2 + interfacing (1 upper, 1 under + interfacing), the turnover blade; sits on the stand and rolls over the seam"
+    },
+    {
+      "name": "Smocked Yoke Panel (büzgü yaka panosu)",
+      "cut": "cut 1 rectangle(s) 1081 x 160 mm (join to a 1051 mm flat top edge that gathers down to 350 mm), gathered smocked at the neckline"
+    }
+  ]
+}

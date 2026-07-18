@@ -1,0 +1,59 @@
+{
+  "slug": "square-neck-drawstring-babydoll-dress",
+  "style": "Square-neck drawstring babydoll dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "square-neck-drawstring-babydoll-dress",
+    "style": "Square-neck drawstring babydoll dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "square",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "gathered",
+    "skirtLength": "mini",
+    "topLength": "hip",
+    "gatherType": 1,
+    "gatherZone": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1231 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1231 mm = edge 1211 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Drawstring Bust Panel (büzgü büst panosu)",
+      "cut": "cut 1 rectangle(s) 244 x 140 mm (join to a 214 mm flat top edge that gathers down to 119 mm), gathered drawstring at the bust"
+    },
+    {
+      "name": "Drawstring Cord (büzgü bağı)",
+      "cut": "cut 1 rectangle 54 x 649 mm (finished 12 x 619 mm), self-fabric cord threaded through the casing"
+    }
+  ]
+}

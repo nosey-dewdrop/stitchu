@@ -1,0 +1,49 @@
+{
+  "slug": "scoop-neck-tank-mini-dress",
+  "style": "Scoop neck tank mini dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "scoop-neck-tank-mini-dress",
+    "style": "Scoop neck tank mini dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "knit",
+    "neckline": "scoop",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "straight",
+    "skirtLength": "mini",
+    "topLength": "hip"
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1160 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1160 mm = edge 1140 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    }
+  ]
+}

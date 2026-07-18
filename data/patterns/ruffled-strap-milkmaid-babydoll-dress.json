@@ -1,0 +1,65 @@
+{
+  "slug": "ruffled-strap-milkmaid-babydoll-dress",
+  "style": "Ruffled-strap milkmaid babydoll dress",
+  "body": {
+    "bust": 88,
+    "waist": 70,
+    "hip": 94,
+    "shoulder": 37,
+    "backLength": 40.5,
+    "armLength": 58,
+    "neck": 35
+  },
+  "spec": {
+    "slug": "ruffled-strap-milkmaid-babydoll-dress",
+    "style": "Ruffled-strap milkmaid babydoll dress",
+    "garment": "dress",
+    "shaping": "dart",
+    "waistline": "empire",
+    "fabric": "woven",
+    "neckline": "square",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "gathered",
+    "skirtLength": "mini",
+    "topLength": "hip",
+    "tie": 3,
+    "gatherType": 2,
+    "gatherZone": 0,
+    "ruffledStraps": 1
+  },
+  "pieces": [
+    {
+      "name": "Bodice Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Bodice Back",
+      "cut": "cut 2"
+    },
+    {
+      "name": "Bias binding (neckline + armholes)",
+      "cut": "cut 1 strip(s) 1231 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1231 mm = edge 1211 mm + overlap), press in half, wrap the edge and trim the excess"
+    },
+    {
+      "name": "Skirt Front",
+      "cut": "cut 1 on fold"
+    },
+    {
+      "name": "Skirt Back",
+      "cut": "cut 2 (center back seam)"
+    },
+    {
+      "name": "Neck/Front Tie (ön bağ)",
+      "cut": "cut 2 rectangle(s) 80 x 380 mm (finished 25 x 350 mm), attach at the front neckline/centre front and knot into a bow"
+    },
+    {
+      "name": "Shirred Yoke Panel (büzgü yaka panosu)",
+      "cut": "cut 1 rectangle(s) 960 x 160 mm (join to a 930 mm flat top edge that gathers down to 465 mm), gathered shirred at the neckline"
+    },
+    {
+      "name": "Ruffled Strap (fırfırlı askı)",
+      "cut": "cut 2 rectangle(s) 74 x 338 mm (finished 22 mm wide, gathered down to a 140 mm strap), each gathers from the front shoulder over to the back"
+    }
+  ]
+}
