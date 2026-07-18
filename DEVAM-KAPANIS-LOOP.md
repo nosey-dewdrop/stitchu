@@ -260,6 +260,26 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   env-3'te yok → K6 arşiv turunda değerlendirilecek.
   Kredi: 0 çağrı. SIRADAKİ: K1 (tek kontrat + terim kaydı).
 
+- 2026-07-19 K1 TEK KONTRAT + TERİM KAYDI: ÜRETİM BİTTİ (mini-denetim bekler),
+  patch 3.20, deploy v92. contract/{garment-spec.schema.json, tables.json,
+  terms.json} + gen-contract.mjs (→ contract.gen.hpp + web/backend
+  contract.gen.js) + spec-validate.js runtime kapısı + validate-contract.mjs
+  MANDALI (ctest contract_check, 8 kontrol). DRAWN_SINCE 16-regex SİLİNDİ,
+  sayaç terim-İD tabanında. SAYILAR: FULL 0.9 23→27/54 (hareket önbellek
+  onarımı: bayat engine/dist + 12 eksik cache girdisi; sayım tabanı değil),
+  eski yöntem 37/54, ELEMENT 71→74/103 (%71.8; +3 cep kaydı, FULL etkisi 0),
+  İKİNCİ SAYI korpus kapsamı %6.7 (342/5092). Sızıntı taraması 0 unmapped.
+  KREDİ İHLALİ BEYANI: 12 vision çağrısı harcandı (snapshot'ta eksik 12 foto;
+  A5 delindi, patch notu + raporda açık). Kanıt: golden dump pristine-HEAD ile
+  byte-identical, iki wasm canlı kopyalarla md5-aynı, ctest 41/41, vocab-sweep
+  37800/0, web-fuzz 26260/3 (bilinen eski defekt), flat SVG bayt-aynı, render
+  PNG gözle. Damla'ya review.* sorusu: waistNip/armholeHollow fit mi stil mi?
+  SONRADAN BULUNDU (v1.1): golden-reference.csv bayat (23034 vs 23406, re-pin
+  Damla onayında), web-fuzz 3 PAGES failure (README'de kayıtlı), results
+  snapshot üzerine-yazma kırılganlığı (K6 adayı), worker deploy edilmedi
+  (davranışsız import). Rapor: reports/2026-07-19-stitchu-k1-kontrat.md.
+  SIRADAKİ: K1 mini-denetimi (taze agent), sonra K2 + K4 paralel.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure

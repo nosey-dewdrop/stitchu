@@ -18,9 +18,10 @@ fotoya denk geldi. Yanlış pusula (Damla haklıydı, 15 Tem).
 TÜM dağarcık-dışı öğelerin (tekrarlarıyla = N) yüzde kaçını motor ARTIK çiziyor
 (D). **D/N**. Kümelenmeyi cezalandırmaz: bir fotoda 3 öğeden 1'ini çizebilir
 hale gelince bu metrik +1 alır, motorun gerçek ilerlemesini gösterir.
-Manifest oov[] üstünden benchmark-58.mjs'teki DRAWN_SINCE filtresiyle OFFLINE
-hesaplanır (sıfır vision çağrısı, stabil). **İlk ölçüm (2026-07-16): D/N =
-37/103 = %35.9.**
+Manifest oov[] üstünden OFFLINE hesaplanır (sıfır vision çağrısı, stabil).
+2026-07-19'dan (K1) beri filtre regex değil TERİM KAYDIDIR: contract/terms.json
+(status drawable|honest); eşleşmeyen ifade honest sayılır ve UNMAPPED raporlanır.
+**İlk ölçüm (2026-07-16): D/N = 37/103 = %35.9.**
 
 Bu iki sayının dışında "yaptım / oldu / bitti" DEMEK YASAK. Her oturum sonunda
 İKİSİ birden ölçülür ve buraya işlenir. Günlük ilerleme = ELEMENT ACCURACY;
@@ -33,7 +34,9 @@ başarı beyanı = FULL PATTERN %80.
 > ÜST hedef ama motorun günlük ilerlemesini GÖSTERMEZ. ELEMENT ACCURACY (D/N)
 > her tek-öğe kazanımını sayar → doğru günlük pusula.
 
-Durum (motor): **31→37/54 TAM KALIP — RAY 1 / R1.2 (Jackie kombo: asimetrik pat + cap sleeve) sonrası +6, 2026-07-17, patch 3.7.**
+Durum (K1 TEK KONTRAT + TERİM KAYDI, 2026-07-19, patch 3.20): **FULL 0.9 kanıtlı 23→27/54 (PARTIAL 10, eski yöntem 37/54) — hareketin TAMAMI önbellek onarımı, sayım-tabanı değişikliği DEĞİL.** Sayaç tabanı artık contract/terms.json TERİM KAYDI (id + synonyms + drawable|honest + capability + evidence); benchmark-58.mjs DRAWN_SINCE 16-regex listesi SİLİNDİ, eşleşme exact-normalized sözlük, eşleşmeyen ifade OTOMATİK honest + UNMAPPED raporunda (58-set sızıntı taraması: 0 unmapped). ELEMENT ACCURACY 71→74/103 (%68.9→%71.8): +3 = regex listesinin UNUTTUĞU cep kabiliyeti (motor patch 3.12'den beri patch+side-seam cep çiziyor; FULL'a etkisi tam sıfır, üç cep fotoğrafı da başka öğeye takılı — kümelenme). İKİNCİ SAYI yayınlandı: frekans-ağırlıklı korpus kapsamı = 1600 vahşi etiketteki 5092 oov gözleminin %6.7'si drawable (342/5092; registry-mapped %17.1). DÜRÜSTLÜK: (1) bu loop 12 vision çağrısı harcadı — results snapshot'ında 12 foto EKSİKTİ, canlı yeniden okundu (0-çağrı kuralı bu yüzden delindi, beyan edildi); (2) engine/dist node kopyası BAYATTI (named-spec sınırı öncesi; her draft-proof throw edip PARTIAL'a düşüyordu), yeniden derlendi, canlı web build'iyle bayt-aynı; (3) yayınlanan 23'ün snapshot'ı yeniden kurulamıyor. KANIT: golden dump pristine-HEAD build ile byte-identical, iki wasm hash'i canlı kopyalarla aynı, ctest 41/41 (yeni contract_check dahil), vocab-sweep 37800/0, web-fuzz 26260/3 (3 = README'de kayıtlı bilinen 100-sayfa packing defekti, bu loop öncesi de var), render-pages Chrome PNG gözle. Rapor: reports/2026-07-19-stitchu-k1-kontrat.md.
+
+Durum (önceki motor): **31→37/54 TAM KALIP — RAY 1 / R1.2 (Jackie kombo: asimetrik pat + cap sleeve) sonrası +6, 2026-07-17, patch 3.7.**
 İKİ dal TEK oturumda çünkü Jackie gingham fotoları iki öğeyi BİRDEN bekliyor (tek başına biri +1/+0).
 (a) ASİMETRİK DÜĞME PATI: mevcut PlacketBlock offsetMM=55mm ile CF'den kaydırılmış kapanmaya genişledi
 (fold çizgisi -offset, grown kenar -(stand+offset), düğme/ilik kaymış, gerçek CF referans çizili);
