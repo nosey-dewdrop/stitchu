@@ -17,8 +17,8 @@
 
 const NAVY = '#1f3a5f';
 const DEEP = '#3f74a8';
-const CREAM = '#faf6ee';
-const CARD = '#fffdf8';      // slightly lighter panel inside the cream ground
+const CREAM = '#ffffff';    // card ground (was cream, now plain white)
+const CARD = '#ffffff';     // inner panel
 const LINE = '#d8c9ae';      // warm hairline that reads on cream
 const MUTE = '#6b5c40';      // warm muted ink for sub-labels
 
@@ -111,8 +111,9 @@ export function renderListingCard(meta, assets = {}) {
 
   const sizeRange = assets.sizeRange || 'EU34-52';
   const diff = difficulty(meta);
-  const { viewBox: flatVB, inner: flatInner } = extractInner(assets.flatSvg);
-  const { viewBox: figVB, inner: figInner } = extractInner(assets.figureSvg);
+  // The card shows only the pattern pieces (cutting layout) — no on-figure
+  // croquis, no front/back technical flat.
+  const { viewBox: piecesVB, inner: piecesInner } = extractInner(assets.piecesSvg);
 
   // ---- layout bands (top to bottom) ----
   // 1) brand corner + hairline rule
@@ -148,34 +149,16 @@ export function renderListingCard(meta, assets = {}) {
   const panelX = pad;
   const panelW = inW;
 
-  // Croquis occupies the left ~48% (it is tall/portrait), flat the right ~52%
-  // (it is wide front+back). Both scaled to fit inside their sub-boxes.
-  const gap = 28;
-  const croqW = Math.round(panelW * 0.46);
-  const flatW = panelW - croqW - gap;
-  const croqX = panelX;
-  const flatX = panelX + croqW + gap;
-
-  // Sub-box insets so the drawings breathe inside the panel.
-  const insetTop = 40, insetBot = 64, insetSide = 24;
-
-  // Croquis sub-svg (portrait). Center it in its box.
-  const [, , figWv, figHv] = figVB.split(/\s+/).map(Number);
-  const croqBoxW = croqW - insetSide * 2;
-  const croqBoxH = panelH - insetTop - insetBot;
-  const croqScale = Math.min(croqBoxW / figWv, croqBoxH / figHv);
-  const croqDrawW = figWv * croqScale, croqDrawH = figHv * croqScale;
-  const croqInnerX = croqX + insetSide + (croqBoxW - croqDrawW) / 2;
-  const croqInnerY = panelY + insetTop + (croqBoxH - croqDrawH) / 2;
-
-  // Flat sub-svg (landscape front+back). Center in the right box, upper area.
-  const [, , flatWv, flatHv] = flatVB.split(/\s+/).map(Number);
-  const flatBoxW = flatW - insetSide * 2;
-  const flatBoxH = panelH - insetTop - insetBot;
-  const flatScale = Math.min(flatBoxW / flatWv, flatBoxH / flatHv);
-  const flatDrawW = flatWv * flatScale, flatDrawH = flatHv * flatScale;
-  const flatInnerX = flatX + insetSide + (flatBoxW - flatDrawW) / 2;
-  const flatInnerY = panelY + insetTop + (flatBoxH - flatDrawH) / 2;
+  // A single panel holding the nested pattern pieces (cutting layout),
+  // centered and scaled to fit.
+  const insetTop = 40, insetBot = 64, insetSide = 40;
+  const [, , piecesWv, piecesHv] = piecesVB.split(/\s+/).map(Number);
+  const boxW = panelW - insetSide * 2;
+  const boxH = panelH - insetTop - insetBot;
+  const piecesScale = Math.min(boxW / piecesWv, boxH / piecesHv);
+  const piecesDrawW = piecesWv * piecesScale, piecesDrawH = piecesHv * piecesScale;
+  const piecesInnerX = panelX + insetSide + (boxW - piecesDrawW) / 2;
+  const piecesInnerY = panelY + insetTop + (boxH - piecesDrawH) / 2;
 
   // ---- difficulty + footer ----
   const footY = panelY + panelH + 62;
@@ -200,14 +183,11 @@ export function renderListingCard(meta, assets = {}) {
   <!-- badges -->
   ${badges}
 
-  <!-- illustration panel: on-figure croquis + technical flat, no photo -->
-  <rect x="${panelX}" y="${panelY}" width="${panelW}" height="${panelH}" rx="8" fill="#fbf8f1" stroke="${LINE}" stroke-width="1.4"/>
-  <line x1="${flatX - gap / 2}" y1="${panelY + 30}" x2="${flatX - gap / 2}" y2="${panelY + panelH - 30}" stroke="${LINE}" stroke-width="1" stroke-dasharray="3 5"/>
-  <text x="${croqX + croqW / 2}" y="${panelY + panelH - 30}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" letter-spacing="2.5" fill="${MUTE}">ON THE FIGURE</text>
-  <text x="${flatX + flatW / 2}" y="${panelY + panelH - 30}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" letter-spacing="2.5" fill="${MUTE}">TECHNICAL FLAT</text>
+  <!-- illustration panel: the pattern pieces (cutting layout), no photo -->
+  <rect x="${panelX}" y="${panelY}" width="${panelW}" height="${panelH}" rx="8" fill="#fff" stroke="${LINE}" stroke-width="1.4"/>
+  <text x="${panelX + panelW / 2}" y="${panelY + panelH - 30}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" letter-spacing="2.5" fill="${MUTE}">PATTERN PIECES</text>
 
-  <svg x="${croqInnerX}" y="${croqInnerY}" width="${croqDrawW}" height="${croqDrawH}" viewBox="${figVB}" preserveAspectRatio="xMidYMid meet">${figInner}</svg>
-  <svg x="${flatInnerX}" y="${flatInnerY}" width="${flatDrawW}" height="${flatDrawH}" viewBox="${flatVB}" preserveAspectRatio="xMidYMid meet">${flatInner}</svg>
+  <svg x="${piecesInnerX}" y="${piecesInnerY}" width="${piecesDrawW}" height="${piecesDrawH}" viewBox="${piecesVB}" preserveAspectRatio="xMidYMid meet">${piecesInner}</svg>
 
   <!-- difficulty + footer -->
   <line x1="${pad}" y1="${footY - 34}" x2="${W - pad}" y2="${footY - 34}" stroke="${LINE}" stroke-width="1.5"/>

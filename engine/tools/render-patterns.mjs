@@ -158,10 +158,9 @@ for (const s of PATTERNS) {
   // (4) The ETSY-STYLE LISTING CARD — the cover/thumbnail. Composed 100% from
   // the engine's own output: name (typography) + flat + on-figure croquis +
   // honest badges. No Canva, no per-product design, no real photo.
-  const flatSvg = renderFrontBack(p.pieces, flatSpec);
   const cardSvg = renderListingCard(
     { slug: s.slug, style: s.style, pieces: p.pieces.length, closure: closures[0] || null },
-    { flatSvg, figureSvg, sizeRange: 'EU34-52' });
+    { piecesSvg: renderScattered(p.pieces), sizeRange: 'EU34-52' });
   writeFileSync(join(OUT, `${s.slug}-card.svg`), cardSvg);
 
   meta.push({ slug: s.slug, style: s.style, pieces: p.pieces.length,

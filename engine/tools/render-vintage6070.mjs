@@ -250,7 +250,7 @@ for (const s of LOOKS) {
   // ETSY-STYLE LISTING CARD — cover/thumbnail from the engine's own output.
   const cardSvg = renderListingCard(
     { slug: s.slug, style: s.en, pieces: p.pieces.length, closure: closures[0] || null },
-    { flatSvg, figureSvg, sizeRange: 'EU34-52' });
+    { piecesSvg: renderScattered(p.pieces), sizeRange: 'EU34-52' });
   writeFileSync(join(OUT, `${s.slug}-card.svg`), cardSvg);
 
   meta.push({ slug: s.slug, en: s.en, tr: s.tr, period: s.period, house: s.house,

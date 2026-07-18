@@ -306,7 +306,7 @@ const STYLE = `<style>
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin:22px 0 6px}
   .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.08)}
   .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 28px rgba(63,116,168,.16)}
-  .card .thumb{background:#faf6ee;border-bottom:1px solid var(--bb-line);display:flex;align-items:stretch;justify-content:center}
+  .card .thumb{background:#fff;border-bottom:1px solid var(--bb-line);display:flex;align-items:stretch;justify-content:center}
   .card .thumb img{width:100%;height:auto;display:block}
   /* The listing card SVG is the tile (Etsy-shop feel). It already carries the
      name + badges, so the body caption below stays minimal. */
