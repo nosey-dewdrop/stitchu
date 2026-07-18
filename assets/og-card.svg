@@ -22,5 +22,5 @@
   <text x="114" y="446" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#2b4a6b">A hand-built C++ engine drafts it to your exact body.</text>
   <!-- dashed seam -->
   <line x1="114" y1="486" x2="1088" y2="486" stroke="#3f74a8" stroke-width="2" stroke-dasharray="9 7" opacity="0.6"/>
-  <text x="114" y="524" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#3f74a8" letter-spacing="0.5">nosey-dewdrop.github.io/stitchu</text>
+  <text x="114" y="524" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#3f74a8" letter-spacing="0.5">stitchu.noseydewdrop.com</text>
 </svg>
