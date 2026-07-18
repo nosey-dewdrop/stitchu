@@ -56,6 +56,46 @@ inline void validateSpecCross(const GarmentSpec& spec) {
         (spec.sleeveStyle != SleeveStyle::None || spec.neckline != Neckline::Crew))
         throw std::invalid_argument(
             "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'");
+    // K2 composition contract (2026-07-19): these combinations used to fall
+    // through the dispatcher's host gates in garment.cpp SILENTLY — the field
+    // was set, nothing was drawn, nothing was said. Same doctrine as above: an
+    // incoherent spec is an error, never a silent no-op. The web pickers already
+    // hide/reset every one of these, so only raw API/spec callers see them.
+    if (spec.garment == GarmentType::Skirt) {
+        const char* bodiceField =
+            spec.keyhole                                          ? "keyhole" :
+            (spec.frontPlacket || spec.placketStyle != 0)         ? "placket" :
+            spec.collarType != 0                                  ? "collarType" :
+            spec.gatherType != 0                                  ? "gatherType" :
+            spec.backOpening != 0                                 ? "backOpening" :
+            spec.ruffledStraps != 0                               ? "ruffledStraps" :
+            spec.peplum != 0                                      ? "peplum" :
+            spec.bardotStyle != 0                                 ? "bardotStyle" :
+            spec.buttonRow != 0                                   ? "buttonRow" :
+            spec.backDetail != 0                                  ? "backDetail" :
+            spec.shoulderStyle != 0                               ? "shoulderStyle" :
+            spec.edgeFinish != 0                                  ? "edgeFinish" : nullptr;
+        if (bodiceField)
+            throw std::invalid_argument(
+                std::string("invalid spec: a skirt has no bodice to carry ") + bodiceField +
+                ": leave it at its default");
+    }
+    if (spec.garment == GarmentType::Top && spec.backSlit != 0)
+        throw std::invalid_argument(
+            "invalid spec: a top has no skirt hem: leave backSlit 'none'");
+    if (spec.garment == GarmentType::Top && spec.ruffleHem)
+        throw std::invalid_argument(
+            "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off");
+    if (spec.backSlit != 0 && spec.garment != GarmentType::Top &&
+        spec.skirtStyle != SkirtStyle::Straight && spec.skirtStyle != SkirtStyle::ALine)
+        throw std::invalid_argument(
+            "invalid spec: a gathered/pleated/half-circle skirt walks freely and hosts no back slit: "
+            "leave backSlit 'none' or pick a straight/A-line skirt");
+    if (spec.hemShape != 0 && spec.garment != GarmentType::Top &&
+        spec.skirtStyle != SkirtStyle::Straight && spec.skirtStyle != SkirtStyle::ALine)
+        throw std::invalid_argument(
+            "invalid spec: a gathered/pleated/half-circle skirt has no fitted side hem to reshape: "
+            "leave hemShape 'straight' or pick a straight/A-line skirt");
 }
 
 } // namespace stitchu
