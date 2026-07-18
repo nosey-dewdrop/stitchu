@@ -32,3 +32,7 @@ dataset/taste-pool/*
 !dataset/taste-pool/label.html
 !dataset/taste-pool/index.json
 !dataset/taste-pool/labels.json
+
+.env.local
+.vercel/
+engine/tools/node_modules/

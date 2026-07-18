@@ -6,9 +6,11 @@
 // Writes per-spec: sheet-<code>.svg (one per printed A4) + strip.svg (all
 // pages in place, frames on — the "taped together" proof) + info.txt.
 import { createRequire } from 'module';
+import { createHash } from 'crypto';
 import { mkdirSync, writeFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { Resvg } from '@resvg/resvg-js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -188,7 +190,8 @@ for (const s of SPECS) {
     s.edgeFinish || 0 /* patch 3.10: 0 = bias binding (default), 1 = facing */,
     s.pocketStyle || 0 /* patch 3.12: 0 = none, 1 = patch, 2 = side-seam */,
     s.cuffStyle || 0 /* patch 3.13: 0 = none, 1 = button, 2 = ribbed */,
-    s.hemShape || 0 /* patch 3.15: 0 = straight, 1 = shirttail, 2 = high-low */));
+    s.hemShape || 0 /* patch 3.15: 0 = straight, 1 = shirttail, 2 = high-low */,
+    s.shoulderStyle || 0, s.buttonRow || 0, s.exposedZip || 0, s.backDetail || 0, s.bardotStyle || 0));
   const dir = join(OUT, s.name);
   mkdirSync(dir, { recursive: true });
   if (out.error) { writeFileSync(join(dir, 'info.txt'), `ERROR: ${out.error}\n`); console.log(s.name, 'ERROR', out.error); continue; }
@@ -207,8 +210,17 @@ for (const s of SPECS) {
   const rows = Math.ceil(layout.stripH / PAGE_H);
   let strip = '';
   for (const { col, row } of sheets) strip += sheetInner(layout, col, row, used);
-  writeFileSync(join(dir, 'strip.svg'),
-    svgDoc(`0 0 ${layout.cols * PAGE_W} ${rows * PAGE_H}`, layout.cols * PAGE_W / 4, rows * PAGE_H / 4, strip));
+  const stripSvg = svgDoc(`0 0 ${layout.cols * PAGE_W} ${rows * PAGE_H}`, layout.cols * PAGE_W / 4, rows * PAGE_H / 4, strip);
+  writeFileSync(join(dir, 'strip.svg'), stripSvg);
+  // Visual verification is an OUTPUT, not a claim (RULES invariant 3): the PNG
+  // artifact is produced here and its absolute path + sha256 go to stdout so a
+  // report can quote them. No PNG path in the report = the render step did not
+  // happen.
+  const png = new Resvg(stripSvg, { fitTo: { mode: 'width', value: 1800 } }).render().asPng();
+  const pngPath = resolve(join(dir, 'strip.png'));
+  writeFileSync(pngPath, png);
+  const pngHash = createHash('sha256').update(png).digest('hex');
+  console.log(`PNG ${pngPath} sha256=${pngHash}`);
 
   const info = [
     `garment: ${p.garment}`, `pieces: ${p.pieces.length} (${p.pieces.map((x) => x.name).join(' | ')})`,
