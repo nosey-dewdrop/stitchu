@@ -206,8 +206,22 @@ add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)
 
+# K2 composition ratchet (2026-07-19): the declared component x host and
+# component x component conflict matrix (contract/composition.json via
+# composition.gen.hpp) is re-derived by actually drafting every combination.
+# A silent no-op not declared "ignored", or any declared-vs-observed class
+# drift, fails the suite.
+add_executable(compose_check tests/compose_check.cpp)
+target_link_libraries(compose_check PRIVATE engine)
+add_test(NAME compose_check COMMAND compose_check)
+
 # K1 contract ratchet (2026-07-19): schema + term registry + generated
 # consumers + flat recipes + runtime vision gate all validated in one node
 # script. Any drift between contract/ and its consumers fails the suite.
 find_program(NODE_EXECUTABLE node REQUIRED)
 add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/validate-contract.mjs)
+
+# K2 flat render lint (2026-07-19): every flat style record in styles.json is
+# rendered headlessly and checked for self-intersection, inconsistent winding
+# (reversed normals), zero-area loops and sampleX y-monotonicity.
+add_test(NAME flat_render_lint COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/render-lint.mjs)
