@@ -413,6 +413,22 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   KAPANDI (madde 10). Rapor: reports/2026-07-19-stitchu-k3-preview-truth.md.
   SIRADAKİ: K3 mini-denetimi (taze agent), sonra K5.
 
+- 2026-07-19 K3 MİNİ-DENETİM: **PASS → K3 YEŞİL, KİLİTLENDİ** (BLOCKER 0;
+  denetçi kendi worktree'sinde: preview-truth 4/4 kendi koşusu, landmark
+  sayıları birebir yeniden üretildi, üç mandal mutasyonu FAIL+restore kanıtlı,
+  ters yön spot check "Tie gizle → FAIL" geçti, allowlist referansları
+  composition.json'da gerçek, 8 pinli stilizasyon kararı MEŞRU bulundu
+  (tables.json flat._layer/flat.len beyanları gerçek + pin mandalı deploy
+  düşürüyor), K3 diff'inde motor dokunuşu sıfır by-construction golden,
+  flat CLI 4/4 bayt-aynı, ctest 45/45, canlı tek sürüm v94, A5 0 çağrı).
+  K3 MINOR (düzeltilmedi, kayıt): (1) allowStructural contractRef varlığını
+  zorlamıyor — gelecekte referanssız allowlist girdisi sessiz geçerdi, v1.1
+  lint adayı; (2) waistNip/armholeHollow pinleri "layer undecided" kaydına
+  yaslı — Damla "fit" derse iki pin iş emrine döner; (3) style-lint
+  patches.html em-dash uyarıları (exit 0, önceden var).
+  DURUM: K0/K1/K2/K3/K4 YEŞİL. SIRADAKİ: K5 (vision kaskad + eval tabanı,
+  TEK kredili ray, tavan 200 çağrı).
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
