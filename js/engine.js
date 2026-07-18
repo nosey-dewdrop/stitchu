@@ -3,126 +3,45 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-// TiePlacement enum (must match engine/src/tie.hpp order). 0 = None.
-const TIE_PLACEMENT = {
-  none: 0, backWaist: 1, backWaistBow: 2, frontNeckBow: 3, tieBack: 4, cuffTies: 5,
-};
-export function tieClosureValue(spec) {
-  return TIE_PLACEMENT[spec && spec.tieClosure] || 0;
+import { VOCAB, canonical } from './vocab.gen.js?v=81';
+
+// Int-enum lookup against the generated vocabulary (engine/vocab.json).
+// ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
+// not a wrong word. A PRESENT but unknown value THROWS: silence here is how
+// 'puff' once drafted a sleeveless dress and nobody saw it.
+function intValue(field, v) {
+  if (v === undefined || v === null || v === '') return 0;
+  const c = canonical(field, v);
+  if (c === undefined) {
+    throw new Error(`invalid ${field} '${v}' (valid: ${VOCAB[field].values.join(', ')})`);
+  }
+  return VOCAB[field].values.indexOf(c);
 }
 
-// SleeveCap enum (must match engine/src/measurements.hpp order). 0 = Plain.
-const SLEEVE_CAP = { plain: 0, gathered: 1, puffed: 2, cap: 3 };
-export function sleeveCapValue(spec) {
-  return SLEEVE_CAP[spec && spec.sleeveCap] || 0;
-}
-
-// CollarType enum (must match engine/src/collar.hpp order). 0 = None.
-const COLLAR_TYPE = { none: 0, stand: 1, mock: 2, flat: 3, peterPan: 4, shirt: 5 };
-export function collarTypeValue(spec) {
-  return COLLAR_TYPE[spec && spec.collarType] || 0;
-}
-// CollarEdge enum (flat family outer edge). 0 = Round.
-const COLLAR_EDGE = { round: 0, pointed: 1, scallop: 2 };
-export function collarEdgeValue(spec) {
-  return COLLAR_EDGE[spec && spec.collarEdge] || 0;
-}
-
-// GatherType enum (must match engine/src/gather.hpp order). 0 = None.
-const GATHER_TYPE = { none: 0, drawstring: 1, shirred: 2, smocked: 3 };
-export function gatherTypeValue(spec) {
-  return GATHER_TYPE[spec && spec.gatherType] || 0;
-}
-// GatherZone enum. 0 = Neckline.
-const GATHER_ZONE = { neckline: 0, bust: 1, waist: 2, sleeve: 3 };
-export function gatherZoneValue(spec) {
-  return GATHER_ZONE[spec && spec.gatherZone] || 0;
-}
-
-// BackOpening enum (must match engine/src/openback.hpp order). 0 = None.
-const BACK_OPENING = { none: 0, round: 1, lowV: 2, square: 3, keyhole: 4 };
-export function backOpeningValue(spec) {
-  return BACK_OPENING[spec && spec.backOpening] || 0;
-}
-
-// HemSlit enum (must match engine/src/slit.hpp order). 0 = None.
-const HEM_SLIT = { none: 0, vent: 1, slit: 2 };
-export function backSlitValue(spec) {
-  return HEM_SLIT[spec && spec.backSlit] || 0;
-}
-
-// StrapStyle enum (must match engine/src/strap.hpp order). 0 = None.
-const STRAP_STYLE = { none: 0, ruffled: 1 };
-export function ruffledStrapsValue(spec) {
-  return STRAP_STYLE[spec && spec.ruffledStraps] || 0;
-}
-
-// PeplumStyle enum (must match engine/src/peplum.hpp order). 0 = None.
-const PEPLUM_STYLE = { none: 0, full: 1, half: 2, pointed: 3 };
-export function peplumValue(spec) {
-  return PEPLUM_STYLE[spec && spec.peplum] || 0;
-}
-
-// PocketStyle enum (must match engine/src/pocket.hpp order). 0 = None.
-const POCKET_STYLE = { none: 0, patch: 1, sideSeam: 2 };
-export function pocketStyleValue(spec) {
-  return POCKET_STYLE[spec && spec.pocketStyle] || 0;
-}
-
-// PlacketStyle enum (must match engine/src/placket.hpp order). 0 = None.
+export function tieClosureValue(spec) { return intValue('tieClosure', spec && spec.tieClosure); }
+export function sleeveCapValue(spec) { return intValue('sleeveCap', spec && spec.sleeveCap); }
+export function collarTypeValue(spec) { return intValue('collarType', spec && spec.collarType); }
+export function collarEdgeValue(spec) { return intValue('collarEdge', spec && spec.collarEdge); }
+export function gatherTypeValue(spec) { return intValue('gatherType', spec && spec.gatherType); }
+export function gatherZoneValue(spec) { return intValue('gatherZone', spec && spec.gatherZone); }
+export function backOpeningValue(spec) { return intValue('backOpening', spec && spec.backOpening); }
+export function backSlitValue(spec) { return intValue('backSlit', spec && spec.backSlit); }
+export function ruffledStrapsValue(spec) { return intValue('ruffledStraps', spec && spec.ruffledStraps); }
+export function peplumValue(spec) { return intValue('peplum', spec && spec.peplum); }
+export function pocketStyleValue(spec) { return intValue('pocketStyle', spec && spec.pocketStyle); }
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
-const PLACKET_STYLE = { none: 0, standard: 1, asymmetric: 2 };
 export function placketStyleValue(spec) {
-  if (spec && spec.placketStyle) return PLACKET_STYLE[spec.placketStyle] || 0;
+  if (spec && spec.placketStyle) return intValue('placketStyle', spec.placketStyle);
   return spec && spec.frontPlacket === true ? 1 : 0;
 }
-
-// EdgeFinish enum (must match engine/src/measurements.hpp order). 0 = BiasBinding
-// (patch 3.10 DEFAULT — Damla: bias on every dress); 1 = Facing (opt-in). A real
-// collar overrides this to a faced neck inside the engine regardless.
-const EDGE_FINISH = { biasBinding: 0, bias: 0, facing: 1 };
-export function edgeFinishValue(spec) {
-  return EDGE_FINISH[spec && spec.edgeFinish] || 0;
-}
-
-// CuffStyle enum (must match engine/src/cuff.hpp order). 0 = None.
-const CUFF_STYLE = { none: 0, button: 1, ribbed: 2 };
-export function cuffStyleValue(spec) {
-  return CUFF_STYLE[spec && spec.cuffStyle] || 0;
-}
-
-// HemShape enum (must match engine/src/hem.hpp order). 0 = Straight.
-const HEM_SHAPE = { straight: 0, shirttail: 1, highLow: 2 };
-export function hemShapeValue(spec) {
-  return HEM_SHAPE[spec && spec.hemShape] || 0;
-}
-
-// ShoulderStyle enum (must match engine/src/measurements.hpp order). 0 = Set.
-const SHOULDER_STYLE = { set: 0, dropped: 1, raglan: 2 };
-export function shoulderStyleValue(spec) {
-  return SHOULDER_STYLE[spec && spec.shoulderStyle] || 0;
-}
-
-// ButtonRow enum (must match engine/src/buttonrow.hpp order). 0 = None.
-const BUTTON_ROW = { none: 0, functional: 1, decorative: 2 };
-export function buttonRowValue(spec) {
-  return BUTTON_ROW[spec && spec.buttonRow] || 0;
-}
-// ExposedZip enum (must match engine/src/exposedzip.hpp order). 0 = None.
-const EXPOSED_ZIP = { none: 0, centerFront: 1, centerBack: 2 };
-export function exposedZipValue(spec) {
-  return EXPOSED_ZIP[spec && spec.exposedZip] || 0;
-}
-// BackDetail enum (must match engine/src/backdetail.hpp order). 0 = None.
-const BACK_DETAIL = { none: 0, ruffle: 1, cape: 2, flounce: 3 };
-export function backDetailValue(spec) {
-  return BACK_DETAIL[spec && spec.backDetail] || 0;
-}
-// BardotStyle enum (must match engine/src/offshoulder.hpp order). 0 = None.
-const BARDOT_STYLE = { none: 0, plain: 1, frill: 2 };
-export function bardotStyleValue(spec) {
-  return BARDOT_STYLE[spec && spec.bardotStyle] || 0;
-}
+export function edgeFinishValue(spec) { return intValue('edgeFinish', spec && spec.edgeFinish); }
+export function cuffStyleValue(spec) { return intValue('cuffStyle', spec && spec.cuffStyle); }
+export function hemShapeValue(spec) { return intValue('hemShape', spec && spec.hemShape); }
+export function shoulderStyleValue(spec) { return intValue('shoulderStyle', spec && spec.shoulderStyle); }
+export function buttonRowValue(spec) { return intValue('buttonRow', spec && spec.buttonRow); }
+export function exposedZipValue(spec) { return intValue('exposedZip', spec && spec.exposedZip); }
+export function backDetailValue(spec) { return intValue('backDetail', spec && spec.backDetail); }
+export function bardotStyleValue(spec) { return intValue('bardotStyle', spec && spec.bardotStyle); }
 
 export function loadEngine() {
   if (!enginePromise) {
@@ -141,7 +60,9 @@ export function loadEngine() {
 // { sizes: [{ size, draft: {pattern, issues} }, ...] }, the seller deliverable.
 export async function grade(spec, fromLabel, toLabel) {
   const engine = await loadEngine();
-  const json = engine.gradeJSON(
+  let json;
+  try {
+    json = engine.gradeJSON(
     spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
     spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
@@ -170,13 +91,21 @@ export async function grade(spec, fromLabel, toLabel) {
     exposedZipValue(spec),  // vocab: exposed zipper
     backDetailValue(spec),  // vocab: back detail
     bardotStyleValue(spec), // vocab: off-shoulder / bardot
-  );
+    );
+  } catch (e) {
+    // Invalid spec value (thrown by intValue or the WASM boundary): no size
+    // run, the message names the field and the accepted values.
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: msg, sizes: [], issues: [msg] };
+  }
   return JSON.parse(json);
 }
 
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
-  const json = engine.draftJSON(
+  let json;
+  try {
+    json = engine.draftJSON(
     spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
     spec.neckline ?? 'crew',
     spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
@@ -207,6 +136,12 @@ export async function draft(spec, measurements) {
     exposedZipValue(spec),       // vocab: exposed zipper
     backDetailValue(spec),       // vocab: back detail
     bardotStyleValue(spec),      // vocab: off-shoulder / bardot
-  );
+    );
+  } catch (e) {
+    // Invalid spec value: no pattern, no PDF. The message names the field and
+    // the accepted values; issues carries it so every existing guard blocks.
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: msg, pattern: null, issues: [msg] };
+  }
   return JSON.parse(json);
 }
