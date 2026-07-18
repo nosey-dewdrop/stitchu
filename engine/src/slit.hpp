@@ -33,7 +33,7 @@ inline constexpr double defaultHeight = 180;  // slit rise from the hem (≈7 in
 inline constexpr double minHeight = 100;      // shorter than this is not a walking slit
 inline constexpr double maxHeight = 350;      // "hem to just above the knee" ceiling
 inline constexpr double seatClearance = 60;   // keep the top point below the hip/seat line
-inline constexpr double ventExtension = 40;   // folded-back underlap/overlap width (≈1.5 in)
+inline constexpr double ventExtension = constants::kVentExtensionMM; // folded-back underlap width (constants.yaml, ~1.5 in)
 
 // Adds the CB walking vent/slit to the back skirt/dress piece: flips its cut note
 // to a CB seam, marks the seam-stop bar tack at the top point, and (for a Vent)

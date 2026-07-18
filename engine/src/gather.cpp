@@ -12,7 +12,7 @@ namespace GatherBlock {
 
 namespace {
 
-constexpr double SA = 15;  // 15 mm seam allowance per edge (Aldrich/Armstrong)
+constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 
 // Gather ratios (flat cut width / finished gathered width) — FORMULAS.md
 // "Drawstring / shirred / smocked gathering". Values live in the K1 contract

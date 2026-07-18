@@ -10,7 +10,7 @@ namespace NecklineExtBlock {
 
 namespace {
 
-constexpr double SA = 15;  // 15 mm seam allowance per edge (Aldrich/Armstrong)
+constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 
 // --- pussy-bow dimensions (FORMULAS.md "Cowl + pussy-bow neckline") ----------
 constexpr double bandH = 55;      // high neck band height (mm) — tall enough to

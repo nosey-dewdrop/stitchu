@@ -32,9 +32,9 @@ enum class StrapStyle { None, Ruffled };
 
 namespace StrapBlock {
 
-inline constexpr double SA = 15;             // 15 mm seam allowance per edge
-inline constexpr double finishedWidth = 22;  // finished ruffled-strap width (mm)
-inline constexpr double fullness = 2.2;      // gather ratio for a soft shoulder frill
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
+inline constexpr double finishedWidth = constants::kStrapFinishedWidthMM; // finished strap width (constants.yaml)
+inline constexpr double fullness = constants::kStrapFullness; // gather ratio (constants.yaml)
 inline constexpr double defaultSpan = 130;   // over-shoulder strap span (mm)
 inline constexpr double minSpan = 90;        // shortest sensible shoulder-strap span
 inline constexpr double maxSpan = 220;       // ceiling (over-shoulder run)

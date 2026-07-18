@@ -89,6 +89,17 @@ try {
   fail(`generated contract files out of sync: ${String(e.stdout || e.stderr || e).slice(0, 300)}`);
 }
 
+// ---- 4b. constants table in sync (K4 mandal) ---------------------------------
+// engine/constants.yaml is the single source for embedded design assumptions;
+// constants.gen.hpp must match it byte for byte, and every row must carry a
+// valid verified/assumed/refuted status (gen-constants validates the rows).
+try {
+  execFileSync('node', [join(here, 'gen-constants.mjs'), '--check'], { stdio: 'pipe' });
+  ok('constants.gen.hpp in sync with engine/constants.yaml (K4 constants table)');
+} catch (e) {
+  fail(`constants table out of sync/invalid: ${String(e.stdout || e.stderr || e).slice(0, 300)}`);
+}
+
 // ---- 5. manifest leak scan (local only) --------------------------------------
 {
   const manPath = join(root, 'benchmark-58', 'manifest.json');

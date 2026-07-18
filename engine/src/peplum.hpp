@@ -38,7 +38,7 @@ enum class PeplumStyle { None, Full, Half, Pointed };
 
 namespace PeplumBlock {
 
-inline constexpr double SA = 15;          // 15 mm seam allowance per edge
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 inline constexpr double depth = 180;      // peplum drop below the waist (mm)
 inline constexpr double minWaist = 500;   // shortest sensible finished waist arc
 inline constexpr double maxWaist = 1400;  // ceiling (very large waist)

@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "constants.gen.hpp"
+
 namespace stitchu {
 
 struct Point {
@@ -57,7 +59,7 @@ struct PatternPiece {
     std::string closure;
     bool hasGrainline = false;
     Grainline grainline;
-    double seamAllowance = 15.0;         // mm, drawn into cutLine
+    double seamAllowance = constants::kSeamAllowanceMM; // mm, drawn into cutLine
 };
 
 struct DraftedPattern {

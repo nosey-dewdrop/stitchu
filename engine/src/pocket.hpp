@@ -41,7 +41,7 @@ enum class PatchCorner { Rounded, Square, Pointed };
 
 namespace PocketBlock {
 
-inline constexpr double SA = 15;             // 15 mm seam allowance per edge
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 
 // --- Patch pocket geometry (proportional to the garment) --------------------
 inline constexpr double patchWidthFrac = 0.55;  // pocket width = 0.55 × front-panel width

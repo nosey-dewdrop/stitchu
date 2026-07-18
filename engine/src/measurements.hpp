@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 
+#include "constants.gen.hpp"
 #include "contract.gen.hpp"
 
 namespace stitchu {
@@ -229,7 +230,7 @@ struct GarmentSpec {
     TopLength topLength = TopLength::Hip;
     // Opt-in hem ruffle (fırfır). Off by default → existing drafts unchanged.
     bool ruffleHem = false;
-    double ruffleFullness = 2.5; // gather ratio 2.0–3.0
+    double ruffleFullness = constants::kRuffleFullnessDefault; // gather ratio 2.0–3.0 (constants.yaml)
     double ruffleDepthMM = 80;   // how deep the ruffle hangs
     int ruffleTiers = 1;         // cascading tiers (kademeli); 1 = single ruffle
     // Opt-in keyhole (anahtar deliği) opening below the front neckline.

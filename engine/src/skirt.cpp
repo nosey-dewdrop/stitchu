@@ -95,7 +95,7 @@ PatternPiece draftQuarter(
     piece.markings = markings;
     piece.hasGrainline = true;
     piece.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -196,7 +196,7 @@ std::vector<PatternPiece> goreQuarter(
     center.markings = {PathCommand::move(tip), PathCommand::line({tip.x - 12, tip.y + 4})};
     center.hasGrainline = true;
     center.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
-    center.seamAllowance = 15;
+    center.seamAllowance = constants::kSeamAllowanceMM;
 
     // ---- side panel ----
     PatternPiece side;
@@ -221,7 +221,7 @@ std::vector<PatternPiece> goreQuarter(
     side.hasGrainline = true;
     const double grainX = (legB.x + hipQuarter) / 2;
     side.grainline = Grainline{{grainX, hipDepthMM + 10}, {grainX, length - 60}};
-    side.seamAllowance = 15;
+    side.seamAllowance = constants::kSeamAllowanceMM;
     const Rect sideBox = boundingBox(side.commands);
     translatePiece(side, -sideBox.x, -sideBox.y);
 
@@ -244,7 +244,7 @@ PatternPiece gatheredPanel(double waistQuarter, double length) {
     piece.markings = {PathCommand::move({0, 18}), PathCommand::line({width, 18})};
     piece.hasGrainline = true;
     piece.grainline = Grainline{{50, 80}, {50, length - 80}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -276,7 +276,7 @@ PatternPiece pleatedPanel(double waistQuarter, double length) {
     }
     piece.hasGrainline = true;
     piece.grainline = Grainline{{width - 50, 80}, {width - 50, length - 80}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -303,7 +303,7 @@ PatternPiece halfCirclePanel(double easedWaistMM, double length) {
     };
     piece.hasGrainline = true;
     piece.grainline = Grainline{{r * 0.8, r * 0.8}, {R * 0.62, R * 0.62}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -328,7 +328,7 @@ PatternPiece waistbandPiece(double waistMM, Fabric fabric) {
     };
     piece.hasGrainline = true;
     piece.grainline = Grainline{{30, bandHeight / 2}, {bandLength - 30, bandHeight / 2}};
-    piece.seamAllowance = 10;
+    piece.seamAllowance = constants::kSeamAllowanceBandMM;
     return piece;
 }
 

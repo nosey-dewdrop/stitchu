@@ -35,7 +35,7 @@ enum class ExposedZip { None, CenterFront, CenterBack };
 
 namespace ExposedZipBlock {
 
-inline constexpr double seamAllowance = 10; // exposed-zip SA (mm), narrower than 15
+inline constexpr double seamAllowance = constants::kSeamAllowanceBandMM; // exposed-zip SA, narrower than the 15 default (constants.yaml)
 
 // Draws the exposed zipper teeth glyph on the CF or CB body piece(s), tags the
 // closure, opens the seam for donning (cut 2, not on fold), and adds a guide

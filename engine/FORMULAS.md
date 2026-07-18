@@ -16,6 +16,16 @@ invented; where a book value could not be confirmed the item stays UNVALIDATED r
 citing a source that does not exist. These values are NOT changed by this pass, only labelled;
 changing a constant is a separate engine decision.
 
+K4 update (2026-07-19): these constants now live in ONE machine-readable table,
+`engine/constants.yaml` → generated `engine/src/constants.gen.hpp` (gen-constants.mjs;
+drift guarded by ctest contract_check). Each row carries {value, unit, source,
+status: verified|assumed|refuted, experiment}. The 2026-07-19 paper-sloper comparison
+(engine EU38 block vs an independent Aldrich hand draft, ctest sloper_check +
+reports/2026-07-19-stitchu-k4-sabitler-sloper.md) set the statuses: shoulderSlopeDeg and
+shoulderSeamTargetMM VERIFIED; bicepsBustRatio 0.30 and the legacy shoulderDropFactor
+0.23 REFUTED (values unchanged in the closing chain — v1.1 candidates); the rest ASSUMED.
+constants.yaml is the source of truth for status; the prose below is the history.
+
 - shoulderDrop = shoulderHalf * 0.23 (~13 deg): UNVALIDATED design assumption. Aldrich's block
   uses a fixed shoulder-slope drop (~37 mm at the standard size) rather than a ratio of shoulder
   width; the ratio form here is not from a single published number. It stays in the wearable

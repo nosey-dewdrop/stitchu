@@ -6,7 +6,7 @@
 namespace stitchu {
 namespace SleeveBlock {
 
-inline constexpr double bicepsRatio = 0.30;  // ASSUMPTION (anthropometric)
+inline constexpr double bicepsRatio = constants::kBicepsBustRatio; // ASSUMPTION (constants.yaml: refuted vs Aldrich top arm)
 inline constexpr double bicepsEase = 0.15;   // verified Brian default
 inline constexpr double capEase = 0.04;      // classic 3-5% cap ease for setting in
 inline constexpr double knitBicepsEase = 0.06; // knits stretch around the arm
@@ -36,7 +36,7 @@ inline double capSpreadFrac(SleeveCap c) {
 // down to a hem the outer edge sweeps back up to the underarm points a short
 // depth below the cap. `capWingDepth` is how far the wing hangs below the cap
 // crown at the shoulder point (the classic 60–90 mm couture cap).
-inline constexpr double capWingDepth = 55;   // wing drop below the crown (mm)
+inline constexpr double capWingDepth = constants::kCapWingDepthMM; // wing drop below the crown (constants.yaml)
 
 // Returns the sleeve pieces (sleeve + cuff for balloon); empty for sleeveless.
 // `cap` adds a gathered/puff head; Plain keeps the classic set-in cap exactly.
