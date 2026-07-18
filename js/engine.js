@@ -62,36 +62,7 @@ export async function grade(spec, fromLabel, toLabel) {
   const engine = await loadEngine();
   let json;
   try {
-    json = engine.gradeJSON(
-    spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
-    spec.neckline ?? 'crew',
-    spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
-    spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
-    (spec.ruffle ?? 'none') !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
-    spec.keyhole === 'keyhole',
-    fromLabel, toLabel,
-    spec.frontPlacket === true,
-    tieClosureValue(spec), // Loop 4b: fabric ties / sash / bow
-    sleeveCapValue(spec),  // Loop 6: gathered/puff sleeve head
-    collarTypeValue(spec), // Loop 7/8: collar family
-    collarEdgeValue(spec), // Loop 7/8: flat-family outer edge
-    gatherTypeValue(spec), // Loop 8: drawstring/shirred/smocked gathering
-    gatherZoneValue(spec), // Loop 8: gather zone
-    backOpeningValue(spec), // Loop 9b: open-back cutout
-    backSlitValue(spec),    // Loop M1: back hem slit / walking vent
-    ruffledStrapsValue(spec), // queue #3: ruffled shoulder straps
-    peplumValue(spec),      // R1.1: peplum flare
-    placketStyleValue(spec), // R1.2: asymmetric placket
-    edgeFinishValue(spec),  // patch 3.10: neckline/armhole edge finish
-    pocketStyleValue(spec),  // patch 3.12: patch / side-seam pocket
-    cuffStyleValue(spec),   // patch 3.13: sleeve-end cuff
-    hemShapeValue(spec),    // patch 3.15: hem shape
-    shoulderStyleValue(spec), // patch 3.13: dropped shoulder / raglan
-    buttonRowValue(spec),   // vocab: button row
-    exposedZipValue(spec),  // vocab: exposed zipper
-    backDetailValue(spec),  // vocab: back detail
-    bardotStyleValue(spec), // vocab: off-shoulder / bardot
-    );
+    json = engine.gradeJSON(engineSpec(spec), { from: fromLabel, to: toLabel });
   } catch (e) {
     // Invalid spec value (thrown by intValue or the WASM boundary): no size
     // run, the message names the field and the accepted values.
@@ -101,42 +72,57 @@ export async function grade(spec, fromLabel, toLabel) {
   return JSON.parse(json);
 }
 
+// The single named-object spec the WASM boundary takes (34 positional args
+// died 2026-07-18 — a one-slot shift silently drafted a different dress).
+function engineSpec(spec) {
+  return {
+    garment: spec.garment,
+    shaping: spec.shaping ?? 'dart',
+    waistline: spec.waistline ?? 'natural',
+    fabric: spec.fabric ?? 'woven',
+    neckline: spec.neckline ?? 'crew',
+    sleeveStyle: spec.sleeveStyle ?? 'none',
+    sleeveLength: spec.sleeveLength ?? 'short',
+    skirtStyle: spec.skirtStyle ?? 'aLine',
+    skirtLength: spec.skirtLength ?? 'midi',
+    topLength: spec.topLength ?? 'hip',
+    ruffleHem: (spec.ruffle ?? 'none') !== 'none',
+    ruffleTiers: spec.ruffle === 'tiered' ? 3 : 1,
+    keyhole: spec.keyhole === 'keyhole',
+    frontPlacket: spec.frontPlacket === true,
+    tieClosure: tieClosureValue(spec),
+    sleeveCap: sleeveCapValue(spec),
+    collarType: collarTypeValue(spec),
+    collarEdge: collarEdgeValue(spec),
+    gatherType: gatherTypeValue(spec),
+    gatherZone: gatherZoneValue(spec),
+    backOpening: backOpeningValue(spec),
+    backSlit: backSlitValue(spec),
+    ruffledStraps: ruffledStrapsValue(spec),
+    peplum: peplumValue(spec),
+    placketStyle: placketStyleValue(spec),
+    edgeFinish: edgeFinishValue(spec),
+    pocketStyle: pocketStyleValue(spec),
+    cuffStyle: cuffStyleValue(spec),
+    hemShape: hemShapeValue(spec),
+    shoulderStyle: shoulderStyleValue(spec),
+    buttonRow: buttonRowValue(spec),
+    exposedZip: exposedZipValue(spec),
+    backDetail: backDetailValue(spec),
+    bardotStyle: bardotStyleValue(spec),
+  };
+}
+
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   let json;
   try {
-    json = engine.draftJSON(
-    spec.garment, spec.shaping ?? 'dart', spec.waistline ?? 'natural', spec.fabric ?? 'woven',
-    spec.neckline ?? 'crew',
-    spec.sleeveStyle ?? 'none', spec.sleeveLength ?? 'short',
-    spec.skirtStyle ?? 'aLine', spec.skirtLength ?? 'midi', spec.topLength ?? 'hip',
-    (spec.ruffle ?? 'none') !== 'none', spec.ruffle === 'tiered' ? 3 : 1,
-    spec.keyhole === 'keyhole',
-    measurements.bust, measurements.waist, measurements.hip, measurements.shoulder,
-    measurements.backLength, measurements.armLength, measurements.neck,
-    measurements.upperBust || 0, // optional full-bust adjustment
-    spec.frontPlacket === true,  // Loop 3: front button placket
-    tieClosureValue(spec),       // Loop 4b: fabric ties / sash / bow
-    sleeveCapValue(spec),        // Loop 6: gathered/puff sleeve head
-    collarTypeValue(spec),       // Loop 7/8: collar family
-    collarEdgeValue(spec),       // Loop 7/8: flat-family outer edge
-    gatherTypeValue(spec),       // Loop 8: drawstring/shirred/smocked gathering
-    gatherZoneValue(spec),       // Loop 8: gather zone
-    backOpeningValue(spec),      // Loop 9b: open-back cutout
-    backSlitValue(spec),         // Loop M1: back hem slit / walking vent
-    ruffledStrapsValue(spec),    // queue #3: ruffled shoulder straps
-    peplumValue(spec),           // R1.1: peplum flare
-    placketStyleValue(spec),     // R1.2: asymmetric placket
-    edgeFinishValue(spec),       // patch 3.10: neckline/armhole edge finish
-    pocketStyleValue(spec),      // patch 3.12: patch / side-seam pocket
-    cuffStyleValue(spec),        // patch 3.13: sleeve-end cuff
-    hemShapeValue(spec),         // patch 3.15: hem shape
-    shoulderStyleValue(spec),    // patch 3.13: dropped shoulder / raglan
-    buttonRowValue(spec),        // vocab: button row
-    exposedZipValue(spec),       // vocab: exposed zipper
-    backDetailValue(spec),       // vocab: back detail
-    bardotStyleValue(spec),      // vocab: off-shoulder / bardot
-    );
+    json = engine.draftJSON(engineSpec(spec), {
+      bust: measurements.bust, waist: measurements.waist, hip: measurements.hip,
+      shoulder: measurements.shoulder, backLength: measurements.backLength,
+      armLength: measurements.armLength, neck: measurements.neck,
+      upperBust: measurements.upperBust || 0,
+    });
   } catch (e) {
     // Invalid spec value: no pattern, no PDF. The message names the field and
     // the accepted values; issues carries it so every existing guard blocks.
