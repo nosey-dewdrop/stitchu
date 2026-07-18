@@ -7,6 +7,7 @@
 
 #include "../src/garment.hpp"
 #include "../src/sizechart.hpp"
+#include "../src/guiderefs.hpp"
 #include "../src/specparse.hpp"
 #include "../src/validator.hpp"
 #include "../src/vocab.gen.hpp"
@@ -141,6 +142,19 @@ std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
     for (size_t i = 0; i < draft.guideSteps.size(); ++i) {
         if (i) out += ",";
         out += "\"" + escape(draft.guideSteps[i]) + "\"";
+    }
+    // guideRefs[i] = names of drafted pieces guide step i references (the
+    // two-way guide<->piece audit that also gates the validator).
+    const GuideAudit guideAudit = auditGuide(draft);
+    out += R"(],"guideRefs":[)";
+    for (size_t i = 0; i < guideAudit.stepPieces.size(); ++i) {
+        if (i) out += ",";
+        out += "[";
+        for (size_t j = 0; j < guideAudit.stepPieces[i].size(); ++j) {
+            if (j) out += ",";
+            out += "\"" + escape(guideAudit.stepPieces[i][j]) + "\"";
+        }
+        out += "]";
     }
     out += R"(],"pieces":[)";
     for (size_t i = 0; i < draft.pieces.size(); ++i) {

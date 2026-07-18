@@ -6,6 +6,7 @@
 #include <optional>
 
 #include "bodice.hpp"
+#include "guiderefs.hpp"
 #include "collar.hpp"
 #include "hem.hpp"
 #include "skirt.hpp"
@@ -1078,6 +1079,18 @@ std::vector<ValidationIssue> issues(
     // An outside LLM found a green-but-unwearable draft; these turn that lesson
     // into a permanent, deterministic, zero-cost gate.
     for (auto& issue : Wearability::issues(spec, m, draft)) result.push_back(issue);
+
+    // Guide <-> piece two-way gate (2026-07-18): every drafted piece must be
+    // sewn by some guide step, and every separable piece the guide names must
+    // exist in the draft. The courtney guide once sewed a bias binding the cut
+    // list hid — a violation here means the deliverable lies, so no PDF.
+    {
+        const GuideAudit audit = auditGuide(draft);
+        for (const auto& orphan : audit.orphanPieces)
+            result.push_back({"guideCoverage", orphan, "piece is drafted but no guide step mentions it"});
+        for (const auto& phantom : audit.phantomSteps)
+            result.push_back({"guideCoverage", "guide", "step references an undrafted piece: " + phantom});
+    }
 
     return result;
 }

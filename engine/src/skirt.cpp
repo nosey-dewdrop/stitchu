@@ -529,7 +529,18 @@ DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtL
     pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping, fabric);
     pattern.fabricAdviceKey = "skirt";
     pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping, fabric);
-    pattern.guideSteps = guide(style, shaping, fabric);
+    // The guide derives from what was DRAFTED, not from what was requested: on
+    // a body with no waist-to-hip shaping the princess gore split resolves to
+    // plain panels, and a guide sewing gore seams that don't exist is a lie
+    // (found by the guideCoverage gate, 2026-07-18).
+    bool goreSplit = false;
+    for (const auto& piece : pattern.pieces)
+        if (piece.name.find("Center ") != std::string::npos) goreSplit = true;
+    pattern.guideSteps = guide(style, goreSplit ? Shaping::Princess : Shaping::Dart, fabric);
+    if (shaping == Shaping::Princess && !goreSplit) {
+        pattern.guideSteps.insert(pattern.guideSteps.begin() + 1,
+            "Princess gore seams were requested, but this body has no waist-to-hip shaping to split over — the skirt is drafted as clean single panels instead (nothing was skipped that the fit needs).");
+    }
     return pattern;
 }
 

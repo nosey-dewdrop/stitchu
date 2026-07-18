@@ -259,7 +259,9 @@ export function makePdfCore({ engine, sheet, body }) {
       s.frontPlacket === true, s.tie || 0, s.sleeveCap || 0, s.collarType || 0, s.collarEdge || 0,
       s.gatherType || 0, s.gatherZone || 0, s.backOpening || 0,
       s.backSlit || 0, s.ruffledStraps || 0, s.peplum || 0, s.placketStyle || 0,
-      s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0));
+      s.edgeFinish || 0, s.pocketStyle || 0, s.cuffStyle || 0, s.hemShape || 0, s.shoulderStyle || 0,
+      s.buttonRow || 0, s.exposedZip || 0, s.backDetail || 0, s.bardotStyle || 0));
+    if (out.error) throw new Error(`engine refused '${s.slug || s.style}': ${out.error}`);
     return out;
   }
 
@@ -275,9 +277,21 @@ export function makePdfCore({ engine, sheet, body }) {
       c.stroke(0.3, GREY); c.dash(null); c.line(M, 55, A4.w - M, 55);
       c.text(M, 66, 12, NAVY, 'Pieces', null);
       let y = 76;
+      // Header count and this list MUST come from the same set: every drafted
+      // piece appears here. Chalk pieces (bias binding, ruffle strips — drawn
+      // straight on fabric, not printed) get their own heading instead of being
+      // silently dropped (the courtney guide sewed a piece the cut list hid).
       const paper = p.pieces.filter((x) => !isChalk(x));
-      for (const piece of (paper.length ? paper : p.pieces)) {
+      const chalk = p.pieces.filter((x) => isChalk(x));
+      for (const piece of paper) {
         c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
+      }
+      if (chalk.length) {
+        y += 3;
+        c.text(M, y, 10, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += 8;
+        for (const piece of chalk) {
+          c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
+        }
       }
       y += 6;
       c.text(M, y, 12, NAVY, 'Assembly'); y += 9;
@@ -309,7 +323,8 @@ export function makePdfCore({ engine, sheet, body }) {
     const scale = Math.min(1, availW / stripW, availH / stripH);
     const c = new Ctx(A0.h);
     c.text(M, 30, 30, NAVY, s.style, null);
-    c.text(M, 46, 14, GREY, `EU38  .  ${p.pieces.length} pieces  .  ${p.fabricMeters140} m at 140 cm  .  single-sheet A0 (print shop)`, null);
+    const a0Chalk = p.pieces.filter((x) => isChalk(x)).length;
+    c.text(M, 46, 14, GREY, `EU38  .  ${p.pieces.length} pieces${a0Chalk ? ` (${a0Chalk} chalked on fabric, not printed here)` : ''}  .  ${p.fabricMeters140} m at 140 cm  .  single-sheet A0 (print shop)`, null);
     if (scale < 1) c.text(M, 60, 12, INK, `NOTE: this pattern is larger than A0; printed here at ${(scale * 100).toFixed(1)}% to fit. Scale up to the calibration square before cutting.`, null);
     else c.text(M, 60, 12, GREY, 'true scale at 100%. Confirm with the calibration square, then cut.', null);
     const ox0 = M, oy0 = 72;
@@ -325,6 +340,7 @@ export function makePdfCore({ engine, sheet, body }) {
     const M = 20;
     const lineH = 5.6;
     const paper = p.pieces.filter((x) => !isChalk(x));
+    const chalk = p.pieces.filter((x) => isChalk(x));
     let c = new Ctx(A4.h);
     let y = 28;
     const newPage = () => { pdf.page(A4.w, A4.h, c.s); c = new Ctx(A4.h); y = 24; };
@@ -333,8 +349,15 @@ export function makePdfCore({ engine, sheet, body }) {
     c.text(M, y, 10, GREY, `EU38 sewing guide  .  ${p.pieces.length} pieces  .  ${p.fabricMeters140} m fabric at 140 cm`, null); y += 7;
     c.text(M, y, 9, GREY, 'text-first guide, no illustrations in this edition. Every step is the engine\'s own instruction.', null); y += 12;
     c.text(M, y, 13, NAVY, 'Cut list', null); y += 8;
-    for (const piece of (paper.length ? paper : p.pieces)) {
+    for (const piece of paper) {
       need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
+    }
+    if (chalk.length) {
+      need(lineH + 4);
+      c.text(M, y, 10.5, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += lineH + 1;
+      for (const piece of chalk) {
+        need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
+      }
     }
     y += 8;
     need(20);

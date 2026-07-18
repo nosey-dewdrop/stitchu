@@ -197,3 +197,7 @@ add_test(NAME sewable_census COMMAND sewable_census)
 add_executable(roundtrip_check tests/roundtrip_check.cpp)
 target_link_libraries(roundtrip_check PRIVATE engine)
 add_test(NAME roundtrip_check COMMAND roundtrip_check)
+
+add_executable(guide_check tests/guide_check.cpp)
+target_link_libraries(guide_check PRIVATE engine)
+add_test(NAME guide_check COMMAND guide_check)

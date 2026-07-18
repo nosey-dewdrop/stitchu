@@ -361,7 +361,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this keeps the facing rolled inside. Turn, press, tack at the shoulder seams.");
         steps.push_back("Sew the bodice side seams.");
         if (sleeveless) {
-            steps.push_back("Finish armholes with bias binding (sleeveless).");
+            steps.push_back("Finish each armhole with a self-cut bias strip: cut a 3 cm wide strip on the bias from the leftover fabric (the fabric estimate already includes it), bind the armhole edge and topstitch it to the inside.");
         }
     }
     if (spec.skirtStyle == SkirtStyle::Gathered) {
@@ -553,7 +553,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     } else if (sleeveless && biasNeck) {
         steps.push_back("Finish each armhole with its bias strip: press it in half, bind the armhole right sides together, ease around the curve, then turn and topstitch it to the inside.");
     } else if (sleeveless) {
-        steps.push_back("Finish the armholes with bias binding.");
+        steps.push_back("Finish each armhole with a self-cut bias strip: cut a 3 cm wide strip on the bias from the leftover fabric (the fabric estimate already includes it), bind the armhole edge and topstitch it to the inside.");
     } else {
         if (spec.sleeveCap == SleeveCap::Cap) {
             steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
