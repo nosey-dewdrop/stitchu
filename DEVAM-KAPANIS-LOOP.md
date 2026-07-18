@@ -347,6 +347,25 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   "web ile aynı köprü" beyanı rebuild() sıfırlamasını içermiyor (bugün fark
   üretmiyor). Rapor: reports/2026-07-19-stitchu-k2-kompozisyon.md.
 
+- 2026-07-19 ORKESTRATÖR (K2+K4 sonrası): TEK DEPLOY YAPILDI — gh-pages
+  subtree push (split 7fc0f0b), canlı curl teyit: index tek sürüm ?v=93,
+  patches 3.20/3.21/3.22 yayında; worker wrangler deploy edildi (stitchu-api
+  versiyon 6f4aafca, K2'nin motor değişikliği + K1 import'u canlıda).
+  K4 MİNİ-DENETİM: **PASS → K4 YEŞİL, KİLİTLENDİ** (BLOCKER 0; denetçi
+  kendi worktree'sinde: tek-kaynak grep 8+ sabit temiz, drift mandalı canlı
+  mutasyonla test edildi, golden HEAD vs pre-K4 cmp byte-identical 23406,
+  Aldrich bağımsızlığı 3 el hesabıyla teyit — pens 43.33/oyuntu 215/göğüs 980,
+  sloper_check 12 pin + 3 assert PASS, ctest 44/44, vocab-sweep 48600/0,
+  wasm md5'ler canlı kopyalarla aynı, A5 0 çağrı temiz).
+  K4 MINOR (düzeltilmedi, kayıt): (a) buttonrow.cpp:107 + placket.cpp:218
+  talimat metinlerinde "18 mm" hard-coded string — yaml değişirse metin
+  sessizce bayatlar; (b) envanter 1.5-1.9 DIŞI gömülü tasarım sabitleri
+  (offshoulder dropMM 55, peplum depth 180, slit 180, neckext bandH 55...)
+  tabloda değil — KİLİT 1 gereği v1.1 adayı; "her varsayım" envanter
+  kapsamında karşılandı, harfiyen değil. (c) engine/dist/stitchu-engine.js
+  untracked bayat lokal artefakt, canlı yol web/vendor.
+  SIRADAKİ: K2 mini-denetimi, PASS ise K3.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
