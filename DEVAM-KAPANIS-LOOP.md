@@ -366,6 +366,21 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   untracked bayat lokal artefakt, canlı yol web/vendor.
   SIRADAKİ: K2 mini-denetimi, PASS ise K3.
 
+- 2026-07-19 K2 MİNİ-DENETİM: **PASS → K2 YEŞİL, KİLİTLENDİ** (BLOCKER 0;
+  denetçi kendi worktree'sinde: 19/19 dispatcher bloğu matriste, compose_check
+  713/713 kendi derlemesiyle, 6 bağımsız wasm probe'unda isimli red / sessiz
+  no-op sıfır, golden pre-K2 vs HEAD cmp byte-identical 23406, ctest 44/44,
+  vocab-sweep 48600/0, web-fuzz 26260/3 bilinen, render-lint + sampleX assert
+  koştu yeşil, A1 temiz — specparse isimli redler meşru, benchmark 27/54 +
+  74/103 birebir A7 gerekmedi).
+  K2 MINOR (düzeltilmedi, kayıt): (1) rapor "21 bileşen" diyor, kayıt 22;
+  (2) "engine/dist == web/vendor md5" iddiası üretilemiyor (untracked
+  engine/dist'i paralel K4 ezmiş olabilir; commit'li vendor + backend wasm
+  otoritatif, davranış probe'la doğru); (3) worker deploy eksiği denetim
+  baseline'ında doğruydu, orkestratör SONRASINDA deploy etti (6f4aafca) —
+  kapandı.
+  DURUM: K0/K1/K2/K4 YEŞİL. SIRADAKİ: K3 (preview-truth).
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
