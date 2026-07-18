@@ -206,9 +206,23 @@ for (const rel of cssFiles) {
   checkCssRules(rel, css);
 }
 
+// ---- flat render lint (K2, 2026-07-19) -------------------------------------
+// Chained here so the existing deploy proof step ("style-lint temiz") also
+// covers the flat engine: self-intersection, reversed winding, zero-area and
+// sampleX monotonicity over every styles.json record (render-lint.mjs).
+import { spawnSync } from 'node:child_process';
+const renderLint = spawnSync(process.execPath,
+  [join(dirname(fileURLToPath(import.meta.url)), 'render-lint.mjs')], { encoding: 'utf8' });
+process.stdout.write(renderLint.stdout || '');
+process.stderr.write(renderLint.stderr || '');
+if (renderLint.status !== 0) {
+  console.error('style-lint: chained flat render-lint FAILED');
+  process.exit(1);
+}
+
 // ---- report ----------------------------------------------------------------
 if (violations.length === 0) {
-  console.log(`OK  style-lint clean across ${htmlFiles.length} pages + ${cssFiles.length} css files (rules a-e, 0 violations).`);
+  console.log(`OK  style-lint clean across ${htmlFiles.length} pages + ${cssFiles.length} css files (rules a-e, 0 violations) + flat render-lint green.`);
   process.exit(0);
 }
 
