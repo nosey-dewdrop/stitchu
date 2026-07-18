@@ -201,3 +201,9 @@ add_test(NAME roundtrip_check COMMAND roundtrip_check)
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)
+
+# K1 contract ratchet (2026-07-19): schema + term registry + generated
+# consumers + flat recipes + runtime vision gate all validated in one node
+# script. Any drift between contract/ and its consumers fails the suite.
+find_program(NODE_EXECUTABLE node REQUIRED)
+add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/validate-contract.mjs)

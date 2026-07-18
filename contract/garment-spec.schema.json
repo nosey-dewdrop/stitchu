@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nosey-dewdrop.github.io/stitchu/contract/garment-spec.schema.json",
+  "title": "stitchu garment spec contract",
+  "description": "K1 single contract (2026-07-19), version 1.0.0. TWO layers. SEMANTIC layer = garment language: closed enums + bounded scalars; the only language the VLM and a human speak (vision reading + draft spec). RENDER layer is NOT in this contract: every renderer compiles its own slider/parameters from the semantics (flat.* below is the flat renderer's declared recipe namespace, for validation of stored recipes only). An LLM/VLM can never write render parameters: the visionReading schema has additionalProperties:false, so any armholeHollow/capPuff/seed smuggled into a vision answer is rejected. Enum values are cross-checked against engine/vocab.json by engine/tools/validate-contract.mjs (the ratchet); a drift fails the test suite.",
+  "version": "1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract": { "const": "garment-spec/1" },
+    "vision": { "$ref": "#/$defs/visionReading" },
+    "draft": { "$ref": "#/$defs/draftSpec" },
+    "flat": { "$ref": "#/$defs/flatRecipe" },
+    "review": { "$ref": "#/$defs/reviewParams" }
+  },
+  "$defs": {
+    "visionReading": {
+      "description": "What the vision layer is allowed to say about a photo. SEMANTIC ONLY. Unknown fields are rejected (additionalProperties:false); a value outside its enum is invalid. The bridge (web/js/vision-bridge.js) compiles this into draftSpec; the declared cross-layer translations live in contract/tables.json mappings.*.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "garment": { "enum": ["skirt", "dress", "top", "trousers", "other"] },
+        "neckline": { "enum": ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter", "cowl", "pussyBow", null] },
+        "sleeveStyle": { "enum": ["none", "straight", "balloon", null] },
+        "sleeveLength": { "enum": ["short", "elbow", "long", null] },
+        "skirtStyle": { "enum": ["aLine", "straight", "gathered", "halfCircle", "pleated", null] },
+        "length": { "enum": ["mini", "midi", "maxi", null] },
+        "topLength": { "enum": ["cropped", "hip", "tunic", null] },
+        "shaping": { "enum": ["princess", "dart", null] },
+        "waistline": { "enum": ["natural", "empire", null] },
+        "fabric": { "enum": ["woven", "knit", null] },
+        "hemRuffle": { "enum": ["none", "single", "tiered", null] },
+        "keyhole": { "type": ["boolean", "null"] },
+        "fabricName": { "type": ["string", "null"], "maxLength": 60 },
+        "closure": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["buttons", "placket", "zipper", "ties", "lace-up", "hookEye", "none", null] },
+            "location": { "enum": ["centerFront", "centerBack", "sideSeam", "shoulder", "neck", "waist", null] }
+          }
+        },
+        "collar": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["none", "stand", "shirt", "peterPan", "mandarin", "notched", "sailor", "other", null] },
+            "name": { "type": ["string", "null"], "maxLength": 80 }
+          }
+        },
+        "straps": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["none", "shoulder", "spaghetti", "wide", "halter", "ruffled", "oneShoulder", "offShoulder", null] },
+            "count": { "enum": [1, 2, null] }
+          }
+        },
+        "cupSeams": { "type": ["boolean", "null"] },
+        "sleeveHead": { "enum": ["plain", "gathered", "puffed", "capped", null] },
+        "yoke": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["none", "shoulderYoke", "shirring", "smocking", null] },
+            "location": { "enum": ["frontBodice", "backBodice", "shoulder", "waist", null] }
+          }
+        },
+        "backDetail": { "enum": ["none", "openBack", "keyholeBack", "vBack", "tieBack", "lacedBack", "buttonBack", null] },
+        "outOfVocab": { "type": "array", "items": { "type": "string", "maxLength": 120 }, "maxItems": 24 },
+        "details": { "type": ["string", "null"], "maxLength": 400 }
+      }
+    },
+    "draftSpec": {
+      "description": "The engine spec: what the pattern engine drafts from. String enums come 1:1 from engine/vocab.json (single vocabulary source; index = C++ enum value). Body measurements are bounded real centimetres.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "garment": { "enum": ["skirt", "dress", "top"] },
+        "shaping": { "enum": ["princess", "dart"] },
+        "waistline": { "enum": ["natural", "empire"] },
+        "fabric": { "enum": ["woven", "knit"] },
+        "neckline": { "enum": ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter", "cowl", "pussyBow"] },
+        "sleeveStyle": { "enum": ["none", "straight", "balloon"] },
+        "sleeveLength": { "enum": ["short", "elbow", "long"] },
+        "skirtStyle": { "enum": ["aLine", "straight", "gathered", "halfCircle", "pleated"] },
+        "skirtLength": { "enum": ["mini", "midi", "maxi"] },
+        "topLength": { "enum": ["cropped", "hip", "tunic"] },
+        "tieClosure": { "enum": ["none", "backWaist", "backWaistBow", "frontNeckBow", "tieBack", "cuffTies", "frontWaistTie", "wrapFront", "frontWaistBow"] },
+        "sleeveCap": { "enum": ["plain", "gathered", "puffed", "cap"] },
+        "collarType": { "enum": ["none", "stand", "mock", "flat", "peterPan", "shirt"] },
+        "collarEdge": { "enum": ["round", "pointed", "scallop"] },
+        "gatherType": { "enum": ["none", "drawstring", "shirred", "smocked"] },
+        "gatherZone": { "enum": ["neckline", "bust", "waist", "sleeve"] },
+        "backOpening": { "enum": ["none", "round", "lowV", "square", "keyhole"] },
+        "backSlit": { "enum": ["none", "vent", "slit"] },
+        "ruffledStraps": { "enum": ["none", "ruffled"] },
+        "peplum": { "enum": ["none", "full", "half", "pointed"] },
+        "placketStyle": { "enum": ["none", "standard", "asymmetric"] },
+        "edgeFinish": { "enum": ["biasBinding", "facing"] },
+        "pocketStyle": { "enum": ["none", "patch", "sideSeam"] },
+        "cuffStyle": { "enum": ["none", "button", "ribbed"] },
+        "hemShape": { "enum": ["straight", "shirttail", "highLow"] },
+        "shoulderStyle": { "enum": ["set", "dropped", "raglan"] },
+        "buttonRow": { "enum": ["none", "functional", "decorative"] },
+        "exposedZip": { "enum": ["none", "centerFront", "centerBack"] },
+        "backDetail": { "enum": ["none", "ruffle", "cape", "flounce"] },
+        "bardotStyle": { "enum": ["none", "plain", "frill"] },
+        "frontPlacket": { "type": "boolean", "description": "legacy bool, mirrors placketStyle=standard" },
+        "keyhole": { "enum": ["none", "keyhole"] },
+        "ruffle": { "enum": ["none", "single", "tiered"] },
+        "body": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "bust": { "type": "number", "minimum": 60, "maximum": 160 },
+            "waist": { "type": "number", "minimum": 45, "maximum": 150 },
+            "hip": { "type": "number", "minimum": 65, "maximum": 170 },
+            "shoulder": { "type": "number", "minimum": 28, "maximum": 55 },
+            "backLength": { "type": "number", "minimum": 30, "maximum": 55 },
+            "armLength": { "type": "number", "minimum": 40, "maximum": 75 },
+            "neck": { "type": "number", "minimum": 26, "maximum": 46 },
+            "upperBust": { "type": "number", "minimum": 0, "maximum": 160 }
+          }
+        }
+      }
+    },
+    "flatRecipe": {
+      "description": "The flat renderer's DECLARED recipe namespace (drawing only; drawing units, not millimetres). Used to validate stored style records (engine/flat-engine/styles.json). A vision answer can never carry these: they are not in visionReading.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": { "type": "string", "maxLength": 60 },
+        "size": { "enum": ["EU34", "EU36", "EU38", "EU40", "EU42"] },
+        "length": { "enum": ["mini", "knee", "midi"] },
+        "ink": { "enum": ["minimal", "orta", "full"] },
+        "seed": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "bustProject": { "type": "number", "minimum": 0, "maximum": 1 },
+        "bustHeight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "skirtFull": { "type": "number", "minimum": 1, "maximum": 4 },
+        "foldCount": { "type": "integer", "minimum": 0, "maximum": 24 },
+        "hemWave": { "type": "number", "minimum": 0, "maximum": 4 },
+        "drape": { "type": "number", "minimum": 0, "maximum": 4 },
+        "hemDip": { "type": "number", "minimum": 0, "maximum": 6 },
+        "top": { "enum": ["band", "shoulder"] },
+        "neckline": { "enum": ["v", "square", "round"] },
+        "label": { "type": "string", "maxLength": 120 },
+        "note": { "type": "string", "maxLength": 400 },
+        "parts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "straps": { "type": "boolean" }, "ruffledStraps": { "type": "boolean" },
+            "collar": { "type": "boolean" }, "sleeve": { "type": "boolean" },
+            "shirr": { "type": "boolean" }, "casing": { "type": "boolean" },
+            "tie": { "type": "boolean" }, "backSeam": { "type": "boolean" },
+            "gatherWaist": { "type": "boolean" }, "cfGather": { "type": "boolean" },
+            "laceNeck": { "type": "boolean" }, "laceSleeve": { "type": "boolean" },
+            "laceHem": { "type": "boolean" }
+          }
+        },
+        "strapLen": { "type": "number", "minimum": 0, "maximum": 40 },
+        "strapWidth": { "type": "number", "minimum": 0, "maximum": 10 },
+        "ruffle": { "type": "number", "minimum": 0, "maximum": 4 },
+        "yokeDrop": { "type": "number", "minimum": 0, "maximum": 40 },
+        "gatherRatio": { "type": "number", "minimum": 1, "maximum": 4 },
+        "shirrRows": { "type": "integer", "minimum": 0, "maximum": 16 },
+        "tieLength": { "type": "number", "minimum": 0, "maximum": 60 },
+        "neckWidth": { "type": "number", "minimum": 0.5, "maximum": 2 },
+        "neckDepth": { "type": "number", "minimum": 0, "maximum": 30 },
+        "neckDepthBack": { "type": "number", "minimum": 0, "maximum": 20 },
+        "shoulderSlope": { "type": "number", "minimum": 0, "maximum": 4 },
+        "sleeveLen": { "type": "number", "minimum": 0, "maximum": 40 },
+        "sleeveWidth": { "type": "number", "minimum": 0, "maximum": 20 },
+        "capPuff": { "type": "number", "minimum": 0, "maximum": 8 },
+        "cuffGather": { "type": "number", "minimum": 0, "maximum": 4 },
+        "laceWidth": { "type": "number", "minimum": 0, "maximum": 5 },
+        "laceScallops": { "type": "integer", "minimum": 0, "maximum": 40 },
+        "collarWidth": { "type": "number", "minimum": 0, "maximum": 12 },
+        "collarGap": { "type": "number", "minimum": 0, "maximum": 4 },
+        "waistNip": { "$ref": "#/$defs/reviewParams/properties/waistNip" },
+        "armholeHollow": { "$ref": "#/$defs/reviewParams/properties/armholeHollow" }
+      }
+    },
+    "reviewParams": {
+      "description": "Parameters whose LAYER is undecided (fit vs style) — Damla's call, registered in contract/tables.json review.*. They keep running where they run today (flat recipes) until decided.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "waistNip": { "type": "number", "minimum": 0, "maximum": 0.25 },
+        "armholeHollow": { "type": "number", "minimum": 0, "maximum": 0.4 }
+      }
+    }
+  }
+}

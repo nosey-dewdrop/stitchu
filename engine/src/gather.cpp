@@ -15,10 +15,11 @@ namespace {
 constexpr double SA = 15;  // 15 mm seam allowance per edge (Aldrich/Armstrong)
 
 // Gather ratios (flat cut width / finished gathered width) — FORMULAS.md
-// "Drawstring / shirred / smocked gathering".
-constexpr double drawstringRatio = 1.8;  // couture drawstring waist / babydoll neck
-constexpr double shirredRatio = 2.0;     // Aldrich shirred bodice, 2:1
-constexpr double smockedRatio = 3.0;     // couture smocking, 3:1
+// "Drawstring / shirred / smocked gathering". Values live in the K1 contract
+// (contract/tables.json draft.gatherRatios); same numbers, one source.
+constexpr double drawstringRatio = contract::kGatherRatio_drawstring;  // couture drawstring waist / babydoll neck
+constexpr double shirredRatio = contract::kGatherRatio_shirred;        // Aldrich shirred bodice, 2:1
+constexpr double smockedRatio = contract::kGatherRatio_smocked;        // couture smocking, 3:1
 
 // Panel depth (the un-gathered dimension) per zone, in mm.
 constexpr double neckPanelDepth = 130;   // a babydoll/milkmaid gathered yoke panel

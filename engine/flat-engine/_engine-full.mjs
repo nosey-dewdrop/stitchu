@@ -1,8 +1,14 @@
-var S=5.6;
-var SIZE={EU34:{neck:6.6,shp:11.9,strap:6.8,bust:14.6,emp:13.2,ad:19.6},EU36:{neck:6.8,shp:12.2,strap:7.1,bust:15.0,emp:13.7,ad:20.0},EU38:{neck:7.0,shp:12.6,strap:7.4,bust:15.5,emp:14.2,ad:20.6},EU40:{neck:7.3,shp:13.1,strap:7.7,bust:16.2,emp:14.9,ad:21.2},EU42:{neck:7.6,shp:13.6,strap:8.0,bust:17.0,emp:15.7,ad:21.8}};
-var LEN={mini:42,knee:58,midi:74};
-var SHARED={size:'EU38',length:'mini',bustProject:0.5,bustHeight:0.30,waistNip:0.07,ink:'minimal',skirtFull:1.95,foldCount:10,hemWave:1.0,drape:1.0,hemDip:2.0,seed:7};
-var STYLE={drawstring_babydoll:{label:'square-neck drawstring',top:'band',parts:{straps:true,ruffledStraps:true,collar:false,sleeve:false,shirr:true,casing:true,tie:true,backSeam:true},own:{strapLen:12,strapWidth:2.6,ruffle:1.0,yokeDrop:16,gatherRatio:2.05,shirrRows:6,tieLength:26},note:''},lace_vneck_70s:{label:'70s v-neck lace babydoll',top:'shoulder',neckline:'v',parts:{straps:false,collar:false,sleeve:true,shirr:false,casing:false,tie:true,backSeam:true,gatherWaist:false,cfGather:true,laceNeck:true,laceSleeve:true,laceHem:true},own:{neckWidth:1.12,neckDepth:13.5,neckDepthBack:2.5,shoulderSlope:1.6,armholeHollow:0.10,sleeveLen:9,sleeveWidth:6.2,capPuff:2.2,cuffGather:1.2,laceWidth:1.3,laceScallops:16,tieLength:20,yokeDrop:11},note:''},courtney_lace_vneck:{label:'the courtney: v-neck lace babydoll',top:'shoulder',neckline:'v',parts:{straps:false,collar:false,sleeve:true,shirr:false,casing:false,tie:true,backSeam:true,gatherWaist:false,cfGather:true,laceNeck:true,laceSleeve:true,laceHem:true},own:{neckWidth:1.12,neckDepth:13.5,neckDepthBack:2.5,shoulderSlope:1.6,armholeHollow:0.10,sleeveLen:17,sleeveWidth:8.4,capPuff:3.4,cuffGather:0,laceWidth:1.55,laceScallops:18,tieLength:27,yokeDrop:11},note:''},peterpan_puff:{label:'peter-pan puff-sleeve',top:'shoulder',parts:{straps:false,ruffledStraps:false,collar:true,sleeve:true,shirr:true,casing:false,tie:false,backSeam:true},own:{neckWidth:1.35,neckDepth:7.5,neckDepthBack:2.5,shoulderSlope:1.5,armholeHollow:0.10,sleeveLen:11,sleeveWidth:7.0,capPuff:2.6,cuffGather:1.0,collarWidth:4.6,collarGap:0.5,yokeDrop:9,gatherRatio:3.0,shirrRows:7},note:''}};
+// K1 contract (2026-07-19): shared values come from contract/tables.json
+// (flat.* namespace — DRAWING units, not millimetres), style records come from
+// styles.json (style = a data record, not code). No inline value copies.
+import {readFileSync as _rf} from 'node:fs';
+var _CT=JSON.parse(_rf(new URL('../../contract/tables.json',import.meta.url),'utf8'));
+var _ST=JSON.parse(_rf(new URL('./styles.json',import.meta.url),'utf8'));
+var S=_CT.flat.unitPX;
+var SIZE=_CT.flat.size;
+var LEN=_CT.flat.len;
+var SHARED=_ST.shared;
+var STYLE=_ST.styles;
 var P={};
 function defaults(styleKey,keep){var st=STYLE[styleKey],o={style:styleKey};for(var k in SHARED)o[k]=(keep&&k in keep)?keep[k]:SHARED[k];for(var j in st.own)o[j]=st.own[j];o.title=st.label;return o;}
 function parts(){return STYLE[P.style].parts;}

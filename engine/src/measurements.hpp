@@ -3,6 +3,8 @@
 #include <cmath>
 #include <string>
 
+#include "contract.gen.hpp"
+
 namespace stitchu {
 
 struct BodyMeasurementsSnapshot {
@@ -133,11 +135,13 @@ inline const char* raw(SkirtLength l) {
     }
     return "";
 }
+// Values live in contract/tables.json (draft.skirtLengthMM) — the K1 single
+// contract; contract.gen.hpp is generated from it. Same numbers, one source.
 inline double millimeters(SkirtLength l) {
     switch (l) {
-        case SkirtLength::Mini: return 450;
-        case SkirtLength::Midi: return 650;
-        case SkirtLength::Maxi: return 900;
+        case SkirtLength::Mini: return contract::kSkirtLength_mini;
+        case SkirtLength::Midi: return contract::kSkirtLength_midi;
+        case SkirtLength::Maxi: return contract::kSkirtLength_maxi;
     }
     return 0;
 }
