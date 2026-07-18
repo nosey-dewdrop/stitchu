@@ -25,7 +25,7 @@
     "flat": "sixties-fit-flare-knit-dress-flat.svg",
     "onFigure": "sixties-fit-flare-knit-dress-figure.svg",
     "card": "sixties-fit-flare-knit-dress-card.svg",
-    "closure": null
+    "closure": "invisible zipper (center back)"
   },
   {
     "slug": "sixties-mondrian-shift-mini",
@@ -112,7 +112,7 @@
     "flat": "sixties-empire-knit-mini-flat.svg",
     "onFigure": "sixties-empire-knit-mini-figure.svg",
     "card": "sixties-empire-knit-mini-card.svg",
-    "closure": null
+    "closure": "invisible zipper (center back)"
   },
   {
     "slug": "sixties-boat-neck-shift-mini",
@@ -167,7 +167,7 @@
     "flat": "sixties-crew-neck-jersey-mini-flat.svg",
     "onFigure": "sixties-crew-neck-jersey-mini-figure.svg",
     "card": "sixties-crew-neck-jersey-mini-card.svg",
-    "closure": null
+    "closure": "invisible zipper (center back)"
   },
   {
     "slug": "sixties-pointed-collar-tunic",
@@ -448,6 +448,6 @@
     "flat": "sixties-boat-neck-longsleeve-mini-flat.svg",
     "onFigure": "sixties-boat-neck-longsleeve-mini-figure.svg",
     "card": "sixties-boat-neck-longsleeve-mini-card.svg",
-    "closure": null
+    "closure": "invisible zipper (center back)"
   }
 ]

@@ -6,7 +6,7 @@
 // far fewer, far fuller pages than tiling each piece separately.
 import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner, pieceSheetMap } from './sheet.js?v=61';
 import { getLang } from './i18n.js?v=61';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=61';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=86';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly), a Turkish sewist must read these in Turkish or the pattern comes
