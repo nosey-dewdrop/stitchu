@@ -52,9 +52,6 @@ const looks = meta.map((m) => {
     <div class="caps">${m.pieceNames.map((n) => `<span class="cap">${esc(n)}</span>`).join('')}</div>
     <p class="lmeta"><span class="num">${m.pieces}</span> <span data-en="pattern pieces" data-tr="kalıp parçası">pattern pieces</span> · <span class="num">${m.fabric}</span> m <span data-en="fabric at 140 cm" data-tr="140 cm kumaş">fabric at 140 cm</span> · <span class="ok" data-en="validator clean" data-tr="validator temiz">validator clean</span>${m.closure ? ` · <span class="ok" data-en="closure: ${esc(m.closure)}" data-tr="kapanma: ${esc(m.closure)}">${esc(m.closure)}</span>` : ''}</p>
   </div>
-  <p class="viewcap" data-en="Front and back technical flat" data-tr="Ön ve arka teknik çizim">Front and back technical flat</p>
-  <a class="figwrap" href="${detail}">${flatSvgOf(m.slug)}</a>
-  <p class="viewcap" data-en="Nested pieces (cut layout)" data-tr="Yerleşimli parçalar (kesim planı)">Nested pieces (cut layout)</p>
   <a class="figwrap" href="${detail}">${svgOf(m.slug)}</a>
   ${oov ? `<p class="honest" data-en="Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:" data-tr="Siluet olarak tam çizildi. Motor bu yüzey detaylarını çizmez, bu yüzden sessizce atlanmaz, belirtilir:">Drafted complete as a silhouette. The engine does not draw these surface details, so they are noted, not silently dropped:</p><div class="caps">${oov}</div>` : ''}
   <p class="detaillink"><a href="${detail}" data-en="See the sewing details and download the pattern →" data-tr="Dikiş detaylarını gör ve kalıbı indir →">See the sewing details and download the pattern →</a></p>

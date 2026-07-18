@@ -183,9 +183,6 @@ function lookSection(l) {
     <div class="caps">${pieces.map((n) => `<span class="cap">${esc(n)}</span>`).join('')}</div>
     <p class="lmeta"><span class="num">${m.pieces}</span> <span data-en="pattern pieces" data-tr="kalıp parçası">pattern pieces</span> · <span class="num">${m.fabric}</span> m <span data-en="fabric at 140 cm" data-tr="140 cm kumaş">fabric at 140 cm</span> · <span class="ok" data-en="validator clean" data-tr="validator temiz">validator clean</span>${m.closure ? ` · <span class="ok" data-en="closure: ${esc(m.closure)}" data-tr="kapanma: ${esc(m.closure)}">${esc(m.closure)}</span>` : ''}</p>
   </div>
-  <p class="viewcap" data-en="Front and back technical flat" data-tr="Ön ve arka teknik çizim">Front and back technical flat</p>
-  <a class="figwrap" href="${detail}">${svgOf(m.flat)}</a>
-  <p class="viewcap" data-en="Nested pieces (cut layout)" data-tr="Yerleşimli parçalar (kesim planı)">Nested pieces (cut layout)</p>
   <a class="figwrap" href="${detail}">${svgOf(`${m.slug}.svg`)}</a>
   <p class="detaillink"><a href="${detail}" data-en="See the sewing details and download the pattern →" data-tr="Dikiş detaylarını gör ve kalıbı indir →">See the sewing details and download the pattern →</a></p>
 </section>`;
