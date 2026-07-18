@@ -381,11 +381,47 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   kapandı.
   DURUM: K0/K1/K2/K4 YEŞİL. SIRADAKİ: K3 (preview-truth).
 
+- 2026-07-19 K3 PREVIEW-TRUTH: **ÜRETİM BİTTİ, MİNİ-DENETİM BEKLİYOR** (patch
+  3.23, ?v 93→94, deploy bu loop'ta — paralel loop yok). contract/
+  preview-truth.json doğdu: 4 flat stilinin her birine TEK semantik giysi kaydı;
+  iki projeksiyon (DISPLAY=styles.json reçetesi, DRAFT=web/vendor CANLI wasm
+  draftJSON, render-pages demo body) aynı kayıttan türetilip diff'lenir.
+  YAPISAL EŞİTLİK (sert): 4/4 stil YEŞİL — flat'in çizdiği her yapısal öğe
+  kalıpta parça buldu (shirr→Yoke/Bust Panel, casing→drawstring panosu,
+  tie→Tie/Cord, sleeve→Puff Sleeve, collar→PeterPan, backSeam→CB); ters yön de
+  denetli (facings/bias=iç konstrüksiyon sınıfı). Beyanlı boşluklar gerekçeli
+  allowlist'te: K2 declaredButNotDrawn straps/ruffledStraps (kalıp KESİYOR,
+  flat çizmiyor), lace×3 (flat çizer, kalıp parçası YOK — dantel hazır şerit,
+  listing yayın notu; çizmek=A1 PARK), cfGather (ink-sınıfı dekor). LANDMARK
+  (%8 yumuşak, büst çapası normalize): süpürme +%0.1 OK, panelCutWidth oranı
+  drawstring 1.800/1.8 + shirred 1.998/2.0 OK (K1 tek-oran-tablosu iki motorda
+  kanıtlandı), courtney sleeveLen −%7.3 OK; stilizasyon sınıfı 8 landmark
+  (yaka eni +%99..141, oyuntu +%68, bel −%17, etek +%15, kol −%38..79) kontrat
+  referanslı PİNLİ zarfta (flat._layer/flat.len/flat.derived/review.*) —
+  KARAR BEYANI: tarif PARK'lamak yerine kontrat-içi beyan+pin seçildi çünkü
+  flat'ler Damla-onaylı foto-türevi sanat, oranları mühendislik oranına çekmek
+  tasarım değişikliği olurdu; pinler mandal, ötesine kayma deploy'u düşürür;
+  Damla aksini isterse pinler daraltılıp iş emrine döner (review.waistNip/
+  armholeHollow sorusunun sayısal hali bel/oyuntu satırları). MANDAL: ctest
+  preview_truth_check (45. test) + style-lint zinciri kancası + K0 4.3
+  paylaşılan-packer bekçisi (render.js assembled preview sheet.js packer'ından
+  ayrılırsa FAIL); mutasyonla kanıtlı (pin daraltma FAIL, allowlist silme FAIL,
+  parça düşürme FAIL, restore 0). KANIT: ctest 45/45, style-lint 81+render-lint+
+  preview-truth yeşil, flat engine değişikliği export-only (puffSleeve) 4 stil
+  CLI SVG cmp bayt-aynı, motor C++ dokunulmadı (wasm derlenmedi, golden
+  by-construction + suite'te geçti), 0 API/vision çağrısı. K0 kapanışı: 4.3
+  KAPANDI (madde 10). Rapor: reports/2026-07-19-stitchu-k3-preview-truth.md.
+  SIRADAKİ: K3 mini-denetimi (taze agent), sonra K5.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
 > genişletmesi, yeni vocabulary çizimleri...)
 
+- PARK (K3): lace trim çizim kabiliyeti (flat lace bantları çiziyor, motorun
+  lace parçası yok; çizmek yeni özellik=A1) — yayın notu: lace flat'leriyle
+  kurulan listing "dantel hazır şerittir, kalıp parçası değildir" demek
+  zorunda (contract/preview-truth.json allowlist girdisinde kayıtlı).
 - PARK (K2): top×bardot hem-extension kusuru (validator-bloke, matris beyanlı);
   skirt×tie bel/kuşak tutarsızlığı; dress(kolsuz)×dropped guideCoverage;
   backDetail cape kink (halter/bardot kombolarında); keyhole×CF ailesinin
