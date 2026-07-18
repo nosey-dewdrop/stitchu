@@ -1,16 +1,18 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=78';
-import { applyStatic, getLang, t } from './i18n.js?v=78';
-import { draft, grade } from './engine.js?v=86';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=86';
-import { renderResult } from './render.js?v=86';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=92';
+import { validateVision } from './spec-validate.js?v=92';
+import { CONTRACT } from './contract.gen.js?v=92';
+import { applyStatic, getLang, t } from './i18n.js?v=92';
+import { draft, grade } from './engine.js?v=92';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=92';
+import { renderResult } from './render.js?v=92';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=78';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=86';
+} from './store.js?v=92';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=92';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -379,7 +381,13 @@ function showSpec() {
       const loader = sewingLoader(t('create.spec.reading'));
       status.appendChild(loader);
       try {
-        const seen = await analyzePhoto(file.files[0]);
+        const seenRaw = await analyzePhoto(file.files[0]);
+        // K1 contract gate: the vision answer must speak the SEMANTIC garment
+        // language (contract/garment-spec.schema.json visionReading,
+        // additionalProperties:false). Unknown fields are stripped, out-of-enum
+        // values nulled — a render knob can never enter through this door.
+        const { clean: seen, report: schemaStrikes } = validateVision(seenRaw);
+        if (schemaStrikes.length) console.warn('vision schema strikes:', schemaStrikes);
         spec.garment = seen.garment;
         if (seen.neckline) spec.neckline = seen.neckline;
         if (seen.sleeveStyle) spec.sleeveStyle = seen.sleeveStyle;
@@ -417,9 +425,10 @@ function showSpec() {
         // R1.2 draws the short CAP-sleeve WING. `puffed` = raised puff, `gathered`
         // = soft gather, `capped` = a short cap wing. A drawstring-gathered sleeve
         // (needs an arm casing) stays honest.
-        if (seen.sleeveHead === 'puffed') spec.sleeveCap = 'puffed';
-        else if (seen.sleeveHead === 'gathered') spec.sleeveCap = 'gathered';
-        else if (seen.sleeveHead === 'capped') spec.sleeveCap = 'cap';
+        // K1: the vision-word -> engine-word translation is contract data
+        // (contract/tables.json mappings.sleeveHeadToSleeveCap), not an if-chain.
+        const capWord = seen.sleeveHead && CONTRACT.mappings.sleeveHeadToSleeveCap[seen.sleeveHead];
+        if (capWord && capWord !== 'plain') spec.sleeveCap = capWord;
         // A gathered/puff/cap head needs an actual sleeve to sit on; if the vision
         // read a head but no sleeve style, give it a straight sleeve to carry it.
         if (spec.sleeveCap && spec.sleeveCap !== 'plain' && (!spec.sleeveStyle || spec.sleeveStyle === 'none')) {
