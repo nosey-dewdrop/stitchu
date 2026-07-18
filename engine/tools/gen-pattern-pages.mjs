@@ -381,7 +381,7 @@ for (const m of meta) {
   const canonical = `${BASE}/patterns/${m.slug}.html`;
   const title = `${m.style} sewing pattern · stitchu`;
   const desc = c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead;
-  const svgUrl = `svg/${m.slug}.svg`;
+  const svgUrl = `svg/${m.slug}.svg?v=${V}`;
   const flatUrl = m.flat ? `svg/${m.flat}` : null;
   const figureUrl = m.onFigure ? `svg/${m.onFigure}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
@@ -430,16 +430,6 @@ ${HEADER}
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
 
-  ${flatUrl ? `<div class="drawing">
-    <p class="viewlabel" data-en="Technical Flat" data-tr="Teknik Çizim">Technical Flat</p>
-    <img src="${flatUrl}" alt="${esc(m.style)} front and back flat technical sketch drafted by the stitchu engine" loading="lazy">
-    <p class="cap" data-en="The front and back flat sketch, the way a commercial pattern shows the garment. Drawn from the engine's own pieces with grainline, balance notches and the closure mark." data-tr="Ön ve arka düz teknik çizim, ticari bir kalıbın modeli gösterdiği gibi. Motorun kendi parçalarından, düzgü, denge çentikleri ve kapanma işaretiyle çizildi.">The front and back flat sketch, the way a commercial pattern shows the garment. Drawn from the engine's own pieces with grainline, balance notches and the closure mark.</p>
-  </div>` : ''}
-  ${figureUrl ? `<div class="drawing figure">
-    <p class="viewlabel" data-en="On the Figure" data-tr="Üzerinde">On the Figure</p>
-    <img src="${figureUrl}" alt="${esc(m.style)} illustrated on a fashion croquis so you can see how it looks worn" loading="lazy">
-    <p class="cap" data-en="The same style drawn on a standard fashion figure, so you can see how it would sit when worn: where the neckline falls, how the hem length reads on the body, how the silhouette drapes. An illustration from the same spec, never a photo." data-tr="Aynı model standart bir moda figürü üzerine çizildi; giyildiğinde nasıl duracağını görürsünüz: yaka nereye oturuyor, etek boyu vücutta nasıl okunuyor, siluet nasıl dökülüyor. Aynı spesifikasyondan bir illüstrasyon, asla fotoğraf değil.">The same style drawn on a standard fashion figure, so you can see how it would sit when worn: where the neckline falls, how the hem length reads on the body, how the silhouette drapes. An illustration from the same spec, never a photo.</p>
-  </div>` : ''}
   <div class="drawing">
     <img src="${svgUrl}" alt="${esc(m.style)} pattern pieces drafted by the stitchu engine" loading="lazy">
     <p class="cap" data-en="The engine's own drafted pieces for this style, laid out for cutting. Drawn to an EU38 demo body." data-tr="Bu model için motorun kendi çizdiği parçalar, kesim için yerleştirilmiş. EU38 örnek beden üzerine çizildi.">The engine's own drafted pieces for this style, laid out for cutting. Drawn to an EU38 demo body.</p>
@@ -491,7 +481,7 @@ function patternCard(m) {
   const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
   // The Etsy-style listing card SVG is the tile — it already carries the brand,
   // name, badges, flat and on-figure croquis. The caption below stays minimal.
-  const thumb = m.card ? `svg/${m.card}` : `svg/${m.slug}.svg`;
+  const thumb = (m.card ? `svg/${m.card}` : `svg/${m.slug}.svg`) + `?v=${V}`;
   return `<a class="card listing" href="${m.slug}.html">
     <div class="thumb"><img src="${thumb}" alt="${esc(m.style)} sewing pattern listing card" loading="lazy"></div>
     <div class="body">

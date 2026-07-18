@@ -91,7 +91,7 @@ const STYLE = `<style>
 
 function card(c) {
   return `<a class="card" href="${c.href}">
-    <div class="thumb"><img src="${c.thumb}" alt="${esc(c.thumbAlt)}" loading="lazy"></div>
+    <div class="thumb"><img src="${c.thumb}?v=${V}" alt="${esc(c.thumbAlt)}" loading="lazy"></div>
     <div class="body">
       <div class="nm" data-en="${esc(c.nameEn)}" data-tr="${esc(c.nameTr)}">${esc(c.nameEn)}</div>
       <div class="ds" data-en="${esc(c.descEn)}" data-tr="${esc(c.descTr)}">${esc(c.descEn)}</div>
