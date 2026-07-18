@@ -291,6 +291,32 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   (davranışsız import). Rapor: reports/2026-07-19-stitchu-k1-kontrat.md.
   SIRADAKİ: K1 mini-denetimi (taze agent), sonra K2 + K4 paralel.
 
+- 2026-07-19 K4 SABİTLER TABLOSU + KAĞIT SLOPER: **ÜRETİM BİTTİ (mini-denetim
+  bekliyor)**. (1) engine/constants.yaml 16 satır {ad, değer, birim, kaynak,
+  durum, deney} — K0 1.5-1.9'un tamamı + geometry.hpp SA default'u +
+  exposedzip/waistband/manşet 10mm ailesi + omuz halefleri (22°/126mm) beyanla
+  dahil; gen-constants.mjs → constants.gen.hpp, kod tablodan okur; MANDAL:
+  validate-contract 4b = ctest contract_check drift bekçisi. DAĞILIM: 3
+  verified / 11 assumed / 2 REFUTED (bicepsBustRatio 0.30 −20mm vs Aldrich top
+  arm 284; shoulderDropFactor 0.23 ~13° vs ~22°, neckFacings'te hâlâ yaşıyor) —
+  refuted değerler DEĞİŞTİRİLMEDİ, v1.1 adayı yazıldı. (2) KAĞIT SLOPER: EU38
+  dart bodice + straight skirt, Aldrich 6. baskı BAĞIMSIZ el hesabı (adımlar
+  raporda), 15 satırlık mm tablosu; 12 landmark pinli sınır içinde, en kötü 3:
+  büst −42mm (ribcage-frame tasarımı, pozitif-ease bandı assert'li), bel +26mm
+  (%5 ease tercihi, pinli), oyuntu −10.6mm. MANDAL: yeni ctest sloper_check
+  (42. test, Aldrich referansları teste pinli). KANIT: golden 23406
+  byte-identical (pristine baseline cmp), ctest 42/42, İKİ wasm md5 canlı
+  kopyalarla AYNI (git diff'te wasm yok), vocab-sweep 48600/0, web-fuzz
+  26260/3 (K1'deki bilinen defekt, değişmedi), style-lint 81 sayfa temiz,
+  header-diff 52 temiz. Kredi: 0 çağrı. Patch 3.21, ?v 92→93 (deploy
+  ORKESTRATÖRDE, K2+K4 sonrası tek deploy). K0 K4-satırları: 1.5/1.6/1.7/
+  1.8/1.9 KAPANDI, 4.8 sloper_check ile yanıtlandı; PARK 0. SONRADAN BULUNDU
+  (operasyonel, v1.1/K6): /tmp'de kalıntı package.json (type:commonjs) /tmp
+  worktree'lerinde node ESM'i kırıyor (contract_check FAIL) — worktree
+  ~/.cache'e taşınarak çözüldü, K6 deploy notuna eklenmeli. Rapor:
+  reports/2026-07-19-stitchu-k4-sabitler-sloper.md. SIRADAKİ: K4
+  mini-denetimi (taze agent) + K2 bitişi, sonra K3.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
