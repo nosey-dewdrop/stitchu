@@ -1,0 +1,48 @@
+STITCHU PIPELINE DARBOGAZ ANALIZI
+18 Temmuz 2026
+
+HEDEF PIPELINE
+Prompt veya ornek resim -> LLM/VLM sadece JSON uretir -> motor JSON'dan fashion flat cizer (preview estetik figur oraniyla, ince bel dolgun kalca) -> Figma benzeri panelde ayar (yaka, boy, vs) -> gercek olculere gore kalip + dikis talimati + kumas onerisi.
+
+Analiz iki somut ornek uzerinden yapildi: (A) parametre paneli (tek elbise sinifi, 4 siluet ailesi, ~20 parametre, slider -> anlik SVG + JSON) ve (B) flat-engine (3 stil, bayrak tabanli bilesenler: aski, dantel biye, bebe yaka, balon kol, buzgu panosu; seed'li deterministik cizgi; JSON'da derived.panelCutWidth gibi gercek kalip sayilari).
+
+HEDEF SEVIYE (benchmark-58/dress_patterns arsivi)
+Kalip hedefi Etsy indie PDF paketi standardi (Locket Top / Buttoned Corset Bustier / Bugra tarzi): numarali kalip parcalari (front body, back body, collar, collar lining, upper/lower sleeve), kesim tablosu (main fabric / interfacing, on fold / mirrored, kac adet), dikis payi kalipta gomulu ve kapakta yazili (1 cm SA + 3 cm etek), beden secim sayfasi, malzeme listesi, RESIMLI adim adim talimat kitapcigi, A0 + A4/US Letter iki format. Fashion flat hedefi de ayni arsivdeki Etsy listing gorselleri: temiz on/arka flat + giyilmis foto yaninda satis karti. Motorun bugunku ciktisi bu paketin cogunu zaten karsiliyor (A4 register, nested grading, kesim listesi, sewing guide, size chart); asil acik RESIMLI talimat (adim gorselleri stil basina uretilmeli, bu da darbogaz 2'deki "her kelimenin ucuncu bedeli"nin gorsel hali) ve listing seviyesi flat sunumu.
+
+SIRALAMA: EN AGIR DARBOGAZDAN EN HAFIFE
+
+1. JSON KONTRATININ YANLIS KATMANDA OLMASI (su an gorunmeyen ama en kritik darbogaz)
+Iki ornekte de JSON aslinda renderer'in ic parametreleri: armholeHollow 0.10, capPuff 2.6, ink minimal, seed 7. Bunlar bezier ayar dugmesi, giysi kelimesi degil. Bir VLM fotografa bakip "armholeHollow: 0.10" uretemez; "kisa balon kol, yogun buzgulu, manset bantli" uretebilir. Yani vocabulary iki katman olmali:
+  - SEMANTIK katman: giysi dili (sleeve: puff/short, gather: heavy, neckline: v + lace trim). VLM'in gorup yazabildigi, insanin okuyabildigi katman. Kontrat BU.
+  - RENDER katmani: semantikten deterministik derlenen slider degerleri (puff+short -> capPuff 2.6, sleeveLen 9). LLM buraya ASLA dokunmaz.
+Bu ayrim yapilmazsa eski teshis tekrarlar: generator renderer'in cizemedigi kombolar uretir (17 Tem cizim motoru teshisi aynen bu). Iki ornek arasinda bile kontrat kaydi var: (A)'da mini=87, (B)'de mini=42; ayni kelime iki motorda farkli sayi. Kontrat tek dosyada, versiyonlu, sema-validasyonlu olmali.
+
+2. HER KELIMENIN UC BEDELI (vocabulary buyume maliyeti)
+Pipeline'da bir kelimenin "var" sayilmasi icin uc implementasyon gerekiyor:
+  a) flat cizimi (B'deki laceBand, puffSleeve, collarShape gibi)
+  b) kalip kurali (o parcanin dikilebilir cizimi: pay, buzgu orani, birlesme)
+  c) dikis talimati + kumas uygunlugu
+(B) su anki haliyle ~10 bilesen tasiyor ve bu bile agir emekle geldi (senin sozunle: cok zor ve maliyetli toparladik). Gercek kapsama icin yuzlerce kelime gerekir. Asil patlama tekil kelime sayisinda degil ETKILESIMLERDE: bebe yaka x V yaka, dantel x manset, aski x omuz ayni noktayi paylasir; (B)'de collar "en ustte cizilir, orta dikisi orter" gibi elle yonetilen z-order kurallari ve (A)'daki sampleX yamasi (kurdele ucu yan dikisi bulamiyordu) bunun ilk belirtileri. Bilesen sayisi n olunca elle yonetilecek etkilesim n kare gider. Cozum yonu: her bilesene baglanti noktasi (attachment point) + oncelik kurali tanimlayan kompozisyon sistemi; her yeni kelime icin "hangi kelimelerle carpisir" testi olan golden set. Bu, motorun en pahali ama en savunulabilir kismi; StitchLift'te bu yok, moat burada birikir.
+
+3. JSON -> KALIP: KURAL KUTUPHANESI (en yavas, en uzman bagimli is)
+Flat cizmek 2D estetik; kalip cikarmak geometri + fit bilgisi. Her kelime icin gereken: suppression karari (gusto = kavisli panel, dart son care), kumas cinsine gore bolluk (woven/knit ayrimi (A)'da zaten var, dogru sezgi), dikis payi, cit/notch, walking seams (bilinen eksik), parcalarin gercekten birlesme kaniti (print register sorunu yasandi). (B)'nin derived.panelCutWidth alani dogru istikamet: ayni JSON'dan hem cizim hem kesim sayisi turuyor. Ama bu kurallar terzilik bilgisi ister ve LLM'e her istekte urettirilemez (LLM kod degil JSON yazar prensibi). Kurallar deterministik kod olarak tek tek yazilacak, her biri gercek referans kaliba bakilarak dogrulanacak (gusto dersi: once gercek pattern'a bak). Bu kutuphane yavastan buyur; kisayolu yok. Roadmap'teki dikilebilir+giyilebilir kaniti (muslin) bu katmanin tek gecerli testi.
+
+4. PREVIEW ILE KALIP ARASINDAKI GUVEN BOSLUGU (is/ticaret darbogazi)
+Istedigin bilincli bir sapma: preview estetik figurle cizilir (satis icin), kalip gercek olcuyle cikar (dikis icin). Teknik cozumu basit: tek semantik JSON, iki ayri projeksiyon (display transform + draft transform). Tehlike teknik degil ticari: musteri preview'daki dususe/orana bakip aliyor, dikince farkli bir sey cikarsa iade ve kotu yorum. Etsy'de kalip satanlar bunu DIKILMIS NUMUNE fotografiyla cozuyor; sende tasarim basina numune olmayacak. Bu yuzden iki sapma turu ayrilmali: oran stilizasyonu (ince bel figur) kabul edilebilir sapma; yapisal sapma (preview'da gorunen firfir kalipta yoksa) YASAK. "Preview'daki her yapisal oge kalipta birebir var" kurali otomatik testle tutulmali. Ilk koleksiyonun numunelerini gercekten dikip fotograflamak (FAZ 1 ILK NUMUNE zaten bu) guven acigini kapatan tek kanit.
+
+5. RESIM/PROMPT -> JSON (senin "beni asan CV" korkun: asmiyor)
+Klasik CV gerekmiyor; VLM (foto -> semantik JSON) bu isi bugun yapiyor, sen zaten bir sohbette yaptin. Gercek zorluklar daha kucuk ve cozumu belli:
+  - Cikti sema-kisitli olmali (kapali enum listesi + validasyon); serbest metin degil.
+  - Fotograftan surekli deger okumak (bel orani 0.84 gibi) guvenilmez -> VLM sadece aile + kelime secer, sayilar ailenin varsayilanindan gelir, ince ayari kullanici panelde yapar. (A)'nin "aile degisince varsayilana don, sonra ince ayar" tasarimi zaten dogru cevap.
+  - Render-back dongusu: VLM'in JSON'u cizilir, cikan flat VLM'e geri gosterilir, "istedigin bu mu" duzeltmesi yapilir. Gorsel dogrulama prensibi burada da gecerli.
+  - Maliyet: istek basina 1-2 VLM cagrisi; onizleme ucretsizse cache + rate limit dusunulmeli.
+
+6. OLCUYE GORE KALIP: GRADING DEGIL MADE-TO-MEASURE
+Beden tablosu (EU34-42) grading isi, gorece kolay. "Olculerine gore" sozu verilirse is degisir: kalip olculerden TURETILIR (derive-from-template, ~10 sayi + oran sablonu), tabloyu olceklemek yetmez. Uc olculer (buyuk gogus + dar omuz gibi) heuristikleri kirar. Ilk surumde beden tablosu + sinirli olcu girisi (boy, gogus, bel, kalca) ile baslamak, tam made-to-measure'i sonraya birakmak dogru siralama.
+
+7. DARBOGAZ OLMAYANLAR (endiselenme)
+  - Figma benzeri editor: iki ornek zaten bunun kanitidir. Slider -> JSON -> anlik render calisiyor; urunlesme sadece UI cilasi.
+  - Dikis talimati + kumas onerisi: her semantik kelimeye sablon metin + kumas uygunluk tablosu; LLM'in en iyi oldugu is, riski dusuk.
+
+OZET SIRA
+Onerilen calisma sirasi mevcut roadmap'le uyumlu: (1) semantik/render katman ayrimi olan tek kontrat dosyasi, (2) kalip kural kutuphanesini kelime kelime, her kelimeyi gercek referansla dogrulayarak buyutmek, (3) yapisal esitlik testi (preview ogesi = kalip ogesi), (4) VLM -> semantik JSON + render-back dongusu, (5) editor cilasi ve talimat sablonlari en sona. CV seni asan muhendislik degil; asil yavas kisim terzilik kurallarinin koda dokulmesi ve o da ogrenilebilir, referansa bakarak.
