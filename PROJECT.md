@@ -16,11 +16,23 @@ Detailed session logs: STRATEGY.md "Session history". Latest report: reports/202
 1. RENDER-ONAY claims before 2026-07-18 are UNVERIFIED: discipline step 6 ("PNG → eyes") was
    satisfiable only by claiming, so past "read by eye" lines are checkbox-filling, not proof.
    All prior visual approvals need re-render with artifact paths (RULES invariant 3).
-2. Bridge silently drops unknown spec values: sleeveStyle 'puff' was dropped with no error — the
-   README's "never silently dropped" guarantee is documented but NOT enforced in code.
-   Fix: unknown enum → Result::Err + a round-trip test per spec field (RULES invariants 1-2).
-3. Today's pattern-vs-dress mismatch came from exactly that silent drop — audit which OTHER spec
-   fields lack a round-trip test (systematic sweep needed, not just puff).
+2. CONFIRMED (evidence scan 2026-07-18, file:line): 'puff' is not a valid SleeveStyle at all
+   (measurements.hpp:41 = None/Straight/Balloon); puff lives on the sleeveCap axis (bindings.cpp:91-98,
+   2=Puffed). Correct spec = sleeveStyle 'balloon'/'straight' + sleeveCap:2. 'puff' fell to
+   SleeveStyle::None via the bindings.cpp:81-85 fallback → garment.cpp:318/:509 skip the sleeve, no error.
+3. SAME PATTERN x11: every *From() in bindings.cpp (lines 67-119: neckline, skirtStyle, skirtLength,
+   sleeveStyle, sleeveLength, sleeveCap, garment, topLength, shaping, waistline, fabric) maps unknown
+   strings to a silent default ('vneck'→Crew, 'blouse'→Dress). Plus no cross-field rule: sleeveCap=2 +
+   sleeveStyle=None passes the validator clean because validator.cpp:278-284 finds no sleeve piece to check.
+3b. Bias binding piece is REAL (garment.cpp:110-121, drawn from true neck+armhole length) — earlier
+   "phantom piece" diagnosis was wrong. The bug is in print: pdf-core.mjs:247 isChalk filters
+   /ruffle|bias binding/ out of the cutting list (:278) while the header counts all pieces (:272);
+   same one-liner at :312 (A0) and :333 (guide). Header says 8, list shows 7, the guide sews the 8th.
+3c. Honesty layer exists but only on the vision→web path (missing.js:114-117 knows the correct puff
+   answer); gen-pattern-pdfs.mjs bypasses it — hand-written specs hit bindings directly. And the
+   delivered courtney PDF's spec is nowhere in the repo (grep empty) → the shipped pattern is
+   unreproducible. buildSpec takes 34 positional args, 24 bare ints (bindings.cpp:124-135) — a
+   one-slot shift silently drafts a different dress.
 4. Docs asserted "ALL PASS / 0.00mm / byte-identical / no engine limit found" as standing facts —
    any decision made on those doc lines (not fresh test output) is suspect until re-run.
 5. Contradictory decisions coexisted in this file (web-only vs all-three, iOS retired vs Phase W5,
