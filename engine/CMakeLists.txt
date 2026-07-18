@@ -225,3 +225,10 @@ add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_D
 # rendered headlessly and checked for self-intersection, inconsistent winding
 # (reversed normals), zero-area loops and sampleX y-monotonicity.
 add_test(NAME flat_render_lint COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/render-lint.mjs)
+
+# K3 preview truth (2026-07-19): one semantic JSON per flat style projected
+# twice (display flat + drafted pattern); structural equality is hard (every
+# drawn element needs a pattern counterpart, declared gaps allowlisted with
+# contract refs), landmark deviation is soft 8% with pinned stylisation
+# envelopes (contract/preview-truth.json) — drift beyond a pin fails.
+add_test(NAME preview_truth_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/preview-truth.mjs)

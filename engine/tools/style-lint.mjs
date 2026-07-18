@@ -220,6 +220,18 @@ if (renderLint.status !== 0) {
   process.exit(1);
 }
 
+// ---- preview truth (K3, 2026-07-19) -----------------------------------------
+// Chained the same way: the deploy proof step also verifies the flat<->pattern
+// boundary (structural equality + pinned landmark envelopes, preview-truth.mjs).
+const previewTruth = spawnSync(process.execPath,
+  [join(dirname(fileURLToPath(import.meta.url)), 'preview-truth.mjs')], { encoding: 'utf8' });
+process.stdout.write(previewTruth.stdout || '');
+process.stderr.write(previewTruth.stderr || '');
+if (previewTruth.status !== 0) {
+  console.error('style-lint: chained preview-truth FAILED');
+  process.exit(1);
+}
+
 // ---- report ----------------------------------------------------------------
 if (violations.length === 0) {
   console.log(`OK  style-lint clean across ${htmlFiles.length} pages + ${cssFiles.length} css files (rules a-e, 0 violations) + flat render-lint green.`);

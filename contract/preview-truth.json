@@ -1,0 +1,168 @@
+{
+  "_contract": "K3 preview-truth (2026-07-19). ONE semantic JSON per flat style; two projections are derived from it: the DISPLAY projection (engine/flat-engine styles.json recipe of the same key) and the DRAFT projection (the C++ pattern engine via draftJSON). engine/tools/preview-truth.mjs diffs the two: STRUCTURAL EQUALITY is the hard rule (every structural element drawn in the flat must have a counterpart among the drafted pieces, and every drafted piece must be represented in the flat — undeclared gaps FAIL); LANDMARK DEVIATION is the soft rule (threshold 8%; a deviation above threshold must cite a contract-declared stylisation below and stays PINNED — drift beyond a pin FAILS the deploy chain).",
+  "version": 1,
+  "body": {
+    "_note": "deterministic measuring body — same demo body as render-pages.mjs / web-fuzz body #0.",
+    "bust": 90,
+    "waist": 72,
+    "hip": 98,
+    "shoulder": 38,
+    "backLength": 40,
+    "armLength": 58,
+    "neck": 36,
+    "upperBust": 0
+  },
+  "specs": {
+    "_note": "the shared SEMANTIC layer per flat style (garment-spec vocabulary, string enums; the tool maps them to engine ints via the same vocab table the API uses). Field values justified from the styles.json records and their photo notes.",
+    "drawstring_babydoll": {
+      "garment": "dress",
+      "shaping": "dart",
+      "waistline": "empire",
+      "fabric": "woven",
+      "neckline": "square",
+      "sleeveStyle": "none",
+      "sleeveLength": "short",
+      "skirtStyle": "gathered",
+      "skirtLength": "mini",
+      "topLength": "hip",
+      "gatherType": "drawstring",
+      "gatherZone": "neckline",
+      "ruffledStraps": "ruffled"
+    },
+    "lace_vneck_70s": {
+      "garment": "dress",
+      "shaping": "dart",
+      "waistline": "empire",
+      "fabric": "woven",
+      "neckline": "vNeck",
+      "sleeveStyle": "straight",
+      "sleeveLength": "short",
+      "skirtStyle": "gathered",
+      "skirtLength": "mini",
+      "topLength": "hip",
+      "sleeveCap": "puffed",
+      "tieClosure": "frontNeckBow"
+    },
+    "peterpan_puff": {
+      "garment": "dress",
+      "shaping": "dart",
+      "waistline": "empire",
+      "fabric": "woven",
+      "neckline": "crew",
+      "sleeveStyle": "straight",
+      "sleeveLength": "short",
+      "skirtStyle": "gathered",
+      "skirtLength": "mini",
+      "topLength": "hip",
+      "sleeveCap": "puffed",
+      "collarType": "peterPan",
+      "collarEdge": "round",
+      "gatherType": "shirred",
+      "gatherZone": "bust"
+    },
+    "courtney_lace_vneck": {
+      "garment": "dress",
+      "shaping": "dart",
+      "waistline": "empire",
+      "fabric": "woven",
+      "neckline": "vNeck",
+      "sleeveStyle": "straight",
+      "sleeveLength": "short",
+      "skirtStyle": "gathered",
+      "skirtLength": "mini",
+      "topLength": "hip",
+      "sleeveCap": "puffed",
+      "tieClosure": "frontNeckBow"
+    }
+  },
+  "structuralAllow": [
+    {
+      "style": "drawstring_babydoll",
+      "items": [
+        "straps",
+        "ruffledStraps"
+      ],
+      "side": "declaredNotDrawn",
+      "contractRef": "contract/composition.json flatComponents.declaredButNotDrawn",
+      "justification": "the flat recipe declares the flags but render() never reads them (K2 finding, code wins); the DRAFT cuts the Ruffled Strap piece, so the pattern is complete and the gap is in the flat drawing only. PARK (v1.1): draw the straps or drop the flags from the schema."
+    },
+    {
+      "style": "*",
+      "items": [
+        "laceNeck",
+        "laceSleeve",
+        "laceHem"
+      ],
+      "side": "flatOnly",
+      "contractRef": "contract/terms.json (lace trim: honest / undrawable pattern vocabulary)",
+      "justification": "lace trim bands are drawn on the flat as illustration; the pattern engine has no lace-trim piece and drawing one is a NEW capability (A1 — PARK, v1.1 candidate). PUBLISH NOTE: any listing built on these flats must state the lace trim is purchased trim, not a pattern piece."
+    },
+    {
+      "style": "*",
+      "items": [
+        "cfGather"
+      ],
+      "side": "flatOnly",
+      "contractRef": "render-lint structural/ink classification (ink strokes are decorative)",
+      "justification": "cfGather emits pure 'ink'-class taper strokes (soft gather shading at CF under the bow), no cut-piece implication; the same decorative class render-lint exempts from structural checks."
+    }
+  ],
+  "landmarkAllow": [
+    {
+      "style": "*",
+      "landmark": "neckHalf",
+      "maxAbsDevPct": 150,
+      "contractRef": "contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres')",
+      "justification": "the fashion flat widens the neckline by design (display beauty ratio); declared stylised layer. Pin = current worst (+141%) + margin; drift beyond fails."
+    },
+    {
+      "style": "*",
+      "landmark": "neckDepth",
+      "maxAbsDevPct": 62,
+      "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+      "justification": "flat neckline depth exaggerated for silhouette drama (current +54..55%); pinned."
+    },
+    {
+      "style": "*",
+      "landmark": "shoulderLen",
+      "maxAbsDevPct": 62,
+      "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+      "justification": "flat shoulder is shortened as the wide neck eats into it (current -38..-57%); pinned."
+    },
+    {
+      "style": "*",
+      "landmark": "armholeDepth",
+      "maxAbsDevPct": 75,
+      "contractRef": "contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer",
+      "justification": "flat armhole is drawn deep/hollow (review.* registered knob, Damla decision pending); current +68..69%; pinned."
+    },
+    {
+      "style": "*",
+      "landmark": "waistHalf",
+      "maxAbsDevPct": 22,
+      "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+      "justification": "the flat nips the waist for the display silhouette (review.* registered); draft empire seam obeys the real body. Current -17%; pinned."
+    },
+    {
+      "style": "*",
+      "landmark": "skirtLen",
+      "maxAbsDevPct": 21,
+      "contractRef": "contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop')",
+      "justification": "the contract itself declares the two lengths as different quantities; current +15.5%; pinned."
+    },
+    {
+      "style": "*",
+      "landmark": "sleeveLen",
+      "maxAbsDevPct": 55,
+      "contractRef": "contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only')",
+      "justification": "flat draws the WORN sleeve, the draft piece is the CUT with raised puff crown; declared drawing-knob layer. Current worst -49%; pinned. courtney passes at -7%."
+    },
+    {
+      "style": "*",
+      "landmark": "sleeveWidth",
+      "maxAbsDevPct": 84,
+      "contractRef": "contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness)",
+      "justification": "cut-vs-worn: the draft sleeve cut width carries the puff spread fullness the worn flat never shows. Current -71..-79%; pinned."
+    }
+  ]
+}
