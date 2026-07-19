@@ -204,6 +204,31 @@ Motor/kontrat:
 15. FAZ P primitif katmanı ve dağarcık büyütme: v1.1 zincirinin ilk
     büyük adayı (Damla onayıyla, yeni DEVAM dosyasıyla).
 
+## 7. v1.2 ADAYI — YAPIM KATMANI ("evde couture"nün kalbi, Damla 2026-07-19)
+Kumaş bilgisi (web/data/fabrics.json seed_fabrics) kalıba İKİ KÖPRÜ ile bağlanır.
+Bu, "evde couture" vaadinin somutlaştığı yer; resimli talimat rayıyla BİRLİKTE
+planlanır (talimat = köprünün çıktısını gösterir).
+
+KÖPRÜ 1 — stretchPercent → ease/bolluk geometrisi (zaten aday listede, madde
+büyütüldü): kumaşın esneme yüzdesi motorun woven-ease varsayımını değiştirir;
+örgü kumaşta negatif ease (kalıp vücuttan dar), dokumada pozitif ease. draft
+geometrisine girer → golden'ı oynatır (bilinçli, beyanlı re-pin).
+
+KÖPRÜ 2 — İÇ YAPI ÖNERİLERİ (YENİ, yapım katmanının kalbi): astar/tela/biye
+kuralları. Ölçülebilir alt-maddeler:
+- Hangi kumaş + silüet astar İSTER (kural tablosu: şeffaf/açık dokuma + fitted
+  gövde → astar; ağır dokuma + yapılı → tela; ince/kenar → biye). Deterministik,
+  runtime LLM yok — fabrics.json profili × silüet sınıfı.
+- Astar kalıbı gövdeden NASIL TÜRER: astar = gövde kalıbının türevi (yaka/oyuntu
+  facing hattından içeri, hem'den kısa); ayrı çizim değil, mevcut parçadan
+  derive (peplum/facing gibi). Motor işi (yeni parça türü → golden re-pin adayı).
+- Talimata NASIL YAZILIR: sewing companion katmanına (knowledge/sewing-guide.md +
+  gen-guide.mjs) astar/tela adımları; resimli talimat rayı bu adımları görsel
+  gösterir (astar yerleştirme, tela ütüleme sırası).
+BAĞIMLILIK: resimli adım talimatı rayı (PARK listesinde) bu köprünün vitrinidir;
+ikisi tek DEVAM'da planlanır. Golden etkisi: köprü 1 kesin re-pin, köprü 2 astar
+parçası eklerse re-pin (ikisi de beyanlı, Damla onayı).
+
 ## 7. DAMLA'YA AÇIK KALEMLER (freeze bunlara takılmadı, sırada bunlar var)
 
 a) GOLDEN RE-PIN ONAYI: engine/golden-reference.csv 23034 satırlık eski
