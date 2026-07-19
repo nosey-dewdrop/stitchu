@@ -529,6 +529,22 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   gate'i KIRMIZI-dürüst (Damla sabah paketi bekliyor, freeze-blocker DEĞİL).
   SIRADAKİ: DENETİM Z (anayasa denetimi), PASS ise FREEZE v1.0.
 
+- 2026-07-19 FREEZE: **v1.0 FROZEN — ZİNCİR KAPANDI.** Denetim Z anayasa
+  denetiminden FREEZE-HAZIR verdi (ray durumları mini-denetimlerle tutarlı,
+  mandallar yerinde, İD sayaç serisi tutuyor, PARK/KIRMIZI listeleri
+  yayınlı, K1 yeşil). Kapanış raporu:
+  reports/2026-07-19-stitchu-v1-kapanis.md (+ ev kopyası
+  ~/damla_projects_2026/reports/2026-07-19-stitchu-v1-kapanis.txt).
+  patches.html 3.26 kapanış girdisi, CLAUDE.md status FROZEN satırı,
+  scripts/deploy.sh ile son deploy + canlı curl teyit, git tag v1.0
+  push'landı. GOLDEN RE-PIN YAPILMADI: golden-reference.csv 23034 legacy
+  pinde KALDI, 23406 dump her rayda byte-identical kanıtlı — freeze'in
+  tek açık kalemi, Damla onayı bekliyor. K5 eval-150 gate KIRMIZI-dürüst
+  (freeze-blocker değil). Damla'ya açık: golden re-pin, eval-150 sabah
+  paketi, review.waistNip/armholeHollow kararı, CLAUDE_API_KEY rotasyonu,
+  avukat sorusu. Bu dosya arşiv niteliğindedir; yeni iş = yeni DEVAM
+  dosyası + Damla onayı.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
