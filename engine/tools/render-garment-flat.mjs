@@ -411,17 +411,27 @@ function interior(g, spec, view) {
     // Classic bodice princess line: starts at the ARMHOLE (over the chest edge,
     // near the underarm), NOT at the neck — a neck-start reads as a wrong V. Runs
     // down over the bust apex, in to the waist nip, out to the hip/hem.
+    // Seam parametreleri spec.seam ile ayarlanabilir (MIHENK-06 ızgarası kurallı
+    // seam versiyonlarını tarar). Varsayılanlar geriye uyumlu (mevcut pinler
+    // değişmez). sm.origin: seam başlangıç x'i (chestW oranı, armhole yakını);
+    // sm.top: başlangıç y'si (küçük = omuza yakın, kanca riski); sm.bow: apex'e
+    // yaklaşma; sm.waist: bel nip; sm.c1: ilk kübik kontrol tension'ı (kanca kaynağı).
+    const sm = spec.seam || {};
+    const oOrigin = sm.origin ?? 0.80;
+    const oTop = sm.top ?? 30;
+    const oBowF = sm.bow ?? (isBack ? 0.46 : 0.62);
+    const oWaist = sm.waist ?? 0.46;
+    const oC1 = sm.c1 ?? 0.25;
     const apexY = isBack ? g.apexY * 0.78 : g.apexY;
-    const apexBow = isBack ? 0.46 : 0.62;   // back princess is a straighter blade seam
     for (const dir of [-1, 1]) {
-      const xTop = dir * g.chestW * 0.80;             // armhole origin (over the chest, near the underarm)
-      const yTop = 30;                                // just below the armhole notch
-      const xApex = dir * g.apexHalfX * apexBow;      // eases to the apex over the bust
-      const xWaist = dir * g.waistW * 0.46;           // draws in at the waist nip
+      const xTop = dir * g.chestW * oOrigin;
+      const yTop = oTop;
+      const xApex = dir * g.apexHalfX * oBowF;
+      const xWaist = dir * g.waistW * oWaist;
       const xBot = dir * (g.isDress ? g.hemHalf * 0.44 : g.waistW * 0.52);
       const yBot = g.isDress ? g.hemY : g.hemY - 6;
-      // cubic 1: armhole -> apex (gentle inward ease, no bulge)
-      let d = `M ${n(xTop)} ${n(yTop)} C ${n(xTop - (xTop - xApex) * 0.25)} ${n(yTop + (apexY - yTop) * 0.55)} ` +
+      // cubic 1: armhole -> apex (oC1 tension; büyük = daha yumuşak giriş, kanca yok)
+      let d = `M ${n(xTop)} ${n(yTop)} C ${n(xTop - (xTop - xApex) * oC1)} ${n(yTop + (apexY - yTop) * 0.55)} ` +
         `${n(xApex)} ${n(apexY - 18)} ${n(xApex)} ${n(apexY)} `;
       // cubic 2: apex -> waist nip (draw in, following the body)
       d += `C ${n(xApex)} ${n(apexY + (waistY - apexY) * 0.55)} ${n(xWaist)} ${n(waistY - 12)} ${n(xWaist)} ${n(waistY)} `;
