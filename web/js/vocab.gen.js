@@ -85,8 +85,15 @@ export const VOCAB = {
       "straight",
       "gathered",
       "halfCircle",
-      "pleated"
-    ]
+      "pleated",
+      "gore"
+    ],
+    "synonyms": {
+      "gored": "gore",
+      "sixGore": "gore",
+      "panelled": "gore",
+      "paneled": "gore"
+    }
   },
   "skirtLength": {
     "type": "string",

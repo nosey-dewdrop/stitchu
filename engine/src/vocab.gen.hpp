@@ -27,8 +27,8 @@ inline constexpr int kSleeveStyleCount = 3;
 inline constexpr const char* kSleeveLength[] = { "short", "elbow", "long" };
 inline constexpr int kSleeveLengthCount = 3;
 // SkirtStyle (string)
-inline constexpr const char* kSkirtStyle[] = { "aLine", "straight", "gathered", "halfCircle", "pleated" };
-inline constexpr int kSkirtStyleCount = 5;
+inline constexpr const char* kSkirtStyle[] = { "aLine", "straight", "gathered", "halfCircle", "pleated", "gore" };
+inline constexpr int kSkirtStyleCount = 6;
 // SkirtLength (string)
 inline constexpr const char* kSkirtLength[] = { "mini", "midi", "maxi" };
 inline constexpr int kSkirtLengthCount = 3;

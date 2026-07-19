@@ -392,7 +392,9 @@ std::optional<double> skirtWaistLength(const PatternPiece& piece, SkirtStyle sty
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
         case SkirtStyle::HalfCircle:
-            // Quarter pieces and circle panels both open with the waist edge.
+        case SkirtStyle::Gore:
+            // Quarter pieces, circle panels and gore panels all open with the
+            // waist edge (a single move + first path command).
             return pathLength({PathCommand::move(start), piece.commands[1]});
         case SkirtStyle::Gathered:
             if (piece.commands[1].type != CmdType::Line) return std::nullopt;
@@ -459,7 +461,13 @@ std::vector<ValidationIssue> skirtIssues(
             issues.push_back({"skirt", piece->name, "unexpected command layout, cannot measure waist"});
             continue;
         }
-        sewnWaist += (*waist - dartIntake(*piece)) * 2;
+        // Every skirt piece is a half of front/back (on fold or cut 2), so x2 —
+        // EXCEPT a gore panel, which is one of `goreCount` identical panels each
+        // carrying waistShare of the finished waist, so it counts `goreCount`
+        // times (SkirtBlock::goreCount).
+        const double multiplier = (spec.skirtStyle == SkirtStyle::Gore)
+                                      ? static_cast<double>(SkirtBlock::goreCount) : 2.0;
+        sewnWaist += (*waist - dartIntake(*piece)) * multiplier;
     }
 
     if (spec.skirtStyle == SkirtStyle::Gathered) {
@@ -579,8 +587,10 @@ std::vector<ValidationIssue> skirtIssues(
     }
 
     // A dress zipper runs through bodice and skirt: the skirt back (or a
-    // half-circle panel) must be cut 2 so a center back seam exists.
-    if (spec.garment == GarmentType::Dress) {
+    // half-circle panel) must be cut 2 so a center back seam exists. A gored
+    // skirt is exempt — it is built from `goreCount` vertical panels, so a panel
+    // seam always lands at the center back for the zipper to continue into.
+    if (spec.garment == GarmentType::Dress && spec.skirtStyle != SkirtStyle::Gore) {
         const PatternPiece* zipCarrier = nullptr;
         for (const auto* piece : skirtPieces) {
             if (hasSuffix(piece->name, "Back")) { zipCarrier = piece; break; }

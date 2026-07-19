@@ -107,6 +107,10 @@ add_executable(peplum_check tests/peplum_check.cpp)
 target_link_libraries(peplum_check PRIVATE engine)
 add_test(NAME peplum_check COMMAND peplum_check)
 
+add_executable(gore_check tests/gore_check.cpp)
+target_link_libraries(gore_check PRIVATE engine)
+add_test(NAME gore_check COMMAND gore_check)
+
 add_executable(pocket_check tests/pocket_check.cpp)
 target_link_libraries(pocket_check PRIVATE engine)
 add_test(NAME pocket_check COMMAND pocket_check)

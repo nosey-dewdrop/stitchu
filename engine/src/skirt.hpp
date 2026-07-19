@@ -17,6 +17,8 @@ inline constexpr double minDartWidth = 8;    // below this the dart folds into t
 inline constexpr double maxSingleDart = 30;  // wider than this cones the hip -> split into two
 inline constexpr double gatherRatio = 1.9;
 inline constexpr double pleatRatio = 3.0;    // knife pleats take 3x their sewn width
+inline constexpr int    goreCount = 6;       // default number of vertical gore panels
+inline constexpr double goreHemFlare = 90;   // extra width per panel edge added at the hem (below hip)
 inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : waistEase; }
 inline double hipEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : hipEase; }
 

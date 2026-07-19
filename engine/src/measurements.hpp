@@ -34,7 +34,12 @@ struct BodyMeasurementsSnapshot {
 // neck band with a long self-lined tie strip that ties into a bow at the throat
 // (band trued to the neckline like a stand collar + a separate tie piece).
 enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart, Halter, Cowl, PussyBow };
-enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
+// Gore (F1, 2026-07-19): a multi-panel gored skirt. The skirt is split into N
+// vertical panels (default 6 = a six-gore skirt); each panel is narrow at the
+// waist (finished waist / N), skims the hip, then flares out like a wedge below
+// the hip toward the hem (Aldrich/Armstrong gored skirt). APPEND-only enum — do
+// not reorder (int values pin the golden/contract surface).
+enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated, Gore };
 // Dress waist seam level. Empire sits just under the bust (underbust girth);
 // empire + gathered = the babydoll silhouette.
 enum class Waistline { Natural, Empire };
@@ -99,6 +104,7 @@ inline const char* raw(SkirtStyle s) {
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "halfCircle";
         case SkirtStyle::Pleated: return "pleated";
+        case SkirtStyle::Gore: return "gore";
     }
     return "";
 }
@@ -109,6 +115,7 @@ inline const char* title(SkirtStyle s) {
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "half circle";
         case SkirtStyle::Pleated: return "pleated";
+        case SkirtStyle::Gore: return "gored";
     }
     return "";
 }

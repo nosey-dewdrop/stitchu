@@ -110,7 +110,7 @@ int main() {
 
     const std::vector<SkirtStyle> skirtStyles = {
         SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered, SkirtStyle::HalfCircle,
-        SkirtStyle::Pleated};
+        SkirtStyle::Pleated, SkirtStyle::Gore};
     const std::vector<SkirtLength> skirtLengths = {SkirtLength::Mini, SkirtLength::Midi, SkirtLength::Maxi};
     const std::vector<Neckline> necklines = {
         Neckline::Crew, Neckline::Scoop, Neckline::VNeck, Neckline::Square, Neckline::Boat,
