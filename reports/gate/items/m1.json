@@ -1,0 +1,4 @@
+{ "slug": "sixties-princess-seam-shift", "label": "1 · Prenses dikişli fitted elbise",
+  "family": "princess", "terms": ["princess seam"], "props": { "waistNip": 0.09, "bustProject": 0.5 },
+  "pieces": 6, "garmentKind": "dress",
+  "note": "Hedef F1: prenses dikişli gövde (dart yerine kavisli panel). En yakın mevcut render prenses-seam shift; F1'de fitted+bel oturtmalı hale gelecek." }

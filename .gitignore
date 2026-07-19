@@ -49,3 +49,6 @@ dataset/eval/*
 .env.local
 .vercel/
 engine/tools/node_modules/
+
+# v1.1 fashion: uretilen ic ekranlar (turev, uretecler commitli)
+reports/gate/*.html
