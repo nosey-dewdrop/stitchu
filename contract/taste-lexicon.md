@@ -17,6 +17,17 @@ Her giriş: `gerekçe (Damla'nın sözü)` → `parametre çevirisi (gusto-lint 
 
 **gusto-lint bağlantısı:** line_hierarchy boyutu zaten 3-katman (2.0/1.4/1.0) ölçüyor ve mevcut flat'lerde 1.4 katmanının EKSİK olduğunu yakalıyor (kalibrasyon: 2/3 katman). Bu giriş o ölçüyü DOĞRULUYOR — Damla'nın gözü ve lint aynı kusuru gösteriyor. F2 çizgi hiyerarşisini motora taşıyınca line_hierarchy skoru yükselecek. YENİ ÖLÇÜ ADAYI (v1.1 sonrası korpus güncellemesi): "iç seam çizgisi anatomik kontrol noktalarından mı geçiyor" (apex'e yakınlık metriği) — şimdilik korpus donmuş, bu aday taste-lexicon'da bekliyor.
 
+### "çadır + boynuz + ızgara + yelpaze" (2026-07-19, kart MIHENK-03, babydoll port)
+**Damla'nın sözü:** çok çirkin, referansla aynı evrende değil. (1) omuzlar sivri boynuz gibi, gövde çadır gibi — form komple yanlış: strapless band-top + fiyonk şart, kanat-çentikli ucube değil. (2) shirr bandı kumaş büzgüsü değil ızgara (üst üste düz çizgiler); dalgalı elle-çizilmiş sıra karakteri şart. (3) drape yelpaze: eşit açılı simetrik çizgiler, kumaş değil geometri; farklı boy + asimetri + seed'li dağılım. (4) etek ucu düz yay; referansın taraklı/dantelli kavisi yok.
+
+**PARAMETRE ÇEVİRİSİ:**
+1. FORM (en ağır): band-top strapless babydoll ÜRETİM renderer'ında yok — kol-oyuntulu bluz gövdesi çiziliyor, cap kanatları "boynuz", geniş etek "çadır" okunuyor. Çeviri: strapless stil için AYRI form yolu — düz üst kenar (band), omuz/kol/oyuntu YOK, üst kenarda kordon fiyongu. Referans buildHalf'in `top:'band'` dalı hedef.
+2. SHIRR: rows düz `<line>` değil — her sıra taperInk dalgalı bump dizisi (referans kalemdeki sin-bump shirr). Mevcut port kısmen yaptı ama drawstring casing hâlâ 2 düz çizgi; bütün pano dalgalı olmalı.
+3. DRAPE: simetrik eşit-açı yelpaze YASAK — drapePlan'ın seed'li asimetri + farklı boy (prim/ikincil die) üretim renderer'da tam çalışmalı; şu an her iki yön ayna simetrik çiziliyor, bir yönü diğerinden farklı seed almalı.
+4. HEM: düz yay değil — taraklı/dantelli kavis (laceBand dili, referans hemPoints dalgası). Üretime port edilmedi.
+
+**EMİR:** mevcut render üzerine iyileştirme YAPMA. Form sıfırdan strapless kurulsun; referansın babydoll'u (band + fiyonk + shirr dalgası + tarak hem) birebir hedef. Bu, gusto-lint silhouette_grammar + composition boyutlarının port-öncesi kör noktası — form yanlışsa çizgi dili düzelse de "aynı evren değil".
+
 ## Bilinen zevk sınırları (mevcut hafızadan tohum, henüz kart değil)
 Bunlar Damla'nın geçmiş sözlerinden; kart reddi geldiğinde buraya taşınıp gusto-lint ölçüsüne bağlanacak:
 - "ölü büzgü" → gather_density_ratio bandı + drape fold canlılığı (composition_bands); büzgü var ama hareketsiz görünüyorsa
