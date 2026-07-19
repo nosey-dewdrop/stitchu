@@ -298,6 +298,7 @@ export const VISION_SCHEMA = {
         "gathered",
         "halfCircle",
         "pleated",
+        "gore",
         null
       ]
     },
