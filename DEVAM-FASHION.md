@@ -62,8 +62,14 @@ planı, ink rejimi, taper mürekkep — F2'nin hedefi budur).
   tavan 200 çağrı/ray.
 
 ## SIRA
-F0 → F1 → F2 → F3 → DENETİM → v1.1 tag
+F0 → **F2 → F1** → F3 → DENETİM → v1.1 tag  (Damla kararı 2026-07-19: F2 öne alındı)
 (F4 şartname F0'da doğar, F1-F3'ün hepsine denetim olarak bağlanır; ayrı ray değildir.)
+
+SIRA REVİZYONU GEREKÇESİ: MIHENK-01 reddi ölçülmüş kanıt verdi — mihenkin
+görsel kabulünü F2 çizim dili (anatomik iç seam eğrisi + 1.4 ağırlık katmanı)
+belirliyor, F1 geometrisi değil (kalıp geometrisi zaten doğru). Çizim dili
+mihenk "kalemim" onayının ön koşulu; F1 siluetleri de aynı kalemle çıkacağı
+için F2 önce gelmeli. Plan F0→F1→F2 idi; Damla F0→F2→F1'e çevirdi.
 
 ## F0 — KOMUTA EKRANI + KAPI ALTYAPISI
 - web/komuta.html (APP_TOKEN arkası): tek ekran — zincir durumu, açık
@@ -202,6 +208,33 @@ yapar. PASS + kuyruk boş → git tag v1.1, kapanış raporu, patch girdisi
   karar: F2'yi öne al mı? Bu turda F2'ye geçilmedi (sıra değişikliği Damla'nın).
   SIRADAKİ: F2 öne-alma kararı Damla'da; onaya kadar F1 ölçüm işi (mevcut 3
   mihenki gerçek motordan render + gusto-lint 5-boyut + şartname) yürüyebilir.
+
+- 2026-07-19 F2 DAMLA KALEMİ (çizgi hiyerarşisi + anatomik iç seam): **ÜRETİM
+  BİTTİ, MIHENK-02 KUYRUKTA (pending, Damla "kalemim?" bekliyor).** Damla F2'yi
+  öne aldı (sıra F0→F2→F1). DEĞİŞEN TEK DOSYA: engine/tools/render-garment-flat.mjs
+  (fashion flat renderer; motor C++ DOKUNULMADI → golden sabit, golden_check
+  PASS kanıtlı, GOLDEN YASASI: flat çıktısı golden CSV'de değil). İKİ DÜZELTME
+  (MIHENK-01 ret gerekçesinin iki maddesi): (1) ÇİZGİ HİYERARŞİSİ 3 katman —
+  W_OUTLINE 2.0 / W_SEAM 1.4 / W_MARK 1.0; empire seam, prenses seam, dart,
+  buton çizgisi, zip, gather, back-opening hepsi doğru katmana çekildi (eskiden
+  hepsi "1", orta 1.4 katmanı hiç yoktu = "dikiş kontur ile aynı ağırlıkta"
+  kusuru). (2) ANATOMİK PRENSES SEAM — geom'a bust apex eklendi (apexY bustHeight
+  0.30-0.60 fraksiyonundan, apexHalfX chest×0.55); iç seam artık oyuntu (chest×
+  0.80) → apex → bel nip (waist×0.46) → hip 3 kübikle geçen S-eğrisi ("parantez
+  gibi rastgele bombeli quadratic" GİTTİ; back princess blade-seam düzleştirildi).
+  1 MİKRO-DÜZELTME: seam başlangıcı yakadan (neck×0.95 = yanlış V) oyuntuya
+  (chest×0.80) taşındı. ÖLÇÜM (measured): prenses gusto line_hierarchy 0.667→
+  **1.0** (3/3 katman), overall 0.933→**0.97**; Damla'nın gözünün gördüğü kusuru
+  gusto-lint zaten sayıyla yakalıyordu, F2 çözdü, sayı yükseldi (aynı kusur, iki
+  bağımsız kaynak). RENDER-ONAY: 3 mihenk (prenses/drape-bluz/fit-flare) yeni
+  kalemle basıldı, Chrome PNG ile GÖZLE onaylandı (anatomik S okunuyor, katman
+  ayrımı var). MIHENK-02 kontakt kuyrukta: prenses 0.97 PASS, fit-flare 0.97
+  PASS, drape-bluz 0.795 düzeltme. STYLE-PIN + style_check ctest: MIHENK-02
+  onayı gelince pinlenecek (Damla "kalemim" demeden pin yazılmaz, anayasa).
+  AÇIK: ön prenses seam üst ucunda küçük kanca kaldı (Damla gözü karar verir;
+  ret gelirse 2. düzeltme turu hakkı var). Rapor: bu NEREDEYİZ + kontakt sayfası.
+  SIRADAKİ: MIHENK-02 kararı Damla'da; onaydan sonra STYLE-PIN + F1 (mevcut
+  yetenek ölçümü + gode primitifi) yeni kalemle.
 
 ## PARK
 > (resimli adım talimatları · figür ailesi · blog musluğu · made-to-measure ·

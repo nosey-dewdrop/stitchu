@@ -24,7 +24,16 @@
 // compatibility but NOT used to derive the outline — the flat is spec-driven.
 
 const NAVY = '#1f3a5f';
-const SEAM = '#5c7aa0';   // interior seam / dart / detail lines (thin)
+const SEAM = '#5c7aa0';   // interior seam / dart / detail lines
+
+// F2 çizgi hiyerarşisi (Damla kalemi, gusto-corpus line_hierarchy 3 katman):
+// gövde konturu KALIN, konstrüksiyon dikişi (prenses seam / dart / empire seam)
+// ORTA — konturdan ince ama işaretten kalın, "bu bir dikiş çizgisi" okunur;
+// yardımcı işaret (grainline dash, buton, gather tick) İNCE. Eşit ağırlık =
+// vektör-şema hissi (MIHENK-01 reddi: "dikiş çizgisi kontur ile aynı ağırlıkta").
+const W_OUTLINE = 2.0;    // dış siluet
+const W_SEAM = 1.4;       // konstrüksiyon dikişi (orta katman — eksikti)
+const W_MARK = 1.0;       // yardımcı işaret
 
 const svgDoc = (w, h, inner) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
@@ -90,8 +99,18 @@ function geom(spec) {
   const fitted = spec.shaping === 'princess' || spec.shaping === 'darts' || empire;
   const waistW = fitted ? U.waistW : U.chestW - 6;   // shift: only a slight taper
 
+  // Bust apex (göğüs noktası): the anatomical landmark a princess seam passes
+  // THROUGH. Height between shoulder and waist (bustHeight 0..1, default 0.42 of
+  // the shoulder->waist span, flat-engine styles.json bustHeight~0.3-0.4); half-x
+  // sits between neck and chest edge (~0.55 of chest half). A real princess seam
+  // runs armhole -> apex -> waist as an S; without the apex it reads as a random
+  // bracket bulge (MIHENK-01 taste-lexicon "parantez çizgi").
+  const bustFrac = typeof spec.bustHeight === 'number' ? (0.30 + spec.bustHeight * 0.30) : 0.42;
+  const apexY = waistY * bustFrac;
+  const apexHalfX = U.chestW * 0.55;
+
   return {
-    isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve,
+    isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve, apexY, apexHalfX,
     shoulderW: U.shoulderW, neckBase: U.neckBase, chestW: U.chestW,
     waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
   };
@@ -293,7 +312,7 @@ function sleeveHalf(g, spec) {
     // gather ticks at the cap head
     for (let t = 0.2; t <= 0.85; t += 0.16) {
       const gx = shoulderTipX + outW * t;
-      s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="1"/>`;
+      s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
     }
   }
   return s;
@@ -312,24 +331,46 @@ function interior(g, spec, view) {
   // empire / waist seam
   if (g.isDress) {
     s += `<line x1="${n(-g.waistW * 1.02)}" y1="${n(waistY)}" x2="${n(g.waistW * 1.02)}" y2="${n(waistY)}" ` +
-      `stroke="${SEAM}" stroke-width="1" stroke-dasharray="7 4"/>`;
+      `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="7 4"/>`;
   }
 
   if (spec.shaping === 'princess') {
-    // two curved princess seams shoulder-ish -> hem on each side
+    // Anatomik prenses dikişi: armhole/shoulder → BUST APEX → waist (→ hem on a
+    // dress). The seam passes THROUGH the apex as an S-curve that follows the body
+    // — over the bust it bows outward to the apex, then draws in to the waist nip,
+    // then eases back out toward the hip. NOT a single random outward bracket
+    // (MIHENK-01: apex'i geçmeyen bombeli quadratic yanlıştı). Two cubics joined
+    // at the apex give the S. Front passes the true apex; back has no bust so its
+    // apex flattens toward the shoulder-blade line.
+    // Classic bodice princess line: starts at the ARMHOLE (over the chest edge,
+    // near the underarm), NOT at the neck — a neck-start reads as a wrong V. Runs
+    // down over the bust apex, in to the waist nip, out to the hip/hem.
+    const apexY = isBack ? g.apexY * 0.78 : g.apexY;
+    const apexBow = isBack ? 0.46 : 0.62;   // back princess is a straighter blade seam
     for (const dir of [-1, 1]) {
-      const xTop = dir * g.neck.half * 0.9;
-      const xMid = dir * g.chestW * 0.62;
-      const xBot = dir * (g.isDress ? g.hemHalf * 0.42 : g.waistW * 0.5);
-      s += `<path d="M ${n(xTop)} ${n(20)} C ${n(xMid)} ${n(70)} ${n(xMid)} ${n(waistY - 30)} ${n(xBot)} ${n(g.isDress ? g.hemY : g.hemY - 6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
+      const xTop = dir * g.chestW * 0.80;             // armhole origin (over the chest, near the underarm)
+      const yTop = 30;                                // just below the armhole notch
+      const xApex = dir * g.apexHalfX * apexBow;      // eases to the apex over the bust
+      const xWaist = dir * g.waistW * 0.46;           // draws in at the waist nip
+      const xBot = dir * (g.isDress ? g.hemHalf * 0.44 : g.waistW * 0.52);
+      const yBot = g.isDress ? g.hemY : g.hemY - 6;
+      // cubic 1: armhole -> apex (gentle inward ease, no bulge)
+      let d = `M ${n(xTop)} ${n(yTop)} C ${n(xTop - (xTop - xApex) * 0.25)} ${n(yTop + (apexY - yTop) * 0.55)} ` +
+        `${n(xApex)} ${n(apexY - 18)} ${n(xApex)} ${n(apexY)} `;
+      // cubic 2: apex -> waist nip (draw in, following the body)
+      d += `C ${n(xApex)} ${n(apexY + (waistY - apexY) * 0.55)} ${n(xWaist)} ${n(waistY - 12)} ${n(xWaist)} ${n(waistY)} `;
+      // cubic 3: waist -> hip/hem (ease back out)
+      if (g.isDress) d += `C ${n(xWaist)} ${n(waistY + (yBot - waistY) * 0.35)} ${n(xBot)} ${n(waistY + (yBot - waistY) * 0.62)} ${n(xBot)} ${n(yBot)} `;
+      else d += `L ${n(xBot)} ${n(yBot)} `;
+      s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round" stroke-linejoin="round"/>`;
     }
   } else if (!isBack) {
     // front bust/waist darts: short tapered lines from the waist up toward the bust
+    // apex (a real dart points AT the apex, not at a guessed height).
     for (const dir of [-1, 1]) {
       const x = dir * g.waistW * 0.5;
-      s += `<path d="M ${n(x)} ${n(bodyBottom * 0.99)} L ${n(x * 0.86)} ${n(waistY * 0.6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
+      s += `<path d="M ${n(x)} ${n(bodyBottom * 0.99)} L ${n(dir * g.apexHalfX * 0.5)} ${n(g.apexY + 6)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
     }
   }
 
@@ -338,11 +379,11 @@ function interior(g, spec, view) {
   if (hasPlacket && !isBack) {
     const top = g.neck.depth + 6;
     const bot = (g.isDress ? g.hemY : g.hemY) * 0.94;
-    s += `<line x1="0" y1="${n(g.neck.depth)}" x2="0" y2="${n(bot + 8)}" stroke="${SEAM}" stroke-width="1"/>`;
+    s += `<line x1="0" y1="${n(g.neck.depth)}" x2="0" y2="${n(bot + 8)}" stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
     const nb = 6;
     for (let i = 0; i < nb; i++) {
       const y = top + (bot - top) * i / (nb - 1);
-      s += `<circle cx="0" cy="${n(y)}" r="3.4" fill="none" stroke="${NAVY}" stroke-width="1"/>`;
+      s += `<circle cx="0" cy="${n(y)}" r="3.4" fill="none" stroke="${NAVY}" stroke-width="${W_MARK}"/>`;
     }
   }
 
@@ -352,11 +393,11 @@ function interior(g, spec, view) {
     const halfW = g.chestW * 0.9;
     if (spec.gatherType === 1) {                 // drawstring: two parallel channels
       for (const off of [-5, 5]) {
-        s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="1"/>`;
+        s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
       }
     } else {                                      // shirred / smocked: tick band
       for (let x = -halfW; x <= halfW; x += 13) {
-        s += `<line x1="${n(x)}" y1="${n(zoneY - 7)}" x2="${n(x)}" y2="${n(zoneY + 7)}" stroke="${SEAM}" stroke-width="0.9"/>`;
+        s += `<line x1="${n(x)}" y1="${n(zoneY - 7)}" x2="${n(x)}" y2="${n(zoneY + 7)}" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
       }
     }
   }
@@ -365,7 +406,7 @@ function interior(g, spec, view) {
   if (isBack) {
     if (spec.closure && /zip/i.test(spec.closure)) {
       s += `<line x1="0" y1="${n(g.neck.depth + 4)}" x2="0" y2="${n(g.isDress ? waistY + 40 : g.hemY * 0.8)}" ` +
-        `stroke="${SEAM}" stroke-width="1" stroke-dasharray="2 3"/>`;
+        `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="2 3"/>`;
     }
     if (spec.tie && spec.tie > 0) {
       const ty = g.isDress ? waistY : g.hemY * 0.86;
@@ -376,7 +417,7 @@ function interior(g, spec, view) {
     }
     if (spec.backOpening && spec.backOpening > 0) {
       s += `<path d="M ${n(-g.neck.half * 0.72)} ${n(g.neck.depth + 6)} Q 0 ${n(waistY * 0.5)} ${n(g.neck.half * 0.72)} ${n(g.neck.depth + 6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-dasharray="4 3"/>`;
+        `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="4 3"/>`;
     }
   }
 

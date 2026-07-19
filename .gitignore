@@ -52,3 +52,6 @@ engine/tools/node_modules/
 
 # v1.1 fashion: uretilen ic ekranlar (turev, uretecler commitli)
 reports/gate/*.html
+
+# harici arac dizini (bu zincir yaratmadi)
+.operator/
