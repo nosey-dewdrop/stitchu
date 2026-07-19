@@ -513,6 +513,49 @@ function interior(g, spec, view) {
   }
 
   // -------------------------------------------------------------------------
+  // WRAP (front only): true-wrap flat convention. The body is cut symmetric per
+  // panel; the wrap is the FRONT CLOSURE — one panel crosses over the other. On
+  // a finished-garment flat this reads as (1) a surplice crossover edge running
+  // diagonally from one shoulder-neck point down across the bust to the opposite
+  // waist, (2) the underlap edge (the panel that goes underneath, faint), and
+  // (3) a self-fabric tie exiting the side seam at the waist and knotting at CF.
+  // Opt-in (spec.wrap): defaults unchanged so golden + pins stay byte-identical.
+  // spec.wrap: 1 = wrap-to-left (overlap right-over-left), 2 = wrap-to-right.
+  // The overlap direction sets which shoulder the crossover starts from.
+  // -------------------------------------------------------------------------
+  if (!isBack && spec.wrap && spec.wrap > 0) {
+    const dir = spec.wrap === 2 ? -1 : 1;         // overlap side
+    const snX = g.neck.half, snY = g.neck.depth;  // shoulder-neck point
+    const overW = g.waistW * 0.30;                // overlap crosses past CF to opp. waist
+    // (1) OVERLAP EDGE (top panel): shoulder-neck -> bust -> opposite waist. Bows
+    // over the bust apex like the princess seam, so it follows the body not a
+    // straight chord (the diagonal is the read of the wrap, not a ruler line).
+    const bx = -dir * g.apexHalfX * 0.55, byA = g.apexY;
+    const wx = -dir * overW, wy = waistY;
+    let d = `M ${n(dir * snX)} ${n(snY)} ` +
+      `C ${n(dir * snX * 0.7)} ${n(snY + (byA - snY) * 0.5)} ${n(bx + dir * g.apexHalfX * 0.3)} ${n(byA - 14)} ${n(bx)} ${n(byA)} ` +
+      `C ${n(bx - dir * g.apexHalfX * 0.2)} ${n(byA + (wy - byA) * 0.5)} ${n(wx)} ${n(wy - 14)} ${n(wx)} ${n(wy)}`;
+    s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_OUTLINE}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // (2) UNDERLAP EDGE (bottom panel, faint mark): mirror side, shoulder to CF-ish
+    // waist, sits under the overlap — drawn thin so it reads as the panel behind.
+    const uwx = dir * overW * 0.5;
+    let du = `M ${n(-dir * snX)} ${n(snY)} ` +
+      `C ${n(-dir * snX * 0.6)} ${n(snY + (byA - snY) * 0.6)} ${n(-dir * g.apexHalfX * 0.4)} ${n(byA + 6)} ${n(uwx)} ${n(wy)}`;
+    s += `<path d="${du}" fill="none" stroke="${SEAM}" stroke-width="${W_MARK}" stroke-linecap="round" stroke-dasharray="5 4"/>`;
+    // (3) WRAP TIE: self-fabric strip exits the side seam at the waist on the
+    // overlap side, wraps to the front, knots near CF. Two soft strokes = the tie.
+    const ty = waistY;
+    s += `<path d="M ${n(dir * g.waistW * 1.01)} ${n(ty - 4)} Q ${n(dir * g.waistW * 0.45)} ${n(ty + 8)} ${n(dir * overW * 0.4)} ${n(ty + 4)}" ` +
+      `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+    // knot + short tails at CF
+    s += `<circle cx="${n(dir * overW * 0.4)}" cy="${n(ty + 4)}" r="3.2" fill="none" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
+    for (const t of [-1, 1]) {
+      s += `<path d="M ${n(dir * overW * 0.4)} ${n(ty + 4)} Q ${n(dir * overW * 0.4 + t * 10)} ${n(ty + 22)} ${n(dir * overW * 0.4 + t * 6)} ${n(ty + 40)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="${W_MARK}" stroke-linecap="round"/>`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
   // PORT: DRAPE MÜREKKEBİ (REFERANS KALEM dili). Boş etek yerine el-çizimi
   // kıvrımlar — ana sırt (skirtBottom'a inen, taper kalın) + sönen ikincil
   // (yarı yolda biter, ince). Gathered/full etekte yoğun, düz etekte az.
