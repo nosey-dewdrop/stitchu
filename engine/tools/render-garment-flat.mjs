@@ -517,10 +517,16 @@ function interior(g, spec, view) {
     const full = st === 'gathered' || st === 'full' || st === 'circle';
     const ink = full ? 'orta' : (spec.ink || 'minimal');
     if (skirtBot - skirtTop > 30) {                 // sadece görünür bir etek varsa
-      const seed = (isBack ? 977 : 131) + Math.round(botHalf) * 7 + Math.round(g.hemY);
-      const plan = drapePlan(seed, ink, spec.foldCount, spec.drape);
-      for (const r of plan) {
-        for (const dir of [-1, 1]) {
+      // ASİMETRİ (taste-lexicon "yelpaze" düzeltmesi): sol ve sağ AYRI drapePlan
+      // (ayrı seed) alır — fabric folds ayna simetrik bir yelpaze değil, iki yön
+      // farklı boy/eğim/yerde düşer, tıpkı gerçek kumaş gibi.
+      const baseSeed = (isBack ? 977 : 131) + Math.round(botHalf) * 7 + Math.round(g.hemY);
+      const planByDir = {
+        '-1': drapePlan(baseSeed, ink, spec.foldCount, spec.drape),
+        '1': drapePlan(baseSeed * 3 + 61, ink, spec.foldCount, spec.drape),
+      };
+      for (const dir of [-1, 1]) {
+        for (const r of planByDir[dir]) {
           // başlangıç: etek üstünde, orta ile yan arası u konumunda
           const su = 0.14 + r.u * 0.5;
           const ax = dir * topHalf * su;
