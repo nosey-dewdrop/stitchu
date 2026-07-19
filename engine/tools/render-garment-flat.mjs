@@ -569,6 +569,32 @@ function interior(g, spec, view) {
     const st = spec.skirtStyle || (g.isDress ? 'aLine' : 'shift');
     const full = st === 'gathered' || st === 'full' || st === 'circle';
     const ink = full ? 'orta' : (spec.ink || 'minimal');
+
+    // GORE / GODE PANEL SEAMS (skirtStyle 'gore'): the engine cuts the skirt into
+    // 6 wedge panels; on a flat that reads as VERTICAL PANEL SEAMS running waist ->
+    // hem, evenly spaced across the width, each flaring out with the skirt so the
+    // godet fullness sits at the hem. Drawn under the drape ink (construction line,
+    // W_SEAM). A 6-gore skirt shows the CF seam + evenly spaced seams to each side
+    // across the visible half. Backward-compatible: only when skirtStyle === 'gore'.
+    if (st === 'gore' && skirtBot - skirtTop > 30) {
+      const nGore = spec.goreCount || 6;            // engine default 6 panels
+      // seams visible across ONE half = half the panel-seam count (CF seam at x=0
+      // shared). Space them evenly in the waist->hem taper so they flare outward.
+      const seamsPerHalf = Math.max(1, Math.round(nGore / 2));
+      for (let i = 0; i <= seamsPerHalf; i++) {
+        const u = i / seamsPerHalf;                 // 0 = CF, 1 = side seam
+        for (const dir of (i === 0 ? [1] : [-1, 1])) {
+          const xTop = dir * topHalf * u;
+          const xBot = dir * botHalf * u;
+          // gentle outward flare (godet): control point pulls the seam out low
+          const my = skirtTop + (skirtBot - skirtTop) * 0.5;
+          const mx = dir * (topHalf * u + (botHalf - topHalf) * u * 0.35);
+          const d = `M ${n(xTop)} ${n(skirtTop)} Q ${n(mx)} ${n(my)} ${n(xBot)} ${n(skirtBot - 2)}`;
+          s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+        }
+      }
+    }
+
     if (skirtBot - skirtTop > 30) {                 // sadece görünür bir etek varsa
       // ASİMETRİ (taste-lexicon "yelpaze" düzeltmesi): sol ve sağ AYRI drapePlan
       // (ayrı seed) alır — fabric folds ayna simetrik bir yelpaze değil, iki yön
