@@ -21,7 +21,7 @@ benchmark-58/
 # collected garment photos (D-phase data pipeline): scraped public product
 # images, local-only for vocab mining + student-model training. NEVER push.
 # The real collector config names the sources — also local-only.
-dataset/
+dataset/*
 engine/tools/collect.config.json
 
 # Taste-pool labeling tool (step one of the aesthetic judge that learns Damla's
@@ -32,6 +32,14 @@ dataset/taste-pool/*
 !dataset/taste-pool/label.html
 !dataset/taste-pool/index.json
 !dataset/taste-pool/labels.json
+
+# K5 eval base: commit the TOOLS, keep the data local (candidates/hand-labels name
+# local photo files from the scraped corpus — same local-only rule as dataset/).
+!dataset/eval/
+dataset/eval/*
+!dataset/eval/label-tool.mjs
+!dataset/eval/select-candidates.mjs
+!dataset/eval/README.md
 
 .env.local
 .vercel/

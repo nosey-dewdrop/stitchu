@@ -429,6 +429,32 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   DURUM: K0/K1/K2/K3/K4 YEŞİL. SIRADAKİ: K5 (vision kaskad + eval tabanı,
   TEK kredili ray, tavan 200 çağrı).
 
+- 2026-07-19 K5 VISION KASKAD + EVAL TABANI: **ÜRETİM BİTTİ, MİNİ-DENETİM
+  BEKLİYOR** (patch 3.24, ?v 94→95, deploy bu loop'ta). KREDİ: **1/200 canlı
+  çağrı** (probe: mine-vocab --anchor 1, 6/6 alan doğru); kalibrasyon/router/eval
+  ölçümleri 0 çağrı (önbellekli teacher etiketleri). STUDENT (dürüst): 4 lokal
+  mobilenet başı {garment, neckline, sleeveLength, skirtStyle} 1600 ambar
+  etiketinden damıtıldı; GLOBAL sızıntısız md5 foto ayrımı 4 başta ortak; ambar
+  filtre istatistikleri baş başına raporlu. Val agreement 0.780/0.590/0.863/0.683.
+  τ (VAL-only, hedef ≥%95 teacher-agreement): sleeveLength 0.94 (%95.3, kapsama
+  %83), skirtStyle 0.90 (%97.1, %34); garment/neckline düz eşik TUTMADI →
+  sınıf-koşullu (skirt@0.50 17/17, crew@0.95 20/21); τ'suz alan/sınıf hep
+  teacher. ÇAĞRI/100FOTO: **100 → 97.5** (val 354'ün 9'u atlandı, atlanan
+  kararlarda agreement 18/18) — kazanç küçük, dürüst; fren garment başı.
+  ROUTER kodda BAYRAK KAPALI (engine/tools/cascade-router.mjs): PUBLIC yol
+  değişmedi; bayrak + eval-gate (hand-labels ≥150) ikisi birden şart, CLI ile
+  iki durum kanıtlı. EVAL TABANI **KIRMIZI-DÜRÜST** (K5 yeşilini düşürmez):
+  150 katman-dengeli aday + lokal etiketleme aracı (dataset/eval/label-tool.mjs,
+  teacher cevabı gizli, kontrat enum İD'leri) + sabah paketi (README, ~25-30 dk)
+  hazır; 150 etiket Damla'da. MANDALLAR: router eval-gate mekanik (kod ≥150
+  ister), calibrate VAL-only + global split kuralı kodda, ambar filtreleri
+  dataloader'da. DAĞILIM-KAYMASI BULGUSU raporlu: 21 eski müze/runway hand-label
+  üzerinde τ transfer etmiyor (student yalnız e-ticaret korpus dağılımında
+  güvenli; kredi zaten orada yanıyor). K0: madde 14 KAPANDI, madde 13
+  KIRMIZI-dürüst (4.2 eval 150 bitince kapanır). Veri lokal (gitignore), araçlar
+  commit. Rapor: reports/2026-07-19-stitchu-k5-vision-kaskad.md.
+  SIRADAKİ: K5 mini-denetimi (taze agent), sonra K6.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
