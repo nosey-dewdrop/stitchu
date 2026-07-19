@@ -55,6 +55,10 @@ add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_chec
     ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
     ${CMAKE_CURRENT_SOURCE_DIR}/GOLDEN-PIN.md)
 
+# style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
+# render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
+add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
+
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
 add_test(NAME ruffle_check COMMAND ruffle_check)
