@@ -268,6 +268,24 @@ yapar. PASS + kuyruk boş → git tag v1.1, kapanış raporu, patch girdisi
   kararı Damla'da; onaya göre port 2. adım (strapless band-top formu) ya da
   başka mihenk.
 
+- 2026-07-19 F2 PORT v2 (band-top köprü): **BİTTİ, MIHENK-04 KUYRUKTA (pending).**
+  MIHENK-03 REJECTED (Damla, 4 madde: çadır+boynuz form / ızgara shirr / yelpaze
+  drape / düz hem; "üzerine iyileştirme YAPMA, form sıfırdan strapless"). ÇÖZÜM
+  (Damla mimari kararı: üretim band-top stiller için referans motoru ÇAĞIRSIN,
+  kopya değil): render-garment-flat.mjs'e renderGarmentFlatAsync + tryReferencePen
+  köprüsü — strapless/band-top spec (drawstring_babydoll, lace_vneck_70s,
+  peterpan_puff, courtney_lace_vneck ya da top:'band'/neckline:'strapless'/
+  referenceStyle) REFERANS KALEM renderStyle'ına gider, shared parametreler
+  (beden/boy/etek/düşüş/büst) override geçer; eşleşme yoksa üretim kendi flat
+  yolu (prenses/shift). TEK HAKİKAT korundu: referans salt-okunur cetvel,
+  üretim çağırır. KANIT: babydoll üretim çıktısı referans kalemle **byte-identical**
+  (form birebir). MIHENK-03'ün 4 maddesi de kapandı (form artık Damla-onaylı
+  referans). MIHENK-04 yan yana: iki taraf birebir aynı. Motor C++ dokunulmadı,
+  golden sabit. SINIR: bu köprü sadece 4 referans babydoll stili için; yeni
+  band-top silüetleri referans kaleme stil eklenerek gelir (Damla kalem işi).
+  SIRADAKİ: MIHENK-04 kararı Damla'da (kalemim mi?); onaydan sonra STYLE-PIN +
+  diğer stiller (lace_vneck_70s zengin test) ya da prenses/shift yolu.
+
 ## PARK
 > (resimli adım talimatları · figür ailesi · blog musluğu · made-to-measure ·
 > gusto-lint korpusu · Damla-zevk-modeli — sırası gelince ayrı DEVAM)
