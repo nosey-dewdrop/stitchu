@@ -605,9 +605,51 @@ function viewPanel(spec, view) {
 }
 
 // ---------------------------------------------------------------------------
+// REFERANS KALEM KÖPRÜSÜ (Damla mimari kararı 2026-07-19): strapless / band-top
+// stiller (babydoll ailesi) için üretim renderer'ın kendi bluz-gövde yolu YANLIŞ
+// form üretiyordu (MIHENK-03: çadır + boynuz). Bu formlar için ÜRETİM, REFERANS
+// KALEM motorunu doğrudan ÇAĞIRIR — form birebir referans, kopya yok, tek hakikat
+// (referans salt-okunur cetvel kalır). spec bir referans stiline eşlenir; eşleşme
+// yoksa üretim kendi flat yolunu kullanır (prenses, shift, vb).
+// ---------------------------------------------------------------------------
+async function tryReferencePen(spec) {
+  // Bu spec bir band-top/strapless babydoll mı? İşaretler: strapless neckline,
+  // band top, ya da açıkça referenceStyle verilmiş.
+  const wantsBand =
+    spec.referenceStyle ||
+    spec.top === 'band' ||
+    spec.neckline === 'strapless' ||
+    spec.style === 'drawstring_babydoll' ||
+    spec.style === 'lace_vneck_70s' ||
+    spec.style === 'peterpan_puff' ||
+    spec.style === 'courtney_lace_vneck';
+  if (!wantsBand) return null;
+  const styleKey = spec.referenceStyle || spec.style || 'drawstring_babydoll';
+  try {
+    const ref = await import('../flat-engine/_engine-full.mjs');
+    if (!ref.STYLE[styleKey]) return null;
+    // shared parametreleri spec'ten geçir (beden/boy/etek/düşüş korunur)
+    const overrides = {};
+    for (const k of ['size', 'length', 'skirtFull', 'ink', 'foldCount', 'hemWave', 'drape', 'hemDip', 'seed', 'bustProject', 'bustHeight', 'waistNip']) {
+      if (spec[k] != null) overrides[k] = spec[k];
+    }
+    return ref.renderStyle(styleKey, overrides);
+  } catch {
+    return null;
+  }
+}
+
 // public: assembled FRONT + BACK finished-garment flat, spec-driven.
 // `pieces` is unused for the outline (kept for signature compatibility).
-// ---------------------------------------------------------------------------
+// Band-top strapless styles route to the reference pen (async); everything else
+// draws through the production flat path (sync). renderGarmentFlat stays sync for
+// callers; use renderGarmentFlatAsync to get the reference-pen routing.
+export async function renderGarmentFlatAsync(pieces, spec = {}) {
+  const ref = await tryReferencePen(spec);
+  if (ref) return ref;
+  return renderGarmentFlat(pieces, spec);
+}
+
 export function renderGarmentFlat(pieces, spec = {}) {
   const fp = viewPanel(spec, 'front');
   const bp = viewPanel(spec, 'back');
