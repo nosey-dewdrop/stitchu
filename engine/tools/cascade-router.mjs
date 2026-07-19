@@ -24,6 +24,12 @@
 //   1. STITCHU_CASCADE=1 in the environment, AND
 //   2. the eval base gate file dataset/eval/hand-labels.json with >= 150 entries.
 //
+// DAMLA DECISION 2026-07-19: labelling STOPPED at 115/150 — DELIBERATE deferral,
+// not incomplete work. Reason: a single user (Damla), no photo volume, teacher
+// cost paid directly; the cascade is a pre-sale need. The remaining 35 labels +
+// calibration happen when selling requires it. DO NOT calibrate on 115 — the
+// gate stays RED-honest until 150. This topic is CLOSED until sales prep.
+//
 // Usage (offline probe):
 //   node engine/tools/cascade-router.mjs <photo.jpg> [photo2.jpg ...]
 //   STITCHU_CASCADE=1 node engine/tools/cascade-router.mjs <photo.jpg>

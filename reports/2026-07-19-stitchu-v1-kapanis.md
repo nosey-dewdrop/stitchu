@@ -154,10 +154,16 @@ yayınlanmış, K1 yeşil. Sonuç: FREEZE-HAZIR.
 ## 4. KIRMIZI-DÜRÜST KALEMLER
 
 - K5 eval-150 gate: KIRMIZI. Kaskad go-live kapısı kodda mekanik olarak
-  ≥150 hand-label istiyor; bugün 0/150. Aday seçimi + etiketleme aracı +
-  sabah paketi hazır (dataset/eval/README.md, ~25-30 dk). Gate, Damla
-  150 etiketi elle bitirene kadar kırmızı kalır ve bu, K5 yeşilini
-  düşürmez (yeşil tanımı "ya tamam ya KIRMIZI-dürüst" idi).
+  ≥150 hand-label istiyor. Aday seçimi + etiketleme aracı + sabah paketi
+  hazır (dataset/eval/README.md). Gate, 150 etiketi elle bitirene kadar
+  kırmızı kalır ve bu, K5 yeşilini düşürmez (yeşil tanımı "ya tamam ya
+  KIRMIZI-dürüst" idi).
+  DAMLA KARARI 2026-07-19: etiketleme 115/150'de DURDU — BİLİNÇLİ erteleme,
+  eksik iş değil. Gerekçe: tek kullanıcı Damla, foto hacmi yok, öğretmen
+  maliyeti doğrudan ödenir; kaskad SATIŞ ÖNCESİ ihtiyaç. Kalan 35 etiket +
+  kalibrasyon satış gerektirdiğinde yapılır. 115 İLE KALİBRASYON YAPILMAZ;
+  gate 150'ye kadar KIRMIZI-dürüst. Konu satış hazırlığına kadar KAPALI
+  (karar cascade-router.mjs yorumunda da kayıtlı).
 - Kırmızı-mühürlü ray YOK: altı rayın altısı da yeşil kilitlendi.
 
 ## 5. A5 İHLAL BEYANI
@@ -228,6 +234,23 @@ kuralları. Ölçülebilir alt-maddeler:
 BAĞIMLILIK: resimli adım talimatı rayı (PARK listesinde) bu köprünün vitrinidir;
 ikisi tek DEVAM'da planlanır. Golden etkisi: köprü 1 kesin re-pin, köprü 2 astar
 parçası eklerse re-pin (ikisi de beyanlı, Damla onayı).
+
+## 8. v2 TAKSONOMİ KANITLARI (Damla 2026-07-19, satış öncesine kadar KAPALI)
+K5 kaskadının student alanları bugün {garmentType, neckline, sleeveLength,
+skirtStyle}. Aşağıdaki taksonomi kanıtları eval-150 kaskad kalibrasyonu
+YAPILDIĞINDA (satış öncesi) student vokabülerine + kalıp kabiliyetine aday:
+- keyhole / cut-out: neckline/gövde açıklığı ailesi (motorda KeyholeBlock +
+  backOpening var; vision taksonomisinde ayrı sınıf değil).
+- off-shoulder / bardot: terms.json bardot-offshoulder (drawable, bardotStyle);
+  student neckline sınıfına eklenebilir.
+- ön-fiyonk / front bow: tie ailesi (FrontNeckBow/FrontWaistBow motorda var);
+  vision okuma sınıfı olarak ayrık değil.
+- strapless / band-top: terms.json strapless (status honest — motor gerçek
+  band bodice çizmiyor, strapless kenar var); band-top babydoll formu F2'de
+  referans kalem köprüsüyle GELDİ (renderGarmentFlatAsync), ama draft
+  (kalıp) tarafında gerçek band bodice yok — bu bir kalıp kabiliyeti adayı.
+KURAL: bu taksonomi işi eval-150 kaskad kalibrasyonuna bağlı, o da satış
+öncesine ertelendi (bölüm 4). Satış hazırlığına kadar AÇILMAZ.
 
 ## 7. DAMLA'YA AÇIK KALEMLER (freeze bunlara takılmadı, sırada bunlar var)
 
