@@ -455,6 +455,26 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   commit. Rapor: reports/2026-07-19-stitchu-k5-vision-kaskad.md.
   SIRADAKİ: K5 mini-denetimi (taze agent), sonra K6.
 
+- 2026-07-19 K5 MİNİ-DENETİM: **PASS → K5 YEŞİL, KİLİTLENDİ** (BLOCKER 0;
+  denetçi: τ kalibrasyonu cache'den yeniden üretildi, üreticinin JSON'u ile
+  birebir; çağrı/100foto 100→97.5 + skip 18/18 agreement teyit; split
+  overlap 0; router çift kapı CLI ile kanıtlı, public yol grep 0; eval 150
+  aday dağılımı birebir sayıldı, teacher sızıntısı yok, label-tool
+  127.0.0.1 çalışır; ctest 45/45; canlı v95 tek sürüm; golden
+  by-construction — K5 diff'inde engine/src sıfır). Eval-150 hedefi
+  KIRMIZI-DÜRÜST (mekanik kapı kodda ≥150 istiyor; Damla sabah paketi
+  dataset/eval/README.md ~25-30 dk).
+  K5 MINOR (düzeltilmedi, kayıt): (1) raporun "sınır router yorumuna
+  yazıldı" cümlesi tutmuyor — 21-set dağılım-kayması sınırı kodda yorum
+  olarak yok, rapor+patch notunda yayınlı (dürüstlük fiilen sağlanıyor);
+  (2) style-lint 6 em-dash ihlali patches.html görünür metinde (K3 dönemi
+  mirası, K5 eklemedi) — K6 deploy.sh kanıt adımını düşürür, K6'da ele
+  alınacak; (3) 1 canlı probe çağrısının kalıcı izi yok (beyan
+  doğrulanamıyor, çürütülemiyor; kod tamamen offline, tavan aşımı imkânsız
+  görünümde).
+  DURUM: K0/K1/K2/K3/K4/K5 YEŞİL. SIRADAKİ: K6 (operasyonel sertleştirme
+  + arşiv), sonra DENETİM Z → FREEZE.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
