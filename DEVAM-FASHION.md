@@ -249,6 +249,25 @@ yapar. PASS + kuyruk boş → git tag v1.1, kapanış raporu, patch girdisi
   SIRADAKİ: MIHENK-02 kararı Damla'da; onaydan sonra STYLE-PIN + F1 (mevcut
   yetenek ölçümü + gode primitifi) yeni kalemle.
 
+- 2026-07-19 F2 PORT (kalem dili üretim renderer'a): **1. ADIM BİTTİ, MIHENK-03
+  KUYRUKTA (pending).** Damla rol ayrımı yaptı: _engine-full.mjs+styles.json =
+  REFERANS KALEM (salt-okunur cetvel, işaretlendi); ÜRETİM HATTI TEK =
+  render-garment-flat.mjs; F2 işi = prototip dilini parametre parametre PORT.
+  PORT EDİLEN (referans kalemden üretim renderer'a): taper mürekkep fonksiyonu
+  (taperInk, ortası kalın uçları sivri), deterministik drape planı (drapePlan:
+  ana sırt köşeye + sönen ikincil, ink rejimi kıvrım sayısı, orta ön temiz),
+  dalgalı taper shirr sıraları (düz 2 çizgi yerine büzgü panosu dokusu),
+  drawstring casing. SONUÇ: boş şematik etek → el-çizimi drape; motor C++
+  dokunulmadı → golden sabit. MIHENK-03 kıyas: babydoll referans vs port,
+  yan yana (reports/gate/MIHENK-03-contact.html). DÜRÜST FARK (gözle):
+  çizim dili (taper/drape/shirr) TUTTU ama SİLÜET FORMU eksik — referans
+  strapless band-top (düz üst + kordon fiyongu), üretim hâlâ kol-oyuntulu
+  bluz gövdesi çiziyor; babydoll'un strapless karakteri + üst fiyonk yok.
+  Bu port'un 2. adımı (band-top form + üst tie). Damla kararı bekliyor:
+  kalem dili tuttu mu, form eksiği kabul edilebilir mi? SIRADAKİ: MIHENK-03
+  kararı Damla'da; onaya göre port 2. adım (strapless band-top formu) ya da
+  başka mihenk.
+
 ## PARK
 > (resimli adım talimatları · figür ailesi · blog musluğu · made-to-measure ·
 > gusto-lint korpusu · Damla-zevk-modeli — sırası gelince ayrı DEVAM)
