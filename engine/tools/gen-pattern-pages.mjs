@@ -221,6 +221,18 @@ const COPY = {
         'Yumuşak açılan A kesim etek, temiz bir hat korurken cebe rahatça uzanma payı bırakır.',
         'Gövde pensli kesimdir; yaka ve kol oyukları biye ile bitirilir, arka orta gizli fermuarla kapanır.'] },
   },
+  'ruffled-strap-drawstring-babydoll': {
+    en: { lead: 'A ruffled-strap drawstring babydoll: a band bodice gathered onto a drawstring with a small centre bow, ruffled shoulder straps, and a gathered mini skirt that falls to a scalloped hem. This is the first flat drawn in stitchu\'s own drawing pen and the first one approved, shown beside the exact pattern the engine drafts from it.',
+      fabric: 'Light woven cotton, lawn, or a soft crepe, roughly 1.9 m at 140 cm.',
+      facts: ['The bodice is a gathered yoke panel cut wide and drawn up onto a drawstring cord, so it pulls in to fit while staying soft across the bust; the cord is its own cut piece.',
+        'The ruffled shoulder straps are a real drafted piece, not a ready-made trim: each is cut as a 74 by 340 mm rectangle and gathered down to a finished 141 mm strap, cut 2. The exact strip length is drafted per size, so it sews, it is not decorative.',
+        'The flat and the pattern on this page pass an automatic structural-equality test (preview-truth): every structural element you see in the drawing has a counterpart piece in the pattern. That check is the moat: it is a claim no competitor publishes.'] },
+    tr: { lead: 'Fırfırlı askılı büzgülü bir babydoll: kordonla toplanan bir bant gövde, ortada küçük bir fiyonk, fırfırlı omuz askıları ve taraklı bir eteğe düşen büzgülü mini etek. Bu, stitchu\'nun kendi çizim kalemiyle çizilen ve onaylanan ilk flat; yanında motorun ondan çizdiği birebir kalıp.',
+      fabric: 'Hafif dokuma pamuk, patiska ya da yumuşak krep, 140 cm ende yaklaşık 1.9 m.',
+      facts: ['Gövde, geniş kesilip bir kordona toplanan büzgülü bir yaka panosudur; göğüste yumuşak kalırken oturacak kadar büzülür, kordon kendi kesim parçasıdır.',
+        'Fırfırlı omuz askıları hazır bir şerit değil, gerçek çizilmiş bir parçadır: her biri 74 x 340 mm dikdörtgen kesilip bitmiş 141 mm askıya büzülür, cut 2. Şerit boyu beden başına hesaplanır, yani dekoratif değil dikilebilir.',
+        'Bu sayfadaki çizim ile kalıp otomatik bir yapısal eşitlik testinden (preview-truth) geçer: çizimde gördüğünüz her yapısal öğenin kalıpta karşılığı vardır. Bu test moattır; hiçbir rakibin yayınlamadığı bir iddiadır.'] },
+  },
 };
 
 // TR phrasing of "drawnBy" for the honest-note sentence, keyed by slug.
@@ -429,6 +441,11 @@ ${HEADER}
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
+
+  ${flatUrl ? `<div class="drawing">
+    <img src="${flatUrl}?v=${V}" alt="${esc(m.style)} fashion flat drawn by the stitchu engine" loading="lazy">
+    <p class="cap" data-en="The fashion flat, front and back, drawn in the engine's own pen." data-tr="Motorun kendi kalemiyle çizilmiş fashion flat, ön ve arka.">The fashion flat, front and back, drawn in the engine's own pen.</p>
+  </div>` : ''}
 
   <div class="drawing">
     <img src="${svgUrl}" alt="${esc(m.style)} pattern pieces drafted by the stitchu engine" loading="lazy">
