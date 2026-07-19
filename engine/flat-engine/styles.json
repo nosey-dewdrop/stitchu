@@ -1,5 +1,6 @@
 {
   "_comment": "Prensip 1: stil bir VERİ KAYDI, kod değil. LLM sadece bu şemada JSON üretir. Motor (engine.mjs) sabit kalır. Aynı JSON hep aynı çizim.",
+  "_ROL": "REFERANS KALEM stil kaynağı (Damla 2026-07-19, salt-okunur). Bu kayıtlar üretim renderer'ının (render-garment-flat.mjs) port edeceği kalem dilinin cetvelidir. Üretim renderer da bu dosyadan okur — tek hakikat. Silme/itme yok.",
   "_schema_version": 1,
   "shared": {
     "size": "EU38",

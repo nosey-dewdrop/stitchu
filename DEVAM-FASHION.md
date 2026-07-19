@@ -109,6 +109,19 @@ mihenk giysisinde koşup puan raporu üretti (kalibrasyon kanıtı).
 YEŞİL: 5 hedef siluet uçtan uca basılıyor + Damla Kapısı PASS + şartname
 PASS + ctest/golden/preview-truth yeşil + yeni kapsam sayısı raporda.
 
+## ROL AYRIMI — REFERANS KALEM vs ÜRETİM HATTI (Damla emri 2026-07-19)
+1. **engine/flat-engine/_engine-full.mjs + styles.json = REFERANS KALEM** —
+   SALT-OKUNUR. Damla'nın flat çizim dilinin cetveli ("hedef böyle görünür":
+   dantel biye, fırfır katları, balon kol karakteri, taper mürekkep, drape
+   planı). STYLE-PIN'in atası. Silme/itme/dokunma yok; değişiklik sadece
+   Damla'nın kalem revizyonuyla.
+2. **ÜRETİM HATTI TEK: motorun flat renderer'ı** (engine/tools/
+   render-garment-flat.mjs). F2'nin gerçek işi = prototibin DİLİNİ üretim
+   renderer'ına parametre parametre, styles.json'dan okuyarak PORT etmek.
+3. İki paralel ürün yolu OLAMAZ (tek hakikat). Prototip cetvel, ürün değil.
+4. MIHENK render'ları: üretim renderer + port edilmiş kalemle. Babydoll ilk
+   test — prototipteki babydoll ile yan yana, fark gözle görünür.
+
 ## F2 — DAMLA KALEMİ MOTORA (listing-flat kalitesi)
 - flat-engine prototipinin dili C++ flat renderer'a taşınır: çizgi
   hiyerarşisi (gövde 1.9 / dikiş orta / pens ince / bastırma kesik), drape

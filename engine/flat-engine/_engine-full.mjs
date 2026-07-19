@@ -1,3 +1,12 @@
+// ============================================================================
+// REFERANS KALEM — SALT-OKUNUR (Damla emri 2026-07-19). BU ÜRETİM MOTORU DEĞİL.
+// Bu prototip Damla'nın flat çizim DİLİNİN cetvelidir ("hedef böyle görünür"):
+// dantel biye, fırfır katları, balon kol karakteri, taper mürekkep, drape planı.
+// STYLE-PIN'in atası. F2'nin işi bu dili ÜRETİM renderer'ına (engine/tools/
+// render-garment-flat.mjs) parametre parametre PORT etmek — styles.json'dan
+// okuyarak. TEK HAKİKAT: iki paralel ürün yolu olamaz; bu dosya cetvel, ürün
+// değil. Silme, itme, dokunma. Değişiklik SADECE Damla'nın kalem revizyonuyla.
+// ============================================================================
 // K1 contract (2026-07-19): shared values come from contract/tables.json
 // (flat.* namespace — DRAWING units, not millimetres), style records come from
 // styles.json (style = a data record, not code). No inline value copies.
