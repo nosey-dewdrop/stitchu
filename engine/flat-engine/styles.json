@@ -41,7 +41,8 @@
       }
     },
     "lace_vneck_70s": {
-      "label": "70s v-neck lace babydoll",
+      "label": "70s v-neck lace babydoll, short puff sleeve with tie cuff",
+      "_pin": "MIHENK-05 v7 approved by Damla 2026-07-19 (kalemim). Sleeve is a SHORT PUFF with a gathered tie cuff (the grid label 'uzun kol' was wrong; the drawing is correct). sleeveLen 9->14, cuffGather 1.2->1.6.",
       "top": "shoulder",
       "neckline": "v",
       "parts": {
@@ -64,10 +65,10 @@
         "neckDepthBack": 2.5,
         "shoulderSlope": 1.6,
         "armholeHollow": 0.1,
-        "sleeveLen": 9,
+        "sleeveLen": 14,
         "sleeveWidth": 6.2,
         "capPuff": 2.2,
-        "cuffGather": 1.2,
+        "cuffGather": 1.6,
         "laceWidth": 1.3,
         "laceScallops": 16,
         "tieLength": 20,
