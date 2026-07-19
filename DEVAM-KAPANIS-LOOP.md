@@ -515,6 +515,20 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   kaynağa; araçlardaki worker URL kopyaları guard kapsamına.
   SIRADAKİ: K6 mini-denetimi (taze agent), PASS ise DENETİM Z → FREEZE.
 
+- 2026-07-19 K6 MİNİ-DENETİM: **PASS → K6 YEŞİL, KİLİTLENDİ** (BLOCKER 0;
+  denetçi: deploy.sh 5 mandalı kod okumasıyla + tek-sürüm kuru mutasyonuyla
+  doğrulandı, kendi subtree split'i 76f71a6 = gh-pages HEAD birebir, canlı
+  tek sürüm v96 + patch 3.25, git log --all benchmark-58 boş + sk-ant/anahtar
+  geçmiş taraması 0, arşiv R100 git mv + canlı koddan 0 referans, engine/dist
+  md5 3/3 kanonik, K0 madde-5 10/10 kapanış bağımsız doğrulandı, em-dash 0 +
+  style-lint 81 sayfa exit 0, A1/A4 temiz — engine dokunuşu yok).
+  K6 MINOR (kayıt): (a) deploy.sh canlı doğrulaması index+3 sayfa ile
+  sınırlı; (b) araç scriptlerindeki worker-URL kopyaları guard kapsamı
+  dışında (v1.1 beyanlı).
+  DURUM: **ALTI RAY DA YEŞİL (K0/K1/K2/K3/K4/K5/K6)**; K5 içinde eval-150
+  gate'i KIRMIZI-dürüst (Damla sabah paketi bekliyor, freeze-blocker DEĞİL).
+  SIRADAKİ: DENETİM Z (anayasa denetimi), PASS ise FREEZE v1.0.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure
