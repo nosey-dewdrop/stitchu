@@ -39,12 +39,12 @@
     },
     "derived": {
       "panelCutWidth": "finished panel width x draft.gatherRatios[gatherType]. The flat engine derives its real cut number from the SAME ratio table the pattern engine cuts with; it never keeps a private ratio truth. Per-style recipe fields (styles.json gatherRatio, capPuff, ...) are ink/drawing knobs only."
+    },
+    "style": {
+      "_layer": "STYLE parameters (Damla 2026-07-19 decision, formerly review.* layer-undecided). These are flat-drawing taste knobs only; they shape the flat silhouette and have NO effect on pattern geometry (the drafting engine never reads them). Live in flat recipes (styles.json).",
+      "waistNip": { "value": 0.07, "livesIn": "flat recipes (styles.json shared)", "note": "waist suppression fraction of the flat silhouette" },
+      "armholeHollow": { "value": 0.1, "livesIn": "flat recipes (styles.json per-style own)", "note": "armhole scoop fraction of the flat silhouette" }
     }
-  },
-  "review": {
-    "_layer": "values whose LAYER is undecided: are they FIT (draft truth, must obey real measurements) or STYLE (flat drawing taste)? Damla decides; until then they stay where they run today (flat recipes) and are only REGISTERED here.",
-    "waistNip": { "value": 0.07, "livesIn": "flat recipes (styles.json shared)", "question": "fit mi stil mi? (waist suppression fraction of the flat silhouette)" },
-    "armholeHollow": { "value": 0.1, "livesIn": "flat recipes (styles.json per-style own)", "question": "fit mi stil mi? (armhole scoop fraction of the flat silhouette)" }
   },
   "mappings": {
     "_layer": "every cross-layer name/meaning translation, declared ONCE. Bridge code reads these; a translation that is not declared here is a contract violation (K0 findings 2.1-2.6).",

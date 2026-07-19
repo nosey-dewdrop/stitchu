@@ -178,17 +178,8 @@
         "laceScallops": { "type": "integer", "minimum": 0, "maximum": 40 },
         "collarWidth": { "type": "number", "minimum": 0, "maximum": 12 },
         "collarGap": { "type": "number", "minimum": 0, "maximum": 4 },
-        "waistNip": { "$ref": "#/$defs/reviewParams/properties/waistNip" },
-        "armholeHollow": { "$ref": "#/$defs/reviewParams/properties/armholeHollow" }
-      }
-    },
-    "reviewParams": {
-      "description": "Parameters whose LAYER is undecided (fit vs style) — Damla's call, registered in contract/tables.json review.*. They keep running where they run today (flat recipes) until decided.",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "waistNip": { "type": "number", "minimum": 0, "maximum": 0.25 },
-        "armholeHollow": { "type": "number", "minimum": 0, "maximum": 0.4 }
+        "waistNip": { "type": "number", "minimum": 0, "maximum": 0.25, "description": "STYLE parameter (Damla 2026-07-19): waist suppression fraction of the flat silhouette. No effect on pattern geometry; the drafting engine never reads it. Was review.* (layer undecided); decided as flat.* style." },
+        "armholeHollow": { "type": "number", "minimum": 0, "maximum": 0.4, "description": "STYLE parameter (Damla 2026-07-19): armhole scoop fraction of the flat silhouette. No effect on pattern geometry. Was review.* (layer undecided); decided as flat.* style." }
       }
     }
   }
