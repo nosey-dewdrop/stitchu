@@ -8,7 +8,7 @@
 //      before the numbered steps.
 // It never invents: the honesty layer (missing.js) still owns what the engine
 // cannot draw. Source of truth: knowledge/sewing-guide.md.
-import { getLang, t } from './i18n.js?v=94';
+import { getLang, t } from './i18n.js?v=95';
 
 let guidePromise = null;
 function loadGuide() {
