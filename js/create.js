@@ -1,18 +1,18 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=95';
-import { validateVision } from './spec-validate.js?v=95';
-import { CONTRACT } from './contract.gen.js?v=95';
-import { applyStatic, getLang, t } from './i18n.js?v=95';
-import { draft, grade } from './engine.js?v=95';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=95';
-import { renderResult } from './render.js?v=95';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=96';
+import { validateVision } from './spec-validate.js?v=96';
+import { CONTRACT } from './contract.gen.js?v=96';
+import { applyStatic, getLang, t } from './i18n.js?v=96';
+import { draft, grade } from './engine.js?v=96';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=96';
+import { renderResult } from './render.js?v=96';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=95';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=95';
+} from './store.js?v=96';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=96';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
