@@ -138,6 +138,7 @@ try {
   for (const [k, v] of Object.entries(styles.shared)) checkNum(k, v, 'shared');
   for (const [name, st] of Object.entries(styles.styles)) {
     for (const [k, v] of Object.entries(st)) {
+      if (k.startsWith('_')) continue; // _pin, _comment: metadata, not contract fields
       if (k === 'parts') {
         for (const pk of Object.keys(v)) if (!partProps[pk]) { fail(`styles.json ${name}.parts: unknown part flag '${pk}'`); bad += 1; }
       } else if (k === 'own') {
