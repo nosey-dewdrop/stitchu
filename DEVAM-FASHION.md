@@ -177,6 +177,32 @@ yapar. PASS + kuyruk boş → git tag v1.1, kapanış raporu, patch girdisi
   SIRADAKİ: F1 (Faz P primitifleri) — MIHENK-01 beklerken başlanabilir (mihenk
   onayı F1 çıktısını revize eder ama primitif işi paralel yürür).
 
+- 2026-07-19 F1 KEŞİF + MIHENK-01 KARARI: motor haritası çıkarıldı (peplum
+  bloğu = post-pass şablonu; garment.cpp 3 post-pass sırası doğrulandı).
+  ÖNEMLİ BULGU (motor sanılandan yetenekli): prenses dikiş (bodice.cpp
+  makePrincessPieces + skirt goreQuarter, armhole→apex→bel anatomik), wrap-tie
+  (TiePlacement::WrapFront "front opening" kapanma), cowl/drape yaka
+  (render-pages cowl-dress) ZATEN motorda. 5 mihenkten 3'ü (prenses/wrap/
+  fit-flare) çizilebiliyor ama gusto-lint spec'iyle ÖLÇÜLMEDİ; gerçekten yeni
+  primitif isteyen: çok-panelli gode etek + (belki) drape yaka. F1 çekirdeği
+  yeniden tanımlandı: sıfırdan silüet DEĞİL → mevcut yeteneği ölç (A1-TERS) +
+  eksik primitifi ekle.
+  MIHENK-01 = **REJECTED** (Damla, gerekçe kayıtlı + taste-lexicon "parantez
+  çizgi" girişi). ÖZÜ: prenses render'ının gövde-içi dikiş çizgileri parantez
+  gibi rastgele bombeli + dikiş çizgisi konturla eşit ağırlıkta (orta katman
+  1.4 eksik). KATMAN AYRIMI KANITLANDI: kalıp GEOMETRİSİ doğru (motor apex'ten
+  geçen anatomik seam çiziyor), kusur FLAT ÇİZİM DİLİNDE (iç işaret çizgisi
+  markings). Bu = **F2 işi, F1 değil.**
+  STRATEJİK SONUÇ (sıra revizyonu adayı): gusto-lint kalibrasyonda "1.4 katman
+  eksik"i yakalamıştı; Damla'nın gözü aynı kusuru doğruladı. Mihenk "kalemim"
+  alamıyorsa F1 siluetleri de aynı çizim diliyle reddedilir → **F2 (Damla
+  kalemi: çizgi hiyerarşisi + anatomik iç seam eğrisi) F1'den ÖNCE ya da onunla
+  İÇ İÇE gitmeli.** Plandaki F0→F1→F2 sırası, ölçülen kanıtla F0→F2→F1'e
+  kayabilir (F2 çizim dili mihenk kabulünün ön koşulu). Damla onayı beklenen
+  karar: F2'yi öne al mı? Bu turda F2'ye geçilmedi (sıra değişikliği Damla'nın).
+  SIRADAKİ: F2 öne-alma kararı Damla'da; onaya kadar F1 ölçüm işi (mevcut 3
+  mihenki gerçek motordan render + gusto-lint 5-boyut + şartname) yürüyebilir.
+
 ## PARK
 > (resimli adım talimatları · figür ailesi · blog musluğu · made-to-measure ·
 > gusto-lint korpusu · Damla-zevk-modeli — sırası gelince ayrı DEVAM)

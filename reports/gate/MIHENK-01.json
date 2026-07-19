@@ -3,8 +3,8 @@
   "type": "contact",
   "title": "Mihenk 5'lisi — v1.1 fashion hedef siluetleri",
   "contact": "reports/gate/MIHENK-01-contact.html",
-  "status": "pending",
-  "reason": null,
+  "status": "rejected",
+  "reason": "prenses render: govde ici dikis cizgileri parantez gibi rastgele bombeli + dikis cizgisi kontur ile ayni agirlikta (orta katman eksik); F2 cizim dili isi, kalip geometrisi dogru",
   "createdAt": "2026-07-19",
   "decidedAt": null
 }
