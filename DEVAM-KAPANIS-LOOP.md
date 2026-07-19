@@ -475,6 +475,46 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   DURUM: K0/K1/K2/K3/K4/K5 YEŞİL. SIRADAKİ: K6 (operasyonel sertleştirme
   + arşiv), sonra DENETİM Z → FREEZE.
 
+- 2026-07-19 K6 OPERASYONEL SERTLEŞTİRME + ARŞİV: **ÜRETİM BİTTİ, MİNİ-DENETİM
+  BEKLİYOR** (patch 3.25, ?v 95→96, SON DEPLOY scripts/deploy.sh İLE yapıldı —
+  yeşil şartı; canlı curl: index tek sürüm v96, patches/create/benchmark 200).
+  (1) scripts/deploy.sh: ?v bump TÜM sayfalarda otomatik + tek-sürüm mandalı
+  (birden fazla ?v = FAIL), kanıt zinciri kapı (style-lint+render-lint+
+  preview-truth+header-diff+validate-contract+ctest 45/45), motor guard
+  (engine/src|wasm dokunulmuş + kanıt beyanı yok = FAIL), worker-URL drift
+  guard (config.js'ten ayrışma = FAIL), /tmp package.json tuzağı preflight
+  WARN + yorumda; mevcut subtree/force-push/curl mekaniği SARILDI değişmedi.
+  (2) GİZLİLİK TARAMASI: SIZINTI YOK, ROTASYON GEREKMİYOR — .benchmark-token
+  git geçmişine hiç girmemiş (log --all boş), KV namespace id kimliktir-secret-
+  değildir (wrangler.toml + benchmark-58.mjs çift kopyası v1.1 notu), wrangler
+  reset yolu (K0 mini-denetim MINOR 1 BURADA KAPSANDI: resetFuse yalnız kendi
+  IP fuse anahtarları, secret'sız, authed wrangler ister), APP_TOKEN/Secrets.swift
+  git'te yok, canlı sk-ant değeri repoda yok; secret değeri hiçbir dosyaya
+  yazılmadı. DAMLA: CLAUDE_API_KEY rotasyonu hâlâ açık (15 Tem notu; anahtar
+  işi yalnız sende). (3) ARŞİV: 5 proof script+5 svg, print-repro.js, flat-v2
+  ailesi, courtney-flat.*, mocks/ + mock.html, asset-guide.* → docs/archive/
+  (git mv); untracked _render-smocked-babydoll.mjs + render-garment-from-pieces.mjs
+  arşive commit'lendi (tasarım gerekçesi değerli, canlı referans 0);
+  render-listing-card.mjs uncommitted diff İŞE YARAR bulundu (bebek-mavisi
+  palet hizası) COMMIT'lendi; bayat engine/dist commit'li kanonik kopyalardan
+  geri dolduruldu md5 birebir (derleme yok, A4); SPECS-next-vocabulary.md
+  başına UNVERIFIED+PARK bandı EKLENDİ (K0 3.6 doğruydu, bant yoktu).
+  (4) patches.html 6 em-dash görünür metinden çıkarıldı (Damla yazım emri;
+  style-lint→deploy kapısı artık fiilen yeşil; K5 MINOR 2 kapandı).
+  (5) vocab-canonical.json DEĞERLENDİRİLDİ: saf terim-eşanlam haritası, foto
+  adı/kaynak/kişisel veri yok = sızıntı değil → gitignore istisnasıyla commit
+  (%6.7 artık repodan yeniden üretilebilir; K1 MINOR 2 kapandı). K0 madde-5
+  satırları SIFIR: 5.1-5.10 hepsi kapandı (tablo raporda). A5: 0 çağrı; sayılar
+  değişmedi (FULL 27/54, ELEMENT 74/103, %94.4, %6.7). Rapor:
+  reports/2026-07-19-stitchu-k6-operasyon.md.
+  DAMLA: AVUKATA SOR — marka fotoğrafı türevi kalıplar + tescilsiz topluluk
+  tasarımı (TR/AB); zincir hukuk yorumu yapmadı, yapmaz.
+  SONRADAN BULUNDU / v1.1 (bu zincirde açılmadı, KİLİT 1): results-snapshot
+  üzerine-yazma → tarih+saat damgalı geçmiş; worker URL inline kopyalarının
+  module-import refactor'ü (şimdilik guard'la mühürlü); KV_NS çift kopyası tek
+  kaynağa; araçlardaki worker URL kopyaları guard kapsamına.
+  SIRADAKİ: K6 mini-denetimi (taze agent), PASS ise DENETİM Z → FREEZE.
+
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
 > flat sunumu, FAZ P primitif katmanı, muslin dikimi, made-to-measure

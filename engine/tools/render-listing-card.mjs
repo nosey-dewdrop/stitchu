@@ -17,10 +17,10 @@
 
 const NAVY = '#1f3a5f';
 const DEEP = '#3f74a8';
-const CREAM = '#ffffff';    // card ground (was cream, now plain white)
+const CREAM = '#ffffff';    // card ground (plain white, baby-blue world)
 const CARD = '#ffffff';     // inner panel
-const LINE = '#d8c9ae';      // warm hairline that reads on cream
-const MUTE = '#6b5c40';      // warm muted ink for sub-labels
+const LINE = '#bcd7ee';      // baby-blue hairline, matches --bb-line
+const MUTE = '#5b7089';      // muted navy for sub-labels, matches the site
 
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

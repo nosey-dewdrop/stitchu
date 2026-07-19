@@ -33,6 +33,11 @@ dataset/taste-pool/*
 !dataset/taste-pool/index.json
 !dataset/taste-pool/labels.json
 
+# Vocab canonicalization overrides (K6): pure fashion-term synonym map, no photo
+# names, no source URLs, no personal data — safe to commit. The corpus-coverage
+# number (6.7%) depends on it; without it that measurement is not reproducible.
+!dataset/vocab-canonical.json
+
 # K5 eval base: commit the TOOLS, keep the data local (candidates/hand-labels name
 # local photo files from the scraped corpus — same local-only rule as dataset/).
 !dataset/eval/
