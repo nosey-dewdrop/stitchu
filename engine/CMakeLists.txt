@@ -47,6 +47,13 @@ add_test(NAME engine_check COMMAND engine_check)
 
 add_executable(golden_dump tests/golden_dump.cpp)
 target_link_libraries(golden_dump PRIVATE engine)
+# The real golden test: fresh dump vs the REPO PIN (engine/golden-reference.csv).
+# Regen-vs-regen is not a golden check. Pin moves only via scripts/repin-golden.sh
+# with a declared label in engine/GOLDEN-PIN.md.
+add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_check.sh
+    $<TARGET_FILE:golden_dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
+    ${CMAKE_CURRENT_SOURCE_DIR}/GOLDEN-PIN.md)
 
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)

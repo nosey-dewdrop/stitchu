@@ -235,6 +235,15 @@ notlarında saklanmadan yayınlanmış mı, K1 yeşil mi (freeze-blocker).
 GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
 (ritim protokolündeki aynı sayılı hak; Z'de de sonsuzluk yok).
 
+KURAL (2026-07-19 adli inceleme sonrası, kalıcı): GOLDEN DOĞRULAMASI DAİMA
+REPO PİN'İNE (engine/golden-reference.csv) KARŞI YAPILIR. Taze dökümü taze
+dökümle kıyaslamak (regen-vs-regen) golden kanıtı DEĞİLDİR ve öyle
+raporlanamaz; zincir boyunca her "byte-identical" beyanı bu hatayı yaptı ve
+562 giysilik yerinde geometri değişikliğini görünmez kıldı. Mandal: ctest
+golden_check her build'de dump'ı pine diff'ler; pin yalnız
+scripts/repin-golden.sh + engine/GOLDEN-PIN.md beyan girdisi + Damla onayı
+ile taşınır.
+
 ## FREEZE (Denetim Z yeşilse)
 - git tag v1.0, golden v1.0 olarak yeniden pinlenir ve dondurulur.
 - Kapanış raporu: tüm YEŞİL tanımları + sayı serisi + PARK listesi tek
@@ -544,6 +553,27 @@ GEÇMEYEN madde = yalnız o madde için tek düzeltme + tek re-denetim
   paketi, review.waistNip/armholeHollow kararı, CLAUDE_API_KEY rotasyonu,
   avukat sorusu. Bu dosya arşiv niteliğindedir; yeni iş = yeni DEVAM
   dosyası + Damla onayı.
+
+- 2026-07-19 GOLDEN RE-PIN DALGASI (Damla ONAYI ile, freeze'in açık kalemi
+  KAPANDI): Damla adli rapor + fark özetini okudu ve re-pin'i şu etiketle
+  onayladı: **"Aldrich blok revizyonu (20cc289), kağıt-doğrulanmış,
+  muslin-bekliyor"**. Yapılan: (a) BEYANLI RE-PIN — golden-reference.csv
+  23034 → 23406 (HEAD regen, md5 7c3d83f2, adli dump'la cmp bayt-aynı);
+  beyan defteri engine/GOLDEN-PIN.md doğdu (etiket + içerik farkı + kanıt +
+  onay kaydı; pin tarihi orada). (b) GERÇEK GOLDEN CTEST — ctest golden_check
+  (46. test): her build'de taze dump REPO PİNİNE cmp'lenir; FAIL mesajı iki
+  dürüst yolu gösterir (motoru düzelt YA scripts/repin-golden.sh ile beyanlı
+  re-pin, etiket zorunlu, defter girdisi + Damla onayı şart) ve regen-vs-regen
+  yasağını açıkça söyler; mutasyonla kanıtlı (pin boz → FAIL + mesaj, restore
+  → PASS). (c) patches.html 3.26'ya DÜZELTME EKİ (EN/TR): "identical + 372
+  yeni kayıt" etiketinin gerçek hikâyesi (537/561 giysi yerinde değişim, maks
+  79,2mm; +372 = 62 etek dart bölünmesi; zincir motora dokunmadı, sunum
+  yanlıştı). (d) Z bölümüne kalıcı kural: golden doğrulaması daima pine karşı.
+  KANIT: ctest 46/46, golden_check PASS + mutasyon FAIL/restore kanıtlı,
+  repin-golden.sh no-op yolu test edildi. MUSLIN-BEKLİYOR: yeni pin kağıt
+  doğrulamalı ama dikilmiş kanıtı yok; İLK NUMUNE bigNeckSmallShoulder
+  gövdesinden (en büyük omuz deltası +75mm, riskin olduğu yer) — FAZ 1
+  numune işinin başlangıç noktası budur.
 
 ## PARK LİSTESİ
 > (A1 gereği ertelenen her şey buraya: resimli adım talimatları, listing
