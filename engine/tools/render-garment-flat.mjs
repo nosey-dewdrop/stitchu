@@ -42,6 +42,72 @@ const svgDoc = (w, h, inner) =>
 const n = (v) => (Math.round(v * 10) / 10).toFixed(1);
 
 // ---------------------------------------------------------------------------
+// PORT: Damla kalem dili — REFERANS KALEM'den (engine/flat-engine/_engine-full.mjs)
+// alınan taper mürekkep + deterministik drape planı. Şematik düz çizgi yerine
+// el-çizimi karakteri: kıvrımlar taper'la kalınlaşıp incelir, drape planı ana
+// sırt (köşeye giden) + sönen ikincil kıvrımları asimetrik dağıtır.
+// ---------------------------------------------------------------------------
+// deterministik gürültü (aynı seed = aynı çizim; MIHENK-01 randomluk dersi)
+function rng(seed) {
+  let s = seed >>> 0;
+  return function () {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// cubic bezier noktası
+function cubicPt(s, t) {
+  const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+  return [a * s[0] + b * s[2] + c * s[4] + d * s[6], a * s[1] + b * s[3] + c * s[5] + d * s[7]];
+}
+function samplePts(p0, c1, c2, p1, m) {
+  const s = [p0[0], p0[1], c1[0], c1[1], c2[0], c2[1], p1[0], p1[1]], out = [];
+  for (let i = 0; i <= m; i++) out.push(cubicPt(s, i / m));
+  return out;
+}
+// TAPER: bir nokta dizisini, ortası kalın uçları sivri kapalı bir mürekkep
+// şeridine çevirir (REFERANS KALEM'deki taper ile aynı matematik). bias eğrisi
+// kalınlığın nasıl doğup söndüğünü ayarlar.
+function taperInk(pts, maxw, bias, color) {
+  const L = pts.length, a = [], b = [];
+  for (let i = 0; i < L; i++) {
+    const t = L > 1 ? i / (L - 1) : 0.5;
+    const q = pts[Math.min(i + 1, L - 1)], r = pts[Math.max(i - 1, 0)];
+    const dx = q[0] - r[0], dy = q[1] - r[1], d = Math.hypot(dx, dy) || 1;
+    const w = maxw * 0.5 * Math.pow(Math.sin(Math.PI * Math.min(Math.max(t, 0.002), 0.998)), bias || 0.5);
+    a.push([pts[i][0] - dy / d * w, pts[i][1] + dx / d * w]);
+    b.push([pts[i][0] + dy / d * w, pts[i][1] - dx / d * w]);
+  }
+  let s = `M ${n(a[0][0])} ${n(a[0][1])}`;
+  for (let i = 1; i < L; i++) s += ` L ${n(a[i][0])} ${n(a[i][1])}`;
+  for (let i = L - 1; i >= 0; i--) s += ` L ${n(b[i][0])} ${n(b[i][1])}`;
+  return `<path d="${s} Z" fill="${color || NAVY}" stroke="none"/>`;
+}
+// DRAPE PLANI: n kıvrım, ana sırt (köşeye giden, prim) + sönen ikincil.
+// REFERANS KALEM drapePlan mantığı: ink rejimi kıvrım sayısını verir, deterministik
+// jitter yerlerini dağıtır, orta ön temiz kalır.
+function drapePlan(seed, ink, foldCount, drape) {
+  const rnd = rng(seed);
+  const cnt = ink === 'minimal' ? 2 : ink === 'orta' ? 3 : Math.max(2, Math.round((foldCount || 10) / 2));
+  const R = [], CORE = 0.20;
+  for (let i = 0; i < cnt; i++) {
+    const prim = i % 2 === 0, base = (i + 0.65) / (cnt + 0.25);
+    const u = Math.min(0.96, Math.max(0.04, base + (rnd() - 0.5) * 0.8 / cnt));
+    R.push({ u: CORE + (1 - CORE) * u, prim,
+      swing: prim ? 0.55 + rnd() * 0.45 : 0.15 + rnd() * 0.30,
+      birth: prim ? rnd() * 0.05 : (0.14 + rnd() * 0.30) * (drape || 1),
+      die: prim ? 1 : 0.40 + rnd() * 0.35,
+      sway: (rnd() - 0.5) * 0.45 });
+  }
+  R.sort((a, b) => a.u - b.u);
+  R[R.length - 1].prim = true; R[0].prim = false; // orta ön temiz
+  if (ink === 'minimal') R.forEach((r) => { r.prim = true; });
+  return R;
+}
+
+// ---------------------------------------------------------------------------
 // Body proportions for the flat (illustration units, NOT mm — this is a fashion
 // drawing, not the pattern). x=0 is center front/back; y grows downward from the
 // shoulder line. We draw the RIGHT half (positive x) and mirror it.
@@ -387,18 +453,33 @@ function interior(g, spec, view) {
     }
   }
 
-  // gather (drawstring / shirred / smocked) — thin horizontal or tick band
+  // PORT: BÜZGÜ PANOSU (REFERANS KALEM shirr dili). Düz paralel çizgi yerine
+  // dalgalı taper büzgü sıraları — panonun toplanan dokusu. drawstring için
+  // ayrıca casing (kanal) çizgisi. Referans kalemdeki dalgalı taper karakteri.
   if (spec.gatherType) {
     const zoneY = spec.gatherZone === 1 ? 60 : spec.gatherZone === 2 ? waistY - 6 : g.neck.depth + 14;
     const halfW = g.chestW * 0.9;
-    if (spec.gatherType === 1) {                 // drawstring: two parallel channels
-      for (const off of [-5, 5]) {
+    const gseed = (isBack ? 71 : 23) + Math.round(halfW) * 3 + Math.round(zoneY);
+    const grnd = rng(gseed);
+    // panonun dikey kapsamı: casing/üst kenardan empire seam'e kadar birkaç sıra
+    const rowTop = spec.gatherType === 1 ? zoneY : Math.max(g.neck.depth + 16, zoneY - 24);
+    const rowBot = spec.gatherType === 1 ? zoneY + 16 : Math.min((g.isDress ? waistY : g.hemY * 0.5) - 6, zoneY + 22);
+    const rows = spec.gatherType === 1 ? 2 : 4;
+    if (spec.gatherType === 1) {                 // drawstring: iki casing çizgisi + fiyonk deliği
+      for (const off of [0, 10]) {
         s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
       }
-    } else {                                      // shirred / smocked: tick band
-      for (let x = -halfW; x <= halfW; x += 13) {
-        s += `<line x1="${n(x)}" y1="${n(zoneY - 7)}" x2="${n(x)}" y2="${n(zoneY + 7)}" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
+    }
+    // dalgalı taper büzgü sıraları (drawstring casing altında, shirred tüm panoda)
+    for (let i = 0; i < rows; i++) {
+      const ry = rows > 1 ? rowTop + (rowBot - rowTop) * (i / (rows - 1)) : rowTop;
+      const bumps = Math.max(4, Math.round(5 + (grnd() - 0.5) * 2));
+      const amp = 0.9 + grnd() * 0.9, ph = grnd() * Math.PI, pts = [];
+      for (let b = 0; b <= bumps * 2; b++) {
+        const u = b / (bumps * 2);
+        pts.push([-halfW + (2 * halfW) * u, ry + Math.sin(ph + u * bumps * Math.PI) * amp]);
       }
+      s += taperInk(pts, 1.3, 0.35, SEAM);
     }
   }
 
@@ -418,6 +499,49 @@ function interior(g, spec, view) {
     if (spec.backOpening && spec.backOpening > 0) {
       s += `<path d="M ${n(-g.neck.half * 0.72)} ${n(g.neck.depth + 6)} Q 0 ${n(waistY * 0.5)} ${n(g.neck.half * 0.72)} ${n(g.neck.depth + 6)}" ` +
         `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="4 3"/>`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // PORT: DRAPE MÜREKKEBİ (REFERANS KALEM dili). Boş etek yerine el-çizimi
+  // kıvrımlar — ana sırt (skirtBottom'a inen, taper kalın) + sönen ikincil
+  // (yarı yolda biter, ince). Gathered/full etekte yoğun, düz etekte az.
+  // Şematik boş etek MIHENK-01 "vektör-şema" hissinin yarısıydı.
+  // -------------------------------------------------------------------------
+  {
+    const skirtTop = g.isDress ? waistY : (g.hemY - (g.hemY - waistY) * 0.5);
+    const skirtBot = g.hemY;
+    const topHalf = g.isDress ? g.waistW * 1.0 : g.chestW * 0.9;
+    const botHalf = g.hemHalf;
+    const st = spec.skirtStyle || (g.isDress ? 'aLine' : 'shift');
+    const full = st === 'gathered' || st === 'full' || st === 'circle';
+    const ink = full ? 'orta' : (spec.ink || 'minimal');
+    if (skirtBot - skirtTop > 30) {                 // sadece görünür bir etek varsa
+      const seed = (isBack ? 977 : 131) + Math.round(botHalf) * 7 + Math.round(g.hemY);
+      const plan = drapePlan(seed, ink, spec.foldCount, spec.drape);
+      for (const r of plan) {
+        for (const dir of [-1, 1]) {
+          // başlangıç: etek üstünde, orta ile yan arası u konumunda
+          const su = 0.14 + r.u * 0.5;
+          const ax = dir * topHalf * su;
+          const ay = skirtTop + 4 + r.birth * (skirtBot - skirtTop) * 0.55;
+          // bitiş: prim ise ete kadar dışa savrulur, ikincil yarı yolda söner
+          const endU = r.prim ? (0.55 + r.u * 0.4) : r.u * 0.85;
+          const bx = dir * botHalf * endU;
+          const by = r.prim ? skirtBot - 3 : skirtTop + (skirtBot - skirtTop) * r.die;
+          const h = by - ay;
+          const c1 = [ax + (bx - ax) * (r.prim ? 0.10 : 0.18), ay + h * 0.40];
+          const c2 = [bx - (bx - ax) * 0.10, by - h * (r.prim ? 0.46 : 0.58)];
+          const line = samplePts([ax, ay], c1, c2, [bx, by], 14);
+          if (ink === 'minimal') {
+            // kısa izler: büzgü altında + ete yakın (referans kalem minimal reji)
+            s += taperInk(line.slice(0, 4), 1.3, 0.55, SEAM);
+            s += taperInk(line.slice(9), 1.5, 0.5, SEAM);
+          } else {
+            s += taperInk(line, r.prim ? 1.8 : 0.95, r.prim ? 0.34 : 0.62, SEAM);
+          }
+        }
+      }
     }
   }
 
