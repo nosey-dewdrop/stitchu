@@ -28,6 +28,39 @@ Her giriş: `gerekçe (Damla'nın sözü)` → `parametre çevirisi (gusto-lint 
 
 **EMİR:** mevcut render üzerine iyileştirme YAPMA. Form sıfırdan strapless kurulsun; referansın babydoll'u (band + fiyonk + shirr dalgası + tarak hem) birebir hedef. Bu, gusto-lint silhouette_grammar + composition boyutlarının port-öncesi kör noktası — form yanlışsa çizgi dili düzelse de "aynı evren değil".
 
+### ANA MADDE — FİGÜR KURALI + KALEM DİLİ GENELLEMESİ (2026-07-20, kartlar MIHENK-06/07/08 üçü de reject)
+**Damla'nın sözü (ortak kök neden):** prenses/wrap/gode ÜÇÜ de eski üretim kalemiyle
+çiziliyor; referans kalemin dili band-top köprüsüyle SADECE babydoll ailesine taşınmış,
+diğer siluetler şematik. İki kusur her üçünde:
+1. **FİGÜR ÜÇGEN/HUNİ:** gövde omuzdan eteğe düz genişliyor. Damla'nın figür dili GERÇEK
+   38 beden kadın: **bel oyulur, kalça dolgun, omuz-kalça dengeli; elbise bir VÜCUDUN
+   üstünde durur gibi okunmalı.** Üçgen/huni/heyula gövde YASAK.
+2. **CETVEL HEM + GEOMETRİ-DEĞİL-KUMAŞ:** hem düz yay, seam düz Q-flare, gode panelleri
+   kumaştan değil geometriden açılıyor; döküm/akış yok. Referans kalemin dalgalı hem
+   (hemPoints), drape (drapePlan), taper mürekkep dili şart.
+
+**PARAMETRE ÇEVİRİSİ (BÜYÜK İŞ — kalem dili genellemesi):**
+1. **Figür grameri portu:** referans kalem buildHalf'in figür S-eğrisi (waistNip ile bel
+   daralması + skirtFull ile kalça/etek dolgunluğu + armholeHollow oyuntu + omuz eğimi +
+   bust apex kavisi) üretim renderer'ın halfOutline'ına TÜM siluetlere taşınır. Mevcut
+   üretim nip'i VAR ama zayıf (tube okuyor) — referans oranlarına çekilir.
+2. **Dalgalı hem + drape + taper:** hemPoints (dalgalı etek ucu), drapePlan asimetri,
+   taper mürekkep üretim renderer'ın etek/hem yolunda kullanılır (şu an düz Q + düz drape).
+3. **Wrap asimetrik surplice:** sahte simetrik vNeck notch + kesik overlap çizgisi YASAK.
+   Outline'ın bir yarısı gerçekten surplice V ile kesilir (asimetrik, F3 hakkı); overlap
+   gerçek sarma akışı gibi (kesik dikiş izi değil).
+4. **gode döküm:** panel seam'leri düz Q-flare değil, kumaş dökümü gibi hafif S + hem'de
+   dalgalanma (referans hem dili).
+
+**gusto-lint bağlantısı (yeni ölçü adayları, korpus donmuş — v1.1 sonrası):**
+- **figure_ratio** boyutu: bel/omuz oranı < 1 (bel daralmış), kalça/bel oranı > 1 (kalça
+  dolgun) — üçgen gövde (monoton genişleme) eşik-altı. Şu an silhouette_grammar bunu
+  yakalamıyor (spec kombosuna bakıyor, figür S-eğrisine değil).
+- **hem_liveliness:** hem düz yay mı dalgalı mı (nokta sayısı + y-varyansı).
+
+**EMİR (Damla):** acele yok, DOĞRU olsun. Üç mihenk de YENİ dille yeniden üretilir,
+ızgaralar aynı formatta. Bu v1.1 tag'inin ÖNÜNDE.
+
 ## Bilinen zevk sınırları (mevcut hafızadan tohum, henüz kart değil)
 Bunlar Damla'nın geçmiş sözlerinden; kart reddi geldiğinde buraya taşınıp gusto-lint ölçüsüne bağlanacak:
 - "ölü büzgü" → gather_density_ratio bandı + drape fold canlılığı (composition_bands); büzgü var ama hareketsiz görünüyorsa

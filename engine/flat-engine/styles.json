@@ -16,7 +16,38 @@
     "hemDip": 2.0,
     "seed": 7
   },
+  "_FIGURE_RULE": "GERÇEK 38 BEDEN KADIN (Damla 2026-07-20, taste-lexicon ana madde). Figür buildHalf'te MERKEZİ ve TÜM stiller miras alır: bel oyulur (eX=emp·(1-waistNip)), kalça/etek dolgun (hX=emp·((1-waistNip)+(skirtFull-1))), omuz-kalça dengeli, dalgalı hem (hemPoints), drape (drapePlan), taper mürekkep, 3 katman çizgi hiyerarşisi. Üçgen/huni/tube gövde YASAK. Elbise bir vücudun üstünde durur gibi okunur. Stil başına tekrar yazılmaz; yeni siluet bu kapıdan girer. Dress-uzunluk stilleri figureNip ile daha belirgin bel çeker (mini babydoll pinleri etkilenmez).",
   "styles": {
+    "princess_dress": {
+      "label": "princess-seam fitted dress (mihenk 1)",
+      "top": "shoulder",
+      "neckline": "v",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 12.0,
+        "neckDepthBack": 3.0,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 6.0,
+        "capPuff": 1.4,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.30,
+        "skirtFull": 1.55
+      }
+    },
     "drawstring_babydoll": {
       "label": "square-neck drawstring",
       "top": "band",
