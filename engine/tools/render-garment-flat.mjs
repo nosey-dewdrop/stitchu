@@ -712,6 +712,27 @@ async function tryReferencePen(spec) {
   if (!styleKey && (spec.top === 'band' || spec.neckline === 'strapless')) {
     styleKey = 'drawstring_babydoll';
   }
+  // TOP family (2026-07-20, item 8/9 — first bare-top production round). A plain
+  // sleeveless top with no beyond-engine detail routes to the matching reference
+  // top style so it draws figured, NOT through the schematic fallback. Only the
+  // simplest, detail-free tops match here; anything with sleeves/collar/gather/etc
+  // falls through until those primitives land in the reference pen.
+  if (!styleKey && spec.garment === 'top') {
+    const bare = (spec.sleeveStyle == null || spec.sleeveStyle === 'none')
+      && (!spec.collar || spec.collar.type == null || spec.collar.type === 'none')
+      && (spec.gatherType == null || spec.gatherType === 'none')
+      && (spec.peplum == null || spec.peplum === 'none')
+      && (spec.hemRuffle == null || spec.hemRuffle === 'none')
+      && (!spec.straps || spec.straps.type == null || spec.straps.type === 'none')
+      && (spec.tieClosure == null || spec.tieClosure === 'none')
+      && (!spec.closure || spec.closure.type == null || spec.closure.type === 'none' || spec.closure.type === 'buttons');
+    if (bare) {
+      const nl = spec.neckline;
+      if ((nl === 'boat' || nl === 'square') && spec.shaping === 'princess') styleKey = 'top_boat_princess';
+      else if (nl === 'scoop') styleKey = 'top_scoop_cami';
+      else if (nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') styleKey = 'top_crew_dart';
+    }
+  }
   if (!styleKey || !ref.STYLE[styleKey]) return null;
   try {
     // shared parametreleri spec'ten geçir (beden/boy/etek/düşüş/nip korunur)

@@ -107,6 +107,82 @@
         "wrapDir": 1
       }
     },
+    "top_boat_princess": {
+      "label": "boatneck sleeveless princess top (hedef 23)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "boat",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.42,
+        "neckDepth": 7.0,
+        "neckDepthBack": 4.0,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.10,
+        "yokeDrop": 12,
+        "waistNip": 0.16
+      }
+    },
+    "top_crew_dart": {
+      "label": "crew-neck sleeveless darted tank top (hedef 88)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 0.92,
+        "neckDepth": 12.0,
+        "neckDepthBack": 5.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.14
+      }
+    },
+    "top_scoop_cami": {
+      "label": "scoop-neck sleeveless cami top (hedef 90)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "scoop",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 22.0,
+        "neckDepthBack": 12.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.12
+      }
+    },
     "drawstring_babydoll": {
       "label": "square-neck drawstring",
       "top": "band",
