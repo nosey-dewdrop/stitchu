@@ -55,3 +55,6 @@ reports/gate/*.html
 
 # harici arac dizini (bu zincir yaratmadi)
 .operator/
+
+# emsal reference flats (Damla private taste corpus, never push)
+design_patterns/
