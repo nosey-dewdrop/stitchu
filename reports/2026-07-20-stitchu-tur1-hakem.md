@@ -138,3 +138,29 @@ Koltuk-altı düz iner, balon GİTTİ. Geniş yuvarlak scoop yaka doğru (V değ
 
 ### Kalan kusur (tek cümle)
 Fix crew/scoop'ta balonu temizledi ama id23 (boat + princess) hâlâ koltuk altında dışa-şişen balon taşıyor — princess/boat dalı düzeltmeden hariç kalmış görünüyor.
+
+---
+
+## tur1d — id23 yeniden yargı (bust genişliği underarm içine çekildi, bağımsız hakem)
+
+Motor FLAT'i id23 için bir kez daha düzeltildi (bust genişliği underarm İÇİNE çekildi = yan-dikiş balonu fix). Yeniden üretilip (/tmp/judge5-23.svg → w5.png) gözle yargılandı. Motor/contract/styles.json'a dokunulmadı; sadece üret+gör+karar.
+
+### id23 (boat + princess) — FLAT **PASS**
+- **Balon GİTTİ.** Kolsuz kenar/yan dikiş artık omuzdan aşağı temiz iniyor; koltuk altında dışa-şişen yumru yok. En geniş nokta OMUZ hizasında; yan dikiş içeri bel oyuğuna, oradan düz heme akıyor. Önceki tur1c'deki tek kusur (koltuk-altı/armhole balonu) temizlendi — fix bu hedefte TUTTU.
+- **Yaka:** geniş+sığ yuvarlak boat/bateau, yüksek oturuyor, omuzdan omuza yakın — doğru (emsal 66-2 geniş-sığ yaka ailesi).
+- **Kolsuz:** evet, temiz armhole, kol yok.
+- **Princess dikişi:** ön iki eğrisel dikiş armhole ortasından bust apeksinden heme, simetrik, anatomik (66-2 princess yerleşimi). Arka CB dikişi + iki princess çizgisiyle aynalı.
+- **Figür:** bel oyuğu belirgin, hem düz+dashed hizalı — emsal seviye.
+- Ölçüt "emsalden ayırt edilemez kötü DEĞİL": karşılıyor.
+
+### Çift kanat (id23)
+FLAT **PASS** + KALIP **PASS** (kalıp önceki turda geçmişti: 0 issue, Δ≈0mm, 5 parça) → id23 GEÇTİ.
+
+### Bu tur toplam kapsam
+| id | FLAT | KALIP | GEÇTİ? |
+|----|------|-------|--------|
+| 88 | PASS | PASS  | EVET (önceki tur) |
+| 90 | PASS | PASS  | EVET (önceki tur) |
+| 23 | PASS | PASS  | EVET (tur1d) |
+
+**GEÇEN: 3/3** (88 + 90 + 23). Kolsuz-princess/boat balon kusuru üç hedefte de temizlendi.
