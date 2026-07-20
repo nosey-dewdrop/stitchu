@@ -48,6 +48,65 @@
         "skirtFull": 1.55
       }
     },
+    "gore_skirt_dress": {
+      "label": "6-gore godet midi dress (mihenk 3)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "gorePanels": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 6.0,
+        "neckDepthBack": 3.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.26,
+        "skirtFull": 1.7,
+        "goreCount": 6
+      }
+    },
+    "wrap_dress": {
+      "label": "surplice wrap dress with waist tie (mihenk 2)",
+      "top": "shoulder",
+      "neckline": "wrap",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "wrapSurplice": true,
+        "wrapTie": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 20.0,
+        "neckDepthBack": 3.0,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 6.0,
+        "capPuff": 1.4,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.6,
+        "wrapDir": 1
+      }
+    },
     "drawstring_babydoll": {
       "label": "square-neck drawstring",
       "top": "band",

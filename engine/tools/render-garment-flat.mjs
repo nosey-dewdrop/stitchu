@@ -698,22 +698,23 @@ function viewPanel(spec, view) {
 // yoksa üretim kendi flat yolunu kullanır (prenses, shift, vb).
 // ---------------------------------------------------------------------------
 async function tryReferencePen(spec) {
-  // Bu spec bir band-top/strapless babydoll mı? İşaretler: strapless neckline,
-  // band top, ya da açıkça referenceStyle verilmiş.
-  const wantsBand =
-    spec.referenceStyle ||
-    spec.top === 'band' ||
-    spec.neckline === 'strapless' ||
-    spec.style === 'drawstring_babydoll' ||
-    spec.style === 'lace_vneck_70s' ||
-    spec.style === 'peterpan_puff' ||
-    spec.style === 'courtney_lace_vneck';
-  if (!wantsBand) return null;
-  const styleKey = spec.referenceStyle || spec.style || 'drawstring_babydoll';
+  // TEK HAKİKAT, TEK KALEM (Damla kararı 2026-07-20): referans motor artık band-top
+  // babydoll ailesinin ÖTESİNDE prenses/wrap/gode gibi TÜM figür-tabanlı siluetleri
+  // de çiziyor (figür kuralı + kalem dili orada MERKEZİ). Üretim renderer bu ailelerde
+  // KENDİ şematik gövde yolunu KULLANMAZ — referans stiline eşleşen HER spec köprüden
+  // geçer (ikinci kalem = beş-turluk sosis/parantez/çadır krizinin kök nedeniydi).
+  // Kapı: spec bir referans STYLE anahtarına eşleşiyor (referenceStyle / style / band
+  // işareti). Eşleşme yoksa üretim kendi yolunu kullanır (henüz referansta olmayan formlar).
+  let ref;
+  try { ref = await import('../flat-engine/_engine-full.mjs'); } catch { return null; }
+  // aday stil anahtarı: explicit referenceStyle > style > band işaretlerinden çıkarım
+  let styleKey = spec.referenceStyle || spec.style || null;
+  if (!styleKey && (spec.top === 'band' || spec.neckline === 'strapless')) {
+    styleKey = 'drawstring_babydoll';
+  }
+  if (!styleKey || !ref.STYLE[styleKey]) return null;
   try {
-    const ref = await import('../flat-engine/_engine-full.mjs');
-    if (!ref.STYLE[styleKey]) return null;
-    // shared parametreleri spec'ten geçir (beden/boy/etek/düşüş korunur)
+    // shared parametreleri spec'ten geçir (beden/boy/etek/düşüş/nip korunur)
     const overrides = {};
     for (const k of ['size', 'length', 'skirtFull', 'ink', 'foldCount', 'hemWave', 'drape', 'hemDip', 'seed', 'bustProject', 'bustHeight', 'waistNip']) {
       if (spec[k] != null) overrides[k] = spec[k];
