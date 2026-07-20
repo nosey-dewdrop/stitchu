@@ -44,7 +44,7 @@
         "capPuff": 1.4,
         "cuffGather": 0,
         "yokeDrop": 12,
-        "waistNip": 0.30,
+        "waistNip": 0.3,
         "skirtFull": 1.55
       }
     },
@@ -128,7 +128,7 @@
         "neckDepth": 7.0,
         "neckDepthBack": 4.0,
         "shoulderSlope": 1.5,
-        "armholeHollow": 0.10,
+        "armholeHollow": 0.1,
         "yokeDrop": 12,
         "waistNip": 0.16
       }
@@ -182,6 +182,32 @@
         "yokeDrop": 12,
         "waistNip": 0.12
       }
+    },
+    "top_crew_boxy_crop": {
+      "label": "crew-neck sleeveless boxy crop tank (hedef 82)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "cropped",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1.0,
+        "neckDepth": 11.0,
+        "neckDepthBack": 5.0,
+        "shoulderSlope": 1.3,
+        "armholeHollow": 0.14,
+        "yokeDrop": 12,
+        "waistNip": 0.03
+      },
+      "boxy": true
     },
     "drawstring_babydoll": {
       "label": "square-neck drawstring",
@@ -305,6 +331,36 @@
         "yokeDrop": 11
       },
       "note": "photo-derived: deep V + cream lace trim, short sheer puff sleeves with lace cuff frill, CF ribbon bow with long streamers, empire waist, flowy gathered mini with sheer hem edge"
+    },
+    "top_crew_boxy_sleeve": {
+      "label": "crew boxy drop-shoulder short-sleeve tee (hedef 65)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1.0,
+        "neckDepth": 10.0,
+        "neckDepthBack": 5.0,
+        "shoulderSlope": 1.4,
+        "armholeHollow": 0.14,
+        "yokeDrop": 12,
+        "waistNip": 0.03,
+        "sleeveLen": 10,
+        "sleeveWidth": 7.0,
+        "capPuff": 0,
+        "cuffGather": 0
+      },
+      "boxy": true
     }
   }
 }

@@ -1,0 +1,52 @@
+{
+ "meta": {
+  "baslangic": "2026-07-21 gece protokolu v2",
+  "taban_sayac": 3,
+  "toplam_hedef": 103
+ },
+ "gecen": [
+  {
+   "hedefId": 23,
+   "durum": "GECTI",
+   "hakem": "tur1d boat princess",
+   "worstD": "~0mm",
+   "zaman": "2026-07-20"
+  },
+  {
+   "hedefId": 88,
+   "durum": "GECTI",
+   "hakem": "tur1c crew",
+   "worstD": "0.71mm",
+   "zaman": "2026-07-20"
+  },
+  {
+   "hedefId": 90,
+   "durum": "GECTI",
+   "hakem": "tur1c scoop",
+   "worstD": "0.71mm",
+   "zaman": "2026-07-20"
+  },
+  {
+   "hedefId": 82,
+   "durum": "GECTI",
+   "hakem": "boxy crop FLAT+KALIP",
+   "worstD": "0.12mm",
+   "zaman": "2026-07-21"
+  }
+ ],
+ "kirmizi": [
+  {
+   "hedefId": 65,
+   "durum": "KIRMIZI",
+   "sebep": "kollu top: sadece puffSleeve var, plain (duz) set-in sleeve yok; capPuff=0 bile cap eğrisini balon cizyor",
+   "deneme": 3,
+   "eksik_yetenek": "plain set-in sleeve (duz kisa/uzun kol)",
+   "zaman": "2026-07-21"
+  }
+ ],
+ "kalan_kuyruk_top_gap1": [
+  41,
+  95
+ ],
+ "sayac": 4
+}
