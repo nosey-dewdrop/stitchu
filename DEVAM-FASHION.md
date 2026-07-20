@@ -286,6 +286,32 @@ yapar. PASS + kuyruk boş → git tag v1.1, kapanış raporu, patch girdisi
   SIRADAKİ: MIHENK-04 kararı Damla'da (kalemim mi?); onaydan sonra STYLE-PIN +
   diğer stiller (lace_vneck_70s zengin test) ya da prenses/shift yolu.
 
+- 2026-07-20 GECE PROTOKOLÜ (Damla uyurken, mayoz zinciri + F3 + denetim):
+  **A-KATEGORİ İŞLER BİTTİ, 4 KART KUYRUKTA (Damla kararı bekliyor).** Mayoz 3 halka
+  (ilki kesin, sonrakiler taslak, her biri öncekinin kalemiyle):
+  (1) **MIHENK-06 prenses seam ızgarası** — 9-varyant kurallı seam taraması (kanca fix);
+  vekil taslak **p9** (en dik giriş, kanca yok, apex sağlam). MIHENK-02'nin kanca sorununu
+  çözer. (2) **MIHENK-07 wrap elbise** — YENİ opt-in `spec.wrap` (surplice çapraz apex'ten
+  geçen + underlap + yan-dikiş bel bağı); vekil taslak **w1** (kanonik), runner-up w3.
+  (3) **MIHENK-08 gode-flat** — YENİ `skirtStyle:'gore'` panel seam'leri (bel→hem godet
+  flare, goreCount motorla aynı 6); vekil taslak **g1** (motor-tutarlı 6-gore midi).
+  DAMLA-VEKİLİ: teacher-VLM rolü kendim (görsel yargı), gerekçeler reports/gate/proxy/*.md.
+  **DİSK-GÜVENLİ MOD**: Chrome/PNG diski doldurdu (Damla elle boşalttı) → görsel yargı SVG
+  GEOMETRİSİNDEN (piksel-doğrulanmadı, Damla sabah gözle bakar); harici VLM çağrısı yok.
+  **F3 cut-on-fold + nesting analizi** (rapor, kod yok): 29 parça 5 giysi, **0 fold-defekt**
+  (motor zaten her simetrik+closuresuz parçayı yarım çiziyor, "küp" örneği sağlı); nesting
+  fold-kazancı yok (zaten optimize); princess 9-parça emsal band üstü = v1.1 aday. Rapor
+  reports/2026-07-20-stitchu-f3-cutfold-nesting.md. **BAĞIMSIZ DENETİM PASS**: anayasa uyumlu,
+  golden+pin byte-identical, **0 pin/tag/golden yazımı** (kırmızı çizgi tam korundu), kapı
+  kayıtları tam, gusto w1=1.0 g1=0.9, ctest 48/48. Rapor reports/2026-07-20-stitchu-gece-
+  denetim.md. **v1.1 TAG'İN TEK ÖN KOŞULU: kuyruktaki 4 kartın (MIHENK-02/06/07/08) Damla
+  kararı** (C-kategori). DEĞİŞEN DOSYA: engine/tools/render-garment-flat.mjs (flat renderer,
+  motor C++ DOKUNULMADI). Push EDİLMEDİ (Damla onayıyla). NABIZ: reports/gate/NABIZ.md.
+  SIRADAKİ: Damla 4 kartı gözden geçirir → onaylar p9/w1/g1 → styles.json stilleri +
+  STYLE-PIN'ler + style_check → denetim tekrar → kuyruk boş + PASS → git tag v1.1.
+
 ## PARK
 > (resimli adım talimatları · figür ailesi · blog musluğu · made-to-measure ·
-> gusto-lint korpusu · Damla-zevk-modeli — sırası gelince ayrı DEVAM)
+> gusto-lint korpusu · Damla-zevk-modeli · wrap asimetrik surplice outline (F3 2. tur) ·
+> gore S-eğri seam cila (F3 2. tur) · princess emsal-band shaping-koşullu (v1.1) ·
+> Damla-zevk-modeli — sırası gelince ayrı DEVAM)
