@@ -3,8 +3,8 @@
   "type": "contact",
   "title": "prenses seam: 9 kurallı versiyon ızgarası (başlangıç/apex/giriş/bel)",
   "contact": "reports/gate/MIHENK-06-contact.html",
-  "status": "pending",
-  "reason": null,
+  "status": "rejected",
+  "reason": "eski üretim kalemi — prenses seam yeni dille değil, şematik gövde; kalem dili GENELLEMESİ gerek (referans kalemin bel-kalça kavisi/drape/taper TÜM ailelere), figür 38-beden kadın olmalı üçgen/huni değil",
   "createdAt": null,
   "decidedAt": null
 }

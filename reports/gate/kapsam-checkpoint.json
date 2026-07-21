@@ -32,6 +32,20 @@
    "hakem": "boxy crop FLAT+KALIP",
    "worstD": "0.12mm",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 15,
+   "durum": "GECTI",
+   "hakem": "princess scoop aLine mini dress",
+   "worstD": "0.116mm",
+   "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 29,
+   "durum": "GECTI",
+   "hakem": "princess scoop aLine midi dress",
+   "worstD": "0.116mm",
+   "zaman": "2026-07-21"
   }
  ],
  "kirmizi": [
@@ -48,5 +62,5 @@
   41,
   95
  ],
- "sayac": 4
+ "sayac": 6
 }

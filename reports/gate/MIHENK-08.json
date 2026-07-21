@@ -3,8 +3,8 @@
   "type": "contact",
   "title": "Godeli midi etek — gore flat kalemi (yeni primitif)",
   "contact": "reports/gate/MIHENK-08-contact.html",
-  "status": "pending",
-  "reason": null,
+  "status": "rejected",
+  "reason": "Ayni kok neden — eski kalem + ucgen figur + cetvel hem. Gode panellerin dokum akisi da yok (6-gore flare kumastan degil geometriden). Referans dil + figur kurallari + DRAPE-2 ile yeniden.",
   "createdAt": "2026-07-20",
   "decidedAt": null
 }

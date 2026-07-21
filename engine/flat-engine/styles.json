@@ -361,6 +361,60 @@
         "cuffGather": 0
       },
       "boxy": true
+    },
+    "dress_princess_scoop_aline": {
+      "label": "sleeveless princess scoop A-line mini dress (hedef 15)",
+      "top": "shoulder",
+      "neckline": "scoop",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 20.0,
+        "neckDepthBack": 10.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.5
+      },
+      "roundNeck": true
+    },
+    "dress_princess_scoop_aline_midi": {
+      "label": "sleeveless princess scoop A-line midi dress (hedef 29)",
+      "top": "shoulder",
+      "neckline": "scoop",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 20.0,
+        "neckDepthBack": 10.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.5
+      },
+      "roundNeck": true
     }
   }
 }

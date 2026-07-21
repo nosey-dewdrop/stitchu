@@ -55,7 +55,7 @@ var nip=Math.max(0.05,0.34-0.9*p.waistNip);if(st.top==='band'){var yTop=y0+p.str
 // hemen içine (shp*0.98) çek, balonu öldür. Guarded on garment==='top' → kollu
 // pinli stiller (underarm=bust, kol soketi geniş olmalı) byte-identical kalır.
 if(st.garment==='top'){uaX=cx+sz.shp*0.98*S;uaY=y0+sz.ad*0.88*S;}
-var yEmp2=uaY+p.yokeDrop*S;k.ny=ny;k.nX=nX;k.stX=stX;k.stY=stY;k.uaX=uaX;k.uaY=uaY;k.panelTop=y0+sz.ad*0.42*S;k.yEmp=yEmp2;k.bX=bustX;k.bustX=bustX;if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'){
+var yEmp2=uaY+p.yokeDrop*S;k.ny=ny;k.nX=nX;k.stX=stX;k.stY=stY;k.uaX=uaX;k.uaY=uaY;k.panelTop=y0+sz.ad*0.42*S;k.yEmp=yEmp2;k.bX=bustX;k.bustX=bustX;if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'||st.roundNeck){
   // TOP round neckline (2026-07-20 tur1 fix — hakem: crew/scoop front V'ye kaçıyordu).
   // A true crew/scoop is a wide U: flat-bottomed at CF (horizontal tangent held
   // LONGER), then a fast rise near the neck point. The old else-curve lifted its

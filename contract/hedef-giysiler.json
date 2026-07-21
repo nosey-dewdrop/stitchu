@@ -720,7 +720,8 @@
     "backSlit": "none",
     "peplum": "none",
     "hemRuffle": "none",
-    "ruffledStraps": "none"
+    "ruffledStraps": "none",
+    "referenceStyle": "dress_princess_scoop_aline"
    },
    "beyondEngine": [
     "dokulu tweed kumas"
@@ -1387,7 +1388,8 @@
     "backSlit": "none",
     "peplum": "none",
     "hemRuffle": "none",
-    "ruffledStraps": "none"
+    "ruffledStraps": "none",
+    "referenceStyle": "dress_princess_scoop_aline_midi"
    },
    "beyondEngine": [
     "gore/panelli flare etek"
