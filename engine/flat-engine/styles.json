@@ -415,6 +415,63 @@
         "skirtFull": 1.5
       },
       "roundNeck": true
+    },
+    "dress_boat_aline_tieback": {
+      "label": "boat sleeveless A-line dart back-tie mini dress (hedef 53)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "mini",
+      "roundNeck": true,
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "tieBack": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 7.0,
+        "neckDepthBack": 5.0,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.11,
+        "yokeDrop": 12,
+        "waistNip": 0.24,
+        "skirtFull": 1.45
+      }
+    },
+    "dress_square_cap_princess": {
+      "label": "square cap-sleeve princess half-circle midi dress (hedef 47)",
+      "top": "shoulder",
+      "neckline": "square",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 14.0,
+        "neckDepthBack": 6.0,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.3,
+        "skirtFull": 1.8,
+        "sleeveLen": 5,
+        "sleeveWidth": 5.5,
+        "capPuff": 1.0,
+        "cuffGather": 0
+      }
     }
   }
 }

@@ -2547,7 +2547,8 @@
     "backSlit": "none",
     "peplum": "none",
     "hemRuffle": "none",
-    "ruffledStraps": "none"
+    "ruffledStraps": "none",
+    "referenceStyle": "dress_boat_aline_tieback"
    },
    "beyondEngine": [
     "arkada baglanan bag"

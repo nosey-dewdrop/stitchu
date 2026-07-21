@@ -56,6 +56,14 @@
    "deneme": 3,
    "eksik_yetenek": "plain set-in sleeve (duz kisa/uzun kol)",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 47,
+   "durum": "KIRMIZI",
+   "sebep": "square yaka (buildHalf yuvarlak cizyor) + cap sleeve (puffSleeve balon) iki yeni primitif",
+   "deneme": 1,
+   "eksik_yetenek": "square neckline + cap sleeve",
+   "zaman": "2026-07-21"
   }
  ],
  "kalan_kuyruk_top_gap1": [
