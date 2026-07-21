@@ -1,0 +1,14 @@
+id23 K1 customer pack — draft report
+spec: {"garment":"top","shaping":"dart","waistline":"natural","fabric":"woven","neckline":"crew","sleeveStyle":"none","sleeveLength":null,"skirtStyle":null,"skirtLength":null,"topLength":"hip"}
+body EU38: {"bust":88,"waist":70,"hip":94,"shoulder":37,"backLength":40.5,"armLength":58,"neck":35}
+DRAFT OK — no engine error, no validator issue
+pieces: 3 (2 paper panels + 1 chalk/notion)
+fabric: 1.6 m at 140 cm wide
+guideSteps: 10
+  - Top Front | cut 1 on fold | SA 15mm
+  - Top Back | cut 2 | SA 15mm
+  - Bias binding (neckline + armholes) | cut 1 strip(s) 1116 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 1116 mm = edge 1096 mm + overlap), press in half, wrap the edge and trim the excess | SA 6mm
+A4 tiling: 9 sheet(s), grid 3 wide
+OUTPUT: id88-crew-dart-tank-a4.pdf — 12 pages (cover + test square + 9 pattern sheet(s) + gluing/sew guide)
+test square: 50 mm side, emitted at 141.732 pt (mm-true)
+PDF bytes: 45019

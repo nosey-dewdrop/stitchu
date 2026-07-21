@@ -53,17 +53,16 @@
    "hakem": "boat aLine tieBack dress",
    "worstD": "0.24mm",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 65,
+   "durum": "GECTI",
+   "hakem": "boxy short-sleeve tee, plainSleeve",
+   "worstD": "0.72mm",
+   "zaman": "2026-07-21"
   }
  ],
  "kirmizi": [
-  {
-   "hedefId": 65,
-   "durum": "KIRMIZI",
-   "sebep": "kollu top: sadece puffSleeve var, plain (duz) set-in sleeve yok; capPuff=0 bile cap eğrisini balon cizyor",
-   "deneme": 3,
-   "eksik_yetenek": "plain set-in sleeve (duz kisa/uzun kol)",
-   "zaman": "2026-07-21"
-  },
   {
    "hedefId": 47,
    "durum": "KIRMIZI",
@@ -77,5 +76,5 @@
   41,
   95
  ],
- "sayac": 7
+ "sayac": 8
 }

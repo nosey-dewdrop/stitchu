@@ -15,10 +15,12 @@ Pinli `drawstring_babydoll` (STYLE-PIN, md5 8b45e11b...) + `peterpan_puff` mevcu
 
 **Not:** babydoll'un elle-shirr'i aslında **casing/drawstring büzgüsü** (boyun kanalı), fizik-shirred ise **shirred bodice panel** — teknik olarak FARKLI iki şey. "İki büzgü yolu" bir çelişki değil, iki ayrı konstrüksiyon olabilir.
 
-## Golden diff özeti (bağlama denenmedi — mühür sonrası ölçülecek)
-- Değişecek path'ler: babydoll gövdesindeki shirr bloğu (render satır `pt.shirr`), ~6 elle satır → ~29 fizik fold.
-- Byte farkı: tahmini +2-4KB (fizik daha çok çizgi).
-- pinli outline (gövde/askı/hem) DEĞİŞMEZ, sadece iç shirr çizimi.
+## Golden diff özeti (Şerit D kontak, 2026-07-21 — reports/gate/kart-shirred/kontak.png)
+GÖRSEL KANIT: iki çıktı TEMELDE FARKLI konstrüksiyon:
+- **babydoll (pinli):** 22916 byte, 74 path — TAM giysi flat'i (ön+arka). shirr = büst altında ~6 ince yatay satır = **casing/drawstring büzgüsü** (boyun kanalı). Klasik ders-kitabı flat.
+- **fizik-shirred:** 29 fold path — TEK kumaş panel, üstte yoğunlaşan değişken-aralıklı fizik kat çizgileri (üstte sık, aşağı söner) = **fizikle-çözülmüş shirred bodice paneli**, giysi değil.
+- **SONUÇ:** ikisi FARKLI ŞEYLER — babydoll'un casing'i (kanal büzgüsü) ≠ fizik panel (bodice shirring). Fizik-shirred babydoll'un casing'ini DOĞRU çizemez (o kanal, panel değil). Bu, ÖNERİ (i)'yi güçlendirir: iki yol farklı konstrüksiyon, çelişki değil.
+- Bağlama denenirse babydoll shirr bloğu (~6 casing satırı) → fizik fold; byte +2-4KB; pinli outline değişmez ama iç çizim değişir → pin kırılır.
 
 ## İki alternatifin dürüst maliyeti
 
