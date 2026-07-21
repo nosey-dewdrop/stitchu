@@ -79,17 +79,23 @@ const FLAT_TO_DRAFT = {
   backSeam: (p) => p.pieces.some((x) => /Back/.test(x.name)
     && /center back seam|cut 2/.test(x.cutInstruction)),
   collar:   (p) => hasPiece(p, /Collar/),
+  princessSeam: (p) => hasPiece(p, /Side Front|Center Front/),  // draft princess split pieces carry the seam
+  gorePanels: (p) => hasPiece(p, /gore|Gore/),                  // draft gore panel piece(s)
+  wrapTie:  () => false,      // ink-only wrap waist tie (the draft carries wrap via closure) — allowlisted
+  wrapSurplice: () => false,  // ink-only surplice edge (asymmetric overlap line) — allowlisted
   cfGather: () => false,   // ink-only decoration — must be allowlisted
   laceNeck: () => false,   // lace trim — must be allowlisted (undrawable, A1)
   laceSleeve: () => false,
   laceHem:  () => false,
 };
 // DRAFT pieces that a worn fashion flat represents implicitly / legitimately:
-const BODY_RE = /^(Bodice|Skirt) (Front|Back)$/;                 // the silhouette itself
+const BODY_RE = /^(Bodice|Skirt|Top) (Front|Back)$/;             // the silhouette itself (Top = the top-garment bodice block)
 const INTERNAL_RE = /Bias binding|Neck Facing|Armhole Facing/;   // inside the garment, invisible worn
 const PIECE_TO_FLAT = [
   { re: /Sleeve/, part: 'sleeve' },
   { re: /Collar/, part: 'collar' },
+  { re: /gore|Gore/, part: 'gorePanels' },                       // gore skirt panel(s)
+  { re: /Side Front|Side Back|Center Front|Center Back/, part: 'princessSeam' }, // princess split pieces
   { re: /Panel/, part: 'shirr' },
   { re: /Cord/, part: 'tie' },
   { re: /^Neck\/Front Tie|Tie \(/, part: 'tie' },
@@ -105,7 +111,7 @@ const allowStructural = (style, item, side) => truth.structuralAllow.some((a) =>
 const verts = (piece) => piece.commands.filter((c) => c.x !== undefined).map((c) => [c.x, c.y]);
 function draftLandmarks(pat) {
   const L = {};
-  const bf = pat.pieces.find((x) => x.name === 'Bodice Front');
+  const bf = pat.pieces.find((x) => x.name === 'Bodice Front' || x.name === 'Top Front');
   const sf = pat.pieces.find((x) => x.name === 'Skirt Front');
   const sl = pat.pieces.find((x) => /Sleeve/.test(x.name));
   const panel = pat.pieces.find((x) => /Panel/.test(x.name));
@@ -165,8 +171,9 @@ function flatLandmarks(styleKey) {
   // flat.derived) — its derived cut number IS finished x draft.gatherRatios.
   return L;
 }
-const allowLandmark = (style, lm) => truth.landmarkAllow.find((a) =>
-  (a.style === '*' || a.style === style) && a.landmark === lm);
+const allowLandmark = (style, lm) => // exact-style pin overrides the '*' wildcard
+  truth.landmarkAllow.find((a) => a.style === style && a.landmark === lm)
+  || truth.landmarkAllow.find((a) => a.style === '*' && a.landmark === lm);
 
 // ---- run ---------------------------------------------------------------------
 const engine = await createEngine();
