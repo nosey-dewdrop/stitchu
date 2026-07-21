@@ -1488,8 +1488,7 @@
     "backSlit": "none",
     "peplum": "full",
     "hemRuffle": "none",
-    "ruffledStraps": "none",
-    "referenceStyle": "top_shirred_peplum"
+    "ruffledStraps": "none"
    },
    "beyondEngine": [
     "shirred/buzgulu ust govde paneli",
@@ -2119,8 +2118,7 @@
     "backSlit": "none",
     "peplum": "full",
     "hemRuffle": "none",
-    "ruffledStraps": "none",
-    "referenceStyle": "top_puff_shirred_peplum"
+    "ruffledStraps": "none"
    },
    "beyondEngine": [
     "tam shirred/smocked govde (elastik buzgu grid)",

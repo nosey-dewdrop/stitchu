@@ -52,3 +52,5 @@ Emsal: ar-202432-1.png (The OG Top, square shirred puff peplum).
 **2/2 GEÇTİ.**
 
 Not: Peplum, top gövdesinde grown-on çiziliyor (ayrı "Peplum" parçası yok) — bu bir kusur değil, empire+peplum=full tasarımının doğru konstruksiyonu; hem-genişlik ölçümü flare'i doğruluyor. Küçük büzgü çizgisi konumu bloklamadı; giysi her iki hedefte de tanınır ve emsal-seviye.
+
+## GECERSIZ (2026-07-22): crew ikamesiyle uretildi, square yaka yok. id31/44 URETILEMEZ isaretlendi. Bu hakem karari SAYILMAZ. Gercek square primitifi eklenince yeniden kosulacak.
