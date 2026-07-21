@@ -444,15 +444,18 @@
         "skirtFull": 1.45
       }
     },
-    "dress_square_cap_princess": {
-      "label": "square cap-sleeve princess half-circle midi dress (hedef 47)",
+    "top_princess_peplum": {
+      "label": "sleeveless princess crew peplum frill top (hedef 41)",
       "top": "shoulder",
-      "neckline": "square",
-      "length": "midi",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "peplum": "full",
+      "roundNeck": true,
       "parts": {
         "straps": false,
         "collar": false,
-        "sleeve": true,
+        "sleeve": false,
         "shirr": false,
         "casing": false,
         "tie": false,
@@ -460,18 +463,13 @@
         "princessSeam": true
       },
       "own": {
-        "neckWidth": 1.15,
-        "neckDepth": 14.0,
-        "neckDepthBack": 6.0,
+        "neckWidth": 1.0,
+        "neckDepth": 11.0,
+        "neckDepthBack": 5.0,
         "shoulderSlope": 1.5,
         "armholeHollow": 0.12,
         "yokeDrop": 12,
-        "waistNip": 0.3,
-        "skirtFull": 1.8,
-        "sleeveLen": 5,
-        "sleeveWidth": 5.5,
-        "capPuff": 1.0,
-        "cuffGather": 0
+        "waistNip": 0.22
       }
     }
   }

@@ -1973,7 +1973,8 @@
     "backSlit": "none",
     "peplum": "full",
     "hemRuffle": "none",
-    "ruffledStraps": "none"
+    "ruffledStraps": "none",
+    "referenceStyle": "top_princess_peplum"
    },
    "beyondEngine": [
     "belde flared peplum volani (circular frill)"
