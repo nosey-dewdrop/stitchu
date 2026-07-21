@@ -287,7 +287,16 @@
    ],
    "side": "flatOnly",
    "contractRef": "contract/composition.json flatComponents (ink-only)",
-   "justification": "the surplice overlap edge is an ink line on the flat (the wrap crossover read); the DRAFT carries the wrap via the tie closure + darted front, not a separate surplice piece. Drawing-only, like cfGather."
+   "justification": "the surplice overlap edge is an ink line on the flat (the wrap crossover read); the flat draws the wrap tie as a post-pass ink stroke, not a structural piece. Drawing-only, like cfGather."
+  },
+  {
+   "style": "wrap_dress",
+   "items": [
+    "wrapTie"
+   ],
+   "side": "draftOnly",
+   "contractRef": "contract/composition.json flatComponents (wrapTie ink layer) + engine tie post-pass (Wrap Front Tie physical cut)",
+   "justification": "the flat draws wrapTie as a post-pass ink stroke (flatOnly above); the DRAFT cuts a real self-fabric 'Wrap Front Tie (kruvaze bağ)' piece. Same garment element, two representations — ink on the display flat, a cut piece in the pattern. Declared ink<->piece correspondence, not a missing counterpart."
   }
  ],
  "landmarkAllow": [
@@ -409,6 +418,34 @@
    "maxAbsDevPct": 152,
    "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
    "justification": "stylised square neck-depth over the top-bust anchor (draft 101mm). Current +142.2%; pinned worst + margin."
+  },
+  {
+   "style": "gore_skirt_dress",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 250,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "boat necklines are drafted very shallow (same class as dress_boat_aline_tieback); the flat draws a normal stylised neck depth, so dividing by the tiny draft boat depth yields a large ratio. Current +233.6%; pinned worst + margin."
+  },
+  {
+   "style": "gore_skirt_dress",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 36,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "same display waist-nip as the '*' 22% pin, but this natural-waist boat/gore dress has a shorter/wider flat torso so the nip ratio runs larger (same cohort as dress_boat_aline_tieback -31.9%). Current -33.7%; pinned worst + margin."
+  },
+  {
+   "style": "wrap_dress",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 140,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "the wrap flat draws a deep vNeck surplice crossover for silhouette drama over a shallow drafted wrap neckline; declared stylised layer. Current +128.6%; pinned worst + margin."
+  },
+  {
+   "style": "wrap_dress",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 38,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "the wrap flat nips the waist tightly at the tie crossover for the display silhouette (review.* registered); the draft waist obeys the real body. Current -35.5%; pinned worst + margin."
   },
   {
    "style": "dress_boat_aline_tieback",

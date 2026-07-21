@@ -20,3 +20,6 @@ Suite kırmızı kalıyor (bu 3 yüzünden). Yeni kırılmayı görmek için: be
 - (a) Bu 3'ü de düzelt (önceki kalem işini tamamla), VEYA
 - (b) Bu 3'ün M dosyalarını commit'le + landmark pinle (kalem genelleme kapansın), VEYA
 - (c) şimdilik bu kartla ayır, benim işim temiz commit'lensin.
+
+## KAPANDI 2026-07-22
+Aynı yöntemle geçirildi (sebep-ayrıştırmalı). princess NaN = HARNESS boşluğu (harness fix, allow yazılmadı); gore/wrap = gerçek sapma (4 landmark pin + 1 structural, geometrik gerekçeli). STYLE-PIN dokunulmadı, golden PASS. TAM ctest 48/48.

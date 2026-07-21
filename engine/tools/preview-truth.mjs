@@ -98,6 +98,7 @@ const PIECE_TO_FLAT = [
   { re: /Side Front|Side Back|Center Front|Center Back/, part: 'princessSeam' }, // princess split pieces
   { re: /Panel/, part: 'shirr' },
   { re: /Cord/, part: 'tie' },
+  { re: /Wrap Front Tie/, part: 'wrapTie' },                      // physical wrap tie cut (flat draws it as ink)
   { re: /^Neck\/Front Tie|Tie \(/, part: 'tie' },
   { re: /Ruffled Strap/, part: 'ruffledStraps' },                // K2 declaredButNotDrawn
 ];
@@ -138,7 +139,14 @@ function draftLandmarks(pat) {
     L.hemSweepHalf = Math.max(...v.map((q) => q[0]));
     L.skirtLen = Math.max(...v.map((q) => q[1]));
   }
-  if (sl) {
+  if (sl && bf) {
+    // Sleeve landmarks are only trustworthy when the bodice front anchor (bf)
+    // exists. Princess styles split the front into Center Front + Side Front
+    // (no un-split 'Bodice Front'/'Top Front'), so bf is absent and L.bustHalf
+    // is undefined — normalising the sleeve against a reconstructed split anchor
+    // would double-count the internal princess-seam allowance (a false anchor).
+    // Consistent with the bodice-frame landmarks, which top_boat_princess (also
+    // split) already honestly skips for the same reason.
     const v = verts(sl);
     L.sleeveWidth = Math.max(...v.map((q) => q[0])) - Math.min(...v.map((q) => q[0]));
     L.sleeveLen = Math.max(...v.map((q) => q[1])) - Math.min(...v.map((q) => q[1]));
@@ -208,6 +216,16 @@ for (const styleKey of styleKeys.filter((k) => truthKeys.includes(k))) {
     if (INTERNAL_RE.test(piece.name)) { console.log(`  draft '${piece.name}' internal construction (invisible worn) OK`); continue; }
     const map = PIECE_TO_FLAT.find((m) => m.re.test(piece.name));
     if (map && (parts[map.part] === true)) {
+      // Ink-only flat parts (FLAT_TO_DRAFT false + flatOnly-allowlisted, e.g.
+      // wrapTie): the flat draws them as a decorative stroke, the DRAFT cuts a
+      // real piece. Require a draftOnly allowlist entry so the ink<->piece
+      // correspondence is contract-declared, not silently accepted.
+      if (FLAT_TO_DRAFT[map.part] && FLAT_TO_DRAFT[map.part](pat, sem) === false
+          && allowStructural(styleKey, map.part, 'flatOnly')) {
+        if (allowStructural(styleKey, map.part, 'draftOnly')) { console.log(`  draft '${piece.name}' cut as a real piece; flat draws '${map.part}' as ink — DECLARED (allowlist)`); continue; }
+        fail(`[${styleKey}] draft cuts '${piece.name}' but the flat only draws '${map.part}' as ink (no draftOnly allowlist entry)`);
+        continue;
+      }
       if (declaredNotDrawn.has(map.part)) {
         if (allowStructural(styleKey, map.part, 'draftOnly')) { console.log(`  draft '${piece.name}' drawn in pattern, flat flag declared-but-not-drawn — DECLARED`); continue; }
         fail(`[${styleKey}] draft cuts '${piece.name}' but the flat never draws its declared '${map.part}' flag (no allowlist entry)`);
