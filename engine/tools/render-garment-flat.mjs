@@ -717,20 +717,34 @@ async function tryReferencePen(spec) {
   // top style so it draws figured, NOT through the schematic fallback. Only the
   // simplest, detail-free tops match here; anything with sleeves/collar/gather/etc
   // falls through until those primitives land in the reference pen.
-  if (!styleKey && spec.garment === 'top') {
-    const bare = (spec.sleeveStyle == null || spec.sleeveStyle === 'none')
-      && (!spec.collar || spec.collar.type == null || spec.collar.type === 'none')
-      && (spec.gatherType == null || spec.gatherType === 'none')
-      && (spec.peplum == null || spec.peplum === 'none')
-      && (spec.hemRuffle == null || spec.hemRuffle === 'none')
-      && (!spec.straps || spec.straps.type == null || spec.straps.type === 'none')
-      && (spec.tieClosure == null || spec.tieClosure === 'none')
-      && (!spec.closure || spec.closure.type == null || spec.closure.type === 'none' || spec.closure.type === 'buttons');
-    if (bare) {
-      const nl = spec.neckline;
-      if ((nl === 'boat' || nl === 'square') && spec.shaping === 'princess') styleKey = 'top_boat_princess';
+  // SPEC → styleKey deterministik eşleme (2026-07-22 FAZ 6 — uçtan uca köprü).
+  // referenceStyle olmadan cümle→spec→köprü otomatik eşlesin. 13 kanıtlı stil.
+  // Eşleşmeyen spec (henüz primitifi olmayan) → null → ÜRETİLEMEZ (ikame yok).
+  if (!styleKey) {
+    const nl = spec.neckline;
+    const sleeve = spec.sleeve || spec.sleeveStyle;   // gramer 'sleeve' | contract 'sleeveStyle'
+    const sleeved = sleeve && sleeve !== 'none';
+    const peplum = spec.peplum && spec.peplum !== 'none';
+    const shirred = (spec.shirred === 'physics') || (spec.gatherType === 'shirred');
+    const boxy = spec.shaping === 'boxy';
+    const princess = spec.shaping === 'princess';
+    const tieBack = spec.closure === 'tieBack' || spec.backDetail === 'tieBack' || spec.tieClosure === 'tieBack';
+
+    if (spec.garment === 'top') {
+      // kompleks kombinasyonlar önce (spesifik → genel)
+      if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
+      else if (nl === 'square' && shirred && peplum) styleKey = 'top_sq_shirred_peplum';
+      else if (peplum && princess) styleKey = 'top_princess_peplum';
+      else if (boxy && sleeved) styleKey = 'top_crew_boxy_sleeve';
+      else if (boxy) styleKey = 'top_crew_boxy_crop';
+      else if ((nl === 'boat' || nl === 'square') && princess) styleKey = 'top_boat_princess';
       else if (nl === 'scoop') styleKey = 'top_scoop_cami';
-      else if (nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') styleKey = 'top_crew_dart';
+      else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
+    } else if (spec.garment === 'dress') {
+      if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
+      else if ((nl === 'scoop' || nl === 'crew') && princess) {
+        styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';
+      }
     }
   }
   if (!styleKey || !ref.STYLE[styleKey]) return null;
