@@ -67,6 +67,20 @@
    "hakem": "princess peplum top",
    "worstD": "seam by-construction, validator 0",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 31,
+   "durum": "GECTI",
+   "hakem": "shirred-bust peplum cami",
+   "worstD": "validator 0, seam by-constr",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 44,
+   "durum": "GECTI",
+   "hakem": "puff shirred peplum",
+   "worstD": "validator 0",
+   "zaman": "2026-07-22"
   }
  ],
  "kirmizi": [
@@ -83,5 +97,5 @@
   41,
   95
  ],
- "sayac": 9
+ "sayac": 11
 }
