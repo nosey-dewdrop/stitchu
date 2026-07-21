@@ -16,12 +16,21 @@
 import {readFileSync} from 'node:fs';
 const GUSTO = JSON.parse(readFileSync(new URL('../../contract/gusto-corpus.json', import.meta.url), 'utf8'));
 
-// parça bandı: garment → {min,max}. top→blouse bandı.
-function pieceBand(garment) {
+// parça bandı: garment → {min,max}. AMA gusto-corpus bandı SADE bluz/dress
+// emsalinden ölçülü (BugraPatterns). peplum/shirred/princess-kompleks o SINIF
+// DEĞİL — yanlış sınıfa bant uygulamak uydurma eşik olur. Bu sınıf için gusto'da
+// emsal parça verisi YOK (gusto FROZEN, external band yok) → ÖLÇÜLMEDİ, kapı bu
+// kanatta SUSAR (FAIL vermez). (2026-07-22 Damla direktifi 2b.)
+function pieceBand(spec) {
+  // kompleks parça getiren primitifler → sade band uygulanamaz → ÖLÇÜLMEDİ
+  const kompleks = (spec.peplum && spec.peplum !== 'none')
+    || (spec.shirred && spec.shirred !== 'none')
+    || spec.shaping === 'princess';
+  if (kompleks) return { olculmedi: true, sinif: 'peplum/shirred/princess kompleks' };
   const b = GUSTO.piece_page_bands.pieces;
-  if (garment === 'top') return b.blouse;
-  if (garment === 'dress') return b.dress;
-  if (garment === 'skirt') return b.skirt;
+  if (spec.garment === 'top') return b.blouse;
+  if (spec.garment === 'dress') return b.dress;
+  if (spec.garment === 'skirt') return b.skirt;
   return null;
 }
 
@@ -40,10 +49,13 @@ export async function gate(compiled, opts = {}) {
     ? compiled.kalip.pieces.filter(p => !/binding|chalk|ruffle|bias/i.test(p.name)).length + 0  // yapısal
     : null;
 
-  // --- 3. PARÇA SAYISI BANDI (deterministik, emsal) ---
-  const band = pieceBand(spec.garment);
-  if (band && compiled.kalip && compiled.kalip.pieces) {
-    const total = compiled.kalip.pieces.length;
+  // --- 3. PARÇA SAYISI BANDI (deterministik, emsal — ÖLÇÜLMEDİ ise sus) ---
+  const band = pieceBand(spec);
+  const total = compiled.kalip && compiled.kalip.pieces ? compiled.kalip.pieces.length : null;
+  if (band && band.olculmedi) {
+    // kompleks sınıf: emsal parça verisi yok → bu kanat PUANLAMAZ (sus).
+    rapor.parcaBandi = { parca: total, not: `ÖLÇÜLMEDİ — ${band.sinif} için emsal parça bandı yok (uydurma eşik yasak)` };
+  } else if (band && total != null) {
     const inBand = total >= band.min && total <= band.max;
     rapor.parcaBandi = { parca: total, band: [band.min, band.max], gecti: inBand };
     if (!inBand) eksik.push(`parça ${total} emsal bandı [${band.min},${band.max}] dışında (${total < band.min ? 'eksik' : 'puzzle'})`);
