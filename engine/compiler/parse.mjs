@@ -13,12 +13,19 @@
 import {readFileSync} from 'node:fs';
 const GRAMMAR = JSON.parse(readFileSync(new URL('../../contract/spec-grammar.json', import.meta.url), 'utf8'));
 
+// --- garment terim listeleri TEK KAYNAK (2026-07-22 sınıf fix: liste iki yerde
+// ayrışmıştı — LEX "top"u tanıyordu ama çelişki regex'i eksikti). Hem LEX hem
+// çelişki kontrolü BURADAN okur; bir daha ayrışamaz. ---
+const TOP_TERMS = 'üst|ust|top|bluz|blouse|tişört|tshirt|tee|atlet|tank|kaşkorse|cami|büstiyer|bustier|korse';
+const DRESS_TERMS = 'elbise|dress|frock';
+const boundary = (terms) => new RegExp(`(?<![a-zçğıöşü0-9])(${terms})(?![a-zçğıöşü0-9])`, 'i');
+
 // --- terim sözlüğü: TR/EN kelime → {slot, value}. SADECE gramerde olan value'lar
 // spec üretir; PARK'takiler eksik_primitif'e gider. ---
 const LEX = [
   // garment
-  [/(?<![a-zçğıöşü0-9])(elbise|dress|frock)(?![a-zçğıöşü0-9])/i, 'garment', 'dress'],
-  [/(?<![a-zçğıöşü0-9])(üst|ust|top|bluz|blouse|tişört|tshirt|tee|atlet|tank|kaşkorse|cami|büstiyer|bustier|korse)(?![a-zçğıöşü0-9])/i, 'garment', 'top'],
+  [boundary(DRESS_TERMS), 'garment', 'dress'],
+  [boundary(TOP_TERMS), 'garment', 'top'],
   [/(?<![a-zçğıöşü0-9])(etek|skirt)(?![a-zçğıöşü0-9])/i, 'garment', 'PARK:skirt'],
   [/(?<![a-zçğıöşü0-9])(pantolon|trouser|pants|palazzo)(?![a-zçğıöşü0-9])/i, 'garment', 'PARK:trousers'],
   // neckline
@@ -145,7 +152,7 @@ export function parse(sentence, llmCandidate) {
   const has = (re) => re.test(sentence);
   if (has(/kolsuz|sleeveless|askılı|askili/i) && has(/balon kol|balloon|puf kol|puff|düz kol|duz kol|straight sleeve|uzun kol|kısa kol|kisa kol/i))
     celiski.push('kolsuz + kollu (imkansız)');
-  if (has(/(?<![a-zçğıöşü])(üst|top|bluz|atlet|tank)(?![a-zçğıöşü])/i) && has(/(?<![a-zçğıöşü])(elbise|dress)(?![a-zçğıöşü])/i))
+  if (has(boundary(TOP_TERMS)) && has(boundary(DRESS_TERMS)))
     celiski.push('üst + elbise (iki garment)');
 
   // geçersiz kombinasyon kontrolü (gramerden, düzeltilebilir)
