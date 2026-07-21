@@ -46,6 +46,13 @@
    "hakem": "princess scoop aLine midi dress",
    "worstD": "0.116mm",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 53,
+   "durum": "GECTI",
+   "hakem": "boat aLine tieBack dress",
+   "worstD": "0.24mm",
+   "zaman": "2026-07-21"
   }
  ],
  "kirmizi": [
@@ -70,5 +77,5 @@
   41,
   95
  ],
- "sayac": 6
+ "sayac": 7
 }
