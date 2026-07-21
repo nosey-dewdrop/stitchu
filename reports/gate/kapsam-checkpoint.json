@@ -60,6 +60,13 @@
    "hakem": "boxy short-sleeve tee, plainSleeve",
    "worstD": "0.72mm",
    "zaman": "2026-07-21"
+  },
+  {
+   "hedefId": 41,
+   "durum": "GECTI",
+   "hakem": "princess peplum top",
+   "worstD": "seam by-construction, validator 0",
+   "zaman": "2026-07-21"
   }
  ],
  "kirmizi": [
@@ -76,5 +83,5 @@
   41,
   95
  ],
- "sayac": 8
+ "sayac": 9
 }
