@@ -3125,7 +3125,8 @@
     "backSlit": "none",
     "peplum": "none",
     "hemRuffle": "none",
-    "ruffledStraps": "none"
+    "ruffledStraps": "none",
+    "referenceStyle": "top_crew_boxy_sleeve"
    },
    "beyondEngine": [
     "boxy/oversized drop-shoulder kesim"

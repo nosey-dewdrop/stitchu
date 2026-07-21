@@ -360,7 +360,8 @@
         "capPuff": 0,
         "cuffGather": 0
       },
-      "boxy": true
+      "boxy": true,
+      "sleeveLength": "short"
     },
     "dress_princess_scoop_aline": {
       "label": "sleeveless princess scoop A-line mini dress (hedef 15)",
