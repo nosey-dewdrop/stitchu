@@ -38,3 +38,11 @@ dersi, DEVAM-KAPANIS-LOOP Z).
   hem).
 - Üretim yolu: `renderGarmentFlatAsync([], {style:'drawstring_babydoll'})`.
 - İLK STYLE-PIN — Damla'nın flat kaleminin ilk motor-onaylı çıktısı.
+
+### 2026-07-22 — fizik-shirred bağlandı (MÜHÜR, Damla onayı "karakter korunuyor")
+- cloth-solver fizik-shirred yeni shirred stillerde (physicsShirr:true) varsayılan.
+- ÖNERİ (i): pinli drawstring_babydoll (md5 8b45e11b...) DOKUNULMADI — elle-shirr
+  (casing büzgüsü) korunur, byte-identical. Fizik-shirred (bodice panel) FARKLI
+  konstrüksiyon, yeni stiller kullanır. Kart: reports/gate/kart-shirred/KART-KARAR.md
+- Hakem hükmü: karakter KORUNUYOR (kat 8→27 emsal-bandı, sönüm gerçek büzgü).
+- AÇIK KART: bant sapması (sönüm/yoğunluk ince-ayar) reports/gate/kart-shirred-bant-sapmasi.md
