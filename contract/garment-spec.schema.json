@@ -7,11 +7,21 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "contract": { "const": "garment-spec/1" },
-    "vision": { "$ref": "#/$defs/visionReading" },
-    "draft": { "$ref": "#/$defs/draftSpec" },
-    "flat": { "$ref": "#/$defs/flatRecipe" },
-    "review": { "$ref": "#/$defs/reviewParams" }
+    "contract": {
+      "const": "garment-spec/1"
+    },
+    "vision": {
+      "$ref": "#/$defs/visionReading"
+    },
+    "draft": {
+      "$ref": "#/$defs/draftSpec"
+    },
+    "flat": {
+      "$ref": "#/$defs/flatRecipe"
+    },
+    "review": {
+      "$ref": "#/$defs/reviewParams"
+    }
   },
   "$defs": {
     "visionReading": {
@@ -19,56 +29,273 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "garment": { "enum": ["skirt", "dress", "top", "trousers", "other"] },
-        "neckline": { "enum": ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter", "cowl", "pussyBow", null] },
-        "sleeveStyle": { "enum": ["none", "straight", "balloon", null] },
-        "sleeveLength": { "enum": ["short", "elbow", "long", null] },
-        "skirtStyle": { "enum": ["aLine", "straight", "gathered", "halfCircle", "pleated", "gore", null] },
-        "length": { "enum": ["mini", "midi", "maxi", null] },
-        "topLength": { "enum": ["cropped", "hip", "tunic", null] },
-        "shaping": { "enum": ["princess", "dart", null] },
-        "waistline": { "enum": ["natural", "empire", null] },
-        "fabric": { "enum": ["woven", "knit", null] },
-        "hemRuffle": { "enum": ["none", "single", "tiered", null] },
-        "keyhole": { "type": ["boolean", "null"] },
-        "fabricName": { "type": ["string", "null"], "maxLength": 60 },
+        "garment": {
+          "enum": [
+            "skirt",
+            "dress",
+            "top",
+            "trousers",
+            "other"
+          ]
+        },
+        "neckline": {
+          "enum": [
+            "crew",
+            "scoop",
+            "vNeck",
+            "square",
+            "boat",
+            "sweetheart",
+            "halter",
+            "cowl",
+            "pussyBow",
+            null
+          ]
+        },
+        "sleeveStyle": {
+          "enum": [
+            "none",
+            "straight",
+            "balloon",
+            null
+          ]
+        },
+        "sleeveLength": {
+          "enum": [
+            "short",
+            "elbow",
+            "long",
+            null
+          ]
+        },
+        "skirtStyle": {
+          "enum": [
+            "aLine",
+            "straight",
+            "gathered",
+            "halfCircle",
+            "pleated",
+            "gore",
+            null
+          ]
+        },
+        "length": {
+          "enum": [
+            "mini",
+            "midi",
+            "maxi",
+            null
+          ]
+        },
+        "topLength": {
+          "enum": [
+            "cropped",
+            "hip",
+            "tunic",
+            null
+          ]
+        },
+        "shaping": {
+          "enum": [
+            "princess",
+            "dart",
+            null
+          ]
+        },
+        "waistline": {
+          "enum": [
+            "natural",
+            "empire",
+            null
+          ]
+        },
+        "fabric": {
+          "enum": [
+            "woven",
+            "knit",
+            null
+          ]
+        },
+        "hemRuffle": {
+          "enum": [
+            "none",
+            "single",
+            "tiered",
+            null
+          ]
+        },
+        "keyhole": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "fabricName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
         "closure": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["buttons", "placket", "zipper", "ties", "lace-up", "hookEye", "none", null] },
-            "location": { "enum": ["centerFront", "centerBack", "sideSeam", "shoulder", "neck", "waist", null] }
+            "type": {
+              "enum": [
+                "buttons",
+                "placket",
+                "zipper",
+                "ties",
+                "lace-up",
+                "hookEye",
+                "none",
+                null
+              ]
+            },
+            "location": {
+              "enum": [
+                "centerFront",
+                "centerBack",
+                "sideSeam",
+                "shoulder",
+                "neck",
+                "waist",
+                null
+              ]
+            }
           }
         },
         "collar": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["none", "stand", "shirt", "peterPan", "mandarin", "notched", "sailor", "other", null] },
-            "name": { "type": ["string", "null"], "maxLength": 80 }
+            "type": {
+              "enum": [
+                "none",
+                "stand",
+                "shirt",
+                "peterPan",
+                "mandarin",
+                "notched",
+                "sailor",
+                "other",
+                null
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 80
+            }
           }
         },
         "straps": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["none", "shoulder", "spaghetti", "wide", "halter", "ruffled", "oneShoulder", "offShoulder", null] },
-            "count": { "enum": [1, 2, null] }
+            "type": {
+              "enum": [
+                "none",
+                "shoulder",
+                "spaghetti",
+                "wide",
+                "halter",
+                "ruffled",
+                "oneShoulder",
+                "offShoulder",
+                null
+              ]
+            },
+            "count": {
+              "enum": [
+                1,
+                2,
+                null
+              ]
+            }
           }
         },
-        "cupSeams": { "type": ["boolean", "null"] },
-        "sleeveHead": { "enum": ["plain", "gathered", "puffed", "capped", null] },
+        "cupSeams": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "sleeveHead": {
+          "enum": [
+            "plain",
+            "gathered",
+            "puffed",
+            "capped",
+            null
+          ]
+        },
         "yoke": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["none", "shoulderYoke", "shirring", "smocking", null] },
-            "location": { "enum": ["frontBodice", "backBodice", "shoulder", "waist", null] }
+            "type": {
+              "enum": [
+                "none",
+                "shoulderYoke",
+                "shirring",
+                "smocking",
+                null
+              ]
+            },
+            "location": {
+              "enum": [
+                "frontBodice",
+                "backBodice",
+                "shoulder",
+                "waist",
+                null
+              ]
+            }
           }
         },
-        "backDetail": { "enum": ["none", "openBack", "keyholeBack", "vBack", "tieBack", "lacedBack", "buttonBack", null] },
-        "outOfVocab": { "type": "array", "items": { "type": "string", "maxLength": 120 }, "maxItems": 24 },
-        "details": { "type": ["string", "null"], "maxLength": 400 }
+        "backDetail": {
+          "enum": [
+            "none",
+            "openBack",
+            "keyholeBack",
+            "vBack",
+            "tieBack",
+            "lacedBack",
+            "buttonBack",
+            null
+          ]
+        },
+        "outOfVocab": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "maxItems": 24
+        },
+        "details": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400
+        }
       }
     },
     "draftSpec": {
@@ -76,51 +303,297 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "garment": { "enum": ["skirt", "dress", "top"] },
-        "shaping": { "enum": ["princess", "dart"] },
-        "waistline": { "enum": ["natural", "empire"] },
-        "fabric": { "enum": ["woven", "knit"] },
-        "neckline": { "enum": ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter", "cowl", "pussyBow"] },
-        "sleeveStyle": { "enum": ["none", "straight", "balloon"] },
-        "sleeveLength": { "enum": ["short", "elbow", "long"] },
-        "skirtStyle": { "enum": ["aLine", "straight", "gathered", "halfCircle", "pleated", "gore"] },
-        "skirtLength": { "enum": ["mini", "midi", "maxi"] },
-        "topLength": { "enum": ["cropped", "hip", "tunic"] },
-        "tieClosure": { "enum": ["none", "backWaist", "backWaistBow", "frontNeckBow", "tieBack", "cuffTies", "frontWaistTie", "wrapFront", "frontWaistBow"] },
-        "sleeveCap": { "enum": ["plain", "gathered", "puffed", "cap"] },
-        "collarType": { "enum": ["none", "stand", "mock", "flat", "peterPan", "shirt"] },
-        "collarEdge": { "enum": ["round", "pointed", "scallop"] },
-        "gatherType": { "enum": ["none", "drawstring", "shirred", "smocked"] },
-        "gatherZone": { "enum": ["neckline", "bust", "waist", "sleeve"] },
-        "backOpening": { "enum": ["none", "round", "lowV", "square", "keyhole"] },
-        "backSlit": { "enum": ["none", "vent", "slit"] },
-        "ruffledStraps": { "enum": ["none", "ruffled"] },
-        "peplum": { "enum": ["none", "full", "half", "pointed"] },
-        "placketStyle": { "enum": ["none", "standard", "asymmetric"] },
-        "edgeFinish": { "enum": ["biasBinding", "facing"] },
-        "pocketStyle": { "enum": ["none", "patch", "sideSeam"] },
-        "cuffStyle": { "enum": ["none", "button", "ribbed"] },
-        "hemShape": { "enum": ["straight", "shirttail", "highLow"] },
-        "shoulderStyle": { "enum": ["set", "dropped", "raglan"] },
-        "buttonRow": { "enum": ["none", "functional", "decorative"] },
-        "exposedZip": { "enum": ["none", "centerFront", "centerBack"] },
-        "backDetail": { "enum": ["none", "ruffle", "cape", "flounce"] },
-        "bardotStyle": { "enum": ["none", "plain", "frill"] },
-        "frontPlacket": { "type": "boolean", "description": "legacy bool, mirrors placketStyle=standard" },
-        "keyhole": { "enum": ["none", "keyhole"] },
-        "ruffle": { "enum": ["none", "single", "tiered"] },
+        "garment": {
+          "enum": [
+            "skirt",
+            "dress",
+            "top"
+          ]
+        },
+        "shaping": {
+          "enum": [
+            "princess",
+            "dart"
+          ]
+        },
+        "waistline": {
+          "enum": [
+            "natural",
+            "empire"
+          ]
+        },
+        "fabric": {
+          "enum": [
+            "woven",
+            "knit"
+          ]
+        },
+        "neckline": {
+          "enum": [
+            "crew",
+            "scoop",
+            "vNeck",
+            "square",
+            "boat",
+            "sweetheart",
+            "halter",
+            "cowl",
+            "pussyBow"
+          ]
+        },
+        "sleeveStyle": {
+          "enum": [
+            "none",
+            "straight",
+            "balloon"
+          ]
+        },
+        "sleeveLength": {
+          "enum": [
+            "short",
+            "elbow",
+            "long"
+          ]
+        },
+        "skirtStyle": {
+          "enum": [
+            "aLine",
+            "straight",
+            "gathered",
+            "halfCircle",
+            "pleated",
+            "gore"
+          ]
+        },
+        "skirtLength": {
+          "enum": [
+            "mini",
+            "midi",
+            "maxi"
+          ]
+        },
+        "topLength": {
+          "enum": [
+            "cropped",
+            "hip",
+            "tunic"
+          ]
+        },
+        "tieClosure": {
+          "enum": [
+            "none",
+            "backWaist",
+            "backWaistBow",
+            "frontNeckBow",
+            "tieBack",
+            "cuffTies",
+            "frontWaistTie",
+            "wrapFront",
+            "frontWaistBow"
+          ]
+        },
+        "sleeveCap": {
+          "enum": [
+            "plain",
+            "gathered",
+            "puffed",
+            "cap"
+          ]
+        },
+        "collarType": {
+          "enum": [
+            "none",
+            "stand",
+            "mock",
+            "flat",
+            "peterPan",
+            "shirt"
+          ]
+        },
+        "collarEdge": {
+          "enum": [
+            "round",
+            "pointed",
+            "scallop"
+          ]
+        },
+        "gatherType": {
+          "enum": [
+            "none",
+            "drawstring",
+            "shirred",
+            "smocked"
+          ]
+        },
+        "gatherZone": {
+          "enum": [
+            "neckline",
+            "bust",
+            "waist",
+            "sleeve"
+          ]
+        },
+        "backOpening": {
+          "enum": [
+            "none",
+            "round",
+            "lowV",
+            "square",
+            "keyhole"
+          ]
+        },
+        "backSlit": {
+          "enum": [
+            "none",
+            "vent",
+            "slit"
+          ]
+        },
+        "ruffledStraps": {
+          "enum": [
+            "none",
+            "ruffled"
+          ]
+        },
+        "peplum": {
+          "enum": [
+            "none",
+            "full",
+            "half",
+            "pointed"
+          ]
+        },
+        "placketStyle": {
+          "enum": [
+            "none",
+            "standard",
+            "asymmetric"
+          ]
+        },
+        "edgeFinish": {
+          "enum": [
+            "biasBinding",
+            "facing"
+          ]
+        },
+        "pocketStyle": {
+          "enum": [
+            "none",
+            "patch",
+            "sideSeam"
+          ]
+        },
+        "cuffStyle": {
+          "enum": [
+            "none",
+            "button",
+            "ribbed"
+          ]
+        },
+        "hemShape": {
+          "enum": [
+            "straight",
+            "shirttail",
+            "highLow"
+          ]
+        },
+        "shoulderStyle": {
+          "enum": [
+            "set",
+            "dropped",
+            "raglan"
+          ]
+        },
+        "buttonRow": {
+          "enum": [
+            "none",
+            "functional",
+            "decorative"
+          ]
+        },
+        "exposedZip": {
+          "enum": [
+            "none",
+            "centerFront",
+            "centerBack"
+          ]
+        },
+        "backDetail": {
+          "enum": [
+            "none",
+            "ruffle",
+            "cape",
+            "flounce"
+          ]
+        },
+        "bardotStyle": {
+          "enum": [
+            "none",
+            "plain",
+            "frill"
+          ]
+        },
+        "frontPlacket": {
+          "type": "boolean",
+          "description": "legacy bool, mirrors placketStyle=standard"
+        },
+        "keyhole": {
+          "enum": [
+            "none",
+            "keyhole"
+          ]
+        },
+        "ruffle": {
+          "enum": [
+            "none",
+            "single",
+            "tiered"
+          ]
+        },
         "body": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "bust": { "type": "number", "minimum": 60, "maximum": 160 },
-            "waist": { "type": "number", "minimum": 45, "maximum": 150 },
-            "hip": { "type": "number", "minimum": 65, "maximum": 170 },
-            "shoulder": { "type": "number", "minimum": 28, "maximum": 55 },
-            "backLength": { "type": "number", "minimum": 30, "maximum": 55 },
-            "armLength": { "type": "number", "minimum": 40, "maximum": 75 },
-            "neck": { "type": "number", "minimum": 26, "maximum": 46 },
-            "upperBust": { "type": "number", "minimum": 0, "maximum": 160 }
+            "bust": {
+              "type": "number",
+              "minimum": 60,
+              "maximum": 160
+            },
+            "waist": {
+              "type": "number",
+              "minimum": 45,
+              "maximum": 150
+            },
+            "hip": {
+              "type": "number",
+              "minimum": 65,
+              "maximum": 170
+            },
+            "shoulder": {
+              "type": "number",
+              "minimum": 28,
+              "maximum": 55
+            },
+            "backLength": {
+              "type": "number",
+              "minimum": 30,
+              "maximum": 55
+            },
+            "armLength": {
+              "type": "number",
+              "minimum": 40,
+              "maximum": 75
+            },
+            "neck": {
+              "type": "number",
+              "minimum": 26,
+              "maximum": 46
+            },
+            "upperBust": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 160
+            }
           }
         }
       }
@@ -130,56 +603,314 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "style": { "type": "string", "maxLength": 60 },
-        "size": { "enum": ["EU34", "EU36", "EU38", "EU40", "EU42"] },
-        "length": { "enum": ["mini", "knee", "midi"] },
-        "ink": { "enum": ["minimal", "orta", "full"] },
-        "seed": { "type": "integer", "minimum": 0, "maximum": 100000 },
-        "bustProject": { "type": "number", "minimum": 0, "maximum": 1 },
-        "bustHeight": { "type": "number", "minimum": 0, "maximum": 1 },
-        "skirtFull": { "type": "number", "minimum": 1, "maximum": 4 },
-        "foldCount": { "type": "integer", "minimum": 0, "maximum": 24 },
-        "hemWave": { "type": "number", "minimum": 0, "maximum": 4 },
-        "drape": { "type": "number", "minimum": 0, "maximum": 4 },
-        "hemDip": { "type": "number", "minimum": 0, "maximum": 6 },
-        "top": { "enum": ["band", "shoulder"] },
-        "neckline": { "enum": ["v", "square", "round"] },
-        "label": { "type": "string", "maxLength": 120 },
-        "note": { "type": "string", "maxLength": 400 },
+        "style": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "size": {
+          "enum": [
+            "EU34",
+            "EU36",
+            "EU38",
+            "EU40",
+            "EU42"
+          ]
+        },
+        "length": {
+          "enum": [
+            "mini",
+            "knee",
+            "midi"
+          ]
+        },
+        "ink": {
+          "enum": [
+            "minimal",
+            "orta",
+            "full"
+          ]
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "bustProject": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "bustHeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "skirtFull": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "foldCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "hemWave": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "drape": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "hemDip": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "top": {
+          "enum": [
+            "band",
+            "shoulder"
+          ]
+        },
+        "neckline": {
+          "enum": [
+            "v",
+            "square",
+            "round",
+            "boat",
+            "wrap",
+            "scoop",
+            "crew"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 400
+        },
         "parts": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "straps": { "type": "boolean" }, "ruffledStraps": { "type": "boolean" },
-            "collar": { "type": "boolean" }, "sleeve": { "type": "boolean" },
-            "shirr": { "type": "boolean" }, "casing": { "type": "boolean" },
-            "tie": { "type": "boolean" }, "backSeam": { "type": "boolean" },
-            "gatherWaist": { "type": "boolean" }, "cfGather": { "type": "boolean" },
-            "laceNeck": { "type": "boolean" }, "laceSleeve": { "type": "boolean" },
-            "laceHem": { "type": "boolean" }
+            "straps": {
+              "type": "boolean"
+            },
+            "ruffledStraps": {
+              "type": "boolean"
+            },
+            "collar": {
+              "type": "boolean"
+            },
+            "sleeve": {
+              "type": "boolean"
+            },
+            "shirr": {
+              "type": "boolean"
+            },
+            "casing": {
+              "type": "boolean"
+            },
+            "tie": {
+              "type": "boolean"
+            },
+            "backSeam": {
+              "type": "boolean"
+            },
+            "gatherWaist": {
+              "type": "boolean"
+            },
+            "cfGather": {
+              "type": "boolean"
+            },
+            "laceNeck": {
+              "type": "boolean"
+            },
+            "laceSleeve": {
+              "type": "boolean"
+            },
+            "laceHem": {
+              "type": "boolean"
+            },
+            "princessSeam": {
+              "type": "boolean"
+            },
+            "gorePanels": {
+              "type": "boolean"
+            },
+            "wrapSurplice": {
+              "type": "boolean"
+            },
+            "wrapTie": {
+              "type": "boolean"
+            },
+            "tieBack": {
+              "type": "boolean"
+            }
           }
         },
-        "strapLen": { "type": "number", "minimum": 0, "maximum": 40 },
-        "strapWidth": { "type": "number", "minimum": 0, "maximum": 10 },
-        "ruffle": { "type": "number", "minimum": 0, "maximum": 4 },
-        "yokeDrop": { "type": "number", "minimum": 0, "maximum": 40 },
-        "gatherRatio": { "type": "number", "minimum": 1, "maximum": 4 },
-        "shirrRows": { "type": "integer", "minimum": 0, "maximum": 16 },
-        "tieLength": { "type": "number", "minimum": 0, "maximum": 60 },
-        "neckWidth": { "type": "number", "minimum": 0.5, "maximum": 2 },
-        "neckDepth": { "type": "number", "minimum": 0, "maximum": 30 },
-        "neckDepthBack": { "type": "number", "minimum": 0, "maximum": 20 },
-        "shoulderSlope": { "type": "number", "minimum": 0, "maximum": 4 },
-        "sleeveLen": { "type": "number", "minimum": 0, "maximum": 40 },
-        "sleeveWidth": { "type": "number", "minimum": 0, "maximum": 20 },
-        "capPuff": { "type": "number", "minimum": 0, "maximum": 8 },
-        "cuffGather": { "type": "number", "minimum": 0, "maximum": 4 },
-        "laceWidth": { "type": "number", "minimum": 0, "maximum": 5 },
-        "laceScallops": { "type": "integer", "minimum": 0, "maximum": 40 },
-        "collarWidth": { "type": "number", "minimum": 0, "maximum": 12 },
-        "collarGap": { "type": "number", "minimum": 0, "maximum": 4 },
-        "waistNip": { "type": "number", "minimum": 0, "maximum": 0.25, "description": "STYLE parameter (Damla 2026-07-19): waist suppression fraction of the flat silhouette. No effect on pattern geometry; the drafting engine never reads it. Was review.* (layer undecided); decided as flat.* style." },
-        "armholeHollow": { "type": "number", "minimum": 0, "maximum": 0.4, "description": "STYLE parameter (Damla 2026-07-19): armhole scoop fraction of the flat silhouette. No effect on pattern geometry. Was review.* (layer undecided); decided as flat.* style." }
+        "strapLen": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "strapWidth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "ruffle": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "yokeDrop": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "gatherRatio": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "shirrRows": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "tieLength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "neckWidth": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 2
+        },
+        "neckDepth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "neckDepthBack": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "shoulderSlope": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "sleeveLen": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "sleeveWidth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "capPuff": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "cuffGather": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "laceWidth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "laceScallops": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "collarWidth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "collarGap": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "waistNip": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.35,
+          "description": "STYLE parameter (Damla 2026-07-19; max 0.25->0.35 on 2026-07-20 for the FIGURE RULE: fitted dresses (princess/wrap/gore) need a real 38-body waist nip, babydolls stay ~0.07). Waist suppression fraction of the flat silhouette. No effect on pattern geometry; the drafting engine never reads it."
+        },
+        "armholeHollow": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.4,
+          "description": "STYLE parameter (Damla 2026-07-19): armhole scoop fraction of the flat silhouette. No effect on pattern geometry. Was review.* (layer undecided); decided as flat.* style."
+        },
+        "goreCount": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "STYLE parameter (2026-07-20): number of gore panels in a gore/godet skirt flat (motor default 6). Drawing only."
+        },
+        "wrapDir": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "STYLE parameter (2026-07-20): wrap overlap direction for a surplice wrap dress flat (1=overlap left, 2=overlap right). Drawing only."
+        },
+        "garment": {
+          "enum": [
+            "top",
+            "dress"
+          ]
+        },
+        "topLength": {
+          "enum": [
+            "cropped",
+            "hip",
+            "tunic"
+          ]
+        },
+        "sleeveLength": {
+          "enum": [
+            "short",
+            "elbow",
+            "long"
+          ]
+        },
+        "boxy": {
+          "type": "boolean"
+        },
+        "roundNeck": {
+          "type": "boolean"
+        },
+        "physicsShirr": {
+          "type": "boolean"
+        },
+        "peplum": {
+          "enum": [
+            "none",
+            "full",
+            "half",
+            "pointed"
+          ]
+        }
       }
     }
   }
