@@ -46,7 +46,9 @@ function buildHalf(p,cx,isBack,rnd){var sz=SIZE[p.size],st=STYLE[p.style];var y0
 // (86.8px) bulging past the sleeveless underarm (69.1px), read most on boat+
 // princess. A sleeveless top's side seam runs close: keep bust at/inside the
 // underarm so shoulder stays the widest point. Guarded on garment==='top'.
-if(st.garment==='top')bustX=cx+sz.shp*0.99*S;
+// ASKI AILESI (2026-07-22): band-top'ta (cami/bandeau) omuz YOK — bust en geniş
+// kalmalı; shp-daraltma sadece OMUZ gövdeli top'a (tur1c kuralı omuz-en-geniş).
+if(st.garment==='top'&&st.top!=='band')bustX=cx+sz.shp*0.99*S;
 // BOXY top (2026-07-21 gece — id82/65 boxy oversized): yan dikiş DÜZ iner, bel
 // çekmesi yok, en geniş nokta omuz=bust=hip. eX (bel) bust hizasına açılır →
 // kutu siluet. Guarded on st.boxy → sadece boxy stiller; diğer top'lar figürlü.

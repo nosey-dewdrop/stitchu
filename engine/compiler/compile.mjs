@@ -36,6 +36,8 @@ function draftSpec(spec) {
     peplum: spec.peplum === 'full' ? 1 : spec.peplum === 'half' ? 2 : spec.peplum === 'pointed' ? 3 : 0,
     gatherType: spec.shirred === 'physics' ? 2 : 0,     // shirred
     gatherZone: spec.shirred === 'physics' ? 1 : 0,     // bust
+    // ASKI ailesi (2026-07-22): StrapStyle enum none/ruffled/wide/spaghetti (0-3).
+    ruffledStraps: spec.straps === 'ruffled' ? 1 : spec.straps === 'wide' ? 2 : spec.straps === 'spaghetti' ? 3 : 0,
   };
 }
 

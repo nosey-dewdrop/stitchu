@@ -79,6 +79,7 @@ const FLAT_TO_DRAFT = {
   backSeam: (p) => p.pieces.some((x) => /Back/.test(x.name)
     && /center back seam|cut 2/.test(x.cutInstruction)),
   collar:   (p) => hasPiece(p, /Collar/),
+  straps:   (p) => hasPiece(p, /Strap/),                       // wide/spaghetti/ruffled strap piece
   princessSeam: (p) => hasPiece(p, /Side Front|Center Front/),  // draft princess split pieces carry the seam
   gorePanels: (p) => hasPiece(p, /gore|Gore/),                  // draft gore panel piece(s)
   wrapTie:  () => false,      // ink-only wrap waist tie (the draft carries wrap via closure) — allowlisted
@@ -104,6 +105,7 @@ const PIECE_TO_FLAT = [
   { re: /Wrap Front Tie/, part: 'wrapTie' },                      // physical wrap tie cut (flat draws it as ink)
   { re: /^Neck\/Front Tie|Tie \(/, part: 'tie' },
   { re: /Ruffled Strap/, part: 'ruffledStraps' },                // K2 declaredButNotDrawn
+  { re: /Wide Strap|Spaghetti Strap/, part: 'straps' },          // ASKI ailesi plain strap tube
 ];
 
 const declaredNotDrawn = new Set(comp.flatComponents.declaredButNotDrawn.parts);

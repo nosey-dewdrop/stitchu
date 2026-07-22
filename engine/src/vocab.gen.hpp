@@ -60,8 +60,8 @@ inline constexpr int kBackOpeningCount = 5;
 inline constexpr const char* kBackSlit[] = { "none", "vent", "slit" };
 inline constexpr int kBackSlitCount = 3;
 // StrapStyle (int)
-inline constexpr const char* kRuffledStraps[] = { "none", "ruffled" };
-inline constexpr int kRuffledStrapsCount = 2;
+inline constexpr const char* kRuffledStraps[] = { "none", "ruffled", "wide", "spaghetti" };
+inline constexpr int kRuffledStrapsCount = 4;
 // PeplumStyle (int)
 inline constexpr const char* kPeplum[] = { "none", "full", "half", "pointed" };
 inline constexpr int kPeplumCount = 4;

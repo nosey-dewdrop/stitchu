@@ -1,1157 +1,1156 @@
 {
-  "_contract": "stitchu composition contract, K2 (2026-07-19). DECLARES, for every existing drawable component, its attachment point, z-order (dispatcher post-pass order in engine/src/garment.cpp) and conflict class, plus the component x host and component x component conflict matrix. The matrix declares CURRENT engine behavior; it never changes it. engine/tests/compose_check.cpp (ctest compose_check) re-derives every class by actually drafting and fails on any drift. gen-contract.mjs generates engine/src/composition.gen.hpp from this file; --check guards sync.",
-  "version": "1.0.0",
-  "classes": {
-    "allowed": "draws, PatternValidator-clean",
-    "excluded": "refused at the spec boundary (engine/src/specparse.hpp validateSpecCross) with a named error",
-    "validator": "drafts but PatternValidator blocks the result with a named issue; the PDF is withheld (honest, visible refusal)",
-    "honest": "the block skips itself and says so in the guide (a guide step containing: skipped)",
-    "ignored": "field not applicable on this host; the engine ignores it silently BY DOCUMENTED DESIGN (halter shoulder/edge-finish family only). Any silent no-op not declared ignored fails compose_check."
+ "_contract": "stitchu composition contract, K2 (2026-07-19). DECLARES, for every existing drawable component, its attachment point, z-order (dispatcher post-pass order in engine/src/garment.cpp) and conflict class, plus the component x host and component x component conflict matrix. The matrix declares CURRENT engine behavior; it never changes it. engine/tests/compose_check.cpp (ctest compose_check) re-derives every class by actually drafting and fails on any drift. gen-contract.mjs generates engine/src/composition.gen.hpp from this file; --check guards sync.",
+ "version": "1.0.0",
+ "classes": {
+  "allowed": "draws, PatternValidator-clean",
+  "excluded": "refused at the spec boundary (engine/src/specparse.hpp validateSpecCross) with a named error",
+  "validator": "drafts but PatternValidator blocks the result with a named issue; the PDF is withheld (honest, visible refusal)",
+  "honest": "the block skips itself and says so in the guide (a guide step containing: skipped)",
+  "ignored": "field not applicable on this host; the engine ignores it silently BY DOCUMENTED DESIGN (halter shoulder/edge-finish family only). Any silent no-op not declared ignored fails compose_check."
+ },
+ "components": [
+  {
+   "id": "shoulderStyle",
+   "specField": "shoulderStyle",
+   "values": [
+    "dropped",
+    "raglan"
+   ],
+   "attachment": "shoulder seam + armhole (reshape / diagonal raglan seam)",
+   "zOrder": 1,
+   "conflictClass": "shoulderZone",
+   "evidence": "engine/src/garment.cpp:604-623, engine/src/shoulder.cpp"
   },
-  "components": [
-    {
-      "id": "shoulderStyle",
-      "specField": "shoulderStyle",
-      "values": [
-        "dropped",
-        "raglan"
-      ],
-      "attachment": "shoulder seam + armhole (reshape / diagonal raglan seam)",
-      "zOrder": 1,
-      "conflictClass": "shoulderZone",
-      "evidence": "engine/src/garment.cpp:604-623, engine/src/shoulder.cpp"
-    },
-    {
-      "id": "keyhole",
-      "specField": "keyhole",
-      "values": [
-        "keyhole"
-      ],
-      "attachment": "front bodice, CF teardrop below the neckline",
-      "zOrder": 2,
-      "conflictClass": "cfZone",
-      "evidence": "engine/src/garment.cpp:624-629, engine/src/keyhole.cpp"
-    },
-    {
-      "id": "neckline.ext",
-      "specField": "neckline",
-      "values": [
-        "cowl",
-        "pussyBow"
-      ],
-      "attachment": "front neckline (bias re-mark / high neck band + tie strip)",
-      "zOrder": 3,
-      "conflictClass": "neckZone",
-      "evidence": "engine/src/garment.cpp:630-638, engine/src/neckext.cpp"
-    },
-    {
-      "id": "placket",
-      "specField": "placketStyle",
-      "values": [
-        "standard",
-        "asymmetric"
-      ],
-      "attachment": "CF of the front piece (grown-on stand + fold line + buttons)",
-      "zOrder": 4,
-      "conflictClass": "cfZone",
-      "evidence": "engine/src/garment.cpp:639-653, engine/src/placket.cpp"
-    },
-    {
-      "id": "tie",
-      "specField": "tieClosure",
-      "values": [
-        "frontNeckBow",
-        "frontWaistTie",
-        "frontWaistBow",
-        "wrapFront",
-        "tieBack",
-        "backWaist",
-        "backWaistBow",
-        "cuffTies"
-      ],
-      "attachment": "placement notch at the named edge (front neck / waist / back waist / cuff)",
-      "zOrder": 5,
-      "conflictClass": "cfZone|backZone|waistZone",
-      "evidence": "engine/src/garment.cpp:654-660, engine/src/tie.cpp"
-    },
-    {
-      "id": "collar",
-      "specField": "collarType",
-      "values": [
-        "stand",
-        "mock",
-        "flat",
-        "peterPan",
-        "shirt"
-      ],
-      "attachment": "faced neck edge, separate piece trued to the neckline; drawn over the CB seam",
-      "zOrder": 6,
-      "conflictClass": "neckZone",
-      "evidence": "engine/src/garment.cpp:661-669, engine/src/collar.cpp:159-199"
-    },
-    {
-      "id": "gather",
-      "specField": "gatherType",
-      "values": [
-        "drawstring",
-        "shirred",
-        "smocked"
-      ],
-      "attachment": "gathered panel trued to the zone edge (gatherZone: neckline/bust/waist/sleeve)",
-      "zOrder": 7,
-      "conflictClass": "zone-of-gatherZone",
-      "evidence": "engine/src/garment.cpp:670-679, engine/src/gather.cpp:279-305"
-    },
-    {
-      "id": "openBack",
-      "specField": "backOpening",
-      "values": [
-        "round",
-        "lowV",
-        "square",
-        "keyhole"
-      ],
-      "attachment": "back piece cutout + facing trued to the opening",
-      "zOrder": 8,
-      "conflictClass": "backZone",
-      "evidence": "engine/src/garment.cpp:680-688, engine/src/openback.cpp:118-135"
-    },
-    {
-      "id": "backSlit",
-      "specField": "backSlit",
-      "values": [
-        "vent",
-        "slit"
-      ],
-      "attachment": "center-back seam of the back skirt piece, up from the hem",
-      "zOrder": 9,
-      "conflictClass": "backZone+hemZone",
-      "evidence": "engine/src/garment.cpp:689-699, engine/src/slit.cpp:64-90"
-    },
-    {
-      "id": "ruffledStraps",
-      "specField": "ruffledStraps",
-      "values": [
-        "ruffled"
-      ],
-      "attachment": "shoulder points of the sleeveless top edge (notch pair)",
-      "zOrder": 10,
-      "conflictClass": "shoulderZone",
-      "evidence": "engine/src/garment.cpp:700-708, engine/src/strap.cpp:106-130"
-    },
-    {
-      "id": "peplum",
-      "specField": "peplum",
-      "values": [
-        "full",
-        "half",
-        "pointed"
-      ],
-      "attachment": "finished waist seam (inner arc trued to m.waistMM)",
-      "zOrder": 11,
-      "conflictClass": "waistZone",
-      "evidence": "engine/src/garment.cpp:709-718, engine/src/peplum.cpp:95-115"
-    },
-    {
-      "id": "pocket",
-      "specField": "pocketStyle",
-      "values": [
-        "patch",
-        "sideSeam"
-      ],
-      "attachment": "front panel surface (patch) / side seam (in-seam bag)",
-      "zOrder": 12,
-      "conflictClass": "surface|sideSeamZone",
-      "evidence": "engine/src/garment.cpp:719-728, engine/src/pocket.cpp:160-225"
-    },
-    {
-      "id": "cuff",
-      "specField": "cuffStyle",
-      "values": [
-        "button",
-        "ribbed"
-      ],
-      "attachment": "wrist end of a full-length sleeve",
-      "zOrder": 13,
-      "conflictClass": "sleeveZone",
-      "evidence": "engine/src/garment.cpp:729-742, engine/src/cuff.cpp:99-135"
-    },
-    {
-      "id": "hemShape",
-      "specField": "hemShape",
-      "values": [
-        "shirttail",
-        "highLow"
-      ],
-      "attachment": "lower edge of the fitted skirt/dress-skirt/top pieces",
-      "zOrder": 14,
-      "conflictClass": "hemZone",
-      "evidence": "engine/src/garment.cpp:743-756, engine/src/hem.cpp:25-140"
-    },
-    {
-      "id": "ruffleHem",
-      "specField": "ruffleHem",
-      "values": [
-        "single",
-        "tiered"
-      ],
-      "attachment": "skirt/dress hem edge (separate gathered strip)",
-      "zOrder": 15,
-      "conflictClass": "hemZone",
-      "evidence": "engine/src/garment.cpp:757-789, engine/src/ruffle.cpp"
-    },
-    {
-      "id": "bardot",
-      "specField": "bardotStyle",
-      "values": [
-        "plain",
-        "frill"
-      ],
-      "attachment": "bodice top edge dropped below the shoulder (elastic-cased band)",
-      "zOrder": 16,
-      "conflictClass": "shoulderZone+neckZone",
-      "evidence": "engine/src/garment.cpp:790-799, engine/src/offshoulder.cpp:100-135"
-    },
-    {
-      "id": "buttonRow",
-      "specField": "buttonRow",
-      "values": [
-        "functional",
-        "decorative"
-      ],
-      "attachment": "CF of the front piece (button circles; functional reuses the placket geometry)",
-      "zOrder": 17,
-      "conflictClass": "cfZone",
-      "evidence": "engine/src/garment.cpp:800-807, engine/src/buttonrow.cpp:48-110"
-    },
-    {
-      "id": "exposedZip",
-      "specField": "exposedZip",
-      "values": [
-        "centerFront",
-        "centerBack"
-      ],
-      "attachment": "CF or CB seam (teeth glyph + opened seam)",
-      "zOrder": 18,
-      "conflictClass": "cfZone|backZone",
-      "evidence": "engine/src/garment.cpp:808-814, engine/src/exposedzip.cpp:35-70"
-    },
-    {
-      "id": "backDetail",
-      "specField": "backDetail",
-      "values": [
-        "ruffle",
-        "cape",
-        "flounce"
-      ],
-      "attachment": "back neck edge (separate piece, attach edge trued)",
-      "zOrder": 19,
-      "conflictClass": "backZone",
-      "evidence": "engine/src/garment.cpp:815-821, engine/src/backdetail.cpp:39-155"
-    },
-    {
-      "id": "neckline.halter",
-      "specField": "neckline",
-      "values": [
-        "halter"
-      ],
-      "attachment": "bare-shoulder frame: own binding, no shoulder seam; sleeves are honestly skipped in-draft",
-      "zOrder": 0,
-      "conflictClass": "neckZone+shoulderZone",
-      "evidence": "engine/src/garment.cpp:281-296 + 317-320 (dress), 477-512 (top)"
-    },
-    {
-      "id": "sleeveCap",
-      "specField": "sleeveCap",
-      "values": [
-        "gathered",
-        "puffed",
-        "cap"
-      ],
-      "attachment": "sleeve crown (raised/gathered) or short cap wing on the armhole",
-      "zOrder": 0,
-      "conflictClass": "sleeveZone+shoulderZone",
-      "evidence": "engine/src/sleeve.cpp, engine/src/specparse.hpp cross-rule"
-    },
-    {
-      "id": "edgeFinish",
-      "specField": "edgeFinish",
-      "values": [
-        "facing"
-      ],
-      "attachment": "neckline + sleeveless armhole raw edges (bias binding default, facing opt-in)",
-      "zOrder": 0,
-      "conflictClass": "neckZone",
-      "evidence": "engine/src/garment.cpp:86-124"
-    }
-  ],
-  "flatComponents": {
-    "_note": "flat-engine (engine/flat-engine/_engine-full.mjs render()) draw order = z-order; later entries draw ON TOP. The hand-managed rule (collar on top, covering the CB line) is hereby declared. Part flags come from styles.json parts.*.",
-    "order": [
-      {
-        "z": 1,
-        "part": "sleeve",
-        "note": "drawn FIRST so the body outline overlaps it (sleeve sits behind the shoulder)"
-      },
-      {
-        "z": 2,
-        "part": "(body outline)",
-        "note": "base silhouette, front + back halves mirrored"
-      },
-      {
-        "z": 3,
-        "part": "shirr",
-        "note": "gather ink rows on the panel; casing flag shifts the top row down"
-      },
-      {
-        "z": 4,
-        "part": "(empire seam)",
-        "note": "always drawn"
-      },
-      {
-        "z": 5,
-        "part": "(drape folds)",
-        "note": "ink, seeded"
-      },
-      {
-        "z": 6,
-        "part": "laceHem",
-        "note": "hem lace band, else hem stitch line"
-      },
-      {
-        "z": 7,
-        "part": "backSeam",
-        "note": "back view only, CB line"
-      },
-      {
-        "z": 8,
-        "part": "laceNeck",
-        "note": "neckline lace band"
-      },
-      {
-        "z": 9,
-        "part": "cfGather",
-        "note": "front only, CF gather ink"
-      },
-      {
-        "z": 10,
-        "part": "collar",
-        "note": "drawn over the body AND the neckline — the declared hand-rule: the collar sits on top and covers the CB/neck line"
-      },
-      {
-        "z": 11,
-        "part": "tie",
-        "note": "front only, bow + streamers, topmost"
-      }
-    ],
-    "declaredButNotDrawn": {
-      "_finding": "declaration-vs-code discrepancy (K2, code wins): these part flags exist in styles.json records and in the contract flat.* schema, but render() never reads them — setting them draws NOTHING.",
-      "parts": [
-        "straps",
-        "ruffledStraps",
-        "gatherWaist"
-      ],
-      "evidence": "engine/flat-engine/_engine-full.mjs:33 reads only pt.sleeve/shirr/casing/tie/backSeam/cfGather/laceNeck/laceSleeve/laceHem/collar; styles.json drawstring_babydoll sets straps+ruffledStraps true"
-    }
+  {
+   "id": "keyhole",
+   "specField": "keyhole",
+   "values": [
+    "keyhole"
+   ],
+   "attachment": "front bodice, CF teardrop below the neckline",
+   "zOrder": 2,
+   "conflictClass": "cfZone",
+   "evidence": "engine/src/garment.cpp:624-629, engine/src/keyhole.cpp"
   },
-  "matrix": {
-    "_note": "defaultClass applies to every host x feature single and feature x feature pair not listed below. Pairs run on a plain sleeveless A-line dress host (EU38), sleeved when a feature needs a sleeve — the same canonical hosts compose_check drafts. why = the engines own message/issue at declaration time (informative; the test re-derives it).",
-    "defaultClass": "allowed",
-    "hostRules": [
-      {
-        "host": "dress",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "dress",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress",
-        "feature": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "host": "dress.sleeved",
-        "feature": "neckline.halter",
-        "class": "honest",
-        "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
-      },
-      {
-        "host": "dress.sleeved",
-        "feature": "ruffledStraps",
-        "class": "excluded",
-        "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "neckline.halter",
-        "class": "ignored",
-        "why": ""
-      },
-      {
-        "host": "dress.halter",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "backDetail.cape",
-        "class": "validator",
-        "why": "[kink] curve 3 turns 28 deg in one step (max 25)"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.halter",
-        "feature": "shoulder.dropped",
-        "class": "ignored",
-        "why": ""
-      },
-      {
-        "host": "dress.halter",
-        "feature": "shoulder.raglan",
-        "class": "ignored",
-        "why": ""
-      },
-      {
-        "host": "dress.halter",
-        "feature": "edgeFinish.facing",
-        "class": "ignored",
-        "why": ""
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "backSlit.vent",
-        "class": "excluded",
-        "why": "invalid spec: a gathered/pleated/half-circle skirt walks freely and hosts no back slit: leave backSlit 'none' "
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "hemShape.highLow",
-        "class": "excluded",
-        "why": "invalid spec: a gathered/pleated/half-circle skirt has no fitted side hem to reshape: leave hemShape 'straight"
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.gathered",
-        "feature": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "bardot.plain",
-        "class": "honest",
-        "why": "Off-shoulder: skipped — this garment has no plain bodiced front + ba"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "dress.princess",
-        "feature": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "host": "top",
-        "feature": "placket.asymmetric",
-        "class": "validator",
-        "why": "[sideseam] front side seam 324.9 vs back 356.4"
-      },
-      {
-        "host": "top",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "top",
-        "feature": "backSlit.vent",
-        "class": "excluded",
-        "why": "invalid spec: a top has no skirt hem: leave backSlit 'none'"
-      },
-      {
-        "host": "top",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top",
-        "feature": "hemShape.highLow",
-        "class": "validator",
-        "why": "[sideseam] front side seam 314.9 vs back 308.3"
-      },
-      {
-        "host": "top",
-        "feature": "ruffleHem",
-        "class": "excluded",
-        "why": "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off"
-      },
-      {
-        "host": "top",
-        "feature": "bardot.plain",
-        "class": "validator",
-        "why": "[top] height 570, expected about 625 — hem extension did not apply"
-      },
-      {
-        "host": "top",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top",
-        "feature": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "backSlit.vent",
-        "class": "excluded",
-        "why": "invalid spec: a top has no skirt hem: leave backSlit 'none'"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "hemShape.highLow",
-        "class": "validator",
-        "why": "[marking] marking point (95.5, 434.0) falls outside the piece"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "ruffleHem",
-        "class": "excluded",
-        "why": "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "bardot.plain",
-        "class": "validator",
-        "why": "[top] height 390, expected about 445 — hem extension did not apply"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "top.cropped",
-        "feature": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "host": "skirt",
-        "feature": "keyhole",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry keyhole: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "neckline.cowl",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
-      },
-      {
-        "host": "skirt",
-        "feature": "neckline.pussyBow",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
-      },
-      {
-        "host": "skirt",
-        "feature": "neckline.halter",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
-      },
-      {
-        "host": "skirt",
-        "feature": "placket.standard",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry placket: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "placket.asymmetric",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry placket: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "tie.frontNeckBow",
-        "class": "validator",
-        "why": "[waist] skirt waist 875.6 vs eased body waist 714.0 differ by 161.6 mm"
-      },
-      {
-        "host": "skirt",
-        "feature": "tie.tieBack",
-        "class": "validator",
-        "why": "[waist] skirt waist 875.6 vs eased body waist 714.0 differ by 161.6 mm"
-      },
-      {
-        "host": "skirt",
-        "feature": "tie.wrapFront",
-        "class": "validator",
-        "why": "[waist] skirt waist 903.6 vs eased body waist 714.0 differ by 189.6 mm"
-      },
-      {
-        "host": "skirt",
-        "feature": "collar.peterPan",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry collarType: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "gather.shirredBust",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry gatherType: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "gather.drawstringSleeve",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry gatherType: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "openBack.round",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry backOpening: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "ruffledStraps",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry ruffledStraps: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "peplum.full",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry peplum: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "skirt",
-        "feature": "bardot.plain",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry bardotStyle: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "buttonRow.functional",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry buttonRow: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "buttonRow.decorative",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry buttonRow: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "exposedZip.centerBack",
-        "class": "honest",
-        "why": "Exposed zipper: skipped — this garment has no center-back body piece"
-      },
-      {
-        "host": "skirt",
-        "feature": "backDetail.cape",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry backDetail: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "skirt",
-        "feature": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
-      },
-      {
-        "host": "skirt",
-        "feature": "shoulder.dropped",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry shoulderStyle: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "shoulder.raglan",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry shoulderStyle: leave it at its default"
-      },
-      {
-        "host": "skirt",
-        "feature": "edgeFinish.facing",
-        "class": "excluded",
-        "why": "invalid spec: a skirt has no bodice to carry edgeFinish: leave it at its default"
-      }
-    ],
-    "pairRules": [
-      {
-        "a": "keyhole",
-        "b": "neckline.pussyBow",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "placket.standard",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "placket.asymmetric",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "tie.frontNeckBow",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "tie.wrapFront",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "collar.peterPan",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "gather.shirredBust",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "ruffledStraps",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "buttonRow.functional",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "buttonRow.decorative",
-        "class": "validator",
-        "why": "[keyhole] keyhole stitch line is not a CF teardrop"
-      },
-      {
-        "a": "keyhole",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "neckline.cowl",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "neckline.pussyBow",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
-      },
-      {
-        "a": "neckline.pussyBow",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "neckline.halter",
-        "b": "gather.drawstringSleeve",
-        "class": "honest",
-        "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
-      },
-      {
-        "a": "neckline.halter",
-        "b": "cuff.button",
-        "class": "honest",
-        "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
-      },
-      {
-        "a": "neckline.halter",
-        "b": "backDetail.cape",
-        "class": "validator",
-        "why": "[kink] curve 3 turns 28 deg in one step (max 25)"
-      },
-      {
-        "a": "neckline.halter",
-        "b": "sleeveCap.puffed",
-        "class": "honest",
-        "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
-      },
-      {
-        "a": "neckline.halter",
-        "b": "sleeveCap.cap",
-        "class": "honest",
-        "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
-      },
-      {
-        "a": "placket.standard",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "placket.asymmetric",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "tie.frontNeckBow",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
-      },
-      {
-        "a": "tie.frontNeckBow",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "tie.tieBack",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "tie.wrapFront",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "collar.peterPan",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[facing] inner edge 101.6 vs garment neckline 244.2 differ by 142.6 mm"
-      },
-      {
-        "a": "collar.peterPan",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "gather.shirredBust",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
-      },
-      {
-        "a": "gather.shirredBust",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "gather.drawstringSleeve",
-        "b": "ruffledStraps",
-        "class": "excluded",
-        "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
-      },
-      {
-        "a": "gather.drawstringSleeve",
-        "b": "sleeveCap.puffed",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "a": "gather.drawstringSleeve",
-        "b": "sleeveCap.cap",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "a": "gather.drawstringSleeve",
-        "b": "shoulder.dropped",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "a": "gather.drawstringSleeve",
-        "b": "shoulder.raglan",
-        "class": "honest",
-        "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
-      },
-      {
-        "a": "openBack.round",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "backSlit.vent",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "ruffledStraps",
-        "b": "cuff.button",
-        "class": "excluded",
-        "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
-      },
-      {
-        "a": "ruffledStraps",
-        "b": "bardot.plain",
-        "class": "validator",
-        "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
-      },
-      {
-        "a": "ruffledStraps",
-        "b": "sleeveCap.puffed",
-        "class": "excluded",
-        "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
-      },
-      {
-        "a": "ruffledStraps",
-        "b": "sleeveCap.cap",
-        "class": "excluded",
-        "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
-      },
-      {
-        "a": "ruffledStraps",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "peplum.full",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "pocket.patch",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "pocket.sideSeam",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "cuff.button",
-        "b": "sleeveCap.cap",
-        "class": "honest",
-        "why": "Cuff: skipped — this garment has no full-length sleeve hem to carry"
-      },
-      {
-        "a": "cuff.button",
-        "b": "shoulder.raglan",
-        "class": "honest",
-        "why": "Cuff: skipped — this garment has no full-length sleeve hem to carry"
-      },
-      {
-        "a": "hemShape.highLow",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "ruffleHem",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "bardot.plain",
-        "b": "backDetail.cape",
-        "class": "validator",
-        "why": "[kink] curve 3 turns 31 deg in one step (max 25)"
-      },
-      {
-        "a": "bardot.plain",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "bardot.plain",
-        "b": "shoulder.raglan",
-        "class": "validator",
-        "why": "[marking] marking point (41.7, 22.3) falls outside the piece"
-      },
-      {
-        "a": "bardot.plain",
-        "b": "edgeFinish.facing",
-        "class": "validator",
-        "why": "[facing] inner edge 101.6 vs garment neckline 244.2 differ by 142.6 mm"
-      },
-      {
-        "a": "buttonRow.functional",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "buttonRow.decorative",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "exposedZip.centerBack",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "backDetail.cape",
-        "b": "shoulder.dropped",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      },
-      {
-        "a": "shoulder.dropped",
-        "b": "edgeFinish.facing",
-        "class": "validator",
-        "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
-      }
-    ]
+  {
+   "id": "neckline.ext",
+   "specField": "neckline",
+   "values": [
+    "cowl",
+    "pussyBow"
+   ],
+   "attachment": "front neckline (bias re-mark / high neck band + tie strip)",
+   "zOrder": 3,
+   "conflictClass": "neckZone",
+   "evidence": "engine/src/garment.cpp:630-638, engine/src/neckext.cpp"
+  },
+  {
+   "id": "placket",
+   "specField": "placketStyle",
+   "values": [
+    "standard",
+    "asymmetric"
+   ],
+   "attachment": "CF of the front piece (grown-on stand + fold line + buttons)",
+   "zOrder": 4,
+   "conflictClass": "cfZone",
+   "evidence": "engine/src/garment.cpp:639-653, engine/src/placket.cpp"
+  },
+  {
+   "id": "tie",
+   "specField": "tieClosure",
+   "values": [
+    "frontNeckBow",
+    "frontWaistTie",
+    "frontWaistBow",
+    "wrapFront",
+    "tieBack",
+    "backWaist",
+    "backWaistBow",
+    "cuffTies"
+   ],
+   "attachment": "placement notch at the named edge (front neck / waist / back waist / cuff)",
+   "zOrder": 5,
+   "conflictClass": "cfZone|backZone|waistZone",
+   "evidence": "engine/src/garment.cpp:654-660, engine/src/tie.cpp"
+  },
+  {
+   "id": "collar",
+   "specField": "collarType",
+   "values": [
+    "stand",
+    "mock",
+    "flat",
+    "peterPan",
+    "shirt"
+   ],
+   "attachment": "faced neck edge, separate piece trued to the neckline; drawn over the CB seam",
+   "zOrder": 6,
+   "conflictClass": "neckZone",
+   "evidence": "engine/src/garment.cpp:661-669, engine/src/collar.cpp:159-199"
+  },
+  {
+   "id": "gather",
+   "specField": "gatherType",
+   "values": [
+    "drawstring",
+    "shirred",
+    "smocked"
+   ],
+   "attachment": "gathered panel trued to the zone edge (gatherZone: neckline/bust/waist/sleeve)",
+   "zOrder": 7,
+   "conflictClass": "zone-of-gatherZone",
+   "evidence": "engine/src/garment.cpp:670-679, engine/src/gather.cpp:279-305"
+  },
+  {
+   "id": "openBack",
+   "specField": "backOpening",
+   "values": [
+    "round",
+    "lowV",
+    "square",
+    "keyhole"
+   ],
+   "attachment": "back piece cutout + facing trued to the opening",
+   "zOrder": 8,
+   "conflictClass": "backZone",
+   "evidence": "engine/src/garment.cpp:680-688, engine/src/openback.cpp:118-135"
+  },
+  {
+   "id": "backSlit",
+   "specField": "backSlit",
+   "values": [
+    "vent",
+    "slit"
+   ],
+   "attachment": "center-back seam of the back skirt piece, up from the hem",
+   "zOrder": 9,
+   "conflictClass": "backZone+hemZone",
+   "evidence": "engine/src/garment.cpp:689-699, engine/src/slit.cpp:64-90"
+  },
+  {
+   "id": "ruffledStraps",
+   "specField": "ruffledStraps",
+   "values": [
+    "ruffled"
+   ],
+   "attachment": "shoulder points of the sleeveless top edge (notch pair)",
+   "zOrder": 10,
+   "conflictClass": "shoulderZone",
+   "evidence": "engine/src/garment.cpp:700-708, engine/src/strap.cpp:106-130"
+  },
+  {
+   "id": "peplum",
+   "specField": "peplum",
+   "values": [
+    "full",
+    "half",
+    "pointed"
+   ],
+   "attachment": "finished waist seam (inner arc trued to m.waistMM)",
+   "zOrder": 11,
+   "conflictClass": "waistZone",
+   "evidence": "engine/src/garment.cpp:709-718, engine/src/peplum.cpp:95-115"
+  },
+  {
+   "id": "pocket",
+   "specField": "pocketStyle",
+   "values": [
+    "patch",
+    "sideSeam"
+   ],
+   "attachment": "front panel surface (patch) / side seam (in-seam bag)",
+   "zOrder": 12,
+   "conflictClass": "surface|sideSeamZone",
+   "evidence": "engine/src/garment.cpp:719-728, engine/src/pocket.cpp:160-225"
+  },
+  {
+   "id": "cuff",
+   "specField": "cuffStyle",
+   "values": [
+    "button",
+    "ribbed"
+   ],
+   "attachment": "wrist end of a full-length sleeve",
+   "zOrder": 13,
+   "conflictClass": "sleeveZone",
+   "evidence": "engine/src/garment.cpp:729-742, engine/src/cuff.cpp:99-135"
+  },
+  {
+   "id": "hemShape",
+   "specField": "hemShape",
+   "values": [
+    "shirttail",
+    "highLow"
+   ],
+   "attachment": "lower edge of the fitted skirt/dress-skirt/top pieces",
+   "zOrder": 14,
+   "conflictClass": "hemZone",
+   "evidence": "engine/src/garment.cpp:743-756, engine/src/hem.cpp:25-140"
+  },
+  {
+   "id": "ruffleHem",
+   "specField": "ruffleHem",
+   "values": [
+    "single",
+    "tiered"
+   ],
+   "attachment": "skirt/dress hem edge (separate gathered strip)",
+   "zOrder": 15,
+   "conflictClass": "hemZone",
+   "evidence": "engine/src/garment.cpp:757-789, engine/src/ruffle.cpp"
+  },
+  {
+   "id": "bardot",
+   "specField": "bardotStyle",
+   "values": [
+    "plain",
+    "frill"
+   ],
+   "attachment": "bodice top edge dropped below the shoulder (elastic-cased band)",
+   "zOrder": 16,
+   "conflictClass": "shoulderZone+neckZone",
+   "evidence": "engine/src/garment.cpp:790-799, engine/src/offshoulder.cpp:100-135"
+  },
+  {
+   "id": "buttonRow",
+   "specField": "buttonRow",
+   "values": [
+    "functional",
+    "decorative"
+   ],
+   "attachment": "CF of the front piece (button circles; functional reuses the placket geometry)",
+   "zOrder": 17,
+   "conflictClass": "cfZone",
+   "evidence": "engine/src/garment.cpp:800-807, engine/src/buttonrow.cpp:48-110"
+  },
+  {
+   "id": "exposedZip",
+   "specField": "exposedZip",
+   "values": [
+    "centerFront",
+    "centerBack"
+   ],
+   "attachment": "CF or CB seam (teeth glyph + opened seam)",
+   "zOrder": 18,
+   "conflictClass": "cfZone|backZone",
+   "evidence": "engine/src/garment.cpp:808-814, engine/src/exposedzip.cpp:35-70"
+  },
+  {
+   "id": "backDetail",
+   "specField": "backDetail",
+   "values": [
+    "ruffle",
+    "cape",
+    "flounce"
+   ],
+   "attachment": "back neck edge (separate piece, attach edge trued)",
+   "zOrder": 19,
+   "conflictClass": "backZone",
+   "evidence": "engine/src/garment.cpp:815-821, engine/src/backdetail.cpp:39-155"
+  },
+  {
+   "id": "neckline.halter",
+   "specField": "neckline",
+   "values": [
+    "halter"
+   ],
+   "attachment": "bare-shoulder frame: own binding, no shoulder seam; sleeves are honestly skipped in-draft",
+   "zOrder": 0,
+   "conflictClass": "neckZone+shoulderZone",
+   "evidence": "engine/src/garment.cpp:281-296 + 317-320 (dress), 477-512 (top)"
+  },
+  {
+   "id": "sleeveCap",
+   "specField": "sleeveCap",
+   "values": [
+    "gathered",
+    "puffed",
+    "cap"
+   ],
+   "attachment": "sleeve crown (raised/gathered) or short cap wing on the armhole",
+   "zOrder": 0,
+   "conflictClass": "sleeveZone+shoulderZone",
+   "evidence": "engine/src/sleeve.cpp, engine/src/specparse.hpp cross-rule"
+  },
+  {
+   "id": "edgeFinish",
+   "specField": "edgeFinish",
+   "values": [
+    "facing"
+   ],
+   "attachment": "neckline + sleeveless armhole raw edges (bias binding default, facing opt-in)",
+   "zOrder": 0,
+   "conflictClass": "neckZone",
+   "evidence": "engine/src/garment.cpp:86-124"
   }
+ ],
+ "flatComponents": {
+  "_note": "flat-engine (engine/flat-engine/_engine-full.mjs render()) draw order = z-order; later entries draw ON TOP. The hand-managed rule (collar on top, covering the CB line) is hereby declared. Part flags come from styles.json parts.*.",
+  "order": [
+   {
+    "z": 1,
+    "part": "sleeve",
+    "note": "drawn FIRST so the body outline overlaps it (sleeve sits behind the shoulder)"
+   },
+   {
+    "z": 2,
+    "part": "(body outline)",
+    "note": "base silhouette, front + back halves mirrored"
+   },
+   {
+    "z": 3,
+    "part": "shirr",
+    "note": "gather ink rows on the panel; casing flag shifts the top row down"
+   },
+   {
+    "z": 4,
+    "part": "(empire seam)",
+    "note": "always drawn"
+   },
+   {
+    "z": 5,
+    "part": "(drape folds)",
+    "note": "ink, seeded"
+   },
+   {
+    "z": 6,
+    "part": "laceHem",
+    "note": "hem lace band, else hem stitch line"
+   },
+   {
+    "z": 7,
+    "part": "backSeam",
+    "note": "back view only, CB line"
+   },
+   {
+    "z": 8,
+    "part": "laceNeck",
+    "note": "neckline lace band"
+   },
+   {
+    "z": 9,
+    "part": "cfGather",
+    "note": "front only, CF gather ink"
+   },
+   {
+    "z": 10,
+    "part": "collar",
+    "note": "drawn over the body AND the neckline — the declared hand-rule: the collar sits on top and covers the CB/neck line"
+   },
+   {
+    "z": 11,
+    "part": "tie",
+    "note": "front only, bow + streamers, topmost"
+   }
+  ],
+  "declaredButNotDrawn": {
+   "_finding": "declaration-vs-code discrepancy (K2, code wins): these part flags exist in styles.json records and in the contract flat.* schema, but render() never reads them — setting them draws NOTHING. [2026-07-22: straps ÇIKARILDI — render() artık pt.straps okuyor (strapShape geri geldi 2026-07-19), ASKI ailesi wide/spaghetti bunu çiziyor; ruffledStraps+gatherWaist hala çizilmiyor].",
+   "parts": [
+    "ruffledStraps",
+    "gatherWaist"
+   ],
+   "evidence": "engine/flat-engine/_engine-full.mjs:33 reads only pt.sleeve/shirr/casing/tie/backSeam/cfGather/laceNeck/laceSleeve/laceHem/collar; styles.json drawstring_babydoll sets straps+ruffledStraps true"
+  }
+ },
+ "matrix": {
+  "_note": "defaultClass applies to every host x feature single and feature x feature pair not listed below. Pairs run on a plain sleeveless A-line dress host (EU38), sleeved when a feature needs a sleeve — the same canonical hosts compose_check drafts. why = the engines own message/issue at declaration time (informative; the test re-derives it).",
+  "defaultClass": "allowed",
+  "hostRules": [
+   {
+    "host": "dress",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "dress",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress",
+    "feature": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "host": "dress.sleeved",
+    "feature": "neckline.halter",
+    "class": "honest",
+    "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
+   },
+   {
+    "host": "dress.sleeved",
+    "feature": "ruffledStraps",
+    "class": "excluded",
+    "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "neckline.halter",
+    "class": "ignored",
+    "why": ""
+   },
+   {
+    "host": "dress.halter",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "backDetail.cape",
+    "class": "validator",
+    "why": "[kink] curve 3 turns 28 deg in one step (max 25)"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.halter",
+    "feature": "shoulder.dropped",
+    "class": "ignored",
+    "why": ""
+   },
+   {
+    "host": "dress.halter",
+    "feature": "shoulder.raglan",
+    "class": "ignored",
+    "why": ""
+   },
+   {
+    "host": "dress.halter",
+    "feature": "edgeFinish.facing",
+    "class": "ignored",
+    "why": ""
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "backSlit.vent",
+    "class": "excluded",
+    "why": "invalid spec: a gathered/pleated/half-circle skirt walks freely and hosts no back slit: leave backSlit 'none' "
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "hemShape.highLow",
+    "class": "excluded",
+    "why": "invalid spec: a gathered/pleated/half-circle skirt has no fitted side hem to reshape: leave hemShape 'straight"
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.gathered",
+    "feature": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "bardot.plain",
+    "class": "honest",
+    "why": "Off-shoulder: skipped — this garment has no plain bodiced front + ba"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "dress.princess",
+    "feature": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "host": "top",
+    "feature": "placket.asymmetric",
+    "class": "validator",
+    "why": "[sideseam] front side seam 324.9 vs back 356.4"
+   },
+   {
+    "host": "top",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "top",
+    "feature": "backSlit.vent",
+    "class": "excluded",
+    "why": "invalid spec: a top has no skirt hem: leave backSlit 'none'"
+   },
+   {
+    "host": "top",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top",
+    "feature": "hemShape.highLow",
+    "class": "validator",
+    "why": "[sideseam] front side seam 314.9 vs back 308.3"
+   },
+   {
+    "host": "top",
+    "feature": "ruffleHem",
+    "class": "excluded",
+    "why": "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off"
+   },
+   {
+    "host": "top",
+    "feature": "bardot.plain",
+    "class": "validator",
+    "why": "[top] height 570, expected about 625 — hem extension did not apply"
+   },
+   {
+    "host": "top",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top",
+    "feature": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "backSlit.vent",
+    "class": "excluded",
+    "why": "invalid spec: a top has no skirt hem: leave backSlit 'none'"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "hemShape.highLow",
+    "class": "validator",
+    "why": "[marking] marking point (95.5, 434.0) falls outside the piece"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "ruffleHem",
+    "class": "excluded",
+    "why": "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "bardot.plain",
+    "class": "validator",
+    "why": "[top] height 390, expected about 445 — hem extension did not apply"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "top.cropped",
+    "feature": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "host": "skirt",
+    "feature": "keyhole",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry keyhole: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "neckline.cowl",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
+   },
+   {
+    "host": "skirt",
+    "feature": "neckline.pussyBow",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
+   },
+   {
+    "host": "skirt",
+    "feature": "neckline.halter",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice: leave sleeveStyle 'none' and neckline 'crew'"
+   },
+   {
+    "host": "skirt",
+    "feature": "placket.standard",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry placket: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "placket.asymmetric",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry placket: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "tie.frontNeckBow",
+    "class": "validator",
+    "why": "[waist] skirt waist 875.6 vs eased body waist 714.0 differ by 161.6 mm"
+   },
+   {
+    "host": "skirt",
+    "feature": "tie.tieBack",
+    "class": "validator",
+    "why": "[waist] skirt waist 875.6 vs eased body waist 714.0 differ by 161.6 mm"
+   },
+   {
+    "host": "skirt",
+    "feature": "tie.wrapFront",
+    "class": "validator",
+    "why": "[waist] skirt waist 903.6 vs eased body waist 714.0 differ by 189.6 mm"
+   },
+   {
+    "host": "skirt",
+    "feature": "collar.peterPan",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry collarType: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "gather.shirredBust",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry gatherType: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "gather.drawstringSleeve",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry gatherType: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "openBack.round",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry backOpening: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "ruffledStraps",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry ruffledStraps: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "peplum.full",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry peplum: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "skirt",
+    "feature": "bardot.plain",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry bardotStyle: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "buttonRow.functional",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry buttonRow: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "buttonRow.decorative",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry buttonRow: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "exposedZip.centerBack",
+    "class": "honest",
+    "why": "Exposed zipper: skipped — this garment has no center-back body piece"
+   },
+   {
+    "host": "skirt",
+    "feature": "backDetail.cape",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry backDetail: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "skirt",
+    "feature": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: sleeveCap requires a sleeve: set sleeveStyle to 'straight' or 'balloon'"
+   },
+   {
+    "host": "skirt",
+    "feature": "shoulder.dropped",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry shoulderStyle: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "shoulder.raglan",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry shoulderStyle: leave it at its default"
+   },
+   {
+    "host": "skirt",
+    "feature": "edgeFinish.facing",
+    "class": "excluded",
+    "why": "invalid spec: a skirt has no bodice to carry edgeFinish: leave it at its default"
+   }
+  ],
+  "pairRules": [
+   {
+    "a": "keyhole",
+    "b": "neckline.pussyBow",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "placket.standard",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "placket.asymmetric",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "tie.frontNeckBow",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "tie.wrapFront",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "collar.peterPan",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "gather.shirredBust",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "ruffledStraps",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "buttonRow.functional",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "buttonRow.decorative",
+    "class": "validator",
+    "why": "[keyhole] keyhole stitch line is not a CF teardrop"
+   },
+   {
+    "a": "keyhole",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "neckline.cowl",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "neckline.pussyBow",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
+   },
+   {
+    "a": "neckline.pussyBow",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "neckline.halter",
+    "b": "gather.drawstringSleeve",
+    "class": "honest",
+    "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
+   },
+   {
+    "a": "neckline.halter",
+    "b": "cuff.button",
+    "class": "honest",
+    "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
+   },
+   {
+    "a": "neckline.halter",
+    "b": "backDetail.cape",
+    "class": "validator",
+    "why": "[kink] curve 3 turns 28 deg in one step (max 25)"
+   },
+   {
+    "a": "neckline.halter",
+    "b": "sleeveCap.puffed",
+    "class": "honest",
+    "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
+   },
+   {
+    "a": "neckline.halter",
+    "b": "sleeveCap.cap",
+    "class": "honest",
+    "why": "A halter has no shoulders to hang a sleeve from — the sleeve choice"
+   },
+   {
+    "a": "placket.standard",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "placket.asymmetric",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "tie.frontNeckBow",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
+   },
+   {
+    "a": "tie.frontNeckBow",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "tie.tieBack",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "tie.wrapFront",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "collar.peterPan",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[facing] inner edge 101.6 vs garment neckline 244.2 differ by 142.6 mm"
+   },
+   {
+    "a": "collar.peterPan",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "gather.shirredBust",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
+   },
+   {
+    "a": "gather.shirredBust",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "gather.drawstringSleeve",
+    "b": "ruffledStraps",
+    "class": "excluded",
+    "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
+   },
+   {
+    "a": "gather.drawstringSleeve",
+    "b": "sleeveCap.puffed",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "a": "gather.drawstringSleeve",
+    "b": "sleeveCap.cap",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "a": "gather.drawstringSleeve",
+    "b": "shoulder.dropped",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "a": "gather.drawstringSleeve",
+    "b": "shoulder.raglan",
+    "class": "honest",
+    "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"
+   },
+   {
+    "a": "openBack.round",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "backSlit.vent",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "ruffledStraps",
+    "b": "cuff.button",
+    "class": "excluded",
+    "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
+   },
+   {
+    "a": "ruffledStraps",
+    "b": "bardot.plain",
+    "class": "validator",
+    "why": "[marking] marking point (53.5, 0.0) falls outside the piece"
+   },
+   {
+    "a": "ruffledStraps",
+    "b": "sleeveCap.puffed",
+    "class": "excluded",
+    "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
+   },
+   {
+    "a": "ruffledStraps",
+    "b": "sleeveCap.cap",
+    "class": "excluded",
+    "why": "invalid spec: ruffledStraps needs bare shoulders: set sleeveStyle to 'none'"
+   },
+   {
+    "a": "ruffledStraps",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "peplum.full",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "pocket.patch",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "pocket.sideSeam",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "cuff.button",
+    "b": "sleeveCap.cap",
+    "class": "honest",
+    "why": "Cuff: skipped — this garment has no full-length sleeve hem to carry"
+   },
+   {
+    "a": "cuff.button",
+    "b": "shoulder.raglan",
+    "class": "honest",
+    "why": "Cuff: skipped — this garment has no full-length sleeve hem to carry"
+   },
+   {
+    "a": "hemShape.highLow",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "ruffleHem",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "bardot.plain",
+    "b": "backDetail.cape",
+    "class": "validator",
+    "why": "[kink] curve 3 turns 31 deg in one step (max 25)"
+   },
+   {
+    "a": "bardot.plain",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "bardot.plain",
+    "b": "shoulder.raglan",
+    "class": "validator",
+    "why": "[marking] marking point (41.7, 22.3) falls outside the piece"
+   },
+   {
+    "a": "bardot.plain",
+    "b": "edgeFinish.facing",
+    "class": "validator",
+    "why": "[facing] inner edge 101.6 vs garment neckline 244.2 differ by 142.6 mm"
+   },
+   {
+    "a": "buttonRow.functional",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "buttonRow.decorative",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "exposedZip.centerBack",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "backDetail.cape",
+    "b": "shoulder.dropped",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   },
+   {
+    "a": "shoulder.dropped",
+    "b": "edgeFinish.facing",
+    "class": "validator",
+    "why": "[guideCoverage] step references an undrafted piece: Dropped shoulder: the shoulder sea"
+   }
+  ]
+ }
 }

@@ -107,10 +107,12 @@
 
     "straps": {
       "values": {
-        "none":     {"kanit": "hakem"},
-        "ruffled":  {"kanit": "pinli", "note": "strapShape, drawstring_babydoll pininde"}
+        "none":      {"kanit": "hakem"},
+        "ruffled":   {"kanit": "pinli", "note": "strapShape, drawstring_babydoll pininde"},
+        "wide":      {"kanit": "hakem", "note": "düz self-lined geniş askı (22mm tube, no gather); kalıp StrapBlock Wide; id4/31/56/58/79/102 (2026-07-22 ASKI ailesi)"},
+        "spaghetti": {"kanit": "hakem", "note": "ince self-lined tube (8mm); kalıp StrapBlock Spaghetti; id46/74"}
       },
-      "PARK": ["shoulder", "spaghetti", "wide", "halter", "oneShoulder", "offShoulder"]
+      "PARK": ["shoulder", "halter", "oneShoulder", "offShoulder"]
     },
 
     "detay-pinli": {

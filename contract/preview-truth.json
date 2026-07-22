@@ -259,6 +259,94 @@
    "topLength": "hip",
    "gatherType": "shirred",
    "gatherZone": "bust"
+  },
+  "dress_boat_princess_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "boat",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "sleeveCap": "cap",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "top_cami_sq_wide_shirred": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "wide",
+   "gatherType": "shirred",
+   "gatherZone": "bust"
+  },
+  "top_cami_sq_wide_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "wide",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
+  },
+  "top_cami_sq_spaghetti": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "spaghetti"
+  },
+  "top_cami_sq_spag_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "spaghetti",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
+  },
+  "top_bandeau_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
   }
  },
  "structuralAllow": [
@@ -515,6 +603,41 @@
    "maxAbsDevPct": 48,
    "contractRef": "contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop')",
    "justification": "same two-quantities-are-different declaration as the '*' 21% skirtLen pin; a mini dress skirt (vs the empire mini cohort) diverges more between the stylised flat length and the real hem drop. Current +45.3%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_wide_shirred",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_wide_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spaghetti",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spag_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_bandeau_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
   }
  ]
 }

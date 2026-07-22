@@ -52,20 +52,23 @@ void placementNotch(PatternPiece* piece, const Point& at) {
 // lengthwise fold self-lines it and the extra length becomes the ruffle. The
 // piece IS the cut rectangle (SA baked into the cut note, like the tie strip),
 // with the lengthwise fold line + a gather line up the middle.
-PatternPiece ruffledStrip(double span) {
-    const double cutW = 2 * finishedWidth + 2 * SA;
-    const double cutL = std::round(span * fullness) + 2 * SA;
+// One strap strip. Ruffled: cut LONGER than the finished span (x fullness) with
+// a gather line. Plain (Wide/Spaghetti, 2026-07-22): the same self-lined tube at
+// fullness 1.0, no gather line. Parameterised so the Ruffled output is
+// byte-for-byte what it always was (golden safety by construction).
+PatternPiece strapStrip(double span, double w, double full, const std::string& name,
+                        const std::string& note) {
+    const double cutW = 2 * w + 2 * SA;
+    const double cutL = std::round(span * full) + 2 * SA;
 
     PatternPiece piece;
-    piece.name = "Ruffled Strap (fırfırlı askı)";
+    piece.name = name;
     piece.cutInstruction =
         "cut 2 rectangle(s) " +
         std::to_string(static_cast<long>(std::lround(cutW))) + " x " +
         std::to_string(static_cast<long>(std::lround(cutL))) +
-        " mm (finished " + std::to_string(static_cast<long>(std::lround(finishedWidth))) +
-        " mm wide, gathered down to a " +
-        std::to_string(static_cast<long>(std::lround(span))) +
-        " mm strap), each gathers from the front shoulder over to the back";
+        " mm (finished " + std::to_string(static_cast<long>(std::lround(w))) +
+        " mm wide" + note;  // caller closes the parenthesis (keeps Ruffled byte-identical)
 
     // Outline at CUT size: a rectangle.
     piece.commands = {
@@ -85,16 +88,32 @@ PatternPiece ruffledStrip(double span) {
     piece.markings.push_back(PathCommand::move({cutW - SA, 0}));
     piece.markings.push_back(PathCommand::line({cutW - SA, cutL}));
 
-    // Gather line: a dashed run along one long edge marks where the two rows of
-    // gathering pull the strip down from cutL to the finished span. Drawn just
-    // inside the seam line so it reads as the gathering channel, not the fold.
-    piece.markings.push_back(PathCommand::move({cutW - SA - 6, SA}));
-    piece.markings.push_back(PathCommand::line({cutW - SA - 6, cutL - SA}));
+    // Gather line (ruffled only): a dashed run along one long edge marks where
+    // the gathering pulls the strip down to the finished span.
+    if (full > 1.0) {
+        piece.markings.push_back(PathCommand::move({cutW - SA - 6, SA}));
+        piece.markings.push_back(PathCommand::line({cutW - SA - 6, cutL - SA}));
+    }
 
     piece.hasGrainline = true;  // grain runs the length of the strap
     piece.grainline = Grainline{{cutW / 2, SA + 6}, {cutW / 2, cutL - SA - 6}};
     piece.seamAllowance = SA;
     return piece;
+}
+
+PatternPiece ruffledStrip(double span) {
+    return strapStrip(span, finishedWidth, fullness, "Ruffled Strap (fırfırlı askı)",
+        ", gathered down to a " + std::to_string(static_cast<long>(std::lround(span))) +
+        " mm strap), each gathers from the front shoulder over to the back");
+}
+
+// Plain self-lined strap tube (Wide 22 mm / Spaghetti 8 mm), fullness 1.0 = no
+// gather. Same construction as the ruffled strip minus the gather.
+PatternPiece plainStrip(double span, double w, const std::string& name) {
+    return strapStrip(span, w, 1.0, name,
+        ", a plain self-lined tube at the finished " +
+        std::to_string(static_cast<long>(std::lround(span))) +
+        " mm strap span)");
 }
 
 } // namespace
@@ -139,6 +158,23 @@ bool apply(DraftedPattern& pattern, StrapStyle style) {
     // piece — push_back can reallocate pattern.pieces and invalidate front/back.
     placementNotch(front, fs);
     placementNotch(back, bs);
+
+    // WIDE / SPAGHETTI (2026-07-22 ASKI ailesi): plain self-lined tubes, no gather.
+    if (style == StrapStyle::Wide || style == StrapStyle::Spaghetti) {
+        const double w = style == StrapStyle::Spaghetti ? spaghettiWidth : finishedWidth;
+        const char* nm = style == StrapStyle::Spaghetti
+            ? "Spaghetti Strap (ince askı)" : "Wide Strap (geniş askı)";
+        pattern.pieces.push_back(plainStrip(span, w, nm));
+        pattern.guideSteps.push_back(
+            std::string(style == StrapStyle::Spaghetti ? "Spaghetti straps" : "Wide straps") +
+            ": cut the two strap rectangles as labelled. Fold each in half lengthwise "
+            "right sides together, stitch the long edge, turn right side out and press "
+            "(a plain self-lined tube, no gathering). Stitch each end to its shoulder "
+            "placement notch — one at the front, the other at the back — catching it in "
+            "the top-edge seam. Cut on the straight grain.");
+        pattern.fabricMeters140 = roundToPlaces(pattern.fabricMeters140 + 0.05, 2);
+        return true;
+    }
 
     pattern.pieces.push_back(ruffledStrip(span));
 

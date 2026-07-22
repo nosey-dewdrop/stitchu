@@ -756,9 +756,18 @@ async function tryReferencePen(spec) {
     const princess = spec.shaping === 'princess';
     const tieBack = spec.closure === 'tieBack' || spec.backDetail === 'tieBack' || spec.tieClosure === 'tieBack';
 
+    const straps = spec.straps;                          // wide | spaghetti | ruffled | none
+    const camiStrap = straps === 'wide' || straps === 'spaghetti';
     if (spec.garment === 'top') {
+      // CAMI / BANDEAU ailesi (2026-07-22 ASKI ailesi): dar askılı (wide/spaghetti)
+      // band-top gövde — mevcut top gövdesinden ÖNCE eşleşir (spesifik → genel).
+      if (camiStrap && nl === 'square' && shirred && peplum && straps === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
+      else if (camiStrap && nl === 'square' && shirred && peplum) styleKey = 'top_cami_sq_wide_shirred_peplum';
+      else if (camiStrap && nl === 'square' && shirred) styleKey = 'top_cami_sq_wide_shirred';
+      else if (camiStrap && nl === 'square' && straps === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
       // kompleks kombinasyonlar önce (spesifik → genel)
-      if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
+      else if ((nl === 'straight' || nl === 'strapless') && straps === 'none' && shirred && peplum) styleKey = 'top_bandeau_shirred_peplum';  // id40
+      else if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
       else if (nl === 'square' && shirred && peplum) styleKey = 'top_sq_shirred_peplum';
       else if (peplum && princess) styleKey = 'top_princess_peplum';
       else if (boxy && sleeved) styleKey = 'top_crew_boxy_sleeve';
@@ -770,6 +779,7 @@ async function tryReferencePen(spec) {
       const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
       if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
       else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
+      else if (nl === 'boat' && princess && circle) styleKey = 'dress_boat_princess_circle';      // id27
       else if ((nl === 'scoop' || nl === 'crew') && princess) {
         styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';
       }

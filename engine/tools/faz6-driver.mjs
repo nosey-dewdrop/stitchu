@@ -28,7 +28,7 @@ function mapLength(v){ if(!v) return null; return ['mini','midi'].includes(v)?v:
 function mapTopLen(v){ if(!v) return null; return ['cropped','hip'].includes(v)?v:('PARK:'+v); }
 function mapPeplum(v){ if(!v||v==='none') return null; const m={full:'full',half:'half',pointed:'pointed'}; return m[v]||('PARK:'+v); }
 function mapCollar(v){ if(!v||v==='none') return null; const m={peterPan:'peterPan',stand:'PARK:stand',shirt:'PARK:shirt',mandarin:'PARK:mandarin'}; return m[v]||('PARK:'+v); }
-function mapStraps(v){ if(!v||v==='none') return null; const m={ruffled:'ruffled',shoulder:'PARK:shoulder',wide:'PARK:wide',spaghetti:'PARK:spaghetti',halter:'PARK:halter',offShoulder:'PARK:offShoulder',oneShoulder:'PARK:oneShoulder'}; return m[v]||('PARK:'+v); }
+function mapStraps(v){ if(!v||v==='none') return null; const m={ruffled:'ruffled',wide:'wide',spaghetti:'spaghetti',shoulder:'PARK:shoulder',halter:'PARK:halter',offShoulder:'PARK:offShoulder',oneShoulder:'PARK:oneShoulder'}; return m[v]||('PARK:'+v); }
 function mapClosure(c){ if(!c||!c.type||c.type==='none') return null; const m={buttons:'buttons',zipper:'zipper',tieBack:'tieBack',ties:'PARK:ties',placket:'PARK:placket-asymmetric','lace-up':'PARK:lace-up'}; return m[c.type]||('PARK:'+c.type); }
 function mapShirred(spec){ // gatherType shirred/gathered/smocked/drawstring
   const g=spec.gatherType; if(!g||g==='none') return null;

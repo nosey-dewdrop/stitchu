@@ -452,7 +452,9 @@
         "ruffledStraps": {
           "enum": [
             "none",
-            "ruffled"
+            "ruffled",
+            "wide",
+            "spaghetti"
           ]
         },
         "peplum": {

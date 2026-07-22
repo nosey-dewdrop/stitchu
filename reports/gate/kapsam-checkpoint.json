@@ -88,6 +88,41 @@
    "hakem": "square+cap+princess+fullCircle cift kanat (kol fix sonrasi final hakem)",
    "worstD": "validator 0, 7 parca",
    "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 4,
+   "hakem": "wide-strap shirred cami",
+   "worstD": "validator 0, 5 parca",
+   "durum": "GECTI",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 31,
+   "hakem": "wide-strap shirred peplum cami (gercek square)",
+   "worstD": "validator 0, 6 parca",
+   "durum": "GECTI",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 74,
+   "hakem": "spaghetti-strap cami (zip flat-not, siluet dogru)",
+   "worstD": "validator 0, 4 parca",
+   "durum": "GECTI",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 46,
+   "hakem": "spaghetti tie-shoulder shirred peplum cami",
+   "worstD": "validator 0, 6 parca",
+   "durum": "GECTI",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 27,
+   "hakem": "boat cap-sleeve princess circle (id47 kardesi)",
+   "worstD": "validator 0, 7 parca",
+   "durum": "GECTI",
+   "zaman": "2026-07-22"
   }
  ],
  "kirmizi": [],
@@ -95,6 +130,6 @@
   41,
   95
  ],
- "sayac": 12,
+ "sayac": 17,
  "uretilemez": []
 }

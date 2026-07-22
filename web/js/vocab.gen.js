@@ -204,7 +204,9 @@ export const VOCAB = {
     "enum": "StrapStyle",
     "values": [
       "none",
-      "ruffled"
+      "ruffled",
+      "wide",
+      "spaghetti"
     ]
   },
   "peplum": {

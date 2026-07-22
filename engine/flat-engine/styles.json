@@ -565,6 +565,164 @@
         "cuffGather": 1.4,
         "sleeveLength": "short"
       }
+    },
+    "dress_boat_princess_circle": {
+      "label": "boat-neck cap-sleeve princess fit-and-flare circle mini dress (hedef 27)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "mini",
+      "sleeveLength": "cap",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 7,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "sleeveWidth": 6.5,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": true
+    },
+    "top_cami_sq_wide_shirred": {
+      "label": "wide-strap shirred cami top (hedef 4)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2.1,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true
+    },
+    "top_cami_sq_wide_shirred_peplum": {
+      "label": "wide-strap shirred cami peplum top (hedef 31)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
+    },
+    "top_cami_sq_spaghetti": {
+      "label": "spaghetti-strap zip cami top (hedef 74)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      }
+    },
+    "top_cami_sq_spag_shirred_peplum": {
+      "label": "spaghetti tie-shoulder shirred cami peplum (hedef 46)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
+    },
+    "top_bandeau_shirred_peplum": {
+      "label": "strapless bandeau shirred peplum top (hedef 40)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
     }
   }
 }
