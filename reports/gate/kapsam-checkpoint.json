@@ -151,12 +151,25 @@
    "hakem": "vNeck short-sleeve gathered dirndl midi + front waist TIE cift kanat (emsal ar-202549-4 Avril)",
    "worstD": "validator 0, 7 parca (gathered Skirt + Front Waist Tie ayri)",
    "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 101,
+   "durum": "GECTI",
+   "hakem": "sweetheart spaghetti-tie-strap princess circle + on bow cift kanat (NET emsal ar-202455-6 floral corset)",
+   "worstD": "validator 0, 8 parca (sweetheart bodice + Spaghetti Strap + Neck/Front Tie)",
+   "zaman": "2026-07-23"
   }
  ],
  "kirmizi": [],
  "kalan_kuyruk_top_gap1": [
   95
  ],
- "sayac": 21,
- "uretilemez": []
+ "sayac": 22,
+ "uretilemez": [],
+ "gecti_adayi_emsal_uyumsuz": [
+  {
+   "hedefId": 54,
+   "not": "flat+kalip spec'e sadik, referans kalemden GECTI-ADAYI, AMA crop (ar-202547-1) handkerchief etek = emsal-uyumsuz, hakem kosulamaz. Kart: kart-sweetheart-ailesi.md. Damla: crop mu yanlis eslenmis?"
+  }
+ ]
 }

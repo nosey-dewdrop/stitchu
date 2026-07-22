@@ -233,6 +233,18 @@ if(p.peplum&&p.peplum!=='none'&&st.garment==='top'){
 // FİYONK; id57 tie = bele bağlanan KUŞAK uçları. Ön parçada (!isBack), bel çizgisinde
 // (k.yEmp). Motor kalıpta ayrı kesim parçası çiziyor (TiePlacement FrontWaistBow/Tie);
 // flat SUNUM işaretidir. Deterministik, sadece st.waistTie taşıyan stiller.
+// SPAGHETTI TIE-STRAP (2026-07-23 — st.spaghettiStrap). id101 sınıf: shoulder-top
+// sweetheart/kolsuz gövdede omuzda BAĞLANAN ince askı. Omuz çizgisi üzerinde
+// (nX↔stX arası) ince dikey bant yukarı çıkar + tepesinde küçük bağ ucu. Motor
+// Spaghetti Strap parçasını zaten çiziyor (StrapBlock); flat sunum işareti.
+if(st.spaghettiStrap){var _ssX=k.nX+(k.stX-k.nX)*0.42,_ssTop=k.y0-9*S,_ssW=2.4;
+  // ince askı bandı (omuz noktasından yukarı, hafif içe)
+  o+=M('M '+(_ssX-_ssW).toFixed(1)+','+k.stY.toFixed(1)+' C '+(_ssX-_ssW).toFixed(1)+','+(k.stY-(k.stY-_ssTop)*0.5)+' '+(_ssX-_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX+_ssW).toFixed(1)+','+k.stY.toFixed(1)+' C '+(_ssX+_ssW).toFixed(1)+','+(k.stY-(k.stY-_ssTop)*0.5)+' '+(_ssX+_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1)+' L '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  // omuzda küçük bağ ucu (sarkan)
+  o+=M('M '+_ssX.toFixed(1)+','+_ssTop.toFixed(1)+' C '+(_ssX-5)+','+(_ssTop-6)+' '+(_ssX-3)+','+(_ssTop-12)+' '+(_ssX+1)+','+(_ssTop-10),'tie');
+}
 var _wtie=(p.waistTie!=null?p.waistTie:st.waistTie);
 if(_wtie&&!isBack&&st.garment!=='top'){var _wy=k.yEmp,_WL=(p.tieLength||26)*S*0.5;
   if(_wtie==='bow'){ // iki ilmek + orta düğüm + sarkan uçlar

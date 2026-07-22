@@ -784,7 +784,8 @@ async function tryReferencePen(spec) {
       else if (nl === 'vNeck' && wrapFront) styleKey = 'wrap_dress';                              // id13/68
       else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
       else if (nl === 'boat' && princess && circle) styleKey = 'dress_boat_princess_circle';      // id27
-      else if (nl === 'sweetheart' && princess && circle && !shirred && !sleeved && (strapType === 'wide' || strapType === 'none' || !strapType)) styleKey = 'dress_sweetheart_princess_circle';  // id54 (sweetheart wide-strap princess fit-and-flare — ruched cup/shirred + kollu + spaghetti/ruffled tie-strap ayrı primitif, ikame yok)
+      else if (nl === 'sweetheart' && princess && circle && !shirred && !sleeved && strapType === 'spaghetti') styleKey = 'dress_sweetheart_spag_circle';  // id101 (sweetheart spaghetti-tie-strap princess fit-and-flare, ön bow)
+      else if (nl === 'sweetheart' && princess && circle && !shirred && !sleeved && (strapType === 'wide' || strapType === 'none' || !strapType)) styleKey = 'dress_sweetheart_princess_circle';  // id54 (sweetheart wide-strap princess fit-and-flare — ruched cup/shirred + kollu ayrı primitif, ikame yok)
       else if (nl === 'vNeck' && gathered && sleeved && sleeve !== 'balloon' && !wrapFront && spec.sleeveHead !== 'puffed' && !shirred) styleKey = 'dress_vneck_gathered';  // id24/57 (dirndl gathered skirt, plain kısa kol — puff/balloon kol + shirred ayrı primitif, ikame yok)
       else if ((nl === 'scoop' || nl === 'crew') && princess) {
         styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';

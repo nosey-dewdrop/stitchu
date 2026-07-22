@@ -371,6 +371,19 @@
    "skirtStyle": "halfCircle",
    "skirtLength": "mini",
    "topLength": "hip"
+  },
+  "dress_sweetheart_spag_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "sweetheart",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "tieClosure": "frontNeckBow"
   }
  },
  "structuralAllow": [

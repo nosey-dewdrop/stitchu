@@ -15,10 +15,11 @@
 - Damla ölçütü hakem için emsal-kıyası şart; id54'ün kendi emsali uyumsuz olduğundan FLAT kanadı id54'e karşı KOŞULAMAZ → **GEÇTİ yazılmadı** (dürüst). GEÇTİ-ADAYI kaldı.
 - KARAR (Damla): id54 spec'i doğru mu (confidence 0.85), crop mu yanlış eşlenmiş? Doğru sweetheart emsali başka crop'ta mı? Emsal düzeltilirse id54 hakeme sokulabilir.
 
-## id101 — TEK EKSİK: flat spaghetti TIE-STRAP (net emsal + motor hazır)
+## id101 — HAKEM-TEYİTLİ GEÇTİ (2026-07-23, sayaç 21→22)
 - id101 (ar-202455-6, NET sweetheart emsal) = sweetheart + spaghetti tie-strap + halfCircle + princess + frontNeckBow.
-- **Motor id101'i TAM çiziyor: 8 parça** — princess bodice + bias + quarter-circle skirt + Neck/Front Tie + **Spaghetti Strap** (test edildi: draftJSON ruffledStraps=3 + tieClosure=3).
-- EKSİK: FLAT'te shoulder-top sweetheart gövdesine spaghetti tie-strap çizimi (mevcut strapShape band-top içindir, shoulder-top omuz-noktası askısı ayrı). Eklenirse id101 TAM açılır (net emsal + tüm primitifler hazır) → sweetheart ailesinin hakem-teyitli GEÇTİ'si.
+- FLAT spaghetti tie-strap primitifi EKLENDİ: `st.spaghettiStrap` bayrağı → shoulder-top omuz-noktasından yukarı ince askı + omuzda bağ ucu (band-top strapShape'ten ayrı). styleKey `dress_sweetheart_spag_circle` (parts.tie=true → ön boyun bow).
+- **Motor 8 parça** — princess bodice (4 panel) + bias + quarter-circle skirt + Neck/Front Tie + Spaghetti Strap.
+- ÇİFT KANAT GEÇTİ: FLAT emsal ar-202455-6'ya sadık (sweetheart yaka + spaghetti tie-strap + on bow + fit-and-flare circle), KALIP 8 parça. Suite 49/49, golden byte-identical, determinizm md5 eşit, preview-truth GREEN (28 stil).
 - (print uyarısı: halfCircle bodice panel 4040mm > 3000mm tiling cap = mevcut circle-etek uyarısı, sweetheart/strap ile ilgisiz.)
 
 ## id10 / id70 — dürüst ÜRETİLEMEZ (kümeli)

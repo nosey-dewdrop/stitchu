@@ -910,6 +910,9 @@
         "gatheredSkirt": {
           "type": "boolean"
         },
+        "spaghettiStrap": {
+          "type": "boolean"
+        },
         "waistTie": {
           "enum": [
             "bow",

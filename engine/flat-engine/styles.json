@@ -784,6 +784,35 @@
       },
       "roundNeck": true,
       "waistTie": "bow"
+    },
+    "dress_sweetheart_spag_circle": {
+      "label": "sweetheart spaghetti-tie-strap princess fit-and-flare full-circle mini corset dress (hedef 101)",
+      "top": "shoulder",
+      "neckline": "sweetheart",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": true,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.1,
+        "neckDepth": 20,
+        "neckDepthBack": 8,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.3,
+        "skirtFull": 2.6,
+        "tieLength": 18
+      },
+      "roundNeck": true,
+      "spaghettiStrap": true
     }
   }
 }
