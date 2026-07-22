@@ -21,16 +21,22 @@ Köprü genişletildi (spec→styleKey 13 stil, referenceStyle'sız): engine/too
 
 ═══════════════════════════════════════════════════════════════════
 ## SUITE DURUMU
-- **ctest: 48/48 tam yeşil** (hijyen tamam bu oturumda düzeltildi)
+- **ctest: 49/49 tam yeşil** (figure_check dahil — FIGURE_BASE mandalı)
 - Pin 7/7 byte-identical (style_check 2/2), golden 23406 pristine, STYLE-PIN dokunulmadı, render-lint GREEN
 - **KURAL: suite yeşilden kırmızıya geçerse DUR ve söyle** (bu gece 37 gizli ihlal görüldü)
 
 ═══════════════════════════════════════════════════════════════════
-## SAYAÇ (iki ayrı, dürüst)
-- **GEÇTİ (hakem-teyitli, tam çift-kanat): 11/103** → id 15,23,29,31,41,44,53,65,82,88,90
-- **GEÇTİ-ADAYI (kapı deterministik, LLM kanadı ÖLÇÜLMEDİ): 12/103** → +id18,63 (−yok, 11'in üstüne)
-- ÜRETİLEMEZ: 91 (çok-primitifli düğümler)
+## SAYAÇ (iki ayrı, dürüst — 2026-07-22 FIGURE_BASE sonrası)
+- **GEÇTİ (hakem-teyitli, tam çift-kanat): 12/103** → id 15,23,29,31,41,44,47,53,65,82,88,90
+- **GEÇTİ-ADAYI (kapı deterministik, LLM kanadı ÖLÇÜLMEDİ): 12/103** → +id18,63
+- ÜRETİLEMEZ: 90 (çok-primitifli düğümler; düğüm tablosu reports/gate/dugum-primitif-olcumu.md)
 - checkpoint: reports/gate/kapsam-checkpoint.json
+
+## FIGURE_BASE (2026-07-22, KATMAN KABUL — reports/gate/SABAH-OZETI-FIGURE.md)
+- 6 boru top banda girdi (waist/bust 0.986→0.780), boxy kutu korundu, dress/pinli byte-identical.
+- contract/figure-bands.json + figure-landmarks.json (EU36 kaynaklı, ÖLÇÜLMEDİ'ler dürüst).
+- YENİ MANDAL: figure_check (ctest 49. test, iki yönlü, drift-lock, mutasyonla kanıtlı).
+- id47 açıldı: full-circle etek + gerçek cap sleeve (primitifler gramerde hakem).
 
 Bitmiş primitifler: crew/scoop/boat/square yaka, princess/dart/boxy, plainSleeve, peplum, tieBack, shirred(physics), roundNeck-dress. STYLE-PIN mühür: fizik-shirred bağlandı (öneri i, babydoll pini dokunulmadı).
 
