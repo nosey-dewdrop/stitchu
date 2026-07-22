@@ -1,6 +1,16 @@
-# NEREDEYİZ — Devir Teslim (2026-07-22 gece)
+# NEREDEYİZ — Devir Teslim (2026-07-23 aile döngüsü)
 
-Yeni oturum: bu sayfayı oku, sonra `reports/gate/SABAH-OZETI-3.md` (detay) + `reports/gate/NABIZ.md` (son 20 satır). Sonra devam.
+Yeni oturum: bu sayfayı oku, sonra `reports/gate/SABAH-OZETI-AILE-DONGUSU.md` (bu turun tam resmi) + `reports/gate/NABIZ.md` (son 20 satır). Sonra devam.
+
+## BU TUR (2026-07-23): gathered dirndl + sweetheart, SAYAÇ 19→22
+- **gathered dirndl**: id24 (bow) + id57 (tie) hakem-teyitli GEÇTİ. flat gatheredSkirt (belde fizik-büzgü) + waistTie bow/tie varyantı + motor Front Waist Bow/Tie enum.
+- **sweetheart + spaghetti tie-strap**: id101 hakem-teyitli GEÇTİ (net emsal ar-202455-6). flat sweetheart yaka + spaghettiStrap primitifi.
+- **id54**: GEÇTİ-ADAYI ama emsal-uyumsuz (crop handkerchief etek) → GEÇTİ yazılmadı. **Damla: doğru sweetheart emsali?**
+- **Damla eki 1 KARTI**: köprü fallback ayrıştırması — 24 aday'ın 23'ü referans kalem temiz, sadece id4 fallback (kart-kopru-fallback-suphesi.md).
+- **SIRADAKİ**: halter ailesi (id21 en temiz, NET emsal, motor hazır; ama omuz/armhole topolojisi değiştiği için yüksek risk → tam kur). Detay: SABAH-OZETI-AILE-DONGUSU.md.
+
+---
+## (önceki devir 2026-07-22)
 
 ═══════════════════════════════════════════════════════════════════
 ## TEK CÜMLE
@@ -26,8 +36,8 @@ Köprü genişletildi (spec→styleKey 13 stil, referenceStyle'sız): engine/too
 - **KURAL: suite yeşilden kırmızıya geçerse DUR ve söyle** (bu gece 37 gizli ihlal görüldü)
 
 ═══════════════════════════════════════════════════════════════════
-## SAYAÇ (iki ayrı, dürüst — 2026-07-22 TAM SÜPÜRME sonrası)
-- **GEÇTİ (hakem-teyitli, tam çift-kanat): 19/103** → id 4,13,15,23,27,29,31,41,44,46,47,53,65,68,74,82,88,90
+## SAYAÇ (iki ayrı, dürüst — 2026-07-23 aile döngüsü sonrası)
+- **GEÇTİ (hakem-teyitli, BENZERSIZ hedef): 21/103** → id 4,13,15,23,24,27,29,31,41,44,46,47,53,57,65,68,74,82,88,90,101 (+id24/57/101 bu tur; önceki "19" yanlıştı = 18 benzersiz + id31 çift kayıt, düzeltildi)
 - **GEÇTİ-ADAYI (pipeline, LLM kanadı ÖLÇÜLMEDİ): 22/103** → +id18,58,63,71
 - ÜRETİLEMEZ: 80/103 · ÜRETİLDİ-GEÇMEDİ: 1 (id17 kollu+askı çelişkisi, dürüst red)
 - checkpoint: reports/gate/kapsam-checkpoint.json · süpürme: reports/gate/SABAH-OZETI-SUPURME.md

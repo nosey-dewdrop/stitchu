@@ -164,7 +164,8 @@
  "kalan_kuyruk_top_gap1": [
   95
  ],
- "sayac": 22,
+ "sayac": 21,
+ "sayac_not": "BENZERSIZ hedef sayisi (id31 iki kez kayitli: shirred-peplum + wide-strap ayni hedef, tek sayilir). Onceki '19' yanlisti (18 benzersiz + id31 cift). Bu tur +3 (id24/57/101) = 18->21 benzersiz.",
  "uretilemez": [],
  "gecti_adayi_emsal_uyumsuz": [
   {
