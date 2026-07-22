@@ -40,17 +40,19 @@
       "values": {
         "none":     {"kanit": "hakem"},
         "straight": {"kanit": "hakem", "note": "plainSleeve düz set-in", "alt": {"sleeveLength": ["short", "elbow", "long"]}},
-        "balloon":  {"kanit": "pinli", "note": "puffSleeve, capPuff>0; babydoll/princess pininde", "alt": {"sleeveLength": ["short"], "sleeveHead": ["puffed"]}}
+        "balloon":  {"kanit": "pinli", "note": "puffSleeve, capPuff>0; babydoll/princess pininde", "alt": {"sleeveLength": ["short"], "sleeveHead": ["puffed"]}},
+        "cap":      {"kanit": "hakem", "note": "cap sleeve: kısa set-in, omuzu kaplar kanat açmaz; kalıp Sleeve parçası (sleeve.cpp capCurve), flat drop=34 outW=16; id47 hakem-geçti 2026-07-22. sleeveHead='capped' de bu yola çözülür."}
       },
-      "PARK": ["cap"]
+      "PARK": []
     },
 
     "skirt": {
       "values": {
         "aLine":      {"kanit": "hakem", "note": "figürlü drape'li etek"},
-        "gore":       {"kanit": "pinli", "note": "gore_skirt_dress pininde (gorePanels)"}
+        "gore":       {"kanit": "pinli", "note": "gore_skirt_dress pininde (gorePanels)"},
+        "fullCircle": {"kanit": "hakem", "note": "full circle etek: iki yarım-daireden kesilir; kalıp halfCirclePanel (skirt.cpp), flat geniş süpürme+dalgalı hem; id47 hakem-geçti 2026-07-22. Ad birliği: circle/full/fullCircle/halfCircle → circleSkirt() tek yol.", "alt_ad": ["circle", "full", "halfCircle"]}
       },
-      "PARK": ["straight", "gathered", "halfCircle", "pleated", "full-circle"]
+      "PARK": ["straight", "gathered", "pleated"]
     },
 
     "length": {

@@ -108,6 +108,26 @@ function drapePlan(seed, ink, foldCount, drape) {
 }
 
 // ---------------------------------------------------------------------------
+// CIRCLE-SKIRT FLAT LANGUAGE (full-circle primitive). The pattern foot already
+// drafts halfCirclePanel (skirt.cpp) for skirtStyle 'halfCircle'/'fullCircle';
+// the flat foot used to drop these to the aLine fallback (flare 1.58) so a
+// circle skirt read as a plain A-line. Here we resolve every circle-skirt name
+// to ONE path so the drawing shows the true wide radial sweep + wavy hem.
+//   full circle  = cut from two half-circles → widest fullness (waist × 2.6)
+//   half circle  = one/two quarter panels    → wide but less (waist × 2.1)
+// Names are unified: circle / full / fullCircle → full; halfCircle → half.
+// (matches beyondEngine "full circle etek" wording and the halfCircle spec.)
+function circleSkirt(skirtStyle) {
+  const st = String(skirtStyle || '').toLowerCase();
+  if (st === 'fullcircle' || st === 'full' || st === 'circle') return 'full';
+  if (st === 'halfcircle') return 'half';
+  return null;                                   // not a circle skirt
+}
+function circleFlare(kind) {                      // hemHalf multiplier vs waistW
+  return kind === 'full' ? 2.6 : kind === 'half' ? 2.1 : null;
+}
+
+// ---------------------------------------------------------------------------
 // Body proportions for the flat (illustration units, NOT mm — this is a fashion
 // drawing, not the pattern). x=0 is center front/back; y grows downward from the
 // shoulder line. We draw the RIGHT half (positive x) and mirror it.
@@ -141,8 +161,9 @@ function geom(spec) {
     const skDrop = skLen === 'mini' ? 150 : skLen === 'midi' ? 250 : skLen === 'maxi' ? 360 : 190;
     hemY = waistY + skDrop;
     const st = spec.skirtStyle || 'aLine';
-    const flare = st === 'straight' ? 1.12 : st === 'gathered' ? 1.9
-      : (st === 'circle' || st === 'full') ? 2.2 : 1.58;    // aLine default
+    const circle = circleSkirt(st);              // full / half / null
+    const flare = circle ? circleFlare(circle)   // real circle-skirt sweep
+      : st === 'straight' ? 1.12 : st === 'gathered' ? 1.9 : 1.58;   // aLine default
     hemHalf = U.waistW * flare;
   } else {
     // a top / shell / blouse / tunic ends at hip / waist / tunic length.
@@ -347,7 +368,10 @@ function sleeveHalf(g, spec) {
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
   const puff = spec.sleeveCap === 2;
-  const cap = style === 'cap' || spec.sleeveCap === 4;
+  // cap sleeve: a short set-in sleeve that caps the shoulder without winging out.
+  // Names unified — style 'cap', numeric sleeveCap===4, or spec.sleeveHead 'capped'
+  // (the vision/target spec field) all resolve to the same short cap draw.
+  const cap = style === 'cap' || spec.sleeveCap === 4 || spec.sleeveHead === 'capped';
 
   // sleeve length (how far the hem drops below the shoulder tip)
   const drop = cap ? 34 : len === 'long' ? 300 : len === 'threeQuarter' ? 220
@@ -567,7 +591,9 @@ function interior(g, spec, view) {
     const topHalf = g.isDress ? g.waistW * 1.0 : g.chestW * 0.9;
     const botHalf = g.hemHalf;
     const st = spec.skirtStyle || (g.isDress ? 'aLine' : 'shift');
-    const full = st === 'gathered' || st === 'full' || st === 'circle';
+    // circle skirts (full/half) drape as densely as a gathered skirt: the wide
+    // radial fullness falls into deep waves at the hem, so use the 'orta' ink.
+    const full = st === 'gathered' || circleSkirt(st) !== null;
     const ink = full ? 'orta' : (spec.ink || 'minimal');
 
     // GORE / GODE PANEL SEAMS (skirtStyle 'gore'): the engine cuts the skirt into
@@ -741,7 +767,9 @@ async function tryReferencePen(spec) {
       else if (nl === 'scoop') styleKey = 'top_scoop_cami';
       else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
     } else if (spec.garment === 'dress') {
+      const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
       if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
+      else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
       else if ((nl === 'scoop' || nl === 'crew') && princess) {
         styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';
       }

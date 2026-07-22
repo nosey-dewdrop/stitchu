@@ -18,12 +18,19 @@ const BODY = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, arm
 
 // spec'i draftJSON'un beklediği tam şekle genişlet (eksik alanlar default enum).
 function draftSpec(spec) {
+  // full circle etek = iki yarım-daireden kesilir → motor SkirtStyle::HalfCircle
+  // (halfCirclePanel) draft eder; grammar 'fullCircle' → motor 'halfCircle'.
+  const skirt = ['fullCircle', 'circle', 'full', 'halfCircle'].includes(spec.skirt) ? 'halfCircle' : (spec.skirt || 'aLine');
+  // cap sleeve → sleeveCap enum 'cap' (index 3, vocab.gen.hpp kSleeveCap); the
+  // set-in sleeve stays 'straight', the head is capped short (sleeve.cpp capCurve).
+  const isCap = spec.sleeve === 'cap';
   return {
     garment: spec.garment, shaping: spec.shaping || 'dart',
     waistline: spec.waistline || 'natural', fabric: spec.fabric || 'woven',
     neckline: spec.neckline || 'crew',
-    sleeveStyle: spec.sleeve || 'none', sleeveLength: spec.sleeveLength || 'short',
-    skirtStyle: spec.skirt || 'aLine', skirtLength: spec.length || 'midi',
+    sleeveStyle: isCap ? 'straight' : (spec.sleeve || 'none'), sleeveLength: spec.sleeveLength || 'short',
+    sleeveCap: isCap ? 'cap' : undefined,
+    skirtStyle: skirt, skirtLength: spec.length || 'midi',
     topLength: spec.topLength || 'hip',
     tieClosure: spec.closure === 'tieBack' ? 4 : 0,     // draftSpec tieClosure enum idx
     peplum: spec.peplum === 'full' ? 1 : spec.peplum === 'half' ? 2 : spec.peplum === 'pointed' ? 3 : 0,
