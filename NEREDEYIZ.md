@@ -26,11 +26,13 @@ Köprü genişletildi (spec→styleKey 13 stil, referenceStyle'sız): engine/too
 - **KURAL: suite yeşilden kırmızıya geçerse DUR ve söyle** (bu gece 37 gizli ihlal görüldü)
 
 ═══════════════════════════════════════════════════════════════════
-## SAYAÇ (iki ayrı, dürüst — 2026-07-22 FIGURE_BASE sonrası)
-- **GEÇTİ (hakem-teyitli, tam çift-kanat): 12/103** → id 15,23,29,31,41,44,47,53,65,82,88,90
-- **GEÇTİ-ADAYI (kapı deterministik, LLM kanadı ÖLÇÜLMEDİ): 12/103** → +id18,63
-- ÜRETİLEMEZ: 90 (çok-primitifli düğümler; düğüm tablosu reports/gate/dugum-primitif-olcumu.md)
-- checkpoint: reports/gate/kapsam-checkpoint.json
+## SAYAÇ (iki ayrı, dürüst — 2026-07-22 TAM SÜPÜRME sonrası)
+- **GEÇTİ (hakem-teyitli, tam çift-kanat): 19/103** → id 4,13,15,23,27,29,31,41,44,46,47,53,65,68,74,82,88,90
+- **GEÇTİ-ADAYI (pipeline, LLM kanadı ÖLÇÜLMEDİ): 22/103** → +id18,58,63,71
+- ÜRETİLEMEZ: 80/103 · ÜRETİLDİ-GEÇMEDİ: 1 (id17 kollu+askı çelişkisi, dürüst red)
+- checkpoint: reports/gate/kapsam-checkpoint.json · süpürme: reports/gate/SABAH-OZETI-SUPURME.md
+
+## BİTMİŞ PRİMİTİFLER (2026-07-22 süpürme turu): full-circle etek, cap sleeve, wide/spaghetti askı (StrapBlock), cami/bandeau band-top, wrap (wrapFront köprü). Sonraki aile: gathered dirndl (id24 + 7 hedef) / sweetheart (4) / halter (4).
 
 ## FIGURE_BASE (2026-07-22, KATMAN KABUL — reports/gate/SABAH-OZETI-FIGURE.md)
 - 6 boru top banda girdi (waist/bust 0.986→0.780), boxy kutu korundu, dress/pinli byte-identical.
