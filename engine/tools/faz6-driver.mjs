@@ -21,9 +21,9 @@ for (const [slot, sd] of Object.entries(GRAMMAR.slots)) if (sd.values) OK[slot] 
 // hedef spec value → grammar value (isim eşleme). null döner = slot boş.
 function mapNeckline(v){ if(!v) return null; const m={crew:'crew',scoop:'scoop',boat:'boat',square:'square',vNeck:'vNeck',sweetheart:'PARK:sweetheart',halter:'PARK:halter',cowl:'PARK:cowl',straight:'PARK:straight-neck'}; return m[v]||('PARK:'+v); }
 function mapShaping(v){ if(!v) return null; const m={dart:'dart',princess:'princess',boxy:'boxy'}; return m[v]||('PARK:'+v); }
-function mapSleeve(v){ if(v==null) return null; const m={none:'none',straight:'straight',balloon:'balloon',cap:'PARK:cap'}; return m[v]||('PARK:'+v); }
+function mapSleeve(v){ if(v==null) return null; const m={none:'none',straight:'straight',balloon:'balloon',cap:'cap'}; return m[v]||('PARK:'+v); }
 function mapSleeveLen(v){ if(!v) return null; return ['short','elbow','long'].includes(v)?v:('PARK:'+v); }
-function mapSkirt(v){ if(!v) return null; const m={aLine:'aLine',gore:'gore',straight:'PARK:straight',gathered:'PARK:gathered',halfCircle:'PARK:halfCircle',pleated:'PARK:pleated'}; return m[v]||('PARK:'+v); }
+function mapSkirt(v){ if(!v) return null; const m={aLine:'aLine',gore:'gore',fullCircle:'fullCircle',halfCircle:'fullCircle',circle:'fullCircle',full:'fullCircle',straight:'PARK:straight',gathered:'PARK:gathered',pleated:'PARK:pleated'}; return m[v]||('PARK:'+v); }
 function mapLength(v){ if(!v) return null; return ['mini','midi'].includes(v)?v:('PARK:'+v); }  // maxi PARK
 function mapTopLen(v){ if(!v) return null; return ['cropped','hip'].includes(v)?v:('PARK:'+v); }
 function mapPeplum(v){ if(!v||v==='none') return null; const m={full:'full',half:'half',pointed:'pointed'}; return m[v]||('PARK:'+v); }
@@ -42,7 +42,9 @@ function candidateFromTarget(spec){
   put('garment', ({dress:'dress',top:'top',skirt:'PARK:skirt',trousers:'PARK:trousers',other:'PARK:other'})[spec.garment] || (spec.garment?('PARK:'+spec.garment):null));
   put('neckline', mapNeckline(spec.neckline));
   put('shaping', mapShaping(spec.shaping));
-  put('sleeve', mapSleeve(spec.sleeveStyle));
+  // sleeveHead 'capped' bir CAP SLEEVE'dir (sleeveStyle alanı bazen 'straight' de
+  // dese) → sleeve slotuna 'cap' olarak çözülür (id47 hakem-geçti 2026-07-22).
+  put('sleeve', spec.sleeveHead==='capped' ? 'cap' : mapSleeve(spec.sleeveStyle));
   put('sleeveLength', mapSleeveLen(spec.sleeveLength));
   put('skirt', mapSkirt(spec.skirtStyle));
   put('length', mapLength(spec.length));
@@ -52,9 +54,8 @@ function candidateFromTarget(spec){
   put('closure', mapClosure(spec.closure));
   put('collar', mapCollar(spec.collar && spec.collar.type));
   put('straps', mapStraps(spec.straps && spec.straps.type));
-  // hemRuffle / backSlit / sleeveHead capped / yoke → beyondEngine sınıfı: grammarda yok
+  // hemRuffle / backSlit / yoke → beyondEngine sınıfı: grammarda yok
   if (spec.hemRuffle && spec.hemRuffle!=='none') c['hemRuffle']='PARK:'+spec.hemRuffle;
-  if (spec.sleeveHead==='capped') c['sleeveHead']='PARK:cap';
   if (spec.yoke && spec.yoke.type && !['none'].includes(spec.yoke.type)) {
     if (spec.yoke.type==='shoulderYoke') c['yoke']='PARK:shoulderYoke';
     else if (spec.yoke.type==='smocking') c['yoke']='PARK:smocking';

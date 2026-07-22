@@ -195,6 +195,19 @@
    "skirtLength": "midi",
    "topLength": "hip"
   },
+  "dress_square_princess_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "sleeveCap": "cap",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
   "dress_boat_aline_tieback": {
    "garment": "dress",
    "shaping": "dart",

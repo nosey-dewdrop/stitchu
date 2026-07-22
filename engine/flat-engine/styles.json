@@ -417,6 +417,37 @@
       },
       "roundNeck": true
     },
+    "dress_square_princess_circle": {
+      "label": "square-neck cap-sleeve princess fit-and-flare full-circle midi dress (hedef 47)",
+      "top": "shoulder",
+      "neckline": "square",
+      "length": "midi",
+      "sleeveLength": "short",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.0,
+        "neckDepth": 15.0,
+        "neckDepthBack": 6.0,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "sleeveWidth": 8.5,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": false
+    },
     "dress_boat_aline_tieback": {
       "label": "boat sleeveless A-line dart back-tie mini dress (hedef 53)",
       "top": "shoulder",

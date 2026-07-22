@@ -89,7 +89,10 @@ const FLAT_TO_DRAFT = {
   laceHem:  () => false,
 };
 // DRAFT pieces that a worn fashion flat represents implicitly / legitimately:
-const BODY_RE = /^(Bodice|Skirt|Top) (Front|Back)$/;             // the silhouette itself (Top = the top-garment bodice block)
+// The circle skirt drafts as ONE piece "Skirt Panel (quarter circle)" (two cut
+// from a half-circle → a full circle); the worn flat shows it as the silhouette's
+// flared lower half, so it belongs to the body outline, NOT a separate flat part.
+const BODY_RE = /^(Bodice|Skirt|Top) (Front|Back)$|^Skirt Panel \(quarter circle\)$/; // the silhouette itself (Top = the top-garment bodice block)
 const INTERNAL_RE = /Bias binding|Neck Facing|Armhole Facing/;   // inside the garment, invisible worn
 const PIECE_TO_FLAT = [
   { re: /Sleeve/, part: 'sleeve' },
