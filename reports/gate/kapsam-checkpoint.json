@@ -81,22 +81,20 @@
    "hakem": "GERCEK square+puff+shirred+peplum",
    "worstD": "validator 0, 7 parca",
    "zaman": "2026-07-22"
-  }
- ],
- "kirmizi": [
+  },
   {
    "hedefId": 47,
-   "durum": "KIRMIZI",
-   "sebep": "square yaka (buildHalf yuvarlak cizyor) + cap sleeve (puffSleeve balon) iki yeni primitif",
-   "deneme": 1,
-   "eksik_yetenek": "square neckline + cap sleeve",
-   "zaman": "2026-07-21"
+   "durum": "GECTI",
+   "hakem": "square+cap+princess+fullCircle cift kanat (kol fix sonrasi final hakem)",
+   "worstD": "validator 0, 7 parca",
+   "zaman": "2026-07-22"
   }
  ],
+ "kirmizi": [],
  "kalan_kuyruk_top_gap1": [
   41,
   95
  ],
- "sayac": 11,
+ "sayac": 12,
  "uretilemez": []
 }

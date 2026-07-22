@@ -889,6 +889,7 @@
         },
         "sleeveLength": {
           "enum": [
+            "cap",
             "short",
             "elbow",
             "long"

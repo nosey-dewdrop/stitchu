@@ -144,12 +144,16 @@ function puffSleeve(p,k){var capTop=k.stY-p.capPuff*S;var outX=k.stX+p.sleeveWid
 // byte-identical. capTop=stY (cap yükseltme yok), düz kenarlar.
 function plainSleeve(p,k){
   // sleeveLength → boy (2026-07-21 FAZ1 kıyas: emsal kısa≈korsaj 1/4, uzun≈3/4).
-  var _slen={short:17,elbow:28,long:42}[p.sleeveLength||'short'];
+  // CAP (2026-07-22 id47): omzu KAPLAYAN çok kısa kol — dış kenar omuzdan AŞAĞI
+  // eğimli çıkar (yataydan flutter/kanat okunuyordu, MIHENK dersi), boy kısa.
+  var _cap=p.sleeveLength==='cap';
+  var _slen={cap:9,short:17,elbow:28,long:42}[p.sleeveLength||'short'];
   var outX=k.stX+p.sleeveWidth*S;var hemY=k.stY+_slen*S;
   var wristX=k.stX+p.sleeveWidth*S*0.70; // bilek omuz genişliğinin %70'i (hafif konik)
   var g=[];
-  // omuz ucundan dış kenar: DÜZ (cap yükseltme YOK, düz kol), armscye kavisi
-  g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.5,k.stY],[outX,k.stY],[outX,k.stY+(hemY-k.stY)*0.12]));
+  // omuz ucundan dış kenar: cap'te aşağı-eğimli (omuz çizgisini takip), düzde yatay
+  if(_cap){g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.45,k.stY+(hemY-k.stY)*0.16],[outX-(outX-k.stX)*0.12,k.stY+(hemY-k.stY)*0.34],[outX,k.stY+(hemY-k.stY)*0.5]));}
+  else g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.5,k.stY],[outX,k.stY],[outX,k.stY+(hemY-k.stY)*0.12]));
   // dış kenar aşağı bileğe (düz-hafif konik)
   g.push(seg([outX,k.stY+(hemY-k.stY)*0.12],[outX-(outX-wristX)*0.4,k.stY+(hemY-k.stY)*0.55],[wristX,hemY-(hemY-k.stY)*0.14],[wristX,hemY]));
   // bilek (kol ağzı, düz hafif kavis)
