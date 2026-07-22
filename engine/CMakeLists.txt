@@ -247,3 +247,10 @@ add_test(NAME flat_render_lint COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE
 # contract refs), landmark deviation is soft 8% with pinned stylisation
 # envelopes (contract/preview-truth.json) — drift beyond a pin fails.
 add_test(NAME preview_truth_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/preview-truth.mjs)
+
+# FIGURE_BASE mandalı (2026-07-22): her flat stilin gövde outline'ından bel
+# oyuğu (waist/bust) ölçülür — figürel top [0.72,0.84] bandında, boxy >0.93
+# kutu (iki yönlü: figürelleşirse de FAIL), dress/pinli taban değere ±0.02
+# drift-lock (contract/figure-bands.json mandal). Bir daha kimse fark etmeden
+# boru üretemez.
+add_test(NAME figure_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/figure-lint.mjs)

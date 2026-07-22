@@ -14,6 +14,9 @@ import {readFileSync as _rf} from 'node:fs';
 import {rectClothGather as _rectGather, SEED_FABRICS as _SEED_FAB} from './cloth-solver.mjs';
 var _CT=JSON.parse(_rf(new URL('../../contract/tables.json',import.meta.url),'utf8'));
 var _ST=JSON.parse(_rf(new URL('./styles.json',import.meta.url),'utf8'));
+// FIGURE_BASE (2026-07-22): figür oran bandı — top bel oyuğu buradan hesaplanır
+// (kaynaklı matematik, göz kararı knob değil). Pinli/dress yolları okumaz.
+var _FB=JSON.parse(_rf(new URL('../../contract/figure-bands.json',import.meta.url),'utf8'));
 var S=_CT.flat.unitPX;
 var SIZE=_CT.flat.size;
 var LEN=_CT.flat.len;
@@ -47,7 +50,20 @@ if(st.garment==='top')bustX=cx+sz.shp*0.99*S;
 // BOXY top (2026-07-21 gece — id82/65 boxy oversized): yan dikiş DÜZ iner, bel
 // çekmesi yok, en geniş nokta omuz=bust=hip. eX (bel) bust hizasına açılır →
 // kutu siluet. Guarded on st.boxy → sadece boxy stiller; diğer top'lar figürlü.
+// FIGURE_BASE İSTİSNASI (2026-07-22): boxy KASITLI kutu — figürel bel çekmesi
+// boxy'ye UYGULANMAZ; mandal boxy'nin borusunu da korur (yanlış figürelleşme=FAIL).
 if(st.boxy){eX=bustX;}
+// FIGURE_BASE (2026-07-22, figür denetimi bulgusu): boxy-olmayan TOP'larda bel
+// oyuğu YOKTU (waist/bust ölçülen 0.98 = BORU; bel 71.3px bust 67.6px'ten bile
+// genişti). Bel artık contract/figure-bands.json bandından HESAPLANIR (göz kararı
+// knob değil): iskelet oranı = band ortası − 0.09 (çizim eğrisi yumuşatması
+// iskeleti ölçümde ~+0.09 kaldırır, figur-denetimi dress kalibrasyonu 0.635→0.726).
+// Omuz-en-geniş kuralı (tur1c hakem) KORUNUR: bust=shp*0.99 dokunulmadı, sadece
+// bel banda çekildi. Dress/pinli stiller bu bloğa girmez → byte-identical.
+if(st.garment==='top'&&!st.boxy){
+  var _wb=(_FB.ratios.waist_bust.band[0]+_FB.ratios.waist_bust.band[1])/2;   // 0.78 band ortası (EU36)
+  eX=cx+(bustX-cx)*_wb;   // bel landmark'ta ölçüm iskeleti direkt okur → düzeltme yok
+}
 var nip=Math.max(0.05,0.34-0.9*p.waistNip);if(st.top==='band'){var yTop=y0+p.strapLen*S,yEmp=yTop+p.yokeDrop*S;var yB=yTop+(yEmp-yTop)*p.bustHeight;var topX=cx+sz.bust*(0.95-0.03*p.bustProject)*S;k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(seg([bustX,yB],[bustX,yB+(yEmp-yB)*0.42],[eX+(bustX-eX)*nip,yEmp-(yEmp-yB)*0.16],[eX,yEmp]));}else{var stX=cx+sz.shp*S,stY=y0+p.shoulderSlope*S;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=cx+sz.bust*S,uaY=y0+sz.ad*S;
 // TOP armhole tightening (2026-07-20 tur1 — hakem tur1b: underarm silüetin en
 // geniş noktasıydı = koltuk-altı balon). Bir kolsuz top'ta EN GENİŞ nokta OMUZ
@@ -84,7 +100,11 @@ if(st.garment==='top'){
   var _tl={cropped:5,hip:16,tunic:30}[p.topLength||'hip'];
   k.yHem=k.yEmp+_tl*S;k.dip=(p.hemDip*0.35)*S;
   // hip barely fuller than the waist — a top hangs close, never flares.
-  k.hX=st.boxy?eX:cx+sz.emp*((1-p.waistNip)+0.06)*S;
+  // FIGURE_BASE (2026-07-22): hem = BEL LANDMARK + oranlı ease (serbest Y/X yasak).
+  // Eski hali emp*((1-waistNip)+0.06) bel'den BAĞIMSIZ hesaplanıyordu → yeni bel
+  // oyuğuyla çelişip hem'i bust dışına taşırırdı. Şimdi bel(eX)'ten bust'a doğru
+  // high-hip ease: cropped bele yakın biter, hip boyu daha dolgun. Boxy: kutu (eX).
+  k.hX=st.boxy?eX:eX+(bustX-eX)*((p.topLength||'hip')==='cropped'?0.15:0.38);
   var Rt=[];k.hemPts=[[k.hX,k.yHem],[cx,k.yHem+k.dip*0.4]];
   // side seam: waist -> hip, gentle ease-out (no skirt sweep).
   g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.5,k.yEmp+(k.yHem-k.yEmp)*0.4],[k.hX,k.yHem-(k.yHem-k.yEmp)*0.35],[k.hX,k.yHem]));

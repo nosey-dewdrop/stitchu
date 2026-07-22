@@ -336,6 +336,34 @@
    "justification": "the flat nips the waist for the display silhouette (review.* registered); draft empire seam obeys the real body. Current -17%; pinned."
   },
   {
+   "style": "top_crew_dart",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): non-boxy top waist now computed FROM the figure band (skeleton=bust*0.78) instead of the tube it was (waist/bust 0.986, figur-denetimi). Draft cuts the real-body waist; the flat draws the croquis figure. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_scoop_cami",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_puff_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
    "style": "*",
    "landmark": "skirtLen",
    "maxAbsDevPct": 21,
