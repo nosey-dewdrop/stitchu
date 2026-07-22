@@ -29,7 +29,10 @@ function mapTopLen(v){ if(!v) return null; return ['cropped','hip'].includes(v)?
 function mapPeplum(v){ if(!v||v==='none') return null; const m={full:'full',half:'half',pointed:'pointed'}; return m[v]||('PARK:'+v); }
 function mapCollar(v){ if(!v||v==='none') return null; const m={peterPan:'peterPan',stand:'PARK:stand',shirt:'PARK:shirt',mandarin:'PARK:mandarin'}; return m[v]||('PARK:'+v); }
 function mapStraps(v){ if(!v||v==='none') return null; const m={ruffled:'ruffled',wide:'wide',spaghetti:'spaghetti',shoulder:'PARK:shoulder',halter:'PARK:halter',offShoulder:'PARK:offShoulder',oneShoulder:'PARK:oneShoulder'}; return m[v]||('PARK:'+v); }
-function mapClosure(c){ if(!c||!c.type||c.type==='none') return null; const m={buttons:'buttons',zipper:'zipper',tieBack:'tieBack',ties:'PARK:ties',placket:'PARK:placket-asymmetric','lace-up':'PARK:lace-up'}; return m[c.type]||('PARK:'+c.type); }
+function mapClosure(c,spec){ if(!c||!c.type||c.type==='none') return null;
+  // wrapFront: closure.type='ties' AMA tieClosure='wrapFront' → surplice wrap kapanma (wrap_dress)
+  if(spec && spec.tieClosure==='wrapFront') return 'wrapFront';
+  const m={buttons:'buttons',zipper:'zipper',tieBack:'tieBack',ties:'PARK:ties',placket:'PARK:placket-asymmetric','lace-up':'PARK:lace-up'}; return m[c.type]||('PARK:'+c.type); }
 function mapShirred(spec){ // gatherType shirred/gathered/smocked/drawstring
   const g=spec.gatherType; if(!g||g==='none') return null;
   if(g==='shirred') return 'physics'; if(g==='smocked') return 'PARK:smocked';
@@ -51,7 +54,7 @@ function candidateFromTarget(spec){
   put('topLength', mapTopLen(spec.topLength));
   put('peplum', mapPeplum(spec.peplum));
   put('shirred', mapShirred(spec));
-  put('closure', mapClosure(spec.closure));
+  put('closure', mapClosure(spec.closure, spec));
   put('collar', mapCollar(spec.collar && spec.collar.type));
   put('straps', mapStraps(spec.straps && spec.straps.type));
   // hemRuffle / backSlit / yoke → beyondEngine sınıfı: grammarda yok

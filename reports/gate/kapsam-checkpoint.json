@@ -123,6 +123,20 @@
    "worstD": "validator 0, 7 parca",
    "durum": "GECTI",
    "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 13,
+   "durum": "GECTI",
+   "hakem": "vNeck side-tie wrap dress (wrap_dress pin, cap-kol pinli sapma)",
+   "worstD": "validator 0, 6 parca",
+   "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 68,
+   "durum": "GECTI",
+   "hakem": "vNeck side-tie wrap linen dress (id13 kardesi)",
+   "worstD": "validator 0, 6 parca",
+   "zaman": "2026-07-22"
   }
  ],
  "kirmizi": [],
@@ -130,6 +144,6 @@
   41,
   95
  ],
- "sayac": 17,
+ "sayac": 19,
  "uretilemez": []
 }

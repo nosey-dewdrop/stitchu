@@ -755,6 +755,7 @@ async function tryReferencePen(spec) {
     const boxy = spec.shaping === 'boxy';
     const princess = spec.shaping === 'princess';
     const tieBack = spec.closure === 'tieBack' || spec.backDetail === 'tieBack' || spec.tieClosure === 'tieBack';
+    const wrapFront = spec.closure === 'wrapFront' || spec.tieClosure === 'wrapFront';
 
     const straps = spec.straps;                          // wide | spaghetti | ruffled | none
     const camiStrap = straps === 'wide' || straps === 'spaghetti';
@@ -778,6 +779,7 @@ async function tryReferencePen(spec) {
     } else if (spec.garment === 'dress') {
       const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
       if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
+      else if (nl === 'vNeck' && wrapFront) styleKey = 'wrap_dress';                              // id13/68
       else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
       else if (nl === 'boat' && princess && circle) styleKey = 'dress_boat_princess_circle';      // id27
       else if ((nl === 'scoop' || nl === 'crew') && princess) {

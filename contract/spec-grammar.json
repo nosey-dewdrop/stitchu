@@ -92,7 +92,8 @@
         "none":       {"kanit": "hakem"},
         "buttons":    {"kanit": "pinli", "note": "front placket, drawstring_babydoll değil princess pin"},
         "zipper":     {"kanit": "hakem", "note": "kalıp CB zip; flat outline'ı değiştirmez"},
-        "tieBack":    {"kanit": "hakem", "note": "arka belde bağ, ayrı kesim parçası (id53)"}
+        "tieBack":    {"kanit": "hakem", "note": "arka belde bağ, ayrı kesim parçası (id53)"},
+        "wrapFront":  {"kanit": "pinli", "note": "surplice çapraz ön kapanma + yan-dikiş bel bağı; kalıp TiePlacement::WrapFront, wrap_dress pininde çiziliyor; id13/68 (2026-07-22)"}
       },
       "PARK": ["placket-asymmetric", "lace-up", "hookEye", "exposed-zip"]
     },
