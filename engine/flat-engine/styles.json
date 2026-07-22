@@ -756,6 +756,34 @@
       "sleeveLength": "short",
       "gatheredSkirt": true,
       "waistTie": "bow"
+    },
+    "dress_sweetheart_princess_circle": {
+      "label": "sweetheart wide-strap princess fit-and-flare full-circle mini dress (hedef 54)",
+      "top": "shoulder",
+      "neckline": "sweetheart",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 20,
+        "neckDepthBack": 8,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": true,
+      "waistTie": "bow"
     }
   }
 }

@@ -82,6 +82,16 @@ var yEmp2=uaY+p.yokeDrop*S;k.ny=ny;k.nX=nX;k.stX=stX;k.stY=stY;k.uaX=uaX;k.uaY=u
   g.push(seg([cx,ny],[cx+(nX-cx)*0.5,ny],[nX,ny],[nX,ny]));      // düz taban CF→köşe
   g.push(seg([nX,ny],[nX,ny-(ny-y0)*0.5],[nX,y0],[nX,y0]));      // dik kenar köşe→omuz
   k.nSeg=2;k.pointed=false;k.squareCorner=[nX,ny];
+}else if(st.neckline==='sweetheart'&&!isBack){
+  // SWEETHEART yaka (2026-07-23 — kalp yaka, SADECE ÖN). CF'de SIĞ merkez çentik +
+  // her bust cup DOLGUN yukarı kavis (kalbin yarısı). crew/v/square ikamesi DEĞİL.
+  // Motor Neckline::Sweetheart zaten çiziyor (bodice.cpp); flat kap dilini kurar.
+  // Arka: st.roundNeck ile normal scoop kavisi (kalp sadece önde).
+  var _swMidY=ny-(ny-y0)*0.16;                          // CF merkez çentik (SIĞ, yukarıda)
+  var _swCupX=cx+(nX-cx)*0.60,_swCupY=ny-(ny-y0)*0.02;  // cup en derin nokta (bust apex, aşağıda dolgun)
+  g.push(seg([cx,_swMidY],[cx+(nX-cx)*0.08,_swMidY+(ny-_swMidY)*0.55],[_swCupX-(_swCupX-cx)*0.42,_swCupY-2],[_swCupX,_swCupY])); // CF sığ çentik → cup dip (dolgun kalp lobu)
+  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.34,_swCupY-(_swCupY-y0)*0.42],[nX-(nX-cx)*0.04,y0+(ny-y0)*0.16],[nX,y0])); // cup dip → omuz (yukarı kavis)
+  k.nSeg=2;k.pointed=false;
 }else if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'||st.roundNeck){
   // TOP round neckline (2026-07-20 tur1 fix — hakem: crew/scoop front V'ye kaçıyordu).
   // A true crew/scoop is a wide U: flat-bottomed at CF (horizontal tangent held

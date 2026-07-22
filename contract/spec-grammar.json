@@ -22,9 +22,10 @@
         "scoop":  {"kanit": "hakem", "kumas": ["woven", "knit"]},
         "boat":   {"kanit": "hakem", "kumas": ["woven", "knit"]},
         "square": {"kanit": "hakem", "kumas": ["woven", "knit"], "note": "gerçek square: düz taban + dik kenar (2026-07-22)"},
-        "vNeck":  {"kanit": "pinli", "kumas": ["woven", "knit"], "note": "lace_vneck/princess_dress pininde çiziliyor"}
+        "vNeck":  {"kanit": "pinli", "kumas": ["woven", "knit"], "note": "lace_vneck/princess_dress pininde çiziliyor"},
+        "sweetheart": {"kanit": "hakem", "kumas": ["woven", "knit"], "note": "kalp yaka: CF sığ merkez çentik + iki dolgun bust cup (kalbin yarısı). Kalıp Neckline::Sweetheart (bodice.cpp); flat kap dili (buildHalf sweetheart dalı, sadece ön; arka roundNeck scoop). styleKey dress_sweetheart_princess_circle; id54 (2026-07-23)."}
       },
-      "PARK": ["sweetheart", "halter", "cowl", "pussyBow"]
+      "PARK": ["halter", "cowl", "pussyBow"]
     },
 
     "shaping": {
