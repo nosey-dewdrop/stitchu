@@ -23,7 +23,7 @@ function mapNeckline(v){ if(!v) return null; const m={crew:'crew',scoop:'scoop',
 function mapShaping(v){ if(!v) return null; const m={dart:'dart',princess:'princess',boxy:'boxy'}; return m[v]||('PARK:'+v); }
 function mapSleeve(v){ if(v==null) return null; const m={none:'none',straight:'straight',balloon:'balloon',cap:'cap'}; return m[v]||('PARK:'+v); }
 function mapSleeveLen(v){ if(!v) return null; return ['short','elbow','long'].includes(v)?v:('PARK:'+v); }
-function mapSkirt(v){ if(!v) return null; const m={aLine:'aLine',gore:'gore',fullCircle:'fullCircle',halfCircle:'fullCircle',circle:'fullCircle',full:'fullCircle',straight:'PARK:straight',gathered:'PARK:gathered',pleated:'PARK:pleated'}; return m[v]||('PARK:'+v); }
+function mapSkirt(v){ if(!v) return null; const m={aLine:'aLine',gore:'gore',fullCircle:'fullCircle',halfCircle:'fullCircle',circle:'fullCircle',full:'fullCircle',straight:'PARK:straight',gathered:'gathered',pleated:'PARK:pleated'}; return m[v]||('PARK:'+v); }
 function mapLength(v){ if(!v) return null; return ['mini','midi'].includes(v)?v:('PARK:'+v); }  // maxi PARK
 function mapTopLen(v){ if(!v) return null; return ['cropped','hip'].includes(v)?v:('PARK:'+v); }
 function mapPeplum(v){ if(!v||v==='none') return null; const m={full:'full',half:'half',pointed:'pointed'}; return m[v]||('PARK:'+v); }
@@ -35,6 +35,10 @@ function mapClosure(c,spec){ if(!c||!c.type||c.type==='none') return null;
   const m={buttons:'buttons',zipper:'zipper',tieBack:'tieBack',ties:'PARK:ties',placket:'PARK:placket-asymmetric','lace-up':'PARK:lace-up'}; return m[c.type]||('PARK:'+c.type); }
 function mapShirred(spec){ // gatherType shirred/gathered/smocked/drawstring
   const g=spec.gatherType; if(!g||g==='none') return null;
+  // SPEC-TUTARLILIK (2026-07-23): gatherType='gathered'+zone='waist' bir DIRNDL etek
+  // büzgüsüdür (skirtStyle='gathered' ile AYNI öğe, ayrı bodice panosu değil) →
+  // skirt slotu zaten temsil ediyor, shirred slotuna GİRMEZ (çift-kayıt kaldırıldı).
+  if(g==='gathered' && spec.gatherZone==='waist' && spec.skirtStyle==='gathered') return null;
   if(g==='shirred') return 'physics'; if(g==='smocked') return 'PARK:smocked';
   if(g==='drawstring') return 'PARK:casing-drawstring-panel'; if(g==='gathered') return 'PARK:gathered-panel'; return 'PARK:'+g;
 }

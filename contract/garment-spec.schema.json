@@ -906,6 +906,15 @@
         "physicsShirr": {
           "type": "boolean"
         },
+        "gatheredSkirt": {
+          "type": "boolean"
+        },
+        "waistTie": {
+          "enum": [
+            "bow",
+            "tie"
+          ]
+        },
         "peplum": {
           "enum": [
             "none",

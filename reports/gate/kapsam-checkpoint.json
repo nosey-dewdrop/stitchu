@@ -137,13 +137,26 @@
    "hakem": "vNeck side-tie wrap linen dress (id13 kardesi)",
    "worstD": "validator 0, 6 parca",
    "zaman": "2026-07-22"
+  },
+  {
+   "hedefId": 24,
+   "durum": "GECTI",
+   "hakem": "vNeck short-sleeve gathered dirndl + front waist BOW cift kanat (emsal ar-202343-5)",
+   "worstD": "validator 0, 7 parca (gathered Skirt + Front Waist Bow ayri)",
+   "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 57,
+   "durum": "GECTI",
+   "hakem": "vNeck short-sleeve gathered dirndl midi + front waist TIE cift kanat (emsal ar-202549-4 Avril)",
+   "worstD": "validator 0, 7 parca (gathered Skirt + Front Waist Tie ayri)",
+   "zaman": "2026-07-23"
   }
  ],
  "kirmizi": [],
  "kalan_kuyruk_top_gap1": [
-  41,
   95
  ],
- "sayac": 19,
+ "sayac": 21,
  "uretilemez": []
 }

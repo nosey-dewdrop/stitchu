@@ -723,6 +723,39 @@
       },
       "physicsShirr": true,
       "peplum": "full"
+    },
+    "dress_vneck_gathered": {
+      "label": "short-sleeve v-neck gathered-skirt dirndl dress (hedef 24)",
+      "top": "shoulder",
+      "neckline": "v",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 14,
+        "neckDepthBack": 4,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 10,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.22,
+        "skirtFull": 2.0,
+        "gatherRatio": 2.2
+      },
+      "sleeveLength": "short",
+      "gatheredSkirt": true,
+      "waistTie": "bow"
     }
   }
 }

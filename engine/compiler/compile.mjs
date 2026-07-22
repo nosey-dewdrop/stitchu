@@ -32,7 +32,11 @@ function draftSpec(spec) {
     sleeveCap: isCap ? 'cap' : undefined,
     skirtStyle: skirt, skirtLength: spec.length || 'midi',
     topLength: spec.topLength || 'hip',
-    tieClosure: spec.closure === 'tieBack' ? 4 : spec.closure === 'wrapFront' ? 7 : 0,     // draftSpec tieClosure enum idx (wrapFront=7)
+    // draftSpec tieClosure enum idx (vocab.gen.hpp kTieClosure): tieBack=4,
+    // frontWaistTie=6, wrapFront=7, frontWaistBow=8. Bel bağı dirndl dress'te
+    // (id24 bow / id57 tie) motor ayrı kesim parçası çizer (tie.cpp).
+    tieClosure: spec.tieClosure === 'frontWaistBow' ? 8 : spec.tieClosure === 'frontWaistTie' ? 6
+      : spec.closure === 'tieBack' ? 4 : spec.closure === 'wrapFront' ? 7 : 0,
     peplum: spec.peplum === 'full' ? 1 : spec.peplum === 'half' ? 2 : spec.peplum === 'pointed' ? 3 : 0,
     gatherType: spec.shirred === 'physics' ? 2 : 0,     // shirred
     gatherZone: spec.shirred === 'physics' ? 1 : 0,     // bust

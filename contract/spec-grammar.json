@@ -50,9 +50,10 @@
       "values": {
         "aLine":      {"kanit": "hakem", "note": "figürlü drape'li etek"},
         "gore":       {"kanit": "pinli", "note": "gore_skirt_dress pininde (gorePanels)"},
-        "fullCircle": {"kanit": "hakem", "note": "full circle etek: iki yarım-daireden kesilir; kalıp halfCirclePanel (skirt.cpp), flat geniş süpürme+dalgalı hem; id47 hakem-geçti 2026-07-22. Ad birliği: circle/full/fullCircle/halfCircle → circleSkirt() tek yol.", "alt_ad": ["circle", "full", "halfCircle"]}
+        "fullCircle": {"kanit": "hakem", "note": "full circle etek: iki yarım-daireden kesilir; kalıp halfCirclePanel (skirt.cpp), flat geniş süpürme+dalgalı hem; id47 hakem-geçti 2026-07-22. Ad birliği: circle/full/fullCircle/halfCircle → circleSkirt() tek yol.", "alt_ad": ["circle", "full", "halfCircle"]},
+        "gathered":   {"kanit": "hakem", "note": "dirndl büzgülü etek: belde büzülen dolgun etek (aLine gibi konik açılmaz, dik-düşen). Kalıp gatheredPanel (skirt.cpp SkirtStyle::Gathered); flat gatheredSkirt bayrağı → belde fizik-büzgü (cloth-solver profile:'skirt', ikinci kıvrım yolu yok). styleKey dress_vneck_gathered; id24/57 (2026-07-23)."}
       },
-      "PARK": ["straight", "gathered", "pleated"]
+      "PARK": ["straight", "pleated"]
     },
 
     "length": {

@@ -778,10 +778,12 @@ async function tryReferencePen(spec) {
       else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
     } else if (spec.garment === 'dress') {
       const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
+      const gathered = (spec.skirt || spec.skirtStyle) === 'gathered';     // dirndl gathered skirt
       if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
       else if (nl === 'vNeck' && wrapFront) styleKey = 'wrap_dress';                              // id13/68
       else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
       else if (nl === 'boat' && princess && circle) styleKey = 'dress_boat_princess_circle';      // id27
+      else if (nl === 'vNeck' && gathered && sleeved && sleeve !== 'balloon' && !wrapFront && spec.sleeveHead !== 'puffed' && !shirred) styleKey = 'dress_vneck_gathered';  // id24/57 (dirndl gathered skirt, plain kısa kol — puff/balloon kol + shirred ayrı primitif, ikame yok)
       else if ((nl === 'scoop' || nl === 'crew') && princess) {
         styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';
       }
@@ -793,6 +795,14 @@ async function tryReferencePen(spec) {
     const overrides = {};
     for (const k of ['size', 'length', 'skirtFull', 'ink', 'foldCount', 'hemWave', 'drape', 'hemDip', 'seed', 'bustProject', 'bustHeight', 'waistNip']) {
       if (spec[k] != null) overrides[k] = spec[k];
+    }
+    // BEL BAĞI varyantı (2026-07-23): dirndl gathered dress'te tek stil, tie/bow
+    // varyantı spec.tieClosure'dan türetilir (id24 frontWaistBow → bow, id57
+    // frontWaistTie → tie). Motor ikisini de kalıpta ayrı parça olarak çiziyor.
+    if (styleKey === 'dress_vneck_gathered') {
+      const tc = spec.tieClosure;
+      if (tc === 'frontWaistTie') overrides.waistTie = 'tie';
+      else if (tc === 'frontWaistBow') overrides.waistTie = 'bow';
     }
     return ref.renderStyle(styleKey, overrides);
   } catch {

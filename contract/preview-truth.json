@@ -347,6 +347,18 @@
    "gatherType": "shirred",
    "gatherZone": "bust",
    "peplum": "full"
+  },
+  "dress_vneck_gathered": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip"
   }
  },
  "structuralAllow": [
@@ -638,6 +650,27 @@
    "maxAbsDevPct": 25,
    "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
    "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 33,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.waistNip (0.22) + gatheredSkirt (dirndl waist gather) + contract/figure-bands.json",
+   "justification": "DIRNDL (2026-07-23): the gathered-dirndl flat nips the waist for the croquis silhouette (waistNip 0.22) AND draws the waist where the skirt fabric is physically gathered in, so the flat half-waist reads narrower than the drafted finished waist the motor cuts. Current -30.1%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "skirtLen",
+   "maxAbsDevPct": 48,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) + gatheredSkirt drape (cloth-solver profile:skirt)",
+   "justification": "DIRNDL (2026-07-23): the flat draws a full dirndl skirt (skirtFull 2.0) whose physics-gathered folds sweep long and straight-dropping for the croquis; the drafted skirt length is the real mini drop. Stylised drawing layer, not a fit deviation. Current +45.3%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "hemSweepHalf",
+   "maxAbsDevPct": 10,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) dirndl hem sweep",
+   "justification": "DIRNDL (2026-07-23): the full dirndl hem sweep is drawn a touch wider in the croquis than the drafted gathered panel width; borderline stylisation. Current +8.0%; pinned worst + margin."
   }
  ]
 }
