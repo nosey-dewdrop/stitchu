@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "../src/yoke.hpp"
+#include "../src/collar.hpp"
 #include "../src/garment.hpp"
 #include "../src/validator.hpp"
 
@@ -174,6 +175,83 @@ int main() {
         } else {
             std::printf("      (this body drafts dart, not princess — covered above)\n");
         }
+        std::printf("\n");
+    }
+
+    // ---- YOKE + NECK FACING (collar): the facing attaches to the yoke -----------
+    // A doll / babydoll dress is a yoke + a Peter-Pan collar. A real collar drafts a
+    // neck facing (edgeFinishPieces), and the neckline lives on the Yoke piece after
+    // the split — so the facing validator must recognise the yoke-renamed piece as the
+    // facing's parent. This is the false-rejection this loop fixes (same class as the
+    // placket-on-top locator bug): pre-split it looked only for "Bodice/Top <half>".
+    {
+        std::printf("Yoke + Peter-Pan collar (doll dress): facing trues to the yoke:\n");
+        auto specWith = [](GarmentType g, Shaping sh) {
+            GarmentSpec s; s.garment = g; s.shaping = sh;
+            s.neckline = Neckline::Crew; s.sleeveStyle = SleeveStyle::Straight;
+            s.sleeveLength = SleeveLength::Short; s.skirtStyle = SkirtStyle::ALine;
+            s.topLength = TopLength::Hip;
+            s.yoke = static_cast<int>(Yoke::Plain);
+            s.collarType = static_cast<int>(CollarType::PeterPan);
+            s.collarEdge = static_cast<int>(CollarEdge::Round);
+            return s;
+        };
+        struct Case { const char* name; GarmentType g; Shaping sh; };
+        const Case cases[] = {
+            {"dress + dart", GarmentType::Dress, Shaping::Dart},
+            {"dress + princess", GarmentType::Dress, Shaping::Princess},
+            {"top + dart", GarmentType::Top, Shaping::Dart},
+            {"top + princess", GarmentType::Top, Shaping::Princess},
+        };
+        for (const auto& c : cases) {
+            GarmentSpec y = specWith(c.g, c.sh);
+            const DraftedPattern dY = GarmentDrafter::draft(y, m0());
+            // The neck facing is actually drafted (a real collar keeps facings), and a
+            // yoke piece carries the neckline.
+            check(findByName(dY, "Neck Facing") != nullptr,
+                  std::string(c.name) + ": neck facing drafted for the collar");
+            check(findByName(dY, "Yoke") != nullptr,
+                  std::string(c.name) + ": a yoke piece carries the neck edge");
+            const auto iss = PatternValidator::issues(y, m0(), dY);
+            bool clean = iss.empty();
+            if (!clean) for (const auto& v : iss) std::printf("        got: %s\n", v.description().c_str());
+            check(clean, std::string(c.name) + ": yoke + collar drafts 0 issues (facing trues to the yoke)");
+        }
+        std::printf("\n");
+    }
+
+    // ---- REGRESSION GUARD: a genuinely orphaned facing is STILL caught ----------
+    // The fix must NOT weaken the check. Take the valid yoke+collar draft above and
+    // DELETE the yoke pieces (the facing's parent) — the facing is now a phantom with
+    // no body piece to attach to, and the validator must flag "body piece missing".
+    {
+        std::printf("Orphaned facing (no yoke, no bodice) is still caught:\n");
+        GarmentSpec y; y.garment = GarmentType::Dress; y.shaping = Shaping::Dart;
+        y.neckline = Neckline::Crew; y.sleeveStyle = SleeveStyle::Straight;
+        y.sleeveLength = SleeveLength::Short; y.skirtStyle = SkirtStyle::ALine;
+        y.yoke = static_cast<int>(Yoke::Plain);
+        y.collarType = static_cast<int>(CollarType::PeterPan);
+        y.collarEdge = static_cast<int>(CollarEdge::Round);
+        DraftedPattern dY = GarmentDrafter::draft(y, m0());
+        check(PatternValidator::issues(y, m0(), dY).empty(),
+              "baseline yoke+collar draft is clean before mutation");
+        // Remove EVERY yoke/body piece so the two Neck Facings are orphaned.
+        std::vector<PatternPiece> kept;
+        for (const auto& p : dY.pieces) {
+            const bool isYoke = p.name.find("Yoke") != std::string::npos;
+            const bool isBody = p.name.find(" Body") != std::string::npos;
+            if (!isYoke && !isBody) kept.push_back(p);
+        }
+        dY.pieces = kept;
+        check(findByName(dY, "Yoke") == nullptr && findByName(dY, "Front Body") == nullptr,
+              "yoke + lower-body pieces removed (facing now orphaned)");
+        check(findByName(dY, "Neck Facing") != nullptr, "the phantom facings remain");
+        const auto iss = PatternValidator::issues(y, m0(), dY);
+        int facingMissing = 0;
+        for (const auto& v : iss)
+            if (v.rule == "facing" && v.detail.find("body piece") != std::string::npos) facingMissing++;
+        check(facingMissing >= 2,
+              "orphaned front + back facings both flagged 'body piece missing' (check not weakened)");
         std::printf("\n");
     }
 
