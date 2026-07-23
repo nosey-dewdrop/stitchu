@@ -193,20 +193,13 @@
    "sebep": "neckline square degil U/scoop cizyor (top_princess_peplum eslemesi)"
   },
   {
-   "hedefId": 58,
-   "sebep": "V+princess+dugme+firfir yok, plain dart tank fallback"
-  },
-  {
-   "hedefId": 63,
-   "sebep": "princess/corset+pointed hem yok, plain fallback"
-  },
-  {
-   "hedefId": 71,
-   "sebep": "wrap/asimetrik/princess yok, plain fallback"
-  },
-  {
    "hedefId": 17,
    "sebep": "kollu+aski celiski (onceden)"
   }
- ]
+ ],
+ "blok3_dogrulama": {
+  "sizinti": 0,
+  "fallback": 0,
+  "not": "kopru sikilastirma sonrasi: princess plain-fallback SIFIR, id4 straps-object fix ile REF (fallback 0). id58/63/71 durustce URETILEMEZ (plain degil)."
+ }
 }
