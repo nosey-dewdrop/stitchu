@@ -95,6 +95,9 @@ inline constexpr int kBackDetailCount = 4;
 // BardotStyle (int)
 inline constexpr const char* kBardotStyle[] = { "none", "plain", "frill" };
 inline constexpr int kBardotStyleCount = 3;
+// CupSeam (int)
+inline constexpr const char* kCupSeam[] = { "none", "horizontal" };
+inline constexpr int kCupSeamCount = 2;
 
 } // namespace vocab
 } // namespace stitchu

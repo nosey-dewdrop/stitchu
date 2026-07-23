@@ -353,6 +353,14 @@ struct GarmentSpec {
     // sleeve draft (not a post-pass) so the armhole/cap reshape trues together.
     // See shoulder.hpp / FORMULAS.md "Dropped shoulder + raglan".
     int shoulderStyle = 0; // ShoulderStyle enum value; 0 = Set
+    // Opt-in cup seam (kup dikişi — Corset Bustier, patterns_real/BUGRA-DEFTER.md):
+    // splits the princess FRONT panels into an Upper Cup + a Lower Cup along a
+    // HORIZONTAL seam through the bust apex — the strapless/sweetheart bustier
+    // construction the motor was missing (it gave the bust curve through the
+    // vertical princess seam alone). 0 = None (byte-identical), 1 = Horizontal.
+    // Only a princess-seamed sweetheart/strapless front hosts one; any other host
+    // is refused honestly. See cupseam.hpp / FORMULAS.md "Cup seam".
+    int cupSeam = 0; // CupSeam enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

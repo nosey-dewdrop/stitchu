@@ -33,6 +33,7 @@
     "buttonRow": { "type": "int", "enum": "ButtonRow", "values": ["none", "functional", "decorative"] },
     "exposedZip": { "type": "int", "enum": "ExposedZip", "values": ["none", "centerFront", "centerBack"] },
     "backDetail": { "type": "int", "enum": "BackDetail", "values": ["none", "ruffle", "cape", "flounce"] },
-    "bardotStyle": { "type": "int", "enum": "BardotStyle", "values": ["none", "plain", "frill"] }
+    "bardotStyle": { "type": "int", "enum": "BardotStyle", "values": ["none", "plain", "frill"] },
+    "cupSeam": { "type": "int", "enum": "CupSeam", "values": ["none", "horizontal"] }
   }
 }

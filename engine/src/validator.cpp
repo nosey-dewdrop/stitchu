@@ -671,6 +671,14 @@ std::vector<ValidationIssue> topIssues(
         if (isFront && spec.hemShape == static_cast<int>(HemShape::HighLow))
             expected -= HemBlock::highLowFrontRise;
         auto& sideLen = isFront ? frontSide : backSide;
+        // Cup seam (Corset Bustier): the front princess panels are REPLACED by an
+        // Upper Cup + a Lower Cup, so the front-half princess-panel + side-seam
+        // audit below no longer maps (the cups carry that wearability, checked in
+        // cup_check). Skip the front half for a cup-split garment.
+        if (isFront && spec.cupSeam != 0 &&
+            find("Upper Cup Center Front") && find("Lower Cup Center Front")) {
+            continue;
+        }
         if (princess) {
             const PatternPiece* center = find(std::string("Top Center ") + half);
             const PatternPiece* side = find(std::string("Top Side ") + half);

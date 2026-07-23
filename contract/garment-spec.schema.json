@@ -535,6 +535,12 @@
             "frill"
           ]
         },
+        "cupSeam": {
+          "enum": [
+            "none",
+            "horizontal"
+          ]
+        },
         "frontPlacket": {
           "type": "boolean",
           "description": "legacy bool, mirrors placketStyle=standard"

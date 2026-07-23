@@ -142,6 +142,7 @@ GarmentSpec buildSpec(const val& o) {
     spec.exposedZip = parseEnumInt("exposedZip", intField(o, "exposedZip"), kExposedZip, kExposedZipCount);
     spec.backDetail = parseEnumInt("backDetail", intField(o, "backDetail"), kBackDetail, kBackDetailCount);
     spec.bardotStyle = parseEnumInt("bardotStyle", intField(o, "bardotStyle"), kBardotStyle, kBardotStyleCount);
+    spec.cupSeam = parseEnumInt("cupSeam", intField(o, "cupSeam"), kCupSeam, kCupSeamCount);
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }

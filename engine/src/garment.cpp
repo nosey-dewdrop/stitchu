@@ -13,6 +13,7 @@
 #include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
+#include "cupseam.hpp"
 #include "cuff.hpp"
 #include "placket.hpp"
 #include "pocket.hpp"
@@ -423,6 +424,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     pattern.fabricAdviceKey = "dress";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);
     pattern.guideSteps = steps;
+    // A dress bodice front ENDS at the waist (its bottom edge IS the waist seam,
+    // where the skirt joins); the only fabric below the natural-waist line is the
+    // front-balance drop, which is part of that waist seam, not a separate band. So
+    // a dress never carries a below-waist Front Body — leave cupSeamWaistBelowApex
+    // at 0 and the cup seam produces just Upper + Lower cup (the skirt is the piece
+    // below the waist). Only a top that EXTENDS through the waist gets a Front Body.
     return pattern;
 }
 
@@ -581,6 +588,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     pattern.fabricAdviceKey = "top";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);
     pattern.guideSteps = steps;
+    // Measured apex->waist drop for the opt-in cup seam: the drafted natural-waist Y
+    // minus the drafted apex Y, in the un-rebased center-panel frame (a frame-
+    // invariant offset that survives each piece's local rebase). Only set it when
+    // the top actually EXTENDS through the waist (extra > 0 — a hip/tunic top): then
+    // the cup seam's second cut yields a real Front Body from the waist to the hem.
+    // A cropped top ends at the waist (extra == 0), so it stays Upper + Lower cup;
+    // the only fabric below the natural-waist line there is the front-balance drop,
+    // not a Front Body band. bodice.front is the un-rebased center panel.
+    if (extra > 0 && bodice.frontPrincess && !bodice.front.markings.empty())
+        pattern.cupSeamWaistBelowApex =
+            bodice.frontPieceWaistY - bodice.front.markings[0].to.y;
     return pattern;
 }
 
@@ -725,6 +743,21 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.pocketStyle != static_cast<int>(PocketStyle::None)) {
         PocketBlock::apply(pattern, static_cast<PocketStyle>(spec.pocketStyle),
                            m.bustMM() / 4.0);
+    }
+    // Opt-in cup seam (kup dikişi — Corset Bustier): splits the princess FRONT
+    // panel(s) into an Upper Cup + a Lower Cup along a HORIZONTAL seam through the
+    // bust apex — the strapless/sweetheart bustier construction the motor was
+    // missing. Post-pass on the finished draft (the princess front is already
+    // drawn), so the base draft is byte-identical with it off (cupSeam == None).
+    // The seam y is READ from the panel's own apex notch (can't drift), and the
+    // two new cut edges are the same horizontal line (length-matched by
+    // construction). Only a princess-seamed sweetheart/strapless front hosts one;
+    // any other host is refused honestly. Runs BEFORE the cutting-line offset so
+    // each cup gets its own cut line. Moulded/foam/boned cups stay honest.
+    if (spec.cupSeam != static_cast<int>(CupSeam::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
+                            pattern.cupSeamWaistBelowApex);
     }
     // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to the
     // wrist end of a full-length sleeve, the wider sleeve hem gathered/pleated in.

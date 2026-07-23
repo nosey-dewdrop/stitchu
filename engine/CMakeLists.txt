@@ -20,6 +20,7 @@ add_library(engine
     src/slit.cpp
     src/strap.cpp
     src/peplum.cpp
+    src/cupseam.cpp
     src/pocket.cpp
     src/neckext.cpp
     src/cuff.cpp
@@ -118,6 +119,10 @@ add_test(NAME gore_check COMMAND gore_check)
 add_executable(pocket_check tests/pocket_check.cpp)
 target_link_libraries(pocket_check PRIVATE engine)
 add_test(NAME pocket_check COMMAND pocket_check)
+
+add_executable(cup_check tests/cup_check.cpp)
+target_link_libraries(cup_check PRIVATE engine)
+add_test(NAME cup_check COMMAND cup_check)
 add_executable(cuff_check tests/cuff_check.cpp)
 target_link_libraries(cuff_check PRIVATE engine)
 add_test(NAME cuff_check COMMAND cuff_check)
