@@ -107,3 +107,12 @@
   net çözüldü, S-flow geldi, ölçülü; circle daha ince ama zenginleşti, abartı yok, fizik korundu."
   Determinizm md5 eşit.
 - PIN: drawstring_babydoll + lace_vneck_70s ESKİ kavis (guard, BYTE-IDENTICAL). suite 50/50.
+
+## 2026-07-23 KÖK 0 — DAMLA KARARI (güzellik turu içinde soruldu)
+- Damla: YENİDEN SUNUM'a geç, 0a/0b golden+pin re-pin işleri AYRI ONAYA kalsın (kart hazır).
+  Kalem güzelliği (4 kök) bu turun asıl hedefiydi, tamam. → 0a/0b bu turda UYGULANMADI.
+- PIN ÇELİŞKİSİ ÇÖZÜLDÜ (Damla): "güzellik promptu geçerli, re-pin yap" → eski cila kartının
+  "peterpan/lace_vneck re-pin YOK" emri GÜNCELLENDİ; korsaj cilası yapıldığında re-pin
+  ön-onaylı (görsel+hakem şartlı). Ama uygulama YENİDEN SUNUM sonrası ayrı tura ertelendi.
+- reports/gate/cila/oneri-korsaj-yan-kavisi.md güncel kalır (0b kaynağı). 0a kaynağı:
+  hakem-id15-29.md (9 parça, 4'ü skirt panel → 2 cut-on-fold hedefi, motor+golden re-pin).
