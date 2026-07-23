@@ -126,6 +126,27 @@ export function pickBackOpening(seen) {
   return 'round';
 }
 
+// Map the vision's back-closure fields to a corset lace-up back. The engine draws
+// a CB facing strip on each back edge + two trued eyelet columns + a lacing cord
+// (an eyelet-laced, open-gap, ADJUSTABLE back). A laced back reads as either a
+// backDetail === 'lacedBack', a closure.type === 'lace-up', or a laced/eyelet/
+// corset-lacing term in the oov/details channel. Returns 1 (Corset) or 0.
+// Distinct from a tie-back (fabric ties, Loop 4b) and an open-back cutout (a
+// faced hole, Loop 9b) — this is a criss-cross eyelet lacing across a CB gap.
+export function pickLaceUpBack(seen) {
+  if (seen.backDetail === 'lacedBack') return 1;
+  if (seen.closure && seen.closure.type === 'lace-up') return 1;
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A corset / laced / eyelet-and-cord back. A plain fabric "tie back" bow is a
+  // DIFFERENT construction (pickTiePlacement handles it) and is not this.
+  if (/(corset|lace-?up|laced|eyelet|grommet)/.test(words) &&
+      /back|corset|bodice|lacing|eyelet|grommet/.test(words)) return 1;
+  return 0;
+}
+
 // Map the vision's oov terms to a back hem slit / walking vent (Loop M1). The
 // engine cuts the back with a center-back seam and opens a walking slit from the
 // hem; a "vent"/"kick" reads as a lapped walking vent, else a plain slit (the
