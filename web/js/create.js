@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=111';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=111';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=111';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -120,6 +120,7 @@ const spec = {
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
+  cupSeam: 'none', yoke: 'none', boxPleat: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -530,6 +531,34 @@ function showSpec() {
         const bardotHostable = spec.garment !== 'skirt' && spec.neckline !== 'halter' &&
           spec.shaping !== 'princess';
         spec.bardotStyle = (bardot && bardotHostable) ? bardot : 'none';
+        // Cup seam (kup dikişi, cupseam.cpp): the engine now splits the princess
+        // front into Upper Cup + Lower Cup + Front Body along a horizontal seam
+        // through the bust apex — the strapless/bustier bust. The host-gate MIRRORS
+        // the engine EXACTLY: a princess-seamed dress/top, strapless (sleeveless or
+        // a cap-sleeve wing), with a sweetheart/square/scoop top edge above the
+        // apex. Any other host the engine refuses honestly, so we don't send it and
+        // it stays in the honesty layer (a sleeved bodice cup seam, a dart bust).
+        const cupSeamHostable = (spec.garment === 'dress' || spec.garment === 'top') &&
+          spec.shaping === 'princess' &&
+          (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
+          (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
+        spec.cupSeam = (pickCupSeam(seen) && cupSeamHostable) ? 'horizontal' : 'none';
+        // Yoke split (roba — doll/babydoll/swing dress, yoke.cpp): the engine now
+        // splits the front+back bodice into a Yoke + a lower Body along a horizontal
+        // chest seam — plain (yoke:1) or gathered/shirred/smocked below (yoke:2).
+        // Host: a dress/top with a bodice (a skirt has none). Composes safely with a
+        // collar (the engine faces the yoke) and with the box pleat below. A yoke the
+        // engine refuses (a skirt) stays honest.
+        const yokePick = pickYoke(seen);
+        const yokeHostable = spec.garment !== 'skirt';
+        spec.yoke = (yokePick && yokeHostable) ? (yokePick === 2 ? 'gathered' : 'plain') : 'none';
+        // Center box pleat (orta ters kutu pili, boxpleat.cpp): a single inverted
+        // fold behind the center-front panel — the swing/doll center fold. Host: a
+        // dress/top (a skirt's CF panel is a different build). Composes with the yoke
+        // above (a swing top is yoke + CF box pleat). No structured vision field
+        // carries a box pleat, so pickBoxPleat reads only the free-text channel.
+        const boxPleat = pickBoxPleat(seen);
+        spec.boxPleat = (boxPleat && spec.garment !== 'skirt') ? 'centerInverted' : 'none';
         // A drawn button row is DECORATIVE from vision (a functional row is the
         // placket path above); a visible run of buttons with no read closure reads
         // decorative. A front placket already drew a functional row, so only add a
@@ -635,6 +664,18 @@ function showSpec() {
           // asymmetric-diagonal / handkerchief / mullet-on-a-gathered-skirt hem is a
           // different construction that stays honest (hemShape straight).
           hemShapeDrawn: !!(spec.hemShape && spec.hemShape !== 'straight'),
+          // cupseam.cpp: a horizontal bust-cup seam (Upper Cup + Lower Cup + Front
+          // Body) is now DRAWN when the host is a strapless princess bustier, so the
+          // honesty layer must NOT list cup seams as missing. A sleeved bodice cup
+          // seam / a dart bust the engine refused stays honest (cupSeam none).
+          cupSeamDrawn: spec.cupSeam !== 'none',
+          // yoke.cpp: a plain/gathered yoke split (Front/Back Yoke + Body) is now
+          // DRAWN, so the honesty layer must NOT list the yoke as missing. A yoke on
+          // a skirt (no bodice) the engine refused stays honest (yoke none).
+          yokeDrawn: spec.yoke !== 'none',
+          // boxpleat.cpp: a center inverted box pleat is now DRAWN behind the CF
+          // panel, so the honesty layer must NOT list a center box pleat as missing.
+          boxPleatDrawn: spec.boxPleat !== 'none',
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

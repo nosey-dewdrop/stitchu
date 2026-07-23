@@ -220,8 +220,11 @@ export function missingFeatures(seen, lang) {
     }
   }
 
-  // cup seams
-  if (seen.cupSeams === true) {
+  // cup seams, only when the engine did NOT draw them. cupseam.cpp now draws a
+  // horizontal Upper/Lower cup seam for a strapless princess bustier (flagged by
+  // seen.cupSeamDrawn from create.js). A sleeved bodice cup seam / a dart bust the
+  // engine refused stays honest here.
+  if (seen.cupSeams === true && !seen.cupSeamDrawn) {
     push(L === 'tr' ? 'ayrı kup göğüs dikişleri' : 'separate bust-cup seams', CUPSEAM_NOTE[L]);
   }
 
@@ -240,13 +243,15 @@ export function missingFeatures(seen, lang) {
     }
   }
 
-  // yoke, a shirred/smocked yoke is now DRAWN as a gathered panel (Loop 8),
-  // flagged by seen.gatherDrawn, so skip it there. A plain shoulderYoke seam is
-  // NOT gathering and stays honest (still not a separate drafted piece).
+  // yoke, now DRAWN as a real Front/Back Yoke + Body split (yoke.cpp, flagged by
+  // seen.yokeDrawn from create.js): a plain shoulderYoke → yoke:1, a shirred/
+  // smocked yoke → yoke:2. Either way it is a real drafted piece now, so skip it.
+  // (A shirred/smocked yoke drawn instead as a gathered PANEL, seen.gatherDrawn,
+  // is also covered.) A yoke on a skirt the engine refused stays honest.
   if (seen.yoke && seen.yoke.type && seen.yoke.type !== 'none') {
     const gatheredYoke = seen.gatherDrawn &&
       (seen.yoke.type === 'shirring' || seen.yoke.type === 'smocking');
-    if (!gatheredYoke) {
+    if (!seen.yokeDrawn && !gatheredYoke) {
       const d = YOKE_DERIVATIVE[seen.yoke.type];
       push((L === 'tr' ? yokeLabelTr(seen.yoke.type) : yokeLabelEn(seen.yoke.type)), d ? d[L] : null);
     }
@@ -360,6 +365,25 @@ export function missingFeatures(seen, lang) {
   const backDetailTerm = (t) =>
     /(back|cape).*(cape|ruffle|frill|flounce|cascade)|caped back|cape back|pelerin/i.test(t) &&
     !/hood|watteau|train|shoulder cape/i.test(t);
+  // boxpleat.cpp: a center inverted box pleat is now drawn behind the CF panel, so
+  // an outOfVocab term naming a center box / inverted pleat is no longer missing. A
+  // knife/accordion/sunburst/kick pleat is a different construction that stays honest.
+  const boxPleatTerm = (t) =>
+    /(center|centre|central|front|cf)[\s-]*(box|inverted)[\s-]*pleat|(box|inverted)[\s-]*pleat|center fold pleat/i.test(t) &&
+    !/knife|accordion|sunburst|sunray|kick|side pleat/i.test(t);
+  // cupseam.cpp: a horizontal bust-cup seam is now drawn (Upper/Lower cup) for a
+  // strapless princess bustier, so an outOfVocab term naming a cup seam / bra-cup
+  // / bustier cup is no longer missing. A moulded/foam/padded cup (no seam) is a
+  // different construction that stays honest.
+  const cupSeamTerm = (t) =>
+    /cup seam|bra[\s-]?cup|bustier cup|corset cup|seamed cup|underbust seam|cup bodice/i.test(t) &&
+    !/moulded|molded|foam|padded/i.test(t);
+  // yoke.cpp: a plain/gathered yoke split is now drawn (Front/Back Yoke + Body),
+  // so an outOfVocab term naming a yoke / shirred-yoke / smocked-yoke / babydoll
+  // yoke is no longer missing. (The gathered-panel path also covers a shirred yoke
+  // via gatherTerm above; this covers the yoke-SPLIT wiring.)
+  const yokeTerm = (t) =>
+    /\byoke\b|shirr(ed|ing)?\s*(yoke|bodice|panel)|smock(ed|ing)?\s*(yoke|bodice|panel)|babydoll\s*yoke/i.test(t);
   // vocab 2026-07-17: an exposed / visible zipper is now drawn as a teeth glyph on
   // the CF/CB seam, so an outOfVocab term naming an exposed/visible zip is no
   // longer missing. A separating / two-way / diagonal zip stays honest.
@@ -385,6 +409,9 @@ export function missingFeatures(seen, lang) {
     if (seen.hemShapeDrawn && hemShapeTerm(label)) continue;
     if (seen.bardotDrawn && bardotTerm(label)) continue;
     if (seen.backDetailDrawn && backDetailTerm(label)) continue;
+    if (seen.boxPleatDrawn && boxPleatTerm(label)) continue;
+    if (seen.cupSeamDrawn && cupSeamTerm(label)) continue;
+    if (seen.yokeDrawn && yokeTerm(label)) continue;
     if (seen.exposedZipDrawn && exposedZipTerm(label)) continue;
     if (seen.buttonRowDrawn && buttonRowTerm(label)) continue;
     if (label && !already.includes(norm(label))) {

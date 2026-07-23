@@ -42,6 +42,9 @@ export function buttonRowValue(spec) { return intValue('buttonRow', spec && spec
 export function exposedZipValue(spec) { return intValue('exposedZip', spec && spec.exposedZip); }
 export function backDetailValue(spec) { return intValue('backDetail', spec && spec.backDetail); }
 export function bardotStyleValue(spec) { return intValue('bardotStyle', spec && spec.bardotStyle); }
+export function cupSeamValue(spec) { return intValue('cupSeam', spec && spec.cupSeam); }
+export function yokeValue(spec) { return intValue('yoke', spec && spec.yoke); }
+export function boxPleatValue(spec) { return intValue('boxPleat', spec && spec.boxPleat); }
 
 export function loadEngine() {
   if (!enginePromise) {
@@ -110,6 +113,9 @@ function engineSpec(spec) {
     exposedZip: exposedZipValue(spec),
     backDetail: backDetailValue(spec),
     bardotStyle: bardotStyleValue(spec),
+    cupSeam: cupSeamValue(spec),
+    yoke: yokeValue(spec),
+    boxPleat: boxPleatValue(spec),
   };
 }
 
