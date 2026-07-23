@@ -36,3 +36,35 @@
   (garment alanı taşımadıkları için top dallarına hiç girmiyorlar). Sessiz geçti, kart gerekmedi.
 - Geri alma: orta (buildHalf'a dokunuldu ama koşullu+pin-korumalı; geri almak 3 edit revert).
 - Hakem (bağımsız, çift kanat) sonucu bekleniyor: tur1a 0/3 (FLAT frendi, V-yaka+armhole balon), düzeltildi, tur1b yargıda.
+
+## 2026-07-23 GÜZELLİK TURU — KÖK 1c: göğüs apex konumu (sarkık/kocaman fix)
+- KARAR: buildHalf figürel (dress + non-boxy figürel top) dalında göğüs apex Y'sini
+  template ORANINA (apex_dusus_torso_frac=0.441, Zoe Hong piksel-kalibre) çek. Mevcut
+  ölçüm: apexFrac 0.73 (torso omuz→bel'in %73'ü = bel çizgisine çok yakın = Damla'nın
+  "sarkık/bele-yakın/aşağıda" şikâyetinin TAM sayısal karşılığı). Hedef 0.441.
+- YÖNTEM (taslak seçimi): apex/bombe Y'sini SHOULDER-relative kur (stY + frac*torso),
+  underarm/armhole (uaY) DEĞİL. Neden: apex'i uaY-relative bustHeight ile %44'e çekmek
+  matematiksel imkânsız (uaY=161 zaten hedef bustY=132'nin altında); ayrıca uaY'ye
+  dokunmak kol oyuntusunu kaydırır (geniş yüzey). Shoulder-relative apex = cerrahi:
+  sadece göğüs bombesi yukarı çıkar, armhole byte-identical.
+- KAPSAM: band-top (drawstring_babydoll) dalı DEĞİŞMEZ (ayrı if-dalı) → o pinli stil
+  byte-identical. lace_vneck_70s de band/babydoll ailesi → pin korunur. figürel dress'ler
+  + non-boxy figürel top'lar etkilenir (kasıtlı — güzellik turu hedefi bunlar).
+- GERİ ALMA: orta (buildHalf tek blok, koşullu; revert 1 edit). Golden C++ etkilenmez
+  (flat golden CSV'de değil). style_check 2 pinli stil byte-identical kalmalı — koşmadan
+  önce ve sonra doğrulanacak.
+- PIN: re-pin YAZILMAZ (güzellik turu kuralı: görsel + hakem şartlı, Damla ön-onaylı ama
+  mühür Damla'da). Eski/yeni görsel + hakem PASS sonra re-pin kartı kuyruğa.
+
+## 2026-07-23 KÖK 1 SONUÇ (2 iterasyon, 1 mühürlendi 1 geri alındı)
+- İTER1 (apex Y shoulder-relative, template 0.441): MÜHÜRLENDİ. apexFrac 0.73→0.441 (id13
+  wrap-surplice + id101 sweetheart-princess + 8 princess/wrap stili). ÇİFT-KANAT HAKEM
+  bağımsız İKİSİ DE PASS: "diş macunu/sarkık çözüldü, apex emsale yaklaştı, regresyon yok".
+- İTER2 (yan-hat büst-bel taper yumuşatma): GERİ ALINDI. Sebep: yan-hat bombe zaten ~3px,
+  taper değişikliği id53/id24'te GÖRÜNMEDİ (kazanç yok); ayrıca lace_vneck_70s pinini kırdı
+  (guard eklendi ama kazançsız risk mantıksız). ESKİ taper byte-identical restore.
+- DÜRÜST SINIR: id53 ("kocaman aşağıda") + id24 ("sarkık bele yakın") apex ÇİZMİYOR (dart/
+  gathered), göğüsleri yan-hat/empire-seam ile temsil → apex-fix onları GÖRSEL değiştirmedi.
+  id53 gerçek sorun = empire/yoke seam konumu (ayrı tanı); id24 = büzgü(KÖK3)+etek(KÖK4).
+- PIN: iki pinli stil (drawstring_babydoll, lace_vneck_70s) BYTE-IDENTICAL. re-pin YAZILMADI
+  (bu stiller değişmedi; değişen 10 stil pinli değil). Determinizm md5 eşit. suite 50/50.

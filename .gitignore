@@ -58,3 +58,8 @@ reports/gate/*.html
 
 # emsal reference flats (Damla private taste corpus, never push)
 design_patterns/
+
+# fashion-flat template images (Zoe Hong / Shutterstock, copyrighted) — local-only
+# calibration source. The MEASURED RATIOS live in contract/figure-bands.json with
+# source attribution; the raster stays out of the public repo (same rule as benchmark-58).
+fashion-flat-models/
