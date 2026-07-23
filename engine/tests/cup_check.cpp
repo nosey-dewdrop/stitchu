@@ -285,6 +285,14 @@ int main() {
     expectCups("sweetheart", Neckline::Sweetheart, "sweetheart");
     expectCups("square", Neckline::Square, "square");
     expectCups("scoop", Neckline::Scoop, "scoop");
+    // Halter is a strapless-support garment (neck band replaces the straps, bare
+    // shoulders, bust held by the cups) — its front neckline sits above the bust
+    // apex like a sweetheart, so it gets a real trued cup seam. The Upper Cup note
+    // names the halter top edge.
+    expectCups("halter", Neckline::Halter, "halter");
+    // Direct class check: a sleeveless halter IS the strapless-bustier class.
+    check(CupSeamBlock::isStraplessBustierClass(Neckline::Halter, SleeveStyle::None, false),
+          "class: sleeveless halter IS strapless-bustier class");
 
     // ---- CAP SLEEVE DOES NOT BREAK THE CUP SEAM --------------------------------
     // A cap sleeve is a weightless wing off the armhole, not a shoulder-carried
@@ -340,6 +348,9 @@ int main() {
               "class: v-neck (plunges below apex) is NOT a bustier top edge");
         check(!CupSeamBlock::isStraplessBustierClass(Neckline::Boat, SleeveStyle::None, false),
               "class: boat (shoulder-shaped) is NOT a bustier top edge");
+        // (c) halter WITH a real straight sleeve is a contradiction — not strapless.
+        check(!CupSeamBlock::isStraplessBustierClass(Neckline::Halter, SleeveStyle::Straight, false),
+              "class: halter + real straight sleeve is NOT strapless (contradiction refused)");
         std::printf("\n");
     }
 

@@ -65,12 +65,15 @@ inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per 
 //       no weight — the front is still cup-supported). A real set-in / straight /
 //       balloon sleeve is a shoulder-carried bodice and is NOT the bustier class.
 //   (2) a bustier TOP EDGE = a neckline that sits ABOVE the bust apex so there is
-//       a real Upper Cup to split. Sweetheart, square (straight) and scoop all do;
-//       each keeps its own top-edge shape through the split (the cup seam is a
-//       HORIZONTAL cut at the apex and never reshapes the neckline above it). A
-//       neckline that plunges BELOW the apex (v-neck / cowl) leaves no upper cup
-//       and is excluded; a crew / boat / high neck is a shoulder-supported bodice
-//       shape, not a strapless bustier, and is excluded.
+//       a real Upper Cup to split. Sweetheart, square (straight), scoop and HALTER
+//       all do; each keeps its own top-edge shape through the split (the cup seam
+//       is a HORIZONTAL cut at the apex and never reshapes the neckline above it).
+//       A halter is a strapless-support garment — the neck band replaces the
+//       straps, the shoulders are bare, and the bust is held by the cups — so it
+//       belongs to the class (a halter WITH a real sleeve is a contradiction and
+//       still fails (1)). A neckline that plunges BELOW the apex (v-neck / cowl)
+//       leaves no upper cup and is excluded; a crew / boat / high neck is a
+//       shoulder-supported bodice shape, not a strapless bustier, and is excluded.
 // Returns true only when BOTH hold. `cap` is whether the (only) sleeve is a cap
 // sleeve; when true it counts as strapless even though sleeveStyle != None.
 bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap);

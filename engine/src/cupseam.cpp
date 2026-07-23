@@ -337,12 +337,20 @@ bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap) {
     if (!strapless) return false;
     // (2) BUSTIER TOP EDGE: a neckline whose top edge sits ABOVE the bust apex so a
     // real Upper Cup exists to split, and that the horizontal cup cut does not
-    // reshape. Sweetheart, square (straight strapless) and scoop qualify. V-neck /
-    // cowl plunge below the apex (no upper cup); crew / boat / halter / etc. are
-    // shoulder-shaped, not strapless bustier tops.
+    // reshape. Sweetheart, square (straight strapless), scoop and HALTER qualify.
+    // A halter is a strapless-support garment: the neck band replaces the straps,
+    // the shoulders are bare, and the bust is held by the cups — exactly what the
+    // cup seam is for. Its front neckline hugs the neck band / rises off the CF
+    // plunge, sitting above the bust apex like a sweetheart, so a real Upper Cup
+    // exists to split. V-neck / cowl plunge below the apex (no upper cup); crew /
+    // boat / etc. are shoulder-shaped, not strapless bustier tops. (If for a given
+    // body a halter front dips below the apex the horizontal cut finds no clean
+    // upper region and splitOnePanel refuses that panel honestly, exactly like a
+    // v-neck — the gate permits the class, the geometry keeps the truing honest.)
     return neckline == Neckline::Sweetheart ||
            neckline == Neckline::Square ||
-           neckline == Neckline::Scoop;
+           neckline == Neckline::Scoop ||
+           neckline == Neckline::Halter;
 }
 
 bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
@@ -385,6 +393,7 @@ bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
     const std::string topEdgeWord =
         neckline == Neckline::Square ? "square (straight strapless)"
         : neckline == Neckline::Scoop ? "scooped"
+        : neckline == Neckline::Halter ? "halter (neck-band top edge, bare shoulders)"
         : "sweetheart";
 
     // Split the center front panel (always present on a princess front). Split the
