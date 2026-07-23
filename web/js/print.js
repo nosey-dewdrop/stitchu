@@ -4,9 +4,9 @@
 // All pieces are shelf-packed into ONE layout (like a cutting table), then
 // the layout is tiled into A4 sheets. Sheets with no geometry are skipped,
 // far fewer, far fuller pages than tiling each piece separately.
-import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner, pieceSheetMap } from './sheet.js?v=113';
-import { getLang } from './i18n.js?v=113';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=113';
+import { PAGE_W, PAGE_H, bounds, packPieces, sheetCode, usedCells, sheetInner, nestedSheetInner, pieceSheetMap } from './sheet.js?v=114';
+import { getLang } from './i18n.js?v=114';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=114';
 
 // The print cover carries the MOST critical instructions (printer scale,
 // assembly), a Turkish sewist must read these in Turkish or the pattern comes
