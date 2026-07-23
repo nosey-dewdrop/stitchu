@@ -187,6 +187,12 @@
    "primitif": "halter yaka",
    "sebep": "3 iterasyon: topoloji calisti (nape bandi + acik armhole) ama V-dip mirror artefakti (CF keskin yarik) cozulmedi. Motor hazir, emsal net (ar-202439-2). Tek-fix: V-dip CF yatay-tangent. Kart: kirmizi-halter.md",
    "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 60,
+   "primitif": "off-shoulder yaka (id60/72)",
+   "sebep": "2 iterasyon: off-shoulder karakteri (omuz acik + omuz ustu yatay bardot bant) cizilemedi, square-tank kaldi. buildHalf CF-mirror yapisi omuz-ustu bardot bandini uretmiyor (halter ile ayni topoloji-sinif zorluk). Motor BardotStyle::Plain hazir (outline dususu), FLAT topoloji tutmadi.",
+   "zaman": "2026-07-23"
   }
  ],
  "kalan_kuyruk_top_gap1": [
