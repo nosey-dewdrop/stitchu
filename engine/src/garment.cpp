@@ -758,8 +758,13 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // each cup gets its own cut line. Moulded/foam/boned cups stay honest.
     if (spec.cupSeam != static_cast<int>(CupSeam::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        // The strapless-bustier class needs the sleeve context: a cap sleeve
+        // (SleeveCap::Cap) is a weightless wing and still counts as strapless; any
+        // real set-in/straight/balloon sleeve is a shoulder-carried bodice and is
+        // refused. The block decides the whole class rule (isStraplessBustierClass).
+        const bool capSleeve = spec.sleeveCap == SleeveCap::Cap;
         CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
-                            pattern.cupSeamWaistBelowApex);
+                            spec.sleeveStyle, capSleeve, pattern.cupSeamWaistBelowApex);
     }
     // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
     // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the

@@ -41,9 +41,11 @@
 
 namespace stitchu {
 
-// Neckline lives in measurements.hpp; forward-declare so this header stays light
-// (the .cpp includes measurements.hpp for the full definition).
+// Neckline / SleeveStyle / SleeveCap live in measurements.hpp; forward-declare so
+// this header stays light (the .cpp includes measurements.hpp for the full defs).
 enum class Neckline;
+enum class SleeveStyle;
+enum class SleeveCap;
 
 // Cup-seam treatment. None = no cup seam (byte-identical default);
 // Horizontal = split each princess front panel into Upper Cup + Lower Cup at the
@@ -54,22 +56,39 @@ namespace CupSeamBlock {
 
 inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 
+// The strapless-bustier CLASS the cup seam belongs to (encoded once, here, so the
+// gate is a named construction rule — not an ad-hoc neckline list). A horizontal
+// cup seam is a STRAPLESS-SUPPORT construction: it cups the bust and lets the
+// bodice stand up WITHOUT shoulder support. So the host must be BOTH:
+//   (1) STRAPLESS = no shoulder-supported sleeve. Sleeveless qualifies; a cap
+//       sleeve qualifies (a cap is a decorative wing off the armhole, it carries
+//       no weight — the front is still cup-supported). A real set-in / straight /
+//       balloon sleeve is a shoulder-carried bodice and is NOT the bustier class.
+//   (2) a bustier TOP EDGE = a neckline that sits ABOVE the bust apex so there is
+//       a real Upper Cup to split. Sweetheart, square (straight) and scoop all do;
+//       each keeps its own top-edge shape through the split (the cup seam is a
+//       HORIZONTAL cut at the apex and never reshapes the neckline above it). A
+//       neckline that plunges BELOW the apex (v-neck / cowl) leaves no upper cup
+//       and is excluded; a crew / boat / high neck is a shoulder-supported bodice
+//       shape, not a strapless bustier, and is excluded.
+// Returns true only when BOTH hold. `cap` is whether the (only) sleeve is a cap
+// sleeve; when true it counts as strapless even though sleeveStyle != None.
+bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap);
+
 // Applies the cup seam. Does nothing for CupSeam::None. Returns false (with an
-// honest guide note) when the draft has no matching host (no princess front with
-// a strapless/sweetheart top edge) — never fails silently. `neckline` is the
-// drafted neckline so the block can confirm the top edge is a bustier class
-// (sweetheart / strapless), passed from the drafter like the other blocks pass
-// their trued scalars. `waistBelowApex` is the measured vertical distance from
-// the bust apex down to the natural-waist level (drafted natural-waist Y minus
-// the drafted apex Y — a frame-invariant offset that survives each piece's local
-// rebase, since a piece's apex notch and its waist sit in the same frame). It
-// drives the SECOND (waist) cut that separates the short Lower Cup from the Front
-// Body below the waist. Passed from the drafter like the other blocks pass their
-// trued scalars (m.waistMM(), etc.). If <= 0, or if a panel does not reach past
-// the waist, the waist cut is honestly skipped and that panel stays Upper + Lower
-// cup.
+// honest guide note) when the draft is not the strapless-bustier class or has no
+// matching princess FRONT host — never fails silently. `neckline`/`sleeve`/`cap`
+// describe the drafted top edge so the block can confirm the strapless-bustier
+// class (see isStraplessBustierClass), passed from the drafter like the other
+// blocks pass their trued scalars. `waistBelowApex` is the measured vertical
+// distance from the bust apex down to the natural-waist level (drafted natural-
+// waist Y minus the drafted apex Y — a frame-invariant offset that survives each
+// piece's local rebase, since a piece's apex notch and its waist sit in the same
+// frame). It drives the SECOND (waist) cut that separates the short Lower Cup from
+// the Front Body below the waist. If <= 0, or if a panel does not reach past the
+// waist, the waist cut is honestly skipped and that panel stays Upper + Lower cup.
 bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
-           double waistBelowApex);
+           SleeveStyle sleeve, bool cap, double waistBelowApex);
 
 } // namespace CupSeamBlock
 } // namespace stitchu

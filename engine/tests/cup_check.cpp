@@ -89,6 +89,60 @@ static double lenFromNote(const PatternPiece* p, const std::string& key, int occ
 static double seamLenFromNote(const PatternPiece* p) { return lenFromNote(p, "mm cup seam"); }
 static double waistLenFromNote(const PatternPiece* p) { return lenFromNote(p, "mm waist seam"); }
 
+// Assert a strapless-bustier neckline (sweetheart / square / scoop) produces a
+// real, trued, wearable cup seam on BOTH a dress and a hip-length top. Proves the
+// split is valid (not merely permitted) on square/scoop: cups appear, the Upper +
+// Lower cup edges are length-matched <0.5 mm, the draft is wearable, and the Upper
+// Cup's top edge follows the actual neckline shape (the note names it).
+static void expectCups(const char* label, Neckline n, const char* topWord) {
+    std::printf("Cup seam ON — %s strapless princess:\n", label);
+    for (GarmentType g : {GarmentType::Dress, GarmentType::Top}) {
+        const char* gword = g == GarmentType::Dress ? "dress" : "top";
+        GarmentSpec s; s.garment = g; s.shaping = Shaping::Princess;
+        s.neckline = n; s.sleeveStyle = SleeveStyle::None; s.topLength = TopLength::Hip;
+        GarmentSpec c = s; c.cupSeam = static_cast<int>(CupSeam::Horizontal);
+        const DraftedPattern d0 = GarmentDrafter::draft(s, m0());
+        const DraftedPattern dC = GarmentDrafter::draft(c, m0());
+
+        check(findByName(dC, "Upper Cup Center Front") != nullptr,
+              std::string(gword) + ": Upper Cup Center Front exists");
+        check(findByName(dC, "Lower Cup Center Front") != nullptr,
+              std::string(gword) + ": Lower Cup Center Front exists");
+        check(findByName(dC, "Upper Cup Side Front") != nullptr,
+              std::string(gword) + ": Upper Cup Side Front exists");
+        check(countByName(dC, "Bodice Center Front") + countByName(dC, "Top Center Front") == 0,
+              std::string(gword) + ": original center front panel replaced, not duplicated");
+
+        // The cup seam is a horizontal cut at the apex; it must not reshape the
+        // neckline. The Upper Cup cut note names the actual top edge shape.
+        const PatternPiece* up = findByName(dC, "Upper Cup Center Front");
+        check(up && up->cutInstruction.find(topWord) != std::string::npos,
+              std::string(gword) + ": Upper Cup top edge is the drafted " + topWord +
+              " shape (note names it — the horizontal cut never reshapes the neckline)");
+
+        // TRUING: the Upper Cup lower edge and Lower Cup top edge are the same seam
+        // length <0.5 mm (the cut that lets the two cups sew together).
+        const double upC = seamLenFromNote(findByName(dC, "Upper Cup Center Front"));
+        const double loC = seamLenFromNote(findByName(dC, "Lower Cup Center Front"));
+        check(upC > 0 && loC > 0 && std::fabs(upC - loC) < 0.5,
+              std::string(gword) + ": center cup-seam edges trued <0.5 mm (upper " +
+              std::to_string(upC) + " vs lower " + std::to_string(loC) + ")");
+        const double upS = seamLenFromNote(findByName(dC, "Upper Cup Side Front"));
+        const double loS = seamLenFromNote(findByName(dC, "Lower Cup Side Front"));
+        check(upS > 0 && loS > 0 && std::fabs(upS - loS) < 0.5,
+              std::string(gword) + ": side cup-seam edges trued <0.5 mm");
+
+        // Matching notches at both cup-seam ends.
+        check(up && up->markings.size() >= 4,
+              std::string(gword) + ": Upper Cup notched at both cup-seam ends");
+
+        // WEARABLE: the whole strapless square/scoop cup-seam draft actually sews.
+        check(PatternValidator::issues(c, m0(), dC).empty(),
+              std::string(gword) + ": " + label + " cup-seam draft is wearable (validator green)");
+    }
+    std::printf("\n");
+}
+
 int main() {
     // ---- REGRESSION GUARD: cupSeam OFF is byte-identical -----------------------
     {
@@ -222,6 +276,73 @@ int main() {
         std::printf("\n");
     }
 
+    // ---- STRAPLESS BUSTIER FAMILY: square + scoop now get cups (dress + top) ----
+    // The whole strapless-bustier class — sweetheart AND square AND scoop — produces
+    // a real, trued, wearable cup seam, on both a dress and a hip-length top. Square
+    // and scoop are the newly-broken bottleneck (a forensic pass found a square-neck
+    // cap-sleeve bustier honestly refused only because the neckline wasn't
+    // sweetheart). The Upper Cup keeps each neckline's own top-edge shape.
+    expectCups("sweetheart", Neckline::Sweetheart, "sweetheart");
+    expectCups("square", Neckline::Square, "square");
+    expectCups("scoop", Neckline::Scoop, "scoop");
+
+    // ---- CAP SLEEVE DOES NOT BREAK THE CUP SEAM --------------------------------
+    // A cap sleeve is a weightless wing off the armhole, not a shoulder-carried
+    // sleeve, so the front is still cup-supported: a square + cap-sleeve strapless
+    // bustier (the exact forensic flat) MUST still get cups. The cup seam is about
+    // the front bodice, independent of the sleeve.
+    {
+        std::printf("Square + cap sleeve bustier: cup seam still fires (cap doesn't break it):\n");
+        GarmentSpec s; s.garment = GarmentType::Dress; s.shaping = Shaping::Princess;
+        s.neckline = Neckline::Square; s.sleeveStyle = SleeveStyle::Straight;
+        s.sleeveCap = SleeveCap::Cap;
+        GarmentSpec c = s; c.cupSeam = static_cast<int>(CupSeam::Horizontal);
+        const DraftedPattern dC = GarmentDrafter::draft(c, m0());
+        check(findByName(dC, "Upper Cup Center Front") != nullptr, "cap sleeve: Upper Cup exists");
+        check(countByName(dC, "Cup") >= 4, "cap sleeve: all four cups drawn (center + side)");
+        check(PatternValidator::issues(c, m0(), dC).empty(),
+              "cap sleeve: square + cap cup-seam draft is wearable");
+        // Direct class check.
+        check(CupSeamBlock::isStraplessBustierClass(Neckline::Square, SleeveStyle::Straight, true),
+              "class: square + cap sleeve IS strapless-bustier class");
+        std::printf("\n");
+    }
+
+    // ---- NON-STRAPLESS IS REFUSED: a sleeved bustier top edge is not the class ---
+    // The gate is the strapless-bustier CLASS, not just a neckline list. A real
+    // shoulder-carried sleeve (straight, non-cap) turns a sweetheart into a sleeved
+    // bodice — NOT strapless — so the cup seam is refused honestly. And a bustier
+    // neckline that plunges BELOW the apex (v-neck) has no upper cup and is excluded.
+    {
+        std::printf("Sleeved & below-apex necklines: cup seam refused honestly:\n");
+        // (a) sweetheart + a real straight sleeve (not cap) — shoulder-carried.
+        GarmentSpec sv; sv.garment = GarmentType::Dress; sv.shaping = Shaping::Princess;
+        sv.neckline = Neckline::Sweetheart; sv.sleeveStyle = SleeveStyle::Straight;
+        sv.sleeveCap = SleeveCap::Plain;
+        GarmentSpec cv = sv; cv.cupSeam = static_cast<int>(CupSeam::Horizontal);
+        const DraftedPattern d0v = GarmentDrafter::draft(sv, m0());
+        const DraftedPattern dCv = GarmentDrafter::draft(cv, m0());
+        check(countByName(dCv, "Cup") == 0 && dCv.pieces.size() == d0v.pieces.size(),
+              "sweetheart + real straight sleeve: no cups (not strapless — refused)");
+        check(!CupSeamBlock::isStraplessBustierClass(Neckline::Sweetheart, SleeveStyle::Straight, false),
+              "class: sweetheart + straight sleeve is NOT strapless-bustier class");
+        // Direct apply on the sleeved draft: honest note, no silent no-op.
+        {
+            DraftedPattern d = GarmentDrafter::draft(sv, m0());
+            const size_t before = d.guideSteps.size();
+            const bool applied = CupSeamBlock::apply(d, CupSeam::Horizontal, Neckline::Sweetheart,
+                                                     SleeveStyle::Straight, /*cap=*/false, 0);
+            check(!applied, "direct apply refuses a sleeved (non-strapless) sweetheart bodice");
+            check(d.guideSteps.size() == before + 1, "honest skip note added (no silent no-op)");
+        }
+        // (b) v-neck (dips below the apex) — no upper cup, excluded even sleeveless.
+        check(!CupSeamBlock::isStraplessBustierClass(Neckline::VNeck, SleeveStyle::None, false),
+              "class: v-neck (plunges below apex) is NOT a bustier top edge");
+        check(!CupSeamBlock::isStraplessBustierClass(Neckline::Boat, SleeveStyle::None, false),
+              "class: boat (shoulder-shaped) is NOT a bustier top edge");
+        std::printf("\n");
+    }
+
     // ---- WAIST CUT HONESTLY SKIPPED: a bodice-length front has no Front Body ----
     {
         // A CROPPED sweetheart+princess top ends at the waist (no fabric below it),
@@ -261,8 +382,9 @@ int main() {
         // Direct call returns false + one honest note.
         DraftedPattern d = GarmentDrafter::draft(s, m0());
         const size_t before = d.guideSteps.size();
-        const bool applied = CupSeamBlock::apply(d, CupSeam::Horizontal, Neckline::Crew, 0);
-        check(!applied, "direct apply refuses a non-sweetheart neckline");
+        const bool applied = CupSeamBlock::apply(d, CupSeam::Horizontal, Neckline::Crew,
+                                                 SleeveStyle::None, /*cap=*/false, 0);
+        check(!applied, "direct apply refuses a non-bustier (crew) neckline");
         check(d.guideSteps.size() == before + 1, "honest skip note added (no silent no-op)");
         std::printf("\n");
     }
@@ -281,7 +403,8 @@ int main() {
               "skirt draft unchanged (cup seam never runs on a skirt)");
         DraftedPattern d = GarmentDrafter::draft(s, m0());
         const size_t before = d.guideSteps.size();
-        const bool applied = CupSeamBlock::apply(d, CupSeam::Horizontal, Neckline::Sweetheart, 0);
+        const bool applied = CupSeamBlock::apply(d, CupSeam::Horizontal, Neckline::Sweetheart,
+                                                 SleeveStyle::None, /*cap=*/false, 0);
         check(!applied, "direct apply refuses a skirt (no princess front panel)");
         check(d.guideSteps.size() == before + 1, "honest skip note added");
         std::printf("\n");

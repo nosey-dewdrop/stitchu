@@ -188,7 +188,8 @@ PatternPiece cupPiece(const std::string& name, const std::string& cutNote,
 // two-piece Upper + Lower cup, exactly as before.
 bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
                    const std::string& upperName, const std::string& lowerName,
-                   const std::string& bodyName, double waistBelowApex,
+                   const std::string& bodyName, const std::string& topEdgeWord,
+                   double waistBelowApex,
                    double& outSeamLen, double& outWaistSeamLen,
                    double& outUpperPerim, double& outLowerPerim,
                    double& outUpperW, double& outUpperH,
@@ -251,8 +252,8 @@ bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
 
     PatternPiece up = cupPiece(
         upperName,
-        cutCount + onFold + " (Upper Cup — the sweetheart top edge down to the cup "
-        "seam; the lower edge is your " + seamStr +
+        cutCount + onFold + " (Upper Cup — the " + topEdgeWord + " top edge down to "
+        "the cup seam; the lower edge is your " + seamStr +
         " mm cup seam, matched to the Lower Cup at the notches)",
         upper,
         /*top*/nullptr, nullptr, /*bot*/&uL, &uR);
@@ -324,20 +325,45 @@ bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
 
 } // namespace
 
+// The strapless-bustier class rule (see header). A cup seam is a strapless-support
+// construction, so BOTH conditions must hold: strapless (sleeveless or cap sleeve)
+// AND a bustier top edge (a neckline that sits above the bust apex — sweetheart,
+// square/straight or scoop). Encoded here as one named rule, not an ad-hoc list.
+bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap) {
+    // (1) STRAPLESS: no shoulder-carried sleeve. Sleeveless is strapless; a cap
+    // sleeve is a weightless wing off the armhole so it still counts; any real
+    // set-in / straight / balloon sleeve is a shoulder-supported bodice and fails.
+    const bool strapless = sleeve == SleeveStyle::None || cap;
+    if (!strapless) return false;
+    // (2) BUSTIER TOP EDGE: a neckline whose top edge sits ABOVE the bust apex so a
+    // real Upper Cup exists to split, and that the horizontal cup cut does not
+    // reshape. Sweetheart, square (straight strapless) and scoop qualify. V-neck /
+    // cowl plunge below the apex (no upper cup); crew / boat / halter / etc. are
+    // shoulder-shaped, not strapless bustier tops.
+    return neckline == Neckline::Sweetheart ||
+           neckline == Neckline::Square ||
+           neckline == Neckline::Scoop;
+}
+
 bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
-           double waistBelowApex) {
+           SleeveStyle sleeve, bool cap, double waistBelowApex) {
     if (style == CupSeam::None) return true;
 
-    // HOST: only a strapless / sweetheart-class bustier top edge carries a cup
-    // seam. Any other neckline is refused honestly (this is a construction that
-    // only makes sense on a bustier — a crew/high-necked princess bodice does not
-    // get a horizontal bust seam).
-    if (neckline != Neckline::Sweetheart) {
+    // HOST: only the STRAPLESS-BUSTIER CLASS carries a cup seam — a strapless
+    // (sleeveless or cap-sleeve) princess bodice whose top edge is a sweetheart,
+    // square or scoop (a top edge above the bust apex). Any bodice with a real
+    // shoulder-carried sleeve, or a neckline that isn't a bustier top edge, is
+    // refused honestly: a horizontal bust seam only makes sense as strapless
+    // support (a crew / high / sleeved bodice shapes the bust through the princess
+    // seam alone).
+    if (!isStraplessBustierClass(neckline, sleeve, cap)) {
         pattern.guideSteps.push_back(
-            "Cup seam: skipped — a horizontal cup seam is the strapless/sweetheart "
-            "bustier construction; this neckline isn't a bustier class. Nothing "
-            "changed. (A crew or high neck shapes the bust through the princess "
-            "seam alone.)");
+            "Cup seam: skipped — a horizontal cup seam is the STRAPLESS bustier "
+            "construction (a sleeveless or cap-sleeve bodice with a sweetheart, "
+            "square or scoop top edge). This draft isn't that class — it has a "
+            "shoulder-carried sleeve or a neckline that isn't a strapless bustier "
+            "top edge, so the bust is shaped through the princess seam alone. "
+            "Nothing changed.");
         return false;
     }
 
@@ -352,6 +378,15 @@ bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
         return false;
     }
 
+    // The top-edge word for the Upper Cup cut note — the actual drafted neckline
+    // (sweetheart / square / scoop), so the note never lies about the shape the
+    // Upper Cup carries. The cup cut is HORIZONTAL at the apex and leaves the top
+    // edge exactly as drawn: a square top stays square, a scoop stays scooped.
+    const std::string topEdgeWord =
+        neckline == Neckline::Square ? "square (straight strapless)"
+        : neckline == Neckline::Scoop ? "scooped"
+        : "sweetheart";
+
     // Split the center front panel (always present on a princess front). Split the
     // side front panel too when it exists (a full bustier cups across both the CF
     // and side-front panels, so both carry the horizontal seam). Discard the sizing
@@ -361,14 +396,14 @@ bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
     bool bodyCC = false, bodyCT = false, bodySC = false, bodyST = false;
     const bool splitC = splitOnePanel(
         pattern, "Bodice Center Front", "Upper Cup Center Front", "Lower Cup Center Front",
-        "Front Body Center Front", waistBelowApex,
+        "Front Body Center Front", topEdgeWord, waistBelowApex,
         s, sw, upP, loP, uW, uH, lW, lH, bodyCC);
     // A Top renames "Bodice" -> "Top"; try that host name too.
     bool splitCtop = false;
     if (!splitC)
         splitCtop = splitOnePanel(
             pattern, "Top Center Front", "Upper Cup Center Front", "Lower Cup Center Front",
-            "Front Body Center Front", waistBelowApex,
+            "Front Body Center Front", topEdgeWord, waistBelowApex,
             s, sw, upP, loP, uW, uH, lW, lH, bodyCT);
 
     if (!splitC && !splitCtop) {
@@ -380,10 +415,10 @@ bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
 
     // Side front cups (optional — present on most princess fronts).
     splitOnePanel(pattern, "Bodice Side Front", "Upper Cup Side Front", "Lower Cup Side Front",
-                  "Front Body Side Front", waistBelowApex,
+                  "Front Body Side Front", topEdgeWord, waistBelowApex,
                   s, sw, upP, loP, uW, uH, lW, lH, bodySC) ||
         splitOnePanel(pattern, "Top Side Front", "Upper Cup Side Front", "Lower Cup Side Front",
-                      "Front Body Side Front", waistBelowApex,
+                      "Front Body Side Front", topEdgeWord, waistBelowApex,
                       s, sw, upP, loP, uW, uH, lW, lH, bodyST);
 
     const bool anyBody = bodyCC || bodyCT || bodySC || bodyST;
