@@ -8,7 +8,7 @@
 // Deterministic subset interpreter for the schema features the contract uses:
 // type, enum (with null), properties, additionalProperties:false, array items,
 // maxLength, maxItems.
-import { VISION_SCHEMA } from './contract.gen.js?v=104';
+import { VISION_SCHEMA } from './contract.gen.js?v=105';
 
 function typeOk(schema, v) {
   if (!schema.type) return true;
