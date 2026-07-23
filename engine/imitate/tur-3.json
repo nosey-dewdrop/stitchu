@@ -1,0 +1,872 @@
+{
+ "tur": 3,
+ "ts": "2026-07-23",
+ "olculdu": 98,
+ "gecti_1pct": 0,
+ "ortalama_sapma": 12.97,
+ "en_yakinla_denenen": 96,
+ "en_kotu": [
+  {
+   "id": 46,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 42.39
+  },
+  {
+   "id": 13,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 38.91
+  },
+  {
+   "id": 24,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 30.68
+  },
+  {
+   "id": 79,
+   "style": "dress_square_princess_circle",
+   "yakin": false,
+   "sapma": 29.19
+  },
+  {
+   "id": 47,
+   "style": "top_sq_shirred_peplum",
+   "yakin": true,
+   "sapma": 25.45
+  },
+  {
+   "id": 67,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 24.65
+  },
+  {
+   "id": 5,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 23.4
+  },
+  {
+   "id": 23,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 22.04
+  }
+ ],
+ "atlanan": {
+  "crop-yok": 5
+ },
+ "hepsi": [
+  {
+   "id": 1,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 14.45,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 2,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 8.64,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 3,
+   "style": "top_crew_boxy_sleeve",
+   "yakin": true,
+   "sapma": 7.4,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 4,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 15,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 5,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 23.4,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 6,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 2.31,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 7,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 5.5,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 8,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 4.44,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 9,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 3.46,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 10,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 16.3,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 11,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 5.9,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 12,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 6.26,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 13,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 38.91,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 14,
+   "style": "top_crew_boxy_sleeve",
+   "yakin": true,
+   "sapma": 18.5,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 15,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 1.34,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 16,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 3.02,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 17,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 5.75,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 18,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 2.3,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 19,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 9.13,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 20,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 8.49,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 21,
+   "style": "wrap_dress",
+   "yakin": true,
+   "sapma": 6.19,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 22,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 9.31,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 23,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 22.04,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 24,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 30.68,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 25,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 12.39,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 26,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 13.21,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 27,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 10.7,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 28,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 4.49,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 29,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 5.33,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 30,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 13.74,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 31,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.32,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 32,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 10.31,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 33,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 15.74,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 34,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 13.56,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 35,
+   "style": "wrap_dress",
+   "yakin": true,
+   "sapma": 11.2,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 36,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 16.78,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 37,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 17.75,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 38,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 15.49,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 39,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 20.77,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 40,
+   "style": "top_crew_boxy_sleeve",
+   "yakin": true,
+   "sapma": 7.68,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 41,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.07,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 42,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 14.08,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 43,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 17.09,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 44,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 11.82,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 45,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 13.4,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 46,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 42.39,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 47,
+   "style": "top_sq_shirred_peplum",
+   "yakin": true,
+   "sapma": 25.45,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 48,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 11.48,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 49,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 13.5,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 50,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 18.01,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 51,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.14,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 52,
+   "style": "top_princess_peplum",
+   "yakin": true,
+   "sapma": 12.35,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 53,
+   "style": "dress_boat_princess_circle",
+   "yakin": true,
+   "sapma": 9.29,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 54,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 14.54,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 55,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 12.67,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 56,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 15.1,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 57,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 16.17,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 58,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 2.97,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 59,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 7.73,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 60,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 12.09,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 61,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 21.63,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 62,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 11.61,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 63,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.9,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 64,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.88,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 65,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 11.33,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 66,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 15.41,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 67,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 24.65,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 68,
+   "sapma": null,
+   "sebep": "crop-yok"
+  },
+  {
+   "id": 69,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 13.02,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 70,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.08,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 71,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 7.2,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 72,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 13.78,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 73,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 5.63,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 74,
+   "sapma": null,
+   "sebep": "crop-yok"
+  },
+  {
+   "id": 75,
+   "sapma": null,
+   "sebep": "crop-yok"
+  },
+  {
+   "id": 76,
+   "sapma": null,
+   "sebep": "crop-yok"
+  },
+  {
+   "id": 77,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.16,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 78,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 10.99,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 79,
+   "style": "dress_square_princess_circle",
+   "yakin": false,
+   "sapma": 29.19,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 80,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 14.3,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 81,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 13.59,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 82,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 3.61,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 83,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 9.57,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 84,
+   "style": "top_princess_peplum",
+   "yakin": true,
+   "sapma": 12.36,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 85,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 12.35,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 86,
+   "style": "princess_dress",
+   "yakin": true,
+   "sapma": 13.02,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 87,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 17.59,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 88,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 16.02,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 89,
+   "style": "top_scoop_cami",
+   "yakin": true,
+   "sapma": 11.89,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 90,
+   "sapma": null,
+   "sebep": "crop-yok"
+  },
+  {
+   "id": 91,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 7.2,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 92,
+   "style": "top_boat_princess",
+   "yakin": true,
+   "sapma": 13.48,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 93,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 8.49,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 94,
+   "style": "top_sq_shirred_peplum",
+   "yakin": true,
+   "sapma": 12.88,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 95,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 15.38,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 96,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 9.47,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 97,
+   "style": "gore_skirt_dress",
+   "yakin": true,
+   "sapma": 8.97,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 98,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 12.9,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 99,
+   "style": "top_crew_boxy_crop",
+   "yakin": true,
+   "sapma": 17.72,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 100,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 15.06,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 101,
+   "style": "dress_sweetheart_spag_circle",
+   "yakin": false,
+   "sapma": 2.98,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 102,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 14.51,
+   "ok": false,
+   "denenenAday": 8
+  },
+  {
+   "id": 103,
+   "style": "top_crew_dart",
+   "yakin": true,
+   "sapma": 15.06,
+   "ok": false,
+   "denenenAday": 8
+  }
+ ]
+}

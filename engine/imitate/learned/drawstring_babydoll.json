@@ -1,19 +1,15 @@
 {
- "style": "top_scoop_cami",
+ "style": "drawstring_babydoll",
  "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
-  "neckWidth": 1.05,
-  "neckDepth": 22,
-  "skirtFull": 1.95,
+  "skirtFull": 1.2,
   "waistNip": 0.05,
-  "bustProject": 0.5,
-  "shoulderSlope": 1.6,
+  "bustProject": 0.9,
   "bustHeight": 0.6,
-  "yokeDrop": 8,
-  "hemDip": 0,
-  "armholeHollow": 0.07
+  "yokeDrop": 8.40625,
+  "hemDip": 0
  },
- "sapma": 0.15058695990941037,
+ "sapma": 0.16174172327173594,
  "ok": false,
  "ts": "2026-07-23"
 }

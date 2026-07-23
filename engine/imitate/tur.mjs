@@ -41,7 +41,7 @@ function styleKeyFor(spec) {
 // ADAY HAVUZU (deneyip-ölçen router için): hedefe öznitelik-benzerliğiyle en yakın K stili
 // döndürür. Tam styleKey varsa BAŞA konur. Havuz DAR (≤maxK) tutulur ki tur hızlı kalsın —
 // benzerlik daraltır, ölçüm seçer. Öznitelik ağırlıkları: garment > neckline > shaping > skirt.
-function candidateStyles(spec, exact, maxK = 4) {
+function candidateStyles(spec, exact, maxK = 8) {
   const s = spec || {};
   const norm = { neckline: s.neckline === 'vNeck' ? 'v' : s.neckline, shaping: s.shaping, garment: s.garment,
                  skirt: s.skirt || s.skirtStyle };

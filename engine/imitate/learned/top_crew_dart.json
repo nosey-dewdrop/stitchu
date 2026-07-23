@@ -1,6 +1,6 @@
 {
  "style": "top_crew_dart",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202528-7.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
   "neckWidth": 0.92,
   "neckDepth": 12,
@@ -13,7 +13,7 @@
   "hemDip": 0,
   "armholeHollow": 0.06
  },
- "sapma": 0.2983232931250002,
+ "sapma": 0.15057961060197383,
  "ok": false,
  "ts": "2026-07-23"
 }

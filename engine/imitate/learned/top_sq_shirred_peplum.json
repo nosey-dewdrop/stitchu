@@ -1,19 +1,19 @@
 {
  "style": "top_sq_shirred_peplum",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202521-5.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202533-7.png",
  "params": {
   "neckWidth": 1.1,
   "neckDepth": 13,
   "skirtFull": 1.95,
-  "waistNip": 0.2900000000000001,
+  "waistNip": 0.05,
   "bustProject": 0.5,
   "shoulderSlope": 1.5,
-  "bustHeight": 0.3375000000000001,
-  "yokeDrop": 19.96875,
-  "hemDip": 4.999999999999998,
-  "armholeHollow": 0.12
+  "bustHeight": 0.6,
+  "yokeDrop": 8,
+  "hemDip": 0,
+  "armholeHollow": 0.06
  },
- "sapma": 0.12358787306287743,
+ "sapma": 0.21832294249843384,
  "ok": false,
  "ts": "2026-07-23"
 }

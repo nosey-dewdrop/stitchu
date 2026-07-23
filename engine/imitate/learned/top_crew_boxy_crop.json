@@ -1,6 +1,6 @@
 {
  "style": "top_crew_boxy_crop",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202528-7.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
   "neckWidth": 1,
   "neckDepth": 11,
@@ -8,12 +8,12 @@
   "waistNip": 0.03,
   "bustProject": 0.5,
   "shoulderSlope": 1.3,
-  "bustHeight": 0.18000000000000002,
-  "yokeDrop": 8,
-  "hemDip": 0,
-  "armholeHollow": 0.06
+  "bustHeight": 0.3,
+  "yokeDrop": 15.5,
+  "hemDip": 3.499999999999999,
+  "armholeHollow": 0.065
  },
- "sapma": 0.17718405403477047,
+ "sapma": 0.15288301786034844,
  "ok": false,
  "ts": "2026-07-23"
 }
