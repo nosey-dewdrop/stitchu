@@ -768,7 +768,7 @@ async function tryReferencePen(spec) {
       else if (camiStrap && nl === 'square' && shirred) styleKey = 'top_cami_sq_wide_shirred';
       else if (camiStrap && nl === 'square' && straps === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
       // kompleks kombinasyonlar önce (spesifik → genel)
-      else if ((nl === 'straight' || nl === 'strapless') && straps === 'none' && shirred && peplum) styleKey = 'top_bandeau_shirred_peplum';  // id40
+      else if ((nl === 'straight' || nl === 'strapless') && (strapType === 'none' || !strapType) && shirred && peplum) styleKey = 'top_bandeau_shirred_peplum';  // id40
       else if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
       else if (nl === 'square' && shirred && peplum) styleKey = 'top_sq_shirred_peplum';
       else if (peplum && princess) styleKey = 'top_princess_peplum';

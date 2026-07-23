@@ -19,7 +19,7 @@ const OK = {};
 for (const [slot, sd] of Object.entries(GRAMMAR.slots)) if (sd.values) OK[slot] = new Set(Object.keys(sd.values));
 
 // hedef spec value → grammar value (isim eşleme). null döner = slot boş.
-function mapNeckline(v){ if(!v) return null; const m={crew:'crew',scoop:'scoop',boat:'boat',square:'square',vNeck:'vNeck',sweetheart:'sweetheart',halter:'PARK:halter',cowl:'PARK:cowl',straight:'PARK:straight-neck'}; return m[v]||('PARK:'+v); }
+function mapNeckline(v){ if(!v) return null; const m={crew:'crew',scoop:'scoop',boat:'boat',square:'square',vNeck:'vNeck',sweetheart:'sweetheart',straight:'straight',strapless:'straight',halter:'PARK:halter',cowl:'PARK:cowl'}; return m[v]||('PARK:'+v); }
 function mapShaping(v){ if(!v) return null; const m={dart:'dart',princess:'princess',boxy:'boxy'}; return m[v]||('PARK:'+v); }
 function mapSleeve(v){ if(v==null) return null; const m={none:'none',straight:'straight',balloon:'balloon',cap:'cap'}; return m[v]||('PARK:'+v); }
 function mapSleeveLen(v){ if(!v) return null; return ['short','elbow','long'].includes(v)?v:('PARK:'+v); }

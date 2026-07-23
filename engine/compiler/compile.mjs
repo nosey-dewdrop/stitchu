@@ -27,7 +27,10 @@ function draftSpec(spec) {
   return {
     garment: spec.garment, shaping: spec.shaping || 'dart',
     waistline: spec.waistline || 'natural', fabric: spec.fabric || 'woven',
-    neckline: spec.neckline || 'crew',
+    // strapless bandeau: motorda ayrı bir Neckline enum'u YOK; band-top strapless
+    // düz üst kenarı 'square' bodice ile draft edilir (top_bandeau preview-truth spec
+    // neckline=square — mevcut çalışma şekli, ikame değil bandeau'nun motor karşılığı).
+    neckline: (spec.neckline === 'straight' || spec.neckline === 'strapless') ? 'square' : (spec.neckline || 'crew'),
     sleeveStyle: isCap ? 'straight' : (spec.sleeve || 'none'), sleeveLength: spec.sleeveLength || 'short',
     sleeveCap: isCap ? 'cap' : undefined,
     skirtStyle: skirt, skirtLength: spec.length || 'midi',

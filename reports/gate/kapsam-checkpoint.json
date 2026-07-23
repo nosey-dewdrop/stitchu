@@ -158,13 +158,20 @@
    "hakem": "sweetheart spaghetti-tie-strap princess circle + on bow cift kanat (NET emsal ar-202455-6 floral corset)",
    "worstD": "validator 0, 8 parca (sweetheart bodice + Spaghetti Strap + Neck/Front Tie)",
    "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 40,
+   "durum": "GECTI",
+   "hakem": "strapless bandeau shirred peplum top cift kanat (emsal ar-202420-4 Haley Bandeau)",
+   "worstD": "validator 0, 5 parca (Shirred Bust Panel + Peplum)",
+   "zaman": "2026-07-23"
   }
  ],
  "kirmizi": [],
  "kalan_kuyruk_top_gap1": [
   95
  ],
- "sayac": 21,
+ "sayac": 22,
  "sayac_not": "BENZERSIZ hedef sayisi (id31 iki kez kayitli: shirred-peplum + wide-strap ayni hedef, tek sayilir). Onceki '19' yanlisti (18 benzersiz + id31 cift). Bu tur +3 (id24/57/101) = 18->21 benzersiz.",
  "uretilemez": [],
  "gecti_adayi_emsal_uyumsuz": [
