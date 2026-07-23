@@ -167,7 +167,14 @@
    "zaman": "2026-07-23"
   }
  ],
- "kirmizi": [],
+ "kirmizi": [
+  {
+   "hedefId": 21,
+   "primitif": "halter yaka",
+   "sebep": "3 iterasyon: topoloji calisti (nape bandi + acik armhole) ama V-dip mirror artefakti (CF keskin yarik) cozulmedi. Motor hazir, emsal net (ar-202439-2). Tek-fix: V-dip CF yatay-tangent. Kart: kirmizi-halter.md",
+   "zaman": "2026-07-23"
+  }
+ ],
  "kalan_kuyruk_top_gap1": [
   95
  ],
@@ -178,6 +185,28 @@
   {
    "hedefId": 54,
    "not": "flat+kalip spec'e sadik, referans kalemden GECTI-ADAYI, AMA crop (ar-202547-1) handkerchief etek = emsal-uyumsuz, hakem kosulamaz. Kart: kart-sweetheart-ailesi.md. Damla: crop mu yanlis eslenmis?"
+  }
+ ],
+ "uretildi_gecmedi_C": [
+  {
+   "hedefId": 18,
+   "sebep": "neckline square degil U/scoop cizyor (top_princess_peplum eslemesi)"
+  },
+  {
+   "hedefId": 58,
+   "sebep": "V+princess+dugme+firfir yok, plain dart tank fallback"
+  },
+  {
+   "hedefId": 63,
+   "sebep": "princess/corset+pointed hem yok, plain fallback"
+  },
+  {
+   "hedefId": 71,
+   "sebep": "wrap/asimetrik/princess yok, plain fallback"
+  },
+  {
+   "hedefId": 17,
+   "sebep": "kollu+aski celiski (onceden)"
   }
  ]
 }
