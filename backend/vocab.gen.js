@@ -328,6 +328,14 @@ export const VOCAB = {
       "plain",
       "gathered"
     ]
+  },
+  "boxPleat": {
+    "type": "int",
+    "enum": "BoxPleat",
+    "values": [
+      "none",
+      "centerInverted"
+    ]
   }
 };
 

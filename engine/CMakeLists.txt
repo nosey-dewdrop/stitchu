@@ -22,6 +22,7 @@ add_library(engine
     src/peplum.cpp
     src/cupseam.cpp
     src/yoke.cpp
+    src/boxpleat.cpp
     src/pocket.cpp
     src/neckext.cpp
     src/cuff.cpp
@@ -127,6 +128,9 @@ add_test(NAME cup_check COMMAND cup_check)
 add_executable(yoke_check tests/yoke_check.cpp)
 target_link_libraries(yoke_check PRIVATE engine)
 add_test(NAME yoke_check COMMAND yoke_check)
+add_executable(boxpleat_check tests/boxpleat_check.cpp)
+target_link_libraries(boxpleat_check PRIVATE engine)
+add_test(NAME boxpleat_check COMMAND boxpleat_check)
 add_executable(cuff_check tests/cuff_check.cpp)
 target_link_libraries(cuff_check PRIVATE engine)
 add_test(NAME cuff_check COMMAND cuff_check)

@@ -370,6 +370,16 @@ struct GarmentSpec {
     // a bodice front/back hosts one; any other host is refused honestly.
     // See yoke.hpp / FORMULAS.md "Yoke split".
     int yoke = 0; // Yoke enum value; 0 = None
+    // Opt-in center inverted box pleat (orta ters kutu pili): the first LOCALIZED
+    // fullness — a SINGLE fold at the center front, as opposed to the distributed
+    // gather the engine already has. Widens the CF-foldable front panel by a fixed
+    // pleat underlay, folded behind so the finished width equals the original; the
+    // extra fabric tucks under (an inverted box pleat). Unlocks the swing / doll
+    // top (yoke + center box pleat). 0 = None (byte-identical), 1 = CenterInverted.
+    // Only a dress/top with a CF-foldable front panel (incl. the yoke "Front Body")
+    // hosts one; a skirt-only or cut-2 front is refused honestly.
+    // See boxpleat.hpp / FORMULAS.md "Center inverted box pleat".
+    int boxPleat = 0; // BoxPleat enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

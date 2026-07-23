@@ -548,6 +548,12 @@
             "gathered"
           ]
         },
+        "boxPleat": {
+          "enum": [
+            "none",
+            "centerInverted"
+          ]
+        },
         "frontPlacket": {
           "type": "boolean",
           "description": "legacy bool, mirrors placketStyle=standard"

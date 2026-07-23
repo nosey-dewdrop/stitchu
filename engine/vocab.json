@@ -35,6 +35,7 @@
     "backDetail": { "type": "int", "enum": "BackDetail", "values": ["none", "ruffle", "cape", "flounce"] },
     "bardotStyle": { "type": "int", "enum": "BardotStyle", "values": ["none", "plain", "frill"] },
     "cupSeam": { "type": "int", "enum": "CupSeam", "values": ["none", "horizontal"] },
-    "yoke": { "type": "int", "enum": "Yoke", "values": ["none", "plain", "gathered"] }
+    "yoke": { "type": "int", "enum": "Yoke", "values": ["none", "plain", "gathered"] },
+    "boxPleat": { "type": "int", "enum": "BoxPleat", "values": ["none", "centerInverted"] }
   }
 }

@@ -15,6 +15,7 @@
 #include "peplum.hpp"
 #include "cupseam.hpp"
 #include "yoke.hpp"
+#include "boxpleat.hpp"
 #include "cuff.hpp"
 #include "placket.hpp"
 #include "pocket.hpp"
@@ -774,6 +775,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.yoke != static_cast<int>(Yoke::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         YokeBlock::apply(pattern, static_cast<Yoke>(spec.yoke));
+    }
+    // Opt-in center inverted box pleat (orta ters kutu pili): the first LOCALIZED
+    // fullness — a SINGLE fold at the center front, not the distributed gather the
+    // engine already has. Widens the CF-foldable front panel by a fixed pleat
+    // underlay folded behind, so the finished (pressed) width equals the original.
+    // Unlocks the swing / doll top (yoke + center box pleat). Post-pass on the
+    // finished draft, so the base is byte-identical with it off (boxPleat == None).
+    // Runs AFTER the yoke block so it can act on the yoke-renamed "Front Body" of a
+    // swing top. Only a dress/top with a CF-foldable front panel hosts one; a skirt
+    // or a cut-2 front is refused honestly. Runs BEFORE the cutting-line offset so
+    // the widened CF edge gets its own cut line. See boxpleat.hpp.
+    if (spec.boxPleat != static_cast<int>(BoxPleat::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        BoxPleatBlock::apply(pattern, static_cast<BoxPleat>(spec.boxPleat));
     }
     // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to the
     // wrist end of a full-length sleeve, the wider sleeve hem gathered/pleated in.

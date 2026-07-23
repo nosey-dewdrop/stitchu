@@ -101,6 +101,9 @@ inline constexpr int kCupSeamCount = 2;
 // Yoke (int)
 inline constexpr const char* kYoke[] = { "none", "plain", "gathered" };
 inline constexpr int kYokeCount = 3;
+// BoxPleat (int)
+inline constexpr const char* kBoxPleat[] = { "none", "centerInverted" };
+inline constexpr int kBoxPleatCount = 2;
 
 } // namespace vocab
 } // namespace stitchu
