@@ -2,6 +2,9 @@
 
 Yeni oturum: bu sayfayı oku, sonra `reports/gate/SABAH-OZETI-AILE-DONGUSU.md` (bu turun tam resmi) + `reports/gate/NABIZ.md` (son 20 satır). Sonra devam.
 
+## TEŞHİS+ONARIM TURU (2026-07-23): köprü sessiz-düşürme ONARILDI (bridge_guard mandal)
+- **TEŞHİS:** princess top spec plain tank'e düşüyordu AMA motor draft'ı DOĞRU princess kesiyor (Center/Side Front) = kopukluk FLAT-köprüde, motorda DEĞİL (Damla tezi kalıp için yanlış). id4/74 straps-object bug (contract {type} object, string kontrolü FALSE). **ONARIM:** camiStrap+cami kuralları strapType (tek kaynak); princess top → plain'e düşmez (styleKey null → ÜRETİLEMEZ). bridge_guard MANDAL (mutasyon kanıtlı, ctest 50/50). **DOĞRULAMA:** sızıntı 3→0, fallback 1→0 (id4 REF'e döndü). Sayaç 22 sabit, id58/63/71 dürüstçe ÜRETİLEMEZ. **halter V-dip 2. tur KIRMIZI** (U-taban yaklaştı, minör iz). Golden-riski kökler (id15/29 skirt-princess bölünme, motor-yok primitifler) = onaysız yazılmadı, sıradaki adaylar.
+
 ## GECE MARATONU (2026-07-23): SAYAÇ 22 (id40 +1), halter KIRMIZI, B+C+D bitti
 - **id40 GEÇTİ** (bandeau/straight-neck köprü boşluğu). **halter KIRMIZI** (V-dip mirror, tek-fix belli). B süpürme: 22/1/5/75. C aday terfi: 0 terfi (id18/58/63/71 flat princess-fallback = köprü ikame bulgusu). D cila kartları (korsaj/landmark/spec-emsal). Sonraki ilk iş: halter V-dip fix + köprü princess-fallback sıkılaştır. Açık kartlar reports/gate/cila/ + kirmizi-halter.md + kart-aday-terfi-C.md.
 
