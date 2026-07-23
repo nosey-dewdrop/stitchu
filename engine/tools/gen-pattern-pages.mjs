@@ -221,6 +221,30 @@ const COPY = {
         'Yumuşak açılan A kesim etek, temiz bir hat korurken cebe rahatça uzanma payı bırakır.',
         'Gövde pensli kesimdir; yaka ve kol oyukları biye ile bitirilir, arka orta gizli fermuarla kapanır.'] },
   },
+  'cup-seam-corset-bustier': {
+    en: { lead: 'A sweetheart princess bustier top with a horizontal cup seam. The seam splits the front into three drafted bands, an upper cup, a lower cup and a front body, the corset construction the engine used to be missing.',
+      fabric: 'Mid-weight woven cotton, twill or a firm satin, roughly 1.5 m at 140 cm.',
+      facts: ['The cup seam is an opt-in horizontal split. It cuts the sweetheart princess front into an Upper Cup, a Lower Cup and a Front Body, so the bust is shaped by seams the way a real corset bustier is built rather than by a single dart.',
+        'The three cup bands are trued to each other at the seam, so the upper and lower cup edges that sew together came out an exact match, measured to 0.00 mm.',
+        'This construction was learned from a purchased professional pattern by a forensic millimetre comparison, then drafted so it draws to your own measurements. It is opt-in, so the plain princess bustier is byte-identical when the cup seam is off.'] },
+    tr: { lead: 'Yatay kup dikişli, kalp yakalı prenses bir bustiyer üst. Dikiş önü üç çizilmiş banda böler: bir üst kup, bir alt kup ve bir ön gövde; motorun eskiden eksik olduğu korse yapısı.',
+      fabric: 'Orta gramajlı dokuma pamuk, twill ya da diri saten, 140 cm ende yaklaşık 1.5 m.',
+      facts: ['Kup dikişi opsiyonel yatay bir bölmedir. Kalp yakalı prenses önü bir Üst Kup, bir Alt Kup ve bir Ön Gövdeye böler; böylece büst, tek bir pensle değil, gerçek bir korse bustiyerin kurulduğu gibi dikişlerle biçimlenir.',
+        'Üç kup bandı dikiş yerinde birbirine trüe edilir; birbirine dikilen üst ve alt kup kenarları tam eşleşerek çıkar, 0.00 mm ölçülü.',
+        'Bu yapı, satın alınmış profesyonel bir kalıptan adli bir milimetre karşılaştırmasıyla öğrenildi, sonra kendi ölçülerine göre çizilecek şekilde kuruldu. Opsiyoneldir, bu yüzden kup dikişi kapalıyken sade prenses bustiyer bayt-birebir aynıdır.'] },
+  },
+  'yoke-doll-dress': {
+    en: { lead: 'A crew-neck doll dress with a horizontal yoke seam and a soft A-line skirt. The yoke splits the bodice front and back into a yoke and a lower body, the babydoll and swing-dress construction.',
+      fabric: 'Light to mid-weight woven cotton or poplin, roughly 1.9 m at 140 cm.',
+      facts: ['The yoke is an opt-in horizontal seam. It splits the front and back into a Front Yoke, a Back Yoke, a Front Body and a Back Body, so the dress can hang from a fitted yoke the way a doll or swing dress does.',
+        'The yoke line is measured at 28 percent of the panel drop from shoulder to hem, so the seam sits high on the chest and back where the doll silhouette wants it.',
+        'The seam is a plain yoke: the lower body does not gather yet, so the swing comes from the A-line skirt block rather than from fullness added at the yoke. It is opt-in, so the plain bodice is byte-identical when the yoke is off.'] },
+    tr: { lead: 'Yatay roba dikişli ve yumuşak A kesim etekli, bisiklet yakalı bir doll elbise. Roba gövde önünü ve arkasını bir roba ile bir alt gövdeye böler; babydoll ve salıncak elbise yapısı.',
+      fabric: 'Hafif ya da orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 1.9 m.',
+      facts: ['Roba opsiyonel yatay bir dikiştir. Önü ve arkayı bir Ön Roba, bir Arka Roba, bir Ön Gövde ve bir Arka Gövdeye böler; böylece elbise, bir doll ya da salıncak elbisesi gibi oturmuş bir robadan sarkabilir.',
+        'Roba çizgisi, omuzdan eteğe panonun düşüşünün yüzde 28inde ölçülür; böylece dikiş, doll siluetinin istediği yerde, göğsün ve sırtın üstünde durur.',
+        'Dikiş sade bir robadır: alt gövde henüz büzülmez, bu yüzden salınım robada eklenen bir dolgunluktan değil, A kesim etek bloğundan gelir. Opsiyoneldir, bu yüzden roba kapalıyken sade gövde bayt-birebir aynıdır.'] },
+  },
   'ruffled-strap-drawstring-babydoll': {
     en: { lead: 'A ruffled-strap drawstring babydoll: a band bodice gathered onto a drawstring with a small centre bow, ruffled shoulder straps, and a gathered mini skirt that falls to a scalloped hem. This is the first flat drawn in stitchu\'s own drawing pen and the first one approved, shown beside the exact pattern the engine drafts from it.',
       fabric: 'Light woven cotton, lawn, or a soft crepe, roughly 1.9 m at 140 cm.',
@@ -251,6 +275,8 @@ const DRAWN_BY_TR = {
   'shirt-collar-smocked-babydoll-top': 'sivri gömlek yakasını, büzgülü göğüs robasını ve büzgülü puf kol başını',
   'gathered-bust-empire-mini-dress': 'empire dikişinin altındaki büzgülü büst panosunu ve arka bel fiyongunu',
   'patch-pocket-shift-dress': 'ön etekteki bir çift yama cebini',
+  'cup-seam-corset-bustier': 'bustiyer önünü üç banda bölen yatay kup dikişini',
+  'yoke-doll-dress': 'gövdeyi bir roba ile bir alt gövdeye bölen yatay roba dikişini',
 };
 
 // Human piece names for the piece list (strip the parenthetical TR the engine adds).
