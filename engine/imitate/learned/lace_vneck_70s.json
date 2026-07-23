@@ -4,16 +4,16 @@
  "params": {
   "neckWidth": 1.12,
   "neckDepth": 13.5,
-  "skirtFull": 1.4899999999999995,
-  "waistNip": 0.05,
+  "skirtFull": 1.2,
+  "waistNip": 0.5,
   "bustProject": 0.9,
   "shoulderSlope": 1.52,
-  "bustHeight": 0.39,
-  "yokeDrop": 8,
-  "hemDip": 0.7156249999999997,
+  "bustHeight": 0.24000000000000002,
+  "yokeDrop": 14,
+  "hemDip": 2.28125,
   "armholeHollow": 0.22
  },
- "sapma": 0.19762481510581048,
+ "sapma": 0.14781795804101816,
  "ok": false,
  "ts": "2026-07-23"
 }

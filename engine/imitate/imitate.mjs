@@ -20,27 +20,48 @@ import * as ref from '../flat-engine/_engine-full.mjs';
 const HERE = new URL('.', import.meta.url).pathname;
 const ROOT = HERE + '../../';
 
-// örnek flat açık-renk floral olabilir → dış kontur ince/açık; eşik yüksek tutulur ki
-// silüet KOPMASIN (140'ta %53-66 bandı sıfıra düşüyordu = kirli ground-truth). TEMİZ hedef.
-const EXAMPLE_INK = 195;
+// UYARLAMALI EŞİK (2026-07-23 kök bug fix): sabit eşik YANLIŞ — 195 floral'da doğru ama
+// kolaj/desenli crop'ta arka planın %85'ini "giysi" sayıyordu (id13 sahte %57 sapma = ölçüm
+// bug'ı, motor değil). Otsu: her crop'un histogramını açık-zemin vs koyu-çizgi olarak ayıran
+// eşiği HESAPLAR. Böylece hem floral ince kontur hem kolaj temiz ground-truth verir.
+function otsuThreshold(gray, W, H) {
+  const hist = new Array(256).fill(0);
+  for (let i = 0; i < W * H; i++) hist[gray[i]]++;
+  const total = W * H;
+  let sum = 0; for (let t = 0; t < 256; t++) sum += t * hist[t];
+  let sumB = 0, wB = 0, best = 0, thr = 128;
+  for (let t = 0; t < 256; t++) {
+    wB += hist[t]; if (wB === 0) continue;
+    const wF = total - wB; if (wF === 0) break;
+    sumB += t * hist[t];
+    const mB = sumB / wB, mF = (sum - sumB) / wF;
+    const between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > best) { best = between; thr = t; }
+  }
+  // çizgi = eşiğin ALTINDAKI koyu piksel; ama çok gevşemesin (dark oranı > %40 ise kolaj/desen
+  // baskın → eşiği düşür, sadece en koyu çizgiyi al). Güvenli tavan: %25 dark.
+  let dark = 0; for (let i = 0; i < W * H; i++) if (gray[i] < thr) dark++;
+  while (thr > 60 && dark / total > 0.25) { thr -= 5; dark = 0; for (let i = 0; i < W * H; i++) if (gray[i] < thr) dark++; }
+  return thr;
+}
 
 // --- silüet çıkarımı: bir PNG'nin dark-pikselleri → bant-bant yarı-genişlik profili ---
-function halfWidthProfile(gray, W, H, box, nband) {
+function halfWidthProfile(gray, W, H, box, nband, ink) {
   const [y0, y1, x0, x1] = box;
   const ch = y1 - y0 || 1;
   const prof = [];
   for (let b = 0; b < nband; b++) {
     const yy = y0 + Math.floor((b + 0.5) / nband * ch);
     let lo = 1e9, hi = -1;
-    for (let x = x0; x < x1; x++) { if (gray[yy * W + x] < EXAMPLE_INK) { if (x < lo) lo = x; if (x > hi) hi = x; } }
+    for (let x = x0; x < x1; x++) { if (gray[yy * W + x] < ink) { if (x < lo) lo = x; if (x > hi) hi = x; } }
     prof.push(hi > lo ? (hi - lo) / 2 / ch : 0);   // torso-boyuna normalize (motor profiliyle aynı taban)
   }
   return prof;
 }
-function bbox(gray, W, H, xmax) {
+function bbox(gray, W, H, xmax, ink) {
   let y0 = 1e9, y1 = -1, x0 = 1e9, x1 = -1;
   for (let y = 0; y < H; y++) for (let x = 0; x < (xmax || W); x++) {
-    if (gray[y * W + x] < 140) { if (y < y0) y0 = y; if (y > y1) y1 = y; if (x < x0) x0 = x; if (x > x1) x1 = x; }
+    if (gray[y * W + x] < ink) { if (y < y0) y0 = y; if (y > y1) y1 = y; if (x < x0) x0 = x; if (x > x1) x1 = x; }
   }
   return [y0, y1, x0, x1];
 }
@@ -69,8 +90,9 @@ function renderMotorProfile(style, params, nband) {
 // --- ana: coordinate descent, sapma %1 altına inene kadar ---
 export function imitate(style, examplePng, nband = 16) {
   const { gray: eg, W: eW, H: eH } = PNG.grayFromFile(examplePng);
-  const ebox = bbox(eg, eW, eH);
-  const target = halfWidthProfile(eg, eW, eH, ebox, nband);
+  const ink = otsuThreshold(eg, eW, eH);          // her crop'a uyarlanan eşik (kolaj/floral güvenli)
+  const ebox = bbox(eg, eW, eH, eW, ink);
+  const target = halfWidthProfile(eg, eW, eH, ebox, nband, ink);
 
   // oturtucunun oynatacağı kollar + aralık (motor param → silüete etki eden)
   const KNOBS = {

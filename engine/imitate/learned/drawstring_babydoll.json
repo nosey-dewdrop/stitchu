@@ -3,13 +3,13 @@
  "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
   "skirtFull": 1.2,
-  "waistNip": 0.05,
+  "waistNip": 0.16000000000000003,
   "bustProject": 0.9,
   "bustHeight": 0.6,
-  "yokeDrop": 8.40625,
-  "hemDip": 0
+  "yokeDrop": 19.90625,
+  "hemDip": 2.4499999999999993
  },
- "sapma": 0.16174172327173594,
+ "sapma": 0.16185720522394242,
  "ok": false,
  "ts": "2026-07-23"
 }
