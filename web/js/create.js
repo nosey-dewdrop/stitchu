@@ -1,18 +1,18 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=113';
-import { validateVision } from './spec-validate.js?v=113';
-import { CONTRACT } from './contract.gen.js?v=113';
-import { applyStatic, getLang, t } from './i18n.js?v=113';
-import { draft, grade } from './engine.js?v=113';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=113';
-import { renderResult } from './render.js?v=113';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=112';
+import { validateVision } from './spec-validate.js?v=112';
+import { CONTRACT } from './contract.gen.js?v=112';
+import { applyStatic, getLang, t } from './i18n.js?v=112';
+import { draft, grade } from './engine.js?v=112';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=112';
+import { renderResult } from './render.js?v=112';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=113';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=113';
+} from './store.js?v=112';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=112';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -57,6 +57,11 @@ const SPEC_GROUPS = [
   // piece + a facing trued to the opening. Only on a dress/top (needs a back
   // bodice). Independent of a tie-back: a dress can have both.
   { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
+  // corset lace-up back (korse bağcıklı sırt): an eyelet-laced CB closure — the
+  // two back halves leave an open gap spanned by a criss-cross lace. Adds a CB
+  // facing strip + trued eyelet columns + a lacing cord. Only a fitted dress/top
+  // back hosts one (needs a fitted bodice back).
+  { key: 'laceUpBack', label: 'lace-up back', trLabel: 'bağcıklı sırt', options: [['none', 'none', 'yok'], ['corset', 'corset lace-up', 'korse bağcık']], for: (s) => s.garment !== 'skirt' },
   // vocab 2026-07-17: back detail (arka pelerin/fırfır — Damla "arkası pelerinli/
   // fırfırlı"). A separate cut piece at the back neck: gathered ruffle, draped
   // cape, or circular flounce. Only a dress/top (needs a back bodice).
@@ -118,7 +123,7 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
-  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
+  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
   cupSeam: 'none', yoke: 'none', boxPleat: 'none',
 };
@@ -466,6 +471,16 @@ function showSpec() {
         // INDEPENDENT of a tie-back (Loop 4b), a Tie Back Mini Dress gets both.
         const backOpen = pickBackOpening(seen);
         spec.backOpening = backOpen || 'none';
+        // Corset lace-up back (korse bağcıklı sırt): the engine now draws a CB
+        // facing strip on each back edge + two trued eyelet columns + a lacing cord
+        // (an eyelet-laced, open-gap, ADJUSTABLE back). Only a fitted (princess/dart)
+        // bodice back on a dress/top hosts one; a skirt or loose/gathered back is
+        // refused honestly by the engine, so gate the same way (a laced read on a
+        // skirt stays in the honesty channel). Distinct from a tie-back (fabric ties)
+        // and an open-back cutout (a faced hole) — this is criss-cross eyelet lacing.
+        const laced = pickLaceUpBack(seen);
+        const lacedHostable = spec.garment !== 'skirt';
+        spec.laceUpBack = (laced && lacedHostable) ? 'corset' : 'none';
         // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
         // cuts the back with a center-back seam and opens a walking slit from the
         // hem. Only a fitted straight/A-line skirt hosts one; a gathered/pleated
@@ -535,16 +550,13 @@ function showSpec() {
         // front into Upper Cup + Lower Cup + Front Body along a horizontal seam
         // through the bust apex — the strapless/bustier bust. The host-gate MIRRORS
         // the engine EXACTLY: a princess-seamed dress/top, strapless (sleeveless or
-        // a cap-sleeve wing), with a sweetheart/square/scoop/halter top edge above
-        // the apex (a halter is strapless support — the neck band replaces the
-        // straps, bare shoulders, bust held by the cups). Any other host the engine
-        // refuses honestly, so we don't send it and it stays in the honesty layer
-        // (a sleeved bodice cup seam, a dart bust).
+        // a cap-sleeve wing), with a sweetheart/square/scoop top edge above the
+        // apex. Any other host the engine refuses honestly, so we don't send it and
+        // it stays in the honesty layer (a sleeved bodice cup seam, a dart bust).
         const cupSeamHostable = (spec.garment === 'dress' || spec.garment === 'top') &&
           spec.shaping === 'princess' &&
           (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
-          (spec.neckline === 'sweetheart' || spec.neckline === 'square' ||
-           spec.neckline === 'scoop' || spec.neckline === 'halter');
+          (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
         spec.cupSeam = (pickCupSeam(seen) && cupSeamHostable) ? 'horizontal' : 'none';
         // Yoke split (roba — doll/babydoll/swing dress, yoke.cpp): the engine now
         // splits the front+back bodice into a Yoke + a lower Body along a horizontal
@@ -617,6 +629,10 @@ function showSpec() {
           // must NOT list the open-back as missing. A pocket / special back
           // finish clustered with it stays honest (its own oov term still shows).
           backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
+          // corset lace-up back: an eyelet-laced CB closure is now DRAWN (CB facing
+          // strip + two trued eyelet columns + a lacing cord), so the honesty layer
+          // must NOT list the laced back as missing / degrade it to a single tie.
+          laceUpBackDrawn: !!(spec.laceUpBack && spec.laceUpBack !== 'none'),
           // Loop M1: a back hem slit / walking vent is now DRAWN (CB seam +
           // top-point bar tack + a lapped extension for a vent), so the honesty
           // layer must NOT list the back slit as missing. A front/side slit stays

@@ -442,6 +442,12 @@
             "keyhole"
           ]
         },
+        "laceUpBack": {
+          "enum": [
+            "none",
+            "corset"
+          ]
+        },
         "backSlit": {
           "enum": [
             "none",

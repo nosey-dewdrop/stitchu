@@ -11,7 +11,7 @@ mkdir -p dist
 # draftJSON/gradeJSON (returns {"error": ...}); without these flags a C++ throw
 # aborts the whole module instead of reaching that catch.
 em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/cupseam.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/laceupback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/cupseam.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \
@@ -50,7 +50,7 @@ echo "copied to web/vendor/"
 # The wasm still arrives pre-compiled via instantiateWasm, so nothing is fetched
 # or compiled at runtime either. Verified end-to-end in wrangler dev + live.
 em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/cupseam.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
+  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/laceupback.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/cupseam.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine \

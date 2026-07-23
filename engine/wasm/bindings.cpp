@@ -129,6 +129,7 @@ GarmentSpec buildSpec(const val& o) {
     spec.gatherType = parseEnumInt("gatherType", intField(o, "gatherType"), kGatherType, kGatherTypeCount);
     spec.gatherZone = parseEnumInt("gatherZone", intField(o, "gatherZone"), kGatherZone, kGatherZoneCount);
     spec.backOpening = parseEnumInt("backOpening", intField(o, "backOpening"), kBackOpening, kBackOpeningCount);
+    spec.laceUpBack = parseEnumInt("laceUpBack", intField(o, "laceUpBack"), kLaceUpBack, kLaceUpBackCount);
     spec.backSlit = parseEnumInt("backSlit", intField(o, "backSlit"), kBackSlit, kBackSlitCount);
     spec.ruffledStraps = parseEnumInt("ruffledStraps", intField(o, "ruffledStraps"), kRuffledStraps, kRuffledStrapsCount);
     spec.peplum = parseEnumInt("peplum", intField(o, "peplum"), kPeplum, kPeplumCount);

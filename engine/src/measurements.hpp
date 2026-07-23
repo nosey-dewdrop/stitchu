@@ -380,6 +380,16 @@ struct GarmentSpec {
     // hosts one; a skirt-only or cut-2 front is refused honestly.
     // See boxpleat.hpp / FORMULAS.md "Center inverted box pleat".
     int boxPleat = 0; // BoxPleat enum value; 0 = None
+    // Opt-in corset lace-up back (korse bağcıklı sırt): an eyelet-laced CENTER-BACK
+    // closure — the two back halves leave an open gap spanned by a cord that
+    // criss-crosses between two columns of eyelets (one down each back edge). Adds
+    // a CB facing strip on each back edge + trued eyelet columns + a lacing cord
+    // piece. Off by default (None) → byte-identical. Only a fitted (princess/dart)
+    // bodice back on a dress/top hosts one; a skirt or loose/gathered back is
+    // refused honestly. The open laced gap is a real donning opening (so no CB
+    // zipper is stamped). 0 = None, 1 = Corset. See laceupback.hpp / FORMULAS.md
+    // "Corset lace-up back".
+    int laceUpBack = 0; // LaceUpBack enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

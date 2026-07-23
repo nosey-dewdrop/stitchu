@@ -188,8 +188,11 @@ export function missingFeatures(seen, lang) {
   // ties-closure is skipped when tieDrawn). Drawstring-gathered ties keep
   // tieDrawn false and still report here.
   const tieClosureDrawn = seen.tieDrawn && seen.closure && seen.closure.type === 'ties';
+  // a corset lace-up closure is now DRAWN as real eyelet columns + a lacing cord
+  // (seen.laceUpBackDrawn), so a 'lace-up' closure read is no longer missing.
+  const laceClosureDrawn = seen.laceUpBackDrawn && seen.closure && seen.closure.type === 'lace-up';
   if (seen.closure && seen.closure.type && seen.closure.type !== 'none' &&
-      !seen.closureDrawn && !tieClosureDrawn) {
+      !seen.closureDrawn && !tieClosureDrawn && !laceClosureDrawn) {
     const d = CLOSURE_DERIVATIVE[seen.closure.type];
     const loc = seen.closure.location ? ` (${seen.closure.location})` : '';
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
@@ -266,12 +269,16 @@ export function missingFeatures(seen, lang) {
   const tieBackDrawn = seen.tieDrawn && seen.backDetail === 'tieBack';
   const openBackDrawn = seen.backOpeningDrawn &&
     ['openBack', 'keyholeBack', 'vBack'].includes(seen.backDetail);
+  // a corset laced back is now DRAWN as eyelet columns + a lacing cord
+  // (seen.laceUpBackDrawn), so a 'lacedBack' backDetail no longer degrades to a
+  // single "plain closed back" / back tie note — it is a real laced closure now.
+  const lacedBackDrawn = seen.laceUpBackDrawn && seen.backDetail === 'lacedBack';
   // vocab 2026-07-17: a cape/ruffle/flounce back is now DRAWN as a separate piece
   // (backDetailDrawn), so it no longer lists as missing.
   const backDetailPieceDrawn = seen.backDetailDrawn &&
     ['cape', 'ruffle', 'flounce', 'backCape', 'backRuffle', 'backFlounce'].includes(seen.backDetail);
   if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn && !openBackDrawn &&
-      !backDetailPieceDrawn) {
+      !backDetailPieceDrawn && !lacedBackDrawn) {
     const d = BACKDETAIL_DERIVATIVE[seen.backDetail];
     push((L === 'tr' ? backLabelTr(seen.backDetail) : backLabelEn(seen.backDetail)), d ? d[L] : null);
   }
@@ -393,10 +400,19 @@ export function missingFeatures(seen, lang) {
   // button circles down the front, so an outOfVocab term naming a button
   // row/front is no longer missing when a row was drawn.
   const buttonRowTerm = (t) => /button\s*(row|front|down|placket|closure)|row of buttons/i.test(t);
+  // laceupback.cpp: a corset lace-up back is now drawn (CB facing + trued eyelet
+  // columns + a lacing cord), so an outOfVocab term naming a corset/laced/eyelet
+  // back lacing is no longer missing. A front-laced / shoulder-laced closure is a
+  // different placement the engine does NOT draft here and stays honest.
+  const laceUpTerm = (t) =>
+    /(corset|lace-?up|laced|eyelet|grommet)/i.test(t) &&
+    /back|corset|bodice|lacing|eyelet|grommet/i.test(t) &&
+    !/front[\s-]?lace|shoulder[\s-]?lace|side[\s-]?lace/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
+    if (seen.laceUpBackDrawn && laceUpTerm(label)) continue;
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (seen.peplumDrawn && peplumTerm(label)) continue;

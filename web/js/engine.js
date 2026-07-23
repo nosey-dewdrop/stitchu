@@ -3,7 +3,7 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=113';
+import { VOCAB, canonical } from './vocab.gen.js?v=112';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -25,6 +25,7 @@ export function collarEdgeValue(spec) { return intValue('collarEdge', spec && sp
 export function gatherTypeValue(spec) { return intValue('gatherType', spec && spec.gatherType); }
 export function gatherZoneValue(spec) { return intValue('gatherZone', spec && spec.gatherZone); }
 export function backOpeningValue(spec) { return intValue('backOpening', spec && spec.backOpening); }
+export function laceUpBackValue(spec) { return intValue('laceUpBack', spec && spec.laceUpBack); }
 export function backSlitValue(spec) { return intValue('backSlit', spec && spec.backSlit); }
 export function ruffledStrapsValue(spec) { return intValue('ruffledStraps', spec && spec.ruffledStraps); }
 export function peplumValue(spec) { return intValue('peplum', spec && spec.peplum); }
@@ -50,7 +51,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=113';
+      script.src = 'vendor/stitchu-engine.js?v=112';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -100,6 +101,7 @@ function engineSpec(spec) {
     gatherType: gatherTypeValue(spec),
     gatherZone: gatherZoneValue(spec),
     backOpening: backOpeningValue(spec),
+    laceUpBack: laceUpBackValue(spec),
     backSlit: backSlitValue(spec),
     ruffledStraps: ruffledStrapsValue(spec),
     peplum: peplumValue(spec),

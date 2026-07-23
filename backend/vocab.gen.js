@@ -190,6 +190,14 @@ export const VOCAB = {
       "keyhole"
     ]
   },
+  "laceUpBack": {
+    "type": "int",
+    "enum": "LaceUpBack",
+    "values": [
+      "none",
+      "corset"
+    ]
+  },
   "backSlit": {
     "type": "int",
     "enum": "HemSlit",

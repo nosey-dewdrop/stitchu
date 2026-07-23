@@ -56,6 +56,9 @@ inline constexpr int kGatherZoneCount = 4;
 // BackOpening (int)
 inline constexpr const char* kBackOpening[] = { "none", "round", "lowV", "square", "keyhole" };
 inline constexpr int kBackOpeningCount = 5;
+// LaceUpBack (int)
+inline constexpr const char* kLaceUpBack[] = { "none", "corset" };
+inline constexpr int kLaceUpBackCount = 2;
 // HemSlit (int)
 inline constexpr const char* kBackSlit[] = { "none", "vent", "slit" };
 inline constexpr int kBackSlitCount = 3;

@@ -6,6 +6,7 @@
 
 #include "buttonrow.hpp"
 #include "exposedzip.hpp"
+#include "laceupback.hpp"
 #include "offshoulder.hpp"
 #include "tie.hpp"
 #include "openback.hpp"
@@ -84,6 +85,9 @@ bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
     // on the CB fold — the tube stays closed, so it does NOT let the body in and
     // is NOT a donning opening (garment.cpp keeps the CB zipper for it).
     if (OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening))) return true;
+    // A corset lace-up back leaves the CB gap open — the body enters through the
+    // unlaced back, then the cord is laced up. A real donning opening.
+    if (LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack))) return true;
     // A back tie-back or back-waist closure opens/ties at the back; a front-neck
     // bow or cuff tie is decorative and does NOT let a head through.
     const auto tie = static_cast<TiePlacement>(spec.tieClosure);

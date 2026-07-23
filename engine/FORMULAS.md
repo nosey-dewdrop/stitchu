@@ -583,6 +583,57 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   square/low-V descriptors pick the silhouette, else round (the set's common case).
   A manual "open back" shape picker covers the no-photo path.
 
+## Corset lace-up back (korse bağcıklı sırt) — opt-in
+- WHAT: an eyelet-laced CENTER-BACK closure. Unlike the invisible CB zip (which
+  joins the two back halves) or the open-back cutout (a faced hole below the nape),
+  a lace-up back leaves the two back edges APART — a CB gap spanned by a cord that
+  criss-crosses between two columns of eyelets, one down each back edge. The garment
+  is therefore ADJUSTABLE (the lacing spans a range of body girths).
+  `LaceUpBack { None, Corset }`. Opt-in (GarmentSpec.laceUpBack); None → golden
+  BYTE-IDENTICAL. laceupback.hpp/.cpp, post-pass in garment.cpp right after the
+  open-back block (both are back-center operations).
+- HOST: a fitted (princess or dart) bodice back on a dress/top (the piece
+  backCenter() finds: Bodice/Top Center Back / Back). A skirt or a loose/gathered
+  back is an honest NO-OP with a guide note (never a silent skip) — the garment gate
+  only calls the block for dress/top, and the block itself refuses if it finds no
+  fitted back piece.
+- EYELET CONVENTION (source: standard corsetry practice — Waugh, "Corsets and
+  Crinolines"; modern corset makers' ~1" eyelet pitch): eyelet pitch
+  `eyeletPitchMM = 28` (≈1"), first eyelet `firstEyeletFromTopMM = 15` below the CB
+  top edge, last kept `eyeletBottomMarginMM = 20` off the bottom. The column height
+  = the back's own CB-edge span (measured off the drawn outline: min-x edge, top y to
+  bottom y — can't drift). Count = floor(height / pitch) + 1, then RE-SPACED evenly
+  to fill the column exactly (spacing = height / (count-1)) so the top + bottom
+  eyelets anchor the run. Refused honestly if fewer than `minEyelets = 5` fit.
+- TRUING (eyelet-column y-alignment, <0.5 mm): the eyelet y series is built once and
+  the garment is cut 2, so the second physical back edge mirrors THIS piece and its
+  eyelet column lands at the SAME heights → the lacing sits level by construction.
+  The drawn series is even to 0.0000 mm (laceupback_check verifies max spacing
+  deviation < 0.5 mm, i.e. the two columns align to < 0.5 mm).
+- FACING: a straight foldless CB facing/placket strip `facingWidthMM = 40` in from
+  the CB edge is drawn as a MARKING on the back (self-faced, interfaced — NOT cut on
+  fold), carrying the eyelet column at `eyeletInsetMM = 20` from the CB edge. This
+  stiff band carries the grommets and keeps the laced edge from stretching.
+- LACING CORD: a separate strip piece (like the tie block's cord), cut 1, self-lined
+  tube. Finished lace length = `round(columnHeight × laceLengthFactor)`,
+  `laceLengthFactor = 3.5` (corset convention — long enough to criss-cross the whole
+  run and tie off), trued to the drawn column height (can't drift).
+- DONNING: the open laced gap IS the donning opening (the body enters through the
+  unlaced back, then the cord is laced up) — LaceUpBackBlock::opensForDonning is the
+  single source of truth shared by garment.cpp (suppresses the redundant invisible CB
+  zipper) and wearability.cpp (hasDonningOpening). A laced-back dress carries NO CB
+  zipper.
+- COMPOSES: with a cup seam (a laced-back bustier) — independent enums, independent
+  post-passes; both the Upper/Lower cup pieces AND the lacing cord appear on the same
+  draft (laceupback_check). Distinct from a tie-back (fabric ties, TieBlock) and an
+  open-back cutout (a faced hole, OpenBackBlock).
+- Vision→spec (create.js pickLaceUpBack): reads seen.backDetail === 'lacedBack',
+  seen.closure.type === 'lace-up', or oov/details terms (corset / lace-up / laced /
+  eyelet / grommet + back/bodice/lacing) → corset. Gated to a non-skirt host. A
+  manual "lace-up back" picker covers the no-photo path. missing.js suppresses the
+  "laced back → single tie / closed back" honest note when laceUpBackDrawn (both the
+  closure-side 'lace-up' note and the backDetail 'lacedBack' note).
+
 ## Back hem slit / walking vent (arka etek yırtmacı) — opt-in (BENCHMARK-58 Loop M1)
 - WHAT: a walking slit (vent) rising from the hem up the CENTER-BACK seam of a
   fitted/straight skirt or dress back, so the wearer can walk. `HemSlit { None,

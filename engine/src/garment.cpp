@@ -10,6 +10,7 @@
 #include "offshoulder.hpp"
 #include "hem.hpp"
 #include "keyhole.hpp"
+#include "laceupback.hpp"
 #include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
@@ -706,6 +707,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         OpenBackBlock::apply(pattern, static_cast<BackOpening>(spec.backOpening));
     }
+    // Opt-in corset lace-up back (korse bağcıklı sırt): a CB facing strip on each
+    // back edge + two trued eyelet columns + a lacing cord — an eyelet-laced,
+    // open-gap, ADJUSTABLE back closure (the two back halves don't meet). Post-pass
+    // on the finished draft, so the base is byte-identical with it off (laceUpBack
+    // == None). Only a fitted (princess/dart) bodice back on a dress/top hosts one;
+    // a skirt or loose/gathered back is refused honestly. The open laced gap is a
+    // real donning opening, so the CB zipper is suppressed below (opensForDonning).
+    if (spec.laceUpBack != static_cast<int>(LaceUpBack::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        LaceUpBackBlock::apply(pattern, static_cast<LaceUpBack>(spec.laceUpBack));
+    }
     // Opt-in back hem slit / walking vent (arka etek yırtmacı, Loop M1): a walking
     // opening up the center-back seam of the back skirt/dress piece. Post-pass on
     // the finished draft, so the base is byte-identical with it off (backSlit ==
@@ -922,6 +934,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const bool exposedZipOpens = spec.exposedZip != static_cast<int>(ExposedZip::None);
     const bool backAlreadyOpens =
         OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
+        LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack)) ||
         spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack ||
         buttonRowOpens || exposedZipOpens;
     annotateTechnical(pattern,

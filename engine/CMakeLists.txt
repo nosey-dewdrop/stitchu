@@ -17,6 +17,7 @@ add_library(engine
     src/collar.cpp
     src/gather.cpp
     src/openback.cpp
+    src/laceupback.cpp
     src/slit.cpp
     src/strap.cpp
     src/peplum.cpp
@@ -101,6 +102,10 @@ add_test(NAME gather_check COMMAND gather_check)
 add_executable(backopen_check tests/backopen_check.cpp)
 target_link_libraries(backopen_check PRIVATE engine)
 add_test(NAME backopen_check COMMAND backopen_check)
+
+add_executable(laceupback_check tests/laceupback_check.cpp)
+target_link_libraries(laceupback_check PRIVATE engine)
+add_test(NAME laceupback_check COMMAND laceupback_check)
 
 add_executable(slit_check tests/slit_check.cpp)
 target_link_libraries(slit_check PRIVATE engine)
