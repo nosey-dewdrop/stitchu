@@ -311,6 +311,14 @@ export const VOCAB = {
       "plain",
       "frill"
     ]
+  },
+  "cupSeam": {
+    "type": "int",
+    "enum": "CupSeam",
+    "values": [
+      "none",
+      "horizontal"
+    ]
   }
 };
 
