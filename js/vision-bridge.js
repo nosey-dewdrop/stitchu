@@ -311,3 +311,73 @@ export function pickBardot(seen) {
   return 'plain';
 }
 
+// Map the vision's cupSeams read to a drawable horizontal cup seam (cupseam.cpp).
+// The engine splits the princess front into an Upper Cup + Lower Cup + Front Body
+// along a HORIZONTAL seam through the bust apex — the strapless/bustier
+// construction. The host-gate (princess + strapless + a sweetheart/square/scoop
+// top edge) is the ENGINE's rule and is enforced at the call site (create.js);
+// this pick only reports whether the vision SAW that construction. Returns 1
+// (horizontal) or null (no cup seam / stays honest). The vision carries a
+// `cupSeams` boolean (true = separate bra-cup pieces joined by a curved seam);
+// the oov/details channel names a bustier/corset-cup read too.
+export function pickCupSeam(seen) {
+  if (seen.cupSeams === true) return 1;
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A named bustier / corset-cup / seamed-cup bust construction. A moulded /
+  // foam / padded cup with NO seam is a different (undrawn) build → stays honest.
+  if (/moulded|molded|foam|padded/.test(words)) return null;
+  if (/cup seam|bra[\s-]?cup|bustier cup|corset cup|seamed cup|underbust seam|cup bodice/.test(words)) return 1;
+  return null;
+}
+
+// Map the vision's yoke read to a drawable yoke split (yoke.cpp). The engine
+// splits the front+back bodice along a HORIZONTAL seam into a Yoke (shoulder
+// panel) + a lower Body: yoke:1 = PLAIN seam, yoke:2 = GATHERED (the body
+// gathers/shirrs onto the yoke seam — a doll/babydoll/swing dress). The host
+// (a dress/top with a bodice) is gated at the call site. Vision carries
+// `seen.yoke` = { type: none|shoulderYoke|shirring|smocking, location }; a
+// shirring/smocking yoke reads as gathered, a plain shoulderYoke as plain.
+// Returns 2 (gathered), 1 (plain) or null (no yoke / stays honest).
+export function pickYoke(seen) {
+  const type = seen.yoke && seen.yoke.type;
+  const words = [
+    type, seen.yoke && seen.yoke.location,
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  const structured = type && type !== 'none';
+  const named = /\byoke\b|roba|babydoll|baby doll|doll dress|swing dress|smock(ed|ing)?\s*(bodice|yoke|panel)?|shirr(ed|ing)?\s*(bodice|yoke|panel)?/.test(words);
+  if (!structured && !named) return null;
+  // Gathered below the yoke seam (shirred/smocked/gathered body) → yoke:2.
+  if (type === 'shirring' || type === 'smocking' ||
+      /shirr|smock|gathered below|gather(ed)? (bodice|body|below)|babydoll|baby doll|swing/.test(words)) {
+    return 2;
+  }
+  // A plain (un-gathered) yoke seam → yoke:1.
+  return 1;
+}
+
+// Map the vision to a center box pleat (boxpleat.cpp). The engine folds a SINGLE
+// inverted box pleat behind the center-front panel (a localized fold, not the
+// distributed gather it already has) — the swing/doll center fold. There is NO
+// structured vision field for a box pleat (the visionReading schema carries none),
+// so this reads ONLY the free-text oov/details channel: a clear center box /
+// inverted pleat read. A distributed knife/accordion/kick pleat is a DIFFERENT
+// construction that stays honest. Returns 1 (centerInverted) or null.
+export function pickBoxPleat(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // Must clearly name a CENTER box / inverted (single-fold) pleat. A skirt's
+  // knife/accordion/sunburst/kick pleating is not this localized CF fold.
+  if (/knife|accordion|sunburst|sunray|kick|side pleat/.test(words)) return null;
+  if (/(center|centre|central|front|cf)[\s-]*(box|inverted)[\s-]*pleat|(box|inverted)[\s-]*pleat[\s-]*(center|centre|front|cf)|center fold pleat|inverted box pleat/.test(words)) {
+    return 1;
+  }
+  return null;
+}
+
