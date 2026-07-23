@@ -319,6 +319,14 @@ export const VOCAB = {
       "none",
       "horizontal"
     ]
+  },
+  "yoke": {
+    "type": "int",
+    "enum": "Yoke",
+    "values": [
+      "none",
+      "plain"
+    ]
   }
 };
 
