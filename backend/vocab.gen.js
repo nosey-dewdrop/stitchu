@@ -325,7 +325,8 @@ export const VOCAB = {
     "enum": "Yoke",
     "values": [
       "none",
-      "plain"
+      "plain",
+      "gathered"
     ]
   }
 };

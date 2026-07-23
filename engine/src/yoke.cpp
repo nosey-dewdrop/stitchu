@@ -2,13 +2,24 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <string>
 #include <vector>
+
+#include "contract.gen.hpp"
 
 namespace stitchu {
 namespace YokeBlock {
 
 namespace {
+
+// Babydoll / swing fullness: the flat body top edge is cut this many times the
+// yoke lower edge, then gathered back down to it. Reuses the SAME 2:1 shirred
+// gather ratio the gather block reads from the K1 contract (contract/tables.json
+// draft.gatherRatios.shirred = 2) — one source, not a wild invented number. 2:1 is
+// the Aldrich / high-street shirred-bodice convention and the classic babydoll
+// gather-into-yoke fullness.
+constexpr double kGatheredYokeRatio = contract::kGatherRatio_shirred;
 
 // Flatten a piece's outline into a closed polygon (cubics -> 24 segments, close
 // returns to the subpath start), matching the engine convention and the cup-seam
@@ -144,14 +155,55 @@ PatternPiece bandPiece(const std::string& name, const std::string& cutNote,
     return piece;
 }
 
+// GATHERED yoke: FLARE the lower body's TOP (yoke-seam) edge outward so its flat top
+// width is `ratio` times the yoke-seam width, then it gathers back down to the yoke
+// edge. The loop is in its own rebased frame; its top edge is the two corners at the
+// minimum y — `lL` (fold / centre side, smaller x) and `lR` (side-seam side, larger
+// x). We push each side-seam corner outward by the extra half-width, and TAPER that
+// horizontal shift linearly to zero over the top `flareBand` fraction of the panel's
+// height — so the side seam angles smoothly out toward the gathered top instead of
+// spiking at a single vertex (a spike makes the cut-line offset self-intersect). On a
+// cut-on-fold piece the fold edge (x==0) must not move, so all the extra width goes to
+// the side-seam corner; a cut-2 piece splits it symmetrically. Only the upper band of
+// the side seams flares; the hem and the fold stay put, and the Yoke piece (a separate
+// piece) — which carries the head opening / armhole / neck — is untouched.
+constexpr double kFlareBand = 0.30; // taper the flare over the top 30% of the panel
+void widenTopEdgeForGather(std::vector<Point>& loop, Point& lL, Point& lR,
+                           double seamLen, double ratio, bool onFold) {
+    const double extra = seamLen * (ratio - 1.0);
+    if (extra <= 0) return;
+    double topY = 1e30, botY = -1e30;
+    for (const auto& p : loop) { topY = std::min(topY, p.y); botY = std::max(botY, p.y); }
+    const double h = botY - topY;
+    if (h <= 0) return;
+    const double addLeft = onFold ? 0.0 : extra / 2.0;   // fold stays put
+    const double addRight = onFold ? extra : extra / 2.0;
+    const double midX = (lL.x + lR.x) / 2.0;
+    const double bandH = h * kFlareBand;
+    // Shift a point outward from the centre by `add`, faded to 0 at bandH below top.
+    auto flare = [&](Point& p) {
+        const double f = std::max(0.0, 1.0 - (p.y - topY) / bandH); // 1 at top -> 0
+        if (f <= 0) return;
+        const double add = (p.x >= midX) ? addRight : addLeft;
+        if (add == 0) return;
+        const double dir = (p.x >= midX) ? 1.0 : -1.0;
+        p.x += dir * add * f;
+    };
+    for (auto& p : loop) flare(p);
+    lL.x -= addLeft;   // the top corners themselves take the full shift (f==1)
+    lR.x += addRight;
+}
+
 // Split ONE bodice panel horizontally at its own measured yoke line into a Yoke
 // (upper) + a lower body piece. The panel is REPLACED in pattern.pieces by the two
 // resulting pieces. Returns false (leaving the panel untouched) if the panel cannot
 // be found or the yoke line does not cleanly divide it. `outSeamLen` is the trued
-// yoke-seam length (identical for both pieces by construction).
+// yoke-seam length (identical for both pieces by construction). When `gathered`, the
+// lower body's top edge is drawn wider (babydoll fullness) and gathered to fit the
+// yoke's lower edge (the sewn length still equals `outSeamLen`).
 bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
                    const std::string& yokeName, const std::string& lowerName,
-                   double& outSeamLen) {
+                   double& outSeamLen, bool gathered) {
     outSeamLen = 0;
     int idx = -1;
     for (size_t i = 0; i < pattern.pieces.size(); ++i)
@@ -203,12 +255,42 @@ bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
     Point lL = cutL, lR = cutR;
     double ldx, ldy;
     rebase(lower, ldx, ldy); lL.x -= ldx; lL.y -= ldy; lR.x -= ldx; lR.y -= ldy;
-    PatternPiece body = bandPiece(
-        lowerName,
+    std::string bodyNote =
         cutCount + onFold + " (below the yoke — the yoke seam down to the hem; the "
         "top edge is your " + seamStr +
-        " mm yoke seam, matched to the Yoke at the notches)",
+        " mm yoke seam, matched to the Yoke at the notches)";
+    if (gathered) {
+        // Widen the body's top edge to `ratio`x the yoke edge, then gather it back
+        // down to the yoke edge — the swing / babydoll fullness. The SEWN (gathered)
+        // length still equals seamLen, so it trues to the Yoke's lower edge.
+        widenTopEdgeForGather(lower, lL, lR, seamLen, kGatheredYokeRatio, onFold.empty() ? false : true);
+        const double flatW = seamLen * kGatheredYokeRatio;
+        const std::string flatStr = std::to_string(static_cast<long>(std::lround(flatW)));
+        // Ratio "N:1" with one decimal (2:1 -> "2.0"), read from the contract.
+        char ratioBuf[16];
+        std::snprintf(ratioBuf, sizeof(ratioBuf), "%.1f", kGatheredYokeRatio);
+        bodyNote =
+            cutCount + onFold + " (below the yoke — the yoke seam down to the hem; the "
+            "top edge is cut " + flatStr + " mm wide, gathered down to your " + seamStr +
+            " mm yoke seam (ratio " + ratioBuf + ":1) and matched to the Yoke at the "
+            "notches — the babydoll fullness swings from the yoke)";
+    }
+    PatternPiece body = bandPiece(
+        lowerName, bodyNote,
         lower, &lL, &lR, nullptr, nullptr);
+    if (gathered) {
+        // Gather distribution ticks along the (now wider) top edge — short downward
+        // ticks between the two seam-end notches so the sewer spreads the fullness
+        // evenly. Purely markings; the outline / trued sewn length are unaffected.
+        const double topY = std::min(lL.y, lR.y);
+        const double x0 = std::min(lL.x, lR.x), x1 = std::max(lL.x, lR.x);
+        const int ticks = 3;
+        for (int i = 1; i <= ticks; ++i) {
+            const double x = x0 + (x1 - x0) * i / (ticks + 1);
+            body.markings.push_back(PathCommand::move({x, topY}));
+            body.markings.push_back(PathCommand::line({x, topY + 8}));
+        }
+    }
 
     pattern.pieces.erase(pattern.pieces.begin() + idx);
     pattern.pieces.insert(pattern.pieces.begin() + idx, {yoke, body});
@@ -222,18 +304,18 @@ bool splitHalf(DraftedPattern& pattern, const std::string& side,
                std::initializer_list<const char*> dartNames,
                std::initializer_list<const char*> centerNames,
                std::initializer_list<const char*> sideNames,
-               double& outSeamLen) {
+               double& outSeamLen, bool gathered) {
     // Dart mode: a single panel ("Bodice Front" / "Top Front", etc.).
     for (const char* n : dartNames)
-        if (splitOnePanel(pattern, n, side + " Yoke", side + " Body", outSeamLen))
+        if (splitOnePanel(pattern, n, side + " Yoke", side + " Body", outSeamLen, gathered))
             return true;
     // Princess mode: center + side panels both carry the yoke seam.
     bool any = false;
     for (const char* n : centerNames)
-        if (splitOnePanel(pattern, n, side + " Yoke Center", side + " Body Center", outSeamLen)) { any = true; break; }
+        if (splitOnePanel(pattern, n, side + " Yoke Center", side + " Body Center", outSeamLen, gathered)) { any = true; break; }
     for (const char* n : sideNames) {
         double s = 0;
-        if (splitOnePanel(pattern, n, side + " Yoke Side", side + " Body Side", s)) {
+        if (splitOnePanel(pattern, n, side + " Yoke Side", side + " Body Side", s, gathered)) {
             if (!any) outSeamLen = s;
             any = true;
             break;
@@ -247,19 +329,20 @@ bool splitHalf(DraftedPattern& pattern, const std::string& side,
 bool apply(DraftedPattern& pattern, Yoke style) {
     if (style == Yoke::None) return true;
 
+    const bool gathered = (style == Yoke::Gathered);
     double frontSeam = 0, backSeam = 0;
     const bool splitFront = splitHalf(
         pattern, "Front",
         {"Bodice Front", "Top Front"},
         {"Bodice Center Front", "Top Center Front"},
         {"Bodice Side Front", "Top Side Front"},
-        frontSeam);
+        frontSeam, gathered);
     const bool splitBack = splitHalf(
         pattern, "Back",
         {"Bodice Back", "Top Back"},
         {"Bodice Center Back", "Top Center Back"},
         {"Bodice Side Back", "Top Side Back"},
-        backSeam);
+        backSeam, gathered);
 
     if (!splitFront && !splitBack) {
         // HOST: no bodice front/back to split (a skirt, or a draft with no bodice).
@@ -278,10 +361,18 @@ bool apply(DraftedPattern& pattern, Yoke style) {
         (splitFront && splitBack ? ", front and back" :
          splitFront ? " (front only — the back had no panel to split)"
                     : " (back only — the front had no panel to split)") +
-        ". Stay-stitch each yoke seam edge, then pin the Yoke's lower edge to the "
-        "lower body's top edge right sides together, matching the two notches, and "
-        "sew. Press the seam up into the yoke and topstitch if you want it crisp. The "
-        "yoke carries the shoulders while the body below it hangs and swings free.");
+        (gathered
+             ? ". The lower body is cut WIDER at its top edge (2:1 babydoll fullness): "
+               "run two rows of gathering stitch along that edge and draw it up to the "
+               "yoke-seam length marked on the piece, spreading the fullness evenly "
+               "between the gather ticks. "
+             : ". ") +
+        "Stay-stitch each yoke seam edge, then pin the Yoke's lower edge to the "
+        "lower body's top edge right sides together, matching the two notches" +
+        (gathered ? " (adjust the gathers so the wider body edge fits the yoke edge)" : "") +
+        ", and sew. Press the seam up into the yoke and topstitch if you want it "
+        "crisp. The yoke carries the shoulders while the body below it hangs and "
+        "swings free.");
     return true;
 }
 

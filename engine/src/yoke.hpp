@@ -26,11 +26,13 @@
 // construction, so they are length-matched to <0.5 mm and sew together; a matching
 // notch is stamped at each end of every seam so the sewer pairs them.
 //
-// GATHER (Yoke::GatheredBelow is reserved but NOT drawn yet — start with Plain, a
-// plain horizontal yoke): when the lower body is meant to gather onto the yoke, the
-// lower piece would be drawn WIDER than the yoke edge and a "gather to fit the yoke"
-// note + the gather ratio stamped (like the gather block) while the SEWN yoke edge
-// still trues. Plain keeps the doll-dress A-line flare that the skirt block already
+// GATHER (Yoke::Gathered): the lower BODY pieces are drawn WIDER at their top (yoke-
+// seam) edge by a babydoll fullness ratio and a "gather the body top edge to fit the
+// yoke lower edge (ratio N)" note + gather notches stamped (mirroring gather.cpp),
+// while the SEWN (gathered-down) length still trues to the yoke's lower edge <0.5 mm.
+// The widening is added ONLY to the body top edge (the side seams below flow to the
+// original hem) so the head opening / armholes / collar-facing on the Yoke piece are
+// untouched. Plain keeps the doll-dress A-line flare that the skirt block already
 // draws below the seam.
 //
 // It is an OPT-IN post-pass exactly like cup seam / peplum / collar / gather: with
@@ -48,11 +50,15 @@ namespace stitchu {
 
 // Yoke treatment. None = no yoke (byte-identical default);
 // Plain = split the front + back bodice panels into a Yoke + a lower body at a
-// measured yoke line high on the chest (the doll-dress construction).
-// (GatheredBelow is reserved for a later loop: same split, but the lower body is
-// drawn wider than the yoke edge and gathered to fit — kept out of the enum surface
-// for now so Plain is the whole capability.)
-enum class Yoke { None, Plain };
+// measured yoke line high on the chest (the doll-dress construction, the lower body
+// hanging plain from the yoke seam);
+// Gathered = the same split, but the lower BODY pieces are drawn WIDER at their top
+// edge (the edge that sews to the yoke's lower edge) by a babydoll fullness ratio
+// (contract::kGatherRatio_shirred, 2:1) and gathered to fit the yoke — the swing /
+// babydoll dress where the body gathers into the yoke seam. The gathered-down (sewn)
+// length still trues to the yoke's lower edge <0.5 mm, exactly like the gather block:
+// the top edge is physically wider but gathers back down to the yoke edge.
+enum class Yoke { None, Plain, Gathered };
 
 namespace YokeBlock {
 

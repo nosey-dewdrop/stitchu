@@ -88,8 +88,9 @@ int main() {
                         sameCommands(d0.pieces[i].markings, dN.pieces[i].markings);
         }
         check(identical, "Yoke::None leaves every piece byte-identical (outline + markings)");
-        check(static_cast<int>(Yoke::None) == 0 && static_cast<int>(Yoke::Plain) == 1,
-              "enum surface is exactly {None=0, Plain=1}");
+        check(static_cast<int>(Yoke::None) == 0 && static_cast<int>(Yoke::Plain) == 1 &&
+              static_cast<int>(Yoke::Gathered) == 2,
+              "enum surface is exactly {None=0, Plain=1, Gathered=2}");
         std::printf("\n");
     }
 
@@ -152,6 +153,110 @@ int main() {
         // The draft is still valid + wearable with the yoke on.
         check(PatternValidator::issues(y, m0(), dY).empty(),
               "yoke draft is valid (wearability + validator green)");
+        std::printf("\n");
+    }
+
+    // ---- YOKE GATHERED: the lower body gathers into the yoke seam ---------------
+    // The babydoll / swing dress: the Front/Back BODY top edge is drawn WIDER than the
+    // yoke's lower edge (2:1 fullness) but gathers back DOWN to the same sewn length,
+    // exactly like the gather block. Plain must stay byte-identical to itself; the
+    // draft stays valid.
+    {
+        std::printf("Yoke GATHERED — babydoll (body top edge wider, gathers to fit):\n");
+        auto spec = []() {
+            GarmentSpec s; s.garment = GarmentType::Dress; s.shaping = Shaping::Dart;
+            s.neckline = Neckline::Crew; s.sleeveStyle = SleeveStyle::Straight;
+            s.sleeveLength = SleeveLength::Short; s.skirtStyle = SkirtStyle::ALine;
+            return s;
+        };
+        GarmentSpec plain = spec(); plain.yoke = static_cast<int>(Yoke::Plain);
+        GarmentSpec gath  = spec(); gath.yoke  = static_cast<int>(Yoke::Gathered);
+        const DraftedPattern dP = GarmentDrafter::draft(plain, m0());
+        const DraftedPattern dG = GarmentDrafter::draft(gath, m0());
+
+        // Same four pieces exist.
+        check(findByName(dG, "Front Yoke") && findByName(dG, "Front Body") &&
+              findByName(dG, "Back Yoke")  && findByName(dG, "Back Body"),
+              "Gathered still yields Front/Back Yoke + Front/Back Body");
+
+        // Measure the top-edge width of the Yoke lower edge vs the Body top edge.
+        // The Body top edge is the piece's outline segment at its minimum y; the Yoke
+        // lower edge is the segment at its maximum y. Width = max x - min x on that row.
+        auto edgeWidthAtY = [](const PatternPiece* p, bool atTop) -> double {
+            if (!p) return -1;
+            double ext = atTop ? 1e30 : -1e30;
+            for (const auto& c : p->commands) {
+                if (c.type == CmdType::Close) continue;
+                ext = atTop ? std::min(ext, c.to.y) : std::max(ext, c.to.y);
+            }
+            double lo = 1e30, hi = -1e30;
+            for (const auto& c : p->commands) {
+                if (c.type == CmdType::Close) continue;
+                if (std::fabs(c.to.y - ext) < 1e-6) { lo = std::min(lo, c.to.x); hi = std::max(hi, c.to.x); }
+            }
+            return (hi < lo) ? -1 : hi - lo;
+        };
+        const double yokeLowerW = edgeWidthAtY(findByName(dG, "Front Yoke"), /*atTop*/false);
+        const double bodyTopW    = edgeWidthAtY(findByName(dG, "Front Body"), /*atTop*/true);
+        std::printf("      Front Yoke lower edge %.1f mm | Front Body top edge %.1f mm (flat)\n",
+                    yokeLowerW, bodyTopW);
+        check(yokeLowerW > 0 && bodyTopW > 0, "both edges measurable");
+        // Body top edge is REALLY wider (a real gather), by about the 2:1 ratio.
+        check(bodyTopW > yokeLowerW * 1.3,
+              "Gathered Front Body top edge is materially WIDER than the yoke lower edge");
+        const double measuredRatio = bodyTopW / yokeLowerW;
+        check(measuredRatio > 1.7 && measuredRatio < 2.3,
+              "flat body top edge is ~2:1 the yoke edge (measured " +
+              std::to_string(measuredRatio) + ")");
+
+        // BUT it gathers DOWN to a matched sewn length: both the Yoke and the Body
+        // record the SAME trued yoke-seam mm in their cut notes (<0.5 mm).
+        const double yF = seamLenFromNote(findByName(dG, "Front Yoke"));
+        const double bF = seamLenFromNote(findByName(dG, "Front Body"));
+        check(yF > 0 && bF > 0 && std::fabs(yF - bF) < 0.5,
+              "gathered front Yoke/Body sewn (yoke-seam) length matched <0.5 mm (yoke " +
+              std::to_string(yF) + " vs body " + std::to_string(bF) + ")");
+        // The sewn length equals the yoke's flat lower edge (the flat body edge does NOT).
+        check(std::fabs(yF - yokeLowerW) < 1.0,
+              "the trued sewn length equals the yoke's flat lower edge (gathers to fit)");
+
+        // The Body carries gather distribution ticks (more markings than the plain body).
+        const PatternPiece* pBody = findByName(dP, "Front Body");
+        const PatternPiece* gBody = findByName(dG, "Front Body");
+        check(pBody && gBody && gBody->markings.size() > pBody->markings.size(),
+              "gathered body has extra gather ticks vs the plain body");
+
+        // PLAIN stays byte-identical to itself (Gathered must not disturb Plain).
+        const DraftedPattern dP2 = GarmentDrafter::draft(plain, m0());
+        bool plainSame = dP.pieces.size() == dP2.pieces.size();
+        for (size_t i = 0; plainSame && i < dP.pieces.size(); ++i)
+            plainSame = plainSame && dP.pieces[i].name == dP2.pieces[i].name &&
+                        sameCommands(dP.pieces[i].commands, dP2.pieces[i].commands) &&
+                        sameCommands(dP.pieces[i].markings, dP2.pieces[i].markings);
+        check(plainSame, "Plain yoke path is unchanged (byte-identical to itself)");
+
+        // The gathered draft is still valid + wearable.
+        check(PatternValidator::issues(gath, m0(), dG).empty(),
+              "gathered yoke draft is valid (wearability + validator green)");
+        std::printf("\n");
+    }
+
+    // ---- YOKE GATHERED + collar: the doll dress (gathered body + Peter-Pan) ------
+    {
+        std::printf("Yoke GATHERED + Peter-Pan collar (real doll dress): 0 issues:\n");
+        GarmentSpec y; y.garment = GarmentType::Dress; y.shaping = Shaping::Dart;
+        y.neckline = Neckline::Crew; y.sleeveStyle = SleeveStyle::Straight;
+        y.sleeveLength = SleeveLength::Short; y.skirtStyle = SkirtStyle::ALine;
+        y.topLength = TopLength::Hip;
+        y.yoke = static_cast<int>(Yoke::Gathered);
+        y.collarType = static_cast<int>(CollarType::PeterPan);
+        y.collarEdge = static_cast<int>(CollarEdge::Round);
+        const DraftedPattern dY = GarmentDrafter::draft(y, m0());
+        check(findByName(dY, "Front Body") != nullptr, "gathered body drafted");
+        check(findByName(dY, "Neck Facing") != nullptr, "neck facing drafted for the collar");
+        const auto iss = PatternValidator::issues(y, m0(), dY);
+        if (!iss.empty()) for (const auto& v : iss) std::printf("        got: %s\n", v.description().c_str());
+        check(iss.empty(), "gathered yoke + collar drafts 0 issues");
         std::printf("\n");
     }
 

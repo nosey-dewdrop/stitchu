@@ -544,7 +544,8 @@
         "yoke": {
           "enum": [
             "none",
-            "plain"
+            "plain",
+            "gathered"
           ]
         },
         "frontPlacket": {
