@@ -87,10 +87,54 @@ function renderMotorProfile(style, params, nband) {
   return prof;
 }
 
+// EN BÜYÜK BAĞLI-BİLEŞEN (2026-07-23 kök ölçüm fix #2): crop'lar çoğu İKİ flat içerir (ön+arka
+// / iki varyant yan yana). Taklit motoru ikisini birden ölçüyordu → profil bozuk (bant kenarında
+// iki-figür-arası boşluk 0.008, sahte sapma). Bir maske ver, en büyük 4-komşu bileşeni bırak
+// (tek giysi). scipy yok → kendi flood-fill BFS (Uint8 stack). Dış kontur çizgisi bağlı olduğu
+// için tüm giysi tek bileşen olur; ikinci flat ayrı bileşen, atılır.
+function largestComponentMask(gray, W, H, ink) {
+  const fg = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) fg[i] = gray[i] < ink ? 1 : 0;
+  const label = new Int32Array(W * H).fill(0);
+  const stack = new Int32Array(W * H);
+  let bestSize = 0, bestLbl = 0, lbl = 0;
+  for (let s = 0; s < W * H; s++) {
+    if (!fg[s] || label[s]) continue;
+    lbl++; let sp = 0, size = 0; stack[sp++] = s; label[s] = lbl;
+    while (sp > 0) {
+      const p = stack[--sp]; size++;
+      const x = p % W, y = (p - x) / W;
+      const nb = [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, y > 0 ? p - W : -1, y < H - 1 ? p + W : -1];
+      for (const q of nb) if (q >= 0 && fg[q] && !label[q]) { label[q] = lbl; stack[sp++] = q; }
+    }
+    if (size > bestSize) { bestSize = size; bestLbl = lbl; }
+  }
+  const mask = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) mask[i] = label[i] === bestLbl ? 1 : 0;
+  return mask;
+}
+// mask'li gray: bileşen dışı = beyaz (255) → bbox/profil sadece tek giysiyi görür
+function maskedGray(gray, mask, W, H) {
+  const out = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) out[i] = mask[i] ? gray[i] : 255;
+  return out;
+}
+
 // --- ana: coordinate descent, sapma %1 altına inene kadar ---
 export function imitate(style, examplePng, nband = 16) {
-  const { gray: eg, W: eW, H: eH } = PNG.grayFromFile(examplePng);
-  const ink = otsuThreshold(eg, eW, eH);          // her crop'a uyarlanan eşik (kolaj/floral güvenli)
+  const raw = PNG.grayFromFile(examplePng);
+  const eW = raw.W, eH = raw.H;
+  const ink = otsuThreshold(raw.gray, eW, eH);    // her crop'a uyarlanan eşik (kolaj/floral güvenli)
+  // GÜVENLİ İZOLASYON: en büyük bileşeni al AMA makullük denetle — seçilen bileşen tüm dark'ın
+  // en az %55'ini kapamıyorsa (giysi parçalı/açık-uçlu ya da metin baskın) maske GÜVENİLMEZ →
+  // orijinale düş (maske olmadan). Yoksa parçalı crop'larda yanlış parça seçilip patlıyor (id86/30).
+  let eg = raw.gray;
+  {
+    const mask = largestComponentMask(raw.gray, eW, eH, ink);
+    let totalDark = 0, maskDark = 0;
+    for (let i = 0; i < eW * eH; i++) { if (raw.gray[i] < ink) { totalDark++; if (mask[i]) maskDark++; } }
+    if (totalDark > 0 && maskDark / totalDark >= 0.55) eg = maskedGray(raw.gray, mask, eW, eH);
+  }
   const ebox = bbox(eg, eW, eH, eW, ink);
   const target = halfWidthProfile(eg, eW, eH, ebox, nband, ink);
 
