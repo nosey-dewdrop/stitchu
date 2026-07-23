@@ -355,6 +355,55 @@
   "closure": "invisible zipper (center back)"
  },
  {
+  "slug": "cup-seam-corset-bustier",
+  "style": "Cup-seam corset bustier top",
+  "pieces": 9,
+  "pieceNames": [
+   "Upper Cup Center Front",
+   "Lower Cup Center Front",
+   "Front Body Center Front",
+   "Upper Cup Side Front",
+   "Lower Cup Side Front",
+   "Front Body Side Front",
+   "Top Center Back",
+   "Top Side Back",
+   "Bias binding (neckline + armholes)"
+  ],
+  "fabric": 1.6,
+  "garment": "top",
+  "patch": "3.27",
+  "drawnBy": "the horizontal cup seam that splits the bustier front into three bands",
+  "photos": 1,
+  "flat": "cup-seam-corset-bustier-flat.svg",
+  "onFigure": "cup-seam-corset-bustier-figure.svg",
+  "card": "cup-seam-corset-bustier-card.svg",
+  "closure": null
+ },
+ {
+  "slug": "yoke-doll-dress",
+  "style": "Yoke doll dress",
+  "pieces": 8,
+  "pieceNames": [
+   "Front Yoke",
+   "Front Body",
+   "Back Yoke",
+   "Back Body",
+   "Bias binding (neckline)",
+   "Skirt Front",
+   "Skirt Back",
+   "Sleeve"
+  ],
+  "fabric": 2,
+  "garment": "dress",
+  "patch": "3.29",
+  "drawnBy": "the horizontal yoke seam that splits the bodice into a yoke and a lower body",
+  "photos": 1,
+  "flat": "yoke-doll-dress-flat.svg",
+  "onFigure": "yoke-doll-dress-figure.svg",
+  "card": "yoke-doll-dress-card.svg",
+  "closure": "invisible zipper (center back)"
+ },
+ {
   "slug": "ruffled-strap-drawstring-babydoll",
   "style": "Ruffled-strap drawstring babydoll dress",
   "pieces": 8,
