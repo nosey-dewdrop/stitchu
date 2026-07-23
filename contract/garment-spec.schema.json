@@ -541,6 +541,12 @@
             "horizontal"
           ]
         },
+        "yoke": {
+          "enum": [
+            "none",
+            "plain"
+          ]
+        },
         "frontPlacket": {
           "type": "boolean",
           "description": "legacy bool, mirrors placketStyle=standard"

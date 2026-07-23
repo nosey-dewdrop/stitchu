@@ -361,6 +361,15 @@ struct GarmentSpec {
     // Only a princess-seamed sweetheart/strapless front hosts one; any other host
     // is refused honestly. See cupseam.hpp / FORMULAS.md "Cup seam".
     int cupSeam = 0; // CupSeam enum value; 0 = None
+    // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
+    // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the
+    // shoulder panel) + a lower body that flares/gathers from the yoke seam. The
+    // highest-frequency missing capability found by a forensic pass over 23 fashion
+    // flats. 0 = None (byte-identical), 1 = Plain. The yoke line is MEASURED off each
+    // panel's own drawn shoulder-to-hem drop (never hardcoded). Only a dress/top with
+    // a bodice front/back hosts one; any other host is refused honestly.
+    // See yoke.hpp / FORMULAS.md "Yoke split".
+    int yoke = 0; // Yoke enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

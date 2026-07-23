@@ -14,6 +14,7 @@
 #include "openback.hpp"
 #include "peplum.hpp"
 #include "cupseam.hpp"
+#include "yoke.hpp"
 #include "cuff.hpp"
 #include "placket.hpp"
 #include "pocket.hpp"
@@ -758,6 +759,21 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
                             pattern.cupSeamWaistBelowApex);
+    }
+    // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
+    // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the
+    // shoulder panel) + a lower body that flares from the yoke seam — the doll-dress
+    // construction the motor was missing (the highest-frequency gap over 23 flats).
+    // Post-pass on the finished draft (the bodice panels are already drawn), so the
+    // base draft is byte-identical with it off (yoke == None). The seam y is MEASURED
+    // off each panel's own drawn shoulder-to-hem drop (can't drift), and the two new
+    // cut edges are the same horizontal line (length-matched by construction). Only a
+    // dress/top with a bodice front/back hosts one; any other host is refused
+    // honestly. Runs BEFORE the cutting-line offset so each new piece gets its own cut
+    // line. A gathered-below yoke stays approximate (Plain draws the plain seam).
+    if (spec.yoke != static_cast<int>(Yoke::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        YokeBlock::apply(pattern, static_cast<Yoke>(spec.yoke));
     }
     // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to the
     // wrist end of a full-length sleeve, the wider sleeve hem gathered/pleated in.

@@ -98,6 +98,9 @@ inline constexpr int kBardotStyleCount = 3;
 // CupSeam (int)
 inline constexpr const char* kCupSeam[] = { "none", "horizontal" };
 inline constexpr int kCupSeamCount = 2;
+// Yoke (int)
+inline constexpr const char* kYoke[] = { "none", "plain" };
+inline constexpr int kYokeCount = 2;
 
 } // namespace vocab
 } // namespace stitchu
