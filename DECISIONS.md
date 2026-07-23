@@ -79,3 +79,18 @@
 - KAPI: kopuk parça 0 (tümü ≤3px, tarama /tmp/attach-scan2.mjs kanıtlı).
 - PIN: iki pinli stil BYTE-IDENTICAL (spaghetti sadece dress_sweetheart_spag_circle'da,
   pinli değil). Determinizm md5 eşit. suite 50/50.
+
+## 2026-07-23 KÖK 3 — büzgü ink dili ("püskül" → kısa emsal tik)
+- TANI: fizik DOĞRU (fold konum/dağılım cloth-solver, emsalle uyumlu) ama ink YANLIŞ —
+  fold band boyu (62-85px, band=67px) UZUN ince saç-teli = "püskül" (id24 dirndl beli,
+  cami shirred bust). Emsal (literatür + gathered-skirt fotoğraf): büzgü KISA, düzensiz,
+  kalın-uç, band-üstünde. Ink-tik boyu gusto-corpus'ta ÖLÇÜLMEDİ → literatür (%25-42) referans.
+- FIX: yeni gatherTick(foldPts,idx) — fizik fold VERİSİ değişmez, fold'un band-üst %25-42'si
+  (idx faz farkıyla düzensiz, seed'siz determinist) kısa tik olarak taper (bias 0.85 kalın uç).
+  İKİNCİ KIVRIM YOLU YOK (aynı fold verisi, sadece render dilimi). gatheredSkirt + physicsShirr
+  yollarına bağlandı.
+- KAPI: id24 before/after + emsal → HAKEM PASS ("püskül NET gitti, emsal diline yaklaştı,
+  fizik dokunulmadı"). Tek kalan nüans: uç-dolgunluğu (bias 1.5 denendi, belirgin kazanç yok,
+  0.85 korundu) → v1.1 kozmetik adayı, shipping bloklamaz.
+- PIN: drawstring_babydoll (physicsShirr=False, elle-shirr yolu) + lace_vneck_70s BYTE-IDENTICAL.
+  Determinizm md5 eşit. suite 50/50.
