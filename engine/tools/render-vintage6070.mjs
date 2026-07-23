@@ -15,7 +15,6 @@ const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
 const flat = await import(join(here, 'render-flat.mjs'));
 const { renderScattered, renderFrontBack } = flat;
-const { renderOnFigure } = await import(join(here, 'render-on-figure.mjs'));
 const { renderListingCard } = await import(join(here, 'render-listing-card.mjs'));
 
 const OUT = join(here, '../../web/patterns/vintage6070');
@@ -247,9 +246,6 @@ for (const s of LOOKS) {
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
   const flatSvg = renderFrontBack(p.pieces, flatSpec);
   writeFileSync(join(OUT, `${s.slug}-flat.svg`), flatSvg);
-  // ON-FIGURE croquis view — the same style worn on a fashion figure.
-  const figureSvg = renderOnFigure(flatSpec);
-  writeFileSync(join(OUT, `${s.slug}-figure.svg`), figureSvg);
   // ETSY-STYLE LISTING CARD — cover/thumbnail from the engine's own output.
   const cardSvg = renderListingCard(
     { slug: s.slug, style: s.en, pieces: p.pieces.length, closure: closures[0] || null },
@@ -260,7 +256,7 @@ for (const s of LOOKS) {
     pieces: p.pieces.length, pieceNames: p.pieces.map((x) => x.name),
     fabric: p.fabricMeters140, garment: s.garment, full: s.full,
     note_en: s.note_en, note_tr: s.note_tr, oov: s.oov,
-    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`,
+    flat: `${s.slug}-flat.svg`,
     card: `${s.slug}-card.svg`, closure: closures[0] || null });
   console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m  [${s.full ? 'FULL' : 'PARTIAL'}]` +
     (closures.length ? ` [closure]` : ''));

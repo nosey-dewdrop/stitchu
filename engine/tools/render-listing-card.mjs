@@ -1,17 +1,17 @@
 // render-listing-card.mjs — one self-contained Etsy-style listing card SVG per
 // pattern, composed 100% from what the engine already produces: the pattern's
-// style name (typography), its technical flat (<slug>-flat.svg), its on-figure
-// croquis (<slug>-figure.svg) as the photoless "worn" image, and honest badges
-// (format / size range / paper / difficulty) derived from meta.
+// style name (typography), its nested pattern pieces (the cutting layout), and
+// honest badges (format / size range / paper / difficulty) derived from meta.
 //
 // Damla's insight: every slot of an Etsy pattern-listing card except the photo
 // already exists inside stitchu. So the cover image is FREE — no Canva, no
-// per-product design. renderListingCard(meta, {flatSvg, figureSvg}) -> SVG.
+// per-product design. renderListingCard(meta, {piecesSvg, sizeRange}) -> SVG.
 //
 // Brand: navy (#1f3a5f) accent on a cream ground (#faf6ee). Display serif
 // (Didot) for the product name, hairline small-caps for badges. No pink (that's
 // what every Etsy seller uses; navy+cream is stitchu's differentiation). No real
-// photos, ever — the on-figure croquis IS the illustrated stand-in.
+// photos, ever — and no human figure (house style forbids figures); the pattern
+// pieces themselves are the illustration.
 //
 // Output canvas: 1000 x 1250 portrait (a listing thumbnail aspect).
 
@@ -98,7 +98,7 @@ function fitName(name, maxWidth, maxSize) {
 /**
  * renderListingCard(meta, assets) -> SVG string.
  * @param {object} meta      one entry from web/patterns/svg/meta.json
- * @param {object} assets    { flatSvg, figureSvg, sizeRange }
+ * @param {object} assets    { piecesSvg, sizeRange }
  */
 export function renderListingCard(meta, assets = {}) {
   const W = 1000, H = 1250;
@@ -203,7 +203,6 @@ export const CARD_LABELS_TR = {
   paper: 'A0 · A4 · Letter',
   instant: 'Anında İndirme',
   sewingPattern: 'DİKİŞ KALIBI',
-  onFigure: 'ÜZERİNDE',
   technicalFlat: 'TEKNİK ÇİZİM',
   pieces: 'parça',
 };

@@ -321,7 +321,6 @@ const STYLE = `<style>
   .lead{font-size:15.5px;color:var(--ink);max-width:64ch;margin-bottom:26px}
   .drawing{border:1px solid var(--bb-line);border-radius:4px;background:#fff;box-shadow:0 8px 26px rgba(63,116,168,.10);padding:18px;margin:6px 0 10px}
   .drawing img{display:block;width:100%;height:auto}
-  .drawing.figure img{width:auto;max-width:100%;max-height:560px;margin:0 auto}
   .viewlabel{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin:0 0 12px;font-weight:600}
   .cap{font-size:12px;color:#5b7089;margin-top:10px;letter-spacing:.3px}
   h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:23px;font-weight:400;margin:38px 0 12px;color:var(--navy)}
@@ -421,7 +420,6 @@ for (const m of meta) {
   const desc = c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead;
   const svgUrl = `svg/${m.slug}.svg?v=${V}`;
   const flatUrl = m.flat ? `svg/${m.flat}` : null;
-  const figureUrl = m.onFigure ? `svg/${m.onFigure}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
 
   const ldjson = {
@@ -523,7 +521,7 @@ function patternCard(m) {
   const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
   const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
   // The Etsy-style listing card SVG is the tile — it already carries the brand,
-  // name, badges, flat and on-figure croquis. The caption below stays minimal.
+  // name, badges and the pattern pieces. The caption below stays minimal.
   const thumb = (m.card ? `svg/${m.card}` : `svg/${m.slug}.svg`) + `?v=${V}`;
   return `<a class="card listing" href="${m.slug}.html">
     <div class="thumb"><img src="${thumb}" alt="${esc(m.style)} sewing pattern listing card" loading="lazy"></div>

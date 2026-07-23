@@ -15,7 +15,6 @@ const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
 const flat = await import(join(here, 'render-flat.mjs'));
 const { renderScattered, renderFrontBack } = flat;
-const { renderOnFigure } = await import(join(here, 'render-on-figure.mjs'));
 const { renderListingCard } = await import(join(here, 'render-listing-card.mjs'));
 
 const OUT = join(here, '../../web/patterns/svg');
@@ -171,12 +170,9 @@ for (const s of PATTERNS) {
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
   // (2) The ASSEMBLED front + back garment flat sketch — the HERO image.
   writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
-  // (3) The ON-FIGURE croquis view — the same style worn on a fashion figure.
-  const figureSvg = renderOnFigure(flatSpec);
-  writeFileSync(join(OUT, `${s.slug}-figure.svg`), figureSvg);
-  // (4) The ETSY-STYLE LISTING CARD — the cover/thumbnail. Composed 100% from
-  // the engine's own output: name (typography) + flat + on-figure croquis +
-  // honest badges. No Canva, no per-product design, no real photo.
+  // (3) The ETSY-STYLE LISTING CARD — the cover/thumbnail. Composed 100% from
+  // the engine's own output: name (typography) + pattern pieces + honest badges.
+  // No Canva, no per-product design, no real photo, no human figure.
   const cardSvg = renderListingCard(
     { slug: s.slug, style: s.style, pieces: p.pieces.length, closure: closures[0] || null },
     { piecesSvg: renderScattered(p.pieces), sizeRange: 'EU34-52' });
@@ -185,7 +181,7 @@ for (const s of PATTERNS) {
   meta.push({ slug: s.slug, style: s.style, pieces: p.pieces.length,
     pieceNames: p.pieces.map((x) => x.name), fabric: p.fabricMeters140,
     garment: s.garment, patch: s.patch, drawnBy: s.drawnBy, photos: s.photos,
-    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`,
+    flat: `${s.slug}-flat.svg`,
     card: `${s.slug}-card.svg`, closure: closures[0] || null });
   console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m` +
     (closures.length ? ` [closure: ${closures[0]}]` : ''));
