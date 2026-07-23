@@ -59,6 +59,10 @@ add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_chec
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
 
+# bridge_guard: köprü sessiz-düşürme yasağı (2026-07-23). princess/straps spec
+# eşleşen styleKey yokken plain dart/scoop REFERANS tank'e degrade OLMAMALI (ikame).
+add_test(NAME bridge_guard COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/bridge_guard.mjs)
+
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
 add_test(NAME ruffle_check COMMAND ruffle_check)

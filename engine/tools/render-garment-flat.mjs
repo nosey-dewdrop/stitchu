@@ -758,15 +758,18 @@ async function tryReferencePen(spec) {
     const wrapFront = spec.closure === 'wrapFront' || spec.tieClosure === 'wrapFront';
 
     const straps = spec.straps;                          // wide | spaghetti | ruffled | none
-    const camiStrap = straps === 'wide' || straps === 'spaghetti';
+    // KÖPRÜ SIKILAŞTIRMA (2026-07-23): strapType TEK KAYNAK (contract {type} object VE
+    // gramer string ikisini de çözer). camiStrap eskiden `straps==='wide'` string
+    // kontrolüydü → contract object'te FALSE → id4/74 cami yerine plain'e DÜŞÜYORDU (bug).
     const strapType = (straps && typeof straps === 'object') ? straps.type : straps;  // contract {type} | gramer string
+    const camiStrap = strapType === 'wide' || strapType === 'spaghetti';
     if (spec.garment === 'top') {
       // CAMI / BANDEAU ailesi (2026-07-22 ASKI ailesi): dar askılı (wide/spaghetti)
       // band-top gövde — mevcut top gövdesinden ÖNCE eşleşir (spesifik → genel).
-      if (camiStrap && nl === 'square' && shirred && peplum && straps === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
+      if (camiStrap && nl === 'square' && shirred && peplum && strapType === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
       else if (camiStrap && nl === 'square' && shirred && peplum) styleKey = 'top_cami_sq_wide_shirred_peplum';
       else if (camiStrap && nl === 'square' && shirred) styleKey = 'top_cami_sq_wide_shirred';
-      else if (camiStrap && nl === 'square' && straps === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
+      else if (camiStrap && nl === 'square' && strapType === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
       // kompleks kombinasyonlar önce (spesifik → genel)
       else if ((nl === 'straight' || nl === 'strapless') && (strapType === 'none' || !strapType) && shirred && peplum) styleKey = 'top_bandeau_shirred_peplum';  // id40
       else if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
@@ -775,8 +778,11 @@ async function tryReferencePen(spec) {
       else if (boxy && sleeved) styleKey = 'top_crew_boxy_sleeve';
       else if (boxy) styleKey = 'top_crew_boxy_crop';
       else if ((nl === 'boat' || nl === 'square') && princess) styleKey = 'top_boat_princess';
-      else if (nl === 'scoop') styleKey = 'top_scoop_cami';
-      else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
+      // KÖPRÜ SIKILAŞTIRMA: princess top (boat/square dışı yaka) princess-top stili YOK →
+      // sessizce plain dart'a DÜŞÜRME (ikame). styleKey null kalır → compile ÜRETİLEMEZ der.
+      // top_scoop_cami/top_crew_dart SADECE princess DEĞİLKEN eşleşir (dart/plain gövde).
+      else if (nl === 'scoop' && !princess) styleKey = 'top_scoop_cami';
+      else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !princess && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
     } else if (spec.garment === 'dress') {
       const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
       const gathered = (spec.skirt || spec.skirtStyle) === 'gathered';     // dirndl gathered skirt
