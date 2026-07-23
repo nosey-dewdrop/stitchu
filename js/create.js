@@ -535,13 +535,16 @@ function showSpec() {
         // front into Upper Cup + Lower Cup + Front Body along a horizontal seam
         // through the bust apex — the strapless/bustier bust. The host-gate MIRRORS
         // the engine EXACTLY: a princess-seamed dress/top, strapless (sleeveless or
-        // a cap-sleeve wing), with a sweetheart/square/scoop top edge above the
-        // apex. Any other host the engine refuses honestly, so we don't send it and
-        // it stays in the honesty layer (a sleeved bodice cup seam, a dart bust).
+        // a cap-sleeve wing), with a sweetheart/square/scoop/halter top edge above
+        // the apex (a halter is strapless support — the neck band replaces the
+        // straps, bare shoulders, bust held by the cups). Any other host the engine
+        // refuses honestly, so we don't send it and it stays in the honesty layer
+        // (a sleeved bodice cup seam, a dart bust).
         const cupSeamHostable = (spec.garment === 'dress' || spec.garment === 'top') &&
           spec.shaping === 'princess' &&
           (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
-          (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
+          (spec.neckline === 'sweetheart' || spec.neckline === 'square' ||
+           spec.neckline === 'scoop' || spec.neckline === 'halter');
         spec.cupSeam = (pickCupSeam(seen) && cupSeamHostable) ? 'horizontal' : 'none';
         // Yoke split (roba — doll/babydoll/swing dress, yoke.cpp): the engine now
         // splits the front+back bodice into a Yoke + a lower Body along a horizontal
