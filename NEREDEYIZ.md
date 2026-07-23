@@ -2,6 +2,9 @@
 
 Yeni oturum: bu sayfayı oku, sonra `reports/gate/SABAH-OZETI-AILE-DONGUSU.md` (bu turun tam resmi) + `reports/gate/NABIZ.md` (son 20 satır). Sonra devam.
 
+## BÜYÜK İNŞA MARATONU (2026-07-23): peplum-hem-ruffle GEÇTİ (sayaç 24), lansman paketi hazır
+- **BLOK A:** peplum-hem-ruffle motor primitifi (golden protokolü, byte-identical) → id84/91 GEÇTİ (sayaç 22→24). PeplumBlock::hemCircumferenceMM + ruffleHem peplum'a bağlandı + flat st.peplumRuffle. off-shoulder KIRMIZI (topoloji, buildHalf mirror sınırı, halter-sınıfı). **BLOK B:** yeni tam-açılan düğüm yok. **BLOK C süpürme:** GEÇTİ 24 / ADAYI 2 / GEÇMEDİ 1 / ÜRETİLEMEZ 76, SIZINTI 0, FALLBACK 0. **BLOK D:** id18 ÜRETİLDİ-GEÇMEDİ (yaka square değil U). **BLOK E:** 24 GEÇTİ skor kartı + 10 lansman adayı görseli (~/Desktop/lansman-adaylari/) + package() id24/101'de kanıtlandı (16/21 sayfa). Sonraki: kalan motor-yok primitifler (shoulderYoke/lace-up/trousers golden riski), off-shoulder/single topoloji (buildHalf mirror). Damla: lansman 3-5 seçim + halter/off-shoulder son-dokunuş + id54 emsal.
+
 ## TEŞHİS+ONARIM TURU (2026-07-23): köprü sessiz-düşürme ONARILDI (bridge_guard mandal)
 - **TEŞHİS:** princess top spec plain tank'e düşüyordu AMA motor draft'ı DOĞRU princess kesiyor (Center/Side Front) = kopukluk FLAT-köprüde, motorda DEĞİL (Damla tezi kalıp için yanlış). id4/74 straps-object bug (contract {type} object, string kontrolü FALSE). **ONARIM:** camiStrap+cami kuralları strapType (tek kaynak); princess top → plain'e düşmez (styleKey null → ÜRETİLEMEZ). bridge_guard MANDAL (mutasyon kanıtlı, ctest 50/50). **DOĞRULAMA:** sızıntı 3→0, fallback 1→0 (id4 REF'e döndü). Sayaç 22 sabit, id58/63/71 dürüstçe ÜRETİLEMEZ. **halter V-dip 2. tur KIRMIZI** (U-taban yaklaştı, minör iz). Golden-riski kökler (id15/29 skirt-princess bölünme, motor-yok primitifler) = onaysız yazılmadı, sıradaki adaylar.
 
