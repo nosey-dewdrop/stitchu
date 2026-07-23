@@ -94,3 +94,16 @@
   0.85 korundu) → v1.1 kozmetik adayı, shipping bloklamaz.
 - PIN: drawstring_babydoll (physicsShirr=False, elle-shirr yolu) + lace_vneck_70s BYTE-IDENTICAL.
   Determinizm md5 eşit. suite 50/50.
+
+## 2026-07-23 KÖK 4 — etek flow ("koni" → S-kavis)
+- TANI: etek yan kenarı belden hem'e düz-diagonal = "koni, flow yok" (Damla). Ölçüm:
+  id101 alt-dışbükey sapma sadece +3.2px (S zayıf). Emsal (literatür + akışkan etek foto):
+  belde içbükey → kalçada döner → hem'e dışbükey açılır = S. Hem-dalga/kıvrım gusto-corpus'ta
+  ink-boyu yok → S kontrol-noktaları literatür referansı.
+- FIX: skirt-fall cubic kontrol noktaları — c1 0.05→0.02 (üst içbükey belirgin), c2 x 0.18→0.05
+  + y 0.30→0.42 (hem'e dışbükey flare dönüşü). Alt-dışbükey 3.2→9.6px. Genişlik/fizik AYNI,
+  sadece yan-kenar eğrisi. İKİNCİ KIVRIM YOLU YOK (aynı hX/skirtFull).
+- KAPI: id53(A-line)+id101(circle) before/after + emsal → HAKEM PASS her iki tip. "A-line koni
+  net çözüldü, S-flow geldi, ölçülü; circle daha ince ama zenginleşti, abartı yok, fizik korundu."
+  Determinizm md5 eşit.
+- PIN: drawstring_babydoll + lace_vneck_70s ESKİ kavis (guard, BYTE-IDENTICAL). suite 50/50.

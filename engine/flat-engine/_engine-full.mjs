@@ -159,7 +159,16 @@ if(st.garment==='top'){
   g.push(seg([k.hX,k.yHem],[cx+(k.hX-cx)*0.6,k.yHem+k.dip*0.3],[cx+(k.hX-cx)*0.3,k.yHem+k.dip*0.45],[cx,k.yHem+k.dip*0.4]));
   return {g:g,folds:Rt,k:k};
 }
-k.yHem=k.yEmp+LEN[p.length]*S;k.dip=p.hemDip*S;k.hX=cx+sz.emp*((1-p.waistNip)+(p.skirtFull-1))*S;var R=drapePlan(p,rnd);k.hemPts=hemPoints(p,k,R);g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.05,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.18,k.yHem-(k.yHem-k.yEmp)*0.30],[k.hX,k.yHem]));smooth(k.hemPts).forEach(function(s){g.push(s);});return {g:g,folds:R,k:k};}
+k.yHem=k.yEmp+LEN[p.length]*S;k.dip=p.hemDip*S;k.hX=cx+sz.emp*((1-p.waistNip)+(p.skirtFull-1))*S;var R=drapePlan(p,rnd);k.hemPts=hemPoints(p,k,R);
+// ETEK YAN-HAT S-KAVİS (KÖK4 güzellik turu 2026-07-23): ESKİ c2=0.18/0.30 → yan kenar
+// belden hem'e düz-diagonal ("koni gibi, flow yok" — Damla). YENİ: belde hafif içbükey
+// (üst korunur), kalçada döner, hem'e DIŞBÜKEY açılır = S karakteri (alt dışbükey 3.2→9.6px).
+// c1 0.05→0.02 (üst içbükey belirgin), c2 x 0.18→0.05 + y 0.30→0.42 (hem'e flare dönüşü).
+// PIN KORUMASI: pinli babydoll/lace ESKİ kavis (byte-identical).
+var _pinSkirt=(p.style==='drawstring_babydoll'||p.style==='lace_vneck_70s');
+if(_pinSkirt)g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.05,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.18,k.yHem-(k.yHem-k.yEmp)*0.30],[k.hX,k.yHem]));
+else g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.02,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.05,k.yHem-(k.yHem-k.yEmp)*0.42],[k.hX,k.yHem]));
+smooth(k.hemPts).forEach(function(s){g.push(s);});return {g:g,folds:R,k:k};}
 /* fırfırlı askı (Damla kalem revizyonu 2026-07-19: straps:true stilleri için
    strapShape geri getirildi; repo K2-minify sırasında budanmıştı, çizim veriyle
    tutmuyordu — MIHENK-04 "askısı var ama"). Senin ilk prototip HTML'inden birebir. */
