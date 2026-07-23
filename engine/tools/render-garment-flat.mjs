@@ -751,6 +751,7 @@ async function tryReferencePen(spec) {
     const sleeve = spec.sleeve || spec.sleeveStyle;   // gramer 'sleeve' | contract 'sleeveStyle'
     const sleeved = sleeve && sleeve !== 'none';
     const peplum = spec.peplum && spec.peplum !== 'none';
+    const hemRuffle = spec.hemRuffle === 'single';   // peplum hem fırfırı (id84/91)
     const shirred = (spec.shirred === 'physics') || (spec.gatherType === 'shirred');
     const boxy = spec.shaping === 'boxy';
     const princess = spec.shaping === 'princess';
@@ -766,7 +767,8 @@ async function tryReferencePen(spec) {
     if (spec.garment === 'top') {
       // CAMI / BANDEAU ailesi (2026-07-22 ASKI ailesi): dar askılı (wide/spaghetti)
       // band-top gövde — mevcut top gövdesinden ÖNCE eşleşir (spesifik → genel).
-      if (camiStrap && nl === 'square' && shirred && peplum && strapType === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
+      if (camiStrap && (nl === 'square' || nl === 'vNeck') && shirred && peplum && strapType === 'spaghetti' && hemRuffle) styleKey = 'top_cami_sq_spag_shirred_peplum_ruffle';  // id84/91 (peplum hem fırfırı)
+      else if (camiStrap && nl === 'square' && shirred && peplum && strapType === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
       else if (camiStrap && nl === 'square' && shirred && peplum) styleKey = 'top_cami_sq_wide_shirred_peplum';
       else if (camiStrap && nl === 'square' && shirred) styleKey = 'top_cami_sq_wide_shirred';
       else if (camiStrap && nl === 'square' && strapType === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
@@ -783,6 +785,10 @@ async function tryReferencePen(spec) {
       // top_scoop_cami/top_crew_dart SADECE princess DEĞİLKEN eşleşir (dart/plain gövde).
       else if (nl === 'scoop' && !princess) styleKey = 'top_scoop_cami';
       else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !princess && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
+      // KÖPRÜ SIKILAŞTIRMA: hemRuffle (peplum hem fırfırı) istenip peplum-ruffle
+      // stiline eşleşmediyse (scoop/princess varyantı yok), fırfırsız stile DÜŞÜRME
+      // (ikame). styleKey null → ÜRETİLEMEZ. id62/75 sınıfı (peplum-ruffle stili yok).
+      if (hemRuffle && styleKey && !/_ruffle$/.test(styleKey)) styleKey = null;
     } else if (spec.garment === 'dress') {
       const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
       const gathered = (spec.skirt || spec.skirtStyle) === 'gathered';     // dirndl gathered skirt

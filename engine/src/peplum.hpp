@@ -51,5 +51,11 @@ inline constexpr double maxWaist = 1400;  // ceiling (very large waist)
 // like the tie block's sash length.
 bool apply(DraftedPattern& pattern, PeplumStyle style, double waistMM);
 
+// Finished (sewn) peplum HEM circumference in mm — the outer edge a hem ruffle
+// trims. Each panel is an annular sector: inner arc = share (= waistMM/2 over a π
+// sweep), outer arc = (r0 + depth) · π where r0 = share/π. Full/Pointed = two
+// panels (whole waist), Half = one panel share over π. Returns 0 for None.
+double hemCircumferenceMM(PeplumStyle style, double waistMM);
+
 } // namespace PeplumBlock
 } // namespace stitchu

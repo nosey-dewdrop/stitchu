@@ -165,6 +165,20 @@
    "hakem": "strapless bandeau shirred peplum top cift kanat (emsal ar-202420-4 Haley Bandeau)",
    "worstD": "validator 0, 5 parca (Shirred Bust Panel + Peplum)",
    "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 84,
+   "durum": "GECTI",
+   "hakem": "spaghetti shirred peplum + peplum-hem FIRFIRI cami (square) cift kanat (emsal ar-202521-5 Amy Top / ar-202457-7)",
+   "worstD": "validator 0, 7 parca (Ruffle strip peplum hemine trued)",
+   "zaman": "2026-07-23"
+  },
+  {
+   "hedefId": 91,
+   "durum": "GECTI",
+   "hakem": "spaghetti shirred peplum + peplum-hem FIRFIRI cami (vNeck) cift kanat (emsal ar-202521-5 Amy Top / ar-202457-7)",
+   "worstD": "validator 0, 7 parca (Ruffle strip peplum hemine trued)",
+   "zaman": "2026-07-23"
   }
  ],
  "kirmizi": [
@@ -178,7 +192,7 @@
  "kalan_kuyruk_top_gap1": [
   95
  ],
- "sayac": 22,
+ "sayac": 24,
  "sayac_not": "BENZERSIZ hedef sayisi (id31 iki kez kayitli: shirred-peplum + wide-strap ayni hedef, tek sayilir). Onceki '19' yanlisti (18 benzersiz + id31 cift). Bu tur +3 (id24/57/101) = 18->21 benzersiz.",
  "uretilemez": [],
  "gecti_adayi_emsal_uyumsuz": [

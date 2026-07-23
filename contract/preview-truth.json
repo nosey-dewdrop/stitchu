@@ -384,6 +384,23 @@
    "skirtLength": "mini",
    "topLength": "hip",
    "tieClosure": "frontNeckBow"
+  },
+  "top_cami_sq_spag_shirred_peplum_ruffle": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full",
+   "ruffleHem": true,
+   "ruffledStraps": "spaghetti"
   }
  },
  "structuralAllow": [
@@ -696,6 +713,13 @@
    "maxAbsDevPct": 10,
    "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) dirndl hem sweep",
    "justification": "DIRNDL (2026-07-23): the full dirndl hem sweep is drawn a touch wider in the croquis than the drafted gathered panel width; borderline stylisation. Current +8.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spag_shirred_peplum_ruffle",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
   }
  ]
 }

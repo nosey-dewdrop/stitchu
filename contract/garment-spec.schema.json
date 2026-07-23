@@ -913,6 +913,9 @@
         "spaghettiStrap": {
           "type": "boolean"
         },
+        "peplumRuffle": {
+          "type": "boolean"
+        },
         "waistTie": {
           "enum": [
             "bow",

@@ -757,10 +757,18 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire
     // half-circle dress ruffle is approximate — noted, not silently wrong.)
+    // A TOP has no skirt hem, but a top WITH A PEPLUM has a peplum hem — the
+    // ruffle trims the peplum's outer edge (id51/62/75/84/91: peplum + fırfır hem).
+    // Off by default (byte-identical). Only when peplum != None on a top.
+    const bool topPeplumRuffle = spec.ruffleHem && spec.garment == GarmentType::Top &&
+                                 spec.peplum != static_cast<int>(PeplumStyle::None);
     if (spec.ruffleHem &&
-        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress)) {
-        const double hemMM = SkirtBlock::hemCircumferenceMM(
-            m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
+        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress ||
+         topPeplumRuffle)) {
+        const double hemMM = topPeplumRuffle
+            ? PeplumBlock::hemCircumferenceMM(static_cast<PeplumStyle>(spec.peplum), m.waistMM())
+            : SkirtBlock::hemCircumferenceMM(
+                  m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
         const auto ruffles = RuffleBlock::draftTiers(
             hemMM, spec.ruffleFullness, spec.ruffleDepthMM, spec.ruffleTiers);
         pattern.pieces.insert(pattern.pieces.end(), ruffles.begin(), ruffles.end());

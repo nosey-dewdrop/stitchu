@@ -82,6 +82,14 @@
       "PARK": []
     },
 
+    "hemRuffle": {
+      "values": {
+        "none":   {"kanit": "hakem"},
+        "single": {"kanit": "hakem", "note": "peplum dış hem'ine dikilen büzgülü tek fırfır katı. Kalıp Ruffle strip (RuffleBlock, peplum hemCircumferenceMM'e trued); flat st.peplumRuffle (peplum hem'i altına dalgalı kat). SADECE peplum!=none top'ta (motor peplumsuz top'ta reddeder). id84/91 (2026-07-23)."}
+      },
+      "PARK": ["tiered", "scalloped"]
+    },
+
     "shirred": {
       "values": {
         "none":    {"kanit": "hakem"},

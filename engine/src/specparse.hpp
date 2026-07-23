@@ -83,9 +83,12 @@ inline void validateSpecCross(const GarmentSpec& spec) {
     if (spec.garment == GarmentType::Top && spec.backSlit != 0)
         throw std::invalid_argument(
             "invalid spec: a top has no skirt hem: leave backSlit 'none'");
-    if (spec.garment == GarmentType::Top && spec.ruffleHem)
+    // A hem ruffle needs a hem: a top has none UNLESS it carries a peplum, whose
+    // outer edge the ruffle trims (id51/84 class — peplum + fırfır hem).
+    if (spec.garment == GarmentType::Top && spec.ruffleHem &&
+        spec.peplum == 0 /* PeplumStyle::None */)
         throw std::invalid_argument(
-            "invalid spec: a hem ruffle attaches to a skirt hem, which a top does not have: leave ruffleHem off");
+            "invalid spec: a hem ruffle attaches to a skirt or peplum hem, which a plain top does not have: leave ruffleHem off (or add a peplum)");
     if (spec.backSlit != 0 && spec.garment != GarmentType::Top &&
         spec.skirtStyle != SkirtStyle::Straight && spec.skirtStyle != SkirtStyle::ALine)
         throw std::invalid_argument(

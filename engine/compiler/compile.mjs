@@ -41,6 +41,8 @@ function draftSpec(spec) {
     tieClosure: spec.tieClosure === 'frontWaistBow' ? 8 : spec.tieClosure === 'frontWaistTie' ? 6
       : spec.closure === 'tieBack' ? 4 : spec.closure === 'wrapFront' ? 7 : 0,
     peplum: spec.peplum === 'full' ? 1 : spec.peplum === 'half' ? 2 : spec.peplum === 'pointed' ? 3 : 0,
+    // hemRuffle single → peplum hem fırfırı (motor ruffleHem, peplum'a bağlanır). id84/91.
+    ruffleHem: spec.hemRuffle === 'single',
     gatherType: spec.shirred === 'physics' ? 2 : 0,     // shirred
     gatherZone: spec.shirred === 'physics' ? 1 : 0,     // bust
     // ASKI ailesi (2026-07-22): StrapStyle enum none/ruffled/wide/spaghetti (0-3).

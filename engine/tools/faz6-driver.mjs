@@ -61,8 +61,12 @@ function candidateFromTarget(spec){
   put('closure', mapClosure(spec.closure, spec));
   put('collar', mapCollar(spec.collar && spec.collar.type));
   put('straps', mapStraps(spec.straps && spec.straps.type));
-  // hemRuffle / backSlit / yoke → beyondEngine sınıfı: grammarda yok
-  if (spec.hemRuffle && spec.hemRuffle!=='none') c['hemRuffle']='PARK:'+spec.hemRuffle;
+  // hemRuffle: peplum hem fırfırı (single) çizilebilir (peplum!=none top'ta);
+  // tiered/scalloped PARK. peplum yoksa motor reddeder → PARK bırak.
+  if (spec.hemRuffle && spec.hemRuffle!=='none') {
+    const hasPeplum = spec.peplum && spec.peplum!=='none';
+    c['hemRuffle'] = (spec.hemRuffle==='single' && hasPeplum) ? 'single' : ('PARK:'+spec.hemRuffle);
+  }
   if (spec.yoke && spec.yoke.type && !['none'].includes(spec.yoke.type)) {
     if (spec.yoke.type==='shoulderYoke') c['yoke']='PARK:shoulderYoke';
     else if (spec.yoke.type==='smocking') c['yoke']='PARK:smocking';

@@ -813,6 +813,33 @@
       },
       "roundNeck": true,
       "spaghettiStrap": true
+    },
+    "top_cami_sq_spag_shirred_peplum_ruffle": {
+      "label": "spaghetti shirred cami peplum + hem ruffle (hedef 84/91)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full",
+      "peplumRuffle": true
     }
   }
 }
