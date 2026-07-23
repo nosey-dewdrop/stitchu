@@ -2,6 +2,9 @@
 
 Yeni oturum: bu sayfayı oku, sonra `reports/gate/SABAH-OZETI-AILE-DONGUSU.md` (bu turun tam resmi) + `reports/gate/NABIZ.md` (son 20 satır). Sonra devam.
 
+## GECE MARATONU (2026-07-23): SAYAÇ 22 (id40 +1), halter KIRMIZI, B+C+D bitti
+- **id40 GEÇTİ** (bandeau/straight-neck köprü boşluğu). **halter KIRMIZI** (V-dip mirror, tek-fix belli). B süpürme: 22/1/5/75. C aday terfi: 0 terfi (id18/58/63/71 flat princess-fallback = köprü ikame bulgusu). D cila kartları (korsaj/landmark/spec-emsal). Sonraki ilk iş: halter V-dip fix + köprü princess-fallback sıkılaştır. Açık kartlar reports/gate/cila/ + kirmizi-halter.md + kart-aday-terfi-C.md.
+
 ## BU TUR (2026-07-23): gathered dirndl + sweetheart, SAYAÇ 19→22
 - **gathered dirndl**: id24 (bow) + id57 (tie) hakem-teyitli GEÇTİ. flat gatheredSkirt (belde fizik-büzgü) + waistTie bow/tie varyantı + motor Front Waist Bow/Tie enum.
 - **sweetheart + spaghetti tie-strap**: id101 hakem-teyitli GEÇTİ (net emsal ar-202455-6). flat sweetheart yaka + spaghettiStrap primitifi.
