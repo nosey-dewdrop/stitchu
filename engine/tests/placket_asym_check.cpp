@@ -118,6 +118,51 @@ int main() {
     check(fAsym && (!fBare || !sameCommands(fBare->commands, fAsym->commands)),
           "asymmetric placket applied without the legacy bool");
 
+    // TOP path: an asymmetric placket on an EXTENDED (hip/tunic) dart top must
+    // draft with ZERO issues. The front panel runs bodice→hem in one piece, so its
+    // trailing center-front edge is a straight LINE grown out to -(offset + stand);
+    // the side-seam finder must skip that grown CF edge (whatever x it reached) and
+    // measure the TRUE side-to-hem curve, which is UNCHANGED by the placket. A
+    // regression here mis-measured the hem sweep as the side seam and reported a
+    // false front-vs-back mismatch (~325 vs ~356 mm). Symmetric / off stay clean too.
+    {
+        std::printf("\nTOP (extended dart) asymmetric placket balances the side seams:\n");
+        auto topSpec = [](int placket, TopLength len) {
+            GarmentSpec s;
+            s.garment = GarmentType::Top;
+            s.neckline = Neckline::Boat;
+            s.sleeveStyle = SleeveStyle::None;
+            s.shaping = Shaping::Dart;
+            s.topLength = len;
+            s.placketStyle = placket;
+            return s;
+        };
+        for (const TopLength len : {TopLength::Hip, TopLength::Tunic}) {
+            const char* lbl = len == TopLength::Hip ? "hip" : "tunic";
+            const GarmentSpec off  = topSpec(static_cast<int>(PlacketStyle::None), len);
+            const GarmentSpec sstd = topSpec(static_cast<int>(PlacketStyle::Standard), len);
+            const GarmentSpec sasy = topSpec(static_cast<int>(PlacketStyle::Asymmetric), len);
+            const DraftedPattern dOff = GarmentDrafter::draft(off, m0());
+            const DraftedPattern dStd = GarmentDrafter::draft(sstd, m0());
+            const DraftedPattern dAsy = GarmentDrafter::draft(sasy, m0());
+            auto sideIssue = [](const std::vector<ValidationIssue>& v) {
+                for (const auto& i : v) if (i.rule == "sideseam") return true;
+                return false;
+            };
+            const auto offIssues = PatternValidator::issues(off, m0(), dOff);
+            const auto stdIssues = PatternValidator::issues(sstd, m0(), dStd);
+            const auto asyIssues = PatternValidator::issues(sasy, m0(), dAsy);
+            check(!sideIssue(offIssues), std::string("top ") + lbl + " no-placket: no side-seam issue");
+            check(!sideIssue(stdIssues), std::string("top ") + lbl + " standard placket: no side-seam issue");
+            check(!sideIssue(asyIssues), std::string("top ") + lbl + " ASYMMETRIC placket: no side-seam issue");
+            check(asyIssues.empty(), std::string("top ") + lbl + " asymmetric draft fully valid (0 issues)");
+            // The off (no-placket) front must be byte-identical to the legacy bool /
+            // Standard is a separate concern already covered on the dress above;
+            // here we anchor that the base top path is untouched by our finder fix.
+            check(!dOff.pieces.empty(), std::string("top ") + lbl + " no-placket drafts pieces");
+        }
+    }
+
     // Direct honest skip: a skirt has no front bodice → refuses cleanly.
     {
         std::printf("\nSkirt: asymmetric placket skipped honestly:\n");

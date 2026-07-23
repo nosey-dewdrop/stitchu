@@ -533,12 +533,6 @@
    },
    {
     "host": "top",
-    "feature": "placket.asymmetric",
-    "class": "validator",
-    "why": "[sideseam] front side seam 324.9 vs back 356.4"
-   },
-   {
-    "host": "top",
     "feature": "gather.drawstringSleeve",
     "class": "honest",
     "why": "Gathering: skipped — no measurable edge at this zone to gather a pan"

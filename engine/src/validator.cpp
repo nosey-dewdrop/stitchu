@@ -607,20 +607,30 @@ std::vector<ValidationIssue> skirtIssues(
 // MARK: Top
 
 // Extended top layout tail: ..., armhole curve, side curve to hem,
-// hem curve to center, center line, close. A front button placket grows the
-// center edge outward and inserts one extra CENTER jog line before close, so
-// the side seam sits one command earlier. Skip trailing near-center lines (the
-// center edge, |x| within the stand width of CF) so the finder lands on the
-// side-to-hem curve in every front topology.
+// hem CURVE to center, center LINE(s) up, close. The side-to-hem and hem-to-
+// center connectors are always CURVES (extendPiece emits them as curves); the
+// trailing center-front edge is always LINE(s). A front button placket grows
+// the whole CF edge outward — the hem corner and the vertical CF edge move to
+// x = -(stand + offset) — and inserts one extra jog LINE back to the neck point
+// before close. So the trailing CF edge can sit at any x (e.g. -73 mm for an
+// asymmetric placket, not just within ~18 mm for a symmetric one). Walk back
+// over trailing Close/Line commands (the CF edge, whatever it grew to) until the
+// first CURVE — that curve is the hem-to-center connector, and the two curves
+// before it are the side-to-hem (hemEnd-1) and armhole-lower (hemEnd-2). This is
+// topology-driven, so it lands on the true side seam for every front topology
+// and every placket offset. (An earlier |x| <= 20 mm skip missed the grown edge
+// of an asymmetric placket and measured the hem sweep as the side seam — a false
+// front-vs-back mismatch; fixed 2026-07-23.)
 std::optional<double> topSideSeamLength(const PatternPiece& piece) {
     const size_t count = piece.commands.size();
     if (count < 5) return std::nullopt;
     size_t hemEnd = count - 1; // index of the close command
-    // Walk back over the closing line(s) that ride the center edge.
+    // Walk back over the closing center-front edge (Close + the trailing LINEs
+    // that ride the CF, at whatever x the placket grew them to) to the first
+    // CURVE — the hem-to-center connector.
     while (hemEnd > 0 &&
            (piece.commands[hemEnd].type == CmdType::Close ||
-            (piece.commands[hemEnd].type == CmdType::Line &&
-             std::fabs(piece.commands[hemEnd].to.x) <= 20.0))) {
+            piece.commands[hemEnd].type == CmdType::Line)) {
         --hemEnd;
     }
     // hemEnd now points at the hem-to-center curve; the two curves before it are
