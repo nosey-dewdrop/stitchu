@@ -32,6 +32,13 @@ function enforceC1(g,flatStart){if(flatStart!==false)g[0][3]=g[0][1];g[g.length-
 function toPath(g){var d="M "+g[0][0].toFixed(1)+","+g[0][1].toFixed(1);g.forEach(function(s){d+=" C "+s[2].toFixed(1)+","+s[3].toFixed(1)+" "+s[4].toFixed(1)+","+s[5].toFixed(1)+" "+s[6].toFixed(1)+","+s[7].toFixed(1);});return d+" Z";}
 function toOpen(g){var d="M "+g[0][0].toFixed(1)+","+g[0][1].toFixed(1);g.forEach(function(s){d+=" C "+s[2].toFixed(1)+","+s[3].toFixed(1)+" "+s[4].toFixed(1)+","+s[5].toFixed(1)+" "+s[6].toFixed(1)+","+s[7].toFixed(1);});return d;}
 function cubic(s,t){var u=1-t,a=u*u*u,b=3*u*u*t,c=3*u*t*t,d=t*t*t;return [a*s[0]+b*s[2]+c*s[4]+d*s[6], a*s[1]+b*s[3]+c*s[5]+d*s[7]];}
+// OMUZ OUTLINE Y @ verilen X (KÖK2 tutunma fix 2026-07-23): omuz eğrisi neck point
+// (nX,y0)→shoulder tip (stX,stY) cubic'i (buildHalf'teki seg ile AYNI kontrol noktaları);
+// bir X için outline'ın gerçek Y'sini döndürür → askı tabanı gövdeye tam oturur (havada kalmaz).
+function shoulderYAt(x,k){var nX=k.nX,y0=k.y0,stX=k.stX,stY=k.stY;
+  var seg=[nX,y0,nX+(stX-nX)*0.34,y0+(stY-y0)*0.28,nX+(stX-nX)*0.70,y0+(stY-y0)*0.72,stX,stY];
+  var bt=0,bd=1e9;for(var t=0;t<=1;t+=0.01){var c=cubic(seg,t);var d=Math.abs(c[0]-x);if(d<bd){bd=d;bt=t;}}
+  return cubic(seg,bt)[1];}
 function sampleX(segs,y){var best=null;for(var i=0;i<segs.length;i++){var s=segs[i],y0=s[1],y1=s[7];if(Math.min(y0,y1)-0.5<=y&&y<=Math.max(y0,y1)+0.5){var lo=0,hi=1,p;for(var k=0;k<26;k++){var t=(lo+hi)/2;p=cubic(s,t);if((y1>y0)?(p[1]<y):(p[1]>y))lo=t;else hi=t;}if(best===null||p[0]>best)best=p[0];}}return best;}
 function smooth(pts){var g=[];for(var i=0;i<pts.length-1;i++){var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||pts[i+1];g.push(seg(p1,[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6],p2));}return g;}
 function taper(pts,maxw,bias){var L=pts.length,a=[],b=[],i;for(i=0;i<L;i++){var t=L>1?i/(L-1):0.5;var q=pts[Math.min(i+1,L-1)],r=pts[Math.max(i-1,0)];var dx=q[0]-r[0],dy=q[1]-r[1],d=Math.hypot(dx,dy)||1;var w=maxw*0.5*Math.pow(Math.sin(Math.PI*Math.min(Math.max(t,0.002),0.998)),bias||0.5);a.push([pts[i][0]-dy/d*w,pts[i][1]+dx/d*w]);b.push([pts[i][0]+dy/d*w,pts[i][1]-dx/d*w]);}var s="M "+a[0][0].toFixed(1)+","+a[0][1].toFixed(1);for(i=1;i<L;i++)s+=" L "+a[i][0].toFixed(1)+","+a[i][1].toFixed(1);for(i=L-1;i>=0;i--)s+=" L "+b[i][0].toFixed(1)+","+b[i][1].toFixed(1);return s+" Z";}
@@ -260,9 +267,14 @@ if(p.peplum&&p.peplum!=='none'&&st.garment==='top'){
 // (nX↔stX arası) ince dikey bant yukarı çıkar + tepesinde küçük bağ ucu. Motor
 // Spaghetti Strap parçasını zaten çiziyor (StrapBlock); flat sunum işareti.
 if(st.spaghettiStrap){var _ssX=k.nX+(k.stX-k.nX)*0.42,_ssTop=k.y0-9*S,_ssW=2.4;
+  // TUTUNMA FIX (KÖK2 güzellik turu 2026-07-23): askı tabanı k.stY (sabit omuz-ucu Y)
+  // idi ama _ssX omuz-ucundan içeride → omuz eğimli olduğu için orada gerçek outline Y'si
+  // farklı = askı GÖVDEDEN KOPUK (id101 "askı havada", ölçüm 5.4px). Askı tabanı artık
+  // omuz outline cubic'inin _ssX noktasındaki GERÇEK Y'sine oturur (shoulderYAt) → değer.
+  var _ssBaseY=shoulderYAt(_ssX,k);
   // ince askı bandı (omuz noktasından yukarı, hafif içe)
-  o+=M('M '+(_ssX-_ssW).toFixed(1)+','+k.stY.toFixed(1)+' C '+(_ssX-_ssW).toFixed(1)+','+(k.stY-(k.stY-_ssTop)*0.5)+' '+(_ssX-_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
-  o+=M('M '+(_ssX+_ssW).toFixed(1)+','+k.stY.toFixed(1)+' C '+(_ssX+_ssW).toFixed(1)+','+(k.stY-(k.stY-_ssTop)*0.5)+' '+(_ssX+_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX-_ssW).toFixed(1)+','+_ssBaseY.toFixed(1)+' C '+(_ssX-_ssW).toFixed(1)+','+(_ssBaseY-(_ssBaseY-_ssTop)*0.5)+' '+(_ssX-_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX+_ssW).toFixed(1)+','+_ssBaseY.toFixed(1)+' C '+(_ssX+_ssW).toFixed(1)+','+(_ssBaseY-(_ssBaseY-_ssTop)*0.5)+' '+(_ssX+_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
   o+=M('M '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1)+' L '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
   // omuzda küçük bağ ucu (sarkan)
   o+=M('M '+_ssX.toFixed(1)+','+_ssTop.toFixed(1)+' C '+(_ssX-5)+','+(_ssTop-6)+' '+(_ssX-3)+','+(_ssTop-12)+' '+(_ssX+1)+','+(_ssTop-10),'tie');

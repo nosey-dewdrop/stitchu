@@ -68,3 +68,14 @@
   id53 gerçek sorun = empire/yoke seam konumu (ayrı tanı); id24 = büzgü(KÖK3)+etek(KÖK4).
 - PIN: iki pinli stil (drawstring_babydoll, lace_vneck_70s) BYTE-IDENTICAL. re-pin YAZILMADI
   (bu stiller değişmedi; değişen 10 stil pinli değil). Determinizm md5 eşit. suite 50/50.
+
+## 2026-07-23 KÖK 2 — giysi-figür kopukluğu (askı/kol tutunma)
+- TARAMA: 17 tutunma noktası (band-strap→yTop, sleeve→armhole by-construction, spaghetti→
+  omuz outline). GERÇEK kopuk: SADECE id101 spaghetti askı (5.4px). Diğerleri zaten bağlı
+  (ilk aracın 5-9px'i YANLIŞ POZİTİF: band üst-kenar segmenti b.g nokta setinde değil).
+- FIX: spaghetti askı tabanı k.stY (sabit omuz-ucu Y) → shoulderYAt(_ssX,k) (omuz outline
+  cubic'inin askı X'indeki GERÇEK Y'si). Askı artık gövdeye tam oturur (havada kalmaz).
+  Yeni yardımcı shoulderYAt (cubic sample). SERBEST Y kaldırıldı, landmark'a bağlandı.
+- KAPI: kopuk parça 0 (tümü ≤3px, tarama /tmp/attach-scan2.mjs kanıtlı).
+- PIN: iki pinli stil BYTE-IDENTICAL (spaghetti sadece dress_sweetheart_spag_circle'da,
+  pinli değil). Determinizm md5 eşit. suite 50/50.
