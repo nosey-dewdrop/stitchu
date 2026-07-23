@@ -1,19 +1,19 @@
 {
- "style": "gore_skirt_dress",
+ "style": "wrap_dress",
  "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
-  "neckWidth": 1.4,
-  "neckDepth": 6,
-  "skirtFull": 1.4199999999999997,
+  "neckWidth": 1.15,
+  "neckDepth": 20,
+  "skirtFull": 1.4,
   "waistNip": 0.05,
   "bustProject": 0.9,
-  "shoulderSlope": 1.48,
+  "shoulderSlope": 1.6199999999999999,
   "bustHeight": 0.45000000000000007,
   "yokeDrop": 8,
   "hemDip": 0,
   "armholeHollow": 0.22
  },
- "sapma": 0.18791938726103152,
+ "sapma": 0.1879402480099193,
  "ok": false,
  "ts": "2026-07-23"
 }

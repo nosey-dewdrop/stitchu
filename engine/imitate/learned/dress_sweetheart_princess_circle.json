@@ -1,19 +1,19 @@
 {
  "style": "dress_sweetheart_princess_circle",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202624-4.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202455-6.png",
  "params": {
   "neckWidth": 1.15,
   "neckDepth": 20,
-  "skirtFull": 1.2,
-  "waistNip": 0.22999999999999976,
-  "bustProject": 0.9,
-  "shoulderSlope": 1.52,
-  "bustHeight": 0.42000000000000004,
-  "yokeDrop": 8.84375,
-  "hemDip": 0.6124999999999997,
-  "armholeHollow": 0.13
+  "skirtFull": 1.6999999999999993,
+  "waistNip": 0.05,
+  "bustProject": 0.2,
+  "shoulderSlope": 1.6,
+  "bustHeight": 0.15000000000000002,
+  "yokeDrop": 17.59375,
+  "hemDip": 4.999999999999998,
+  "armholeHollow": 0.22
  },
- "sapma": 0.14550295034119848,
+ "sapma": 0.029801240782600037,
  "ok": false,
  "ts": "2026-07-23"
 }

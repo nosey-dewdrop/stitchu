@@ -1,6 +1,6 @@
 {
  "style": "top_boat_princess",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202533-7.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
  "params": {
   "neckWidth": 1.42,
   "neckDepth": 7,
@@ -13,7 +13,7 @@
   "hemDip": 0,
   "armholeHollow": 0.07
  },
- "sapma": 0.21833917893424,
+ "sapma": 0.15059271829897897,
  "ok": false,
  "ts": "2026-07-23"
 }

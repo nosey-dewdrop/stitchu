@@ -1,19 +1,19 @@
 {
  "style": "dress_princess_scoop_aline_midi",
- "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202358-5.png",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202436-6.png",
  "params": {
   "neckWidth": 1.05,
   "neckDepth": 20,
-  "skirtFull": 2.5200000000000005,
+  "skirtFull": 1.58,
   "waistNip": 0.05,
-  "bustProject": 0.2,
+  "bustProject": 0.9,
   "shoulderSlope": 1.6,
-  "bustHeight": 0.2699999999999999,
-  "yokeDrop": 11,
-  "hemDip": 1.5499999999999998,
-  "armholeHollow": 0.07
+  "bustHeight": 0.45000000000000007,
+  "yokeDrop": 8,
+  "hemDip": 0.16249999999999984,
+  "armholeHollow": 0.06
  },
- "sapma": 0.05331062195379072,
+ "sapma": 0.19317209708414104,
  "ok": false,
  "ts": "2026-07-23"
 }

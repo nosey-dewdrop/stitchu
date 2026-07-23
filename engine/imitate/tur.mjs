@@ -38,20 +38,26 @@ function styleKeyFor(spec) {
   return null;
 }
 
-// EN YAKIN STİL (2026-07-23, Damla: "her turda tümünü dene"). styleKey bulunamayan hedef
-// ATLANMAZ — en yakın mevcut stille denenir ki motor ondan öğrensin (atlamak = öğrenmemek).
-// Yakınlık: garment + neckline/shaping ipuçlarıyla kaba eşleşme; hiçbiri yoksa garment tabanı.
-function nearestStyle(spec) {
-  const s = spec || {}, g = s.garment, nl = s.neckline;
+// ADAY HAVUZU (deneyip-ölçen router için): hedefe öznitelik-benzerliğiyle en yakın K stili
+// döndürür. Tam styleKey varsa BAŞA konur. Havuz DAR (≤maxK) tutulur ki tur hızlı kalsın —
+// benzerlik daraltır, ölçüm seçer. Öznitelik ağırlıkları: garment > neckline > shaping > skirt.
+function candidateStyles(spec, exact, maxK = 4) {
+  const s = spec || {};
+  const norm = { neckline: s.neckline === 'vNeck' ? 'v' : s.neckline, shaping: s.shaping, garment: s.garment,
+                 skirt: s.skirt || s.skirtStyle };
   const keys = Object.keys(ref.STYLE).filter(k => !k.startsWith('_'));
-  const cands = keys.map(k => ({ k, st: ref.STYLE[k] }));
-  // aynı garment
-  let pool = cands.filter(c => c.st.garment === g);
-  if (!pool.length) pool = cands;
-  // neckline eşleşmesi öncelikli
-  const nlMatch = pool.filter(c => c.st.neckline === nl || (nl === 'vNeck' && c.st.neckline === 'v'));
-  if (nlMatch.length) return nlMatch[0].k;
-  return pool[0].k;
+  const scored = keys.map(k => {
+    const st = ref.STYLE[k]; let sc = 0;
+    if (st.garment === norm.garment) sc += 4; else sc -= 2;
+    if (st.neckline === norm.neckline) sc += 3;
+    if (st.shaping && st.shaping === norm.shaping) sc += 2;
+    if (st.corset && s.shaping === 'princess') sc += 1;
+    return { k, sc };
+  }).sort((a, b) => b.sc - a.sc);
+  const out = [];
+  if (exact && ref.STYLE[exact]) out.push(exact);
+  for (const c of scored) { if (out.length >= maxK) break; if (!out.includes(c.k)) out.push(c.k); }
+  return out;
 }
 
 const turNo = +(process.argv[2] || 1);
@@ -66,17 +72,22 @@ for (const t of targets) {
   let crop = null;
   for (const c of (t.crops || [])) { const p = ROOT + 'design_patterns/crops/' + c.replace('-alt', ''); if (existsSync(p)) { crop = p; break; } }
   if (!crop) { results.push({ id: t.id, sapma: null, sebep: 'crop-yok' }); continue; }
-  // TÜMÜNÜ DENE: tam styleKey yoksa en yakın stile düş (atlama yok)
-  let style = styleKeyFor(t.spec), yakin = false;
-  if (!style || !ref.STYLE[style]) { style = nearestStyle(t.spec); yakin = true; }
   done++;
-  try {
-    const r = imitate(style, crop, 16);
-    results.push({ id: t.id, style, yakin, sapma: +(r.err * 100).toFixed(2), ok: r.ok });
-    process.stdout.write(`id${t.id} ${style}${yakin ? '~' : ''}: %${(r.err * 100).toFixed(2)}${r.ok ? ' ✓' : ''}\n`);
-  } catch (e) {
-    results.push({ id: t.id, style, sapma: null, sebep: 'hata:' + e.message });
+  // DENEYİP-ÖLÇEN ROUTER (Damla kararı 2026-07-23): tahmin eden if-else YOK. Aday havuzunu
+  // (tam styleKey varsa o + garment-uyumlu birkaç en-benzer stil) HER BİRİYLE dene, taklit
+  // motoru EN DÜŞÜK sapmalıyı SEÇSİN. Router = ölçüm, tahmin değil.
+  const exact = styleKeyFor(t.spec);
+  const cands = candidateStyles(t.spec, exact);
+  let best = null;
+  for (const style of cands) {
+    try {
+      const r = imitate(style, crop, 16);
+      if (!best || r.err < best.err) best = { style, err: r.err, ok: r.ok };
+    } catch { /* bu aday çizemedi, atla */ }
   }
+  if (!best) { results.push({ id: t.id, sapma: null, sebep: 'aday-cizemedi' }); continue; }
+  results.push({ id: t.id, style: best.style, yakin: best.style !== exact, sapma: +(best.err * 100).toFixed(2), ok: best.ok, denenenAday: cands.length });
+  process.stdout.write(`id${t.id} -> ${best.style}${best.style !== exact ? '~' : ''}: %${(best.err * 100).toFixed(2)}${best.ok ? ' ✓' : ''} (${cands.length} aday)\n`);
 }
 
 // TUR RAPORU

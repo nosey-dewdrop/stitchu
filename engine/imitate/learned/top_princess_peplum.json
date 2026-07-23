@@ -1,0 +1,19 @@
+{
+ "style": "top_princess_peplum",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202528-7.png",
+ "params": {
+  "neckWidth": 1,
+  "neckDepth": 11,
+  "skirtFull": 1.95,
+  "waistNip": 0.05499999999999995,
+  "bustProject": 0.5,
+  "shoulderSlope": 1.5,
+  "bustHeight": 0.6,
+  "yokeDrop": 8,
+  "hemDip": 0,
+  "armholeHollow": 0.06
+ },
+ "sapma": 0.2983295393419182,
+ "ok": false,
+ "ts": "2026-07-23"
+}

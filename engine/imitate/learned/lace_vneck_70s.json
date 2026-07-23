@@ -1,19 +1,19 @@
 {
- "style": "dress_vneck_gathered",
+ "style": "lace_vneck_70s",
  "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-4.png",
  "params": {
-  "neckWidth": 1.05,
-  "neckDepth": 14,
-  "skirtFull": 1.4999999999999996,
+  "neckWidth": 1.12,
+  "neckDepth": 13.5,
+  "skirtFull": 1.4899999999999995,
   "waistNip": 0.05,
   "bustProject": 0.9,
-  "shoulderSlope": 1.6199999999999999,
-  "bustHeight": 0.45000000000000007,
+  "shoulderSlope": 1.52,
+  "bustHeight": 0.39,
   "yokeDrop": 8,
-  "hemDip": 0.16249999999999984,
+  "hemDip": 0.7156249999999997,
   "armholeHollow": 0.22
  },
- "sapma": 0.19551461259491024,
+ "sapma": 0.19762481510581048,
  "ok": false,
  "ts": "2026-07-23"
 }
