@@ -1,0 +1,19 @@
+{
+ "style": "dress_vneck_gathered",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202629-3.png",
+ "params": {
+  "neckWidth": 1.05,
+  "neckDepth": 14,
+  "skirtFull": 1.3899999999999995,
+  "waistNip": 0.32500000000000007,
+  "bustProject": 0.20000000000000012,
+  "shoulderSlope": 1.7,
+  "bustHeight": 0.15000000000000002,
+  "yokeDrop": 11.5,
+  "hemDip": 2.4499999999999993,
+  "armholeHollow": 0.22
+ },
+ "sapma": 0.057544341803306115,
+ "ok": false,
+ "ts": "2026-07-23"
+}

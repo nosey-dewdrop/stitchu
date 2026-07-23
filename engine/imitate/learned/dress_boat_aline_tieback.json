@@ -1,0 +1,19 @@
+{
+ "style": "dress_boat_aline_tieback",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202545-7.png",
+ "params": {
+  "neckWidth": 1.4,
+  "neckDepth": 7,
+  "skirtFull": 1.2,
+  "waistNip": 0.3450000000000001,
+  "bustProject": 0.2,
+  "shoulderSlope": 1.46,
+  "bustHeight": 0.15000000000000002,
+  "yokeDrop": 11,
+  "hemDip": 3.799999999999999,
+  "armholeHollow": 0.22
+ },
+ "sapma": 0.09371633208336902,
+ "ok": false,
+ "ts": "2026-07-23"
+}
