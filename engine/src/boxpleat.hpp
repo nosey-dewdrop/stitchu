@@ -64,5 +64,17 @@ inline constexpr double depthMM = 40.0;
 // draft has no CF-foldable front panel to host the pleat; never fails silently.
 bool apply(DraftedPattern& pattern, BoxPleat style);
 
+// Reusable primitive: grow ONE cut-on-fold panel at its center-front fold by the
+// pleat underlay (2 × depthMM past the fold) and stamp the pleat fold lines +
+// "fold to center" marking, restricted to the CF vertices whose y lies in
+// [yLo, yHi]. `protectNeckPoint` keeps commands[0] (the true neck point on a
+// bodice/top front) fixed and jogs back to it so the neckline still trues — pass
+// false for a skirt/lower panel that has no neckline on its top edge. Returns true
+// when a CF fold was found and grown; false (no change) when the panel has no CF
+// fold near x=0 or the CF edge is degenerate. apply() calls this over the FULL CF
+// edge; the hem kick pleat (hem.cpp BoxPleatHem) calls it over the lower hem
+// region only. See boxpleat.cpp.
+bool growCfPleat(PatternPiece& front, double yLo, double yHi, bool protectNeckPoint);
+
 } // namespace BoxPleatBlock
 } // namespace stitchu

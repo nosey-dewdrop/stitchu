@@ -84,8 +84,8 @@ inline constexpr int kPocketStyleCount = 3;
 inline constexpr const char* kCuffStyle[] = { "none", "button", "ribbed" };
 inline constexpr int kCuffStyleCount = 3;
 // HemShape (int)
-inline constexpr const char* kHemShape[] = { "straight", "shirttail", "highLow" };
-inline constexpr int kHemShapeCount = 3;
+inline constexpr const char* kHemShape[] = { "straight", "shirttail", "highLow", "pointedV", "boxPleatHem" };
+inline constexpr int kHemShapeCount = 5;
 // ShoulderStyle (int)
 inline constexpr const char* kShoulderStyle[] = { "set", "dropped", "raglan" };
 inline constexpr int kShoulderStyleCount = 3;

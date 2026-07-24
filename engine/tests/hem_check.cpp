@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "../src/hem.hpp"
+#include "../src/boxpleat.hpp"
 #include "../src/garment.hpp"
 #include "../src/validator.hpp"
 
@@ -65,6 +66,12 @@ static double centerHemY(const PatternPiece& p) {
     for (const auto& c : p.commands)
         if (c.type != CmdType::Close && std::fabs(c.to.x - minX) < 20.0) y = std::max(y, c.to.y);
     return y;
+}
+// The min-x reached by a piece's outline (the CF/CB fold line, ~0).
+static double minOutlineX(const PatternPiece& p) {
+    double m = 1e18;
+    for (const auto& c : p.commands) if (c.type != CmdType::Close) m = std::min(m, c.to.x);
+    return m;
 }
 // The side hem y = the max-y vertex at the max-x (side edge).
 static double sideHemY(const PatternPiece& p) {
@@ -205,6 +212,98 @@ int main() {
             const double rise = sideHemY(*skBase) - sideHemY(*skSh);
             std::printf("      skirt side hem lifted %.2f mm\n", rise);
             check(rise > 1.0, "dress skirt side hem lifts");
+        }
+        std::printf("\n");
+    }
+
+    // 6) PointedV (corset/basque point): the CENTER hem drops to a point, the sides
+    //    stay level, the gore seam trues, front + back drop equally (point meets at
+    //    the fold), the waist is untouched, and no piece is added.
+    {
+        std::printf("PointedV: center drops to a point, sides level, gore trued:\n");
+        GarmentSpec pv = skirt; pv.hemShape = static_cast<int>(HemShape::PointedV);
+        const DraftedPattern base = GarmentDrafter::draft(skirt, m0());
+        const DraftedPattern d = GarmentDrafter::draft(pv, m0());
+        check(d.pieces.size() == base.pieces.size(), "pointedV adds no piece (reshape only)");
+        check(PatternValidator::issues(pv, m0(), d).empty(), "pointedV draft valid (wearable)");
+
+        const PatternPiece* cfBase = named(base, "Center Front");
+        const PatternPiece* cfPv = named(d, "Center Front");
+        const PatternPiece* cbBase = named(base, "Center Back");
+        const PatternPiece* cbPv = named(d, "Center Back");
+        const PatternPiece* sfBase = named(base, "Side Front");
+        const PatternPiece* sfPv = named(d, "Side Front");
+        check(cfBase && cfPv && cbBase && cbPv && sfBase && sfPv, "center + side panels found");
+        if (cfBase && cfPv && cbBase && cbPv && sfBase && sfPv) {
+            // Center front DROPS by the point depth (y grows down → drop = after - before).
+            const double frontDrop = centerHemY(*cfPv) - centerHemY(*cfBase);
+            const double backDrop = centerHemY(*cbPv) - centerHemY(*cbBase);
+            std::printf("      CF point drop %.2f mm, CB point drop %.2f mm\n", frontDrop, backDrop);
+            check(frontDrop > HemBlock::pointedVCenterDrop * 0.5, "center front drops to a point");
+            check(std::fabs(frontDrop - backDrop) < 0.5,
+                  "front + back center drop equally (point meets at the fold)");
+
+            // The gore-seam edges (center panel's outer edge, side panel's inner edge)
+            // both stay level → the gore seam trues.
+            const double cfGoreDelta = sideHemY(*cfPv) - sideHemY(*cfBase);       // center panel outer
+            const double sfGoreDelta = centerHemY(*sfPv) - centerHemY(*sfBase);   // side panel inner
+            std::printf("      gore-seam deltas: center-outer %.4f, side-inner %.4f\n",
+                        cfGoreDelta, sfGoreDelta);
+            check(std::fabs(cfGoreDelta) < 0.5 && std::fabs(sfGoreDelta) < 0.5,
+                  "gore seam stays level on both edges (trued)");
+            // Side panel outer (the side seam) stays level too.
+            check(std::fabs(sideHemY(*sfPv) - sideHemY(*sfBase)) < 0.5, "side hem stays level");
+            // The waist edge (min y) is untouched.
+            check(std::fabs(minY(*cfPv) - minY(*cfBase)) < 1e-6, "waist edge (min y) untouched");
+        }
+        std::printf("\n");
+    }
+
+    // 7) BoxPleatHem (kick pleat): the center panel grows wider at the CF fold by the
+    //    box-pleat underlay, fold-line markings are stamped, the finished width trues
+    //    back, the piece is valid, and a non-fold (gathered) host is refused honestly.
+    {
+        std::printf("BoxPleatHem: center pleat underlay grown + trued:\n");
+        GarmentSpec bp = skirt; bp.hemShape = static_cast<int>(HemShape::BoxPleatHem);
+        const DraftedPattern base = GarmentDrafter::draft(skirt, m0());
+        const DraftedPattern d = GarmentDrafter::draft(bp, m0());
+        check(d.pieces.size() == base.pieces.size(), "box-pleat hem adds no piece (reuses CF fold)");
+        check(PatternValidator::issues(bp, m0(), d).empty(), "box-pleat hem draft valid (wearable)");
+
+        const PatternPiece* cfBase = named(base, "Center Front");
+        const PatternPiece* cfBp = named(d, "Center Front");
+        if (cfBase && cfBp) {
+            // The CF edge grows OUTWARD (into -x) by 2 × depth (the underlay).
+            const double underlay = minOutlineX(*cfBase) - minOutlineX(*cfBp);
+            const double want = 2.0 * BoxPleatBlock::depthMM;
+            std::printf("      CF underlay grown %.2f mm (want %.2f = 2 x depth)\n", underlay, want);
+            check(std::fabs(underlay - want) < 0.01, "CF grows by 2 x depth (pleat underlay trued)");
+            // Fold-line markings were stamped (center fold + underlay fold + arrow).
+            check(cfBp->markings.size() > cfBase->markings.size(), "pleat fold-line markings stamped");
+            check(cfBp->closure.find("box pleat") != std::string::npos, "pleat construction recorded");
+        }
+        std::printf("\n");
+    }
+
+    // 8) Both new shapes: a gathered skirt is refused honestly (gate + direct call).
+    {
+        std::printf("Gathered skirt: pointedV + box-pleat refused honestly:\n");
+        for (HemShape sh : {HemShape::PointedV, HemShape::BoxPleatHem}) {
+            GarmentSpec g; g.garment = GarmentType::Skirt; g.skirtStyle = SkirtStyle::Gathered;
+            g.hemShape = static_cast<int>(sh);
+            GarmentSpec off = g; off.hemShape = 0;
+            const DraftedPattern d = GarmentDrafter::draft(g, m0());
+            const DraftedPattern b = GarmentDrafter::draft(off, m0());
+            bool same = d.pieces.size() == b.pieces.size();
+            for (size_t i = 0; same && i < d.pieces.size(); ++i)
+                same = same && sameCommands(d.pieces[i].commands, b.pieces[i].commands);
+            check(same, "gathered skirt gated out at garment level, byte-identical");
+
+            DraftedPattern dd = GarmentDrafter::draft(off, m0());
+            const size_t before = dd.guideSteps.size();
+            const bool applied = HemBlock::apply(dd, sh);
+            check(!applied, "direct HemBlock::apply refuses a gathered panel");
+            check(dd.guideSteps.size() == before + 1, "honest skip note added (no silent no-op)");
         }
         std::printf("\n");
     }

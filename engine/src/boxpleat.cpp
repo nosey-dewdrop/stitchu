@@ -58,6 +58,96 @@ inline Point outward(Point p, double dx) { return {p.x - dx, p.y}; } // dx>0 => 
 
 } // namespace
 
+bool growCfPleat(PatternPiece& front, double yLo, double yHi, bool protectNeckPoint) {
+    if (front.commands.empty() || front.commands[0].type != CmdType::Move) return false;
+    const double cfX = minOutlineX(front);
+    if (std::abs(cfX) > 40.0) return false;              // no CF fold near x = 0
+    double cfTopY, cfBotY;
+    cfEdgeExtent(front, cfX, cfTopY, cfBotY);
+    if (!(cfBotY > cfTopY)) return false;               // CF edge degenerate
+
+    // Restrict the grown region to the CF vertices whose y sits in [yLo, yHi],
+    // clamped to the CF edge. A full-edge caller passes [cfTopY, cfBotY] so every
+    // CF vertex qualifies (byte-identical with the original apply()).
+    const double lo = std::max(yLo, cfTopY);
+    const double hi = std::min(yHi, cfBotY);
+    if (!(hi > lo)) return false;
+    // A vertex on the CF is grown only when its y is inside the pleat region. An
+    // eps of kCfEps keeps the region-edge vertices consistent.
+    auto inRegion = [&](double y) { return y >= lo - kCfEps && y <= hi + kCfEps; };
+
+    // The true neck point is cmds[0] on a bodice/top front (the neckline lives on
+    // this piece). It must NOT move — the neckline + neck facing still match there.
+    // On a yoke "Front Body" (below the yoke) there is no neckline, but keeping the
+    // first vertex fixed and jogging back to it is harmless (it stays a clean
+    // corner). We grow every OTHER CF vertex outward by the half-underlay. A
+    // skirt/lower panel (protectNeckPoint == false) has no neckline on its top edge.
+    const Point neckPointCF = front.commands[0].to;
+    const bool neckOnCF = protectNeckPoint && std::abs(neckPointCF.x - cfX) < kCfEps;
+
+    std::vector<PathCommand>& cmds = front.commands;
+    std::vector<PathCommand> grown;
+    grown.reserve(cmds.size() + 1);
+    for (size_t i = 0; i < cmds.size(); ++i) {
+        PathCommand c = cmds[i];
+        if (c.type == CmdType::Close) { grown.push_back(c); continue; }
+        // Keep a grown curve smooth: any control point on the CF (inside the region)
+        // grows with it.
+        if (c.type == CmdType::Curve) {
+            if (std::abs(c.cp1.x - cfX) < kCfEps && inRegion(c.cp1.y)) c.cp1 = outward(c.cp1, kUnderlayHalf);
+            if (std::abs(c.cp2.x - cfX) < kCfEps && inRegion(c.cp2.y)) c.cp2 = outward(c.cp2, kUnderlayHalf);
+        }
+        // Does this command ARRIVE at the true neck point? (the last CF vertex on a
+        // bodice/top front). Grow to the widened stand top, then jog back to the
+        // true neck point so the neckline is untouched.
+        const bool arrivesAtNeck = i != 0 && neckOnCF &&
+                                   std::abs(c.to.x - neckPointCF.x) < kCfEps &&
+                                   std::abs(c.to.y - neckPointCF.y) < kCfEps;
+        if (arrivesAtNeck && inRegion(c.to.y)) {
+            c.to = outward(c.to, kUnderlayHalf);
+            grown.push_back(c);
+            grown.push_back(PathCommand::line(neckPointCF)); // stand top -> neck point
+        } else if (i != 0 && std::abs(c.to.x - cfX) < kCfEps && inRegion(c.to.y)) {
+            c.to = outward(c.to, kUnderlayHalf);
+            grown.push_back(c);
+        } else {
+            grown.push_back(c);
+        }
+    }
+    front.commands = grown;
+
+    // The piece stays CUT ON FOLD (the pleat presses to the CF fold), so we do NOT
+    // flip it to cut 2 (that is the placket's behaviour, and a box pleat is the
+    // opposite — it closes the center rather than opening it).
+
+    // Pleat fold-line markings, from the region top to bottom:
+    //   * the CENTER line at x = cfX  — the fold the pleat presses to (the two
+    //     mirrored halves meet here on the right side);
+    //   * the UNDERLAY fold at x = cfX - kUnderlayHalf — where the underlay turns
+    //     back behind the pleat.
+    const double topY = lo, botY = hi;
+    front.markings.push_back(PathCommand::move({cfX, topY}));
+    front.markings.push_back(PathCommand::line({cfX, botY}));            // center fold
+    const double underlayX = cfX - kUnderlayHalf;
+    front.markings.push_back(PathCommand::move({underlayX, topY + 4}));
+    front.markings.push_back(PathCommand::line({underlayX, botY - 4}));  // underlay fold
+    // A short arrow at the top pointing the underlay toward center — "fold to
+    // center" — so the direction of the inverted pleat is unambiguous.
+    const double arrowY = topY + std::min(30.0, (botY - topY) * 0.15);
+    front.markings.push_back(PathCommand::move({underlayX, arrowY}));
+    front.markings.push_back(PathCommand::line({cfX, arrowY}));
+    front.markings.push_back(PathCommand::move({cfX - 8, arrowY - 4}));
+    front.markings.push_back(PathCommand::line({cfX, arrowY}));
+    front.markings.push_back(PathCommand::move({cfX - 8, arrowY + 4}));
+    front.markings.push_back(PathCommand::line({cfX, arrowY}));
+
+    // Record the construction on the piece so the metadata is honest about the
+    // extra fold (a pressed pleat is a real construction feature).
+    const long deep = std::lround(depthMM);
+    front.closure = "inverted box pleat (center front, " + std::to_string(deep) + " mm deep)";
+    return true;
+}
+
 bool apply(DraftedPattern& pattern, BoxPleat style) {
     if (style == BoxPleat::None) return true;
 
@@ -98,74 +188,17 @@ bool apply(DraftedPattern& pattern, BoxPleat style) {
         return false;
     }
 
-    // The true neck point is cmds[0] on a bodice/top front (the neckline lives on
-    // this piece). It must NOT move — the neckline + neck facing still match there.
-    // On a yoke "Front Body" (below the yoke) there is no neckline, but keeping the
-    // first vertex fixed and jogging back to it is harmless (it stays a clean
-    // corner). We grow every OTHER CF vertex outward by the half-underlay.
-    const Point neckPointCF = front->commands[0].to;
-    const bool neckOnCF = std::abs(neckPointCF.x - cfX) < kCfEps;
-
-    std::vector<PathCommand>& cmds = front->commands;
-    std::vector<PathCommand> grown;
-    grown.reserve(cmds.size() + 1);
-    for (size_t i = 0; i < cmds.size(); ++i) {
-        PathCommand c = cmds[i];
-        if (c.type == CmdType::Close) { grown.push_back(c); continue; }
-        // Keep a grown curve smooth: any control point on the CF grows with it.
-        if (c.type == CmdType::Curve) {
-            if (std::abs(c.cp1.x - cfX) < kCfEps) c.cp1 = outward(c.cp1, kUnderlayHalf);
-            if (std::abs(c.cp2.x - cfX) < kCfEps) c.cp2 = outward(c.cp2, kUnderlayHalf);
-        }
-        // Does this command ARRIVE at the true neck point? (the last CF vertex on a
-        // bodice/top front). Grow to the widened stand top, then jog back to the
-        // true neck point so the neckline is untouched.
-        const bool arrivesAtNeck = i != 0 && neckOnCF &&
-                                   std::abs(c.to.x - neckPointCF.x) < kCfEps &&
-                                   std::abs(c.to.y - neckPointCF.y) < kCfEps;
-        if (arrivesAtNeck) {
-            c.to = outward(c.to, kUnderlayHalf);
-            grown.push_back(c);
-            grown.push_back(PathCommand::line(neckPointCF)); // stand top -> neck point
-        } else if (i != 0 && std::abs(c.to.x - cfX) < kCfEps) {
-            c.to = outward(c.to, kUnderlayHalf);
-            grown.push_back(c);
-        } else {
-            grown.push_back(c);
-        }
-    }
-    front->commands = grown;
+    // Grow the FULL CF edge (the box pleat runs the whole length of the panel) and
+    // stamp the fold lines. protectNeckPoint keeps the neckline trued on a bodice/
+    // top front. Passing [cfTopY, cfBotY] makes the reusable primitive act on every
+    // CF vertex — byte-identical with the original inline loop.
+    growCfPleat(*front, cfTopY, cfBotY, /*protectNeckPoint=*/true);
 
     // The piece stays CUT ON FOLD (the pleat presses to the CF fold), so we do NOT
     // flip it to cut 2 (that is the placket's behaviour, and a box pleat is the
     // opposite — it closes the center rather than opening it).
 
-    // Pleat fold-line markings, from the CF-edge top to bottom:
-    //   * the CENTER line at x = cfX  — the fold the pleat presses to (the two
-    //     mirrored halves meet here on the right side);
-    //   * the UNDERLAY fold at x = cfX - kUnderlayHalf — where the underlay turns
-    //     back behind the pleat.
-    const double topY = cfTopY, botY = cfBotY;
-    front->markings.push_back(PathCommand::move({cfX, topY}));
-    front->markings.push_back(PathCommand::line({cfX, botY}));            // center fold
-    const double underlayX = cfX - kUnderlayHalf;
-    front->markings.push_back(PathCommand::move({underlayX, topY + 4}));
-    front->markings.push_back(PathCommand::line({underlayX, botY - 4}));  // underlay fold
-    // A short arrow at the top pointing the underlay toward center — "fold to
-    // center" — so the direction of the inverted pleat is unambiguous.
-    const double arrowY = topY + std::min(30.0, (botY - topY) * 0.15);
-    front->markings.push_back(PathCommand::move({underlayX, arrowY}));
-    front->markings.push_back(PathCommand::line({cfX, arrowY}));
-    front->markings.push_back(PathCommand::move({cfX - 8, arrowY - 4}));
-    front->markings.push_back(PathCommand::line({cfX, arrowY}));
-    front->markings.push_back(PathCommand::move({cfX - 8, arrowY + 4}));
-    front->markings.push_back(PathCommand::line({cfX, arrowY}));
-
-    // Record the construction on the piece so the metadata is honest about the
-    // extra fold (a pressed pleat is a real construction feature).
     const long deep = std::lround(depthMM);
-    front->closure = "inverted box pleat (center front, " + std::to_string(deep) + " mm deep)";
-
     pattern.guideSteps.push_back(
         std::string("Center inverted box pleat: this front is cut ON THE FOLD but "
         "WIDER at the center front by ") +

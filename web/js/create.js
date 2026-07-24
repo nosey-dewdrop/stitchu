@@ -113,7 +113,7 @@ const SPEC_GROUPS = [
   // shirt-tail (sides up, center long) or high-low (front short, back long). Only
   // a fitted straight/A-line skirt/dress or a top hosts it; a gathered/pleated/
   // circle skirt has no shaped side hem to lift (stays honest).
-  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
+  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun'], ['pointedV', 'pointed / corset (V)', 'sivri / korse (V)'], ['boxPleatHem', 'box-pleat kick', 'kutu pili (kick)']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Darts are the DEFAULT shaping (2026-07-17 minimal-piece policy): a plain
   // bodice stays ONE panel per side instead of splitting into a center + side
@@ -538,11 +538,14 @@ function showSpec() {
           (spec.sleeveLength === 'long' || spec.sleeveLength === 'elbow') &&
           spec.sleeveCap !== 'cap';
         spec.cuffStyle = (cuff && cuffHostable) ? cuff : 'none';
-        // Hem shape (etek ucu şekli, patch 3.15): the engine now reshapes the
-        // fitted lower edge into a shirt-tail (sides up) or a high-low (front short,
-        // back long). Only a fitted straight/A-line skirt/dress or a top hosts one;
-        // a gathered/pleated/circle skirt has no shaped side hem to lift, and an
-        // asymmetric/handkerchief hem stays honest (pickHemShape null).
+        // Hem shape (etek ucu şekli, patch 3.15+): the engine now reshapes the
+        // fitted lower edge into a shirt-tail (sides up), a high-low (front short,
+        // back long), a corset/basque POINT (center dips to a V), or an inverted
+        // BOX-PLEAT / kick pleat released at the hem. Only a fitted straight/A-line
+        // skirt/dress or a top hosts one; a gathered/pleated/circle skirt has no
+        // shaped lower edge, and a handkerchief/asymmetric-diagonal hem stays honest
+        // (pickHemShape null). boxPleatHem also needs a center-fold panel — the C++
+        // block honest-no-ops (guide note) if the host has no CF/CB fold.
         const hemShape = pickHemShape(seen);
         const hemHostable = spec.garment === 'top' ||
           ((spec.garment === 'skirt' || spec.garment === 'dress') &&

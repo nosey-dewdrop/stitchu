@@ -30,7 +30,7 @@
       "synonyms": { "bias": "biasBinding" } },
     "pocketStyle": { "type": "int", "enum": "PocketStyle", "values": ["none", "patch", "sideSeam"] },
     "cuffStyle": { "type": "int", "enum": "CuffStyle", "values": ["none", "button", "ribbed"] },
-    "hemShape": { "type": "int", "enum": "HemShape", "values": ["straight", "shirttail", "highLow"] },
+    "hemShape": { "type": "int", "enum": "HemShape", "values": ["straight", "shirttail", "highLow", "pointedV", "boxPleatHem"] },
     "shoulderStyle": { "type": "int", "enum": "ShoulderStyle", "values": ["set", "dropped", "raglan"] },
     "buttonRow": { "type": "int", "enum": "ButtonRow", "values": ["none", "functional", "decorative"] },
     "exposedZip": { "type": "int", "enum": "ExposedZip", "values": ["none", "centerFront", "centerBack"] },

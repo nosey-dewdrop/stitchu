@@ -11,6 +11,18 @@
 //               rise (a gentle shirt-tail / cowboy-shirt hem). Symmetric front↔back.
 //   HighLow   = the FRONT hem is raised (short) and the BACK hem is dropped (long),
 //               a dramatic high-low. The side hems blend between the two.
+//   PointedV  = a corset / basque point: the CENTER hem (center front + center back)
+//               DROPS to a point while the sides stay level — the classic
+//               corset-bottom V. Symmetric front↔back; the two halves meet cleanly
+//               at the CF/CB on-fold line (the point trues). Only a fitted
+//               (princess/dart) bodice-to-waist or a top hosts a point.
+//   BoxPleatHem = an inverted box pleat RELEASED at the center of the hem for a
+//               kick / flare — reuses the box-pleat underlay primitive
+//               (boxpleat.cpp): the center-front panel is cut WIDER at the CF fold
+//               by an underlay folded behind, so the finished (pressed) width trues
+//               back to the original. v1 releases the pleat down the whole CF fold
+//               of a fitted straight/A-line skirt (or a top center panel) — it
+//               reads as a hem kick pleat. Host: a straight/A-line skirt or a top.
 //
 // It reshapes only the hem band (the lowest edge of each qualifying piece); the
 // waist edge, the side-seam LENGTH balance and the center hem are left trued. The
@@ -30,7 +42,9 @@
 namespace stitchu {
 
 // Hem lower-edge shape. Straight = the level default (byte-identical).
-enum class HemShape { Straight, Shirttail, HighLow };
+// APPEND-only (index == enum value == vocab order): PointedV = corset/basque point
+// (center drops to a V), BoxPleatHem = inverted box pleat released at the hem.
+enum class HemShape { Straight, Shirttail, HighLow, PointedV, BoxPleatHem };
 
 namespace HemBlock {
 
@@ -41,6 +55,12 @@ namespace HemBlock {
 inline constexpr double shirttailSideRise = 120;
 inline constexpr double highLowFrontRise  = 220;
 inline constexpr double highLowBackDrop   = 120;
+// PointedV: how far the CENTER hem (CF/CB) drops below the level side hem, in mm.
+// A sensible basque / corset-point depth (ready-to-wear basque points run ~60-90 mm
+// below the side line); 75 mm sits mid-range so the V reads without over-dipping.
+// The side hem stays level and the center dips by this depth (adaptive-scaled by
+// the same shortest-host cap as the other shapes so it never eats the side seam).
+inline constexpr double pointedVCenterDrop = 75;
 // A host shorter than this (a cropped top) has no real hem to curve — reshaping it
 // would eat the side seam and let the front/back seam curves diverge. Refuse it
 // honestly (guide note) rather than draw an unbalanced hem. Mini skirts (~460 mm)
