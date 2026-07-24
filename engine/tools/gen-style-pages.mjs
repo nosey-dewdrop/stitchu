@@ -526,6 +526,10 @@ const CSS = `
   th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);background:var(--bb-pale)}
   td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
   .meta{font-size:12.5px;color:#5b7089;max-width:66ch;margin-top:10px}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--bb-line)}
+  .faq-item:first-of-type{border-top:1px solid var(--bb-line)}
+  .faq-q{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .faq-a{font-size:13.5px;color:var(--ink);max-width:66ch}
   .cta2{display:inline-block;font-size:13px;letter-spacing:.4px;color:var(--bb-deep);text-decoration:none;border-bottom:1px dashed var(--bb);padding-bottom:2px}
   .cta2:hover{border-bottom-color:var(--bb-deep)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:14px 0 6px}
@@ -789,6 +793,47 @@ function breadcrumbLd(name, url) {
   })}</script>`;
 }
 
+// FAQ built from the style's own real data (compat, tests, numbers, group). Each
+// answer is the copy shown on the page, so structured data matches visible text.
+// Returns the entries so both the visible block and the FAQPage schema use them.
+function styleFaqEntries(s) {
+  const low = s.name.toLowerCase();
+  const q = [];
+  q.push({
+    q: `Can I get a free ${low} sewing pattern?`,
+    a: `Yes. stitchu drafts the ${low} to your own measurements and gives you a printable PDF for free, with no fixed sizes and no paywall.`,
+  });
+  if (s.compat) q.push({
+    q: `What can I combine the ${low} with?`,
+    a: `${s.compat}`,
+  });
+  const lenRow = (s.numbers || []).find(([k]) => /length|ease|flare/i.test(k));
+  if (lenRow) q.push({
+    q: `What measurements does the ${low} use?`,
+    a: `The engine drafts it from your body, not fixed sizes. Key numbers: ${s.numbers.map(([k, v]) => `${k} ${v}`).slice(0, 3).join('; ')}.`,
+  });
+  if (s.tests) q.push({
+    q: `Is the ${low} draft tested?`,
+    a: `${s.tests}`,
+  });
+  q.push({
+    q: `How do I print the ${low} pattern at true size?`,
+    a: `Every sheet carries a 3 cm calibration square. Print at 100 percent scale with no fit-to-page, measure the square, and the pattern comes out true to size.`,
+  });
+  return q;
+}
+
+function styleFaqLd(s) {
+  const entries = styleFaqEntries(s);
+  return `<script type="application/ld+json">${JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: entries.map((e) => ({
+      '@type': 'Question', name: e.q,
+      acceptedAnswer: { '@type': 'Answer', text: e.a },
+    })),
+  })}</script>`;
+}
+
 // Per-style extras: the flat-sketch params, the create-flow preset the "print"
 // link carries, and the patch that made the feature possible. Keyed by slug so
 // the STYLES list above stays the readable content source. Presets use the
@@ -836,6 +881,7 @@ function stylePage(s) {
 <head>
 ${headBlock({ title: s.title, desc: s.desc, canonical: url })}
 ${breadcrumbLd(s.name, url)}
+${styleFaqLd(s)}
 <style>${CSS}</style>
 </head>
 <body>
@@ -854,6 +900,9 @@ ${header}
     ${s.numbers.map(([k, v]) => `<tr><td>${k}</td><td class="v">${v}</td></tr>`).join('\n    ')}
   </table>
   <p class="meta"><b>Works with:</b> ${s.compat}</p>
+
+  <h2>Common questions.</h2>
+  ${styleFaqEntries(s).map((e) => `<div class="faq-item"><h3 class="faq-q">${esc(e.q)}</h3><p class="faq-a">${esc(e.a)}</p></div>`).join('\n  ')}
 
   ${testBlock(S)}
 
