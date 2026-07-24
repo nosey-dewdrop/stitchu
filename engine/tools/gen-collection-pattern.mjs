@@ -70,6 +70,54 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const kb = (bytes) => `${Math.round(bytes / 1024)} KB`;
 const cleanPiece = (n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim();
 
+// ---- SEO depth helpers: real content derived from data, never invented ----
+// Difficulty is a function of piece count, shaping method and closure, not a
+// made-up label. dart shaping + few pieces + no fitted closure = beginner.
+function difficulty(m, dp) {
+  let score = 0;
+  if (m.pieces >= 8) score += 2; else if (m.pieces >= 6) score += 1;
+  if (dp.shaping === 'princess') score += 2; else if (dp.shaping === 'dart') score += 1;
+  if (dp.sleeveStyle && dp.sleeveStyle !== 'none') score += 1;
+  if (dp.frontPlacket || (dp.tie && dp.tie > 0) || dp.collarType) score += 1;
+  if (/zip/i.test(m.closure || '')) score += 1;
+  if (score <= 2) return { en: 'Beginner', tr: 'Başlangıç' };
+  if (score <= 4) return { en: 'Confident beginner', tr: 'Orta-başlangıç' };
+  return { en: 'Intermediate', tr: 'Orta' };
+}
+
+// FAQ entries: each answer is composed from the look's own real fields (fabric
+// type, yardage, piece count, closure, size model). No boilerplate marketing.
+function faqEntries(m, dp, diff) {
+  const fabricType = dp.fabric === 'knit' ? 'a stretch knit (jersey, ponte or interlock)' : 'a woven fabric with little or no stretch';
+  const fabricTypeTr = dp.fabric === 'knit' ? 'esnek bir örme (jarse, ponte veya interlok)' : 'az veya hiç esnemeyen dokuma bir kumaş';
+  const q = [];
+  q.push({
+    q_en: `What fabric works best for the ${m.en.toLowerCase()}?`,
+    q_tr: `${m.en} için en uygun kumaş nedir?`,
+    a_en: `This pattern is drafted for ${fabricType}. Plan for roughly ${m.fabric} m at 140 cm wide; the estimate scales with your measurements when you draft it.`,
+    a_tr: `Bu kalıp ${fabricTypeTr} için çizildi. 140 cm ende yaklaşık ${m.fabric} m planlayın; tahmin, kalıbı çizdiğinizde ölçülerinize göre değişir.`,
+  });
+  q.push({
+    q_en: `Is the ${m.en.toLowerCase()} a beginner sewing pattern?`,
+    q_tr: `${m.en} yeni başlayanlar için uygun mu?`,
+    a_en: `Difficulty is ${diff.en.toLowerCase()}. It has ${m.pieces} pattern pieces, ${dp.shaping === 'princess' ? 'princess seams for the shaping' : 'simple darts for the shaping'}${m.closure ? `, and closes with ${m.closure}` : ''}.`,
+    a_tr: `Zorluk ${diff.tr.toLowerCase()}. ${m.pieces} kalıp parçası var, biçimlendirme ${dp.shaping === 'princess' ? 'prenses dikişleriyle' : 'sade penslerle'} yapılır${m.closure ? `, kapanış ${m.closure}` : ''}.`,
+  });
+  q.push({
+    q_en: `What size is this pattern and can I fit it to my body?`,
+    q_tr: `Bu kalıp hangi bedende ve kendi vücuduma göre ayarlayabilir miyim?`,
+    a_en: `The printable PDF is drafted to an EU38 demo body. To get it in your own measurements, draft it free on the create page and the engine redraws every piece to fit you.`,
+    a_tr: `Baskıya hazır PDF, EU38 örnek beden üzerine çizilir. Kendi ölçülerinizde almak için çiz sayfasında ücretsiz çizin; motor her parçayı size uyacak şekilde yeniden çizer.`,
+  });
+  q.push({
+    q_en: `How is this different from a store-bought sewing pattern?`,
+    q_tr: `Bu, hazır satın alınan bir dikiş kalıbından nasıl farklı?`,
+    a_en: `A store pattern ships in fixed graded sizes. stitchu drafts the pattern to your exact measurements from a real pattern-making engine, and every look is benchmark-checked against a sewn reference.`,
+    a_tr: `Hazır kalıp sabit beden ölçeklerinde gelir. stitchu, kalıbı gerçek bir kalıp motorundan tam ölçülerinize göre çizer ve her görünüm dikilmiş bir referansa karşı kıyaslanır.`,
+  });
+  return q;
+}
+
 // ---- build the printable PDFs for every look ----------------------------
 const engine = await createEngine();
 const core = makePdfCore({ engine, sheet, body: BODY });
@@ -135,6 +183,15 @@ const STYLE = `<style>
   td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
   .honest{font-size:13.5px;color:#5b7089;font-style:italic;margin:6px 0 4px;max-width:66ch}
   .honest a{font-style:normal}
+  .faqs{margin-top:6px}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--bb-line)}
+  .faq-item:first-child{border-top:1px solid var(--bb-line)}
+  .faq-q{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .faq-a{font-size:13.5px;color:var(--ink);max-width:66ch}
+  ul.related{list-style:none;margin:6px 0 0;padding:0}
+  ul.related li{padding:9px 0;border-bottom:1px solid var(--bb-line);font-size:14px}
+  ul.related a{text-decoration:none;color:var(--bb-deep)}
+  ul.related .rel-era{color:#5b7089;font-size:12px;margin-left:8px;font-variant-numeric:tabular-nums}
   /* CTA look lives in ../css/shared-button.css (.sb-btn). Layout-only helpers here. */
   .sb-btn{margin-top:30px}
   .cta2{display:inline-block;margin:30px 0 0 16px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
@@ -193,16 +250,34 @@ for (const m of meta) {
   const flatUrl = m.flat ? `../patterns/vintage6070/${m.flat}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
 
+  const diff = difficulty(m, dp);
+  const faqs = faqEntries(m, dp, diff);
+
+  // Two schema.org nodes in one @graph: the Article (unchanged) plus a FAQPage
+  // so Google can render the questions as a rich result. Answers are the real
+  // per-look copy shown on the page, so structured data == visible content.
   const ldjson = {
-    '@context': 'https://schema.org', '@type': 'Article',
-    headline: title, description: desc,
-    image: `${BASE}/patterns/vintage6070/${m.slug}.svg`,
-    author: { '@type': 'Organization', name: 'stitchu' },
-    publisher: { '@type': 'Organization', name: 'stitchu' },
-    datePublished: '2026-07-17', mainEntityOfPage: canonical,
-    articleSection: 'Collections', inLanguage: 'en',
-    about: { '@type': 'Thing', name: m.en },
-    isPartOf: `${BASE}/collections/`,
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article',
+        headline: title, description: desc,
+        image: `${BASE}/patterns/vintage6070/${m.slug}.svg`,
+        author: { '@type': 'Organization', name: 'stitchu' },
+        publisher: { '@type': 'Organization', name: 'stitchu' },
+        datePublished: '2026-07-17', mainEntityOfPage: canonical,
+        articleSection: 'Collections', inLanguage: 'en',
+        about: { '@type': 'Thing', name: m.en },
+        isPartOf: `${BASE}/collections/`,
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question', name: f.q_en,
+          acceptedAnswer: { '@type': 'Answer', text: f.a_en },
+        })),
+      },
+    ],
   };
 
   const pieceRows = pieces.map((p) => `<li>${esc(p)}</li>`).join('');
@@ -228,12 +303,28 @@ for (const m of meta) {
   </div>
 ` : '';
 
+  // Related looks: three others from the same collection (internal links spread
+  // crawl depth and link equity, and keep readers on the site).
+  const related = meta.filter((x) => x.slug !== m.slug && DRAFT_PARAMS[x.slug]).slice(0, 12);
+  const idx = meta.findIndex((x) => x.slug === m.slug);
+  const picks = [];
+  for (let k = 1; picks.length < 3 && k <= meta.length; k++) {
+    const cand = meta[(idx + k) % meta.length];
+    if (cand.slug !== m.slug && DRAFT_PARAMS[cand.slug]) picks.push(cand);
+  }
+  const faqHtml = faqs.map((f) => `
+    <div class="faq-item">
+      <h3 class="faq-q" data-en="${esc(f.q_en)}" data-tr="${esc(f.q_tr)}">${esc(f.q_en)}</h3>
+      <p class="faq-a" data-en="${esc(f.a_en)}" data-tr="${esc(f.a_tr)}">${esc(f.a_en)}</p>
+    </div>`).join('');
+  const relatedHtml = picks.map((r) => `<li><a href="${r.slug}.html" data-en="${esc(r.en)}" data-tr="${esc(r.tr)}">${esc(r.en)}</a> <span class="rel-era">${esc(r.period)}</span></li>`).join('');
+
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a> / <a href="${COLLECTION.href}" data-en="${esc(COLLECTION.nameEn)}" data-tr="${esc(COLLECTION.nameTr)}">${esc(COLLECTION.nameEn)}</a> / ${esc(m.en)}</p>
   <h1 data-en="${esc(m.en)}, drafted." data-tr="${esc(m.en)}, çizildi.">${esc(m.en)}, drafted.</h1>
-  <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span></p>
+  <p class="era"><span class="period">${esc(m.period)}</span> · <span data-en="${esc(m.house)}" data-tr="${esc(m.house)}">${esc(m.house)}</span> · <span data-en="${diff.en}" data-tr="${diff.tr}">${diff.en}</span> · <span data-en="${dp.fabric === 'knit' ? 'Knit fabric' : 'Woven fabric'}" data-tr="${dp.fabric === 'knit' ? 'Örme kumaş' : 'Dokuma kumaş'}">${dp.fabric === 'knit' ? 'Knit fabric' : 'Woven fabric'}</span></p>
   <p class="lead" data-en="${esc(m.note_en)}" data-tr="${esc(m.note_tr)}">${esc(m.note_en)}</p>
 
   ${flatUrl ? `<div class="drawing">
@@ -255,7 +346,14 @@ ${HEADER}
   <h2 data-en="The Honest Note." data-tr="Dürüst Not.">The Honest Note.</h2>
   <p class="honest" data-en="${esc(oovNote.en)}" data-tr="${esc(oovNote.tr)}">${esc(oovNote.en)}</p>
   <p class="honest"><a href="../patches.html" data-en="See the full patch history →" data-tr="Tüm yama geçmişine bak →">See the full patch history →</a></p>
+
+  <h2 data-en="Common Questions." data-tr="Sık Sorulanlar.">Common Questions.</h2>
+  <div class="faqs">${faqHtml}
+  </div>
 ${dlSection}
+  <h2 data-en="More From This Collection." data-tr="Bu Koleksiyondan Daha Fazlası.">More From This Collection.</h2>
+  <ul class="related">${relatedHtml}
+  </ul>
   <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
   <a class="cta2" href="${COLLECTION.href}" data-en="Back to the collection →" data-tr="Koleksiyona geri dön →">Back to the collection →</a>
 </div>

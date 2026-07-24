@@ -162,6 +162,10 @@ function checkHeadings(rel, html) {
   while ((m = hRe.exec(noComments))) {
     // prefer data-en copy if the heading carries it (that is the EN source text)
     const open = m[0].match(/<h[1-3]\b[^>]*>/i)[0];
+    // patch-note titles (h2.ptitle on patches.html) are editorial free text in
+    // Damla's voice, not site-template headings; the terminal-punctuation rule
+    // does not apply to them (most already end in a full stop, short ones need not).
+    if (/\bclass\s*=\s*"[^"]*\bptitle\b/i.test(open)) continue;
     const attr = open.match(/\bdata-en\s*=\s*"([^"]*)"/i);
     let text = attr ? attr[1] : m[2];
     text = text.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/gi, ' ').replace(/\s+/g, ' ').trim();
