@@ -198,6 +198,14 @@ export const VOCAB = {
       "corset"
     ]
   },
+  "wrapFront": {
+    "type": "int",
+    "enum": "WrapFront",
+    "values": [
+      "none",
+      "surplice"
+    ]
+  },
   "backSlit": {
     "type": "int",
     "enum": "HemSlit",
