@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu 3.21 · Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal.</title>
+<meta name="description" content="Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fi">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/patches/3-21.html">
+<link rel="alternate" hreflang="en" href="https://stitchu.noseydewdrop.com/patches/3-21.html">
+<link rel="alternate" hreflang="x-default" href="https://stitchu.noseydewdrop.com/patches/3-21.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="stitchu 3.21 · Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal.">
+<meta property="og:description" content="Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fi">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/patches/3-21.html">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-07-19">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="stitchu 3.21 · Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal.">
+<meta name="twitter:description" content="Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fi">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal.", "description": "Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fi", "datePublished": "2026-07-19", "dateModified": "2026-07-19", "author": {"@type": "Person", "name": "Damla Su Bilge"}, "publisher": {"@type": "Organization", "name": "stitchu"}, "mainEntityOfPage": "https://stitchu.noseydewdrop.com/patches/3-21.html", "url": "https://stitchu.noseydewdrop.com/patches/3-21.html", "about": {"@type": "SoftwareApplication", "name": "stitchu", "applicationCategory": "DesignApplication"}, "articleSection": "patch notes", "version": "3.21"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "stitchu", "item": "https://stitchu.noseydewdrop.com/"}, {"@type": "ListItem", "position": 2, "name": "patch notes", "item": "https://stitchu.noseydewdrop.com/patches.html"}, {"@type": "ListItem", "position": 3, "name": "3.21", "item": "https://stitchu.noseydewdrop.com/patches/3-21.html"}]}</script>
+<link rel="stylesheet" href="../css/theme-transitions.css?v=84">
+<link rel="stylesheet" href="../css/shared-header.css?v=84">
+<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 32px 110px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:20px 0 10px;color:var(--navy)}
+  .manifesto{font-size:15px;color:var(--ink);max-width:60ch;margin-bottom:6px}
+  .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:34px}
+
+  .patch{border:1px solid var(--bb-line);border-radius:3px;margin:0 0 22px;background:#fff;box-shadow:0 6px 20px rgba(63,116,168,.09)}
+  .patch.now{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .phead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 22px 10px;border-bottom:1px dashed var(--bb-line)}
+  .pnum{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;color:var(--bb-deep)}
+  .ptitle{font-size:17px;color:var(--navy)}
+  .pdate{font-size:12px;color:#5b7089;margin-left:auto;letter-spacing:.5px}
+  .pbody{padding:14px 22px 18px}
+  .pbody ul{list-style:none;margin:0 0 10px}
+  .pbody li{position:relative;padding:4px 0 4px 20px;font-size:14px;color:var(--ink)}
+  .pbody li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:2px;background:var(--bb-deep)}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .delta{display:inline-block;font-size:12px;letter-spacing:.4px;background:var(--bb-pale);color:var(--navy);border:1px solid var(--bb-line);border-radius:2px;padding:2px 10px;margin-top:6px}
+  .honest{font-size:13px;color:#5b7089;font-style:italic;margin-top:8px}
+  footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+
+    /* gingham signature band (Damla, 16 Jul): thin texture strip on white pages */
+    body::before{content:"";display:block;height:12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        #fff;}
+</style>
+
+</head>
+<body>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="../patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" class="sh-active" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+<main class="wrap">
+<nav class="crumb" aria-label="Breadcrumb"><a href="../index.html">stitchu</a> › <a href="../patches.html">patch notes</a> › 3.21</nav>
+<article class="patch now single">
+<div class="phead"><span class="pnum">3.21</span><h1 class="ptitle" data-en="Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal." data-tr="Gömülü her varsayım artık tek denetlenmiş tabloda yaşıyor ve EU38 blok, bağımsız bir Aldrich kağıt çizimiyle ölçüldü: ilk dış fit sinyali.">Every built-in assumption now lives in one audited table, and the EU38 block was measured against an independent Aldrich paper draft: the first external fit signal.</h1><span class="pdate">2026-07-19</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Sixteen design constants the engine used to hard-code across a dozen files (the 15 mm seam allowance defined in 12+ places, the 18 mm button in two headers that had never met, the 0.30 bust-to-biceps guess written twice, four different ruffle fullness numbers) now live in one table, engine/constants.yaml, each row with a source, a status (verified / assumed / refuted) and the experiment that speaks to it. The code reads a generated header and a permanent test guard fails on any drift. The values themselves are provably unchanged: the golden reference is byte-identical and both compiled engine binaries came out hash-identical to the live ones." data-tr="Motorun bir düzine dosyaya gömdüğü on altı tasarım sabiti (12'den fazla yerde tanımlı 15 mm dikiş payı, birbirinden habersiz iki header'daki 18 mm düğme, iki kez yazılmış 0.30 göğüs-pazu tahmini, dört farklı fırfır bolluk sayısı) artık tek tabloda, engine/constants.yaml içinde yaşıyor; her satırın kaynağı, durumu (doğrulanmış / varsayım / çürütülmüş) ve ona konuşan deneyi var. Kod üretilmiş bir header okuyor ve kalıcı bir test bekçisi her kaymada kırmızı yanıyor. Değerlerin kendisi kanıtla değişmedi: golden referans bayt-aynı ve derlenen iki motor ikilisi canlıdakilerle hash-aynı çıktı.">Sixteen design constants the engine used to hard-code across a dozen files (the 15 mm seam allowance defined in 12+ places, the 18 mm button in two headers that had never met, the 0.30 bust-to-biceps guess written twice, four different ruffle fullness numbers) now live in one table, engine/constants.yaml, each row with a source, a status (verified / assumed / refuted) and the experiment that speaks to it. The code reads a generated header and a permanent test guard fails on any drift. The values themselves are provably unchanged: the golden reference is byte-identical and both compiled engine binaries came out hash-identical to the live ones.</li>
+        <li data-en="Then the assumptions were put on trial. The engine's EU38 fitted bodice and straight skirt were measured landmark by landmark against a block hand-drafted from Aldrich's published method (Metric Pattern Cutting): an independent calculation, not the engine's own formulas. Twelve landmarks sit inside their pinned bounds: back neck width −1.0 mm, shoulder tip drop +0.7 mm, drawn shoulder seam +3.5 mm, scye depth −10.6 mm, skirt side-waist rise −0.5 mm, skirt hip girth −11.2 mm, skirt sewn waist +5.6 mm. Until today every fit number on this site was the engine agreeing with itself; this table is the first one where somebody else's arithmetic gets a vote." data-tr="Sonra varsayımlar yargılandı. Motorun EU38 oturan korsajı ve düz eteği, Aldrich'in yayınlanmış yönteminden (Metric Pattern Cutting) elle çizilen blokla landmark landmark ölçüldü: motorun kendi formülleri değil, bağımsız bir hesap. On iki landmark pinlenmiş sınırların içinde: arka yaka eni −1.0 mm, omuz ucu düşüşü +0.7 mm, çizilen omuz boyu +3.5 mm, oyuntu derinliği −10.6 mm, etek yan bel kalkışı −0.5 mm, etek kalça çevresi −11.2 mm, etek dikilen beli +5.6 mm. Bugüne kadar bu sitedeki her fit sayısı motorun kendi kendisiyle anlaşmasıydı; bu tablo, başkasının aritmetiğinin oy kullandığı ilk tablo.">Then the assumptions were put on trial. The engine's EU38 fitted bodice and straight skirt were measured landmark by landmark against a block hand-drafted from Aldrich's published method (Metric Pattern Cutting): an independent calculation, not the engine's own formulas. Twelve landmarks sit inside their pinned bounds: back neck width −1.0 mm, shoulder tip drop +0.7 mm, drawn shoulder seam +3.5 mm, scye depth −10.6 mm, skirt side-waist rise −0.5 mm, skirt hip girth −11.2 mm, skirt sewn waist +5.6 mm. Until today every fit number on this site was the engine agreeing with itself; this table is the first one where somebody else's arithmetic gets a vote.</li>
+        <li data-en="Two constants lost their trial and are stamped REFUTED, values untouched (a value change is a behaviour change, and this chain ships none): the 0.30 bust-to-biceps ratio underestimates the standard-chart arm by 20 mm (−7%) at bust 88, and the legacy 0.23 shoulder-drop factor draws a ~13° shoulder where the paper draft says ~22°. Both carry written v1.1 exit plans (collect a real arm girth; retire the legacy factor from the one facing frame it still drives). The comparison also wrote down what the engine honestly does not draft: Aldrich's 70 mm shoulder bust dart and a separate cross-back width." data-tr="İki sabit davasını kaybetti ve değerlerine dokunulmadan ÇÜRÜTÜLDÜ damgası yedi (değer değişikliği davranış değişikliğidir ve bu zincir hiçbirini göndermez): 0.30 göğüs-pazu oranı bust 88'de standart tablodaki kolu 20 mm (−%7) dar tahmin ediyor ve eski 0.23 omuz düşüş çarpanı, kağıt çizim ~22° derken ~13°'lik omuz çiziyor. İkisinin de yazılı v1.1 çıkış planı var (gerçek kol çevresi ölçüsü almak; eski çarpanı hâlâ sürdüğü tek facing çerçevesinden emekli etmek). Kıyas, motorun dürüstçe çizmediklerini de yazdı: Aldrich'in 70 mm'lik omuz göğüs pensi ve ayrı bir sırt eni.">Two constants lost their trial and are stamped REFUTED, values untouched (a value change is a behaviour change, and this chain ships none): the 0.30 bust-to-biceps ratio underestimates the standard-chart arm by 20 mm (−7%) at bust 88, and the legacy 0.23 shoulder-drop factor draws a ~13° shoulder where the paper draft says ~22°. Both carry written v1.1 exit plans (collect a real arm girth; retire the legacy factor from the one facing frame it still drives). The comparison also wrote down what the engine honestly does not draft: Aldrich's 70 mm shoulder bust dart and a separate cross-back width.</li>
+        <li data-en="Every confirmed bound became a permanent test (sloper_check, the suite's 42nd): the Aldrich reference numbers are pinned in the test itself, so a future change that drifts a landmark past its bound fails the build. The paper comparison cost zero fabric and zero model calls. What it does NOT claim is a human fit: that is the muslin, and the muslin is the next phase's job, on purpose." data-tr="Doğrulanan her sınır kalıcı bir teste dönüştü (sloper_check, takımın 42.'si): Aldrich referans sayıları testin kendisine pinli, yani bir landmark'ı sınırının dışına kaydıran gelecek bir değişiklik derlemeyi düşürür. Kağıt kıyas sıfır kumaş ve sıfır model çağrısına mal oldu. İddia ETMEDİĞİ şey insan bedenine oturma: o muslin işi ve muslin bilerek sonraki fazın görevi.">Every confirmed bound became a permanent test (sloper_check, the suite's 42nd): the Aldrich reference numbers are pinned in the test itself, so a future change that drifts a landmark past its bound fails the build. The paper comparison cost zero fabric and zero model calls. What it does NOT claim is a human fit: that is the muslin, and the muslin is the next phase's job, on purpose.</li>
+      </ul>
+      <span class="delta" data-en="constants + paper sloper · 16 constants: 3 verified, 11 assumed, 2 refuted · 12 landmarks within pinned mm bounds · full patterns unchanged at 27 of 54 · engine byte-identical" data-tr="sabitler + kağıt sloper · 16 sabit: 3 doğrulanmış, 11 varsayım, 2 çürütülmüş · 12 landmark pinli mm sınırları içinde · tam kalıp 54'te 27'de değişmedi · motor bayt-aynı">constants + paper sloper · 16 constants: 3 verified, 11 assumed, 2 refuted · 12 landmarks within pinned mm bounds · full patterns unchanged at 27 of 54 · engine byte-identical</span>
+      <p class="honest" data-en="Three honest edges. The largest gaps are design choices, published, not hidden: the bust line runs 42 mm closer than Aldrich's block because the back drafts to the underbust (a ribcage frame, asserted to stay inside a positive-ease band), and the waist carries +26 mm because the engine prefers 5% ease to Aldrich's flat 2 cm. Two steps of the hand draft (the back-neck rise and the shoulder guide drop) vary between editions of the book; the one landmark they touch got a wider bound and says so in the test. And a paper match is not a fit guarantee: it only proves the block lands within millimetres of a published system a human could draft." data-tr="Üç dürüst kenar. En büyük farklar saklanmayan, yayınlanan tasarım tercihleri: büst hattı Aldrich bloğundan 42 mm dar, çünkü arka parça underbust'a çizilir (ribcage çerçevesi; pozitif ease bandında kalması ayrıca assert edildi) ve bel +26 mm taşıyor, çünkü motor Aldrich'in düz 2 cm'i yerine %5 ease tercih ediyor. El çiziminin iki adımı (arka yaka yükselmesi ve omuz kılavuz düşüşü) kitabın baskıları arasında oynar; dokundukları tek landmark daha geniş sınır aldı ve bunu testin içinde söylüyor. Ve kağıt eşleşmesi fit garantisi değildir: sadece bloğun, bir insanın çizebileceği yayınlanmış bir sistemin milimetrelerle içine düştüğünü kanıtlar.">Three honest edges. The largest gaps are design choices, published, not hidden: the bust line runs 42 mm closer than Aldrich's block because the back drafts to the underbust (a ribcage frame, asserted to stay inside a positive-ease band), and the waist carries +26 mm because the engine prefers 5% ease to Aldrich's flat 2 cm. Two steps of the hand draft (the back-neck rise and the shoulder guide drop) vary between editions of the book; the one landmark they touch got a wider bound and says so in the test. And a paper match is not a fit guarantee: it only proves the block lands within millimetres of a published system a human could draft.</p>
+    </div>
+</article>
+<nav class="pn-nav"><a class="pn-prev" href="3-22.html">← 3.22 (newer)</a><a class="pn-next" href="3-20.html">3.20 (older) →</a></nav>
+<p class="allpatches"><a href="../patches.html" data-en="← all patch notes" data-tr="← tüm yama notları">← all patch notes</a></p>
+</main>
+<script src="../js/shared-header.js?v=84"></script>
+</body>
+</html>
