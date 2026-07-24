@@ -129,3 +129,9 @@
 - KÖK ONARIM (yama değil): 6 üretici (gen-collections-page, gen-collection-pattern, gen-pattern-pages, gen-taste-collections, gen-guide, gen-vintage-page, gen-style-pages) hâlâ ölü nosey-dewdrop.github.io/stitchu BASE + hardcoded og/twitter image URL taşıyordu. Commit 257f9bd canonical/og:url'yi düzeltmiş ama og:IMAGE'ı ve üretici BASE'lerini kaçırmış -> her regen 62 canlı sayfada kırık og:image (sosyal kart 404) geri getiriyordu. TÜM üreticilerin BASE+og URL'si düzeltildi, hepsi yeniden basıldı. Site geneli ölü-domain 62->0.
 - KANIT: style-lint 0 ihlal, sitemap 143->145 (düşmedi arttı), canlı curl: FAQPage + doğru og:image + 145 url changefreq. ?v=122 canlı.
 - GERİ ALMA: ucuz (üreticiler tek kaynak, geri çevirip regen). Motor guard tetiklenmedi (engine/src'ye dokunulmadı).
+
+## 2026-07-24 seo intent turu: title+description yüksek-niyet keyword
+- Karar: pattern+collection title formatı "X sewing pattern · stitchu" -> "X · free PDF pattern · stitchu". Sebep: kullanıcı "free sewing pattern PDF" arıyor, ürün tam bu (paywall yok, gerçek indirilir PDF). 40/40 title'da free+PDF+pattern, hepsi hâlâ benzersiz, en uzun 74 char.
+- Karar: meta description sonuna "Free printable PDF pattern." CTA eklendi AMA sadece ~160 char altına sığıyorsa; sığmıyorsa editoryel lead kesilmeden korunur (dürüst, kırpma yok). 'free' taşıyan desc 0->10, en uzun 155 char, benzersizlik korundu.
+- KANIT: style-lint 0 ihlal, sıfır ölü-domain regresyonu, canlı title doğrulandı. ?v=123 canlı.
+- GERİ ALMA: ucuz (title/desc şablonu tek satır, regen).
