@@ -108,7 +108,7 @@ const SPEC_GROUPS = [
   // patch 3.12: pocket (cep). A patch pocket (a separate piece sewn onto the
   // outside + a placement mark) or a side-seam in-seam pocket (two bag pieces +
   // a mouth mark). Welt/besom/cargo/kangaroo stay honest → not offered here.
-  { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi']], for: () => true },
+  { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi'], ['slash', 'slash pocket (angled front)', 'eğik cep (ön hip)']], for: () => true },
   // patch 3.15: hem shape (etek ucu şekli). Reshapes the fitted lower edge into a
   // shirt-tail (sides up, center long) or high-low (front short, back long). Only
   // a fitted straight/A-line skirt/dress or a top hosts it; a gathered/pleated/
@@ -522,12 +522,19 @@ function showSpec() {
         const peplum = pickPeplum(seen);
         spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
-        // separate piece + a placement mark) and a side-seam in-seam pocket (two
-        // bag pieces + a mouth mark). A welt/besom/cargo/kangaroo pocket stays
-        // honest (pickPocket null). The block itself skips honestly when the host
-        // has no panel / no side seam (e.g. a cropped top for a side-seam bag).
+        // separate piece + a placement mark), a side-seam in-seam pocket (two bag
+        // pieces + a mouth mark), and a SLASH pocket (a diagonal front-hip mouth +
+        // a facing + a bag). A welt/besom/cargo/kangaroo pocket stays honest
+        // (pickPocket null). The block itself skips honestly when the host has no
+        // panel / no side seam (e.g. a cropped top for a side-seam bag).
         const pocket = pickPocket(seen);
-        spec.pocketStyle = pocket || 'none';
+        // A slash pocket needs a lower-body hip: a dress, or a fitted/A-line skirt
+        // (a gathered/pleated/circle skirt is a no-waist rectangle, and a bodice-
+        // only top has no hip). Gate it out otherwise (the engine also skips
+        // honestly); the pocket then falls back to the honest missing note.
+        const slashHostable = spec.garment === 'dress' ||
+          (spec.garment === 'skirt' && (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
+        spec.pocketStyle = (pocket === 'slash' && !slashHostable) ? 'none' : (pocket || 'none');
         // Cuff (manşet, patch 3.13): the engine now draws a button or ribbed band
         // at the wrist end of a full-length sleeve, the sleeve hem gathered in.
         // Only a real full-length sleeve (Straight, long/elbow) hosts one — a
