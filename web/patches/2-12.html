@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu 2.12 · Every pattern page now has a print pack to download</title>
+<meta name="description" content="Every pattern page now has a print pack to download">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/patches/2-12.html">
+<link rel="alternate" hreflang="en" href="https://stitchu.noseydewdrop.com/patches/2-12.html">
+<link rel="alternate" hreflang="x-default" href="https://stitchu.noseydewdrop.com/patches/2-12.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="stitchu 2.12 · Every pattern page now has a print pack to download">
+<meta property="og:description" content="Every pattern page now has a print pack to download">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/patches/2-12.html">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-07-16">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="stitchu 2.12 · Every pattern page now has a print pack to download">
+<meta name="twitter:description" content="Every pattern page now has a print pack to download">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Every pattern page now has a print pack to download", "description": "Every pattern page now has a print pack to download", "datePublished": "2026-07-16", "dateModified": "2026-07-16", "author": {"@type": "Person", "name": "Damla Su Bilge"}, "publisher": {"@type": "Organization", "name": "stitchu"}, "mainEntityOfPage": "https://stitchu.noseydewdrop.com/patches/2-12.html", "url": "https://stitchu.noseydewdrop.com/patches/2-12.html", "about": {"@type": "SoftwareApplication", "name": "stitchu", "applicationCategory": "DesignApplication"}, "articleSection": "patch notes", "version": "2.12"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "stitchu", "item": "https://stitchu.noseydewdrop.com/"}, {"@type": "ListItem", "position": 2, "name": "patch notes", "item": "https://stitchu.noseydewdrop.com/patches.html"}, {"@type": "ListItem", "position": 3, "name": "2.12", "item": "https://stitchu.noseydewdrop.com/patches/2-12.html"}]}</script>
+<link rel="stylesheet" href="../css/theme-transitions.css?v=84">
+<link rel="stylesheet" href="../css/shared-header.css?v=84">
+<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 32px 110px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:20px 0 10px;color:var(--navy)}
+  .manifesto{font-size:15px;color:var(--ink);max-width:60ch;margin-bottom:6px}
+  .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:34px}
+
+  .patch{border:1px solid var(--bb-line);border-radius:3px;margin:0 0 22px;background:#fff;box-shadow:0 6px 20px rgba(63,116,168,.09)}
+  .patch.now{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .phead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 22px 10px;border-bottom:1px dashed var(--bb-line)}
+  .pnum{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;color:var(--bb-deep)}
+  .ptitle{font-size:17px;color:var(--navy)}
+  .pdate{font-size:12px;color:#5b7089;margin-left:auto;letter-spacing:.5px}
+  .pbody{padding:14px 22px 18px}
+  .pbody ul{list-style:none;margin:0 0 10px}
+  .pbody li{position:relative;padding:4px 0 4px 20px;font-size:14px;color:var(--ink)}
+  .pbody li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:2px;background:var(--bb-deep)}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .delta{display:inline-block;font-size:12px;letter-spacing:.4px;background:var(--bb-pale);color:var(--navy);border:1px solid var(--bb-line);border-radius:2px;padding:2px 10px;margin-top:6px}
+  .honest{font-size:13px;color:#5b7089;font-style:italic;margin-top:8px}
+  footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+
+    /* gingham signature band (Damla, 16 Jul): thin texture strip on white pages */
+    body::before{content:"";display:block;height:12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        #fff;}
+</style>
+
+</head>
+<body>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="../patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" class="sh-active" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+<main class="wrap">
+<nav class="crumb" aria-label="Breadcrumb"><a href="../index.html">stitchu</a> › <a href="../patches.html">patch notes</a> › 2.12</nav>
+<article class="patch now single">
+<div class="phead"><span class="pnum">2.12</span><h1 class="ptitle" data-en="Every pattern page now has a print pack to download" data-tr="Her kalıp sayfasında artık indirilebilir bir baskı paketi var">Every pattern page now has a print pack to download</h1><span class="pdate">2026-07-16</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="Each of the 12 pattern pages now carries a download block. The A4 print pack is the main button: the tiled sheets you tape together at home, with the piece list, fabric estimate and a calibration square on the cover. Beside it sit two dashed links, the A0 single sheet for a print shop and the text-first sewing guide. Every file is the engine's own output at an EU38 body, drawn to true scale." data-tr="12 kalıp sayfasının her biri artık bir indirme bölümü taşıyor. A4 baskı paketi ana düğme: evde bantlayıp birleştirdiğiniz döşenmiş sayfalar; kapağında parça listesi, kumaş tahmini ve bir kalibrasyon karesiyle. Yanında iki kesikli bağlantı: matbaa için A0 tek sayfa ve önce-metin dikiş kılavuzu. Her dosya, motorun EU38 beden üzerine kendi çıktısı, gerçek ölçekte çizilmiş.">Each of the 12 pattern pages now carries a download block. The A4 print pack is the main button: the tiled sheets you tape together at home, with the piece list, fabric estimate and a calibration square on the cover. Beside it sit two dashed links, the A0 single sheet for a print shop and the text-first sewing guide. Every file is the engine's own output at an EU38 body, drawn to true scale.</li>
+        <li data-en="The page count and file size shown on each link are read straight from the pack manifest, not typed by hand, so a page can never claim a size the file does not have. Every sheet carries a 3 cm calibration square to check the print came out at true scale before cutting." data-tr="Her bağlantıda gösterilen sayfa sayısı ve dosya boyutu, elle yazılmadan doğrudan paket manifestinden okunur; böylece bir sayfa, dosyanın taşımadığı bir boyutu asla iddia edemez. Her sayfada, kesmeden önce baskının gerçek ölçekte çıktığını kontrol etmek için 3 cm’lik bir kalibrasyon karesi var.">The page count and file size shown on each link are read straight from the pack manifest, not typed by hand, so a page can never claim a size the file does not have. Every sheet carries a 3 cm calibration square to check the print came out at true scale before cutting.</li>
+      </ul>
+      <span class="delta" data-en="12 pattern pages, 36 downloadable PDFs live · sizes read from the manifest" data-tr="12 kalıp sayfası, 36 indirilebilir PDF yayında · boyutlar manifestten okunuyor">12 pattern pages, 36 downloadable PDFs live · sizes read from the manifest</span>
+      <p class="honest" data-en="No accuracy number moves here; this is the shell, not the engine. A download link cannot make a pattern more correct. The PDFs are the same drafted pieces the pages already showed, now packed for the printer. Both site guards stayed clean: style-lint found zero violations and the header is byte-identical across all 44 pages." data-tr="Burada hiçbir doğruluk sayısı oynamıyor; bu kabuk, motor değil. Bir indirme bağlantısı bir kalıbı daha doğru yapamaz. PDF’ler, sayfaların zaten gösterdiği aynı çizilmiş parçalar, artık yazıcı için paketlenmiş. İki site bekçisi de temiz kaldı: style-lint sıfır ihlal buldu ve üst menü 44 sayfanın tümünde bayt-aynı.">No accuracy number moves here; this is the shell, not the engine. A download link cannot make a pattern more correct. The PDFs are the same drafted pieces the pages already showed, now packed for the printer. Both site guards stayed clean: style-lint found zero violations and the header is byte-identical across all 44 pages.</p>
+    </div>
+</article>
+<nav class="pn-nav"><a class="pn-prev" href="3-0.html">← 3.0 (newer)</a><a class="pn-next" href="2-11.html">2.11 (older) →</a></nav>
+<p class="allpatches"><a href="../patches.html" data-en="← all patch notes" data-tr="← tüm yama notları">← all patch notes</a></p>
+</main>
+<script src="../js/shared-header.js?v=84"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu 3.15 · The engine now shapes the hem: shirt-tail and high-low.</title>
+<meta name="description" content="The engine now shapes the hem: shirt-tail and high-low.">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/patches/3-15.html">
+<link rel="alternate" hreflang="en" href="https://stitchu.noseydewdrop.com/patches/3-15.html">
+<link rel="alternate" hreflang="x-default" href="https://stitchu.noseydewdrop.com/patches/3-15.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="stitchu 3.15 · The engine now shapes the hem: shirt-tail and high-low.">
+<meta property="og:description" content="The engine now shapes the hem: shirt-tail and high-low.">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/patches/3-15.html">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-07-17">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="stitchu 3.15 · The engine now shapes the hem: shirt-tail and high-low.">
+<meta name="twitter:description" content="The engine now shapes the hem: shirt-tail and high-low.">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "The engine now shapes the hem: shirt-tail and high-low.", "description": "The engine now shapes the hem: shirt-tail and high-low.", "datePublished": "2026-07-17", "dateModified": "2026-07-17", "author": {"@type": "Person", "name": "Damla Su Bilge"}, "publisher": {"@type": "Organization", "name": "stitchu"}, "mainEntityOfPage": "https://stitchu.noseydewdrop.com/patches/3-15.html", "url": "https://stitchu.noseydewdrop.com/patches/3-15.html", "about": {"@type": "SoftwareApplication", "name": "stitchu", "applicationCategory": "DesignApplication"}, "articleSection": "patch notes", "version": "3.15"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "stitchu", "item": "https://stitchu.noseydewdrop.com/"}, {"@type": "ListItem", "position": 2, "name": "patch notes", "item": "https://stitchu.noseydewdrop.com/patches.html"}, {"@type": "ListItem", "position": 3, "name": "3.15", "item": "https://stitchu.noseydewdrop.com/patches/3-15.html"}]}</script>
+<link rel="stylesheet" href="../css/theme-transitions.css?v=84">
+<link rel="stylesheet" href="../css/shared-header.css?v=84">
+<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 32px 110px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:20px 0 10px;color:var(--navy)}
+  .manifesto{font-size:15px;color:var(--ink);max-width:60ch;margin-bottom:6px}
+  .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:34px}
+
+  .patch{border:1px solid var(--bb-line);border-radius:3px;margin:0 0 22px;background:#fff;box-shadow:0 6px 20px rgba(63,116,168,.09)}
+  .patch.now{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .phead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 22px 10px;border-bottom:1px dashed var(--bb-line)}
+  .pnum{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;color:var(--bb-deep)}
+  .ptitle{font-size:17px;color:var(--navy)}
+  .pdate{font-size:12px;color:#5b7089;margin-left:auto;letter-spacing:.5px}
+  .pbody{padding:14px 22px 18px}
+  .pbody ul{list-style:none;margin:0 0 10px}
+  .pbody li{position:relative;padding:4px 0 4px 20px;font-size:14px;color:var(--ink)}
+  .pbody li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:2px;background:var(--bb-deep)}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .delta{display:inline-block;font-size:12px;letter-spacing:.4px;background:var(--bb-pale);color:var(--navy);border:1px solid var(--bb-line);border-radius:2px;padding:2px 10px;margin-top:6px}
+  .honest{font-size:13px;color:#5b7089;font-style:italic;margin-top:8px}
+  footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+
+    /* gingham signature band (Damla, 16 Jul): thin texture strip on white pages */
+    body::before{content:"";display:block;height:12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        #fff;}
+</style>
+
+</head>
+<body>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="../patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" class="sh-active" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+<main class="wrap">
+<nav class="crumb" aria-label="Breadcrumb"><a href="../index.html">stitchu</a> › <a href="../patches.html">patch notes</a> › 3.15</nav>
+<article class="patch now single">
+<div class="phead"><span class="pnum">3.15</span><h1 class="ptitle" data-en="The engine now shapes the hem: shirt-tail and high-low." data-tr="Motor artık etek ucunu şekillendiriyor: gömlek eteği ve önü kısa arkası uzun.">The engine now shapes the hem: shirt-tail and high-low.</h1><span class="pdate">2026-07-17</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="A shirt-tail hem stays long at the center front and center back and curves up at the sides, the soft rounded hem of a shirt worn out. A high-low hem is short at the front and drops long at the back. The engine now reshapes the fitted lower edge itself for both: it lifts the side hem (or the front) along a smooth curve while the waist and the long edge stay put, and it lifts the front and back side hems to the same height so the side seams still meet when you sew them." data-tr="Gömlek eteği hem ortada önde ve arkada uzun kalır, yanlarda yukarı kavislenir, dışarıda giyilen bir gömleğin yumuşak yuvarlak eteği. Önü kısa arkası uzun hem ise önde kısadır ve arkada uzar. Motor artık ikisi için de oturan alt kenarı yeniden şekillendiriyor: yan eteği (ya da önü) yumuşak bir eğri boyunca kaldırıyor, bel ve uzun kenar yerinde kalıyor; ön ve arka yan etekleri aynı yüksekliğe kaldırıyor, böylece diktiğinde yan dikişler yine buluşuyor.">A shirt-tail hem stays long at the center front and center back and curves up at the sides, the soft rounded hem of a shirt worn out. A high-low hem is short at the front and drops long at the back. The engine now reshapes the fitted lower edge itself for both: it lifts the side hem (or the front) along a smooth curve while the waist and the long edge stay put, and it lifts the front and back side hems to the same height so the side seams still meet when you sew them.</li>
+      </ul>
+      <span class="delta" data-en="a new lower-edge shape · fitted straight and A-line skirts, dresses and tops" data-tr="yeni bir alt kenar şekli · oturan düz ve A kesim etekler, elbiseler ve üstler">a new lower-edge shape · fitted straight and A-line skirts, dresses and tops</span>
+      <p class="honest" data-en="This does not move the 54-photo benchmark: none of those photos is a shirt-tail or high-low hem, so the number holds at 34 of 54. It adds a shape the wider market asks for often, proven correct instead of claimed. Only the soft symmetric shirt-tail and the front-short back-long high-low are drawn; an asymmetric-diagonal or handkerchief hem, and a mullet on a gathered or circle skirt, stay honest. A cropped top is too short to curve without unbalancing the seams, so it is refused honestly rather than drawn wrong. The base draft is byte-identical with the hem straight, so no existing pattern changed: 23 engine tests pass, including a new check that confirms the center hem holds, the side hem lifts, and the front and back side seams still match; 20400 web drafts and 37800 vocabulary drafts pass with zero failures; the golden reference is unchanged to the millionth of a millimetre. Verified by rendering a shirt-tail top and a high-low dress and reading the printed pieces by eye." data-tr="Bu, 54 fotoğraflık kıyaslamayı oynatmıyor: o fotoğrafların hiçbiri gömlek eteği ya da önü kısa arkası uzun hem değil, bu yüzden sayı 54’te 34’te kalıyor. Daha geniş pazarın sık istediği bir şekli, iddia edilmek yerine kanıtlanarak ekliyor. Yalnızca yumuşak simetrik gömlek eteği ve önü kısa arkası uzun hem çiziliyor; asimetrik-diyagonal ya da mendil hem ile büzgülü veya çember etek üzerinde mullet hâlâ dürüst kalıyor. Crop üst, dikişleri bozmadan kavislenemeyecek kadar kısa, bu yüzden yanlış çizilmek yerine dürüstçe reddediliyor. Hem düzken temel çizim bayt-aynı, yani mevcut hiçbir kalıp değişmedi: 23 motor testi geçiyor; bunların arasında ortadaki eteğin durduğunu, yan eteğin kalktığını ve ön ile arka yan dikişlerin hâlâ eşleştiğini doğrulayan yeni bir kontrol var; 20400 web çizimi ve 37800 sözlük çizimi sıfır hatayla geçiyor; altın referans milimetrenin milyonda birine kadar değişmedi. Gömlek etekli bir üst ve önü kısa arkası uzun bir elbise render edilip basılı parçalar gözle okunarak doğrulandı.">This does not move the 54-photo benchmark: none of those photos is a shirt-tail or high-low hem, so the number holds at 34 of 54. It adds a shape the wider market asks for often, proven correct instead of claimed. Only the soft symmetric shirt-tail and the front-short back-long high-low are drawn; an asymmetric-diagonal or handkerchief hem, and a mullet on a gathered or circle skirt, stay honest. A cropped top is too short to curve without unbalancing the seams, so it is refused honestly rather than drawn wrong. The base draft is byte-identical with the hem straight, so no existing pattern changed: 23 engine tests pass, including a new check that confirms the center hem holds, the side hem lifts, and the front and back side seams still match; 20400 web drafts and 37800 vocabulary drafts pass with zero failures; the golden reference is unchanged to the millionth of a millimetre. Verified by rendering a shirt-tail top and a high-low dress and reading the printed pieces by eye.</p>
+    </div>
+</article>
+<nav class="pn-nav"><a class="pn-prev" href="3-8.html">← 3.8 (newer)</a><a class="pn-next" href="3-7.html">3.7 (older) →</a></nav>
+<p class="allpatches"><a href="../patches.html" data-en="← all patch notes" data-tr="← tüm yama notları">← all patch notes</a></p>
+</main>
+<script src="../js/shared-header.js?v=84"></script>
+</body>
+</html>
