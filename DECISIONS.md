@@ -122,3 +122,10 @@
 - KANIT: hiçbir CANLI kod silinen md'yi okumuyor (tam grep taraması temiz). Tek istisna komuta.mjs `read('DEVAM-FASHION.md')` idi → NABIZ.md'ye yönlendirildi (çalıştı, komuta.html üretildi, Neredeyiz kutusu doldu). Kod-sabiti gerekçesi taşıyan 3 rapor (k2/k4/f0-gusto) yanlışlıkla silinince HEAD'den restore edildi.
 - TEK GERÇEK SAYAÇ artık: reports/gate/kapsam-checkpoint.json (24/103). CLAUDE.md okuma sırası + sayaç bölümü yeniden yazıldı. Md'ler artık sayaç yazmaz, oraya işaret eder.
 - GERİ ALMA: silinen tracked md'ler git geçmişinde (ucuz restore); untracked engine md'leri gitti (dersleri DERSLER.md'de). Zip'ler birebir tekrardı, kayıp yok.
+
+## 2026-07-24 seo derinlik turu 2 + site geneli og:image kök onarımı
+- Karar: pattern-blog sayfalarına da (19) FAQ+FAQPage schema+difficulty+related eklendi (collection'la aynı derinlik, tek üretici gen-pattern-pages.mjs). Kelime 604->926. FAQ cevapları meta'nın gerçek verisinden (fabric metraj, parça, kapanış, beden), schema==görünür metin.
+- Karar: sitemap gen-style-pages.mjs onarıldı. Eskisi BOZUKTU: patches/ (61) ve collections/ detaylarını KAPSAMIYORDU + BASE ölü github.io idi -> her regen sitemap'i fakirleştirip yanlış domain'e çeviriyordu. Artık patches+collections dizinlerini tarar, changefreq+priority+bugünün lastmod'u ile 145 url, sıfır ölü domain.
+- KÖK ONARIM (yama değil): 6 üretici (gen-collections-page, gen-collection-pattern, gen-pattern-pages, gen-taste-collections, gen-guide, gen-vintage-page, gen-style-pages) hâlâ ölü nosey-dewdrop.github.io/stitchu BASE + hardcoded og/twitter image URL taşıyordu. Commit 257f9bd canonical/og:url'yi düzeltmiş ama og:IMAGE'ı ve üretici BASE'lerini kaçırmış -> her regen 62 canlı sayfada kırık og:image (sosyal kart 404) geri getiriyordu. TÜM üreticilerin BASE+og URL'si düzeltildi, hepsi yeniden basıldı. Site geneli ölü-domain 62->0.
+- KANIT: style-lint 0 ihlal, sitemap 143->145 (düşmedi arttı), canlı curl: FAQPage + doğru og:image + 145 url changefreq. ?v=122 canlı.
+- GERİ ALMA: ucuz (üreticiler tek kaynak, geri çevirip regen). Motor guard tetiklenmedi (engine/src'ye dokunulmadı).
