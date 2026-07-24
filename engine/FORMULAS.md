@@ -634,6 +634,53 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   "laced back → single tie / closed back" honest note when laceUpBackDrawn (both the
   closure-side 'lace-up' note and the backDetail 'lacedBack' note).
 
+## Wrap / surplice front (kruvaze / surplice ön) — opt-in
+- WHAT: a REAL crossed double front — the wrap-dress / surplice-bodice family —
+  NOT the wrap-front TIE (TiePlacement::WrapFront, which only adds a tie strip). The
+  LEFT and RIGHT front panels each extend PAST the center front to the opposite
+  side, so worn the right front laps over the left (women's convention) and the two
+  overlapping diagonal edges form the surplice V. `WrapFront { None, Surplice }`.
+  Opt-in (GarmentSpec.wrapFront); None → golden BYTE-IDENTICAL. wrapfront.hpp/.cpp,
+  post-pass in garment.cpp right BEFORE the tie block (so a composed wrap-front tie
+  lands its notch on the already-reshaped front) and before the cutting-line offset.
+- GEOMETRY: the on-fold half front is REBUILT. The drafted NECK EDGE (commands[0]
+  = CF-neck move, commands[1] = the neck edge) is kept BYTE-IDENTICAL — that is the
+  top of the surplice V and the neck facing is trued to it, so touching it would
+  break the facing match. Below the neck point the CF edge (the run of x≈0 vertices)
+  is replaced: the CF-waist corner (the x≈0 vertex with the largest y) is pushed out
+  to x = −wrapPastCF (dragging the waist/hem edge ACROSS the body centerline into the
+  wrap corner, its CF control points sliding out with it), then a single straight
+  WRAP EDGE runs from that wrap corner up to the CF-neck point — the clean surplice
+  diagonal. The front flips from "cut 1 on fold" to "cut 2 (mirror wrap)" (a wrap
+  OPENS at CF — it can't be on the fold); the Front Neck Facing mirrors the flip.
+- WRAP ALLOWANCE (source: Aldrich "Metric Pattern Cutting" wrap block + Armstrong
+  surplice/wrap front — each front laps past CF to at least the opposite side-front
+  so the crossed fronts give real coverage): wrapPastCF = frontChestWidth (bust/4,
+  passed in like the patch pocket) × kWrapPastCFShare (0.50), clamped to [90, 260] mm.
+  For EU38 (bust 88) that is 110 mm past CF.
+- OVERLAP proof: cut 2 mirror. This panel reaches x ∈ [−wrapPastCF, side]; its
+  mirror reaches [−side, +wrapPastCF]. BOTH cover CF (x = 0), so the two panels
+  overlap across the band [−wrapPastCF, +wrapPastCF] = 2·wrapPastCF wide, centered on
+  CF — a real, wearable crossover (wrapfront_check measures the panel's most-negative
+  x and asserts the mirror covers +that).
+- HOST: a dress/top bodice FRONT (dart panel "Bodice/Top Front", or the princess
+  "Bodice/Top Center Front" — it carries the CF edge + the neck). A skirt / bodiceless
+  draft is an honest NO-OP with a guide note (the garment gate only calls the block
+  for dress/top; the block itself refuses if the front center isn't drafted on x≈0).
+- DONNING: the wrap IS the opening (the fronts lap over each other), so a wrap dress
+  drops the redundant invisible CB zip (WrapFrontBlock::opensForDonning, mirrored in
+  garment.cpp's backAlreadyOpens + wearability::hasDonningOpening). Composes with a
+  wrap-front TIE (the tie cinches the crossed front) and with a cup seam.
+- Vision→spec (create.js pickWrapFront): reads a wrap / surplice / crossover /
+  faux-wrap / cache-cœur / kruvaze FRONT term in oov / details / closure.location →
+  surplice; a wrap SKIRT or wrap COAT (a different, undrawn build) stays honest.
+  Gated to a non-skirt host. A manual "wrap / surplice front" picker covers the
+  no-photo path. missing.js suppresses the wrap/surplice honest note when
+  wrapFrontDrawn. validateSpecCross refuses a wrapFront on a skirt (no bodice).
+  wrapfront_check proves: None byte-identical; Surplice yields the reshaped cut-2
+  mirror front lapping past CF with the surplice V + a trued/wearable draft; a skirt
+  host is an honest no-op.
+
 ## Back hem slit / walking vent (arka etek yırtmacı) — opt-in (BENCHMARK-58 Loop M1)
 - WHAT: a walking slit (vent) rising from the hem up the CENTER-BACK seam of a
   fitted/straight skirt or dress back, so the wearer can walk. `HemSlit { None,

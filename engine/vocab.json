@@ -21,6 +21,7 @@
     "gatherZone": { "type": "int", "enum": "GatherZone", "values": ["neckline", "bust", "waist", "sleeve"] },
     "backOpening": { "type": "int", "enum": "BackOpening", "values": ["none", "round", "lowV", "square", "keyhole"] },
     "laceUpBack": { "type": "int", "enum": "LaceUpBack", "values": ["none", "corset"] },
+    "wrapFront": { "type": "int", "enum": "WrapFront", "values": ["none", "surplice"] },
     "backSlit": { "type": "int", "enum": "HemSlit", "values": ["none", "vent", "slit"] },
     "ruffledStraps": { "type": "int", "enum": "StrapStyle", "values": ["none", "ruffled", "wide", "spaghetti"] },
     "peplum": { "type": "int", "enum": "PeplumStyle", "values": ["none", "full", "half", "pointed"] },

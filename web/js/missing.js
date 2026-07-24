@@ -408,11 +408,20 @@ export function missingFeatures(seen, lang) {
     /(corset|lace-?up|laced|eyelet|grommet)/i.test(t) &&
     /back|corset|bodice|lacing|eyelet|grommet/i.test(t) &&
     !/front[\s-]?lace|shoulder[\s-]?lace|side[\s-]?lace/i.test(t);
+  // wrapfront.cpp: a true wrap / surplice front is now drawn (the front reshaped
+  // into a crossed double front, cut 2 mirror, surplice V), so an outOfVocab term
+  // naming a wrap / surplice / crossover / faux-wrap FRONT is no longer missing. A
+  // wrap SKIRT (lower body) or a wrap COAT (outerwear) is a different construction
+  // the engine does NOT draft here and stays honest.
+  const wrapFrontTerm = (t) =>
+    /surplice|cross[\s-]?over|crossover|faux[\s-]?wrap|cache[\s-]?c(o|œ)eur|kruvaze|wrap[\s-]?(front|bodice|dress|top)|\bwrap\b/i.test(t) &&
+    !/wrap[\s-]?skirt|coat|jacket|robe|kimono|cardigan/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
     if (seen.laceUpBackDrawn && laceUpTerm(label)) continue;
+    if (seen.wrapFrontDrawn && wrapFrontTerm(label)) continue;
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (seen.peplumDrawn && peplumTerm(label)) continue;

@@ -59,6 +59,9 @@ inline constexpr int kBackOpeningCount = 5;
 // LaceUpBack (int)
 inline constexpr const char* kLaceUpBack[] = { "none", "corset" };
 inline constexpr int kLaceUpBackCount = 2;
+// WrapFront (int)
+inline constexpr const char* kWrapFront[] = { "none", "surplice" };
+inline constexpr int kWrapFrontCount = 2;
 // HemSlit (int)
 inline constexpr const char* kBackSlit[] = { "none", "vent", "slit" };
 inline constexpr int kBackSlitCount = 3;

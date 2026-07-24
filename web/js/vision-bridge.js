@@ -147,6 +147,31 @@ export function pickLaceUpBack(seen) {
   return 0;
 }
 
+// Map the vision's fields to a TRUE wrap / surplice front (wrapfront.cpp). The
+// engine reshapes the FRONT bodice into a crossed double front (each front laps
+// past CF into a diagonal wrap edge, cut 2 mirror, surplice V). A wrap reads as a
+// FRONT cue — most reliably in the honesty channel (a "wrap"/"surplice"/
+// "crossover"/"faux wrap"/"kruvaze" phrase) or the details sentence — and usually
+// pairs with a vNeck and a waist/side tie. It is DISTINCT from a corset lace-up
+// (a back closure) and from a plain waist bow. A jacket-style "wrap coat" or a
+// "wrap skirt" is a different (undrawn) build — require a FRONT/bodice/dress
+// context and reject a skirt/coat-only phrase. Returns 1 (Surplice) or 0.
+export function pickWrapFront(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+    seen.closure && seen.closure.location,
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A wrap / surplice / crossover / faux-wrap / cache-coeur / kruvaze FRONT.
+  const isWrap = /surplice|cross[\s-]?over|crossover|faux[\s-]?wrap|cache[\s-]?c(o|œ)eur|kruvaze|wrap[\s-]?(front|bodice|dress|top|over)|\bwrap\b/.test(words);
+  if (!isWrap) return 0;
+  // A wrap SKIRT (lower body only) or a wrap COAT/robe (outerwear) is a different
+  // construction the engine does not draft as a bodice surplice — stay honest.
+  if (/wrap[\s-]?(skirt)/.test(words) && !/dress|bodice|top|surplice|cross/.test(words)) return 0;
+  if (/(coat|jacket|robe|kimono|cardigan)/.test(words) && !/dress|surplice|cross|bodice/.test(words)) return 0;
+  return 1;
+}
+
 // Map the vision's oov terms to a back hem slit / walking vent (Loop M1). The
 // engine cuts the back with a center-back seam and opens a walking slit from the
 // hem; a "vent"/"kick" reads as a lapped walking vent, else a plain slit (the

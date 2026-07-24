@@ -74,6 +74,7 @@ inline void validateSpecCross(const GarmentSpec& spec) {
             spec.buttonRow != 0                                   ? "buttonRow" :
             spec.backDetail != 0                                  ? "backDetail" :
             spec.shoulderStyle != 0                               ? "shoulderStyle" :
+            spec.wrapFront != 0                                   ? "wrapFront" :
             spec.edgeFinish != 0                                  ? "edgeFinish" : nullptr;
         if (bodiceField)
             throw std::invalid_argument(

@@ -26,6 +26,7 @@ export function gatherTypeValue(spec) { return intValue('gatherType', spec && sp
 export function gatherZoneValue(spec) { return intValue('gatherZone', spec && spec.gatherZone); }
 export function backOpeningValue(spec) { return intValue('backOpening', spec && spec.backOpening); }
 export function laceUpBackValue(spec) { return intValue('laceUpBack', spec && spec.laceUpBack); }
+export function wrapFrontValue(spec) { return intValue('wrapFront', spec && spec.wrapFront); }
 export function backSlitValue(spec) { return intValue('backSlit', spec && spec.backSlit); }
 export function ruffledStrapsValue(spec) { return intValue('ruffledStraps', spec && spec.ruffledStraps); }
 export function peplumValue(spec) { return intValue('peplum', spec && spec.peplum); }
@@ -102,6 +103,7 @@ function engineSpec(spec) {
     gatherZone: gatherZoneValue(spec),
     backOpening: backOpeningValue(spec),
     laceUpBack: laceUpBackValue(spec),
+    wrapFront: wrapFrontValue(spec),
     backSlit: backSlitValue(spec),
     ruffledStraps: ruffledStrapsValue(spec),
     peplum: peplumValue(spec),

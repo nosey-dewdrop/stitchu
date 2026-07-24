@@ -10,6 +10,7 @@
 #include "offshoulder.hpp"
 #include "tie.hpp"
 #include "openback.hpp"
+#include "wrapfront.hpp"
 #include "validator.hpp"
 
 namespace stitchu {
@@ -88,6 +89,10 @@ bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
     // A corset lace-up back leaves the CB gap open — the body enters through the
     // unlaced back, then the cord is laced up. A real donning opening.
     if (LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack))) return true;
+    // A true wrap / surplice front IS the opening — the two fronts lap over each
+    // other and open at the wrap, so the garment is donnable without a zip (a wrap
+    // dress). Distinct from (and composes with) the wrap-front TIE above.
+    if (WrapFrontBlock::opensForDonning(static_cast<WrapFront>(spec.wrapFront))) return true;
     // A back tie-back or back-waist closure opens/ties at the back; a front-neck
     // bow or cuff tie is decorative and does NOT let a head through.
     const auto tie = static_cast<TiePlacement>(spec.tieClosure);

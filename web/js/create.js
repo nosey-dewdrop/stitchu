@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=114';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=114';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=114';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -62,6 +62,11 @@ const SPEC_GROUPS = [
   // facing strip + trued eyelet columns + a lacing cord. Only a fitted dress/top
   // back hosts one (needs a fitted bodice back).
   { key: 'laceUpBack', label: 'lace-up back', trLabel: 'bağcıklı sırt', options: [['none', 'none', 'yok'], ['corset', 'corset lace-up', 'korse bağcık']], for: (s) => s.garment !== 'skirt' },
+  // wrapfront.cpp: true wrap / surplice front (kruvaze — the wrap-dress family). The
+  // FRONT is reshaped into a crossed double front (each front laps past CF into a
+  // diagonal wrap edge, cut 2 mirror, surplice V). Only a dress/top (needs a front
+  // bodice). Pairs naturally with the wrap-front tie above.
+  { key: 'wrapFront', label: 'wrap / surplice front', trLabel: 'kruvaze ön', options: [['none', 'none', 'yok'], ['surplice', 'surplice wrap', 'kruvaze (çapraz ön)']], for: (s) => s.garment !== 'skirt' },
   // vocab 2026-07-17: back detail (arka pelerin/fırfır — Damla "arkası pelerinli/
   // fırfırlı"). A separate cut piece at the back neck: gathered ruffle, draped
   // cape, or circular flounce. Only a dress/top (needs a back bodice).
@@ -123,7 +128,7 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
-  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', backSlit: 'none',
+  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', wrapFront: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
   cupSeam: 'none', yoke: 'none', boxPleat: 'none',
 };
@@ -481,6 +486,16 @@ function showSpec() {
         const laced = pickLaceUpBack(seen);
         const lacedHostable = spec.garment !== 'skirt';
         spec.laceUpBack = (laced && lacedHostable) ? 'corset' : 'none';
+        // True wrap / surplice front (kruvaze, wrapfront.cpp): the engine now
+        // reshapes the FRONT bodice into a crossed double front — each front laps
+        // past CF into a diagonal wrap edge, cut 2 mirror-image, forming the surplice
+        // V (the wrap-dress family). Only a dress/top with a front bodice hosts one;
+        // a skirt is refused honestly by the engine, so gate the same way (a wrap read
+        // on a skirt stays in the honesty channel). A wrap-front TIE composes on top
+        // to cinch it. Mirror the engine host gate exactly.
+        const wrap = pickWrapFront(seen);
+        const wrapHostable = spec.garment !== 'skirt';
+        spec.wrapFront = (wrap && wrapHostable) ? 'surplice' : 'none';
         // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
         // cuts the back with a center-back seam and opens a walking slit from the
         // hem. Only a fitted straight/A-line skirt hosts one; a gathered/pleated
@@ -633,6 +648,10 @@ function showSpec() {
           // strip + two trued eyelet columns + a lacing cord), so the honesty layer
           // must NOT list the laced back as missing / degrade it to a single tie.
           laceUpBackDrawn: !!(spec.laceUpBack && spec.laceUpBack !== 'none'),
+          // wrapfront.cpp: a true wrap / surplice front is now DRAWN (the front
+          // reshaped into a crossed double front, cut 2 mirror, surplice V), so the
+          // honesty layer must NOT degrade a wrap/surplice read to a mere tie strip.
+          wrapFrontDrawn: !!(spec.wrapFront && spec.wrapFront !== 'none'),
           // Loop M1: a back hem slit / walking vent is now DRAWN (CB seam +
           // top-point bar tack + a lapped extension for a vent), so the honesty
           // layer must NOT list the back slit as missing. A front/side slit stays

@@ -390,6 +390,17 @@ struct GarmentSpec {
     // zipper is stamped). 0 = None, 1 = Corset. See laceupback.hpp / FORMULAS.md
     // "Corset lace-up back".
     int laceUpBack = 0; // LaceUpBack enum value; 0 = None
+    // Opt-in true wrap / surplice crossover front (kruvaze / surplice ön): a REAL
+    // crossed double front (the wrap-dress / surplice-bodice family), not a tie.
+    // The on-fold half front is REBUILT as a full asymmetric panel whose CF edge is
+    // extended past center front into a diagonal WRAP edge that crosses the body
+    // centerline; the front is then cut 2 mirror-image (left-wrap + right-wrap) so
+    // the two panels lap over each other at CF and the drafted neck edge meets the
+    // wrap edge as a surplice V. Off by default (None) → byte-identical. Only a
+    // dress/top bodice front (dart or princess center) hosts one; a skirt is refused
+    // honestly. The wrap IS the donning opening (no CB zip). 0 = None, 1 = Surplice.
+    // See wrapfront.hpp / FORMULAS.md "Wrap / surplice front".
+    int wrapFront = 0; // WrapFront enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

@@ -448,6 +448,12 @@
             "corset"
           ]
         },
+        "wrapFront": {
+          "enum": [
+            "none",
+            "surplice"
+          ]
+        },
         "backSlit": {
           "enum": [
             "none",

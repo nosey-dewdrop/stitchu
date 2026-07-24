@@ -27,6 +27,7 @@
 #include "sleeve.hpp"
 #include "strap.hpp"
 #include "tie.hpp"
+#include "wrapfront.hpp"
 
 namespace stitchu {
 
@@ -672,6 +673,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PlacketBlock::apply(pattern, 0.0, asymPlacket ? PlacketBlock::asymOffset : 0.0);
     }
+    // Opt-in true wrap / surplice front (kruvaze / surplice ön): reshapes the
+    // FRONT bodice panel into a crossed double front — the CF edge is extended past
+    // the center front into a diagonal wrap edge, the panel is cut 2 mirror-image,
+    // and the two fronts lap over each other at CF (the wrap-dress family). Post-
+    // pass on the finished draft, so the base is byte-identical with it off
+    // (wrapFront == None). Only a dress/top bodice front hosts one; a skirt is
+    // refused honestly. Runs BEFORE the tie pass so a composed wrap-front tie lands
+    // its placement notch on the ALREADY-reshaped front, and BEFORE the cutting-line
+    // offset so the wrapped edge gets its own cut line. The wrap allowance scales
+    // from the drafted front quarter (bust/4, like the patch pocket).
+    if (spec.wrapFront != static_cast<int>(WrapFront::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        WrapFrontBlock::apply(pattern, static_cast<WrapFront>(spec.wrapFront), m.bustMM() / 4.0);
+    }
     // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): adds
     // separate tie pieces + a placement notch. Post-pass on the finished draft,
     // so the base is byte-identical with it off (tieClosure == None). Only
@@ -932,11 +947,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // An exposed zip on CF or CB opens that seam for donning (a visible zip is a
     // real closure, not just decoration).
     const bool exposedZipOpens = spec.exposedZip != static_cast<int>(ExposedZip::None);
+    // A wrap / surplice front opens at the FRONT (the two fronts lap over each
+    // other), so the dress does not also need a redundant invisible CB zipper.
+    const bool wrapOpens =
+        WrapFrontBlock::opensForDonning(static_cast<WrapFront>(spec.wrapFront));
     const bool backAlreadyOpens =
         OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
         LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack)) ||
         spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack ||
-        buttonRowOpens || exposedZipOpens;
+        buttonRowOpens || exposedZipOpens || wrapOpens;
     annotateTechnical(pattern,
         /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
 
