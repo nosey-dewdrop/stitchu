@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>stitchu — wearable render mock</title>
+<style>
+  body{margin:0;background:#eef1f5;font-family:'Helvetica Neue',Arial,sans-serif;color:#1f3a5f}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-weight:600;letter-spacing:.5px;font-size:22px;margin:0 0 6px}
+  .sub{color:#5c7aa0;font-size:14px;margin:0 0 36px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .card{background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(31,58,95,.10);overflow:hidden}
+  .cap{padding:16px 20px;border-top:1px solid #eef1f5;font-size:13px;color:#5c7aa0}
+  .cap b{color:#1f3a5f;font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-size:12px}
+  svg{display:block;width:100%;height:auto;background:#f7f4ef}
+  @media(max-width:760px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Giyilebilir görsel — iki yön</h1>
+  <p class="sub">Aynı empire elbise. Solda renkli + gölgeli düz çizim (Stardoll ikonu gibi), sağda manken üzerinde. Motora dokunulmadı; bu sadece "böyle görünür" örneği.</p>
+  <div class="row">
+
+    <!-- ============ MOCK A: colored + shaded flat ============ -->
+    <div class="card">
+      <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- fabric body: soft coral gradient with a center highlight -->
+          <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#e88a72"/>
+            <stop offset="0.42" stop-color="#f6b3a0"/>
+            <stop offset="0.5" stop-color="#fbc9ba"/>
+            <stop offset="0.58" stop-color="#f6b3a0"/>
+            <stop offset="1" stop-color="#e07d63"/>
+          </linearGradient>
+          <linearGradient id="skirtShade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="1" stop-color="#b8543b" stop-opacity="0.28"/>
+          </linearGradient>
+        </defs>
+        <!-- dress body (empire silhouette, filled) -->
+        <g transform="translate(150 46) scale(1.02)">
+          <path d="M 0 12 Q 28.6 15 52 4 L 78 12.3 C 78 38.3 86 66 74 92
+                   C 72 53 60 77 60 99 C 66.5 169 98.9 314 114 349
+                   Q 57 359 0 359 Q -57 359 -114 349
+                   C -98.9 314 -66.5 169 -60 99 C -60 77 -72 53 -74 92
+                   C -86 66 -78 38.3 -78 12.3 L -52 4 Q -28.6 15 0 12 Z"
+                fill="url(#cloth)"/>
+          <!-- skirt bottom shading for volume -->
+          <path d="M -60 99 C -66.5 169 -98.9 314 -114 349 Q -57 359 0 359
+                   Q 57 359 114 349 C 98.9 314 66.5 169 60 99 Z"
+                fill="url(#skirtShade)"/>
+          <!-- soft drape folds on the skirt -->
+          <g stroke="#c96a4f" stroke-width="1.4" fill="none" opacity="0.5" stroke-linecap="round">
+            <path d="M -28 120 C -34 200 -50 300 -60 344"/>
+            <path d="M 0 120 C 0 210 0 300 0 350"/>
+            <path d="M 28 120 C 34 200 50 300 60 344"/>
+            <path d="M -50 130 C -60 210 -80 300 -92 340"/>
+            <path d="M 50 130 C 60 210 80 300 92 340"/>
+          </g>
+          <!-- empire seam -->
+          <path d="M -60 99 L 60 99" stroke="#c96a4f" stroke-width="1.6" opacity="0.7"/>
+          <!-- gathered bust shading -->
+          <g stroke="#c96a4f" stroke-width="1" opacity="0.55" stroke-linecap="round">
+            <path d="M -40 26 L -38 92"/><path d="M -26 22 L -24 94"/>
+            <path d="M -12 20 L -11 95"/><path d="M 0 19 L 0 95"/>
+            <path d="M 12 20 L 11 95"/><path d="M 26 22 L 24 94"/>
+            <path d="M 40 26 L 38 92"/>
+          </g>
+          <!-- neckline + shoulder highlight -->
+          <path d="M 0 12 Q 28.6 15 52 4" fill="none" stroke="#fff" stroke-width="1.4" opacity="0.6"/>
+          <path d="M 0 12 Q -28.6 15 -52 4" fill="none" stroke="#fff" stroke-width="1.4" opacity="0.6"/>
+          <!-- crisp outline on top -->
+          <path d="M 0 12 Q 28.6 15 52 4 L 78 12.3 C 78 38.3 86 66 74 92
+                   C 72 53 60 77 60 99 C 66.5 169 98.9 314 114 349
+                   Q 57 359 0 359 Q -57 359 -114 349
+                   C -98.9 314 -66.5 169 -60 99 C -60 77 -72 53 -74 92
+                   C -86 66 -78 38.3 -78 12.3 L -52 4 Q -28.6 15 0 12 Z"
+                fill="none" stroke="#8a3f2c" stroke-width="2.2" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="cap"><b>A · Renkli düz çizim</b><br>Kumaş rengi, gölge, drape kıvrımları, buzgu — Stardoll/Sims kıyafet ikonu hissi. Hızlı, motorun siluetine giydirilir.</div>
+    </div>
+
+    <!-- ============ MOCK B: on a figure ============ -->
+    <div class="card">
+      <svg viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cloth2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#e88a72"/>
+            <stop offset="0.5" stop-color="#fbc9ba"/>
+            <stop offset="1" stop-color="#e07d63"/>
+          </linearGradient>
+        </defs>
+        <!-- croquis body -->
+        <g fill="#eaddce" stroke="#c9b39a" stroke-width="1">
+          <!-- head -->
+          <ellipse cx="150" cy="40" rx="19" ry="23"/>
+          <!-- neck -->
+          <rect x="143" y="60" width="14" height="16" rx="6"/>
+          <!-- arms -->
+          <path d="M 108 96 C 96 150 92 210 96 250 L 104 250 C 104 208 108 154 120 104 Z"/>
+          <path d="M 192 96 C 204 150 208 210 204 250 L 196 250 C 196 208 192 154 180 104 Z"/>
+          <!-- legs -->
+          <path d="M 138 350 C 136 380 134 400 133 410 L 145 410 C 147 392 149 372 150 352 Z"/>
+          <path d="M 162 350 C 164 380 166 400 167 410 L 155 410 C 153 392 151 372 150 352 Z"/>
+        </g>
+        <!-- dress on the body -->
+        <g transform="translate(150 82) scale(0.92)">
+          <path d="M 0 12 Q 28.6 15 52 4 L 78 12.3 C 78 38.3 86 66 74 92
+                   C 72 53 60 77 60 99 C 66.5 169 98.9 314 114 349
+                   Q 57 359 0 359 Q -57 359 -114 349
+                   C -98.9 314 -66.5 169 -60 99 C -60 77 -72 53 -74 92
+                   C -86 66 -78 38.3 -78 12.3 L -52 4 Q -28.6 15 0 12 Z"
+                fill="url(#cloth2)"/>
+          <path d="M -60 99 L 60 99" stroke="#c96a4f" stroke-width="1.6" opacity="0.7"/>
+          <g stroke="#c96a4f" stroke-width="1.3" fill="none" opacity="0.45" stroke-linecap="round">
+            <path d="M -28 120 C -34 200 -50 300 -60 344"/>
+            <path d="M 0 120 C 0 210 0 300 0 350"/>
+            <path d="M 28 120 C 34 200 50 300 60 344"/>
+          </g>
+          <g stroke="#c96a4f" stroke-width="1" opacity="0.5" stroke-linecap="round">
+            <path d="M -26 22 L -24 94"/><path d="M 0 19 L 0 95"/><path d="M 26 22 L 24 94"/>
+          </g>
+          <path d="M 0 12 Q 28.6 15 52 4 L 78 12.3 C 78 38.3 86 66 74 92
+                   C 72 53 60 77 60 99 C 66.5 169 98.9 314 114 349
+                   Q 57 359 0 359 Q -57 359 -114 349
+                   C -98.9 314 -66.5 169 -60 99 C -60 77 -72 53 -74 92
+                   C -86 66 -78 38.3 -78 12.3 L -52 4 Q -28.6 15 0 12 Z"
+                fill="none" stroke="#8a3f2c" stroke-width="2.2" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="cap"><b>B · Manken üzerinde</b><br>Aynı elbise bir bedene giydirilmiş (croquis). "Bunu biri giyer" hissi. Etsy fotoğrafının çizim karşılığı.</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -63,3 +63,7 @@ design_patterns/
 # calibration source. The MEASURED RATIOS live in contract/figure-bands.json with
 # source attribution; the raster stays out of the public repo (same rule as benchmark-58).
 fashion-flat-models/
+
+# devasa arşivler repoya girmez (2026-07-24 temizlik)
+*.zip
+Arşiv.zip

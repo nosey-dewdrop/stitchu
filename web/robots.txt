@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nosey-dewdrop.github.io/stitchu/sitemap.xml
+Sitemap: https://stitchu.noseydewdrop.com/sitemap.xml

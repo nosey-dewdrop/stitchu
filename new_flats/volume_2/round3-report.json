@@ -1,0 +1,93 @@
+{
+  "round": 3,
+  "volume": 2,
+  "body": { "bust": 88, "waist": 70, "hip": 94, "shoulder": 37, "backLength": 40.5, "armLength": 58, "neck": 35 },
+  "engine": "engine/dist/stitchu-engine.js (cup seam EXTENDED to include halter (sleeveless princess); NEW laceUpBack:1 corset lace-up back = eyelet column marked on CB edge + continuous Lacing Cord piece, composes with cup seam; both bridge-wired)",
+  "resultShapeNote": "draftJSON returns a JSON STRING; parse it. top keys {pattern, issues}; error absent on success. pieces at pattern.pieces[].name.",
+  "tally": { "wearable": 13, "partial": 3, "outOfScope": 2, "skip": 2, "total": 20, "drafted": 17 },
+  "delta_vs_round2": {
+    "count": { "wearable": 2, "partial": -2, "outOfScope": 0, "skip": 0, "summary": "+2 partial->wearable: #13 (lace-up back), #15 (lace-up back + halter cups together)" },
+    "faithfulness": { "gain": 1, "summary": "halter bustier cup class now draws horizontal cup seam (fidelity, not a new wearable)" }
+  },
+  "capabilities": {
+    "laceUpBack": {
+      "fires": "garment dress/top, shaping princess OR dart, laceUpBack:1",
+      "producesLacingCordPiece": true,
+      "lacingCordCutInstruction": "cut 1 rectangle 54 x 1252 mm (finished 12 x 1222 mm), one continuous lace, criss-cross between the two eyelet columns and tie off at the top",
+      "eyeletsAsMarkings": true,
+      "eyeletColumnCount": 13,
+      "eyeletSpacingMM": 29,
+      "replacesBackTie": true,
+      "note": "eyelets are diamond markings punched down the CB back edge (x~17-23), NOT a separate cut piece (correct). laceUpBack replaces tieClosure:4 back tie; use one or the other."
+    },
+    "halterCup": {
+      "fires": "neckline:halter, shaping:princess, cupSeam:1 (top or dress)",
+      "stillSuppressed": ["shaping:dart"],
+      "proof": [
+        { "case": "halter+princess+cup top", "pieces": 8, "cupPresent": true, "issues": [] },
+        { "case": "halter+princess+cup dress", "pieces": 10, "cupPresent": true, "issues": [] },
+        { "case": "halter+dart+cup top", "pieces": 3, "cupPresent": false, "issues": [] }
+      ]
+    }
+  },
+  "movedFlats": [
+    {
+      "id": 13, "file": "Ekran Resmi 2026-07-23 19.37.11.png",
+      "verdict": "WEARABLE", "verdictChange": "PARTIAL -> WEARABLE (via lace-up back)",
+      "movedVia": "laceUpBack:1",
+      "spec": { "garment": "dress", "shaping": "princess", "neckline": "sweetheart", "sleeveStyle": "none", "ruffledStraps": 2, "laceUpBack": 1, "skirtStyle": "halfCircle", "skirtLength": "mini" },
+      "error": null, "issues": [], "pieceCount": 8,
+      "lacingCordInPieceList": true, "eyeletSeparatePiece": false, "eyeletAsMarking": true,
+      "pieces": ["Bodice Center Front","Bodice Side Front","Bodice Center Back","Bodice Side Back","Bias binding (neckline + armholes)","Skirt Panel (quarter circle)","Lacing Cord (korse bağcığı)","Wide Strap"],
+      "note": "Round 2 collapsed laced back to single Back Tie; now 13-eyelet column on CB + criss-cross Lacing Cord piece. laceUpBack replaces tieClosure:4."
+    },
+    {
+      "id": 15, "file": "Ekran Resmi 2026-07-23 19.37.37.png",
+      "verdict": "WEARABLE", "verdictChange": "PARTIAL -> WEARABLE (via lace-up back AND halter cups together)",
+      "movedVia": ["laceUpBack:1", "cupSeam:1 under halter", "shaping:princess"],
+      "spec": { "garment": "top", "shaping": "princess", "neckline": "halter", "sleeveStyle": "none", "cupSeam": 1, "laceUpBack": 1, "topLength": "hip" },
+      "error": null, "issues": [], "pieceCount": 9,
+      "lacingCordInPieceList": true, "cupPresent": true, "eyeletSeparatePiece": false, "eyeletAsMarking": true,
+      "pieces": ["Upper Cup Center Front","Lower Cup Center Front","Front Body Center Front","Upper Cup Side Front","Lower Cup Side Front","Front Body Side Front","Top Back","Bias binding (halter)","Lacing Cord (korse bağcığı)"],
+      "note": "Needed BOTH new capabilities. Round 2 dropped cup (halter not allowed) AND collapsed laced back to one tie. Requires shaping:princess for cup (dart still drops it)."
+    }
+  ],
+  "faithfulnessUpgrades": [
+    { "name": "halter bustier cup class", "flats": [15], "isNewWearable": false,
+      "note": "any halter/strapless princess bustier now draws the horizontal cup seam; fidelity gain only (no volume_2 flat beyond #15 depends on it)." }
+  ],
+  "unchangedPartials": [
+    { "id": 8, "verdict": "PARTIAL", "pieceCount": 7, "issues": [], "drop": "angled slash pocket still Pocket Bag (side-seam)", "tag": "VOCAB-GAP" },
+    { "id": 10, "verdict": "PARTIAL", "pieceCount": 4, "issues": [], "drop": "all-around dropped-waist flounce still Back Flounce only (back-only)", "tag": "CAPABILITY" },
+    { "id": 17, "verdict": "PARTIAL", "pieceCount": 4, "issues": [], "drop": "surplice crossover still a Wrap Front Tie strip", "tag": "CAPABILITY" }
+  ],
+  "outOfScope": [
+    { "id": 9, "reason": "asymmetric one-shoulder + diagonal ruching" },
+    { "id": 14, "reason": "asymmetric one-shoulder skirt" }
+  ],
+  "wearablesReconfirmed": [
+    { "id": 1, "pieces": 9, "issues": [] }, { "id": 2, "pieces": 5, "issues": [] }, { "id": 3, "pieces": 6, "issues": [] },
+    { "id": 4, "pieces": 12, "issues": [] }, { "id": 6, "pieces": 7, "issues": [] }, { "id": 11, "pieces": 7, "issues": [] },
+    { "id": 12, "pieces": 6, "issues": [] }, { "id": 16, "pieces": 12, "issues": [] }, { "id": 18, "pieces": 8, "issues": [] },
+    { "id": 19, "pieces": 7, "issues": [] }, { "id": 20, "pieces": 6, "issues": [] }
+  ],
+  "round4Backlog": [
+    { "rank": 1, "tag": "CAPABILITY", "name": "True wrap / surplice crossover front", "unlocks": [17], "flatsUnlocked": 1,
+      "why": "tieClosure:7 only adds a tie strip; no crossed-over double front panel. A whole wrap-front garment family (dresses+tops), not a one-off. Highest remaining value now that the 2-flat lace-up item cleared.",
+      "highestValuePick": true },
+    { "rank": 2, "tag": "CAPABILITY", "name": "All-around / tiered dropped-waist flounce", "unlocks": [10], "flatsUnlocked": 1, "touches": [2] },
+    { "rank": 3, "tag": "VOCAB-GAP", "name": "Angled / slash pocket", "unlocks": [8], "flatsUnlocked": 1, "cheap": true }
+  ],
+  "round4Pick": "True wrap / surplice crossover front (CAPABILITY) — last remaining capability touching an unlocked flat (#17), represents an entire wrap-front family. Slash pocket is cheaper (VOCAB-GAP) but cosmetic and single-flat.",
+  "residuals": [
+    "Cup under shaping:dart still silently suppressed (needs princess) — Round 1 residual; consider an issue when cupSeam requested-but-suppressed.",
+    "Asymmetric one-shoulder (#9,#14) outside symmetric-draft model, large lift.",
+    "Ruffled collar edge (#18) cosmetic."
+  ],
+  "notes": [
+    "Every drafted flat returned error:null and issues:[].",
+    "Count delta +2 (#13, #15). Faithfulness delta +1 (halter cup class) reported separately, no inflation.",
+    "Every WEARABLE = issues.length===0 + piece list contains the faithful feature (lacing cord for #13/#15, cup panels for #15).",
+    "Eyelet column verified: 13 diamond markings ~29mm apart down CB back edge; Lacing Cord is a real cut piece with criss-cross cut instruction."
+  ]
+}

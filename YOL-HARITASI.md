@@ -30,7 +30,13 @@ KURAL (kalıcı, KAPI 1'le RULES.md'ye girer): dikilmeden ship edilmez.
 2.1 envanter: her öznitelik SEWN / DRAWN / CLAIMED (docs/attribute-status.md).
 2.2 CLAIMED kovası boşalır: ya kodla ya sil (örn. princess seam varsayılanı).
 2.3 DRAWN→SEWN: mine-vocab frekansına göre en sık 10 öznitelik numuneyle.
-KAPI 2: CLAIMED boş; en sık 10 SEWN.
+2.4 KAPALI-FORM GEOMETRİ TÜRETİMİ + TEKNİK RAPOR (21 Tem TOHUM-DEPO'dan terfi, Damla onayı — YENİ PROJE DEĞİL, moat derinleşmesi):
+    - kapsam: pens dağılımı + kol evi eğrisi (armhole) + beden→kalıp dönüşümünün SEMBOLİK türetimi (sayısal fit değil kapalı-form).
+    - motora gömme: türetim engine'e girer, her adım golden+ctest'e bağlanır.
+    - yayın: tarihli + isimli teknik rapor (reports/ + Medium/arşiv) = anlatı zırhı (matematik uydurulamaz/kopyalanamaz) + moat mühimmatı; "ders paylaş tarif paylaşma" — türetim METODU anlatılır, motorun tam kalıp algoritması verilmez.
+    - alet: Wolfram Engine (bedava) / SymPy — o gün seçilir (geri dönüşü ucuz, kararı yazıma başlarken ver).
+    - zamanlama: LANSMAN SONRASI, fit-muslin sprintinin komşusu (KAPI 1 numune + KAPI 2 SEWN ile aynı dönem).
+KAPI 2: CLAIMED boş; en sık 10 SEWN; kapalı-form türetim en az bir öznitelikte (pens ya da armhole) motora gömülü + raporu taslak.
 
 ## FAZ 3 — GENİŞLİK (çarpımla)
 Sıradaki öznitelik TAHMİNLE değil mine-vocab frekansıyla; her yeni öznitelik: engine + test +
