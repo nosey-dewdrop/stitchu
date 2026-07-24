@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=118';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=118';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=118';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -521,6 +521,14 @@ function showSpec() {
         // waisted bodice → gate it out.
         const peplum = pickPeplum(seen);
         spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
+        // All-around hem flounce (etek ucu volanı — dropped-waist tiered look): the
+        // engine hangs a gathered flounce from the WHOLE hem (front + back) as a
+        // separate strip, gathered edge trued to the finished hem. Only a dress/top
+        // with a real hem hosts one (a gathered/flared skirt already ripples). A
+        // peplum (waist) or a back-only ruffle stays honest (pickHemFlounce null).
+        const hemFlounce = pickHemFlounce(seen);
+        const hemFlounceHostable = spec.garment === 'dress' || spec.garment === 'top';
+        spec.hemFlounce = (hemFlounce && hemFlounceHostable) ? hemFlounce : 'none';
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
         // separate piece + a placement mark), a side-seam in-seam pocket (two bag
         // pieces + a mouth mark), and a SLASH pocket (a diagonal front-hip mouth +
@@ -678,6 +686,11 @@ function showSpec() {
           // as missing. A pleated/gathered/draped/tiered peplum stays honest
           // (peplum none — a different construction the engine does not draw).
           peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
+          // All-around hem flounce: a gathered flounce is now DRAWN as a separate
+          // strip trued to the whole hem, so the honesty layer must NOT list an
+          // all-around / tiered hem flounce as missing. A pleated/circular/multi-
+          // tier hem flounce stays honest (hemFlounce none).
+          hemFlounceDrawn: !!(spec.hemFlounce && spec.hemFlounce !== 'none'),
           // vocab 2026-07-17: an OFF-SHOULDER / bardot neckline is now DRAWN
           // (top edge dropped below the shoulder + elastic casing + optional
           // frill), so the honesty layer must NOT list off-shoulder as missing. A

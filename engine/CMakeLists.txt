@@ -22,6 +22,7 @@ add_library(engine
     src/slit.cpp
     src/strap.cpp
     src/peplum.cpp
+    src/hemflounce.cpp
     src/cupseam.cpp
     src/yoke.cpp
     src/boxpleat.cpp
@@ -123,6 +124,10 @@ add_test(NAME strap_check COMMAND strap_check)
 add_executable(peplum_check tests/peplum_check.cpp)
 target_link_libraries(peplum_check PRIVATE engine)
 add_test(NAME peplum_check COMMAND peplum_check)
+
+add_executable(hemflounce_check tests/hemflounce_check.cpp)
+target_link_libraries(hemflounce_check PRIVATE engine)
+add_test(NAME hemflounce_check COMMAND hemflounce_check)
 
 add_executable(gore_check tests/gore_check.cpp)
 target_link_libraries(gore_check PRIVATE engine)

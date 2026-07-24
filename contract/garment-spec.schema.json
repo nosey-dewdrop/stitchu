@@ -477,6 +477,12 @@
             "pointed"
           ]
         },
+        "hemFlounce": {
+          "enum": [
+            "none",
+            "gathered"
+          ]
+        },
         "placketStyle": {
           "enum": [
             "none",

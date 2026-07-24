@@ -401,6 +401,15 @@ struct GarmentSpec {
     // honestly. The wrap IS the donning opening (no CB zip). 0 = None, 1 = Surplice.
     // See wrapfront.hpp / FORMULAS.md "Wrap / surplice front".
     int wrapFront = 0; // WrapFront enum value; 0 = None
+    // Opt-in all-around hem flounce (etek ucu volanı — dropped-waist tiered look):
+    // a gathered flounce tier hung from the WHOLE hem (front + back), NOT a peplum
+    // (waist) or a back-neck flounce (nape). A flat strip cut ~2:1 wider than the
+    // measured hem and drawn up to fit it, attached all the way around. Off by
+    // default (None) → byte-identical. Only a dress/top with a real hosting hem
+    // carries one; a gathered/flared skirt (already rippling) is refused honestly.
+    // 0 = None, 1 = Gathered (Circular reserved for later). See hemflounce.hpp /
+    // FORMULAS.md "All-around hem flounce".
+    int hemFlounce = 0; // HemFlounce enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

@@ -71,6 +71,9 @@ inline constexpr int kRuffledStrapsCount = 4;
 // PeplumStyle (int)
 inline constexpr const char* kPeplum[] = { "none", "full", "half", "pointed" };
 inline constexpr int kPeplumCount = 4;
+// HemFlounce (int)
+inline constexpr const char* kHemFlounce[] = { "none", "gathered" };
+inline constexpr int kHemFlounceCount = 2;
 // PlacketStyle (int)
 inline constexpr const char* kPlacketStyle[] = { "none", "standard", "asymmetric" };
 inline constexpr int kPlacketStyleCount = 3;

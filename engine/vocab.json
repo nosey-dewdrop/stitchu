@@ -25,6 +25,7 @@
     "backSlit": { "type": "int", "enum": "HemSlit", "values": ["none", "vent", "slit"] },
     "ruffledStraps": { "type": "int", "enum": "StrapStyle", "values": ["none", "ruffled", "wide", "spaghetti"] },
     "peplum": { "type": "int", "enum": "PeplumStyle", "values": ["none", "full", "half", "pointed"] },
+    "hemFlounce": { "type": "int", "enum": "HemFlounce", "values": ["none", "gathered"] },
     "placketStyle": { "type": "int", "enum": "PlacketStyle", "values": ["none", "standard", "asymmetric"] },
     "edgeFinish": { "type": "int", "enum": "EdgeFinish", "values": ["biasBinding", "facing"],
       "synonyms": { "bias": "biasBinding" } },

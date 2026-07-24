@@ -134,6 +134,7 @@ GarmentSpec buildSpec(const val& o) {
     spec.backSlit = parseEnumInt("backSlit", intField(o, "backSlit"), kBackSlit, kBackSlitCount);
     spec.ruffledStraps = parseEnumInt("ruffledStraps", intField(o, "ruffledStraps"), kRuffledStraps, kRuffledStrapsCount);
     spec.peplum = parseEnumInt("peplum", intField(o, "peplum"), kPeplum, kPeplumCount);
+    spec.hemFlounce = parseEnumInt("hemFlounce", intField(o, "hemFlounce"), kHemFlounce, kHemFlounceCount);
     spec.placketStyle = parseEnumInt("placketStyle", intField(o, "placketStyle"), kPlacketStyle, kPlacketStyleCount);
     spec.edgeFinish = parseEnumInt("edgeFinish", intField(o, "edgeFinish"), kEdgeFinish, kEdgeFinishCount);
     spec.pocketStyle = parseEnumInt("pocketStyle", intField(o, "pocketStyle"), kPocketStyle, kPocketStyleCount);

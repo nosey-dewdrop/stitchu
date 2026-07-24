@@ -14,6 +14,7 @@
 #include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
+#include "hemflounce.hpp"
 #include "cupseam.hpp"
 #include "yoke.hpp"
 #include "boxpleat.hpp"
@@ -762,6 +763,18 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.peplum != static_cast<int>(PeplumStyle::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PeplumBlock::apply(pattern, static_cast<PeplumStyle>(spec.peplum), m.waistMM());
+    }
+    // Opt-in all-around hem flounce (etek ucu volanı — dropped-waist tiered look):
+    // a gathered flounce strip hung from the WHOLE hem (front + back), the last
+    // remaining partial flat. NOT a peplum (waist) or a back-neck flounce (nape).
+    // The flat gathered edge is trued to the finished hem MEASURED off the drafted
+    // front + back bottom edges. Post-pass on the finished draft, so the base is
+    // byte-identical with it off (hemFlounce == None). Only a dress/top with a real
+    // hosting hem carries one (HemFlounceBlock skips honestly if it finds no
+    // measurable hem). A gathered/flared skirt already ripples and is refused.
+    if (spec.hemFlounce != static_cast<int>(HemFlounce::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        HemFlounceBlock::apply(pattern, static_cast<HemFlounce>(spec.hemFlounce));
     }
     // Opt-in pocket (cep, patch 3.12): a PATCH pocket (separate piece + placement
     // mark) or a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). Post-
