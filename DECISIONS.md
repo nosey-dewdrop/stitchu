@@ -140,3 +140,9 @@
 - Karar: 23 style sayfasına (a-line skirt, boat neckline, gathered skirt, puff sleeve gibi JENERİK yüksek-hacimli terimler) FAQ+FAQPage schema eklendi. Bunlar FAQ'sız kalan son katmandı ve en çok arananlar (niş collection/pattern değil, jenerik style). FAQ style'ın gerçek verisinden (compat, tests, numbers), lead soru free/PDF intent dilinde. Kelime 516->847, schema==metin, title'lar zaten optimize (dokunulmadı).
 - KANIT: style-lint 0, sıfır ölü-domain regresyon, canlı FAQPage doğrulandı. ?v=124 canlı.
 - Artık pattern(19)+collection(16)+style(23) TÜM içerik katmanları FAQ+schema taşıyor. Derinlik fazı TAMAM.
+
+## 2026-07-24 seo indexleme: IndexNow otomatik ping
+- Karar: IndexNow kuruldu (web/<32hex>.txt key + engine/tools/indexnow-ping.mjs sitemap'teki tüm URL'i submit eder). deploy.sh 7. adım olarak her deploy sonrası otomatik ping (best-effort, ping hatası deploy'u bozmaz). Sebep: domain stitchu.noseydewdrop.com'a yeni taşındı, 58 yeni-derinleştirilmiş sayfanın haftalarca doğal crawl beklemesi yerine Bing/Yandex/Seznam anında recrawl.
+- KANIT: IndexNow HTTP 202 (kabul), 121 URL submit. Key dosyası canlıda HTTP 200 (ownership doğrulanır). Google ping endpoint'i kapalı (404, beklenen) -> Google sitemap'i doğal/GSC'den okur.
+- NOT: gerçek canlı domain Vercel (stitchu.noseydewdrop.com, ?v=125); gh-pages de 200 döner ama canonical her yerde noseydewdrop.com -> duplicate content Google tarafından doğru çözülür.
+- GERİ ALMA: ucuz (key dosyası + tool sil, deploy.sh adımı çıkar).
