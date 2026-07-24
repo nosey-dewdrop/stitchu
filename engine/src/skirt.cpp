@@ -13,7 +13,8 @@ double flare(SkirtStyle style) {
         case SkirtStyle::Straight:
         case SkirtStyle::Gathered:
         case SkirtStyle::HalfCircle:
-        case SkirtStyle::Pleated: return 0;
+        case SkirtStyle::Pleated:
+        case SkirtStyle::Gore: return 0; // Gore flares per-panel below the hip, not at the side seam
     }
     return 0;
 }
@@ -95,7 +96,7 @@ PatternPiece draftQuarter(
     piece.markings = markings;
     piece.hasGrainline = true;
     piece.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -196,7 +197,7 @@ std::vector<PatternPiece> goreQuarter(
     center.markings = {PathCommand::move(tip), PathCommand::line({tip.x - 12, tip.y + 4})};
     center.hasGrainline = true;
     center.grainline = Grainline{{40, hipDepthMM}, {40, length - 60}};
-    center.seamAllowance = 15;
+    center.seamAllowance = constants::kSeamAllowanceMM;
 
     // ---- side panel ----
     PatternPiece side;
@@ -221,7 +222,7 @@ std::vector<PatternPiece> goreQuarter(
     side.hasGrainline = true;
     const double grainX = (legB.x + hipQuarter) / 2;
     side.grainline = Grainline{{grainX, hipDepthMM + 10}, {grainX, length - 60}};
-    side.seamAllowance = 15;
+    side.seamAllowance = constants::kSeamAllowanceMM;
     const Rect sideBox = boundingBox(side.commands);
     translatePiece(side, -sideBox.x, -sideBox.y);
 
@@ -244,7 +245,7 @@ PatternPiece gatheredPanel(double waistQuarter, double length) {
     piece.markings = {PathCommand::move({0, 18}), PathCommand::line({width, 18})};
     piece.hasGrainline = true;
     piece.grainline = Grainline{{50, 80}, {50, length - 80}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -276,7 +277,7 @@ PatternPiece pleatedPanel(double waistQuarter, double length) {
     }
     piece.hasGrainline = true;
     piece.grainline = Grainline{{width - 50, 80}, {width - 50, length - 80}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
 }
 
@@ -303,8 +304,69 @@ PatternPiece halfCirclePanel(double easedWaistMM, double length) {
     };
     piece.hasGrainline = true;
     piece.grainline = Grainline{{r * 0.8, r * 0.8}, {R * 0.62, R * 0.62}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
     return piece;
+}
+
+// One gore panel of an N-gore skirt. The panel is symmetric about its own
+// centre grainline (x=0): it carries waistShare of the finished waist at the top
+// (half each side), skims to hipShare at the hip, then flares out below the hip
+// by goreHemFlare per edge into a wedge at the hem (Aldrich/Armstrong gored
+// skirt). Drafted flat (cut count carried in the note); the waist edge is a
+// gentle curve, hip→hem a straight flared line.
+PatternPiece gorePanel(const std::string& name, double waistShare, double hipShare,
+                       double length, double hipDepthMM, int cutCount) {
+    const double waistHalf = waistShare / 2;
+    const double hipHalf = hipShare / 2;
+    const double hemHalf = hipHalf + goreHemFlare;
+
+    const Point waistL{-waistHalf, 0};
+    const Point waistR{waistHalf, 0};
+    const Point hipR{hipHalf, hipDepthMM};
+    const Point hemR{hemHalf, length};
+    const Point hemL{-hemHalf, length};
+    const Point hipL{-hipHalf, hipDepthMM};
+
+    PatternPiece piece;
+    piece.name = name;
+    piece.cutInstruction = "cut " + std::to_string(cutCount);
+    piece.commands = {
+        PathCommand::move(waistL),
+        // waist edge: a straight line so its length is EXACTLY waistShare (trued
+        // to the finished waist; the panels seam into a clean waist circle).
+        PathCommand::line(waistR),
+        // right side: waist -> hip (skims the hip), curved
+        PathCommand::curve(hipR,
+                           {waistHalf + (hipHalf - waistHalf) * 0.55, hipDepthMM * 0.35},
+                           {hipHalf, hipDepthMM * 0.7}),
+        // right side: hip -> hem, straight flared wedge
+        PathCommand::line(hemR),
+        // hem edge across the bottom
+        PathCommand::line(hemL),
+        // left side: hem -> hip, straight flared wedge (mirror)
+        PathCommand::line(hipL),
+        // left side: hip -> waist (skims the hip), curved (mirror)
+        PathCommand::curve(waistL,
+                           {-hipHalf, hipDepthMM * 0.7},
+                           {-(waistHalf + (hipHalf - waistHalf) * 0.55), hipDepthMM * 0.35}),
+        PathCommand::close(),
+    };
+    piece.hasGrainline = true;
+    piece.grainline = Grainline{{0, hipDepthMM * 0.4}, {0, length - 60}};
+    piece.seamAllowance = constants::kSeamAllowanceMM;
+    return piece;
+}
+
+// A full gored skirt: `count` identical vertical panels. Each panel carries
+// fullWaist/count of the finished waist and fullHip/count of the hip; every
+// panel flares below the hip. The panels are identical so one piece is cut
+// `count` times.
+std::vector<PatternPiece> gorePanels(double fullWaist, double fullHip, double length,
+                                     double hipDepthMM, int count) {
+    const double waistShare = fullWaist / count;
+    const double hipShare = std::max(fullHip, fullWaist) / count;
+    return {gorePanel(std::to_string(count) + "-gore Panel", waistShare, hipShare,
+                      length, hipDepthMM, count)};
 }
 
 } // namespace
@@ -328,7 +390,7 @@ PatternPiece waistbandPiece(double waistMM, Fabric fabric) {
     };
     piece.hasGrainline = true;
     piece.grainline = Grainline{{30, bandHeight / 2}, {bandLength - 30, bandHeight / 2}};
-    piece.seamAllowance = 10;
+    piece.seamAllowance = constants::kSeamAllowanceBandMM;
     return piece;
 }
 
@@ -392,6 +454,15 @@ std::vector<PatternPiece> pieces(
         case SkirtStyle::HalfCircle:
             result.push_back(halfCirclePanel(fullWaist, len));
             break;
+        case SkirtStyle::Gore: {
+            // Multi-panel gored skirt. Standalone panelled skirt — does NOT
+            // depend on princess/join; every panel is identical and flares below
+            // the hip. fullHip drives the hip share (>= waist so it clears).
+            const double fullHip = std::max(m.hipMM() * (1 + hipEaseFor(fabric)), fullWaist);
+            for (auto& piece : gorePanels(fullWaist, fullHip, len, hipDepthMM, goreCount))
+                result.push_back(piece);
+            break;
+        }
     }
     if (includeWaistband) {
         result.push_back(waistbandPiece(m.waistMM(), fabric));
@@ -429,6 +500,16 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
             meters = (R * 2 + 120) * 1.10 / 1000;
             break;
         }
+        case SkirtStyle::Gore: {
+            // One panel is hipShare/2 + goreHemFlare per edge wide at the hem;
+            // panels lie two-across per fabric width, all `goreCount` panels.
+            const double fullHip = std::max(m.hipMM() * (1 + hipEaseFor(fabric)),
+                                            m.waistMM() * (1 + waistEaseFor(fabric)));
+            const double panelHem = fullHip / goreCount + 2 * goreHemFlare;
+            const double piecesPerWidth = panelHem * 2 < 700 ? 2.0 : 1.0;
+            meters = ((len * goreCount) / piecesPerWidth + 120) * 1.10 / 1000;
+            break;
+        }
     }
     return roundToPlaces(meters, 1);
 }
@@ -451,6 +532,13 @@ double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, S
         case SkirtStyle::HalfCircle: {
             const double R = m.waistMM() * (1 + waistEaseFor(fabric)) / M_PI + len;
             return M_PI * R; // half-circle hem is the outer arc
+        }
+        case SkirtStyle::Gore: {
+            // Each panel presents hipShare + 2*goreHemFlare at the hem; sum over
+            // all panels = total finished hem circumference.
+            const double fullHip = std::max(m.hipMM() * (1 + hipEaseFor(fabric)),
+                                            m.waistMM() * (1 + waistEaseFor(fabric)));
+            return fullHip + goreCount * 2 * goreHemFlare;
         }
     }
     return 0;
@@ -506,6 +594,17 @@ std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric)
                 "Insert an invisible zipper in the left seam BEFORE closing the seam below it.",
                 "Attach the interfaced waistband over the basted pleats, then finish the inside.",
                 "Hem with a 2 cm double-fold, then press the pleat creases again from hip to hem if you want sharp pleats all the way down.",
+            });
+            break;
+        case SkirtStyle::Gore:
+            steps.insert(steps.end(), {
+                "Cut the gore panel " + std::to_string(goreCount) + " times (all panels are identical). Cut 2 waistband pieces, interface 1.",
+                "Sew the panels together one gore seam at a time, right sides together, matching the waist and hem ends. Press each seam to one side (all the same way) or open.",
+                "Leave the last (left-back) seam open for the top 20 cm for the zipper.",
+                "Staystitch the curved waist edge so it does not stretch while you work.",
+                "Insert an invisible zipper in the open seam BEFORE closing the seam below it, then close the rest of the seam.",
+                "Attach the interfaced waistband, right sides together, then fold and finish the inside.",
+                "Let the skirt hang for 24 hours before hemming — the flared panels drop on the bias. Then trim the hem even and finish with a 2 cm double-fold.",
             });
             break;
         case SkirtStyle::HalfCircle:

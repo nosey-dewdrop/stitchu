@@ -27,7 +27,7 @@ int main() {
                               Neckline::VNeck, Neckline::Square, Neckline::Scoop, Neckline::Boat,
                               Neckline::Cowl, Neckline::PussyBow};
     const SkirtStyle skirts[] = {SkirtStyle::ALine, SkirtStyle::Straight, SkirtStyle::Gathered,
-                                 SkirtStyle::HalfCircle, SkirtStyle::Pleated};
+                                 SkirtStyle::HalfCircle, SkirtStyle::Pleated, SkirtStyle::Gore};
     const SleeveStyle sleeves[] = {SleeveStyle::None, SleeveStyle::Straight, SleeveStyle::Balloon};
 
     // Decoupled grid: bust, back length and shoulder vary INDEPENDENTLY — the

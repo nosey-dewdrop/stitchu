@@ -38,9 +38,9 @@ enum class ButtonRow { None, Functional, Decorative };
 
 namespace ButtonRowBlock {
 
-inline constexpr double buttonDia = 18;    // button diameter (mm), couture default
+inline constexpr double buttonDia = constants::kButtonDiameterMM; // button diameter (constants.yaml)
 inline constexpr double spacing = 90;      // on-center vertical spacing (mm)
-inline constexpr double standWidth = 18;   // CF button stand width (= button dia)
+inline constexpr double standWidth = constants::kButtonDiameterMM; // CF button stand width (= button dia)
 
 // Appends the button-row markings (a vertical row of button circles + buttonhole
 // ticks) to the front center piece, and — for a Functional row — grows the CF

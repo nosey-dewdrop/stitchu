@@ -10,7 +10,7 @@ namespace CuffBlock {
 
 namespace {
 
-constexpr double SA = 10;          // 10 mm seam allowance (bands/cuffs, FORMULAS.md)
+constexpr double SA = constants::kSeamAllowanceBandMM; // band/cuff seam allowance (constants.yaml)
 
 // --- cuff dimensions (FORMULAS.md "Cuff family") -----------------------------
 constexpr double buttonHeight = 60;     // finished barrel-cuff depth

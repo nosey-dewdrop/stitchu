@@ -44,10 +44,10 @@ enum class BardotStyle { None, Plain, Frill };
 namespace OffShoulderBlock {
 
 inline constexpr double dropMM = 55;       // top edge drop below the shoulder point
-inline constexpr double SA = 15;           // seam allowance (mm)
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance (constants.yaml)
 inline constexpr double casingDepth = 22;  // elastic casing channel depth (mm)
 inline constexpr double frillDepth = 90;   // bardot frill drop (mm)
-inline constexpr double frillFullness = 2.0; // frill gather ratio
+inline constexpr double frillFullness = constants::kBardotFrillFullness; // frill gather ratio (constants.yaml)
 
 // Reshapes the front + back top edge down to a straight bardot band below the
 // shoulder, marks the elastic casing, and (Frill) adds a bardot ruffle piece

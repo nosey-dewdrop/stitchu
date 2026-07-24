@@ -38,7 +38,7 @@ enum class PeplumStyle { None, Full, Half, Pointed };
 
 namespace PeplumBlock {
 
-inline constexpr double SA = 15;          // 15 mm seam allowance per edge
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 inline constexpr double depth = 180;      // peplum drop below the waist (mm)
 inline constexpr double minWaist = 500;   // shortest sensible finished waist arc
 inline constexpr double maxWaist = 1400;  // ceiling (very large waist)
@@ -50,6 +50,12 @@ inline constexpr double maxWaist = 1400;  // ceiling (very large waist)
 // (measured) waist the inner arc is trued to, passed from the drafter exactly
 // like the tie block's sash length.
 bool apply(DraftedPattern& pattern, PeplumStyle style, double waistMM);
+
+// Finished (sewn) peplum HEM circumference in mm — the outer edge a hem ruffle
+// trims. Each panel is an annular sector: inner arc = share (= waistMM/2 over a π
+// sweep), outer arc = (r0 + depth) · π where r0 = share/π. Full/Pointed = two
+// panels (whole waist), Half = one panel share over π. Returns 0 for None.
+double hemCircumferenceMM(PeplumStyle style, double waistMM);
 
 } // namespace PeplumBlock
 } // namespace stitchu

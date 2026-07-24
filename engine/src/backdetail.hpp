@@ -33,8 +33,8 @@ enum class BackDetail { None, Ruffle, Cape, Flounce };
 
 namespace BackDetailBlock {
 
-inline constexpr double SA = 15;          // 15 mm seam allowance per edge
-inline constexpr double ruffleFullness = 2.2; // ruffle gather ratio
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
+inline constexpr double ruffleFullness = constants::kBackRuffleFullness; // ruffle gather ratio (constants.yaml)
 inline constexpr double ruffleDepth = 140;    // ruffle drop (mm)
 inline constexpr double capeDrop = 380;       // cape panel length down the back (mm)
 inline constexpr double flounceDepth = 200;   // flounce drop (mm)

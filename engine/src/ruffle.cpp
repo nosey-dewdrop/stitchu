@@ -10,7 +10,7 @@ namespace RuffleBlock {
 namespace {
 
 constexpr double HEM = 10;      // rolled bottom hem allowance (mm)
-constexpr double SA = 12;       // seam allowance at a gathered/joined edge
+constexpr double SA = constants::kSeamAllowanceRuffleJoinMM; // gathered/joined edge SA (constants.yaml)
 constexpr double SEG_MAX = 1400; // one fabric-width segment (well under the 3000 mm print cap)
 
 // One gathered strip. bottomIsHem: the bottom edge is finished with a rolled

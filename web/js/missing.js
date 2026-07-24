@@ -188,8 +188,11 @@ export function missingFeatures(seen, lang) {
   // ties-closure is skipped when tieDrawn). Drawstring-gathered ties keep
   // tieDrawn false and still report here.
   const tieClosureDrawn = seen.tieDrawn && seen.closure && seen.closure.type === 'ties';
+  // a corset lace-up closure is now DRAWN as real eyelet columns + a lacing cord
+  // (seen.laceUpBackDrawn), so a 'lace-up' closure read is no longer missing.
+  const laceClosureDrawn = seen.laceUpBackDrawn && seen.closure && seen.closure.type === 'lace-up';
   if (seen.closure && seen.closure.type && seen.closure.type !== 'none' &&
-      !seen.closureDrawn && !tieClosureDrawn) {
+      !seen.closureDrawn && !tieClosureDrawn && !laceClosureDrawn) {
     const d = CLOSURE_DERIVATIVE[seen.closure.type];
     const loc = seen.closure.location ? ` (${seen.closure.location})` : '';
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
@@ -220,8 +223,11 @@ export function missingFeatures(seen, lang) {
     }
   }
 
-  // cup seams
-  if (seen.cupSeams === true) {
+  // cup seams, only when the engine did NOT draw them. cupseam.cpp now draws a
+  // horizontal Upper/Lower cup seam for a strapless princess bustier (flagged by
+  // seen.cupSeamDrawn from create.js). A sleeved bodice cup seam / a dart bust the
+  // engine refused stays honest here.
+  if (seen.cupSeams === true && !seen.cupSeamDrawn) {
     push(L === 'tr' ? 'ayrı kup göğüs dikişleri' : 'separate bust-cup seams', CUPSEAM_NOTE[L]);
   }
 
@@ -240,13 +246,15 @@ export function missingFeatures(seen, lang) {
     }
   }
 
-  // yoke, a shirred/smocked yoke is now DRAWN as a gathered panel (Loop 8),
-  // flagged by seen.gatherDrawn, so skip it there. A plain shoulderYoke seam is
-  // NOT gathering and stays honest (still not a separate drafted piece).
+  // yoke, now DRAWN as a real Front/Back Yoke + Body split (yoke.cpp, flagged by
+  // seen.yokeDrawn from create.js): a plain shoulderYoke → yoke:1, a shirred/
+  // smocked yoke → yoke:2. Either way it is a real drafted piece now, so skip it.
+  // (A shirred/smocked yoke drawn instead as a gathered PANEL, seen.gatherDrawn,
+  // is also covered.) A yoke on a skirt the engine refused stays honest.
   if (seen.yoke && seen.yoke.type && seen.yoke.type !== 'none') {
     const gatheredYoke = seen.gatherDrawn &&
       (seen.yoke.type === 'shirring' || seen.yoke.type === 'smocking');
-    if (!gatheredYoke) {
+    if (!seen.yokeDrawn && !gatheredYoke) {
       const d = YOKE_DERIVATIVE[seen.yoke.type];
       push((L === 'tr' ? yokeLabelTr(seen.yoke.type) : yokeLabelEn(seen.yoke.type)), d ? d[L] : null);
     }
@@ -261,12 +269,16 @@ export function missingFeatures(seen, lang) {
   const tieBackDrawn = seen.tieDrawn && seen.backDetail === 'tieBack';
   const openBackDrawn = seen.backOpeningDrawn &&
     ['openBack', 'keyholeBack', 'vBack'].includes(seen.backDetail);
+  // a corset laced back is now DRAWN as eyelet columns + a lacing cord
+  // (seen.laceUpBackDrawn), so a 'lacedBack' backDetail no longer degrades to a
+  // single "plain closed back" / back tie note — it is a real laced closure now.
+  const lacedBackDrawn = seen.laceUpBackDrawn && seen.backDetail === 'lacedBack';
   // vocab 2026-07-17: a cape/ruffle/flounce back is now DRAWN as a separate piece
   // (backDetailDrawn), so it no longer lists as missing.
   const backDetailPieceDrawn = seen.backDetailDrawn &&
     ['cape', 'ruffle', 'flounce', 'backCape', 'backRuffle', 'backFlounce'].includes(seen.backDetail);
   if (seen.backDetail && seen.backDetail !== 'none' && !tieBackDrawn && !openBackDrawn &&
-      !backDetailPieceDrawn) {
+      !backDetailPieceDrawn && !lacedBackDrawn) {
     const d = BACKDETAIL_DERIVATIVE[seen.backDetail];
     push((L === 'tr' ? backLabelTr(seen.backDetail) : backLabelEn(seen.backDetail)), d ? d[L] : null);
   }
@@ -306,6 +318,18 @@ export function missingFeatures(seen, lang) {
   // construction the engine does NOT draft and stays honest.
   const peplumTerm = (t) => /peplum|waist flounce|waist frill/i.test(t) &&
     !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t);
+  // All-around hem flounce: a gathered flounce hung from the WHOLE hem (front +
+  // back — the dropped-waist tiered look) is now drawn as a separate strip trued
+  // to the hem, so an outOfVocab term naming an all-around / hem / dropped-waist
+  // flounce is no longer missing. A peplum (waist) or a back-only flounce is a
+  // DIFFERENT construction (handled elsewhere / stays honest), and a pleated /
+  // circular / multi-tier hem flounce stays honest too.
+  const hemFlounceTerm = (t) =>
+    /(flounce|ruffle|frill|volan|tier(ed)?|flare)/i.test(t) &&
+    /(hem|bottom|all[\s-]?around|all[\s-]?round|dropped[\s-]?waist|drop[\s-]?waist|drop waist)/i.test(t) &&
+    !/peplum|waist flounce|waist frill/i.test(t) &&
+    !/back[\s-]?only|nape|back neck|one[\s-]?side/i.test(t) &&
+    !/pleated|box[\s-]?pleat|circular|multi[\s-]?tier|two[\s-]?tier|three[\s-]?tier/i.test(t);
   // R1.2: an asymmetric button placket is now drawn (the CF stand shifted off
   // center), so an outOfVocab term naming an asymmetric/offset/diagonal button
   // front is no longer missing. It must name a button/placket closure.
@@ -341,13 +365,15 @@ export function missingFeatures(seen, lang) {
   const cuffTerm = (t) => /\bcuff\b/i.test(t) &&
     /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
     !/french|elastic|casing|ruffle|frill|tie/i.test(t);
-  // patch 3.15: a shirt-tail / high-low hem is now drawn by reshaping the fitted
-  // lower edge, so an outOfVocab term naming that hem shape is no longer missing.
-  // A handkerchief / pointed / asymmetric-diagonal hem is a different construction
+  // patch 3.15+: a shirt-tail / high-low / corset-basque POINT / inverted box-pleat
+  // (kick) hem is now drawn by reshaping the fitted lower edge (or releasing a center
+  // pleat), so an outOfVocab term naming those hem shapes is no longer missing. A
+  // handkerchief (multi-point) / asymmetric-diagonal hem is a different construction
   // the engine does NOT draw and stays honest.
   const hemShapeTerm = (t) =>
-    /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
-    !/handkerchief|pointed|asymmetric|diagonal/i.test(t);
+    (/(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline|corset|basque|box[\s-]?pleat|kick[\s-]?pleat)/i.test(t) ||
+     /(point|\bv[\s-]?hem|v[\s-]?shaped).*hem|hem.*(point|corset|basque)/i.test(t)) &&
+    !/handkerchief|multi[\s-]?point|asymmetric|diagonal/i.test(t);
   // vocab 2026-07-17: an off-shoulder / bardot neckline is now drawn (top edge
   // dropped below the shoulder + elastic casing), so an outOfVocab term naming an
   // off-shoulder / bardot neck is no longer missing. A one-shoulder / strapless
@@ -360,6 +386,25 @@ export function missingFeatures(seen, lang) {
   const backDetailTerm = (t) =>
     /(back|cape).*(cape|ruffle|frill|flounce|cascade)|caped back|cape back|pelerin/i.test(t) &&
     !/hood|watteau|train|shoulder cape/i.test(t);
+  // boxpleat.cpp: a center inverted box pleat is now drawn behind the CF panel, so
+  // an outOfVocab term naming a center box / inverted pleat is no longer missing. A
+  // knife/accordion/sunburst/kick pleat is a different construction that stays honest.
+  const boxPleatTerm = (t) =>
+    /(center|centre|central|front|cf)[\s-]*(box|inverted)[\s-]*pleat|(box|inverted)[\s-]*pleat|center fold pleat/i.test(t) &&
+    !/knife|accordion|sunburst|sunray|kick|side pleat/i.test(t);
+  // cupseam.cpp: a horizontal bust-cup seam is now drawn (Upper/Lower cup) for a
+  // strapless princess bustier, so an outOfVocab term naming a cup seam / bra-cup
+  // / bustier cup is no longer missing. A moulded/foam/padded cup (no seam) is a
+  // different construction that stays honest.
+  const cupSeamTerm = (t) =>
+    /cup seam|bra[\s-]?cup|bustier cup|corset cup|seamed cup|underbust seam|cup bodice/i.test(t) &&
+    !/moulded|molded|foam|padded/i.test(t);
+  // yoke.cpp: a plain/gathered yoke split is now drawn (Front/Back Yoke + Body),
+  // so an outOfVocab term naming a yoke / shirred-yoke / smocked-yoke / babydoll
+  // yoke is no longer missing. (The gathered-panel path also covers a shirred yoke
+  // via gatherTerm above; this covers the yoke-SPLIT wiring.)
+  const yokeTerm = (t) =>
+    /\byoke\b|shirr(ed|ing)?\s*(yoke|bodice|panel)|smock(ed|ing)?\s*(yoke|bodice|panel)|babydoll\s*yoke/i.test(t);
   // vocab 2026-07-17: an exposed / visible zipper is now drawn as a teeth glyph on
   // the CF/CB seam, so an outOfVocab term naming an exposed/visible zip is no
   // longer missing. A separating / two-way / diagonal zip stays honest.
@@ -369,13 +414,32 @@ export function missingFeatures(seen, lang) {
   // button circles down the front, so an outOfVocab term naming a button
   // row/front is no longer missing when a row was drawn.
   const buttonRowTerm = (t) => /button\s*(row|front|down|placket|closure)|row of buttons/i.test(t);
+  // laceupback.cpp: a corset lace-up back is now drawn (CB facing + trued eyelet
+  // columns + a lacing cord), so an outOfVocab term naming a corset/laced/eyelet
+  // back lacing is no longer missing. A front-laced / shoulder-laced closure is a
+  // different placement the engine does NOT draft here and stays honest.
+  const laceUpTerm = (t) =>
+    /(corset|lace-?up|laced|eyelet|grommet)/i.test(t) &&
+    /back|corset|bodice|lacing|eyelet|grommet/i.test(t) &&
+    !/front[\s-]?lace|shoulder[\s-]?lace|side[\s-]?lace/i.test(t);
+  // wrapfront.cpp: a true wrap / surplice front is now drawn (the front reshaped
+  // into a crossed double front, cut 2 mirror, surplice V), so an outOfVocab term
+  // naming a wrap / surplice / crossover / faux-wrap FRONT is no longer missing. A
+  // wrap SKIRT (lower body) or a wrap COAT (outerwear) is a different construction
+  // the engine does NOT draft here and stays honest.
+  const wrapFrontTerm = (t) =>
+    /surplice|cross[\s-]?over|crossover|faux[\s-]?wrap|cache[\s-]?c(o|œ)eur|kruvaze|wrap[\s-]?(front|bodice|dress|top)|\bwrap\b/i.test(t) &&
+    !/wrap[\s-]?skirt|coat|jacket|robe|kimono|cardigan/i.test(t);
   for (const raw of seen.outOfVocab || []) {
     const label = String(raw).trim();
     if (seen.gatherDrawn && gatherTerm(label) && !sleeveGather(label)) continue;
     if (seen.backOpeningDrawn && openBackTerm(label)) continue;
+    if (seen.laceUpBackDrawn && laceUpTerm(label)) continue;
+    if (seen.wrapFrontDrawn && wrapFrontTerm(label)) continue;
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (seen.peplumDrawn && peplumTerm(label)) continue;
+    if (seen.hemFlounceDrawn && hemFlounceTerm(label)) continue;
     if (seen.placketAsymDrawn && asymPlacketTerm(label)) continue;
     if (seen.capSleeveDrawn && capSleeveTerm(label)) continue;
     if (seen.pocketDrawn && pocketTerm(label)) continue;
@@ -385,6 +449,9 @@ export function missingFeatures(seen, lang) {
     if (seen.hemShapeDrawn && hemShapeTerm(label)) continue;
     if (seen.bardotDrawn && bardotTerm(label)) continue;
     if (seen.backDetailDrawn && backDetailTerm(label)) continue;
+    if (seen.boxPleatDrawn && boxPleatTerm(label)) continue;
+    if (seen.cupSeamDrawn && cupSeamTerm(label)) continue;
+    if (seen.yokeDrawn && yokeTerm(label)) continue;
     if (seen.exposedZipDrawn && exposedZipTerm(label)) continue;
     if (seen.buttonRowDrawn && buttonRowTerm(label)) continue;
     if (label && !already.includes(norm(label))) {

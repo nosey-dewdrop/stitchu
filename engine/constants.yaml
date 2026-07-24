@@ -1,0 +1,139 @@
+# stitchu engine constants — the single source for every embedded design
+# assumption (K4 closing chain, 2026-07-19).
+#
+# Every value here used to live hard-coded in one or more engine source files
+# (the K0 inventory rows 1.5-1.9 list them). K4 RELOCATES them into this table
+# and generates engine/src/constants.gen.hpp from it (gen-constants.mjs, same
+# codegen discipline as the K1 contract). The values themselves are UNCHANGED —
+# the golden byte-identical diff is the guard.
+#
+# Fields per row:
+#   name       constant name (camelCase; C++ symbol = k<Name> in stitchu::constants)
+#   value      the number the engine compiles in (exactly as written)
+#   unit       mm | ratio | deg
+#   source     where the number comes from (published reference or design choice)
+#   status     verified — an independent published draft/reference confirms it
+#              assumed  — a design assumption; no external confirmation yet
+#              refuted  — the paper-sloper comparison contradicts it; the value
+#                         is NOT changed in this chain (a value change is a
+#                         behaviour change = A1/A4 violation); v1.1 candidate.
+#   experiment what test/comparison speaks to this row (paper sloper EU38 =
+#              reports/2026-07-19-stitchu-k4-sabitler-sloper.md; muslin = FAZ 1)
+#
+# Status verdicts follow the 2026-07-19 paper-sloper comparison: the engine's
+# EU38 fitted bodice + straight skirt measured landmark-by-landmark against an
+# independent Aldrich (Metric Pattern Cutting, 6th ed) hand draft.
+
+version: 1
+constants:
+  - name: seamAllowanceMM
+    value: 15
+    unit: mm
+    source: "Aldrich/Armstrong standard garment seam allowance (15 mm); FORMULAS.md Conventions"
+    status: verified
+    experiment: "published standard; blocks compare net (outline = sewing line), SA is metadata"
+
+  - name: seamAllowanceBandMM
+    value: 10
+    unit: mm
+    source: "bands/cuffs/waistband narrow SA convention (FORMULAS.md: 10 mm bands/cuffs)"
+    status: assumed
+    experiment: "convention only; confirm on the FAZ 1 muslin waistband/cuff"
+
+  - name: seamAllowanceRuffleJoinMM
+    value: 12
+    unit: mm
+    source: "gathered/joined ruffle edge SA (design choice between 10 band and 15 default)"
+    status: assumed
+    experiment: "no external reference; confirm on a sewn ruffle join (FAZ 1)"
+
+  - name: buttonDiameterMM
+    value: 18
+    unit: mm
+    source: "typical blouse button; button size is not collected (FORMULAS.md assumption ledger)"
+    status: assumed
+    experiment: "stand width is button-driven (Aldrich/Armstrong doctrine verified); the 18 mm pick is unvalidated — swap and re-draft for a different button"
+
+  - name: bicepsBustRatio
+    value: 0.30
+    unit: ratio
+    source: "design assumption: bare biceps girth = bust * 0.30 (arm girth is not one of the seven inputs)"
+    status: refuted
+    experiment: "paper comparison 2026-07-19: 0.30 * 880 = 264 mm bare biceps vs Aldrich 6th ed size chart top arm 284 mm at bust 88 -> -20 mm (-7%); v1.1 candidate: collect arm girth or lift the ratio (value NOT changed in this chain)"
+
+  - name: shoulderDropFactorDeprecated
+    value: 0.23
+    unit: ratio
+    source: "legacy shoulder drop = shoulderHalf * 0.23 (~13 deg); DEPRECATED for the seam since 2026-07-18 but still drives the neck-facing shoulder frame (bodice.cpp neckFacings)"
+    status: refuted
+    experiment: "paper sloper 2026-07-19: gives 42.6 mm drop (~13 deg) vs Aldrich draft ~50 mm (~21.5 deg) at EU38 — the reason it was deprecated; facing inner edge repeats the garment neckline verbatim so the facing still matches, but the facing shoulder frame is v1.1 cleanup"
+
+  - name: shoulderSlopeDeg
+    value: 22.0
+    unit: deg
+    source: "Aldrich womenswear block shoulder slope (~22 deg from horizontal), adopted 2026-07-18"
+    status: verified
+    experiment: "paper sloper 2026-07-19 (sloper_check): what matters is where the tip LANDS — engine tip drop 50.7 mm vs Aldrich draft 50 mm (+0.7); the raw guide angle differs (22.0 vs ~25 deg) but over the engine's longer seam the drawn tip is within 1 mm"
+
+  - name: shoulderSeamTargetMM
+    value: 126.0
+    unit: mm
+    source: "EU38 shoulder seam ~120 mm (Aldrich chart shoulder 122.5 mm at bust 88); drawn ~118 after neck/armhole curves trim the corners"
+    status: verified
+    experiment: "paper sloper 2026-07-19 (sloper_check): drawn back shoulder seam measured 126.0 mm vs Aldrich chart shoulder 122.5 mm -> +3.5 mm"
+
+  - name: underbustOffsetMM
+    value: 70
+    unit: mm
+    source: "B/C cup bust-to-underbust drop; Aldrich/Armstrong cup-sizing band ~50-80 mm (FORMULAS.md assumption ledger, source-bound range)"
+    status: assumed
+    experiment: "inside the published band but the exact 70 is a pick; off for very full/shallow cups — optional upperBust input + FAZ 1 muslin cover it"
+
+  - name: capWingDepthMM
+    value: 55
+    unit: mm
+    source: "cap-sleeve wing drop below the crown; classic couture cap 60-90 mm band, 55 chosen after render comparison (R1.2)"
+    status: assumed
+    experiment: "slightly under the published band by design (short kanat); confirm on a sewn cap sleeve (FAZ 1)"
+
+  - name: strapFinishedWidthMM
+    value: 22
+    unit: mm
+    source: "finished ruffled-strap width; high-street babydoll strap convention (design choice)"
+    status: assumed
+    experiment: "no external reference; confirm against a real strap (FAZ 1)"
+
+  - name: ventExtensionMM
+    value: 40
+    unit: mm
+    source: "tailored vent underlap ~1.5 in (38.1 mm) rounded to 40 (Aldrich/Armstrong vent practice)"
+    status: assumed
+    experiment: "rounded convention; slit_check pins the drawn width to the constant"
+
+  - name: strapFullness
+    value: 2.2
+    unit: ratio
+    source: "gather ratio for a soft shoulder frill (design choice)"
+    status: assumed
+    experiment: "fullness family is inconsistent by design history (2.0 bardot / 2.2 strap+back / 2.5 hem default); unifying = v1.1 candidate, values NOT changed in this chain"
+
+  - name: backRuffleFullness
+    value: 2.2
+    unit: ratio
+    source: "back-neck ruffle gather ratio (design choice, matches strap)"
+    status: assumed
+    experiment: "see strapFullness family note"
+
+  - name: bardotFrillFullness
+    value: 2.0
+    unit: ratio
+    source: "bardot/off-shoulder frill gather ratio (design choice)"
+    status: assumed
+    experiment: "see strapFullness family note"
+
+  - name: ruffleFullnessDefault
+    value: 2.5
+    unit: ratio
+    source: "hem ruffle default gather ratio, in the published 2.0-3.0 gathering band (FORMULAS.md Ruffle)"
+    status: assumed
+    experiment: "band is published (ASG/Aldrich gathering practice), the 2.5 default is a pick; see strapFullness family note"

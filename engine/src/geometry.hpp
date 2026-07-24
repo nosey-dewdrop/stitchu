@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "constants.gen.hpp"
+
 namespace stitchu {
 
 struct Point {
@@ -57,7 +59,7 @@ struct PatternPiece {
     std::string closure;
     bool hasGrainline = false;
     Grainline grainline;
-    double seamAllowance = 15.0;         // mm, drawn into cutLine
+    double seamAllowance = constants::kSeamAllowanceMM; // mm, drawn into cutLine
 };
 
 struct DraftedPattern {
@@ -66,6 +68,13 @@ struct DraftedPattern {
     std::string fabricAdviceKey;
     double fabricMeters140 = 0.0;
     std::vector<std::string> guideSteps;
+    // Measured drop from the front bust apex to the natural waist, in the drafted
+    // panel frame (drafted waist Y minus drafted apex Y). Carried out of the bodice
+    // draft so the opt-in cup-seam post-pass can cut the second (waist) seam that
+    // separates the Lower Cup from the Front Body without re-deriving the waist. 0
+    // when there is no princess bodice / no bust apex to measure from. This is
+    // metadata only (not a piece), so it never enters the golden dump.
+    double cupSeamWaistBelowApex = 0.0;
 };
 
 // Flatten one cubic to `steps` segments; returns steps+1 points incl. `from`.

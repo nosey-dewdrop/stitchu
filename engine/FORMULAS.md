@@ -16,6 +16,16 @@ invented; where a book value could not be confirmed the item stays UNVALIDATED r
 citing a source that does not exist. These values are NOT changed by this pass, only labelled;
 changing a constant is a separate engine decision.
 
+K4 update (2026-07-19): these constants now live in ONE machine-readable table,
+`engine/constants.yaml` → generated `engine/src/constants.gen.hpp` (gen-constants.mjs;
+drift guarded by ctest contract_check). Each row carries {value, unit, source,
+status: verified|assumed|refuted, experiment}. The 2026-07-19 paper-sloper comparison
+(engine EU38 block vs an independent Aldrich hand draft, ctest sloper_check +
+reports/2026-07-19-stitchu-k4-sabitler-sloper.md) set the statuses: shoulderSlopeDeg and
+shoulderSeamTargetMM VERIFIED; bicepsBustRatio 0.30 and the legacy shoulderDropFactor
+0.23 REFUTED (values unchanged in the closing chain — v1.1 candidates); the rest ASSUMED.
+constants.yaml is the source of truth for status; the prose below is the history.
+
 - shoulderDrop = shoulderHalf * 0.23 (~13 deg): UNVALIDATED design assumption. Aldrich's block
   uses a fixed shoulder-slope drop (~37 mm at the standard size) rather than a ratio of shoulder
   width; the ratio form here is not from a single published number. It stays in the wearable
@@ -572,6 +582,104 @@ maxPieceSpan 3000 · markingSlack 8 · fabric sane (0, 30] m
   terms (open-back / back cutout / backless / low open back) → a shape; keyhole/
   square/low-V descriptors pick the silhouette, else round (the set's common case).
   A manual "open back" shape picker covers the no-photo path.
+
+## Corset lace-up back (korse bağcıklı sırt) — opt-in
+- WHAT: an eyelet-laced CENTER-BACK closure. Unlike the invisible CB zip (which
+  joins the two back halves) or the open-back cutout (a faced hole below the nape),
+  a lace-up back leaves the two back edges APART — a CB gap spanned by a cord that
+  criss-crosses between two columns of eyelets, one down each back edge. The garment
+  is therefore ADJUSTABLE (the lacing spans a range of body girths).
+  `LaceUpBack { None, Corset }`. Opt-in (GarmentSpec.laceUpBack); None → golden
+  BYTE-IDENTICAL. laceupback.hpp/.cpp, post-pass in garment.cpp right after the
+  open-back block (both are back-center operations).
+- HOST: a fitted (princess or dart) bodice back on a dress/top (the piece
+  backCenter() finds: Bodice/Top Center Back / Back). A skirt or a loose/gathered
+  back is an honest NO-OP with a guide note (never a silent skip) — the garment gate
+  only calls the block for dress/top, and the block itself refuses if it finds no
+  fitted back piece.
+- EYELET CONVENTION (source: standard corsetry practice — Waugh, "Corsets and
+  Crinolines"; modern corset makers' ~1" eyelet pitch): eyelet pitch
+  `eyeletPitchMM = 28` (≈1"), first eyelet `firstEyeletFromTopMM = 15` below the CB
+  top edge, last kept `eyeletBottomMarginMM = 20` off the bottom. The column height
+  = the back's own CB-edge span (measured off the drawn outline: min-x edge, top y to
+  bottom y — can't drift). Count = floor(height / pitch) + 1, then RE-SPACED evenly
+  to fill the column exactly (spacing = height / (count-1)) so the top + bottom
+  eyelets anchor the run. Refused honestly if fewer than `minEyelets = 5` fit.
+- TRUING (eyelet-column y-alignment, <0.5 mm): the eyelet y series is built once and
+  the garment is cut 2, so the second physical back edge mirrors THIS piece and its
+  eyelet column lands at the SAME heights → the lacing sits level by construction.
+  The drawn series is even to 0.0000 mm (laceupback_check verifies max spacing
+  deviation < 0.5 mm, i.e. the two columns align to < 0.5 mm).
+- FACING: a straight foldless CB facing/placket strip `facingWidthMM = 40` in from
+  the CB edge is drawn as a MARKING on the back (self-faced, interfaced — NOT cut on
+  fold), carrying the eyelet column at `eyeletInsetMM = 20` from the CB edge. This
+  stiff band carries the grommets and keeps the laced edge from stretching.
+- LACING CORD: a separate strip piece (like the tie block's cord), cut 1, self-lined
+  tube. Finished lace length = `round(columnHeight × laceLengthFactor)`,
+  `laceLengthFactor = 3.5` (corset convention — long enough to criss-cross the whole
+  run and tie off), trued to the drawn column height (can't drift).
+- DONNING: the open laced gap IS the donning opening (the body enters through the
+  unlaced back, then the cord is laced up) — LaceUpBackBlock::opensForDonning is the
+  single source of truth shared by garment.cpp (suppresses the redundant invisible CB
+  zipper) and wearability.cpp (hasDonningOpening). A laced-back dress carries NO CB
+  zipper.
+- COMPOSES: with a cup seam (a laced-back bustier) — independent enums, independent
+  post-passes; both the Upper/Lower cup pieces AND the lacing cord appear on the same
+  draft (laceupback_check). Distinct from a tie-back (fabric ties, TieBlock) and an
+  open-back cutout (a faced hole, OpenBackBlock).
+- Vision→spec (create.js pickLaceUpBack): reads seen.backDetail === 'lacedBack',
+  seen.closure.type === 'lace-up', or oov/details terms (corset / lace-up / laced /
+  eyelet / grommet + back/bodice/lacing) → corset. Gated to a non-skirt host. A
+  manual "lace-up back" picker covers the no-photo path. missing.js suppresses the
+  "laced back → single tie / closed back" honest note when laceUpBackDrawn (both the
+  closure-side 'lace-up' note and the backDetail 'lacedBack' note).
+
+## Wrap / surplice front (kruvaze / surplice ön) — opt-in
+- WHAT: a REAL crossed double front — the wrap-dress / surplice-bodice family —
+  NOT the wrap-front TIE (TiePlacement::WrapFront, which only adds a tie strip). The
+  LEFT and RIGHT front panels each extend PAST the center front to the opposite
+  side, so worn the right front laps over the left (women's convention) and the two
+  overlapping diagonal edges form the surplice V. `WrapFront { None, Surplice }`.
+  Opt-in (GarmentSpec.wrapFront); None → golden BYTE-IDENTICAL. wrapfront.hpp/.cpp,
+  post-pass in garment.cpp right BEFORE the tie block (so a composed wrap-front tie
+  lands its notch on the already-reshaped front) and before the cutting-line offset.
+- GEOMETRY: the on-fold half front is REBUILT. The drafted NECK EDGE (commands[0]
+  = CF-neck move, commands[1] = the neck edge) is kept BYTE-IDENTICAL — that is the
+  top of the surplice V and the neck facing is trued to it, so touching it would
+  break the facing match. Below the neck point the CF edge (the run of x≈0 vertices)
+  is replaced: the CF-waist corner (the x≈0 vertex with the largest y) is pushed out
+  to x = −wrapPastCF (dragging the waist/hem edge ACROSS the body centerline into the
+  wrap corner, its CF control points sliding out with it), then a single straight
+  WRAP EDGE runs from that wrap corner up to the CF-neck point — the clean surplice
+  diagonal. The front flips from "cut 1 on fold" to "cut 2 (mirror wrap)" (a wrap
+  OPENS at CF — it can't be on the fold); the Front Neck Facing mirrors the flip.
+- WRAP ALLOWANCE (source: Aldrich "Metric Pattern Cutting" wrap block + Armstrong
+  surplice/wrap front — each front laps past CF to at least the opposite side-front
+  so the crossed fronts give real coverage): wrapPastCF = frontChestWidth (bust/4,
+  passed in like the patch pocket) × kWrapPastCFShare (0.50), clamped to [90, 260] mm.
+  For EU38 (bust 88) that is 110 mm past CF.
+- OVERLAP proof: cut 2 mirror. This panel reaches x ∈ [−wrapPastCF, side]; its
+  mirror reaches [−side, +wrapPastCF]. BOTH cover CF (x = 0), so the two panels
+  overlap across the band [−wrapPastCF, +wrapPastCF] = 2·wrapPastCF wide, centered on
+  CF — a real, wearable crossover (wrapfront_check measures the panel's most-negative
+  x and asserts the mirror covers +that).
+- HOST: a dress/top bodice FRONT (dart panel "Bodice/Top Front", or the princess
+  "Bodice/Top Center Front" — it carries the CF edge + the neck). A skirt / bodiceless
+  draft is an honest NO-OP with a guide note (the garment gate only calls the block
+  for dress/top; the block itself refuses if the front center isn't drafted on x≈0).
+- DONNING: the wrap IS the opening (the fronts lap over each other), so a wrap dress
+  drops the redundant invisible CB zip (WrapFrontBlock::opensForDonning, mirrored in
+  garment.cpp's backAlreadyOpens + wearability::hasDonningOpening). Composes with a
+  wrap-front TIE (the tie cinches the crossed front) and with a cup seam.
+- Vision→spec (create.js pickWrapFront): reads a wrap / surplice / crossover /
+  faux-wrap / cache-cœur / kruvaze FRONT term in oov / details / closure.location →
+  surplice; a wrap SKIRT or wrap COAT (a different, undrawn build) stays honest.
+  Gated to a non-skirt host. A manual "wrap / surplice front" picker covers the
+  no-photo path. missing.js suppresses the wrap/surplice honest note when
+  wrapFrontDrawn. validateSpecCross refuses a wrapFront on a skirt (no bodice).
+  wrapfront_check proves: None byte-identical; Surplice yields the reshaped cut-2
+  mirror front lapping past CF with the surplice V + a trued/wearable draft; a skirt
+  host is an honest no-op.
 
 ## Back hem slit / walking vent (arka etek yırtmacı) — opt-in (BENCHMARK-58 Loop M1)
 - WHAT: a walking slit (vent) rising from the hem up the CENTER-BACK seam of a

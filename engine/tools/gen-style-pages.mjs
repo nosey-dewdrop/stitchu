@@ -563,46 +563,16 @@ const footer = `<footer>
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 // ---------------------------------------------------------------------------
-// FLAT SKETCH — a parametric technical drawing of the garment the style lives
-// on. NOT a photo, NOT hand-drawn per page: one composer builds a fashion
-// flat-sketch silhouette in the site's line language (thin ink lines on the
-// page ground), and each style feeds it neckline / sleeve / skirt / detail
-// params. The technique the page is about is drawn as a HEAVIER accent line so
-// the eye lands on it. Everything below is pure geometry against a shared
-// coordinate frame, so 24 pages share one drawing engine. CANON: navy ink on a
-// bb-pale ground, bb-deep accent — same world as benchmark/patches.
+// FLAT SKETCH — REMOVED 2026-07-20 (master directive item 3, publication
+// cleanup). The old parametric hand-schematic (straight L-command silhouette,
+// no figure, no drape) read as robotic/amateur and its figcaption falsely
+// claimed "drawn by the same engine that drafts the pattern" — it was not the
+// pattern engine, just hand-written path strings. Every style page now shows
+// text + the real-numbers table only. A pinned flat from the central reference
+// pen (directive item 8) returns here once each style passes the emsal bands.
+// style-lint enforces: no page may ship a non-pinned inline garment flat.
 // ---------------------------------------------------------------------------
-const INK = '#1f3a5f';              // main garment outline (navy on the bb-pale sketch ground)
-const INK_SOFT = 'rgba(31,58,95,.35)';     // construction / fold / centre lines
-const INK_ACCENT = '#3f74a8';       // the technique this page teaches (canon bb-deep accent)
-
-// Front necklines, expressed as an SVG path from the left neck point (LNP) to
-// the right neck point (RNP), drawn across a bodice whose shoulders sit at
-// y=NECK_Y and whose centre front is x=CX. w = half neck width, and each shape
-// dips to its own depth. Returned as { path, accent:true }.
-function necklinePath(kind, CX, NECK_Y, w) {
-  const L = CX - w, R = CX + w;               // neck points
-  const d = { crew: 22, scoop: 60, vNeck: 82, square: 50, boat: 14, sweetheart: 66, halter: 60 }[kind] ?? 40;
-  const bot = NECK_Y + d;
-  switch (kind) {
-    case 'crew':   return `M ${L} ${NECK_Y} C ${L} ${NECK_Y + d * .9} ${R} ${NECK_Y + d * .9} ${R} ${NECK_Y}`;
-    case 'scoop':  return `M ${L} ${NECK_Y} C ${L - 4} ${bot} ${R + 4} ${bot} ${R} ${NECK_Y}`;
-    case 'vNeck':  return `M ${L} ${NECK_Y} L ${CX} ${bot} L ${R} ${NECK_Y}`;
-    case 'square': return `M ${L} ${NECK_Y} L ${L} ${bot} L ${R} ${bot} L ${R} ${NECK_Y}`;
-    case 'boat':   return `M ${L - 18} ${NECK_Y} C ${L} ${NECK_Y + d} ${R} ${NECK_Y + d} ${R + 18} ${NECK_Y}`;
-    case 'sweetheart':
-      // two mirrored lobes meeting in a cleft at CX, lifting above the chord
-      return `M ${L} ${NECK_Y} C ${L + w * .22} ${NECK_Y + d * .95} ${CX - w * .5} ${NECK_Y + d * .2} ${CX} ${bot - 8} C ${CX + w * .5} ${NECK_Y + d * .2} ${R - w * .22} ${NECK_Y + d * .95} ${R} ${NECK_Y}`;
-    case 'halter':
-      // no shoulder seam: the neck rises into a nape strap above NECK_Y
-      return `M ${CX - 14} ${NECK_Y - 34} L ${CX + 14} ${NECK_Y - 34} L ${R} ${NECK_Y + d} C ${R} ${NECK_Y + d + 14} ${L} ${NECK_Y + d + 14} ${L} ${NECK_Y + d} Z`;
-    default:       return `M ${L} ${NECK_Y} C ${L} ${bot} ${R} ${bot} ${R} ${NECK_Y}`;
-  }
-}
-
-// Compose one flat sketch. `sk` = { type, neckline, sleeve, skirt, detail }.
-// Coordinate frame: 240 wide, 300 tall, garment centred.
-function flatSketch(sk) {
+function flatSketch_REMOVED(sk) {
   const W = 240, H = 300, CX = 120;
   const SHO_Y = 40, SHO_HALF = 62;          // shoulder line
   const NECK_Y = 42, NECK_HALF = 20;        // neck opening
@@ -871,8 +841,6 @@ ${header}
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html">style library</a> / ${s.name.toLowerCase()}</p>
   <h1>${s.name}, <em>drafted.</em></h1>
   <p class="lead">${s.lead}</p>
-
-  ${flatSketch(S.sketch)}
 
   <h2>How the engine drafts it.</h2>
   ${s.facts.map((f) => `<p class="fact">${f}</p>`).join('\n  ')}

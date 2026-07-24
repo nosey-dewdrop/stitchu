@@ -1,5 +1,6 @@
 {
   "_comment": "Prensip 1: stil bir VERİ KAYDI, kod değil. LLM sadece bu şemada JSON üretir. Motor (engine.mjs) sabit kalır. Aynı JSON hep aynı çizim.",
+  "_ROL": "REFERANS KALEM stil kaynağı (Damla 2026-07-19, salt-okunur). Bu kayıtlar üretim renderer'ının (render-garment-flat.mjs) port edeceği kalem dilinin cetvelidir. Üretim renderer da bu dosyadan okur — tek hakikat. Silme/itme yok.",
   "_schema_version": 1,
   "shared": {
     "size": "EU38",
@@ -10,12 +11,204 @@
     "ink": "minimal",
     "skirtFull": 1.95,
     "foldCount": 10,
-    "hemWave": 1.0,
-    "drape": 1.0,
-    "hemDip": 2.0,
+    "hemWave": 1,
+    "drape": 1,
+    "hemDip": 2,
     "seed": 7
   },
+  "_FIGURE_RULE": "GERÇEK 38 BEDEN KADIN (Damla 2026-07-20, taste-lexicon ana madde). Figür buildHalf'te MERKEZİ ve TÜM stiller miras alır: bel oyulur (eX=emp·(1-waistNip)), kalça/etek dolgun (hX=emp·((1-waistNip)+(skirtFull-1))), omuz-kalça dengeli, dalgalı hem (hemPoints), drape (drapePlan), taper mürekkep, 3 katman çizgi hiyerarşisi. Üçgen/huni/tube gövde YASAK. Elbise bir vücudun üstünde durur gibi okunur. Stil başına tekrar yazılmaz; yeni siluet bu kapıdan girer. Dress-uzunluk stilleri figureNip ile daha belirgin bel çeker (mini babydoll pinleri etkilenmez).",
   "styles": {
+    "princess_dress": {
+      "label": "princess-seam fitted dress (mihenk 1)",
+      "top": "shoulder",
+      "neckline": "v",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 12,
+        "neckDepthBack": 3,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 6,
+        "capPuff": 1.4,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.3,
+        "skirtFull": 1.55
+      }
+    },
+    "gore_skirt_dress": {
+      "label": "6-gore godet midi dress (mihenk 3)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "gorePanels": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 6,
+        "neckDepthBack": 3,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.26,
+        "skirtFull": 1.7,
+        "goreCount": 6
+      }
+    },
+    "wrap_dress": {
+      "label": "surplice wrap dress with waist tie (mihenk 2)",
+      "top": "shoulder",
+      "neckline": "wrap",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "wrapSurplice": true,
+        "wrapTie": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 20,
+        "neckDepthBack": 3,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 6,
+        "capPuff": 1.4,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.6,
+        "wrapDir": 1
+      }
+    },
+    "top_boat_princess": {
+      "label": "boatneck sleeveless princess top (hedef 23)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "boat",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.42,
+        "neckDepth": 7,
+        "neckDepthBack": 4,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.1,
+        "yokeDrop": 12,
+        "waistNip": 0.16
+      }
+    },
+    "top_crew_dart": {
+      "label": "crew-neck sleeveless darted tank top (hedef 88)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 0.92,
+        "neckDepth": 12,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.14
+      }
+    },
+    "top_scoop_cami": {
+      "label": "scoop-neck sleeveless cami top (hedef 90)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "scoop",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 22,
+        "neckDepthBack": 12,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.12
+      }
+    },
+    "top_crew_boxy_crop": {
+      "label": "crew-neck sleeveless boxy crop tank (hedef 82)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "cropped",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1,
+        "neckDepth": 11,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.3,
+        "armholeHollow": 0.14,
+        "yokeDrop": 12,
+        "waistNip": 0.03
+      },
+      "boxy": true
+    },
     "drawstring_babydoll": {
       "label": "square-neck drawstring",
       "top": "band",
@@ -32,7 +225,7 @@
       "own": {
         "strapLen": 12,
         "strapWidth": 2.6,
-        "ruffle": 1.0,
+        "ruffle": 1,
         "yokeDrop": 16,
         "gatherRatio": 2.05,
         "shirrRows": 6,
@@ -40,7 +233,8 @@
       }
     },
     "lace_vneck_70s": {
-      "label": "70s v-neck lace babydoll",
+      "label": "70s v-neck lace babydoll, short puff sleeve with tie cuff",
+      "_pin": "MIHENK-05 v7 approved by Damla 2026-07-19 (kalemim). Sleeve is a SHORT PUFF with a gathered tie cuff (the grid label 'uzun kol' was wrong; the drawing is correct). sleeveLen 9->14, cuffGather 1.2->1.6.",
       "top": "shoulder",
       "neckline": "v",
       "parts": {
@@ -63,10 +257,10 @@
         "neckDepthBack": 2.5,
         "shoulderSlope": 1.6,
         "armholeHollow": 0.1,
-        "sleeveLen": 9,
+        "sleeveLen": 14,
         "sleeveWidth": 6.2,
         "capPuff": 2.2,
-        "cuffGather": 1.2,
+        "cuffGather": 1.6,
         "laceWidth": 1.3,
         "laceScallops": 16,
         "tieLength": 20,
@@ -93,13 +287,13 @@
         "shoulderSlope": 1.5,
         "armholeHollow": 0.1,
         "sleeveLen": 11,
-        "sleeveWidth": 7.0,
+        "sleeveWidth": 7,
         "capPuff": 2.6,
-        "cuffGather": 1.0,
+        "cuffGather": 1,
         "collarWidth": 4.6,
         "collarGap": 0.5,
         "yokeDrop": 9,
-        "gatherRatio": 3.0,
+        "gatherRatio": 3,
         "shirrRows": 7
       }
     },
@@ -137,6 +331,515 @@
         "yokeDrop": 11
       },
       "note": "photo-derived: deep V + cream lace trim, short sheer puff sleeves with lace cuff frill, CF ribbon bow with long streamers, empire waist, flowy gathered mini with sheer hem edge"
+    },
+    "top_crew_boxy_sleeve": {
+      "label": "crew boxy drop-shoulder short-sleeve tee (hedef 65)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": false
+      },
+      "own": {
+        "neckWidth": 1,
+        "neckDepth": 10,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.4,
+        "armholeHollow": 0.14,
+        "yokeDrop": 12,
+        "waistNip": 0.03,
+        "sleeveLen": 10,
+        "sleeveWidth": 7,
+        "capPuff": 0,
+        "cuffGather": 0
+      },
+      "boxy": true,
+      "sleeveLength": "short"
+    },
+    "dress_princess_scoop_aline": {
+      "label": "sleeveless princess scoop A-line mini dress (hedef 15)",
+      "top": "shoulder",
+      "neckline": "scoop",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 20,
+        "neckDepthBack": 10,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.5
+      },
+      "roundNeck": true
+    },
+    "dress_princess_scoop_aline_midi": {
+      "label": "sleeveless princess scoop A-line midi dress (hedef 29)",
+      "top": "shoulder",
+      "neckline": "scoop",
+      "length": "midi",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 20,
+        "neckDepthBack": 10,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 1.5
+      },
+      "roundNeck": true
+    },
+    "dress_square_princess_circle": {
+      "label": "square-neck cap-sleeve princess fit-and-flare full-circle midi dress (hedef 47)",
+      "top": "shoulder",
+      "neckline": "square",
+      "length": "midi",
+      "sleeveLength": "cap",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1,
+        "neckDepth": 15,
+        "neckDepthBack": 6,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.12,
+        "sleeveWidth": 6.5,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": false
+    },
+    "dress_boat_aline_tieback": {
+      "label": "boat sleeveless A-line dart back-tie mini dress (hedef 53)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "mini",
+      "roundNeck": true,
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "tieBack": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 7,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.11,
+        "yokeDrop": 12,
+        "waistNip": 0.24,
+        "skirtFull": 1.45
+      }
+    },
+    "top_princess_peplum": {
+      "label": "sleeveless princess crew peplum frill top (hedef 41)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "crew",
+      "topLength": "hip",
+      "peplum": "full",
+      "roundNeck": true,
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1,
+        "neckDepth": 11,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.22
+      }
+    },
+    "top_sq_shirred_peplum": {
+      "label": "square sleeveless shirred-bust peplum top (hedef 31)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "square",
+      "topLength": "hip",
+      "peplum": "full",
+      "physicsShirr": true,
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "neckWidth": 1.1,
+        "neckDepth": 13,
+        "neckDepthBack": 7,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.2,
+        "gatherRatio": 2,
+        "shirrRows": 6
+      }
+    },
+    "top_sq_puff_shirred_peplum": {
+      "label": "square puff-sleeve shirred-bust peplum top (hedef 44)",
+      "top": "shoulder",
+      "garment": "top",
+      "neckline": "square",
+      "topLength": "hip",
+      "peplum": "full",
+      "physicsShirr": true,
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 12,
+        "neckDepthBack": 7,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "yokeDrop": 12,
+        "waistNip": 0.2,
+        "gatherRatio": 2,
+        "shirrRows": 6,
+        "sleeveLen": 13,
+        "sleeveWidth": 6.5,
+        "capPuff": 2.2,
+        "cuffGather": 1.4,
+        "sleeveLength": "short"
+      }
+    },
+    "dress_boat_princess_circle": {
+      "label": "boat-neck cap-sleeve princess fit-and-flare circle mini dress (hedef 27)",
+      "top": "shoulder",
+      "neckline": "boat",
+      "length": "mini",
+      "sleeveLength": "cap",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.4,
+        "neckDepth": 7,
+        "neckDepthBack": 5,
+        "shoulderSlope": 1.5,
+        "armholeHollow": 0.12,
+        "sleeveWidth": 6.5,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": true
+    },
+    "top_cami_sq_wide_shirred": {
+      "label": "wide-strap shirred cami top (hedef 4)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2.1,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true
+    },
+    "top_cami_sq_wide_shirred_peplum": {
+      "label": "wide-strap shirred cami peplum top (hedef 31)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
+    },
+    "top_cami_sq_spaghetti": {
+      "label": "spaghetti-strap zip cami top (hedef 74)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      }
+    },
+    "top_cami_sq_spag_shirred_peplum": {
+      "label": "spaghetti tie-shoulder shirred cami peplum (hedef 46)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
+    },
+    "top_bandeau_shirred_peplum": {
+      "label": "strapless bandeau shirred peplum top (hedef 40)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 3.4,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full"
+    },
+    "dress_vneck_gathered": {
+      "label": "short-sleeve v-neck gathered-skirt dirndl dress (hedef 24)",
+      "top": "shoulder",
+      "neckline": "v",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": true,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "neckWidth": 1.05,
+        "neckDepth": 14,
+        "neckDepthBack": 4,
+        "shoulderSlope": 1.7,
+        "armholeHollow": 0.12,
+        "sleeveLen": 12,
+        "sleeveWidth": 10,
+        "capPuff": 0,
+        "cuffGather": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.22,
+        "skirtFull": 2.0,
+        "gatherRatio": 2.2
+      },
+      "sleeveLength": "short",
+      "gatheredSkirt": true,
+      "waistTie": "bow"
+    },
+    "dress_sweetheart_princess_circle": {
+      "label": "sweetheart wide-strap princess fit-and-flare full-circle mini dress (hedef 54)",
+      "top": "shoulder",
+      "neckline": "sweetheart",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": false,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.15,
+        "neckDepth": 20,
+        "neckDepthBack": 8,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "skirtFull": 2.6
+      },
+      "roundNeck": true,
+      "waistTie": "bow"
+    },
+    "dress_sweetheart_spag_circle": {
+      "label": "sweetheart spaghetti-tie-strap princess fit-and-flare full-circle mini corset dress (hedef 101)",
+      "top": "shoulder",
+      "neckline": "sweetheart",
+      "length": "mini",
+      "parts": {
+        "straps": false,
+        "collar": false,
+        "sleeve": false,
+        "shirr": false,
+        "casing": false,
+        "tie": true,
+        "backSeam": true,
+        "princessSeam": true
+      },
+      "own": {
+        "neckWidth": 1.1,
+        "neckDepth": 20,
+        "neckDepthBack": 8,
+        "shoulderSlope": 1.6,
+        "armholeHollow": 0.13,
+        "yokeDrop": 12,
+        "waistNip": 0.3,
+        "skirtFull": 2.6,
+        "tieLength": 18
+      },
+      "roundNeck": true,
+      "spaghettiStrap": true
+    },
+    "top_cami_sq_spag_shirred_peplum_ruffle": {
+      "label": "spaghetti shirred cami peplum + hem ruffle (hedef 84/91)",
+      "top": "band",
+      "garment": "top",
+      "length": "mini",
+      "parts": {
+        "straps": true,
+        "collar": false,
+        "sleeve": false,
+        "shirr": true,
+        "casing": false,
+        "tie": false,
+        "backSeam": true
+      },
+      "own": {
+        "strapLen": 13,
+        "strapWidth": 2,
+        "ruffle": 0,
+        "yokeDrop": 12,
+        "waistNip": 0.28,
+        "gatherRatio": 2,
+        "skirtFull": 1.2
+      },
+      "physicsShirr": true,
+      "peplum": "full",
+      "peplumRuffle": true
     }
   }
 }

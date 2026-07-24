@@ -189,6 +189,38 @@ function checkWeOur(rel, visible) {
   });
 }
 
+// ---- (f) pinned-flat mandal (master directive item 3, 2026-07-20) ----------
+// No live page may ship a garment FLAT (fashion technical sketch) unless that
+// flat is pinned in engine/STYLE-PIN/STYLE-PIN.md (md5-approved by Damla). The
+// old hand-schematic flats (class="sketch" / aria-label "Technical flat
+// sketch") read as amateur and were pulled; this keeps them from coming back.
+// PATTERN pieces (grainline / "Skirt Front" / notch SVGs) are NOT flats and are
+// not caught — they carry no flat-sketch marker. Detection is marker-based so a
+// future pinned flat, embedded via the reference pen (directive item 8), is
+// allowed only when its style key is listed in the pin ledger.
+const PIN_LEDGER = join(dirname(fileURLToPath(import.meta.url)), '..', 'STYLE-PIN', 'STYLE-PIN.md');
+const pinnedStyles = new Set();
+if (existsSync(PIN_LEDGER)) {
+  const led = readFileSync(PIN_LEDGER, 'utf8');
+  // pull every "<style_key>.svg" that appears with an md5 / MIHENK approval
+  for (const m of led.matchAll(/([a-z0-9_]+)\.svg/gi)) pinnedStyles.add(m[1].toLowerCase());
+}
+function checkPinnedFlats(rel, html) {
+  // a flat-sketch marker: the removed composer used class="sketch" and an
+  // aria-label starting "Technical flat sketch". The reference pen marks a
+  // pinned flat with data-flat-style="<key>".
+  const hasAmateurFlat = /class\s*=\s*"[^"]*\bsketch\b/i.test(html)
+    || /aria-label\s*=\s*"Technical flat sketch/i.test(html);
+  if (hasAmateurFlat) {
+    add(rel, 'f', 'inline garment flat sketch with no STYLE-PIN (pull it or pin it via the reference pen)');
+  }
+  // a declared pinned flat must actually be pinned
+  for (const m of html.matchAll(/data-flat-style\s*=\s*"([a-z0-9_]+)"/gi)) {
+    const key = m[1].toLowerCase();
+    if (!pinnedStyles.has(key)) add(rel, 'f', `flat "${key}" is embedded but not in STYLE-PIN ledger`);
+  }
+}
+
 // ---- run -------------------------------------------------------------------
 for (const rel of htmlFiles) {
   const html = readFileSync(join(WEB, rel), 'utf8');
@@ -196,6 +228,7 @@ for (const rel of htmlFiles) {
   checkEmDash(rel, visible);
   checkWeOur(rel, visible);
   checkHeadings(rel, html);
+  checkPinnedFlats(rel, html);
   // CSS bans also apply to inline <style> blocks
   const styleBlocks = (html.match(/<style[\s\S]*?<\/style>/gi) || []).join('\n');
   checkCssRules(rel, styleBlocks + '\n' + html); // html included for inline style="" pills
@@ -206,9 +239,35 @@ for (const rel of cssFiles) {
   checkCssRules(rel, css);
 }
 
+// ---- flat render lint (K2, 2026-07-19) -------------------------------------
+// Chained here so the existing deploy proof step ("style-lint temiz") also
+// covers the flat engine: self-intersection, reversed winding, zero-area and
+// sampleX monotonicity over every styles.json record (render-lint.mjs).
+import { spawnSync } from 'node:child_process';
+const renderLint = spawnSync(process.execPath,
+  [join(dirname(fileURLToPath(import.meta.url)), 'render-lint.mjs')], { encoding: 'utf8' });
+process.stdout.write(renderLint.stdout || '');
+process.stderr.write(renderLint.stderr || '');
+if (renderLint.status !== 0) {
+  console.error('style-lint: chained flat render-lint FAILED');
+  process.exit(1);
+}
+
+// ---- preview truth (K3, 2026-07-19) -----------------------------------------
+// Chained the same way: the deploy proof step also verifies the flat<->pattern
+// boundary (structural equality + pinned landmark envelopes, preview-truth.mjs).
+const previewTruth = spawnSync(process.execPath,
+  [join(dirname(fileURLToPath(import.meta.url)), 'preview-truth.mjs')], { encoding: 'utf8' });
+process.stdout.write(previewTruth.stdout || '');
+process.stderr.write(previewTruth.stderr || '');
+if (previewTruth.status !== 0) {
+  console.error('style-lint: chained preview-truth FAILED');
+  process.exit(1);
+}
+
 // ---- report ----------------------------------------------------------------
 if (violations.length === 0) {
-  console.log(`OK  style-lint clean across ${htmlFiles.length} pages + ${cssFiles.length} css files (rules a-e, 0 violations).`);
+  console.log(`OK  style-lint clean across ${htmlFiles.length} pages + ${cssFiles.length} css files (rules a-e, 0 violations) + flat render-lint green.`);
   process.exit(0);
 }
 
@@ -217,7 +276,7 @@ for (const v of violations) (byRule[v.rule] ??= []).push(v);
 console.error(`style-lint FAILED: ${violations.length} violation(s).`);
 for (const rule of Object.keys(byRule).sort()) {
   const label = { a: 'em dash', b: 'single-side accent bar', c: 'pill capsule',
-    d: 'unpunctuated heading', e: 'brand we/our' }[rule];
+    d: 'unpunctuated heading', e: 'brand we/our', f: 'non-pinned garment flat' }[rule];
   console.error(`\n(${rule}) ${label} — ${byRule[rule].length}:`);
   for (const v of byRule[rule]) console.error(`  ${v.rel}: ${v.msg}`);
 }

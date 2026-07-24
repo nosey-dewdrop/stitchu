@@ -75,21 +75,21 @@ inline constexpr double armholeDepthFactor = 0.44;
 // armscyeArmFactor sets how much armhole depth one unit of biceps girth needs
 // (tuned so the sleeve cap ease lands in 1-9%); armscyeMaxDepthShare clamps the
 // underarm above the waist so deepening never eats the whole bodice.
-inline constexpr double bicepsRatioForArmscye = 0.30;
+inline constexpr double bicepsRatioForArmscye = constants::kBicepsBustRatio;
 inline constexpr double armscyeArmFactor = 0.60;
 inline constexpr double armscyeMaxDepthShare = 0.72;
 inline constexpr double backNeckWidthFactor = 0.197;
 inline constexpr double frontNeckWidthFactor = 0.17;
 inline constexpr double backNeckCutoutFactor = 0.06;
 inline constexpr double centerBackReduction = 0.35;
-inline constexpr double underbustOffset = 70;      // ASSUMPTION: B/C cup
-inline constexpr double shoulderDropFactor = 0.23; // DEPRECATED (was steep+short on wide necks)
+inline constexpr double underbustOffset = constants::kUnderbustOffsetMM; // ASSUMPTION: B/C cup (constants.yaml)
+inline constexpr double shoulderDropFactor = constants::kShoulderDropFactorDeprecated; // DEPRECATED (constants.yaml: refuted; still frames neckFacings)
 // Aldrich shoulder seam (2026-07-18): the neck-point -> shoulder-tip seam is drawn
 // at a fixed SLOPE over a fixed LENGTH, independent of neckline width, so a boat
 // neck no longer collapses the run into a short/steep seam. EU38 shoulder ~120 mm
 // at ~22 deg from horizontal (Aldrich womenswear block).
-inline constexpr double shoulderSlopeDeg = 22.0;      // seam angle from horizontal
-inline constexpr double shoulderSeamTargetMM = 126.0; // neck point -> tip; drawn seam ~118 after
+inline constexpr double shoulderSlopeDeg = constants::kShoulderSlopeDeg;      // seam angle from horizontal (constants.yaml)
+inline constexpr double shoulderSeamTargetMM = constants::kShoulderSeamTargetMM; // neck point -> tip; drawn seam ~118 after
                                                       // the neck/armhole curves trim the corners
 // How much of the front waist suppression slants the side seam (rest = bust dart).
 // Lowered from 15 mm to 5 mm so the single waist->apex dart deepens to the Aldrich

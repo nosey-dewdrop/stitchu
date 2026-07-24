@@ -1,0 +1,19 @@
+{
+ "style": "courtney_lace_vneck",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-4.png",
+ "params": {
+  "neckWidth": 1.12,
+  "neckDepth": 13.5,
+  "skirtFull": 3.2,
+  "waistNip": 0.05,
+  "bustProject": 0.9,
+  "shoulderSlope": 1.52,
+  "bustHeight": 0.36,
+  "yokeDrop": 8,
+  "hemDip": 0.14843749999999983,
+  "armholeHollow": 0.22
+ },
+ "sapma": 0.6356709066589585,
+ "ok": false,
+ "ts": "2026-07-23"
+}

@@ -1,0 +1,19 @@
+{
+ "style": "top_crew_boxy_sleeve",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202528-7.png",
+ "params": {
+  "neckWidth": 1,
+  "neckDepth": 10,
+  "skirtFull": 1.95,
+  "waistNip": 0.03,
+  "bustProject": 0.5,
+  "shoulderSlope": 1.4,
+  "bustHeight": 0.3,
+  "yokeDrop": 20,
+  "hemDip": 4.999999999999998,
+  "armholeHollow": 0.21500000000000008
+ },
+ "sapma": 0.13455133198819738,
+ "ok": false,
+ "ts": "2026-07-23"
+}

@@ -1,0 +1,19 @@
+{
+ "style": "top_sq_puff_shirred_peplum",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202533-7.png",
+ "params": {
+  "neckWidth": 1.15,
+  "neckDepth": 12,
+  "skirtFull": 1.95,
+  "waistNip": 0.05,
+  "bustProject": 0.5,
+  "shoulderSlope": 1.5,
+  "bustHeight": 0.45000000000000007,
+  "yokeDrop": 8.96875,
+  "hemDip": 0,
+  "armholeHollow": 0.12
+ },
+ "sapma": 0.022820977951098498,
+ "ok": false,
+ "ts": "2026-07-23"
+}

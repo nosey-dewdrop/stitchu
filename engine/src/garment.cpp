@@ -10,9 +10,14 @@
 #include "offshoulder.hpp"
 #include "hem.hpp"
 #include "keyhole.hpp"
+#include "laceupback.hpp"
 #include "neckext.hpp"
 #include "openback.hpp"
 #include "peplum.hpp"
+#include "hemflounce.hpp"
+#include "cupseam.hpp"
+#include "yoke.hpp"
+#include "boxpleat.hpp"
 #include "cuff.hpp"
 #include "placket.hpp"
 #include "pocket.hpp"
@@ -23,6 +28,7 @@
 #include "sleeve.hpp"
 #include "strap.hpp"
 #include "tie.hpp"
+#include "wrapfront.hpp"
 
 namespace stitchu {
 
@@ -423,6 +429,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     pattern.fabricAdviceKey = "dress";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);
     pattern.guideSteps = steps;
+    // A dress bodice front ENDS at the waist (its bottom edge IS the waist seam,
+    // where the skirt joins); the only fabric below the natural-waist line is the
+    // front-balance drop, which is part of that waist seam, not a separate band. So
+    // a dress never carries a below-waist Front Body — leave cupSeamWaistBelowApex
+    // at 0 and the cup seam produces just Upper + Lower cup (the skirt is the piece
+    // below the waist). Only a top that EXTENDS through the waist gets a Front Body.
     return pattern;
 }
 
@@ -581,6 +593,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     pattern.fabricAdviceKey = "top";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);
     pattern.guideSteps = steps;
+    // Measured apex->waist drop for the opt-in cup seam: the drafted natural-waist Y
+    // minus the drafted apex Y, in the un-rebased center-panel frame (a frame-
+    // invariant offset that survives each piece's local rebase). Only set it when
+    // the top actually EXTENDS through the waist (extra > 0 — a hip/tunic top): then
+    // the cup seam's second cut yields a real Front Body from the waist to the hem.
+    // A cropped top ends at the waist (extra == 0), so it stays Upper + Lower cup;
+    // the only fabric below the natural-waist line there is the front-balance drop,
+    // not a Front Body band. bodice.front is the un-rebased center panel.
+    if (extra > 0 && bodice.frontPrincess && !bodice.front.markings.empty())
+        pattern.cupSeamWaistBelowApex =
+            bodice.frontPieceWaistY - bodice.front.markings[0].to.y;
     return pattern;
 }
 
@@ -651,6 +674,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PlacketBlock::apply(pattern, 0.0, asymPlacket ? PlacketBlock::asymOffset : 0.0);
     }
+    // Opt-in true wrap / surplice front (kruvaze / surplice ön): reshapes the
+    // FRONT bodice panel into a crossed double front — the CF edge is extended past
+    // the center front into a diagonal wrap edge, the panel is cut 2 mirror-image,
+    // and the two fronts lap over each other at CF (the wrap-dress family). Post-
+    // pass on the finished draft, so the base is byte-identical with it off
+    // (wrapFront == None). Only a dress/top bodice front hosts one; a skirt is
+    // refused honestly. Runs BEFORE the tie pass so a composed wrap-front tie lands
+    // its placement notch on the ALREADY-reshaped front, and BEFORE the cutting-line
+    // offset so the wrapped edge gets its own cut line. The wrap allowance scales
+    // from the drafted front quarter (bust/4, like the patch pocket).
+    if (spec.wrapFront != static_cast<int>(WrapFront::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        WrapFrontBlock::apply(pattern, static_cast<WrapFront>(spec.wrapFront), m.bustMM() / 4.0);
+    }
     // Opt-in fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): adds
     // separate tie pieces + a placement notch. Post-pass on the finished draft,
     // so the base is byte-identical with it off (tieClosure == None). Only
@@ -686,6 +723,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         OpenBackBlock::apply(pattern, static_cast<BackOpening>(spec.backOpening));
     }
+    // Opt-in corset lace-up back (korse bağcıklı sırt): a CB facing strip on each
+    // back edge + two trued eyelet columns + a lacing cord — an eyelet-laced,
+    // open-gap, ADJUSTABLE back closure (the two back halves don't meet). Post-pass
+    // on the finished draft, so the base is byte-identical with it off (laceUpBack
+    // == None). Only a fitted (princess/dart) bodice back on a dress/top hosts one;
+    // a skirt or loose/gathered back is refused honestly. The open laced gap is a
+    // real donning opening, so the CB zipper is suppressed below (opensForDonning).
+    if (spec.laceUpBack != static_cast<int>(LaceUpBack::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        LaceUpBackBlock::apply(pattern, static_cast<LaceUpBack>(spec.laceUpBack));
+    }
     // Opt-in back hem slit / walking vent (arka etek yırtmacı, Loop M1): a walking
     // opening up the center-back seam of the back skirt/dress piece. Post-pass on
     // the finished draft, so the base is byte-identical with it off (backSlit ==
@@ -716,6 +764,18 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
         PeplumBlock::apply(pattern, static_cast<PeplumStyle>(spec.peplum), m.waistMM());
     }
+    // Opt-in all-around hem flounce (etek ucu volanı — dropped-waist tiered look):
+    // a gathered flounce strip hung from the WHOLE hem (front + back), the last
+    // remaining partial flat. NOT a peplum (waist) or a back-neck flounce (nape).
+    // The flat gathered edge is trued to the finished hem MEASURED off the drafted
+    // front + back bottom edges. Post-pass on the finished draft, so the base is
+    // byte-identical with it off (hemFlounce == None). Only a dress/top with a real
+    // hosting hem carries one (HemFlounceBlock skips honestly if it finds no
+    // measurable hem). A gathered/flared skirt already ripples and is refused.
+    if (spec.hemFlounce != static_cast<int>(HemFlounce::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        HemFlounceBlock::apply(pattern, static_cast<HemFlounce>(spec.hemFlounce));
+    }
     // Opt-in pocket (cep, patch 3.12): a PATCH pocket (separate piece + placement
     // mark) or a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). Post-
     // pass on the finished draft, so the base is byte-identical with it off
@@ -725,6 +785,55 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (spec.pocketStyle != static_cast<int>(PocketStyle::None)) {
         PocketBlock::apply(pattern, static_cast<PocketStyle>(spec.pocketStyle),
                            m.bustMM() / 4.0);
+    }
+    // Opt-in cup seam (kup dikişi — Corset Bustier): splits the princess FRONT
+    // panel(s) into an Upper Cup + a Lower Cup along a HORIZONTAL seam through the
+    // bust apex — the strapless/sweetheart bustier construction the motor was
+    // missing. Post-pass on the finished draft (the princess front is already
+    // drawn), so the base draft is byte-identical with it off (cupSeam == None).
+    // The seam y is READ from the panel's own apex notch (can't drift), and the
+    // two new cut edges are the same horizontal line (length-matched by
+    // construction). Only a princess-seamed sweetheart/strapless front hosts one;
+    // any other host is refused honestly. Runs BEFORE the cutting-line offset so
+    // each cup gets its own cut line. Moulded/foam/boned cups stay honest.
+    if (spec.cupSeam != static_cast<int>(CupSeam::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        // The strapless-bustier class needs the sleeve context: a cap sleeve
+        // (SleeveCap::Cap) is a weightless wing and still counts as strapless; any
+        // real set-in/straight/balloon sleeve is a shoulder-carried bodice and is
+        // refused. The block decides the whole class rule (isStraplessBustierClass).
+        const bool capSleeve = spec.sleeveCap == SleeveCap::Cap;
+        CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
+                            spec.sleeveStyle, capSleeve, pattern.cupSeamWaistBelowApex);
+    }
+    // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
+    // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the
+    // shoulder panel) + a lower body that flares from the yoke seam — the doll-dress
+    // construction the motor was missing (the highest-frequency gap over 23 flats).
+    // Post-pass on the finished draft (the bodice panels are already drawn), so the
+    // base draft is byte-identical with it off (yoke == None). The seam y is MEASURED
+    // off each panel's own drawn shoulder-to-hem drop (can't drift), and the two new
+    // cut edges are the same horizontal line (length-matched by construction). Only a
+    // dress/top with a bodice front/back hosts one; any other host is refused
+    // honestly. Runs BEFORE the cutting-line offset so each new piece gets its own cut
+    // line. A gathered-below yoke stays approximate (Plain draws the plain seam).
+    if (spec.yoke != static_cast<int>(Yoke::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        YokeBlock::apply(pattern, static_cast<Yoke>(spec.yoke));
+    }
+    // Opt-in center inverted box pleat (orta ters kutu pili): the first LOCALIZED
+    // fullness — a SINGLE fold at the center front, not the distributed gather the
+    // engine already has. Widens the CF-foldable front panel by a fixed pleat
+    // underlay folded behind, so the finished (pressed) width equals the original.
+    // Unlocks the swing / doll top (yoke + center box pleat). Post-pass on the
+    // finished draft, so the base is byte-identical with it off (boxPleat == None).
+    // Runs AFTER the yoke block so it can act on the yoke-renamed "Front Body" of a
+    // swing top. Only a dress/top with a CF-foldable front panel hosts one; a skirt
+    // or a cut-2 front is refused honestly. Runs BEFORE the cutting-line offset so
+    // the widened CF edge gets its own cut line. See boxpleat.hpp.
+    if (spec.boxPleat != static_cast<int>(BoxPleat::None) &&
+        (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
+        BoxPleatBlock::apply(pattern, static_cast<BoxPleat>(spec.boxPleat));
     }
     // Opt-in sleeve-end cuff (manşet, patch 3.13): a separate band stitched to the
     // wrist end of a full-length sleeve, the wider sleeve hem gathered/pleated in.
@@ -757,10 +866,18 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // Opt-in hem ruffle: attaches to a skirt/dress hem. Off by default, so every
     // existing draft is byte-identical. (halfCircle uses skirt length; an empire
     // half-circle dress ruffle is approximate — noted, not silently wrong.)
+    // A TOP has no skirt hem, but a top WITH A PEPLUM has a peplum hem — the
+    // ruffle trims the peplum's outer edge (id51/62/75/84/91: peplum + fırfır hem).
+    // Off by default (byte-identical). Only when peplum != None on a top.
+    const bool topPeplumRuffle = spec.ruffleHem && spec.garment == GarmentType::Top &&
+                                 spec.peplum != static_cast<int>(PeplumStyle::None);
     if (spec.ruffleHem &&
-        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress)) {
-        const double hemMM = SkirtBlock::hemCircumferenceMM(
-            m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
+        (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress ||
+         topPeplumRuffle)) {
+        const double hemMM = topPeplumRuffle
+            ? PeplumBlock::hemCircumferenceMM(static_cast<PeplumStyle>(spec.peplum), m.waistMM())
+            : SkirtBlock::hemCircumferenceMM(
+                  m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
         const auto ruffles = RuffleBlock::draftTiers(
             hemMM, spec.ruffleFullness, spec.ruffleDepthMM, spec.ruffleTiers);
         pattern.pieces.insert(pattern.pieces.end(), ruffles.begin(), ruffles.end());
@@ -843,10 +960,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // An exposed zip on CF or CB opens that seam for donning (a visible zip is a
     // real closure, not just decoration).
     const bool exposedZipOpens = spec.exposedZip != static_cast<int>(ExposedZip::None);
+    // A wrap / surplice front opens at the FRONT (the two fronts lap over each
+    // other), so the dress does not also need a redundant invisible CB zipper.
+    const bool wrapOpens =
+        WrapFrontBlock::opensForDonning(static_cast<WrapFront>(spec.wrapFront));
     const bool backAlreadyOpens =
         OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
+        LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack)) ||
         spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack ||
-        buttonRowOpens || exposedZipOpens;
+        buttonRowOpens || exposedZipOpens || wrapOpens;
     annotateTechnical(pattern,
         /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
 

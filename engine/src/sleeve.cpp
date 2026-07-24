@@ -151,7 +151,7 @@ std::vector<PatternPiece> draft(
         capPiece.markings = capMarks;
         capPiece.hasGrainline = true;
         capPiece.grainline = Grainline{{0, capHeight * 0.35}, {0, wingY - 12}};
-        capPiece.seamAllowance = 15;
+        capPiece.seamAllowance = constants::kSeamAllowanceMM;
         return {capPiece};
     }
 
@@ -232,7 +232,7 @@ std::vector<PatternPiece> draft(
     sleeve.markings = markings;
     sleeve.hasGrainline = true;
     sleeve.grainline = Grainline{{0, capHeight * 0.4}, {0, hemY - 40}};
-    sleeve.seamAllowance = 15;
+    sleeve.seamAllowance = constants::kSeamAllowanceMM;
 
     if (!balloon) return {sleeve};
 
@@ -255,7 +255,7 @@ std::vector<PatternPiece> draft(
     };
     cuff.hasGrainline = true;
     cuff.grainline = Grainline{{20, cuffHeight / 2}, {cuffLength - 20, cuffHeight / 2}};
-    cuff.seamAllowance = 10;
+    cuff.seamAllowance = constants::kSeamAllowanceBandMM;
     return {sleeve, cuff};
 }
 

@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "boxpleat.hpp"   // BoxPleatBlock::growCfPleat — reused for the kick pleat
+
 namespace stitchu {
 namespace HemBlock {
 
@@ -150,11 +152,14 @@ bool apply(DraftedPattern& pattern, HemShape shape) {
     const double shRise = shirttailSideRise * scale;
     const double hlFront = highLowFrontRise * scale;
     const double hlBack = highLowBackDrop * scale;
+    // The corset/basque point drop, adaptive-scaled by the same shortest-host cap so
+    // the point stays a hem detail, never eats the side seam.
+    const double pvDrop = pointedVCenterDrop * scale;
 
     // The hem band: how far up from the lowest point we reshape. Deep enough to
     // clear the deepest rise so the lifted curve stays smooth into the side seam,
     // but never deeper than the shortest host (so it stays a hem, not the waist).
-    const double band = std::min(std::max(shRise, hlFront) + 60, minHostH * 0.9);
+    const double band = std::min(std::max({shRise, hlFront, pvDrop}) + 60, minHostH * 0.9);
 
     // A princess skirt splits each half into a "Center …" panel (spanning the
     // center fold to the gore seam) and a "Side …" panel (the gore seam to the
@@ -184,7 +189,7 @@ bool apply(DraftedPattern& pattern, HemShape shape) {
             "(both sides lift by the same amount, so they still match), then finish "
             "the whole curved hem with a narrow rolled or bias-faced hem so it turns "
             "cleanly around the curve.");
-    } else { // HighLow
+    } else if (shape == HemShape::HighLow) {
         // Front raised (short), back dropped (long). The front and back SIDE hems
         // meet at a shared height (sideCommon) so the side seam stays balanced. On
         // a gore skirt the Center panel shifts UNIFORMLY by its centerDelta (front
@@ -203,6 +208,70 @@ bool apply(DraftedPattern& pattern, HemShape shape) {
             "side seams still match). Sew the side seams, then finish the curved hem "
             "with a narrow rolled or bias-faced hem. Let the garment hang for 24 "
             "hours before finishing the back hem — the longer back drops on the bias.");
+    } else if (shape == HemShape::PointedV) {
+        // Corset / basque point: the CENTER hem (center front + center back) DROPS to
+        // a point while the SIDES stay level. This is the inverse of the shirttail —
+        // instead of lifting the sides, we drop the center by pvDrop (a NEGATIVE
+        // centerDelta lowers the point; sideRise 0 keeps the side hem level). On a
+        // gore skirt only the "Center …" panel carries the drop: its fold edge (min-x,
+        // t=0) drops the full pvDrop to the point, its gore edge (max-x, t=1) stays
+        // level (0). The "Side …" panel is untouched (both its gore edge and its side
+        // edge stay level at 0) — so every gore seam's two edges carry the SAME 0
+        // delta and still match. A plain (dart) quarter drops from the fold (full) to
+        // the side (0). The two mirrored halves meet cleanly at the CF/CB fold (both
+        // fold edges drop by exactly pvDrop → the point trues on the fold line).
+        for (auto* p : hosts) {
+            if (!isCenterPanel(*p) && !tapers(*p)) continue; // safety (already gated)
+            // On a gore skirt only the center panel drops; a plain quarter (no gore)
+            // has no "Side …" sibling, so it must drop too. Detect a gore split by a
+            // matching "Side …" name — but simpler: a center panel OR a plain quarter
+            // (a piece that is NOT a "Side …" panel) drops. A "Side …" panel stays.
+            if (p->name.find("Side ") != std::string::npos) continue; // side panel: level
+            reshape(*p, band, /*sideRise=*/0.0, /*centerDelta=*/-pvDrop);
+        }
+        pattern.guideSteps.push_back(
+            "Pointed / corset (basque) hem: the lower edge dips to a POINT at the "
+            "center front and center back while the sides stay level — the classic "
+            "corset-bottom V. The two halves of the point meet on the center fold "
+            "line, so the point is symmetric. Stitch the side seams as usual, then "
+            "finish the pointed hem with a narrow rolled or bias-faced hem, clipping "
+            "carefully at the center point so it turns crisply. Understitch or add a "
+            "tiny anchor stitch at the point so the V holds its shape.");
+    } else { // BoxPleatHem
+        // A kick pleat: an inverted box pleat released at the center of the hem for
+        // kick/flare. REUSE the box-pleat underlay primitive (boxpleat.cpp
+        // growCfPleat): the center panel is grown WIDER at its CF/CB fold by the
+        // pleat underlay (2 × depth), folded behind, so the finished (pressed) width
+        // trues back to the original. v1 releases the pleat over the LOWER hem region
+        // of the CF-fold center panel — it reads as a hem kick pleat. Only a panel
+        // cut ON THE FOLD (a single fold to press the pleat to) hosts it.
+        const double kickHeight = std::min(std::max(300.0, band), minHostH * 0.6);
+        bool any = false;
+        for (auto* p : hosts) {
+            if (p->name.find("Side ") != std::string::npos) continue; // no CF fold
+            if (p->cutInstruction.find("on fold") == std::string::npos) continue;
+            const double pieceMaxY = boundingBox(p->commands).y + boundingBox(p->commands).height;
+            const double yLo = pieceMaxY - kickHeight;
+            if (BoxPleatBlock::growCfPleat(*p, yLo, pieceMaxY, /*protectNeckPoint=*/false))
+                any = true;
+        }
+        if (!any) {
+            pattern.guideSteps.push_back(
+                "Box-pleat hem: skipped — this draft has no center-fold panel to "
+                "release a center kick pleat into (a cut-in-two front, or a "
+                "gathered/pleated panel, has no single CF/CB fold to press an inverted "
+                "box pleat to). Add a kick pleat by hand if you want one.");
+            return false;
+        }
+        pattern.guideSteps.push_back(
+            "Box-pleat (kick) hem: the center panel is cut WIDER at the center fold "
+            "over the lower hem region by the marked underlay. Fold the underlay back "
+            "behind the fabric on the two marked fold lines so the extra width tucks "
+            "UNDER and the two folds meet on the center line — an inverted box pleat "
+            "released at the hem for kick and flare. Press the pleat, baste across the "
+            "top of the pleat to hold it closed, then finish the hem as usual; the "
+            "finished (folded) width equals the un-pleated width, so the side seams "
+            "still true. The pleat hangs closed and springs open as you walk.");
     }
     return true;
 }

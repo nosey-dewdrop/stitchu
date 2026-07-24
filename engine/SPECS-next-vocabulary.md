@@ -1,3 +1,8 @@
+> **UNVERIFIED + PARK (K6, 2026-07-19).** Agent-drafted spec, never reviewed against the
+> engine, never implemented. New vocabulary drawing = new feature = A1 forbidden in the
+> v1.0 closing chain. PARKED as a v1.1 candidate; do not build from this file without
+> Damla's approval and a fresh verification pass.
+
 # Stitchu Engine — Specs for the Next Couture Vocabulary (Track A item 5)
 
 > Written 2026-07-13. Research + engine-mapping spec for the NINE vocabulary items after

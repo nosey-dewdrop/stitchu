@@ -28,8 +28,8 @@ namespace PlacketBlock {
 // Aldrich / Armstrong doctrine, buttonDiameter-driven (FORMULAS.md). We do not
 // collect a button size, so a couture blouse default (18 mm button) is used and
 // documented; the guide's muslin note covers swapping the button.
-inline constexpr double buttonDiameter = 18;          // ASSUMPTION: blouse button
-inline constexpr double standWidth = 18;              // = button diameter, extension past CF
+inline constexpr double buttonDiameter = constants::kButtonDiameterMM; // ASSUMPTION: blouse button (constants.yaml)
+inline constexpr double standWidth = constants::kButtonDiameterMM;     // = button diameter, extension past CF
 inline constexpr double facingDepth = 40;             // grown-on fold-back facing (35–50 range)
 inline constexpr double buttonholeOffset = 3;         // horizontal hole starts 3 mm past CF
 inline constexpr double buttonholeLength = 21;        // Ø + thickness + 2 mm ease

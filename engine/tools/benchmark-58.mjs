@@ -22,6 +22,8 @@ import {
   pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape,
   pickPlacket, pickBackDetail, pickExposedZip, pickBardot,
 } from '../../web/js/vision-bridge.js';
+import { CONTRACT } from '../../web/js/contract.gen.js';
+import { canonicalize } from './canonicalize.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PHOTOS = join(root, 'benchmark-58', 'photos-1024');
@@ -86,112 +88,35 @@ function analyze(file) {
 // Same acceptance rule as web/js/analyze.js: skirt|dress|top proceeds, else rejected.
 const DRAFTABLE = ['skirt', 'dress', 'top'];
 
-// Engine vocabulary grows loop by loop: manifest oov terms the engine can NOW
-// draw are filtered out (each drawing loop appends its rule; the manifest itself
-// stays frozen ground truth). Module-scope so both classify() and the summary's
-// element-accuracy metric share ONE source of truth.
-const DRAWN_SINCE = [
-  // loop 3: front button placket, grown-on stand (symmetric CF). A BACK/DOUBLE
-  // placket stays missing; an ASYMMETRIC front is now drawn by its own rule below.
-  (t) => /placket|button front closure/i.test(t) && !/back|double|loop/i.test(t),
-  // R1.2: ASYMMETRIC button front placket — the engine now shifts the grown-on CF
-  // stand off center (the Jackie gingham). "asymmetric button front closure",
-  // "diagonal button placket", "asymmetric offset button placket" all draw. It
-  // must name a button/placket closure so a non-closure "asymmetric hem" never
-  // matches. A back asymmetric closure stays missing.
-  (t) => /(asymmetric|asymmetrical|offset|off[\s-]?cent|diagonal)/i.test(t) &&
-         /(button|placket|closure|front)/i.test(t) && !/back|hem/i.test(t),
-  // loop 4b: simple applied fabric ties / sash / bow / tie-back closure, drawn
-  // as separate self-fabric strips + placement notch. A DRAWSTRING that
-  // GATHERS the fabric (casing + shirring) is NOT drawn — it stays missing.
-  (t) => /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i.test(t) &&
-         !/drawstring|gathered|shirr|smock/i.test(t),
-  // loop 6: gathered / puff / puffed SLEEVE HEAD — the engine raises + widens
-  // the cap and gathers the crown. Only the sleeve HEAD, and only the simple
-  // gather/puff. A "drawstring gathered sleeve" needs a casing/channel → NOT
-  // drawn (stays missing). The CAP sleeve is now drawn by its own rule below.
-  (t) => /\bpuff(ed)?\b|gathered sleeve|puff sleeve|gathered.*sleeve head|puffed.*sleeve head|balloon shoulder|gigot/i.test(t) &&
-         !/drawstring|shirr|smock|casing|channel/i.test(t),
-  // R1.2: CAP sleeve — the engine now drafts the short cap-sleeve WING (the set-in
-  // cap kept and matched to the armhole, cut off just below the notches so a small
-  // wing covers the shoulder with no underarm seam). "cap sleeve", "cap sleeves"
-  // draw. A dropped/off-shoulder sleeve is a different shape → stays missing.
-  (t) => /\bcap\s*sleeve/i.test(t) && !/drop|off[\s-]?shoulder/i.test(t),
-  // loop 7/8: the collar FAMILY — a separate collar piece, neck edge trued to
-  // the neckline: stand / mock / mandarin / flat / peter-pan / shirt collars,
-  // with a round / pointed / scalloped outer edge. A special FINISH the engine
-  // does NOT draft stays missing: a bias-bound neckline (a bound raw edge, no
-  // collar piece), a notched/sailor/lapel tailored collar. The phrase must name
-  // a collar (so a non-collar oov term never matches).
-  (t) => /collar/i.test(t) &&
-         !/bias-?bound|bound neckline|notch|sailor|lapel/i.test(t),
-  // loop 8: drawstring / shirred / smocked / gathered PANEL — the engine now
-  // draws a separate gathered panel (+ a drawstring cord) whose gathered edge is
-  // trued to the neckline/bust/waist. Drawstring neckline, gathered bust panel,
-  // shirred/smocked yoke, gathered yoke/straps all draw. The one honest EXCEPTION
-  // is a gathered SLEEVE (needs an arm casing/channel the engine does NOT draft):
-  // "drawstring gathered sleeves" stays missing.
-  (t) => /drawstring|shirr|smock|gathered|gathering/i.test(t) &&
-         !/sleeve/i.test(t),
-  // loop 9b: open-back cutout — the engine now opens a shaped cutout (round /
-  // low-V / square / keyhole) in the BACK piece + a facing trued to the opening.
-  // "open-back circular cutout", "low open back", "open back", "back cutout" all
-  // draw. A tie-BACK CLOSURE is a DIFFERENT term (Loop 4b draws the tie strips),
-  // so this rule must NOT match it — the tie-back rule above already covers it,
-  // and both can be present on the same photo (each its own oov term).
-  (t) => /open-?back|back ?cutout|backless|open back/i.test(t) &&
-         !/\btie\b|\bties\b|lace/i.test(t),
-  // loop M1: back hem slit / walking vent — the engine now cuts the back with a
-  // center-back seam and opens a walking slit from the hem (a lapped extension
-  // for a vent, a plain faced opening for a slit). "back hem slit", "walking
-  // vent/slit", "back vent", "kick pleat/vent" all draw. A FRONT or SIDE slit is
-  // a DIFFERENT undrawn opening → stays missing (only the center-back walking
-  // vent is drawn).
-  (t) => /(back|hem|walking)[\s-]*(hem[\s-]*)?(slit|vent)|kick[\s-]*(pleat|vent)/i.test(t) &&
-         !/front|side/i.test(t),
-  // queue #3: ruffled shoulder straps — the engine now draws a gathered self-fabric
-  // frill strip as a separate strap pair + a placement notch. "ruffled straps",
-  // "frilled strap", "flutter straps", "gathered shoulder strap" all draw. A
-  // spaghetti / one-shoulder / off-shoulder / halter strap is a DIFFERENT
-  // construction → stays missing.
-  (t) => /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i.test(t) &&
-         !/spaghetti|halter|one[\s-]?shoulder|off[\s-]?shoulder/i.test(t),
-  // R1.1: peplum — the engine now hangs a flared circular flounce from the waist
-  // as a separate piece, inner arc trued to the finished waist (full circle, half
-  // circle, and a pointed/handkerchief hem). "peplum construction", "pointed
-  // peplum hem", "peplum ruffle at waist" all draw. A PLEATED / GATHERED / DRAPED
-  // / TIERED peplum is a DIFFERENT construction → stays missing.
-  (t) => /peplum|waist flounce|waist frill/i.test(t) &&
-         !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t),
-  // patch 3.16: cowl neckline — the engine now cuts the front wide + deep on the
-  // BIAS with drape excess so it falls into soft self-facing cowl folds. "cowl",
-  // "cowl neck", "draped cowl neckline" all draw. An ASYMMETRIC / MULTI-LAYER
-  // draped cowl is a different construction → stays missing. (A pussy-bow neck
-  // BOW is already covered by the Loop 4b tie/bow rule above — not re-matched
-  // here, so it is never double-counted.)
-  (t) => /cowl(\s*neck)?|draped?\s*(cowl|neck|neckline)/i.test(t) &&
-         !/asymmetric|asymmetrical|layered|multi/i.test(t),
-  // patch 3.13: sleeve-end cuff — the engine now draws a button (barrel/shirt) or
-  // ribbed (knit) band at the wrist of a full-length sleeve, the sleeve hem
-  // gathered in. "button cuff", "barrel cuff", "shirt cuff", "ribbed cuff",
-  // "ribbed knit cuff" all draw. A FRENCH cuff (double turn-back), an ELASTIC /
-  // casing cuff, and a RUFFLE / TIE cuff are a DIFFERENT construction → stay
-  // missing. NOTE: this rule moves the 58-set FULL count by ZERO — there is no
-  // photo in the set whose ONLY out-of-vocab item is a button/ribbed cuff (the
-  // three cuff photos are balloon short-sleeve garments with "cuff ties" / "ruffle
-  // cuffs", a different construction). It is added for vocabulary/moat coverage of
-  // real long-sleeve garments, not benchmark movement — measured, not claimed.
-  (t) => /\bcuff\b/i.test(t) &&
-         /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
-         !/french|elastic|casing|ruffle|frill|tie/i.test(t),
-  // patch 3.15: hem shape — the engine now reshapes the fitted lower edge into a
-  // shirt-tail (sides up, center long) or a high-low (front short, back long).
-  // "shirt-tail hem", "high-low hemline", "mullet hem", "curved hem" all draw. A
-  // handkerchief / pointed / asymmetric-diagonal hem is a DIFFERENT construction →
-  // stays missing.
-  (t) => /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
-         !/handkerchief|pointed|asymmetric|diagonal/i.test(t),
-];
+// ---- K1 TERM REGISTRY (2026-07-19): the DRAWN_SINCE regex list is RETIRED.
+// Capability is now a DECLARATION in contract/terms.json: every construction
+// word has an id, a status (drawable | honest), a capability and, for
+// piece-adding constructions, an evidence pattern the drafted piece names must
+// match. The counter looks a phrase up by EXACT normalized match (lowercase,
+// trimmed, collapsed spaces) against canonical + synonyms. An unmatched phrase
+// counts HONEST (never drawable by accident) and is reported in the UNMAPPED
+// leak scan below — a regex can leak, a dictionary miss is visible.
+const TERMS = JSON.parse(readFileSync(join(root, 'contract', 'terms.json'), 'utf8')).terms;
+const normPhrase = (s) => String(s).toLowerCase().replace(/\s+/g, ' ').trim();
+const TERM_BY_PHRASE = new Map();
+for (const term of TERMS) {
+  for (const p of [term.canonical, ...(term.synonyms || [])]) {
+    TERM_BY_PHRASE.set(normPhrase(p), term);
+  }
+}
+const UNMAPPED = new Map(); // phrase -> occurrence count (leak scan)
+function termFor(phrase) {
+  const t = TERM_BY_PHRASE.get(normPhrase(phrase));
+  if (!t) UNMAPPED.set(phrase, (UNMAPPED.get(phrase) || 0) + 1);
+  return t || null;
+}
+const isDrawable = (phrase) => {
+  const t = termFor(phrase);
+  return !!t && t.status === 'drawable';
+};
+
+// (The retired regex list lived here, 16 rules, benchmark-58.mjs:93-194 in the
+// pre-K1 tree; verdict history preserved in git. Registry replaces it 1:1.)
 
 
 // ---- 0.9 DRAFT-PROOF (2026-07-18): "FULL" is no longer a count, it is a
@@ -201,7 +126,12 @@ const DRAWN_SINCE = [
 // element the classifier says is now-drawable leaves EVIDENCE in the drafted
 // pieces. Anything that fails is PARTIAL — drafted, but not the photographed
 // garment. ('puff' -> None once made a sleeveless dress count as FULL here.)
-const SLEEVE_CAP_MAP = { plain: 0, gathered: 1, puffed: 2, puff: 2, capped: 3, cap: 3 };
+// K1: the vision-word -> engine-word translation is CONTRACT data
+// (contract/tables.json mappings.sleeveHeadToSleeveCap), ints via the vocab.
+const SLEEVE_CAP_MAP = Object.fromEntries(
+  Object.entries(CONTRACT.mappings.sleeveHeadToSleeveCap)
+    .map(([visionWord, engineWord]) => [visionWord, enumInt('sleeveCap', engineWord)]),
+);
 
 // Maps the vision spec to the engine spec with the SAME pick* bridge the web
 // product uses (web/js/vision-bridge.js) — the counter scores the REAL chain,
@@ -253,19 +183,11 @@ function mapVisionSpec(seen, fieldMisses) {
   return o;
 }
 
-// drawnNow phrase -> evidence expected in the drafted pieces. Categories whose
-// output is a marking/reshape (placket lines, hem shape, cowl remark, slits,
-// keyhole) pass on a clean draft; piece-adding categories must SHOW the piece.
-const EVIDENCE = [
-  { re: /collar/i, piece: /collar/i },
-  { re: /\btie\b|\bties\b|\bbow\b|\bsash\b|tie-?back/i, piece: /tie|bow/i },
-  { re: /drawstring|shirr|smock|gathered yoke|gathered bust|gathering/i, piece: /shirred|gathered|panel|cord/i },
-  { re: /(ruffled?|frilled?|gathered|flutter)\s*(shoulder\s*)?strap/i, piece: /strap/i },
-  { re: /peplum|waist flounce|waist frill/i, piece: /peplum/i },
-  { re: /open-?back|back ?cutout|backless/i, piece: /open back/i },
-  { re: /\bpuff(ed)?\b|gigot|sleeve head|gathered sleeve|cap\s*sleeve/i, piece: /sleeve/i },
-  { re: /\bcuff\b/i, piece: /cuff/i },
-];
+// drawnNow phrase -> evidence expected in the drafted pieces. K1: the evidence
+// pattern is the term's own declaration (contract/terms.json evidence field).
+// Terms whose output is a marking/reshape (placket lines, hem shape, cowl
+// remark, slits) declare evidence:null and pass on a clean draft; piece-adding
+// terms must SHOW the piece.
 
 function draftProof(entry, spec) {
   const fieldMisses = [];
@@ -283,11 +205,13 @@ function draftProof(entry, spec) {
   const names = out.pattern.pieces.map((x) => x.name).join(' | ');
   // (1) a promised sleeve must be drawn
   if (mapped.sleeveStyle !== 'none' && !/sleeve/i.test(names)) reasons.push('sleeve promised but no Sleeve piece drafted');
-  // (3) every now-drawable element must leave evidence
-  const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));
+  // (3) every now-drawable element must leave the evidence its term declares
+  const drawnNow = (entry.oov || []).filter((t) => isDrawable(t));
   for (const phrase of drawnNow) {
-    const ev = EVIDENCE.find((c) => c.re.test(phrase));
-    if (ev && !ev.piece.test(names)) reasons.push(`'${phrase}' counted drawable but no matching piece (pieces: ${names.slice(0, 90)})`);
+    const term = termFor(phrase);
+    if (term && term.evidence && !new RegExp(term.evidence, 'i').test(names)) {
+      reasons.push(`'${phrase}' (${term.id}) counted drawable but no matching piece (pieces: ${names.slice(0, 90)})`);
+    }
   }
   return reasons.length ? { ok: false, why: reasons.join('; ') } : { ok: true };
 }
@@ -304,15 +228,17 @@ function classify(entry, spec) {
   const misses = [];
   for (const [field, accepted] of Object.entries(entry.expect || {})) {
     let got = spec[field] === undefined ? null : spec[field];
-    // Honest equivalence, not a measurement trick: for sleeveStyle a sleeveless
-    // garment reads as either null or 'none' (no sleeve is no sleeve) — the block
-    // drafts identically. So null satisfies an expected 'none' and vice versa.
-    if (field === 'sleeveStyle' && got === null && accepted.includes('none')) got = 'none';
+    // Honest equivalence, not a measurement trick: contract data now
+    // (contract/tables.json mappings.nullEquivalence) — for a declared field a
+    // null reading and the declared value mean the SAME garment and draft
+    // identically (sleeveStyle: no sleeve is no sleeve).
+    const nullEq = CONTRACT.mappings.nullEquivalence[field];
+    if (nullEq !== undefined && got === null && accepted.includes(nullEq)) got = nullEq;
     if (!accepted.includes(got)) misses.push(`${field}=${JSON.stringify(got)} not in ${JSON.stringify(accepted)}`);
   }
   if (misses.length) return { cls: 'WRONG', why: misses.join('; ') };
-  const oovLeft = (entry.oov || []).filter((t) => !DRAWN_SINCE.some((fn) => fn(t)));
-  const drawnNow = (entry.oov || []).filter((t) => DRAWN_SINCE.some((fn) => fn(t)));
+  const oovLeft = (entry.oov || []).filter((t) => !isDrawable(t));
+  const drawnNow = (entry.oov || []).filter((t) => isDrawable(t));
   if (oovLeft.length) return { cls: 'MISSING', why: `engine cannot draw: ${oovLeft.join(', ')}` };
   if (drawnNow.length) return { cls: 'FULL', why: `in-vocab + now-drawable: ${drawnNow.join(', ')}` };
   return { cls: 'FULL', why: 'in-vocab fields match, no out-of-vocab construction' };
@@ -357,8 +283,9 @@ function structuralCoverage(entry, spec) {
 }
 
 const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
-// Reclassify cached entries against the CURRENT engine vocabulary (DRAWN_SINCE
-// grows loop by loop; the cached spec is still valid, only the verdict moves).
+// Reclassify cached entries against the CURRENT term registry (capability
+// declarations move loop by loop; the cached spec is still valid, only the
+// verdict moves).
 let reclassified = 0;
 for (const entry of MANIFEST.photos) {
   const r = results[entry.file];
@@ -466,25 +393,86 @@ console.log(`correct-reject: ${counts['REJECT-OK'] || 0}/${rejectTotal}`);
 // look like they moved nothing. The daily compass is element-level accuracy:
 // of EVERY out-of-vocab element across the set (with repeats = N), what
 // fraction can the engine NOW draw (D)? This does not punish clustering and
-// shows the engine's real progress loop by loop. Computed straight from the
-// frozen manifest oov[] against the same DRAWN_SINCE filter used above — zero
-// vision calls, so it is stable and reclassify-friendly.
+// shows the engine's real progress loop by loop. K1: computed straight from
+// the frozen manifest oov[] against the TERM REGISTRY (contract/terms.json) —
+// zero vision calls, so it is stable and reclassify-friendly.
 {
   let N = 0, D = 0;
-  const remaining = {}; // canonical-ish remaining term -> photo count
+  const remaining = {}; // remaining term id (or raw phrase) -> photo count
   for (const p of MANIFEST.photos) {
     if (p.category !== 'garment') continue;
     for (const t of (p.oov || [])) {
       N += 1;
-      if (DRAWN_SINCE.some((fn) => fn(t))) D += 1;
-      else remaining[t] = (remaining[t] || 0) + 1;
+      if (isDrawable(t)) D += 1;
+      else {
+        const term = termFor(t);
+        const key = term ? `${term.id} (${t})` : t;
+        remaining[key] = (remaining[key] || 0) + 1;
+      }
     }
   }
-  console.log('\n== ELEMENT ACCURACY (daily compass) ==');
+  console.log('\n== ELEMENT ACCURACY (daily compass, term-ID base) ==');
   console.log(`engine now draws ${D}/${N} of all out-of-vocab elements (${(100 * D / N).toFixed(1)}%)`);
   const top = Object.entries(remaining).sort((a, b) => b[1] - a[1]).slice(0, 8);
   console.log('top still-missing elements (freq):');
   for (const [t, n] of top) console.log(`  ${String(n).padStart(2)}  ${t}`);
+}
+
+// K1 LEAK SCAN: a manifest phrase that resolves to NO registry term would fall
+// honest silently — print it loudly instead. Green = empty.
+{
+  for (const p of MANIFEST.photos) for (const t of (p.oov || [])) termFor(t);
+  console.log('\n== TERM REGISTRY LEAK SCAN (unmapped manifest phrases) ==');
+  if (!UNMAPPED.size) console.log('0 unmapped — every 58-set oov phrase resolves to a term id');
+  else for (const [t, n] of UNMAPPED) console.log(`  UNMAPPED x${n}: ${t}`);
+}
+
+// K1 SECOND NUMBER — FREQUENCY-WEIGHTED CORPUS COVERAGE. The 58-set says how
+// the engine does on Damla's curated photos; this says how it does on the WILD
+// corpus: over every oov occurrence in the mine-vocab label bank
+// (dataset/labels/, local + gitignored), what share of occurrences is a
+// DRAWABLE term? Occurrences that match no registry term count in the
+// denominator (honest: unknown is not drawable). Published NEXT TO the 58-set
+// number, never instead of it. Offline, zero calls.
+{
+  const LABELS_DIR = join(root, 'dataset', 'labels');
+  if (!existsSync(LABELS_DIR)) {
+    console.log('\n== FREQUENCY-WEIGHTED CORPUS COVERAGE ==\n(dataset/labels absent on this machine — metric needs the local label bank)');
+  } else {
+    const { readdirSync } = await import('node:fs');
+    // Registry lookup on the canonicalized form too: bank phrasing varies, the
+    // miner's canonicalizer collapses it, and we index every term phrase both raw
+    // and canonicalized. Deterministic, no fuzzy matching.
+    const CANON_INDEX = new Map();
+    for (const term of TERMS) {
+      for (const p of [term.canonical, ...(term.synonyms || [])]) {
+        CANON_INDEX.set(canonicalize(p), term);
+      }
+    }
+    let occ = 0, drawableOcc = 0, mappedOcc = 0, files = 0;
+    const topDrawable = {}, topHonestMapped = {};
+    for (const f of readdirSync(LABELS_DIR)) {
+      if (!f.endsWith('.json')) continue;
+      let rec;
+      try { rec = JSON.parse(readFileSync(join(LABELS_DIR, f), 'utf8')); } catch { continue; }
+      files += 1;
+      for (const t of (rec.outOfVocab || [])) {
+        occ += 1;
+        const term = TERM_BY_PHRASE.get(normPhrase(t)) || CANON_INDEX.get(canonicalize(t)) || null;
+        if (!term) continue;
+        mappedOcc += 1;
+        if (term.status === 'drawable') { drawableOcc += 1; topDrawable[term.id] = (topDrawable[term.id] || 0) + 1; }
+        else topHonestMapped[term.id] = (topHonestMapped[term.id] || 0) + 1;
+      }
+    }
+    console.log('\n== FREQUENCY-WEIGHTED CORPUS COVERAGE (second number, term-ID base) ==');
+    console.log(`label bank: ${files} labels, ${occ} oov occurrences`);
+    console.log(`drawable share of ALL occurrences: ${drawableOcc}/${occ} = ${(100 * drawableOcc / (occ || 1)).toFixed(1)}%`);
+    console.log(`registry-mapped occurrences: ${mappedOcc}/${occ} = ${(100 * mappedOcc / (occ || 1)).toFixed(1)}% (unmapped counts as not drawable, honest)`);
+    const fmt = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k, n]) => `${k}:${n}`).join('  ');
+    console.log(`top drawable in the wild: ${fmt(topDrawable)}`);
+    console.log(`top mapped-but-honest:    ${fmt(topHonestMapped)}`);
+  }
 }
 
 // Loop 1 SCHEMA-BRIDGE metric: how many out-of-vocab construction elements the

@@ -21,7 +21,7 @@ benchmark-58/
 # collected garment photos (D-phase data pipeline): scraped public product
 # images, local-only for vocab mining + student-model training. NEVER push.
 # The real collector config names the sources — also local-only.
-dataset/
+dataset/*
 engine/tools/collect.config.json
 
 # Taste-pool labeling tool (step one of the aesthetic judge that learns Damla's
@@ -33,6 +33,33 @@ dataset/taste-pool/*
 !dataset/taste-pool/index.json
 !dataset/taste-pool/labels.json
 
+# Vocab canonicalization overrides (K6): pure fashion-term synonym map, no photo
+# names, no source URLs, no personal data — safe to commit. The corpus-coverage
+# number (6.7%) depends on it; without it that measurement is not reproducible.
+!dataset/vocab-canonical.json
+
+# K5 eval base: commit the TOOLS, keep the data local (candidates/hand-labels name
+# local photo files from the scraped corpus — same local-only rule as dataset/).
+!dataset/eval/
+dataset/eval/*
+!dataset/eval/label-tool.mjs
+!dataset/eval/select-candidates.mjs
+!dataset/eval/README.md
+
 .env.local
 .vercel/
 engine/tools/node_modules/
+
+# v1.1 fashion: uretilen ic ekranlar (turev, uretecler commitli)
+reports/gate/*.html
+
+# harici arac dizini (bu zincir yaratmadi)
+.operator/
+
+# emsal reference flats (Damla private taste corpus, never push)
+design_patterns/
+
+# fashion-flat template images (Zoe Hong / Shutterstock, copyrighted) — local-only
+# calibration source. The MEASURED RATIOS live in contract/figure-bands.json with
+# source attribution; the raster stays out of the public repo (same rule as benchmark-58).
+fashion-flat-models/

@@ -1,0 +1,2 @@
+# KART (AÇIK) — köprü kapsamı (FAZ 6 bulgusu, 2026-07-22)
+4 hedef (14, 52, 66, 77) gramer-temiz spec üretti ama compile() köprüsünde referans-stil eşleşmesi bulamadı (kopru-eslesmesi-yok). Sebep EKSİK PRİMİTİF değil, spec→referans-stil köprü kapsamı. Bu stiller çizilebilir primitiflerden oluşuyor olabilir ama köprü eşleme tablosunda kombinasyonları yok. Ayrı yol haritası: köprü eşlemesini bu 4'ün spec'ine göre genişlet (yeni stil kaydı gerekebilir).

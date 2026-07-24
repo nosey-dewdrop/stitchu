@@ -1,0 +1,1987 @@
+{
+ "ts": "2026-07-23",
+ "toplam": 103,
+ "esikler": {
+  "flatKotuPct": 10,
+  "routerKorPct": 3,
+  "nband": 16
+ },
+ "katmanlar": {
+  "FLAT": 53,
+  "JSON": 18,
+  "TEMIZ": 16,
+  "ROUTER": 11,
+  "CROP-YOK": 5
+ },
+ "katmanHedefleri": {
+  "FLAT": [
+   1,
+   4,
+   10,
+   13,
+   14,
+   23,
+   24,
+   25,
+   26,
+   27,
+   31,
+   33,
+   35,
+   36,
+   38,
+   39,
+   41,
+   42,
+   43,
+   44,
+   46,
+   47,
+   48,
+   49,
+   50,
+   51,
+   52,
+   54,
+   55,
+   56,
+   57,
+   62,
+   63,
+   64,
+   65,
+   66,
+   67,
+   69,
+   70,
+   72,
+   77,
+   78,
+   79,
+   81,
+   84,
+   87,
+   88,
+   89,
+   92,
+   94,
+   95,
+   99,
+   102
+  ],
+  "JSON": [
+   2,
+   5,
+   30,
+   32,
+   34,
+   37,
+   40,
+   45,
+   60,
+   61,
+   80,
+   85,
+   86,
+   93,
+   97,
+   98,
+   100,
+   103
+  ],
+  "TEMIZ": [
+   3,
+   7,
+   8,
+   11,
+   15,
+   16,
+   17,
+   20,
+   21,
+   22,
+   29,
+   53,
+   58,
+   59,
+   73,
+   101
+  ],
+  "ROUTER": [
+   6,
+   9,
+   12,
+   18,
+   19,
+   28,
+   71,
+   82,
+   83,
+   91,
+   96
+  ],
+  "CROP-YOK": [
+   68,
+   74,
+   75,
+   76,
+   90
+  ]
+ },
+ "jsonKokNeden": {
+  "straight/halfCircle": 2,
+  "trousers": 7,
+  "straight/null": 4,
+  "other/null": 1,
+  "other": 2,
+  "straight/pleated": 2
+ },
+ "flatRouterBeyondEngineFreq": {
+  "full circle klos etek": 3,
+  "belde buzgulu genis etek": 3,
+  "yan cepler": 2,
+  "peplum firfir hem": 2,
+  "empire alti buzgulu babydoll etek": 2,
+  "curved shirt hem": 2,
+  "peplum + firfir hem": 2,
+  "corset panel dikisleri": 2
+ },
+ "satirlar": [
+  {
+   "id": 1,
+   "label": "strapless princess A-line/flare maxi dress with high side slit",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_boat_princess sapma %14.45 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_boat_princess",
+    "bestSapma": 14.45,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 17.28,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "9 parça"
+    }
+   }
+  },
+  {
+   "id": 2,
+   "label": "strapless full-circle A-line midi/maxi dress (fitted bodice)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": "halfCircle"
+   }
+  },
+  {
+   "id": 3,
+   "label": "mandarin-collar frogged jacket with fluted cuffs, pointed hem",
+   "katman": "TEMIZ",
+   "kanit": "flat %7.40 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "top_crew_boxy_sleeve",
+    "bestSapma": 7.4,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 8.63,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 4,
+   "label": "cami/bralette top with cross-lace trim and button front placket",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %15.00 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 15,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 27.42,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 5,
+   "label": "drawstring-side lace-up shorts with elastic waist",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 6,
+   "label": "draped surplice bodice fitted maxi gown with ruched side slit",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim dress_sweetheart_princess_circle %5.57 ama top_scoop_cami %2.31 → router 3.27pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 2.31,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 5.57,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 7,
+   "label": "belted surplice draped wrap tulip-hem dress (waist detail crop)",
+   "katman": "TEMIZ",
+   "kanit": "flat %5.50 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 5.5,
+    "firstStyle": "princess_dress",
+    "firstSapma": 5.5,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 8,
+   "label": "off-shoulder ruffle-yoke peasant top + tiered ruffle-hem maxi skirt (set)",
+   "katman": "TEMIZ",
+   "kanit": "flat %4.44 + kalıp 3 parça",
+   "detay": {
+    "bestStyle": "gore_skirt_dress",
+    "bestSapma": 4.44,
+    "firstStyle": "princess_dress",
+    "firstSapma": 4.64,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 9,
+   "label": "sleeveless twist-front high-low sheath dress",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_crew_dart %10.77 ama top_crew_boxy_crop %3.46 → router 7.32pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 3.46,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 10.77,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 10,
+   "label": "tie-front ruched-cup bustier bodice fit-and-flare dress",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %16.30 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 16.3,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 17.45,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "9 parça"
+    }
+   }
+  },
+  {
+   "id": 11,
+   "label": "off-shoulder blouson batwing ruched-skirt mini dress",
+   "katman": "TEMIZ",
+   "kanit": "flat %5.90 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "gore_skirt_dress",
+    "bestSapma": 5.9,
+    "firstStyle": "gore_skirt_dress",
+    "firstSapma": 5.9,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 12,
+   "label": "balloon-sleeve gathered bishop cuff (sleeve detail flat)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %17.32 ama top_crew_boxy_crop %6.26 → router 11.06pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 6.26,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 17.32,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 13,
+   "label": "sleeveless V-neck side-tie wrap dress",
+   "katman": "FLAT",
+   "kanit": "en iyi stil gore_skirt_dress sapma %38.91 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "gore_skirt_dress",
+    "bestSapma": 38.91,
+    "firstStyle": "princess_dress",
+    "firstSapma": 38.91,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 14,
+   "label": "long balloon bishop sleeves with elastic gathered cuff (sleeve flat)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_sleeve sapma %18.50 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_sleeve",
+    "bestSapma": 18.5,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 18.61,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 15,
+   "label": "princess-seam scoop-neck fit-and-flare mini dress (green textured)",
+   "katman": "TEMIZ",
+   "kanit": "flat %1.34 + kalıp 9 parça",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 1.34,
+    "firstStyle": "dress_princess_scoop_aline",
+    "firstSapma": 1.35,
+    "exact": "dress_princess_scoop_aline",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "9 parça"
+    }
+   }
+  },
+  {
+   "id": 16,
+   "label": "gathered yoke bubble/balloon-hem maxi skirt with side drawstrings",
+   "katman": "TEMIZ",
+   "kanit": "flat %3.02 + kalıp 3 parça",
+   "detay": {
+    "bestStyle": "gore_skirt_dress",
+    "bestSapma": 3.02,
+    "firstStyle": "princess_dress",
+    "firstSapma": 3.02,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 17,
+   "label": "long-sleeve surplice wrap-tie dress with side slit and bralette layer",
+   "katman": "TEMIZ",
+   "kanit": "flat %5.75 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 5.75,
+    "firstStyle": "princess_dress",
+    "firstSapma": 5.75,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 18,
+   "label": "square-neck sleeveless princess-seam blouse (cover 66-1/66-2)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_sq_shirred_peplum %10.34 ama top_crew_boxy_crop %2.30 → router 8.04pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 2.3,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 10.34,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 19,
+   "label": "halter ruffle-tiered mini party dress (illustration)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim princess_dress %21.97 ama top_crew_boxy_crop %9.13 → router 12.84pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 9.13,
+    "firstStyle": "princess_dress",
+    "firstSapma": 21.97,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 20,
+   "label": "high-neck balloon-sleeve mermaid muslimah gown with beaded trim",
+   "katman": "TEMIZ",
+   "kanit": "flat %8.49 + kalıp 6 parça",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 8.49,
+    "firstStyle": "dress_princess_scoop_aline",
+    "firstSapma": 8.88,
+    "exact": "dress_princess_scoop_aline",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 21,
+   "label": "gingham halter fit-and-flare full-circle midi dress",
+   "katman": "TEMIZ",
+   "kanit": "flat %6.19 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "wrap_dress",
+    "bestSapma": 6.19,
+    "firstStyle": "princess_dress",
+    "firstSapma": 6.19,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 22,
+   "label": "Ruby Pea Coat gingham collared puff-sleeve top",
+   "katman": "TEMIZ",
+   "kanit": "flat %9.31 + kalıp 3 parça",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 9.31,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 10.06,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 23,
+   "label": "boatneck sleeveless button-down princess top (Jana / Boatneck)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %22.04 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 22.04,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 30.68,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 24,
+   "label": "short-sleeve V-neck button waist-tie skirt dress (sketch)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %30.68 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 30.68,
+    "firstStyle": "dress_vneck_gathered",
+    "firstSapma": 34.58,
+    "exact": "dress_vneck_gathered",
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 25,
+   "label": "lace-up front puff-sleeve peplum babydoll blouse",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_scoop_cami sapma %12.39 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 12.39,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 12.39,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 26,
+   "label": "ruffle-hem wrap mini skirt with 3D rosette",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %13.21 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 13.21,
+    "firstStyle": "princess_dress",
+    "firstSapma": 13.55,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 27,
+   "label": "boat-neck cap-sleeve princess fit-and-flare pinafore dress (Heloise)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_boat_princess sapma %10.70 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_boat_princess",
+    "bestSapma": 10.7,
+    "firstStyle": "dress_boat_princess_circle",
+    "firstSapma": 11.51,
+    "exact": "dress_boat_princess_circle",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 28,
+   "label": "deep-V ruffle-strap empire peplum bow top (Tmish)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %7.85 ama top_crew_boxy_crop %4.49 → router 3.37pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 4.49,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 7.85,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 29,
+   "label": "scoop-neck sleeveless princess panelled fit-and-flare midi dress (Patterncos)",
+   "katman": "TEMIZ",
+   "kanit": "flat %5.33 + kalıp 9 parça",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 5.33,
+    "firstStyle": "dress_princess_scoop_aline_midi",
+    "firstSapma": 5.33,
+    "exact": "dress_princess_scoop_aline_midi",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "9 parça"
+    }
+   }
+  },
+  {
+   "id": 30,
+   "label": "overbust corset with back lace-up (Artqube corset bundle)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": null
+   }
+  },
+  {
+   "id": 31,
+   "label": "Daisy shirred cami peplum top (gingham)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.32 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.32,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 26.71,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 32,
+   "label": "wide-leg pleated wrap-tie palazzo pants (Sleepy Pleated)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 33,
+   "label": "high-neck asymmetric-hem cap-sleeve ribbed top (Aurelic)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %15.74 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 15.74,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 28.12,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 34,
+   "label": "low-waist wide-leg drawstring yoke pants (Tillys)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 35,
+   "label": "vintage 1950s puff-sleeve smock babydoll shortie set (ruffle trim)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil wrap_dress sapma %11.20 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "wrap_dress",
+    "bestSapma": 11.2,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 13.46,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 36,
+   "label": "cap-sleeve collar top with front pleats (Isabel)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %16.78 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 16.78,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 26.11,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 37,
+   "label": "Bloom culotte shorts low-waist (wide culotte)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 38,
+   "label": "bow-tie wrap A-line mini skirt low/high-rise (3 lengths)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil princess_dress sapma %15.49 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 15.49,
+    "firstStyle": "princess_dress",
+    "firstSapma": 15.49,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 39,
+   "label": "scoop-neck cap-sleeve gathered-skirt smock dress with pockets (Liston)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %20.77 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 20.77,
+    "firstStyle": "top_scoop_cami",
+    "firstSapma": 20.77,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 40,
+   "label": "strapless bandeau ruched-front babydoll peplum top (Haley)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": null
+   }
+  },
+  {
+   "id": 41,
+   "label": "sleeveless princess-seam peplum frill top (denim, Frill Top)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.07 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.07,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 16.22,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 42,
+   "label": "scoop-neck sleeveless babydoll A-line mini dress (Alma denim)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %14.08 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 14.08,
+    "firstStyle": "top_scoop_cami",
+    "firstSapma": 14.08,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 43,
+   "label": "short-sleeve collared button-down shirtdress (Delilah, upcycled)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %17.09 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 17.09,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 23.89,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 44,
+   "label": "square-neck puff-sleeve shirred peplum top (OG Top)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %11.82 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 11.82,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 24.25,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 45,
+   "label": "asymmetric one-shoulder cross-back side-tie jean top (Ossane Jean Top)",
+   "katman": "JSON",
+   "kanit": "neckline='other' motor enum'unda yok",
+   "detay": {
+    "neckline": "other",
+    "skirtStyle": null
+   }
+  },
+  {
+   "id": 46,
+   "label": "2000s tie-shoulder babydoll cami top (Y2K)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %42.39 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 42.39,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 51.86,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 47,
+   "label": "square-neck cap-sleeve princess fit-and-flare midi dress (Harper)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_sq_shirred_peplum sapma %25.45 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_sq_shirred_peplum",
+    "bestSapma": 25.45,
+    "firstStyle": "dress_square_princess_circle",
+    "firstSapma": 26.69,
+    "exact": "dress_square_princess_circle",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 48,
+   "label": "Peter-Pan collar puff-sleeve babydoll blouse/mini dress (Olivia)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %11.48 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 11.48,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 11.48,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 49,
+   "label": "ruffled Peter-Pan collar puff-sleeve babydoll blouse (Blythe)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %13.50 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 13.5,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 15.53,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 50,
+   "label": "scoop-neck sleeveless drawstring-front A-line shift dress/top (Shoreline Shift)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %18.01 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 18.01,
+    "firstStyle": "top_scoop_cami",
+    "firstSapma": 18.01,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 51,
+   "label": "Lila ruffle-tie plaid peplum tank top",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.14 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.14,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 26.23,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 52,
+   "label": "boatneck asymmetric crossover cropped sweater (Nora)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_princess_peplum sapma %12.35 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_princess_peplum",
+    "bestSapma": 12.35,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 12.36,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 53,
+   "label": "boatneck sleeveless A-line back-tie mini dress (Keira / Mini A-Line)",
+   "katman": "TEMIZ",
+   "kanit": "flat %9.29 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "dress_boat_princess_circle",
+    "bestSapma": 9.29,
+    "firstStyle": "dress_boat_aline_tieback",
+    "firstSapma": 9.37,
+    "exact": "dress_boat_aline_tieback",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 54,
+   "label": "sweetheart wide-strap princess fit-and-flare mini heart dress",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %14.54 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 14.54,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 19.71,
+    "exact": "dress_sweetheart_princess_circle",
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 55,
+   "label": "handkerchief-hem asymmetric wrap mini skirt (Tori Handkerchief)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %12.67 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 12.67,
+    "firstStyle": "princess_dress",
+    "firstSapma": 17.8,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "2 parça"
+    }
+   }
+  },
+  {
+   "id": 56,
+   "label": "V-neck cross-strap open-back godet-flare babydoll mini dress (Orla)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_boat_princess sapma %15.10 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_boat_princess",
+    "bestSapma": 15.1,
+    "firstStyle": "princess_dress",
+    "firstSapma": 19.7,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 57,
+   "label": "short-sleeve V-neck button waist-tie shirtdress (Avril)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %16.17 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 16.17,
+    "firstStyle": "dress_vneck_gathered",
+    "firstSapma": 17.76,
+    "exact": "dress_vneck_gathered",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 58,
+   "label": "deep-V ruffle-trim button-front bralette top (floral, green)",
+   "katman": "TEMIZ",
+   "kanit": "flat %2.97 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 2.97,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 2.97,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 59,
+   "label": "off-shoulder puff-sleeve shirred-bodice tiered-hem cottagecore mini dress (floral)",
+   "katman": "TEMIZ",
+   "kanit": "flat %7.73 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 7.73,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 9.77,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 60,
+   "label": "off-shoulder puff-sleeve princess corset fit-and-flare mini dress (Melia)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": "halfCircle"
+   }
+  },
+  {
+   "id": 61,
+   "label": "deep-V spaghetti-strap godet-flare denim romper (Willow Romper)",
+   "katman": "JSON",
+   "kanit": "garment='other' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "other"
+   }
+  },
+  {
+   "id": 62,
+   "label": "tie-shoulder ruffle-trim cami top + ruffle-hem shorts pajama set (Iggi)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_boat_princess sapma %11.61 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_boat_princess",
+    "bestSapma": 11.61,
+    "firstStyle": "top_scoop_cami",
+    "firstSapma": 11.61,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 63,
+   "label": "scoop-neck sleeveless corset-seam crop top (Adelphi Corset Boatneck)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.90 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.9,
+    "firstStyle": "top_scoop_cami",
+    "firstSapma": 23.8,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 64,
+   "label": "oversized boyfriend button-down collared shirt (striped)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.88 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.88,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 23.77,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 65,
+   "label": "boxy drop-shoulder crew boat tunic tee (Rina)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %11.33 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 11.33,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 11.33,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 66,
+   "label": "sleeveless / short-sleeve trapeze A-line shift dress (Patterns Room, 4 views)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %15.41 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 15.41,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 22.03,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 67,
+   "label": "puff-sleeve sweetheart shirred cottagecore milkmaid dress (Anastasia)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_scoop_cami sapma %24.65 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 24.65,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 26.04,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 68,
+   "label": "sleeveless V-neck side-tie wrap linen dress (Nassimasew Wrap)",
+   "katman": "CROP-YOK",
+   "kanit": "emsal görsel yok → router/flat ölçülemedi (kalıp temiz)",
+   "detay": {
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça",
+     "pieces": 5
+    }
+   }
+  },
+  {
+   "id": 69,
+   "label": "crew-neck sleeveless crop top + straight maxi skirt linen set (Lunaria)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %13.02 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 13.02,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 21.68,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 70,
+   "label": "sweetheart ruffle-strap ruched coquette corset top (milk stripe)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.08 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.08,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 25.6,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 71,
+   "label": "asymmetric side-tie wrap vest over shirt (Simona Vest)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %19.60 ama top_crew_boxy_crop %7.20 → router 12.40pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 7.2,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 19.6,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 72,
+   "label": "off-shoulder sweetheart princess corset fit-and-flare mini dress (Melia black, alt)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %13.78 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 13.78,
+    "firstStyle": "dress_sweetheart_princess_circle",
+    "firstSapma": 14.55,
+    "exact": "dress_sweetheart_princess_circle",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 73,
+   "label": "V-neck puff-sleeve gathered-skirt wrap midi dress with pockets (Addison)",
+   "katman": "TEMIZ",
+   "kanit": "flat %5.63 + kalıp 5 parça",
+   "detay": {
+    "bestStyle": "princess_dress",
+    "bestSapma": 5.63,
+    "firstStyle": "dress_vneck_gathered",
+    "firstSapma": 5.75,
+    "exact": "dress_vneck_gathered",
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 74,
+   "label": "spaghetti-strap center-front zip cami top + mini skirt (100% Human set)",
+   "katman": "CROP-YOK",
+   "kanit": "emsal görsel yok → router/flat ölçülemedi (kalıp temiz)",
+   "detay": {
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça",
+     "pieces": 3
+    }
+   }
+  },
+  {
+   "id": 75,
+   "label": "spaghetti-strap deep-V rosette empire babydoll cami (yellow floral, illustration)",
+   "katman": "CROP-YOK",
+   "kanit": "emsal görsel yok → router/flat ölçülemedi (kalıp temiz)",
+   "detay": {
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça",
+     "pieces": 5
+    }
+   }
+  },
+  {
+   "id": 76,
+   "label": "short-sleeve V-neck tiered gathered peasant dress (napravy dress, red line)",
+   "katman": "CROP-YOK",
+   "kanit": "emsal görsel yok → router/flat ölçülemedi (kalıp temiz)",
+   "detay": {
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça",
+     "pieces": 5
+    }
+   }
+  },
+  {
+   "id": 77,
+   "label": "short-sleeve batwing boatneck fitted top (Emma Rose)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %14.16 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 14.16,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 18.33,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 78,
+   "label": "halter stand-collar keyhole-back-lacing fitted top (Keyhole Top)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %10.99 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 10.99,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 23.26,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "4 parça"
+    }
+   }
+  },
+  {
+   "id": 79,
+   "label": "square-neck sleeveless princess corset bustier midi dress (Bluebell)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil dress_square_princess_circle sapma %29.19 > %10 → motor bu şekli çizemiyor",
+   "detay": {
+    "bestStyle": "dress_square_princess_circle",
+    "bestSapma": 29.19,
+    "firstStyle": "dress_square_princess_circle",
+    "firstSapma": 29.19,
+    "exact": "dress_square_princess_circle",
+    "yakin": false,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 80,
+   "label": "ruffle-tiered elastic-cuff pantaloons (renaissance faire)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 81,
+   "label": "double-breasted mandarin cap-sleeve princess blouse (StorePatterns)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %13.59 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 13.59,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 13.59,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 82,
+   "label": "crew-neck sleeveless boxy crop tank (Elle Top)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_crew_dart %12.43 ama top_crew_boxy_crop %3.61 → router 8.82pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 3.61,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 12.43,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 83,
+   "label": "halter deep-V spaghetti-strap empire babydoll backless cami (Amy Top)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %22.01 ama top_crew_boxy_crop %9.57 → router 12.44pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 9.57,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 22.01,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 84,
+   "label": "square-neck tie-shoulder shirred-bodice ruffle-hem peplum top (Willow Shirred)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_princess_peplum sapma %12.36 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_princess_peplum",
+    "bestSapma": 12.36,
+    "firstStyle": "top_sq_shirred_peplum",
+    "firstSapma": 12.36,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 85,
+   "label": "strapless shirred-bodice tent lounge top/dress (So Manual)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": null
+   }
+  },
+  {
+   "id": 86,
+   "label": "straight-leg elastic-waist drawstring lounge pants (Andrea/Evelyn/Luna family)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 87,
+   "label": "halter front-tie A-line mini dress with waist ties (Margot)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %17.59 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 17.59,
+    "firstStyle": "princess_dress",
+    "firstSapma": 24.02,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 88,
+   "label": "Poppy sleeveless crew-neck darted tank top",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %16.02 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 16.02,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 21.13,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 89,
+   "label": "MUUN cross-front slit-hem lace-up tie top (Cheoma/Cross)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_scoop_cami sapma %11.89 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_scoop_cami",
+    "bestSapma": 11.89,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 11.89,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 90,
+   "label": "scoop-back sleeveless denim tank/cami (crop 202511-2 hanging)",
+   "katman": "CROP-YOK",
+   "kanit": "emsal görsel yok → router/flat ölçülemedi (kalıp temiz)",
+   "detay": {
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça",
+     "pieces": 3
+    }
+   }
+  },
+  {
+   "id": 91,
+   "label": "deep-V empire ruffle-strap peplum bow top (Amy/Amynote alt)",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %19.67 ama top_crew_boxy_crop %7.20 → router 12.47pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 7.2,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 19.67,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 92,
+   "label": "Delphine tie-front halter fringe/tassel top (yellow)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_boat_princess sapma %13.48 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_boat_princess",
+    "bestSapma": 13.48,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 13.48,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 93,
+   "label": "Roxy cutout tie-neck cap-sleeve top (bolero + bandeau look)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": null
+   }
+  },
+  {
+   "id": 94,
+   "label": "boxy drop-shoulder gather-front colorblock top (Collage Gather)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_sq_shirred_peplum sapma %12.88 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_sq_shirred_peplum",
+    "bestSapma": 12.88,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 12.88,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 95,
+   "label": "Pixie side-lace-up sleeveless crop top",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %15.38 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 15.38,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 15.38,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "3 parça"
+    }
+   }
+  },
+  {
+   "id": 96,
+   "label": "Victorian halter deep-V tailcoat vest with back lace-up + tails",
+   "katman": "ROUTER",
+   "kanit": "ilk seçim top_boat_princess %21.83 ama top_crew_boxy_crop %9.47 → router 12.36pt daha iyisini kaçırıyor (düzeltince kabul edilebilir çizim)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 9.47,
+    "firstStyle": "top_boat_princess",
+    "firstSapma": 21.83,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 97,
+   "label": "pull-on gathered patch-pocket kids/bloomer pants (pink stripe)",
+   "katman": "JSON",
+   "kanit": "garment='trousers' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "trousers"
+   }
+  },
+  {
+   "id": 98,
+   "label": "Low-waist yoke belt add-on (waistband piece)",
+   "katman": "JSON",
+   "kanit": "garment='other' motor enum'unda yok (geçerli: skirt/dress/top)",
+   "detay": {
+    "garment": "other"
+   }
+  },
+  {
+   "id": 99,
+   "label": "crew-neck short-sleeve gathered-skirt smock dress with pockets (Sew Good gathering)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_boxy_crop sapma %17.72 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_boxy_crop",
+    "bestSapma": 17.72,
+    "firstStyle": "top_crew_dart",
+    "firstSapma": 29.83,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 100,
+   "label": "Darling box-pleat drop-waist tennis mini dress (strap, contrast hem)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": "pleated"
+   }
+  },
+  {
+   "id": 101,
+   "label": "sweetheart tie-strap floral fit-and-flare corset mini dress (Saddleback/floral)",
+   "katman": "TEMIZ",
+   "kanit": "flat %2.98 + kalıp 6 parça",
+   "detay": {
+    "bestStyle": "dress_sweetheart_spag_circle",
+    "bestSapma": 2.98,
+    "firstStyle": "dress_sweetheart_spag_circle",
+    "firstSapma": 2.98,
+    "exact": "dress_sweetheart_spag_circle",
+    "yakin": false,
+    "routerBlind": false,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "6 parça"
+    }
+   }
+  },
+  {
+   "id": 102,
+   "label": "V-neck oversized swing tent mini dress (Saddleback mini)",
+   "katman": "FLAT",
+   "kanit": "en iyi stil top_crew_dart sapma %14.51 > %10 → motor bu şekli çizemiyor (gerçek stil eksik, fallback) (router da kör ama düzeltmek yetmez)",
+   "detay": {
+    "bestStyle": "top_crew_dart",
+    "bestSapma": 14.51,
+    "firstStyle": "princess_dress",
+    "firstSapma": 19.55,
+    "exact": null,
+    "yakin": true,
+    "routerBlind": true,
+    "denenen": 8,
+    "kalip": {
+     "ok": true,
+     "kanit": "5 parça"
+    }
+   }
+  },
+  {
+   "id": 103,
+   "label": "strapless drop-waist box-pleat pleated mini dress with contrast underskirt (Darling Pleated)",
+   "katman": "JSON",
+   "kanit": "neckline='straight' motor enum'unda yok",
+   "detay": {
+    "neckline": "straight",
+    "skirtStyle": "pleated"
+   }
+  }
+ ]
+}

@@ -1,16 +1,18 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=78';
-import { applyStatic, getLang, t } from './i18n.js?v=78';
-import { draft, grade } from './engine.js?v=86';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=86';
-import { renderResult } from './render.js?v=86';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=119';
+import { validateVision } from './spec-validate.js?v=119';
+import { CONTRACT } from './contract.gen.js?v=119';
+import { applyStatic, getLang, t } from './i18n.js?v=119';
+import { draft, grade } from './engine.js?v=119';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=119';
+import { renderResult } from './render.js?v=119';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=78';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickHemSlit, pickRuffledStraps, pickPeplum, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot } from './vision-bridge.js?v=86';
+} from './store.js?v=119';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=119';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -55,6 +57,16 @@ const SPEC_GROUPS = [
   // piece + a facing trued to the opening. Only on a dress/top (needs a back
   // bodice). Independent of a tie-back: a dress can have both.
   { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
+  // corset lace-up back (korse bağcıklı sırt): an eyelet-laced CB closure — the
+  // two back halves leave an open gap spanned by a criss-cross lace. Adds a CB
+  // facing strip + trued eyelet columns + a lacing cord. Only a fitted dress/top
+  // back hosts one (needs a fitted bodice back).
+  { key: 'laceUpBack', label: 'lace-up back', trLabel: 'bağcıklı sırt', options: [['none', 'none', 'yok'], ['corset', 'corset lace-up', 'korse bağcık']], for: (s) => s.garment !== 'skirt' },
+  // wrapfront.cpp: true wrap / surplice front (kruvaze — the wrap-dress family). The
+  // FRONT is reshaped into a crossed double front (each front laps past CF into a
+  // diagonal wrap edge, cut 2 mirror, surplice V). Only a dress/top (needs a front
+  // bodice). Pairs naturally with the wrap-front tie above.
+  { key: 'wrapFront', label: 'wrap / surplice front', trLabel: 'kruvaze ön', options: [['none', 'none', 'yok'], ['surplice', 'surplice wrap', 'kruvaze (çapraz ön)']], for: (s) => s.garment !== 'skirt' },
   // vocab 2026-07-17: back detail (arka pelerin/fırfır — Damla "arkası pelerinli/
   // fırfırlı"). A separate cut piece at the back neck: gathered ruffle, draped
   // cape, or circular flounce. Only a dress/top (needs a back bodice).
@@ -73,7 +85,7 @@ const SPEC_GROUPS = [
   // front tie / tie-front waist as self-fabric strips. A wrap-front tie also
   // serves as the front opening. Only a dress/top (needs a front bodice).
   { key: 'tieClosure', label: 'front tie', trLabel: 'ön bağ', options: [['none', 'none', 'yok'], ['frontNeckBow', 'front neck bow', 'ön yaka fiyonku'], ['frontWaistTie', 'tie-front waist', 'önden bel bağı'], ['frontWaistBow', 'front waist bow', 'ön bel fiyonku'], ['wrapFront', 'wrap-front tie', 'kruvaze (önden bağlı)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
-  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli']], for: (s) => s.garment !== 'top' },
+  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli'], ['gore', 'gored (6-panel)', 'godeli (6 panel)']], for: (s) => s.garment !== 'top' },
   { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
   { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
   { key: 'ruffle', label: 'hem ruffle', trLabel: 'fırfır', options: [['none', 'none', 'yok'], ['single', 'hem ruffle', 'etek ucu fırfır'], ['tiered', 'tiered (3)', 'kademeli (3 kat)']], for: (s) => s.garment !== 'top' },
@@ -96,12 +108,12 @@ const SPEC_GROUPS = [
   // patch 3.12: pocket (cep). A patch pocket (a separate piece sewn onto the
   // outside + a placement mark) or a side-seam in-seam pocket (two bag pieces +
   // a mouth mark). Welt/besom/cargo/kangaroo stay honest → not offered here.
-  { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi']], for: () => true },
+  { key: 'pocketStyle', label: 'pocket', trLabel: 'cep', options: [['none', 'none', 'yok'], ['patch', 'patch pocket', 'yama cep'], ['sideSeam', 'side-seam pocket', 'yan dikiş cebi'], ['slash', 'slash pocket (angled front)', 'eğik cep (ön hip)']], for: () => true },
   // patch 3.15: hem shape (etek ucu şekli). Reshapes the fitted lower edge into a
   // shirt-tail (sides up, center long) or high-low (front short, back long). Only
   // a fitted straight/A-line skirt/dress or a top hosts it; a gathered/pleated/
   // circle skirt has no shaped side hem to lift (stays honest).
-  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
+  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun'], ['pointedV', 'pointed / corset (V)', 'sivri / korse (V)'], ['boxPleatHem', 'box-pleat kick', 'kutu pili (kick)']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
   { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
   // Darts are the DEFAULT shaping (2026-07-17 minimal-piece policy): a plain
   // bodice stays ONE panel per side instead of splitting into a center + side
@@ -116,8 +128,9 @@ const spec = {
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
   waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
-  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', backSlit: 'none',
+  gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', wrapFront: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
+  cupSeam: 'none', yoke: 'none', boxPleat: 'none',
 };
 
 // Preset from a style-library page: a link like create.html?garment=dress&
@@ -379,7 +392,13 @@ function showSpec() {
       const loader = sewingLoader(t('create.spec.reading'));
       status.appendChild(loader);
       try {
-        const seen = await analyzePhoto(file.files[0]);
+        const seenRaw = await analyzePhoto(file.files[0]);
+        // K1 contract gate: the vision answer must speak the SEMANTIC garment
+        // language (contract/garment-spec.schema.json visionReading,
+        // additionalProperties:false). Unknown fields are stripped, out-of-enum
+        // values nulled — a render knob can never enter through this door.
+        const { clean: seen, report: schemaStrikes } = validateVision(seenRaw);
+        if (schemaStrikes.length) console.warn('vision schema strikes:', schemaStrikes);
         spec.garment = seen.garment;
         if (seen.neckline) spec.neckline = seen.neckline;
         if (seen.sleeveStyle) spec.sleeveStyle = seen.sleeveStyle;
@@ -417,9 +436,10 @@ function showSpec() {
         // R1.2 draws the short CAP-sleeve WING. `puffed` = raised puff, `gathered`
         // = soft gather, `capped` = a short cap wing. A drawstring-gathered sleeve
         // (needs an arm casing) stays honest.
-        if (seen.sleeveHead === 'puffed') spec.sleeveCap = 'puffed';
-        else if (seen.sleeveHead === 'gathered') spec.sleeveCap = 'gathered';
-        else if (seen.sleeveHead === 'capped') spec.sleeveCap = 'cap';
+        // K1: the vision-word -> engine-word translation is contract data
+        // (contract/tables.json mappings.sleeveHeadToSleeveCap), not an if-chain.
+        const capWord = seen.sleeveHead && CONTRACT.mappings.sleeveHeadToSleeveCap[seen.sleeveHead];
+        if (capWord && capWord !== 'plain') spec.sleeveCap = capWord;
         // A gathered/puff/cap head needs an actual sleeve to sit on; if the vision
         // read a head but no sleeve style, give it a straight sleeve to carry it.
         if (spec.sleeveCap && spec.sleeveCap !== 'plain' && (!spec.sleeveStyle || spec.sleeveStyle === 'none')) {
@@ -456,6 +476,26 @@ function showSpec() {
         // INDEPENDENT of a tie-back (Loop 4b), a Tie Back Mini Dress gets both.
         const backOpen = pickBackOpening(seen);
         spec.backOpening = backOpen || 'none';
+        // Corset lace-up back (korse bağcıklı sırt): the engine now draws a CB
+        // facing strip on each back edge + two trued eyelet columns + a lacing cord
+        // (an eyelet-laced, open-gap, ADJUSTABLE back). Only a fitted (princess/dart)
+        // bodice back on a dress/top hosts one; a skirt or loose/gathered back is
+        // refused honestly by the engine, so gate the same way (a laced read on a
+        // skirt stays in the honesty channel). Distinct from a tie-back (fabric ties)
+        // and an open-back cutout (a faced hole) — this is criss-cross eyelet lacing.
+        const laced = pickLaceUpBack(seen);
+        const lacedHostable = spec.garment !== 'skirt';
+        spec.laceUpBack = (laced && lacedHostable) ? 'corset' : 'none';
+        // True wrap / surplice front (kruvaze, wrapfront.cpp): the engine now
+        // reshapes the FRONT bodice into a crossed double front — each front laps
+        // past CF into a diagonal wrap edge, cut 2 mirror-image, forming the surplice
+        // V (the wrap-dress family). Only a dress/top with a front bodice hosts one;
+        // a skirt is refused honestly by the engine, so gate the same way (a wrap read
+        // on a skirt stays in the honesty channel). A wrap-front TIE composes on top
+        // to cinch it. Mirror the engine host gate exactly.
+        const wrap = pickWrapFront(seen);
+        const wrapHostable = spec.garment !== 'skirt';
+        spec.wrapFront = (wrap && wrapHostable) ? 'surplice' : 'none';
         // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
         // cuts the back with a center-back seam and opens a walking slit from the
         // hem. Only a fitted straight/A-line skirt hosts one; a gathered/pleated
@@ -481,13 +521,28 @@ function showSpec() {
         // waisted bodice → gate it out.
         const peplum = pickPeplum(seen);
         spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
+        // All-around hem flounce (etek ucu volanı — dropped-waist tiered look): the
+        // engine hangs a gathered flounce from the WHOLE hem (front + back) as a
+        // separate strip, gathered edge trued to the finished hem. Only a dress/top
+        // with a real hem hosts one (a gathered/flared skirt already ripples). A
+        // peplum (waist) or a back-only ruffle stays honest (pickHemFlounce null).
+        const hemFlounce = pickHemFlounce(seen);
+        const hemFlounceHostable = spec.garment === 'dress' || spec.garment === 'top';
+        spec.hemFlounce = (hemFlounce && hemFlounceHostable) ? hemFlounce : 'none';
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
-        // separate piece + a placement mark) and a side-seam in-seam pocket (two
-        // bag pieces + a mouth mark). A welt/besom/cargo/kangaroo pocket stays
-        // honest (pickPocket null). The block itself skips honestly when the host
-        // has no panel / no side seam (e.g. a cropped top for a side-seam bag).
+        // separate piece + a placement mark), a side-seam in-seam pocket (two bag
+        // pieces + a mouth mark), and a SLASH pocket (a diagonal front-hip mouth +
+        // a facing + a bag). A welt/besom/cargo/kangaroo pocket stays honest
+        // (pickPocket null). The block itself skips honestly when the host has no
+        // panel / no side seam (e.g. a cropped top for a side-seam bag).
         const pocket = pickPocket(seen);
-        spec.pocketStyle = pocket || 'none';
+        // A slash pocket needs a lower-body hip: a dress, or a fitted/A-line skirt
+        // (a gathered/pleated/circle skirt is a no-waist rectangle, and a bodice-
+        // only top has no hip). Gate it out otherwise (the engine also skips
+        // honestly); the pocket then falls back to the honest missing note.
+        const slashHostable = spec.garment === 'dress' ||
+          (spec.garment === 'skirt' && (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
+        spec.pocketStyle = (pocket === 'slash' && !slashHostable) ? 'none' : (pocket || 'none');
         // Cuff (manşet, patch 3.13): the engine now draws a button or ribbed band
         // at the wrist end of a full-length sleeve, the sleeve hem gathered in.
         // Only a real full-length sleeve (Straight, long/elbow) hosts one — a
@@ -498,11 +553,14 @@ function showSpec() {
           (spec.sleeveLength === 'long' || spec.sleeveLength === 'elbow') &&
           spec.sleeveCap !== 'cap';
         spec.cuffStyle = (cuff && cuffHostable) ? cuff : 'none';
-        // Hem shape (etek ucu şekli, patch 3.15): the engine now reshapes the
-        // fitted lower edge into a shirt-tail (sides up) or a high-low (front short,
-        // back long). Only a fitted straight/A-line skirt/dress or a top hosts one;
-        // a gathered/pleated/circle skirt has no shaped side hem to lift, and an
-        // asymmetric/handkerchief hem stays honest (pickHemShape null).
+        // Hem shape (etek ucu şekli, patch 3.15+): the engine now reshapes the
+        // fitted lower edge into a shirt-tail (sides up), a high-low (front short,
+        // back long), a corset/basque POINT (center dips to a V), or an inverted
+        // BOX-PLEAT / kick pleat released at the hem. Only a fitted straight/A-line
+        // skirt/dress or a top hosts one; a gathered/pleated/circle skirt has no
+        // shaped lower edge, and a handkerchief/asymmetric-diagonal hem stays honest
+        // (pickHemShape null). boxPleatHem also needs a center-fold panel — the C++
+        // block honest-no-ops (guide note) if the host has no CF/CB fold.
         const hemShape = pickHemShape(seen);
         const hemHostable = spec.garment === 'top' ||
           ((spec.garment === 'skirt' || spec.garment === 'dress') &&
@@ -521,6 +579,34 @@ function showSpec() {
         const bardotHostable = spec.garment !== 'skirt' && spec.neckline !== 'halter' &&
           spec.shaping !== 'princess';
         spec.bardotStyle = (bardot && bardotHostable) ? bardot : 'none';
+        // Cup seam (kup dikişi, cupseam.cpp): the engine now splits the princess
+        // front into Upper Cup + Lower Cup + Front Body along a horizontal seam
+        // through the bust apex — the strapless/bustier bust. The host-gate MIRRORS
+        // the engine EXACTLY: a princess-seamed dress/top, strapless (sleeveless or
+        // a cap-sleeve wing), with a sweetheart/square/scoop top edge above the
+        // apex. Any other host the engine refuses honestly, so we don't send it and
+        // it stays in the honesty layer (a sleeved bodice cup seam, a dart bust).
+        const cupSeamHostable = (spec.garment === 'dress' || spec.garment === 'top') &&
+          spec.shaping === 'princess' &&
+          (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
+          (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
+        spec.cupSeam = (pickCupSeam(seen) && cupSeamHostable) ? 'horizontal' : 'none';
+        // Yoke split (roba — doll/babydoll/swing dress, yoke.cpp): the engine now
+        // splits the front+back bodice into a Yoke + a lower Body along a horizontal
+        // chest seam — plain (yoke:1) or gathered/shirred/smocked below (yoke:2).
+        // Host: a dress/top with a bodice (a skirt has none). Composes safely with a
+        // collar (the engine faces the yoke) and with the box pleat below. A yoke the
+        // engine refuses (a skirt) stays honest.
+        const yokePick = pickYoke(seen);
+        const yokeHostable = spec.garment !== 'skirt';
+        spec.yoke = (yokePick && yokeHostable) ? (yokePick === 2 ? 'gathered' : 'plain') : 'none';
+        // Center box pleat (orta ters kutu pili, boxpleat.cpp): a single inverted
+        // fold behind the center-front panel — the swing/doll center fold. Host: a
+        // dress/top (a skirt's CF panel is a different build). Composes with the yoke
+        // above (a swing top is yoke + CF box pleat). No structured vision field
+        // carries a box pleat, so pickBoxPleat reads only the free-text channel.
+        const boxPleat = pickBoxPleat(seen);
+        spec.boxPleat = (boxPleat && spec.garment !== 'skirt') ? 'centerInverted' : 'none';
         // A drawn button row is DECORATIVE from vision (a functional row is the
         // placket path above); a visible run of buttons with no read closure reads
         // decorative. A front placket already drew a functional row, so only add a
@@ -576,6 +662,14 @@ function showSpec() {
           // must NOT list the open-back as missing. A pocket / special back
           // finish clustered with it stays honest (its own oov term still shows).
           backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
+          // corset lace-up back: an eyelet-laced CB closure is now DRAWN (CB facing
+          // strip + two trued eyelet columns + a lacing cord), so the honesty layer
+          // must NOT list the laced back as missing / degrade it to a single tie.
+          laceUpBackDrawn: !!(spec.laceUpBack && spec.laceUpBack !== 'none'),
+          // wrapfront.cpp: a true wrap / surplice front is now DRAWN (the front
+          // reshaped into a crossed double front, cut 2 mirror, surplice V), so the
+          // honesty layer must NOT degrade a wrap/surplice read to a mere tie strip.
+          wrapFrontDrawn: !!(spec.wrapFront && spec.wrapFront !== 'none'),
           // Loop M1: a back hem slit / walking vent is now DRAWN (CB seam +
           // top-point bar tack + a lapped extension for a vent), so the honesty
           // layer must NOT list the back slit as missing. A front/side slit stays
@@ -592,6 +686,11 @@ function showSpec() {
           // as missing. A pleated/gathered/draped/tiered peplum stays honest
           // (peplum none — a different construction the engine does not draw).
           peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
+          // All-around hem flounce: a gathered flounce is now DRAWN as a separate
+          // strip trued to the whole hem, so the honesty layer must NOT list an
+          // all-around / tiered hem flounce as missing. A pleated/circular/multi-
+          // tier hem flounce stays honest (hemFlounce none).
+          hemFlounceDrawn: !!(spec.hemFlounce && spec.hemFlounce !== 'none'),
           // vocab 2026-07-17: an OFF-SHOULDER / bardot neckline is now DRAWN
           // (top edge dropped below the shoulder + elastic casing + optional
           // frill), so the honesty layer must NOT list off-shoulder as missing. A
@@ -626,6 +725,18 @@ function showSpec() {
           // asymmetric-diagonal / handkerchief / mullet-on-a-gathered-skirt hem is a
           // different construction that stays honest (hemShape straight).
           hemShapeDrawn: !!(spec.hemShape && spec.hemShape !== 'straight'),
+          // cupseam.cpp: a horizontal bust-cup seam (Upper Cup + Lower Cup + Front
+          // Body) is now DRAWN when the host is a strapless princess bustier, so the
+          // honesty layer must NOT list cup seams as missing. A sleeved bodice cup
+          // seam / a dart bust the engine refused stays honest (cupSeam none).
+          cupSeamDrawn: spec.cupSeam !== 'none',
+          // yoke.cpp: a plain/gathered yoke split (Front/Back Yoke + Body) is now
+          // DRAWN, so the honesty layer must NOT list the yoke as missing. A yoke on
+          // a skirt (no bodice) the engine refused stays honest (yoke none).
+          yokeDrawn: spec.yoke !== 'none',
+          // boxpleat.cpp: a center inverted box pleat is now DRAWN behind the CF
+          // panel, so the honesty layer must NOT list a center box pleat as missing.
+          boxPleatDrawn: spec.boxPleat !== 'none',
         };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();

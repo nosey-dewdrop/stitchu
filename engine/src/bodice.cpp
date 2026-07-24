@@ -260,7 +260,7 @@ HalfBodice makePiece(
     piece.grainline = Grainline{
         {std::max(centerTakeIn, 20.0) + 20, armholeY},
         {std::max(centerTakeIn, 20.0) + 20, sideWaistY - 30}};
-    piece.seamAllowance = 15;
+    piece.seamAllowance = constants::kSeamAllowanceMM;
 
     HalfBodice half;
     half.piece = piece;
@@ -432,7 +432,7 @@ PrincessHalf makePrincessPieces(
     center.grainline = Grainline{
         {std::max(centerTakeIn, 20.0) + 20, armholeY},
         {std::max(centerTakeIn, 20.0) + 20, sideWaistY - 30}};
-    center.seamAllowance = 15;
+    center.seamAllowance = constants::kSeamAllowanceMM;
 
     // ---- side panel ----
     std::vector<PathCommand> sideCommands{PathCommand::move(split)};
@@ -468,7 +468,7 @@ PrincessHalf makePrincessPieces(
     side.grainline = Grainline{
         {grainX, std::max(armholeY, apex.y) + 25},
         {grainX, sideWaistY + (extra > 0 ? extra - 40 : -30)}};
-    side.seamAllowance = 15;
+    side.seamAllowance = constants::kSeamAllowanceMM;
     // Rebase to a local top-left origin like every other piece.
     const Rect sideBox = boundingBox(side.commands);
     translatePiece(side, -sideBox.x, -sideBox.y);
@@ -1072,7 +1072,7 @@ PatternPiece makeFacing(
     facing.grainline = Grainline{
         {(pts[g1].x + outer[g1].x) / 2, (pts[g1].y + outer[g1].y) / 2},
         {(pts[g2].x + outer[g2].x) / 2, (pts[g2].y + outer[g2].y) / 2}};
-    facing.seamAllowance = 15;
+    facing.seamAllowance = constants::kSeamAllowanceMM;
     return facing;
 }
 

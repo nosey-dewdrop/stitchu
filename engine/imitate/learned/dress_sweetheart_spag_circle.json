@@ -1,0 +1,19 @@
+{
+ "style": "dress_sweetheart_spag_circle",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202455-6.png",
+ "params": {
+  "neckWidth": 1.1,
+  "neckDepth": 20,
+  "skirtFull": 1.6499999999999992,
+  "waistNip": 0.05,
+  "bustProject": 0.2,
+  "shoulderSlope": 1.6,
+  "bustHeight": 0.15000000000000002,
+  "yokeDrop": 19.65625,
+  "hemDip": 4.999999999999999,
+  "armholeHollow": 0.22
+ },
+ "sapma": 0.02991008865118907,
+ "ok": false,
+ "ts": "2026-07-23"
+}

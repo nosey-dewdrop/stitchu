@@ -15,7 +15,6 @@ const require = createRequire(import.meta.url);
 const createEngine = require(join(here, '../dist/stitchu-engine.js'));
 const flat = await import(join(here, 'render-flat.mjs'));
 const { renderScattered, renderFrontBack } = flat;
-const { renderOnFigure } = await import(join(here, 'render-on-figure.mjs'));
 const { renderListingCard } = await import(join(here, 'render-listing-card.mjs'));
 
 const OUT = join(here, '../../web/patterns/svg');
@@ -115,6 +114,19 @@ export const PATTERNS = [
     shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'none',
     sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
     pocketStyle: 1 /* patch */, patch: '3.12', drawnBy: 'the pair of patch pockets on the front skirt', photos: 2 },
+
+  // v1.1, the first new capabilities after the v1.0 freeze.
+  { slug: 'cup-seam-corset-bustier', style: 'Cup-seam corset bustier top', garment: 'top',
+    shaping: 'princess', waistline: 'natural', fabric: 'woven', neckline: 'sweetheart', sleeveStyle: 'none',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    cupSeam: 1 /* upper cup + lower cup + front body */, patch: '3.27',
+    drawnBy: 'the horizontal cup seam that splits the bustier front into three bands', photos: 1 },
+
+  { slug: 'yoke-doll-dress', style: 'Yoke doll dress', garment: 'dress',
+    shaping: 'dart', waistline: 'natural', fabric: 'woven', neckline: 'crew', sleeveStyle: 'straight',
+    sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip',
+    yoke: 1 /* front + back yoke split */, patch: '3.29',
+    drawnBy: 'the horizontal yoke seam that splits the bodice into a yoke and a lower body', photos: 1 },
 ];
 
 const engine = await createEngine();
@@ -134,6 +146,7 @@ for (const s of PATTERNS) {
     backSlit: s.backSlit || 0, ruffledStraps: s.ruffledStraps || 0, peplum: s.peplum || 0,
     placketStyle: s.placketStyle || 0, edgeFinish: s.edgeFinish || 0, pocketStyle: s.pocketStyle || 0,
     cuffStyle: s.cuffStyle || 0, hemShape: s.hemShape || 0, shoulderStyle: s.shoulderStyle || 0,
+    cupSeam: s.cupSeam || 0, yoke: s.yoke || 0,
   }, { bust: BODY.bust, waist: BODY.waist, hip: BODY.hip, shoulder: BODY.shoulder, backLength: BODY.backLength, armLength: BODY.armLength, neck: BODY.neck }));
   if (out.error) { console.log(s.slug, 'ERROR', out.error); continue; }
   const p = out.pattern;
@@ -150,18 +163,16 @@ for (const s of PATTERNS) {
     tie: s.tie || 0, gatherType: s.gatherType || 0, gatherZone: s.gatherZone || 0,
     backOpening: s.backOpening || 0, ruffledStraps: s.ruffledStraps || 0,
     peplum: s.peplum || 0, pocketStyle: s.pocketStyle || 0, hemRuffle: s.hemRuffle || 0,
+    cupSeam: s.cupSeam || 0, yoke: s.yoke || 0,
     closure: closures[0] || null,
   };
   // (1) The scattered nested-piece layout — the CUTTING LAYOUT (secondary/PDF).
   writeFileSync(join(OUT, `${s.slug}.svg`), renderScattered(p.pieces));
   // (2) The ASSEMBLED front + back garment flat sketch — the HERO image.
   writeFileSync(join(OUT, `${s.slug}-flat.svg`), renderFrontBack(p.pieces, flatSpec));
-  // (3) The ON-FIGURE croquis view — the same style worn on a fashion figure.
-  const figureSvg = renderOnFigure(flatSpec);
-  writeFileSync(join(OUT, `${s.slug}-figure.svg`), figureSvg);
-  // (4) The ETSY-STYLE LISTING CARD — the cover/thumbnail. Composed 100% from
-  // the engine's own output: name (typography) + flat + on-figure croquis +
-  // honest badges. No Canva, no per-product design, no real photo.
+  // (3) The ETSY-STYLE LISTING CARD — the cover/thumbnail. Composed 100% from
+  // the engine's own output: name (typography) + pattern pieces + honest badges.
+  // No Canva, no per-product design, no real photo, no human figure.
   const cardSvg = renderListingCard(
     { slug: s.slug, style: s.style, pieces: p.pieces.length, closure: closures[0] || null },
     { piecesSvg: renderScattered(p.pieces), sizeRange: 'EU34-52' });
@@ -170,7 +181,7 @@ for (const s of PATTERNS) {
   meta.push({ slug: s.slug, style: s.style, pieces: p.pieces.length,
     pieceNames: p.pieces.map((x) => x.name), fabric: p.fabricMeters140,
     garment: s.garment, patch: s.patch, drawnBy: s.drawnBy, photos: s.photos,
-    flat: `${s.slug}-flat.svg`, onFigure: `${s.slug}-figure.svg`,
+    flat: `${s.slug}-flat.svg`,
     card: `${s.slug}-card.svg`, closure: closures[0] || null });
   console.log(`${s.slug}: ${p.pieces.length} pieces, ${p.fabricMeters140} m` +
     (closures.length ? ` [closure: ${closures[0]}]` : ''));

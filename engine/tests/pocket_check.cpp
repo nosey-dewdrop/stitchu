@@ -153,6 +153,84 @@ int main() {
         std::printf("      cut note: %s\n\n", bag ? bag->cutInstruction.c_str() : "(none)");
     }
 
+    // ---- SLASH POCKET on a shift dress (angled front-hip / jeans pocket) -----
+    {
+        std::printf("Slash pocket on an A-line shift dress:\n");
+        GarmentSpec s; s.garment = GarmentType::Dress; s.skirtStyle = SkirtStyle::ALine;
+        s.shaping = Shaping::Dart; s.neckline = Neckline::Square; s.sleeveStyle = SleeveStyle::None;
+        s.skirtLength = SkirtLength::Midi; s.topLength = TopLength::Hip;
+        GarmentSpec p = s; p.pocketStyle = static_cast<int>(PocketStyle::Slash);
+
+        const DraftedPattern d0 = GarmentDrafter::draft(s, m0());
+        const DraftedPattern dP = GarmentDrafter::draft(p, m0());
+
+        // Slash adds TWO pieces: a facing + a bag (the mouth itself is marked on
+        // the existing front, not a new piece).
+        check(countByName(dP, "Facing") == 1, "adds one pocket-facing piece");
+        check(countByName(dP, "Bag") == 1, "adds one pocket-bag piece");
+        check(dP.pieces.size() == d0.pieces.size() + 2, "adds exactly two pieces (facing + bag)");
+        checkOutlinesIdentical(d0, dP, "Pocket", "slash dress");
+
+        const PatternPiece* facing = findByName(dP, "Facing");
+        const PatternPiece* bag = findByName(dP, "eğik cep");
+        check(facing != nullptr, "a Pocket Facing piece exists");
+        check(bag != nullptr, "a slash Pocket Bag piece exists");
+        check(facing && facing->cutInstruction.find("slash") != std::string::npos,
+              "facing cut note names the slash mouth");
+        check(facing && facing->hasGrainline, "facing has a grainline");
+
+        // A diagonal mouth mark was stamped on the skirt front (markings grew) and
+        // it is DIAGONAL (both dx and dy non-trivial — not a straight side-seam or
+        // horizontal waist tick).
+        const PatternPiece* frontPlain = findByName(d0, "Skirt Front");
+        const PatternPiece* frontP = findByName(dP, "Skirt Front");
+        check(frontPlain && frontP && frontP->markings.size() > frontPlain->markings.size(),
+              "a diagonal mouth mark is stamped on the skirt front");
+        // The first two added markings are the mouth line (move -> line).
+        double slashLen = 0.0; bool diagonal = false;
+        if (frontPlain && frontP && frontP->markings.size() >= frontPlain->markings.size() + 2) {
+            const Point a = frontP->markings[frontPlain->markings.size()].to;
+            const Point b = frontP->markings[frontPlain->markings.size() + 1].to;
+            slashLen = std::hypot(b.x - a.x, b.y - a.y);
+            diagonal = std::fabs(b.x - a.x) > 20.0 && std::fabs(b.y - a.y) > 20.0;
+        }
+        check(diagonal, "the mouth mark is a real diagonal (waist -> side seam)");
+
+        // TRUING: the facing's mouth edge (its second command, a straight line from
+        // (0,0) to (0,mouthLen)) is the SAME length as the marked slash on the
+        // front (<0.5 mm), so they sew.
+        double facingMouth = -1.0;
+        if (facing && facing->commands.size() > 1) facingMouth = std::fabs(facing->commands[1].to.y);
+        check(facingMouth > 0 && std::fabs(facingMouth - slashLen) < 0.5,
+              "facing mouth edge trued to the front slash edge (<0.5 mm)");
+        std::printf("      slash len=%.3f mm, facing mouth=%.3f mm, delta=%.4f mm\n",
+                    slashLen, facingMouth, std::fabs(facingMouth - slashLen));
+
+        check(PatternValidator::issues(p, m0(), dP).empty(), "slash draft valid (wearable, no issues)");
+        std::printf("      facing note: %s\n\n", facing ? facing->cutInstruction.c_str() : "(none)");
+    }
+
+    // ---- HONEST NO-OP: a gathered (no-waist) skirt front can't host a slash ----
+    {
+        std::printf("Gathered skirt: slash pocket skipped honestly (no fitted waist):\n");
+        GarmentSpec s; s.garment = GarmentType::Skirt; s.skirtStyle = SkirtStyle::Gathered;
+        s.shaping = Shaping::Dart;
+        GarmentSpec p = s; p.pocketStyle = static_cast<int>(PocketStyle::Slash);
+        const DraftedPattern d0 = GarmentDrafter::draft(s, m0());
+        const DraftedPattern dP = GarmentDrafter::draft(p, m0());
+        check(countByName(dP, "Facing") == 0 && countByName(dP, "Bag") == 0,
+              "no facing/bag on a gathered rectangle front");
+        check(dP.pieces.size() == d0.pieces.size(), "no extra piece on a refusal");
+
+        // Direct call returns false + one honest note.
+        DraftedPattern d = GarmentDrafter::draft(s, m0());
+        const size_t before = d.guideSteps.size();
+        const bool applied = PocketBlock::apply(d, PocketStyle::Slash, m0().bustMM() / 4.0);
+        check(!applied, "direct Slash apply refuses a gathered front");
+        check(d.guideSteps.size() == before + 1, "honest skip note added (no silent no-op)");
+        std::printf("\n");
+    }
+
     // ---- HONEST SKIP: a cropped top has no side seam for an in-seam bag ------
     {
         std::printf("Cropped top: side-seam pocket skipped honestly:\n");
@@ -178,10 +256,11 @@ int main() {
     // ---- HONEST BOUNDARY: no welt/besom enum exists (never faked) ------------
     {
         std::printf("Welt/besom pocket: honest boundary (no enum, never faked):\n");
-        // The block only draws Patch + SideSeam. There is no PocketStyle::Welt —
-        // a welt request stays in the honesty layer (missing.js), it is never
-        // silently substituted with a patch. Prove the enum surface is exactly
-        // {None, Patch, SideSeam} and that None is a true no-op.
+        // The block draws Patch + SideSeam + Slash. There is no PocketStyle::Welt
+        // — a welt request stays in the honesty layer (missing.js), it is never
+        // silently substituted with a patch. Prove the enum values are stable
+        // (None=0, Patch=1, SideSeam=2, Slash=3 appended) and that None is a true
+        // no-op.
         GarmentSpec s; s.garment = GarmentType::Dress;
         GarmentSpec none = s; none.pocketStyle = static_cast<int>(PocketStyle::None);
         const DraftedPattern d0 = GarmentDrafter::draft(s, m0());
@@ -190,9 +269,11 @@ int main() {
         for (size_t i = 0; identical && i < d0.pieces.size(); ++i)
             identical = identical && sameCommands(d0.pieces[i].commands, dN.pieces[i].commands);
         check(identical, "PocketStyle::None is byte-identical to no pocket at all");
-        check(static_cast<int>(PocketStyle::SideSeam) == 2 &&
-              static_cast<int>(PocketStyle::Patch) == 1,
-              "enum surface is exactly {None=0, Patch=1, SideSeam=2} (no welt)");
+        check(static_cast<int>(PocketStyle::None) == 0 &&
+              static_cast<int>(PocketStyle::Patch) == 1 &&
+              static_cast<int>(PocketStyle::SideSeam) == 2 &&
+              static_cast<int>(PocketStyle::Slash) == 3,
+              "enum values stable {None=0, Patch=1, SideSeam=2, Slash=3} (no welt)");
         std::printf("\n");
     }
 

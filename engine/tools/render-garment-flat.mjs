@@ -24,13 +24,108 @@
 // compatibility but NOT used to derive the outline — the flat is spec-driven.
 
 const NAVY = '#1f3a5f';
-const SEAM = '#5c7aa0';   // interior seam / dart / detail lines (thin)
+const SEAM = '#5c7aa0';   // interior seam / dart / detail lines
+
+// F2 çizgi hiyerarşisi (Damla kalemi, gusto-corpus line_hierarchy 3 katman):
+// gövde konturu KALIN, konstrüksiyon dikişi (prenses seam / dart / empire seam)
+// ORTA — konturdan ince ama işaretten kalın, "bu bir dikiş çizgisi" okunur;
+// yardımcı işaret (grainline dash, buton, gather tick) İNCE. Eşit ağırlık =
+// vektör-şema hissi (MIHENK-01 reddi: "dikiş çizgisi kontur ile aynı ağırlıkta").
+const W_OUTLINE = 2.0;    // dış siluet
+const W_SEAM = 1.4;       // konstrüksiyon dikişi (orta katman — eksikti)
+const W_MARK = 1.0;       // yardımcı işaret
 
 const svgDoc = (w, h, inner) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
   `width="100%" role="img"><rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#fff"/>${inner}</svg>`;
 
 const n = (v) => (Math.round(v * 10) / 10).toFixed(1);
+
+// ---------------------------------------------------------------------------
+// PORT: Damla kalem dili — REFERANS KALEM'den (engine/flat-engine/_engine-full.mjs)
+// alınan taper mürekkep + deterministik drape planı. Şematik düz çizgi yerine
+// el-çizimi karakteri: kıvrımlar taper'la kalınlaşıp incelir, drape planı ana
+// sırt (köşeye giden) + sönen ikincil kıvrımları asimetrik dağıtır.
+// ---------------------------------------------------------------------------
+// deterministik gürültü (aynı seed = aynı çizim; MIHENK-01 randomluk dersi)
+function rng(seed) {
+  let s = seed >>> 0;
+  return function () {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// cubic bezier noktası
+function cubicPt(s, t) {
+  const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+  return [a * s[0] + b * s[2] + c * s[4] + d * s[6], a * s[1] + b * s[3] + c * s[5] + d * s[7]];
+}
+function samplePts(p0, c1, c2, p1, m) {
+  const s = [p0[0], p0[1], c1[0], c1[1], c2[0], c2[1], p1[0], p1[1]], out = [];
+  for (let i = 0; i <= m; i++) out.push(cubicPt(s, i / m));
+  return out;
+}
+// TAPER: bir nokta dizisini, ortası kalın uçları sivri kapalı bir mürekkep
+// şeridine çevirir (REFERANS KALEM'deki taper ile aynı matematik). bias eğrisi
+// kalınlığın nasıl doğup söndüğünü ayarlar.
+function taperInk(pts, maxw, bias, color) {
+  const L = pts.length, a = [], b = [];
+  for (let i = 0; i < L; i++) {
+    const t = L > 1 ? i / (L - 1) : 0.5;
+    const q = pts[Math.min(i + 1, L - 1)], r = pts[Math.max(i - 1, 0)];
+    const dx = q[0] - r[0], dy = q[1] - r[1], d = Math.hypot(dx, dy) || 1;
+    const w = maxw * 0.5 * Math.pow(Math.sin(Math.PI * Math.min(Math.max(t, 0.002), 0.998)), bias || 0.5);
+    a.push([pts[i][0] - dy / d * w, pts[i][1] + dx / d * w]);
+    b.push([pts[i][0] + dy / d * w, pts[i][1] - dx / d * w]);
+  }
+  let s = `M ${n(a[0][0])} ${n(a[0][1])}`;
+  for (let i = 1; i < L; i++) s += ` L ${n(a[i][0])} ${n(a[i][1])}`;
+  for (let i = L - 1; i >= 0; i--) s += ` L ${n(b[i][0])} ${n(b[i][1])}`;
+  return `<path d="${s} Z" fill="${color || NAVY}" stroke="none"/>`;
+}
+// DRAPE PLANI: n kıvrım, ana sırt (köşeye giden, prim) + sönen ikincil.
+// REFERANS KALEM drapePlan mantığı: ink rejimi kıvrım sayısını verir, deterministik
+// jitter yerlerini dağıtır, orta ön temiz kalır.
+function drapePlan(seed, ink, foldCount, drape) {
+  const rnd = rng(seed);
+  const cnt = ink === 'minimal' ? 2 : ink === 'orta' ? 3 : Math.max(2, Math.round((foldCount || 10) / 2));
+  const R = [], CORE = 0.20;
+  for (let i = 0; i < cnt; i++) {
+    const prim = i % 2 === 0, base = (i + 0.65) / (cnt + 0.25);
+    const u = Math.min(0.96, Math.max(0.04, base + (rnd() - 0.5) * 0.8 / cnt));
+    R.push({ u: CORE + (1 - CORE) * u, prim,
+      swing: prim ? 0.55 + rnd() * 0.45 : 0.15 + rnd() * 0.30,
+      birth: prim ? rnd() * 0.05 : (0.14 + rnd() * 0.30) * (drape || 1),
+      die: prim ? 1 : 0.40 + rnd() * 0.35,
+      sway: (rnd() - 0.5) * 0.45 });
+  }
+  R.sort((a, b) => a.u - b.u);
+  R[R.length - 1].prim = true; R[0].prim = false; // orta ön temiz
+  if (ink === 'minimal') R.forEach((r) => { r.prim = true; });
+  return R;
+}
+
+// ---------------------------------------------------------------------------
+// CIRCLE-SKIRT FLAT LANGUAGE (full-circle primitive). The pattern foot already
+// drafts halfCirclePanel (skirt.cpp) for skirtStyle 'halfCircle'/'fullCircle';
+// the flat foot used to drop these to the aLine fallback (flare 1.58) so a
+// circle skirt read as a plain A-line. Here we resolve every circle-skirt name
+// to ONE path so the drawing shows the true wide radial sweep + wavy hem.
+//   full circle  = cut from two half-circles → widest fullness (waist × 2.6)
+//   half circle  = one/two quarter panels    → wide but less (waist × 2.1)
+// Names are unified: circle / full / fullCircle → full; halfCircle → half.
+// (matches beyondEngine "full circle etek" wording and the halfCircle spec.)
+function circleSkirt(skirtStyle) {
+  const st = String(skirtStyle || '').toLowerCase();
+  if (st === 'fullcircle' || st === 'full' || st === 'circle') return 'full';
+  if (st === 'halfcircle') return 'half';
+  return null;                                   // not a circle skirt
+}
+function circleFlare(kind) {                      // hemHalf multiplier vs waistW
+  return kind === 'full' ? 2.6 : kind === 'half' ? 2.1 : null;
+}
 
 // ---------------------------------------------------------------------------
 // Body proportions for the flat (illustration units, NOT mm — this is a fashion
@@ -66,8 +161,9 @@ function geom(spec) {
     const skDrop = skLen === 'mini' ? 150 : skLen === 'midi' ? 250 : skLen === 'maxi' ? 360 : 190;
     hemY = waistY + skDrop;
     const st = spec.skirtStyle || 'aLine';
-    const flare = st === 'straight' ? 1.12 : st === 'gathered' ? 1.9
-      : (st === 'circle' || st === 'full') ? 2.2 : 1.58;    // aLine default
+    const circle = circleSkirt(st);              // full / half / null
+    const flare = circle ? circleFlare(circle)   // real circle-skirt sweep
+      : st === 'straight' ? 1.12 : st === 'gathered' ? 1.9 : 1.58;   // aLine default
     hemHalf = U.waistW * flare;
   } else {
     // a top / shell / blouse / tunic ends at hip / waist / tunic length.
@@ -90,8 +186,18 @@ function geom(spec) {
   const fitted = spec.shaping === 'princess' || spec.shaping === 'darts' || empire;
   const waistW = fitted ? U.waistW : U.chestW - 6;   // shift: only a slight taper
 
+  // Bust apex (göğüs noktası): the anatomical landmark a princess seam passes
+  // THROUGH. Height between shoulder and waist (bustHeight 0..1, default 0.42 of
+  // the shoulder->waist span, flat-engine styles.json bustHeight~0.3-0.4); half-x
+  // sits between neck and chest edge (~0.55 of chest half). A real princess seam
+  // runs armhole -> apex -> waist as an S; without the apex it reads as a random
+  // bracket bulge (MIHENK-01 taste-lexicon "parantez çizgi").
+  const bustFrac = typeof spec.bustHeight === 'number' ? (0.30 + spec.bustHeight * 0.30) : 0.42;
+  const apexY = waistY * bustFrac;
+  const apexHalfX = U.chestW * 0.55;
+
   return {
-    isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve,
+    isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve, apexY, apexHalfX,
     shoulderW: U.shoulderW, neckBase: U.neckBase, chestW: U.chestW,
     waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
   };
@@ -262,7 +368,10 @@ function sleeveHalf(g, spec) {
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
   const puff = spec.sleeveCap === 2;
-  const cap = style === 'cap' || spec.sleeveCap === 4;
+  // cap sleeve: a short set-in sleeve that caps the shoulder without winging out.
+  // Names unified — style 'cap', numeric sleeveCap===4, or spec.sleeveHead 'capped'
+  // (the vision/target spec field) all resolve to the same short cap draw.
+  const cap = style === 'cap' || spec.sleeveCap === 4 || spec.sleeveHead === 'capped';
 
   // sleeve length (how far the hem drops below the shoulder tip)
   const drop = cap ? 34 : len === 'long' ? 300 : len === 'threeQuarter' ? 220
@@ -293,7 +402,7 @@ function sleeveHalf(g, spec) {
     // gather ticks at the cap head
     for (let t = 0.2; t <= 0.85; t += 0.16) {
       const gx = shoulderTipX + outW * t;
-      s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="1"/>`;
+      s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
     }
   }
   return s;
@@ -312,24 +421,56 @@ function interior(g, spec, view) {
   // empire / waist seam
   if (g.isDress) {
     s += `<line x1="${n(-g.waistW * 1.02)}" y1="${n(waistY)}" x2="${n(g.waistW * 1.02)}" y2="${n(waistY)}" ` +
-      `stroke="${SEAM}" stroke-width="1" stroke-dasharray="7 4"/>`;
+      `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="7 4"/>`;
   }
 
   if (spec.shaping === 'princess') {
-    // two curved princess seams shoulder-ish -> hem on each side
+    // Anatomik prenses dikişi: armhole/shoulder → BUST APEX → waist (→ hem on a
+    // dress). The seam passes THROUGH the apex as an S-curve that follows the body
+    // — over the bust it bows outward to the apex, then draws in to the waist nip,
+    // then eases back out toward the hip. NOT a single random outward bracket
+    // (MIHENK-01: apex'i geçmeyen bombeli quadratic yanlıştı). Two cubics joined
+    // at the apex give the S. Front passes the true apex; back has no bust so its
+    // apex flattens toward the shoulder-blade line.
+    // Classic bodice princess line: starts at the ARMHOLE (over the chest edge,
+    // near the underarm), NOT at the neck — a neck-start reads as a wrong V. Runs
+    // down over the bust apex, in to the waist nip, out to the hip/hem.
+    // Seam parametreleri spec.seam ile ayarlanabilir (MIHENK-06 ızgarası kurallı
+    // seam versiyonlarını tarar). Varsayılanlar geriye uyumlu (mevcut pinler
+    // değişmez). sm.origin: seam başlangıç x'i (chestW oranı, armhole yakını);
+    // sm.top: başlangıç y'si (küçük = omuza yakın, kanca riski); sm.bow: apex'e
+    // yaklaşma; sm.waist: bel nip; sm.c1: ilk kübik kontrol tension'ı (kanca kaynağı).
+    const sm = spec.seam || {};
+    const oOrigin = sm.origin ?? 0.80;
+    const oTop = sm.top ?? 30;
+    const oBowF = sm.bow ?? (isBack ? 0.46 : 0.62);
+    const oWaist = sm.waist ?? 0.46;
+    const oC1 = sm.c1 ?? 0.25;
+    const apexY = isBack ? g.apexY * 0.78 : g.apexY;
     for (const dir of [-1, 1]) {
-      const xTop = dir * g.neck.half * 0.9;
-      const xMid = dir * g.chestW * 0.62;
-      const xBot = dir * (g.isDress ? g.hemHalf * 0.42 : g.waistW * 0.5);
-      s += `<path d="M ${n(xTop)} ${n(20)} C ${n(xMid)} ${n(70)} ${n(xMid)} ${n(waistY - 30)} ${n(xBot)} ${n(g.isDress ? g.hemY : g.hemY - 6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
+      const xTop = dir * g.chestW * oOrigin;
+      const yTop = oTop;
+      const xApex = dir * g.apexHalfX * oBowF;
+      const xWaist = dir * g.waistW * oWaist;
+      const xBot = dir * (g.isDress ? g.hemHalf * 0.44 : g.waistW * 0.52);
+      const yBot = g.isDress ? g.hemY : g.hemY - 6;
+      // cubic 1: armhole -> apex (oC1 tension; büyük = daha yumuşak giriş, kanca yok)
+      let d = `M ${n(xTop)} ${n(yTop)} C ${n(xTop - (xTop - xApex) * oC1)} ${n(yTop + (apexY - yTop) * 0.55)} ` +
+        `${n(xApex)} ${n(apexY - 18)} ${n(xApex)} ${n(apexY)} `;
+      // cubic 2: apex -> waist nip (draw in, following the body)
+      d += `C ${n(xApex)} ${n(apexY + (waistY - apexY) * 0.55)} ${n(xWaist)} ${n(waistY - 12)} ${n(xWaist)} ${n(waistY)} `;
+      // cubic 3: waist -> hip/hem (ease back out)
+      if (g.isDress) d += `C ${n(xWaist)} ${n(waistY + (yBot - waistY) * 0.35)} ${n(xBot)} ${n(waistY + (yBot - waistY) * 0.62)} ${n(xBot)} ${n(yBot)} `;
+      else d += `L ${n(xBot)} ${n(yBot)} `;
+      s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round" stroke-linejoin="round"/>`;
     }
   } else if (!isBack) {
     // front bust/waist darts: short tapered lines from the waist up toward the bust
+    // apex (a real dart points AT the apex, not at a guessed height).
     for (const dir of [-1, 1]) {
       const x = dir * g.waistW * 0.5;
-      s += `<path d="M ${n(x)} ${n(bodyBottom * 0.99)} L ${n(x * 0.86)} ${n(waistY * 0.6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-linecap="round"/>`;
+      s += `<path d="M ${n(x)} ${n(bodyBottom * 0.99)} L ${n(dir * g.apexHalfX * 0.5)} ${n(g.apexY + 6)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
     }
   }
 
@@ -338,26 +479,41 @@ function interior(g, spec, view) {
   if (hasPlacket && !isBack) {
     const top = g.neck.depth + 6;
     const bot = (g.isDress ? g.hemY : g.hemY) * 0.94;
-    s += `<line x1="0" y1="${n(g.neck.depth)}" x2="0" y2="${n(bot + 8)}" stroke="${SEAM}" stroke-width="1"/>`;
+    s += `<line x1="0" y1="${n(g.neck.depth)}" x2="0" y2="${n(bot + 8)}" stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
     const nb = 6;
     for (let i = 0; i < nb; i++) {
       const y = top + (bot - top) * i / (nb - 1);
-      s += `<circle cx="0" cy="${n(y)}" r="3.4" fill="none" stroke="${NAVY}" stroke-width="1"/>`;
+      s += `<circle cx="0" cy="${n(y)}" r="3.4" fill="none" stroke="${NAVY}" stroke-width="${W_MARK}"/>`;
     }
   }
 
-  // gather (drawstring / shirred / smocked) — thin horizontal or tick band
+  // PORT: BÜZGÜ PANOSU (REFERANS KALEM shirr dili). Düz paralel çizgi yerine
+  // dalgalı taper büzgü sıraları — panonun toplanan dokusu. drawstring için
+  // ayrıca casing (kanal) çizgisi. Referans kalemdeki dalgalı taper karakteri.
   if (spec.gatherType) {
     const zoneY = spec.gatherZone === 1 ? 60 : spec.gatherZone === 2 ? waistY - 6 : g.neck.depth + 14;
     const halfW = g.chestW * 0.9;
-    if (spec.gatherType === 1) {                 // drawstring: two parallel channels
-      for (const off of [-5, 5]) {
-        s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="1"/>`;
+    const gseed = (isBack ? 71 : 23) + Math.round(halfW) * 3 + Math.round(zoneY);
+    const grnd = rng(gseed);
+    // panonun dikey kapsamı: casing/üst kenardan empire seam'e kadar birkaç sıra
+    const rowTop = spec.gatherType === 1 ? zoneY : Math.max(g.neck.depth + 16, zoneY - 24);
+    const rowBot = spec.gatherType === 1 ? zoneY + 16 : Math.min((g.isDress ? waistY : g.hemY * 0.5) - 6, zoneY + 22);
+    const rows = spec.gatherType === 1 ? 2 : 4;
+    if (spec.gatherType === 1) {                 // drawstring: iki casing çizgisi + fiyonk deliği
+      for (const off of [0, 10]) {
+        s += `<line x1="${n(-halfW)}" y1="${n(zoneY + off)}" x2="${n(halfW)}" y2="${n(zoneY + off)}" stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
       }
-    } else {                                      // shirred / smocked: tick band
-      for (let x = -halfW; x <= halfW; x += 13) {
-        s += `<line x1="${n(x)}" y1="${n(zoneY - 7)}" x2="${n(x)}" y2="${n(zoneY + 7)}" stroke="${SEAM}" stroke-width="0.9"/>`;
+    }
+    // dalgalı taper büzgü sıraları (drawstring casing altında, shirred tüm panoda)
+    for (let i = 0; i < rows; i++) {
+      const ry = rows > 1 ? rowTop + (rowBot - rowTop) * (i / (rows - 1)) : rowTop;
+      const bumps = Math.max(4, Math.round(5 + (grnd() - 0.5) * 2));
+      const amp = 0.9 + grnd() * 0.9, ph = grnd() * Math.PI, pts = [];
+      for (let b = 0; b <= bumps * 2; b++) {
+        const u = b / (bumps * 2);
+        pts.push([-halfW + (2 * halfW) * u, ry + Math.sin(ph + u * bumps * Math.PI) * amp]);
       }
+      s += taperInk(pts, 1.3, 0.35, SEAM);
     }
   }
 
@@ -365,7 +521,7 @@ function interior(g, spec, view) {
   if (isBack) {
     if (spec.closure && /zip/i.test(spec.closure)) {
       s += `<line x1="0" y1="${n(g.neck.depth + 4)}" x2="0" y2="${n(g.isDress ? waistY + 40 : g.hemY * 0.8)}" ` +
-        `stroke="${SEAM}" stroke-width="1" stroke-dasharray="2 3"/>`;
+        `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="2 3"/>`;
     }
     if (spec.tie && spec.tie > 0) {
       const ty = g.isDress ? waistY : g.hemY * 0.86;
@@ -376,7 +532,127 @@ function interior(g, spec, view) {
     }
     if (spec.backOpening && spec.backOpening > 0) {
       s += `<path d="M ${n(-g.neck.half * 0.72)} ${n(g.neck.depth + 6)} Q 0 ${n(waistY * 0.5)} ${n(g.neck.half * 0.72)} ${n(g.neck.depth + 6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="1" stroke-dasharray="4 3"/>`;
+        `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="4 3"/>`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // WRAP (front only): true-wrap flat convention. The body is cut symmetric per
+  // panel; the wrap is the FRONT CLOSURE — one panel crosses over the other. On
+  // a finished-garment flat this reads as (1) a surplice crossover edge running
+  // diagonally from one shoulder-neck point down across the bust to the opposite
+  // waist, (2) the underlap edge (the panel that goes underneath, faint), and
+  // (3) a self-fabric tie exiting the side seam at the waist and knotting at CF.
+  // Opt-in (spec.wrap): defaults unchanged so golden + pins stay byte-identical.
+  // spec.wrap: 1 = wrap-to-left (overlap right-over-left), 2 = wrap-to-right.
+  // The overlap direction sets which shoulder the crossover starts from.
+  // -------------------------------------------------------------------------
+  if (!isBack && spec.wrap && spec.wrap > 0) {
+    const dir = spec.wrap === 2 ? -1 : 1;         // overlap side
+    const snX = g.neck.half, snY = g.neck.depth;  // shoulder-neck point
+    const overW = g.waistW * 0.30;                // overlap crosses past CF to opp. waist
+    // (1) OVERLAP EDGE (top panel): shoulder-neck -> bust -> opposite waist. Bows
+    // over the bust apex like the princess seam, so it follows the body not a
+    // straight chord (the diagonal is the read of the wrap, not a ruler line).
+    const bx = -dir * g.apexHalfX * 0.55, byA = g.apexY;
+    const wx = -dir * overW, wy = waistY;
+    let d = `M ${n(dir * snX)} ${n(snY)} ` +
+      `C ${n(dir * snX * 0.7)} ${n(snY + (byA - snY) * 0.5)} ${n(bx + dir * g.apexHalfX * 0.3)} ${n(byA - 14)} ${n(bx)} ${n(byA)} ` +
+      `C ${n(bx - dir * g.apexHalfX * 0.2)} ${n(byA + (wy - byA) * 0.5)} ${n(wx)} ${n(wy - 14)} ${n(wx)} ${n(wy)}`;
+    s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_OUTLINE}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // (2) UNDERLAP EDGE (bottom panel, faint mark): mirror side, shoulder to CF-ish
+    // waist, sits under the overlap — drawn thin so it reads as the panel behind.
+    const uwx = dir * overW * 0.5;
+    let du = `M ${n(-dir * snX)} ${n(snY)} ` +
+      `C ${n(-dir * snX * 0.6)} ${n(snY + (byA - snY) * 0.6)} ${n(-dir * g.apexHalfX * 0.4)} ${n(byA + 6)} ${n(uwx)} ${n(wy)}`;
+    s += `<path d="${du}" fill="none" stroke="${SEAM}" stroke-width="${W_MARK}" stroke-linecap="round" stroke-dasharray="5 4"/>`;
+    // (3) WRAP TIE: self-fabric strip exits the side seam at the waist on the
+    // overlap side, wraps to the front, knots near CF. Two soft strokes = the tie.
+    const ty = waistY;
+    s += `<path d="M ${n(dir * g.waistW * 1.01)} ${n(ty - 4)} Q ${n(dir * g.waistW * 0.45)} ${n(ty + 8)} ${n(dir * overW * 0.4)} ${n(ty + 4)}" ` +
+      `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+    // knot + short tails at CF
+    s += `<circle cx="${n(dir * overW * 0.4)}" cy="${n(ty + 4)}" r="3.2" fill="none" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
+    for (const t of [-1, 1]) {
+      s += `<path d="M ${n(dir * overW * 0.4)} ${n(ty + 4)} Q ${n(dir * overW * 0.4 + t * 10)} ${n(ty + 22)} ${n(dir * overW * 0.4 + t * 6)} ${n(ty + 40)}" ` +
+        `fill="none" stroke="${SEAM}" stroke-width="${W_MARK}" stroke-linecap="round"/>`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // PORT: DRAPE MÜREKKEBİ (REFERANS KALEM dili). Boş etek yerine el-çizimi
+  // kıvrımlar — ana sırt (skirtBottom'a inen, taper kalın) + sönen ikincil
+  // (yarı yolda biter, ince). Gathered/full etekte yoğun, düz etekte az.
+  // Şematik boş etek MIHENK-01 "vektör-şema" hissinin yarısıydı.
+  // -------------------------------------------------------------------------
+  {
+    const skirtTop = g.isDress ? waistY : (g.hemY - (g.hemY - waistY) * 0.5);
+    const skirtBot = g.hemY;
+    const topHalf = g.isDress ? g.waistW * 1.0 : g.chestW * 0.9;
+    const botHalf = g.hemHalf;
+    const st = spec.skirtStyle || (g.isDress ? 'aLine' : 'shift');
+    // circle skirts (full/half) drape as densely as a gathered skirt: the wide
+    // radial fullness falls into deep waves at the hem, so use the 'orta' ink.
+    const full = st === 'gathered' || circleSkirt(st) !== null;
+    const ink = full ? 'orta' : (spec.ink || 'minimal');
+
+    // GORE / GODE PANEL SEAMS (skirtStyle 'gore'): the engine cuts the skirt into
+    // 6 wedge panels; on a flat that reads as VERTICAL PANEL SEAMS running waist ->
+    // hem, evenly spaced across the width, each flaring out with the skirt so the
+    // godet fullness sits at the hem. Drawn under the drape ink (construction line,
+    // W_SEAM). A 6-gore skirt shows the CF seam + evenly spaced seams to each side
+    // across the visible half. Backward-compatible: only when skirtStyle === 'gore'.
+    if (st === 'gore' && skirtBot - skirtTop > 30) {
+      const nGore = spec.goreCount || 6;            // engine default 6 panels
+      // seams visible across ONE half = half the panel-seam count (CF seam at x=0
+      // shared). Space them evenly in the waist->hem taper so they flare outward.
+      const seamsPerHalf = Math.max(1, Math.round(nGore / 2));
+      for (let i = 0; i <= seamsPerHalf; i++) {
+        const u = i / seamsPerHalf;                 // 0 = CF, 1 = side seam
+        for (const dir of (i === 0 ? [1] : [-1, 1])) {
+          const xTop = dir * topHalf * u;
+          const xBot = dir * botHalf * u;
+          // gentle outward flare (godet): control point pulls the seam out low
+          const my = skirtTop + (skirtBot - skirtTop) * 0.5;
+          const mx = dir * (topHalf * u + (botHalf - topHalf) * u * 0.35);
+          const d = `M ${n(xTop)} ${n(skirtTop)} Q ${n(mx)} ${n(my)} ${n(xBot)} ${n(skirtBot - 2)}`;
+          s += `<path d="${d}" fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+        }
+      }
+    }
+
+    if (skirtBot - skirtTop > 30) {                 // sadece görünür bir etek varsa
+      // ASİMETRİ (taste-lexicon "yelpaze" düzeltmesi): sol ve sağ AYRI drapePlan
+      // (ayrı seed) alır — fabric folds ayna simetrik bir yelpaze değil, iki yön
+      // farklı boy/eğim/yerde düşer, tıpkı gerçek kumaş gibi.
+      const baseSeed = (isBack ? 977 : 131) + Math.round(botHalf) * 7 + Math.round(g.hemY);
+      const planByDir = {
+        '-1': drapePlan(baseSeed, ink, spec.foldCount, spec.drape),
+        '1': drapePlan(baseSeed * 3 + 61, ink, spec.foldCount, spec.drape),
+      };
+      for (const dir of [-1, 1]) {
+        for (const r of planByDir[dir]) {
+          // başlangıç: etek üstünde, orta ile yan arası u konumunda
+          const su = 0.14 + r.u * 0.5;
+          const ax = dir * topHalf * su;
+          const ay = skirtTop + 4 + r.birth * (skirtBot - skirtTop) * 0.55;
+          // bitiş: prim ise ete kadar dışa savrulur, ikincil yarı yolda söner
+          const endU = r.prim ? (0.55 + r.u * 0.4) : r.u * 0.85;
+          const bx = dir * botHalf * endU;
+          const by = r.prim ? skirtBot - 3 : skirtTop + (skirtBot - skirtTop) * r.die;
+          const h = by - ay;
+          const c1 = [ax + (bx - ax) * (r.prim ? 0.10 : 0.18), ay + h * 0.40];
+          const c2 = [bx - (bx - ax) * 0.10, by - h * (r.prim ? 0.46 : 0.58)];
+          const line = samplePts([ax, ay], c1, c2, [bx, by], 14);
+          if (ink === 'minimal') {
+            // kısa izler: büzgü altında + ete yakın (referans kalem minimal reji)
+            s += taperInk(line.slice(0, 4), 1.3, 0.55, SEAM);
+            s += taperInk(line.slice(9), 1.5, 0.5, SEAM);
+          } else {
+            s += taperInk(line, r.prim ? 1.8 : 0.95, r.prim ? 0.34 : 0.62, SEAM);
+          }
+        }
+      }
     }
   }
 
@@ -440,9 +716,126 @@ function viewPanel(spec, view) {
 }
 
 // ---------------------------------------------------------------------------
+// REFERANS KALEM KÖPRÜSÜ (Damla mimari kararı 2026-07-19): strapless / band-top
+// stiller (babydoll ailesi) için üretim renderer'ın kendi bluz-gövde yolu YANLIŞ
+// form üretiyordu (MIHENK-03: çadır + boynuz). Bu formlar için ÜRETİM, REFERANS
+// KALEM motorunu doğrudan ÇAĞIRIR — form birebir referans, kopya yok, tek hakikat
+// (referans salt-okunur cetvel kalır). spec bir referans stiline eşlenir; eşleşme
+// yoksa üretim kendi flat yolunu kullanır (prenses, shift, vb).
+// ---------------------------------------------------------------------------
+async function tryReferencePen(spec) {
+  // TEK HAKİKAT, TEK KALEM (Damla kararı 2026-07-20): referans motor artık band-top
+  // babydoll ailesinin ÖTESİNDE prenses/wrap/gode gibi TÜM figür-tabanlı siluetleri
+  // de çiziyor (figür kuralı + kalem dili orada MERKEZİ). Üretim renderer bu ailelerde
+  // KENDİ şematik gövde yolunu KULLANMAZ — referans stiline eşleşen HER spec köprüden
+  // geçer (ikinci kalem = beş-turluk sosis/parantez/çadır krizinin kök nedeniydi).
+  // Kapı: spec bir referans STYLE anahtarına eşleşiyor (referenceStyle / style / band
+  // işareti). Eşleşme yoksa üretim kendi yolunu kullanır (henüz referansta olmayan formlar).
+  let ref;
+  try { ref = await import('../flat-engine/_engine-full.mjs'); } catch { return null; }
+  // aday stil anahtarı: explicit referenceStyle > style > band işaretlerinden çıkarım
+  let styleKey = spec.referenceStyle || spec.style || null;
+  if (!styleKey && (spec.top === 'band' || spec.neckline === 'strapless')) {
+    styleKey = 'drawstring_babydoll';
+  }
+  // TOP family (2026-07-20, item 8/9 — first bare-top production round). A plain
+  // sleeveless top with no beyond-engine detail routes to the matching reference
+  // top style so it draws figured, NOT through the schematic fallback. Only the
+  // simplest, detail-free tops match here; anything with sleeves/collar/gather/etc
+  // falls through until those primitives land in the reference pen.
+  // SPEC → styleKey deterministik eşleme (2026-07-22 FAZ 6 — uçtan uca köprü).
+  // referenceStyle olmadan cümle→spec→köprü otomatik eşlesin. 13 kanıtlı stil.
+  // Eşleşmeyen spec (henüz primitifi olmayan) → null → ÜRETİLEMEZ (ikame yok).
+  if (!styleKey) {
+    const nl = spec.neckline;
+    const sleeve = spec.sleeve || spec.sleeveStyle;   // gramer 'sleeve' | contract 'sleeveStyle'
+    const sleeved = sleeve && sleeve !== 'none';
+    const peplum = spec.peplum && spec.peplum !== 'none';
+    const hemRuffle = spec.hemRuffle === 'single';   // peplum hem fırfırı (id84/91)
+    const shirred = (spec.shirred === 'physics') || (spec.gatherType === 'shirred');
+    const boxy = spec.shaping === 'boxy';
+    const princess = spec.shaping === 'princess';
+    const tieBack = spec.closure === 'tieBack' || spec.backDetail === 'tieBack' || spec.tieClosure === 'tieBack';
+    const wrapFront = spec.closure === 'wrapFront' || spec.tieClosure === 'wrapFront';
+
+    const straps = spec.straps;                          // wide | spaghetti | ruffled | none
+    // KÖPRÜ SIKILAŞTIRMA (2026-07-23): strapType TEK KAYNAK (contract {type} object VE
+    // gramer string ikisini de çözer). camiStrap eskiden `straps==='wide'` string
+    // kontrolüydü → contract object'te FALSE → id4/74 cami yerine plain'e DÜŞÜYORDU (bug).
+    const strapType = (straps && typeof straps === 'object') ? straps.type : straps;  // contract {type} | gramer string
+    const camiStrap = strapType === 'wide' || strapType === 'spaghetti';
+    if (spec.garment === 'top') {
+      // CAMI / BANDEAU ailesi (2026-07-22 ASKI ailesi): dar askılı (wide/spaghetti)
+      // band-top gövde — mevcut top gövdesinden ÖNCE eşleşir (spesifik → genel).
+      if (camiStrap && (nl === 'square' || nl === 'vNeck') && shirred && peplum && strapType === 'spaghetti' && hemRuffle) styleKey = 'top_cami_sq_spag_shirred_peplum_ruffle';  // id84/91 (peplum hem fırfırı)
+      else if (camiStrap && nl === 'square' && shirred && peplum && strapType === 'spaghetti') styleKey = 'top_cami_sq_spag_shirred_peplum';
+      else if (camiStrap && nl === 'square' && shirred && peplum) styleKey = 'top_cami_sq_wide_shirred_peplum';
+      else if (camiStrap && nl === 'square' && shirred) styleKey = 'top_cami_sq_wide_shirred';
+      else if (camiStrap && nl === 'square' && strapType === 'spaghetti') styleKey = 'top_cami_sq_spaghetti';
+      // kompleks kombinasyonlar önce (spesifik → genel)
+      else if ((nl === 'straight' || nl === 'strapless') && (strapType === 'none' || !strapType) && shirred && peplum) styleKey = 'top_bandeau_shirred_peplum';  // id40
+      else if (nl === 'square' && shirred && peplum && sleeved) styleKey = 'top_sq_puff_shirred_peplum';
+      else if (nl === 'square' && shirred && peplum) styleKey = 'top_sq_shirred_peplum';
+      else if (peplum && princess) styleKey = 'top_princess_peplum';
+      else if (boxy && sleeved) styleKey = 'top_crew_boxy_sleeve';
+      else if (boxy) styleKey = 'top_crew_boxy_crop';
+      else if ((nl === 'boat' || nl === 'square') && princess) styleKey = 'top_boat_princess';
+      // KÖPRÜ SIKILAŞTIRMA: princess top (boat/square dışı yaka) princess-top stili YOK →
+      // sessizce plain dart'a DÜŞÜRME (ikame). styleKey null kalır → compile ÜRETİLEMEZ der.
+      // top_scoop_cami/top_crew_dart SADECE princess DEĞİLKEN eşleşir (dart/plain gövde).
+      else if (nl === 'scoop' && !princess) styleKey = 'top_scoop_cami';
+      else if ((nl === 'crew' || nl === 'boat' || nl === 'square' || nl === 'vNeck') && !princess && !sleeved && !peplum && !shirred) styleKey = 'top_crew_dart';
+      // KÖPRÜ SIKILAŞTIRMA: hemRuffle (peplum hem fırfırı) istenip peplum-ruffle
+      // stiline eşleşmediyse (scoop/princess varyantı yok), fırfırsız stile DÜŞÜRME
+      // (ikame). styleKey null → ÜRETİLEMEZ. id62/75 sınıfı (peplum-ruffle stili yok).
+      if (hemRuffle && styleKey && !/_ruffle$/.test(styleKey)) styleKey = null;
+    } else if (spec.garment === 'dress') {
+      const circle = circleSkirt(spec.skirt || spec.skirtStyle) !== null;  // full/half circle
+      const gathered = (spec.skirt || spec.skirtStyle) === 'gathered';     // dirndl gathered skirt
+      if (nl === 'boat' && tieBack) styleKey = 'dress_boat_aline_tieback';
+      else if (nl === 'vNeck' && wrapFront) styleKey = 'wrap_dress';                              // id13/68
+      else if (nl === 'square' && princess && circle) styleKey = 'dress_square_princess_circle';  // id47
+      else if (nl === 'boat' && princess && circle) styleKey = 'dress_boat_princess_circle';      // id27
+      else if (nl === 'sweetheart' && princess && circle && !shirred && !sleeved && strapType === 'spaghetti') styleKey = 'dress_sweetheart_spag_circle';  // id101 (sweetheart spaghetti-tie-strap princess fit-and-flare, ön bow)
+      else if (nl === 'sweetheart' && princess && circle && !shirred && !sleeved && (strapType === 'wide' || strapType === 'none' || !strapType)) styleKey = 'dress_sweetheart_princess_circle';  // id54 (sweetheart wide-strap princess fit-and-flare — ruched cup/shirred + kollu ayrı primitif, ikame yok)
+      else if (nl === 'vNeck' && gathered && sleeved && sleeve !== 'balloon' && !wrapFront && spec.sleeveHead !== 'puffed' && !shirred) styleKey = 'dress_vneck_gathered';  // id24/57 (dirndl gathered skirt, plain kısa kol — puff/balloon kol + shirred ayrı primitif, ikame yok)
+      else if ((nl === 'scoop' || nl === 'crew') && princess) {
+        styleKey = (spec.length === 'midi') ? 'dress_princess_scoop_aline_midi' : 'dress_princess_scoop_aline';
+      }
+    }
+  }
+  if (!styleKey || !ref.STYLE[styleKey]) return null;
+  try {
+    // shared parametreleri spec'ten geçir (beden/boy/etek/düşüş/nip korunur)
+    const overrides = {};
+    for (const k of ['size', 'length', 'skirtFull', 'ink', 'foldCount', 'hemWave', 'drape', 'hemDip', 'seed', 'bustProject', 'bustHeight', 'waistNip']) {
+      if (spec[k] != null) overrides[k] = spec[k];
+    }
+    // BEL BAĞI varyantı (2026-07-23): dirndl gathered dress'te tek stil, tie/bow
+    // varyantı spec.tieClosure'dan türetilir (id24 frontWaistBow → bow, id57
+    // frontWaistTie → tie). Motor ikisini de kalıpta ayrı parça olarak çiziyor.
+    if (styleKey === 'dress_vneck_gathered') {
+      const tc = spec.tieClosure;
+      if (tc === 'frontWaistTie') overrides.waistTie = 'tie';
+      else if (tc === 'frontWaistBow') overrides.waistTie = 'bow';
+    }
+    return ref.renderStyle(styleKey, overrides);
+  } catch {
+    return null;
+  }
+}
+
 // public: assembled FRONT + BACK finished-garment flat, spec-driven.
 // `pieces` is unused for the outline (kept for signature compatibility).
-// ---------------------------------------------------------------------------
+// Band-top strapless styles route to the reference pen (async); everything else
+// draws through the production flat path (sync). renderGarmentFlat stays sync for
+// callers; use renderGarmentFlatAsync to get the reference-pen routing.
+export async function renderGarmentFlatAsync(pieces, spec = {}) {
+  const ref = await tryReferencePen(spec);
+  if (ref) return ref;
+  return renderGarmentFlat(pieces, spec);
+}
+
 export function renderGarmentFlat(pieces, spec = {}) {
   const fp = viewPanel(spec, 'front');
   const bp = viewPanel(spec, 'back');

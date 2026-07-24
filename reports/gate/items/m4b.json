@@ -1,0 +1,4 @@
+{ "slug": "m4", "label": "4 · Drape yaka bluz (F2 kalem)", "flatSvgPath": "reports/gate/f2render/m4-flat.svg",
+  "family": "shift", "terms": [], "props": { "drape": 1.1 },
+  "pieces": 4, "garmentKind": "blouse",
+  "note": "F2 kalem: 3 çizgi katmanı. Cowl/drape yaka motorda mevcut; F1'de drape derinliği gusto bandına ayarlanacak." }

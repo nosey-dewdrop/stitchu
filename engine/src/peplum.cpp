@@ -156,5 +156,16 @@ bool apply(DraftedPattern& pattern, PeplumStyle style, double waistMM) {
     return true;
 }
 
+double hemCircumferenceMM(PeplumStyle style, double waistMM) {
+    if (style == PeplumStyle::None) return 0.0;
+    // Same geometry as apply(): each panel's outer arc = (r0 + depth) · π where
+    // r0 = share/π and share = waistMM/2. Full/Pointed cut 2, Half is 2 pieces
+    // (front + back) — both cover the whole waist, so total hem = 2 · outer.
+    const double share = waistMM / 2.0;   // per panel (front/back or cut-2 half)
+    const double r0 = share / PI;
+    const double outerPerPanel = (r0 + depth) * PI;   // = share + depth·π
+    return 2.0 * outerPerPanel;           // two panels → whole hem circumference
+}
+
 } // namespace PeplumBlock
 } // namespace stitchu

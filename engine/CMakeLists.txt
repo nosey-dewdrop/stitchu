@@ -17,9 +17,15 @@ add_library(engine
     src/collar.cpp
     src/gather.cpp
     src/openback.cpp
+    src/laceupback.cpp
+    src/wrapfront.cpp
     src/slit.cpp
     src/strap.cpp
     src/peplum.cpp
+    src/hemflounce.cpp
+    src/cupseam.cpp
+    src/yoke.cpp
+    src/boxpleat.cpp
     src/pocket.cpp
     src/neckext.cpp
     src/cuff.cpp
@@ -47,6 +53,21 @@ add_test(NAME engine_check COMMAND engine_check)
 
 add_executable(golden_dump tests/golden_dump.cpp)
 target_link_libraries(golden_dump PRIVATE engine)
+# The real golden test: fresh dump vs the REPO PIN (engine/golden-reference.csv).
+# Regen-vs-regen is not a golden check. Pin moves only via scripts/repin-golden.sh
+# with a declared label in engine/GOLDEN-PIN.md.
+add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_check.sh
+    $<TARGET_FILE:golden_dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
+    ${CMAKE_CURRENT_SOURCE_DIR}/GOLDEN-PIN.md)
+
+# style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
+# render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
+add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
+
+# bridge_guard: köprü sessiz-düşürme yasağı (2026-07-23). princess/straps spec
+# eşleşen styleKey yokken plain dart/scoop REFERANS tank'e degrade OLMAMALI (ikame).
+add_test(NAME bridge_guard COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/bridge_guard.mjs)
 
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
@@ -84,6 +105,14 @@ add_executable(backopen_check tests/backopen_check.cpp)
 target_link_libraries(backopen_check PRIVATE engine)
 add_test(NAME backopen_check COMMAND backopen_check)
 
+add_executable(laceupback_check tests/laceupback_check.cpp)
+target_link_libraries(laceupback_check PRIVATE engine)
+add_test(NAME laceupback_check COMMAND laceupback_check)
+
+add_executable(wrapfront_check tests/wrapfront_check.cpp)
+target_link_libraries(wrapfront_check PRIVATE engine)
+add_test(NAME wrapfront_check COMMAND wrapfront_check)
+
 add_executable(slit_check tests/slit_check.cpp)
 target_link_libraries(slit_check PRIVATE engine)
 add_test(NAME slit_check COMMAND slit_check)
@@ -96,9 +125,27 @@ add_executable(peplum_check tests/peplum_check.cpp)
 target_link_libraries(peplum_check PRIVATE engine)
 add_test(NAME peplum_check COMMAND peplum_check)
 
+add_executable(hemflounce_check tests/hemflounce_check.cpp)
+target_link_libraries(hemflounce_check PRIVATE engine)
+add_test(NAME hemflounce_check COMMAND hemflounce_check)
+
+add_executable(gore_check tests/gore_check.cpp)
+target_link_libraries(gore_check PRIVATE engine)
+add_test(NAME gore_check COMMAND gore_check)
+
 add_executable(pocket_check tests/pocket_check.cpp)
 target_link_libraries(pocket_check PRIVATE engine)
 add_test(NAME pocket_check COMMAND pocket_check)
+
+add_executable(cup_check tests/cup_check.cpp)
+target_link_libraries(cup_check PRIVATE engine)
+add_test(NAME cup_check COMMAND cup_check)
+add_executable(yoke_check tests/yoke_check.cpp)
+target_link_libraries(yoke_check PRIVATE engine)
+add_test(NAME yoke_check COMMAND yoke_check)
+add_executable(boxpleat_check tests/boxpleat_check.cpp)
+target_link_libraries(boxpleat_check PRIVATE engine)
+add_test(NAME boxpleat_check COMMAND boxpleat_check)
 add_executable(cuff_check tests/cuff_check.cpp)
 target_link_libraries(cuff_check PRIVATE engine)
 add_test(NAME cuff_check COMMAND cuff_check)
@@ -138,6 +185,10 @@ add_test(NAME placket_asym_check COMMAND placket_asym_check)
 add_executable(fit_proof tests/fit_proof.cpp)
 target_link_libraries(fit_proof PRIVATE engine)
 add_test(NAME fit_proof COMMAND fit_proof)
+
+add_executable(sloper_check tests/sloper_check.cpp)
+target_link_libraries(sloper_check PRIVATE engine)
+add_test(NAME sloper_check COMMAND sloper_check)
 
 add_executable(fba_check tests/fba_check.cpp)
 target_link_libraries(fba_check PRIVATE engine)
@@ -201,3 +252,37 @@ add_test(NAME roundtrip_check COMMAND roundtrip_check)
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)
+
+# K2 composition ratchet (2026-07-19): the declared component x host and
+# component x component conflict matrix (contract/composition.json via
+# composition.gen.hpp) is re-derived by actually drafting every combination.
+# A silent no-op not declared "ignored", or any declared-vs-observed class
+# drift, fails the suite.
+add_executable(compose_check tests/compose_check.cpp)
+target_link_libraries(compose_check PRIVATE engine)
+add_test(NAME compose_check COMMAND compose_check)
+
+# K1 contract ratchet (2026-07-19): schema + term registry + generated
+# consumers + flat recipes + runtime vision gate all validated in one node
+# script. Any drift between contract/ and its consumers fails the suite.
+find_program(NODE_EXECUTABLE node REQUIRED)
+add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/validate-contract.mjs)
+
+# K2 flat render lint (2026-07-19): every flat style record in styles.json is
+# rendered headlessly and checked for self-intersection, inconsistent winding
+# (reversed normals), zero-area loops and sampleX y-monotonicity.
+add_test(NAME flat_render_lint COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/render-lint.mjs)
+
+# K3 preview truth (2026-07-19): one semantic JSON per flat style projected
+# twice (display flat + drafted pattern); structural equality is hard (every
+# drawn element needs a pattern counterpart, declared gaps allowlisted with
+# contract refs), landmark deviation is soft 8% with pinned stylisation
+# envelopes (contract/preview-truth.json) — drift beyond a pin fails.
+add_test(NAME preview_truth_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/preview-truth.mjs)
+
+# FIGURE_BASE mandalı (2026-07-22): her flat stilin gövde outline'ından bel
+# oyuğu (waist/bust) ölçülür — figürel top [0.72,0.84] bandında, boxy >0.93
+# kutu (iki yönlü: figürelleşirse de FAIL), dress/pinli taban değere ±0.02
+# drift-lock (contract/figure-bands.json mandal). Bir daha kimse fark etmeden
+# boru üretemez.
+add_test(NAME figure_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/figure-lint.mjs)

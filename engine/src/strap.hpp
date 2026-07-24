@@ -13,28 +13,31 @@
 // GarmentSpec.ruffledStraps == StrapStyle::None off by default, exactly like the
 // tie / placket / keyhole post-passes).
 //
-// SCOPE (honest boundary): only the RUFFLED (gathered-strip) strap is drawn here
-// — a plain shoulder / wide strap is already the engine's plain sleeveless edge,
-// and a spaghetti / one-shoulder / off-shoulder / halter strap is a DIFFERENT
-// construction that stays in the honesty layer (missing.js), NOT here.
+// SCOPE (2026-07-22 ASKI ailesi genişlemesi): RUFFLED (gathered strip) + PLAIN
+// straps (Wide 22 mm / Spaghetti 8 mm self-lined tubes, fullness 1.0 — a cami /
+// bralette shoulder strap). A one-shoulder / off-shoulder / halter strap is a
+// DIFFERENT construction that stays in the honesty layer (missing.js), NOT here.
 //
 // Formulas (Aldrich Metric Pattern Cutting + Armstrong + high-street babydoll
 // practice, see FORMULAS.md "Ruffled straps"): a finished strap of width W and
 // span L, gathered at fullness F, is cut (2W + 2·SA) wide x (L·F + 2·SA) long,
 // self-lined by the lengthwise fold; the cut strip is gathered back down to L.
+// A PLAIN strap is the same tube at F = 1.0 (no gather line).
 #include "geometry.hpp"
 
 namespace stitchu {
 
 // Shoulder-strap treatment. None = no strap piece drawn (byte-identical default);
-// Ruffled = a gathered self-fabric frill strip drawn as a separate pair.
-enum class StrapStyle { None, Ruffled };
+// Ruffled = a gathered self-fabric frill strip drawn as a separate pair;
+// Wide / Spaghetti = plain self-lined strap tubes (no gather), opt-in like Ruffled.
+enum class StrapStyle { None, Ruffled, Wide, Spaghetti };
 
 namespace StrapBlock {
 
-inline constexpr double SA = 15;             // 15 mm seam allowance per edge
-inline constexpr double finishedWidth = 22;  // finished ruffled-strap width (mm)
-inline constexpr double fullness = 2.2;      // gather ratio for a soft shoulder frill
+inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
+inline constexpr double finishedWidth = constants::kStrapFinishedWidthMM; // finished strap width (constants.yaml)
+inline constexpr double fullness = constants::kStrapFullness; // gather ratio (constants.yaml)
+inline constexpr double spaghettiWidth = 8;  // finished spaghetti-tube width (mm, high-street cami convention)
 inline constexpr double defaultSpan = 130;   // over-shoulder strap span (mm)
 inline constexpr double minSpan = 90;        // shortest sensible shoulder-strap span
 inline constexpr double maxSpan = 220;       // ceiling (over-shoulder run)

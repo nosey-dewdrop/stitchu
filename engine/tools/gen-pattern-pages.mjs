@@ -221,6 +221,42 @@ const COPY = {
         'Yumuşak açılan A kesim etek, temiz bir hat korurken cebe rahatça uzanma payı bırakır.',
         'Gövde pensli kesimdir; yaka ve kol oyukları biye ile bitirilir, arka orta gizli fermuarla kapanır.'] },
   },
+  'cup-seam-corset-bustier': {
+    en: { lead: 'A sweetheart princess bustier top with a horizontal cup seam. The seam splits the front into three drafted bands, an upper cup, a lower cup and a front body, the corset construction the engine used to be missing.',
+      fabric: 'Mid-weight woven cotton, twill or a firm satin, roughly 1.5 m at 140 cm.',
+      facts: ['The cup seam is an opt-in horizontal split. It cuts the sweetheart princess front into an Upper Cup, a Lower Cup and a Front Body, so the bust is shaped by seams the way a real corset bustier is built rather than by a single dart.',
+        'The three cup bands are trued to each other at the seam, so the upper and lower cup edges that sew together came out an exact match, measured to 0.00 mm.',
+        'This construction was learned from a purchased professional pattern by a forensic millimetre comparison, then drafted so it draws to your own measurements. It is opt-in, so the plain princess bustier is byte-identical when the cup seam is off.'] },
+    tr: { lead: 'Yatay kup dikişli, kalp yakalı prenses bir bustiyer üst. Dikiş önü üç çizilmiş banda böler: bir üst kup, bir alt kup ve bir ön gövde; motorun eskiden eksik olduğu korse yapısı.',
+      fabric: 'Orta gramajlı dokuma pamuk, twill ya da diri saten, 140 cm ende yaklaşık 1.5 m.',
+      facts: ['Kup dikişi opsiyonel yatay bir bölmedir. Kalp yakalı prenses önü bir Üst Kup, bir Alt Kup ve bir Ön Gövdeye böler; böylece büst, tek bir pensle değil, gerçek bir korse bustiyerin kurulduğu gibi dikişlerle biçimlenir.',
+        'Üç kup bandı dikiş yerinde birbirine trüe edilir; birbirine dikilen üst ve alt kup kenarları tam eşleşerek çıkar, 0.00 mm ölçülü.',
+        'Bu yapı, satın alınmış profesyonel bir kalıptan adli bir milimetre karşılaştırmasıyla öğrenildi, sonra kendi ölçülerine göre çizilecek şekilde kuruldu. Opsiyoneldir, bu yüzden kup dikişi kapalıyken sade prenses bustiyer bayt-birebir aynıdır.'] },
+  },
+  'yoke-doll-dress': {
+    en: { lead: 'A crew-neck doll dress with a horizontal yoke seam and a soft A-line skirt. The yoke splits the bodice front and back into a yoke and a lower body, the babydoll and swing-dress construction.',
+      fabric: 'Light to mid-weight woven cotton or poplin, roughly 1.9 m at 140 cm.',
+      facts: ['The yoke is an opt-in horizontal seam. It splits the front and back into a Front Yoke, a Back Yoke, a Front Body and a Back Body, so the dress can hang from a fitted yoke the way a doll or swing dress does.',
+        'The yoke line is measured at 28 percent of the panel drop from shoulder to hem, so the seam sits high on the chest and back where the doll silhouette wants it.',
+        'The seam is a plain yoke: the lower body does not gather yet, so the swing comes from the A-line skirt block rather than from fullness added at the yoke. It is opt-in, so the plain bodice is byte-identical when the yoke is off.'] },
+    tr: { lead: 'Yatay roba dikişli ve yumuşak A kesim etekli, bisiklet yakalı bir doll elbise. Roba gövde önünü ve arkasını bir roba ile bir alt gövdeye böler; babydoll ve salıncak elbise yapısı.',
+      fabric: 'Hafif ya da orta gramajlı dokuma pamuk ya da poplin, 140 cm ende yaklaşık 1.9 m.',
+      facts: ['Roba opsiyonel yatay bir dikiştir. Önü ve arkayı bir Ön Roba, bir Arka Roba, bir Ön Gövde ve bir Arka Gövdeye böler; böylece elbise, bir doll ya da salıncak elbisesi gibi oturmuş bir robadan sarkabilir.',
+        'Roba çizgisi, omuzdan eteğe panonun düşüşünün yüzde 28inde ölçülür; böylece dikiş, doll siluetinin istediği yerde, göğsün ve sırtın üstünde durur.',
+        'Dikiş sade bir robadır: alt gövde henüz büzülmez, bu yüzden salınım robada eklenen bir dolgunluktan değil, A kesim etek bloğundan gelir. Opsiyoneldir, bu yüzden roba kapalıyken sade gövde bayt-birebir aynıdır.'] },
+  },
+  'ruffled-strap-drawstring-babydoll': {
+    en: { lead: 'A ruffled-strap drawstring babydoll: a band bodice gathered onto a drawstring with a small centre bow, ruffled shoulder straps, and a gathered mini skirt that falls to a scalloped hem. This is the first flat drawn in stitchu\'s own drawing pen and the first one approved, shown beside the exact pattern the engine drafts from it.',
+      fabric: 'Light woven cotton, lawn, or a soft crepe, roughly 1.9 m at 140 cm.',
+      facts: ['The bodice is a gathered yoke panel cut wide and drawn up onto a drawstring cord, so it pulls in to fit while staying soft across the bust; the cord is its own cut piece.',
+        'The ruffled shoulder straps are a real drafted piece, not a ready-made trim: each is cut as a 74 by 340 mm rectangle and gathered down to a finished 141 mm strap, cut 2. The exact strip length is drafted per size, so it sews, it is not decorative.',
+        'The flat and the pattern on this page pass an automatic structural-equality test (preview-truth): every structural element you see in the drawing has a counterpart piece in the pattern. That check is the moat: it is a claim no competitor publishes.'] },
+    tr: { lead: 'Fırfırlı askılı büzgülü bir babydoll: kordonla toplanan bir bant gövde, ortada küçük bir fiyonk, fırfırlı omuz askıları ve taraklı bir eteğe düşen büzgülü mini etek. Bu, stitchu\'nun kendi çizim kalemiyle çizilen ve onaylanan ilk flat; yanında motorun ondan çizdiği birebir kalıp.',
+      fabric: 'Hafif dokuma pamuk, patiska ya da yumuşak krep, 140 cm ende yaklaşık 1.9 m.',
+      facts: ['Gövde, geniş kesilip bir kordona toplanan büzgülü bir yaka panosudur; göğüste yumuşak kalırken oturacak kadar büzülür, kordon kendi kesim parçasıdır.',
+        'Fırfırlı omuz askıları hazır bir şerit değil, gerçek çizilmiş bir parçadır: her biri 74 x 340 mm dikdörtgen kesilip bitmiş 141 mm askıya büzülür, cut 2. Şerit boyu beden başına hesaplanır, yani dekoratif değil dikilebilir.',
+        'Bu sayfadaki çizim ile kalıp otomatik bir yapısal eşitlik testinden (preview-truth) geçer: çizimde gördüğünüz her yapısal öğenin kalıpta karşılığı vardır. Bu test moattır; hiçbir rakibin yayınlamadığı bir iddiadır.'] },
+  },
 };
 
 // TR phrasing of "drawnBy" for the honest-note sentence, keyed by slug.
@@ -239,6 +275,8 @@ const DRAWN_BY_TR = {
   'shirt-collar-smocked-babydoll-top': 'sivri gömlek yakasını, büzgülü göğüs robasını ve büzgülü puf kol başını',
   'gathered-bust-empire-mini-dress': 'empire dikişinin altındaki büzgülü büst panosunu ve arka bel fiyongunu',
   'patch-pocket-shift-dress': 'ön etekteki bir çift yama cebini',
+  'cup-seam-corset-bustier': 'bustiyer önünü üç banda bölen yatay kup dikişini',
+  'yoke-doll-dress': 'gövdeyi bir roba ile bir alt gövdeye bölen yatay roba dikişini',
 };
 
 // Human piece names for the piece list (strip the parenthetical TR the engine adds).
@@ -283,7 +321,6 @@ const STYLE = `<style>
   .lead{font-size:15.5px;color:var(--ink);max-width:64ch;margin-bottom:26px}
   .drawing{border:1px solid var(--bb-line);border-radius:4px;background:#fff;box-shadow:0 8px 26px rgba(63,116,168,.10);padding:18px;margin:6px 0 10px}
   .drawing img{display:block;width:100%;height:auto}
-  .drawing.figure img{width:auto;max-width:100%;max-height:560px;margin:0 auto}
   .viewlabel{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin:0 0 12px;font-weight:600}
   .cap{font-size:12px;color:#5b7089;margin-top:10px;letter-spacing:.3px}
   h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:23px;font-weight:400;margin:38px 0 12px;color:var(--navy)}
@@ -383,7 +420,6 @@ for (const m of meta) {
   const desc = c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead;
   const svgUrl = `svg/${m.slug}.svg?v=${V}`;
   const flatUrl = m.flat ? `svg/${m.flat}` : null;
-  const figureUrl = m.onFigure ? `svg/${m.onFigure}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
 
   const ldjson = {
@@ -429,6 +465,11 @@ ${HEADER}
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
+
+  ${flatUrl ? `<div class="drawing">
+    <img src="${flatUrl}?v=${V}" alt="${esc(m.style)} fashion flat drawn by the stitchu engine" loading="lazy">
+    <p class="cap" data-en="The fashion flat, front and back, drawn in the engine's own pen." data-tr="Motorun kendi kalemiyle çizilmiş fashion flat, ön ve arka.">The fashion flat, front and back, drawn in the engine's own pen.</p>
+  </div>` : ''}
 
   <div class="drawing">
     <img src="${svgUrl}" alt="${esc(m.style)} pattern pieces drafted by the stitchu engine" loading="lazy">
@@ -480,7 +521,7 @@ function patternCard(m) {
   const short = c ? c.en.lead.split('. ')[0] + '.' : m.style;
   const shortTr = c ? c.tr.lead.split('. ')[0] + '.' : m.style;
   // The Etsy-style listing card SVG is the tile — it already carries the brand,
-  // name, badges, flat and on-figure croquis. The caption below stays minimal.
+  // name, badges and the pattern pieces. The caption below stays minimal.
   const thumb = (m.card ? `svg/${m.card}` : `svg/${m.slug}.svg`) + `?v=${V}`;
   return `<a class="card listing" href="${m.slug}.html">
     <div class="thumb"><img src="${thumb}" alt="${esc(m.style)} sewing pattern listing card" loading="lazy"></div>

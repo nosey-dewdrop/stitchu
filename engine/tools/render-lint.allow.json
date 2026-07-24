@@ -1,0 +1,7 @@
+{
+  "_note": "Pinned PRE-EXISTING flat-engine findings (K2, 2026-07-19). The closing chain freezes current behavior; these two cosmetic self-intersections exist in the LIVE flat SVGs today (byte-identical since K1) and are v1.1 fix candidates, listed in reports/2026-07-19-stitchu-k2-kompozisyon.md. Any finding NOT in this list fails render-lint.",
+  "allow": [
+    "lace_vneck_70s|piece|selfx|7x21",
+    "peterpan_puff|piece|selfx|165x176"
+  ]
+}

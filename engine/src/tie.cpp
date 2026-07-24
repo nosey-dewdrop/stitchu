@@ -12,7 +12,7 @@ namespace TieBlock {
 
 namespace {
 
-constexpr double SA = 15;  // 15 mm seam allowance per edge (Aldrich/Armstrong)
+constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
 
 // One self-fabric tie strip, cut as a rectangle folded lengthwise into a tube.
 // finishedW / finishedL are the finished (sewn, turned) dimensions in mm; the

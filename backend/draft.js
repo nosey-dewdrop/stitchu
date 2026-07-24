@@ -17,6 +17,7 @@ import wasmModule from './engine/stitchu-worker.wasm';
 // API, the web bridge and the C++ boundary can never drift apart. An unknown
 // value is a clear 422, never a silent fallback to the default.
 import { VOCAB, canonical } from './vocab.gen.js';
+import { CONTRACT } from './contract.gen.js';
 
 // Accepted strings per field: canonical values + documented synonyms
 // (e.g. edgeFinish 'bias' -> 'biasBinding'). ruffle/keyhole are API-level
@@ -224,7 +225,9 @@ export async function runDraft(spec, measurements) {
 
 // Grade a design across a standard EU size run. The seller/brand deliverable:
 // one spec, a whole size chart, from the same engine — no manual grade rules.
-const EU_SIZES = ['EU34','EU36','EU38','EU40','EU42','EU44','EU46','EU48','EU50','EU52'];
+// K1 contract: the size list is the engine size chart's list, one source
+// (contract/tables.json draft.euSizes; the C++ chart is generated from it too).
+const EU_SIZES = CONTRACT.draft.euSizes;
 export async function handleGrade(request) {
   let raw;
   try { raw = await request.text(); } catch { return { status: 400, payload: { error: 'invalid_body' } }; }

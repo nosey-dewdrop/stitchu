@@ -16,10 +16,18 @@ AMBAR YASASI (see DEVAM-DATA-LOOP.md):
 # Field -> ordered class list (index == class id). null is intentionally NOT here.
 NECKLINE_CLASSES = ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter"]
 
-# Registry so more heads can be added later (sleeveStyle, skirtStyle, ...) without
-# touching the training loop. For D3 stage 2 we only wire up neckline.
+# K5 cascade heads. Classes copied verbatim from the teacher schema
+# (backend/worker.js prompt / contract/garment-spec.schema.json $defs.visionReading).
+GARMENT_CLASSES = ["skirt", "dress", "top", "trousers", "other"]
+SLEEVE_LENGTH_CLASSES = ["short", "elbow", "long"]
+SKIRT_STYLE_CLASSES = ["aLine", "straight", "gathered", "halfCircle", "pleated"]
+
+# Registry so more heads can be added later without touching the training loop.
 FIELDS = {
     "neckline": NECKLINE_CLASSES,
+    "garment": GARMENT_CLASSES,
+    "sleeveLength": SLEEVE_LENGTH_CLASSES,
+    "skirtStyle": SKIRT_STYLE_CLASSES,
 }
 
 # Values that mean "teacher abstained / not applicable" -> drop the sample for that field.

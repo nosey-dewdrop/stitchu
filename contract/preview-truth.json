@@ -1,0 +1,725 @@
+{
+ "_contract": "K3 preview-truth (2026-07-19). ONE semantic JSON per flat style; two projections are derived from it: the DISPLAY projection (engine/flat-engine styles.json recipe of the same key) and the DRAFT projection (the C++ pattern engine via draftJSON). engine/tools/preview-truth.mjs diffs the two: STRUCTURAL EQUALITY is the hard rule (every structural element drawn in the flat must have a counterpart among the drafted pieces, and every drafted piece must be represented in the flat — undeclared gaps FAIL); LANDMARK DEVIATION is the soft rule (threshold 8%; a deviation above threshold must cite a contract-declared stylisation below and stays PINNED — drift beyond a pin FAILS the deploy chain).",
+ "version": 1,
+ "body": {
+  "_note": "deterministic measuring body — same demo body as render-pages.mjs / web-fuzz body #0.",
+  "bust": 90,
+  "waist": 72,
+  "hip": 98,
+  "shoulder": 38,
+  "backLength": 40,
+  "armLength": 58,
+  "neck": 36,
+  "upperBust": 0
+ },
+ "specs": {
+  "_note": "the shared SEMANTIC layer per flat style (garment-spec vocabulary, string enums; the tool maps them to engine ints via the same vocab table the API uses). Field values justified from the styles.json records and their photo notes.",
+  "drawstring_babydoll": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "empire",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "gatherType": "drawstring",
+   "gatherZone": "neckline",
+   "ruffledStraps": "ruffled"
+  },
+  "lace_vneck_70s": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "empire",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "sleeveCap": "puffed",
+   "tieClosure": "frontNeckBow"
+  },
+  "peterpan_puff": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "empire",
+   "fabric": "woven",
+   "neckline": "crew",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "sleeveCap": "puffed",
+   "collarType": "peterPan",
+   "collarEdge": "round",
+   "gatherType": "shirred",
+   "gatherZone": "bust"
+  },
+  "courtney_lace_vneck": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "empire",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "sleeveCap": "puffed",
+   "tieClosure": "frontNeckBow"
+  },
+  "princess_dress": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "gore_skirt_dress": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "boat",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "gore",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "wrap_dress": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "tieClosure": "wrapFront"
+  },
+  "top_boat_princess": {
+   "garment": "top",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "boat",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "top_crew_dart": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "crew",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "top_scoop_cami": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "scoop",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "top_crew_boxy_crop": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "crew",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "cropped"
+  },
+  "top_crew_boxy_sleeve": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "crew",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "dress_princess_scoop_aline": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "scoop",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "dress_princess_scoop_aline_midi": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "scoop",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "dress_square_princess_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "sleeveCap": "cap",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "dress_boat_aline_tieback": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "boat",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "top_princess_peplum": {
+   "garment": "top",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "crew",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip"
+  },
+  "top_sq_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust"
+  },
+  "top_sq_puff_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust"
+  },
+  "dress_boat_princess_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "boat",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "sleeveCap": "cap",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "top_cami_sq_wide_shirred": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "wide",
+   "gatherType": "shirred",
+   "gatherZone": "bust"
+  },
+  "top_cami_sq_wide_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "wide",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
+  },
+  "top_cami_sq_spaghetti": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "spaghetti"
+  },
+  "top_cami_sq_spag_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "ruffledStraps": "spaghetti",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
+  },
+  "top_bandeau_shirred_peplum": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full"
+  },
+  "dress_vneck_gathered": {
+   "garment": "dress",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "straight",
+   "sleeveLength": "short",
+   "skirtStyle": "gathered",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "dress_sweetheart_princess_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "sweetheart",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "mini",
+   "topLength": "hip"
+  },
+  "dress_sweetheart_spag_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "sweetheart",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "mini",
+   "topLength": "hip",
+   "tieClosure": "frontNeckBow"
+  },
+  "top_cami_sq_spag_shirred_peplum_ruffle": {
+   "garment": "top",
+   "shaping": "dart",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "midi",
+   "topLength": "hip",
+   "gatherType": "shirred",
+   "gatherZone": "bust",
+   "peplum": "full",
+   "ruffleHem": true,
+   "ruffledStraps": "spaghetti"
+  }
+ },
+ "structuralAllow": [
+  {
+   "style": "drawstring_babydoll",
+   "items": [
+    "straps",
+    "ruffledStraps"
+   ],
+   "side": "declaredNotDrawn",
+   "contractRef": "contract/composition.json flatComponents.declaredButNotDrawn",
+   "justification": "the flat recipe declares the flags but render() never reads them (K2 finding, code wins); the DRAFT cuts the Ruffled Strap piece, so the pattern is complete and the gap is in the flat drawing only. PARK (v1.1): draw the straps or drop the flags from the schema."
+  },
+  {
+   "style": "*",
+   "items": [
+    "laceNeck",
+    "laceSleeve",
+    "laceHem"
+   ],
+   "side": "flatOnly",
+   "contractRef": "contract/composition.json flatComponents.order (laceNeck z8 / laceHem z6 are flat-only draw layers; the draft-side component registry has no lace component)",
+   "justification": "lace trim bands are drawn on the flat as illustration; the pattern engine has no lace-trim piece and drawing one is a NEW capability (A1 — PARK, v1.1 candidate). PUBLISH NOTE: any listing built on these flats must state the lace trim is purchased trim, not a pattern piece."
+  },
+  {
+   "style": "*",
+   "items": [
+    "cfGather"
+   ],
+   "side": "flatOnly",
+   "contractRef": "render-lint structural/ink classification (ink strokes are decorative)",
+   "justification": "cfGather emits pure 'ink'-class taper strokes (soft gather shading at CF under the bow), no cut-piece implication; the same decorative class render-lint exempts from structural checks."
+  },
+  {
+   "style": "wrap_dress",
+   "items": [
+    "wrapSurplice",
+    "wrapTie"
+   ],
+   "side": "flatOnly",
+   "contractRef": "contract/composition.json flatComponents (ink-only)",
+   "justification": "the surplice overlap edge is an ink line on the flat (the wrap crossover read); the flat draws the wrap tie as a post-pass ink stroke, not a structural piece. Drawing-only, like cfGather."
+  },
+  {
+   "style": "wrap_dress",
+   "items": [
+    "wrapTie"
+   ],
+   "side": "draftOnly",
+   "contractRef": "contract/composition.json flatComponents (wrapTie ink layer) + engine tie post-pass (Wrap Front Tie physical cut)",
+   "justification": "the flat draws wrapTie as a post-pass ink stroke (flatOnly above); the DRAFT cuts a real self-fabric 'Wrap Front Tie (kruvaze bağ)' piece. Same garment element, two representations — ink on the display flat, a cut piece in the pattern. Declared ink<->piece correspondence, not a missing counterpart."
+  }
+ ],
+ "landmarkAllow": [
+  {
+   "style": "*",
+   "landmark": "neckHalf",
+   "maxAbsDevPct": 150,
+   "contractRef": "contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres')",
+   "justification": "the fashion flat widens the neckline by design (display beauty ratio); declared stylised layer. Pin = current worst (+141%) + margin; drift beyond fails."
+  },
+  {
+   "style": "*",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 62,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "flat neckline depth exaggerated for silhouette drama (current +54..55%); pinned."
+  },
+  {
+   "style": "*",
+   "landmark": "shoulderLen",
+   "maxAbsDevPct": 62,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "flat shoulder is shortened as the wide neck eats into it (current -38..-57%); pinned."
+  },
+  {
+   "style": "*",
+   "landmark": "armholeDepth",
+   "maxAbsDevPct": 75,
+   "contractRef": "contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer",
+   "justification": "flat armhole is drawn deep/hollow (review.* registered knob, Damla decision pending); current +68..69%; pinned."
+  },
+  {
+   "style": "*",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 22,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "the flat nips the waist for the display silhouette (review.* registered); draft empire seam obeys the real body. Current -17%; pinned."
+  },
+  {
+   "style": "top_crew_dart",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): non-boxy top waist now computed FROM the figure band (skeleton=bust*0.78) instead of the tube it was (waist/bust 0.986, figur-denetimi). Draft cuts the real-body waist; the flat draws the croquis figure. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_scoop_cami",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_puff_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84])",
+   "justification": "FIGURE_BASE (2026-07-22): same band-derived top waist as top_crew_dart. Current -22.0%; pinned worst + margin."
+  },
+  {
+   "style": "*",
+   "landmark": "skirtLen",
+   "maxAbsDevPct": 21,
+   "contractRef": "contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop')",
+   "justification": "the contract itself declares the two lengths as different quantities; current +15.5%; pinned."
+  },
+  {
+   "style": "*",
+   "landmark": "sleeveLen",
+   "maxAbsDevPct": 55,
+   "contractRef": "contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only')",
+   "justification": "flat draws the WORN sleeve, the draft piece is the CUT with raised puff crown; declared drawing-knob layer. Current worst -49%; pinned. courtney passes at -7%."
+  },
+  {
+   "style": "*",
+   "landmark": "sleeveWidth",
+   "maxAbsDevPct": 84,
+   "contractRef": "contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness)",
+   "justification": "cut-vs-worn: the draft sleeve cut width carries the puff spread fullness the worn flat never shows. Current -71..-79%; pinned."
+  },
+  {
+   "style": "top_crew_dart",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 235,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "same stylised neck-depth exaggeration as the '*' neckDepth pin, but the top block's crew neck is drafted shallow (76mm over a narrow top-bust anchor) so the flat/draft ratio runs larger than the empire-dress cohort. Current +221.7%; pinned worst + margin."
+  },
+  {
+   "style": "top_scoop_cami",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 320,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "the cami flat draws a deep scoop for display; the draft scoop is 111mm over the narrow top-bust anchor, so the ratio deviation is the widest of the crew/scoop top cohort. Current +304.1%; pinned worst + margin."
+  },
+  {
+   "style": "top_crew_boxy_crop",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 200,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "stylised crew neck-depth over the boxy-crop top-bust anchor (draft 76mm). Current +189.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_crew_boxy_crop",
+   "landmark": "armholeDepth",
+   "maxAbsDevPct": 105,
+   "contractRef": "contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer",
+   "justification": "the CROPPED top length shortens the drafted bodice so the tip->underarm span (armholeDepth) is smaller relative to bust than the hip-length cohort, while the flat keeps its deep-hollow armhole draw; ratio runs above the '*' 75% pin. Current +98.2%; pinned worst + margin."
+  },
+  {
+   "style": "top_crew_boxy_sleeve",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 178,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "stylised crew neck-depth over the boxy top-bust anchor (draft 76mm). Current +168.1%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_shirred_peplum",
+   "landmark": "neckHalf",
+   "maxAbsDevPct": 166,
+   "contractRef": "contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres')",
+   "justification": "the square-neck shirred flat widens the neckline for display; over the narrow top-bust anchor the half-neck ratio runs above the '*' 150% pin. Current +157.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_shirred_peplum",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 172,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "stylised square neck-depth over the top-bust anchor (draft 101mm). Current +162.4%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_puff_shirred_peplum",
+   "landmark": "neckHalf",
+   "maxAbsDevPct": 178,
+   "contractRef": "contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres')",
+   "justification": "same square-neck display-widening as top_sq_shirred_peplum, over the narrow top-bust anchor. Current +168.7%; pinned worst + margin."
+  },
+  {
+   "style": "top_sq_puff_shirred_peplum",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 152,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "stylised square neck-depth over the top-bust anchor (draft 101mm). Current +142.2%; pinned worst + margin."
+  },
+  {
+   "style": "gore_skirt_dress",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 250,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "boat necklines are drafted very shallow (same class as dress_boat_aline_tieback); the flat draws a normal stylised neck depth, so dividing by the tiny draft boat depth yields a large ratio. Current +233.6%; pinned worst + margin."
+  },
+  {
+   "style": "gore_skirt_dress",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 36,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "same display waist-nip as the '*' 22% pin, but this natural-waist boat/gore dress has a shorter/wider flat torso so the nip ratio runs larger (same cohort as dress_boat_aline_tieback -31.9%). Current -33.7%; pinned worst + margin."
+  },
+  {
+   "style": "wrap_dress",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 140,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "the wrap flat draws a deep vNeck surplice crossover for silhouette drama over a shallow drafted wrap neckline; declared stylised layer. Current +128.6%; pinned worst + margin."
+  },
+  {
+   "style": "wrap_dress",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 38,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "the wrap flat nips the waist tightly at the tie crossover for the display silhouette (review.* registered); the draft waist obeys the real body. Current -35.5%; pinned worst + margin."
+  },
+  {
+   "style": "dress_boat_aline_tieback",
+   "landmark": "neckDepth",
+   "maxAbsDevPct": 305,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
+   "justification": "boat necklines are drafted very shallow (draft 28mm); the flat draws a normal stylised neck depth, so dividing by the tiny draft depth yields the widest ratio of any style. Current +289.2%; pinned worst + margin."
+  },
+  {
+   "style": "dress_boat_aline_tieback",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 34,
+   "contractRef": "contract/tables.json review.waistNip (0.07 waist suppression, layer undecided)",
+   "justification": "same display waist-nip as the '*' 22% pin, but this natural-waist boat dress has a shorter/wider flat torso so the nip ratio runs larger. Current -31.9%; pinned worst + margin."
+  },
+  {
+   "style": "dress_boat_aline_tieback",
+   "landmark": "hemSweepHalf",
+   "maxAbsDevPct": 16,
+   "contractRef": "contract/tables.json flat._layer (stylised drawing units) + draft aLine sweep",
+   "justification": "the mini A-line flat draws less hem flare relative to bust than the draft A-line sweep adds at a real mini hem drop. Current -13.7%; pinned worst + margin."
+  },
+  {
+   "style": "dress_boat_aline_tieback",
+   "landmark": "skirtLen",
+   "maxAbsDevPct": 48,
+   "contractRef": "contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop')",
+   "justification": "same two-quantities-are-different declaration as the '*' 21% skirtLen pin; a mini dress skirt (vs the empire mini cohort) diverges more between the stylised flat length and the real hem drop. Current +45.3%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_wide_shirred",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_wide_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spaghetti",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spag_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "top_bandeau_shirred_peplum",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 33,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.waistNip (0.22) + gatheredSkirt (dirndl waist gather) + contract/figure-bands.json",
+   "justification": "DIRNDL (2026-07-23): the gathered-dirndl flat nips the waist for the croquis silhouette (waistNip 0.22) AND draws the waist where the skirt fabric is physically gathered in, so the flat half-waist reads narrower than the drafted finished waist the motor cuts. Current -30.1%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "skirtLen",
+   "maxAbsDevPct": 48,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) + gatheredSkirt drape (cloth-solver profile:skirt)",
+   "justification": "DIRNDL (2026-07-23): the flat draws a full dirndl skirt (skirtFull 2.0) whose physics-gathered folds sweep long and straight-dropping for the croquis; the drafted skirt length is the real mini drop. Stylised drawing layer, not a fit deviation. Current +45.3%; pinned worst + margin."
+  },
+  {
+   "style": "dress_vneck_gathered",
+   "landmark": "hemSweepHalf",
+   "maxAbsDevPct": 10,
+   "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) dirndl hem sweep",
+   "justification": "DIRNDL (2026-07-23): the full dirndl hem sweep is drawn a touch wider in the croquis than the drafted gathered panel width; borderline stylisation. Current +8.0%; pinned worst + margin."
+  },
+  {
+   "style": "top_cami_sq_spag_shirred_peplum_ruffle",
+   "landmark": "waistHalf",
+   "maxAbsDevPct": 25,
+   "contractRef": "contract/figure-bands.json ratios.waist_bust (EU36 66/84)",
+   "justification": "FIGURE_BASE band-derived cami/bandeau waist (0.78 skeleton); draft cuts real-body waist. Current -22%; pinned worst + margin."
+  }
+ ]
+}

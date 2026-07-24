@@ -10,7 +10,7 @@ namespace CollarBlock {
 
 namespace {
 
-constexpr double SA = 15;         // 15 mm seam allowance (Aldrich/Armstrong)
+constexpr double SA = constants::kSeamAllowanceMM; // seam allowance (constants.yaml)
 
 // --- collar dimensions (FORMULAS.md "Collar family") -------------------------
 constexpr double standBandH = 35;   // full stand-up band height

@@ -1,0 +1,109 @@
+{
+  "_comment": "GUSTO KORPUSU — F0'da beş kaynaktan çıkarılmış ölçülebilir bantlar, DONMUŞ. F1-F3 boyunca SALT-OKUNUR. gusto-lint.mjs buradan okur. Korpus güncellemesi ayrı DEVAM ister (DEVAM-FASHION anayasa: sonsuz-loop kilidi 1). Kaynak envanteri: reports/2026-07-19-stitchu-f0-gusto-korpus.md",
+  "_frozen": "2026-07-19",
+  "_schema_version": 1,
+  "_sources": {
+    "s1_etsy_packages": "benchmark-58/dress_patterns/ (A0PlainbustierDRESS 2p, A1Plainbustierdress 4p, BustierdresMixte 24p, instrucitons 13p, mixtestepsbustierregdress 12p) + bugra-ref/",
+    "s2_vocab_freq": "dataset/vocab-frequency.md + vocab-canonical.json + contract/terms.json (51 terim, 29 drawable / 22 honest)",
+    "s3_flat_engine": "engine/flat-engine/styles.json + _engine-full.mjs (4 stil, shared+own params)",
+    "s4_flat_svg": "web/patterns/svg/*-flat.svg + vintage6070/*-flat.svg (32 dosya, 3 stroke katmani)",
+    "s5_vintage": "web/patterns/vintage6070/meta.json (16 stil, 6 silüet ailesi)"
+  },
+
+  "silhouette_grammar": {
+    "_comment": "Kaynak 2 + 5. Bir silüetin terim-İD kombinasyonu emsal korpusta var mı, hangi frekansta. gusto-lint kombinasyonu bu tabloya karşı yoklar.",
+    "known_families": ["shift", "babydoll", "empire", "aLine", "fitFlare", "tunic", "tent", "pinafore", "princess", "wrap", "sheath"],
+    "family_count": 6,
+    "drawable_terms": 29,
+    "honest_terms": 22,
+    "high_freq_grammar": {
+      "_comment": "En sık geçen silüet-oluşturan terim frekansları (vocab-frequency.md OOV + core). Bir kombinasyon bu terimleri içeriyorsa emsal-desteklidir.",
+      "dropped shoulder": 63,
+      "relaxed boxy fit": 54,
+      "patch pocket": 37,
+      "elastic waistband": 34,
+      "side hem slit": 20,
+      "empire waist": 12,
+      "princess seam": 10,
+      "gathered": 10,
+      "ruffle": 8,
+      "peplum": 6
+    }
+  },
+
+  "proportion_bands": {
+    "_comment": "Kaynak 3. flat-engine shared/own parametre aralıkları = emsal dağılımı. Bir render'ın oranları bu bantların içindeyse gusto-uyumlu. Bant DIŞI = düzeltme kuyruğu.",
+    "shared": {
+      "bustProject": { "min": 0.0, "max": 1.0, "typical": [0.4, 0.6] },
+      "bustHeight": { "min": 0.0, "max": 1.0, "typical": [0.25, 0.4] },
+      "waistNip": { "min": 0.0, "max": 0.15, "typical": [0.05, 0.1] },
+      "skirtFull": { "min": 1.0, "max": 3.0, "typical": [1.6, 2.1] },
+      "foldCount": { "min": 4, "max": 16, "typical": [8, 12] },
+      "hemWave": { "min": 0.5, "max": 2.0, "typical": [0.8, 1.2] },
+      "drape": { "min": 0.5, "max": 2.0, "typical": [0.8, 1.3] },
+      "hemDip": { "min": 0.0, "max": 4.0, "typical": [1.5, 2.5] }
+    },
+    "own": {
+      "strapLen": { "min": 9, "max": 27 },
+      "strapWidth": { "min": 2.0, "max": 3.5 },
+      "gatherRatio": { "min": 1.8, "max": 3.0, "typical": [1.9, 2.2] },
+      "yokeDrop": { "min": 9, "max": 16 },
+      "ruffle": { "min": 0.6, "max": 1.4 },
+      "tieLength": { "min": 20, "max": 32 }
+    }
+  },
+
+  "line_hierarchy": {
+    "_comment": "Kaynak 4. Damla-onayli flat SVG'lerin çizgi katmanları. F2 kalemi bu katman yapısına uymalı. gusto-lint bir SVG'nin stroke-width dağılımını buna karşı ölçer.",
+    "stroke_layers": 3,
+    "outline_width": 2.0,
+    "interior_widths": [1.4, 1.0],
+    "layer_roles": {
+      "2.0": "dış siluet (gövde outline)",
+      "1.4": "iç yapı (dikiş, drape, yaka)",
+      "1.0": "konstruksiyon işareti (pens, grainline, bastırma)"
+    },
+    "color_navy": "#1f3a5f",
+    "color_seam": "#5c7aa0",
+    "ink_regimes": {
+      "minimal": "2 drape fold",
+      "orta": "3 drape fold",
+      "full": "max(2, round(foldCount/2)) fold"
+    }
+  },
+
+  "piece_page_bands": {
+    "_comment": "Kaynak 1. Etsy emsal paketlerinin parça + sayfa bandı. gusto-lint + şartname bir çıktının parça/sayfa sayısını buna karşı ölçer. Bant dışı (çok parça = puzzle, az parça = eksik) düzeltme kuyruğu.",
+    "pieces": {
+      "blouse": { "min": 3, "max": 5, "note": "BugraPatterns emsal: bluz sade" },
+      "dress": { "min": 4, "max": 8, "note": "bustier dress A1: 4 yapisal parça çekirdegi" },
+      "skirt": { "min": 2, "max": 4 }
+    },
+    "pages": {
+      "a4_multipage": { "min": 8, "max": 24, "note": "BustierdresMixte 24p, mixtesteps 12p, instrucitons 13p" },
+      "a0_single": { "min": 1, "max": 2, "note": "A0PlainbustierDRESS 2p" },
+      "a1_single": { "min": 1, "max": 4, "note": "A1Plainbustierdress 4p" }
+    },
+    "cut_instruction_language": ["cut 1 on fold", "cut 2", "cut 1 pair", "place on fold"]
+  },
+
+  "composition_bands": {
+    "_comment": "Kaynak 3+4. Drape/büzgü yoğunluğu emsal aralığında mı. Aşırı büzgü = kalabalık, sıfır drape = steril (ZEVK SÖZLÜĞÜ adayları).",
+    "drape_fold_count": { "min": 1, "max": 10, "typical": [3, 6], "_note": "min 1: sade bir bluz/shell'in az drape işareti taşıması meşrudur, kusur değil; SIFIR drape = steril (ceza). Üst 10: yoğun büzgü/pileli emsalleri (24-sayfa bustier) dışlamaz." },
+    "gather_density_ratio": { "min": 1.8, "max": 3.0 },
+    "viewbox_aspect": { "_comment": "front+back yan yana flat oranı", "front_back_width": 496.0, "typical_height": [243.0, 494.0] }
+  },
+
+  "thresholds": {
+    "_comment": "gusto-lint puanlama eşikleri. Her boyut 0-1 arası puan; toplam ağırlıklı. Eşik altı boyut = o boyutun düzeltme kuyruğu. GENEL EŞİK 0.70 = ray kendi kendine yeşil olabilir; altı = düzeltme (maks 3 tur, her tur yükseltmeli).",
+    "overall_pass": 0.70,
+    "weights": {
+      "silhouette_grammar": 0.25,
+      "proportion_bands": 0.25,
+      "line_hierarchy": 0.20,
+      "piece_page_bands": 0.20,
+      "composition_bands": 0.10
+    },
+    "dimension_floor": 0.50
+  }
+}

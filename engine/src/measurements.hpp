@@ -3,6 +3,9 @@
 #include <cmath>
 #include <string>
 
+#include "constants.gen.hpp"
+#include "contract.gen.hpp"
+
 namespace stitchu {
 
 struct BodyMeasurementsSnapshot {
@@ -31,7 +34,12 @@ struct BodyMeasurementsSnapshot {
 // neck band with a long self-lined tie strip that ties into a bow at the throat
 // (band trued to the neckline like a stand collar + a separate tie piece).
 enum class Neckline { Crew, Scoop, VNeck, Square, Boat, Sweetheart, Halter, Cowl, PussyBow };
-enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated };
+// Gore (F1, 2026-07-19): a multi-panel gored skirt. The skirt is split into N
+// vertical panels (default 6 = a six-gore skirt); each panel is narrow at the
+// waist (finished waist / N), skims the hip, then flares out like a wedge below
+// the hip toward the hem (Aldrich/Armstrong gored skirt). APPEND-only enum — do
+// not reorder (int values pin the golden/contract surface).
+enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated, Gore };
 // Dress waist seam level. Empire sits just under the bust (underbust girth);
 // empire + gathered = the babydoll silhouette.
 enum class Waistline { Natural, Empire };
@@ -96,6 +104,7 @@ inline const char* raw(SkirtStyle s) {
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "halfCircle";
         case SkirtStyle::Pleated: return "pleated";
+        case SkirtStyle::Gore: return "gore";
     }
     return "";
 }
@@ -106,6 +115,7 @@ inline const char* title(SkirtStyle s) {
         case SkirtStyle::Gathered: return "gathered";
         case SkirtStyle::HalfCircle: return "half circle";
         case SkirtStyle::Pleated: return "pleated";
+        case SkirtStyle::Gore: return "gored";
     }
     return "";
 }
@@ -133,11 +143,13 @@ inline const char* raw(SkirtLength l) {
     }
     return "";
 }
+// Values live in contract/tables.json (draft.skirtLengthMM) — the K1 single
+// contract; contract.gen.hpp is generated from it. Same numbers, one source.
 inline double millimeters(SkirtLength l) {
     switch (l) {
-        case SkirtLength::Mini: return 450;
-        case SkirtLength::Midi: return 650;
-        case SkirtLength::Maxi: return 900;
+        case SkirtLength::Mini: return contract::kSkirtLength_mini;
+        case SkirtLength::Midi: return contract::kSkirtLength_midi;
+        case SkirtLength::Maxi: return contract::kSkirtLength_maxi;
     }
     return 0;
 }
@@ -225,7 +237,7 @@ struct GarmentSpec {
     TopLength topLength = TopLength::Hip;
     // Opt-in hem ruffle (fırfır). Off by default → existing drafts unchanged.
     bool ruffleHem = false;
-    double ruffleFullness = 2.5; // gather ratio 2.0–3.0
+    double ruffleFullness = constants::kRuffleFullnessDefault; // gather ratio 2.0–3.0 (constants.yaml)
     double ruffleDepthMM = 80;   // how deep the ruffle hangs
     int ruffleTiers = 1;         // cascading tiers (kademeli); 1 = single ruffle
     // Opt-in keyhole (anahtar deliği) opening below the front neckline.
@@ -341,6 +353,63 @@ struct GarmentSpec {
     // sleeve draft (not a post-pass) so the armhole/cap reshape trues together.
     // See shoulder.hpp / FORMULAS.md "Dropped shoulder + raglan".
     int shoulderStyle = 0; // ShoulderStyle enum value; 0 = Set
+    // Opt-in cup seam (kup dikişi — Corset Bustier, patterns_real/BUGRA-DEFTER.md):
+    // splits the princess FRONT panels into an Upper Cup + a Lower Cup along a
+    // HORIZONTAL seam through the bust apex — the strapless/sweetheart bustier
+    // construction the motor was missing (it gave the bust curve through the
+    // vertical princess seam alone). 0 = None (byte-identical), 1 = Horizontal.
+    // Only a princess-seamed sweetheart/strapless front hosts one; any other host
+    // is refused honestly. See cupseam.hpp / FORMULAS.md "Cup seam".
+    int cupSeam = 0; // CupSeam enum value; 0 = None
+    // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
+    // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the
+    // shoulder panel) + a lower body that flares/gathers from the yoke seam. The
+    // highest-frequency missing capability found by a forensic pass over 23 fashion
+    // flats. 0 = None (byte-identical), 1 = Plain. The yoke line is MEASURED off each
+    // panel's own drawn shoulder-to-hem drop (never hardcoded). Only a dress/top with
+    // a bodice front/back hosts one; any other host is refused honestly.
+    // See yoke.hpp / FORMULAS.md "Yoke split".
+    int yoke = 0; // Yoke enum value; 0 = None
+    // Opt-in center inverted box pleat (orta ters kutu pili): the first LOCALIZED
+    // fullness — a SINGLE fold at the center front, as opposed to the distributed
+    // gather the engine already has. Widens the CF-foldable front panel by a fixed
+    // pleat underlay, folded behind so the finished width equals the original; the
+    // extra fabric tucks under (an inverted box pleat). Unlocks the swing / doll
+    // top (yoke + center box pleat). 0 = None (byte-identical), 1 = CenterInverted.
+    // Only a dress/top with a CF-foldable front panel (incl. the yoke "Front Body")
+    // hosts one; a skirt-only or cut-2 front is refused honestly.
+    // See boxpleat.hpp / FORMULAS.md "Center inverted box pleat".
+    int boxPleat = 0; // BoxPleat enum value; 0 = None
+    // Opt-in corset lace-up back (korse bağcıklı sırt): an eyelet-laced CENTER-BACK
+    // closure — the two back halves leave an open gap spanned by a cord that
+    // criss-crosses between two columns of eyelets (one down each back edge). Adds
+    // a CB facing strip on each back edge + trued eyelet columns + a lacing cord
+    // piece. Off by default (None) → byte-identical. Only a fitted (princess/dart)
+    // bodice back on a dress/top hosts one; a skirt or loose/gathered back is
+    // refused honestly. The open laced gap is a real donning opening (so no CB
+    // zipper is stamped). 0 = None, 1 = Corset. See laceupback.hpp / FORMULAS.md
+    // "Corset lace-up back".
+    int laceUpBack = 0; // LaceUpBack enum value; 0 = None
+    // Opt-in true wrap / surplice crossover front (kruvaze / surplice ön): a REAL
+    // crossed double front (the wrap-dress / surplice-bodice family), not a tie.
+    // The on-fold half front is REBUILT as a full asymmetric panel whose CF edge is
+    // extended past center front into a diagonal WRAP edge that crosses the body
+    // centerline; the front is then cut 2 mirror-image (left-wrap + right-wrap) so
+    // the two panels lap over each other at CF and the drafted neck edge meets the
+    // wrap edge as a surplice V. Off by default (None) → byte-identical. Only a
+    // dress/top bodice front (dart or princess center) hosts one; a skirt is refused
+    // honestly. The wrap IS the donning opening (no CB zip). 0 = None, 1 = Surplice.
+    // See wrapfront.hpp / FORMULAS.md "Wrap / surplice front".
+    int wrapFront = 0; // WrapFront enum value; 0 = None
+    // Opt-in all-around hem flounce (etek ucu volanı — dropped-waist tiered look):
+    // a gathered flounce tier hung from the WHOLE hem (front + back), NOT a peplum
+    // (waist) or a back-neck flounce (nape). A flat strip cut ~2:1 wider than the
+    // measured hem and drawn up to fit it, attached all the way around. Off by
+    // default (None) → byte-identical. Only a dress/top with a real hosting hem
+    // carries one; a gathered/flared skirt (already rippling) is refused honestly.
+    // 0 = None, 1 = Gathered (Circular reserved for later). See hemflounce.hpp /
+    // FORMULAS.md "All-around hem flounce".
+    int hemFlounce = 0; // HemFlounce enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

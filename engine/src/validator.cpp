@@ -392,7 +392,9 @@ std::optional<double> skirtWaistLength(const PatternPiece& piece, SkirtStyle sty
         case SkirtStyle::ALine:
         case SkirtStyle::Straight:
         case SkirtStyle::HalfCircle:
-            // Quarter pieces and circle panels both open with the waist edge.
+        case SkirtStyle::Gore:
+            // Quarter pieces, circle panels and gore panels all open with the
+            // waist edge (a single move + first path command).
             return pathLength({PathCommand::move(start), piece.commands[1]});
         case SkirtStyle::Gathered:
             if (piece.commands[1].type != CmdType::Line) return std::nullopt;
@@ -459,7 +461,13 @@ std::vector<ValidationIssue> skirtIssues(
             issues.push_back({"skirt", piece->name, "unexpected command layout, cannot measure waist"});
             continue;
         }
-        sewnWaist += (*waist - dartIntake(*piece)) * 2;
+        // Every skirt piece is a half of front/back (on fold or cut 2), so x2 —
+        // EXCEPT a gore panel, which is one of `goreCount` identical panels each
+        // carrying waistShare of the finished waist, so it counts `goreCount`
+        // times (SkirtBlock::goreCount).
+        const double multiplier = (spec.skirtStyle == SkirtStyle::Gore)
+                                      ? static_cast<double>(SkirtBlock::goreCount) : 2.0;
+        sewnWaist += (*waist - dartIntake(*piece)) * multiplier;
     }
 
     if (spec.skirtStyle == SkirtStyle::Gathered) {
@@ -579,8 +587,10 @@ std::vector<ValidationIssue> skirtIssues(
     }
 
     // A dress zipper runs through bodice and skirt: the skirt back (or a
-    // half-circle panel) must be cut 2 so a center back seam exists.
-    if (spec.garment == GarmentType::Dress) {
+    // half-circle panel) must be cut 2 so a center back seam exists. A gored
+    // skirt is exempt — it is built from `goreCount` vertical panels, so a panel
+    // seam always lands at the center back for the zipper to continue into.
+    if (spec.garment == GarmentType::Dress && spec.skirtStyle != SkirtStyle::Gore) {
         const PatternPiece* zipCarrier = nullptr;
         for (const auto* piece : skirtPieces) {
             if (hasSuffix(piece->name, "Back")) { zipCarrier = piece; break; }
@@ -597,20 +607,30 @@ std::vector<ValidationIssue> skirtIssues(
 // MARK: Top
 
 // Extended top layout tail: ..., armhole curve, side curve to hem,
-// hem curve to center, center line, close. A front button placket grows the
-// center edge outward and inserts one extra CENTER jog line before close, so
-// the side seam sits one command earlier. Skip trailing near-center lines (the
-// center edge, |x| within the stand width of CF) so the finder lands on the
-// side-to-hem curve in every front topology.
+// hem CURVE to center, center LINE(s) up, close. The side-to-hem and hem-to-
+// center connectors are always CURVES (extendPiece emits them as curves); the
+// trailing center-front edge is always LINE(s). A front button placket grows
+// the whole CF edge outward — the hem corner and the vertical CF edge move to
+// x = -(stand + offset) — and inserts one extra jog LINE back to the neck point
+// before close. So the trailing CF edge can sit at any x (e.g. -73 mm for an
+// asymmetric placket, not just within ~18 mm for a symmetric one). Walk back
+// over trailing Close/Line commands (the CF edge, whatever it grew to) until the
+// first CURVE — that curve is the hem-to-center connector, and the two curves
+// before it are the side-to-hem (hemEnd-1) and armhole-lower (hemEnd-2). This is
+// topology-driven, so it lands on the true side seam for every front topology
+// and every placket offset. (An earlier |x| <= 20 mm skip missed the grown edge
+// of an asymmetric placket and measured the hem sweep as the side seam — a false
+// front-vs-back mismatch; fixed 2026-07-23.)
 std::optional<double> topSideSeamLength(const PatternPiece& piece) {
     const size_t count = piece.commands.size();
     if (count < 5) return std::nullopt;
     size_t hemEnd = count - 1; // index of the close command
-    // Walk back over the closing line(s) that ride the center edge.
+    // Walk back over the closing center-front edge (Close + the trailing LINEs
+    // that ride the CF, at whatever x the placket grew them to) to the first
+    // CURVE — the hem-to-center connector.
     while (hemEnd > 0 &&
            (piece.commands[hemEnd].type == CmdType::Close ||
-            (piece.commands[hemEnd].type == CmdType::Line &&
-             std::fabs(piece.commands[hemEnd].to.x) <= 20.0))) {
+            piece.commands[hemEnd].type == CmdType::Line)) {
         --hemEnd;
     }
     // hemEnd now points at the hem-to-center curve; the two curves before it are
@@ -661,6 +681,26 @@ std::vector<ValidationIssue> topIssues(
         if (isFront && spec.hemShape == static_cast<int>(HemShape::HighLow))
             expected -= HemBlock::highLowFrontRise;
         auto& sideLen = isFront ? frontSide : backSide;
+        // Cup seam (Corset Bustier): the front princess panels are REPLACED by an
+        // Upper Cup + a Lower Cup, so the front-half princess-panel + side-seam
+        // audit below no longer maps (the cups carry that wearability, checked in
+        // cup_check). Skip the front half for a cup-split garment.
+        if (isFront && spec.cupSeam != 0 &&
+            find("Upper Cup Center Front") && find("Lower Cup Center Front")) {
+            continue;
+        }
+        // Yoke split (roba — doll / babydoll dress): the "Top <half>" panel (dart) or
+        // the "Top Center/Side <half>" princess panels are REPLACED by a "<half> Yoke"
+        // + "<half> Body" (dart), or "<half> Yoke Center/Side" + "<half> Body
+        // Center/Side" (princess). The single-piece shoulder-to-hem height + side-seam
+        // audit below no longer maps (two stacked pieces carry that length now). The
+        // yoke seam is trued by construction and checked in yoke_check + the neck-
+        // facing check; skip this half here exactly as the cup-seam split does above.
+        if (spec.yoke != 0 &&
+            ((find(std::string(half) + " Yoke") && find(std::string(half) + " Body")) ||
+             (find(std::string(half) + " Yoke Center") && find(std::string(half) + " Body Center")))) {
+            continue;
+        }
         if (princess) {
             const PatternPiece* center = find(std::string("Top Center ") + half);
             const PatternPiece* side = find(std::string("Top Side ") + half);
@@ -781,17 +821,54 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
         for (size_t i = 1; i <= k; ++i) path.push_back(piece.commands[i]);
         return pathLength(path);
     };
+    // The yoke split (yoke.cpp) replaces "Bodice Front"/"Top Front" (and back) with a
+    // "<half> Yoke" (upper) + a "<half> Body" (lower). The NECKLINE lives on the Yoke
+    // piece (it carries the shoulder + neck edge); the lower Body has no neck edge.
+    // But yoke.cpp re-emits the panel outline as a FLATTENED polyline (curves -> 24
+    // line segments), so the k-command trick above can't isolate the neck edge on it.
+    // Measure the yoke's neck edge geometrically instead: it runs from the center-neck
+    // move point along the outline to the neck point (the shoulder-neck corner = the
+    // min-y vertex, after which the outline turns toward the armhole/side seam). That
+    // is the exact run of edge the neck facing must retrace — the same seam, just
+    // polyline-drawn — so a valid facing on a valid yoke still trues to < 1.5 mm.
+    auto yokeNeckLength = [&](const PatternPiece& piece) -> std::optional<double> {
+        const auto& cmds = piece.commands;
+        if (cmds.size() < 3 || cmds[0].type != CmdType::Move) return std::nullopt;
+        size_t neckIdx = 0;
+        double minY = cmds[0].to.y;
+        // Walk only the leading run of Line vertices (the split panel is emitted as
+        // lines); the neck point is the lowest-y vertex of that leading run.
+        for (size_t i = 1; i < cmds.size(); ++i) {
+            if (cmds[i].type != CmdType::Line) break;
+            if (cmds[i].to.y < minY - 1e-9) { minY = cmds[i].to.y; neckIdx = i; }
+        }
+        if (neckIdx < 1) return std::nullopt;
+        std::vector<PathCommand> path;
+        for (size_t i = 0; i <= neckIdx; ++i) path.push_back(cmds[i]);
+        return pathLength(path);
+    };
     for (const bool isFront : {true, false}) {
         const char* half = isFront ? "Front" : "Back";
         const PatternPiece* facing = nullptr;
         const PatternPiece* body = nullptr;
+        const PatternPiece* yoke = nullptr;
         for (const auto& piece : draft.pieces) {
             if (piece.name == std::string(half) + " Neck Facing") facing = &piece;
+            // Dart mode splits into "<half> Yoke"; princess mode splits the center
+            // panel into "<half> Yoke Center" (that center piece carries the neck edge
+            // on the fold, exactly as "Bodice Center <half>" did before the split).
+            if (piece.name == std::string(half) + " Yoke" ||
+                piece.name == std::string(half) + " Yoke Center") yoke = &piece;
             for (const char* prefix : {"Bodice Center ", "Bodice ", "Top Center ", "Top "}) {
                 if (piece.name == std::string(prefix) + half) { body = &piece; break; }
             }
         }
-        if (!facing || !body) {
+        // After a yoke split there is no "Bodice/Top <half>" panel — the neck edge
+        // moved onto the "<half> Yoke". Treat that yoke as the neck-carrying body so a
+        // real facing on a valid yoke draft is NOT falsely reported missing. With
+        // neither a body panel NOR a yoke, the facing is genuinely orphaned (a phantom
+        // facing with no parent) and must STILL be caught.
+        if (!facing || (!body && !yoke)) {
             issues.push_back({"facing", draft.garment,
                 std::string(half) + (facing ? " body piece" : " neck facing") + " missing"});
             continue;
@@ -799,7 +876,9 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
         // The square front neckline is two commands; everything else is one.
         const size_t k = (isFront && spec.neckline == Neckline::Square) ? 2 : 1;
         const auto fLen = neckLength(*facing, k);
-        const auto bLen = neckLength(*body, k);
+        // Prefer the un-split body panel's k-command measurement (byte-identical with
+        // the yoke off); fall back to the yoke's geometric neck edge after a split.
+        const auto bLen = body ? neckLength(*body, k) : yokeNeckLength(*yoke);
         if (!fLen || !bLen) {
             issues.push_back({"facing", facing->name, "unexpected layout, cannot measure the neck edge"});
             continue;

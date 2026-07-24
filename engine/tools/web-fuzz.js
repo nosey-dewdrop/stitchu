@@ -2,7 +2,19 @@
    sends to draftJSON, including ruffle/keyhole translation) across body-corner
    measurements, then simulates the print packer's math on every draft to prove
    no piece can be clipped and page counts stay sane.
-   run:  node engine/tools/web-fuzz.js */
+   run:  node engine/tools/web-fuzz.js
+
+   PACKER BOUNDARY, DECLARED HONESTLY (K2, 2026-07-19 — K0 finding 4.7):
+   the packer simulated below is the SHELF baseline only. The live product
+   (web/js/sheet.js packPieces) races shelf + skyline fit/sort/rotation
+   variants and picks whichever needs FEWER sheets, and a new strategy can
+   only ever win, never regress (the A4 loop's invariant) — so the PAGES
+   count here is a conservative UPPER BOUND on the live packer. The CLIP
+   check, however, only proves the SHELF layout never clips; the skyline +
+   per-piece-rotation placements are NOT fuzzed here (sheet.js is an ES
+   module with ?v-suffixed imports Node cannot resolve). Their guards live
+   elsewhere: register-continuity.mjs (139 page-pairs < 0.01 mm) and the
+   all-specs integrity check from the A4 strategy loop. */
 const path = require('path');
 const createEngine = require(path.join(__dirname, '../dist/stitchu-engine.js'));
 
@@ -495,6 +507,7 @@ createEngine().then((e) => {
   }
 
   console.log(`\nweb fuzz: ${drafts} drafts | ${blocked} validator-blocked (honest) | max ${maxSheets} sheets | ${failures} FAILURES`);
+  console.log('packer boundary: shelf-baseline mirror only (live sheet.js race is never worse on sheets; skyline/rotation placements guarded by register-continuity.mjs, not fuzzed here)');
   if (blocked) console.log('blocked examples:\n  ' + blockedExamples.join('\n  '));
   process.exit(failures === 0 ? 0 : 1);
 });

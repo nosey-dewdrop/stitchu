@@ -1,0 +1,19 @@
+{
+ "style": "top_scoop_cami",
+ "examplePng": "/Users/damummyphus/damla_projects_2026/00_currently_on_working/stitchu/engine/imitate/../../design_patterns/crops/ar-202447-6.png",
+ "params": {
+  "neckWidth": 1.05,
+  "neckDepth": 22,
+  "skirtFull": 1.95,
+  "waistNip": 0.28500000000000014,
+  "bustProject": 0.5,
+  "shoulderSlope": 1.6,
+  "bustHeight": 0.32999999999999996,
+  "yokeDrop": 12.5,
+  "hemDip": 2,
+  "armholeHollow": 0.13
+ },
+ "sapma": 0.14598477311165106,
+ "ok": false,
+ "ts": "2026-07-23"
+}

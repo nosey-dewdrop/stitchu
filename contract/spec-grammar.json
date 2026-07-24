@@ -1,0 +1,154 @@
+{
+  "_ROL": "DERLEYICI ARA DİLİ — motorun DÜRÜST envanteri (2026-07-22, FAZ 1). KURAL: burada YAZAN her değer motor tarafından ÇİZİLEBİLİR (hakem-kanıtlı ya da pinli-kanıtlı). Çizilemeyen değer BURAYA GİRMEZ. Parser bu gramere karşı doğrular; gramerde olmayan alan üretilemez. 'ikame' YASAK — primitif yoksa ÜRETİLEMEZ + eksik.",
+  "_kanit_seviyeleri": {
+    "hakem": "en az 1 hedefte çift kanat hakemden geçti (geçen 11 hedef)",
+    "pinli": "STYLE-PIN'de Damla-onaylı bir stilde çiziliyor ama tek-primitif hakem turu yok",
+    "PARK": "gramerde YOK — henüz çizilemez ya da kanıtsız"
+  },
+  "_schema_version": 1,
+
+  "slots": {
+    "garment": {
+      "values": {
+        "top":   {"kanit": "hakem", "note": "kolsuz + kollu, hip/cropped"},
+        "dress": {"kanit": "hakem", "note": "korsaj + etek, princess/dart"}
+      },
+      "PARK": ["skirt", "trousers"]
+    },
+
+    "neckline": {
+      "values": {
+        "crew":   {"kanit": "hakem", "kumas": ["woven", "knit"]},
+        "scoop":  {"kanit": "hakem", "kumas": ["woven", "knit"]},
+        "boat":   {"kanit": "hakem", "kumas": ["woven", "knit"]},
+        "square": {"kanit": "hakem", "kumas": ["woven", "knit"], "note": "gerçek square: düz taban + dik kenar (2026-07-22)"},
+        "vNeck":  {"kanit": "pinli", "kumas": ["woven", "knit"], "note": "lace_vneck/princess_dress pininde çiziliyor"},
+        "sweetheart": {"kanit": "hakem", "kumas": ["woven", "knit"], "note": "kalp yaka: CF sığ merkez çentik + iki dolgun bust cup (kalbin yarısı). Kalıp Neckline::Sweetheart (bodice.cpp); flat kap dili (buildHalf sweetheart dalı, sadece ön; arka roundNeck scoop). styleKey dress_sweetheart_princess_circle; id54 (2026-07-23)."},
+        "straight": {"kanit": "hakem", "kumas": ["woven", "knit"], "note": "strapless bandeau düz üst kenar (omuz/askı yok, düz yatay bant bust üstünde). Kalıp band-top gövde (bodice strapless edge); flat top:'band' düz üst kenar (top_bandeau_shirred_peplum'da çiziliyor). Woven'da kapanış/elastik şart (wearability). styleKey top_bandeau_shirred_peplum; id40 (2026-07-23). alt_ad: strapless."}
+      },
+      "PARK": ["halter", "cowl", "pussyBow"]
+    },
+
+    "shaping": {
+      "values": {
+        "dart":     {"kanit": "hakem"},
+        "princess": {"kanit": "hakem", "note": "ön+arka princess seam"},
+        "boxy":     {"kanit": "hakem", "note": "yan dikiş düz, bel çekmesi yok (kutu); garment=top ile", "gerektirir": {"garment": "top"}}
+      },
+      "PARK": []
+    },
+
+    "sleeve": {
+      "values": {
+        "none":     {"kanit": "hakem"},
+        "straight": {"kanit": "hakem", "note": "plainSleeve düz set-in", "alt": {"sleeveLength": ["short", "elbow", "long"]}},
+        "balloon":  {"kanit": "pinli", "note": "puffSleeve, capPuff>0; babydoll/princess pininde", "alt": {"sleeveLength": ["short"], "sleeveHead": ["puffed"]}},
+        "cap":      {"kanit": "hakem", "note": "cap sleeve: kısa set-in, omuzu kaplar kanat açmaz; kalıp Sleeve parçası (sleeve.cpp capCurve), flat drop=34 outW=16; id47 hakem-geçti 2026-07-22. sleeveHead='capped' de bu yola çözülür."}
+      },
+      "PARK": []
+    },
+
+    "skirt": {
+      "values": {
+        "aLine":      {"kanit": "hakem", "note": "figürlü drape'li etek"},
+        "gore":       {"kanit": "pinli", "note": "gore_skirt_dress pininde (gorePanels)"},
+        "fullCircle": {"kanit": "hakem", "note": "full circle etek: iki yarım-daireden kesilir; kalıp halfCirclePanel (skirt.cpp), flat geniş süpürme+dalgalı hem; id47 hakem-geçti 2026-07-22. Ad birliği: circle/full/fullCircle/halfCircle → circleSkirt() tek yol.", "alt_ad": ["circle", "full", "halfCircle"]},
+        "gathered":   {"kanit": "hakem", "note": "dirndl büzgülü etek: belde büzülen dolgun etek (aLine gibi konik açılmaz, dik-düşen). Kalıp gatheredPanel (skirt.cpp SkirtStyle::Gathered); flat gatheredSkirt bayrağı → belde fizik-büzgü (cloth-solver profile:'skirt', ikinci kıvrım yolu yok). styleKey dress_vneck_gathered; id24/57 (2026-07-23)."}
+      },
+      "PARK": ["straight", "pleated"]
+    },
+
+    "length": {
+      "values": {
+        "mini": {"kanit": "hakem"}, "midi": {"kanit": "hakem"}
+      },
+      "PARK": ["maxi"]
+    },
+
+    "topLength": {
+      "values": {
+        "cropped": {"kanit": "hakem"}, "hip": {"kanit": "hakem"}
+      },
+      "PARK": ["tunic"]
+    },
+
+    "peplum": {
+      "values": {
+        "none":    {"kanit": "hakem"},
+        "full":    {"kanit": "hakem", "note": "bele takılı dairesel flare, garment=top", "gerektirir": {"garment": "top"}},
+        "half":    {"kanit": "pinli", "note": "aynı geometri, sığ flare"},
+        "pointed": {"kanit": "pinli", "note": "sivri handkerchief flare"}
+      },
+      "PARK": []
+    },
+
+    "hemRuffle": {
+      "values": {
+        "none":   {"kanit": "hakem"},
+        "single": {"kanit": "hakem", "note": "peplum dış hem'ine dikilen büzgülü tek fırfır katı. Kalıp Ruffle strip (RuffleBlock, peplum hemCircumferenceMM'e trued); flat st.peplumRuffle (peplum hem'i altına dalgalı kat). SADECE peplum!=none top'ta (motor peplumsuz top'ta reddeder). id84/91 (2026-07-23)."}
+      },
+      "PARK": ["tiered", "scalloped"]
+    },
+
+    "shirred": {
+      "values": {
+        "none":    {"kanit": "hakem"},
+        "physics": {"kanit": "hakem", "note": "cloth-solver fizik büzgü (physicsShirr), üst-yoğun-sönümlü panel", "alt": {"gatherRatio": [1.8, 3.2], "gatherZone": ["bust"]}, "acik_kart": "bant sapması (sönüm %26 vs bant %15-25, yoğunluk 27 vs 4-6) — kart-shirred-bant-sapmasi.md"}
+      },
+      "PARK": ["smocked", "casing-drawstring-panel"]
+    },
+
+    "closure": {
+      "values": {
+        "none":       {"kanit": "hakem"},
+        "buttons":    {"kanit": "pinli", "note": "front placket, drawstring_babydoll değil princess pin"},
+        "zipper":     {"kanit": "hakem", "note": "kalıp CB zip; flat outline'ı değiştirmez"},
+        "tieBack":    {"kanit": "hakem", "note": "arka belde bağ, ayrı kesim parçası (id53)"},
+        "wrapFront":  {"kanit": "pinli", "note": "surplice çapraz ön kapanma + yan-dikiş bel bağı; kalıp TiePlacement::WrapFront, wrap_dress pininde çiziliyor; id13/68 (2026-07-22)"}
+      },
+      "PARK": ["placket-asymmetric", "lace-up", "hookEye", "exposed-zip"]
+    },
+
+    "collar": {
+      "values": {
+        "none":     {"kanit": "hakem"},
+        "peterPan": {"kanit": "pinli", "note": "collarShape, peterpan_puff pininde çiziliyor — tek-primitif hakem turu YOK"}
+      },
+      "PARK": ["stand", "shirt", "mandarin", "notched", "sailor"]
+    },
+
+    "straps": {
+      "values": {
+        "none":      {"kanit": "hakem"},
+        "ruffled":   {"kanit": "pinli", "note": "strapShape, drawstring_babydoll pininde"},
+        "wide":      {"kanit": "hakem", "note": "düz self-lined geniş askı (22mm tube, no gather); kalıp StrapBlock Wide; id4/31/56/58/79/102 (2026-07-22 ASKI ailesi)"},
+        "spaghetti": {"kanit": "hakem", "note": "ince self-lined tube (8mm); kalıp StrapBlock Spaghetti; id46/74"}
+      },
+      "PARK": ["shoulder", "halter", "oneShoulder", "offShoulder"]
+    },
+
+    "detay-pinli": {
+      "note": "pinli stillerde çizilen ama tek-primitif hakem turu OLMAYAN öğeler. Kombinasyonda kullanılabilir ama hedef bunlara İNDİRGENİRSE hakem şart.",
+      "values": {
+        "laceNeck":  {"kanit": "pinli"}, "laceSleeve": {"kanit": "pinli"}, "laceHem": {"kanit": "pinli"},
+        "cfGather":  {"kanit": "pinli"}, "wrapSurplice": {"kanit": "pinli"}, "wrapTie": {"kanit": "pinli"},
+        "backSeam":  {"kanit": "hakem"}, "casing": {"kanit": "pinli"}
+      }
+    }
+  },
+
+  "gecersiz_kombinasyonlar": [
+    {"kural": "sleeve=none + sleeveLength/sleeveHead", "neden": "kolsuzda kol parametresi olamaz"},
+    {"kural": "sleeve=none + balloon/straight", "neden": "kolsuz ile kol stili çelişir"},
+    {"kural": "peplum!=none + garment=dress", "neden": "peplum top belden takılır; dress'te etek zaten var (şimdilik)"},
+    {"kural": "shirred=physics + garment=dress", "neden": "shirred panel top gövdesine kalibre; dress kombinasyonu kanıtsız"},
+    {"kural": "boxy + shaping=princess", "neden": "boxy düz yan, princess figürlü — çelişir"},
+    {"kural": "collar!=none + neckline=halter", "neden": "halter yaka collar taşımaz (halter PARK zaten)"}
+  ],
+
+  "kumas_siniflari": {
+    "woven": {"note": "dokuma, esnemez. kapanışsız dar yaka GİYİLEMEZ (baş geçmez) — closure zorunlu"},
+    "knit":  {"note": "örme, esner. kapanışsız dar yaka OK (35cm yaka örmede kafadan geçer)"},
+    "_kural": "garment kapanışsız + neckOpening dar + woven → wearability FAIL. knit ise geç. (id82 numune dersi)"
+  }
+}

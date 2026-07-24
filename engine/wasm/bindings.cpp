@@ -129,9 +129,12 @@ GarmentSpec buildSpec(const val& o) {
     spec.gatherType = parseEnumInt("gatherType", intField(o, "gatherType"), kGatherType, kGatherTypeCount);
     spec.gatherZone = parseEnumInt("gatherZone", intField(o, "gatherZone"), kGatherZone, kGatherZoneCount);
     spec.backOpening = parseEnumInt("backOpening", intField(o, "backOpening"), kBackOpening, kBackOpeningCount);
+    spec.laceUpBack = parseEnumInt("laceUpBack", intField(o, "laceUpBack"), kLaceUpBack, kLaceUpBackCount);
+    spec.wrapFront = parseEnumInt("wrapFront", intField(o, "wrapFront"), kWrapFront, kWrapFrontCount);
     spec.backSlit = parseEnumInt("backSlit", intField(o, "backSlit"), kBackSlit, kBackSlitCount);
     spec.ruffledStraps = parseEnumInt("ruffledStraps", intField(o, "ruffledStraps"), kRuffledStraps, kRuffledStrapsCount);
     spec.peplum = parseEnumInt("peplum", intField(o, "peplum"), kPeplum, kPeplumCount);
+    spec.hemFlounce = parseEnumInt("hemFlounce", intField(o, "hemFlounce"), kHemFlounce, kHemFlounceCount);
     spec.placketStyle = parseEnumInt("placketStyle", intField(o, "placketStyle"), kPlacketStyle, kPlacketStyleCount);
     spec.edgeFinish = parseEnumInt("edgeFinish", intField(o, "edgeFinish"), kEdgeFinish, kEdgeFinishCount);
     spec.pocketStyle = parseEnumInt("pocketStyle", intField(o, "pocketStyle"), kPocketStyle, kPocketStyleCount);
@@ -142,6 +145,9 @@ GarmentSpec buildSpec(const val& o) {
     spec.exposedZip = parseEnumInt("exposedZip", intField(o, "exposedZip"), kExposedZip, kExposedZipCount);
     spec.backDetail = parseEnumInt("backDetail", intField(o, "backDetail"), kBackDetail, kBackDetailCount);
     spec.bardotStyle = parseEnumInt("bardotStyle", intField(o, "bardotStyle"), kBardotStyle, kBardotStyleCount);
+    spec.cupSeam = parseEnumInt("cupSeam", intField(o, "cupSeam"), kCupSeam, kCupSeamCount);
+    spec.yoke = parseEnumInt("yoke", intField(o, "yoke"), kYoke, kYokeCount);
+    spec.boxPleat = parseEnumInt("boxPleat", intField(o, "boxPleat"), kBoxPleat, kBoxPleatCount);
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }

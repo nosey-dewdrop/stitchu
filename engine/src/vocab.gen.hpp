@@ -27,8 +27,8 @@ inline constexpr int kSleeveStyleCount = 3;
 inline constexpr const char* kSleeveLength[] = { "short", "elbow", "long" };
 inline constexpr int kSleeveLengthCount = 3;
 // SkirtStyle (string)
-inline constexpr const char* kSkirtStyle[] = { "aLine", "straight", "gathered", "halfCircle", "pleated" };
-inline constexpr int kSkirtStyleCount = 5;
+inline constexpr const char* kSkirtStyle[] = { "aLine", "straight", "gathered", "halfCircle", "pleated", "gore" };
+inline constexpr int kSkirtStyleCount = 6;
 // SkirtLength (string)
 inline constexpr const char* kSkirtLength[] = { "mini", "midi", "maxi" };
 inline constexpr int kSkirtLengthCount = 3;
@@ -56,15 +56,24 @@ inline constexpr int kGatherZoneCount = 4;
 // BackOpening (int)
 inline constexpr const char* kBackOpening[] = { "none", "round", "lowV", "square", "keyhole" };
 inline constexpr int kBackOpeningCount = 5;
+// LaceUpBack (int)
+inline constexpr const char* kLaceUpBack[] = { "none", "corset" };
+inline constexpr int kLaceUpBackCount = 2;
+// WrapFront (int)
+inline constexpr const char* kWrapFront[] = { "none", "surplice" };
+inline constexpr int kWrapFrontCount = 2;
 // HemSlit (int)
 inline constexpr const char* kBackSlit[] = { "none", "vent", "slit" };
 inline constexpr int kBackSlitCount = 3;
 // StrapStyle (int)
-inline constexpr const char* kRuffledStraps[] = { "none", "ruffled" };
-inline constexpr int kRuffledStrapsCount = 2;
+inline constexpr const char* kRuffledStraps[] = { "none", "ruffled", "wide", "spaghetti" };
+inline constexpr int kRuffledStrapsCount = 4;
 // PeplumStyle (int)
 inline constexpr const char* kPeplum[] = { "none", "full", "half", "pointed" };
 inline constexpr int kPeplumCount = 4;
+// HemFlounce (int)
+inline constexpr const char* kHemFlounce[] = { "none", "gathered" };
+inline constexpr int kHemFlounceCount = 2;
 // PlacketStyle (int)
 inline constexpr const char* kPlacketStyle[] = { "none", "standard", "asymmetric" };
 inline constexpr int kPlacketStyleCount = 3;
@@ -72,14 +81,14 @@ inline constexpr int kPlacketStyleCount = 3;
 inline constexpr const char* kEdgeFinish[] = { "biasBinding", "facing" };
 inline constexpr int kEdgeFinishCount = 2;
 // PocketStyle (int)
-inline constexpr const char* kPocketStyle[] = { "none", "patch", "sideSeam" };
-inline constexpr int kPocketStyleCount = 3;
+inline constexpr const char* kPocketStyle[] = { "none", "patch", "sideSeam", "slash" };
+inline constexpr int kPocketStyleCount = 4;
 // CuffStyle (int)
 inline constexpr const char* kCuffStyle[] = { "none", "button", "ribbed" };
 inline constexpr int kCuffStyleCount = 3;
 // HemShape (int)
-inline constexpr const char* kHemShape[] = { "straight", "shirttail", "highLow" };
-inline constexpr int kHemShapeCount = 3;
+inline constexpr const char* kHemShape[] = { "straight", "shirttail", "highLow", "pointedV", "boxPleatHem" };
+inline constexpr int kHemShapeCount = 5;
 // ShoulderStyle (int)
 inline constexpr const char* kShoulderStyle[] = { "set", "dropped", "raglan" };
 inline constexpr int kShoulderStyleCount = 3;
@@ -95,6 +104,15 @@ inline constexpr int kBackDetailCount = 4;
 // BardotStyle (int)
 inline constexpr const char* kBardotStyle[] = { "none", "plain", "frill" };
 inline constexpr int kBardotStyleCount = 3;
+// CupSeam (int)
+inline constexpr const char* kCupSeam[] = { "none", "horizontal" };
+inline constexpr int kCupSeamCount = 2;
+// Yoke (int)
+inline constexpr const char* kYoke[] = { "none", "plain", "gathered" };
+inline constexpr int kYokeCount = 3;
+// BoxPleat (int)
+inline constexpr const char* kBoxPleat[] = { "none", "centerInverted" };
+inline constexpr int kBoxPleatCount = 2;
 
 } // namespace vocab
 } // namespace stitchu
