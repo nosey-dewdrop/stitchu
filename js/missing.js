@@ -318,6 +318,18 @@ export function missingFeatures(seen, lang) {
   // construction the engine does NOT draft and stays honest.
   const peplumTerm = (t) => /peplum|waist flounce|waist frill/i.test(t) &&
     !/pleated|gathered|draped|tiered|box[\s-]?pleat/i.test(t);
+  // All-around hem flounce: a gathered flounce hung from the WHOLE hem (front +
+  // back — the dropped-waist tiered look) is now drawn as a separate strip trued
+  // to the hem, so an outOfVocab term naming an all-around / hem / dropped-waist
+  // flounce is no longer missing. A peplum (waist) or a back-only flounce is a
+  // DIFFERENT construction (handled elsewhere / stays honest), and a pleated /
+  // circular / multi-tier hem flounce stays honest too.
+  const hemFlounceTerm = (t) =>
+    /(flounce|ruffle|frill|volan|tier(ed)?|flare)/i.test(t) &&
+    /(hem|bottom|all[\s-]?around|all[\s-]?round|dropped[\s-]?waist|drop[\s-]?waist|drop waist)/i.test(t) &&
+    !/peplum|waist flounce|waist frill/i.test(t) &&
+    !/back[\s-]?only|nape|back neck|one[\s-]?side/i.test(t) &&
+    !/pleated|box[\s-]?pleat|circular|multi[\s-]?tier|two[\s-]?tier|three[\s-]?tier/i.test(t);
   // R1.2: an asymmetric button placket is now drawn (the CF stand shifted off
   // center), so an outOfVocab term naming an asymmetric/offset/diagonal button
   // front is no longer missing. It must name a button/placket closure.
@@ -427,6 +439,7 @@ export function missingFeatures(seen, lang) {
     if (seen.hemSlitDrawn && hemSlitTerm(label)) continue;
     if (seen.ruffledStrapsDrawn && strapTerm(label)) continue;
     if (seen.peplumDrawn && peplumTerm(label)) continue;
+    if (seen.hemFlounceDrawn && hemFlounceTerm(label)) continue;
     if (seen.placketAsymDrawn && asymPlacketTerm(label)) continue;
     if (seen.capSleeveDrawn && capSleeveTerm(label)) continue;
     if (seen.pocketDrawn && pocketTerm(label)) continue;

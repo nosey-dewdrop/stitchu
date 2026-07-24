@@ -228,6 +228,33 @@ export function pickPeplum(seen) {
   return 'full';
 }
 
+// Map the vision's oov / details to an ALL-AROUND HEM FLOUNCE (etek ucu volanı) —
+// a gathered flounce tier hung from the WHOLE hem (front + back), the dropped-
+// waist tiered look. Distinct from a PEPLUM (a circular flare at the WAIST, above
+// the hem) and from a BACK-ONLY ruffle/flounce (at the nape / back neck). The
+// engine draws the GATHERED variant; a pleated / circular / multi-tier / one-
+// sided hem flounce stays honest. Returns 'gathered' or null.
+export function pickHemFlounce(seen) {
+  const words = [
+    Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
+    seen.details || '',
+  ].filter(Boolean).join(' ').toLowerCase();
+  // A peplum sits at the WAIST — that is pickPeplum's job, not a hem flounce.
+  const isPeplum = /peplum|waist flounce|waist frill/.test(words);
+  // Read an all-around flounce/ruffle/frill/volan/tier AT THE HEM (or a dropped-
+  // waist tier). Require a hem / all-around / dropped-waist / tiered signal so a
+  // sleeve or neck ruffle does not trigger it.
+  const flounceWord = /flounce|ruffle|frill|volan|tier(ed)?|flare/.test(words);
+  const hemSignal = /hem|bottom|all[\s-]?around|all[\s-]?round|round the|dropped[\s-]?waist|drop[\s-]?waist|drop waist|skirt tier/.test(words);
+  if (isPeplum) return null;
+  if (!flounceWord || !hemSignal) return null;
+  // Back-only / one-sided / nape flounce is not an all-around hem tier.
+  if (/back[\s-]?only|nape|at the back|back neck|one[\s-]?side/.test(words)) return null;
+  // Constructions the engine does NOT draft as a gathered hem tier — stay honest.
+  if (/pleated|box[\s-]?pleat|circular|multi[\s-]?tier|two[\s-]?tier|three[\s-]?tier/.test(words)) return null;
+  return 'gathered';
+}
+
 // Map the vision's oov / details to a pocket (patch 3.12; slash added later).
 // The engine draws a PATCH pocket (a separate piece sewn onto the outside + a
 // placement mark), a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark),

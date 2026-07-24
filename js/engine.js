@@ -30,6 +30,7 @@ export function wrapFrontValue(spec) { return intValue('wrapFront', spec && spec
 export function backSlitValue(spec) { return intValue('backSlit', spec && spec.backSlit); }
 export function ruffledStrapsValue(spec) { return intValue('ruffledStraps', spec && spec.ruffledStraps); }
 export function peplumValue(spec) { return intValue('peplum', spec && spec.peplum); }
+export function hemFlounceValue(spec) { return intValue('hemFlounce', spec && spec.hemFlounce); }
 export function pocketStyleValue(spec) { return intValue('pocketStyle', spec && spec.pocketStyle); }
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
 export function placketStyleValue(spec) {
@@ -107,6 +108,7 @@ function engineSpec(spec) {
     backSlit: backSlitValue(spec),
     ruffledStraps: ruffledStrapsValue(spec),
     peplum: peplumValue(spec),
+    hemFlounce: hemFlounceValue(spec),
     placketStyle: placketStyleValue(spec),
     edgeFinish: edgeFinishValue(spec),
     pocketStyle: pocketStyleValue(spec),

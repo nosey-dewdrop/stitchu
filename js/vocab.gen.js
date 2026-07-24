@@ -235,6 +235,14 @@ export const VOCAB = {
       "pointed"
     ]
   },
+  "hemFlounce": {
+    "type": "int",
+    "enum": "HemFlounce",
+    "values": [
+      "none",
+      "gathered"
+    ]
+  },
   "placketStyle": {
     "type": "int",
     "enum": "PlacketStyle",
