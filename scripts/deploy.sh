@@ -35,7 +35,11 @@ if [ "${1:-}" = "--no-bump" ]; then BUMP=0; shift; fi
 MSG="${1:-}"
 if [ -z "$MSG" ]; then echo "usage: scripts/deploy.sh [--no-bump] \"commit message\""; exit 2; fi
 
-LIVE_BASE="https://nosey-dewdrop.github.io/stitchu"
+# auto-regenerate sitemap.xml from every real page (no manual per-page indexing)
+echo "== deploy.sh: regenerating sitemap =="
+python3 web/gen-sitemap.py || { echo "sitemap generation failed"; exit 3; }
+
+LIVE_BASE="https://stitchu.noseydewdrop.com"
 
 echo "== deploy.sh: preflight =="
 if [ -f /tmp/package.json ]; then
