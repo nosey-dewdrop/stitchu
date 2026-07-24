@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stitchu 3.37 · A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie.</title>
+<meta name="description" content="A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of c">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/patches/3-37.html">
+<link rel="alternate" hreflang="en" href="https://stitchu.noseydewdrop.com/patches/3-37.html">
+<link rel="alternate" hreflang="x-default" href="https://stitchu.noseydewdrop.com/patches/3-37.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="stitchu 3.37 · A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie.">
+<meta property="og:description" content="A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of c">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/patches/3-37.html">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-07-24">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="stitchu 3.37 · A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie.">
+<meta name="twitter:description" content="A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of c">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie.", "description": "A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of c", "datePublished": "2026-07-24", "dateModified": "2026-07-24", "author": {"@type": "Person", "name": "Damla Su Bilge"}, "publisher": {"@type": "Organization", "name": "stitchu"}, "mainEntityOfPage": "https://stitchu.noseydewdrop.com/patches/3-37.html", "url": "https://stitchu.noseydewdrop.com/patches/3-37.html", "about": {"@type": "SoftwareApplication", "name": "stitchu", "applicationCategory": "DesignApplication"}, "articleSection": "patch notes", "version": "3.37"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "stitchu", "item": "https://stitchu.noseydewdrop.com/"}, {"@type": "ListItem", "position": 2, "name": "patch notes", "item": "https://stitchu.noseydewdrop.com/patches.html"}, {"@type": "ListItem", "position": 3, "name": "3.37", "item": "https://stitchu.noseydewdrop.com/patches/3-37.html"}]}</script>
+<link rel="stylesheet" href="../css/theme-transitions.css?v=84">
+<link rel="stylesheet" href="../css/shared-header.css?v=84">
+<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.5;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 32px 110px}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:40px;line-height:1.12;font-weight:400;margin:20px 0 10px;color:var(--navy)}
+  .manifesto{font-size:15px;color:var(--ink);max-width:60ch;margin-bottom:6px}
+  .updated{font-size:12px;color:#5b7089;letter-spacing:.5px;margin-bottom:34px}
+
+  .patch{border:1px solid var(--bb-line);border-radius:3px;margin:0 0 22px;background:#fff;box-shadow:0 6px 20px rgba(63,116,168,.09)}
+  .patch.now{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .phead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 22px 10px;border-bottom:1px dashed var(--bb-line)}
+  .pnum{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;color:var(--bb-deep)}
+  .ptitle{font-size:17px;color:var(--navy)}
+  .pdate{font-size:12px;color:#5b7089;margin-left:auto;letter-spacing:.5px}
+  .pbody{padding:14px 22px 18px}
+  .pbody ul{list-style:none;margin:0 0 10px}
+  .pbody li{position:relative;padding:4px 0 4px 20px;font-size:14px;color:var(--ink)}
+  .pbody li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:2px;background:var(--bb-deep)}
+  .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
+  .delta{display:inline-block;font-size:12px;letter-spacing:.4px;background:var(--bb-pale);color:var(--navy);border:1px solid var(--bb-line);border-radius:2px;padding:2px 10px;margin-top:6px}
+  .honest{font-size:13px;color:#5b7089;font-style:italic;margin-top:8px}
+  footer{border-top:1px solid var(--bb-line);padding:24px 40px 34px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+
+    /* gingham signature band (Damla, 16 Jul): thin texture strip on white pages */
+    body::before{content:"";display:block;height:12px;
+      background:
+        repeating-linear-gradient(90deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, rgba(143,191,232,.55) 0 6px, transparent 6px 12px),
+        #fff;}
+</style>
+
+</head>
+<body>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="../patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../patches.html" class="sh-active" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+<main class="wrap">
+<nav class="crumb" aria-label="Breadcrumb"><a href="../index.html">stitchu</a> › <a href="../patches.html">patch notes</a> › 3.37</nav>
+<article class="patch now single">
+<div class="phead"><span class="pnum">3.37</span><h1 class="ptitle" data-en="A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie." data-tr="Bir korse bağcıklı sırt: motor artık gerçek bir kuşgözü bağcıklı sırt çiziyor, her arka-orta kenar boyunca bir kuşgözü kolonu ve çapraz bir kordon, bağcıklı bir sırtı tek bir bağa indirgemek yerine.">A corset lace-up back: the engine now draws a real eyelet-laced back, a column of grommets down each center-back edge with a criss-cross cord, instead of collapsing a laced back to a single tie.</h1><span class="pdate">2026-07-24</span></div>
+    <div class="pbody">
+      <ul>
+        <li data-en="A laced corset back used to collapse to a single back tie. Now it is a real construction: each center-back edge gets a self-faced interfaced placket carrying a column of eyelets at a 28mm pitch (the classic one-inch corsetry spacing, first eyelet 15mm down, re-spaced evenly to fill the drawn edge), the two columns aligned so the lacing runs level, plus a separate lacing cord cut long enough to criss-cross the run and tie off. The back is left open at center back rather than cut on fold or zipped, so the finished garment laces adjustably. It composes with the cup seam, so a laced-back strapless bustier draws its cups and its lacing together." data-tr="Bağcıklı bir korse sırtı eskiden tek bir arka bağa indirgeniyordu. Artık gerçek bir konstrüksiyon: her arka-orta kenar, 28mm adımda bir kuşgözü kolonu taşıyan öz-kaplamalı telalı bir pat alıyor (klasik bir inç korse aralığı, ilk kuşgözü 15mm aşağıda, çizilen kenarı doldurmak için eşit yeniden aralıklı), iki kolon bağcık düz gitsin diye hizalı, artı çaprazlayıp bağlamaya yetecek kadar uzun kesilmiş ayrı bir bağcık kordonu. Sırt katlı kesilmek ya da fermuarlanmak yerine arka ortada açık bırakılıyor, böylece bitmiş giysi ayarlanabilir bağlanıyor. Kup dikişiyle besteleniyor, yani bağcıklı-sırt straplez bir bustier kuplarını ve bağcığını birlikte çiziyor.">A laced corset back used to collapse to a single back tie. Now it is a real construction: each center-back edge gets a self-faced interfaced placket carrying a column of eyelets at a 28mm pitch (the classic one-inch corsetry spacing, first eyelet 15mm down, re-spaced evenly to fill the drawn edge), the two columns aligned so the lacing runs level, plus a separate lacing cord cut long enough to criss-cross the run and tie off. The back is left open at center back rather than cut on fold or zipped, so the finished garment laces adjustably. It composes with the cup seam, so a laced-back strapless bustier draws its cups and its lacing together.</li>
+        <li data-en="Wired end to end from the photo through the same spec boundary the earlier bottleneck fix opened, so a laced or eyelet back read from your photo now reaches the engine. Golden byte-identical when off, all 54 tests pass, the two eyelet columns align to zero drift, and a non-fitted or skirt back stays an honest no-op. Verified by eye: the eyelet column reads as grommets down the center back with the facing strip beside it." data-tr="Fotoğraftan, daha önceki darboğaz düzeltmesinin açtığı aynı spec sınırından uçtan uca kablolandı, böylece fotoğrafınızdan okunan bağcıklı ya da kuşgözü bir sırt artık motora ulaşıyor. Kapalıyken golden bayt-birebir, 54 testin hepsi geçiyor, iki kuşgözü kolonu sıfır kaymaya hizalanıyor ve oturmayan ya da etek bir sırt dürüst bir no-op kalıyor. Gözle doğrulandı: kuşgözü kolonu arka ortada grommet olarak okunuyor, yanında kaplama şeridi.">Wired end to end from the photo through the same spec boundary the earlier bottleneck fix opened, so a laced or eyelet back read from your photo now reaches the engine. Golden byte-identical when off, all 54 tests pass, the two eyelet columns align to zero drift, and a non-fitted or skirt back stays an honest no-op. Verified by eye: the eyelet column reads as grommets down the center back with the facing strip beside it.</li>
+      </ul>
+      <span class="delta" data-en="new v1.1 capability: corset lace-up back (eyelet columns at 28mm pitch + a lacing cord) · columns aligned to 0mm drift · composes with the cup seam · wired photo to engine · golden byte-identical · 54 of 54 tests · verified by eye" data-tr="yeni v1.1 kabiliyeti: korse bağcıklı sırt (28mm adımda kuşgözü kolonları + bir bağcık kordonu) · kolonlar 0mm kaymaya hizalı · kup dikişiyle besteleniyor · fotoğraftan motora kablolandı · golden bayt-birebir · 54'te 54 test · gözle doğrulandı">new v1.1 capability: corset lace-up back (eyelet columns at 28mm pitch + a lacing cord) · columns aligned to 0mm drift · composes with the cup seam · wired photo to engine · golden byte-identical · 54 of 54 tests · verified by eye</span>
+    </div>
+</article>
+<nav class="pn-nav"><a class="pn-prev" href="3-38.html">← 3.38 (newer)</a><a class="pn-next" href="3-36.html">3.36 (older) →</a></nav>
+<p class="allpatches"><a href="../patches.html" data-en="← all patch notes" data-tr="← tüm yama notları">← all patch notes</a></p>
+</main>
+<script src="../js/shared-header.js?v=84"></script>
+</body>
+</html>
