@@ -3,7 +3,7 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=119';
+import { VOCAB, canonical } from './vocab.gen.js?v=121';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -53,7 +53,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=119';
+      script.src = 'vendor/stitchu-engine.js?v=121';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
