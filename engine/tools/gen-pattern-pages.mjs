@@ -13,7 +13,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const WEB = join(here, '../../web');
 const OUT = join(WEB, 'patterns');
 mkdirSync(OUT, { recursive: true });
-const BASE = 'https://nosey-dewdrop.github.io/stitchu';
+const BASE = 'https://stitchu.noseydewdrop.com';
 const V = process.env.V || '83';
 
 const meta = JSON.parse(readFileSync(join(OUT, 'svg', 'meta.json'), 'utf8'));
@@ -285,6 +285,49 @@ const cleanPiece = (n) => n.replace(/\s*\([^)]*\)\s*$/, '').trim();
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const bilingual = (en, tr, tag = 'span') => `<${tag} data-en="${esc(en)}" data-tr="${esc(tr)}">${esc(en)}</${tag}>`;
 
+// ---- SEO depth helpers (mirror gen-collection-pattern.mjs): real content from
+// the look's own data, never invented. Pattern-blog meta has no `shaping`, so
+// difficulty leans on piece count, garment type and closure, which are enough.
+function patDifficulty(m) {
+  let score = 0;
+  if (m.pieces >= 8) score += 2; else if (m.pieces >= 6) score += 1;
+  if (m.garment === 'dress') score += 1;              // bodice + skirt join
+  if (/zip|button|placket|lace/i.test(m.closure || '')) score += 1;
+  if ((m.pieceNames || []).some((p) => /sleeve/i.test(p))) score += 1;
+  if ((m.pieceNames || []).some((p) => /collar|cuff|pocket|placket/i.test(p))) score += 1;
+  if (score <= 2) return { en: 'Beginner', tr: 'Başlangıç' };
+  if (score <= 4) return { en: 'Confident beginner', tr: 'Orta-başlangıç' };
+  return { en: 'Intermediate', tr: 'Orta' };
+}
+function patFaqEntries(m, diff) {
+  const q = [];
+  q.push({
+    q_en: `How much fabric does the ${m.style.toLowerCase()} need?`,
+    q_tr: `${m.style} ne kadar kumaş ister?`,
+    a_en: `Plan for roughly ${m.fabric} m at 140 cm wide. The estimate scales with your measurements when you draft the pattern to your own size.`,
+    a_tr: `140 cm ende yaklaşık ${m.fabric} m planlayın. Tahmin, kalıbı kendi bedeninize çizdiğinizde ölçülerinize göre değişir.`,
+  });
+  q.push({
+    q_en: `Is the ${m.style.toLowerCase()} a beginner sewing pattern?`,
+    q_tr: `${m.style} yeni başlayanlar için uygun mu?`,
+    a_en: `Difficulty is ${diff.en.toLowerCase()}. It has ${m.pieces} pattern pieces${m.closure ? ` and closes with ${m.closure}` : ' and needs no separate closure'}.`,
+    a_tr: `Zorluk ${diff.tr.toLowerCase()}. ${m.pieces} kalıp parçası var${m.closure ? ` ve kapanış ${m.closure}` : ' ve ayrı bir kapanış gerektirmez'}.`,
+  });
+  q.push({
+    q_en: `Can I get the ${m.style.toLowerCase()} in my own measurements?`,
+    q_tr: `${m.style} kendi ölçülerimde alabilir miyim?`,
+    a_en: `Yes. The printable PDF is an EU38 demo, but on the create page the engine redraws every piece to your exact measurements, free.`,
+    a_tr: `Evet. Baskıya hazır PDF EU38 örnektir, ama çiz sayfasında motor her parçayı tam ölçülerinize göre ücretsiz yeniden çizer.`,
+  });
+  q.push({
+    q_en: `How do I print this pattern at the right size?`,
+    q_tr: `Bu kalıbı doğru boyutta nasıl basarım?`,
+    a_en: `Every sheet carries a 3 cm calibration square. Print at 100 percent scale with no fit-to-page, measure the square, and the pattern comes out true to size.`,
+    a_tr: `Her sayfada 3 cm'lik bir kalibrasyon karesi var. Yüzde 100 ölçekte, sayfaya sığdırmadan basın, kareyi ölçün; kalıp gerçek boyutunda çıkar.`,
+  });
+  return q;
+}
+
 // Canonical site header (create · closet · patterns · benchmark · patch notes ·
 // API + EN·TR). Byte-identical to gen-style-pages.mjs and the hand-written
 // pages; dimensions/behaviour come from ../css/shared-header.css + shared-header.js.
@@ -332,6 +375,16 @@ const STYLE = `<style>
   td.v{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy)}
   .honest{font-size:13.5px;color:#5b7089;font-style:italic;margin:6px 0 4px;max-width:66ch}
   .honest a{font-style:normal}
+  .wrap > .era{font-size:12.5px;letter-spacing:.4px;color:#5b7089;margin:0 0 14px}
+  .faqs{margin-top:6px}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--bb-line)}
+  .faq-item:first-child{border-top:1px solid var(--bb-line)}
+  .faq-q{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .faq-a{font-size:13.5px;color:var(--ink);max-width:66ch}
+  ul.related{list-style:none;margin:6px 0 0;padding:0}
+  ul.related li{padding:9px 0;border-bottom:1px solid var(--bb-line);font-size:14px}
+  ul.related a{text-decoration:none;color:var(--bb-deep)}
+  ul.related .rel-era{color:#5b7089;font-size:12px;margin-left:8px}
   /* CTA look lives in ../css/shared-button.css (.sb-btn). Layout-only helpers here. */
   .sb-btn{margin-top:30px}
   .cta2{display:inline-block;margin:30px 0 0 16px;font-size:13px;letter-spacing:.4px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
@@ -389,11 +442,11 @@ function head(title, desc, canonical, ldjson) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <script type="application/ld+json">${JSON.stringify(ldjson)}</script>
@@ -422,16 +475,31 @@ for (const m of meta) {
   const flatUrl = m.flat ? `svg/${m.flat}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
 
+  const diff = patDifficulty(m);
+  const faqs = patFaqEntries(m, diff);
+
   const ldjson = {
-    '@context': 'https://schema.org', '@type': 'Article',
-    headline: title, description: desc,
-    image: `${BASE}/patterns/${svgUrl}`,
-    author: { '@type': 'Organization', name: 'stitchu' },
-    publisher: { '@type': 'Organization', name: 'stitchu' },
-    datePublished: '2026-07-17', mainEntityOfPage: canonical,
-    articleSection: 'Pattern library', inLanguage: 'en',
-    about: { '@type': 'Thing', name: m.style },
-    isBasedOn: `${BASE}/benchmark.html`,
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article',
+        headline: title, description: desc,
+        image: `${BASE}/patterns/${svgUrl}`,
+        author: { '@type': 'Organization', name: 'stitchu' },
+        publisher: { '@type': 'Organization', name: 'stitchu' },
+        datePublished: '2026-07-17', mainEntityOfPage: canonical,
+        articleSection: 'Pattern library', inLanguage: 'en',
+        about: { '@type': 'Thing', name: m.style },
+        isBasedOn: `${BASE}/benchmark.html`,
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question', name: f.q_en,
+          acceptedAnswer: { '@type': 'Answer', text: f.a_en },
+        })),
+      },
+    ],
   };
 
   const facts = c.en.facts.map((f, i) => `<p class="fact" data-en="${esc(f)}" data-tr="${esc(c.tr.facts[i])}">${esc(f)}</p>`).join('\n  ');
@@ -459,11 +527,27 @@ for (const m of meta) {
   </div>
 ` : '';
 
+  // Related patterns: three others from the library (internal links spread crawl
+  // depth and link equity, and keep readers moving through the blog).
+  const idxP = meta.findIndex((x) => x.slug === m.slug);
+  const picks = [];
+  for (let k = 1; picks.length < 3 && k <= meta.length; k++) {
+    const cand = meta[(idxP + k) % meta.length];
+    if (cand.slug !== m.slug && COPY[cand.slug]) picks.push(cand);
+  }
+  const faqHtml = faqs.map((f) => `
+    <div class="faq-item">
+      <h3 class="faq-q" data-en="${esc(f.q_en)}" data-tr="${esc(f.q_tr)}">${esc(f.q_en)}</h3>
+      <p class="faq-a" data-en="${esc(f.a_en)}" data-tr="${esc(f.a_tr)}">${esc(f.a_en)}</p>
+    </div>`).join('');
+  const relatedHtml = picks.map((r) => `<li><a href="${r.slug}.html" data-en="${esc(r.style)}" data-tr="${esc(r.style)}">${esc(r.style)}</a> <span class="rel-era">${r.pieces} pieces</span></li>`).join('');
+
   const html = head(title, desc, canonical, ldjson) + `
 ${HEADER}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / <a href="index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a> / ${esc(m.style)}</p>
   <h1 data-en="${esc(m.style)}, drafted." data-tr="${esc(m.style)}, çizildi.">${esc(m.style)}, drafted.</h1>
+  <p class="era"><span data-en="${diff.en}" data-tr="${diff.tr}">${diff.en}</span> · <span data-en="${m.garment === 'dress' ? 'Dress' : m.garment === 'top' ? 'Top' : 'Skirt'}" data-tr="${m.garment === 'dress' ? 'Elbise' : m.garment === 'top' ? 'Üst' : 'Etek'}">${m.garment === 'dress' ? 'Dress' : m.garment === 'top' ? 'Top' : 'Skirt'}</span> · <span data-en="${m.pieces} pattern pieces" data-tr="${m.pieces} kalıp parçası">${m.pieces} pattern pieces</span></p>
   <p class="lead" data-en="${esc(c.en.lead)}" data-tr="${esc(c.tr.lead)}">${esc(c.en.lead)}</p>
 
   ${flatUrl ? `<div class="drawing">
@@ -488,7 +572,14 @@ ${HEADER}
   <h2 data-en="The honest note." data-tr="Dürüst not.">The honest note.</h2>
   <p class="honest" data-en="${esc(patchNote.en)}" data-tr="${esc(patchNote.tr)}">${esc(patchNote.en)}</p>
   <p class="honest">${m.patch ? `<a href="../patches.html" data-en="See patch ${m.patch} in the patch notes →" data-tr="Yama notlarında ${m.patch} yamasına bak →">See patch ${m.patch} in the patch notes →</a>` : `<a href="../patches.html" data-en="See the full patch history →" data-tr="Tüm yama geçmişine bak →">See the full patch history →</a>`}</p>
+
+  <h2 data-en="Common questions." data-tr="Sık sorulanlar.">Common questions.</h2>
+  <div class="faqs">${faqHtml}
+  </div>
 ${dlSection}
+  <h2 data-en="More from the pattern library." data-tr="Kalıp kütüphanesinden daha fazlası.">More from the pattern library.</h2>
+  <ul class="related">${relatedHtml}
+  </ul>
   <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
   <a class="cta2" href="index.html" data-en="Browse the pattern library →" data-tr="Kalıp kütüphanesine göz at →">Browse the pattern library →</a>
 </div>

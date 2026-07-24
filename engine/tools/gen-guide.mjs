@@ -137,7 +137,7 @@ const PAGES = [
 function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 function head(p) {
-  const url = `https://nosey-dewdrop.github.io/stitchu/guide/${p.slug}.html`;
+  const url = `https://stitchu.noseydewdrop.com/guide/${p.slug}.html`;
   const desc = esc(p.lead);
   const ld = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Article',
@@ -148,8 +148,8 @@ function head(p) {
   });
   const crumb = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'stitchu', item: 'https://nosey-dewdrop.github.io/stitchu/' },
-      { '@type': 'ListItem', position: 2, name: 'Sewing guide', item: 'https://nosey-dewdrop.github.io/stitchu/guide/' },
+      { '@type': 'ListItem', position: 1, name: 'stitchu', item: 'https://stitchu.noseydewdrop.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Sewing guide', item: 'https://stitchu.noseydewdrop.com/guide/' },
       { '@type': 'ListItem', position: 3, name: p.title, item: url },
     ],
   });
@@ -167,11 +167,11 @@ function head(p) {
 <meta property="og:title" content="${esc(p.title)} · stitchu">
 <meta property="og:description" content="${desc}">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta name="twitter:title" content="${esc(p.title)} · stitchu">
 <meta name="twitter:description" content="${desc}">
 <link rel="stylesheet" href="../css/theme-transitions.css?${V}">

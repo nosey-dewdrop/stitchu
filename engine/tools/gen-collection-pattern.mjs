@@ -35,7 +35,7 @@ const VDIR = join(WEB, 'patterns/vintage6070');
 const COLDIR = join(WEB, 'collections');
 const PDFDIR = join(COLDIR, 'pdf');
 mkdirSync(PDFDIR, { recursive: true });
-const BASE = 'https://nosey-dewdrop.github.io/stitchu';
+const BASE = 'https://stitchu.noseydewdrop.com';
 const V = process.env.V || '85';
 
 const meta = JSON.parse(readFileSync(join(VDIR, 'meta.json'), 'utf8'));

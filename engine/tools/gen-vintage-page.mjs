@@ -31,10 +31,10 @@ const jsonLd = {
   '@context': 'https://schema.org', '@type': 'CollectionPage',
   name: 'Sixties seventies collection · stitchu',
   description: 'Twelve 1960s and 1970s dress and skirt silhouettes, each drafted to a full sewing pattern by the stitchu engine. Every piece shown is the engine’s own output.',
-  url: 'https://nosey-dewdrop.github.io/stitchu/collection-60s70s.html',
-  inLanguage: 'en', isPartOf: 'https://nosey-dewdrop.github.io/stitchu/',
+  url: 'https://stitchu.noseydewdrop.com/collection-60s70s.html',
+  inLanguage: 'en', isPartOf: 'https://stitchu.noseydewdrop.com/',
   hasPart: meta.map((m) => ({ '@type': 'CreativeWork', name: m.en,
-    about: `${m.period} ${m.house}`, url: `https://nosey-dewdrop.github.io/stitchu/collection-60s70s.html#${m.slug}` })),
+    about: `${m.period} ${m.house}`, url: `https://stitchu.noseydewdrop.com/collection-60s70s.html#${m.slug}` })),
 };
 
 const looks = meta.map((m) => {
@@ -66,17 +66,17 @@ const html = `<!DOCTYPE html>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
 <title>Sixties seventies collection · stitchu</title>
 <meta name="description" content="Twelve 1960s and 1970s dress and skirt silhouettes drafted to full sewing patterns by the stitchu engine. Every pattern piece shown is the engine's own output, validator clean.">
-<link rel="canonical" href="https://nosey-dewdrop.github.io/stitchu/collection-60s70s.html">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/collection-60s70s.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="stitchu">
 <meta property="og:title" content="Sixties seventies collection · stitchu">
 <meta property="og:description" content="Twelve 1960s and 1970s silhouettes, every pattern piece drafted by the engine.">
-<meta property="og:url" content="https://nosey-dewdrop.github.io/stitchu/collection-60s70s.html">
-<meta property="og:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/collection-60s70s.html">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nosey-dewdrop.github.io/stitchu/assets/og-card.png">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta name="twitter:title" content="Sixties seventies collection · stitchu">
 <meta name="twitter:description" content="Twelve 1960s and 1970s silhouettes, drafted by the engine.">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>

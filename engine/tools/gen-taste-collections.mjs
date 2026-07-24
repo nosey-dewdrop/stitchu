@@ -23,7 +23,7 @@ const WEB = join(here, '../../web');
 const SVGDIR = join(WEB, 'patterns', 'svg');
 const OUT = join(WEB, 'collections');
 mkdirSync(OUT, { recursive: true });
-const BASE = 'https://nosey-dewdrop.github.io/stitchu';
+const BASE = 'https://stitchu.noseydewdrop.com';
 const V = process.env.V || '90';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
