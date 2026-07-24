@@ -279,7 +279,9 @@ export const VOCAB = {
     "values": [
       "straight",
       "shirttail",
-      "highLow"
+      "highLow",
+      "pointedV",
+      "boxPleatHem"
     ]
   },
   "shoulderStyle": {

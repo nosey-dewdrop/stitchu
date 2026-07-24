@@ -270,22 +270,35 @@ export function pickCuff(seen) {
   return 'button'; // a plain "cuff" on a woven sleeve reads as the barrel cuff
 }
 
-// Map the vision's oov / details to a hem SHAPE (patch 3.15). The engine reshapes
-// the fitted lower edge into a shirt-tail (sides up, center long) or a high-low
-// (front short, back long). An asymmetric-diagonal / handkerchief / mullet hem on
-// a gathered skirt is a different construction that stays honest. Returns
-// 'shirttail' | 'highLow' or null. Gated off a fitted straight/A-line skirt/dress
-// or a top by the caller.
+// Map the vision's oov / details to a hem SHAPE (patch 3.15+). The engine reshapes
+// the fitted lower edge into a shirt-tail (sides up, center long), a high-low (front
+// short, back long), a corset/basque POINT (center dips to a V, sides level), or an
+// inverted BOX-PLEAT / kick pleat released at the hem. A handkerchief (multi-point)
+// / asymmetric-diagonal / mullet-on-a-gathered-skirt hem is a different construction
+// that stays honest. Returns 'shirttail' | 'highLow' | 'pointedV' | 'boxPleatHem' or
+// null. Gated onto the right host (pointedV = fitted bodice/top; boxPleatHem =
+// straight/aLine) by the caller.
 export function pickHemShape(seen) {
   const words = [
     Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
     seen.details || '',
   ].filter(Boolean).join(' ').toLowerCase();
-  if (!/hem|hemline|lower edge/.test(words) &&
-      !/high[\s-]?low|mullet|shirt[\s-]?tail|shirttail/.test(words)) return null;
-  // A handkerchief / pointed / asymmetric-diagonal hem is NOT the soft symmetric
-  // shirttail / front-short-back-long high-low the engine draws — leave it honest.
+  const hemContext = /hem|hemline|lower edge/.test(words);
+  if (!hemContext &&
+      !/high[\s-]?low|mullet|shirt[\s-]?tail|shirttail|corset|basque|box[\s-]?pleat|kick[\s-]?pleat/.test(words))
+    return null;
+  // A corset / basque / center-V POINT hem is now drawn (center dips, sides level).
+  // A handkerchief / multi-point / diagonal / asymmetric hem is a DIFFERENT
+  // construction — leave it honest. So a corset/basque cue wins first, otherwise a
+  // pointed/V/angled/asymmetric/diagonal/handkerchief cue stays honest.
+  if (/corset|basque/.test(words) ||
+      ((/point|\bv[\s-]?hem|v[\s-]?shaped/.test(words)) &&
+       !/handkerchief|multi|asymmetric|diagonal|angled/.test(words)))
+    return 'pointedV';
   if (/handkerchief|pointed|asymmetric|diagonal|angled/.test(words)) return null;
+  // An inverted box pleat / kick pleat released at the hem for kick/flare.
+  if (/(inverted )?box[\s-]?pleat|kick[\s-]?pleat|kick pleat|pleated kick/.test(words))
+    return 'boxPleatHem';
   if (/high[\s-]?low|mullet|dipped back|dip hem|longer at (the )?back/.test(words)) return 'highLow';
   if (/shirt[\s-]?tail|shirttail|curved hem|cowboy|rounded hem|curved hemline/.test(words)) return 'shirttail';
   return null;

@@ -353,13 +353,15 @@ export function missingFeatures(seen, lang) {
   const cuffTerm = (t) => /\bcuff\b/i.test(t) &&
     /button|barrel|shirt|rib(bed)?|knit|bomber/i.test(t) &&
     !/french|elastic|casing|ruffle|frill|tie/i.test(t);
-  // patch 3.15: a shirt-tail / high-low hem is now drawn by reshaping the fitted
-  // lower edge, so an outOfVocab term naming that hem shape is no longer missing.
-  // A handkerchief / pointed / asymmetric-diagonal hem is a different construction
+  // patch 3.15+: a shirt-tail / high-low / corset-basque POINT / inverted box-pleat
+  // (kick) hem is now drawn by reshaping the fitted lower edge (or releasing a center
+  // pleat), so an outOfVocab term naming those hem shapes is no longer missing. A
+  // handkerchief (multi-point) / asymmetric-diagonal hem is a different construction
   // the engine does NOT draw and stays honest.
   const hemShapeTerm = (t) =>
-    /(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline)/i.test(t) &&
-    !/handkerchief|pointed|asymmetric|diagonal/i.test(t);
+    (/(shirt[\s-]?tail|shirttail|high[\s-]?low|mullet|curved hem|curved hemline|corset|basque|box[\s-]?pleat|kick[\s-]?pleat)/i.test(t) ||
+     /(point|\bv[\s-]?hem|v[\s-]?shaped).*hem|hem.*(point|corset|basque)/i.test(t)) &&
+    !/handkerchief|multi[\s-]?point|asymmetric|diagonal/i.test(t);
   // vocab 2026-07-17: an off-shoulder / bardot neckline is now drawn (top edge
   // dropped below the shoulder + elastic casing), so an outOfVocab term naming an
   // off-shoulder / bardot neck is no longer missing. A one-shoulder / strapless
