@@ -1,5 +1,5 @@
 {
-  "_comment": "GUSTO KORPUSU — F0'da beş kaynaktan çıkarılmış ölçülebilir bantlar, DONMUŞ. F1-F3 boyunca SALT-OKUNUR. gusto-lint.mjs buradan okur. Korpus güncellemesi ayrı DEVAM ister (DEVAM-FASHION anayasa: sonsuz-loop kilidi 1). Kaynak envanteri: reports/2026-07-19-stitchu-f0-gusto-korpus.md",
+  "_comment": "GUSTO KORPUSU — F0'da beş kaynaktan çıkarılmış ölçülebilir bantlar, DONMUŞ. F1-F3 boyunca SALT-OKUNUR. gusto-lint.mjs buradan okur. Korpus güncellemesi ayrı DEVAM ister (DERSLER.md: shadow-spec yasağı, korpus salt-okunur). Kaynak envanteri: reports/2026-07-19-stitchu-f0-gusto-korpus.md",
   "_frozen": "2026-07-19",
   "_schema_version": 1,
   "_sources": {

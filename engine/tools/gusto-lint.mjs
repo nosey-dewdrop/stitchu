@@ -2,7 +2,7 @@
 // "Satar mı / kalem mi" hükmünü Damla değil İSTATİSTİK verir. Bir görsel
 // çıktıyı (flat SVG + spec) contract/gusto-corpus.json'daki DONMUŞ bantlara
 // karşı beş boyutta puanlar. Eşik altı = düzeltme kuyruğu; eşik üstü = ray
-// kendi kendine yeşil. Korpus salt-okunur (DEVAM-FASHION anayasa kilidi 1).
+// kendi kendine yeşil. Korpus salt-okunur (DERSLER.md: korpus salt-okunur).
 //
 //   node engine/tools/gusto-lint.mjs <flat.svg> [spec.json]
 //   node engine/tools/gusto-lint.mjs --calibrate   (5 mihenk/vintage flat'i toplu puanla)

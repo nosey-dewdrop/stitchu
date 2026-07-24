@@ -8,7 +8,7 @@
 //
 // Kaynaklar: gate kuyruğu (gate.mjs), gusto kalibrasyon (gusto-lint), ctest
 // sayısı (CMakeLists add_test grep), golden pin (GOLDEN-PIN.md), NEREDEYİZ
-// (DEVAM-FASHION.md), benchmark sayıları (CLAUDE.md status satırı).
+// (NABIZ.md son izler), benchmark sayıları (CLAUDE.md status satırı).
 
 import { readFileSync, existsSync, readdirSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
@@ -33,10 +33,11 @@ function goldenPin() {
 }
 
 function neredeyiz() {
-  const d = read('DEVAM-FASHION.md');
-  const seg = d.split('## NEREDEYİZ')[1] || '';
-  const body = seg.split('## PARK')[0].trim();
-  return body || '(orkestratör henüz yazmadı)';
+  // Tek canlı kaynak: NABIZ.md son işlem izleri (DEVAM-FASHION.md 2026-07-24 temizlikte kaldırıldı).
+  const d = read('reports/gate/NABIZ.md');
+  if (!d) return '(NABIZ.md yok)';
+  const lines = d.trim().split('\n').filter((l) => l.trim());
+  return lines.slice(-15).join('\n') || '(nabız boş)';
 }
 
 function frozenCorpus() {
@@ -85,7 +86,7 @@ function build() {
   a{color:#3f74a8}
 </style></head><body><div class="wrap">
   <h1>stitchu · komuta ekranı</h1>
-  <div class="tag">v1.1 fashion zinciri · iç araç (noindex, deploy'a girmez) · DEVAM-FASHION.md</div>
+  <div class="tag">v1.1 fashion zinciri · iç araç (noindex, deploy'a girmez) · NABIZ.md</div>
   <div class="nums">${numCells}</div>
   <h2>Damla Kapısı — kuyruk</h2>
   <table><thead><tr><th>id</th><th>tür</th><th>başlık</th><th>durum</th><th>kontakt</th><th>gerekçe</th></tr></thead><tbody>${gateRows}</tbody></table>

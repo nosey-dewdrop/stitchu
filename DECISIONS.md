@@ -116,3 +116,9 @@
   ön-onaylı (görsel+hakem şartlı). Ama uygulama YENİDEN SUNUM sonrası ayrı tura ertelendi.
 - reports/gate/cila/oneri-korsaj-yan-kavisi.md güncel kalır (0b kaynağı). 0a kaynağı:
   hakem-id15-29.md (9 parça, 4'ü skirt panel → 2 cut-on-fold hedefi, motor+golden re-pin).
+
+## 2026-07-24 doküman/arşiv temizliği (tıkanma → navigasyon katmanı)
+- Karar: ~150 md → 74'e indirildi, iki Arşiv.zip (797MB kök birebir-tekrar + 190MB tracked golden-fark) silindi (disk 4.3G→2.4G). Silinenler: çelişkili yol dosyaları (NEREDEYIZ, DEVAM-FASHION/KAPANIS/RAY, GOREV-enum, engine/{BULGULAR,PRENSIPLER,SPEC-*-ESKI,SPEC-URETIM-v2,SPECS-next}, DESIGN-RULES), 48 reports/gate tutanağı, 43 tarihli reports log. Neden: 10 dosya 10 çelişkili sayaç iddia ediyordu (37/54 vs 22 vs 24 vs 27/54) → her oturum yanlış yöne gidiyordu; kod hiçbir md okumuyor (sadece contract/*.json). Damla emri: silmeden önce dersleri tek DERSLER.md'ye damıt.
+- KANIT: hiçbir CANLI kod silinen md'yi okumuyor (tam grep taraması temiz). Tek istisna komuta.mjs `read('DEVAM-FASHION.md')` idi → NABIZ.md'ye yönlendirildi (çalıştı, komuta.html üretildi, Neredeyiz kutusu doldu). Kod-sabiti gerekçesi taşıyan 3 rapor (k2/k4/f0-gusto) yanlışlıkla silinince HEAD'den restore edildi.
+- TEK GERÇEK SAYAÇ artık: reports/gate/kapsam-checkpoint.json (24/103). CLAUDE.md okuma sırası + sayaç bölümü yeniden yazıldı. Md'ler artık sayaç yazmaz, oraya işaret eder.
+- GERİ ALMA: silinen tracked md'ler git geçmişinde (ucuz restore); untracked engine md'leri gitti (dersleri DERSLER.md'de). Zip'ler birebir tekrardı, kayıp yok.
