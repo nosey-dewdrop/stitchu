@@ -157,9 +157,10 @@
    "specField": "pocketStyle",
    "values": [
     "patch",
-    "sideSeam"
+    "sideSeam",
+    "slash"
    ],
-   "attachment": "front panel surface (patch) / side seam (in-seam bag)",
+   "attachment": "front panel surface (patch) / side seam (in-seam bag) / diagonal front-hip mouth + facing + bag (slash)",
    "zOrder": 12,
    "conflictClass": "surface|sideSeamZone",
    "evidence": "engine/src/garment.cpp:719-728, engine/src/pocket.cpp:160-225"

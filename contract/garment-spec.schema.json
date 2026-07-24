@@ -494,7 +494,8 @@
           "enum": [
             "none",
             "patch",
-            "sideSeam"
+            "sideSeam",
+            "slash"
           ]
         },
         "cuffStyle": {

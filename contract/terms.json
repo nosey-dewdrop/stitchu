@@ -39,6 +39,8 @@
       "synonyms": ["front pockets", "patch pockets", "patch pockets at hip", "chest patch pocket", "hip patch pockets"] },
     { "id": "side-seam-pocket", "canonical": "side-seam pocket", "category": "pocket", "status": "drawable", "capability": "pocketStyle=sideSeam", "evidence": "pocket",
       "synonyms": ["side-seam pockets", "side seam pockets", "in-seam pockets", "inseam pockets"] },
+    { "id": "slash-pocket", "canonical": "slash pocket", "category": "pocket", "status": "drawable", "capability": "pocketStyle=slash", "evidence": "pocket",
+      "synonyms": ["slash pockets", "angled pocket", "angled front pockets", "diagonal pocket", "slant pocket", "slanted pocket", "jeans pocket", "trouser pocket"] },
     { "id": "dropped-shoulder", "canonical": "dropped shoulder", "category": "sleeve", "status": "drawable", "capability": "shoulderStyle=dropped", "evidence": null,
       "synonyms": ["dropped shoulders", "dropped shoulder seam", "drop shoulder"] },
     { "id": "back-neck-detail", "canonical": "back ruffle / cape / flounce", "category": "back", "status": "drawable", "capability": "backDetail", "evidence": null,

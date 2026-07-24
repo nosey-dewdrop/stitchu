@@ -261,7 +261,8 @@ export const VOCAB = {
     "values": [
       "none",
       "patch",
-      "sideSeam"
+      "sideSeam",
+      "slash"
     ]
   },
   "cuffStyle": {

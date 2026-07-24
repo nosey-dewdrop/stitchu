@@ -228,11 +228,13 @@ export function pickPeplum(seen) {
   return 'full';
 }
 
-// Map the vision's oov / details to a pocket (patch 3.12). The engine draws a
-// PATCH pocket (a separate piece sewn onto the outside + a placement mark) and a
-// SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). A welt / besom /
-// bound / cargo / flap / kangaroo pocket is a DIFFERENT construction that stays
-// honest. Returns 'patch' | 'sideSeam' or null.
+// Map the vision's oov / details to a pocket (patch 3.12; slash added later).
+// The engine draws a PATCH pocket (a separate piece sewn onto the outside + a
+// placement mark), a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark),
+// and a SLASH pocket (a diagonal front-hip mouth + a facing + a bag — the jeans/
+// trouser angled front pocket). A welt / besom / bound / cargo / flap / kangaroo
+// pocket is a DIFFERENT construction that stays honest. Returns
+// 'patch' | 'sideSeam' | 'slash' or null.
 export function pickPocket(seen) {
   const words = [
     Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' | ') : '',
@@ -243,11 +245,15 @@ export function pickPocket(seen) {
   if (/welt|besom|bound|jetted|cargo|flap|kangaroo|patch flap|zip(per)?\s*pocket/.test(words)) {
     return null;
   }
-  // A side-seam / in-seam / hidden / slash pocket rides the side seam.
-  if (/side[\s-]?seam|in[\s-]?seam|inseam|hidden|slash|seam pocket/.test(words)) return 'sideSeam';
+  // An angled / diagonal / slant / jeans / trouser front pocket = the slash
+  // pocket (a diagonal mouth cut into the front hip). Checked BEFORE side-seam
+  // so a "slash" read draws the real angled mouth, not a vertical in-seam bag.
+  if (/slash|slant(ed)?|angled|diagonal|jeans?|trouser|western/.test(words)) return 'slash';
+  // A side-seam / in-seam / hidden pocket rides the side seam (vertical mouth).
+  if (/side[\s-]?seam|in[\s-]?seam|inseam|hidden|seam pocket/.test(words)) return 'sideSeam';
   // A patch pocket is a piece applied to the surface (the most common read).
   if (/patch|hip pocket|chest pocket|applied pocket/.test(words)) return 'patch';
-  // A bare "pocket" with no welt/side cue reads as the common patch pocket.
+  // A bare "pocket" with no welt/side/slash cue reads as the common patch pocket.
   return 'patch';
 }
 

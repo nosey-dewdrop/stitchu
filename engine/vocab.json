@@ -28,7 +28,7 @@
     "placketStyle": { "type": "int", "enum": "PlacketStyle", "values": ["none", "standard", "asymmetric"] },
     "edgeFinish": { "type": "int", "enum": "EdgeFinish", "values": ["biasBinding", "facing"],
       "synonyms": { "bias": "biasBinding" } },
-    "pocketStyle": { "type": "int", "enum": "PocketStyle", "values": ["none", "patch", "sideSeam"] },
+    "pocketStyle": { "type": "int", "enum": "PocketStyle", "values": ["none", "patch", "sideSeam", "slash"] },
     "cuffStyle": { "type": "int", "enum": "CuffStyle", "values": ["none", "button", "ribbed"] },
     "hemShape": { "type": "int", "enum": "HemShape", "values": ["straight", "shirttail", "highLow", "pointedV", "boxPleatHem"] },
     "shoulderStyle": { "type": "int", "enum": "ShoulderStyle", "values": ["set", "dropped", "raglan"] },

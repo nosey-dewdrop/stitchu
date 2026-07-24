@@ -22,6 +22,17 @@
 //    MEASURED from the drafted side-seam length (Aldrich/Armstrong in-seam bag),
 //    so it drifts by 0.00 mm from the seam it lives on.
 //
+//  SLASH (eğik cep / angled front hip): the classic jeans/trouser front pocket.
+//    The FRONT panel gets a DIAGONAL mouth cut from a point on the waist (inset
+//    from the side seam by ~1/3 of that panel's waist width) down to a point on
+//    the side seam ~135 mm below the waist. Behind it: a pocket FACING (curved,
+//    follows the mouth and finishes the slash edge) + a pocket BAG (the side-seam
+//    bag geometry reused, larger, holds the hand). The facing's mouth edge is
+//    TRUED to the front's marked slash edge (same length <0.5 mm) so they sew; the
+//    bag attaches at the side seam + waist. Only a front panel with a real waist
+//    AND a side seam hosts one (a fitted / A-line front); a gathered / no-waist
+//    front is an honest no-op with a guide note.
+//
 // HONEST BOUNDARY (drawn on purpose, NOT here): welt / besom / bound pockets,
 // cargo / flap pockets, and kangaroo pouches are DIFFERENT constructions that
 // stay in the honesty layer (missing.js), never silently faked here.
@@ -31,8 +42,11 @@ namespace stitchu {
 
 // Pocket treatment. None = no pocket drawn (byte-identical default);
 // Patch    = a separate patch pocket piece + a placement mark on the body;
-// SideSeam = two in-seam pocket-bag pieces + a mouth-opening mark on the seam.
-enum class PocketStyle { None, Patch, SideSeam };
+// SideSeam = two in-seam pocket-bag pieces + a mouth-opening mark on the seam;
+// Slash    = a diagonal front-hip mouth + a pocket facing + a pocket bag
+//            (the jeans/trouser angled front pocket). APPEND-only (keeps the
+//            None/Patch/SideSeam integer values so the golden dump is unchanged).
+enum class PocketStyle { None, Patch, SideSeam, Slash };
 
 // Lower-corner shape of a patch pocket. Kept internal (the vision reads "patch
 // pocket"; corner style follows the garment): a hip patch reads rounded, a chest
@@ -57,6 +71,19 @@ inline constexpr double bagWidth = 165;         // how far the bag reaches towar
 inline constexpr double bagBelowMouth = 175;    // bag depth below the opening bottom
 inline constexpr double mouthBelowWaist = 70;   // opening starts this far below the waist edge
 inline constexpr double minSeamForBag = 320;    // shortest side seam that can host a bag
+
+// --- Slash pocket geometry (angled front-hip / jeans pocket) ----------------
+// The diagonal mouth runs from a waist point (inset from the side by this
+// fraction of the panel's waist width) down to a side-seam point `slashDrop`
+// below the waist. Values are the classic jeans/trouser slash convention
+// (Aldrich "Metric Pattern Cutting for Women's Wear", trouser front pocket;
+// Reader's Digest Complete Guide to Sewing, slant pocket): the mouth inset is
+// ~1/3 of the front waist quarter and it drops ~130-140 mm to the side seam.
+inline constexpr double slashInsetFrac = 0.333; // mouth-top inset from side = 1/3 of the waist width
+inline constexpr double slashDrop = 135;        // mouth-bottom is this far down the side seam
+inline constexpr double slashFacingDepth = 60;  // how deep the facing reaches behind the mouth
+inline constexpr double slashMinWaist = 90;     // shortest panel waist that can host a slash mouth
+inline constexpr double slashMinSideForDrop = 200; // side seam must be long enough for the drop
 
 // Appends the pocket piece(s) + a placement/mouth mark + a guide step. Does
 // nothing for PocketStyle::None. Returns false (with an honest guide note) when

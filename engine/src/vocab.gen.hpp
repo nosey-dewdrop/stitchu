@@ -78,8 +78,8 @@ inline constexpr int kPlacketStyleCount = 3;
 inline constexpr const char* kEdgeFinish[] = { "biasBinding", "facing" };
 inline constexpr int kEdgeFinishCount = 2;
 // PocketStyle (int)
-inline constexpr const char* kPocketStyle[] = { "none", "patch", "sideSeam" };
-inline constexpr int kPocketStyleCount = 3;
+inline constexpr const char* kPocketStyle[] = { "none", "patch", "sideSeam", "slash" };
+inline constexpr int kPocketStyleCount = 4;
 // CuffStyle (int)
 inline constexpr const char* kCuffStyle[] = { "none", "button", "ribbed" };
 inline constexpr int kCuffStyleCount = 3;
