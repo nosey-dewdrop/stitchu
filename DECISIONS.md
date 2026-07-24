@@ -135,3 +135,8 @@
 - Karar: meta description sonuna "Free printable PDF pattern." CTA eklendi AMA sadece ~160 char altına sığıyorsa; sığmıyorsa editoryel lead kesilmeden korunur (dürüst, kırpma yok). 'free' taşıyan desc 0->10, en uzun 155 char, benzersizlik korundu.
 - KANIT: style-lint 0 ihlal, sıfır ölü-domain regresyonu, canlı title doğrulandı. ?v=123 canlı.
 - GERİ ALMA: ucuz (title/desc şablonu tek satır, regen).
+
+## 2026-07-24 seo derinlik turu 3: style library FAQ (en yüksek arama hacmi)
+- Karar: 23 style sayfasına (a-line skirt, boat neckline, gathered skirt, puff sleeve gibi JENERİK yüksek-hacimli terimler) FAQ+FAQPage schema eklendi. Bunlar FAQ'sız kalan son katmandı ve en çok arananlar (niş collection/pattern değil, jenerik style). FAQ style'ın gerçek verisinden (compat, tests, numbers), lead soru free/PDF intent dilinde. Kelime 516->847, schema==metin, title'lar zaten optimize (dokunulmadı).
+- KANIT: style-lint 0, sıfır ölü-domain regresyon, canlı FAQPage doğrulandı. ?v=124 canlı.
+- Artık pattern(19)+collection(16)+style(23) TÜM içerik katmanları FAQ+schema taşıyor. Derinlik fazı TAMAM.
