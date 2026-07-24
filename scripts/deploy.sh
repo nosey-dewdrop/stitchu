@@ -134,3 +134,11 @@ for PAGE in patches.html create.html benchmark.html; do
   [ "$CODE" = "200" ] || { echo "FAIL: $PAGE not 200"; exit 11; }
 done
 echo "== DEPLOYED: ?v=$NEW live and single-versioned =="
+
+# 7) IndexNow: tell Bing/Yandex/Seznam the pages changed so they recrawl now
+# instead of on their own schedule. Best-effort: a ping failure never fails the
+# deploy (the pages are already live). Skipped if no key file is present.
+if node -e 'process.exit(require("fs").readdirSync("web").some(f=>/^[a-f0-9]{32}\.txt$/.test(f))?0:1)' 2>/dev/null; then
+  echo "== IndexNow ping =="
+  node engine/tools/indexnow-ping.mjs || echo "WARN: IndexNow ping failed (pages still live)."
+fi
