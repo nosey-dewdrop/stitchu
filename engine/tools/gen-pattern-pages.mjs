@@ -469,8 +469,15 @@ for (const m of meta) {
   const c = COPY[m.slug];
   if (!c) { console.log('NO COPY for', m.slug); continue; }
   const canonical = `${BASE}/patterns/${m.slug}.html`;
-  const title = `${m.style} sewing pattern · stitchu`;
-  const desc = c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead;
+  // Title carries the high-intent search terms shoppers actually type ("free",
+  // "PDF", "pattern") and is honest: every look is free and downloads as a PDF.
+  const title = `${m.style} · free PDF pattern · stitchu`;
+  // Meta description = the honest lead, plus a "Free printable PDF" CTA when
+  // there is room under ~160 chars (drives the SERP click; every look is free).
+  const CTA = ' Free printable PDF pattern.';
+  const desc = c.en.lead.length + CTA.length <= 158
+    ? c.en.lead + CTA
+    : (c.en.lead.length > 155 ? c.en.lead.slice(0, 152) + '...' : c.en.lead);
   const svgUrl = `svg/${m.slug}.svg?v=${V}`;
   const flatUrl = m.flat ? `svg/${m.flat}` : null;
   const pieces = m.pieceNames.map(cleanPiece);

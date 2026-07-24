@@ -244,8 +244,15 @@ for (const m of meta) {
   if (!dp) continue;
   const pdf = pdfBySlug[m.slug];
   const canonical = `${BASE}/collections/${m.slug}.html`;
-  const title = `${m.en} sewing pattern · stitchu`;
-  const desc = m.note_en.length > 155 ? m.note_en.slice(0, 152) + '...' : m.note_en;
+  // High-intent search terms in the title ("free", "PDF", "pattern"), honest:
+  // every look is free and downloads as a printable PDF.
+  const title = `${m.en} · free PDF pattern · stitchu`;
+  // Meta description = the honest note, plus a "Free printable PDF" CTA when it
+  // fits under ~160 chars (drives the SERP click; every look is free).
+  const CTA = ' Free printable PDF pattern.';
+  const desc = m.note_en.length + CTA.length <= 158
+    ? m.note_en + CTA
+    : (m.note_en.length > 155 ? m.note_en.slice(0, 152) + '...' : m.note_en);
   const svgUrl = `../patterns/vintage6070/${m.slug}.svg`;
   const flatUrl = m.flat ? `../patterns/vintage6070/${m.flat}` : null;
   const pieces = m.pieceNames.map(cleanPiece);
