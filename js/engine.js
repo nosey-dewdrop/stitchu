@@ -3,7 +3,7 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=86';
+import { VOCAB, canonical } from './vocab.gen.js?v=119';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -25,9 +25,12 @@ export function collarEdgeValue(spec) { return intValue('collarEdge', spec && sp
 export function gatherTypeValue(spec) { return intValue('gatherType', spec && spec.gatherType); }
 export function gatherZoneValue(spec) { return intValue('gatherZone', spec && spec.gatherZone); }
 export function backOpeningValue(spec) { return intValue('backOpening', spec && spec.backOpening); }
+export function laceUpBackValue(spec) { return intValue('laceUpBack', spec && spec.laceUpBack); }
+export function wrapFrontValue(spec) { return intValue('wrapFront', spec && spec.wrapFront); }
 export function backSlitValue(spec) { return intValue('backSlit', spec && spec.backSlit); }
 export function ruffledStrapsValue(spec) { return intValue('ruffledStraps', spec && spec.ruffledStraps); }
 export function peplumValue(spec) { return intValue('peplum', spec && spec.peplum); }
+export function hemFlounceValue(spec) { return intValue('hemFlounce', spec && spec.hemFlounce); }
 export function pocketStyleValue(spec) { return intValue('pocketStyle', spec && spec.pocketStyle); }
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
 export function placketStyleValue(spec) {
@@ -42,12 +45,15 @@ export function buttonRowValue(spec) { return intValue('buttonRow', spec && spec
 export function exposedZipValue(spec) { return intValue('exposedZip', spec && spec.exposedZip); }
 export function backDetailValue(spec) { return intValue('backDetail', spec && spec.backDetail); }
 export function bardotStyleValue(spec) { return intValue('bardotStyle', spec && spec.bardotStyle); }
+export function cupSeamValue(spec) { return intValue('cupSeam', spec && spec.cupSeam); }
+export function yokeValue(spec) { return intValue('yoke', spec && spec.yoke); }
+export function boxPleatValue(spec) { return intValue('boxPleat', spec && spec.boxPleat); }
 
 export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=86';
+      script.src = 'vendor/stitchu-engine.js?v=119';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -97,9 +103,12 @@ function engineSpec(spec) {
     gatherType: gatherTypeValue(spec),
     gatherZone: gatherZoneValue(spec),
     backOpening: backOpeningValue(spec),
+    laceUpBack: laceUpBackValue(spec),
+    wrapFront: wrapFrontValue(spec),
     backSlit: backSlitValue(spec),
     ruffledStraps: ruffledStrapsValue(spec),
     peplum: peplumValue(spec),
+    hemFlounce: hemFlounceValue(spec),
     placketStyle: placketStyleValue(spec),
     edgeFinish: edgeFinishValue(spec),
     pocketStyle: pocketStyleValue(spec),
@@ -110,6 +119,9 @@ function engineSpec(spec) {
     exposedZip: exposedZipValue(spec),
     backDetail: backDetailValue(spec),
     bardotStyle: bardotStyleValue(spec),
+    cupSeam: cupSeamValue(spec),
+    yoke: yokeValue(spec),
+    boxPleat: boxPleatValue(spec),
   };
 }
 

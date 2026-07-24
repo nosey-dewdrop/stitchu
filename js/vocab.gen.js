@@ -85,8 +85,15 @@ export const VOCAB = {
       "straight",
       "gathered",
       "halfCircle",
-      "pleated"
-    ]
+      "pleated",
+      "gore"
+    ],
+    "synonyms": {
+      "gored": "gore",
+      "sixGore": "gore",
+      "panelled": "gore",
+      "paneled": "gore"
+    }
   },
   "skirtLength": {
     "type": "string",
@@ -183,6 +190,22 @@ export const VOCAB = {
       "keyhole"
     ]
   },
+  "laceUpBack": {
+    "type": "int",
+    "enum": "LaceUpBack",
+    "values": [
+      "none",
+      "corset"
+    ]
+  },
+  "wrapFront": {
+    "type": "int",
+    "enum": "WrapFront",
+    "values": [
+      "none",
+      "surplice"
+    ]
+  },
   "backSlit": {
     "type": "int",
     "enum": "HemSlit",
@@ -197,7 +220,9 @@ export const VOCAB = {
     "enum": "StrapStyle",
     "values": [
       "none",
-      "ruffled"
+      "ruffled",
+      "wide",
+      "spaghetti"
     ]
   },
   "peplum": {
@@ -208,6 +233,14 @@ export const VOCAB = {
       "full",
       "half",
       "pointed"
+    ]
+  },
+  "hemFlounce": {
+    "type": "int",
+    "enum": "HemFlounce",
+    "values": [
+      "none",
+      "gathered"
     ]
   },
   "placketStyle": {
@@ -236,7 +269,8 @@ export const VOCAB = {
     "values": [
       "none",
       "patch",
-      "sideSeam"
+      "sideSeam",
+      "slash"
     ]
   },
   "cuffStyle": {
@@ -254,7 +288,9 @@ export const VOCAB = {
     "values": [
       "straight",
       "shirttail",
-      "highLow"
+      "highLow",
+      "pointedV",
+      "boxPleatHem"
     ]
   },
   "shoulderStyle": {
@@ -301,6 +337,31 @@ export const VOCAB = {
       "none",
       "plain",
       "frill"
+    ]
+  },
+  "cupSeam": {
+    "type": "int",
+    "enum": "CupSeam",
+    "values": [
+      "none",
+      "horizontal"
+    ]
+  },
+  "yoke": {
+    "type": "int",
+    "enum": "Yoke",
+    "values": [
+      "none",
+      "plain",
+      "gathered"
+    ]
+  },
+  "boxPleat": {
+    "type": "int",
+    "enum": "BoxPleat",
+    "values": [
+      "none",
+      "centerInverted"
     ]
   }
 };
