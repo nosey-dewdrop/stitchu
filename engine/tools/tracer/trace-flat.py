@@ -165,6 +165,15 @@ def main():
         im = im.crop((int(c[0]*w), int(c[1]*h), int(c[2]*w), int(c[3]*h)))
     A = np.asarray(im)
     ink = (A < INK).astype(np.uint8)
+    # İKİ-MASKE (v2 "üstünden geç" pası): renkli DOLGU bölgesinin sınırı da çizgidir.
+    # Dış kontur dolguya bitişik yerde eşikte erise bile dolgu-sınırı onu kapatır.
+    fill = ((A < 240) & (A >= INK)).astype(np.uint8)
+    if fill.sum() > 500:
+        er = fill.copy()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            er &= np.roll(np.roll(fill, dy, 0), dx, 1)
+        boundary = fill & ~er
+        ink = (ink | boundary).astype(np.uint8)
     print('ink px:', int(ink.sum()))
     S = thin(ink)
     print('iskelet px:', int(S.sum()))
@@ -173,11 +182,11 @@ def main():
     H, W = A.shape
 
     xychains = [[(p[1], p[0]) for p in pa] for pa in paths]
-    # 1) kısa dash parçalarını ayır (dikiş çizgileri): kısa + cok sayida
-    solid = [c for c in xychains if chain_len(c) >= 14]
-    dashes = [c for c in xychains if chain_len(c) < 14]
-    # 2) kesikleri kapat: solid zincirler 6px'e kadar uç uca eklenir
-    solid = join_chains(solid, 6)
+    # 1) ÖNCE hepsini birleştir (kavşakta doğranmış gerçek konturlar geri kaynasın)
+    joined = join_chains(xychains, 6)
+    # 2) hala kısa kalanlar dash adayı (dikiş çizgileri); uzunlar solid
+    solid = [c for c in joined if chain_len(c) >= 22]
+    dashes = [c for c in joined if chain_len(c) < 22]
     # 3) dash dizileri: 12px'e kadar birleşen kısa parçalar tek DASHED yol olur
     dash_chains = [c for c in join_chains(dashes, 12) if chain_len(c) >= 30]
 
