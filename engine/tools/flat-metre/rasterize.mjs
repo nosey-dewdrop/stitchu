@@ -11,12 +11,15 @@ mkdirSync(OUT, { recursive: true });
 
 const { renderStyle, STYLE } = await import('../../flat-engine/_engine-full.mjs');
 
-// arg olarak stil listesi; boşsa hepsi
-const keys = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(STYLE);
+// arg olarak stil listesi; boşsa hepsi. --asym: inkAsym bayrağıyla, __asym son ekiyle
+const args = process.argv.slice(2);
+const asym = args.includes('--asym');
+const keys0 = args.filter(a => a !== '--asym');
+const keys = keys0.length ? keys0 : Object.keys(STYLE);
 for (const k of keys) {
   if (!STYLE[k]) { console.error('bilinmeyen stil:', k); continue; }
-  const svg = renderStyle(k);
+  const svg = asym ? renderStyle(k, { inkAsym: 1 }) : renderStyle(k);
   const png = new Resvg(svg, { background: 'white', fitTo: { mode: 'width', value: 940 } }).render().asPng();
-  writeFileSync(join(OUT, `${k}.png`), png);
-  console.log('ok', k);
+  writeFileSync(join(OUT, `${k}${asym ? '__asym' : ''}.png`), png);
+  console.log('ok', k + (asym ? ' (asym)' : ''));
 }
