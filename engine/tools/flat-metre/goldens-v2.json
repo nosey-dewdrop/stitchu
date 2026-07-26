@@ -1,0 +1,315 @@
+{
+  "_": "new_flats volume_1+2 kürasyonu (2026-07-27), Damla'nın referans külliyatı — TEK golden kaynağı. Her PNG tek tek gözle incelendi (43 dosya). crop = [x0,y0,x1,y1] 0-1 oran, ön görünümü izole eder. stil = mevcut stitchu stil anahtarlarından EN YAKIN; YOK = yakın stil yok, eksik alanı neyin gerektiğini söyler. Stil verilmiş olsa da eksik alanı kalan farkı not eder.",
+  "goldens": [
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.06.png",
+      "class": "romper",
+      "crop": [0.08, 0.08, 0.6, 0.97],
+      "tarif": "Kolsuz, kayık yakalı oturan üst beden, kloş etek görünümlü şort (skort) romper; arkada derin U dekolte + bel fiyonk. Ön görünüm soldaki flat, sağdaki arka görünüm ve foto crop dışı.",
+      "stil": "YOK",
+      "eksik": "Romper/şort alt beden primitifi + derin sırt U dekoltesi; üst beden dress_boat_aline_tieback'e komşu"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.21.png",
+      "class": "top",
+      "crop": [0.05, 0.0, 0.85, 1.0],
+      "tarif": "Derin V yaka, göğüs altı empire kesikli büzgülü panel, önden sık mini düğme, uzun balon kol düğmeli manşetli, fırfırlı peplum etek ucu; 70s bluz. Sağdaki soluk arka/yan flat ve soldaki kumaş fotosu crop dışı.",
+      "stil": "lace_vneck_70s",
+      "eksik": "Uzun balon kol + düğmeli manşet + fırfır peplum kombinasyonu"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.01.png",
+      "class": "top",
+      "crop": [0.13, 0.15, 0.62, 0.97],
+      "tarif": "V yaka, kap kol, göğüs altı empire kesik, ön panelde pili/büzgü çizgileri; arkada (sağdaki flat, crop dışı) bel bağcık fiyonk. Eefje Patterns.",
+      "stil": "YOK",
+      "eksik": "Empire kesikli + büzgülü ön panelli kap kollu top primitifi (dress_vneck_gathered'ın top hali)"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.14.png",
+      "class": "top",
+      "crop": [0.5, 0.05, 0.98, 0.95],
+      "tarif": "Geniş yuvarlak/kayık yaka, kolsuz, boydan düğmeli ön pat, bel pensli, etek ucunda pli açılımlı hafif flare. Ön görünüm sağdaki (düğmeli) flat; soldaki arka görünüm crop dışı.",
+      "stil": "top_crew_dart",
+      "eksik": "Boydan düğme patı + etek ucu pli flare; yaka crew'dan geniş"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.31.png",
+      "class": "top",
+      "crop": [0.0, 0.02, 0.62, 0.55],
+      "tarif": "Dik (mock) yaka, kısa kabarık kol manşetli, asimetrik yan düğme patlı ve büzgülü ön gövde, hafif peplum etek ucu; arkada (alt sağ flat, crop dışı) bel fiyonk.",
+      "stil": "YOK",
+      "eksik": "Dik yaka + asimetrik büzgülü düğme patı; kabarık kol peterpan_puff'a komşu"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.45.png",
+      "class": "top",
+      "crop": [0.1, 0.35, 0.68, 1.0],
+      "tarif": "Küçük gömlek yakalı, yuvarlak roba (yoke), roba altı pilili/büzgülü trapez salaş crop gövde, kısa kap kol, önde 2 düğme. Ön görünüm sol alttaki flat; sağ üstteki arka görünüm ve soldaki foto crop dışı.",
+      "stil": "YOK",
+      "eksik": "Gömlek yakası + roba (yoke) + roba altı büzgülü trapez gövde primitifi"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.04.png",
+      "class": "dress",
+      "crop": [0.06, 0.2, 0.6, 1.0],
+      "tarif": "Küçük düz yaka, roba, kısa kabarık kol fırfırlı manşetli, roba altı salaş babydoll A silüet mini. Ön görünüm soldaki flat; sağdaki arka görünüm ve soldaki foto şeridi crop dışı.",
+      "stil": "peterpan_puff",
+      "eksik": "Roba (yoke) + babydoll elbise boyu + fırfır manşet"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.20.png",
+      "class": "dress",
+      "crop": [0.15, 0.02, 0.88, 1.0],
+      "tarif": "V yaka, kolsuz, prenses dikişli, A-line mini jumper elbise, bel hizasında kapaklı çift cep. Tek ön flat, kenarlardaki foto parçaları crop dışı.",
+      "stil": "dress_princess_scoop_aline",
+      "eksik": "V-yaka prenses varyantı + kapaklı cep"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.39.png",
+      "class": "dress",
+      "crop": [0.08, 0.05, 0.92, 1.0],
+      "tarif": "Kayık yaka, kap kol, dar kalem (sheath) mini, ön ortadan kaçık asimetrik boydan düğme sırası, panel dikişler. Tek ön flat, foto arka plan.",
+      "stil": "YOK",
+      "eksik": "Dar kalem (sheath) silüet + asimetrik düğme sırası; üst beden dress_boat_princess_circle'a komşu"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.51.png",
+      "class": "dress",
+      "crop": [0.45, 0.12, 0.93, 0.97],
+      "tarif": "Fırfırlı bebe (peter pan) yaka, roba altı büzgülü babydoll gövde, kısa kabarık kol fırfır kenarlı; aynı stilin top hali solda (crop dışı), elbise hali sağda (crop bu).",
+      "stil": "peterpan_puff",
+      "eksik": "Roba + babydoll elbise boyu (peterpan_puff top ise)"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.03.png",
+      "class": "top",
+      "crop": [0.05, 0.1, 0.95, 1.0],
+      "tarif": "Kalın askılı, düz kare yaka, oturan bant gövde, göğüs altı kesikten büzgülü kloş babydoll peplum etek. Kalem gölgeli eskiz stili flat (vektör değil), tek ön görünüm.",
+      "stil": "top_cami_sq_wide_shirred_peplum",
+      "eksik": "Gövde gipe (shirring) değil düz bant; peplum daha uzun babydoll boyda"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.11.png",
+      "class": "top",
+      "crop": [0.1, 0.15, 0.92, 0.88],
+      "tarif": "Büzgülü geniş yuvarlak (peasant) yaka, kap kabarık kol, göğüs altı bant + yarım düğme patı, salaş dökümlü etek ucu. Tek ön flat.",
+      "stil": "YOK",
+      "eksik": "Büzgülü peasant yaka + göğüs altı empire bant + yarım pat primitifi"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.20.png",
+      "class": "top",
+      "crop": [0.22, 0.65, 0.7, 0.96],
+      "tarif": "Statement bebe yaka (scoop üstüne geniş yaka), gipe (shirred) gövde, balon kol, peplum etek ucu. Sayfa etiketli diyagram; crop alttaki balon kollu temiz flat'i izole eder, ok/yazılar dışarıda.",
+      "stil": "top_sq_puff_shirred_peplum",
+      "eksik": "Statement/bebe yaka primitifi"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.24.png",
+      "class": "other",
+      "crop": [0.48, 0.5, 1.0, 0.95],
+      "tarif": "4'lü korse/bustier sayfası; crop sağ alttaki kalp yakalı kalın askılı, panel dikişli, sivri bel uçlu bustier'i izole eder. Diğer üçü: balenli korse, önden bağcıklı korse, kuplu korse.",
+      "stil": "YOK",
+      "eksik": "Korse/bustier gövde primitifi: balen-panel hatları, kup dikişi, sivri bel ucu, bağcık"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.31.png",
+      "class": "dress",
+      "crop": [0.06, 0.02, 0.95, 1.0],
+      "tarif": "Boyundan fiyonkla bağlı halter, derin V büzgülü kup, göğüs altı empire kesik, kloş A mini etek (Marilyn stili). Tek ön flat, temiz fon.",
+      "stil": "dress_vneck_gathered",
+      "eksik": "Halter boyun bağı + göğüs altı empire kesik"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.52.png",
+      "class": "dress",
+      "crop": [0.08, 0.16, 0.95, 0.9],
+      "tarif": "Kare yaka, fisto (scallop) kenarlı geniş askı, göğüs kesik/pens detaylı, A-line mini. Ekose kumaş dolgulu render flat (çizgi değil dolgu); üst yazı ve alt UI ikonları crop dışı.",
+      "stil": "dress_square_princess_circle",
+      "eksik": "A-line varyantı (circle değil) + fisto kenarlı askı; kumaş dokusu çizgi-flat imitasyonunda gürültü"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.26.png",
+      "class": "dress",
+      "crop": [0.0, 0.05, 0.48, 0.95],
+      "tarif": "Kayık yaka, kolsuz, prenses dikişli fit&flare mini. Ön görünüm soldaki flat; sağdaki derin V sırtlı arka görünüm crop dışı. Koyu fon.",
+      "stil": "dress_boat_princess_circle",
+      "eksik": "Etek circle değil fit&flare A-line"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.34.png",
+      "class": "top",
+      "crop": [0.0, 0.08, 0.53, 1.0],
+      "tarif": "Büzgülü (elastik) askı, kare-ish yaka önde yarım düğme patı, kat kat fırfırlı (tiered) babydoll gövde; arkada (sağdaki flat, crop dışı) tam gipe panel + bağcık. sewingarabella.",
+      "stil": "top_cami_sq_wide_shirred_peplum",
+      "eksik": "Katlı (tiered) fırfır etek + büzgülü askı"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.40.png",
+      "class": "dress",
+      "crop": [0.05, 0.02, 0.95, 1.0],
+      "tarif": "Yuvarlak (scoop) yaka, kolsuz, göğüs altı empire kesik büzgülü üst, A-line diz üstü etek. Hafif gölgeli tek ön flat.",
+      "stil": "dress_vneck_gathered",
+      "eksik": "Scoop yaka varyantı (V değil)"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.46.png",
+      "class": "dress",
+      "crop": [0.0, 0.02, 0.46, 1.0],
+      "tarif": "Kare yaka, kap kol, göğüs altı kup kesikli büzgülü, panel (prenses) dikişli kloş mini. Ön görünüm soldaki (kuplu) flat; sağdaki arka görünüm ve UI oku crop dışı.",
+      "stil": "dress_square_princess_circle",
+      "eksik": "Kap kol + göğüs altı büzgülü kup"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.05.png",
+      "class": "dress",
+      "crop": [0.05, 0.0, 0.9, 0.93],
+      "tarif": "Dantel kenarlı hafif kalp/kare yaka + mini fiyonk, kalın askı, panel dikişli korse gövde, godeli dramatik kloş mini etek. Tek ön flat; alttaki yazı crop dışı.",
+      "stil": "dress_sweetheart_princess_circle",
+      "eksik": "Dantel kenar + fiyonk süs detayı"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.37.png",
+      "class": "top",
+      "crop": [0.05, 0.02, 0.95, 0.92],
+      "tarif": "Düz yüksek kare (apron) yaka, ip (spaghetti) askı, trapez salaş A gövde, çapraz cepler, etek ucu baskı dikişli. Tek ön flat; alttaki LOVELESS yazısı crop dışı.",
+      "stil": "top_cami_sq_spaghetti",
+      "eksik": "Trapez bol kesim + çapraz cepler"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.42.png",
+      "class": "dress",
+      "crop": [0.05, 0.02, 0.95, 0.98],
+      "tarif": "Düşük omuz/asimetrik tek omuz yaka, yanlardan drapeli büzgülü (ruched) dar kalem mini. Gölgeli illüstrasyon stili tek ön flat.",
+      "stil": "YOK",
+      "eksik": "Off-shoulder/asimetrik omuz + drape (ruching) + kalem silüet primitifi"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.55.png",
+      "class": "dress",
+      "crop": [0.03, 0.06, 0.5, 1.0],
+      "tarif": "Kayık yaka, kolsuz, pensli düz gövde, düşük belden büzgülü fırfır etek katı (drop-waist). Ön görünüm soldaki flat; sağdaki scoop sırtlı arka ve foto kolajı crop dışı.",
+      "stil": "YOK",
+      "eksik": "Düşük bel (drop-waist) + büzgülü fırfır kat primitifi; üst beden dress_boat_aline_tieback'e komşu"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.59.png",
+      "class": "dress",
+      "crop": [0.0, 0.04, 0.46, 1.0],
+      "tarif": "Kayık yaka, kolsuz, göğüs pensli 60s A-line şift mini; arkada (sağdaki flat, crop dışı) derin V dekolte + fiyonk. Foto arka plan.",
+      "stil": "dress_boat_aline_tieback",
+      "eksik": ""
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.04.png",
+      "class": "dress",
+      "crop": [0.03, 0.03, 0.49, 0.98],
+      "tarif": "Kayık yaka, kolsuz, pensli A-line şift mini; arkada (sağdaki flat, crop dışı) derin U açık sırt. 19.36.59'un kardeş varyantı. Foto arka plan.",
+      "stil": "dress_boat_aline_tieback",
+      "eksik": "Sırt fiyonksuz derin U dekolte (ön görünüm birebir yakın)"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.11.png",
+      "class": "dress",
+      "crop": [0.0, 0.0, 0.5, 1.0],
+      "tarif": "Omuzdan fiyonkla bağlı askı, büzgülü kup + yaka ortasında bağcık fiyonk, korse panel gövde sivri bel uçlu, büzgülü kabarık mini etek (milkmaid). Arkada (sağdaki flat, crop dışı) çapraz bağcık. UI oku sağda.",
+      "stil": "dress_sweetheart_spag_circle",
+      "eksik": "Korse panel + sivri bel ucu + arka çapraz bağcık; etek circle değil büzgülü (gathered)"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.28.png",
+      "class": "top",
+      "crop": [0.02, 0.02, 0.5, 1.0],
+      "tarif": "Tek omuz bant yaka, omuzda büyük fiyonk bağ, banttan büzgülü salaş kısa gövde. Ön görünüm soldaki flat; sağdaki arka görünüm crop dışı.",
+      "stil": "YOK",
+      "eksik": "Tek omuz (one-shoulder) bant + omuz fiyonk primitifi"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.37.png",
+      "class": "top",
+      "crop": [0.0, 0.02, 0.5, 1.0],
+      "tarif": "Boyundan fiyonkla bağlı halter yaka, panel dikişli oturan gövde, kalçada flare peplum; arkada (sağdaki flat, crop dışı) açık sırt + çift fiyonk bağ.",
+      "stil": "YOK",
+      "eksik": "Halter boyun bağı + açık sırt çift bağcık; gövde+peplum top_princess_peplum'a komşu"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.43.png",
+      "class": "dress",
+      "crop": [0.04, 0.02, 0.96, 0.98],
+      "tarif": "Omuzdan fiyonkla bağlı ip askı, balenli kup (underwire) korse üst beden, panel dikişler, düz dar mini etek. Tek ön flat, havlu/kumaş foto arka plan.",
+      "stil": "dress_sweetheart_spag_circle",
+      "eksik": "Balenli kup dikişli korse gövde + düz dar (bodycon) mini etek; fiyonk askı"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.57.png",
+      "class": "top",
+      "crop": [0.0, 0.03, 1.0, 0.52],
+      "tarif": "Derin V yaka, kolsuz kalın askı, göğüs altı büzgülü kup kesiği, oturan bel. Ön görünüm üstteki flat; alttaki arka görünüm (kayık sırt + bel fiyonk) crop dışı.",
+      "stil": "courtney_lace_vneck",
+      "eksik": "Göğüs altı büzgülü kup kesiği + arka bel fiyonk"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.13.png",
+      "class": "dress",
+      "crop": [0.02, 0.02, 0.98, 0.98],
+      "tarif": "Fırfır kenarlı büyük sivri (chelsea) yaka, derin V, kolsuz, önden boydan düğmeli, panel dikişli A-line salaş mini. Tek ön flat, temiz fon.",
+      "stil": "YOK",
+      "eksik": "Statement/chelsea fırfır kenarlı yaka + boydan düğmeli panel A-line primitifi"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.29.png",
+      "class": "top",
+      "crop": [0.0, 0.02, 0.5, 1.0],
+      "tarif": "Boyundan fiyonkla bağlı halter, derin V, göğüs altı büzgü, önden mini düğmeli, önü yırtmaçlı peplum etek ucu. Ön görünüm soldaki flat; sağdaki arka görünüm (açık sırt + çift fiyonk) crop dışı.",
+      "stil": "YOK",
+      "eksik": "Halter boyun bağı + açık sırt; V + büzgü + peplum lace_vneck_70s'e komşu"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.50.png",
+      "class": "top",
+      "crop": [0.03, 0.02, 0.97, 0.98],
+      "tarif": "Omuzdan fiyonkla bağlı askı, düz yaka, belde geniş gipe (shirring) panel, altında peplum flare etek ucu. Tek ön flat, temiz fon.",
+      "stil": "top_cami_sq_wide_shirred_peplum",
+      "eksik": "Omuz fiyonk askı detayı"
+    }
+  ],
+  "exclude": [
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.15.png",
+      "sebep": "Kalıp-parça sayfası (numaralı pattern pieces), flat değil"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.32.png",
+      "sebep": "Boş/junk mor şerit (4KB), içerik yok"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.42.png",
+      "sebep": "Kalıp-parça sayfası (Pattern Pieces başlıklı, dikiş paylı parçalar), flat değil"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.47.png",
+      "sebep": "Flat güzel ama üzerinde kırmızı ölçü okları/harfleri (A-E) var — taklit döngüsü için temiz değil, çizgiler golden'ı zehirler"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.56.png",
+      "sebep": "Boş/junk sarı şerit (4KB), içerik yok"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.38.png",
+      "sebep": "Kalıp-parça sayfası + parça/kumaş tablosu, flat değil"
+    },
+    {
+      "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.46.png",
+      "sebep": "Kalıp-parça sayfası (numaralı 4 parça), flat değil"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.55.png",
+      "sebep": "Boş/junk gri şerit (4KB), içerik yok"
+    },
+    {
+      "file": "new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.19.png",
+      "sebep": "Kalıp-parça diyagramı (main dress/facing legend, BACK/FRONT parça sayfası) + sayfa çevirme UI okları, flat değil"
+    }
+  ]
+}
