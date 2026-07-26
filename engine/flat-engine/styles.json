@@ -852,7 +852,8 @@
     "shirr": false,
     "casing": false,
     "tie": false,
-    "backSeam": true
+    "backSeam": true,
+    "princessSeam": true
    },
    "own": {
     "strapLen": 4,

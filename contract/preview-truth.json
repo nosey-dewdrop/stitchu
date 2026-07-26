@@ -401,6 +401,18 @@
    "peplum": "full",
    "ruffleHem": true,
    "ruffledStraps": "spaghetti"
+  },
+  "dress_bandeau_circle": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "square",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "halfCircle",
+   "skirtLength": "midi",
+   "topLength": "hip"
   }
  },
  "structuralAllow": [

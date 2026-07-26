@@ -969,6 +969,9 @@
             "half",
             "pointed"
           ]
+        },
+        "fittedBand": {
+          "type": "boolean"
         }
       }
     }
