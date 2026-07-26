@@ -89,7 +89,13 @@ if(st.garment==='top'&&!st.boxy){
   var _wb=(_FB.ratios.waist_bust.band[0]+_FB.ratios.waist_bust.band[1])/2;   // 0.78 band ortası (EU36)
   eX=cx+(bustX-cx)*_wb;   // bel landmark'ta ölçüm iskeleti direkt okur → düzeltme yok
 }
-var nip=Math.max(0.05,0.34-0.9*p.waistNip);if(st.top==='band'){var yTop=y0+p.strapLen*S,yEmp=yTop+p.yokeDrop*S;var yB=yTop+(yEmp-yTop)*p.bustHeight;var topX=cx+sz.bust*(0.95-0.03*p.bustProject)*S;k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(seg([bustX,yB],[bustX,yB+(yEmp-yB)*0.42],[eX+(bustX-eX)*nip,yEmp-(yEmp-yB)*0.16],[eX,yEmp]));}else{var stX=cx+sz.shp*S,stY=y0+p.shoulderSlope*S;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=cx+sz.bust*S,uaY=y0+sz.ad*S;
+var nip=Math.max(0.05,0.34-0.9*p.waistNip);if(st.top==='band'){var yTop=y0+p.strapLen*S,yEmp=yTop+p.yokeDrop*S;var yB=yTop+(yEmp-yTop)*p.bustHeight;
+// FITTED BAND (2026-07-26 taklit döngüsü, golden flat-01 bindirme bulgusu): band gövde
+// üst kenarı bust genişliğindeydi + yanlar düz = KUTU okunuyor. Gerçek straplez korsaj:
+// üst kenar DAR (~bust*0.72), bust bombesi ılımlı (~0.88), bele oturur. SADECE
+// st.fittedBand taşıyan stiller; mevcut bandeau/cami topları (0.95) byte-identical.
+if(st.fittedBand)bustX=cx+sz.bust*0.88*S;
+var topX=cx+sz.bust*((st.fittedBand?0.72:0.95)-0.03*p.bustProject)*S;k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(seg([bustX,yB],[bustX,yB+(yEmp-yB)*0.42],[eX+(bustX-eX)*nip,yEmp-(yEmp-yB)*0.16],[eX,yEmp]));}else{var stX=cx+sz.shp*S,stY=y0+p.shoulderSlope*S;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=cx+sz.bust*S,uaY=y0+sz.ad*S;
 // TOP armhole tightening (2026-07-20 tur1 — hakem tur1b: underarm silüetin en
 // geniş noktasıydı = koltuk-altı balon). Bir kolsuz top'ta EN GENİŞ nokta OMUZ
 // ucudur; underarm onun İÇİNDE kalır, silüet omuzdan bele düz-içe akar. bust
