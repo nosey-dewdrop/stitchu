@@ -1,0 +1,25 @@
+{
+  "_": "flats-clean küratörlüğü (2026-07-26, kontak sayfası gözle). crop = [x0,y0,x1,y1] oran. exclude sebepleri kayıtlı — golden klasörü ham indirmeydi, ayakkabı/screenshot bile içeriyordu.",
+  "dir": "design_patterns/flats-clean",
+  "goldens": [
+    { "file": "flat-01.png", "class": "dress",  "crop": [0.0, 0.0, 0.52, 1.0], "not": "strapless circle dress, ön görünüm (sol)" },
+    { "file": "flat-02.png", "class": "top",    "crop": null, "not": "cap-sleeve top, tek görünüm" },
+    { "file": "flat-04.png", "class": "dress",  "crop": [0.22, 0.0, 1.0, 1.0], "not": "wrap dress; soldaki ok işareti kırpıldı" },
+    { "file": "flat-05.png", "class": "dress",  "crop": null, "not": "slip maxi, tek görünüm" },
+    { "file": "flat-06.png", "class": "dress",  "crop": null, "not": "gathered babydoll midi, tek görünüm" },
+    { "file": "flat-08.png", "class": "dress",  "crop": null, "not": "halter gingham (id21 emsal sınıfı)" },
+    { "file": "flat-10.png", "class": "dress",  "crop": null, "not": "korse mini; desen dokusu mürekkep sayılır, frag şişer — sadece oran metrikleri güvenilir" },
+    { "file": "flat-16.png", "class": "top",    "crop": null, "not": "cowl top, tek görünüm" }
+  ],
+  "exclude": [
+    { "file": "flat-03.png", "sebep": "etek kırpığı, gövde yok" },
+    { "file": "flat-07.png", "sebep": "bubble şort, sınıf dışı v1" },
+    { "file": "flat-09.png", "sebep": "diyagonal watermark yazısı mürekkebi kirletiyor" },
+    { "file": "flat-11.png", "sebep": "GİYSİ DEĞİL — Etsy listing ekran görüntüsü" },
+    { "file": "flat-12.png", "sebep": "GİYSİ DEĞİL — ayakkabı" },
+    { "file": "flat-13.png", "sebep": "çok-görünüm tiered etek, v1 sınıf dışı" },
+    { "file": "flat-14.png", "sebep": "GİYSİ DEĞİL — ayakkabı (flat-12 dublörü)" },
+    { "file": "flat-15.png", "sebep": "fırfır kumaş yakın çekimi, giysi bütünü yok" },
+    { "file": "flat-17.png", "sebep": "lace-up etek — skirt sınıfı ayrı tur" }
+  ]
+}
