@@ -156,6 +156,57 @@ def join_chains(chains, max_gap):
     return chains
 
 
+def close_mask(m, r=3):
+    """morfolojik kapama: küçük delik/boşlukları doldur (dilate sonra erode)."""
+    d = m.copy()
+    for _ in range(r):
+        n = d.copy()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            n |= np.roll(np.roll(d, dy, 0), dx, 1)
+        d = n
+    e = d.copy()
+    for _ in range(r):
+        n = e.copy()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            n &= np.roll(np.roll(e, dy, 0), dx, 1)
+        e = n
+    return e
+
+
+def outer_contour(mask):
+    """SİLÜET SINIRI = tek KAPALI kesintisiz eğri (Moore boundary trace).
+    Kesik imkânsız: dolu bölgenin sınırı tanım gereği kapalı döngüdür."""
+    ys, xs = np.nonzero(mask)
+    if not len(ys):
+        return []
+    start = (ys[xs == xs[ys.argmin()]].min() if False else ys.min(), 0)
+    # en üst satırdaki en soldaki dolu piksel
+    top = ys.min()
+    start = (top, xs[ys == top].min())
+    DIRS = [(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1)]
+    def inside(p):
+        return 0 <= p[0] < mask.shape[0] and 0 <= p[1] < mask.shape[1] and mask[p]
+    contour = [start]
+    prev_dir = 6  # geldiğimiz yön (batı)
+    cur = start
+    for _ in range(200000):
+        found = False
+        for k in range(8):
+            d = (prev_dir + 6 + k) % 8   # sağ el kuralı
+            nxt = (cur[0] + DIRS[d][0], cur[1] + DIRS[d][1])
+            if inside(nxt):
+                contour.append(nxt)
+                prev_dir = d
+                cur = nxt
+                found = True
+                break
+        if not found:
+            break
+        if cur == start and len(contour) > 10:
+            break
+    return contour
+
+
 def main():
     img_path, crop_arg, out_svg = sys.argv[1], sys.argv[2], sys.argv[3]
     im = Image.open(img_path).convert('L')
@@ -165,15 +216,15 @@ def main():
         im = im.crop((int(c[0]*w), int(c[1]*h), int(c[2]*w), int(c[3]*h)))
     A = np.asarray(im)
     ink = (A < INK).astype(np.uint8)
-    # İKİ-MASKE (v2 "üstünden geç" pası): renkli DOLGU bölgesinin sınırı da çizgidir.
-    # Dış kontur dolguya bitişik yerde eşikte erise bile dolgu-sınırı onu kapatır.
     fill = ((A < 240) & (A >= INK)).astype(np.uint8)
+    # SİLÜET: mürekkep + dolgu birlikte, kapatılmış -> dış kontur tek kapalı eğri
+    sil = close_mask((ink | fill).astype(bool), 3)
+    # en büyük bileşeni al (etiketleme pahalı; flood yerine: sınır izinden gelen kontur zaten en üst bileşen)
     if fill.sum() > 500:
         er = fill.copy()
         for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
             er &= np.roll(np.roll(fill, dy, 0), dx, 1)
-        boundary = fill & ~er
-        ink = (ink | boundary).astype(np.uint8)
+        ink = (ink | (fill & ~er)).astype(np.uint8)
     print('ink px:', int(ink.sum()))
     S = thin(ink)
     print('iskelet px:', int(S.sum()))
@@ -182,12 +233,31 @@ def main():
     H, W = A.shape
 
     xychains = [[(p[1], p[0]) for p in pa] for pa in paths]
-    # 1) ÖNCE hepsini birleştir (kavşakta doğranmış gerçek konturlar geri kaynasın)
-    joined = join_chains(xychains, 6)
-    # 2) hala kısa kalanlar dash adayı (dikiş çizgileri); uzunlar solid
+    # DIŞ KONTUR: silüet sınır HALKASI (sil - erode) tek piksel genişliğinde kapalı
+    # yoldur; zincir yürüteçle gez, en uzun zincir = kesintisiz dış kontur.
+    er2 = sil.copy()
+    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+        er2 = er2 & np.roll(np.roll(sil, dy, 0), dx, 1)
+    ring = (sil & ~er2).astype(np.uint8)
+    ring_paths = paths_from_skeleton(ring)
+    ring_chains = join_chains([[(p[1], p[0]) for p in pa] for pa in ring_paths], 8)
+    oc_list = [c for c in ring_chains if chain_len(c) > 60]
+    oc_xy = max(oc_list, key=chain_len) if oc_list else []
+    print('dış kontur parça:', len(oc_list), 'en uzun:', len(oc_xy))
+    # dış konturun yakınındaki iskelet zincirleri (5px) dış hattın kopyası — ele
+    ocset = set()
+    for x, y in oc_xy:
+        for dy in range(-4, 5):
+            for dx in range(-4, 5):
+                ocset.add((x+dx, y+dy))
+    def near_oc(c):
+        hits = sum((round(x), round(y)) in ocset for x, y in c[::3])
+        return hits > 0.6 * max(1, len(c[::3]))
+    inner = [c for c in xychains if not near_oc(c)]
+    # 1) iç çizgileri birleştir (teğet şartlı, geniş boşluk 10px)
+    joined = join_chains(inner, 10)
     solid = [c for c in joined if chain_len(c) >= 22]
     dashes = [c for c in joined if chain_len(c) < 22]
-    # 3) dash dizileri: 12px'e kadar birleşen kısa parçalar tek DASHED yol olur
     dash_chains = [c for c in join_chains(dashes, 12) if chain_len(c) >= 30]
 
     def to_path(xy, eps):
@@ -204,6 +274,12 @@ def main():
     kw = W / 940.0
     wBody, wDet, wDash = 1.9*kw*1.6, 1.05*kw*1.6, 0.9*kw*1.6
     parts = []
+    for occ in oc_list:
+        step = max(1, len(occ)//400)
+        closed = np.hypot(occ[0][0]-occ[-1][0], occ[0][1]-occ[-1][1]) < 12
+        d = to_path(occ[::step] + ([occ[0]] if closed else []), 2.4)
+        if d:
+            parts.append((1e9, 'body', d + (' Z' if closed else '')))
     for c in solid:
         d = to_path(c, 1.6)
         if not d: continue
