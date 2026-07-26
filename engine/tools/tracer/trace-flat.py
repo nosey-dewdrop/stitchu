@@ -242,6 +242,18 @@ def main():
     ring_paths = paths_from_skeleton(ring)
     ring_chains = join_chains([[(p[1], p[0]) for p in pa] for pa in ring_paths], 8)
     oc_list = [c for c in ring_chains if chain_len(c) > 60]
+    # KAYMA FİX: halka noktalarını gerçek çizgi İSKELETİNE mıknatısla (r=5).
+    # Kesintisizlik halkadan, metrik doğruluk iskeletten gelir.
+    skel = set(zip(*np.nonzero(S)))
+    OFFS = sorted(((dy, dx) for dy in range(-5, 6) for dx in range(-5, 6)),
+                  key=lambda o: o[0]*o[0]+o[1]*o[1])
+    def snap(pt):
+        y, x = round(pt[1]), round(pt[0])
+        for dy, dx in OFFS:
+            if (y+dy, x+dx) in skel:
+                return (x+dx, y+dy)
+        return pt
+    oc_list = [[snap(p) for p in c] for c in oc_list]
     oc_xy = max(oc_list, key=chain_len) if oc_list else []
     print('dış kontur parça:', len(oc_list), 'en uzun:', len(oc_xy))
     # dış konturun yakınındaki iskelet zincirleri (5px) dış hattın kopyası — ele
@@ -252,10 +264,38 @@ def main():
                 ocset.add((x+dx, y+dy))
     def near_oc(c):
         hits = sum((round(x), round(y)) in ocset for x, y in c[::3])
-        return hits > 0.6 * max(1, len(c[::3]))
+        return hits > 0.35 * max(1, len(c[::3]))   # çift-çizgi kopyaları agresif ele
     inner = [c for c in xychains if not near_oc(c)]
+    # DÜĞMELER: küçük parçaları yakınlık KÜMESİNE topla, küme daire gibiyse mühürle
+    small = [c for c in inner if chain_len(c) < 40 and
+             (max(p[0] for p in c)-min(p[0] for p in c)) < 24 and
+             (max(p[1] for p in c)-min(p[1] for p in c)) < 24]
+    big = [c for c in inner if c not in small]
+    used = [False]*len(small)
+    circles, rest = [], list(big)
+    def center(c):
+        return (float(np.mean([p[0] for p in c])), float(np.mean([p[1] for p in c])))
+    for i, c in enumerate(small):
+        if used[i]: continue
+        grp = [c]; used[i] = True
+        ci = center(c)
+        for j in range(i+1, len(small)):
+            if used[j]: continue
+            cj = center(small[j])
+            if np.hypot(ci[0]-cj[0], ci[1]-cj[1]) < 12:
+                grp.append(small[j]); used[j] = True
+        pts = [p for g in grp for p in g]
+        xs_, ys_ = [p[0] for p in pts], [p[1] for p in pts]
+        bw_, bh_ = max(xs_)-min(xs_), max(ys_)-min(ys_)
+        tot = sum(chain_len(g) for g in grp)
+        if bw_ < 24 and bh_ < 24 and bw_ > 4 and bh_ > 4 and tot > 0.7*3.14*max(bw_, bh_)/1.0 and abs(bw_-bh_) < 0.6*max(bw_, bh_):
+            cx_, cy_ = float(np.mean(xs_)), float(np.mean(ys_))
+            r_ = float(np.mean([np.hypot(x-cx_, y-cy_) for x, y in pts]))
+            circles.append((cx_, cy_, max(2.0, r_)))
+        else:
+            rest.extend(grp)
     # 1) iç çizgileri birleştir (teğet şartlı, geniş boşluk 10px)
-    joined = join_chains(inner, 10)
+    joined = join_chains(rest, 10)
     solid = [c for c in joined if chain_len(c) >= 22]
     dashes = [c for c in joined if chain_len(c) < 22]
     dash_chains = [c for c in join_chains(dashes, 12) if chain_len(c) >= 30]
@@ -295,6 +335,8 @@ def main():
            f'.dash{{fill:none;stroke:#111;stroke-width:{wDash:.2f};stroke-dasharray:{6*kw:.1f} {5*kw:.1f};stroke-linecap:round}}</style>']
     for ln, cls, d in parts:
         svg.append(f'<path class="{cls}" d="{d}"/>')
+    for cx_, cy_, r_ in circles:
+        svg.append(f'<circle cx="{cx_:.1f}" cy="{cy_:.1f}" r="{r_:.1f}" fill="#fff" stroke="#111" stroke-width="{wDet:.2f}"/>')
     svg.append('</svg>')
     os.makedirs(os.path.dirname(out_svg) or '.', exist_ok=True)
     open(out_svg, 'w').write('\n'.join(svg))
