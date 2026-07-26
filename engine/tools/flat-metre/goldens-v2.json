@@ -1,5 +1,6 @@
 {
   "_": "new_flats volume_1+2 kürasyonu (2026-07-27), Damla'nın referans külliyatı — TEK golden kaynağı. Her PNG tek tek gözle incelendi (43 dosya). crop = [x0,y0,x1,y1] 0-1 oran, ön görünümü izole eder. stil = mevcut stitchu stil anahtarlarından EN YAKIN; YOK = yakın stil yok, eksik alanı neyin gerektiğini söyler. Stil verilmiş olsa da eksik alanı kalan farkı not eder.",
+  "_bugra": "new_flats/real patterns (BugraPatterns Etsy, 2026-07-27): 19 jpg tek tek incelendi, 3 golden eklendi — corset bustier final flat ('6 - instructions.jpg' AND WELL DONE köşesi), Locket Top linen kumaş-render ('5 Inspirations.jpg' 2x3 grid sol üst, +5 varyant aynı sayfada) ve Locket Top final çizgi-flat ('instrucitons Part 2/13.jpg'); kalan sayfalar metin/beden tablosu/malzeme/kalıp-parça/dikiş-adım diyagramı, golden değil.",
   "goldens": [
     {
       "file": "new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.06.png",
@@ -272,6 +273,30 @@
       "tarif": "Omuzdan fiyonkla bağlı askı, düz yaka, belde geniş gipe (shirring) panel, altında peplum flare etek ucu. Tek ön flat, temiz fon.",
       "stil": "top_cami_sq_wide_shirred_peplum",
       "eksik": "Omuz fiyonk askı detayı"
+    },
+    {
+      "file": "new_flats/real patterns/Buttoned Corset Bustier - FIXED/6 - instructions.jpg",
+      "class": "other",
+      "crop": [0.87, 0.78, 0.99, 1.0],
+      "tarif": "Buttoned Corset Bustier bitmiş hali: kare yaka, kalın askı, göğüs altı kup kesiği, panel dikişli korse gövde, önden boydan mini düğme patı. Dikiş talimat sayfasının sağ alt 'AND WELL DONE!' köşesindeki temiz siyah-beyaz çizgi-flat; sayfanın kalanı (adım diyagramları + metin) crop dışı.",
+      "stil": "YOK",
+      "eksik": "Korse/bustier primitifi: kup kesiği + panel hatları + boydan düğme patı (volume_1 19.25.24 kaydıyla aynı ihtiyaç)"
+    },
+    {
+      "file": "new_flats/real patterns/Locket Top/5 Inspirations.jpg",
+      "class": "top",
+      "crop": [0.03, 0.11, 0.33, 0.5],
+      "tarif": "Locket Top: bebe (peter pan) yaka, kısa kabarık (puff) kol, boydan mini düğme patı, bel pensli oturan crop gövde. Sayfa 2x3 kumaş-varyant grid'i (linen/stripe/stripe/polka dots/plaid/denim); crop sol üstteki LINEN flat'i izole eder, diğer 5 varyant ve etiketler crop dışı.",
+      "stil": "peterpan_puff",
+      "eksik": "Boydan düğme patı + bel pensli oturan gövde; kumaş dokusu dolgulu render (çizgi-flat değil)"
+    },
+    {
+      "file": "new_flats/real patterns/instrucitons Part 2/13.jpg",
+      "class": "top",
+      "crop": [0.02, 0.03, 0.53, 0.5],
+      "tarif": "Locket Top bitmiş hali: bebe yaka, kabarık kol, boydan düğmeli pat, bel pensli oturan crop gövde; dikiş dash'li temiz vektör çizgi-flat (talimat serisinin final sayfası). Sağdaki metin blokları crop dışı. 5 Inspirations linen render'ın çizgi-flat kardeşi.",
+      "stil": "peterpan_puff",
+      "eksik": "Boydan düğme patı + bel pensli oturan gövde"
     }
   ],
   "exclude": [

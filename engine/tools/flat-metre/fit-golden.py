@@ -99,7 +99,8 @@ def main():
     print('BAŞLANGIÇ mesafe:', round(d0,4), det0)
 
     KNOBS = {
-        'skirtFull':    [1.2, 1.6, 2.0, 2.4, 2.8],
+        'skirtFull':    [1.2, 1.6, 2.0, 2.4, 2.8, 3.2],
+        'skirtCurve':   [0, 0.35, 0.7, 1.0],
         'waistNip':     [0.05, 0.15, 0.28, 0.4],
         'bustProject':  [0.0, 0.25, 0.5, 0.9],
         'hemDip':       [0.5, 1, 2, 3.5],

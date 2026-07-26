@@ -173,7 +173,13 @@ k.yHem=k.yEmp+LEN[p.length]*S;k.dip=p.hemDip*S;k.hX=cx+sz.emp*((1-p.waistNip)+(p
 // PIN KORUMASI: pinli babydoll/lace ESKİ kavis (byte-identical).
 var _pinSkirt=(p.style==='drawstring_babydoll'||p.style==='lace_vneck_70s');
 if(_pinSkirt)g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.05,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.18,k.yHem-(k.yHem-k.yEmp)*0.30],[k.hX,k.yHem]));
-else g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.02,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.05,k.yHem-(k.yHem-k.yEmp)*0.42],[k.hX,k.yHem]));
+else{
+// ETEK DOLGUNLUK (2026-07-27 taklit döngüsü, 3 referans bindirmesinde ortak duvar):
+// referans eteklerde yan hat dışa BOMBELİ dolgun düşer, bizimki koni-düz iniyordu.
+// p.skirtCurve 0..1: 0 = eski kavis BİREBİR (skirtCurve taşımayan her stil
+// byte-identical), 1 = tam dolgun (c1 dışarı, c2 hem'e yakın + hX ötesine bombe).
+var _sq=p.skirtCurve||0;
+g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*(0.02+0.30*_sq),k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*(0.05-0.14*_sq),k.yHem-(k.yHem-k.yEmp)*(0.42-0.22*_sq)],[k.hX,k.yHem]));}
 smooth(k.hemPts).forEach(function(s){g.push(s);});return {g:g,folds:R,k:k};}
 /* fırfırlı askı (Damla kalem revizyonu 2026-07-19: straps:true stilleri için
    strapShape geri getirildi; repo K2-minify sırasında budanmıştı, çizim veriyle
