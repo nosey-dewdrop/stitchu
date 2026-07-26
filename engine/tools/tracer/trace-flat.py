@@ -111,6 +111,51 @@ def catmull_to_bezier(pts):
     return segs
 
 
+def chain_len(xy):
+    return sum(np.hypot(xy[i+1][0]-xy[i][0], xy[i+1][1]-xy[i][1]) for i in range(len(xy)-1))
+
+
+def join_chains(chains, max_gap):
+    """uç uca yakın zincirleri birleştir (kesikliği kapatır). dashed adayları:
+    kısa parçaların 3-10px aralıklı dizisi -> tek zincir + dashed bayrağı."""
+    chains = [list(c) for c in chains]
+    merged = True
+    while merged:
+        merged = False
+        for i in range(len(chains)):
+            if chains[i] is None: continue
+            for j in range(len(chains)):
+                if i == j or chains[j] is None: continue
+                a, b = chains[i], chains[j]
+                pairs = [(np.hypot(a[-1][0]-b[0][0], a[-1][1]-b[0][1]), 'ab'),
+                         (np.hypot(a[-1][0]-b[-1][0], a[-1][1]-b[-1][1]), 'ar'),
+                         (np.hypot(a[0][0]-b[0][0], a[0][1]-b[0][1]), 'fb'),
+                         (np.hypot(a[0][0]-b[-1][0], a[0][1]-b[-1][1]), 'fr')]
+                d, mode = min(pairs)
+                # TEĞET ŞARTI: uç yönleri uyumsuzsa birleştirme (sahte köprü yasak)
+                def tdir(ch, tail):
+                    k = min(6, len(ch)-1)
+                    v = (np.array(ch[-1])-np.array(ch[-1-k])) if tail else (np.array(ch[k])-np.array(ch[0]))
+                    n = np.hypot(*v) or 1.0
+                    return v/n
+                ok = True
+                if d <= max_gap:
+                    if mode == 'ab':   va, vb = tdir(a, True), tdir(b, False)
+                    elif mode == 'ar': va, vb = tdir(a, True), -tdir(b, True)
+                    elif mode == 'fb': va, vb = -tdir(a, False), tdir(b, False)
+                    else:              va, vb = -tdir(a, False), -tdir(b, True)
+                    ok = float(np.dot(va, vb)) > 0.5   # < ~60 derece sapma
+                if d <= max_gap and ok:
+                    if mode == 'ab':   chains[i] = a + b
+                    elif mode == 'ar': chains[i] = a + b[::-1]
+                    elif mode == 'fb': chains[i] = a[::-1] + b
+                    else:              chains[i] = b + a
+                    chains[j] = None
+                    merged = True
+        chains = [c for c in chains if c is not None]
+    return chains
+
+
 def main():
     img_path, crop_arg, out_svg = sys.argv[1], sys.argv[2], sys.argv[3]
     im = Image.open(img_path).convert('L')
@@ -124,32 +169,51 @@ def main():
     S = thin(ink)
     print('iskelet px:', int(S.sum()))
     paths = paths_from_skeleton(S)
-    print('yol sayısı:', len(paths))
+    print('ham yol:', len(paths))
     H, W = A.shape
-    parts = []
-    for pa in paths:
-        xy = [(p[1], p[0]) for p in pa]          # (x,y)
-        simp = rdp(xy, 1.6)
+
+    xychains = [[(p[1], p[0]) for p in pa] for pa in paths]
+    # 1) kısa dash parçalarını ayır (dikiş çizgileri): kısa + cok sayida
+    solid = [c for c in xychains if chain_len(c) >= 14]
+    dashes = [c for c in xychains if chain_len(c) < 14]
+    # 2) kesikleri kapat: solid zincirler 6px'e kadar uç uca eklenir
+    solid = join_chains(solid, 6)
+    # 3) dash dizileri: 12px'e kadar birleşen kısa parçalar tek DASHED yol olur
+    dash_chains = [c for c in join_chains(dashes, 12) if chain_len(c) >= 30]
+
+    def to_path(xy, eps):
+        simp = rdp(xy, eps)
         segs = catmull_to_bezier(simp)
         if not segs:
-            continue
+            return None
         d = f"M {segs[0][0][0]:.1f},{segs[0][0][1]:.1f}"
         for p1, c1, c2, p2 in segs:
             d += f" C {c1[0]:.1f},{c1[1]:.1f} {c2[0]:.1f},{c2[1]:.1f} {p2[0]:.1f},{p2[1]:.1f}"
-        # uzunluk ~ dış hat / iç detay ayrımı (v0 sezgisel: uzun = gövde)
-        ln = sum(np.hypot(xy[i+1][0]-xy[i][0], xy[i+1][1]-xy[i][1]) for i in range(len(xy)-1))
-        cls = 'body' if ln > 0.9*min(W, H) else 'detail'
-        parts.append((ln, cls, d))
+        return d
+
+    # cizgi kalinligi tuvale ORANLI (solukluk fix): 940-genislik referansinda 1.9/1.05
+    kw = W / 940.0
+    wBody, wDet, wDash = 1.9*kw*1.6, 1.05*kw*1.6, 0.9*kw*1.6
+    parts = []
+    for c in solid:
+        d = to_path(c, 1.6)
+        if not d: continue
+        cls = 'body' if chain_len(c) > 0.9*min(W, H) else 'detail'
+        parts.append((chain_len(c), cls, d))
+    for c in dash_chains:
+        d = to_path(c, 2.2)
+        if d: parts.append((chain_len(c), 'dash', d))
     parts.sort(reverse=True)
     svg = [f'<svg viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">',
-           '<style>.body{fill:none;stroke:#111;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}'
-           '.detail{fill:none;stroke:#111;stroke-width:1.05;stroke-linecap:round}</style>']
+           f'<style>.body{{fill:none;stroke:#111;stroke-width:{wBody:.2f};stroke-linecap:round;stroke-linejoin:round}}'
+           f'.detail{{fill:none;stroke:#111;stroke-width:{wDet:.2f};stroke-linecap:round}}'
+           f'.dash{{fill:none;stroke:#111;stroke-width:{wDash:.2f};stroke-dasharray:{6*kw:.1f} {5*kw:.1f};stroke-linecap:round}}</style>']
     for ln, cls, d in parts:
         svg.append(f'<path class="{cls}" d="{d}"/>')
     svg.append('</svg>')
     os.makedirs(os.path.dirname(out_svg) or '.', exist_ok=True)
     open(out_svg, 'w').write('\n'.join(svg))
-    print('yazıldı:', out_svg, f'({len(parts)} yol)')
+    print('yazıldı:', out_svg, f'({len(parts)} yol: solid {len(solid)}, dash {len(dash_chains)})')
 
 
 if __name__ == '__main__':
