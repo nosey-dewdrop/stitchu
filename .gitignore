@@ -67,3 +67,4 @@ fashion-flat-models/
 # devasa arşivler repoya girmez (2026-07-24 temizlik)
 *.zip
 Arşiv.zip
+.rabadon/state.json
