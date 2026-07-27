@@ -69,6 +69,10 @@ Formüller düz metin ifadelerdir. v1 grameri:
   - `clamp(x, lo, hi)` — motorda `std::clamp` (skirt.cpp:14)
   - `gate(x, t)` = `x >= t ? x : 0` — motorun "pens minimumun altındaysa yan
     dikişe katlanır" kuralı (skirt.cpp:43-46, `minDartWidth`)
+  - `hypot(a, b)` — motorda `std::hypot` (bodice.cpp omuz eşitleme :671-676,
+    kol oyuğu kirişi + tanjant normalizasyonu :127-141). v1.1 eklemesi
+    (2026-07-28, §6): `sqrt(a*a+b*b)` taklidi DEĞİL, aynı libm çağrısı —
+    bayt kapısı ancak bire bir aynı işlemle tutar.
 - **isim çözümleme:** görünür ad alanı = ölçüler + parametreler + sabitler
   (`consts`) + global skalerler + (parça içinde) parça-yerel skalerler. AYNI
   görünür kapsam zincirinde bir adın İKİ kaynakta tanımlanması (gölgeleme) =
@@ -484,6 +488,11 @@ Yalnız isim + motor karşılığı:
 Dil operasyonu asla kernelden ÖNCE tasarlanmaz; kernelde olmayan şey reçetede
 adlandırılamaz.
 
+Genişleme kaydı: v1.1 (§6, 2026-07-28) bu kuralın kendisiyle işletilmiş ilk
+genişlemedir — `hypot` + `shoulderMM` + `top` kernel bloğu, hepsi kernel
+karşılığı gösterilerek ve kendi ctest/golden kanıtıyla girdi; mühür ihlali
+değildir.
+
 ---
 
 ## 5. Kapı 1 test planı (hakem: makine)
@@ -601,3 +610,82 @@ sonrası Aşama 2 (KANVAS) otomatik açılır.
   GEREKSİZLEŞTİ — daha güçlü kanıt doğrudan motor üstünde üretildi (pinli alt
   kümenin fp-contract duyarlılığı ölçüldü, prototip beklemeden); sonuç §2.1'e
   işlendi, ayrıca smoke şartı kalmadı.
+
+---
+
+## 6. v1.1 GENİŞLEME — `top` kerneli (Aşama 2 damar-içi reçete, 2026-07-28)
+
+Gerekçe: Kapı 2'nin Damla-hakem malzemesi damar-içi bir reçete ister (§2.3
+notu); seçilen stil Vol2 #8 — spagetti askılı, kare yaka, A-line mini shift
+(dikişsiz gövde: bodice bel altına A-line uzar, `TopBlock::extendPiece`
+garment.cpp:50-91). Reçete: `recipes/shift-dress-square-spaghetti.json`
+(`top.shift.square.spaghetti`). Formüllerin TAMAMI bodice.cpp +
+garment.cpp'den okunmuştur (denetim izi reçete alanlarının sırasında).
+
+**Dile eklenenler (genişleme kuralı §4 ile):**
+- `hypot(a, b)` (§2.1) — motor karşılığı `std::hypot`.
+- Ölçü sözlüğüne `shoulderMM` (measurements.hpp `shoulderMM()`; bodice
+  omuz yarımı bodice.cpp:547 `m.shoulderCM * 10 / 2`).
+
+**Kernel bloğu garment'a göre anahtarlanır (kapalı kümeler):**
+- `"skirt"` → { garment, skirtStyle, shaping, fabric } (v1, değişmedi).
+- `"top"`   → { garment, neckline, topLength, straps, shaping, fabric }.
+  v1.1 mührü: her enum YALNIZ gönderilen reçetenin kanıtladığı değeri alır —
+  neckline `"square"`, topLength `"tunic"`, straps `"spaghetti"`, shaping
+  `"dart"` (princess `curveSplitAtX` ister, dilde yok), fabric `"woven"`
+  (ease sabitleri belgede woven'a çözülü; knit reçetesi kendi belgesi + kendi
+  kanıtıyla gelir). Mühür dışı değer = Err. `table` bağı skirt-only; top
+  parametresi düz aralıklıdır (`extendMM`, bel→etek ucu uzatması; motorun
+  `belowWaist(TopLength)` tablosunun sürekli hali — tunic=300 pinli nokta).
+- `"dress"` → HENÜZ YOK (bel dikişli elbise etek kompozisyonu ister; kendi
+  kanıtıyla gelecek genişleme). Shift elbise top kernelinde yaşar.
+
+**Top kanonik outline sırası (pozisyonel sözleşme, validator + servisler):**
+parça adları MECBUREN `Top Front` / `Top Back` (validator topIssues ve
+StrapBlock bu adlara bağlanır). Sıra: move(centerNeck) → yaka kenarı (kare
+önde 2 line, arka crew 1 curve) → line(omuz ucu) → kol oyuğu curve →
+yan-dikiş+etek curve → etek→merkez curve → line(merkez kenar) → close.
+Yapısal yürüyüş (validator.cpp topSideSeamLength ile AYNI): sondan close +
+line'lar atlanır; kalan son üç curve = [kol oyuğu, yan→etek, etek→merkez];
+kol oyuğunun başlangıcı bir önceki komutun ucudur (omuz ucu). Yorumlayıcı
+kol oyuğu uzunluğunu BU yürüyüşle ölçer; sıraya uymayan belge Err.
+
+**Kernel son-işlem servisleri (top; motor çağrı sırası birebir):**
+1. kenar bitişi: varsayılan bias binding (patch 3.10) —
+   `BodiceBlock::biasBinding(neckEdgeLength(m, neckline) + 2×ölçülmüş kol
+   oyuğu, "neckline + armholes")`. Facing v1.1'de yok (mühür).
+2. kumaş metrajı: TopBlock::draft birebir — (ön parça bbox yüksekliği =
+   frontLength + extendMM) üzerinden; bindingFabricMeters +
+   armholeBiasFabricMeters(ölçülmüş kol oyuğu).
+3. rehber: `TopBlock::guide(...)` — TopBlock::draft'tan ÇIKARILMIŞ ortak
+   fonksiyon (metin bire bir; motor da aynı fonksiyonu çağırır).
+4. askı: `StrapBlock::apply(pattern, Spaghetti)` motor post-pass'i birebir
+   (omuz noktalarını çizilmiş geometriden kendisi ölçer; yerleşim çentikleri
+   + askı parçası + rehber adımı + kumaş payı).
+5. `annotateTechnical(pattern, dressZipper=false)` (garment.cpp'den public
+   servise çıkarıldı) + cutLine offsetOutline (v1 ile ortak kuyruk).
+
+**Dürüst redler (Err, sessiz sapma değil):**
+- `upperBustMM > 0` gövde → Err: belge 7-ölçü fallback çerçevesine çözülü
+  (`bust - underbustOffset`); FBA dalı koşulsuz dilde ifade edilemez, verilen
+  üst-göğüs sessizce yutulamaz.
+- `Top Front`/`Top Back` adları yoksa parse Err; kanonik sıra bozuksa draft Err.
+
+**Bayt kapısı (Kapı 1b'nin bu stile uzantısı):** §2.1 kuralı gereği probe
+ÖNCE koşuldu (2026-07-28): pinli `top/square/tunic/none.short` alt kümesi
+(54 satır; 3 gövde × [fabric + Top Front 9 + Top Back 8]) `-ffp-contract=off`
+derlemede pinle BAYT-ÖZDEŞ → bayt kapısı geçerli. Hakem:
+`recipe_dress_golden_check` — beklenen = PİNLİ csv'den
+`grep '|top/square/tunic/none.short|' | grep ',outline,'` (51 outline
+satırı), gerçek = reçete yolu `extendMM=300` (= belowWaist(Tunic) pinli
+nokta) dökümü, cmp bayt. KAPSAM DIŞI BIRAKILANLAR (ilanlı): fabric satırı
+(pin Facing-yüzeyli ve facing metrajı düşülmüş; reçete bias+askı taşır) ve
+marking satırları (pinli kombinasyonda marking yok; reçete yolunda askı
+yerleşim çentikleri StrapBlock'tan gelir — o servis motorla ORTAK kod).
+Ayrıca `recipe_dress_check` motor-çapraz paritesi: aynı spec'le
+`GarmentDrafter::draft` çıktısı ile reçete yolu, komut komut ≤ 1e-6 mm +
+rehber/kesim metinleri bire bir (canlı çapraz kanıt; golden değil, pinin
+yanında ikinci hakem). Trig sabitleri (`sinShoulderSlope` /
+`cosShoulderSlope`) %.17g yazılır ve K0 mandalı `std::sin/std::cos`
+çıktısıyla DOUBLE eşitliğiyle karşılaştırır — ondalık yaklaşıklık değil,
+aynı double.
