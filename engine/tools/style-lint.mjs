@@ -38,7 +38,7 @@ const weOurAllow = (allow.weOur || []).map((s) => s.toLowerCase());
 // ---- file list -------------------------------------------------------------
 const htmlFiles = [];
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html', 'api.html', 'privacy.html'];
+  'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html', 'api.html', 'privacy.html', 'studio.html'];
 for (const f of mainPages) if (existsSync(join(WEB, f))) htmlFiles.push(f);
 for (const sub of ['styles', 'patterns', 'guide', 'blog', 'collections']) {
   const dir = join(WEB, sub);

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<title>stitchu · studio</title>
+<meta name="description" content="Live pattern studio: the pattern is a formula document, change a measurement and every piece is recomputed by the engine.">
+<link rel="stylesheet" href="css/tokens.css?v=129">
+<link rel="stylesheet" href="css/app.css?v=129">
+<link rel="stylesheet" href="css/shared-header.css?v=129">
+<link rel="stylesheet" href="css/studio.css?v=129">
+</head>
+<body class="studio">
+
+<header class="sh-header">
+  <a class="brandpatch" href="index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="patterns/index.html" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
+    <a href="collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+
+<main class="studio-main">
+  <div class="studio-top">
+    <div>
+      <h1>Studio</h1>
+      <p class="studio-sub">The pattern here is not a picture. It is a formula document: change a measurement and every piece is recomputed by the engine, live. SVG is only an export.</p>
+    </div>
+    <label class="recipe-pick">Recipe
+      <select id="recipe-select"></select>
+    </label>
+  </div>
+
+  <div class="studio-cols">
+    <aside class="studio-panel">
+      <h2 class="panel-h">Measurements</h2>
+      <div id="meas-fields"></div>
+      <h2 class="panel-h">Parameters</h2>
+      <div id="param-fields"></div>
+      <h2 class="panel-h">Piece</h2>
+      <div id="piece-info" class="piece-info">Click a piece on the canvas to inspect it.</div>
+      <button id="dl-svg" class="studio-btn" type="button" disabled>Download SVG</button>
+      <p class="panel-note">The download is drawn at true scale, 1 unit = 1 mm.</p>
+    </aside>
+
+    <section class="studio-stage">
+      <div id="canvas" class="studio-canvas"></div>
+      <div id="issues" class="issues-box" hidden></div>
+      <p id="status" class="studio-status"></p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>stitchu · a pattern-making engine</span>
+    <span><a href="index.html">Home</a> · <a href="create.html">Create</a> · <a href="privacy.html">Privacy</a> · @nosey-dewdrop</span>
+  </div>
+</footer>
+
+<script src="js/shared-header.js?v=129"></script>
+<script type="module" src="js/studio.js?v=129"></script>
+</body>
+</html>
