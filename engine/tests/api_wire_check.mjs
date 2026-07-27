@@ -62,5 +62,41 @@ if (p353 && p1100 && p353 === p1100) fail('motor 353 ve 1100 mm için AYNI kalı
 if (pOff && pZero && pOff !== pZero) fail('mm=0 ile atlanmış spec farklı kalıp üretti — opt-in default bozuldu');
 if (pOff && p353 && pOff === p353) fail('mm=353 atlanmışla aynı kalıp — kablo API yolunda hâlâ ölü');
 
+// 4) 2026-07-27 bugra corset kablosu (BASAR corset madde 7): cupSeam validate
+// SONRASI normalize spec'te YAŞAMALI ve engineSpec onu motor int'ine çevirmeli.
+// Bulgu: ENUMS döngüsü 'cupSeam'i doğruluyordu ama normalize + engineSpec
+// DÜŞÜRÜYORDU — API "cupSeam":"horizontal" kabul edip hiç çizmiyordu (web yolu
+// taşıyordu; iki yol yine ayrı dil). Aynı delikte 5 kardeş alan daha vardı:
+// laceUpBack, wrapFront, hemFlounce, yoke, boxPleat — hepsi bağlandı.
+{
+  const spec = { garment: 'top', shaping: 'princess', neckline: 'square',
+                 topLength: 'hip', cupSeam: 'bugra' };
+  const v = backend.validateDraftRequest({ spec, measurements: MEAS });
+  if (v.error) fail(`cupSeam 'bugra' validate red: ${v.detail}`);
+  else {
+    if (v.spec.cupSeam !== 'bugra') fail(`normalize cupSeam'i düşürdü (${v.spec.cupSeam}) — kopuk kablo`);
+    const es = backend.engineSpec(v.spec);
+    if (es.cupSeam !== 2) fail(`backend engineSpec cupSeam bugra→2 çevirmiyor (${es.cupSeam})`);
+    const wes = web.engineSpec(spec);
+    if (wes.cupSeam !== es.cupSeam) fail(`web (${wes.cupSeam}) ile backend (${es.cupSeam}) cupSeam'i FARKLI taşıyor`);
+  }
+  const vBad2 = backend.validateDraftRequest({ spec: { ...SPEC, cupSeam: 'diagonal' }, measurements: MEAS });
+  if (!vBad2.error) fail("bilinmeyen cupSeam ('diagonal') sessizce geçti — dürüst 422 bekleniyordu");
+}
+
+// 5) TAMLIK KİLİDİ: backend engineSpec HER vocab alanını motora taşır — yedinci
+// bir alan aynı sessiz deliğe bir daha düşemez (RULES invariant 2).
+{
+  const { VOCAB } = await import(join(root, 'backend/vocab.gen.js'));
+  const vAll = backend.validateDraftRequest({ spec: { garment: 'dress' }, measurements: MEAS });
+  if (vAll.error) fail(`tamlık kilidi: minimal spec validate red (${vAll.detail})`);
+  else {
+    const esAll = backend.engineSpec(vAll.spec);
+    for (const field of Object.keys(VOCAB)) {
+      if (!(field in esAll)) fail(`engineSpec vocab alanını TAŞIMIYOR: ${field} (sessiz düşme deliği)`);
+    }
+  }
+}
+
 if (fails) { console.error(`\napi_wire_check FAILED (${fails})`); process.exit(1); }
-console.log('api_wire_check GREEN: skirtLengthMM API yolunda motora ulaşıyor (353!=1100 kalıp), web=backend aynı mm, 0/atlanmış default korunuyor');
+console.log('api_wire_check GREEN: skirtLengthMM + cupSeam (ve 5 kardeş alan) API yolunda motora ulaşıyor, web=backend aynı dil, engineSpec vocab-tam, 0/atlanmış default korunuyor');

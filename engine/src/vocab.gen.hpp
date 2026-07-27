@@ -105,8 +105,8 @@ inline constexpr int kBackDetailCount = 4;
 inline constexpr const char* kBardotStyle[] = { "none", "plain", "frill" };
 inline constexpr int kBardotStyleCount = 3;
 // CupSeam (int)
-inline constexpr const char* kCupSeam[] = { "none", "horizontal" };
-inline constexpr int kCupSeamCount = 2;
+inline constexpr const char* kCupSeam[] = { "none", "horizontal", "bugra" };
+inline constexpr int kCupSeamCount = 3;
 // Yoke (int)
 inline constexpr const char* kYoke[] = { "none", "plain", "gathered" };
 inline constexpr int kYokeCount = 3;

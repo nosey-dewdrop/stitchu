@@ -50,11 +50,74 @@ enum class SleeveCap;
 // Cup-seam treatment. None = no cup seam (byte-identical default);
 // Horizontal = split each princess front panel into Upper Cup + Lower Cup at the
 // bust apex (the classic bustier cup seam).
-enum class CupSeam { None, Horizontal };
+// Bugra = the FULL Buttoned Corset Bustier construction measured off the
+// purchased Buğra pattern (patterns_real/geometry/geometry-full.json, size 36):
+// exactly SIX pieces —
+//   1. Upper Cup, ONE piece per side spanning center + side front (NO
+//      center/side split above the cup seam) with a CUT-ON strap band growing
+//      out of its top edge over the bust;
+//   2. Lower Cup, the under-bust CRESCENT between the crescent-arc cup seam
+//      (at the bust point, dipping to the underbust toward both ends) and the
+//      straight underbust seam — thickest under the bust, tapering out before
+//      the side seam;
+//   3. Front Body Center, from the underbust seam to the corset hem, the CF
+//      edge carrying the grown button-placket edge;
+//   4. Front Body Side, underbust seam to hem;
+//   5. Back Body Side, body + lower armhole sweep + CUT-ON strap in ONE piece;
+//   6. Back Body Center, the SHORT corset back (top edge under the shoulder
+//      blade), CUT ON FOLD as one piece — not a shoulder-to-hip tank back.
+enum class CupSeam { None, Horizontal, Bugra };
 
 namespace CupSeamBlock {
 
 inline constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (constants.yaml)
+
+// Bugra corset style lines — every proportion MEASURED off the purchased Buğra
+// Buttoned Corset Bustier's size-36 vector geometry (patterns_real/geometry/
+// geometry-full.json; corrected piece identities from the 2026-07-27 föy IoU
+// matching), expressed as shares of the draft's own measured spans so the
+// construction scales with the body. The strap widths and hem drop are style
+// constants of the garment (like empireDrop): a corset hem depth is a fixed
+// style depth, not a body proportion.
+namespace bugra {
+// Drafting options the corset base draft uses (read by garment.cpp):
+inline constexpr double frontPrincessShare = 0.65; // front seam sits toward the side (Buğra orta 160 / yan 85)
+inline constexpr double backPrincessShare = 0.45;  // back seam sits toward the fold (Buğra fold 94 / side 125)
+// MEASURED corset ease: the purchased size-36 pieces sew to ~784 mm at the
+// underbust on an ~820 mm underbust body (sizeChartMM 36 = bust 880) — a
+// compressive ~-4% fit, which is what a buttoned corset bustier is. Negative,
+// deliberate, and taken from the pattern itself, not assumed.
+inline constexpr double corsetChestEase = -0.04;
+inline constexpr double corsetWaistEase = -0.04;
+// Vertical levels:
+inline constexpr double cupDepthShare = 0.18;        // apex→underbust, share of the apex→waist drop
+inline constexpr double hemBelowWaistMM = 58;        // corset hem below the natural waist (high hip)
+inline constexpr double backTopAboveUnderarmMM = 57; // back top edge above the underarm (under the blade)
+// The crescent cup seam (pattern-cutting föy, pieces 1/2): an arc AT the bust
+// point that dips to the underbust line at both ends — a short blunt CF edge
+// and a vanishing point at the side seam.
+inline constexpr double crescentCFDepthMM = 32;      // crescent depth at the CF end (thick end)
+inline constexpr double crescentTipDepthMM = 10;     // crescent tapers out at its own tip
+inline constexpr double crescentSpanShare = 0.85;    // crescent ends before the side seam; the outer
+                                                     // top edge of the side body sews to the cup tail
+inline constexpr double cupSeamTipDepthMM = 26;      // the cup seam's own depth at the side seam
+inline constexpr double cfEdgeHMM = 8;               // Upper Cup CF end: near-point (ring profile: ~20 incl SA)
+inline constexpr double sideEndHMM = 15;             // blunt side end height ABOVE the seam tip
+inline constexpr double backStrapLeanMM = 18;        // back strap leans toward CB as it rises
+inline constexpr double frontStrapLeanMM = -30;      // front strap leans toward CF/neck to reach the shoulder
+
+// Upper-cup style lines (shares of the apex→shoulder crown height):
+inline constexpr double crownShare = 0.08;           // cup height at the strap base (thin band: the crescent carries the bust depth)
+inline constexpr double cfRiseShare = 0.08;          // CF top edge above the cup seam
+inline constexpr double sideEdgeShare = 0.16;        // side edge height above the cup seam
+inline constexpr double strapCenterShare = 0.31;    // strap center, share of CFâside (the strap climbs to the shoulder, so it sits between the neck and the bust point)
+// Cut-on straps:
+inline constexpr double strapFrontW = 18;            // front strap band width (ring: ~48 cut incl 15 mm SA)
+inline constexpr double strapBackW = 32;             // back strap band width (Buğra 36 ≈ 30)
+inline constexpr double strapTopInsetMM = 12;        // BACK strap top below the drafted shoulder line
+inline constexpr double strapFrontTopInsetMM = 50;   // FRONT strap stops shorter (Buğra cup piece 247 tall)
+inline constexpr double sweepRiseMM = 75;            // where the armhole sweep leaves the back strap
+} // namespace bugra
 
 // The strapless-bustier CLASS the cup seam belongs to (encoded once, here, so the
 // gate is a named construction rule — not an ad-hoc neckline list). A horizontal
@@ -90,8 +153,14 @@ bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap);
 // frame). It drives the SECOND (waist) cut that separates the short Lower Cup from
 // the Front Body below the waist. If <= 0, or if a panel does not reach past the
 // waist, the waist cut is honestly skipped and that panel stays Upper + Lower cup.
+// `backWaistY` is the drafted natural-waist level in the BACK panel frame
+// (m.backLengthMM() for a natural non-halter draft — the back panels are drawn
+// un-shifted, so the body frame IS the piece frame). Only the Bugra variant
+// reads it (the corset back top edge + hem are measured down from it);
+// Horizontal ignores it, so existing callers pass 0 unchanged.
 bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
-           SleeveStyle sleeve, bool cap, double waistBelowApex);
+           SleeveStyle sleeve, bool cap, double waistBelowApex,
+           double backWaistY = 0);
 
 } // namespace CupSeamBlock
 } // namespace stitchu

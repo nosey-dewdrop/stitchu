@@ -325,6 +325,468 @@ bool splitOnePanel(DraftedPattern& pattern, const std::string& panelName,
 
 } // namespace
 
+// ---------------------------------------------------------------------------
+// Bugra Buttoned Corset Bustier construction (CupSeam::Bugra).
+//
+// Every proportion below is MEASURED off the purchased Buğra pattern's size-36
+// vector geometry (patterns_real/geometry/geometry-full.json; the six corrected
+// piece identities are proven in the 2026-07-27 föy IoU matching) and expressed
+// as a SHARE of the draft's own measured spans (apex→waist drop, apex→shoulder
+// crown, underarm level) so the construction scales with any body instead of
+// replaying the size-36 millimetres. The two strap band widths and the hem drop
+// are style constants of the garment itself (like empireDrop / frontBalanceDrop)
+// — a corset hem depth does not scale with height the way a seam does.
+
+namespace {
+
+std::vector<Point> translated(std::vector<Point> v, double dx, double dy) {
+    for (auto& p : v) { p.x += dx; p.y += dy; }
+    return v;
+}
+
+Point rotatedPoint(Point p, Point about, double angle) {
+    const double c = std::cos(angle), s = std::sin(angle);
+    const double x = p.x - about.x, y = p.y - about.y;
+    return {about.x + c * x - s * y, about.y + s * x + c * y};
+}
+
+// Build a finished Bugra piece from commands drawn in the shared body frame:
+// notch ticks become markings, a vertical grainline is placed, and the piece is
+// rebased to a local top-left origin like every other drafted piece.
+PatternPiece bugraPiece(const std::string& name, const std::string& cutNote,
+                        std::vector<PathCommand> cmds,
+                        const std::vector<std::pair<Point, Point>>& notchTicks) {
+    PatternPiece p;
+    p.name = name;
+    p.cutInstruction = cutNote;
+    p.commands = std::move(cmds);
+    for (const auto& t : notchTicks) {
+        p.markings.push_back(PathCommand::move(t.first));
+        p.markings.push_back(PathCommand::line(t.second));
+    }
+    const Rect b = boundingBox(p.commands);
+    p.hasGrainline = true;
+    const double gx = b.x + b.width * 0.5;
+    p.grainline = Grainline{{gx, b.y + b.height * 0.15}, {gx, b.y + b.height * 0.85}};
+    p.seamAllowance = SA;
+    translatePiece(p, -b.x, -b.y);
+    return p;
+}
+
+// Carry the host panel's own markings (the grown button-placket fold line,
+// facing line and buttonhole ticks the placket block drew BEFORE this pass)
+// into a band piece: marking pairs fully inside [y0, y1] are kept, and a
+// vertical line that spans the band (the fold/facing line) is clamped to it.
+// Appended to `into` in the shared frame (bugraPiece rebases afterwards? no —
+// callers append BEFORE construction, so pass-through happens via notchTicks?
+// — no: this appends move/line pairs directly; call it on the piece AFTER
+// bugraPiece() with the frame shift applied by the caller).
+void clipMarkPairsInto(std::vector<PathCommand>& into,
+                       const std::vector<PathCommand>& markings,
+                       double y0, double y1, double dx, double dy) {
+    for (size_t i = 0; i + 1 < markings.size(); i += 2) {
+        if (markings[i].type != CmdType::Move || markings[i + 1].type != CmdType::Line) continue;
+        Point a = markings[i].to, b = markings[i + 1].to;
+        const double lo = std::min(a.y, b.y), hi = std::max(a.y, b.y);
+        if (hi < y0 || lo > y1) continue; // outside the band
+        const bool vertical = std::fabs(a.x - b.x) < 0.5 && (hi - lo) > 30;
+        if (vertical) { // fold / facing line: clamp to the band
+            a.y = std::max(a.y, y0); a.y = std::min(a.y, y1);
+            b.y = std::max(b.y, y0); b.y = std::min(b.y, y1);
+        } else if (lo < y0 || hi > y1) {
+            continue; // a short tick straddling the cut: drop, do not distort
+        }
+        into.push_back(PathCommand::move({a.x + dx, a.y + dy}));
+        into.push_back(PathCommand::line({b.x + dx, b.y + dy}));
+    }
+}
+
+
+// Honest structural refusal for the Bugra pass: every guard that bails leaves
+// a note naming WHERE the geometry did not map (never a silent no-op).
+bool bugraRefuse(DraftedPattern& pattern, const std::string& where) {
+    pattern.guideSteps.push_back(
+        "Bugra corset: skipped — the drafted geometry did not map at: " + where +
+        ". Nothing changed.");
+    return false;
+}
+
+std::string mmStr(double v) {
+    return std::to_string(static_cast<long>(std::lround(v)));
+}
+
+// The full six-piece Buğra corset restructure. Returns false with an honest
+// guide note whenever the host is not the (princess, strapless-bustier,
+// below-waist) draft the construction needs — never a silent no-op.
+bool applyBugra(DraftedPattern& pattern, Neckline neckline, SleeveStyle sleeve,
+                bool cap, double waistBelowApex, double backWaistY) {
+    // The Buğra corset is a strapless-CLASS bodice (its cut-on straps replace
+    // separate straps, the support is still the cups). A halter's shifted frame
+    // is a different construction and is refused honestly.
+    if (neckline == Neckline::Halter ||
+        !isStraplessBustierClass(neckline, sleeve, cap)) {
+        pattern.guideSteps.push_back(
+            "Bugra corset: skipped — this construction needs a sleeveless (or cap-"
+            "sleeve) princess bodice with a sweetheart, square or scoop top edge "
+            "(the strapless bustier class; halter keeps its own frame). Nothing changed.");
+        return false;
+    }
+    PatternPiece* fc = findPiece(pattern, {"Top Center Front", "Bodice Center Front"});
+    PatternPiece* fs = findPiece(pattern, {"Top Side Front", "Bodice Side Front"});
+    PatternPiece* bc = findPiece(pattern, {"Top Center Back", "Bodice Center Back"});
+    PatternPiece* bs = findPiece(pattern, {"Top Side Back", "Bodice Side Back"});
+    if (!fc || !fs || !bc || !bs ||
+        fc->markings.empty() || fs->markings.empty() ||
+        bc->markings.empty() || bs->markings.empty()) {
+        pattern.guideSteps.push_back(
+            "Bugra corset: skipped — the draft has no full princess front + back "
+            "(center and side panels with their apex notches) to rebuild from. "
+            "Draft it princess-seamed. Nothing changed.");
+        return false;
+    }
+    if (waistBelowApex <= 0 || backWaistY <= 0) {
+        pattern.guideSteps.push_back(
+            "Bugra corset: skipped — the corset body runs from the underbust down "
+            "PAST the waist to a high-hip hem, so it needs a top that extends below "
+            "the waist (topLength hip or tunic). Nothing changed.");
+        return false;
+    }
+
+    // ---- FRONT: shared frame = the center panel's own (un-rebased) frame ----
+    const Point apexF = fc->markings[0].to;
+    const Point apexFS = fs->markings[0].to;
+    const std::vector<Point> loopC = flattenOutline(fc->commands);
+    const std::vector<Point> loopS =
+        translated(flattenOutline(fs->commands), apexF.x - apexFS.x, apexF.y - apexFS.y);
+    if (loopC.size() < 4 || loopS.size() < 4) return bugraRefuse(pattern, "front panel outlines");
+
+    const double apexY = apexF.y;
+    const double waistY = apexY + waistBelowApex;
+    const double underbustY = apexY + bugra::cupDepthShare * waistBelowApex;
+    const double hemY = waistY + bugra::hemBelowWaistMM;
+    double frontMaxY = -1e18;
+    for (const auto& p : loopC) frontMaxY = std::max(frontMaxY, p.y);
+    if (hemY > frontMaxY - 5) {
+        pattern.guideSteps.push_back(
+            "Bugra corset: skipped — the drafted front does not reach the corset "
+            "hem (waist + " + mmStr(bugra::hemBelowWaistMM) +
+            " mm). Draft with topLength hip or tunic. Nothing changed.");
+        return false;
+    }
+
+    // Center panel: cut at the underbust, the hem, and the cup seam (apex).
+    std::vector<Point> cAbove, cBelow, cBody, cTail;
+    Point cUbL{}, cUbR{}, cHemL{}, cHemR{};
+    if (!splitLoopAtY(loopC, underbustY, cAbove, cBelow, cUbL, cUbR)) return bugraRefuse(pattern, "front center underbust cut");
+    if (!splitLoopAtY(cBelow, hemY, cBody, cTail, cHemL, cHemR)) return bugraRefuse(pattern, "front center hem cut");
+    // Side panel: same two cuts in the shared frame.
+    std::vector<Point> sAbove, sBelow, sBody, sTail;
+    Point sUbL{}, sUbR{}, sHemL{}, sHemR{};
+    if (!splitLoopAtY(loopS, underbustY, sAbove, sBelow, sUbL, sUbR)) return bugraRefuse(pattern, "front side underbust cut");
+    if (!splitLoopAtY(sBelow, hemY, sBody, sTail, sHemL, sHemR)) return bugraRefuse(pattern, "front side hem cut");
+
+    // ---- 1. UPPER CUP + 2. LOWER CUP: the crescent cup seam ---------------
+    // The Bugra cup seam is NOT a horizontal cut: the pattern-cutting foy (piece
+    // 1/2) shows an ARC that sits AT the bust point under the bust and dips to
+    // the underbust line at both ends — a short blunt edge at CF and a POINT at
+    // the side seam. The Lower Cup is the true under-bust CRESCENT between that
+    // arc and the straight underbust seam (thickest under the bust, vanishing
+    // at the side). Both pieces draw the SAME arc, so the cup seam is trued by
+    // construction; the crescent's bottom edge is the same underbust line the
+    // two Front Body pieces carry (the princess intake width between them is
+    // taken out of the crescent's side end so the sewn lengths match).
+    double topYF = 1e18;
+    for (const auto& p : cAbove) topYF = std::min(topYF, p.y);
+    for (const auto& p : sAbove) topYF = std::min(topYF, p.y);
+    const double crownH = apexY - topYF;                // apex->shoulder-line span
+    // The CUPS sew at the true center front (x = 0): the grown button stand
+    // belongs to the Front Body Center below the underbust; the cup region
+    // closes at a CF seam, so the cup pieces start at x = 0, not at the stand.
+    const double xCF = 0.0;
+    const double xTip = sUbR.x;                         // side seam x at the underbust
+    const double cfRise = bugra::cfRiseShare * crownH;  // (kept for the note only)
+    (void)cfRise;
+    const double bodyH = bugra::crownShare * crownH;    // cup height at the strap
+    const double sw = bugra::strapFrontW;
+    const double strapTopY = topYF + bugra::strapFrontTopInsetMM;
+    // The strap sits over the BUST POINT (share of CF->side measured off Bugra),
+    // not over the princess seam - the corset seam is a style line moved toward
+    // the side, while the strap must still rise over the bust.
+    const double strapCX = xCF + bugra::strapCenterShare * (xTip - xCF);
+    const double sx0 = strapCX - sw / 2, sx1 = strapCX + sw / 2;
+    const double lean = bugra::frontStrapLeanMM; // top of the strap toward CF/neck
+    const double strapRun = (apexY - bodyH) - strapTopY;
+
+    // Cup-seam arc anchors: CF end (short blunt edge), bust point, side tip.
+    const Point aCF{xCF, underbustY - bugra::crescentCFDepthMM};
+    const Point aBust{strapCX, apexY};
+    const Point aTip{xTip, underbustY - bugra::cupSeamTipDepthMM};
+    // The arc drawn CF -> bust -> tip (the crescent top edge); the Upper Cup
+    // draws it tip -> bust -> CF (same cubics reversed = identical geometry).
+    const PathCommand arcCFtoBust = PathCommand::curve(
+        aBust,
+        {xCF + (strapCX - xCF) * 0.35, aCF.y - (aCF.y - apexY) * 0.10},
+        {strapCX - (strapCX - xCF) * 0.30, apexY});
+    const PathCommand arcBustToTip = PathCommand::curve(
+        aTip,
+        {strapCX + (xTip - strapCX) * 0.30, apexY},
+        {xTip - (xTip - strapCX) * 0.25, aTip.y - (aTip.y - apexY) * 0.15});
+    const double cupSeamLen =
+        pathLength({PathCommand::move(aCF), arcCFtoBust, arcBustToTip});
+
+    std::vector<PathCommand> up;
+    up.push_back(PathCommand::move(aCF));
+    up.push_back(PathCommand::line({xCF, aCF.y - bugra::cfEdgeHMM}));      // CF edge
+    up.push_back(PathCommand::curve({sx0, apexY - bodyH},                   // top edge to strap
+                                    {xCF + (sx0 - xCF) * 0.55, aCF.y - bugra::cfEdgeHMM - 14},
+                                    {sx0 - 10, apexY - bodyH + 36}));
+    up.push_back(PathCommand::curve({sx0 + lean, strapTopY},                // strap front edge
+                                    {sx0 + lean * 0.2, apexY - bodyH - strapRun * 0.4},
+                                    {sx0 + lean * 0.9, strapTopY + strapRun * 0.35}));
+    up.push_back(PathCommand::line({sx1 + lean, strapTopY}));               // strap top
+    up.push_back(PathCommand::curve({sx1, apexY - bodyH},                   // strap back edge
+                                    {sx1 + lean * 0.9, strapTopY + strapRun * 0.35},
+                                    {sx1 + lean * 0.2, apexY - bodyH - strapRun * 0.4}));
+    const Point sideTop{xTip, aTip.y - bugra::sideEndHMM};                  // blunt side end top (above the seam tip)
+    up.push_back(PathCommand::curve(sideTop,                                 // top edge dives right after the strap
+                                    {sx1 + (xTip - sx1) * 0.05,
+                                     (apexY - bodyH) + (sideTop.y - (apexY - bodyH)) * 0.55},
+                                    {xTip - (xTip - sx1) * 0.45, sideTop.y - 5}));
+    up.push_back(PathCommand::line(aTip));                                   // short blunt side edge
+    up.push_back(reverseCubic(aBust, arcBustToTip));                        // cup seam: tip -> bust
+    up.push_back(reverseCubic(aCF, arcCFtoBust));                           // cup seam: bust -> CF
+    up.push_back(PathCommand::close());
+
+    PatternPiece pUpper = bugraPiece(
+        "Upper Cup",
+        "cut 2 mirrored (Upper Cup — ONE piece across the whole front cup, no "
+        "center/side split, with a grown cut-on strap over the bust; the lower "
+        "edge is your " + mmStr(cupSeamLen) +
+        " mm crescent cup seam, matched to the Lower Cup at the notches)",
+        up,
+        {{aCF, {aCF.x + 12, aCF.y - 8}}, {{aBust.x, aBust.y}, {aBust.x - 12, aBust.y - 8}}});
+
+    // Lower Cup: the crescent. Top edge = the same arc; bottom edge = the
+    // straight underbust seam, its length = the two Front Body top edges summed
+    // (the princess intake between them is taken out of the side end).
+    // Center underbust seam measured from the CF FOLD LINE (x = 0): the grown
+    // stand region folds under, it is not sewn seam length.
+    const double ubCenterLen = cUbR.x;
+    const double ubSideLen = sUbR.x - sUbL.x;
+    const double gapW = std::max(0.0, sUbL.x - cUbR.x);
+    // The crescent tapers OUT before the side seam (crescentSpanShare): from its
+    // tip to the side seam the Upper Cup's seam tail sews DIRECTLY onto the
+    // outer top edge of the Front Body Side. Its own tip is thinner than the
+    // cup seam's side end, giving the true banana shape.
+    const double xC = xCF + bugra::crescentSpanShare * (xTip - xCF);
+    const Point cTip{xC, underbustY - bugra::crescentTipDepthMM};
+    const PathCommand cresBustToTip = PathCommand::curve(
+        cTip,
+        {strapCX + (xC - strapCX) * 0.30, apexY},
+        {xC - (xC - strapCX) * 0.25, cTip.y - (cTip.y - apexY) * 0.15});
+    std::vector<PathCommand> cres;
+    cres.push_back(PathCommand::move(aCF));
+    cres.push_back(arcCFtoBust);
+    cres.push_back(cresBustToTip);
+    cres.push_back(PathCommand::line({xC - gapW, underbustY}));    // tip end (intake removed)
+    cres.push_back(PathCommand::line({xCF, underbustY}));          // underbust seam back to CF
+    cres.push_back(PathCommand::close());                          // CF end up to aCF
+    PatternPiece pLower = bugraPiece(
+        "Lower Cup",
+        "cut 2 mirrored (Lower Cup — the under-bust crescent; the top edge is your " +
+        mmStr(cupSeamLen) + " mm crescent cup seam matched to the Upper Cup, the "
+        "bottom edge is your " + mmStr(ubCenterLen) + " + " + mmStr(ubSideLen) +
+        " mm underbust seam matched to the Front Body Center and Front Body Side "
+        "at the notches)",
+        cres,
+        {{aCF, {aCF.x + 12, aCF.y + 8}},
+         {cTip, {cTip.x - 12, cTip.y + 8}},
+         {{xCF, underbustY}, {xCF + 12, underbustY - 8}},
+         {{xC - gapW, underbustY}, {xC - gapW - 12, underbustY - 8}}});
+
+    // ---- 3./4. FRONT BODY CENTER + SIDE: underbust seam → corset hem --------
+    PatternPiece pFBC = bugraPiece(
+        "Front Body Center",
+        "cut 2 mirrored (Front Body Center — underbust seam to the corset hem; the "
+        "center-front edge is the grown button-placket edge, the top edge is your " +
+        mmStr(ubCenterLen) + " mm underbust seam matched to the Lower Cup at the notches)",
+        outlineFromLoop(cBody),
+        {{cUbL, {cUbL.x + 12, cUbL.y + 8}}, {cUbR, {cUbR.x - 12, cUbR.y + 8}}});
+    // Carry the placket fold/facing lines + buttonholes (drawn on the host front
+    // before this pass) into the band, clipped to it, so the buttoned CF edge
+    // stays a REAL drawn closure, not a lost marking. The piece was rebased by
+    // bugraPiece; shift the clipped markings by the same delta.
+    {
+        const Rect bb = boundingBox(outlineFromLoop(cBody));
+        clipMarkPairsInto(pFBC.markings, fc->markings, underbustY, hemY, -bb.x, -bb.y);
+    }
+    PatternPiece pFBS = bugraPiece(
+        "Front Body Side",
+        "cut 2 mirrored (Front Body Side — underbust seam to the corset hem, "
+        "starting AT the underbust; the top edge is your " + mmStr(ubSideLen) +
+        " mm underbust seam matched to the Lower Cup at the notches)",
+        outlineFromLoop(sBody),
+        {{sUbL, {sUbL.x + 12, sUbL.y + 8}}, {sUbR, {sUbR.x - 12, sUbR.y + 8}}});
+
+    // ---- BACK: shared frame = the center back panel's frame -----------------
+    const Point apexB = bc->markings[0].to;
+    const Point apexBS = bs->markings[0].to;
+    const std::vector<Point> loopBC = flattenOutline(bc->commands);
+    const std::vector<Point> loopBS =
+        translated(flattenOutline(bs->commands), apexB.x - apexBS.x, apexB.y - apexBS.y);
+    // The underarm point is READ from the drafted side-back panel itself: a
+    // princess side panel always starts move(split) + the armhole cubic down to
+    // the underarm, so commands[1].to IS the drafted underarm (measured, never a
+    // hardcoded level). A max-x scan would be fooled by the hip flare below.
+    if (bs->commands.size() < 2 || bs->commands[1].type != CmdType::Curve)
+        return bugraRefuse(pattern, "back underarm point");
+    const Point underarm{bs->commands[1].to.x + (apexB.x - apexBS.x),
+                         bs->commands[1].to.y + (apexB.y - apexBS.y)};
+    const double backTopY = underarm.y - bugra::backTopAboveUnderarmMM;
+    const double backHemY = backWaistY + bugra::hemBelowWaistMM;
+    double backMaxY = -1e18;
+    for (const auto& p : loopBC) backMaxY = std::max(backMaxY, p.y);
+    if (backHemY > backMaxY - 5 || backTopY <= 0) {
+        pattern.guideSteps.push_back(
+            "Bugra corset: skipped — the drafted back does not span the corset back "
+            "(top edge under the shoulder blade to a high-hip hem). Nothing changed.");
+        return false;
+    }
+
+    // ---- 6. BACK BODY CENTER: the SHORT corset back, cut on fold ------------
+    std::vector<Point> bcTop, bcRest, bcBody, bcTail;
+    Point bcTopL{}, bcTopR{}, bcHemL{}, bcHemR{};
+    if (!splitLoopAtY(loopBC, backTopY, bcTop, bcRest, bcTopL, bcTopR)) return bugraRefuse(pattern, "back center top cut");
+    if (!splitLoopAtY(bcRest, backHemY, bcBody, bcTail, bcHemL, bcHemR)) return bugraRefuse(pattern, "back center hem cut");
+    // The CB edge becomes the FOLD: straighten the small drafted CB take-in onto
+    // x = 0 so the piece is honestly cuttable on the fold.
+    for (auto& p : bcBody) if (p.x < 15.0) p.x = 0;
+    PatternPiece pBBC = bugraPiece(
+        "Back Body Center",
+        "cut 1 on fold (Back Body Center — the SHORT corset back; the top edge ends "
+        "under the shoulder blade, the center back is the fold — this is not a "
+        "shoulder-to-hip tank back)",
+        outlineFromLoop(bcBody), {});
+
+    // ---- 5. BACK BODY SIDE: body + armhole sweep + cut-on strap, one piece --
+    std::vector<Point> bsTop, bsRest, bsBody, bsTail;
+    Point bsTopL{}, bsTopR{}, bsHemL{}, bsHemR{};
+    if (!splitLoopAtY(loopBS, backTopY, bsTop, bsRest, bsTopL, bsTopR)) return bugraRefuse(pattern, "back side top cut");
+    if (!splitLoopAtY(bsRest, backHemY, bsBody, bsTail, bsHemL, bsHemR)) return bugraRefuse(pattern, "back side hem cut");
+    // Locate the two top-cut corners in the body loop so the strap + armhole
+    // sweep can replace the straight top edge between them.
+    const size_t nBS = bsBody.size();
+    size_t iL = nBS, iR = nBS;
+    for (size_t i = 0; i < nBS; ++i) {
+        if (std::fabs(bsBody[i].y - backTopY) > 1e-6) continue;
+        if (std::fabs(bsBody[i].x - bsTopL.x) < 1e-6) iL = i;
+        if (std::fabs(bsBody[i].x - bsTopR.x) < 1e-6) iR = i;
+    }
+    if (iL == nBS || iR == nBS || iL == iR) return bugraRefuse(pattern, "back side top-cut corners");
+    // The armhole SWEEP replaces the drafted armhole fragment: it lands directly
+    // on the drafted underarm point, so start the body walk there (the drafted
+    // armhole points between the top cut and the underarm are consumed).
+    size_t iU = iR;
+    double bestD = 1e18;
+    for (size_t i = 0; i < nBS; ++i) {
+        const double d = std::hypot(bsBody[i].x - underarm.x, bsBody[i].y - underarm.y);
+        if (d < bestD) { bestD = d; iU = i; }
+    }
+    double topYB = 1e18;
+    for (const auto& p : loopBC) topYB = std::min(topYB, p.y);
+    const double sbw = bugra::strapBackW;
+    const double strapTopYB = topYB + bugra::strapTopInsetMM + 8;
+    // The strap leans toward the center back as it rises (Bugra foy piece 5).
+    const Point innerTop{bsTopL.x + 2 - bugra::backStrapLeanMM, strapTopYB};
+    const Point outerTop{innerTop.x + sbw, strapTopYB};
+    const Point sweepStart{bsTopL.x + sbw, backTopY - bugra::sweepRiseMM};
+    std::vector<PathCommand> bsc;
+    bsc.push_back(PathCommand::move(innerTop));
+    bsc.push_back(PathCommand::line(outerTop));
+    bsc.push_back(PathCommand::curve(
+        sweepStart,
+        {outerTop.x + 4, strapTopYB + (sweepStart.y - strapTopYB) * 0.4},
+        {sweepStart.x - 2, sweepStart.y - 30}));
+    // The concave armhole sweep runs from the strap edge DOWN INTO the drafted
+    // underarm point in one curve (the corset armhole).
+    bsc.push_back(PathCommand::curve(
+        bsBody[iU],
+        {sweepStart.x + 8, backTopY + (bsBody[iU].y - backTopY) * 0.45},
+        {bsBody[iU].x - (bsBody[iU].x - sweepStart.x) * 0.35, bsBody[iU].y - 10}));
+    for (size_t i = (iU + 1) % nBS;; i = (i + 1) % nBS) {
+        bsc.push_back(PathCommand::line(bsBody[i]));
+        if (i == iL) break;
+    }
+    bsc.push_back(PathCommand::curve(
+        innerTop,
+        {bsTopL.x - 4, backTopY - (backTopY - strapTopYB) * 0.4},
+        {innerTop.x + 2, strapTopYB + (backTopY - strapTopYB) * 0.3}));
+    bsc.push_back(PathCommand::close());
+    PatternPiece pBBS = bugraPiece(
+        "Back Body Side",
+        "cut 2 mirrored (Back Body Side — body, lower armhole sweep and grown "
+        "cut-on strap in ONE piece; the strap runs over the shoulder and joins the "
+        "Upper Cup strap — try on and pin to length before sewing the join)",
+        bsc,
+        {{innerTop, {innerTop.x + 10, innerTop.y + 10}}});
+
+    // ---- Replace the four princess panels (and the binding strip) -----------
+    size_t insertAt = pattern.pieces.size();
+    for (size_t i = 0; i < pattern.pieces.size(); ++i)
+        if (&pattern.pieces[i] == fc) { insertAt = i; break; }
+    std::vector<PatternPiece> kept;
+    kept.reserve(pattern.pieces.size());
+    std::vector<PatternPiece> six{pUpper, pLower, pFBC, pFBS, pBBS, pBBC};
+    bool inserted = false;
+    for (size_t i = 0; i < pattern.pieces.size(); ++i) {
+        const PatternPiece& pc = pattern.pieces[i];
+        const bool consumed = (&pc == fc || &pc == fs || &pc == bc || &pc == bs ||
+                               pc.name.find("Bias binding") != std::string::npos ||
+                               pc.name.find("Neck Facing") != std::string::npos);
+        if (i == insertAt) {
+            kept.insert(kept.end(), six.begin(), six.end());
+            inserted = true;
+        }
+        if (!consumed) kept.push_back(pc);
+    }
+    if (!inserted) kept.insert(kept.end(), six.begin(), six.end());
+    pattern.pieces = std::move(kept);
+
+    // Drop the now-moot finish steps: the corset has no shoulder seam and no
+    // bias strip (the full-lining step below replaces them honestly).
+    pattern.guideSteps.erase(
+        std::remove_if(pattern.guideSteps.begin(), pattern.guideSteps.end(),
+                       [](const std::string& s) {
+                           return s.find("bias strip") != std::string::npos ||
+                                  s.find("shoulder seams") != std::string::npos;
+                       }),
+        pattern.guideSteps.end());
+
+    // ---- Guide: the corset sews in this order (names every piece) -----------
+    pattern.guideSteps.push_back(
+        "Bugra corset construction: the front is built in three horizontal bands — "
+        "sew the Upper Cup's lower edge to the Lower Cup's top edge along the " +
+        mmStr(cupSeamLen) + " mm cup seam, matching the notches; then sew the Lower "
+        "Cup's bottom edge to the Front Body Center and Front Body Side along the "
+        "underbust seam, matching the notches. Sew the Front Body Center to the "
+        "Front Body Side along the princess seam below the underbust.");
+    pattern.guideSteps.push_back(
+        "Back: sew the Back Body Center (cut on the fold — the short corset back) "
+        "to the Back Body Side along the back princess seam, then close the side "
+        "seams. The Back Body Side's grown strap runs over the shoulder; try the "
+        "corset on, pin each back strap to its Upper Cup strap at the shoulder to "
+        "length, then sew the strap join.");
+    pattern.guideSteps.push_back(
+        "Corset finish (Bugra): cut EVERY piece a second time in self fabric as a "
+        "full lining and bag the corset out — the lining finishes every raw edge "
+        "(the top edge, the armholes and the straps), so no bias binding strip is "
+        "cut. Close the buttoned front last: the Front Body Center's placket edge "
+        "carries the fold line and buttonholes.");
+    return true;
+}
+
+} // namespace
+
 // The strapless-bustier class rule (see header). A cup seam is a strapless-support
 // construction, so BOTH conditions must hold: strapless (sleeveless or cap sleeve)
 // AND a bustier top edge (a neckline that sits above the bust apex — sweetheart,
@@ -354,8 +816,16 @@ bool isStraplessBustierClass(Neckline neckline, SleeveStyle sleeve, bool cap) {
 }
 
 bool apply(DraftedPattern& pattern, CupSeam style, Neckline neckline,
-           SleeveStyle sleeve, bool cap, double waistBelowApex) {
+           SleeveStyle sleeve, bool cap, double waistBelowApex,
+           double backWaistY) {
     if (style == CupSeam::None) return true;
+
+    // The Bugra variant is the full six-piece corset restructure (front cups +
+    // front bodies + short fold back + strapped side back), not a per-panel
+    // split — it has its own honest gates and never falls through to the
+    // Horizontal path.
+    if (style == CupSeam::Bugra)
+        return applyBugra(pattern, neckline, sleeve, cap, waistBelowApex, backWaistY);
 
     // HOST: only the STRAPLESS-BUSTIER CLASS carries a cup seam — a strapless
     // (sleeveless or cap-sleeve) princess bodice whose top edge is a sweetheart,

@@ -463,6 +463,31 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // the cap seats. Halter has its own bare-shoulder frame.
     options.sleeveless = spec.neckline != Neckline::Halter &&
                          spec.sleeveStyle == SleeveStyle::None;
+    // Bugra corset (cupSeam == Bugra): the corset BASE draft differs — zero
+    // wearing ease and the princess seams moved to the Buğra style positions
+    // (front toward the side, back toward the fold). Gated on the same cheap
+    // class checks the post-pass enforces, so a host the pass would refuse is
+    // never silently drafted corset-tight. Default (None/Horizontal) leaves the
+    // options untouched — byte-identical.
+    if (spec.cupSeam == static_cast<int>(CupSeam::Bugra) &&
+        options.shaping == Shaping::Princess && extra > 0 &&
+        spec.neckline != Neckline::Halter &&
+        CupSeamBlock::isStraplessBustierClass(spec.neckline, spec.sleeveStyle,
+                                              spec.sleeveCap == SleeveCap::Cap)) {
+        options.corsetEase = true;
+        options.corsetChestEase = CupSeamBlock::bugra::corsetChestEase;
+        options.corsetWaistEase = CupSeamBlock::bugra::corsetWaistEase;
+        options.princessShareFront = CupSeamBlock::bugra::frontPrincessShare;
+        options.princessShareBack = CupSeamBlock::bugra::backPrincessShare;
+        // The corset hem sits at the HIGH hip (hemBelowWaistMM under the waist),
+        // so the below-waist panels aim at the interpolated high-hip girth, not
+        // the full-hip flare (200 = the drafting hip-blend depth the panels
+        // flare over, see bodice.cpp hipBlendDepth). Zero ease, like the rest
+        // of the corset.
+        options.hipHalfQuarter =
+            (m.waistMM() +
+             (m.hipMM() - m.waistMM()) * (CupSeamBlock::bugra::hemBelowWaistMM / 200.0)) / 4.0;
+    }
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
 
     std::vector<PatternPiece> tops;
@@ -804,8 +829,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         // real set-in/straight/balloon sleeve is a shoulder-carried bodice and is
         // refused. The block decides the whole class rule (isStraplessBustierClass).
         const bool capSleeve = spec.sleeveCap == SleeveCap::Cap;
+        // backWaistY: the drafted natural-waist level in the back-panel frame
+        // (the back is drawn un-shifted for every non-halter draft, so the body
+        // frame IS the piece frame). Only the Bugra corset variant reads it.
         CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
-                            spec.sleeveStyle, capSleeve, pattern.cupSeamWaistBelowApex);
+                            spec.sleeveStyle, capSleeve, pattern.cupSeamWaistBelowApex,
+                            m.backLengthMM());
     }
     // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
     // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the

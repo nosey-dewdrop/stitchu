@@ -119,7 +119,7 @@ inline GuideAudit auditGuide(const DraftedPattern& p) {
         std::vector<std::string> tokens = categoriesOf(nameLower);
         for (const char* w : {"bodice", "skirt", "top", "front", "back", "center", "side",
                               "tie", "bow", "cord", "elastic", "facing", "keyhole", "panel",
-                              "band", "bias"})
+                              "band", "bias", "cup"})
             if (nameLower.find(w) != std::string::npos) tokens.push_back(w);
         bool covered = false;
         for (size_t si = 0; si < stepLower.size(); ++si) {
@@ -145,10 +145,17 @@ inline GuideAudit auditGuide(const DraftedPattern& p) {
     bool halter = lower(p.garment).find("halter") != std::string::npos;
     for (const auto& piece : p.pieces)
         if (lower(piece.name).find("halter") != std::string::npos) halter = true;
+    // The Bugra corset's straps are also GROWN-ON — cut in one piece with the
+    // Upper Cup and the Back Body Side (the cut notes say "cut-on strap") — so
+    // its guide names straps with no separate strap piece, like the halter.
+    bool grownOnStrap = halter;
+    for (const auto& piece : p.pieces)
+        if (lower(piece.cutInstruction).find("cut-on strap") != std::string::npos)
+            grownOnStrap = true;
     for (size_t si = 0; si < stepLower.size(); ++si) {
         if (isHonestSkip(stepLower[si])) continue;
         for (const auto& cat : phantomCategories()) {
-            if (halter && cat == "strap") continue;
+            if (grownOnStrap && cat == "strap") continue;
             if (!matchWord(stepLower[si], cat, /*countNegated=*/false)) continue;
             if (std::find(presentCats.begin(), presentCats.end(), cat) == presentCats.end())
                 audit.phantomSteps.push_back(p.guideSteps[si] + " [no '" + cat + "' piece drafted]");

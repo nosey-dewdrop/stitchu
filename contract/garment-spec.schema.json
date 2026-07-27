@@ -625,7 +625,8 @@
         "cupSeam": {
           "enum": [
             "none",
-            "horizontal"
+            "horizontal",
+            "bugra"
           ]
         },
         "yoke": {

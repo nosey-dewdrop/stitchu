@@ -160,6 +160,9 @@ add_executable(pocket_check tests/pocket_check.cpp)
 target_link_libraries(pocket_check PRIVATE engine)
 add_test(NAME pocket_check COMMAND pocket_check)
 
+add_executable(bustier_check tests/bustier_check.cpp)
+target_link_libraries(bustier_check PRIVATE engine)
+add_test(NAME bustier_check COMMAND bustier_check)
 add_executable(cup_check tests/cup_check.cpp)
 target_link_libraries(cup_check PRIVATE engine)
 add_test(NAME cup_check COMMAND cup_check)
@@ -227,6 +230,10 @@ add_test(NAME wearability_check COMMAND wearability_check)
 
 add_executable(wearability-bench tools/wearability-bench.cpp)
 target_link_libraries(wearability-bench PRIVATE engine)
+
+# Bugra corset micro-loop dump (patterns_real IoU harness input; not a test)
+add_executable(bugra-dump tools/bugra-dump.cpp)
+target_link_libraries(bugra-dump PRIVATE engine)
 
 add_executable(shoulder_check tests/shoulder_check.cpp)
 target_link_libraries(shoulder_check PRIVATE engine)

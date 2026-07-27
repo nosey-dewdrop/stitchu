@@ -312,7 +312,8 @@ PrincessHalf makePrincessPieces(
     double extendBelowWaist = 0,
     double hipHalfQuarter = 0,
     bool isFront = false,
-    bool sleeveless = false
+    bool sleeveless = false,
+    double princessShare = 0.5
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
@@ -335,8 +336,11 @@ PrincessHalf makePrincessPieces(
         {centerTakeIn + waistSpan * 0.6, sideWaist.y + (centerWaist.y - sideWaist.y) * 0.55},
         {centerTakeIn + waistSpan * 0.25, centerWaist.y});
 
-    // Old dart geometry becomes the seam geometry.
-    const double dartCenterX = centerTakeIn + waistSpan * 0.5;
+    // Old dart geometry becomes the seam geometry. princessShare = 0.5 is the
+    // classic dart-center seam (byte-identical); the Bugra corset construction
+    // moves the front seam toward the side and the back seam toward the fold
+    // (measured off the purchased pattern, see cupseam.hpp bugra::).
+    const double dartCenterX = centerTakeIn + waistSpan * princessShare;
     const CubicSplit waistAtA = splitCubic(sideWaist, waistCurve, cubicTForX(sideWaist, waistCurve, dartCenterX - dartWidth / 2));
     const CubicSplit waistAtB = splitCubic(sideWaist, waistCurve, cubicTForX(sideWaist, waistCurve, dartCenterX + dartWidth / 2));
     const Point legA = waistAtA.at; // center-side seam end on the waist
@@ -524,8 +528,13 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // Sleeveless scye cut-in applies to the front + back pieces (not halter,
     // which has its own bare-shoulder frame). Front deeper than back either way.
     const bool sleevelessScye = options.sleeveless && neckline != Neckline::Halter;
-    const double chestEase = chestEaseFor(options.fabric);
-    const double waistEase = waistEaseFor(options.fabric);
+    // Corset fit (Bugra, opt-in): a fitted buttoned corset is drafted at ZERO
+    // wearing ease (the purchased Bugra pieces measure no ease band). Default
+    // false -> the fabric table drives, byte-identical.
+    const double chestEase = options.corsetEase ? options.corsetChestEase
+                                                : chestEaseFor(options.fabric);
+    const double waistEase = options.corsetEase ? options.corsetWaistEase
+                                                : waistEaseFor(options.fabric);
 
     const double neck = m.neckMM();
     const double backLength = m.backLengthMM();
@@ -752,7 +761,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backDartLength,
             cbTakeIn,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/false, sleevelessScye);
+            /*isFront=*/false, sleevelessScye, options.princessShareBack);
     } else {
         back = makePiece(
             "Bodice Back", "cut 2",
@@ -802,7 +811,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontDartLength,
             0,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/true, sleevelessScye);
+            /*isFront=*/true, sleevelessScye, options.princessShareFront);
     } else {
         front = makePiece(
             "Bodice Front", "cut 1 on fold",

@@ -132,6 +132,20 @@ struct BodiceOptions {
     // real pattern-maker's sleeveless armhole. A set-in-sleeve armhole keeps the
     // full width so the sleeve cap seats. Set by garment.cpp from the sleeve.
     bool sleeveless = false;
+    // Corset fit (Bugra Buttoned Corset Bustier, cupSeam == Bugra only): a
+    // fitted buttoned corset is drafted at ZERO wearing ease — the purchased
+    // Buğra size-36 pieces measure the front half at ~underbust/4 exactly, no
+    // ease band. false (default) keeps chestEaseFor/waistEaseFor byte-identical.
+    bool corsetEase = false;
+    double corsetChestEase = 0;  // used only when corsetEase (set from bugra::)
+    double corsetWaistEase = 0;
+    // WHERE the princess seam sits across the waist span (0.5 = the classic
+    // dart-center default, byte-identical). The Buğra corset carries its front
+    // seam nearer the side (the whole cup region above the underbust is one
+    // piece, so the seam is a style line, not an apex line) and its back seam
+    // nearer the fold. Only the corset construction moves these.
+    double princessShareFront = 0.5;
+    double princessShareBack = 0.5;
 };
 
 // Armhole scye shape (Aldrich / Armstrong bodice block). The armhole is NOT a

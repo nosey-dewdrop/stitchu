@@ -7,6 +7,14 @@
 // but never COPIED it into the normalized spec, so engineSpec always read
 // undefined and the API path silently sent 0 to the engine (the web path
 // worked). The normalized spec now carries it; the round-trip test locks it.
+//
+// 2026-07-27 (bugra corset pass) SAME BUG, six more fields: cupSeam, laceUpBack,
+// wrapFront, hemFlounce, yoke and boxPleat were validated by the ENUMS loop and
+// then silently DROPPED by both validateDraftRequest's normalization and
+// engineSpec — the API accepted "cupSeam": "horizontal" and drafted as if it
+// were never sent (the web path carried them fine). All six are now wired;
+// api_wire_check locks engineSpec against the whole vocabulary so a seventh
+// field can never fall through the same hole.
 
 // ---- API vocabulary. Generated from engine/vocab.json (gen-vocab.mjs) so the
 // API, the web bridge and the C++ boundary can never drift apart. An unknown
@@ -53,6 +61,12 @@ const buttonRowInt = enumIntOf('buttonRow');
 const exposedZipInt = enumIntOf('exposedZip');
 const backDetailInt = enumIntOf('backDetail');
 const bardotStyleInt = enumIntOf('bardotStyle');
+const cupSeamInt = enumIntOf('cupSeam');
+const laceUpBackInt = enumIntOf('laceUpBack');
+const wrapFrontInt = enumIntOf('wrapFront');
+const hemFlounceInt = enumIntOf('hemFlounce');
+const yokeInt = enumIntOf('yoke');
+const boxPleatInt = enumIntOf('boxPleat');
 // The legacy frontPlacket bool maps to Standard; asymmetric is the new mode.
 const placketStyleEnumInt = enumIntOf('placketStyle');
 const placketStyleInt = (spec) => {
@@ -171,6 +185,12 @@ export function validateDraftRequest(body) {
       exposedZip: spec.exposedZip ?? 'none',
       backDetail: spec.backDetail ?? 'none',
       bardotStyle: spec.bardotStyle ?? 'none',
+      cupSeam: spec.cupSeam ?? 'none',
+      laceUpBack: spec.laceUpBack ?? 'none',
+      wrapFront: spec.wrapFront ?? 'none',
+      hemFlounce: spec.hemFlounce ?? 'none',
+      yoke: spec.yoke ?? 'none',
+      boxPleat: spec.boxPleat ?? 'none',
     },
     measurements,
   };
@@ -197,5 +217,8 @@ export function engineSpec(spec) {
     hemShape: hemShapeInt(spec.hemShape), shoulderStyle: shoulderStyleInt(spec.shoulderStyle),
     buttonRow: buttonRowInt(spec.buttonRow), exposedZip: exposedZipInt(spec.exposedZip),
     backDetail: backDetailInt(spec.backDetail), bardotStyle: bardotStyleInt(spec.bardotStyle),
+    cupSeam: cupSeamInt(spec.cupSeam), laceUpBack: laceUpBackInt(spec.laceUpBack),
+    wrapFront: wrapFrontInt(spec.wrapFront), hemFlounce: hemFlounceInt(spec.hemFlounce),
+    yoke: yokeInt(spec.yoke), boxPleat: boxPleatInt(spec.boxPleat),
   };
 }

@@ -689,6 +689,15 @@ std::vector<ValidationIssue> topIssues(
             find("Upper Cup Center Front") && find("Lower Cup Center Front")) {
             continue;
         }
+        // Bugra corset (cupSeam == Bugra): the WHOLE top is rebuilt as the
+        // six-piece corset — merged Upper/Lower Cup + two Front Bodies in front,
+        // short fold back + strapped side back behind — so the per-half panel
+        // height + side-seam audit below maps for NEITHER half. The construction
+        // (piece set, fold, straps, band truing) is proven in bustier_check.
+        if (spec.cupSeam == 2 /*CupSeam::Bugra*/ &&
+            find("Upper Cup") && find("Back Body Center")) {
+            continue;
+        }
         // Yoke split (roba — doll / babydoll dress): the "Top <half>" panel (dart) or
         // the "Top Center/Side <half>" princess panels are REPLACED by a "<half> Yoke"
         // + "<half> Body" (dart), or "<half> Yoke Center/Side" + "<half> Body
@@ -753,6 +762,27 @@ double biasStripLength(const PatternPiece& p) {
 std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const DraftedPattern& draft,
                                           const BodyMeasurementsSnapshot& m) {
     std::vector<ValidationIssue> issues;
+
+    // Bugra corset (cupSeam == Bugra, construction actually built): the corset
+    // is finished with a FULL self-fabric lining (a guide step names it), which
+    // finishes the top edge, armholes and straps — no bias strip and no facing
+    // is drafted, exactly like the purchased Buğra pattern. Any leftover finish
+    // piece would be a bug, so only strays are flagged here.
+    {
+        bool bugraBuilt = false;
+        if (spec.cupSeam == 2 /*CupSeam::Bugra*/)
+            for (const auto& piece : draft.pieces)
+                if (piece.name == "Upper Cup") { bugraBuilt = true; break; }
+        if (bugraBuilt) {
+            for (const auto& piece : draft.pieces) {
+                if (piece.name.find("Neck Facing") != std::string::npos ||
+                    piece.name.find("Bias binding") != std::string::npos)
+                    issues.push_back({"facing", piece.name,
+                        "stray edge-finish piece on a Bugra corset (the full lining finishes every edge)"});
+            }
+            return issues;
+        }
+    }
 
     // Bias binding edge finish (patch 3.10, DEFAULT). A collarless, non-halter
     // neck bound with edgeFinish == BiasBinding carries ONE bias binding strip —
