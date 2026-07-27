@@ -73,6 +73,7 @@ for (const item of MANIFEST) {
     reason: res.reason || null,
     confidence: res.confidence,
     ratios: res.ratios,
+    ratioNull: res.ratioNull || null,
     px: res.debug && res.debug.px ? res.debug.px : null,
     groundUniformity: res.debug ? res.debug.groundUniformity : null,
     tol: res.debug ? res.debug.tol : null,

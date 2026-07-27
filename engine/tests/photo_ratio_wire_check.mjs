@@ -87,6 +87,98 @@ for (const [name, m, lw, hw] of [
   if (!(r.hemToWaistWidth >= hw[0] && r.hemToWaistWidth <= hw[1])) fail(`foto ${name}: hem/bel ${r.hemToWaistWidth} beklenen bandin (${hw}) disinda`);
 }
 
+// ---- 0) SEMA MANDALI: worker ratios{} 7 alaninin HEPSI olcum ciktisinda ----
+// (goz kolu v1, 2026-07-28). Anahtar listesi worker.js kaynagından okunur:
+// worker semasi degisirse bu test bilincli guncellenene kadar kirmizi.
+const workerSrc = readFileSync(join(root, 'backend/worker.js'), 'utf8');
+const ratiosLine = workerSrc.match(/"ratios": \{([^}]*)\}/);
+if (!ratiosLine) fail('worker.js ratios{} satiri bulunamadi — sema mandali kör');
+const workerKeys = [...(ratiosLine ? ratiosLine[1] : '').matchAll(/"(\w+)": number \| null/g)].map((m2) => m2[1]);
+if (workerKeys.length !== 7) fail(`worker ratios sema anahtari 7 degil (${workerKeys.length}: ${workerKeys})`);
+for (const k of workerKeys) {
+  if (!Object.prototype.hasOwnProperty.call(mA.ratios, k)) fail(`olcum ratios '${k}' alanini tasimiyor (worker sema uyumu kirik)`);
+  const v = mA.ratios[k];
+  if (v === null) {
+    if (!mA.ratioNull || typeof mA.ratioNull[k] !== 'string' || !mA.ratioNull[k]) {
+      fail(`ratios.${k} null ama ratioNull nedeni yok — durust null sozlesmesi kirik`);
+    }
+  } else if (typeof v !== 'number' || !Number.isFinite(v)) {
+    fail(`ratios.${k} sayi degil (${v})`);
+  }
+}
+// duz-omuzlu sentetik: yaka cukuru yok -> null + neden (0 UYDURULMAZ), v1 kol nedeni sabit.
+if (mA.ratios.neckDepthToLength !== null || (mA.ratioNull || {}).neckDepthToLength !== 'neck_dip_below_noise_floor') {
+  fail(`duz omuz sentetigi yaka derinligi uydurdu (${mA.ratios.neckDepthToLength} / ${(mA.ratioNull || {}).neckDepthToLength})`);
+}
+if (mA.ratios.sleeveLenToGarment !== null || (mA.ratioNull || {}).sleeveLenToGarment !== 'sleeve_not_separable_from_silhouette_v1') {
+  fail('sleeveLenToGarment v1 durust-null sozlesmesi kirik');
+}
+
+// ---- 0b) DETERMINIZM: ayni goruntu iki kosuda bayt-ayni JSON ----
+const detA1 = JSON.stringify(measureGarment(makeDressImage({ bustW: 200, waistW: 160, hemW: 200, len: 440 })));
+const detA2 = JSON.stringify(measureGarment(makeDressImage({ bustW: 200, waistW: 160, hemW: 200, len: 440 })));
+if (detA1 !== detA2) fail('determinizm kirik: ayni sentetik goruntu iki kosuda farkli JSON');
+
+// ---- 0c) POZITIF sentetik: askili + yaka cukurlu elbise, yeni alanlar olculur ----
+// tasarim: L=400, omuz genisligi 200 (dis kenarlar), 2 ask? 12px, yaka cukuru 30px.
+function makeStrapDressImage() {
+  const pad = 40;
+  const bustW = 200;
+  const len = 400;
+  const strapW = 12;
+  const neckDrop = 30;
+  const W = 320 + 2 * pad;
+  const H = len + 2 * pad;
+  const data = new Uint8ClampedArray(W * H * 4);
+  for (let p = 0; p < W * H; p++) {
+    data[p * 4] = 236; data[p * 4 + 1] = 229; data[p * 4 + 2] = 218; data[p * 4 + 3] = 255;
+  }
+  const cx = W / 2;
+  const ink = (x, y) => {
+    const o = (y * W + x) * 4;
+    data[o] = 40; data[o + 1] = 45; data[o + 2] = 90; data[o + 3] = 255;
+  };
+  // straps: outer edges at +-bustW/2, rows pad..pad+neckDrop
+  for (let y = 0; y < neckDrop; y++) {
+    for (let dx = 0; dx < strapW; dx++) {
+      ink(Math.round(cx - bustW / 2) + dx, pad + y);
+      ink(Math.round(cx + bustW / 2) - dx, pad + y);
+    }
+  }
+  // body: bust 200 -> waist 150 (40%) -> hem 260, filled
+  const stops = [[0, bustW], [0.4, 150], [1, 260]];
+  const widthAt = (f) => {
+    for (let i = 1; i < stops.length; i++) {
+      if (f <= stops[i][0]) {
+        const [f0, w0] = stops[i - 1];
+        const [f1, w1] = stops[i];
+        return w0 + (w1 - w0) * ((f - f0) / (f1 - f0));
+      }
+    }
+    return 260;
+  };
+  for (let y = neckDrop; y < len; y++) {
+    const half = widthAt((y - neckDrop) / (len - neckDrop - 1)) / 2;
+    for (let x = Math.round(cx - half); x <= Math.round(cx + half); x++) ink(x, pad + y);
+  }
+  return { data, width: W, height: H };
+}
+const mS = measureGarment(makeStrapDressImage());
+if (!mS.ok) fail(`askili sentetik reddedildi (${mS.reason})`);
+else {
+  const rs = mS.ratios;
+  // tasarim degerleri: neckDepth 30/400=0.075, neckWidth ~(200-2*12)/200=0.88, strap 12/200=0.06
+  if (!(rs.neckDepthToLength >= 0.06 && rs.neckDepthToLength <= 0.09)) {
+    fail(`askili sentetik yaka derinligi ${rs.neckDepthToLength}, tasarim 0.075 bandi (0.06-0.09) disi`);
+  }
+  if (!(rs.neckWidthToShoulder >= 0.8 && rs.neckWidthToShoulder <= 0.95)) {
+    fail(`askili sentetik yaka/omuz ${rs.neckWidthToShoulder}, tasarim 0.88 bandi (0.8-0.95) disi`);
+  }
+  if (!(rs.strapWidthToShoulder >= 0.045 && rs.strapWidthToShoulder <= 0.075)) {
+    fail(`askili sentetik aski/omuz ${rs.strapWidthToShoulder}, tasarim 0.06 bandi (0.045-0.075) disi`);
+  }
+}
+
 // 1) OLCUM KAPISI: LLM'in ratios cevabi (anchor-echo 1.55) ASLA hayatta kalmaz.
 const LLM_ECHO = { lengthToWidth: 1.55, hemToWaistWidth: 1.55 };
 const seenA = { garment: 'dress', waistline: 'natural', skirtStyle: 'aLine', ratios: { ...LLM_ECHO } };
