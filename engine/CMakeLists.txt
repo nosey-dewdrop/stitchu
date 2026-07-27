@@ -82,6 +82,11 @@ add_test(NAME skirtlen_refresh_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/te
 # compile_dialect_check: compile() web lehçesini (waistline/fabric/skirtLengthMM)
 # meşru tanır — flat byte-identical, mm motora ulaşır, geçersiz değer dürüst red.
 add_test(NAME compile_dialect_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_dialect_check.mjs)
+# photo_ratio_wire_check: ölçülen oranlar kullanıcı akışına bağlı (2026-07-27).
+# Sayının tek kaynağı deterministik piksel ölçümü (measure.js); LLM ratios{}
+# yapısal ölü (ratiosMeasured tanığı). Aynı foto + farklı gövde -> farklı mm;
+# farklı L/W -> farklı spec (mm + fullness sınıfı); tablo + veto deterministik.
+add_test(NAME photo_ratio_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/photo_ratio_wire_check.mjs)
 
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)

@@ -12,7 +12,8 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=128';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM } from './vision-bridge.js?v=128';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness } from './vision-bridge.js?v=128';
+import { measureGarment } from './measure.js?v=128';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -406,18 +407,34 @@ function showSpec() {
       const loader = sewingLoader(t('create.spec.reading'));
       status.appendChild(loader);
       try {
-        const seenRaw = await analyzePhoto(file.files[0]);
+        const { reading: seenRaw, pixels } = await analyzePhoto(file.files[0]);
         // K1 contract gate: the vision answer must speak the SEMANTIC garment
         // language (contract/garment-spec.schema.json visionReading,
         // additionalProperties:false). Unknown fields are stripped, out-of-enum
         // values nulled — a render knob can never enter through this door.
         const { clean: seen, report: schemaStrikes } = validateVision(seenRaw);
         if (schemaStrikes.length) console.warn('vision schema strikes:', schemaStrikes);
+        // Olcum kapisi (2026-07-27): the NUMBERS come from the same canvas the
+        // labels came from, measured deterministically (measure.js). The LLM
+        // answer's ratios{} is never consumed: applyMeasuredRatios replaces it
+        // with the measurement, or with null when the measurement honestly
+        // refused (then the enum-default path drives, exactly as before, and
+        // the result screen says "standard proportions"). LLM = labels only.
+        applyMeasuredRatios(seen, measureGarment(pixels));
         spec.garment = seen.garment;
         if (seen.neckline) spec.neckline = seen.neckline;
         if (seen.sleeveStyle) spec.sleeveStyle = seen.sleeveStyle;
         if (seen.sleeveLength) spec.sleeveLength = seen.sleeveLength;
         if (seen.skirtStyle) spec.skirtStyle = seen.skirtStyle;
+        // Oran kablosu 2 — hemToWaistWidth's first consumer: the MEASURED
+        // hem-to-waist width picks the skirt fullness class inside the
+        // engine's existing enum (straight/aLine/gathered/halfCircle,
+        // thresholds at the midpoints of what each style actually drafts). A
+        // structural pleated/gore label outranks the ratio (pickSkirtFullness
+        // returns null and the label keeps driving). Placed BEFORE the host
+        // gates below so backSlit/hemShape/pocket see the final skirt style.
+        const fullness = pickSkirtFullness(seen);
+        if (fullness) spec.skirtStyle = fullness;
         if (seen.length) spec.skirtLength = seen.length;
         // Foto-oran kablosu: the measured ratios scale the hem to the WEARER's
         // own body — a continuous mm target next to the coarse mini/midi/maxi.
@@ -643,6 +660,11 @@ function showSpec() {
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
         // the honesty layer can tell the user what the pattern is missing).
         spec.seen = {
+          // Olcum kapisi: which proportion source drove this spec — true =
+          // the deterministic pixel measurement, false = the standard enum
+          // table (measurement honestly refused). The result screen prints
+          // the matching one-line note; no third (silent) state exists.
+          ratiosMeasured: seen.ratiosMeasured === true,
           closure: seen.closure || null,
           collar: seen.collar || null,
           straps: seen.straps || null,

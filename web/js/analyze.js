@@ -4,21 +4,27 @@ import { BACKEND_URL } from './config.js?v=128';
 
 export const photoAvailable = () => Boolean(BACKEND_URL);
 
-// Returns a data-URL-free base64 JPEG, longest edge capped at 1024 px.
+// Downscales once; the SAME canvas feeds both consumers: the base64 JPEG for
+// the label read (Worker) and the raw RGBA pixels for the deterministic ratio
+// measurement (measure.js, oran kablosu 2026-07-27). Longest edge 1024 px.
 async function downscale(file) {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, 1024 / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-  return dataUrl.slice(dataUrl.indexOf(',') + 1);
+  return { image: dataUrl.slice(dataUrl.indexOf(',') + 1), pixels };
 }
 
-// Returns {spec fields..., details} or throws with a user-safe message.
+// Returns { reading: {spec fields..., details}, pixels: ImageData } or throws
+// with a user-safe message. `pixels` is the exact canvas the Worker saw, so
+// the caller can measure ratios from the same image the labels came from.
 export async function analyzePhoto(file) {
-  const image = await downscale(file);
+  const { image, pixels } = await downscale(file);
   const res = await fetch(BACKEND_URL + '/api/analyze', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -40,5 +46,5 @@ export async function analyzePhoto(file) {
   if (!['skirt', 'dress', 'top'].includes(parsed.garment)) {
     throw new Error("That looks like something I can't draft yet (I do skirts, dresses and tops), pick below.");
   }
-  return parsed;
+  return { reading: parsed, pixels };
 }

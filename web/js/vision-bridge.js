@@ -488,18 +488,79 @@ export function pickBoxPleat(seen) {
 }
 
 
+// Olcum kapisi (2026-07-27, "LLM'den sayi istemeyi birak" adli raporu): the
+// SINGLE door through which numbers enter `seen`. The LLM's ratios{} answer is
+// never consumed (anchor-echo: minis clustered on the prompt's example 1.55);
+// the only trusted source is the deterministic pixel measurement (measure.js)
+// run on the SAME canvas the label read used. Rules:
+// - measurement ok:true AND confidence >= MEASURE_MIN_CONFIDENCE
+//   -> seen.ratios = the MEASURED ratios, seen.ratiosMeasured = true.
+// - anything else -> seen.ratios = null, ratiosMeasured = false: every ratio
+//   consumer below returns its honest default and the enum path drives,
+//   exactly as before the photo-ratio wire existed.
+// Returns 'measured' | 'standard' so the result screen can say which one
+// happened. Runs AFTER validateVision (the schema gate) in create.js.
+// measure.js refuses below its own 0.45 floor; the wiring demands a margin on
+// top because a wrong ratio silently reshapes the pattern, which is worse
+// than falling back to the standard table.
+export const MEASURE_MIN_CONFIDENCE = 0.6;
+export function applyMeasuredRatios(seen, measured) {
+  const trusted = !!(measured && measured.ok === true && measured.ratios &&
+    typeof measured.confidence === 'number' &&
+    measured.confidence >= MEASURE_MIN_CONFIDENCE);
+  seen.ratios = trusted ? measured.ratios : null;
+  seen.ratiosMeasured = trusted;
+  return trusted ? 'measured' : 'standard';
+}
+
+// Oran kablosu 2 (2026-07-27): the first consumer of the MEASURED
+// hemToWaistWidth — the skirt FULLNESS class. The measured hem-to-narrowest
+// width ratio picks between the engine's EXISTING skirt styles (no invented
+// motor parameter): thresholds sit at the midpoints of what each style
+// actually drafts on the EU38 demo body (waist 700, hip 940 mm):
+//   straight   hem = hip                    -> hem/waist ~ 1.34
+//   aLine      hem = hip + 4x60mm flare     -> hem/waist ~ 1.69
+//   gathered   hem = waist x 1.9 (skirt.hpp gatherRatio) -> 1.90
+//   halfCircle hem/waist = (r+L)/r, r=waist/pi, midi -> ~ 3.2
+// A structural pleated/gore label OUTRANKS the ratio: pleats and gore seams
+// are fold/seam constructions a width ratio cannot see, only the label read
+// can. A top has no skirt to shape. Out-of-contract-band values (0.5-5, the
+// schema band) return null honestly.
+export const SKIRT_FULLNESS_TABLE = [
+  { below: 1.51, style: 'straight' },
+  { below: 1.80, style: 'aLine' },
+  { below: 2.55, style: 'gathered' },
+  { below: Infinity, style: 'halfCircle' },
+];
+export function pickSkirtFullness(seen) {
+  if (!seen || seen.ratiosMeasured !== true) return null;
+  const r = seen.ratios;
+  if (!r || typeof r.hemToWaistWidth !== 'number' || !Number.isFinite(r.hemToWaistWidth)) return null;
+  if (r.hemToWaistWidth < 0.5 || r.hemToWaistWidth > 5) return null;
+  if (seen.garment === 'top') return null;
+  if (seen.skirtStyle === 'pleated' || seen.skirtStyle === 'gore') return null;
+  for (const row of SKIRT_FULLNESS_TABLE) {
+    if (r.hemToWaistWidth < row.below) return row.style;
+  }
+  return null;
+}
+
 // Foto-oran kablosu (2026-07-27): the first CONSUMER of visionReading.ratios.
 // Turns the measured photo proportions into a CONTINUOUS skirt length in mm,
 // scaled by the WEARER's own measurements — two different "midi" photos now
 // draft different hems. Returns 0 (= off, the mini/midi/maxi table drives)
-// whenever the read is not trustworthy. v1 honest scope: a DRESS with a
+// whenever the read is not trustworthy. Since 2026-07-27 the ratios feeding
+// this are the DETERMINISTIC pixel measurement only (applyMeasuredRatios):
+// seen.ratiosMeasured is the structural witness, an LLM ratios{} without it
+// returns 0. v1 honest scope: a DRESS with a
 // natural waist. Empire stays off (the engine's empire lengthExtraMM already
 // lengthens the skirt from the raised seam — feeding a seam-relative photo
-// measure on top would double-count); a skirt stays off (the prompt anchors
-// lengthToWidth to the BUST line, which a skirt photo does not have — that
-// read is not defined yet). The engine clamps 250-1200 as the safety band.
+// measure on top would double-count); a skirt stays off (the measurement
+// anchors lengthToWidth to the BUST line, which a skirt photo does not have —
+// that read is not defined yet). The engine clamps 250-1200 as the safety band.
 export function pickSkirtLengthMM(seen, body) {
-  const r = seen && seen.ratios;
+  if (!seen || seen.ratiosMeasured !== true) return 0;
+  const r = seen.ratios;
   if (!r || typeof r.lengthToWidth !== 'number' || !(r.lengthToWidth > 0)) return 0;
   if (!body || !(body.bust > 0) || !(body.backLength > 0)) return 0;
   if (seen.garment !== 'dress') return 0;
@@ -511,7 +572,12 @@ export function pickSkirtLengthMM(seen, body) {
   const garmentLenMM = r.lengthToWidth * bustFlatMM;    // shoulder → hem
   const skirtLenMM = garmentLenMM - body.backLength * 10; // minus nape → waist
   if (!Number.isFinite(skirtLenMM) || skirtLenMM <= 0) return 0;
-  return Math.round(skirtLenMM);
+  // Clamp to the engine's own 250-1200 safety band HERE, at the source: the
+  // wasm clamps silently but the API validator honestly rejects out-of-band,
+  // so an unclamped bridge value (a long maxi measuring 1204) would draft in
+  // the browser and 422 on the API — two paths, two languages. One clamp,
+  // one language (found by oran-kablo-proof.mjs on photo 13.50.29 + tall body).
+  return Math.round(Math.min(1200, Math.max(250, skirtLenMM)));
 }
 
 // Foto-anı bug fix (2026-07-27): the mm above used to be computed ONCE, at the

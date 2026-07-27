@@ -18,7 +18,10 @@ const { pickSkirtLengthMM, refreshSkirtLengthMM } = await import(join(root, 'web
 let fails = 0;
 const fail = (m) => { console.error('FAIL:', m); fails += 1; };
 
-const SEEN = { garment: 'dress', waistline: 'natural', ratios: { lengthToWidth: 2.2 } };
+// ratiosMeasured: true = olcum kapisi tanigi (2026-07-27, applyMeasuredRatios).
+// pickSkirtLengthMM artik bu tanik olmadan 0 doner (LLM sayilari yapisal olu);
+// bu fixture olcumden gecmis bir seen'i temsil eder.
+const SEEN = { garment: 'dress', waistline: 'natural', ratiosMeasured: true, ratios: { lengthToWidth: 2.2 } };
 const DEMO = { bust: 88, backLength: 40 };    // EU38 demo gövdesi (create.js DEMO_BODY)
 const USER = { bust: 102, backLength: 44 };   // kullanıcının gerçek ölçüsü
 
