@@ -339,6 +339,48 @@ def main():
     dashes = [c for c in joined if chain_len(c) < 22]
     dash_chains = [c for c in join_chains(dashes, 12) if chain_len(c) >= 30]
 
+    # SİMETRİ TAMAMLAMA (v6): referans flat'ler CF eksenine göre simetriktir;
+    # iskelet bir tarafta İZLEDİĞİ uzun yapısal çizgiyi (pens/dikiş/yaka kenarı)
+    # öbür tarafta kaçırdıysa aynasını ekle. ESTETİK KORUMASI (ink-asimetri
+    # dersi): kısa organik tiklere (büzgü/kırışık) DOKUNULMAZ — sadece uzun
+    # (>60px) zincir + aynada gerçekten iz yoksa (<0.35 kapsama). Silüetin
+    # kendisi simetrik değilse (wrap/asimetrik pat) pas tamamen atlanır.
+    mirrored_solid = []
+    if oc_xy:
+        xs_oc = [p[0] for p in oc_xy]
+        axis = 0.5 * (min(xs_oc) + max(xs_oc))
+        ocset2 = set((round(x), round(y)) for x, y in oc_xy)
+        hits = tot2 = 0
+        for x, y in oc_xy[::5]:
+            tot2 += 1
+            mx = round(2 * axis - x)
+            if any((mx+dx, round(y)+dy) in ocset2 for dy in (-3,-2,-1,0,1,2,3) for dx in (-3,-2,-1,0,1,2,3)):
+                hits += 1
+        if tot2 and hits / tot2 > 0.9:
+            skxy = set((x, y) for y, x in skel)   # iskelet (x,y)
+            def mirror_cov(c):
+                cnt = hit = 0
+                for x, y in c[::3]:
+                    mx, my = round(2*axis - x), round(y)
+                    cnt += 1
+                    if any((mx+dx, my+dy) in skxy or (mx+dx, my+dy) in ocset2
+                           for dy in (-4,-3,-2,-1,0,1,2,3,4) for dx in (-4,-3,-2,-1,0,1,2,3,4)):
+                        hit += 1
+                return hit / max(1, cnt)
+            for c in solid:
+                if chain_len(c) < 60:
+                    continue
+                xs_c = [p[0] for p in c]
+                # ekseni kesen ya da eksene yapışık (pat/CF) zincirler aynalanmaz
+                if min(xs_c) - axis < 12 and axis - max(xs_c) < 12:
+                    if (min(xs_c) < axis < max(xs_c)) or abs(0.5*(min(xs_c)+max(xs_c)) - axis) < 15:
+                        continue
+                if mirror_cov(c) < 0.35:
+                    mirrored_solid.append([(2*axis - x, y) for x, y in c])
+            if mirrored_solid:
+                print('simetri tamamlama:', len(mirrored_solid), 'zincir aynalandı')
+            solid = solid + mirrored_solid
+
     def to_path(xy, eps):
         simp = rdp(xy, eps)
         segs = catmull_to_bezier(simp)
