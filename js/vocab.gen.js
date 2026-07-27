@@ -344,7 +344,8 @@ export const VOCAB = {
     "enum": "CupSeam",
     "values": [
       "none",
-      "horizontal"
+      "horizontal",
+      "bugra"
     ]
   },
   "yoke": {
