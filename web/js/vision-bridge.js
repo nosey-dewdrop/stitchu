@@ -91,16 +91,30 @@ export function pickCollar(seen) {
   let edge = 'round';
   if (words.includes('scallop')) edge = 'scallop';
   else if (words.includes('point')) edge = 'pointed';
-  // Collar family.
-  let type = null;
-  if (words.includes('peter pan') || words.includes('peter-pan') || words.includes('bebe'))
-    type = 'peterPan';
-  else if (words.includes('mock') || words.includes('mandarin')) type = 'mock';
-  else if (words.includes('stand')) type = 'stand';
-  else if (words.includes('shirt') || words.includes('gömlek')) type = 'shirt';
-  else if (words.includes('scallop')) type = 'peterPan';   // scallop = a flat collar edge
-  else if (words.includes('rounded') || words.includes('round')) type = 'peterPan';
-  else if (words.includes('flat') || words.includes('collar')) type = 'flat';
+  // Collar family. The vision schema speaks a CLOSED camelCase enum
+  // (contract/garment-spec.schema.json collar.type: stand/shirt/peterPan/
+  // mandarin/notched/sailor/other) — map that enum FIRST, deterministically.
+  // 2026-07-27 kopuk kablo: the camelCase 'peterPan' fell through the
+  // 'peter pan'/'peter-pan' prose regex and the collar silently vanished; an
+  // enum value never goes through a prose regex again. notched/sailor are
+  // tailored collars the engine does not draft — an explicit null, the
+  // honesty card in missing.js names them. The prose regex below keeps
+  // serving the free-text channel (collar.name + outOfVocab) and 'other'.
+  const COLLAR_ENUM_MAP = { stand: 'stand', shirt: 'shirt', peterPan: 'peterPan', mandarin: 'mock' };
+  const enumType = seen.collar && seen.collar.type;
+  if (enumType === 'notched' || enumType === 'sailor') return null;
+  let type = COLLAR_ENUM_MAP[enumType] || null;
+  if (!type) {
+    if (words.includes('peter pan') || words.includes('peter-pan') ||
+        words.includes('peterpan') || words.includes('bebe'))
+      type = 'peterPan';
+    else if (words.includes('mock') || words.includes('mandarin')) type = 'mock';
+    else if (words.includes('stand')) type = 'stand';
+    else if (words.includes('shirt') || words.includes('gömlek')) type = 'shirt';
+    else if (words.includes('scallop')) type = 'peterPan';   // scallop = a flat collar edge
+    else if (words.includes('rounded') || words.includes('round')) type = 'peterPan';
+    else if (words.includes('flat') || words.includes('collar')) type = 'flat';
+  }
   if (!type) return null;
   return { type, edge };
 }
@@ -498,4 +512,17 @@ export function pickSkirtLengthMM(seen, body) {
   const skirtLenMM = garmentLenMM - body.backLength * 10; // minus nape → waist
   if (!Number.isFinite(skirtLenMM) || skirtLenMM <= 0) return 0;
   return Math.round(skirtLenMM);
+}
+
+// Foto-anı bug fix (2026-07-27): the mm above used to be computed ONCE, at the
+// moment the photo was analyzed — usually against the EU38 demo body — and
+// never again when the user entered her OWN measurements. This is the single
+// re-derive rule create.js calls on EVERY spec-screen entry (measurement
+// wizard done, profile switched): the photo read is a RATIO, the mm must
+// always be ratio x the CURRENT body. A hand-picked mini/midi/maxi is an
+// explicit order (create.js sets handPicked) — the photo mm stays dropped
+// until a NEW photo is read. Returns the mm the spec should carry.
+export function refreshSkirtLengthMM(currentMM, photoSeen, body, handPicked) {
+  if (!photoSeen || handPicked) return currentMM || 0;
+  return pickSkirtLengthMM(photoSeen, body);
 }

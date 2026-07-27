@@ -69,6 +69,20 @@ add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_c
 # eşleşen styleKey yokken plain dart/scoop REFERANS tank'e degrade OLMAMALI (ikame).
 add_test(NAME bridge_guard COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/bridge_guard.mjs)
 
+# 27 Tem kopuk kablo mandalları (json-el adli raporu): dört sessiz kopukluk.
+# api_wire_check: skirtLengthMM API yolunda motora ULAŞIR (backend normalize
+# spec taşır, web=backend aynı mm, 353!=1100 kalıp, 0/atlanmış default aynı).
+add_test(NAME api_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/api_wire_check.mjs)
+# collar_bridge_check: şema enum'unun HER collar tipi ya köprüde çizilir ya
+# missing.js kartına düşer — peterPan camelCase sessiz-düşme sınıfı ölü.
+add_test(NAME collar_bridge_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/collar_bridge_check.mjs)
+# skirtlen_refresh_check: foto mm'i gövdeyi İZLER (foto-anı donması yasak),
+# elle mini/midi/maxi seçimi mm'i düşük tutar, create.js kablosu takılı.
+add_test(NAME skirtlen_refresh_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/skirtlen_refresh_check.mjs)
+# compile_dialect_check: compile() web lehçesini (waistline/fabric/skirtLengthMM)
+# meşru tanır — flat byte-identical, mm motora ulaşır, geçersiz değer dürüst red.
+add_test(NAME compile_dialect_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_dialect_check.mjs)
+
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
 add_test(NAME ruffle_check COMMAND ruffle_check)

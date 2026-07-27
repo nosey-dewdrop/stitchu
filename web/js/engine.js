@@ -80,7 +80,9 @@ export async function grade(spec, fromLabel, toLabel) {
 
 // The single named-object spec the WASM boundary takes (34 positional args
 // died 2026-07-18 — a one-slot shift silently drafted a different dress).
-function engineSpec(spec) {
+// Exported so the API round-trip test (engine/tests/api_wire_check.mjs) can
+// prove the web path and the backend path hand the SAME values to the engine.
+export function engineSpec(spec) {
   return {
     garment: spec.garment,
     shaping: spec.shaping ?? 'dart',

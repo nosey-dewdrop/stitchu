@@ -16,6 +16,22 @@ import {createHash} from 'node:crypto';
 // EU38 standart vücut (draftJSON için) — sizechart.hpp EU38.
 const BODY = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 };
 
+// WEB LEHÇESİ (2026-07-27 kopuk kablo fix): create.js spec'i waistline/fabric/
+// skirtLengthMM taşır. Bunlar motorun GERÇEK draftJSON alanları (draftSpec
+// zaten waistline/fabric default'luyor; skirtLengthMM ctest skirtlen_check'li)
+// ama cümle-grameri slot'u olmadıkları için validateSpec onları
+// 'eksik_primitif' sayıp TÜM spec'i üretilemez yapıyordu — iç boru hattı ile
+// web ayrı dil konuşuyordu. Burada meşru alan olarak ayıklanır, DEĞERİ
+// doğrulanır (geçersizse dürüst red, sessiz düşme yok) ve motora AYNEN
+// taşınır. Flat kalemi bu alanları okumaz → flat byte-identical kalır
+// (compile_dialect_check bunu kanıtlar).
+const WEB_DIALECT = {
+  waistline: (v) => v === 'natural' || v === 'empire',
+  fabric: (v) => v === 'woven' || v === 'knit',
+  skirtLengthMM: (v) => v === 0 ||
+    (typeof v === 'number' && Number.isFinite(v) && v >= 250 && v <= 1200),
+};
+
 // spec'i draftJSON'un beklediği tam şekle genişlet (eksik alanlar default enum).
 function draftSpec(spec) {
   // full circle etek = iki yarım-daireden kesilir → motor SkirtStyle::HalfCircle
@@ -34,6 +50,9 @@ function draftSpec(spec) {
     sleeveStyle: isCap ? 'straight' : (spec.sleeve || 'none'), sleeveLength: spec.sleeveLength || 'short',
     sleeveCap: isCap ? 'cap' : undefined,
     skirtStyle: skirt, skirtLength: spec.length || 'midi',
+    // Web lehçesi kablosu: sürekli mm hedefi motora AYNEN geçer (0 = kapalı,
+    // tablo sürer — engine.js/draft.js ile aynı sözleşme).
+    skirtLengthMM: (typeof spec.skirtLengthMM === 'number' && spec.skirtLengthMM > 0) ? spec.skirtLengthMM : 0,
     topLength: spec.topLength || 'hip',
     // draftSpec tieClosure enum idx (vocab.gen.hpp kTieClosure): tieBack=4,
     // frontWaistTie=6, wrapFront=7, frontWaistBow=8. Bel bağı dirndl dress'te
@@ -54,11 +73,28 @@ function draftSpec(spec) {
 //   { ok:true, flat, kalip, specHash }  — üretildi
 //   { ok:false, uretilemez:true, eksik_primitif, ... }  — boşluk raporu
 export async function compile(rawSpec, opts = {}) {
+  // 0) web lehçesi alanlarını ayıkla: gramer cümle-primitifi değiller ama
+  // motorun meşru alanları. Değer geçersizse dürüst red (sessiz düşme yok);
+  // geçerliyse gramer doğrulamasından SONRA spec'e geri takılır.
+  const dialect = {};
+  const grammarCandidate = { ...rawSpec };
+  for (const [key, okFn] of Object.entries(WEB_DIALECT)) {
+    const v = grammarCandidate[key];
+    if (v === undefined || v === null) continue;
+    delete grammarCandidate[key];
+    if (!okFn(v)) {
+      return { ok: false, uretilemez: true, eksik_primitif: [`${key}=${v}`],
+               not: `web lehçesi alanı ${key} geçersiz değer taşıyor`, anlasilan: rawSpec };
+    }
+    dialect[key] = v;
+  }
+
   // 1) gramere karşı doğrula — eksik/uydurma primitif varsa ÜRETME
-  const { spec, eksik_primitif, reddedilen } = validateSpec(rawSpec);
+  const { spec, eksik_primitif, reddedilen } = validateSpec(grammarCandidate);
   if (eksik_primitif.length > 0) {
     return { ok: false, uretilemez: true, eksik_primitif, reddedilen, anlasilan: spec };
   }
+  Object.assign(spec, dialect);
   if (!spec.garment) {
     return { ok: false, uretilemez: true, eksik_primitif: ['garment-belirtilmedi'], anlasilan: spec };
   }
