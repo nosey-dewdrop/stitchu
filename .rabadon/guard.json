@@ -45,8 +45,8 @@
     },
     {
       "id": "generated-web-html",
-      "match": "web/.*\\.html$",
-      "why": "CLAUDE.md SEO: 'Elle HTML düzenleme YOK' — pages are produced by gen-pattern-pages.mjs / gen-collection-pattern.mjs / gen-style-pages.mjs; change the generator."
+      "match": "web/(patterns|collections|styles|guide|blog)/.*\\.html$",
+      "why": "CLAUDE.md SEO: 'Elle HTML düzenleme YOK' — THESE dirs are produced by gen-pattern-pages.mjs / gen-collection-pattern.mjs / gen-style-pages.mjs / gen-guide.mjs; change the generator. Root pages (index/create/closet/studio/...) are hand-written and hand-edited (scoped 2026-07-28: the old web/.*html match blocked legitimate root-page work)."
     },
     {
       "id": "generated-sitemap-robots",
