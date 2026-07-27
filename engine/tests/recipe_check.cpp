@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include "../src/constants.gen.hpp"
 #include "../src/recipe.hpp"
 #include "../src/skirt.hpp"
 #include "../src/validator.hpp"

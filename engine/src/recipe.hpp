@@ -8,10 +8,13 @@
 // v1 scope seal (RECETE-SPEC §4): ops move/line/curve/close, dart, marking
 // move/line, grainline, piece meta; formulas + - * / unary minus parens and
 // min/max/clamp/gate; `when` only on marking entries; one recipe
-// (skirt.aline.dart). Nothing else parses — unknown anything is Err.
+// (skirt.aline.dart). v1.1 (RECETE-SPEC §6, 2026-07-28): + hypot, + shoulderMM,
+// + the sealed `top` kernel (square / tunic / spaghetti / dart / woven — the
+// shift-dress recipe). Nothing else parses — unknown anything is Err.
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "geometry.hpp"
 #include "measurements.hpp"
@@ -59,6 +62,11 @@ const std::string& recipeId(const Recipe& recipe);
 // against its motor-header counterpart so an un-pinned recipe cannot drift
 // silently when skirt.hpp / constants.gen.hpp move.
 const std::map<std::string, double>& recipeConsts(const Recipe& recipe);
+
+// Declared param names in document order. Tools that bind ONE positional value
+// (recipe-json-dump) resolve it against a single-param recipe through this —
+// no hardcoded param-name mapping.
+std::vector<std::string> recipeParamNames(const Recipe& recipe);
 
 // Execute (RECETE-SPEC §3, fixed order): bind measurements (listed value <= 0
 // = Err) + params (range-enforced), evaluate consts → global scalars → piece

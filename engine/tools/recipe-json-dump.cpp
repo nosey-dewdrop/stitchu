@@ -3,7 +3,9 @@
 // (wasm/bindings.cpp), so web/js/sheet.js can pack it into A4 print sheets and
 // engine/tools/render-recipe.mjs can render the PNG visual proof (RULES
 // invariant 3: the PNG path goes in the report, or the step did not happen).
-//   usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder> <lengthMM>
+//   usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder> <paramMM>
+//   (paramMM binds to the recipe's SINGLE declared param — lengthMM for the
+//   skirt recipe, extendMM for the shift-dress recipe; no hardcoded name.)
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -60,7 +62,7 @@ std::string commandsJSON(const std::vector<PathCommand>& commands) {
 
 int main(int argc, char** argv) {
     if (argc < 4) {
-        std::fprintf(stderr, "usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder> <lengthMM>\n");
+        std::fprintf(stderr, "usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder> <paramMM>\n");
         return 2;
     }
     const auto loaded = recipe::loadRecipeFile(argv[1]);
@@ -74,9 +76,15 @@ int main(int argc, char** argv) {
     else if (body == "pear") m = {96, 70, 116, 37, 41, 58, 36};
     else if (body == "bigNeckSmallShoulder") m = {100, 84, 104, 30, 40, 58, 50};
     else { std::fprintf(stderr, "unknown body '%s'\n", body.c_str()); return 2; }
-    const double lengthMM = std::strtod(argv[3], nullptr);
+    const double paramMM = std::strtod(argv[3], nullptr);
+    const auto paramNames = recipe::recipeParamNames(loaded.value);
+    if (paramNames.size() != 1) {
+        std::fprintf(stderr, "recipe declares %zu params; this tool binds exactly one positional value\n",
+                     paramNames.size());
+        return 2;
+    }
 
-    const auto drafted = recipe::draftRecipe(loaded.value, m, {{"lengthMM", lengthMM}});
+    const auto drafted = recipe::draftRecipe(loaded.value, m, {{paramNames[0], paramMM}});
     if (!drafted.ok) {
         std::fprintf(stderr, "draftRecipe failed: %s\n", drafted.error.c_str());
         return 1;

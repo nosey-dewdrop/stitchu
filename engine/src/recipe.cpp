@@ -13,12 +13,15 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <set>
 #include <sstream>
 
+#include "garment.hpp"
 #include "skirt.hpp"
+#include "strap.hpp"
 
 namespace stitchu {
 namespace recipe {
@@ -203,7 +206,7 @@ const JValue& asArr(const JValue& v, const std::string& where) {
 // ---------------------------------------------------------------------------
 // 2. formula language (RECETE-SPEC §2.1).
 struct Expr {
-    enum class K { Num, Var, Add, Sub, Mul, Div, Neg, Min, Max, Clamp, Gate };
+    enum class K { Num, Var, Add, Sub, Mul, Div, Neg, Min, Max, Clamp, Gate, Hypot };
     K k = K::Num;
     double num = 0;
     std::string name;        // Var
@@ -301,7 +304,8 @@ private:
             else if (name == "max") e.k = Expr::K::Max;
             else if (name == "clamp") e.k = Expr::K::Clamp;
             else if (name == "gate") e.k = Expr::K::Gate;
-            else fail(where_ + ": unknown function '" + name + "' (v1 allows min/max/clamp/gate only)");
+            else if (name == "hypot") e.k = Expr::K::Hypot;
+            else fail(where_ + ": unknown function '" + name + "' (v1.1 allows min/max/clamp/gate/hypot only)");
             const size_t arity = (e.k == Expr::K::Clamp) ? 3 : 2;
             if (args.size() != arity)
                 fail(where_ + ": '" + name + "' takes " + std::to_string(arity) + " arguments, got " + std::to_string(args.size()));
@@ -351,6 +355,11 @@ double evalExpr(const Expr& e, const std::map<std::string, double>& env) {
             const double t = evalExpr(e.kids[1], env);
             return x >= t ? x : 0.0;
         }
+        case Expr::K::Hypot:
+            // v1.1 (RECETE-SPEC §6): the SAME libm call the motor makes
+            // (bodice.cpp shoulder truing + armhole chord/tangent), not a
+            // sqrt(a*a+b*b) imitation — the byte gate rests on this.
+            return std::hypot(evalExpr(e.kids[0], env), evalExpr(e.kids[1], env));
     }
     return 0.0;
 }
@@ -451,9 +460,12 @@ struct ParamDef {
 struct RecipeDoc {
     std::string id;
     std::string title;
-    // sealed kernel block — the only enum source (RECETE-SPEC §2.2).
+    // sealed kernel block — the only enum source (RECETE-SPEC §2.2, §6).
     GarmentType garment = GarmentType::Skirt;
-    SkirtStyle skirtStyle = SkirtStyle::ALine;
+    SkirtStyle skirtStyle = SkirtStyle::ALine;   // skirt kernel only
+    Neckline neckline = Neckline::Square;        // top kernel only
+    TopLength topLength = TopLength::Tunic;      // top kernel only
+    StrapStyle strapStyle = StrapStyle::None;    // top kernel only
     Shaping shaping = Shaping::Dart;
     Fabric fabric = Fabric::Woven;
     std::vector<std::string> measurements;
@@ -472,6 +484,7 @@ double measurementValue(const BodyMeasurementsSnapshot& m, const std::string& na
     if (name == "bustMM") return m.bustMM();
     if (name == "waistMM") return m.waistMM();
     if (name == "hipMM") return m.hipMM();
+    if (name == "shoulderMM") return m.shoulderMM();
     if (name == "backLengthMM") return m.backLengthMM();
     if (name == "neckMM") return m.neckMM();
     if (name == "upperBustMM") return m.upperBustMM();
@@ -479,7 +492,8 @@ double measurementValue(const BodyMeasurementsSnapshot& m, const std::string& na
 }
 bool knownMeasurement(const std::string& name) {
     return name == "bustMM" || name == "waistMM" || name == "hipMM" ||
-           name == "backLengthMM" || name == "neckMM" || name == "upperBustMM";
+           name == "shoulderMM" || name == "backLengthMM" || name == "neckMM" ||
+           name == "upperBustMM";
 }
 
 GarmentType parseGarmentEnum(const std::string& s) {
@@ -677,14 +691,41 @@ std::shared_ptr<const RecipeDoc> parseDoc(const std::string& jsonText) {
     const std::string units = asStr(need(obj, "units", where), where + ".units");
     if (units != "mm") fail(where + ".units: '" + units + "' is not supported (mm only)");
 
-    // sealed kernel block: fixed closed-enum quadruple, nothing else.
+    // sealed kernel block: garment-keyed closed key sets (RECETE-SPEC §2.2, §6).
     const std::string kw = where + ".kernel";
     const JValue& kernel = asObj(need(obj, "kernel", where), kw);
-    checkKeys(kernel, {"garment", "skirtStyle", "shaping", "fabric"}, kw);
     doc->garment = parseGarmentEnum(asStr(need(kernel, "garment", kw), kw + ".garment"));
-    doc->skirtStyle = parseSkirtStyleEnum(asStr(need(kernel, "skirtStyle", kw), kw + ".skirtStyle"));
-    doc->shaping = parseShapingEnum(asStr(need(kernel, "shaping", kw), kw + ".shaping"));
-    doc->fabric = parseFabricEnum(asStr(need(kernel, "fabric", kw), kw + ".fabric"));
+    if (doc->garment == GarmentType::Skirt) {
+        checkKeys(kernel, {"garment", "skirtStyle", "shaping", "fabric"}, kw);
+        doc->skirtStyle = parseSkirtStyleEnum(asStr(need(kernel, "skirtStyle", kw), kw + ".skirtStyle"));
+        doc->shaping = parseShapingEnum(asStr(need(kernel, "shaping", kw), kw + ".shaping"));
+        doc->fabric = parseFabricEnum(asStr(need(kernel, "fabric", kw), kw + ".fabric"));
+    } else if (doc->garment == GarmentType::Top) {
+        // v1.1 seal (RECETE-SPEC §6): every enum carries exactly the value the
+        // shipped shift-dress recipe proves; an unproven value is Err — it gets
+        // in with its own recipe + ctest proof, never by guess.
+        checkKeys(kernel, {"garment", "neckline", "topLength", "straps", "shaping", "fabric"}, kw);
+        const std::string neckline = asStr(need(kernel, "neckline", kw), kw + ".neckline");
+        if (neckline != "square")
+            fail(kw + ".neckline: '" + neckline + "' is outside the v1.1 seal (square only; a new neckline enters with its own recipe + proof)");
+        doc->neckline = Neckline::Square;
+        const std::string topLength = asStr(need(kernel, "topLength", kw), kw + ".topLength");
+        if (topLength != "tunic")
+            fail(kw + ".topLength: '" + topLength + "' is outside the v1.1 seal (tunic only)");
+        doc->topLength = TopLength::Tunic;
+        const std::string straps = asStr(need(kernel, "straps", kw), kw + ".straps");
+        if (straps != "spaghetti")
+            fail(kw + ".straps: '" + straps + "' is outside the v1.1 seal (spaghetti only)");
+        doc->strapStyle = StrapStyle::Spaghetti;
+        doc->shaping = parseShapingEnum(asStr(need(kernel, "shaping", kw), kw + ".shaping"));
+        if (doc->shaping != Shaping::Dart)
+            fail(kw + ".shaping: the top kernel v1.1 is dart-only (a princess split needs curveSplitAtX, which is not in the language)");
+        doc->fabric = parseFabricEnum(asStr(need(kernel, "fabric", kw), kw + ".fabric"));
+        if (doc->fabric != Fabric::Woven)
+            fail(kw + ".fabric: the top kernel v1.1 is woven-only (the recipe's ease consts are style-resolved to woven; a knit recipe declares its own document + proof)");
+    } else {
+        fail(kw + ".garment: 'dress' has no recipe kernel yet — the shift dress rides the top kernel; the waist-seam dress (skirt composition) is a future extension with its own proof (RECETE-SPEC §6)");
+    }
 
     // one visible scope chain: measurements + params + consts + global scalars.
     std::set<std::string> scope;
@@ -711,7 +752,10 @@ std::shared_ptr<const RecipeDoc> parseDoc(const std::string& jsonText) {
         if (!(def.min < def.max)) fail(pw + ": min must be < max");
         if (const JValue* table = pv.find("table")) {
             def.table = asStr(*table, pw + ".table");
-            // v1 seal: the only known K1 table reference.
+            // v1 seal: the only known K1 table reference, and it is skirt-only
+            // (a top param is plain-ranged, RECETE-SPEC §6).
+            if (doc->garment != GarmentType::Skirt)
+                fail(pw + ".table: table bindings are skirt-only (draft.skirtLengthMM); a top param carries no table");
             if (def.table != "draft.skirtLengthMM")
                 fail(pw + ".table: unknown table '" + def.table + "'");
             if (!doc->lengthParam.empty())
@@ -759,6 +803,18 @@ std::shared_ptr<const RecipeDoc> parseDoc(const std::string& jsonText) {
     if (doc->garment == GarmentType::Skirt && doc->lengthParam.empty())
         fail(where + ".params: a skirt recipe needs one param bound to table draft.skirtLengthMM");
 
+    // the top kernel's services + the validator attach to the canonical piece
+    // names (RECETE-SPEC §6 positional contract) — enforce them at parse time.
+    if (doc->garment == GarmentType::Top) {
+        bool front = false, back = false;
+        for (const auto& piece : doc->pieces) {
+            front = front || piece.name == "Top Front";
+            back = back || piece.name == "Top Back";
+        }
+        if (!front || !back)
+            fail(where + ".pieces: a top recipe must carry pieces named 'Top Front' and 'Top Back' (canonical names the kernel services and the validator attach to)");
+    }
+
     return doc;
 }
 
@@ -793,13 +849,26 @@ Result<Recipe> loadRecipeFile(const std::string& path) {
 
 GarmentSpec kernelSpec(const Recipe& recipe) {
     // built ONLY from the sealed kernel block; every other field keeps its
-    // GarmentSpec default (all opt-ins off).
+    // GarmentSpec default (all opt-ins off; a top's sleeveStyle stays the
+    // default None — the v1.1 top kernel is sleeveless by construction).
     GarmentSpec spec;
     spec.garment = recipe.doc->garment;
     spec.shaping = recipe.doc->shaping;
     spec.fabric = recipe.doc->fabric;
-    spec.skirtStyle = recipe.doc->skirtStyle;
+    if (recipe.doc->garment == GarmentType::Skirt) {
+        spec.skirtStyle = recipe.doc->skirtStyle;
+    } else if (recipe.doc->garment == GarmentType::Top) {
+        spec.neckline = recipe.doc->neckline;
+        spec.topLength = recipe.doc->topLength;
+        spec.ruffledStraps = static_cast<int>(recipe.doc->strapStyle);
+    }
     return spec;
+}
+
+std::vector<std::string> recipeParamNames(const Recipe& recipe) {
+    std::vector<std::string> names;
+    for (const auto& def : recipe.doc->params) names.push_back(def.name);
+    return names;
 }
 
 const std::string& recipeId(const Recipe& recipe) { return recipe.doc->id; }
@@ -816,10 +885,16 @@ Result<DraftedPattern> draftRecipe(
     using R = Result<DraftedPattern>;
     const RecipeDoc& doc = *recipe.doc;
     try {
-        // v1 interpreter executes skirt kernels; anything else is refused
-        // honestly (the drawing layer is generic, the kernel services are not).
-        if (doc.garment != GarmentType::Skirt)
-            fail("draft: kernel garment '" + std::string(raw(doc.garment)) + "' is not supported by the v1 interpreter (skirt only)");
+        // v1.1 interpreter executes skirt + top kernels; anything else is
+        // refused honestly (the drawing layer is generic, the kernel services
+        // are not). Parse already refuses non-skirt/top, belt and suspenders.
+        if (doc.garment != GarmentType::Skirt && doc.garment != GarmentType::Top)
+            fail("draft: kernel garment '" + std::string(raw(doc.garment)) + "' is not supported by the v1.1 interpreter (skirt + top only)");
+        // Top kernel honest refusal (RECETE-SPEC §6): the shipped recipe is
+        // resolved to the 7-measurement fallback frame (bust - underbustOffset);
+        // a given upper bust would be SILENTLY ignored — refuse instead.
+        if (doc.garment == GarmentType::Top && m.upperBustMM() > 0)
+            fail("draft: the top kernel v1.1 drafts the 7-measurement frame; an upper-bust value would be silently ignored (the full-bust adjustment is not expressible in the recipe language yet) — refused");
 
         // params: enforced range, no missing, no smuggled keys (RULES inv 1).
         for (const auto& kv : params) {
@@ -849,7 +924,10 @@ Result<DraftedPattern> draftRecipe(
         for (const ScalarDef& def : doc.scalars) env[def.id] = evalExpr(def.f, env);
 
         DraftedPattern pattern;
-        pattern.garment = std::string(title(doc.skirtStyle)) + " skirt";
+        pattern.garment = doc.garment == GarmentType::Skirt
+            ? std::string(title(doc.skirtStyle)) + " skirt"
+            // TopBlock::draft verbatim (sleeveless -> empty sleeve word).
+            : std::string(raw(doc.topLength)) + " top";
         for (const PieceDef& def : doc.pieces) {
             std::map<std::string, double> penv = env;
             for (const ScalarDef& sdef : def.scalars) penv[sdef.id] = evalExpr(sdef.f, penv);
@@ -907,11 +985,13 @@ Result<DraftedPattern> draftRecipe(
             pattern.pieces.push_back(std::move(piece));
         }
 
-        // ---- kernel post services, verbatim policy (RECETE-SPEC §3 step 6).
-        // fabric estimate + guide: enum args from the sealed kernel block; the
-        // continuous length rides the param DECLARED as draft.skirtLengthMM in
-        // the document (no hidden mapping). The SkirtLength enum argument is
-        // dead when the override is > 0 (resolvedLength, skirt.cpp:12-16).
+        // ---- kernel post services, verbatim policy (RECETE-SPEC §3 step 6,
+        // §6 for the top kernel). Enum args from the sealed kernel block only.
+        if (doc.garment == GarmentType::Skirt) {
+        // fabric estimate + guide: the continuous length rides the param
+        // DECLARED as draft.skirtLengthMM in the document (no hidden mapping).
+        // The SkirtLength enum argument is dead when the override is > 0
+        // (resolvedLength, skirt.cpp:12-16).
         const double lengthMM = env.at(doc.lengthParam);
         pattern.fabricAdviceKey = "skirt";
         pattern.fabricMeters140 = SkirtBlock::fabricEstimate(
@@ -932,6 +1012,66 @@ Result<DraftedPattern> draftRecipe(
         // a standalone skirt whose pieces already carry grainlines: the notch
         // rules key on "Skirt"-prefixed dress piece names and the closure rule
         // on a dress zipper — neither applies here. Nothing to add.
+        } else {
+        // ---- top kernel (RECETE-SPEC §6), motor call order verbatim
+        // (TopBlock::draft then GarmentDrafter::draft): edge finish ->
+        // fabric -> guide -> straps -> technical annotations -> cut lines.
+        const PatternPiece* front = nullptr;
+        const PatternPiece* back = nullptr;
+        for (const auto& piece : pattern.pieces) {
+            if (piece.name == "Top Front") front = &piece;
+            if (piece.name == "Top Back") back = &piece;
+        }
+        // parse guarantees both names exist; keep the honest guard anyway.
+        if (!front || !back) fail("draft: canonical pieces 'Top Front'/'Top Back' missing");
+        // canonical-order armhole measurement — the SAME structural walk the
+        // validator uses (validator.cpp topSideSeamLength): from the end skip
+        // close + the trailing center-edge lines; the last three curves are
+        // [armhole, side-to-hem, hem-to-center]; the armhole starts at the
+        // previous command's endpoint (the shoulder tip). Length is measured
+        // off the DRAWN cubic, exactly like the motor measures its own
+        // (bodice.cpp makePiece armholeLen) — the edge can never drift from
+        // the geometry.
+        auto armholeArc = [](const PatternPiece& piece) -> double {
+            const auto& cmds = piece.commands;
+            size_t hemEnd = cmds.size() - 1;
+            while (hemEnd > 0 && (cmds[hemEnd].type == CmdType::Close ||
+                                  cmds[hemEnd].type == CmdType::Line)) --hemEnd;
+            if (hemEnd < 3 || cmds[hemEnd].type != CmdType::Curve ||
+                cmds[hemEnd - 1].type != CmdType::Curve ||
+                cmds[hemEnd - 2].type != CmdType::Curve)
+                fail("draft: piece does not follow the canonical top outline order (RECETE-SPEC §6) — the armhole cannot be measured");
+            return pathLength({PathCommand::move(cmds[hemEnd - 3].to), cmds[hemEnd - 2]});
+        };
+        // motor sum order: back half + front half (bodice.cpp:890-891).
+        const double armholeLength = armholeArc(*back) + armholeArc(*front);
+        // front piece height = frontLength + extension (the drawn hem center),
+        // measured before any piece is appended (pointers stay valid).
+        const double frontHeight = boundingBox(front->commands).height;
+        // edge finish: the DEFAULT bias binding (patch 3.10) — one strip binds
+        // the neckline + both sleeveless armholes (garment.cpp
+        // edgeFinishPieces -> BodiceBlock::biasBinding, verbatim).
+        pattern.pieces.push_back(BodiceBlock::biasBinding(
+            BodiceBlock::neckEdgeLength(m, doc.neckline) + armholeLength * 2,
+            "neckline + armholes"));
+        // fabric estimate: TopBlock::draft verbatim, same addition order.
+        pattern.fabricAdviceKey = "top";
+        double meters = frontHeight * 2 * 1.15 / 1000 + BodiceBlock::bindingFabricMeters;
+        meters += BodiceBlock::armholeBiasFabricMeters(armholeLength);
+        pattern.fabricMeters140 = roundToPlaces(meters, 1);
+        // sewing guide: the kernel's own step builder (extracted verbatim from
+        // TopBlock::draft), enum context from the sealed kernel block only.
+        pattern.guideSteps = TopBlock::guide(kernelSpec(recipe), /*halter=*/false,
+            /*biasNeck=*/true, /*sleeveless=*/true, /*frontPrincess=*/false,
+            /*backPrincess=*/false, /*waistEnds=*/false);
+        // straps: the motor's own post-pass, verbatim — it measures the drafted
+        // shoulder points itself, stamps the placement notches, adds the strap
+        // piece + its guide step + its fabric share (strap.cpp).
+        StrapBlock::apply(pattern, doc.strapStyle);
+        // technical annotations: grainline fallback + balance notches, the
+        // same pass every motor draft runs; a top carries no CB zipper.
+        GarmentDrafter::annotateTechnical(pattern, /*dressZipper=*/false);
+        }
         // cutting lines: the motor's final pass verbatim (garment.cpp:1040-1046).
         for (auto& piece : pattern.pieces) {
             if (piece.name.find("Ruffle") != std::string::npos ||
