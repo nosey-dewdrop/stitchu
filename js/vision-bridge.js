@@ -473,3 +473,29 @@ export function pickBoxPleat(seen) {
   return null;
 }
 
+
+// Foto-oran kablosu (2026-07-27): the first CONSUMER of visionReading.ratios.
+// Turns the measured photo proportions into a CONTINUOUS skirt length in mm,
+// scaled by the WEARER's own measurements — two different "midi" photos now
+// draft different hems. Returns 0 (= off, the mini/midi/maxi table drives)
+// whenever the read is not trustworthy. v1 honest scope: a DRESS with a
+// natural waist. Empire stays off (the engine's empire lengthExtraMM already
+// lengthens the skirt from the raised seam — feeding a seam-relative photo
+// measure on top would double-count); a skirt stays off (the prompt anchors
+// lengthToWidth to the BUST line, which a skirt photo does not have — that
+// read is not defined yet). The engine clamps 250-1200 as the safety band.
+export function pickSkirtLengthMM(seen, body) {
+  const r = seen && seen.ratios;
+  if (!r || typeof r.lengthToWidth !== 'number' || !(r.lengthToWidth > 0)) return 0;
+  if (!body || !(body.bust > 0) || !(body.backLength > 0)) return 0;
+  if (seen.garment !== 'dress') return 0;
+  if (seen.waistline === 'empire') return 0;
+  // Flat front width at the bust ≈ (bust + wearing ease) / 2. The 1.08 here is
+  // a bridge ESTIMATE for photo scaling only — the drafted ease stays the
+  // engine's own fabric-dependent table.
+  const bustFlatMM = body.bust * 10 * 1.08 / 2;
+  const garmentLenMM = r.lengthToWidth * bustFlatMM;    // shoulder → hem
+  const skirtLenMM = garmentLenMM - body.backLength * 10; // minus nape → waist
+  if (!Number.isFinite(skirtLenMM) || skirtLenMM <= 0) return 0;
+  return Math.round(skirtLenMM);
+}

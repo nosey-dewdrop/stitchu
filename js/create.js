@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=125';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat } from './vision-bridge.js?v=125';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, pickSkirtLengthMM } from './vision-bridge.js?v=125';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -405,6 +405,10 @@ function showSpec() {
         if (seen.sleeveLength) spec.sleeveLength = seen.sleeveLength;
         if (seen.skirtStyle) spec.skirtStyle = seen.skirtStyle;
         if (seen.length) spec.skirtLength = seen.length;
+        // Foto-oran kablosu: the measured ratios scale the hem to the WEARER's
+        // own body — a continuous mm target next to the coarse mini/midi/maxi.
+        // 0 = not trustworthy → the table drives, exactly as before.
+        spec.skirtLengthMM = pickSkirtLengthMM(seen, values);
         if (seen.topLength) spec.topLength = seen.topLength;
         if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
         if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
@@ -772,7 +776,13 @@ function showSpec() {
       for (const [value, label, trOption] of group.options) {
         const b = el('button', 'choice', getLang() === 'tr' ? trOption : label);
         b.setAttribute('aria-pressed', String(spec[group.key] === value));
-        b.addEventListener('click', () => { spec[group.key] = value; rebuild(); });
+        b.addEventListener('click', () => {
+          spec[group.key] = value;
+          // A hand-picked length is an explicit order: drop the photo-measured
+          // mm override so mini/midi/maxi does exactly what it says.
+          if (group.key === 'skirtLength') spec.skirtLengthMM = 0;
+          rebuild();
+        });
         row.appendChild(b);
       }
       g.appendChild(row);

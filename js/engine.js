@@ -91,6 +91,8 @@ function engineSpec(spec) {
     sleeveLength: spec.sleeveLength ?? 'short',
     skirtStyle: spec.skirtStyle ?? 'aLine',
     skirtLength: spec.skirtLength ?? 'midi',
+    // Foto-oran kablosu: continuous mm target (0 = off, the table drives).
+    skirtLengthMM: (typeof spec.skirtLengthMM === 'number' && spec.skirtLengthMM > 0) ? spec.skirtLengthMM : 0,
     topLength: spec.topLength ?? 'hip',
     ruffleHem: (spec.ruffle ?? 'none') !== 'none',
     ruffleTiers: spec.ruffle === 'tiered' ? 3 : 1,
