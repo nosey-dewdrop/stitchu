@@ -33,13 +33,17 @@ struct SkirtJoin {
 };
 
 DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                     Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven);
+                     Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
+                     double lengthOverrideMM = 0);
 
 // Skirt pieces alone, reusable by the dress block (waistband optional).
 // The dress block passes the bodice's measured sewn waist as targetWaistMM so
 // the skirt waist seam matches the seam it attaches to; an empire dress also
 // passes lengthExtraMM (the seam sits higher, the skirt runs longer and the
 // hip line sits deeper below the seam).
+// lengthOverrideMM (foto-oran kablosu): >0 replaces the mini/midi/maxi table
+// value with a continuous target length (clamped 250-1200); hip depth stays
+// governed by lengthExtraMM alone. 0 = off, byte-identical.
 std::vector<PatternPiece> pieces(
     const BodyMeasurementsSnapshot& m,
     SkirtStyle style,
@@ -49,19 +53,20 @@ std::vector<PatternPiece> pieces(
     Shaping shaping = Shaping::Princess,
     Fabric fabric = Fabric::Woven,
     double lengthExtraMM = 0,
-    const SkirtJoin* join = nullptr);
+    const SkirtJoin* join = nullptr,
+    double lengthOverrideMM = 0);
 
 PatternPiece waistbandPiece(double waistMM, Fabric fabric = Fabric::Woven);
 
 // Rough estimate for 140cm-wide fabric, 10% cutting margin.
 double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
                       Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
-                      double lengthExtraMM = 0);
+                      double lengthExtraMM = 0, double lengthOverrideMM = 0);
 
 // Finished (sewn) hem circumference in mm — the edge a hem ruffle trims.
 double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
                           Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
-                          double lengthExtraMM = 0);
+                          double lengthExtraMM = 0, double lengthOverrideMM = 0);
 
 std::vector<std::string> guide(SkirtStyle style, Shaping shaping = Shaping::Princess,
                                Fabric fabric = Fabric::Woven);

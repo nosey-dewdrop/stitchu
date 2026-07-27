@@ -273,7 +273,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     const bool useJoin = shaping == Shaping::Princess;
     std::vector<PatternPiece> skirtPieces = SkirtBlock::pieces(
         m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist,
-        shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr);
+        shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr, spec.skirtLengthMM);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
         // Half-circle panels already carry the word; avoid "Skirt Skirt Panel".
@@ -305,7 +305,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // the old facing allowance. Golden dumps subtract whichever was added.
     const double neckFinishMeters = (halter || biasNeck)
         ? BodiceBlock::bindingFabricMeters : BodiceBlock::facingFabricMeters;
-    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, shaping, spec.fabric, skirtExtra) + 0.7 + neckFinishMeters;
+    double meters = SkirtBlock::fabricEstimate(m, spec.skirtStyle, spec.skirtLength, shaping, spec.fabric, skirtExtra, spec.skirtLengthMM) + 0.7 + neckFinishMeters;
     if (!sleeves.empty()) meters += spec.sleeveLength == SleeveLength::Long ? 0.7 : 0.4;
     // A sleeveless (non-halter) garment bias-binds both armholes (a real piece in
     // the default finish, a step in the facing finish) — count the self-fabric
@@ -615,7 +615,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     DraftedPattern pattern;
     switch (spec.garment) {
         case GarmentType::Skirt:
-            pattern = SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
+            pattern = SkirtBlock::draft(m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric,
+                                        spec.skirtLengthMM);
             break;
         case GarmentType::Dress:
             pattern = DressBlock::draft(spec, m);
@@ -877,7 +878,8 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         const double hemMM = topPeplumRuffle
             ? PeplumBlock::hemCircumferenceMM(static_cast<PeplumStyle>(spec.peplum), m.waistMM())
             : SkirtBlock::hemCircumferenceMM(
-                  m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric);
+                  m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric,
+                  /*lengthExtraMM=*/0, spec.skirtLengthMM);
         const auto ruffles = RuffleBlock::draftTiers(
             hemMM, spec.ruffleFullness, spec.ruffleDepthMM, spec.ruffleTiers);
         pattern.pieces.insert(pattern.pieces.end(), ruffles.begin(), ruffles.end());

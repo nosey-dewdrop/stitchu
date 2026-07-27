@@ -3,6 +3,7 @@
 #include <emscripten/bind.h>
 
 #include <algorithm>
+#include <cmath>
 #include <string>
 
 #include "../src/garment.hpp"
@@ -114,6 +115,12 @@ GarmentSpec buildSpec(const val& o) {
     spec.sleeveLength = sleeveLengthFrom(strField(o, "sleeveLength", "short"));
     spec.skirtStyle = skirtStyleFrom(strField(o, "skirtStyle", "aLine"));
     spec.skirtLength = skirtLengthFrom(strField(o, "skirtLength", "midi"));
+    // Foto-oran kablosu: sürekli etek boyu (mm). Alan yoksa/0 ise tablo sürer;
+    // motor 250-1200 kelepçeler. Negatif/NaN 0 sayılır (opt-in kapalı).
+    {
+        const double lenMM = numField(o, "skirtLengthMM");
+        spec.skirtLengthMM = (std::isfinite(lenMM) && lenMM > 0) ? lenMM : 0;
+    }
     spec.topLength = topLengthFrom(strField(o, "topLength", "hip"));
     spec.ruffleHem = boolField(o, "ruffleHem");
     const int tiers = intField(o, "ruffleTiers");

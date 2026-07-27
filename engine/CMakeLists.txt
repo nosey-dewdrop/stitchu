@@ -117,6 +117,10 @@ add_executable(slit_check tests/slit_check.cpp)
 target_link_libraries(slit_check PRIVATE engine)
 add_test(NAME slit_check COMMAND slit_check)
 
+add_executable(skirtlen_check tests/skirtlen_check.cpp)
+target_link_libraries(skirtlen_check PRIVATE engine)
+add_test(NAME skirtlen_check COMMAND skirtlen_check)
+
 add_executable(strap_check tests/strap_check.cpp)
 target_link_libraries(strap_check PRIVATE engine)
 add_test(NAME strap_check COMMAND strap_check)

@@ -234,6 +234,12 @@ struct GarmentSpec {
     SleeveCap sleeveCap = SleeveCap::Plain;
     SkirtStyle skirtStyle = SkirtStyle::ALine;
     SkirtLength skirtLength = SkirtLength::Midi;
+    // Opt-in CONTINUOUS skirt length (foto-oran kablosu): target waist-seam→hem
+    // length in mm, measured from the photo's ratios × the wearer's own body.
+    // 0 = off → the mini/midi/maxi contract table drives, byte-identical.
+    // Engine clamps to [250, 1200] mm; hip depth is NOT coupled (empire's
+    // lengthExtraMM keeps that job).
+    double skirtLengthMM = 0;
     TopLength topLength = TopLength::Hip;
     // Opt-in hem ruffle (fırfır). Off by default → existing drafts unchanged.
     bool ruffleHem = false;

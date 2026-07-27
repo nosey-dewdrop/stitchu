@@ -126,6 +126,15 @@ export function validateDraftRequest(body) {
     }
   }
 
+  // Optional continuous skirt length (foto-oran kablosu): number in the same
+  // band the engine clamps to; anything else is a clean 422, not a silent 0.
+  if (spec.skirtLengthMM !== undefined && spec.skirtLengthMM !== null && spec.skirtLengthMM !== 0) {
+    const sl = spec.skirtLengthMM;
+    if (typeof sl !== 'number' || !Number.isFinite(sl) || sl < 250 || sl > 1200) {
+      return { error: 'invalid_value', detail: 'spec.skirtLengthMM must be a number between 250 and 1200 (mm), or 0/omitted', field: 'spec.skirtLengthMM' };
+    }
+  }
+
   // Measurements: all seven required, numeric, in range (cm).
   const measurements = {};
   for (const [key, [lo, hi]] of Object.entries(MEASURE_RANGE)) {
@@ -197,6 +206,8 @@ function engineSpec(spec) {
     fabric: spec.fabric, neckline: spec.neckline,
     sleeveStyle: spec.sleeveStyle, sleeveLength: spec.sleeveLength,
     skirtStyle: spec.skirtStyle, skirtLength: spec.skirtLength, topLength: spec.topLength,
+    // Foto-oran kablosu: continuous mm target (0 = off, the table drives).
+    skirtLengthMM: (typeof spec.skirtLengthMM === 'number' && spec.skirtLengthMM > 0) ? spec.skirtLengthMM : 0,
     ruffleHem: spec.ruffle !== 'none', ruffleTiers: spec.ruffle === 'tiered' ? 3 : 1,
     keyhole: spec.keyhole === 'keyhole', frontPlacket: spec.frontPlacket === true,
     tieClosure: tieInt(spec.tieClosure), sleeveCap: sleeveCapInt(spec.sleeveCap),

@@ -518,6 +518,72 @@ export const VISION_SCHEMA = {
         "null"
       ],
       "maxLength": 400
+    },
+    "ratios": {
+      "description": "MEASURED garment proportions (foto-oran kablosu): each value is one garment measurement divided by another garment measurement, so flat-lay and worn photos read the same. null per-field when not visible.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hemToWaistWidth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0.5,
+          "maximum": 5
+        },
+        "lengthToWidth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0.2,
+          "maximum": 6
+        },
+        "neckDepthToLength": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 0.6
+        },
+        "neckWidthToShoulder": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1.2
+        },
+        "sleeveLenToGarment": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1.5
+        },
+        "waistYToLength": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "strapWidthToShoulder": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 0.5
+        }
+      }
     }
   }
 };

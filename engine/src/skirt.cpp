@@ -7,6 +7,14 @@ namespace stitchu {
 namespace SkirtBlock {
 namespace {
 
+// Foto-oran kablosu: >0 ise sürekli hedef boy (mm) tabloyu ezer; güvenlik
+// kelepçesi 250-1200 (mini altı / kuyruklu üstü draft'ı burada kesilir).
+double resolvedLength(SkirtLength length, double lengthOverrideMM) {
+    if (lengthOverrideMM > 0)
+        return std::clamp(lengthOverrideMM, 250.0, 1200.0);
+    return millimeters(length);
+}
+
 double flare(SkirtStyle style) {
     switch (style) {
         case SkirtStyle::ALine: return 60;
@@ -403,7 +411,8 @@ std::vector<PatternPiece> pieces(
     Shaping shaping,
     Fabric fabric,
     double lengthExtraMM,
-    const SkirtJoin* join
+    const SkirtJoin* join,
+    double lengthOverrideMM
 ) {
     const double fullWaist = targetWaistMM.value_or(m.waistMM() * (1 + waistEaseFor(fabric)));
     const double waistQuarter = fullWaist / 4;
@@ -412,7 +421,7 @@ std::vector<PatternPiece> pieces(
     const double hipQuarter = std::max(m.hipMM() * (1 + hipEaseFor(fabric)) / 4, waistQuarter);
     // Empire dresses: the seam sits higher, so the skirt runs longer and the
     // hip line sits deeper below the seam.
-    const double len = millimeters(length) + lengthExtraMM;
+    const double len = resolvedLength(length, lengthOverrideMM) + lengthExtraMM;
     const double hipDepthMM = hipDepth + lengthExtraMM;
 
     std::vector<PatternPiece> result;
@@ -471,8 +480,8 @@ std::vector<PatternPiece> pieces(
 }
 
 double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                      Shaping shaping, Fabric fabric, double lengthExtraMM) {
-    const double len = millimeters(length) + lengthExtraMM;
+                      Shaping shaping, Fabric fabric, double lengthExtraMM, double lengthOverrideMM) {
+    const double len = resolvedLength(length, lengthOverrideMM) + lengthExtraMM;
     double meters = 0;
     switch (style) {
         case SkirtStyle::ALine:
@@ -515,8 +524,8 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
 }
 
 double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                          Shaping shaping, Fabric fabric, double lengthExtraMM) {
-    const double len = millimeters(length) + lengthExtraMM;
+                          Shaping shaping, Fabric fabric, double lengthExtraMM, double lengthOverrideMM) {
+    const double len = resolvedLength(length, lengthOverrideMM) + lengthExtraMM;
     switch (style) {
         case SkirtStyle::ALine:
         case SkirtStyle::Straight: {
@@ -622,12 +631,14 @@ std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric)
 }
 
 DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                     Shaping shaping, Fabric fabric) {
+                     Shaping shaping, Fabric fabric, double lengthOverrideMM) {
     DraftedPattern pattern;
     pattern.garment = std::string(title(style)) + " skirt";
-    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping, fabric);
+    pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping, fabric,
+                            /*lengthExtraMM=*/0, /*join=*/nullptr, lengthOverrideMM);
     pattern.fabricAdviceKey = "skirt";
-    pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping, fabric);
+    pattern.fabricMeters140 = fabricEstimate(m, style, length, shaping, fabric,
+                                             /*lengthExtraMM=*/0, lengthOverrideMM);
     // The guide derives from what was DRAFTED, not from what was requested: on
     // a body with no waist-to-hip shaping the princess gore split resolves to
     // plain panels, and a guide sewing gore seams that don't exist is a lie

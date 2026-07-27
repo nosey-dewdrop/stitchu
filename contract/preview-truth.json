@@ -413,6 +413,18 @@
    "skirtStyle": "halfCircle",
    "skirtLength": "midi",
    "topLength": "hip"
+  },
+  "dress_vneck_aline": {
+   "garment": "dress",
+   "shaping": "princess",
+   "waistline": "natural",
+   "fabric": "woven",
+   "neckline": "vNeck",
+   "sleeveStyle": "none",
+   "sleeveLength": "short",
+   "skirtStyle": "aLine",
+   "skirtLength": "mini",
+   "topLength": "hip"
   }
  },
  "structuralAllow": [
