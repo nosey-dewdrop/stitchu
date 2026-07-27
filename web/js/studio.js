@@ -6,8 +6,8 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, loadEngine } from './engine.js?v=129';
-import { pathD, bounds } from './sheet.js?v=129';
+import { draftRecipe, loadEngine } from './engine.js?v=130';
+import { pathD, bounds } from './sheet.js?v=130';
 
 const $ = (id) => document.getElementById(id);
 
@@ -315,7 +315,7 @@ function downloadSVG() {
 
 // ------------------------------------------------------------------ startup
 async function loadRecipe(entry) {
-  const res = await fetch(`recipes/${entry.file}?v=129`);
+  const res = await fetch(`recipes/${entry.file}?v=130`);
   if (!res.ok) throw new Error(`recipe fetch failed: HTTP ${res.status}`);
   state.text = await res.text();
   state.doc = JSON.parse(state.text); // form metadata only; the engine re-parses
@@ -335,7 +335,7 @@ async function init() {
   // re-evaluation itself, not the one-off engine download.
   const warmup = loadEngine().catch(() => {});
   try {
-    const res = await fetch('recipes/index.json?v=129');
+    const res = await fetch('recipes/index.json?v=130');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.recipes = (await res.json()).recipes;
   } catch (e) {
