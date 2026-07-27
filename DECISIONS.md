@@ -146,3 +146,11 @@
 - KANIT: IndexNow HTTP 202 (kabul), 121 URL submit. Key dosyası canlıda HTTP 200 (ownership doğrulanır). Google ping endpoint'i kapalı (404, beklenen) -> Google sitemap'i doğal/GSC'den okur.
 - NOT: gerçek canlı domain Vercel (stitchu.noseydewdrop.com, ?v=125); gh-pages de 200 döner ama canonical her yerde noseydewdrop.com -> duplicate content Google tarafından doğru çözülür.
 - GERİ ALMA: ucuz (key dosyası + tool sil, deploy.sh adımı çıkar).
+
+## 2026-07-27 oran kablosu + bayat cache + tracer sınırları
+- Karar: vision şemasına ratios{} (7 ölçülü oran, giysi÷giysi — flat-lay/worn aynı okunur, gövdeye bölme YOK). Sebep: 22 alanın hepsi etiketti, fotoğraftan tek sayı akmıyordu ("iki farklı A-line maxi aynı kalıp" kökü). GERİ ALMA: ucuz (prompt alanı, tüketici opt-in).
+- Karar: motor skirtLengthMM opt-in sürekli etek boyu (250-1200 kelepçe, hipDepth AYRIK, kapalıyken byte-identical; ctest skirtlen_check). Köprü v1 kapsamı: natural-bel dress (empire=lengthExtraMM çift-sayım riski, skirt=oran tanımsız → bilinçli 0). Elle boy seçimi mm'i düşürür. GERİ ALMA: orta (contract+bindings+JS zinciri; opt-in olduğu için davranışsız geri alınabilir).
+- Karar: teşhis/sayaç işi CANLI yeniden ölçümsüz yapılmaz. Sebep: 18 Tem cache bayattı, 3 hafta yanlış pusula (halter hataları canlıda çoktan ölmüştü; taze tarama FULL 27→39/54). Araç: vision-probe.mjs (tam hasat bankalar) + benchmark taze koşu. GERİ ALMA: yok (süreç kuralı).
+- Karar: tracer düğmeleri iskelet zincirinden değil BAĞLI BİLEŞENDEN yakalar (iskelet daireyi kırar); sahte-mühür bekçileri bbox 9-26 + halka tutarlılığı. GERİ ALMA: ucuz.
+- Karar: styles.json "v" flat iç sözlüğüdür, kontrat enum'una çevrilmez (pinli stiller kırılır — denendi, geri alındı); enum düzeltmesi preview-truth draft tarafında.
+- Tespit (karar Damla'nın): taklit hattının duvarı girdi kalitesi — golden'lar 260px thumbnail, dokulu flat'lerde eşik tabanlı ink çıkarımı çöküyor. Yol: kenar-haritası + Bugra vektör PDF 4x rasterize (mm bağlama bedava başlar) + yüksek-çöz yeniden capture.
