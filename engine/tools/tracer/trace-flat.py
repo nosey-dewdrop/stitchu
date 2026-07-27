@@ -84,6 +84,14 @@ def rdp(pts, eps):
     if len(pts) < 3:
         return pts
     a, b = np.array(pts[0], float), np.array(pts[-1], float)
+    if np.hypot(*(b - a)) < 1e-6:
+        # KAPALI DÖNGÜ: uçlar çakışık -> kord 0, klasik RDP her şeyi 2 noktaya
+        # indirir (dış kontur sessizce kaybolur). En uzak noktadan ikiye böl.
+        dists = [np.hypot(p[0]-a[0], p[1]-a[1]) for p in pts]
+        k = int(np.argmax(dists))
+        if k <= 0 or k >= len(pts) - 1:
+            return [pts[0], pts[-1]]
+        return rdp(pts[:k+1], eps)[:-1] + rdp(pts[k:], eps)
     ab = b - a
     L = np.hypot(*ab) or 1.0
     d = [abs(ab[0]*(p[1]-a[1]) - ab[1]*(p[0]-a[0])) / L for p in pts[1:-1]]
@@ -173,36 +181,90 @@ def close_mask(m, r=3):
     return e
 
 
+def flood_bg(nonink):
+    """zemin taraması: kenarlardan ulaşılabilir non-ink pikseller (BFS).
+    Zemine ULAŞAMAYAN boşluk = kapalı iç bölge — dolgu olmayan çizimde
+    (kalıp parçası: içi beyaz kontur) silüeti tanım gereği kapalı yapar."""
+    from collections import deque
+    H, W = nonink.shape
+    bg = np.zeros((H, W), bool)
+    q = deque()
+    for x in range(W):
+        for y in (0, H-1):
+            if nonink[y, x] and not bg[y, x]:
+                bg[y, x] = True; q.append((y, x))
+    for y in range(H):
+        for x in (0, W-1):
+            if nonink[y, x] and not bg[y, x]:
+                bg[y, x] = True; q.append((y, x))
+    while q:
+        cy, cx = q.popleft()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            ny, nx = cy+dy, cx+dx
+            if 0 <= ny < H and 0 <= nx < W and nonink[ny, nx] and not bg[ny, nx]:
+                bg[ny, nx] = True; q.append((ny, nx))
+    return bg
+
+
+def largest_region(mask):
+    """maskede en büyük 4-bağlı bileşen (BFS)."""
+    from collections import deque
+    H, W = mask.shape
+    lab = np.zeros((H, W), bool)
+    best = None
+    for sy, sx in zip(*np.nonzero(mask)):
+        if lab[sy, sx]:
+            continue
+        comp = [(sy, sx)]; lab[sy, sx] = True; q = deque(comp)
+        while q:
+            cy, cx = q.popleft()
+            for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                ny, nx = cy+dy, cx+dx
+                if 0 <= ny < H and 0 <= nx < W and mask[ny, nx] and not lab[ny, nx]:
+                    lab[ny, nx] = True; q.append((ny, nx)); comp.append((ny, nx))
+        if best is None or len(comp) > len(best):
+            best = comp
+    out = np.zeros((H, W), bool)
+    if best:
+        ys = [p[0] for p in best]; xs = [p[1] for p in best]
+        out[ys, xs] = True
+    return out
+
+
 def outer_contour(mask):
     """SİLÜET SINIRI = tek KAPALI kesintisiz eğri (Moore boundary trace).
     Kesik imkânsız: dolu bölgenin sınırı tanım gereği kapalı döngüdür."""
     ys, xs = np.nonzero(mask)
     if not len(ys):
         return []
-    start = (ys[xs == xs[ys.argmin()]].min() if False else ys.min(), 0)
-    # en üst satırdaki en soldaki dolu piksel
+    # en üst satırdaki en soldaki dolu piksel; batısı tanım gereği boş
     top = ys.min()
-    start = (top, xs[ys == top].min())
-    DIRS = [(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1)]
-    def inside(p):
+    s = (top, xs[ys == top].min())
+    CW = [(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1)]  # saat yönü
+    def filled(p):
         return 0 <= p[0] < mask.shape[0] and 0 <= p[1] < mask.shape[1] and mask[p]
-    contour = [start]
-    prev_dir = 6  # geldiğimiz yön (batı)
-    cur = start
+    contour = [s]
+    b0 = (s[0], s[1] - 1)   # ilk backtrack: batı komşusu (boş)
+    b, c = b0, s
     for _ in range(200000):
-        found = False
-        for k in range(8):
-            d = (prev_dir + 6 + k) % 8   # sağ el kuralı
-            nxt = (cur[0] + DIRS[d][0], cur[1] + DIRS[d][1])
-            if inside(nxt):
-                contour.append(nxt)
-                prev_dir = d
-                cur = nxt
-                found = True
+        # backtrack'ten saat yönünde tarayarak ilk dolu komşuya geç
+        # (ders kitabı Moore-komşu izleme; önceki sürüm sağ-el sezgiseliydi ve
+        # 1px çıkıntıda minik döngüye takılıp izi yarım bırakıyordu)
+        bi = CW.index((b[0] - c[0], b[1] - c[1]))
+        nxt = None
+        for k in range(1, 9):
+            d = CW[(bi + k) % 8]
+            p = (c[0] + d[0], c[1] + d[1])
+            if filled(p):
+                nxt = p
+                pb = CW[(bi + k - 1) % 8]
+                b = (c[0] + pb[0], c[1] + pb[1])
                 break
-        if not found:
-            break
-        if cur == start and len(contour) > 10:
+        if nxt is None:
+            break               # izole piksel
+        c = nxt
+        contour.append(c)
+        if c == s and b == b0:  # Jacob durması: aynı backtrack ile ikinci giriş
             break
     return contour
 
@@ -217,8 +279,48 @@ def main():
     A = np.asarray(im)
     ink = (A < INK).astype(np.uint8)
     fill = ((A < 240) & (A >= INK)).astype(np.uint8)
-    # SİLÜET: mürekkep + dolgu birlikte, kapatılmış -> dış kontur tek kapalı eğri
-    sil = close_mask((ink | fill).astype(bool), 3)
+    # SİLÜET yol 1 (dolgusuz çizim, ör. kalıp parçası): zemin flood — kenardan
+    # ulaşılamayan boşluk = kapalı iç bölge. Antialias iğne deliği sızdırmasın
+    # diye ink 1px şişirilerek taranır. İç bölge anlamlıysa ana parça dışındaki
+    # mürekkep bileşenleri (komşu parça artığı) atılır.
+    ink1 = ink.astype(bool).copy()
+    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+        ink1 |= np.roll(np.roll(ink.astype(bool), dy, 0), dx, 1)
+    interior = ~flood_bg(~ink1) & ~ink1
+    sil = None
+    if interior.sum() > 0.02 * A.size:
+        main_int = largest_region(interior)
+        keep = main_int.copy()
+        for _ in range(4):
+            n = keep.copy()
+            for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                n |= np.roll(np.roll(keep, dy, 0), dx, 1)
+            keep = n
+        # ana iç bölgeye değmeyen mürekkep bileşenlerini at (BFS etiketleme)
+        from collections import deque as _dq
+        inkb = ink.astype(bool); lab = np.zeros(A.shape, bool)
+        dropped = 0
+        for sy, sx in zip(*np.nonzero(inkb)):
+            if lab[sy, sx]:
+                continue
+            comp = [(sy, sx)]; lab[sy, sx] = True; q = _dq(comp); touch = False
+            while q:
+                cy, cx = q.popleft()
+                if keep[cy, cx]:
+                    touch = True
+                for dy, dx in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)):
+                    ny, nx = cy+dy, cx+dx
+                    if 0 <= ny < A.shape[0] and 0 <= nx < A.shape[1] and inkb[ny, nx] and not lab[ny, nx]:
+                        lab[ny, nx] = True; q.append((ny, nx)); comp.append((ny, nx))
+            if not touch:
+                dropped += 1
+                for cy, cx in comp:
+                    ink[cy, cx] = 0
+        print('zemin-flood: iç bölge px', int(main_int.sum()), '| atılan dış bileşen:', dropped)
+        sil = close_mask(ink.astype(bool) | main_int, 3)
+    if sil is None:
+        # SİLÜET yol 2 (eski davranış, dolgulu flat): mürekkep + dolgu birlikte
+        sil = close_mask((ink | fill).astype(bool), 3)
     # en büyük bileşeni al (etiketleme pahalı; flood yerine: sınır izinden gelen kontur zaten en üst bileşen)
     if fill.sum() > 500:
         er = fill.copy()
@@ -271,15 +373,22 @@ def main():
     H, W = A.shape
 
     xychains = [[(p[1], p[0]) for p in pa] for pa in paths]
-    # DIŞ KONTUR: silüet sınır HALKASI (sil - erode) tek piksel genişliğinde kapalı
-    # yoldur; zincir yürüteçle gez, en uzun zincir = kesintisiz dış kontur.
-    er2 = sil.copy()
-    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
-        er2 = er2 & np.roll(np.roll(sil, dy, 0), dx, 1)
-    ring = (sil & ~er2).astype(np.uint8)
-    ring_paths = paths_from_skeleton(ring)
-    ring_chains = join_chains([[(p[1], p[0]) for p in pa] for pa in ring_paths], 8)
-    oc_list = [c for c in ring_chains if chain_len(c) > 60]
+    # DIŞ KONTUR: Moore sınır izi — dolu bölgenin sınırı TANIM GEREĞİ tek kapalı
+    # döngü (v3 iddiasının gerçek uygulaması; halka-iskelet yolu kesik/çentik
+    # çıkıntılarında kavşak üretip bölünüyordu, o yol artık yedek).
+    # Moore en üst pikselden başlar — artık/parça kalıntısı yanıltmasın diye
+    # en büyük silüet bileşeninden izlenir.
+    moore = outer_contour(largest_region(sil.astype(bool)))
+    if len(moore) > 100:
+        oc_list = [[(p[1], p[0]) for p in moore]]
+    else:
+        er2 = sil.copy()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            er2 = er2 & np.roll(np.roll(sil, dy, 0), dx, 1)
+        ring = (sil & ~er2).astype(np.uint8)
+        ring_paths = paths_from_skeleton(ring)
+        ring_chains = join_chains([[(p[1], p[0]) for p in pa] for pa in ring_paths], 8)
+        oc_list = [c for c in ring_chains if chain_len(c) > 60]
     # KAYMA FİX: halka noktalarını gerçek çizgi İSKELETİNE mıknatısla (r=5).
     # Kesintisizlik halkadan, metrik doğruluk iskeletten gelir.
     skel = set(zip(*np.nonzero(S)))
