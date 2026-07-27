@@ -226,6 +226,44 @@ def main():
             er &= np.roll(np.roll(fill, dy, 0), dx, 1)
         ink = (ink | (fill & ~er)).astype(np.uint8)
     print('ink px:', int(ink.sum()))
+    # DÜĞME AVI (v5): iskeletten ÖNCE, mürekkep maskesinde KÜÇÜK kare-oranlı bağlı
+    # bileşenleri bul — iskelet daireyi yaya kırar, bileşen kırmaz. Bulunan düğme
+    # pikselleri maskeden düşülür ki geride C-yayı artığı kalmasın.
+    comp_circles = []
+    inkpts = set(zip(*np.nonzero(ink)))
+    NB8 = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+    seen_px = set()
+    for p in list(inkpts):
+        if p in seen_px:
+            continue
+        comp = [p]; seen_px.add(p); qi = 0
+        while qi < len(comp):
+            cy, cx = comp[qi]; qi += 1
+            for dy, dx in NB8:
+                q = (cy+dy, cx+dx)
+                if q in inkpts and q not in seen_px:
+                    seen_px.add(q); comp.append(q)
+            if len(comp) > 900:   # düğme olamayacak kadar büyük — erken çık
+                break
+        if len(comp) > 900 or len(comp) < 8:
+            continue
+        ys_ = [c[0] for c in comp]; xs_ = [c[1] for c in comp]
+        bh_, bw_ = max(ys_)-min(ys_), max(xs_)-min(xs_)
+        # dash tireleri küçük/çizgisel: min 9px kutu + gerçek halka şartı onları eler
+        if not (9 <= bw_ <= 26 and 9 <= bh_ <= 26):
+            continue
+        if abs(bw_-bh_) > 0.5*max(bw_, bh_):
+            continue
+        cy_, cx_ = float(np.mean(ys_)), float(np.mean(xs_))
+        rad = [np.hypot(y-cy_, x-cx_) for y, x in comp]
+        r_ = float(np.mean(rad))
+        # daire tutarlılığı: halka/disk yarıçap dağılımı dar; çizgi parçası (std/mean ~0.58) elenir
+        if r_ < 3.2 or float(np.std(rad)) > 0.35*max(r_, 1.0):
+            continue
+        comp_circles.append((cx_, cy_, max(2.0, 0.5*(bw_+bh_)/2.0)))
+        for q in comp:
+            ink[q] = 0
+    print('bileşen-düğme:', len(comp_circles))
     S = thin(ink)
     print('iskelet px:', int(S.sum()))
     paths = paths_from_skeleton(S)
@@ -267,12 +305,13 @@ def main():
         return hits > 0.35 * max(1, len(c[::3]))   # çift-çizgi kopyaları agresif ele
     inner = [c for c in xychains if not near_oc(c)]
     # DÜĞMELER: küçük parçaları yakınlık KÜMESİNE topla, küme daire gibiyse mühürle
-    small = [c for c in inner if chain_len(c) < 40 and
+    # eşik 80: tam düğme dairesi ~44px çevre; gerçek boyut bekçisi zaten 24px bbox (v4 kök: <40 tam daireyi dışlıyordu)
+    small = [c for c in inner if chain_len(c) < 80 and
              (max(p[0] for p in c)-min(p[0] for p in c)) < 24 and
              (max(p[1] for p in c)-min(p[1] for p in c)) < 24]
     big = [c for c in inner if c not in small]
     used = [False]*len(small)
-    circles, rest = [], list(big)
+    circles, rest = list(comp_circles), list(big)
     def center(c):
         return (float(np.mean([p[0] for p in c])), float(np.mean([p[1] for p in c])))
     for i, c in enumerate(small):
