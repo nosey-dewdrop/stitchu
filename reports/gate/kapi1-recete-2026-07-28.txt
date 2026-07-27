@@ -1,0 +1,52 @@
+KAPI 1 KANIT RAPORU — reçete veri modeli (PIPELINE Aşama 1, hakem: makine)
+Tarih: 2026-07-28. Sözleşme: docs/RECETE-SPEC.md v1.
+
+NE KURULDU
+- Yorumlayıcı: engine/src/recipe.hpp + recipe.cpp (JSON reçete belgesi ->
+  formül değerlendirme -> PathCommand parçaları; per-op IEEE, yeniden sıralama
+  yok; kernel servisleri offsetOutline/fabricEstimate/guide mühürlü kernel
+  bloğu enum'larıyla çağrılır).
+- İlk reçete: recipes/skirt-aline-dart.json (A-line + Dart + woven + Waistband;
+  formüllerin tamamı skirt.cpp'den okunmuş, tek koordinat yok).
+- Yazar ortaklığı: engine/tests/golden_writer.hpp (golden_dump ile
+  recipe_golden_dump aynı CSV yazarı; çıkarma sonrası golden_check yeşil).
+
+KANITLAR (test çıktılarıyla; sayılar test çıktısında, RULES inv 6)
+(a) Aynı reçete + iki ölçü tablosu -> iki DOĞRU kalıp: ctest recipe_check.
+    EU38 2 pens (6 marking komutu) vs bigNeckSmallShoulder 1 pens (3);
+    bel çeyreği dikilen boy farkı <= 3.0 mm; her iki gövde validator temiz.
+(b) Reçete yolu vs PİNLİ golden alt kümesi: ctest recipe_golden_check.
+    Beklenen = pinli engine/golden-reference.csv'den grep '|skirt/aLine/'
+    (288 satır, 3 gövde x 3 boy, fabric satırı dahil); taze motor dökümünden
+    filtreleme YOK (regen-vs-regen yasağı, DERSLER.md:12).
+    Çıktı: "recipe_golden_check PASS: recipe path byte-identical to the repo
+    pin subset (288 lines, skirt/aLine x 3 bodies x 3 lengths)".
+(c) Dikiş eşitleme reçete ÇIKTISINDA: ctest recipe_check — ön/arka yan dikiş
+    yay farkı <= 3.0 mm, 4 çeyrek dikilen bel vs kolaylı bel <= 12.0 mm,
+    kuşak hakemi validator'ın ÖLÇEN kontrolü (bandTotal vs sewnWaist),
+    lengthMM 200/1300 -> Err, 250/1200 -> ok, eksik/kaçak param -> Err;
+    9 kombinasyonda (3 gövde x 3 boy) validator temiz + cutLine mevcut.
+(d) Görünür kanıt (RULES inv 3): reçete yolundan A4 segmentasyon + PNG:
+    /Users/damummyphus/damla_projects_2026/stitchu/reports/gate/recipe-kapi1/eu38-mini/strip.png
+      sha256=0b4e3f9f5b89e875e524029e50d9dbd915662f9d371cfa576e6a2147d8e1b405
+    /Users/damummyphus/damla_projects_2026/stitchu/reports/gate/recipe-kapi1/bigneck-mini/strip.png
+      sha256=fd60d1f4a66daadf0b7f9585977d695ea4dcf71e46f0d0d409f872a3dcf4d1fb
+    (10 A4 sayfa/kalıp; ön+arka çeyrek pensleriyle, kuşak katlama çizgisiyle,
+    dikiş + kesim çift çizgisi görünür. Üretici: engine/build/recipe-json-dump
+    + engine/tools/render-recipe.mjs.)
+
+TAM SUITE: ctest 66/66 PASS (159.99 s; engine_check 138 s, sewable_census
+160 s dahil) — mevcut suite kırılmadı, golden_check pinli dosyaya karşı yeşil.
+
+EK MANDALLAR (RECETE-SPEC gereği)
+- K0 parite: recipe_check reçete sabitlerini motor başlıklarıyla karşılaştırır
+  (waistEase/hipEase/hipDepth/maxSideTake/minDartWidth/maxSingleDart);
+  sideWaistRise/flareOut/hemSideRise fonksiyon-içi sabit, hakemleri (b).
+- Err yolları (RULES inv 1): bilinmeyen kök anahtar / kernel enum / kernel
+  fazla anahtar / gölgeleme / ileri referans / bilinmeyen tanımlayıcı /
+  bilinmeyen op / ölçü <= 0 -> hepsi Result::Err, sessiz düşürme yok.
+
+SONUÇ: Kapı 1'in dört kanıtı da yeşil. PIPELINE gereği makine-hakemli kapı
+sonrası AŞAMA 2 (KANVAS) otomatik açılır; eldeki tek reçete damar dışı
+(ANAYASA gerilimi RECETE-SPEC §2.3'te kayıtlı), Kapı 2 malzemesi için ilk
+damar-içi reçete ihtiyacı nottadır.
