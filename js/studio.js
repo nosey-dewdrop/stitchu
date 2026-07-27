@@ -18,6 +18,7 @@ const MEAS_FIELDS = {
   bustMM: { key: 'bust', label: 'Bust (cm)', dflt: 88 },
   waistMM: { key: 'waist', label: 'Waist (cm)', dflt: 70 },
   hipMM: { key: 'hip', label: 'Hip (cm)', dflt: 94 },
+  shoulderMM: { key: 'shoulder', label: 'Shoulder (cm)', dflt: 37 },
   backLengthMM: { key: 'backLength', label: 'Back length (cm)', dflt: 40.5 },
   neckMM: { key: 'neck', label: 'Neck (cm)', dflt: 35 },
   upperBustMM: { key: 'upperBust', label: 'Upper bust (cm)', dflt: 86 },

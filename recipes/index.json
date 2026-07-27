@@ -1,10 +1,16 @@
 {
   "recipes": [
     {
+      "id": "top.shift.square.spaghetti",
+      "title": "A-line mini shift dress (square neck, spaghetti straps - Vol2 #8)",
+      "file": "shift-dress-square-spaghetti.json",
+      "note": "first in-vein recipe (ANAYASA vol2 #8) - studio default; Kapi 2 material, judge is Damla"
+    },
+    {
       "id": "skirt.aline.dart",
       "title": "A-line skirt (dart shaping, woven, waistband)",
       "file": "skirt-aline-dart.json",
-      "note": "gate 1 machine candidate; outside the vol1/vol2 vein (separate skirt) - the first in-vein dress recipe replaces it as the studio default when it lands"
+      "note": "gate 1 machine candidate; outside the vol1/vol2 vein (separate skirt) - kept for the gate 1 proof chain"
     }
   ]
 }
