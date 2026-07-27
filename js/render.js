@@ -184,6 +184,19 @@ export function renderResult(container, result) {
   }
   container.appendChild(meta);
 
+  // Olcum kapisi honesty line (2026-07-27): when the spec came from a photo,
+  // say which proportion source drove it — the deterministic pixel
+  // measurement, or the standard table because the measurement honestly
+  // refused. One line, no claim beyond what happened. Manual flow: no line.
+  if (result.seen && typeof result.seen.ratiosMeasured === 'boolean') {
+    const src = document.createElement('p');
+    src.className = 'proportions-note';
+    src.style.cssText = 'font-size:13px;color:#8a8a8a;margin-top:6px';
+    src.textContent = t(result.seen.ratiosMeasured
+      ? 'result.proportions.measured' : 'result.proportions.standard');
+    container.appendChild(src);
+  }
+
   // Honesty layer: the vision saw elements the engine cannot draft yet. Say so
   // out loud, the closest derivative given + what to add by hand. Silent
   // fallback is the trust killer this card removes.
