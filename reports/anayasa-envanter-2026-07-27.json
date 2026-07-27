@@ -1,0 +1,813 @@
+{
+ "inventory": [
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.06.png",
+   "kind": "flat",
+   "garment": "sortlu spor elbise / romper (exercise dress)",
+   "views": "on+arka",
+   "neckline": "on: kayik/yuvarlak kolsuz; arka: derin U acik sirt",
+   "sleeves": "kolsuz",
+   "waist": "oturmus bel, on gorunumde bel pensleri",
+   "hem": "klos (fit-and-flare) kisa etek; arkada icteki sort paçalari gorunuyor",
+   "closure": "belirsiz (gorunur fermuar/dugme yok)",
+   "details": [
+    "derin acik sirt",
+    "arkada bel hizasinda buyuk fiyonk",
+    "on bel pensleri",
+    "klos etek",
+    "icte entegre sort",
+    "omuz askili sirt kayislari"
+   ],
+   "background": "foto ustune bindirilmis (ayna + kondisyon bisikleti selfie'si, acik mavi panel, 'SEWING PATTERN' yazisi)",
+   "notes": "Sporty-feminen karisim: onden masum kloş tenis elbisesi, arkadan derin U sirt + fiyonk surpriziyle 'arkasi olay' estetigi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.15.png",
+   "kind": "kalip-parcalari",
+   "garment": "elbise (muhtemelen onceki sortlu elbisenin kalibi)",
+   "views": "parcalar",
+   "details": [
+    "5 numarali parca",
+    "1: tam boy on/arka panel (fold isareti + gogus pensi cizgili)",
+    "2: korsaj/bodice parcasi (pens cizgili)",
+    "3: kucuk sirt/korsaj parcasi",
+    "4: sort-etek paneli",
+    "5: ince uzun serit (biye/kemer/bagcik)",
+    "'fold' ve '...g(cutx2)' kesim notlari"
+   ],
+   "background": "temiz zemin (beyaz sayfa, ustte pembe baslik cizgisi, 'PIECES' basligi)",
+   "notes": "Sade pudra-gri dolgulu, numarali daire etiketli tipik indie-pattern parca sayfasi; dikis payi cizgisi gorunmuyor."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.21.png",
+   "kind": "flat",
+   "garment": "bluz (vintage/milkmaid tarzi crop bluz)",
+   "views": "sadece on (sagda ikinci bir giysinin — buzgulu elbise/etek — kismi flati var)",
+   "neckline": "derin V yaka",
+   "sleeves": "uzun kol; omuzda hafif karpuz/puf, bilekte buzgulu balon manset + manset dugmeleri",
+   "waist": "bust alti kesikli (empire hattina yakin), oturmus kisa beden",
+   "hem": "bel hizasinda kisa peplum/volan firfir",
+   "closure": "on boydan sik dizili minik dugme (loop-dugme hissi)",
+   "details": [
+    "derin V yaka",
+    "bust alti buzgu/shirring (cup etkisi)",
+    "sik minik dugme sirasi",
+    "peplum volan",
+    "buzgulu balon manset",
+    "omuz pufu"
+   ],
+   "background": "foto ustune bindirilmis (koyu cicekli kumas/elbise fotografi uzerinde acik lila flat)",
+   "notes": "Romantik-vintage damar: derin V + bust buzgusu + mini dugme siralamasiyla 'milkmaid' inceligi, koyu cicekli zeminle kontrast."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.32.png",
+   "kind": "bos-junk",
+   "garment": "yok",
+   "views": "yok",
+   "details": [],
+   "background": "duz koyu gri/mor ince serit",
+   "notes": "Icerik yok — tek renk minik serit, muhtemelen kirpilmis bos ekran parcasi; envantere alinmaz."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.42.png",
+   "kind": "kalip-parcalari",
+   "garment": "ust/top (dugmeli korsajli; kesin giysi tipi belirsiz)",
+   "views": "parcalar",
+   "details": [
+    "~9 parca, hepsinde kesik cizgili dikis payi konturu",
+    "dugme isaretli on korsaj parcasi",
+    "kavisli yaka/rever parcalari (biri zigzag/pinked kenarli)",
+    "ince uzun aski/biye seritleri",
+    "genis T-benzeri govde/kol parcasi",
+    "altta yamuk etek bandi/kusak paneli",
+    "grain-line dikey cizgileri + minik etiketler (okunamayacak kadar kucuk)"
+   ],
+   "background": "temiz zemin (beyaz sayfa, mor cerceve, el yazisi tarzi 'Pattern Pieces' basligi)",
+   "notes": "Sevimli-zanaat estetigi: Comic-Sans-vari baslik + kesik cizgili dikis paylariyla oyuncak/doll-clothes hissi veren parca sayfasi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.47.png",
+   "kind": "flat",
+   "garment": "korse-esintili kisa kollu bluz/yelek-top (olcu semasi)",
+   "views": "on+arka",
+   "neckline": "derin V yaka; ic kisimda kontrast/astar dolgusu gosterilmis",
+   "sleeves": "kisa kol",
+   "waist": "prenses dikisli oturmus beden; arkada bel kesigi + kisa peplum bandi",
+   "hem": "onde yelek gibi sivri uclu (pointed) etek ucu, arkada duz bantli",
+   "closure": "on ortada 4 dugme",
+   "details": [
+    "derin V yaka",
+    "prenses dikisleri (on+arka)",
+    "4 dugmeli on kapama",
+    "sivri yelek ucu",
+    "arka bel bandi/peplum",
+    "kirmizi A-B-C-D-E olcu cizgileri (measurement chart)"
+   ],
+   "background": "temiz zemin (beyaz, ust kenarda cetvel serit)",
+   "notes": "Viktorya/yelek melezi yapisal estetik: prenses dikis + sivri on uc; kirmizi olcu oklariyla teknik olcu-semasi formatinda cizilmis."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.22.56.png",
+   "kind": "bos-junk",
+   "garment": "yok",
+   "views": "yok",
+   "details": [],
+   "neckline": "yok",
+   "sleeves": "yok",
+   "waist": "yok",
+   "hem": "yok",
+   "closure": "yok",
+   "background": "temiz zemin",
+   "notes": "Sadece duz hardal-sari minik bir kare; hicbir cizim/giysi yok, kirpma artigi junk serit."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.01.png",
+   "kind": "flat",
+   "garment": "top (kolsuz/kap kollu bluz)",
+   "views": "on+arka",
+   "details": [
+    "gogus alti empire kup dikisi",
+    "on etek kisminda dikey pintuck/pens cizgileri",
+    "arkada ortadan bagcikli fiyonk + fiyonktan yayilan buzgu",
+    "kap (cap) kol"
+   ],
+   "neckline": "onde derin V, arkada yuvarlak/kayik",
+   "sleeves": "kap kol (cok kisa, omuzdan tasan)",
+   "waist": "empire kup alti hafif serbest, bele oturmuyor",
+   "hem": "duz, kalca ustu boy",
+   "closure": "belirsiz (arka fiyonk ayarlayici gorunuyor, ayrica fermuar belirsiz)",
+   "background": "foto ustune bindirilmis",
+   "notes": "Eefje Patterns imzali pembe flat cifti; estetigi tasiyan sey V-yaka empire kupun altindaki dikey tuck ritmi ile arkadaki tek buyuk fiyonk-buzgu odagi. Sol kenarda siyah giysili bir insan fotosu seridi var (Pinterest tarzi kirpim)."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.14.png",
+   "kind": "flat",
+   "garment": "kolsuz top/bluz",
+   "views": "on+arka",
+   "details": [
+    "on ortada cok sayida kucuk dugmeli pat",
+    "bel pensleri",
+    "penslerin etek ucunda actigi kutu pli/gode benzeri kloslar",
+    "arka ortada etek ucu pli/yirtmac"
+   ],
+   "neckline": "genis kayik/yuvarlak, yakasiz",
+   "sleeves": "kolsuz",
+   "waist": "penslerle hafif oturtulmus, belirgin bel dikisi yok",
+   "hem": "plilerle aciklan hafif klos/peplum hissi, bel alti boy",
+   "closure": "on dugme pati (tam boy)",
+   "background": "temiz zemin",
+   "notes": "Krem-pudra tonlarinda cok temiz cizim; sade kayik yakali govdenin etek ucunda penslerden dogan pli/flare hareketi tek suslemenin dugme siralamasi olmasiyla dengeleniyor (minimal ama hareketli)."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.31.png",
+   "kind": "flat",
+   "garment": "bluz (kisa kollu)",
+   "views": "on+arka",
+   "details": [
+    "hakim/dik yaka",
+    "asimetrik yandan dugme pati",
+    "patin yaninda capraz buzgu/drapaj cizgileri",
+    "kisa balon (puff) kol + kol mansedi",
+    "arkada bel hizasinda baglanan buyuk fiyonk kusak",
+    "arka bel pensleri"
+   ],
+   "neckline": "hakim (mandarin/dik) yaka",
+   "sleeves": "kisa puff kol, dar mansetli",
+   "waist": "oturtulmus; arkada fiyonkla toplanmis",
+   "hem": "onde hafif sivri/asimetrik peplum ucu, arkada fiyonk altinda serbest",
+   "closure": "asimetrik on dugme (yandan kapanma)",
+   "background": "temiz zemin",
+   "notes": "Lila zeminde Front/Back etiketli beyaz bluz; estetigi kuran sey asimetrik dugme hattina akan capraz buzgular + arkadaki tek dramatik fiyonk (vintage/retro bir zarafet)."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.38.png",
+   "kind": "kalip-parcalari",
+   "garment": "bluz kalip sayfasi (19.23.31'deki asimetrik bluzun parcalari)",
+   "views": "parcalar",
+   "details": [
+    "9 numarali parca: on sag, on sol (2X), arka (kumas katinda 1), yaka (aynali + tela), kol (aynali), kol mansedi (aynali)",
+    "sag/sol facing (tela ile)",
+    "arka bag/kusak (2 cift aynali)",
+    "'Seam allowances included' notu"
+   ],
+   "neckline": "belirsiz (parca sayfasi)",
+   "sleeves": "belirsiz (parca sayfasi)",
+   "waist": "belirsiz (parca sayfasi)",
+   "hem": "belirsiz (parca sayfasi)",
+   "closure": "belirsiz (parca sayfasi)",
+   "background": "temiz zemin",
+   "notes": "Lila panelde numarali kalip parcalari + sag tarafta parca/kumas/tela tablosu; bir onceki asimetrik fiyonklu bluzun uretim sayfasi oldugu icin flat degil kalip-envanter referansi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.23.45.png",
+   "kind": "flat",
+   "garment": "salas (swing) top",
+   "views": "on+arka",
+   "details": [
+    "gomlek yakasi",
+    "yuvarlak roba (yoke)",
+    "roba altinda 2 dugme",
+    "roba altindan dokulen pli/bolluk",
+    "kisa buzgulu kap/puff kol",
+    "arka robada ters kutu pli"
+   ],
+   "neckline": "gomlek yakali, kucuk acik yaka",
+   "sleeves": "kisa, buzgulu kap-puff kol",
+   "waist": "belsiz, A-cizgi salinim",
+   "hem": "genis klos/A-line, kalca hizasi",
+   "closure": "on roba altinda 2 dugme (alt kisim belirsiz, muhtemelen kapali govde)",
+   "background": "foto ustune bindirilmis",
+   "notes": "Pembe zeminde 'TOP' basligi ve solda pembe pötikareli topu giyen model fotosu seridi; estetigi kuran sey minik gomlek yakali yuvarlak robadan dokulen bebek-dogan (babydoll) salinim ve arka ters kutu pli."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.04.png",
+   "kind": "flat",
+   "garment": "babydoll elbise (baslikta 'DRESS', muhtemelen babydoll)",
+   "views": "on+arka",
+   "neckline": "kucuk devrik yaka (gomlek/peter-pan arasi), onde kisa acilma",
+   "sleeves": "kisa puf kol, kol agzinda firfir/lastikli bitis",
+   "waist": "belsiz; gogus alti roba (yoke), robadan serbest dusen govde",
+   "hem": "hafif A cizgisi, duz-yuvarlak etek ucu, diz ustu",
+   "closure": "belirsiz (arka govde duz gorunuyor; on yaka acilmasi kisa plaket olabilir)",
+   "background": "foto ustune bindirilmis (solda dis mekan foto seridi, pembe panel uzerinde flat cifti)",
+   "details": [
+    "roba (yoke) hatti on+arka",
+    "on robada kucuk pensler/buzgu izi",
+    "puf kol + firfirli kol agzi",
+    "kucuk devrik yaka",
+    "genis salas govde"
+   ],
+   "notes": "Sirin-cocuksu babydoll estetigi: yaka+puf kol+roba ucgeni, vucudu sarmayan serbest dusus."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.20.png",
+   "kind": "flat",
+   "garment": "kolsuz mini elbise (jumper/A-line sift)",
+   "views": "sadece on",
+   "neckline": "V yaka, iceride koyu ic-yuz (facing) gorunuyor",
+   "sleeves": "kolsuz, duz kol oyuntusu",
+   "waist": "belirgin bel dikisi yok; prenses dikisleriyle bele oturan kesim",
+   "hem": "kalcadan aciilan A etek, duz etek ucu, mini boy",
+   "closure": "belirsiz (gorunur dugme/fermuar yok; muhtemelen arka fermuar)",
+   "background": "foto ustune bindirilmis (bej zemin panel, kenarlarda ekose ve koyu kumas foto parcalari)",
+   "details": [
+    "omuzdan etege inen prenses dikisleri",
+    "kalca hizasinda kapakli (flap) cepler",
+    "V yaka ic-yuz cizgisi",
+    "krem/ekru dolgu rengi"
+   ],
+   "notes": "60'lar mod havasi: temiz prenses panelli kolsuz jumper, tek suslemesi kapakli cepler."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.39.png",
+   "kind": "flat",
+   "garment": "kap kollu sheath mini elbise",
+   "views": "sadece on",
+   "neckline": "kayik/bateau yaka (yuksek ve genis)",
+   "sleeves": "kisa kap (cap) kol",
+   "waist": "bel dikissiz, panel dikisleriyle vucuda oturan sheath kesim",
+   "hem": "duz, dar etek ucu, mini boy",
+   "closure": "on-sol tarafta asimetrik dikey dugme siralamasi (~9 halka/loop dugme)",
+   "background": "foto ustune bindirilmis (perde ve kol gorunen bir fotonun ustunde flat)",
+   "details": [
+    "asimetrik on dugme bandi",
+    "halkali (loop) dugmeler",
+    "dikey panel/prenses dikisleri",
+    "kayik yaka + kap kol birlikteligi"
+   ],
+   "notes": "Retro-sik asimetri: sade sheath govdeye tek eksende dizilmis dugme siranin grafik etkisi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.24.51.png",
+   "kind": "flat",
+   "garment": "top + elbise ikilisi (ayni model iki boy: kisa top ve elbise)",
+   "views": "sadece on (iki ayri giysi, ikisi de on)",
+   "neckline": "firfir kenarli peter-pan (bebe) yaka",
+   "sleeves": "kisa puf kol, firfirli/lastikli kol agzi",
+   "waist": "belsiz; gogus ustu robadan buzguyle (gather) dusen govde",
+   "hem": "genis, hafif dalgali serbest etek ucu; top kalca ustu, elbise diz civari",
+   "closure": "belirsiz (onde gorunur kapanma yok; muhtemelen arkadan)",
+   "background": "foto ustune bindirilmis (pembe panel, baslik 'Top & Dress', solda foto seridi)",
+   "details": [
+    "firfirli bebe yaka",
+    "roba altinda yogun buzgu",
+    "puf kol + firfir kol agzi",
+    "ayni kalibin top ve elbise varyanti yan yana",
+    "kumas dusme cizgileri elle cizilmis dokulu stil"
+   ],
+   "notes": "Ayni sevimli-romantik DNA'nin iki boyda gosterimi: firfirli yaka+buzgulu roba, tam Damla'nin babydoll damari."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.03.png",
+   "kind": "flat",
+   "garment": "askili babydoll/peplum top",
+   "views": "sadece on",
+   "neckline": "duz (straight/square) yaka, genis kalin askilar",
+   "sleeves": "kolsuz (kalin omuz askisi)",
+   "waist": "empire/gogus alti kup: oturan sutyen-kup benzeri ust + bel hattinda buzgu",
+   "hem": "bol, dalgali serbest etek ucu (peplum), onu kisa arkasi hafif uzun izlenimi",
+   "closure": "belirsiz (gorunur kapanma yok)",
+   "background": "foto ustune bindirilmis degil; baslikli ('Sewing Pattern') duz bej ilan zemini — temiz zemine yakin",
+   "details": [
+    "kalin duz askilar",
+    "duz kesim on kup",
+    "empire hattan yogun buzgu",
+    "golgeli/karakalem cizim stili (diger flatlerden farkli render)"
+   ],
+   "notes": "Golgelendirilmis eskiz estetigi: yapili duz kuplu ust + ucusan buzgulu etegin kontrasti."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.11.png",
+   "kind": "flat",
+   "garment": "gypsy/peasant top (baslik '... Top', XXS-XXL PDF ilani)",
+   "views": "sadece on",
+   "neckline": "genis dusuk oval/scoop yaka, yaka boyunca buzgulu (gathered) kenar",
+   "sleeves": "kisa puf/kap kol, buzgulu takim (raglan izlenimi, kesin dikis belirsiz)",
+   "waist": "empire: gogus alti bant, banttan asagi bol buzgulu govde",
+   "hem": "bol, hafif dalgali serbest etek ucu, kalca hizasi",
+   "closure": "on ortada gogus bandinda kisa dugme plaket (3-4 kucuk dugme)",
+   "background": "foto ustune bindirilmis (pembe ilan paneli, solda foto seridi, altta 'XXS-XXL · PDF' yazisi)",
+   "details": [
+    "buzgulu genis yaka",
+    "gogus alti empire bant",
+    "on ortada mini dugme plaket",
+    "govdede serbest kumas kivrim cizgileri",
+    "puf kol"
+   ],
+   "notes": "Romantik koylu (peasant) damari: her kenari buzgulu, tek yapisal cizgisi empire bant + minik dugme plaket."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.20.png",
+   "kind": "flat",
+   "garment": "peplum top (shirred bodice), iki varyant: kolsuz + balon kollu",
+   "views": "sadece on",
+   "neckline": "scoop neck + genis 'statement' yaka (buyuk Peter Pan tarzi devrik yaka)",
+   "sleeves": "ust flat kolsuz; alt flat kisa balon kol (bilekte firfirli/lastikli agiz)",
+   "waist": "shirring bel altina kadar govdeyi sariyor, belden peplum acilir",
+   "hem": "dalgali/firfirli peplum ucu",
+   "closure": "gorunmuyor (shirred govde muhtemelen esnek, kapanma yok) - belirsiz",
+   "details": [
+    "statement collar (abartili genis devrik yaka)",
+    "shirred bodice (tum govde buzgu/gipe)",
+    "peplum",
+    "balloon sleeves (varyantta)",
+    "ok isaretli egitim tipi etiketler: SCOOP NECK / STATEMENT COLLAR / SHIRRED BODICE / PEPLUM / BALLOON SLEEVES"
+   ],
+   "background": "temiz zemin (beyaz, etiketli anatomi/egitim sayfasi)",
+   "notes": "Estetik cekirdegi buzgulu govde + abartili yumusak yaka + peplum ucgeni; ayni bedeni kolsuz/balon-kollu iki varyantla anlatan didaktik bir flat sayfasi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.24.png",
+   "kind": "flat",
+   "garment": "4 ayri korse/bustiyer ustu (tek sayfada dort flat)",
+   "views": "sadece on",
+   "neckline": "sol ust: hafif kavisli duz ust; sag ust: kare/duz ust askili; sol alt: kup (underwire) sweetheart; sag alt: kare yaka askili, ucu sivri",
+   "sleeves": "hepsi kolsuz (askili veya straplez)",
+   "waist": "hepsi bel oturtmali korse govde; balen kanallari belden gecer",
+   "hem": "sol ust ve sol alt: sivri/kavisli korse ucu; sag alt: onde sivri (V) etek ucu; sag ust: duz-kavisli",
+   "closure": "sag ust: onde capraz bagcik (lace-up); digerlerinde kapanma gorunmuyor - belirsiz (muhtemelen arka fermuar/bagcik)",
+   "details": [
+    "balen kanallari / prenses dikisleri (tum parcalar)",
+    "onde capraz bagcik + omuzda kurdele baglar (sag ust)",
+    "kup dikisli sutyen formu (sol alt)",
+    "sivri korse ucu (point)",
+    "askida fiyonk/kurdele detayi"
+   ],
+   "background": "temiz zemin (duz gul kurusu/mauve renkli fon)",
+   "notes": "Ayni sayfada dort korse siluetinin karsilastirmasi; estetigi ayirt eden sey balen cizgilerinin ritmi + bagcik/kurdele romantizmi, corsetcore koleksiyon dili."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.31.png",
+   "kind": "flat",
+   "garment": "halter mini elbise (Marilyn tarzi)",
+   "views": "sadece on",
+   "neckline": "derin V dekolte, boyundan baglamali halter (ense fiyongu onden gorunuyor)",
+   "sleeves": "kolsuz (halter)",
+   "waist": "gogus alti (underbust/empire) kesik; kuplerde buzgu",
+   "hem": "diz ustu, klos/A-line acilan duz etek ucu",
+   "closure": "boyun bagi (fiyonk); baska kapanma gorunmuyor - belirsiz",
+   "details": [
+    "boyunda fiyonkla baglanan halter askilar",
+    "buzgulu ucgen gogus kuplari",
+    "gogus alti kesikten acilan klos etek",
+    "onde etek pili/yumusak dokum cizgileri"
+   ],
+   "background": "temiz zemin (acik gri, tek flat)",
+   "notes": "Tek parca ikonik siluet: derin V + fiyonklu halter + kisa klos etek; sayfadaki en 'tek bakista taninir' retro-flort estetigi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.46.png",
+   "kind": "kalip-parcalari",
+   "garment": "askili A-line mini elbise kalibi (4 numarali parca)",
+   "views": "parcalar",
+   "neckline": "parca 1-2 govde ust parcalari genis tek-aski formunda; birlesmis yaka formu belirsiz",
+   "sleeves": "kolsuz (aski govdeyle butun kesilmis)",
+   "waist": "govde ile etek ayri parcalar; bel hatti kesigi var",
+   "hem": "parca 3-4 etek panelleri A-line acilimli, duz kivrilmis etek ucu payli",
+   "closure": "gorunmuyor - belirsiz (panel kenarlarindan muhtemelen dikis/fermuar, kalipta isaret secilemiyor)",
+   "details": [
+    "4 numarali parca: 1-2 govde (askili), 3-4 etek panelleri",
+    "dikis payi/ic kontur cizgileri",
+    "cit (notch) isaretleri kenarlarda",
+    "pembe dolgulu kalip sunumu"
+   ],
+   "background": "temiz zemin (krem fon uzerinde pembe kalip parcalari)",
+   "notes": "Giysi degil kalip anatomisi sayfasi: askili mini elbisenin 4 parcaya nasil ayristigini gosteren, stitchu'nun 'flat -> parca' hattina birebir ornek."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_1/Ekran Resmi 2026-07-23 19.25.52.png",
+   "kind": "diger",
+   "garment": "kalin askili, kare yakali pötikare (gingham) mini elbise - dikis kalibi urun gorseli",
+   "views": "sadece on",
+   "neckline": "kare yaka, kenari fisto/zikzak (scallop/picot) biyeli",
+   "sleeves": "kolsuz, genis askilar (askilar da fisto kenarli)",
+   "waist": "gogus altinda kesik; kuplerde kucuk suslemeler (fiyonk ya da nakis - thumbnail kucuk, belirsiz)",
+   "hem": "diz ustu, hafif A-line duz etek ucu",
+   "closure": "gorunmuyor - belirsiz",
+   "details": [
+    "pötikare/gingham kumas dolgusu (kirmizi-krem ekose)",
+    "fisto/zikzak kenar seridi yaka ve askilarda",
+    "gogus kesiginde iki kucuk suslu detay (fiyonk/nakis, belirsiz)",
+    "ustte 'SEWING PATTERN' basligi + kalp ikonu",
+    "altta kirpilmis buton ikonlari (urun sayfasi arayuzu)"
+   ],
+   "background": "foto ustune bindirilmis / urun-sayfasi ekran goruntusu (krem fonlu listing karti)",
+   "notes": "Teknik flat degil, satis sayfasi gorseli: kumasi giydirilmis (gingham) romantik cottagecore mini elbise; fisto kenar + ekose kombinasyonu Damla estetiginin net bir ornegi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.26.png",
+   "kind": "flat",
+   "garment": "kolsuz mini elbise (fit-and-flare)",
+   "views": "on+arka",
+   "neckline": "onde kayik/bateau yaka; arkada derin V sirt dekoltesi",
+   "sleeves": "kolsuz, ince genis askili omuz",
+   "waist": "belirgin bel kesigi yok, prenses dikisleriyle oturtulmus govde",
+   "hem": "mini boy, hafif kloş/A-line ucu",
+   "closure": "belirsiz (gorunur dugme/fermuar cizilmemis, muhtemelen gizli fermuar)",
+   "details": [
+    "on ve arkada prenses dikisleri (omuzdan/koltuk altindan etege inen dikey paneller)",
+    "derin V sirt",
+    "temiz minimal cizgi, sus yok"
+   ],
+   "background": "foto ustune bindirilmis — koyu haki/yesil zemin, 'Street' yazisi ve yuvarlak damga filigrani var",
+   "notes": "Susuz, tamamen dikis-mimarisiyle konusan minimal bir mini: sade on yuz + surpriz derin V sirt kontrasti."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.34.png",
+   "kind": "flat",
+   "garment": "babydoll/katli askili ust (tunik boyu top)",
+   "views": "on+arka",
+   "neckline": "onde duz/hafif kavisli yaka, arkada duz smocked ust kenar",
+   "sleeves": "kolsuz; kalin buzgulu (shirred/elastik) askilar",
+   "waist": "bel yerine gogus altindan baslayan katli buzgu; arkada tum ust govde smocking/shirring paneli",
+   "hem": "iki katli buzgulu firfir (tiered ruffle) etek ucu",
+   "closure": "on ortada kisa dugme patti (3-4 kucuk dugme); arkada baglamali kordon fiyonk",
+   "details": [
+    "buzgulu/shirred askilar",
+    "arkada tam smocked panel + ortada kordon fiyonk",
+    "iki kademeli buzgulu firfir katlari",
+    "on ortada mini dugme patti"
+   ],
+   "background": "temiz pembe zemin, ustte 'by sewingarabella' yazisi; sol kenarda ince foto seridi (kolaj artigi)",
+   "notes": "Cottagecore/romantik damar: her yumusak detay (shirring, fiyonk, firfir) bir arada ama olceklice kucuk tutulmus, sirin-tatli estetik."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.40.png",
+   "kind": "flat",
+   "garment": "kolsuz empire bel elbise (diz boyu)",
+   "views": "sadece on",
+   "neckline": "genis yuvarlak/kayiga yakin yaka",
+   "sleeves": "kolsuz",
+   "waist": "empire (gogus alti) kesik; gogus kisminda kesige toplanan buzgu",
+   "hem": "diz boyu, sade A-line etek ucu",
+   "closure": "belirsiz (gorunmuyor)",
+   "details": [
+    "gogus alti empire kesigine dokulen buzgu",
+    "etek yuzunde iki ince dikey dikis/pens izi",
+    "golgeli-yumusak cizim stili (diger flatlerden farkli, render'li)"
+   ],
+   "background": "temiz bej/krem zemin",
+   "notes": "En sade parca: tek dokunusu empire kesikteki buzgu olan sakin, gunluk 60'lar havali A-line siluet."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.46.png",
+   "kind": "flat",
+   "garment": "kap kollu mini elbise (fit-and-flare, panelli)",
+   "views": "on+arka",
+   "neckline": "onde kare yaka; arkada da kare/dusuk kare yaka",
+   "sleeves": "kap kol (kisa, omuzdan tasan ucgen kapak)",
+   "waist": "gogus alti kesik + govdeye oturan cok dikisli korse benzeri panel yapisi",
+   "hem": "mini boy, cok panelden acilan dalgali/kloş etek ucu",
+   "closure": "belirsiz (gorunmuyor)",
+   "details": [
+    "gogus alti kup dikisi ve kup icinde buzgu tikleri (bust cup gather)",
+    "onde ve arkada cok sayida dikey prenses/panel dikisi etege kadar iniyor",
+    "panellerden dogan godet-vari kloş mini etek"
+   ],
+   "background": "temiz krem zemin; sagda site karusel ok butonu (ekran goruntusu UI artigi)",
+   "notes": "Yapisal-romantik karisimi: korse disiplinindeki panel dikisleri buzgulu kuple ve ucusan mini klosla yumusatilmis, milkmaid/balletcore havasi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.35.55.png",
+   "kind": "bos-junk",
+   "garment": "yok",
+   "views": "yok",
+   "details": [],
+   "background": "belirsiz — cok kucuk, neredeyse tamamen bos gri kucuk parca",
+   "notes": "Icerik yok: minicik bos/gri kirpinti, envantere girecek giysi bilgisi tasimiyor."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.05.png",
+   "kind": "flat",
+   "garment": "kalin askili korse-govdeli mini elbise (fit-and-flare)",
+   "views": "sadece on",
+   "neckline": "kare-sweetheart arasi yaka, kenari ince dantel/firfir seritli",
+   "sleeves": "kolsuz, kalin duz askilar",
+   "waist": "korse mantigi: kesiksiz prenses panelleri govdeyi sarip belde iyice daraliyor, sonra etege aciliyor",
+   "hem": "mini boy, cok dolgun/abartili kloş (godet gibi ucusarak acilan) etek ucu",
+   "closure": "belirsiz (gorunmuyor)",
+   "details": [
+    "yaka kenarinda ince dantel/firfir trim",
+    "on ortada minik fiyonk",
+    "govdeden etek ucuna kesintisiz inen prenses/panel dikisleri",
+    "dramatik dolgun kloş mini etek"
+   ],
+   "background": "temiz gri zemin, altta kismen kesilmis 'DINA...' yazisi (kalip adi), acik pembe dolgulu flat",
+   "notes": "Koleksiyonun en 'balerin' parcasi: siki korse govde + patlayan kloş mini kontrasti, dantel+fiyonk dozu minimumda tutulmus coquette estetigi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.19.png",
+   "kind": "kalip-parcalari",
+   "garment": "kolsuz shift elbise (kalip sayfasi)",
+   "views": "parcalar",
+   "details": [
+    "A on beden (gogus pensi + dikey bel pensi)",
+    "B x2 arka beden yarimlari (dikey bel pensli)",
+    "C on yaka/kol pervazi (facing)",
+    "D x2 arka pervaz parcalari",
+    "renk lejanti: mor=MAIN DRESS, yesil=FACING",
+    "sag/sol karusel oklari (site ekran goruntusu)"
+   ],
+   "neckline": "kolsuz yuvarlak yaka (parca konturundan)",
+   "sleeves": "kolsuz",
+   "waist": "penslerle sekillenen duz shift",
+   "hem": "duz etek ucu, diz ustu boy",
+   "closure": "belirsiz (arka iki parcali; muhtemel arka orta fermuar)",
+   "background": "temiz zemin",
+   "notes": "Dikis egitim sitesi tarzinda renk kodlu, lejantli tertemiz dijital kalip-parca diyagrami; flat degil parca anatomisi kaynagi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.37.png",
+   "kind": "flat",
+   "garment": "ince askili trapez (swing) top/tunik",
+   "views": "sadece on",
+   "details": [
+    "ince spagetti askilar",
+    "duz (kare) dekolte hatti",
+    "yanlarda verev cep agzi ya da yan pens cizgisi (kucuk gorselde belirsiz)",
+    "etek ucunda noktali ust dikis (topstitch)",
+    "altta kesilmis 'LOVELESS' yazisi (marka/model adi)"
+   ],
+   "neckline": "duz/kare, askili",
+   "sleeves": "kolsuz (askili)",
+   "waist": "belsiz, A/trapez salinim",
+   "hem": "hafif kavisli, topstitch'li",
+   "closure": "belirsiz",
+   "background": "temiz zemin",
+   "notes": "Bej ton-sur-ton, tek renk dolgulu minimalist Japon-vari sade swing flat; suslemesiz, tamamen siluetle konusuyor."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.42.png",
+   "kind": "flat",
+   "garment": "dusuk omuz (off-shoulder) drapeli mini elbise",
+   "views": "sadece on",
+   "details": [
+    "omuzdan devrik/katlanmis off-shoulder yaka bandi",
+    "govde boyunca yan buzgu/ruching drape cizgileri",
+    "dar kalip mini siluet",
+    "hafif asimetrik dalgali etek ucu"
+   ],
+   "neckline": "off-shoulder / dusuk omuz, devrik bant",
+   "sleeves": "kolsuz (omuz acik)",
+   "waist": "dikissiz, drape ile sarilan dar bel",
+   "hem": "mini, hafif asimetrik/yumusak dalgali",
+   "closure": "belirsiz (gorselde yok)",
+   "background": "temiz zemin",
+   "notes": "Kati teknik flat degil; hafif perspektifli, kumas dokusunu golge cizgileriyle anlatan yumusak illustrasyon — drape estetigi referansi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.55.png",
+   "kind": "flat",
+   "garment": "dusuk belli (drop-waist) volanli mini elbise",
+   "views": "on+arka",
+   "details": [
+    "onde acili fransiz gogus pensleri",
+    "dusuk bel hatti",
+    "bel altinda buzgulu volan/firfir etek katmani",
+    "arkada derin U (scoop) sirt dekoltes i",
+    "arka orta dikis"
+   ],
+   "neckline": "onde kayik/yuksek yuvarlak, arkada derin U",
+   "sleeves": "kolsuz",
+   "waist": "dusuk bel (drop-waist)",
+   "hem": "buzgulu volan, mini",
+   "closure": "belirsiz",
+   "background": "foto ustune bindirilmis",
+   "notes": "Pinterest kolaji ustune bindirilmis 60'lar dropped-waist + oynak volan kombinasyonu; ciddi on / surpriz sirt karsitligi."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.36.59.png",
+   "kind": "flat",
+   "garment": "kolsuz A-line mini shift elbise",
+   "views": "on+arka",
+   "details": [
+    "onde acili fransiz gogus pensleri",
+    "arkada derin V sirt dekoltesi",
+    "V'nin bitiminde arka orta fiyonk",
+    "arka orta dikis",
+    "temiz A-line etek"
+   ],
+   "neckline": "onde kayik (bateau), arkada derin V",
+   "sleeves": "kolsuz",
+   "waist": "dikissiz, penslerle oturan A siluet",
+   "hem": "duz, mini",
+   "closure": "belirsiz (muhtemel yan/gizli; gorselde cizilmemis)",
+   "background": "foto ustune bindirilmis",
+   "notes": "Onu sade 60'lar shift, arkasi derin V + fiyonkla tek vurus yapan 'arkasi olay' estetigi; foto kolaj ustunde beyaz flat cifti."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.04.png",
+   "kind": "flat",
+   "garment": "kolsuz A-line mini shift elbise",
+   "views": "on+arka",
+   "details": [
+    "onde acili fransiz gogus pensleri",
+    "arkada cok derin U (plunge scoop) sirt",
+    "arka orta dikis",
+    "temiz A-line etek"
+   ],
+   "neckline": "onde kayik (bateau), arkada bele yaklasan derin U",
+   "sleeves": "kolsuz",
+   "waist": "dikissiz A siluet",
+   "hem": "duz, mini",
+   "closure": "belirsiz",
+   "background": "foto ustune bindirilmis",
+   "notes": "36.59'daki elbisenin kardesi: ayni sade on, bu kez fiyonksuz, neredeyse bele inen dev U sirt — ayni ailenin ikinci varyanti."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.11.png",
+   "kind": "flat",
+   "garment": "korse bedenli milkmaid mini elbise",
+   "views": "on+arka",
+   "details": [
+    "omuzlarda fiyonkla baglanan askilar",
+    "buzgulu/shirred kup gogus, ustu dantel/pico kenarli",
+    "on ortada baglama kordonu (drawstring/tie) detayi",
+    "dikisli korse beden, sivri (basque) bel",
+    "arkada capraz bagcikli (lace-up) korse sirt + kucuk fiyonk",
+    "bol buzgulu/klos mini etek"
+   ],
+   "neckline": "buzgulu duz/kalp-vari kup dekolte, fiyonk askili",
+   "sleeves": "kolsuz (baglamali askilar)",
+   "waist": "korse dikisli, sivri basque bel",
+   "hem": "bol klos/buzgulu mini",
+   "closure": "arka capraz bagcik (lace-up)",
+   "background": "temiz zemin",
+   "notes": "Setin en suslu parcasi: balletcore/coquette korse + fiyonk + buzgu yigini, en cok kucuk-detay primitifi isteyen referans; sag karusel oklu site thumbnail'i."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.28.png",
+   "kind": "flat",
+   "garment": "tek omuz volanli top",
+   "views": "on+arka",
+   "neckline": "asimetrik tek-omuz bant, digger taraf acik",
+   "sleeves": "kolsuz; tek omuzda genis bant",
+   "waist": "belirgin bel yok, bant altindan buzgulu serbest dusus",
+   "hem": "klos/dalgali, kenarda noktali dikis (pikolu kenar olabilir, belirsiz)",
+   "closure": "belirsiz (gorunur kapanma yok)",
+   "details": [
+    "omuzda uzun uclu fiyonk",
+    "bant altinda yogun buzgu",
+    "babydoll gibi acilan govde",
+    "iki gorunum ayna simetrik"
+   ],
+   "background": "temiz zemin",
+   "notes": "Tek omuz + kocaman fiyonk + buzgulu babydoll dususu: tek dramatik jestin tasidigi minimal romantik flat."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.37.png",
+   "kind": "flat",
+   "garment": "halter top",
+   "views": "on+arka",
+   "neckline": "halter; onde sivri ucgen/derin V hattina inen capraz askilar",
+   "sleeves": "kolsuz, ince bagli halter askilar",
+   "waist": "oturmus bel, prens dikisleri, etek ucuna dogru peplum gibi acilma",
+   "hem": "hafif kavisli, kalcada acilan kisa etek ucu",
+   "closure": "arkada iki fiyonk bagla kapanan acik sirt",
+   "details": [
+    "ensede fiyonk",
+    "capraz halter askilar",
+    "tamamen acik sirt",
+    "arka ortada iki bagcik fiyonk",
+    "prens dikisleri"
+   ],
+   "background": "temiz zemin",
+   "notes": "Sirti tamamen acik, uc ayri fiyonkla (ense + arka iki bag) kapanan heykelsi halter: fiyonk burada sus degil konstruksiyon."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.43.png",
+   "kind": "flat",
+   "garment": "bustiyerli mini elbise",
+   "views": "sadece on",
+   "neckline": "bustiyer/balkonet kup hatti, duz ust kenar",
+   "sleeves": "kolsuz; omuzda fiyonkla baglanan ince askilar",
+   "waist": "gogus alti kesikle oturmus bel, dikisli kup yapisi",
+   "hem": "mini, duz",
+   "closure": "belirsiz (thumbnail cok kucuk)",
+   "details": [
+    "balen goruntusunde kup dikisleri",
+    "omuz fiyonk askilar",
+    "govdeye oturan mini etek"
+   ],
+   "background": "foto ustune bindirilmis",
+   "notes": "Ic giyim konstruksiyonu (kup+balen dikisi) diseriya tasinmis; havlu dokulu foto uzerine kucuk thumbnail, detaylar kismen belirsiz."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.37.57.png",
+   "kind": "flat",
+   "garment": "kolsuz top",
+   "views": "on+arka",
+   "neckline": "onde derin V (gogus alti buzgulu kesikle birlesir); arkada duz/bato hatti",
+   "sleeves": "kolsuz, genis askili",
+   "waist": "onde duz govde; arkada bel hizasinda ince bagcik fiyonk",
+   "hem": "duz",
+   "closure": "belirsiz (arka bagcik sus/ayar olabilir)",
+   "details": [
+    "gogus alti buzgu (V'nin altinda toplanma)",
+    "arka belde ince kordon fiyonk",
+    "iki gorunum ust uste yerlesik"
+   ],
+   "background": "temiz zemin",
+   "notes": "Onu sade V+buzgu, arkasi tek surpriz (bel fiyongu) olan 90'lar tank sadeligi; ust kenarda kirpilmis 'PATTERN' yazisi var."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.13.png",
+   "kind": "flat",
+   "garment": "kolsuz A-line mini elbise/tunik",
+   "views": "sadece on",
+   "neckline": "buyuk boy sivri devrik yaka, kenari firfirli, V acikligi",
+   "sleeves": "kolsuz, kol oyulari noktali dikisli",
+   "waist": "bel kesiksiz; prens dikisleriyle A-line acilan govde",
+   "hem": "genis, hafif kavisli, noktali dikis cizgili",
+   "closure": "on ortada dugme pati (6 dugme); yan dikiste fermuar isareti belirsiz",
+   "details": [
+    "firfir kenarli dev yaka (oversize chelsea)",
+    "on dugme sirasi",
+    "prens dikisleri",
+    "noktali ust dikis vurgulari"
+   ],
+   "background": "temiz zemin",
+   "notes": "Estetigi tek basina dev firfirli yaka tasiyor: sade A-line govde + abartili yaka orani, kiz-cocugu/60'lar dokunusu."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.29.png",
+   "kind": "flat",
+   "garment": "halter yelekvari peplum top",
+   "views": "on+arka",
+   "neckline": "cok derin halter V (gogus altina inen), genis halter bantlari",
+   "sleeves": "kolsuz",
+   "waist": "gogus alti buzgulu kesik, oturmus korse benzeri bel, sonra peplum acilmasi",
+   "closure": "on ortada sik minik dugme (loop-button) sirasi",
+   "hem": "peplum/kalca boyu, on ortada kisa yirtmac",
+   "details": [
+    "ensede uzun uclu buyuk fiyonk bag",
+    "gogus alti buzgu",
+    "minik dugme sirasi",
+    "acik sirt, ust kenari buzgulu arka bant",
+    "peplum + on yirtmac"
+   ],
+   "background": "temiz zemin",
+   "notes": "Yelek ciddiyeti (dugme sirasi, korse bel) ile halter cilvesinin (dev ense fiyongu, ciplak sirt) carpismasi; hafif dokulu bej zemin ama flat temiz."
+  },
+  {
+   "file": "/Users/damummyphus/damla_projects_2026/stitchu/new_flats/volume_2/Ekran Resmi 2026-07-23 19.38.50.png",
+   "kind": "flat",
+   "garment": "gipeli (shirring) askili top",
+   "views": "sadece on",
+   "neckline": "duz kesim ust hat",
+   "sleeves": "kolsuz; omuzlarda fiyonkla baglanan askilar",
+   "waist": "genis cok-sirali elastik shirring/gipe paneli (belden kalcaya)",
+   "hem": "shirring altinda kisa dalgali volan/peplum",
+   "closure": "yok/belirsiz (shirring esnekligi giydirir)",
+   "details": [
+    "iki omuzda fiyonk bag",
+    "genis smocking/shirring bandi",
+    "shirring ustunde buzgulu govde",
+    "mini volan etek ucu"
+   ],
+   "background": "temiz zemin",
+   "notes": "Dokunun kendisi susleme: yariya kadar inen dev shirring blogu + omuz fiyonklari, pembe-lila zeminde tatli/el-isi hissi."
+  }
+ ],
+ "synthesis": "ENVANTER TABANI: 43 gorsel = 34 gercek flat + 5 kalip-parca sayfasi + 3 bos-junk kirpinti + 1 urun-foto (gingham). Asagidaki damar 34 flat uzerinden cikarildi; kalip-parca sayfalari ayri bir seri (stitchu'nun \"flat -> parca\" hattina referans), junk'lar envanter disi.\n\n## 1. Kompozisyon kurallari (tekrar edenler)\n\n- **On+arka cift yaygin ama sart degil:** 18/34 flat on+arka, 16/34 sadece on. Kritik kural: arka cizildiyse arkada mutlaka \"olay\" var (derin V/U sirt, fiyonk, lace-up, smocking) — 18 ciftin ~15'inde boyle. \"Onu sade, arkasi surpriz\" setin imzasi (22.06, 35.26, 36.59, 37.04, 36.55, 37.37).\n- **Cizgi karakteri:** duz onden, simetrik, hayalet-manken teknik flat; ince koyu kontur + tek renk pastel dolgu (pudra, krem, lila, pembe, bej); dikis cizgileri ince, topstitch noktali cizgiyle. Istisna sadece 2-3 golgeli/eskiz render (25.03, 35.40, 36.42).\n- **Zemin iki tip:** ya temiz pastel sayfa (~20) ya Pinterest foto-kolaji ustune bindirme (~14); iki durumda da flat zeminden net ayrisiyor.\n- **Olcek/oran:** giysiler mini-boy agirlikli; on ve arka ayni olcekte yan yana veya ust uste.\n\n## 2. Tekrar eden giysi/detay aileleri\n\n- **Giysi turu:** yalnizca kadin ust (top/bluz/bustiyer/korse) ve elbise (mini agirlikli) + 1 romper. Elbiselerin tamami mini/diz ustu; en uzunu diz boyu (35.40).\n- **Uc siluet ailesi:** (a) empire/gogus-alti kesik + buzgu (~10 ornek), (b) prenses-dikisli/korse fit-and-flare (~9: 22.47, 36.05, 37.11, 25.24...), (c) roba altindan dokulen babydoll/swing salinim (~7: 23.45, 24.04, 24.51, 35.34). Klasik normal-bel dikisli elbise neredeyse yok.\n- **Yakalar:** derin V (7), kayik/bateau (6), kare/sweetheart (5), bebe/statement devrik yaka (4-5), halter (3). Halter ve tek-omuz gibi \"acik omuz\" varyantlari tekrar ediyor.\n- **Kollar:** kolsuz/askili ezici cogunluk (~23/34); kol varsa kisa puf/balon/kap (10). TUM sette tek bir uzun kol var (22.21) ve o da puf + buzgulu manset.\n- **Detay primitifleri (frekans sirasiyla):** fiyonk (~14 flat; arka belde, ensede, omuzda, askida), buzgu/shirring/smocking (~16), minik siki dugme siralari (9; loop-dugme hissi, 2'si asimetrik hatta), firfir/volan/peplum (~9), prenses/panel dikisi (~9), bagcik/lace-up (2 ama ikonik: 25.24, 37.11), dantel/fisto trim (2-3).\n- **Kapanma dili:** cogunlukta closure \"belirsiz\" yani cizilmemis; cizildiginde HEP dugme/bagcik/fiyonk. Fiyonk bazen sus degil konstruksiyon (37.37: sirt uc fiyonkla kapaniyor).\n\n## 3. NE YOK (bu sette hic gorulmeyen)\n\n- Alt giyim yok: pantolon, jean, ayri etek, sort (tek istisna romper icindeki entegre sort).\n- Dis giyim/triko yok: ceket, blazer, mont, kazak, hoodie, sweatshirt sifir.\n- Maxi/midi boy yok; en uzun diz boyu.\n- Duz uzun kol yok; biskop/gomlek kolu yok.\n- Gorunur fermuar, citcit, kopca, metal donanim cizimi yok.\n- Bogazli yaka, kapuson, kargo-cep/sportif teknik detay yok (tek cep ornegi: 24.20 kapakli cep, tek istisna).\n- Flat dolgusunda desen/print yok — hep tek renk pastel (tek desenli ornek flat degil, urun fotosu 25.52).\n- Erkek/unisex parca yok; koyu-sert \"sokak/teknik\" estetik yok.\n\n## 4. Set uyeligi kontrol listesi (bir flat bu setten mi?)\n\n1. Giysi kadin ust (top/bluz/bustiyer/korse) veya mini/diz-ustu elbise mi? (alt giyim, dis giyim, triko ise ELENIR)\n2. Kol: kolsuz/askili YA DA kisa puf/balon/kap kol mu? (duz uzun kol varsa ELENIR)\n3. Siluet uc aileden birine mi giriyor: empire+buzgu / prenses-korse fit-and-flare / babydoll-roba salinimi?\n4. En az IKI yumusak detay primitifi var mi: fiyonk, buzgu/shirring, firfir/volan/peplum, minik dugme sirasi, bagcik, dantel trim?\n5. Kapanma dili yumusak mi: gorunur fermuar/metal cizilmemis; varsa dugme/bagcik/fiyonk?\n6. Cizim duz onden simetrik teknik flat mi; tek renk pastel dolgu + ince kontur, desen dolgusu yok mu?\n7. Arka gorunum cizildiyse arkada bir surpriz var mi (derin V/U sirt, fiyonk, lace-up, smocking)? (arka duz-sikici ise damara aykiri)\n8. Etek ucu hareketli mi: klos/A-line/volan/peplum; boy mini-diz ustu mu?\n\nDamarin tek cumlesi: pastel, duz-onden teknik flatlerde \"onden masum, arkadan olay\" kurgulu; kolsuz/puf kollu mini siluetlerin buzgu+fiyonk+minik-dugme diliyle yazildigi coquette/balletcore/60'lar-mod karisimi; metal ve sertlik tamamen dislanmis."
+}

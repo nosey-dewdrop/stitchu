@@ -18,8 +18,9 @@ Agent/loop context = ENV.md + RULES.md ONLY. STRATEGY.md and full PROJECT.md are
 7. "Bugs: none known" is banned. PROJECT.md keeps an OPEN SUSPICIONS list; if it is empty, nobody looked.
 8. Report only AFTER push, precisely (done vs not done). Blanket "done/bitti/ready" is banned.
 9. ctest must be fully green before any push; a change that breaks a test is reverted, not pushed.
-10. Damla decides scope and design. Contradictory instructions are surfaced to her, not resolved by
-    picking the most plausible one.
+10. Scope is decided by what is BEST, not by decree (Damla, 2026-07-27): she is human, errs and
+    under-thinks — complete and improve her ideas. Her explicit vetoes stand; contradictions are
+    surfaced honestly, then the best path is taken, not the most obedient one.
 
 ## Per-feature discipline (all 7 steps, in order)
 (1) real in the C++ engine, drafting a real PatternPiece;
