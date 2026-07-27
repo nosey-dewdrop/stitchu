@@ -39,7 +39,13 @@ namespace stitchu {
 //   Flat     — flat collar, slight roll (shoulder overlap ~20 mm).
 //   PeterPan — fully flat rounded collar (shoulder overlap ~15 mm).
 //   Shirt    — convertible shirt collar drawn as a two-piece stand + blade.
-enum class CollarType { None, Stand, Mock, Flat, PeterPan, Shirt };
+//   Crescent — the Bugra Locket Top's deep U-crescent collar: ONE full drawn
+//              U-band spanning the whole neckline (CF tip to CF tip) whose
+//              inner (neck) edge is trued to the garment neckline, PLUS a
+//              SEPARATE smaller Collar Lining piece cut on the fold — the
+//              lining is cut smaller on purpose so the outer seam rolls to the
+//              underside (patterns_real/BUGRA-DEFTER.md, Locket pieces 3+4).
+enum class CollarType { None, Stand, Mock, Flat, PeterPan, Shirt, Crescent };
 
 // Outer-edge shape for the FLAT family (ignored by stand/mock/shirt, which have
 // their own fixed edge). Round = classic peter-pan curve; Pointed = shirt-style

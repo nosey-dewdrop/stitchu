@@ -75,6 +75,13 @@ struct DraftedPattern {
     // when there is no princess bodice / no bust apex to measure from. This is
     // metadata only (not a piece), so it never enters the golden dump.
     double cupSeamWaistBelowApex = 0.0;
+    // Measured armhole (one arm, front half + back half, sewing line) + drafted
+    // armhole depth, carried out of the bodice draft so the opt-in Locket sleeve
+    // post-pass can refit its two-piece sleeve against the SAME armhole the base
+    // sleeve was fit to, without re-deriving the bodice. Metadata only (not a
+    // piece), so it never enters the golden dump.
+    double sleeveArmholeLenMM = 0.0;
+    double sleeveArmholeDepthMM = 0.0;
 };
 
 // Flatten one cubic to `steps` segments; returns steps+1 points incl. `from`.

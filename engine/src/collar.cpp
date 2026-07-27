@@ -20,6 +20,25 @@ constexpr double flatWidth = 60;    // finished flat/peter-pan collar width
 constexpr double shirtStandH = 28;  // shirt collar stand height
 constexpr double shirtBladeH = 48;  // shirt collar blade (= stand + 20, covers seam)
 
+// --- Crescent (Bugra Locket) collar dimensions -------------------------------
+// Every proportion measured off the purchased Locket Top's size-36 vector rings
+// (patterns_real/geometry/geometry-full.json: the 'EXTRA-TL' cluster is the true
+// Collar, the 'Collar' cluster is the true Collar Lining — nameNote-proven).
+// The U aspect and the two band widths are style constants of the collar (like
+// flatWidth); the U SIZE is solved from the garment's own measured neckline, so
+// the trued neck edge stays the governing constraint.
+constexpr double crescentAspect = 0.95;     // inner-U half-span / inner-U depth (ring fit, /tmp grid vs the size-36 ring)
+constexpr double crescentBandW = 30;        // band depth at centre back (sew)
+constexpr double crescentBandTip = 22;      // band width at the blunt CF tip ends (sew)
+constexpr double crescentTipRise = 0;       // tips sit on the inner tip line (ring fit)
+constexpr double crescentTipFlare = 12;     // lining tip flares outward past the inner tip
+constexpr double crescentLiningBandW = 62;  // lining band is cut deeper (Bugra piece 4)
+constexpr double crescentLiningScale = 0.95; // lining neck edge cut smaller -> seam rolls under
+constexpr double crescentLiningAspect = 1.15; // lining half-U inner aspect (a / d)
+
+// Quarter-ellipse cubic from (sx*a, 0) toward (0, d) or back, kappa arc.
+constexpr double kKappa = 0.5522847498;
+
 PatternPiece* findPiece(DraftedPattern& pattern, std::initializer_list<const char*> names) {
     for (const char* name : names)
         for (auto& piece : pattern.pieces)
@@ -152,6 +171,120 @@ PatternPiece flatCollar(const std::string& name, double neckLen, double width,
     return piece;
 }
 
+// --- Crescent (Bugra Locket) collar ------------------------------------------
+
+// Inner-U path (full U, tips up on y = 0, bottom at y = d): two quarter-ellipse
+// cubics T_R -> bottom -> T_L. Arc length scales linearly with uniform scale, so
+// the U is drawn once at a seed size and scaled to put the INNER (neck) edge
+// exactly on the measured neck-seam target — truing by construction, and the
+// ctest re-measures it.
+std::vector<PathCommand> crescentInnerU(double a, double d) {
+    const Point tR{a, 0}, tL{-a, 0}, b{0, d};
+    return {
+        PathCommand::move(tR),
+        PathCommand::curve(b, {a, d * kKappa}, {a * kKappa, d}),
+        PathCommand::curve(tL, {-a * kKappa, d}, {-a, d * kKappa}),
+    };
+}
+
+// The full drawn Collar: a deep U-CRESCENT (hilal). Inner edge = the neck seam
+// (length `neckTarget`, solved by scale; a/d aspect measured off the size-36
+// ring); outer edge = a second half-ellipse `crescentBandW` deeper at centre
+// back whose ends MEET the inner tips — the band tapers to a point at each CF
+// tip, exactly the purchased ring's crescent profile. Returns the piece;
+// outNeckLen = the measured drawn inner-edge length (cut note + ctest).
+PatternPiece crescentCollar(double neckTarget, double& outNeckLen) {
+    double a = crescentAspect * 50.0, d = 50.0;
+    const double len0 = pathLength(crescentInnerU(a, d));
+    const double s = len0 > 1e-9 ? neckTarget / len0 : 1.0;
+    a *= s; d *= s;
+    const double bw = crescentBandW;
+    const double D = d + bw;
+    const double A = a + crescentBandTip;
+    const Point tRin{a, 0}, tLin{-a, 0};
+    const Point tRout{A, -crescentTipRise}, tLout{-A, -crescentTipRise};
+
+    std::vector<PathCommand> cmds = crescentInnerU(a, d);  // tR -> bottom -> tL (inner)
+    outNeckLen = pathLength(cmds);
+    // Blunt CF end cut, then the outer crescent edge: a half-ellipse-class arc
+    // (A, D) whose arms rise a touch above the inner tip line — the ring's own
+    // arm profile (band `bw` deep at centre back, `crescentBandTip` at the ends).
+    cmds.push_back(PathCommand::line(tLout));
+    cmds.push_back(PathCommand::curve({0, D},
+                                      {-A, D * kKappa - crescentTipRise * 0.5},
+                                      {-A * kKappa, D}));
+    cmds.push_back(PathCommand::curve(tRout,
+                                      {A * kKappa, D},
+                                      {A, D * kKappa - crescentTipRise * 0.5}));
+    cmds.push_back(PathCommand::close());
+    (void)tRin; (void)tLin;
+
+    PatternPiece piece;
+    piece.name = "Collar";
+    piece.commands = cmds;
+    piece.cutInstruction =
+        "cut 2 (1 upper + 1 under) + 1 interfacing (Collar — deep U-crescent; the "
+        "inner edge is your " + std::to_string(static_cast<long>(std::lround(outNeckLen))) +
+        " mm neck seam, sewn from centre front around the back neck to centre "
+        "front; the Collar Lining is cut smaller so the outer seam rolls under)";
+    // Centre-back line across the band + a CB placement notch on the neck edge.
+    piece.markings.push_back(PathCommand::move({0, d}));
+    piece.markings.push_back(PathCommand::line({0, D}));
+    piece.markings.push_back(PathCommand::move({-8, d + 4}));
+    piece.markings.push_back(PathCommand::line({8, d + 4}));
+    piece.hasGrainline = true;
+    piece.grainline = Grainline{{0, d + bw * 0.2}, {0, D - bw * 0.2}};
+    piece.seamAllowance = SA;
+    return piece;
+}
+
+// The separate Collar Lining (Bugra Locket piece 4): HALF the under-collar,
+// cut on the fold at centre back — a thick croissant band. Cut smaller than
+// the Collar on purpose (crescentLiningScale) so the outer seam rolls to the
+// underside. Returns the piece; outNeckLen = measured drawn inner-edge length
+// of the HALF piece (×2 across the fold = the lining neck edge).
+PatternPiece crescentLining(double neckTarget, double& outNeckLen) {
+    double aL = crescentLiningAspect * 50.0, dL = 50.0;
+    // Half inner arc: CB (on the fold) -> tip, one quarter-ellipse cubic.
+    auto halfInner = [](double a, double d) {
+        return std::vector<PathCommand>{
+            PathCommand::move({0, d}),
+            PathCommand::curve({a, 0}, {a * kKappa, d}, {a, d * kKappa}),
+        };
+    };
+    const double len0 = pathLength(halfInner(aL, dL));
+    const double target = neckTarget * crescentLiningScale / 2.0;
+    const double s = len0 > 1e-9 ? target / len0 : 1.0;
+    aL *= s; dL *= s;
+    const double bw = crescentLiningBandW;
+    const double A = aL + bw * 0.6, D = dL + bw;
+    const Point tipOut{aL + crescentTipFlare, -crescentTipRise};
+
+    std::vector<PathCommand> cmds = halfInner(aL, dL);     // fold -> tip (inner)
+    outNeckLen = pathLength(cmds);
+    cmds.push_back(PathCommand::line(tipOut));             // CF end cut
+    cmds.push_back(PathCommand::curve({0, D},              // outer edge back to CB
+                                      {A, -crescentTipRise + (D + crescentTipRise) * 0.5},
+                                      {A * 0.55, D}));
+    cmds.push_back(PathCommand::close());                  // straight fold edge x=0
+
+    PatternPiece piece;
+    piece.name = "Collar Lining";
+    piece.commands = cmds;
+    piece.cutInstruction =
+        "cut 1 on fold + 1 interfacing on fold (Collar Lining — the under layer, "
+        "cut smaller than the Collar on purpose so the outer seam rolls to the "
+        "underside; its half neck edge measures " +
+        std::to_string(static_cast<long>(std::lround(outNeckLen))) +
+        " mm on the drawn piece)";
+    piece.markings.push_back(PathCommand::move({0, dL}));
+    piece.markings.push_back(PathCommand::line({0, D}));
+    piece.hasGrainline = true;
+    piece.grainline = Grainline{{aL * 0.35, dL * 0.55}, {aL * 0.35, D - 8}};
+    piece.seamAllowance = SA;
+    return piece;
+}
+
 // Stamp a short cross-tick placement notch on the neckline of a body piece at
 // its centre-neck vertex (commands[0]), so the sewer knows the collar attaches
 // there. Body-frame independent.
@@ -257,6 +390,33 @@ bool apply(DraftedPattern& pattern, CollarType type, CollarEdge edge) {
                 "turn), sandwich it between the two stand layers, stitch the stand top "
                 "edge, then sew the stand's bottom edge to the neckline matching centre "
                 "back and shoulder notches.");
+            break;
+        }
+        case CollarType::Crescent: {
+            // The crescent spans the WHOLE neckline (CF tip to CF tip), minus the
+            // grown button-stand jog when the front carries one: the collar ends
+            // at the centre-front fold line, not at the stand edge. The jog is
+            // MEASURED off the drawn front (commands[0] sits at -standWidth on a
+            // grown-placket front, at the fold otherwise) — never assumed.
+            const PatternPiece* fr = findPiece(pattern,
+                {"Bodice Center Front", "Bodice Front", "Top Center Front", "Top Front"});
+            double jog = 0;
+            if (fr && !fr->commands.empty() && fr->commands[0].type == CmdType::Move)
+                jog = std::max(0.0, -fr->commands[0].to.x);
+            const double target = std::max(150.0, neckFull - 2 * jog);
+            double collarNeck = 0, liningNeck = 0;
+            pattern.pieces.push_back(crescentCollar(target, collarNeck));
+            pattern.pieces.push_back(crescentLining(target, liningNeck));
+            pattern.guideSteps.push_back(
+                "Collar (deep U-crescent, Bugra Locket): the Collar's inner edge is "
+                "drafted to your " + std::to_string(static_cast<long>(std::lround(collarNeck))) +
+                " mm neck seam (centre front to centre front around the back neck); "
+                "the separate Collar Lining is cut on the fold and SMALLER on "
+                "purpose — sew Collar to Collar Lining right sides together along "
+                "the outer edge, easing the collar to the lining, so the seam rolls "
+                "to the underside when turned. Interface both per the cut notes, "
+                "turn, press, then sew the collar's inner edge to the neckline "
+                "matching the centre-back notch.");
             break;
         }
         case CollarType::None:

@@ -15,7 +15,7 @@
     "topLength": { "type": "string", "enum": "TopLength", "values": ["cropped", "hip", "tunic"] },
     "tieClosure": { "type": "int", "enum": "TiePlacement", "values": ["none", "backWaist", "backWaistBow", "frontNeckBow", "tieBack", "cuffTies", "frontWaistTie", "wrapFront", "frontWaistBow"] },
     "sleeveCap": { "type": "int", "enum": "SleeveCap", "values": ["plain", "gathered", "puffed", "cap"] },
-    "collarType": { "type": "int", "enum": "CollarType", "values": ["none", "stand", "mock", "flat", "peterPan", "shirt"] },
+    "collarType": { "type": "int", "enum": "CollarType", "values": ["none", "stand", "mock", "flat", "peterPan", "shirt", "crescent"] },
     "collarEdge": { "type": "int", "enum": "CollarEdge", "values": ["round", "pointed", "scallop"] },
     "gatherType": { "type": "int", "enum": "GatherType", "values": ["none", "drawstring", "shirred", "smocked"] },
     "gatherZone": { "type": "int", "enum": "GatherZone", "values": ["neckline", "bust", "waist", "sleeve"] },
@@ -38,6 +38,7 @@
     "backDetail": { "type": "int", "enum": "BackDetail", "values": ["none", "ruffle", "cape", "flounce"] },
     "bardotStyle": { "type": "int", "enum": "BardotStyle", "values": ["none", "plain", "frill"] },
     "cupSeam": { "type": "int", "enum": "CupSeam", "values": ["none", "horizontal", "bugra"] },
+    "locketTop": { "type": "int", "enum": "LocketTop", "values": ["none", "bugra"] },
     "yoke": { "type": "int", "enum": "Yoke", "values": ["none", "plain", "gathered"] },
     "boxPleat": { "type": "int", "enum": "BoxPleat", "values": ["none", "centerInverted"] }
   }

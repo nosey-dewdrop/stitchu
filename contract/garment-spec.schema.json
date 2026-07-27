@@ -473,7 +473,8 @@
             "mock",
             "flat",
             "peterPan",
-            "shirt"
+            "shirt",
+            "crescent"
           ]
         },
         "collarEdge": {
@@ -626,6 +627,12 @@
           "enum": [
             "none",
             "horizontal",
+            "bugra"
+          ]
+        },
+        "locketTop": {
+          "enum": [
+            "none",
             "bugra"
           ]
         },

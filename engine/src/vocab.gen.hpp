@@ -42,8 +42,8 @@ inline constexpr int kTieClosureCount = 9;
 inline constexpr const char* kSleeveCap[] = { "plain", "gathered", "puffed", "cap" };
 inline constexpr int kSleeveCapCount = 4;
 // CollarType (int)
-inline constexpr const char* kCollarType[] = { "none", "stand", "mock", "flat", "peterPan", "shirt" };
-inline constexpr int kCollarTypeCount = 6;
+inline constexpr const char* kCollarType[] = { "none", "stand", "mock", "flat", "peterPan", "shirt", "crescent" };
+inline constexpr int kCollarTypeCount = 7;
 // CollarEdge (int)
 inline constexpr const char* kCollarEdge[] = { "round", "pointed", "scallop" };
 inline constexpr int kCollarEdgeCount = 3;
@@ -107,6 +107,9 @@ inline constexpr int kBardotStyleCount = 3;
 // CupSeam (int)
 inline constexpr const char* kCupSeam[] = { "none", "horizontal", "bugra" };
 inline constexpr int kCupSeamCount = 3;
+// LocketTop (int)
+inline constexpr const char* kLocketTop[] = { "none", "bugra" };
+inline constexpr int kLocketTopCount = 2;
 // Yoke (int)
 inline constexpr const char* kYoke[] = { "none", "plain", "gathered" };
 inline constexpr int kYokeCount = 3;

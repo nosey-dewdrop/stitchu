@@ -153,6 +153,7 @@ GarmentSpec buildSpec(const val& o) {
     spec.backDetail = parseEnumInt("backDetail", intField(o, "backDetail"), kBackDetail, kBackDetailCount);
     spec.bardotStyle = parseEnumInt("bardotStyle", intField(o, "bardotStyle"), kBardotStyle, kBardotStyleCount);
     spec.cupSeam = parseEnumInt("cupSeam", intField(o, "cupSeam"), kCupSeam, kCupSeamCount);
+    spec.locketTop = parseEnumInt("locketTop", intField(o, "locketTop"), kLocketTop, kLocketTopCount);
     spec.yoke = parseEnumInt("yoke", intField(o, "yoke"), kYoke, kYokeCount);
     spec.boxPleat = parseEnumInt("boxPleat", intField(o, "boxPleat"), kBoxPleat, kBoxPleatCount);
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip

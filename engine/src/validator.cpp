@@ -8,6 +8,7 @@
 #include "bodice.hpp"
 #include "guiderefs.hpp"
 #include "collar.hpp"
+#include "locket.hpp"
 #include "hem.hpp"
 #include "skirt.hpp"
 #include "sleeve.hpp"
@@ -698,6 +699,16 @@ std::vector<ValidationIssue> topIssues(
             find("Upper Cup") && find("Back Body Center")) {
             continue;
         }
+        // Bugra Locket (locketTop == Bugra, construction actually built): the
+        // two dart panels are REBUILT as the Locket's Front Body (side bust dart
+        // cut open — the side seam is drawn LONGER by the wedge mouth on
+        // purpose) + the fold-cut Back Body, so the per-half height + side-seam
+        // audit no longer maps. The construction (piece set, fold, dart-transfer
+        // truing, band truing) is proven in locket_check.
+        if (spec.locketTop == 1 /*LocketTop::Bugra*/ &&
+            find("Front Body") && find("Back Body")) {
+            continue;
+        }
         // Yoke split (roba — doll / babydoll dress): the "Top <half>" panel (dart) or
         // the "Top Center/Side <half>" princess panels are REPLACED by a "<half> Yoke"
         // + "<half> Body" (dart), or "<half> Yoke Center/Side" + "<half> Body
@@ -779,6 +790,31 @@ std::vector<ValidationIssue> facingIssues(const GarmentSpec& spec, const Drafted
                     piece.name.find("Bias binding") != std::string::npos)
                     issues.push_back({"facing", piece.name,
                         "stray edge-finish piece on a Bugra corset (the full lining finishes every edge)"});
+            }
+            return issues;
+        }
+    }
+
+    // Bugra Locket (locketTop == Bugra, construction actually built): the
+    // crescent Collar + separate Collar Lining finish the neck — the purchased
+    // Locket has NO neck facing, and the pass consumes them. Only strays are
+    // flagged here.
+    {
+        bool locketBuilt = false;
+        if (spec.locketTop == 1 /*LocketTop::Bugra*/) {
+            bool fb = false, us = false;
+            for (const auto& piece : draft.pieces) {
+                if (piece.name == "Front Body") fb = true;
+                if (piece.name == "Upper Sleeve") us = true;
+            }
+            locketBuilt = fb && us;
+        }
+        if (locketBuilt) {
+            for (const auto& piece : draft.pieces) {
+                if (piece.name.find("Neck Facing") != std::string::npos ||
+                    piece.name.find("Bias binding") != std::string::npos)
+                    issues.push_back({"facing", piece.name,
+                        "stray edge-finish piece on a Bugra Locket (the collar + lining finish the neck)"});
             }
             return issues;
         }
@@ -1172,6 +1208,11 @@ std::vector<ValidationIssue> issues(
             if (spec.neckline != Neckline::Halter &&
                 static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
                 options.shoulderStyle = ShoulderStyle::Dropped;
+            // (Bugra Locket walks the side seam in the base draft; the reference
+            // bodice here stays UNSHIFTED on purpose — exactly like the corset's
+            // corsetEase — so bodiceIssues audits a self-consistent reference.
+            // The ±12 mm walk moves the armhole length by well under the puffed
+            // crown's accepted gather band, so sleeveIssues stays honest.)
             const BodiceDraft bodice = BodiceBlock::draft(m, options);
             for (auto& issue : bodiceIssues(spec, bodice, m)) result.push_back(issue);
             for (auto& issue : sleeveIssues(spec, m, draft, bodice)) result.push_back(issue);

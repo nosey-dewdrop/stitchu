@@ -416,6 +416,17 @@ struct GarmentSpec {
     // 0 = None, 1 = Gathered (Circular reserved for later). See hemflounce.hpp /
     // FORMULAS.md "All-around hem flounce".
     int hemFlounce = 0; // HemFlounce enum value; 0 = None
+    // Opt-in Bugra Locket Top construction (patterns_real/BUGRA-DEFTER.md, second
+    // purchased pattern): a waist-length buttoned dart top rebuilt as the Locket's
+    // six pieces — Front Body (cut 2, big cut-open side bust dart), Back Body
+    // (CUT ON FOLD, waist dart), a TWO-PIECE gathered puff-band sleeve (Upper +
+    // Lower Sleeve) and the deep-crescent Collar + separate smaller Collar Lining
+    // (collarType crescent), with no neck facings (the collar finishes the neck,
+    // as the purchased pattern does). 0 = None (byte-identical), 1 = Bugra. Only
+    // the exact host class (waist-length dart top, short set-in puffed sleeve,
+    // buttoned CF, crescent collar) hosts it; anything else is refused honestly.
+    // See locket.hpp.
+    int locketTop = 0; // LocketTop enum value; 0 = None
 };
 
 inline double roundToPlaces(double value, int places) {

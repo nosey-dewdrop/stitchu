@@ -146,6 +146,14 @@ struct BodiceOptions {
     // nearer the fold. Only the corset construction moves these.
     double princessShareFront = 0.5;
     double princessShareBack = 0.5;
+    // WHERE the side seam sits around the body (Bugra Locket Top, locketTop ==
+    // Bugra only): the purchased Locket pieces measure the front half WIDER and
+    // the back half NARROWER than the even bust/4 split — the side seam is moved
+    // toward the back. Positive = mm moved from the back quarter into the front
+    // quarter at BOTH the chest and the waist, so the total girth and the total
+    // suppression are unchanged (only the seam walks). 0 (default) keeps every
+    // existing draft byte-identical.
+    double sideSeamShiftMM = 0;
 };
 
 // Armhole scye shape (Aldrich / Armstrong bodice block). The armhole is NOT a

@@ -1,16 +1,20 @@
-// Bugra corset micro-loop dump: drafts the Buttoned Corset Bustier spec
-// (cupSeam = bugra) on the Bugra-36 body and prints the pieces as JSON
-// polygons (sewing line + cutting line, cubics flattened to 24 segments) so
-// patterns_real-style overlay tooling can measure piece-by-piece IoU against
-// the purchased pattern's size-36 rings (patterns_real/geometry/
-// geometry-full.json). Also prints the validator verdict so every loop
-// iteration sees wearability, not just shape.
+// Bugra micro-loop dump: drafts the purchased-pattern spec on the Bugra-36
+// body and prints the pieces as JSON polygons (sewing line + cutting line,
+// cubics flattened to 24 segments) so patterns_real-style overlay tooling can
+// measure piece-by-piece IoU against the purchased pattern's size-36 rings
+// (patterns_real/geometry/geometry-full.json). Also prints the validator
+// verdict so every loop iteration sees wearability, not just shape.
+// Modes: no arg / "corset" = Buttoned Corset Bustier (cupSeam = bugra);
+//        "locket" = Locket Top (locketTop = bugra).
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <vector>
 
+#include "../src/collar.hpp"
 #include "../src/cupseam.hpp"
 #include "../src/garment.hpp"
+#include "../src/locket.hpp"
 #include "../src/validator.hpp"
 
 using namespace stitchu;
@@ -51,12 +55,28 @@ void printPoly(const char* key, const std::vector<PathCommand>& cmds) {
 
 } // namespace
 
-int main() {
+int main(int argc, char** argv) {
     // Bugra size-36 body (BASAR-IKI-KALIP.md): bust 88 / waist 68 / hip 94,
     // EU38 demo frame: shoulder 37, back 40, arm 58, neck 35.
     const BodyMeasurementsSnapshot m{88, 68, 94, 37, 40, 58, 35};
+    const bool locket = argc > 1 && std::strcmp(argv[1], "locket") == 0;
 
     GarmentSpec spec;
+    if (locket) {
+        // The Locket Top host class (locket.hpp): waist-length buttoned dart
+        // top, short set-in puffed sleeve, crescent collar.
+        spec.garment = GarmentType::Top;
+        spec.shaping = Shaping::Dart;
+        spec.neckline = Neckline::Crew;
+        spec.sleeveStyle = SleeveStyle::Straight;
+        spec.sleeveLength = SleeveLength::Short;
+        spec.sleeveCap = SleeveCap::Puffed;
+        spec.fabric = Fabric::Woven;
+        spec.topLength = TopLength::Cropped;
+        spec.frontPlacket = true;
+        spec.collarType = static_cast<int>(CollarType::Crescent);
+        spec.locketTop = static_cast<int>(LocketTop::Bugra);
+    } else {
     spec.garment = GarmentType::Top;
     spec.shaping = Shaping::Princess;
     spec.neckline = Neckline::Square;
@@ -65,6 +85,7 @@ int main() {
     spec.topLength = TopLength::Hip;
     spec.frontPlacket = true; // the buttoned CF (grown placket, drawn pre-split)
     spec.cupSeam = static_cast<int>(CupSeam::Bugra);
+    }
 
     const DraftedPattern d = GarmentDrafter::draft(spec, m);
     const auto issues = PatternValidator::issues(spec, m, d);

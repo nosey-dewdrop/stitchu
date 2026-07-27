@@ -24,6 +24,7 @@ add_library(engine
     src/peplum.cpp
     src/hemflounce.cpp
     src/cupseam.cpp
+    src/locket.cpp
     src/yoke.cpp
     src/boxpleat.cpp
     src/pocket.cpp
@@ -163,6 +164,9 @@ add_test(NAME pocket_check COMMAND pocket_check)
 add_executable(bustier_check tests/bustier_check.cpp)
 target_link_libraries(bustier_check PRIVATE engine)
 add_test(NAME bustier_check COMMAND bustier_check)
+add_executable(locket_check tests/locket_check.cpp)
+target_link_libraries(locket_check PRIVATE engine)
+add_test(NAME locket_check COMMAND locket_check)
 add_executable(cup_check tests/cup_check.cpp)
 target_link_libraries(cup_check PRIVATE engine)
 add_test(NAME cup_check COMMAND cup_check)

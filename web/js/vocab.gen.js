@@ -147,7 +147,8 @@ export const VOCAB = {
       "mock",
       "flat",
       "peterPan",
-      "shirt"
+      "shirt",
+      "crescent"
     ]
   },
   "collarEdge": {
@@ -345,6 +346,14 @@ export const VOCAB = {
     "values": [
       "none",
       "horizontal",
+      "bugra"
+    ]
+  },
+  "locketTop": {
+    "type": "int",
+    "enum": "LocketTop",
+    "values": [
+      "none",
       "bugra"
     ]
   },

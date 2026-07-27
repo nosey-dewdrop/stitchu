@@ -653,7 +653,11 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         ? ((underbust / 4) * (1 + chestEase)) * 0.7
         : std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = halter ? 8 : neck * backNeckCutoutFactor;
-    const double backWidth = (underbust / 4) * (1 + chestEase) + droppedWiden;
+    // Side-seam walk (Bugra Locket, opt-in): move sideSeamShiftMM from the back
+    // quarter into the front quarter at chest AND waist — girth + suppression
+    // totals unchanged, only the seam position. 0 (default) = byte-identical.
+    const double sideShift = options.sideSeamShiftMM;
+    const double backWidth = (underbust / 4) * (1 + chestEase) + droppedWiden - sideShift;
 
     // SHOULDER TRUING (2026-07-13, precision pass): the back neck is wider
     // than the front (anatomy), so with a shared shoulder tip the back seam
@@ -671,7 +675,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         bTipHalf = backNeckW + backRunX * scale;
         bTipDrop = shoulderDrop * scale;
     }
-    const double backWaistTarget = (girth * backWaistShare / 2) * (1 + waistEase);
+    const double backWaistTarget = (girth * backWaistShare / 2) * (1 + waistEase) - sideShift;
     const double backReduction = std::max(0.0, backWidth - backWaistTarget);
     double backDart = backReduction * (1 - centerBackReduction * 0.5);
     const double cbTakeIn = backReduction * centerBackReduction * 0.5;
@@ -687,8 +691,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // is where a full-bust adjustment puts the extra: dart intake, not a wider
     // silhouette). Only engages when the real upper bust was given.
     const double frontCupAdd = m.upperBustMM() > 0 ? cupFullness * 0.35 : 0.0;
-    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd + droppedWiden;
-    const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase);
+    const double frontWidth = (m.bustMM() / 4) * (1 + chestEase) + frontCupAdd + droppedWiden + sideShift;
+    const double frontWaistTarget = (girth * (1 - backWaistShare) / 2) * (1 + waistEase) + sideShift;
     const double frontReduction = std::max(0.0, frontWidth - frontWaistTarget);
     // Bust dart (2026-07-18, Aldrich pass): a B-cup for an 88 bust wants a
     // 15-18 deg bust dart. The old code bled up to 15 mm of the front

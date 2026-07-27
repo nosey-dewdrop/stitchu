@@ -16,6 +16,7 @@
 #include "peplum.hpp"
 #include "hemflounce.hpp"
 #include "cupseam.hpp"
+#include "locket.hpp"
 #include "yoke.hpp"
 #include "boxpleat.hpp"
 #include "cuff.hpp"
@@ -488,6 +489,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             (m.waistMM() +
              (m.hipMM() - m.waistMM()) * (CupSeamBlock::bugra::hemBelowWaistMM / 200.0)) / 4.0;
     }
+    // Bugra Locket (locketTop == Bugra): the Locket BASE draft moves the side
+    // seam toward the BACK (measured off the purchased size-36 pieces: front
+    // half wider, back half narrower than the even bust/4 split). Gated on the
+    // same cheap class checks the post-pass enforces, so a host the pass would
+    // refuse is never silently drafted with a walked seam. Default (None)
+    // leaves the options untouched — byte-identical.
+    if (spec.locketTop == static_cast<int>(LocketTop::Bugra) &&
+        options.shaping == Shaping::Dart &&
+        LocketBlock::isLocketHost(spec)) {
+        options.sideSeamShiftMM = LocketBlock::bugra::sideSeamShiftMM;
+    }
     const BodiceDraft bodice = BodiceBlock::draft(m, options);
 
     std::vector<PatternPiece> tops;
@@ -629,6 +641,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     if (extra > 0 && bodice.frontPrincess && !bodice.front.markings.empty())
         pattern.cupSeamWaistBelowApex =
             bodice.frontPieceWaistY - bodice.front.markings[0].to.y;
+    // Measured armhole frame, carried out for the opt-in Locket sleeve post-pass
+    // (metadata only — never serialized, golden dump unchanged).
+    pattern.sleeveArmholeLenMM = bodice.armholeLength;
+    pattern.sleeveArmholeDepthMM = bodice.armholeDepth;
     return pattern;
 }
 
@@ -835,6 +851,20 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         CupSeamBlock::apply(pattern, static_cast<CupSeam>(spec.cupSeam), spec.neckline,
                             spec.sleeveStyle, capSleeve, pattern.cupSeamWaistBelowApex,
                             m.backLengthMM());
+    }
+    // Opt-in Bugra Locket Top construction (locketTop == Bugra): rebuilds the
+    // waist-length buttoned dart top as the purchased Locket's six pieces —
+    // Front Body (big cut-open side bust dart), fold-cut Back Body, the
+    // TWO-PIECE gathered puff-band sleeve (Upper + Lower Sleeve) and the
+    // crescent Collar + Collar Lining already drawn by the collar block, with
+    // the neck facings consumed (the collar finishes the neck, as the purchased
+    // pattern does). Post-pass on the finished draft, so the base is
+    // byte-identical with it off (locketTop == None); any non-Locket host is
+    // refused honestly inside the block. Runs BEFORE the cutting-line offset so
+    // every rebuilt piece gets its own cut line. See locket.hpp.
+    if (spec.locketTop != static_cast<int>(LocketTop::None) &&
+        spec.garment == GarmentType::Top) {
+        LocketBlock::apply(pattern, spec, m);
     }
     // Opt-in yoke split (roba — doll / babydoll / swing dress): splits the FRONT and
     // BACK bodice panels along a HORIZONTAL seam high on the chest into a Yoke (the

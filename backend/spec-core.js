@@ -62,6 +62,7 @@ const exposedZipInt = enumIntOf('exposedZip');
 const backDetailInt = enumIntOf('backDetail');
 const bardotStyleInt = enumIntOf('bardotStyle');
 const cupSeamInt = enumIntOf('cupSeam');
+const locketTopInt = enumIntOf('locketTop');
 const laceUpBackInt = enumIntOf('laceUpBack');
 const wrapFrontInt = enumIntOf('wrapFront');
 const hemFlounceInt = enumIntOf('hemFlounce');
@@ -186,6 +187,7 @@ export function validateDraftRequest(body) {
       backDetail: spec.backDetail ?? 'none',
       bardotStyle: spec.bardotStyle ?? 'none',
       cupSeam: spec.cupSeam ?? 'none',
+      locketTop: spec.locketTop ?? 'none',
       laceUpBack: spec.laceUpBack ?? 'none',
       wrapFront: spec.wrapFront ?? 'none',
       hemFlounce: spec.hemFlounce ?? 'none',
@@ -217,7 +219,8 @@ export function engineSpec(spec) {
     hemShape: hemShapeInt(spec.hemShape), shoulderStyle: shoulderStyleInt(spec.shoulderStyle),
     buttonRow: buttonRowInt(spec.buttonRow), exposedZip: exposedZipInt(spec.exposedZip),
     backDetail: backDetailInt(spec.backDetail), bardotStyle: bardotStyleInt(spec.bardotStyle),
-    cupSeam: cupSeamInt(spec.cupSeam), laceUpBack: laceUpBackInt(spec.laceUpBack),
+    cupSeam: cupSeamInt(spec.cupSeam), locketTop: locketTopInt(spec.locketTop),
+    laceUpBack: laceUpBackInt(spec.laceUpBack),
     wrapFront: wrapFrontInt(spec.wrapFront), hemFlounce: hemFlounceInt(spec.hemFlounce),
     yoke: yokeInt(spec.yoke), boxPleat: boxPleatInt(spec.boxPleat),
   };
