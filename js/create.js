@@ -1,18 +1,18 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=125';
-import { validateVision } from './spec-validate.js?v=125';
-import { CONTRACT } from './contract.gen.js?v=125';
-import { applyStatic, getLang, t } from './i18n.js?v=125';
-import { draft, grade } from './engine.js?v=125';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=125';
-import { renderResult } from './render.js?v=125';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=128';
+import { validateVision } from './spec-validate.js?v=128';
+import { CONTRACT } from './contract.gen.js?v=128';
+import { applyStatic, getLang, t } from './i18n.js?v=128';
+import { draft, grade } from './engine.js?v=128';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=128';
+import { renderResult } from './render.js?v=128';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=125';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, pickSkirtLengthMM } from './vision-bridge.js?v=125';
+} from './store.js?v=128';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, pickSkirtLengthMM } from './vision-bridge.js?v=128';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
