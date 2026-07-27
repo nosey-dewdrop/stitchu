@@ -39,7 +39,8 @@ add_library(engine
     src/sleeve.cpp
     src/garment.cpp
     src/wearability.cpp
-    src/validator.cpp)
+    src/validator.cpp
+    src/recipe.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -286,6 +287,31 @@ add_test(NAME roundtrip_check COMMAND roundtrip_check)
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)
+
+# Gate 1 recipe path (PIPELINE Asama 1, docs/RECETE-SPEC.md). recipe_check:
+# (a) same recipe + two pinned bodies -> two different CORRECT patterns
+# (dart topology flips 2->1, waist/side-seam equalization measured, validator
+# clean) + (c) seam checks on the RECIPE output + Err-path enforcement
+# (RULES invariant 1) + the K0 const parity latch (RECETE-SPEC 2.3).
+add_executable(recipe_check tests/recipe_check.cpp)
+target_link_libraries(recipe_check PRIVATE engine)
+add_test(NAME recipe_check COMMAND recipe_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
+
+# Gate 1(b): the recipe path vs the REPO PIN subset (grep '|skirt/aLine/' of
+# golden-reference.csv). Expected comes from the PIN, never from a fresh motor
+# dump — regen-vs-regen is forbidden as evidence (DERSLER.md:12).
+add_executable(recipe_golden_dump tests/recipe_golden_dump.cpp)
+target_link_libraries(recipe_golden_dump PRIVATE engine)
+add_test(NAME recipe_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/recipe_golden_check.sh
+    $<TARGET_FILE:recipe_golden_dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
+
+# recipe-json-dump (tool, not a test): recipe-path pattern as draftJSON-shaped
+# JSON for the A4 sheet renderer (Gate 1d visual proof via render-recipe.mjs).
+add_executable(recipe-json-dump tools/recipe-json-dump.cpp)
+target_link_libraries(recipe-json-dump PRIVATE engine)
 
 # K2 composition ratchet (2026-07-19): the declared component x host and
 # component x component conflict matrix (contract/composition.json via
