@@ -865,6 +865,32 @@
     "skirtFull": 2.2
    },
    "fittedBand": true
+  },
+  "dress_vneck_aline": {
+   "label": "sleeveless princess V-neck A-line mini dress (preview-truth 31)",
+   "top": "shoulder",
+   "neckline": "v",
+   "length": "mini",
+   "parts": {
+    "straps": false,
+    "collar": false,
+    "sleeve": false,
+    "shirr": false,
+    "casing": false,
+    "tie": false,
+    "backSeam": true,
+    "princessSeam": true
+   },
+   "own": {
+    "neckWidth": 1.05,
+    "neckDepth": 20,
+    "neckDepthBack": 10,
+    "shoulderSlope": 1.6,
+    "armholeHollow": 0.13,
+    "yokeDrop": 12,
+    "waistNip": 0.28,
+    "skirtFull": 1.5
+   }
   }
  }
 }

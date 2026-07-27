@@ -22,8 +22,8 @@ const WEB = join(here, '../../web');
 
 // Every page that MUST carry the canonical header.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'patches.html', 'showcase.html', 'collection-60s70s.html', 'collections/index.html',
-  'api.html', 'privacy.html'];
+  'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html',
+  'collections/index.html', 'api.html', 'privacy.html'];
 const stylePages = readdirSync(join(WEB, 'styles')).filter((f) => f.endsWith('.html')).map((f) => `styles/${f}`);
 const patternPages = readdirSync(join(WEB, 'patterns')).filter((f) => f.endsWith('.html')).map((f) => `patterns/${f}`);
 const pages = [...mainPages, ...stylePages, ...patternPages];
