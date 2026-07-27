@@ -48,12 +48,11 @@ Sınırda endüstri uyumluluğu: DXF-AAMA/ASTM, print tiling, nokta bazlı gradi
 Sıra mühürlü. Aşama açılırken ilk iş CANLI yeniden doğrulama (bayat teşhis tuzağı);
 aşamanın madde listesi o doğrulamayla netleşir, kapısı ise şimdiden sabittir.
 
-> **AÇIK ÇELİŞKİ (Damla kararı bekliyor):** CLAUDE.md'de aynı güne tarihli ikinci bir
-> "her şeyden önce" emri var: BASAR-IKI-KALIP kampanyası (2 satın alınmış Buğra kalıbı
-> motorca bire bir yapılana kadar başka iş yok). Bu kampanyanın hakemi mühür ilkesine
-> zaten uygun (gerçek kalıpla bire bir örtüşme = dış dünya gerçeği). Damla tek kelimeyle
-> çözer: "kampanya önce" derse kampanya AŞAMA 1 olur ve kablo kapanışı ardına geçer;
-> "pipeline önce" derse kampanya PARK'a düşer. Karar gelene kadar iki iş de açılmaz.
+> **ÇÖZÜLDÜ (2026-07-27 gece):** BASAR-IKI-KALIP kampanyası çaresiz anda verilmiş blokaj
+> emriydi; Damla kararı delege etti ("o çaresizce verilen bir komuttu"). Karar: HEDEF
+> YAŞIYOR, BLOKAJ KALKTI. İki Buğra kalıbının bire bir üretimi pipeline'a yerleşti:
+> malzemesi AŞAMA 3'te (Buğra PDF izleme + mm bağlama), kanıtı KAPI 5'te (bire bir
+> örtüşme raporu). "Başka stitchu işi yok" blokajı hükümsüz. Damla tek kelimeyle geri çevirir.
 
 ### AŞAMA 1 — KABLO KAPANIŞI (aktif)
 Motorun gerçek çıktısı ile kullanıcının gördüğü şey arasında kopuk hat kalmaması.
@@ -87,8 +86,9 @@ kalıp + flat'i iner; üçü de üyelik + dikiş testinden geçer; Damla evet de
 ### AŞAMA 5 — ENDÜSTRİ SINIRI
 DXF-AAMA/ASTM export; print tiling (A4/A0); nokta bazlı grading (beden serisi).
 **KAPI 5 (hakem: dış dünya):** çıktı bağımsız bir CAD'de açılır (Valentina/Seamly2D);
-seam-walking raporu temiz; grading beden tablosuyla doğrulanır. Chanel çıtasının ilk
-gerçek eşiği bu kapıdır.
+seam-walking raporu temiz; grading beden tablosuyla doğrulanır; iki satın alınmış Buğra
+kalıbı motorca bire bir yeniden üretilir (BASAR-IKI-KALIP hedefi burada kanıtlanır).
+Chanel çıtasının ilk gerçek eşiği bu kapıdır.
 
 ### AŞAMA 6 — CAD YÜZEYİ
 Parça editörü, proje/dosya yönetimi, marker/yerleşim. Detayı KAPI 5 geçilince Damla ile
@@ -110,3 +110,4 @@ sonra sıradaki aşama otomatik açılır; Damla-hakemli kapı onun evet'ini bek
 Bu dosya yalnız Damla'nın açık evet'iyle değişir. Her değişiklik altta tarihli tek satır.
 
 - 2026-07-27: mühür basıldı (üç katlı mimari + 6 aşama + kapılar). — Damla kararı
+- 2026-07-27 gece: BASAR-IKI-KALIP blokajı kalktı, hedefi Aşama 3 + Kapı 5'e gömüldü. — Damla delegasyonu, Claude kararı
