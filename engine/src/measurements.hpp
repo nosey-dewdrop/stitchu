@@ -21,6 +21,7 @@ struct BodyMeasurementsSnapshot {
     double bustMM() const { return bustCM * 10; }
     double waistMM() const { return waistCM * 10; }
     double hipMM() const { return hipCM * 10; }
+    double shoulderMM() const { return shoulderCM * 10; }
     double backLengthMM() const { return backLengthCM * 10; }
     double neckMM() const { return neckCM * 10; }
     double upperBustMM() const { return upperBustCM * 10; }
