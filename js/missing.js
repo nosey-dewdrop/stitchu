@@ -69,14 +69,16 @@ const COLLAR_NOTE = {
   en: { applied: 'the plain neckline edge', note: 'the separate collar piece is not drafted, draft/buy a collar to that neckline yourself' },
   tr: { applied: 'düz yaka oyuğu kenarı', note: 'ayrı yaka parçası çizili değil, o oyuğa yakayı kendin çiz/ekle' },
 };
-// Loop 7/8: the collar family the engine now draws as a REAL separate piece
-// (neck edge trued to the neckline). A vision collar of one of these types is no
-// longer listed as missing. Patch 3.10 also made bias binding the DEFAULT
-// neckline/armhole finish, so a "bias-bound / bound edge" read (a bound raw
-// edge, no structural collar) is now genuinely drawn and is no longer honest.
-// A notched/sailor tailored collar still stays honest here.
-const COLLAR_DRAWN = ['stand', 'mock', 'mandarin', 'flat', 'peterPan', 'scallop', 'shirt',
-                      'bias', 'biasBound', 'bound', 'binding'];
+// 2026-07-27: the COLLAR_DRAWN type list is DEAD. It ASSUMED a listed type was
+// drawn — but when the bridge regex missed the schema's camelCase 'peterPan',
+// the collar was NOT drawn AND this list still suppressed the card: a silent
+// drop with no witness on either side. The only truth about "drawn" is
+// seen.collarDrawn (set by create.js from the spec the bridge actually
+// produced). The single remaining suppression is a bias-binding READ: patch
+// 3.10 made bias binding the DEFAULT drawn neckline finish, so a "bias-bound /
+// bound edge" collar read (a bound raw edge, no structural piece) is genuinely
+// covered even though pickCollar honestly returns null for it.
+const isBiasBindingRead = (c) => /bias|bound|binding/i.test(`${c.type || ''} ${c.name || ''}`);
 
 // straps.type → derivative. The engine draws a plain sleeveless shoulder edge,
 // so a normal shoulder/wide strap is effectively drawn; frills, halter framing,
@@ -198,12 +200,13 @@ export function missingFeatures(seen, lang) {
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
   }
 
-  // collar, only when a real collar the engine does NOT draw. The stand/mock/
-  // flat/peter-pan/shirt family is now a real drafted piece (seen.collarDrawn set
-  // by create.js when the vision collar maps to a drawable type), so it is not
-  // listed; bias-bound / notched / sailor finishes stay honest.
+  // collar: EVERY collar read that was NOT actually drawn gets the card —
+  // seen.collarDrawn (create.js, from the spec the bridge really produced) is
+  // the only witness, a type list cannot vouch for a drawing that never
+  // happened (2026-07-27, silent-drop class killed). Sole exception: a
+  // bias-binding read, genuinely covered by the default drawn edge finish.
   if (seen.collar && seen.collar.type && seen.collar.type !== 'none' &&
-      !seen.collarDrawn && !COLLAR_DRAWN.includes(seen.collar.type)) {
+      !seen.collarDrawn && !isBiasBindingRead(seen.collar)) {
     const name = seen.collar.name ? seen.collar.name : (L === 'tr' ? 'yaka' : 'collar');
     push(name, COLLAR_NOTE[L]);
   }

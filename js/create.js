@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=128';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, pickSkirtLengthMM } from './vision-bridge.js?v=128';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM } from './vision-bridge.js?v=128';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -123,6 +123,14 @@ const SPEC_GROUPS = [
   { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => s.garment !== 'skirt' || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
   { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
 ];
+// Foto-anı bug fix (2026-07-27): the last validated vision reading + whether
+// the user hand-picked a length AFTER it. The photo mm is a ratio x body — it
+// used to freeze at the values present when the photo was uploaded (usually
+// the EU38 demo) and never follow the user's own measurements. Kept at module
+// level so every re-entry into the spec screen re-derives it (see showSpec).
+let photoSeen = null;
+let photoLenHandPicked = false;
+
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
@@ -319,6 +327,12 @@ function showMeasurement(index) {
 }
 
 function showSpec() {
+  // Foto-anı bug fix (2026-07-27): the photo-measured hem mm is a RATIO x the
+  // CURRENT body. Every entry into this screen (first visit, measurement
+  // wizard finished, profile switched) re-derives it from the values as they
+  // are NOW — it no longer freezes at whatever body was loaded when the photo
+  // was uploaded. A hand-picked mini/midi/maxi keeps its explicit-order drop.
+  spec.skirtLengthMM = refreshSkirtLengthMM(spec.skirtLengthMM, photoSeen, values, photoLenHandPicked);
   screen.textContent = '';
   screen.className = 'wrap spec-screen';
   screen.appendChild(el('h1', 'screen-title', t('create.spec.title')));
@@ -407,8 +421,12 @@ function showSpec() {
         if (seen.length) spec.skirtLength = seen.length;
         // Foto-oran kablosu: the measured ratios scale the hem to the WEARER's
         // own body — a continuous mm target next to the coarse mini/midi/maxi.
-        // 0 = not trustworthy → the table drives, exactly as before.
-        spec.skirtLengthMM = pickSkirtLengthMM(seen, values);
+        // 0 = not trustworthy → the table drives, exactly as before. The seen
+        // is KEPT so showSpec re-derives the mm whenever the body changes
+        // (foto-anı bug fix, 2026-07-27); a fresh photo clears the hand-pick.
+        photoSeen = seen;
+        photoLenHandPicked = false;
+        spec.skirtLengthMM = refreshSkirtLengthMM(spec.skirtLengthMM, photoSeen, values, photoLenHandPicked);
         if (seen.topLength) spec.topLength = seen.topLength;
         if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
         if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
@@ -779,8 +797,10 @@ function showSpec() {
         b.addEventListener('click', () => {
           spec[group.key] = value;
           // A hand-picked length is an explicit order: drop the photo-measured
-          // mm override so mini/midi/maxi does exactly what it says.
-          if (group.key === 'skirtLength') spec.skirtLengthMM = 0;
+          // mm override so mini/midi/maxi does exactly what it says. The latch
+          // keeps it dropped across showSpec re-entries (measurement edits)
+          // until a NEW photo is analyzed (foto-anı bug fix, 2026-07-27).
+          if (group.key === 'skirtLength') { spec.skirtLengthMM = 0; photoLenHandPicked = true; }
           rebuild();
         });
         row.appendChild(b);
