@@ -73,7 +73,14 @@ function analyze(file) {
     '-H', 'content-type: application/json'];
   if (FAST) curlArgs.push('-H', `x-sb-bench: ${BENCH_TOKEN}`);
   curlArgs.push('--data', `@${tmp}`);
-  const raw = sh('curl', curlArgs);
+  // Transient network/timeout kills a whole photo's verdict (27 Tem: 2 ERROR
+  // were plain curl failures that read fine on retry) — one retry, then honest.
+  let raw;
+  try {
+    raw = sh('curl', curlArgs);
+  } catch {
+    raw = sh('curl', curlArgs);
+  }
   const data = JSON.parse(raw);
   if (data.error) return { error: data.error };
   const text = data?.content?.[0]?.text;
