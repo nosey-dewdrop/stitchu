@@ -1,37 +1,16 @@
 // C++ side of the golden dump: identical CSV format to engine-check/dump.swift.
 // engine/golden-diff.py compares the two outputs within 0.1 mm.
+// The CSV writer itself lives in golden_writer.hpp, SHARED with the recipe
+// path's recipe_golden_dump (Gate 1b author commonality, docs/RECETE-SPEC.md §5b).
 #include <cstdio>
 #include <string>
 #include <vector>
 
 #include "../src/garment.hpp"
+#include "golden_writer.hpp"
 
 using namespace stitchu;
-
-namespace {
-
-void dumpCommands(const char* kind, const std::vector<PathCommand>& commands, const std::string& prefix) {
-    for (size_t i = 0; i < commands.size(); ++i) {
-        const auto& cmd = commands[i];
-        switch (cmd.type) {
-            case CmdType::Move:
-                std::printf("%s,%s,%zu,move,%.4f,%.4f\n", prefix.c_str(), kind, i, cmd.to.x, cmd.to.y);
-                break;
-            case CmdType::Line:
-                std::printf("%s,%s,%zu,line,%.4f,%.4f\n", prefix.c_str(), kind, i, cmd.to.x, cmd.to.y);
-                break;
-            case CmdType::Curve:
-                std::printf("%s,%s,%zu,curve,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n", prefix.c_str(), kind, i,
-                            cmd.to.x, cmd.to.y, cmd.cp1.x, cmd.cp1.y, cmd.cp2.x, cmd.cp2.y);
-                break;
-            case CmdType::Close:
-                std::printf("%s,%s,%zu,close\n", prefix.c_str(), kind, i);
-                break;
-        }
-    }
-}
-
-} // namespace
+using goldenwriter::dumpCommands;
 
 int main() {
     const std::vector<std::pair<std::string, BodyMeasurementsSnapshot>> bodies = {
@@ -109,7 +88,7 @@ int main() {
             const double fabric = spec.garment == GarmentType::Skirt
                 ? draft.fabricMeters140
                 : draft.fabricMeters140 - BodiceBlock::facingFabricMeters;
-            std::printf("%s|%s|fabric,%.4f\n", bodyName.c_str(), label.c_str(), fabric);
+            goldenwriter::dumpFabricLine(bodyName, label, fabric);
             size_t p = 0;
             for (const auto& piece : draft.pieces) {
                 if (piece.name.find("Facing") != std::string::npos) continue;
@@ -120,7 +99,7 @@ int main() {
                 if (spec.garment == GarmentType::Dress && dumpName == "Skirt Panel (quarter circle)") {
                     dumpName = "Skirt Skirt Panel (quarter circle)";
                 }
-                const std::string prefix = bodyName + "|" + label + "|piece" + std::to_string(p) + ":" + dumpName;
+                const std::string prefix = goldenwriter::piecePrefix(bodyName, label, p, dumpName);
                 dumpCommands("outline", piece.commands, prefix);
                 dumpCommands("marking", piece.markings, prefix);
                 ++p;
