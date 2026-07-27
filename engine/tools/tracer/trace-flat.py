@@ -6,13 +6,130 @@ referansın çizgilerini OKU (iskelet) + PÜRÜZSÜZ eğriye oturt (fit) + yenid
 Eski batış (radial-trace "tırtık tırtık") ham izlemeydi; eğri-oturtma katmanı yoktu.
 LLM yok, tahmin yok — saf görüntü işleme.
 
+v8 (2026-07-28): doku/zemin bağışıklığı — beyaz-zemin girdi ESKİ yoldan bayt-bayt
+gider (regresyon yok); renkli/dokulu zemin (keten + bej, IZLEYICI-V6-HIRES duvarı)
+yeni yoldan: zemin rengi tespiti (kenar bandı medyanı) + medyan doku bastırma +
+zemin-uzaklık silüeti (Otsu) + Sobel kenar haritası. Ham INK eşiği dokulu yolda
+kullanılmaz.
+
 kullanım: trace-flat.py <img> <x0,y0,x1,y1|-> <out.svg>
 """
 import sys, os
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 INK = int(__import__("os").environ.get("INK","120"))
+
+
+def sobel_mag(L):
+    """Sobel gradyan büyüklüğü (float). Kenar haritası: doku medyanla
+    bastırıldıktan sonra kalan güçlü gradyan = çizilmiş çizgi / silüet sınırı."""
+    Lf = L.astype(np.float64)
+    def sh(dy, dx):
+        return np.roll(np.roll(Lf, dy, 0), dx, 1)
+    gx = (sh(-1,1) + 2*sh(0,1) + sh(1,1)) - (sh(-1,-1) + 2*sh(0,-1) + sh(1,-1))
+    gy = (sh(1,-1) + 2*sh(1,0) + sh(1,1)) - (sh(-1,-1) + 2*sh(-1,0) + sh(-1,1))
+    return np.hypot(gx, gy)
+
+
+def otsu_threshold(vals, bins=256):
+    """deterministik Otsu: histogram sınıf-içi varyansı minimize eden eşik."""
+    hist, edges = np.histogram(vals, bins=bins)
+    hist = hist.astype(np.float64)
+    total = hist.sum()
+    if total <= 0:
+        return 0.0
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    w0 = np.cumsum(hist)
+    w1 = total - w0
+    m0 = np.cumsum(hist * centers) / np.maximum(w0, 1e-9)
+    m1 = (np.sum(hist * centers) - np.cumsum(hist * centers)) / np.maximum(w1, 1e-9)
+    between = w0 * w1 * (m0 - m1) ** 2
+    between[w1 <= 0] = -1
+    return float(centers[int(np.argmax(between))])
+
+
+def border_bg(rgb):
+    """zemin rengi tespiti: kenar bandının (8px) kanal-medyanı — gürültüye
+    dayanıklı, deterministik."""
+    b = 8
+    band = np.concatenate([
+        rgb[:b].reshape(-1, 3), rgb[-b:].reshape(-1, 3),
+        rgb[:, :b].reshape(-1, 3), rgb[:, -b:].reshape(-1, 3)])
+    return np.median(band, axis=0)
+
+
+def textured_masks(im_rgb, bg):
+    """dokulu/renkli zemin yolu: medyan doku bastırma + zemin-uzaklık silüeti
+    (Otsu) + Sobel kenar haritası + karanlık-vuruş eşiği. INK ham eşiği YOK."""
+    imf = im_rgb.filter(ImageFilter.MedianFilter(3))     # doku bastırma
+    # (5'lik pencere ince çizgiyi/minik düğmeyi eritiyor: keten ölçümünde pat
+    # p0.5 91→196'ya fırladı; 3'lük koru, kalan doku eşiklere bırakılır)
+    F = np.asarray(imf).astype(np.int16)
+    Lm = np.asarray(imf.convert('L')).astype(np.float64)
+    bgL = float(0.299*bg[0] + 0.587*bg[1] + 0.114*bg[2])
+    E = sobel_mag(Lm)
+    # GEÇİŞ 1 — SİLÜET: kaba koyu-vuruş maskesi (zeminden belirgin karanlık)
+    # kapalı dış konturu verir; flood o konturun ÇEVRELEDİĞİ iç bölgeyi bulur.
+    # Zemin-uzaklık bölgesi (dolgu rengi zeminden gerçekten farklıysa) katkı verir.
+    stroke0 = Lm < (bgL - 60.0)
+    st1 = stroke0.copy()
+    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+        st1 |= np.roll(np.roll(stroke0, dy, 0), dx, 1)
+    interior = ~flood_bg(~st1) & ~st1
+    D = np.abs(F - bg.reshape(1, 1, 3)).max(axis=2).astype(np.float64)
+    tau_fig = max(otsu_threshold(D), 12.0)
+    figD = D > tau_fig
+    if figD.mean() < 0.03:      # anlamlı dolgu-ayrımı yoksa katkıyı kapat
+        figD[:] = False
+    sil = close_mask(stroke0 | interior | figD, 3)
+    G = largest_region(sil)
+    holes = ~flood_bg(~G) & ~G   # kapalı iç delikleri doldur
+    G = G | holes
+    # GEÇİŞ 2 — MÜREKKEP: eşikler silüet İÇİNDE ölçülür (doku istatistiği).
+    # Ölçüm (IZLEYICI-V8 keten kanıtı): doku L 197-235 / E p95≈56; gerçek çizgi
+    # L<130 / kenar E≥270 — aralık geniş, formül veriye oturur.
+    if G.any():
+        p1g = float(np.percentile(Lm[G], 1))
+        medg = float(np.median(Lm[G]))
+        tau_dark = p1g + 0.35 * (medg - p1g) if p1g < bgL - 80 else bgL - 70.0
+        noise = float(np.median(E[G]))
+        tau_e = max(6.0 * noise, 60.0)
+    else:
+        tau_dark, noise, tau_e = bgL - 70.0, 0.0, 60.0
+    stroke = (Lm < tau_dark) | (E > tau_e)
+    print(f'zemin: rgb={tuple(int(v) for v in bg)} L={bgL:.0f} | silüet px={int(G.sum())} '
+          f'tau_fig={tau_fig:.1f} | tau_dark={tau_dark:.1f} tau_e={tau_e:.1f} (doku gürültüsü {noise:.1f})')
+    Gd = G.copy()
+    for _ in range(2):
+        n = Gd.copy()
+        for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+            n |= np.roll(np.roll(Gd, dy, 0), dx, 1)
+        Gd = n
+    ink = stroke & Gd
+    # silüet sınırı iskelete girsin (eski yolun fill-kenarı davranışıyla aynı rol)
+    er = G.copy()
+    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+        er = er & np.roll(np.roll(G, dy, 0), dx, 1)
+    ink |= (G & ~er)
+    # ufak doku kırıntılarını at (<10 px bileşen) — sahte düğme/dash tohumu
+    from collections import deque as _dq
+    inkb = ink.copy(); lab = np.zeros(ink.shape, bool)
+    for sy, sx in zip(*np.nonzero(inkb)):
+        if lab[sy, sx]:
+            continue
+        comp = [(sy, sx)]; lab[sy, sx] = True; q = _dq(comp)
+        while q:
+            cy, cx = q.popleft()
+            for dy, dx in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)):
+                ny, nx = cy+dy, cx+dx
+                if 0 <= ny < ink.shape[0] and 0 <= nx < ink.shape[1] and inkb[ny, nx] and not lab[ny, nx]:
+                    lab[ny, nx] = True; q.append((ny, nx)); comp.append((ny, nx))
+        if len(comp) < 10:
+            for cy, cx in comp:
+                ink[cy, cx] = 0
+    fill = (G & ~ink)
+    return ink.astype(np.uint8), fill.astype(np.uint8), G
 
 
 def thin(img):
@@ -271,12 +388,21 @@ def outer_contour(mask):
 
 def main():
     img_path, crop_arg, out_svg = sys.argv[1], sys.argv[2], sys.argv[3]
-    im = Image.open(img_path).convert('L')
+    im0 = Image.open(img_path)
     if crop_arg != '-':
         c = [float(x) for x in crop_arg.split(',')]
-        w, h = im.size
-        im = im.crop((int(c[0]*w), int(c[1]*h), int(c[2]*w), int(c[3]*h)))
+        w, h = im0.size
+        im0 = im0.crop((int(c[0]*w), int(c[1]*h), int(c[2]*w), int(c[3]*h)))
+    im_rgb = im0.convert('RGB')
+    im = im0.convert('L')
     A = np.asarray(im)
+    # ZEMİN TESPİTİ (v8): kenar bandı beyaza yakınsa ESKİ yol bayt-bayt aynı
+    # çalışır (regresyon garantisi); değilse dokulu/renkli-zemin yolu devreye girer.
+    bg = border_bg(np.asarray(im_rgb))
+    textured = float(bg.min()) < 240.0   # gerçek beyaz zemin 248-255; bej/krem 230 civarı
+    if textured:
+        ink, _fill, sil = textured_masks(im_rgb, bg)
+        return finish(A, ink, sil, out_svg)
     ink = (A < INK).astype(np.uint8)
     fill = ((A < 240) & (A >= INK)).astype(np.uint8)
     # SİLÜET yol 1 (dolgusuz çizim, ör. kalıp parçası): zemin flood — kenardan
@@ -327,6 +453,10 @@ def main():
         for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
             er &= np.roll(np.roll(fill, dy, 0), dx, 1)
         ink = (ink | (fill & ~er)).astype(np.uint8)
+    return finish(A, ink, sil, out_svg)
+
+
+def finish(A, ink, sil, out_svg):
     print('ink px:', int(ink.sum()))
     # DÜĞME AVI (v5): iskeletten ÖNCE, mürekkep maskesinde KÜÇÜK kare-oranlı bağlı
     # bileşenleri bul — iskelet daireyi yaya kırar, bileşen kırmaz. Bulunan düğme
