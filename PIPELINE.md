@@ -1,32 +1,45 @@
-# PIPELINE — MÜHÜRLÜ (2026-07-27, Damla mührü)
+# PIPELINE — MÜHÜRLÜ (2026-07-27, Damla mührü; aynı gece CAD yöntemi revizyonu)
 
 Damla'nın emri: "bu son kararımızı mühürlüyorum ve bu karardan asla sapmayacağın
 looplu denetimli kapılı aşamalı akıcı bir pipeline istiyorum." Bu dosya o mühürdür.
 
 İş sırası dayatabilen YALNIZCA iki belge vardır: **ANAYASA.md** (hedef + hakem + zevk
-yasası) ve **bu dosya** (sıra + kapılar). Diğer her yol/durum dosyası tarih arşividir.
-Bu dosyadan sapmak = incident: sapma fark edildiği an iş durur, önce dosya konuşur.
+yasası) ve **bu dosya** (yöntem + sıra + kapılar). Diğer her yol/durum dosyası tarih
+arşividir. Bu dosyadan sapmak = incident: sapma fark edildiği an iş durur.
 
 ## MÜHÜRLÜ KARAR (değişmez çekirdek)
 
 Vaat: **prompt ya da görselden, Damla'nın onaylayacağı flat + dikilebilir kalıp.**
-Hedef ölçek: demo değil, v1 değil; endüstriyel kalıp CAD'i (Valentina/Lectra ligi).
-Mimari üç kat:
+Hedef ölçek: demo değil, v1 değil; endüstriyel kalıp CAD'i (Valentina/Lectra ligi),
+zevk çıtası couture (Chanel/Dior). Anlaşma: ürün Claude'dan, dünya/pazarlama Damla'dan.
 
-1. **GENERATİF KAT** — tasarımı spec dilinde ÜRETİR (etiket + parametre; kombinasyonla
-   sonsuzluk). Asla sayı ölçmez, asla koordinat çizmez.
-2. **DETERMİNİSTİK KERNEL** — C++ motor; kalıp + flat geometrisinin TEK sayı kaynağı;
-   dikiş boyu eşitleme, çentik, grainline. Tahmin sıfır.
-3. **SÜZGEÇ** — ANAYASA üyelik kontrolü (8 soru) + makine testleri + Damla'nın evet'i.
-   Makine testi gerekli ama yeterli değil; zevk kapısının tek hakemi Damla.
+**YÖNTEM (Damla emri, 27 Tem gece: "autocad, valentina"): pipeline değil, MODEL.**
+Üç haftanın hastalığı boru hattıydı: foto girer, borulardan geçer, ucundan SVG resmi
+düşer, resim ayarlanır, bitmez. CAD yönteminde resim yoktur, model vardır: kalıp =
+ölçülere bağlı formüllü YAPIM REÇETESİ (operasyon dizisi); ekrandaki görüntü modelin
+yansımasıdır, ölçü değişince her şey yeniden üretilir. Mimari dört unsur:
 
+1. **REÇETE VERİ MODELİ** — kalıp, kaydedilip düzenlenebilen yapım reçetesidir
+   (nokta/eğri/pens operasyonları, ölçü tablosuna bağlı formüller). Valentina dosya
+   mantığı. Üretilen resim değil, belge.
+2. **DETERMİNİSTİK KERNEL** — C++ motor; geometri hesabı, dikiş boyu eşitleme, çentik,
+   grainline. TEK sayı kaynağı. Tahmin sıfır.
+3. **KANVAS** — canlı çizim yüzeyi: parça görünür, nokta seçilir, ölçü değişince anında
+   yeniden çizilir. SVG sadece dışa aktarım formatıdır.
+4. **GENERATİF KAT** — prompt/foto → reçete YAZAR (asla sayı ölçmez, koordinat çizmez;
+   kombinasyonla sonsuzluk). Aynı reçete elle de düzenlenebilir. AI çıkarılınca geriye
+   eksiksiz bir CAD kalır.
+
+Süzgeç her katın üstünde: ANAYASA üyelik kontrolü (8 soru) + makine testleri + Damla'nın
+evet'i. Makine testi gerekli ama yeterli değil; zevk kapısının tek hakemi Damla.
 Sınırda endüstri uyumluluğu: DXF-AAMA/ASTM, print tiling, nokta bazlı grading.
 
 ## KALICI YASAKLAR (incident kaynaklı, tartışmasız)
 
 - LLM'den ölçüm/sayı/koordinat istemek (çapa yankısı kanıtı:
   `reports/2026-07-27-stitchu-json-el-adli.txt`).
-- El-ayarlı çarpan kalemini ürün yüzeyinde diriltmek (flat hattı = tracer/referans).
+- El-ayarlı çarpan kalemini ürün yüzeyinde diriltmek.
+- Modeli olmayan resim üretmek (reçetesiz SVG = eski hastalık).
 - Yeni sayaç rejimi kurmak (FULL x/N tarzı). Başarı beyanı = kapı kanıtı + Damla evet'i.
 - Bu dosya dışında iş sırası dayatan yeni doküman açmak.
 - Aynı anda iki aşama yürütmek.
@@ -36,50 +49,39 @@ Sınırda endüstri uyumluluğu: DXF-AAMA/ASTM, print tiling, nokta bazlı gradi
 
 ## SAPMA TESTİ (her işten önce 3 soru)
 
-1. Bu iş AKTİF aşamanın listesinde mi? Değilse yapılmaz; PARK bölümüne tek satır yazılır,
-   sırası geldiğinde Damla'ya sorulur.
-2. Hakemi baştan belli mi? (piksel gerçeği / geometri testi / Damla'nın yan yana evet'i)
+1. Bu iş AKTİF aşamanın listesinde mi? Değilse yapılmaz; PARK bölümüne tek satır yazılır.
+2. Hakemi baştan belli mi? (piksel gerçeği / geometri testi / dış CAD / Damla'nın evet'i)
 3. Bitince kanıtı ne olacak? (rapor + dosya + ölçüm)
 
 Üçünden biri boşsa iş başlamaz. Bu üç soru her oturum başında yeniden okunur.
 
-## AŞAMALAR VE KAPILAR
+## AŞAMALAR VE KAPILAR (CAD yöntemine göre, sıra mühürlü)
 
-Sıra mühürlü. Aşama açılırken ilk iş CANLI yeniden doğrulama (bayat teşhis tuzağı);
-aşamanın madde listesi o doğrulamayla netleşir, kapısı ise şimdiden sabittir.
+Aşama açılırken ilk iş CANLI yeniden doğrulama (bayat teşhis tuzağı).
 
-> **ÇÖZÜLDÜ (2026-07-27 gece):** BASAR-IKI-KALIP kampanyası çaresiz anda verilmiş blokaj
-> emriydi; Damla kararı delege etti ("o çaresizce verilen bir komuttu"). Karar: HEDEF
-> YAŞIYOR, BLOKAJ KALKTI. İki Buğra kalıbının bire bir üretimi pipeline'a yerleşti:
-> malzemesi AŞAMA 3'te (Buğra PDF izleme + mm bağlama), kanıtı KAPI 5'te (bire bir
-> örtüşme raporu). "Başka stitchu işi yok" blokajı hükümsüz. Damla tek kelimeyle geri çevirir.
+### AŞAMA 1 — CAD ÇEKİRDEĞİ (aktif)
+Reçete veri modeli kurulur: formüllü operasyon dizisi, ölçü tablosuna bağlı; motorun
+gömülü çizim adımları reçete diline dökülür; ölçüden yeniden üretim (regeneration).
+**KAPI 1 (hakem: makine):** aynı reçete + iki farklı ölçü tablosu → iki DOĞRU kalıp;
+mevcut motor stillerinden en az biri reçete yolundan bire bir yeniden üretilir (golden
+karşılaştırma); dikiş eşitleme testleri reçete yolunda da yeşil.
 
-### AŞAMA 1 — KABLO KAPANIŞI (aktif)
-Motorun gerçek çıktısı ile kullanıcının gördüğü şey arasında kopuk hat kalmaması.
-Oran kablosu uçtan uca bağlandı (ctest `skirtlen_check` 12/12); kalan adli bulgular
-canlıda tek tek doğrulanıp kapatılır: draft.js normalize kopyası, create.js foto-anı
-ölçü bug'ı, peterPan köprü regex'i, compile() web lehçesi.
-**KAPI 1 (hakem: makine + ekran kanıtı):** aynı stile iki farklı kullanıcı ölçüsü →
-ürün yüzeyinde iki FARKLI çıktı (byte/md5 kanıtı); suite yeşil; ekran görüntüsü Damla'ya.
+### AŞAMA 2 — KANVAS
+Canlı model editörü: parça görüntüleme, nokta/operasyon seçimi, ölçü değişince anında
+yeniden çizim; SVG/PDF sadece export.
+**KAPI 2 (hakem: Damla):** Damla ekranda kalıbı açar, ölçüyü değiştirir, kalıbın CANLI
+değiştiğini gözüyle görür; evet der.
 
-### AŞAMA 2 — GÖZ DÜRÜSTLÜĞÜ
-Çapa yankısının ölümü: prompt'taki örnek sayılar çıkarılır; ölçüm deterministik piksel
-koduna geçer (silüet → genişlik/boy profili → oranlar). LLM'in işi sadece etiket.
-Vision maliyeti (yeniden tarama ~59 çağrı) işten ÖNCE söylenir.
-**KAPI 2 (hakem: piksel gerçeği):** iki farklı foto → farklı oranlar; probe setinde
-ölçümler bağımsız el ölçümüne tolerans içinde; sonuç raporu `reports/`e.
-
-### AŞAMA 3 — FLAT DAMAR HATTI
-Tracer hattı büyür: doku/zemin bağışıklığı, Bugra vektör PDF'lerinin rasterize+izlenmesi,
-izlenen referanslardan parametrik BLOK çıkarımı (her blok tek tek Damla evet'iyle girer).
-**KAPI 3 (hakem: Damla):** referans + çıktı yan yana; kör iterasyon yasak: 3 tur üst üste
-iyileşme yoksa DUR, Damla'ya çık.
+### AŞAMA 3 — GÖZ + FLAT DAMARI
+Foto/referans tarafı modele bağlanır: deterministik piksel ölçümü (LLM sadece etiket;
+vision maliyeti önce söylenir), tracer/blok hattı referansları reçeteye çevirir; Buğra
+PDF'leri rasterize + mm bağlama burada (BASAR-IKI-KALIP malzemesi).
+**KAPI 3 (hakem: piksel gerçeği + Damla):** iki farklı foto → farklı reçete
+parametreleri; referans + çıktı yan yana, Damla evet. 3 tur iyileşme yoksa DUR.
 
 ### AŞAMA 4 — GENERATİF KAT
-Prompt → spec üretici: yeni kombinasyonlar, varyasyonlar; üyelik ön-süzgeci otomatik;
-parametreler kernelin dikilebilir aralıklarından. (Bu aşamanın 3'ten sonra gelme nedeni:
-yeni tasarımın flat'i ancak blok kütüphanesiyle çizilebilir; referanssız tasarıma tracer
-çalışmaz. Sıra atlanmaz.)
+Prompt → reçete üretici; üyelik ön-süzgeci otomatik; parametreler kernelin dikilebilir
+aralıklarından.
 **KAPI 4 (hakem: Damla):** Damla'nın verdiği TEK prompt'tan 3 farklı tasarım; üçünün de
 kalıp + flat'i iner; üçü de üyelik + dikiş testinden geçer; Damla evet der.
 
@@ -90,20 +92,23 @@ seam-walking raporu temiz; grading beden tablosuyla doğrulanır; iki satın al�
 kalıbı motorca bire bir yeniden üretilir (BASAR-IKI-KALIP hedefi burada kanıtlanır).
 Chanel çıtasının ilk gerçek eşiği bu kapıdır.
 
-### AŞAMA 6 — CAD YÜZEYİ
-Parça editörü, proje/dosya yönetimi, marker/yerleşim. Detayı KAPI 5 geçilince Damla ile
-yazılır; şimdiden detaylandırmak drift kaynağıdır, sadece adı mühürlü.
+### AŞAMA 6 — CAD YÜZEYİ TAMAMLAMA
+Editör derinleşmesi, proje/dosya yönetimi, marker/yerleşim. Detayı KAPI 5 geçilince
+Damla ile yazılır; şimdiden detaylandırmak drift kaynağıdır, sadece adı mühürlü.
 
 ## LOOP DÜZENİ (her aşamanın içi)
 
 yap → ölç (aşamanın hakemiyle) → raporla (kanıt `reports/`e) → geçemediyse TEK değişken
-değiştirip tekrar. 3 tur üst üste metrik iyileşmiyorsa DUR ve Damla'ya çık (mikro-loop
-kararı Damla'nın). Kapı geçilince: commit + push + Damla'ya kanıt. Makine-hakemli kapıdan
-sonra sıradaki aşama otomatik açılır; Damla-hakemli kapı onun evet'ini bekler.
+değiştirip tekrar. 3 tur üst üste metrik iyileşmiyorsa DUR ve Damla'ya çık. Kapı
+geçilince: commit + push + Damla'ya kanıt. Makine-hakemli kapıdan sonra sıradaki aşama
+otomatik açılır; Damla-hakemli kapı onun evet'ini bekler.
 
 ## PARK
 
 (Aşama listesi dışı her fikir buraya tek satır düşer; Damla evet demeden işe dönmez.)
+- Eski "kablo kapanışı" kalemleri (draft.js normalize, create.js foto-anı, peterPan
+  regex, web lehçesi): reçete modeli eski boru hattının yerini aldıkça çoğu kökten
+  ölür; hâlâ gerekenler Aşama 1-2 canlı doğrulamasında ele alınır.
 
 ## DEĞİŞİKLİK PROTOKOLÜ
 
@@ -111,3 +116,4 @@ Bu dosya yalnız Damla'nın açık evet'iyle değişir. Her değişiklik altta t
 
 - 2026-07-27: mühür basıldı (üç katlı mimari + 6 aşama + kapılar). — Damla kararı
 - 2026-07-27 gece: BASAR-IKI-KALIP blokajı kalktı, hedefi Aşama 3 + Kapı 5'e gömüldü. — Damla delegasyonu, Claude kararı
+- 2026-07-27 gece: YÖNTEM revizyonu — pipeline değil MODEL; reçete veri modeli + kanvas; aşamalar CAD-native yeniden yazıldı. — Damla emri ("autocad, valentina")
