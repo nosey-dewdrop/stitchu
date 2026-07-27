@@ -11,11 +11,26 @@
 // - honesty first: if the ground cannot be separated or no garment body is
 //   found, returns { ok:false } with a reason. It NEVER invents numbers; the
 //   caller falls back to the existing enum-default path.
-// Ratio semantics follow the worker schema (backend/worker.js RATIOS rule):
+// Ratio semantics follow the worker schema (backend/worker.js RATIOS rule).
+// The ratios object carries ALL SEVEN worker fields (2026-07-28, goz kolu v1);
+// a field the silhouette cannot honestly yield is null and the reason lives in
+// result.ratioNull[field] — no guessed numbers, ever:
 //   lengthToWidth   = garment length / width at the bust line
 //   hemToWaistWidth = hem width / narrowest width between bust and hem
 //   waistYToLength  = shoulder-to-narrowest-point drop / garment length
+//                     (waist-SEAM proxy: the narrowest silhouette point; a
+//                     seam the silhouette does not pinch at is not seen)
+//   neckDepthToLength / neckWidthToShoulder = top-edge dip analysis. Measures
+//                     the HIGHEST visible neck edge of the silhouette; on a
+//                     drawn flat that includes a back-neck line this under-
+//                     reads the front depth — dips below the noise floor are
+//                     refused (null), not reported as 0.
+//   strapWidthToShoulder = two-thin-runs top-band topology, FILLED silhouettes
+//                     only (an outline drawing's shoulder strokes mimic straps).
+//   sleeveLenToGarment = null in v1: a row-span profile cannot separate a
+//                     sleeve from the torso it overlaps.
 //   shoulderToHemProfile = 13 evenly spaced widths, normalized by max width
+//                     (extra field, not part of the worker seven)
 
 const DEFAULTS = {
   maxDim: 512, // internal working size (box downscale, deterministic)
@@ -201,6 +216,150 @@ const median = (arr) => {
   return s[Math.floor(s.length / 2)];
 };
 
+// Top-edge analysis: neck dip + strap topology for the worker-schema fields
+// neckDepthToLength / neckWidthToShoulder / strapWidthToShoulder.
+// Deterministic integer/index work only. Returns measured values or null with
+// a reason per field (never a guessed number).
+function topEdgeFields(label, id, prof, span, W, y0, y1, L, fillFactor) {
+  const out = {
+    neckDepthToLength: null,
+    neckWidthToShoulder: null,
+    strapWidthToShoulder: null,
+    nulls: {},
+    debug: {},
+  };
+
+  // shoulder line = widest row in the first 5% of the garment
+  const shoulderBandEnd = Math.min(y1, y0 + Math.max(2, Math.round(0.05 * L)));
+  let shoulderRow = y0;
+  for (let y = y0; y <= shoulderBandEnd; y++) {
+    if (span[y] > span[shoulderRow]) shoulderRow = y;
+  }
+  const shoulderW = span[shoulderRow];
+  const xL = prof.xmin[shoulderRow];
+  const xR = prof.xmax[shoulderRow];
+  out.debug.shoulderRow = shoulderRow - y0;
+  out.debug.shoulderW = shoulderW;
+
+  if (!(shoulderW > 4) || xL < 0) {
+    const why = 'shoulder_line_unreadable';
+    out.nulls.neckDepthToLength = why;
+    out.nulls.neckWidthToShoulder = why;
+    out.nulls.strapWidthToShoulder = why;
+    return out;
+  }
+
+  // per-column first-ink row (top edge), then 3-column median smoothing
+  const nCols = xR - xL + 1;
+  const topY = new Int32Array(nCols).fill(-1);
+  for (let i = 0; i < nCols; i++) {
+    const x = xL + i;
+    for (let y = y0; y <= y1; y++) {
+      if (label[y * W + x] === id) {
+        topY[i] = y;
+        break;
+      }
+    }
+  }
+  const topYs = new Int32Array(nCols).fill(-1);
+  for (let i = 0; i < nCols; i++) {
+    const tri = [];
+    for (let k = Math.max(0, i - 1); k <= Math.min(nCols - 1, i + 1); k++) {
+      if (topY[k] >= 0) tri.push(topY[k]);
+    }
+    if (tri.length) topYs[i] = median(tri);
+  }
+
+  // shoulder top level = y0, the trimmed component top: the same "highest
+  // shoulder point" anchor lengthToWidth uses (an outer-column median fails
+  // on narrow straps: the outer band swallows gap columns and reads the
+  // bodice top as the shoulder).
+  const shoulderTopY = y0;
+
+  // --- neck dip: deepest smoothed top edge in the central 60% ---
+  {
+    const c0 = Math.round(0.2 * nCols);
+    const c1 = nCols - 1 - c0;
+    let dipPx = 0;
+    let dipAt = -1;
+    for (let i = c0; i <= c1; i++) {
+      if (topYs[i] < 0) continue;
+      const d = topYs[i] - shoulderTopY;
+      if (d > dipPx) {
+        dipPx = d;
+        dipAt = i;
+      }
+    }
+    const noiseFloor = Math.max(3, Math.round(0.03 * L));
+    out.debug.neckDipPx = dipPx;
+    if (dipAt < 0 || dipPx < noiseFloor) {
+      // a filled/undrawn neck opening and a true zero dip are
+      // indistinguishable here — refusing beats reporting a fake 0.
+      out.nulls.neckDepthToLength = 'neck_dip_below_noise_floor';
+      out.nulls.neckWidthToShoulder = 'neck_dip_below_noise_floor';
+    } else if (dipPx / L > 0.6) {
+      // schema band ceiling: deeper than any neckline -> not a neck opening
+      out.nulls.neckDepthToLength = 'neck_dip_out_of_schema_band';
+      out.nulls.neckWidthToShoulder = 'neck_dip_out_of_schema_band';
+    } else {
+      out.neckDepthToLength = r3(dipPx / L);
+      // neck width = contiguous columns around the dip deeper than 35% of it
+      let a = dipAt;
+      let b = dipAt;
+      while (a > 0 && topYs[a - 1] >= 0 && topYs[a - 1] - shoulderTopY > 0.35 * dipPx) a--;
+      while (b < nCols - 1 && topYs[b + 1] >= 0 && topYs[b + 1] - shoulderTopY > 0.35 * dipPx) b++;
+      const neckW = b - a + 1;
+      out.debug.neckWidthPx = neckW;
+      const nws = neckW / shoulderW;
+      if (nws > 1.2) {
+        out.nulls.neckWidthToShoulder = 'neck_width_out_of_schema_band';
+      } else {
+        out.neckWidthToShoulder = r3(nws);
+      }
+    }
+  }
+
+  // --- straps: top band rows made of exactly two thin runs ---
+  if (fillFactor < 0.5) {
+    // an outline drawing's left+right shoulder strokes read as two thin runs
+    out.nulls.strapWidthToShoulder = 'outline_drawing_strap_ambiguous';
+    return out;
+  }
+  const bandEnd = Math.min(y1, y0 + Math.max(2, Math.round(0.06 * L)));
+  let bandRows = 0;
+  let twoRunRows = 0;
+  const runWidths = [];
+  for (let y = y0; y <= bandEnd; y++) {
+    if (span[y] <= 0) continue;
+    bandRows++;
+    const rows = [];
+    let runLen = 0;
+    for (let x = prof.xmin[y]; x <= prof.xmax[y] + 1; x++) {
+      const on = x <= prof.xmax[y] && label[y * W + x] === id;
+      if (on) runLen++;
+      else if (runLen > 0) {
+        rows.push(runLen);
+        runLen = 0;
+      }
+    }
+    if (rows.length === 2 && Math.max(rows[0], rows[1]) <= 0.3 * span[y]) {
+      twoRunRows++;
+      runWidths.push(rows[0], rows[1]);
+    }
+  }
+  if (!bandRows || twoRunRows / bandRows < 0.6 || !runWidths.length) {
+    out.nulls.strapWidthToShoulder = 'top_edge_not_two_strap_topology';
+  } else {
+    const sws = median(runWidths) / shoulderW;
+    if (sws > 0.5) {
+      out.nulls.strapWidthToShoulder = 'strap_width_out_of_schema_band';
+    } else {
+      out.strapWidthToShoulder = r3(sws);
+    }
+  }
+  return out;
+}
+
 export function measureGarment(image, opts = {}) {
   const cfg = { ...DEFAULTS, ...opts };
   if (!image || !image.data || !image.width || !image.height ||
@@ -369,7 +528,9 @@ export function measureGarment(image, opts = {}) {
     return fail('hem_tapers_like_legs', 0.35, debug);
   }
 
-  // 7) ratios only (no absolute units: a photo carries no scale reference)
+  // 7) ratios only (no absolute units: a photo carries no scale reference).
+  //    Full worker-schema shape: all seven fields present, null = honestly
+  //    not extractable, reason in ratioNull (see header comment).
   const profile = [];
   for (let i = 0; i < 13; i++) {
     const y = y0 + Math.round((i / 12) * (L - 1));
@@ -377,10 +538,18 @@ export function measureGarment(image, opts = {}) {
   }
   let contig = 0;
   for (let y = y0; y <= y1; y++) if (span[y] > 0) contig++;
+  const edge = topEdgeFields(comp.label, comp.bestId, prof, span, W, y0, y1, L, fillFactor);
+  debug.topEdge = edge.debug;
+  const ratioNull = { ...edge.nulls };
+  ratioNull.sleeveLenToGarment = 'sleeve_not_separable_from_silhouette_v1';
   const ratios = {
     lengthToWidth: r3(L / bustWidth),
     hemToWaistWidth: r3(hemWidth / waistWidth),
     waistYToLength: r3((waistY - y0) / L),
+    neckDepthToLength: edge.neckDepthToLength,
+    neckWidthToShoulder: edge.neckWidthToShoulder,
+    sleeveLenToGarment: null,
+    strapWidthToShoulder: edge.strapWidthToShoulder,
     shoulderToHemProfile: profile,
   };
 
@@ -398,5 +567,5 @@ export function measureGarment(image, opts = {}) {
   }
 
   if (confidence < 0.45) return fail('low_confidence', confidence, debug);
-  return { ok: true, confidence, ratios, debug };
+  return { ok: true, confidence, ratios, ratioNull, debug };
 }
