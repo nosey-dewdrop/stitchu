@@ -51,7 +51,20 @@ const BODIES = {
   EU38: { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40.5, armLength: 58, neck: 35 },
   bigNeckSmallShoulder: { bust: 100, waist: 84, hip: 104, shoulder: 30, backLength: 40, armLength: 58, neck: 50 },
 };
-const LENGTHS = [450, 900];
+
+// Param values come from the recipe's OWN declared range (same single-param
+// contract recipe-json-dump enforces): both range ends, so the parity combos
+// hit the declared boundaries of whatever recipe this test is pointed at
+// (skirt lengthMM 250-1200, dress extendMM 300-480, ...).
+const doc = JSON.parse(canonical);
+const paramNames = Object.keys(doc.params || {});
+if (paramNames.length !== 1) {
+  console.error(`recipe declares ${paramNames.length} params; this test binds exactly one`);
+  process.exit(2);
+}
+const paramName = paramNames[0];
+const paramRange = doc.params[paramName];
+const PARAM_VALUES = [paramRange.min, paramRange.max];
 
 const GEOM_FIELDS = ['name', 'cutInstruction', 'seamAllowance', 'grainline',
   'commands', 'markings', 'notches', 'cutLine'];
@@ -64,21 +77,21 @@ function pieceGeom(p) {
 
 let combos = 0;
 for (const [bodyName, body] of Object.entries(BODIES)) {
-  for (const lengthMM of LENGTHS) {
+  for (const paramMM of PARAM_VALUES) {
     combos += 1;
-    const nat = JSON.parse(execFileSync(nativeDump, [recipePath, bodyName, String(lengthMM)], { encoding: 'utf8' }));
-    const wasmOut = JSON.parse(eng.draftRecipeJSON(canonical, { ...body, upperBust: 0 }, { lengthMM }));
-    if (wasmOut.error) { fail(`${bodyName}/${lengthMM}: wasm error ${wasmOut.error}`); continue; }
-    if (wasmOut.issues.length) { fail(`${bodyName}/${lengthMM}: wasm validator issues ${JSON.stringify(wasmOut.issues)}`); continue; }
+    const nat = JSON.parse(execFileSync(nativeDump, [recipePath, bodyName, String(paramMM)], { encoding: 'utf8' }));
+    const wasmOut = JSON.parse(eng.draftRecipeJSON(canonical, { ...body, upperBust: 0 }, { [paramName]: paramMM }));
+    if (wasmOut.error) { fail(`${bodyName}/${paramMM}: wasm error ${wasmOut.error}`); continue; }
+    if (wasmOut.issues.length) { fail(`${bodyName}/${paramMM}: wasm validator issues ${JSON.stringify(wasmOut.issues)}`); continue; }
     const np = nat.pieces, wp = wasmOut.pattern.pieces;
-    if (np.length !== wp.length) { fail(`${bodyName}/${lengthMM}: piece count native ${np.length} vs wasm ${wp.length}`); continue; }
+    if (np.length !== wp.length) { fail(`${bodyName}/${paramMM}: piece count native ${np.length} vs wasm ${wp.length}`); continue; }
     for (let i = 0; i < np.length; i += 1) {
       const a = JSON.stringify(pieceGeom(np[i]));
       const b = JSON.stringify(pieceGeom(wp[i]));
-      if (a !== b) fail(`${bodyName}/${lengthMM}: piece '${np[i].name}' geometry differs\n  native: ${a.slice(0, 200)}\n  wasm:   ${b.slice(0, 200)}`);
+      if (a !== b) fail(`${bodyName}/${paramMM}: piece '${np[i].name}' geometry differs\n  native: ${a.slice(0, 200)}\n  wasm:   ${b.slice(0, 200)}`);
     }
     if (nat.fabricMeters140 !== wasmOut.pattern.fabricMeters140) {
-      fail(`${bodyName}/${lengthMM}: fabricMeters140 native ${nat.fabricMeters140} vs wasm ${wasmOut.pattern.fabricMeters140}`);
+      fail(`${bodyName}/${paramMM}: fabricMeters140 native ${nat.fabricMeters140} vs wasm ${wasmOut.pattern.fabricMeters140}`);
     }
   }
 }
@@ -86,20 +99,20 @@ for (const [bodyName, body] of Object.entries(BODIES)) {
 // ---- 3. Err-path parity at the WASM boundary (RULES invariant 1: the browser
 // gets the same honest refusal the native interpreter gives, never a crash or
 // a silent clamp).
-const outOfRange = JSON.parse(eng.draftRecipeJSON(canonical, { ...BODIES.EU38, upperBust: 0 }, { lengthMM: 9999 }));
+const outOfRange = JSON.parse(eng.draftRecipeJSON(canonical, { ...BODIES.EU38, upperBust: 0 }, { [paramName]: paramRange.max + 9999 }));
 if (!outOfRange.error || !/outside declared range/.test(outOfRange.error)) {
   fail(`out-of-range param not refused honestly: ${JSON.stringify(outOfRange.error)}`);
 }
-const smuggled = JSON.parse(eng.draftRecipeJSON(canonical, { ...BODIES.EU38, upperBust: 0 }, { lengthMM: 450, evil: 1 }));
+const smuggled = JSON.parse(eng.draftRecipeJSON(canonical, { ...BODIES.EU38, upperBust: 0 }, { [paramName]: paramRange.min, evil: 1 }));
 if (!smuggled.error || !/not declared/.test(smuggled.error)) {
   fail(`undeclared param not refused: ${JSON.stringify(smuggled.error)}`);
 }
-const noMeas = JSON.parse(eng.draftRecipeJSON(canonical, { bust: 88, upperBust: 0 }, { lengthMM: 450 }));
+const noMeas = JSON.parse(eng.draftRecipeJSON(canonical, { bust: 88, upperBust: 0 }, { [paramName]: paramRange.min }));
 if (!noMeas.error || !/missing or non-positive/.test(noMeas.error)) {
   fail(`missing measurement not refused: ${JSON.stringify(noMeas.error)}`);
 }
 const badDoc = JSON.parse(eng.draftRecipeJSON('{"recipeVersion": 99}', { ...BODIES.EU38 }, {}));
 if (!badDoc.error) fail('unknown recipeVersion accepted by the wasm boundary');
 
-if (fails) { console.error(`recipe_wasm_parity: ${fails} failure(s)`); process.exit(1); }
-console.log(`OK recipe_wasm_parity: ${combos} body-length combos byte-equal native vs wasm (pieces+fabric), web recipe copy byte-identical, 4 err paths honest.`);
+if (fails) { console.error(`recipe_wasm_parity[${doc.id}]: ${fails} failure(s)`); process.exit(1); }
+console.log(`OK recipe_wasm_parity[${doc.id}]: ${combos} body-param combos byte-equal native vs wasm (pieces+fabric), web recipe copy byte-identical, 4 honest refusal paths.`);

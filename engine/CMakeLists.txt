@@ -341,6 +341,13 @@ add_test(NAME recipe_wasm_parity COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/
     $<TARGET_FILE:recipe-json-dump>
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
 
+# Same latch for the in-vein dress recipe the studio ships as its default
+# (Kapı 2 material): wasm parity at the declared extendMM range ends + the
+# web/recipes/ copy stays byte-identical (no silent fork of what Damla sees).
+add_test(NAME recipe_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/recipe_wasm_parity_check.mjs
+    $<TARGET_FILE:recipe-json-dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
 # K2 composition ratchet (2026-07-19): the declared component x host and
 # component x component conflict matrix (contract/composition.json via
 # composition.gen.hpp) is re-derived by actually drafting every combination.
