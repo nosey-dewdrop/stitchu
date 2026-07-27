@@ -308,6 +308,25 @@ add_test(NAME recipe_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/reci
     ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
 
+# v1.1 top kernel (RECETE-SPEC §6): the damar-içi shift-dress recipe.
+# recipe_dress_check: K0 const latch (incl. exact-double trig), motor
+# cross-parity at the pinned extension point, body-follows-widths, measured
+# side-seam equalization, drawn-vs-declared neck coupling, validator clean,
+# Err paths for every v1.1 seal violation.
+add_executable(recipe_dress_check tests/recipe_dress_check.cpp)
+target_link_libraries(recipe_dress_check PRIVATE engine)
+add_test(NAME recipe_dress_check COMMAND recipe_dress_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
+# v1.1 byte gate: recipe top path vs the REPO PIN subset (outline lines of
+# top/square/tunic/none.short; probe-cleared for -ffp-contract, RECETE-SPEC §6).
+add_executable(recipe_dress_golden_dump tests/recipe_dress_golden_dump.cpp)
+target_link_libraries(recipe_dress_golden_dump PRIVATE engine)
+add_test(NAME recipe_dress_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/recipe_dress_golden_check.sh
+    $<TARGET_FILE:recipe_dress_golden_dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
 # recipe-json-dump (tool, not a test): recipe-path pattern as draftJSON-shaped
 # JSON for the A4 sheet renderer (Gate 1d visual proof via render-recipe.mjs).
 add_executable(recipe-json-dump tools/recipe-json-dump.cpp)
