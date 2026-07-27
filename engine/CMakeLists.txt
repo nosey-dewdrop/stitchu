@@ -313,6 +313,15 @@ add_test(NAME recipe_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/reci
 add_executable(recipe-json-dump tools/recipe-json-dump.cpp)
 target_link_libraries(recipe-json-dump PRIVATE engine)
 
+# Aşama 2 (KANVAS) mandalı: the WASM recipe path (engine/dist/stitchu-engine.js,
+# draftRecipeJSON) is byte-equal to the native interpreter for the same recipe
+# + body + params, err paths refuse honestly at the boundary, and the web copy
+# of the recipe document (web/recipes/) is byte-identical to the canonical one
+# these tests pin. Requires engine/build-wasm.sh output, same as api_wire_check.
+add_test(NAME recipe_wasm_parity COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/recipe_wasm_parity_check.mjs
+    $<TARGET_FILE:recipe-json-dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
+
 # K2 composition ratchet (2026-07-19): the declared component x host and
 # component x component conflict matrix (contract/composition.json via
 # composition.gen.hpp) is re-derived by actually drafting every combination.

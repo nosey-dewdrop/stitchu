@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    {
+      "id": "skirt.aline.dart",
+      "title": "A-line skirt (dart shaping, woven, waistband)",
+      "file": "skirt-aline-dart.json",
+      "note": "gate 1 machine candidate; outside the vol1/vol2 vein (separate skirt) - the first in-vein dress recipe replaces it as the studio default when it lands"
+    }
+  ]
+}

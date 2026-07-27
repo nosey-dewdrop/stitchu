@@ -7,6 +7,7 @@
 #include <string>
 
 #include "../src/garment.hpp"
+#include "../src/recipe.hpp"
 #include "../src/sizechart.hpp"
 #include "../src/guiderefs.hpp"
 #include "../src/specparse.hpp"
@@ -160,10 +161,11 @@ GarmentSpec buildSpec(const val& o) {
     return spec;
 }
 
-// The {pattern, issues} JSON for one drafted body — shared by draftJSON and the
-// per-size entries of gradeJSON.
-std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
-    const DraftedPattern draft = GarmentDrafter::draft(spec, m);
+// Serialize one already-drafted pattern + its validator verdict as the
+// {pattern, issues} JSON — shared by the motor path (draftJSON / gradeJSON)
+// and the recipe path (draftRecipeJSON). One writer, no format drift.
+std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m,
+                        const DraftedPattern& draft) {
     const auto issues = PatternValidator::issues(spec, m, draft);
 
     std::string out = R"({"pattern":{"garment":")" + escape(draft.garment) + "\"";
@@ -216,14 +218,26 @@ std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
     return out;
 }
 
+// The {pattern, issues} JSON for one drafted body — shared by draftJSON and the
+// per-size entries of gradeJSON.
+std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
+    const DraftedPattern draft = GarmentDrafter::draft(spec, m);
+    return draftedJSON(spec, m, draft);
+}
+
+BodyMeasurementsSnapshot bodyFrom(const val& bodyObj) {
+    BodyMeasurementsSnapshot m{
+        numField(bodyObj, "bust"), numField(bodyObj, "waist"), numField(bodyObj, "hip"),
+        numField(bodyObj, "shoulder"), numField(bodyObj, "backLength"),
+        numField(bodyObj, "armLength"), numField(bodyObj, "neck")};
+    m.upperBustCM = numField(bodyObj, "upperBust"); // optional FBA; 0 = old behaviour
+    return m;
+}
+
 std::string draftJSON(val specObj, val bodyObj) {
     try {
         const GarmentSpec spec = buildSpec(specObj);
-        BodyMeasurementsSnapshot m{
-            numField(bodyObj, "bust"), numField(bodyObj, "waist"), numField(bodyObj, "hip"),
-            numField(bodyObj, "shoulder"), numField(bodyObj, "backLength"),
-            numField(bodyObj, "armLength"), numField(bodyObj, "neck")};
-        m.upperBustCM = numField(bodyObj, "upperBust"); // optional FBA; 0 = old behaviour
+        const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
         return patternJSON(spec, m);
     } catch (const std::exception& e) {
         // Invalid spec: no pattern, the message names the field and the accepted
@@ -275,9 +289,43 @@ std::string gradeJSON(val specObj, val rangeObj) {
     return out;
 }
 
+// Recipe path (PIPELINE Aşama 2, kanvas): recipe JSON text + measurements +
+// params in, the SAME {pattern, issues} JSON out as draftJSON, so render/sheet/
+// print consume both paths identically. The interpreter (engine/src/recipe.cpp,
+// contract docs/RECETE-SPEC.md) enforces everything — unknown key/param,
+// out-of-range param, missing measurement all come back as an honest error,
+// never a silent default (RULES invariant 1). No LLM, no guessed numbers:
+// the recipe document carries formulas, the kernel evaluates them.
+std::string draftRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) {
+    const auto errJSON = [](const std::string& msg) {
+        return std::string(R"({"error":")") + escape(msg) +
+               R"(","pattern":null,"issues":[")" + escape(msg) + "\"]}";
+    };
+    const auto parsed = recipe::parseRecipe(recipeText);
+    if (!parsed.ok) return errJSON(parsed.error);
+
+    // params: every own key of the JS object is handed to the interpreter,
+    // which rejects undeclared keys and enforces declared [min, max] ranges.
+    recipe::RecipeParams params;
+    const val keys = val::global("Object").call<val>("keys", paramsObj);
+    const int n = keys["length"].as<int>();
+    for (int i = 0; i < n; ++i) {
+        const std::string key = keys[i].as<std::string>();
+        params[key] = paramsObj[key.c_str()].as<double>();
+    }
+
+    const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
+    const auto drafted = recipe::draftRecipe(parsed.value, m, params);
+    if (!drafted.ok) return errJSON(drafted.error);
+    // Validator verdict with the GarmentSpec built ONLY from the recipe's
+    // sealed kernel block (no magic recipeId→enum mapping).
+    return draftedJSON(recipe::kernelSpec(parsed.value), m, drafted.value);
+}
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("draftJSON", &draftJSON);
     emscripten::function("gradeJSON", &gradeJSON);
+    emscripten::function("draftRecipeJSON", &draftRecipeJSON);
 }

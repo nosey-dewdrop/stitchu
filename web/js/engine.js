@@ -129,6 +129,29 @@ export function engineSpec(spec) {
   };
 }
 
+// Recipe path (PIPELINE Aşama 2 kanvas): recipe JSON text + measurements (cm)
+// + params in, the SAME {pattern, issues} shape out as draft(), so render.js /
+// sheet.js / print.js consume both paths identically. The C++ interpreter
+// enforces the whole contract (docs/RECETE-SPEC.md): undeclared param,
+// out-of-range value, missing measurement all come back as an honest error in
+// `error` + `issues`, never a silent default.
+export async function draftRecipe(recipeText, measurements, params) {
+  const engine = await loadEngine();
+  let json;
+  try {
+    json = engine.draftRecipeJSON(recipeText, {
+      bust: measurements.bust || 0, waist: measurements.waist || 0, hip: measurements.hip || 0,
+      shoulder: measurements.shoulder || 0, backLength: measurements.backLength || 0,
+      armLength: measurements.armLength || 0, neck: measurements.neck || 0,
+      upperBust: measurements.upperBust || 0,
+    }, params || {});
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: msg, pattern: null, issues: [msg] };
+  }
+  return JSON.parse(json);
+}
+
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   let json;
