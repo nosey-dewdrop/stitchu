@@ -1,0 +1,158 @@
+KAPI 2 HAZIRLIK RAPORU — 2026-07-28 (bağımsız doğrulayıcı kolu)
+Hakem: DAMLA. Bu rapor kapı geçişi beyan etmez; sadece malzemenin hazır olup
+olmadığını komut çıktılarıyla söyler.
+
+HÜKÜM: DAMLA ONAYINA HAZIR.
+
+Canlı adres: https://stitchu.noseydewdrop.com/studio.html
+
+================================================================
+1. TEMİZ BUILD + TAM SUITE (iddialara güvenilmedi, sıfırdan koşuldu)
+================================================================
+engine/build silindi, sıfırdan configure + derleme (Release, önceki cache ile
+aynı bayraklar), sonra tam ctest:
+
+  $ rm -rf build && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j8
+  configure+build exit: 0
+  $ ctest --test-dir build -j8
+  100% tests passed, 0 tests failed out of 69   (kolların bıraktığı hali)
+  ... bu oturumda elbise için 1 yeni mandal eklendi (bkz. §4), sonrası:
+  100% tests passed, 0 tests failed out of 70
+
+İki WASM hedefi de bu oturumda güncel kaynaktan yeniden derlendi
+(engine/build-wasm.sh, exit 0). ÖNEMLİ BULGU: eldeki dist bundle 01:19'da
+derlenmişti, reçete kolunun motor commit'leri 01:39-01:51'de geldi — yani
+kanvas kolunun bıraktığı vendor WASM'da v1.1 top kerneli YOKTU, elbise
+reçetesi tarayıcıda çizilemezdi. Taze derleme + parite testi bunu kapattı:
+
+  $ ctest -R recipe_wasm_parity        -> Passed (skirt: 4 combo bayt-eşit)
+  $ ctest -R recipe_wasm_parity_dress  -> Passed (elbise: 4 combo bayt-eşit, yeni mandal)
+
+Motor proof seti (deploy guard'ın istediği tam liste, hepsi bu oturumda):
+  vocab-sweep : 58320 drafts | 58320 sewable | 0 SEWABILITY FAILURES
+  web-fuzz    : 26260 drafts | 6513 validator-blocked (honest) | 3 FAILURES
+                (bilinen 3 PAGES vakası: dress/pussyBow/straight/pleated/maxi
+                 102 sayfa — NABIZ 27 Tem baseline'ı ile birebir, YENİ YOK)
+  golden_check + tüm golden/style-pin testleri suite içinde yeşil.
+
+================================================================
+2. ELBİSE REÇETESİ — İKİ ÖLÇÜ TABLOSUYLA KENDİ ÜRETİMİM
+================================================================
+Reçete: recipes/shift-dress-square-spaghetti.json (top.shift.square.spaghetti,
+Vol2 #8). İki pinli gövdeyle kendim ürettim (extendMM=420):
+
+  $ ./build/recipe-json-dump ../recipes/shift-dress-square-spaghetti.json EU38 420
+  $ ./build/recipe-json-dump ../recipes/shift-dress-square-spaghetti.json bigNeckSmallShoulder 420
+
+PARÇA LİSTESİ (iki gövdede de 4 parça — az parça, damar-içi silüet):
+  1. Top Front  — cut 1 on fold, pay 15 mm  (kare yaka basamağı çizimde görünür)
+  2. Top Back   — cut 2, pay 15 mm
+  3. Bias binding (neckline + armholes) — ölçülen kenara göre:
+       EU38:    1231 x 25 mm şerit (kenar 1211 mm)
+       bigNeck: 2 x 704 mm şerit (kenar 1388 mm)   <- gövdeyle DEĞİŞİYOR
+  4. Spaghetti Strap (ince askı) x2 — EU38 span 140 mm / bigNeck 145 mm
+
+WASM yolundan aynı üretim (taze bundle, validator dahil):
+  EU38 @420:    issues: []  | 4 parça | kumaş 2.15 m | rehber 11 adım
+  bigNeck @420: issues: []  | 4 parça | kumaş 2.15 m | rehber 11 adım
+  extendMM=500 -> Err: param 'extendMM' ... outside declared range [300, 480]
+  (kelepçe dürüst: aralık dışı sessizce kabul edilmiyor)
+
+DİKİŞ + VALIDATOR KANITI (recipe_dress_check, temiz build'de exit 0, 126 PASS;
+3 gövde x 3 boy, ölçülmüş sayılarla — örnek satırlar):
+  EU38    @300mm side seams front 475.84 vs back 476.15 (|d| <= 3.0)
+  pear    @380mm side seams front 560.54 vs back 561.90 (|d| <= 3.0)
+  bigNeck @460mm side seams front 635.78-yakını ... (9 kombinasyonun 9'u PASS)
+  çizilen yaka = beyan edilen enum: EU38 465.2 vs 465.2 (|d| <= 0.5)
+  validator: 9 kombinasyonda "validator clean (0 issues)"
+  + motor çapraz-parite: tüm parçalar <= 1e-6 mm, K0 sabit mandalı 27/27.
+
+Bağımsız yeniden üretim çapraz kontrolü: EU38 @420 A4 strip PNG'imin sha256'sı
+(3eae2b4f...) reçete kolunun raporladığı sha ile BİREBİR aynı çıktı.
+
+DÜRÜST FARK NOTU (Damla yan yana bakarken görsün): referans Vol2 #8 görselinde
+verev ön cepler var; reçete v1.1'de cep YOK (kernel'de top cebi servisi bu
+mühürde yok). Silüet/yaka/askı birebir; cep, sonraki genişleme adayı.
+
+================================================================
+3. DEPLOY + CANLI DOĞRULAMA
+================================================================
+scripts/deploy.sh ile (motor proof seti §1'de koşulduktan sonra
+STITCHU_MOTOR_PROOF=done). Proof zinciri deploy içinde tekrar koştu:
+  style-lint: OK 87 sayfa 0 ihlal | header-diff: OK 58 sayfa
+  validate-contract: GREEN | ctest: 100% tests passed, 0 failed out of 70
+  == DEPLOYED: ?v=130 live and single-versioned ==
+  IndexNow response: HTTP 200
+
+Canlı curl doğrulamaları (cache-bust ile):
+  studio.html                    -> HTTP 200
+  <meta name="robots" content="noindex">        MEVCUT (sitemap'te studio: 0)
+  id="canvas" class="studio-canvas"             MEVCUT (kanvas kancası)
+  js/studio.js?v=130                            MEVCUT
+  recipes/index.json             -> elbise İLK sırada (studio varsayılanı)
+  recipes/shift-dress-square-spaghetti.json -> HTTP 200 ve yerel kanonik
+    dosyayla cmp BAYT-ÖZDEŞ ("LIVE recipe byte-identical to canonical")
+
+Worker deploy'a DOKUNULMADI (gerek yok: studio tamamen istemci tarafı WASM;
+wrangler Damla'nın adımı).
+
+================================================================
+4. BU OTURUMDA YAPILAN KABLO İŞİ (doğrulama sırasında bulunan boşluklar)
+================================================================
+a) web/js/studio.js MEAS_FIELDS'e shoulderMM eklendi. Bulgu: elbise reçetesi
+   shoulderMM beyan ediyor ama studio bu ölçüyü form'a bağlayamıyordu —
+   manifest'e eklense bile her draft "measurement missing" Err olacaktı.
+b) Elbise reçetesi web/recipes/'e bayt-özdeş kopyalandı, manifest'te İLK
+   sıraya (varsayılan) kondu; skirt ikinci sırada duruyor.
+c) recipe_wasm_parity_check.mjs reçetenin BEYAN ETTİĞİ tek parametreye
+   genellendi (sabit lengthMM/450-900 yerine beyan edilen aralığın iki ucu);
+   ctest'e recipe_wasm_parity_dress eklendi -> elbise web kopyası da artık
+   bayt-kilitli, sessiz çatal imkansız. Suite 69 -> 70.
+d) İki WASM hedefi güncel kaynaktan yeniden derlendi (§1'deki bayat bundle
+   bulgusu), vendor + backend artefaktları commit'te.
+Commit'ler: e1da40f (parite genelleme + elbise mandalı), 46eb99f (studio
+elbise kablosu + taze vendor), 764ff95 + fe1fb00 (deploy ?v=130). Hepsi
+origin/main'de.
+
+================================================================
+5. GÖRSEL KANIT (dosya yolları — RULES invariant 3)
+================================================================
+reports/gate/kapi-2-hazirlik/ altında:
+  dress-eu38-420/strip.png     sha256=3eae2b4fc800f2c2be83061dcd76678384a8e0208298af3c4e03bd62f72191a4
+                               (A4 16 sayfa, 2x8; 1800x9474 px)
+  dress-bigneck-420/strip.png  sha256=6dc24fe21370d309d734a508f22076e2988cd9cb888e716fad5717c42caf47d1
+                               (A4 15 sayfa, 5x3; gözle bakıldı: kare yaka
+                               basamağı, A-line etek, bias şerit, askı, kesim
+                               çizgisi offset'leri yerinde)
+  studio-live-dress-default.png            (CANLI sayfa, EU38 varsayılan)
+  studio-live-dress-body84-104-len460.png  (CANLI, ölçü değişince yeniden
+                               üretim: kumaş 2.15 -> 2.25 m, re-evaluated
+                               18.2 ms, parçalar büyüdü)
+  studio-live-dress-select-front.png       (CANLI, parça müfettişi: Top Front,
+                               cut 1 on fold, pay 15 mm, dikiş-hattı
+                               244 x 835 mm — motorla çapraz kontrol: native
+                               bbox 244.4 x 835.0 mm, BİREBİR)
+
+================================================================
+6. DAMLA'NIN BAKACAĞI ŞEYLER (Kapı 2 hakem gezisi)
+================================================================
+1) https://stitchu.noseydewdrop.com/studio.html aç — elbise (Vol2 #8) kendiliğinden gelmeli.
+2) Waist'i 70 -> 84, Hip'i 94 -> 104 yap: parçalar ANINDA yeniden çizilmeli,
+   alttaki satırda "re-evaluated in X ms" ve kumaş metrajı değişmeli.
+3) extendMM slider'ını 300-480 arasında sürükle: etek boyu canlı uzayıp kısalmalı.
+4) Kanvasta Top Front'a tıkla: sol panelde ad/kesim/pay/dikiş-hattı boyutu.
+5) Download SVG: 1 unit = 1 mm gerçek ölçekli dışa aktarım.
+6) Yan yana karşılaştırma: new_flats/volume_2'deki #8 görseli (36.37) ile
+   ekrandaki parçalar — cep farkı §2'nin sonunda dürüstçe not edildi.
+Evet/hayır kararı Damla'nın; hayır ise nedeni ANAYASA damar bölümüne işlenecek.
+
+================================================================
+7. AÇIK/DÜRÜST NOTLAR
+================================================================
+- web-fuzz'daki 3 FAILURE bu işten ÖNCE de vardı (bilinen PAGES sınıfı,
+  27 Tem baseline'ı ile aynı); bu oturum yeni kırmızı üretmedi.
+- new_flats/COMBINED-FINAL.md + combined-final.json çalışma ağacında silinmiş
+  duruyor (bana ait değil, başka kolun izi); dokunulmadı, commit'lenmedi.
+- Skirt reçetesi seçicide duruyor (Kapı 1 kanıt zinciri için); damar dışı
+  olduğu manifest notunda yazılı.
+- "Kapı 2 geçti" beyanı YOKTUR; hakem Damla'dır.
