@@ -7,7 +7,8 @@ ANAYASA.md + PIPELINE.md'de); Aşama 1'in "ne inşa edilecek" sorusunun cevabıd
 
 Karar (Keşif 1'deki açık karar noktası): reçete yolu, motor çağrılarını kaydeden
 bir RECORDER değil, reçeteden PathCommand'i BAĞIMSIZ yeniden inşa eden bir
-YORUMLAYICI olacak. Gerekçe RULES.md'nin regen-vs-regen yasağının ruhu: kanıt
+YORUMLAYICI olacak. Gerekçe regen-vs-regen yasağının ruhu (kaynak: DERSLER.md:12
++ golden_check.sh başlığı, 2026-07-19 adli dersi — RULES.md'de bu yasak yazmaz): kanıt
 ancak ikinci, bağımsız bir üretim yolunun PİNLİ golden'a bire bir oturmasıyla
 kanıt olur; motorun kendi çağrılarını tekrar oynatmak kendi kendini doğrulamaktır.
 
@@ -68,13 +69,27 @@ Formüller düz metin ifadelerdir. v1 grameri:
   - `clamp(x, lo, hi)` — motorda `std::clamp` (skirt.cpp:14)
   - `gate(x, t)` = `x >= t ? x : 0` — motorun "pens minimumun altındaysa yan
     dikişe katlanır" kuralı (skirt.cpp:43-46, `minDartWidth`)
-- **isim çözümleme sırası:** ölçüler → parametreler → sabitler (`consts`) →
-  daha önce tanımlanmış skalerler (önce global, sonra parça-yerel). İleri
-  referans HATADIR. Bilinmeyen isim/fonksiyon/op = `Result::Err`
-  (RULES.md invariant 1: sessiz düşürme/zorlamaya çevirme yok).
+- **isim çözümleme:** görünür ad alanı = ölçüler + parametreler + sabitler
+  (`consts`) + global skalerler + (parça içinde) parça-yerel skalerler. AYNI
+  görünür kapsam zincirinde bir adın İKİ kaynakta tanımlanması (gölgeleme) =
+  `Result::Err` — öncelik sırası yoktur, çakışma sessizce maskelenmez (ör.
+  `waistMM` adlı skaler tanımlanamaz: ölçü adıyla çakışır ve ölü doğardı).
+  Farklı parçaların yerel skalerleri ayrı kapsamlardır (Front ve Back'in
+  kendi `dartLength`'i meşru). İleri referans HATADIR. Bilinmeyen
+  isim/fonksiyon/op = `Result::Err` (RULES.md invariant 1: sessiz
+  düşürme/zorlamaya çevirme yok).
 - **`when` koşulu:** yalnız marking girdilerinde; tek karşılaştırmalardan oluşan
-  liste (`>`, `>=`, `<`, `<=`), liste elemanları VE ile bağlanır. Başka hiçbir
-  yerde koşul yok.
+  liste (`>`, `>=`, `<`, `<=`), liste elemanları VE ile bağlanır. Operand
+  grameri: karşılaştırmanın İKİ tarafı da atomdur — tanımlayıcı YA DA ondalık
+  sayı sabiti (ifade/parantez yok); tanımlayıcılar yukarıdaki isim
+  çözümlemesinden geçer. Başka hiçbir yerde koşul yok. Grading kuralı (Aşama 5
+  için ŞİMDİ yazılır, yoksa Kapı 5'te DXF-AAMA duvara toslar): nokta-bazlı
+  graded bir beden serisi içinde TÜM `when` dalları her bedende AYNI
+  değerlenmelidir; bir eşik serinin ortasında kesilirse (pens 1↔2 topoloji
+  flip'i) nokta eşlemesi kaybolur → o graded run için `Result::Err`. Bugünkü
+  EU çizelgesinde (tables.json euSizeChart) her bedende bel-kalça farkı 24 cm
+  → dartWidth her bedende eşik üstünde sabit; bu topoloji sabitliği TESADÜF,
+  garanti değil.
 - **YOK:** üçlü koşul ifadesi, döngü, kullanıcı tanımlı fonksiyon, string
   işlemi, rastgelelik. LLM formül/sayı yazmaz (PIPELINE kalıcı yasak); reçete
   belgesini v1'de insan/spec yazar, Aşama 4'ün generatif katı reçete SEÇER ve
@@ -82,8 +97,26 @@ Formüller düz metin ifadelerdir. v1 grameri:
 
 **Bayt-eşitlik disiplini:** formül metni, motordaki ifadenin işlem SIRASINI
 birebir taşır (soldan sağa, aynı parantezleme). Yorumlayıcı aritmetiği yeniden
-sıralamaz; IEEE754 double ile motorla aynı ara sonuçlar üretilir. Golden bire
-bir kanıtının (Kapı 1b) ön şartı budur.
+sıralamaz. AMA işlem sırası tek başına "motorla aynı ara sonuçlar"ı GARANTİ
+ETMEZ — FP contraction gerçeği (probe: motor `-DCMAKE_CXX_FLAGS=-ffp-contract=off`
+ile derlenir, `golden_dump` çıktısı pinli CSV ile cmp/diff edilir; ölçüm
+2026-07-28): engine/CMakeLists.txt hiçbir fp/optimizasyon bayrağı taşımaz,
+Apple clang varsayılanı `a*b±c` şekillerini FMA'ya kaynaştırır ve PİNLİ golden
+bu kaynaşmış aritmetiği İÇERİR — `-ffp-contract=off` derlemede tam dump pinden
+125 satırda sapıyor (hepsi bodice/top eğrisi; ilk fark satır 8041, cp1.x
+153.1253→153.1252). Motor bayrağına DOKUNULMAZ (bayrak pinlemek golden_check'i
+kırar). Ağaç-yürüyen yorumlayıcı per-op değerlendirir (kaynaşma imkânsız);
+bu yüzden bayt kapısı ancak kaynaşmaya duyarsız alt kümelerde kurulabilir.
+v1 adayı için aynı probe'la ölçüldü: `skirt/aLine` 288 satırlık pinli alt küme
+`-ffp-contract=off` derlemede de BAYT-ÖZDEŞ — etek yolunda kaynaşabilir
+şekiller var (skirt.cpp:67'deki `waistlineWidth + (hipQuarter - waistlineWidth)
+* 0.6` fmadd'i ve `hipDepthMM * 0.3 - sideWaistRise` fmsub'ı) ama pinli üç
+gövdede `%.4f` sınırını oynatmıyorlar (hipDepthMM=200 sabitken 200*0.3=60.0
+tam temsil edilir). Kapı 1b bayt kapısı bu reçete için GEÇERLİ. Kural: bayt
+kapısına yeni bir stil eklenmeden ÖNCE aynı probe o stilin pinli alt kümesine
+koşulur; alt küme sapıyorsa o stilin hakemi BİLİNÇLİ İLANLA `golden-diff.py`
+0.1 mm olur — formüller asla "bayt tutturmak için" değiştirilmez (yanlış
+teşhisli formül düzeltmesi = drift).
 
 ### 2.2 Şema (v1)
 
@@ -93,13 +126,39 @@ Reçete belgesi (JSON, tek stil):
   id              : benzersiz stil kimliği, ör. "skirt.aline.dart"
   title           : insan etiketi
   units           : "mm" (tek geçerli değer)
+  kernel          : MÜHÜRLÜ kernel bağlamı — { garment, skirtStyle, shaping,
+                    fabric } sabit kapalı-enum string dörtlüsü. Formül/sayı
+                    TAŞIYAMAZ; dört anahtar dışında anahtar = Err
+                    (additionalProperties felsefesi burada da delinmez).
+                    Nedeni: çizim DIŞI kernel servisleri reçete belgesinden
+                    üretilemez — `fabricEstimate` enum ister (skirt.cpp:482-525;
+                    Princess'te 2*goreFlare ekler), `PatternValidator::issues()`
+                    GarmentSpec ister (validator.hpp:35-38) ve etek sınıflaması
+                    spec.garment/skirtStyle okur (validator.cpp:438-448); golden
+                    satır etiketi de bu enum'lardan kurulur. Harness GarmentSpec'i
+                    ve servis argümanlarını YALNIZ bu bloktan kurar; dokümante
+                    edilmemiş "sihirli recipeId→enum eşlemesi" yasaktır (aksi
+                    bağımsız-ikinci-yol kanıtını sessizce zayıflatır).
   measurements    : gereken ölçü adları listesi (BodyMeasurementsSnapshot
-                    türevleri: waistMM, hipMM, bustMM, ...); eksik ölçü = Err
+                    türevleri: waistMM, hipMM, bustMM, ...). "Eksik ölçü = Err"
+                    tanımı SAYISALDIR: snapshot alanları default 0'dır
+                    (measurements.hpp:12-13), eksik ile sıfır ayırt edilemez —
+                    kural: listelenen her ölçü için değer <= 0 → Err.
   params          : { ad: { min, max, table? } } — çağıranın verdiği sürekli
-                    girdiler; min/max kanvas/UI aralığıdır, zorlama reçetenin
-                    içindeki açık clamp formülüyle yapılır (motor pariteleri:
-                    resolvedLength, skirt.cpp:12-16). table = K1 kontrat
-                    referansı (ör. "draft.skirtLengthMM", tables.json).
+                    girdiler. min/max YORUMLAYICI TARAFINDAN ZORLANIR: aralık
+                    dışı parametre = Err (RULES.md invariant 1 — enforce
+                    edilmeyen garanti yoktur; Aşama 4 generatif katından ya da
+                    kanvas dışından gelen aralık dışı değer sessiz kabul
+                    edilemez, clamp'i unutan reçeteye güvenilmez). Reçete
+                    içindeki açık clamp formülü motor paritesi için kalır
+                    (resolvedLength, skirt.cpp:12-16) ve zorlanmış aralıkta
+                    kimliktir. Bilinen sapma (kayda geçer): motor TABLO yolunda
+                    clamp YAPMAZ (skirt.cpp:12-16 yalnız override>0 dalında
+                    clamp'ler); bugün K1 tablosu 450/650/900 aralık içi
+                    olduğundan bayt farkı yok — tablo bir gün aralık dışına
+                    oynarsa reçete yolunda bu Err olarak PATLAR, sessiz sapmaz.
+                    table = K1 kontrat referansı (ör. "draft.skirtLengthMM",
+                    tables.json).
   consts          : { ad: sayı } — stile çözülmüş blok sabitleri
   scalars         : [ { id, f } ] — sıralı, formüllü ara değerler
   pieces          : [ Parça ]
@@ -136,12 +195,23 @@ Seçim gerekçesi: motorun en az bileşenli, post-pass'siz bloğu; golden'da
 `skirt/aLine/{mini,midi,maxi}` satırları `Shaping::Dart` ile pinli
 (golden_dump.cpp:58-67). Formüllerin TAMAMI skirt.cpp'den okunmuştur.
 
+ANAYASA gerilimi (dürüst kayıt): ayrı etek + midi/maxi, ANAYASA.md "NE YOK"
+listesindedir — bu aday DAMAR için değil, MAKİNE KAPISI için seçildi (Kapı 1
+hakemi makinedir; pinli golden yalnız mevcut motor stillerinde var ve en temiz
+blok bu). Sonuç: Kapı 1 geçilip Aşama 2 otomatik açıldığında eldeki tek reçete
+damar dışı olacak; Kapı 2'nin Damla-hakem malzemesi için ilk DAMAR İÇİ reçete
+ihtiyacı (ör. A-line mini elbise / babydoll yönü) şimdiden görünür. Bu bir iş
+sırası dayatması değildir (o yetki ANAYASA+PIPELINE'da), Aşama 2 açılırken boş
+elle çıkılmasın diye düşülmüş nottur.
+
 ```json
 {
   "recipeVersion": 1,
   "id": "skirt.aline.dart",
   "title": "A-line skirt (dart shaping, woven, waistband)",
   "units": "mm",
+  "kernel": { "garment": "skirt", "skirtStyle": "aLine",
+              "shaping": "dart", "fabric": "woven" },
   "measurements": ["waistMM", "hipMM"],
   "params": {
     "lengthMM": { "min": 250, "max": 1200, "table": "draft.skirtLengthMM" }
@@ -271,8 +341,24 @@ açıklık > kısalık.)
 `suppression/sideTake/dartWidth/waistlineWidth` = skirt.cpp:40-49;
 noktalar = skirt.cpp:55-59; outline eğri kontrolleri = skirt.cpp:61-75;
 pens dalları ve 0.82 çarpanı = skirt.cpp:89-98; grainline = skirt.cpp:106;
-Waistband = skirt.cpp:382-403; dikiş payları = constants.gen.hpp:13-15;
-blok sabitleri = skirt.hpp:11-17.
+Waistband = skirt.cpp:382-403 (bandLength skirt.cpp:383; `pieces()` :477
+`waistbandPiece(m.waistMM(), fabric)` HAM bel geçirir, ease bandın içinde
+uygulanır — reçete formülü aynı sonucu üretir, woven'da `waistEaseFor`=0.02);
+dikiş payları = constants.gen.hpp:13-15; blok sabitleri = skirt.hpp:11-17;
+`sideWaistRise = 12` blok başlığında DEĞİL, fonksiyon-içi sabittir
+(skirt.cpp:50).
+
+**Consts kopyası = K0 riski (değerlendirildi, karar):** yukarıdaki `consts`
+değerleri skirt.hpp:11-17 ve constants.gen.hpp:13-15'ten ELLE kopyadır;
+contract/tables.json `_contract` notu "Consumers NEVER copy these values" der.
+Karar: v1'de reçete sabitlerini codegen'le üretmek KAPSAM DIŞI (yeni üreteç
+katmanı Aşama 1'i şişirir); bedeli PARİTE MANDALIYLA ödenir — `recipe_check`
+ctest'i reçetedeki HER const'u motor başlığındaki karşılığıyla sayısal
+karşılaştırır (waistEase == SkirtBlock::waistEase, seamAllowanceMM ==
+constants::kSeamAllowanceMM, ...); biri kayarsa suite kırmızı. Golden yalnız
+pinli stilleri koruduğundan, bu mandal olmadan pinlenmemiş gelecek reçeteler
+skirt.hpp/K1 değişikliğinde sessiz drift ederdi (repo'nun kendi K0 dersi).
+contract'tan üretme seçeneği Aşama 2+ için açık.
 
 ---
 
@@ -306,22 +392,42 @@ Adımlar, sıra sabit:
    yazmaz): cutLine = `offsetOutline` (geometry.hpp:128-135), teknik
    anotasyonlar (çentik/closure/grainline fallback, garment.cpp:159-200),
    `PatternValidator::issues()`. Golden dökümü yalnız commands + markings
-   okuduğu için (geometry.hpp:49-55 sözleşmesi) bu katman golden'ı etkilemez.
+   okuduğu için (geometry.hpp:47-58 sözleşmesi: `notches` markings'ten AYRI
+   alandır, annotateTechnical notches'a yazar) bu katman golden'ı etkilemez.
+   Servis çağrılarının enum bağlamı (GarmentSpec, fabricEstimate/guide
+   argümanları) YALNIZ reçetenin mühürlü `kernel` bloğundan kurulur (§2.2).
 7. **Determinizm.** Aynı reçete + aynı snapshot + aynı param → aynı double'lar
-   (sabit değerlendirme sırası, IEEE754, yeniden sıralama yok) → aynı
-   `%.4f` dökümü. Tahmin, rastgelelik, LLM sayısı sıfır.
+   (sabit değerlendirme sırası, IEEE754, yeniden sıralama yok; FP contraction
+   sınırı ve probe kuralı §2.1) → aynı `%.4f` dökümü. Tahmin, rastgelelik,
+   LLM sayısı sıfır.
+
+**Outline kanonik sıra sözleşmesi:** `PatternValidator` POZİSYONEL ölçer —
+etek parçasında bel kenarı `commands[1]`dir (`skirtWaistLength`,
+validator.cpp:389-400) ve yan dikiş `commands[1]=Curve, [2]=Curve, [3]=Line`
+dayatır (`skirtSideSeamLength`, validator.cpp:412-418). Reçete outline'ı bu
+yüzden motorun kanonik komut sırasını KORUMAK ZORUNDADIR: move(bel merkezi) →
+bel eğrisi → yan dikiş eğrisi → etek ucu → merkeze dönüş → close. Geometrik
+olarak doğru ama sırası farklı bir belge validator ölçümünü sessizce bozar;
+gelecekteki her reçete yazarı bu sözleşmeye tabidir.
 
 **Regeneration:** ölçü ya da parametre değişince 2-6 adımları baştan koşar.
 Reçete belgesi değişmez ve içinde önbelleklenmiş tek koordinat yoktur; maliyet
 O(operasyon sayısı). Aşama 2 kanvası "ölçü değişti → anında yeniden çiz"
-döngüsünü tam bu çağrıyla kurar; SVG/PDF yalnız dışa aktarımdır.
+döngüsünü tam bu çağrıyla kurar; SVG/PDF yalnız dışa aktarımdır. Grading notu:
+motorun BUGÜNKÜ grading tanımı beden başına yeniden draft + monotonluk +
+validator'dır (grade_check.cpp, euSizeChart) — reçete yeniden-değerlendirmesi
+bunu aynen taşır. Nokta-bazlı (delta kurallı / DXF-AAMA) grading Aşama 5
+işidir ve §2.1'deki when-topoloji kuralına tabidir; cp1/cp2/grainline/marking
+koordinatları v1'de isimsiz inline formüldür (nokta kimliği yok), nokta
+kimliği tasarımı Aşama 5'in kendi kapısında yapılır.
 
 **Motorla ilişki (v1):** `GarmentDrafter::draft()` dokunulmadan kalır; reçete
 yolu paralel ikinci yoldur. Motor stillerinin reçete diline dökülmesi stil stil
 ilerler; iki yolun eşitliği her stilde golden ile kanıtlanır. Kumaş metrajı ve
 dikiş rehberi metni reçete dili DIŞINDADIR: bunlar çizim değil kernel servisidir
-(`fabricEstimate` skirt.cpp:482-524, `guide` skirt.cpp:556-631) ve reçete yolu
-dökümde aynı servisleri çağırır.
+(`fabricEstimate` skirt.cpp:482-525, `guide` skirt.cpp:556-631) ve reçete yolu
+dökümde aynı servisleri çağırır; çağrının enum argümanları reçetenin mühürlü
+`kernel` bloğundan gelir (§2.2), harness'ta gizli eşleme yoktur.
 
 ---
 
@@ -354,17 +460,26 @@ adayının İHTİYACI kadardır, bir operasyon fazlası değil.
 **Genişleme yolu (temiz büyüme kuralı):** bir operasyon dile ancak şu iki şart
 birlikte sağlanınca girer: (1) kernelde deterministik, kapalı-form karşılığı
 ZATEN vardır (geometry.hpp fonksiyonu ya da blok kodundaki adım); (2) tek başına,
-kendi golden/ctest kanıtıyla eklenir (bir seferde bir operasyon). Aday sıra,
-yalnız isim ve motor karşılığı (şimdi detaylandırmak yasak):
+kendi golden/ctest kanıtıyla eklenir (bir seferde bir operasyon). Aday envanter
+SIRASIZDIR — sıra vaadi fiilen iş sırası dayatmaya kayar, o yetki yalnız
+ANAYASA+PIPELINE'da (Aşama 6 ilkesi: şimdiden detaylandırmak drift kaynağı).
+Yalnız isim + motor karşılığı:
 
-1. `mirror` — gorePanel simetrisi (skirt.cpp:325-366), `translatePiece`.
-2. `curveSplitAtX` — `splitCubic` + `cubicTForX` (geometry.hpp:108-117);
-   princess/gore bel bölmesi.
-3. `seamEqualize` — gore truing (`targetLegLen`/`legDrop`, skirt.cpp:182-190).
-4. `arcPointOnCurve` — bel yayında hedef ark yürüyüşü (`seamArcTarget`,
-   skirt.cpp:158-171); prenses dikişi hizalama.
-5. `rectPanel` + oran sabitleri — gathered/pleated dikdörtgen panelleri
-   (skirt.cpp:241-290).
+- `mirror` — gorePanel simetrisi (skirt.cpp:325-366), `translatePiece`.
+- `curveSplitAtX` — `splitCubic` + `cubicTForX` (geometry.hpp:108-117);
+  princess/gore bel bölmesi.
+- `seamEqualize` — gore truing (`targetLegLen`/`legDrop`, skirt.cpp:182-190).
+  DÜRÜST NOT: bu bugün TEK operasyon değildir — motor `splitCubic` çıktısını
+  MUTASYONLA düzeltir (`sideWaistEdge = waistAtB.second; sideWaistEdge.cp1.y
+  += legBTrued.y - legB.y`, skirt.cpp:188-190; ardından `translatePiece`
+  normalize, skirt.cpp:234-235). v1'in append-only op modeli ara eğri değerini
+  adlandırıp tüketemez; bu operasyonun dile girişi MODEL DEĞİŞİKLİĞİ gerektirir
+  (isimli kenar / ara-değer referansı) ve o tasarım giriş anında yapılır,
+  şimdi değil.
+- `arcPointOnCurve` — bel yayında hedef ark yürüyüşü (`seamArcTarget`,
+  skirt.cpp:158-171); prenses dikişi hizalama.
+- `rectPanel` + oran sabitleri — gathered/pleated dikdörtgen panelleri
+  (skirt.cpp:241-290).
 
 Dil operasyonu asla kernelden ÖNCE tasarlanmaz; kernelde olmayan şey reçetede
 adlandırılamaz.
@@ -375,8 +490,8 @@ adlandırılamaz.
 
 Hedef kod: `engine/src/recipe.hpp/.cpp` (yorumlayıcı),
 `recipes/skirt-aline-dart.json` (ilk reçete), `engine/tests/recipe_check.cpp`
-+ `engine/tests/recipe_golden_check.sh` (ctest'e eklenir). Üç kanıt da yeşil
-olmadan kapı geçilmiş sayılmaz; kanıt çıktıları `reports/`e yazılır
++ `engine/tests/recipe_golden_check.sh` (ctest'e eklenir). Dört kanıt (a-d)
+yeşil olmadan kapı geçilmiş sayılmaz; kanıt çıktıları `reports/`e yazılır
 (PIPELINE loop düzeni), push kapı geçişinden sonra.
 
 ### (a) Aynı reçete + iki ölçü tablosu → iki DOĞRU kalıp
@@ -397,15 +512,30 @@ Test iddiaları (ctest `recipe_check` çıktısında sayılarla):
 ### (b) Mevcut motor stili reçete yolundan golden'a bire bir
 
 - Kapsam: `golden-reference.csv` içindeki `skirt/aLine/{mini,midi,maxi}`
-  satırları, 3 pinli gövdenin üçünde (fabric satırı dahil).
+  satırları, 3 pinli gövdenin üçünde (fabric satırı dahil). Pinli dosya
+  bütündür (`wc -l` = 23406 satır), bu alt küme `grep -c '|skirt/aLine/'` =
+  288 satırdır — 9 kombinasyonluk döküm TAM dosyaya cmp veremez. Alt küme
+  çıkarma MEKANİZMASI spec'in parçasıdır: `recipe_golden_check.sh` expected
+  dosyasını PİNLİ `engine/golden-reference.csv`'den `grep '|skirt/aLine/'`
+  ile üretir ve cmp O dosyaya karşı yapılır. Alt kümeyi motorun TAZE
+  dökümünden filtrelemek YASAK — bu tam DERSLER.md:12'nin yasakladığı
+  regen-vs-regen olurdu.
 - Reçete yolu aynı 9 kombinasyonu üretir ve golden_dump'ın MEVCUT yazarıyla
-  (`dumpCommands`, golden_dump.cpp:13-32; `%.4f` format) CSV'ye döker. Sayı
-  üretimi bağımsız (yorumlayıcı), YAZAR ortak: format farkından sahte
+  (`dumpCommands`, golden_dump.cpp:13-32; `%.4f` format) CSV'ye döker. YAZAR
+  ortaklığı yalnız komut satırları değildir: `body|label|fabric,%.4f` satırı
+  (combo başına İLK satır) ve `body|label|pieceN:Name` önek formatı
+  golden_dump `main()`'dedir (golden_dump.cpp:112, :123) — reçete golden
+  aracı bunları ve parça sırasını (Front, Back, Waistband) birebir kopyalar.
+  Sayı üretimi bağımsız (yorumlayıcı), YAZAR ortak: format farkından sahte
   alarm/sahte geçiş olmasın.
-- Karşılaştırma PİNLİ `golden-reference.csv`'ye karşı `cmp` ile bayttır; motorun
-  taze dökümüne karşı DEĞİL (regen-vs-regen yasağı, RULES.md). Hakem: cmp
-  exit 0, çıktısı rapora.
-- fabric satırı kernel servisi `fabricEstimate`'ten gelir (§3; çizim değil).
+- Karşılaştırma PİNLİ alt kümeye karşı `cmp` ile bayttır; motorun taze
+  dökümüne karşı DEĞİL (regen-vs-regen yasağı: DERSLER.md:12 +
+  golden_check.sh başlığı). Hakem: cmp exit 0, çıktısı rapora. Bayt kapısının
+  FP-contraction ön koşulu ve ölçülmüş kanıtı §2.1'dedir (skirt/aLine alt
+  kümesi `-ffp-contract=off` altında bayt-özdeş, probe 2026-07-28); bayt
+  kapısına yeni stil eklemeden önce aynı probe zorunlu.
+- fabric satırı kernel servisi `fabricEstimate`'ten gelir (§3; çizim değil);
+  enum argümanları reçetenin mühürlü `kernel` bloğundan (§2.2).
 
 ### (c) Dikiş eşitleme testleri reçete yolunda yeşil
 
@@ -413,13 +543,24 @@ Mevcut dikiş/doğrulama disiplini reçete ÇIKTISINA uygulanır (motor çıktı
 değil):
 - Yan dikiş: Front ve Back yan kenar yay uzunlukları eşit (test ölçerek
   doğrular, formül benzerliğine güvenmez).
-- Bel dikişi: dört çeyreğin dikilen bel toplamı `fullWaist`'e, Waistband
-  `bandLength` = `fullWaist / 2 + 30`'a tolerans içinde oturur (bant kalıba
-  dikilebilir).
+- Bel dikişi: dört çeyreğin dikilen bel toplamı `fullWaist`'e tolerans içinde
+  oturur. Bant kontrolü TOTOLOJİ DEĞİLDİR: `bandLength`'i onu tanımlayan
+  formülün kendisiyle karşılaştırmak kanıt sayılmaz; hakem validator'ın ÖLÇEN
+  kontrolüdür — `bandTotal = bandLength*2 - 60` vs ölçülmüş `sewnWaist`
+  (validator.cpp:496-503) + yan dikiş çifti `pairedSeamTolerance`
+  (validator.cpp:751, :197-201).
 - `lengthMM` kelepçe sınırları (250/1200) reçete yolunda da doğrulanır
-  (`skirtlen_check` paritesi).
-- `PatternValidator::issues()` tüm reçete parçalarında temiz; ctest tam yeşil
-  olmadan push yok (RULES invariant 9).
+  (`skirtlen_check` paritesi) + aralık dışı param → Err (§2.2 zorlaması).
+- `PatternValidator::issues()` tüm reçete parçalarında temiz (GarmentSpec
+  mühürlü `kernel` bloğundan kurulur, §2.2); ctest tam yeşil olmadan push yok
+  (RULES invariant 9).
+
+### (d) Görünür kanıt (RULES invariant 3 + 5 ve per-feature 7 adım)
+
+- Reçete yolundan üretilen kalıp A4 segmentasyonundan geçer (printable) ve
+  PNG'ye render edilir (`engine/tools/render-pages.mjs` ailesi); PNG dosya
+  yolu rapora yazılır. Yol yoksa adım YAPILMAMIŞTIR (invariant 3);
+  validator-clean + printable olmadan özellik VAR sayılmaz (invariant 5).
 
 Kapı geçince: commit + push + kanıt raporu; PIPELINE gereği makine-hakemli kapı
 sonrası Aşama 2 (KANVAS) otomatik açılır.
@@ -434,4 +575,29 @@ sonrası Aşama 2 (KANVAS) otomatik açılır.
 - `engine/src/constants.gen.hpp` — dikiş payı sabitleri
 - `engine/tests/golden_dump.cpp`, `engine/golden-reference.csv` — pinli hakem
 - `contract/tables.json` (K1) — draft.skirtLengthMM tek kaynak
-- `PIPELINE.md` Aşama 1 + Kapı 1; `RULES.md` invariant 1/5/7/9
+- `PIPELINE.md` Aşama 1 + Kapı 1; `RULES.md` invariant 1/3/5/9 + per-feature
+  7 adım; `DERSLER.md:12` — regen-vs-regen yasağının gerçek kaynağı
+
+---
+
+## Reddedilen itirazlar (çürütücü turu, 2026-07-28 — gerekçeli)
+
+- "Motor + reçete `-ffp-contract=off` ile pinlensin, golden_check'in yeşil
+  kaldığı kanıtlansın": REDDEDİLDİ, ölçümle — `-ffp-contract=off` derlenen
+  motor TAM pinli golden'dan 125 satırda sapıyor (ilk fark satır 8041, bodice
+  back cp1.x 153.1253→153.1252; probe komutu §2.1'de). Pin kaynaşmış aritmetik
+  içeriyor; bayrağı pinlemek golden_check'i kırar ve tarihi Swift-parite
+  pinini bayrak yüzünden re-pin'e zorlardı. Seçilen yol: alt küme probe'u (§2.1).
+- "Kapı 1b hakemi golden-diff.py 0.1 mm'e indirilsin": v1 için REDDEDİLDİ —
+  skirt/aLine 288 satırlık pinli alt küme `-ffp-contract=off` altında bile
+  bayt-özdeş ölçüldü (2026-07-28); bayt kanıtı eldeyken hakemi gevşetmek
+  kanıtı gereksiz zayıflatır. 0.1 mm yalnız probe'u kıran GELECEK stiller için
+  bilinçli-ilanlı fallback olarak §2.1'e yazıldı.
+- "Reçete sabitleri contract/constants'tan codegen'le ŞİMDİ üretilsin":
+  v1 için REDDEDİLDİ — yeni üreteç katmanı Aşama 1 kapsamını şişirir (kapsam
+  mührü §4 ruhu); K0 riski onun yerine zorunlu parite ctest mandalıyla
+  kapatıldı (§2.3), codegen seçeneği Aşama 2+ için açık bırakıldı.
+- "Yorumlayıcı ilk prototipiyle 9 kombinasyonluk smoke test önce koşulsun":
+  GEREKSİZLEŞTİ — daha güçlü kanıt doğrudan motor üstünde üretildi (pinli alt
+  kümenin fp-contract duyarlılığı ölçüldü, prototip beklemeden); sonuç §2.1'e
+  işlendi, ayrıca smoke şartı kalmadı.
