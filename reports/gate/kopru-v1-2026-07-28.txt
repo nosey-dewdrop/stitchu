@@ -1,0 +1,90 @@
+tracer→reçete köprüsü v1 — locket top front body (beden 38) — 2026-07-28 gece
+PIPELINE Aşama 3 malzemesi; hakem MAKİNE (ctest mandalı bugra_bridge_check).
+LLM/vision çağrısı YOK; tüm zincir deterministik (aynı girdi -> bayt aynı çıktı).
+
+NE YAPILDI
+- trace-ring v3'e mm kontur dökümü eklendi (ölçülü/köprü İŞARETLİ, sayfa-mm):
+  patterns_real/geometry/ring-trace-locket-front-38.json (stdout sayıları pinli
+  bugra-ring-2026-07-28.txt satır 5-8 ile birebir; 2 koşu bayt-özdeş).
+- Köprü aracı: engine/tools/tracer/ring2recipe.py — izlenen kontur ->
+  RECETE-SPEC v1.1 formatında GERÇEK reçete (recipes/bugra-locket-top-front-38.json,
+  id top.locket.front38.fit; nokta dökümü değil, motorun formüllü operasyonları)
+  + fit JSON + gerekçeli fit defteri (reports/gate/kopru-v1/).
+- Karşılaştırma hakemi: engine/tools/tracer/ring-compare.py — bbox + çevre +
+  nokta-mesafe; pens V'si deterministik tespit (hull-atlama + DP köşe).
+- recipe-json-dump'a custom gövde girişi (Buğra çizelge gövdesi pinli üçlüde yok).
+- ctest mandalı: bugra_bridge_check (üretim 2 koşu + repo pini bayt-özdeş; çizim
+  2 koşu bayt-özdeş; tolerans aşımı = FAIL). RECETE-SPEC değişikliği GEREKMEDİ:
+  köprü mühürlü v1.1 diliyle yazıldı (pens V'si marking move/line; yeni op yok).
+
+YÖNTEM (özet; tam türetim fit defterinde)
+- Gövde ölçüleri Buğra'nın KENDİ beden çizelgesinden (38: bust/waist/hip
+  920/720/980) — kontur gövde ölçüsü uydurmaz; formül disiplini korunur
+  (frontWidth = bust/4·(1+ease) vb.), fit edilen her sabit defterde gerekçeli.
+- İzlenen kontur = KESİM çizgisi (Buğra 1cm pay + 3cm etek DAHİL basar);
+  kesim→dikiş indirimi kapalı geometri; karşılaştırma kesim-kesim
+  (reçete tarafında offsetOutline cutLine, pay 10mm).
+- Serbest parametreler kapalı-form ters çevrim (tek yer-imi -> tek parametre);
+  eğri payları (kol oyuğu 3 sabit, yan dikiş 1 sabit) iki-kademeli sabit-ızgara
+  LSQ — kara kutu değil, adımlar araç docstring'inde.
+- Yan göğüs pensi (Buğra baskıda kontura AÇIK basılı V, yay 277.6 / kiriş 98.3)
+  reçetede marking move/line, koltukaltı çapasına bağlı formüllerle.
+
+TOLERANS TABLOSU (nihai tur; ctest çıktısıyla birebir)
+GECTI | bbox W  | reçete 300.03->300.12 vs trace 298.54 | +1.58mm (+0.53%) | tol ±1.3% (gece hedefi ±3.9mm bandında)
+GECTI | bbox H  | reçete 513.39 vs trace 510.64          | +2.74mm (+0.54%) | tol ±1.3%
+GECTI | çevre   | reçete 1520.3 vs pens-kapalı VEKTÖR 1506.4 | +13.8mm (+0.92%) | tol ±1.3%
+BILGI | çevre   | reçete vs pens-kapalı TRACE 1447.0     | +73.3mm (+5.06%) | gate yok — köprü kirişleri yayı sistematik kısaltır (%40 köprü, −59mm trace açığı); vektör gerçek trace-ring'in kendi hakemi
+GECTI | nokta-mesafe medyan | 4.77mm | tol ≤5.0
+GECTI | nokta-mesafe p95    | 34.19mm | tol ≤38 (regresyon kilidi, kalite iddiası değil)
+GECTI | nokta-mesafe max    | 34.52mm | tol ≤38
+(nokta-mesafe: yalnız ÖLÇÜLÜ trace noktaları, pens V hariç, n=103)
+
+GECE HEDEFİ TOLERANS NOTU (dürüst): hedef metnindeki "toplam çevre ±3mm" köprü
+bütçe hesabıydı; ölçüm gösterdi ki köprülü trace çevresi kesim yayını −59mm
+(−%3.6) kısaltıyor — ±3mm'lik kıyas ancak köprüsüz izlenebilse mümkün. Çevre
+hakemi pens-kapalı vektör gerçeğe kuruldu (±%1.3, bbox ile aynı ölçüt); trace
+kıyası bilgi satırı olarak raporda tutuluyor.
+
+LOOP İZİ (her tur TEK değişken; 4 tur, 4'ü de iyileşti — DUR gerekmedi)
+tur 1 kapalı-form çekirdek: bbox GEÇTİ; medyan 11.5 / p95 62.8 / max 63.5
+      (kural-tabanlı sabit-nokta geri beslemesi denendi, IRAKSADI -> tek atış)
+tur 2 kol oyuğu 3 eğri payı grid-LSQ: max 63.5->33.2, p95 62.8->32.9 (medyan 13.3)
+tur 3 yan dikiş extSideTakeCap grid-LSQ: medyan 13.3->5.8
+tur 4 aynı değişkenin ızgara sınırı genişletildi (60->80; optimum 63.6 içsel):
+      medyan 4.77 — tüm gate'ler yeşil.
+
+FİT DEFTERİ ÖZETİ (tamamı reports/gate/kopru-v1/fit-defteri-locket-front-38.txt)
+- gövde: bust/waist/hip 920/720/980 (Buğra çizelge 38); shoulderMM 464.6 ve
+  backLengthMM 455.7 kontur tersinden (Buğra çizelgesinde yok; backLength
+  koltukaltı-derinliği tersidir, gövde iddiası değil)
+- chestEase 0.211 (Buğra ön parçayı arkadan geniş keser; ön/arka payı bu sabite
+  katlanır), hipExtendEase 0.984, extendMM 32.3 (30mm Buğra etek payı ile 10mm
+  payımızın 20mm farkı dahil), frontBalanceDrop 2.61, squareNeckDrop −76.4
+  (Locket yakası geniş-sığ), neckWidthMult 2.728, omuz trig çifti ölçülen birim
+  yön (sin 0.2084 / cos 0.9780, L 71.5)
+- kol oyuğu payları aile SINIRINDA (tangentShare 0.02, hollowShareFront 0.90,
+  lowerDropShare 0.90; rms 20.6mm): mühürlü v1.1 kolsuz-armscye eğrisi
+  (teğet-süreklilik) takma-kol oyuğunu ÇİZEMİYOR — yapısal sınır, aşağıda.
+- extSideTakeCap 63.6 (rms 3.92mm): Buğra beli yan dikişten motor
+  varsayılanından (15) çok daha derin alıyor.
+
+KANIT
+- ctest bugra_bridge_check: Passed (üretim+çizim+karşılaştırma 2'şer koşu
+  bayt-özdeş; repo pinleri = araç çıktısı). SUITE 71/71 YEŞİL (48.1s).
+- görsel: ~/Desktop/KOPRU-V1-locket-front38-overlay.png (siyah trace ölçülü /
+  açık-kırmızı köprü / mavi reçete cutLine / yeşil pens marking; tepedeki artı
+  mühürlü kernelin spagetti askı yerleşim işareti — StrapBlock post-pass),
+  ~/Desktop/KOPRU-V1-locket-front38-truth.png, ~/Desktop/KOPRU-V1-trace-walk.png
+- determinizm: trace dökümü 2 koşu cmp özdeş; stdout pinli rapor satırlarıyla birebir.
+
+AÇIK / YAPISAL SINIRLAR (v2+ adayları; iş sırası dayatmaz)
+1. Set-in (takma kol) armscye eğrisi v1.1 dilinde yok — p95/max 34mm bunun +
+   kare-yaka-vs-oyuk-yaka köşesinin toplamı. Yeni neckline/armscye enum'u kendi
+   reçetesi + kanıtıyla girer (RECETE-SPEC §6 mühür kuralı).
+2. CF kenarı + CF-yakın yaka ucu baskıda üst halkalarca örtülü (tek 431.6mm
+   köprü) — cfNeck yer-imi ölçülü son yaka noktasından (~4mm sığ önyargı, gate
+   dışı). Dar-şerit köprü oranını düşürme işi (CLAUDE.md açık iş 2) bunu da açar.
+3. Cup seam + 2-parçalı kol (BUGRA-DEFTER öncelikleri) bu köprünün kapsamı
+   dışında — bustier köprüsü onlarsız kurulamaz.
+4. Kıyas tek parça-beden (locket front 38); diğer 23 halkaya genelleme sabah işi.

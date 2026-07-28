@@ -1,0 +1,18 @@
+{
+  "tool": "ring2recipe v1",
+  "source": "ring-trace-locket-front-38.json",
+  "recipe": "top.locket.front38.fit",
+  "bodyCM": {
+    "bustCM": 92.0,
+    "waistCM": 72.0,
+    "hipCM": 98.0,
+    "shoulderCM": 46.4547,
+    "backLengthCM": 45.5733,
+    "armLengthCM": 58.0,
+    "neckCM": 35.0
+  },
+  "bodySource": "Bugra size chart 38 (bust/waist/hip) + fit (shoulder/backLength) + EU38 std (neck/arm)",
+  "params": {
+    "extendMM": 32.3
+  }
+}

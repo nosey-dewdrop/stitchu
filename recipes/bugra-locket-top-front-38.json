@@ -1,0 +1,598 @@
+{
+  "recipeVersion": 1,
+  "id": "top.locket.front38.fit",
+  "title": "Bugra Locket Top front-body fit (size 38 trace bridge v1)",
+  "units": "mm",
+  "kernel": {
+    "garment": "top",
+    "neckline": "square",
+    "topLength": "tunic",
+    "straps": "spaghetti",
+    "shaping": "dart",
+    "fabric": "woven"
+  },
+  "measurements": [
+    "bustMM",
+    "waistMM",
+    "hipMM",
+    "shoulderMM",
+    "backLengthMM",
+    "neckMM"
+  ],
+  "params": {
+    "extendMM": {
+      "min": 30,
+      "max": 480
+    }
+  },
+  "consts": {
+    "chestEase": 0.211032,
+    "waistEase": 0.05,
+    "underbustOffset": 70,
+    "neckWidthMult": 2.728261,
+    "frontNeckWidthFactor": 0.17,
+    "backNeckWidthFactor": 0.197,
+    "backNeckCutoutFactor": 0.06,
+    "maxNeckShoulderShare": 0.72,
+    "sinShoulderSlope": 0.208422,
+    "cosShoulderSlope": 0.978039,
+    "shoulderSeamTargetMM": 71.512687,
+    "armholeDepthFactor": 0.44,
+    "bicepsRatioForArmscye": 0.3,
+    "armscyeArmFactor": 0.6,
+    "armscyeMaxDepthShare": 0.72,
+    "backWaistShare": 0.48,
+    "centerBackReduction": 0.35,
+    "frontBalanceDrop": 2.6118,
+    "extSideTakeCap": 63.6,
+    "squareNeckDrop": -76.4304,
+    "cutInMM": 9.0,
+    "underarmRaiseMM": 6,
+    "hollowShareFront": 0.9,
+    "hollowShareBack": 0.24,
+    "tangentShare": 0.02,
+    "lowerDropShare": 0.9,
+    "hipExtendEase": 0.983898
+  },
+  "scalars": [
+    {
+      "id": "shoulderHalfRaw",
+      "f": "shoulderMM / 2"
+    },
+    {
+      "id": "frontNeckWSlope",
+      "f": "min(neckMM * frontNeckWidthFactor * neckWidthMult, shoulderHalfRaw * maxNeckShoulderShare)"
+    },
+    {
+      "id": "shoulderDrop",
+      "f": "shoulderSeamTargetMM * sinShoulderSlope"
+    },
+    {
+      "id": "shoulderHalf",
+      "f": "frontNeckWSlope + shoulderSeamTargetMM * cosShoulderSlope"
+    },
+    {
+      "id": "torsoArmholeY",
+      "f": "backLengthMM * armholeDepthFactor + shoulderDrop"
+    },
+    {
+      "id": "bicepsGirth",
+      "f": "bustMM * bicepsRatioForArmscye"
+    },
+    {
+      "id": "armholeDepthForArm",
+      "f": "bicepsGirth * armscyeArmFactor + shoulderDrop"
+    },
+    {
+      "id": "armholeDepthCap",
+      "f": "backLengthMM * armscyeMaxDepthShare + shoulderDrop"
+    },
+    {
+      "id": "armholeY",
+      "f": "min(armholeDepthCap, max(torsoArmholeY, armholeDepthForArm))"
+    },
+    {
+      "id": "underarmY",
+      "f": "armholeY - underarmRaiseMM"
+    },
+    {
+      "id": "frontLength",
+      "f": "backLengthMM + frontBalanceDrop"
+    },
+    {
+      "id": "frameGirth",
+      "f": "min(bustMM - underbustOffset, bustMM - 20)"
+    },
+    {
+      "id": "underbust",
+      "f": "max(frameGirth, waistMM)"
+    },
+    {
+      "id": "frontNeckW",
+      "f": "min(neckMM * frontNeckWidthFactor * neckWidthMult, shoulderHalf * maxNeckShoulderShare)"
+    },
+    {
+      "id": "backNeckW",
+      "f": "min(neckMM * backNeckWidthFactor * neckWidthMult, shoulderHalf * maxNeckShoulderShare)"
+    },
+    {
+      "id": "backCutout",
+      "f": "neckMM * backNeckCutoutFactor"
+    },
+    {
+      "id": "backWidth",
+      "f": "underbust / 4 * (1 + chestEase)"
+    },
+    {
+      "id": "frontShoulderLen",
+      "f": "hypot(shoulderHalf - frontNeckW, shoulderDrop)"
+    },
+    {
+      "id": "backRunX",
+      "f": "shoulderHalf - backNeckW"
+    },
+    {
+      "id": "backSeamRaw",
+      "f": "hypot(backRunX, shoulderDrop)"
+    },
+    {
+      "id": "tipScale",
+      "f": "frontShoulderLen / backSeamRaw"
+    },
+    {
+      "id": "bTipHalf",
+      "f": "backNeckW + backRunX * tipScale"
+    },
+    {
+      "id": "bTipDrop",
+      "f": "shoulderDrop * tipScale"
+    },
+    {
+      "id": "backWaistTarget",
+      "f": "waistMM * backWaistShare / 2 * (1 + waistEase)"
+    },
+    {
+      "id": "backReduction",
+      "f": "max(0, backWidth - backWaistTarget)"
+    },
+    {
+      "id": "backDart",
+      "f": "backReduction * (1 - centerBackReduction * 0.5)"
+    },
+    {
+      "id": "cbTakeIn",
+      "f": "backReduction * centerBackReduction * 0.5"
+    },
+    {
+      "id": "backWaistlineWidth",
+      "f": "cbTakeIn + backWaistTarget + backDart"
+    },
+    {
+      "id": "frontWidth",
+      "f": "bustMM / 4 * (1 + chestEase)"
+    },
+    {
+      "id": "frontWaistTarget",
+      "f": "waistMM * (1 - backWaistShare) / 2 * (1 + waistEase)"
+    },
+    {
+      "id": "frontReduction",
+      "f": "max(0, frontWidth - frontWaistTarget)"
+    },
+    {
+      "id": "sideTake",
+      "f": "min(frontReduction, extSideTakeCap)"
+    },
+    {
+      "id": "frontDart",
+      "f": "frontReduction - sideTake"
+    },
+    {
+      "id": "frontWaistlineWidth",
+      "f": "frontWaistTarget + frontDart"
+    },
+    {
+      "id": "hipHalfQuarter",
+      "f": "hipMM / 4 * hipExtendEase"
+    },
+    {
+      "id": "frontCutout",
+      "f": "frontNeckW + squareNeckDrop"
+    }
+  ],
+  "pieces": [
+    {
+      "name": "Top Front",
+      "cut": "cut 2 mirrored",
+      "seamAllowanceMM": 10.0,
+      "scalars": [
+        {
+          "id": "tipX",
+          "f": "shoulderHalf - cutInMM"
+        },
+        {
+          "id": "dx",
+          "f": "frontWidth - tipX"
+        },
+        {
+          "id": "dy",
+          "f": "underarmY - shoulderDrop"
+        },
+        {
+          "id": "hollow",
+          "f": "hollowShareFront * dx"
+        },
+        {
+          "id": "chord",
+          "f": "hypot(dx, dy)"
+        },
+        {
+          "id": "stxRaw",
+          "f": "tipX - frontNeckW"
+        },
+        {
+          "id": "slen",
+          "f": "hypot(stxRaw, shoulderDrop)"
+        },
+        {
+          "id": "stx",
+          "f": "stxRaw / slen"
+        },
+        {
+          "id": "sty",
+          "f": "shoulderDrop / slen"
+        },
+        {
+          "id": "tanReach",
+          "f": "chord * tangentShare"
+        },
+        {
+          "id": "cp1x",
+          "f": "tipX + stx * tanReach"
+        },
+        {
+          "id": "cp1y",
+          "f": "shoulderDrop + sty * tanReach"
+        },
+        {
+          "id": "cp2x",
+          "f": "frontWidth - dx * 0.06 - hollow"
+        },
+        {
+          "id": "cp2y",
+          "f": "shoulderDrop + dy * lowerDropShare"
+        },
+        {
+          "id": "dartMouthLowInMM",
+          "f": "13.93"
+        },
+        {
+          "id": "dartMouthLowDropMM",
+          "f": "97.28"
+        },
+        {
+          "id": "dartApexInMM",
+          "f": "123.26"
+        },
+        {
+          "id": "dartApexDropMM",
+          "f": "33.07"
+        },
+        {
+          "id": "dartMouthTopInMM",
+          "f": "0.0"
+        },
+        {
+          "id": "dartMouthTopDropMM",
+          "f": "0.0"
+        }
+      ],
+      "points": [
+        {
+          "id": "centerNeck",
+          "x": "0",
+          "y": "frontCutout"
+        },
+        {
+          "id": "neckCorner",
+          "x": "frontNeckW",
+          "y": "frontCutout"
+        },
+        {
+          "id": "neckPoint",
+          "x": "frontNeckW",
+          "y": "0"
+        },
+        {
+          "id": "shoulderTip",
+          "x": "tipX",
+          "y": "shoulderDrop"
+        },
+        {
+          "id": "underarm",
+          "x": "frontWidth",
+          "y": "underarmY"
+        },
+        {
+          "id": "hemSide",
+          "x": "hipHalfQuarter",
+          "y": "backLengthMM + extendMM - 10"
+        },
+        {
+          "id": "hemCenter",
+          "x": "0",
+          "y": "frontLength + extendMM"
+        }
+      ],
+      "outline": [
+        {
+          "op": "move",
+          "to": "centerNeck"
+        },
+        {
+          "op": "line",
+          "to": "neckCorner"
+        },
+        {
+          "op": "line",
+          "to": "neckPoint"
+        },
+        {
+          "op": "line",
+          "to": "shoulderTip"
+        },
+        {
+          "op": "curve",
+          "to": "underarm",
+          "cp1": [
+            "cp1x",
+            "cp1y"
+          ],
+          "cp2": [
+            "cp2x",
+            "cp2y"
+          ]
+        },
+        {
+          "op": "curve",
+          "to": "hemSide",
+          "cp1": [
+            "frontWaistlineWidth",
+            "backLengthMM + extendMM * 0.35"
+          ],
+          "cp2": [
+            "hipHalfQuarter",
+            "backLengthMM + extendMM * 0.7"
+          ]
+        },
+        {
+          "op": "curve",
+          "to": "hemCenter",
+          "cp1": [
+            "hipHalfQuarter * 0.6",
+            "frontLength + extendMM"
+          ],
+          "cp2": [
+            "hipHalfQuarter * 0.25",
+            "frontLength + extendMM"
+          ]
+        },
+        {
+          "op": "line",
+          "to": "centerNeck"
+        },
+        {
+          "op": "close"
+        }
+      ],
+      "markings": [
+        {
+          "op": "move",
+          "to": [
+            "frontWidth - dartMouthLowInMM",
+            "underarmY + dartMouthLowDropMM"
+          ]
+        },
+        {
+          "op": "line",
+          "to": [
+            "frontWidth - dartApexInMM",
+            "underarmY + dartApexDropMM"
+          ]
+        },
+        {
+          "op": "line",
+          "to": [
+            "frontWidth - dartMouthTopInMM",
+            "underarmY + dartMouthTopDropMM"
+          ]
+        }
+      ],
+      "grainline": {
+        "from": [
+          "max(0, 20) + 20",
+          "armholeY"
+        ],
+        "to": [
+          "max(0, 20) + 20",
+          "backLengthMM - 30"
+        ]
+      }
+    },
+    {
+      "name": "Top Back",
+      "cut": "cut 2",
+      "seamAllowanceMM": 10.0,
+      "scalars": [
+        {
+          "id": "tipX",
+          "f": "bTipHalf - cutInMM"
+        },
+        {
+          "id": "dx",
+          "f": "backWidth - tipX"
+        },
+        {
+          "id": "dy",
+          "f": "underarmY - bTipDrop"
+        },
+        {
+          "id": "hollow",
+          "f": "hollowShareBack * dx"
+        },
+        {
+          "id": "chord",
+          "f": "hypot(dx, dy)"
+        },
+        {
+          "id": "stxRaw",
+          "f": "tipX - backNeckW"
+        },
+        {
+          "id": "slen",
+          "f": "hypot(stxRaw, bTipDrop)"
+        },
+        {
+          "id": "stx",
+          "f": "stxRaw / slen"
+        },
+        {
+          "id": "sty",
+          "f": "bTipDrop / slen"
+        },
+        {
+          "id": "tanReach",
+          "f": "chord * tangentShare"
+        },
+        {
+          "id": "cp1x",
+          "f": "tipX + stx * tanReach"
+        },
+        {
+          "id": "cp1y",
+          "f": "bTipDrop + sty * tanReach"
+        },
+        {
+          "id": "cp2x",
+          "f": "backWidth - dx * 0.06 - hollow"
+        },
+        {
+          "id": "cp2y",
+          "f": "bTipDrop + dy * lowerDropShare"
+        },
+        {
+          "id": "grainX",
+          "f": "max(cbTakeIn, 20) + 20"
+        }
+      ],
+      "points": [
+        {
+          "id": "centerNeck",
+          "x": "0",
+          "y": "backCutout"
+        },
+        {
+          "id": "neckPoint",
+          "x": "backNeckW",
+          "y": "0"
+        },
+        {
+          "id": "shoulderTip",
+          "x": "tipX",
+          "y": "bTipDrop"
+        },
+        {
+          "id": "underarm",
+          "x": "backWidth",
+          "y": "underarmY"
+        },
+        {
+          "id": "hemSide",
+          "x": "hipHalfQuarter",
+          "y": "backLengthMM + extendMM - 10"
+        },
+        {
+          "id": "hemCenter",
+          "x": "0",
+          "y": "backLengthMM + extendMM"
+        }
+      ],
+      "outline": [
+        {
+          "op": "move",
+          "to": "centerNeck"
+        },
+        {
+          "op": "curve",
+          "to": "neckPoint",
+          "cp1": [
+            "backNeckW * 0.55",
+            "backCutout"
+          ],
+          "cp2": [
+            "backNeckW * 0.9",
+            "backCutout * 0.35"
+          ]
+        },
+        {
+          "op": "line",
+          "to": "shoulderTip"
+        },
+        {
+          "op": "curve",
+          "to": "underarm",
+          "cp1": [
+            "cp1x",
+            "cp1y"
+          ],
+          "cp2": [
+            "cp2x",
+            "cp2y"
+          ]
+        },
+        {
+          "op": "curve",
+          "to": "hemSide",
+          "cp1": [
+            "backWaistlineWidth",
+            "backLengthMM + extendMM * 0.35"
+          ],
+          "cp2": [
+            "hipHalfQuarter",
+            "backLengthMM + extendMM * 0.7"
+          ]
+        },
+        {
+          "op": "curve",
+          "to": "hemCenter",
+          "cp1": [
+            "hipHalfQuarter * 0.6",
+            "backLengthMM + extendMM"
+          ],
+          "cp2": [
+            "hipHalfQuarter * 0.25",
+            "backLengthMM + extendMM"
+          ]
+        },
+        {
+          "op": "line",
+          "to": "centerNeck"
+        },
+        {
+          "op": "close"
+        }
+      ],
+      "markings": [],
+      "grainline": {
+        "from": [
+          "grainX",
+          "armholeY"
+        ],
+        "to": [
+          "grainX",
+          "backLengthMM - 30"
+        ]
+      }
+    }
+  ]
+}

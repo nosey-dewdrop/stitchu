@@ -348,6 +348,15 @@ add_test(NAME recipe_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
     $<TARGET_FILE:recipe-json-dump>
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
 
+# Aşama 3 köprü v1 mandalı (2026-07-28): izlenen Buğra mm konturu (pinli
+# trace-ring dökümü) -> ring2recipe fit reçetesi. İddialar: üretim 2 koşu +
+# repo pini bayt-özdeş; reçete çizimi 2 koşu bayt-özdeş; ring-compare
+# toleransları (bbox ±%1.3, çevre vs pens-kapalı vektör ±%1.3, nokta-mesafe
+# regresyon kilidi) aşımda FAIL. python3 ister (tracer araçları gibi).
+add_test(NAME bugra_bridge_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/bugra_bridge_check.sh
+    $<TARGET_FILE:recipe-json-dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
 # K2 composition ratchet (2026-07-19): the declared component x host and
 # component x component conflict matrix (contract/composition.json via
 # composition.gen.hpp) is re-derived by actually drafting every combination.

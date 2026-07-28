@@ -1,0 +1,53 @@
+FIT DEFTERI — ring2recipe v1 (tracer→reçete köprüsü, köprü v1)
+kaynak: locket_top | Front Body | beden 38 | izlenen kontur locket-a0-288na-1.png (trace-ring v3 dökümü)
+kural: her fit sabiti tek yer-iminin motor formülünün TERSİ; sihirli sayı yok.
+çerçeve: izlenen kontur KESİM çizgisi (Buğra payları dahil basar, 1cm; etek 3cm).
+kesim→dikiş indirimi kapalı geometri (sew_targets): bbox uçları dik teğet → W/H -20;
+kenar-üstü yer-imi kenar normali -10; köşe normalinin eksen-dışı bileşeni ihmal
+(≤8mm, yalnız gate-dışı omuz sabitlerine gider). Kural-tabanlı sabit-nokta geri
+beslemesi denendi ve IRAKSADI — bilinçli tek atış; kalıntılar aşağıda raporlu.
+
+YER-İMLERİ (kesim-yereli ölçüm -> sew hedefi, mm):
+  W: 298.54 -> 278.54
+  H: 510.64 -> 490.64
+  neckPtX: 172.33 -> 162.33
+  tipX: 233.27 -> 223.27
+  tipY: 14.90 -> 14.90
+  cfNeckY: 85.90 -> 85.90
+  underarmY: 219.43 -> 209.43
+  hemSideX: 261.05 -> 241.05
+  hemSideY: 498.03 -> 478.03
+
+GÖVDE (reçete girdisi, çizim değil):
+  bust/waist/hip = 920/720/980 mm <- Buğra beden çizelgesi 38 (geometry-full.json sizeChartMM; reçete parametreleri Buğra REFERANS ölçülerine fit edilir)
+  shoulderMM = 464.55 <- 2×shoulderHalf; shoulderHalf = omuz-ucu x + cutInMM = 223.27+9 (motor: omuz yarımı = shoulderMM/2; Buğra çizelgesinde omuz yok, konturdan)
+  backLengthMM = 455.73 <- (underarmY + underarmRaise - shoulderDrop)/armholeDepthFactor = (209.43+6-14.90)/0.44 (koltukaltı derinliği tersi; torso dalı doğrulandı)
+  neckCM = 35 (EU38 standardı; yaka genişliğine yalnız neckWidthMult çarpımıyla girer), armLengthCM = 58 (üst reçetede kullanılmıyor)
+
+FIT SABİTLERİ (reçete consts; her satır: değer <- ters çevrim <- yer-imi):
+  chestEase = 0.211032 <- 4×frontWidth/bust - 1; frontWidth(sew) = 278.54 <- kontur max genişlik. NOT: Buğra ön parçayı arkadan geniş keser; motor ön/arka simetrik böldüğünden ön-parça payı bu sabite katlanır (ön+arka dikilen çevre defter kıyasında).
+  hipExtendEase = 0.983898 <- 4×hemSideX/hip; hemSideX(sew) = 241.05 <- etek yan köşesi (Buğra 3cm etek payının 1cm payımızdan fazlası extend fitine katlanır)
+  sinShoulderSlope = 0.208422, cosShoulderSlope = 0.978039 <- omuz dikişinin ÖLÇÜLEN birim yönü (koşu 69.94 / düşüş 14.90); sin²+cos²=1 kuruluş gereği; motor trig çifti Buğra omuz eğimine fit edildi
+  shoulderSeamTargetMM = 71.512687 <- omuz dikişi ölçülen uzunluk (yaka noktası→omuz ucu)
+  neckWidthMult = 2.728261 <- frontNeckW/(neck×0.17); frontNeckW(sew) = 162.33 <- tepe yaka noktası x (Locket geniş yakası: çarpan ölçümden; cap dalları doğrulandı)
+  squareNeckDrop = -76.430400 <- CF yaka derinliği - frontNeckW = 85.90 - 162.33 (NEGATİF: Locket yakası geniş ama sığ; kare-yaka modelinde derinlik = frontNeckW + drop tanımından işaret böyle çıkar)
+  frontBalanceDrop = 2.611800 <- (H - hemSideY) - 10 = (490.64 - 478.03) - 10 (CF eteğin yan köşeden sarkması; model hemSide -10 taşır)
+  extendMM (param) = 32.3000 <- H - backLength - frontBalanceDrop (bel-altı uzatma; Buğra 30mm etek payı ile 10mm payımızın 20mm farkını içerir — kontur eşleme fiti)
+  tangentShare = 0.02, hollowShareFront = 0.9, lowerDropShare = 0.9 <- kol oyuğu eğrisi Buğra ölçülü oyuk noktalarına iki-kademeli sabit-ızgara LSQ (n=39, rms 20.60 mm); motor kolsuz-armscye varsayılanı dışa süpürür, Buğra takma-kol oyuğu içe oyuk (tur 2)
+  extSideTakeCap = 63.6 <- yan dikiş bel payı, pens altı yan dikiş noktalarına tek-değişken ızgara LSQ (n=20, rms 3.92 mm); motor varsayılanı 15mm — Buğra beli yan dikişten daha derin alıyor (tur 3)
+  değişmeyenler: waistEase 0.05, backWaistShare 0.48, hollowShareBack, yaka faktörleri — motor varsayılanı; yan/kol eğrilerinde kalan fark nokta-mesafe metriğinde raporlu
+
+YAN GÖĞÜS PENSİ (Buğra baskıda kontura AÇIK basılı V; reçetede marking move/line):
+  kontur V: yay 277.6 mm, ağız kirişi 98.3 mm (hull-atlama tespiti)
+  dartMouthLowInMM = 13.93 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+  dartMouthLowDropMM = 97.28 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+  dartApexInMM = 123.26 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+  dartApexDropMM = 33.07 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+  dartMouthTopInMM = 0.0 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+  dartMouthTopDropMM = 0.0 (koltukaltı çapası frontWidth/underarmY üzerinden; kesim→dikiş indirimi: çerçeve -10/-10, kenar noktalarına ek kenar-normali -10)
+
+ÇİZİM-SONRASI KALINTI (kesim hedef - çizilen, kural-tabanlı çıkarım; yalnız rapor,
+hakem ring-compare mandalı; köşe bevel/kural farkları dahildir):
+  W=-1.58 H=-2.74 neckPtX=+10.00 tipX=-11.99 tipY=-29.50 cfNeckY=-2.74 underarmY=+2.61 hemSideX=+8.75 hemSideY=-2.66
+
+deterministik: tek atış kapalı form + sabit yuvarlama; aynı girdi -> bayt aynı çıktı.
