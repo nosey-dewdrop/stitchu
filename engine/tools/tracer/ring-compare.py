@@ -42,15 +42,16 @@ BBOX_TOL_FRAC = 0.013
 # trace-ring'in kendi hakemi. Trace-kıyası bilgi satırı olarak raporda kalır.
 # Gate ±%1.3: bbox metodolojisiyle aynı ölçüt (vektör çevre kesin).
 PERIM_TOL_FRAC = 0.013
-# nokta-mesafe regresyon kilidi (v1): tur 4 ölçümünden kilitlendi (medyan
-# 4.77 / p95 34.19 / max 34.52 — rapor reports/gate/kopru-v1-2026-07-28.txt).
-# p95/max kaynağı YAPISAL ve belgeli: (a) mühürlü v1.1 kolsuz-armscye eğri
-# ailesi takma-kol oyuğunu çizemiyor (teğet-süreklilik cp'si; grid-LSQ aile
-# sınırında rms ~20mm), (b) kare-yaka modeli vs Buğra oyuk yaka köşesi.
-# Bu kilit kalite iddiası değil REGRESYON mandalı; iyileşme sayıları düşürür.
+# nokta-mesafe regresyon kilidi (v2, 2026-07-28): SET-IN scye kernel modeli
+# (bodice.hpp setInArmhole*) yapısal kaynak (a)'yı çözdü — köprü artık kolsuz
+# teğet ailesi yerine set-in scye fit'i kullanıyor; ölçüm medyan 4.77->4.34,
+# p95 34.19->24.37, max 34.52->24.58 (arclen-regülarize, çevre 0.99% gate içi).
+# Kilit yeni başarıma çekildi (26mm; kalan p95/max kaynağı (b) kare-yaka modeli
+# vs Buğra oyuk yaka köşesi + kalıntı armscye — v2 adayı). Bu kilit kalite
+# iddiası değil REGRESYON mandalı; iyileşme sayıları düşürür (v1 38mm -> v2 26mm).
 DIST_MEDIAN_MM = 5.0
-DIST_P95_MM = 38.0
-DIST_MAX_MM = 38.0
+DIST_P95_MM = 26.0
+DIST_MAX_MM = 26.0
 DART_MIN_EXCESS_MM = 30.0
 
 

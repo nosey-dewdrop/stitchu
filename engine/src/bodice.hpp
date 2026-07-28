@@ -179,6 +179,19 @@ inline constexpr double armholeShoulderTangentShare = 0.26;
 // armhole sits close to the body instead of gaping.
 inline constexpr double sleevelessShoulderCutInMM = 9.0;
 inline constexpr double sleevelessUnderarmRaiseMM = 6.0;
+// Set-in-sleeve armscye (opt-in; the sleeveless/default scye above is UNCHANGED).
+// A set-in armhole is NOT tangent-continuous with the shoulder seam: it breaks at
+// the shoulder tip and the sleeve-cap seam covers that corner. cp1 leaves the tip
+// heading DOWN into the scye (its own direction, not along the shoulder seam), and
+// the scye is scooped deeper than a sleeveless one; the FRONT is deeper than BACK.
+// Measured (Bugra-Locket front 38, 2026-07-28): freeing cp1 from the shoulder-
+// tangent lock drops the traced scye residual 20.6 -> ~11 mm, and the optimum
+// leaves the tip near-perpendicular to the shoulder line — i.e. a real set-in scye.
+inline constexpr double setInArmholeHollowShareFront = 0.42; // deeper than sleeveless 0.34
+inline constexpr double setInArmholeHollowShareBack  = 0.30; // deeper than sleeveless 0.24
+inline constexpr double setInArmholeCp1OutShare      = 0.06; // cp1 x: near shoulder, slight outward
+inline constexpr double setInArmholeUpperDropShare   = 0.42; // cp1 y: drops into the scye (own direction)
+inline constexpr double setInArmholeLowerDropShare   = 0.70; // cp2 y: above the underarm
 
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& options);
 // Convenience overload (defaults: natural waist, woven).

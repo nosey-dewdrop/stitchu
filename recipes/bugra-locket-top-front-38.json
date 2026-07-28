@@ -48,10 +48,11 @@
     "squareNeckDrop": -76.4304,
     "cutInMM": 9.0,
     "underarmRaiseMM": 6,
-    "hollowShareFront": 0.9,
-    "hollowShareBack": 0.24,
-    "tangentShare": 0.02,
-    "lowerDropShare": 0.9,
+    "hollowShareFront": 1.07,
+    "hollowShareBack": 0.3,
+    "cp1OutShare": -0.03,
+    "upperDropShare": 0.73,
+    "lowerDropShare": 0.5,
     "hipExtendEase": 0.983898
   },
   "scalars": [
@@ -223,36 +224,12 @@
           "f": "hollowShareFront * dx"
         },
         {
-          "id": "chord",
-          "f": "hypot(dx, dy)"
-        },
-        {
-          "id": "stxRaw",
-          "f": "tipX - frontNeckW"
-        },
-        {
-          "id": "slen",
-          "f": "hypot(stxRaw, shoulderDrop)"
-        },
-        {
-          "id": "stx",
-          "f": "stxRaw / slen"
-        },
-        {
-          "id": "sty",
-          "f": "shoulderDrop / slen"
-        },
-        {
-          "id": "tanReach",
-          "f": "chord * tangentShare"
-        },
-        {
           "id": "cp1x",
-          "f": "tipX + stx * tanReach"
+          "f": "tipX + dx * cp1OutShare"
         },
         {
           "id": "cp1y",
-          "f": "shoulderDrop + sty * tanReach"
+          "f": "shoulderDrop + dy * upperDropShare"
         },
         {
           "id": "cp2x",
@@ -441,36 +418,12 @@
           "f": "hollowShareBack * dx"
         },
         {
-          "id": "chord",
-          "f": "hypot(dx, dy)"
-        },
-        {
-          "id": "stxRaw",
-          "f": "tipX - backNeckW"
-        },
-        {
-          "id": "slen",
-          "f": "hypot(stxRaw, bTipDrop)"
-        },
-        {
-          "id": "stx",
-          "f": "stxRaw / slen"
-        },
-        {
-          "id": "sty",
-          "f": "bTipDrop / slen"
-        },
-        {
-          "id": "tanReach",
-          "f": "chord * tangentShare"
-        },
-        {
           "id": "cp1x",
-          "f": "tipX + stx * tanReach"
+          "f": "tipX + dx * cp1OutShare"
         },
         {
           "id": "cp1y",
-          "f": "bTipDrop + sty * tanReach"
+          "f": "bTipDrop + dy * upperDropShare"
         },
         {
           "id": "cp2x",

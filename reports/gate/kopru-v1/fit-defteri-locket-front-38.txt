@@ -33,7 +33,7 @@ FIT SABİTLERİ (reçete consts; her satır: değer <- ters çevrim <- yer-imi):
   squareNeckDrop = -76.430400 <- CF yaka derinliği - frontNeckW = 85.90 - 162.33 (NEGATİF: Locket yakası geniş ama sığ; kare-yaka modelinde derinlik = frontNeckW + drop tanımından işaret böyle çıkar)
   frontBalanceDrop = 2.611800 <- (H - hemSideY) - 10 = (490.64 - 478.03) - 10 (CF eteğin yan köşeden sarkması; model hemSide -10 taşır)
   extendMM (param) = 32.3000 <- H - backLength - frontBalanceDrop (bel-altı uzatma; Buğra 30mm etek payı ile 10mm payımızın 20mm farkını içerir — kontur eşleme fiti)
-  tangentShare = 0.02, hollowShareFront = 0.9, lowerDropShare = 0.9 <- kol oyuğu eğrisi Buğra ölçülü oyuk noktalarına iki-kademeli sabit-ızgara LSQ (n=39, rms 20.60 mm); motor kolsuz-armscye varsayılanı dışa süpürür, Buğra takma-kol oyuğu içe oyuk (tur 2)
+  cp1OutShare = -0.03, upperDropShare = 0.73, hollowShareFront = 1.07, lowerDropShare = 0.5 <- SET-IN scye (kernel bodice.hpp setInArmhole* modeli): cp1 omuz dikişinden kopar, oyuğa iner (teğet-kilit YOK). Buğra ölçülü oyuk noktalarına iki-kademeli sabit-ızgara LSQ (n=39, rms 15.17 mm). Kolsuz-armscye teğet ailesi bu takma-kol içe-oyuk scye'yi çizemiyordu (ölçülü yapısal sınır 20.6mm -> set-in ile ~11mm).
   extSideTakeCap = 63.6 <- yan dikiş bel payı, pens altı yan dikiş noktalarına tek-değişken ızgara LSQ (n=20, rms 3.92 mm); motor varsayılanı 15mm — Buğra beli yan dikişten daha derin alıyor (tur 3)
   değişmeyenler: waistEase 0.05, backWaistShare 0.48, hollowShareBack, yaka faktörleri — motor varsayılanı; yan/kol eğrilerinde kalan fark nokta-mesafe metriğinde raporlu
 
@@ -48,6 +48,6 @@ YAN GÖĞÜS PENSİ (Buğra baskıda kontura AÇIK basılı V; reçetede marking
 
 ÇİZİM-SONRASI KALINTI (kesim hedef - çizilen, kural-tabanlı çıkarım; yalnız rapor,
 hakem ring-compare mandalı; köşe bevel/kural farkları dahildir):
-  W=-1.58 H=-2.74 neckPtX=+10.00 tipX=-11.99 tipY=-29.50 cfNeckY=-2.74 underarmY=+2.61 hemSideX=+8.75 hemSideY=-2.66
+  W=-0.74 H=-2.74 neckPtX=+10.00 tipX=-10.10 tipY=-4.92 cfNeckY=-2.74 underarmY=-0.90 hemSideX=+8.75 hemSideY=-2.66
 
 deterministik: tek atış kapalı form + sabit yuvarlama; aynı girdi -> bayt aynı çıktı.

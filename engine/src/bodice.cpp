@@ -115,7 +115,7 @@ struct HalfBodice {
 //                shoulder edge sits close to the body instead of gaping.
 PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
                             const Point& armholeBottomIn, const Point& neckPoint,
-                            bool isFront, bool sleeveless) {
+                            bool isFront, bool sleeveless, bool setIn = false) {
     Point shoulder{shoulderHalf, shoulderDrop};
     Point armholeBottom = armholeBottomIn;
     if (sleeveless) {
@@ -126,6 +126,22 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     }
     const double dx = armholeBottom.x - shoulder.x;   // horizontal span (>0)
     const double dy = armholeBottom.y - shoulder.y;   // vertical drop   (>0)
+    if (setIn) {
+        // Set-in-sleeve scye (opt-in): cp1 breaks from the shoulder seam and heads
+        // DOWN into the armhole — a real set-in armhole corners at the tip and the
+        // sleeve cap covers it. Deeper hollow than the sleeveless/tangent scye.
+        // No tangent lock (that lock is what a single cubic could not reconcile
+        // with a set-in scye — the measured 20.6 mm structural residual).
+        const double hollowIn = (isFront ? BodiceBlock::setInArmholeHollowShareFront
+                                         : BodiceBlock::setInArmholeHollowShareBack) * dx;
+        const Point cp1In{
+            shoulder.x + dx * BodiceBlock::setInArmholeCp1OutShare,
+            shoulder.y + dy * BodiceBlock::setInArmholeUpperDropShare};
+        const Point cp2In{
+            armholeBottom.x - dx * 0.06 - hollowIn,
+            shoulder.y + dy * BodiceBlock::setInArmholeLowerDropShare};
+        return PathCommand::curve(armholeBottom, cp1In, cp2In);
+    }
     const double hollow = (isFront ? BodiceBlock::armholeHollowShareFront
                                    : BodiceBlock::armholeHollowShareBack) * dx;
     const double chord = std::hypot(dx, dy);

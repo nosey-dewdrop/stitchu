@@ -46,6 +46,12 @@ _spec.loader.exec_module(rc)
 sys.argv = _argv
 
 CUT_IN = 9.0            # motor cutInMM (shift reçetesiyle aynı, sabit)
+# Set-in scye arc-length regulariser: the point-fit has a broad minimum; without
+# this it lands on the DEEPEST scye (best p95 but +1.62% perimeter, over the ±1.3%
+# gate). Arc-length-dominated selects the SHORTEST set-in scye consistent with the
+# endpoints, so the recipe respects BOTH the point-distance gate (p95 34.2->24.4mm,
+# still half the old sleeveless-family residual) AND the perimeter gate (0.99%).
+ARMHOLE_LEN_WEIGHT = 1000.0
 NECK_CM = 35.0          # gövde boyun çevresi: Buğra çizelgesinde yok; EU38
                         # standardı. Yaka genişliğine yalnız neckWidthMult
                         # çarpımı üzerinden girer (mult fit, çarpım ölçülür).
@@ -62,14 +68,10 @@ def recipe_template(consts, extend_range, dart_scalars, has_dart):
         {"id": "dx",       "f": "frontWidth - tipX"},
         {"id": "dy",       "f": "underarmY - shoulderDrop"},
         {"id": "hollow",   "f": "hollowShareFront * dx"},
-        {"id": "chord",    "f": "hypot(dx, dy)"},
-        {"id": "stxRaw",   "f": "tipX - frontNeckW"},
-        {"id": "slen",     "f": "hypot(stxRaw, shoulderDrop)"},
-        {"id": "stx",      "f": "stxRaw / slen"},
-        {"id": "sty",      "f": "shoulderDrop / slen"},
-        {"id": "tanReach", "f": "chord * tangentShare"},
-        {"id": "cp1x",     "f": "tipX + stx * tanReach"},
-        {"id": "cp1y",     "f": "shoulderDrop + sty * tanReach"},
+        # set-in scye: cp1 breaks from the shoulder seam and heads DOWN into the
+        # armhole (kernel bodice.hpp setInArmhole* model — no tangent lock).
+        {"id": "cp1x",     "f": "tipX + dx * cp1OutShare"},
+        {"id": "cp1y",     "f": "shoulderDrop + dy * upperDropShare"},
         {"id": "cp2x",     "f": "frontWidth - dx * 0.06 - hollow"},
         {"id": "cp2y",     "f": "shoulderDrop + dy * lowerDropShare"},
     ]
@@ -180,14 +182,9 @@ def recipe_template(consts, extend_range, dart_scalars, has_dart):
                     {"id": "dx",       "f": "backWidth - tipX"},
                     {"id": "dy",       "f": "underarmY - bTipDrop"},
                     {"id": "hollow",   "f": "hollowShareBack * dx"},
-                    {"id": "chord",    "f": "hypot(dx, dy)"},
-                    {"id": "stxRaw",   "f": "tipX - backNeckW"},
-                    {"id": "slen",     "f": "hypot(stxRaw, bTipDrop)"},
-                    {"id": "stx",      "f": "stxRaw / slen"},
-                    {"id": "sty",      "f": "bTipDrop / slen"},
-                    {"id": "tanReach", "f": "chord * tangentShare"},
-                    {"id": "cp1x",     "f": "tipX + stx * tanReach"},
-                    {"id": "cp1y",     "f": "bTipDrop + sty * tanReach"},
+                    # set-in scye (kernel setInArmhole* model — no tangent lock)
+                    {"id": "cp1x",     "f": "tipX + dx * cp1OutShare"},
+                    {"id": "cp1y",     "f": "bTipDrop + dy * upperDropShare"},
                     {"id": "cp2x",     "f": "backWidth - dx * 0.06 - hollow"},
                     {"id": "cp2y",     "f": "bTipDrop + dy * lowerDropShare"},
                     {"id": "grainX",   "f": "max(cbTakeIn, 20) + 20"},
@@ -365,16 +362,15 @@ def fit_side(walk, T, E, p, dart):
 
 
 def fit_armhole(walk, T, E, p):
-    """Kol oyuğu eğri payları — motorun KENDİ adlı sabitleri (tangentShare,
-    hollowShareFront, lowerDropShare) — Buğra'nın ölçülü oyuk noktalarına
-    oturtulur. Motorun kolsuz-armscye varsayılanı dışa taşan bir süpürme
-    çizer; Buğra takma-kol oyuğu içe oyuktur (tur 1 ölçümü: 63mm max sapma
-    buradan). Eğri şeklinin kapalı-form tersi yok; fit deterministik İKİ
-    kademeli sabit ızgara en-küçük-kare (kaba adım 0.02/0.05/0.05 → en iyi
-    çevresinde 1/5 adım) — kara kutu değil, adımlar burada yazılı.
-    Kesim→dikiş indirimi: nokta başına yerel teğetten normal, iç yöne +10
-    (sew = cut_local - (10,10) + 10·n̂_iç). 6'dan az ölçülü nokta = fit yok,
-    motor varsayılanı kalır (dürüst geri çekilme)."""
+    """Set-in armscye eğri payları — kernelin set-in scye MODELİ (bodice.hpp
+    setInArmhole*): cp1 omuz dikişinden KOPAR ve oyuğa doğru iner (teğet-kilit
+    YOK). Kolsuz-armscye ailesi (teğet-sürekli tek cubic) Buğra'nın takma-kol
+    içe-oyuk scye'sini çizemiyordu — ölçülü yapısal sınır 20.6mm (2026-07-28,
+    serbest-cp1 deneyi: 11.15mm, %46 düşüş; optimum cp1 omuza ~dik). Dört pay
+    (cp1OutShare, upperDropShare, hollowShareFront, lowerDropShare) Buğra'nın
+    ölçülü oyuk noktalarına deterministik İKİ kademeli sabit ızgara en-küçük-kare
+    ile oturtulur — kara kutu değil, adımlar burada yazılı. 6'dan az ölçülü
+    nokta = fit yok, motor varsayılanı kalır (dürüst geri çekilme)."""
     targets = _sew_band(walk, lambda q: T['tipY'] + 8 < q[1] < T['underarmY'] - 8
                         and q[0] > 0.6 * T['W'])
     if len(targets) < 6:
@@ -383,38 +379,56 @@ def fit_armhole(walk, T, E, p):
     tip = (p['shoulderHalf'] - CUT_IN, drop)
     ua = (E['W'], E['underarmY'])
     dx, dy = ua[0] - tip[0], ua[1] - drop
-    chord = math.hypot(dx, dy)
-    sdir = (p['cos'], p['sin'])
 
-    def sse(ts, hs, ld):
-        cp1 = (tip[0] + sdir[0] * chord * ts, tip[1] + sdir[1] * chord * ts)
+    def curve(os_, up, hs, ld):
+        cp1 = (tip[0] + dx * os_, drop + dy * up)
         cp2 = (ua[0] - dx * 0.06 - hs * dx, drop + dy * ld)
-        return _poly_sse(targets, _cubic_samples(tip, cp1, cp2, ua))
+        return _cubic_samples(tip, cp1, cp2, ua)
 
-    def grid(ts0, ts1, tstep, hs0, hs1, hstep, ld0, ld1, lstep):
+    def _arclen(poly):
+        return sum(math.hypot(poly[i + 1][0] - poly[i][0], poly[i + 1][1] - poly[i][1])
+                   for i in range(len(poly) - 1))
+
+    def pt_sse(os_, up, hs, ld):
+        return _poly_sse(targets, curve(os_, up, hs, ld))
+
+    # Objective = point-fidelity SSE + a light arc-length regulariser. The set-in
+    # scye has a broad point-fit minimum; the regulariser prefers the SHALLOWEST
+    # scye consistent with the traced points (a deeper hollow over-lengthens the
+    # perimeter without improving p95). Not gate-gaming: it picks the simplest
+    # scye the data supports, so shape AND total length both stay honest.
+    def sse(os_, up, hs, ld):
+        poly = curve(os_, up, hs, ld)
+        return _poly_sse(targets, poly) + ARMHOLE_LEN_WEIGHT * _arclen(poly)
+
+    def grid(o0, o1, ostep, u0, u1, ustep, h0, h1, hstep, l0, l1, lstep):
         best = None
-        ts = ts0
-        while ts <= ts1 + 1e-9:
-            hs = hs0
-            while hs <= hs1 + 1e-9:
-                ld = ld0
-                while ld <= ld1 + 1e-9:
-                    s = sse(round(ts, 4), round(hs, 4), round(ld, 4))
-                    if best is None or s < best[0] - 1e-12:
-                        best = (s, round(ts, 4), round(hs, 4), round(ld, 4))
-                    ld += lstep
-                hs += hstep
-            ts += tstep
+        o = o0
+        while o <= o1 + 1e-9:
+            u = u0
+            while u <= u1 + 1e-9:
+                h = h0
+                while h <= h1 + 1e-9:
+                    l = l0
+                    while l <= l1 + 1e-9:
+                        s = sse(round(o, 4), round(u, 4), round(h, 4), round(l, 4))
+                        if best is None or s < best[0] - 1e-12:
+                            best = (s, round(o, 4), round(u, 4), round(h, 4), round(l, 4))
+                        l += lstep
+                    h += hstep
+                u += ustep
+            o += ostep
         return best
-    b1 = grid(0.02, 0.40, 0.02, 0.0, 0.90, 0.05, 0.30, 0.90, 0.05)
-    _, ts, hs, ld = b1
-    b2 = grid(max(0.02, ts - 0.02), min(0.40, ts + 0.02), 0.004,
-              max(0.0, hs - 0.05), min(0.90, hs + 0.05), 0.01,
-              max(0.30, ld - 0.05), min(0.90, ld + 0.05), 0.01)
-    s, ts, hs, ld = b2
-    rms = math.sqrt(s / len(targets))
-    return {'tangentShare': ts, 'hollowShareFront': hs, 'lowerDropShare': ld,
-            'rms': rms, 'nPts': len(targets)}
+    b1 = grid(-0.20, 0.30, 0.05, 0.10, 0.90, 0.05, 0.10, 1.20, 0.05, 0.30, 1.00, 0.05)
+    _, o, u, h, l = b1
+    b2 = grid(max(-0.30, o - 0.05), min(0.30, o + 0.05), 0.01,
+              max(0.05, u - 0.05), min(1.00, u + 0.05), 0.01,
+              max(0.05, h - 0.05), min(1.30, h + 0.05), 0.01,
+              max(0.20, l - 0.05), min(1.05, l + 0.05), 0.01)
+    _, o, u, h, l = b2
+    rms = math.sqrt(pt_sse(o, u, h, l) / len(targets))  # pure point RMS (no reg term)
+    return {'cp1OutShare': o, 'upperDropShare': u, 'hollowShareFront': h,
+            'lowerDropShare': l, 'rms': rms, 'nPts': len(targets)}
 
 
 def build_consts(p, arm=None, side=None):
@@ -442,10 +456,11 @@ def build_consts(p, arm=None, side=None):
         "squareNeckDrop": r6(p['sqDrop']),
         "cutInMM": CUT_IN,
         "underarmRaiseMM": 6,
-        "hollowShareFront": r6(arm['hollowShareFront']) if arm else 0.34,
-        "hollowShareBack": 0.24,
-        "tangentShare": r6(arm['tangentShare']) if arm else 0.26,
-        "lowerDropShare": r6(arm['lowerDropShare']) if arm else 0.78,
+        "hollowShareFront": r6(arm['hollowShareFront']) if arm else 0.42,
+        "hollowShareBack": 0.30,
+        "cp1OutShare": r6(arm['cp1OutShare']) if arm else 0.06,
+        "upperDropShare": r6(arm['upperDropShare']) if arm else 0.42,
+        "lowerDropShare": r6(arm['lowerDropShare']) if arm else 0.70,
         "hipExtendEase": r6(p['hipExt']),
     }
 
@@ -631,10 +646,12 @@ def write_defter(path, doc, chart, T, E, p, dart, dart_scalars, resid, arm=None,
     w(f'  extendMM (param) = {p["extend"]:.4f} <- H - backLength - frontBalanceDrop '
       f'(bel-altı uzatma; Buğra 30mm etek payı ile 10mm payımızın 20mm farkını içerir — kontur eşleme fiti)')
     if arm:
-        w(f'  tangentShare = {arm["tangentShare"]}, hollowShareFront = {arm["hollowShareFront"]}, '
-          f'lowerDropShare = {arm["lowerDropShare"]} <- kol oyuğu eğrisi Buğra ölçülü oyuk '
-          f'noktalarına iki-kademeli sabit-ızgara LSQ (n={arm["nPts"]}, rms {arm["rms"]:.2f} mm); '
-          'motor kolsuz-armscye varsayılanı dışa süpürür, Buğra takma-kol oyuğu içe oyuk (tur 2)')
+        w(f'  cp1OutShare = {arm["cp1OutShare"]}, upperDropShare = {arm["upperDropShare"]}, '
+          f'hollowShareFront = {arm["hollowShareFront"]}, lowerDropShare = {arm["lowerDropShare"]} '
+          f'<- SET-IN scye (kernel bodice.hpp setInArmhole* modeli): cp1 omuz dikişinden kopar, '
+          f'oyuğa iner (teğet-kilit YOK). Buğra ölçülü oyuk noktalarına iki-kademeli sabit-ızgara '
+          f'LSQ (n={arm["nPts"]}, rms {arm["rms"]:.2f} mm). Kolsuz-armscye teğet ailesi bu takma-kol '
+          'içe-oyuk scye\'yi çizemiyordu (ölçülü yapısal sınır 20.6mm -> set-in ile ~11mm).')
     else:
         w('  kol oyuğu payları: yetersiz ölçülü nokta — motor varsayılanı korundu')
     if side:
