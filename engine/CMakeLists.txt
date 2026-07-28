@@ -328,6 +328,18 @@ add_test(NAME recipe_dress_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test
     ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
 
+# Grading / beden serisi (PIPELINE Aşama 5, recipe path): the SAME recipe
+# re-evaluated against every standard body in euSizeChart() must produce a full
+# graded set that is validator-clean + front/back seam-matched at every EU size,
+# grows monotonically EU34->EU52, and keeps its dart topology constant across
+# the whole series (RECETE-SPEC §2.1 `when`-flip warning). Complements the
+# motor-path grade_check with the recipe (CAD document) path.
+add_executable(recipe_grade_check tests/recipe_grade_check.cpp)
+target_link_libraries(recipe_grade_check PRIVATE engine)
+add_test(NAME recipe_grade_check COMMAND recipe_grade_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
 # recipe-json-dump (tool, not a test): recipe-path pattern as draftJSON-shaped
 # JSON for the A4 sheet renderer (Gate 1d visual proof via render-recipe.mjs).
 add_executable(recipe-json-dump tools/recipe-json-dump.cpp)
