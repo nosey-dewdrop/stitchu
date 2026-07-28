@@ -20,9 +20,9 @@
 <meta name="twitter:title" content="stitchu · pattern-making engine">
 <meta name="twitter:description" content="Photograph a dress. Get the pattern, drafted to your body.">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"Photograph a dress, get the sewing pattern drafted to your own measurements.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A photo-to-pattern sewing engine: a real C++ pattern-making engine that drafts garment patterns to your own measurements, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=133">
-<link rel="stylesheet" href="css/shared-button.css?v=133">
-<link rel="stylesheet" href="css/shared-header.css?v=133">
+<link rel="stylesheet" href="css/theme-transitions.css?v=135">
+<link rel="stylesheet" href="css/shared-button.css?v=135">
+<link rel="stylesheet" href="css/shared-header.css?v=135">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
      structure preserved from the vişne landing; only the color turns. Gingham
@@ -179,6 +179,7 @@
       <a class="chip" href="benchmark.html" data-en="engineering proofs, published" data-tr="mühendislik kanıtları, yayınlı">engineering proofs, published</a>
       <a class="chip" href="benchmark.html" data-en="seams match to 0.00&nbsp;mm" data-tr="dikişler 0,00&nbsp;mm ile eşleşir">seams match to 0.00&nbsp;mm</a>
       <a class="chip" href="privacy.html" data-en="on-device · nothing uploaded" data-tr="cihazda · hiçbir şey yüklenmez">on-device · nothing uploaded</a>
+      <a class="chip" href="#industry" data-en="exports factory-grade DXF" data-tr="fabrika kalitesinde DXF çıkarır">exports factory-grade DXF</a>
     </div>
     <form class="betaform" onsubmit="return betaWaitlist(event)">
       <input type="email" id="betaemail" required
@@ -302,6 +303,35 @@
   <a class="whycta sb-btn sb-secondary" href="benchmark.html" data-en="See the Engineering Proofs →" data-tr="Mühendislik Kanıtlarını Gör →">See the Engineering Proofs →</a>
 </section>
 
+<section class="why" id="industry" style="border-top:1px solid var(--bb-line);padding-top:56px">
+  <h2 class="ptitle" data-en="What can it already send to the factory floor?" data-tr="Fabrikaya şimdiden ne gönderebiliyor?">What can it already send to the factory floor?</h2>
+  <p class="psub" data-en="The recipe doesn't stop at an A4 printout. The same geometry exports to the files a production line actually reads, each one machine-checked against third-party tools, misses and limits published." data-tr="Reçete bir A4 çıktıda bitmiyor. Aynı geometri, bir üretim hattının gerçekten okuduğu dosyalara çıkar, her biri üçüncü taraf araçlarla makinece doğrulanmış, eksikleri ve sınırları açık.">The recipe doesn't stop at an A4 printout. The same geometry exports to the files a production line actually reads, each one machine-checked against third-party tools, misses and limits published.</p>
+  <div class="cards">
+    <div class="card">
+      <h3 data-en="Industry interchange, not a screenshot." data-tr="Ekran görüntüsü değil, endüstri dosyası.">Industry interchange, not a screenshot.</h3>
+      <p data-en="The kernel's own geometry exports to DXF-AAMA/ASTM R12 (1 unit = 1 mm) on the standard layer convention: cut line, seamline, grainline, darts and notches, each on its named layer. Opened in ezdxf and measured vertex for vertex against the engine's own millimetres." data-tr="Motorun kendi geometrisi DXF-AAMA/ASTM R12'ye (1 birim = 1 mm) standart katman düzeniyle çıkar: kesim çizgisi, dikiş çizgisi, grainline, pensler ve çentikler, her biri kendi adlı katmanında. ezdxf'te açıldı ve motorun kendi milimetresine karşı vertex vertex ölçüldü.">The kernel's own geometry exports to DXF-AAMA/ASTM R12 (1 unit = 1 mm) on the standard layer convention: cut line, seamline, grainline, darts and notches, each on its named layer. Opened in <b>ezdxf</b> and measured vertex for vertex against the engine's own millimetres.</p>
+      <span class="stat" data-en="0.000 mm DXF parity · opens in Valentina / Seamly2D" data-tr="0,000 mm DXF paritesi · Valentina / Seamly2D'de açılır">0.000 mm DXF parity · opens in Valentina / Seamly2D</span>
+    </div>
+    <div class="card">
+      <h3 data-en="One design, a full size run." data-tr="Tek tasarım, tam beden serisi.">One design, a full size run.</h3>
+      <p data-en="One recipe grades across the whole EU34 to 52 chart by re-drafting to each standard body: 10 of 10 sizes validator-clean, seams still match, and growth stays monotonic and follows the chart's own +4 to +6 cm jump, not a fake fixed step." data-tr="Tek reçete, her standart bedene yeniden çizilerek EU34'ten 52'ye tüm tabloya grade'lenir: 10 bedenin 10'u validator-temiz, dikişler hâlâ eşleşir, büyüme monotonik kalır ve tablonun kendi +4 ila +6 cm sıçramasını izler, sahte sabit adım değil.">One recipe grades across the whole EU34 to 52 chart by re-drafting to each standard body: <b>10 of 10</b> sizes validator-clean, seams still match, and growth stays monotonic and follows the chart's own +4 to +6 cm jump, not a fake fixed step.</p>
+      <span class="stat" data-en="EU34–52 · 10/10 sizes clean · dart topology fixed" data-tr="EU34–52 · 10/10 beden temiz · pens topolojisi sabit">EU34–52 · 10/10 sizes clean · dart topology fixed</span>
+    </div>
+    <div class="card">
+      <h3 data-en="Cut pieces packed onto the fabric." data-tr="Kumaşa yerleşen kesim parçaları.">Cut pieces packed onto the fabric.</h3>
+      <p data-en="The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine (shapely), not an in-house script: pairwise intersection area 0.000000 mm², and the layout fits inside the width." data-tr="Graded parçalar top eninde bir marker'a yerleşir, örtüşme bir iç script'le değil bağımsız bir geometri motoruyla (shapely) kontrol edilir: ikili kesişim alanı 0,000000 mm² ve yerleşim ene sığar.">The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine (<b>shapely</b>), not an in-house script: pairwise intersection area 0.000000 mm², and the layout fits inside the width.</p>
+      <span class="stat" data-en="overlap 0.000000 mm² · shapely-checked" data-tr="örtüşme 0,000000 mm² · shapely doğrulamalı">overlap 0.000000 mm² · shapely-checked</span>
+    </div>
+    <div class="card">
+      <h3 data-en="A production package a factory can read." data-tr="Bir fabrikanın okuyabileceği üretim paketi.">A production package a factory can read.</h3>
+      <p data-en="One recipe becomes a single machine-readable tech-pack: size table, cut list, fabric weight, marker efficiency and a graded DXF per size, plus a human-readable PDF spec sheet. The weight and efficiency maths are cross-checked, and a tampered value fails the verifier loudly." data-tr="Tek reçete, tek makine-okur tech-pack'e dönüşür: beden tablosu, kesim listesi, kumaş ağırlığı, marker verimi ve beden başına graded DXF, artı insan-okur PDF spec sayfası. Ağırlık ve verim hesapları çapraz kontrollü, kurcalanmış bir değer doğrulayıcıyı yüksek sesle çökertir.">One recipe becomes a single machine-readable tech-pack: size table, cut list, fabric weight, marker efficiency and a graded DXF per size, plus a human-readable PDF spec sheet. The weight and efficiency maths are cross-checked, and a tampered value <b>fails the verifier loudly</b>.</p>
+      <span class="stat" data-en="manifest + graded DXF per size + PDF spec" data-tr="manifest + beden başına graded DXF + PDF spec">manifest + graded DXF per size + PDF spec</span>
+    </div>
+  </div>
+  <p class="versus" data-en="These are the machine-checked gates: DXF, grading, nesting, tech-pack. The taste of a pattern and its true fit are still judged the old way, sew a toile, and a real pattern-cutter has the final word." data-tr="Bunlar makinece doğrulanan kapılar: DXF, grading, nesting, tech-pack. Bir kalıbın zevki ve gerçek uyumu hâlâ eski yolla yargılanır, bir prova dik, ve son sözü gerçek bir kalıpçı söyler.">These are the machine-checked gates: DXF, grading, nesting, tech-pack. The taste of a pattern and its true fit are still judged the old way, sew a toile, and a real pattern-cutter has the final word.</p>
+  <a class="whycta sb-btn sb-primary" href="studio.html" data-en="Open the studio → download a real DXF + factory pack" data-tr="Studio'yu aç → gerçek bir DXF + fabrika paketi indir">Open the studio → download a real DXF + factory pack</a>
+</section>
+
 <section class="why" id="api" style="border-top:1px solid var(--bb-line);padding-top:56px">
   <h2 class="ptitle" data-en="Build with the stitchu engine." data-tr="stitchu motoruyla geliştir.">Build with the stitchu engine.</h2>
   <p class="psub" data-en="The same C++ drafting engine, behind one endpoint. POST /api/draft → a true-scale, measurement-fitted pattern. One photo → a full size run (XS–XL / EU34–52) via /api/grade. No per-call AI cost." data-tr="Aynı C++ kalıp motoru, tek bir uçta. POST /api/draft → gerçek ölçekli, bedene çizilmiş bir kalıp. Tek fotoğraf → tam bir beden serisi (XS–XL / EU34–52) /api/grade ile. Çağrı başına yapay zeka maliyeti yok.">The same C++ drafting engine, behind one endpoint. <span style="color:var(--bb-deep)">POST /api/draft</span> → a true-scale, measurement-fitted pattern. One photo → a full size run (XS–XL / EU34–52) via <span style="color:var(--bb-deep)">/api/grade</span>. No per-call AI cost.</p>
@@ -316,12 +346,12 @@
 
 <footer>
   <span>stitchu · a pattern-making engine</span>
-  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v85</span></span>
+  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v86</span></span>
 </footer>
 </div>
 <!-- /.rest -->
 
-<script src="js/shared-header.js?v=133"></script>
+<script src="js/shared-header.js?v=135"></script>
 <script>
 // Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
