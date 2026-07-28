@@ -40,7 +40,8 @@ add_library(engine
     src/garment.cpp
     src/wearability.cpp
     src/validator.cpp
-    src/recipe.cpp)
+    src/recipe.cpp
+    src/dxf.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -354,6 +355,20 @@ add_test(NAME recipe_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
 # toleransları (bbox ±%1.3, çevre vs pens-kapalı vektör ±%1.3, nokta-mesafe
 # regresyon kilidi) aşımda FAIL. python3 ister (tracer araçları gibi).
 add_test(NAME bugra_bridge_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/bugra_bridge_check.sh
+    $<TARGET_FILE:recipe-json-dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# dxf-export (tool, not a test): the recipe-path DraftedPattern as a
+# DXF-AAMA/ASTM R12 interchange file (PIPELINE Aşama 5). Consumed by dxf_check.
+add_executable(dxf-export tools/dxf-export.cpp)
+target_link_libraries(dxf-export PRIVATE engine)
+
+# Aşama 5 mandalı (2026-07-28): DXF-AAMA/ASTM export doğrulaması. dxf-export
+# üretir, ezdxf (STANDART CAD kütüphanesi) açar, motorun mm geometrisine karşı
+# layer + vertex paritesi kontrol edilir (≤1e-4mm), determinizm 2 koşu
+# bayt-özdeş. ezdxf: engine/.venv-dxf; yoksa verify FAIL eder (sessiz skip yok).
+add_test(NAME dxf_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/dxf_check.sh
+    $<TARGET_FILE:dxf-export>
     $<TARGET_FILE:recipe-json-dump>
     ${CMAKE_CURRENT_SOURCE_DIR}/..)
 

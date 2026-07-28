@@ -1,0 +1,83 @@
+ENDÜSTRİ SINIRI — DXF-AAMA/ASTM EXPORT (PIPELINE Aşama 5, KAPI 5 adayı)
+Tarih: 2026-07-28
+Durum: LANDI (yapı + mm paritesi + determinizm bir STANDART araçla kanıtlandı)
+
+=== NE İNŞA EDİLDİ ===
+Motorun deterministik PatternPiece geometrisinden (recipe yolu DraftedPattern)
+DXF R12 ASCII interchange dosyası üreten exporter. Resim ÜRETMEZ — kernelin mm
+geometrisini yeniden kodlar. Model in → bayt-özdeş dosya out (tarih/handle/
+rastgelelik yok).
+
+Dosyalar:
+  engine/src/dxf.hpp / engine/src/dxf.cpp   — exporter (engine lib'e eklendi)
+  engine/tools/dxf-export.cpp               — CLI (recipe+gövde+param → .dxf)
+  engine/tools/dxf-verify.py                — ezdxf parite harness'i
+  engine/tests/dxf_check.sh                 — ctest mandalı
+  engine/CMakeLists.txt                     — dxf.cpp + dxf-export + dxf_check
+  engine/.venv-dxf/                          — ezdxf 1.4.4 + matplotlib (gitignore edilir)
+
+=== LAYER SÖZLEŞMESİ (AAMA-250 / ASTM D6673) ===
+  1   parça sınırı / kesim çizgisi  <- piece.cutLine
+  8   dikiş çizgisi (seamline)       <- piece.commands
+  7   grainline                      <- piece.grainline
+  4   çentik (balance notch)         <- piece.notches
+  11  iç çizgiler (pens, katlama)    <- piece.markings
+  15  metin (parça adı)              <- piece.name (TEXT)
+$INSUNITS = 4 (millimeters). Koordinat: DXF y-up (motor y-down), yDXF = -yMM;
+x korunur. Eğriler motorun KENDİ flattenCubic(...,24) formülüyle düzleştirilir —
+export vertex'leri motorun kendi örnekleridir, bağımsız eğri matematiği yok.
+
+=== KANIT (çalıştırma çıktıları) ===
+
+1) YAPI + mm PARİTESİ — bir STANDART araçla (ezdxf 1.4.4) açıldı, layer + her
+   vertex motorun mm'ine karşı ≤ 1e-4 mm doğrulandı:
+
+   skirt.aline.dart / EU38 / 450mm:
+     dxf-verify OK: 3 pieces, layers ['1','11','15','4','7','8'],
+       224 vertices within 0.0001mm, $INSUNITS=mm, 3 annotations
+   skirt.aline.dart / pear / 650mm:
+     dxf-verify OK: 3 pieces, ... 224 vertices within 0.0001mm ...
+   top.shift.square.spaghetti (damar-içi) / EU38 / 300mm:
+     dxf-verify OK: 4 pieces, layers ['1','11','15','4','7','8'],
+       300 vertices within 0.0001mm, $INSUNITS=mm, 4 annotations
+   (dress reçetesi layer 11 pens + layer 4 askı çentiği taşır — exporter tüm
+    PatternPiece yüzeyini kapsar, sadece outline değil.)
+
+   Beklenti kaynağı: recipe-json-dump (aynı DraftedPattern JSON'u), Python'da
+   aynı 24-adım kübik formülle düzleştirilir. Sahte sayı yok: expected = motorun
+   kendi örnekleri, actual = ezdxf'in dosyadan okuduğu.
+
+2) DETERMİNİZM — aynı reçete+gövde+param için dxf-export iki koşu bayt-özdeş
+   (dxf_check.sh: her tag için "1) determinizm: 2 kosu bayt-ozdes").
+
+3) ctest — dxf_check kaydedildi ve GEÇTİ; TÜM SUİTE 72/72 (önce 71, +1 yeni):
+     67/72 Test #67: dxf_check ... Passed  0.55 sec
+     100% tests passed, 0 tests failed out of 72
+
+4) GÖRÜNÜR KANIT (RULES invariant 3) — DXF, ezdxf'in KENDİ matplotlib çizim
+   backend'iyle (bağımsız CAD kütüphanesi) PNG'ye render edildi:
+     reports/gate/endustri/skirt-aline-eu38-450.png   (A-line ön/arka + pens + kuşak)
+     reports/gate/endustri/skirt-aline-pear-650.png
+     reports/gate/endustri/shift-dress-eu38-300.png   (kare yaka shift + askı + çentik)
+   Görünen: beyaz kesim çizgisi (1), kırmızı dikiş çizgisi (8) içeride ofsetli,
+   sarı pens (11), yeşil grainline (7), mavi çentik (4).
+
+=== DÜRÜST SINIRLAR (uydurma yok) ===
+- Bu KAPI 5'in DXF ayağıdır, kapının tamamı DEĞİL. KAPI 5 ayrıca ister:
+  bağımsız CAD'de (Valentina/Seamly2D) MASAÜSTÜ açılış (burada kanıt ezdxf
+  KÜTÜPHANESİ + render; masaüstü Valentina bu makinede kurulu değil),
+  seam-walking raporu, grading beden serisi doğrulaması, iki Buğra kalıbının
+  bire bir yeniden üretimi. Bunlar açık kalan iş.
+- Parçalar dosyada ORTAK koordinat uzayını paylaşır (üst üste biner);
+  otomatik yerleşim/nesting KAPSAM DIŞI (marker işi = PIPELINE Aşama 6). Bu
+  bilinçli — exporter geometriyi taşır, yerleştirmez.
+- Metin anotasyonları parçalar üst üste bindiği için görselde çakışır; kozmetik,
+  geometri paritesini etkilemez (verify TEXT sayısını parça sayısıyla eşler).
+- Grainline tek düz segment olarak POLYLINE (2 vertex) yazılır; ezdxf onu doğru
+  okur (parite green). AAMA'da grainline ok-başlı özel bir varlık değildir,
+  layer 7'de çizgidir — sözleşmeye uygun.
+
+=== v1.1 GENİŞLEME NOTU (RECETE-SPEC ruhu) ===
+Bu bir REÇETE dili genişlemesi değildir — export, motorun mevcut geometrisinin
+(PatternPiece) yeni bir SERİLEŞTİRME biçimidir. Reçete dili, kernel, golden
+DOKUNULMADI; suite'in tamamı bayt-özdeş kaldı (72/72, önceki 71 aynen geçti).
