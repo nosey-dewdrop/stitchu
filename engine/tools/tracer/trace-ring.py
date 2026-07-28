@@ -22,7 +22,11 @@ mm kesin: A0'da 1px = (72/dpi) pt, mm = pt × 25.4/72.
   sıralanır, boşluklar DÜZ köprüyle kapanır; ölçülü mm ile köprü mm AYRI
   raporlanır (truth yalnız sıralama/kimlik; ölçülen sayı raster pikseli).
 
-kullanım: trace-ring.py <raster.png> <pattern> <piece> <size> [overlay.png]
+kullanım: trace-ring.py <raster.png> <pattern> <piece> <size> [overlay.png] [dump.json]
+dump.json (2026-07-28, köprü v1): izlenen halkanın mm kontur dökümü —
+ölçülü parça polyline'ları (rdp 1.5, mm'e çevrili; ÇEVRE HESABIYLA AYNI veri)
++ köprü segmentleri AYRI işaretli, sayfa-mm çerçevesinde (geometry-full.json
+ile aynı: x sağa, y yukarı). tracer→reçete köprüsünün (ring2recipe.py) girdisi.
 LLM yok, tahmin yok — deterministik görüntü işleme.
 """
 import sys, os, json
@@ -75,6 +79,7 @@ def plen(xy):
 def main():
     raster, pattern, piece, size = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
     overlay = sys.argv[5] if len(sys.argv) > 5 else None
+    dumppath = sys.argv[6] if len(sys.argv) > 6 else None
     d = json.load(open(GEOM))
     rs = [r for r in d['rings'] if r['pattern'] == pattern and r['piece'] == piece
           and r.get('sizeGuess') == size]
@@ -202,6 +207,40 @@ def main():
         os.makedirs(os.path.dirname(overlay) or '.', exist_ok=True)
         ov.save(overlay)
         print('overlay:', overlay)
+    if dumppath:
+        # sayfa-mm çerçevesi (geometry-full.json ile aynı): x sağa, y yukarı.
+        # ölçülü segment = rdp(1.5) polyline (ÇEVRE hesabıyla birebir aynı veri);
+        # köprü segment = 2 nokta düz çizgi. 4 ondalık: 288dpi pikseli 0.0882mm,
+        # 1e-4 mm kayıpsız.
+        def mm(pt):
+            return [round((x0 + pt[0]) * mmpp, 4), round((H - (y0 + pt[1])) * mmpp, 4)]
+        segs = []
+        prev_end = None
+        for _, _, xy in items:
+            simp = rdp(xy, 1.5)
+            if prev_end is not None:
+                segs.append({'kind': 'bridge', 'pts': [mm(prev_end), mm(simp[0])]})
+            segs.append({'kind': 'measured', 'pts': [mm(p) for p in simp]})
+            prev_end = simp[-1]
+        first = rdp(items[0][2], 1.5)[0]
+        segs.append({'kind': 'bridge', 'pts': [mm(prev_end), mm(first)]})
+        dump = {
+            'tool': 'trace-ring v3 dump (köprü v1)',
+            'pattern': pattern, 'piece': piece, 'size': size,
+            'raster': os.path.basename(raster), 'mmPerPx': round(mmpp, 6),
+            'strokeColor': [int(c) for c in col],
+            'summaryMM': {'w': round(bw, 2), 'h': round(bh, 2),
+                          'perim': round(per, 1), 'measured': round(covm, 1),
+                          'bridge': round(brm, 1)},
+            'truthMM': {'w': truth[0], 'h': truth[1], 'perim': truth[2]},
+            'frame': 'page mm, x right, y up (geometry-full.json ile ayni)',
+            'segments': segs,
+        }
+        os.makedirs(os.path.dirname(dumppath) or '.', exist_ok=True)
+        with open(dumppath, 'w') as f:
+            json.dump(dump, f, separators=(',', ':'))
+            f.write('\n')
+        print('dump:', dumppath)
     return 0
 
 
