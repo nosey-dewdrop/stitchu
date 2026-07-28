@@ -1,0 +1,120 @@
+STITCHU SATIS PAKETI, LISTING TASLAGI (2026-07-28 gece, akis kolu)
+==================================================================
+DRAFT. Kanal (Etsy / Gumroad), fiyat ve magaza adi sabah Damla kararidir.
+Hicbir hesap acilmadi, hicbir sey yayinlanmadi. Asagidaki metinler musteriye
+gidecek EN kopyalardir (ozne "the engine", "we/my" yok, emoji yok, metrik).
+
+------------------------------------------------------------------
+1) TITLE VARIANTS (Etsy titles are keyword-searched; pick one, or A/B)
+------------------------------------------------------------------
+T1: Made-to-Measure Shift Dress Sewing Pattern PDF, A-Line Mini, Square Neck,
+    Spaghetti Straps, Drafted to Your Own Measurements, A4 Print at Home
+T2: Custom-Fit Shift Dress PDF Sewing Pattern, Drafted to Your Measurements
+    by a Pattern Engine, A-Line Mini, Square Neckline, A4 Tiled
+T3: A-Line Mini Shift Dress Pattern, Made to Measure (Not Standard Sizes),
+    Square Neck + Spaghetti Straps, Print-Ready A4 PDF + True-Scale SVG
+T4: Shift Dress Sewing Pattern Drafted to Your Body, Made-to-Measure PDF,
+    Coquette A-Line Mini, Square Neck, Beginner-Friendly A4 Assembly
+T5 (kisa, Gumroad tarzi): Shift Dress Pattern, Drafted to Your Measurements
+
+------------------------------------------------------------------
+2) DESCRIPTION (EN, musteri kopyasi)
+------------------------------------------------------------------
+A-line mini shift dress: square neckline, spaghetti straps, clean A-line fall.
+
+This is not a standard-size pattern. The pattern is drafted to the
+measurements you provide: bust, waist, hip, shoulder, back length and neck
+(in cm), plus your chosen dress length (300 to 480 mm, mini to above-knee).
+A deterministic pattern-making engine recomputes every piece from those
+numbers. The pieces are drafted, not graded and not scaled from a base size.
+
+WHAT THE FILE CONTAINS?
+- Print-ready PDF tiled to A4 sheets, with corner codes (A1 top left) and
+  edge ticks, so the sheets tape together edge to edge without guessing.
+- A cover page with a numbered cutting list: every piece, its cut
+  instruction, and the exact sheets it prints on.
+- A calibration block: a 3 cm square and a 1 inch bar. Print at 100% scale
+  and verify before cutting.
+- 15 mm seam allowance included: cut on the outer line, sew on the inner
+  fine line.
+- Pieces: Top Front, Top Back, bias binding (neckline + armholes),
+  spaghetti straps.
+- A fabric estimate computed for your body (the EU38 default reads 2.15 m
+  at 140 cm width).
+- A true-scale SVG (1 unit = 1 mm) for plotter or projector cutting.
+
+WHY MADE TO MEASURE?
+A standard pattern is drafted once for a size chart, and your body is asked
+to fit it. Here the direction is reversed: your measurements drive the
+drafting formulas, so the square neck sits where your shoulder actually is
+and the length is the length you asked for. Two different bodies get two
+visibly different sets of pieces from the same design.
+
+SKILL LEVEL?
+Confident beginner and up. Straight seams, bias-bound neckline and armholes,
+thin straps. Every sheet is numbered and the cover tells you where each
+piece prints.
+
+Measurements are processed in the browser when using the live studio; they
+never leave your device.
+
+------------------------------------------------------------------
+3) TAGS (Etsy 13-tag slotu icin aday havuzu)
+------------------------------------------------------------------
+made to measure pattern, custom fit sewing, shift dress pattern, pdf sewing
+pattern, a line mini dress, square neck dress, spaghetti strap dress, print
+at home pattern, a4 sewing pattern, coquette sewing, dress pattern women,
+beginner dress pattern, made to order pdf
+
+------------------------------------------------------------------
+4) FIYAT ONERISI (ARALIK; sayi DAMLA'nin)
+------------------------------------------------------------------
+Oneri araligi: 9-18 USD tek tasarim icin.
+
+Emsal gerekcesi (pazar taramasi YAPILMADI, gece kurali):
+- Bilinen tek emsal: benchmark-58 arsivindeki Bugra kalip PDF'leri PARALI
+  Etsy urunleriydi (satin alinmis IP). Odenen tutar repoda kayitli degil;
+  bu yuzden emsal "lig" olarak kullanildi, sayi olarak degil.
+- O lig standart-beden PDF satar. Buradaki fark made-to-measure: alici
+  kendi olcusuyle cizilmis kalip alir. Bu fark standart-beden liginin
+  USTUNDE fiyatlamayi mesru kilar; araligin ust yarisi (13-18 USD) bu
+  farki fiyatlar, alt yarisi (9-12 USD) ilk-satis/derleme donemi icindir.
+- Dogrulama istenirse sabah Damla onayi ile gercek emsal taramasi yapilir;
+  bu taslak taramasiz yazildi ve bunu gizlemiyor.
+
+------------------------------------------------------------------
+5) ACIK KARARLAR (sabah Damla dolduracak)
+------------------------------------------------------------------
+a) KANAL: Etsy mi Gumroad mu (yoksa once site ustunden mi)? Hesap acilmadi.
+b) FIYAT: yukaridaki araliktan sayi secimi.
+c) TESLIMAT MODELI (kritik, listing metnini degistirir):
+   - Model 1: alici olculerini mesajla gonderir, uretilen PDF X saat icinde
+     iletilir (Etsy "made to order" digital). Emek dongusu ister.
+   - Model 2: alici standart-beden PDF alir + studio linkiyle kendi
+     olcusune kendisi uretir (tam self-serve). Etsy'nin sabit-dosya
+     modeline daha uygun, "made to measure" vurgusunu studio tasir.
+   Taslak metin iki modele de uyacak sekilde yazildi ama secim yapilmadan
+   yayinlanamaz.
+d) MAGAZA ADI / marka gorseli.
+e) Listing gorselleri: motor ciktisi ekran goruntuleri hazir
+   (web/assets/shift-dress-body-*.png + bu klasordeki check-dress-*.png);
+   Etsy kapak kompozisyonu Damla zevk karari.
+f) Kapak basligi puruzu: motorun garment etiketi bu recete icin "tunic top"
+   yaziyor (uzatilmis top kerneli, durust motor ciktisi). Satis PDF'inde
+   kapak basliginin "shift dress" olmasi icin recete/kernel etiket karari
+   gerekiyor; elle metin degistirilmedi (recetesiz cizgi yok kanunu).
+
+------------------------------------------------------------------
+KAYNAK GERCEKLERI (bu metindeki her iddianin dayanagi)
+------------------------------------------------------------------
+- A4 korner kodu / kenar isaretleri / kesim listesi / 3cm+1inch kalibrasyon /
+  %100 olcek uyarisi: web/js/print.js P.assemble + calibrationSVG +
+  pieceSheetMap (tek icerik kaynagi; studio PDF yolu da ayni builder).
+- 15 mm dikis payi + cutLine: reports/gate/recipe-kapi1b/shift-eu38-420.json
+  (seamAllowance 15.0, cutLine dolu).
+- Parca listesi + kumas 2.15 m @ 140 cm + olcu alanlari + 300-480 mm:
+  canli studio ciktisi (reports/gate/kapi-2-hazirlik/*.png) + recete
+  recipes/shift-dress-square-spaghetti.json.
+- "Measurements never leave your browser": studio modul grafiginde yalnizca
+  iki fetch var, ikisi de statik recete JSON'u (web/js/studio.js:318,338);
+  olculer sadece yerel WASM cagrisina gider (web/js/engine.js draftRecipe).
