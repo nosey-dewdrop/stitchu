@@ -32,7 +32,9 @@ export class Pdf {
     for (let i = 0; i < this.pages.length; i++) { pageIds.push(next++); contentIds.push(next++); }
     push(catalogId, `<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
     push(pagesId, `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`);
-    push(fontId, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+    // WinAnsiEncoding: engine text carries latin1 glyphs the standard encoding
+    // hides (the bias-cut note's degree sign) — WinAnsi maps them correctly.
+    push(fontId, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
     for (let i = 0; i < this.pages.length; i++) {
       const pg = this.pages[i];
       const wpt = (pg.wMM * MM).toFixed(3);
@@ -40,7 +42,10 @@ export class Pdf {
       push(pageIds[i], `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${wpt} ${hpt}] ` +
         `/Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${contentIds[i]} 0 R >>`);
       const stream = pg.ops;
-      push(contentIds[i], `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`);
+      // Length in LATIN1 bytes — the whole file is serialized latin1 below, so
+      // counting utf8 here shifted every later offset when a non-ASCII char
+      // (the strap's Turkish parenthetical) entered a content stream.
+      push(contentIds[i], `<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`);
     }
     const xrefStart = out.length;
     const count = next;
@@ -97,7 +102,19 @@ export function helvWidth(str, size) {
   for (const ch of String(str)) w += (HELV_W[ch] ?? 556);
   return (w / 1000) * size;
 }
-function pdfStr(s) { return String(s).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)'); }
+// Base-14 Helvetica has no glyphs beyond the standard set: transliterate the
+// few non-ASCII letters engine text can carry (same faithful-rendering move as
+// decodeEntities' arrow mapping) instead of emitting bytes the font cannot show.
+const TRANSLIT = { 'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S', 'ğ': 'g', 'Ğ': 'G',
+  'ü': 'u', 'Ü': 'U', 'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C',
+  '—': '-', '–': '-', '‘': "'", '’': "'",
+  '“': '"', '”': '"', '…': '...' };
+function pdfStr(s) {
+  return String(s)
+    .replace(/[ıİşŞğĞüÜöÖçÇ–—‘’“”…]/g, (ch) => TRANSLIT[ch])
+    .replace(/[^\x00-\xff]/g, '?')
+    .replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+}
 
 // ---- tolerant reader for the SVG sheet.js emits -------------------------
 const HEX = (h) => {
@@ -123,7 +140,7 @@ function parsePathD(d) {
   return segs;
 }
 
-function renderSvgChunk(ctx, svg, ox, oy) {
+export function renderSvgChunk(ctx, svg, ox, oy) {
   const re = /<g transform="translate\(([-\d.]+) ([-\d.]+)\)">|<\/g>|<(rect|path|line|text)\b([^>]*?)(?:\/>|>([\s\S]*?)<\/text>)/g;
   let m;
   const stack = [];
@@ -194,7 +211,7 @@ const NAVY = HEX('#1f3a5f');
 const INK = HEX('#111111');
 const GREY = HEX('#666666');
 
-function calibration(ctx, x, y) {
+export function calibration(ctx, x, y) {
   ctx.stroke(0.5, INK); ctx.dash(null);
   ctx.rect(x + 2, y + 2, 30, 30, 'S');
   ctx.text(x + 17, y + 37, 3.2, INK, '3 cm, measure me before cutting', 'middle');

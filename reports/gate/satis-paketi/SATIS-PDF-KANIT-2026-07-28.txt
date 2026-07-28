@@ -1,0 +1,87 @@
+SATIS PAKETI — MUSTERI PDF KOLU KANIT RAPORU (2026-07-28 gece)
+Bu rapor kapi gecisi beyan etmez. Damla'nin sabah onayina malzeme hazirlar.
+Is: Asama 2 kanitli ciktinin PAKETLENMESI (yeni asama degil). LLM/vision cagrisi yok,
+odeme/kanal kurulumu yok. Fiyat + kanal + "satisa cik" karari Damla'nin.
+
+NE URETILDI (uretici: engine/tools/gen-satis-pdf.mjs — deterministik, ayni girdi = ayni bayt)
+Zincir: recete JSON -> wasm draftRecipeJSON (studio'nun sattigi AYNI motor yolu, taze v1.1
+bundle) -> web/js/sheet.js A4 doseme (register sistemi tek gercek) -> pdf-core.mjs vektor PDF.
+Iceride TEK BIR elle cizim / uydurma talimat yok: geometri motor komutlari, kesim notlari
+cutInstruction, yapim sirasi guideSteps, kumas fabricMeters140 — hepsi motor ciktisi verbatim.
+Validator issues != [] ya da motor Err ise PDF basilmaz (baskiya kacak yok).
+
+Sayfa duzeni: kapak (stil adi + girilen olculer + parca listesi/pafta kodlari + kumas)
+-> olcek sayfasi (10x10 cm kare "measure before cutting" + motorun 3 cm karesi + 1 inch)
+-> A4 kalip paftalari (cerceve, A1-tarzi grid kodu, kose kareleri, join tick, devam oklari,
+kes/dik cift cizgi) -> sewing guide (kesim listesi + motorun construction order'i).
+
+UC URUN (reports/gate/satis-paketi/):
+  shift-dress-eu38.pdf   16 sayfa, 63167 B  sha256=c84e44b2a4cbc7377bc543444a1fb222a2b930d3f54eaec235d199c5a999cd93
+  shift-dress-pear.pdf   19 sayfa, 72616 B  sha256=c99dfb90a724560a3156c0dd59eca5accc7a74145c7697d3563d9f7492000417
+  skirt-aline-eu38.pdf   13 sayfa, 38742 B  sha256=3cda87334d3c26eed9d8a090e0ab327c6a1e2c959f12d5a60fed3f2985ee545d
+Reçeteler: recipes/shift-dress-square-spaghetti.json (extendMM=420; EU38 88/70/94 + pear
+96/70/116) ve recipes/skirt-aline-dart.json (lengthMM=450, EU38). Govde degisince cikti
+gercekten degisiyor: bias binding 1231 -> 1279 mm, aski 170 -> 171 mm, pafta 13 -> 16.
+Yaninda .pdf.json sidecar manifest: olcek karelerinin ve her parcanin sayfa-mm konumu
+(kanit araci yeniden turetmez, uretim anindaki sayilari okur).
+
+OLCEK KANITI (arac: engine/tools/satis-pdf-proof.mjs; PDF -> pdftoppm 300dpi gri raster ->
+koyu-piksel kenar kumeleri -> px/mm; tolerans 1.0 mm; komut ciktilari aynen):
+  shift-dress-eu38.pdf : 5/5 PASS
+    square100 height 100.00 -> 99.991 mm (delta -0.009)
+    square100 width  100.00 -> 99.991 mm (delta -0.009)
+    square30  height  30.00 -> 30.057 mm (delta +0.057)
+    square30  width   30.00 -> 29.972 mm (delta -0.028)
+    Spaghetti Strap width (pafta E1) 46.00 -> 46.059 mm (delta +0.059)
+  shift-dress-pear.pdf : 5/5 PASS (ayni kareler; strap pafta H1, 46.00 -> 46.059 mm)
+  skirt-aline-eu38.pdf : 5/5 PASS (ayni kareler; Waistband height pafta A2, 80.00 -> 79.968 mm, delta -0.032)
+TOPLAM: 15/15 olcum 1.0 mm toleransta; en buyuk sapma 0.059 mm (300dpi'da ~0.7 piksel).
+Parca olcusu motorun mm'i ile karsilastirildi (manifest sewW/sewH = dikis cizgisi bbox).
+
+GORSEL KANIT (RULES inv 3 — dosya yollari):
+  reports/gate/satis-paketi/kanit-dress-eu38-kapak.png
+  reports/gate/satis-paketi/kanit-dress-eu38-olcek.png
+  reports/gate/satis-paketi/kanit-dress-eu38-sayfa-A2.png
+  reports/gate/satis-paketi/kanit-dress-eu38-guide.png
+  reports/gate/satis-paketi/kanit-dress-pear-kapak.png
+  reports/gate/satis-paketi/kanit-skirt-eu38-sayfa-A1.png
+  reports/gate/satis-paketi/kanit-skirt-eu38-guide.png
+
+YOLDA BULUNAN VE KOKTEN DUZELTILEN GERCEK BUG (pdf-core.mjs, tum PDF ureticileri etkileniyordu):
+  /Length utf8 bayt sayiyordu ama dosya latin1 yaziliyor; motor metnindeki ilk non-ASCII
+  karakter ("ince askı") stream offsetlerini kaydirip PDF'i bozuyordu (pdftoppm "Missing
+  'endstream'" hatalari). Duzeltme: Buffer.byteLength(stream,'latin1') + fonta
+  /Encoding /WinAnsiEncoding (derece isareti icin) + base-14 Helvetica'nin basamayacagi
+  harfler icin okunur cevrim (ı->i, em dash -> '-'). Eski 12-kalip ureticisi
+  gen-pattern-pdfs.mjs kendi KOPYA yazarini tasiyor, ayni latent bug orada duruyor (bu gece
+  dokunulmadi; not).
+
+MOTOR TALIMAT METNINDE BULUNAN BOSLUKLAR (durust liste — uydurulmadi, oldugu gibi basildi):
+  1. Parca adi "Spaghetti Strap (ince askı)" TURKCE parantez tasiyor (strap.cpp). EN musteri
+     PDF'inde "ince aski" olarak goruluyor. Motor tarafinda isim degisikligi golden re-pin
+     ister — gece dokunulmadi, Damla karari.
+  2. Recete title'lari ic referans tasiyor: "... - Vol2 #8" kapakta basiliyor. Pazar adi
+     (Etsy listing adi) motorda yok; kapak stil adi = recete title. Damla sabah pazar adina
+     karar verirse recete title'i guncellenir.
+  3. Elbise guide'i hala "3 cm calibration square" diyor (TopBlock::guide adim 1); 10x10 cm
+     karenin adimi motor metninde yok. Bu yuzden olcek sayfasina IKI kare de kondu (3 cm
+     karesi olmadan motor adimi havada kalirdi). Motor guide'ina 10 cm cumlesi eklemek =
+     motor degisikligi, gece yapilmadi.
+  4. Etek guide'i "invisible zipper (left seam)" diyor — ANAYASA damar dilinde gorunur
+     fermuar/metal yok; ayri etek zaten NE-YOK listesinde (damar disi urun, RECETE-SPEC
+     §2.3'te kayitli gerilim). Satisa girip girmeyecegi Damla karari.
+  5. Beden tablosu yok: motor tek govdeye cizer (made-to-measure). Emsal Etsy paketlerindeki
+     coklu-beden (grade) sayfasi bu pakette YOK — dürüst konum: "drafted for the
+     measurements below". Grading PIPELINE Asama 5 isi.
+  6. A0 tek-tabaka varyanti bu pakete konmadi (pdf-core a0Pdf var ama olcekleyip kucultuyor;
+     satis icin 1:1 A0 nesting isteri ayri is).
+  7. Kumas onerisi metni yok: motor fabricAdviceKey ("top"/"skirt") anahtar veriyor, insan
+     okur cumleye ceviren tablo web tarafinda; pakete kumas TIPI cumlesi basilmadi (sadece
+     metraj). Anahtar->cumle tablosunu pakete baglamak kucuk is, sabaha karar.
+Yerlesim notu: paket packPieces(allowRotate=false) ile dizilir (PDF metin ciziciler yatay;
+sheet.js rotasyonu destekler ama pafta sayisi tasarrufu icin dondurulen parca etiketi PDF'te
+yan yatar — dogruluk degil kozmetik tercih, manifest 'rot' alaninda gorunur).
+
+TEST DURUMU: push oncesi tam suite — ctest 70/70 PASS ("100% tests passed, 0 tests failed
+out of 70"). Bu gece C++ ve web/js koduna dokunulmadi; degisen dosyalar yalniz
+engine/tools/pdf-core.mjs (PDF yazari bugfix), gen-satis-pdf.mjs, satis-pdf-proof.mjs.
