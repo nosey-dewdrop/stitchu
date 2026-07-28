@@ -41,7 +41,8 @@ add_library(engine
     src/wearability.cpp
     src/validator.cpp
     src/recipe.cpp
-    src/dxf.cpp)
+    src/dxf.cpp
+    src/nest.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -382,6 +383,35 @@ target_link_libraries(dxf-export PRIVATE engine)
 add_test(NAME dxf_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/dxf_check.sh
     $<TARGET_FILE:dxf-export>
     $<TARGET_FILE:recipe-json-dump>
+    ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# nest-marker (tool, not a test): lays the recipe-path DraftedPattern's cut
+# pieces onto fabric of a given width without overlap, reports efficiency, and
+# writes the marker (SVG + DXF). Consumed by nest_marker_check.
+add_executable(nest-marker tools/nest-marker.cpp)
+target_link_libraries(nest-marker PRIVATE engine)
+
+# Aşama 6 mandalı (marker/yerleşim, 2026-07-28): the MARKER gate. Drafts both
+# recipes across the pinned bodies + two industry fabric widths, nests them, and
+# proves on the TRUE cut polygons (motor flattenCubic, zero tolerance): no two
+# placed pieces overlap, every piece is inside the fabric width, efficiency is
+# the measured area / consumed rectangle, the packer is deterministic, a too-
+# narrow fabric is an HONEST refuse (no silent drop), and the overlap detector
+# itself fires on a controlled overlap (a green gate that can't see overlap is
+# worthless).
+add_executable(nest_check tests/nest_check.cpp)
+target_link_libraries(nest_check PRIVATE engine)
+add_test(NAME nest_check COMMAND nest_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
+# Aşama 6 dış-CAD mandalı (marker/yerleşim, 2026-07-28): nest-marker'ın ürettiği
+# marker DXF'i STANDART ezdxf ile açılır (AAMA boundary layer + mm), her parça
+# kumaş eni içinde, ve overlap=0 BAĞIMSIZ bir geometri çekirdeğiyle (shapely /
+# pure-python) doğrulanır — motorun kendi C++ overlap kanıtının dış-dünya aynası.
+# Determinizm 2 koşu bayt-özdeş. ezdxf yoksa verify FAIL eder (sessiz skip yok).
+add_test(NAME nest_marker_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/nest_marker_check.sh
+    $<TARGET_FILE:nest-marker>
     ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 # K2 composition ratchet (2026-07-19): the declared component x host and
