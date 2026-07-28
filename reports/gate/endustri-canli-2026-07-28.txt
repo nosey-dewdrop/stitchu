@@ -1,0 +1,167 @@
+CANLI ENDÜSTRİ İNDİRME — BAĞIMSIZ DOĞRULAMA (forensic, canlı siteden)
+=====================================================================
+Tarih: 2026-07-28
+Doğrulayıcı: bağımsız kol. İddialara GÜVENMEDİM — dosyaları CANLI domainden
+(stitchu.noseydewdrop.com) gerçek tarayıcıyla (headless Chrome) kendim indirdim,
+ezdxf ile açtım, motorun kendi mm'iyle çapraz-kontrol ettim.
+Kanun: PIPELINE Aşama 5/6 endüstri sınırı + "canlı studio ↔ endüstri çıktısı bağlandı".
+Hakem = makine + dış CAD (ezdxf 1.4.4) + shapely 2.1.2. Damar/zevk hakemi HÂLÂ
+Kapı 2'de DAMLA — burada zevk beyanı YOK.
+
+HÜKÜM: CANLI İNDİRME ÇALIŞIYOR. Damla girdiği ölçü için gerçek fabrika DXF'ini VE
+tam beden serisi üretim paketini canlı siteden indirebiliyor; her ikisi de bağımsız
+CAD'de (ezdxf) açılıyor ve motorun mm geometrisiyle 0.0001mm içinde örtüşüyor.
+
+--------------------------------------------------------------------------------
+0. TEMİZ BUILD + TAM CTEST
+--------------------------------------------------------------------------------
+Sıfırdan build dizini (engine/build-verify), Release:
+  cmake -S . -B build-verify -DCMAKE_BUILD_TYPE=Release   -> CFG_EXIT=0
+  cmake --build build-verify -j8                          -> BUILD_EXIT=0, [100%] Built
+  ctest --test-dir build-verify --output-on-failure
+    100% tests passed, 0 tests failed out of 79
+    (Total Test time 65.18 sec)
+Not: PostToolUse'ta beliren "rabadon: tests are RED" BAŞKA bir projenin sinyali
+(rabadon/native/rabadon-gate). stitchu ctest'i temiz build'de 79/79 yeşil.
+
+--------------------------------------------------------------------------------
+1. CANLI SİTE ERİŞİMİ + GERÇEK TARAYICI İNDİRMESİ
+--------------------------------------------------------------------------------
+curl -sS -o /dev/null -w "%{http_code}" https://stitchu.noseydewdrop.com/studio.html
+  -> HTTP 200
+Canlı bundle içeriği (curl):
+  js/studio.js?v=133  -> "dxfRecipe" 3 kez geçiyor
+  js/engine.js?v=133  -> "dxfRecipeJSON" 1 kez (WASM binding canlı bundle'da)
+
+Headless Chrome (CDP, node 26 yerleşik WebSocket) canlı studio.html'i sürdü:
+  URL: studio.html?v=133&waist=76&hip=100&lengthMM=450
+  - "A-line skirt" reçetesi select'ten seçildi (change event), form YENİDEN kuruldu.
+  - Ölçü GERÇEKTEN girildi: waist=76 cm, hip=100 cm; param lengthMM=450 (mini).
+    (VARSAYILAN DEĞİL — waist 76 default 70'ten, hip 100 default 94'ten farklı.)
+  - Motor tarayıcıda yeniden üretti: "re-evaluated in 6.5 ms · 3 pieces ·
+    fabric 0.6 m (140 cm wide)", issues=boş, dl-dxf ve dl-factory ETKİN.
+  - İki buton tıklandı; Chrome downloadWillBegin/downloadProgress=completed:
+      "Download DXF (AAMA)"        -> blob:.../...  suggested="skirt-aline-dart-waist76-hip100-lengthMM450.dxf"  done=true  (11550 bytes)
+      "Download factory pack (.zip)"-> https://stitchu.noseydewdrop.com/factory/skirt.aline.dart.zip?v=133  done=true  (21019 bytes)
+
+--------------------------------------------------------------------------------
+2. "Download DXF (AAMA)" — CANLI İNDİRİLEN DOSYA (ezdxf ile açıldı)
+--------------------------------------------------------------------------------
+Dosya: skirt-aline-dart-waist76-hip100-lengthMM450.dxf (tarayıcıda WASM'ın ürettiği blob)
+ezdxf.readfile(...):
+  DXF version: AC1009 (R12)      $INSUNITS: 4  (== mm)   -> EVET mm
+  layers: 0,1,4,7,8,11,15,Defpoints
+  AAMA layer denetimi (gerekli 1,8,7,11,4,15):
+    layer 1  (kesim/sınır)   PRESENT
+    layer 8  (dikiş)         PRESENT
+    layer 7  (grainline)     PRESENT
+    layer 11 (iç/pens)       PRESENT
+    layer 4  (çentik)        PRESENT
+    layer 15 (metin)         PRESENT
+  entity sayıları: POLYLINE layer 1 x3, layer 8 x3, layer 7 x3, layer 11 x5,
+                   TEXT layer 15 x3
+  layer 1 (kesim sınırı) 3 parça:
+    Front:     23 vertex   x[0.00..333.74]  y[-465.00..27.68] mm
+    Back:      23 vertex   x[0.00..333.74]  y[-465.00..27.68] mm
+    Waistband:  4 vertex   x[-10.00..427.60] y[-90.00..10.00] mm
+  TEXT (layer 15): 'Front', 'Back', 'Waistband'
+
+SINIR mm'i MOTORUN KENDİ mm'iyle TUTUYOR MU?  (sayı kaynağı = C++ motor dökümü,
+DXF değil; gate'in dxf-verify.py'si, motorun cutLine'ını geometry.cpp:flattenCubic
+ile 24-adım aynı formülle flatten eder, ezdxf'in okuduğuyla vertex-vertex kıyaslar):
+  recipe-json-dump custom:0,76,100,0,0,0,0 450  -> aynı gövdenin motor dökümü
+  dxf-verify.py <CANLI-İNDİRİLEN.dxf> <döküm.json>:
+    "dxf-verify OK: 3 pieces, layers [1,11,15,4,7,8], 224 vertices within 0.0001mm,
+     $INSUNITS=mm, 3 annotations"
+  => CANLI İNDİRİLEN DXF motorun mm geometrisini 224 vertex boyunca 0.0001mm içinde
+     taşıyor. Resim değil, kernel geometrisi.
+
+BAYT KANITI (en güçlü tie): aynı gövde için native aracın çıktısıyla kıyas:
+  dxf-export skirt-aline-dart.json custom:0,76,100,0,0,0,0 450  > native.dxf
+  sha256(CANLI-blob.dxf) == sha256(native.dxf)
+    ee48de57e5bfea1a02cd16e5c8c3bd8417088b71dbd6a0d1050f2d0e7687b9fa (ikisi de)
+  cmp -> IDENTICAL, ikisi de 11550 bytes.
+  => Tarayıcıdaki WASM yolu native dxf-export ile BİREBİR AYNI dosyayı üretti;
+     "yeniden çizim" değil, aynı motorun aynı çıktısı.
+
+GÖRSEL: reports/gate/endustri-canli/live-custom.png — ezdxf matplotlib backend'i
+canlı-indirilen DXF'i çizdi: kırmızı kesim sınırı, sarı 2 pens, yeşil grainline,
+waistband dikdörtgeni, Front/Back/Waistband metinleri = gerçek dikilebilir A-line
+etek paneli (gözle doğrulandı).
+
+--------------------------------------------------------------------------------
+3. "Download factory pack (.zip)" — CANLI İNDİRİLEN ÜRETİM PAKETİ
+--------------------------------------------------------------------------------
+Dosya: skirt.aline.dart.zip (canlı /factory/skirt.aline.dart.zip'ten, 21019 bytes)
+Repo web/factory ile bayt-parite:
+  sha256(canlı-indirilen) == sha256(web/factory/skirt.aline.dart.zip)
+    1703e73f5cc0e4a5cad35c79f998067ca1e53d328e09fced1b6c77eb389d63e8 (ikisi de)
+  => Canlı servis edilen dosya repodaki paketle BİREBİR aynı.
+
+İÇERİK (unzip):
+  manifest.json               (schema "stitchu.techpack/1")
+  dxf/skirt.aline.dart.EU34..EU52.dxf   (10 graded DXF)
+  tech-pack.pdf               (2 sayfa A4)
+  README.txt
+
+HER GRADED DXF ezdxf'te AÇILIYOR MU?  (10/10):
+  EU34..EU52 her biri: INSUNITS=4 (mm), layers {0,1,4,7,8,11,15,Defpoints},
+  boundary_verts=224  -> hepsi OK.   ALL DXF OPEN + mm: YES
+
+MANİFEST BEDEN TABLOSU (motordan, kendi çapraz-kontrolümle):
+  size  clean pcs fabric_m weight_g waist_cm markerEff
+  EU34  True  3   0.6      184.8    62.0     0.6588
+  EU36  True  3   0.6      184.8    66.0     0.6643
+  EU38  True  3   0.6      184.8    70.0     0.5035
+  EU40  True  3   0.6      184.8    74.0     0.5111
+  EU42  True  3   0.6      184.8    78.0     0.5184
+  EU44  True  3   0.6      184.8    82.0     0.5253
+  EU46  True  3   0.6      184.8    86.0     0.5319
+  EU48  True  3   1.1      338.8    92.0     0.5413
+  EU50  True  3   1.1      338.8    98.0     0.5502
+  EU52  True  3   1.1      338.8    104.0    0.5585
+  all validatorClean=True | waist monoton artan (62->104 cm, EU çizelgesi 4/6cm adım)
+  AĞIRLIK çapraz-kontrol (meters*1.40m*gsm, gsm=220):
+    EU34 manifest 184.8 == hesap 184.8 (diff 0.000)
+    EU52 manifest 338.8 == hesap 338.8 (diff 0.000)
+
+GATE'İN KENDİ DOĞRULAYICISI (tamper-farkında) canlı paket üstünde:
+  techpack-verify.py manifest.json tech-pack.pdf:
+    "techpack-verify OK: skirt.aline.dart | 10 sizes | 10 clean+nested |
+     10 graded DXF open in ezdxf | PDF opens in poppler (2 pages) |
+     efficiency + weight cross-checked | grade monotonic"
+  PDF: pdfinfo -> Pages 2, A4 (595 x 841 pt).
+
+GÖRSEL: reports/gate/endustri-canli/pack-EU42.png — paket içindeki EU42 graded DXF
+ezdxf'te çizildi (aynı AAMA katmanları, gövdeye göre büyümüş panel).
+
+DÜRÜST SINIR (etikette de yazıyor): factory pack ÖNCEDEN ÜRETİLMİŞTİR. Reçetenin
+VARSAYILAN param'ında (lengthMM=450) tüm EU34-52 serisine grade'lenmiş hazır
+pakettir — kullanıcının GİRDİĞİ özel ölçüye göre değil. Bir beden serisi tek
+tasarımı standart bedenlere grade'ler; alıcı tablodan bedenini seçer. Studio bunu
+"demo reçete için hazır paket, varsayılan param" diye dürüstçe etiketliyor.
+
+--------------------------------------------------------------------------------
+NİHAİ TABLO — CANLI YÜZEYDE
+--------------------------------------------------------------------------------
+İNDİRME                     DURUM      TEK-SATIR KANIT (kendi koşumla, canlıdan)
+Download DXF (AAMA)         ÇALIŞIYOR  canlı blob == native dxf-export (aynı sha256);
+                                       ezdxf açar, mm-parite 0.0001mm/224 vertex, INSUNITS=mm
+Download factory pack (.zip) ÇALIŞIYOR canlı zip == repo web/factory (aynı sha256);
+                                       10/10 graded DXF ezdxf'te açar; PDF poppler 2 sayfa;
+                                       ağırlık/verim çapraz-kontrol; grade monoton
+                                       DÜRÜST: önceden-üretilmiş, varsayılan param
+
+DAMLA TAM OLARAK NEYE TIKLAYIP NE İNDİRİYOR:
+- studio.html'de reçete seçer (A-line skirt / A-line mini shift dress), bel/kalça/boy
+  ölçüsünü girer.
+- "Download DXF (AAMA)" -> tarayıcıda o ölçü için GERÇEK DXF-AAMA/ASTM R12 iner
+  (adı: skirt-aline-dart-waist<...>-hip<...>-lengthMM<...>.dxf). Bu dosya ezdxf/
+  Valentina/Seamly2D/AutoCAD gibi endüstri CAD'lerinde açılır; içinde kesim çizgisi
+  (layer 1), dikiş payı (8), grainline (7), pens (11), çentik (4), parça adları (15),
+  birim mm. Motorun mm geometrisiyle 0.0001mm içinde aynıdır.
+- "Download factory pack (.zip)" -> seçili reçetenin EU34-52 hazır üretim paketi iner:
+  makine-okur manifest + beden başına graded DXF + insan-okur PDF spec sheet.
+
+DAMAR: bu rapor MAKİNE kapılarını doğrular; zevk/damar hakemi hâlâ Kapı 2'de DAMLA.
+SUITE: temiz build 79/79 yeşil.

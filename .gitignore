@@ -5,6 +5,9 @@ xcuserdata/
 *.xcuserstate
 DerivedData/
 build/
+build-verify/
+build-forensic/
+.verify-dl/
 
 # App secrets — real backend URL + app token. Never commit.
 App/Stitchu/Secrets.swift
