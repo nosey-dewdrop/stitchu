@@ -363,6 +363,20 @@ add_test(NAME recipe_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
     $<TARGET_FILE:recipe-json-dump>
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
 
+# Aşama 5 tarayıcı-parite mandalı (2026-07-28): the DXF-AAMA/ASTM export the
+# studio hands a shopper (wasm dxfRecipeJSON) is BYTE-IDENTICAL to the native
+# dxf-export tool the outside-CAD proof (dxf_check.sh, ezdxf + mm-parity) runs
+# on — same recipe + body + param, both range ends, three pinned bodies — plus
+# three honest refusal paths at the wasm boundary. Requires engine/build-wasm.sh
+# output (same as recipe_wasm_parity). Pins the browser download to the proven
+# native geometry so "green suite" means the industry file is real in the browser.
+add_test(NAME dxf_wasm_parity COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/dxf_wasm_parity_check.mjs
+    $<TARGET_FILE:dxf-export>
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
+add_test(NAME dxf_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/dxf_wasm_parity_check.mjs
+    $<TARGET_FILE:dxf-export>
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
+
 # Aşama 3 köprü v1 mandalı (2026-07-28): izlenen Buğra mm konturu (pinli
 # trace-ring dökümü) -> ring2recipe fit reçetesi. İddialar: üretim 2 koşu +
 # repo pini bayt-özdeş; reçete çizimi 2 koşu bayt-özdeş; ring-compare

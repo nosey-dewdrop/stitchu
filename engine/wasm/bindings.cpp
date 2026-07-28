@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string>
 
+#include "../src/dxf.hpp"
 #include "../src/garment.hpp"
 #include "../src/recipe.hpp"
 #include "../src/sizechart.hpp"
@@ -322,10 +323,48 @@ std::string draftRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) 
     return draftedJSON(recipe::kernelSpec(parsed.value), m, drafted.value);
 }
 
+// DXF-AAMA/ASTM export at the recipe boundary (PIPELINE Aşama 5, in-browser).
+// Same production path as draftRecipeJSON — parse the recipe, draft the SAME
+// DraftedPattern for this body + params — then serialize it with the SAME
+// dxf::exportPattern the native dxf-export tool uses. So the DXF a shopper
+// downloads for their own measurement is the motor's mm geometry, not a redraw:
+// the wasm string is byte-identical to the native dxf-export output for the same
+// recipe + body + param (proven by the dxf_wasm_parity ctest). Returns
+// {"dxf": "<escaped R12 text>"} on success or {"error": ...} on any honest
+// refusal (unknown recipe/param/measurement) — never a silent default.
+std::string dxfRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) {
+    const auto errJSON = [](const std::string& msg) {
+        return std::string(R"({"error":")") + escape(msg) + R"(","dxf":null})";
+    };
+    const auto parsed = recipe::parseRecipe(recipeText);
+    if (!parsed.ok) return errJSON(parsed.error);
+
+    recipe::RecipeParams params;
+    const val keys = val::global("Object").call<val>("keys", paramsObj);
+    const int n = keys["length"].as<int>();
+    for (int i = 0; i < n; ++i) {
+        const std::string key = keys[i].as<std::string>();
+        params[key] = paramsObj[key.c_str()].as<double>();
+    }
+
+    const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
+    const auto drafted = recipe::draftRecipe(parsed.value, m, params);
+    if (!drafted.ok) return errJSON(drafted.error);
+
+    // A validator-blocked draft must not hand out an "industry" DXF: refuse it
+    // the same way the studio refuses the SVG/PDF when issues are non-empty.
+    const auto issues = PatternValidator::issues(recipe::kernelSpec(parsed.value), m, drafted.value);
+    if (!issues.empty()) return errJSON(issues.front().description());
+
+    const std::string doc = dxf::exportPattern(drafted.value);
+    return std::string(R"({"dxf":")") + escape(doc) + "\"}";
+}
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("draftJSON", &draftJSON);
     emscripten::function("gradeJSON", &gradeJSON);
     emscripten::function("draftRecipeJSON", &draftRecipeJSON);
+    emscripten::function("dxfRecipeJSON", &dxfRecipeJSON);
 }
