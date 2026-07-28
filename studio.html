@@ -47,9 +47,14 @@
       <div id="param-fields"></div>
       <h2 class="panel-h">Piece</h2>
       <div id="piece-info" class="piece-info">Click a piece on the canvas to inspect it.</div>
-      <button id="dl-svg" class="studio-btn" type="button" disabled>Download SVG</button>
-      <button id="dl-pdf" class="studio-btn" type="button" disabled>Download print-ready PDF (A4)</button>
-      <p class="panel-note">The download is drawn at true scale, 1 unit = 1 mm. The PDF opens the browser print dialog, tiled to A4 with a calibration square: choose "Save as PDF" and keep printer scale at 100%.</p>
+      <button id="dl-dxf" class="studio-btn" type="button" disabled>Download DXF (AAMA)</button>
+      <button id="dl-svg" class="studio-btn secondary" type="button" disabled>Download SVG</button>
+      <button id="dl-pdf" class="studio-btn secondary" type="button" disabled>Download print-ready PDF (A4)</button>
+      <p class="panel-note">The DXF is the industry interchange file (DXF-AAMA/ASTM R12, 1 unit = 1 mm) for your measurement — cut line, seamline, grainline, notches and darts on named layers. It opens in Valentina, Seamly2D and standard CAD. The SVG and PDF are drawn at true scale; the PDF tiles to A4 with a calibration square (choose "Save as PDF", printer scale 100%).</p>
+
+      <h2 class="panel-h">Factory pack</h2>
+      <button id="dl-factory" class="studio-btn" type="button" disabled>Download factory pack (.zip)</button>
+      <p id="factory-note" class="panel-note">A graded EU34–52 production package for this demo recipe at its default parameter: machine manifest, one graded DXF per size, marker efficiency, and a human-readable PDF spec sheet. Prepared with the same engine — a factory size run grades one design across the standard size chart, so a buyer picks their size from the table.</p>
       <p class="panel-note">Measurements never leave your browser: the engine runs locally as WebAssembly and the pattern is computed on your device.</p>
     </aside>
 

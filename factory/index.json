@@ -1,0 +1,27 @@
+{
+  "schema": "stitchu.factory/1",
+  "packs": [
+    {
+      "id": "skirt.aline.dart",
+      "file": "skirt.aline.dart.zip",
+      "param": "lengthMM",
+      "paramMM": 450,
+      "fabricWidthMM": 1400,
+      "gsm": 220,
+      "gradedSizesClean": 10,
+      "gradedSizesTotal": 10,
+      "bytes": 21019
+    },
+    {
+      "id": "top.shift.square.spaghetti",
+      "file": "top.shift.square.spaghetti.zip",
+      "param": "extendMM",
+      "paramMM": 390,
+      "fabricWidthMM": 1400,
+      "gsm": 180,
+      "gradedSizesClean": 10,
+      "gradedSizesTotal": 10,
+      "bytes": 39127
+    }
+  ]
+}

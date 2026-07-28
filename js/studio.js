@@ -6,7 +6,7 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, loadEngine } from './engine.js?v=132';
+import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=132';
 import { pathD, bounds } from './sheet.js?v=132';
 import { printPattern } from './print.js?v=132';
 
@@ -39,6 +39,7 @@ const state = {
   result: null,       // last {pattern, issues} from the engine
   selected: -1,       // selected piece index
   pending: false,
+  factory: [],        // factory/index.json packs (pre-built graded EU size runs)
 };
 
 // ---------------------------------------------------------------- form build
@@ -149,12 +150,15 @@ async function regenerate() {
     status.textContent = 'The engine refused this input; the drawing was not updated.';
     $('dl-svg').disabled = true;
     $('dl-pdf').disabled = true;
+    $('dl-dxf').disabled = true;
     return;
   }
   issuesBox.hidden = out.issues.length === 0;
   if (out.issues.length) issuesBox.textContent = out.issues.join(' · ');
-  $('dl-svg').disabled = out.issues.length > 0;
-  $('dl-pdf').disabled = out.issues.length > 0;
+  const blocked = out.issues.length > 0;
+  $('dl-svg').disabled = blocked;
+  $('dl-pdf').disabled = blocked;
+  $('dl-dxf').disabled = blocked;
 
   drawPattern(out.pattern);
   const p = out.pattern;
@@ -316,6 +320,69 @@ function downloadSVG() {
   URL.revokeObjectURL(a.href);
 }
 
+// -------------------------------------------------------------- DXF export
+// DXF-AAMA/ASTM interchange for THIS body — the industry file. It is drafted
+// through the wasm dxfRecipeJSON path, whose output is byte-identical to the
+// native dxf-export tool the ezdxf/mm-parity proof runs on (ctest
+// dxf_wasm_parity): what downloads is the exact motor geometry, not a redraw.
+async function downloadDXF() {
+  if (!state.result || !state.result.pattern || state.result.issues.length) return;
+  const btn = $('dl-dxf');
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Building DXF…';
+  try {
+    const out = await dxfRecipe(state.text, state.measurements, state.params);
+    if (out.error || !out.dxf) {
+      $('status').textContent = `DXF export refused: ${out.error || 'no geometry'}`;
+      return;
+    }
+    const meas = Object.entries(state.measurements).map(([k, v]) => `${k}${v}`).join('-');
+    const params = Object.entries(state.params).map(([k, v]) => `${k}${v}`).join('-');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([out.dxf], { type: 'application/dxf' }));
+    a.download = `${state.doc.id.replace(/\./g, '-')}-${meas}-${params}.dxf`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } finally {
+    btn.textContent = label; btn.disabled = false;
+  }
+}
+
+// ------------------------------------------------------------ factory pack
+// The pre-built graded EU34–52 production package for the SELECTED recipe at its
+// default parameter (web/factory/<id>.zip, built by engine/tools/gen-factory-
+// pack.mjs with the native tech-pack tool: manifest + one graded DXF per size +
+// PDF spec sheet). A factory size run grades one design over the standard size
+// chart, so it is complete without the shopper's custom body — honest, real
+// native output, not fabricated. Absent pack -> the button stays disabled.
+function factoryPackFor(id) {
+  return state.factory.find((p) => p.id === id) || null;
+}
+function refreshFactoryButton() {
+  const btn = $('dl-factory');
+  const note = $('factory-note');
+  const pack = state.doc ? factoryPackFor(state.doc.id) : null;
+  btn.disabled = !pack;
+  if (pack) {
+    note.textContent =
+      `A graded EU34–52 production package for this demo recipe at its default ` +
+      `${pack.param} (${pack.paramMM} mm): machine manifest, one graded DXF per size, ` +
+      `marker at ${pack.fabricWidthMM} mm width, and a human-readable PDF spec sheet ` +
+      `(${pack.gradedSizesClean}/${pack.gradedSizesTotal} sizes clean). A factory size run ` +
+      `grades one design across the standard chart, so a buyer picks their size from the table.`;
+  } else {
+    note.textContent = 'No prepared factory pack is published for this recipe yet.';
+  }
+}
+function downloadFactoryPack() {
+  const pack = state.doc ? factoryPackFor(state.doc.id) : null;
+  if (!pack) return;
+  const a = document.createElement('a');
+  a.href = `factory/${pack.file}?v=132`;
+  a.download = pack.file;
+  a.click();
+}
+
 // -------------------------------------------------------------- PDF export
 // Print-ready A4 PDF: the SAME builder create.html uses (print.js
 // buildPrintPages over sheet.js packing), so the studio PDF and every other
@@ -337,6 +404,7 @@ async function loadRecipe(entry) {
   buildMeasFields();
   buildParamFields();
   renderPieceInfo();
+  refreshFactoryButton();
   await regenerate();
   // ?select=N deep-links a piece into the inspector (0-based piece index).
   const sel = urlState.get('select');
@@ -356,6 +424,12 @@ async function init() {
     $('status').textContent = `Recipe list failed to load (${e.message}). The studio needs the site served over http(s).`;
     return;
   }
+  // Factory-pack index (optional): the pre-built graded size runs per recipe.
+  // A missing index just leaves the factory button disabled, never a crash.
+  try {
+    const fres = await fetch('factory/index.json?v=132');
+    if (fres.ok) state.factory = (await fres.json()).packs || [];
+  } catch { state.factory = []; }
   for (const r of state.recipes) {
     const opt = document.createElement('option');
     opt.value = r.id;
@@ -368,6 +442,8 @@ async function init() {
   });
   $('dl-svg').addEventListener('click', downloadSVG);
   $('dl-pdf').addEventListener('click', downloadPDF);
+  $('dl-dxf').addEventListener('click', () => { downloadDXF(); });
+  $('dl-factory').addEventListener('click', downloadFactoryPack);
   await warmup;
   if (state.recipes.length) await loadRecipe(state.recipes[0]);
 }
