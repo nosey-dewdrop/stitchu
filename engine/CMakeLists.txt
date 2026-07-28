@@ -42,7 +42,8 @@ add_library(engine
     src/validator.cpp
     src/recipe.cpp
     src/dxf.cpp
-    src/nest.cpp)
+    src/nest.cpp
+    src/drape.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -413,6 +414,26 @@ add_test(NAME nest_check COMMAND nest_check
 add_test(NAME nest_marker_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/nest_marker_check.sh
     $<TARGET_FILE:nest-marker>
     ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# drape-preview (tool, not a test): FIRST real attempt at a 3D drape preview off
+# the deterministic pattern geometry — a Provot-style mass-spring cloth (drape.hpp)
+# hung under gravity around a body cylinder, projected to an SVG. NOT a physical /
+# CLO3D sim (honest scope in drape.hpp): a deterministic geometric preview.
+# Consumed by drape_check + tracer/svg2png.mjs (PNG visual proof).
+add_executable(drape-preview tools/drape-preview.cpp)
+target_link_libraries(drape-preview PRIVATE engine)
+
+# drape_check (Aşama 2/6 mandalı, 2026-07-28): the DRAPE gate. Drapes the recipe-
+# path skirt Front for pinned bodies and proves the settle is REAL + deterministic
+# (byte-identical across two runs), the pinned edge stays fixed, no NaN, the hem
+# actually falls below the flat lay, body-collision penetration ~0 AND the
+# penetration detector is not blind (an unsettled flat sheet inside the cylinder
+# is seen deep + settling reduces it), and a piece with no outline is an honest
+# refuse (no fabricated preview). It never judges taste — that is Damla at Kapı 2.
+add_executable(drape_check tests/drape_check.cpp)
+target_link_libraries(drape_check PRIVATE engine)
+add_test(NAME drape_check COMMAND drape_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/skirt-aline-dart.json)
 
 # tech-pack (tool, not a test): grades ONE recipe across the full EU size chart
 # and assembles the industrial production package (size table + cut list +

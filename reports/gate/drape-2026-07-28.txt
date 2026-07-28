@@ -1,0 +1,102 @@
+DRAPE / 3B ÖNİZLEME ATAĞI — DÜRÜST RAPOR (2026-07-28, makine hakemli)
+=====================================================================
+
+DURUM: LANDI (dürüst kapsam: geometrik önizleme, fizik motoru DEĞİL).
+
+Düz kalıp -> 3B drape önizlemeye ilk gerçek atak. Deterministik motor
+geometrisinden (PatternPiece, mm) çıkan düz parça, bir kütle-yay bezine
+(Provot: structural + shear + bend yayları) dönüştürülüp yerçekimi altında,
+bel kenarı sabitlenmiş halde, bir gövde silindirinin etrafına sarılarak
+çözülüyor. Çıktı: 3B örgü + projekte edilmiş görsel PNG.
+
+BU CLO3D DEĞİLDİR (dürüst sınır — drape.hpp başında yazılı):
+- Kütle-yay bezi, Verlet integrasyonu, tek gövde silindiri çarpışması.
+- YOK: self-collision, gerçek kumaşa kalibre bükülme sertliği, çok panelin
+  dikişle birleştirilmesi (tek panel, tek asılım). Fiziksel doğrulanmış
+  simülasyon DEĞİL, deterministik geometrik önizleme.
+
+
+NE DEĞİŞTİ (dosyalar)
+---------------------
+- engine/src/drape.hpp / drape.cpp   YENİ: drape modülü (buildCloth + settle +
+  drapePiece + drapeSVG). Motorun kendi flattenCubic'iyle (dxf::flattenPiece)
+  parça sınırı alınır, ızgara parçacık meshi (cellMM), yaylar, üst sıra pin.
+- engine/tools/drape-preview.cpp     YENİ: reçete draft'ından bir parçayı
+  drape eder, ölçülen tanıları JSON basar, SVG yazar.
+- engine/tests/drape_check.cpp       YENİ: ctest mandalı (29 kontrol).
+- engine/CMakeLists.txt              drape.cpp kütüphaneye; drape-preview +
+  drape_check hedefleri + add_test(drape_check).
+- reports/gate/drape/*.png/.svg      görsel kanıt.
+
+Mevcut suite KIRILMADI: yeni testler eklendi, hiçbiri değiştirilmedi.
+
+
+KANIT (komut çıktıları, ölçümler)
+---------------------------------
+1) TÜM SUITE YEŞİL (mevcut + yeni):
+   $ ctest --output-on-failure -j4
+   100% tests passed, 0 tests failed out of 77   (öncesi 76, +drape_check)
+   drape_check ......... Passed 0.55 sec
+
+2) drape_check standalone: 29/29 kontrol geçti. Kanıtladıkları:
+   - DETERMİNİZM: iki bağımsız koşu BAYT-ÖZDEŞ (flat-hang VE body-wrap
+     rejiminde ayrı ayrı) — settle saf deterministik fonksiyon.
+   - PİN TUTUYOR: sabitlenen bel kenarı kımıldamıyor (drift < 1e-6 mm).
+   - NaN/Inf YOK: kararsız sim üretirdi, gerçek olan üretmiyor.
+   - GERÇEK ASILIM: hem düz seriminin altına düşüyor; yay-gerinimi flat
+     hang'de < %5 (dik panel dengeye yakın -> sıkı çözülür = fiziksel gerçek).
+   - ATAK KANITI (3B sarım): body-wrap rejiminde Z-yayılımı > 50mm; flat
+     hang'de Z-yayılımı ~0 -> sarım gövde-güdümlü, gürültü değil.
+   - ÇARPIŞMA: gövde silindirine penetrasyon < 1mm; VE detektör kör değil:
+     silindirin derinine gömülü düz sac steps=0'da derin GÖRÜLÜR (>100mm),
+     settle penetrasyonu AZALTIR (çarpışma iticisi çalışıyor).
+   - DÜRÜST RED: sınırsız parça / absürt kaba hücre = Err (uydurma önizleme
+     yok).
+   - GÖVDEYE BAĞIMLI: farklı gövde ölçülebilir farklı 3B şekle drape ediyor.
+
+3) drape-preview ölçülen tanılar (gerçek sayılar, uydurma değil):
+   EU38 Front (lengthMM=450):
+     particles=213 springs=1124 pinned=10
+     bodyRadiusMM=143.24  maxSpringStrain=0.150  bodyPenetrationMM=0.000
+     finalHeightMM=439.01  zSpreadMM=143.44  anyNaN=false
+   pear Front (lengthMM=450):
+     particles=256 springs=1371 pinned=12
+     bodyRadiusMM=175.07  maxSpringStrain=0.386  bodyPenetrationMM=0.000
+     finalHeightMM=441.06  zSpreadMM=196.78  anyNaN=false
+   -> daha geniş kalçalı pear daha derin sarılıyor (197 vs 143mm). Drape
+      gerçekten gövdenin fonksiyonu.
+
+4) GÖRSEL (RULES inv 3 — yol yoksa adım yapılmamıştır):
+   reports/gate/drape/drape_eu38.png  (700px)  — sabit bel kenarı kırmızı,
+     üçgen mesh derinlikle gölgeli, sol kenar öne kıvrılıyor (gövde sarımı),
+     panel gerçek yüzey dalgalanmasıyla düşüyor. DÜZ dikdörtgen DEĞİL.
+   reports/gate/drape/drape_pear.png  (700px)  — belirgin daha geniş + daha
+     derin sarımlı panel.
+   (SVG kaynakları da yanında; svg2png.mjs resvg ile rasterize.)
+
+
+YÖNTEM / FİZİK KARARLARI (dürüst iz)
+------------------------------------
+- Parça sınırı motorun kendi flattenCubic(24)'üyle (dxf::flattenPiece yolu,
+  nest.cpp ile aynı) -> sınır poligonu motor mm gerçeği.
+- Mesh düz kurulur: rest uzunlukları GERÇEK kumaş mm'i. Erken "pre-wrap"
+  (parçacıkları silindire taşıma) rest uzunluklarını bozup gerinimi
+  patlatıyordu (probe: strain 5.0) -> KALDIRILDI. Sarım artık yalnız gövde
+  çarpışmasından doğuyor: düz sac silindirin önünün içine yerleştirilir,
+  çarpışma öne iter -> gerçek 3B sarım.
+- Sarım derinliği kumaşla SINIRLI: panel arkı gövde arkından darsa sarım
+  durur ve asılır; gerinim tanısı bunu dürüstçe raporlar.
+- Verlet: SABİT adım sayısı (500) + SABİT dt -> deterministik. Rastgelelik,
+  tarih, duvar-saati YOK.
+
+
+KALAN AÇIK İŞ (dürüst)
+----------------------
+- Gövde tek dikey silindir; gerçek torso (göğüs/kalça konik) değil. Çoklu
+  segment / konik gövde bir sonraki adım.
+- Tek panel drape ediliyor; Front+Back'i dikiş kenarından birleştirip kapalı
+  bir giysi drape etmek (seam-sew) sıradaki gerçek adım.
+- Bükülme sertliği görsel ayarlı, gerçek kumaş gramajına kalibre değil
+  (tech-pack gsm'i buraya beslenebilir).
+- Bu bir Kapı DEĞİL: zevk/damar hakemi hâlâ Kapı 2'de DAMLA. Bu, kanvas
+  yönünde makine-kanıtlı bir yetenek eklentisi.
