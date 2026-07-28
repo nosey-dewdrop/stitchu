@@ -3,9 +3,13 @@
 // (wasm/bindings.cpp), so web/js/sheet.js can pack it into A4 print sheets and
 // engine/tools/render-recipe.mjs can render the PNG visual proof (RULES
 // invariant 3: the PNG path goes in the report, or the step did not happen).
-//   usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder> <paramMM>
+//   usage: recipe-json-dump <recipe.json> <EU38|pear|bigNeckSmallShoulder|custom:...> <paramMM>
 //   (paramMM binds to the recipe's SINGLE declared param — lengthMM for the
 //   skirt recipe, extendMM for the shift-dress recipe; no hardcoded name.)
+//   custom:<bust,waist,hip,shoulder,backLength,armLength,neck> — 7 CM values in
+//   BodyMeasurementsSnapshot field order (measurements.hpp), upperBust stays 0.
+//   Added 2026-07-28 for the tracer→recipe bridge (Bugra size-chart bodies are
+//   not in the pinned trio); malformed input is a hard error, no defaults.
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -75,6 +79,27 @@ int main(int argc, char** argv) {
     if (body == "EU38") m = {88, 70, 94, 37, 40.5, 58, 35};
     else if (body == "pear") m = {96, 70, 116, 37, 41, 58, 36};
     else if (body == "bigNeckSmallShoulder") m = {100, 84, 104, 30, 40, 58, 50};
+    else if (body.rfind("custom:", 0) == 0) {
+        double v[7];
+        int n = 0;
+        const char* s = body.c_str() + 7;
+        char* end = nullptr;
+        while (n < 7) {
+            v[n] = std::strtod(s, &end);
+            if (end == s) break;
+            ++n;
+            s = end;
+            if (*s == ',') ++s;
+            else break;
+        }
+        if (n != 7 || *s != '\0') {
+            std::fprintf(stderr, "custom body needs exactly 7 comma-separated CM values "
+                                 "(bust,waist,hip,shoulder,backLength,armLength,neck), got '%s'\n",
+                         body.c_str());
+            return 2;
+        }
+        m = {v[0], v[1], v[2], v[3], v[4], v[5], v[6]};
+    }
     else { std::fprintf(stderr, "unknown body '%s'\n", body.c_str()); return 2; }
     const double paramMM = std::strtod(argv[3], nullptr);
     const auto paramNames = recipe::recipeParamNames(loaded.value);
