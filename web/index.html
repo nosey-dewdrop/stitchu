@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
-<title>stitchu · pattern-making engine</title>
-<meta name="description" content="Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.">
+<title>stitchu · a made-to-measure pattern CAD</title>
+<meta name="description" content="A deterministic made-to-measure pattern CAD. Draft from a photo or recipe, grade across EU34–52, and export the DXF-AAMA and tech-pack a factory reads. Every number computed by a C++ kernel, published with proof.">
 <link rel="canonical" href="https://stitchu.noseydewdrop.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="stitchu">
-<meta property="og:title" content="stitchu · pattern-making engine">
-<meta property="og:description" content="Photograph a dress. Get the pattern, drafted to your body.">
+<meta property="og:title" content="stitchu · a made-to-measure pattern CAD">
+<meta property="og:description" content="From a photo or recipe to a factory-ready pattern, graded to every size and exported to DXF-AAMA.">
 <meta property="og:url" content="https://stitchu.noseydewdrop.com/">
 <meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
-<meta name="twitter:title" content="stitchu · pattern-making engine">
-<meta name="twitter:description" content="Photograph a dress. Get the pattern, drafted to your body.">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"Photograph a dress, get the sewing pattern drafted to your own measurements.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A photo-to-pattern sewing engine: a real C++ pattern-making engine that drafts garment patterns to your own measurements, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"Photograph a dress, get the sewing pattern drafted to your own measurements. A real C++ pattern-making engine with true-scale A4 printing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
-<link rel="stylesheet" href="css/theme-transitions.css?v=135">
-<link rel="stylesheet" href="css/shared-button.css?v=135">
-<link rel="stylesheet" href="css/shared-header.css?v=135">
+<meta name="twitter:title" content="stitchu · a made-to-measure pattern CAD">
+<meta name="twitter:description" content="From a photo or recipe to a factory-ready pattern, graded to every size and exported to DXF-AAMA.">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"A deterministic made-to-measure pattern CAD: draft from a photo or recipe, grade across EU34–52, and export DXF-AAMA and a tech-pack a factory reads.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic made-to-measure pattern CAD: a C++ kernel drafts a garment, grades it across the full size run, and exports DXF-AAMA, per-size graded DXF and a tech-pack, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic made-to-measure pattern CAD. Draft from a photo or recipe, grade across EU34–52, and export DXF-AAMA and a tech-pack, with true-scale A4 printing for home sewing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
+<link rel="stylesheet" href="css/theme-transitions.css?v=136">
+<link rel="stylesheet" href="css/shared-button.css?v=136">
+<link rel="stylesheet" href="css/shared-header.css?v=136">
 <style>
   /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
      structure preserved from the vişne landing; only the color turns. Gingham
@@ -173,13 +173,13 @@
   </figure>
 
   <div class="col">
-    <h1 data-en="Photograph a dress. Get a real sewing pattern, drafted to your body." data-tr="Bir elbisenin fotoğrafını çek. Kendi bedenine çizilmiş gerçek bir dikiş kalıbı al.">Photograph a dress. Get a <em>real sewing pattern</em>, drafted to your body.</h1>
-    <p class="lead" data-en="Most photo-to-fashion apps hand you a filter and a one-size template. stitchu is a real pattern-making engine that redraws the garment for your exact body, and publishes exactly how well it works, misses included." data-tr="Çoğu fotoğraf-moda uygulaması sana bir filtre ve tek beden şablon verir. stitchu gerçek bir kalıp motoru, kıyafeti tam senin bedenine yeniden çizer ve ne kadar iyi çalıştığını, eksikleriyle birlikte açıkça yayınlar.">Most photo-to-fashion apps hand you a filter and a one-size template. <b>stitchu is a real pattern-making engine</b> that redraws the garment for your exact body, and publishes exactly how well it works, misses included.</p>
+    <h1 data-en="From one design to a factory-ready pattern, graded to every size." data-tr="Tek tasarımdan fabrikaya hazır kalıba, her bedene grade'lenmiş.">From one design to a <em>factory-ready pattern</em>, graded to every size.</h1>
+    <p class="lead" data-en="stitchu is a deterministic pattern CAD. Draft a garment from a photo or a recipe, grade it across the full EU34–52 run, and export the DXF-AAMA and tech-pack a production line already reads. Every number is computed by a C++ kernel, not guessed, and published with its proof." data-tr="stitchu deterministik bir kalıp CAD'i. Bir kıyafeti fotoğraftan ya da reçeteden çiz, EU34–52 serisinin tamamına grade'le ve bir üretim hattının zaten okuduğu DXF-AAMA ile tech-pack'i çıkar. Her sayı bir C++ çekirdeğiyle hesaplanır, tahmin edilmez, kanıtıyla yayınlanır."><b>stitchu is a deterministic pattern CAD.</b> Draft a garment from a photo or a recipe, grade it across the full EU34–52 run, and export the DXF-AAMA and tech-pack a production line already reads. Every number is computed by a C++ kernel, not guessed, and published with its proof.</p>
     <div class="chips">
-      <a class="chip" href="benchmark.html" data-en="engineering proofs, published" data-tr="mühendislik kanıtları, yayınlı">engineering proofs, published</a>
-      <a class="chip" href="benchmark.html" data-en="seams match to 0.00&nbsp;mm" data-tr="dikişler 0,00&nbsp;mm ile eşleşir">seams match to 0.00&nbsp;mm</a>
-      <a class="chip" href="privacy.html" data-en="on-device · nothing uploaded" data-tr="cihazda · hiçbir şey yüklenmez">on-device · nothing uploaded</a>
-      <a class="chip" href="#industry" data-en="exports factory-grade DXF" data-tr="fabrika kalitesinde DXF çıkarır">exports factory-grade DXF</a>
+      <a class="chip" href="#industry" data-en="DXF-AAMA · opens in Valentina / Seamly2D" data-tr="DXF-AAMA · Valentina / Seamly2D'de açılır">DXF-AAMA · opens in Valentina / Seamly2D</a>
+      <a class="chip" href="#industry" data-en="EU34–52 graded run + tech-pack" data-tr="EU34–52 beden serisi + tech-pack">EU34–52 graded run + tech-pack</a>
+      <a class="chip" href="benchmark.html" data-en="seams match to 0.00&nbsp;mm, published" data-tr="dikişler 0,00&nbsp;mm eşleşir, yayınlı">seams match to 0.00&nbsp;mm, published</a>
+      <a class="chip" href="privacy.html" data-en="on-device · your patterns stay yours" data-tr="cihazda · kalıpların sende kalır">on-device · your patterns stay yours</a>
     </div>
     <form class="betaform" onsubmit="return betaWaitlist(event)">
       <input type="email" id="betaemail" required
@@ -189,9 +189,9 @@
     <p class="betamsg" id="betamsg"></p>
     <a class="cta2" href="studio.html" data-en="or draft a pattern free in the live studio →" data-tr="ya da canlı stüdyoda ücretsiz kalıp çiz →">or draft a pattern free in the live studio →</a>
     <div class="items">
-      <p class="item"><span class="lbl" data-en="what is it?" data-tr="nedir?">what is it?</span><span data-en="A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template." data-tr="Herhangi bir etek, elbise ya da üstün fotoğrafı, senin yedi ölçüne çizilmiş gerçek, dikilebilir bir kalıba dönüşür. Filtre değil. Şablon değil.">A photo of any skirt, dress or top becomes a real, sewable pattern, drafted to your own seven measurements. Not a filter. Not a template.</span></p>
-      <p class="item"><span class="lbl" data-en="under the hood?" data-tr="içinde ne var?">under the hood?</span><span data-en="A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit you, with princess seams instead of fiddly darts, and reads the fabric, a stretch knit and a crisp poplin get different patterns." data-tr="Elle yazılmış bir C++ kalıp motoru. Kıyafetin 3B biçimini sana uyan düz panolara açar, zahmetli pensler yerine prenses dikiş kullanır ve kumaşı okur, esnek örgü ile sert poplin farklı kalıplar alır.">A hand-built C++ drafting engine. It unfolds the garment's 3D shape onto flat panels that fit <b>you</b>, with princess seams instead of fiddly darts, and reads the fabric, a stretch knit and a crisp poplin get different patterns.</span></p>
-      <p class="item"><span class="lbl" data-en="an api?" data-tr="api var mı?">an api?</span><span data-en="Yes, the same engine behind one endpoint, no per-call AI cost. " data-tr="Evet, aynı motor tek bir uçta, çağrı başına yapay zeka maliyeti yok. ">Yes, the same engine behind one endpoint, no per-call AI cost. </span><a href="api.html" style="color:var(--bb-deep)" data-en="Get early access ↓" data-tr="Erken erişim al ↓">Get early access ↓</a></p>
+      <p class="item"><span class="lbl" data-en="what is it?" data-tr="nedir?">what is it?</span><span data-en="A deterministic pattern CAD. A photo or a recipe becomes a real, editable pattern, graded across the full size run and exported to DXF-AAMA and a tech-pack. Not a filter, not a one-size template." data-tr="Deterministik bir kalıp CAD'i. Bir fotoğraf ya da reçete, gerçek ve düzenlenebilir bir kalıba dönüşür, tüm beden serisine grade'lenir ve DXF-AAMA ile tech-pack'e çıkar. Filtre değil, tek beden şablon değil.">A deterministic pattern CAD. A photo or a recipe becomes a real, editable pattern, graded across the full size run and exported to DXF-AAMA and a tech-pack. Not a filter, not a one-size template.</span></p>
+      <p class="item"><span class="lbl" data-en="under the hood?" data-tr="içinde ne var?">under the hood?</span><span data-en="A hand-built C++ kernel is the single source of every number: geometry, seam equalisation, notches, grainlines. Take the AI away and a full CAD remains, a recipe model, the kernel, and an industry interchange path (DXF-AAMA, a graded DXF per size, tech-pack)." data-tr="Elle yazılmış bir C++ çekirdeği her sayının tek kaynağı: geometri, dikiş eşitleme, çentikler, grainline'lar. AI'yı çıkar, geriye tam bir CAD kalır, bir reçete modeli, çekirdek ve bir endüstri değişim yolu (DXF-AAMA, beden başına graded DXF, tech-pack).">A hand-built C++ kernel is the single source of every number: geometry, seam equalisation, notches, grainlines. <b>Take the AI away and a full CAD remains</b>, a recipe model, the kernel, and an industry interchange path (DXF-AAMA, a graded DXF per size, tech-pack).</span></p>
+      <p class="item"><span class="lbl" data-en="sewing at home?" data-tr="evde mi dikeceksin?">sewing at home?</span><span data-en="That path is yours too. Draft any garment to your own seven measurements and print it true-scale, tiled to A4, free in the browser, with nothing about your body uploaded. " data-tr="O yol da senin. Herhangi bir kıyafeti kendi yedi ölçüne çiz ve gerçek ölçekte, A4'e döşenmiş bas, tarayıcıda ücretsiz, vücudunla ilgili hiçbir şey yüklenmez. ">That path is yours too. Draft any garment to your own seven measurements and print it true-scale, tiled to A4, free in the browser, with nothing about your body uploaded. </span><a href="studio.html" style="color:var(--bb-deep)" data-en="Open the studio ↓" data-tr="Studio'yu aç ↓">Open the studio ↓</a></p>
     </div>
   </div>
 </section>
@@ -199,11 +199,11 @@
 <div class="rest">
 <section class="how">
   <div class="flow">
-    <div class="step"><span class="n">01</span><span data-en="photograph a dress you love" data-tr="sevdiğin bir elbisenin fotoğrafını çek">photograph a dress you love</span></div>
+    <div class="step"><span class="n">01</span><span data-en="a photo or a recipe" data-tr="bir fotoğraf ya da reçete">a photo or a recipe</span></div>
     <span class="seam"></span>
-    <div class="step"><span class="n">02</span><span data-en="the engine drafts it to your body" data-tr="motor onu senin bedenine çizer">the engine drafts it to your body</span></div>
+    <div class="step"><span class="n">02</span><span data-en="the kernel drafts it, then grades every size" data-tr="çekirdek onu çizer, sonra her bedene grade'ler">the kernel drafts it, then grades every size</span></div>
     <span class="seam"></span>
-    <div class="step"><span class="n">03</span><span data-en="print true-scale, then sew" data-tr="gerçek ölçekte bas, sonra dik">print true-scale, then sew</span></div>
+    <div class="step"><span class="n">03</span><span data-en="export DXF-AAMA + tech-pack, or print true-scale and sew" data-tr="DXF-AAMA + tech-pack çıkar, ya da gerçek ölçekte bas ve dik">export DXF-AAMA + tech-pack, or print true-scale and sew</span></div>
   </div>
 </section>
 
@@ -351,7 +351,7 @@
 </div>
 <!-- /.rest -->
 
-<script src="js/shared-header.js?v=135"></script>
+<script src="js/shared-header.js?v=136"></script>
 <script>
 // Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
 const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';

@@ -1,19 +1,19 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=135';
-import { validateVision } from './spec-validate.js?v=135';
-import { CONTRACT } from './contract.gen.js?v=135';
-import { applyStatic, getLang, t } from './i18n.js?v=135';
-import { draft, grade } from './engine.js?v=135';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=135';
-import { renderResult } from './render.js?v=135';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=136';
+import { validateVision } from './spec-validate.js?v=136';
+import { CONTRACT } from './contract.gen.js?v=136';
+import { applyStatic, getLang, t } from './i18n.js?v=136';
+import { draft, grade } from './engine.js?v=136';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=136';
+import { renderResult } from './render.js?v=136';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=135';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness } from './vision-bridge.js?v=135';
-import { measureGarment } from './measure.js?v=135';
+} from './store.js?v=136';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness } from './vision-bridge.js?v=136';
+import { measureGarment } from './measure.js?v=136';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
