@@ -6,9 +6,9 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=132';
-import { pathD, bounds } from './sheet.js?v=132';
-import { printPattern } from './print.js?v=132';
+import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=133';
+import { pathD, bounds } from './sheet.js?v=133';
+import { printPattern } from './print.js?v=133';
 
 const $ = (id) => document.getElementById(id);
 
@@ -365,7 +365,7 @@ function refreshFactoryButton() {
   btn.disabled = !pack;
   if (pack) {
     note.textContent =
-      `A graded EU34–52 production package for this demo recipe at its default ` +
+      `A graded EU34 to 52 production package for this demo recipe at its default ` +
       `${pack.param} (${pack.paramMM} mm): machine manifest, one graded DXF per size, ` +
       `marker at ${pack.fabricWidthMM} mm width, and a human-readable PDF spec sheet ` +
       `(${pack.gradedSizesClean}/${pack.gradedSizesTotal} sizes clean). A factory size run ` +
@@ -378,7 +378,7 @@ function downloadFactoryPack() {
   const pack = state.doc ? factoryPackFor(state.doc.id) : null;
   if (!pack) return;
   const a = document.createElement('a');
-  a.href = `factory/${pack.file}?v=132`;
+  a.href = `factory/${pack.file}?v=133`;
   a.download = pack.file;
   a.click();
 }
@@ -396,7 +396,7 @@ function downloadPDF() {
 
 // ------------------------------------------------------------------ startup
 async function loadRecipe(entry) {
-  const res = await fetch(`recipes/${entry.file}?v=132`);
+  const res = await fetch(`recipes/${entry.file}?v=133`);
   if (!res.ok) throw new Error(`recipe fetch failed: HTTP ${res.status}`);
   state.text = await res.text();
   state.doc = JSON.parse(state.text); // form metadata only; the engine re-parses
@@ -417,7 +417,7 @@ async function init() {
   // re-evaluation itself, not the one-off engine download.
   const warmup = loadEngine().catch(() => {});
   try {
-    const res = await fetch('recipes/index.json?v=132');
+    const res = await fetch('recipes/index.json?v=133');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.recipes = (await res.json()).recipes;
   } catch (e) {
@@ -427,7 +427,7 @@ async function init() {
   // Factory-pack index (optional): the pre-built graded size runs per recipe.
   // A missing index just leaves the factory button disabled, never a crash.
   try {
-    const fres = await fetch('factory/index.json?v=132');
+    const fres = await fetch('factory/index.json?v=133');
     if (fres.ok) state.factory = (await fres.json()).packs || [];
   } catch { state.factory = []; }
   for (const r of state.recipes) {
