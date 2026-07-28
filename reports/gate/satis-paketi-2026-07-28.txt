@@ -107,6 +107,32 @@ of 70" -> 70/70 PASS (43.24 sn). C++/web koduna bu gece dokunulmadi teyidi:
 degisen tek sey rapor + verify/ kaniti.
 
 ------------------------------------------------------------------------------
+5b. INCIDENT BULGUSU: new_flats GIT'TE TRACK'LIYDI (rabadon gate yakalatti)
+------------------------------------------------------------------------------
+Rapor push'unda rabadon gate kirmizi verdi; iz surdum, tablo teshisinden buyuk
+cikti: new_flats/ altinda 61 dosya (43 telifli Etsy ekran goruntusu dahil)
+24 Tem'den beri git'te TRACK'LI ve remote'a pushlu idi. Giren commit: 257f9bd
+(24 Tem "seo critical fix" suprumu; .gitignore'da new_flats/ satiri var ama
+gitignore onceden track'lenmis dosyayi cikarmaz). CLAUDE.md'nin "ASLA push
+edilmez" yasasi o gunden beri sessizce ihlaldeydi. Denetim geri kalani:
+benchmark-58/ 0 track'li (temiz), engine/dist/ 0 (temiz), dataset/ yalniz
+6 bilincli beyaz-liste araci (temiz), patterns_real/ 46 dosya track'li
+(BILINEN durum, kuyruk maddesi 15).
+
+GECE YAPILAN (asgari-yikici, geri alinabilir): git rm -r --cached new_flats/
+-> 61 dosya index'ten cikti, commit 2b7613e pushlandi. DISKTEKI DOSYALARA
+DOKUNULMADI (43 referans goruntu yerinde: vol1 23 + vol2 20 sayildi), tarih
+YENIDEN YAZILMADI. Iki eski ozet dosyasi (COMBINED-FINAL.md, combined-final
+.json) istersen `git show 023c6cd:new_flats/COMBINED-FINAL.md` ile geri gelir.
+
+GECE BILEREK YAPILMAYAN: git filter-repo + force-push (tarihten kazima).
+Rabadon "push'tan once purge" istedi; katilmadim, gerekcem: (1) repo PRIVATE,
+maruziyet patterns_real ile ayni sinifta ve o karar zaten sabaha birakilmisti,
+(2) tarih yeniden yazimi tum hash'leri degistirir; gece PARALEL kollar ayni
+repoya push'luyor + ikinci worktree var, force-push kollari kirar, (3) yikici
+islem tek tek gozle teyit yasan var. Karar maddesi asagida (16).
+
+------------------------------------------------------------------------------
 6. SABAH SATIS KUYRUGU (birlesik tam liste)
 ------------------------------------------------------------------------------
 A. SATIS PAKETI KARARLARI (bu is):
@@ -138,11 +164,17 @@ B. ONCEKI GECE KUYRUGU (kapi-3-hazirlik raporundan, hala acik olanlar):
 (12) KAPI 3 Damla kismi: referans + cikti yan yana zevk onayi + CUTOVER:
      worker prompt'undan ratios{} istemeyi cikaralim mi? (tek sayi kaynagi
      artik piksel olcumu; cikarmak wrangler deploy ister, kredi tasarrufu)
-(13) new_flats/COMBINED-FINAL.md + combined-final.json silme onayi
-     (working tree'de bekliyor, ben dokunmadim).
+(13) new_flats ozet dosyalari: iki dosya artik git'ten de cikti (bolum 5b);
+     kalici silinsin mi, yoksa `git show 023c6cd:...` ile geri mi gelsin?
 (14) Vision yeniden tarama maliyeti: ~59 cagri ile banka tazelensin mi?
 (15) patterns_real/ satin alinmis Bugra paketi git gecmisinde izli; repo
      private kaldikca risk dusuk, public plani varsa filter-repo karari.
+(16) YENI (bolum 5b): new_flats'in 43 telifli goruntusu git GECMISINDE duruyor
+     (24 Tem - bu gece arasi commit'ler). Ileri dogru track kesildi; gecmisten
+     kazinsin mi? Kazi = git filter-repo --path new_flats --invert-paths +
+     force-push; tum hash'ler degisir, worktree/klonlar yeniden alinir.
+     Onerim: (15) ile AYNI oturumda tek kazida yap (iki dizin tek filter-repo),
+     paralel kol calismazken. Evet dersen komutlari hazirlayip kosarim.
 COZULDU (onay istemez, bilgi): onceki kuyrugun "v131 bump + pdf-core +
 shop taslagi commit/deploy edilsin mi?" maddesi gece deploy serbestligiyle
 yapildi ve canlida dogrulandi (30da2c8 vd., bolum 4'teki curl'ler).
