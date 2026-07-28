@@ -8,6 +8,7 @@
 // more (PIPELINE: "resim yoktur, model vardır").
 import { draftRecipe, loadEngine } from './engine.js?v=130';
 import { pathD, bounds } from './sheet.js?v=130';
+import { printPattern } from './print.js?v=130';
 
 const $ = (id) => document.getElementById(id);
 
@@ -147,11 +148,13 @@ async function regenerate() {
     issuesBox.textContent = out.error;
     status.textContent = 'The engine refused this input; the drawing was not updated.';
     $('dl-svg').disabled = true;
+    $('dl-pdf').disabled = true;
     return;
   }
   issuesBox.hidden = out.issues.length === 0;
   if (out.issues.length) issuesBox.textContent = out.issues.join(' · ');
   $('dl-svg').disabled = out.issues.length > 0;
+  $('dl-pdf').disabled = out.issues.length > 0;
 
   drawPattern(out.pattern);
   const p = out.pattern;
@@ -313,6 +316,17 @@ function downloadSVG() {
   URL.revokeObjectURL(a.href);
 }
 
+// -------------------------------------------------------------- PDF export
+// Print-ready A4 PDF: the SAME builder create.html uses (print.js
+// buildPrintPages over sheet.js packing), so the studio PDF and every other
+// PDF surface share one content source: cover with cutting table + calibration
+// square, then A4-tiled sheets with corner codes. The browser print dialog
+// does the PDF encoding ("Save as PDF", scale 100%); no second layout truth.
+function downloadPDF() {
+  if (!state.result || !state.result.pattern || state.result.issues.length) return;
+  printPattern(state.result);
+}
+
 // ------------------------------------------------------------------ startup
 async function loadRecipe(entry) {
   const res = await fetch(`recipes/${entry.file}?v=130`);
@@ -353,6 +367,7 @@ async function init() {
     if (entry) loadRecipe(entry).catch((e) => { $('status').textContent = e.message; });
   });
   $('dl-svg').addEventListener('click', downloadSVG);
+  $('dl-pdf').addEventListener('click', downloadPDF);
   await warmup;
   if (state.recipes.length) await loadRecipe(state.recipes[0]);
 }
