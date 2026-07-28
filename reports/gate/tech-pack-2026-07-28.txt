@@ -1,0 +1,121 @@
+TECH-PACK / ÜRETİM PAKETİ — KANIT RAPORU (2026-07-28)
+PIPELINE Aşama 5/6 birleşimi. Önceki adımlar: dxf=LANDI, grading=LANDI, nesting=LANDI.
+
+DURUM: LANDI.
+
+YETENEK
+  Üretim/fabrika paketi: bir reçeteyi TÜM EU beden serisine (EU34-52, 10 beden)
+  grade'ler ve fabrikanın istediği paketi tek MAKİNE-OKUR manifest (JSON) + tek
+  İNSAN-OKUR PDF spec sayfası olarak toplar:
+    - beden tablosu   : her bedenin grade'lendiği standart gövde (cm, K1 euSizeChart)
+    - kesim listesi   : her beden için her parçanın adı / kesim notu / dikiş payı (mm)
+                        + dikiş-çizgisi bbox (sewW/sewH)
+    - kumaş           : motorun kendi fabricMeters140 (m, 140cm en); gramaj (GSM)
+                        verildiyse toplam ağırlık deterministik türetilir
+                        (metre × 1.40m × gsm), verilmediyse DÜRÜSTÇE null
+    - marker verimi   : her beden için nest::nestPieces ile ölçülen verim + top boyu
+                        (overlap=0 kanıtlı gerçek kesim polygon'larında)
+    - graded DXF      : her beden için bir DXF-AAMA/ASTM R12 dosyası (fabrikanın açtığı
+                        endüstri değişim formatı)
+  İçerik %100 motordan; uydurma sayı yok, LLM yok, sezgi yok. Aynı reçete + param +
+  en + gsm → aynı manifest bytes (tarih/rastgelelik yok). Draft/nest reddi (dar kumaş,
+  validator patlaması) DÜRÜSTÇE raporlanır (draftError/nestError), sessizce düşmez.
+
+NE DEĞİŞTİ (dosyalar)
+  YENİ  engine/tools/tech-pack.cpp        — toplayıcı araç: reçeteyi EU serisine grade'ler,
+                                            manifest.json + beden başına graded DXF üretir
+  YENİ  engine/tools/gen-techpack-pdf.mjs — insan-okur PDF spec sayfası (manifestten;
+                                            hiçbir sayı yeniden türetilmez, pdf-core.mjs)
+  YENİ  engine/tools/techpack-verify.py   — dış doğrulayıcı: şema + çapraz-kontrol +
+                                            ezdxf (bağımsız CAD) + poppler (bağımsız PDF)
+  YENİ  engine/tests/tech_pack_check.sh   — ctest mandalı (determinizm + şema + açılır kanıt)
+  DÜZ   engine/CMakeLists.txt             — tech-pack aracı + tech_pack_check test kaydedildi
+
+KANIT 1 — üret (iki reçete, gramaj ile)
+  $ tech-pack recipes/skirt-aline-dart.json 450 1400 <out> --gsm 220
+    graded sizes: 10/10 clean+nested | manifest 8297 bytes | dxf/ 10 dosya
+  $ tech-pack recipes/shift-dress-square-spaghetti.json 300 1400 <out> --gsm 180
+    graded sizes: 10/10 clean+nested | manifest 12539 bytes | dxf/ 10 dosya
+
+KANIT 2 — grade tablosu gerçek + monotonik (skirt, marker eni 1400mm, gsm 220)
+  beden  bust  waist  hip   pcs  fabric  weight  roll(mm)  eff%
+  EU34   80.0  62.0   86.0   3   0.6m    185g    298.0     65.88
+  EU36   84.0  66.0   90.0   3   0.6m    185g    308.2     66.43
+  EU38   88.0  70.0   94.0   3   0.6m    185g    423.4     50.35
+  EU40   92.0  74.0   98.0   3   0.6m    185g    433.6     51.11
+  EU42   96.0  78.0  102.0   3   0.6m    185g    443.8     51.84
+  EU44  100.0  82.0  106.0   3   0.6m    185g    454.1     52.53
+  EU46  104.0  86.0  110.0   3   0.6m    185g    464.3     53.19
+  EU48  110.0  92.0  116.0   3   1.1m    339g    479.6     54.13
+  EU50  116.0  98.0  122.0   3   1.1m    339g    494.9     55.02
+  EU52  122.0 104.0  128.0   3   1.1m    339g    510.2     55.85
+  → top boyu EU34→EU52 monotonik büyür (grade doğru); kumaş metresi EU48'de
+    motorun KENDİ tahmin yuvarlaması ile 0.6→1.1m artar; verim ölçülen değer
+    (EU36→EU38 düşüş shelf packer'ın ikinci-raf başlangıcı, gerçek geometri,
+    uydurma değil).
+
+KANIT 3 — dış doğrulama (techpack-verify.py; şema + çapraz-kontrol + açılır)
+  techpack-verify OK: skirt.aline.dart | 10 sizes | 10 clean+nested |
+    10 graded DXF open in ezdxf | PDF opens in poppler (2 pages) |
+    efficiency + weight cross-checked | grade monotonic
+  techpack-verify OK: top.shift.square.spaghetti | 10 sizes | 10 clean+nested |
+    10 graded DXF open in ezdxf | PDF opens in poppler (2 pages) |
+    efficiency + weight cross-checked | grade monotonic
+  Çapraz-kontrol içi: her marker verimi = alan / (en × top boyu) [%.4f yuvarlama
+    bandında ≤1.5e-4]; her ağırlık = metre × 1.40 × gsm [≤0.01g]; grade monotonik.
+
+KANIT 4 — doğrulayıcı GERÇEKTEN görüyor (yeşil-ama-kör olmasın; 6 saldırı testi)
+  tampered efficiency (0.99)  → FAIL: efficiency 0.99 != area/(w*roll) 0.65878166
+  smuggled key ('sneaky')     → FAIL: EU36: drafted block has stray keys ['sneaky']
+  non-monotonic roll          → FAIL (efficiency çapraz-kontrolü önce yakaladı, >1)
+  wrong weight (1.0g)         → FAIL: weight 1.0 != meters*1.40*gsm 184.8000
+  missing DXF file            → FAIL: EU38: DXF file missing at dxf/...EU38.dxf
+  truncated PDF               → FAIL: poppler could not open the PDF (xref/trailer)
+
+KANIT 5 — PDF gerçekten açılır (poppler = bağımsız okuyucu) + determinizm
+  skirt tech-pack.pdf  sha256=aaf0945a...792514  2 sayfa (spec cover + grade table)
+  dress tech-pack.pdf  sha256=4f34ba60...7448aa  2 sayfa
+  → sha256 ayrı invocation'larda aynı (PDF deterministik). pdftoppm 745×1053 px
+    (A4 @ 90dpi) her sayfayı rasterize etti = poppler parse etti.
+  Görünür kanıt (RULES invariant 3):
+    reports/gate/tech-pack/skirt-spec-1.png   (spec cover: ayarlar + kesim listesi)
+    reports/gate/tech-pack/skirt-spec-2.png   (grade tablosu EU34-52)
+    reports/gate/tech-pack/dress-grade-2.png  (elbise grade tablosu)
+    reports/gate/tech-pack/skirt-manifest.sample.json   (örnek manifest)
+    reports/gate/tech-pack/skirt.aline.dart.EU38.sample.dxf (örnek graded DXF)
+
+KANIT 6 — tam suite regresyon (mevcut suite KIRILMADI)
+  $ ctest → 100% tests passed, 76/76 (baseline 75/75 + 1 yeni tech_pack_check).
+    Toplam süre ~23s.
+
+KANIT 7 — ctest tech_pack_check (dış mandal; 2 reçete + gsm'siz koşu)
+  [skirt-eu-1400-220] 1+2) determinizm: manifest + 10 DXF bayt-ozdes
+  [skirt-eu-1400-220] pdf: iki kosu bayt-ozdes
+  techpack-verify OK: skirt.aline.dart ...
+  [dress-eu-1400-180] 1+2) determinizm: manifest + 10 DXF bayt-ozdes
+  [dress-eu-1400-180] pdf: iki kosu bayt-ozdes
+  techpack-verify OK: top.shift.square.spaghetti ...
+  [skirt-nogsm] gramaj yok: agirlik null, sema + acilir kanit gecti
+  tech_pack_check: PASS
+
+YÖNTEM NOTLARI (dürüst sınırlar)
+  - Manifest sayıları motorun KENDİ deterministik çıktısı: draftRecipe (grade =
+    her bedene yeniden değerlendirme), fabricMeters140 (motorun tahmini),
+    nest::nestPieces (overlap=0 kanıtlı marker), dxf::exportPattern (mm-parite
+    kanıtlı DXF). İkinci bir sayı kaynağı yok.
+  - Gramaj (GSM) motorun BİLMEDİĞİ bir değirmen gerçeği: verilmezse ağırlık null
+    (uydurulmaz); verilirse ağırlık = metre × 1.40m × gsm deterministik türetilir.
+    Kumaş tahmini 140cm en varsayar (motorun kendi konvansiyonu); marker verimi
+    AYRI gerçek kesim eni kullanır (manifest her ikisini de ayrı alanda taşır).
+  - Verim = ölçülen alan / tüketilen dikdörtgen (greedy shelf packer v1); "verim
+    optimal" DEĞİL — o iddia yok. Optimizasyon nest v2 işi.
+  - Şema mühürlü: her graded blok tam DRAFTED_KEYS taşır; kaçak alan = FAIL
+    (kontrat felsefesi: additionalProperties yok). Reddedilen beden yalnız
+    size/body/draftError taşır.
+
+KALAN AÇIK İŞ
+  - Tech-pack'i web/studio yüzeyine bağlama (fabrikaya "paketi indir" düğmesi) —
+    ürün yüzeyi işi (Aşama 6 CAD yüzeyi tamamlama).
+  - Marker verimi optimizasyonu (nest v2) tech-pack'in verim sayısını iyileştirir.
+  - Grade DXF'lerini tek çok-sayfalı DXF/marker paketine katmanlama (fabrika bazen
+    tek dosya ister) — genişleme, şimdilik dürüst çoklu-dosya.

@@ -414,6 +414,30 @@ add_test(NAME nest_marker_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/nest_m
     $<TARGET_FILE:nest-marker>
     ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
+# tech-pack (tool, not a test): grades ONE recipe across the full EU size chart
+# and assembles the industrial production package (size table + cut list +
+# fabric/gramaj + marker efficiency + graded DXF per size) into one machine-
+# readable JSON manifest. Everything motor-derived; a refused/blocked size is
+# reported honestly. Consumed by tech_pack_check + gen-techpack-pdf.mjs.
+add_executable(tech-pack tools/tech-pack.cpp)
+target_link_libraries(tech-pack PRIVATE engine)
+
+# tech_pack_check (Aşama 5/6 birleşim mandalı, 2026-07-28): the PRODUCTION
+# package gate. Grades each recipe across the full EU size chart and assembles
+# the factory tech pack (size table + cut list + fabric/gramaj + marker
+# efficiency + graded DXF per size) into one machine-readable JSON manifest +
+# one human-readable PDF spec sheet. Proves from the OUTSIDE: manifest + every
+# graded DXF byte-identical over 2 runs (deterministic); manifest matches the
+# stitchu.techpack/1 schema; every marker efficiency == measured area /
+# (width x roll) and every fabric weight == meters x 1.40 x gsm (cross-checked);
+# the grade is monotonic EU34->EU52; every graded DXF opens in ezdxf (AAMA layer
+# + mm) and the PDF opens in poppler. ezdxf/poppler missing = FAIL (no silent
+# skip). Requires node + the .venv-dxf ezdxf + poppler (pdfinfo/pdftoppm).
+add_test(NAME tech_pack_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/tech_pack_check.sh
+    $<TARGET_FILE:tech-pack>
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-techpack-pdf.mjs
+    ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
 # K2 composition ratchet (2026-07-19): the declared component x host and
 # component x component conflict matrix (contract/composition.json via
 # composition.gen.hpp) is re-derived by actually drafting every combination.
