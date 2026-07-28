@@ -152,6 +152,31 @@ export async function draftRecipe(recipeText, measurements, params) {
   return JSON.parse(json);
 }
 
+// DXF-AAMA/ASTM export at the recipe boundary (PIPELINE Aşama 5, in-browser).
+// Same recipe + measurements + params as draftRecipe → the industry interchange
+// file for THIS body, straight from the motor's mm geometry. Returns
+// { dxf: '<R12 text>' } on success or { error, dxf: null } on an honest refusal
+// (out-of-range param, missing measurement, unknown recipe, validator block).
+// The wasm output is byte-identical to the native dxf-export tool the outside-
+// CAD proof runs on (ctest dxf_wasm_parity): what downloads here is the exact
+// geometry ezdxf verified, not a redraw.
+export async function dxfRecipe(recipeText, measurements, params) {
+  const engine = await loadEngine();
+  let json;
+  try {
+    json = engine.dxfRecipeJSON(recipeText, {
+      bust: measurements.bust || 0, waist: measurements.waist || 0, hip: measurements.hip || 0,
+      shoulder: measurements.shoulder || 0, backLength: measurements.backLength || 0,
+      armLength: measurements.armLength || 0, neck: measurements.neck || 0,
+      upperBust: measurements.upperBust || 0,
+    }, params || {});
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: msg, dxf: null };
+  }
+  return JSON.parse(json);
+}
+
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   let json;

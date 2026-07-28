@@ -71,4 +71,8 @@ fashion-flat-models/
 # devasa arşivler repoya girmez (2026-07-24 temizlik)
 *.zip
 Arşiv.zip
+# EXCEPTION: the studio's downloadable factory packs are real, motor-generated
+# graded production packages (manifest + graded DXF + PDF) — a shipped web asset,
+# not an archive. Kept in the repo so the studio can serve them as static files.
+!web/factory/*.zip
 .rabadon/state.json

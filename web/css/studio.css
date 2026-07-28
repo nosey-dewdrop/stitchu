@@ -68,6 +68,10 @@
 }
 .studio-btn:hover:not(:disabled) { background: #2b4f7a; }
 .studio-btn:disabled { opacity: .45; cursor: default; }
+/* secondary: same shape, outline instead of fill — DXF + factory pack lead
+   (navy fill), SVG/PDF sit under them as quieter alternates. Same tokens. */
+.studio-btn.secondary { color: var(--navy); background: var(--paper); border-color: var(--bb-line); }
+.studio-btn.secondary:hover:not(:disabled) { background: var(--bb-pale); }
 .panel-note { font-size: 11px; color: var(--gray); margin-top: 8px; }
 
 /* the drafting stage: pattern-paper feel, faint 50mm-ish grid */
