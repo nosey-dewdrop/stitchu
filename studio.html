@@ -48,7 +48,9 @@
       <h2 class="panel-h">Piece</h2>
       <div id="piece-info" class="piece-info">Click a piece on the canvas to inspect it.</div>
       <button id="dl-svg" class="studio-btn" type="button" disabled>Download SVG</button>
-      <p class="panel-note">The download is drawn at true scale, 1 unit = 1 mm.</p>
+      <button id="dl-pdf" class="studio-btn" type="button" disabled>Download print-ready PDF (A4)</button>
+      <p class="panel-note">The download is drawn at true scale, 1 unit = 1 mm. The PDF opens the browser print dialog, tiled to A4 with a calibration square: choose "Save as PDF" and keep printer scale at 100%.</p>
+      <p class="panel-note">Measurements never leave your browser: the engine runs locally as WebAssembly and the pattern is computed on your device.</p>
     </aside>
 
     <section class="studio-stage">
