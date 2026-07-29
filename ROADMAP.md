@@ -1,93 +1,176 @@
-# stitchu — YOL HARİTASI (ÖNERİ v2, 2026-07-29)
+# stitchu — YOL HARİTASI (2026-07-29, tam yeniden yazım)
 
-Durum: **AKTİF — Damla omurgayı onayladı ("bunu yapacağız, başlayalım"). Tek plan kaynağı budur.**
-(CLAUDE.md buraya işaret eder; `flatten-research/FINDINGS.md` + `reports/2026-07-29-endustri-arastirmasi.md`
-+ `knowledge/drafting-math-eu38.md` araştırma/zemin arşivi.)
+> Bu dosya 29 Temmuz'daki günün sonunda yazıldı. O gün beş mimari önerisi çöktü, iki pazar
+> iddiası kanıtla çürütüldü, üç açık kaynak kalıp sistemi kaynak kodundan okundu ve motorun
+> gerçek bir couture kalıbını çıkaramadığı ölçüldü. Buradaki her cümlenin arkasında o günün
+> ölçümü var; tahmin yok.
 
-**İLERLEME (2026-07-29):**
-- ✅ Çekirdek tez (pens=eğrilik) gerçek Buğra front-38'de doğrulandı, <%1 strain (`flatten-research/05`).
-- ✅ Hard eased-seam kısıtı: 0.00mm, deterministik (`06`); uniform-ease bug'ı bulundu.
-- ✅ Cap-ease VERIFIED dağıtım (koltukaltı %0, taç 1/3-2/3): 0.00mm, deterministik (`07`), grounded (Aldrich).
-- ⏳ SIRADA: gerçek armhole extraction FIX (257mm şişik) → gerçek Buğra'ya bağla; sonra C++ port + çok-parça.
-- Not: 07-sleeve ilk denemesi (tahmin dolu) ÇÖP çıktı, silindi — patternmaking sayıları artık verified referanstan.
+---
 
-## HEDEF (değişmedi)
-Prompt/fotoğraftan, Damla'nın onaylayacağı, DİKİLEBİLİR, endüstri-uyumlu couture kalıbı.
-Valentina/Lectra ligi, Chanel/Dior zevki. Ürün Claude'dan, dünya Damla'dan.
+## 0. NE SATIYORUZ
 
-## İKİ ARAŞTIRMA TURUNUN GETİRDİĞİ (kaynaklı, reports/2026-07-29)
-1. **3B "flatten" DOĞRU sezgi ama tek başına çekirdek DEĞİL.** Harita analojisi geçerli: küre→düzlem
-   imkânsız, kartograf projeksiyon seçer + haritayı KESER (interrupted projection). Pens/dikiş = o
-   kesikler. Yani flatten ile dikiş-eşleme ZIT değil, AYNI kısıtlı problem.
-2. **BUG yakalandı:** "dikişler eşit uzunlukta" YANLIŞ. Set-in kol kapağı, oyuktan KASITLI 3-4cm uzun,
-   ease'le dikilir. Kural: **"eşit YA DA kurala göre kasıtlı-eased."**
-3. **BATAKLIK yakalandı (aylar batırır):** 3B giysi YÜZEYİNİ sıfırdan üretmek. Dünya yüzeyi verili,
-   giysi yüzeyi = gövde+ease+siluet+yerçekimi = TASARIM. En iyi laboratuvarlar bile geri çekiliyor
-   (GarmentCode, ChatGarment: "kısıtsız, kendine geçen kumaş"). → yüzeyi ŞİMDİLİK GİRDİ al.
-4. **PRE-DEFORMATION:** doğru 2B parça, giyilince hedefi ÜRETEN "dinlenme şekli"dir; yüzeyin düz
-   açılımı değil (giysi yerçekimiyle dökülür). Geometri-only flatten yanlış haritayı tersler.
-5. **ANİZOTROPİ:** kumaş warp/weft/bias'ta farklı esner; saf izometri yanlış fizik — pens miktarı
-   kumaşa bağlı (KES/FAST). Kimse "bu kumaşa göre pens" ship'lemiyor.
-6. **Kendi tuzağımız:** eski fit-defteri Buğra'yı motorun formül-sabitlerini tersine çevirerek "fit"
-   etmiş = yasak "benziyor gibi". Yine de scye'de rms 15mm = **formül motorunun temsil tavanı.**
-   Buğra curve-fit hedefi değil, BENCHMARK olur; benchmark açığı GİZLEMEZ, AÇIĞA ÇIKARIR.
+Premium **tasarım**. Chanel/Dior çıtası, Lekala değil. Üç satış yüzeyi:
 
-## MOAT (wrapper testini geçen)
-Deterministik **couture kalıp ÇÖZÜCÜSÜ**: kısıtlı bağlı düzleştirme + kumaş-anizotropili pens +
-drape-inverse, hepsi satın alınan couture kalıbına karşı mm-benchmark'lı. LLM'i çıkar → benchmark'-
-lanabilir geometri çözücüsü kalır. Neural rakipler dikilemez panel üretiyor; dikilebilirliği GARANTİ
-eden tek deterministik motor = biz.
+1. **Kalıp** — ev dikişçisine, 1:1 basılabilir, talimatlı.
+2. **Dikilmiş ürün** — giysinin kendisi.
+3. **Tasarım** — lisans/tech-pack.
 
-## MİMARİ
-1. **VERİ MODELİ — parametrik yapım grafiği** (nokta=formül; Valentina `.val` mantığı). Pattern=çıktı.
-2. **SEAM SOLVER (beyin/moat).** Paneller BİRLİKTE çözülür; paylaşılan kenarlar **eşit-YA-DA-eased**
-   (cap-ease kural tablosu), pens-değeri korunur. **Sert kısıt** (herkes soft-penalty; sert = moat).
-3. **DART ENGINE — anizotropili.** Pens = korunan şekillendirme; pivot/slash-spread; miktar kumaşa
-   (warp/weft/bias, KES/FAST) bağlı. `flatten-research` kanıtı (pens=eğrilik, 41mm) teorik temel.
-4. **DRAPE-INVERSE (fit oracle + rest-shape).** drape.cpp Verlet'i TERS koş: giyilince doğru dökülen
-   dinlenme şeklini çöz; ileri koş = strain/tension haritası doğrulama.
-5. **KESİK YERLEŞİMİ.** Eğrilik-güdümlü pens/dikiş = interrupted-projection kesikleri.
-6. **3B ÖN-YÜZ (Damla'nın sezgisi — SIRALANMIŞ).** Gövde mesh + ease/siluet alanı → giysi yüzeyi →
-   çözücü flatten eder. Omurga kanıtlanınca üstüne eklenir; şimdilik yüzey/blok GİRDİ.
-7. **ENDÜSTRİ + GENERATİF.** DXF-AAMA + grade-rule; prompt/foto → grafik parametreleri (asla ölçmez).
+Üçü de tek bir nesnenin paketlenmesi: **doğruluğu kanıtlanmış, derecelendirilmiş, montaj
+bilgisi taşıyan panel seti.** Yani pazar seçimi mühendisliği değiştirmiyor.
 
-## MEVCUT MOTORDAN NE KALIR (~%40, doğrulandı)
-KAL: geometry.hpp (flattenCubic, pathLength, offsetOutline), dxf.cpp, nest.cpp, tech-pack, drape.cpp
-Verlet (→ drape-inverse), cupseam.cpp. AT: formül-çizim beyni tek karar mercii olarak (seam solver'a tabi).
-NOT: commit'siz set-in armscye işi = eski-yön yama; solver gelince gereksiz — Damla: revert (078fa47).
+**Bedenler 34-44 sabit.** Made-to-measure YOK ve bu bir kısıtlama değil, kanıtlı bir karar:
+o iddiada ZOZO, unspun, Fayma battı, Lekala kalite tavanına çarptı. Sebep bilgi teorik —
+ölçü bedenin şeklini belirlemiyor, aynı göğüs çevresi bambaşka kütle dağılımına oturuyor.
+Buğra sabit beden satıyor ve premium müşteri memnun ödüyor. Herkesi öldüren problem bizim
+yolumuzun üstünde değil.
 
-## GROUND TRUTH (elimizde, doğrulandı)
-Satın alınmış Buğra: **Locket Top** (front-38 ring-trace + fit defteri var), Buttoned Corset Bustier,
-Special Size XXS, bustier dress PDF'leri. Karşılaştırma aracı `patterns_real/tools/motor-vs-bugra.mjs`
-+ `motor-locket-iou.mjs` var. EKSİK: set-in KOLLU satın alınmış kalıp (cap-ease testi için gerekli).
+---
 
-## MİLESTONE MERDİVENİ (her biri SERT kapılı; hakem = mm-metrik + son sözde Damla)
-- **M0 — DÜRÜST BENCHMARK (açığı çıkaran).** Motorun DOĞAL çıktısı (sabit-fit ETMEDEN) vs Buğra
-  ground-truth; artık BÖLGE-BÖLGE ayrışır (armscye / göğüs pensi / yan dikiş / yaka / cap-ease).
-  Metrikler: seam-walk artığı mm (eased kural dahil), pens-intake mm, toplam ease mm, grade-nest.
-  **Kapı:** Locket-38 için bölge-bazlı residual raporu üretilir; "kapanmayan bölge" = hedef katman.
-  En küçük dilim: tek-pensli bodice ön+arka (+ sleeve verisi gelince set-in kol).
-- **M1 — SEAM SOLVER (moat).** Kısıtlı bağlı çözüm; kenarlar eşit-ya-da-eased. **Kapı:** iki komşu
-  parça (armscye ↔ kol kapağı) kurala göre yürür (<0.5mm eşit dikiş, kap ease'i kural-doğru), gerçek
-  kalıba karşı, bayt-deterministik.
-- **M2 — DART ENGINE (anizotropili koruma).** Pens=korunan miktar, kumaşa bağlı. **Kapı:** göğüs
-  pensini taşı — apeks+toplam korunur; farklı kumaş → farklı intake; seam-walk hâlâ geçer.
-- **M3 — DRAPE-INVERSE + EASE.** Rest-shape çöz; tasarım vs giyim ease bağımsız. **Kapı:** çözülen
-  parça giyilince strain<eşik sarılır; bilerek bozuk dikiş yüksek strain görünür.
-- **M4 — PARAMETRİK GRAFİK + INTERCHANGE.** Nokta=formül; DXF-AAMA + grade-rule. **Kapı:** bir grafik
-  → 2 gövde → 2 doğru kalıp; grade nest EU34-52; Valentina/Seamly2D'de açılır.
-- **M5 — 3B ÖN-YÜZ (yüzey authoring, sıralanmış).** Gövde mesh + ease alanı → giysi yüzeyi → çözücü.
-  **Kapı:** ölçüden üretilen yüzey, çözücüden geçince gerçek kalıba mm-yakın.
-- **M6 — STYLE + GENERATİF.** Prompt/foto → grafik parametreleri; hepsi solver+validator geçer.
-  **Kapı:** Damla'nın tek prompt'u → 3 dikilebilir tasarım, zevk kapısı.
-- **M7 — COUTURE ÇITASI + TAM GİYSİ.** Bodice+etek+kol paylaşılan çözülmüş dikişten; Lectra round-trip.
-  **Kapı:** 2 Buğra kalıbı couture toleransında yeniden üretilir; Damla evet.
+## 1. NEDEN BİZ (29 Tem'de ölçülmüş, iddia değil)
 
-## LOOP
-yap → ölç (kapı metriği) → reports/'e kanıt → geçemezse TEK değişken tekrar. 3 tur iyileşme yoksa DUR,
-Damla'ya çık. Ucuz Python'da kanıtla → C++'a taşı. Kapı geçince commit+push+kanıt.
+**Okumada dünya çapındayız.** Satın alınmış 2 couture kalıbının 8 bedenini (112 halkanın
+103'ü) semantik geometriye çevirdik: isimli dikişler, çentikler, dikiş çizgisi, mm hassasiyet.
+Bu okuma, **profesyonelin sattığı kalıptaki hatayı buldu** — arka yan dikiş 8 bedende
+sistematik ~27mm uzun, arka omuz bedenle büyüyen 3.5→7.1mm fazla.
 
-## AÇIK KARAR (Damla)
-Omurga = deterministik çözücü; 3B-yüzey authoring SIRALANDI (kanıtlanmış omurga üstüne), küre hayali
-ölmüyor. Onay → M0 dürüst benchmark'ı kuruyorum. Blokör: cap-ease testi için set-in kollu bir Buğra
-kalıbı — sende var mı, yoksa ben mi bulayım?
+**Dünyada kimse kalıbın dikilebilirliğini doğrulamıyor:**
+- **Seamly2D/Valentina** — 50 girişlik `Tool` enum'unda tek bir ölçme/karşılaştırma/doğrulama
+  aracı yok. `union_tool.cpp:378` iki parçayı birleştirirken kenar uzunluklarını hiç
+  karşılaştırmıyor. Eğri ofseti yok: her eğri sabit 0.5 pikselde poligona çevriliyor.
+  Miter sınırı çıplak `const qreal maxL = 2.4;`. Test toleransı 1mm. Kendi kendini kesme
+  temizleme testinin adı `PossibleInfiniteClearLoops` ve üç vakasından ikisi 64-bit x86'da
+  derlemeden çıkarılmış (`// Disabled due to "undefined behavior" problem`).
+- **FreeSewing** — tek dikiş çiftini tek skalerle ve elle seçilmiş altı çarpanla
+  (0.8/0.9/1.3/1.15/0.99/1.008) oturtuyor, 2mm tolerans, 50 turda sessizce pes ediyor.
+  Test paketinde **tek bir geometrik iddia yok**; testler sadece "hata fırlatmadan çizildi mi"
+  diye bakıyor.
+- **GarmentCode** — uzunluk kontrolü var ama hiç açılmayan bir `verbose` bayrağının arkasında,
+  yani ölü kod. Dikiş payı, çentik, düz iplik hiç yok.
+
+**Ve kod yazmak artık darboğaz değil.** Lectra'nın on yılının çoğu alan bilgisini keşfetmek,
+şirket kurmak ve entegrasyondu. Bilgi bugün okunabilir; yazmak hızlı. Geriye pahalı olan tek
+şey **kimsenin yazmadığı yer** kalıyor — FreeSewing neden altı sihirli çarpan kullanıyor,
+Buğra'nın arka yan dikişi neden 27mm uzun. Orası ölçümle çıkar ve ölçüm bizim güçlü yanımız.
+
+---
+
+## 2. ÇEKİRDEK FİKİR: GİYSİ DERLEYİCİSİ
+
+stitchu bir çizim programı değil. **Bir derleyici.**
+
+```
+tasarım niyeti  →  IR (tipli giysi grafiği)  →  çözücü  →  doğrulanmış üretilebilir çıktı
+                                                              + her çıktıya iliştirilmiş KANIT
+```
+
+Derleyici analojisi süs değil, mimari karar:
+- **Tip sistemi = arayüz sözleşmeleri.** Kol ancak oyuk arayüzü uyuşuyorsa takılır.
+  Geçersiz giysi **temsil edilemez**, çalıştırılıp bulunmaz.
+- **Optimizasyon = kısıt çözücü.** Serbest parametreler, tüm dikiş kuralları aynı anda
+  sağlanacak şekilde çözülür.
+- **Doğrulama = derleyici hatası.** Kalıp dikilemezse çıktı üretilmez; sessizce bozuk
+  geometri basılmaz (Seamly2D `points.append(px)` diyor, biz demeyeceğiz).
+- **Sınırsız varyasyon**, ancak her varyasyonun doğruluğu makine tarafından kanıtlanabildiği
+  için güvenli. Bitmoji gibi değiştirebilmenin ön koşulu bu.
+
+---
+
+## 3. MİMARİ — 11 KATMAN
+
+**L0 — Yer gerçeği korpusu.** Satın alınmış couture kalıpları semantik IR'a. Bugün: 2 kalıp,
+8 beden, 103 halka. Büyüyecek. Bu korpus dünyada kimsede yok.
+
+**L1 — Tam geometri çekirdeği.** Eğri-yerel. Yay uzunluğu adaptif Gauss-Legendre (~1e-12),
+poligonlaştırma YOK. Eğri-yerel dikiş payı ofseti, altı köşe işlemi (Seamly2D'den alınan
+gerçek alan bilgisi), tam aritmetikli kesişim yüklemleri, ilmek temizleme. **Hedef: Seamly2D'nin
+1mm test toleransına karşı mikron altı.** Ölçülebilir, kanıtlanabilir üstünlük.
+
+**L2 — Giysi IR'ı.** Panel = kapalı kenar döngüsü. Kenar = eğri + arayüz etiketi + **ease
+oranı** (GarmentCode dersi: ease "+2cm" değil ORAN olarak saklanır, tüm eşleştirme yansıtılmış
+uzunluk üzerinden yapılır). Dikiş kuralı = (panelA kenar aralığı) ↔ (panelB kenar aralığı) +
+kural (eşit / eased / büzgülü). Nokta = formül (Valentina'nın DAG'ı). Serileştirilebilir,
+karşılaştırılabilir, sürümlenebilir.
+
+**L3 — Kısıt çözücü.** Tüm dikiş kuralları eşzamanlı, **sert** kısıt. Levenberg-Marquardt,
+deterministik, ve **yakınsama raporu**: yakınsamadıysa yakınsamadı der. Hedef <0.01mm.
+(FreeSewing 2mm'de pes edip susuyor.)
+
+**L4 — Derecelendirme = yeniden çözüm.** Grade tablosu/ofset kuralı yok; grafiği her beden
+için yeniden çöz. Hakem: satın alınmış kalıbın 8 gerçek bedeni.
+
+**L5 — Fizik doğrulama.** XPBD/projective dynamics, anizotropik gerilme-bükülme, gövde
+çarpışması, yerçekimi. Ve gerçek dünya: dik, ölç, geri besle. `drape.cpp`'deki Verlet oyuncak
+sayılmaz.
+
+**L6 — Flat = kalıbın render'ı.** Görsel ASLA ayrı çizilmez; montajlanmış panellerden türetilir.
+Bugün repoda tersi vardı ve bebe yaka çizimde fiyonk gibi çıkıyordu — o bir bug değil, mimari
+sonucuydu. Bu katman Damla'nın "flat ile kalıp arasındaki accuracy" şartını **yapısal olarak**
+garanti eder.
+
+**L7 — Kompozisyon + etkileşim.** Bileşen değiştir, anında hem giysiyi gör hem doğru kalıbı al.
+Artımlı yeniden çözüm, sıcak başlangıç, tarayıcıda C++/WASM, milisaniyeler. Hız sonradan
+optimize edilecek detay değil, mimariyi belirleyen kısıt.
+
+**L8 — Kumaş modeli.** Aynı kalıp ipekte ve denimde aynı kalıp değil. Anizotropi, dökülme
+katsayısı, çekme. Gerçek malzeme verisi.
+
+**L9 — AI katmanları.** Hepsi wrapper testini geçer, çünkü LLM'i çıkarınca IR + çözücü +
+doğrulayıcı ayakta kalır:
+- **Prompt/fotoğraf → IR parametreleri.** AI önerir, çözücü karar verir. AI hiçbir zaman
+  geometri üretmez.
+- **Görüntüden dijitalleştirme.** Herhangi bir kalıp PDF'i/fotoğrafı → IR.
+- **Zevk asistanı.** Damla'nın onayladığı korpus üzerinden öneri.
+
+**L10 — Üretim çıktısı.** DXF-AAMA (Seamly2D'nin atladığı MIRROR/DRILL/TEXT/REF katmanları
+dahil), marker/nesting, tech pack, 1:1 döşenmiş PDF, ve **montaj grafiğinden türetilen dikiş
+talimatı**.
+
+---
+
+## 4. MİLESTONE MERDİVENİ — her biri SERT kapılı
+
+| # | İş | KAPI (kanıt olmadan geçilmez) |
+|---|---|---|
+| **M0** | Yer gerçeği korpusu | 2 kalıp × 8 beden semantik IR'da; anomaliler işaretli. **%92 tamam** (103/104 halka) |
+| **M1** | Geometri çekirdeği | Yay uzunluğu bağıl hata <1e-10; eğri-yerel ofset ilmeksiz; Seamly2D ile aynı girdide **ölçülmüş** karşılaştırma raporu |
+| **M2** | IR + çözücü | Gerçek Buğra-38 dikiş kurallarında artık **<0.01mm**, iki koşum bayt-özdeş, yakınsama raporu doğru |
+| **M3** | Buğra'yı yeniden üret | Locket **7/7 parça**, 8 bedende, parça-parça mm raporu. Bebe yaka ve iki katmanlı puff kol dahil (bugün 4/7 ve yaka hiç yok) |
+| **M4** | İlk tam paket | Satılabilir tek ürün: 34-44, 1:1 PDF, dikiş payı, çentik, düz iplik, talimat, doğru flat. **Damla'nın üç sorusu: üçü de EVET** |
+| **M5** | Flat = render + kompozisyon | Yaka/kol değiştir → görsel ve kalıp birlikte değişir, <50ms, hâlâ <0.01mm |
+| **M6** | Fizik | Dikilmiş numune ölçüsü ile simülasyon tahmini arasında <5mm |
+| **M7** | AI | Fotoğraf/prompt → IR parametreleri; çıktı M2-M4 kapılarının hepsinden geçer |
+| **M8** | Üç yüzey | Kalıp satışı + dikilmiş ürün + tasarım lisansı aynı çekirdekten |
+
+---
+
+## 5. KANIT DİSİPLİNİ
+
+- Her milestone bir **çalıştırma çıktısıyla** kapanır. "Oldu/çalışıyor" yasak.
+- Çöp çıkarsa **shiplenmez**: silinir, dürüst söylenir.
+- Her tuğlada: NEYİ değiştirdi + HEDEF + BAŞARI ORANI.
+- Hakem sırası: mm metriği → doğrulayıcı → Damla'nın gözü. Son söz Damla'da.
+
+---
+
+## 6. DÜRÜST BİLİNMEYENLER
+
+1. **Güzellik kompozisyondan çıkar mı?** Motor "geçerli" üretebilir; "güzel"i tanımlayan Damla.
+   Cevaba göre L7 ya bileşen seçici olur ya Damla'nın çizimini kalıba çeviren şey. **Açık.**
+2. **Fiziksel doğrulama yavaştır.** Gerçek kumaş, gerçek dikim gerektirir. Yazılımla
+   hızlandırılamaz.
+3. **Patent riski.** Tri-D Technologies US12339643B2 (verildi: 24 Haziran 2025) ölçü → kumaş ve
+   ease'li 3B model → 2B parçalar zincirini kapsıyor. **Okunmalı.** Bizim sabit-beden yolumuz
+   muhtemelen dışında ama varsayım yapılmayacak.
+4. **SF ölçeği.** "Damla'nın kalıp evi" tek başına SF hikayesi değil. Ölçek hikayesi aynı
+   motorun tasarımcılara açılması. Sıra: önce kendi kullan, kanıtla, sonra araç olarak aç.
+
+---
+
+## 7. ŞU ANDA NEREDE DURUYORUZ
+
+- **Var:** yer gerçeği korpusu (L0), doğrulayıcı (L3'ün denetim yarısı), geometri ilkelleri,
+  DXF/nesting/tech-pack, `core/` altında yeni geometri çekirdeği ve LM çözücüsünün ilk hali.
+- **Yok:** IR, çözücünün giysiye bağlanmış hali, eğri-yerel ofset, render-from-pattern,
+  kompozisyon, fizik, AI katmanı.
+- **Ölü:** `engine/`'in formül-çizim beyni (Buğra-38'de 7 parçanın 4'ü, bebe yaka yok,
+  ön/arka aynı genişlikte). Vokabüler bilgi olarak duruyor, kod olarak değil.
