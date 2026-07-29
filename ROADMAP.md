@@ -1,8 +1,15 @@
 # stitchu — YOL HARİTASI (ÖNERİ v2, 2026-07-29)
 
-Durum: **AKTİF ÖNERİ — Damla "geliştir, her şeye varım" dedi; omurga kararı onunla teyit ediliyor.**
-Onaylanınca tek plan kaynağı budur (CLAUDE.md buraya işaret eder; `flatten-research/FINDINGS.md` +
-`reports/2026-07-29-endustri-arastirmasi.md` araştırma arşivi).
+Durum: **AKTİF — Damla omurgayı onayladı ("bunu yapacağız, başlayalım"). Tek plan kaynağı budur.**
+(CLAUDE.md buraya işaret eder; `flatten-research/FINDINGS.md` + `reports/2026-07-29-endustri-arastirmasi.md`
++ `knowledge/drafting-math-eu38.md` araştırma/zemin arşivi.)
+
+**İLERLEME (2026-07-29):**
+- ✅ Çekirdek tez (pens=eğrilik) gerçek Buğra front-38'de doğrulandı, <%1 strain (`flatten-research/05`).
+- ✅ Hard eased-seam kısıtı: 0.00mm, deterministik (`06`); uniform-ease bug'ı bulundu.
+- ✅ Cap-ease VERIFIED dağıtım (koltukaltı %0, taç 1/3-2/3): 0.00mm, deterministik (`07`), grounded (Aldrich).
+- ⏳ SIRADA: gerçek armhole extraction FIX (257mm şişik) → gerçek Buğra'ya bağla; sonra C++ port + çok-parça.
+- Not: 07-sleeve ilk denemesi (tahmin dolu) ÇÖP çıktı, silindi — patternmaking sayıları artık verified referanstan.
 
 ## HEDEF (değişmedi)
 Prompt/fotoğraftan, Damla'nın onaylayacağı, DİKİLEBİLİR, endüstri-uyumlu couture kalıbı.
