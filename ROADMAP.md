@@ -42,12 +42,19 @@ yolumuzun üstünde değil.
 
 ## 1. NEDEN BİZ (29 Tem'de ölçülmüş, iddia değil)
 
-**Okumada dünya çapındayız.** Satın alınmış 2 couture kalıbının 8 bedenini (112 halkanın
-103'ü) semantik geometriye çevirdik: isimli dikişler, çentikler, dikiş çizgisi, mm hassasiyet.
-Bu okuma, **profesyonelin sattığı kalıptaki hatayı buldu** — arka yan dikiş 8 bedende
-sistematik ~27mm uzun, arka omuz bedenle büyüyen 3.5→7.1mm fazla.
+**Okuyabiliyoruz.** Satın alınmış 2 couture kalıbının 8 bedenini (112 halkanın 103'ü) semantik
+geometriye çevirdik: isimli dikişler, çentikler, kontur, mm hassasiyet. Bu gerçek ve doğrulandı.
 
-**Dünyada kimse kalıbın dikilebilirliğini doğrulamıyor:**
+> **⚠️ 29 Tem, GÜN İÇİNDE ÇÜRÜTÜLDÜ — bu satır burada dursun ki tekrar yazılmasın.**
+> Daha önce bu bölümde "profesyonelin sattığı kalıptaki hatayı bulduk (27mm yan dikiş, bedenle
+> büyüyen 3.5→7.1mm omuz)" yazıyordu. **YANLIŞTI, hata bizimdi.** Kesim çizgisinde omuz farkı
+> 8 bedende de +0.95...+1.13mm — dümdüz, hiç büyümüyor. "Büyüyen fark" sadece bizim 10mm miter
+> ofsetimizden sonra ortaya çıkıyor. Pens bacakları kesim çizgisinde 119.84 vs 119.73mm (onda
+> bir mm, kusursuz true edilmiş); bizim ofsetimiz onu işaret değiştiren ±5-30mm'ye çeviriyor.
+> Üstelik arka omzun uzun olması **standart kalıpçılıktır** (kürek payı, normalde 6-12mm).
+> → Dikiş-çizgisi sayılarına güvenmeden ÖNCE eğri-yerel ofset düzeltilecek.
+
+**Açık kaynakta kimse dikilebilirliği doğrulamıyor** (ticari tarafta durum farklı, aşağıda):
 - **Seamly2D/Valentina** — 50 girişlik `Tool` enum'unda tek bir ölçme/karşılaştırma/doğrulama
   aracı yok. `union_tool.cpp:378` iki parçayı birleştirirken kenar uzunluklarını hiç
   karşılaştırmıyor. Eğri ofseti yok: her eğri sabit 0.5 pikselde poligona çevriliyor.
@@ -61,10 +68,16 @@ sistematik ~27mm uzun, arka omuz bedenle büyüyen 3.5→7.1mm fazla.
 - **GarmentCode** — uzunluk kontrolü var ama hiç açılmayan bir `verbose` bayrağının arkasında,
   yani ölü kod. Dikiş payı, çentik, düz iplik hiç yok.
 
+**Ticari tarafta ise doğrulama VAR, abartma:** CLO3D'de M:N dikiş nesnesi ve `Check Sewing
+Length` (1mm'yi aşan fark kırmızı), Gerber AccuMark'ta `Walk Pieces`. Gerçek boşluk otomatik
+**eşleştirme** — endüstriyel kalıp dosyaları isimsiz poligon, kenar-eşleştirme grafı taşımıyor.
+Ve **parafashion** (SIGGRAPH 2022, kodu açık) zaten anizotropik dokuma enerjisi + grain kontrol
+değişkeni + 45° bias + dikiş uzunluğu eşitliği içeriyor. Yeni bir şey iddia etmeden önce bunlara bak.
+
 **Ve kod yazmak artık darboğaz değil.** Lectra'nın on yılının çoğu alan bilgisini keşfetmek,
-şirket kurmak ve entegrasyondu. Bilgi bugün okunabilir; yazmak hızlı. Geriye pahalı olan tek
-şey **kimsenin yazmadığı yer** kalıyor — FreeSewing neden altı sihirli çarpan kullanıyor,
-Buğra'nın arka yan dikişi neden 27mm uzun. Orası ölçümle çıkar ve ölçüm bizim güçlü yanımız.
+şirket kurmak ve entegrasyondu. Bilgi bugün okunabilir; yazmak hızlı. Pahalı olan tek şey
+**kimsenin yazmadığı yer** — FreeSewing neden altı sihirli çarpan kullanıyor gibi sorular.
+Orası ölçümle çıkar ve ölçüm bizim güçlü yanımız (ama önce ölçüm aletini tamir ederek).
 
 ---
 
