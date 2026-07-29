@@ -127,28 +127,33 @@ talimatı**.
 
 ---
 
-## 4. MİLESTONE MERDİVENİ — her biri SERT kapılı
+## 4. TEK KAPI (Damla, 29 Tem — metrik merdiveni İPTAL)
 
-| # | İş | KAPI (kanıt olmadan geçilmez) |
-|---|---|---|
-| **M0** | Yer gerçeği korpusu | 2 kalıp × 8 beden semantik IR'da; anomaliler işaretli. **%92 tamam** (103/104 halka) |
-| **M1** | Geometri çekirdeği | Yay uzunluğu bağıl hata <1e-10; eğri-yerel ofset ilmeksiz; Seamly2D ile aynı girdide **ölçülmüş** karşılaştırma raporu |
-| **M2** | IR + çözücü | Gerçek Buğra-38 dikiş kurallarında artık **<0.01mm**, iki koşum bayt-özdeş, yakınsama raporu doğru |
-| **M3** | Buğra'yı yeniden üret | Locket **7/7 parça**, 8 bedende, parça-parça mm raporu. Bebe yaka ve iki katmanlı puff kol dahil (bugün 4/7 ve yaka hiç yok) |
-| **M4** | İlk tam paket | Satılabilir tek ürün: 34-44, 1:1 PDF, dikiş payı, çentik, düz iplik, talimat, doğru flat. **Damla'nın üç sorusu: üçü de EVET** |
-| **M5** | Flat = render + kompozisyon | Yaka/kol değiştir → görsel ve kalıp birlikte değişir, <50ms, hâlâ <0.01mm |
-| **M6** | Fizik | Dikilmiş numune ölçüsü ile simülasyon tahmini arasında <5mm |
-| **M7** | AI | Fotoğraf/prompt → IR parametreleri; çıktı M2-M4 kapılarının hepsinden geçer |
-| **M8** | Üç yüzey | Kalıp satışı + dikilmiş ürün + tasarım lisansı aynı çekirdekten |
+Bu projenin tek kabul kapısı vardır ve üç sorudur. Biri hayırsa OLMAMIŞTIR:
 
----
+# 1. Bunu giyer misin?
+# 2. Bunu Etsy'ye koyabilir misin?
+# 3. Diğer fashion flat'lerden ayırt edilemeyecek kadar iyi mi?
 
-## 5. KANIT DİSİPLİNİ
+mm, tolerans, yakınsama, determinizm — bunlar bu kapıyı geçmenin **aracı**, kapının kendisi
+değil. Ara metrik kapıları KURULMAZ; token yakar, ürün getirmez. Doğruluk zaten mühendisliğin
+içinde; ayrıca kapı dizmek işi yavaşlatır.
 
-- Her milestone bir **çalıştırma çıktısıyla** kapanır. "Oldu/çalışıyor" yasak.
-- Çöp çıkarsa **shiplenmez**: silinir, dürüst söylenir.
-- Her tuğlada: NEYİ değiştirdi + HEDEF + BAŞARI ORANI.
-- Hakem sırası: mm metriği → doğrulayıcı → Damla'nın gözü. Son söz Damla'da.
+## 5. YAPILACAK İŞ SIRASI (kapı yok, sıra var)
+
+1. **Geometri çekirdeği** — eğri-yerel yay uzunluğu ve dikiş payı ofseti. Hangi yöne gidilirse
+   gidilsin lazım; çöpe gitmeyen katman.
+2. **Giysi IR'ı + çözücü** — paneller, arayüzler, dikiş kuralları; hepsi birlikte çözülür.
+3. **Buğra'yı yeniden üret** — Locket 7/7 parça, bebe yaka ve iki katmanlı puff kol dahil
+   (bugün 4/7 ve yaka hiç çıkmıyor).
+4. **İlk tam paket** — 34-44, 1:1 PDF, dikiş payı, çentik, düz iplik, talimat, doğru flat.
+   Burada üç soru sorulur.
+5. **Flat = render + kompozisyon** — yaka/kol değiştir, görsel ve kalıp birlikte değişsin.
+6. **Fizik** — dik, ölç, geri besle.
+7. **AI katmanı** — fotoğraf/prompt → IR parametreleri.
+8. **Üç satış yüzeyi** — kalıp, dikilmiş ürün, tasarım.
+
+Çöp çıkarsa shiplenmez: silinir, dürüst söylenir. Hakem Damla.
 
 ---
 
