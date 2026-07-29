@@ -8,6 +8,30 @@ required for behavior changes).
 
 ## Pin history
 
+### 2026-07-28 — 23406 lines, md5 fcaa935448b58ef38d108ffeda49e2df (DAMLA APPROVAL PENDING)
+- Label (pending Damla's wording): "set-in armscye — kollu giysiler artik
+  set-in kol oyugu aliyor, kolsuz-teget degil".
+- What changed vs previous pin (7c3d83f...): the set-in armscye kernel model
+  (bodice.hpp setInArmhole*) is wired into the engine's own SLEEVED drafting
+  (makePiece + makePrincessPieces, setInScye = !sleeveless && neckline!=Halter).
+  cp1 breaks from the shoulder-seam tangent and drops into the scye; deeper
+  hollow than the sleeveless curve. 5372 lines changed, ALL sleeved dresses
+  (balloon/straight sleeves); ZERO sleeveless (none.*) and ZERO skirt lines
+  changed. Zero keys added/removed. Example (dress/crew/aLine/straight.short,
+  Bodice Front armhole cubic): cp1 (222.3,65.8)->(180.4,122.0),
+  cp2 (217.1,186.2)->(211.6,171.9); shoulder tip + underarm endpoints unchanged.
+- Why: a set-in sleeve needs a set-in armhole; the old tangent-continuous
+  sleeveless scye was geometrically wrong under a sleeve (the Bugra-Locket bridge
+  measured a 20.6mm structural residual from exactly this). Geometry, not a
+  reference copy (Damla 2026-07-28: "geometri knows it all").
+- Verification: full ctest 79/79 green incl. sleeve_check + cap_sleeve_check
+  (sleeve caps RE-SEAT to the new armhole by bisection — the seam-match invariant
+  holds) + all validators clean; golden dump byte-deterministic (2 runs == pin).
+  Visual before/after: ~/Desktop/SETIN-ARMSCYE-before-after.png.
+- Approval status: DAMLA TASTE-CHECK PENDING (Kapi 2). Geometrically verified;
+  awaiting Damla's eye on the visual + her approval label before this pin is
+  final. NOT committed until approved.
+
 ### 2026-07-19 — 23406 lines, md5 7c3d83f237c7596d573f6155da72a918
 - Label (Damla's approval wording): "Aldrich blok revizyonu (20cc289),
   kagit-dogrulanmis, muslin-bekliyor".

@@ -213,7 +213,8 @@ HalfBodice makePiece(
     double dartLength,
     double centerTakeIn,
     bool isFront = false,
-    bool sleeveless = false
+    bool sleeveless = false,
+    bool setIn = false
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
@@ -230,7 +231,7 @@ HalfBodice makePiece(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -329,7 +330,8 @@ PrincessHalf makePrincessPieces(
     double hipHalfQuarter = 0,
     bool isFront = false,
     bool sleeveless = false,
-    double princessShare = 0.5
+    double princessShare = 0.5,
+    bool setIn = false
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
@@ -343,7 +345,7 @@ PrincessHalf makePrincessPieces(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -544,6 +546,12 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // Sleeveless scye cut-in applies to the front + back pieces (not halter,
     // which has its own bare-shoulder frame). Front deeper than back either way.
     const bool sleevelessScye = options.sleeveless && neckline != Neckline::Halter;
+    // Set-in scye: a SLEEVED garment (not sleeveless, not halter) gets the set-in
+    // armhole — cp1 breaks from the shoulder seam into the scye, so the sleeve cap
+    // seats into a real set-in armhole instead of the sleeveless tangent curve.
+    // The sleeve cap re-matches automatically (SleeveBlock fits the cap by
+    // bisection to armholeLength). Sleeveless keeps its smooth bare-shoulder scye.
+    const bool setInScye = !options.sleeveless && neckline != Neckline::Halter;
     // Corset fit (Bugra, opt-in): a fitted buttoned corset is drafted at ZERO
     // wearing ease (the purchased Bugra pieces measure no ease band). Default
     // false -> the fabric table drives, byte-identical.
@@ -781,7 +789,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backDartLength,
             cbTakeIn,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/false, sleevelessScye, options.princessShareBack);
+            /*isFront=*/false, sleevelessScye, options.princessShareBack, /*setIn=*/setInScye);
     } else {
         back = makePiece(
             "Bodice Back", "cut 2",
@@ -792,7 +800,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn,
-            /*isFront=*/false, sleevelessScye);
+            /*isFront=*/false, sleevelessScye, /*setIn=*/setInScye);
     }
 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
@@ -831,7 +839,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontDartLength,
             0,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/true, sleevelessScye, options.princessShareFront);
+            /*isFront=*/true, sleevelessScye, options.princessShareFront, /*setIn=*/setInScye);
     } else {
         front = makePiece(
             "Bodice Front", "cut 1 on fold",
@@ -842,7 +850,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0,
-            /*isFront=*/true, sleevelessScye);
+            /*isFront=*/true, sleevelessScye, /*setIn=*/setInScye);
     }
 
     // A half that stays unsplit under princess+extension is extended later by
