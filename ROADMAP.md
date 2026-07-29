@@ -7,17 +7,22 @@
 
 ---
 
-## ★ 0.0 KAPSAM KARARI (Damla, 29 Tem — her şeyin üstünde)
+## ★ 0.0 LİG (Damla, 29 Tem — her şeyin üstünde, ve bu bir İNDİRİM DEĞİL)
 
-**stitchu SF şirketi DEĞİL.** Damla'nın ilk göz ağrısı, onun için özel bir ürün.
-SF şirketi ayrı bir soru ve onu Damla düşünüyor (rabadon/infra).
+stitchu Damla'nın ilk göz ağrısı ve onun için özel. SF hedefi kesin; onun aracını
+(rabadon/infra) Damla ayrıca düşünüyor.
 
-Bu ayrım teknik değil ama her teknik kararı belirliyor: 29 Temmuz'da üretilen altı
-çerçevenin altısı da "ama bu SF ölçeği mi?" sorusunda öldü. O şart kalktı.
-**stitchu'nun tek görevi: güzel, doğru ve satılabilir olmak.**
+**Bu, stitchu'nun LİGİNİ VEYA PLANLARINI ASLA DÜŞÜRMEZ.** Damla'nın kendi sözü:
+*"bu ligini planlarını asla düşürmesin. her şeyi çok zaman alsa da zor da olsa en iyi en
+verimli yoldan yap, kolaya kaçma."*
 
-Sonuç olarak bu yol haritasından DÜŞENLER: unicorn tezi arayışı, "sektörün eksik katmanı"
-iddiası, alıcısı tanımsız B2B katman hayali. Bunlar bir daha önüne konmaz.
+Yani buradaki tek değişiklik şu: bir mühendislik kararı artık "bu unicorn tezi olur mu?"
+diye sınanmıyor. **Ama "en zor ve en doğru yol bu mu?" diye HER ZAMAN sınanıyor.** Kolay
+yol, yaklaşık çözüm, "şimdilik böyle kalsın" — hepsi yasak. Çıta Cyberpark/SF'de sunulacak
+seviye; aile demosu değil.
+
+Bu ayrımın sebebi tarihsel: 29 Temmuz'da üretilen altı çerçevenin altısı da "ama bu SF
+ölçeği mi?" sorusunda öldü ve gün yandı. Soru kalktı, **standart kalktı sanılmasın.**
 
 ---
 
