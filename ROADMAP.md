@@ -7,6 +7,20 @@
 
 ---
 
+## ★ 0.0 KAPSAM KARARI (Damla, 29 Tem — her şeyin üstünde)
+
+**stitchu SF şirketi DEĞİL.** Damla'nın ilk göz ağrısı, onun için özel bir ürün.
+SF şirketi ayrı bir soru ve onu Damla düşünüyor (rabadon/infra).
+
+Bu ayrım teknik değil ama her teknik kararı belirliyor: 29 Temmuz'da üretilen altı
+çerçevenin altısı da "ama bu SF ölçeği mi?" sorusunda öldü. O şart kalktı.
+**stitchu'nun tek görevi: güzel, doğru ve satılabilir olmak.**
+
+Sonuç olarak bu yol haritasından DÜŞENLER: unicorn tezi arayışı, "sektörün eksik katmanı"
+iddiası, alıcısı tanımsız B2B katman hayali. Bunlar bir daha önüne konmaz.
+
+---
+
 ## 0. NE SATIYORUZ
 
 Premium **tasarım**. Chanel/Dior çıtası, Lekala değil. Üç satış yüzeyi:
