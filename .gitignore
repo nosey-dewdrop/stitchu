@@ -79,3 +79,6 @@ Arşiv.zip
 # not an archive. Kept in the repo so the studio can serve them as static files.
 !web/factory/*.zip
 .rabadon/state.json
+
+# purchased-pattern derived renders (Bugra geometry) — never push
+flatten-research/*.png
