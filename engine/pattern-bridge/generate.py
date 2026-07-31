@@ -34,8 +34,14 @@ import walk as walklib  # noqa: E402
 NAME = 'stitchu'
 
 
-def generate(state, out_dir):
-    """State dict -> pattern files in out_dir. Returns dict of output paths."""
+def generate(state, out_dir, no_print=False):
+    """State dict -> pattern files in out_dir. Returns dict of output paths.
+
+    no_print=True skips the printpack stage (A0/A4 1:1 paper); used by
+    gradeset.py where 8 sizes are audited and the paper pack is not the
+    object under test. Everything up to and including the seam deed runs
+    unchanged.
+    """
     out_dir = Path(out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -104,8 +110,11 @@ def generate(state, out_dir):
     (out_dir / 'seam-report.json').write_text(json.dumps(report, indent=2))
     (out_dir / 'seam-report.txt').write_text(walklib.report_txt(report))
 
-    size_label = SIZES[int(state.get('size', 2))]
-    print_paths = printpack.build(out_dir, spec_path, size_label)
+    if no_print:
+        print_paths = {}
+    else:
+        size_label = SIZES[int(state.get('size', 2))]
+        print_paths = printpack.build(out_dir, spec_path, size_label)
 
     return {
         'specification': spec_path,
@@ -126,11 +135,13 @@ def main():
     ap = argparse.ArgumentParser(description='atolye state JSON -> sewing pattern')
     ap.add_argument('state_json', help='atolye state JSON file (POST body of /api/pattern)')
     ap.add_argument('out_dir', help='output directory')
+    ap.add_argument('--no-print', action='store_true',
+                    help='skip the printpack stage (gradeset audit mode)')
     args = ap.parse_args()
 
     with open(args.state_json) as f:
         state = json.load(f)
-    paths = generate(state, args.out_dir)
+    paths = generate(state, args.out_dir, no_print=args.no_print)
     for k, p in paths.items():
         exists = Path(p).exists()
         print(f'{k}: {p} {"OK" if exists else "MISSING"}')
