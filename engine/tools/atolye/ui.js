@@ -167,10 +167,13 @@ function initPatternButton() {
     btn.disabled = true;
     const was = btn.textContent;
     btn.textContent = 'kalip uretiliyor…';
+    // M3: kalibin yaninda flat de gider — ayni durumdan ayni anda cizilen
+    // teknik cizim zip'e flat.svg/flat.png olarak girer (kalip + flat TEK
+    // KAYNAKTAN). Servis sarilmis govdeyi de ciplak state'i de kabul eder.
     fetch('/api/pattern', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ST),
+      body: JSON.stringify({ state: ST, flatSvg: draw(ST) }),
     })
       .then((r) => { if (!r.ok) throw new Error('servis ' + r.status); return r.blob(); })
       .then((blob) => {
