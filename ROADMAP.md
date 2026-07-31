@@ -64,7 +64,28 @@ Kalan 44'ü **matematik uyduramaz.** Gelebileceği yalnızca üç yer var, dörd
    → beğenince KALIP İNER
 ```
 
-**Flat sonda teslim edilen çıktı değil — flat ARAYÜZÜN KENDİSİ.** Dilin kaybettiği bilgiyi ancak resim geri verir. `engine/flat-engine/*` (40 stil, parametrik, zaten çiziyor) bu döngünün ekran katmanı — **yarısı kurulu.**
+**Flat sonda teslim edilen çıktı değil — flat ARAYÜZÜN KENDİSİ.** Dilin kaybettiği bilgiyi ancak resim geri verir. `engine/flat-engine/*` bu döngünün ekran katmanı.
+
+### ✅ M0 EKRAN KATMANI YAPILDI (31 Tem) — `web/atolye.html`
+
+`engine/tools/build-atolye.mjs` SALT-OKUNUR kalemi (`_engine-full.mjs`) **değiştirmeden** tek
+sayfaya paketliyor (üç `node:fs` JSON okuması gömülüyor, CLI kuyruğu düşüyor). Üstüne malzeme
+katmanı: **cümle → 46 sürekli malzeme kadranı → kalem → ekranda flat**, 3 ms, deterministik.
+
+- Kalem 31 stil KAYDI okuyordu; hiçbir yerinde listeyi zorunlu kılan şey yok. Sayfa, listede
+  **olmayan** kayıtlarla sürüyor. Kanıt: tek kadran süpürmesi (etek bolluğu 1.0→2.8 = düz boru →
+  tam kloş, aradaki her değer geçerli giysi).
+- **Düzeltme: `styles.json` 31 stil, 40 değil** (bu dosyada 40 yazıyordu).
+- Sözlük **LLM'siz** — kural tabanlı, çevrimdışı, anında. "Puf kol" ayrı bir kol türü değil,
+  `kapak yüksekliği = 2.4`.
+- Bulunan hata: kalemde `plainSleeve()` kol boyunu `{cap:9,short:17,elbow:28,long:42}` enum'undan
+  okuyor, `puffSleeve()` ise sürekli `sleeveLen`'den. Kapak 0'ken kol boyu kadranı **hiçbir şey
+  yapmıyordu**. Kalem salt-okunur olduğu için düzeltme malzeme katmanında (en yakın kovaya
+  yuvarlama). Dürüst not: kapak 0'da kol boyu 4 kademeli.
+- Bulunan hata 2: kalem `var S` (unitPX) tanımlıyor; malzeme katmanı da `S` tanımlayınca sayfa
+  **bomboş** açılıyordu (SyntaxError). Build artık çakışmayı reddediyor.
+- **Kapanmadı:** kalıp inmiyor, sadece flat iniyor. Ön yaka bandı V yakada bozuk çiziliyor
+  (`collarShape()` yaka eğrisinin sadece ilk segmentini ofsetliyor).
 
 ### Yapılacak
 1. **Varsayılan profil**: 37 alanın her biri için makul varsayılan + hangi bedende hangi ölçü (34-48 tablo). Damla'nın zevkine göre, generic değil.
@@ -142,6 +163,79 @@ Kalan 44'ü **matematik uyduramaz.** Gelebileceği yalnızca üç yer var, dörd
 - **Üç yüzey:** yazılım (yazılım kullanana) · kalıp+flat (Etsy'ciye) · dikilmiş giysi (dikemeyene).
 - **Sabit beden 34-44/48.** Made-to-measure YOK — kanıtlı karar: ZOZO, unspun, Fayma battı; Lekala kalite tavanına çarptı. Sebep bilgi-teorik: ölçü bedenin şeklini belirlemiyor.
 
+---
+
+## ★ MALZEME SÖZLÜĞÜ — 31 TEM DENETİMİ (kanıtlanan / çürütülen)
+
+**Tez:** 37 kategorik alan yemek adı; malzeme tutulmalı. Denetim sonucu: **tez doğru yönde,
+önerilen 9'luk liste EKSİK. Ve bir maddesi çürütüldü.**
+
+### ✅ KANITLANDI — ölçüm, motor çıktısı değil
+`curve-research/03-band-ingredients.py`, kaynak satın alınmış Buğra "Locket Top" A0 PDF'i
+(beden 38, mm-kalibre, `patterns_real/geometry/geometry-full.json`):
+
+- Üreticinin **kendi kitapçığı 6 parça** sayıyor (`2 Pattern Cutting.jpg`). Bizim çıkarıcı 7
+  halka buldu; yedincisine ad veremedi (`EXTRA-TL (not in defter)`). **Adsız parça 8 bedende de
+  var, dereceli, kapalı.** Ad taşımadığı halde ölçülüyor.
+- Üç bant parçası (adı olan ikisi + adı olmayan) ölçüm için **aynı nesne**: iki kenarlı eğri bant.
+  Her kenar **5 sayıyla** (uzunluk + 4 eğrilik katsayısı) yeniden çiziliyor:
+  | parça | ort. hata | maks. hata |
+  |---|---|---|
+  | bant B | **0.03 mm** | 0.14 mm |
+  | bant C | **0.01 mm** | 0.03 mm |
+  | adsız parça 3 (düz kenar) | **0.03 mm** | 0.20 mm |
+  | adsız parça 3 (köşe içeren kenar) | 2.5 mm | 12.4 mm |
+  İzli poligon 350–798 sayı tutuyor; model 15. Köşe içeren kenarda hata **köşenin orada olduğunu
+  söylüyor**, gizlemiyor.
+- AÇIKLIK (serbest kenar / bağlı kenar) her parça için ölçülüyor: **1.400 · 1.519 · 1.545**.
+
+### ❌ ÇÜRÜTÜLDÜ — bunu bir daha iddia etme
+> *"Yaka tipi diye bir şey yok; stand + fall oynayınca hepsi çıkar."*
+
+Literatürde **sert bir ikilik** var, tek eğrilik kadranı arasından geçemiyor:
+- **yatan yaka (bebe/flat):** boyun kenarı gömleğin yaka eğrisinden **kopyalanır** (ön parça +
+  arka parça, omuz noktasında birleşir, orada **kırılır**) — bir yay değil.
+- **hakim / gömlek yakası:** boyun kenarı bir dikdörtgen iskelet üzerine tek skalerden
+  (yarım boyun ölçüsü) çizilir. Gömlek yakasında boyun kenarı yaka boyundan **daha uzun**
+  (patlet payı kadar).
+
+Kaynaklar: Wild Ginger "Anatomy of the Collar" (*"one of two basic shapes"*), dresspatternmaking
+(flat = tam yaka şekli, dik = değil), Kunz *Manual of Apparel Drafting* 1914 (kamu malı),
+Schoenfeld *American Designer and Cutter* 1915, Müller & Sohn ayrı-stand yakası.
+
+**Kendi ölçümüm de aynı yere çıktı:** kapalı form `açıklık = 1 + w/r` üç parçada da **%23–31
+hata** veriyor (bant düz halka değil, derinliği boyunca değişiyor; kenar merkezleri 21–50 mm
+ayrı), ve adsız parçanın bağlı kenarı **ortasında köşe taşıyor**.
+→ **dik/fall bir ÖLÇÜM SONUCUDUR, çizim GİRDİSİ değil.** Girdi, boyun kenarının eğriliği.
+
+### ⚠️ EKSİK MALZEMELER (kaynaklı, liste 9 değil)
+iplik/verev · kumaş davranışı (Aldrich'in kitabının en üst bölümlemesi bununla belirleniyor) ·
+**balans** (ön–arka boy ilişkisi) · **dağılım profilleri** (her skaler aslında bir eğri boyunca
+fonksiyon; kap ease'i koltukaltında %0, tacın üstünde 1/3 ön 2/3 arka — bu zaten
+`knowledge/drafting-math-eu38.md`'de yazılı) · **contouring** (Armstrong 3. ilke; 9'luk liste
+straplez korsaj yapamaz) · **spring** (Keystone'da 12, Hecklinger'de 8 geçiyor) · **sweep**
+(Keystone 39, Hecklinger 37) · **roll line** (stand/fall'un referansı) · **dikiş eşitliği
+kısıtı** · **pivot** · pay/çentik/eşleşme noktası · ply (üst/alt yaka farkı) · ön–arka asimetri ·
+giyme ease'i ile tasarım ease'i ayrımı · genişlik (kiriş) ile çevre (kapalı halka) ayrımı.
+
+Doğrulanan zanaat sözcükleri: **suppression** (Keystone 1895, birebir), **fullness**
+(Hecklinger 1881; Armstrong 2. ilke), ease, cap height/ease, stand & fall, **girth**
+(Müller & Sohn'un ölçü adlandırması).
+Uydurma olanlar: **"level"** (zanaat "balans" diyor, skaler değil ilişki), **"kenar rolü"**
+(beş maddelik başka bir yemek listesi), **"topoloji"**.
+
+### ★ EN ÖNEMLİ DÜZELTME
+**Topoloji bir malzeme değil, TABAK SEÇİCİSİDİR.** Yayınlanmış her sistem (GarmentCode 25 bileşen
+sınıfı, NeuralTailor 19 şablon, 23 panel yuvası) önce topolojiyi ayrık olarak sabitliyor;
+süreklilik ancak onun ALTINDA başlıyor. Ayrıca **pens payı + ease + çevre TEK eksendir**, 9'luk
+listede üç kez sayılmış (`çevre(seviye) = vücut + ease`; pens payı = iki komşu seviyenin çevre
+farkı). Ve pens payı ile topoloji **dik değil**: prenses dikiş = göğüs pensi + bel pensi
+(dart equivalent yasası).
+
+→ Doğru cümle şu: **topoloji küçük ve ayrık kalır; onun altındaki her şey sürekli olur.**
+Bugünkü 37 enum ikisini karıştırıyor — içinde ~6 topoloji gerçeği ve sayı olması gereken ~31
+nicelik var.
+
 ## M7+ — sonra (şimdi değil)
 - **Zanaat dağarcığı**: blok + 7 işlem (pivot dart, slash&spread, walk, blend, ease, pay, grade). GarmentCode'un içini bununla değiştir. *(Kalıpçı sıfırdan çizmez, bloktan türetir — Joseph-Armstrong.)* **Dart pivot + slash&spread açık kaynakta YOK** (Seamly2D #369 hâlâ açık) → yazılacak.
 - **Geometri çekirdeği**: BFF (MIT, sınır uzunluğu **dayatılabilir** düzleştirme) + OptCuts (MIT, otomatik dikiş yerleşimi) + koni tekilliği = pens (Gauss-Bonnet).
@@ -152,7 +246,7 @@ Kalan 44'ü **matematik uyduramaz.** Gelebileceği yalnızca üç yer var, dörd
 
 ## NEDEN BUGÜNE KADAR BİTMEDİ (ölçüldü)
 
-1. **Motor her giysiyi sıfırdan formülle çiziyor** → giysi başına dosya. `engine/src/` = 17.693 satır, **43 .cpp**. Giysi başına O(n) insan emeği.
+1. **Motor her giysiyi sıfırdan formülle çiziyor** → giysi başına dosya. `engine/src/` = **13.814 satır, 37 .cpp** (31 Tem'de yeniden sayıldı; bu dosyada önce 17.693/43 yazıyordu, **yanlıştı** — `wc -l engine/src/*.cpp`). Tüm `engine/` ağacı test+araç dahil 117 .cpp / 30.386 satır. Giysi başına O(n) insan emeği.
 2. **Sayılar uydurma.** `bodice.hpp: armholeHollowShareFront = 0.34` ↔ Buğra reçetesinde aynı sayı **1.07** (kirişin dışı). `chestEase: 0.211032`, `neckWidthMult: 2.728261`. Altı ondalık = tek kalıba overfit → **SVG'nin çirkin olma sebebi.**
 3. **Reçete katmanı yanlış dağarcıkla.** `recipe.cpp` 1089 satır; `move/line/curve(cp1,cp2)/close` = çizim dili, kurgu dili değil. `docs/RECETE-SPEC.md` bunu **erdem** sanmış: *"motorun BUGÜN yaptığı işlemlere birebir oturur."*
 4. **Korpus yer gerçeği değil.** `patterns_real/geometry/geometry-full.json` (104 halka): **7/13 parça beden-monotonluğunu ihlal ediyor**, 32/104 containment başarısız, `Collar Lining` 46→48'de 501.5→**382.9 mm**, `Upper Sleeve` 36 ve 38 aynı halka. Tracer hatası mı kalıp mı **ayrışmadı**.

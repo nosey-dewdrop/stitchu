@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>stitchu atolye</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font:15px/1.5 "Times New Roman",Times,serif;
+  color:#111;background:#fff;
+  -webkit-font-smoothing:antialiased;
+}
+.bar{
+  display:flex;align-items:baseline;gap:14px;
+  padding:14px 26px;border-bottom:1px solid #111;
+}
+.mark{font-size:19px;letter-spacing:.14em;text-transform:lowercase}
+.sub{font-size:12.5px;color:#555;letter-spacing:.04em}
+.ver{margin-left:auto;font:11px/1 ui-monospace,Menlo,monospace;color:#111;
+  border:1px solid #111;padding:4px 7px}
+
+main{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 51px)}
+.left{border-right:1px solid #111;overflow-y:auto;max-height:calc(100vh - 51px);padding:0 0 60px}
+.right{display:flex;flex-direction:column}
+
+/* ---- soru kutusu */
+#askform{padding:22px 24px 18px;border-bottom:1px solid #111}
+.lbl{display:block;font-size:17px;margin-bottom:9px}
+.askrow{display:flex;gap:0}
+#ask{
+  flex:1;min-width:0;font:14px/1.4 "Times New Roman",Times,serif;
+  padding:9px 11px;border:1px solid #111;border-right:0;background:#fff;color:#111;
+}
+#ask:focus{outline:0;background:#fbfaf7}
+#ask::placeholder{color:#999}
+.askrow button{
+  font:13px/1 "Times New Roman",Times,serif;letter-spacing:.1em;
+  padding:0 18px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;
+}
+.askrow button:hover{background:#fff;color:#111}
+.hint{font-size:12.5px;line-height:1.55;color:#555;margin:11px 0 0}
+.hint b{color:#111}
+.tagd{border-bottom:1px dotted #999}
+
+/* ---- malzeme aileleri */
+.fam{padding:18px 24px 6px;border-bottom:1px solid #ddd}
+.fam h2{font-size:14px;letter-spacing:.15em;text-transform:uppercase;margin:0 0 4px;font-weight:400}
+.blurb{font-size:12px;color:#666;margin:0 0 14px;line-height:1.5}
+
+.row{margin:0 0 15px;padding-left:9px;border-left:2px solid transparent}
+.row.touched{border-left-color:#111}
+.rowhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.name{font-size:13.5px}
+.read{font:11px/1 ui-monospace,Menlo,monospace;color:#111}
+.note{font-size:11.5px;color:#777;margin:4px 0 0;line-height:1.45}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:15px;margin:6px 0 0;
+  background:transparent;cursor:pointer;display:block
+}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:#111}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:11px;height:11px;background:#fff;border:1.5px solid #111;
+  border-radius:50%;margin-top:-5.5px
+}
+input[type=range]::-moz-range-track{height:1px;background:#111}
+input[type=range]::-moz-range-thumb{width:9px;height:9px;background:#fff;border:1.5px solid #111;border-radius:50%}
+
+.row.flag label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.row.flag input{accent-color:#111;width:14px;height:14px;margin:0}
+.row.flag .read{margin-left:auto}
+
+.opts{display:flex;gap:0;margin-top:6px}
+.opts button{
+  font:12px/1 "Times New Roman",Times,serif;padding:6px 12px;
+  border:1px solid #111;border-right:0;background:#fff;color:#111;cursor:pointer
+}
+.opts button:last-child{border-right:1px solid #111}
+.opts button.on{background:#111;color:#fff}
+
+/* ---- sahne */
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:26px;overflow:auto}
+#flat{width:100%;max-width:1000px}
+#flat svg{width:100%;height:auto;display:block}
+.foot{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 26px;border-top:1px solid #111
+}
+.foot button{
+  font:12px/1 "Times New Roman",Times,serif;letter-spacing:.06em;
+  padding:8px 14px;border:1px solid #111;background:#fff;color:#111;cursor:pointer
+}
+.foot button:hover{background:#111;color:#fff}
+.stat{margin-left:auto;font:11px/1 ui-monospace,Menlo,monospace;color:#666}
+
+@media (max-width:900px){
+  main{grid-template-columns:1fr}
+  .left{max-height:none;border-right:0;border-bottom:1px solid #111}
+}
+
+/* ---- durust panel: bu tezgah neyi yapamiyor */
+.honest{padding:20px 24px 40px;border-top:1px solid #111;background:#fbfaf7}
+.honest h2{font-size:14px;letter-spacing:.15em;text-transform:uppercase;margin:0 0 12px;font-weight:400}
+.honest p{font-size:12.5px;line-height:1.6;color:#333;margin:0 0 11px}
+.honest b{color:#111}
+.src{display:block;font:10.5px/1.4 ui-monospace,Menlo,monospace;color:#888;margin-top:3px}
+
+</style>
+</head>
+<body>
+<header class="bar">
+  <span class="mark">stitchu</span>
+  <span class="sub">atolye &mdash; malzeme tezgahi</span>
+  <span class="ver" id="ver"></span>
+</header>
+
+<main>
+  <section class="left">
+    <form id="askform" autocomplete="off">
+      <label class="lbl" for="ask">Ne dikelim?</label>
+      <div class="askrow">
+        <input id="ask" type="text" spellcheck="false"
+               placeholder="puf kollu midi kloş elbise, derin v yaka">
+        <button type="submit">ciz</button>
+      </div>
+      <p class="hint" id="hint">Cumle sadece <b>hangi malzemeden ne kadar</b> koyacagimizi soyler. Soylemedigin her malzeme varsayilanda kalir ve asagida <span class="tagd">varsayilan</span> diye isaretlenir.</p>
+    </form>
+    <div id="dials"></div>
+
+    <section class="honest">
+      <h2>Bu tezgah neyi yapamiyor?</h2>
+      <p><b>Kanitlandi.</b> Satin alinmis Bugra "Locket Top" kalibinin uc bant parcasi
+      &mdash; ureticinin kendi kitapciginda ikisinin adi var, ucuncusunun adi yok &mdash;
+      olcum icin ayni nesne: iki kenarli egri bant. Her kenar <b>5 sayiyla</b>
+      (uzunluk + 4 egrilik katsayisi) <b>0.01&ndash;0.05 mm</b>'ye yeniden cizildi.
+      Adi olmayan parca da cizildi. Demek ki ad geometri tasimiyor.
+      <span class="src">curve-research/03-band-ingredients.py</span></p>
+
+      <p><b>Curutuldu.</b> "Yaka tipi diye bir sey yok, tek egrilik kadrani hepsini verir"
+      &mdash; yanlis. Yatan yakanin boyun kenari gomlegin yakasindan kopyalanir ve omuz
+      noktasinda kirilir; hakim yaka bir dikdortgen uzerine tek skalerden cizilir. Tek
+      kadran ikisi arasinda gecemez. Kendi olcumum de ayni yere cikti: kapali formun
+      hatasi %23, ve adsiz parcanin bagli kenari ortasinda kose tasiyor.
+      Burada <b>dik/yatan bir sonuctur, girdi degil.</b></p>
+
+      <p><b>Henuz yok.</b> Iplik ve verev &middot; kumas davranisi &middot; balans
+      (on&ndash;arka boy iliskisi) &middot; her skalerin aslinda bir dagilim profili
+      olmasi &middot; contouring &middot; spring &middot; sweep &middot; roll line &middot;
+      dikis esitligi kisiti &middot; pay ve centik &middot; on&ndash;arka asimetri.
+      Ayrica pens payi, ease ve cevre tek eksendir, burada uc kez sayildi.</p>
+
+      <p><b>Ve en onemlisi:</b> topoloji bir malzeme degil, tabak secicisidir. Kac panel
+      var sorusu once cevaplanir; surekli olan her sey onun altindadir. Bu tezgah 31
+      kayitlik listeyi kaldirdi, ama <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor.</p>
+    </section>
+  </section>
+
+  <section class="right">
+    <div class="stage"><div id="flat"></div></div>
+    <div class="foot">
+      <button id="dl-svg" type="button">flat.svg indir</button>
+      <button id="reset" type="button">varsayilana don</button>
+      <span class="stat" id="stat"></span>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+// ============================================================================
+// 2D KÜTLE-YAY KUMAŞ ÇÖZÜCÜ — DETERMİNİSTİK (Damla master directive madde 6).
+// stitchu'nun ilk fizik katmanı. Bir dikdörtgen kumaşı düğüm ızgarası olarak
+// modeller; yerçekimi + yapısal gerilim + eğilme direnci altında dengeye
+// oturtur. Girdi: tutturma noktaları (üst kenar) + kumaş parametreleri
+// (gatherRatio = büzgü oranı, stiffness, weight). Çıktı: kararlı düğüm konumları
+// → kat (drape fold) çizgileri.
+//
+// DETERMİNİZM MUTLAK (golden/STYLE-PIN kırılmaz): Math.random YOK, argsız Date
+// YOK. Sabit başlangıç ızgarası + sabit iterasyon sayısı + sabit alt-adım →
+// aynı girdi HEP aynı çıktı. Simülasyon "canlı" değil; deterministik bir
+// çözücüdür (fizik-tabanlı bir formül gibi). Verlet integrasyonu (hızsız,
+// konumdan konuma) → sayısal olarak kararlı ve tekrarlanabilir.
+//
+// İZOLE KANIT (adım b): rectClothGather() bir dikdörtgeni üst kenardan büzer,
+// kat çizgilerinin dağılımını verir. Çözücü çalışırsa shirred primitifine
+// bağlanır (22 hedef); çalışmazsa erken öğreniriz — motora bağlamadan.
+// ============================================================================
+
+// ---- fabric seeds: karakteri parametre belirler (chiffon çok+ince, satin
+// az+uzun, keten sert+kırık). Değerler ölçülmedi (emsal band gelince kalibre);
+// şimdilik fiziksel-makul başlangıç, item 5 ÖLÇÜLMEDİ notuyla.
+const SEED_FABRICS = {
+  chiffon: { stiffness: 0.20, bend: 0.04, weight: 0.6 },  // yumuşak, çok ince kat
+  satin:   { stiffness: 0.45, bend: 0.10, weight: 1.0 },  // ağır, az uzun kat
+  cotton:  { stiffness: 0.60, bend: 0.18, weight: 0.9 },  // orta
+  linen:   { stiffness: 0.80, bend: 0.35, weight: 1.0 },  // sert, kırık kat
+};
+
+// ---- çözücü sabitleri (deterministik ayar) ----
+const ITERS = 240;          // toplam Verlet adımı (sabit)
+const CONSTRAINT_PASSES = 3; // her adımda yay-kısıt gevşetme geçişi
+const GRAVITY = 0.45;        // aşağı sabit ivme (düğüm başına)
+const DAMP = 0.94;           // sönümleme (kararlılık için)
+
+// deterministik başlangıç mikro-sapması (fold simetrisini kırar ama SABİT —
+// bir seed'den türeyen tekrarlanabilir sözde-rasgele, çözücü çıktısı seed'e
+// bağlı ama HEP aynı).
+function seededOffset(i, seed) {
+  const s = ((i + 1) * 2654435761 + seed * 40503) >>> 0;
+  return ((s ^ (s >>> 13)) % 1000) / 1000 - 0.5; // [-0.5, 0.5]
+}
+
+// ---------------------------------------------------------------------------
+// solveCloth: bir düğüm ızgarasını dengeye oturt.
+//   nx, ny        : ızgara boyutu (yatay × dikey düğüm)
+//   restX, restY  : dinlenme (gerilmemiş) düğüm aralığı
+//   pin(i,j)      : bu düğüm sabit mi (üst kenar tutturma) → {x,y} | null
+//   fabric        : {stiffness, bend, weight}
+//   seed          : deterministik başlangıç
+// Döner: pos[j][i] = {x,y} kararlı konumlar.
+// ---------------------------------------------------------------------------
+function solveCloth({ nx, ny, restX, restY, pin, fabric, seed = 7, topLockRows = 0, gatherStiffTop = 1 }) {
+  const { stiffness, bend, weight } = fabric;
+  // konum + önceki konum (Verlet). Başlangıç: düz asılı ızgara + sabit sapma.
+  const pos = [], prev = [];
+  for (let j = 0; j < ny; j++) {
+    pos[j] = []; prev[j] = [];
+    for (let i = 0; i < nx; i++) {
+      const p = pin(i, j);
+      const x = p ? p.x : i * restX + seededOffset(j * nx + i, seed) * restX * 0.3;
+      const y = p ? p.y : j * restY;
+      pos[j][i] = { x, y, pinned: !!p };
+      prev[j][i] = { x, y };
+    }
+  }
+  // yay dinlenme uzunlukları
+  const relax = (a, b, rest, k) => {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const d = Math.hypot(dx, dy) || 1e-6;
+    const diff = (d - rest) / d * 0.5 * k;
+    const ox = dx * diff, oy = dy * diff;
+    if (!a.pinned) { a.x += ox; a.y += oy; }
+    if (!b.pinned) { b.x -= ox; b.y -= oy; }
+  };
+  for (let it = 0; it < ITERS; it++) {
+    // Verlet integrasyon: yerçekimi + atalet
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const p = pos[j][i]; if (p.pinned) continue;
+      const pr = prev[j][i];
+      const vx = (p.x - pr.x) * DAMP, vy = (p.y - pr.y) * DAMP;
+      pr.x = p.x; pr.y = p.y;
+      p.x += vx; p.y += vy + GRAVITY * weight;
+    }
+    // kısıt gevşetme: yapısal (komşu) + eğilme (2-komşu)
+    // SHIRRED profili (topLockRows>0): üst birkaç satırda yatay yay ÇOK sert
+    // (büzgü kumaşı üstte sıkı toplar), aşağı doğru hızla normale döner → kat
+    // aktif bölgesi üst %15-25'te sönümlenir, alt düz kalır. Emsal shirred
+    // panel karakteri budur (hakem kıyası 2026-07-21). skirt profilinde
+    // topLockRows=0 → eski davranış (byte-identical).
+    for (let c = 0; c < CONSTRAINT_PASSES; c++) {
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        // yatay stiffness: shirred'de üstte gatherStiffTop× sert, alta doğru söner
+        let hstiff = stiffness;
+        if (topLockRows > 0 && j <= topLockRows) {
+          const t = j / topLockRows;                 // 0 (üst) .. 1 (kilit sonu)
+          hstiff = stiffness * (gatherStiffTop * (1 - t) + t); // üstte yüksek, altta normal
+          if (hstiff > 1) hstiff = 1;
+        }
+        if (i + 1 < nx) relax(pos[j][i], pos[j][i + 1], restX, hstiff);          // yatay yapısal
+        if (j + 1 < ny) relax(pos[j][i], pos[j + 1][i], restY, stiffness);       // dikey yapısal
+        if (i + 2 < nx) relax(pos[j][i], pos[j][i + 2], restX * 2, bend);        // yatay eğilme
+        if (j + 2 < ny) relax(pos[j][i], pos[j + 2][i], restY * 2, bend);        // dikey eğilme
+      }
+    }
+  }
+  return pos;
+}
+
+// ---------------------------------------------------------------------------
+// rectClothGather (İZOLE KANIT — adım b): bir dikdörtgen kumaşı üst kenardan
+// büz. Kumaş genişliği = finished × gatherRatio; üst düğümler dar bitmiş
+// genişliğe SIKIŞTIRILIR (büzgü), alt serbest sarkar. Çözücü katları kendisi
+// bulur.
+//   finishedW : bitmiş (büzülmüş) üst kenar genişliği
+//   clothH    : kumaş boyu
+//   gatherRatio : büzgü oranı (2.0 = iki kat kumaş bir kata)
+// Döner: { pos, folds } — folds = dikey kat çizgileri (fizikten türetilmiş).
+// ---------------------------------------------------------------------------
+function rectClothGather({ finishedW, clothH, gatherRatio, fabric = SEED_FABRICS.cotton, seed = 7, profile = 'skirt' }) {
+  const shirred = profile === 'shirred';
+  // shirred panel çok daha ince+çok kat taşır (emsal ~25-45); skirt daha az.
+  const nx = shirred
+    ? Math.max(21, Math.round(gatherRatio * 14) | 1)
+    : Math.max(9, Math.round(gatherRatio * 8) | 1); // tek sayı → orta düğüm var
+  const ny = shirred ? 18 : 14;
+  const clothW = finishedW * gatherRatio;
+  const restX = clothW / (nx - 1);      // gerilmemiş kumaş aralığı (geniş)
+  const restY = clothH / (ny - 1);
+  // büzgü hattı: skirt'te sadece üst satır (0) pinli. shirred'de üst 2 satır
+  // pinli (büzgü kumaşı üstte fiziksel olarak toplanmış+tutturulmuş = panel),
+  // + üst-kilitli sönüm (topLockRows) katları üst %20'ye hapseder.
+  const pinRows = shirred ? 1 : 0; // 0..pinRows arası satır büzgü hattında sabit
+  const pin = (i, j) => {
+    if (j > pinRows) return null;
+    // pinli satırlar bitmiş dar genişliğe eşit aralıkla sıkışır; alt pin satırı
+    // hafif rasgele x ile büzgü kırışığını başlatır (deterministik seed).
+    const jitter = j === 0 ? 0 : seededOffset(i, seed) * restX * 0.18;
+    return { x: (i / (nx - 1)) * finishedW + jitter, y: j * restY };
+  };
+  const topLockRows = shirred ? Math.round(ny * 0.22) : 0; // kat aktif bölge üst %22
+  const pos = solveCloth({ nx, ny, restX, restY, pin, fabric, seed,
+    topLockRows, gatherStiffTop: shirred ? 3.2 : 1 });
+  // kat çizgileri: her iç sütunun düğümlerini bağla.
+  // skirt: kat tüm boyu iner (çan). shirred: kat SADECE üst sönüm bölgesinde
+  // görünür (büzgü kırışığı üstte yoğun, altta panel düz düşer) — bu emsal
+  // shirred karakteridir; fold'ları üst %activeFrac'e kırp, altı düz bırak.
+  const activeFrac = shirred ? 0.21 : 1.0; // kıyas-2: %28 sönüm ~%34'e taşıyordu, emsal %15-25 → %21'e çek
+  const jMax = shirred ? Math.max(2, Math.round((ny - 1) * activeFrac)) : ny - 1;
+  const folds = [];
+  for (let i = 1; i < nx - 1; i++) {
+    const line = [];
+    for (let j = 0; j <= jMax; j++) line.push([pos[j][i].x, pos[j][i].y]);
+    folds.push(line);
+  }
+  return { pos, folds, nx, ny, clothW, finishedW, activeFrac };
+}
+
+// ---- CLI: izole kanıt SVG üret ----
+
+var _rectGather=rectClothGather, _SEED_FAB=SEED_FABRICS;
+// ============================================================================
+// REFERANS KALEM — SALT-OKUNUR (Damla emri 2026-07-19). BU ÜRETİM MOTORU DEĞİL.
+// Bu prototip Damla'nın flat çizim DİLİNİN cetvelidir ("hedef böyle görünür"):
+// dantel biye, fırfır katları, balon kol karakteri, taper mürekkep, drape planı.
+// STYLE-PIN'in atası. F2'nin işi bu dili ÜRETİM renderer'ına (engine/tools/
+// render-garment-flat.mjs) parametre parametre PORT etmek — styles.json'dan
+// okuyarak. TEK HAKİKAT: iki paralel ürün yolu olamaz; bu dosya cetvel, ürün
+// değil. Silme, itme, dokunma. Değişiklik SADECE Damla'nın kalem revizyonuyla.
+// ============================================================================
+// K1 contract (2026-07-19): shared values come from contract/tables.json
+// (flat.* namespace — DRAWING units, not millimetres), style records come from
+// styles.json (style = a data record, not code). No inline value copies.
+var _CT={"_contract":"stitchu shared-value tables, K1 single contract (2026-07-19). Every number here used to live in 2+ places (the K0 double-truth inventory). Consumers NEVER copy these values: C++ reads engine/src/contract.gen.hpp, the web reads web/js/contract.gen.js, the backend reads backend/contract.gen.js (all three generated by engine/tools/gen-contract.mjs), the flat engine reads this file directly. docs/reference/dis-llm-panel-a.html is a FROZEN HISTORICAL artefact: its LEN {87,104,120} and SIZE tables are a museum piece from the external-LLM session, not a consumer, and are intentionally left untouched.","version":"1.0.0","draft":{"_layer":"pattern-drafting truth. Real millimetres / centimetres on a real body. Binds the C++ engine. Changing a number here changes the golden reference; the golden diff is the guard.","skirtLengthMM":{"mini":450,"midi":650,"maxi":900},"gatherRatios":{"_note":"flat cut width / finished gathered width (FORMULAS.md, Drawstring / shirred / smocked gathering). The flat engine's per-style gatherRatio recipe values are DRAWING ink density, a different quantity; its real cut number (panelCutWidth) must derive from THESE ratios.","drawstring":1.8,"shirred":2,"smocked":3},"euSizes":["EU34","EU36","EU38","EU40","EU42","EU44","EU46","EU48","EU50","EU52"],"euSizeChart":{"_fields":["bustCM","waistCM","hipCM","shoulderCM","backLengthCM","armLengthCM","neckCM"],"EU34":[80,62,86,36,39.5,57,34],"EU36":[84,66,90,36.5,40,57.5,34.5],"EU38":[88,70,94,37,40.5,58,35],"EU40":[92,74,98,37.5,41,58.5,36],"EU42":[96,78,102,38,41.5,59,36.5],"EU44":[100,82,106,38.5,42,59.5,37],"EU46":[104,86,110,39,42,60,38],"EU48":[110,92,116,40,42.5,60.5,39],"EU50":[116,98,122,41,43,61,40],"EU52":[122,104,128,42,43.5,61.5,41]}},"flat":{"_layer":"fashion-flat DRAWING units. 1 unit = 5.6 SVG px. NOT millimetres and NOT the same quantity as draft.*: flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop. Both live in this one file so the same word never carries a third, undocumented number (the K0 1.1 finding: mini was 87, 42 and 450 in three engines).","unitPX":5.6,"len":{"mini":42,"knee":58,"midi":74},"size":{"_fields":["neck","shp","strap","bust","emp","ad"],"EU34":{"neck":6.6,"shp":11.9,"strap":6.8,"bust":14.6,"emp":13.2,"ad":19.6},"EU36":{"neck":6.8,"shp":12.2,"strap":7.1,"bust":15,"emp":13.7,"ad":20},"EU38":{"neck":7,"shp":12.6,"strap":7.4,"bust":15.5,"emp":14.2,"ad":20.6},"EU40":{"neck":7.3,"shp":13.1,"strap":7.7,"bust":16.2,"emp":14.9,"ad":21.2},"EU42":{"neck":7.6,"shp":13.6,"strap":8,"bust":17,"emp":15.7,"ad":21.8}},"derived":{"panelCutWidth":"finished panel width x draft.gatherRatios[gatherType]. The flat engine derives its real cut number from the SAME ratio table the pattern engine cuts with; it never keeps a private ratio truth. Per-style recipe fields (styles.json gatherRatio, capPuff, ...) are ink/drawing knobs only."},"style":{"_layer":"STYLE parameters (Damla 2026-07-19 decision, formerly review.* layer-undecided). These are flat-drawing taste knobs only; they shape the flat silhouette and have NO effect on pattern geometry (the drafting engine never reads them). Live in flat recipes (styles.json).","waistNip":{"value":0.07,"livesIn":"flat recipes (styles.json shared)","note":"waist suppression fraction of the flat silhouette"},"armholeHollow":{"value":0.1,"livesIn":"flat recipes (styles.json per-style own)","note":"armhole scoop fraction of the flat silhouette"}}},"mappings":{"_layer":"every cross-layer name/meaning translation, declared ONCE. Bridge code reads these; a translation that is not declared here is a contract violation (K0 findings 2.1-2.6).","sleeveHeadToSleeveCap":{"_note":"vision speaks sleeveHead {plain,gathered,puffed,capped}; the engine speaks sleeveCap {plain,gathered,puffed,cap}. Legacy aliases included so old cached specs still map.","plain":"plain","gathered":"gathered","puffed":"puffed","puff":"puffed","capped":"cap","cap":"cap"},"nullEquivalence":{"_note":"fields where a null reading and this canonical value mean the SAME garment and draft identically. Was a private rule inside benchmark-58.mjs classify(); now contract data.","sleeveStyle":"none"},"backDetailSplit":{"_note":"the vision's single backDetail field fans out to three targets in the bridge (K0 2.4). Declared here so the split is a contract, not a buried if-chain.","openBack":{"target":"backOpening","value":"round"},"keyholeBack":{"target":"backOpening","value":"keyhole"},"vBack":{"target":"backOpening","value":"lowV"},"tieBack":{"target":"tieClosure","value":"tieBack"},"lacedBack":{"target":"honest"},"buttonBack":{"target":"honest"}},"orphanFields":{"_note":"vision fields with no engine target, declared instead of silently dangling (K0 2.5).","straps.count":"declared-unused (produced by vision, consumed nowhere; kept for future one-shoulder work)","fabricName":"ui-only (photo fabric label on the result card; never reaches the engine)","cupSeams":"honest (no engine capability; missing.js lists it for the user)"},"seenFlags":["backDetailDrawn","backOpeningDrawn","bardotDrawn","buttonRowDrawn","capSleeveDrawn","closureDrawn","collarDrawn","cuffDrawn","exposedZipDrawn","gatherDrawn","hemShapeDrawn","hemSlitDrawn","peplumDrawn","placketAsymDrawn","pocketDrawn","ruffledStrapsDrawn","sleeveCapDrawn","tieDrawn"],"seenFlagsNote":"sleeveCapDrawn = ANY non-plain sleeve head was drawn; capSleeveDrawn = specifically the cap WING. Similar names, different meanings (K0 2.6) — registered so the next bridge hand knows."}};
+var _ST={"_comment":"Prensip 1: stil bir VERİ KAYDI, kod değil. LLM sadece bu şemada JSON üretir. Motor (engine.mjs) sabit kalır. Aynı JSON hep aynı çizim.","_ROL":"REFERANS KALEM stil kaynağı (Damla 2026-07-19, salt-okunur). Bu kayıtlar üretim renderer'ının (render-garment-flat.mjs) port edeceği kalem dilinin cetvelidir. Üretim renderer da bu dosyadan okur — tek hakikat. Silme/itme yok.","_schema_version":1,"shared":{"size":"EU38","length":"mini","bustProject":0.5,"bustHeight":0.3,"waistNip":0.07,"ink":"minimal","skirtFull":1.95,"foldCount":10,"hemWave":1,"drape":1,"hemDip":2,"seed":7},"_FIGURE_RULE":"GERÇEK 38 BEDEN KADIN (Damla 2026-07-20, taste-lexicon ana madde). Figür buildHalf'te MERKEZİ ve TÜM stiller miras alır: bel oyulur (eX=emp·(1-waistNip)), kalça/etek dolgun (hX=emp·((1-waistNip)+(skirtFull-1))), omuz-kalça dengeli, dalgalı hem (hemPoints), drape (drapePlan), taper mürekkep, 3 katman çizgi hiyerarşisi. Üçgen/huni/tube gövde YASAK. Elbise bir vücudun üstünde durur gibi okunur. Stil başına tekrar yazılmaz; yeni siluet bu kapıdan girer. Dress-uzunluk stilleri figureNip ile daha belirgin bel çeker (mini babydoll pinleri etkilenmez).","styles":{"princess_dress":{"label":"princess-seam fitted dress (mihenk 1)","top":"shoulder","neckline":"v","length":"midi","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.05,"neckDepth":12,"neckDepthBack":3,"shoulderSlope":1.7,"armholeHollow":0.12,"sleeveLen":12,"sleeveWidth":6,"capPuff":1.4,"cuffGather":0,"yokeDrop":12,"waistNip":0.3,"skirtFull":1.55}},"gore_skirt_dress":{"label":"6-gore godet midi dress (mihenk 3)","top":"shoulder","neckline":"boat","length":"midi","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"gorePanels":true},"own":{"neckWidth":1.4,"neckDepth":6,"neckDepthBack":3,"shoulderSlope":1.6,"armholeHollow":0.12,"yokeDrop":12,"waistNip":0.26,"skirtFull":1.7,"goreCount":6}},"wrap_dress":{"label":"surplice wrap dress with waist tie (mihenk 2)","top":"shoulder","neckline":"wrap","length":"midi","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":true,"wrapSurplice":true,"wrapTie":true},"own":{"neckWidth":1.15,"neckDepth":20,"neckDepthBack":3,"shoulderSlope":1.7,"armholeHollow":0.12,"sleeveLen":12,"sleeveWidth":6,"capPuff":1.4,"cuffGather":0,"yokeDrop":12,"waistNip":0.28,"skirtFull":1.6,"wrapDir":1}},"top_boat_princess":{"label":"boatneck sleeveless princess top (hedef 23)","top":"shoulder","garment":"top","neckline":"boat","topLength":"hip","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.42,"neckDepth":7,"neckDepthBack":4,"shoulderSlope":1.5,"armholeHollow":0.1,"yokeDrop":12,"waistNip":0.16}},"top_crew_dart":{"label":"crew-neck sleeveless darted tank top (hedef 88)","top":"shoulder","garment":"top","neckline":"crew","topLength":"hip","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":false},"own":{"neckWidth":0.92,"neckDepth":12,"neckDepthBack":5,"shoulderSlope":1.6,"armholeHollow":0.12,"yokeDrop":12,"waistNip":0.14}},"top_scoop_cami":{"label":"scoop-neck sleeveless cami top (hedef 90)","top":"shoulder","garment":"top","neckline":"scoop","topLength":"hip","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":false},"own":{"neckWidth":1.05,"neckDepth":22,"neckDepthBack":12,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.12}},"top_crew_boxy_crop":{"label":"crew-neck sleeveless boxy crop tank (hedef 82)","top":"shoulder","garment":"top","neckline":"crew","topLength":"cropped","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":false},"own":{"neckWidth":1,"neckDepth":11,"neckDepthBack":5,"shoulderSlope":1.3,"armholeHollow":0.14,"yokeDrop":12,"waistNip":0.03},"boxy":true},"drawstring_babydoll":{"label":"square-neck drawstring","top":"band","parts":{"straps":true,"ruffledStraps":true,"collar":false,"sleeve":false,"shirr":true,"casing":true,"tie":true,"backSeam":true},"own":{"strapLen":12,"strapWidth":2.6,"ruffle":1,"yokeDrop":16,"gatherRatio":2.05,"shirrRows":6,"tieLength":26}},"lace_vneck_70s":{"label":"70s v-neck lace babydoll, short puff sleeve with tie cuff","_pin":"MIHENK-05 v7 approved by Damla 2026-07-19 (kalemim). Sleeve is a SHORT PUFF with a gathered tie cuff (the grid label 'uzun kol' was wrong; the drawing is correct). sleeveLen 9->14, cuffGather 1.2->1.6.","top":"shoulder","neckline":"v","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":true,"backSeam":true,"gatherWaist":false,"cfGather":true,"laceNeck":true,"laceSleeve":true,"laceHem":true},"own":{"neckWidth":1.12,"neckDepth":13.5,"neckDepthBack":2.5,"shoulderSlope":1.6,"armholeHollow":0.1,"sleeveLen":14,"sleeveWidth":6.2,"capPuff":2.2,"cuffGather":1.6,"laceWidth":1.3,"laceScallops":16,"tieLength":20,"yokeDrop":11}},"peterpan_puff":{"label":"peter-pan puff-sleeve","top":"shoulder","parts":{"straps":false,"ruffledStraps":false,"collar":true,"sleeve":true,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"neckWidth":1.35,"neckDepth":7.5,"neckDepthBack":2.5,"shoulderSlope":1.5,"armholeHollow":0.1,"sleeveLen":11,"sleeveWidth":7,"capPuff":2.6,"cuffGather":1,"collarWidth":4.6,"collarGap":0.5,"yokeDrop":9,"gatherRatio":3,"shirrRows":7}},"courtney_lace_vneck":{"label":"the courtney: v-neck lace babydoll (boogiechild photo, 2026-07-18)","top":"shoulder","neckline":"v","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":true,"backSeam":true,"gatherWaist":false,"cfGather":true,"laceNeck":true,"laceSleeve":true,"laceHem":true},"own":{"neckWidth":1.12,"neckDepth":13.5,"neckDepthBack":2.5,"shoulderSlope":1.6,"armholeHollow":0.1,"sleeveLen":17,"sleeveWidth":8.4,"capPuff":3.4,"cuffGather":0,"laceWidth":1.55,"laceScallops":18,"tieLength":27,"yokeDrop":11},"note":"photo-derived: deep V + cream lace trim, short sheer puff sleeves with lace cuff frill, CF ribbon bow with long streamers, empire waist, flowy gathered mini with sheer hem edge"},"top_crew_boxy_sleeve":{"label":"crew boxy drop-shoulder short-sleeve tee (hedef 65)","top":"shoulder","garment":"top","neckline":"crew","topLength":"hip","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":false},"own":{"neckWidth":1,"neckDepth":10,"neckDepthBack":5,"shoulderSlope":1.4,"armholeHollow":0.14,"yokeDrop":12,"waistNip":0.03,"sleeveLen":10,"sleeveWidth":7,"capPuff":0,"cuffGather":0},"boxy":true,"sleeveLength":"short"},"dress_princess_scoop_aline":{"label":"sleeveless princess scoop A-line mini dress (hedef 15)","top":"shoulder","neckline":"scoop","length":"mini","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.05,"neckDepth":20,"neckDepthBack":10,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.28,"skirtFull":1.5},"roundNeck":true},"dress_princess_scoop_aline_midi":{"label":"sleeveless princess scoop A-line midi dress (hedef 29)","top":"shoulder","neckline":"scoop","length":"midi","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.05,"neckDepth":20,"neckDepthBack":10,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.28,"skirtFull":1.5},"roundNeck":true},"dress_square_princess_circle":{"label":"square-neck cap-sleeve princess fit-and-flare full-circle midi dress (hedef 47)","top":"shoulder","neckline":"square","length":"midi","sleeveLength":"cap","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1,"neckDepth":15,"neckDepthBack":6,"shoulderSlope":1.6,"armholeHollow":0.12,"sleeveWidth":6.5,"capPuff":0,"cuffGather":0,"yokeDrop":12,"waistNip":0.28,"skirtFull":2.6},"roundNeck":false},"dress_boat_aline_tieback":{"label":"boat sleeveless A-line dart back-tie mini dress (hedef 53)","top":"shoulder","neckline":"boat","length":"mini","roundNeck":true,"parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"tieBack":true},"own":{"neckWidth":1.4,"neckDepth":7,"neckDepthBack":5,"shoulderSlope":1.5,"armholeHollow":0.11,"yokeDrop":12,"waistNip":0.24,"skirtFull":1.45}},"top_princess_peplum":{"label":"sleeveless princess crew peplum frill top (hedef 41)","top":"shoulder","garment":"top","neckline":"crew","topLength":"hip","peplum":"full","roundNeck":true,"parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1,"neckDepth":11,"neckDepthBack":5,"shoulderSlope":1.5,"armholeHollow":0.12,"yokeDrop":12,"waistNip":0.22}},"top_sq_shirred_peplum":{"label":"square sleeveless shirred-bust peplum top (hedef 31)","top":"shoulder","garment":"top","neckline":"square","topLength":"hip","peplum":"full","physicsShirr":true,"parts":{"straps":false,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"neckWidth":1.1,"neckDepth":13,"neckDepthBack":7,"shoulderSlope":1.5,"armholeHollow":0.12,"yokeDrop":12,"waistNip":0.2,"gatherRatio":2,"shirrRows":6}},"top_sq_puff_shirred_peplum":{"label":"square puff-sleeve shirred-bust peplum top (hedef 44)","top":"shoulder","garment":"top","neckline":"square","topLength":"hip","peplum":"full","physicsShirr":true,"parts":{"straps":false,"collar":false,"sleeve":true,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"neckWidth":1.15,"neckDepth":12,"neckDepthBack":7,"shoulderSlope":1.5,"armholeHollow":0.12,"yokeDrop":12,"waistNip":0.2,"gatherRatio":2,"shirrRows":6,"sleeveLen":13,"sleeveWidth":6.5,"capPuff":2.2,"cuffGather":1.4,"sleeveLength":"short"}},"dress_boat_princess_circle":{"label":"boat-neck cap-sleeve princess fit-and-flare circle mini dress (hedef 27)","top":"shoulder","neckline":"boat","length":"mini","sleeveLength":"cap","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.4,"neckDepth":7,"neckDepthBack":5,"shoulderSlope":1.5,"armholeHollow":0.12,"sleeveWidth":6.5,"capPuff":0,"cuffGather":0,"yokeDrop":12,"waistNip":0.28,"skirtFull":2.6},"roundNeck":true},"top_cami_sq_wide_shirred":{"label":"wide-strap shirred cami top (hedef 4)","top":"band","garment":"top","length":"mini","parts":{"straps":true,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":3.4,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2.1,"skirtFull":1.2},"physicsShirr":true},"top_cami_sq_wide_shirred_peplum":{"label":"wide-strap shirred cami peplum top (hedef 31)","top":"band","garment":"top","length":"mini","parts":{"straps":true,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":3.4,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2,"skirtFull":1.2},"physicsShirr":true,"peplum":"full"},"top_cami_sq_spaghetti":{"label":"spaghetti-strap zip cami top (hedef 74)","top":"band","garment":"top","length":"mini","parts":{"straps":true,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":2,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2,"skirtFull":1.2}},"top_cami_sq_spag_shirred_peplum":{"label":"spaghetti tie-shoulder shirred cami peplum (hedef 46)","top":"band","garment":"top","length":"mini","parts":{"straps":true,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":2,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2,"skirtFull":1.2},"physicsShirr":true,"peplum":"full"},"top_bandeau_shirred_peplum":{"label":"strapless bandeau shirred peplum top (hedef 40)","top":"band","garment":"top","length":"mini","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":3.4,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2,"skirtFull":1.2},"physicsShirr":true,"peplum":"full"},"dress_vneck_gathered":{"label":"short-sleeve v-neck gathered-skirt dirndl dress (hedef 24)","top":"shoulder","neckline":"v","length":"mini","parts":{"straps":false,"collar":false,"sleeve":true,"shirr":false,"casing":false,"tie":false,"backSeam":true},"own":{"neckWidth":1.05,"neckDepth":14,"neckDepthBack":4,"shoulderSlope":1.7,"armholeHollow":0.12,"sleeveLen":12,"sleeveWidth":10,"capPuff":0,"cuffGather":0,"yokeDrop":12,"waistNip":0.22,"skirtFull":2,"gatherRatio":2.2},"sleeveLength":"short","gatheredSkirt":true,"waistTie":"bow"},"dress_sweetheart_princess_circle":{"label":"sweetheart wide-strap princess fit-and-flare full-circle mini dress (hedef 54)","top":"shoulder","neckline":"sweetheart","length":"mini","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.15,"neckDepth":20,"neckDepthBack":8,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.28,"skirtFull":2.6},"roundNeck":true,"waistTie":"bow"},"dress_sweetheart_spag_circle":{"label":"sweetheart spaghetti-tie-strap princess fit-and-flare full-circle mini corset dress (hedef 101)","top":"shoulder","neckline":"sweetheart","length":"mini","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":true,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.1,"neckDepth":20,"neckDepthBack":8,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.3,"skirtFull":2.6,"tieLength":18},"roundNeck":true,"spaghettiStrap":true},"top_cami_sq_spag_shirred_peplum_ruffle":{"label":"spaghetti shirred cami peplum + hem ruffle (hedef 84/91)","top":"band","garment":"top","length":"mini","parts":{"straps":true,"collar":false,"sleeve":false,"shirr":true,"casing":false,"tie":false,"backSeam":true},"own":{"strapLen":13,"strapWidth":2,"ruffle":0,"yokeDrop":12,"waistNip":0.28,"gatherRatio":2,"skirtFull":1.2},"physicsShirr":true,"peplum":"full","peplumRuffle":true},"dress_bandeau_circle":{"label":"strapless bandeau circle dress (taklit: flat-01 golden)","top":"band","length":"midi","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"strapLen":4,"strapWidth":3,"ruffle":0,"yokeDrop":13,"waistNip":0.28,"bustHeight":0.3,"skirtFull":2.2},"fittedBand":true},"dress_vneck_aline":{"label":"sleeveless princess V-neck A-line mini dress (preview-truth 31)","top":"shoulder","neckline":"v","length":"mini","parts":{"straps":false,"collar":false,"sleeve":false,"shirr":false,"casing":false,"tie":false,"backSeam":true,"princessSeam":true},"own":{"neckWidth":1.05,"neckDepth":20,"neckDepthBack":10,"shoulderSlope":1.6,"armholeHollow":0.13,"yokeDrop":12,"waistNip":0.28,"skirtFull":1.5}}}};
+// FIGURE_BASE (2026-07-22): figür oran bandı — top bel oyuğu buradan hesaplanır
+// (kaynaklı matematik, göz kararı knob değil). Pinli/dress yolları okumaz.
+var _FB={"_ROL":"FİGÜR ORAN BANDI (FIGURE_BASE turu, 2026-07-22). Flat teknik çizimin gövde oranları göz kararı knob DEĞİL, kaynaklı matematik — Damla: 'gusto algımız yetmez ama teknik çizim tamamen matematiksel iş'. Her değerin yanında kaynağı; kaynaksız değer GİREMEZ. Kaynak önceliği: template > emsal bandı > dress-form (Damla kararı). Ölçülemeyene ÖLÇÜLMEDİ.","_schema_version":1,"_kaynaklar":{"eu36":"engine/src/contract.gen.hpp EU36 = bust 84 / waist 66 / hip 90 / shoulder 36.5 cm (motor sizechart, Aldrich EU konvansiyonu) — ORAN olarak kullanılır, mutlak cm değil","literatur":"9-baş teknik flat croquis geleneği (fashion flat drafting: Zoe Hong female flat template ailesi + 9-head croquis). Bant literatürden, 'literatur' etiketiyle; uydurma değil kaynaklı","template":"fashion-flat-models/Ekran Resmi 2026-07-23 04.03.37.png = Zoe Hong FEMALE FLAT TEMPLATE TORSOS (front torso, 774px), PİKSEL-KALİBRE 2026-07-23 (güzellik turu KÖK1). Göğüs daireleri Hough-tarzı daire-fit (score 3.0, gözle onaylı /tmp/front_torso_fit2.png). CF ekseni x=224 (boyun merkeziyle 1px örtüşme = ölçüm sağlam). Oranlar beden-bağımsız (gövde-genişliğine ve torso-boyuna normalize); MUTLAK flat-px türetilmedi çünkü template↔flat dikey ölçek tutarsız (bustLine y=79 vs mevcut 132 — uydurma dönüşüm yasak, ÖLÇÜLMEDİ kuralı).","olcum":"reports/gate/figur-denetimi.md ekstremum-tabanlı SVG ölçümü (2026-07-22) — mevcut figürel dress'lerin gerçek değerleri, bandın alt ucunu kalibre eder"},"template_gogus_geometrisi":{"_ROL":"KÖK1 güzellik turu (2026-07-23): göğüs DAİRESİ template'ten piksel-kalibre. Damla teşhisi (sarkık/kocaman/bele-yakın/diş-macunu) bu geometriyle çözülür. Tüm değerler beden-bağımsız ORAN, kaynak: template (piksel-kalibre).","cap_tam_govde_gen":{"value":0.272,"kaynak":"template","not":"göğüs dairesi çapı / tam gövde genişliği (bust hizası kaburga outline). 'kocaman' şikâyeti = bu orandan büyük çizim."},"cap_yari_govde_gen":{"value":0.543,"kaynak":"template","not":"göğüs çapı / yarı gövde genişliği (CF→yan)."},"apex_cf_uzaklik_yari_govde":{"value":0.348,"kaynak":"template","not":"apex'in CF'den yatay uzaklığı / yarı gövde. İki göğüs arası açıklık; 'bele-yakın' değil YANAL yerleşim referansı."},"apex_dusus_torso_frac":{"value":0.441,"kaynak":"template","not":"apex y düşüşü (omuz çizgisi=0 → apex) / torso boyu (omuz→bel). 'sarkık/aşağıda' şikâyetinin sayısal karşılığı: apex bu fraksiyondan AŞAĞIDA = sarkık. Referans: torso'nun ~%44'ü, bel çizgisine değil büst çizgisine oturur."},"boyun_gen_tam_govde":{"value":0.225,"kaynak":"template","not":"boyun genişliği / tam gövde genişliği."},"kavis_karakteri":{"value":"daire","kaynak":"template","not":"göğüs flat'te simetrik DAİRE ile temsil (apex tam ortada); gövde yan-hattı büst hizasında daralMAZ (kaburga takibi, göğüs ayrı daire). 'diş-macunu/boru' = gövde yan-hattının göğüsle şişirilmesi HATASI; doğru: yan-hat düz-kaburga + göğüs ayrı dolgunluk."}},"ratios":{"waist_bust":{"value":0.786,"band":[0.72,0.84],"kaynak":"eu36 (66/84) — TEMPLATE DOĞRULANDI 2026-07-23: Zoe Hong torso silüet yan-hattı waist/bust half-width = 0.812, bandın [0.72,0.84] İÇİNDE (uyumlu). Not: template silüet metriği göğüs dairesini HARİÇ tutar (göğüs ayrı daire), figure-lint bel/büst en-dar-nokta metriğiyle birebir payda değil → değer eu36'da bırakıldı, template çapraz-doğrulama olarak kaydedildi (bant genişletilmedi).","not":"BEL OYUĞU — ana figür metriği. Bant penceresi Damla kararı 2026-07-22 (figürel dress'ler 0.707-0.765 ölçüldü, alt uç onlarla uyumlu). Template silüet 0.812 üst-uçla uyumlu. >0.93 = BORU."},"waist_hip":{"value":0.733,"band":[0.68,0.8],"kaynak":"eu36 (66/90)","not":"flat'te hip landmark'ı kurulunca ölçülebilir olur (bugün flat hip çizmiyor, skirtFull'dan türetiyor)"},"bust_hip":{"value":0.933,"band":[0.88,0.98],"kaynak":"eu36 (84/90)"},"shoulder_slope_deg":{"value":null,"band":[18,22],"kaynak":"literatur","not":"OMUZ EĞİM AÇISI (yatayla derece). Template ölçümü KABA çıktı (~26.6°, neck→shoulderTip iki-nokta, tek segment gürültülü) → literatür bandı KORUNDU, template değeri güvenilir DEĞİL (ÖLÇÜLMEDİ sayılır, tek-nokta hassasiyeti düşük). Mevcut flat shoulderSlope knob ile karşılaştırma landmark turu işi."},"bust_height_frac":{"value":null,"band":[0.2,0.24],"kaynak":"literatur","not":"GÖĞÜS HATTI YÜKSEKLİĞİ / TAM gövde boyu (tepe=0, crotch dahil). Template torso'da bacak tam yok → TAM-boy paydası ÖLÇÜLEMEDİ. Template'ten ölçülen TORSO-relative (omuz→bel) apex fraksiyonu = 0.441, ayrı metrik olarak template_gogus_geometrisi.apex_dusus_torso_frac'ta yayında. Full-body frac literatür kalır."}},"profiller":{"figurel":{"waist_bust_max":0.84,"not":"bel oyuğu banda girer — dress gövdesi + figürel top hedefi"},"boxy":{"waist_bust_min":0.93,"not":"KASITLI kutu (boxy primitifi, Damla onaylı) — figürelleşmesi de HATA (mandal iki yönlü)"}},"mandal":{"_not":"figure_check ctest bu bloktan okur. Metod: bel = gövde profil GERÇEK en-dar nokta (üst %10/alt %18 hariç), bust = bel üstü max (engine/tools/figure-lint.mjs, figur-denetimi v3). Üç sınıf: (1) figürel TOP → band [0.72,0.84]; (2) BOXY → >0.93 (kutu bozulursa da FAIL — iki yönlü mandal); (3) DRESS/PİNLİ → taban değere drift-lock ±0.02 (onlar pin hakikati; body-bandı değil stilizasyon — princess_dress 0.623 bilinen band-dışı, kart değil pin).","figurel_top_band":[0.72,0.84],"boxy_min":0.93,"drift_tolerans":0.02,"taban_v3":{"princess_dress":0.623,"wrap_dress":0.641,"dress_princess_scoop_aline":0.64,"dress_princess_scoop_aline_midi":0.64,"gore_skirt_dress":0.658,"dress_boat_aline_tieback":0.675,"drawstring_babydoll":0.828,"peterpan_puff":1.001,"lace_vneck_70s":1.003,"courtney_lace_vneck":1.003}},"_donma":"Bu bantlar FIGURE_BASE turunda mandala bağlanır (figure_check). Değişiklik ancak yeni kaynaklı ölçümle — bant Damla onayı olmadan genişletilemez."};
+var S=_CT.flat.unitPX;
+var SIZE=_CT.flat.size;
+var LEN=_CT.flat.len;
+var SHARED=_ST.shared;
+var STYLE=_ST.styles;
+var P={};
+function defaults(styleKey,keep){var st=STYLE[styleKey],o={style:styleKey};for(var k in SHARED)o[k]=(keep&&k in keep)?keep[k]:SHARED[k];for(var j in st.own)o[j]=st.own[j];if(st.topLength!=null)o.topLength=st.topLength;if(st.sleeveLength!=null)o.sleeveLength=st.sleeveLength;if(st.peplum!=null)o.peplum=st.peplum;if(st.waistTie!=null)o.waistTie=st.waistTie;o.title=st.label;return o;}
+function parts(){return STYLE[P.style].parts;}
+function rng(seed){var s=seed>>>0;return function(){s=(s+0x6D2B79F5)>>>0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function seg(p0,c1,c2,p1){return [p0[0],p0[1],c1[0],c1[1],c2[0],c2[1],p1[0],p1[1]];}
+function mirror(segs,ax){var m=[],r=function(x){return 2*ax-x;};for(var i=segs.length-1;i>=0;i--){var s=segs[i];m.push([r(s[6]),s[7],r(s[4]),s[5],r(s[2]),s[3],r(s[0]),s[1]]);}return m;}
+function enforceC1(g,flatStart){if(flatStart!==false)g[0][3]=g[0][1];g[g.length-1][5]=g[g.length-1][7];return g;}
+function toPath(g){var d="M "+g[0][0].toFixed(1)+","+g[0][1].toFixed(1);g.forEach(function(s){d+=" C "+s[2].toFixed(1)+","+s[3].toFixed(1)+" "+s[4].toFixed(1)+","+s[5].toFixed(1)+" "+s[6].toFixed(1)+","+s[7].toFixed(1);});return d+" Z";}
+function toOpen(g){var d="M "+g[0][0].toFixed(1)+","+g[0][1].toFixed(1);g.forEach(function(s){d+=" C "+s[2].toFixed(1)+","+s[3].toFixed(1)+" "+s[4].toFixed(1)+","+s[5].toFixed(1)+" "+s[6].toFixed(1)+","+s[7].toFixed(1);});return d;}
+function cubic(s,t){var u=1-t,a=u*u*u,b=3*u*u*t,c=3*u*t*t,d=t*t*t;return [a*s[0]+b*s[2]+c*s[4]+d*s[6], a*s[1]+b*s[3]+c*s[5]+d*s[7]];}
+// OMUZ OUTLINE Y @ verilen X (KÖK2 tutunma fix 2026-07-23): omuz eğrisi neck point
+// (nX,y0)→shoulder tip (stX,stY) cubic'i (buildHalf'teki seg ile AYNI kontrol noktaları);
+// bir X için outline'ın gerçek Y'sini döndürür → askı tabanı gövdeye tam oturur (havada kalmaz).
+function shoulderYAt(x,k){var nX=k.nX,y0=k.y0,stX=k.stX,stY=k.stY;
+  var seg=[nX,y0,nX+(stX-nX)*0.34,y0+(stY-y0)*0.28,nX+(stX-nX)*0.70,y0+(stY-y0)*0.72,stX,stY];
+  var bt=0,bd=1e9;for(var t=0;t<=1;t+=0.01){var c=cubic(seg,t);var d=Math.abs(c[0]-x);if(d<bd){bd=d;bt=t;}}
+  return cubic(seg,bt)[1];}
+function sampleX(segs,y){var best=null;for(var i=0;i<segs.length;i++){var s=segs[i],y0=s[1],y1=s[7];if(Math.min(y0,y1)-0.5<=y&&y<=Math.max(y0,y1)+0.5){var lo=0,hi=1,p;for(var k=0;k<26;k++){var t=(lo+hi)/2;p=cubic(s,t);if((y1>y0)?(p[1]<y):(p[1]>y))lo=t;else hi=t;}if(best===null||p[0]>best)best=p[0];}}return best;}
+function smooth(pts){var g=[];for(var i=0;i<pts.length-1;i++){var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||pts[i+1];g.push(seg(p1,[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6],p2));}return g;}
+function taper(pts,maxw,bias){var L=pts.length,a=[],b=[],i;for(i=0;i<L;i++){var t=L>1?i/(L-1):0.5;var q=pts[Math.min(i+1,L-1)],r=pts[Math.max(i-1,0)];var dx=q[0]-r[0],dy=q[1]-r[1],d=Math.hypot(dx,dy)||1;var w=maxw*0.5*Math.pow(Math.sin(Math.PI*Math.min(Math.max(t,0.002),0.998)),bias||0.5);a.push([pts[i][0]-dy/d*w,pts[i][1]+dx/d*w]);b.push([pts[i][0]+dy/d*w,pts[i][1]-dx/d*w]);}var s="M "+a[0][0].toFixed(1)+","+a[0][1].toFixed(1);for(i=1;i<L;i++)s+=" L "+a[i][0].toFixed(1)+","+a[i][1].toFixed(1);for(i=L-1;i>=0;i--)s+=" L "+b[i][0].toFixed(1)+","+b[i][1].toFixed(1);return s+" Z";}
+function samplePts(p0,c1,c2,p1,n){var s=[p0[0],p0[1],c1[0],c1[1],c2[0],c2[1],p1[0],p1[1]],out=[];for(var i=0;i<=n;i++)out.push(cubic(s,i/n));return out;}
+// BÜZGÜ TİK İNK (KÖK3 güzellik turu 2026-07-23): fizik-çözülmüş fold'u "püskül" (band boyu
+// uzun ince saç-teli) yerine EMSAL diline basar — KISA (band'in %25-42'si), düzensiz boy
+// (fold indeksine göre), KALIN uç (dikişe yakın taban geniş → ucu inceltmeden). Fizik fold
+// VERİSİ (kat konumu/dağılımı) DEĞİŞMEZ — sadece fold'un band-üst diliminden kısa tik çizilir,
+// ikinci kıvrım yolu YOK. Damla: emsalde büzgü kısa, uçları kalın, düzensiz-aralıklı tik.
+function gatherTick(foldPts,idx){
+  if(foldPts.length<3) return taper(foldPts,1.1,0.4);
+  // düzensiz kısa boy: band diliminin %25-42'si (idx faz farkıyla dalgalanır, seed'siz determinist)
+  var frac=0.25+0.17*(0.5+0.5*Math.sin(idx*1.7+0.6));
+  var n=Math.max(2,Math.round((foldPts.length-1)*frac));
+  var slice=foldPts.slice(0,n+1);
+  // KALIN uç: taban geniş, uç sivrilmeden (bias 0.85 → sin eğrisi tepede daha düz = kalın uç).
+  // Hakem PASS bu değerde (2026-07-23); bias 1.5 denendi ama belirgin kazanç yok → 0.85 korundu.
+  // Uç-dolgunluğu nüansı v1.1 kozmetik adayı (hakem notu, shipping bloklamaz).
+  return taper(slice,1.35,0.85);
+}
+function polyFromSegs(segs,n){var out=[];segs.forEach(function(sg,i){for(var j=(i?1:0);j<=n;j++)out.push(cubic(sg,j/n));});return out;}
+function laceBand(poly,w,sc){var inner=[],outer=[],i;for(i=0;i<poly.length;i++){var q=poly[Math.min(i+1,poly.length-1)],r=poly[Math.max(i-1,0)];var dx=q[0]-r[0],dy=q[1]-r[1],d=Math.hypot(dx,dy)||1;var nx=-dy/d,ny=dx/d;if(ny<0){nx=-nx;ny=-ny;}var t=i/(poly.length-1);var amp=w*(0.60+0.40*Math.abs(Math.sin(t*Math.PI*sc)));inner.push(poly[i]);outer.push([poly[i][0]+nx*amp,poly[i][1]+ny*amp]);}var d1="M "+inner[0][0].toFixed(1)+","+inner[0][1].toFixed(1);for(i=1;i<inner.length;i++)d1+=" L "+inner[i][0].toFixed(1)+","+inner[i][1].toFixed(1);for(i=outer.length-1;i>=0;i--)d1+=" L "+outer[i][0].toFixed(1)+","+outer[i][1].toFixed(1);d1+=" Z";var d2="M "+inner[0][0].toFixed(1)+","+inner[0][1].toFixed(1);for(i=1;i<inner.length;i++){var q2=outer[i],p2=inner[i];d2+=" L "+(p2[0]+(q2[0]-p2[0])*0.30).toFixed(1)+","+(p2[1]+(q2[1]-p2[1])*0.30).toFixed(1);}return {band:d1,head:d2};}
+function drapePlan(p,rnd){var n=(p.ink==='minimal')?2:(p.ink==='orta')?3:Math.max(2,Math.round(p.foldCount/2));var R=[],CORE=0.20;for(var i=0;i<n;i++){var prim=(i%2===0),base=(i+0.65)/(n+0.25);var u=Math.min(0.96,Math.max(0.04,base+(rnd()-0.5)*0.8/n));R.push({u:CORE+(1-CORE)*u,prim:prim,swing:prim?0.55+rnd()*0.45:0.15+rnd()*0.30,birth:prim?rnd()*0.05:(0.14+rnd()*0.30)*p.drape,die:prim?1:0.40+rnd()*0.35,sag:0.55+rnd()*0.75,sway:(rnd()-0.5)*0.45});}R.sort(function(a,b){return a.u-b.u;});R[R.length-1].prim=true;R[0].prim=false;if(p.ink==='minimal')R.forEach(function(r){r.prim=true;});return R;}
+function hemPoints(p,k,R){function baseY(u){return k.yHem+k.dip*(1-Math.pow(u,1.7));}var W=p.hemWave*3.2,pts=[[k.hX,k.yHem]];var prim=R.filter(function(r){return r.prim;});for(var j=prim.length-1;j>=0;j--){var r=prim[j],outer=(j===prim.length-1)?1:prim[j+1].u,mid=(r.u+outer)/2;pts.push([k.cx+(k.hX-k.cx)*mid,baseY(mid)+W*r.sag]);var x=k.cx+(k.hX-k.cx)*r.u,y=baseY(r.u)-W*(0.45+r.swing*0.75);r.hem=[x,y];pts.push([x,y]);pts.push([x,y]);}var i0=prim[0].u*0.45;pts.push([k.cx+(k.hX-k.cx)*i0,baseY(i0)+W*0.55]);pts.push([k.cx,baseY(0)]);return pts;}
+function buildHalf(p,cx,isBack,rnd){var sz=SIZE[p.size],st=STYLE[p.style];var y0=46,k={cx:cx,y0:y0},g=[];var eX=cx+sz.emp*(1-p.waistNip)*S;var bustX=cx+sz.bust*(1+0.07*p.bustProject)*S;
+// TOP bust-width (2026-07-20 tur1c — hakem: en geniş nokta underarm ALTINDA, yan
+// dikişte bust dışa balon yapıyordu). Root wasn't the armhole; it was bustX
+// (86.8px) bulging past the sleeveless underarm (69.1px), read most on boat+
+// princess. A sleeveless top's side seam runs close: keep bust at/inside the
+// underarm so shoulder stays the widest point. Guarded on garment==='top'.
+// ASKI AILESI (2026-07-22): band-top'ta (cami/bandeau) omuz YOK — bust en geniş
+// kalmalı; shp-daraltma sadece OMUZ gövdeli top'a (tur1c kuralı omuz-en-geniş).
+if(st.garment==='top'&&st.top!=='band')bustX=cx+sz.shp*0.99*S;
+// BOXY top (2026-07-21 gece — id82/65 boxy oversized): yan dikiş DÜZ iner, bel
+// çekmesi yok, en geniş nokta omuz=bust=hip. eX (bel) bust hizasına açılır →
+// kutu siluet. Guarded on st.boxy → sadece boxy stiller; diğer top'lar figürlü.
+// FIGURE_BASE İSTİSNASI (2026-07-22): boxy KASITLI kutu — figürel bel çekmesi
+// boxy'ye UYGULANMAZ; mandal boxy'nin borusunu da korur (yanlış figürelleşme=FAIL).
+if(st.boxy){eX=bustX;}
+// FIGURE_BASE (2026-07-22, figür denetimi bulgusu): boxy-olmayan TOP'larda bel
+// oyuğu YOKTU (waist/bust ölçülen 0.98 = BORU; bel 71.3px bust 67.6px'ten bile
+// genişti). Bel artık contract/figure-bands.json bandından HESAPLANIR (göz kararı
+// knob değil): iskelet oranı = band ortası − 0.09 (çizim eğrisi yumuşatması
+// iskeleti ölçümde ~+0.09 kaldırır, figur-denetimi dress kalibrasyonu 0.635→0.726).
+// Omuz-en-geniş kuralı (tur1c hakem) KORUNUR: bust=shp*0.99 dokunulmadı, sadece
+// bel banda çekildi. Dress/pinli stiller bu bloğa girmez → byte-identical.
+if(st.garment==='top'&&!st.boxy){
+  var _wb=(_FB.ratios.waist_bust.band[0]+_FB.ratios.waist_bust.band[1])/2;   // 0.78 band ortası (EU36)
+  eX=cx+(bustX-cx)*_wb;   // bel landmark'ta ölçüm iskeleti direkt okur → düzeltme yok
+}
+var nip=Math.max(0.05,0.34-0.9*p.waistNip);if(st.top==='band'){var yTop=y0+p.strapLen*S,yEmp=yTop+p.yokeDrop*S;var yB=yTop+(yEmp-yTop)*p.bustHeight;
+// FITTED BAND (2026-07-26 taklit döngüsü, golden flat-01 bindirme bulgusu): band gövde
+// üst kenarı bust genişliğindeydi + yanlar düz = KUTU okunuyor. Gerçek straplez korsaj:
+// üst kenar DAR (~bust*0.72), bust bombesi ılımlı (~0.88), bele oturur. SADECE
+// st.fittedBand taşıyan stiller; mevcut bandeau/cami topları (0.95) byte-identical.
+if(st.fittedBand)bustX=cx+sz.bust*0.88*S;
+var topX=cx+sz.bust*((st.fittedBand?0.72:0.95)-0.03*p.bustProject)*S;k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(seg([bustX,yB],[bustX,yB+(yEmp-yB)*0.42],[eX+(bustX-eX)*nip,yEmp-(yEmp-yB)*0.16],[eX,yEmp]));}else{var stX=cx+sz.shp*S,stY=y0+p.shoulderSlope*S;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=cx+sz.bust*S,uaY=y0+sz.ad*S;
+// TOP armhole tightening (2026-07-20 tur1 — hakem tur1b: underarm silüetin en
+// geniş noktasıydı = koltuk-altı balon). Bir kolsuz top'ta EN GENİŞ nokta OMUZ
+// ucudur; underarm onun İÇİNDE kalır, silüet omuzdan bele düz-içe akar. bust
+// genişliği (86.8px) omuz ucundan (70.6px) genişti → underarm'ı omuz ucunun
+// hemen içine (shp*0.98) çek, balonu öldür. Guarded on garment==='top' → kollu
+// pinli stiller (underarm=bust, kol soketi geniş olmalı) byte-identical kalır.
+if(st.garment==='top'){uaX=cx+sz.shp*0.98*S;uaY=y0+sz.ad*0.88*S;}
+var yEmp2=uaY+p.yokeDrop*S;k.ny=ny;k.nX=nX;k.stX=stX;k.stY=stY;k.uaX=uaX;k.uaY=uaY;k.panelTop=y0+sz.ad*0.42*S;k.yEmp=yEmp2;k.bX=bustX;k.bustX=bustX;
+// GÖĞÜS APEX Y — SHOULDER-relative (KÖK1 güzellik turu 2026-07-23, template piksel-kalibre).
+// ESKİ apex = uaY+(yEmp-uaY)*bustHeight → apex torso'nun %73'ünde (bel çizgisine çok yakın) =
+// Damla teşhisi "göğüs sarkık/bele-yakın/aşağıda". Zoe Hong template: apex omuz→bel torso'nun
+// %44'ünde (apex_dusus_torso_frac=0.441, contract/figure-bands.json). k.apexY iç-işaret çizgileri
+// (princess/surplice/sweetheart seam) için; büst-bel mesafesini açar → sarkıklık gider. Yan-hat
+// bombe (side seam) uaY-relative KALIR (bombe underarm altında = fizik; yukarı çekmek zigzag yapar).
+k.apexY=stY+(yEmp2-stY)*0.441;if(st.neckline==='square'){
+  // SQUARE neckline (2026-07-22 — gerçek square: DÜZ taban + iki DİK kenar,
+  // yuvarlatma YOK. neck point (nX,y0)'dan omuza; CF'de (cx,ny) düz taban; köşe
+  // (nX,ny) keskin. İki segment: taban (cx,ny→nX,ny) + dik kenar (nX,ny→nX,y0).
+  // roundNeck yuvarlak U çiziyordu; square onun ANTİTEZİ. crew ikamesi YASAK.
+  g.push(seg([cx,ny],[cx+(nX-cx)*0.5,ny],[nX,ny],[nX,ny]));      // düz taban CF→köşe
+  g.push(seg([nX,ny],[nX,ny-(ny-y0)*0.5],[nX,y0],[nX,y0]));      // dik kenar köşe→omuz
+  k.nSeg=2;k.pointed=false;k.squareCorner=[nX,ny];
+}else if(st.neckline==='sweetheart'&&!isBack){
+  // SWEETHEART yaka (2026-07-23 — kalp yaka, SADECE ÖN). CF'de SIĞ merkez çentik +
+  // her bust cup DOLGUN yukarı kavis (kalbin yarısı). crew/v/square ikamesi DEĞİL.
+  // Motor Neckline::Sweetheart zaten çiziyor (bodice.cpp); flat kap dilini kurar.
+  // Arka: st.roundNeck ile normal scoop kavisi (kalp sadece önde).
+  var _swMidY=ny-(ny-y0)*0.16;                          // CF merkez çentik (SIĞ, yukarıda)
+  var _swCupX=cx+(nX-cx)*0.60,_swCupY=ny-(ny-y0)*0.02;  // cup en derin nokta (bust apex, aşağıda dolgun)
+  g.push(seg([cx,_swMidY],[cx+(nX-cx)*0.08,_swMidY+(ny-_swMidY)*0.55],[_swCupX-(_swCupX-cx)*0.42,_swCupY-2],[_swCupX,_swCupY])); // CF sığ çentik → cup dip (dolgun kalp lobu)
+  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.34,_swCupY-(_swCupY-y0)*0.42],[nX-(nX-cx)*0.04,y0+(ny-y0)*0.16],[nX,y0])); // cup dip → omuz (yukarı kavis)
+  k.nSeg=2;k.pointed=false;
+}else if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'||st.roundNeck){
+  // TOP round neckline (2026-07-20 tur1 fix — hakem: crew/scoop front V'ye kaçıyordu).
+  // A true crew/scoop is a wide U: flat-bottomed at CF (horizontal tangent held
+  // LONGER), then a fast rise near the neck point. The old else-curve lifted its
+  // second control point too early (0.55 of the depth), reading as a V. Here the
+  // bottom control stays low and wide, so the eye reads round. Guarded on
+  // garment==='top' so every pinned (non-top) style keeps its exact old curve.
+  g.push(seg([cx,ny],[cx+(nX-cx)*0.55,ny],[nX-(nX-cx)*0.04,ny-(ny-y0)*0.18],[nX,y0]));k.nSeg=1;k.pointed=false;
+}else{g.push(seg([cx,ny],[cx+(nX-cx)*0.38,ny],[nX-(nX-cx)*0.12,ny-(ny-y0)*0.55],[nX,y0]));k.nSeg=1;k.pointed=false;}g.push(seg([nX,y0],[nX+(stX-nX)*0.34,y0+(stY-y0)*0.28],[nX+(stX-nX)*0.70,y0+(stY-y0)*0.72],[stX,stY]));var H=p.armholeHollow;var a1=[stX+(uaX-stX)*H,stY+(uaY-stY)*0.36];var a2=[stX+(uaX-stX)*0.50,stY+(uaY-stY)*0.74];g.push(seg([stX,stY],[stX+(uaX-stX)*H*0.7,stY+(uaY-stY)*0.13],[stX+(uaX-stX)*H,stY+(uaY-stY)*0.24],a1));g.push(seg(a1,[a1[0]+(a2[0]-a1[0])*0.42,a1[1]+(a2[1]-a1[1])*0.48],[a1[0]+(a2[0]-a1[0])*0.66,a1[1]+(a2[1]-a1[1])*0.74],a2));g.push(seg(a2,[a2[0]+(uaX-a2[0])*0.46,a2[1]+(uaY-a2[1])*0.68],[uaX-(uaX-a2[0])*0.52,uaY],[uaX,uaY]));// YAN-HAT BÜST-BEL TAPER: KÖK1 iter2 GERİ ALINDI (2026-07-23). Yan-hat bombe zaten
+// minimal (~3px) → taper yumuşatma id53/id24'te GÖRÜNMEDİ (kazanç yok, prompt "puan
+// yükselmeli" kuralı). id13/id101 iyileşmesini iter1 apex-fix zaten yaptı. ESKİ taper
+// korundu (byte-identical). id53/id24 gerçek göğüs sorunu ayrı yerde (id53 empire seam
+// konumu, id24 büzgü/etek KÖK3/4) → dürüst not, bu KÖK'te çözülmedi.
+var yB2=uaY+(yEmp2-uaY)*p.bustHeight;g.push(seg([uaX,uaY],[uaX+(bustX-uaX)*0.85,uaY+(yB2-uaY)*0.22],[bustX,yB2-(yB2-uaY)*0.55],[bustX,yB2]));g.push(seg([bustX,yB2],[bustX,yB2+(yEmp2-yB2)*0.44],[eX+(bustX-eX)*nip,yEmp2-(yEmp2-yB2)*0.16],[eX,yEmp2]));}k.eX=eX;
+// TOP branch (2026-07-20, master directive item 8 — top family, 46 targets).
+// A top is ONE figured body that skims from the waist to a hip/crop hem: no
+// separate skirt panel, no waist seam gape, no drape folds. Guarded on
+// st.garment==='top' so every existing (pinned) style — none of which carries a
+// garment field — takes the untouched dress path and stays byte-identical.
+if(st.garment==='top'){
+  // hem length from topLength (cropped ~ at waist, hip ~ below, tunic ~ lower);
+  // the body keeps a soft waist nip then eases back out to a near-straight hip.
+  var _tl={cropped:5,hip:16,tunic:30}[p.topLength||'hip'];
+  k.yHem=k.yEmp+_tl*S;k.dip=(p.hemDip*0.35)*S;
+  // hip barely fuller than the waist — a top hangs close, never flares.
+  // FIGURE_BASE (2026-07-22): hem = BEL LANDMARK + oranlı ease (serbest Y/X yasak).
+  // Eski hali emp*((1-waistNip)+0.06) bel'den BAĞIMSIZ hesaplanıyordu → yeni bel
+  // oyuğuyla çelişip hem'i bust dışına taşırırdı. Şimdi bel(eX)'ten bust'a doğru
+  // high-hip ease: cropped bele yakın biter, hip boyu daha dolgun. Boxy: kutu (eX).
+  k.hX=st.boxy?eX:eX+(bustX-eX)*((p.topLength||'hip')==='cropped'?0.15:0.38);
+  var Rt=[];k.hemPts=[[k.hX,k.yHem],[cx,k.yHem+k.dip*0.4]];
+  // side seam: waist -> hip, gentle ease-out (no skirt sweep).
+  g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.5,k.yEmp+(k.yHem-k.yEmp)*0.4],[k.hX,k.yHem-(k.yHem-k.yEmp)*0.35],[k.hX,k.yHem]));
+  // straight hem across to centre front (slight dip only).
+  g.push(seg([k.hX,k.yHem],[cx+(k.hX-cx)*0.6,k.yHem+k.dip*0.3],[cx+(k.hX-cx)*0.3,k.yHem+k.dip*0.45],[cx,k.yHem+k.dip*0.4]));
+  return {g:g,folds:Rt,k:k};
+}
+k.yHem=k.yEmp+LEN[p.length]*S;k.dip=p.hemDip*S;k.hX=cx+sz.emp*((1-p.waistNip)+(p.skirtFull-1))*S;var R=drapePlan(p,rnd);k.hemPts=hemPoints(p,k,R);
+// ETEK YAN-HAT S-KAVİS (KÖK4 güzellik turu 2026-07-23): ESKİ c2=0.18/0.30 → yan kenar
+// belden hem'e düz-diagonal ("koni gibi, flow yok" — Damla). YENİ: belde hafif içbükey
+// (üst korunur), kalçada döner, hem'e DIŞBÜKEY açılır = S karakteri (alt dışbükey 3.2→9.6px).
+// c1 0.05→0.02 (üst içbükey belirgin), c2 x 0.18→0.05 + y 0.30→0.42 (hem'e flare dönüşü).
+// PIN KORUMASI: pinli babydoll/lace ESKİ kavis (byte-identical).
+var _pinSkirt=(p.style==='drawstring_babydoll'||p.style==='lace_vneck_70s');
+if(_pinSkirt)g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*0.05,k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*0.18,k.yHem-(k.yHem-k.yEmp)*0.30],[k.hX,k.yHem]));
+else{
+// ETEK DOLGUNLUK (2026-07-27 taklit döngüsü, 3 referans bindirmesinde ortak duvar):
+// referans eteklerde yan hat dışa BOMBELİ dolgun düşer, bizimki koni-düz iniyordu.
+// p.skirtCurve 0..1: 0 = eski kavis BİREBİR (skirtCurve taşımayan her stil
+// byte-identical), 1 = tam dolgun (c1 dışarı, c2 hem'e yakın + hX ötesine bombe).
+var _sq=p.skirtCurve||0;
+g.push(seg([eX,k.yEmp],[eX+(k.hX-eX)*(0.02+0.30*_sq),k.yEmp+(k.yHem-k.yEmp)*0.26],[k.hX-(k.hX-eX)*(0.05-0.14*_sq),k.yHem-(k.yHem-k.yEmp)*(0.42-0.22*_sq)],[k.hX,k.yHem]));}
+smooth(k.hemPts).forEach(function(s){g.push(s);});return {g:g,folds:R,k:k};}
+/* fırfırlı askı (Damla kalem revizyonu 2026-07-19: straps:true stilleri için
+   strapShape geri getirildi; repo K2-minify sırasında budanmıştı, çizim veriyle
+   tutmuyordu — MIHENK-04 "askısı var ama"). Senin ilk prototip HTML'inden birebir. */
+function strapShape(p,k,rnd){
+  var w=p.strapWidth*S*0.5,amp=p.ruffle*S*0.42;
+  var aX=k.cx+(k.bX-k.cx)*0.55+p.strapWidth*S*0.5,aY=k.yTop+2;
+  var bX=k.strapX,bY=k.y0;
+  var m=9,L=[],R=[],lumps=[];
+  for(var i=0;i<=m;i++){
+    var t=i/m;
+    var x=aX+(bX-aX)*t-(Math.sin(Math.PI*t)*4),y=aY+(bY-aY)*t;
+    var dx=(bX-aX)-Math.PI*Math.cos(Math.PI*t)*4,dy=(bY-aY),d=Math.hypot(dx,dy);
+    var nx=-dy/d,ny=dx/d,ph=i*1.05;
+    var wl=w+amp*(0.5+0.5*Math.sin(ph))*(0.55+rnd()*0.75);
+    var wr=w+amp*(0.5+0.5*Math.sin(ph+Math.PI))*(0.55+rnd()*0.75);
+    L.push([x+nx*wl,y+ny*wl]);R.push([x-nx*wr,y-ny*wr]);
+    lumps.push({x:x,y:y,nx:nx,ny:ny,wl:wl,wr:wr,side:Math.sin(ph)>0?1:-1});
+  }
+  var outline=smooth(L)
+    .concat([seg(L[m],[L[m][0],L[m][1]],[R[m][0],R[m][1]],R[m])])
+    .concat(smooth(R.slice().reverse()))
+    .concat([seg(R[0],[R[0][0],R[0][1]],[L[0][0],L[0][1]],L[0])]);
+  return {outline:outline,lumps:lumps};
+}
+function puffSleeve(p,k){var capTop=k.stY-p.capPuff*S;var outX=k.stX+p.sleeveWidth*S;var hemY=k.stY+p.sleeveLen*S;var shoulderY=k.stY+(hemY-k.stY)*0.34;var g=[];g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.18,capTop-3],[outX,shoulderY-(shoulderY-capTop)*0.52],[outX,shoulderY]));g.push(seg([outX,shoulderY],[outX,shoulderY+(hemY-shoulderY)*0.44],[outX-1,hemY-7],[outX-5,hemY]));g.push(seg([outX-5,hemY],[k.uaX+22,hemY+5],[k.uaX+14,hemY+3],[k.uaX+9,hemY-3]));g.push(seg([k.uaX+9,hemY-3],[k.uaX+4,hemY-22],[k.uaX+1,k.uaY+14],[k.uaX,k.uaY]));return {g:g,capTop:capTop,outX:outX,hemY:hemY,shoulderY:shoulderY};}
+// PLAIN set-in sleeve (2026-07-21 gece — 9 hedef straight/plain kol ister; puf
+// DEĞİL). Omuz ucundan hafif eğimli düz aşağı iner, bilekte hafif daralır:
+// dikdörtgen-ish set-in kol. Ayrı fonksiyon → puffSleeve (pinli princess/wrap)
+// byte-identical. capTop=stY (cap yükseltme yok), düz kenarlar.
+function plainSleeve(p,k){
+  // sleeveLength → boy (2026-07-21 FAZ1 kıyas: emsal kısa≈korsaj 1/4, uzun≈3/4).
+  // CAP (2026-07-22 id47): omzu KAPLAYAN çok kısa kol — dış kenar omuzdan AŞAĞI
+  // eğimli çıkar (yataydan flutter/kanat okunuyordu, MIHENK dersi), boy kısa.
+  var _cap=p.sleeveLength==='cap';
+  var _slen={cap:9,short:17,elbow:28,long:42}[p.sleeveLength||'short'];
+  var outX=k.stX+p.sleeveWidth*S;var hemY=k.stY+_slen*S;
+  var wristX=k.stX+p.sleeveWidth*S*0.70; // bilek omuz genişliğinin %70'i (hafif konik)
+  var g=[];
+  // omuz ucundan dış kenar: cap'te aşağı-eğimli (omuz çizgisini takip), düzde yatay
+  if(_cap){g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.45,k.stY+(hemY-k.stY)*0.16],[outX-(outX-k.stX)*0.12,k.stY+(hemY-k.stY)*0.34],[outX,k.stY+(hemY-k.stY)*0.5]));}
+  else g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.5,k.stY],[outX,k.stY],[outX,k.stY+(hemY-k.stY)*0.12]));
+  // dış kenar aşağı bileğe (düz-hafif konik)
+  g.push(seg([outX,k.stY+(hemY-k.stY)*0.12],[outX-(outX-wristX)*0.4,k.stY+(hemY-k.stY)*0.55],[wristX,hemY-(hemY-k.stY)*0.14],[wristX,hemY]));
+  // bilek (kol ağzı, düz hafif kavis)
+  g.push(seg([wristX,hemY],[wristX-(wristX-(k.uaX+6))*0.5,hemY+2],[k.uaX+10,hemY+1],[k.uaX+6,hemY-1]));
+  // iç kenar (koltukaltı dikişi) bilekten underarm'a — DÜZ yumuşak
+  g.push(seg([k.uaX+6,hemY-1],[k.uaX+3,hemY-(hemY-k.uaY)*0.55],[k.uaX+1,k.uaY+8],[k.uaX,k.uaY]));
+  return {g:g,outX:outX,hemY:hemY,wristX:wristX};}
+function collarShape(p,neckSeg,k,gap){var n=16,outer=[],inner=[];for(var i=0;i<=n;i++){var t=i/n,q=cubic(neckSeg,t),q2=cubic(neckSeg,Math.min(1,t+0.02));var dx=q2[0]-q[0],dy=q2[1]-q[1],d=Math.hypot(dx,dy)||1;var w=p.collarWidth*S*(0.72+0.28*Math.sin(Math.PI*t));inner.push([q[0],q[1]]);outer.push([q[0]+dy/d*w,q[1]-dx/d*w]);}outer[0]=[k.cx+gap,outer[0][1]];inner[0]=[k.cx+gap,inner[0][1]];var loop=outer.concat(inner.slice().reverse());loop.push(loop[0]);return smooth(loop);}
+function render(p){var pt=parts(),st=STYLE[p.style];var W=940,H=680,o='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';o+='<style>.body{fill:#fff;stroke:#111;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}.piece{fill:#fff;stroke:#111;stroke-width:1.5;stroke-linejoin:round}.tie{fill:#fff;stroke:#111;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}.seam{fill:none;stroke:#111;stroke-width:1.05;stroke-linecap:round}.ink{fill:#111;stroke:none}.st{fill:none;stroke:#111;stroke-width:.65;stroke-dasharray:3.5 3;stroke-linecap:round}.lbl{font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:2.8px;fill:#111;text-anchor:middle}</style>';[false,true].forEach(function(isBack){var cx=isBack?700:240;var rnd=rng(p.seed*131+(isBack?977:13));var b=buildHalf(p,cx,isBack,rnd),k=b.k;var half=enforceC1(b.g.slice(),!k.pointed),full=half.concat(mirror(half,cx));var M=function(d,c){return '<path class="'+c+'" d="'+d+'"/>'+'<g transform="translate('+(2*cx)+',0) scale(-1,1)"><path class="'+c+'" d="'+d+'"/></g>';};
+// INK-ASİMETRİ (2026-07-26, flat-metre bulgusu): gerçek emsal flat'lerde mürekkep
+// (kıvrım/tik) sol-sağ AYNA DEĞİL (ölçülen simetri 0.66-0.84); bizim kalem her ink'i
+// scale(-1,1) ile kopyalıyordu (ölçülen 0.997-1.0 = robotik). p.inkAsym açıkken drape
+// fold'ları sol kanatta KENDİ deterministik planından çizilir, fizik-büzgü tikleri
+// aynalanmaz (çözücü tüm genişliği üretir). SİLÜET AYNALI KALIR. Default KAPALI →
+// pinli/mevcut her stil byte-identical. Determinist: rndL sabit tohum, md5 eşit.
+var AS=!!p.inkAsym;var rndL=rng(p.seed*131+(isBack?977:13)+500009);
+var refl=function(pts){return pts.map(function(q){return [2*cx-q[0],q[1]];});};
+// MJ: ink taper'ı çift kanat basar. Asym: sağ ham; sol = yansıt + iç noktalara
+// deterministik mikro-jitter (uçlar SABİT = yapısal konum korunur), genişlik ±%10.
+var MJ=function(pts,maxw,bias){if(!AS)return M(taper(pts,maxw,bias),'ink');
+  var L=refl(pts).map(function(q,i,a){if(i===0||i===a.length-1)return q;
+    return [q[0]+(rndL()-0.5)*2.4,q[1]+(rndL()-0.5)*1.8];});
+  return '<path class="ink" d="'+taper(pts,maxw,bias)+'"/>'+
+         '<path class="ink" d="'+taper(L,maxw*(0.9+rndL()*0.2),bias)+'"/>';};if(pt.straps){var sp=strapShape(p,k,rng(p.seed*57+(isBack?31:5)));o+=M(toPath(sp.outline),'piece');if(p.ruffle>0.05)sp.lumps.forEach(function(l,i){if(i===0||i===sp.lumps.length-1)return;var s=l.side,w=s>0?l.wl:l.wr;o+=MJ(samplePts([l.x+l.nx*w*s*0.92,l.y+l.ny*w*s*0.92],[l.x+l.nx*w*s*0.45,l.y+l.ny*w*s*0.45+2],[l.x-l.nx*w*s*0.25,l.y-l.ny*w*s*0.25+3],[l.x-l.nx*w*s*0.62,l.y-l.ny*w*s*0.62+4],7),1.5,0.45);});}if(pt.sleeve){var sl=(p.capPuff>0.05?puffSleeve(p,k):plainSleeve(p,k));o+=M(toPath(sl.g),'piece');var cn=(p.capPuff>0.05?5:0),cr=rng(p.seed*23+(isBack?7:19));for(var ci=1;ci<=cn;ci++){var ct=ci/(cn+1),cp=cubic(sl.g[0],ct);if(cp[0]<k.stX+(sl.outX-k.stX)*0.55)continue;var inx=cp[0]-(cp[0]-k.stX)*0.22,iny=cp[1]+9+cr()*5;o+=MJ(samplePts(cp,[cp[0]-(cp[0]-inx)*0.3,cp[1]+4],[inx+(cp[0]-inx)*0.2,iny-4],[inx,iny],6),0.95,0.5);}var cuY=sl.hemY-9;o+=M('M '+(sl.outX-6).toFixed(1)+','+cuY.toFixed(1)+' C '+(sl.outX-24)+','+(cuY+5)+' '+(k.uaX+22)+','+(cuY+4)+' '+(k.uaX+11).toFixed(1)+','+(cuY-2).toFixed(1),'seam');if(pt.laceSleeve){var cuffPoly=polyFromSegs([sl.g[2]],10);var cl=laceBand(cuffPoly,p.laceWidth*S*0.85,Math.round(p.laceScallops*0.5));o+=M(cl.band,'piece');o+=M(cl.head,'st');}var gn=p.cuffGather<0.05?0:Math.round(5*p.cuffGather)+2,gr=rng(p.seed*37+(isBack?11:3));for(var gi=1;gi<gn;gi++){var gu=(gi/gn)*0.58,gx2=(sl.outX-8)+((k.uaX+13)-(sl.outX-8))*gu,gy2=cuY-3;o+=MJ([[gx2,gy2],[gx2+1.5,gy2-7-gr()*6],[gx2+2.5,gy2-14-gr()*8]],1.1,0.4);}}o+='<path class="body" d="'+toPath(full)+'"/>';if(pt.shirr && st.physicsShirr && p.gatherRatio>1.05 && (!isBack||st.top==='shoulder')){
+  // FIZIK-SHIRRED (2026-07-21 — cloth-solver, st.physicsShirr bayrağı). Elle-shirr
+  // satırları yerine fizik-çözülmüş fold çizgileri. SADECE physicsShirr taşıyan
+  // stiller → pinli babydoll (bayrak yok) byte-identical. Deterministik.
+  var _pTop=k.panelTop+(pt.casing?11:6),_pBot=k.yEmp-(st.top==='band'?4.5*S:2.5*S);
+  var _pFin=(sampleX(half,_pTop)||k.bX)-k.cx-3;      // bitmiş yarım-genişlik
+  var _res=_rectGather({finishedW:_pFin*2,clothH:(_pBot-_pTop),gatherRatio:p.gatherRatio,fabric:_SEED_FAB.cotton,seed:p.seed,profile:'shirred'});
+  for(var _fi=0;_fi<_res.folds.length;_fi++){var _fl=_res.folds[_fi],_fp=[];
+    for(var _fj=0;_fj<_fl.length;_fj++)_fp.push([k.cx-_pFin+_fl[_fj][0],_pTop+_fl[_fj][1]]);
+    o+=AS?'<path class="ink" d="'+gatherTick(_fp,_fi)+'"/>':M(gatherTick(_fp,_fi),'ink');}   // KÖK3: püskül → kısa emsal tik (asym: çözücü tüm genişlik, ayna yok)
+}else if(pt.shirr && p.gatherRatio>1.05 && (!isBack||st.top==='shoulder')){var rows=(p.ink==='minimal')?Math.min(4,p.shirrRows):p.shirrRows,top=k.panelTop+(pt.casing?11:6),bot=k.yEmp-(st.top==='band'?4.5*S:2.5*S),prev=null;for(var i=0;i<rows;i++){var ry=top+(bot-top)*(i/(rows-1||1));var rx=sampleX(half,ry);if(rx===null)rx=k.bX;rx-=3;var bumps=Math.max(3,Math.round(4*(p.gatherRatio-1)+2+(rnd()-0.5)*2));var amp=0.9+rnd()*0.9,ph=rnd()*Math.PI,spts=[];for(var s2=0;s2<=bumps*2;s2++){var u=s2/(bumps*2);spts.push([k.cx+1+(rx-k.cx-1)*u,ry+Math.sin(ph+u*bumps*Math.PI)*amp*(0.35+0.65*u)]);}o+=MJ(spts,1.35,0.35);prev=ry;}}var eL=2*k.cx-k.eX;if(st.garment!=='top')o+='<path class="seam" d="M '+eL.toFixed(1)+','+(k.yEmp-1).toFixed(1)+' C '+(k.cx-(k.eX-k.cx)*0.45)+','+(k.yEmp+2.5)+' '+(k.cx+(k.eX-k.cx)*0.45)+','+(k.yEmp+2.5)+' '+k.eX.toFixed(1)+','+(k.yEmp-1).toFixed(1)+'"/>';
+// FIZIK-GATHERED ETEK (2026-07-23 — dirndl karakteri, st.gatheredSkirt bayrağı).
+// Dirndl = etek belde BÜZÜLÜR (aLine gibi konik açılmaz). Bel dikişinin hemen
+// altına fizik-çözülmüş (cloth-solver, profile:'skirt') büzgü kırışıkları çizilir;
+// çözücü katları kendisi bulur, İKİNCİ kıvrım yolu yok — shirred bust'ta yaptığının
+// etek-beli versiyonu. Deterministik. SADECE gatheredSkirt taşıyan stiller etkilenir.
+if(st.gatheredSkirt&&st.garment!=='top'){
+  var _gFin=(k.eX-k.cx);                                 // bitmiş yarım-bel genişliği
+  var _gTop=k.yEmp+2,_gBand=Math.min(24*S*0.5,(k.yHem-k.yEmp)*0.22); // büzgü bandı boyu (belin hemen altı)
+  var _gr=_rectGather({finishedW:_gFin*2,clothH:_gBand,gatherRatio:(p.gatherRatio||2),fabric:_SEED_FAB.cotton,seed:p.seed,profile:'skirt'});
+  for(var _gi=0;_gi<_gr.folds.length;_gi++){var _gl=_gr.folds[_gi],_gp=[];
+    for(var _gj=0;_gj<_gl.length;_gj++)_gp.push([k.cx-_gFin+_gl[_gj][0],_gTop+_gl[_gj][1]]);
+    o+=AS?'<path class="ink" d="'+gatherTick(_gp,_gi)+'"/>':M(gatherTick(_gp,_gi),'ink');}   // KÖK3: püskül → kısa emsal tik (asym: ayna yok)
+}
+var _foldTapers=function(r){var su=0.12+r.u*(0.48+r.sway*0.12);var A=[k.cx+(k.eX-k.cx)*su,k.yEmp+3+r.birth*(k.yHem-k.yEmp)*0.55];var B=r.prim?r.hem:[k.cx+(k.hX-k.cx)*r.u*0.92,k.yEmp+(k.yHem-k.yEmp)*r.die];var h=B[1]-A[1];var sw=Math.pow(r.u,1.6);B=[A[0]+(B[0]-A[0])*(0.25+0.75*sw),B[1]];var c1=[A[0]+(B[0]-A[0])*(r.prim?0.08:0.16)*(1+r.sway*0.5),A[1]+h*0.40];var c2=[B[0]-(B[0]-A[0])*0.10,B[1]-h*(r.prim?0.46:0.58)];var line=samplePts(A,c1,c2,B,14);if(p.ink==='minimal')return [[line.slice(0,4),1.3,0.55],[line.slice(9),1.5,0.5]];return [[line,r.prim?1.8:0.95,r.prim?0.32:0.65]];};
+if(AS&&b.folds.length){
+  // sağ kanat: mevcut plan, ayna YOK; sol kanat: kendi bağımsız (deterministik) planı
+  b.folds.forEach(function(r){_foldTapers(r).forEach(function(t){o+='<path class="ink" d="'+taper(t[0],t[1],t[2])+'"/>';});});
+  var R2=drapePlan(p,rndL);hemPoints(p,k,R2); // r.hem atamak için; silüet hemPts DEĞİŞMEZ
+  R2.forEach(function(r){_foldTapers(r).forEach(function(t){o+='<path class="ink" d="'+taper(refl(t[0]),t[1],t[2])+'"/>';});});
+}else b.folds.forEach(function(r){_foldTapers(r).forEach(function(t){o+=M(taper(t[0],t[1],t[2]),'ink');});});var ts=k.hemPts.filter(function(q,i,a){return !(a[i-1]&&a[i-1][0]===q[0]&&a[i-1][1]===q[1]);});if(pt.laceHem){var hl=laceBand(polyFromSegs(smooth(ts),4),p.laceWidth*S,p.laceScallops);o+=M(hl.band,'piece');o+=M(hl.head,'st');}else{o+=M(toOpen(smooth(ts.map(function(q){return [q[0],q[1]-9];}))),'st');}if(pt.backSeam&&isBack)o+='<path class="seam" d="M '+k.cx+','+((st.top==='band'?k.yTop:k.ny)+1).toFixed(1)+' L '+k.cx+','+(k.hemPts[k.hemPts.length-1][1]).toFixed(1)+'"/>';
+// TIE-BACK (2026-07-21 gündüz — id53 sınıf: arkada belde bağlanan bağ). Arka
+// parçada (isBack), bel çizgisinde CB'den iki yana çıkan bağ şeritleri, uçları
+// aşağı sarkar+kıvrılır (fiyonk değil, açık bağ uçları). Sadece pt.tieBack.
+if(pt.tieBack&&isBack){var _tby=k.yEmp,_tbL=(p.tieLength||22)*S*0.7;
+  // sol+sağ bağ ucu (M ile aynalanır)
+  o+=M('M '+k.cx.toFixed(1)+','+_tby.toFixed(1)+' C '+(k.cx-(k.eX-k.cx)*0.5)+','+(_tby+_tbL*0.3)+' '+(k.cx-(k.eX-k.cx)*0.85)+','+(_tby+_tbL*0.7)+' '+(k.cx-(k.eX-k.cx)*0.7)+','+(_tby+_tbL),'tie');
+  // bağ düğümü (CB'de küçük)
+  o+='<path class="tie" d="M '+(k.cx-4)+','+(_tby-3)+' L '+(k.cx+4)+','+(_tby-3)+' L '+(k.cx+4)+','+(_tby+7)+' L '+(k.cx-4)+','+(_tby+7)+' Z"/>';}
+// PEPLUM (2026-07-21 FAZ A2 — bele takılı, aşağı açılan kısa flare panel; id41
+// + 8 hedef). Top gövdesinin bel çizgisinden (k.yHem) aşağı dairesel flare: iç
+// yay = bel genişliği, dış yay daha geniş → kendiliğinden dalgalanır (drape).
+// Ayrı kesim parçası çizgisi. p.peplum!=='none' && st.garment==='top'. Pinli
+// stiller peplum taşımaz → byte-identical. full=tam, half=sığ, pointed=sivri.
+if(p.peplum&&p.peplum!=='none'&&st.garment==='top'){
+  var _pw=k.hX-k.cx;                              // bel yarım-genişlik
+  var _pflare=(p.peplum==='full')?1.8:(p.peplum==='pointed')?2.0:1.45;
+  var _plen=(p.peplum==='pointed')?36:28;         // peplum boyu (px) — KISA, bel→kalça
+  var _py0=k.yHem, _pyH=k.yHem+_plen*S;
+  var _phX=k.cx+_pw*_pflare;                       // dış (hem) yarım-genişlik
+  var _pdip=(p.peplum==='pointed')?12:4;           // hem dalga derinliği (yumuşak)
+  k.pepH=_pyH;                                      // label'ı peplum altına almak için
+  // yan kenar: bel → flare hem
+  o+=M('M '+k.hX.toFixed(1)+','+_py0.toFixed(1)+' C '+(k.hX+(_phX-k.hX)*0.45).toFixed(1)+','+(_py0+(_pyH-_py0)*0.45).toFixed(1)+' '+_phX.toFixed(1)+','+(_pyH-(_pyH-_py0)*0.28).toFixed(1)+' '+_phX.toFixed(1)+','+_pyH.toFixed(1),'seam');
+  // dalgalı hem — YUMUŞAK cubic dalga (flare kendiliğinden dalga, sivri değil)
+  var _phem='M '+_phX.toFixed(1)+','+_pyH.toFixed(1),_nw=3,_pts=[];
+  for(var _pi=0;_pi<=_nw*2;_pi++){var _pu=_pi/(_nw*2);_pts.push([_phX+(k.cx-_phX)*_pu,_pyH+((_pi%2)?_pdip:0)]);}
+  o+=M(toOpen(smooth(_pts)),'seam');
+  // bel bağlanma çizgisi (peplum dikişi)
+  o+=M('M '+k.cx+','+_py0.toFixed(1)+' L '+k.hX.toFixed(1)+','+_py0.toFixed(1),'st');
+  // PEPLUM HEM FIRFIRI (2026-07-23 — st.peplumRuffle). Peplum dış hem'ine (_pyH,_phX)
+  // dikilen büzgülü fırfır şeridi. Motor Ruffle strip parçasını (peplum hem çevresine
+  // trued) çiziyor; flat SUNUM: hem'in altına daha derin+dalgalı fırfır katı.
+  if(st.peplumRuffle){var _rfD=(_pdip+8);                 // fırfır derinliği (peplum dalgasından derin)
+    var _rfN=Math.max(5,_nw*2),_rfPts=[];
+    for(var _ri=0;_ri<=_rfN;_ri++){var _ru=_ri/_rfN;_rfPts.push([_phX+(k.cx-_phX)*_ru,_pyH+_rfD+((_ri%2)?_rfD*0.55:0)]);}
+    o+=M(toOpen(smooth(_rfPts)),'seam');                  // fırfır alt dalgalı kenar
+    // fırfır büzgü çizgileri (peplum hem'inden fırfıra inen kısa dikey işaretler)
+    for(var _rj=1;_rj<_rfN;_rj+=2){var _rx=_phX+(k.cx-_phX)*(_rj/_rfN);o+=MJ([[_rx,_pyH+1],[_rx+1,_pyH+_rfD*0.5],[_rx,_pyH+_rfD*0.9]],1.0,0.4);}
+  }
+}if(pt.princessSeam&&st.top!=='band'){var _apY=k.apexY;var _apX=k.cx+(k.bustX-k.cx)*(isBack?0.52:0.66);var _oX=k.cx+(k.uaX-k.cx)*0.80;var _wX=k.cx+(k.eX-k.cx)*0.50;var _hemBotY=k.hemPts[k.hemPts.length-1][1];var _hX=k.cx+(k.hX-k.cx)*0.46;var _psA=samplePts([_oX,k.uaY+4],[_oX-(_oX-_apX)*0.28,k.uaY+(_apY-k.uaY)*0.5],[_apX,_apY-6],[_apX,_apY],10);var _psB=samplePts([_apX,_apY],[_apX,_apY+(k.yEmp-_apY)*0.5],[_wX,k.yEmp-8],[_wX,k.yEmp],10);var _psC=samplePts([_wX,k.yEmp],[_wX,k.yEmp+(_hemBotY-k.yEmp)*0.34],[_hX,k.yEmp+(_hemBotY-k.yEmp)*0.66],[_hX,_hemBotY-2],12);o+=MJ(_psA,1.35,0.4);o+=MJ(_psB,1.35,0.5);o+=MJ(_psC,1.4,0.4);}if(pt.gorePanels&&st.top!=='band'){var _gN=p.goreCount||6,_gHalf=Math.max(1,Math.round(_gN/2)),_gHemBotY=k.hemPts[k.hemPts.length-1][1];for(var _gi=1;_gi<=_gHalf;_gi++){var _gu=_gi/_gHalf;var _gTopX=k.cx+(k.eX-k.cx)*_gu;var _gBotX=k.cx+(k.hX-k.cx)*_gu;var _gMidX=k.cx+(k.eX-k.cx)*_gu+((k.hX-k.eX)*_gu)*0.30;var _gpts=samplePts([_gTopX,k.yEmp+2],[_gTopX+( _gMidX-_gTopX)*0.4,k.yEmp+(_gHemBotY-k.yEmp)*0.34],[_gMidX,k.yEmp+(_gHemBotY-k.yEmp)*0.62],[_gBotX,_gHemBotY-3],12);o+=MJ(_gpts,1.3,0.42);}}if(pt.wrapSurplice&&!isBack){var _wd=(p.wrapDir===2?-1:1);var _snX=k.nX,_snY=k.stY;var _apY2=k.apexY;var _apX2=k.cx-_wd*(k.bustX-k.cx)*0.42;var _owX=k.cx-_wd*(k.eX-k.cx)*0.62;var _ov=samplePts([k.cx+_wd*(_snX-k.cx),_snY],[k.cx+_wd*(_snX-k.cx)*0.5,_snY+(_apY2-_snY)*0.42],[_apX2+_wd*(k.bustX-k.cx)*0.25,_apY2-10],[_apX2,_apY2],12);var _ov2=samplePts([_apX2,_apY2],[_apX2-_wd*(k.bustX-k.cx)*0.10,_apY2+(k.yEmp-_apY2)*0.5],[_owX,k.yEmp-10],[_owX,k.yEmp],12);o+=M(taper(_ov,1.7,0.4),'ink');o+=M(taper(_ov2,1.7,0.42),'ink');o+=M('M '+(k.cx-_wd*(_snX-k.cx)).toFixed(1)+','+_snY.toFixed(1)+' C '+(k.cx-_wd*(_snX-k.cx)*0.55).toFixed(1)+','+(_snY+(_apY2-_snY)*0.55).toFixed(1)+' '+(k.cx+_wd*(k.eX-k.cx)*0.10).toFixed(1)+','+(_apY2+8).toFixed(1)+' '+(k.cx+_wd*(k.eX-k.cx)*0.28).toFixed(1)+','+k.yEmp.toFixed(1),'st');}if(pt.wrapTie&&!isBack){var _wd2=(p.wrapDir===2?-1:1);var _ty2=k.yEmp;var _tKX=k.cx+_wd2*(k.eX-k.cx)*0.30;o+=M('M '+(k.cx+_wd2*(k.eX-k.cx)*1.0).toFixed(1)+','+(_ty2-3).toFixed(1)+' Q '+(k.cx+_wd2*(k.eX-k.cx)*0.5).toFixed(1)+','+(_ty2+7).toFixed(1)+' '+_tKX.toFixed(1)+','+(_ty2+3).toFixed(1),'seam');var _TL2=(p.tieLength||22)*S*0.5;o+=M('M '+_tKX.toFixed(1)+','+(_ty2+3).toFixed(1)+' C '+(_tKX+_wd2*8)+','+(_ty2+_TL2*0.4)+' '+(_tKX+_wd2*4)+','+(_ty2+_TL2*0.8)+' '+(_tKX-_wd2*2)+','+(_ty2+_TL2),'seam');}if(pt.laceNeck){var nl=laceBand(polyFromSegs(half.slice(0,k.nSeg),9),p.laceWidth*S,Math.round(p.laceScallops*0.55));o+=M(nl.band,'piece');o+=M(nl.head,'st');}if(pt.cfGather&&!isBack){var cg=rng(p.seed*71+9);for(var ci2=0;ci2<4;ci2++){var a0=[k.cx+3,k.ny+4+ci2*3];var a1x=[k.cx+16+cg()*10,k.ny+16+ci2*7+cg()*6];o+=MJ([a0,[(a0[0]+a1x[0])/2,(a0[1]+a1x[1])/2-2],a1x],1.15,0.5);}}if(pt.collar){var gap=isBack?0:p.collarGap*S;o+=M(toPath(collarShape(p,half[0],k,gap)),'piece');}if(pt.tie&&!isBack){var ty=(st.top==='band')?k.yTop+1.2*S+1:k.ny-4;var TL=p.tieLength*S*0.5;o+=M('M '+(k.cx+3)+','+(ty+6)+' C '+(k.cx+9)+','+(ty+TL*0.34)+' '+(k.cx+16)+','+(ty+TL*0.66)+' '+(k.cx+13)+','+(ty+TL)+' L '+(k.cx+5)+','+(ty+TL-2)+' C '+(k.cx+8)+','+(ty+TL*0.64)+' '+(k.cx+4)+','+(ty+TL*0.32)+' '+(k.cx+1)+','+(ty+8)+' Z','tie');o+=M('M '+(k.cx+4)+','+(ty+2)+' C '+(k.cx+22)+','+(ty-12)+' '+(k.cx+42)+','+(ty-5)+' '+(k.cx+40)+','+(ty+6)+' C '+(k.cx+38)+','+(ty+17)+' '+(k.cx+19)+','+(ty+12)+' '+(k.cx+4)+','+(ty+8)+' Z','tie');o+='<path class="tie" d="M '+(k.cx-5)+','+(ty-3)+' L '+(k.cx+5)+','+(ty-3)+' L '+(k.cx+5)+','+(ty+11)+' L '+(k.cx-5)+','+(ty+11)+' Z"/>';}
+// BEL BAĞI (2026-07-23 — st.waistTie 'bow'|'tie'). id24 bow = önde bele bağlanan
+// FİYONK; id57 tie = bele bağlanan KUŞAK uçları. Ön parçada (!isBack), bel çizgisinde
+// (k.yEmp). Motor kalıpta ayrı kesim parçası çiziyor (TiePlacement FrontWaistBow/Tie);
+// flat SUNUM işaretidir. Deterministik, sadece st.waistTie taşıyan stiller.
+// SPAGHETTI TIE-STRAP (2026-07-23 — st.spaghettiStrap). id101 sınıf: shoulder-top
+// sweetheart/kolsuz gövdede omuzda BAĞLANAN ince askı. Omuz çizgisi üzerinde
+// (nX↔stX arası) ince dikey bant yukarı çıkar + tepesinde küçük bağ ucu. Motor
+// Spaghetti Strap parçasını zaten çiziyor (StrapBlock); flat sunum işareti.
+if(st.spaghettiStrap){var _ssX=k.nX+(k.stX-k.nX)*0.42,_ssTop=k.y0-9*S,_ssW=2.4;
+  // TUTUNMA FIX (KÖK2 güzellik turu 2026-07-23): askı tabanı k.stY (sabit omuz-ucu Y)
+  // idi ama _ssX omuz-ucundan içeride → omuz eğimli olduğu için orada gerçek outline Y'si
+  // farklı = askı GÖVDEDEN KOPUK (id101 "askı havada", ölçüm 5.4px). Askı tabanı artık
+  // omuz outline cubic'inin _ssX noktasındaki GERÇEK Y'sine oturur (shoulderYAt) → değer.
+  var _ssBaseY=shoulderYAt(_ssX,k);
+  // ince askı bandı (omuz noktasından yukarı, hafif içe)
+  o+=M('M '+(_ssX-_ssW).toFixed(1)+','+_ssBaseY.toFixed(1)+' C '+(_ssX-_ssW).toFixed(1)+','+(_ssBaseY-(_ssBaseY-_ssTop)*0.5)+' '+(_ssX-_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX+_ssW).toFixed(1)+','+_ssBaseY.toFixed(1)+' C '+(_ssX+_ssW).toFixed(1)+','+(_ssBaseY-(_ssBaseY-_ssTop)*0.5)+' '+(_ssX+_ssW*0.6).toFixed(1)+','+(_ssTop+3)+' '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  o+=M('M '+(_ssX-_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1)+' L '+(_ssX+_ssW*0.4).toFixed(1)+','+_ssTop.toFixed(1),'piece');
+  // omuzda küçük bağ ucu (sarkan)
+  o+=M('M '+_ssX.toFixed(1)+','+_ssTop.toFixed(1)+' C '+(_ssX-5)+','+(_ssTop-6)+' '+(_ssX-3)+','+(_ssTop-12)+' '+(_ssX+1)+','+(_ssTop-10),'tie');
+}
+var _wtie=(p.waistTie!=null?p.waistTie:st.waistTie);
+if(_wtie&&!isBack&&st.garment!=='top'){var _wy=k.yEmp,_WL=(p.tieLength||26)*S*0.5;
+  if(_wtie==='bow'){ // iki ilmek + orta düğüm + sarkan uçlar
+    o+=M('M '+(k.cx+3)+','+(_wy+6)+' C '+(k.cx+10)+','+(_wy+_WL*0.32)+' '+(k.cx+18)+','+(_wy+_WL*0.66)+' '+(k.cx+14)+','+(_wy+_WL)+' L '+(k.cx+5)+','+(_wy+_WL-2)+' C '+(k.cx+9)+','+(_wy+_WL*0.62)+' '+(k.cx+4)+','+(_wy+_WL*0.30)+' '+(k.cx+1)+','+(_wy+8)+' Z','tie');
+    o+=M('M '+(k.cx+4)+','+(_wy+1)+' C '+(k.cx+24)+','+(_wy-13)+' '+(k.cx+46)+','+(_wy-5)+' '+(k.cx+43)+','+(_wy+7)+' C '+(k.cx+40)+','+(_wy+18)+' '+(k.cx+20)+','+(_wy+12)+' '+(k.cx+4)+','+(_wy+8)+' Z','tie');
+    o+='<path class="tie" d="M '+(k.cx-5)+','+(_wy-3)+' L '+(k.cx+5)+','+(_wy-3)+' L '+(k.cx+5)+','+(_wy+11)+' L '+(k.cx-5)+','+(_wy+11)+' Z"/>';
+  } else { // kuşak: CF'den iki yana çıkan bağ şeritleri
+    o+=M('M '+(k.cx+2)+','+(_wy-2)+' C '+(k.cx+(k.eX-k.cx)*0.4)+','+(_wy-3)+' '+(k.eX-6)+','+(_wy-2)+' '+(k.eX-2)+','+(_wy)+'','seam');
+    o+=M('M '+(k.eX-2)+','+(_wy)+' C '+(k.eX+6)+','+(_wy+_WL*0.4)+' '+(k.eX+2)+','+(_wy+_WL*0.8)+' '+(k.eX-4)+','+(_wy+_WL)+'','seam');
+  }
+}
+o+='<text class="lbl" x="'+cx+'" y="'+((k.pepH?k.pepH:k.yHem+k.dip)+52)+'">'+(isBack?'BACK':'FRONT')+'</text>';});return o+'</svg>';}
+// K2 (2026-07-19): the engine is importable so render-lint.mjs can inspect the
+// exact geometry it draws (same functions, same seeds). The CLI path below is
+// byte-identical to before the refactor (cmp-proven per style).
+function renderStyle(styleKey, overrides) {
+  P = defaults(styleKey);
+  if (overrides) Object.assign(P, overrides);
+  return render(P);
+}
+
+
+// ============================================================================
+// MALZEME KATMANI — 2026-07-31
+//
+// Tez: kalip alanlari yemek degil MALZEME olmali. engine/vocab.json bugun 37
+// kategorik alan tutuyor (neckline: crew|scoop|vNeck|... , collarType:
+// peterPan|shirt|crescent|...). Bunlar tabak isimleri. Asagidaki liste
+// malzemedir: her biri SUREKLI bir sayidir, iki tarif arasi bir yer vardir.
+//
+// KANITLANAN (olcum: curve-research/03-band-ingredients.py, kaynak
+// patterns_real/geometry/geometry-full.json -- satin alinmis Bugra "Locket Top"
+// A0 PDF'i, beden 38, mm-kalibre. Motor ciktisi DEGIL):
+//   Ayni kalibin uc parcasi -- uretici defterinde ikisinin adi var, ucuncusunun
+//   adi YOK -- olcum icin ayni nesnedir: iki kenarli bir EGRI BANT. Her kenar
+//   (uzunluk + 4 egrilik katsayisi) = 5 sayi ile yeniden ciziliyor:
+//     bant B  kenar hatasi ortalama 0.03mm / en fazla 0.14mm
+//     bant C  kenar hatasi ortalama 0.01mm / en fazla 0.03mm
+//     parca 3 duz kenarinda 0.03mm; kose iceren kenarinda 2.5mm (kose ORADA
+//             oldugunu soyluyor, gizlemiyor)
+//   Yani ADI olmayan parca da olculuyor ve yeniden ciziliyor. Ad tasimiyor.
+//   ACIKLIK = serbest kenar / bagli kenar: 1.400 · 1.519 · 1.545.
+//
+// CURUTULEN -- bunu iddia ETME (31 Tem, hakem + kendi olcumum ayni yere cikti):
+//   "Yaka tipi diye bir sey yoktur, tek bir egrilik kadrani hepsini verir"
+//   YANLIS. Kalipcilik literaturunde SERT bir ikilik var:
+//     - yatan yaka (bebe/flat): boyun kenari gomlegin yaka egrisinden KOPYALANIR
+//       (on parca + arka parca, omuz noktasinda birlesir, orada KIRILIR)
+//     - hakim / gomlek yakasi: boyun kenari bir dikdortgen iskelet uzerine tek
+//       bir skalerden (yarim boyun olcusu) cizilir
+//   Tek skaler egrilik bu ikisi arasinda yolculuk edemez.
+//   Kendi olcumum da ayni yone cikti: kapali form aciklik = 1 + w/r 23% hata
+//   veriyor (bant duz halka degil, derinligi boyunca degisiyor), ve parca 3'un
+//   bagli kenari ortasinda KOSE tasiyor -- tek egrilik polinomu tutmuyor.
+//   -> "Dik/yatan" bir OLCUM sonucudur, cizim GIRDISI degil.
+//
+// EKSIK MALZEMELER (literatur taramasi, kaynakli; bu dosya HENUZ tasimiyor):
+//   iplik/verev · kumas davranisi · balans (on-arka boy iliskisi) · dagilim
+//   profilleri (her skaler aslinda bir egri boyunca fonksiyon) · contouring
+//   (Armstrong 3. ilke: vucudun COKUK yerinden almak) · spring · sweep ·
+//   roll line · dikis-esitligi kisiti · pivot · pay/centik · on-arka asimetri.
+//   Ayrica: pens payi + ease + cevre TEK eksendir, uc kez sayilmis;
+//   ve topoloji bir malzeme degil, TABAK SECICISIDIR -- once o sabitlenir,
+//   altindaki her sey ondan sonra surekli olur.
+//
+// Bu dosya ciziim kalemini (engine/flat-engine/_engine-full.mjs, SALT-OKURUR)
+// DEGISTIRMEZ. Kalem zaten bir stil KAYDI aliyor; styles.json'da o kayittan 31
+// tane var, o kadar. Burasi kaydi listeden degil malzeme degerlerinden kurar.
+// ============================================================================
+
+// --- 9 malzeme ailesi. Sira ekranda gorunen sira.
+const FAMILIES = [
+  ['olcu', 'beden', 'Vucut olcusu. Malzeme degil, uzerine calisilan sey.'],
+  ['seviye', 'seviye', 'Vucutta yukseklik: yaka nereye iner, bel nerede, etek nerede biter.'],
+  ['cevre', 'cevre', 'Bir seviyedeki genislik: yaka acikligi, kol genisligi.'],
+  ['pens', 'pens payi', 'Vucuda oturmak icin cevreden CIKARILAN miktar.'],
+  ['bolluk', 'bolluk', 'Kes-ac ile EKLENEN kumas. Klos, buzgu, firfir hepsi bu.'],
+  ['kapak', 'kapak', 'Kol kapaginin yuksekligi ve payi.'],
+  ['bant', 'dik / yatan', 'Yaka, mansaf, peplum, firfir: hepsi bir bant. Derinlik + aciklik.'],
+  ['kenar', 'kenar rolu', 'Bir kenara ne oluyor: dikis / kat / buzgu / biye.'],
+  ['topoloji', 'topoloji', 'Kac panel var, hangi kenar hangisine dikiliyor.'],
+  ['kalem', 'kalem', 'Cizim dili. Giysinin kendisi degil, resmi.'],
+];
+
+// --- malzemeler. def = varsayilan profil (Damla zevki, generic degil).
+// Her satir: [anahtar, aile, etiket, min, max, adim, varsayilan, aciklama]
+const M = [
+  ['size', 'olcu', 'beden', 0, 7, 1, 2, 'EU34..EU48. Sabit beden satilir; olcuye gore dikim degil.'],
+
+  ['hemLevel', 'seviye', 'etek boyu', 8, 112, 1, 74, 'Crop’tan maxi’ye tek sayi. mini/midi/maxi ayri tur degil.'],
+  ['neckDepth', 'seviye', 'yaka derinligi on', 2, 30, 0.5, 12, 'Yakanin on ortada ne kadar indigi.'],
+  ['neckDepthBack', 'seviye', 'yaka derinligi arka', 1, 20, 0.5, 3, 'Ayni sey, arkada.'],
+  ['yokeDrop', 'seviye', 'bel hatti', 6, 26, 0.5, 12, 'Bel dikisinin yuksekligi. Empire = bu sayi kucuk.'],
+  ['shoulderSlope', 'seviye', 'omuz egimi', 0.6, 3.0, 0.05, 1.6, 'Omuz cizgisinin dususu.'],
+  ['sleeveLen', 'seviye', 'kol boyu', 5, 48, 0.5, 14, 'Kolun nerede bittigi. kisa/dirsek/uzun ayri tur degil.'],
+
+  ['neckWidth', 'cevre', 'yaka genisligi', 0.85, 1.75, 0.01, 1.05, 'Yakanin omza dogru acilmasi. Bateau = bu sayi buyuk.'],
+  ['sleeveWidth', 'cevre', 'kol genisligi', 3, 15, 0.1, 7, 'Kolun cevresi.'],
+  ['armholeHollow', 'cevre', 'kol oyugu', 0.04, 0.32, 0.005, 0.12, 'Oyugun ne kadar ice oyuldugu.'],
+  ['strapWidth', 'cevre', 'aski genisligi', 1.0, 5.0, 0.1, 2.6, 'Spagetti = kucuk, kalin aski = buyuk.'],
+  ['strapLen', 'cevre', 'aski boyu', 3, 16, 0.5, 8, ''],
+
+  ['waistNip', 'pens', 'bel pensi', 0, 0.38, 0.005, 0.12, 'Belden cikarilan pay. 0 = kutu, 0.30 = korsaj.'],
+  ['bustProject', 'pens', 'gogus bombesi', 0, 1.0, 0.02, 0.5, ''],
+  ['bustHeight', 'pens', 'gogus yuksekligi', 0.15, 0.6, 0.01, 0.3, ''],
+
+  ['skirtFull', 'bolluk', 'etek bollugu', 1.0, 2.9, 0.02, 1.6, '1.0 = duz, 1.95 = A, 2.6+ = klos. Ayri tur degil, tek sayi.'],
+  ['skirtCurve', 'bolluk', 'etek dususu', 0, 1, 0.02, 0.4, 'Yan hattin koni-duz mu bombeli mi dustugu.'],
+  ['gatherRatio', 'bolluk', 'buzgu orani', 1.0, 3.4, 0.05, 1.0, 'Kac kat kumas buzuluyor. 1.0 = buzgu yok.'],
+  ['ruffle', 'bolluk', 'firfir', 0, 1.4, 0.02, 0, ''],
+
+  ['capPuff', 'kapak', 'kapak yuksekligi', 0, 4.0, 0.05, 0, '0 = duz set-in kol. 1.4+ = puf. Balon/bishop ayri tur degil.'],
+  ['cuffGather', 'kapak', 'kol agzi buzgusu', 0, 2.0, 0.05, 0, ''],
+
+  ['collarWidth', 'bant', 'bant derinligi', 0.8, 10, 0.1, 4.6, 'Yaka bandinin derinligi. Dik/yatan bunun SONUCUDUR, girdisi degil.'],
+  ['collarGap', 'bant', 'bant araligi', 0, 3.0, 0.05, 0.5, 'Iki yaka ucunun on ortada acikligi.'],
+
+  ['shirrRows', 'kenar', 'buzgu sirasi', 3, 12, 1, 6, ''],
+  ['goreCount', 'topoloji', 'panel sayisi', 2, 12, 2, 6, 'Etegin kac dilimden kuruldugu.'],
+  ['tieLength', 'topoloji', 'bag boyu', 8, 34, 1, 22, ''],
+
+  ['foldCount', 'kalem', 'kat sayisi', 2, 18, 1, 10, ''],
+  ['drape', 'kalem', 'dokum', 0, 1.6, 0.05, 1, ''],
+  ['hemWave', 'kalem', 'etek dalgasi', 0, 2.5, 0.05, 1, ''],
+  ['hemDip', 'kalem', 'etek sarkmasi', 0, 8, 0.2, 2, ''],
+  ['seed', 'kalem', 'kalem tohumu', 1, 40, 1, 7, 'Ayni tohum hep ayni cizim. Rastgelelik yok.'],
+];
+
+// --- kenar rolu + topoloji: acik/kapali. Bunlar da malzeme, sadece surekli degil.
+const FLAGS = [
+  ['sleeve', 'topoloji', 'kol var', true, 'Kol paneli var mi.'],
+  ['collar', 'topoloji', 'yaka bandi', false, 'Boyun kenarina dikilen bant.'],
+  ['straps', 'topoloji', 'aski', false, ''],
+  ['princessSeam', 'topoloji', 'prenses dikis', true, 'Pensi dikise gomer. Pens payi ayni, YOLU farkli.'],
+  ['backSeam', 'topoloji', 'arka orta dikis', true, ''],
+  ['gorePanels', 'topoloji', 'dilimli etek', false, ''],
+  ['wrapSurplice', 'topoloji', 'kruvaze on', false, 'On tek panel degil, iki bindirme panel.'],
+  ['tie', 'topoloji', 'boyun bagi', false, ''],
+  ['tieBack', 'topoloji', 'arka bel bagi', false, ''],
+  ['shirr', 'kenar', 'buzgulu kenar', false, 'Kenar duz dikilmiyor, buzuluyor.'],
+  ['casing', 'kenar', 'tunel / bagcik', false, ''],
+  ['laceNeck', 'kenar', 'yaka biyesi', false, ''],
+  ['laceSleeve', 'kenar', 'kol biyesi', false, ''],
+  ['laceHem', 'kenar', 'etek biyesi', false, ''],
+];
+
+// --- yaka egrisinin SEKLI. Kalemin gercekten ayrik oldugu tek yer.
+// DURUST NOT: bu bir egri-sekli parametresidir, olcumde de boyle cikti
+// (bkz. 03-band-ingredients.py: her kenar bir egrilik profili istiyor).
+// Kalem SALT-OKUNUR oldugu icin bugun 4 aile olarak duruyor.
+const NECKSHAPES = [
+  ['round', 'yuvarlak'],
+  ['v', 'V'],
+  ['square', 'kare'],
+  ['sweetheart', 'kalp'],
+];
+
+const SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48'];
+const INKS = [['minimal', 'az'], ['orta', 'orta'], ['dolu', 'dolu']];
+
+function defaultState() {
+  const s = { _neckShape: 'round', _ink: 'orta', _asym: true };
+  M.forEach(([k, , , , , , d]) => { s[k] = d; });
+  FLAGS.forEach(([k, , , d]) => { s[k] = d; });
+  return s;
+}
+
+// ---------------------------------------------------------------------------
+// compile(): malzeme degerleri -> kalemin bekledigi stil KAYDI.
+// Kalem dosyasina dokunulmaz; disari verdigi STYLE ve LEN nesnelerine
+// calisma aninda tek bir kayit eklenir.
+// ---------------------------------------------------------------------------
+function compile(s) {
+  LEN['__live'] = s.hemLevel;                 // surekli etek boyu (mini/midi/maxi enum'u yerine)
+
+  const parts = {};
+  FLAGS.forEach(([k]) => { parts[k] = !!s[k]; });
+
+  STYLE['__live'] = {
+    label: 'atolye',
+    garment: 'dress',                         // surekli hem yolu (top dali topLength enum'una kilitli)
+    top: s.straps ? 'band' : 'shoulder',
+    neckline: s._neckShape === 'round' ? undefined : s._neckShape,
+    roundNeck: s._neckShape === 'round',
+    length: '__live',
+    physicsShirr: !!s.shirr,
+    gatheredSkirt: s.gatherRatio > 1.05 && !s.shirr,
+    parts,
+    own: {},
+  };
+
+  const over = {};
+  M.forEach(([k]) => { if (k !== 'size' && k !== 'hemLevel') over[k] = s[k]; });
+  over.size = SIZES[s.size];
+
+  // KALEM SINIRI (olculdu 2026-07-31, curve-research grid'i):
+  // puffSleeve() kol boyunu p.sleeveLen'den SUREKLI okuyor; plainSleeve() ise
+  // p.sleeveLength enum'undan {cap:9, short:17, elbow:28, long:42}. Yani kapak
+  // yuksekligi 0 iken "kol boyu" kadrani hicbir sey yapmiyordu -- uc farkli
+  // sleeveLen ayni cizimi veriyordu. Kalem SALT-OKUNUR oldugu icin duzeltme
+  // burada: enum'a en yakin kovaya yuvarlanir, boylece kadran her durumda
+  // calisir. DURUST NOT: kapak 0'da kol boyu 4 kademeli, surekli degil.
+  const BUCKETS = [['cap', 9], ['short', 17], ['elbow', 28], ['long', 42]];
+  over.sleeveLength = BUCKETS.reduce((a, b) =>
+    Math.abs(b[1] - s.sleeveLen) < Math.abs(a[1] - s.sleeveLen) ? b : a)[0];
+
+  over.length = '__live';
+  over.ink = s._ink;
+  over.inkAsym = !!s._asym;
+  over.laceWidth = 1.4;
+  over.laceScallops = 16;
+  over.wrapDir = 1;
+  return over;
+}
+
+// renderStyle() kalemin kendi giris kapisi: modul-ici P'yi kurar, sonra cizer.
+// render()'i dogrudan cagirmak parts() okumasini bozar (P kurulmamis olur).
+function draw(s) { return renderStyle('__live', compile(s)); }
+
+
+// ============================================================================
+// SOZLUK — cumle -> malzeme degeri.  2026-07-31
+//
+// LLM YOK. Kural tabanli, deterministik, cevrimdisi, aninda. Bir cumlenin
+// verdigi bilgi zaten cok az: "puf kollu elbise" 45 sayidan 2-3'unu soyluyor.
+// O 2-3'u bulmak icin model cagirmaya gerek yok; kalan 42'yi zaten model de
+// uyduramaz, onlar varsayilan profilden gelir.
+//
+// Her kural bir TABAK adini bir MALZEME degerine cevirir. Tabak adi burada
+// kalir, motora gecmez:
+//    "puf kol"      -> kapak yuksekligi 2.4     (ayri bir kol turu degil)
+//    "balon kol"    -> kapak 2.0 + kol agzi buzgusu 1.3
+//    "klos etek"    -> etek bollugu 2.55        (ayri bir etek turu degil)
+//    "hakim yaka"   -> bant derinligi 2.2       (yatan kisim yok)
+//    "bebe yaka"    -> bant derinligi 4.6       (yatarak durur)
+// Iki tarif arasindaki her yer de gecerli bir giysidir; liste bunu yasaklardi.
+// ============================================================================
+
+const RULES = [
+  // ---- siluet / boy
+  [/\b(crop|kisa\s*ust|krop)/i, { hemLevel: 16, waistNip: 0.10 }],
+  [/\b(mini)\b/i, { hemLevel: 42 }],
+  [/\b(midi)\b/i, { hemLevel: 74 }],
+  [/\b(maxi|uzun\s*elbise|maksi)/i, { hemLevel: 105 }],
+  [/\b(diz\s*(alti|ustu)|knee)/i, { hemLevel: 58 }],
+  [/\b(tunik|tunic)/i, { hemLevel: 34 }],
+
+  // ---- etek bollugu (tek sayi, ayri tur degil)
+  [/\b(klos|circle\s*skirt|tam\s*klos)/i, { skirtFull: 2.55, skirtCurve: 0.8 }],
+  [/\b(a\s*-?\s*line|a\s*kesim|kloş)/i, { skirtFull: 1.95, skirtCurve: 0.6 }],
+  [/\b(kalem|duz\s*etek|straight|pencil)/i, { skirtFull: 1.02, skirtCurve: 0.1, waistNip: 0.22 }],
+  [/\b(dilimli|gore|panelli)/i, { gorePanels: true, skirtFull: 2.0 }],
+  [/\b(buzgulu\s*etek|dirndl|gathered\s*skirt)/i, { skirtFull: 2.2, gatherRatio: 2.2 }],
+  [/\b(bol|salas|oversize|kutu|boxy)/i, { waistNip: 0.02, skirtFull: 1.15 }],
+  [/\b(oturan|fitted|vucuda|dar)/i, { waistNip: 0.28, skirtFull: 1.15 }],
+
+  // ---- yaka: seviye + cevre + egri ailesi
+  [/\b(v\s*yaka|v-?neck)/i, { _neckShape: 'v', neckDepth: 16 }],
+  [/\bderin\s*v/i, { _neckShape: 'v', neckDepth: 24 }],
+  [/\b(kare\s*yaka|square\s*neck)/i, { _neckShape: 'square', neckDepth: 13, neckWidth: 1.22 }],
+  [/\b(kalp\s*yaka|sweetheart)/i, { _neckShape: 'sweetheart', neckDepth: 14 }],
+  [/\b(kayik\s*yaka|bateau|boat\s*neck)/i, { _neckShape: 'round', neckDepth: 6, neckWidth: 1.55 }],
+  [/\b(bisiklet\s*yaka|crew)/i, { _neckShape: 'round', neckDepth: 6.5, neckWidth: 0.98 }],
+  [/\b(kasik\s*yaka|scoop)/i, { _neckShape: 'round', neckDepth: 15, neckWidth: 1.2 }],
+  [/\bderin\s*(yaka|dekolte)/i, { neckDepth: 22 }],
+  [/\b(kapali\s*yaka|yuksek\s*yaka)/i, { neckDepth: 4, neckWidth: 0.92 }],
+  [/\b(sirt\s*dekolte|acik\s*sirt|open\s*back)/i, { neckDepthBack: 15 }],
+
+  // ---- bant ailesi: yaka tipi diye bir sey yok, derinlik var
+  [/\b(hakim\s*yaka|mandarin|dik\s*yaka|stand\s*collar)/i, { collar: true, collarWidth: 2.2, collarGap: 0.2 }],
+  [/\b(bebe\s*yaka|peter\s*pan)/i, { collar: true, collarWidth: 4.6, collarGap: 0.5 }],
+  [/\b(gomlek\s*yaka|shirt\s*collar)/i, { collar: true, collarWidth: 5.6, collarGap: 0.1 }],
+  [/\b(genis\s*yaka|sal\s*yaka|shawl)/i, { collar: true, collarWidth: 8.0, collarGap: 0.8 }],
+  [/\byakasiz|kolsuz\s*yakasiz/i, { collar: false }],
+
+  // ---- kol: kapak yuksekligi + buzgu, ayri tur degil
+  [/\b(kolsuz|sleeveless|askili)/i, { sleeve: false }],
+  [/\b(puf\s*kol|puff\s*sleeve|karpuz\s*kol)/i, { sleeve: true, capPuff: 2.4, sleeveLen: 12 }],
+  [/\b(balon\s*kol|balloon|bishop)/i, { sleeve: true, capPuff: 2.0, cuffGather: 1.3, sleeveLen: 22 }],
+  [/\b(duz\s*kol|set-?in|klasik\s*kol)/i, { sleeve: true, capPuff: 0, sleeveLen: 17 }],
+  [/\b(kisa\s*kol|short\s*sleeve)/i, { sleeve: true, sleeveLen: 12 }],
+  [/\b(uzun\s*kol|long\s*sleeve)/i, { sleeve: true, sleeveLen: 42 }],
+  [/\b(dirsek|elbow)/i, { sleeve: true, sleeveLen: 28 }],
+  [/\b(genis\s*kol|wide\s*sleeve)/i, { sleeveWidth: 11 }],
+
+  // ---- aski
+  [/\b(ince\s*aski|spagetti|spaghetti)/i, { straps: true, sleeve: false, strapWidth: 1.4 }],
+  [/\b(kalin\s*aski|wide\s*strap)/i, { straps: true, sleeve: false, strapWidth: 4.0 }],
+  [/\b(straplez|bandeau|straplez)/i, { straps: false, sleeve: false }],
+
+  // ---- kenar rolu / bolluk
+  [/\b(buzgu|buzgulu|shirr|gathered|shirred)/i, { shirr: true, gatherRatio: 2.2 }],
+  [/\b(firfir|ruffle|volan|frill)/i, { ruffle: 0.9 }],
+  [/\b(bagcik|tunel|drawstring|ip)/i, { casing: true }],
+  [/\b(dantel|biye|lace|trim)/i, { laceNeck: true, laceHem: true }],
+  [/\b(kruvaze|wrap|anvelop|surplice)/i, { wrapSurplice: true }],
+  [/\b(kusak|kemer|belted|bag)/i, { tieBack: true }],
+  [/\b(bel\s*bagi|boyun\s*bagi|fiyonk)/i, { tie: true }],
+
+  // ---- dikis mimarisi
+  [/\b(prenses\s*dikis|princess)/i, { princessSeam: true }],
+  [/\b(pensli|dart)/i, { princessSeam: false }],
+  [/\b(empire|yuksek\s*bel)/i, { yokeDrop: 7 }],
+  [/\b(dusuk\s*bel|drop\s*waist)/i, { yokeDrop: 22 }],
+
+  // ---- kalem
+  [/\b(sade\s*ciz|az\s*cizgi|minimal)/i, { _ink: 'minimal' }],
+  [/\b(detayli\s*ciz|dolu\s*ciz)/i, { _ink: 'dolu' }],
+
+  // ---- beden
+  [/\b(34|xs)\b/i, { size: 0 }], [/\b36\b/, { size: 1 }], [/\b38\b/, { size: 2 }],
+  [/\b40\b/, { size: 3 }], [/\b42\b/, { size: 4 }], [/\b44\b/, { size: 5 }],
+  [/\b46\b/, { size: 6 }], [/\b48\b/, { size: 7 }],
+];
+
+// Turkce aksan + yaygin yazim varyantlarini duzler; kural tarafi hep sade harf.
+function fold(t) {
+  return t.toLowerCase()
+    .replace(/ı/g, 'i').replace(/İ/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9\s-]/g, ' ');
+}
+
+// -> { state, touched:Set, matched:[etiket] }
+function readSentence(text, base) {
+  const t = fold(text);
+  const s = Object.assign({}, base);
+  const touched = new Set();
+  const matched = [];
+  for (const [re, set] of RULES) {
+    const m = t.match(re);
+    if (!m) continue;
+    matched.push(m[0].trim());
+    for (const k in set) { s[k] = set[k]; touched.add(k); }
+  }
+  // "elbise" / "ust" / "etek" sadece hem seviyesini belirler, ayri tur degil
+  if (!touched.has('hemLevel')) {
+    if (/\b(ust|bluz|top|gomlek|tisort)\b/.test(t)) { s.hemLevel = 22; touched.add('hemLevel'); }
+    else if (/\betek\b/.test(t) && !/\belbise\b/.test(t)) { s.hemLevel = 60; touched.add('hemLevel'); }
+  }
+  return { state: s, touched, matched };
+}
+
+
+// ============================================================================
+// TEZGAH — 2026-07-31
+// Cumle -> malzeme -> kalem -> ekranda flat. Kadran oynayinca yeniden cizilir.
+// Tek yonlu: durum tek yerde (S), her degisiklik ayni cizim yolundan gecer.
+// ============================================================================
+
+let ST = defaultState();
+let TOUCHED = new Set();
+
+const $ = (id) => document.getElementById(id);
+const famOf = {};
+M.forEach(([k, f]) => { famOf[k] = f; });
+FLAGS.forEach(([k, f]) => { famOf[k] = f; });
+
+function paint() {
+  const t0 = performance.now();
+  let svg;
+  try { svg = draw(ST); }
+  catch (e) { $('stat').textContent = 'cizim hatasi: ' + e.message; return; }
+  $('flat').innerHTML = svg;
+  const ms = performance.now() - t0;
+  const n = (svg.match(/<path/g) || []).length;
+  $('stat').textContent = `${n} cizgi · ${ms.toFixed(0)} ms`;
+  $('ver').textContent = SIZES[ST.size];
+  document.querySelectorAll('[data-k]').forEach((el) => {
+    const k = el.dataset.k;
+    const row = el.closest('.row');
+    if (!row) return;
+    const rd = row.querySelector('.read');
+    if (rd) rd.textContent = fmt(k, ST[k]);
+    row.classList.toggle('touched', TOUCHED.has(k));
+  });
+}
+
+function fmt(k, v) {
+  if (k === 'size') return SIZES[v];
+  if (typeof v === 'boolean') return v ? 'var' : 'yok';
+  return (Math.abs(v) >= 10 || Number.isInteger(v)) ? String(v) : v.toFixed(2);
+}
+
+function set(k, v) { ST[k] = v; TOUCHED.delete(k); paint(); }
+
+function buildDials() {
+  const host = $('dials');
+  host.innerHTML = '';
+  for (const [fam, title, blurb] of FAMILIES) {
+    const rows = [];
+
+    if (fam === 'olcu') {
+      rows.push(sliderRow(M.find((m) => m[0] === 'size')));
+    } else if (fam === 'kalem') {
+      rows.push(choiceRow('_ink', 'kalem yogunlugu', INKS));
+      rows.push(flagRow(['_asym', 'kalem', 'asimetrik murekkep', true, 'Gercek flat cizimlerde sol ve sag ayni degildir.']));
+    }
+    if (fam === 'seviye') rows.push(choiceRow('_neckShape', 'yaka egrisi', NECKSHAPES));
+
+    M.forEach((m) => { if (m[1] === fam && m[0] !== 'size') rows.push(sliderRow(m)); });
+    FLAGS.forEach((f) => { if (f[1] === fam) rows.push(flagRow(f)); });
+    if (!rows.length) continue;
+
+    const sec = document.createElement('section');
+    sec.className = 'fam';
+    sec.innerHTML = `<h2>${title}</h2><p class="blurb">${blurb}</p>`;
+    rows.forEach((r) => sec.appendChild(r));
+    host.appendChild(sec);
+  }
+}
+
+function sliderRow([k, , label, min, max, step, , note]) {
+  const el = document.createElement('div');
+  el.className = 'row';
+  el.innerHTML = `
+    <div class="rowhead"><span class="name">${label}</span><span class="read"></span></div>
+    <input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${ST[k]}">
+    ${note ? `<p class="note">${note}</p>` : ''}`;
+  const inp = el.querySelector('input');
+  inp.addEventListener('input', () => set(k, parseFloat(inp.value)));
+  return el;
+}
+
+function flagRow([k, , label, , note]) {
+  const el = document.createElement('div');
+  el.className = 'row flag';
+  el.innerHTML = `
+    <label><input type="checkbox" data-k="${k}" ${ST[k] ? 'checked' : ''}>
+    <span class="name">${label}</span><span class="read"></span></label>
+    ${note ? `<p class="note">${note}</p>` : ''}`;
+  const inp = el.querySelector('input');
+  inp.addEventListener('change', () => set(k, inp.checked));
+  return el;
+}
+
+function choiceRow(k, label, opts) {
+  const el = document.createElement('div');
+  el.className = 'row choice';
+  el.innerHTML = `<div class="rowhead"><span class="name">${label}</span></div>
+    <div class="opts">${opts.map(([v, t]) =>
+      `<button type="button" data-v="${v}" class="${ST[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+  el.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+    ST[k] = b.dataset.v;
+    el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    paint();
+  }));
+  return el;
+}
+
+function syncControls() {
+  document.querySelectorAll('input[data-k]').forEach((inp) => {
+    const k = inp.dataset.k;
+    if (inp.type === 'checkbox') inp.checked = !!ST[k]; else inp.value = ST[k];
+  });
+  document.querySelectorAll('.choice').forEach((row) => {
+    row.querySelectorAll('button').forEach((b) => {
+      const k = row.querySelector('.name').textContent === 'yaka egrisi' ? '_neckShape' : '_ink';
+      b.classList.toggle('on', ST[k] === b.dataset.v);
+    });
+  });
+}
+
+$('askform').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const txt = $('ask').value.trim();
+  if (!txt) return;
+  const r = readSentence(txt, defaultState());
+  ST = r.state; TOUCHED = r.touched;
+  syncControls(); paint();
+  const fams = [...new Set([...r.touched].map((k) => famOf[k]).filter(Boolean))];
+  $('hint').innerHTML = r.touched.size
+    ? `Cumleden <b>${r.touched.size}</b> malzeme okundu (${fams.join(', ')}). Kalan <b>${
+        M.length + FLAGS.length - r.touched.size}</b> malzeme varsayilan profilde kaldi ve asagida isaretli degil. Hangisi yanlissa kadrani cek.`
+    : 'Bu cumleden hicbir malzeme okunamadi. Hepsi varsayilan profilde.';
+});
+
+$('reset').addEventListener('click', () => {
+  ST = defaultState(); TOUCHED = new Set();
+  syncControls(); paint();
+  $('hint').textContent = 'Varsayilan profil. Buradan baslayip kadranlari cek.';
+});
+
+$('dl-svg').addEventListener('click', () => {
+  const blob = new Blob([draw(ST)], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'stitchu-flat.svg';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+buildDials();
+paint();
+
+</script>
+</body>
+</html>
