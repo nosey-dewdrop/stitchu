@@ -1,213 +1,199 @@
-# stitchu — YOL HARİTASI (2026-07-29, tam yeniden yazım)
+# stitchu — YOL HARİTASI
 
-> Bu dosya 29 Temmuz'daki günün sonunda yazıldı. O gün beş mimari önerisi çöktü, iki pazar
-> iddiası kanıtla çürütüldü, üç açık kaynak kalıp sistemi kaynak kodundan okundu ve motorun
-> gerçek bir couture kalıbını çıkaramadığı ölçüldü. Buradaki her cümlenin arkasında o günün
-> ölçümü var; tahmin yok.
+> **Tek plan kaynağı.** Yeni session sırası: `CLAUDE.md` → **bu dosya** → `DERSLER.md`. Başka plan dosyası açma.
+> 2026-07-31 tam yeniden yazım: ürün sırasına göre. 29 Tem sürümü git geçmişinde (`git show HEAD:ROADMAP.md`); oradaki ölçümler bu dosyada korundu.
 
 ---
 
-## ★ 0.0 LİG (Damla, 29 Tem — her şeyin üstünde, ve bu bir İNDİRİM DEĞİL)
+## ★ HEDEF (Damla, 31 Tem — her şeyin üstünde)
 
-stitchu Damla'nın ilk göz ağrısı ve onun için özel. SF hedefi kesin; onun aracını
-(rabadon/infra) Damla ayrıca düşünüyor.
+> **Bir istek promptu verilir → KALIP + FLAT çıkar. Ve bunlar GİYİLEBİLİR, SATILABİLİR şeylerdir.**
+>
+> *"matematiğinin ne kadar kusursuz olduğu umrumda değil; bir istek promptu kalıp + flat olarak verebilmesi umrumda. ve bunun giyilebilir satılabilir şeyler olması umrumda."*
 
-**Bu, stitchu'nun LİGİNİ VEYA PLANLARINI ASLA DÜŞÜRMEZ.** Damla'nın kendi sözü:
-*"bu ligini planlarını asla düşürmesin. her şeyi çok zaman alsa da zor da olsa en iyi en
-verimli yoldan yap, kolaya kaçma."*
+Zarif matematik **araç**, vitrin değil. Sadece bu çıktıyı üretmeye yarıyorsa değerli.
 
-Yani buradaki tek değişiklik şu: bir mühendislik kararı artık "bu unicorn tezi olur mu?"
-diye sınanmıyor. **Ama "en zor ve en doğru yol bu mu?" diye HER ZAMAN sınanıyor.** Kolay
-yol, yaklaşık çözüm, "şimdilik böyle kalsın" — hepsi yasak. Çıta Cyberpark/SF'de sunulacak
-seviye; aile demosu değil.
+## ★ LİG (Damla, 29 Tem — ve bu bir İNDİRİM DEĞİL)
 
-Bu ayrımın sebebi tarihsel: 29 Temmuz'da üretilen altı çerçevenin altısı da "ama bu SF
-ölçeği mi?" sorusunda öldü ve gün yandı. Soru kalktı, **standart kalktı sanılmasın.**
+stitchu Damla'nın ilk göz ağrısı. SF şirketi ayrı (rabadon/infra) — ama **bu, stitchu'nun ligini ASLA düşürmez.** Damla'nın sözü: *"her şeyi çok zaman alsa da zor da olsa en iyi en verimli yoldan yap, kolaya kaçma."*
 
----
+Tek değişiklik: mühendislik kararı artık "bu unicorn tezi olur mu?" diye sınanmıyor. **"En doğru yol bu mu?" diye HER ZAMAN sınanıyor.** 29 Tem'de altı çerçevenin altısı da "ama bu SF ölçeği mi?" sorusunda öldü ve gün yandı. **Soru kalktı, standart kalkmadı.**
 
-## 0. NE SATIYORUZ
+## ★ TEK KAPI (metrik merdiveni İPTAL)
 
-Premium **tasarım**. Chanel/Dior çıtası, Lekala değil. Üç satış yüzeyi:
-
-1. **Kalıp** — ev dikişçisine, 1:1 basılabilir, talimatlı.
-2. **Dikilmiş ürün** — giysinin kendisi.
-3. **Tasarım** — lisans/tech-pack.
-
-Üçü de tek bir nesnenin paketlenmesi: **doğruluğu kanıtlanmış, derecelendirilmiş, montaj
-bilgisi taşıyan panel seti.** Yani pazar seçimi mühendisliği değiştirmiyor.
-
-**Bedenler 34-44 sabit.** Made-to-measure YOK ve bu bir kısıtlama değil, kanıtlı bir karar:
-o iddiada ZOZO, unspun, Fayma battı, Lekala kalite tavanına çarptı. Sebep bilgi teorik —
-ölçü bedenin şeklini belirlemiyor, aynı göğüs çevresi bambaşka kütle dağılımına oturuyor.
-Buğra sabit beden satıyor ve premium müşteri memnun ödüyor. Herkesi öldüren problem bizim
-yolumuzun üstünde değil.
-
----
-
-## 1. NEDEN BİZ (29 Tem'de ölçülmüş, iddia değil)
-
-**Okuyabiliyoruz.** Satın alınmış 2 couture kalıbının 8 bedenini (112 halkanın 103'ü) semantik
-geometriye çevirdik: isimli dikişler, çentikler, kontur, mm hassasiyet. Bu gerçek ve doğrulandı.
-
-> **⚠️ 29 Tem, GÜN İÇİNDE ÇÜRÜTÜLDÜ — bu satır burada dursun ki tekrar yazılmasın.**
-> Daha önce bu bölümde "profesyonelin sattığı kalıptaki hatayı bulduk (27mm yan dikiş, bedenle
-> büyüyen 3.5→7.1mm omuz)" yazıyordu. **YANLIŞTI, hata bizimdi.** Kesim çizgisinde omuz farkı
-> 8 bedende de +0.95...+1.13mm — dümdüz, hiç büyümüyor. "Büyüyen fark" sadece bizim 10mm miter
-> ofsetimizden sonra ortaya çıkıyor. Pens bacakları kesim çizgisinde 119.84 vs 119.73mm (onda
-> bir mm, kusursuz true edilmiş); bizim ofsetimiz onu işaret değiştiren ±5-30mm'ye çeviriyor.
-> Üstelik arka omzun uzun olması **standart kalıpçılıktır** (kürek payı, normalde 6-12mm).
-> → Dikiş-çizgisi sayılarına güvenmeden ÖNCE eğri-yerel ofset düzeltilecek.
-
-**Açık kaynakta kimse dikilebilirliği doğrulamıyor** (ticari tarafta durum farklı, aşağıda):
-- **Seamly2D/Valentina** — 50 girişlik `Tool` enum'unda tek bir ölçme/karşılaştırma/doğrulama
-  aracı yok. `union_tool.cpp:378` iki parçayı birleştirirken kenar uzunluklarını hiç
-  karşılaştırmıyor. Eğri ofseti yok: her eğri sabit 0.5 pikselde poligona çevriliyor.
-  Miter sınırı çıplak `const qreal maxL = 2.4;`. Test toleransı 1mm. Kendi kendini kesme
-  temizleme testinin adı `PossibleInfiniteClearLoops` ve üç vakasından ikisi 64-bit x86'da
-  derlemeden çıkarılmış (`// Disabled due to "undefined behavior" problem`).
-- **FreeSewing** — tek dikiş çiftini tek skalerle ve elle seçilmiş altı çarpanla
-  (0.8/0.9/1.3/1.15/0.99/1.008) oturtuyor, 2mm tolerans, 50 turda sessizce pes ediyor.
-  Test paketinde **tek bir geometrik iddia yok**; testler sadece "hata fırlatmadan çizildi mi"
-  diye bakıyor.
-- **GarmentCode** — uzunluk kontrolü var ama hiç açılmayan bir `verbose` bayrağının arkasında,
-  yani ölü kod. Dikiş payı, çentik, düz iplik hiç yok.
-
-**Ticari tarafta ise doğrulama VAR, abartma:** CLO3D'de M:N dikiş nesnesi ve `Check Sewing
-Length` (1mm'yi aşan fark kırmızı), Gerber AccuMark'ta `Walk Pieces`. Gerçek boşluk otomatik
-**eşleştirme** — endüstriyel kalıp dosyaları isimsiz poligon, kenar-eşleştirme grafı taşımıyor.
-Ve **parafashion** (SIGGRAPH 2022, kodu açık) zaten anizotropik dokuma enerjisi + grain kontrol
-değişkeni + 45° bias + dikiş uzunluğu eşitliği içeriyor. Yeni bir şey iddia etmeden önce bunlara bak.
-
-**Ve kod yazmak artık darboğaz değil.** Lectra'nın on yılının çoğu alan bilgisini keşfetmek,
-şirket kurmak ve entegrasyondu. Bilgi bugün okunabilir; yazmak hızlı. Pahalı olan tek şey
-**kimsenin yazmadığı yer** — FreeSewing neden altı sihirli çarpan kullanıyor gibi sorular.
-Orası ölçümle çıkar ve ölçüm bizim güçlü yanımız (ama önce ölçüm aletini tamir ederek).
-
----
-
-## 2. ÇEKİRDEK FİKİR: GİYSİ DERLEYİCİSİ
-
-stitchu bir çizim programı değil. **Bir derleyici.**
-
-```
-tasarım niyeti  →  IR (tipli giysi grafiği)  →  çözücü  →  doğrulanmış üretilebilir çıktı
-                                                              + her çıktıya iliştirilmiş KANIT
-```
-
-Derleyici analojisi süs değil, mimari karar:
-- **Tip sistemi = arayüz sözleşmeleri.** Kol ancak oyuk arayüzü uyuşuyorsa takılır.
-  Geçersiz giysi **temsil edilemez**, çalıştırılıp bulunmaz.
-- **Optimizasyon = kısıt çözücü.** Serbest parametreler, tüm dikiş kuralları aynı anda
-  sağlanacak şekilde çözülür.
-- **Doğrulama = derleyici hatası.** Kalıp dikilemezse çıktı üretilmez; sessizce bozuk
-  geometri basılmaz (Seamly2D `points.append(px)` diyor, biz demeyeceğiz).
-- **Sınırsız varyasyon**, ancak her varyasyonun doğruluğu makine tarafından kanıtlanabildiği
-  için güvenli. Bitmoji gibi değiştirebilmenin ön koşulu bu.
-
----
-
-## 3. MİMARİ — 11 KATMAN
-
-**L0 — Yer gerçeği korpusu.** Satın alınmış couture kalıpları semantik IR'a. Bugün: 2 kalıp,
-8 beden, 103 halka. Büyüyecek. Bu korpus dünyada kimsede yok.
-
-**L1 — Tam geometri çekirdeği.** Eğri-yerel. Yay uzunluğu adaptif Gauss-Legendre (~1e-12),
-poligonlaştırma YOK. Eğri-yerel dikiş payı ofseti, altı köşe işlemi (Seamly2D'den alınan
-gerçek alan bilgisi), tam aritmetikli kesişim yüklemleri, ilmek temizleme. **Hedef: Seamly2D'nin
-1mm test toleransına karşı mikron altı.** Ölçülebilir, kanıtlanabilir üstünlük.
-
-**L2 — Giysi IR'ı.** Panel = kapalı kenar döngüsü. Kenar = eğri + arayüz etiketi + **ease
-oranı** (GarmentCode dersi: ease "+2cm" değil ORAN olarak saklanır, tüm eşleştirme yansıtılmış
-uzunluk üzerinden yapılır). Dikiş kuralı = (panelA kenar aralığı) ↔ (panelB kenar aralığı) +
-kural (eşit / eased / büzgülü). Nokta = formül (Valentina'nın DAG'ı). Serileştirilebilir,
-karşılaştırılabilir, sürümlenebilir.
-
-**L3 — Kısıt çözücü.** Tüm dikiş kuralları eşzamanlı, **sert** kısıt. Levenberg-Marquardt,
-deterministik, ve **yakınsama raporu**: yakınsamadıysa yakınsamadı der. Hedef <0.01mm.
-(FreeSewing 2mm'de pes edip susuyor.)
-
-**L4 — Derecelendirme = yeniden çözüm.** Grade tablosu/ofset kuralı yok; grafiği her beden
-için yeniden çöz. Hakem: satın alınmış kalıbın 8 gerçek bedeni.
-
-**L5 — Fizik doğrulama.** XPBD/projective dynamics, anizotropik gerilme-bükülme, gövde
-çarpışması, yerçekimi. Ve gerçek dünya: dik, ölç, geri besle. `drape.cpp`'deki Verlet oyuncak
-sayılmaz.
-
-**L6 — Flat = kalıbın render'ı.** Görsel ASLA ayrı çizilmez; montajlanmış panellerden türetilir.
-Bugün repoda tersi vardı ve bebe yaka çizimde fiyonk gibi çıkıyordu — o bir bug değil, mimari
-sonucuydu. Bu katman Damla'nın "flat ile kalıp arasındaki accuracy" şartını **yapısal olarak**
-garanti eder.
-
-**L7 — Kompozisyon + etkileşim.** Bileşen değiştir, anında hem giysiyi gör hem doğru kalıbı al.
-Artımlı yeniden çözüm, sıcak başlangıç, tarayıcıda C++/WASM, milisaniyeler. Hız sonradan
-optimize edilecek detay değil, mimariyi belirleyen kısıt.
-
-**L8 — Kumaş modeli.** Aynı kalıp ipekte ve denimde aynı kalıp değil. Anizotropi, dökülme
-katsayısı, çekme. Gerçek malzeme verisi.
-
-**L9 — AI katmanları.** Hepsi wrapper testini geçer, çünkü LLM'i çıkarınca IR + çözücü +
-doğrulayıcı ayakta kalır:
-- **Prompt/fotoğraf → IR parametreleri.** AI önerir, çözücü karar verir. AI hiçbir zaman
-  geometri üretmez.
-- **Görüntüden dijitalleştirme.** Herhangi bir kalıp PDF'i/fotoğrafı → IR.
-- **Zevk asistanı.** Damla'nın onayladığı korpus üzerinden öneri.
-
-**L10 — Üretim çıktısı.** DXF-AAMA (Seamly2D'nin atladığı MIRROR/DRILL/TEXT/REF katmanları
-dahil), marker/nesting, tech pack, 1:1 döşenmiş PDF, ve **montaj grafiğinden türetilen dikiş
-talimatı**.
-
----
-
-## 4. TEK KAPI (Damla, 29 Tem — metrik merdiveni İPTAL)
-
-Bu projenin tek kabul kapısı vardır ve üç sorudur. Biri hayırsa OLMAMIŞTIR:
+Üç soru. Biri hayırsa **olmamıştır**:
 
 # 1. Bunu giyer misin?
 # 2. Bunu Etsy'ye koyabilir misin?
 # 3. Diğer fashion flat'lerden ayırt edilemeyecek kadar iyi mi?
 
-mm, tolerans, yakınsama, determinizm — bunlar bu kapıyı geçmenin **aracı**, kapının kendisi
-değil. Ara metrik kapıları KURULMAZ; token yakar, ürün getirmez. Doğruluk zaten mühendisliğin
-içinde; ayrıca kapı dizmek işi yavaşlatır.
-
-## 5. YAPILACAK İŞ SIRASI (kapı yok, sıra var)
-
-1. **Geometri çekirdeği** — eğri-yerel yay uzunluğu ve dikiş payı ofseti. Hangi yöne gidilirse
-   gidilsin lazım; çöpe gitmeyen katman.
-2. **Giysi IR'ı + çözücü** — paneller, arayüzler, dikiş kuralları; hepsi birlikte çözülür.
-3. **Buğra'yı yeniden üret** — Locket 7/7 parça, bebe yaka ve iki katmanlı puff kol dahil
-   (bugün 4/7 ve yaka hiç çıkmıyor).
-4. **İlk tam paket** — 34-44, 1:1 PDF, dikiş payı, çentik, düz iplik, talimat, doğru flat.
-   Burada üç soru sorulur.
-5. **Flat = render + kompozisyon** — yaka/kol değiştir, görsel ve kalıp birlikte değişsin.
-6. **Fizik** — dik, ölç, geri besle.
-7. **AI katmanı** — fotoğraf/prompt → IR parametreleri.
-8. **Üç satış yüzeyi** — kalıp, dikilmiş ürün, tasarım.
-
-Çöp çıkarsa shiplenmez: silinir, dürüst söylenir. Hakem Damla.
+mm, tolerans, yakınsama — bunlar kapıyı geçmenin **aracı**, kapının kendisi değil. **Ara metrik kapısı KURULMAZ.**
+Ve: ölçüm, tablo, rapor, mimari, benchmark **nesne değildir.** Bu proje tam olarak böyle %70'lik parçalar yığıp sıfır ürün çıkardı.
 
 ---
 
-## 6. DÜRÜST BİLİNMEYENLER
+# YOL HARİTASI — her kilometre taşı bir NESNEYLE biter
 
-1. **Güzellik kompozisyondan çıkar mı?** Motor "geçerli" üretebilir; "güzel"i tanımlayan Damla.
-   Cevaba göre L7 ya bileşen seçici olur ya Damla'nın çizimini kalıba çeviren şey. **Açık.**
-2. **Fiziksel doğrulama yavaştır.** Gerçek kumaş, gerçek dikim gerektirir. Yazılımla
-   hızlandırılamaz.
-3. **Patent riski.** Tri-D Technologies US12339643B2 (verildi: 24 Haziran 2025) ölçü → kumaş ve
-   ease'li 3B model → 2B parçalar zincirini kapsıyor. **Okunmalı.** Bizim sabit-beden yolumuz
-   muhtemelen dışında ama varsayım yapılmayacak.
-4. **SF ölçeği.** "Damla'nın kalıp evi" tek başına SF hikayesi değil. Ölçek hikayesi aynı
-   motorun tasarımcılara açılması. Sıra: önce kendi kullan, kanıtla, sonra araç olarak aç.
+Sıra atlanmaz. Kapıyı geçmeden sonrakine geçilmez.
+
+## M0 — prompt → dikilebilir kalıp  ← ŞU AN BURADASIN
+**Nesne: ekranda bir kalıp.**
+
+- **GarmentCode** (MIT, aktif v2.0, `github.com/maria-korosteleva/GarmentCode`) entegre et. Parametre/prompt → geçerli dikiş kalıbı. **Geçerlilik DSL'in inşasından gelir** — çözücüye gerek yok.
+- LLM → GarmentCode programı. Design2GarmentCode (CVPR'25, Style3D) bunun çalıştığını gösterdi.
+- **Kapı:** bir prompt gir → kalıp parçaları çıksın → dikiş çiftleri eşleşsin.
+
+⚠️ **Tek başına wrapper.** M3+M4 ile birlikte değil. GarmentCode'un ifade gücü kendi bileşen kütüphanesi kadar (başkasının poğaça listesi) — **başlangıç noktası, varış değil.** İçi M7'de değişir.
+
+## M1 — kalıp → basılabilir paket
+**Nesne: yazıcıdan çıkan, kesilebilen kağıt.**
+
+- Dikiş payı: **eğri offset** (poligon offset DEĞİL — Seamly2D'yi bunun için eleştirdik, kendimiz yapmayacağız)
+- Çentik (tek=ön / çift=arka / üçlü=arka orta), grainline oku, kat çizgisi
+- **1:1 PDF**: A4 döşeli + A0, sayfa no + hizalama, **4 cm test karesi**
+- Parça etiketi: isim, no, beden, "cut 2" / "cut 1 on fold", kumaş/tela
+- **Kapı:** bas → 4cm kareyi cetvelle ölç → parçaları kes.
+
+## M2 — DİK VE GİY  ← TEK KAPI'nın ilk geçişi
+**Nesne: giyilebilir giysi.**
+
+- Damla (veya bir dikişçi) M1 paketini diker.
+- Oturmayan yer **hangi ölçü/ease parametresi** olduğu yazılarak geri beslenir.
+- **Kapı: Damla giyer mi?** Geçmeden M3'e geçme.
+- ⚠️ Bu adım **yazılımla hızlandırılamaz.** Gerçek kumaş, gerçek dikim. Planın en yavaş parçası.
+
+## M3 — flat üretimi
+**Nesne: kalıbın yanında profesyonel teknik çizim.**
+
+- `engine/flat-engine/cloth-solver.mjs` (2B Verlet) başlığında zaten yazıyor: *"Çıktı → kat (drape fold) çizgileri."* **Yarı kurulmuş, bitirilecek.**
+- `engine/src/drape.hpp` 3B kütle-yay Verlet + `maxSpringStrain` hazır.
+- Boru hattı: drape → köşe eğriliği → ridge/valley çizgileri → **PolyVectorization** (MIT) ile temiz vektör.
+- **Kapı:** bizim flat şu an **13 çizgi** (`dataset/taste-pool/svg/g001-flat.svg`); referansta (`design_patterns/crops-flat/flat-01.png`) sadece etek kıvrımları ~20. Hedef **50+**, yan yana **GÖZLE** bakılır.
+- ⚠️ Gerçek drape'te yüzlerce mikro kırışık var, flat'te ~10 temiz kat olmalı → **agresif sadeleştirme** gerekiyor; bu bir tasarım problemi, sadece çıkarım değil. Güven: %60-70.
+- **Boşluk:** kalıpçılar flat vermiyor, flat'çiler kalıp vermiyor. **Tek kaynaktan ikisini veren yok.** Ürün farkımız burası.
+
+## M4 — güzelleştirme (satılacak, çirkin olamaz)
+**Nesne: eğrileri düzgün kalıp.**
+
+- **`curve-research/01-elastica.py` ÇALIŞIYOR** (31 Tem):
+  - Açı uzayı formülasyonu → **yay uzunluğu inşaat gereği TAM** (hata 0.0, yaklaşık değil)
+  - Uç nokta hatası **1e-13 mm**, 5 iterasyonda yakınsıyor, Newton+KKT
+  - Tohum = Bézier'in eşit-yay-boyu örneklemesi. **Lineer açı tohumu ÇALIŞMIYOR** (kapanma hatası 91mm'de takılır — denendi, tekrar deneme)
+  - **Elle seçilmiş sabit: 0.** (Bézier'de 3 tane: `0.26 / 0.34 / 0.78`)
+- **AÇIK BULGU (doğrulanmadı):** motorun Bézier'i koltukaltına **65.6°** ile giriyor; yan dikiş dikey. Ön+arka birleşince kol oyuğu orada **V yapıyor** olabilir. Kalıpçılıkta kol oyuğunun yan dikişe **dik** girmesi kuralı var. **Damla teyit etmeli**, sonra doğru teğetle elastica koşulur.
+- **Kapı:** eski/yeni yan yana PNG → **Damla gözle bakar.**
+
+## M5 — beden serisi 34-48
+**Nesne: tek kalıp, sekiz beden.**
+
+- **Nokta bazlı grade rule.** Lekala'nın hatası tek katsayıyla ölçekleme (kullanıcı şikayeti: *"shapeless box"*); doğrusu nokta başına ayrı delta — göğüs +2cm, bel +1.5cm, boyun +0.5cm. Basit gövdede 8-12 grade noktası tipik.
+- **Katmanlı PDF (OCG)** — sadece kendi bedenini yazdır; modern indie kalıp standardı.
+- **Kapı:** her bedende her dikiş çifti hâlâ eşit; çevreler monoton.
+
+## M6 — SAT
+**Nesne: para.**
+
+- Etsy: kalıp $8-15, paket $20-40. **Talimat kitapçığı algılanan değerin %40-50'si** — atlanamaz. Montaj sırası **dikiş grafiğinin topolojik sıralamasından** türetilir (kimse yapmıyor).
+- DXF-AAMA (`engine/src/dxf.cpp` var). Katman tablosu: 1=sınır, 4=çentik, 7=grainline, 8=iç çizgi, 13=delik, 14=dikiş çizgisi.
+- **Üç yüzey:** yazılım (yazılım kullanana) · kalıp+flat (Etsy'ciye) · dikilmiş giysi (dikemeyene).
+- **Sabit beden 34-44/48.** Made-to-measure YOK — kanıtlı karar: ZOZO, unspun, Fayma battı; Lekala kalite tavanına çarptı. Sebep bilgi-teorik: ölçü bedenin şeklini belirlemiyor.
+
+## M7+ — sonra (şimdi değil)
+- **Zanaat dağarcığı**: blok + 7 işlem (pivot dart, slash&spread, walk, blend, ease, pay, grade). GarmentCode'un içini bununla değiştir. *(Kalıpçı sıfırdan çizmez, bloktan türetir — Joseph-Armstrong.)* **Dart pivot + slash&spread açık kaynakta YOK** (Seamly2D #369 hâlâ açık) → yazılacak.
+- **Geometri çekirdeği**: BFF (MIT, sınır uzunluğu **dayatılabilir** düzleştirme) + OptCuts (MIT, otomatik dikiş yerleşimi) + koni tekilliği = pens (Gauss-Bonnet).
+  **Kapı: panel üçgenlerinde strain < %0.5.** Geçmezse açılmaz. *(Damla 29 Tem: "3B-flatten'ı ÇEKİRDEK sanma" — endüstri 2B-kaynak → 3B-doğrulama.)*
+- **Foto → kalıp**: SOTA %23.7 (Sewformer'ın %76.3'ü dikilemiyor). **Takvim sözü verilmez.**
 
 ---
 
-## 7. ŞU ANDA NEREDE DURUYORUZ
+## NEDEN BUGÜNE KADAR BİTMEDİ (ölçüldü)
 
-- **Var:** yer gerçeği korpusu (L0), doğrulayıcı (L3'ün denetim yarısı), geometri ilkelleri,
-  DXF/nesting/tech-pack, `core/` altında yeni geometri çekirdeği ve LM çözücüsünün ilk hali.
-- **Yok:** IR, çözücünün giysiye bağlanmış hali, eğri-yerel ofset, render-from-pattern,
-  kompozisyon, fizik, AI katmanı.
-- **Ölü:** `engine/`'in formül-çizim beyni (Buğra-38'de 7 parçanın 4'ü, bebe yaka yok,
-  ön/arka aynı genişlikte). Vokabüler bilgi olarak duruyor, kod olarak değil.
+1. **Motor her giysiyi sıfırdan formülle çiziyor** → giysi başına dosya. `engine/src/` = 17.693 satır, **43 .cpp**. Giysi başına O(n) insan emeği.
+2. **Sayılar uydurma.** `bodice.hpp: armholeHollowShareFront = 0.34` ↔ Buğra reçetesinde aynı sayı **1.07** (kirişin dışı). `chestEase: 0.211032`, `neckWidthMult: 2.728261`. Altı ondalık = tek kalıba overfit → **SVG'nin çirkin olma sebebi.**
+3. **Reçete katmanı yanlış dağarcıkla.** `recipe.cpp` 1089 satır; `move/line/curve(cp1,cp2)/close` = çizim dili, kurgu dili değil. `docs/RECETE-SPEC.md` bunu **erdem** sanmış: *"motorun BUGÜN yaptığı işlemlere birebir oturur."*
+4. **Korpus yer gerçeği değil.** `patterns_real/geometry/geometry-full.json` (104 halka): **7/13 parça beden-monotonluğunu ihlal ediyor**, 32/104 containment başarısız, `Collar Lining` 46→48'de 501.5→**382.9 mm**, `Upper Sleeve` 36 ve 38 aynı halka. Tracer hatası mı kalıp mı **ayrışmadı**.
+
+## RAKİPLER (31 Tem taraması)
+
+Bu **sektörün** hastalığı, bizim bug'ımız değil:
+
+| Sistem | Kaç model | Nasıl |
+|---|---|---|
+| Lekala | 3.003 | **hepsi elle çizilmiş** |
+| Tailornova | "sınırsız" | gerçekte ~15 şablon × slider |
+| Six Atomic / Style3D | **gizli** | enterprise kara kutu |
+| Seamly2D | sınırsız | tasarımcı elle çiziyor |
+
+**Kaynak kodundan okunan (29 Tem, geçerli):**
+- **Seamly2D/Valentina** — 50 `Tool` enum'unda tek doğrulama aracı yok. `union_tool.cpp:378` kenar uzunluklarını hiç karşılaştırmıyor. Eğri ofseti yok (sabit 0.5px poligon). Miter sınırı çıplak `const qreal maxL = 2.4;`. Test toleransı 1mm. Kendi-kesme testinin üç vakasından ikisi 64-bit'te derlemeden çıkarılmış.
+- **FreeSewing** — tek dikiş çiftini elle seçilmiş **altı çarpanla** (0.8/0.9/1.3/1.15/0.99/1.008) oturtuyor, 2mm tolerans, 50 turda **sessizce pes ediyor**. Test paketinde tek geometrik iddia yok.
+- **GarmentCode** — uzunluk kontrolü hiç açılmayan `verbose` bayrağının arkasında. Dikiş payı, çentik, düz iplik yok.
+
+**⚠️ ABARTMA:** ticari tarafta doğrulama VAR — CLO3D `Check Sewing Length` (>1mm kırmızı), Gerber `Walk Pieces`, CLO patenti **US 11308707** derecelendirmede dikiş uzunluk oranını otomatik koruyor. Ve **parafashion** (SIGGRAPH'22, kodu açık GPL3) zaten anizotropik dokuma enerjisi + grain kontrolü + 45° bias + dikiş uzunluğu eşitliği içeriyor. **"Kimse dikiş eşitliğini çözmüyor" İDDİASI YANLIŞ** (31 Tem'de kuruldu ve çürütüldü).
+
+### Neden AI foto üretiyor da kalıp üretemiyor
+| | Görsel | Kalıp |
+|---|---|---|
+| Veri | **5 milyar** çift (LAION) | ~115k, **sentetik** |
+| Doğruluk | yok — "iyi görünüyorsa" doğru | **ikili + fiziksel**, mm tutmazsa kapanmıyor |
+| Çıktı | nihai ürün | **talimat**; gerçek ürün dikilmiş giysi |
+
+Duvar **üretimde değil doğrulamada.** Doğrulayıcı yarı kimsede yok.
+
+---
+
+## KURALLAR (ihlal = iş geri alınır)
+
+- **Giysi başına yeni dosya — bir daha asla.**
+- **Beden ölçüsü veya beyan edilmiş tasarım parametresi olmayan hiçbir sayı.**
+- **Motorun kendi çıktısı asla kanıt değildir** — `golden-reference.csv`, `dataset/taste-pool/`, `contract/preview-truth.json`, `contract/figure-landmarks.json` (kaynağı `buildHalf:` = prototip kodu), showcase SVG'leri: **hepsi motor çıktısı.**
+- **GPL/AGPL kod repoya girmez.** Algoritmayı makaleden yazmak serbest, kodu almak değil.
+- Patternmaking sayısı **tahmin edilmez** — `knowledge/drafting-math-eu38.md` (Aldrich doğrulanmış) veya doğrulanmış kaynak.
+- Her aşama **render → PNG → GÖZLE BAK.** SVG path'e bakıp beğenmek yasak (DERSLER.md).
+- **Ajan tavanı 3-4.** Geometriyle ölçülebilen şey araştırmaya sorulmaz (29 Tem: 100 ajan / 863k token yandı).
+- `engine/flat-engine/*` **SALT-OKUNUR** (Damla emri 19 Tem) — Damla'nın flat çizim dili.
+- **Çöp çıkarsa shiplenmez:** silinir, dürüst söylenir.
+
+## LİSANS
+
+**✅ ALINIR:** GarmentCode (MIT) · BFF (MIT) · OptCuts (MIT) · libigl core (MPL2 — **CoMISo hariç, GPL3**) · libWetCloth/DER (MPL-2.0) · informative-drawings (MIT) · PolyVectorization (MIT) · ezdxf (BSD) · DexiNed · SketchRNN (Apache)
+
+**❌ DOKUNULMAZ:** parafashion (GPL3) · Seamly2D (GPL3) · κ-curves (GPL3) · **Patro (AGPL)** · potrace (GPL2) · RTSC (GPL) · Developability of Triangle Meshes (GPL) · **Style3D GarmageNet (CC BY-NC-ND, ticari yasak)** · libspiro (lisans çelişkili, kullanma)
+
+## ELDE NE VAR
+
+| Dosya | Ne | Durum |
+|---|---|---|
+| `curve-research/01-elastica.py` | **elastica çözücü — ÇALIŞIYOR** | 31 Tem, yeni |
+| `core/include/stitchu/geom.hpp` | adaptif Gauss-Legendre yay uzunluğu 1e-12 | hazır |
+| `core/include/stitchu/solve.hpp` | LM çözücü, yakınsamayınca söyler | hazır |
+| `engine/flat-engine/cloth-solver.mjs` | 2B Verlet → kat çizgileri | **yarı kurulmuş** |
+| `engine/src/drape.hpp` | 3B Verlet + strain | hazır |
+| `engine/src/dxf.cpp`, `nest.cpp` | DXF-AAMA + marker | yaşar |
+| `engine/tools/render-*.mjs` | PNG render | yaşar |
+| `engine/flat-engine/*` | Damla'nın flat dili, 40 stil | SALT-OKUNUR |
+| 43 giysi .cpp'si | **şartname olarak oku, kod olarak kullanma** | `engine/legacy/`'ye |
+
+## DÜRÜST BİLİNMEYENLER
+
+1. **⚠️ PATENT:** Tri-D Technologies **US12339643B2** (24 Haz 2025) — ölçü → kumaş ve ease'li 3B model → 2B parçalar zincirini kapsıyor. **OKUNMALI.** Sabit-beden yolumuz muhtemelen dışında ama varsayım yapılmayacak.
+2. **Güzellik kompozisyondan çıkar mı?** Motor "geçerli" üretir; "güzel"i tanımlayan Damla. **Açık.**
+3. Kol oyuğu koltukaltına dik girmeli mi (65.6° vs 90°) — **Damla teyit etmeli**
+4. Buğra korpusunun 7/13 ihlali: tracer mı kalıp mı — ayrışmadı
+5. ASTM D6673 tam spec ücretli; katman tablosu ikincil kaynaktan — gerçek DXF ile teyit
+6. SMPL ticari lisansı belirsiz → gerekirse ANSUR II / CAESAR
+7. Türevlenebilir simülasyon araştırması eksik kaldı
+8. Buğra kalıbını **blok** olarak kullanmanın hukuki sınırı: blok türetim serbest, **tasarım kopyası satılamaz**
+
+### ⚠️ 29 TEM — GERİ ALINMIŞ İDDİA (bir daha yazılmasın)
+Daha önce *"profesyonelin sattığı kalıpta hata bulduk (27mm yan dikiş, bedenle büyüyen 3.5→7.1mm omuz)"* yazıyordu. **YANLIŞTI, hata bizimdi.** Kesim çizgisinde omuz farkı 8 bedende de +0.95…+1.13mm — dümdüz. "Büyüyen fark" sadece bizim 10mm miter ofsetimizden sonra çıkıyor. Pens bacakları 119.84 vs 119.73mm (kusursuz true edilmiş); bizim ofsetimiz onu ±5-30mm'ye çeviriyor. **Arka omzun uzun olması standart kalıpçılıktır** (kürek payı 6-12mm).
+
+---
+
+## YENİ SESSION NASIL DEVAM EDER
+
+1. `CLAUDE.md` → bu dosya → `DERSLER.md`
+2. **M-sırasında ilk bitmemiş olanı al. Sıra atlama.**
+3. Kapıyı geçmeden sonrakine geçme. Kapı = sayı veya Damla'nın gözü; ikisi de "sanırım oldu" kabul etmez.
+4. Bitince **render → PNG → Damla'ya göster**, sonra commit + push.
+5. Rapor: `~/damla_projects_2026/reports/YYYY-MM-DD-konu.txt` (Damla .md açamıyor).
