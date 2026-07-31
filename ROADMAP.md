@@ -178,6 +178,13 @@ salt-okunur, tuval kararı Damla'ya); PolyVectorization/3B yolu M7'ye.
 - **Kapı:** eski/yeni yan yana PNG → **Damla gözle bakar.**
 
 ## M5 — beden serisi 34-48
+
+✅ **ÜRETİM+DENETİM BİTTİ (1 Ağu gece, commit 4c26902):** `scripts/gradeset.sh` 8 bedeni üretip
+üç denetim koşuyor — tapu (FAIL hep aynı 4 dikiş, büyüklük 1.68→2.28mm), kenar monotonluğu
+(90 kenar, 28 ihlal, 4/8 parçada; üreteç topolojisi bedenler arası SABİT DEĞİL, mikro-kenar
+36/40/44/46/48'de var 34/38/42'de yok), grade adımı (bel 40.12-40.13mm kusursuz düzgün, göğüste
+44→46'da tek 32mm sapma). Nest'ler klasik grading yuvası gibi (Logs/gradeset-*/nest-*.png).
+**Kalan:** ihlallerin "GarmentCode tercihi mi hata mı" hükmü + M7'de kendi grade motorumuz.
 **Nesne: tek kalıp, sekiz beden.**
 
 - **Nokta bazlı grade rule.** Lekala'nın hatası tek katsayıyla ölçekleme (kullanıcı şikayeti: *"shapeless box"*); doğrusu nokta başına ayrı delta — göğüs +2cm, bel +1.5cm, boyun +0.5cm. Basit gövdede 8-12 grade noktası tipik.
