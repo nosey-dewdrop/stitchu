@@ -80,7 +80,19 @@ Sıra atlanmaz. Kapıyı geçmeden sonrakine geçilmez.
   - Uç nokta hatası **1e-13 mm**, 5 iterasyonda yakınsıyor, Newton+KKT
   - Tohum = Bézier'in eşit-yay-boyu örneklemesi. **Lineer açı tohumu ÇALIŞMIYOR** (kapanma hatası 91mm'de takılır — denendi, tekrar deneme)
   - **Elle seçilmiş sabit: 0.** (Bézier'de 3 tane: `0.26 / 0.34 / 0.78`)
-- **AÇIK BULGU (doğrulanmadı):** motorun Bézier'i koltukaltına **65.6°** ile giriyor; yan dikiş dikey. Ön+arka birleşince kol oyuğu orada **V yapıyor** olabilir. Kalıpçılıkta kol oyuğunun yan dikişe **dik** girmesi kuralı var. **Damla teyit etmeli**, sonra doğru teğetle elastica koşulur.
+- **★ ÇÖZÜLDÜ (31 Tem, ölçüldü — `curve-research/02-underarm-angle.py`): MOTOR KOL OYUĞUNU YANLIŞ AÇIYLA ÇIKARIYOR.**
+
+  Kural (kaynaklı): *"the armhole curve should be perpendicular to the side seam and shoulder seams"* · *"Pattern pieces should meet at a 90-degree angle for the first 0.5-1cm to prevent irregular angles or **'V' shapes**"*
+
+  **Gerçek Buğra kalıbında ölçüldü (beden 38, 3/6/10mm yerel teğet, SVD):**
+  | | koltukaltı | omuz ucu |
+  |---|---|---|
+  | Ön beden | **75.2–75.7°** | **85.8–88.3°** |
+  | Arka beden | **85.9–89.7°** | **72.9–85.6°** |
+
+  **Bizim motor: koltukaltı 24.4°, omuz ucu 0.0°.** Omuzda 0° — `bodice.cpp:159-166` yorumu bunu bilerek yapıyor ("teğet paylaşsınlar, 77°'lik sivrilik gitsin"). Bir sivriliği düzeltirken kuralı ihlal etmişler.
+  → **M4'te elastica doğru uç teğetlerle (≈90°) koşulacak.** Düzeltme tekniğinin zanaattaki adı **blending/truing**: ön+arka yan dikişten yan yana konur, arkadan öne eğri düz akmalı.
+  ⚠️ Beden 36/40/42 ölçümü çöp (0.0°/0.1°) — landmark indisleri `CLAUDE.md`'de **beden 38 için** çıkarılmış, diğerlerine uymuyor. Yeni beden ölçmeden önce landmark çıkarımı o beden için yeniden koşulmalı.
 - **Kapı:** eski/yeni yan yana PNG → **Damla gözle bakar.**
 
 ## M5 — beden serisi 34-48
@@ -178,12 +190,25 @@ Duvar **üretimde değil doğrulamada.** Doğrulayıcı yarı kimsede yok.
 
 1. **⚠️ PATENT:** Tri-D Technologies **US12339643B2** (24 Haz 2025) — ölçü → kumaş ve ease'li 3B model → 2B parçalar zincirini kapsıyor. **OKUNMALI.** Sabit-beden yolumuz muhtemelen dışında ama varsayım yapılmayacak.
 2. **Güzellik kompozisyondan çıkar mı?** Motor "geçerli" üretir; "güzel"i tanımlayan Damla. **Açık.**
-3. Kol oyuğu koltukaltına dik girmeli mi (65.6° vs 90°) — **Damla teyit etmeli**
-4. Buğra korpusunun 7/13 ihlali: tracer mı kalıp mı — ayrışmadı
-5. ASTM D6673 tam spec ücretli; katman tablosu ikincil kaynaktan — gerçek DXF ile teyit
-6. SMPL ticari lisansı belirsiz → gerekirse ANSUR II / CAESAR
-7. Türevlenebilir simülasyon araştırması eksik kaldı
-8. Buğra kalıbını **blok** olarak kullanmanın hukuki sınırı: blok türetim serbest, **tasarım kopyası satılamaz**
+3. Buğra korpusunun 7/13 ihlali: tracer mı kalıp mı — ayrışmadı
+4. ASTM D6673 tam spec ücretli; katman tablosu ikincil kaynaktan — gerçek DXF ile teyit
+5. SMPL ticari lisansı belirsiz → gerekirse ANSUR II / CAESAR
+6. Türevlenebilir simülasyon araştırması eksik kaldı
+7. Landmark indisleri **sadece beden 38** için geçerli; başka bedende ölçüm yapmadan önce çıkarım o beden için yeniden koşulmalı
+
+### ✅ ÇÖZÜLDÜ — HUKUK (31 Tem, araştırıldı)
+Satın alınmış kalıptan ne yapılabilir:
+| Eylem | Durum |
+|---|---|
+| Kalıbı **ölçmek**, verisinden öğrenmek | ✅ güvenli |
+| Ondan **blok/sloper** türetmek | ✅ güvenli — "rub-off" endüstri standardı, tersine mühendislik yasal |
+| O bloktan **FARKLI** tasarım yapıp satmak | ✅ hukuken temiz (giysi "useful article", kesim telifli değil — *Star Athletica v. Varsity Brands*, 2017) |
+| **Aynı tasarımı** yeniden çizip satmak | ❌ **YASAK** (türev eser) |
+| Onların kalıbını derecelendirip satmak | ⚠️ **riskli** (kopya+değişiklik = türev tartışması) |
+
+Telifli olan: kalıbın **çizimi, talimat metni, illüstrasyonları**. Telifli olmayan: kalıptan üretilen **giysi**. *(Baker v. Selden, 1879: telif ifadeyi korur, sanatı uygulamayı değil.)*
+"Personal use only" maddesi hukuken zayıf (satın alma öncesi sözleşme değil) **ama pratikte DMCA takedown riski gerçek.**
+→ **stitchu çizgisi: Buğra'yı öğrenmek ve blok türetmek için kullan; kendi tasarımlarımızı sat; onların tasarımını asla.**
 
 ### ⚠️ 29 TEM — GERİ ALINMIŞ İDDİA (bir daha yazılmasın)
 Daha önce *"profesyonelin sattığı kalıpta hata bulduk (27mm yan dikiş, bedenle büyüyen 3.5→7.1mm omuz)"* yazıyordu. **YANLIŞTI, hata bizimdi.** Kesim çizgisinde omuz farkı 8 bedende de +0.95…+1.13mm — dümdüz. "Büyüyen fark" sadece bizim 10mm miter ofsetimizden sonra çıkıyor. Pens bacakları 119.84 vs 119.73mm (kusursuz true edilmiş); bizim ofsetimiz onu ±5-30mm'ye çeviriyor. **Arka omzun uzun olması standart kalıpçılıktır** (kürek payı 6-12mm).
