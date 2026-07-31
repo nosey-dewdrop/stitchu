@@ -116,6 +116,12 @@ katmanı: **cümle → 46 sürekli malzeme kadranı → kalem → ekranda flat**
 ## M1 — kalıp → basılabilir paket
 **Nesne: yazıcıdan çıkan, kesilebilen kağıt.**
 
+✅ **YAZILIM TARAFI BİTTİ (1 Ağu gece, `printpack.py`, commit be875fc):** eğri ofset pay
+(10 376 noktada 10.000mm, analitik normal, köşe = ofset doğrularının kesişimi, pens ağzı V-kırpma),
+stitch grafiğinden çentik (ön tek/arka çift/arka-orta üçlü, çift farkı 0.000003mm), grainline+etiket,
+A0 raf + A4 kitapçık (bindirme, artılar, sayfa kodu, harita, 4cm kare kodda assert), zip bayt-deterministik.
+**Kapı fiziksel ve Damla'da: bas → 4cm kareyi cetvelle ölç → kes.**
+
 - Dikiş payı: **eğri offset** (poligon offset DEĞİL — Seamly2D'yi bunun için eleştirdik, kendimiz yapmayacağız)
 - Çentik (tek=ön / çift=arka / üçlü=arka orta), grainline oku, kat çizgisi
 - **1:1 PDF**: A4 döşeli + A0, sayfa no + hizalama, **4 cm test karesi**
