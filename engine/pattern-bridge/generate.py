@@ -5,6 +5,8 @@
 #              -> GarmentCode (core/third_party/garmentcode, pinned d449629)
 #              -> specification.json / pattern.svg / pattern.png / print PDF
 #              -> walk.py seam deed (seam-report.json + seam-report.txt)
+#              -> printpack.py 1:1 paper (print-a0.pdf / print-a4.pdf /
+#                 print-report.txt: allowance, notches, grainline, tiling)
 #
 # Must run with the GarmentCode venv python:
 #   PYTHONPATH=<gc root> <gc root>/.venv/bin/python generate.py state.json out/
@@ -25,7 +27,8 @@ GC_ROOT = HERE.parent.parent / 'core' / 'third_party' / 'garmentcode'
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(GC_ROOT))
 
-from mapping import map_state  # noqa: E402
+from mapping import map_state, SIZES  # noqa: E402
+import printpack  # noqa: E402
 import walk as walklib  # noqa: E402
 
 NAME = 'stitchu'
@@ -101,6 +104,9 @@ def generate(state, out_dir):
     (out_dir / 'seam-report.json').write_text(json.dumps(report, indent=2))
     (out_dir / 'seam-report.txt').write_text(walklib.report_txt(report))
 
+    size_label = SIZES[int(state.get('size', 2))]
+    print_paths = printpack.build(out_dir, spec_path, size_label)
+
     return {
         'specification': spec_path,
         'svg': out_dir / f'{NAME}_pattern.svg',
@@ -109,6 +115,7 @@ def generate(state, out_dir):
         'print_svg': out_dir / f'{NAME}_print_pattern.svg',
         'seam_json': out_dir / 'seam-report.json',
         'seam_txt': out_dir / 'seam-report.txt',
+        **print_paths,
         'notes': notes_path,
         'design': design_path,
         'body': body_path,

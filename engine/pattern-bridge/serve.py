@@ -3,11 +3,12 @@
 #
 #   GET  /api/health   -> {"ok": true}
 #   POST /api/pattern  -> body: atolye state JSON
-#                         runs generate.py (mapping -> GarmentCode -> walk)
-#                         in a subprocess and answers with a zip:
-#                         specification.json, pattern.svg, pattern.png,
-#                         print PDF, seam-report.json/.txt, mapping-notes.json,
-#                         design.yaml, body.yaml
+#                         runs generate.py (mapping -> GarmentCode -> walk
+#                         -> printpack) in a subprocess and answers with a
+#                         zip: specification.json, pattern.svg, pattern.png,
+#                         print PDF, print-a0.pdf, print-a4.pdf,
+#                         print-report.txt, seam-report.json/.txt,
+#                         mapping-notes.json, design.yaml, body.yaml
 #   everything else    -> static files from web/ (atolye.html lives there)
 #
 # Run through scripts/atolye-serve.sh (it picks the GarmentCode venv python).
@@ -37,6 +38,9 @@ ZIP_MEMBERS = [  # (output file name, name inside the zip)
     ('stitchu_pattern.svg', 'pattern.svg'),
     ('stitchu_pattern.png', 'pattern.png'),
     ('stitchu_print_pattern.pdf', 'print-pattern.pdf'),
+    ('print-a0.pdf', 'print-a0.pdf'),
+    ('print-a4.pdf', 'print-a4.pdf'),
+    ('print-report.txt', 'print-report.txt'),
     ('seam-report.json', 'seam-report.json'),
     ('seam-report.txt', 'seam-report.txt'),
     ('mapping-notes.json', 'mapping-notes.json'),
