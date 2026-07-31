@@ -263,6 +263,8 @@ function collarOverlay(over) {
 function draw(s) {
   const over = compile(s);
   let svg = renderStyle('__live', over);
-  if (s.collar) svg = svg.replace('</svg>', collarOverlay(over) + '</svg>');
+  let extra = flFoldOverlay(s, over);      // kat katmani (foldlines.js, M3)
+  if (s.collar) extra += collarOverlay(over);
+  if (extra) svg = svg.replace('</svg>', extra + '</svg>');
   return svg;
 }

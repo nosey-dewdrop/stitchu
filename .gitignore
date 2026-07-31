@@ -87,3 +87,4 @@ flatten-research/*.png
 # scripts/setup-garmentcode.sh (pinned commit, minimal cgal-free venv).
 core/third_party/garmentcode/
 __pycache__/
+reports/2026-08-01-m3-flat-yogunluk/

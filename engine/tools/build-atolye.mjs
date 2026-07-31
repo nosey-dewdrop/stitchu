@@ -54,6 +54,7 @@ if (/node:fs|node:url|process\.argv/.test(penBundle)) {
 }
 
 const ING = R('engine/tools/atolye/ingredients.js');
+const FOLD = R('engine/tools/atolye/foldlines.js');
 const LEX = R('engine/tools/atolye/lexicon.js');
 const UI = R('engine/tools/atolye/ui.js');
 const CSS = R('engine/tools/atolye/atolye.css');
@@ -71,6 +72,7 @@ const topLevelNames = (src) => {
   return out;
 };
 const scopes = [['pen', topLevelNames(penBundle)], ['ingredients', topLevelNames(ING)],
+                ['foldlines', topLevelNames(FOLD)],
                 ['lexicon', topLevelNames(LEX)], ['ui', topLevelNames(UI)]];
 const clashes = [];
 for (let i = 0; i < scopes.length; i++)
@@ -156,6 +158,8 @@ ${CSS}
 ${penBundle}
 
 ${ING}
+
+${FOLD}
 
 ${LEX}
 
