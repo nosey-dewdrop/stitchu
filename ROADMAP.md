@@ -36,14 +36,46 @@ Ve: ölçüm, tablo, rapor, mimari, benchmark **nesne değildir.** Bu proje tam 
 
 Sıra atlanmaz. Kapıyı geçmeden sonrakine geçilmez.
 
-## M0 — prompt → dikilebilir kalıp  ← ŞU AN BURADASIN
-**Nesne: ekranda bir kalıp.**
+## ★ M0 — GİRDİ PROBLEMİ: prompt → resim → kalıp  ← ŞU AN BURADASIN
+**Nesne: ekranda gördüğün, ayarladığın, sonra indirdiğin elbise.**
 
-- **GarmentCode** (MIT, aktif v2.0, `github.com/maria-korosteleva/GarmentCode`) entegre et. Parametre/prompt → geçerli dikiş kalıbı. **Geçerlilik DSL'in inşasından gelir** — çözücüye gerek yok.
-- LLM → GarmentCode programı. Design2GarmentCode (CVPR'25, Style3D) bunun çalıştığını gösterdi.
-- **Kapı:** bir prompt gir → kalıp parçaları çıksın → dikiş çiftleri eşleşsin.
+### Önce sayıyı bil (31 Tem, `engine/vocab.json`'dan sayıldı)
 
-⚠️ **Tek başına wrapper.** M3+M4 ile birlikte değil. GarmentCode'un ifade gücü kendi bileşen kütüphanesi kadar (başkasının poğaça listesi) — **başlangıç noktası, varış değil.** İçi M7'de değişir.
+**Bir kalıp 37 kategorik alan + 8 ölçü = 45 sayı istiyor. "Bir elbise" bunun 1'ini veriyor.**
+Kalan 44'ü **matematik uyduramaz.** Gelebileceği yalnızca üç yer var, dördüncüsü yok:
+
+| Kaynak | Ne doldurur |
+|---|---|
+| Kullanıcı söyler | 45 soru = kullanılamaz ürün |
+| **Varsayılan + beden tablosu** | 8 ölçü beden tablosundan (34-48), 37 kategorik **varsayılan profilden** |
+| Referans görselden çıkarım | görü kategorikleri doldurur (sonra) |
+
+**Vücut ölçüsü gerekmiyor:** satılabilir kalıp **sabit beden** — müşteri 38'i seçer. MTM ölü (ZOZO/unspun/Fayma battı, Damla kararı). Kendi giysin için ölçünü **bir kez** verirsin: form, araştırma değil.
+**"Ne kadar uzun" tek bir sayıdır**, varsayılanı olur, kadranla değişir.
+
+### ★ Ve "seni anladım mı"nın cevabı JSON OLAMAZ — RESİM olmak zorunda
+
+```
+"puf kollu midi A-line elbise"
+   → 1 alan promptdan, 36 alan varsayılandan
+   → 2 saniyede FLAT EKRANA ÇİZİLİR
+   → Damla bakar: "kol daha kabarık, boy 5cm kısa"
+   → kadran oynar, yeniden çizilir
+   → beğenince KALIP İNER
+```
+
+**Flat sonda teslim edilen çıktı değil — flat ARAYÜZÜN KENDİSİ.** Dilin kaybettiği bilgiyi ancak resim geri verir. `engine/flat-engine/*` (40 stil, parametrik, zaten çiziyor) bu döngünün ekran katmanı — **yarısı kurulu.**
+
+### Yapılacak
+1. **Varsayılan profil**: 37 alanın her biri için makul varsayılan + hangi bedende hangi ölçü (34-48 tablo). Damla'nın zevkine göre, generic değil.
+2. **LLM → alan doldurma**: prompt sadece **ayrık yapı** verir, asla sayı üretmez. Doldurmadığı her alan varsayılanda kalır ve **kullanıcıya görünür**.
+3. **Anında flat**: doldurulan alanlar → `flat-engine` → ekranda çizim.
+4. **Kadranlar**: her alan değiştirilebilir, değişince yeniden çizilir.
+5. **Kalıp**: beğenilen konfigürasyon → **GarmentCode** (MIT, `github.com/maria-korosteleva/GarmentCode`) → geçerli dikiş kalıbı. Geçerlilik DSL'in inşasından gelir, çözücüye gerek yok. *(Design2GarmentCode, CVPR'25 bunun çalıştığını gösterdi.)*
+
+**Kapı:** Damla bir cümle yazsın → 2 saniyede elbiseyi **görsün** → iki kadran oynatsın → kalıbı indirsin.
+
+⚠️ GarmentCode tek başına wrapper. Resim döngüsü + M3/M4 ile birlikte değil. İfade gücü kendi bileşen kütüphanesi kadar (başkasının poğaça listesi) — **başlangıç noktası, varış değil.** İçi M7'de değişir.
 
 ## M1 — kalıp → basılabilir paket
 **Nesne: yazıcıdan çıkan, kesilebilen kağıt.**
