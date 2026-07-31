@@ -153,6 +153,14 @@ function compile(s) {
 
   const parts = {};
   FLAGS.forEach(([k]) => { parts[k] = !!s[k]; });
+  // KALEM SINIRI 2 (goruldu 2026-07-31, PNG ile): kalemdeki collarShape() yaka
+  // egrisinin SADECE ilk segmentini ofsetliyor (collarShape(p, half[0], ...)).
+  // Yuvarlak yakada nSeg=1, fark edilmiyor; V/kare/kalp yakada nSeg=2 ve bant
+  // yakanin yarisinda bitip V'nin dibinde burusmus bir kapak gibi ciziliyordu.
+  // Kalem SALT-OKUNUR; duzeltme burada: bant kaleme hic cizdirilmez, draw()
+  // ayni genislik profiliyle TUM yaka segmentlerini yuruyerek cizer (kalemin
+  // icindeki laceNeck zaten boyle yapiyor: polyFromSegs(half.slice(0,k.nSeg))).
+  parts.collar = false;
 
   STYLE['__live'] = {
     label: 'atolye',
@@ -191,6 +199,70 @@ function compile(s) {
   return over;
 }
 
+// ---------------------------------------------------------------------------
+// Yaka bandi — collarShape() ile ayni cizim dili (ayni genislik profili, ayni
+// CF sabitleme, ayni smooth), tek fark: ilk segment degil TUM yaka yurunur.
+// Kalemin disari verdigi fonksiyonlarla kurulur, kaleme dokunulmaz.
+// ---------------------------------------------------------------------------
+function bandLoop(p, half, k, gap) {
+  // Tanjant segment ICINDEN alinir (koseyi merkezi farkla 45 dereceden kesmek
+  // dis kenari bandin icinden gecirtiyordu). Segment sinirindaki kose bandin
+  // IC kosesidir: iki ofset dogrusunun KESISIMI (gonye/miter noktasi) alinir —
+  // kare yakada (kose_x - w, kose_y - w)'ye denk gelir; duz birlesimlerde iki
+  // nokta zaten cakisir, kesisim ayni yere duser.
+  const segs = half.slice(0, k.nSeg), N = 16;
+  const outer = [], inner = [];
+  segs.forEach((sg, si) => {
+    for (let j = 0; j <= N; j++) {
+      const u = (si * N + j) / (segs.length * N);
+      const q = cubic(sg, j / N);
+      const q0 = cubic(sg, Math.max(0, j - 1) / N), q2 = cubic(sg, Math.min(N, j + 1) / N);
+      const dx = q2[0] - q0[0], dy = q2[1] - q0[1], d = Math.hypot(dx, dy) || 1;
+      const w = p.collarWidth * S * (0.72 + 0.28 * Math.sin(Math.PI * u));
+      inner.push([q[0], q[1], dx / d, dy / d, w]);   // tanjant + w miter icin saklanir
+      outer.push([q[0] + dy / d * w, q[1] - dx / d * w]);
+    }
+  });
+  for (let si = 1; si < segs.length; si++) {         // segment siniri = olasi kose
+    const ia = si * (N + 1) - 1, ib = si * (N + 1);  // ayni kose noktasi, iki tanjant
+    const [qx, qy, t1x, t1y, w] = inner[ia];
+    const [, , t2x, t2y] = inner[ib];
+    const P1 = [qx + t1y * w, qy - t1x * w], P2 = [qx + t2y * w, qy - t2x * w];
+    const det = t1x * t2y - t1y * t2x;
+    if (Math.abs(det) > 1e-6) {
+      const a = ((P2[0] - P1[0]) * t2y - (P2[1] - P1[1]) * t2x) / det;
+      const Mx = P1[0] + a * t1x, My = P1[1] + a * t1y;
+      outer[ia] = [Mx, My]; outer[ib] = [Mx, My];
+    }
+  }
+  const innerPts = inner.map((q) => [q[0], q[1]]);
+  outer[0] = [k.cx + gap, outer[0][1]];
+  innerPts[0] = [k.cx + gap, innerPts[0][1]];
+  const loop = outer.concat(innerPts.slice().reverse());
+  loop.push(loop[0]);
+  return smooth(loop);
+}
+
+function collarOverlay(over) {
+  const p = Object.assign(defaults('__live'), over);
+  let o = '';
+  [[240, false], [700, true]].forEach(([cx, isBack]) => {
+    const b = buildHalf(p, cx, isBack, rng(p.seed * 131 + (isBack ? 977 : 13)));
+    const k = b.k;
+    if (!k.nSeg) return;                      // bandeau/aski govdesinde yaka egrisi yok
+    const half = enforceC1(b.g.slice(), !k.pointed);
+    const d = toPath(bandLoop(p, half, k, isBack ? 0 : p.collarGap * S));
+    o += '<path class="piece" d="' + d + '"/>' +
+         '<g transform="translate(' + (2 * cx) + ',0) scale(-1,1)"><path class="piece" d="' + d + '"/></g>';
+  });
+  return o;
+}
+
 // renderStyle() kalemin kendi giris kapisi: modul-ici P'yi kurar, sonra cizer.
 // render()'i dogrudan cagirmak parts() okumasini bozar (P kurulmamis olur).
-function draw(s) { return renderStyle('__live', compile(s)); }
+function draw(s) {
+  const over = compile(s);
+  let svg = renderStyle('__live', over);
+  if (s.collar) svg = svg.replace('</svg>', collarOverlay(over) + '</svg>');
+  return svg;
+}

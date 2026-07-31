@@ -84,8 +84,14 @@ katmanı: **cümle → 46 sürekli malzeme kadranı → kalem → ekranda flat**
   yuvarlama). Dürüst not: kapak 0'da kol boyu 4 kademeli.
 - Bulunan hata 2: kalem `var S` (unitPX) tanımlıyor; malzeme katmanı da `S` tanımlayınca sayfa
   **bomboş** açılıyordu (SyntaxError). Build artık çakışmayı reddediyor.
-- **Kapanmadı:** kalıp inmiyor, sadece flat iniyor. Ön yaka bandı V yakada bozuk çiziliyor
-  (`collarShape()` yaka eğrisinin sadece ilk segmentini ofsetliyor).
+- **Kapanmadı:** kalıp inmiyor, sadece flat iniyor.
+- ✅ **Yaka bandı düzeltildi (31 Tem gece):** kalemdeki `collarShape()` yaka eğrisinin sadece
+  ilk segmentini ofsetliyor (V/kare/kalp yakada `nSeg=2`, bant yakanın yarısında bitiyordu —
+  PNG ile görüldü). Kalem salt-okunur; bant artık malzeme katmanında çiziliyor
+  (`ingredients.js bandLoop()`): tüm segmentler yürünür, tanjant segment içinden alınır,
+  segment sınırındaki köşe iki ofset doğrusunun KESİŞİMİYLE (gönye/miter) kapanır — merkezi
+  fark köşeyi 45°'den kesip dış kenarı bandın içinden geçiriyordu, ölçülüp görüldü.
+  Dört yaka şekli PNG ile doğrulandı; bantsız çıktı bayt-bayt eski (regresyon yok).
 
 ### Yapılacak
 1. **Varsayılan profil**: 37 alanın her biri için makul varsayılan + hangi bedende hangi ölçü (34-48 tablo). Damla'nın zevkine göre, generic değil.
