@@ -84,7 +84,16 @@ katmanı: **cümle → 46 sürekli malzeme kadranı → kalem → ekranda flat**
   yuvarlama). Dürüst not: kapak 0'da kol boyu 4 kademeli.
 - Bulunan hata 2: kalem `var S` (unitPX) tanımlıyor; malzeme katmanı da `S` tanımlayınca sayfa
   **bomboş** açılıyordu (SyntaxError). Build artık çakışmayı reddediyor.
-- **Kapanmadı:** kalıp inmiyor, sadece flat iniyor.
+- ✅ **KALIP İNİYOR (1 Ağu gece)** — `engine/pattern-bridge/`: atölye durumu → GarmentCode
+  (d449629, MIT; GPL'li cgal HİÇ kurulmadan minimal kurulum) → 12 panelli gerçek dikiş kalıbı,
+  zip olarak iner (spec + svg + png + 1:1 print PDF + **dikiş tapusu** + eşleme notları).
+  Tapu = `walk.py`: her stitch çiftinin iki kenarı ölçülür (Gerber Walk Pieces / CLO Check
+  Sewing Length dengi), büzgü design oranından tanınır, >1mm FAIL. Stock elbisede elle
+  yürüyüşle çapraz doğrulandı: 40 çift, 32'si ≤1mm; 135.59mm büzgü = 452mm×0.30 birebir;
+  3.37mm omuz farkı üretecin kendisinden (ön>arka, zanaat standardının tersi).
+  Eşlenemeyen kadranlar `mapping-notes.json`'da tek tek (askı genişliği, sürekli pens,
+  kapak mm, sweetheart tam formu, armholeHollow...). Servis yerel: `scripts/atolye-serve.sh`.
+  ⚠ GarmentCode başlangıç noktası, varış değil (aşağıdaki uyarı geçerli; içi M7'de değişir).
 - ✅ **Yaka bandı düzeltildi (31 Tem gece):** kalemdeki `collarShape()` yaka eğrisinin sadece
   ilk segmentini ofsetliyor (V/kare/kalp yakada `nSeg=2`, bant yakanın yarısında bitiyordu —
   PNG ile görüldü). Kalem salt-okunur; bant artık malzeme katmanında çiziliyor
