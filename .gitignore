@@ -82,3 +82,8 @@ Arşiv.zip
 
 # purchased-pattern derived renders (Bugra geometry) — never push
 flatten-research/*.png
+
+# GarmentCode third-party clone + venv: reproduced from scratch by
+# scripts/setup-garmentcode.sh (pinned commit, minimal cgal-free venv).
+core/third_party/garmentcode/
+__pycache__/
