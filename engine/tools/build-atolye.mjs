@@ -144,6 +144,8 @@ ${CSS}
     <div class="stage"><div id="flat"></div></div>
     <div class="foot">
       <button id="dl-svg" type="button">flat.svg indir</button>
+      <button id="dl-pattern" type="button" disabled
+              title="yerel sunucu gerekir: scripts/atolye-serve.sh calistir, sayfayi oradan ac">kalip indir</button>
       <button id="reset" type="button">varsayilana don</button>
       <span class="stat" id="stat"></span>
     </div>

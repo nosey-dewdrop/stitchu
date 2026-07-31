@@ -146,5 +146,45 @@ $('dl-svg').addEventListener('click', () => {
   URL.revokeObjectURL(a.href);
 });
 
+// ---------------------------------------------------------------------------
+// kalip indir — the bridge to a REAL sewing pattern (engine/pattern-bridge).
+// The page probes the local service once at load; without it the button stays
+// disabled and its title says honestly what is needed. With it, the current
+// state ST is POSTed and the answer (spec + svg + png + print pdf + seam
+// deed) comes back as one zip.
+// ---------------------------------------------------------------------------
+function initPatternButton() {
+  const btn = $('dl-pattern');
+  fetch('/api/health').then((r) => r.ok ? r.json() : Promise.reject())
+    .then((j) => {
+      if (!j.ok) return;
+      btn.disabled = false;
+      btn.title = 'gercek dikis kalibi: spec + svg + png + print pdf + dikis tapusu (zip)';
+    })
+    .catch(() => { /* no local service: button stays disabled, title explains */ });
+
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    const was = btn.textContent;
+    btn.textContent = 'kalip uretiliyor…';
+    fetch('/api/pattern', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ST),
+    })
+      .then((r) => { if (!r.ok) throw new Error('servis ' + r.status); return r.blob(); })
+      .then((blob) => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'stitchu-kalip.zip';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      })
+      .catch((e) => { $('stat').textContent = 'kalip hatasi: ' + e.message; })
+      .finally(() => { btn.disabled = false; btn.textContent = was; });
+  });
+}
+
 buildDials();
 paint();
+initPatternButton();
