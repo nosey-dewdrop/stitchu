@@ -88,3 +88,4 @@ flatten-research/*.png
 core/third_party/garmentcode/
 __pycache__/
 reports/2026-08-01-m3-flat-yogunluk/
+Logs/
