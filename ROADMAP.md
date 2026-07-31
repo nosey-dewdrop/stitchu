@@ -139,6 +139,14 @@ A0 raf + A4 kitapçık (bindirme, artılar, sayfa kodu, harita, 4cm kare kodda a
 ## M3 — flat üretimi
 **Nesne: kalıbın yanında profesyonel teknik çizim.**
 
+✅ **BÜYÜK PARÇA BİTTİ (1 Ağu gece, commit db1a007):** `foldlines.js` — cloth-solver Verlet'inden
+fizik-güdümlü kat katmanı, kalemin kendi mürekkep diliyle (flat-engine'e dokunulmadı). Sayaçla:
+varsayılan 28→55, kloş maxi 28→65, büzgülü 86→157, puf 40→87 anlamlı çizgi; bayt-deterministik
+(`engine/tools/atolye-proof.mjs` hedef altında exit 1). Flat artık kalıp zip'inin İÇİNDE
+(flat.svg + flat.png, 14 dosya) — kalıp+flat tek kaynaktan, pazarda eşi yok.
+**Kalan:** Damla'nın göz kapısı (yan yana beğeni); maxi etek 680px tuvalde kesiliyor (kalem
+salt-okunur, tuval kararı Damla'ya); PolyVectorization/3B yolu M7'ye.
+
 - `engine/flat-engine/cloth-solver.mjs` (2B Verlet) başlığında zaten yazıyor: *"Çıktı → kat (drape fold) çizgileri."* **Yarı kurulmuş, bitirilecek.**
 - `engine/src/drape.hpp` 3B kütle-yay Verlet + `maxSpringStrain` hazır.
 - Boru hattı: drape → köşe eğriliği → ridge/valley çizgileri → **PolyVectorization** (MIT) ile temiz vektör.
