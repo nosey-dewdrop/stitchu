@@ -1,0 +1,44 @@
+{
+  "armhole": {
+    "front_underarm": 39.566,
+    "front_crown": 171.168,
+    "back_crown": 178.528,
+    "back_underarm": 41.11,
+    "crown": 349.696,
+    "total": 430.372
+  },
+  "cap_total": 425.345,
+  "candidates": [
+    87,
+    127,
+    412,
+    446,
+    456
+  ],
+  "chosen": {
+    "orientation": "back-first",
+    "notches": [
+      87,
+      446
+    ],
+    "zones": [
+      40.007,
+      345.872,
+      39.465
+    ],
+    "residuals": [
+      -1.102,
+      -3.824,
+      -0.101
+    ],
+    "total_residual_mm": 5.027,
+    "gather_marks": [
+      127,
+      412,
+      456
+    ]
+  },
+  "colour_filtered_total_residual_mm": 87.838,
+  "ideal_near_split_arc": 88,
+  "resample_step_mm": 1.0
+}
