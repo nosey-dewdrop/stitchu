@@ -137,8 +137,29 @@ ${CSS}
       Ayrica pens payi, ease ve cevre tek eksendir, burada uc kez sayildi.</p>
 
       <p><b>Ve en onemlisi:</b> topoloji bir malzeme degil, tabak secicisidir. Kac panel
-      var sorusu once cevaplanir; surekli olan her sey onun altindadir. Bu tezgah 31
-      kayitlik listeyi kaldirdi, ama <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor.</p>
+      var sorusu once cevaplanir; surekli olan her sey onun altindadir. Bu yuzden
+      <b>ne dikiyoruz</b> (elbise / ust) ve <b>govde tabani</b> (omuz / bant) en ustte,
+      ayri bir aile olarak duruyor.</p>
+
+      <p><b>1 Agustos duzeltmesi.</b> Bir gun once bu tezgah topolojiyi kadran degil
+      SABIT tutuyordu: her cizim bir elbiseydi. Oysa kalem 17 ayri stil alani okuyor ve
+      kalemin kendi listesindeki 31 kaydin <b>14'u ust</b>. Sekiz alan &mdash; ust govde,
+      ust boyu, kutu kesim, peplum, peplum firfiri, bel bagi, spagetti aski, oturan
+      korsaj &mdash; kalemde vardi, tezgahtan cikmiyordu. Hepsi acildi. Bir kadran bu
+      govdede okunmuyorsa <b>silinmiyor, solduruluyor</b>: uzay gorunur kalsin ama yalan
+      soylemesin. Hangi kadranin olu oldugu goz karari degil, bayt karsilastirmasiyla
+      olculuyor.
+      <span class="src">engine/tools/atolye-contact.mjs --dead</span></p>
+
+      <p><b>Kalemin izin vermedigi yer.</b> Ust'te boy surekli DEGIL: kalem ust hem'ini
+      uc kovadan okuyor (kisa 5 &middot; kalca 16 &middot; tunik 30), sayi kabul etmiyor.
+      Kadran en yakin kovaya yuvarlanir ve okumasi ekranda kovanin adiyla gosterilir;
+      kol boyunda da ayni sey oluyor. Kayik yaka ile kruvazenin kalemde ayri bir egrisi
+      yok &mdash; kayik, genis ve sig bir yuvarlak yakadir; kruvazeyi cizen sey yaka
+      egrisi degil bindirme on paneldir. Ikisi de oldugu gibi yazili, gizlenmedi.</p>
+
+      <p>Ve hala: bu tezgah <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor. Kalip
+      koprusu ayri bir sey ve o da neyi soyleyemedigini yaninda yaziyor.</p>
     </section>
   </section>
 

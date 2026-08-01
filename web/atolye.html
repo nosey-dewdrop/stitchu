@@ -52,6 +52,10 @@ main{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 51px)}
 
 .row{margin:0 0 15px;padding-left:9px;border-left:2px solid transparent}
 .row.touched{border-left-color:#111}
+/* bu topolojide kalemin okumadigi kadran: silinmez, soldurulur (uzay gorunur
+   kalsin ama yalan soylemesin) */
+.row.inert{opacity:.34}
+.row.inert::after{content:"bu govdede okunmuyor";display:block;font-size:10.5px;color:#888;margin-top:3px}
 .rowhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .name{font-size:13.5px}
 .read{font:11px/1 ui-monospace,Menlo,monospace;color:#111}
@@ -153,8 +157,29 @@ input[type=range]::-moz-range-thumb{width:9px;height:9px;background:#fff;border:
       Ayrica pens payi, ease ve cevre tek eksendir, burada uc kez sayildi.</p>
 
       <p><b>Ve en onemlisi:</b> topoloji bir malzeme degil, tabak secicisidir. Kac panel
-      var sorusu once cevaplanir; surekli olan her sey onun altindadir. Bu tezgah 31
-      kayitlik listeyi kaldirdi, ama <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor.</p>
+      var sorusu once cevaplanir; surekli olan her sey onun altindadir. Bu yuzden
+      <b>ne dikiyoruz</b> (elbise / ust) ve <b>govde tabani</b> (omuz / bant) en ustte,
+      ayri bir aile olarak duruyor.</p>
+
+      <p><b>1 Agustos duzeltmesi.</b> Bir gun once bu tezgah topolojiyi kadran degil
+      SABIT tutuyordu: her cizim bir elbiseydi. Oysa kalem 17 ayri stil alani okuyor ve
+      kalemin kendi listesindeki 31 kaydin <b>14'u ust</b>. Sekiz alan &mdash; ust govde,
+      ust boyu, kutu kesim, peplum, peplum firfiri, bel bagi, spagetti aski, oturan
+      korsaj &mdash; kalemde vardi, tezgahtan cikmiyordu. Hepsi acildi. Bir kadran bu
+      govdede okunmuyorsa <b>silinmiyor, solduruluyor</b>: uzay gorunur kalsin ama yalan
+      soylemesin. Hangi kadranin olu oldugu goz karari degil, bayt karsilastirmasiyla
+      olculuyor.
+      <span class="src">engine/tools/atolye-contact.mjs --dead</span></p>
+
+      <p><b>Kalemin izin vermedigi yer.</b> Ust'te boy surekli DEGIL: kalem ust hem'ini
+      uc kovadan okuyor (kisa 5 &middot; kalca 16 &middot; tunik 30), sayi kabul etmiyor.
+      Kadran en yakin kovaya yuvarlanir ve okumasi ekranda kovanin adiyla gosterilir;
+      kol boyunda da ayni sey oluyor. Kayik yaka ile kruvazenin kalemde ayri bir egrisi
+      yok &mdash; kayik, genis ve sig bir yuvarlak yakadir; kruvazeyi cizen sey yaka
+      egrisi degil bindirme on paneldir. Ikisi de oldugu gibi yazili, gizlenmedi.</p>
+
+      <p>Ve hala: bu tezgah <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor. Kalip
+      koprusu ayri bir sey ve o da neyi soyleyemedigini yaninda yaziyor.</p>
     </section>
   </section>
 
@@ -769,8 +794,14 @@ function renderStyle(styleKey, overrides) {
 // tane var, o kadar. Burasi kaydi listeden degil malzeme degerlerinden kurar.
 // ============================================================================
 
-// --- 9 malzeme ailesi. Sira ekranda gorunen sira.
+// --- 10 malzeme ailesi. Sira ekranda gorunen sira.
+// EN USTTE TOPOLOJI: yukaridaki notun kendi cumlesi -- "topoloji bir malzeme
+// degil, TABAK SECICISIDIR -- once o sabitlenir, altindaki her sey ondan sonra
+// surekli olur". 31 kayitlik listenin 14'u UST idi ve tezgah 'dress'e civili
+// oldugu icin hicbiri disari cikmiyordu (Damla, 1 Agu 14:00: "sadece 1 urun mu
+// var, vocab kombinasyonlari yok mu").
 const FAMILIES = [
+  ['govde', 'ne dikiyoruz', 'Ilk soru bu: elbise mi, ust mu. Altindaki her kadran anlamini buradan alir; bu topolojide okunmayan kadran soluk gosterilir.'],
   ['olcu', 'beden', 'Vucut olcusu. Malzeme degil, uzerine calisilan sey.'],
   ['seviye', 'seviye', 'Vucutta yukseklik: yaka nereye iner, bel nerede, etek nerede biter.'],
   ['cevre', 'cevre', 'Bir seviyedeki genislik: yaka acikligi, kol genisligi.'],
@@ -817,6 +848,10 @@ const M = [
   ['collarGap', 'bant', 'bant araligi', 0, 3.0, 0.05, 0.5, 'Iki yaka ucunun on ortada acikligi.'],
 
   ['shirrRows', 'kenar', 'buzgu sirasi', 3, 12, 1, 6, ''],
+  // biye kadranlari 1 Agu'ya kadar compile()'da 1.4 / 16 diye SABIT yaziliydi;
+  // kalem ikisini de okuyor (laceBand genlik + tarak sayisi).
+  ['laceWidth', 'kenar', 'biye derinligi', 0.5, 4.0, 0.1, 1.4, 'Dantel/biye seridinin derinligi.'],
+  ['laceScallops', 'kenar', 'biye tarak sayisi', 4, 30, 1, 16, 'Serit boyunca kac dalga.'],
   ['goreCount', 'topoloji', 'panel sayisi', 2, 12, 2, 6, 'Etegin kac dilimden kuruldugu.'],
   ['tieLength', 'topoloji', 'bag boyu', 8, 34, 1, 22, ''],
 
@@ -828,42 +863,166 @@ const M = [
 ];
 
 // --- kenar rolu + topoloji: acik/kapali. Bunlar da malzeme, sadece surekli degil.
+//
+// BAYRAKLAR IKI AYRI YERE GIDER — karistirmak sessizce hicbir sey yapmaz:
+//   FLAGS  -> kalemin parts{} nesnesi   (kalem parts() ile okur: pt.sleeve ...)
+//   SFLAGS -> stil KAYDININ kendisi     (kalem STYLE[p.style] ile okur: st.boxy ...)
+// Kalem bilmedigi anahtari yok sayar, o yuzden yanlis kovaya koymak hata
+// vermez, sadece kadran olu kalir. Ayrim bu yuzden yazili.
 const FLAGS = [
   ['sleeve', 'topoloji', 'kol var', true, 'Kol paneli var mi.'],
   ['collar', 'topoloji', 'yaka bandi', false, 'Boyun kenarina dikilen bant.'],
-  ['straps', 'topoloji', 'aski', false, ''],
+  ['straps', 'topoloji', 'aski panelleri', false, 'Bant govdenin ustunden omza cikan aski parcalari. SADECE bant govdede: omuz govdesinde kalem k.strapX kurmuyor, cizim NaN oluyor (olculdu).'],
   ['princessSeam', 'topoloji', 'prenses dikis', true, 'Pensi dikise gomer. Pens payi ayni, YOLU farkli.'],
   ['backSeam', 'topoloji', 'arka orta dikis', true, ''],
   ['gorePanels', 'topoloji', 'dilimli etek', false, ''],
-  ['wrapSurplice', 'topoloji', 'kruvaze on', false, 'On tek panel degil, iki bindirme panel.'],
+  ['wrapTie', 'topoloji', 'kruvaze bag', false, 'Kruvaze onun belde baglanan ucu.'],
   ['tie', 'topoloji', 'boyun bagi', false, ''],
   ['tieBack', 'topoloji', 'arka bel bagi', false, ''],
   ['shirr', 'kenar', 'buzgulu kenar', false, 'Kenar duz dikilmiyor, buzuluyor.'],
   ['casing', 'kenar', 'tunel / bagcik', false, ''],
+  ['cfGather', 'kenar', 'on orta buzgu', false, 'Yakanin hemen altinda on ortada toplanan buzgu.'],
   ['laceNeck', 'kenar', 'yaka biyesi', false, ''],
   ['laceSleeve', 'kenar', 'kol biyesi', false, ''],
   ['laceHem', 'kenar', 'etek biyesi', false, ''],
 ];
 
-// --- yaka egrisinin SEKLI. Kalemin gercekten ayrik oldugu tek yer.
-// DURUST NOT: bu bir egri-sekli parametresidir, olcumde de boyle cikti
-// (bkz. 03-band-ingredients.py: her kenar bir egrilik profili istiyor).
-// Kalem SALT-OKUNUR oldugu icin bugun 4 aile olarak duruyor.
+// --- stil KAYDI bayraklari (st.*). Kalem bunlari parts{} icinde ARAMAZ.
+// 1 Agu'ya kadar hicbiri kurulmuyordu; kalem okuyor, tezgah vermiyordu.
+const SFLAGS = [
+  ['boxy', 'pens', 'kutu kesim', false, 'Bel daralmasi YOK: bel bust hizasina acilir, siluet boru. Acikken bel pensi kadrani gorunmez kalir.'],
+  ['spaghettiStrap', 'topoloji', 'spagetti aski', false, 'Omuz cizgisi uzerinde yukari cikip baglanan ince aski. OMUZ govdesi ister; aski govdesinde omuz noktasi olmadigi icin kalem NaN uretiyor (olculdu), o yuzden orada kapatilir.'],
+  ['fittedBand', 'topoloji', 'oturan korsaj', false, 'Aski govdesinin ust kenarini daraltir (bust*0.72) ve bele oturtur. SADECE aski govdesinde okunur.'],
+  ['peplumRuffle', 'bolluk', 'peplum firfiri', false, 'Peplum hem’ine dikilen buzgulu serit. Peplum yoksa kalem hic bakmaz.'],
+];
+
+// --- yaka egrisinin SEKLI.
+// KALEMIN GERCEKTEN AYRIK OLDUGU YER SADECE UC DEGER (olculdu 2026-08-01,
+// bayt karsilastirmasi): 'v' · 'square' · 'sweetheart'. Kalemde bu ucunun
+// disinda neckline ne yazarsa yazsin ('boat', 'crew', 'scoop', 'wrap',
+// bos) AYNI egri cikiyor; ustte (garment==='top') hepsi yuvarlak U dalina
+// dusuyor ve dordu de BAYT-AYNI.
+//   -> 'kayik' bu yuzden bir kalem degeri degil, HAZIR AYAR: yaka genisligi
+//      + on derinlik kadranlarini gorunur sekilde bir yere iter. Zaten bu
+//      dosyanin tezi: kayik yaka ayri bir tur degil, GENIS + SIG yuvarlak
+//      yakadir. Kadran ekranda kayar, arkada gizli is yapilmaz.
+//   -> 'kruvaze' de bir yaka EGRISI degil: kalemde st.neckline==='wrap' hicbir
+//      yerde okunmuyor (olu deger), gorunen kruvazenin tamami parts.wrapSurplice
+//      cizgileridir. Iki kavram tek dugmeye indirildi: FLAGS'teki ayri
+//      'kruvaze on' bayragi KALDIRILDI, yerini bu yaka ailesi aldi. Kayit
+//      yine neckline:'wrap' tasir (mihenk stili wrap_dress boyle) ama isi
+//      yapan parts.wrapSurplice'tir.
 const NECKSHAPES = [
   ['round', 'yuvarlak'],
   ['v', 'V'],
   ['square', 'kare'],
   ['sweetheart', 'kalp'],
+  ['boat', 'kayik'],
+  ['wrap', 'kruvaze'],
 ];
+// kalemin ayri egri cizdigi degerler (digerleri yuvarlak U'ya duser)
+const PEN_NECK = { v: 'v', square: 'square', sweetheart: 'sweetheart', wrap: 'wrap' };
+// hazir ayar: dugmeye basinca GORUNUR sekilde kayan kadranlar
+const NECKPRESET = {
+  boat: { neckWidth: 1.55, neckDepth: 6 },
+  wrap: { neckDepth: 20, neckWidth: 1.15 },
+};
+
+// --- topoloji secicileri (surekli degil, ayrik: once bunlar sabitlenir)
+const GARMENTS = [['dress', 'elbise'], ['top', 'ust']];
+// GOVDE TABANI (st.top). 1 Agu'ya kadar bu TEK bir 'aski' onay kutusuydu ve iki
+// ayri seyi ayni anda yapiyordu: (a) govde tabanini bant yapmak (st.top='band'),
+// (b) aski panellerini cizmek (parts.straps). Ikisi ayrilinca BANDEAU (bant
+// govde + aski YOK) ilk kez ulasilabilir oluyor -- kalemde zaten var olan bir
+// aile (styles.json: top_bandeau_shirred_peplum) ama tezgahtan cikmiyordu.
+const BODICES = [['shoulder', 'omuz'], ['band', 'bant / straplez']];
+// peplum: kalemde p.peplum bir ENUM. 'pointed' 2.0 kat aciklik / 36px boy /
+// 12px hem dalgasi; 'full' 1.8 / 28 / 4; baska her truthy deger 1.45 / 28 / 4
+// (kalem satir 322-329). 'half' o ucuncu kovanin adidir. SADECE ust'te okunur
+// (st.garment==='top' kosulu kalemde yazili; elbisede bayt-ayni cikti).
+const PEPLUMS = [['none', 'yok'], ['half', 'kisa'], ['full', 'dolgun'], ['pointed', 'sivri']];
+// bel bagi: kalemde 'bow' (fiyonk) | 'tie' (kusak ucu). SADECE elbisede okunur
+// (kalem satir 371: st.garment!=='top'); ustte bayt-ayni cikti.
+const WAISTTIES = [['none', 'yok'], ['bow', 'fiyonk'], ['tie', 'kusak']];
+// kruvaze bindirme yonu (kalem p.wrapDir 1 | 2)
+const WRAPDIRS = [['right', 'sag uste'], ['left', 'sol uste']];
 
 const SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48'];
 const INKS = [['minimal', 'az'], ['orta', 'orta'], ['dolu', 'dolu']];
 
 function defaultState() {
-  const s = { _neckShape: 'round', _ink: 'orta', _asym: true };
+  const s = {
+    _garment: 'dress', _bodice: 'shoulder', _neckShape: 'round',
+    _peplum: 'none', _waistTie: 'none', _wrapDir: 'right',
+    _ink: 'orta', _asym: true,
+  };
   M.forEach(([k, , , , , , d]) => { s[k] = d; });
   FLAGS.forEach(([k, , , d]) => { s[k] = d; });
+  SFLAGS.forEach(([k, , , d]) => { s[k] = d; });
   return s;
+}
+
+// ---------------------------------------------------------------------------
+// KADRAN GECERLILIGI — su anki topolojide kalemin OKUMADIGI malzemeler.
+// Her satir kalemdeki gercek kosula dayanir, tahmine degil; hepsi bayt
+// karsilastirmasiyla dogrulandi (engine/tools/atolye-contact.mjs --dead).
+// UI bunlari silmez, SOLDURUR: uzay gorunur kalsin ama yalan soylemesin.
+// ---------------------------------------------------------------------------
+function inertKeys(s) {
+  const off = new Set();
+  const isTop = s._garment === 'top';
+  const isBand = s._bodice === 'band';
+  const gathering = !!s.shirr && s.gatherRatio > 1.05;   // kalem: iki kosul birlikte
+
+  if (isTop) {
+    // ust dali kalemde erken return ediyor (satir 154-171): etek paneli,
+    // drapePlan ve hem dalgasi o dala hic girmiyor.
+    ['skirtFull', 'skirtCurve', 'hemWave', 'foldCount', 'drape'].forEach((k) => off.add(k));
+    off.add('_waistTie');                       // kalem satir 371: st.garment!=='top'
+    // kalem satir 74: ust'te bustX omuz genisligine kilitleniyor. Bant dalinda
+    // ise ust kenar hala bombeyi okuyor (satir 98) -> orada yasar.
+    if (!isBand) off.add('bustProject');
+    if (!s.shirr) off.add('gatherRatio');        // ust'te buzgu disinda buzgu orani okunmuyor
+  } else {
+    off.add('_peplum');                          // kalem satir 322: st.garment==='top'
+  }
+  if (!isTop || s._peplum === 'none') off.add('peplumRuffle');
+
+  if (isBand) {
+    // bant dalinda kalem omuz/yaka noktasini (k.nX/k.stX/k.stY/k.uaX/k.nSeg)
+    // hic kurmuyor (satir 92-98) -> yaka, omuz, kol oyugu ve kola bagli her sey
+    // olu; bazilari acilirsa NaN (compile() orada kapatiyor).
+    ['_neckShape', 'neckDepth', 'neckDepthBack', 'neckWidth', 'shoulderSlope',
+      'armholeHollow', 'spaghettiStrap', 'princessSeam', 'gorePanels', 'goreCount',
+      'cfGather', 'wrapTie', 'laceNeck', 'collar', 'collarWidth', 'collarGap',
+      'sleeve', 'sleeveLen', 'sleeveWidth', 'capPuff', 'cuffGather', 'laceSleeve',
+    ].forEach((k) => off.add(k));
+  } else {
+    // omuz govdesinde bant tabaninin kadranlari okunmuyor
+    ['strapWidth', 'strapLen', 'fittedBand', 'straps', 'ruffle'].forEach((k) => off.add(k));
+  }
+  if (isBand && !s.straps) { off.add('strapWidth'); off.add('ruffle'); }  // strapLen bant ust kenarini tasir, aski olmasa da yasar
+  if (!isBand && !s.sleeve) ['sleeveLen', 'sleeveWidth', 'capPuff', 'cuffGather', 'laceSleeve'].forEach((k) => off.add(k));
+  if (!gathering) { off.add('shirrRows'); off.add('casing'); }
+  if (s.gatherRatio <= 1.05) off.add('shirr');   // buzgu bayragi tek basina cizgi uretmiyor
+  if (!s.gorePanels) off.add('goreCount');
+  if (!s.collar) { off.add('collarWidth'); off.add('collarGap'); }
+  if (!s.tie && !s.tieBack && !s.wrapTie && s._waistTie === 'none') off.add('tieLength');
+  if (!s.laceNeck && !s.laceSleeve && !s.laceHem) { off.add('laceWidth'); off.add('laceScallops'); }
+  if (s._neckShape !== 'wrap' || isBand) off.add('_wrapDir');   // yon sadece kruvaze cizilirken
+  if (s._ink !== 'dolu') off.add('foldCount');   // drapePlan kat sayisini SADECE dolu murekkepte okuyor
+  if (s.boxy) off.add('waistNip');               // kalem satir 80: eX=bustX, pens payi yutulur
+  return off;
+}
+
+// Kalemin enum bekledigi iki yer. Surekli kadran en yakin kovaya yuvarlanir;
+// kova sinirlari kalemin KENDI sayilaridir, uydurma degil:
+//   kol   : plainSleeve() {cap:9, short:17, elbow:28, long:42}
+//   ust boy: {cropped:5, hip:16, tunic:30}   (kalem satir 157)
+const SLEEVE_BUCKETS = [['cap', 9], ['short', 17], ['elbow', 28], ['long', 42]];
+const TOP_BUCKETS = [['cropped', 5], ['hip', 16], ['tunic', 30]];
+function nearestBucket(v, buckets) {
+  return buckets.reduce((a, b) => (Math.abs(b[1] - v) < Math.abs(a[1] - v) ? b : a))[0];
 }
 
 // ---------------------------------------------------------------------------
@@ -873,6 +1032,10 @@ function defaultState() {
 // ---------------------------------------------------------------------------
 function compile(s) {
   LEN['__live'] = s.hemLevel;                 // surekli etek boyu (mini/midi/maxi enum'u yerine)
+
+  const isTop = s._garment === 'top';
+  const isBand = s._bodice === 'band';        // kalemde st.top === 'band'
+  const shape = s._neckShape;
 
   const parts = {};
   FLAGS.forEach(([k]) => { parts[k] = !!s[k]; });
@@ -885,18 +1048,54 @@ function compile(s) {
   // icindeki laceNeck zaten boyle yapiyor: polyFromSegs(half.slice(0,k.nSeg))).
   parts.collar = false;
 
-  STYLE['__live'] = {
+  // KRUVAZE: yaka ailesinin 'wrap' uyesi = parts.wrapSurplice (yukaridaki
+  // NECKSHAPES notu). Aski govdesinde kalem omuz noktasini (k.stY) hic
+  // kurmadigi icin surplice cizimi CRASH ediyor (olculdu) -> orada kapali.
+  parts.wrapSurplice = shape === 'wrap' && !isBand;
+  parts.wrapTie = parts.wrapTie && !isBand;   // k.eX var ama kruvaze bagi surplice'siz anlamsiz
+  parts.cfGather = parts.cfGather && !isBand; // k.ny sadece omuz govdesinde kuruluyor
+  // BANT GOVDE KAPILARI — hepsi olculdu (bkz. atolye-contact.mjs --probe):
+  // bant dalinda kalem k.nX / k.stX / k.stY / k.uaX / k.uaY / k.nSeg kurmuyor.
+  //   parts.straps  omuz govdesinde  -> NaN x488   (k.strapX yok)
+  //   parts.sleeve  bant govdesinde  -> NaN        (k.stX/k.uaX yok)
+  //   parts.laceNeck bant govdesinde -> half.slice(0, undefined) TUM govdeyi
+  //                                     dantel sanip siluetin etrafini doluyor
+  parts.straps = parts.straps && isBand;
+  if (isBand) { parts.sleeve = false; parts.laceNeck = false; parts.laceSleeve = false; }
+
+  const st = {
     label: 'atolye',
-    garment: 'dress',                         // surekli hem yolu (top dali topLength enum'una kilitli)
-    top: s.straps ? 'band' : 'shoulder',
-    neckline: s._neckShape === 'round' ? undefined : s._neckShape,
-    roundNeck: s._neckShape === 'round',
+    garment: isTop ? 'top' : 'dress',
+    top: isBand ? 'band' : 'shoulder',
+    neckline: PEN_NECK[shape],
+    roundNeck: shape === 'round' || shape === 'boat',
     length: '__live',
     physicsShirr: !!s.shirr,
-    gatheredSkirt: s.gatherRatio > 1.05 && !s.shirr,
+    gatheredSkirt: !isTop && s.gatherRatio > 1.05 && !s.shirr,
     parts,
     own: {},
   };
+
+  // --- stil-kaydi bayraklari. Her biri kalemin GERCEKTEN okudugu kosulda
+  // kurulur; kosul disinda kurmak sessizce bir sey yapmaz ya da NaN uretir.
+  if (s.boxy) st.boxy = true;                          // kalem satir 80, iki topolojide de okunur
+  if (s.spaghettiStrap && !isBand) st.spaghettiStrap = true;  // omuz noktasi sart (NaN olculdu)
+  if (s.fittedBand && isBand) st.fittedBand = true;    // kalem satir 97, sadece band dalinda
+  if (isTop && s._peplum !== 'none') {
+    st.peplum = s._peplum;                             // kalem satir 322: st.garment==='top'
+    if (s.peplumRuffle) st.peplumRuffle = true;        // kalem satir 341, peplum blogunun icinde
+  }
+  if (!isTop && s._waistTie !== 'none') st.waistTie = s._waistTie;  // kalem satir 371
+
+  // KALEM SINIRI 3 (olculdu 2026-08-01): ust'un hem'i p.topLength ENUM'undan
+  // okunuyor -- var _tl={cropped:5,hip:16,tunic:30}[p.topLength||'hip'] (kalem
+  // satir 157). Sayi kabul etmiyor; listede olmayan anahtar undefined -> NaN.
+  // Yani surekli 'etek boyu' kadrani ust'te dogrudan calisamiyor. Kol boyunda
+  // kurulan EMSAL izlenir: kadran en yakin kovaya yuvarlanir, boylece kadran
+  // ust'te de yasar. DURUST NOT: ust'te boy 3 kademeli, surekli DEGIL --
+  // kadranin okumasi bu yuzden ekranda kova adiyla gosteriliyor.
+  if (isTop) st.topLength = nearestBucket(s.hemLevel, TOP_BUCKETS);
+  STYLE['__live'] = st;
 
   const over = {};
   M.forEach(([k]) => { if (k !== 'size' && k !== 'hemLevel') over[k] = s[k]; });
@@ -909,16 +1108,14 @@ function compile(s) {
   // sleeveLen ayni cizimi veriyordu. Kalem SALT-OKUNUR oldugu icin duzeltme
   // burada: enum'a en yakin kovaya yuvarlanir, boylece kadran her durumda
   // calisir. DURUST NOT: kapak 0'da kol boyu 4 kademeli, surekli degil.
-  const BUCKETS = [['cap', 9], ['short', 17], ['elbow', 28], ['long', 42]];
-  over.sleeveLength = BUCKETS.reduce((a, b) =>
-    Math.abs(b[1] - s.sleeveLen) < Math.abs(a[1] - s.sleeveLen) ? b : a)[0];
+  over.sleeveLength = nearestBucket(s.sleeveLen, SLEEVE_BUCKETS);
 
   over.length = '__live';
   over.ink = s._ink;
   over.inkAsym = !!s._asym;
-  over.laceWidth = 1.4;
-  over.laceScallops = 16;
-  over.wrapDir = 1;
+  // kruvaze yonu: kalem p.wrapDir===2'de bindirmeyi aynaliyor (sol-uste-sag).
+  // 1 Agu'ya kadar 1'e civiliydi; ikisi de gercek bir kruvaze.
+  over.wrapDir = s._wrapDir === 'left' ? 2 : 1;
   return over;
 }
 
@@ -981,6 +1178,36 @@ function collarOverlay(over) {
   return o;
 }
 
+// ---------------------------------------------------------------------------
+// KADRAJ — kalemin viewBox'i "0 0 940 680" SABIT, ama cizim disari tasabiliyor.
+// OLCULDU (2026-08-01, cizim verisinden sinir kutusu):
+//   spagetti aski              y = -16.4  (kalem askiyi k.y0-9*S'ten baslatiyor)
+//   en uzun klos maxi (112/2.9) y = 868.7  (viewBox 680'de bitiyor)
+// Yani tezgahta aski ucu ve etek eteginin son 190px'i KESILIYORDU. Kalem
+// SALT-OKUNUR; duzeltme burada: cizimin gercek dikey siniri olculur, viewBox
+// ona gore yeniden yazilir. Tek bir cizgi verisi degismez, sadece cerceve.
+// X'e dokunulmaz (0..940): on ve arka figur yerinde kalsin, kadran cekilirken
+// yatay ziplama olmasin.
+// ---------------------------------------------------------------------------
+function fitFrame(svg) {
+  let y0 = 1e9, y1 = -1e9, m;
+  const dRe = /\sd="([^"]+)"/g;
+  while ((m = dRe.exec(svg))) {
+    const ns = m[1].match(/-?\d+(?:\.\d+)?/g);
+    if (!ns) continue;
+    for (let i = 1; i < ns.length; i += 2) {      // kalem yalniz M/L/C/Q/Z basar: sayilar cift cift koordinat
+      const y = parseFloat(ns[i]);
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  const tRe = /<text[^>]*\sy="(-?\d+(?:\.\d+)?)"/g;
+  while ((m = tRe.exec(svg))) { const y = parseFloat(m[1]); if (y > y1) y1 = y; }
+  if (y0 > y1) return svg;
+  const top = y0 - 14, h = (y1 + 16) - top;
+  return svg.replace('viewBox="0 0 940 680"', `viewBox="0 ${top.toFixed(1)} 940 ${h.toFixed(1)}"`);
+}
+
 // renderStyle() kalemin kendi giris kapisi: modul-ici P'yi kurar, sonra cizer.
 // render()'i dogrudan cagirmak parts() okumasini bozar (P kurulmamis olur).
 function draw(s) {
@@ -989,7 +1216,7 @@ function draw(s) {
   let extra = flFoldOverlay(s, over);      // kat katmani (foldlines.js, M3)
   if (s.collar) extra += collarOverlay(over);
   if (extra) svg = svg.replace('</svg>', extra + '</svg>');
-  return svg;
+  return fitFrame(svg);
 }
 
 
@@ -1273,13 +1500,23 @@ function flFoldOverlay(s, over) {
 // ============================================================================
 
 const RULES = [
+  // ---- TOPOLOJI: her seyden once bu. Elbise mi ust mu -- kalemde ust AYRI bir
+  // dal (etek paneli hic cizilmiyor), o yuzden bu satirlar listenin basinda.
+  // 31 kayitlik listenin 14'u ust idi ve 1 Agu'ya kadar hicbiri disari
+  // cikmiyordu; cumle tarafinin ilk isi artik topolojiyi secmek.
+  [/\b(ust|bluz|blouse|tisort|t-?shirt|gomlek|shirt|top|bustiyer|korsaj)\b/i, { _garment: 'top' }],
+  [/\b(elbise|dress)\b/i, { _garment: 'dress' }],
+
   // ---- siluet / boy
-  [/\b(crop|kisa\s*ust|krop)/i, { hemLevel: 16, waistNip: 0.10 }],
+  // NOT: ust'te boy kadrani kalemin uc kovasina yuvarlanir (cropped 5 / hip 16
+  // / tunic 30), o yuzden asagidaki sayilar ust'te kovaya duser.
+  [/\b(crop|kisa\s*ust|krop|bralet)/i, { _garment: 'top', hemLevel: 6, waistNip: 0.10 }],
   [/\b(mini)\b/i, { hemLevel: 42 }],
   [/\b(midi)\b/i, { hemLevel: 74 }],
   [/\b(maxi|uzun\s*elbise|maksi)/i, { hemLevel: 105 }],
   [/\b(diz\s*(alti|ustu)|knee)/i, { hemLevel: 58 }],
   [/\b(tunik|tunic)/i, { hemLevel: 34 }],
+  [/\b(kalca\s*boyu|hip\s*length)/i, { _garment: 'top', hemLevel: 16 }],
 
   // ---- etek bollugu (tek sayi, ayri tur degil)
   [/\b(klos|circle\s*skirt|tam\s*klos)/i, { skirtFull: 2.55, skirtCurve: 0.8 }],
@@ -1287,7 +1524,9 @@ const RULES = [
   [/\b(kalem|duz\s*etek|straight|pencil)/i, { skirtFull: 1.02, skirtCurve: 0.1, waistNip: 0.22 }],
   [/\b(dilimli|gore|panelli)/i, { gorePanels: true, skirtFull: 2.0 }],
   [/\b(buzgulu\s*etek|dirndl|gathered\s*skirt)/i, { skirtFull: 2.2, gatherRatio: 2.2 }],
-  [/\b(bol|salas|oversize|kutu|boxy)/i, { waistNip: 0.02, skirtFull: 1.15 }],
+  // kutu/boxy artik bir BAYRAK (kalem satir 80: eX=bustX, bel daralmasi yok);
+  // eskiden sadece bel pensini kisiyordu, kalemin kendi kutu dali kapaliydi.
+  [/\b(bol|salas|oversize|kutu|boxy)/i, { boxy: true, waistNip: 0.02, skirtFull: 1.15 }],
   [/\b(oturan|fitted|vucuda|dar)/i, { waistNip: 0.28, skirtFull: 1.15 }],
 
   // ---- yaka: seviye + cevre + egri ailesi
@@ -1295,7 +1534,8 @@ const RULES = [
   [/\bderin\s*v/i, { _neckShape: 'v', neckDepth: 24 }],
   [/\b(kare\s*yaka|square\s*neck)/i, { _neckShape: 'square', neckDepth: 13, neckWidth: 1.22 }],
   [/\b(kalp\s*yaka|sweetheart)/i, { _neckShape: 'sweetheart', neckDepth: 14 }],
-  [/\b(kayik\s*yaka|bateau|boat\s*neck)/i, { _neckShape: 'round', neckDepth: 6, neckWidth: 1.55 }],
+  // kayik = yuvarlak egri + GENIS/SIG kadranlar (kalemde ayri egri yok, olculdu)
+  [/\b(kayik\s*yaka|bateau|boat\s*neck)/i, { _neckShape: 'boat', neckDepth: 6, neckWidth: 1.55 }],
   [/\b(bisiklet\s*yaka|crew)/i, { _neckShape: 'round', neckDepth: 6.5, neckWidth: 0.98 }],
   [/\b(kasik\s*yaka|scoop)/i, { _neckShape: 'round', neckDepth: 15, neckWidth: 1.2 }],
   [/\bderin\s*(yaka|dekolte)/i, { neckDepth: 22 }],
@@ -1320,18 +1560,38 @@ const RULES = [
   [/\b(genis\s*kol|wide\s*sleeve)/i, { sleeveWidth: 11 }],
 
   // ---- aski
-  [/\b(ince\s*aski|spagetti|spaghetti)/i, { straps: true, sleeve: false, strapWidth: 1.4 }],
-  [/\b(kalin\s*aski|wide\s*strap)/i, { straps: true, sleeve: false, strapWidth: 4.0 }],
-  [/\b(straplez|bandeau|straplez)/i, { straps: false, sleeve: false }],
+  // DIKKAT (koddan): "spagetti aski" kalemde IKI AYRI SEY. (a) parts.straps =
+  // gogus ustunden gecen BANT govde + aski panelleri; (b) st.spaghettiStrap =
+  // OMUZ cizgisi uzerinde yukari cikip baglanan ince askidir ve omuz noktasi
+  // ister -- band govdesinde k.nX/k.stX kurulmadigi icin NaN uretiyor
+  // (olculdu). O yuzden ince-aski cumlesi bant govdeyi kurar, omuz askisini
+  // isteyen ayri bir kaliba baglanir.
+  [/\b(ince\s*aski|spagetti|spaghetti)/i, { _bodice: 'band', straps: true, sleeve: false, strapWidth: 1.4 }],
+  [/\b(omuz\s*(baglamali|bagli)\s*aski|omuzda\s*bagl)/i, { _bodice: 'shoulder', sleeve: false, spaghettiStrap: true }],
+  [/\b(kalin\s*aski|wide\s*strap|askili)/i, { _bodice: 'band', straps: true, sleeve: false, strapWidth: 4.0 }],
+  [/\b(straplez|bandeau|bando|bustiyer)/i, { _bodice: 'band', straps: false, sleeve: false, fittedBand: true }],
+  [/\b(korsaj|oturan\s*korsaj|fitted\s*band)/i, { _bodice: 'band', sleeve: false, fittedBand: true }],
 
   // ---- kenar rolu / bolluk
   [/\b(buzgu|buzgulu|shirr|gathered|shirred)/i, { shirr: true, gatherRatio: 2.2 }],
   [/\b(firfir|ruffle|volan|frill)/i, { ruffle: 0.9 }],
   [/\b(bagcik|tunel|drawstring|ip)/i, { casing: true }],
   [/\b(dantel|biye|lace|trim)/i, { laceNeck: true, laceHem: true }],
-  [/\b(kruvaze|wrap|anvelop|surplice)/i, { wrapSurplice: true }],
-  [/\b(kusak|kemer|belted|bag)/i, { tieBack: true }],
-  [/\b(bel\s*bagi|boyun\s*bagi|fiyonk)/i, { tie: true }],
+  // kruvaze artik yaka ailesinin bir uyesi (ayri bayrak KALDIRILDI, gerekce
+  // ingredients.js NECKSHAPES notunda: kalemde st.neckline==='wrap' olu deger,
+  // isi yapan parts.wrapSurplice)
+  [/\b(kruvaze|wrap|anvelop|surplice)/i, { _neckShape: 'wrap', wrapTie: true }],
+  [/\b(kusak|kemer|belted)/i, { tieBack: true }],
+  [/\b(boyun\s*bagi)/i, { tie: true }],
+  [/\b(bel\s*bagi|fiyonk|bow)/i, { _waistTie: 'bow' }],
+  [/\b(kusak\s*bagi|sash)/i, { _waistTie: 'tie' }],
+  [/\b(on\s*orta\s*buzgu|cf\s*gather|gogus\s*buzgusu)/i, { cfGather: true }],
+
+  // ---- peplum: bele dikilen ayri kesim etek parcasi. SADECE ust'te (kalem).
+  [/\b(peplum|peplumlu)/i, { _garment: 'top', _peplum: 'full' }],
+  [/\b(sivri\s*peplum|pointed\s*peplum)/i, { _garment: 'top', _peplum: 'pointed' }],
+  [/\b(kisa\s*peplum|hafif\s*peplum)/i, { _garment: 'top', _peplum: 'half' }],
+  [/\b(firfirli\s*peplum|peplum\s*firfir)/i, { _garment: 'top', _peplum: 'full', peplumRuffle: true }],
 
   // ---- dikis mimarisi
   [/\b(prenses\s*dikis|princess)/i, { princessSeam: true }],
@@ -1391,6 +1651,7 @@ const $ = (id) => document.getElementById(id);
 const famOf = {};
 M.forEach(([k, f]) => { famOf[k] = f; });
 FLAGS.forEach(([k, f]) => { famOf[k] = f; });
+SFLAGS.forEach(([k, f]) => { famOf[k] = f; });
 
 function paint() {
   const t0 = performance.now();
@@ -1401,7 +1662,10 @@ function paint() {
   const ms = performance.now() - t0;
   const n = (svg.match(/<path/g) || []).length;
   $('stat').textContent = `${n} cizgi · ${ms.toFixed(0)} ms`;
-  $('ver').textContent = SIZES[ST.size];
+  $('ver').textContent = SIZES[ST.size] + ' · ' + (ST._garment === 'top' ? 'ust' : 'elbise');
+
+  // bu topolojide kalemin okumadigi kadranlar: silinmez, SOLDURULUR.
+  const off = inertKeys(ST);
   document.querySelectorAll('[data-k]').forEach((el) => {
     const k = el.dataset.k;
     const row = el.closest('.row');
@@ -1410,11 +1674,19 @@ function paint() {
     if (rd) rd.textContent = fmt(k, ST[k]);
     row.classList.toggle('touched', TOUCHED.has(k));
   });
+  document.querySelectorAll('.row').forEach((row) => {
+    const el = row.querySelector('[data-k]');
+    const k = el ? el.dataset.k : row.dataset.ck;
+    row.classList.toggle('inert', !!k && off.has(k));
+  });
 }
 
 function fmt(k, v) {
   if (k === 'size') return SIZES[v];
   if (typeof v === 'boolean') return v ? 'var' : 'yok';
+  // UST'te boy kadrani kalemin uc kovasina yuvarlaniyor (kalem siniri, bkz.
+  // ingredients.js). Okuma o yuzden hem sayiyi hem kovanin adini gosterir.
+  if (k === 'hemLevel' && ST._garment === 'top') return v + ' → ' + nearestBucket(v, TOP_BUCKETS);
   return (Math.abs(v) >= 10 || Number.isInteger(v)) ? String(v) : v.toFixed(2);
 }
 
@@ -1426,16 +1698,28 @@ function buildDials() {
   for (const [fam, title, blurb] of FAMILIES) {
     const rows = [];
 
-    if (fam === 'olcu') {
+    if (fam === 'govde') {
+      rows.push(choiceRow('_garment', 'ne dikiyoruz', GARMENTS,
+        'Ust secilince kalem ayri bir dala giriyor: etek paneli hic cizilmiyor, boy uc kovaya (kisa / kalca / tunik) yuvarlaniyor.'));
+      rows.push(choiceRow('_bodice', 'govde tabani', BODICES,
+        'Omuz: yaka egrisi + omuz + kol oyugu var. Bant: gogus ustunden gecen bant govde; omuz noktasi olmadigi icin yaka/kol kadranlari okunmaz.'));
+    } else if (fam === 'olcu') {
       rows.push(sliderRow(M.find((m) => m[0] === 'size')));
     } else if (fam === 'kalem') {
       rows.push(choiceRow('_ink', 'kalem yogunlugu', INKS));
       rows.push(flagRow(['_asym', 'kalem', 'asimetrik murekkep', true, 'Gercek flat cizimlerde sol ve sag ayni degildir.']));
     }
-    if (fam === 'seviye') rows.push(choiceRow('_neckShape', 'yaka egrisi', NECKSHAPES));
+    if (fam === 'seviye') {
+      rows.push(choiceRow('_neckShape', 'yaka egrisi', NECKSHAPES,
+        'Kalem sadece V / kare / kalp icin AYRI bir egri ciziyor. Kayik = genis + sig yuvarlak (dugme kadranlari oraya iter). Kruvaze bir egri degil, bindirme on panel.'));
+      rows.push(choiceRow('_wrapDir', 'kruvaze yonu', WRAPDIRS));
+    }
+    if (fam === 'bolluk') rows.push(choiceRow('_peplum', 'peplum', PEPLUMS));
+    if (fam === 'topoloji') rows.push(choiceRow('_waistTie', 'bel bagi', WAISTTIES));
 
     M.forEach((m) => { if (m[1] === fam && m[0] !== 'size') rows.push(sliderRow(m)); });
     FLAGS.forEach((f) => { if (f[1] === fam) rows.push(flagRow(f)); });
+    SFLAGS.forEach((f) => { if (f[1] === fam) rows.push(flagRow(f)); });
     if (!rows.length) continue;
 
     const sec = document.createElement('section');
@@ -1470,15 +1754,22 @@ function flagRow([k, , label, , note]) {
   return el;
 }
 
-function choiceRow(k, label, opts) {
+function choiceRow(k, label, opts, note) {
   const el = document.createElement('div');
   el.className = 'row choice';
+  el.dataset.ck = k;                       // hangi durum anahtari (etiket metnine bakma)
   el.innerHTML = `<div class="rowhead"><span class="name">${label}</span></div>
     <div class="opts">${opts.map(([v, t]) =>
-      `<button type="button" data-v="${v}" class="${ST[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+      `<button type="button" data-v="${v}" class="${ST[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div>
+    ${note ? `<p class="note">${note}</p>` : ''}`;
   el.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
     ST[k] = b.dataset.v;
+    // HAZIR AYAR (kayik/kruvaze): kalemde ayri egri yok, kadranlari iter.
+    // Gizli is yapmaz -- kaydirilan kadranlar ekranda yerine gider.
+    const pre = k === '_neckShape' ? NECKPRESET[b.dataset.v] : null;
+    if (pre) { Object.assign(ST, pre); Object.keys(pre).forEach((x) => TOUCHED.delete(x)); }
     el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    if (pre) syncControls();
     paint();
   }));
   return el;
@@ -1490,10 +1781,8 @@ function syncControls() {
     if (inp.type === 'checkbox') inp.checked = !!ST[k]; else inp.value = ST[k];
   });
   document.querySelectorAll('.choice').forEach((row) => {
-    row.querySelectorAll('button').forEach((b) => {
-      const k = row.querySelector('.name').textContent === 'yaka egrisi' ? '_neckShape' : '_ink';
-      b.classList.toggle('on', ST[k] === b.dataset.v);
-    });
+    const k = row.dataset.ck;
+    row.querySelectorAll('button').forEach((b) => b.classList.toggle('on', ST[k] === b.dataset.v));
   });
 }
 
@@ -1507,7 +1796,7 @@ $('askform').addEventListener('submit', (e) => {
   const fams = [...new Set([...r.touched].map((k) => famOf[k]).filter(Boolean))];
   $('hint').innerHTML = r.touched.size
     ? `Cumleden <b>${r.touched.size}</b> malzeme okundu (${fams.join(', ')}). Kalan <b>${
-        M.length + FLAGS.length - r.touched.size}</b> malzeme varsayilan profilde kaldi ve asagida isaretli degil. Hangisi yanlissa kadrani cek.`
+        M.length + FLAGS.length + SFLAGS.length - r.touched.size}</b> malzeme varsayilan profilde kaldi ve asagida isaretli degil. Hangisi yanlissa kadrani cek.`
     : 'Bu cumleden hicbir malzeme okunamadi. Hepsi varsayilan profilde.';
 });
 

@@ -17,13 +17,23 @@
 // ============================================================================
 
 const RULES = [
+  // ---- TOPOLOJI: her seyden once bu. Elbise mi ust mu -- kalemde ust AYRI bir
+  // dal (etek paneli hic cizilmiyor), o yuzden bu satirlar listenin basinda.
+  // 31 kayitlik listenin 14'u ust idi ve 1 Agu'ya kadar hicbiri disari
+  // cikmiyordu; cumle tarafinin ilk isi artik topolojiyi secmek.
+  [/\b(ust|bluz|blouse|tisort|t-?shirt|gomlek|shirt|top|bustiyer|korsaj)\b/i, { _garment: 'top' }],
+  [/\b(elbise|dress)\b/i, { _garment: 'dress' }],
+
   // ---- siluet / boy
-  [/\b(crop|kisa\s*ust|krop)/i, { hemLevel: 16, waistNip: 0.10 }],
+  // NOT: ust'te boy kadrani kalemin uc kovasina yuvarlanir (cropped 5 / hip 16
+  // / tunic 30), o yuzden asagidaki sayilar ust'te kovaya duser.
+  [/\b(crop|kisa\s*ust|krop|bralet)/i, { _garment: 'top', hemLevel: 6, waistNip: 0.10 }],
   [/\b(mini)\b/i, { hemLevel: 42 }],
   [/\b(midi)\b/i, { hemLevel: 74 }],
   [/\b(maxi|uzun\s*elbise|maksi)/i, { hemLevel: 105 }],
   [/\b(diz\s*(alti|ustu)|knee)/i, { hemLevel: 58 }],
   [/\b(tunik|tunic)/i, { hemLevel: 34 }],
+  [/\b(kalca\s*boyu|hip\s*length)/i, { _garment: 'top', hemLevel: 16 }],
 
   // ---- etek bollugu (tek sayi, ayri tur degil)
   [/\b(klos|circle\s*skirt|tam\s*klos)/i, { skirtFull: 2.55, skirtCurve: 0.8 }],
@@ -31,7 +41,9 @@ const RULES = [
   [/\b(kalem|duz\s*etek|straight|pencil)/i, { skirtFull: 1.02, skirtCurve: 0.1, waistNip: 0.22 }],
   [/\b(dilimli|gore|panelli)/i, { gorePanels: true, skirtFull: 2.0 }],
   [/\b(buzgulu\s*etek|dirndl|gathered\s*skirt)/i, { skirtFull: 2.2, gatherRatio: 2.2 }],
-  [/\b(bol|salas|oversize|kutu|boxy)/i, { waistNip: 0.02, skirtFull: 1.15 }],
+  // kutu/boxy artik bir BAYRAK (kalem satir 80: eX=bustX, bel daralmasi yok);
+  // eskiden sadece bel pensini kisiyordu, kalemin kendi kutu dali kapaliydi.
+  [/\b(bol|salas|oversize|kutu|boxy)/i, { boxy: true, waistNip: 0.02, skirtFull: 1.15 }],
   [/\b(oturan|fitted|vucuda|dar)/i, { waistNip: 0.28, skirtFull: 1.15 }],
 
   // ---- yaka: seviye + cevre + egri ailesi
@@ -39,7 +51,8 @@ const RULES = [
   [/\bderin\s*v/i, { _neckShape: 'v', neckDepth: 24 }],
   [/\b(kare\s*yaka|square\s*neck)/i, { _neckShape: 'square', neckDepth: 13, neckWidth: 1.22 }],
   [/\b(kalp\s*yaka|sweetheart)/i, { _neckShape: 'sweetheart', neckDepth: 14 }],
-  [/\b(kayik\s*yaka|bateau|boat\s*neck)/i, { _neckShape: 'round', neckDepth: 6, neckWidth: 1.55 }],
+  // kayik = yuvarlak egri + GENIS/SIG kadranlar (kalemde ayri egri yok, olculdu)
+  [/\b(kayik\s*yaka|bateau|boat\s*neck)/i, { _neckShape: 'boat', neckDepth: 6, neckWidth: 1.55 }],
   [/\b(bisiklet\s*yaka|crew)/i, { _neckShape: 'round', neckDepth: 6.5, neckWidth: 0.98 }],
   [/\b(kasik\s*yaka|scoop)/i, { _neckShape: 'round', neckDepth: 15, neckWidth: 1.2 }],
   [/\bderin\s*(yaka|dekolte)/i, { neckDepth: 22 }],
@@ -64,18 +77,38 @@ const RULES = [
   [/\b(genis\s*kol|wide\s*sleeve)/i, { sleeveWidth: 11 }],
 
   // ---- aski
-  [/\b(ince\s*aski|spagetti|spaghetti)/i, { straps: true, sleeve: false, strapWidth: 1.4 }],
-  [/\b(kalin\s*aski|wide\s*strap)/i, { straps: true, sleeve: false, strapWidth: 4.0 }],
-  [/\b(straplez|bandeau|straplez)/i, { straps: false, sleeve: false }],
+  // DIKKAT (koddan): "spagetti aski" kalemde IKI AYRI SEY. (a) parts.straps =
+  // gogus ustunden gecen BANT govde + aski panelleri; (b) st.spaghettiStrap =
+  // OMUZ cizgisi uzerinde yukari cikip baglanan ince askidir ve omuz noktasi
+  // ister -- band govdesinde k.nX/k.stX kurulmadigi icin NaN uretiyor
+  // (olculdu). O yuzden ince-aski cumlesi bant govdeyi kurar, omuz askisini
+  // isteyen ayri bir kaliba baglanir.
+  [/\b(ince\s*aski|spagetti|spaghetti)/i, { _bodice: 'band', straps: true, sleeve: false, strapWidth: 1.4 }],
+  [/\b(omuz\s*(baglamali|bagli)\s*aski|omuzda\s*bagl)/i, { _bodice: 'shoulder', sleeve: false, spaghettiStrap: true }],
+  [/\b(kalin\s*aski|wide\s*strap|askili)/i, { _bodice: 'band', straps: true, sleeve: false, strapWidth: 4.0 }],
+  [/\b(straplez|bandeau|bando|bustiyer)/i, { _bodice: 'band', straps: false, sleeve: false, fittedBand: true }],
+  [/\b(korsaj|oturan\s*korsaj|fitted\s*band)/i, { _bodice: 'band', sleeve: false, fittedBand: true }],
 
   // ---- kenar rolu / bolluk
   [/\b(buzgu|buzgulu|shirr|gathered|shirred)/i, { shirr: true, gatherRatio: 2.2 }],
   [/\b(firfir|ruffle|volan|frill)/i, { ruffle: 0.9 }],
   [/\b(bagcik|tunel|drawstring|ip)/i, { casing: true }],
   [/\b(dantel|biye|lace|trim)/i, { laceNeck: true, laceHem: true }],
-  [/\b(kruvaze|wrap|anvelop|surplice)/i, { wrapSurplice: true }],
-  [/\b(kusak|kemer|belted|bag)/i, { tieBack: true }],
-  [/\b(bel\s*bagi|boyun\s*bagi|fiyonk)/i, { tie: true }],
+  // kruvaze artik yaka ailesinin bir uyesi (ayri bayrak KALDIRILDI, gerekce
+  // ingredients.js NECKSHAPES notunda: kalemde st.neckline==='wrap' olu deger,
+  // isi yapan parts.wrapSurplice)
+  [/\b(kruvaze|wrap|anvelop|surplice)/i, { _neckShape: 'wrap', wrapTie: true }],
+  [/\b(kusak|kemer|belted)/i, { tieBack: true }],
+  [/\b(boyun\s*bagi)/i, { tie: true }],
+  [/\b(bel\s*bagi|fiyonk|bow)/i, { _waistTie: 'bow' }],
+  [/\b(kusak\s*bagi|sash)/i, { _waistTie: 'tie' }],
+  [/\b(on\s*orta\s*buzgu|cf\s*gather|gogus\s*buzgusu)/i, { cfGather: true }],
+
+  // ---- peplum: bele dikilen ayri kesim etek parcasi. SADECE ust'te (kalem).
+  [/\b(peplum|peplumlu)/i, { _garment: 'top', _peplum: 'full' }],
+  [/\b(sivri\s*peplum|pointed\s*peplum)/i, { _garment: 'top', _peplum: 'pointed' }],
+  [/\b(kisa\s*peplum|hafif\s*peplum)/i, { _garment: 'top', _peplum: 'half' }],
+  [/\b(firfirli\s*peplum|peplum\s*firfir)/i, { _garment: 'top', _peplum: 'full', peplumRuffle: true }],
 
   // ---- dikis mimarisi
   [/\b(prenses\s*dikis|princess)/i, { princessSeam: true }],

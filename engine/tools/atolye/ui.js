@@ -11,6 +11,7 @@ const $ = (id) => document.getElementById(id);
 const famOf = {};
 M.forEach(([k, f]) => { famOf[k] = f; });
 FLAGS.forEach(([k, f]) => { famOf[k] = f; });
+SFLAGS.forEach(([k, f]) => { famOf[k] = f; });
 
 function paint() {
   const t0 = performance.now();
@@ -21,7 +22,10 @@ function paint() {
   const ms = performance.now() - t0;
   const n = (svg.match(/<path/g) || []).length;
   $('stat').textContent = `${n} cizgi · ${ms.toFixed(0)} ms`;
-  $('ver').textContent = SIZES[ST.size];
+  $('ver').textContent = SIZES[ST.size] + ' · ' + (ST._garment === 'top' ? 'ust' : 'elbise');
+
+  // bu topolojide kalemin okumadigi kadranlar: silinmez, SOLDURULUR.
+  const off = inertKeys(ST);
   document.querySelectorAll('[data-k]').forEach((el) => {
     const k = el.dataset.k;
     const row = el.closest('.row');
@@ -30,11 +34,19 @@ function paint() {
     if (rd) rd.textContent = fmt(k, ST[k]);
     row.classList.toggle('touched', TOUCHED.has(k));
   });
+  document.querySelectorAll('.row').forEach((row) => {
+    const el = row.querySelector('[data-k]');
+    const k = el ? el.dataset.k : row.dataset.ck;
+    row.classList.toggle('inert', !!k && off.has(k));
+  });
 }
 
 function fmt(k, v) {
   if (k === 'size') return SIZES[v];
   if (typeof v === 'boolean') return v ? 'var' : 'yok';
+  // UST'te boy kadrani kalemin uc kovasina yuvarlaniyor (kalem siniri, bkz.
+  // ingredients.js). Okuma o yuzden hem sayiyi hem kovanin adini gosterir.
+  if (k === 'hemLevel' && ST._garment === 'top') return v + ' → ' + nearestBucket(v, TOP_BUCKETS);
   return (Math.abs(v) >= 10 || Number.isInteger(v)) ? String(v) : v.toFixed(2);
 }
 
@@ -46,16 +58,28 @@ function buildDials() {
   for (const [fam, title, blurb] of FAMILIES) {
     const rows = [];
 
-    if (fam === 'olcu') {
+    if (fam === 'govde') {
+      rows.push(choiceRow('_garment', 'ne dikiyoruz', GARMENTS,
+        'Ust secilince kalem ayri bir dala giriyor: etek paneli hic cizilmiyor, boy uc kovaya (kisa / kalca / tunik) yuvarlaniyor.'));
+      rows.push(choiceRow('_bodice', 'govde tabani', BODICES,
+        'Omuz: yaka egrisi + omuz + kol oyugu var. Bant: gogus ustunden gecen bant govde; omuz noktasi olmadigi icin yaka/kol kadranlari okunmaz.'));
+    } else if (fam === 'olcu') {
       rows.push(sliderRow(M.find((m) => m[0] === 'size')));
     } else if (fam === 'kalem') {
       rows.push(choiceRow('_ink', 'kalem yogunlugu', INKS));
       rows.push(flagRow(['_asym', 'kalem', 'asimetrik murekkep', true, 'Gercek flat cizimlerde sol ve sag ayni degildir.']));
     }
-    if (fam === 'seviye') rows.push(choiceRow('_neckShape', 'yaka egrisi', NECKSHAPES));
+    if (fam === 'seviye') {
+      rows.push(choiceRow('_neckShape', 'yaka egrisi', NECKSHAPES,
+        'Kalem sadece V / kare / kalp icin AYRI bir egri ciziyor. Kayik = genis + sig yuvarlak (dugme kadranlari oraya iter). Kruvaze bir egri degil, bindirme on panel.'));
+      rows.push(choiceRow('_wrapDir', 'kruvaze yonu', WRAPDIRS));
+    }
+    if (fam === 'bolluk') rows.push(choiceRow('_peplum', 'peplum', PEPLUMS));
+    if (fam === 'topoloji') rows.push(choiceRow('_waistTie', 'bel bagi', WAISTTIES));
 
     M.forEach((m) => { if (m[1] === fam && m[0] !== 'size') rows.push(sliderRow(m)); });
     FLAGS.forEach((f) => { if (f[1] === fam) rows.push(flagRow(f)); });
+    SFLAGS.forEach((f) => { if (f[1] === fam) rows.push(flagRow(f)); });
     if (!rows.length) continue;
 
     const sec = document.createElement('section');
@@ -90,15 +114,22 @@ function flagRow([k, , label, , note]) {
   return el;
 }
 
-function choiceRow(k, label, opts) {
+function choiceRow(k, label, opts, note) {
   const el = document.createElement('div');
   el.className = 'row choice';
+  el.dataset.ck = k;                       // hangi durum anahtari (etiket metnine bakma)
   el.innerHTML = `<div class="rowhead"><span class="name">${label}</span></div>
     <div class="opts">${opts.map(([v, t]) =>
-      `<button type="button" data-v="${v}" class="${ST[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+      `<button type="button" data-v="${v}" class="${ST[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div>
+    ${note ? `<p class="note">${note}</p>` : ''}`;
   el.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
     ST[k] = b.dataset.v;
+    // HAZIR AYAR (kayik/kruvaze): kalemde ayri egri yok, kadranlari iter.
+    // Gizli is yapmaz -- kaydirilan kadranlar ekranda yerine gider.
+    const pre = k === '_neckShape' ? NECKPRESET[b.dataset.v] : null;
+    if (pre) { Object.assign(ST, pre); Object.keys(pre).forEach((x) => TOUCHED.delete(x)); }
     el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    if (pre) syncControls();
     paint();
   }));
   return el;
@@ -110,10 +141,8 @@ function syncControls() {
     if (inp.type === 'checkbox') inp.checked = !!ST[k]; else inp.value = ST[k];
   });
   document.querySelectorAll('.choice').forEach((row) => {
-    row.querySelectorAll('button').forEach((b) => {
-      const k = row.querySelector('.name').textContent === 'yaka egrisi' ? '_neckShape' : '_ink';
-      b.classList.toggle('on', ST[k] === b.dataset.v);
-    });
+    const k = row.dataset.ck;
+    row.querySelectorAll('button').forEach((b) => b.classList.toggle('on', ST[k] === b.dataset.v));
   });
 }
 
@@ -127,7 +156,7 @@ $('askform').addEventListener('submit', (e) => {
   const fams = [...new Set([...r.touched].map((k) => famOf[k]).filter(Boolean))];
   $('hint').innerHTML = r.touched.size
     ? `Cumleden <b>${r.touched.size}</b> malzeme okundu (${fams.join(', ')}). Kalan <b>${
-        M.length + FLAGS.length - r.touched.size}</b> malzeme varsayilan profilde kaldi ve asagida isaretli degil. Hangisi yanlissa kadrani cek.`
+        M.length + FLAGS.length + SFLAGS.length - r.touched.size}</b> malzeme varsayilan profilde kaldi ve asagida isaretli degil. Hangisi yanlissa kadrani cek.`
     : 'Bu cumleden hicbir malzeme okunamadi. Hepsi varsayilan profilde.';
 });
 

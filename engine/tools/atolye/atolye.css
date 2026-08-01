@@ -44,6 +44,10 @@ main{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 51px)}
 
 .row{margin:0 0 15px;padding-left:9px;border-left:2px solid transparent}
 .row.touched{border-left-color:#111}
+/* bu topolojide kalemin okumadigi kadran: silinmez, soldurulur (uzay gorunur
+   kalsin ama yalan soylemesin) */
+.row.inert{opacity:.34}
+.row.inert::after{content:"bu govdede okunmuyor";display:block;font-size:10.5px;color:#888;margin-top:3px}
 .rowhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .name{font-size:13.5px}
 .read{font:11px/1 ui-monospace,Menlo,monospace;color:#111}

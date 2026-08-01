@@ -78,12 +78,26 @@ def graded_body(size_index, notes):
 
 # ---------------------------------------------------------------------------
 # Neck shape: the only truly discrete dial in the atolye.
+#
+# 2026-08-01: the atolye's neck family grew to six. Two of the new members are
+# not curve families at all (measured against the flat pen, byte comparison):
+#   'boat'  the pen has no boat curve; a boat neck IS a wide+shallow round one,
+#           so the atolye's boat button just moves the width/depth dials.
+#           Here it is the same CircleNeckHalf, and the width already arrives
+#           through collar.width below -> nothing is lost, no note needed.
+#   'wrap'  a surplice is an overlapping FRONT, not a neck curve. GarmentCode
+#           has no wrap front, so the base curve is the round one and the wrap
+#           itself is recorded as a loss (see the flag loop below).
+# A missing key used to raise KeyError and take the whole service down with a
+# 500; the lookup is now defensive and says what it did.
 # ---------------------------------------------------------------------------
 NECK_SHAPE = {
     'round': 'CircleNeckHalf',
     'v': 'VNeckHalf',
     'square': 'SquareNeckHalf',
     'sweetheart': 'Bezier2NeckHalf',  # approximation, see note below
+    'boat': 'CircleNeckHalf',         # = wide round; width carries it
+    'wrap': 'CircleNeckHalf',         # base curve under the surplice
 }
 
 
@@ -126,7 +140,13 @@ def map_state(state):
     # in the atolye the shape dial describes the FRONT neckline; a round
     # back is the default construction in both systems.
     shape = state.get('_neckShape', 'round')
-    set_v(['collar', 'f_collar'], NECK_SHAPE[shape])
+    if shape not in NECK_SHAPE:
+        notes.append({
+            'field': '_neckShape', 'value': shape,
+            'action': 'unknown neck shape -> fell back to CircleNeckHalf',
+            'lost': 'whatever that shape meant; add it to mapping.NECK_SHAPE',
+        })
+    set_v(['collar', 'f_collar'], NECK_SHAPE.get(shape, 'CircleNeckHalf'))
     set_v(['collar', 'b_collar'], 'CircleNeckHalf')
     if shape == 'sweetheart':
         # Bezier2NeckHalf with a high inner control point is the closest
@@ -168,74 +188,131 @@ def map_state(state):
     design['meta']['upper']['v'] = 'FittedShirt' if fitted else 'Shirt'
     set_v(['shirt', 'width'], round(lin(state['waistNip'], 0.0, 0.38, 1.3, 1.0), 4))
 
-    # straps flag: our "aski" bodice is a band bodice with spaghetti straps.
-    # GarmentCode has no strap pieces; strapless=true gives the band bodice.
-    if state.get('straps'):
+    # --- bodice base ---------------------------------------------------------
+    # 2026-08-01: the atolye used to have ONE 'aski' checkbox doing two jobs
+    # (band bodice + strap pieces). They are separate controls now, and this
+    # side has to follow: the BAND BASE is what maps to shirt.strapless.
+    # Old states carry no _bodice; falling back to the straps flag keeps them
+    # mapping exactly as before.
+    band_bodice = state.get('_bodice', 'band' if state.get('straps') else 'shoulder') == 'band'
+    if band_bodice:
         set_v(['shirt', 'strapless'], True)
         set_v(['sleeve', 'sleeveless'], True)
         notes.append({
+            'field': '_bodice',
+            'value': 'band',
+            'action': 'mapped to shirt.strapless=true (band bodice)',
+            'lost': 'nothing at the bodice base; GarmentCode drafts the same '
+                    'strapless torso',
+        })
+    if state.get('straps'):
+        notes.append({
             'field': 'straps/strapWidth/strapLen',
             'value': [state.get('strapWidth'), state.get('strapLen')],
-            'action': 'mapped to shirt.strapless=true (band bodice)',
+            'action': 'not mapped',
             'lost': 'the strap pieces themselves; GarmentCode cannot draft '
                     'spaghetti straps (strapWidth/strapLen dropped)',
         })
 
-    # --- skirt ----------------------------------------------------------------
-    # skirtFull 1.0..2.9 (added fabric; 1.0 straight, ~1.95 A, 2.6+ klos)
-    # picks the skirt program, then drives its own flare dial:
-    #   gorePanels flag  -> SkirtManyPanels (goreCount -> n_panels)
-    #   skirtFull >= 2.6 -> SkirtCircle (klos), suns 1.0..1.95
-    #   else             -> Skirt2, flare int 0..20 over 1.0..2.6
-    skirt_full = state['skirtFull']
-    if state.get('gorePanels'):
-        design['meta']['bottom']['v'] = 'SkirtManyPanels'
-        n = int(min(15, max(4, state.get('goreCount', 6))))
-        design['flare-skirt']['skirt-many-panels']['n_panels']['v'] = n
-        set_v(['flare-skirt', 'length'], round(lin(state['hemLevel'], 8, 112, 0.2, 0.95), 4))
-        set_v(['flare-skirt', 'suns'], round(lin(skirt_full, 1.0, 2.9, 0.1, 1.95), 4))
-        if state.get('goreCount', 6) < 4:
+    # --- topology: dress or top ----------------------------------------------
+    # THE HONEST GATE. A top is not a short dress: it has no skirt panel at
+    # all. GarmentCode says this natively -- meta.bottom is a select_null and
+    # None is inside its own range (assets/design_params/default.yaml) -- so a
+    # top maps to "upper only, no bottom, no waistband". Nothing is invented.
+    #
+    # What CANNOT be said, and is therefore recorded rather than faked:
+    # their FittedShirt draws its length from the body (bodice.py:105,
+    # length = body['waist_line'] - back_adjustment) and IGNORES shirt.length.
+    # So a FITTED top always ends at the natural waist; cropped/hip/tunic only
+    # survives on the boxy Shirt program (tee.py:34 reads shirt.length as a
+    # fraction of waist_line). We do not silently ship a waist-length pattern
+    # for a tunic: the loss is written into mapping-notes.json.
+    is_top = state.get('_garment') == 'top'
+    if is_top:
+        design['meta']['bottom']['v'] = None
+        design['meta']['wb']['v'] = None
+        # our continuous hem dial rounds to the pen's three top buckets
+        hem_lvl = state.get('hemLevel', 16)
+        bucket = min([('cropped', 5), ('hip', 16), ('tunic', 30)],
+                     key=lambda b: abs(b[1] - hem_lvl))[0]
+        # Shirt length is a fraction of waist_line measured from the shoulder:
+        # 1.0 lands on the natural waist, so cropped sits above it and tunic
+        # below. Ends map to ends over their own 0.5..3.5 range.
+        length_frac = {'cropped': 0.9, 'hip': 1.2, 'tunic': 1.55}[bucket]
+        set_v(['shirt', 'length'], length_frac)
+        notes.append({
+            'field': '_garment', 'value': 'top',
+            'action': f'meta.bottom=None, meta.wb=None, shirt.length='
+                      f'{length_frac} ({bucket})',
+            'lost': 'nothing at the topology level; a top is upper-only',
+        })
+        if fitted:
             notes.append({
-                'field': 'goreCount', 'value': state['goreCount'],
-                'action': 'clamped to 4', 'lost': 'their n_panels floor is 4',
+                'field': 'hemLevel/topLength', 'value': [hem_lvl, bucket],
+                'action': 'shirt.length written but NOT USED by FittedShirt',
+                'lost': 'THE TOP LENGTH. GarmentCode FittedShirt takes its '
+                        'length from body.waist_line (bodice.py) and ignores '
+                        'shirt.length, so this pattern ends at the natural '
+                        'waist whatever the dial says. Only the boxy Shirt '
+                        'program (waistNip < 0.08) honours the length.',
             })
-    elif skirt_full >= 2.6:
-        design['meta']['bottom']['v'] = 'SkirtCircle'
-        set_v(['flare-skirt', 'length'], round(lin(state['hemLevel'], 8, 112, 0.2, 0.95), 4))
-        set_v(['flare-skirt', 'suns'], round(lin(skirt_full, 2.6, 2.9, 1.0, 1.95), 4))
-    else:
-        design['meta']['bottom']['v'] = 'Skirt2'
-        set_v(['skirt', 'length'], round(hem, 4))
-        set_v(['skirt', 'flare'], int(round(lin(skirt_full, 1.0, 2.6, 0, 20))))
 
-    # gatherRatio 1.0..3.4 (how many widths gathered in) -> skirt.ruffle
-    # 1..2. Identity below 2, CLIPPED above their ceiling -> noted.
-    ruffle = min(2.0, state['gatherRatio'])
-    set_v(['skirt', 'ruffle'], round(ruffle, 4))
-    if state['gatherRatio'] > 2.0:
-        notes.append({
-            'field': 'gatherRatio', 'value': state['gatherRatio'],
-            'action': 'clipped to 2.0',
-            'lost': 'gather beyond 2x; their skirt.ruffle ceiling is 2',
-        })
-    # skirt.ruffle is a Skirt2 dial; circle/gore skirts do not gather.
-    if state['gatherRatio'] > 1.05 and design['meta']['bottom']['v'] != 'Skirt2':
-        notes.append({
-            'field': 'gatherRatio', 'value': state['gatherRatio'],
-            'action': 'ignored for ' + design['meta']['bottom']['v'],
-            'lost': 'waist gathering; only their Skirt2 has a ruffle dial',
-        })
+    # --- skirt (DRESS ONLY; a top has no bottom, meta.bottom stays None) ------
+    if not is_top:
+        # skirtFull 1.0..2.9 (added fabric; 1.0 straight, ~1.95 A, 2.6+ klos)
+        # picks the skirt program, then drives its own flare dial:
+        #   gorePanels flag  -> SkirtManyPanels (goreCount -> n_panels)
+        #   skirtFull >= 2.6 -> SkirtCircle (klos), suns 1.0..1.95
+        #   else             -> Skirt2, flare int 0..20 over 1.0..2.6
+        skirt_full = state['skirtFull']
+        if state.get('gorePanels'):
+            design['meta']['bottom']['v'] = 'SkirtManyPanels'
+            n = int(min(15, max(4, state.get('goreCount', 6))))
+            design['flare-skirt']['skirt-many-panels']['n_panels']['v'] = n
+            set_v(['flare-skirt', 'length'], round(lin(state['hemLevel'], 8, 112, 0.2, 0.95), 4))
+            set_v(['flare-skirt', 'suns'], round(lin(skirt_full, 1.0, 2.9, 0.1, 1.95), 4))
+            if state.get('goreCount', 6) < 4:
+                notes.append({
+                    'field': 'goreCount', 'value': state['goreCount'],
+                    'action': 'clamped to 4', 'lost': 'their n_panels floor is 4',
+                })
+        elif skirt_full >= 2.6:
+            design['meta']['bottom']['v'] = 'SkirtCircle'
+            set_v(['flare-skirt', 'length'], round(lin(state['hemLevel'], 8, 112, 0.2, 0.95), 4))
+            set_v(['flare-skirt', 'suns'], round(lin(skirt_full, 2.6, 2.9, 1.0, 1.95), 4))
+        else:
+            design['meta']['bottom']['v'] = 'Skirt2'
+            set_v(['skirt', 'length'], round(hem, 4))
+            set_v(['skirt', 'flare'], int(round(lin(skirt_full, 1.0, 2.6, 0, 20))))
 
-    # yokeDrop 6..26 cm (waist-seam height; empire = small) -> skirt.rise
-    # 1.0..0.5 INVERSE-linear (their 1.0 = natural waist, lower = dropped).
-    set_v(['skirt', 'rise'], round(lin(state['yokeDrop'], 6, 26, 1.0, 0.5), 4))
-    if state['yokeDrop'] < 12:
-        notes.append({
-            'field': 'yokeDrop', 'value': state['yokeDrop'],
-            'action': 'mapped into skirt.rise (floor: natural waist)',
-            'lost': 'an empire seam ABOVE the natural waist; their rise '
-                    'cannot go above 1.0',
-        })
+        # gatherRatio 1.0..3.4 (how many widths gathered in) -> skirt.ruffle
+        # 1..2. Identity below 2, CLIPPED above their ceiling -> noted.
+        ruffle = min(2.0, state['gatherRatio'])
+        set_v(['skirt', 'ruffle'], round(ruffle, 4))
+        if state['gatherRatio'] > 2.0:
+            notes.append({
+                'field': 'gatherRatio', 'value': state['gatherRatio'],
+                'action': 'clipped to 2.0',
+                'lost': 'gather beyond 2x; their skirt.ruffle ceiling is 2',
+            })
+        # skirt.ruffle is a Skirt2 dial; circle/gore skirts do not gather.
+        if state['gatherRatio'] > 1.05 and design['meta']['bottom']['v'] != 'Skirt2':
+            notes.append({
+                'field': 'gatherRatio', 'value': state['gatherRatio'],
+                'action': 'ignored for ' + design['meta']['bottom']['v'],
+                'lost': 'waist gathering; only their Skirt2 has a ruffle dial',
+            })
+
+        # yokeDrop 6..26 cm (waist-seam height; empire = small) -> skirt.rise
+        # 1.0..0.5 INVERSE-linear (their 1.0 = natural waist, lower = dropped).
+        set_v(['skirt', 'rise'], round(lin(state['yokeDrop'], 6, 26, 1.0, 0.5), 4))
+        if state['yokeDrop'] < 12:
+            notes.append({
+                'field': 'yokeDrop', 'value': state['yokeDrop'],
+                'action': 'mapped into skirt.rise (floor: natural waist)',
+                'lost': 'an empire seam ABOVE the natural waist; their rise '
+                        'cannot go above 1.0',
+            })
 
     # --- everything the target system cannot say (recorded, not swallowed) ---
     for field, why in [
@@ -257,10 +334,21 @@ def map_state(state):
         ('collarGap', 'collar band front gap; same reason'),
         ('shirrRows', 'shirring row count; no shirring in GarmentCode'),
         ('tieLength', 'neck/waist ties; no tie pieces in GarmentCode'),
+        ('laceWidth', 'lace/binding strip depth; trim, not a drafted piece'),
+        ('laceScallops', 'lace scallop count; trim, not a drafted piece'),
     ]:
         if field in state:
             notes.append({'field': field, 'value': state[field],
                           'action': 'not mapped', 'lost': why})
+
+    # A top carries no bottom at all, so the skirt dials were never read.
+    if is_top:
+        for field in ['skirtFull', 'gatherRatio', 'goreCount', 'yokeDrop']:
+            if field in state:
+                notes.append({'field': field, 'value': state[field],
+                              'action': 'not mapped (topology = top)',
+                              'lost': 'nothing: a top has no skirt panel, so '
+                                      'no skirt dial applies'})
 
     for flag, why in [
         ('collar', 'sewn-on neck band (see collarWidth)'),
@@ -268,19 +356,63 @@ def map_state(state):
                          'survives, its PATH (princess seam) does not'),
         ('backSeam', 'their torso back is drafted whole or per their own '
                      'panel plan; no center-back-seam switch'),
-        ('wrapSurplice', 'wrap/surplice front: no overlapping-panel front '
-                         'in their dress stack'),
         ('tie', 'no tie pieces'),
         ('tieBack', 'no tie pieces'),
+        ('wrapTie', 'no tie pieces'),
         ('shirr', 'no shirring'),
         ('casing', 'no drawstring casing'),
+        ('cfGather', 'centre-front gathering; no shirring/gather at the '
+                     'neckline in their bodice stack'),
         ('laceNeck', 'trim, not geometry'),
         ('laceSleeve', 'trim, not geometry'),
         ('laceHem', 'trim, not geometry'),
+        # --- 2026-08-01, the newly unlocked pen fields. Every one of them is
+        # a real cut in the flat and NONE of them exists in GarmentCode, so
+        # every one is written down instead of quietly disappearing.
+        ('gorePanels', 'panelled skirt is mapped when it is a dress; on a '
+                       'top there is no bottom to panel'),
+        ('spaghettiStrap', 'shoulder-tied spaghetti strap: no strap pieces '
+                           'in GarmentCode'),
+        ('fittedBand', 'fitted (contoured) band bodice: their strapless '
+                       'torso has one width, no separate band draft'),
+        ('boxy', 'boxy cut is expressed through waistNip -> Shirt vs '
+                 'FittedShirt + shirt.width; the pen ALSO opens the waist to '
+                 'the bust line, which their Shirt does by construction'),
+        ('peplumRuffle', 'ruffle strip on the peplum hem; no peplum, so no '
+                         'peplum ruffle'),
     ]:
         if state.get(flag):
             notes.append({'field': flag, 'value': True,
                           'action': 'not mapped', 'lost': why})
+
+    # Enum-valued fields whose non-default value the target system cannot say.
+    if state.get('_neckShape') == 'wrap':
+        notes.append({
+            'field': '_neckShape', 'value': 'wrap',
+            'action': 'base curve = CircleNeckHalf, surplice NOT drafted',
+            'lost': 'the wrap/surplice front itself: no overlapping-panel '
+                    'front in their dress stack',
+        })
+    if state.get('_peplum', 'none') != 'none':
+        notes.append({
+            'field': '_peplum', 'value': state['_peplum'],
+            'action': 'not mapped',
+            'lost': 'the peplum is a separate flared piece seamed at the '
+                    'waist; GarmentCode has no peplum program (their '
+                    'flare-skirt starts at the waist and IS the bottom)',
+        })
+    if state.get('_waistTie', 'none') != 'none':
+        notes.append({
+            'field': '_waistTie', 'value': state['_waistTie'],
+            'action': 'not mapped', 'lost': 'no tie pieces in GarmentCode',
+        })
+    if state.get('_wrapDir', 'right') != 'right':
+        notes.append({
+            'field': '_wrapDir', 'value': state['_wrapDir'],
+            'action': 'not mapped',
+            'lost': 'wrap overlap direction; there is no wrap front to give '
+                    'a direction to (see _neckShape=wrap above)',
+        })
 
     # Pen-only dials: they shape the DRAWING, not the garment. A real
     # pattern has no ink density; nothing is lost garment-wise.
