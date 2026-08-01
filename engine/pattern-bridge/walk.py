@@ -111,34 +111,90 @@ def panel_role(name):
 
 
 def gather_ratios(design):
-    """Extract gather ratios > 1.05 from a design dict (or None)."""
+    """Every gather ratio the design declares, wherever it sits in the tree.
+
+    The first version of this read two fields, skirt.ruffle and
+    sleeve.connect_ruffle. The design space carries eighteen gather-like
+    parameters and seven of them are real gathers, including a whole mirrored
+    branch for asymmetric garments. A ratio that is not read becomes a seam
+    that is failed for doing what it was told, so the tree is walked instead
+    of named field by field.
+
+    A ratio is a gather when the parameter's name ends in `ruffle`. `flare`
+    reshapes a piece rather than setting a ratio between two edges, so it is
+    NOT collected: treating it as one would excuse real mismatches.
+    """
     ratios = {}
     if not design:
         return ratios
-    try:
-        r = float(design['skirt']['ruffle']['v'])
-        if r > 1.05:
-            ratios['skirt'] = r
-    except (KeyError, TypeError):
-        pass
-    try:
-        r = float(design['sleeve']['connect_ruffle']['v'])
-        if r > 1.05:
-            ratios['sleeve'] = r
-    except (KeyError, TypeError):
-        pass
+
+    def visit(node, path):
+        if not isinstance(node, dict):
+            return
+        if 'v' in node and 'type' in node:
+            name = path.split('.')[-1]
+            if name.endswith('ruffle'):
+                try:
+                    r = float(node['v'])
+                except (TypeError, ValueError):
+                    return
+                if r > 1.05:
+                    ratios[path] = r
+            return
+        for key, value in node.items():
+            visit(value, f'{path}.{key}' if path else key)
+
+    visit(design, '')
     return ratios
 
 
-def expected_ratio(role_a, role_b, ratios):
-    roles = {role_a, role_b}
-    if 'skirt' in ratios and roles == {'skirt', 'wb'}:
-        return ratios['skirt']
-    if 'skirt' in ratios and roles == {'skirt', 'torso'}:
-        return ratios['skirt']
-    if 'sleeve' in ratios and roles == {'sleeve', 'torso'}:
-        return ratios['sleeve']
-    return None
+def declares_asymmetry(design):
+    """Did the design ask for a garment whose two sides differ?
+
+    GarmentCode carries `left.enable_asym`, and its sampler turns it on about
+    one sample in five. A mirror audit run over an intentionally asymmetric
+    garment reports every seam on the left as a fault. So when asymmetry is
+    declared the mirror audits do not run, and they say so rather than
+    reporting nothing.
+    """
+    if not design:
+        return None
+    reasons = []
+    try:
+        if bool(design['left']['enable_asym']['v']):
+            reasons.append('left.enable_asym')
+    except (KeyError, TypeError):
+        pass
+    try:
+        if design['flare-skirt']['asymm']['front_length']['v'] not in (0.5,):
+            reasons.append('flare-skirt.asymm.front_length')
+    except (KeyError, TypeError):
+        pass
+    return reasons or None
+
+
+def match_declared_ratio(len_a, len_b, ratios, tol):
+    """Is this pair's inequality one the design asked for?
+
+    Mapping every gather parameter to the exact seam it acts on would mean
+    reimplementing the generator's assembly, and a wrong map fails a correct
+    seam. So a pair that is not equal is checked against the ratios the design
+    DECLARED, and the one it matches is named in the report. A pair matching
+    no declared ratio fails.
+
+    This can excuse a broken seam that happens to land on a declared ratio,
+    so a gathered verdict always carries which ratio it matched and they are
+    counted apart from plain passes.
+    """
+    short, long_ = min(len_a, len_b), max(len_a, len_b)
+    if short <= 0:
+        return None
+    best = None
+    for name, ratio in ratios.items():
+        dev = abs(long_ - short * ratio)
+        if dev <= tol and (best is None or dev < best[2]):
+            best = (name, ratio, dev)
+    return best
 
 
 # ---------------------------------------------------------------------------
@@ -168,37 +224,38 @@ def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios):
             'rule': 'no rule applied: the kind of this seam was not established',
         }
 
-    # Every remaining kind is an equality seam, unless the design declares a
-    # gather across these two roles.
-    ratio = expected_ratio(panel_role(sa['panel']), panel_role(sb['panel']),
-                           ratios)
-    if ratio is not None:
+    # Every remaining kind is an equality seam, unless the design declared a
+    # gather that this pair's inequality matches.
+    status, detail = seamrules.judge_equal(la, lb)
+    if status == seamrules.PASS:
+        return status, detail
+
+    hit = match_declared_ratio(la, lb, ratios, TOL_MM)
+    if hit is not None:
+        name, ratio, dev = hit
         short, long_ = min(la, lb), max(la, lb)
-        dev = abs(long_ - short * ratio)
-        detail = {
-            'rule': f'gathered: the long side is {ratio}x the short side',
+        return 'GATHERED-PASS', {
+            'rule': f'not equal, but the design declares {name} = {ratio} and '
+                    f'the long side is that multiple of the short one',
+            'declared_by': name,
             'expected_ratio': ratio,
-            'measured_ratio': round(long_ / short, 4) if short else None,
+            'measured_ratio': round(long_ / short, 4),
             'gather_dev_mm': round(dev, 4),
         }
-        if dev <= TOL_MM:
-            return 'GATHERED-PASS', detail
-        # A declared gather that does not hold is only a failure if the pair
-        # is not simply equal; a 1.0-ratio seam between gathered roles is a
-        # plain seam.
-        if abs(la - lb) <= TOL_MM:
-            return seamrules.PASS, {
-                'rule': f'equal within {TOL_MM:.5f}mm (a gather is declared '
-                        f'for these roles but this pair is not gathered)',
-                'diff_mm': round(abs(la - lb), 4),
-            }
-        return seamrules.FAIL, detail
-
-    return seamrules.judge_equal(la, lb)
+    if ratios:
+        detail['declared_ratios_checked'] = sorted(ratios)
+    return status, detail
 
 
-def _judge_armhole_groups(pairs, panels):
-    """Cap ease is measured over the whole armhole, per side of the body."""
+def _judge_armhole_groups(pairs, panels, ratios=None):
+    """Cap ease is measured over the whole armhole, per side of the body.
+
+    A gathered sleeve is not an eased sleeve. When the design declares a
+    gather onto the armhole the cap is a multiple of it by intent, and cap
+    ease bands do not apply: a puff sleeve at a declared 1.8 was being called
+    a suspect draft for a 390mm ease.
+    """
+    ratios = ratios or {}
     groups = {}
     for p in pairs:
         if p['kind'] != 'armhole-cap':
@@ -219,7 +276,24 @@ def _judge_armhole_groups(pairs, panels):
                     cap += length
                 else:
                     arm += length
-        status, detail = seamrules.judge_cap_ease(cap, arm)
+        hit = match_declared_ratio(cap, arm, ratios, TOL_MM * len(members))
+        if hit is not None:
+            name, ratio, dev = hit
+            status = 'GATHERED-PASS'
+            detail = {
+                'rule': f'the cap is gathered into the armhole at a declared '
+                        f'{name} = {ratio}, so cap ease does not apply',
+                'cap_mm': round(cap, 4),
+                'armhole_mm': round(arm, 4),
+                'declared_by': name,
+                'expected_ratio': ratio,
+                'measured_ratio': round(cap / arm, 4) if arm else None,
+                'gather_dev_mm': round(dev, 4),
+                'cap_ease_mm': round(cap - arm, 4),
+                'school': 'gathered, not eased',
+            }
+        else:
+            status, detail = seamrules.judge_cap_ease(cap, arm)
         detail['side'] = side
         detail['segments'] = len(members)
         reports.append({'status': status, **detail})
@@ -275,16 +349,23 @@ def walk(spec_path, design_path=None):
         entry['detail'] = detail
         pairs.append(entry)
 
-    armholes = _judge_armhole_groups(pairs, panels)
+    armholes = _judge_armhole_groups(pairs, panels, ratios)
 
     closed = [panelcheck.check_closed(n, p, edge_curve)
               for n, p in panels.items()]
     selfx = [panelcheck.check_self_intersection(n, p, edge_curve)
              for n, p in panels.items()]
-    mirror_panels = panelcheck.check_mirror_symmetry(
-        panels, edge_length_mm, seamrules.mirror_name)
-    mirror_seams = panelcheck.check_stitch_mirror_symmetry(
-        panels, stitches, edge_length_mm, seamrules.mirror_name)
+    # A garment the design asked to be asymmetric must not be audited for
+    # symmetry. The sampler turns asymmetry on in roughly one design in five,
+    # and auditing those would report a fault on every seam of one side.
+    asym = declares_asymmetry(design)
+    if asym:
+        mirror_panels, mirror_seams = [], []
+    else:
+        mirror_panels = panelcheck.check_mirror_symmetry(
+            panels, edge_length_mm, seamrules.mirror_name)
+        mirror_seams = panelcheck.check_stitch_mirror_symmetry(
+            panels, stitches, edge_length_mm, seamrules.mirror_name)
 
     counts = {}
     for p in pairs:
@@ -303,6 +384,7 @@ def walk(spec_path, design_path=None):
         'gather_ratios': ratios,
         'shoulder_reference_height_cm': (round(shoulder_h, 3)
                                          if shoulder_h is not None else None),
+        'asymmetry_declared': asym,
         'summary': {
             'pairs': len(pairs),
             'by_status': counts,
@@ -313,6 +395,7 @@ def walk(spec_path, design_path=None):
             'panels_self_intersecting': len(_fails(selfx)),
             'mirror_panel_faults': len(_fails(mirror_panels)),
             'mirror_seam_faults': len(_fails(mirror_seams)),
+            'mirror_audited': not asym,
         },
         'armholes': armholes,
         'pairs': pairs,
