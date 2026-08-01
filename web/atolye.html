@@ -451,15 +451,19 @@ k.apexY=stY+(yEmp2-stY)*0.441;if(st.neckline==='square'){
   g.push(seg([nX,ny],[nX,ny-(ny-y0)*0.5],[nX,y0],[nX,y0]));      // dik kenar köşe→omuz
   k.nSeg=2;k.pointed=false;k.squareCorner=[nX,ny];
 }else if(st.neckline==='sweetheart'&&!isBack){
-  // SWEETHEART yaka (2026-07-23 — kalp yaka, SADECE ÖN). CF'de SIĞ merkez çentik +
-  // her bust cup DOLGUN yukarı kavis (kalbin yarısı). crew/v/square ikamesi DEĞİL.
-  // Motor Neckline::Sweetheart zaten çiziyor (bodice.cpp); flat kap dilini kurar.
+  // SWEETHEART yaka (2026-08-01 Damla cerrahi izni: "kalp böyle değil" — eski hal
+  // köşeli çentik okunuyordu: merkez ile lob dibi arası 9px, enforceC1 CF tanjantını
+  // yatay zorluyordu → W-zigzag). Gerçek kalp: iki YUMUŞAK KAVİSLİ lob ortada küçük
+  // V'de buluşur. CF noktası lob dibinden belirgin yukarıda; lob dibinde yatay tanjant
+  // (iki segment C1); askı/omuz kenarına yumuşak yükseliş. k.pointed=true → enforceC1
+  // CF tanjantına dokunmaz, ayna V'yi korur (v-yaka dalıyla aynı mekanizma).
+  // Motor Neckline::Sweetheart zaten çiziyor (bodice.cpp); flat kalp dilini kurar.
   // Arka: st.roundNeck ile normal scoop kavisi (kalp sadece önde).
-  var _swMidY=ny-(ny-y0)*0.16;                          // CF merkez çentik (SIĞ, yukarıda)
-  var _swCupX=cx+(nX-cx)*0.60,_swCupY=ny-(ny-y0)*0.02;  // cup en derin nokta (bust apex, aşağıda dolgun)
-  g.push(seg([cx,_swMidY],[cx+(nX-cx)*0.08,_swMidY+(ny-_swMidY)*0.55],[_swCupX-(_swCupX-cx)*0.42,_swCupY-2],[_swCupX,_swCupY])); // CF sığ çentik → cup dip (dolgun kalp lobu)
-  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.34,_swCupY-(_swCupY-y0)*0.42],[nX-(nX-cx)*0.04,y0+(ny-y0)*0.16],[nX,y0])); // cup dip → omuz (yukarı kavis)
-  k.nSeg=2;k.pointed=false;
+  var _swVY=ny-(ny-y0)*0.34;                            // CF küçük V noktası (lob dibinden yukarıda)
+  var _swCupX=cx+(nX-cx)*0.52,_swCupY=ny;               // lob dibi (tam yaka derinliği)
+  g.push(seg([cx,_swVY],[cx+(_swCupX-cx)*0.30,_swVY+(_swCupY-_swVY)*0.62],[_swCupX-(_swCupX-cx)*0.46,_swCupY],[_swCupX,_swCupY])); // V → lob dibi: aşağı-dışa kavisli iniş, dipte yatay tanjant
+  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.42,_swCupY],[nX-(nX-cx)*0.06,y0+(ny-y0)*0.24],[nX,y0])); // lob dibi → omuz/askı: yatay tanjanttan yumuşak yükseliş
+  k.nSeg=2;k.pointed=true;
 }else if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'||st.roundNeck){
   // TOP round neckline (2026-07-20 tur1 fix — hakem: crew/scoop front V'ye kaçıyordu).
   // A true crew/scoop is a wide U: flat-bottomed at CF (horizontal tangent held
@@ -550,6 +554,32 @@ function plainSleeve(p,k){
   var _slen={cap:9,short:17,elbow:28,long:42}[p.sleeveLength||'short'];
   var outX=k.stX+p.sleeveWidth*S;var hemY=k.stY+_slen*S;
   var wristX=k.stX+p.sleeveWidth*S*0.70; // bilek omuz genişliğinin %70'i (hafif konik)
+  // FITTED elbow/long (2026-08-01 Damla cerrahi izni: "kol uzayınca bu kadar çirkin
+  // olmamalı"). Eski yol dış kenarı wristX'e (omuz ekseninde) İÇE süpürüyordu →
+  // dirsek/uzun kol gövdeye paralel 5-15px'lik cılız eğri şerit çiziyordu. Ticari
+  // flat dili: kol omuzdan bileğe gövdeye ~12-13° açıyla iner, bisep→ağız düzgün
+  // konik, ağızda eksene DİK temiz kapanış. cap/short ESKİ yolda, bayt-aynı.
+  if(p.sleeveLength==='elbow'||p.sleeveLength==='long'){
+    var _sn=0.22,_cs=0.9755;                             // sin/cos ~12.7° (gövdeden dışa)
+    var _bh=(outX-k.uaX)*0.5;                            // bisep yarı-genişliği
+    var _axL=hemY-k.uaY;                                 // bisep çizgisinden ağız merkezine eksen boyu
+    var _wcX=k.uaX+_bh+_sn*_axL,_wcY=k.uaY+_cs*_axL;     // ağız (bilek/dirsek) merkezi
+    var _wh=_bh*(p.sleeveLength==='long'?0.60:0.80);     // ağız yarı-genişliği (bilek dar, dirsek dolgun)
+    var _owX=_wcX+_cs*_wh,_owY=_wcY-_sn*_wh;             // ağız dış köşe (eksene dik)
+    var _iwX=_wcX-_cs*_wh,_iwY=_wcY+_sn*_wh;             // ağız iç köşe
+    var _cY=k.stY+(k.uaY-k.stY)*0.30;                    // omuz kapağı dönüş noktası
+    var gf=[];
+    gf.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.5,k.stY],[outX,k.stY+(_cY-k.stY)*0.5],[outX,_cY])); // omuz ucu → kapak (kısa kolla aynı karakter)
+    gf.push(seg([outX,_cY],[outX+(_owX-outX)*0.22,_cY+(_owY-_cY)*0.38],[_owX-(_owX-outX)*0.12,_owY-(_owY-_cY)*0.20],[_owX,_owY])); // dış kenar: kapaktan ağza düzgün konik, dışa açılı
+    gf.push(seg([_owX,_owY],[_owX+(_iwX-_owX)*0.33+_sn*1.5,_owY+(_iwY-_owY)*0.33+_cs*1.5],[_iwX+(_owX-_iwX)*0.33+_sn*1.5,_iwY+(_owY-_iwY)*0.33+_cs*1.5],[_iwX,_iwY])); // ağız: eksene dik temiz kapanış (hafif dışbükey)
+    gf.push(seg([_iwX,_iwY],[_iwX-(_iwX-k.uaX)*0.30,_iwY-(_iwY-k.uaY)*0.34],[k.uaX+(_iwX-k.uaX)*0.10,k.uaY+(_iwY-k.uaY)*0.22],[k.uaX,k.uaY])); // iç kenar: ağızdan koltukaltına
+    // dönen outX/hemY manşet-seam çapasıdır (render sl.outX/sl.hemY okur; x çapaları
+    // sabit uaX bölgesinde). Açılı kolda bilek dışarı kaydığı için çizgi bilekte havada
+    // kalırdı; İÇ DİKİŞE çapalanan kırışık olarak konur: ucu (x=uaX+11) iç dikişin
+    // o x'i kestiği yüksekliğe oturur — dirsek kolunda ağzın hemen üstü (gerçek hemY),
+    // uzun kolda dirsek hizası. Kısa koldaki manşet kıvrımıyla aynı kalem dili.
+    return {g:gf,outX:outX,hemY:(p.sleeveLength==='long'?k.uaY+(_iwY-k.uaY)*(11/(_iwX-k.uaX))+11:hemY),wristX:_iwX};
+  }
   var g=[];
   // omuz ucundan dış kenar: cap'te aşağı-eğimli (omuz çizgisini takip), düzde yatay
   if(_cap){g.push(seg([k.stX,k.stY],[k.stX+(outX-k.stX)*0.45,k.stY+(hemY-k.stY)*0.16],[outX-(outX-k.stX)*0.12,k.stY+(hemY-k.stY)*0.34],[outX,k.stY+(hemY-k.stY)*0.5]));}
