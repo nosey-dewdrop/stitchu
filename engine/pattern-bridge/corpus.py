@@ -1,6 +1,14 @@
 # ============================================================================
 # corpus.py — RUN THE INSTRUMENT OVER A CORPUS AND COUNT WHAT IS SEWABLE.
 #
+# GREEN AND UNSEWABLE. The name for what this measures. A pattern is green and
+# unsewable when it passes every gate its own generator runs and still carries
+# a seam that cannot be sewn. On 500 designs asked of GarmentCode's own
+# sampler, 472 of which produced a pattern, 318 passed the generator's gate and
+# 202 of those were green and unsewable. The gate is not wrong, it is narrow:
+# it looks for a piece whose outline crosses itself, which it finds well, and
+# it never compares the two sides of a seam.
+#
 # The number nobody has published. The field's whole vocabulary of validity is
 # "the simulator did not crash": a survey of five open pattern generators on
 # 2026-08-02 found no seam length equality check in any of them, and the
