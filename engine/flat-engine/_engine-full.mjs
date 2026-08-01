@@ -63,7 +63,13 @@ function polyFromSegs(segs,n){var out=[];segs.forEach(function(sg,i){for(var j=(
 function laceBand(poly,w,sc){var inner=[],outer=[],i;for(i=0;i<poly.length;i++){var q=poly[Math.min(i+1,poly.length-1)],r=poly[Math.max(i-1,0)];var dx=q[0]-r[0],dy=q[1]-r[1],d=Math.hypot(dx,dy)||1;var nx=-dy/d,ny=dx/d;if(ny<0){nx=-nx;ny=-ny;}var t=i/(poly.length-1);var amp=w*(0.60+0.40*Math.abs(Math.sin(t*Math.PI*sc)));inner.push(poly[i]);outer.push([poly[i][0]+nx*amp,poly[i][1]+ny*amp]);}var d1="M "+inner[0][0].toFixed(1)+","+inner[0][1].toFixed(1);for(i=1;i<inner.length;i++)d1+=" L "+inner[i][0].toFixed(1)+","+inner[i][1].toFixed(1);for(i=outer.length-1;i>=0;i--)d1+=" L "+outer[i][0].toFixed(1)+","+outer[i][1].toFixed(1);d1+=" Z";var d2="M "+inner[0][0].toFixed(1)+","+inner[0][1].toFixed(1);for(i=1;i<inner.length;i++){var q2=outer[i],p2=inner[i];d2+=" L "+(p2[0]+(q2[0]-p2[0])*0.30).toFixed(1)+","+(p2[1]+(q2[1]-p2[1])*0.30).toFixed(1);}return {band:d1,head:d2};}
 function drapePlan(p,rnd){var n=(p.ink==='minimal')?2:(p.ink==='orta')?3:Math.max(2,Math.round(p.foldCount/2));var R=[],CORE=0.20;for(var i=0;i<n;i++){var prim=(i%2===0),base=(i+0.65)/(n+0.25);var u=Math.min(0.96,Math.max(0.04,base+(rnd()-0.5)*0.8/n));R.push({u:CORE+(1-CORE)*u,prim:prim,swing:prim?0.55+rnd()*0.45:0.15+rnd()*0.30,birth:prim?rnd()*0.05:(0.14+rnd()*0.30)*p.drape,die:prim?1:0.40+rnd()*0.35,sag:0.55+rnd()*0.75,sway:(rnd()-0.5)*0.45});}R.sort(function(a,b){return a.u-b.u;});R[R.length-1].prim=true;R[0].prim=false;if(p.ink==='minimal')R.forEach(function(r){r.prim=true;});return R;}
 function hemPoints(p,k,R){function baseY(u){return k.yHem+k.dip*(1-Math.pow(u,1.7));}var W=p.hemWave*3.2,pts=[[k.hX,k.yHem]];var prim=R.filter(function(r){return r.prim;});for(var j=prim.length-1;j>=0;j--){var r=prim[j],outer=(j===prim.length-1)?1:prim[j+1].u,mid=(r.u+outer)/2;pts.push([k.cx+(k.hX-k.cx)*mid,baseY(mid)+W*r.sag]);var x=k.cx+(k.hX-k.cx)*r.u,y=baseY(r.u)-W*(0.45+r.swing*0.75);r.hem=[x,y];pts.push([x,y]);pts.push([x,y]);}var i0=prim[0].u*0.45;pts.push([k.cx+(k.hX-k.cx)*i0,baseY(i0)+W*0.55]);pts.push([k.cx,baseY(0)]);return pts;}
-function buildHalf(p,cx,isBack,rnd){var sz=SIZE[p.size],st=STYLE[p.style];var y0=46,k={cx:cx,y0:y0},g=[];var eX=cx+sz.emp*(1-p.waistNip)*S;var bustX=cx+sz.bust*(1+0.07*p.bustProject)*S;
+function buildHalf(p,cx,isBack,rnd){var sz=SIZE[p.size],st=STYLE[p.style];var y0=46,k={cx:cx,y0:y0},g=[];var eX=cx+sz.emp*(1-p.waistNip)*S;
+// GÖĞÜS GENİŞLİĞİ (2026-08-01, Damla: "göğüs daha dar olacak, sarkık memeleri
+// reddettim"). Eskiden bustX koltukaltından %3.5 DIŞARIDAYDI (1+0.07*0.5), yani
+// yan hat oyuğun altında balon yapıyordu — sarkık okunmasının yarısı bu. Artık
+// varsayılanda koltukaltıyla aynı hizada (0.975+0.05*0.5 = 1.000), kadran hâlâ
+// çalışıyor ama dışa taşma ancak bilinçli olarak açılıyor.
+var bustX=cx+sz.bust*(0.975+0.05*p.bustProject)*S;
 // TOP bust-width (2026-07-20 tur1c — hakem: en geniş nokta underarm ALTINDA, yan
 // dikişte bust dışa balon yapıyordu). Root wasn't the armhole; it was bustX
 // (86.8px) bulging past the sleeveless underarm (69.1px), read most on boat+
@@ -127,10 +133,15 @@ k.apexY=stY+(yEmp2-stY)*0.441;if(st.neckline==='square'){
   // CF tanjantına dokunmaz, ayna V'yi korur (v-yaka dalıyla aynı mekanizma).
   // Motor Neckline::Sweetheart zaten çiziyor (bodice.cpp); flat kalp dilini kurar.
   // Arka: st.roundNeck ile normal scoop kavisi (kalp sadece önde).
-  var _swVY=ny-(ny-y0)*0.34;                            // CF küçük V noktası (lob dibinden yukarıda)
-  var _swCupX=cx+(nX-cx)*0.52,_swCupY=ny;               // lob dibi (tam yaka derinliği)
-  g.push(seg([cx,_swVY],[cx+(_swCupX-cx)*0.30,_swVY+(_swCupY-_swVY)*0.62],[_swCupX-(_swCupX-cx)*0.46,_swCupY],[_swCupX,_swCupY])); // V → lob dibi: aşağı-dışa kavisli iniş, dipte yatay tanjant
-  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.42,_swCupY],[nX-(nX-cx)*0.06,y0+(ny-y0)*0.24],[nX,y0])); // lob dibi → omuz/askı: yatay tanjanttan yumuşak yükseliş
+  // İKİNCİ TUR (2026-08-01, Damla: "kalp W gibi duruyor" — ilk tur yetmedi, ölçtüm):
+  // W'nin sebebi merkezdi. CF çentiği yaka derinliğinin %34'ü kadar YÜKSEK ve sivriydi,
+  // loblar da sığ kalınca siluet /\_/\ okunuyor. Gerçek kalpte merkez KÜÇÜK bir
+  // çentiktir, hacim LOBLARDADIR. Çentik %14'e indi, lob dışa açıldı (0.52 → 0.62),
+  // ve lob dibi iki yandan yatay tanjantla kuşatıldı → yuvarlak kupa, sivri uç değil.
+  var _swVY=ny-(ny-y0)*0.14;                            // CF çentiği: sığ
+  var _swCupX=cx+(nX-cx)*0.62,_swCupY=ny;               // lob dibi: dışa açık
+  g.push(seg([cx,_swVY],[cx+(_swCupX-cx)*0.20,_swVY+(_swCupY-_swVY)*0.90],[_swCupX-(_swCupX-cx)*0.55,_swCupY],[_swCupX,_swCupY])); // çentikten hızla in, dipte yatay
+  g.push(seg([_swCupX,_swCupY],[_swCupX+(nX-_swCupX)*0.58,_swCupY],[nX-(nX-cx)*0.03,y0+(ny-y0)*0.46],[nX,y0])); // dipten yatay çık, omza yumuşak yüksel
   k.nSeg=2;k.pointed=true;
 }else if(st.neckline==='v'&&!isBack){var mid=[cx+(nX-cx)*0.54,ny-(ny-y0)*0.56];g.push(seg([cx,ny],[cx+(nX-cx)*0.15,ny-(ny-y0)*0.13],[cx+(nX-cx)*0.37,ny-(ny-y0)*0.37],mid));g.push(seg(mid,[cx+(nX-cx)*0.72,ny-(ny-y0)*0.76],[nX-(nX-cx)*0.05,y0+(ny-y0)*0.14],[nX,y0]));k.nSeg=2;k.pointed=true;}else if(st.garment==='top'||st.roundNeck){
   // TOP round neckline (2026-07-20 tur1 fix — hakem: crew/scoop front V'ye kaçıyordu).
@@ -145,7 +156,10 @@ k.apexY=stY+(yEmp2-stY)*0.441;if(st.neckline==='square'){
 // yükselmeli" kuralı). id13/id101 iyileşmesini iter1 apex-fix zaten yaptı. ESKİ taper
 // korundu (byte-identical). id53/id24 gerçek göğüs sorunu ayrı yerde (id53 empire seam
 // konumu, id24 büzgü/etek KÖK3/4) → dürüst not, bu KÖK'te çözülmedi.
-var yB2=uaY+(yEmp2-uaY)*p.bustHeight;g.push(seg([uaX,uaY],[uaX+(bustX-uaX)*0.85,uaY+(yB2-uaY)*0.22],[bustX,yB2-(yB2-uaY)*0.55],[bustX,yB2]));g.push(seg([bustX,yB2],[bustX,yB2+(yEmp2-yB2)*0.44],[eX+(bustX-eX)*nip,yEmp2-(yEmp2-yB2)*0.16],[eX,yEmp2]));}k.eX=eX;
+// GÖĞÜS YÜKSEKLİĞİ (2026-08-01, Damla: "daha yukarıda olacak"). Yan-hat bombesi
+// koltukaltı ile bel arasının %30'undaydı; bel çizgisine yakın bombe = sarkık.
+// 0.58 çarpanı bombeyi koltukaltının hemen altına çeker (%17), kadran korunur.
+var yB2=uaY+(yEmp2-uaY)*p.bustHeight*0.58;g.push(seg([uaX,uaY],[uaX+(bustX-uaX)*0.85,uaY+(yB2-uaY)*0.22],[bustX,yB2-(yB2-uaY)*0.55],[bustX,yB2]));g.push(seg([bustX,yB2],[bustX,yB2+(yEmp2-yB2)*0.44],[eX+(bustX-eX)*nip,yEmp2-(yEmp2-yB2)*0.16],[eX,yEmp2]));}k.eX=eX;
 // TOP branch (2026-07-20, master directive item 8 — top family, 46 targets).
 // A top is ONE figured body that skims from the waist to a hip/crop hem: no
 // separate skirt panel, no waist seam gape, no drape folds. Guarded on
@@ -214,6 +228,18 @@ function puffSleeve(p,k){var capTop=k.stY-p.capPuff*S;var outX=k.stX+p.sleeveWid
 // DEĞİL). Omuz ucundan hafif eğimli düz aşağı iner, bilekte hafif daralır:
 // dikdörtgen-ish set-in kol. Ayrı fonksiyon → puffSleeve (pinli princess/wrap)
 // byte-identical. capTop=stY (cap yükseltme yok), düz kenarlar.
+// KOL KAPAĞI = GÖVDENİN OYUĞU (2026-08-01, Damla: "kol çirkin").
+// Kol konturu koltukaltından omuz ucuna DÜZ kapanıyordu (toPath'in Z'si), oysa
+// gövdenin oyuğu orada kavisli. İki çizgi çakışmayınca koltukaltında küçük bir
+// kanca/ok görünüyordu — ekrandaki artık buydu. Bu yardımcı buildHalf'in oyuk
+// eğrisinin AYNISINI ters yönde döndürür, kol oyuğa birebir oturur.
+function armholeBack(p,k){
+  var H=p.armholeHollow,sX=k.stX,sY=k.stY,uX=k.uaX,uY=k.uaY;
+  var a1=[sX+(uX-sX)*H,sY+(uY-sY)*0.36],a2=[sX+(uX-sX)*0.50,sY+(uY-sY)*0.74];
+  return [seg([uX,uY],[uX-(uX-a2[0])*0.52,uY],[a2[0]+(uX-a2[0])*0.46,a2[1]+(uY-a2[1])*0.68],a2),
+          seg(a2,[a1[0]+(a2[0]-a1[0])*0.66,a1[1]+(a2[1]-a1[1])*0.74],[a1[0]+(a2[0]-a1[0])*0.42,a1[1]+(a2[1]-a1[1])*0.48],a1),
+          seg(a1,[sX+(uX-sX)*H,sY+(uY-sY)*0.24],[sX+(uX-sX)*H*0.7,sY+(uY-sY)*0.13],[sX,sY])];
+}
 function plainSleeve(p,k){
   // sleeveLength → boy (2026-07-21 FAZ1 kıyas: emsal kısa≈korsaj 1/4, uzun≈3/4).
   // CAP (2026-07-22 id47): omzu KAPLAYAN çok kısa kol — dış kenar omuzdan AŞAĞI
@@ -246,6 +272,7 @@ function plainSleeve(p,k){
     // kalırdı; İÇ DİKİŞE çapalanan kırışık olarak konur: ucu (x=uaX+11) iç dikişin
     // o x'i kestiği yüksekliğe oturur — dirsek kolunda ağzın hemen üstü (gerçek hemY),
     // uzun kolda dirsek hizası. Kısa koldaki manşet kıvrımıyla aynı kalem dili.
+    gf.push.apply(gf,armholeBack(p,k));   // kol kapağı = gövdenin oyuğu (kanca gitti)
     return {g:gf,outX:outX,hemY:(p.sleeveLength==='long'?k.uaY+(_iwY-k.uaY)*(11/(_iwX-k.uaX))+11:hemY),wristX:_iwX};
   }
   var g=[];
@@ -258,6 +285,7 @@ function plainSleeve(p,k){
   g.push(seg([wristX,hemY],[wristX-(wristX-(k.uaX+6))*0.5,hemY+2],[k.uaX+10,hemY+1],[k.uaX+6,hemY-1]));
   // iç kenar (koltukaltı dikişi) bilekten underarm'a — DÜZ yumuşak
   g.push(seg([k.uaX+6,hemY-1],[k.uaX+3,hemY-(hemY-k.uaY)*0.55],[k.uaX+1,k.uaY+8],[k.uaX,k.uaY]));
+  g.push.apply(g,armholeBack(p,k));   // kol kapağı = gövdenin oyuğu (kanca gitti)
   return {g:g,outX:outX,hemY:hemY,wristX:wristX};}
 function collarShape(p,neckSeg,k,gap){var n=16,outer=[],inner=[];for(var i=0;i<=n;i++){var t=i/n,q=cubic(neckSeg,t),q2=cubic(neckSeg,Math.min(1,t+0.02));var dx=q2[0]-q[0],dy=q2[1]-q[1],d=Math.hypot(dx,dy)||1;var w=p.collarWidth*S*(0.72+0.28*Math.sin(Math.PI*t));inner.push([q[0],q[1]]);outer.push([q[0]+dy/d*w,q[1]-dx/d*w]);}outer[0]=[k.cx+gap,outer[0][1]];inner[0]=[k.cx+gap,inner[0][1]];var loop=outer.concat(inner.slice().reverse());loop.push(loop[0]);return smooth(loop);}
 function render(p){var pt=parts(),st=STYLE[p.style];var W=940,H=680,o='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';o+='<style>.body{fill:#fff;stroke:#111;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}.piece{fill:#fff;stroke:#111;stroke-width:1.5;stroke-linejoin:round}.tie{fill:#fff;stroke:#111;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}.seam{fill:none;stroke:#111;stroke-width:1.05;stroke-linecap:round}.ink{fill:#111;stroke:none}.st{fill:none;stroke:#111;stroke-width:.65;stroke-dasharray:3.5 3;stroke-linecap:round}.lbl{font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:2.8px;fill:#111;text-anchor:middle}</style>';[false,true].forEach(function(isBack){var cx=isBack?700:240;var rnd=rng(p.seed*131+(isBack?977:13));var b=buildHalf(p,cx,isBack,rnd),k=b.k;var half=enforceC1(b.g.slice(),!k.pointed),full=half.concat(mirror(half,cx));var M=function(d,c){return '<path class="'+c+'" d="'+d+'"/>'+'<g transform="translate('+(2*cx)+',0) scale(-1,1)"><path class="'+c+'" d="'+d+'"/></g>';};
@@ -275,7 +303,17 @@ var MJ=function(pts,maxw,bias){if(!AS)return M(taper(pts,maxw,bias),'ink');
   var L=refl(pts).map(function(q,i,a){if(i===0||i===a.length-1)return q;
     return [q[0]+(rndL()-0.5)*2.4,q[1]+(rndL()-0.5)*1.8];});
   return '<path class="ink" d="'+taper(pts,maxw,bias)+'"/>'+
-         '<path class="ink" d="'+taper(L,maxw*(0.9+rndL()*0.2),bias)+'"/>';};if(pt.straps){var sp=strapShape(p,k,rng(p.seed*57+(isBack?31:5)));o+=M(toPath(sp.outline),'piece');if(p.ruffle>0.05)sp.lumps.forEach(function(l,i){if(i===0||i===sp.lumps.length-1)return;var s=l.side,w=s>0?l.wl:l.wr;o+=MJ(samplePts([l.x+l.nx*w*s*0.92,l.y+l.ny*w*s*0.92],[l.x+l.nx*w*s*0.45,l.y+l.ny*w*s*0.45+2],[l.x-l.nx*w*s*0.25,l.y-l.ny*w*s*0.25+3],[l.x-l.nx*w*s*0.62,l.y-l.ny*w*s*0.62+4],7),1.5,0.45);});}if(pt.sleeve){var sl=(p.capPuff>0.05?puffSleeve(p,k):plainSleeve(p,k));o+=M(toPath(sl.g),'piece');var cn=(p.capPuff>0.05?5:0),cr=rng(p.seed*23+(isBack?7:19));for(var ci=1;ci<=cn;ci++){var ct=ci/(cn+1),cp=cubic(sl.g[0],ct);if(cp[0]<k.stX+(sl.outX-k.stX)*0.55)continue;var inx=cp[0]-(cp[0]-k.stX)*0.22,iny=cp[1]+9+cr()*5;o+=MJ(samplePts(cp,[cp[0]-(cp[0]-inx)*0.3,cp[1]+4],[inx+(cp[0]-inx)*0.2,iny-4],[inx,iny],6),0.95,0.5);}var cuY=sl.hemY-9;o+=M('M '+(sl.outX-6).toFixed(1)+','+cuY.toFixed(1)+' C '+(sl.outX-24)+','+(cuY+5)+' '+(k.uaX+22)+','+(cuY+4)+' '+(k.uaX+11).toFixed(1)+','+(cuY-2).toFixed(1),'seam');if(pt.laceSleeve){var cuffPoly=polyFromSegs([sl.g[2]],10);var cl=laceBand(cuffPoly,p.laceWidth*S*0.85,Math.round(p.laceScallops*0.5));o+=M(cl.band,'piece');o+=M(cl.head,'st');}var gn=p.cuffGather<0.05?0:Math.round(5*p.cuffGather)+2,gr=rng(p.seed*37+(isBack?11:3));for(var gi=1;gi<gn;gi++){var gu=(gi/gn)*0.58,gx2=(sl.outX-8)+((k.uaX+13)-(sl.outX-8))*gu,gy2=cuY-3;o+=MJ([[gx2,gy2],[gx2+1.5,gy2-7-gr()*6],[gx2+2.5,gy2-14-gr()*8]],1.1,0.4);}}o+='<path class="body" d="'+toPath(full)+'"/>';if(pt.shirr && st.physicsShirr && p.gatherRatio>1.05 && (!isBack||st.top==='shoulder')){
+         '<path class="ink" d="'+taper(L,maxw*(0.9+rndL()*0.2),bias)+'"/>';};if(pt.straps){var sp=strapShape(p,k,rng(p.seed*57+(isBack?31:5)));o+=M(toPath(sp.outline),'piece');if(p.ruffle>0.05)sp.lumps.forEach(function(l,i){if(i===0||i===sp.lumps.length-1)return;var s=l.side,w=s>0?l.wl:l.wr;o+=MJ(samplePts([l.x+l.nx*w*s*0.92,l.y+l.ny*w*s*0.92],[l.x+l.nx*w*s*0.45,l.y+l.ny*w*s*0.45+2],[l.x-l.nx*w*s*0.25,l.y-l.ny*w*s*0.25+3],[l.x-l.nx*w*s*0.62,l.y-l.ny*w*s*0.62+4],7),1.5,0.45);});}if(pt.sleeve){var sl=(p.capPuff>0.05?puffSleeve(p,k):plainSleeve(p,k));o+=M(toPath(sl.g),'piece');var cn=(p.capPuff>0.05?5:0),cr=rng(p.seed*23+(isBack?7:19));for(var ci=1;ci<=cn;ci++){var ct=ci/(cn+1),cp=cubic(sl.g[0],ct);if(cp[0]<k.stX+(sl.outX-k.stX)*0.55)continue;var inx=cp[0]-(cp[0]-k.stX)*0.22,iny=cp[1]+9+cr()*5;o+=MJ(samplePts(cp,[cp[0]-(cp[0]-inx)*0.3,cp[1]+4],[inx+(cp[0]-inx)*0.2,iny-4],[inx,iny],6),0.95,0.5);}// MANŞET DİKİŞİ (2026-08-01, Damla: "kol uzayınca bu kadar çirkin olmamalı").
+// Eğri kolun AĞZINI değil, kol ağzından GÖVDENİN koltukaltına kadar uzanıyordu
+// (bitiş k.uaX+11). Kısa kolda ağız zaten gövdeye yakın olduğu için fark
+// edilmiyordu; uzun/dirsek kolda kolun ortasını boydan boya kesen bir çizgi
+// oluyordu — görüntüdeki artık bu. Artık sadece kolun kendi ağzını kapatıyor.
+// Manşet dikişi çizgisi KALDIRILDI (2026-08-01, Damla: "simple dursun").
+// Uzun/dirsek kolda `sl.hemY` bileği değil koltukaltı hizasını döndürüyor, o
+// yüzden çizgi kol ağzına değil OMUZ OYUĞUNUN yanına düşüyordu — ekranda
+// görülen küçük artık buydu. Düz kolun ağzı zaten konturla kapanıyor, ayrı
+// bir dikiş çizgisine ihtiyacı yok.
+var cuY=sl.hemY-9;if(pt.laceSleeve){var cuffPoly=polyFromSegs([sl.g[2]],10);var cl=laceBand(cuffPoly,p.laceWidth*S*0.85,Math.round(p.laceScallops*0.5));o+=M(cl.band,'piece');o+=M(cl.head,'st');}var gn=p.cuffGather<0.05?0:Math.round(5*p.cuffGather)+2,gr=rng(p.seed*37+(isBack?11:3));for(var gi=1;gi<gn;gi++){var gu=(gi/gn)*0.58,gx2=(sl.outX-8)+((k.uaX+13)-(sl.outX-8))*gu,gy2=cuY-3;o+=MJ([[gx2,gy2],[gx2+1.5,gy2-7-gr()*6],[gx2+2.5,gy2-14-gr()*8]],1.1,0.4);}}o+='<path class="body" d="'+toPath(full)+'"/>';if(pt.shirr && st.physicsShirr && p.gatherRatio>1.05 && (!isBack||st.top==='shoulder')){
   // FIZIK-SHIRRED (2026-07-21 — cloth-solver, st.physicsShirr bayrağı). Elle-shirr
   // satırları yerine fizik-çözülmüş fold çizgileri. SADECE physicsShirr taşıyan
   // stiller → pinli babydoll (bayrak yok) byte-identical. Deterministik.
