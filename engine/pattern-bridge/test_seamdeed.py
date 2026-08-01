@@ -139,6 +139,21 @@ check('a rotated edge loop is recognised, at zero difference',
       close(worst, 0.0, 1e-9) and reverse is False and shift == 10,
       f'worst {worst}, reversed={reverse}, shift={shift}')
 
+# The same outline written with a different edge count is NOT a fault. Taken
+# from a shipped reference pattern, where one copy carries 14.786 and 81.653
+# where the other carries 96.440, and the perimeters agree to 0.000mm.
+split_a = [96.440, 200.0, 50.0]
+split_b = [14.786, 81.653, 200.0, 50.0]
+check('an outline split into more edges still lines up',
+      panelcheck._merge_alignment(split_a, split_b,
+                                  panelcheck.TOL_MIRROR_MM) is not None,
+      'this false positive fired on every shipped reference pattern')
+
+check('a genuinely different outline does not line up',
+      panelcheck._merge_alignment([96.44, 200.0, 50.0],
+                                  [14.786, 81.653, 200.0, 61.0],
+                                  panelcheck.TOL_MIRROR_MM) is None)
+
 # A genuinely different panel must NOT be aligned into a false match.
 bent = list(lens)
 bent[4] += 9.0

@@ -114,6 +114,46 @@ def check_self_intersection(panel_name, panel, edge_curve):
     return {'panel': panel_name, 'status': status, 'hits': hits}
 
 
+def _merge_alignment(lens_a, lens_b, tol):
+    """Line two edge loops up when one side splits an edge the other keeps.
+
+    The same outline can be written with different edge counts: a panel whose
+    left copy carries 14.786 and 81.653 where its right copy carries 96.440 is
+    the same shape, cut into pieces differently. Comparing edge to edge calls
+    that a fault, and it is not one. Here the two loops are walked together,
+    accumulating on whichever side is behind, and they match when every run
+    closes on the same length.
+
+    Returns (reversed, shift) for an alignment that works, or None.
+    """
+    n, m = len(lens_a), len(lens_b)
+    for reverse in (False, True):
+        base = list(reversed(lens_b)) if reverse else list(lens_b)
+        for shift in range(m):
+            rolled = [base[(k + shift) % m] for k in range(m)]
+            i = j = 0
+            acc_a = acc_b = 0.0
+            ok = True
+            while i < n or j < m:
+                if abs(acc_a - acc_b) <= tol and acc_a > 0:
+                    acc_a = acc_b = 0.0          # a run closed; start the next
+                if acc_a <= acc_b and i < n:
+                    acc_a += lens_a[i]
+                    i += 1
+                elif j < m:
+                    acc_b += rolled[j]
+                    j += 1
+                else:
+                    ok = False
+                    break
+                if min(acc_a, acc_b) > 0 and abs(acc_a - acc_b) > sum(lens_a):
+                    ok = False
+                    break
+            if ok and abs(acc_a - acc_b) <= tol:
+                return reverse, shift
+    return None
+
+
 def _best_alignment(lens_a, lens_b):
     """How does one panel's edge loop line up with its mirror's?
 
@@ -156,18 +196,27 @@ def check_mirror_symmetry(panels, edge_length_mm, mirror_name):
         seen.add(key)
 
         a, b = panels[key[0]], panels[key[1]]
-        if len(a['edges']) != len(b['edges']):
+        lens_a = [edge_length_mm(a, e) for e in a['edges']]
+        lens_b = [edge_length_mm(b, e) for e in b['edges']]
+
+        if len(lens_a) != len(lens_b):
+            # Different edge counts are a difference in how the outline was
+            # written, not necessarily in the outline. Perimeter decides.
+            perim = abs(sum(lens_a) - sum(lens_b))
+            merged = _merge_alignment(lens_a, lens_b, TOL_MIRROR_MM)
             results.append({
                 'pair': list(key),
-                'status': 'FAIL',
-                'reason': f"mirrored panels carry a different number of edges "
-                          f"({len(a['edges'])} vs {len(b['edges'])})",
+                'status': 'PASS' if (perim <= TOL_MIRROR_MM and merged) else 'FAIL',
+                'reason': f"the two copies are cut into a different number of "
+                          f"edges ({len(lens_a)} vs {len(lens_b)}); perimeters "
+                          f"differ by {perim:.4f}mm and the loops "
+                          f"{'do' if merged else 'do NOT'} line up when the "
+                          f"split runs are merged",
+                'perimeter_diff_mm': round(perim, 4),
                 'edges': [],
             })
             continue
 
-        lens_a = [edge_length_mm(a, e) for e in a['edges']]
-        lens_b = [edge_length_mm(b, e) for e in b['edges']]
         worst, reverse, shift, rolled = _best_alignment(lens_a, lens_b)
 
         rows = []
