@@ -45,10 +45,14 @@ BODY_FILE = GC_ROOT / 'assets' / 'bodies' / 'mean_all.yaml'
 # and the whole run came out no quicker than serial.
 #
 # So the import is paid once per worker and the worker loops. Every sample
-# still reseeds and rebuilds from nothing. That this is the same output as a
-# fresh process per sample is not assumed: `--verify-determinism` regenerates
-# a batch and compares the specifications byte for byte against samples that
-# were generated one process each.
+# still reseeds and rebuilds from nothing, and that this is the same run was
+# checked rather than assumed. Seeds 0-56 were regenerated batched and set
+# against the same seeds generated one process each. The design files are
+# byte identical on all 57. The specifications are NOT, and the reason is not
+# ours: the generator serializes its panels in an unstable order, so the same
+# pattern comes out with a different panel first. Compared by content the 57
+# specifications are identical, and walked end to end all 57 produce the same
+# verdict on every pair. Nothing here reads panel order.
 GEN = r"""
 import sys, json, yaml, random, traceback
 from pathlib import Path
