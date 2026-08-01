@@ -48,12 +48,13 @@ for (const [name, over, floor] of __CONFIGS) {
   const ink = (svg.match(/<path class="ink"/g) || []).length;
   const st = (svg.match(/<path class="st"/g) || []).length;
   const all = (svg.match(/<path/g) || []).length;
-  const ok = det && (ink + st) >= floor;
+  // DAMLA HUKMU (1 Agu 13:22): yogunluk tabani KALKTI — cok cizgi cirkin cikti
+  // ("karman corman cizik"). Sayi sadece RAPORLANIR; tek sert kapi determinizm.
+  const ok = det;
   if (!ok) __fail = 1;
   console.log(
     name.padEnd(12), 'anlamli', String(ink + st).padStart(3),
     '(ink ' + ink + ' + st ' + st + ', toplam path ' + all + ')',
-    'hedef ' + floor + (ink + st >= floor ? ' GECTI' : ' KALDI'),
     det ? '| determinist' : '| DETERMINIST DEGIL');
   if (__OUT) __wf(__OUT + '/' + name + '.svg', svg);
 }
