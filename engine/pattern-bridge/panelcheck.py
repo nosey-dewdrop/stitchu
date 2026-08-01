@@ -24,6 +24,22 @@
 TOL_CLOSURE_MM = 0.01     # curve sampling noise, not a pattern fact
 TOL_MIRROR_MM = 0.79375   # same production standard as an equality seam
 
+# The outline is walked as a polyline rather than as curves. svgpathtools does
+# not intersect arcs reliably, which is not our finding: the generator says so
+# in its own source, cites the upstream issue, and linearizes for the same
+# reason. Calling that solver on a circular skirt returns crossings at points
+# the arcs never reach, and the check has to be built out of segment against
+# segment, where the answer is a determinant and there is nothing to trust.
+#
+# Step is the resample distance along an edge. A chord of s on radius r sits
+# s^2/8r off the true curve, so 1mm on the tightest curve a pattern carries,
+# a 1cm dart tip, is 0.0125mm of error, sixty times under the tolerance a seam
+# is judged at. The cap keeps a 150cm hem arc from becoming fifteen hundred
+# segments; at the cap its chords are 3.8mm and its error 0.07mm, still ten
+# times under tolerance.
+STEP_MM = 1.0
+MAX_STEPS_PER_EDGE = 400
+
 
 def _panel_segments(panel, edge_curve):
     """The panel outline as an ordered list of svgpathtools segments."""
@@ -72,46 +88,111 @@ def check_closed(panel_name, panel, edge_curve):
     }
 
 
+def _ring(panel, edge_curve):
+    """The outline as one closed polyline, remembering which edge each step
+    came from so a crossing can be reported in the pattern's own vocabulary."""
+    pts, owner = [], []
+    for idx, seg in enumerate(_panel_segments(panel, edge_curve)):
+        length_mm = seg.length() * 10.0
+        n = int(min(MAX_STEPS_PER_EDGE, max(1, round(length_mm / STEP_MM))))
+        for k in range(n):                      # end point is the next start
+            p = seg.point(k / n)
+            pts.append((p.real, p.imag))
+            owner.append(idx)
+    return pts, owner
+
+
+_EPS_CM = 1e-9    # below this a point is ON the line, not to one side of it
+
+
+def _side(p, q, r):
+    """How far r sits off the line pq, signed. Positive is one side."""
+    ux, uy = q[0] - p[0], q[1] - p[1]
+    n = (ux * ux + uy * uy) ** 0.5
+    if n == 0.0:
+        return 0.0
+    return (ux * (r[1] - p[1]) - uy * (r[0] - p[0])) / n
+
+
+def _crosses(a, b, c, d):
+    """Where two segments properly cross, or None.
+
+    Each segment must have the other's ends strictly on opposite sides. That
+    is four sign tests and no division, which matters: solving for the two
+    parameters instead divides by a determinant that is 1e-19 rather than 0
+    for two collinear steps of the same straight edge, and the parameters
+    that come back are rounding noise that lands inside [0,1] often enough to
+    report a straight line as crossing itself. It did, on a four sided skirt
+    panel, in all eight sizes of a run that is known clean.
+
+    Touching is not crossing. Two steps that share a point, an outline that
+    grazes itself and comes back the same side, a dart leg that ends exactly
+    on another edge: all read as zero here and none is a piece that cannot be
+    cut. Only a real pass-through is a fault.
+    """
+    d1, d2 = _side(c, d, a), _side(c, d, b)
+    if not ((d1 > _EPS_CM) != (d2 > _EPS_CM)) or abs(d1) <= _EPS_CM or abs(d2) <= _EPS_CM:
+        return None
+    d3, d4 = _side(a, b, c), _side(a, b, d)
+    if not ((d3 > _EPS_CM) != (d4 > _EPS_CM)) or abs(d3) <= _EPS_CM or abs(d4) <= _EPS_CM:
+        return None
+    t = d1 / (d1 - d2)                          # safe: d1 and d2 differ in sign
+    return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+
+
 def check_self_intersection(panel_name, panel, edge_curve):
     """Does the outline cross itself?
 
-    Every non-adjacent pair of segments is tested. Adjacent segments are
-    excluded because they share an endpoint by construction, and in a closed
-    loop the first and last segment are adjacent too. A dart notch touching
-    its own leg is a real intersection and is reported; a piece is allowed to
-    be concave, it is not allowed to cross.
+    The outline is resampled into one closed polyline and every pair of steps
+    that does not share a point is tested. Two things fall out of walking the
+    piece as one ring instead of comparing edge to edge. A curved edge that
+    doubles back through itself is caught, which pairwise edge comparison
+    cannot see at all. And adjacency stops being a special case: steps that
+    touch are neighbours in the ring, whether they belong to the same edge or
+    to two edges that meet at a vertex.
+
+    A piece is allowed to be concave. It is not allowed to cross.
     """
-    segs = _panel_segments(panel, edge_curve)
-    n = len(segs)
+    pts, owner = _ring(panel, edge_curve)
+    n = len(pts)
     hits = []
-    for i in range(n):
-        for j in range(i + 1, n):
-            adjacent = (j == i + 1) or (i == 0 and j == n - 1)
-            if adjacent:
-                continue
-            try:
-                crossings = segs[i].intersect(segs[j])
-            except Exception as exc:              # noqa: BLE001
-                hits.append({'kind': 'not-computable', 'edges': [i, j],
-                             'detail': f'{type(exc).__name__}: {exc}'})
-                continue
-            for (t1, t2) in crossings:
-                p = segs[i].point(t1)
+    if n < 4:
+        return {'panel': panel_name, 'status': 'PASS', 'hits': hits}
+
+    # Buckets by cell so a 6000 step ring is not 18 million comparisons. Cell
+    # is the longest step, so a step can only meet steps in its own cell or
+    # one cell out, and the sweep stays linear in the number of steps.
+    seg = [(pts[i], pts[(i + 1) % n]) for i in range(n)]
+    cell = max(max(abs(a[0] - b[0]), abs(a[1] - b[1])) for a, b in seg) or 1.0
+    grid = {}
+    for i, (a, b) in enumerate(seg):
+        for gx in range(int(min(a[0], b[0]) // cell), int(max(a[0], b[0]) // cell) + 1):
+            for gy in range(int(min(a[1], b[1]) // cell), int(max(a[1], b[1]) // cell) + 1):
+                grid.setdefault((gx, gy), []).append(i)
+
+    tested = set()
+    for (gx, gy), bucket in grid.items():
+        near = [k for dx in (-1, 0, 1) for dy in (-1, 0, 1)
+                for k in grid.get((gx + dx, gy + dy), ())]
+        for i in bucket:
+            for j in near:
+                if j <= i or (j - i) % n <= 1 or (i - j) % n <= 1:
+                    continue
+                if (i, j) in tested:
+                    continue
+                tested.add((i, j))
+                p = _crosses(seg[i][0], seg[i][1], seg[j][0], seg[j][1])
+                if p is None:
+                    continue
                 hits.append({
                     'kind': 'crossing',
-                    'edges': [i, j],
-                    'at_cm': [round(p.real, 4), round(p.imag, 4)],
+                    'edges': sorted({owner[i], owner[j]}),
+                    'at_cm': [round(p[0], 4), round(p[1], 4)],
                 })
 
-    computable = [h for h in hits if h['kind'] == 'crossing']
-    failed = [h for h in hits if h['kind'] == 'not-computable']
-    if failed and not computable:
-        status = 'UNVERIFIABLE'
-    elif computable:
-        status = 'FAIL'
-    else:
-        status = 'PASS'
-    return {'panel': panel_name, 'status': status, 'hits': hits}
+    return {'panel': panel_name,
+            'status': 'FAIL' if hits else 'PASS',
+            'hits': hits}
 
 
 def _merge_alignment(lens_a, lens_b, tol):

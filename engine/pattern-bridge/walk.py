@@ -37,6 +37,8 @@
 # Verdicts:
 #   PASS           the rule for this kind of seam is satisfied
 #   GATHERED-PASS  the long side is the declared gather ratio of the short one
+#   GATHERED-UNSCORED  the design gathers this seam and does not fix its
+#                  length. Not a pass. Counted and published separately.
 #   REPORTED       measured, but the field holds more than one position on
 #                  what the right value is (cap ease)
 #   UNVERIFIABLE   we could not establish what this seam is, so it was not
@@ -66,7 +68,19 @@ def rel_to_abs(a, b, rel):
 
 
 def edge_curve(vertices, edge):
-    """Build the svgpathtools segment for one spec edge (coords in cm)."""
+    """Build the svgpathtools segment for one spec edge (coords in cm).
+
+    The sweep flag of a circular edge is written for the space the piece is
+    drawn in, where Y points down, and the specification stores the piece in
+    the space it is cut in, where Y points up. Read with the drawing flag an
+    arc bulges away from the side it belongs on: on a tiered skirt the waist
+    arc turns its centre 28cm to the wrong side of the hem arc and the two
+    cross twice, at points 17cm outside a piece 13cm wide. The generator keeps
+    both conventions itself, `sweep=right` where it builds the mesh and
+    `not right` where it draws, and the mesh is the piece. Radius, chord and
+    the large-arc flag are untouched by this, so an arc's LENGTH is the same
+    either way and no seam verdict moved when it was corrected.
+    """
     a = vertices[edge['endpoints'][0]]
     b = vertices[edge['endpoints'][1]]
     ca, cb = complex(*a), complex(*b)
@@ -84,7 +98,7 @@ def edge_curve(vertices, edge):
     if curv['type'] == 'circle':
         radius, large_arc, right = curv['params']
         return Arc(ca, complex(radius, radius), 0.0,
-                   bool(large_arc), not bool(right), cb)
+                   bool(large_arc), bool(right), cb)
     raise ValueError(f"unknown curvature type: {curv['type']}")
 
 
@@ -151,11 +165,19 @@ def gather_ratios(design):
 def declares_asymmetry(design):
     """Did the design ask for a garment whose two sides differ?
 
-    GarmentCode carries `left.enable_asym`, and its sampler turns it on about
-    one sample in five. A mirror audit run over an intentionally asymmetric
-    garment reports every seam on the left as a fault. So when asymmetry is
-    declared the mirror audits do not run, and they say so rather than
-    reporting nothing.
+    Asked about which axis. The mirror audit pairs `left_x` with `right_x`,
+    so the only declaration that can excuse a difference is one that makes
+    the two SIDES differ. `left.enable_asym` does exactly that: it feeds the
+    left bodice a separate design subtree, and the sampler turns it on about
+    one sample in five. A mirror audit run over such a garment reports every
+    seam on the left as a fault, so the audits do not run and say so.
+
+    `flare-skirt.asymm.front_length` was read as a declaration too and it is
+    not one. It drives AsymmSkirtCircle, which shortens the FRONT against the
+    back and leaves left and right identical, and it is sampled from 0.1-0.9
+    on every design whether a circle skirt is used or not. Reading it silenced
+    the mirror audit on 33 of 57 patterns, most of which had no circle skirt
+    at all, and none of which was asymmetric across the axis being audited.
     """
     if not design:
         return None
@@ -165,32 +187,107 @@ def declares_asymmetry(design):
             reasons.append('left.enable_asym')
     except (KeyError, TypeError):
         pass
-    try:
-        if design['flare-skirt']['asymm']['front_length']['v'] not in (0.5,):
-            reasons.append('flare-skirt.asymm.front_length')
-    except (KeyError, TypeError):
-        pass
     return reasons or None
 
 
-def match_declared_ratio(len_a, len_b, ratios, tol):
+# WHICH GATHERS CAN BE SCORED AT ALL. Measured over 57 patterns, against the
+# 1/32 inch tolerance, a declared ratio lands on the seam only when the
+# generator applies it to the EDGE:
+#   sleeve.connect_ruffle    median miss 0.66mm    25 of 44 inside tolerance
+#   pants.cuff.skirt_ruffle  median miss 0.14mm     4 of 4
+#   sleeve.cuff.top_ruffle   median miss 12.9mm     6 of 40
+#   pants.cuff.top_ruffle    median miss 25.8mm     6 of 34
+#   skirt.ruffle             median miss 37.6mm     8 of 79
+#   levels-skirt.level_ruffle median miss 95.8mm    0 of 38
+# The split is not noise, it is where the multiplication happens. connect_ruffle
+# extends the sleeve's own open shape (sleeves.py:130). skirt.ruffle multiplies
+# waist_length, a BODY measurement, into a panel's top edge
+# (skirt_paneled.py:16-25), and that edge is then sewn to a drafted bodice
+# bottom which was never that measurement. level_ruffle is worse: it scales
+# lbody['waist'] and leaves lbody['hips'] alone (skirt_levels.py:41), and the
+# next tier interpolates between the two, so the ratio asked for is not the
+# ratio built, in any of the 38 tiers measured.
+# So a gather that reaches a seam through a body measurement says the seam is
+# unequal ON PURPOSE and does not say by how much. Failing it is a false
+# positive and passing it at any ratio is not a check. It is reported unscored,
+# counted apart, and published.
+#
+# Which two pieces a declared gather is allowed to act on. Read out of the
+# generator's own assembly, not inferred: `connect_ruffle` extends the sleeve's
+# open shape before it meets the armhole (sleeves.py:130), `cuff.top_ruffle`
+# sizes the cuff from the sleeve or trouser bottom (sleeves.py:304,
+# pants.py:247), `cuff.skirt_ruffle` sizes the flounce hanging off a cuff
+# (bands.py:203), `skirt.ruffle` gathers a panelled skirt onto the waistband
+# and only when it sits on one (skirt_paneled.py:416), and `level_ruffle`
+# sizes each skirt level from the bottom of the level above it
+# (skirt_levels.py:41), so both of its sides are skirt.
+_SCOPES = [
+    ('cuff.skirt_ruffle', ('cuff_skirt', 'cuff')),
+    ('cuff.top_ruffle',   ('cuff', 'sleeve|pant')),
+    ('connect_ruffle',    ('sleeve', 'torso')),
+    ('level_ruffle',      ('skirt', 'skirt')),
+    ('skirt.ruffle',      ('skirt', 'wb|torso')),
+]
+
+
+def _touches(panel_name, want):
+    n = panel_name.lower()
+    if 'cuff_skirt' in n:
+        here = {'cuff_skirt'}
+    elif 'cuff' in n:
+        here = {'cuff'}
+    elif n.startswith('wb'):
+        here = {'wb'}
+    elif 'sleeve' in n:
+        here = {'sleeve'}
+    elif n.startswith('pant'):
+        here = {'pant'}
+    elif 'skirt' in n:
+        here = {'skirt'}
+    else:
+        here = {'torso'}
+    return bool(here & set(want.split('|')))
+
+
+def ratio_applies(path, name_a, name_b):
+    """Can this declared gather act on this pair of pieces?
+
+    It can not, most of the time. The sampler writes a value for every gather
+    in the design space on every design, so a garment with no cuff and no
+    trousers still declares four cuff ratios and two trouser ratios. Ten of
+    them were being offered to every seam in the pattern, and a seam that is
+    wrong by any amount that happens to land on any of the ten was excused.
+    The ratio is bound to the two pieces the generator applies it between, and
+    a seam that is not between those two pieces cannot claim it.
+    """
+    if path.startswith('left.') and not (name_a.lower().startswith('left')
+                                         or name_b.lower().startswith('left')):
+        return False
+    for tail, (want_a, want_b) in _SCOPES:
+        if path.endswith(tail):
+            return ((_touches(name_a, want_a) and _touches(name_b, want_b))
+                    or (_touches(name_b, want_a) and _touches(name_a, want_b)))
+    return False    # a gather whose reach is not known does not excuse anything
+
+
+def match_declared_ratio(len_a, len_b, ratios, tol, names=None):
     """Is this pair's inequality one the design asked for?
 
-    Mapping every gather parameter to the exact seam it acts on would mean
-    reimplementing the generator's assembly, and a wrong map fails a correct
-    seam. So a pair that is not equal is checked against the ratios the design
-    DECLARED, and the one it matches is named in the report. A pair matching
-    no declared ratio fails.
+    A pair that is not equal is checked against the ratios the design DECLARED
+    that can reach it, and the one it matches is named in the report. A pair
+    matching no reachable declared ratio fails.
 
-    This can excuse a broken seam that happens to land on a declared ratio,
-    so a gathered verdict always carries which ratio it matched and they are
-    counted apart from plain passes.
+    This can still excuse a broken seam that happens to land on the ratio that
+    governs it, so a gathered verdict always carries which ratio it matched
+    and they are counted apart from plain passes.
     """
     short, long_ = min(len_a, len_b), max(len_a, len_b)
     if short <= 0:
         return None
     best = None
     for name, ratio in ratios.items():
+        if names is not None and not ratio_applies(name, names[0], names[1]):
+            continue
         dev = abs(long_ - short * ratio)
         if dev <= tol and (best is None or dev < best[2]):
             best = (name, ratio, dev)
@@ -230,10 +327,11 @@ def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios):
     if status == seamrules.PASS:
         return status, detail
 
-    hit = match_declared_ratio(la, lb, ratios, TOL_MM)
+    hit = match_declared_ratio(la, lb, ratios, TOL_MM,
+                               (sa['panel'], sb['panel']))
+    short, long_ = min(la, lb), max(la, lb)
     if hit is not None:
         name, ratio, dev = hit
-        short, long_ = min(la, lb), max(la, lb)
         return 'GATHERED-PASS', {
             'rule': f'not equal, but the design declares {name} = {ratio} and '
                     f'the long side is that multiple of the short one',
@@ -242,8 +340,21 @@ def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios):
             'measured_ratio': round(long_ / short, 4),
             'gather_dev_mm': round(dev, 4),
         }
-    if ratios:
-        detail['declared_ratios_checked'] = sorted(ratios)
+
+    reach = {n: r for n, r in ratios.items()
+             if ratio_applies(n, sa['panel'], sb['panel'])}
+    if reach and not any(n.endswith('connect_ruffle') for n in reach):
+        return 'GATHERED-UNSCORED', {
+            'rule': 'the design gathers this seam, and does not say by how '
+                    'much: the ratio is applied to a body measurement and the '
+                    'seam is between two drafted edges',
+            'declared_by': sorted(reach),
+            'declared_ratio': sorted(reach.values()),
+            'measured_ratio': round(long_ / short, 4),
+            'diff_mm': round(long_ - short, 4),
+        }
+    if reach:
+        detail['declared_ratios_checked'] = sorted(reach)
     return status, detail
 
 
@@ -276,7 +387,10 @@ def _judge_armhole_groups(pairs, panels, ratios=None):
                     cap += length
                 else:
                     arm += length
-        hit = match_declared_ratio(cap, arm, ratios, TOL_MM * len(members))
+        # Named from a sleeve side and a torso side because that is what an
+        # armhole group is; the group is only built from armhole-cap pairs.
+        hit = match_declared_ratio(cap, arm, ratios, TOL_MM * len(members),
+                                   (f'{side}_sleeve', f'{side}_ftorso'))
         if hit is not None:
             name, ratio, dev = hit
             status = 'GATHERED-PASS'

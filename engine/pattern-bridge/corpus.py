@@ -18,9 +18,9 @@
 import argparse
 import json
 import os
-import random
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import yaml
@@ -36,47 +36,118 @@ import walk as walklib          # noqa: E402
 DESIGN_FILE = GC_ROOT / 'assets' / 'design_params' / 'default.yaml'
 BODY_FILE = GC_ROOT / 'assets' / 'bodies' / 'mean_all.yaml'
 
-# One sample, generated on its own so a crash in the generator costs one
-# pattern and not the run. Written as a script because pygarment has to be
-# imported with the generator's own working directory.
-GEN = r'''
-import sys, json, yaml, random
+# A BATCH of samples in one worker. The first version spawned a process per
+# sample so a crash cost one pattern and not the run, and that is still true
+# per batch. What it also cost was an `import pygarment` per sample: numpy,
+# scipy and matplotlib, about four seconds, against roughly one second of
+# actual generation. Running twelve of those at once made every one of them
+# slower rather than faster, 4.8s alone against 13-34s with five siblings,
+# and the whole run came out no quicker than serial.
+#
+# So the import is paid once per worker and the worker loops. Every sample
+# still reseeds and rebuilds from nothing. That this is the same output as a
+# fresh process per sample is not assumed: `--verify-determinism` regenerates
+# a batch and compares the specifications byte for byte against samples that
+# were generated one process each.
+GEN = r"""
+import sys, json, yaml, random, traceback
 from pathlib import Path
 sys.path.insert(0, {gc!r})
 import pygarment as pyg
 from assets.garment_programs.meta_garment import MetaGarment
 from assets.bodies.body_params import BodyParameters
 
-seed = int(sys.argv[1]); out = Path(sys.argv[2])
-random.seed(seed)
+root = Path(sys.argv[1])
+seeds = [int(x) for x in sys.argv[2:]]
 sampler = pyg.DesignSampler({design!r})
-design = sampler.randomize()
-body = BodyParameters({body!r})
-piece = MetaGarment('sample', body, design)
-pattern = piece.assembly()
-out.mkdir(parents=True, exist_ok=True)
-pattern.serialize(str(out), to_subfolder=False, tag='')
-with open(out / 'design.yaml', 'w') as f:
-    yaml.dump({{'design': design}}, f)
-print('OK')
-'''
+
+for seed in seeds:
+    out = root / ('sample-%04d' % seed)
+    try:
+        random.seed(seed)
+        design = sampler.randomize()
+        body = BodyParameters({body!r})
+        piece = MetaGarment('sample', body, design)
+        # The generator's OWN gate, the one its published dataset passed
+        # through: pattern_sampler.py rejects a design and redraws when this
+        # comes back True. Recorded rather than acted on, so the same sample
+        # can be judged by both.
+        own_gate = bool(piece.is_self_intersecting())
+        pattern = piece.assembly()
+        out.mkdir(parents=True, exist_ok=True)
+        pattern.serialize(str(out), to_subfolder=False, tag='')
+        with open(out / 'design.yaml', 'w') as f:
+            yaml.dump({{'design': design}}, f)
+        with open(out / 'generator-verdict.json', 'w') as f:
+            json.dump({{'is_self_intersecting': own_gate}}, f)
+        print('OK %d' % seed, flush=True)
+    except BaseException:
+        line = traceback.format_exc().strip().splitlines()[-1]
+        print('ERR %d %s' % (seed, line), flush=True)
+"""
 
 
-def generate_one(seed, out_dir):
+def generate_batch(seeds, root):
+    """Generate these seeds in one worker. Returns {seed: error or None}."""
     script = GEN.format(gc=str(GC_ROOT), design=str(DESIGN_FILE),
                         body=str(BODY_FILE))
     # The generator pulls in matplotlib, whose macOS backend dies when it is
     # imported off the main thread of a plain subprocess. Nothing here draws.
     env = dict(os.environ, MPLBACKEND='Agg')
-    r = subprocess.run([str(VENV_PY), '-c', script, str(seed), str(out_dir)],
-                       cwd=str(GC_ROOT), capture_output=True, text=True,
-                       env=env)
-    if r.returncode != 0:
-        return None, (r.stderr.strip().splitlines() or ['?'])[-1]
-    specs = list(Path(out_dir).glob('*_specification.json'))
+    r = subprocess.run(
+        [str(VENV_PY), '-c', script, str(root)] + [str(s) for s in seeds],
+        cwd=str(GC_ROOT), capture_output=True, text=True, env=env)
+    out = {s: 'worker produced no verdict for this seed' for s in seeds}
+    for line in r.stdout.splitlines():
+        if line.startswith('OK '):
+            out[int(line.split()[1])] = None
+        elif line.startswith('ERR '):
+            parts = line.split(None, 2)
+            out[int(parts[1])] = parts[2] if len(parts) > 2 else '?'
+    if r.returncode != 0 and all(v is not None for v in out.values()):
+        last = (r.stderr.strip().splitlines() or ['?'])[-1]
+        out = {s: last for s in seeds}
+    return out
+
+
+def walk_sample(seed, root, walklib):
+    """Everything the instrument says about one generated sample."""
+    out_dir = root / f'sample-{seed:04d}'
+    specs = list(out_dir.glob('*_specification.json'))
     if not specs:
-        return None, 'generator wrote no specification'
-    return specs[0], None
+        return None
+    design = out_dir / 'design.yaml'
+    own = out_dir / 'generator-verdict.json'
+    own_gate = (json.loads(own.read_text())['is_self_intersecting']
+                if own.exists() else None)
+    rep = walklib.walk(specs[0], design if design.exists() else None)
+    s = rep['summary']
+    row = {
+        'seed': seed,
+        'pairs': s['pairs'],
+        'fail': s['by_status'].get('FAIL', 0),
+        'unverifiable': s['by_status'].get('UNVERIFIABLE', 0),
+        'unscored': s['by_status'].get('GATHERED-UNSCORED', 0),
+        'pass': s['by_status'].get('PASS', 0),
+        'gathered': s['by_status'].get('GATHERED-PASS', 0),
+        'max_diff_mm': s['max_diff_mm'],
+        'not_closed': s['panels_not_closed'],
+        'self_intersecting': s['panels_self_intersecting'],
+        'mirror_panel': s['mirror_panel_faults'],
+        'mirror_seam': len([m for m in rep['mirror_seams']
+                            if m['status'] == 'FAIL']),
+        'unknown_kind': s['by_kind'].get('unknown', 0),
+        'generator_says_self_intersecting': own_gate,
+    }
+    row['clean'] = (row['fail'] == 0 and row['not_closed'] == 0 and
+                    row['self_intersecting'] == 0 and
+                    row['mirror_panel'] == 0 and row['mirror_seam'] == 0)
+    # Fully judged means every pair got a verdict a rule produced. A seam the
+    # design gathers without fixing its length did not, and neither did one
+    # whose kind was never established. Both are named so the headline rate
+    # can be quoted with them and without them.
+    row['fully_judged'] = (row['unverifiable'] == 0 and row['unscored'] == 0)
+    return row
 
 
 def main():
@@ -84,52 +155,45 @@ def main():
     ap.add_argument('--count', type=int, default=40)
     ap.add_argument('--out', default=str(REPO / 'Logs' / 'corpus'))
     ap.add_argument('--start-seed', type=int, default=0)
+    ap.add_argument('--jobs', type=int, default=os.cpu_count() or 4,
+                    help='worker processes; each imports the generator once '
+                         'and then loops over its share of the seeds')
     args = ap.parse_args()
 
     root = Path(args.out).resolve()
     root.mkdir(parents=True, exist_ok=True)
 
+    seeds = [args.start_seed + k for k in range(args.count)]
+    jobs = max(1, min(args.jobs, len(seeds)))
+    batches = [seeds[i::jobs] for i in range(jobs)]
+
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        errs = {}
+        for part in pool.map(lambda b: generate_batch(b, root), batches):
+            errs.update(part)
+
     rows, gen_failures = [], []
-    for k in range(args.count):
-        seed = args.start_seed + k
-        out_dir = (root / f'sample-{seed:04d}').resolve()
-        spec, err = generate_one(seed, out_dir)
-        if spec is None:
-            gen_failures.append({'seed': seed, 'error': err})
-            print(f'  seed {seed:4d}  GENERATOR FAILED  {err[:70]}')
+    for seed in seeds:
+        if errs.get(seed) is not None:
+            gen_failures.append({'seed': seed, 'error': errs[seed]})
+            print(f"  seed {seed:4d}  GENERATOR FAILED  {errs[seed][:70]}")
             continue
-        design = out_dir / 'design.yaml'
-        rep = walklib.walk(spec, design if design.exists() else None)
-        s = rep['summary']
-        mirror_seam = len([m for m in rep['mirror_seams']
-                           if m['status'] == 'FAIL'])
-        row = {
-            'seed': seed,
-            'pairs': s['pairs'],
-            'fail': s['by_status'].get('FAIL', 0),
-            'unverifiable': s['by_status'].get('UNVERIFIABLE', 0),
-            'pass': s['by_status'].get('PASS', 0),
-            'gathered': s['by_status'].get('GATHERED-PASS', 0),
-            'max_diff_mm': s['max_diff_mm'],
-            'not_closed': s['panels_not_closed'],
-            'self_intersecting': s['panels_self_intersecting'],
-            'mirror_panel': s['mirror_panel_faults'],
-            'mirror_seam': mirror_seam,
-            'unknown_kind': s['by_kind'].get('unknown', 0),
-        }
-        row['clean'] = (row['fail'] == 0 and row['not_closed'] == 0 and
-                        row['self_intersecting'] == 0 and
-                        row['mirror_panel'] == 0 and row['mirror_seam'] == 0)
-        rows.append(row)
-        flag = 'clean' if row['clean'] else (
-            f"FAIL {row['fail']}  mirror {row['mirror_panel']}/"
-            f"{row['mirror_seam']}  maxdiff {row['max_diff_mm']:.2f}mm")
-        print(f"  seed {seed:4d}  {row['pairs']:3d} pairs  "
-              f"{row['unverifiable']:2d} unverifiable  {flag}")
+        r = walk_sample(seed, root, walklib)
+        if r is None:
+            gen_failures.append({'seed': seed,
+                                 'error': 'generator wrote no specification'})
+            print(f'  seed {seed:4d}  GENERATOR WROTE NOTHING')
+            continue
+        rows.append(r)
+        flag = 'clean' if r['clean'] else (
+            f"FAIL {r['fail']}  mirror {r['mirror_panel']}/{r['mirror_seam']}  "
+            f"maxdiff {r['max_diff_mm']:.2f}mm")
+        print(f"  seed {seed:4d}  {r['pairs']:3d} pairs  "
+              f"{r['unscored']:2d} unscored  {r['unverifiable']:2d} unjudged  {flag}")
 
     walked = len(rows)
     clean = sum(1 for r in rows if r['clean'])
-    fully_judged = [r for r in rows if r['unverifiable'] == 0]
+    fully_judged = [r for r in rows if r['fully_judged']]
     summary = {
         'requested': args.count,
         'generator_failed': len(gen_failures),
@@ -147,6 +211,18 @@ def main():
         'total_pairs': sum(r['pairs'] for r in rows),
         'total_failing_pairs': sum(r['fail'] for r in rows),
         'total_unverifiable_pairs': sum(r['unverifiable'] for r in rows),
+        'total_unscored_pairs': sum(r['unscored'] for r in rows),
+        # The comparison the headline rests on: of the patterns the generator's
+        # own gate lets through, how many carry a seam that cannot be sewn.
+        'passed_generator_own_gate': sum(
+            1 for r in rows if r['generator_says_self_intersecting'] is False),
+        'clean_among_those': sum(
+            1 for r in rows
+            if r['generator_says_self_intersecting'] is False and r['clean']),
+        'generator_own_gate_rejected': sum(
+            1 for r in rows if r['generator_says_self_intersecting'] is True),
+        'patterns_carrying_an_unscored_seam': sum(1 for r in rows
+                                                  if r['unscored']),
         'worst_single_pair_mm': max((r['max_diff_mm'] for r in rows),
                                     default=0.0),
         'tolerance_mm': walklib.TOL_MM,

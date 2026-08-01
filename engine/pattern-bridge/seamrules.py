@@ -140,6 +140,16 @@ def role_of(panel_name, panel):
     n = panel_name.lower()
     if n.startswith('wb'):
         return 'waistband'
+    # A collar and a hood carry the label 'body', the same label the bodice
+    # carries, and a seam between two things labelled 'body' has no front and
+    # no back to tell a shoulder from a side seam. They were 52 of the 160
+    # pairs a 57 pattern corpus could not judge. They are split out by name
+    # for the same reason the waistband is: what they attach to is a neckline
+    # and a neckline has its own rule.
+    if 'collar' in n:
+        return 'collar'
+    if 'hood' in n:
+        return 'hood'
     label = (panel.get('label') or '').lower()
     if label in ('arm', 'body', 'leg'):
         return {'arm': 'sleeve', 'body': 'torso', 'leg': 'skirt'}[label]
@@ -162,7 +172,10 @@ def role_of(panel_name, panel):
 #   shoulder          DIRECTIONAL  back longer than front, 0..12mm
 #   side-seam         EQUAL   front torso to back torso, below the armhole
 #   centre-seam       EQUAL   left panel to its own right mirror
-#   waist-attach      EQUAL   torso or skirt to waistband
+#   waist-attach      EQUAL   torso or skirt to waistband, or skirt straight
+#                             to the bodice when there is no waistband
+#   neckline-attach   EQUAL   a collar or a hood to the body
+#   collar-seam       EQUAL   collar to collar, or collar to hood
 #   skirt-seam        EQUAL   skirt to skirt
 #   gathered          RATIO   handled by the caller, from design intent
 #   unknown           -       reported UNVERIFIABLE, never silently passed
@@ -188,6 +201,15 @@ def classify(a_panel_name, a_panel, a_edge, b_panel_name, b_panel, b_edge,
         return 'skirt-seam', 'both panels are skirt panels'
     if 'waistband' in roles:
         return 'waist-attach', f'one waistband panel ({ra}/{rb})'
+    # A skirt joined straight to the bodice with no waistband between them.
+    # The same seam as waist-attach and the same rule; only the piece it lands
+    # on differs. 108 of the 160 unjudged pairs on the 57 pattern corpus.
+    if roles == {'torso', 'skirt'}:
+        return 'waist-attach', 'skirt joined to the bodice, with no waistband'
+    if roles & {'collar', 'hood'}:
+        if roles <= {'collar', 'hood'}:
+            return 'collar-seam', f'two neckline pieces ({ra}/{rb})'
+        return 'neckline-attach', f'a neckline piece joined to the body ({ra}/{rb})'
 
     if roles == {'torso'}:
         if mirror_name(a_panel_name) == b_panel_name:
