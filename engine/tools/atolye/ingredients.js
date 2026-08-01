@@ -125,7 +125,7 @@ const FLAGS = [
   ['sleeve', 'topoloji', 'kol var', true, 'Kol paneli var mi.'],
   ['collar', 'topoloji', 'yaka bandi', false, 'Boyun kenarina dikilen bant.'],
   ['straps', 'topoloji', 'aski panelleri', false, 'Bant govdenin ustunden omza cikan aski parcalari. SADECE bant govdede: omuz govdesinde kalem k.strapX kurmuyor, cizim NaN oluyor (olculdu).'],
-  ['princessSeam', 'topoloji', 'prenses dikis', true, 'Pensi dikise gomer. Pens payi ayni, YOLU farkli.'],
+  ['princessSeam', 'topoloji', 'prenses dikis', false, 'Pensi dikise gomer. Pens payi ayni, YOLU farkli.'],
   ['backSeam', 'topoloji', 'arka orta dikis', true, ''],
   ['gorePanels', 'topoloji', 'dilimli etek', false, ''],
   ['wrapTie', 'topoloji', 'kruvaze bag', false, 'Kruvaze onun belde baglanan ucu.'],
@@ -462,11 +462,19 @@ function fitFrame(svg) {
 
 // renderStyle() kalemin kendi giris kapisi: modul-ici P'yi kurar, sonra cizer.
 // render()'i dogrudan cagirmak parts() okumasini bozar (P kurulmamis olur).
+// DAMLA EMRI (1 Agu 14:20, birebir): "o aptal cizgileri toplama mi prenses
+// dikis mi kalem mi ne bok dediysen KALDIR". Bir kere azaltip gecistirdim,
+// emir bu degildi. Artik cizimde tek bir dekoratif kirisik/golge cizgisi
+// kalmiyor: ne bizim kat katmanimiz (flFoldOverlay artik hic cagrilmiyor),
+// ne de kalemin kendi 'ink' vurusları (drape fold'lari, buzgu tikleri,
+// prenses/gore izleri). Geriye giysinin kendisi kaliyor: silüet, parca
+// konturu, dikis ve kat cizgisi.
+const INK_PATH = /<path class="ink"[^>]*\/>/g;
+const EMPTY_G = /<g transform="[^"]*"><\/g>/g;
+
 function draw(s) {
   const over = compile(s);
-  let svg = renderStyle('__live', over);
-  let extra = flFoldOverlay(s, over);      // kat katmani (foldlines.js, M3)
-  if (s.collar) extra += collarOverlay(over);
-  if (extra) svg = svg.replace('</svg>', extra + '</svg>');
+  let svg = renderStyle('__live', over).replace(INK_PATH, '').replace(EMPTY_G, '');
+  if (s.collar) svg = svg.replace('</svg>', collarOverlay(over) + '</svg>');
   return fitFrame(svg);
 }
