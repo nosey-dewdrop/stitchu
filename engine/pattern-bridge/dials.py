@@ -186,28 +186,30 @@ def bisect_dial(design, path, kind, tree, root, body_file, steps=6,
         v = int(round(value)) if is_int else round(value, 4)
         d = copy.deepcopy(design)
         atlas.set_v(d, path, v)
-        r = draw(d, Path(root) / f'{tag}-{len(evals):02d}', root, body_file)
+        where = Path(root) / f'{tag}-{len(evals):02d}'
+        r = draw(d, where, root, body_file)
         evals.append({'value': v, 'score': _score(r, kind),
                       'ok': bool(r and r['total_fails'] == 0
                                  and r['mirror'] == 0)})
-        return v, r
+        return v, r, where
 
-    best = (None, None, (10 ** 6, 10 ** 6))
+    best = (None, None, (10 ** 6, 10 ** 6), None)
+
+    def done():
+        return (best[1] is not None and best[1]['total_fails'] == 0
+                and best[1]['mirror'] == 0)
+
     for _ in range(max(1, steps)):
         mid = (lo + hi) / 2.0
-        a = lo + (mid - lo) / 2.0
-        b = mid + (hi - mid) / 2.0
-        va, ra = at(a)
+        va, ra, wa = at(lo + (mid - lo) / 2.0)
         if _score(ra, kind) < best[2]:
-            best = (va, ra, _score(ra, kind))
-        if best[1] is not None and best[1]['total_fails'] == 0 \
-                and best[1]['mirror'] == 0:
+            best = (va, ra, _score(ra, kind), wa)
+        if done():
             break
-        vb, rb = at(b)
+        vb, rb, wb = at(mid + (hi - mid) / 2.0)
         if _score(rb, kind) < best[2]:
-            best = (vb, rb, _score(rb, kind))
-        if best[1] is not None and best[1]['total_fails'] == 0 \
-                and best[1]['mirror'] == 0:
+            best = (vb, rb, _score(rb, kind), wb)
+        if done():
             break
         if _score(ra, kind) <= _score(rb, kind):
             hi = mid
@@ -215,7 +217,7 @@ def bisect_dial(design, path, kind, tree, root, body_file, steps=6,
             lo = mid
         if is_int and hi - lo < 1:
             break
-    return best[0], best[1], evals
+    return best[0], best[1], evals, best[3]
 
 
 def close_cell(design, reading, table, tree, root, body_file, limit=3,
@@ -243,9 +245,9 @@ def close_cell(design, reading, table, tree, root, body_file, limit=3,
     tried = []
     work = copy.deepcopy(design)
     for path in chosen:
-        value, got, evals = bisect_dial(work, path, kind, tree, root,
-                                        body_file, steps=steps,
-                                        tag=f'bis-{path.replace(".", "-")}')
+        value, got, evals, where = bisect_dial(
+            work, path, kind, tree, root, body_file, steps=steps,
+            tag=f'bis-{path.replace(".", "-")}')
         tried.append({'dial': path, 'kind': kind, 'value': value,
                       'readings': len(evals),
                       'worst_mm': None if got is None
@@ -255,7 +257,8 @@ def close_cell(design, reading, table, tree, root, body_file, limit=3,
         if got is not None and got['total_fails'] == 0 and got['mirror'] == 0:
             atlas.set_v(work, path, value)
             return {'closed': True, 'kind': kind, 'dial': path,
-                    'value': value, 'design': work, 'tried': tried}
+                    'value': value, 'design': work, 'dir': str(where),
+                    'tried': tried}
         # Keep the best value found for this dial and move to the next one,
         # so the levers compose instead of each starting from scratch.
         if value is not None:

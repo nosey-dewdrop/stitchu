@@ -85,8 +85,21 @@ def attempt_design(base_design, tree, dials, cell_id, k):
 
 
 def search_cell(cell_id, base_design, root, body_file, tries, tree, dials,
-                slug):
-    """Try readings of one cell until GATE 0 passes. Returns the record."""
+                slug, table=None):
+    """Try readings of one cell until GATE 0 passes. Returns the record.
+
+    `tries` readings are RANDOM readings, every dial moved at once. That
+    search rescued none of fifty eight open cells, because a random reading is
+    a step in sixty eight dimensions and the measured table says only six of
+    those dimensions touch a seam at all.
+
+    So when a table is supplied, the random readings are followed by a TARGETED
+    one. The cell that failed already names the kind of seam that failed; the
+    table names the dials that move that kind; each of those dials is then
+    searched alone by bisection. A broken underarm closes in two readings this
+    way. A cell that stays open records which dial was pulled how far, so it
+    says where it is stuck rather than that it was tried.
+    """
     tried = []
     for k in range(tries):
         out = Path(root) / slug / f'try{k:02d}'
@@ -119,6 +132,28 @@ def search_cell(cell_id, base_design, root, body_file, tries, tree, dials,
             return {'ok': True, 'try': k, 'dir': str(out), 'gate': v,
                     'tries_used': k + 1, 'tries_allowed': tries,
                     'attempts': tried}
+    if table is not None:
+        import dials as diallib
+        last = Path(root) / slug / f'try{max(tries - 1, 0):02d}'
+        reading = diallib.by_kind(last) if last.exists() else None
+        res = diallib.close_cell(base_design, reading, table, tree,
+                                 Path(root) / slug / 'aim', body_file)
+        tried.append({'try': 'aimed', 'ok': res['closed'],
+                      'kind': res.get('kind'), 'dial': res.get('dial'),
+                      'value': res.get('value'),
+                      'why': res.get('why'),
+                      'dials_tried': [t['dial'] for t in res.get('tried', [])],
+                      'readings': sum(t['readings']
+                                      for t in res.get('tried', []))})
+        if res['closed'] and res.get('dir'):
+            out = Path(res['dir'])
+            v = atlas.gate(out) if list(out.glob('*_specification.json')) \
+                else None
+            if v and v['ok']:
+                return {'ok': True, 'try': 'aimed', 'dir': str(out),
+                        'gate': v, 'tries_used': tries + 1,
+                        'tries_allowed': tries, 'attempts': tried}
+
     return {'ok': False, 'try': None, 'dir': None,
             'tries_used': tries, 'tries_allowed': tries, 'attempts': tried,
             'why': _dominant_reason(tried)}

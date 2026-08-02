@@ -30,7 +30,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import atlas                       # noqa: E402
+import atlas
+import dials                       # noqa: E402
 import vocab as vocablib           # noqa: E402
 
 REPO = atlas.REPO
@@ -119,10 +120,13 @@ def design_for(words):
 _W = {}
 
 
-def _init(root, body_file, tries):
+def _init(root, body_file, tries, aim):
     _W['root'] = Path(root)
     _W['body'] = body_file
     _W['tries'] = tries
+    # The measured dial-to-seam table. Loaded once per worker, not per cell.
+    # None means the second pass is off and the census stays a census.
+    _W['table'] = dials.load_table() if aim else None
     _W['tree'] = atlas.load_tree()
     _W['dials'] = vocablib.dial_paths(_W['tree'])
 
@@ -133,7 +137,7 @@ def _drive(words):
     try:
         rec = vocablib.search_cell(cid, design_for(words), _W['root'],
                                    _W['body'], _W['tries'], _W['tree'],
-                                   _W['dials'], slug)
+                                   _W['dials'], slug, table=_W['table'])
     except Exception as e:                              # noqa: BLE001
         return {'cell': cid, 'slug': slug, 'ok': False,
                 'words': {p: atlas.word_label(v) for p, v in words.items()},
@@ -173,6 +177,11 @@ def main():
                          'drawn at all are still driven, and their cells are '
                          'reported apart')
     ap.add_argument('--tries', type=int, default=4)
+    ap.add_argument('--aim', action='store_true',
+                    help='after the random readings, aim: read which seam '
+                         'kind failed, look up the dials that move it in '
+                         'knowledge/dial-seam-table.json, and bisect each of '
+                         'them alone')
     ap.add_argument('--jobs', type=int, default=6)
     ap.add_argument('--minutes', type=float, default=0,
                     help='wall clock budget; cells not reached are COUNTED '
@@ -223,7 +232,7 @@ def main():
     # than three times that; the generator subprocess was never the wall.
     with ProcessPoolExecutor(max_workers=args.jobs, initializer=_init,
                              initargs=(str(root), str(body_file),
-                                       args.tries)) as pool:
+                                       args.tries, args.aim)) as pool:
         for row in pool.map(_drive, cells, chunksize=1):
             if row is None:
                 continue
