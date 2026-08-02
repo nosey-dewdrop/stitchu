@@ -1,0 +1,49 @@
+diff --git a/pygarment/garmentcode/connector.py b/pygarment/garmentcode/connector.py
+index 626d44e..9b51c99 100644
+--- a/pygarment/garmentcode/connector.py
++++ b/pygarment/garmentcode/connector.py
+@@ -7,7 +7,13 @@ from pygarment.garmentcode.utils import close_enough
+ class StitchingRule:
+     """High-level stitching instructions connecting two component interfaces
+     """
+-    def __init__(self, int1: Interface, int2: Interface, 
++
++    # stitchu: how far apart two vertices may be, in cm, and still be called
++    # the same vertex when two interfaces are matched. 0.1mm, an order below
++    # the 0.79375mm (1/32") production standard the seams are judged against.
++    SNAP_CM = 0.01
++
++    def __init__(self, int1: Interface, int2: Interface,
+                  verbose: bool = False) -> None:
+         """
+         Inputs:
+@@ -61,9 +67,26 @@ class StitchingRule:
+         frac2 = self.int2.projecting_fractions()
+         min_frac = min(min(frac1), min(frac2))  # projection tolerance should not be larger than the smallest fraction
+ 
+-        self._match_to_fractions(self.int1, frac2, tol=min(1e-2, min_frac / 2))
+-
+-        self._match_to_fractions(self.int2, frac1, tol=min(1e-2, min_frac / 2))
++        # stitchu 2026-08-05: the projection tolerance decides when a vertex on
++        # one side is taken to BE a vertex on the other. It was purely
++        # relative: 1e-2 of a 72.6cm waist is 7.3mm, nine times the 0.79mm the
++        # finished pattern is then measured against. Every vertex pair inside
++        # that window was welded together and the length difference it carried
++        # was dropped onto whichever segment the one-directional walk was
++        # standing in, instead of being shared. A 2.9mm waist mismatch came out
++        # as a 1.5mm gap on one side of the dart and nothing on the other, and
++        # the two halves of the same garment stopped being mirrors.
++        # Bounding it in LENGTH means a snap can never move a vertex further
++        # than the stitch itself is allowed to be wrong.
++        len1 = self.int1.projecting_lengths().sum()
++        len2 = self.int2.projecting_lengths().sum()
++        rel = min(1e-2, min_frac / 2)
++
++        self._match_to_fractions(
++            self.int1, frac2, tol=min(rel, self.SNAP_CM / max(len1, 1e-9)))
++
++        self._match_to_fractions(
++            self.int2, frac1, tol=min(rel, self.SNAP_CM / max(len2, 1e-9)))
+ 
+ 
+     def _match_to_fractions(self, inter:Interface, to_add, tol=1e-2):
