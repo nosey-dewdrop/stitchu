@@ -4,72 +4,169 @@
     {
       "id": "no-force-push-main",
       "deny": "git\\s+push(?=[\\s\\S]*(--force\\b|\\s-f\\b))(?=[\\s\\S]*\\b(main|master)\\b)",
-      "why": "Baseline gate: force-pushing main destroys shared history; RULES 9 pushes only clean, green states."
+      "why": "Baseline gate: force-pushing main destroys shared history; RULES 9 pushes only clean, green states.",
+      "allow": [
+        "git push origin main",
+        "git push --force origin feature/pattern-bridge"
+      ]
     },
     {
       "id": "no-rm-rf-outside-project",
       "deny": "rm\\s+(-\\w*[rf]\\w*\\s+)+(/(?!Users/damummyphus/damla_projects_2026/stitchu)\\S*|~(?!/damla_projects_2026/stitchu)\\S*|\\$HOME\\S*)",
-      "why": "Baseline gate: recursive delete outside the project tree is unrecoverable and never required by any law."
+      "why": "Baseline gate: recursive delete outside the project tree is unrecoverable and never required by any law.",
+      "allow": [
+        "rm -rf engine/build-forensic",
+        "rm -rf /Users/damummyphus/damla_projects_2026/stitchu/Logs/scratch"
+      ]
     },
     {
       "id": "no-hard-reset-shared-branch",
       "deny": "git\\s+reset\\s+--hard\\s+(origin/)?(main|master)\\b",
-      "why": "Baseline gate + RULES 9: a broken change is reverted via normal commits, not by rewriting shared branch state."
+      "why": "Baseline gate + RULES 9: a broken change is reverted via normal commits, not by rewriting shared branch state.",
+      "allow": [
+        "git reset --hard HEAD~1"
+      ]
     },
     {
       "id": "no-coauthor-in-commit",
       "deny": "git\\s+commit[\\s\\S]*co-authored-by",
-      "why": "ENV.md Deploy: lowercase english commit messages, no co-author tags."
+      "why": "ENV.md Deploy: lowercase english commit messages, no co-author tags.",
+      "allow": [
+        "git commit -m tighten the snap tolerance to 0.1mm"
+      ]
     },
     {
       "id": "no-wrangler-deploy",
       "deny": "wrangler\\s+(deploy|publish)\\b",
-      "why": "ENV.md Deploy: wrangler deploy is DAMLA'S step; the agent must never deploy or claim the worker is live."
+      "why": "ENV.md Deploy: wrangler deploy is DAMLA'S step; the agent must never deploy or claim the worker is live.",
+      "allow": [
+        "npx wrangler dev",
+        "wrangler tail --format pretty"
+      ]
     },
     {
       "id": "no-strategy-in-agent-context",
       "deny": "(cat|head|tail|less|more|bat)\\s+[^|;&]*STRATEGY\\.md",
-      "why": "CLAUDE.md + RULES.md: STRATEGY.md is never loaded into agent context (stale/contradictory strategy poisons the loop)."
+      "why": "CLAUDE.md + RULES.md: STRATEGY.md is never loaded into agent context (stale/contradictory strategy poisons the loop).",
+      "allow": [
+        "cat ROADMAP.md",
+        "head -40 RULES.md"
+      ]
     },
     {
       "id": "no-shell-edit-generated-html",
       "deny": "(sed\\s+-i|tee\\s)[^|;&]*web/[^\\s]*\\.html",
-      "why": "CLAUDE.md SEO: no hand-editing HTML — fix the generator (gen-*-pages.mjs) and regenerate everything."
+      "why": "CLAUDE.md SEO: no hand-editing HTML — fix the generator (gen-*-pages.mjs) and regenerate everything.",
+      "allow": [
+        "node engine/tools/gen-pattern-pages.mjs",
+        "sed -i s/v41/v43/ scripts/deploy.sh"
+      ]
+    },
+    {
+      "id": "ctest-tail-hides-verdict",
+      "deny": "^tail\\s+-(n\\s*)?[12]\\s*$",
+      "why": "tail -1/-2 clips the 'X% tests passed' verdict line, making green runs unreadable as pass/fail; use tail -5 or grep 'tests passed'. REPAIRED 2026-08-03: the old pattern was 'ctest[^|]*\\|\\s*tail\\s+-(n\\s*)?[12]\\b' and could never fire — rabadon matches each rule against a PARSED SEGMENT surface and a '|' is the segment boundary, so no surface ever contains one (measured: gate exit 0 on 'ctest --test-dir engine/build | tail -1'). The tail segment is judged alone, so the ctest context is not visible; the pattern therefore fires on a bare 'tail -1' with no file operand, which is the piped shape. 'tail -1 Logs/run.log' and 'tail -20' still pass.",
+      "authoredBy": "incident",
+      "incidentAt": "2026-07-28T00:07:24Z",
+      "allow": [
+        "tail -20",
+        "tail -5",
+        "tail -1 Logs/katalog-2026-08-05/run.log",
+        "ctest --test-dir engine/build --output-on-failure"
+      ]
+    },
+    {
+      "id": "no-git-add-never-push-dirs",
+      "deny": "git\\s+add\\b[^&|;]*(new_flats|benchmark-58|dataset/|engine/dist|patterns_real)",
+      "why": "new_flats, benchmark-58, dataset, engine/dist and patterns_real are copyrighted never-push sources (CLAUDE.md GİZLİLİK); explicitly adding them to the index must be blocked before it happens.",
+      "authoredBy": "incident",
+      "incidentAt": "2026-07-28T00:29:17Z",
+      "allow": [
+        "git add engine/src/bodice.cpp",
+        "git add knowledge/dial-seam-table.json"
+      ]
+    },
+    {
+      "id": "no-ctest-list-as-green",
+      "deny": "\\bctest\\b[^\\n]*(\\s-N(\\s|$)|--show-only)",
+      "why": "ctest -N / --show-only only LISTS tests and runs nothing; its exit code is 0 whatever the suite does, so it is never a pass/fail signal — run the real suite. REPAIRED 2026-08-03: the old pattern was 'ctest\\s+-N\\b.*grep\\s+-c' and could never fire, because it needed the pipe and the parsed surface splits on it (measured: gate exit 0 on 'ctest -N | grep -c Test'). The dry run is now refused on its own segment, where it is visible.",
+      "authoredBy": "incident",
+      "incidentAt": "2026-07-28T10:03:30Z",
+      "allow": [
+        "ctest --test-dir engine/build --output-on-failure",
+        "ctest --test-dir engine/build -j8",
+        "ctest --test-dir engine/build -R locket_check --output-on-failure"
+      ]
+    },
+    {
+      "id": "no-blanket-add-stitchu",
+      "deny": "git\\s+add\\s+(-A|--all|\\.)(\\s|$)",
+      "why": "Repo holds untracked unignored dirs (Logs/, patterns_real additions) that must never be staged wholesale, and other Claude sessions write in this tree; explicit-path git add stays allowed.",
+      "authoredBy": "incident",
+      "incidentAt": "2026-07-31T23:41:05Z",
+      "allow": [
+        "git add engine/pattern-bridge/walk.py",
+        "git add .rabadon/guard.json"
+      ]
     }
   ],
   "protectedPaths": [
     {
       "id": "golden-reference",
       "match": "engine/golden-reference\\.csv$",
-      "why": "RULES 4: golden diff stays byte-identical when features are off; the golden is a reference, not a thing to edit into passing."
+      "why": "RULES 4: golden diff stays byte-identical when features are off; the golden is a reference, not a thing to edit into passing.",
+      "allow": [
+        "engine/golden-diff.py",
+        "engine/tests/golden_check.sh"
+      ]
     },
     {
       "id": "generated-web-html",
       "match": "web/(patterns|collections|styles|guide|blog)/.*\\.html$",
-      "why": "CLAUDE.md SEO: 'Elle HTML düzenleme YOK' — THESE dirs are produced by gen-pattern-pages.mjs / gen-collection-pattern.mjs / gen-style-pages.mjs / gen-guide.mjs; change the generator. Root pages (index/create/closet/studio/...) are hand-written and hand-edited (scoped 2026-07-28: the old web/.*html match blocked legitimate root-page work)."
+      "why": "CLAUDE.md SEO: 'Elle HTML düzenleme YOK' — THESE dirs are produced by gen-pattern-pages.mjs / gen-collection-pattern.mjs / gen-style-pages.mjs / gen-guide.mjs; change the generator. Root pages (index/create/closet/studio/...) are hand-written and hand-edited (scoped 2026-07-28: the old web/.*html match blocked legitimate root-page work).",
+      "allow": [
+        "web/index.html",
+        "web/js/create.js",
+        "engine/tools/gen-pattern-pages.mjs"
+      ]
     },
     {
       "id": "generated-sitemap-robots",
       "match": "web/(sitemap\\.xml|robots\\.txt)$",
-      "why": "CLAUDE.md SEO: sitemap+robots are emitted by the page generators, not hand-maintained."
+      "why": "CLAUDE.md SEO: sitemap+robots are emitted by the page generators, not hand-maintained.",
+      "allow": [
+        "web/index.html",
+        "scripts/deploy.sh"
+      ]
     },
     {
       "id": "strategy-md",
       "match": "STRATEGY\\.md$",
-      "why": "CLAUDE.md + RULES.md: STRATEGY.md is banned from agent context; an agent that cannot read it cannot legitimately write it."
+      "why": "CLAUDE.md + RULES.md: STRATEGY.md is banned from agent context; an agent that cannot read it cannot legitimately write it.",
+      "allow": [
+        "ROADMAP.md",
+        "RULES.md"
+      ]
     }
   ],
   "codePaths": [
     "engine/.*\\.(cpp|cc|h|hpp)$",
     "engine/.*\\.(mjs|js)$",
+    "engine/pattern-bridge/.*\\.py$",
+    "flatten-research/.*\\.py$",
     "web/js/.*\\.js$",
     "backend/.*\\.js$"
   ],
-  "testCommand": "\\bctest\\b",
+  "testPaths": [
+    "^engine/tests/.*\\.(cpp|hpp|mjs|sh)$",
+    "^engine/pattern-bridge/test_.*\\.py$",
+    "^engine-check/.*\\.(swift|sh)$"
+  ],
+  "testCommand": "\\bctest\\b(?![\\s\\S]*(\\s-N\\b|--show-only))",
   "testPassPattern": "100% tests passed,\\s*0 tests failed",
   "pushGate": {
     "why": "RULES 9: ctest must be fully green before any push; a change that breaks a test is reverted, not pushed.",
-    "testHint": "ctest (from engine/ build; engine-check harness = full draft matrix, must be FULLY green)"
+    "testHint": "cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure (engine-check harness = full draft matrix, must be FULLY green)"
   },
   "generatedBy": "rabadon guard (claude code cli)"
 }
