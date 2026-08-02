@@ -147,6 +147,11 @@ def _drive(words):
         'tries_allowed': rec['tries_allowed'],
         'why': rec.get('why'),
     }
+    # A cell whose audit crashed was NOT judged, and it is not a failure.
+    # Counted under its own name so the pass rate is over what was judged.
+    last = (rec.get('attempts') or [{}])[-1]
+    if 'NOT JUDGED' in (rec.get('why') or '') or 'crashed' in str(last):
+        row['not_judged'] = True
     if rec['ok']:
         g = rec['gate']
         row.update({
@@ -252,6 +257,8 @@ def main():
         'driven': driven,
         'not_reached': total - driven,
         'passed_gate0': passed,
+        'not_judged': sum(1 for line in manifest.read_text().splitlines()
+                          if line.strip() and json.loads(line).get('not_judged')),
         'tries_per_cell': args.tries,
         'stopped_on_clock': stopped,
         'minutes': round((time.time() - t0) / 60, 2),

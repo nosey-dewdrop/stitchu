@@ -492,10 +492,17 @@ def gate(out_dir):
         v['notches'] = int(n)
         v['notches_ok'] = bool(float(worst) < NOTCH_TOL_MM)
     except Exception as e:                      # noqa: BLE001
+        # THE AUDIT BROKE, NOT THE GARMENT, and those are different findings.
+        # This branch used to leave `why` reading like a verdict on the
+        # pattern, and 365 perfectly sewable cells were recorded as failures
+        # because the notch audit crashed on a stitch shape it did not expect.
+        # A tool error is carried under its own name from here on, so it can
+        # be counted apart and re-judged rather than buried in the fail pile.
         v['notch_worst_mm'] = None
         v['notches'] = 0
         v['notches_ok'] = False
-        v['notch_error'] = f'{type(e).__name__}: {e}'
+        v['tool_error'] = f'{type(e).__name__}: {e}'
+        v['notch_error'] = v['tool_error']
     v['ok'] = v['clean'] and v['fully_judged'] and v['notches_ok']
     if not v['ok']:
         v['why'] = _why(v)
@@ -517,8 +524,11 @@ def _why(v):
     if v['unscored']:
         why.append(f"{v['unscored']} unscored gather(s)")
     if not v.get('notches_ok') and not v.get('notch_skipped'):
-        why.append(v.get('notch_error') or
-                   f"notch diff {v.get('notch_worst_mm')}mm")
+        if v.get('tool_error'):
+            why.append(f"NOT JUDGED, the notch audit crashed: "
+                       f"{v['tool_error']}")
+        else:
+            why.append(f"notch diff {v.get('notch_worst_mm')}mm")
     return '; '.join(why) or 'gate 0 not satisfied'
 
 
