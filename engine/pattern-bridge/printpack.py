@@ -470,11 +470,17 @@ def build_notches(pattern, geos):
     # GarmentCode emits panels/stitches in nondeterministic order (measured
     # 2026-08-01: two runs, identical geometry, shuffled dicts). Everything
     # here iterates in canonical order so the print pack is byte-stable.
+    # A stitch is two sides and, when the generator wants the right side of
+    # one piece against the WRONG side of the other, a third entry that is a
+    # bare string (connector.py:173). Iterating all three asked a string for
+    # its 'panel' and took the whole print pack down with a TypeError, on
+    # every lapel in the vocabulary, 38 of the first 384 cells driven. The
+    # seam walk never saw it because it reads stitch[0] and stitch[1] by hand.
     stitches = sorted(pattern['stitches'],
                       key=lambda s: sorted((e['panel'], e['edge'])
-                                           for e in s))
+                                           for e in s[:2]))
     for stitch in stitches:
-        sa, sb = sorted(stitch, key=lambda e: (e['panel'], e['edge']))
+        sa, sb = sorted(stitch[:2], key=lambda e: (e['panel'], e['edge']))
         if sa['panel'] == sb['panel']:
             darts += 1  # dart: marked by its wedge, not notched
             continue

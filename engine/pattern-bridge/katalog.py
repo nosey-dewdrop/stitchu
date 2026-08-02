@@ -279,7 +279,7 @@ def main():
     sheets = root / 'kontakt'
     shown = kept
     if args.pages:
-        per = 80
+        per = 8 * 7          # same grid contact_pages lays out
         shown = kept[:args.pages * per]
         if len(shown) < len(kept):
             print(f'  contact sheets capped at {args.pages} pages: '
