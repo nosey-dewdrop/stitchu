@@ -1,0 +1,125 @@
+diff --git a/pygarment/garmentcode/connector.py b/pygarment/garmentcode/connector.py
+index 626d44e..84e3541 100644
+--- a/pygarment/garmentcode/connector.py
++++ b/pygarment/garmentcode/connector.py
+@@ -7,7 +7,19 @@ from pygarment.garmentcode.utils import close_enough
+ class StitchingRule:
+     """High-level stitching instructions connecting two component interfaces
+     """
+-    def __init__(self, int1: Interface, int2: Interface, 
++
++    # stitchu: how far apart two vertices may be, in cm, and still be called
++    # the same vertex when two interfaces are matched. 0.1mm, an order below
++    # the 0.79375mm (1/32") production standard the seams are judged against.
++    SNAP_CM = 0.01
++
++    # stitchu: how far two panel joints, one on each side of a stitch, may
++    # already disagree and still be treated as the same joint and held fixed.
++    # Relative, because this one is a question about correspondence, not about
++    # cutting.
++    ANCHOR_REL = 1e-2
++
++    def __init__(self, int1: Interface, int2: Interface,
+                  verbose: bool = False) -> None:
+         """
+         Inputs:
+@@ -61,9 +73,96 @@ class StitchingRule:
+         frac2 = self.int2.projecting_fractions()
+         min_frac = min(min(frac1), min(frac2))  # projection tolerance should not be larger than the smallest fraction
+ 
+-        self._match_to_fractions(self.int1, frac2, tol=min(1e-2, min_frac / 2))
+-
+-        self._match_to_fractions(self.int2, frac1, tol=min(1e-2, min_frac / 2))
++        # stitchu 2026-08-05: the projection tolerance decides when a vertex on
++        # one side is taken to BE a vertex on the other. It was purely
++        # relative: 1e-2 of a 72.6cm waist is 7.3mm, nine times the 0.79mm the
++        # finished pattern is then measured against. Every vertex pair inside
++        # that window was welded together and the length difference it carried
++        # was dropped onto whichever segment the one-directional walk was
++        # standing in, instead of being shared. A 2.9mm waist mismatch came out
++        # as a 1.5mm gap on one side of the dart and nothing on the other, and
++        # the two halves of the same garment stopped being mirrors.
++        # Bounding it in LENGTH means a snap can never move a vertex further
++        # than the stitch itself is allowed to be wrong.
++        len1 = self.int1.projecting_lengths().sum()
++        len2 = self.int2.projecting_lengths().sum()
++        rel = min(1e-2, min_frac / 2)
++
++        # stitchu 2026-08-05, second correction. Matching by fraction of the
++        # WHOLE interface lets a local disagreement move every seam on the
++        # garment. A fitted bodice and a pair of trousers agree about the front
++        # waist to 0.0000mm and disagree about the back by 1.4734mm per side;
++        # because the front is a slightly different share of 726.28mm than it
++        # is of 723.34mm, the walk lands the front panel joint 0.7984mm off and
++        # cuts a sliver out of a seam that was already exact. The panel joints
++        # are the anchors a patternmaker actually sews to, a front sews to a
++        # front, so they are held fixed and each side's proportions are applied
++        # only WITHIN its own panel. The error then stays where it is produced
++        # and, since the panel runs come in mirrored pairs, the subdivision
++        # comes out mirrored too.
++        anchored1, anchored2 = self._anchor_by_panel(frac1, frac2)
++
++        self._match_to_fractions(
++            self.int1, anchored1, tol=min(rel, self.SNAP_CM / max(len1, 1e-9)))
++
++        self._match_to_fractions(
++            self.int2, anchored2, tol=min(rel, self.SNAP_CM / max(len2, 1e-9)))
++
++    @staticmethod
++    def _panel_runs(inter):
++        """Index spans of consecutive edges that belong to one panel."""
++        runs, start = [], 0
++        n = len(inter.edges)
++        for i in range(1, n + 1):
++            if i == n or inter.panel[i] is not inter.panel[i - 1]:
++                runs.append((start, i))
++                start = i
++        return runs
++
++    def _anchor_by_panel(self, frac1, frac2):
++        """Re-express each side's target fractions panel run by panel run.
++
++        Returns (to_add_for_int1, to_add_for_int2). Falls back to the plain
++        global fractions when the two interfaces do not present the same number
++        of panel runs, since then there is no correspondence to anchor on.
++
++        Equal run counts alone are not enough. A four panel skirt of four equal
++        180.83mm panels also presents four runs against the bodice's
++        195.99 / 195.99 / 167.15 / 167.15, and its joints are nowhere near the
++        bodice's side seams; holding them fixed would sew a 195.99mm run to a
++        180.83mm one and put 9.18mm of error into ten seams. So the joints must
++        already agree before they are held: every run boundary has to land
++        within 1% of the interface on both sides. That 1% is the generator's
++        own original notion of nearness, which is far too coarse to CUT with
++        and exactly right for asking whether two joints are the same joint.
++        The trouser waist boundaries disagree by at most 0.22%, the four panel
++        skirt by 3.97%.
++        """
++        runs1 = self._panel_runs(self.int1)
++        runs2 = self._panel_runs(self.int2)
++        if len(runs1) != len(runs2):
++            return frac2, frac1
++
++        cum1 = np.cumsum([float(sum(frac1[a:b])) for a, b in runs1])
++        cum2 = np.cumsum([float(sum(frac2[a:b])) for a, b in runs2])
++        if np.abs(cum1 - cum2).max() > self.ANCHOR_REL:
++            return frac2, frac1
++
++        def project(src, src_runs, dst, dst_runs):
++            out = []
++            for (a, b), (c, d) in zip(src_runs, dst_runs):
++                share = float(sum(dst[c:d]))          # the run keeps its size
++                local = src[a:b]
++                total = float(sum(local))
++                if total <= 0:
++                    out.extend([0.0] * (b - a))
++                    continue
++                out.extend([float(f) / total * share for f in local])
++            return np.array(out)
++
++        # int1 is subdivided at int2's proportions, run by run, and vice versa.
++        return (project(frac2, runs2, frac1, runs1),
++                project(frac1, runs1, frac2, runs2))
+ 
+ 
+     def _match_to_fractions(self, inter:Interface, to_add, tol=1e-2):
