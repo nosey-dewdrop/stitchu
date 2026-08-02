@@ -16,6 +16,7 @@
 # ============================================================================
 import argparse
 import json
+import subprocess
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -69,6 +70,17 @@ def main():
 
     root = Path(args.root).resolve()
     manifest = root / 'cells.jsonl'
+
+    # This rewrites a file that matrix.py holds open in append mode. Doing
+    # both at once races: lines appended between the read and the write are
+    # dropped, and the only reason the first run survived it was luck. The
+    # driver has to be finished before the verdicts are rewritten.
+    running = subprocess.run(['pgrep', '-f', 'pattern-bridge/matrix.py'],
+                             capture_output=True, text=True)
+    if running.stdout.strip():
+        sys.exit('matrix.py is still driving cells into this manifest; '
+                 'rewriting it now would drop the rows it appends. '
+                 'Wait for it to finish.')
     rows = [json.loads(l) for l in manifest.read_text().splitlines()
             if l.strip()]
     todo = [i for i, r in enumerate(rows) if needs_rejudging(r, args.all)]
