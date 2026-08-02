@@ -155,6 +155,23 @@ PLAIN = {
     'sleeve.armhole_shape': 'ArmholeCurve',
     'sleeve.cuff.type': None,
     'left.enable_asym': False,
+    # THE ONE DIAL THIS FILE MOVES OFF THE FILE DEFAULT, and it is moved
+    # because it was measured, not because it looked better.
+    #
+    # At the shipped default of 0.2 the fitted bodice cannot be sewn AT ALL.
+    # The front and back underarm side seams disagree by 2.99mm at EU38, and
+    # the mismatch is a property of the armhole cut rather than of any other
+    # dial: length, width and flare were swept and it stayed at 2.9921mm to
+    # four decimals on every one of them, while over the sizes EU34 to EU48 it
+    # ran 2.52, 2.77, 2.99, 3.17, 3.30, 3.37, 3.37, 3.30mm. Every one of 272
+    # fitted-top cells in the first matrix probe failed, 0 passes.
+    #
+    # The armhole connecting width closes it monotonically, 4.06mm at 0.0,
+    # 2.99 at 0.2, 1.92 at 0.4, 1.35 at 0.6, and the seam trues between 0.610
+    # and 0.615, bisected. 0.7 sits above the threshold with room, and the
+    # armhole it draws is a deeper scoop than the default stub, which was
+    # rendered and looked at rather than assumed.
+    'sleeve.connecting_width': 0.7,
 }
 
 TOP = 'FittedShirt'
@@ -381,6 +398,20 @@ def notch_check(spec_path):
     return worst, len(records)
 
 
+def _off(pair):
+    """One pair's distance from its own rule, in mm."""
+    d = pair.get('detail') or {}
+    for key in ('dev_mm', 'gather_dev_mm'):
+        if key in d:
+            return abs(float(d[key]))
+    # A shoulder or an armhole group that passed is inside its band by
+    # definition, and its raw inequality is the ease, not an error.
+    if pair.get('status') in ('PASS', 'GATHERED-PASS') and \
+            pair.get('kind') in ('shoulder', 'armhole-cap'):
+        return 0.0
+    return abs(float(pair.get('diff_mm', 0.0)))
+
+
 def _py(x):
     """numpy scalars out of the walk report, so a verdict is JSON."""
     if hasattr(x, 'item'):
@@ -414,6 +445,12 @@ def gate(out_dir):
         'pass': b.get('PASS', 0),
         'gathered': b.get('GATHERED-PASS', 0),
         'max_diff_mm': s['max_diff_mm'],
+        # How far the worst pair sits from what it was SUPPOSED to be, which
+        # is not the same as how unequal it is. A skirt gathered onto a
+        # waistband at 1.3 is 12mm unequal and 0.0mm wrong, and printing the
+        # 12mm beside a passing square reads as a fault that is not there.
+        'worst_off_mm': round(float(max(
+            (_off(p) for p in rep['pairs']), default=0.0)), 4),
         'not_closed': s['panels_not_closed'],
         'self_intersecting': s['panels_self_intersecting'],
         'mirror_panel': s['mirror_panel_faults'],

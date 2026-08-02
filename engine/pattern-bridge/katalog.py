@@ -141,7 +141,7 @@ def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
             for j, line in enumerate(_wrap(caption, 34)[:2]):
                 d.text((cx + 8, cy + ch + 5 + j * 19), line,
                        font=font(16), fill=INK)
-            note = f"{r['pairs']} dikis  en kotu {r['worst_seam_mm']:.2f}mm"
+            note = f"{r['pairs']} dikis  sapma {r.get('worst_off_mm', r['worst_seam_mm']):.2f}mm"
             if r['cell'] in odd_cells:
                 note += '   AYRILDI'
             d.text((cx + 8, cy + ch + 5 + 40), note, font=font(14),

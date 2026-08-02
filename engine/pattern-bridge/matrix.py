@@ -153,6 +153,7 @@ def _drive(words):
             'dir': str(Path(rec['dir']).relative_to(_W['root'])),
             'pairs': g['pairs'], 'gathered': g['gathered'],
             'worst_seam_mm': g['max_diff_mm'],
+            'worst_off_mm': g['worst_off_mm'],
             'notches': g['notches'],
             'notch_worst_mm': g['notch_worst_mm'],
         })

@@ -22,6 +22,7 @@
 import argparse
 import copy
 import datetime
+import hashlib
 import io
 import json
 import random
@@ -90,15 +91,24 @@ def search_cell(cell_id, base_design, root, body_file, tries, tree, dials,
     for k in range(tries):
         out = Path(root) / slug / f'try{k:02d}'
         design = attempt_design(base_design, tree, dials, cell_id, k)
-        # Every attempt is a pure function of (cell, k), so a reading already
-        # on disk is the same reading; a rerun re-judges instead of redrawing.
+        # A rerun re-judges instead of redrawing, but only when what is on
+        # disk is the SAME reading. The design is hashed and stored beside it,
+        # so changing a plain value invalidates the cache instead of silently
+        # judging last night's garment under this night's name.
+        digest = hashlib.sha256(
+            json.dumps(design, sort_keys=True, default=str).encode()
+        ).hexdigest()
+        stamp = out / 'reading.sha256'
         if (list(out.glob('*_specification.json'))
-                and (out / 'stitch-intent.json').exists()):
+                and (out / 'stitch-intent.json').exists()
+                and stamp.exists() and stamp.read_text().strip() == digest):
             err = None
         else:
             err = atlas.generate_batch(
                 [{'id': cell_id, 'design': design, 'out': str(out)}],
                 root, body_file)[cell_id]
+            if not err:
+                stamp.write_text(digest)
         if err:
             tried.append({'try': k, 'ok': False, 'why': f'generator: {err}'})
             continue
@@ -204,7 +214,7 @@ def gallery(records, out_png, date_str, cols=6):
         if r['ok']:
             g = r['gate']
             d.text((cx + 16, ly + 62),
-                   f"{g['pairs']} seams  worst {g['max_diff_mm']:.2f}mm  "
+                   f"{g['pairs']} seams  {g['gathered']} gathered  off by {g['worst_off_mm']:.2f}mm  "
                    f"try {r['try'] + 1}/{r['tries_allowed']}",
                    font=font(19), fill=GREY)
     page.save(out_png)
