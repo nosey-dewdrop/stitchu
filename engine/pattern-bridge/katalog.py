@@ -103,7 +103,10 @@ def _one_thumb(job):
 def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
                   jobs=4, odd_cells=(), prefix='kontakt'):
     """Contact sheets, paged. Returns the list of page paths."""
-    cw, ch, cap = 330, 270, 58
+    # Three caption lines, not two. At two the last two words of the
+    # sentence fell off the bottom and two different garments carried the
+    # same label, which is the one thing a contact sheet must not do.
+    cw, ch, cap = 330, 270, 80
     per = cols * rows_per
     pages = []
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -138,13 +141,13 @@ def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
                 page.paste(im, (cx + (cw - im.width) // 2,
                                 cy + (ch - im.height) // 2))
             caption = cell_caption(r)
-            for j, line in enumerate(_wrap(caption, 34)[:2]):
+            for j, line in enumerate(_wrap(caption, 36)[:3]):
                 d.text((cx + 8, cy + ch + 5 + j * 19), line,
                        font=font(16), fill=INK)
             note = f"{r['pairs']} dikis  sapma {r.get('worst_off_mm', r['worst_seam_mm']):.2f}mm"
             if r['cell'] in odd_cells:
                 note += '   AYRILDI'
-            d.text((cx + 8, cy + ch + 5 + 40), note, font=font(14),
+            d.text((cx + 8, cy + ch + 5 + 59), note, font=font(14),
                    fill=(150, 40, 30) if r['cell'] in odd_cells else GREY)
         path = (out_dir / f'{prefix}.png' if prefix != 'kontakt'
                 else out_dir / f'kontakt-{pno + 1:03d}.png')
