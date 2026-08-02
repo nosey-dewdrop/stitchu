@@ -101,7 +101,7 @@ def _one_thumb(job):
 
 
 def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
-                  jobs=4, odd_cells=()):
+                  jobs=4, odd_cells=(), prefix='kontakt'):
     """Contact sheets, paged. Returns the list of page paths."""
     cw, ch, cap = 330, 270, 58
     per = cols * rows_per
@@ -146,7 +146,8 @@ def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
                 note += '   AYRILDI'
             d.text((cx + 8, cy + ch + 5 + 40), note, font=font(14),
                    fill=(150, 40, 30) if r['cell'] in odd_cells else GREY)
-        path = out_dir / f'kontakt-{pno + 1:03d}.png'
+        path = (out_dir / f'{prefix}.png' if prefix != 'kontakt'
+                else out_dir / f'kontakt-{pno + 1:03d}.png')
         page.save(path)
         pages.append(path)
         print(f'  {path}  ({len(chunk)} squares)')
@@ -276,7 +277,25 @@ def main():
         print(f'{len(odd)} of {len(kept)} carry a piece that cannot be cut '
               f'or worn at this size; listed apart, not removed')
 
+    # PAGE ZERO. A hundred and fifty contact sheets is a filing cabinet, not a
+    # look. This is ONE page holding one garment from every combination of
+    # top, bottom and waistband there is, so the range is visible before the
+    # depth. The pick inside each group is the first by name, which is
+    # arbitrary and is stated as such; the page is coverage, not taste.
     sheets = root / 'kontakt'
+    seen_groups, overview = set(), []
+    for r in kept:
+        key = (r['words']['meta.upper'], r['words']['meta.bottom'],
+               r['words']['meta.wb'])
+        if key not in seen_groups:
+            seen_groups.add(key)
+            overview.append(r)
+    if overview:
+        contact_pages(overview, root, sheets, date_str, jobs=args.jobs,
+                      odd_cells=odd_cells, prefix='kontakt-000-genel')
+        print(f'  overview: {len(overview)} groups of top x bottom x '
+              f'waistband, one garment each')
+
     shown = kept
     if args.pages:
         per = 8 * 7          # same grid contact_pages lays out
