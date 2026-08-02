@@ -172,6 +172,18 @@ PLAIN = {
     # armhole it draws is a deeper scoop than the default stub, which was
     # rendered and looked at rather than assumed.
     'sleeve.connecting_width': 0.7,
+    # THE SECOND, and for a different reason: at the file default of one level
+    # the tiered skirt draws NO tier, so the word would be shown by a garment
+    # that does not contain it. Two is the smallest reading in which the word
+    # is present, and it passes wherever one level passes, checked across ten
+    # combinations of top and waistband.
+    #
+    # The tier GATHER stays off, and that is a measurement rather than a
+    # preference. With level_ruffle at 1.5 the tier seam misses by 244.12mm at
+    # one level, 366.18 at two, 549.27 at three, each exactly 1.5 times the
+    # last, because the ratio is multiplied into the next level's body waist
+    # and never reaches the edge (skirt_levels.py:41).
+    'levels-skirt.num_levels': 2,
 }
 
 TOP = 'FittedShirt'
