@@ -73,6 +73,37 @@ root = Path(sys.argv[1])
 seeds = [int(x) for x in sys.argv[2:]]
 sampler = pyg.DesignSampler({design!r})
 
+
+def _coeff(intf, i):
+    for r in intf.ruffle:
+        if r['sec'][0] <= i < r['sec'][1]:
+            return float(r['coeff'])
+    return 1.0
+
+
+def stitch_intent(piece):
+    # The ratio the generator INTENDS for each stitch, coeff_a / coeff_b.
+    # See the block above load_stitch_intent() in walk.py for why this is
+    # read here rather than derived from the design tree.
+    rows = []
+
+    def collect(c):
+        if hasattr(c, '_get_subcomponents'):
+            for s in c._get_subcomponents():
+                collect(s)
+        for rule in getattr(getattr(c, 'stitching_rules', None), 'rules', []):
+            i1, i2 = rule.int1, rule.int2
+            for i in range(min(len(i1.edges), len(i2.edges))):
+                rows.append({{
+                    'a': {{'panel': i1.panel[i].name,
+                          'edge': i1.edges[i].geometric_id}},
+                    'b': {{'panel': i2.panel[i].name,
+                          'edge': i2.edges[i].geometric_id}},
+                    'ruffle_a': _coeff(i1, i), 'ruffle_b': _coeff(i2, i),
+                }})
+    collect(piece)
+    return rows
+
 for seed in seeds:
     out = root / ('sample-%04d' % seed)
     try:
@@ -88,6 +119,8 @@ for seed in seeds:
         pattern = piece.assembly()
         out.mkdir(parents=True, exist_ok=True)
         pattern.serialize(str(out), to_subfolder=False, tag='')
+        with open(out / 'stitch-intent.json', 'w') as f:
+            json.dump(stitch_intent(piece), f)
         with open(out / 'design.yaml', 'w') as f:
             yaml.dump({{'design': design}}, f)
         with open(out / 'generator-verdict.json', 'w') as f:

@@ -297,7 +297,68 @@ def match_declared_ratio(len_a, len_b, ratios, tol, names=None):
 # ---------------------------------------------------------------------------
 # Judging one pair, once its kind is known.
 # ---------------------------------------------------------------------------
-def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios):
+# ---------------------------------------------------------------------------
+# THE GENERATOR'S OWN BOOKKEEPING, read instead of guessed.
+#
+# Every interface in GarmentCode carries a ruffle coefficient, and two
+# interfaces are matched by their PROJECTED length, len / coeff
+# (interface.py:104, projecting_edges extends by 1/coeff). So the length ratio
+# the generator INTENDS for a stitch is coeff_a / coeff_b, exactly, per seam.
+#
+# This replaces reading a ratio out of the design tree and hoping it lands on
+# the edge. It never did: `skirt.ruffle` multiplies a BODY measurement into a
+# panel edge, and the piece on the other side of the seam was drafted from a
+# different one, which is why 1708 pairs came back GATHERED-UNSCORED on the
+# 500-design corpus of 2026-08-03. The coefficient on the interface is the
+# ratio AFTER the generator has done that arithmetic, so there is nothing left
+# to derive. It is not written into the specification file, so it is captured
+# at generation time into `stitch-intent.json` next to the spec (atlas.py).
+#
+# It cuts both ways. A pair the design tree called gathered but that the
+# generator built at 1:1 is no longer excused, and a pair with no ratio
+# anywhere in the design tree can still be declared unequal by the piece that
+# owns it. Read the deed, not the wish.
+# ---------------------------------------------------------------------------
+def load_stitch_intent(spec_path):
+    """{(panel_a, edge_a), (panel_b, edge_b): (coeff_a, coeff_b)} or {}."""
+    path = Path(spec_path).parent / 'stitch-intent.json'
+    if not path.exists():
+        return {}
+    intent = {}
+    for row in json.loads(path.read_text()):
+        a, b = row['a'], row['b']
+        ka, kb = (a['panel'], a['edge']), (b['panel'], b['edge'])
+        ra, rb = float(row['ruffle_a']), float(row['ruffle_b'])
+        intent[(ka, kb)] = (ra, rb)
+        intent[(kb, ka)] = (rb, ra)
+    return intent
+
+
+def judge_by_intent(la, lb, ra, rb):
+    """Judge a pair against the ratio the generator built into it."""
+    if ra <= 0 or rb <= 0:
+        return None
+    expected_lb = la * rb / ra
+    dev = abs(lb - expected_lb)
+    ratio = rb / ra
+    even = abs(ratio - 1.0) < 1e-6
+    detail = {
+        'rule': ('equal within 0.79375mm (1/32 inch, production standard)'
+                 if even else
+                 f'the generator gathers this pair at {ratio:.4f} (interface '
+                 f'coefficients {ra:.4f} / {rb:.4f}), and the two measured '
+                 f'sides must sit on that ratio'),
+        'expected_ratio': round(ratio, 6),
+        'measured_ratio': round(lb / la, 6) if la else None,
+        'declared_by': 'generator interface coefficients',
+        'dev_mm': round(dev, 4),
+    }
+    if dev > TOL_MM:
+        return 'FAIL', detail
+    return ('PASS' if even else 'GATHERED-PASS'), detail
+
+
+def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios, intent=None):
     """Returns (status, detail). Armhole/cap pairs are deferred: cap ease is a
     property of the whole armhole, not of one of the three seams that make it
     up, so those are judged as a group after this pass."""
@@ -321,8 +382,14 @@ def _judge_pair(kind, entry, panels, sa, sb, la, lb, ratios):
             'rule': 'no rule applied: the kind of this seam was not established',
         }
 
-    # Every remaining kind is an equality seam, unless the design declared a
-    # gather that this pair's inequality matches.
+    # Every remaining kind is an equality seam, unless a gather was declared.
+    # When the generator's own coefficients for this pair are on hand they are
+    # the declaration, and they are exact, so nothing else is consulted.
+    if intent is not None:
+        verdict = judge_by_intent(la, lb, *intent)
+        if verdict is not None:
+            return verdict
+
     status, detail = seamrules.judge_equal(la, lb)
     if status == seamrules.PASS:
         return status, detail
@@ -435,6 +502,7 @@ def walk(spec_path, design_path=None):
             loaded = yaml.safe_load(f)
         design = loaded.get('design', loaded)
     ratios = gather_ratios(design)
+    intents = load_stitch_intent(spec_path)
 
     shoulder_h = seamrules.shoulder_reference_height(panels, stitches)
 
@@ -457,8 +525,12 @@ def walk(spec_path, design_path=None):
             'kind': kind,
             'kind_evidence': why,
         }
+        intent = intents.get(((sa['panel'], sa['edge']),
+                              (sb['panel'], sb['edge'])))
         status, detail = _judge_pair(kind, entry, panels, sa, sb, la, lb,
-                                     ratios)
+                                     ratios, intent)
+        if intent is not None:
+            entry['intent_ratio'] = round(intent[1] / intent[0], 6)
         entry['status'] = status
         entry['detail'] = detail
         pairs.append(entry)
@@ -496,6 +568,7 @@ def walk(spec_path, design_path=None):
         'tolerance_mm': TOL_MM,
         'tolerance_source': "1/32 inch, the production patternmaker's standard",
         'gather_ratios': ratios,
+        'stitch_intent_pairs': len(intents) // 2,
         'shoulder_reference_height_cm': (round(shoulder_h, 3)
                                          if shoulder_h is not None else None),
         'asymmetry_declared': asym,
