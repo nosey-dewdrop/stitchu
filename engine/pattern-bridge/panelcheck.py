@@ -1,3 +1,5 @@
+import cutplan
+
 # ============================================================================
 # panelcheck.py — the checks that are about ONE PIECE, or about a piece and
 # its mirror, rather than about a pair of edges being sewn together.
@@ -257,13 +259,30 @@ def _best_alignment(lens_a, lens_b):
     return best
 
 
-def check_mirror_symmetry(panels, edge_length_mm, mirror_name):
-    """Every panel that has a mirror is compared to it, edge by edge.
+def check_mirror_symmetry(panels, edge_length_mm, mirror_name,
+                          segments_for=None):
+    """Every panel that has a mirror is compared to it.
 
-    A mirrored pair must carry the same number of edges and the same length
-    on each, because the difference between the two sides of a symmetric
-    garment is zero by construction, not by tolerance. The production
-    tolerance is still applied, so sampling noise does not raise a fault.
+    The difference between the two sides of a symmetric garment is zero by
+    construction, not by tolerance. What that zero is measured ON matters
+    more than the tolerance around it.
+
+    This audit used to compare the two EDGE LENGTH SEQUENCES. That reads a
+    fault the cloth does not have, and it did: on a fitted shirt over a
+    many-panelled skirt it reported 89.9209mm between the two front bodices.
+    Both panels carry 13 edges and the same 1647.7872mm perimeter, but the
+    generator splits them in different places — the left writes 89.921 plus
+    28.838 where the right writes one 118.759, and the right writes 62.813
+    plus 14.419 where the left writes one 77.231. Equal counts, different
+    partition, so a sequence comparison lines up the wrong edges. Walked as
+    an OUTLINE the same two panels differ by 0.0000mm.
+
+    So when `segments_for` is supplied the verdict comes from the outline:
+    resampled at equal arc length, reflected, landed on the other over every
+    rotation and both directions. The edge table is still reported, as the
+    detail of where the two panels are written differently, but it no longer
+    decides. Without `segments_for` the old sequence comparison stands, so
+    callers that have no curves keep working.
     """
     results = []
     seen = set()
@@ -279,6 +298,29 @@ def check_mirror_symmetry(panels, edge_length_mm, mirror_name):
         a, b = panels[key[0]], panels[key[1]]
         lens_a = [edge_length_mm(a, e) for e in a['edges']]
         lens_b = [edge_length_mm(b, e) for e in b['edges']]
+
+        if segments_for is not None:
+            worst_mm = 10.0 * cutplan.shape_distance_cm(
+                cutplan.Loop(segments_for(a)), cutplan.Loop(segments_for(b)),
+                reflect_a=True)
+            split = (len(lens_a) != len(lens_b)
+                     or abs(sum(lens_a) - sum(lens_b)) > TOL_MIRROR_MM)
+            results.append({
+                'pair': list(key),
+                'status': 'PASS' if worst_mm <= TOL_MIRROR_MM else 'FAIL',
+                'worst_diff_mm': round(worst_mm, 4),
+                'measured_on': 'outline',
+                'reason': f'the outlines differ by {worst_mm:.4f}mm once the '
+                          f'traversal offset and direction are removed'
+                          + ('; the two panels are written with a different '
+                             'edge split, which the edge table shows and the '
+                             'outline does not care about' if not split and
+                             len(lens_a) == len(lens_b) else ''),
+                'edges': [],
+                'edge_counts': [len(lens_a), len(lens_b)],
+                'perimeter_diff_mm': round(abs(sum(lens_a) - sum(lens_b)), 4),
+            })
+            continue
 
         if len(lens_a) != len(lens_b):
             # Different edge counts are a difference in how the outline was

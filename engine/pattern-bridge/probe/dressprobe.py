@@ -99,12 +99,20 @@ def main():
         print(f"{head:38s} {'OK' if r['ok'] else 'FAIL'}  "
               f"mirror_panel={r['mirror_panel']} mirror_seam={r['mirror_seam']} "
               f"seam_fail={r['fail']}  worst={r['max_diff_mm']:.4f}mm")
+        # A pair can fail BEFORE it is classified, and then kind and the two
+        # lengths are all None. Formatting them crashed the printout halfway
+        # down a failing run, which loses exactly the rows worth reading.
+        def num(v, fmt):
+            return format(v, fmt) if isinstance(v, (int, float)) else '   ?  '
+
         for f in r['failing'][:6]:
-            print(f"    {f['kind']:22s} {f['a']} | {f['b']}  "
-                  f"{f['len_a']:.2f} vs {f['len_b']:.2f}  {f['diff']:+.4f}mm")
+            print(f"    {str(f['kind'] or 'unclassified'):22s} "
+                  f"{f['a']} | {f['b']}  "
+                  f"{num(f['len_a'], '.2f')} vs {num(f['len_b'], '.2f')}  "
+                  f"{num(f['diff'], '+.4f')}mm")
         for m in r['mirror_seam_faults'][:6]:
             print(f"    mirror {m.get('seam')} ~ {m.get('mirror')}  "
-                  f"{m.get('mirror_diff_mm'):+.4f}mm")
+                  f"{num(m.get('mirror_diff_mm'), '+.4f')}mm")
     if a.json:
         print(json.dumps(rows, indent=1, default=str))
 

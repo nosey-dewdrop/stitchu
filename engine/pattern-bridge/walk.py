@@ -548,8 +548,12 @@ def walk(spec_path, design_path=None):
     if asym:
         mirror_panels, mirror_seams = [], []
     else:
+        def _segments_for(panel):
+            return [edge_curve(panel['vertices'], e) for e in panel['edges']]
+
         mirror_panels = panelcheck.check_mirror_symmetry(
-            panels, edge_length_mm, seamrules.mirror_name)
+            panels, edge_length_mm, seamrules.mirror_name,
+            segments_for=_segments_for)
         mirror_seams = panelcheck.check_stitch_mirror_symmetry(
             panels, stitches, edge_length_mm, seamrules.mirror_name)
 

@@ -57,9 +57,10 @@ class Loop:
     at all.
     """
 
-    def __init__(self, geo, step_cm=TABLE_STEP_CM):
+    def __init__(self, segs, step_cm=TABLE_STEP_CM):
+        segs = getattr(segs, 'segs', segs)      # a PanelGeo or a bare list
         pts = []
-        for seg in geo.segs:
+        for seg in segs:
             k = max(2, int(math.ceil(seg.length() / step_cm)))
             pts.extend(seg.point(i / k) for i in range(k))   # endpoint = next
         p = np.array([[q.real, q.imag] for q in pts], dtype=float)
