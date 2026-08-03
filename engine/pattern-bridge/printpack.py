@@ -49,6 +49,8 @@ sys.path.insert(0, str(HERE))
 import walk as walklib  # noqa: E402  (edge_curve: spec edge -> svgpathtools segment)
 import cutplan             # noqa: E402  (cut counts, measured off the outlines)
 import seamrules           # noqa: E402  (roles, and the name a person reads)
+import packpages           # noqa: E402  (cloth layout and the yardage it measures)
+import mapping             # noqa: E402  (the graded body the size table states)
 
 # --- geometry constants (cm unless stated) ---------------------------------
 ALLOW = 1.0            # seam allowance: 10mm (Bugra's bought patterns use it)
@@ -978,7 +980,7 @@ def svgs_to_pdf(svgs, pdf_path, date_str):
 # report
 # ===========================================================================
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
-               pages_info, svg_hash, size_label, date_str, plan):
+               pages_info, svg_hash, size_label, date_str, plan, quotes):
     lines = [
         'PRINT PACK (baski tapusu) — allowance, notches, pagination: '
         'measured, not claimed',
@@ -1050,6 +1052,154 @@ def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
 
 
 # ===========================================================================
+# the pages that are not the pattern: size table, cloth, cutting layout
+# ===========================================================================
+def render_info_pages(arts, plan, size_label, date_str):
+    """A4 pages a person reads before touching scissors.
+
+    Everything on them is a consequence of the pieces that were just drawn.
+    The size table is the graded body the pattern was cut from, the cloth
+    length is what the layout below it measures, and the piece list carries
+    the cut counts the outlines proved.
+    """
+    usable_w = A4_W - 2 * MARGIN
+    body = [_text(MARGIN, MARGIN + 0.9, 0.8,
+                  f'stitchu · {size_label} · {date_str}', weight='bold'),
+            _text(MARGIN, MARGIN + 1.8, 0.42,
+                  'kesmeden once bu sayfayi okuyun')]
+    y = MARGIN + 3.2
+
+    # --- size table --------------------------------------------------------
+    body.append(_text(MARGIN, y, 0.55, 'BEDEN TABLOSU (vucut olculeri, cm)',
+                      weight='bold'))
+    y += 0.9
+    cols = [MARGIN, MARGIN + 4.0, MARGIN + 8.0, MARGIN + 12.0]
+    for c, h in zip(cols, ('beden', 'gogus', 'bel', 'basen')):
+        body.append(_text(c, y, 0.42, h, weight='bold'))
+    y += 0.55
+    for i, label in enumerate(mapping.SIZES):
+        b = mapping.graded_body(i, [])
+        # no raw '<' anywhere near an SVG text node
+        mark = 'BU KALIP' if label == size_label else ''
+        vals = (label, f"{b['bust']:.1f}", f"{b['waist']:.1f}",
+                f"{b['hips']:.1f}")
+        weight = 'bold' if label == size_label else 'normal'
+        for c, v in zip(cols, vals):
+            body.append(_text(c, y, 0.42, v, weight=weight))
+        if mark:
+            body.append(_text(cols[3] + 4.0, y, 0.42, mark.strip(),
+                              weight='bold'))
+        y += 0.55
+    y += 0.7
+
+    # --- cloth -------------------------------------------------------------
+    quotes = packpages.yardage(arts)
+    body.append(_text(MARGIN, y, 0.55, 'KUMAS', weight='bold'))
+    y += 0.85
+    body.append(_text(MARGIN, y, 0.42,
+                      'kumas boyuna ikiye katlanir, kenar kenara. '
+                      'katlamada kesilen parcalar katin ustune oturur,'))
+    y += 0.55
+    body.append(_text(MARGIN, y, 0.42,
+                      'kalanlar iki kattan birden kesilir, yani aynali '
+                      'cift tek yerlestirmeden iki parca verir.'))
+    y += 0.8
+    for q in quotes:
+        txt = (f"{q['bolt_cm']:.0f} cm eninde: "
+               + (f"{q['length_cm'] / 100.0:.2f} m"
+                  if q['length_cm'] is not None
+                  else 'YERLESMEDI — bir parca bu ene sigmiyor'))
+        body.append(_text(MARGIN, y, 0.48, txt, weight='bold'))
+        y += 0.65
+    y += 0.5
+    lens = {q['length_cm'] for q in quotes if q['length_cm'] is not None}
+    if len(lens) == 1 and len(quotes) > 1:
+        # not a rounding accident: a piece cut on the fold can only sit on
+        # the ONE fold, so several of them queue along the length and wider
+        # cloth buys nothing
+        body.append(_text(MARGIN, y, 0.4,
+                          'iki en de ayni cikiyor cunku uzunlugu katlamada '
+                          'kesilen parcalar belirliyor: hepsi tek katin'))
+        y += 0.55
+        body.append(_text(MARGIN, y, 0.4,
+                          'ustune sirayla diziliyor, kumas enine genisleyince '
+                          'bu sira kisalmiyor.'))
+        y += 0.55
+    single = [a.human for n, a in arts.items()
+              if not a.fold and plan[n]['cut'] == 1]
+    if single:
+        body.append(_text(MARGIN, y, 0.4,
+                          'TEK KAT: ' + ', '.join(sorted(single))
+                          + ' cift kattan kesilmemeli, kumasi bu parca icin '
+                            'acin.', weight='bold'))
+        y += 0.55
+    body.append(_text(MARGIN, y, 0.4,
+                      'olculer kalibin kendisinden olculdu, tablodan '
+                      'alinmadi; %5 pay birakmaniz onerilir.'))
+    y += 1.2
+
+    # --- piece list --------------------------------------------------------
+    body.append(_text(MARGIN, y, 0.55, 'PARCALAR', weight='bold'))
+    y += 0.85
+    for name, art in sorted(arts.items(), key=lambda kv: kv[1].name):
+        r = plan[name]
+        body.append(_text(MARGIN, y, 0.42,
+                          f'{art.human} — {r["label"]}'))
+        y += 0.55
+    y += 0.5
+    body.append(_text(MARGIN, y, 0.45,
+                      'DIKIS PAYI 10mm, her kenarda, kaliba DAHIL. '
+                      'kesim cizgisi duz, dikis cizgisi kesikli.',
+                      weight='bold'))
+
+    body.append(_test_square(A4_W - MARGIN - 4.2, A4_H - MARGIN - 5.2))
+    pages = [_svg_doc(A4_W, A4_H, '\n'.join(body))]
+
+    # --- cutting layout, one page per bolt width ---------------------------
+    for q in quotes:
+        if q['laid'] is None:
+            continue
+        pos, length, fold_x = q['laid']
+        head = A4_HEADER_H = 3.4
+        avail_w, avail_h = usable_w, A4_H - 2 * MARGIN - head
+        scale = min(avail_w / fold_x, avail_h / max(length, 1e-6))
+        art_body = [
+            _text(MARGIN, MARGIN + 0.9, 0.7,
+                  f'KESIM PLANI · {q["bolt_cm"]:.0f} cm en · '
+                  f'{length / 100.0:.2f} m', weight='bold'),
+            _text(MARGIN, MARGIN + 1.7, 0.4,
+                  f'kumas ikiye katli, katlanmis en {fold_x:.1f} cm · '
+                  f'olcek 1:{1 / scale:.1f} · bu sayfa 1:1 DEGIL'),
+            _text(MARGIN, MARGIN + 2.4, 0.4,
+                  'sag kenar KAT, sol kenar kumas kenari'),
+        ]
+        ox, oy = MARGIN, MARGIN + head
+        art_body.append(
+            f'<rect x="{ox:.3f}" y="{oy:.3f}" '
+            f'width="{fold_x * scale:.3f}" height="{length * scale:.3f}" '
+            'fill="none" stroke="black" stroke-width="0.05"/>')
+        art_body.append(
+            f'<line x1="{ox + fold_x * scale:.3f}" y1="{oy:.3f}" '
+            f'x2="{ox + fold_x * scale:.3f}" '
+            f'y2="{oy + length * scale:.3f}" stroke="black" '
+            'stroke-width="0.09" stroke-dasharray="1.2,0.4,0.25,0.4"/>')
+        for name, (px, py) in sorted(pos.items()):
+            art = arts[name]
+            pts = ' '.join(
+                f'{ox + (px + x) * scale:.3f},{oy + (py + y) * scale:.3f}'
+                for x, y in art.cut)
+            art_body.append(f'<polygon points="{pts}" fill="none" '
+                            'stroke="black" stroke-width="0.04"/>')
+            art_body.append(_text(ox + (px + art.w / 2) * scale,
+                                  oy + (py + art.h / 2) * scale,
+                                  max(0.28, 0.5 * scale * art.h / 6),
+                                  art.human, 'middle'))
+        pages.append(_svg_doc(A4_W, A4_H, '\n'.join(art_body)))
+
+    return pages, quotes
+
+
+# ===========================================================================
 # entry point
 # ===========================================================================
 def build(out_dir, spec_path, size_label, date_str=None):
@@ -1091,15 +1241,22 @@ def build(out_dir, spec_path, size_label, date_str=None):
         (svg_dir / f'a4-page{i + 1}.svg').write_text(svg)
         h.update(svg.encode())
 
+    info_svgs, quotes = render_info_pages(arts, plan, size_label, date_str)
+    for i, svg in enumerate(info_svgs):
+        (svg_dir / f'info-page{i + 1}.svg').write_text(svg)
+        h.update(svg.encode())
+
     svgs_to_pdf(a0_svgs, out_dir / 'print-a0.pdf', date_str)
     svgs_to_pdf(a4_svgs, out_dir / 'print-a4.pdf', date_str)
+    svgs_to_pdf(info_svgs, out_dir / 'print-info.pdf', date_str)
 
     txt = report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                      {'a0_shelf': a0_shelf, 'a0_tiled': a0_tiled,
                       'a4_rows': rows, 'a4_cols': cols, 'a4_live': a4_live},
-                     h.hexdigest(), size_label, date_str, plan)
+                     h.hexdigest(), size_label, date_str, plan, quotes)
     (out_dir / 'print-report.txt').write_text(txt)
     return {
+        'print_info': out_dir / 'print-info.pdf',
         'print_a0': out_dir / 'print-a0.pdf',
         'print_a4': out_dir / 'print-a4.pdf',
         'print_report': out_dir / 'print-report.txt',
