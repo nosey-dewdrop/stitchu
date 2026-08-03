@@ -47,6 +47,8 @@ from scipy.spatial import cKDTree
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import walk as walklib  # noqa: E402  (edge_curve: spec edge -> svgpathtools segment)
+import cutplan             # noqa: E402  (cut counts, measured off the outlines)
+import seamrules           # noqa: E402  (roles, and the name a person reads)
 
 # --- geometry constants (cm unless stated) ---------------------------------
 ALLOW = 1.0            # seam allowance: 10mm (Bugra's bought patterns use it)
@@ -526,28 +528,70 @@ def build_notches(pattern, geos):
 # ===========================================================================
 # panel drawing (local, y-flipped-for-paper coordinates)
 # ===========================================================================
+def clip_half(points, axis, eps=1e-9):
+    """A closed polyline cut down to the half-plane x <= axis.
+
+    Sutherland-Hodgman against one edge. This is what draws a piece that is
+    cut on the fold: the drawing is the half, and the edge that lands on the
+    fold carries NO seam allowance, because there is no seam there — the
+    cloth runs continuously through it.
+    """
+    out, n = [], len(points)
+    for i in range(n):
+        cur, nxt = points[i], points[(i + 1) % n]
+        cur_in, nxt_in = cur.real <= axis + eps, nxt.real <= axis + eps
+        if cur_in:
+            out.append(cur)
+        if cur_in != nxt_in:
+            t = (axis - cur.real) / (nxt.real - cur.real)
+            out.append(complex(axis, cur.imag + t * (nxt.imag - cur.imag)))
+    return out
+
+
 class PanelArt:
     """Render-ready panel: polylines + texts in local paper coords (y down),
     origin at the top-left of the cut bounding box."""
 
-    def __init__(self, geo, piece_no, piece_total, size_label, date_str):
+    def __init__(self, geo, piece_no, piece_total, size_label, date_str,
+                 cut_note='1 kes', fold_axis=None, human=None):
         self.name = geo.name
-        x0, y0, x1, y1 = geo.cut_bbox()
-        self.w, self.h = x1 - x0, y1 - y0
+        self.human = human or geo.name
+        self.fold = fold_axis is not None
+
+        cut_pts = [r['q'] for r in geo.cut_loop]
+        seam_pts = list(geo.seam_ring)
+        notch_pts = list(geo.notches)
+        if self.fold:
+            cut_pts = clip_half(cut_pts, fold_axis)
+            seam_pts = clip_half(seam_pts, fold_axis)
+            notch_pts = [(a, b) for a, b in notch_pts
+                         if 0.5 * (a.real + b.real) <= fold_axis + 1e-9]
+
+        x0 = min(p.real for p in cut_pts)
+        y1 = max(p.imag for p in cut_pts)
+        self.w = max(p.real for p in cut_pts) - x0
+        self.h = y1 - min(p.imag for p in cut_pts)
 
         def loc(p):
             return (p.real - x0, y1 - p.imag)
 
-        self.cut = [loc(r['q']) for r in geo.cut_loop]
-        self.seam = [loc(p) for p in geo.seam_ring]
-        self.notches = [(loc(a), loc(b)) for a, b in geo.notches]
-        self.texts = []   # (x, y, size, text, anchor)
+        self.cut = [loc(p) for p in cut_pts]
+        self.seam = [loc(p) for p in seam_pts]
+        self.notches = [(loc(a), loc(b)) for a, b in notch_pts]
+        self.texts = []   # (x, y, size, text, anchor, rotation)
         self.lines = []   # grainline + arrowheads, list of (p0, p1)
+        self.fold_edge = []   # the line the cloth is folded through
+
+        if self.fold:
+            on = [p for p in cut_pts if abs(p.real - fold_axis) <= 1e-7]
+            if len(on) >= 2:
+                self.fold_edge = [loc(min(on, key=lambda p: p.imag)),
+                                  loc(max(on, key=lambda p: p.imag))]
 
         # grainline: vertical (local y = lengthwise grain), ~60% of height,
         # kept inside the seam outline
-        cx = sum(p.real for p in geo.seam_ring) / len(geo.seam_ring)
-        cy = sum(p.imag for p in geo.seam_ring) / len(geo.seam_ring)
+        cx = sum(p.real for p in seam_pts) / len(seam_pts)
+        cy = sum(p.imag for p in seam_pts) / len(seam_pts)
         gx = cx - 0.18 * self.w
         half = 0.30 * self.h
         for _ in range(14):
@@ -566,20 +610,74 @@ class PanelArt:
                 self.lines.append((tip, (tip[0] - 0.35, tip[1] + sgn * 0.6)))
                 self.lines.append((tip, (tip[0] + 0.35, tip[1] + sgn * 0.6)))
 
-        # label block, centered on the seam centroid
+        # Label block, on the roomiest point INSIDE the piece. The seam
+        # centroid is not that point: an armhole scoops a bodice into an L and
+        # the centroid of an L falls outside it, which is how the front bodice
+        # came to have its own name printed across its own cut line.
         fs = min(0.75, max(0.38, 0.011 * min(self.w * 4, self.h * 8)))
-        lx, ly = loc(complex(cx, cy))
-        lx += 0.10 * self.w
+
+        def room_at(px, py):
+            if not geo.inside(px, py):
+                return -1.0
+            d = float(geo.seam_tree.query((px, py))[0])
+            return min(d, fold_axis - px) if self.fold else d
+
+        # first choice: on the grainline, clear of the arrow. The arrow and
+        # the roomiest point of a panel are the same place, so searching for
+        # room alone puts the text through the arrow.
+        ax = ay = None
+        if half >= 0.8:
+            for cand in (cy - half - 2.2 * fs, cy + half + 2.2 * fs):
+                if room_at(gx, cand) > 1.4 * fs:
+                    ax, ay = gx, cand
+                    break
+        if ax is None:
+            ax, ay, room = cx, cy, -1.0
+            xs = np.linspace(min(p.real for p in seam_pts),
+                             max(p.real for p in seam_pts), 45)
+            ys = np.linspace(min(p.imag for p in seam_pts),
+                             max(p.imag for p in seam_pts), 45)
+            for px in xs:
+                for py in ys:
+                    d = room_at(px, py)
+                    if d > room:
+                        ax, ay, room = px, py, d
+        lx, ly = loc(complex(ax, ay))
         rows = [
-            (self.name, fs * 1.15),
-            (f'parca {piece_no}/{piece_total} · {size_label} · cut 1',
+            (self.human, fs * 1.15),
+            (f'parca {piece_no}/{piece_total} · {size_label} · {cut_note}',
              fs * 0.9),
             (f'stitchu · {date_str} · pay 10mm dahil', fs * 0.75),
         ]
+        # Helvetica averages about half the point size per character. The
+        # block is shrunk to fit the piece and then pulled back inside it:
+        # a centred label anchored near an edge hangs half of itself over the
+        # cut line, which is how 'etek arka' came to start outside its own
+        # skirt.
+        def block_w(rs):
+            return max(0.5 * s * len(t) for t, s in rs)
+
+        room_w = max(0.92 * self.w, 1.0)
+        if block_w(rows) > room_w:
+            k = room_w / block_w(rows)
+            rows = [(t, s * k) for t, s in rows]
+        half_w = 0.5 * block_w(rows)
+        lx = min(max(lx, half_w + 0.2), max(self.w - half_w - 0.2,
+                                            half_w + 0.2))
+
         ty = ly - 0.5 * sum(r[1] * 1.5 for r in rows)
         for txt, s in rows:
             ty += s * 1.5
-            self.texts.append((lx, ty, s, txt, 'middle'))
+            self.texts.append((lx, ty, s, txt, 'middle', 0.0))
+
+        # The fold edge is named ALONG the edge and INSIDE the piece. Outside
+        # it reads as belonging to whatever panel is packed next to it, and a
+        # fold edge mistaken for a cut edge loses the whole piece.
+        if self.fold_edge:
+            (fx, fya), (_, fyb) = self.fold_edge
+            self.texts.append((fx - 0.55 * fs, 0.5 * (fya + fyb), fs * 0.85,
+                               'KATLAMA — buradan katla, dikis payi yok',
+                               'middle', -90.0))
 
     # -- svg ------------------------------------------------------------------
     def svg(self, ox, oy):
@@ -591,6 +689,12 @@ class PanelArt:
                  f'<polygon points="{pts(self.seam)}" fill="none" '
                  'stroke="black" stroke-width="0.025" '
                  'stroke-dasharray="0.6,0.35"/>']
+        if self.fold_edge:
+            (ax, ay), (bx, by) = self.fold_edge
+            parts.append(f'<line x1="{ox+ax:.3f}" y1="{oy+ay:.3f}" '
+                         f'x2="{ox+bx:.3f}" y2="{oy+by:.3f}" '
+                         'stroke="black" stroke-width="0.09" '
+                         'stroke-dasharray="1.8,0.5,0.35,0.5"/>')
         for a, b in self.notches:
             parts.append(f'<line x1="{ox+a[0]:.3f}" y1="{oy+a[1]:.3f}" '
                          f'x2="{ox+b[0]:.3f}" y2="{oy+b[1]:.3f}" '
@@ -599,11 +703,13 @@ class PanelArt:
             parts.append(f'<line x1="{ox+a[0]:.3f}" y1="{oy+a[1]:.3f}" '
                          f'x2="{ox+b[0]:.3f}" y2="{oy+b[1]:.3f}" '
                          'stroke="black" stroke-width="0.04"/>')
-        for x, y, s, txt, anchor in self.texts:
+        for x, y, s, txt, anchor, rot in self.texts:
+            spin = ('' if abs(rot) < 1e-9 else
+                    f' transform="rotate({rot:.1f} {ox+x:.3f} {oy+y:.3f})"')
             parts.append(f'<text x="{ox+x:.3f}" y="{oy+y:.3f}" '
                          f'font-size="{s:.3f}" text-anchor="{anchor}" '
                          'font-family="Helvetica, Arial, sans-serif" '
-                         f'fill="black">{txt}</text>')
+                         f'fill="black"{spin}>{txt}</text>')
         return '\n'.join(parts)
 
 
@@ -872,12 +978,14 @@ def svgs_to_pdf(svgs, pdf_path, date_str):
 # report
 # ===========================================================================
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
-               pages_info, svg_hash, size_label, date_str):
+               pages_info, svg_hash, size_label, date_str, plan):
     lines = [
         'PRINT PACK (baski tapusu) — allowance, notches, pagination: '
         'measured, not claimed',
         f'size: {size_label}   date: {date_str}   allowance: 10mm   '
         f'scale: 1cm = {CM_PT:.4f}pt',
+        '',
+    ] + cutplan.report_lines(plan) + [
         '',
         'SEAM ALLOWANCE — perpendicular distance of the cut line to the '
         'seam line',
@@ -958,9 +1066,16 @@ def build(out_dir, spec_path, size_label, date_str=None):
     notch_records, dart_pairs, short_pairs = build_notches(pattern, geos)
     offset_stats = [geos[n].verify_offset() for n in names]
 
-    total = len(names)
-    arts = {name: PanelArt(geos[name], i + 1, total, size_label, date_str)
-            for i, name in enumerate(names)}
+    # how many of each piece, and from what fold — measured off the outlines
+    plan = cutplan.derive(names, geos)
+    drawn = [n for n in names if plan[n]['printed']]
+    total = len(drawn)
+    arts = {name: PanelArt(geos[name], i + 1, total, size_label, date_str,
+                           cut_note=plan[name]['label'],
+                           fold_axis=(plan[name].get('fold_axis')
+                                      if plan[name]['fold'] else None),
+                           human=seamrules.human_name(name, panels[name]))
+            for i, name in enumerate(drawn)}
 
     a0_svgs, a0_shelf, a0_tiled = render_a0_pages(arts, size_label, date_str)
     a4_svgs, rows, cols, a4_live = render_tiled(arts, size_label, date_str,
@@ -982,7 +1097,7 @@ def build(out_dir, spec_path, size_label, date_str=None):
     txt = report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                      {'a0_shelf': a0_shelf, 'a0_tiled': a0_tiled,
                       'a4_rows': rows, 'a4_cols': cols, 'a4_live': a4_live},
-                     h.hexdigest(), size_label, date_str)
+                     h.hexdigest(), size_label, date_str, plan)
     (out_dir / 'print-report.txt').write_text(txt)
     return {
         'print_a0': out_dir / 'print-a0.pdf',

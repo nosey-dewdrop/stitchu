@@ -207,8 +207,10 @@ def derive(panel_names, geos):
 
         fold_cm = shape_distance_cm(loops[rep], loops[rep], True)
         fold = fold_cm <= TOL_CM
-        arr = _normalise(loops[rep].sample())
-        axis = 0.5 * (arr[:, 0].min() + arr[:, 0].max())
+        # in the PANEL's own coordinates, because that is where the drawing
+        # gets cut in half
+        raw = loops[rep].p[:-1]
+        axis = 0.5 * (float(raw[:, 0].min()) + float(raw[:, 0].max()))
 
         bits = [f'{cut} kes']
         if cut > 1 and cls['mirrored']:

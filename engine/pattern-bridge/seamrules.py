@@ -320,3 +320,28 @@ def judge_cap_ease(cap_total_mm, armhole_total_mm):
         detail['violation'] = 'outside every published band; suspect draft'
         return FAIL, detail
     return REPORTED, detail
+
+
+def human_name(panel_name, panel):
+    """The name a person reads on the paper, not the name the generator uses.
+
+    A pattern page that says 'left_ftorso' announces that a machine wrote it.
+    Every bought pattern says 'Front Body'. The role and the front/back call
+    are already established for seam judging, so the human name is read off
+    the same two answers rather than kept as a second list that can drift.
+    """
+    role = role_of(panel_name, panel)
+    face = front_back_of(panel_name)
+    n = panel_name.lower()
+    if 'cuff' in n:
+        role = 'cuff'
+    base = {'torso': 'beden', 'skirt': 'etek', 'waistband': 'kemer',
+            'sleeve': 'kol', 'collar': 'yaka', 'hood': 'kapuson',
+            'cuff': 'manset'}.get(role)
+    if base is None:
+        return panel_name
+    if face == 'front':
+        return f'{base} on'
+    if face == 'back':
+        return f'{base} arka'
+    return base
