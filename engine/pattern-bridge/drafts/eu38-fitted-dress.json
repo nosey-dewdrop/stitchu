@@ -16,380 +16,1415 @@
     "nothing else. Everything not marked 'style' is arithmetic on the body."
   ],
   "variables": [
-    {"name": "sh_tan", "formula": "tanD(shoulder_incl)",
-     "why": "the shoulder falls at shoulder_incl degrees, so this is its slope"},
-    {"name": "sh_cos", "formula": "cosD(shoulder_incl)",
-     "why": "a step ALONG the shoulder line is a step across divided by this"},
-
-    {"name": "arc_k_armhole",
-     "formula": "(4/3)*tanD((90 + shoulder_incl)/4)/(2*sinD((90 + shoulder_incl)/2))",
-     "why": "an armhole leaves the side seam square and the shoulder seam square, so its tangent turns by 90 degrees plus the shoulder slope. Two fixed ends and two fixed tangents over-determine a circle, so the edge is a cubic, and this is the control length that makes that cubic the circular arc of the same turn: (4/3)tan(t/4) of the radius, with the radius read off the chord. The fullness of the curve is therefore not a taste dial, it is the turn"},
-    {"name": "arc_k_neck",
-     "formula": "(4/3)*tanD((90 - shoulder_incl)/4)/(2*sinD((90 - shoulder_incl)/2))",
-     "why": "same rule for a neckline: square to the fold at the centre, square to the shoulder seam at the neck point, so the tangent turns by 90 degrees minus the shoulder slope"},
-
-    {"name": "front_w", "formula": "(bust - back_width)/2",
-     "why": "half the front at the bust: what the back does not take"},
-    {"name": "back_w", "formula": "back_width/2"},
-    {"name": "front_waist", "formula": "(waist - waist_back_width)/2"},
-    {"name": "back_waist", "formula": "waist_back_width/2"},
-
-    {"name": "bust_lvl", "formula": "(2/3)*vert_bust_line + (1/3)*bust_line",
-     "why": "the bust dart is balanced two thirds toward the vertical measure"},
-    {"name": "bust_h", "formula": "waist_line - bust_lvl",
-     "why": "height of the bust line above the waist"},
-
-    {"name": "front_dart_w", "formula": "(front_w - front_waist)*2/3",
-     "why": "two thirds of the front's waist reduction goes into the dart, one third to the side"},
-    {"name": "front_dart_dep", "formula": "0.9*bust_h",
-     "why": "the waist dart stops short of the bust point"},
-    {"name": "side_dart_dep", "formula": "0.75*(front_w - bust_points/2)",
-     "why": "the bust dart stops three quarters of the way in from the side"},
-
-    {"name": "front_top", "formula": "waist_over_bust_line - sh_tan*(front_w - shoulder_w/2)",
-     "why": "height of the shoulder line where it crosses the side of the front"},
-    {"name": "fb_diff", "formula": "bust/2 - back_width",
-     "why": "how much wider the front half is than a quarter of the bust"},
-    {"name": "side_len", "formula": "waist_line - sh_tan*(back_w - shoulder_w/2) - sh_tan*fb_diff"},
-    {"name": "side_dart_w", "formula": "front_top - side_len",
-     "why": "the front is longer than the side needs to be; the difference is the bust dart"},
-    {"name": "back_len", "formula": "waist_line - sh_tan*(back_w - shoulder_w/2)",
-     "why": "height of the shoulder line where it crosses the side of the back"},
-
-    {"name": "sleeve_balance", "formula": "1.0", "style": true,
-     "why": "the shoulder seam stops 1cm inside the shoulder point, where a set-in sleeve wants its cap seam"},
-    {"name": "sh_x", "formula": "shoulder_w/2 - sleeve_balance"},
-    {"name": "blade_ease", "formula": "0.6", "style": true,
-     "why": "the back shoulder is cut 6mm longer for the shoulder blade and eased onto the front; the field puts this at 6-12mm"},
-
-    {"name": "neck_half", "formula": "neck_w/2 + 1.2", "style": true,
-     "why": "the opening is cut 1.2cm wider than the base of the neck on each side"},
-    {"name": "front_neck_drop", "formula": "1.2*neck_half", "style": true,
-     "why": "the front neck drops a fifth more than its own half width"},
-    {"name": "front_neck_y", "formula": "front_top + sh_tan*(front_w - neck_half) - front_neck_drop"},
-
-    {"name": "underarm_clear", "formula": "1.0", "style": true,
-     "why": "the armhole ends 1cm above the top of the bust dart; a sleeveless armhole is cut higher than one that takes a sleeve"},
-
-    {"name": "back_cb_rise", "formula": "sh_tan*back_w/4",
-     "why": "the centre back is drawn a little shorter than the side"},
-    {"name": "back_dart_w", "formula": "5*(back_w - back_waist)/12",
-     "why": "the two back darts take five sixths of the reduction between them, the side seam the other sixth"},
-    {"name": "back_waist_run", "formula": "back_waist + 2*back_dart_w",
-     "why": "the waist line has to be this long BEFORE the darts are folded out"},
-    {"name": "b_side_x", "formula": "sqrt(back_waist_run**2 - back_cb_rise**2)",
-     "why": "so the slanted waist line measures exactly back_waist_run; the side seam takes whatever is left"},
-    {"name": "b_dart_in_c", "formula": "bum_points/2 - bum_points/8 + back_dart_w/2"},
-    {"name": "b_dart_out_c", "formula": "bum_points/2 + bum_points/8 + 1.5*back_dart_w"},
-    {"name": "b_dart_in_dep", "formula": "back_len - bust_lvl"},
-    {"name": "b_dart_out_dep", "formula": "0.9*b_dart_in_dep"},
-    {"name": "b_seg_cb", "formula": "b_dart_in_c - back_dart_w/2"},
-    {"name": "b_seg_mid", "formula": "b_dart_out_c - back_dart_w - b_dart_in_c"},
-    {"name": "b_seg_side", "formula": "back_waist_run - b_dart_out_c - back_dart_w/2"},
-
-    {"name": "f_seg_cf", "formula": "bust_points/2"},
-    {"name": "f_seg_side", "formula": "front_waist - bust_points/2"},
-
-    {"name": "wb_w", "formula": "0.2*hips_line", "style": true,
-     "why": "the waistband is a fifth of the waist-to-hip drop deep"},
-    {"name": "wb_front_w", "formula": "2*front_waist"},
-    {"name": "wb_back_w", "formula": "2*back_waist"},
-
-    {"name": "leg_len", "formula": "height - head_l - waist_line - hips_line"},
-    {"name": "skirt_len", "formula": "0.4*leg_len", "style": true,
-     "why": "hem at two fifths of the leg below the hip line"},
-    {"name": "skirt_waist_y", "formula": "skirt_len + hips_line"},
-    {"name": "front_hip", "formula": "(hips - hip_back_width)/2"},
-    {"name": "back_hip", "formula": "hip_back_width/2"},
-    {"name": "hip_shift", "formula": "tanD(hip_inclination/2)*hips_line",
-     "why": "how far the side seam leans in between hip and waist"},
-    {"name": "side_take", "formula": "min(hip_shift, front_hip - front_waist)",
-     "why": "the side seam takes the same amount off the front and the back, so the two side seams are the same seam"},
-    {"name": "skirt_dart_w", "formula": "(back_hip - back_waist - side_take)/2",
-     "why": "whatever the side does not take off the back, the two darts take"},
-    {"name": "skirt_dart_in_dep", "formula": "0.85*hips_line"},
-    {"name": "skirt_dart_out_dep", "formula": "0.9*skirt_dart_in_dep"},
-    {"name": "sk_in_off", "formula": "bum_points/2 - bum_points/8 + skirt_dart_w/2"},
-    {"name": "sk_out_off", "formula": "bum_points/2 + bum_points/8 + 1.5*skirt_dart_w"},
-    {"name": "skirt_turn", "formula": "atanD(side_take/hips_line)",
-     "why": "the side seam leaves the hip line square and leans in to the waist, so its tangent turns by this much"},
-    {"name": "arc_k_skirt",
-     "formula": "(4/3)*tanD(skirt_turn/4)/(2*sinD(skirt_turn/2))",
-     "why": "the same circular-arc control length as the armhole and the neckline, for a much smaller turn"},
-    {"name": "sk_l", "formula": "side_take", "why": "left end of the back skirt waist"},
-    {"name": "sk_c", "formula": "back_hip", "why": "centre back of the back skirt"},
-
-    {"name": "torso_top", "formula": "height - head_l",
-     "why": "the block is hung from the base of the head"},
-    {"name": "waist_level", "formula": "height - head_l - waist_line"}
+    {
+      "name": "sh_tan",
+      "formula": "tanD(shoulder_incl)",
+      "why": "the shoulder falls at shoulder_incl degrees, so this is its slope"
+    },
+    {
+      "name": "sh_cos",
+      "formula": "cosD(shoulder_incl)",
+      "why": "a step ALONG the shoulder line is a step across divided by this"
+    },
+    {
+      "name": "arc_k_armhole",
+      "formula": "(4/3)*tanD((90 + shoulder_incl)/4)/(2*sinD((90 + shoulder_incl)/2))",
+      "why": "an armhole leaves the side seam square and the shoulder seam square, so its tangent turns by 90 degrees plus the shoulder slope. Two fixed ends and two fixed tangents over-determine a circle, so the edge is a cubic, and this is the control length that makes that cubic the circular arc of the same turn: (4/3)tan(t/4) of the radius, with the radius read off the chord. The fullness of the curve is therefore not a taste dial, it is the turn"
+    },
+    {
+      "name": "arc_k_neck",
+      "formula": "(4/3)*tanD((90 - shoulder_incl)/4)/(2*sinD((90 - shoulder_incl)/2))",
+      "why": "same rule for a neckline: square to the fold at the centre, square to the shoulder seam at the neck point, so the tangent turns by 90 degrees minus the shoulder slope"
+    },
+    {
+      "name": "front_w",
+      "formula": "(bust - back_width)/2",
+      "why": "half the front at the bust: what the back does not take"
+    },
+    {
+      "name": "back_w",
+      "formula": "back_width/2"
+    },
+    {
+      "name": "front_waist",
+      "formula": "(waist - waist_back_width)/2"
+    },
+    {
+      "name": "back_waist",
+      "formula": "waist_back_width/2"
+    },
+    {
+      "name": "bust_lvl",
+      "formula": "(2/3)*vert_bust_line + (1/3)*bust_line",
+      "why": "the bust dart is balanced two thirds toward the vertical measure"
+    },
+    {
+      "name": "bust_h",
+      "formula": "waist_line - bust_lvl",
+      "why": "height of the bust line above the waist"
+    },
+    {
+      "name": "front_dart_w",
+      "formula": "(front_w - front_waist)*2/3",
+      "why": "two thirds of the front's waist reduction goes into the dart, one third to the side"
+    },
+    {
+      "name": "front_dart_dep",
+      "formula": "0.9*bust_h",
+      "why": "the waist dart stops short of the bust point"
+    },
+    {
+      "name": "side_dart_dep",
+      "formula": "0.75*(front_w - bust_points/2)",
+      "why": "the bust dart stops three quarters of the way in from the side"
+    },
+    {
+      "name": "front_top",
+      "formula": "waist_over_bust_line - sh_tan*(front_w - shoulder_w/2)",
+      "why": "height of the shoulder line where it crosses the side of the front"
+    },
+    {
+      "name": "fb_diff",
+      "formula": "bust/2 - back_width",
+      "why": "how much wider the front half is than a quarter of the bust"
+    },
+    {
+      "name": "side_len",
+      "formula": "waist_line - sh_tan*(back_w - shoulder_w/2) - sh_tan*fb_diff"
+    },
+    {
+      "name": "side_dart_w",
+      "formula": "front_top - side_len",
+      "why": "the front is longer than the side needs to be; the difference is the bust dart"
+    },
+    {
+      "name": "back_len",
+      "formula": "waist_line - sh_tan*(back_w - shoulder_w/2)",
+      "why": "height of the shoulder line where it crosses the side of the back"
+    },
+    {
+      "name": "sleeve_balance",
+      "formula": "1.0",
+      "style": true,
+      "why": "the shoulder seam stops 1cm inside the shoulder point, where a set-in sleeve wants its cap seam"
+    },
+    {
+      "name": "sh_x",
+      "formula": "shoulder_w/2 - sleeve_balance"
+    },
+    {
+      "name": "blade_ease",
+      "formula": "0.6",
+      "style": true,
+      "why": "the back shoulder is cut 6mm longer for the shoulder blade and eased onto the front; the field puts this at 6-12mm"
+    },
+    {
+      "name": "neck_half",
+      "formula": "neck_w/2 + 1.2",
+      "style": true,
+      "why": "the opening is cut 1.2cm wider than the base of the neck on each side"
+    },
+    {
+      "name": "front_neck_drop",
+      "formula": "1.2*neck_half",
+      "style": true,
+      "why": "the front neck drops a fifth more than its own half width"
+    },
+    {
+      "name": "front_neck_y",
+      "formula": "front_top + sh_tan*(front_w - neck_half) - front_neck_drop"
+    },
+    {
+      "name": "underarm_clear",
+      "formula": "1.0",
+      "style": true,
+      "why": "the armhole ends 1cm above the top of the bust dart; a sleeveless armhole is cut higher than one that takes a sleeve"
+    },
+    {
+      "name": "back_cb_rise",
+      "formula": "sh_tan*back_w/4",
+      "why": "the centre back is drawn a little shorter than the side"
+    },
+    {
+      "name": "back_dart_w",
+      "formula": "5*(back_w - back_waist)/12",
+      "why": "the two back darts take five sixths of the reduction between them, the side seam the other sixth"
+    },
+    {
+      "name": "back_waist_run",
+      "formula": "back_waist + 2*back_dart_w",
+      "why": "the waist line has to be this long BEFORE the darts are folded out"
+    },
+    {
+      "name": "b_side_x",
+      "formula": "sqrt(back_waist_run**2 - back_cb_rise**2)",
+      "why": "so the slanted waist line measures exactly back_waist_run; the side seam takes whatever is left"
+    },
+    {
+      "name": "b_dart_in_c",
+      "formula": "bum_points/2 - bum_points/8 + back_dart_w/2"
+    },
+    {
+      "name": "b_dart_out_c",
+      "formula": "bum_points/2 + bum_points/8 + 1.5*back_dart_w"
+    },
+    {
+      "name": "b_dart_in_dep",
+      "formula": "back_len - bust_lvl"
+    },
+    {
+      "name": "b_dart_out_dep",
+      "formula": "0.9*b_dart_in_dep"
+    },
+    {
+      "name": "b_seg_cb",
+      "formula": "b_dart_in_c - back_dart_w/2"
+    },
+    {
+      "name": "b_seg_mid",
+      "formula": "b_dart_out_c - back_dart_w - b_dart_in_c"
+    },
+    {
+      "name": "b_seg_side",
+      "formula": "back_waist_run - b_dart_out_c - back_dart_w/2"
+    },
+    {
+      "name": "f_seg_cf",
+      "formula": "bust_points/2"
+    },
+    {
+      "name": "f_seg_side",
+      "formula": "front_waist - bust_points/2"
+    },
+    {
+      "name": "wb_w",
+      "formula": "0.2*hips_line",
+      "style": true,
+      "why": "the waistband is a fifth of the waist-to-hip drop deep"
+    },
+    {
+      "name": "wb_front_w",
+      "formula": "2*front_waist"
+    },
+    {
+      "name": "wb_back_w",
+      "formula": "2*back_waist"
+    },
+    {
+      "name": "leg_len",
+      "formula": "height - head_l - waist_line - hips_line"
+    },
+    {
+      "name": "skirt_len",
+      "formula": "0.4*leg_len",
+      "style": true,
+      "why": "hem at two fifths of the leg below the hip line"
+    },
+    {
+      "name": "skirt_waist_y",
+      "formula": "skirt_len + hips_line"
+    },
+    {
+      "name": "front_hip",
+      "formula": "(hips - hip_back_width)/2"
+    },
+    {
+      "name": "back_hip",
+      "formula": "hip_back_width/2"
+    },
+    {
+      "name": "hip_shift",
+      "formula": "tanD(hip_inclination/2)*hips_line",
+      "why": "how far the side seam leans in between hip and waist"
+    },
+    {
+      "name": "side_take",
+      "formula": "min(hip_shift, front_hip - front_waist)",
+      "why": "the side seam takes the same amount off the front and the back, so the two side seams are the same seam"
+    },
+    {
+      "name": "skirt_dart_w",
+      "formula": "(back_hip - back_waist - side_take)/2",
+      "why": "whatever the side does not take off the back, the two darts take"
+    },
+    {
+      "name": "skirt_dart_in_dep",
+      "formula": "0.85*hips_line"
+    },
+    {
+      "name": "skirt_dart_out_dep",
+      "formula": "0.9*skirt_dart_in_dep"
+    },
+    {
+      "name": "sk_in_off",
+      "formula": "bum_points/2 - bum_points/8 + skirt_dart_w/2"
+    },
+    {
+      "name": "sk_out_off",
+      "formula": "bum_points/2 + bum_points/8 + 1.5*skirt_dart_w"
+    },
+    {
+      "name": "skirt_turn",
+      "formula": "atanD(side_take/hips_line)",
+      "why": "the side seam leaves the hip line square and leans in to the waist, so its tangent turns by this much"
+    },
+    {
+      "name": "arc_k_skirt",
+      "formula": "(4/3)*tanD(skirt_turn/4)/(2*sinD(skirt_turn/2))",
+      "why": "the same circular-arc control length as the armhole and the neckline, for a much smaller turn"
+    },
+    {
+      "name": "sk_l",
+      "formula": "side_take",
+      "why": "left end of the back skirt waist"
+    },
+    {
+      "name": "sk_c",
+      "formula": "back_hip",
+      "why": "centre back of the back skirt"
+    },
+    {
+      "name": "torso_top",
+      "formula": "height - head_l",
+      "why": "the block is hung from the base of the head"
+    },
+    {
+      "name": "waist_level",
+      "formula": "height - head_l - waist_line"
+    },
+    {
+      "name": "arc_per_chord",
+      "formula": "1.1789",
+      "why": "the armhole edge is a cubic whose two end tangents are fixed by the draft rather than a circular arc, so its arc length is not a closed form of its chord. Measured on the drawn edge over all eight sizes it is a constant of this construction: 1.178536 to 1.179315, front and back. The number is read off our own drawing, not out of a book. A variable cannot see a drawn point, so the lengths it feeds are spelled out in the sleeve points themselves"
+    },
+    {
+      "name": "cap_ease",
+      "formula": "2.5",
+      "why": "cap seam minus armhole, over the whole armhole. knowledge/drafting-math-eu38.md, HIGH: dress or blouse 2-3cm. Cap ease is a sewing allowance and not a body measurement, so it does not grade; 2.5 is the middle of the band"
+    },
+    {
+      "name": "cap_ease_f",
+      "formula": "cap_ease/3",
+      "why": "the ease is split one third front, two thirds back (knowledge file, HIGH, everyone agrees: the back carries more for shoulder movement)"
+    },
+    {
+      "name": "cap_ease_b",
+      "formula": "2*cap_ease/3",
+      "why": "the other two thirds"
+    },
+    {
+      "name": "sl_len",
+      "formula": "0.3*arm_length",
+      "why": "a short sleeve. A design decision like the skirt length, not a drafting constant"
+    }
   ],
-
   "points": [
-    {"id": "f_cf_waist", "op": "origin", "x": "0", "y": "0"},
-    {"id": "f_d1a", "op": "offset", "from": "f_cf_waist", "dx": "bust_points/2"},
-    {"id": "f_d1b", "op": "offset", "from": "f_d1a", "dx": "front_dart_w"},
-    {"id": "f_d1apex", "op": "swing", "a": "f_d1a", "b": "f_d1b",
-     "r1": "front_dart_dep", "r2": "front_dart_dep", "side": "left"},
-    {"id": "f_side_waist", "op": "offset", "from": "f_cf_waist", "dx": "front_waist + front_dart_w"},
-    {"id": "f_bust_lo", "op": "offset", "from": "f_cf_waist", "dx": "front_w", "dy": "bust_h"},
-    {"id": "f_bust_hi", "op": "offset", "from": "f_bust_lo", "dy": "side_dart_w"},
-    {"id": "f_bustapex", "op": "swing", "a": "f_bust_lo", "b": "f_bust_hi",
-     "r1": "side_dart_dep", "r2": "side_dart_dep", "side": "left"},
-    {"id": "f_underarm", "op": "offset", "from": "f_bust_hi", "dy": "underarm_clear"},
-    {"id": "f_sh_cf", "op": "offset", "from": "f_cf_waist", "dy": "front_top + sh_tan*front_w"},
-    {"id": "f_sh_tip", "op": "polar", "from": "f_sh_cf", "angle": "-shoulder_incl", "length": "sh_x/sh_cos"},
-    {"id": "f_sh_neck", "op": "polar", "from": "f_sh_cf", "angle": "-shoulder_incl", "length": "neck_half/sh_cos"},
-    {"id": "f_cf_neck", "op": "origin", "x": "0", "y": "front_neck_y"},
-
-    {"id": "b_side_waist", "op": "origin", "x": "b_side_x", "y": "0"},
-    {"id": "b_cb_waist", "op": "origin", "x": "0", "y": "back_cb_rise"},
-    {"id": "b_d_in_a", "op": "along", "a": "b_cb_waist", "b": "b_side_waist", "length": "b_dart_in_c - back_dart_w/2"},
-    {"id": "b_d_in_b", "op": "along", "a": "b_cb_waist", "b": "b_side_waist", "length": "b_dart_in_c + back_dart_w/2"},
-    {"id": "b_d_in_apex", "op": "swing", "a": "b_d_in_a", "b": "b_d_in_b",
-     "r1": "b_dart_in_dep", "r2": "b_dart_in_dep", "side": "left"},
-    {"id": "b_d_out_a", "op": "along", "a": "b_cb_waist", "b": "b_side_waist", "length": "b_dart_out_c - back_dart_w/2"},
-    {"id": "b_d_out_b", "op": "along", "a": "b_cb_waist", "b": "b_side_waist", "length": "b_dart_out_c + back_dart_w/2"},
-    {"id": "b_d_out_apex", "op": "swing", "a": "b_d_out_a", "b": "b_d_out_b",
-     "r1": "b_dart_out_dep", "r2": "b_dart_out_dep", "side": "left"},
-    {"id": "b_sh_cb", "op": "origin", "x": "0", "y": "back_len + sh_tan*back_w"},
-    {"id": "b_sh_tip", "op": "polar", "from": "b_sh_cb", "angle": "-shoulder_incl",
-     "length": "sh_x/sh_cos + blade_ease",
-     "why": "the back shoulder is the front shoulder plus the blade ease, by construction"},
-    {"id": "b_sh_neck", "op": "polar", "from": "b_sh_cb", "angle": "-shoulder_incl", "length": "neck_half/sh_cos"},
-    {"id": "b_cb_neck", "op": "origin", "x": "0", "y": "back_len"},
-    {"id": "b_side_mid", "op": "polar", "from": "b_side_waist",
-     "angle": "acosD((back_w - b_side_x)/(Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm))",
-     "length": "Line_f_side_waist_f_bust_lo",
-     "why": "the back side seam is the front side seam, measured off the front and laid down from the back waist"},
-    {"id": "b_underarm", "op": "polar", "from": "b_side_waist",
-     "angle": "acosD((back_w - b_side_x)/(Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm))",
-     "length": "Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm"},
-
-    {"id": "wbf_0", "op": "origin", "x": "0", "y": "0"},
-    {"id": "wbf_1", "op": "origin", "x": "wb_front_w", "y": "0"},
-    {"id": "wbf_2", "op": "origin", "x": "wb_front_w", "y": "wb_w"},
-    {"id": "wbf_3", "op": "origin", "x": "wb_front_w - f_seg_side", "y": "wb_w"},
-    {"id": "wbf_4", "op": "origin", "x": "wb_front_w - f_seg_side - f_seg_cf", "y": "wb_w"},
-    {"id": "wbf_5", "op": "origin", "x": "f_seg_side", "y": "wb_w"},
-    {"id": "wbf_6", "op": "origin", "x": "0", "y": "wb_w"},
-
-    {"id": "wbb_0", "op": "origin", "x": "0", "y": "0"},
-    {"id": "wbb_1", "op": "origin", "x": "b_seg_side", "y": "0"},
-    {"id": "wbb_2", "op": "origin", "x": "b_seg_side + b_seg_mid", "y": "0"},
-    {"id": "wbb_3", "op": "origin", "x": "wb_back_w - b_seg_side - b_seg_mid", "y": "0"},
-    {"id": "wbb_4", "op": "origin", "x": "wb_back_w - b_seg_side", "y": "0"},
-    {"id": "wbb_5", "op": "origin", "x": "wb_back_w", "y": "0"},
-    {"id": "wbb_6", "op": "origin", "x": "wb_back_w", "y": "wb_w"},
-    {"id": "wbb_7", "op": "origin", "x": "wb_back_w - b_seg_side", "y": "wb_w"},
-    {"id": "wbb_8", "op": "origin", "x": "wb_back_w - b_seg_side - b_seg_mid", "y": "wb_w"},
-    {"id": "wbb_9", "op": "origin", "x": "back_waist", "y": "wb_w"},
-    {"id": "wbb_10", "op": "origin", "x": "b_seg_side + b_seg_mid", "y": "wb_w"},
-    {"id": "wbb_11", "op": "origin", "x": "b_seg_side", "y": "wb_w"},
-    {"id": "wbb_12", "op": "origin", "x": "0", "y": "wb_w"},
-
-    {"id": "sf_hem_l", "op": "origin", "x": "0", "y": "0"},
-    {"id": "sf_hem_r", "op": "origin", "x": "2*front_hip", "y": "0"},
-    {"id": "sf_hip_r", "op": "origin", "x": "2*front_hip", "y": "skirt_len"},
-    {"id": "sf_waist_r", "op": "origin", "x": "2*front_hip - side_take", "y": "skirt_waist_y"},
-    {"id": "sf_waist_l", "op": "origin", "x": "side_take", "y": "skirt_waist_y"},
-    {"id": "sf_hip_l", "op": "origin", "x": "0", "y": "skirt_len"},
-
-    {"id": "sb_hem_l", "op": "origin", "x": "0", "y": "0"},
-    {"id": "sb_hip_l", "op": "origin", "x": "0", "y": "skirt_len"},
-    {"id": "sb_waist_l", "op": "origin", "x": "sk_l", "y": "skirt_waist_y"},
-    {"id": "sb_o1a", "op": "origin", "x": "sk_c - sk_out_off - skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_o1b", "op": "origin", "x": "sk_c - sk_out_off + skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_o1p", "op": "swing", "a": "sb_o1a", "b": "sb_o1b",
-     "r1": "skirt_dart_out_dep", "r2": "skirt_dart_out_dep", "side": "right"},
-    {"id": "sb_i1a", "op": "origin", "x": "sk_c - sk_in_off - skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_i1b", "op": "origin", "x": "sk_c - sk_in_off + skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_i1p", "op": "swing", "a": "sb_i1a", "b": "sb_i1b",
-     "r1": "skirt_dart_in_dep", "r2": "skirt_dart_in_dep", "side": "right"},
-    {"id": "sb_i2a", "op": "origin", "x": "sk_c + sk_in_off - skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_i2b", "op": "origin", "x": "sk_c + sk_in_off + skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_i2p", "op": "swing", "a": "sb_i2a", "b": "sb_i2b",
-     "r1": "skirt_dart_in_dep", "r2": "skirt_dart_in_dep", "side": "right"},
-    {"id": "sb_o2a", "op": "origin", "x": "sk_c + sk_out_off - skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_o2b", "op": "origin", "x": "sk_c + sk_out_off + skirt_dart_w/2", "y": "skirt_waist_y"},
-    {"id": "sb_o2p", "op": "swing", "a": "sb_o2a", "b": "sb_o2b",
-     "r1": "skirt_dart_out_dep", "r2": "skirt_dart_out_dep", "side": "right"},
-    {"id": "sb_waist_r", "op": "origin", "x": "2*back_hip - sk_l", "y": "skirt_waist_y"},
-    {"id": "sb_hip_r", "op": "origin", "x": "2*back_hip", "y": "skirt_len"},
-    {"id": "sb_hem_r", "op": "origin", "x": "2*back_hip", "y": "0"}
+    {
+      "id": "f_cf_waist",
+      "op": "origin",
+      "x": "0",
+      "y": "0"
+    },
+    {
+      "id": "f_d1a",
+      "op": "offset",
+      "from": "f_cf_waist",
+      "dx": "bust_points/2"
+    },
+    {
+      "id": "f_d1b",
+      "op": "offset",
+      "from": "f_d1a",
+      "dx": "front_dart_w"
+    },
+    {
+      "id": "f_d1apex",
+      "op": "swing",
+      "a": "f_d1a",
+      "b": "f_d1b",
+      "r1": "front_dart_dep",
+      "r2": "front_dart_dep",
+      "side": "left"
+    },
+    {
+      "id": "f_side_waist",
+      "op": "offset",
+      "from": "f_cf_waist",
+      "dx": "front_waist + front_dart_w"
+    },
+    {
+      "id": "f_bust_lo",
+      "op": "offset",
+      "from": "f_cf_waist",
+      "dx": "front_w",
+      "dy": "bust_h"
+    },
+    {
+      "id": "f_bust_hi",
+      "op": "offset",
+      "from": "f_bust_lo",
+      "dy": "side_dart_w"
+    },
+    {
+      "id": "f_bustapex",
+      "op": "swing",
+      "a": "f_bust_lo",
+      "b": "f_bust_hi",
+      "r1": "side_dart_dep",
+      "r2": "side_dart_dep",
+      "side": "left"
+    },
+    {
+      "id": "f_underarm",
+      "op": "offset",
+      "from": "f_bust_hi",
+      "dy": "underarm_clear"
+    },
+    {
+      "id": "f_sh_cf",
+      "op": "offset",
+      "from": "f_cf_waist",
+      "dy": "front_top + sh_tan*front_w"
+    },
+    {
+      "id": "f_sh_tip",
+      "op": "polar",
+      "from": "f_sh_cf",
+      "angle": "-shoulder_incl",
+      "length": "sh_x/sh_cos"
+    },
+    {
+      "id": "f_sh_neck",
+      "op": "polar",
+      "from": "f_sh_cf",
+      "angle": "-shoulder_incl",
+      "length": "neck_half/sh_cos"
+    },
+    {
+      "id": "f_cf_neck",
+      "op": "origin",
+      "x": "0",
+      "y": "front_neck_y"
+    },
+    {
+      "id": "b_side_waist",
+      "op": "origin",
+      "x": "b_side_x",
+      "y": "0"
+    },
+    {
+      "id": "b_cb_waist",
+      "op": "origin",
+      "x": "0",
+      "y": "back_cb_rise"
+    },
+    {
+      "id": "b_d_in_a",
+      "op": "along",
+      "a": "b_cb_waist",
+      "b": "b_side_waist",
+      "length": "b_dart_in_c - back_dart_w/2"
+    },
+    {
+      "id": "b_d_in_b",
+      "op": "along",
+      "a": "b_cb_waist",
+      "b": "b_side_waist",
+      "length": "b_dart_in_c + back_dart_w/2"
+    },
+    {
+      "id": "b_d_in_apex",
+      "op": "swing",
+      "a": "b_d_in_a",
+      "b": "b_d_in_b",
+      "r1": "b_dart_in_dep",
+      "r2": "b_dart_in_dep",
+      "side": "left"
+    },
+    {
+      "id": "b_d_out_a",
+      "op": "along",
+      "a": "b_cb_waist",
+      "b": "b_side_waist",
+      "length": "b_dart_out_c - back_dart_w/2"
+    },
+    {
+      "id": "b_d_out_b",
+      "op": "along",
+      "a": "b_cb_waist",
+      "b": "b_side_waist",
+      "length": "b_dart_out_c + back_dart_w/2"
+    },
+    {
+      "id": "b_d_out_apex",
+      "op": "swing",
+      "a": "b_d_out_a",
+      "b": "b_d_out_b",
+      "r1": "b_dart_out_dep",
+      "r2": "b_dart_out_dep",
+      "side": "left"
+    },
+    {
+      "id": "b_sh_cb",
+      "op": "origin",
+      "x": "0",
+      "y": "back_len + sh_tan*back_w"
+    },
+    {
+      "id": "b_sh_tip",
+      "op": "polar",
+      "from": "b_sh_cb",
+      "angle": "-shoulder_incl",
+      "length": "sh_x/sh_cos + blade_ease",
+      "why": "the back shoulder is the front shoulder plus the blade ease, by construction"
+    },
+    {
+      "id": "b_sh_neck",
+      "op": "polar",
+      "from": "b_sh_cb",
+      "angle": "-shoulder_incl",
+      "length": "neck_half/sh_cos"
+    },
+    {
+      "id": "b_cb_neck",
+      "op": "origin",
+      "x": "0",
+      "y": "back_len"
+    },
+    {
+      "id": "b_side_mid",
+      "op": "polar",
+      "from": "b_side_waist",
+      "angle": "acosD((back_w - b_side_x)/(Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm))",
+      "length": "Line_f_side_waist_f_bust_lo",
+      "why": "the back side seam is the front side seam, measured off the front and laid down from the back waist"
+    },
+    {
+      "id": "b_underarm",
+      "op": "polar",
+      "from": "b_side_waist",
+      "angle": "acosD((back_w - b_side_x)/(Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm))",
+      "length": "Line_f_side_waist_f_bust_lo + Line_f_bust_hi_f_underarm"
+    },
+    {
+      "id": "wbf_0",
+      "op": "origin",
+      "x": "0",
+      "y": "0"
+    },
+    {
+      "id": "wbf_1",
+      "op": "origin",
+      "x": "wb_front_w",
+      "y": "0"
+    },
+    {
+      "id": "wbf_2",
+      "op": "origin",
+      "x": "wb_front_w",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbf_3",
+      "op": "origin",
+      "x": "wb_front_w - f_seg_side",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbf_4",
+      "op": "origin",
+      "x": "wb_front_w - f_seg_side - f_seg_cf",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbf_5",
+      "op": "origin",
+      "x": "f_seg_side",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbf_6",
+      "op": "origin",
+      "x": "0",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_0",
+      "op": "origin",
+      "x": "0",
+      "y": "0"
+    },
+    {
+      "id": "wbb_1",
+      "op": "origin",
+      "x": "b_seg_side",
+      "y": "0"
+    },
+    {
+      "id": "wbb_2",
+      "op": "origin",
+      "x": "b_seg_side + b_seg_mid",
+      "y": "0"
+    },
+    {
+      "id": "wbb_3",
+      "op": "origin",
+      "x": "wb_back_w - b_seg_side - b_seg_mid",
+      "y": "0"
+    },
+    {
+      "id": "wbb_4",
+      "op": "origin",
+      "x": "wb_back_w - b_seg_side",
+      "y": "0"
+    },
+    {
+      "id": "wbb_5",
+      "op": "origin",
+      "x": "wb_back_w",
+      "y": "0"
+    },
+    {
+      "id": "wbb_6",
+      "op": "origin",
+      "x": "wb_back_w",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_7",
+      "op": "origin",
+      "x": "wb_back_w - b_seg_side",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_8",
+      "op": "origin",
+      "x": "wb_back_w - b_seg_side - b_seg_mid",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_9",
+      "op": "origin",
+      "x": "back_waist",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_10",
+      "op": "origin",
+      "x": "b_seg_side + b_seg_mid",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_11",
+      "op": "origin",
+      "x": "b_seg_side",
+      "y": "wb_w"
+    },
+    {
+      "id": "wbb_12",
+      "op": "origin",
+      "x": "0",
+      "y": "wb_w"
+    },
+    {
+      "id": "sf_hem_l",
+      "op": "origin",
+      "x": "0",
+      "y": "0"
+    },
+    {
+      "id": "sf_hem_r",
+      "op": "origin",
+      "x": "2*front_hip",
+      "y": "0"
+    },
+    {
+      "id": "sf_hip_r",
+      "op": "origin",
+      "x": "2*front_hip",
+      "y": "skirt_len"
+    },
+    {
+      "id": "sf_waist_r",
+      "op": "origin",
+      "x": "2*front_hip - side_take",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sf_waist_l",
+      "op": "origin",
+      "x": "side_take",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sf_hip_l",
+      "op": "origin",
+      "x": "0",
+      "y": "skirt_len"
+    },
+    {
+      "id": "sb_hem_l",
+      "op": "origin",
+      "x": "0",
+      "y": "0"
+    },
+    {
+      "id": "sb_hip_l",
+      "op": "origin",
+      "x": "0",
+      "y": "skirt_len"
+    },
+    {
+      "id": "sb_waist_l",
+      "op": "origin",
+      "x": "sk_l",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_o1a",
+      "op": "origin",
+      "x": "sk_c - sk_out_off - skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_o1b",
+      "op": "origin",
+      "x": "sk_c - sk_out_off + skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_o1p",
+      "op": "swing",
+      "a": "sb_o1a",
+      "b": "sb_o1b",
+      "r1": "skirt_dart_out_dep",
+      "r2": "skirt_dart_out_dep",
+      "side": "right"
+    },
+    {
+      "id": "sb_i1a",
+      "op": "origin",
+      "x": "sk_c - sk_in_off - skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_i1b",
+      "op": "origin",
+      "x": "sk_c - sk_in_off + skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_i1p",
+      "op": "swing",
+      "a": "sb_i1a",
+      "b": "sb_i1b",
+      "r1": "skirt_dart_in_dep",
+      "r2": "skirt_dart_in_dep",
+      "side": "right"
+    },
+    {
+      "id": "sb_i2a",
+      "op": "origin",
+      "x": "sk_c + sk_in_off - skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_i2b",
+      "op": "origin",
+      "x": "sk_c + sk_in_off + skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_i2p",
+      "op": "swing",
+      "a": "sb_i2a",
+      "b": "sb_i2b",
+      "r1": "skirt_dart_in_dep",
+      "r2": "skirt_dart_in_dep",
+      "side": "right"
+    },
+    {
+      "id": "sb_o2a",
+      "op": "origin",
+      "x": "sk_c + sk_out_off - skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_o2b",
+      "op": "origin",
+      "x": "sk_c + sk_out_off + skirt_dart_w/2",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_o2p",
+      "op": "swing",
+      "a": "sb_o2a",
+      "b": "sb_o2b",
+      "r1": "skirt_dart_out_dep",
+      "r2": "skirt_dart_out_dep",
+      "side": "right"
+    },
+    {
+      "id": "sb_waist_r",
+      "op": "origin",
+      "x": "2*back_hip - sk_l",
+      "y": "skirt_waist_y"
+    },
+    {
+      "id": "sb_hip_r",
+      "op": "origin",
+      "x": "2*back_hip",
+      "y": "skirt_len"
+    },
+    {
+      "id": "sb_hem_r",
+      "op": "origin",
+      "x": "2*back_hip",
+      "y": "0"
+    },
+    {
+      "id": "sl_top",
+      "op": "origin",
+      "x": "0",
+      "y": "(((Line_f_underarm_f_sh_tip + Line_b_sh_tip_b_underarm)*arc_per_chord)/4)",
+      "why": "cap height has no agreed coefficient and the systems disagree (knowledge file). AH/4 is the common proportional RTW rule and it is written here in the open"
+    },
+    {
+      "id": "sl_ua_f",
+      "op": "origin",
+      "x": "-sqrt((Line_f_underarm_f_sh_tip + cap_ease_f/arc_per_chord)*(Line_f_underarm_f_sh_tip + cap_ease_f/arc_per_chord) - (((Line_f_underarm_f_sh_tip + Line_b_sh_tip_b_underarm)*arc_per_chord)/4)*(((Line_f_underarm_f_sh_tip + Line_b_sh_tip_b_underarm)*arc_per_chord)/4))",
+      "y": "0",
+      "why": "the cap chord and the cap height are two sides of a right triangle, so the half width at the biceps follows and is never chosen. The chord is the front armhole chord plus the chord that adds exactly cap_ease_f of arc, because the cap is that curve scaled"
+    },
+    {
+      "id": "sl_ua_b",
+      "op": "origin",
+      "x": "sqrt((Line_b_sh_tip_b_underarm + cap_ease_b/arc_per_chord)*(Line_b_sh_tip_b_underarm + cap_ease_b/arc_per_chord) - (((Line_f_underarm_f_sh_tip + Line_b_sh_tip_b_underarm)*arc_per_chord)/4)*(((Line_f_underarm_f_sh_tip + Line_b_sh_tip_b_underarm)*arc_per_chord)/4))",
+      "y": "0",
+      "why": "the same on the back"
+    },
+    {
+      "id": "sl_hem_f",
+      "op": "offset",
+      "from": "sl_ua_f",
+      "dx": "0",
+      "dy": "-sl_len"
+    },
+    {
+      "id": "sl_hem_b",
+      "op": "offset",
+      "from": "sl_ua_b",
+      "dx": "0",
+      "dy": "-sl_len"
+    }
   ],
-
   "pieces": [
     {
-      "name": "left_ftorso", "label": "body",
-      "place": ["0", "torso_top - front_top - sh_tan*front_w", "30"],
-      "path": [
-        {"pt": "f_cf_waist"},
-        {"pt": "f_d1a"},
-        {"pt": "f_d1apex"},
-        {"pt": "f_d1b"},
-        {"pt": "f_side_waist"},
-        {"pt": "f_bust_lo"},
-        {"pt": "f_bustapex"},
-        {"pt": "f_bust_hi"},
-        {"pt": "f_underarm", "label": "left_armhole",
-         "curve": {"op": "spline",
-                   "angle1": "180", "length1": "arc_k_armhole*Line_f_underarm_f_sh_tip",
-                   "angle2": "-(90 + shoulder_incl)", "length2": "arc_k_armhole*Line_f_underarm_f_sh_tip"}},
-        {"pt": "f_sh_tip"},
-        {"pt": "f_sh_neck", "label": "left_collar",
-         "curve": {"op": "spline",
-                   "angle1": "-(90 + shoulder_incl)", "length1": "arc_k_neck*Line_f_sh_neck_f_cf_neck",
-                   "angle2": "0", "length2": "arc_k_neck*Line_f_sh_neck_f_cf_neck"}},
-        {"pt": "f_cf_neck"}
+      "name": "left_ftorso",
+      "label": "body",
+      "place": [
+        "0",
+        "torso_top - front_top - sh_tan*front_w",
+        "30"
       ],
-      "copies": [{"name": "right_ftorso", "place": ["0", "torso_top - front_top - sh_tan*front_w", "30"]}]
-    },
-    {
-      "name": "left_btorso", "label": "body",
-      "place": ["0", "torso_top - back_len - sh_tan*back_w", "-25"],
       "path": [
-        {"pt": "b_cb_waist"},
-        {"pt": "b_cb_neck", "label": "left_collar",
-         "curve": {"op": "spline",
-                   "angle1": "0", "length1": "arc_k_neck*Line_b_cb_neck_b_sh_neck",
-                   "angle2": "-(90 + shoulder_incl)", "length2": "arc_k_neck*Line_b_cb_neck_b_sh_neck"}},
-        {"pt": "b_sh_neck"},
-        {"pt": "b_sh_tip", "label": "left_armhole",
-         "curve": {"op": "spline",
-                   "angle1": "-(90 + shoulder_incl)", "length1": "arc_k_armhole*Line_b_sh_tip_b_underarm",
-                   "angle2": "180", "length2": "arc_k_armhole*Line_b_sh_tip_b_underarm"}},
-        {"pt": "b_underarm"},
-        {"pt": "b_side_mid"},
-        {"pt": "b_side_waist"},
-        {"pt": "b_d_out_b"},
-        {"pt": "b_d_out_apex"},
-        {"pt": "b_d_out_a"},
-        {"pt": "b_d_in_b"},
-        {"pt": "b_d_in_apex"},
-        {"pt": "b_d_in_a"}
+        {
+          "pt": "f_cf_waist"
+        },
+        {
+          "pt": "f_d1a"
+        },
+        {
+          "pt": "f_d1apex"
+        },
+        {
+          "pt": "f_d1b"
+        },
+        {
+          "pt": "f_side_waist"
+        },
+        {
+          "pt": "f_bust_lo"
+        },
+        {
+          "pt": "f_bustapex"
+        },
+        {
+          "pt": "f_bust_hi"
+        },
+        {
+          "pt": "f_underarm",
+          "label": "left_armhole",
+          "curve": {
+            "op": "spline",
+            "angle1": "180",
+            "length1": "arc_k_armhole*Line_f_underarm_f_sh_tip",
+            "angle2": "-(90 + shoulder_incl)",
+            "length2": "arc_k_armhole*Line_f_underarm_f_sh_tip"
+          }
+        },
+        {
+          "pt": "f_sh_tip"
+        },
+        {
+          "pt": "f_sh_neck",
+          "label": "left_collar",
+          "curve": {
+            "op": "spline",
+            "angle1": "-(90 + shoulder_incl)",
+            "length1": "arc_k_neck*Line_f_sh_neck_f_cf_neck",
+            "angle2": "0",
+            "length2": "arc_k_neck*Line_f_sh_neck_f_cf_neck"
+          }
+        },
+        {
+          "pt": "f_cf_neck"
+        }
       ],
-      "copies": [{"name": "right_btorso", "place": ["0", "torso_top - back_len - sh_tan*back_w", "-25"]}]
-    },
-    {
-      "name": "wb_front", "label": "body",
-      "place": ["-front_waist", "waist_level - wb_w", "20"],
-      "path": [
-        {"pt": "wbf_0"}, {"pt": "wbf_1"}, {"pt": "wbf_2"},
-        {"pt": "wbf_3", "label": "lower_interface"},
-        {"pt": "wbf_4", "label": "lower_interface"},
-        {"pt": "wbf_5", "label": "lower_interface"},
-        {"pt": "wbf_6", "label": "lower_interface"}
+      "copies": [
+        {
+          "name": "right_ftorso",
+          "place": [
+            "0",
+            "torso_top - front_top - sh_tan*front_w",
+            "30"
+          ]
+        }
       ]
     },
     {
-      "name": "wb_back", "label": "body",
-      "place": ["-back_waist", "waist_level - wb_w", "-15"],
+      "name": "left_btorso",
+      "label": "body",
+      "place": [
+        "0",
+        "torso_top - back_len - sh_tan*back_w",
+        "-25"
+      ],
       "path": [
-        {"pt": "wbb_0"}, {"pt": "wbb_1"}, {"pt": "wbb_2"}, {"pt": "wbb_3"},
-        {"pt": "wbb_4"}, {"pt": "wbb_5"},
-        {"pt": "wbb_6", "label": "lower_interface"},
-        {"pt": "wbb_7", "label": "lower_interface"},
-        {"pt": "wbb_8", "label": "lower_interface"},
-        {"pt": "wbb_9", "label": "lower_interface"},
-        {"pt": "wbb_10", "label": "lower_interface"},
-        {"pt": "wbb_11", "label": "lower_interface"},
-        {"pt": "wbb_12"}
+        {
+          "pt": "b_cb_waist"
+        },
+        {
+          "pt": "b_cb_neck",
+          "label": "left_collar",
+          "curve": {
+            "op": "spline",
+            "angle1": "0",
+            "length1": "arc_k_neck*Line_b_cb_neck_b_sh_neck",
+            "angle2": "-(90 + shoulder_incl)",
+            "length2": "arc_k_neck*Line_b_cb_neck_b_sh_neck"
+          }
+        },
+        {
+          "pt": "b_sh_neck"
+        },
+        {
+          "pt": "b_sh_tip",
+          "label": "left_armhole",
+          "curve": {
+            "op": "spline",
+            "angle1": "-(90 + shoulder_incl)",
+            "length1": "arc_k_armhole*Line_b_sh_tip_b_underarm",
+            "angle2": "180",
+            "length2": "arc_k_armhole*Line_b_sh_tip_b_underarm"
+          }
+        },
+        {
+          "pt": "b_underarm"
+        },
+        {
+          "pt": "b_side_mid"
+        },
+        {
+          "pt": "b_side_waist"
+        },
+        {
+          "pt": "b_d_out_b"
+        },
+        {
+          "pt": "b_d_out_apex"
+        },
+        {
+          "pt": "b_d_out_a"
+        },
+        {
+          "pt": "b_d_in_b"
+        },
+        {
+          "pt": "b_d_in_apex"
+        },
+        {
+          "pt": "b_d_in_a"
+        }
+      ],
+      "copies": [
+        {
+          "name": "right_btorso",
+          "place": [
+            "0",
+            "torso_top - back_len - sh_tan*back_w",
+            "-25"
+          ]
+        }
       ]
     },
     {
-      "name": "skirt_front", "label": "leg",
-      "place": ["-front_hip", "waist_level - wb_w - skirt_waist_y", "25"],
+      "name": "wb_front",
+      "label": "body",
+      "place": [
+        "-front_waist",
+        "waist_level - wb_w",
+        "20"
+      ],
       "path": [
-        {"pt": "sf_hem_l"},
-        {"pt": "sf_hem_r"},
-        {"pt": "sf_hip_r",
-         "curve": {"op": "spline",
-                   "angle1": "90", "length1": "arc_k_skirt*Line_sf_hip_r_sf_waist_r",
-                   "angle2": "AngleLine_sf_waist_r_sf_hip_r", "length2": "arc_k_skirt*Line_sf_hip_r_sf_waist_r"}},
-        {"pt": "sf_waist_r"},
-        {"pt": "sf_waist_l",
-         "curve": {"op": "spline",
-                   "angle1": "AngleLine_sf_waist_l_sf_hip_l", "length1": "arc_k_skirt*Line_sf_hip_l_sf_waist_l",
-                   "angle2": "90", "length2": "arc_k_skirt*Line_sf_hip_l_sf_waist_l"}},
-        {"pt": "sf_hip_l"}
+        {
+          "pt": "wbf_0"
+        },
+        {
+          "pt": "wbf_1"
+        },
+        {
+          "pt": "wbf_2"
+        },
+        {
+          "pt": "wbf_3",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbf_4",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbf_5",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbf_6",
+          "label": "lower_interface"
+        }
       ]
     },
     {
-      "name": "skirt_back", "label": "leg",
-      "place": ["-back_hip", "waist_level - wb_w - skirt_waist_y", "-20"],
+      "name": "wb_back",
+      "label": "body",
+      "place": [
+        "-back_waist",
+        "waist_level - wb_w",
+        "-15"
+      ],
       "path": [
-        {"pt": "sb_hem_l"},
-        {"pt": "sb_hip_l",
-         "curve": {"op": "spline",
-                   "angle1": "90", "length1": "arc_k_skirt*Line_sb_hip_l_sb_waist_l",
-                   "angle2": "AngleLine_sb_waist_l_sb_hip_l", "length2": "arc_k_skirt*Line_sb_hip_l_sb_waist_l"}},
-        {"pt": "sb_waist_l"},
-        {"pt": "sb_o1a"}, {"pt": "sb_o1p"}, {"pt": "sb_o1b"},
-        {"pt": "sb_i1a"}, {"pt": "sb_i1p"}, {"pt": "sb_i1b"},
-        {"pt": "sb_i2a"}, {"pt": "sb_i2p"}, {"pt": "sb_i2b"},
-        {"pt": "sb_o2a"}, {"pt": "sb_o2p"}, {"pt": "sb_o2b"},
-        {"pt": "sb_waist_r",
-         "curve": {"op": "spline",
-                   "angle1": "AngleLine_sb_waist_r_sb_hip_r", "length1": "arc_k_skirt*Line_sb_hip_r_sb_waist_r",
-                   "angle2": "90", "length2": "arc_k_skirt*Line_sb_hip_r_sb_waist_r"}},
-        {"pt": "sb_hip_r"},
-        {"pt": "sb_hem_r"}
+        {
+          "pt": "wbb_0"
+        },
+        {
+          "pt": "wbb_1"
+        },
+        {
+          "pt": "wbb_2"
+        },
+        {
+          "pt": "wbb_3"
+        },
+        {
+          "pt": "wbb_4"
+        },
+        {
+          "pt": "wbb_5"
+        },
+        {
+          "pt": "wbb_6",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_7",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_8",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_9",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_10",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_11",
+          "label": "lower_interface"
+        },
+        {
+          "pt": "wbb_12"
+        }
+      ]
+    },
+    {
+      "name": "skirt_front",
+      "label": "leg",
+      "place": [
+        "-front_hip",
+        "waist_level - wb_w - skirt_waist_y",
+        "25"
+      ],
+      "path": [
+        {
+          "pt": "sf_hem_l"
+        },
+        {
+          "pt": "sf_hem_r"
+        },
+        {
+          "pt": "sf_hip_r",
+          "curve": {
+            "op": "spline",
+            "angle1": "90",
+            "length1": "arc_k_skirt*Line_sf_hip_r_sf_waist_r",
+            "angle2": "AngleLine_sf_waist_r_sf_hip_r",
+            "length2": "arc_k_skirt*Line_sf_hip_r_sf_waist_r"
+          }
+        },
+        {
+          "pt": "sf_waist_r"
+        },
+        {
+          "pt": "sf_waist_l",
+          "curve": {
+            "op": "spline",
+            "angle1": "AngleLine_sf_waist_l_sf_hip_l",
+            "length1": "arc_k_skirt*Line_sf_hip_l_sf_waist_l",
+            "angle2": "90",
+            "length2": "arc_k_skirt*Line_sf_hip_l_sf_waist_l"
+          }
+        },
+        {
+          "pt": "sf_hip_l"
+        }
+      ]
+    },
+    {
+      "name": "skirt_back",
+      "label": "leg",
+      "place": [
+        "-back_hip",
+        "waist_level - wb_w - skirt_waist_y",
+        "-20"
+      ],
+      "path": [
+        {
+          "pt": "sb_hem_l"
+        },
+        {
+          "pt": "sb_hip_l",
+          "curve": {
+            "op": "spline",
+            "angle1": "90",
+            "length1": "arc_k_skirt*Line_sb_hip_l_sb_waist_l",
+            "angle2": "AngleLine_sb_waist_l_sb_hip_l",
+            "length2": "arc_k_skirt*Line_sb_hip_l_sb_waist_l"
+          }
+        },
+        {
+          "pt": "sb_waist_l"
+        },
+        {
+          "pt": "sb_o1a"
+        },
+        {
+          "pt": "sb_o1p"
+        },
+        {
+          "pt": "sb_o1b"
+        },
+        {
+          "pt": "sb_i1a"
+        },
+        {
+          "pt": "sb_i1p"
+        },
+        {
+          "pt": "sb_i1b"
+        },
+        {
+          "pt": "sb_i2a"
+        },
+        {
+          "pt": "sb_i2p"
+        },
+        {
+          "pt": "sb_i2b"
+        },
+        {
+          "pt": "sb_o2a"
+        },
+        {
+          "pt": "sb_o2p"
+        },
+        {
+          "pt": "sb_o2b"
+        },
+        {
+          "pt": "sb_waist_r",
+          "curve": {
+            "op": "spline",
+            "angle1": "AngleLine_sb_waist_r_sb_hip_r",
+            "length1": "arc_k_skirt*Line_sb_hip_r_sb_waist_r",
+            "angle2": "90",
+            "length2": "arc_k_skirt*Line_sb_hip_r_sb_waist_r"
+          }
+        },
+        {
+          "pt": "sb_hip_r"
+        },
+        {
+          "pt": "sb_hem_r"
+        }
+      ]
+    },
+    {
+      "name": "left_sleeve",
+      "label": "arm",
+      "place": [
+        "-front_w - 32",
+        "torso_top - front_top - sh_tan*front_w",
+        "30"
+      ],
+      "path": [
+        {
+          "pt": "sl_ua_f",
+          "curve": {
+            "op": "spline",
+            "angle1": "AngleLine_sl_ua_f_sl_top + (180 - AngleLine_f_underarm_f_sh_tip)",
+            "length1": "arc_k_armhole*Line_sl_ua_f_sl_top",
+            "angle2": "AngleLine_sl_top_sl_ua_f + (-(90 + shoulder_incl) - AngleLine_f_sh_tip_f_underarm)",
+            "length2": "arc_k_armhole*Line_sl_ua_f_sl_top"
+          }
+        },
+        {
+          "pt": "sl_top",
+          "curve": {
+            "op": "spline",
+            "angle1": "AngleLine_sl_top_sl_ua_b - (-(90 + shoulder_incl) - AngleLine_b_sh_tip_b_underarm)",
+            "length1": "arc_k_armhole*Line_sl_top_sl_ua_b",
+            "angle2": "AngleLine_sl_ua_b_sl_top - (180 - AngleLine_b_underarm_b_sh_tip)",
+            "length2": "arc_k_armhole*Line_sl_top_sl_ua_b"
+          }
+        },
+        {
+          "pt": "sl_ua_b"
+        },
+        {
+          "pt": "sl_hem_b"
+        },
+        {
+          "pt": "sl_hem_f"
+        }
+      ],
+      "copies": [
+        {
+          "name": "right_sleeve",
+          "place": [
+            "front_w + 32",
+            "torso_top - front_top - sh_tan*front_w",
+            "30"
+          ]
+        }
       ]
     }
   ],
-
   "seams": [
-    ["left_ftorso:1", "left_ftorso:2"],
-    ["left_ftorso:5", "left_ftorso:6"],
-    ["right_ftorso:10", "right_ftorso:9"],
-    ["right_ftorso:6", "right_ftorso:5"],
-
-    ["left_btorso:7", "left_btorso:8"],
-    ["left_btorso:10", "left_btorso:11"],
-    ["right_btorso:5", "right_btorso:4"],
-    ["right_btorso:2", "right_btorso:1"],
-
-    ["left_ftorso:9", "left_btorso:2"],
-    ["right_ftorso:2", "right_btorso:10"],
-
-    ["left_ftorso:4", "left_btorso:5"],
-    ["left_ftorso:7", "left_btorso:4"],
-    ["right_ftorso:7", "right_btorso:7"],
-    ["right_ftorso:4", "right_btorso:8"],
-
-    ["left_ftorso:11", "right_ftorso:0"],
-    ["left_btorso:0", "right_btorso:12"],
-
-    ["left_ftorso:3", "wb_front:2"],
-    ["left_ftorso:0", "wb_front:3"],
-    ["right_ftorso:11", "wb_front:4"],
-    ["right_ftorso:8", "wb_front:5"],
-
-    ["left_btorso:6", "wb_back:6"],
-    ["left_btorso:9", "wb_back:7"],
-    ["left_btorso:12", "wb_back:8"],
-    ["right_btorso:0", "wb_back:9"],
-    ["right_btorso:3", "wb_back:10"],
-    ["right_btorso:6", "wb_back:11"],
-
-    ["wb_front:1", "wb_back:5"],
-    ["wb_front:6", "wb_back:12"],
-
-    ["wb_front:0", "skirt_front:3"],
-    ["wb_back:0", "skirt_back:2"],
-    ["wb_back:1", "skirt_back:5"],
-    ["wb_back:2", "skirt_back:8"],
-    ["wb_back:3", "skirt_back:11"],
-    ["wb_back:4", "skirt_back:14"],
-
-    ["skirt_back:3", "skirt_back:4"],
-    ["skirt_back:6", "skirt_back:7"],
-    ["skirt_back:9", "skirt_back:10"],
-    ["skirt_back:12", "skirt_back:13"],
-
-    ["skirt_front:1", "skirt_back:16"],
-    ["skirt_front:2", "skirt_back:15"],
-    ["skirt_front:4", "skirt_back:1"],
-    ["skirt_front:5", "skirt_back:0"]
+    [
+      "left_ftorso:1",
+      "left_ftorso:2"
+    ],
+    [
+      "left_ftorso:5",
+      "left_ftorso:6"
+    ],
+    [
+      "right_ftorso:10",
+      "right_ftorso:9"
+    ],
+    [
+      "right_ftorso:6",
+      "right_ftorso:5"
+    ],
+    [
+      "left_btorso:7",
+      "left_btorso:8"
+    ],
+    [
+      "left_btorso:10",
+      "left_btorso:11"
+    ],
+    [
+      "right_btorso:5",
+      "right_btorso:4"
+    ],
+    [
+      "right_btorso:2",
+      "right_btorso:1"
+    ],
+    [
+      "left_ftorso:9",
+      "left_btorso:2"
+    ],
+    [
+      "right_ftorso:2",
+      "right_btorso:10"
+    ],
+    [
+      "left_ftorso:4",
+      "left_btorso:5"
+    ],
+    [
+      "left_ftorso:7",
+      "left_btorso:4"
+    ],
+    [
+      "right_ftorso:7",
+      "right_btorso:7"
+    ],
+    [
+      "right_ftorso:4",
+      "right_btorso:8"
+    ],
+    [
+      "left_ftorso:11",
+      "right_ftorso:0"
+    ],
+    [
+      "left_btorso:0",
+      "right_btorso:12"
+    ],
+    [
+      "left_ftorso:3",
+      "wb_front:2"
+    ],
+    [
+      "left_ftorso:0",
+      "wb_front:3"
+    ],
+    [
+      "right_ftorso:11",
+      "wb_front:4"
+    ],
+    [
+      "right_ftorso:8",
+      "wb_front:5"
+    ],
+    [
+      "left_btorso:6",
+      "wb_back:6"
+    ],
+    [
+      "left_btorso:9",
+      "wb_back:7"
+    ],
+    [
+      "left_btorso:12",
+      "wb_back:8"
+    ],
+    [
+      "right_btorso:0",
+      "wb_back:9"
+    ],
+    [
+      "right_btorso:3",
+      "wb_back:10"
+    ],
+    [
+      "right_btorso:6",
+      "wb_back:11"
+    ],
+    [
+      "wb_front:1",
+      "wb_back:5"
+    ],
+    [
+      "wb_front:6",
+      "wb_back:12"
+    ],
+    [
+      "wb_front:0",
+      "skirt_front:3"
+    ],
+    [
+      "wb_back:0",
+      "skirt_back:2"
+    ],
+    [
+      "wb_back:1",
+      "skirt_back:5"
+    ],
+    [
+      "wb_back:2",
+      "skirt_back:8"
+    ],
+    [
+      "wb_back:3",
+      "skirt_back:11"
+    ],
+    [
+      "wb_back:4",
+      "skirt_back:14"
+    ],
+    [
+      "skirt_back:3",
+      "skirt_back:4"
+    ],
+    [
+      "skirt_back:6",
+      "skirt_back:7"
+    ],
+    [
+      "skirt_back:9",
+      "skirt_back:10"
+    ],
+    [
+      "skirt_back:12",
+      "skirt_back:13"
+    ],
+    [
+      "skirt_front:1",
+      "skirt_back:16"
+    ],
+    [
+      "skirt_front:2",
+      "skirt_back:15"
+    ],
+    [
+      "skirt_front:4",
+      "skirt_back:1"
+    ],
+    [
+      "skirt_front:5",
+      "skirt_back:0"
+    ],
+    [
+      "left_sleeve:0",
+      "left_ftorso:8"
+    ],
+    [
+      "left_sleeve:1",
+      "left_btorso:3"
+    ],
+    [
+      "left_sleeve:4",
+      "left_sleeve:2"
+    ],
+    [
+      "right_sleeve:4",
+      "right_ftorso:3"
+    ],
+    [
+      "right_sleeve:3",
+      "right_btorso:9"
+    ],
+    [
+      "right_sleeve:0",
+      "right_sleeve:2"
+    ]
   ]
 }
