@@ -89,3 +89,9 @@ core/third_party/garmentcode/
 __pycache__/
 reports/2026-08-01-m3-flat-yogunluk/
 Logs/
+
+.rabadon/handoff.md
+
+# the drawing path's own venv (numpy/scipy/matplotlib/svgpathtools/pyyaml,
+# no GarmentCode): recreated with python3 -m venv + pip install
+engine/pattern-bridge/.venv/

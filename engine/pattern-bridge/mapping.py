@@ -1,15 +1,22 @@
 # ============================================================================
-# mapping.py — atolye state (M + FLAGS + _neckShape + size) -> GarmentCode design
+# mapping.py — two jobs that share one size ladder, and only one of them
+# leaves this repository.
 #
-# Every mapping is LINEAR over the two documented ranges (ours from
-# engine/tools/atolye/ingredients.js, theirs from the design yaml ranges in
-# core/third_party/garmentcode) and carries its reasoning as a comment.
-# Anything that cannot be expressed in GarmentCode is NOT silently swallowed:
-# it is recorded in the notes list and written next to the output as
-# mapping-notes.json (field, what was done, what was lost).
+# GRADED BODY (graded_body, SIZES, GRADE_PER_SIZE). EU size -> 26 body
+# measurements. Reads bodies/mean_all.yaml, which lives here. This is what
+# draft.py hands to material.py, and nothing on this side needs a generator
+# to be installed.
 #
-# Base design template: probe/stitchu_fitted_dress.yaml (full GarmentCode
-# design tree). We only override 'v' values; ranges/types stay theirs.
+# ATOLYE STATE -> DESIGN (the rest of the file). Turns the workshop's own
+# state (M + FLAGS + _neckShape + size) into a design tree for the third
+# party generator, for the corpus and catalogue work that judges that
+# generator. Every mapping is LINEAR over two documented ranges, ours from
+# engine/tools/atolye/ingredients.js and theirs from the design yaml, and
+# carries its reasoning as a comment. Anything the generator cannot express
+# is not silently swallowed, it goes to the notes list and is written next
+# to the output as mapping-notes.json (field, what was done, what was lost).
+# Base design template: probe/stitchu_fitted_dress.yaml, a full design tree
+# of which only 'v' values are overridden; ranges and types stay theirs.
 # ============================================================================
 import copy
 from pathlib import Path
@@ -18,8 +25,10 @@ import yaml
 
 HERE = Path(__file__).resolve().parent
 DESIGN_TEMPLATE = HERE / 'probe' / 'stitchu_fitted_dress.yaml'
-GC_ROOT = HERE.parent.parent / 'core' / 'third_party' / 'garmentcode'
-BASE_BODY = GC_ROOT / 'assets' / 'bodies' / 'mean_all.yaml'
+# The measurements the drawing path grades from are ours to read, so they sit
+# in this package. Nothing under core/third_party needs to exist for draft.py
+# to run; the copy and its provenance are in bodies/mean_all.yaml.
+BASE_BODY = HERE / 'bodies' / 'mean_all.yaml'
 
 SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48']
 
