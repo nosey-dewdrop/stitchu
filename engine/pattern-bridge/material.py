@@ -434,22 +434,27 @@ def _mirror_panel(panel, copy, s):
     verts = [[x - ox, y] for x, y in verts]
     n = len(verts)
 
-    # reversing the walk keeps the outline turning the same way it did before
-    # the reflection, which is what the print side and the seam side both
-    # assume
+    # Reflecting a closed outline reverses the direction it turns in, so the
+    # walk is reversed too and the piece comes out turning the way it did
+    # before. Reversing the walk means reversing the OUTLINE as well as the
+    # edge table: the first version of this reordered the edges and left the
+    # vertices where they were, which put every curve on a different edge from
+    # the one it was drawn on. A lopsided test piece with one curved side and
+    # four straight ones landed 12.9353mm from its own reflection; a mirrored
+    # pair is equal by construction, so anything but zero was the code.
     idx = [0] + list(range(n - 1, 0, -1))
-    pos = {old: new for new, old in enumerate(idx)}
+    verts = [verts[i] for i in idx]
     edges = []
-    for new, old in enumerate(idx):
-        prev = idx[(new - 1) % n]
-        src = panel['edges'][prev]          # the edge INTO old, walked back
+    for new in range(n):
+        # new edge k runs from old vertex idx[k] to old vertex idx[k+1], which
+        # is old edge (n-1-k) walked backwards
+        src = panel['edges'][n - 1 - new]
         e = {'endpoints': [new, (new + 1) % n]}
         if 'curvature' in src:
             e['curvature'] = _flip_curvature(src['curvature'])
         if 'label' in src:
             e['label'] = _flip_label(src['label'])
         edges.append(e)
-    assert pos  # keeps the mapping visible for anyone reading the walk
 
     t = panel['translation']
     return {
