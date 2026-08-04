@@ -93,7 +93,12 @@ GRADE_PER_SIZE = {
     'wrist': 0.25,
     'bust_points': 0.5,   # bust points spread with girth
     'bum_points': 0.5,
-    'armscye_depth': 0.5,  # armhole depth grades ~0.5cm per size
+    # 0.5 was unsourced AND it moved nothing: the drawing path never read
+    # armscye_depth, so the drawn armhole sat at the same 22.0549cm drop in
+    # all eight sizes. It drives the underarm level now, and the step is the
+    # verified one (knowledge/drafting-math-eu38.md: Aldrich armscye depth
+    # 21.0 at bust 88, 21.4 at bust 92, two sizes apart)
+    'armscye_depth': 0.2,
     # --- length, measured off the bought pattern's eight nested rings -------
     # Solved, not typed: the drawn bodice already lengthens 0.0994 cm/size on
     # its own, because the shoulder tip slides outward with the width grade

@@ -136,9 +136,9 @@
     },
     {
       "name": "underarm_clear",
-      "formula": "1.0",
+      "formula": "18.3639 - armscye_depth",
       "style": true,
-      "why": "the armhole ends 1cm above the top of the bust dart; a sleeveless armhole is cut higher than one that takes a sleeve"
+      "why": "how far the underarm sits above the high bust point. It was the literal 1.0 with no source behind it, and the armhole it produced was 536.70mm at EU38 while a bought industrial pattern of the same BODY measures 430.4mm at the seam line (Locket-38, extracted from the A0 vector). The straight chord between our two armhole ends was 232.5mm, longer than that pattern's whole curved front scye at 211mm, so the fault was never the curve, it was where the two ends were put. The size charts do not agree either: their EU38 is bust 92.0 and ours is 87.8, the same 4.2cm apart in all eight sizes, so the target is taken bust-matched, our EU40 against their 38. The constant is solved to land that armhole on 430.4mm and the grade comes from armscye_depth, which now steps at Aldrich's verified 0.2cm per size. Before this the drawn drop was 22.0549cm in every size, i.e. the armhole did not grade in depth at all."
     },
     {
       "name": "back_cb_rise",
