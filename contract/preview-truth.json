@@ -489,9 +489,10 @@
   {
    "style": "*",
    "landmark": "neckDepth",
-   "maxAbsDevPct": 62,
+   "maxAbsDevPct": 67.67,
    "contractRef": "contract/tables.json flat._layer (stylised drawing units)",
-   "justification": "flat neckline depth exaggerated for silhouette drama (current +54..55%); pinned."
+   "justification": "flat neckline depth exaggerated for silhouette drama (current +54..55%); pinned. PIN TASINDI 2026-08-04 (x1.035). Mandal gevsetilmedi, PAYDA degisti: her flat landmark bustHalf ANCHOR uzerine normalize ediliyor ve 43fd696 (1 Agu, 'four fixes damla asked for twice') _engine-full.mjs buildHalf'ta bustX carpanini (1+0.07*bustProject) -> (0.975+0.05*bustProject) yapti; varsayilan bustProject 0.5 icin 1.0350 -> 1.0000. Iki commit arasi olculdu: flat degerlerin HEPSI x1.0344..x1.0367 kaydi (boat armholeDepth 1.191->1.232, boat skirtLen 2.618->2.710, vneck neckDepth 0.873->0.903, vneck hemSweepHalf 1.576->1.631), draft tarafi hicbirinde kimildamadi. Pin ayni carpanla tasindi, stilizasyona yeni pay verilmedi.",
+   "repin_2026_08_04": "62 -> 67.67"
   },
   {
    "style": "*",
@@ -503,9 +504,10 @@
   {
    "style": "*",
    "landmark": "armholeDepth",
-   "maxAbsDevPct": 75,
+   "maxAbsDevPct": 81.125,
    "contractRef": "contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer",
-   "justification": "flat armhole is drawn deep/hollow (review.* registered knob, Damla decision pending); current +68..69%; pinned."
+   "justification": "flat armhole is drawn deep/hollow (review.* registered knob, Damla decision pending). PIN TASINDI 2026-08-04 (x1.035). Mandal gevsetilmedi, PAYDA degisti: her flat landmark bustHalf ANCHOR uzerine normalize ediliyor ve 43fd696 (1 Agu, 'four fixes damla asked for twice') _engine-full.mjs buildHalf'ta bustX carpanini (1+0.07*bustProject) -> (0.975+0.05*bustProject) yapti; varsayilan bustProject 0.5 icin 1.0350 -> 1.0000. Iki commit arasi olculdu: flat degerlerin HEPSI x1.0344..x1.0367 kaydi (boat armholeDepth 1.191->1.232, boat skirtLen 2.618->2.710, vneck neckDepth 0.873->0.903, vneck hemSweepHalf 1.576->1.631), draft tarafi hicbirinde kimildamadi. Pin ayni carpanla tasindi, stilizasyona yeni pay verilmedi.",
+   "repin_2026_08_04": "75 -> 81.125"
   },
   {
    "style": "*",
@@ -678,9 +680,10 @@
   {
    "style": "dress_boat_aline_tieback",
    "landmark": "skirtLen",
-   "maxAbsDevPct": 48,
+   "maxAbsDevPct": 53.18,
    "contractRef": "contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop')",
-   "justification": "same two-quantities-are-different declaration as the '*' 21% skirtLen pin; a mini dress skirt (vs the empire mini cohort) diverges more between the stylised flat length and the real hem drop. Current +45.3%; pinned worst + margin."
+   "justification": "same two-quantities-are-different declaration as the '*' 21% skirtLen pin; a mini dress skirt (vs the empire mini cohort) diverges more between the stylised flat length and the real hem drop. Current +45.3%; pinned worst + margin. PIN TASINDI 2026-08-04 (x1.035). Mandal gevsetilmedi, PAYDA degisti: her flat landmark bustHalf ANCHOR uzerine normalize ediliyor ve 43fd696 (1 Agu, 'four fixes damla asked for twice') _engine-full.mjs buildHalf'ta bustX carpanini (1+0.07*bustProject) -> (0.975+0.05*bustProject) yapti; varsayilan bustProject 0.5 icin 1.0350 -> 1.0000. Iki commit arasi olculdu: flat degerlerin HEPSI x1.0344..x1.0367 kaydi (boat armholeDepth 1.191->1.232, boat skirtLen 2.618->2.710, vneck neckDepth 0.873->0.903, vneck hemSweepHalf 1.576->1.631), draft tarafi hicbirinde kimildamadi. Pin ayni carpanla tasindi, stilizasyona yeni pay verilmedi.",
+   "repin_2026_08_04": "48 -> 53.18"
   },
   {
    "style": "top_cami_sq_wide_shirred",
@@ -727,16 +730,18 @@
   {
    "style": "dress_vneck_gathered",
    "landmark": "skirtLen",
-   "maxAbsDevPct": 48,
+   "maxAbsDevPct": 53.18,
    "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) + gatheredSkirt drape (cloth-solver profile:skirt)",
-   "justification": "DIRNDL (2026-07-23): the flat draws a full dirndl skirt (skirtFull 2.0) whose physics-gathered folds sweep long and straight-dropping for the croquis; the drafted skirt length is the real mini drop. Stylised drawing layer, not a fit deviation. Current +45.3%; pinned worst + margin."
+   "justification": "DIRNDL (2026-07-23): the flat draws a full dirndl skirt (skirtFull 2.0) whose physics-gathered folds sweep long and straight-dropping for the croquis; the drafted skirt length is the real mini drop. Stylised drawing layer, not a fit deviation. Current +45.3%; pinned worst + margin. PIN TASINDI 2026-08-04 (x1.035). Mandal gevsetilmedi, PAYDA degisti: her flat landmark bustHalf ANCHOR uzerine normalize ediliyor ve 43fd696 (1 Agu, 'four fixes damla asked for twice') _engine-full.mjs buildHalf'ta bustX carpanini (1+0.07*bustProject) -> (0.975+0.05*bustProject) yapti; varsayilan bustProject 0.5 icin 1.0350 -> 1.0000. Iki commit arasi olculdu: flat degerlerin HEPSI x1.0344..x1.0367 kaydi (boat armholeDepth 1.191->1.232, boat skirtLen 2.618->2.710, vneck neckDepth 0.873->0.903, vneck hemSweepHalf 1.576->1.631), draft tarafi hicbirinde kimildamadi. Pin ayni carpanla tasindi, stilizasyona yeni pay verilmedi.",
+   "repin_2026_08_04": "48 -> 53.18"
   },
   {
    "style": "dress_vneck_gathered",
    "landmark": "hemSweepHalf",
-   "maxAbsDevPct": 10,
+   "maxAbsDevPct": 13.85,
    "contractRef": "engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) dirndl hem sweep",
-   "justification": "DIRNDL (2026-07-23): the full dirndl hem sweep is drawn a touch wider in the croquis than the drafted gathered panel width; borderline stylisation. Current +8.0%; pinned worst + margin."
+   "justification": "DIRNDL (2026-07-23): the full dirndl hem sweep is drawn a touch wider in the croquis than the drafted gathered panel width; borderline stylisation. Current +8.0%; pinned worst + margin. PIN TASINDI 2026-08-04 (x1.035). Mandal gevsetilmedi, PAYDA degisti: her flat landmark bustHalf ANCHOR uzerine normalize ediliyor ve 43fd696 (1 Agu, 'four fixes damla asked for twice') _engine-full.mjs buildHalf'ta bustX carpanini (1+0.07*bustProject) -> (0.975+0.05*bustProject) yapti; varsayilan bustProject 0.5 icin 1.0350 -> 1.0000. Iki commit arasi olculdu: flat degerlerin HEPSI x1.0344..x1.0367 kaydi (boat armholeDepth 1.191->1.232, boat skirtLen 2.618->2.710, vneck neckDepth 0.873->0.903, vneck hemSweepHalf 1.576->1.631), draft tarafi hicbirinde kimildamadi. Pin ayni carpanla tasindi, stilizasyona yeni pay verilmedi.",
+   "repin_2026_08_04": "10 -> 13.85"
   },
   {
    "style": "top_cami_sq_spag_shirred_peplum_ruffle",

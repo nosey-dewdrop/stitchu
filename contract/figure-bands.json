@@ -9,12 +9,36 @@
  },
  "template_gogus_geometrisi": {
   "_ROL": "KÖK1 güzellik turu (2026-07-23): göğüs DAİRESİ template'ten piksel-kalibre. Damla teşhisi (sarkık/kocaman/bele-yakın/diş-macunu) bu geometriyle çözülür. Tüm değerler beden-bağımsız ORAN, kaynak: template (piksel-kalibre).",
-  "cap_tam_govde_gen": { "value": 0.272, "kaynak": "template", "not": "göğüs dairesi çapı / tam gövde genişliği (bust hizası kaburga outline). 'kocaman' şikâyeti = bu orandan büyük çizim." },
-  "cap_yari_govde_gen": { "value": 0.543, "kaynak": "template", "not": "göğüs çapı / yarı gövde genişliği (CF→yan)." },
-  "apex_cf_uzaklik_yari_govde": { "value": 0.348, "kaynak": "template", "not": "apex'in CF'den yatay uzaklığı / yarı gövde. İki göğüs arası açıklık; 'bele-yakın' değil YANAL yerleşim referansı." },
-  "apex_dusus_torso_frac": { "value": 0.441, "kaynak": "template", "not": "apex y düşüşü (omuz çizgisi=0 → apex) / torso boyu (omuz→bel). 'sarkık/aşağıda' şikâyetinin sayısal karşılığı: apex bu fraksiyondan AŞAĞIDA = sarkık. Referans: torso'nun ~%44'ü, bel çizgisine değil büst çizgisine oturur." },
-  "boyun_gen_tam_govde": { "value": 0.225, "kaynak": "template", "not": "boyun genişliği / tam gövde genişliği." },
-  "kavis_karakteri": { "value": "daire", "kaynak": "template", "not": "göğüs flat'te simetrik DAİRE ile temsil (apex tam ortada); gövde yan-hattı büst hizasında daralMAZ (kaburga takibi, göğüs ayrı daire). 'diş-macunu/boru' = gövde yan-hattının göğüsle şişirilmesi HATASI; doğru: yan-hat düz-kaburga + göğüs ayrı dolgunluk." }
+  "cap_tam_govde_gen": {
+   "value": 0.272,
+   "kaynak": "template",
+   "not": "göğüs dairesi çapı / tam gövde genişliği (bust hizası kaburga outline). 'kocaman' şikâyeti = bu orandan büyük çizim."
+  },
+  "cap_yari_govde_gen": {
+   "value": 0.543,
+   "kaynak": "template",
+   "not": "göğüs çapı / yarı gövde genişliği (CF→yan)."
+  },
+  "apex_cf_uzaklik_yari_govde": {
+   "value": 0.348,
+   "kaynak": "template",
+   "not": "apex'in CF'den yatay uzaklığı / yarı gövde. İki göğüs arası açıklık; 'bele-yakın' değil YANAL yerleşim referansı."
+  },
+  "apex_dusus_torso_frac": {
+   "value": 0.441,
+   "kaynak": "template",
+   "not": "apex y düşüşü (omuz çizgisi=0 → apex) / torso boyu (omuz→bel). 'sarkık/aşağıda' şikâyetinin sayısal karşılığı: apex bu fraksiyondan AŞAĞIDA = sarkık. Referans: torso'nun ~%44'ü, bel çizgisine değil büst çizgisine oturur."
+  },
+  "boyun_gen_tam_govde": {
+   "value": 0.225,
+   "kaynak": "template",
+   "not": "boyun genişliği / tam gövde genişliği."
+  },
+  "kavis_karakteri": {
+   "value": "daire",
+   "kaynak": "template",
+   "not": "göğüs flat'te simetrik DAİRE ile temsil (apex tam ortada); gövde yan-hattı büst hizasında daralMAZ (kaburga takibi, göğüs ayrı daire). 'diş-macunu/boru' = gövde yan-hattının göğüsle şişirilmesi HATASI; doğru: yan-hat düz-kaburga + göğüs ayrı dolgunluk."
+  }
  },
  "ratios": {
   "waist_bust": {
@@ -81,16 +105,26 @@
   "boxy_min": 0.93,
   "drift_tolerans": 0.02,
   "taban_v3": {
+   "princess_dress": 0.643,
+   "wrap_dress": 0.662,
+   "dress_princess_scoop_aline": 0.662,
+   "dress_princess_scoop_aline_midi": 0.662,
+   "gore_skirt_dress": 0.68,
+   "dress_boat_aline_tieback": 0.697,
+   "drawstring_babydoll": 0.856,
+   "peterpan_puff": 1.001,
+   "lace_vneck_70s": 1.003,
+   "courtney_lace_vneck": 1.003
+  },
+  "_taban_v3_repin": "YENİDEN ÇAKILDI 2026-08-04. Yedi pinli değer 43fd696'da (1 Ağu, 'four fixes damla asked for twice, this time verified on screen') kaydı, çünkü o commit BÜSTÜ DARALTTI: _engine-full.mjs buildHalf'ta bustX çarpanı (1+0.07*bustProject) -> (0.975+0.05*bustProject), varsayılan bustProject 0.5'te büst yarı-genişliği 1.0350 -> 1.0000, yani %3.38 daha dar; apex de bustHeight*0.58 ile yukarı alındı. Bel değişmedi, PAYDA değişti, o yüzden waist/bust yedisinde de aynı yönde ve aynı büyüklükte arttı: ölçülen +%3.21..+%3.44, aritmetiğin verdiği +%3.50. Beli oyuk OLMAYAN üç pin (peterpan_puff, lace_vneck_70s, courtney_lace_vneck) hiç kımıldamadı (oran ~1.0, bel ve büst aynı hatta okunuyor) — kaymanın büstten geldiğinin kanıtı. Commit commit ölçüldü: a87a72d..ba5cb1b'nin dokuzunda değerler eski pinde duruyor, 43fd696'da yedisi birden zıplıyor. Çizim kasıtlı ve ekranda doğrulanmış, eski pin bayattı; drift_tolerans 0.02 elle GENİŞLETİLMEDİ, taban ölçülen yeni değere taşındı.",
+  "_taban_v3_onceki": {
    "princess_dress": 0.623,
    "wrap_dress": 0.641,
    "dress_princess_scoop_aline": 0.64,
    "dress_princess_scoop_aline_midi": 0.64,
    "gore_skirt_dress": 0.658,
    "dress_boat_aline_tieback": 0.675,
-   "drawstring_babydoll": 0.828,
-   "peterpan_puff": 1.001,
-   "lace_vneck_70s": 1.003,
-   "courtney_lace_vneck": 1.003
+   "drawstring_babydoll": 0.828
   }
  },
  "_donma": "Bu bantlar FIGURE_BASE turunda mandala bağlanır (figure_check). Değişiklik ancak yeni kaynaklı ölçümle — bant Damla onayı olmadan genişletilemez."
