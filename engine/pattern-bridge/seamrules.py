@@ -25,6 +25,7 @@
 # and the meaning of the pairing, as human input.
 # ============================================================================
 import math
+import re
 
 # ---------------------------------------------------------------------------
 # TOLERANCES
@@ -344,4 +345,13 @@ def human_name(panel_name, panel):
         return f'{base} on'
     if face == 'back':
         return f'{base} arka'
+    # A skirt cut in equal panels has no front and no back to call: every
+    # panel is the same trapezium, and the only thing that tells one from the
+    # next is where it sits round the waist. That is the number the generator
+    # counts with, from centre front outwards, so the page says it. Without it
+    # a five-panel skirt prints three different drawings all headed 'etek' and
+    # nobody holding the paper can tell which piece is in their hands.
+    ring = re.search(r'_p(\d+)$', n)
+    if ring:
+        return f'{base} paneli {int(ring.group(1)) + 1}'
     return base
