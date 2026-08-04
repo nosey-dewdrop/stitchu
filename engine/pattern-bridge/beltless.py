@@ -79,27 +79,33 @@ def build_recipe(n_panels, base=None):
 
     # ---- where the ring is cut ------------------------------------------
     # bodice boundaries on the left half, then the panel boundaries, then the
-    # union. Positions are carried as formulas and compared as numbers.
-    bodice_edges = [(ev(a), ev(b), piece, start, how)
+    # union. Positions are COMPARED as numbers and CARRIED as formulas, and
+    # the difference matters: which bodice edge a panel boundary falls inside
+    # is a comparison and one body settles it, while how far along the ring
+    # that boundary sits is a length and has to grade. Measured over
+    # EU34..EU48 and all six panel counts, the comparison never changes its
+    # answer, so this stays one recipe.
+    bodice_edges = [(ev(a), ev(b), a, b, piece, start, how)
                     for piece, start, a, b, how in WAIST_RUN]
     panel_cuts = [(k * waist / n_panels, f'{k}*waist/{n_panels}')
                   for k in range(1, n_panels)
                   if 1e-9 < k * waist / n_panels < half - 1e-9]
 
     # every bodice waist edge, cut at the panel boundaries inside it
-    sub_edges = []          # (ring_start, ring_end, piece, start_point_id)
+    sub_edges = []          # (ring_start, ring_end, lo_formula, hi_formula,
+                            #  piece, start_point_id)
     extra_points = []       # points inserted into the bodice paths
     inserts = {}            # (piece, after_point_id) -> [point ids in order]
-    for lo, hi, piece, start, how in bodice_edges:
+    for lo, hi, lo_f, hi_f, piece, start, how in bodice_edges:
         inner = [(pos, f) for pos, f in panel_cuts if lo + 1e-9 < pos < hi - 1e-9]
-        prev_id, prev_pos = start, lo
+        prev_id, prev_pos, prev_f = start, lo, lo_f
         for i, (pos, formula) in enumerate(inner):
             pid = f'wcut_{piece}_{start}_{i}'
             extra_points.append(split_point(pid, formula, how))
             inserts.setdefault((piece, start), []).append(pid)
-            sub_edges.append((prev_pos, pos, piece, prev_id))
-            prev_id, prev_pos = pid, pos
-        sub_edges.append((prev_pos, hi, piece, prev_id))
+            sub_edges.append((prev_pos, pos, prev_f, formula, piece, prev_id))
+            prev_id, prev_pos, prev_f = pid, pos, formula
+        sub_edges.append((prev_pos, hi, prev_f, hi_f, piece, prev_id))
 
     # ---- the bodice, with those points in its paths ----------------------
     pieces, seam_syms = [], []
@@ -204,12 +210,22 @@ def skirt_pieces(n, sub_edges, waist, half, ev, seam_syms):
     and the seams that join them to each other and to the bodice."""
     # the full ring of bodice sub-edges: the left half as drawn, then the same
     # positions reflected through centre back onto the mirror pieces
-    ring = [(lo, hi, piece, pt) for lo, hi, piece, pt in sub_edges]
-    for lo, hi, piece, pt in reversed(sub_edges):
+    ring = list(sub_edges)
+    for lo, hi, lo_f, hi_f, piece, pt in reversed(sub_edges):
         other = ('right_' + piece[5:]) if piece.startswith('left_') else piece
-        ring.append((2 * half - hi, 2 * half - lo, other, pt))
-    cuts = sorted({r for lo, hi, _, _ in ring for r in (lo, hi)}
-                  | {k * waist / n for k in range(n + 1)})
+        ring.append((2 * half - hi, 2 * half - lo,
+                     f'2*({HALF}) - ({hi_f})', f'2*({HALF}) - ({lo_f})',
+                     other, pt))
+    # a cut is a number to sort by and a formula to draw with; the bodice's
+    # own formula wins where a panel boundary lands on a bodice boundary,
+    # because there the seam is the bodice's
+    cut_f = {}
+    for k in range(n + 1):
+        cut_f[k * waist / n] = f'{k}*waist/{n}'
+    for lo, hi, lo_f, hi_f, _, _ in ring:
+        cut_f[lo] = lo_f
+        cut_f[hi] = hi_f
+    cuts = sorted(cut_f)
 
     pieces = []
     for k in range(n):
@@ -227,7 +243,8 @@ def skirt_pieces(n, sub_edges, waist, half, ev, seam_syms):
                  {'pt': f'{name}_hip_l'}]
         pieces.append({'name': name, 'label': 'leg',
                        'place': place_of(k, n), 'path': path,
-                       'points': panel_points(name, k, n, inside, a, b)})
+                       'points': panel_points(name, k, n,
+                                              [(c, cut_f[c]) for c in inside])})
 
         # waist attach: this panel's waist sub-edges, right to left, against
         # the bodice sub-edges that occupy the same stretch of the ring
@@ -235,7 +252,7 @@ def skirt_pieces(n, sub_edges, waist, half, ev, seam_syms):
         for j in range(len(bounds) - 1):
             lo, hi = bounds[len(bounds) - 2 - j], bounds[len(bounds) - 1 - j]
             mid = (lo + hi) / 2.0
-            match = [(p, q) for rlo, rhi, p, q in ring if rlo < mid < rhi]
+            match = [(p, q) for rlo, rhi, _, _, p, q in ring if rlo < mid < rhi]
             if len(match) != 1:
                 raise ValueError(f'panel {k} waist {lo:.4f}..{hi:.4f} matched '
                                  f'{len(match)} bodice edges')
@@ -272,7 +289,7 @@ def curve(side, name):
             'angle2': '90', 'length2': f'arc_k_pan*Line_{a}_{b}'}
 
 
-def panel_points(name, k, n, inside, a, b):
+def panel_points(name, k, n, inside):
     pts = [
         {'id': f'{name}_hem_l', 'op': 'origin', 'x': '0', 'y': '0'},
         {'id': f'{name}_hem_r', 'op': 'origin', 'x': 'pan_hip', 'y': '0'},
@@ -284,12 +301,18 @@ def panel_points(name, k, n, inside, a, b):
         {'id': f'{name}_w_l', 'op': 'origin', 'x': 'pan_take',
          'y': 'skirt_waist_y'},
     ]
-    for j, cut in enumerate(reversed(inside)):
-        # the cut is a ring position; on the panel it is that far from the
-        # panel's own left end, carried as a formula so it grades
-        frac = (cut - a) / (b - a)
+    for j, (_, cut_f) in enumerate(reversed(inside)):
+        # The cut is a ring position and on the panel it sits that far from
+        # the panel's own left end. It was a FRACTION of the panel here, taken
+        # once on one body, and a fraction says the bodice's waist segments
+        # keep their proportions as the body grades. They do not: the girths
+        # grade by 4cm a size and the darts, the front-to-back split and the
+        # side take-in each grade at their own rate, so at EU48 the panel was
+        # cutting its waist in a place the bodice no longer cut its own. The
+        # position is the bodice's own formula now, and the panel is exactly
+        # pan_waist wide, so the offset needs no scaling at all.
         pts.append({'id': f'{name}_w_{j}', 'op': 'origin',
-                    'x': f'pan_take + {frac!r}*pan_waist',
+                    'x': f'pan_take + ({cut_f}) - {k}*waist/{n}',
                     'y': 'skirt_waist_y'})
     return pts
 
