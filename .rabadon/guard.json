@@ -167,9 +167,9 @@
  "pushGate": {
   "why": "RULES 9: ctest must be fully green before any push; a change that breaks a test is reverted, not pushed.",
   "testHint": "cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure (engine-check harness = full draft matrix, must be FULLY green)",
-  "run": "cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure",
+  "run": "cd /Users/damummyphus/damla_projects_2026/stitchu && cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure",
   "timeoutSec": 900,
-  "_run_eklendi": "2026-08-04: pushGate'in 'run' anahtari YOKTU. gate.cpp:2367 runCmd bos olunca dogrudan block ediyor ve suiti hic catallamiyor, lastTestVerified ise SADECE rabadon'un kendi catalladigi kosunun exit 0'ini okuyunca damgalaniyor (gate.cpp:2381). Yani kapi kapanik dogmustu: yesil suit gostermek ise yaramiyordu, state.json'da lastTestVerified 0'da cakiliydi ve lastCodeEdit her zaman ondan buyuktu. Kural gevsetilmedi, calistirilacak komut verildi; artik rabadon suiti KENDI kosuyor, iddiaya degil kendi okudugu exit koduna bakiyor."
+  "_run_eklendi": "2026-08-04: pushGate'in 'run' anahtari YOKTU. gate.cpp:2367 runCmd bos olunca dogrudan block ediyor ve suiti hic catallamiyor, lastTestVerified ise SADECE rabadon'un kendi catalladigi kosunun exit 0'ini okuyunca damgalaniyor (gate.cpp:2381). Yani kapi kapanik dogmustu: yesil suit gostermek ise yaramiyordu, state.json'da lastTestVerified 0'da cakiliydi ve lastCodeEdit her zaman ondan buyuktu. Kural gevsetilmedi, calistirilacak komut verildi; artik rabadon suiti KENDI kosuyor, iddiaya degil kendi okudugu exit koduna bakiyor. 2026-08-05 duzeltme: komut PROJE KOKUNE cd ediyor. Kapi forku oturumun o anki calisma dizininde kosuyor ve oturum engine/pattern-bridge icindeyken 'engine/build is not a directory' ile kirmizi dondu; yani kapi testin degil bulundugum dizinin hukmunu veriyordu."
  },
  "generatedBy": "rabadon guard (claude code cli)"
 }

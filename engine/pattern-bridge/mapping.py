@@ -45,8 +45,37 @@ def lin(x, x0, x1, y0, y1):
 # mean_all.yaml has bust 99.84cm; EU size = bust/2 - 6 puts it at ~EU44
 # (index 5). Grading is the standard EU girth grade: 4cm per size on the
 # four girths, half of that on back widths (the back carries ~half the
-# girth change), 1cm on shoulder width. Heights/lengths are NOT graded
-# (length grade exists in real grading; loss is recorded in notes).
+# girth change), 1cm on shoulder width.
+#
+# LENGTH GRADE, MEASURED OFF A BOUGHT PATTERN (2026-08-05). Until today the
+# vertical measures did not grade at all, so EU34 and EU48 were one garment
+# stretched sideways: +14.000cm across the size run and +0.000cm down it. The
+# number that was missing had been on disk all along, in the eight nested
+# rings of a bought industrial pattern (patterns_real, PDF vector, mm
+# calibrated). Measured there, piece by piece, over all eight sizes:
+#
+#   front bodice   50.57 -> 54.29cm across EU34..EU48  = 0.531 cm/size
+#   back bodice    44.77 -> 48.04cm                    = 0.467 cm/size
+#   upper sleeve   20.54 -> 22.06cm                    = 0.219 cm/size
+#
+# and WHERE that length lands is the more useful half of the answer: 85% of
+# the front's growth and 94% of the back's sits at the TOP of the piece, the
+# shoulder and armhole end. The hem moves 0.08cm/size at the front and
+# 0.03cm/size at the back. A bigger body is longer between shoulder and
+# waist; it is not standing further off the floor, which is why stature is
+# still not graded here.
+#
+# So the front piece's step goes to the measure that sets the front bodice
+# length (waist_over_bust_line, through front_top) and the back piece's to
+# the one that sets the back (waist_line, through back_len and side_len).
+# Nothing is spread by eye: a measure gets a step only where a piece of the
+# real pattern was measured for it.
+#
+# The rate transferred is the TOP-edge rate, 0.451 and 0.439 cm/size, not the
+# whole-piece rate. Their piece runs shoulder to a hem below the waist and
+# ours runs shoulder to waist, so the two spans are not the same length and
+# their cm/size cannot be copied across. What does carry is where the growth
+# sits, and it sits at the shoulder end, which is the end both spans share.
 # ---------------------------------------------------------------------------
 BASE_SIZE_INDEX = 5  # mean_all.yaml ~= EU44
 
@@ -65,6 +94,15 @@ GRADE_PER_SIZE = {
     'bust_points': 0.5,   # bust points spread with girth
     'bum_points': 0.5,
     'armscye_depth': 0.5,  # armhole depth grades ~0.5cm per size
+    # --- length, measured off the bought pattern's eight nested rings -------
+    # Solved, not typed: the drawn bodice already lengthens 0.0994 cm/size on
+    # its own, because the shoulder tip slides outward with the width grade
+    # and the shoulder slope turns that into drop. These two steps are what
+    # is left once that is taken off, so the DRAWN piece grades at the rate
+    # the real pattern's piece grades at (verified: front 0.4510, back
+    # 0.4390 cm/size).
+    'waist_over_bust_line': 0.3516,  # front bodice, its top edge 0.451/size
+    'waist_line': 0.3396,            # back bodice, its top edge 0.439/size
 }
 
 
@@ -79,8 +117,11 @@ def graded_body(size_index, notes):
         'value': SIZES[size_index],
         'action': f'girth-graded mean_all.yaml by {delta} sizes '
                   f'({", ".join(GRADE_PER_SIZE)})',
-        'lost': 'length grade: height/waist_line/arm_length stay at the '
-                'mean-body values; only girths and widths are graded',
+        'lost': 'the bodice length grade is measured (front 0.531, back '
+                '0.467 cm/size, off a bought pattern); stature, hips_line, '
+                'arm_length and the two bust heights are still flat, so the '
+                'whole of the graded torso length falls between the bust and '
+                'the waist',
     })
     return body
 
