@@ -1,131 +1,200 @@
 {
- "_ROL": "FİGÜR ORAN BANDI (FIGURE_BASE turu, 2026-07-22). Flat teknik çizimin gövde oranları göz kararı knob DEĞİL, kaynaklı matematik — Damla: 'gusto algımız yetmez ama teknik çizim tamamen matematiksel iş'. Her değerin yanında kaynağı; kaynaksız değer GİREMEZ. Kaynak önceliği: template > emsal bandı > dress-form (Damla kararı). Ölçülemeyene ÖLÇÜLMEDİ.",
- "_schema_version": 1,
- "_kaynaklar": {
-  "eu36": "engine/src/contract.gen.hpp EU36 = bust 84 / waist 66 / hip 90 / shoulder 36.5 cm (motor sizechart, Aldrich EU konvansiyonu) — ORAN olarak kullanılır, mutlak cm değil",
-  "literatur": "9-baş teknik flat croquis geleneği (fashion flat drafting: Zoe Hong female flat template ailesi + 9-head croquis). Bant literatürden, 'literatur' etiketiyle; uydurma değil kaynaklı",
-  "template": "fashion-flat-models/Ekran Resmi 2026-07-23 04.03.37.png = Zoe Hong FEMALE FLAT TEMPLATE TORSOS (front torso, 774px), PİKSEL-KALİBRE 2026-07-23 (güzellik turu KÖK1). Göğüs daireleri Hough-tarzı daire-fit (score 3.0, gözle onaylı /tmp/front_torso_fit2.png). CF ekseni x=224 (boyun merkeziyle 1px örtüşme = ölçüm sağlam). Oranlar beden-bağımsız (gövde-genişliğine ve torso-boyuna normalize); MUTLAK flat-px türetilmedi çünkü template↔flat dikey ölçek tutarsız (bustLine y=79 vs mevcut 132 — uydurma dönüşüm yasak, ÖLÇÜLMEDİ kuralı).",
-  "olcum": "reports/gate/figur-denetimi.md ekstremum-tabanlı SVG ölçümü (2026-07-22) — mevcut figürel dress'lerin gerçek değerleri, bandın alt ucunu kalibre eder"
- },
- "template_gogus_geometrisi": {
-  "_ROL": "KÖK1 güzellik turu (2026-07-23): göğüs DAİRESİ template'ten piksel-kalibre. Damla teşhisi (sarkık/kocaman/bele-yakın/diş-macunu) bu geometriyle çözülür. Tüm değerler beden-bağımsız ORAN, kaynak: template (piksel-kalibre).",
-  "cap_tam_govde_gen": {
-   "value": 0.272,
-   "kaynak": "template",
-   "not": "göğüs dairesi çapı / tam gövde genişliği (bust hizası kaburga outline). 'kocaman' şikâyeti = bu orandan büyük çizim."
+  "_ROL": "FİGÜR ORAN BANDI (FIGURE_BASE turu, 2026-07-22). Flat teknik çizimin gövde oranları göz kararı knob DEĞİL, kaynaklı matematik — Damla: 'gusto algımız yetmez ama teknik çizim tamamen matematiksel iş'. Her değerin yanında kaynağı; kaynaksız değer GİREMEZ. Kaynak önceliği: template > emsal bandı > dress-form (Damla kararı). Ölçülemeyene ÖLÇÜLMEDİ.",
+  "_schema_version": 1,
+  "_kaynaklar": {
+    "eu36": "engine/src/contract.gen.hpp EU36 = bust 84 / waist 66 / hip 90 / shoulder 36.5 cm (motor sizechart, Aldrich EU konvansiyonu) — ORAN olarak kullanılır, mutlak cm değil",
+    "literatur": "9-baş teknik flat croquis geleneği (fashion flat drafting: Zoe Hong female flat template ailesi + 9-head croquis). Bant literatürden, 'literatur' etiketiyle; uydurma değil kaynaklı",
+    "template": "fashion-flat-models/Ekran Resmi 2026-07-23 04.03.37.png = Zoe Hong FEMALE FLAT TEMPLATE TORSOS (front torso, 774px), PİKSEL-KALİBRE 2026-07-23 (güzellik turu KÖK1). Göğüs daireleri Hough-tarzı daire-fit (score 3.0, gözle onaylı /tmp/front_torso_fit2.png). CF ekseni x=224 (boyun merkeziyle 1px örtüşme = ölçüm sağlam). Oranlar beden-bağımsız (gövde-genişliğine ve torso-boyuna normalize); MUTLAK flat-px türetilmedi çünkü template↔flat dikey ölçek tutarsız (bustLine y=79 vs mevcut 132 — uydurma dönüşüm yasak, ÖLÇÜLMEDİ kuralı).",
+    "olcum": "reports/gate/figur-denetimi.md ekstremum-tabanlı SVG ölçümü (2026-07-22) — mevcut figürel dress'lerin gerçek değerleri, bandın alt ucunu kalibre eder"
   },
-  "cap_yari_govde_gen": {
-   "value": 0.543,
-   "kaynak": "template",
-   "not": "göğüs çapı / yarı gövde genişliği (CF→yan)."
+  "template_gogus_geometrisi": {
+    "_ROL": "KÖK1 güzellik turu (2026-07-23): göğüs DAİRESİ template'ten piksel-kalibre. Damla teşhisi (sarkık/kocaman/bele-yakın/diş-macunu) bu geometriyle çözülür. Tüm değerler beden-bağımsız ORAN, kaynak: template (piksel-kalibre).",
+    "cap_tam_govde_gen": {
+      "value": 0.272,
+      "kaynak": "template",
+      "not": "göğüs dairesi çapı / tam gövde genişliği (bust hizası kaburga outline). 'kocaman' şikâyeti = bu orandan büyük çizim."
+    },
+    "cap_yari_govde_gen": {
+      "value": 0.543,
+      "kaynak": "template",
+      "not": "göğüs çapı / yarı gövde genişliği (CF→yan)."
+    },
+    "apex_cf_uzaklik_yari_govde": {
+      "value": 0.348,
+      "kaynak": "template",
+      "not": "apex'in CF'den yatay uzaklığı / yarı gövde. İki göğüs arası açıklık; 'bele-yakın' değil YANAL yerleşim referansı."
+    },
+    "apex_dusus_torso_frac": {
+      "value": 0.441,
+      "kaynak": "template",
+      "not": "apex y düşüşü (omuz çizgisi=0 → apex) / torso boyu (omuz→bel). 'sarkık/aşağıda' şikâyetinin sayısal karşılığı: apex bu fraksiyondan AŞAĞIDA = sarkık. Referans: torso'nun ~%44'ü, bel çizgisine değil büst çizgisine oturur."
+    },
+    "boyun_gen_tam_govde": {
+      "value": 0.225,
+      "kaynak": "template",
+      "not": "boyun genişliği / tam gövde genişliği."
+    },
+    "kavis_karakteri": {
+      "value": "daire",
+      "kaynak": "template",
+      "not": "göğüs flat'te simetrik DAİRE ile temsil (apex tam ortada); gövde yan-hattı büst hizasında daralMAZ (kaburga takibi, göğüs ayrı daire). 'diş-macunu/boru' = gövde yan-hattının göğüsle şişirilmesi HATASI; doğru: yan-hat düz-kaburga + göğüs ayrı dolgunluk."
+    }
   },
-  "apex_cf_uzaklik_yari_govde": {
-   "value": 0.348,
-   "kaynak": "template",
-   "not": "apex'in CF'den yatay uzaklığı / yarı gövde. İki göğüs arası açıklık; 'bele-yakın' değil YANAL yerleşim referansı."
+  "ratios": {
+    "waist_bust": {
+      "value": 0.786,
+      "band": [
+        0.72,
+        0.84
+      ],
+      "kaynak": "eu36 (66/84) — TEMPLATE DOĞRULANDI 2026-07-23: Zoe Hong torso silüet yan-hattı waist/bust half-width = 0.812, bandın [0.72,0.84] İÇİNDE (uyumlu). Not: template silüet metriği göğüs dairesini HARİÇ tutar (göğüs ayrı daire), figure-lint bel/büst en-dar-nokta metriğiyle birebir payda değil → değer eu36'da bırakıldı, template çapraz-doğrulama olarak kaydedildi (bant genişletilmedi).",
+      "not": "BEL OYUĞU — ana figür metriği. Bant penceresi Damla kararı 2026-07-22 (figürel dress'ler 0.707-0.765 ölçüldü, alt uç onlarla uyumlu). Template silüet 0.812 üst-uçla uyumlu. >0.93 = BORU."
+    },
+    "waist_hip": {
+      "value": 0.733,
+      "band": [
+        0.68,
+        0.8
+      ],
+      "kaynak": "eu36 (66/90)",
+      "not": "flat'te hip landmark'ı kurulunca ölçülebilir olur (bugün flat hip çizmiyor, skirtFull'dan türetiyor)"
+    },
+    "bust_hip": {
+      "value": 0.933,
+      "band": [
+        0.88,
+        0.98
+      ],
+      "kaynak": "eu36 (84/90)"
+    },
+    "shoulder_slope_deg": {
+      "value": null,
+      "band": [
+        18,
+        22
+      ],
+      "kaynak": "literatur",
+      "not": "OMUZ EĞİM AÇISI (yatayla derece). Template ölçümü KABA çıktı (~26.6°, neck→shoulderTip iki-nokta, tek segment gürültülü) → literatür bandı KORUNDU, template değeri güvenilir DEĞİL (ÖLÇÜLMEDİ sayılır, tek-nokta hassasiyeti düşük). Mevcut flat shoulderSlope knob ile karşılaştırma landmark turu işi."
+    },
+    "bust_height_frac": {
+      "value": null,
+      "band": [
+        0.2,
+        0.24
+      ],
+      "kaynak": "literatur",
+      "not": "GÖĞÜS HATTI YÜKSEKLİĞİ / TAM gövde boyu (tepe=0, crotch dahil). Template torso'da bacak tam yok → TAM-boy paydası ÖLÇÜLEMEDİ. Template'ten ölçülen TORSO-relative (omuz→bel) apex fraksiyonu = 0.441, ayrı metrik olarak template_gogus_geometrisi.apex_dusus_torso_frac'ta yayında. Full-body frac literatür kalır."
+    }
   },
-  "apex_dusus_torso_frac": {
-   "value": 0.441,
-   "kaynak": "template",
-   "not": "apex y düşüşü (omuz çizgisi=0 → apex) / torso boyu (omuz→bel). 'sarkık/aşağıda' şikâyetinin sayısal karşılığı: apex bu fraksiyondan AŞAĞIDA = sarkık. Referans: torso'nun ~%44'ü, bel çizgisine değil büst çizgisine oturur."
+  "profiller": {
+    "figurel": {
+      "waist_bust_max": 0.84,
+      "not": "bel oyuğu banda girer — dress gövdesi + figürel top hedefi"
+    },
+    "boxy": {
+      "waist_bust_min": 0.93,
+      "not": "KASITLI kutu (boxy primitifi, Damla onaylı) — figürelleşmesi de HATA (mandal iki yönlü)"
+    }
   },
-  "boyun_gen_tam_govde": {
-   "value": 0.225,
-   "kaynak": "template",
-   "not": "boyun genişliği / tam gövde genişliği."
+  "mandal": {
+    "_not": "figure_check ctest bu bloktan okur. Metod: bel = gövde profil GERÇEK en-dar nokta (üst %10/alt %18 hariç), bust = bel üstü max (engine/tools/figure-lint.mjs, figur-denetimi v3). Üç sınıf: (1) figürel TOP → band [0.72,0.84]; (2) BOXY → >0.93 (kutu bozulursa da FAIL — iki yönlü mandal); (3) DRESS/PİNLİ → taban değere drift-lock ±0.02 (onlar pin hakikati; body-bandı değil stilizasyon — princess_dress 0.623 bilinen band-dışı, kart değil pin).",
+    "figurel_top_band": [
+      0.72,
+      0.84
+    ],
+    "boxy_min": 0.93,
+    "drift_tolerans": 0.02,
+    "taban_v3": {
+      "princess_dress": 0.643,
+      "wrap_dress": 0.662,
+      "dress_princess_scoop_aline": 0.662,
+      "dress_princess_scoop_aline_midi": 0.662,
+      "gore_skirt_dress": 0.68,
+      "dress_boat_aline_tieback": 0.697,
+      "drawstring_babydoll": 0.856,
+      "peterpan_puff": 1.001,
+      "lace_vneck_70s": 1.003,
+      "courtney_lace_vneck": 1.003
+    },
+    "_taban_v3_repin": "YENİDEN ÇAKILDI 2026-08-04. Yedi pinli değer 43fd696'da (1 Ağu, 'four fixes damla asked for twice, this time verified on screen') kaydı, çünkü o commit BÜSTÜ DARALTTI: _engine-full.mjs buildHalf'ta bustX çarpanı (1+0.07*bustProject) -> (0.975+0.05*bustProject), varsayılan bustProject 0.5'te büst yarı-genişliği 1.0350 -> 1.0000, yani %3.38 daha dar; apex de bustHeight*0.58 ile yukarı alındı. Bel değişmedi, PAYDA değişti, o yüzden waist/bust yedisinde de aynı yönde ve aynı büyüklükte arttı: ölçülen +%3.21..+%3.44, aritmetiğin verdiği +%3.50. Beli oyuk OLMAYAN üç pin (peterpan_puff, lace_vneck_70s, courtney_lace_vneck) hiç kımıldamadı (oran ~1.0, bel ve büst aynı hatta okunuyor) — kaymanın büstten geldiğinin kanıtı. Commit commit ölçüldü: a87a72d..ba5cb1b'nin dokuzunda değerler eski pinde duruyor, 43fd696'da yedisi birden zıplıyor. Çizim kasıtlı ve ekranda doğrulanmış, eski pin bayattı; drift_tolerans 0.02 elle GENİŞLETİLMEDİ, taban ölçülen yeni değere taşındı.",
+    "_taban_v3_onceki": {
+      "princess_dress": 0.623,
+      "wrap_dress": 0.641,
+      "dress_princess_scoop_aline": 0.64,
+      "dress_princess_scoop_aline_midi": 0.64,
+      "gore_skirt_dress": 0.658,
+      "dress_boat_aline_tieback": 0.675,
+      "drawstring_babydoll": 0.828
+    }
   },
-  "kavis_karakteri": {
-   "value": "daire",
-   "kaynak": "template",
-   "not": "göğüs flat'te simetrik DAİRE ile temsil (apex tam ortada); gövde yan-hattı büst hizasında daralMAZ (kaburga takibi, göğüs ayrı daire). 'diş-macunu/boru' = gövde yan-hattının göğüsle şişirilmesi HATASI; doğru: yan-hat düz-kaburga + göğüs ayrı dolgunluk."
+  "_donma": "Bu bantlar FIGURE_BASE turunda mandala bağlanır (figure_check). Değişiklik ancak yeni kaynaklı ölçümle — bant Damla onayı olmadan genişletilemez.",
+  "figur_croquis": {
+    "_ROL": "TEK CROQUIS — flat figuru artik stil basina knob degil, olculmus tek govde. Damla 5 Agustos: \"birinde bel cok ince digerinde kutuk gibi, flat conventionun yok\" / \"AYNI OLCUDE BILE DEGILLER\". Olcum: fashion-flat-models/Ekran Resmi 2026-07-23 04.03.37.png (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, 774x594, CF x=224), 2026-08-05. Yontem: govde yan hatti SUREKLILIK TAKIBI — kalca hizasindan (y=488, kollar bitmis, tek cizgi) baslanip yukari ve asagi yurundu, her satirda onceki x'e en yakin koyu-kosu merkezi secildi (max sicrama 3px). Kol ic/dis kenarlari ve prenses dikisleri boylece ayristi; iz gorsel olarak sablonun uzerine basildi ve GOZLE dogrulandi (/tmp/k2/tpl_trace.png).",
+    "_olculen_px": {
+      "boyun_tabani": {
+        "yari_genislik": 30.0,
+        "y": 96,
+        "not": "boyun kolonunun kenari; omuz cizgisinin ic ucu"
+      },
+      "omuz_ucu": {
+        "yari_genislik": 112.5,
+        "y": 125,
+        "not": "dis konturun egim kirilmasi: omuz cizgisi +2.75px/y, kol +0.5px/y; kesisim y=123.8 half=113"
+      },
+      "koltukalti": {
+        "yari_genislik": 86.0,
+        "y": 236,
+        "not": "govdenin BELDEN YUKARIDAKI en genis noktasi; ustunde hat oyuga doner"
+      },
+      "bel": {
+        "yari_genislik": 70.5,
+        "y": 320,
+        "not": "duz plato y=304..336, ortasi alindi"
+      },
+      "kalca": {
+        "yari_genislik": 104.0,
+        "y": 485,
+        "not": "kollar y=478de bitiyor, bu hizada tek cizgi var — belirsizlik yok"
+      }
+    },
+    "oran": {
+      "_payda": "B = koltukalti yari genisligi = 86.0px. Dikey oranlarin paydasi torso = omuz ucu y -> bel y = 195px.",
+      "omuz": 1.3081,
+      "bel": 0.8198,
+      "kalca": 1.2093,
+      "boyun": 0.3488,
+      "torso": 2.2674,
+      "omuz_dusus": 0.3372,
+      "koltukalti_y": 1.2907,
+      "bel_kalca": 1.9186,
+      "apex_x": 0.348,
+      "apex_y": 0.441
+    },
+    "_capraz_dogrulama": {
+      "bel_bust_onceki_olcum": "Bu dosyanin ratios.waist_bust kaydi 2026-07-23te ayni sablondan 0.812 olcmustu; bu turun bagimsiz olcumu 0.8198. Iki olcum %0.9 icinde — bant degistirilmedi.",
+      "beden_tablosuyla": "Capa sz.shp (omuz yari genisligi, gercek bir izdusum olcusu). EU38: shp 12.6 birim = 70.6px -> 3.82 px/cm. Bu olcekte croquis EU38 govdesini veriyor: bust genisligi 28.4cm (gercek 88cm cevre / pi = 28.0), bel 23.3cm (70cm cevre), kalca 34.3cm (94cm cevre). Yani sablon oranlari beden tablosuyla %2 icinde ortusuyor — capa dogru.",
+      "sz_bust_neden_capa_degil": "sz.bust (EU38 15.5 birim = 86.8px = 22.7cm yari) bir CEYREK-CEVRE kalip sayisi, izdusum genisligi degil. Cizimde omuzla ayni olcege oturmuyordu: tabloda bust/omuz 1.23, sablonda 0.764. 31 flatin ikiye bolunmesinin (ustler omuzdan, elbiseler bustten) kok sebebi bu."
+    },
+    "_yan_hat_egrisi": {
+      "_not": "Koltukalti->bel yan hatti olculen profile fit edilmis kubik. (w,f) uzayinda w=genislik orani (koltukalti 1, bel 0), f=dikey oran. Olculen: f .048/.143/.238/.333/.429/.524/.619/.714/.810 -> w .935/.839/.742/.613/.484/.387/.290/.161/.000",
+      "koltukalti_bel_c1": [
+        0.8,
+        0.22
+      ],
+      "koltukalti_bel_c2": [
+        0.02,
+        0.62
+      ],
+      "_not_bel_kalca": "Bel->kalca: olculen f .121/.267/.412/.558/.703/.861 -> w .045/.239/.463/.657/.821/.940 (dogrusaldan hafif disbukey).",
+      "bel_kalca_c1": [
+        0.1,
+        0.2
+      ],
+      "bel_kalca_c2": [
+        1.05,
+        0.72
+      ]
+    },
+    "_gogus_konturda_yok": "Sablonda govde yan hatti gogus hizasinda SISMIYOR: gogus iki AYRI DAIRE olarak iceride cizili, siluet kaburgayi takip ediyor (iz goruntusunde acikca gorulur). Motorun koltukalti ile bel arasina koydugu bustX lobu bu yuzden kaldirildi — Damlanin \"koca memeli ya asagida sarkik\" ve \"dis macunu tupu\" teshislerinin ikisi de tek kaynaktan geliyordu. Gogus artik sadece IC isaretlerde yasar (prenses dikisi, pens, apex)."
   }
- },
- "ratios": {
-  "waist_bust": {
-   "value": 0.786,
-   "band": [
-    0.72,
-    0.84
-   ],
-   "kaynak": "eu36 (66/84) — TEMPLATE DOĞRULANDI 2026-07-23: Zoe Hong torso silüet yan-hattı waist/bust half-width = 0.812, bandın [0.72,0.84] İÇİNDE (uyumlu). Not: template silüet metriği göğüs dairesini HARİÇ tutar (göğüs ayrı daire), figure-lint bel/büst en-dar-nokta metriğiyle birebir payda değil → değer eu36'da bırakıldı, template çapraz-doğrulama olarak kaydedildi (bant genişletilmedi).",
-   "not": "BEL OYUĞU — ana figür metriği. Bant penceresi Damla kararı 2026-07-22 (figürel dress'ler 0.707-0.765 ölçüldü, alt uç onlarla uyumlu). Template silüet 0.812 üst-uçla uyumlu. >0.93 = BORU."
-  },
-  "waist_hip": {
-   "value": 0.733,
-   "band": [
-    0.68,
-    0.8
-   ],
-   "kaynak": "eu36 (66/90)",
-   "not": "flat'te hip landmark'ı kurulunca ölçülebilir olur (bugün flat hip çizmiyor, skirtFull'dan türetiyor)"
-  },
-  "bust_hip": {
-   "value": 0.933,
-   "band": [
-    0.88,
-    0.98
-   ],
-   "kaynak": "eu36 (84/90)"
-  },
-  "shoulder_slope_deg": {
-   "value": null,
-   "band": [
-    18,
-    22
-   ],
-   "kaynak": "literatur",
-   "not": "OMUZ EĞİM AÇISI (yatayla derece). Template ölçümü KABA çıktı (~26.6°, neck→shoulderTip iki-nokta, tek segment gürültülü) → literatür bandı KORUNDU, template değeri güvenilir DEĞİL (ÖLÇÜLMEDİ sayılır, tek-nokta hassasiyeti düşük). Mevcut flat shoulderSlope knob ile karşılaştırma landmark turu işi."
-  },
-  "bust_height_frac": {
-   "value": null,
-   "band": [
-    0.2,
-    0.24
-   ],
-   "kaynak": "literatur",
-   "not": "GÖĞÜS HATTI YÜKSEKLİĞİ / TAM gövde boyu (tepe=0, crotch dahil). Template torso'da bacak tam yok → TAM-boy paydası ÖLÇÜLEMEDİ. Template'ten ölçülen TORSO-relative (omuz→bel) apex fraksiyonu = 0.441, ayrı metrik olarak template_gogus_geometrisi.apex_dusus_torso_frac'ta yayında. Full-body frac literatür kalır."
-  }
- },
- "profiller": {
-  "figurel": {
-   "waist_bust_max": 0.84,
-   "not": "bel oyuğu banda girer — dress gövdesi + figürel top hedefi"
-  },
-  "boxy": {
-   "waist_bust_min": 0.93,
-   "not": "KASITLI kutu (boxy primitifi, Damla onaylı) — figürelleşmesi de HATA (mandal iki yönlü)"
-  }
- },
- "mandal": {
-  "_not": "figure_check ctest bu bloktan okur. Metod: bel = gövde profil GERÇEK en-dar nokta (üst %10/alt %18 hariç), bust = bel üstü max (engine/tools/figure-lint.mjs, figur-denetimi v3). Üç sınıf: (1) figürel TOP → band [0.72,0.84]; (2) BOXY → >0.93 (kutu bozulursa da FAIL — iki yönlü mandal); (3) DRESS/PİNLİ → taban değere drift-lock ±0.02 (onlar pin hakikati; body-bandı değil stilizasyon — princess_dress 0.623 bilinen band-dışı, kart değil pin).",
-  "figurel_top_band": [
-   0.72,
-   0.84
-  ],
-  "boxy_min": 0.93,
-  "drift_tolerans": 0.02,
-  "taban_v3": {
-   "princess_dress": 0.643,
-   "wrap_dress": 0.662,
-   "dress_princess_scoop_aline": 0.662,
-   "dress_princess_scoop_aline_midi": 0.662,
-   "gore_skirt_dress": 0.68,
-   "dress_boat_aline_tieback": 0.697,
-   "drawstring_babydoll": 0.856,
-   "peterpan_puff": 1.001,
-   "lace_vneck_70s": 1.003,
-   "courtney_lace_vneck": 1.003
-  },
-  "_taban_v3_repin": "YENİDEN ÇAKILDI 2026-08-04. Yedi pinli değer 43fd696'da (1 Ağu, 'four fixes damla asked for twice, this time verified on screen') kaydı, çünkü o commit BÜSTÜ DARALTTI: _engine-full.mjs buildHalf'ta bustX çarpanı (1+0.07*bustProject) -> (0.975+0.05*bustProject), varsayılan bustProject 0.5'te büst yarı-genişliği 1.0350 -> 1.0000, yani %3.38 daha dar; apex de bustHeight*0.58 ile yukarı alındı. Bel değişmedi, PAYDA değişti, o yüzden waist/bust yedisinde de aynı yönde ve aynı büyüklükte arttı: ölçülen +%3.21..+%3.44, aritmetiğin verdiği +%3.50. Beli oyuk OLMAYAN üç pin (peterpan_puff, lace_vneck_70s, courtney_lace_vneck) hiç kımıldamadı (oran ~1.0, bel ve büst aynı hatta okunuyor) — kaymanın büstten geldiğinin kanıtı. Commit commit ölçüldü: a87a72d..ba5cb1b'nin dokuzunda değerler eski pinde duruyor, 43fd696'da yedisi birden zıplıyor. Çizim kasıtlı ve ekranda doğrulanmış, eski pin bayattı; drift_tolerans 0.02 elle GENİŞLETİLMEDİ, taban ölçülen yeni değere taşındı.",
-  "_taban_v3_onceki": {
-   "princess_dress": 0.623,
-   "wrap_dress": 0.641,
-   "dress_princess_scoop_aline": 0.64,
-   "dress_princess_scoop_aline_midi": 0.64,
-   "gore_skirt_dress": 0.658,
-   "dress_boat_aline_tieback": 0.675,
-   "drawstring_babydoll": 0.828
-  }
- },
- "_donma": "Bu bantlar FIGURE_BASE turunda mandala bağlanır (figure_check). Değişiklik ancak yeni kaynaklı ölçümle — bant Damla onayı olmadan genişletilemez."
 }
