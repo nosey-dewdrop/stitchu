@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(engine
     src/geometry.cpp
+    src/volume.cpp
     src/bodice.cpp
     src/skirt.cpp
     src/ruffle.cpp
@@ -506,3 +507,12 @@ add_test(NAME preview_truth_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOU
 # drift-lock (contract/figure-bands.json mandal). Bir daha kimse fark etmeden
 # boru üretemez.
 add_test(NAME figure_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/figure-lint.mjs)
+
+# VOLUME kernel ratchet (2026-08-09): the integrator is validated against solids
+# with closed-form area / volume / centroid / total curvature. Sphere, ellipsoid
+# and torus must all come back inside 1e-8 relative, and the Gauss-Bonnet total
+# must report chi=2 for the spheres and chi=0 for the torus, so a closed surface
+# proves its own topology out of the same pass that measured it.
+add_executable(volume_check tests/volume_check.cpp)
+target_link_libraries(volume_check PRIVATE engine)
+add_test(NAME volume_check COMMAND volume_check)
