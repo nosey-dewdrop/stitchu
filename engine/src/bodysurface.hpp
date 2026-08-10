@@ -46,6 +46,12 @@ public:
     const std::vector<BodyLevel>& levels() const { return levels_; }
     double parameterFor(double heightMM) const;
 
+    // Semi-axes of the elliptic section at t: a across the body (side to side),
+    // b through it (front to back). The garment shell offsets THIS curve in its
+    // own plane, which is what a girth ease actually means.
+    void sectionSemiAxes(double t, double& a, double& b) const;
+    double heightAt(double t) const;
+
 private:
     struct Spline {
         std::vector<double> t, y, m;  // knots, values, second derivatives

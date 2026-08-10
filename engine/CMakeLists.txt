@@ -9,6 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(engine
     src/geometry.cpp
     src/volume.cpp
+    src/bodysurface.cpp
+    src/garmentshell.cpp
     src/bodice.cpp
     src/skirt.cpp
     src/ruffle.cpp
@@ -516,3 +518,23 @@ add_test(NAME figure_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR
 add_executable(volume_check tests/volume_check.cpp)
 target_link_libraries(volume_check PRIVATE engine)
 add_test(NAME volume_check COMMAND volume_check)
+
+# BODY SURFACE gate. The test file landed on 2026-08-08 but its target never did:
+# commit 192a9cc wired only volume.cpp / volume_check, so bodysurface.cpp was
+# never compiled and this check has never run inside the suite. Wired 2026-08-10.
+add_executable(body_volume_check tests/body_volume_check.cpp)
+target_link_libraries(body_volume_check PRIVATE engine)
+add_test(NAME body_volume_check COMMAND body_volume_check)
+
+# GARMENT SHELL gate (2026-08-10): ease stops being a number a draftsman types
+# and becomes the OUTER PARALLEL BODY of the section. Steiner's formulae make
+# girth -> offset exact (P_d = P + 2.pi.d, A_d = A + d.P + pi.d^2), so the shell
+# is checked against its own theorems, a declared ease is re-measured at the ring
+# it was declared at, ease comes back as a VOLUME, and a shell that would fold
+# through itself is refused together with the radius of curvature that killed it.
+add_executable(render-shell tools/render-shell.cpp)
+target_link_libraries(render-shell PRIVATE engine)
+
+add_executable(garment_shell_check tests/garment_shell_check.cpp)
+target_link_libraries(garment_shell_check PRIVATE engine)
+add_test(NAME garment_shell_check COMMAND garment_shell_check)

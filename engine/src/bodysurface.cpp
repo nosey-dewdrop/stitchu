@@ -179,6 +179,14 @@ Surface BodySurface::surface() const {
     };
 }
 
+void BodySurface::sectionSemiAxes(double t, double& a, double& b) const {
+    const double scale = sigmaHat_.at(t) * std::sin(t);
+    b = scale;
+    a = scale * aspect_.at(t);
+}
+
+double BodySurface::heightAt(double t) const { return zCentre_ + zHalf_ * std::cos(t); }
+
 double BodySurface::measuredGirthMM(const BodyLevel& level, int order) const {
     const double t = parameterFor(level.heightMM);
     const double scale = sigmaHat_.at(t) * std::sin(t);
