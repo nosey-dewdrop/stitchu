@@ -1,0 +1,62 @@
+{
+  "_rol": "L0 TEK VÜCUT KONTRATI — kalıp gövdesi (cm, gerçek) + flat croquis (oran, stilize) tek dosyada. Üretici: engine-check/harness/uret-body-kontrat.py; bekçi: h0-vucut.py. Elle düzenlenmez.",
+  "beden": "EU38",
+  "olculer_cm": {
+    "arm_length": 53.9697,
+    "arm_pose_angle": 45.483,
+    "armscye_depth": 12.2679,
+    "back_width": 41.6761,
+    "bum_points": 16.7342,
+    "bust": 87.8407,
+    "bust_line": 25.6947,
+    "bust_points": 15.4463,
+    "crotch_hip_diff": 8.81363,
+    "head_l": 26.3262,
+    "height": 171.99,
+    "hip_back_width": 48.8237,
+    "hip_inclination": 9.86489,
+    "hips": 91.478,
+    "hips_line": 23.4837,
+    "leg_circ": 54.2039,
+    "neck_w": 17.4328,
+    "shoulder_incl": 21.6777,
+    "shoulder_w": 33.4568,
+    "underbust": 74.2455,
+    "vert_bust_line": 21.1388,
+    "waist": 72.3338,
+    "waist_back_width": 33.1358,
+    "waist_line": 35.8725,
+    "waist_over_bust_line": 39.5055,
+    "wrist": 15.8445
+  },
+  "grade_notu": [
+    {
+      "field": "size",
+      "value": "EU38",
+      "action": "girth-graded mean_all.yaml by -3 sizes (bust, underbust, waist, hips, back_width, waist_back_width, hip_back_width, shoulder_w, neck_w, leg_circ, wrist, bust_points, bum_points, armscye_depth, waist_over_bust_line, waist_line)",
+      "lost": "the bodice length grade is measured (front 0.531, back 0.467 cm/size, off a bought pattern); stature, hips_line, arm_length and the two bust heights are still flat, so the whole of the graded torso length falls between the bust and the waist"
+    }
+  ],
+  "croquis_oran": {
+    "_payda": "B = koltukalti yari genisligi = 86.0px. Dikey oranlarin paydasi torso = omuz ucu y -> bel y = 195px.",
+    "omuz": 1.3081,
+    "bel": 0.8198,
+    "kalca": 1.2093,
+    "boyun": 0.3488,
+    "torso": 2.2674,
+    "omuz_dusus": 0.3372,
+    "koltukalti_y": 1.2907,
+    "bel_kalca": 1.9186,
+    "apex_x": 0.348,
+    "apex_y": 0.441
+  },
+  "stilizasyon_makasi": {
+    "bel_bust_croquis_izdusum": 0.8198,
+    "bel_bust_gercek_cevre": 0.8235,
+    "kalca_bust_croquis_izdusum": 1.2093,
+    "kalca_bust_gercek_cevre": 1.0414,
+    "omuz_bust_croquis_izdusum": 1.3081,
+    "bel_stilizasyon_faktoru": 0.9955,
+    "kalca_stilizasyon_faktoru": 1.1612
+  }
+}
