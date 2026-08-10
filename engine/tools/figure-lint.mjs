@@ -69,6 +69,10 @@ export async function waistBust(styleKey) {
 }
 
 // --- mandal -----------------------------------------------------------------
+// CLI koruması (2026-08-10): waistBust artık solve-garment-ease.mjs tarafından
+// import ediliyor; import sırasında süitin koşup process.exit basması ölçümü
+// öldürüyordu. Doğrudan çalıştırmada davranış birebir aynı.
+if (import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1] || '').href) {
 let fails = 0;
 const [bandLo, bandHi] = M.figurel_top_band;
 for (const key of Object.keys(ST)) {
@@ -91,3 +95,4 @@ for (const key of Object.keys(ST)) {
 }
 if (fails) { console.error(`\nfigure-lint: ${fails} FAILURE(S) — boru/drift üretildi, mandal düştü`); process.exit(1); }
 console.log(`\nOK figure-lint green: bel oyuğu bandları tutuyor (figürel top ${bandLo}-${bandHi}, boxy >${M.boxy_min}, pinli drift ±${M.drift_tolerans})`);
+}

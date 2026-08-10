@@ -132,7 +132,7 @@
     "_ROL": "TEK CROQUIS — flat figuru artik stil basina knob degil, olculmus tek govde. Damla 5 Agustos: \"birinde bel cok ince digerinde kutuk gibi, flat conventionun yok\" / \"AYNI OLCUDE BILE DEGILLER\". Olcum: fashion-flat-models/Ekran Resmi 2026-07-23 04.03.37.png (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, 774x594, CF x=224), 2026-08-05. Yontem: govde yan hatti SUREKLILIK TAKIBI — kalca hizasindan (y=488, kollar bitmis, tek cizgi) baslanip yukari ve asagi yurundu, her satirda onceki x'e en yakin koyu-kosu merkezi secildi (max sicrama 3px). Kol ic/dis kenarlari ve prenses dikisleri boylece ayristi; iz gorsel olarak sablonun uzerine basildi ve GOZLE dogrulandi (/tmp/k2/tpl_trace.png).",
     "_olculen_px": {
       "boyun_tabani": {
-        "yari_genislik": 30.0,
+        "yari_genislik": 30,
         "y": 96,
         "not": "boyun kolonunun kenari; omuz cizgisinin ic ucu"
       },
@@ -142,7 +142,7 @@
         "not": "dis konturun egim kirilmasi: omuz cizgisi +2.75px/y, kol +0.5px/y; kesisim y=123.8 half=113"
       },
       "koltukalti": {
-        "yari_genislik": 86.0,
+        "yari_genislik": 86,
         "y": 236,
         "not": "govdenin BELDEN YUKARIDAKI en genis noktasi; ustunde hat oyuga doner"
       },
@@ -152,7 +152,7 @@
         "not": "duz plato y=304..336, ortasi alindi"
       },
       "kalca": {
-        "yari_genislik": 104.0,
+        "yari_genislik": 104,
         "y": 485,
         "not": "kollar y=478de bitiyor, bu hizada tek cizgi var — belirsizlik yok"
       }
@@ -196,5 +196,46 @@
       ]
     },
     "_gogus_konturda_yok": "Sablonda govde yan hatti gogus hizasinda SISMIYOR: gogus iki AYRI DAIRE olarak iceride cizili, siluet kaburgayi takip ediyor (iz goruntusunde acikca gorulur). Motorun koltukalti ile bel arasina koydugu bustX lobu bu yuzden kaldirildi — Damlanin \"koca memeli ya asagida sarkik\" ve \"dis macunu tupu\" teshislerinin ikisi de tek kaynaktan geliyordu. Gogus artik sadece IC isaretlerde yasar (prenses dikisi, pens, apex)."
+  },
+  "garment_ease": {
+    "bel": {
+      "gore_skirt_dress": 1.0691,
+      "wrap_dress": 1.0375,
+      "drawstring_babydoll": 1.0445,
+      "dress_princess_scoop_aline": 1.0375,
+      "dress_princess_scoop_aline_midi": 1.0375,
+      "dress_boat_aline_tieback": 1.0938,
+      "top_cami_sq_wide_shirred_peplum": 0.9039,
+      "top_cami_sq_spag_shirred_peplum": 0.9039,
+      "top_bandeau_shirred_peplum": 0.9039,
+      "top_cami_sq_spag_shirred_peplum_ruffle": 0.9039,
+      "top_boat_princess": 1.2414,
+      "top_crew_dart": 1.2414,
+      "top_scoop_cami": 1.2414,
+      "lace_vneck_70s": 1.6,
+      "peterpan_puff": 1.6,
+      "courtney_lace_vneck": 1.6
+    },
+    "_provenance": {
+      "ne": "stil başına giysi BEL çarpanı: eX = cx + (vücut_bel - cx) * çarpan",
+      "neden": "4aec2e5 boyları taşıdı, silüeti taşımadı; giysi beli vücuda çöktü (figure_check 21 FAIL)",
+      "hedef_kaynagi": "eski onaylı kalem 30fae0e, AYNI aletle ölçüm (figure-lint waistBust)",
+      "yontem": "solve-garment-ease.mjs ikili arama, tolerans 0.002; geçen stillere dokunulmadı",
+      "tarih": "2026-08-10"
+    },
+    "gogus": {
+      "top_boat_princess": 1.3089,
+      "top_crew_dart": 1.3089,
+      "top_scoop_cami": 1.3089,
+      "top_crew_boxy_crop": 1.3089,
+      "top_crew_boxy_sleeve": 1.3089,
+      "top_princess_peplum": 1.3089,
+      "top_sq_shirred_peplum": 1.3089,
+      "top_sq_puff_shirred_peplum": 1.3089,
+      "lace_vneck_70s": 1.3089,
+      "peterpan_puff": 1.3089,
+      "courtney_lace_vneck": 1.3089,
+      "_gerekce": "eski onaylı giysi koltukaltısı 70.6px (30fae0e, derive-garment-ease.mjs) / yeni vücut B 53.94px = 1.3089; omuzdan düşen stiller"
+    }
   }
 }

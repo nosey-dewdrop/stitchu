@@ -105,19 +105,35 @@ function laceBand(poly,w,sc){var inner=[],outer=[],i;for(i=0;i<poly.length;i++){
 function drapePlan(p,rnd){var n=(p.ink==='minimal')?2:(p.ink==='orta')?3:Math.max(2,Math.round(p.foldCount/2));var R=[],CORE=0.20;for(var i=0;i<n;i++){var prim=(i%2===0),base=(i+0.65)/(n+0.25);var u=Math.min(0.96,Math.max(0.04,base+(rnd()-0.5)*0.8/n));R.push({u:CORE+(1-CORE)*u,prim:prim,swing:prim?0.55+rnd()*0.45:0.15+rnd()*0.30,birth:prim?rnd()*0.05:(0.14+rnd()*0.30)*p.drape,die:prim?1:0.40+rnd()*0.35,sag:0.55+rnd()*0.75,sway:(rnd()-0.5)*0.45});}R.sort(function(a,b){return a.u-b.u;});R[R.length-1].prim=true;R[0].prim=false;if(p.ink==='minimal')R.forEach(function(r){r.prim=true;});return R;}
 function hemPoints(p,k,R){function baseY(u){return k.yHem+k.dip*(1-Math.pow(u,1.7));}var W=p.hemWave*3.2*(k.sc||1),pts=[[k.hX,k.yHem]];var prim=R.filter(function(r){return r.prim;});for(var j=prim.length-1;j>=0;j--){var r=prim[j],outer=(j===prim.length-1)?1:prim[j+1].u,mid=(r.u+outer)/2;pts.push([k.cx+(k.hX-k.cx)*mid,baseY(mid)+W*r.sag]);var x=k.cx+(k.hX-k.cx)*r.u,y=baseY(r.u)-W*(0.45+r.swing*0.75);r.hem=[x,y];pts.push([x,y]);pts.push([x,y]);}var i0=prim[0].u*0.45;pts.push([k.cx+(k.hX-k.cx)*i0,baseY(i0)+W*0.55]);pts.push([k.cx,baseY(0)]);return pts;}
 function buildHalf(p,cx,isBack,rnd){var sz=SIZE[p.size],st=STYLE[p.style];var y0=46,k={cx:cx,y0:y0},g=[];
-var F=figureOf(p,cx,y0);var eX=F.waistX;k.sc=F.sc;
+var F=figureOf(p,cx,y0);
+// GİYSİ BEL BOLLUĞU (2026-08-10). 4aec2e5 tek croquis'e geçerken BOYLARI torso
+// oranıyla taşıdı ama GENİŞLİĞİ taşımadı: giysi beli vücut beline çöktü, 21 stil
+// tek waist/bust'a indi (bol 70s elbise de boxy kutu da 0.63'e figürelleşti,
+// figure_check+preview_truth KIRMIZI). Vücut tek kalır (figür croquis'ten),
+// giysi beli stil karakterini kontrat çarpanıyla taşır: eski onaylı çizimler
+// aynı aletle (figure-lint waistBust, 30fae0e) ölçüldü, çarpan o hedefe çözüldü
+// (engine/tools/solve-garment-ease.mjs). Çarpanı olmayan stil vücut belinde kalır.
+var _GE=(_FB.garment_ease&&_FB.garment_ease.bel)?_FB.garment_ease.bel[p.style]:undefined;
+var eX=_GE?cx+(F.waistX-cx)*_GE:F.waistX;k.sc=F.sc;
+// GİYSİ GÖĞÜS BOLLUĞU: omuzdan düşen giysilerde (boxy kutu, 70s tent, figürel
+// top) giysi koltukaltısı anatomik koltukaltından GENİŞTİR (eski onaylı üst
+// gövdesi 70.6px = vücudun 1.309'u). Bel çarpanı tek başına yetmiyordu: alet
+// minimumu koltukaltında okuyor, oran 0.78'de doyuyordu (çözücü logu 10 Ağu).
+// Çarpanı olmayan stilde giysi koltukaltısı = vücut (bugünkü hal, bayt aynı).
+var _GEB=(_FB.garment_ease&&_FB.garment_ease.gogus)?_FB.garment_ease.gogus[p.style]:undefined;
+var _gUaX=_GEB?cx+(F.uaX-cx)*_GEB:F.uaX;
 // YATAY ÖLÇEK. Dantel/biye gibi ŞERİT genişlikleri gövdenin eninde ölçülür,
 // boyunda değil: eski gövde yarı genişliği sz.bust*S idi, yenisi F.uaX-cx.
 // Aynı mutlak genişlikte bırakılan dantel, daralan etek ucunun dalgasında
 // kendi üstüne katlanıyordu (render-lint iki dantelli stilde yakaladı).
-k.scx=(F.uaX-cx)/(sz.bust*S);
+k.scx=(_gUaX-cx)/(sz.bust*S);
 // GÖĞÜS KONTURDA YOK (2026-08-05). Şablonda gövde yan hattı göğüs hizasında
 // ŞİŞMİYOR: göğüs iki ayrı DAİRE olarak içeride, siluet kaburgayı takip ediyor
 // (iz ölçüldü ve şablonun üstüne basılıp gözle doğrulandı). Motor koltukaltı ile
 // bel arasına ayrı bir bustX lobu koyuyordu; "koca memeli ya aşağıda sarkık" ve
 // "diş macunu tüpü" teşhislerinin ikisi de o tek lobdan geliyordu. bustX artık
 // gövdenin kendi genişliği — ayrı bir bombe değil, sadece iç işaretlerin çapası.
-var bustX=F.uaX;
+var bustX=_gUaX;
 // ESKİ HAL (silinen, kayıt için): omuzlu TOP'larda gövde genişliği OMUZDAN,
 // elbiselerde BUSTTEN türüyordu — ölçüldü, üst gövdesi 70.6 / elbise 86.8 /
 // bandeau 76.4 birim, aynı figürün üç ayrı gövdesi. Şimdi üçü de F.uaX.
@@ -126,14 +142,16 @@ var bustX=F.uaX;
 // BOXY = KASITLI KUTU: figürel bel çekmesi uygulanmaz, yan hat gövdeyi çok
 // hafif takip eder (0.965 → kutu kalır, boru olmaz). Mandal boxy'yi >0.93'te
 // tutuyor, iki yönlü: figürelleşmesi de FAIL.
-if(st.boxy){eX=cx+(bustX-cx)*0.965;}
+// Boxy: kontrat çarpanı varsa o kazanır (eski boxy 0.986'ya çözülür); yoksa
+// eski kural (gövdeyi 0.965'le çok hafif takip) yedek kalır.
+if(st.boxy&&!_GE){eX=cx+(bustX-cx)*0.965;}
 if(st.top==='band'){var yTop=y0+p.strapLen*S*F.sc,yEmp=F.waistY;var yB=F.uaY;
 // FITTED BAND (2026-07-26 taklit döngüsü, golden flat-01 bindirme bulgusu): band gövde
 // üst kenarı bust genişliğindeydi + yanlar düz = KUTU okunuyor. Gerçek straplez korsaj:
 // üst kenar DAR (~bust*0.72), bust bombesi ılımlı (~0.88), bele oturur. SADECE
 // st.fittedBand taşıyan stiller; mevcut bandeau/cami topları (0.95) byte-identical.
-if(st.fittedBand)bustX=cx+(F.uaX-cx)*0.94;
-var topX=cx+(F.uaX-cx)*((st.fittedBand?0.76:0.95)-0.03*p.bustProject);k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(sideSeam(bustX,yB,eX,yEmp));}else{var stX=F.stX,stY=F.stY;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S*F.sc;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=F.uaX,uaY=F.uaY;
+if(st.fittedBand)bustX=cx+(_gUaX-cx)*0.94;
+var topX=cx+(_gUaX-cx)*((st.fittedBand?0.76:0.95)-0.03*p.bustProject);k.yTop=yTop;k.panelTop=yTop;k.yEmp=yEmp;k.bX=topX;k.bustX=bustX;k.strapX=cx+sz.strap*S;g.push(seg([cx,yTop],[cx+(topX-cx)*0.34,yTop+2.5],[topX-(topX-cx)*0.20,yTop-1.0],[topX,yTop]));g.push(seg([topX,yTop],[topX+(bustX-topX)*0.60,yTop+(yB-yTop)*0.28],[bustX,yB-(yB-yTop)*0.42],[bustX,yB]));g.push(sideSeam(bustX,yB,eX,yEmp));}else{var stX=F.stX,stY=F.stY;var ny=y0+(isBack?p.neckDepthBack:p.neckDepth)*S*F.sc;var nX=Math.min(cx+sz.neck*p.neckWidth*S,stX-0.22*(stX-cx));var uaX=_gUaX,uaY=F.uaY;
 // OMUZ EĞİMİ + KOLTUKALTI DERİNLİĞİ + BEL YÜKSEKLİĞİ de croquis'ten (2026-08-05).
 // Eskiden shoulderSlope stil başına 5 ayrı değer (1.3–1.7), yokeDrop 5 ayrı değer
 // (9–16) taşıyordu: aynı figürün beş omzu ve beş bel yüksekliği. Şablonun kendi
