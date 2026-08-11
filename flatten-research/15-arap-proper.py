@@ -172,91 +172,95 @@ def polar_init(V3, nu, nv, apex_s0, ds, arc_at):
             P[i * (nv + 1) + j] = [s * np.cos(th), s * np.sin(th)]
     return P
 
-print("== G1a KONİ FRUSTUM (açılabilir ⇒ pens 0, strain ~0) ==")
-r0, r1, h = 40.0, 80.0, 60.0
-slant = np.hypot(r1 - r0, h)
-s0 = r0 * slant / (r1 - r0)                      # apeksten üst çembere eğik mesafe
-nu, nv = 24, 96
-def cone(u, v):
-    r = r0 + (r1 - r0) * u
-    th = 2 * np.pi * v
-    return np.array([r * np.cos(th), r * np.sin(th), h * u])
-V3, F = grid_mesh(nu, nv, cone)                  # v=0 ve v=1 AYRI köşeler ⇒ bant kesik
-def cone_arc(i):
-    r = r0 + (r1 - r0) * i / nu
-    return 2 * np.pi * r / nv
-P0 = polar_init(V3, nu, nv, s0, slant / nu, cone_arc)
-P = arap_flatten(V3, F, P0, rounds=40)
-st = max_strain(V3, F, P)
-# sektör açısı: alt kenarın iki ucu
-i = nu
-v0, v1 = P[i * (nv + 1)], P[i * (nv + 1) + nv]
-ang = np.degrees(abs(np.arctan2(v0[1], v0[0]) - np.arctan2(v1[1], v1[0])))
-analitik = np.degrees(2 * np.pi * r1 / (s0 + slant))
-print(f"  max strain        : {st*100:.4f}%   (kapı < 0.1%)")
-print(f"  sektör açısı      : {ang:.3f}°  analitik {analitik:.3f}°  fark {abs(ang-analitik):.4f}°  (kapı ±0.05°)")
-g1a = st < 0.001 and abs(ang - analitik) <= 0.05
+def _g1_gates():
+    print("== G1a KONİ FRUSTUM (açılabilir ⇒ pens 0, strain ~0) ==")
+    r0, r1, h = 40.0, 80.0, 60.0
+    slant = np.hypot(r1 - r0, h)
+    s0 = r0 * slant / (r1 - r0)                      # apeksten üst çembere eğik mesafe
+    nu, nv = 24, 96
+    def cone(u, v):
+        r = r0 + (r1 - r0) * u
+        th = 2 * np.pi * v
+        return np.array([r * np.cos(th), r * np.sin(th), h * u])
+    V3, F = grid_mesh(nu, nv, cone)                  # v=0 ve v=1 AYRI köşeler ⇒ bant kesik
+    def cone_arc(i):
+        r = r0 + (r1 - r0) * i / nu
+        return 2 * np.pi * r / nv
+    P0 = polar_init(V3, nu, nv, s0, slant / nu, cone_arc)
+    P = arap_flatten(V3, F, P0, rounds=40)
+    st = max_strain(V3, F, P)
+    # sektör açısı: alt kenarın iki ucu
+    i = nu
+    v0, v1 = P[i * (nv + 1)], P[i * (nv + 1) + nv]
+    ang = np.degrees(abs(np.arctan2(v0[1], v0[0]) - np.arctan2(v1[1], v1[0])))
+    analitik = np.degrees(2 * np.pi * r1 / (s0 + slant))
+    print(f"  max strain        : {st*100:.4f}%   (kapı < 0.1%)")
+    print(f"  sektör açısı      : {ang:.3f}°  analitik {analitik:.3f}°  fark {abs(ang-analitik):.4f}°  (kapı ±0.05°)")
+    g1a = st < 0.001 and abs(ang - analitik) <= 0.05
 
-print("\n== G1b KÜRE KALOTU 12 DİLİM (02 deneyi, ARAP ile) ==")
-a, hh = 70.0, 28.0
-R = (a * a + hh * hh) / (2 * hh)
-TH = np.arcsin(a / R)
-# DOĞRU ANALİTİK HEDEF: dilimli açılımın develop-deficit'i 2π(1−sinθ/θ) = 33.76°.
-# Gauss-Bonnet 2π(1−cosθ)=99.31° TOPLAM eğriliktir, sınır açık kalırken dilim
-# açılımının kama toplamı DEĞİLDİR (01/02'nin düzeltilmiş dersi; 02'nin K→∞
-# yakınsadığı sayı da 33°lerdir, 99 değil).
-deficit = np.degrees(2 * np.pi * (1 - np.sin(TH) / TH))
-K, Ncap = 12, 28
-cols = max(3, 72 // K)
-spans, strains = [], []
-for k in range(K):
-    p0_, p1_ = 2 * np.pi * k / K, 2 * np.pi * (k + 1) / K
-    def cap(u, v, p0_=p0_, p1_=p1_):
-        phi = TH * u
-        psi = p0_ + (p1_ - p0_) * v
-        return np.array([R * np.sin(phi) * np.cos(psi), R * np.sin(phi) * np.sin(psi), R * np.cos(phi)])
-    # TEPE TEK KÖŞE (02'deki gibi): grid apeks satırını çökertirse sıfır-uzunluk
-    # kenarlar doğar (ilk koşuda inf strain buradandı). Apeks = köşe 0.
-    V3c = [cap(0, 0)]
-    idx = {}
-    for i in range(1, Ncap + 1):
-        for j in range(cols + 1):
-            idx[(i, j)] = len(V3c)
-            V3c.append(cap(i / Ncap, j / cols))
-    V3c = np.array(V3c)
-    Fc = []
-    for j in range(cols):
-        Fc.append([0, idx[(1, j)], idx[(1, j + 1)]])
-    for i in range(1, Ncap):
+    print("\n== G1b KÜRE KALOTU 12 DİLİM (02 deneyi, ARAP ile) ==")
+    a, hh = 70.0, 28.0
+    R = (a * a + hh * hh) / (2 * hh)
+    TH = np.arcsin(a / R)
+    # DOĞRU ANALİTİK HEDEF: dilimli açılımın develop-deficit'i 2π(1−sinθ/θ) = 33.76°.
+    # Gauss-Bonnet 2π(1−cosθ)=99.31° TOPLAM eğriliktir, sınır açık kalırken dilim
+    # açılımının kama toplamı DEĞİLDİR (01/02'nin düzeltilmiş dersi; 02'nin K→∞
+    # yakınsadığı sayı da 33°lerdir, 99 değil).
+    deficit = np.degrees(2 * np.pi * (1 - np.sin(TH) / TH))
+    K, Ncap = 12, 28
+    cols = max(3, 72 // K)
+    spans, strains = [], []
+    for k in range(K):
+        p0_, p1_ = 2 * np.pi * k / K, 2 * np.pi * (k + 1) / K
+        def cap(u, v, p0_=p0_, p1_=p1_):
+            phi = TH * u
+            psi = p0_ + (p1_ - p0_) * v
+            return np.array([R * np.sin(phi) * np.cos(psi), R * np.sin(phi) * np.sin(psi), R * np.cos(phi)])
+        # TEPE TEK KÖŞE (02'deki gibi): grid apeks satırını çökertirse sıfır-uzunluk
+        # kenarlar doğar (ilk koşuda inf strain buradandı). Apeks = köşe 0.
+        V3c = [cap(0, 0)]
+        idx = {}
+        for i in range(1, Ncap + 1):
+            for j in range(cols + 1):
+                idx[(i, j)] = len(V3c)
+                V3c.append(cap(i / Ncap, j / cols))
+        V3c = np.array(V3c)
+        Fc = []
         for j in range(cols):
-            Fc.append([idx[(i, j)], idx[(i + 1, j)], idx[(i, j + 1)]])
-            Fc.append([idx[(i, j + 1)], idx[(i + 1, j)], idx[(i + 1, j + 1)]])
-    Fc = np.array(Fc)
-    P0c = np.zeros((len(V3c), 2))
-    for i in range(1, Ncap + 1):
-        s = R * TH * i / Ncap
-        arc = np.linalg.norm(cap(i / Ncap, 0) - cap(i / Ncap, 1 / cols))
-        for j in range(cols + 1):
-            th = (j - cols / 2) * arc / s
-            P0c[idx[(i, j)]] = [s * np.cos(th), s * np.sin(th)]
-    Pc = arap_flatten(V3c, Fc, P0c, pin=0, rounds=40)
-    Pc = strain_polish(V3c, Fc, Pc, pin=0)
-    strains.append(max_strain(V3c, Fc, Pc))
-    vv0, vv1 = Pc[idx[(Ncap, 0)]], Pc[idx[(Ncap, cols)]]
-    sp = abs((np.arctan2(vv1[1], vv1[0]) - np.arctan2(vv0[1], vv0[0]) + np.pi) % (2 * np.pi) - np.pi)
-    spans.append(sp)
-material = np.degrees(sum(spans))
-dart_total = 360.0 - material
-print(f"  pens toplamı      : {dart_total:.2f}°   develop-deficit {deficit:.2f}°   fark {abs(dart_total-deficit):.2f}°")
-print(f"  max strain        : {max(strains)*100:.4f}%   (02'nin gradyan gevşetmesi: 0.463%)")
-# strain kapısı %0.5 (giysi şartı). 02 ile parite ayrıca raporlanır: iki bağımsız
-# çözücü aynı tabana iniyor (0.4636 vs 0.463) — bu, çözücü kusuru değil bu dilim
-# ayrıklaştırmasının içsel taban değeri (dilim sayısı artınca 02'de de düşüyor).
-g1b = abs(dart_total - deficit) <= 1.0 and max(strains) <= 0.005
+            Fc.append([0, idx[(1, j)], idx[(1, j + 1)]])
+        for i in range(1, Ncap):
+            for j in range(cols):
+                Fc.append([idx[(i, j)], idx[(i + 1, j)], idx[(i, j + 1)]])
+                Fc.append([idx[(i, j + 1)], idx[(i + 1, j)], idx[(i + 1, j + 1)]])
+        Fc = np.array(Fc)
+        P0c = np.zeros((len(V3c), 2))
+        for i in range(1, Ncap + 1):
+            s = R * TH * i / Ncap
+            arc = np.linalg.norm(cap(i / Ncap, 0) - cap(i / Ncap, 1 / cols))
+            for j in range(cols + 1):
+                th = (j - cols / 2) * arc / s
+                P0c[idx[(i, j)]] = [s * np.cos(th), s * np.sin(th)]
+        Pc = arap_flatten(V3c, Fc, P0c, pin=0, rounds=40)
+        Pc = strain_polish(V3c, Fc, Pc, pin=0)
+        strains.append(max_strain(V3c, Fc, Pc))
+        vv0, vv1 = Pc[idx[(Ncap, 0)]], Pc[idx[(Ncap, cols)]]
+        sp = abs((np.arctan2(vv1[1], vv1[0]) - np.arctan2(vv0[1], vv0[0]) + np.pi) % (2 * np.pi) - np.pi)
+        spans.append(sp)
+    material = np.degrees(sum(spans))
+    dart_total = 360.0 - material
+    print(f"  pens toplamı      : {dart_total:.2f}°   develop-deficit {deficit:.2f}°   fark {abs(dart_total-deficit):.2f}°")
+    print(f"  max strain        : {max(strains)*100:.4f}%   (02'nin gradyan gevşetmesi: 0.463%)")
+    # strain kapısı %0.5 (giysi şartı). 02 ile parite ayrıca raporlanır: iki bağımsız
+    # çözücü aynı tabana iniyor (0.4636 vs 0.463) — bu, çözücü kusuru değil bu dilim
+    # ayrıklaştırmasının içsel taban değeri (dilim sayısı artınca 02'de de düşüyor).
+    g1b = abs(dart_total - deficit) <= 1.0 and max(strains) <= 0.005
 
-print()
-if g1a and g1b:
-    print("G1 OK: ARAP sertifikalı — koni tam açıldı (pens 0), kalot pensleri develop-deficit'e oturdu, strain 02 sınıfında")
-else:
-    print(f"G1 FAIL: g1a={g1a} g1b={g1b}")
-    raise SystemExit(1)
+    print()
+    if g1a and g1b:
+        print("G1 OK: ARAP sertifikalı — koni tam açıldı (pens 0), kalot pensleri develop-deficit'e oturdu, strain 02 sınıfında")
+    else:
+        print(f"G1 FAIL: g1a={g1a} g1b={g1b}")
+        raise SystemExit(1)
+
+if __name__ == '__main__':
+    _g1_gates()
