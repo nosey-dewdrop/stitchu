@@ -15,8 +15,9 @@ adim() { echo; echo "== $1"; }
 adim "H0 — L0 tek vücut kontratı (taze + stilizasyon pinleri)"
 python3 "$ROOT/engine-check/harness/h0-vucut.py" || FAILS=$((FAILS+1))
 
-adim "H1 — L1 tasarım uzayı: katman zabıtası (rapor modu)"
-python3 "$ROOT/scripts/katman-lint.py" || FAILS=$((FAILS+1))
+adim "H1 — L1 tasarım uzayı: katman zabıtası (STRICT — ihlal = arıza)"
+python3 "$ROOT/scripts/katman-lint.py" --strict || FAILS=$((FAILS+1))
+"$VENVPY" "$ROOT/engine/pattern-bridge/gen-size-table.py" --check || FAILS=$((FAILS+1))
 
 adim "H2/L2 — shell + drape (ctest alt kümesi)"
 if [ -d "$ROOT/engine/build" ]; then

@@ -1,0 +1,55 @@
+{
+  "comment": "graded body girths (cm) per EU size; produced by engine/pattern-bridge/gen-size-table.py from mapping.py — edit mapping, then regenerate",
+  "sizes": [
+    "EU34",
+    "EU36",
+    "EU38",
+    "EU40",
+    "EU42",
+    "EU44",
+    "EU46",
+    "EU48"
+  ],
+  "girths_cm": {
+    "EU34": {
+      "bust": 79.8407,
+      "waist": 64.3338,
+      "hips": 83.478
+    },
+    "EU36": {
+      "bust": 83.8407,
+      "waist": 68.3338,
+      "hips": 87.478
+    },
+    "EU38": {
+      "bust": 87.8407,
+      "waist": 72.3338,
+      "hips": 91.478
+    },
+    "EU40": {
+      "bust": 91.8407,
+      "waist": 76.3338,
+      "hips": 95.478
+    },
+    "EU42": {
+      "bust": 95.8407,
+      "waist": 80.3338,
+      "hips": 99.478
+    },
+    "EU44": {
+      "bust": 99.8407,
+      "waist": 84.3338,
+      "hips": 103.478
+    },
+    "EU46": {
+      "bust": 103.8407,
+      "waist": 88.3338,
+      "hips": 107.478
+    },
+    "EU48": {
+      "bust": 107.8407,
+      "waist": 92.3338,
+      "hips": 111.478
+    }
+  }
+}

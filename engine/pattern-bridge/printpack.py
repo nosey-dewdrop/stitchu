@@ -50,7 +50,8 @@ import walk as walklib  # noqa: E402  (edge_curve: spec edge -> svgpathtools seg
 import cutplan             # noqa: E402  (cut counts, measured off the outlines)
 import seamrules           # noqa: E402  (roles, and the name a person reads)
 import packpages           # noqa: E402  (cloth layout and the yardage it measures)
-import mapping             # noqa: E402  (the graded body the size table states)
+# the size table is CONTRACT data now (contract/layers/size-table.json,
+# produced by gen-size-table.py) — the referee no longer reads the producer
 
 # --- geometry constants (cm unless stated) ---------------------------------
 ALLOW = 1.0            # seam allowance: 10mm (Bugra's bought patterns use it)
@@ -1077,8 +1078,11 @@ def render_info_pages(arts, plan, size_label, date_str):
     for c, h in zip(cols, ('beden', 'gogus', 'bel', 'basen')):
         body.append(_text(c, y, 0.42, h, weight='bold'))
     y += 0.55
-    for i, label in enumerate(mapping.SIZES):
-        b = mapping.graded_body(i, [])
+    size_table = json.loads(
+        (Path(__file__).resolve().parents[2]
+         / 'contract/layers/size-table.json').read_text())
+    for label in size_table['sizes']:
+        b = size_table['girths_cm'][label]
         # no raw '<' anywhere near an SVG text node
         mark = 'BU KALIP' if label == size_label else ''
         vals = (label, f"{b['bust']:.1f}", f"{b['waist']:.1f}",
