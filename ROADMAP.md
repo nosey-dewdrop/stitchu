@@ -377,6 +377,16 @@ Daha önce *"profesyonelin sattığı kalıpta hata bulduk (27mm yan dikiş, bed
 
 ---
 
+### ★ 12 AĞU GÜNDÜZ — TEK YÜZEY MOTORA İNDİ (Faz C → üretim yolu açıldı)
+G1/G2/G3 kanıtları C++ motorda: `engine/src/flatten.cpp` (sertifikalı ARAP,
+`flatten_check`) + `engine/src/surfacepattern.cpp` (bel halkası bir kez
+örneklenir, 8 panel ondan kesilir, dikiş planı inşadan çıkar). Motorun kendi
+spec'i h3b-rings'ten **−0.108mm OK** (üretim hattı +2.947 FAIL kalır, H3b
+bilerek kırmızı; yeni kapı **H3c** motor spec'ini yeşil şart koşar), walk.py
+**408/408 PASS**. Kök kararlar + açık cepheler (G5, ease d(t,φ), paketleme
+geçişi, ÜÇÜNCÜ vücut kaynağı teşhisi): CLAUDE.md Koşu 4 + rapor
+`~/damla_projects_2026/reports/2026-08-12-tek-yuzey-motora-indi.txt`.
+
 ## YENİ SESSION NASIL DEVAM EDER
 
 1. `CLAUDE.md` → bu dosya → `DERSLER.md`
