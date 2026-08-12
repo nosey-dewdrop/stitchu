@@ -11,6 +11,7 @@ add_library(engine
     src/volume.cpp
     src/flatten.cpp
     src/surfacepattern.cpp
+    src/curvefit.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp

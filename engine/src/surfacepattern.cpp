@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <set>
 #include <stdexcept>
 
 namespace stitchu {
@@ -28,19 +29,26 @@ double levelHeight(const BodySurface& body, const std::string& name) {
 // on the rings themselves, which is exactly where darts point.
 struct GarmentSurf {
     struct Ring {
-        double h, a, b;
+        double h, a, b;   // BODY section semi-axes at this level
+        double d = 0.0;   // wearing-ease offset, d = ease/(2*pi) — Steiner-exact
     };
     std::vector<Ring> rings;  // descending height: bust, waist, hip
 
-    static GarmentSurf fromBody(const BodySurface& body) {
+    // easeMM: girth ease per ring, in ring order (bust, waist, hip). A garment
+    // with zero ease is skin and cannot be put on; the offset is the OUTER
+    // PARALLEL CURVE of the body section (garmentshell.cpp theorem: perimeter
+    // grows by exactly 2*pi*d, so d = ease/(2*pi) with no fitted constant).
+    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[3]) {
         GarmentSurf s;
+        int k = 0;
         for (const char* name : {"bust", "waist", "hip"}) {
             for (const BodyLevel& lv : body.levels())
                 if (lv.name == name) {
                     double a = 0, b = 0;
                     body.sectionSemiAxes(body.parameterFor(lv.heightMM), a, b);
-                    s.rings.push_back({lv.heightMM, a, b});
+                    s.rings.push_back({lv.heightMM, a, b, easeMM[k] / (2 * kPi)});
                 }
+            ++k;
         }
         if (s.rings.size() != 3) throw std::runtime_error("need bust/waist/hip rings");
         return s;
@@ -50,9 +58,9 @@ struct GarmentSurf {
 
     // piecewise-linear profile value with the HIP corner rounded C¹: neither a
     // body nor cloth creases sharply, and a sharp cone->cylinder ring carries
-    // singular curvature no finite dart set can absorb.
-    double profile(double h, bool depth) const {
-        auto val = [&](const Ring& r) { return depth ? r.b : r.a; };
+    // singular curvature no finite dart set can absorb. sel: 0=a, 1=b, 2=d.
+    double profile(double h, int sel) const {
+        auto val = [&](const Ring& r) { return sel == 0 ? r.a : sel == 1 ? r.b : r.d; };
         auto lin = [&](size_t k, double hh) {  // value on segment k..k+1 (extended)
             const double u = (rings[k].h - hh) / (rings[k].h - rings[k + 1].h);
             return val(rings[k]) + (val(rings[k + 1]) - val(rings[k])) * u;
@@ -74,7 +82,12 @@ struct GarmentSurf {
     }
 
     Vec3 at(double h, double phi) const {
-        return {profile(h, false) * std::cos(phi), profile(h, true) * std::sin(phi), h};
+        const double a = profile(h, 0), b = profile(h, 1), d = profile(h, 2);
+        // outer parallel curve of the body ellipse at distance d (the exact
+        // Steiner offset, same closed form as garmentshell.cpp offsetPoint)
+        const double sn = std::sin(phi), cs = std::cos(phi);
+        const double L = std::sqrt(a * a * sn * sn + b * b * cs * cs);
+        return {(a + d * b / L) * cs, (b + d * a / L) * sn, h};
     }
 };
 
@@ -116,7 +129,8 @@ struct Slit {
 };
 
 SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
-                         const std::vector<Slit>& slits, const SheathOptions& opt) {
+                         const std::vector<Slit>& slits, const std::vector<int>& breakCols,
+                         const SheathOptions& opt) {
     const int rowsN = static_cast<int>(g.rows.size()) - 1;
     const int cols = static_cast<int>(g.rows[0].size()) - 1;
 
@@ -208,6 +222,9 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     };
     std::map<int, const Slit*> slitAt;
     for (const Slit& s : slits) slitAt[s.col] = &s;
+    std::set<int> breakAt(breakCols.begin(), breakCols.end());
+    for (const Slit& s : slits) breakAt.insert(s.col);
+    std::vector<int> run;  // the current waist seam-run
 
     // dart legs are TRUED: each leg is one straight contour edge from its ring
     // point to the apex, exactly how a drafter draws a dart. Straight legs of
@@ -215,10 +232,16 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     // one-edge-per-leg shape a generator dart has. The 3D reference length of
     // a leg is the slit column's surface polyline, kept in legRef3D.
     std::map<int, double> legRef3D;  // contour edge index -> 3D reference mm
+    std::vector<int> apexPos;        // contour position of each dart apex
     push(vid(0, 0, false), nullptr);
     std::vector<SurfacePanel::Dart> darts(slits.size());
     for (int j = 1; j <= cols; ++j) {
         push(vid(0, j, false), &out.waistEdges);  // ring arc — the shared source
+        run.push_back(out.waistEdges.back());
+        if ((breakAt.count(j) && j < cols) || j == cols) {
+            out.waistRuns.push_back(run);
+            run.clear();
+        }
         auto it = slitAt.find(j);
         if (it != slitAt.end() && j < cols) {
             const Slit& s = *it->second;
@@ -226,6 +249,7 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
             while (slits[d].col != s.col) ++d;
             double colLen = 0.0;
             for (int i = 0; i < s.apexRow; ++i) colLen += dist3(g.rows[i][j], g.rows[i + 1][j]);
+            apexPos.push_back(static_cast<int>(cv.size()));  // trued after P lands
             push(base[gi(s.apexRow, j)], &darts[d].legA);  // straight leg up
             legRef3D[darts[d].legA.back()] = colLen;
             std::vector<int> down;
@@ -250,6 +274,28 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     out.contour.reserve(cv.size());
     for (int id : cv) out.contour.push_back(P[id]);
     const int n = static_cast<int>(out.contour.size());
+
+    // TRUE each dart, the way a drafter does: the apex moves onto the
+    // perpendicular bisector of its two waist points at the mean leg length,
+    // so the two legs a sewist brings together are EQUAL by construction.
+    for (size_t d = 0; d < apexPos.size(); ++d) {
+        const int ap = apexPos[d];
+        const Vec2 wl = out.contour[(ap - 1 + n) % n], wr = out.contour[(ap + 1) % n];
+        const Vec2 apx = out.contour[ap];
+        const double lm = 0.5 * (std::hypot(apx.x - wl.x, apx.y - wl.y) +
+                                 std::hypot(apx.x - wr.x, apx.y - wr.y));
+        const Vec2 mid{0.5 * (wl.x + wr.x), 0.5 * (wl.y + wr.y)};
+        double px = -(wr.y - wl.y), py = wr.x - wl.x;
+        const double pn = std::hypot(px, py);
+        if (pn > 1e-9) {
+            px /= pn;
+            py /= pn;
+            if (px * (apx.x - mid.x) + py * (apx.y - mid.y) < 0) { px = -px; py = -py; }
+            const double half = 0.5 * std::hypot(wr.x - wl.x, wr.y - wl.y);
+            const double drop = std::sqrt(std::max(lm * lm - half * half, 0.0));
+            out.contour[ap] = {mid.x + px * drop, mid.y + py * drop};
+        }
+    }
 
     for (int k = 0; k < n; ++k) {
         const auto ref = legRef3D.find(k);
@@ -306,7 +352,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     const double hipH = levelHeight(body, "hip");
     const double hemH = hipH - opt.hemDropBelowHipMM;
 
-    GarmentSurf surf = GarmentSurf::fromBody(body);
+    const double easeMM[3] = {opt.easeBustMM, opt.easeWaistMM, opt.easeHipMM};
+    GarmentSurf surf = GarmentSurf::fromBody(body, easeMM);
     surf.blendMM = opt.hipBlendMM;
 
     // THE ring: sampled once, at the waist, over the full circle.
@@ -344,8 +391,35 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 if (c > bounds.back() && c < half) bounds.push_back(c);
             }
             bounds.push_back(half);
+            // "cut 2, one mirrored": when the layout is symmetric about the
+            // half's centre (our default single 0.5 cut with symmetric darts),
+            // the right sub-panel IS the left one reflected — a drafter draws
+            // it once. Deriving it by mirroring makes the two panels exactly
+            // congruent (their princess seam matches bit for bit) instead of
+            // two independent solver runs that land in different minima.
+            const bool mirrorable = [&] {
+                if (bounds.size() != 3 || bounds[1] * 2 != half) return false;
+                for (double f : *L.dartFracs) {
+                    bool hasTwin = false;
+                    for (double g2 : *L.dartFracs)
+                        if (std::fabs((1.0 - f) - g2) < 1e-9) hasTwin = true;
+                    if (!hasTwin) return false;
+                }
+                return true;
+            }();
             std::vector<int>& subs = h == 0 ? L.frontSubs : L.backSubs;
             for (size_t s = 0; s + 1 < bounds.size(); ++s) {
+                if (mirrorable && s == 1) {
+                    const SurfacePanel& src = pat.panels[subs[0]];
+                    SurfacePanel p = src;  // congruent copy
+                    for (Vec2& v : p.contour) v.x = -v.x;  // reflect
+                    std::swap(p.seam0Edges, p.seam1Edges);  // cut seam swaps sides
+                    p.name = "right_" + std::string(h == 0 ? L.fname : L.bname);
+                    p.ringOffset = colBase + bounds[1];
+                    subs.push_back(static_cast<int>(pat.panels.size()));
+                    pat.panels.push_back(std::move(p));
+                    continue;
+                }
                 const int c0 = colBase + bounds[s], c1 = colBase + bounds[s + 1];
                 const std::vector<Vec3> seg(ring.begin() + c0, ring.begin() + c1 + 1);
                 const double phi0 = 2 * kPi * c0 / NR, phi1 = 2 * kPi * c1 / NR;
@@ -367,6 +441,14 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                     if (c > bounds[s] && c < bounds[s + 1])
                         slits.push_back({c - bounds[s], apex});
                 }
+                // the waist seam breaks wherever EITHER layer darts, so run r
+                // spans the same ring arc on both sides of the waist stitch
+                std::vector<int> breaks;
+                for (const std::vector<double>* fr : {&opt.bodiceDartFracs, &opt.skirtDartFracs})
+                    for (double f : *fr) {
+                        const int c = static_cast<int>(std::lround(half * f));
+                        if (c > bounds[s] && c < bounds[s + 1]) breaks.push_back(c - bounds[s]);
+                    }
                 // the referee's naming vocabulary (seamrules.py): a two-way
                 // split is left_/right_, anything finer stays numbered
                 std::string name = std::string(h == 0 ? L.fname : L.bname);
@@ -374,7 +456,7 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                     name = (s == 0 ? "left_" : "right_") + name;
                 else if (bounds.size() > 3)
                     name += "_" + std::to_string(s + 1);
-                SurfacePanel p = flattenGrid(g, name, slits, opt);
+                SurfacePanel p = flattenGrid(g, name, slits, breaks, opt);
                 p.ringOffset = c0;
                 subs.push_back(static_cast<int>(pat.panels.size()));
                 pat.panels.push_back(std::move(p));

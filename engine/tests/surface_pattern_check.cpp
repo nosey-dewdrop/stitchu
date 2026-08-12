@@ -48,11 +48,15 @@ int main() {
     for (const BodyLevel& lv : body.levels())
         if (lv.name == "waist") chartWaist = lv.girthMM;
 
-    const SurfacePattern pat = buildSheathPattern(body);
+    const SheathOptions opt;
+    const SurfacePattern pat = buildSheathPattern(body, opt);
 
-    std::printf("== 1. kalibrasyon ==\n");
-    std::printf("  halka %0.3fmm  kontrat %0.3fmm\n", pat.ringGirthMM, chartWaist);
-    gate("halka - kontrat mm", pat.ringGirthMM - chartWaist, 0.5);
+    // Steiner: the eased ring girth is EXACTLY chart + declared ease
+    const double target = chartWaist + opt.easeWaistMM;
+    std::printf("== 1. kalibrasyon (giyim payı dahil) ==\n");
+    std::printf("  halka %0.3fmm  kontrat+ease %0.3fmm (bel %0.0f + pay %0.0f)\n",
+                pat.ringGirthMM, target, chartWaist, opt.easeWaistMM);
+    gate("halka - hedef mm", pat.ringGirthMM - target, 0.5);
 
     std::printf("== 2. tek halka (H3b kapısı; üretim hattı +2.947mm) ==\n");
     std::printf("  gövde-altı %0.4fmm  etek-üstü %0.4fmm\n", pat.bodiceWaistSumMM, pat.skirtWaistSumMM);

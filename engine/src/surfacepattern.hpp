@@ -34,6 +34,10 @@ struct SurfacePanel {
     // edge indices of each logical side in ascending grid order, so stitches
     // pair index-to-index across panels.
     std::vector<int> waistEdges;  // along the shared ring, phi ascending (ring arcs only)
+    // waist arcs grouped into SEAM RUNS: breaks fall at this panel's darts AND
+    // at the opposing layer's dart columns, so bodice run r and skirt run r
+    // always span the same ring arc — one stitch per run, both sides congruent
+    std::vector<std::vector<int>> waistRuns;
     std::vector<int> farEdges;    // bodice top / skirt hem, phi ascending
     std::vector<int> seam0Edges;  // side seam at the panel's first phi, row ascending
     std::vector<int> seam1Edges;  // side seam at the panel's last phi, row ascending
@@ -77,6 +81,13 @@ struct SurfacePattern {
 
 struct SheathOptions {
     double hemDropBelowHipMM = 200.0;  // skirt length past the hip ring — a design dial
+    // WEARING EASE per ring, mm of girth. A zero-ease garment is skin and
+    // cannot be worn. Defaults are the fitted-dress band the trade agrees on
+    // (Threads/RTW: 2" bust, 1" waist, 2" hip; Aldrich close-fitting carries
+    // 7cm at the bust) — declared design dials, not laws.
+    double easeBustMM = 60.0;
+    double easeWaistMM = 25.0;
+    double easeHipMM = 50.0;
     int ringSamples = 128;             // the waist ring, sampled once; panels take half each
     double rowStepMM = 8.0;            // vertical mesh resolution
     int arapRounds = 60;
@@ -93,8 +104,8 @@ struct SheathOptions {
     std::vector<double> skirtCutFracs = {0.5};
     std::vector<double> skirtDartFracs = {0.25, 0.75};  // one dart per quarter, the classic sheath
     double bodiceApexFrac = 0.80;
-    double skirtApexFrac = 1.15;  // dart tip reaches into the hip blend band
-    double hipBlendMM = 70.0;  // hip-corner rounding half-width (drafting "hip curve")
+    double skirtApexFrac = 1.35;  // dart tip runs through the hip blend band
+    double hipBlendMM = 90.0;  // hip-corner rounding half-width (drafting "hip curve")
 };
 
 // Builds the four-panel sheath from the body surface with zero ease.
