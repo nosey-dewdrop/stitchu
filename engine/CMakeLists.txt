@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(engine
     src/geometry.cpp
     src/volume.cpp
+    src/flatten.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -538,3 +539,11 @@ target_link_libraries(render-shell PRIVATE engine)
 add_executable(garment_shell_check tests/garment_shell_check.cpp)
 target_link_libraries(garment_shell_check PRIVATE engine)
 add_test(NAME garment_shell_check COMMAND garment_shell_check)
+
+# flatten_check: the C++ port of the CERTIFIED ARAP solver (flatten-research/15,
+# Faz C / G1) held to the same analytic gates — cone unrolls to its exact sector,
+# calotte darts land on the develop-deficit. Python 15 is the proof of record;
+# a disagreement means the port broke, never the proof.
+add_executable(flatten_check tests/flatten_check.cpp)
+target_link_libraries(flatten_check PRIVATE engine)
+add_test(NAME flatten_check COMMAND flatten_check)
