@@ -10,6 +10,7 @@ add_library(engine
     src/geometry.cpp
     src/volume.cpp
     src/flatten.cpp
+    src/surfacepattern.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -547,3 +548,15 @@ add_test(NAME garment_shell_check COMMAND garment_shell_check)
 add_executable(flatten_check tests/flatten_check.cpp)
 target_link_libraries(flatten_check PRIVATE engine)
 add_test(NAME flatten_check COMMAND flatten_check)
+
+# surface_pattern_check: the single-surface line (waist ring sampled ONCE, both
+# panels cut from it, certified-ARAP flattened) judged at the production doors:
+# chart girth ±0.5mm, H3b ring door ±1.0mm, strain 0.5%, seam deed 0.79375mm.
+add_executable(surface_pattern_check tests/surface_pattern_check.cpp)
+target_link_libraries(surface_pattern_check PRIVATE engine)
+add_test(NAME surface_pattern_check COMMAND surface_pattern_check)
+
+# surface-pattern: emits the single-surface sheath as specification.json so
+# h3b-rings.py / walk.py judge the new line without referee changes.
+add_executable(surface-pattern tools/surface-pattern.cpp)
+target_link_libraries(surface-pattern PRIVATE engine)

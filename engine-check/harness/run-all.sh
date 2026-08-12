@@ -33,6 +33,24 @@ else
   echo "(beklenen kırmızı: arıza L3b'ye mühürlü, kök çözüm Faz C — bel 3B'de tek eğri)"
 fi
 
+adim "H3c — TEK YÜZEY HATTI: motorun kendi spec'i AYNI hakemden YEŞİL geçmeli"
+# Faz C'nin motor karşılığı (engine/src/surfacepattern.cpp): bel halkası bir kez
+# örneklenir, panel dikişleri inşa gereği eşleşir. Aynı h3b-rings hakemi bu
+# spec'te YEŞİL beklenir; eski GC hattı (yukarıda) kırmızı kalır, çünkü kök
+# çözüm oraya değil motora kondu — paketleme geçişi ayrı adım.
+if [ -x "$ROOT/engine/build/surface-pattern" ]; then
+  SPEC3C=$(mktemp /tmp/h3c-spec-XXXX.json)
+  if "$ROOT/engine/build/surface-pattern" EU38 >"$SPEC3C" 2>/dev/null \
+     && "$VENVPY" "$ROOT/engine-check/harness/h3b-rings.py" "$SPEC3C"; then
+    echo "  ok tek yüzey hattı (halka tek sayıda)"
+  else
+    echo "  FAIL tek yüzey hattı"; FAILS=$((FAILS+1))
+  fi
+  rm -f "$SPEC3C"
+else
+  echo "  surface-pattern derlenmemiş (cmake --build engine/build)"; FAILS=$((FAILS+1))
+fi
+
 adim "H3b-flatten kapıları — kanıtlı çözücü sınırları (01/02/07/12; 04-arap YASAK)"
 for g in 01-dart-from-curvature 02-gore-flatten-strain 07-seam-solver-v1 12-notch-zone-walk; do
   if python3 "$ROOT/flatten-research/$g.py" >/tmp/harness-$g.log 2>&1; then

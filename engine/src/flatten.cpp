@@ -172,10 +172,15 @@ std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init
     return P;
 }
 
-void strainPolish(const TriMesh& mesh, std::vector<Vec2>& P, int pin, int iters, double step) {
+namespace {
+
+void polishImpl(const TriMesh& mesh, std::vector<Vec2>& P, const std::vector<double>& W,
+                int pin, int iters, double step) {
     const auto E = uniqueEdges(mesh);
     std::vector<double> L0(E.size());
     for (size_t e = 0; e < E.size(); ++e) L0[e] = norm3(mesh.V[E[e][0]] - mesh.V[E[e][1]]);
+    double wmax = 1.0;
+    for (size_t e = 0; e < E.size(); ++e) wmax = std::max(wmax, W.empty() ? 1.0 : W[e]);
     const Vec2 anchor = P[pin];
     std::vector<Vec2> g(P.size());
     for (int it = 0; it < iters; ++it) {
@@ -184,18 +189,35 @@ void strainPolish(const TriMesh& mesh, std::vector<Vec2>& P, int pin, int iters,
             const double dx = P[E[e][0]].x - P[E[e][1]].x;
             const double dy = P[E[e][0]].y - P[E[e][1]].y;
             const double ln = std::sqrt(dx * dx + dy * dy) + 1e-12;
-            const double f = (ln - L0[e]) / ln;
+            const double f = (W.empty() ? 1.0 : W[e]) * (ln - L0[e]) / ln;
             g[E[e][0]].x += f * dx;
             g[E[e][0]].y += f * dy;
             g[E[e][1]].x -= f * dx;
             g[E[e][1]].y -= f * dy;
         }
+        const double s = step / wmax;  // stability under the heaviest weight
         for (size_t i = 0; i < P.size(); ++i) {
-            P[i].x -= step * g[i].x;
-            P[i].y -= step * g[i].y;
+            P[i].x -= s * g[i].x;
+            P[i].y -= s * g[i].y;
         }
         P[pin] = anchor;
     }
+}
+
+}  // namespace
+
+void strainPolish(const TriMesh& mesh, std::vector<Vec2>& P, int pin, int iters, double step) {
+    polishImpl(mesh, P, {}, pin, iters, step);
+}
+
+void strainPolishWeighted(const TriMesh& mesh, std::vector<Vec2>& P,
+                          const std::vector<char>& flagged, double emphasis,
+                          int pin, int iters, double step) {
+    const auto E = uniqueEdges(mesh);
+    std::vector<double> W(E.size(), 1.0);
+    for (size_t e = 0; e < E.size(); ++e)
+        if (flagged[E[e][0]] && flagged[E[e][1]]) W[e] = emphasis;
+    polishImpl(mesh, P, W, pin, iters, step);
 }
 
 double maxStrain(const TriMesh& mesh, const std::vector<Vec2>& P) {

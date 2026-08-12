@@ -45,6 +45,13 @@ std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init
 void strainPolish(const TriMesh& mesh, std::vector<Vec2>& P, int pin = 0,
                   int iters = 4000, double step = 0.2);
 
+// Weighted polish: edges whose BOTH endpoints are flagged get `emphasis` times
+// the pull. Used to lock the metric onto CUT LINES — the boundary is the
+// sewable contract, the interior residual is the declared ease/molding budget.
+void strainPolishWeighted(const TriMesh& mesh, std::vector<Vec2>& P,
+                          const std::vector<char>& flagged, double emphasis,
+                          int pin = 0, int iters = 4000, double step = 0.2);
+
 // Worst |2D edge length − 3D edge length| / 3D length over all mesh edges.
 // This is the certificate number: <0.1% for a developable surface, <0.5% is
 // the garment gate.
