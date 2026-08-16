@@ -568,3 +568,15 @@ target_link_libraries(surface-pattern PRIVATE engine)
 add_executable(section_check tests/section_check.cpp)
 target_link_libraries(section_check PRIVATE engine)
 add_test(NAME section_check COMMAND section_check)
+
+# capability_check: a capability is not a dial. Turning one off must make the
+# suite RED, not green — see the file header for the incident that caused it.
+add_executable(capability_check tests/capability_check.cpp)
+target_link_libraries(capability_check PRIVATE engine)
+add_test(NAME capability_check COMMAND capability_check)
+
+# wearable_check: can a person put this on? A geometric gate cannot catch a neck
+# opening the head will not pass — see the file header for the night it did not.
+add_executable(wearable_check tests/wearable_check.cpp)
+target_link_libraries(wearable_check PRIVATE engine)
+add_test(NAME wearable_check COMMAND wearable_check)

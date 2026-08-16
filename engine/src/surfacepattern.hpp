@@ -109,6 +109,15 @@ struct SheathOptions {
     // body measurement: the same body wears a crew and a scoop. The one thing
     // that is universal is that the back is shallower than the front, and that
     // is why these are two numbers rather than one.
+    // BACK OPENING — a garment you cannot put on is not a garment. The neck
+    // opening measured 352.5mm (13.88 inches) against a sourced minimum of 22
+    // inches for a PULL-ON garment (Ladies' Garment Cutting and Making, Ch. X).
+    // Reaching 22 inches by dropping the front alone needs 190mm, nearly to the
+    // bust — so the number was never the fix. Every 1960s A-line envelope lists
+    // a closure instead: "22 inch neckline zipper" (Vogue 6900, Vogue Couturier
+    // 2063), "16 inch neck zipper" (Simplicity 7129 Jiffy). 558.8mm = 22 inches,
+    // the period default. 0 = no closure, and then wearable_check binds.
+    double backOpeningMM = 558.8;
     double neckHalfWidthMM = 87.164;   // neck_w/2, EU38 contract body
     double frontNeckDropMM = 70.0;
     double backNeckDropMM = 20.0;
