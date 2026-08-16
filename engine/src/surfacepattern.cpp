@@ -646,7 +646,19 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         }
     if (shoulderHalf <= 0.0)
         throw std::runtime_error("body has no shoulder level: a bodice cannot be cut");
-    const TopProfile top{napeZ, tanIncl, opt.neckHalfWidthMM, opt.frontNeckDropMM,
+    // THE NECKLINE IS DRAFTED FROM THE NECK MEASUREMENT, not chosen. Aldrich
+    // works off one fifth of the neck size (5th ed. p.16), so every size draws
+    // its own neckline out of its own chart row and there is no constant to go
+    // stale between sizes. See SheathOptions for the three sources that agree.
+    double neckGirthMM = 0.0;
+    for (const BodyLevel& lv : body.levels())
+        if (lv.name == "neck") neckGirthMM = lv.girthMM;
+    if (neckGirthMM <= 0.0)
+        throw std::runtime_error("body has no neck girth: the neckline cannot be drafted");
+    const double fifthNeck = neckGirthMM / 5.0;
+    const double neckHalfMM = fifthNeck + opt.neckWidthCoefCM * 10.0;
+    const double frontDropMM = fifthNeck + opt.frontNeckDropCoefCM * 10.0;
+    const TopProfile top{napeZ, tanIncl, neckHalfMM, frontDropMM,
                          opt.backNeckDropMM, shoulderHalf};
     if (opt.skimBodice) {
         surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip

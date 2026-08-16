@@ -134,9 +134,38 @@ struct SheathOptions {
     // 2063), "16 inch neck zipper" (Simplicity 7129 Jiffy). 558.8mm = 22 inches,
     // the period default. 0 = no closure, and then wearable_check binds.
     double backOpeningMM = 558.8;
-    double neckHalfWidthMM = 87.164;   // neck_w/2, EU38 contract body
-    double frontNeckDropMM = 70.0;
-    double backNeckDropMM = 20.0;
+
+    // ---- THE NECKLINE IS DRAFTED, NOT CHOSEN ----
+    //
+    // These were three numbers I made up: half-width 87.164 (the contract body's
+    // neck_w/2, which is a BODY width and not a neckline), front drop 70, back
+    // drop 20. Aldrich drafts all three off the neck measurement, and two
+    // further systems land on the same width, which is how I know the invented
+    // half-width was the one that was wrong:
+    //
+    //   Aldrich, Metric Pattern Cutting for Women's Wear, 5th ed. p.16
+    //     back neck width    0-9  = one fifth neck size minus 0.2 cm
+    //     front neck width   4-20 = one fifth neck size minus 0.7 cm
+    //     front neck drop    4-21 = one fifth neck size minus 0.2 cm
+    //     back neck drop     0-1  = 1.5 cm
+    //   GRAFIS CAD, Maße OB 10/50/60:  bHlh = (uHa + 30)/5 - 15  [mm]
+    //   Hofenbitzer, Band 1 p.12 (Reihenmessung 1995): HlB Gr.38 = 6.7 cm
+    //
+    // At our EU38 neck of 35.0 cm those give 6.3 / 6.8 / 6.3 / 6.7 cm — three
+    // independent systems inside 5mm. My 8.7 cm was 2 cm too wide, a neckline
+    // falling off the shoulder. Coefficients, not numbers, so every size drafts
+    // its own neckline from its own neck measurement and the constants die.
+    //
+    // ONE HONEST SIMPLIFICATION, written down rather than hidden: Aldrich's
+    // front neck is 0.5 cm narrower than the back. This surface carries ONE top
+    // boundary sampled once over the whole circle (the second law), so the width
+    // where the shoulder ends is single-valued and cannot differ front to back.
+    // The back value is used, because the shoulder is drawn from it. Expressing
+    // the 5mm front difference needs the boundary to carry two widths, and that
+    // is a change to the law, not a number to nudge.
+    double neckWidthCoefCM = -0.2;    // Aldrich back neck width, off 1/5 neck
+    double frontNeckDropCoefCM = -0.2;  // Aldrich front neck drop, off 1/5 neck
+    double backNeckDropMM = 15.0;     // Aldrich 0-1, a flat 1.5 cm at every size
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;

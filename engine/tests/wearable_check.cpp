@@ -60,11 +60,20 @@ int main() {
         const BodySurface body(e->body, kStatureMM, kCapMM);
         const SheathOptions opt;
 
-        double napeZ = 0, shH = 0, shHalf = 0;
+        double napeZ = 0, shH = 0, shHalf = 0, neckGirth = 0;
         for (const BodyLevel& lv : body.levels()) {
-            if (lv.name == "neck") napeZ = lv.heightMM;
+            if (lv.name == "neck") { napeZ = lv.heightMM; neckGirth = lv.girthMM; }
             if (lv.name == "shoulder") { shH = lv.heightMM; shHalf = lv.halfWidthMM; }
         }
+        // Aldrich's one-fifth-neck draft, same coefficients the engine uses.
+        // ⚠ KNOWN SECOND SOURCE: the neckline SHAPE below is a copy of
+        // TopProfile::at. It is a copy so this gate can measure the neck without
+        // building the whole dress, and a copy is exactly the thing that let a
+        // 2.947mm waist error live for weeks. It should become one shared
+        // function; until then, a change to TopProfile must be made here too.
+        const double fifthNeck = neckGirth / 5.0;
+        const double neckHalfMM = fifthNeck + opt.neckWidthCoefCM * 10.0;
+        const double frontDropMM = fifthNeck + opt.frontNeckDropCoefCM * 10.0;
         if (shHalf <= 0.0) { ++failures; continue; }
         const double tanIncl = (napeZ - shH) / shHalf;
 
@@ -76,11 +85,11 @@ int main() {
         for (int i = 0; i <= N; ++i) {
             const double phi = 2 * kPi * i / N;
             const double x = std::fabs(shHalf * std::cos(phi));
-            if (x >= opt.neckHalfWidthMM) { have = false; continue; }
-            const double neckPointZ = napeZ - tanIncl * opt.neckHalfWidthMM;
-            const double drop = std::sin(phi) > 0 ? opt.frontNeckDropMM : opt.backNeckDropMM;
+            if (x >= neckHalfMM) { have = false; continue; }
+            const double neckPointZ = napeZ - tanIncl * neckHalfMM;
+            const double drop = std::sin(phi) > 0 ? frontDropMM : opt.backNeckDropMM;
             const double h =
-                neckPointZ - drop * 0.5 * (1.0 + std::cos(kPi * x / opt.neckHalfWidthMM));
+                neckPointZ - drop * 0.5 * (1.0 + std::cos(kPi * x / neckHalfMM));
             const Section s = body.sectionAt(body.parameterFor(h));
             double cx = 0, cy = 0;
             s.offsetPoint(0.0, phi, cx, cy);
