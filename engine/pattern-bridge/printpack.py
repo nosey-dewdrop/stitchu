@@ -1047,6 +1047,24 @@ def svgs_to_pdf(svgs, pdf_path, date_str):
 # ===========================================================================
 # report
 # ===========================================================================
+# Zips are sold in whole inches, not in millimetres. Stocked dress/invisible
+# zip lengths, the ones a person can actually walk into a shop and buy.
+ZIP_STOCK_INCH = (4, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24)
+
+
+def _zip_size_inch(mm):
+    """Largest stock zip that fits inside an opening of `mm`.
+
+    Rounding to the nearest inch is wrong in both directions here. Round UP and
+    the zip is longer than its opening, which cannot be sewn in at all. Round to
+    nearest and a 21.86 inch opening asks for a 21 inch zip, which is not a
+    thing that is sold. So: floor onto the STOCK list.
+    """
+    inch = mm / 25.4
+    fits = [z for z in ZIP_STOCK_INCH if z <= inch + 1e-9]
+    return fits[-1] if fits else 0
+
+
 def _opening_lines(opening):
     """Say, in words, that one seam is NOT sewn.
 
@@ -1066,11 +1084,8 @@ def _opening_lines(opening):
         'zip-end, and stop there.',
         '  Everything above that notch takes the zipper. The dress does not go '
         'over the head without it.',
-        # FLOOR, not round. The opening here is 21.86 inch and rounding said
-        # "buy 22 inch" — a zip longer than its opening cannot be sewn in,
-        # which is the one thing this line exists to prevent.
-        f'  Buy a zip of {int(mm / 25.4)} inch or shorter — a longer one does '
-        'not fit the opening.',
+        f'  Zip: {_zip_size_inch(mm)} inch (largest STOCK size that fits this '
+        f'{mm / 25.4:.2f} inch opening).',
         '',
     ]
 

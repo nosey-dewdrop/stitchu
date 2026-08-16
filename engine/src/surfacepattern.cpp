@@ -985,10 +985,20 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // than the bodice, which at 22 inches it is.
     //
     // Length is measured on the FLATTENED seam, because that is the length the
-    // buyer's zip has to match and the length the printed pattern will show.
-    // The run stops at the last whole edge that still fits: the opening comes
-    // out at or under the requested length, never over. A zip longer than its
-    // opening cannot be sewn in; a shorter one can.
+    // printed pattern shows and the length the zip has to live in.
+    //
+    // The run stops at the first whole edge that REACHES the requested length,
+    // so the opening lands at or OVER it, never under. That is the reverse of
+    // how this was first written, and the reason is what a person does with the
+    // number: they go and buy a zip. Zips are sold in whole inches -- 18, 20,
+    // 22, 24 -- and stopping UNDER the target gave 21.7-21.9 inches across the
+    // eight sizes, so the pack said "21 inch or shorter". No such zip exists,
+    // and since a zip longer than its opening cannot be sewn in, the buyer
+    // drops to 20 and loses two inches of opening for nothing. Landing at or
+    // over 22 makes the 22 inch zip fit -- which is exactly what the period
+    // envelopes call for (Vogue 6900, Vogue Couturier 2063). The few
+    // millimetres of opening past the zip end get stitched, as on any real
+    // garment.
     if (opt.backOpeningMM > 0.0) {
         std::vector<int> topDown;
         // bodice seam edges are row-ascending (waist upward), so the neckline
@@ -1002,9 +1012,9 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             const Vec2& u = p.contour[st.ea];
             const Vec2& v = p.contour[(st.ea + 1) % p.contour.size()];
             const double len = std::hypot(v.x - u.x, v.y - u.y);
-            if (run + len > opt.backOpeningMM) break;
             run += len;
             st.kind = SurfaceStitch::Opening;
+            if (run >= opt.backOpeningMM) break;
         }
         pat.backOpeningMM = run;
     }
