@@ -49,6 +49,7 @@ sys.path.insert(0, str(HERE))
 import walk as walklib  # noqa: E402  (edge_curve: spec edge -> svgpathtools segment)
 import cutplan             # noqa: E402  (cut counts, measured off the outlines)
 import seamrules           # noqa: E402  (roles, and the name a person reads)
+import instructions        # noqa: E402  (assembly order from the stitch graph)
 import packpages           # noqa: E402  (cloth layout and the yardage it measures)
 # the size table is CONTRACT data now (contract/layers/size-table.json,
 # produced by gen-size-table.py) — the referee no longer reads the producer
@@ -1065,6 +1066,13 @@ def _zip_size_inch(mm):
     return fits[-1] if fits else 0
 
 
+def _assembly_lines(pattern):
+    """Montaj sirasi — decisions.json 'talimat-kitapcigi', artik uygulandi."""
+    if not pattern:
+        return []
+    return instructions.report_lines(pattern)
+
+
 def _opening_lines(opening):
     """Say, in words, that one seam is NOT sewn.
 
@@ -1092,14 +1100,14 @@ def _opening_lines(opening):
 
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                pages_info, svg_hash, size_label, date_str, plan, quotes,
-               opening=None):
+               opening=None, pattern_for_steps=None):
     lines = [
         'PRINT PACK (baski tapusu) — allowance, notches, pagination: '
         'measured, not claimed',
         f'size: {size_label}   date: {date_str}   allowance: 10mm   '
         f'scale: 1cm = {CM_PT:.4f}pt',
         '',
-    ] + _opening_lines(opening) + cutplan.report_lines(plan) + [
+    ] + _opening_lines(opening) + _assembly_lines(pattern_for_steps) + cutplan.report_lines(plan) + [
         '',
         'SEAM ALLOWANCE — perpendicular distance of the cut line to the '
         'seam line',
@@ -1368,7 +1376,8 @@ def build(out_dir, spec_path, size_label, date_str=None):
     txt = report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                      {'a0_shelf': a0_shelf, 'a0_tiled': a0_tiled,
                       'a4_rows': rows, 'a4_cols': cols, 'a4_live': a4_live},
-                     h.hexdigest(), size_label, date_str, plan, quotes, opening=pattern.get('openings'))
+                     h.hexdigest(), size_label, date_str, plan, quotes, opening=pattern.get('openings'),
+                     pattern_for_steps=pattern)
     (out_dir / 'print-report.txt').write_text(txt)
     return {
         'print_info': out_dir / 'print-info.pdf',
