@@ -557,6 +557,15 @@ add_executable(surface_pattern_check tests/surface_pattern_check.cpp)
 target_link_libraries(surface_pattern_check PRIVATE engine)
 add_test(NAME surface_pattern_check COMMAND surface_pattern_check)
 
+# h10_gate_check: H1.0'ın KABUL KAPISI — giyilebilirlik. Tanım docs/H1.0-KAPI.md.
+# Altı şart x sekiz beden: kol oyuğu çevresi + grade, omuz dikişinin VARLIĞI,
+# omuz ön/arka dengesi (arka uzun, kürek payı), yakanın KAPALI delik olması ve
+# çevresi, omzun üstünden geçen taşıyıcı yüzey. Sayılar satın alınmış Buğra
+# kalıbından ölçülü; tahmin edilen sayı yok. KIRMIZI DOĞMASI beklenendir.
+add_executable(h10_gate_check tests/h10_gate_check.cpp)
+target_link_libraries(h10_gate_check PRIVATE engine)
+add_test(NAME h10_gate_check COMMAND h10_gate_check)
+
 # surface-pattern: emits the single-surface sheath as specification.json so
 # h3b-rings.py / walk.py judge the new line without referee changes.
 add_executable(surface-pattern tools/surface-pattern.cpp)
