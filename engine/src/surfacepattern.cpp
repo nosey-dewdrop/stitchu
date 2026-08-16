@@ -256,9 +256,24 @@ struct TopProfile {
     double strapHalfMM = 0.0;  // where the shoulder ENDS and the armhole begins
     double underarmZ = 0.0;    // 0 = no armhole, shoulder runs to the side seam
 
-    double at(double phi) const {
-        // distance across the body, measured on the shoulder-level section
-        const double x = std::fabs(shoulderHalfMM * std::cos(phi));
+    // THE ZONE IS DECIDED BY A DISTANCE THE CLOTH ACTUALLY REACHES.
+    //
+    // at(phi) used to compute x = shoulderHalf*cos(phi) itself and hand that to
+    // the zone test. That x belongs to the SHOULDER-LEVEL section — but the
+    // point being cut sits at the boundary height, where the garment section
+    // has semi-axis a(z), and a(z) <= shoulderHalf everywhere below the
+    // shoulder. So every zone boundary was placed at a distance across the body
+    // that the surface never got to: the armhole was scooped starting from a
+    // column that was really further IN than the model believed, and K6 read
+    // the cloth at the shoulder point as 17-64mm low because that column was
+    // already falling into the armhole.
+    //
+    // x and z depend on each other (the boundary height picks the section, the
+    // section gives x), so the caller solves the fixed point on the real
+    // surface and passes the x it converged on. The three-zone law below is
+    // untouched; only the question "how far across is this column" got an
+    // honest answer.
+    double zAt(double x, bool front) const {
         if (underarmZ > 0.0 && x >= strapHalfMM) {
             // ARMHOLE: scoop from the strap end down to the underarm at the side
             const double strapZ = napeZ - tanIncl * strapHalfMM;
@@ -273,11 +288,65 @@ struct TopProfile {
         if (x >= neckHalfMM) return napeZ - tanIncl * x;   // shoulder line
         // inside the neck width: drop below the neck point, front deeper
         const double neckPointZ = napeZ - tanIncl * neckHalfMM;
-        const double drop = std::sin(phi) > 0 ? frontDropMM : backDropMM;
+        const double drop = front ? frontDropMM : backDropMM;
         const double u = neckHalfMM > 1e-9 ? x / neckHalfMM : 1.0;
         return neckPointZ - drop * 0.5 * (1.0 + std::cos(kPi * u));
     }
 };
+
+// The fixed point: the boundary height decides the section, the section decides
+// how far across the body this column is, and that distance decides which zone
+// the column is in and so its height. Damped by halves.
+//
+// ★ THE ARMHOLE IS NOT PART OF THE FIXED POINT, and this was measured the hard
+// way. Solving all three zones together lifted the underarm until the section
+// happened to be as wide as the strap, and the armhole lost its depth: the
+// gate's K1 fell from 332mm to 128mm — a third of a real armhole — while the
+// FAIL count went DOWN, which is exactly the kind of improvement that is not
+// one. The armscye depth is a drafting law (Aldrich: nape - 1.5cm - (armscye
+// depth - 0.5cm)) and no section width gets to overrule it.
+//
+// So the fixed point runs on the shoulder and neckline branches only, where z
+// really is a function of the distance across the body. The strap end is the
+// place where THAT solved boundary is strapHalf wide, found by bisection, and
+// the armhole is then scooped from there down to the underarm depth — in the
+// angle, which is the coordinate the armhole actually has.
+double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
+    const bool front = std::sin(phi) > 0;
+    const double c = std::fabs(std::cos(phi));
+    TopProfile bare = top;
+    bare.underarmZ = 0.0;  // shoulder + neckline only
+    // The section's x is a(z)*cos(phi) by construction, so the half-width at a
+    // height is one evaluation at phi = 0 and the angle drops out of the solve.
+    auto aOf = [&](double z) { return std::fabs(surf.at(z, 0.0).x); };
+    auto fp = [&](double cc) {
+        double x = top.shoulderHalfMM * cc;
+        double z = bare.zAt(x, front);
+        for (int it = 0; it < 24; ++it) {
+            const double xn = 0.5 * (x + aOf(z) * cc);
+            const double zn = bare.zAt(xn, front);
+            const bool done = std::fabs(zn - z) < 1e-6 && std::fabs(xn - x) < 1e-6;
+            x = xn;
+            z = zn;
+            if (done) break;
+        }
+        return std::pair<double, double>{x, z};
+    };
+    if (top.underarmZ <= 0.0) return fp(c).second;
+    // widest the solved shoulder line ever gets: if it never reaches the strap
+    // there is no armhole to cut and the shoulder simply runs to the side seam
+    if (fp(1.0).first <= top.strapHalfMM) return fp(c).second;
+    double lo = 0.0, hi = 1.0;  // fp(.).first is increasing in cc
+    for (int it = 0; it < 60; ++it) {
+        const double mid = 0.5 * (lo + hi);
+        (fp(mid).first < top.strapHalfMM ? lo : hi) = mid;
+    }
+    const double cStrap = 0.5 * (lo + hi);
+    if (c <= cStrap) return fp(c).second;
+    const double strapZ = fp(cStrap).second;
+    const double u = (c - cStrap) / std::max(1.0 - cStrap, 1e-9);
+    return strapZ - (strapZ - top.underarmZ) * 0.5 * (1.0 - std::cos(kPi * u));
+}
 
 PanelGrid buildGrid(const GarmentSurf& surf,
                     const std::vector<Vec3>& ringSeg, double waistH,
@@ -868,7 +937,7 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     for (GarmentLayer& L : layers) {
         L.topH.assign(NR + 1, L.farH);
         if (!L.isSkirt && opt.shoulderTop)
-            for (int j = 0; j <= NR; ++j) L.topH[j] = top.at(2 * kPi * j / NR);
+            for (int j = 0; j <= NR; ++j) L.topH[j] = solveTopH(surf, top, 2 * kPi * j / NR);
     }
 
     // ---- K6: THE ENGINE CAN NOW BE ASKED WHETHER IT CARRIES (docs/H1.0-KAPI.md) ----
