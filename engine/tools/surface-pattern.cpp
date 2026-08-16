@@ -392,6 +392,13 @@ int main(int argc, char** argv) {
                                           ? (interior + 1) - (before + (zipEnd > 0 ? 1 : 0))
                                           : before + 1;
             }
+            if (std::getenv("STITCHU_FIT_DEBUG"))
+                std::fprintf(stderr,
+                             "  BIRLESIM %-16s <-> %-16s n=%3d ters=%d "
+                             "dogal(%zu,%zu) -> birlesim=%zu\n",
+                             A.name.c_str(), B.name.c_str(), n, reversed ? 1 : 0,
+                             naturalBreaks(A, A.seam1Edges).size(),
+                             naturalBreaks(B, B.seam0Edges).size(), u.size());
             brk1[q.pa] = u;
             std::vector<int> v;
             for (int b : u) v.push_back(reversed ? n - 1 - b : b);
