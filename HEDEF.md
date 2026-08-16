@@ -9,13 +9,17 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 ## SAYAÇ
 
 ```
-H1'e kalan:  5 halka / 31–49 koşu saati    [H1.0 yeniden ölçüldü: 25–45s → 20–38s, kapısı kuruldu]
+H1'e kalan:  5 halka / 29–46 koşu saati    [H1.0: 25–45 → 20–38 → **18–35s**, slit üst çapası indi]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / ikisi de BAĞLI      [T2,T3,T4,T6,T7,T8,T10,T11 kapandı · T1 yok-hükmünde · T5 = K5 cevabına bloke · T9 h3c = H1.0'ın yüzey işine bağlı]
+TABAN:       2 halka / T9 = 1–2s, T5 bloke [T2,T3,T4,T6,T7,T8,T10,T11 kapandı · T1 yok-hükmünde · T5 = K5 cevabına bloke]
 ```
 
-**TABAN FİİLEN MÜHÜRLENDİ (17.08).** Kalan iki halkanın ikisi de kendi başına ilerletilemez: T5 tanım bekliyor, T9'un kalanı H1.0 kapanınca kapanacak. Bundan sonra kritik yol **tek**: H1.0.
+**TABAN FİİLEN MÜHÜRLENDİ (17.08).** T5 tanım bekliyor. **T9 düzeltildi sayılmaz ama kökü artık KANITLI ve ucuz:** `flatten.cpp:arapFlatten()` sabit 60 turda **yakınsamıyor**; `arapRounds=400`'de 8 bedenin 8'i de temizleniyor (`bodiceWaist−ring` −0.0049…−0.0036mm). Çözüm sayıyı büyütmek değil, **yakınsama testi** (~12 satır, turlar arası max yer değişimi `<1e-4mm`). Tahmin **1–2 koşu saati**.
+
+> **TUR 4 DÜZELTMESİ — ÖNCEKİ TURUN İKİ SAYISI YANLIŞTI.**
+> (1) `+0.2138 / +0.1376 / +0.2691mm` **h3c değildi** — motorun stderr satırıydı (`bodiceWaistSum − ringGirth`). Gerçek h3c (`h3b-rings.py`, tolerans ±1.0mm) bugün **8/8 bedende GEÇİYOR**. "T9 sayıyı kımıldatmadı" cümlesi yanlış numaraya bakıyordu: `Logs/taban-T7-SONRA` h3c'si gerçekten FAIL'di (−5.264 / −10.795 / −2.230mm) ve **T9'un `emitChain` düzeltmesi onu kapattı**.
+> (2) "Zikzak panele ~3.3mm fazladan uzunluk katıyor" **yanlış**: kıvrım uzunluk-koruyucu (adımlar 7.5297→7.6104mm, pürüzsüz), bozulan yalnız dönüş açısı (−0.7° → +88.3°). mm zinciri kapatıldı: ftorso 235.973 + btorso 206.550 = 442.523, ring yarım 442.454, fark ×2 = **+0.1376mm**. Artık **birikmiş sınır gerinimi**, ekstra uzunluk değil.
 
 > **KAPSAM BÜYÜDÜ: +1 halka (T11 — ters omuz). Sebebi:** T7 kapıyı gerçek kapı yapınca ortaya çıkan 12 hüküm-FAIL'in yarısı T9'un (waist-attach) değil: **6'sı ters omuz** — ön omuz arkadan uzun çıkıyor. `CLAUDE.md`'de kayıtlı alan bilgisi bunun tersini söylüyor (arka omzun uzun olması STANDARTTIR, kürek payı 6-12mm). İşaret hatası mı gerçek geometri mi **ölçülmedi**. T9'un içine gizlemek yerine halka yazıyorum.
 

@@ -6,10 +6,10 @@
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
 
   "sayac": {
-    "H1": { "kalan_halka": 5, "kalan_saat": "31-49  [H1.0 yeniden olculdu 25-45 -> 20-38s; kapisi kuruldu: h10_gate_check 48 FAIL/55]" },
+    "H1": { "kalan_halka": 5, "kalan_saat": "29-46  [H1.0: 25-45 -> 20-38 -> 18-35s; h10_gate_check 48 FAIL/55 degismedi]" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 2, "kalan_saat": "ikisi de BAGLI  [T5 = K5 cevabina bloke; T9 h3c = H1.0 yuzey isine bagli]. TABAN FIILEN MUHURLENDI 17.08" }
+    "TABAN": { "kalan_halka": 2, "kalan_saat": "T9 = 1-2s (kok sebep KANITLI: arapFlatten 60 turda yakinsamiyor, cozum yakinsama testi ~12 satir); T5 = K5 cevabina bloke" }
   },
   "sayac_gecmisi": [
     { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
@@ -132,6 +132,36 @@
       "tur": 3,
       "karar": "KAYNAK CELISKISI KAPIYA KONMADI — K9",
       "gerekce": "knowledge/drafting-math-eu38.md (HIGH) 'ON armscye daha uzun, 1.5-2.5cm' diyor; Bugra 8/8 bedende TERSINI olcuyor (on-arka -13.50...-1.22mm). Cozulmeden sart yazmak 20-38 saati kanitsiz yone surukler. Fikstur on/arka yayi BASIYOR, YARGILAMIYOR. Tur 4'te olculecek, hukum Damla'nin."
+    },
+    {
+      "tur": 4,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: H1 31-49 -> 29-46 saat (H1.0 20-38 -> 18-35), TABAN'in T9 halkasi 'kok sebep bilinmiyor'dan '1-2 saat, 12 satir'a indi. h10_gate_check 48/55 degismedi — bu dilim sart kapatmiyordu, K3/K5/K6'nin onundeki yapisal blokoru kaldiriyordu. Tripwire pasif (3 tur ust uste dusme yok)."
+    },
+    {
+      "tur": 4,
+      "karar": "T9 KOK SEBEBI KANITLANDI — (a) ARAP",
+      "gerekce": "Uc hipotezden (b) cv siralamasi ve (c) etiketleme off-by-one insadan VE olcumle elendi. Kanit: waistfold-probe ile arap-only kivrimi buyutuyor (EU46 +88.31 -> +146.03 derece), cutSweeps=0 hic oynatmiyor (projeksiyon aklandi), arapRounds=400 tamamen yok ediyor (8/8 beden temiz). arapFlatten sabit 60 turda YAKINSAMIYOR; cila ve projeksiyon uzunluk enerjisi, bukulme terimi yok, kivrimi gormuyor sadece kilitliyor. Cozum: 60->400 degil, YAKINSAMA TESTI (flatten.cpp:136, ~12 satir, rounds bir TAVAN olur)."
+    },
+    {
+      "tur": 4,
+      "karar": "IKI ONCEKI SAYI YANLISTI — ILAN EDILDI",
+      "gerekce": "(1) +0.2138/+0.1376/+0.2691mm h3c degil, motorun stderr satiriydi; gercek h3c bugun 8/8 GECIYOR ve T9'un emitChain duzeltmesi onu zaten kapatmisti. (2) 'zikzak 3.3mm uzunluk katiyor' yanlis: kivrim uzunluk-koruyucu, bozulan donus acisi. Gizlenmedi, HEDEF.md'ye duzeltme blogu olarak yazildi."
+    },
+    {
+      "tur": 4,
+      "karar": "K9 COZULDU — IKI IDDIA AYNI SEYDEN BAHSETMIYOR",
+      "gerekce": "Aldrich tarafi EGRILIK, Bugra UZUNLUK olcuyor; Bugra 8/8'de IKISINI BIRDEN dogruluyor (on oyuk daha egri: yay/kiris 1.232-1.262 vs 1.161-1.177, bantlar cakismyor; arka oyuk daha uzun: -13.83...-1.50mm). Ceviren cumle Aldrich'in degil — knowledge dosyasi satir 26'da 'Armhole CEVRESI Aldrich'te yok' diyor, ikinci kaynakta armscye gecen 0 satir var, ve gerekce bir sezgi ('kol one uzanir'). Plaket sebep degil (CF kenari 8/8 tam duz, oyuktan yaka+omuzla ayri). Omuz celiskinin parcasi degil (8/8 arka uzun, alan bilgisiyle ayni yonde). HUKUM: sayi sart yazilmaz (fark 8 bedende 9 kat daraliyor = Bugra'nin grade'i, kanun degil), ISARET yazilir. Gate dosyalari BILEREK duzeltilmedi — hukum Damla'nin."
+    },
+    {
+      "tur": 4,
+      "karar": "YENI KIRMIZI ILAN EDILDI — %28-35 IC GERINIM",
+      "gerekce": "Basilan ayarda EU42 %28.61, EU46 %32.51, EU48 %34.62 maxStrain (diger 5 beden %0.02-0.77). Ayni uclu. Yeri: bel satirindan ilk satira giden DIKEY kenarlar (EU48 left_ftorso row 0 ver %26.490, row 4'te %3.2). Supheli mekanizma DOGRULANMADI: buildGrid'in ragged-top izgarasi rowsN'i GLOBAL tutup her kolonun i. satirini kendi span'inin ayni KESRINE koyuyor; yaka cukuru ile omuz ucu arasinda span orani ~3 kat. H1.0'in yuzey isine dusuyor, ayri halka acilmadi cunku ayni kokten."
+    },
+    {
+      "tur": 4,
+      "karar": "BRANCH + COMMIT YASASI (Damla emri)",
+      "gerekce": "git log vardiya..f1 BOS -> f1 vardiyanin icinde, merge gereksiz. Yeni branch acilmaz, hicbir branch silinmez, gh-pages'e dokunulmaz. Kosu sonu: vardiya -> main muhurlu merge, SONRA f1 kapanir. Commit: bir adim = bir commit + push, MUTLAK; kirmiziyken 'KIRMIZI: <kapi, kac FAIL>' onekiyle; 30dk'dan eski commitlenmemis degisiklik yasak. rabadon vardiya/* commitlerini ENGELLEMIYOR (12 commit sorunsuz push edildi)."
     },
     {
       "tur": 1,
