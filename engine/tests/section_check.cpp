@@ -65,6 +65,7 @@ int main() {
 
     double worstGirth = 0, worstShare = 0, worstSteiner = 0, worstKink = 0;
     double leastConvexMargin = 1e300, leastCuspMargin = 1e300, leastAsym = 1e300;
+    double worstWidth = 0;
 
     for (const char* label : sizes) {
         const SizeChartEntry* e = euSize(label);
@@ -78,19 +79,30 @@ int main() {
         for (const BodyLevel& lv : body.levels()) {
             const Section s = body.sectionAt(body.parameterFor(lv.heightMM));
 
-            // S1 — the arc length of the section curve is the chart girth
-            worstGirth = std::max(worstGirth, std::fabs(s.perimeter(24) - lv.girthMM));
-
-            // S2 — the back's share of that arc is what the contract publishes
-            const double share = s.backArc(24) / s.perimeter(24);
-            worstShare = std::max(worstShare, std::fabs(share - publishedBackFrac(e->body, lv.name)));
+            // A level promises EITHER a girth or a width, never both. The
+            // shoulder is the width case — a size chart gives shoulder-to-
+            // shoulder across the body and never a girth around it — so its
+            // girth is derived and gating it against a chart number it never
+            // had would be gating against zero. Each level is held to what it
+            // actually promised.
+            if (lv.halfWidthMM > 0.0) {
+                // S1w — the width-driven level hits its width exactly
+                worstWidth = std::max(worstWidth, std::fabs(s.a - lv.halfWidthMM));
+            } else {
+                // S1 — the arc length of the section curve is the chart girth
+                worstGirth = std::max(worstGirth, std::fabs(s.perimeter(24) - lv.girthMM));
+                // S2 — the back's share of that arc is what the contract publishes
+                const double share = s.backArc(24) / s.perimeter(24);
+                worstShare = std::max(worstShare,
+                                      std::fabs(share - publishedBackFrac(e->body, lv.name)));
+            }
 
             // S3 — strictly convex, closed form
             leastConvexMargin = std::min(leastConvexMargin, s.bm - 2.0 * std::fabs(s.bd));
 
             // S6 — front and back depth really differ (except the neck, which
             // has no published split and is symmetric BY DECLARATION)
-            if (lv.name != "neck")
+            if (lv.name != "neck" && lv.name != "shoulder")
                 leastAsym = std::min(leastAsym, std::fabs(s.bd) / s.bm);
 
             // S5 — no KINK at the side points (phi = 0, pi), where the side seam
@@ -147,6 +159,7 @@ int main() {
     std::printf("== KESIT — vucudun onu ve arkasi (8 beden x 4 halka) ==\n");
     gate("S1 cevre - chart cevresi mm", worstGirth, 0.01, worstGirth < 0.01);
     gate("S2 arka pay - kontrat payi", worstShare, 1e-6, worstShare < 1e-6);
+    gate("S1w genislik - chart genisligi mm", worstWidth, 1e-9, worstWidth < 1e-9);
     gate("S3 konvekslik payi bm-2|bd|", leastConvexMargin, 0.0, leastConvexMargin > 0.0);
     gate("S4 Steiner P_d-(P+2pi d) mm", worstSteiner, 1e-3, worstSteiner < 1e-3);
     gate("S5 yan noktada kink artigi", worstKink, 1e-4, std::fabs(worstKink) < 1e-4);

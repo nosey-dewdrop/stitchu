@@ -40,6 +40,8 @@ inline const std::vector<SizeChartEntry>& euSizeChart() {
                     e.body.bustBackFrac = r.bust;
                     e.body.waistBackFrac = r.waist;
                     e.body.hipBackFrac = r.hip;
+                    e.body.shoulderWidthCM = r.shoulderWidthCM;
+                    e.body.shoulderInclDeg = r.shoulderInclDeg;
                 }
         return c;
     }();

@@ -49,10 +49,19 @@ RINGS = [
 
 def build():
     table = {}
+    shoulder = {}
     for i, label in enumerate(mapping.SIZES):
         b = mapping.graded_body(i, [])
         table[label] = {ring: round(b[back] / b[girth], 6)
                         for ring, girth, back in RINGS}
+        # SHOULDER is shape, not girth: a chart gives shoulder-to-shoulder ACROSS
+        # the body and never a girth around it. shoulder_w/2 is the x of the
+        # shoulder tip in GarmentCode's own panels (bodice.py:58,
+        # base_classes.py:37), and shoulder_incl is the slope in DEGREES
+        # (body_params.py sets _shoulder_incl = shoulder_incl, and every use site
+        # feeds it to np.deg2rad).
+        shoulder[label] = {'width_cm': round(b['shoulder_w'], 4),
+                           'incl_deg': round(b['shoulder_incl'], 4)}
     return {
         'comment': 'BACK share of the girth arc, per EU size. Source: '
                    'engine/pattern-bridge/bodies/mean_all.yaml (MIT) graded by '
@@ -65,18 +74,26 @@ def build():
                       'a measurement, and it is published rather than smoothed',
         'neck': 'NO SOURCE for a neck front/back split — the neck ring stays '
                 'symmetric (0.5) and that is a DECLARED ASSUMPTION, not data',
+        'shoulder_note': 'shoulder.width_cm is TIP-TO-TIP across the body and '
+                    'shoulder.incl_deg is the slope in degrees; both verified in '
+                    "GarmentCode's own code, not assumed. The chart's own "
+                    'shoulderCM (37 at EU38) is a DIFFERENT quantity used only by '
+                    'the legacy 2D line and is not this.',
         'sizes': mapping.SIZES,
         'back_arc_fraction': table,
+        'shoulder': shoulder,
     }
 
 
 def header(doc):
     rows = ''.join(
-        '    {{"{s}", {b}, {w}, {h}}},\n'.format(
+        '    {{"{s}", {b}, {w}, {h}, {sw}, {si}}},\n'.format(
             s=s,
             b=doc['back_arc_fraction'][s]['bust'],
             w=doc['back_arc_fraction'][s]['waist'],
-            h=doc['back_arc_fraction'][s]['hip'])
+            h=doc['back_arc_fraction'][s]['hip'],
+            sw=doc['shoulder'][s]['width_cm'],
+            si=doc['shoulder'][s]['incl_deg'])
         for s in doc['sizes'])
     return (
         '#pragma once\n'
@@ -98,6 +115,7 @@ def header(doc):
         'struct BackArcRow {\n'
         '    const char* label;\n'
         '    double bust, waist, hip;\n'
+        '    double shoulderWidthCM, shoulderInclDeg;\n'
         '};\n'
         '\n'
         '// Sizes absent here (EU50/EU52) have no published ratio and keep 0, so\n'

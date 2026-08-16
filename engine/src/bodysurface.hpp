@@ -13,6 +13,7 @@
 //
 // Units mm.
 #include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,16 @@ struct BodyLevel {
     double girthMM = 0.0;
     double widthToDepth = 1.0;
     double backArcFraction = 0.5;
+    // A level the chart describes by WIDTH instead of girth. The shoulder is
+    // the case: a size chart gives shoulder-to-shoulder across the body, never a
+    // girth around it, and there is no honest way to invent the missing girth.
+    // When > 0 this drives the calibration and the girth becomes a DERIVED,
+    // reported quantity rather than a promised one.
+    double halfWidthMM = 0.0;
+    // Shape parameter k = bd/bm taken from the surface that already exists at
+    // this height, for levels whose front/back split has no published source.
+    // NaN means "solve it from backArcFraction" as usual.
+    double asymOverride = std::numeric_limits<double>::quiet_NaN();
 };
 
 // A body cross-section as a CONVEX PLANE CURVE with a front and a back.
@@ -134,7 +145,7 @@ public:
 
 private:
     struct Spline {
-        std::vector<double> t, y, m;  // knots, values, second derivatives
+        std::vector<double> t, y, m;  // knots, values, FIRST derivatives (monotone Hermite)
         double at(double x) const;
     };
 

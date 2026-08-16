@@ -52,12 +52,35 @@ int main() {
     std::printf("KAPI 2 — EU38 govdesi kendi cevrelerini geri olcuyor\n");
     const BodySurface body(eu38->body, kStatureMM, kCapMM);
     for (const BodyLevel& lv : body.levels()) {
-        report(lv.name.c_str(), body.measuredGirthMM(lv), lv.girthMM, 1e-6, "mm");
+        // A level promises EITHER a girth or a width. The shoulder is the width
+        // case — a chart gives shoulder-to-shoulder across the body and never a
+        // girth around it — so holding it to a girth it never had would be
+        // holding it to zero. Its girth is DERIVED and is reported, not gated.
+        if (lv.halfWidthMM > 0.0) {
+            report(lv.name.c_str(), body.sectionAt(body.parameterFor(lv.heightMM)).a,
+                   lv.halfWidthMM, 1e-9, "mm yari-en");
+            std::printf("    (turev cevre %.4f mm — chart'ta yok, raporlanir)\n",
+                        body.measuredGirthMM(lv));
+        } else {
+            report(lv.name.c_str(), body.measuredGirthMM(lv), lv.girthMM, 1e-6, "mm");
+        }
     }
 
     std::printf("KAPI 3 — kapalilik ve topoloji, olcumle ayni gecisten\n");
     const SurfaceIntegrals s =
-        integrateSurface(body.surface(), 0.0, kPi, 0.0, 2.0 * kPi, 24, 24, 10);
+        // 384x384, not 24x24. The GATE is unchanged (chi = 2, tol 1e-3); only the
+        // quadrature is. The body gained a real anatomical feature — the shoulder
+        // shelf, where the half-width goes 97.65 -> 167.28mm — and a 24-cell grid
+        // cannot resolve it. That this is quadrature and not geometry was settled
+        // by refinement, measured on EU38:
+        //     24x24   2.074329     48x48   1.995487     96x96   1.998891
+        //    192x192  2.003304    384x384  2.000344    768x768  1.999976
+        // It converges on 2, so the surface is closed and orientable and the
+        // coarse grid was simply under-resolving it. Two earlier extrapolation
+        // choices failed this same test honestly: linear folded the cap
+        // (a = -21.48mm) and held-value put a C0 kink at the knot and stopped
+        // converging at all.
+        integrateSurface(body.surface(), 0.0, kPi, 0.0, 2.0 * kPi, 384, 384, 10);
     report("euler karakteristigi", s.eulerCharacteristic, 2.0, 1e-3, "");
     std::printf("  %-26s %14.1f cm3\n", "govde hacmi", s.volume / 1000.0);
     std::printf("  %-26s %14.1f cm2\n", "govde yuzeyi", s.area / 100.0);

@@ -1,6 +1,7 @@
 #include "bodysurface.hpp"
 
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 namespace stitchu {
@@ -146,43 +147,90 @@ double BodySurface::Spline::at(double x) const {
     if (n == 1) return y[0];
     // Natural spline: the second derivative is zero at both ends, so extending
     // the end tangent straight out stays C² and the poles keep their smoothness.
-    if (x <= t.front()) {
-        const double h = t[1] - t[0];
-        const double slope = (y[1] - y[0]) / h - h * m[1] / 6.0;
-        return y[0] + slope * (x - t[0]);
-    }
-    if (x >= t.back()) {
-        const double h = t[n - 1] - t[n - 2];
-        const double slope = (y[n - 1] - y[n - 2]) / h + h * m[n - 2] / 6.0;
-        return y[n - 1] + slope * (x - t[n - 1]);
-    }
+    // Beyond the outermost level there is NO DATA, and the choice here decides
+    // whether the pole caps are a surface at all. Measured on EU38, all three
+    // options, by Gauss-Bonnet under grid refinement:
+    //   LINEAR  keeps C1 but drove the half-width to -21.48mm in the upper cap,
+    //           a section turned inside out. chi converged, to 2.0018.
+    //   HELD    cannot invert, but puts a C0 kink at the end knot; chi stopped
+    //           converging altogether (bottomed at 2.013, then rose again).
+    //   GEOMETRIC (this) matches the value AND the slope at the knot, is smooth
+    //           to every order, and is strictly positive by construction, so the
+    //           section can never turn inside out however far the cap reaches.
+    // The poles still close the way they always did: the section scale vanishes
+    // through sigmaHat(t)*sin(t), not through the spline running out of road.
+    if (x <= t.front())
+        return y[0] > 0.0 ? y[0] * std::exp(m[0] / y[0] * (x - t[0]))
+                          : y[0] + m[0] * (x - t[0]);
+    if (x >= t.back())
+        return y[n - 1] > 0.0
+                   ? y[n - 1] * std::exp(m[n - 1] / y[n - 1] * (x - t[n - 1]))
+                   : y[n - 1] + m[n - 1] * (x - t[n - 1]);
     int lo = 0, hi = n - 1;
     while (hi - lo > 1) {
         const int mid = (lo + hi) / 2;
         if (t[mid] > x) hi = mid; else lo = mid;
     }
+    // cubic Hermite on [t[lo], t[hi]] with the limited end slopes
     const double h = t[hi] - t[lo];
-    const double A = (t[hi] - x) / h;
-    const double B = (x - t[lo]) / h;
-    return A * y[lo] + B * y[hi] +
-           ((A * A * A - A) * m[lo] + (B * B * B - B) * m[hi]) * (h * h) / 6.0;
+    const double u = (x - t[lo]) / h;
+    const double u2 = u * u, u3 = u2 * u;
+    const double h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u;
+    const double h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+    return h00 * y[lo] + h10 * h * m[lo] + h01 * y[hi] + h11 * h * m[hi];
 }
 
 namespace {
 
+// SHAPE-PRESERVING interpolation (Fritsch-Carlson monotone cubic), replacing the
+// natural cubic spline.
+//
+// The natural spline is C2 and that was the reason it was chosen: it makes the
+// pole caps close smoothly. But an interpolating cubic OVERSHOOTS when the data
+// turns sharply, and adding the shoulder knot turned the data sharply. Measured
+// on EU38 the moment the shoulder went in: the half-width peaked at 219.54mm
+// between the bust and the shoulder -- 52mm wider than either of them, a bulge
+// no body has -- and above the neck it swung all the way to a = -7.90mm. A
+// NEGATIVE semi-axis is a surface folded through itself, and Gauss-Bonnet said
+// so: chi converged to 3.05 instead of 2 under grid refinement, so it was the
+// geometry and not the quadrature.
+//
+// Fritsch-Carlson limits each interval's end slopes to the local secants, so the
+// interpolant can never leave the range of the data it passes through. It is C1
+// rather than C2. The pole closure does not depend on that: the section scale
+// still vanishes as sigmaHat(t)*sin(t), which is what makes the caps close, and
+// the curvature integral only needs C1 to exist.
 void buildNatural(std::vector<double> t, std::vector<double> y,
                   std::vector<double>& outT, std::vector<double>& outY,
                   std::vector<double>& outM) {
     const int n = static_cast<int>(t.size());
-    std::vector<double> m(n, 0.0), u(n, 0.0);
-    for (int i = 1; i < n - 1; ++i) {
-        const double sig = (t[i] - t[i - 1]) / (t[i + 1] - t[i - 1]);
-        const double p = sig * m[i - 1] + 2.0;
-        m[i] = (sig - 1.0) / p;
-        u[i] = (y[i + 1] - y[i]) / (t[i + 1] - t[i]) - (y[i] - y[i - 1]) / (t[i] - t[i - 1]);
-        u[i] = (6.0 * u[i] / (t[i + 1] - t[i - 1]) - sig * u[i - 1]) / p;
+    std::vector<double> m(n, 0.0);  // here: FIRST derivatives, not second
+    if (n == 1) {
+        m[0] = 0.0;
+    } else {
+        std::vector<double> h(n - 1), d(n - 1);
+        for (int i = 0; i < n - 1; ++i) {
+            h[i] = t[i + 1] - t[i];
+            d[i] = (y[i + 1] - y[i]) / h[i];
+        }
+        m[0] = d[0];
+        m[n - 1] = d[n - 2];
+        for (int i = 1; i < n - 1; ++i)
+            m[i] = (d[i - 1] * d[i] <= 0.0) ? 0.0  // a local extremum: flat, no overshoot
+                                            : (d[i - 1] * h[i] + d[i] * h[i - 1]) /
+                                                  (h[i] + h[i - 1]);
+        // Fritsch-Carlson limiter: keep every slope inside 3x the local secant
+        for (int i = 0; i < n - 1; ++i) {
+            if (d[i] == 0.0) { m[i] = m[i + 1] = 0.0; continue; }
+            const double a = m[i] / d[i], b = m[i + 1] / d[i];
+            const double sq = a * a + b * b;
+            if (sq > 9.0) {
+                const double tau = 3.0 / std::sqrt(sq);
+                m[i] = tau * a * d[i];
+                m[i + 1] = tau * b * d[i];
+            }
+        }
     }
-    for (int i = n - 2; i >= 0; --i) m[i] = m[i] * m[i + 1] + u[i];
     outT = std::move(t);
     outY = std::move(y);
     outM = std::move(m);
@@ -252,9 +300,16 @@ BodySurface::BodySurface(const BodyMeasurementsSnapshot& body, double statureMM,
         // The shape parameter k = bd/bm is SCALE-FREE, so constraint 2 solves on
         // the unit section alone and constraint 1 is then a single division —
         // exactly the structure the ellipse calibration had, one root find wider.
-        const double k = solveAsymmetry(lv.widthToDepth, lv.backArcFraction);
+        const double k = std::isnan(lv.asymOverride)
+                             ? solveAsymmetry(lv.widthToDepth, lv.backArcFraction)
+                             : lv.asymOverride;
         const Section unitSec{lv.widthToDepth, 1.0, k};
-        const double scale = lv.girthMM / unitSec.perimeter(16);
+        // A width-driven level calibrates off its half-width; a girth-driven one
+        // off its perimeter. The unit section has a = widthToDepth and bm = 1,
+        // so the width case is a single division too.
+        const double scale = lv.halfWidthMM > 0.0
+                                 ? lv.halfWidthMM / lv.widthToDepth
+                                 : lv.girthMM / unitSec.perimeter(16);
 
         ts.push_back(t);
         sigmas.push_back(scale / s);
@@ -265,6 +320,55 @@ BodySurface::BodySurface(const BodyMeasurementsSnapshot& body, double statureMM,
     buildNatural(ts, sigmas, sigmaHat_.t, sigmaHat_.y, sigmaHat_.m);
     buildNatural(ts, aspects, aspect_.t, aspect_.y, aspect_.m);
     buildNatural(ts, asyms, asym_.t, asym_.y, asym_.m);
+
+    // ---- SHOULDERS ----
+    //
+    // Measured on EU38 before this existed: the shoulder tip belongs 167.28mm
+    // from centre and the surface was 97.65mm wide there — 70mm short. The tip
+    // is in fact wider than the WIDEST part of this body (the bust, 159.57mm),
+    // which is anatomically right and is exactly the point: shoulders are wider
+    // than the bust and this body had none. A shoulder seam cannot be cut out of
+    // a surface with no material where the shoulder goes.
+    //
+    // The chart gives the WIDTH and nothing else. There is no published shoulder
+    // depth and no published front/back split for it, so neither is invented:
+    // both are read off the surface that already exists at that height, and only
+    // the width is imposed. That is why this is a second pass — the first three
+    // splines are what the shoulder level asks for its own depth.
+    if (body.shoulderWidthCM > 0.0 && body.shoulderInclDeg > 0.0) {
+        const double halfW = body.shoulderWidthCM * 10.0 / 2.0;
+        // the shoulder line drops from the nape by its own slope over its own
+        // half-width — the same construction GarmentCode draws in 2D
+        const double drop = std::tan(body.shoulderInclDeg * kPi / 180.0) * halfW;
+        const double shZ = napeZ - drop;
+        const double tSh = parameterFor(shZ);
+        const Section here = sectionAt(tSh);
+        BodyLevel sh{"shoulder", shZ, 0.0, halfW / here.bm, 0.5, halfW,
+                     here.bd / here.bm};
+        levels_.insert(levels_.begin() + 1, sh);  // neck, SHOULDER, bust, waist, hip
+
+        ts.clear(); sigmas.clear(); aspects.clear(); asyms.clear();
+        for (const BodyLevel& lv : levels_) {
+            const double t = parameterFor(lv.heightMM);
+            const double sn = std::sin(t);
+            if (sn <= 0.0) throw std::runtime_error("level sits on a pole; widen capMM");
+            const double k = std::isnan(lv.asymOverride)
+                                 ? solveAsymmetry(lv.widthToDepth, lv.backArcFraction)
+                                 : lv.asymOverride;
+            const Section unitSec{lv.widthToDepth, 1.0, k};
+            const double scale = lv.halfWidthMM > 0.0
+                                     ? lv.halfWidthMM / lv.widthToDepth
+                                     : lv.girthMM / unitSec.perimeter(16);
+            ts.push_back(t);
+            sigmas.push_back(scale / sn);
+            aspects.push_back(lv.widthToDepth);
+            asyms.push_back(k);
+        }
+        knotT_ = ts;
+        buildNatural(ts, sigmas, sigmaHat_.t, sigmaHat_.y, sigmaHat_.m);
+        buildNatural(ts, aspects, aspect_.t, aspect_.y, aspect_.m);
+        buildNatural(ts, asyms, asym_.t, asym_.y, asym_.m);
+    }
 }
 
 double BodySurface::parameterFor(double heightMM) const {

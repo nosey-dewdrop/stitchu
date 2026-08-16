@@ -26,6 +26,16 @@ struct BodyMeasurementsSnapshot {
     // silently changes shape by omitting them.
     double bustBackFrac = 0, waistBackFrac = 0, hipBackFrac = 0;
 
+    // SHOULDER, which a size chart gives as a WIDTH across the body and never as
+    // a girth around it. shoulder_w is tip to tip (verified: GarmentCode uses
+    // shoulder_w/2 as the shoulder tip's x, bodice.py:58, base_classes.py:37);
+    // shoulderInclDeg is the slope in DEGREES (body_params.py keeps it as-is and
+    // every use site feeds it to deg2rad). 0 means not supplied and the surface
+    // simply has no shoulders, which is what it had before.
+    // NOTE: this is NOT the chart's own shoulderCM (37 at EU38) — that is a
+    // different quantity and only the legacy 2D line reads it.
+    double shoulderWidthCM = 0, shoulderInclDeg = 0;
+
     double bustMM() const { return bustCM * 10; }
     double waistMM() const { return waistCM * 10; }
     double hipMM() const { return hipCM * 10; }
