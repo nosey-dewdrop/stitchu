@@ -62,6 +62,16 @@ Ayrıca dizin adı tutarsız: `pack-eu38` küçük harf, diğer 7'si `pack-EU34.
 **Silinsin mi, arşive mi?** Düzeltmek bayat çıktıyı meşrulaştırır diye dokunmadım.
 **Cevap:**
 
+### [ ] K9 — İKİ KAYNAK BİRBİRİNİN TERSİNİ SÖYLÜYOR · 20–38 saatlik işin yönünü belirler · 2026-08-17
+Bu, uydurulup geçilebilecek bir şey değildi; kapıya **kasten konmadı**.
+
+- `knowledge/drafting-math-eu38.md` (HIGH güven, Aldrich verified): **"ÖN armscye daha uzun, fark 1.5–2.5cm"**. `docs/G5-OMUZ-PLANI.md` kapı-2 bunu şart yazmış.
+- Satın aldığın **Buğra kalıbı 8/8 bedende TERSİNİ ölçüyor**: ön−arka = **−13.50 … −1.22mm** (arka uzun).
+
+Fikstür bu yüzden ön/arka yayı **basıyor, yargılamıyor** — çözülmeden şart yazmak 20–38 saati kanıtsız yöne sürüklerdi.
+**ÖLÇÜLMEDİ:** fark landmark atamasından mı geliyor (Locket düğmeli bir ÜST, CF plaketli) yoksa gerçek geometriden mi. Bunu Tur 4'te ölçtürüyorum; sonuç gelince buraya düşecek, ama **hangi kaynağın kural sayılacağı senin hükmün** — Buğra bir REFERANS mı, yoksa kural mı (28 Tem: "Buğra bir REFERANS, kural değil").
+**Cevap:**
+
 ---
 
 ## KAPANDI

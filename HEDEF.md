@@ -9,11 +9,13 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 ## SAYAÇ
 
 ```
-H1'e kalan:  5 halka / 36–56 koşu saati    [H1.0 ÖLÇÜLDÜ: 25–45s, yapısal]
+H1'e kalan:  5 halka / 31–49 koşu saati    [H1.0 yeniden ölçüldü: 25–45s → 20–38s, kapısı kuruldu]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / 6–12 koşu saati     [T2,T3,T4,T6,T7,T8,T10,T11 kapandı · T1 yok-hükmünde · açık: T5 (bloke), T9 (yarısı: waist-attach kapandı, h3c açık ve H1.0'a bağlandı)]
+TABAN:       2 halka / ikisi de BAĞLI      [T2,T3,T4,T6,T7,T8,T10,T11 kapandı · T1 yok-hükmünde · T5 = K5 cevabına bloke · T9 h3c = H1.0'ın yüzey işine bağlı]
 ```
+
+**TABAN FİİLEN MÜHÜRLENDİ (17.08).** Kalan iki halkanın ikisi de kendi başına ilerletilemez: T5 tanım bekliyor, T9'un kalanı H1.0 kapanınca kapanacak. Bundan sonra kritik yol **tek**: H1.0.
 
 > **KAPSAM BÜYÜDÜ: +1 halka (T11 — ters omuz). Sebebi:** T7 kapıyı gerçek kapı yapınca ortaya çıkan 12 hüküm-FAIL'in yarısı T9'un (waist-attach) değil: **6'sı ters omuz** — ön omuz arkadan uzun çıkıyor. `CLAUDE.md`'de kayıtlı alan bilgisi bunun tersini söylüyor (arka omzun uzun olması STANDARTTIR, kürek payı 6-12mm). İşaret hatası mı gerçek geometri mi **ölçülmedi**. T9'un içine gizlemek yerine halka yazıyorum.
 

@@ -6,15 +6,16 @@
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
 
   "sayac": {
-    "H1": { "kalan_halka": 5, "kalan_saat": "36-56  [H1.0 OLCULDU: 25-45s yapisal]" },
+    "H1": { "kalan_halka": 5, "kalan_saat": "31-49  [H1.0 yeniden olculdu 25-45 -> 20-38s; kapisi kuruldu: h10_gate_check 48 FAIL/55]" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 3, "kalan_saat": "6-12  [acik: T5 bloke, T9, T11]" }
+    "TABAN": { "kalan_halka": 2, "kalan_saat": "ikisi de BAGLI  [T5 = K5 cevabina bloke; T9 h3c = H1.0 yuzey isine bagli]. TABAN FIILEN MUHURLENDI 17.08" }
   },
   "sayac_gecmisi": [
     { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
     { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." },
-    { "tur": 2, "H1": 5, "H2": 7, "H3": 4, "TABAN": 3, "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12." }
+    { "tur": 2, "H1": 5, "H2": 7, "H3": 4, "TABAN": 3, "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12." },
+    { "tur": 3, "H1": 5, "H2": 7, "H3": 4, "TABAN": 2, "not": "TABAN 3->2 (T11 kapandi, T9 yarim). walkgate hukum-FAIL 12->0, ctest 90/90. worst fit 7.1717->0.1469mm. H1.0 kapisi kuruldu (h10_gate_check, 48 FAIL/55) ve H1.0 tahmini 25-45 -> 20-38s dustu. Kalan iki taban halkasi da BAGLI: kritik yol artik TEK, H1.0." }
   ],
 
   "tripwire": {
@@ -111,6 +112,26 @@
       "tur": 2,
       "karar": "T2 MUHRU GECERSIZ, YENIDEN MUHURLENECEK",
       "gerekce": "T8 kenar sayisini 2096->782 dusurdu, T7 walk.py JSON'una gate anahtari ekledi. T2'nin dondurulmus manifest sha256'si (8abec243...) artik gecersiz. Determinizm KIRILMADI (urun degisti, kosu degil) ama muhur Tur 3 sonunda yeniden alinacak."
+    },
+    {
+      "tur": 3,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: TABAN 3 -> 2, H1 36-56 -> 31-49 saat. walkgate hukum-FAIL 12 -> 0, ctest 90/90, worst fit 7.1717 -> 0.1469mm (kapi ilk kez GERCEKTEN uygulaniyor). H1.0'in kabul kapisi kuruldu ve bugun kirmizi (48 FAIL / 55) — dogru sonuc. Tripwire pasif."
+    },
+    {
+      "tur": 3,
+      "karar": "TABAN FIILEN MUHURLENDI — KRITIK YOL ARTIK TEK",
+      "gerekce": "Kalan iki taban halkasi kendi basina ilerletilemez: T5 tanim bekliyor (K5), T9'un h3c yarisi H1.0'in ARAP yuzey isine bagli (kok sebep emitChain'de degil, govde panelinin duzlestirmesinin bel sinirinda — EU46 gerinim %0.087 vs EU38 %0.004, 20 kat). Bundan sonra butun kapasite H1.0'a."
+    },
+    {
+      "tur": 3,
+      "karar": "TUR 1'IN H1.0 OLCUMU KISMEN BAYAT — DUZELTILDI",
+      "gerekce": "'Giysi tamamen tup, omzun ustunden hicbir sey gecmiyor' fazla genisti. Bugun ragged-top grid VAR, ust sinir birinci sinif, yaka Aldrich/GRAFIS/Hofenbitzer'den DRAFT ediliyor (uydurma 8.7cm oldu), armhole scoop var, arka aciklik 558.8mm var. DOGRU olan cekirdek: omuz halkasi yok (5. halka degil, z(phi) fonksiyonu) ve Slit hala yalniz-bel capali — en buyuk tek yapisal blokor bu."
+    },
+    {
+      "tur": 3,
+      "karar": "KAYNAK CELISKISI KAPIYA KONMADI — K9",
+      "gerekce": "knowledge/drafting-math-eu38.md (HIGH) 'ON armscye daha uzun, 1.5-2.5cm' diyor; Bugra 8/8 bedende TERSINI olcuyor (on-arka -13.50...-1.22mm). Cozulmeden sart yazmak 20-38 saati kanitsiz yone surukler. Fikstur on/arka yayi BASIYOR, YARGILAMIYOR. Tur 4'te olculecek, hukum Damla'nin."
     },
     {
       "tur": 1,
