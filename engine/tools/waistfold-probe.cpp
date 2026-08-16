@@ -134,6 +134,18 @@ int main(int argc, char** argv) {
             o.cutEmphasis = 1.0;
             run(s, "cutEmphasis=1", o);
         }
+        {  // PURE ARAP: no polish, no projection. If the fold is already here,
+           // it is the ARAP solve; if it is not, the polish put it there.
+            SheathOptions o = base;
+            o.polishIters = 0;
+            o.cutSweeps = 0;
+            run(s, "arap-only", o);
+        }
+        {  // more ARAP: a converged ARAP should not care about the count
+            SheathOptions o = base;
+            o.arapRounds = 400;
+            run(s, "arapRounds=400", o);
+        }
         std::printf("\n");
     }
     return 0;
