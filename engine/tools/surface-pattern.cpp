@@ -6,9 +6,21 @@
 //
 // Pairing safety: princess and side seams join panels that are exact mirror or
 // rotation copies, so their fitted chains match segment for segment. The waist
-// stitch joins two DIFFERENT curves (bodice vs skirt), so each waist run is
-// forced to a SINGLE cubic on both sides — one stitch, one edge, both referees
-// re-measure the result.
+// stitch joins two DIFFERENT curves (bodice vs skirt), so its two sides need a
+// SHARED segmentation — the union of both sides' natural breakpoints, refitted
+// on both. That is the same device the princess and side seams already use.
+//
+// It used to be done differently and wrongly: each waist run was forced to a
+// SINGLE cubic with tolerance 1e9, i.e. kFitTolMM was bypassed on exactly the
+// edge that carries the dress's defining ring. The stated reason was "one
+// stitch, one edge", but the real constraint was narrower — the stitch pairing
+// below only ever read waist[r][0], so a multi-edge waist chain would have left
+// every edge past the first unsewn. The waist is ONE CURVE; nothing requires it
+// to be one cubic. A 33-point back waist forced into one cubic missed its own
+// polyline by 7.17mm (48x the tolerance) and, because the referee measures the
+// EDGE, reported the bodice waist 5.35mm shorter than the skirt waist it is
+// sewn to. Curve stays one curve, cubics are as many as the tolerance needs,
+// and the pairing walks the chain.
 //
 // Usage: surface-pattern [size] [--svg out.svg] > spec.json    (coords in cm)
 #include <algorithm>
@@ -92,6 +104,11 @@ std::vector<int> emitChain(SpecPanel& sp, const std::vector<Vec2>& pts, bool sin
         forcedBreaks ? fitCubicsAtBreaks(pts, *forcedBreaks)
                      : fitCubics(pts, singleCubic ? 1e9 : kFitTolMM);
     const double dev = fitDeviation(segs, pts);
+    if (const char* dn = std::getenv("STITCHU_FIT_DUMP"))
+        if (sp.name == dn) {
+            std::fprintf(stderr, "DUMP %s n=%zu\n", sp.name.c_str(), pts.size());
+            for (const Vec2& q : pts) std::fprintf(stderr, "P %.6f %.6f\n", q.x, q.y);
+        }
     if (std::getenv("STITCHU_FIT_DEBUG"))
         std::fprintf(stderr, "  FIT %-18s %-11s n=%3zu segs=%2zu dev=%8.4fmm\n",
                      sp.name.c_str(),
@@ -150,7 +167,8 @@ std::vector<Vec2> sidePoints(const SurfacePanel& p, const std::vector<int>& edge
 
 SpecPanel buildSpecPanel(const SurfacePanel& p,
                          const std::vector<int>* seam0Breaks = nullptr,
-                         const std::vector<int>* seam1Breaks = nullptr) {
+                         const std::vector<int>* seam1Breaks = nullptr,
+                         const std::vector<std::vector<int>>* waistBreaks = nullptr) {
     SpecPanel sp;
     sp.name = p.name;
     const int n = static_cast<int>(p.contour.size());
@@ -186,11 +204,13 @@ SpecPanel buildSpecPanel(const SurfacePanel& p,
         else if (t.k == LB)
             sp.dartLegs[t.id][1] = emitLine(sp, pts.back());
         else {
-            const bool single = (t.k == W);
-            const std::vector<int>* forced = t.k == S0 ? seam0Breaks
-                                           : t.k == S1 ? seam1Breaks
-                                                       : nullptr;
-            const std::vector<int> chain = emitChain(sp, pts, single, forced);
+            const std::vector<int>* forced =
+                t.k == S0   ? seam0Breaks
+                : t.k == S1 ? seam1Breaks
+                : (t.k == W && waistBreaks && t.id < static_cast<int>(waistBreaks->size()))
+                            ? &(*waistBreaks)[t.id]
+                            : nullptr;
+            const std::vector<int> chain = emitChain(sp, pts, /*singleCubic=*/false, forced);
             if (t.k == W) sp.waist.push_back(chain);
             if (t.k == S1) sp.seam1 = chain;
             if (t.k == S0) sp.seam0 = chain;
@@ -320,6 +340,7 @@ int main(int argc, char** argv) {
     for (const SurfaceStitch& s : pat.stitches)
         if (s.kind == SurfaceStitch::Opening) ++openMeshEdges[s.pa];
     std::vector<int> openSpecEdges(NP, 0);  // how many spec seam edges are open
+    std::vector<std::vector<std::vector<int>>> wbrk(NP);  // waist breaks, per run
     {
         auto naturalBreaks = [&](const SurfacePanel& p, const std::vector<int>& edges) {
             std::vector<int> b;
@@ -405,12 +426,53 @@ int main(int argc, char** argv) {
             std::sort(v.begin(), v.end());
             brk0[q.pb] = v;
         }
+
+        // ---- THE WAIST GETS THE SAME TREATMENT ----
+        //
+        // Bodice sub s and skirt sub s are sewn along waist run r. They are two
+        // DIFFERENT curves (the bodice develops the ring one way, the skirt the
+        // other), so neither may pick its own segmentation and neither may be
+        // exempted from kFitTolMM. Union of both sides' natural breaks, refit
+        // both there, and the chains pair edge for edge like any other seam.
+        for (int s = 0; s < 4; ++s) {
+            const SurfacePanel& A = pat.panels[s];      // torso sub s
+            const SurfacePanel& B = pat.panels[4 + s];  // skirt sub s
+            wbrk[s].assign(A.waistRuns.size(), {});
+            wbrk[4 + s].assign(B.waistRuns.size(), {});
+            const size_t R = std::min(A.waistRuns.size(), B.waistRuns.size());
+            for (size_t r = 0; r < R; ++r) {
+                const std::vector<Vec2> pa = sidePoints(A, A.waistRuns[r]);
+                const std::vector<Vec2> pb = sidePoints(B, B.waistRuns[r]);
+                if (pa.size() != pb.size() || pa.size() < 2) continue;
+                const int n = static_cast<int>(pa.size());
+                const std::vector<double> ca = cumulative(pa), cb = cumulative(pb);
+                double direct = 0, rev = 0;
+                for (int i = 0; i < n; ++i) {
+                    direct += std::fabs(ca[i] - cb[i]);
+                    rev += std::fabs(ca[i] - (cb.back() - cb[n - 1 - i]));
+                }
+                const bool reversed = rev < direct;
+                std::vector<int> u = naturalBreaks(A, A.waistRuns[r]);
+                for (int b : naturalBreaks(B, B.waistRuns[r]))
+                    u.push_back(reversed ? n - 1 - b : b);
+                std::sort(u.begin(), u.end());
+                u.erase(std::unique(u.begin(), u.end()), u.end());
+                std::vector<int> v;
+                for (int b : u) v.push_back(reversed ? n - 1 - b : b);
+                std::sort(v.begin(), v.end());
+                if (std::getenv("STITCHU_FIT_DEBUG"))
+                    std::fprintf(stderr, "  BEL %-18s <-> %-18s n=%3d ters=%d birlesim=%zu\n",
+                                 A.name.c_str(), B.name.c_str(), n, reversed ? 1 : 0, u.size());
+                wbrk[s][r] = u;
+                wbrk[4 + s][r] = v;
+            }
+        }
     }
 
     std::vector<SpecPanel> panels;
     double worstFit = 0;
     for (int i = 0; i < NP; ++i) {
-        panels.push_back(buildSpecPanel(pat.panels[i], &brk0[i], &brk1[i]));
+        panels.push_back(buildSpecPanel(pat.panels[i], &brk0[i], &brk1[i], &wbrk[i]));
         worstFit = std::max(worstFit, panels.back().worstFitMM);
     }
 
@@ -451,10 +513,13 @@ int main(int argc, char** argv) {
     };
     // panel order: [lF rF lB rB] torso, then skirt — as built (front subs then back subs per layer)
     const int T = 0, S = 4;  // first torso / skirt panel index
-    // waist: torso sub s run r <-> skirt sub s run r
+    // waist: torso sub s run r <-> skirt sub s run r, edge for edge. It used to
+    // pair waist[r][0] only, which is why the run had to be one cubic; with a
+    // shared segmentation the chain pairs like every other seam and chainPair
+    // still measures (never assumes) which way round the two sides run.
     for (int s = 0; s < 4; ++s)
         for (size_t r = 0; r < panels[T + s].waist.size(); ++r)
-            st.push_back({T + s, panels[T + s].waist[r][0], S + s, panels[S + s].waist[r][0]});
+            chainPair(T + s, panels[T + s].waist[r], S + s, panels[S + s].waist[r]);
     // stitch indices that are NOT sewn — the back opening. Recorded here rather
     // than searched for later: chainPair emits one stitch per spec seam edge in
     // seam order, so the open ones are the last k on the bodice (the run starts
