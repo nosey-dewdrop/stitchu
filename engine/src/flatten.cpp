@@ -4,6 +4,8 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <set>
 
 namespace stitchu {
@@ -55,7 +57,8 @@ std::vector<std::array<int, 2>> uniqueEdges(const TriMesh& mesh) {
 }  // namespace
 
 std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init,
-                              int pin, int rounds, double cgTol) {
+                              int pin, int rounds, double cgTol, double moveTolMM,
+                              int* roundsUsed) {
     const int n = static_cast<int>(mesh.V.size());
     const int m = static_cast<int>(mesh.F.size());
     std::vector<RefFrame> ref(m);
@@ -98,7 +101,7 @@ std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init
     };
 
     std::vector<Vec2> P = init;
-    std::vector<Vec2> B(n), r(n), p(n), Ap(n);
+    std::vector<Vec2> B(n), r(n), p(n), Ap(n), prev(n);
 
     auto cg = [&](const std::vector<Vec2>& rhs, std::vector<Vec2>& x) {
         matvec(x, Ap);
@@ -133,7 +136,28 @@ std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init
         }
     };
 
+    // `rounds` IS A CEILING, NOT A COUNT.
+    //
+    // It used to be a count, and the count was 60. Local/global ARAP converges
+    // linearly, so a fixed count answers a question nobody asked: it says how
+    // long the solver ran, not whether it finished. Measured (tur 4,
+    // waistfold-probe): at 60 rounds three of eight sizes still carried a fold
+    // in the last waist column (turn angle +88 to +146 deg); at 400 rounds all
+    // eight were clean (-0.67 deg). Raising 60 to 400 would only be fitting a
+    // number to today's gate — the next mesh resolution or the next body would
+    // need a different number and nobody would know.
+    //
+    // So the loop stops on the SOLVER'S OWN answer: the largest distance any
+    // vertex moved during a round. Below `moveTolMM` the local rotations and the
+    // global solve agree to within a ten-thousandth of a millimetre, which is
+    // four orders below the 0.79375mm production tolerance, and running longer
+    // cannot change the pattern. `rounds` stays as the ceiling that keeps a
+    // pathological mesh from spinning forever.
+    int used = 0;
+    double lastMove = 0.0;
     for (int round = 0; round < rounds; ++round) {
+        used = round + 1;
+        prev = P;
         // LOCAL: per-triangle best rotation, closed-form 2x2 polar of the
         // weighted covariance S = Σ w (ref edge)(current edge)^T
         std::fill(B.begin(), B.end(), Vec2{});
@@ -169,7 +193,18 @@ std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init
             }
         }
         cg(B, P);
+        if (moveTolMM > 0.0) {
+            double mv = 0.0;
+            for (int i = 0; i < n; ++i)
+                mv = std::max(mv, std::hypot(P[i].x - prev[i].x, P[i].y - prev[i].y));
+            lastMove = mv;
+            if (mv < moveTolMM) break;
+        }
     }
+    if (std::getenv("STITCHU_ARAP_DEBUG"))
+        std::fprintf(stderr, "arap: verts %6d  rounds %5d/%d  lastMove %.3e mm%s\n", n, used,
+                     rounds, lastMove, used >= rounds ? "  CEILING HIT" : "");
+    if (roundsUsed) *roundsUsed = used;
     return P;
 }
 

@@ -36,8 +36,17 @@ struct TriMesh {
 
 // Local-global ARAP. `init` is the 2D start (proven development, not random),
 // `pin` the vertex held fixed. Deterministic for identical inputs.
+//
+// `rounds` is a CEILING, not a count: the solve stops when the largest vertex
+// displacement over one local/global round falls below `moveTolMM`. A fixed
+// count says how long the solver ran, not whether it finished — and at the old
+// fixed 60 it had NOT finished (tur 4: three of eight sizes kept a fold in the
+// waist that a converged solve does not have). Set `moveTolMM <= 0` to restore
+// the old fixed-count behaviour. `roundsUsed`, if given, reports how many rounds
+// were actually spent.
 std::vector<Vec2> arapFlatten(const TriMesh& mesh, const std::vector<Vec2>& init,
-                              int pin = 0, int rounds = 60, double cgTol = 1e-10);
+                              int pin = 0, int rounds = 2000, double cgTol = 1e-10,
+                              double moveTolMM = 1e-4, int* roundsUsed = nullptr);
 
 // Post-ARAP metric polish: direct edge-strain relaxation (the arc relaxation of
 // research file 02). ARAP establishes the shape, the polish tightens the metric;

@@ -215,7 +215,12 @@ struct SheathOptions {
     double easeHipMM = 50.0;
     int ringSamples = 128;             // the waist ring, sampled once; panels take half each
     double rowStepMM = 8;             // vertical mesh resolution
-    int arapRounds = 60;
+    int arapRounds = 2000;       // CEILING, not a count — arapFlatten stops on
+                                 // its own convergence (max vertex move < 1e-4mm
+                                 // over a local/global round). This was 60, and
+                                 // 60 did not converge: three of eight sizes kept
+                                 // a fold in the last waist column that a
+                                 // finished solve does not have.
     int polishIters = 12000;
     int cutRounds = 40;          // alternations of {relax, project} — the
                                  // constraint lives INSIDE the solve, not after it

@@ -578,6 +578,12 @@ target_link_libraries(surface-pattern PRIVATE engine)
 add_executable(waistfold-probe tools/waistfold-probe.cpp)
 target_link_libraries(waistfold-probe PRIVATE engine)
 
+# arapconv-probe: DIAGNOSTIC, not a gate and not in ctest. One line per size
+# carrying the three numbers the ARAP convergence stop has to move together —
+# the waist turn angle, the h3c mm residual, and the worst panel strain.
+add_executable(arapconv-probe tools/arapconv-probe.cpp)
+target_link_libraries(arapconv-probe PRIVATE engine)
+
 # section_check: the body cross-section has a FRONT and a BACK. Girth, back-arc
 # share, convexity, Steiner exactness, side-point smoothness, and the asymmetry
 # itself — each a gate, so the symmetric-ellipse body cannot come back quietly.
