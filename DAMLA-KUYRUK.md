@@ -70,6 +70,37 @@ Bu, uydurulup geçilebilecek bir şey değildi; kapıya **kasten konmadı**.
 
 Fikstür bu yüzden ön/arka yayı **basıyor, yargılamıyor** — çözülmeden şart yazmak 20–38 saati kanıtsız yöne sürüklerdi.
 **ÖLÇÜLMEDİ:** fark landmark atamasından mı geliyor (Locket düğmeli bir ÜST, CF plaketli) yoksa gerçek geometriden mi. Bunu Tur 4'te ölçtürüyorum; sonuç gelince buraya düşecek, ama **hangi kaynağın kural sayılacağı senin hükmün** — Buğra bir REFERANS mı, yoksa kural mı (28 Tem: "Buğra bir REFERANS, kural değil").
+
+#### ÖLÇÜM SONUCU — TUR 4 (2026-08-17) · tam dosya: `knowledge/armscye-on-arka-2026-08-17.md`
+Komut: `python3 flatten-research/18-armscye-front-back.py` · kaynak `patterns_real/geometry/geometry-full.json` (PDF vektör) · 0.25mm resample · landmarklar EU38'de `CLAUDE.md` kaydıyla **≤1mm** doğrulandı, 8 bedende köşe sayısı+sırası sabit.
+
+**★ İKİ İDDİA AYNI ŞEYDEN BAHSETMİYOR.** Aldrich tarafı **EĞRİLİK** diyor, Buğra **UZUNLUK** ölçüyor. Buğra 8/8 bedende **ikisini birden** doğruluyor:
+
+| beden | ön oyuk | arka oyuk | fark (ön−arka) | ön omuz | arka omuz | fark (arka−ön) | ön yay/kiriş | arka yay/kiriş |
+|---|---|---|---|---|---|---|---|---|
+| 34 | 205.17 | 219.00 | **−13.83** | 63.00 | 63.93 | +0.93 | 1.2394 | 1.1764 |
+| 36 | 208.92 | 221.39 | **−12.47** | 63.73 | 64.50 | +0.77 | 1.2350 | 1.1767 |
+| 38 | 211.00 | 222.46 | **−11.46** | 63.75 | 64.50 | +0.75 | 1.2292 | 1.1749 |
+| 40 | 221.86 | 226.49 | **−4.63** | 64.50 | 65.50 | +1.00 | 1.2620 | 1.1734 |
+| 42 | 227.23 | 231.24 | **−4.01** | 65.67 | 66.50 | +0.83 | 1.2551 | 1.1707 |
+| 44 | 231.97 | 235.20 | **−3.23** | 66.25 | 67.20 | +0.95 | 1.2470 | 1.1676 |
+| 46 | 236.13 | 238.69 | **−2.56** | 66.92 | 67.75 | +0.83 | 1.2419 | 1.1654 |
+| 48 | 242.50 | 244.00 | **−1.50** | 67.75 | 68.70 | +0.95 | 1.2323 | 1.1610 |
+
+(hepsi mm, **kesim çizgisi** = basılı kontur. Dikiş çizgisi ayrıca ölçüldü, 6/8 aynı işaret; kesim çizgisi birincil. EU38 toplam armhole 433.45mm ≈ kayıtlı 43.30cm.)
+
+1. **ARKA OYUK UZUN, 8/8** (−13.83…−1.50mm). Ama fark bedenle **9 kat küçülüyor** → bu bir kanun değil, Buğra'nın grade'i.
+2. **ÖN OYUK DAHA EĞRİ, 8/8** — yay/kiriş ön 1.232–1.262 vs arka 1.161–1.177, bantlar hiç çakışmıyor. Aldrich'in *"ön daha derin/oyuk"* yarısı **DOĞRULANDI**. Çürüyen kısım *"→ dolayısıyla ön daha UZUN"*. İkisi farklı büyüklük; daha eğri bir yay, daha kısa kiriş üzerinde yine de kısa olabilir. **İkisi de pens-bağışık** (pens kapanınca oyuk kenarı rijit döner; yay da kiriş de korunur).
+3. **OMUZ ÇELİŞKİNİN PARÇASI DEĞİL.** 8/8 arka uzun, +0.75…+1.00mm, düz — alan bilgisiyle **aynı yönde** (kürek payı), sadece 6–12mm bandının 6–8 katı altında. Omuz ile oyuk aynı cümlede anılmamalıydı.
+4. **PLAKET SEBEP DEĞİL — ölçüldü.** CF/plaket kenarı 8/8 bedende **tam düz** (yay/kiriş ≤1.00008) ve oyuktan yaka (216–240mm) + omuz (63–68mm) ile ayrı. Oyuğun iki ucu da CF'de değil → konturun başka yerindeki uzatma oyuk yayını değiştiremez. Peter Pan yaka ayrı parça, yaka kenarına oturuyor; puf kol gövdenin oyuğuna değmiyor.
+5. **★ "Aldrich verified" ETİKETİ HAK EDİLMEMİŞ.** O cümlenin iki kaynağı da onu taşımıyor: Aldrich p.11 bir **ölçü tablosu** sayfası ve dosyanın kendisi *"Armhole ÇEVRESİ Aldrich'te yok"* yazıyor (satır 26); `reports/2026-07-29-endustri-arastirmasi.md` (git'te, diskte yok) içinde `armscye|scye|armhole` geçen **0 satır** var. Dahası dosya **kendi içinde** çelişiyor: Aldrich p.11 sırt genişliği **34.4 > ön 32.4**, ve dosyanın kendi HIGH cap-ease kuralı ease'in **2/3'ünü arkaya** veriyor — ikisi de arka-uzunu gösteriyor.
+
+**AJAN HÜKMÜ (savunulur, menü değil):** §47–49'un **uzunluk** yarısı silinir — Buğra Aldrich'i yendiği için değil, **o cümle Aldrich değil**; kaynaksız bir çıkarım, dosyanın kendi HIGH kalemleriyle çelişiyor, ve tek ölçülmüş gerçek kalıpta 8/8 çürüyor. **Eğrilik** yarısı kalır ve ölçümle terfi eder. **Sayı şart yazılmaz** (referansı kural yapmak olur, 28 Tem kararına aykırı); şart yazılacaksa **işaret** yazılır: `ön_yay ≤ arka_yay` ve `ön_yay/kiriş > arka_yay/kiriş`, büyüklük **REPORTED** kalır. Ölçülen giysi sayısı **1** (corset_bustier strapless, tanık olamaz) — büyüklüğü şart yapmamanın ikinci sebebi bu.
+
+**⚠ YAN BULGU (K9 dışı, ama K9'un sayılarına dokunuyor):** `flatten-research/10-seam-walk-real.py`'ın dikiş-çizgisi sayıları **bozuk** — kenar uçlarından 17–28 nokta buduyor. Tek satırlık kanıt: **düz** CF kenarını `420.8 → 401.5mm` yapıyor; düz bir çizgiyi 10mm ötelemek boyunu değiştiremez. Bu turun yöntemi aynı kenarda `421.00 → 421.00`. → `CLAUDE.md`'deki *"dikiş çizgisinde oyuk 430.4 / kapak 425.3 / net cap ease −5.0mm ≈ 0"* üçlüsü bu hattan; **DOĞRULANMADI**, yeniden ölçülmeden kullanılmamalı.
+
+**⚠ YAN BULGU 2:** *"yan dikiş ön 201.8 vs arka 227.4"* açık işi (CLAUDE.md #2) muhtemelen **K9 ile aynı sınıf hata**: ön yan dikişin İÇİNE büst pensi kesilmiş (EU38'de dikey 97.1mm yutuyor). **Pens kapanmadan ön/arka yan dikiş kıyaslanamaz.** Bu turda pens kapatılıp ölçülmedi → **ÖLÇÜLMEDİ**, ama "kalıpta sapma var" denmez.
+
 **Cevap:**
 
 ---
