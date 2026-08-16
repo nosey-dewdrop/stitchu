@@ -917,16 +917,26 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     for (int k = 0; k < NR; ++k)
         pat.stitches.push_back({torsoArc[k].first, torsoArc[k].second,
                                 skirtArc[k].first, skirtArc[k].second, SurfaceStitch::Waist});
-    // princess seams within a half + side seams between halves
+    // princess seams within a half + side seams between halves.
+    // The centre-back seam is recorded AS IT IS EMITTED: it is the princess
+    // seam of the back half whose right-hand panel begins at the centre-back
+    // ring column, and it is the only seam a back zip can live in. Finding it
+    // by construction rather than by searching the finished plan for "the seam
+    // nearest the back" keeps it correct when the cut fractions change.
+    std::vector<int> cbBodice, cbSkirt;
     for (const GarmentLayer& L : layers) {
         for (int h = 0; h < 2; ++h) {
             const std::vector<int>& subs = h == 0 ? L.frontSubs : L.backSubs;
             for (size_t s = 0; s + 1 < subs.size(); ++s) {
                 const SurfacePanel& a = pat.panels[subs[s]];
                 const SurfacePanel& b = pat.panels[subs[s + 1]];
-                for (size_t i = 0; i < a.seam1Edges.size(); ++i)
+                const bool isCentreBack = h == 1 && b.ringOffset == 3 * NR / 4;
+                std::vector<int>& cb = L.isSkirt ? cbSkirt : cbBodice;
+                for (size_t i = 0; i < a.seam1Edges.size(); ++i) {
+                    if (isCentreBack) cb.push_back(static_cast<int>(pat.stitches.size()));
                     pat.stitches.push_back({subs[s], a.seam1Edges[i],
                                             subs[s + 1], b.seam0Edges[i], SurfaceStitch::Princess});
+                }
             }
         }
         const SurfacePanel& fLast = pat.panels[L.frontSubs.back()];
@@ -946,6 +956,46 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             for (size_t i = 0; i < d.legA.size(); ++i)
                 pat.stitches.push_back({static_cast<int>(pi), d.legA[i],
                                         static_cast<int>(pi), d.legB[i], SurfaceStitch::Dart});
+
+    // ---- THE BACK OPENING: the closure stops being a declaration ----
+    //
+    // wearable_check gates the neck opening against the sourced 22-inch
+    // head-through minimum OR a closure, and the dress passes on the closure
+    // arm. That arm was, at first, only a number in the options — a flag that
+    // satisfied a gate while the pattern still had every seam sewn shut from
+    // hem to neckline. Here the closure becomes geometry.
+    //
+    // The seam already exists: the back half's princess seam runs down the
+    // centre back, which is exactly where the period envelopes put the zip.
+    // So no new cut is invented. What changes is that its top run is marked
+    // Opening instead of Princess, walking DOWN from the neckline — through
+    // the bodice, across the waist, and into the skirt if the zip is longer
+    // than the bodice, which at 22 inches it is.
+    //
+    // Length is measured on the FLATTENED seam, because that is the length the
+    // buyer's zip has to match and the length the printed pattern will show.
+    // The run stops at the last whole edge that still fits: the opening comes
+    // out at or under the requested length, never over. A zip longer than its
+    // opening cannot be sewn in; a shorter one can.
+    if (opt.backOpeningMM > 0.0) {
+        std::vector<int> topDown;
+        // bodice seam edges are row-ascending (waist upward), so the neckline
+        // end is the LAST one — walk it backwards, then continue into the skirt
+        topDown.insert(topDown.end(), cbBodice.rbegin(), cbBodice.rend());
+        topDown.insert(topDown.end(), cbSkirt.begin(), cbSkirt.end());
+        double run = 0.0;
+        for (int si : topDown) {
+            SurfaceStitch& st = pat.stitches[si];
+            const SurfacePanel& p = pat.panels[st.pa];
+            const Vec2& u = p.contour[st.ea];
+            const Vec2& v = p.contour[(st.ea + 1) % p.contour.size()];
+            const double len = std::hypot(v.x - u.x, v.y - u.y);
+            if (run + len > opt.backOpeningMM) break;
+            run += len;
+            st.kind = SurfaceStitch::Opening;
+        }
+        pat.backOpeningMM = run;
+    }
     return pat;
 }
 

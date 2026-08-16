@@ -59,7 +59,6 @@ int main() {
         if (!e) { ++failures; continue; }
         const BodySurface body(e->body, kStatureMM, kCapMM);
         const SheathOptions opt;
-        haveClosure = opt.backOpeningMM > 0.0;
 
         double napeZ = 0, shH = 0, shHalf = 0;
         for (const BodyLevel& lv : body.levels()) {
@@ -94,12 +93,30 @@ int main() {
         if (len < worstOpening) { worstOpening = len; worstSize = label; }
     }
 
+    // THE CLOSURE IS ASKED OF THE PATTERN, NOT OF THE OPTIONS.
+    //
+    // A flag saying "there is a zip" is exactly the move this project has been
+    // burned by: the definition of success quietly satisfied without the thing
+    // existing. So the closure is counted by BUILDING the dress and looking for
+    // stitches marked Opening on the centre-back seam. If the geometry is not
+    // there, backOpeningMM comes back 0 and the 22-inch rule binds.
+    const SizeChartEntry* mid = euSize("EU38");
+    const SurfacePattern pat =
+        buildSheathPattern(BodySurface(mid->body, kStatureMM, kCapMM), SheathOptions{});
+    int openingEdges = 0;
+    for (const SurfaceStitch& s : pat.stitches)
+        if (s.kind == SurfaceStitch::Opening) ++openingEdges;
+    haveClosure = openingEdges > 0 && pat.backOpeningMM > 0.0;
+
     std::printf("  en dar yaka açıklığı: %s\n", worstSize);
     gate("yaka açıklığı (kapamasız asgari)", worstOpening, kHeadThroughMM,
          haveClosure || worstOpening >= kHeadThroughMM, "mm");
     std::printf("  %-38s %10.2f inç\n", "  (aynısı inç olarak)", worstOpening / 25.4);
     std::printf("  %-38s %s\n", "arka kapama var mı",
                 haveClosure ? "EVET — 22 inç kuralı düşer" : "YOK — 22 inç kuralı bağlar");
+    std::printf("  %-38s %10.2f mm  (%d kenar, %.2f inç fermuar)\n",
+                "  kalıptaki gerçek açıklık", pat.backOpeningMM, openingEdges,
+                pat.backOpeningMM / 25.4);
 
     if (failures)
         std::printf(

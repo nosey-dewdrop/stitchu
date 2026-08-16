@@ -306,6 +306,20 @@ int main(int argc, char** argv) {
     // would quietly put the notches on backwards.
     const int NP = static_cast<int>(pat.panels.size());
     std::vector<std::vector<int>> brk0(NP), brk1(NP);
+    // ---- THE ZIP END IS A NOTCH, SO IT HAS TO BE A BREAK ----
+    //
+    // The engine marks the top run of the centre-back seam Opening, one mesh
+    // edge at a time. The spec describes that seam as a handful of cubics, so
+    // unless the point where the opening STOPS is a breakpoint, the zip end
+    // falls in the middle of a curve — no vertex to notch, and no way to say
+    // "stitch from here down, leave the rest for the zip". Forcing the break
+    // makes the zip end a real corner of the pattern, which is what a notch is.
+    // Nothing is measured twice: the count comes from the engine's own Opening
+    // marks, never from re-walking the seam against a length here.
+    std::vector<int> openMeshEdges(NP, 0);
+    for (const SurfaceStitch& s : pat.stitches)
+        if (s.kind == SurfaceStitch::Opening) ++openMeshEdges[s.pa];
+    std::vector<int> openSpecEdges(NP, 0);  // how many spec seam edges are open
     {
         auto naturalBreaks = [&](const SurfacePanel& p, const std::vector<int>& edges) {
             std::vector<int> b;
@@ -351,8 +365,33 @@ int main(int argc, char** argv) {
             std::vector<int> u = naturalBreaks(A, A.seam1Edges);
             for (int b : naturalBreaks(B, B.seam0Edges))
                 u.push_back(reversed ? n - 1 - b : b);
+            // The opening runs DOWN from the neckline, and sidePoints walks the
+            // seam upward, so on the bodice the open edges are the LAST ones and
+            // the zip end sits at (n-1) - count; on the skirt the run continues
+            // downward from the waist, which is that panel's FIRST edges, so the
+            // zip end sits at the count itself. Both are the same point on the
+            // dress — the seam simply changes which panel it belongs to.
+            int zipEnd = -1;
+            if (openMeshEdges[q.pa] > 0) {
+                zipEnd = q.pa < 4 ? (n - 1) - openMeshEdges[q.pa] : openMeshEdges[q.pa];
+                if (zipEnd > 0 && zipEnd < n - 1) u.push_back(zipEnd);
+            }
             std::sort(u.begin(), u.end());
             u.erase(std::unique(u.begin(), u.end()), u.end());
+            if (zipEnd >= 0) {
+                // segment k of the fit spans cut[k]..cut[k+1] with cut =
+                // {0, interior breaks..., n-1}; count the segments on the open
+                // side of the zip end
+                int interior = 0, before = 0;
+                for (int b : u)
+                    if (b > 0 && b < n - 1) {
+                        ++interior;
+                        if (b < zipEnd) ++before;
+                    }
+                openSpecEdges[q.pa] = q.pa < 4
+                                          ? (interior + 1) - (before + (zipEnd > 0 ? 1 : 0))
+                                          : before + 1;
+            }
             brk1[q.pa] = u;
             std::vector<int> v;
             for (int b : u) v.push_back(reversed ? n - 1 - b : b);
@@ -409,12 +448,23 @@ int main(int argc, char** argv) {
     for (int s = 0; s < 4; ++s)
         for (size_t r = 0; r < panels[T + s].waist.size(); ++r)
             st.push_back({T + s, panels[T + s].waist[r][0], S + s, panels[S + s].waist[r][0]});
+    // stitch indices that are NOT sewn — the back opening. Recorded here rather
+    // than searched for later: chainPair emits one stitch per spec seam edge in
+    // seam order, so the open ones are the last k on the bodice (the run starts
+    // at the neckline) and the first k on the skirt (it continues past the
+    // waist). Same physical opening, two panels.
+    std::vector<int> openStitch;
     for (int base : {T, S}) {
         chainPair(base + 0, panels[base + 0].seam1, base + 1, panels[base + 1].seam0);  // front princess
+        const int cbBase = static_cast<int>(st.size());
         chainPair(base + 2, panels[base + 2].seam1, base + 3, panels[base + 3].seam0);  // back princess
+        const int m = static_cast<int>(panels[base + 2].seam1.size());
+        for (int i = 0; i < openSpecEdges[base + 2] && i < m; ++i)
+            openStitch.push_back(base == T ? cbBase + (m - 1 - i) : cbBase + i);
         chainPair(base + 1, panels[base + 1].seam1, base + 2, panels[base + 2].seam0);  // side phi=pi
         chainPair(base + 3, panels[base + 3].seam1, base + 0, panels[base + 0].seam0);  // side phi=2pi
     }
+    std::sort(openStitch.begin(), openStitch.end());
     for (const auto& sp : panels)
         for (const auto& legs : sp.dartLegs)
             st.push_back({static_cast<int>(&sp - panels.data()), legs[0],
@@ -427,7 +477,17 @@ int main(int argc, char** argv) {
         std::printf("%s\n    [{\"panel\": \"%s\", \"edge\": %d}, {\"panel\": \"%s\", \"edge\": %d}]",
                     i ? "," : "", panels[st[i].pa].name.c_str(), st[i].ea,
                     panels[st[i].pb].name.c_str(), st[i].eb);
-    std::printf("\n  ],\n  \"panel_order\": [");
+    // The back opening: indices into "stitches" that are NOT sewn. Additive on
+    // purpose — every existing reader sees the same stitch list it always saw,
+    // and the two sides of the opening stay a PAIR so the walk still checks
+    // they are the same length, which is exactly what a zip needs. The last
+    // index is the zip end, and that vertex is where the notch goes.
+    std::printf("\n  ],\n  \"openings\": {\"kind\": \"centre_back_zip\", \"length_mm\": %.4f,"
+                " \"stitches\": [",
+                pat.backOpeningMM);
+    for (size_t i = 0; i < openStitch.size(); ++i)
+        std::printf("%s%d", i ? ", " : "", openStitch[i]);
+    std::printf("]},\n  \"panel_order\": [");
     for (size_t i = 0; i < panels.size(); ++i)
         std::printf("%s\"%s\"", i ? ", " : "", panels[i].name.c_str());
     std::printf("]\n  },\n");

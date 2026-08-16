@@ -65,8 +65,19 @@ struct SurfacePanel {
 
 // One seam of the plan: edge `ea` of panel `pa` is sewn to edge `eb` of `pb`.
 // The plan is BUILT with the panels — seam matching is construction, not search.
+// An OPENING is a seam that is NOT sewn: the two edges still face each other,
+// still have to be the same length, and still get cut and finished — but a
+// zipper goes in instead of a stitch line. It stays a PAIR rather than becoming
+// two free edges, precisely because a zip whose two sides differ in length
+// buckles. So the walk still judges it as an equality seam; only the assembly
+// verb changes, and that is the whole difference.
+//
+// The transition from Opening to Princess along the centre-back seam IS the zip
+// end, and that point is where the notch goes. Consumers find it by scanning
+// for the last Opening on the seam rather than being handed a separate
+// coordinate — one source for where the zip stops, the waist ring's law again.
 struct SurfaceStitch {
-    enum Kind { Waist, Princess, Side, Dart };
+    enum Kind { Waist, Princess, Side, Dart, Opening };
     int pa = 0, ea = 0, pb = 0, eb = 0;
     Kind kind = Waist;
 };
@@ -77,6 +88,11 @@ struct SurfacePattern {
     double ringGirthMM = 0.0;          // the single sampled 3D waist ring (polyline)
     double bodiceWaistSumMM = 0.0;     // flattened, all torso panels
     double skirtWaistSumMM = 0.0;      // flattened, all skirt panels
+    // The back opening as BUILT, measured on the flattened centre-back seam —
+    // which is the length the buyer's zip has to be. It lands on a whole mesh
+    // edge, so it is at or just under the requested backOpeningMM, never over:
+    // a zip longer than its opening cannot be sewn in, a shorter one can.
+    double backOpeningMM = 0.0;
 };
 
 struct SheathOptions {
