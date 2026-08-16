@@ -38,6 +38,7 @@ import hashlib
 import json
 import math
 import sys
+import textwrap
 from pathlib import Path
 
 import numpy as np
@@ -1174,6 +1175,68 @@ def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
 # ===========================================================================
 # the pages that are not the pattern: size table, cloth, cutting layout
 # ===========================================================================
+def _xml_escape(s):
+    return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+
+def render_steps_pages(pattern, size_label, date_str):
+    """The assembly order, on a page the buyer actually holds.
+
+    instructions.build() has produced this order since 84e79a9, but it only
+    ever reached print-report.txt -- the audit file. The three PDFs that ARE
+    the pack said what to cut and never what to sew, so a person with the
+    printed pack in hand had no order at all. A sewing order that lives in a
+    verification report is not shipped; it is only proven.
+    """
+    if not pattern:
+        return []
+    steps, closing = instructions.build(pattern)
+    if not steps:
+        return []
+
+    body_size = 0.40
+    # Helvetica averages ~0.52em per char; the step number column is 1.4cm
+    wrap_w = int((A4_W - 2 * MARGIN - 1.4) / (body_size * 0.52))
+    pages, body = [], []
+    y = [0.0]
+
+    def head():
+        body.clear()
+        body.extend([
+            _text(MARGIN, MARGIN + 0.9, 0.8,
+                  f'stitchu · {size_label} · {date_str}', weight='bold'),
+            _text(MARGIN, MARGIN + 1.8, 0.55, 'MONTAJ SIRASI', weight='bold'),
+            _text(MARGIN, MARGIN + 2.5, 0.38,
+                  'dikis grafiginden turetildi, elle yazilmadi. parcayi '
+                  'buyuten dikisler once, kucukten buyuge;'),
+            _text(MARGIN, MARGIN + 3.05, 0.38,
+                  'halkayi kapatan dikis en sonda (flat construction): o '
+                  'dikisten sonra is duz degil, tup.'),
+            _text(MARGIN, MARGIN + 3.85, 0.42,
+                  f'{len(steps)} adim, {closing} kapatan dikis',
+                  weight='bold'),
+        ])
+        y[0] = MARGIN + 5.0
+
+    head()
+    for s in steps:
+        chunks = textwrap.wrap(s['text'], wrap_w) or ['']
+        need = 0.55 * len(chunks) + 0.25
+        if y[0] + need > A4_H - MARGIN:
+            pages.append(_svg_doc(A4_W, A4_H, '\n'.join(body)))
+            head()
+        body.append(_text(MARGIN, y[0], body_size, f"{s['n']:>2}.",
+                          weight='bold'))
+        for chunk in chunks:
+            body.append(_text(MARGIN + 1.4, y[0], body_size,
+                              _xml_escape(chunk)))
+            y[0] += 0.55
+        y[0] += 0.25
+
+    pages.append(_svg_doc(A4_W, A4_H, '\n'.join(body)))
+    return pages
+
+
 def render_info_pages(arts, plan, size_label, date_str):
     """A4 pages a person reads before touching scissors.
 
@@ -1365,6 +1428,10 @@ def build(out_dir, spec_path, size_label, date_str=None):
         h.update(svg.encode())
 
     info_svgs, quotes = render_info_pages(arts, plan, size_label, date_str)
+    # the order goes ABOVE the cut plan: the sheet says what to do with the
+    # pieces on the page after the one that told you to cut them
+    steps_svgs = render_steps_pages(pattern, size_label, date_str)
+    info_svgs = info_svgs[:1] + steps_svgs + info_svgs[1:]
     for i, svg in enumerate(info_svgs):
         (svg_dir / f'info-page{i + 1}.svg').write_text(svg)
         h.update(svg.encode())
