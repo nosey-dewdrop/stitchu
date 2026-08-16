@@ -120,6 +120,19 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 
 ---
 
+## BRANCH DÜZENİ (Damla emri, 17.08)
+
+- **Koşu bitene kadar hiçbir branch silinmez, yeniden adlandırılmaz. `gh-pages`'e dokunulmaz.**
+- **Yeni branch AÇILMAZ.** Bütün iş `vardiya/2026-08-16`'da. Ajanlardan biri branch açarsa **hakem bunu ihlal sayar** ve turu kırmızı kapatır.
+- **KOŞU SONU TOPOLOJİSİ:** `vardiya/2026-08-16` → `main`'e **mühürlü merge** (taban mührü + üç sayaç raporu commit'in içinde), *sonra* `f1-body-front-back` kapanır. Bu sıra değişmez.
+- Ölçüm 17.08: `git log vardiya/2026-08-16..f1-body-front-back` **boş** → f1 vardiyanın içinde, taşınacak commit yok.
+
+## COMMIT SIKLIĞI (Damla emri, 17.08)
+
+- **Bir adım = bir commit + push. MUTLAK, kırmızıdan etkilenmez.** Her alt-ajan işi bitince, her hakem kararından sonra, `HEDEF.md` / `.vardiya/state.json` / `DAMLA-KUYRUK.md` güncellemeleri dahil — istisnasız.
+- **Taban kırmızıyken atılan commit `KIRMIZI: <kapı, kaç FAIL>` önekiyle atılır.** Bu kapı boyamak değil, kırmızılığın **İLANIDIR**.
+- **30 dakikadan eski commit'lenmemiş değişiklik çalışma ağacında DURAMAZ.**
+
 ## TUR — tekrarlanan tek adım
 
 ```
