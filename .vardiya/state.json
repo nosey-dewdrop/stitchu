@@ -9,11 +9,12 @@
     "H1": { "kalan_halka": 5, "kalan_saat": "36-56  [H1.0 OLCULDU: 25-45s yapisal]" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 7, "kalan_saat": "9-17  [T2,T4,T6 kapandi; T1 yok-hukmunde; T5 bloke; +T7,T8,T9,T10]" }
+    "TABAN": { "kalan_halka": 3, "kalan_saat": "6-12  [acik: T5 bloke, T9, T11]" }
   },
   "sayac_gecmisi": [
     { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
-    { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." }
+    { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." },
+    { "tur": 2, "H1": 5, "H2": 7, "H3": 4, "TABAN": 3, "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12." }
   ],
 
   "tripwire": {
@@ -26,7 +27,9 @@
     { "id": "T8", "durum": "acik", "sure": "3-6s", "sira": 1, "not": "TUR 2 — curvefit.cpp kubik kontrol parametresi [0,1] disina cikiyor (1.9678'e kadar) -> 480 kenar geri donuyor. T3'un kok sebebi" },
     { "id": "T7", "durum": "acik", "sure": "2-4s", "sira": 2, "not": "TUR 2 — walk.py kapi degil yazici (main hep exit 0); taban.sh grep '^FAIL' girintili 76 FAIL'i saymiyor" },
     { "id": "T10", "durum": "acik", "sure": "~0.5s", "sira": 3, "not": "TUR 2 — _opening_lines() sadece print-report.txt'e gidiyor; alici arka ortayi kapatip kafasi gecmeyen elbise diker" },
-    { "id": "T9", "durum": "acik", "sure": "4-8s", "sira": 4, "not": "h3c EU42/46/48 FAIL, worst fit EU46 7.1717mm vs tol 0.15mm (48 kat)" },
+    { "id": "T9", "durum": "acik", "sure": "4-8s", "sira": 1, "not": "TUR 3 — KOK SEBEP ADAYI: surface-pattern.cpp emitChain, bel kosularini singleCubic=true ile tek kubige zorluyor (tol 1e9) -> kFitTolMM BY-PASS. worst fit EU46 7.1717mm, T8'den sonra kimildamadi. waist-attach 3 ayri kusur (EU46 5.350mm, EU42 2.651, EU48 1.142)" },
+    { "id": "T11", "durum": "acik", "sure": "OLCULMEDI", "sira": 2, "not": "TUR 3 — ters omuz: on omuz arkadan uzun (walkgate 6 hukum = 3 dikis). CLAUDE.md: arka omzun uzun olmasi STANDART (kurek payi 6-12mm). Isaret hatasi mi gercek geometri mi olculmedi. KAPSAM BUYUDU +1" },
+    { "id": "H1.0-KAPI", "durum": "acik", "sure": "2-4s", "sira": 3, "not": "TUR 3 — H1.0 KOD DEGIL, KAPI. 25-45 saatlik yapisal is baslamadan once kabul kapisi + fikstur Bugra landmark paritesinden cikarilacak (docs/G5-OMUZ-PLANI.md). Kapi olmadan 25-45 saat yon secemez" },
     { "id": "H1.0", "durum": "acik-KIRMIZI", "sure": "25-45s", "sira": 5, "not": "OLCULDU: giysi tup. Omuz halkasi yok, kol oyugu 33.55cm vs Bugra 43.30cm. Yapisal: buildGrid (h,phi) izgarasi + Slit yalniz-bel capasi, ~610-1180 satir, 9 dosya" },
     { "id": "T1", "durum": "YOK-HUKMUNDE", "sure": "0", "not": "terim repoda yok (tum revizyonlar arandi). 52 baslik derlendi, 0 basarisiz. Uydurulmadi -> DAMLA-KUYRUK K6" },
     { "id": "T2", "durum": "KAPANDI", "sure": "~0.5s", "not": "iki bagimsiz temiz kosu, manifest sha256 8abec243... ozdes, 24 PDF cmp 0 fark" },
@@ -88,6 +91,26 @@
       "tur": 1,
       "karar": "H1.0 KIRMIZI — sure OLCULDU",
       "gerekce": "commit 52cd8bf'nin 'the garment gets an armhole' iddiasi kismen dogru (ust kenara Aldrich kaynakli bir kol oyugu EGRISI eklendi, gradeleniyor, uydurma degil) ama sonucu yanlis: giysi yoke degildi, TUPTU ve tup kaldi. Kabul sarti (strapless degil, balensiz duruyor) saglanmiyor. H1'in '15-20 saat' tahmini olu; 36-56 saat."
+    },
+    {
+      "tur": 2,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: TABAN 7 -> 3. Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12, aciklik uyarisi pakete girdi + regresyon mandali kuruldu (printpack_sheet_check). Rota Tur 1'de degistigi gibi dogru calisti: cizgi once duzeldi. Tripwire pasif."
+    },
+    {
+      "tur": 2,
+      "karar": "KAPSAM BUYUDU: +1 halka (T11 ters omuz)",
+      "gerekce": "T7 kapiyi gercek kapi yapinca cikan 12 hukum-FAIL'in 6'si waist-attach (T9) degil, ters omuz. CLAUDE.md alan bilgisi bunun tersini soyluyor. T9'un icine gizlemek yerine halka yazildi."
+    },
+    {
+      "tur": 2,
+      "karar": "ctest KALICI KIRMIZI — BOYANMADI",
+      "gerekce": "walkgate_check 12 gercek hukmu gosteriyor, bu DOGRU sonuc. 'Bilinen-kirmizi' ilan etmek = kapi boyamak. Ilan edilmedi. Bedeli: rabadon push kapisi kapali kalabilir. Cozum kapiyi gevsetmek degil, T9+T11'i kapatmak — Tur 3 tam olarak bu."
+    },
+    {
+      "tur": 2,
+      "karar": "T2 MUHRU GECERSIZ, YENIDEN MUHURLENECEK",
+      "gerekce": "T8 kenar sayisini 2096->782 dusurdu, T7 walk.py JSON'una gate anahtari ekledi. T2'nin dondurulmus manifest sha256'si (8abec243...) artik gecersiz. Determinizm KIRILMADI (urun degisti, kosu degil) ama muhur Tur 3 sonunda yeniden alinacak."
     },
     {
       "tur": 1,

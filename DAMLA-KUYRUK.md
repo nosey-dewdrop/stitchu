@@ -54,6 +54,14 @@ Silmedim — README dört otorite dosyasından biri değil, senin anlatı yüzey
 **Ama bu sayıyı dışarıda söylersen yanlış söylersin.** Düzelteyim mi, sen mi yazacaksın?
 **Cevap:**
 
+### [ ] K8 — 12 Ağustos paketleri sadece bayat değil, BAŞKA BİR GİYSİ · 2026-08-17
+`Logs/surface-2026-08-12/pack-*` (8 beden) spec'inde `openings` anahtarı **hiç yok** (`None`).
+Yani o elbisenin arka açıklığı da fermuarı da yok — **kafadan geçmeyen kapalı bir tüp**.
+`CLAUDE.md`'deki "8 bedenin tam paketi diskte duruyor" cümlesi ürün olarak sayılamaz; bugünden itibaren öyle söylenmiyor.
+Ayrıca dizin adı tutarsız: `pack-eu38` küçük harf, diğer 7'si `pack-EU34..48` büyük. Script kırabilir.
+**Silinsin mi, arşive mi?** Düzeltmek bayat çıktıyı meşrulaştırır diye dokunmadım.
+**Cevap:**
+
 ---
 
 ## KAPANDI
