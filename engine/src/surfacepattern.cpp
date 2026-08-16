@@ -188,23 +188,72 @@ struct PanelGrid {
 // a design decision, not a body measurement -- the same body wears a crew and a
 // scoop -- so it is a declared dial with the back shallower than the front,
 // which is the one thing about it that is universal.
+// THE TOP BOUNDARY: neckline, shoulder, and — as of this operator — an ARMHOLE.
+//
+// Until now the shoulder line ran all the way out to the side seam, so the
+// garment had no armhole at all: it was a strap closed from the neck to the
+// side. That is not a sleeveless dress, it is a yoke, and no amount of getting
+// the neckline right would have made it one.
+//
+// The armhole lives where |cos phi| is largest, which is the side. Going from
+// the side seam toward the front, the boundary RISES from the underarm to the
+// shoulder strap; the same happens toward the back. So it is single-valued in
+// phi and fits this profile without redesigning it — a worry that turned out to
+// be arithmetic, not geometry. Measured on EU38: the strap sits at phi = ±19.9
+// deg, which is ±56mm around the side, and a real armhole is 10-11cm front to
+// back. The span is right because it is the same span.
+//
+// Both numbers are Aldrich's, from the block she actually publishes for this:
+//
+//   "3 The close fitting sleeveless block" (Metric Pattern Cutting, 5th ed. p.28)
+//     Draw new armscye depth line 1 cm above original line.
+//     Mark points 3 and 4 1 cm in from shoulder edge.
+//
+//   and the sleeved line it moves from, p.16:
+//     1-2 armscye depth measurement plus 0.5 cm
+//     0-1 1.5 cm
+//
+//   so the sleeveless underarm sits at nape - 1.5cm - (armscye depth - 0.5cm).
+//
+// Armscye depth is not in our chart, and is NOT invented: Aldrich's own size
+// chart is exactly linear in bust girth, 19.8 + 0.1*(bust_cm - 76), verified
+// against all eight of her printed rows at zero error. So it grades itself out
+// of the bust the size already carries.
+//
+// NOT APPLIED, and the reason is written down rather than the rule half-copied:
+// the same page also removes 1.5cm from each side seam. That belongs to her
+// CLOSE FITTING block, which is a fitted bodice; this garment is a 1960s skim
+// whose width comes from the shift silhouette, not from a fitted block. Taking
+// 3cm out of its bust girth would be copying a number across a garment it was
+// not measured on.
 struct TopProfile {
     double napeZ;        // the shoulder line starts here, at the centre back neck
     double tanIncl;      // shoulder slope
-    double neckHalfMM;   // half the neckline WIDTH (neck_w/2), where the shoulder ends
+    double neckHalfMM;   // half the neckline WIDTH, where the shoulder starts
     double frontDropMM;  // design dial
     double backDropMM;   // design dial
     double shoulderHalfMM;
+    double strapHalfMM = 0.0;  // where the shoulder ENDS and the armhole begins
+    double underarmZ = 0.0;    // 0 = no armhole, shoulder runs to the side seam
 
     double at(double phi) const {
         // distance across the body, measured on the shoulder-level section
         const double x = std::fabs(shoulderHalfMM * std::cos(phi));
+        if (underarmZ > 0.0 && x >= strapHalfMM) {
+            // ARMHOLE: scoop from the strap end down to the underarm at the side
+            const double strapZ = napeZ - tanIncl * strapHalfMM;
+            const double span = shoulderHalfMM - strapHalfMM;
+            const double u = span > 1e-9 ? (x - strapHalfMM) / span : 1.0;
+            // same cosine easing as the neckline, and for the same reason: it
+            // leaves the shoulder with a flat tangent instead of a corner the
+            // flatten would have to absorb as a singularity, and it is flat
+            // again at the side seam where the front and back arcs meet
+            return strapZ - (strapZ - underarmZ) * 0.5 * (1.0 - std::cos(kPi * u));
+        }
         if (x >= neckHalfMM) return napeZ - tanIncl * x;   // shoulder line
         // inside the neck width: drop below the neck point, front deeper
         const double neckPointZ = napeZ - tanIncl * neckHalfMM;
         const double drop = std::sin(phi) > 0 ? frontDropMM : backDropMM;
-        // a cosine easing so the neckline meets the shoulder with a flat tangent
-        // instead of a corner the flatten would have to absorb as a singularity
         const double u = neckHalfMM > 1e-9 ? x / neckHalfMM : 1.0;
         return neckPointZ - drop * 0.5 * (1.0 + std::cos(kPi * u));
     }
@@ -658,8 +707,19 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     const double fifthNeck = neckGirthMM / 5.0;
     const double neckHalfMM = fifthNeck + opt.neckWidthCoefCM * 10.0;
     const double frontDropMM = fifthNeck + opt.frontNeckDropCoefCM * 10.0;
-    const TopProfile top{napeZ, tanIncl, neckHalfMM, frontDropMM,
-                         opt.backNeckDropMM, shoulderHalf};
+    // ARMHOLE (Aldrich sleeveless block, p.28 + p.16 — see TopProfile).
+    // armscye depth grades itself out of the bust: 19.8 + 0.1*(bust_cm - 76) cm,
+    // which reproduces all eight of Aldrich's printed rows exactly.
+    double bustGirthMM = 0.0;
+    for (const BodyLevel& lv : body.levels())
+        if (lv.name == "bust") bustGirthMM = lv.girthMM;
+    const double armscyeDepthMM = 198.0 + 1.0 * (bustGirthMM / 10.0 - 76.0);
+    const double strapHalfMM = shoulderHalf - opt.shoulderNarrowMM;
+    const double underarmZ = opt.armhole
+                                 ? napeZ - 15.0 - (armscyeDepthMM - 5.0)
+                                 : 0.0;
+    const TopProfile top{napeZ,        tanIncl,          neckHalfMM, frontDropMM,
+                         opt.backNeckDropMM, shoulderHalf, strapHalfMM, underarmZ};
     if (opt.skimBodice) {
         surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
         surf.skimBaseH = waistH;                          // the single shared ring

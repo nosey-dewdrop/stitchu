@@ -166,6 +166,17 @@ struct SheathOptions {
     double neckWidthCoefCM = -0.2;    // Aldrich back neck width, off 1/5 neck
     double frontNeckDropCoefCM = -0.2;  // Aldrich front neck drop, off 1/5 neck
     double backNeckDropMM = 15.0;     // Aldrich 0-1, a flat 1.5 cm at every size
+
+    // ---- ARMHOLE ----
+    // Without this the shoulder line runs to the side seam and the garment has
+    // no armhole: a strap closed from neck to side, which is a yoke and not a
+    // sleeveless dress. Aldrich's close fitting sleeveless block, p.28:
+    // "Mark points 3 and 4 1 cm in from shoulder edge" and "Draw new armscye
+    // depth line 1 cm above original line". The depth itself grades out of the
+    // bust — see TopProfile for the derivation and for the one instruction on
+    // that page deliberately NOT applied.
+    bool armhole = true;
+    double shoulderNarrowMM = 10.0;   // Aldrich: 1 cm in from the shoulder edge
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;
