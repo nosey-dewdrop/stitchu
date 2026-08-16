@@ -20,6 +20,25 @@ Vec2 evalCubic(const CubicSeg& s, double t) {
 // One least-squares cubic over pts[i0..i1] with chord parametrisation and
 // free inner control points (endpoints fixed). Solves the 2x2 normal system
 // for the scalar weights along the end tangent directions.
+//
+// THE SOLVE IS CONSTRAINED, and the constraint is the cut line's own law.
+// Schneider's original guards only the sign (a negative weight folds the curve
+// backwards at its own endpoint) and leaves the magnitude unbounded. Unbounded
+// is the other half of the same failure: a weight larger than the chord puts a
+// control point BEYOND the far endpoint, and a cubic whose control points are
+// out of order along its chord runs past the end and comes back. On a cut line
+// that is not an aesthetic defect, it is a line no cutter can follow.
+//
+// Write the chord as the unit vector uc and project the four control points
+// onto it: x0 = 0, x1 = al*(t0.uc), x2 = chord - be*(-t1.uc), x3 = chord. The
+// projected curve is a scalar cubic Bezier on (x0,x1,x2,x3); its derivative is
+// a quadratic Bezier on the differences, so x0 <= x1 <= x2 <= x3 makes the
+// derivative's control values non-negative and the projection monotone. Those
+// are three LINEAR inequalities in (al, be), and the fit energy is a convex
+// quadratic, so the constrained minimum is exact and cheap: take the
+// unconstrained solution when it is feasible, otherwise the minimum sits on a
+// face and each face is a one-variable problem solved in closed form. Nothing
+// is clipped after the fact — the feasible set is part of the problem.
 CubicSeg fitOne(const std::vector<Vec2>& pts, int i0, int i1,
                 Vec2 t0, Vec2 t1, const std::vector<double>& u) {
     double c00 = 0, c01 = 0, c11 = 0, x0 = 0, x1 = 0;
@@ -45,7 +64,61 @@ CubicSeg fitOne(const std::vector<Vec2>& pts, int i0, int i1,
         be = (c00 * x1 - c01 * x0) / det;
     }
     const double chord = std::hypot(pts[i1].x - pts[i0].x, pts[i1].y - pts[i0].y);
-    if (al <= 1e-9 || be <= 1e-9) al = be = chord / 3.0;  // Wu/Barsky fallback
+
+    // forward components of the two inward tangents along the chord
+    const Vec2 uc = chord > 1e-12
+                        ? Vec2{(pts[i1].x - pts[i0].x) / chord, (pts[i1].y - pts[i0].y) / chord}
+                        : Vec2{0, 0};
+    const double fa = t0.x * uc.x + t0.y * uc.y;    // start tangent, points forward
+    const double fb = -(t1.x * uc.x + t1.y * uc.y);  // end tangent, points backward
+    auto E = [&](double a, double b) {
+        return 0.5 * (c00 * a * a + 2 * c01 * a * b + c11 * b * b) - x0 * a - x1 * b;
+    };
+    // A tangent with no forward component cannot carry any weight at all
+    // without pushing its control point backwards past its own endpoint.
+    const double alMax = fa > 1e-9 ? chord / fa : 0.0;
+    const double beMax = fb > 1e-9 ? chord / fb : 0.0;
+    auto feasible = [&](double a, double b) {
+        return a >= -1e-12 && b >= -1e-12 && fa * a + fb * b <= chord * (1 + 1e-12) &&
+               fa * a >= -1e-12 && fb * b >= -1e-12;
+    };
+    if (chord > 1e-12 && !feasible(al, be)) {
+        double bestA = 0, bestB = 0, bestE = E(0, 0);
+        auto consider = [&](double a, double b) {
+            a = std::max(0.0, std::min(a, alMax));
+            b = std::max(0.0, std::min(b, beMax));
+            if (fa * a + fb * b > chord) {  // pull back onto the ordering face
+                const double sc = chord / (fa * a + fb * b);
+                a *= sc;
+                b *= sc;
+            }
+            if (!feasible(a, b)) return;
+            const double e = E(a, b);
+            if (e < bestE) { bestE = e; bestA = a; bestB = b; }
+        };
+        // face be = 0, face al = 0
+        if (c00 > 1e-12) consider(x0 / c00, 0.0);
+        if (c11 > 1e-12) consider(0.0, x1 / c11);
+        // face fa*al + fb*be = chord, minimised along its length
+        if (fa > 1e-9 && fb > 1e-9) {
+            const double r = fa / fb;
+            const double K = c00 - 2 * r * c01 + r * r * c11;
+            const double L = c01 * chord / fb - x0 - r * (c11 * chord / fb - x1);
+            if (K > 1e-12) {
+                const double a = -L / K;
+                consider(a, (chord - fa * a) / fb);
+            }
+            consider(0.0, chord / fb);
+            consider(chord / fa, 0.0);
+        }
+        al = bestA;
+        be = bestB;
+    }
+
+    if (al <= 1e-9 || be <= 1e-9) {  // Wu/Barsky fallback
+        al = fa > 1e-9 ? chord / 3.0 : 0.0;
+        be = fb > 1e-9 ? chord / 3.0 : 0.0;
+    }
     CubicSeg s;
     s.p0 = pts[i0];
     s.p3 = pts[i1];
@@ -132,8 +205,21 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
         out.push_back(s);
         return;
     }
+    // SIGN OF THE SPLIT TANGENT. fitOne places the control points as
+    // c1 = p0 + al*t0 and c2 = p3 + be*t1 with al, be >= 0, so BOTH tangents
+    // must point INWARD: t0 forward from the start, t1 BACKWARD from the end.
+    // `tc` is the centred FORWARD tangent at the split, which is what the
+    // second half wants as its start tangent — and the exact opposite of what
+    // the first half wants as its end tangent. Schneider's original computes
+    // the centre tangent pointing backward, hands it to the first half, and
+    // negates it for the second; this port had the sign inverted on both
+    // halves and the first half paid for it: with the end tangent pointing
+    // forward, every positive be puts c2 BEYOND p3, so the curve runs past its
+    // own endpoint and comes back. That is the whole of the edge-monotonicity
+    // failure — the returned parameter is not clipped here, it is generated in
+    // the right direction and the least squares is solved in the right basis.
     const Vec2 tc = unit({pts[split + 1].x - pts[split - 1].x, pts[split + 1].y - pts[split - 1].y});
-    fitRange(pts, i0, split, t0, tc, tolMM, out, depth + 1, breaks);
+    fitRange(pts, i0, split, t0, {-tc.x, -tc.y}, tolMM, out, depth + 1, breaks);
     if (breaks) breaks->push_back(split);
     fitRange(pts, split, i1, tc, t1, tolMM, out, depth + 1, breaks);
 }
