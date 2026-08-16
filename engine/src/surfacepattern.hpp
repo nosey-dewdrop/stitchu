@@ -85,6 +85,7 @@ struct SheathOptions {
     // cannot be worn. Defaults are the fitted-dress band the trade agrees on
     // (Threads/RTW: 2" bust, 1" waist, 2" hip; Aldrich close-fitting carries
     // 7cm at the bust) — declared design dials, not laws.
+    double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;
     double easeHipMM = 50.0;

@@ -34,16 +34,22 @@ struct GarmentSurf {
         double a, bm, bd;  // BODY section: width, mean depth, front/back asymmetry
         double d = 0.0;    // wearing-ease offset, d = ease/(2*pi) — Steiner-exact
     };
-    std::vector<Ring> rings;  // descending height: bust, waist, hip
+    std::vector<Ring> rings;  // descending height: neck, bust, waist, hip
 
-    // easeMM: girth ease per ring, in ring order (bust, waist, hip). A garment
-    // with zero ease is skin and cannot be put on; the offset is the OUTER
-    // PARALLEL CURVE of the body section (garmentshell.cpp theorem: perimeter
-    // grows by exactly 2*pi*d, so d = ease/(2*pi) with no fitted constant).
-    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[3]) {
+    // easeMM: girth ease per ring, in ring order (neck, bust, waist, hip). A
+    // garment with zero ease is skin and cannot be put on; the offset is the
+    // OUTER PARALLEL CURVE of the body section (garmentshell.cpp theorem:
+    // perimeter grows by exactly 2*pi*d, so d = ease/(2*pi), no fitted constant).
+    //
+    // The NECK ring is what lets a garment exist above the bust at all. Until
+    // now the top ring was the bust and profile() returned the bust section
+    // unchanged for every height above it — a straight cylinder of bust width
+    // where the chest, shoulder and neck belong. That was invisible while the
+    // dress was strapless, because nothing was ever cut up there.
+    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[4]) {
         GarmentSurf s;
         int k = 0;
-        for (const char* name : {"bust", "waist", "hip"}) {
+        for (const char* name : {"neck", "bust", "waist", "hip"}) {
             for (const BodyLevel& lv : body.levels())
                 if (lv.name == name) {
                     const Section sec = body.sectionAt(body.parameterFor(lv.heightMM));
@@ -52,7 +58,7 @@ struct GarmentSurf {
                 }
             ++k;
         }
-        if (s.rings.size() != 3) throw std::runtime_error("need bust/waist/hip rings");
+        if (s.rings.size() != 4) throw std::runtime_error("need neck/bust/waist/hip rings");
         return s;
     }
 
@@ -111,20 +117,39 @@ struct PanelGrid {
 
 // Rows from the waist ring outward (up for the bodice, down for the skirt).
 // row 0 is copied verbatim from the single ring sample.
+// THE TOP BOUNDARY of the bodice as a function of phi.
+//
+// Stage one: FLAT, exactly at the bust, which reproduces the strapless sheath
+// byte for byte. The mechanism lands and is proved neutral before the shape
+// goes in, so that when the numbers move it is the neckline moving and not a
+// refactor.
+double topProfile(double phi, double bustH) {
+    (void)phi;
+    return bustH;
+}
+
 PanelGrid buildGrid(const GarmentSurf& surf,
-                    const std::vector<Vec3>& ringSeg, double waistH, double farH,
+                    const std::vector<Vec3>& ringSeg, double waistH,
+                    const std::vector<double>& topH,
                     double phi0, double phi1, double rowStepMM) {
     const int cols = static_cast<int>(ringSeg.size()) - 1;
-    const int rowsN = std::max(12, static_cast<int>(std::ceil(std::fabs(farH - waistH) / rowStepMM)));
+    // RAGGED TOP. topH[j] is where THIS column ends, so the far boundary can dip
+    // for a neckline, ride over a shoulder and scoop for an armhole while the
+    // waist row stays exactly the sampled ring. rowsN stays GLOBAL and row i of
+    // every column sits at the same FRACTION of its own span — that is what
+    // keeps the grid topologically rectangular, and it is why the contour walk
+    // and the seam0/seam1 index pairing below keep working untouched.
+    double span = 0.0;
+    for (int j = 0; j <= cols; ++j) span = std::max(span, std::fabs(topH[j] - waistH));
+    const int rowsN = std::max(12, static_cast<int>(std::ceil(span / rowStepMM)));
     PanelGrid g;
     g.rows.resize(rowsN + 1);
     g.rows[0] = ringSeg;  // << the single sampled ring; no second waist source exists
     for (int i = 1; i <= rowsN; ++i) {
-        const double h = waistH + (farH - waistH) * i / rowsN;
         g.rows[i].resize(cols + 1);
         for (int j = 0; j <= cols; ++j) {
             const double phi = phi0 + (phi1 - phi0) * j / cols;
-            g.rows[i][j] = surf.at(h, phi);
+            g.rows[i][j] = surf.at(waistH + (topH[j] - waistH) * i / rowsN, phi);
         }
     }
     return g;
@@ -497,7 +522,10 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     const double hipH = levelHeight(body, "hip");
     const double hemH = hipH - opt.hemDropBelowHipMM;
 
-    const double easeMM[3] = {opt.easeBustMM, opt.easeWaistMM, opt.easeHipMM};
+    // The neck ring carries ZERO wearing ease and that is a declaration, not an
+    // omission: a neckline is CUT, not fitted, so there is no girth to ease at
+    // that ring. It exists to give the surface a shape above the bust.
+    const double easeMM[4] = {opt.easeNeckMM, opt.easeBustMM, opt.easeWaistMM, opt.easeHipMM};
     GarmentSurf surf = GarmentSurf::fromBody(body, easeMM);
     surf.blendMM = opt.hipBlendMM;
 
@@ -514,7 +542,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // ---- cut each half into sub-panels at the declared princess columns ----
     struct GarmentLayer {
         bool isSkirt;
-        double farH;
+        double farH;                   // representative far height (dart apex scale)
+        std::vector<double> topH;      // per RING COLUMN, size NR+1 — the second law
         const char* fname;  // front half base name
         const char* bname;  // back half base name
         const std::vector<double>* cutFracs;
@@ -523,9 +552,19 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         std::vector<int> frontSubs, backSubs;
     };
     GarmentLayer layers[2] = {
-        {false, bustH, "ftorso", "btorso", &opt.bodiceCutFracs, &opt.bodiceDartFracs, {}, {}},
-        {true, hemH, "skirt_front", "skirt_back", &opt.skirtCutFracs, &opt.skirtDartFracs, {}, {}},
+        {false, bustH, {}, "ftorso", "btorso", &opt.bodiceCutFracs, &opt.bodiceDartFracs, {}, {}},
+        {true, hemH, {}, "skirt_front", "skirt_back", &opt.skirtCutFracs, &opt.skirtDartFracs, {}, {}},
     };
+    // ★ SECOND LAW: the top boundary is sampled ONCE over the whole circle, on
+    // the same NR columns as the waist ring, and every panel CUTS its own top
+    // out of that one array. The waist ring law killed a 2.947mm class of error
+    // by removing the second source of the waist number; a top boundary each
+    // panel computed for itself would let the same class back in from above.
+    for (GarmentLayer& L : layers) {
+        L.topH.assign(NR + 1, L.farH);
+        if (!L.isSkirt)
+            for (int j = 0; j <= NR; ++j) L.topH[j] = topProfile(2 * kPi * j / NR, bustH);
+    }
 
     // ---- sub-panel column bounds, shared by both passes ----
     auto boundsFor = [&](const GarmentLayer& L) {
@@ -558,7 +597,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 const int c0 = h * half + bounds[s], c1 = h * half + bounds[s + 1];
                 if (opt.maxDartDeg > 0.0) {
                     const std::vector<Vec3> seg(ring.begin() + c0, ring.begin() + c1 + 1);
-                    const PanelGrid g = buildGrid(surf, seg, waistH, L.farH,
+                    const std::vector<double> topSeg(L.topH.begin() + c0, L.topH.begin() + c1 + 1);
+                    const PanelGrid g = buildGrid(surf, seg, waistH, topSeg,
                                                   2 * kPi * c0 / NR, 2 * kPi * c1 / NR,
                                                   opt.rowStepMM);
                     for (const DerivedDart& d : dartColumnsFromDeficit(g, opt.maxDartDeg * kPi / 180.0))
@@ -634,7 +674,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 const int c0 = colBase + bounds[s], c1 = colBase + bounds[s + 1];
                 const std::vector<Vec3> seg(ring.begin() + c0, ring.begin() + c1 + 1);
                 const double phi0 = 2 * kPi * c0 / NR, phi1 = 2 * kPi * c1 / NR;
-                const PanelGrid g = buildGrid(surf, seg, waistH, L.farH, phi0, phi1, opt.rowStepMM);
+                const std::vector<double> topSeg(L.topH.begin() + c0, L.topH.begin() + c1 + 1);
+                const PanelGrid g = buildGrid(surf, seg, waistH, topSeg, phi0, phi1, opt.rowStepMM);
                 const int rowsN = static_cast<int>(g.rows.size()) - 1;
                 // Where the dart ENDS is geometry, not a dial.
                 //
