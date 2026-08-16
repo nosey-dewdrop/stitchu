@@ -1,17 +1,20 @@
 {
   "vardiya": "2026-08-16",
   "branch": "vardiya/2026-08-16",
-  "tur": 0,
+  "tur": 1,
   "otorite": "HEDEF.md",
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
 
   "sayac": {
-    "H1": { "kalan_halka": 5, "kalan_saat": "~11 + H1.0 OLCULMEDI" },
+    "H1": { "kalan_halka": 5, "kalan_saat": "36-56  [H1.0 OLCULDU: 25-45s yapisal]" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 4, "kalan_saat": "~3 + T1,T5 OLCULMEDI" }
+    "TABAN": { "kalan_halka": 7, "kalan_saat": "9-17  [T2,T4,T6 kapandi; T1 yok-hukmunde; T5 bloke; +T7,T8,T9,T10]" }
   },
-  "sayac_gecmisi": [],
+  "sayac_gecmisi": [
+    { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
+    { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." }
+  ],
 
   "tripwire": {
     "aktif": false,
@@ -20,10 +23,14 @@
   },
 
   "kuyruk": [
-    { "id": "H1.0", "durum": "acik", "sure": "OLCULMEDI", "not": "commit 52cd8bf 'the garment gets an armhole' — DOGRULA, INANMA" },
-    { "id": "T1", "durum": "acik", "sure": "OLCULMEDI", "not": "iki include duzeltmesi — adres tespiti" },
-    { "id": "T2", "durum": "acik", "sure": "~1s", "not": "determinizm cift kosusu, SHA256 esit" },
-    { "id": "T3", "durum": "acik", "sure": "~2s", "not": "kenar monotonlugu, 8 bedende" },
+    { "id": "T8", "durum": "acik", "sure": "3-6s", "sira": 1, "not": "TUR 2 — curvefit.cpp kubik kontrol parametresi [0,1] disina cikiyor (1.9678'e kadar) -> 480 kenar geri donuyor. T3'un kok sebebi" },
+    { "id": "T7", "durum": "acik", "sure": "2-4s", "sira": 2, "not": "TUR 2 — walk.py kapi degil yazici (main hep exit 0); taban.sh grep '^FAIL' girintili 76 FAIL'i saymiyor" },
+    { "id": "T10", "durum": "acik", "sure": "~0.5s", "sira": 3, "not": "TUR 2 — _opening_lines() sadece print-report.txt'e gidiyor; alici arka ortayi kapatip kafasi gecmeyen elbise diker" },
+    { "id": "T9", "durum": "acik", "sure": "4-8s", "sira": 4, "not": "h3c EU42/46/48 FAIL, worst fit EU46 7.1717mm vs tol 0.15mm (48 kat)" },
+    { "id": "H1.0", "durum": "acik-KIRMIZI", "sure": "25-45s", "sira": 5, "not": "OLCULDU: giysi tup. Omuz halkasi yok, kol oyugu 33.55cm vs Bugra 43.30cm. Yapisal: buildGrid (h,phi) izgarasi + Slit yalniz-bel capasi, ~610-1180 satir, 9 dosya" },
+    { "id": "T1", "durum": "YOK-HUKMUNDE", "sure": "0", "not": "terim repoda yok (tum revizyonlar arandi). 52 baslik derlendi, 0 basarisiz. Uydurulmadi -> DAMLA-KUYRUK K6" },
+    { "id": "T2", "durum": "KAPANDI", "sure": "~0.5s", "not": "iki bagimsiz temiz kosu, manifest sha256 8abec243... ozdes, 24 PDF cmp 0 fark" },
+    { "id": "T3", "durum": "OLCULDU-KAPI-KIRMIZI", "sure": "-> T8", "not": "2096 kenar, 480 ihlal, en kotu EU34 left_ftorso[20] 22.99mm. edgemono_check ctest'e baglandi (859f3fe)" },
     { "id": "T4", "durum": "KAPANDI", "sure": "~1s", "not": "84e79a9 sadece print-report.txt'e basiyordu; artik print-info.pdf s.2'de 13 adim. a65881e" },
     { "id": "T5", "durum": "acik-BLOKE", "sure": "OLCULMEDI", "not": "tanim repoda YOK (tum revizyonlar arandi, 2 isabet = halkanin kendisi). Uydurulmadi -> DAMLA-KUYRUK K5" },
     { "id": "T6", "durum": "KAPANDI", "sure": "~2s", "not": "tek sayac = HEDEF.md § SAYAC. contract/kapsam-checkpoint.json DISKTE YOK; bayat sayac+otorite satirlari silindi" },
@@ -66,6 +73,21 @@
       "tur": 1,
       "karar": "TEK SAYAC ADRESI DUZELTILDI (T6)",
       "gerekce": "HEDEF.md T6 tek sayac olarak contract/kapsam-checkpoint.json'u adlandiriyordu; dosya DISKTE YOK (ls dogrulandi). reports/gate/kapsam-checkpoint.json ise 2026-07-21 / 103-hedef rejiminden ve ANAYASA.md onu zaten 'hukumsuz' + 'tarih arsivi' ilan etmis. Olu bir rejimi diriltmek yerine tek sayac HEDEF.md § SAYAC olarak muhurlendi."
+    },
+    {
+      "tur": 1,
+      "karar": "ROTA DEGIS",
+      "gerekce": "HEDEF.md kuyrugu H1.0'dan sonra dogrudan kitapcik/kapak/listing'e gidiyordu — sanki omuz gelince paket satilabilir olacakmis gibi. Tur 1 IKINCI ve BAGIMSIZ bir sebep olctu: kesim cizgilerinin kendisi bozuk (64 panelin 60'i kendini kesiyor, 480 kenar geri doniyor, en kotu 22.99mm) ve basili paket 'burayi dikmeyin' uyarisini tasimiyor. Bunlarin ustune kitapcik/listing yazmak KAPI BOYAMAKTIR. Yeni sira: T8 (curvefit kok sebep) -> T7 (walk.py kapi olsun) -> T10 (acikik uyarisi pakete) -> T9 (h3c) -> H1.0 (yapisal) -> H1.1-H1.4. Gerekce ozeti: once cizgi dogru olsun, sonra giysi ayakta dursun, en son satis kopyasi."
+    },
+    {
+      "tur": 1,
+      "karar": "KAPSAM BUYUDU: +4 halka (T7, T8, T9, T10)",
+      "gerekce": "Dordu de bagimsiz olcum, dordu de bugun basilan paketi satilamaz kiliyor, hicbiri H1.0 yesil olunca kendiliginden gecmiyor. Sessizce eklemek kapi boyamakla ayni sinif ihlal oldugu icin halka yazildi."
+    },
+    {
+      "tur": 1,
+      "karar": "H1.0 KIRMIZI — sure OLCULDU",
+      "gerekce": "commit 52cd8bf'nin 'the garment gets an armhole' iddiasi kismen dogru (ust kenara Aldrich kaynakli bir kol oyugu EGRISI eklendi, gradeleniyor, uydurma degil) ama sonucu yanlis: giysi yoke degildi, TUPTU ve tup kaldi. Kabul sarti (strapless degil, balensiz duruyor) saglanmiyor. H1'in '15-20 saat' tahmini olu; 36-56 saat."
     },
     {
       "tur": 1,

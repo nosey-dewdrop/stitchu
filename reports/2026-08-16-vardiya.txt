@@ -1,0 +1,33 @@
+VARDİYA RAPORU — stitchu — 2026-08-16 — TUR 1
+
+H1'e kalan:  5 halka / 36–56 koşu saati
+H2'ye kalan: 7 halka / 168–295 koşu saati
+H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
+TABAN:       7 halka / 9–17 koşu saati
+
+KAPSAM BÜYÜDÜ: +4 halka (T7, T8, T9, T10), sebebi aşağıda.
+
+Bugün satılabilir bir paket yok ve bunun sebebi tahmin ettiğimiz sebep değil. Elbise
+hâlâ bir tüp: yüzey dört halka taşıyor (boyun/göğüs/bel/kalça), omzun üzerinden geçen
+hiçbir kumaş yok, kol oyuğu bir delik değil kenardaki bir çentik — EU38'de 33.6cm,
+satın aldığımız Buğra kalıbında 43.3cm, yani bandın 6.5cm altında. Bunu 25–45 saatlik
+yapısal bir iş olarak ölçtük (ızgaranın yeniden parametrelendirilmesi, 9 dosya). Ama
+asıl haber bu değil: paketin satılamamasının İKİNCİ, bağımsız bir sebebi çıktı. Kesim
+çizgilerinin kendisi bozuk — 64 panelin 60'ı kendini kesiyor, 480 kenar geri katlanıyor,
+en kötüsü 23mm. Motorun bunu gören bir kapısı vardı ama o kapı hiçbir yere bağlı değildi:
+walk.py her koşuda "OK" basıyordu çünkü hiçbir zaman sıfırdan farklı çıkmıyor, ve sayaç
+girintili FAIL satırlarını görmüyordu — 76 hata haftalardır sessizce geçiyordu. Bir de
+alıcıyı doğrudan vuran bir şey: "burayı dikmeyin, fermuar açıklığı" uyarısı basılı
+paketin hiçbir sayfasında yok, sadece bizim denetim dosyamızda. O paketi alan biri arka
+ortayı kapatır ve kafası geçmeyen bir elbise diker. Bu yüzden rotayı değiştirdim:
+kitapçık, kapak ve listing halkalarını geriye aldım — bozuk çizginin üstüne satış kopyası
+yazmak kapı boyamaktır. Sıra artık: çizgiyi düzelt, kapıyı gerçek kapı yap, uyarıyı
+pakete koy, sonra giysiyi ayağa kaldır, en son sat. Kapanan: determinizm mühürlendi
+(iki bağımsız koşu byte-özdeş), montaj sırası artık basılı pakette (13 adım, sayfa 2),
+sayaç ve otorite tekleşti (HEDEF.md). Diskteki 12 Ağustos paketleri artık bugünün
+motorunun çıktısı değil — "8 bedenin tam paketi hazır" cümlesi bugünden itibaren doğru
+değil, öyle söylenmeyecek.
+
+Damla'da bekleyen: K1 patterns_real/public · K2 beden · K3 kapak · K4 zevk ·
+K5 "dünya kapısı" ne demek · K6 "iki include" neydi · K7 README'deki bayat sayı.
+Hiçbiri koşuyu bloke etmiyor, T5 hariç.

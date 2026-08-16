@@ -41,6 +41,19 @@ Zevk kapısının hakemi Damla. Süre taahhüt edilemez; raporlarda `zevk turu N
 **Soru:** "dünya kapısı" hangi kapı — (a) giysinin dış dünyaya çıktığı kapı (= listeleme/satış), (b) TEK KAPI'nın başka adı, (c) motorun dışarıdan gelen rastgele isteği kabul/red kapısı (bitiş tanımındaki "10 cümle"), yoksa (d) bambaşka bir şey mi? Sicil neyi saymalı?
 **Cevap:**
 
+### [ ] K6 — "iki include düzeltmesi" neydi? · T1'i kapatır · 2026-08-16
+Bunu HEDEF.md'ye senin metninden yazdım, repoda karşılığı yok. Arandı: tüm revizyonlar, tüm commit gövdeleri, `docs/`, `reports/`, `flatten-research/FINDINGS.md`, `ANAYASA/DERSLER/ROADMAP/RULES/README/ENV` → **0 isabet**.
+Ampirik kontrol: 52 başlık tek tek `-fsyntax-only` ile derlendi, **0 başarısız** — yani `#include` kastediliyorsa ortada kusur yok.
+**T1'i "yok hükmünde" yazdım, uydurmadım.** Başka bir şey kastettiysen söyle, halka geri açılır.
+**Cevap:**
+
+### [ ] K7 — README public'te bayat sayı söylüyor · 2026-08-16
+`README.md:45` dışarıya **"the engine drafts 27 of 54 real garment photos … (37/54 under the older, looser count)"**, `:40` **"77/77 green"** diyor.
+Üçü de `ANAYASA.md`'nin hükümsüz ilan ettiği 2026-07-21 rejiminden. Bugünün gerçeği: **ctest 88 test, 1 kırmızı**; 8 bedenin 3'ü h3c'den düşüyor.
+Silmedim — README dört otorite dosyasından biri değil, senin anlatı yüzeyin, tek taraflı yeniden yazmak bana düşmez.
+**Ama bu sayıyı dışarıda söylersen yanlış söylersin.** Düzelteyim mi, sen mi yazacaksın?
+**Cevap:**
+
 ---
 
 ## KAPANDI
