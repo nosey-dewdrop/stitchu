@@ -258,6 +258,63 @@ else:
 
 
 # ---------------------------------------------------------------------------
+# 8. A STRAPLESS GARMENT HAS NO SHOULDER SEAM. 2026-08-17, ring T11.
+#
+# The side seam of the sheath was being called a shoulder and judged by the
+# shoulder's directional rule, which reported "reversed: the FRONT shoulder is
+# the longer one" on a garment with no shoulder at all. The reference height
+# was a maximum over front-to-back torso seams, and a maximum always exists.
+# Below: a strapless tube, panels left at the origin the way surface-pattern
+# writes them, one front-to-back seam per side running into the waistline.
+# ---------------------------------------------------------------------------
+def _tube_panel(label, verts):
+    # edge 0 is the waist, edge 1 the front-to-back seam; the contour closes,
+    # so the two share a vertex and the seam runs into the waistline
+    return {'label': label, 'translation': [0, 0, 0], 'rotation': [0, 0, 0],
+            'vertices': verts,
+            'edges': [{'endpoints': [0, 1]}, {'endpoints': [1, 2]},
+                      {'endpoints': [2, 0]}]}
+
+
+tube = {
+    'right_ftorso': _tube_panel('body', [[0, 0], [20, 0], [20, 18]]),
+    'left_btorso': _tube_panel('body', [[0, 0], [20, 0], [20, 18]]),
+    'right_skirt_front': _tube_panel('leg', [[0, 0], [20, 0], [20, 40]]),
+    'left_skirt_back': _tube_panel('leg', [[0, 0], [20, 0], [20, 40]]),
+}
+tube_stitches = [
+    [{'panel': 'right_ftorso', 'edge': 0},
+     {'panel': 'right_skirt_front', 'edge': 0}],          # waist, front
+    [{'panel': 'left_btorso', 'edge': 0},
+     {'panel': 'left_skirt_back', 'edge': 0}],            # waist, back
+    [{'panel': 'right_ftorso', 'edge': 1},
+     {'panel': 'left_btorso', 'edge': 1}],                # the side seam
+]
+side = seamrules.side_seam_edges(tube, tube_stitches)
+check('a front-to-back seam running into the waistline is proven a side seam',
+      ('right_ftorso', 1) in side and ('left_btorso', 1) in side,
+      f'proven: {sorted(side)}')
+
+check('a strapless garment reports no shoulder reference height',
+      seamrules.shoulder_reference_height(tube, tube_stitches,
+                                          side_seams=side) is None,
+      'the tallest side seam was promoted into a shoulder')
+
+kind, why = seamrules.classify(
+    'right_ftorso', tube['right_ftorso'], tube['right_ftorso']['edges'][1],
+    'left_btorso', tube['left_btorso'], tube['left_btorso']['edges'][1],
+    shoulder_height_cm=None, known_side_seam=True)
+check('the strapless side seam is a side seam, not a shoulder',
+      kind == 'side-seam', f'got {kind}: {why}')
+
+# and the height heuristic still runs where nothing is proven, so a garment
+# that really has a shoulder keeps its directional check
+check('with no contour proof the shoulder reference is still derived',
+      seamrules.shoulder_reference_height(tube, tube_stitches) is not None,
+      'the height heuristic was removed rather than deferred')
+
+
+# ---------------------------------------------------------------------------
 print('SEAM DEED RULE LAYER')
 print('-' * 78)
 failed = 0

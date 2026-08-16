@@ -513,7 +513,12 @@ def walk(spec_path, design_path=None):
     ratios = gather_ratios(design)
     intents = load_stitch_intent(spec_path)
 
-    shoulder_h = seamrules.shoulder_reference_height(panels, stitches)
+    # Contour proof first, height heuristic second: an edge that runs into the
+    # waistline is a side seam whatever its height says, and the height only
+    # means anything once the seams that are settled are out of the running.
+    side_seams = seamrules.side_seam_edges(panels, stitches)
+    shoulder_h = seamrules.shoulder_reference_height(panels, stitches,
+                                                     side_seams=side_seams)
 
     pairs = []
     for stitch in stitches:
@@ -522,9 +527,11 @@ def walk(spec_path, design_path=None):
         ea, eb = pa['edges'][sa['edge']], pb['edges'][sb['edge']]
         la, lb = edge_length_mm(pa, ea), edge_length_mm(pb, eb)
 
-        kind, why = seamrules.classify(sa['panel'], pa, ea,
-                                       sb['panel'], pb, eb,
-                                       shoulder_height_cm=shoulder_h)
+        kind, why = seamrules.classify(
+            sa['panel'], pa, ea, sb['panel'], pb, eb,
+            shoulder_height_cm=shoulder_h,
+            known_side_seam=((sa['panel'], sa['edge']) in side_seams
+                             or (sb['panel'], sb['edge']) in side_seams))
         entry = {
             'a': {'panel': sa['panel'], 'edge': sa['edge'],
                   'len_mm': round(la, 4)},

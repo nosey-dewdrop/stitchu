@@ -182,9 +182,12 @@ def role_of(panel_name, panel):
 #   unknown           -       reported UNVERIFIABLE, never silently passed
 # ---------------------------------------------------------------------------
 def classify(a_panel_name, a_panel, a_edge, b_panel_name, b_panel, b_edge,
-             shoulder_height_cm=None):
+             shoulder_height_cm=None, known_side_seam=False):
     """Return (kind, why). `why` records the evidence, so a wrong call is
-    traceable to the signal that made it rather than to a hunch."""
+    traceable to the signal that made it rather than to a hunch.
+
+    `known_side_seam` carries the verdict of side_seam_edges() for this pair:
+    contour proof beats the height heuristic, see that function."""
     if a_panel_name == b_panel_name:
         return 'dart', 'both sides belong to the same panel'
 
@@ -218,6 +221,9 @@ def classify(a_panel_name, a_panel, a_edge, b_panel_name, b_panel, b_edge,
         fa, fb = front_back_of(a_panel_name), front_back_of(b_panel_name)
         if fa is None or fb is None or fa == fb:
             return 'unknown', f'torso pair with no front/back split ({fa}/{fb})'
+        if known_side_seam:
+            return 'side-seam', ('the seam contour runs into the waistline; a '
+                                 'shoulder seam never reaches the waist')
         ha = edge_midpoint_world_height(a_panel, a_edge)
         hb = edge_midpoint_world_height(b_panel, b_edge)
         if ha is None or hb is None:
@@ -232,14 +238,13 @@ def classify(a_panel_name, a_panel, a_edge, b_panel_name, b_panel, b_edge,
     return 'unknown', f'unhandled role combination ({ra}/{rb})'
 
 
-def shoulder_reference_height(panels, stitches):
-    """The height of the highest front-to-back torso seam. That seam is the
-    shoulder; everything else joining front to back is the side seam, which
-    may be split into several segments by the armhole and the waist.
+def _front_to_back_torso_edges(panels, stitches):
+    """Every (panel name, edge index) that joins front torso to back torso.
 
-    Returns None when the garment has no front-to-back torso seam at all, in
-    which case every such pair stays unknown rather than being guessed at."""
-    best = None
+    That family holds exactly two kinds of seam: the shoulder and the side
+    seam. Which is which is the job of the two functions below.
+    """
+    out = []
     for st in stitches:
         a, b = st[0], st[1]
         if a['panel'] == b['panel']:
@@ -252,8 +257,109 @@ def shoulder_reference_height(panels, stitches):
         fa, fb = front_back_of(a['panel']), front_back_of(b['panel'])
         if fa is None or fb is None or fa == fb:
             continue
-        ha = edge_midpoint_world_height(pa, pa['edges'][a['edge']])
-        hb = edge_midpoint_world_height(pb, pb['edges'][b['edge']])
+        out.append(((a['panel'], a['edge']), (b['panel'], b['edge'])))
+    return out
+
+
+def _waist_attached_edges(panels, stitches):
+    """(panel, edge) of every edge sewn at the waistline — to a waistband, or
+    straight to a skirt where there is no waistband. Same set classify() calls
+    waist-attach."""
+    out = set()
+    for st in stitches:
+        a, b = st[0], st[1]
+        if a['panel'] == b['panel']:
+            continue
+        ra = role_of(a['panel'], panels[a['panel']])
+        rb = role_of(b['panel'], panels[b['panel']])
+        roles = {ra, rb}
+        if 'waistband' in roles or roles == {'torso', 'skirt'}:
+            out.add((a['panel'], a['edge']))
+            out.add((b['panel'], b['edge']))
+    return out
+
+
+def side_seam_edges(panels, stitches):
+    """Every front-to-back torso edge PROVEN to be a side seam, by contour.
+
+    2026-08-17 — WHY THIS EXISTS. Until today the split between a shoulder and
+    a side seam was made on one signal: the HIGHEST front-to-back torso seam is
+    the shoulder, everything below it is the side seam. That reads a body
+    height out of edge_midpoint_world_height(), and a height is only a body
+    height when the specification places its panels in a common frame. A
+    specification is free not to: our own surface-pattern writes all eight
+    panels at translation [0,0,0] and rotation [0,0,0], so the "height" of an
+    edge is the panel's own y and two panels' heights are not comparable at
+    all. The heuristic then answered anyway. On the strapless sheath it called
+    the SIDE SEAM a shoulder and judged it by the shoulder's directional rule,
+    which produced "reversed: the FRONT shoulder is the longer one" on a
+    garment that has no shoulder seam and no shoulder ring on its surface.
+    It also broke its own mirror: on EU34/36/46 one of the two identical side
+    seams came out `shoulder` and the other `side-seam`, because the reference
+    is an exact maximum and only one pair can equal it.
+
+    The proof here needs no frame. A side seam runs down the body INTO the
+    waistline; a shoulder seam never touches the waist. So: start from the
+    front-to-back torso edges that share a contour vertex with an edge sewn at
+    the waist, and walk outward through the front-to-back torso edges of the
+    same panel that share vertices with them. A side seam split into several
+    segments by the armhole comes along the chain; a shoulder cannot be
+    reached, because the neckline and the armhole sit between them and neither
+    is a front-to-back torso seam.
+
+    Returns a set of (panel name, edge index).
+    """
+    waist = _waist_attached_edges(panels, stitches)
+    fb = set()
+    for ka, kb in _front_to_back_torso_edges(panels, stitches):
+        fb.add(ka)
+        fb.add(kb)
+
+    # per panel: vertex -> the front-to-back torso edges touching it, and the
+    # vertices the waist edges of that panel touch
+    touch = {}
+    waist_verts = {}
+    for name, idx in fb:
+        e = panels[name]['edges'][idx]
+        for v in e['endpoints']:
+            touch.setdefault((name, v), set()).add(idx)
+    for name, idx in waist:
+        if name not in panels:
+            continue
+        for v in panels[name]['edges'][idx]['endpoints']:
+            waist_verts.setdefault(name, set()).add(v)
+
+    proven = set()
+    stack = [(n, i) for (n, i) in fb
+             if any(v in waist_verts.get(n, ()) for v in panels[n]['edges'][i]['endpoints'])]
+    while stack:
+        key = stack.pop()
+        if key in proven:
+            continue
+        proven.add(key)
+        name, idx = key
+        for v in panels[name]['edges'][idx]['endpoints']:
+            for j in touch.get((name, v), ()):
+                if (name, j) not in proven:
+                    stack.append((name, j))
+    return proven
+
+
+def shoulder_reference_height(panels, stitches, side_seams=None):
+    """The height of the highest front-to-back torso seam that is NOT already
+    proven to be a side seam. That seam is the shoulder.
+
+    Returns None when the garment has no such seam left — a strapless garment
+    has none, and then no pair is called a shoulder rather than the tallest
+    side seam being promoted into one."""
+    side_seams = side_seams or set()
+    best = None
+    for ka, kb in _front_to_back_torso_edges(panels, stitches):
+        if ka in side_seams or kb in side_seams:
+            continue
+        pa, pb = panels[ka[0]], panels[kb[0]]
+        ha = edge_midpoint_world_height(pa, pa['edges'][ka[1]])
+        hb = edge_midpoint_world_height(pb, pb['edges'][kb[1]])
         if ha is None or hb is None:
             continue
         h = (ha + hb) / 2.0
