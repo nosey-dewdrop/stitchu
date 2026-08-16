@@ -184,12 +184,18 @@ int main() {
         verdict(kSizes[si], "K5 neck-girth", k52, buf);
 
         // --- K6: omzun üstünden geçen taşıyıcı yüzey ---
-        // SurfacePattern üst-sınır yüksekliğini bildirmiyor. Soru sorulamıyor.
+        // ARTIK SORULABİLİYOR (Tur 5): SurfacePattern.shoulderCarryMM. Eşik
+        // DEĞİŞMEDİ — docs/H1.0-KAPI.md § K6, omuz seviyesinin en fazla 5.0mm
+        // altı. Değişen tek şey, motorun soruya cevap verebiliyor olması; kapı
+        // aynı kapı. İşaret: + omuz seviyesinin ÜSTÜ, - ALTI.
+        const double carry = pat.shoulderCarryMM;
+        const bool k6 = carry >= -kCarryMaxDropMM;
         std::snprintf(buf, sizeof buf,
-                      "ÖLÇÜLEMİYOR: SurfacePattern taşıyıcı yüksekliği bildirmiyor "
-                      "(kapı: omuz seviyesinin <= %.1fmm altı; Tur 1 ölçümü 153.5mm ALTI)",
-                      kCarryMaxDropMM);
-        verdict(kSizes[si], "K6 shoulder-carry", false, buf);
+                      "%+8.2fmm  kapı >= %.1f  (ön %+.2f arka %+.2f, omuz sev. %.1f, "
+                      "soru x=%.1f, yüzeyin ulaştığı x=%.1f)",
+                      carry, -kCarryMaxDropMM, pat.frontCarryMM, pat.backCarryMM,
+                      pat.shoulderLevelMM, pat.shoulderPointXMM, pat.carryReachXMM);
+        verdict(kSizes[si], "K6 shoulder-carry", k6, buf);
     }
 
     // --- K2: grade. Tüm bedenler ölçüldükten sonra. ---

@@ -34,9 +34,10 @@ struct GarmentSurf {
         double a, bm, bd;  // BODY section: width, mean depth, front/back asymmetry
         double d = 0.0;    // wearing-ease offset, d = ease/(2*pi) — Steiner-exact
     };
-    std::vector<Ring> rings;  // descending height: neck, bust, waist, hip
+    std::vector<Ring> rings;  // descending height: neck, shoulder, bust, waist, hip
 
-    // easeMM: girth ease per ring, in ring order (neck, bust, waist, hip). A
+    // easeMM: girth ease per ring, in ring order (neck, shoulder, bust, waist,
+    // hip). A
     // garment with zero ease is skin and cannot be put on; the offset is the
     // OUTER PARALLEL CURVE of the body section (garmentshell.cpp theorem:
     // perimeter grows by exactly 2*pi*d, so d = ease/(2*pi), no fitted constant).
@@ -46,19 +47,38 @@ struct GarmentSurf {
     // unchanged for every height above it — a straight cylinder of bust width
     // where the chest, shoulder and neck belong. That was invisible while the
     // dress was strapless, because nothing was ever cut up there.
-    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[4]) {
+    //
+    // ★ THE SHOULDER IS THE FIFTH RING (Tur 5). It was the missing one, and its
+    // absence was not a detail: the shoulder is the WIDEST level of this body
+    // (bodysurface.cpp measured EU38 tip at 167.28mm against a bust of 159.57),
+    // so a garment surface interpolated neck->bust straight through it was
+    // NARROWER at shoulder height than the shoulder it is supposed to sit on.
+    // Every top-boundary zone (TopProfile) is decided by a distance ACROSS the
+    // body, x = shoulderHalf*cos(phi) — a shoulder-wide model — while the
+    // surface being cut was a neck->bust cone. The two disagreed, and the
+    // neckline, the shoulder strap and the armhole were all cut on the wrong
+    // width because of it. The ring closes that gap by construction: at
+    // shoulder height the garment surface is now exactly as wide as the
+    // shoulder the chart declares.
+    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[5]) {
         GarmentSurf s;
         int k = 0;
-        for (const char* name : {"neck", "bust", "waist", "hip"}) {
+        for (const char* name : {"neck", "shoulder", "bust", "waist", "hip"}) {
             for (const BodyLevel& lv : body.levels())
                 if (lv.name == name) {
                     const Section sec = body.sectionAt(body.parameterFor(lv.heightMM));
-                    s.rings.push_back({lv.heightMM, sec.a, sec.bm, sec.bd,
+                    // A level the chart gives as a WIDTH (the shoulder) carries
+                    // its half-width as law; the lofted surface may round it off
+                    // between knots, and a shoulder that is not shoulder-wide is
+                    // the whole failure this ring exists to end.
+                    const double a = lv.halfWidthMM > 0.0 ? lv.halfWidthMM : sec.a;
+                    s.rings.push_back({lv.heightMM, a, sec.bm, sec.bd,
                                        easeMM[k] / (2 * kPi)});
                 }
             ++k;
         }
-        if (s.rings.size() != 4) throw std::runtime_error("need neck/bust/waist/hip rings");
+        if (s.rings.size() != 5)
+            throw std::runtime_error("need neck/shoulder/bust/waist/hip rings");
         return s;
     }
 
@@ -757,15 +777,21 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // The neck ring carries ZERO wearing ease and that is a declaration, not an
     // omission: a neckline is CUT, not fitted, so there is no girth to ease at
     // that ring. It exists to give the surface a shape above the bust.
-    const double easeMM[4] = {opt.easeNeckMM, opt.easeBustMM, opt.easeWaistMM, opt.easeHipMM};
+    // The SHOULDER ring carries zero wearing ease for the same reason the neck
+    // does, and it is a declaration: the shoulder half-width is a WIDTH the
+    // chart gives, not a girth to be eased, and a garment does not stand off
+    // the shoulder — it rests on it.
+    const double easeMM[5] = {opt.easeNeckMM, 0.0, opt.easeBustMM, opt.easeWaistMM,
+                              opt.easeHipMM};
     GarmentSurf surf = GarmentSurf::fromBody(body, easeMM);
 
     // the top boundary, built once from the chart's own shoulder numbers
     const double napeZ = levelHeight(body, "neck");
-    double shoulderHalf = 0.0, tanIncl = 0.0;
+    double shoulderHalf = 0.0, tanIncl = 0.0, shoulderLevelH = 0.0;
     for (const BodyLevel& lv : body.levels())
         if (lv.name == "shoulder") {
             shoulderHalf = lv.halfWidthMM;
+            shoulderLevelH = lv.heightMM;
             tanIncl = (napeZ - lv.heightMM) / shoulderHalf;  // exactly the slope used to place it
         }
     if (shoulderHalf <= 0.0)
@@ -843,6 +869,66 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         L.topH.assign(NR + 1, L.farH);
         if (!L.isSkirt && opt.shoulderTop)
             for (int j = 0; j <= NR; ++j) L.topH[j] = top.at(2 * kPi * j / NR);
+    }
+
+    // ---- K6: THE ENGINE CAN NOW BE ASKED WHETHER IT CARRIES (docs/H1.0-KAPI.md) ----
+    //
+    // The gate's sixth condition is whether the garment's top boundary reaches
+    // the shoulder, and until this line the engine could not be asked: the top
+    // boundary lived entirely inside this .cpp. Refusing to answer is not a
+    // pass and is not a fail — it is a missing instrument, and H1.0 owes the
+    // instrument as much as it owes the geometry.
+    //
+    // MEASURED ON THE SURFACE, NOT ON THE MODEL. The zone model (TopProfile)
+    // decides where the shoulder is by x = shoulderHalf*cos(phi); the SURFACE
+    // puts the same column at x = a(h)*cos(phi). Asking the model would answer
+    // a question about itself. So the columns are evaluated as 3D points and
+    // the one whose |x| lands nearest the shoulder point (Aldrich's 1 cm in
+    // from the shoulder edge, the same inset the armhole uses) is the one the
+    // question is about. Front and back halves are measured separately and the
+    // WORSE of the two is reported: a garment held up on one side only is not
+    // held up.
+    //
+    // INTERPOLATED, NOT SNAPPED, and that is not a nicety. The armhole scoop
+    // begins at exactly this x, so the boundary height has a corner there: one
+    // ring column inside it is the shoulder line, one column outside it is
+    // already falling toward the underarm. Snapping to the nearest column makes
+    // the answer depend on which side of the corner 128 columns happen to land
+    // — measured, EU46 read +4.35mm and EU48 read -60.68mm on the same
+    // geometry. So the two columns that BRACKET the shoulder point are found
+    // and the height is read between them.
+    {
+        const double xTarget = shoulderHalf - opt.shoulderNarrowMM;
+        double bestZ[2] = {0.0, 0.0}, bestDx[2] = {1e18, 1e18};
+        double bestX[2] = {0.0, 0.0};
+        const std::vector<double>& tH = layers[0].topH;
+        double prevX[2] = {-1.0, -1.0}, prevZ[2] = {0.0, 0.0};
+        for (int j = 0; j <= NR; ++j) {
+            const double phi = 2 * kPi * j / NR;
+            const Vec3 p = surf.at(tH[j], phi);
+            const int half2 = std::sin(phi) >= 0.0 ? 0 : 1;  // 0 front, 1 back
+            const double x = std::fabs(p.x);
+            bestX[half2] = std::max(bestX[half2], x);
+            // bracket: consecutive columns of the same half straddling xTarget
+            if (prevX[half2] >= 0.0 &&
+                ((prevX[half2] - xTarget) * (x - xTarget) <= 0.0) &&
+                std::fabs(x - prevX[half2]) > 1e-9) {
+                const double u = (xTarget - prevX[half2]) / (x - prevX[half2]);
+                bestZ[half2] = prevZ[half2] + (p.z - prevZ[half2]) * u;
+                bestDx[half2] = 0.0;
+            } else if (bestDx[half2] > 0.0 && std::fabs(x - xTarget) < bestDx[half2]) {
+                bestDx[half2] = std::fabs(x - xTarget);  // never reached: nearest column
+                bestZ[half2] = p.z;
+            }
+            prevX[half2] = x;
+            prevZ[half2] = p.z;
+        }
+        pat.shoulderLevelMM = shoulderLevelH;
+        pat.shoulderPointXMM = xTarget;
+        pat.frontCarryMM = bestZ[0] - shoulderLevelH;
+        pat.backCarryMM = bestZ[1] - shoulderLevelH;
+        pat.carryReachXMM = std::max(bestX[0], bestX[1]);
+        pat.shoulderCarryMM = std::min(pat.frontCarryMM, pat.backCarryMM);
     }
 
     // ---- sub-panel column bounds, shared by both passes ----

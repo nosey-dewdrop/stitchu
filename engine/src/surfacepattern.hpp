@@ -93,6 +93,30 @@ struct SurfacePattern {
     // edge, so it is at or just under the requested backOpeningMM, never over:
     // a zip longer than its opening cannot be sewn in, a shorter one can.
     double backOpeningMM = 0.0;
+
+    // ---- DOES THE GARMENT HANG FROM THE SHOULDER? (H1.0 gate, K6) ----
+    //
+    // A strapless tube and a garment that rests on the shoulders are told apart
+    // by ONE number: how far below the shoulder level the top boundary sits at
+    // the shoulder point. The gate asks for it, and until this field existed the
+    // gate could not ask at all — the top boundary was a private detail of the
+    // .cpp. Sign convention: POSITIVE is above the shoulder level, NEGATIVE is
+    // below it, so "carries" is shoulderCarryMM >= -tolerance and the tube's
+    // failure reads as the large negative number it is.
+    //
+    // shoulderCarryMM is the WORSE of the front and the back, because a garment
+    // supported on one face only is not supported. Both are published so the
+    // difference is visible rather than averaged away.
+    double shoulderCarryMM = 0.0;   // min(front, back), mm above the shoulder level
+    double frontCarryMM = 0.0;
+    double backCarryMM = 0.0;
+    double shoulderLevelMM = 0.0;   // the body's own shoulder height, for reference
+    double shoulderPointXMM = 0.0;  // where the question is asked: shoulderHalf - 10mm
+    // How far out the surface actually REACHES at its top boundary. If this is
+    // short of shoulderPointXMM the carry number is being read off a column that
+    // never gets to the shoulder at all, and the honest reading is "the cloth
+    // does not arrive", not "the cloth is low".
+    double carryReachXMM = 0.0;
 };
 
 struct SheathOptions {
