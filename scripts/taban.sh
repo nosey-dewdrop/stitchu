@@ -82,7 +82,7 @@ fi
 
 # ---------------------------------------------------------------- 5. 8 BEDEN
 adim "5. YÜZEY MOTORU — 8 BEDEN SPEC + HAKEM"
-WALKTOT=0; WALKPASS=0
+WALKTOT=0; WALKPASS=0; WALKFAILTOT=0
 for S in "${SIZES[@]}"; do
   SPEC="$OUT/specs/$S.json"
   if ! ./engine/build/surface-pattern "$S" >"$SPEC" 2>"$OUT/specs/$S.motor.txt"; then
@@ -97,7 +97,9 @@ for S in "${SIZES[@]}"; do
     H3C="FAIL"; FAILS=$((FAILS+1))
   fi
 
-  # walk.py — dikiş tapusu
+  # walk.py — dikiş tapusu. 17 Ağu'ya kadar walk.py hiçbir koşulda sıfırdan
+  # farklı çıkmıyordu, yani buradaki `walk:OK` walk.py'ın hükmü DEĞİL, sadece
+  # "python çökmedi" demekti. Artık exit kodu hükümdür (walk.py gate()).
   if "$GCPY" engine/pattern-bridge/walk.py "$SPEC" \
         --out-txt "$OUT/specs/$S.walk.txt" >"$OUT/specs/$S.walk.log" 2>&1; then
     W="OK"
@@ -106,16 +108,33 @@ for S in "${SIZES[@]}"; do
   fi
   # grep -c 0 eşleşmede exit 1 döner; `|| echo 0` iki satır üretip aritmetiği
   # bozuyordu ve DÖNGÜYÜ düşürüyordu (F0'da yakalandı). Sayım artık tek satır.
-  P=0; F=0
+  #
+  # FAIL SAYIMI — 17 Ağu düzeltmesi. Eski `grep -c '^FAIL'` yalnız DİKİŞ
+  # ÇİFTİ tablosunun satırlarını görüyordu; CONTOUR / SELF-INTERSECTION /
+  # MIRROR başlıkları altındaki satırlar iki boşlukla girintili basılıyor
+  # (`  FAIL`) ve bir tanesi bile sayılmıyordu — 8 bedende 76 satır görünmezdi.
+  # ARMHOLE hükmü hiç `FAIL` diye başlayan satır basmıyor, köşeli parantez
+  # içinde gömülü; onu hiçbir grep yakalayamaz. O yüzden asıl sayı walk.py'ın
+  # kendi KAPI satırından okunur, grep yalnız çapraz kontrol olarak durur.
+  P=0; F=0; FGREP=0
   if [ -f "$OUT/specs/$S.walk.txt" ]; then
     P=$(grep -c '^PASS' "$OUT/specs/$S.walk.txt" || true); P=${P:-0}
-    F=$(grep -c '^FAIL' "$OUT/specs/$S.walk.txt" || true); F=${F:-0}
+    F=$(sed -n 's/^KAPI  hukum-FAIL: \([0-9]*\).*/\1/p' "$OUT/specs/$S.walk.txt" | tail -1)
+    F=${F:-0}
+    FGREP=$(grep -cE '^[[:space:]]*FAIL' "$OUT/specs/$S.walk.txt" || true); FGREP=${FGREP:-0}
   fi
   [ "$F" -eq 0 ] || FAILS=$((FAILS+1))
+  # Kapı düştüğü hâlde sayaç sıfır okuyorsa sayaç yine kördür: bunu sessizce
+  # geçme.
+  if [ "$W" = "FAIL" ] && [ "$F" -eq 0 ]; then
+    say "  $S  UYARI: walk.py kapıyı düşürdü ama KAPI satırı okunamadı"
+    FAILS=$((FAILS+1))
+  fi
+  WALKFAILTOT=$((WALKFAILTOT+F))
   WALKPASS=$((WALKPASS+P)); WALKTOT=$((WALKTOT+P+F))
-  say "  $S  h3c:$H3C  walk:$W $P/$((P+F))  | $MOTOR"
+  say "  $S  h3c:$H3C  walk:$W $P/$((P+F))  hüküm-FAIL:$F (satır:$FGREP)  | $MOTOR"
 done
-say "  WALK TOPLAM: $WALKPASS/$WALKTOT"
+say "  WALK TOPLAM: $WALKPASS/$WALKTOT   HÜKÜM-FAIL TOPLAM: $WALKFAILTOT"
 
 # ---------------------------------------------------------------- 6. PAKET
 if [ "$HIZLI" -eq 0 ]; then
@@ -171,7 +190,7 @@ say ""
 say "===================== HEDEFTE MİYİZ? ====================="
 say "ctest            : ${CT:-?}"
 say "harness          : $( [ -f "$OUT/harness.log" ] && tail -1 "$OUT/harness.log" || echo '-' )"
-say "walk (8 beden)   : $WALKPASS/$WALKTOT"
+say "walk (8 beden)   : $WALKPASS/$WALKTOT   hüküm-FAIL: $WALKFAILTOT"
 say "gerinim (kontur) : $(grep -o 'bel [0-9.]*%' "$OUT/strain.txt" 2>/dev/null | sort -u | tr '\n' ' ')"
 say "manifest         : $MSUM"
 say "mühür            : $OUT"

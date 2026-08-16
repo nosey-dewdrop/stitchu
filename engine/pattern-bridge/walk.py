@@ -44,9 +44,18 @@
 #   UNVERIFIABLE   we could not establish what this seam is, so it was not
 #                  judged. This is NOT a pass.
 #   FAIL           the rule for this kind of seam is broken
+#
+# 2026-08-17 — THE GATE. Until today this file was a PRINTER, not a gate:
+# main() ended with print() and returned None, so the process exited 0 whatever
+# it had just found. scripts/taban.sh read that exit code and wrote `walk:OK`
+# on all eight sizes while sixty of sixty-four panels carried a self-crossing
+# outline. A referee whose verdict cannot be read by the thing that calls it is
+# not a referee. See gate() below for which finding is a VERDICT and which is
+# INFORMATION, and why.
 # ============================================================================
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import yaml
@@ -598,6 +607,102 @@ def walk(spec_path, design_path=None):
     return report
 
 
+# ---------------------------------------------------------------------------
+# THE GATE — VERDICT (hüküm) against INFORMATION (bilgi).
+#
+# The split is not a matter of taste and it is not a threshold. A finding is a
+# VERDICT when it says, of a specific piece or a specific pair, that the thing
+# as drawn cannot be cut or cannot be sewn. It is INFORMATION when the check
+# did not reach a judgement — because the seam's kind could not be established,
+# because the design declared an inequality without saying how much, or because
+# the field itself holds more than one answer. An unreached judgement is not a
+# defect and must not fail the gate; a reached one is a defect and must, no
+# matter how many of them there are.
+#
+# VERDICT — the gate falls (exit 1):
+#   pair FAIL             the rule for this kind of seam is broken. The two
+#                         edges are stitched together and do not match.
+#   armhole group FAIL    cap ease outside every school's band, judged over the
+#                         whole armhole (seamrules.judge_cap_ease).
+#   closed_contour FAIL   an outline that does not close is not a piece.
+#   self_intersection FAIL an outline that crosses itself cannot be cut. This
+#                         is the class that was invisible until today.
+#   mirror_panels FAIL    a garment drawn symmetric that comes out asymmetric.
+#   mirror_seams FAIL     the same seam deviating differently on the two sides.
+#
+# INFORMATION — reported, counted, printed, does NOT fail the gate:
+#   UNVERIFIABLE          the kind of this seam was not established, so no rule
+#                         was applied. Not a pass either: it is a hole in
+#                         coverage, and it is printed with its count so the
+#                         hole cannot be mistaken for a clean run.
+#   GATHERED-UNSCORED     the design gathers this seam and does not fix its
+#                         length. Failing it would be a false positive.
+#   REPORTED              measured, but the field holds more than one position
+#                         on what the right value is (cap ease bands).
+#   DEFERRED              judged inside its armhole group; the group carries
+#                         the verdict, this row must not carry it twice.
+#
+# PASS / GATHERED-PASS are passes and count as neither.
+#
+# Nothing moves between these two lists to make a run green. If a class of
+# defect is real and reached, it stays a verdict and the gate stays red.
+# ---------------------------------------------------------------------------
+VERDICT_CLASSES = ('seam', 'armhole', 'closed_contour', 'self_intersection',
+                   'mirror_panels', 'mirror_seams')
+INFORMATION_STATUSES = ('UNVERIFIABLE', 'GATHERED-UNSCORED', 'REPORTED',
+                        'DEFERRED')
+
+
+def gate(report):
+    """Split the report into verdicts and information. Returns a dict with the
+    per-class verdict-failure counts, the information counts, and `red`."""
+    def n_fail(rows):
+        return sum(1 for r in rows if r.get('status') == 'FAIL')
+
+    verdicts = {
+        'seam': n_fail(report['pairs']),
+        'armhole': n_fail(report['armholes']),
+        'closed_contour': n_fail(report['closed_contour']),
+        'self_intersection': n_fail(report['self_intersection']),
+        'mirror_panels': n_fail(report['mirror_panels']),
+        'mirror_seams': n_fail(report['mirror_seams']),
+    }
+    information = {}
+    for row in report['pairs']:
+        st = row.get('status')
+        if st in INFORMATION_STATUSES:
+            information[st] = information.get(st, 0) + 1
+    for row in report['armholes']:
+        st = row.get('status')
+        if st in INFORMATION_STATUSES:
+            information[st] = information.get(st, 0) + 1
+    total = sum(verdicts.values())
+    return {'verdicts': verdicts, 'verdict_fails': total,
+            'information': information, 'red': total > 0}
+
+
+def gate_txt(g):
+    """The machine-readable tail of the report.
+
+    Prefixed `KAPI` rather than FAIL/PASS on purpose: taban.sh counts lines
+    beginning with those words and a summary line must never be counted as one
+    more finding.
+    """
+    v = g['verdicts']
+    info = '  '.join(f'{k} {n}' for k, n in sorted(g['information'].items()))
+    return [
+        '',
+        'KAPI — hüküm (dikilebilirliği bozar, kapıyı düşürür)',
+        f"KAPI  hukum-FAIL: {g['verdict_fails']}  "
+        f"(seam {v['seam']}  armhole {v['armhole']}  "
+        f"contour {v['closed_contour']}  "
+        f"self-intersection {v['self_intersection']}  "
+        f"mirror-panel {v['mirror_panels']}  mirror-seam {v['mirror_seams']})",
+        f"KAPI  bilgi (kapıyı düşürmez): {info or 'yok'}",
+        f"KAPI  HUKUM: {'KIRMIZI' if g['red'] else 'YESIL'}",
+    ]
+
+
 def report_txt(report):
     s = report['summary']
     lines = [
@@ -678,6 +783,7 @@ def report_txt(report):
                          f"{m['mirror_diff_mm']:+.3f}mm")
             lines.append(f"                spread {m['spread_mm']:.3f}mm")
 
+    lines += gate_txt(gate(report))
     return '\n'.join(lines) + '\n'
 
 
@@ -692,13 +798,18 @@ def main():
     args = ap.parse_args()
 
     report = walk(args.spec, args.design)
+    g = gate(report)
+    report['gate'] = g
     txt = report_txt(report)
     if args.out_json:
         Path(args.out_json).write_text(json.dumps(report, indent=2))
     if args.out_txt:
         Path(args.out_txt).write_text(txt)
     print(txt)
+    # The verdict leaves this process as an exit code, so the thing that calls
+    # it can read it. 1 = at least one verdict-class failure.
+    return 1 if g['red'] else 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

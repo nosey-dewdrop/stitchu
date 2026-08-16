@@ -590,3 +590,11 @@ add_test(NAME wearable_check COMMAND wearable_check)
 # venv for svgpathtools; a missing venv FAILS instead of skipping silently.
 add_test(NAME edgemono_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/edgemono_check.sh
          $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# walkgate_check: the seam deed's own verdict, wired to an exit code. walk.py
+# printed FAIL rows for sixty of sixty-four panels and exited 0 anyway, so
+# taban.sh wrote `walk:OK` on all eight sizes. The gate now leaves the process
+# as a status; this test is what stops it floating again. Which finding is a
+# verdict and which is information is written into walk.py's gate() header.
+add_test(NAME walkgate_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/walkgate_check.sh
+         $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
