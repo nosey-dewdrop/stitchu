@@ -1,5 +1,5 @@
 #include "curvefit.hpp"
-
+#include <algorithm>
 #include <cmath>
 
 namespace stitchu {
@@ -58,7 +58,8 @@ Vec2 unit(Vec2 v) {
 }
 
 void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
-              double tolMM, std::vector<CubicSeg>& out, int depth) {
+              double tolMM, std::vector<CubicSeg>& out, int depth,
+              std::vector<int>* breaks) {
     if (i1 - i0 == 1) {
         CubicSeg s;
         s.p0 = pts[i0];
@@ -91,19 +92,63 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
         return;
     }
     const Vec2 tc = unit({pts[split + 1].x - pts[split - 1].x, pts[split + 1].y - pts[split - 1].y});
-    fitRange(pts, i0, split, t0, tc, tolMM, out, depth + 1);
-    fitRange(pts, split, i1, tc, t1, tolMM, out, depth + 1);
+    fitRange(pts, i0, split, t0, tc, tolMM, out, depth + 1, breaks);
+    if (breaks) breaks->push_back(split);
+    fitRange(pts, split, i1, tc, t1, tolMM, out, depth + 1, breaks);
 }
 
 }  // namespace
 
-std::vector<CubicSeg> fitCubics(const std::vector<Vec2>& pts, double tolMM) {
+std::vector<CubicSeg> fitCubics(const std::vector<Vec2>& pts, double tolMM,
+                               std::vector<int>* breaksOut) {
     std::vector<CubicSeg> out;
     if (pts.size() < 2) return out;
     const int n = static_cast<int>(pts.size());
     const Vec2 t0 = unit({pts[1].x - pts[0].x, pts[1].y - pts[0].y});
     const Vec2 t1 = unit({pts[n - 2].x - pts[n - 1].x, pts[n - 2].y - pts[n - 1].y});
-    fitRange(pts, 0, n - 1, t0, t1, tolMM, out, 0);
+    fitRange(pts, 0, n - 1, t0, t1, tolMM, out, 0, breaksOut);
+    if (breaksOut) std::sort(breaksOut->begin(), breaksOut->end());
+    return out;
+}
+
+// Fit with the breakpoints DICTATED instead of discovered.
+//
+// The two sides of a seam are two polylines that get sewn to each other point
+// for point. If each side chooses its own breakpoints, the two sides come back
+// with different numbers of edges and the stitch plan has nothing to pair —
+// which is exactly what happened the moment the body got a front and a back and
+// the front and back panels stopped being the same shape ("chain mismatch
+// right_skirt_front(40) vs left_skirt_back(29)"). Feeding both sides the UNION
+// of their breakpoints makes the segmentation shared, so edge k on one side is
+// edge k on the other by construction, and notches land where they are meant to.
+std::vector<CubicSeg> fitCubicsAtBreaks(const std::vector<Vec2>& pts,
+                                        const std::vector<int>& breaks) {
+    std::vector<CubicSeg> out;
+    const int n = static_cast<int>(pts.size());
+    if (n < 2) return out;
+    std::vector<int> cut = {0};
+    for (int b : breaks)
+        if (b > cut.back() && b < n - 1) cut.push_back(b);
+    cut.push_back(n - 1);
+    // Tangent at an INTERIOR break is centred and SHARED by the two runs that
+    // meet there, exactly as the recursive fit does it — so the chain stays C1
+    // across a break. Using a one-sided tangent instead put a visible kink at
+    // every shared break and tripled the fit deviation (0.51mm -> 1.57mm).
+    auto tangentAt = [&](int i, bool forward) {
+        if (i > 0 && i < n - 1)
+            return unit({pts[i + 1].x - pts[i - 1].x, pts[i + 1].y - pts[i - 1].y});
+        if (forward) return unit({pts[1].x - pts[0].x, pts[1].y - pts[0].y});
+        return unit({pts[n - 2].x - pts[n - 1].x, pts[n - 2].y - pts[n - 1].y});
+    };
+    for (size_t k = 0; k + 1 < cut.size(); ++k) {
+        const int i0 = cut[k], i1 = cut[k + 1];
+        const Vec2 t0 = tangentAt(i0, true);
+        Vec2 t1 = tangentAt(i1, false);
+        // fitRange wants the END tangent pointing back INTO the run
+        if (i1 > 0 && i1 < n - 1) t1 = {-t1.x, -t1.y};
+        // tolerance 1e9: never subdivide further, the breakpoints are the answer
+        fitRange(pts, i0, i1, t0, t1, 1e9, out, 0, nullptr);
+    }
     return out;
 }
 

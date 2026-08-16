@@ -561,3 +561,10 @@ add_test(NAME surface_pattern_check COMMAND surface_pattern_check)
 # h3b-rings.py / walk.py judge the new line without referee changes.
 add_executable(surface-pattern tools/surface-pattern.cpp)
 target_link_libraries(surface-pattern PRIVATE engine)
+
+# section_check: the body cross-section has a FRONT and a BACK. Girth, back-arc
+# share, convexity, Steiner exactness, side-point smoothness, and the asymmetry
+# itself — each a gate, so the symmetric-ellipse body cannot come back quietly.
+add_executable(section_check tests/section_check.cpp)
+target_link_libraries(section_check PRIVATE engine)
+add_test(NAME section_check COMMAND section_check)

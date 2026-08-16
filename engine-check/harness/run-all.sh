@@ -18,6 +18,10 @@ python3 "$ROOT/engine-check/harness/h0-vucut.py" || FAILS=$((FAILS+1))
 adim "H1 — L1 tasarım uzayı: katman zabıtası (STRICT — ihlal = arıza)"
 python3 "$ROOT/scripts/katman-lint.py" --strict || FAILS=$((FAILS+1))
 "$VENVPY" "$ROOT/engine/pattern-bridge/gen-size-table.py" --check || FAILS=$((FAILS+1))
+# the body's FRONT/BACK split is a contract too: shape-ratios.json + the
+# generated header must both match mapping.py, or the engine is drafting a
+# different body than the one the contract publishes.
+"$VENVPY" "$ROOT/engine/pattern-bridge/gen-shape-ratios.py" --check || FAILS=$((FAILS+1))
 
 adim "H2/L2 — shell + drape (ctest alt kümesi)"
 if [ -d "$ROOT/engine/build" ]; then

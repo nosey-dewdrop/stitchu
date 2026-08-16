@@ -77,9 +77,18 @@ double fitDeviation(const std::vector<CubicSeg>& segs, const std::vector<Vec2>& 
 }
 
 // appends a fitted chain for `pts`; returns spec-edge indices
-std::vector<int> emitChain(SpecPanel& sp, const std::vector<Vec2>& pts, bool singleCubic) {
-    const std::vector<CubicSeg> segs = fitCubics(pts, singleCubic ? 1e9 : kFitTolMM);
-    sp.worstFitMM = std::max(sp.worstFitMM, fitDeviation(segs, pts));
+std::vector<int> emitChain(SpecPanel& sp, const std::vector<Vec2>& pts, bool singleCubic,
+                           const std::vector<int>* forcedBreaks = nullptr) {
+    const std::vector<CubicSeg> segs =
+        forcedBreaks ? fitCubicsAtBreaks(pts, *forcedBreaks)
+                     : fitCubics(pts, singleCubic ? 1e9 : kFitTolMM);
+    const double dev = fitDeviation(segs, pts);
+    if (std::getenv("STITCHU_FIT_DEBUG"))
+        std::fprintf(stderr, "  FIT %-18s %-11s n=%3zu segs=%2zu dev=%8.4fmm\n",
+                     sp.name.c_str(),
+                     forcedBreaks ? "PAYLASILAN" : (singleCubic ? "tek-kubik" : "serbest"),
+                     pts.size(), segs.size(), dev);
+    sp.worstFitMM = std::max(sp.worstFitMM, dev);
     std::vector<int> out;
     for (size_t i = 0; i < segs.size(); ++i) {
         const CubicSeg& s = segs[i];
@@ -112,7 +121,27 @@ int emitLine(SpecPanel& sp, Vec2 to) {
     return static_cast<int>(sp.edges.size()) - 1;
 }
 
-SpecPanel buildSpecPanel(const SurfacePanel& p) {
+// Raw polyline of one tagged side, walked in CONTOUR ORDER.
+//
+// The edge LISTS are stored row-ascending, but seam0 runs DOWN the contour, so
+// its indices descend. buildSpecPanel always walks the contour ascending, so the
+// breakpoints have to be computed on that same polyline — reading the stored
+// list in its own order builds a different (and, at the seam0 end, off-by-one)
+// curve, and the breaks then land nowhere near where the fit needs them. That
+// mistake cost 1.57mm of fit deviation and looked like a tangent problem.
+std::vector<Vec2> sidePoints(const SurfacePanel& p, const std::vector<int>& edges) {
+    std::vector<Vec2> pts;
+    const int n = static_cast<int>(p.contour.size());
+    if (edges.empty()) return pts;
+    int lo = edges.front(), hi = edges.front();
+    for (int e : edges) { lo = std::min(lo, e); hi = std::max(hi, e); }
+    for (int k = lo; k <= hi + 1; ++k) pts.push_back(p.contour[k % n]);
+    return pts;
+}
+
+SpecPanel buildSpecPanel(const SurfacePanel& p,
+                         const std::vector<int>* seam0Breaks = nullptr,
+                         const std::vector<int>* seam1Breaks = nullptr) {
     SpecPanel sp;
     sp.name = p.name;
     const int n = static_cast<int>(p.contour.size());
@@ -149,7 +178,10 @@ SpecPanel buildSpecPanel(const SurfacePanel& p) {
             sp.dartLegs[t.id][1] = emitLine(sp, pts.back());
         else {
             const bool single = (t.k == W);
-            const std::vector<int> chain = emitChain(sp, pts, single);
+            const std::vector<int>* forced = t.k == S0 ? seam0Breaks
+                                           : t.k == S1 ? seam1Breaks
+                                                       : nullptr;
+            const std::vector<int> chain = emitChain(sp, pts, single, forced);
             if (t.k == W) sp.waist.push_back(chain);
             if (t.k == S1) sp.seam1 = chain;
             if (t.k == S0) sp.seam0 = chain;
@@ -252,10 +284,78 @@ int main(int argc, char** argv) {
     const SheathOptions opt;
     const SurfacePattern pat = buildSheathPattern(body, opt);
 
+    // ---- SHARED SEGMENTATION FOR EVERY SEAM ----
+    //
+    // A seam's two sides are sewn point for point, so they have to be described
+    // with the SAME breakpoints. Left to itself the adaptive fit chooses its own
+    // per edge, and while the front and the back panels were identical shapes
+    // that happened to agree; the moment the body got a front and a back it
+    // stopped ("chain mismatch right_skirt_front(40) vs left_skirt_back(29)").
+    // So: fit each side, take the UNION of the two sides' breakpoints, refit
+    // both there. Orientation is MEASURED, not assumed — a mirrored panel runs
+    // its seam the other way, and pairing break i with break i in that case
+    // would quietly put the notches on backwards.
+    const int NP = static_cast<int>(pat.panels.size());
+    std::vector<std::vector<int>> brk0(NP), brk1(NP);
+    {
+        auto naturalBreaks = [&](const SurfacePanel& p, const std::vector<int>& edges) {
+            std::vector<int> b;
+            const std::vector<Vec2> pts = sidePoints(p, edges);
+            if (pts.size() >= 2) {
+                const std::vector<CubicSeg> segs = fitCubics(pts, kFitTolMM, &b);
+                if (std::getenv("STITCHU_FIT_DEBUG"))
+                    std::fprintf(stderr, "  DOGAL %-18s n=%3zu segs=%2zu breaks=%2zu dev=%8.4fmm\n",
+                                 p.name.c_str(), pts.size(), segs.size(), b.size(),
+                                 fitDeviation(segs, pts));
+            }
+            return b;
+        };
+        auto cumulative = [&](const std::vector<Vec2>& pts) {
+            std::vector<double> c(pts.size(), 0.0);
+            for (size_t i = 1; i < pts.size(); ++i)
+                c[i] = c[i - 1] + std::hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+            return c;
+        };
+        // the fixed seam graph of the four-panel sheath, both layers
+        struct Pair { int pa, pb; };
+        std::vector<Pair> seams;
+        for (int base : {0, 4}) {
+            seams.push_back({base + 0, base + 1});
+            seams.push_back({base + 2, base + 3});
+            seams.push_back({base + 1, base + 2});
+            seams.push_back({base + 3, base + 0});
+        }
+        for (const Pair& q : seams) {
+            const SurfacePanel& A = pat.panels[q.pa];
+            const SurfacePanel& B = pat.panels[q.pb];
+            const std::vector<Vec2> pa = sidePoints(A, A.seam1Edges);
+            const std::vector<Vec2> pb = sidePoints(B, B.seam0Edges);
+            if (pa.size() != pb.size() || pa.size() < 2) continue;
+            const int n = static_cast<int>(pa.size());
+            const std::vector<double> ca = cumulative(pa), cb = cumulative(pb);
+            double direct = 0, rev = 0;
+            for (int i = 0; i < n; ++i) {
+                direct += std::fabs(ca[i] - cb[i]);
+                rev += std::fabs(ca[i] - (cb.back() - cb[n - 1 - i]));
+            }
+            const bool reversed = rev < direct;
+            std::vector<int> u = naturalBreaks(A, A.seam1Edges);
+            for (int b : naturalBreaks(B, B.seam0Edges))
+                u.push_back(reversed ? n - 1 - b : b);
+            std::sort(u.begin(), u.end());
+            u.erase(std::unique(u.begin(), u.end()), u.end());
+            brk1[q.pa] = u;
+            std::vector<int> v;
+            for (int b : u) v.push_back(reversed ? n - 1 - b : b);
+            std::sort(v.begin(), v.end());
+            brk0[q.pb] = v;
+        }
+    }
+
     std::vector<SpecPanel> panels;
     double worstFit = 0;
-    for (const SurfacePanel& p : pat.panels) {
-        panels.push_back(buildSpecPanel(p));
+    for (int i = 0; i < NP; ++i) {
+        panels.push_back(buildSpecPanel(pat.panels[i], &brk0[i], &brk1[i]));
         worstFit = std::max(worstFit, panels.back().worstFitMM);
     }
 
