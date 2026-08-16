@@ -1,0 +1,68 @@
+{
+  "vardiya": "2026-08-16",
+  "branch": "vardiya/2026-08-16",
+  "tur": 0,
+  "otorite": "HEDEF.md",
+  "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
+
+  "sayac": {
+    "H1": { "kalan_halka": 5, "kalan_saat": "~11 + H1.0 OLCULMEDI" },
+    "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
+    "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
+    "TABAN": { "kalan_halka": 6, "kalan_saat": "~6 + T1,T5 OLCULMEDI" }
+  },
+  "sayac_gecmisi": [],
+
+  "tripwire": {
+    "aktif": false,
+    "dusmeyen_tur_sayisi": 0,
+    "kural": "Sayac 3 tur ust uste dusmezse HAKEM'in DEVAM secenegi KAPANIR; ROTA DEGIS ya da DUR-SOR-DAMLA secmek zorundadir."
+  },
+
+  "kuyruk": [
+    { "id": "H1.0", "durum": "acik", "sure": "OLCULMEDI", "not": "commit 52cd8bf 'the garment gets an armhole' — DOGRULA, INANMA" },
+    { "id": "T1", "durum": "acik", "sure": "OLCULMEDI", "not": "iki include duzeltmesi — adres tespiti" },
+    { "id": "T2", "durum": "acik", "sure": "~1s", "not": "determinizm cift kosusu, SHA256 esit" },
+    { "id": "T3", "durum": "acik", "sure": "~2s", "not": "kenar monotonlugu, 8 bedende" },
+    { "id": "T4", "durum": "acik", "sure": "~1s", "not": "montaj sirasi pakete girdi mi" },
+    { "id": "T5", "durum": "acik", "sure": "OLCULMEDI", "not": "dunya-kapisi sicili — tanim cikarilacak" },
+    { "id": "T6", "durum": "acik", "sure": "~2s", "not": "tek sayac contract/kapsam-checkpoint.json; bayat sayaclar silinir" },
+    { "id": "H1.1", "durum": "acik", "sure": "~1s", "not": "docs/SATIS-SARTNAMESI.md zaten tanimliyor -> muhurle" },
+    { "id": "H1.2", "durum": "acik", "sure": "~4s", "not": "kitapcik, motor ciktisindan" },
+    { "id": "H1.3", "durum": "acik", "sure": "~3s", "not": "kapak + line drawing -> DAMLA-KUYRUK K3" },
+    { "id": "H1.4", "durum": "acik", "sure": "~3s", "not": "listing + fiyat + lisans" },
+    { "id": "H2.1", "durum": "acik", "sure": "10s", "not": "spec semasi muhru" },
+    { "id": "H2.7", "durum": "acik", "sure": "8-15s", "not": "operator sicili + durust red — KAPSAM BUYUDU +1" },
+    { "id": "H2.2", "durum": "acik", "sure": "40-80s", "not": "style line / bolge cikarimi — KRITIK YOL" },
+    { "id": "H2.3", "durum": "acik", "sure": "60-100s", "not": "operator dalgasi: yaka, kol, etek, boy, kumas" },
+    { "id": "H2.4", "durum": "acik", "sure": "30-50s", "not": "sanal muslin hakemi" },
+    { "id": "H2.5", "durum": "acik", "sure": "10-20s", "not": "F8 frontend" },
+    { "id": "H2.6", "durum": "acik", "sure": "10-20s", "not": "foto->spec siniflandirma (operatorler bitince)" },
+    { "id": "H3.1", "durum": "acik", "sure": "80-120s", "not": "yuzeyden cizgi cikarimi" },
+    { "id": "H3.2", "durum": "acik", "sure": "dahil", "not": "sadelestirme" },
+    { "id": "H3.3", "durum": "acik", "sure": "dahil", "not": "Damla'nin kalemine oturtma" },
+    { "id": "H3.4", "durum": "acik", "sure": "TAAHHUT EDILEMEZ", "not": "zevk turlari, hakem Damla" }
+  ],
+
+  "damla_kuyrugu": ["K1 patterns_real/public", "K2 beden", "K3 kapak", "K4 zevk"],
+
+  "karar_sicili": [
+    {
+      "tur": 0,
+      "karar": "ACILIS",
+      "gerekce": "HEDEF.md repo otoritesi olarak acildi. Kuyruk TABAN + H1.0 onde olacak sekilde siralandi: H1.0 olculmeden H1'in 15-20 saat tahmini savunulamaz."
+    },
+    {
+      "tur": 0,
+      "karar": "KAPSAM BUYUDU: +1 halka (H2.7)",
+      "gerekce": "Bitis tanimi 'eksik operatorunu soyleyerek reddeder' diyor; operator sicili + kapsam sorgusu H2.1-H2.6'nin hicbirinden kendiliginden cikmiyor."
+    },
+    {
+      "tur": 0,
+      "karar": "DUZELTME",
+      "gerekce": "Onceki turda 'patterns_real gitignore'da yazili ama takipli' dedim. YANLIS: grep bos dondu, .gitignore'da girdi yok. Dogru olcum: 49 dosya takipli, bilerek commitlenmis, repo public. K1 olarak kuyruga yazildi."
+    }
+  ],
+
+  "kota": { "harcanan_kosu_saati": 0, "son_durus_sebebi": null }
+}
