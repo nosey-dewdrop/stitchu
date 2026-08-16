@@ -85,6 +85,23 @@ struct SheathOptions {
     // cannot be worn. Defaults are the fitted-dress band the trade agrees on
     // (Threads/RTW: 2" bust, 1" waist, 2" hip; Aldrich close-fitting carries
     // 7cm at the bust) — declared design dials, not laws.
+    // SHOULDER TOP — off by default, and the reason is measured, not cautious.
+    // With the real top boundary the bodice quarter-panel carries +52.5 deg of
+    // develop-deficit (it was -0.20 deg as a strapless tube), and the flatten
+    // cannot absorb it: cut-line strain goes to 46-65% and the panels fold
+    // through themselves. The missing piece is named and known — Slit can only
+    // anchor at the WAIST row, so a shoulder dart or a neckline dart cannot be
+    // expressed at all, and those are exactly the two a bodice with shoulders
+    // needs. Turn this on when Slit gains a top anchor, not before.
+    bool shoulderTop = false;
+
+    // NECKLINE — design dials, and declared as such. A neckline depth is not a
+    // body measurement: the same body wears a crew and a scoop. The one thing
+    // that is universal is that the back is shallower than the front, and that
+    // is why these are two numbers rather than one.
+    double neckHalfWidthMM = 87.164;   // neck_w/2, EU38 contract body
+    double frontNeckDropMM = 70.0;
+    double backNeckDropMM = 20.0;
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;

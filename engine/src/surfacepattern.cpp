@@ -119,14 +119,45 @@ struct PanelGrid {
 // row 0 is copied verbatim from the single ring sample.
 // THE TOP BOUNDARY of the bodice as a function of phi.
 //
-// Stage one: FLAT, exactly at the bust, which reproduces the strapless sheath
-// byte for byte. The mechanism lands and is proved neutral before the shape
-// goes in, so that when the numbers move it is the neckline moving and not a
-// refactor.
-double topProfile(double phi, double bustH) {
-    (void)phi;
-    return bustH;
-}
+// A bodice panel's top edge really is single-valued across the body, which is
+// why this can be a function at all: starting at the side it leaves the
+// underarm, curves up and over the armhole to the shoulder tip, runs in along
+// the shoulder to the neck point, and drops into the neckline at the centre.
+// Reading it here by the section's own x coordinate (phi = 0 and pi are the
+// SIDES, pi/2 the centre front, 3pi/2 the centre back) puts every zone boundary
+// where a drafter would put it: at a distance across the body, not at an angle.
+//
+// The SHOULDER is entirely sourced. The line drops from the nape by its own
+// slope over the distance travelled outward, which is the construction
+// GarmentCode draws in 2D, and both numbers were verified rather than assumed:
+// shoulder_w/2 is the shoulder tip's x (bodice.py:58, base_classes.py:37) and
+// shoulder_incl is in DEGREES (body_params.py; every use site deg2rads it).
+//
+// The NECKLINE is NOT sourced and is not pretending to be. A neckline depth is
+// a design decision, not a body measurement -- the same body wears a crew and a
+// scoop -- so it is a declared dial with the back shallower than the front,
+// which is the one thing about it that is universal.
+struct TopProfile {
+    double napeZ;        // the shoulder line starts here, at the centre back neck
+    double tanIncl;      // shoulder slope
+    double neckHalfMM;   // half the neckline WIDTH (neck_w/2), where the shoulder ends
+    double frontDropMM;  // design dial
+    double backDropMM;   // design dial
+    double shoulderHalfMM;
+
+    double at(double phi) const {
+        // distance across the body, measured on the shoulder-level section
+        const double x = std::fabs(shoulderHalfMM * std::cos(phi));
+        if (x >= neckHalfMM) return napeZ - tanIncl * x;   // shoulder line
+        // inside the neck width: drop below the neck point, front deeper
+        const double neckPointZ = napeZ - tanIncl * neckHalfMM;
+        const double drop = std::sin(phi) > 0 ? frontDropMM : backDropMM;
+        // a cosine easing so the neckline meets the shoulder with a flat tangent
+        // instead of a corner the flatten would have to absorb as a singularity
+        const double u = neckHalfMM > 1e-9 ? x / neckHalfMM : 1.0;
+        return neckPointZ - drop * 0.5 * (1.0 + std::cos(kPi * u));
+    }
+};
 
 PanelGrid buildGrid(const GarmentSurf& surf,
                     const std::vector<Vec3>& ringSeg, double waistH,
@@ -527,6 +558,19 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // that ring. It exists to give the surface a shape above the bust.
     const double easeMM[4] = {opt.easeNeckMM, opt.easeBustMM, opt.easeWaistMM, opt.easeHipMM};
     GarmentSurf surf = GarmentSurf::fromBody(body, easeMM);
+
+    // the top boundary, built once from the chart's own shoulder numbers
+    const double napeZ = levelHeight(body, "neck");
+    double shoulderHalf = 0.0, tanIncl = 0.0;
+    for (const BodyLevel& lv : body.levels())
+        if (lv.name == "shoulder") {
+            shoulderHalf = lv.halfWidthMM;
+            tanIncl = (napeZ - lv.heightMM) / shoulderHalf;  // exactly the slope used to place it
+        }
+    if (shoulderHalf <= 0.0)
+        throw std::runtime_error("body has no shoulder level: a bodice cannot be cut");
+    const TopProfile top{napeZ, tanIncl, opt.neckHalfWidthMM, opt.frontNeckDropMM,
+                         opt.backNeckDropMM, shoulderHalf};
     surf.blendMM = opt.hipBlendMM;
 
     // THE ring: sampled once, at the waist, over the full circle.
@@ -562,8 +606,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // panel computed for itself would let the same class back in from above.
     for (GarmentLayer& L : layers) {
         L.topH.assign(NR + 1, L.farH);
-        if (!L.isSkirt)
-            for (int j = 0; j <= NR; ++j) L.topH[j] = topProfile(2 * kPi * j / NR, bustH);
+        if (!L.isSkirt && opt.shoulderTop)
+            for (int j = 0; j <= NR; ++j) L.topH[j] = top.at(2 * kPi * j / NR);
     }
 
     // ---- sub-panel column bounds, shared by both passes ----
