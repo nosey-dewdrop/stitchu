@@ -59,14 +59,23 @@ void relCoords(Vec2 a, Vec2 b, Vec2 c, double& r0, double& r1) {
 }
 
 double fitDeviation(const std::vector<CubicSeg>& segs, const std::vector<Vec2>& pts) {
-    // distance from each source point to the densely sampled fitted chain
+    // Distance from each source point to the sampled fitted chain.
+    //
+    // The sampling used to be a FIXED 97 points per segment, which is a trap:
+    // one cubic spanning a 400mm side seam then has its samples 4.1mm apart, and
+    // the nearest-SAMPLE distance carries up to half of that as pure sampling
+    // error. It reported 2.0583mm on a chain the fitter had accepted at
+    // 0.1256mm and made the cut line look 16x worse than it is. Sample density
+    // now follows arc length, so the number measures the CURVE and not the ruler.
     std::vector<Vec2> samp;
-    for (const CubicSeg& s : segs)
-        for (int i = 0; i <= 96; ++i) {
-            const double t = i / 96.0, u = 1 - t;
+    for (const CubicSeg& s : segs) {
+        const int n = std::max(96, static_cast<int>(std::ceil(cubicLength(s, 64) / 0.01)));
+        for (int i = 0; i <= n; ++i) {
+            const double t = static_cast<double>(i) / n, u = 1 - t;
             samp.push_back({u * u * u * s.p0.x + 3 * u * u * t * s.c1.x + 3 * u * t * t * s.c2.x + t * t * t * s.p3.x,
                             u * u * u * s.p0.y + 3 * u * u * t * s.c1.y + 3 * u * t * t * s.c2.y + t * t * t * s.p3.y});
         }
+    }
     double worst = 0;
     for (const Vec2& p : pts) {
         double best = 1e18;

@@ -1,5 +1,7 @@
 #include "curvefit.hpp"
 #include <algorithm>
+#include <cstdio>
+#include <cstdlib>
 #include <cmath>
 
 namespace stitchu {
@@ -88,6 +90,9 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
         }
     }
     if (worst <= tolMM || depth > 12) {
+        if (std::getenv("STITCHU_FIT_DEBUG") && depth == 0)
+            std::fprintf(stderr, "    fitRange KABUL depth=%d worst=%.4f tol=%.4f n=%d\n",
+                         depth, worst, tolMM, i1 - i0);
         out.push_back(s);
         return;
     }
