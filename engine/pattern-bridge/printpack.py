@@ -525,7 +525,74 @@ def build_notches(pattern, geos):
         }
         assert worst < 1.0, f'notch mismatch {worst:.3f}mm on {rec}'
         records.append(rec)
+    records.extend(build_zip_notch(pattern, geos))
     return records, darts, short
+
+
+def build_zip_notch(pattern, geos):
+    """Mark where the back opening STOPS.
+
+    The engine leaves the top run of the centre-back seam unsewn and the spec
+    lists those stitches under "openings". A sewer needs to know where to stop
+    stitching, and on a real pattern that is a notch -- so the pack has to draw
+    one, or the printed thing says "sew this seam shut" and the dress cannot be
+    put on. The zip end is already a VERTEX, because the engine forced a curve
+    break there for exactly this reason.
+
+    Which endpoint is the zip end: the opening edge has two ends. One is the
+    waist (its neighbour belongs to a different seam -- the waist attachment)
+    and one continues down the SAME seam as a sewn edge. The second is the zip
+    end. Decided by looking at what the neighbour is joined to, not by assuming
+    an edge direction, because a mirrored panel walks its seam the other way.
+    """
+    opening = pattern.get('openings')
+    if not opening or not opening.get('stitches'):
+        return []
+    stitches = pattern['stitches']
+    open_idx = opening['stitches']
+    # the seam this opening lives on, as a pair of panel names
+    last = stitches[open_idx[-1]]
+    seam_panels = {e['panel'] for e in last[:2]}
+    open_edges = {}
+    for i in open_idx:
+        for e in stitches[i][:2]:
+            open_edges.setdefault(e['panel'], set()).add(e['edge'])
+
+    # which (panel, edge) pairs join the SAME two panels -> same seam
+    same_seam = {}
+    for st in stitches:
+        if {e['panel'] for e in st[:2]} == seam_panels:
+            for e in st[:2]:
+                same_seam.setdefault(e['panel'], set()).add(e['edge'])
+
+    out = []
+    for side in last[:2]:
+        name = side['panel']
+        panel = pattern['panels'][name]
+        edge = panel['edges'][side['edge']]
+        mine = open_edges[name]
+        zip_v = None
+        for vtx in edge['endpoints']:
+            nbrs = [i for i, ee in enumerate(panel['edges'])
+                    if i != side['edge'] and vtx in ee['endpoints']]
+            # the zip end continues along the same seam, still sewn
+            if any(n not in mine and n in same_seam.get(name, ()) for n in nbrs):
+                zip_v = vtx
+        if zip_v is None:
+            raise AssertionError(f'zip end not identifiable on {name}')
+        geo = geos[name]
+        seg = geo.segs[side['edge']]
+        length = seg.length()
+        # arc position: the vertex is an endpoint of this edge, so it is either
+        # the start or the end of the curve
+        at_end = edge['endpoints'][1] == zip_v
+        geo.add_notch(side['edge'], length if at_end else 0.0, 3)
+        out.append({
+            'a': f"{name}[{side['edge']}]", 'b': 'ZIP END',
+            'len_a_mm': round(length * 10, 1), 'len_b_mm': 0.0,
+            'notch': 'triple', 'positions': 'zip-end', 'ratio_diff_mm': 0.0,
+        })
+    return out
 
 
 # ===========================================================================
@@ -980,15 +1047,44 @@ def svgs_to_pdf(svgs, pdf_path, date_str):
 # ===========================================================================
 # report
 # ===========================================================================
+def _opening_lines(opening):
+    """Say, in words, that one seam is NOT sewn.
+
+    A notch marks WHERE the zip stops; nothing on the sheet says the seam above
+    it stays open. A sewer reading only the pieces would stitch the centre back
+    shut and produce a dress that cannot go over the head -- the exact failure
+    wearable_check exists to prevent, reintroduced at the last step by silence.
+    """
+    if not opening or not opening.get('stitches'):
+        return []
+    mm = opening.get('length_mm', 0.0)
+    return [
+        'OPENING (dikilmeyen dikis) — BURAYI DIKMEYIN',
+        f"  {opening.get('kind', 'opening')}: {mm:.1f}mm "
+        f'({mm / 25.4:.2f} inch) of the centre-back seam is NOT stitched.',
+        '  Sew the centre back from the HEM up to the triple notch marked '
+        'zip-end, and stop there.',
+        '  Everything above that notch takes the zipper. The dress does not go '
+        'over the head without it.',
+        # FLOOR, not round. The opening here is 21.86 inch and rounding said
+        # "buy 22 inch" — a zip longer than its opening cannot be sewn in,
+        # which is the one thing this line exists to prevent.
+        f'  Buy a zip of {int(mm / 25.4)} inch or shorter — a longer one does '
+        'not fit the opening.',
+        '',
+    ]
+
+
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
-               pages_info, svg_hash, size_label, date_str, plan, quotes):
+               pages_info, svg_hash, size_label, date_str, plan, quotes,
+               opening=None):
     lines = [
         'PRINT PACK (baski tapusu) — allowance, notches, pagination: '
         'measured, not claimed',
         f'size: {size_label}   date: {date_str}   allowance: 10mm   '
         f'scale: 1cm = {CM_PT:.4f}pt',
         '',
-    ] + cutplan.report_lines(plan) + [
+    ] + _opening_lines(opening) + cutplan.report_lines(plan) + [
         '',
         'SEAM ALLOWANCE — perpendicular distance of the cut line to the '
         'seam line',
@@ -1257,7 +1353,7 @@ def build(out_dir, spec_path, size_label, date_str=None):
     txt = report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                      {'a0_shelf': a0_shelf, 'a0_tiled': a0_tiled,
                       'a4_rows': rows, 'a4_cols': cols, 'a4_live': a4_live},
-                     h.hexdigest(), size_label, date_str, plan, quotes)
+                     h.hexdigest(), size_label, date_str, plan, quotes, opening=pattern.get('openings'))
     (out_dir / 'print-report.txt').write_text(txt)
     return {
         'print_info': out_dir / 'print-info.pdf',
