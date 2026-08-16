@@ -179,8 +179,29 @@ void polishImpl(const TriMesh& mesh, std::vector<Vec2>& P, const std::vector<dou
     const auto E = uniqueEdges(mesh);
     std::vector<double> L0(E.size());
     for (size_t e = 0; e < E.size(); ++e) L0[e] = norm3(mesh.V[E[e][0]] - mesh.V[E[e][1]]);
-    double wmax = 1.0;
-    for (size_t e = 0; e < E.size(); ++e) wmax = std::max(wmax, W.empty() ? 1.0 : W[e]);
+    // JACOBI PRECONDITIONING — the weight leaves the step and moves onto the
+    // vertex it belongs to.
+    //
+    // This used to divide ONE GLOBAL step by the heaviest weight
+    // (s = step / wmax). With the cut lines weighted 120x that made the step
+    // 120x smaller for the WHOLE mesh, so the interior relaxed 120x slower than
+    // the boundary — which is exactly the behaviour measured: raise the
+    // iterations 4x and the cut-line strain improves (1.18% -> 0.49%) while the
+    // interior gets WORSE (6.56% -> 9.30%). It was not "the polish trading one
+    // for the other" by design; it was a solver whose conditioning was ruined by
+    // its own emphasis. Refining the mesh made it worse too (3.31 -> 6.56%),
+    // which is the signature of a step that no longer suits the problem.
+    //
+    // Dividing each vertex's gradient by the total weight of ITS OWN incident
+    // edges is the diagonal of the Hessian: heavy vertices take small steps,
+    // light ones take normal steps, and the global step goes back to O(1).
+    std::vector<double> D(P.size(), 0.0);
+    for (size_t e = 0; e < E.size(); ++e) {
+        const double w = W.empty() ? 1.0 : W[e];
+        D[E[e][0]] += w;
+        D[E[e][1]] += w;
+    }
+    for (double& d : D) d = d > 1e-12 ? d : 1.0;
     const Vec2 anchor = P[pin];
     std::vector<Vec2> g(P.size());
     for (int it = 0; it < iters; ++it) {
@@ -195,8 +216,8 @@ void polishImpl(const TriMesh& mesh, std::vector<Vec2>& P, const std::vector<dou
             g[E[e][1]].x -= f * dx;
             g[E[e][1]].y -= f * dy;
         }
-        const double s = step / wmax;  // stability under the heaviest weight
         for (size_t i = 0; i < P.size(); ++i) {
+            const double s = step / D[i];
             P[i].x -= s * g[i].x;
             P[i].y -= s * g[i].y;
         }
