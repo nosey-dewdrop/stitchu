@@ -9,7 +9,7 @@
     "H1": { "kalan_halka": 5, "kalan_saat": "~11 + H1.0 OLCULMEDI" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 6, "kalan_saat": "~6 + T1,T5 OLCULMEDI" }
+    "TABAN": { "kalan_halka": 4, "kalan_saat": "~3 + T1,T5 OLCULMEDI" }
   },
   "sayac_gecmisi": [],
 
@@ -24,9 +24,9 @@
     { "id": "T1", "durum": "acik", "sure": "OLCULMEDI", "not": "iki include duzeltmesi — adres tespiti" },
     { "id": "T2", "durum": "acik", "sure": "~1s", "not": "determinizm cift kosusu, SHA256 esit" },
     { "id": "T3", "durum": "acik", "sure": "~2s", "not": "kenar monotonlugu, 8 bedende" },
-    { "id": "T4", "durum": "acik", "sure": "~1s", "not": "montaj sirasi pakete girdi mi" },
-    { "id": "T5", "durum": "acik", "sure": "OLCULMEDI", "not": "dunya-kapisi sicili — tanim cikarilacak" },
-    { "id": "T6", "durum": "acik", "sure": "~2s", "not": "tek sayac contract/kapsam-checkpoint.json; bayat sayaclar silinir" },
+    { "id": "T4", "durum": "KAPANDI", "sure": "~1s", "not": "84e79a9 sadece print-report.txt'e basiyordu; artik print-info.pdf s.2'de 13 adim. a65881e" },
+    { "id": "T5", "durum": "acik-BLOKE", "sure": "OLCULMEDI", "not": "tanim repoda YOK (tum revizyonlar arandi, 2 isabet = halkanin kendisi). Uydurulmadi -> DAMLA-KUYRUK K5" },
+    { "id": "T6", "durum": "KAPANDI", "sure": "~2s", "not": "tek sayac = HEDEF.md § SAYAC. contract/kapsam-checkpoint.json DISKTE YOK; bayat sayac+otorite satirlari silindi" },
     { "id": "H1.1", "durum": "acik", "sure": "~1s", "not": "docs/SATIS-SARTNAMESI.md zaten tanimliyor -> muhurle" },
     { "id": "H1.2", "durum": "acik", "sure": "~4s", "not": "kitapcik, motor ciktisindan" },
     { "id": "H1.3", "durum": "acik", "sure": "~3s", "not": "kapak + line drawing -> DAMLA-KUYRUK K3" },
@@ -44,7 +44,7 @@
     { "id": "H3.4", "durum": "acik", "sure": "TAAHHUT EDILEMEZ", "not": "zevk turlari, hakem Damla" }
   ],
 
-  "damla_kuyrugu": ["K1 patterns_real/public", "K2 beden", "K3 kapak", "K4 zevk"],
+  "damla_kuyrugu": ["K1 patterns_real/public", "K2 beden", "K3 kapak", "K4 zevk", "K5 dunya kapisi ne demek (T5'i BLOKE EDER)"],
 
   "karar_sicili": [
     {
@@ -61,6 +61,16 @@
       "tur": 0,
       "karar": "DUZELTME",
       "gerekce": "Onceki turda 'patterns_real gitignore'da yazili ama takipli' dedim. YANLIS: grep bos dondu, .gitignore'da girdi yok. Dogru olcum: 49 dosya takipli, bilerek commitlenmis, repo public. K1 olarak kuyruga yazildi."
+    },
+    {
+      "tur": 1,
+      "karar": "TEK SAYAC ADRESI DUZELTILDI (T6)",
+      "gerekce": "HEDEF.md T6 tek sayac olarak contract/kapsam-checkpoint.json'u adlandiriyordu; dosya DISKTE YOK (ls dogrulandi). reports/gate/kapsam-checkpoint.json ise 2026-07-21 / 103-hedef rejiminden ve ANAYASA.md onu zaten 'hukumsuz' + 'tarih arsivi' ilan etmis. Olu bir rejimi diriltmek yerine tek sayac HEDEF.md § SAYAC olarak muhurlendi."
+    },
+    {
+      "tur": 1,
+      "karar": "T5 UYDURULMADI",
+      "gerekce": "'dunya kapisi' terimi tum revizyonlarda 2 yerde geciyor, ikisi de halkanin kendisi (HEDEF.md:40 + state.json). Tanim yok, sicil kurulamaz. Tanim uydurmak yerine K5 acildi ve T5 bloke birakildi."
     }
   ],
 

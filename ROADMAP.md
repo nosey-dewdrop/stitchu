@@ -1,6 +1,7 @@
 # stitchu — YOL HARİTASI
 
-> **Tek plan kaynağı.** Yeni session sırası: `CLAUDE.md` → **bu dosya** → `DERSLER.md`. Başka plan dosyası açma.
+> **Otorite `HEDEF.md`'dir, bu dosya değil.** Yeni session sırası: `HEDEF.md` → bu dosya → `DERSLER.md`. Çelişkide `HEDEF.md` kazanır.
+> **Sayaç bu dosyada YAŞAMAZ** — tek sayaç `HEDEF.md § SAYAÇ`.
 > 2026-07-31 tam yeniden yazım: ürün sırasına göre. 29 Tem sürümü git geçmişinde (`git show HEAD:ROADMAP.md`); oradaki ölçümler bu dosyada korundu.
 
 ---

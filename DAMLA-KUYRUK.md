@@ -29,6 +29,18 @@ Listing vitrini için kapak + tek line drawing. Adaylar üretilince buraya PNG y
 Zevk kapısının hakemi Damla. Süre taahhüt edilemez; raporlarda `zevk turu N` diye sayılır.
 **Cevap:**
 
+### [ ] K5 — dünya kapısı ne demek? · T5'i BLOKE EDER · 2026-08-16
+`HEDEF.md` T4 satırı "dünya-kapısı sicili" diye bir taban halkası açıyor ama terimin tanımı repoda **hiçbir yerde yok**. Aradığım yerler ve sonuç:
+- `git grep -i -E "d[uü]nya[ -]?kap|world[ -]?gate|global gate"` **tüm revizyonlarda** (`git rev-list --all`) → **2 isabet**, ikisi de halkanın kendisi: `HEDEF.md:40` ve `.vardiya/state.json:28`. İkisi de dün `bc0c63b` ile yazıldı.
+- Tüm commit gövdeleri (`git log --all --format=%B`) → **0 isabet**.
+- Diskteki takipsiz/gitignore'lu dosyalar dahil ağaç geneli → aynı 2 isabet.
+- Tek tek okundu, geçmiyor: `ANAYASA.md`, `DERSLER.md`, `ROADMAP.md`, `CLAUDE.md`, `RULES.md`, `README.md`, `ENV.md`, `docs/`, `reports/`, `reports/gate/` (`NABIZ.md` + 8 `MIHENK-*.json` dahil).
+- Yakın ama BAŞKA terimler: **TEK KAPI** (= Damla'nın gözü, `ROADMAP.md:22`), `KAPI 0` (= dikilebilirlik, `atlas.py`), `H0/H3b/H3c` (= harness kapıları), `pushGate` (= rabadon).
+
+**Tanımı UYDURMADIM.** T5 açık bırakıldı; sicil kurulmadı, çünkü neyin sicili olduğu belli değil.
+**Soru:** "dünya kapısı" hangi kapı — (a) giysinin dış dünyaya çıktığı kapı (= listeleme/satış), (b) TEK KAPI'nın başka adı, (c) motorun dışarıdan gelen rastgele isteği kabul/red kapısı (bitiş tanımındaki "10 cümle"), yoksa (d) bambaşka bir şey mi? Sicil neyi saymalı?
+**Cevap:**
+
 ---
 
 ## KAPANDI

@@ -1,7 +1,7 @@
 # ANAYASA — vol 1 + vol 2 (2026-07-27, Damla emri)
 
 Eski anayasa (BENCHMARK-58 rejimi) HÜKÜMSÜZ ve SİLİNDİ. Bu dosya onun yerine geçer.
-Her yeni oturum ÖNCE bunu okur.
+Bu dosya **zevk/hakem yasasıdır**; iş sırasının ve sayacın otoritesi `HEDEF.md`'dir. Çelişkide `HEDEF.md` kazanır.
 
 ## Tek hedef
 

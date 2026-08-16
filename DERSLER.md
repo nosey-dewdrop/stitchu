@@ -2,7 +2,7 @@
 
 > Bu dosya 150+ eski md/rapor silinmeden ÖNCE onlardan damıtıldı (2026-07-24 temizlik turu).
 > Amaç: batan yaklaşımları tekrar denememek, çalışanları korumak. Tarih değil DERS.
-> Kod/veri gerçeği: `contract/*.json` (kodun okuduğu TEK şey) + `reports/gate/kapsam-checkpoint.json`.
+> Kod/veri gerçeği: `contract/*.json` (kodun okuduğu TEK şey). Sayaç burada değil — tek sayaç `HEDEF.md § SAYAÇ`.
 
 ---
 
@@ -48,9 +48,8 @@
 
 ## SAYAÇ KARMAŞASININ GERÇEĞİ (2026-07-24 ölçümü)
 
-Bu proje 10 farklı dosyada 10 farklı sayaç iddia ederek kendini tıkadı. TEK GERÇEK:
-- **24 hakem-teyitli GEÇTİ / 103 hedef** → `reports/gate/kapsam-checkpoint.json` + NABIZ.md son satır. Makine-okunur, en güvenilir.
-- Web canlı **27/54** = FARKLI metod (foto→tam kalıp, term-registry) — yanlış değil, başka ölçek.
-- CLAUDE.md'deki **37/54** = BAYAT, eski regex metodu, terk edildi.
+Bu proje 10 farklı dosyada 10 farklı sayaç iddia ederek kendini tıkadı. **DERS BU** — sayıların kendisi değil.
 
-**KURAL BUNDAN SONRA:** Sayaç TEK yerde yaşar — `kapsam-checkpoint.json`. Md'ler sayaç yazmaz, oraya işaret eder. Bir daha "hangi dosya doğru?" sorusu olmayacak.
+Buradaki üç sayaç (24/103 · 27/54 · 37/54) 2026-08-16'da **silindi**: üçü de 103-hedef / 54-hedef rejimindendi, o rejimi `ANAYASA.md` zaten "hepsi hükümsüz" ilan etmişti, ve `reports/gate/kapsam-checkpoint.json` `ANAYASA.md`'ye göre tarih arşivi — iş sırası dayatamaz.
+
+**KURAL:** Sayaç TEK yerde yaşar — **`HEDEF.md § SAYAÇ`** (H1 / H2 / H3 / TABAN halka sayıları). Md'ler sayaç yazmaz, oraya işaret eder. Her rapor o üç sayıyla biter.

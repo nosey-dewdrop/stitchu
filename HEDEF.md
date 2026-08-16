@@ -12,10 +12,12 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 H1'e kalan:  5 halka / ~11 koşu saati + H1.0 (ÖLÇÜLMEDİ)
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       6 halka / ~6 koşu saati + T1,T5 (ÖLÇÜLMEDİ)
+TABAN:       4 halka / ~3 koşu saati + T1,T5 (ÖLÇÜLMEDİ)   [T4,T6 kapandı 16.08]
 ```
 
 Her rapor bu üç sayıyla **biter**. Sayı düşmediyse rapor bunu gizleyemez: `sayı düşmedi, sebebi şu` yazar.
+
+**Bu blok reponun TEK sayacıdır.** Başka hiçbir dosya sayaç yazmaz, buraya işaret eder. `contract/kapsam-checkpoint.json` T6'da tek sayaç diye adlandırılmıştı ama **diskte yok** (16.08 doğrulandı); `reports/gate/kapsam-checkpoint.json` ise 2026-07-21 / 103-hedef rejiminden ve `ANAYASA.md`'ye göre tarih arşivi — sayaç değildir.
 
 ---
 
@@ -36,9 +38,9 @@ Her fazın sonunda **pazarlıksız** mühürlenir.
 | T1 | iki include düzeltmesi | adres tespiti Tur 1'de | **ÖLÇÜLMEDİ** |
 | T2 | determinizm çift koşusu | aynı girdi → byte-özdeş paket, iki bağımsız koşu, SHA256 eşit | ~1s |
 | T3 | kenar monotonluğu | panel kenarı geri dönmüyor, 8 bedende | ~2s |
-| T4 | montaj sırasının pakete girişi | `84e79a9` üretti; pakette var mı doğrulanmadı | ~1s |
-| T5 | dünya-kapısı sicili | tanımı Tur 1'de repo bulgularından çıkarılacak | **ÖLÇÜLMEDİ** |
-| T6 | sayaç/anayasa tekleştirme | tek sayaç `contract/kapsam-checkpoint.json`; ROADMAP/DERSLER'deki bayat sayaçlar silinir | ~2s |
+| T4 | montaj sırasının pakete girişi | **KAPANDI 16.08** — `84e79a9` sadece `print-report.txt`'e basıyordu (denetim dosyası), hiçbir PDF'e girmiyordu; artık `print-info.pdf` s.2'de 13 adım | ~1s |
+| T5 | dünya-kapısı sicili | **AÇIK — BLOKE.** Terim tüm revizyonlarda sadece bu satırda ve `.vardiya/state.json`'da geçiyor, tanımı repoda YOK (16.08 arandı). Sicil kurulmadı, tanım uydurulmadı → `DAMLA-KUYRUK.md` **K5** | **ÖLÇÜLMEDİ** |
+| T6 | sayaç/anayasa tekleştirme | **KAPANDI 16.08** — tek sayaç bu dosyanın `§ SAYAÇ`'ı; ROADMAP/DERSLER/ANAYASA'daki bayat sayaç ve otorite satırları silindi | ~2s |
 
 T1 ve T5 için bugün "saatler/günler" demiyorum. **ÖLÇÜLMEDİ.** Tur 1 adresini bulur, süre o zaman yazılır.
 
