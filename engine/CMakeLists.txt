@@ -580,3 +580,13 @@ add_test(NAME capability_check COMMAND capability_check)
 add_executable(wearable_check tests/wearable_check.cpp)
 target_link_libraries(wearable_check PRIVATE engine)
 add_test(NAME wearable_check COMMAND wearable_check)
+
+# edgemono_check: a panel edge that folds back on itself. The ring-based
+# self-intersection check in panelcheck.py reports a PROPER crossing, and says
+# in its own header that touching is not crossing — so a cut line that runs out
+# and returns along nearly the same line is a tangency, its determinant is
+# zero, and it passes. Eight sizes, specifications generated fresh from
+# surface-pattern rather than read off a past run's pack. Needs the garmentcode
+# venv for svgpathtools; a missing venv FAILS instead of skipping silently.
+add_test(NAME edgemono_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/edgemono_check.sh
+         $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
