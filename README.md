@@ -1,6 +1,8 @@
 # stitchu
 
-**A deterministic FIXED-SIZE (EU34-48) pattern CAD engine.** Give it a body and a recipe, and it drafts a sewing pattern the way industrial CAD does — not as a picture that gets nudged until it looks right, but as a formula-driven construction document that regenerates exactly when the measurements change. Every point, curve, dart and seam is computed by a C++ kernel from published pattern-cutting formulas. Same recipe, same body, same millimetres — byte for byte.
+**A deterministic FIXED-SIZE (EU34-48) pattern engine.** Give it a body and a garment, and it does not draw a pattern: it builds the garment as a 3D surface on that body and then flattens it. The darts are not formulas — they are the surface's own develop-deficit, opened where the flattening says it has to open. Same body, same garment, same millimetres, byte for byte.
+
+That is the sealed architecture (`flatten-research/FINDINGS.md`, 28 Jul), and it is sealed because the alternative was tried first and found to be the wrong abstraction: a 2D formula draft treats the flat pattern as the primitive, when a flat pattern is an OUTPUT — what a 3D surface becomes when you flatten it. Sections below that still describe a formula-driven recipe model describe the older line, which is being superseded and is marked where it appears.
 
 Not made-to-measure, and that is a decision with evidence behind it: ZOZO, unspun and Fayma all died on MTM and Lekala hit a quality ceiling, because a girth does not determine a shape — two bodies with the same bust can need different patterns. stitchu sells graded fixed sizes. The run is EU34-48 because that is exactly the range for which the body contract publishes a front/back split (contract/layers/shape-ratios.json); EU50 and EU52 have no published ratio and are not claimed.
 
@@ -15,7 +17,13 @@ The engine drafts to a recipe, then carries that geometry all the way to product
 - **Nesting / marker layout.** Cut pieces pack onto a fabric width and the overlap is checked by an independent geometry engine, not our own script: `shapely 2.1.2` pairwise intersection area = **0.000000 mm²**, and the layout fits inside the roll width. The detector is not blind — its smoke test sees a half-shifted overlapping copy and does *not* false-positive on far-apart copies. (`engine/src/nest.{hpp,cpp}`, ctest `nest_check` + external `nest_marker_check`)
 - **Tech-pack — a machine-readable production package.** One recipe grades across the full size run into a single manifest (`stitchu.techpack/1`: size table + cut list + fabric weight + marker efficiency + a graded DXF per size) plus a human-readable PDF spec. The weight math (`metres × 1.40 × gsm`) and efficiency math (`area ÷ (width × roll)`) were cross-checked by hand to within rounding, the PDF opens in `poppler` (2 pages), and a tampered efficiency value **fails the verifier loudly** — so the check actually measures, it doesn't rubber-stamp. (`engine/tools/tech-pack.cpp`, ctest `tech_pack_check` + external `techpack-verify.py`)
 
-## How is the pattern a document, not a picture?
+## How is the pattern a document, not a picture? (the OLDER line)
+
+> ⚠ **This section describes the 2D formula-draft line, not the sealed one.** It is
+> kept because every claim in it was measured and still holds, but it is not where
+> the dress comes from: the shippable garment is built by the surface line above
+> (`engine/src/surfacepattern.cpp` → certified ARAP flatten). Two engines is one too
+> many, and this is the one that goes.
 
 The core architecture is a CAD model, not a pipeline. A pattern is a **recipe**: a formula-driven sequence of operations bound to a measurement table (Valentina file logic). The screen shows a rendering of the recipe; when a measurement changes, everything regenerates. SVG and PDF are only export formats.
 
