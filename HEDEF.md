@@ -12,7 +12,7 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 H1'e kalan:  5 halka / 36–56 koşu saati    [H1.0 ÖLÇÜLDÜ: 25–45s, yapısal]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       7 halka / 9–17 koşu saati     [T2,T4,T6 kapandı · T1 yok-hükmünde · T5 bloke · +T7,T8,T9,T10]
+TABAN:       6 halka / 8–16 koşu saati     [T2,T4,T6,T10 kapandı · T1 yok-hükmünde · T5 bloke · +T7,T8,T9]
 ```
 
 > **KAPSAM BÜYÜDÜ: +4 halka (T7, T8, T9, T10). Sebebi:** Tur 1, tabanın altında dört bağımsız kırmızı ölçtü. Hiçbiri "H1.0 yeşil olunca geçer" cinsinden değil; dördü de **bugün basılan paketi satılamaz kılıyor**. Sessizce eklemek yerine halka yazıyorum ve H1'in kitapçık/kapak/listing halkalarını bunların ARKASINA aldım (gerekçe: TUR 1 ROTA KARARI).
@@ -51,7 +51,7 @@ Her fazın sonunda **pazarlıksız** mühürlenir.
 | T7 | **`walk.py` bir kapı değil, yazıcı** | **KAPANDI 17.08.** `main()` artık hüküm döndürüyor; hangi bulgu **hüküm** (dikiş · kol oyuğu grubu · kapalı kontur · kendini kesme · ayna) hangisi **bilgi** (UNVERIFIABLE · GATHERED-UNSCORED · REPORTED · DEFERRED) `walk.py gate()` başlığında yazılı. `taban.sh` sayımı artık walk.py'ın `KAPI` satırından okuyor (girintili `  FAIL` + hiç FAIL satırı basmayan ARMHOLE hükmü dahil), grep çapraz kontrole indi. Kapı `walkgate_check` ile ctest'e bağlandı — 8 beden TAZE spec. **Ölçüm: donmuş T2-RUN2 spec'lerinde exit 0/8 → 1/8, görünen FAIL 12 → 72 (60 kendini kesen panel).** Bugünkü ağaçta (T8 curvefit düzeltmesiyle) kendini kesme 0, kalan **12 hüküm-FAIL** = 6 waist-attach + 6 ters omuz → `taban.sh` exit 1, ctest 88/89 | 2–4s |
 | T8 | **eğri-fit kontrol noktası taşması** | T3'ün kök sebebi: `curvefit.cpp` kübik kontrol parametresini `[0,1]` dışına çıkarıyor (1.9678'e kadar), eğri bitiş noktasını aşıp geri dönüyor. 480 kenar | 3–6s |
 | T9 | **h3c 3/8 bedende FAIL** | EU42 +0.2138mm · EU46 +0.1376mm · EU48 +0.2691mm. `worst fit` EU46'da **7.1717mm**, tolerans `kFitTolMM = 0.15mm` → **48 kat**. `waist-attach` EU48'de 5.350mm. Bel halkası yasası yeniden açılmış | 4–8s |
-| T10 | **açıklık uyarısı pakete girmiyor** | `_opening_lines()` ("BURAYI DİKMEYİN / fermuar açıklığı") sadece `print-report.txt`'e gidiyor, hiçbir PDF'e girmiyor. **Alıcı arka ortayı kapatır, kafası geçmeyen bir elbise diker.** T4'ün aynı sınıfı, tek satırlık düzeltme | ~0.5s |
+| T10 | **açıklık uyarısı pakete girmiyor** | **KAPANDI 16.08** — uyarı artık `print-info.pdf` s.2'de çerçeveli kutu (adım listesinin İÇİNDE değil ÜSTÜNDE) + kalıbın kendi üstünde, dikilmeyen kenar boyunca etiket (A0 2×, A4 10×). Sayfa ile `print-report.txt` tek kaynaktan (`opening_facts()`) basılıyor, ayrışamazlar. **Ölçüm düzeltmesi:** T1 "hiçbir PDF'e girmiyor" dedi; doğrusu, `a65881e`'den beri adım 9 fermuarı anıyordu (1 satır) — eksik olan, o dikişin DİKİLMEYECEĞİ idi. Regresyon mandalı kuruldu: `printpack_sheet_check` (ctest #90), T4'ün montaj sırasını da tutuyor | ~1s |
 
 T5 için "saatler/günler" demiyorum: **tanımı yok, ÖLÇÜLEMEZ.** K5 cevabından sonra ~1s.
 
