@@ -47,7 +47,78 @@ void gaussLegendreNodes(int n, std::vector<double>& xs, std::vector<double>& ws)
     }
 }
 
+// Gauss-Legendre over [p0,p1] split into `cells` panels. The section speed has
+// two humps per turn, so one polynomial rule over a whole turn works far too
+// hard; ellipsePerimeter already uses four cells per turn for the same reason.
+double integrateSpeed(const Section& sec, double p0, double p1, int order, int cells) {
+    std::vector<double> xs, ws;
+    gaussLegendreNodes(order, xs, ws);
+    const double cell = (p1 - p0) / cells;
+    double total = 0.0;
+    for (int c = 0; c < cells; ++c) {
+        const double mid = p0 + cell * (c + 0.5);
+        for (int i = 0; i < order; ++i)
+            total += sec.speed(mid + 0.5 * cell * xs[i]) * ws[i] * 0.5 * cell;
+    }
+    return total;
+}
+
 }  // namespace
+
+double Section::arcLength(double phi0, double phi1, int order) const {
+    // one cell per quarter turn, minimum two
+    const int cells = std::max(2, 2 * static_cast<int>(std::ceil(std::fabs(phi1 - phi0) / (kPi / 2))));
+    return integrateSpeed(*this, phi0, phi1, order, cells);
+}
+
+double Section::perimeter(int order) const { return arcLength(0.0, 2.0 * kPi, order); }
+
+double Section::backArc(int order) const { return arcLength(kPi, 2.0 * kPi, order); }
+
+double Section::area(int order) const {
+    std::vector<double> xs, ws;
+    gaussLegendreNodes(order, xs, ws);
+    const int cells = 8;
+    const double cell = 2.0 * kPi / cells;
+    double total = 0.0;
+    for (int c = 0; c < cells; ++c) {
+        const double mid = cell * (c + 0.5);
+        for (int i = 0; i < order; ++i) {
+            const double p = mid + 0.5 * cell * xs[i];
+            total += (x(p) * dy(p) - y(p) * dx(p)) * ws[i] * 0.5 * cell;
+        }
+    }
+    return 0.5 * total;
+}
+
+void Section::normal(double phi, double& nx, double& ny) const {
+    const double u = dx(phi), v = dy(phi);
+    const double L = std::sqrt(u * u + v * v);
+    nx = v / L;
+    ny = -u / L;
+}
+
+void Section::offsetPoint(double d, double phi, double& px, double& py) const {
+    double nx = 0, ny = 0;
+    normal(phi, nx, ny);
+    px = x(phi) + d * nx;
+    py = y(phi) + d * ny;
+}
+
+double Section::minRadiusOfCurvature(int order) const {
+    // kappa is smooth and its extremes sit near the axes; a dense sweep is cheap
+    // and honest here — this number only gates the shell's refusal to exist, it
+    // is not in a hot loop, and a closed-form extremum would be a second thing
+    // to keep true.
+    const int n = std::max(720, order * 16);
+    double worst = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < n; ++i) {
+        const double k = curvature(2.0 * kPi * i / n);
+        if (k <= 0.0) return 0.0;  // not convex: no offset distance is safe
+        worst = std::min(worst, 1.0 / k);
+    }
+    return worst;
+}
 
 double ellipsePerimeter(double a, double b, int order) {
     std::vector<double> xs, ws;
@@ -117,6 +188,29 @@ void buildNatural(std::vector<double> t, std::vector<double> y,
     outM = std::move(m);
 }
 
+// Solve k = bd/bm so the unit section's BACK arc is the given fraction of its
+// perimeter. backArc/perimeter is continuous and strictly decreasing in k (more
+// front depth lengthens the front half and shortens the back's share), so
+// bisection is the whole method — no seed, no tuning, and it either brackets or
+// it says so. The bracket is the CONVEXITY limit |k| < 1/2 (see Section), kept
+// a hair inside so the returned section is strictly convex.
+double solveAsymmetry(double aspect, double backFraction) {
+    auto share = [&](double k) {
+        const Section s{aspect, 1.0, k};
+        return s.backArc(16) / s.perimeter(16);
+    };
+    double lo = -0.499, hi = 0.499;
+    const double fLo = share(lo), fHi = share(hi);
+    // share(lo) is the LARGEST back share, share(hi) the smallest
+    if (backFraction >= fLo || backFraction <= fHi)
+        throw std::runtime_error("backArcFraction outside what a convex section can express");
+    for (int i = 0; i < 80; ++i) {
+        const double mid = 0.5 * (lo + hi);
+        if (share(mid) > backFraction) lo = mid; else hi = mid;
+    }
+    return 0.5 * (lo + hi);
+}
+
 }  // namespace
 
 BodySurface::BodySurface(const BodyMeasurementsSnapshot& body, double statureMM, double capMM) {
@@ -128,11 +222,16 @@ BodySurface::BodySurface(const BodyMeasurementsSnapshot& body, double statureMM,
     // Ordered by increasing t, i.e. top of the body first: t = 0 is the neck
     // pole, t = pi the hip pole, matching the sphere convention in volume.cpp
     // so that r_t x r_phi points OUT and the enclosed volume comes back positive.
+    // A back share of 0 means the caller supplied none; fall back to 0.5, which
+    // is the symmetric section this model replaced — so an omission shows up as
+    // "no front and no back" rather than as a silently invented asymmetry.
+    auto backFrac = [](double f) { return f > 0.0 ? f : 0.5; };
     levels_ = {
-        {"neck", napeZ, body.neckMM(), kAspectNeck},
-        {"bust", bustZ, body.bustMM(), kAspectBust},
-        {"waist", waistZ, body.waistMM(), kAspectWaist},
-        {"hip", hipZ, body.hipMM(), kAspectHip},
+        // the neck has NO published front/back split; symmetric, declared
+        {"neck", napeZ, body.neckMM(), kAspectNeck, 0.5},
+        {"bust", bustZ, body.bustMM(), kAspectBust, backFrac(body.bustBackFrac)},
+        {"waist", waistZ, body.waistMM(), kAspectWaist, backFrac(body.waistBackFrac)},
+        {"hip", hipZ, body.hipMM(), kAspectHip, backFrac(body.hipBackFrac)},
     };
 
     const double zTop = napeZ + capMM;
@@ -140,22 +239,32 @@ BodySurface::BodySurface(const BodyMeasurementsSnapshot& body, double statureMM,
     zCentre_ = 0.5 * (zTop + zBot);
     zHalf_ = 0.5 * (zTop - zBot);
 
-    std::vector<double> ts, sigmas, aspects;
+    std::vector<double> ts, sigmas, aspects, asyms;
     for (const BodyLevel& lv : levels_) {
         const double t = parameterFor(lv.heightMM);
-        // Unit-scale section: semi-axes (aspect, 1). Perimeter scales linearly,
-        // so the calibration is one division and it is exact.
-        const double unit = ellipsePerimeter(lv.widthToDepth, 1.0, 16);
-        const double scale = lv.girthMM / unit;
         const double s = std::sin(t);
         if (s <= 0.0) throw std::runtime_error("level sits on a pole; widen capMM");
+
+        // TWO constraints, THREE unknowns (a, bm, bd), one declared assumption.
+        //   1. total perimeter        = chart girth
+        //   2. back arc / perimeter   = level.backArcFraction  (measured)
+        //   3. a / bm                 = level.widthToDepth     (ASSUMPTION)
+        // The shape parameter k = bd/bm is SCALE-FREE, so constraint 2 solves on
+        // the unit section alone and constraint 1 is then a single division —
+        // exactly the structure the ellipse calibration had, one root find wider.
+        const double k = solveAsymmetry(lv.widthToDepth, lv.backArcFraction);
+        const Section unitSec{lv.widthToDepth, 1.0, k};
+        const double scale = lv.girthMM / unitSec.perimeter(16);
+
         ts.push_back(t);
         sigmas.push_back(scale / s);
         aspects.push_back(lv.widthToDepth);
+        asyms.push_back(k);
     }
     knotT_ = ts;
     buildNatural(ts, sigmas, sigmaHat_.t, sigmaHat_.y, sigmaHat_.m);
     buildNatural(ts, aspects, aspect_.t, aspect_.y, aspect_.m);
+    buildNatural(ts, asyms, asym_.t, asym_.y, asym_.m);
 }
 
 double BodySurface::parameterFor(double heightMM) const {
@@ -170,28 +279,41 @@ Surface BodySurface::surface() const {
     // every use site (test harness, grading sweep).
     const Spline sigma = sigmaHat_;
     const Spline aspect = aspect_;
+    const Spline asym = asym_;
     const double zc = zCentre_;
     const double zh = zHalf_;
-    return [sigma, aspect, zc, zh](double t, double phi) {
+    return [sigma, aspect, asym, zc, zh](double t, double phi) {
+        // The pole-closure trick is untouched: the section SCALE still vanishes
+        // as sigmaHat(t)*sin(t), so both poles close C-2 the way a sphere does
+        // and Gauss-Bonnet still reports chi = 2. Asymmetry rides on the shape
+        // parameter k, which is scale-free and stays finite at the poles.
         const double scale = sigma.at(t) * std::sin(t);
-        const double rho = aspect.at(t);
-        return Vec3{scale * rho * std::cos(phi), scale * std::sin(phi), zc + zh * std::cos(t)};
+        const Section s{scale * aspect.at(t), scale, scale * asym.at(t)};
+        return Vec3{s.x(phi), s.y(phi), zc + zh * std::cos(t)};
     };
 }
 
-void BodySurface::sectionSemiAxes(double t, double& a, double& b) const {
+Section BodySurface::sectionAt(double t) const {
     const double scale = sigmaHat_.at(t) * std::sin(t);
-    b = scale;
-    a = scale * aspect_.at(t);
+    return Section{scale * aspect_.at(t), scale, scale * asym_.at(t)};
+}
+
+void BodySurface::sectionSemiAxes(double t, double& a, double& b) const {
+    const Section s = sectionAt(t);
+    a = s.a;
+    b = s.bm;
 }
 
 double BodySurface::heightAt(double t) const { return zCentre_ + zHalf_ * std::cos(t); }
 
 double BodySurface::measuredGirthMM(const BodyLevel& level, int order) const {
-    const double t = parameterFor(level.heightMM);
-    const double scale = sigmaHat_.at(t) * std::sin(t);
-    const double rho = aspect_.at(t);
-    return ellipsePerimeter(scale * rho, scale, order);
+    // The girth is the arc length of the SECTION CURVE, whatever that curve is.
+    // It used to be an ellipse perimeter; the definition never was.
+    return sectionAt(parameterFor(level.heightMM)).perimeter(order);
+}
+
+double BodySurface::measuredBackArcMM(const BodyLevel& level, int order) const {
+    return sectionAt(parameterFor(level.heightMM)).backArc(order);
 }
 
 }  // namespace stitchu

@@ -101,6 +101,10 @@ private:
 
     // Offset section curve and its enclosed area / perimeter, for a given d.
     void sectionAt(double t, double& a, double& b, double& d) const;
+    // THE section at t, front and back included. Every geometric quantity in
+    // this class goes through it; sectionAt()'s (a, b) cannot say where the
+    // front is, and a garment cut from (a, b) alone has no front and no back.
+    Section sectionCurve(double t) const;
     double capContribution(double t, double sign) const;
 };
 

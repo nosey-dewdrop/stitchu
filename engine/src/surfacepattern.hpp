@@ -89,7 +89,7 @@ struct SheathOptions {
     double easeWaistMM = 25.0;
     double easeHipMM = 50.0;
     int ringSamples = 128;             // the waist ring, sampled once; panels take half each
-    double rowStepMM = 8.0;            // vertical mesh resolution
+    double rowStepMM = 8;             // vertical mesh resolution
     int arapRounds = 60;
     int polishIters = 12000;
     double cutEmphasis = 120.0;  // polish weight locking the metric onto cut lines
@@ -99,6 +99,13 @@ struct SheathOptions {
     // waist darts within the resulting sub-panels. Fractions of the half-panel
     // phi span. Apex height is a fraction of the shaped region (bodice:
     // waist->bust, skirt: waist->hip).
+    // DART CAP, degrees of develop-deficit per dart. When > 0 the dart COLUMNS
+    // are derived from the panel's measured deficit instead of the fraction
+    // lists below, and the COUNT follows the load — the front and the back of a
+    // real body do not want the same number of darts, and once the body has a
+    // front and a back the engine can no longer pretend they do. Set 0 to use
+    // the declared fractions (the symmetric-body behaviour).
+    double maxDartDeg = 14;
     std::vector<double> bodiceCutFracs = {0.5};
     std::vector<double> bodiceDartFracs = {};
     std::vector<double> skirtCutFracs = {0.5};

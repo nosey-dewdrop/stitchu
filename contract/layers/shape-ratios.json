@@ -1,0 +1,57 @@
+{
+  "comment": "BACK share of the girth arc, per EU size. Source: engine/pattern-bridge/bodies/mean_all.yaml (MIT) graded by mapping.py. Semantics verified against GarmentCode bodice.py:22, bands.py:50, circle_skirt.py:150 — back_width is an ARC of the girth, not a chord. Produced by gen-shape-ratios.py; edit mapping.py, then regenerate.",
+  "drift_note": "the ratio moves with size because the grade adds equal cm to girth and to back width; that is a grading artefact, not a measurement, and it is published rather than smoothed",
+  "neck": "NO SOURCE for a neck front/back split — the neck ring stays symmetric (0.5) and that is a DECLARED ASSUMPTION, not data",
+  "sizes": [
+    "EU34",
+    "EU36",
+    "EU38",
+    "EU40",
+    "EU42",
+    "EU44",
+    "EU46",
+    "EU48"
+  ],
+  "back_arc_fraction": {
+    "EU34": {
+      "bust": 0.471891,
+      "waist": 0.452885,
+      "hip": 0.536952
+    },
+    "EU36": {
+      "bust": 0.473232,
+      "waist": 0.455643,
+      "hip": 0.535263
+    },
+    "EU38": {
+      "bust": 0.474451,
+      "waist": 0.458096,
+      "hip": 0.533721
+    },
+    "EU40": {
+      "bust": 0.475564,
+      "waist": 0.460292,
+      "hip": 0.532308
+    },
+    "EU42": {
+      "bust": 0.476584,
+      "waist": 0.462269,
+      "hip": 0.531009
+    },
+    "EU44": {
+      "bust": 0.477522,
+      "waist": 0.464058,
+      "hip": 0.52981
+    },
+    "EU46": {
+      "bust": 0.478388,
+      "waist": 0.465686,
+      "hip": 0.528701
+    },
+    "EU48": {
+      "bust": 0.479189,
+      "waist": 0.467172,
+      "hip": 0.527671
+    }
+  }
+}

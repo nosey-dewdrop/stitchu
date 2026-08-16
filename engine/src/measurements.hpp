@@ -18,6 +18,14 @@ struct BodyMeasurementsSnapshot {
     // B/C-cup assumption (bust - 70 mm) and the draft is byte-identical.
     double upperBustCM = 0;
 
+    // BACK share of the girth ARC at each ring — the numbers that give the body
+    // a front and a back at all. Source: shaperatios.gen.hpp (mean_all.yaml,
+    // MIT, graded by mapping.py); the semantics were verified against
+    // GarmentCode's own programs, not assumed. 0 means "not supplied" and the
+    // surface falls back to 0.5 — the old symmetric ellipse — so no caller
+    // silently changes shape by omitting them.
+    double bustBackFrac = 0, waistBackFrac = 0, hipBackFrac = 0;
+
     double bustMM() const { return bustCM * 10; }
     double waistMM() const { return waistCM * 10; }
     double hipMM() const { return hipCM * 10; }

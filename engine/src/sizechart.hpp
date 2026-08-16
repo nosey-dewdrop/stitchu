@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "measurements.hpp"
+#include "shaperatios.gen.hpp"
 
 namespace stitchu {
 
@@ -21,12 +22,27 @@ struct SizeChartEntry {
 // contract; the X-macro below is generated into contract.gen.hpp. Same
 // numbers, one source (backend EU_SIZES reads the same table).
 inline const std::vector<SizeChartEntry>& euSizeChart() {
-    static const std::vector<SizeChartEntry> chart = {
+    static const std::vector<SizeChartEntry> chart = [] {
+        std::vector<SizeChartEntry> c = {
 #define X(label, bust, waist, hip, shoulder, backLen, armLen, neck) \
         {label, {bust, waist, hip, shoulder, backLen, armLen, neck}},
-        STITCHU_CONTRACT_EU_SIZE_CHART(X)
+            STITCHU_CONTRACT_EU_SIZE_CHART(X)
 #undef X
-    };
+        };
+        // The chart carries GIRTHS and nothing else — it has never carried a
+        // shape. The back's share of each girth arc comes from the graded body
+        // (shaperatios.gen.hpp) and is grafted on here so there is still ONE
+        // lookup for callers. Sizes with no published ratio (EU50/EU52) keep 0
+        // and the surface falls back to the symmetric section, visibly.
+        for (SizeChartEntry& e : c)
+            for (const contract::BackArcRow& r : contract::kBackArcFraction)
+                if (e.label == r.label) {
+                    e.body.bustBackFrac = r.bust;
+                    e.body.waistBackFrac = r.waist;
+                    e.body.hipBackFrac = r.hip;
+                }
+        return c;
+    }();
     return chart;
 }
 

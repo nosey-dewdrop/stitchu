@@ -51,30 +51,28 @@ void buildNatural(std::vector<double> t, std::vector<double> y,
     outM = std::move(m);
 }
 
-// The offset section curve and its first derivative, in closed form.
-// c(phi)   = (a cos, b sin)                     the body section
-// n_hat    = (b cos, a sin) / L,  L = |c'|      outward unit normal, in plane
-// c_d(phi) = ((a + d b/L) cos, (b + d a/L) sin) the parallel curve
+// The offset section curve and its first derivative.
+//
+// This was a closed form that only a centred ELLIPSE has. The body section now
+// carries a front and a back (Section, bodysurface.hpp), so the offset is taken
+// along the true unit normal instead:
+//     c_d(phi) = c(phi) + d * n_hat(phi),      n_hat = (y', -x') / |c'|
+// and for a CONVEX section the offset curve's speed is exactly
+//     |c_d'| = |c'| * (1 + d*kappa)
+// with the tangent DIRECTION unchanged. That identity is what makes Steiner
+// exact: integrate it over a turn, the total curvature is 2*pi, and
+// P_d = P + 2*pi*d falls out for any convex curve. So ease stays a division and
+// never becomes a fitted constant — the reason this file exists at all.
 struct OffsetPoint {
     double x = 0, y = 0, dx = 0, dy = 0;
 };
 
-OffsetPoint offsetPoint(double a, double b, double d, double phi) {
-    const double s = std::sin(phi), c = std::cos(phi);
-    const double L2 = a * a * s * s + b * b * c * c;
-    const double L = std::sqrt(L2);
-    const double dL = (a * a - b * b) * s * c / L;
-
-    const double f = a + d * b / L;
-    const double g = b + d * a / L;
-    const double df = -d * b * dL / L2;
-    const double dg = -d * a * dL / L2;
-
+OffsetPoint offsetPoint(const Section& sec, double d, double phi) {
     OffsetPoint p;
-    p.x = f * c;
-    p.y = g * s;
-    p.dx = df * c - f * s;
-    p.dy = dg * s + g * c;
+    sec.offsetPoint(d, phi, p.x, p.y);
+    const double stretch = 1.0 + d * sec.curvature(phi);
+    p.dx = sec.dx(phi) * stretch;
+    p.dy = sec.dy(phi) * stretch;
     return p;
 }
 
@@ -144,20 +142,23 @@ void GarmentShell::sectionAt(double t, double& a, double& b, double& d) const {
     d = offset_.at(t);
 }
 
+// THE section at t. sectionAt() above keeps its (a, b) shape for callers that
+// only want a scale, but every geometric quantity below now goes through this
+// one, because (a, b) cannot say where the front is.
+Section GarmentShell::sectionCurve(double t) const { return body_->sectionAt(t); }
+
 Surface GarmentShell::surface() const {
     const BodySurface* body = body_;
     const Spline off = offset_;
     return [body, off](double t, double phi) {
-        double a = 0, b = 0;
-        body->sectionSemiAxes(t, a, b);
-        const OffsetPoint p = offsetPoint(a, b, off.at(t), phi);
+        const OffsetPoint p = offsetPoint(body->sectionAt(t), off.at(t), phi);
         return Vec3{p.x, p.y, body->heightAt(t)};
     };
 }
 
 double GarmentShell::sectionGirthMM(double t, int order) const {
-    double a = 0, b = 0, d = 0;
-    sectionAt(t, a, b, d);
+    const Section sec = sectionCurve(t);
+    const double d = offset_.at(t);
     std::vector<double> xs, ws;
     gaussLegendreNodes(order, xs, ws);
     const int cells = 4;
@@ -166,7 +167,7 @@ double GarmentShell::sectionGirthMM(double t, int order) const {
     for (int c = 0; c < cells; ++c) {
         const double mid = cell * (c + 0.5);
         for (int i = 0; i < order; ++i) {
-            const OffsetPoint p = offsetPoint(a, b, d, mid + 0.5 * cell * xs[i]);
+            const OffsetPoint p = offsetPoint(sec, d, mid + 0.5 * cell * xs[i]);
             total += std::sqrt(p.dx * p.dx + p.dy * p.dy) * ws[i] * 0.5 * cell;
         }
     }
@@ -174,8 +175,8 @@ double GarmentShell::sectionGirthMM(double t, int order) const {
 }
 
 double GarmentShell::sectionAreaMM2(double t, int order) const {
-    double a = 0, b = 0, d = 0;
-    sectionAt(t, a, b, d);
+    const Section sec = sectionCurve(t);
+    const double d = offset_.at(t);
     std::vector<double> xs, ws;
     gaussLegendreNodes(order, xs, ws);
     const int cells = 4;
@@ -184,7 +185,7 @@ double GarmentShell::sectionAreaMM2(double t, int order) const {
     for (int c = 0; c < cells; ++c) {
         const double mid = cell * (c + 0.5);
         for (int i = 0; i < order; ++i) {
-            const OffsetPoint p = offsetPoint(a, b, d, mid + 0.5 * cell * xs[i]);
+            const OffsetPoint p = offsetPoint(sec, d, mid + 0.5 * cell * xs[i]);
             total += 0.5 * (p.x * p.dy - p.y * p.dx) * ws[i] * 0.5 * cell;
         }
     }
@@ -197,14 +198,14 @@ PinchReport GarmentShell::pinch(int samples) const {
     worst.marginMM = 1e300;
     for (int i = 0; i <= samples; ++i) {
         const double t = tTop_ + (tBottom_ - tTop_) * i / samples;
-        double a = 0, b = 0, d = 0;
-        sectionAt(t, a, b, d);
-        const double major = std::max(a, b);
-        const double minor = std::min(a, b);
-        // Smallest radius of curvature of an ellipse sits at the end of the
-        // major axis and equals minor^2 / major. The parallel curve develops a
-        // cusp exactly when the offset reaches it.
-        const double rMin = major > 0.0 ? minor * minor / major : 0.0;
+        const Section sec = sectionCurve(t);
+        const double d = offset_.at(t);
+        // The parallel curve develops a cusp exactly when the offset reaches
+        // the smallest radius of curvature. For an ellipse that was minor^2 /
+        // major in closed form; the section now has a front and a back, so the
+        // section reports it itself — and returns 0 if it is not convex at all,
+        // which makes the shell refuse rather than fold through itself.
+        const double rMin = sec.minRadiusOfCurvature();
         const double margin = rMin - d;
         if (margin < worst.marginMM) {
             worst.marginMM = margin;
@@ -236,9 +237,7 @@ ShellMeasurement GarmentShell::measure(int cellsT, int cellsPhi, int order) cons
     // an ease volume measured against anything else would be a different solid.
     const BodySurface* body = body_;
     Surface bare = [body](double t, double phi) {
-        double a = 0, b = 0;
-        body->sectionSemiAxes(t, a, b);
-        const OffsetPoint p = offsetPoint(a, b, 0.0, phi);
+        const OffsetPoint p = offsetPoint(body->sectionAt(t), 0.0, phi);
         return Vec3{p.x, p.y, body->heightAt(t)};
     };
     const SurfaceIntegrals bareWall =
@@ -247,9 +246,8 @@ ShellMeasurement GarmentShell::measure(int cellsT, int cellsPhi, int order) cons
     for (int k = 0; k < 2; ++k) {
         const double t = k == 0 ? tTop_ : tBottom_;
         const double sign = k == 0 ? 1.0 : -1.0;
-        double a = 0, b = 0;
-        body_->sectionSemiAxes(t, a, b);
-        bareVolume += (1.0 / 3.0) * sign * body_->heightAt(t) * kPi * a * b;
+        bareVolume += (1.0 / 3.0) * sign * body_->heightAt(t) *
+                      body_->sectionAt(t).area(24);
     }
     out.bodyVolumeMM3 = bareVolume;
     out.easeVolumeMM3 = out.garmentVolumeMM3 - out.bodyVolumeMM3;
@@ -260,10 +258,10 @@ ShellMeasurement GarmentShell::measure(int cellsT, int cellsPhi, int order) cons
     const int rings = 64;
     for (int i = 0; i <= rings; ++i) {
         const double t = tTop_ + (tBottom_ - tTop_) * i / rings;
-        double a = 0, b = 0, d = 0;
-        sectionAt(t, a, b, d);
-        const double basePerimeter = ellipsePerimeter(a, b, 24);
-        const double baseArea = kPi * a * b;
+        const Section sec = sectionCurve(t);
+        const double d = offset_.at(t);
+        const double basePerimeter = sec.perimeter(24);
+        const double baseArea = sec.area(24);
 
         const double girthErr =
             std::fabs(sectionGirthMM(t, 24) - (basePerimeter + 2.0 * kPi * d));
