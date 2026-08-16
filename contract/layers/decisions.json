@@ -1,0 +1,38 @@
+{
+ "_rol": "KARAR DEFTERI. Bir karar buraya yazilir ve makine UYGULANDI MI diye bakar. Mekanizma teshisi 2026-08-16: bulgu ROADMAP'e yaziliyor, sonraki oturum bilmiyor, hic uygulanmiyor. BFF/OptCuts kaniti: ROADMAP'te aylardir 'ALINIR' yaziyor, core/third_party'de yok. Yazip gecmek artik kirmizi basar.",
+ "kararlar": [
+  {
+   "id": "bff",
+   "karar": "BFF (Boundary First Flattening) alinir — sinir uzunlugu DAYATILABILIR duzlestirme",
+   "kaynak": "ROADMAP.md 'LISANS / ALINIR' + M7 geometri cekirdegi",
+   "lisans": "MIT (DOGRULANACAK)",
+   "kanit_yolu": "core/third_party/bff",
+   "durum": "KARAR VERILDI, UYGULANMADI",
+   "neden_onemli": "elde yazilan ARAP+yay cozucusunun tum gece savastigi sey: dikis uzunlugunu ceza degil KISIT yapmak"
+  },
+  {
+   "id": "optcuts",
+   "karar": "OptCuts alinir — otomatik dikis yerlesimi",
+   "kaynak": "ROADMAP.md 'LISANS / ALINIR' + M7",
+   "lisans": "MIT (DOGRULANACAK)",
+   "kanit_yolu": "core/third_party/optcuts",
+   "durum": "KARAR VERILDI, UYGULANMADI"
+  },
+  {
+   "id": "talimat-kitapcigi",
+   "karar": "Talimat kitapcigi — montaj sirasi dikis grafiginin topolojik siralamasindan",
+   "kaynak": "ROADMAP.md M6: 'algilanan degerin %40-50'si'",
+   "lisans": "-",
+   "kanit_yolu": "engine/pattern-bridge/instructions.py",
+   "durum": "KARAR VERILDI, UYGULANMADI"
+  },
+  {
+   "id": "ocg-katmanli-pdf",
+   "karar": "Katmanli PDF (OCG) — alici sadece kendi bedenini bassin",
+   "kaynak": "ROADMAP.md M5",
+   "lisans": "-",
+   "kanit_yolu": "engine/pattern-bridge/ocg.py",
+   "durum": "KARAR VERILDI, UYGULANMADI"
+  }
+ ]
+}

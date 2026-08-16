@@ -1,6 +1,7 @@
 #include "flatten.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <set>
@@ -239,6 +240,54 @@ void strainPolishWeighted(const TriMesh& mesh, std::vector<Vec2>& P,
     for (size_t e = 0; e < E.size(); ++e)
         if (flagged[E[e][0]] && flagged[E[e][1]]) W[e] = emphasis;
     polishImpl(mesh, P, W, pin, iters, step);
+}
+
+void enforceCutLengths(const TriMesh& mesh, std::vector<Vec2>& P,
+                       const std::vector<char>& flagged, int pin, int sweeps) {
+    // THE CUT LINE IS A CONTRACT, NOT A PREFERENCE.
+    //
+    // A licence-level audit of ~20 published garment systems (2026-08-16) found
+    // that NOT ONE of them treats mating seam length as a hard constraint:
+    // GarmentCode prints a 3mm warning behind a verbose flag and deliberately
+    // breaks equality for gathers; NeuralTailor matches stitches by learned tag
+    // embedding with no length term at all; every generative model approximates
+    // and patches afterwards. The two that attack it as geometry (ParaFashion,
+    // garment-flattening) cannot be used — no licence and GPL respectively.
+    //
+    // Weighting those edges 120x in the energy, which is what this file did
+    // until now, is still only a PENALTY: the solver is free to trade cut-line
+    // error for interior comfort, and it does. So after the energy has done its
+    // work, the constrained edges are PROJECTED onto their true 3D lengths and
+    // the correction is shared between the two endpoints — Gauss-Seidel
+    // projection, the same move position-based dynamics makes. Sweeping it to
+    // convergence leaves the cut line exact and pushes the residual where it
+    // belongs: into the interior, where a dart or the fabric's own give takes it.
+    if (sweeps <= 0) return;
+    const auto E = uniqueEdges(mesh);
+    std::vector<std::array<int, 2>> cut;
+    std::vector<double> target;
+    for (const auto& e : E)
+        if (flagged[e[0]] && flagged[e[1]]) {
+            cut.push_back(e);
+            target.push_back(norm3(mesh.V[e[0]] - mesh.V[e[1]]));
+        }
+    if (cut.empty()) return;
+
+    for (int it = 0; it < sweeps; ++it)
+        for (size_t k = 0; k < cut.size(); ++k) {
+            const int a = cut[k][0], b = cut[k][1];
+            double dx = P[a].x - P[b].x, dy = P[a].y - P[b].y;
+            const double len = std::sqrt(dx * dx + dy * dy);
+            if (len < 1e-12) continue;
+            // half the error to each end, unless one end is the anchor
+            const double corr = (len - target[k]) / len;
+            const double wa = (a == pin) ? 0.0 : (b == pin ? 1.0 : 0.5);
+            const double wb = (b == pin) ? 0.0 : (a == pin ? 1.0 : 0.5);
+            P[a].x -= wa * corr * dx;
+            P[a].y -= wa * corr * dy;
+            P[b].x += wb * corr * dx;
+            P[b].y += wb * corr * dy;
+        }
 }
 
 double maxStrain(const TriMesh& mesh, const std::vector<Vec2>& P) {

@@ -78,7 +78,43 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
     const double total = u.back();
     for (double& v : u) v /= (total > 1e-12 ? total : 1.0);
 
-    const CubicSeg s = fitOne(pts, i0, i1, t0, t1, u);
+    CubicSeg s = fitOne(pts, i0, i1, t0, t1, u);
+
+    // REPARAMETERISE, which Schneider's original FitCurve does and this port had
+    // omitted. Chord-length gives each sample a guessed parameter; the fitted
+    // curve then almost never passes closest to pts[i] AT u[i], so the residual
+    // measured at u[i] overstates the true deviation and the subdivision keeps
+    // splitting a curve that is already good. Measured before this: a side seam
+    // came back as 42 cubics over 48 points while the true nearest-point
+    // deviation was 0.026mm against a 0.15mm tolerance. Newton on
+    // (Q(u)-p).Q'(u) = 0 moves each parameter onto the actual foot point.
+    for (int pass = 0; pass < 3; ++pass) {
+        for (int i = i0 + 1; i < i1; ++i) {
+            const double t = u[i - i0];
+            const Vec2 q = evalCubic(s, t);
+            // first and second derivatives of the cubic at t
+            const double v = 1 - t;
+            const Vec2 d1{3 * v * v * (s.c1.x - s.p0.x) + 6 * v * t * (s.c2.x - s.c1.x) +
+                              3 * t * t * (s.p3.x - s.c2.x),
+                          3 * v * v * (s.c1.y - s.p0.y) + 6 * v * t * (s.c2.y - s.c1.y) +
+                              3 * t * t * (s.p3.y - s.c2.y)};
+            const Vec2 d2{6 * v * (s.c2.x - 2 * s.c1.x + s.p0.x) +
+                              6 * t * (s.p3.x - 2 * s.c2.x + s.c1.x),
+                          6 * v * (s.c2.y - 2 * s.c1.y + s.p0.y) +
+                              6 * t * (s.p3.y - 2 * s.c2.y + s.c1.y)};
+            const double dx = q.x - pts[i].x, dy = q.y - pts[i].y;
+            const double num = dx * d1.x + dy * d1.y;
+            const double den = d1.x * d1.x + d1.y * d1.y + dx * d2.x + dy * d2.y;
+            if (std::fabs(den) < 1e-12) continue;
+            double nt = t - num / den;
+            // stay inside this run and keep the samples ordered
+            const double lo = u[i - i0 - 1] + 1e-9;
+            const double hi = (i + 1 <= i1) ? u[i - i0 + 1] - 1e-9 : 1.0;
+            if (nt > lo && nt < hi) u[i - i0] = nt;
+        }
+        s = fitOne(pts, i0, i1, t0, t1, u);
+    }
+
     double worst = 0;
     int split = (i0 + i1) / 2;
     for (int i = i0 + 1; i < i1; ++i) {

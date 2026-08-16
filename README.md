@@ -1,6 +1,8 @@
 # stitchu
 
-**A deterministic made-to-measure pattern CAD engine.** Give it a body and a recipe, and it drafts a sewing pattern the way industrial CAD does — not as a picture that gets nudged until it looks right, but as a formula-driven construction document that regenerates exactly when the measurements change. Every point, curve, dart and seam is computed by a C++ kernel from published pattern-cutting formulas. Same recipe, same body, same millimetres — byte for byte.
+**A deterministic FIXED-SIZE (EU34-48) pattern CAD engine.** Give it a body and a recipe, and it drafts a sewing pattern the way industrial CAD does — not as a picture that gets nudged until it looks right, but as a formula-driven construction document that regenerates exactly when the measurements change. Every point, curve, dart and seam is computed by a C++ kernel from published pattern-cutting formulas. Same recipe, same body, same millimetres — byte for byte.
+
+Not made-to-measure, and that is a decision with evidence behind it: ZOZO, unspun and Fayma all died on MTM and Lekala hit a quality ceiling, because a girth does not determine a shape — two bodies with the same bust can need different patterns. stitchu sells graded fixed sizes. The run is EU34-48 because that is exactly the range for which the body contract publishes a front/back split (contract/layers/shape-ratios.json); EU50 and EU52 have no published ratio and are not claimed.
 
 The moat is not a chat box. Take the AI away and what remains is a real CAD: a recipe model, a deterministic geometry kernel, and an industry-standard interchange path. Below is what that kernel can already do, each capability proven by running it — not asserted.
 

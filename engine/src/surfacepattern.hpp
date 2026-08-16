@@ -93,7 +93,17 @@ struct SheathOptions {
     // anchor at the WAIST row, so a shoulder dart or a neckline dart cannot be
     // expressed at all, and those are exactly the two a bodice with shoulders
     // needs. Turn this on when Slit gains a top anchor, not before.
-    bool shoulderTop = false;
+    bool shoulderTop = true;
+    // SKIM: the bodice runs straight from the waist ring to the shoulder instead
+    // of following the bust and the neck. This is what a 1960s shift IS, and it
+    // is a cone, so it develops exactly.
+    bool skimBodice = true;
+    // A-LINE HEM SWEEP, mm of finished lower-edge circumference. SOURCED from
+    // 1960s Big-4 envelope backs, which printed "width at lower edge" for
+    // exactly this garment: 48.5-52.5 inches over a 36 inch hip (Simplicity
+    // 7129 c.1967, Vogue 6900 c.1966, Vogue Couturier 2063 / Valentino 1969).
+    // 1270mm = 50 inches, the middle of that measured band. 0 = straight sheath.
+    double hemSweepMM = 1270.0;
 
     // NECKLINE — design dials, and declared as such. A neckline depth is not a
     // body measurement: the same body wears a crew and a scoop. The one thing
@@ -110,6 +120,10 @@ struct SheathOptions {
     double rowStepMM = 8;             // vertical mesh resolution
     int arapRounds = 60;
     int polishIters = 12000;
+    int cutRounds = 40;          // alternations of {relax, project} — the
+                                 // constraint lives INSIDE the solve, not after it
+    int cutSweeps = 400;         // hard projection of the cut lines onto their
+                                 // 3D lengths after the energy has run
     double cutEmphasis = 120.0;  // polish weight locking the metric onto cut lines
     // SUPPRESSION LAYOUT — design decisions (G2: only the total is a law).
     // cutFracs are FULL vertical cuts through the half-panel (princess seams;

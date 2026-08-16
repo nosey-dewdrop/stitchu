@@ -52,6 +52,14 @@ void strainPolishWeighted(const TriMesh& mesh, std::vector<Vec2>& P,
                           const std::vector<char>& flagged, double emphasis,
                           int pin = 0, int iters = 4000, double step = 0.2);
 
+// Project the flagged (cut-line) edges onto their exact 3D lengths, sharing the
+// correction between endpoints, swept to convergence. This is what turns the
+// sewing contract from a PENALTY the solver may trade away into a CONSTRAINT it
+// must satisfy — the thing the audited prior art does not do.
+void enforceCutLengths(const TriMesh& mesh, std::vector<Vec2>& P,
+                       const std::vector<char>& flagged, int pin = 0,
+                       int sweeps = 200);
+
 // Worst |2D edge length − 3D edge length| / 3D length over all mesh edges.
 // This is the certificate number: <0.1% for a developable surface, <0.5% is
 // the garment gate.

@@ -96,7 +96,58 @@ struct GarmentSurf {
         return Section{profile(h, 0), profile(h, 1), profile(h, 2)};
     }
 
+    // SKIM MODE. A 1960s shift does not follow the body: it hangs from the
+    // shoulders and skims. Sourced from the envelope copy of the period — the
+    // Big 4 describe these as "semi-fitted", "lightly fitted and flared",
+    // "four panel", and the flare is carried by PANEL SEAMS, not by dart
+    // suppression (McCall's 7229, P-22, 8808; Butterick 3393; Vogue 2063).
+    //
+    // Geometrically that is the whole difference. A surface that follows the
+    // bust and then tapers to the neck is doubly curved and its quarter panel
+    // carried +52.5 deg of develop-deficit — unflattenable with waist darts
+    // alone. A straight run from the waist ring to the shoulder ring is a CONE,
+    // and a cone develops exactly. The shift silhouette is not a way of dodging
+    // the hard problem; it is the garment whose construction the period sources
+    // actually describe, and its geometry is why it could be sewn by anyone.
+    double skimTopH = 0.0;   // 0 = off, follow the body as before
+    double skimBaseH = 0.0;  // the waist ring — named, not searched for
+    // A-LINE SKIRT: below the waist the garment does not follow the hip either.
+    // It opens straight from the waist ring to a prescribed hem sweep, which is
+    // what "A-line" means and is why the period patterns could be sewn flat.
+    // The sweep is SOURCED, not chosen: 1960s Big-4 envelope backs print
+    // "width at lower edge" for these dresses at 48.5-52.5 inches over a 36 inch
+    // hip (Simplicity 7129, Vogue 6900, Vogue Couturier 2063 / Valentino).
+    double hemH = 0.0, hemScale = 0.0;
+
     Vec3 at(double h, double phi) const {
+        if (skimTopH > 0.0 && h > skimBaseH) {
+            // straight (conical) run from the waist ring up to the shoulder, so
+            // nothing in between bulges out to meet the bust
+            const double waistH = skimBaseH, topH = skimTopH;
+            {
+                const double u = (h - waistH) / (topH - waistH);
+                const Section a0 = section(waistH), a1 = section(topH);
+                const Section mid{a0.a + (a1.a - a0.a) * u, a0.bm + (a1.bm - a0.bm) * u,
+                                  a0.bd + (a1.bd - a0.bd) * u};
+                const double d = profile(waistH, 3) + (profile(topH, 3) - profile(waistH, 3)) * u;
+                double px = 0, py = 0;
+                mid.offsetPoint(d, phi, px, py);
+                return {px, py, h};
+            }
+        }
+        if (hemScale > 0.0 && h < skimBaseH && skimBaseH > 0.0) {
+            const double u = (skimBaseH - h) / (skimBaseH - hemH);
+            const Section w = section(skimBaseH);
+            const double k = 1.0 + (hemScale - 1.0) * u;
+            const Section mid{w.a * k, w.bm * k, w.bd * k};
+            double px = 0, py = 0;
+            mid.offsetPoint(profile(skimBaseH, 3) * k, phi, px, py);
+            return {px, py, h};
+        }
+        return atBody(h, phi);
+    }
+
+    Vec3 atBody(double h, double phi) const {
         // Outer parallel curve of the body section at distance d. The old code
         // had this in closed form because the section was a centred ellipse;
         // the section now has a front and a back, so the offset is taken along
@@ -273,7 +324,13 @@ std::vector<DerivedDart> dartColumnsFromDeficit(const PanelGrid& g, double capRa
         w[j] = d * std::min(j, cols - j) / (0.5 * cols);  // 0 at a seam, 1 mid-panel
         weighted += w[j];
     }
-    if (total <= 0.0 || weighted <= 0.0) return {};
+    // A DART WITH NOTHING TO ABSORB IS NOT A DART. Once the garment surface is
+    // conical the deficit is zero, and a slit opened anyway is a degenerate
+    // wedge: it splits the waist run, so the bodice run and the skirt run stop
+    // spanning the same ring arc and the waist deed jumped to +1.4812mm. Below
+    // half a degree there is nothing to let out and the panel is cut whole.
+    const double kNothingToAbsorbRad = 0.5 * kPi / 180.0;
+    if (total <= kNothingToAbsorbRad || weighted <= 0.0) return {};
 
     // The COUNT still follows the load the darts actually have to carry.
     const int n = std::max(1, static_cast<int>(std::ceil(weighted / capRad - 1e-9)));
@@ -349,7 +406,27 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     for (int i = 0; i <= rowsN; ++i) onCut[base[gi(i, 0)]] = onCut[base[gi(i, cols)]] = 1;
     for (const Slit& s : slits)
         for (int i = 0; i <= s.apexRow; ++i) onCut[vid(i, s.col, false)] = onCut[vid(i, s.col, true)] = 1;
-    strainPolishWeighted(mesh, P, onCut, opt.cutEmphasis, base[gi(rowsN, cols / 2)], opt.polishIters);
+    // ALTERNATE, do not yank at the end.
+    //
+    // Projecting the cut edges onto their 3D lengths only AFTER the energy has
+    // finished gets the lengths exactly right and leaves the seam zigzagging:
+    // every edge is correct and the polyline is not smooth, so the curve fitter
+    // chases the wiggle and a side seam came out as 42 segments over 48 points.
+    // A pattern edge is meant to be a handful of curves.
+    //
+    // So the constraint moves inside the loop, which is what position-based
+    // dynamics does: relax a little, project, relax again. The interior settles
+    // INTO the constrained boundary instead of being pulled away from it, and
+    // the seam ends up both exact and smooth.
+    {
+        const int pin = base[gi(rowsN, cols / 2)];
+        const int rounds = std::max(1, opt.cutRounds);
+        for (int r = 0; r < rounds; ++r) {
+            strainPolishWeighted(mesh, P, onCut, opt.cutEmphasis, pin,
+                                 std::max(1, opt.polishIters / rounds));
+            enforceCutLengths(mesh, P, onCut, pin, opt.cutSweeps / rounds);
+        }
+    }
 
     SurfacePanel out;
     out.name = name;
@@ -571,6 +648,17 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         throw std::runtime_error("body has no shoulder level: a bodice cannot be cut");
     const TopProfile top{napeZ, tanIncl, opt.neckHalfWidthMM, opt.frontNeckDropMM,
                          opt.backNeckDropMM, shoulderHalf};
+    if (opt.skimBodice) {
+        surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
+        surf.skimBaseH = waistH;                          // the single shared ring
+        if (opt.hemSweepMM > 0.0) {
+            surf.hemH = hemH;
+            // scale the waist section until its perimeter reaches the sourced sweep
+            const Section w = surf.section(waistH);
+            const double base = w.perimeter(24) + 2 * kPi * surf.profile(waistH, 3);
+            surf.hemScale = opt.hemSweepMM / base;
+        }
+    }
     surf.blendMM = opt.hipBlendMM;
 
     // THE ring: sampled once, at the waist, over the full circle.

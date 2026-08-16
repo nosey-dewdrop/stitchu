@@ -23,6 +23,9 @@ python3 "$ROOT/scripts/katman-lint.py" --strict || FAILS=$((FAILS+1))
 # different body than the one the contract publishes.
 "$VENVPY" "$ROOT/engine/pattern-bridge/gen-shape-ratios.py" --check || FAILS=$((FAILS+1))
 
+adim "H1b — KARAR DEFTERİ: yazılmış ama yapılmamış karar var mı"
+python3 "$ROOT/scripts/karar-lint.py" || true
+
 adim "H2/L2 — shell + drape (ctest alt kümesi)"
 if [ -d "$ROOT/engine/build" ]; then
   ctest --test-dir "$ROOT/engine/build" -R "body_volume|garment_shell|drape" 2>&1 | grep -E "tests passed|Failed" || FAILS=$((FAILS+1))
