@@ -289,12 +289,19 @@ PanelGrid buildGrid(const GarmentSurf& surf,
 double dist3(Vec3 a, Vec3 b) { return std::sqrt(dot(a - b, a - b)); }
 double dist2(Vec2 a, Vec2 b) { return std::hypot(a.x - b.x, a.y - b.y); }
 
-// A dart as a mesh SLIT: the column is split from the waist row up to (not
+// A dart as a mesh SLIT: the column is split from one BOUNDARY row to (not
 // including) the apex row. The flatten opens the slit into a wedge — the
 // develop-deficit surfacing as geometry, not as a formula (G2).
+//
+// TWO ANCHORS. A waist slit runs rows [0, apexRow) and opens on the waist ring;
+// a TOP slit runs rows (apexRow, rowsN] and opens on the far boundary — the
+// neckline/shoulder/armhole edge. The second one is the shoulder dart and the
+// neckline dart, which a bodice with shoulders needs and which could not be
+// expressed at all while every slit was anchored at the waist.
 struct Slit {
     int col = 0;
     int apexRow = 0;
+    bool fromTop = false;  // anchor on the far row instead of the waist row
 };
 
 // PER-COLUMN DEVELOP-DEFICIT of an un-slit panel grid, in radians.
@@ -304,7 +311,14 @@ struct Slit {
 // discrete amount that wants out at a vertex is its angle defect: 2*pi minus the
 // angles of the triangles around it. Summing that per COLUMN says where the cuts
 // belong — which is how a drafter decides where a dart goes, except measured.
-std::vector<double> columnDeficit(const PanelGrid& g) {
+//
+// ROW BAND. A dart can only absorb curvature it can REACH: a waist-anchored slit
+// runs from the waist row up to its apex and cannot let out anything that sits
+// above it, and a top-anchored slit cannot reach below its own tip. So the same
+// per-column defect is summed over a row range [iLo, iHi) rather than over the
+// whole panel, and each band is answered by the darts that can get to it.
+// iLo/iHi default to the full interior, which is the original behaviour.
+std::vector<double> columnDeficitRows(const PanelGrid& g, int iLo, int iHi) {
     const int rowsN = static_cast<int>(g.rows.size()) - 1;
     const int cols = static_cast<int>(g.rows[0].size()) - 1;
     std::vector<double> perCol(cols + 1, 0.0);
@@ -328,9 +342,14 @@ std::vector<double> columnDeficit(const PanelGrid& g) {
             sum[idx(i + 1, j)] += ang(v10, v11, v01);
             sum[idx(i + 1, j + 1)] += ang(v11, v01, v10);
         }
-    for (int i = 1; i < rowsN; ++i)
+    const int lo = std::max(1, iLo), hi = std::min(rowsN, iHi);
+    for (int i = lo; i < hi; ++i)
         for (int j = 1; j < cols; ++j) perCol[j] += 2 * kPi - sum[idx(i, j)];
     return perCol;
+}
+
+std::vector<double> columnDeficit(const PanelGrid& g) {
+    return columnDeficitRows(g, 1, static_cast<int>(g.rows.size()) - 1);
 }
 
 // Dart columns DERIVED from that deficit rather than declared as fractions.
@@ -346,10 +365,12 @@ std::vector<double> columnDeficit(const PanelGrid& g) {
 struct DerivedDart {
     int col;
     double loadRad;  // the share of the panel's deficit this dart has to carry
+    bool fromTop = false;  // anchored on the far boundary, not on the waist ring
 };
 
-std::vector<DerivedDart> dartColumnsFromDeficit(const PanelGrid& g, double capRad) {
-    const std::vector<double> def = columnDeficit(g);
+std::vector<DerivedDart> dartColumnsFromDeficitRows(const PanelGrid& g, double capRad, int iLo,
+                                                   int iHi, bool fromTop) {
+    const std::vector<double> def = columnDeficitRows(g, iLo, iHi);
     const int cols = static_cast<int>(def.size()) - 1;
     if (cols < 4 || capRad <= 0.0) return {};
 
@@ -389,11 +410,15 @@ std::vector<DerivedDart> dartColumnsFromDeficit(const PanelGrid& g, double capRa
     for (int j = 1; j < cols && k < n; ++j) {
         run += w[j];
         while (k < n && run >= (k + 0.5) / n * weighted) {
-            if (out.empty() || out.back().col != j) out.push_back({j, total / n});
+            if (out.empty() || out.back().col != j) out.push_back({j, total / n, fromTop});
             ++k;
         }
     }
     return out;
+}
+
+std::vector<DerivedDart> dartColumnsFromDeficit(const PanelGrid& g, double capRad) {
+    return dartColumnsFromDeficitRows(g, capRad, 1, static_cast<int>(g.rows.size()) - 1, false);
 }
 
 SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
@@ -411,13 +436,19 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
             base[gi(i, j)] = static_cast<int>(mesh.V.size());
             mesh.V.push_back(g.rows[i][j]);
         }
-    // right-side copies of split vertices
+    // right-side copies of split vertices. A waist slit duplicates rows
+    // [0, apexRow); a top slit duplicates (apexRow, rowsN]. The apex vertex
+    // itself is never duplicated — that is what makes it the tip of a wedge
+    // rather than a second cut.
     std::map<std::pair<int, int>, int> dup;  // (i, col) -> vertex id
-    for (const Slit& s : slits)
-        for (int i = 0; i < s.apexRow; ++i) {
+    for (const Slit& s : slits) {
+        const int lo = s.fromTop ? s.apexRow + 1 : 0;
+        const int hi = s.fromTop ? rowsN : s.apexRow - 1;
+        for (int i = lo; i <= hi; ++i) {
             dup[{i, s.col}] = static_cast<int>(mesh.V.size());
             mesh.V.push_back(g.rows[i][s.col]);
         }
+    }
     auto vid = [&](int i, int j, bool fromRight) {
         if (fromRight) {
             auto it = dup.find({i, j});
@@ -446,15 +477,29 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     }
     for (const auto& [key, id] : dup) P0[id] = P0[base[gi(key.first, key.second)]];
 
-    // pin away from any slit so the anchor never sits on a dart leg
-    std::vector<Vec2> P = arapFlatten(mesh, P0, base[gi(rowsN, cols / 2)], opt.arapRounds);
+    // pin away from any slit so the anchor never sits on a dart leg. The far
+    // row used to be slit-free by construction; with top anchors it is not, so
+    // the pin walks off any top slit column instead of assuming.
+    int pinCol = cols / 2;
+    auto topSlitAtCol = [&](int c) {
+        for (const Slit& s : slits)
+            if (s.fromTop && s.col == c) return true;
+        return false;
+    };
+    while (pinCol > 0 && topSlitAtCol(pinCol)) --pinCol;
+    const int pinV = base[gi(rowsN, pinCol)];
+    std::vector<Vec2> P = arapFlatten(mesh, P0, pinV, opt.arapRounds);
     // polish with the metric LOCKED onto cut lines: boundary edges (incl. dart
     // legs) carry the sewing contract, the interior carries the ease budget
     std::vector<char> onCut(mesh.V.size(), 0);
     for (int j = 0; j <= cols; ++j) onCut[base[gi(0, j)]] = onCut[base[gi(rowsN, j)]] = 1;
     for (int i = 0; i <= rowsN; ++i) onCut[base[gi(i, 0)]] = onCut[base[gi(i, cols)]] = 1;
-    for (const Slit& s : slits)
-        for (int i = 0; i <= s.apexRow; ++i) onCut[vid(i, s.col, false)] = onCut[vid(i, s.col, true)] = 1;
+    for (const Slit& s : slits) {
+        const int lo = s.fromTop ? s.apexRow : 0;
+        const int hi = s.fromTop ? rowsN : s.apexRow;
+        for (int i = lo; i <= hi; ++i)
+            onCut[vid(i, s.col, false)] = onCut[vid(i, s.col, true)] = 1;
+    }
     // ALTERNATE, do not yank at the end.
     //
     // Projecting the cut edges onto their 3D lengths only AFTER the energy has
@@ -468,7 +513,7 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     // INTO the constrained boundary instead of being pulled away from it, and
     // the seam ends up both exact and smooth.
     {
-        const int pin = base[gi(rowsN, cols / 2)];
+        const int pin = pinV;
         const int rounds = std::max(1, opt.cutRounds);
         for (int r = 0; r < rounds; ++r) {
             strainPolishWeighted(mesh, P, onCut, opt.cutEmphasis, pin,
@@ -547,10 +592,14 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
         if (!cv.empty() && sink) sink->push_back(static_cast<int>(cv.size()) - 1);
         cv.push_back(meshId);
     };
-    std::map<int, const Slit*> slitAt;
-    for (const Slit& s : slits) slitAt[s.col] = &s;
+    // A TOP slit never touches the waist row, so it neither appears in the waist
+    // walk nor breaks a waist seam run. That is the whole point of the anchor:
+    // suppression can now be taken out of the garment without cutting the one
+    // shared ring.
+    std::map<int, const Slit*> slitAt, topSlitAt;
+    for (const Slit& s : slits) (s.fromTop ? topSlitAt : slitAt)[s.col] = &s;
     std::set<int> breakAt(breakCols.begin(), breakCols.end());
-    for (const Slit& s : slits) breakAt.insert(s.col);
+    for (const auto& [c, s] : slitAt) breakAt.insert(c);
     std::vector<int> run;  // the current waist seam-run
 
     // dart legs are TRUED: each leg is one straight contour edge from its ring
@@ -587,8 +636,33 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     }
     for (int i = 1; i <= rowsN; ++i) push(base[gi(i, cols)], &out.seam1Edges);
     {
+        // The far row is walked with phi DESCENDING, so a top slit is met from
+        // its RIGHT side first (the duplicated copy), goes down to the apex, and
+        // comes back up on the left (base) — the mirror image of the waist walk,
+        // and consistent with the triangulation, where column j's left-hand cell
+        // takes the base copy and its right-hand cell takes the duplicate.
         std::vector<int> far;
-        for (int j = cols - 1; j >= 0; --j) push(base[gi(rowsN, j)], &far);
+        for (int j = cols - 1; j >= 0; --j) {
+            auto it = topSlitAt.find(j);
+            if (it != topSlitAt.end() && j > 0) {
+                const Slit& s = *it->second;
+                size_t d = 0;
+                while (slits[d].col != s.col || !slits[d].fromTop) ++d;
+                double colLen = 0.0;
+                for (int i = s.apexRow; i < rowsN; ++i)
+                    colLen += dist3(g.rows[i][j], g.rows[i + 1][j]);
+                push(vid(rowsN, j, true), &far);   // far arc into the right leg top
+                apexPos.push_back(static_cast<int>(cv.size()));
+                push(base[gi(s.apexRow, j)], &darts[d].legA);  // straight leg down
+                legRef3D[darts[d].legA.back()] = colLen;
+                std::vector<int> up;
+                push(base[gi(rowsN, j)], &up);                 // straight leg up
+                legRef3D[up.back()] = colLen;
+                darts[d].legB = up;
+                continue;
+            }
+            push(base[gi(rowsN, j)], &far);
+        }
         std::reverse(far.begin(), far.end());                       // phi ascending
         out.farEdges = far;
     }
@@ -659,8 +733,9 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     // measured wedge opening per dart (chord angle waist->apex, both legs)
     for (size_t d = 0; d < slits.size(); ++d) {
         const Slit& s = slits[d];
+        const int mouth = s.fromTop ? rowsN : 0;  // the row the wedge opens on
         const Vec2 apex = P[base[gi(s.apexRow, s.col)]];
-        const Vec2 wl = P[vid(0, s.col, false)], wr = P[vid(0, s.col, true)];
+        const Vec2 wl = P[vid(mouth, s.col, false)], wr = P[vid(mouth, s.col, true)];
         const double angL = std::atan2(wl.y - apex.y, wl.x - apex.x);
         const double angR = std::atan2(wr.y - apex.y, wr.x - apex.x);
         double sp = std::fmod(angL - angR + kPi, 2 * kPi);
@@ -805,8 +880,27 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                     const PanelGrid g = buildGrid(surf, seg, waistH, topSeg,
                                                   2 * kPi * c0 / NR, 2 * kPi * c1 / NR,
                                                   opt.rowStepMM);
-                    for (const DerivedDart& d : dartColumnsFromDeficit(g, opt.maxDartDeg * kPi / 180.0))
-                        abs.push_back({c0 + d.col, d.loadRad});
+                    // TWO BANDS, TWO ANCHORS. Only a bodice with a real top
+                    // boundary has anywhere for a top dart to open: a skirt's
+                    // far edge is the hem, and a hem dart is not a thing. So
+                    // the split is asked for exactly where it means something,
+                    // and everywhere else the call is the original whole-panel
+                    // one, unchanged.
+                    const int gRows = static_cast<int>(g.rows.size()) - 1;
+                    const bool twoBand =
+                        !L.isSkirt && opt.shoulderTop && opt.topDartSplitFrac < 1.0;
+                    const int split =
+                        twoBand ? std::max(2, static_cast<int>(std::lround(
+                                                 gRows * opt.topDartSplitFrac)))
+                                : gRows;
+                    const double capRad = opt.maxDartDeg * kPi / 180.0;
+                    for (const DerivedDart& d :
+                         dartColumnsFromDeficitRows(g, capRad, 1, split, false))
+                        abs.push_back({c0 + d.col, d.loadRad, false});
+                    if (twoBand)
+                        for (const DerivedDart& d :
+                             dartColumnsFromDeficitRows(g, capRad, split, gRows, true))
+                            abs.push_back({c0 + d.col, d.loadRad, true});
                     if (std::getenv("STITCHU_SP_DEBUG")) {
                         const std::vector<double> d = columnDeficit(g);
                         double tot = 0;
@@ -848,18 +942,26 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             // reflections. With derived darts that is a question about the
             // DERIVED columns, not about the declared fractions: sub-panel 1's
             // darts must be sub-panel 0's darts reflected about the shared cut.
+            // The two anchor classes are checked SEPARATELY. A waist dart and a
+            // top dart that happen to land on reflected columns are not each
+            // other's mirror image — they are two different cuts — so mixing
+            // them into one list could declare a mirror that is not one.
             const bool mirrorable = [&] {
                 if (bounds.size() != 3 || bounds[1] * 2 != half) return false;
-                std::vector<int> lc, rc;
-                for (const DerivedDart& d : dartCols[&L]) {
-                    if (d.col > colBase && d.col < colBase + bounds[1]) lc.push_back(d.col - colBase);
-                    else if (d.col > colBase + bounds[1] && d.col < colBase + half)
-                        rc.push_back(d.col - colBase - bounds[1]);
+                for (int anchor = 0; anchor < 2; ++anchor) {
+                    std::vector<int> lc, rc;
+                    for (const DerivedDart& d : dartCols[&L]) {
+                        if (d.fromTop != (anchor == 1)) continue;
+                        if (d.col > colBase && d.col < colBase + bounds[1])
+                            lc.push_back(d.col - colBase);
+                        else if (d.col > colBase + bounds[1] && d.col < colBase + half)
+                            rc.push_back(d.col - colBase - bounds[1]);
+                    }
+                    if (lc.size() != rc.size()) return false;
+                    const int w = bounds[1];
+                    for (size_t i = 0; i < lc.size(); ++i)
+                        if (lc[lc.size() - 1 - i] != w - rc[i]) return false;
                 }
-                if (lc.size() != rc.size()) return false;
-                const int w = bounds[1];
-                for (size_t i = 0; i < lc.size(); ++i)
-                    if (lc[lc.size() - 1 - i] != w - rc[i]) return false;
                 return true;
             }();
             std::vector<int>& subs = h == 0 ? L.frontSubs : L.backSubs;
@@ -930,9 +1032,19 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 // not a law — picking the minimum out of it would be fitting the
                 // gate, not the geometry. The uniform apex stands until an
                 // instrument says what actually governs the tip.
+                // A TOP dart's tip is a declared height (topDartApexFrac), for
+                // the same reason the bodice waist dart's is: a shoulder dart
+                // that runs to the apex makes a cone tip, and drafting texts end
+                // it short. The two tips sit on the same fraction scale, so the
+                // cuts cannot cross by construction.
+                const int topApex =
+                    std::min(rowsN - 2,
+                             std::max(1, static_cast<int>(
+                                             std::lround(rowsN * opt.topDartApexFrac))));
                 std::vector<Slit> slits;
                 for (const DerivedDart& d : dartCols[&L])
-                    if (d.col > c0 && d.col < c1) slits.push_back({d.col - c0, apex});
+                    if (d.col > c0 && d.col < c1)
+                        slits.push_back({d.col - c0, d.fromTop ? topApex : apex, d.fromTop});
                 // the waist seam breaks wherever EITHER layer darts, so run r
                 // spans the same ring arc on both sides of the waist stitch.
                 // With derived darts the two layers no longer dart in the same
@@ -940,9 +1052,12 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 // than a convenience.
                 std::vector<int> breaks;
                 for (const GarmentLayer& other : layers) {
-                    // darts of the other layer...
+                    // darts of the other layer... but only the WAIST-anchored
+                    // ones. A top dart does not reach the ring, so it does not
+                    // break a waist run, and breaking one there would split the
+                    // shared arc for nothing.
                     for (const DerivedDart& d : dartCols[&other])
-                        if (d.col > c0 && d.col < c1) breaks.push_back(d.col - c0);
+                        if (!d.fromTop && d.col > c0 && d.col < c1) breaks.push_back(d.col - c0);
                     // ...AND its panel cuts. A waist run must span the same ring
                     // arc on both sides of the stitch, so it breaks wherever
                     // EITHER layer has a boundary — a dart or a seam, no

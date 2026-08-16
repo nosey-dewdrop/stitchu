@@ -101,14 +101,22 @@ struct SheathOptions {
     // cannot be worn. Defaults are the fitted-dress band the trade agrees on
     // (Threads/RTW: 2" bust, 1" waist, 2" hip; Aldrich close-fitting carries
     // 7cm at the bust) — declared design dials, not laws.
-    // SHOULDER TOP — off by default, and the reason is measured, not cautious.
-    // With the real top boundary the bodice quarter-panel carries +52.5 deg of
-    // develop-deficit (it was -0.20 deg as a strapless tube), and the flatten
-    // cannot absorb it: cut-line strain goes to 46-65% and the panels fold
-    // through themselves. The missing piece is named and known — Slit can only
-    // anchor at the WAIST row, so a shoulder dart or a neckline dart cannot be
-    // expressed at all, and those are exactly the two a bodice with shoulders
-    // needs. Turn this on when Slit gains a top anchor, not before.
+    // SHOULDER TOP — on, and the old warning that sat here was STALE. It said
+    // "off by default … cut-line strain goes to 46-65% and the panels fold
+    // through themselves. Turn this on when Slit gains a top anchor, not
+    // before." The code said `true`. Re-measured 17.08, eight sizes, and both
+    // halves of that sentence were out of date:
+    //   * shoulderTop=true, skimBodice=true (what ships): cut-line strain
+    //     0.0071-0.1501%, all eight sizes under the 0.5% gate. The quarter
+    //     panel's develop-deficit is -0.03 to -0.31 deg, not +52.5 — because
+    //     skimBodice turned the bodice into a CONE, and a cone develops. The
+    //     warning was written before the skim existed and was never re-measured.
+    //   * shoulderTop=true, skimBodice=false (the body-following bodice the
+    //     warning was actually about): cut-line strain 2.96-48.12%, worst EU48.
+    //     Still bad, still not 46-65%, and the number band was stale too.
+    // What was NOT stale is the named blocker: Slit could only anchor at the
+    // WAIST row. That is now fixed (see topDartFrac), so the sentence has no
+    // remaining claim to make.
     bool shoulderTop = true;
     // SKIM: the bodice runs straight from the waist ring to the shoulder instead
     // of following the bust and the neck. This is what a 1960s shift IS, and it
@@ -208,6 +216,28 @@ struct SheathOptions {
     std::vector<double> skirtCutFracs = {0.5};
     std::vector<double> skirtDartFracs = {0.25, 0.75};  // one dart per quarter, the classic sheath
     double bodiceApexFrac = 0.80;
+    // TOP-ANCHORED DARTS. A dart is a slit in the mesh, and until now every slit
+    // started at the WAIST row. That is a statement about the garment, not about
+    // the solver: a bodice whose deficit sits up under the shoulder had no way
+    // to let it out, because the only cut that existed opened from the hem end.
+    // A shoulder dart and a neckline dart are the two a bodice with shoulders
+    // needs, and both anchor on the TOP boundary.
+    //
+    // So the deficit is now measured in two bands rather than one, and each band
+    // gets the darts that can actually reach it: the band below topDartSplitFrac
+    // leaves through waist-anchored slits, the band above it through slits that
+    // open from the far edge. Nothing is redistributed and no total is invented —
+    // it is the same per-column angle defect, summed over two row ranges instead
+    // of all of them.
+    //
+    // topDartApexFrac is where the top dart's TIP sits, as a fraction of the
+    // panel's height above the waist. DECLARED, not measured: 0.55 puts the tip
+    // at roughly the shoulder-blade / bust level, which is where drafting texts
+    // end a shoulder dart, and it is above the waist dart's own reach so the two
+    // cuts cannot cross. Set topDartSplitFrac to 1.0 to switch top darts off
+    // entirely and get the waist-only behaviour back, unchanged.
+    double topDartSplitFrac = 0.55;   // band boundary, fraction of panel height
+    double topDartApexFrac = 0.55;    // top dart tip height, same fraction scale
     double skirtApexFrac = 1.35;  // dart tip runs through the hip blend band
     double hipBlendMM = 90.0;  // hip-corner rounding half-width (drafting "hip curve")
 };

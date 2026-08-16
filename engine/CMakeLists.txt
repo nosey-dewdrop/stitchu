@@ -571,6 +571,13 @@ add_test(NAME h10_gate_check COMMAND h10_gate_check)
 add_executable(surface-pattern tools/surface-pattern.cpp)
 target_link_libraries(surface-pattern PRIVATE engine)
 
+# waistfold-probe: DIAGNOSTIC, not a gate and not in ctest. Re-runs the sheath
+# with solver knobs that carry no geometric meaning and prints the waist fold,
+# so "is the fold the flatten solver's or the contour's?" is answered by a
+# measurement instead of by reading the code.
+add_executable(waistfold-probe tools/waistfold-probe.cpp)
+target_link_libraries(waistfold-probe PRIVATE engine)
+
 # section_check: the body cross-section has a FRONT and a BACK. Girth, back-arc
 # share, convexity, Steiner exactness, side-point smoothness, and the asymmetry
 # itself — each a gate, so the symmetric-ellipse body cannot come back quietly.
