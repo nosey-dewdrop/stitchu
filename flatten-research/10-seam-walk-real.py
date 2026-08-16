@@ -7,13 +7,21 @@
 # kapagi KISALTIR (offset bir egrinin boyunu d * toplam_donus kadar degistirir, isaret egrilige
 # bagli). Yani "kesim cizgisinde olculen ease" YANLIS sayidir. Burada ikisini de hesapliyoruz.
 #
-# YONTEM (CAD'in yaptigi):
-#   1) kapali konturu 1mm'de yeniden ornekle, yonelimi (CW/CCW) isaretli alandan bul
-#   2) her noktayi IC normal boyunca 10mm otele
-#   3) GECERSIZ offset noktalarini at: gecerli bir offset noktasinin ORIJINAL kontura uzakligi
-#      TAM 10mm olmali; ic-bukey/konveks kose ilmeklerinde bu deger kucuk cikar -> at (mesafe-alani budamasi)
-#   4) komsu iki dikisin offset cizgilerini KESISTIR (miter) -> gercek dikis-cizgisi kosesi
-#   5) her dikisi kendi miter koseleri arasinda olc
+# ⚠ 2026-08-17 DUZELTME (Tur 5). ESKI YONTEM BOZUKTU, sayilari CLAUDE.md'ye zehirlemisti.
+# Eski yontem: (a) "mesafe-alani budamasi" ile her kenarin UCLARINDAN 17-28 nokta atiyordu,
+# (b) kalan uclari miter kesisimiyle uzatmaya calisiyordu. Sonuc: her kenar ~2*SA kisaliyordu.
+# TEK SATIRLIK CURUTME: CF kenari DUZ bir cizgi, eski yontem 420.8 -> 401.5mm (-19.4) diyordu.
+# DUZ bir cizgiyi paralel otelemek boyunu DEGISTIREMEZ. CB -20.1, etek -20.7, omuz -19.0:
+# hepsi ~= -2*SA, yani budamanin kendisi. Ayni sinif hata pens bacaginda +6.6/-5.7 ile isaret
+# bile degistiriyordu.
+#
+# YENI YONTEM (ajan 4B'nin `18-armscye-front-back.py`'de kurdugu, 32/32 olcumde dogrulanan):
+#   1) kapali konturu 0.25mm'de yeniden ornekle, yonelimi (CW/CCW) isaretli alandan bul
+#   2) kenari kendi kose indisleri arasinda KES (uc noktalar dahil), sonra
+#   3) her noktayi IC normal boyunca 10mm otele — teget +-3mm merkezi farkla (tek segment
+#      gurultusu iceri girmez), BUDAMA YOK, MITER YOK. Kose yapayligi olcume girmez.
+#   4) ANALITIK CAPRAZ KONTROL: dL = -d * (toplam isaretli donus, radyan). Her kenarda basilir.
+#   5) DUZ-KENAR TESTI: dogrulugun tek satirlik mandali, koşunun basinda calisir.
 #
 # CIKTI: her parca icin kenar-kenar kesim vs dikis uzunlugu, ve eslesmesi GEREKEN dikis ciftleri.
 import json, math
@@ -23,7 +31,7 @@ ROOT = "/Users/damummyphus/damla_projects_2026/stitchu"
 GEOM = ROOT + "/patterns_real/geometry/geometry-full.json"
 SIZE = "38"
 SA = 10.0          # mm, satici talimatindan (1 cm), TAHMIN DEGIL
-STEP = 1.0
+STEP = 0.25        # 18'le ayni (eskiden 1.0)
 
 # --- landmark atamasi: 09'un kose indekslerinden, GORSEL + sayisal capraz kontrol edildi ---
 # (kose sirasi 09 ciktisiyla ayni; anlamlar 09 PNG'si + satici talimat/gorselleriyle dogrulandi)
@@ -72,75 +80,55 @@ def signed_area(P):
     x, y = P[:, 0], P[:, 1]
     return 0.5*float(np.sum(x*np.roll(y, -1) - np.roll(x, -1)*y))
 
-def inward_offset(Q, d):
-    """her noktayi IC normal boyunca d otele + mesafe-alani budamasi (ilmekleri atar)."""
-    m = len(Q)
-    tang = np.roll(Q, -1, axis=0) - np.roll(Q, 1, axis=0)
-    tang /= (np.linalg.norm(tang, axis=1)[:, None] + 1e-12)
-    ccw = signed_area(Q) > 0
-    n = np.column_stack([-tang[:, 1], tang[:, 0]]) if ccw else np.column_stack([tang[:, 1], -tang[:, 0]])
-    O = Q + d * n
-    # gecerlilik: offset noktasinin ORIJINAL kontura uzakligi ~d olmali
-    valid = np.ones(m, bool)
-    CH = 2000
-    for a in range(0, m, CH):
-        blk = O[a:a+CH]
-        dist = np.sqrt(((blk[:, None, :] - Q[None, :, :])**2).sum(-1)).min(1)
-        valid[a:a+CH] = dist > d - 0.6
-    return O, valid, n
-
-def line_isect(p1, d1, p2, d2):
-    """iki dogru kesisimi (p+t*d); paralel ise None."""
-    den = d1[0]*d2[1] - d1[1]*d2[0]
-    if abs(den) < 1e-9: return None
-    t = ((p2[0]-p1[0])*d2[1] - (p2[1]-p1[1])*d2[0]) / den
-    return p1 + t*d1
-
 def polylen(P):
     return float(np.sum(np.linalg.norm(np.diff(P, axis=0), axis=1))) if len(P) > 1 else 0.0
 
+def tangents(A, win_mm=3.0, step=STEP):
+    """+-win_mm merkezi farkla teget (tek segmentin gurultusu ICERI GIRMEZ)."""
+    k = max(1, int(round(win_mm / step)))
+    n = len(A)
+    lo = np.clip(np.arange(n) - k, 0, n - 1)
+    hi = np.clip(np.arange(n) + k, 0, n - 1)
+    T = A[hi] - A[lo]
+    nrm = np.linalg.norm(T, axis=1, keepdims=True)
+    nrm[nrm < 1e-12] = 1.0
+    return T / nrm
+
+def total_turn_deg(A):
+    """polylinein toplam isaretli donusu (derece), teget +-3mm pencerede duzeltilmis."""
+    T = tangents(A)
+    ang = np.unwrap(np.arctan2(T[:, 1], T[:, 0]))
+    return math.degrees(ang[-1] - ang[0])
+
+def offset_polyline(A, d, ccw):
+    """nokta-normali ile d kadar ICERI ofset (BUDAMA YOK, MITER YOK)."""
+    T = tangents(A)
+    N = np.column_stack([-T[:, 1], T[:, 0]]) * (1.0 if ccw else -1.0)
+    return A + N * d
+
 def stitch_seams(Q, corners, d=SA):
-    """her kenar icin dikis-cizgisi uzunlugu (miter kosesinden miter kosesine)."""
-    m = len(Q); O, valid, n = inward_offset(Q, d)
-    k = len(corners)
-    runs = []   # her kenarin gecerli offset noktalari (indeks listesi)
-    for i in range(k):
-        a, b = corners[i], corners[(i+1) % k]
-        idx = [(a+t) % m for t in range((b-a) % m + 1)]
-        vi = [j for j in idx if valid[j]]
-        runs.append((idx, vi))
-    # miter koseleri: kenar i'nin sonu ile kenar i+1'in basi
-    miters = [None]*k
-    for i in range(k):
-        _, vi_a = runs[i]; _, vi_b = runs[(i+1) % k]
-        if len(vi_a) < 3 or len(vi_b) < 3:
-            miters[i] = None; continue
-        pa, pa2 = O[vi_a[-1]], O[vi_a[-3]]
-        pb, pb2 = O[vi_b[0]],  O[vi_b[2]]
-        da = pa - pa2; db = pb2 - pb
-        na = np.linalg.norm(da); nb = np.linalg.norm(db)
-        if na < 1e-9 or nb < 1e-9: miters[i] = None; continue
-        X = line_isect(pa, da/na, pb, db/nb)
-        # asiri uzayan miter (cok sivri kose) guvenlik siniri
-        if X is None or np.linalg.norm(X-pa) > 8*d or np.linalg.norm(X-pb) > 8*d:
-            X = 0.5*(pa+pb)
-        miters[i] = X
+    """her kenar icin (kesim, dikis, analitik dikis, sapma). Kenar = kose->kose dilim."""
+    m = len(Q); k = len(corners); ccw = signed_area(Q) > 0
     out = []
     for i in range(k):
-        idx, vi = runs[i]
-        cut = polylen(Q[idx])
-        if len(vi) < 3:
-            out.append((cut, None, 0)); continue
-        P = O[vi]
-        start = miters[(i-1) % k]; end = miters[i]
-        chain = [start] if start is not None else []
-        chain.append(P); chain2 = []
-        for c in chain:
-            chain2.append(c.reshape(1, 2) if c.ndim == 1 else c)
-        if end is not None: chain2.append(end.reshape(1, 2))
-        full = np.vstack(chain2)
-        out.append((cut, polylen(full), len(idx)-len(vi)))
+        a, b = corners[i], corners[(i + 1) % k]
+        idx = [(a + t) % m for t in range((b - a) % m + 1)]
+        A = Q[idx]
+        cut = polylen(A)
+        seam = polylen(offset_polyline(A, d, ccw))
+        tt = total_turn_deg(A)
+        # ic ofset: dL = -d * dtheta  (ccw poligonda; cw'de isaret ters doner)
+        ana = cut - d * math.radians(tt) * (1.0 if ccw else -1.0)
+        out.append((cut, seam, ana, seam - ana))
     return out
+
+# --- DOGRULAMA MANDALI: duz bir kenari otele, boyu DEGISMEMELI (eski yontem burada dusuyordu)
+def selftest_straight(d=SA):
+    A = np.column_stack([np.arange(0, 400.0 + STEP, STEP), np.zeros(int(400.0 / STEP) + 1)])
+    for ccw in (True, False):
+        L0, L1 = polylen(A), polylen(offset_polyline(A, d, ccw))
+        assert abs(L1 - L0) < 1e-9, f"DUZ-KENAR TESTI DUSTU: {L0:.4f} -> {L1:.4f}"
+    return polylen(A), polylen(offset_polyline(A, d, True))
 
 # --------------------------------------------------------------------- calis
 d = json.load(open(GEOM))
@@ -150,6 +138,9 @@ R = {r["piece"]: r for r in d["rings"]
 print("=" * 100)
 print(f"LOCKET-38 SEAM WALK — kesim cizgisi vs DIKIS cizgisi (SA={SA:.0f}mm, satici talimatindan)")
 print("=" * 100)
+_L0, _L1 = selftest_straight()
+print(f"DUZ-KENAR TESTI: {_L0:.4f}mm -> {_L1:.4f}mm  (fark {_L1-_L0:+.2e}mm)  GECTI")
+print(f"resample {STEP:.2f}mm | teget penceresi +-3mm | budama YOK | miter YOK")
 
 M = {}
 for piece, names in SEAM_NAMES.items():
@@ -160,12 +151,12 @@ for piece, names in SEAM_NAMES.items():
         continue
     seams = stitch_seams(Q, cs)
     print(f"\n--- {piece} ---   kontur {L:.1f}mm")
-    print(f"    {'dikis':>22} {'kesim(mm)':>10} {'DIKIS(mm)':>10} {'fark':>8} {'budanan':>8}")
-    for nm, (cut, st, pruned) in zip(names, seams):
+    print(f"    {'dikis':>22} {'kesim(mm)':>10} {'DIKIS(mm)':>10} {'fark':>8} {'analitik':>10} {'sapma':>8}")
+    for nm, (cut, st, ana, dev) in zip(names, seams):
         M[(piece, nm)] = st
-        st_s = f"{st:10.1f}" if st is not None else "      n/a "
-        df = f"{st-cut:+8.1f}" if st is not None else "     n/a"
-        print(f"    {nm:>22} {cut:>10.1f} {st_s} {df} {pruned:>8}")
+        print(f"    {nm:>22} {cut:>10.2f} {st:>10.2f} {st-cut:>+8.2f} {ana:>10.2f} {dev:>+8.3f}")
+    worst = max(abs(r[3]) for r in seams)
+    print(f"    -> analitik dL=-d*dtheta ile en kotu sapma: {worst:.4f}mm")
 
 print("\n" + "=" * 100)
 print("SEAM WALK — eslesmesi GEREKEN dikisler (dikis cizgisinde)")

@@ -25,31 +25,44 @@ def sarea(P):
     x, y = P[:,0], P[:,1]
     return 0.5*float(np.sum(x*np.roll(y,-1) - np.roll(x,-1)*y))
 
-def offset_valid(Q, d=SA):
-    m = len(Q)
-    t = np.roll(Q,-1,axis=0) - np.roll(Q,1,axis=0)
-    t /= (np.linalg.norm(t,axis=1)[:,None] + 1e-12)
-    n = (np.column_stack([-t[:,1],t[:,0]]) if sarea(Q) > 0 else np.column_stack([t[:,1],-t[:,0]]))
-    O = Q + d*n
-    valid = np.ones(m, bool)
-    for a in range(0, m, 2000):
-        blk = O[a:a+2000]
-        valid[a:a+2000] = np.sqrt(((blk[:,None,:]-Q[None,:,:])**2).sum(-1)).min(1) > d-0.6
-    return O, valid
+# ⚠ 2026-08-17 DUZELTME (Tur 5): eski `offset_valid` "mesafe-alani budamasi" ile ofset
+# noktalarini ATIYORDU; bolge ucu bir KOSEYE dayaniyorsa oradan ~SA kadar uzunluk siliniyordu.
+# Curutme: duz bir kenari 10mm otelemek boyunu DEGISTIREMEZ, eski yontem degistiriyordu
+# (10-seam-walk-real.py, CF kenari 420.8 -> 401.5mm). Yeni yontem 18-armscye-front-back.py'nin
+# nokta-normali ofseti: teget +-3mm merkezi farkla, BUDAMA YOK, MITER YOK.
+# Analitik mandal: dL = -d * (toplam isaretli donus).
+def _tangents(A, win_mm=3.0, step=STEP):
+    k = max(1, int(round(win_mm/step))); n = len(A)
+    lo = np.clip(np.arange(n)-k, 0, n-1); hi = np.clip(np.arange(n)+k, 0, n-1)
+    T = A[hi] - A[lo]
+    nrm = np.linalg.norm(T, axis=1, keepdims=True); nrm[nrm < 1e-12] = 1.0
+    return T/nrm
 
-def zone_stitch_len(Q, i0, i1):
-    """cut-line indeks araligi [i0,i1] icin DIKIS cizgisi uzunlugu (gecerli offset noktalari)."""
-    m = len(Q); O, valid = OFF[id(Q)]
+def zone_stitch_len(Q, i0, i1, d=SA):
+    """cut-line indeks araligi [i0,i1] icin DIKIS cizgisi uzunlugu (nokta-normali ofset)."""
+    m = len(Q)
     idx = [(i0+t) % m for t in range((i1-i0) % m + 1)]
-    P = O[[j for j in idx if valid[j]]]
-    return float(np.sum(np.linalg.norm(np.diff(P,axis=0),axis=1))) if len(P) > 1 else 0.0
+    A = Q[idx]
+    if len(A) < 2: return 0.0
+    T = _tangents(A)
+    N = np.column_stack([-T[:,1], T[:,0]]) * (1.0 if sarea(Q) > 0 else -1.0)
+    P = A + N*d
+    return float(np.sum(np.linalg.norm(np.diff(P,axis=0),axis=1)))
+
+def _selftest_straight(d=SA):
+    A = np.column_stack([np.arange(0, 400.0+STEP, STEP), np.zeros(int(400.0/STEP)+1)])
+    T = _tangents(A); P = A + np.column_stack([-T[:,1], T[:,0]])*d
+    L0 = float(np.sum(np.linalg.norm(np.diff(A,axis=0),axis=1)))
+    L1 = float(np.sum(np.linalg.norm(np.diff(P,axis=0),axis=1)))
+    assert abs(L1-L0) < 1e-9, f"DUZ-KENAR TESTI DUSTU: {L0} -> {L1}"
+    return L0, L1
 
 G = json.load(open(ROOT + "/patterns_real/geometry/geometry-full.json"))
 R = {r["piece"]: r for r in G["rings"]
      if r["pattern"] == "locket_top" and r["sizeGuess"] == "38" and r["ring"] >= 0}
 Q = {n: resample(np.array(R[n]["polygon"], float)) for n in
      ["Front Body","Back Body","Lower Sleeve"]}
-OFF = {id(q): offset_valid(q) for q in Q.values()}
+_L0, _L1 = _selftest_straight()   # dogrulama mandali: duz kenar, boy degismemeli
 
 # --- 09'dan dogrulanmis kose indeksleri, 11'den 38-rengi centik arc'lari ---
 FRONT_UNDERARM, FRONT_SHOULDER = 726, 937      # oyuk: kose4 -> kose5
