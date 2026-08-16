@@ -598,3 +598,14 @@ add_test(NAME edgemono_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/edgemono_
 # verdict and which is information is written into walk.py's gate() header.
 add_test(NAME walkgate_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/walkgate_check.sh
          $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# printpack_sheet_check: what the PRINTED pack actually says. Twice now a
+# sentence was derived, proved, and shipped only into print-report.txt -- the
+# audit file, which no buyer holds: the assembly order (T4) and the "BURAYI
+# DİKMEYİN" opening warning (T10). Both commit messages said the pack carried
+# it; the pack did not. No test guarded printpack at all, because printpack is
+# Python and this suite is C++. This is that latch: it drafts a spec off
+# surface-pattern, prints the pack, and reads the PDF back. Needs the
+# garmentcode venv and pdftotext; either missing FAILS instead of skipping.
+add_test(NAME printpack_sheet_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/printpack_sheet_check.sh
+         $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
