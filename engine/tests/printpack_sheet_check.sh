@@ -85,10 +85,30 @@ LBL=$(grep -o 'BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI' "$D"/print-svg/a0-page*
 [ "$LBL" -ge 2 ] \
   || fail "A0 kalıp sayfasında açıklık etiketi $LBL kez var (>=2 bekleniyor: \
 beden arka + etek arka)"
-LBL4=$(grep -o 'BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI' "$D"/print-svg/a4-page*.svg \
-       | wc -l | tr -d ' ')
-[ "$LBL4" -ge 2 ] \
-  || fail "A4 kalıp sayfalarında açıklık etiketi $LBL4 kez var (>=2 bekleniyor)"
+# A4'te SAYMAK YETMEZ: her karo panelin TAMAMINI çizip pencereyle kırpıyor, o
+# yüzden etiket 10 SVG'de "var" ama çoğunda karonun dışında kalıyor. Şart:
+# her etiketin çapası EN AZ BİR karonun 21x29.7 penceresine düşsün.
+LBL4=$("$PY" - "$D" <<'EOF'
+import glob, re, sys
+seen = set()
+for f in sorted(glob.glob(sys.argv[1] + '/print-svg/a4-page*.svg')):
+    s = open(f).read()
+    m = re.search(r'translate\(([-0-9.]+),([-0-9.]+)\)', s)
+    if not m:
+        continue
+    tx, ty = float(m.group(1)), float(m.group(2))
+    for rot in re.findall(
+            r'transform="rotate\(([^)]*)\)"[^>]*>BURAYI DİKMEYİN', s):
+        _, ax, ay = [float(v) for v in rot.split()]
+        x, y = ax + tx, ay + ty
+        if 0 <= x <= 21.0 and 0 <= y <= 29.7:
+            seen.add((round(ax, 3), round(ay, 3)))
+print(len(seen))
+EOF
+)
+[ "${LBL4:-0}" -ge 2 ] \
+  || fail "A4 karolarında GÖRÜNÜR açıklık etiketi $LBL4 tane (>=2 bekleniyor: \
+etiket her karoda çiziliyor ama çoğunda pencerenin dışında kalıyor)"
 
 # ---------------------------------------------------------------- 4. TEK KAYNAK
 # Sayfa ile denetim dosyası aynı cümleyi basmalı; ayrılabiliyorlarsa T4/T10
