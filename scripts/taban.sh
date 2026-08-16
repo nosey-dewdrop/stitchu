@@ -138,7 +138,14 @@ fi
 # ---------------------------------------------------------------- 7. MANİFEST
 adim "7. MÜHÜR (manifest.sha256 — zaman damgasız, sıralı, KARŞILAŞTIRILAN ŞEY)"
 # .log dosyaları ZAMAN/SÜRE taşır → mühre GİRMEZ. Mühür yalnız ÜRÜNÜ kapsar:
-# spec json, walk tapusu, gerinim, ve paketin PDF/SVG çıktıları.
+# spec json, walk tapusu, gerinim, paketin PDF/SVG çıktıları VE print-report.txt.
+#
+# print-report.txt 16 Ağu'ya kadar mührün DIŞINDAYDI ve bu bir karar değildi,
+# isim filtresinin kazasıydı: .log değil, ürün. Montaj sırası rapora eklenince
+# dosya 67 satırdan 80'e çıktı ve manifest KIMILDAMADI — yani insanın elbiseyi
+# nasıl dikeceğini söyleyen belge, "karşılaştırılan şey"in dışındaydı ve orada
+# bir bozulma hiçbir zaman determinizmi kıramazdı. Rapor mutlak yol taşımıyor,
+# tarihi etiket tarihine sabitli; girmemesi için sebep yoktu.
 # NORMALİZASYON: raporlar kendi mutlak yollarını içine yazıyor (walk.py "spec: /.../F0-A/...").
 # O yol ÜRÜN DEĞİL, koşum yeridir; mühre girerse her koşu farklı çıkar ve
 # determinizm sahte-kırık görünür (F0.2'de yakalandı). Metin dosyaları
@@ -152,7 +159,8 @@ while IFS= read -r f; do
   echo "$H  $f" >>"$OUT/manifest.sha256"
 done < <( cd "$OUT" && find specs packs strain.txt -type f \
     \( -name '*.json' -o -name '*.walk.txt' -o -name 'strain.txt' \
-       -o -name '*.pdf' -o -name '*.svg' \) 2>/dev/null | LC_ALL=C sort )
+       -o -name '*.pdf' -o -name '*.svg' -o -name 'print-report.txt' \) \
+    2>/dev/null | LC_ALL=C sort )
 MSUM=$(shasum -a 256 "$OUT/manifest.sha256" | cut -d' ' -f1)
 NFILE=$(wc -l <"$OUT/manifest.sha256" | tr -d ' ')
 say "  $NFILE dosya mühürlendi"
