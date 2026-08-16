@@ -210,6 +210,7 @@ class PanelGeo:
         self.segs = [walklib.edge_curve(panel['vertices'], e)
                      for e in panel['edges']]
         self.notches = []   # list of [(p0, p1)] line segments (seam coords)
+        self.edge_labels = []   # (point, angle_deg, text) in seam coords
         self._build()
 
     # -- seam ---------------------------------------------------------------
@@ -418,6 +419,43 @@ class PanelGeo:
             self.notches.append((p, p + NOTCH_LEN * nrm))
         return seg.ilength(min(max(arc_pos, 0.3), L - 0.3))
 
+    # -- edge labels ----------------------------------------------------------
+    def add_edge_label(self, edge_idx, text):
+        """Write `text` ALONG one edge, just inside the panel.
+
+        A notch says WHERE something stops; it cannot say WHAT stops. The
+        opening is the one edge on this pattern that must NOT be sewn, and a
+        mark whose meaning lives on another sheet is a mark a hurrying sewer
+        reads as an ordinary notch. So the piece carries the sentence itself.
+
+        Placed on the seam line and pushed inward along the normal until the
+        whole run of the text sits inside the panel: an armhole or a dart
+        wedge can eat the naive offset point, and a warning printed across
+        its own cut line is the same defect as the label bug above.
+        """
+        seg = self.segs[edge_idx]
+        L = seg.length()
+        t = seg.ilength(0.5 * L)
+        p = seg.point(t)
+        tan = _tangent(seg, t)
+        # add_notch steps OUTWARD along this normal, so the inside is -nrm
+        inward = -(tan * complex(0, -1) * self.orient)
+        run = 0.30 * L   # half the text run, probed for room
+        step = None
+        for k in range(12):
+            # 1.0cm clears the dashed seam line by more than one cap height:
+            # a warning printed THROUGH the seam line reads as part of it
+            cand = p + (1.0 + 0.22 * k) * inward
+            probes = [cand + f * run * tan for f in (-1.0, -0.5, 0.0, 0.5, 1.0)]
+            if all(self.inside(q.real, q.imag) for q in probes):
+                step = cand
+                break
+        if step is None:
+            return False
+        self.edge_labels.append(
+            (step, math.degrees(math.atan2(tan.imag, tan.real)), text))
+        return True
+
     # -- placement helpers ----------------------------------------------------
     def cut_bbox(self):
         xs = [r['q'].real for r in self.cut_loop]
@@ -594,6 +632,18 @@ def build_zip_notch(pattern, geos):
             'len_a_mm': round(length * 10, 1), 'len_b_mm': 0.0,
             'notch': 'triple', 'positions': 'zip-end', 'ratio_diff_mm': 0.0,
         })
+
+    # The sentence on the piece itself. The three notches above say where the
+    # seam stops; nothing on the cloth says the run above them stays open, and
+    # T10 measured that the warning reached only print-report.txt -- an audit
+    # file no buyer holds. A dress whose centre back got sewn shut does not go
+    # over the head, which is the exact failure wearable_check exists to stop.
+    for name, edges in sorted(open_edges.items()):
+        geo = geos[name]
+        for idx in sorted(edges, key=lambda i: -geos[name].segs[i].length()):
+            if geo.add_edge_label(idx, opening_edge_label(opening)):
+                break
+
     return out
 
 
@@ -633,11 +683,14 @@ class PanelArt:
         cut_pts = [r['q'] for r in geo.cut_loop]
         seam_pts = list(geo.seam_ring)
         notch_pts = list(geo.notches)
+        edge_labels = list(geo.edge_labels)
         if self.fold:
             cut_pts = clip_half(cut_pts, fold_axis)
             seam_pts = clip_half(seam_pts, fold_axis)
             notch_pts = [(a, b) for a, b in notch_pts
                          if 0.5 * (a.real + b.real) <= fold_axis + 1e-9]
+            edge_labels = [e for e in edge_labels
+                           if e[0].real <= fold_axis + 1e-9]
 
         x0 = min(p.real for p in cut_pts)
         y1 = max(p.imag for p in cut_pts)
@@ -750,6 +803,18 @@ class PanelArt:
             self.texts.append((fx - 0.55 * fs, 0.5 * (fya + fyb), fs * 0.85,
                                'KATLAMA — buradan katla, dikis payi yok',
                                'middle', -90.0))
+
+        # The unsewn edge names itself, ON the piece. Paper y runs DOWN while
+        # the seam space runs up, so the angle flips sign with the coordinate;
+        # and text that came out upside down is text nobody reads, so a run
+        # pointing backwards is spun the other half turn.
+        for p, ang, txt in edge_labels:
+            lax, lay = loc(p)
+            rot = -ang
+            rot = (rot + 180.0) % 360.0 - 180.0
+            if abs(rot) > 90.0:
+                rot -= math.copysign(180.0, rot)
+            self.texts.append((lax, lay, fs * 0.8, txt, 'middle', rot))
 
     # -- svg ------------------------------------------------------------------
     def svg(self, ox, oy):
@@ -1074,29 +1139,49 @@ def _assembly_lines(pattern):
     return instructions.report_lines(pattern)
 
 
-def _opening_lines(opening):
-    """Say, in words, that one seam is NOT sewn.
+def opening_edge_label(opening):
+    """The warning as it is printed ON the piece, along the unsewn edge."""
+    mm = (opening or {}).get('length_mm', 0.0)
+    return f'BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI {mm:.0f}mm'
+
+
+def opening_facts(opening):
+    """The one place the unsewn seam is put into words.
 
     A notch marks WHERE the zip stops; nothing on the sheet says the seam above
     it stays open. A sewer reading only the pieces would stitch the centre back
     shut and produce a dress that cannot go over the head -- the exact failure
     wearable_check exists to prevent, reintroduced at the last step by silence.
+
+    Returns (title, lines). The printed page and the audit file both render
+    THIS, so the sheet a buyer holds and the file that proves it cannot drift
+    apart -- which is exactly how T4's assembly order came to exist only in
+    the report.
     """
     if not opening or not opening.get('stitches'):
-        return []
+        return None, []
     mm = opening.get('length_mm', 0.0)
-    return [
-        'OPENING (dikilmeyen dikis) — BURAYI DIKMEYIN',
-        f"  {opening.get('kind', 'opening')}: {mm:.1f}mm "
-        f'({mm / 25.4:.2f} inch) of the centre-back seam is NOT stitched.',
-        '  Sew the centre back from the HEM up to the triple notch marked '
-        'zip-end, and stop there.',
-        '  Everything above that notch takes the zipper. The dress does not go '
-        'over the head without it.',
-        f'  Zip: {_zip_size_inch(mm)} inch (largest STOCK size that fits this '
-        f'{mm / 25.4:.2f} inch opening).',
-        '',
+    inch = mm / 25.4
+    return 'DİKİLMEYEN DİKİŞ — BURAYI DİKMEYİN', [
+        f"{opening.get('kind', 'opening')}: arka orta dikişin "
+        f'{mm:.1f}mm ({inch:.2f} inç) üst kısmı DİKİLMEZ.',
+        'Arka ortayı eteğin ALT ucundan başlayarak, zip-end yazan üçlü '
+        'çentiğe kadar dik ve orada DUR.',
+        'O çentiğin üstünde kalan kısım fermuarındır. Fermuarsız bu elbise '
+        'kafadan geçmez.',
+        f'Fermuar: {_zip_size_inch(mm)} inç — bu {inch:.2f} inç açıklığa '
+        'sığan en büyük STOK boy.',
+        'Kalıpta bu kenar "' + opening_edge_label(opening) + '" diye '
+        'işaretlidir.',
     ]
+
+
+def _opening_lines(opening):
+    """The same warning, in the audit file (print-report.txt)."""
+    title, lines = opening_facts(opening)
+    if not title:
+        return []
+    return [title] + ['  ' + ln for ln in lines] + ['']
 
 
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
@@ -1179,6 +1264,35 @@ def _xml_escape(s):
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 
 
+def _opening_box(body, pattern, y, wrap_w):
+    """The unsewn-seam warning, boxed, ABOVE step 1 of the assembly order.
+
+    Not folded into the step list: step 5 of 10 already carries the sentence
+    and T10 still measured a buyer who could sew the back shut, because a
+    warning ranked equal with nine ordinary steps reads as an ordinary step.
+    The rule that must not be missed goes above the list, inside a rule.
+    """
+    title, lines = opening_facts((pattern or {}).get('openings'))
+    if not title:
+        return y
+    inner = wrap_w - 2
+    wrapped = []
+    for ln in lines:
+        wrapped.extend(textwrap.wrap(ln, inner) or [''])
+    top = y - 0.55
+    h = 1.55 + 0.52 * len(wrapped)
+    body.append(f'<rect x="{MARGIN:.3f}" y="{top:.3f}" '
+                f'width="{A4_W - 2 * MARGIN:.3f}" height="{h:.3f}" '
+                'fill="none" stroke="black" stroke-width="0.09"/>')
+    ty = top + 0.85
+    body.append(_text(MARGIN + 0.45, ty, 0.5, _xml_escape(title),
+                      weight='bold'))
+    for chunk in wrapped:
+        ty += 0.52
+        body.append(_text(MARGIN + 0.45, ty, 0.38, _xml_escape(chunk)))
+    return top + h + 1.0
+
+
 def render_steps_pages(pattern, size_label, date_str):
     """The assembly order, on a page the buyer actually holds.
 
@@ -1219,6 +1333,7 @@ def render_steps_pages(pattern, size_label, date_str):
         y[0] = MARGIN + 5.0
 
     head()
+    y[0] = _opening_box(body, pattern, y[0], wrap_w)
     for s in steps:
         chunks = textwrap.wrap(s['text'], wrap_w) or ['']
         need = 0.55 * len(chunks) + 0.25
