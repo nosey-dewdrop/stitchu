@@ -118,6 +118,20 @@
       "allow": [
         "sed -i '' s/frontNeckDropMM = 70/frontNeckDropMM = 55/ engine/src/surfacepattern.hpp"
       ]
+    },
+    {
+      "id": "no-shell-write-protected-path",
+      "deny": "(>>?|\\bsed\\s+-i|\\bperl\\s+-p?i|\\btee\\b|\\bcp\\b|\\bmv\\b|\\brm\\b|\\binstall\\b|\\brsync\\b|\\bdd\\b|\\bnode\\s+-e|python[0-9.]*\\s+-c|\\bawk\\s+-i)[^|;&]*(web/(collection-60s70s\\.html|(patterns|collections|styles|guide|blog)/[^\\s|;&]*\\.html)|engine/golden-reference\\.csv|web/(sitemap\\.xml|robots\\.txt)|STRATEGY\\.md)",
+      "why": "K21 (TUR 14): protectedPaths was TOOL-SHAPED, not PATH-SHAPED. Measured 2026-08-17 against this very guard.json with rabadon-gate itself (native/rabadon-gate, PreToolUse payload, cwd=stitchu): a Write to web/styles/x.html is BLOCKED by generated-web-html, but from Bash the SAME path was reachable by 'cat > web/styles/x.html', 'cp /tmp/a.html web/styles/x.html', 'printf x > web/guide/y.html' and 'node -e fs.writeFileSync(...)' — all ALLOW, rc 0. 13C (TUR 13) walked through this hole in the open: it did its bulk repairs with 'node /tmp/*.mjs' and wrote to protected paths that way, did NOT relax the rule, and declared it in its report. Worse than declared: gate.cpp enforces protectedPaths ONLY inside 'if (toolName == Edit || Write || MultiEdit || NotebookEdit)' (native/gate.cpp:2892), so THREE of the four protected paths had ZERO bash coverage — golden-reference.csv, sitemap/robots and STRATEGY.md were all ALLOW under 'sed -i' and '>' (measured, four commands, all rc 0). The old rule no-shell-edit-generated-html covered only 'sed -i|tee' and only under web/. This rule covers the write SHAPES that name the path on the command line, for all four protected paths at once. ⚠ RESIDUAL, DECLARED NOT HIDDEN: a command line that does NOT name the path — 'node /tmp/fix.mjs', i.e. exactly 13C's route — cannot be caught by any regex over the command text, because the path is inside the script. No guard rule closes that; the repo-side gate engine/tests/generated_ratchet_check.sh does, by refusing a generated file whose bytes moved without its declared sha256 moving with it in the same commit. Rule authored in stitchu ONLY; rabadon itself is Damla's separate product and was read, never written.",
+      "authoredBy": "incident",
+      "incidentAt": "2026-08-17T00:00:00Z",
+      "allow": [
+        "node engine/tools/gen-style-pages.mjs",
+        "node engine/tools/gen-guide.mjs",
+        "cat web/styles/shift-dress.html",
+        "grep -n canonical web/guide/index.html",
+        "node engine/tools/site-health.mjs > /tmp/health.txt"
+      ]
     }
   ],
   "protectedPaths": [
