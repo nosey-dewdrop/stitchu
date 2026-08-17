@@ -299,6 +299,19 @@ Görseller etkilenmiyor (SVG'ler sayfaların içine gömülü, 16 adet inline), 
 **Özet: 16'nın 3'ü uyandırmaya değer** (`accuracy-benchmark`, `vocab-sweep`, `bugra-parity`), 1'i şartlı, 12'si halefi olduğu için uyuyor. **Silme kararı Damla'nın; ben yalnız envanter çıkardım.**
 **Cevap:**
 
+### [ ] K20 — Deploy yolu ÖLÇÜLDÜ: iki değil ÜÇ yüzey var, biri ölü, biri Vercel · 2026-08-17 (TUR 12)
+10B "iki deploy yolu yarışıyor" demişti. Ölçüldü — **yarışmıyorlar, çünkü üçü de aynı kaynağı (main/`web/`) izliyor ve biri hiç kimseye servis etmiyor.** Kanıt canlı baytların eşleştirilmesiyle:
+- `curl https://stitchu.noseydewdrop.com/index.html` **= `web/index.html` ile BAYT AYNI** (`cmp` sessiz, 67925 bayt).
+- Aynı canlı bayt, `origin/gh-pages:index.html`'den **FARKLI** (67960 bayt, char 482'de ayrışıyor).
+- `origin/gh-pages` son commit'i **2026-07-28 17:12**; main'in `web/`'e son dokunuşu **2026-08-16**. Branch 20 gündür donmuş.
+- Pages API: `build_type: workflow` → `source.branch: gh-pages` alanı **yok sayılıyor**, artık bir kalıntı.
+**Hüküm: kanonik yayıncı `pages.yml` (main → artifact).** `scripts/deploy.sh`'in `git subtree split` → `gh-pages --force` adımı (satır 116–117) **kimsenin okumadığı bir branch'e yazıyor** — yani sahte bir "deploy oldu" sinyali. Bozuk değil, **konusuz**.
+★ **Sorulmamış ama önemli — özel alan adı GitHub'da DEĞİL:** `curl -I stitchu.noseydewdrop.com` → **`server: Vercel`**; `nosey-dewdrop.github.io` → `server: GitHub.com`. Pages API `cname: null` ve `web/CNAME` diskte yok — çünkü alan adı Pages'e hiç bağlanmamış, **ayrı bir Vercel projesi** aynı repoyu yayınlıyor (`web/vercel.json` duruyor). İki adres aynı baytı veriyor çünkü ikisi de main'i izliyor, birbirlerini ezdikleri için değil.
+⚠ **CLAUDE.md'nin "eski nosey-dewdrop.github.io ÖLÜ" satırı YANLIŞ** — 200 dönüyor ve GitHub tarafının kanonik adresi tam olarak orası.
+⚠ **`deploy.sh` çalıştırmak bugün ZARARLI:** sitemap'i `web/gen-sitemap.py` ile yeniden yazar ve o üreteç `styles`'ı atlar → **24 canlı stil sayfası sitemap'ten düşer** (K17).
+**Karar gerekiyor: `deploy.sh`'in gh-pages adımı silinsin mi (yayıncı `pages.yml` ilan edilsin), Vercel mi GitHub Pages mi kanonik kalsın?** Siteyi bozmamak için **hiçbirine dokunmadım**. ~1 saat.
+**Cevap:**
+
 ---
 
 ## KAPANDI
