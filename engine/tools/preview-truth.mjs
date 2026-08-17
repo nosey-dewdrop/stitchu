@@ -188,6 +188,43 @@ const allowLandmark = (style, lm) => // exact-style pin overrides the '*' wildca
   truth.landmarkAllow.find((a) => a.style === style && a.landmark === lm)
   || truth.landmarkAllow.find((a) => a.style === '*' && a.landmark === lm);
 
+// ---- T17/TUR 9 (17 Ağu): SESSİZ ATLAMA ARTIK HÜKÜM İSTİYOR --------------------
+// Buraya kadar landmark döngüsü `if (F[lm] === undefined || D[lm] === undefined)
+// continue;` diyordu — "honest skip (band top, no sleeve)". ÖLÇÜLDÜ: 31 stil ×
+// 10 landmark = 310 yargı yuvasının **190'ı (%61.3) atlanıyordu**, ve
+// **11 stil (princessSeam ailesinin TAMAMI) 0/10 yargı alıyordu.** Sebep tek bir
+// çapa: princess stilleri önü Center/Side Front'a böldüğü için draft'ta
+// 'Bodice Front' parçası YOK → D.bustHalf undefined → çapa yok → ON landmark'ın
+// hepsi düşüyor. Ratchet o 11 stilde hiçbir zaman koşmadı; figure_check'in 7'si
+// ile aynı sınıf, daha büyüğü.
+//
+// Atlama yasağı değil, GEREKÇE şartı: bir landmark ancak stilin KENDİ beyanı
+// (contract/preview-truth.json specs + styles.json parts) o landmark'ın var
+// olmadığını söylüyorsa atlanabilir. Gerekçesiz atlama = ölçüm aletinin
+// boşluğu = FAIL. Eşik (%8), tolerans, DECLARED mekanizması DEĞİŞMEDİ.
+//
+// bustHalf ve waistHalf HİÇBİR koşulda atlanamaz: her giysinin büstü ve beli
+// vardır. Orada eksik sayı stilin özelliği değil, aletin körlüğüdür.
+const SKIP_FREE = new Set(['bustHalf', 'waistHalf']);
+function skipReason(styleKey, sem, parts, pat, lm, missF, missD) {
+  if (SKIP_FREE.has(lm)) return null;             // her giyside var; atlanamaz
+  if (lm === 'sleeveLen' || lm === 'sleeveWidth') {
+    return parts.sleeve === true ? null : 'stil kolsuz (styles.json parts.sleeve yok)';
+  }
+  if (lm === 'hemSweepHalf' || lm === 'skirtLen') {
+    if (sem.garment === 'top') return 'stil ÜST (preview-truth spec garment=top) — etek yok';
+    if (parts.gorePanels === true) return 'etek gore panellerine bölünmüş (parts.gorePanels) — tek Skirt Front parçası yok';
+    return null;
+  }
+  if (lm === 'neckHalf' || lm === 'neckDepth' || lm === 'shoulderLen' || lm === 'armholeDepth') {
+    // Bant/askı üstünde flat'in omuz noktası (k.nX) YOKTUR — bu stilin kendi
+    // gerçeği. Ama sayıyı kaybeden DRAFT tarafıysa, bu aletin boşluğudur.
+    if (missF && !missD) return 'bant/askı üstü — flat\'in omuz noktası yok (k.nX undefined)';
+    return null;
+  }
+  return null;
+}
+
 // ---- run ---------------------------------------------------------------------
 const engine = await createEngine();
 const styleKeys = Object.keys(styles.styles);
@@ -247,7 +284,15 @@ for (const styleKey of styleKeys.filter((k) => truthKeys.includes(k))) {
   const D = draftLandmarks(pat);
   const rows = [];
   for (const lm of ['bustHalf', 'neckHalf', 'neckDepth', 'shoulderLen', 'armholeDepth', 'waistHalf', 'hemSweepHalf', 'skirtLen', 'sleeveLen', 'sleeveWidth']) {
-    if (F[lm] === undefined || D[lm] === undefined) continue; // honest skip (band top, no sleeve)
+    const missF = F[lm] === undefined, missD = D[lm] === undefined;
+    if (missF || missD) {
+      const why = skipReason(styleKey, sem, parts, pat, lm, missF, missD);
+      const side = missF && missD ? 'flat+draft' : (missF ? 'flat' : 'draft');
+      if (why) { rows.push(`  ${lm.padEnd(13)} SKIP — ${why} (${side} tarafı yok)`); continue; }
+      fail(`[${styleKey}] landmark '${lm}' ÖLÇÜLMEDİ: ${side} tarafında sayı yok ve stilin beyanında bunu açıklayan bir yapı yok — ratchet burada SESSİZ (T17/TUR 9)`);
+      rows.push(`  ${lm.padEnd(13)} FAIL — gerekçesiz atlama (${side} tarafı yok)`);
+      continue;
+    }
     const rF = F[lm] / F.bustHalf, rD = D[lm] / D.bustHalf;
     const dev = (rF / rD - 1) * 100;
     let status;
