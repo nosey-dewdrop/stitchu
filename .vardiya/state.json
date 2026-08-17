@@ -3,13 +3,13 @@
   "branch": "main",
   "son_saglam_tag": null,
   "son_saglam_tag_not": "Damla 17.08: muhur artik TAG. taban.sh tam yesilde taban-<etiket> tag'i atar ve pushlar; donus adresi son tag'dir. null = henuz tam yesil muhur alinmadi (h10_gate_check kasten kirmizi).",
-  "tur": 6,
+  "tur": 7,
   "otorite": "HEDEF.md",
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
   "sayac": {
     "H1": {
-      "kalan_halka": 5,
-      "kalan_saat": "23-33  [H1.0: 25-45 -> 20-38 -> 18-35 -> 14-26 -> 12-22s]"
+      "kalan_halka": 8,
+      "kalan_saat": "26-37  [H1.0: 12-22 -> 13-24s; +H1.1a/b/c]"
     },
     "H2": {
       "kalan_halka": 7,
@@ -20,11 +20,19 @@
       "kalan_saat": "80-120 + zevk turu 0"
     },
     "TABAN": {
-      "kalan_halka": 3,
-      "kalan_saat": "~2-3  [T13 KAPANDI; T1 yok-hukmunde; T5 bloke; +T15 (18.py sarilim-kor mandal ~0.3s), T16 (iki beden tablosu uyusmuyor ~1s)]"
+      "kalan_halka": 2,
+      "kalan_saat": "~1s  [T15,T16 KAPANDI; T5 bloke; +T17 style_check bos kosuyor]"
     }
   },
   "sayac_gecmisi": [
+    {
+      "tur": 7,
+      "H1": 8,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 2,
+      "not": "T15+T16 KAPANDI. ★ T16'nin asil bulgusu: celiski ALICIYA ULASIYORDU — size-table.json printpack.py:1380'de alicinin PDF'ine basiliyor, motor euSize()'dan kesiyor; EU38 sayfasi 'bel 72.3' yazarken kalip 70.0'a kesilmisti. 3 celisen dogru -> 2. H1.1 MUHURLENDI ama ACIK (17 maddenin 14'u gecti, +3 halka). H1.0a KAPANMADI ve TESHIS YER DEGISTIRDI."
+    },
     {
       "tur": 6,
       "H1": 5,
@@ -90,37 +98,43 @@
     {
       "id": "H1.0a",
       "durum": "acik",
-      "sure": "3-6s",
+      "sure": "4-8s",
       "sira": 1,
-      "not": "TUR 7 KRITIK YOL — pens duzeni. Ust pens ile bel pensi KESISIYOR (bel yarigi [0,0.80), ust yarik (0.55,rowsN]); ayrica on-orta kesigin yaninda pens turetilmeyen olu bolge. Bu cozulmeden shoulderSeam bayragi acilamaz."
+      "not": "TUR 8 KRITIK YOL — EYER. Panelin deficit'i ust iki satir bandinda +34.57 sonra -64.34 derece; cukur bir eyer ve pens eyeri yutamaz. CrestFold'un SEKLI. Iki alt kalem: (1) ust pensin bacaklari dikis listesine PENS CIFTI olarak girmiyor (PNG'de hic mavi kenar yok, dikiciye kapatma talimati yok), (2) maxDartDeg baglamiyor (ilan 14 derece, gercek 24.4)."
     },
     {
       "id": "H1.0b",
       "durum": "acik",
       "sure": "6-12s",
       "sira": 2,
-      "not": "kol oyugu GERCEK 2B DELIK olmali. Bugun phi in [0,19.9] bandinda ince mercek: derinlik ~148mm, genislik ~52mm -> elips ~333mm (olculen 330). Bugra 424-486 icin delik ~110mm genis olmali. K1 + K9 buna bagli."
+      "not": "kol oyugu GERCEK 2B DELIK olmali. Bugun ince mercek (derinlik ~148mm, genislik ~52mm, elips ~333mm). Bugra 424-486 icin delik ~110mm genis olmali. K1+K9 buna bagli."
     },
     {
-      "id": "T16",
+      "id": "T17",
       "durum": "acik",
       "sure": "~1s",
       "sira": 3,
-      "not": "TUR 7 — IKI BEDEN TABLOSU UYUSMUYOR: contract/layers/size-table.json EU48 bust 107.84 (kusursuz dogrusal) vs contract.gen.hpp 110 (grade 1.5 kat). h10_gate_check ikincisini kullaniyor. Ayrica backLengthCM EU44->EU46 adimi 0.0cm. -> DAMLA-KUYRUK K10"
+      "not": "TUR 8 — style_check ctest'te YESIL ama engine/STYLE-PIN/ dizini hic olmadigi icin 'PASS (nothing to enforce)'. T7 ile ayni sinif. Ayrica: BASKA hangi kapilar bos kosuyor? Supurme gerekiyor."
     },
     {
-      "id": "T15",
+      "id": "H1.1a",
       "durum": "acik",
-      "sure": "~0.3s",
+      "sure": "~1s",
       "sira": 4,
-      "not": "TUR 7 — flatten-research/18'in analitik mandali SARILIM-KOR: dL=-d*dtheta ic normalin hep tegent-solda oldugunu varsayiyor, yalniz CCW'de dogru. Govde CCW 8/8, KOL CW 8/8 -> kol kenarlarinda sahte 2*d*dtheta (EU38 14.18/20.89mm). 13 ve 19'da duzeltildi, 18 DUZELTILMEDI."
+      "not": "TUR 8 — nesting once/sonra kaniti uretilmiyor (sartname 3. bolum)"
     },
     {
-      "id": "H1.1",
+      "id": "H1.1b",
       "durum": "acik",
       "sure": "~1s",
       "sira": 5,
-      "not": "TUR 7 — paket tanimi muhru. docs/SATIS-SARTNAMESI.md zaten kalem kalem tanimliyor -> muhurle"
+      "not": "TUR 8 — kumas onerisi (weight/drape gerekcesiyle) hicbir sayfaya basilmiyor (sartname 4. bolum)"
+    },
+    {
+      "id": "H1.1c",
+      "durum": "acik-DAMLA",
+      "sure": "?",
+      "not": "kontakt sayfasinin emsal PDF'leri DISKTE YOK (benchmark-58). Damla karari."
     },
     {
       "id": "T5",
@@ -132,13 +146,13 @@
       "id": "H1.2",
       "durum": "acik",
       "sure": "~4s",
-      "not": "kitapcik, motor ciktisindan (H1.0'in ARKASINDA)"
+      "not": "kitapcik (H1.0'in ARKASINDA)"
     },
     {
       "id": "H1.3",
       "durum": "acik",
       "sure": "~3s",
-      "not": "kapak + line drawing -> DAMLA-KUYRUK K3 (H1.0'in ARKASINDA)"
+      "not": "kapak + line drawing -> K3 (H1.0'in ARKASINDA). NOT: motor bugun listing flat'i HIC uretmiyor (web/**/*flat*.svg -> 0 dosya)"
     },
     {
       "id": "H1.4",
@@ -162,13 +176,13 @@
       "id": "H2.2",
       "durum": "acik",
       "sure": "40-80s",
-      "not": "style line / bolge cikarimi — KRITIK YOL (H2)"
+      "not": "style line / bolge cikarimi — H2 KRITIK YOL"
     },
     {
       "id": "H2.3",
       "durum": "acik",
       "sure": "60-100s",
-      "not": "operator dalgasi: yaka, kol, etek, boy, kumas. ★ TUR 6 BULGUSU: buzgulu OVERLAY KATMANI da bir operator (Bugra'nin puf kolu iki katman, yatay bolunme degil)"
+      "not": "operator dalgasi. ★ buzgulu OVERLAY KATMANI da bir operator (Tur 6)"
     },
     {
       "id": "H2.4",
@@ -228,6 +242,36 @@
     "K12 Bugra kolu iki KATMAN (bilgi)"
   ],
   "karar_sicili": [
+    {
+      "tur": 7,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: TABAN 3 -> 2 (T15,T16 kapandi). H1 halka sayisi 5 -> 8 CIKTI ama bu kapsam buyumesi degil GORUNURLUK: H1.1'in muhru sartnameyi ilk kez bugunku pakete karsi olctu ve uc madde gercekten saglanmiyor cikti. Tripwire pasif."
+    },
+    {
+      "tur": 7,
+      "karar": "H1.0a TESHISI YER DEGISTIRDI — ONCEKI TESHIS OLCUMLE GERI CEKILDI",
+      "gerekce": "(a) 'ust pensler bel pensleriyle kesisiyor' YANLIS: govdede HIC BEL PENSI YOK (STITCHU_SLIT_DEBUG, 4 bedende, bayrak acik ve kapali; govde yalniz ust capa turetiyor, etek develop-deficit +0.000 cunku skimBodice+hemSweep koniye ceviriyor). (b) On-orta olu bolge de kok degil: o bolgenin deficit'i dikisten cikiyor (sinir gerinimleri %0.011-0.092, kapi %0.5). GERCEK KOK (c): panelin deficit'i ust iki satir bandinda +34.57 derece sivri sonra -64.34 derece cukur = bir EYER, ve pens eyeri yutamaz (dartColumnsFromDeficitRows negatif bantlari sifira kirpiyor, negatif egrilige gidecek yer verilmiyor, bacak gerinimi olarak yuzeye cikiyor: %8.929). Bu bir pens muhasebesi sorunu degil, CrestFold'un SEKLININ sorunu."
+    },
+    {
+      "tur": 7,
+      "karar": "BIR DUZELTME DAHA ALINMADI",
+      "gerekce": "maxDartDeg BAGLAMIYOR: sayi weighted'dan, yuk total/n'den geliyor; EU38 on govde ceyregi +48.806 derece olcuyor, n=2 aliyor, her pense 24.4 derece veriyor — ilan edilen kapak 14. total'dan saymak denendi (STITCHU_DART_COUNT_TOTAL=1): n 2->4 ama kuyruk yurumesi ucunu komsu kolonlara yigiyor ve kesim cizgisi KOTULESIYOR (on 1.8318->2.2734%, arka 1.8646->2.0431%), hala 4 FAIL. Tur 5/6 emsali: alinmadi, olculdu, ilan edildi."
+    },
+    {
+      "tur": 7,
+      "karar": "★ ALICIYA ULASAN BIR HATA KAPANDI (T16)",
+      "gerekce": "contract/layers/size-table.json printpack.py:1380'de alicinin PDF'ine 'BEDEN TABLOSU (vucut olculeri, cm)' basligiyla basiliyordu; motor ise euSize()'dan kesiyor. Fark sabit: EU34-46 gogus -0.159 bel +2.334 basen -2.522 cm; EU48 gogus -2.159 basen -4.522. EU38 icin sayfa 'bel 72.3' yazarken kalip 70.0'a kesilmisti — kendini bizim tablomuza gore olcen alici YANLIS BEDENE gonderiliyordu. Kok A (euSizeChart) tekil kaynak secildi (11 tuketici vs 1), size-table.json artik ondan KOPYALIYOR. ctest onceki=sonraki (99%, 1/91), K2 grade 7/7 korundu, K6 dizisi bit-ayni."
+    },
+    {
+      "tur": 7,
+      "karar": "KAPSAM BUYUDU: +4 halka (H1.1a, H1.1b, H1.1c, T17)",
+      "gerekce": "H1.1'in muhru bugunku pakete karsi olculdu, 17 maddenin 3'u saglanmiyor: H1.1a nesting once/sonra kaniti hic uretilmiyor, H1.1b kumas onerisi hicbir sayfaya basilmiyor, H1.1c kontakt sayfasinin emsal PDF'leri DISKTE YOK (benchmark-58). Ayrica T17: style_check ctest'te YESIL ama engine/STYLE-PIN/ dizini HIC OLMADIGI icin 'PASS (nothing to enforce)' basiyor — T7 ile ayni sinif, bos kosan kapi."
+    },
+    {
+      "tur": 7,
+      "karar": "EU48 REJIMI DAMLA'YA — TEK TARAFLI DUZELTILMEDI",
+      "gerekce": "6B tablonun 8 bedenine bakti; sozlesmede 10 var ve UST USTE UCU de ayni: EU46->48, 48->50, 50->52 hepsi +6.0 gogus-bel-basen, +1.0 omuz. Bir dizgi hatasi kendini dort sutunda uc kez tekrar etmez -> kasitli olma ihtimali guclu (Alman DOB serisi 46 ustu 6cm mi, DOGRULANMADI). Ustelik dayandigi belirti BUGUN YOK: K6 8/8 ok, EU46->48 adimi +1.34mm, orada IYILESIYOR. backLengthCM'in tek-hucrelik duzeltmesi de yok (EU46'yi 42.5 yapmak sifir adimi EU46->48'e tasir). Uydurulmadi -> K10."
+    },
     {
       "tur": 6,
       "karar": "DEVAM",
@@ -412,6 +456,8 @@
     "T12",
     "T13",
     "T14",
+    "T15",
+    "T16",
     "H1.0-KAPI"
   ]
 }

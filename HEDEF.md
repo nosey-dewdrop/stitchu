@@ -11,11 +11,27 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 > **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
 
 ```
-H1'e kalan:  8 halka / 25–36 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → 14–26 → **12–22s**] [+H1.1a/b/c]
+H1'e kalan:  8 halka / 26–37 koşu saati    [H1.0: 12–22 → **13–24s**, teşhis yer değiştirdi] [+H1.1a/b/c]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / ~1–2 koşu saati     [T13 KAPANDI · T15 KAPANDI · T1 yok-hükmünde · T5 bloke · +T16]
+TABAN:       2 halka / ~1 koşu saati       [T13,T15,T16 KAPANDI · T1 yok-hükmünde · T5 bloke · +T17 style_check boş koşuyor]
 ```
+
+## TUR 7 — ALICIYA ULAŞAN BİR HATA KAPANDI + H1.0a'NIN TEŞHİSİ YER DEĞİŞTİRDİ
+
+### ★ Bugünün en somut bulgusu: basılan beden tablosu kalıptan farklıydı
+`contract/layers/size-table.json`, `printpack.py:1380`'de alıcının PDF'ine **"BEDEN TABLOSU (vücut ölçüleri, cm)"** başlığıyla basılıyordu; motor ise `euSize()`'dan kesiyordu. Fark sabit ve büyük:
+`EU34–46: göğüs −0.159 · bel +2.334 · basen −2.522 cm` · `EU48: göğüs −2.159 · basen −4.522`
+→ **EU38 sayfası "bel 72.3" yazarken kalıp 70.0'a kesilmişti.** Kendini bizim tablomuza göre ölçen alıcı **yanlış bedene** gönderiliyordu. Tekleştirildi (kök `euSizeChart` — 11 tüketici vs 1); `size-table.json` artık sözleşmeden **kopyalıyor**. `ctest` önce=sonra (`99%, 1/91`), K2 grade **7/7 korundu**, K6 dizisi bit-aynı.
+
+### H1.0a — ÖNCEKİ TEŞHİS ÖLÇÜMLE GERİ ÇEKİLDİ
+Tur 6'nın *"üst pensler bel pensleriyle kesişiyor"* teşhisi **YANLIŞTI**: `STITCHU_SLIT_DEBUG` 4 bedende, bayrak açık ve kapalı — **gövdede HİÇ BEL PENSİ YOK** (gövde yalnız üst çapa türetiyor; etek develop-deficit **+0.000°**, çünkü `skimBodice`+`hemSweep` koniye çeviriyor). *"Ön-orta ölü bölge"* de kök değil: o bölgenin deficit'i dikişten çıkıyor (sınır gerinimleri %0.011–0.092, kapı %0.5).
+
+**GERÇEK KÖK — EYER.** Panelin deficit'i üstteki iki satır bandında **+34.57° sivri, sonra −64.34° çukur**; altındaki her bant −0.12…−0.18°. Çukur bir **eyer**, ve **pens eyeri yutamaz** — `dartColumnsFromDeficitRows` negatif bantları yerleşim için sıfıra kırpıyor, katlamanın negatif eğriliğine gidecek yer hiç verilmiyor ve **bacak gerinimi olarak yüzeye çıkıyor: %8.929** (kapıyı kıran %1.83'ün kaynağı). Bu bir pens muhasebesi sorunu değil, **`CrestFold`'un şeklinin** sorunu.
+İki alt kalem: (1) üst pensin bacakları dikiş listesine **pens çifti olarak girmiyor** — PNG'de hiç mavi kenar yok, dikiciye kapatma talimatı yok; (2) `maxDartDeg` **bağlamıyor** (ilan edilen kapak 14°, gerçekte pens başına 24.4°).
+**Bir düzeltme daha alınmadı:** `total`'dan pens sayma (n 2→4) kuyruk yürüyüşünü komşu kolonlara yığdı ve kesim çizgisini **kötüleştirdi** (ön 1.8318→%2.2734). Ölçüldü, ilan edildi, alınmadı.
+
+> **KAPSAM BÜYÜDÜ: +1 halka (T17). Sebebi:** `style_check` ctest'te **YEŞİL** ama `engine/STYLE-PIN/` dizini **hiç olmadığı için** `PASS (nothing to enforce)` basıyor — hiçbir şeyi tutmuyor. T7 (`walk.py` kapı değil yazıcıydı) ile **aynı sınıf**. Tek testi düzeltmek yetmez: **başka hangi kapılar yeşil görünüp boş koşuyor?** Süpürme gerekiyor.
 
 ## TUR 6 — OMUZ DİKİŞİ İNŞA EDİLDİ, BAYRAK ARKASINDA BEKLİYOR
 
