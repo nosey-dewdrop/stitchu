@@ -26,15 +26,43 @@
 #                            subprocesses; canonicalised specs must be
 #                            byte-equal.
 #
-# Every generation is a FRESH SUBPROCESS of generate.py (the determinism
-# law of the bridge); this file only reads what those runs wrote.
+# Every generation is a FRESH SUBPROCESS (the determinism law of the bridge);
+# this file only reads what those runs wrote.
 #
-# Run with the GarmentCode venv python (scripts/gradeset.sh does):
-#   <gc>/.venv/bin/python gradeset.py <state.json|default> [--out DIR]
+# ---------------------------------------------------------------------------
+# TUR 15 (17 Agu) — HANGI MOTOR YARGILANIYOR? Iki motor vardi ve bu, HEDEF.md'nin
+# "iki dogru birakilmaz" yasasinin ihlaliydi:
+#   scripts/taban.sh (vardiya muhru) -> engine/build/surface-pattern  (SEVK EDILEN, C++)
+#   scripts/gradeset.sh (bu dosya)   -> generate.py -> GarmentCode    (ESKI HAT, Python)
+# Ikisi ayni panel ADINI kullaniyor ama AYNI PANELLERI DEGIL. Yedinci kirmizinin
+# `mirror_seams 8` + `IHLAL 18` sayilari altinci kirmizi kapandiginda kimildamadi
+# ve bu bir basarisizlik degil, ERISILEMEZLIKti: gradeset sevk edilmeyen bir
+# motoru yargiliyordu.
+#
+# Karar: TEK ALET, IKI MOTOR ADI, TEK VARSAYILAN.
+#   --motor surface      (VARSAYILAN) sevk edilen tek-yuzey C++ motoru
+#   --motor garmentcode  eski GarmentCode hatti; ARSIV. Silinmedi cunku
+#                        `green and unsewable` / 22704 hucre sayilari o hattan
+#                        cikti ve tekrar uretilebilirligi olduremeyiz.
+# Rapor ve kapi satiri hangi motoru yargiladigini ADIYLA yazar. Bir tabloya
+# bakip hangi motorun kastedildigini tahmin etmek zorunda kalmak, bu turun
+# kapattigi kusurun ta kendisi.
+#
+# ★ SURFACE MOTORUNDA ILK OLCUM (17 Agu, engine/build-15a Release): grade
+# denetimi sevk edilen motorda HIC KOSMAMISTI ve kostugunda eski hattan DAHA
+# AGIR cikti — 8 panelin 4'u (dort govde paneli) kenar sayisi bedene gore 2
+# ziplamasi yuzunden tabloya HIC giremiyor, giren 4 etek panelinin 34
+# kenarinin 30'u monotonlugu ihlal ediyor, ve bel dikisi cevresi 8 bedende de
+# 0.00mm cunku motorda `wb` (korsaj bandi) rolu YOK.
+#
+# Run with the GarmentCode venv python (scripts/gradeset.sh does; walk.py ve
+# cairosvg o venv'de):
+#   <gc>/.venv/bin/python gradeset.py <state.json|default> [--motor M] [--out DIR]
 # ============================================================================
 import argparse
 import datetime
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -44,6 +72,11 @@ REPO = HERE.parent.parent
 GC_ROOT = REPO / 'core' / 'third_party' / 'garmentcode'
 VENV_PY = GC_ROOT / '.venv' / 'bin' / 'python'
 GENERATE = HERE / 'generate.py'
+# The shipped engine. taban.sh hardcodes engine/build/surface-pattern; an env
+# override exists so a shift can grade its OWN build dir without editing the
+# script (engine/build-15a etc.), which is exactly how this file was measured.
+SURFACE_BIN = Path(os.environ.get(
+    'STITCHU_SURFACE_BIN', REPO / 'engine' / 'build' / 'surface-pattern'))
 
 sys.path.insert(0, str(HERE))
 from mapping import SIZES  # noqa: E402
@@ -73,13 +106,25 @@ DEFAULT_STATE = {
     'laceNeck': False, 'laceSleeve': False, 'laceHem': False,
 }
 
-NEST_PANELS = ['right_ftorso', 'right_btorso', 'skirt_front', 'right_sleeve_f']
+# Nest panels are a PER-MOTOR fact: the two engines do not carry the same
+# pieces. Naming them in one flat list was how `skirt_front` and
+# `right_sleeve_f` came to be silently skipped on the surface engine (they do
+# not exist there) — the `if name not in panels: continue` class. A named nest
+# panel that the motor does not carry is now REPORTED (see verdict()).
+NEST_PANELS = {
+    'garmentcode': ['right_ftorso', 'right_btorso', 'skirt_front',
+                    'right_sleeve_f'],
+    # measured 17 Agu on engine/build-15a: the surface engine ships exactly
+    # eight panels — left/right x {ftorso, btorso, skirt_front, skirt_back}.
+    'surface': ['right_ftorso', 'right_btorso', 'right_skirt_front',
+                'right_skirt_back'],
+}
 
 
 # ---------------------------------------------------------------------------
 # generation
 # ---------------------------------------------------------------------------
-def run_size(state, size_index, out_dir):
+def run_size_garmentcode(state, size_index, out_dir):
     """Fresh-subprocess generate.py for one size. Returns the out dir."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -95,6 +140,53 @@ def run_size(state, size_index, out_dir):
         sys.stderr.write(proc.stdout + proc.stderr)
         raise RuntimeError(f'generate.py failed for {SIZES[size_index]}')
     return out_dir
+
+
+def run_size_surface(state, size_index, out_dir):
+    """Fresh-subprocess `surface-pattern <SIZE>` for one size, then walk.py's
+    seam deed on what it wrote. Returns the out dir.
+
+    ⚠ `state` IS NOT AN INPUT HERE and that is not an oversight to paper over:
+    the shipped engine's only argument is the size label. The atolye dials do
+    not reach it. gradeset therefore grades THE ENGINE'S ONE GARMENT across
+    eight bodies, not "this atolye state across eight bodies" — the report says
+    so in words rather than letting a state.json sit next to the output
+    implying it was honoured.
+    """
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    spec_path = out_dir / 'stitchu_specification.json'
+    if not SURFACE_BIN.exists():
+        raise RuntimeError(
+            f'sevk edilen motor derlenmemis: {SURFACE_BIN}\n'
+            '  cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release '
+            '&& cmake --build engine/build -j8\n'
+            '  (ya da STITCHU_SURFACE_BIN=<yol> ile kendi build dizinini ver)')
+    proc = subprocess.run([str(SURFACE_BIN), SIZES[size_index]],
+                          capture_output=True, text=True, timeout=600)
+    if proc.returncode != 0:
+        sys.stderr.write(proc.stdout + proc.stderr)
+        raise RuntimeError(f'surface-pattern failed for {SIZES[size_index]}')
+    spec_path.write_text(proc.stdout)
+    (out_dir / 'motor.txt').write_text(proc.stderr)
+
+    # The deed is walk.py's, unchanged and un-reparameterised: the same
+    # function taban.sh calls on the same spec. No design.yaml exists on this
+    # line, so no declared gather ratio is claimed — walk handles design=None.
+    report = walklib.walk(spec_path)
+    (out_dir / 'seam-report.json').write_text(json.dumps(report, indent=2))
+    (out_dir / 'seam-report.txt').write_text(walklib.report_txt(report))
+    # The nudge ladder is a GarmentCode cut_corner escape; this motor has no
+    # such ladder. An empty list is the truthful record, and section 4 of the
+    # report says which of the two it is.
+    (out_dir / 'mapping-notes.json').write_text('[]')
+    return out_dir
+
+
+def run_size(state, size_index, out_dir, motor):
+    if motor == 'surface':
+        return run_size_surface(state, size_index, out_dir)
+    return run_size_garmentcode(state, size_index, out_dir)
 
 
 def canonical_spec(spec_path):
@@ -376,12 +468,18 @@ def nest_svg(panel_name, patterns):
     return svg, w, h
 
 
-def build_nests(patterns, out_dir):
-    """Per-panel nest SVG+PNG. Returns list of written paths."""
+def build_nests(patterns, out_dir, motor):
+    """Per-panel nest SVG+PNG. Returns (paths written, names not carried).
+
+    A named nest panel the motor does not carry used to `continue` in silence;
+    on the surface engine that silently dropped 2 of 4 nests. It is returned so
+    the verdict can say it out loud.
+    """
     import cairosvg
-    paths = []
-    for name in NEST_PANELS:
+    paths, missing = [], []
+    for name in NEST_PANELS[motor]:
         if name not in patterns[0]['panels']:
+            missing.append(name)
             continue
         svg, w, h = nest_svg(name, patterns)
         svg_path = Path(out_dir) / f'nest-{name}.svg'
@@ -391,7 +489,7 @@ def build_nests(patterns, out_dir):
                          output_width=max(1200, int(w * 55)),
                          background_color='white')
         paths += [svg_path, png_path]
-    return paths
+    return paths, missing
 
 
 # ---------------------------------------------------------------------------
@@ -474,7 +572,18 @@ def status_counts(d):
     return d['summary']['pairs'], npass, ngath, nfail, other
 
 
-def verdict(deed, mono_counts, det_equal, struct_skipped=()):
+# TUR 15 (17 Agu) — IKI SAYIM DAHA SIFIRIN UZERINDE DURUYORDU, ve ikisi de
+# sadece SEVK EDILEN motorda gorunur oldu:
+#   (1) `waist_seam_girth_mm` torso<->wb dikis ciftlerini topluyor. surface
+#       motorunda `wb` rolu YOK (olculdu: 8 bedende de n=0, toplam 0.00mm), yani
+#       bolum 3'un yarisi "bel dikisi delta araligi: 0.00..0.00mm" diye DUZGUN
+#       bir grade gibi basiliyordu. Olculmemis bir sey duzgun degildir.
+#   (2) nest'i istenen panel motorda yoksa sessizce atlaniyordu (surface'ta
+#       4 nest'in 2'si). Gozun bakacagi cizim basilmadan "6) NEST" basligi
+#       yine basiliyordu.
+# Ikisi de esik DEGIL sayimdir; hicbir tolerans gevsetilmedi.
+def verdict(deed, mono_counts, det_equal, struct_skipped=(),
+            waist_pairs=(), nest_missing=()):
     """Return the list of (name, count) findings that make this run RED."""
     red = []
     drift = deed_schema_faults(deed)
@@ -524,11 +633,22 @@ def verdict(deed, mono_counts, det_equal, struct_skipped=()):
                     f'({", ".join(struct_skipped)}) — hizalanamayan panel '
                     f'monotonlukta hic yargilanmiyor, bu bir atlama, gecme '
                     f'degil', len(struct_skipped)))
+    if waist_pairs and not any(waist_pairs):
+        red.append(('SAYIM: bel dikisi cevresi HIC olculmedi — 8 bedenin '
+                    'hicbirinde torso<->wb dikis cifti yok (motorda korsaj '
+                    'bandi rolu yok); 0.00mm bir grade adimi degil, olcum '
+                    'yoklugudur', len(SIZES)))
+    if nest_missing:
+        red.append((f'SAYIM: nest istenen panel motorda yok '
+                    f'({", ".join(nest_missing)}) — gozun bakacagi cizim '
+                    f'basilmadi, sessizce atlanmaz', len(nest_missing)))
     return red
 
 
-def verdict_lines(deed, mono_counts, det_equal, struct_skipped=()):
-    red = verdict(deed, mono_counts, det_equal, struct_skipped)
+def verdict_lines(deed, mono_counts, det_equal, struct_skipped=(),
+                  waist_pairs=(), nest_missing=()):
+    red = verdict(deed, mono_counts, det_equal, struct_skipped,
+                  waist_pairs, nest_missing)
     if not red:
         return ['KAPI: YESIL — dikis tapusu 0 FAIL, monotonluk 0 IHLAL, '
                 'determinizm ozdes']
@@ -537,16 +657,33 @@ def verdict_lines(deed, mono_counts, det_equal, struct_skipped=()):
     return out
 
 
-def fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
-               det_equal, nest_paths, state_src,
-               struct_notes=(), struct_skipped=()):
+MOTOR_HAT = {
+    'surface': ('SEVK EDILEN MOTOR — engine/build/surface-pattern (C++ tek '
+                'yuzey; taban.sh ayni ikiliyi muhurluyor)',
+                'her beden taze subprocess `surface-pattern <BEDEN>` '
+                '-> walk.py dikis tapusu'),
+    'garmentcode': ('ARSIV HAT — generate.py -> mapping.py -> GarmentCode '
+                    '(SEVK EDILMIYOR; `green and unsewable` / 22704 hucre '
+                    'sayilarinin uretildigi hat, tekrar uretilebilirlik icin '
+                    'ayakta)',
+                    'her beden taze subprocess generate.py --no-print '
+                    '(mapping -> GarmentCode -> walk dikis tapusu)'),
+}
+
+
+def fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs, nudges,
+               det_equal, nest_paths, state_src, motor,
+               struct_notes=(), struct_skipped=(), nest_missing=()):
     L = []
-    L.append('GRADESET RAPORU — bir atolye durumu, 8 beden (EU34..EU48), '
-             'denetimli uretim')
+    L.append('GRADESET RAPORU — 8 beden (EU34..EU48), denetimli uretim')
+    L.append(f'MOTOR: {motor} — {MOTOR_HAT[motor][0]}')
     L.append(f'tarih: {datetime.date.today().isoformat()}   '
              f'durum kaynagi: {state_src}')
-    L.append('her beden taze subprocess generate.py --no-print '
-             '(mapping -> GarmentCode -> walk dikis tapusu)')
+    L.append(MOTOR_HAT[motor][1])
+    if motor == 'surface':
+        L.append('⚠ atolye kadranlari bu motora ULASMIYOR: surface-pattern tek '
+                 'argüman alir (beden etiketi). Yargilanan sey "bu atolye '
+                 'durumu 8 bedende" degil, MOTORUN TEK GIYSISI 8 bedende.')
     L.append('')
 
     L.append('1) DIKIS TAPUSU BEDEN BAZINDA (walk.py, tolerans 1mm)')
@@ -648,30 +785,44 @@ def fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
     L.append(f'gogus delta araligi: {min(bd):.2f}..{max(bd):.2f}mm '
              f'(hedef girth grade 4cm/beden -> desen duzleminde ~sabit '
              'artis; ease carpani mutlak degeri buyutebilir)')
-    L.append(f'bel dikisi delta araligi: {min(wd):.2f}..{max(wd):.2f}mm')
+    if not any(waist_pairs):
+        L.append('bel dikisi: OLCULMEDI — 8 bedenin hicbirinde torso<->wb '
+                 'dikis cifti yok (bu motorda korsaj bandi rolu yok). '
+                 'Yukaridaki 0.00 sutunu bir grade adimi DEGIL, olcum '
+                 'yokluguDUR; delta araligi basilmiyor.')
+    else:
+        L.append(f'bel dikisi delta araligi: {min(wd):.2f}..{max(wd):.2f}mm '
+                 f'(beden basina dikis cifti: {list(waist_pairs)})')
     med = sorted(bd)[len(bd) // 2]
     for i, d in enumerate(bd):
         if abs(d - med) > 2.0:
             L.append(f'  DIKKAT: {SIZES[i]}->{SIZES[i + 1]} gogus adimi '
                      f'{d:.2f}mm (medyan {med:.2f}mm) — duzgun grade '
                      'disi sapma')
-    med_w = sorted(wd)[len(wd) // 2]
-    for i, d in enumerate(wd):
-        if abs(d - med_w) > 2.0:
-            L.append(f'  DIKKAT: {SIZES[i]}->{SIZES[i + 1]} bel adimi '
-                     f'{d:.2f}mm (medyan {med_w:.2f}mm)')
+    if any(waist_pairs):
+        med_w = sorted(wd)[len(wd) // 2]
+        for i, d in enumerate(wd):
+            if abs(d - med_w) > 2.0:
+                L.append(f'  DIKKAT: {SIZES[i]}->{SIZES[i + 1]} bel adimi '
+                         f'{d:.2f}mm (medyan {med_w:.2f}mm)')
     L.append('')
 
     L.append('4) OMUZ NUDGE KAYITLARI (generate.py cut_corner merdiveni)')
-    any_nudge = False
-    for i, n in enumerate(nudges):
-        if n:
-            any_nudge = True
-            for rec in n:
-                L.append(f"  {SIZES[i]}: shoulder_w={rec['value']} "
-                         f"({rec['action']})")
-    if not any_nudge:
-        L.append('  hicbir bedende nudge gerekmedi (0.0 ilk denemede gecti)')
+    if motor != 'garmentcode':
+        L.append('  KONUSUZ — nudge merdiveni GarmentCode cut_corner kacisidir, '
+                 f'`{motor}` motorunda boyle bir merdiven yok. Bos liste '
+                 '"nudge gerekmedi" DEMEK DEGILDIR.')
+    else:
+        any_nudge = False
+        for i, n in enumerate(nudges):
+            if n:
+                any_nudge = True
+                for rec in n:
+                    L.append(f"  {SIZES[i]}: shoulder_w={rec['value']} "
+                             f"({rec['action']})")
+        if not any_nudge:
+            L.append('  hicbir bedende nudge gerekmedi '
+                     '(0.0 ilk denemede gecti)')
     L.append('')
 
     L.append('5) DETERMINIZM')
@@ -683,6 +834,8 @@ def fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
     L.append('6) NEST (goz icin)')
     for p in nest_paths:
         L.append(f'  {p}')
+    for n in nest_missing:
+        L.append(f'  BASILMADI: {n} — bu motorun panel listesinde yok')
     return '\n'.join(L) + '\n'
 
 
@@ -691,9 +844,14 @@ def main():
     ap = argparse.ArgumentParser(
         description='atolye state -> EU34..EU48 size run + grading audit')
     ap.add_argument('state', help="atolye state JSON path, or 'default'")
+    ap.add_argument('--motor', choices=sorted(NEST_PANELS), default='surface',
+                    help='hangi motor yargilanacak (varsayilan: surface = '
+                         'sevk edilen C++ tek-yuzey motoru; garmentcode = '
+                         'arsiv hat)')
     ap.add_argument('--out', default=None,
-                    help='output dir (default Logs/gradeset-<date>/)')
+                    help='output dir (default Logs/gradeset-<motor>-<date>/)')
     args = ap.parse_args()
+    motor = args.motor
 
     if args.state == 'default':
         state, state_src = dict(DEFAULT_STATE), 'atolye defaults (embedded)'
@@ -702,15 +860,20 @@ def main():
             state = json.load(f)
         state_src = args.state
 
+    # The motor goes in the directory NAME: two engines writing into one
+    # `gradeset-<date>/` is how "which engine is this?" became unanswerable in
+    # the first place.
     out = Path(args.out) if args.out else \
-        REPO / 'Logs' / f'gradeset-{datetime.date.today().isoformat()}'
+        REPO / 'Logs' / (f'gradeset-{motor}-'
+                         f'{datetime.date.today().isoformat()}')
     out.mkdir(parents=True, exist_ok=True)
+    print(f'MOTOR: {motor} — {MOTOR_HAT[motor][0]}')
 
     # --- generate all 8 sizes (fresh subprocess each) ----------------------
     patterns, deed, nudges = [], [], []
     lengths_by_size = []
     for i, label in enumerate(SIZES):
-        d = run_size(state, i, out / label)
+        d = run_size(state, i, out / label, motor)
         print(f'{label} uretildi: {d}')
         pat = load_spec(d)
         patterns.append(pat)
@@ -725,32 +888,35 @@ def main():
     # --- audits ------------------------------------------------------------
     aligned, struct_notes, struct_skipped = align_lengths(lengths_by_size)
     mono_rows, mono_counts = monotonicity(aligned)
-    bust, waist = [], []
+    bust, waist, waist_pairs = [], [], []
     for pat in patterns:
         b, _ = bust_girth_mm(pat)
-        w, _ = waist_seam_girth_mm(pat)
+        w, n = waist_seam_girth_mm(pat)
         bust.append(b)
         waist.append(w)
+        waist_pairs.append(n)
 
     # --- determinism: EU38 twice -------------------------------------------
-    det_dir = run_size(state, 2, out / 'EU38-rerun')
+    det_dir = run_size(state, 2, out / 'EU38-rerun', motor)
     det_equal = (canonical_spec(det_dir / 'stitchu_specification.json')
                  == canonical_spec(out / 'EU38'
                                    / 'stitchu_specification.json'))
 
     # --- nest ---------------------------------------------------------------
-    nest_paths = build_nests(patterns, out)
+    nest_paths, nest_missing = build_nests(patterns, out, motor)
 
-    report = fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
-                        det_equal, nest_paths, state_src,
-                        struct_notes, struct_skipped)
+    report = fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs,
+                        nudges, det_equal, nest_paths, state_src, motor,
+                        struct_notes, struct_skipped, nest_missing)
     (out / 'gradeset-report.txt').write_text(report)
     print(report)
     print(f'rapor: {out / "gradeset-report.txt"}')
 
-    for line in verdict_lines(deed, mono_counts, det_equal, struct_skipped):
+    for line in verdict_lines(deed, mono_counts, det_equal, struct_skipped,
+                              waist_pairs, nest_missing):
         print(line)
-    if verdict(deed, mono_counts, det_equal, struct_skipped):
+    if verdict(deed, mono_counts, det_equal, struct_skipped,
+               waist_pairs, nest_missing):
         sys.exit(1)
 
 
