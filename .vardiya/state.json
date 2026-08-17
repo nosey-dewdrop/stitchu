@@ -88,113 +88,63 @@
   },
   "kuyruk": [
     {
-      "id": "T8",
+      "id": "H1.0a",
       "durum": "acik",
       "sure": "3-6s",
       "sira": 1,
-      "not": "TUR 2 — curvefit.cpp kubik kontrol parametresi [0,1] disina cikiyor (1.9678'e kadar) -> 480 kenar geri donuyor. T3'un kok sebebi"
+      "not": "TUR 7 KRITIK YOL — pens duzeni. Ust pens ile bel pensi KESISIYOR (bel yarigi [0,0.80), ust yarik (0.55,rowsN]); ayrica on-orta kesigin yaninda pens turetilmeyen olu bolge. Bu cozulmeden shoulderSeam bayragi acilamaz."
     },
     {
-      "id": "T7",
+      "id": "H1.0b",
       "durum": "acik",
-      "sure": "2-4s",
+      "sure": "6-12s",
       "sira": 2,
-      "not": "TUR 2 — walk.py kapi degil yazici (main hep exit 0); taban.sh grep '^FAIL' girintili 76 FAIL'i saymiyor"
+      "not": "kol oyugu GERCEK 2B DELIK olmali. Bugun phi in [0,19.9] bandinda ince mercek: derinlik ~148mm, genislik ~52mm -> elips ~333mm (olculen 330). Bugra 424-486 icin delik ~110mm genis olmali. K1 + K9 buna bagli."
     },
     {
-      "id": "T10",
+      "id": "T16",
       "durum": "acik",
-      "sure": "~0.5s",
-      "sira": 3,
-      "not": "TUR 2 — _opening_lines() sadece print-report.txt'e gidiyor; alici arka ortayi kapatip kafasi gecmeyen elbise diker"
-    },
-    {
-      "id": "T9",
-      "durum": "acik",
-      "sure": "4-8s",
-      "sira": 1,
-      "not": "TUR 3 — KOK SEBEP ADAYI: surface-pattern.cpp emitChain, bel kosularini singleCubic=true ile tek kubige zorluyor (tol 1e9) -> kFitTolMM BY-PASS. worst fit EU46 7.1717mm, T8'den sonra kimildamadi. waist-attach 3 ayri kusur (EU46 5.350mm, EU42 2.651, EU48 1.142)"
-    },
-    {
-      "id": "T11",
-      "durum": "acik",
-      "sure": "OLCULMEDI",
-      "sira": 2,
-      "not": "TUR 3 — ters omuz: on omuz arkadan uzun (walkgate 6 hukum = 3 dikis). CLAUDE.md: arka omzun uzun olmasi STANDART (kurek payi 6-12mm). Isaret hatasi mi gercek geometri mi olculmedi. KAPSAM BUYUDU +1"
-    },
-    {
-      "id": "H1.0-KAPI",
-      "durum": "acik",
-      "sure": "2-4s",
-      "sira": 3,
-      "not": "TUR 3 — H1.0 KOD DEGIL, KAPI. 25-45 saatlik yapisal is baslamadan once kabul kapisi + fikstur Bugra landmark paritesinden cikarilacak (docs/G5-OMUZ-PLANI.md). Kapi olmadan 25-45 saat yon secemez"
-    },
-    {
-      "id": "H1.0",
-      "durum": "acik-KIRMIZI",
-      "sure": "25-45s",
-      "sira": 5,
-      "not": "OLCULDU: giysi tup. Omuz halkasi yok, kol oyugu 33.55cm vs Bugra 43.30cm. Yapisal: buildGrid (h,phi) izgarasi + Slit yalniz-bel capasi, ~610-1180 satir, 9 dosya"
-    },
-    {
-      "id": "T1",
-      "durum": "YOK-HUKMUNDE",
-      "sure": "0",
-      "not": "terim repoda yok (tum revizyonlar arandi). 52 baslik derlendi, 0 basarisiz. Uydurulmadi -> DAMLA-KUYRUK K6"
-    },
-    {
-      "id": "T2",
-      "durum": "KAPANDI",
-      "sure": "~0.5s",
-      "not": "iki bagimsiz temiz kosu, manifest sha256 8abec243... ozdes, 24 PDF cmp 0 fark"
-    },
-    {
-      "id": "T3",
-      "durum": "OLCULDU-KAPI-KIRMIZI",
-      "sure": "-> T8",
-      "not": "2096 kenar, 480 ihlal, en kotu EU34 left_ftorso[20] 22.99mm. edgemono_check ctest'e baglandi (859f3fe)"
-    },
-    {
-      "id": "T4",
-      "durum": "KAPANDI",
       "sure": "~1s",
-      "not": "84e79a9 sadece print-report.txt'e basiyordu; artik print-info.pdf s.2'de 13 adim. a65881e"
+      "sira": 3,
+      "not": "TUR 7 — IKI BEDEN TABLOSU UYUSMUYOR: contract/layers/size-table.json EU48 bust 107.84 (kusursuz dogrusal) vs contract.gen.hpp 110 (grade 1.5 kat). h10_gate_check ikincisini kullaniyor. Ayrica backLengthCM EU44->EU46 adimi 0.0cm. -> DAMLA-KUYRUK K10"
     },
     {
-      "id": "T5",
-      "durum": "acik-BLOKE",
-      "sure": "OLCULMEDI",
-      "not": "tanim repoda YOK (tum revizyonlar arandi, 2 isabet = halkanin kendisi). Uydurulmadi -> DAMLA-KUYRUK K5"
-    },
-    {
-      "id": "T6",
-      "durum": "KAPANDI",
-      "sure": "~2s",
-      "not": "tek sayac = HEDEF.md § SAYAC. contract/kapsam-checkpoint.json DISKTE YOK; bayat sayac+otorite satirlari silindi"
+      "id": "T15",
+      "durum": "acik",
+      "sure": "~0.3s",
+      "sira": 4,
+      "not": "TUR 7 — flatten-research/18'in analitik mandali SARILIM-KOR: dL=-d*dtheta ic normalin hep tegent-solda oldugunu varsayiyor, yalniz CCW'de dogru. Govde CCW 8/8, KOL CW 8/8 -> kol kenarlarinda sahte 2*d*dtheta (EU38 14.18/20.89mm). 13 ve 19'da duzeltildi, 18 DUZELTILMEDI."
     },
     {
       "id": "H1.1",
       "durum": "acik",
       "sure": "~1s",
-      "not": "docs/SATIS-SARTNAMESI.md zaten tanimliyor -> muhurle"
+      "sira": 5,
+      "not": "TUR 7 — paket tanimi muhru. docs/SATIS-SARTNAMESI.md zaten kalem kalem tanimliyor -> muhurle"
+    },
+    {
+      "id": "T5",
+      "durum": "acik-BLOKE",
+      "sure": "OLCULEMEZ",
+      "not": "tanim repoda YOK -> DAMLA-KUYRUK K5"
     },
     {
       "id": "H1.2",
       "durum": "acik",
       "sure": "~4s",
-      "not": "kitapcik, motor ciktisindan"
+      "not": "kitapcik, motor ciktisindan (H1.0'in ARKASINDA)"
     },
     {
       "id": "H1.3",
       "durum": "acik",
       "sure": "~3s",
-      "not": "kapak + line drawing -> DAMLA-KUYRUK K3"
+      "not": "kapak + line drawing -> DAMLA-KUYRUK K3 (H1.0'in ARKASINDA)"
     },
     {
       "id": "H1.4",
       "durum": "acik",
       "sure": "~3s",
-      "not": "listing + fiyat + lisans"
+      "not": "listing + fiyat + lisans (H1.0'in ARKASINDA)"
     },
     {
       "id": "H2.1",
@@ -206,19 +156,19 @@
       "id": "H2.7",
       "durum": "acik",
       "sure": "8-15s",
-      "not": "operator sicili + durust red — KAPSAM BUYUDU +1"
+      "not": "operator sicili + durust red"
     },
     {
       "id": "H2.2",
       "durum": "acik",
       "sure": "40-80s",
-      "not": "style line / bolge cikarimi — KRITIK YOL"
+      "not": "style line / bolge cikarimi — KRITIK YOL (H2)"
     },
     {
       "id": "H2.3",
       "durum": "acik",
       "sure": "60-100s",
-      "not": "operator dalgasi: yaka, kol, etek, boy, kumas"
+      "not": "operator dalgasi: yaka, kol, etek, boy, kumas. ★ TUR 6 BULGUSU: buzgulu OVERLAY KATMANI da bir operator (Bugra'nin puf kolu iki katman, yatay bolunme degil)"
     },
     {
       "id": "H2.4",
@@ -236,7 +186,7 @@
       "id": "H2.6",
       "durum": "acik",
       "sure": "10-20s",
-      "not": "foto->spec siniflandirma (operatorler bitince)"
+      "not": "foto->spec siniflandirma"
     },
     {
       "id": "H3.1",
@@ -264,11 +214,18 @@
     }
   ],
   "damla_kuyrugu": [
-    "K1 patterns_real/public",
+    "K1 patterns_real/public ACIL",
     "K2 beden",
     "K3 kapak",
     "K4 zevk",
-    "K5 dunya kapisi ne demek (T5'i BLOKE EDER)"
+    "K5 dunya kapisi (T5 bloke)",
+    "K6 iki include",
+    "K7 README bayat sayi",
+    "K8 12 Agu paketleri",
+    "K9 kaynak celiskisi (olculdu, hukum Damla'da)",
+    "K10 beden tablosu",
+    "K11 omuz yedirme: motor mu talimat mi",
+    "K12 Bugra kolu iki KATMAN (bilgi)"
   ],
   "karar_sicili": [
     {
@@ -440,5 +397,21 @@
   "kota": {
     "harcanan_kosu_saati": 0,
     "son_durus_sebebi": null
-  }
+  },
+  "kapandi": [
+    "T1 (yok-hukmunde)",
+    "T2",
+    "T3",
+    "T4",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+    "T14",
+    "H1.0-KAPI"
+  ]
 }
