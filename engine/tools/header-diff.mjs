@@ -24,9 +24,25 @@ const WEB = join(here, '../../web');
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
   'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html',
   'collections/index.html', 'api.html', 'privacy.html', 'studio.html'];
-const stylePages = readdirSync(join(WEB, 'styles')).filter((f) => f.endsWith('.html')).map((f) => `styles/${f}`);
-const patternPages = readdirSync(join(WEB, 'patterns')).filter((f) => f.endsWith('.html')).map((f) => `patterns/${f}`);
-const pages = [...mainPages, ...stylePages, ...patternPages];
+// Generated page classes. `patterns/` is NOT one of them any more: commit
+// af49514 deleted the whole fake pattern gallery (67 svgs + 22 product pages)
+// on purpose — it presented output that fails the buyable-object test. This
+// tool kept reading that directory and CRASHED at readdirSync (ENOENT), so
+// scripts/deploy.sh proof #2 has been unrunnable ever since. A missing or
+// empty declared dir is now a LOUD failure — never a crash, never a silent
+// skip (Tur 9 katman-lint class).
+const REQUIRED_DIRS = ['styles'];
+let dirFail = 0;
+const subdirPages = REQUIRED_DIRS.flatMap((d) => {
+  let names;
+  try { names = readdirSync(join(WEB, d)); }
+  catch { console.error(`FAIL  required page dir web/${d}/ is MISSING — a declared page class cannot be checked`); dirFail++; return []; }
+  const html = names.filter((f) => f.endsWith('.html'));
+  if (html.length === 0) { console.error(`FAIL  required page dir web/${d}/ carries ZERO html pages — nothing to enforce`); dirFail++; }
+  return html.map((f) => `${d}/${f}`);
+});
+const stylePages = subdirPages.filter((p) => p.startsWith('styles/'));
+const pages = [...mainPages, ...subdirPages];
 
 function extractHeader(html, rel) {
   const m = html.match(/<header class="sh-header">[\s\S]*?<\/header>/);
@@ -55,7 +71,7 @@ function normalise(header) {
 }
 
 const shared = {};
-let fail = 0;
+let fail = dirFail;
 for (const rel of pages) {
   let html;
   try { html = readFileSync(join(WEB, rel), 'utf8'); }
@@ -72,7 +88,7 @@ for (const rel of pages) {
 
 const variants = Object.keys(shared);
 if (variants.length === 1 && fail === 0) {
-  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles + ${patternPages.length} patterns).`);
+  console.log(`OK  header identical across ${pages.length} pages (${mainPages.length} main + ${stylePages.length} styles).`);
   process.exit(0);
 }
 
