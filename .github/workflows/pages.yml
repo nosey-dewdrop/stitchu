@@ -98,6 +98,28 @@ jobs:
       - name: site-health
         run: node engine/tools/site-health.mjs
 
+      # TUR 18 (18C): the atelier's size dial ships EIGHT sizes (EU34..EU48) but
+      # contract/tables.json flat.size stops at EU42 — five rows. Both consumers
+      # index that table directly (web/atolye.html:421 and the read-only pen
+      # engine/flat-engine/_engine-full.mjs:37, `SIZE[p.size]` -> `sz.shp`).
+      #
+      # RED TODAY, declared rather than hidden: 12 of 32. Measured end to end by
+      # running the SHIPPED page's own draw() over 4 topology branches x 8 dial
+      # positions — EU34..EU42 draw and are byte-deterministic in all four
+      # branches; EU44/EU46/EU48 THROW in all four. The engine is honest; the UI
+      # is not: paint() catches the throw and `return`s ABOVE the lines that
+      # update the drawing, the size label and every dial readout, so a visitor
+      # who drags to EU48 keeps looking at the EU42 drawing, still labelled
+      # EU42. A silent skip, which this shift has ruled worse than a crash ten
+      # times over, so it now has a gate.
+      #
+      # The three missing rows belong to contract/tables.json and are NOT
+      # invented here (DAMLA-KUYRUK K22). This gate only refuses to stay silent
+      # — the same posture as validate-contract below. It also exits 2, never 0,
+      # when it cannot measure.
+      - name: size-coverage
+        run: node engine/tools/size-coverage-check.mjs
+
       # deploy.sh proof 3: contract/vocab/gen drift AND the copyright boundary
       # (check 5b). This one is RED today and it is red for a real reason:
       # patterns_real/ has 49 tracked files, 8 of them purchased BugraPatterns

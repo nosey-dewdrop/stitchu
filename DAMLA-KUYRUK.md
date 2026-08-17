@@ -28,10 +28,11 @@ Aciliyet üç kademe: **ACİL** = bugün bir şeyi durduruyor · **SIRADA** = bi
 | K15 | 31 stilin "kalemi"ni pinlemek için bir tur açayım mı? | `style_check` + `figure_check` (ikisi de ilan edilmiş kırmızı) | **SIRADA** |
 | K16 | `vintage6070/meta.json` geri gelsin mi, yoksa 4 sayfa ailesi kalksın mı? | 4 üreteç ENOENT ile ölü; K18 bunun kararını bekliyor | **SIRADA** |
 | K17 | Sitemap'in kanonik üreteci hangisi? İkisi de bugünkü ağacı yanlış anlatıyor. | canlı SEO yüzeyi | **ACİL** |
-| K18 | Silinen galeriye giden 228 ölü iç referans — ~~açık~~ TUR 13'te onarıldı, kalan 1 | — | **KAPANDI** |
+| K18 | Silinen galeriye giden 228 ölü iç referans — ~~açık~~ TUR 13'te onarıldı, ~~kalan 1~~ TUR 18'de 0 | — | **KAPANDI** |
 | K19 | Uyuyan 16 aletin 3'ü uyandırmaya değer — silinsin mi, uyandırılsın mı? | envanter; hiçbir halkayı durdurmuyor | BEKLER |
 | K20 | `deploy.sh`'in gh-pages adımı silinsin mi? Kanonik yayıncı Vercel mi Pages mi? | `deploy.sh` bugün ZARARLI (K17) | **ACİL** |
 | K21 | Korumalı yol araç-şekilliydi; bash kapatıldı, kalan delik ilan edildi — bilgin olsun. | — | **KAPANDI** |
+| K22 | `flat.size` EU42'de bitiyor, kadran EU48'e gidiyor: **32 çizimin 12'si çöküyor**, atölye yutuyor | atölye sayfası, canlı | **ACİL** |
 
 ---
 
@@ -350,6 +351,31 @@ Tur 8'in kapı süpürmesi iki testin **boş koştuğunu** buldu ve ikisi de art
 `web/` ağacında **187 adet `href=".../patterns/..."`** duruyor ve `web/patterns/` **yok**. Paylaşılan header'da olduğu için **`web/index.html` dahil neredeyse her sayfada**: `collections/babydoll.html` tek başına 17, `collections/retro-dresses.html` 17, 61 patch sayfasının her birinde 1.
 Görseller etkilenmiyor (SVG'ler sayfaların içine gömülü, 16 adet inline), **kırılan gezinme**. Bu, K16'nın dört üretecinden bağımsız ve ondan büyük: üreteçler onarılsa bile bu linkler geri gelir, çünkü şablonların içinde yazılı.
 **Bu Damla'nın yüzü** — silmedim, elle de düzeltmedim (guard: üreteci değiştir). ~2 saat, ama önce K16 kararı gerek.
+**Cevap:**
+
+### [ ] K22 — `flat.size` üç bedeni eksik ve atölye çöküşü YUTUYOR · 2026-08-17 (TUR 18)
+**Ölçüm, tahmin değil.** Sevk edilen `web/atolye.html`'in KENDİ `draw()`'u koşuldu, **4 topoloji dalı × 8 kadran bedeni = 32 çizim** (kapı: `node engine/tools/size-coverage-check.mjs`, mutasyon kanıtı 4/4):
+
+| dal | EU34–EU42 | EU44 / EU46 / EU48 |
+|---|---|---|
+| dress+shoulder | OK, 5038–5044 B, iki koşu bayt-aynı | **ÇÖKÜYOR** |
+| top+shoulder | OK, 3722–3732 B, bayt-aynı | **ÇÖKÜYOR** |
+| dress+band | OK, 3314–3317 B, bayt-aynı | **ÇÖKÜYOR** |
+| top+band | OK, 2001–2003 B, bayt-aynı | **ÇÖKÜYOR** |
+
+Hepsi aynı istisna: `TypeError: Cannot read properties of undefined (reading 'shp')`.
+**Kök:** `contract/tables.json → flat.size` **beş satır** (EU34–EU42); kadran **sekiz** beden sevk ediyor (`engine/tools/atolye/ingredients.js:202`, `['size', …, 0, 7, …]`). İki tüketici de çizelgeye doğrudan giriyor: `web/atolye.html:421` ve **salt-okunur** `engine/flat-engine/_engine-full.mjs:37`.
+
+★ **Motor dürüst — YALAN SÖYLEYEN UI.** `atolye.html` `paint()`:
+```
+try { svg = draw(ST); }
+catch (e) { $('stat').textContent = 'cizim hatasi: ' + e.message; return; }
+```
+O `return`, çizimi (`$('flat')`), beden etiketini (`$('ver')`) ve **bütün kadran okumalarını** güncelleyen satırların ÜSTÜNDE. Yani ziyaretçi kadranı EU48'e çekince ekranda **EU42'nin çizimi, EU42 etiketiyle** durmaya devam ediyor; tek sinyal küçük bir durum satırı. Bu vardiyanın on kez tekrarladığı **sessiz atlama** sınıfı.
+
+**YAPMADIĞIM:** üç satırı ben yazmadım. (a) `contract/tables.json` bu turda **18B'nin dosyası**, (b) çizelgenin kendi kaynağı zaten açık bir soru — TUR 17 `euSizeChart`'ın **70 sayısının repoda hiçbir yerde beyan edilmediğini** ölçtü. Vücut sayısı **uydurulmaz**.
+
+**Soru: üç satır (EU44/EU46/EU48) `flat.size`'a hangi kaynaktan eklensin?** Alternatif — kadran beşe indirilsin mi? (O da motorun sevk ettiği 8 bedenle çelişir, yani kapıyı boyar.) Kapı bugün **12 FAIL** ile `pages.yml`'de duruyor ve deploy'u bilerek bloke ediyor.
 **Cevap:**
 
 ### [ ] K19 — Uyuyan 16 alet: silinmedi, envanteri çıkarıldı · 2026-08-17 (TUR 12)
