@@ -81,15 +81,21 @@ int main() {
         const int n = static_cast<int>(c.size());
         return std::hypot(c[(e + 1) % n].x - c[e].x, c[(e + 1) % n].y - c[e].y);
     };
-    const char* kinds[] = {"bel", "prenses", "yan", "pens"};
-    double worst[4] = {0, 0, 0, 0};
-    int counts[4] = {0, 0, 0, 0};
+    // ONE ENTRY PER SurfaceStitch::Kind. This array was four long while the
+    // enum was five (Opening), so every Opening stitch wrote past the end —
+    // undefined behaviour that has been in the tree since the closure landed.
+    // No threshold moved: the same 0.79375mm gate now simply covers every kind
+    // instead of scribbling on the stack.
+    const char* kinds[] = {"bel", "prenses", "yan", "pens", "omuz", "açıklık"};
+    constexpr int kKinds = static_cast<int>(sizeof kinds / sizeof kinds[0]);
+    double worst[kKinds] = {0, 0, 0, 0, 0, 0};
+    int counts[kKinds] = {0, 0, 0, 0, 0, 0};
     for (const SurfaceStitch& st : pat.stitches) {
         const double d = std::fabs(edgeLen(st.pa, st.ea) - edgeLen(st.pb, st.eb));
         worst[st.kind] = std::max(worst[st.kind], d);
         ++counts[st.kind];
     }
-    for (int k = 0; k < 4; ++k) {
+    for (int k = 0; k < kKinds; ++k) {
         if (!counts[k]) continue;
         char label[64];
         std::snprintf(label, sizeof label, "%s en kötü çift (%d)", kinds[k], counts[k]);

@@ -77,7 +77,14 @@ struct SurfacePanel {
 // for the last Opening on the seam rather than being handed a separate
 // coordinate — one source for where the zip stops, the waist ring's law again.
 struct SurfaceStitch {
-    enum Kind { Waist, Princess, Side, Dart, Opening };
+    // SHOULDER is a kind of its own and NOT because a name passes a gate —
+    // docs/H1.0-KAPI.md § K3 says outright that adding the value proves
+    // nothing. It is here because the seam it names is the only one in the
+    // plan that joins a FRONT panel's far edge to a BACK panel's far edge,
+    // and every consumer that groups seams by kind (equality referees,
+    // assembly order, the printed instructions) has to be able to say
+    // "shoulder" without re-deriving the topology.
+    enum Kind { Waist, Princess, Side, Dart, Shoulder, Opening };
     int pa = 0, ea = 0, pb = 0, eb = 0;
     Kind kind = Waist;
 };
@@ -209,6 +216,38 @@ struct SheathOptions {
     // that page deliberately NOT applied.
     bool armhole = true;
     double shoulderNarrowMM = 10.0;   // Aldrich: 1 cm in from the shoulder edge
+
+    // ---- THE SHOULDER SEAM: the surface stops being a tube ----
+    //
+    // MEASURED DIAGNOSIS (Tur 5, ajan 5B; confirmed here): the garment surface
+    // is a (h, phi) TUBE. The front panel's top edge lives at y > 0 and the
+    // back's at y < 0. Over the shoulder they sit at the SAME height and are
+    // never the same curve, so no amount of naming produces a shoulder seam —
+    // K3 reads 0 because the topology has no place to put one. The top of the
+    // shoulder is a nearly HORIZONTAL region crossed in y, and a tube cannot
+    // cross it.
+    //
+    // So in the shoulder band the top of the surface is folded onto ONE curve,
+    // the shoulder seam line, which lies on the crest of the shoulder (y ~ 0).
+    // Front and back then share it by construction, exactly as a garment does,
+    // and the neck hole and the armhole close at its two ends: the seam runs
+    // from the neck point (x = neckHalf) out to the shoulder point
+    // (x = strapHalf), and outside that band the weight eases to zero because
+    // that is precisely where the two edges are SUPPOSED to part company —
+    // into the neckline at the centre and into the armhole at the side.
+    bool shoulderSeam = true;
+    // How far FORWARD of the crest the seam is placed, mm. A design decision
+    // and declared as one: trade practice runs from on-the-crest to about a
+    // centimetre forward, and 0 is the neutral reading (the seam on the crest).
+    double shoulderSeamForwardMM = 0.0;
+    // Vertical depth of the fold, mm — the band below the top boundary over
+    // which the surface turns from the body's front/back onto the crest. This
+    // is the shoulder CAP, and it is a declared modelling dial like
+    // topDartApexFrac, not a drafting number: it says how much of the garment
+    // is treated as lying over the top of the shoulder rather than hanging off
+    // it. Too small and the fold is a crease no dart set can absorb; too large
+    // and the bodice stops following the body well below the armhole.
+    double shoulderCrestBandMM = 60.0;
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;

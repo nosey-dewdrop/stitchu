@@ -348,10 +348,56 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
     return strapZ - (strapZ - top.underarmZ) * 0.5 * (1.0 - std::cos(kPi * u));
 }
 
+// ---- THE SHOULDER CREST FOLD (H1.0, K3/K4/K5) ----
+//
+// The zone coordinate is x = shoulderHalf * |cos phi|, which is the SAME
+// coordinate TopProfile uses to decide neckline / shoulder / armhole and the
+// same one the gate uses to classify the far arcs. It is a distance across the
+// body at SHOULDER level, which is where the shoulder line is drafted, and
+// keeping the fold on it means the engine and the gate cannot disagree about
+// where the shoulder is. (The fixed point in solveTopH answers a different
+// question — how HIGH the boundary is — and stays as it is.)
+//
+// weight(phi): 1 across the shoulder band [neckHalf, strapHalf], easing to 0
+// at the centre and at the shoulder edge. Those two zeros are not softening:
+// they are the neck hole and the armhole. The seam ends where the hole begins.
+struct CrestFold {
+    bool on = false;
+    double neckHalfMM = 0.0, strapHalfMM = 0.0, shoulderHalfMM = 0.0;
+    double seamYMM = 0.0;
+    double bandMM = 0.0;
+
+    static double ease(double u) { return 0.5 * (1.0 - std::cos(kPi * u)); }
+
+    double weight(double phi) const {
+        if (!on || bandMM <= 0.0) return 0.0;
+        const double x = std::fabs(shoulderHalfMM * std::cos(phi));
+        if (x >= neckHalfMM && x <= strapHalfMM) return 1.0;
+        if (x < neckHalfMM) return neckHalfMM > 1e-9 ? ease(x / neckHalfMM) : 0.0;
+        const double sp = shoulderHalfMM - strapHalfMM;
+        if (sp <= 1e-9 || x >= shoulderHalfMM) return 0.0;
+        return ease((shoulderHalfMM - x) / sp);
+    }
+
+    // Bend y onto the seam line over the top bandMM of THIS column. Nothing
+    // below the band moves, so the waist ring — the one shared curve — is
+    // untouched by construction, and x and z are untouched everywhere: the
+    // fold is a fold, not a re-draft of the boundary.
+    Vec3 apply(Vec3 p, double phi, double topZ) const {
+        const double w = weight(phi);
+        if (w <= 0.0) return p;
+        double t = (p.z - (topZ - bandMM)) / bandMM;
+        t = std::max(0.0, std::min(1.0, t));
+        p.y += (seamYMM - p.y) * w * ease(t);
+        return p;
+    }
+};
+
 PanelGrid buildGrid(const GarmentSurf& surf,
                     const std::vector<Vec3>& ringSeg, double waistH,
                     const std::vector<double>& topH,
-                    double phi0, double phi1, double rowStepMM) {
+                    double phi0, double phi1, double rowStepMM,
+                    const CrestFold& fold = {}) {
     const int cols = static_cast<int>(ringSeg.size()) - 1;
     // RAGGED TOP. topH[j] is where THIS column ends, so the far boundary can dip
     // for a neckline, ride over a shoulder and scoop for an armhole while the
@@ -369,7 +415,8 @@ PanelGrid buildGrid(const GarmentSurf& surf,
         g.rows[i].resize(cols + 1);
         for (int j = 0; j <= cols; ++j) {
             const double phi = phi0 + (phi1 - phi0) * j / cols;
-            g.rows[i][j] = surf.at(waistH + (topH[j] - waistH) * i / rowsN, phi);
+            g.rows[i][j] = fold.apply(surf.at(waistH + (topH[j] - waistH) * i / rowsN, phi),
+                                      phi, topH[j]);
         }
     }
     return g;
@@ -890,6 +937,13 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                                  : 0.0;
     const TopProfile top{napeZ,        tanIncl,          neckHalfMM, frontDropMM,
                          opt.backNeckDropMM, shoulderHalf, strapHalfMM, underarmZ};
+    CrestFold fold;
+    fold.on = opt.shoulderTop && opt.shoulderSeam && opt.armhole;
+    fold.neckHalfMM = neckHalfMM;
+    fold.strapHalfMM = strapHalfMM;
+    fold.shoulderHalfMM = shoulderHalf;
+    fold.seamYMM = opt.shoulderSeamForwardMM;
+    fold.bandMM = opt.shoulderCrestBandMM;
     if (opt.skimBodice) {
         surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
         surf.skimBaseH = waistH;                          // the single shared ring
@@ -985,12 +1039,28 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 const double u = (xTarget - prevX[half2]) / (x - prevX[half2]);
                 bestZ[half2] = prevZ[half2] + (p.z - prevZ[half2]) * u;
                 bestDx[half2] = 0.0;
+                if (std::getenv("STITCHU_TOP_DEBUG"))
+                    std::fprintf(stderr, "  XCROSS j=%3d half=%d prevX=%8.3f x=%8.3f u=%.4f z=%9.3f\n",
+                                 j, half2, prevX[half2], x, u, bestZ[half2]);
             } else if (bestDx[half2] > 0.0 && std::fabs(x - xTarget) < bestDx[half2]) {
                 bestDx[half2] = std::fabs(x - xTarget);  // never reached: nearest column
                 bestZ[half2] = p.z;
             }
             prevX[half2] = x;
             prevZ[half2] = p.z;
+        }
+        if (std::getenv("STITCHU_TOP_DEBUG")) {
+            for (int j = 0; j <= NR / 4; ++j) {
+                const double phi = 2 * kPi * j / NR;
+                const Vec3 p = surf.at(tH[j], phi);
+                std::fprintf(stderr,
+                             "  TOP j=%3d phi=%7.3fdeg  x=%8.3f y=%8.3f z=%9.3f  "
+                             "carry=%+8.3f  modelx=%8.3f\n",
+                             j, phi * 180.0 / kPi, p.x, p.y, p.z, p.z - shoulderLevelH,
+                             shoulderHalf * std::cos(phi));
+            }
+            std::fprintf(stderr, "  TOP nape=%.3f shoulderH=%.3f tanIncl=%.5f strap=%.3f neck=%.3f underarmZ=%.3f\n",
+                         napeZ, shoulderLevelH, tanIncl, strapHalfMM, neckHalfMM, underarmZ);
         }
         pat.shoulderLevelMM = shoulderLevelH;
         pat.shoulderPointXMM = xTarget;
@@ -1034,7 +1104,7 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                     const std::vector<double> topSeg(L.topH.begin() + c0, L.topH.begin() + c1 + 1);
                     const PanelGrid g = buildGrid(surf, seg, waistH, topSeg,
                                                   2 * kPi * c0 / NR, 2 * kPi * c1 / NR,
-                                                  opt.rowStepMM);
+                                                  opt.rowStepMM, L.isSkirt ? CrestFold{} : fold);
                     // TWO BANDS, TWO ANCHORS. Only a bodice with a real top
                     // boundary has anywhere for a top dart to open: a skirt's
                     // far edge is the hem, and a hem dart is not a thing. So
@@ -1136,7 +1206,8 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 const std::vector<Vec3> seg(ring.begin() + c0, ring.begin() + c1 + 1);
                 const double phi0 = 2 * kPi * c0 / NR, phi1 = 2 * kPi * c1 / NR;
                 const std::vector<double> topSeg(L.topH.begin() + c0, L.topH.begin() + c1 + 1);
-                const PanelGrid g = buildGrid(surf, seg, waistH, topSeg, phi0, phi1, opt.rowStepMM);
+                const PanelGrid g = buildGrid(surf, seg, waistH, topSeg, phi0, phi1, opt.rowStepMM,
+                                              L.isSkirt ? CrestFold{} : fold);
                 const int rowsN = static_cast<int>(g.rows.size()) - 1;
                 // Where the dart ENDS is geometry, not a dial.
                 //
@@ -1298,6 +1369,53 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             for (size_t i = 0; i < d.legA.size(); ++i)
                 pat.stitches.push_back({static_cast<int>(pi), d.legA[i],
                                         static_cast<int>(pi), d.legB[i], SurfaceStitch::Dart});
+
+    // ---- THE SHOULDER SEAM (H1.0 K3, and with it K5's closed neck hole) ----
+    //
+    // The fold put the front and the back top boundaries onto ONE curve across
+    // the shoulder band; this sews them. The pairing is the fold's own mirror:
+    // ring column c and ring column NR-c are the same distance across the body
+    // on opposite faces, so front arc [c, c+1] and back arc [NR-c-1, NR-c] are
+    // the same piece of the seam line. Nothing is searched for.
+    //
+    // The "right_" panels are MIRRORED copies — the contour was reflected but
+    // the edge lists were not reindexed — so their far edge k spans the arc
+    // [ringOffset + n-k-1, ringOffset + n-k], not [ringOffset+k, +k+1].
+    // Getting that backwards sews the shoulder to the neckline, so the ring
+    // arc is derived per panel rather than assumed.
+    //
+    // The seam runs only where the fold's weight is 1 at BOTH ends of the arc,
+    // which is exactly the shoulder band [neckHalf, strapHalf]. Outside it the
+    // two edges are meant to part: into the neckline at the centre and into the
+    // armhole at the side. Sewing there would close the holes the garment is
+    // put on through.
+    if (fold.on) {
+        std::vector<std::pair<int, int>> arcOf(NR, {-1, -1});
+        auto indexFar = [&](const std::vector<int>& subs) {
+            for (int pi : subs) {
+                const SurfacePanel& p = pat.panels[pi];
+                const int n = static_cast<int>(p.farEdges.size());
+                const bool mirrored = p.name.rfind("right_", 0) == 0;
+                for (int k = 0; k < n; ++k) {
+                    const int lo = mirrored ? p.ringOffset + n - k - 1 : p.ringOffset + k;
+                    if (lo >= 0 && lo < NR) arcOf[lo] = {pi, p.farEdges[k]};
+                }
+            }
+        };
+        indexFar(layers[0].frontSubs);
+        indexFar(layers[0].backSubs);
+        auto inBand = [&](int col) {
+            const double x = std::fabs(shoulderHalf * std::cos(2 * kPi * col / NR));
+            return x >= neckHalfMM && x <= strapHalfMM;
+        };
+        for (int c = 0; c < NR / 2; ++c) {
+            const int d = NR - 1 - c;
+            if (!inBand(c) || !inBand(c + 1)) continue;
+            if (arcOf[c].first < 0 || arcOf[d].first < 0) continue;
+            pat.stitches.push_back({arcOf[c].first, arcOf[c].second, arcOf[d].first,
+                                    arcOf[d].second, SurfaceStitch::Shoulder});
+        }
+    }
 
     // ---- THE BACK OPENING: the closure stops being a declaration ----
     //
