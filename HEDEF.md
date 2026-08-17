@@ -87,6 +87,51 @@ Sevk edilen motorda ilk koşu (`d336514`, `engine/build-15a` Release):
 
 **ctest** (`engine/build-15a`, Release): dışlamalı **`100% tests passed, 0 tests failed out of 89`** · tam süit **`95% tests passed, 5 tests failed out of 94`** — düşen tam olarak ilan edilen beşi (`style_check`, `contract_check`, `preview_truth_check`, `figure_check`, `h10_gate_check`). Gerileme yok.
 
+## TUR 15 — OMZUN KÖKÜ BİR HATA DEĞİL, İKİ SİSTEMİN KARIŞMASI
+
+### ★ GÖVDE ÇİZELGESİNDE İKİ OMUZ GENİŞLİĞİ VAR, YÜZEY DAR OLANI KULLANIYOR
+
+| kaynak | EU38 | ürettiği omuz boyu | Aldrich'e sapma, 8 beden |
+|---|---|---|---|
+| `shaperatios.gen.hpp` `shoulderWidthCM` (GarmentCode **ortalama gövde**, EU44'e çapalı) — **motorun kullandığı** | 33.4568 | 106.84mm | **−19.3 … −10.6mm, 8/8 KISA** |
+| `contract.gen.hpp` `shoulderCM` (çizelgenin **kendi kolonu**, bugün yalnız eski 2B hat okuyor) | 37.0 | 125.93mm | **+5.2 … −2.9mm** |
+
+`measurements.hpp:35` *"bu çizelgenin `shoulderCM`'i DEĞİL, farklı bir büyüklük"* diyor — **bu bir İDDİA; ölçüm çizelge kolonunu gösteriyor.** Motor, Aldrich'in dar **boyun noktasını** GarmentCode'un **omuz genişliğiyle** eşleştiriyor. Açık tam olarak bu.
+
+**Ve ilan edilen %15 yanlış sayıydı — gerçek daha kötü.** `103.93mm` bir omuz boyu değil: içinde **45.24mm y-süpürmesi** var (tüpün etrafından dolaşma payı, Aldrich'in mezurasında yok). Kırışık açıkken aynı kapı **91.69mm** okuyor. Aldrich kolsuz karşılığı **112.5mm** (p.28, 1cm içerde) → **%18.5 KISA.**
+`neckHalf` **Aldrich'in boyun noktasıdır** (`neck/5 − 0.2cm` = 68.0mm, p.16) — 12A'nın *"iç uç doğrulanmadı"* notu **kapandı**, tartışma yok.
+
+**KARARIM (ölçüye dayalı, savunuyorum):** gövde çizelgesinin omuz kaynağı **`contract.gen.hpp` `shoulderCM`** olmalı. Gerekçe: Aldrich **doğrulanmış** kaynak (`knowledge/drafting-math-eu38.md`), çizelge kolonu ona **+5.2/−2.9mm** içinde uyuyor, GarmentCode ortalama gövdesi **8/8 bedende −10…−19mm** sapıyor. Bir ölçüm sekiz bedende birden tek yönde sapıyorsa o ölçüm yanlıştır. **Bedeli var ve gizlenmiyor:** geçiş K5-çevreyi **8/8 kapatıyor (4→0)** ama üç K6 hükmü + K2'yi düşürüyor. **K2'nin düşmesi bir SONUÇ, sebep değil** — doğru ölçüye geçip düşen kapıyı onarmak, yanlış ölçüyü korumaktan iyidir. Bu bir karar, Tur 16'nın işi. (Ölçüm kaydı: `184860c`, on ikinci emsal olarak reddedilen prob orada.)
+
+### ★ K4 ÇÖZÜLDÜ — BUG DEĞİL, İKİNCİ YASANIN BEDELİ
+Ön ve arka **x-z koşuları 8 bedende 0.009mm'ye kadar AYNI** (EU38 94.875 / 94.884). Farkın **tamamı y-süpürmesi** (ön 45.237, arka 43.421) — yani kapının "kürek payı" sandığı şey **gövde elipsinin önünün arkasından derin olması** ve o **ters yöne bakar**. Kırışık açıkken K4 **−2.336 → −0.150mm** (%94 çöküş).
+Kalan sıfır **doğru okuma**: üst sınır tüm çember üzerinde **bir kez** örnekleniyor (ikinci yasa), omuz çizgisi tek değerli → **ön/arka farklı OLAMAZ.** → **K4, K3'e ve ikinci yasaya BLOKE.** Kürek payı sınırın iki değer taşımasını gerektirir.
+
+### ★ `docs/H1.0-KAPI.md` §4.3'ün HÜKMÜ ÇÜRÜDÜ
+*"Kolon flip'i ELENDİ"* deniyordu. Kapının **kendi çıktısı**: EU34–EU40 `omuz 32+32 · yaka 18+18`, **EU42–EU48 `omuz 34+34 · yaka 16+16`** — flip **tam EU40→EU42'de**, yani K5-çevrenin −24.41mm düştüğü yerde. **Hipotez elenmemiş, DOĞRULANMIŞ.**
+
+### İKİ MOTOR KARARI: (a) SEÇİLDİ — ve sevk edilen motorun grade'i BUGÜNE KADAR HİÇ ÖLÇÜLMEMİŞ
+★ `taban.sh` **bedenler arası tek hüküm taşımıyor** (monotonluk, grade adımı, nest — hiçbiri). `run-all.sh` de öyle. Grade denetimi **yalnız** `gradeset.sh`'teydi, o da sevk edilmeyen motoru yargılıyordu.
+`gradeset.py --motor` eklendi, **varsayılan `surface`**. Sonuç, sevk edilen motorda **daha ağır**:
+
+| | arşiv (GarmentCode) | **sevk edilen** |
+|---|---|---|
+| dikiş tapusu | `mirror_seams` 8 | **26/26 PASS × 8 beden, altı sınıf da 0** |
+| monotonluk ihlali | 18 | **30** (34 kenarın 30'u, en kötü EU46→EU48 **−19.47mm**) |
+| hizalanamayan panel | 0 | **4 — dört gövde panelinin HEPSİ** |
+| bel dikişi | ölçülüyor | **8 bedende ölçülemedi** |
+
+★ Kök: `ftorso` `[20,21,22,20,20,21,21,21]`, `btorso` `[22,22,22,20,20,20,20,20]` — bedene göre **2 zıplama**; `align_lengths` 1'i birleştirebiliyor **2'yi birleştiremiyor** → **giysinin oturmasını sağlayan dört panel kenar tablosuna hiç giremiyor**, yargılanan 34 kenarın hepsi **etek**.
+★ **Sevk edilen motorda göğüs çevresi EU44→EU46'da −3.86mm AZALIYOR** (medyan adım +16.96mm). Beden büyürken göğüs küçülüyor. Kökü **ARAŞTIRILMADI**.
+★ **Atölye kadranları sevk edilen motora ULAŞMIYOR:** `surface-pattern` tek argüman alıyor (beden etiketi). `web/atolye.html`'in 40+ kadranının motorda **hiçbir karşılığı yok** — vitrin ile motor **ayrı şeyler**.
+
+> **KAPSAM BÜYÜDÜ: +2 halka.** (b) dört gövde panelinin kenar zıplaması (~4–6s) · (c) motorda bel dikişi tapusu (~4–6s). İkisi de H1.0'ın değil **motorun** alanı.
+
+### Dört kapı daha silahlandı, yeni kırmızı YOK
+`spec_census.py`: **mutlak taban 8 panel/beden** (tekdüze çöküşü yakalayan tek hüküm) + **çapraz sabitlik**. Dikiş tabanı sayılmadı **türetildi** (n panel bağlı kalmak için ≥ n−1 dikiş, kapsayan ağaç). Delik tam olarak **dikişleri koruyan** çöküşteymiş: 8 beden → 2 panel, dikişler korunmuş → eski kapı `hüküm-FAIL 0` basıp **YEŞİL** çıkıyordu.
+`cutplan_check` yeni ve ctest'te; `name_disagreement` **bugün 8/8 bedende ateşlemiyor** (kök 14A/14B'de kapandı) — ölçüldükten sonra silahlandırıldı.
+**ctest dışlamalı: 90/90 yeşil.** Tam süit 95'te 5 FAIL, beşi de ilan edilmiş.
+
 ## TUR 14 — ALTINCI KIRMIZI KAPANDI, VE BİR KAYIT HATAM DÜZELTİLDİ
 
 ### ★ `reversed` artık ÖLÇÜLMÜYOR, İNŞADAN TÜRETİLİYOR — walkgate 5/8 → 0
