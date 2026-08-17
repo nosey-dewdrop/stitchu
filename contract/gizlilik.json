@@ -6,6 +6,7 @@
     {
       "yol": "patterns_real/",
       "neden": "SATIN ALINMIS BugraPatterns kaliplari (A0/A4/US Letter PDF'leri, talimat PDF'i, urun fotograflari). Baskasinin urunu; parayla alindi, dagitim hakki alinmadi.",
+      "ilan_edilmis_karar": "ILAN EDILMIS KARAR (Damla, 17.08): patterns_real BILEREK takipli ve repo BILEREK public. Damla'nin sozu: 'pdfleri silmicem, satin aldim.' 9B bu kirmiziyi 17 Agu sabahi 'gizlilik IHLALI' diye kurmustu; ayni gun Damla karari verdi ve TUR 10'da etiket duzeltildi. Bu bir kaza, bir sizinti ya da bir ajan hatasi DEGIL — bilinen bedeli bilerek odenen bir karar. Kapi KALDIRILMADI: sayilan sey hala 'takipli telifli dosya' (bugun 49) ve hedefi hala 0, yani kapi KIRMIZI kaliyor ve bedeli gorunur tutuyor. Yesile donmesi olcumun degil Damla'nin karari degismesinin isi (K1).",
       "izinli": []
     },
     {
@@ -39,6 +40,6 @@
     }
   ],
 
-  "_bugunku_durum": "17 Agu: `patterns_real/` 49 dosyayla HEAD'de TAKIPLI (8 satin alinmis PDF + 25 jpg, ~65.5 MB) ve repo BUGUN PUBLIC acildi (gh repo view: visibility PUBLIC). Yani bu kapi kuruldugu anda KIRMIZI dogdu ve kirmizinin sebebi gercek: o dosyalar su anda internetten indirilebiliyor. Gecmisten kazima (git filter-repo) DAMLA-KUYRUK K1'de ve DAMLA'NIN KARARIDIR — gecmis yeniden yazmak tek tarafli yapilmaz, o yuzden ajan dosyalari silmedi, ISIK YAKTI.",
-  "_bitis_sarti": "K1 cevaplanip `patterns_real/` agactan cikinca (ve/veya repo private'a donup gecmis kazininca) kapi kendiliginden yesile doner. Esik yok, tolerans yok, pin yok — sayilacak sey 'takipli telifli dosya sayisi' ve hedefi 0."
+  "_bugunku_durum": "17 Agu, TUR 10 — ETIKET DUZELTILDI, KAPI DURUYOR. `patterns_real/` 49 dosyayla HEAD'de TAKIPLI (8 satin alinmis PDF + 25 jpg, ~65.5 MB) ve repo PUBLIC. TUR 9'da bu 'gizlilik IHLALI' diye yazilmisti; ayni gun Damla karar verdi: PDF'ler KALIYOR ('pdfleri silmicem, satin aldim'), repo public KALIYOR. Dolayisiyla bu kirmizi bir kaza degil, bir KARARIN bedelidir ve oyle adlandirilir (kapinin cumlesi 'DECLARED DECISION', 'BREACHED' degil). Kapi kaldirilmadi, esik konmadi, tolerans verilmedi — sayi 49, hedef 0, hukum FAIL. Yeni bir telifli dizin sessizce eklenirse (ilan_edilmis_karar alani olmadan) eskisi gibi BREACHED der.",
+  "_bitis_sarti": "Damla'nin K1 karari degisip `patterns_real/` agactan cikinca (ve/veya gecmis filter-repo ile kazininca) kapi kendiliginden yesile doner. Esik yok, tolerans yok, pin yok — sayilacak sey 'takipli telifli dosya sayisi' ve hedefi 0. Bu bir OLCUM isi degil, bir KARAR isi."
 }

@@ -152,7 +152,19 @@ try {
     if (!bad.length) { ok(`copyright boundary '${p.yol}': 0 tracked files beyond the ${allow.size} declared tools`); continue; }
     leaked += bad.length;
     const shown = bad.slice(0, 6).join(', ');
-    fail(`copyright boundary BREACHED — '${p.yol}' has ${bad.length} TRACKED file(s) in git: ${shown}${bad.length > 6 ? `, +${bad.length - 6} more` : ''}\n      why protected: ${p.neden}\n      the repo is public unless proven otherwise; tracked means downloadable. Deleting history is DAMLA'S call (DAMLA-KUYRUK K1) — this gate only refuses to stay silent.`);
+    // TUR 10 (17 Ağu) — YENİDEN ETİKETLEME, KAPI DEĞİL. 9B bu kırmızıyı "gizlilik
+    // İHLALİ" diye kurdu. Damla 17 Ağu'da KARAR VERDİ: PDF'ler kalıyor ("pdfleri
+    // silmicem, satın aldım"), repo public kalıyor. Yani patterns_real/ artık bir
+    // kaza değil, İLAN EDİLMİŞ BİR KARAR. Kapı KALDIRILMADI ve kırmızı KALIYOR —
+    // sayı hâlâ "takipli telifli dosya" ve hâlâ FAIL. Değişen tek şey CÜMLE:
+    // ilan edilmiş bir karar "ihlal" diye adlandırılmaz. `ilan_edilmis_karar`
+    // alanı OLMAYAN her korunan yol eskisi gibi BREACHED der — yeni bir telifli
+    // dizin sessizce eklenirse yine ihlal olarak kırmızıya döner.
+    if (p.ilan_edilmis_karar) {
+      fail(`DECLARED DECISION (not a breach) — '${p.yol}' has ${bad.length} TRACKED file(s) in git: ${shown}${bad.length > 6 ? `, +${bad.length - 6} more` : ''}\n      ${p.ilan_edilmis_karar}\n      This gate stays RED on purpose: it counts tracked copyrighted files and the target is 0. RED here means "a known, signed-off cost is still being paid", NOT "someone leaked something". A protected path WITHOUT an ilan_edilmis_karar field still reports as BREACHED.`);
+    } else {
+      fail(`copyright boundary BREACHED — '${p.yol}' has ${bad.length} TRACKED file(s) in git: ${shown}${bad.length > 6 ? `, +${bad.length - 6} more` : ''}\n      why protected: ${p.neden}\n      the repo is public unless proven otherwise; tracked means downloadable. Deleting history is DAMLA'S call (DAMLA-KUYRUK K1) — this gate only refuses to stay silent.`);
+    }
   }
   if (!leaked) ok('copyright boundary clean: no protected input tracked in git');
 }

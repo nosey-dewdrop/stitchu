@@ -53,7 +53,9 @@ Static, framework-free, GitHub Pages. `store.js` (measurements + closet, local),
 One Cloudflare Worker: proxies garment analysis to Claude vision. The browser never holds the API key — it sends a shared app token; the key is a Worker secret. Rate-limited (20/min app-token; public mode 3/min, 15/day per IP), hardened per the 2026-07-13 ship-check. Also serves the stitch wall (KV). Planned: `POST /api/draft` running the same WASM engine server-side — the sellable API.
 
 ### 10. Track B — owning the vision (`vision/`)
-Goal: kill the per-call LLM cost. The vision step is bounded classification into a fixed vocabulary. Measured on a hand-labeled eval set: zero-shot CLIP 44%, SigLIP 65% (dead end vs a ~95% product bar); Opus via the live worker 86%. v1 plan: Opus as teacher auto-labels a licensed image corpus (70 images + pipeline in `vision/corpus`) → train small per-attribute heads → ship as browser ONNX next to the WASM engine, zero marginal vision cost. Numbers and method: `vision/README.md`.
+Goal: kill the per-call LLM cost. The vision step is bounded classification into a fixed vocabulary. Measured on a hand-labeled eval set: zero-shot CLIP 44%, SigLIP 65% (dead end vs a ~95% product bar); Opus via the live worker 86%. v1 plan: Opus as teacher auto-labels a licensed image corpus (pipeline in `vision/corpus`) → train small per-attribute heads → ship as browser ONNX next to the WASM engine, zero marginal vision cost. Numbers and method: `vision/README.md`.
+
+⚠ **2026-08-17 (T10):** the 780 fetched rasters (166MB, the single largest tracked directory in the repo) were **removed from the tree and gitignored**. Measured first: zero references in `engine/CMakeLists.txt`, `engine/tests/`, `scripts/`, `backend/`, `web/js/`, `contract/` — the only two files naming them are `vision/fetch-corpus.sh` (the producer) and `vision/live-eval.sh`, both inside this same not-started track. `vision/corpus/manifest.json` (every photo's source URL + licence) and the fetcher stay tracked, so `./vision/fetch-corpus.sh` rebuilds the corpus. **Track B is a plan, not a shipped path** — the v0 numbers above are the whole of it.
 
 ## Data flow summary
 

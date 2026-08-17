@@ -93,6 +93,24 @@ __pycache__/
 reports/2026-08-01-m3-flat-yogunluk/
 Logs/
 
+# Track B (vision) training rasters: 780 jpg / 166MB of openly licensed Wikimedia
+# + Openverse photos, RE-FETCHABLE by vision/fetch-corpus.sh (md5-dedupes, merges
+# manifest). vision/corpus/manifest.json stays tracked, so every photo's source
+# URL + licence is preserved and the fetch is reproducible. Nothing in the motor
+# line (engine/CMakeLists.txt, engine/tests, scripts/, backend/, web/, contract/)
+# reads these files — measured 2026-08-17, zero hits.
+vision/corpus/photos/
+
+# stale cmake build trees: engine/.gitignore already covers build/ and build-*/,
+# repeated here so a root-level `git status` never surfaces them.
+engine/build-*/
+
+# stray root-level ezdxf venv (deleted 2026-08-17): the LIVE one every consumer
+# names is engine/.venv-dxf (CMakeLists 403/476, dxf_check.sh, tech_pack_check.sh,
+# nest_marker_check.sh, setup-dxf-venv.sh). The root copy had ezdxf only, no
+# matplotlib/shapely/PIL, and no file in the tree referenced it.
+.venv-dxf/
+
 .rabadon/handoff.md
 
 # the drawing path's own venv (numpy/scipy/matplotlib/svgpathtools/pyyaml,
