@@ -6,15 +6,17 @@
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
 
   "sayac": {
-    "H1": { "kalan_halka": 5, "kalan_saat": "29-46  [H1.0: 25-45 -> 20-38 -> 18-35s; h10_gate_check 48 FAIL/55 degismedi]" },
+    "H1": { "kalan_halka": 5, "kalan_saat": "25-37  [H1.0: 25-45 -> 20-38 -> 18-35 -> 14-26s; h10_gate_check 48 -> 44 FAIL/55, K5-cevre 4/8 kapandi, K6 artik OLCULEBILIR]" },
     "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
     "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 2, "kalan_saat": "T9 = 1-2s (kok sebep KANITLI: arapFlatten 60 turda yakinsamiyor, cozum yakinsama testi ~12 satir); T5 = K5 cevabina bloke" }
+    "TABAN": { "kalan_halka": 4, "kalan_saat": "~3-4  [T9 KAPANDI; T5 bloke; +T12 (13.py ayni bozuk ofset ~0.5s), T13 (fikstur isaret sartini yargilamiyor ~1s), T14 (negatif cap ease koku 1-2s)]" }
   },
   "sayac_gecmisi": [
     { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
     { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." },
     { "tur": 2, "H1": 5, "H2": 7, "H3": 4, "TABAN": 3, "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12." },
+    { "tur": 5, "H1": 5, "H2": 7, "H3": 4, "TABAN": 4, "not": "T9 KAPANDI (arapFlatten yakinsama testi; maxStrain %28-35 -> %0.77-0.87, bel donus 8/8 +-0.54 derece). h10_gate 48 -> 44 FAIL, K5-cevre 4/8 kapandi, K6 ilk kez OLCULEBILIR. H1.0 18-35 -> 14-26s. TABAN 2 -> 1 dustu sonra 1 -> 4 cikti (+T12,T13,T14 bozuk-kaynak temizliginden). Uc bozuk kaynak kapandi: drafting-math 47-49 uzunluk yarisi silindi, iki kapi belgesi ISARET sartina cevrildi, 10+12 scriptleri duzeltildi ve CLAUDE.md'nin zehirli sayilari (oyuk 430.4->468.33, cap ease -5.0->-21.90mm) geri cekildi." },
+    { "tur": 4, "H1": 5, "H2": 7, "H3": 4, "TABAN": 2, "not": "H1 31-49 -> 29-46. Slit ust capasi indi. T9 kok sebebi kanitlandi (ARAP yakinsamiyor). K9 cozuldu: iki iddia ayni seyden bahsetmiyor." },
     { "tur": 3, "H1": 5, "H2": 7, "H3": 4, "TABAN": 2, "not": "TABAN 3->2 (T11 kapandi, T9 yarim). walkgate hukum-FAIL 12->0, ctest 90/90. worst fit 7.1717->0.1469mm. H1.0 kapisi kuruldu (h10_gate_check, 48 FAIL/55) ve H1.0 tahmini 25-45 -> 20-38s dustu. Kalan iki taban halkasi da BAGLI: kritik yol artik TEK, H1.0." }
   ],
 
@@ -162,6 +164,31 @@
       "tur": 4,
       "karar": "BRANCH + COMMIT YASASI (Damla emri)",
       "gerekce": "git log vardiya..f1 BOS -> f1 vardiyanin icinde, merge gereksiz. Yeni branch acilmaz, hicbir branch silinmez, gh-pages'e dokunulmaz. Kosu sonu: vardiya -> main muhurlu merge, SONRA f1 kapanir. Commit: bir adim = bir commit + push, MUTLAK; kirmiziyken 'KIRMIZI: <kapi, kac FAIL>' onekiyle; 30dk'dan eski commitlenmemis degisiklik yasak. rabadon vardiya/* commitlerini ENGELLEMIYOR (12 commit sorunsuz push edildi)."
+    },
+    {
+      "tur": 5,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: H1 29-46 -> 25-37, H1.0 18-35 -> 14-26s, T9 KAPANDI. h10_gate 48 -> 44. Tripwire pasif."
+    },
+    {
+      "tur": 5,
+      "karar": "AJAN KAPIYI BOYAMADI — KAYDA GECIYOR",
+      "gerekce": "5B, sabit noktayi uc bolgeye birden uygulayinca h10_gate 44 -> 39 FAIL'e dustu ve K6 8/8 yesil oldu. AMA ayni degisiklik K1'i 332 -> 128mm'ye cokertti (kol oyugu gercegin ucte biri): iterasyon koltukaltini a(z)=x olana kadar yukari kaldiriyordu, oysa koltukalti derinligi bir CIZIM KANUNU (Aldrich: nape - 1.5cm - (armscye depth - 0.5cm)). '39, 44'ten daha kotu bir giysinin sayisiydi' diyip ALMADI ve kendi ilan etti. Bu vardiyanin en dogru hamlesi."
+    },
+    {
+      "tur": 5,
+      "karar": "PAYLASILAN WORKTREE UCUNCU KEZ OLCUMU KIRLETTI",
+      "gerekce": "5A'nin commit mesajindaki '39/55' sayisi 5B'nin commitlenmemis bozuk halinden geldi; gercek sayi 44. Ayni sinif kirlenme Tur 2 (git show HEAD~1) ve Tur 3'te (HEDEF.md commit karismasi) de oldu. KARAR: bundan sonra ayni turda ayni dosyaya iki ajan girmez (zaten uygulaniyor) VE her ajan olctugu sayinin yanina olctugu commit hash'ini yazar."
+    },
+    {
+      "tur": 5,
+      "karar": "KAPSAM BUYUDU: +3 halka (T12, T13, T14)",
+      "gerekce": "Bozuk kaynak temizligi uc acik kalem birakti: 13.py ayni bozuk ofseti tasiyor, fikstur K9 isaret sartini yargilamiyor sadece basiyor, ve net cap ease -21.90mm cikti (duz set-in dikiste tuhaf, K1'in hedef bandini etkileyebilir). Sessizce birakmak yerine halka yazildi."
+    },
+    {
+      "tur": 5,
+      "karar": "K3/K1/K4/K5-kapali TOPOLOJI ILE BLOKE",
+      "gerekce": "5B teshisi: yuzey bir (h,phi) TUPU. Omzun ustu y yonunde gecilmesi gereken neredeyse yatay bir bolge — bir tup orayi HICBIR ZAMAN kapatamaz. On panelin ust kenari y>0'da, arkaninki y<0'da; ayni z'de ama asla ayni egri degiller. K3'un 0 olmasinin sebebi isim degil TOPOLOJI. Gereken insa: omuz bolgesindeki kolonlarin ust bandinda y'nin ortak bir omuz dikisi cizgisine kivrilmasi + farEdges<->farEdges dikislerinin plana eklenmesi. K4'un ISARETI bu insadan duser (dikis crest'in onune konursa arka panel omzun tepesinden gectigi icin uzun olur = arka >= on, buyukluk yazilmadan). K1 de oradan gelir (oyugun ust ucu omuz ucuna tasininca yay uzar; bugun 330, hedef 393-433, %19 eksik). TUR 6'NIN TEK ISI BUDUR."
     },
     {
       "tur": 1,

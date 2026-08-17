@@ -9,13 +9,21 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 ## SAYAÇ
 
 ```
-H1'e kalan:  5 halka / 29–46 koşu saati    [H1.0: 25–45 → 20–38 → **18–35s**, slit üst çapası indi]
+H1'e kalan:  5 halka / 25–37 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → **14–26s**]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / T9 = 1–2s, T5 bloke [T2,T3,T4,T6,T7,T8,T10,T11 kapandı · T1 yok-hükmünde · T5 = K5 cevabına bloke]
+TABAN:       4 halka / ~3–4 koşu saati     [T2,T3,T4,T6,T7,T8,T9,T10,T11 kapandı · T1 yok-hükmünde · T5 bloke · +T12,T13,T14]
 ```
 
-**TABAN FİİLEN MÜHÜRLENDİ (17.08).** T5 tanım bekliyor. **T9 düzeltildi sayılmaz ama kökü artık KANITLI ve ucuz:** `flatten.cpp:arapFlatten()` sabit 60 turda **yakınsamıyor**; `arapRounds=400`'de 8 bedenin 8'i de temizleniyor (`bodiceWaist−ring` −0.0049…−0.0036mm). Çözüm sayıyı büyütmek değil, **yakınsama testi** (~12 satır, turlar arası max yer değişimi `<1e-4mm`). Tahmin **1–2 koşu saati**.
+**T9 KAPANDI 17.08.** `arapFlatten`'ın `rounds`'u sayaç olmaktan çıkıp **TAVAN** oldu; duruş şartı çözücünün kendi cevabı (bir turda max düğüm yer değişimi `< 1e-4mm`). `60 → 400` YAPILMADI — ölçüldü, gövde panelleri **69–95 turda** bitiyor, 60 sadece 10–35 tur eksikmiş. Sonuç: bel dönüş açısı 8 bedende **±0.54°** içinde (önce EU46 +88.31°), `maxStrain` **%28.61/32.51/34.62 → 8 bedende %0.77–0.87**, bel dikiş sayısı 10–26 arası dağınıktan **8 bedende de 14**'e. `flatten_check`'in sertifikaları ayakta (koni bit-aynı 0.005814°). Bedel **+3.1 saniye**.
+
+> **KAPSAM BÜYÜDÜ: +3 halka (T12, T13, T14). Sebebi:** Tur 5, bozuk `10`/`12` scriptlerini düzeltirken üç bağımsız açık kalem bıraktı. Üçü de bugün karar besliyor.
+
+| # | Halka | Ölçülen | Süre |
+|---|---|---|---|
+| T12 | `flatten-research/13-digitize-multisize.py` aynı bozuk ofseti taşıyor | `inward_offset`+`line_isect` kopyası; `13`'ten türemiş her sayı hâlâ şüpheli. Çalıştırılmadı | ~0.5s |
+| T13 | fikstür işaret şartını **yargılamıyor**, sadece basıyor | K9 hükmü belgelere yazıldı (`ön_yay ≤ arka_yay` **ve** `ön_yay/kiriş > arka_yay/kiriş`) ama `h10_gate_check` onu hüküm olarak koşmuyor | ~1s |
+| T14 | **net cap ease NEGATİF** — düz set-in dikişte fiziksel olarak tuhaf | Düzeltilmiş ölçüm: oyuk **468.33mm**, kapak **446.43mm**, ease **−21.90mm (−4.7%)**. Üç ihtimal DOĞRULANMADI: oyuğa giden kenar aslında Upper Sleeve mi · Lower tam oyuğa oturmuyor mu · `KAPAK` landmark ataması hatalı mı. **K1'in hedef bandını etkileyebilir** | 1–2s |
 
 > **TUR 4 DÜZELTMESİ — ÖNCEKİ TURUN İKİ SAYISI YANLIŞTI.**
 > (1) `+0.2138 / +0.1376 / +0.2691mm` **h3c değildi** — motorun stderr satırıydı (`bodiceWaistSum − ringGirth`). Gerçek h3c (`h3b-rings.py`, tolerans ±1.0mm) bugün **8/8 bedende GEÇİYOR**. "T9 sayıyı kımıldatmadı" cümlesi yanlış numaraya bakıyordu: `Logs/taban-T7-SONRA` h3c'si gerçekten FAIL'di (−5.264 / −10.795 / −2.230mm) ve **T9'un `emitChain` düzeltmesi onu kapattı**.

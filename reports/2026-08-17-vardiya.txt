@@ -1,0 +1,47 @@
+VARDİYA RAPORU — stitchu — 2026-08-17 — TUR 1..5 kapandı
+
+H1'e kalan:  5 halka / 25–37 koşu saati   (dün: 36–56)
+H2'ye kalan: 7 halka / 168–295 koşu saati (değişmedi — henüz sıra gelmedi)
+H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
+TABAN:       4 halka / ~3–4 koşu saati    (dün: 7 halka / 9–17 saat)
+
+KAPSAM BÜYÜDÜ: bu vardiyada toplam +8 halka (T7,T8,T9,T10,T11,T12,T13,T14).
+Hepsinin gerekçesi HEDEF.md'de kalem kalem yazılı. Hiçbiri sessizce eklenmedi.
+
+Bir günde on halka kapandı ve ilk satışa mesafe 36-56 saatten 25-37 saate indi.
+Ama kapananların çoğu yeni iş değil, ORTAYA ÇIKAN İŞTİ: motorun kendi kapılarının
+üçü kapı değilmiş. walk.py her koşuda "OK" basıyordu çünkü hiçbir zaman sıfırdan
+farklı çıkmıyordu — 76 hata haftalardır sessizce geçiyordu; gerçek kapıya çevrilince
+64 panelin 60'ının kendini kestiği görüldü. Eğri çizici kontrol noktasını kendi bitiş
+noktasının ötesine koyuyordu, 480 kenar geri katlanıyordu, en kötüsü 23mm — kök sebep
+bir teğetin işaretiydi ve düzeltilince 968 ihlal sıfıra indi. Düzleştirici hiç
+yakınsamıyordu: 60 tur sabitti, paneller 69-95 turda bitiyor; tur sayısı tavana
+çevrilince üç bedendeki %28-35 iç gerinim %0.8'e düştü ve bunun bedeli 3.1 saniye.
+Bir de alıcıyı doğrudan vuran şey kapandı: "burayı dikmeyin, fermuar açıklığı" uyarısı
+artık basılı pakette hem talimat sayfasında hem kalıbın üstünde, ve bir daha sessizce
+düşmesin diye regresyon mandalı kuruldu.
+
+Elbise hâlâ satılamaz ve sebebi tek: omuz. Yüzey bir tüp, omzun üstü ise y yönünde
+geçilmesi gereken neredeyse yatay bir bölge — bir tüp orayı hiçbir zaman kapatamaz.
+Kol oyuğu 33cm, satın aldığın Buğra kalıbında 43.3cm. Bunun için sert bir kabul kapısı
+kuruldu (6 şart × 8 beden = 55 yargı) ve bugün 44'ü kırmızı; kapı kasten kırmızı doğdu,
+çünkü kendini geçiren kapı kapı değildir. Bir ajan bu kapıyı 44'ten 39'a düşüren bir
+değişiklik buldu, sonra o değişikliğin kol oyuğunu 332mm'den 128mm'ye çökerttiğini
+ölçtü ve "39, 44'ten daha kötü bir giysinin sayısıydı" deyip almadı. Bu vardiyanın en
+doğru hamlesi buydu.
+
+İki yanlış sayı da geri çekildi. Dikiş çizgisi ölçen script her kenarın ucundan 17-28
+nokta buduyordu — düz bir çizgiyi 10mm ötelemek boyunu değiştiremez, ama o script
+değiştiriyordu. Düzeltilince CLAUDE.md'de aylardır duran üç sayı düştü: kol oyuğu
+430.4 değil 468.33mm, net cap ease "sıfıra yakın" değil −21.90mm. Ve bilgi tabanındaki
+"ön armscye daha uzun" kuralı — HIGH güven etiketiyle duruyordu — Aldrich'in cümlesi
+değilmiş; kendi kaynağında o konuda tek satır yok. Buğra 8/8 bedende tersini ölçüyor.
+Bu önemli çünkü kapı belgesi o yanlış şartı taşıyordu ve 14-26 saatlik işi ters yöne
+sürükleyecekti.
+
+Sende bekleyen 9 karar var (DAMLA-KUYRUK.md). Biri acil: repo bugün public açıldı ve
+satın alınmış Buğra PDF'leri dahil 49 dosya geçmişte takipli. Sen private'a çekiyorsun;
+geçmişten kazınsın mı, o senin kararın.
+
+Bir sonraki turun tek işi: omuz dikişi topolojisi. K1, K3, K4 ve K5'in dördü birden
+ona bağlı.
