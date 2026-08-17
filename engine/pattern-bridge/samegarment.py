@@ -59,8 +59,38 @@ def main():
               f"{r['perimeter_mm'] - r['ref_perimeter_mm']:>9.2f}")
     if missing:
         print('panels on one side only:', missing)
+    # T12/TUR 12. `sys.exit(main())` at the bottom of this file LOOKED armed
+    # and was not: main() returned None, so this compared two garments and
+    # exited 0 no matter what came out — including when the two specs shared
+    # NOT ONE panel, where the max() below raises and the "verdict" is a
+    # traceback.
+    #
+    # What is NOT armed here, deliberately: the millimetre. The header of
+    # this file says zero is not the target and would be suspicious — two of
+    # the numbers are intentional changes and must show up. Putting a pass
+    # threshold on worst_mm would be inventing a number, which is the one
+    # thing forbidden. The mm stays a measurement.
+    #
+    # What IS armed: the cases where there is no comparison at all. A panel
+    # present on one side only is not a tolerance question — that piece is
+    # not in the other garment. Same for zero panels in common: an
+    # instrument that judged nothing did not return a green.
+    faults = []
+    if not rows:
+        faults.append('the two specifications share NO panel — '
+                      'nothing was compared')
+    if missing:
+        faults.append(f'{len(missing)} panels exist on ONE side only: '
+                      + ', '.join(missing))
+    if faults:
+        print('SAMEGARMENT HÜKÜM: KIRMIZI — ' + '; '.join(faults),
+              file=sys.stderr)
+        return 1
     print(f"worst panel: {max(rows, key=lambda r: r['worst_mm'])['panel']} "
           f"{max(r['worst_mm'] for r in rows):.4f}mm")
+    print(f'SAMEGARMENT: {len(rows)} panels compared, 0 unmatched '
+          '(the mm above is a MEASUREMENT, not a gate — see header)')
+    return 0
 
 
 if __name__ == '__main__':

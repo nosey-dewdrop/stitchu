@@ -26,6 +26,7 @@ import argparse
 import datetime
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import cutplan
@@ -289,9 +290,24 @@ def main():
         raise SystemExit('missing specifications: ' + ', '.join(missing))
     paths = build(args.out, specs, args.date)
     print((Path(args.out) / 'nest-report.txt').read_text())
+    # T12/TUR 12: this loop printed MISSING and then main() fell off its end,
+    # so the process exited 0. Identical in class to the printpack.py bug
+    # armed in TUR 11 — and this is the sheet the buyer is actually sold
+    # ("eight sizes on one sheet"). A nest page the code promised and did not
+    # write is not a warning, it is the product missing. No threshold: the
+    # target is that every path in `paths` exists.
+    missing_out = [f'{k}: {p}' for k, p in paths.items()
+                   if not Path(p).exists()]
     for k, p in paths.items():
         print(k, p, 'OK' if Path(p).exists() else 'MISSING')
+    if missing_out:
+        print(f'NESTPACK HÜKÜM: KIRMIZI — {len(missing_out)} of {len(paths)} '
+              'promised outputs were never written: ' + ', '.join(missing_out),
+              file=sys.stderr)
+        return 1
+    print(f'NESTPACK HÜKÜM: YEŞİL — {len(paths)} outputs, 0 missing')
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

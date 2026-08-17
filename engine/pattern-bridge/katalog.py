@@ -92,23 +92,33 @@ def thumb(svg_path, w, h):
 
 
 def _one_thumb(job):
+    # T12/TUR 12: this used to return a bare None on any exception and the
+    # caller silently pasted nothing. A cell whose render blew up became an
+    # empty square on the contact sheet, indistinguishable from a cell that
+    # was simply never drawn, and NOTHING counted it. The reason is carried
+    # out now; the caller counts and the process exits on it.
     idx, svg, w, h = job
     try:
         im = thumb(svg, w, h)
-        return idx, im.tobytes(), im.size, im.mode
-    except Exception:                                   # noqa: BLE001
-        return idx, None, None, None
+        return idx, im.tobytes(), im.size, im.mode, None
+    except Exception as e:                              # noqa: BLE001
+        return idx, None, None, None, f'{type(e).__name__}: {e}'
 
 
 def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
                   jobs=4, odd_cells=(), prefix='kontakt'):
-    """Contact sheets, paged. Returns the list of page paths."""
+    """Contact sheets, paged. Returns (page paths, blanks).
+
+    `blanks` is the list of cells that got an EMPTY square: either the svg was
+    never written, or the render raised. Both are reported by the caller; an
+    empty square on a contact sheet is a cell the buyer cannot see.
+    """
     # Three caption lines, not two. At two the last two words of the
     # sentence fell off the bottom and two different garments carried the
     # same label, which is the one thing a contact sheet must not do.
     cw, ch, cap = 330, 270, 80
     per = cols * rows_per
-    pages = []
+    pages, blanks = [], []
     out_dir.mkdir(parents=True, exist_ok=True)
     for pno in range((len(rows) + per - 1) // per):
         chunk = rows[pno * per:(pno + 1) * per]
@@ -126,11 +136,15 @@ def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
             svg = Path(root) / r['dir'] / f'{atlas.NAME}_pattern.svg'
             if svg.exists():
                 jobs_list.append((i, svg, cw - 18, ch - 14))
+            else:
+                blanks.append((r['cell'], f'no svg: {svg}'))
         made = {}
         with ProcessPoolExecutor(max_workers=jobs) as pool:
-            for idx, raw, size, mode in pool.map(_one_thumb, jobs_list):
+            for idx, raw, size, mode, err in pool.map(_one_thumb, jobs_list):
                 if raw is not None:
                     made[idx] = Image.frombytes(mode, size, raw)
+                else:
+                    blanks.append((chunk[idx]['cell'], err))
         for i, r in enumerate(chunk):
             cx = 20 + (i % cols) * cw
             cy = 120 + (i // cols) * (ch + cap)
@@ -154,7 +168,7 @@ def contact_pages(rows, root, out_dir, date_str, cols=8, rows_per=7,
         page.save(path)
         pages.append(path)
         print(f'  {path}  ({len(chunk)} squares)')
-    return pages
+    return pages, blanks
 
 
 def _wrap(text, n):
@@ -293,9 +307,11 @@ def main():
         if key not in seen_groups:
             seen_groups.add(key)
             overview.append(r)
+    blanks = []
     if overview:
-        contact_pages(overview, root, sheets, date_str, jobs=args.jobs,
-                      odd_cells=odd_cells, prefix='kontakt-000-genel')
+        _, b = contact_pages(overview, root, sheets, date_str, jobs=args.jobs,
+                             odd_cells=odd_cells, prefix='kontakt-000-genel')
+        blanks += b
         print(f'  overview: {len(overview)} groups of top x bottom x '
               f'waistband, one garment each')
 
@@ -307,8 +323,9 @@ def main():
             print(f'  contact sheets capped at {args.pages} pages: '
                   f'{len(shown)} of {len(kept)} laid out, '
                   f'{len(kept) - len(shown)} not drawn')
-    pages = contact_pages(shown, root, sheets, date_str, jobs=args.jobs,
-                          odd_cells=odd_cells)
+    pages, b = contact_pages(shown, root, sheets, date_str, jobs=args.jobs,
+                             odd_cells=odd_cells)
+    blanks += b
 
     printed, print_errors = [], []
     if args.print_n:
@@ -335,6 +352,7 @@ def main():
         'print_packs_written': len(printed),
         'print_packs_failed': [c for c, _ in print_errors],
         'print_packs_not_written': max(0, len(kept) - len(printed)),
+        'blank_contact_squares': [{'cell': c, 'why': w} for c, w in blanks],
         'set_aside_by_eye': len(odd),
         'set_aside': odd,
         'cells': [{'cell': r['cell'], 'dir': r['dir'],
@@ -345,6 +363,40 @@ def main():
     (root / 'katalog-index.json').write_text(json.dumps(index, indent=2))
     print(f"\nwrote {root / 'katalog-index.json'}")
 
+    # ---- THE VERDICT ------------------------------------------------------
+    # T12/TUR 12: everything above was measured, printed and THROWN AWAY.
+    # main() fell off its end, so the process exited 0 whatever happened:
+    # all sixty print packs could blow up, every contact square could come
+    # out blank, and the shell that called this read "wrote katalog-index"
+    # and a zero. printpack.py and walk.py were the same class of bug and
+    # were armed in TUR 11; this is the third.
+    #
+    # What is a VERDICT here and what is only information:
+    #   verdict — a print pack that was asked for and did not come out, and a
+    #             contact square that came out empty. Both are the buyer's
+    #             own object missing. No threshold: the target is zero.
+    #   info    — survivors NOT asked to print (--print is a deliberate
+    #             bound, stated in the index), and `set_aside` oddities,
+    #             which are listed apart on purpose and not removed.
+    # Nothing here is loosened; the numbers already existed, only the exit
+    # code is new.
+    faults = []
+    if print_errors:
+        faults.append(f'{len(print_errors)} of {len(printed) + len(print_errors)}'
+                      ' print packs FAILED')
+        for cell, err in print_errors:
+            print(f'  BASKI PATLADI  {cell}: {err}', file=sys.stderr)
+    if blanks:
+        faults.append(f'{len(blanks)} contact squares came out BLANK')
+        for cell, why in blanks:
+            print(f'  BOŞ KARE  {cell}: {why}', file=sys.stderr)
+    if faults:
+        print('KATALOG HÜKÜM: KIRMIZI — ' + '; '.join(faults), file=sys.stderr)
+        return 1
+    print('KATALOG HÜKÜM: YEŞİL — '
+          f'{len(printed)} print packs, {len(shown)} squares, 0 blank')
+    return 0
+
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
