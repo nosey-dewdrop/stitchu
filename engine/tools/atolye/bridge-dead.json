@@ -1,0 +1,20 @@
+{
+  "_ROL": "OLCUM, IDDIA DEGIL. atolye kadranlarindan hangisinin INDIRILEN KALIBI gercekten oynattigi. Bu dosya elle yazilmaz; `python3 engine/tools/atolye-bridge-check.py --write` uretir, `--check` (kapi) dogrular.",
+  "_NEDEN": "TUR 17C. atolye.html'in kadranlari kullaniciya bir VAAT ediyor. Vaadin karsiligini olcen tek sey buydu ve olculmemisti. Sayfa 'kalip koprusu neyi soyleyemedigini yaninda yaziyor' diyor; olculdu, 27 kadran icin YAZMIYOR.",
+  "olcum_tarihi": "2026-08-17",
+  "olcum_agaci": "299c5b9",
+  "motor": "ARSIV HAT — serve.py -> generate.py -> mapping.py -> GarmentCode. SEVK EDILEN motor (engine/build/surface-pattern) DEGIL; sevk edilen motor tek argüman alir (beden etiketi) ve hicbir atolye kadranini okumaz.",
+  "topoloji": "varsayilan durum (defaultState(): elbise + omuz govdesi + yuvarlak yaka). Baska topolojide olu kume DEGISIR — bu dosya varsayilanin olcumudur.",
+  "yontem": "her kadran tek basina uc degerine itilir (slider max, yoksa min; bayrak ters cevrilir), generate.py --no-print kosar, cikan specification.json'un PANEL GEOMETRISI kanonik olarak karsilastirilir. Kanonik = dikis listesi sirasiz kume olarak alinir (asagidaki determinizm notu).",
+  "determinizm_notu": "ARSIV HAT BAYT DETERMINIST DEGIL. Ayni durumla iki kosu farkli specification.json sha256'si veriyor; fark SADECE dikis listesinin SIRASI (panel geometrisi ve dikis KUMESI ozdes). PYTHONHASHSEED=0 ile de gecmiyor, yani kok sebep hash tohumu DEGIL. Kok sebep DOGRULANMADI. Alici bugun ayni kadranlarla iki kere indirdiginde iki farkli bayt aliyor.",
+  "sayim": { "toplam_kadran": 60, "kalibi_oynatan": 15, "kalibi_oynatmayan": 45, "ui_solduruyor": 18, "UI_PARLAK_AMA_KALIP_OKUMUYOR": 27, "bunlardan_notta_ilan_edilen": 13, "bunlardan_SESSIZCE_YUTULAN": 14 },
+  "kalibi_oynatan": ["size", "hemLevel", "neckDepth", "neckDepthBack", "sleeveLen", "neckWidth", "sleeveWidth", "skirtFull", "gatherRatio", "capPuff", "sleeve", "gorePanels", "_garment", "_bodice", "_neckShape"],
+  "ui_parlak_ama_kalip_okumuyor": ["yokeDrop", "shoulderSlope", "armholeHollow", "waistNip", "bustProject", "bustHeight", "skirtCurve", "cuffGather", "drape", "hemWave", "hemDip", "seed", "collar", "princessSeam", "backSeam", "wrapTie", "tie", "tieBack", "cfGather", "laceNeck", "laceSleeve", "laceHem", "boxy", "spaghettiStrap", "_waistTie", "_ink", "_asym"],
+  "sessizce_yutulan": ["yokeDrop", "waistNip", "collar", "princessSeam", "wrapTie", "tie", "tieBack", "cfGather", "laceNeck", "laceSleeve", "laceHem", "boxy", "spaghettiStrap", "_waistTie"],
+  "_SESSIZCE_YUTULAN_NEDIR": "mapping-notes.json'da hic gecmeyen olu kadran. Sayfanin 'koprü neyi soyleyemedigini yaninda yaziyor' vaadinin tutmadigi tam kume.",
+  "uc_olum_sinifi": {
+    "1_mapping_hic_okumuyor": "ornek princessSeam: design.yaml BAYT AYNI kaliyor, notta da yok. Tam sessiz.",
+    "2_mapping_okuyor_notta_ilan_ediyor": "ornek shoulderSlope/armholeHollow: 'not mapped' diye notta yaziyor. Durust olu.",
+    "3_MAPPING_HARITALIYOR_URETEC_YUTUYOR": "EN AGIRI. waistNip 0.12->0.38: design.yaml'da shirt.width 1.2053 -> 1.0 GERCEKTEN degisiyor, yokeDrop 12->26: skirt.rise 0.85 -> 0.5 degisiyor — ve iki halde de PANEL GEOMETRISI BAYT OZDES. mapping.py haritaladigini sandigi icin nota da yazmiyor. Notlar mekanizmasi bu sinifi YAPICA yakalayamaz: sadece mapping.py'in dusurdugunu bildigi kadrani gorur, uretecin yuttugunu goremez."
+  }
+}

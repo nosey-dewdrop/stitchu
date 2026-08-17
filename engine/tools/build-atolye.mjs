@@ -53,6 +53,11 @@ if (/node:fs|node:url|process\.argv/.test(penBundle)) {
   process.exit(1);
 }
 
+// TUR 17C: sayfanin "kopru neyi soyleyemiyor" paragrafinin sayilari BURADAN
+// gelir, elle yazilmaz. Uretici: engine/tools/atolye-bridge-check.py --write,
+// bekcisi ayni aracin --check kapisi. Sayfa ile olcum ayrilirsa kapi kirmizi.
+const BD = J('engine/tools/atolye/bridge-dead.json');
+
 const ING = R('engine/tools/atolye/ingredients.js');
 const FOLD = R('engine/tools/atolye/foldlines.js');
 const LEX = R('engine/tools/atolye/lexicon.js');
@@ -160,6 +165,33 @@ ${CSS}
 
       <p>Ve hala: bu tezgah <b>kalip uretmiyor</b> &mdash; sadece flat ciziyor. Kalip
       koprusu ayri bir sey ve o da neyi soyleyemedigini yaninda yaziyor.</p>
+
+      <p><b>17 Agustos olcumu &mdash; koprunun acigi.</b> Yukaridaki cumle
+      ("neyi soyleyemedigini yaninda yaziyor") <b>olculdu ve tam tutmadi.</b>
+      Once en onemlisi: <b>"kalip indir" sevk edilen motoru surmuyor.</b>
+      Dugme <code>serve.py &rarr; generate.py &rarr; GarmentCode</code>
+      <b>arsiv hattina</b> gidiyor; sevk edilen tek-yuzey motor
+      (<code>engine/build/surface-pattern</code>) tek argüman aliyor &mdash; beden
+      etiketi &mdash; ve <b>hicbir kadrani okumuyor.</b>
+      Arsiv hattinda ise varsayilan topolojide <b>${BD.sayim.toplam_kadran} kadranin
+      ${BD.sayim.kalibi_oynatan}'i</b> indirilen kalibi oynatiyor.
+      Kalanin ${BD.sayim.ui_solduruyor}'ini bu sayfa zaten <b>solduruyor</b> (durust olu),
+      ama <b>${BD.sayim.UI_PARLAK_AMA_KALIP_OKUMUYOR} kadran ekranda PARLAK durup
+      kalibi hic oynatmiyor</b> &mdash; ve bunlarin
+      <b>${BD.sayim.bunlardan_SESSIZCE_YUTULAN}'i notlarda bile gecmiyor</b>:
+      <code>${BD.sessizce_yutulan.join(' ')}</code>.
+      En agir sinif ucuncusu: <code>waistNip</code> 0.12&rarr;0.38 ve
+      <code>yokeDrop</code> 12&rarr;26 <b>design.yaml'a gercekten islenip</b>
+      (<code>shirt.width</code> 1.2053&rarr;1.0, <code>skirt.rise</code> 0.85&rarr;0.5)
+      panel geometrisini <b>bayt bayt ayni</b> birakiyor &mdash; mapping haritaladigini
+      sandigi icin nota da yazmiyor. Notlar mekanizmasi bu sinifi <b>yapica</b>
+      goremez.
+      Ayrica: arsiv hat <b>bayt determinist degil</b> &mdash; ayni durumla iki indirme
+      iki farkli sha256 veriyor (fark yalniz dikis listesinin SIRASI; geometri ozdes,
+      kok sebep <b>DOGRULANMADI</b>).
+      Bu paragraftaki her sayi elle yazilmadi, <b>olculdu</b> ve bir kapiya bagli:
+      sayfa ile olcum ayrilirsa kapi kirmizi yanar.
+      <span class="src">engine/tools/atolye-bridge-check.py --check &middot; engine/tools/atolye/bridge-dead.json</span></p>
     </section>
   </section>
 
