@@ -3,13 +3,13 @@
   "branch": "main",
   "son_saglam_tag": null,
   "son_saglam_tag_not": "Damla 17.08: muhur artik TAG. taban.sh tam yesilde taban-<etiket> tag'i atar ve pushlar; donus adresi son tag'dir. null = henuz tam yesil muhur alinmadi (h10_gate_check kasten kirmizi).",
-  "tur": 7,
+  "tur": 8,
   "otorite": "HEDEF.md",
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
   "sayac": {
     "H1": {
-      "kalan_halka": 8,
-      "kalan_saat": "26-37  [H1.0: 12-22 -> 13-24s; +H1.1a/b/c]"
+      "kalan_halka": 6,
+      "kalan_saat": "22-31  [H1.0: 13-24 -> 11-20s; H1.1a,H1.1b KAPANDI]"
     },
     "H2": {
       "kalan_halka": 7,
@@ -21,10 +21,18 @@
     },
     "TABAN": {
       "kalan_halka": 2,
-      "kalan_saat": "~1s  [T15,T16 KAPANDI; T5 bloke; +T17 style_check bos kosuyor]"
+      "kalan_saat": "ikisi de DAMLA'DA [T17 KAPANDI; T5 = K5'e bloke; style/figure pinleri = K15'e bloke]"
     }
   },
   "sayac_gecmisi": [
+    {
+      "tur": 8,
+      "H1": 6,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 2,
+      "not": "H1.0a kok bir kademe derine indi: pens EYERI YUTAMIYOR degildi, PENS HIC OLMAMALIYDI (max(0,def) kirpmasi negatif yariyi atip pozitifi gercek saniyordu; panelden orada olmayan 73 derecelik kama kesiliyordu). walkgate 6->0 YESIL, kesim cizgisi %1.83->%0.42 GECIYOR, pens bacagi gerinimi %8.9->%0.0. Blokor 2'den 1'e indi (kalan: ic gerinim %24, kapi %3). T17: 5 kapi bos kosuyordu (style_check tam bos, figure_check 7/31, run-all H2 grep exit yutuyordu, taban.sh sessiz beden atlama + BOS MUHUR). H1.1a+H1.1b kapandi, sartname 16/17."
+    },
     {
       "tur": 7,
       "H1": 8,
@@ -96,39 +104,18 @@
   },
   "kuyruk": [
     {
-      "id": "H1.0a",
-      "durum": "acik",
-      "sure": "4-8s",
-      "sira": 1,
-      "not": "TUR 8 KRITIK YOL — EYER. Panelin deficit'i ust iki satir bandinda +34.57 sonra -64.34 derece; cukur bir eyer ve pens eyeri yutamaz. CrestFold'un SEKLI. Iki alt kalem: (1) ust pensin bacaklari dikis listesine PENS CIFTI olarak girmiyor (PNG'de hic mavi kenar yok, dikiciye kapatma talimati yok), (2) maxDartDeg baglamiyor (ilan 14 derece, gercek 24.4)."
-    },
-    {
       "id": "H1.0b",
       "durum": "acik",
       "sure": "6-12s",
+      "sira": 1,
+      "not": "TUR 9 KRITIK YOL (ROTA DEGISTI) — kol oyugu GERCEK 2B DELIK. Bugun phi in [0,19.9] bandinda ince mercek: derinlik ~148mm, genislik ~52mm, elips ~333mm. Bugra 424-486 icin ~110mm genis olmali. K1+K9 buna bagli VE 8A'nin kalan ic gerinimi (%24 vs kapi %3) muhtemelen bunun altinda."
+    },
+    {
+      "id": "H1.0a",
+      "durum": "acik-H1.0b'YE BAGLI",
+      "sure": "?",
       "sira": 2,
-      "not": "kol oyugu GERCEK 2B DELIK olmali. Bugun ince mercek (derinlik ~148mm, genislik ~52mm, elips ~333mm). Bugra 424-486 icin delik ~110mm genis olmali. K1+K9 buna bagli."
-    },
-    {
-      "id": "T17",
-      "durum": "acik",
-      "sure": "~1s",
-      "sira": 3,
-      "not": "TUR 8 — style_check ctest'te YESIL ama engine/STYLE-PIN/ dizini hic olmadigi icin 'PASS (nothing to enforce)'. T7 ile ayni sinif. Ayrica: BASKA hangi kapilar bos kosuyor? Supurme gerekiyor."
-    },
-    {
-      "id": "H1.1a",
-      "durum": "acik",
-      "sure": "~1s",
-      "sira": 4,
-      "not": "TUR 8 — nesting once/sonra kaniti uretilmiyor (sartname 3. bolum)"
-    },
-    {
-      "id": "H1.1b",
-      "durum": "acik",
-      "sure": "~1s",
-      "sira": 5,
-      "not": "TUR 8 — kumas onerisi (weight/drape gerekcesiyle) hicbir sayfaya basilmiyor (sartname 4. bolum)"
+      "not": "Kalan tek blokor: ic gerinim %24.07/%18.14 (kapi %3.0). Iki sekil hipotezi olculdu, dipol kimildamadi -> eyer muhtemelen kol oyugunun seklinden. H1.0b'den SONRA yeniden olculecek."
     },
     {
       "id": "H1.1c",
@@ -242,6 +229,26 @@
     "K12 Bugra kolu iki KATMAN (bilgi)"
   ],
   "karar_sicili": [
+    {
+      "tur": 8,
+      "karar": "ROTA DEGIS",
+      "gerekce": "8A iki sekil hipotezini olctu ve DIPOL KIMILDAMADI (+34.57/-64.34 -> +41.59/-65.29 -> +48.63/-65.07). Eyer ne tirtikli ust sinirdan ne kesitin duzlesmesinden geliyor. Kalan tek aday: kol oyugunun bugunku INCE MERCEK sekli. Yani H1.0a'nin kalan kirmizisi H1.0b'nin ALTINDA. TUR 9'DA KRITIK YOL H1.0b OLDU (kol oyugu gercek 2B delik), H1.0a onun arkasina alindi."
+    },
+    {
+      "tur": 8,
+      "karar": "PUSH KAPISI: DISLAMA 1 -> 3 AD",
+      "gerekce": "Damla imzasi altinda (17.08 emri). style_check ve figure_check T17'nin BOS KOSAN KAPI bulgusundan kirmiziya dondu — bunlar gerileme DEGIL, sahte yesilin sonu. Bloke etmek supurmenin kendisini cezalandirirdi. Dislama tek tek AD regexi: olcum 97%/3 of 91, dusen tam olarak bu uc, DORDUNCU YOK. Ucunun de gerekcesi ve BITIS SARTI guard.json'da yazili."
+    },
+    {
+      "tur": 8,
+      "karar": "BES BOS KOSAN KAPI — HEPSI MUTASYON KANITLI DUZELTILDI",
+      "gerekce": "En agiri: taban.sh'in BOS MUHRU — find hicbir sey bulamasa da manifest yazilip sha256'si hesaplaniyordu; o sha e3b0c442... = bos dizginin hash'i. Tam yesilse GIT TAG bile atilabilirdi, yani 'donus adresi' hiclige isaret edebilirdi. Ayrica run-all.sh H2 T7'nin birebir aynisiydi (grep boru hattinin exit kodunu yutuyordu)."
+    },
+    {
+      "tur": 8,
+      "karar": "IKI SEKIL HIPOTEZI ALINMADI",
+      "gerekce": "(a) bant = kolonun kendi acikliginin kesri: arka ic %7.79 -> %11.91. (b) katlama duzleme degil orta-yuzeye: arka kesim %0.2908 -> %0.3038. Ikisi de kotulestirdi, kod icinde sayilariyla duruyor. Bu vardiyada besinci kez bir duzeltme olculup reddedildi."
+    },
     {
       "tur": 7,
       "karar": "DEVAM",
@@ -458,6 +465,19 @@
     "T14",
     "T15",
     "T16",
-    "H1.0-KAPI"
-  ]
+    "H1.0-KAPI",
+    "T17",
+    "H1.1a",
+    "H1.1b"
+  ],
+  "ilan_edilen_kirmizi": {
+    "olcum_17_08": "97% tests passed, 3 tests failed out of 91",
+    "dusenler": [
+      "style_check",
+      "figure_check",
+      "h10_gate_check"
+    ],
+    "dorduncu_yok": true,
+    "kaynak": ".rabadon/guard.json -> pushGate._ilan_listesi"
+  }
 }

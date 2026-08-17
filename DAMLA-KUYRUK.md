@@ -249,6 +249,27 @@ A1 kimin işine yarar: A0 baskısı olmayan ama A4'ten büyük çıktı alabilen
 **Soru:** pakete A1 de girsin mi, yoksa A0 + A4 yeterli mi?
 **Cevap:**
 
+### [ ] K15 — 38 tasarımın "kalemi" pinlenecek · İKİ KAPIYI AÇAR · 2026-08-17
+Tur 8'in kapı süpürmesi iki testin **boş koştuğunu** buldu ve ikisi de artık dürüstçe kırmızı:
+- **`style_check`**: `engine/STYLE-PIN/` diskte **hiç yok**. Test yıllardır `PASS (nothing to enforce)` basıp yeşil görünüyordu — sıfır pin, sıfır hüküm. (Kapının ilan ettiği çıkış yolu `scripts/repin-style.sh` de diskte yok.)
+- **`figure_check`**: 31 stilin **7'si** son `else` dalından **koşulsuz OK** alıyordu. Tanık: `dress_bandeau_circle` **0.872** — figürel bandın üstünde (0.84), boxy eşiğinin altında (0.93), iki yasanın da dışında, yine "ok".
+
+**Pin ölçümden gelmez, KARARDAN gelir.** Motor kendi çıktısını pinleyemez (regen-vs-regen yasağı, `DERSLER.md`). Yani bu senin gözün.
+**Soru:** 31 stilin render'ına bakıp "kalemim bu" diyeceğin bir tur açayım mı? Açarsam sana PNG kontakt sayfası üretirim, sen seçersin, pin donar ve iki kapı da dışlamadan çıkar.
+**Bloke etmiyor** — o güne kadar ikisi `.rabadon/guard.json` → `pushGate._ilan_listesi`'nde gerekçesi ve bitiş şartıyla ilan edildi.
+**Cevap:**
+
+### [ ] K13 — Etsy listing dili: Türkçe mi İngilizce mi? · H1.4'ü bağlar · 2026-08-17
+Paket bugün Türkçe basıyor: kesim notu `2 kes · aynali cift`, kumaş sayfası, montaj sırası. Emsal korpus (satın aldığımız Etsy kalıpları) İngilizce: `cut 2` / `cut 1 pair`.
+Anlam birebir, sözcük değil. Etsy'de satıyorsak alıcı çoğunlukla İngilizce okur.
+**Tek dil mi, iki dil mi?** İki dil paketi büyütür ve her sayfayı iki kez doğrulamak gerekir.
+**Cevap:**
+
+### [ ] K14 — A1 sayfası üretilsin mi? · 2026-08-17
+Bugün yalnız **A0 (1 sayfa)** ve **A4 (15 sayfa)** basılıyor. Kod yolu (`render_tiled`) A1'i destekliyor ama çağrılmıyor.
+Şartname "A0/A1 ikisi de üretilebilir" diyor; "ya A0 ya A1" okumasıyla madde geçti, o yüzden **çağırmadım** — bu bir ürün kararı: kopya dükkânlarında A1 A0'dan yaygın ve ucuz.
+**Cevap:**
+
 ---
 
 ## KAPANDI
