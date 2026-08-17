@@ -174,6 +174,42 @@ Sevk edilen motorda ilk koşu (`d336514`, `engine/build-15a` Release):
 
 **ctest** (`engine/build-15a`, Release): dışlamalı **`100% tests passed, 0 tests failed out of 89`** · tam süit **`95% tests passed, 5 tests failed out of 94`** — düşen tam olarak ilan edilen beşi (`style_check`, `contract_check`, `preview_truth_check`, `figure_check`, `h10_gate_check`). Gerileme yok.
 
+## TUR 18 — ★ BEDEN ÇİZELGESİ BİR TEST FIXTURE'I OLARAK DOĞMUŞ
+
+### Doğum yeri git'ten ölçüldü
+`git log -S` ilk giriş: **`77193d5`** (7 Tem 2026) → **`engine-check/main.swift`**, yani bir **test koşum takımı** — ve **aynı dizinde** uydurma `tall / petite / pear / apple / bigNeckSmallShoulder` gövdeleriyle yan yana. Tek gerekçe bir yorum: *"EU size chart (German convention) + edge cases"*.
+**`1eafc16`** (15 Tem) o on satırı `sizechart.hpp`'ye **birebir kopyaladı** ve motorun **gövde gerçeği** yaptı — **terfi anında hiçbir kaynak eklemeden.**
+Repoda `EN 13402` · `DOB` · `Hohenstein` · `Burda` kelimeleri **hiç geçmiyor**.
+
+| kolon | durum |
+|---|---|
+| `bustCM` · `waistCM` · `hipCM` | ✅ **KAYNAKLANDI, 30 hücrede 30 birebir** — **burda style "Damen Maßtabellen"** (NORMALE DAMENGRÖSSEN, Körpergröße 168) |
+| `shoulderCM` · `backLengthCM` · `armLengthCM` · `neckCM` | ⛔ **KAYNAKSIZ** — doğrulanmış yokluk olarak yazıldı |
+
+✅ **Alıcıya ULAŞAN üç sayı, tam olarak kaynaklanan üçü** (`size-table.json` yalnız bust/waist/hips basıyor). Kaynaksız dördü **kalıbı şekillendiriyor** ama basılmıyor.
+
+### ★ `shoulderCM` SADECE KAYNAKSIZ DEĞİL — YANLIŞ BÜYÜKLÜK
+Her standartta `shoulder` = **tek omuz dikişi**: Burda **12–14.5cm**, Müller 11.8–13.6, Aldrich 11.75–14.2.
+**36–42cm'i bir VÜCUT ölçüsü olarak basan hiçbir standart yok** — o aralık yalnız perakende **BİTMİŞ GİYSİ** tablolarında.
+→ Tur 15–16'nın *"iki omuz genişliği var, yüzey dar olanı kullanıyor"* teşhisi eksikmiş: **geniş olan da bir vücut ölçüsü değil.** Omuz halkasının kaynağı bugün **ikisi de yanlış**.
+
+### +6cm rejimi: KASITLI VE KAYNAKLI — soru Damla'ya sorulmadan kapandı
+Burda'nın kendi serisi **104→110→116→122**; Aldrich'in başlığı **"4cm and 6cm Increments (European Sizing)"**. Tur 7'nin *"kasıtlı olma ihtimali güçlü"* çıkarımı **doğruymuş**, ve artık iç tutarlılık değil **birincil yayın**.
+`backLengthCM` 0.0 adımı ve `neckCM` düzensizliği ise **hata gibi okunuyor**: yayınlanan her seri düzgün (Burda +0.5 tekdüze, Aldrich +0.4, Müller +0.2/+0.3), ve **ortada olup sonra +0.5'e dönen düz adım hiçbir yayında yok**. **Tek hücre düzeltmek kolonu kaynaklı yapmaz** → `DAMLA-KUYRUK` **K10**.
+
+**Kapı kuruldu, KASTEN KIRMIZI:** `sizechart_source_check` — her kolon kaynak beyanı taşımak zorunda, `verified` olan ayrıca URL + yayınlanmış değerlerle **değer değer** tutmak zorunda. Bugün **4 FAIL**. Mutasyon **7/7** (kaynak silinince · değer kaydırılınca · **+6cm rejimi düzleştirilince** · kaynaksız "verified" iddia edilince…), ve bir kolon gerçekten kaynaklanınca **hüküm sayısı düşüyor** — gerçek işle kapanabilir. **Ajan çizelgeyi düzenleyerek kapatamaz.**
+
+### ★ ATÖLYEDE UI YALAN SÖYLÜYOR — motor dürüst
+`web/atolye.html`'in KENDİ `draw()`'u koşuldu, **4 topoloji dalı × 8 beden = 32 çizim**: EU34–EU42 hepsi OK ve bayt-determinist; **EU44 / EU46 / EU48 dört dalda da ÇÖKÜYOR** (`TypeError: … reading 'shp'`) — **32'nin 12'si (%37.5)**. Sebep: `flat.size` çizelgesi **EU42'de bitiyor**, motor 8 beden sevk ediyor.
+★ **Asıl kusur çökme değil, YAKALAMA:** `paint()`'in `catch`'i `return` ediyor ve o `return`, çizimi, **beden etiketini** ve **bütün kadran okumalarını** güncelleyen satırların **ÜSTÜNDE**. Ziyaretçi kadranı EU48'e çekince ekranda **EU42'nin çizimi, EU42 etiketiyle** duruyor. Üç beden UI'da **seçilebiliyor**.
+Kapı: `size-coverage-check.mjs` — ad karşılaştırması değil, **sayfayı koşturur**. Mutasyon 4/4, fikstür dolunca **32/32 yeşil** (kalıcı kırmızı değil). Eksik üç satır **YAZILMADI** — vücut sayısı uydurulmaz → `DAMLA-KUYRUK` **K22, ACİL**.
+**`site-health` YEŞİLE DÖNDÜ** (ölü referans 1 → 0); eski günlük kütüğü, kuralın sanksiyonladığı tek yolla silindi: **hiç var olmayan üreteci yazılarak** (`gen-legacy-redirects.mjs`, yasası iki kapı: beyan edilen hedef diskte yoksa ölümcül, hedef null ise kütük silinir).
+
+### K6 fallback DÜZELDİ, dikiş sabitliğinin kökü ÖLÇÜLDÜ
+K6 fallback dalı artık crossing'in kuralını uyguluyor (`kProdTolMM = 0.79375` içinde **yükseği tut**): geçiş ağacında EU42 **−14.35 → +4.20mm** — 17A'nın tahmininin **birebir aynısı**. Sevk edilende hiçbir sayı kımıldamadı (dal gerçekten *"never reached"* idi).
+★ **Dikiş sayısı bir tarif değil, `fitCubics(0.15mm)`'in ARTIĞI** — ve **bugünkü sabit 26 ŞANS**: sekiz bedenin sekizi de eşiğin **0.02mm** altında duruyor. Geçişte pay **0.003mm**'ye düşüyor ve iki dikiş taşıyor.
+⚠ **Bugünkü K6 8/8 yeşili de kırılgan:** EU44 −4.28, EU46 −4.67, kapı −5.0 → **0.33mm pay.**
+
 ## TUR 17 — ETEĞİN KLOŞU GRADELENDİ, VE ATÖLYENİN 60 KADRANININ 45'İ HİÇBİR ŞEY YAPMIYOR
 
 ### ★ KLOŞ GRADELENDİ — kaynak kodun kendi yorumundaymış, yarısı sevk edilmemiş
