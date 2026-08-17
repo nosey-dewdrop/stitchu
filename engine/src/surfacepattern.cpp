@@ -340,7 +340,14 @@ struct TopProfile {
 // place where THAT solved boundary is strapHalf wide, found by bisection, and
 // the armhole is then scooped from there down to the underarm depth — in the
 // angle, which is the coordinate the armhole actually has.
-double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
+// cStrapOut, when given, receives |cos phi| of the place where the scoop meets
+// the shoulder line — the SHOULDER POINT. It used to be findable by scanning
+// the boundary for the column where |x| turns over, and that scan died the
+// moment the skim became an envelope (H1.0b, Tur 10): the garment is now widest
+// at the UNDERARM, so the argmax is the underarm itself and the scan measured a
+// zero-length armhole. The solver knows the answer exactly; it just never said it.
+double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
+                 double* cStrapOut = nullptr) {
     const bool front = std::sin(phi) > 0;
     const double c = std::fabs(std::cos(phi));
     TopProfile bare = top;
@@ -361,6 +368,7 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
         }
         return std::pair<double, double>{x, z};
     };
+    if (cStrapOut) *cStrapOut = -1.0;  // "no armhole on this surface"
     if (top.underarmZ <= 0.0) return fp(c).second;
     // widest the solved shoulder line ever gets: if it never reaches the strap
     // there is no armhole to cut and the shoulder simply runs to the side seam
@@ -403,6 +411,7 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
         const double d = std::atof(e);
         if (d > 0.0 && d < 89.0) cStrap = std::min(cStrap, std::cos(d * kPi / 180.0));
     }
+    if (cStrapOut) *cStrapOut = cStrap;
     if (c <= cStrap) return fp(c).second;
     const double strapZ = fp(cStrap).second;
     const double u = (c - cStrap) / std::max(1.0 - cStrap, 1e-9);
@@ -1327,17 +1336,22 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         // hole opens FRONT TO BACK, is the one nobody had measured.
         if (std::getenv("STITCHU_ARMHOLE_DEBUG")) {
             const std::vector<double>& tH = layers[0].topH;
-            // ARGMAX, not first-decrease: |x| dips by 0.4mm over the first
-            // three columns because cos(phi) falls faster than the section
-            // widens on the nearly flat underarm floor, so a first-decrease
-            // scan stops at the underarm itself and reports a zero-length
-            // armhole. Measured and corrected rather than left as a plausible
-            // scan.
+            // THE SHOULDER POINT IS ASKED OF THE SOLVER, NOT SCANNED FOR.
+            // It used to be the argmax of |x| along the boundary. That worked
+            // only while the garment was widest at the shoulder; once the skim
+            // became an envelope the widest column is the UNDERARM and the
+            // argmax scan returned j = 0, i.e. a zero-length armhole on a
+            // garment whose armhole had just got bigger. solveTopH computes the
+            // strap point exactly (bisection on the shoulder branch); it now
+            // publishes it.
+            double cStrap = -1.0;
+            solveTopH(surf, top, 0.0, &cStrap);
             int jTip = 0;
-            for (int j = 1; j <= NR / 4; ++j)
-                if (std::fabs(surf.at(tH[j], 2 * kPi * j / NR).x) >
-                    std::fabs(surf.at(tH[jTip], 2 * kPi * jTip / NR).x))
-                    jTip = j;
+            if (cStrap > 0.0) {
+                const double phiStrap = std::acos(std::min(1.0, cStrap));
+                jTip = static_cast<int>(std::lround(phiStrap * NR / (2 * kPi)));
+                jTip = std::max(0, std::min(NR / 4, jTip));
+            }
             double arc = 0.0;
             for (int j = 1; j <= jTip; ++j)
                 arc += dist3(surf.at(tH[j - 1], 2 * kPi * (j - 1) / NR),
