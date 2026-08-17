@@ -1266,6 +1266,10 @@ static SheathOptions probeOverrides(const SheathOptions& in) {
     if (const char* e = std::getenv("STITCHU_BODICE_APEX")) o.bodiceApexFrac = std::atof(e);
     if (const char* e = std::getenv("STITCHU_CREST_BAND")) o.shoulderCrestBandMM = std::atof(e);
     if (const char* e = std::getenv("STITCHU_MAX_DART_DEG")) o.maxDartDeg = std::atof(e);
+    // TUR 17 — the two hem-sweep laws, so both can be measured on the same
+    // binary instead of being argued about. See SheathOptions.
+    if (const char* e = std::getenv("STITCHU_HEM_OVER_HIP")) o.hemSweepOverHipMM = std::atof(e);
+    if (const char* e = std::getenv("STITCHU_HEM_HIP_RATIO")) o.hemSweepHipRatio = std::atof(e);
     return o;
 }
 
@@ -1333,12 +1337,25 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     if (opt.skimBodice) {
         surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
         surf.skimBaseH = waistH;                          // the single shared ring
-        if (opt.hemSweepMM > 0.0) {
+        // ★ TUR 17 — THE SWEEP GRADES, because it is derived from THIS body's
+        // hip and not from the one 36-inch hip the source happened to print.
+        // See SheathOptions::hemSweepOverHipMM for why the offset and not the
+        // ratio. The hip girth is the chart's own row, so nothing here can go
+        // stale between sizes.
+        double hipGirthMM = 0.0;
+        for (const BodyLevel& lv : body.levels())
+            if (lv.name == "hip") hipGirthMM = lv.girthMM;
+        double sweepMM = opt.hemSweepMM;
+        if (hipGirthMM > 0.0 && opt.hemSweepHipRatio > 0.0)
+            sweepMM = hipGirthMM * opt.hemSweepHipRatio;
+        else if (hipGirthMM > 0.0 && opt.hemSweepOverHipMM >= 0.0)
+            sweepMM = hipGirthMM + opt.hemSweepOverHipMM;
+        if (sweepMM > 0.0) {
             surf.hemH = hemH;
             // scale the waist section until its perimeter reaches the sourced sweep
             const Section w = surf.section(waistH);
             const double base = w.perimeter(24) + 2 * kPi * surf.profile(waistH, 3);
-            surf.hemScale = opt.hemSweepMM / base;
+            surf.hemScale = sweepMM / base;
         }
     }
     surf.blendMM = opt.hipBlendMM;

@@ -173,6 +173,40 @@ struct SheathOptions {
     // exactly this garment: 48.5-52.5 inches over a 36 inch hip (Simplicity
     // 7129 c.1967, Vogue 6900 c.1966, Vogue Couturier 2063 / Valentino 1969).
     // 1270mm = 50 inches, the middle of that measured band. 0 = straight sheath.
+    //
+    // ★ TUR 17 — THIS NUMBER USED TO SHIP AS AN ABSOLUTE, AND THAT WAS THE BUG.
+    // Read the source line again: it is a PAIR, "50 inches OVER A 36 INCH HIP".
+    // Shipping only the left half of the pair gave every size the same 1270mm
+    // hem (measured, 8 sizes, 1269.86mm, total spread 0.03mm) while the waist
+    // ring grades +40mm a size — so the A closed as the size grew: EU34 got a
+    // full A, EU48 got very nearly a straight skirt. The same style was not the
+    // same style at eight sizes. A constant CIRCUMFERENCE is not a measurement,
+    // it is one body's number worn by eight bodies.
+    //
+    // The pair is one data point, and one point cannot by itself say whether
+    // the law is a RATIO (hem = hip x 1.3889) or an OFFSET (hem = hip + 355.6).
+    // What decides it is how a flared skirt is GRADED: below the hip the side
+    // seam is moved PARALLEL, so the hem gains exactly the hip grade and the
+    // flare -- the amount the hem stands OUT past the hip -- is what stays
+    // constant between sizes. That is the offset law. Its geometric meaning is
+    // the thing a buyer actually feels: a constant added circumference is a
+    // constant radial stand-off (355.6/2pi = 56.6mm) and therefore the SAME
+    // A-angle at every size. The ratio law opens the angle by a third from
+    // EU34 to EU48, which is the same defect this ring names, only mirrored.
+    // Both laws were measured on all eight sizes; the numbers and the gate
+    // counts are in HEDEF.md Tur 17.
+    //
+    // So: the sweep is DERIVED per size = body hip girth + hemSweepOverHipMM,
+    // and 355.6mm is 50 - 36 inches, the source's own pair, subtracted rather
+    // than truncated. Negative = fall back to the absolute hemSweepMM below.
+    double hemSweepOverHipMM = 355.6;
+    // Ratio law, kept because it was measured and because a spec may want it:
+    // > 0 overrides the offset (sweep = hip * ratio). 1270/914.4 = 1.38889 is
+    // the same source pair read the other way. Default 0 = off.
+    double hemSweepHipRatio = 0.0;
+    // ABSOLUTE sweep, used only when hemSweepOverHipMM < 0 and the ratio is off.
+    // 0 = straight sheath. This is what garment-spec-v2's `hemSweepMM` binds to
+    // when a spec states an explicit lower-edge width.
     double hemSweepMM = 1270.0;
 
     // NECKLINE — design dials, and declared as such. A neckline depth is not a
