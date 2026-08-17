@@ -108,6 +108,11 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
       Sayı alıcının sayfasına da basılıyor (`print-info.pdf` s.1 `BASKI: A4 15 sayfa …`),
       denetim dosyasında kalmıyor (T4/T10 dersi).
       ⚠ **Uydurma kazanç yazılmadı.** Şartname "kanıt" istiyor, "kazanç" değil.
+      ★ **SIFIR, ÖLÇÜM BOZUK OLDUĞU İÇİN DEĞİL — BAĞIMSIZ TANIK VAR.** Aynı kod, kat kuralının
+      GERÇEKTEN tetiklendiği eski bir giyside (`Logs/paket-2026-08-06`, kemerli elbise) koşuldu:
+      `pieces that can be cut on the fold: 2 of 7 drawn (skirt_back, skirt_front)` ·
+      **A4 24 → 20 (+4 sayfa)** · **A0 2 → 1 (+1 sayfa)**. Yani ölçüm yolu canlı ve kazancı
+      görebiliyor; bugünkü **0**, bugünkü giysinin özelliği.
       Regresyon mandalı: `printpack_sheet_check` §6 — hem önce/sonra satırlarının varlığını,
       hem de basılan sayının **gerçekten basılan PDF'in sayfa sayısına** eşitliğini tutuyor
       (`pdfinfo print-a4.pdf` = 15 ↔ raporun "sonra"sı = 15 ↔ alıcı sayfası = 15).
