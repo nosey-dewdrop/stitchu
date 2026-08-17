@@ -235,7 +235,40 @@ struct SheathOptions {
     // (x = strapHalf), and outside that band the weight eases to zero because
     // that is precisely where the two edges are SUPPOSED to part company —
     // into the neckline at the centre and into the armhole at the side.
-    bool shoulderSeam = true;
+    // ⚠ OFF BY DEFAULT, AND THAT IS A REVERT, NOT A DESIGN CHOICE.
+    //
+    // The construction below WORKS and is measured: with it on, h10_gate_check
+    // goes 52 -> 24 FAIL of 63 and closes K3 (0 -> 30 shoulder stitches, 8/8),
+    // K5 neck-closed (8/8), K5 neck-girth (4/8 -> 8/8) and K6 (8/8), while K2
+    // grade stays 7/7. But it BREAKS two taban gates that were green:
+    //   surface_pattern_check  0 -> 4 FAIL (torso cut-line strain 0.0071-0.1501%
+    //                          -> 1.83/1.86% against a 0.5% gate)
+    //   walkgate_check         0 -> 6 hüküm-FAIL, all self-intersection
+    // HEDEF.md § YASALAR and RULES 9 say a change that breaks a test is
+    // reverted, not shipped, and the taban is the condition of finishing rather
+    // than a target. So the switch ships OFF and the ring goes back on the queue
+    // with its diagnosis written down instead of patched. Turn it on and the
+    // whole shoulder is there; nothing here is a stub.
+    //
+    // ROOT, MEASURED: the fold's Gaussian curvature has to leave through
+    // top-anchored darts, and it cannot.
+    //   (a) the top darts CROSS the waist darts on the torso panels — visible
+    //       in flatten-research/20-panel-png.py's render — because a waist slit
+    //       runs rows [0, bodiceApexFrac = 0.80) and a top slit runs
+    //       (topDartApexFrac = 0.55, rowsN], and those ranges OVERLAP over a
+    //       quarter of the panel. The claim at topDartApexFrac that the two
+    //       "cannot cross by construction" is FALSE.
+    //   (b) on the front the deficit sits in the columns beside the
+    //       centre-front cut, exactly where dartColumnsFromDeficitRows weights
+    //       suppression to zero on purpose (a seam absorbs suppression next to
+    //       it), so no dart is derived there at all.
+    // Two fixes were tried and BOTH made it worse, so neither is in the code:
+    //   crest band 60 -> 120mm: cut line 1.83 -> 0.46% (inside the gate) but
+    //     walkgate 6 -> 30 hüküm-FAIL, every size self-intersecting. Rejected
+    //     under the Tur 5 precedent — the better number was the worse garment.
+    //   topDartApexFrac 0.55 -> 0.80 (ranges made to meet, not overlap):
+    //     cut line 1.83 -> 0.91% but interior 6.96 -> 11.67%. Still 4 FAIL.
+    bool shoulderSeam = false;
     // How far FORWARD of the crest the seam is placed, mm. A design decision
     // and declared as one: trade practice runs from on-the-crest to about a
     // centimetre forward, and 0 is the neutral reading (the seam on the crest).
@@ -248,18 +281,9 @@ struct SheathOptions {
     // it. Too small and the fold is a crease no dart set can absorb; too large
     // and the bodice stops following the body well below the armhole.
     //
-    // MEASURED, not chosen: at 60mm the fold is a crease and the torso panels'
-    // cut-line strain went 0.0071-0.1501% -> 1.83/1.86% (gate 0.5) with the
-    // interior at 6.96/7.79% (gate 3.0) — four FAILs in surface_pattern_check
-    // that were not there before. Spreading the same fold over 120mm halves the
-    // tilt and takes the cut lines back inside the gate (0.4587/0.4790%) and
-    // the BACK's interior down to 2.79%. The FRONT's interior is still 7.29%
-    // and that is an open red, recorded in the shift report rather than tuned
-    // away: the front's deficit sits in the columns next to the centre-front
-    // cut, where dartColumnsFromDeficitRows weights it down to nothing on
-    // purpose (a seam absorbs suppression beside it), so no dart is derived
-    // there and the curvature has nowhere to go.
-    double shoulderCrestBandMM = 120.0;
+    // MEASURED BOTH WAYS — see the shoulderSeam note above for the table and
+    // for why 120mm was rejected even though it lowers a FAIL count.
+    double shoulderCrestBandMM = 60.0;
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;
