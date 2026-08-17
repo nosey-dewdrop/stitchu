@@ -1712,9 +1712,26 @@ def main():
     spec = Path(args.out_dir) / 'stitchu_specification.json'
     paths = build(args.out_dir, spec, args.size, args.date)
     print((Path(args.out_dir) / 'print-report.txt').read_text())
+    missing = []
     for k, p in paths.items():
-        print(k, p, 'OK' if Path(p).exists() else 'MISSING')
+        ok = Path(p).exists()
+        print(k, p, 'OK' if ok else 'MISSING')
+        if not ok:
+            missing.append(k)
+
+    # TUR 11 (17 Agu) — MISSING HİÇ BU SÜREÇTEN ÇIKMIYORDU. Bu döngü paket
+    # yazıldığından beri her çıktı dosyası için OK/MISSING basıyor, sonra
+    # main() sonundan düşüyordu: ne basarsa bassın çıkış kodu 0'dı.
+    # scripts/taban.sh:151 tam o çıkış koduna bakıp yanına "  <beden>  ok"
+    # yazıyor — sekiz alıcı paketinin sekizi de A0 sayfası olmadan çıksa
+    # vardiya mührü yine YEŞİL basılırdı. Bu, gradeset.sh sınıfıdır: ölç,
+    # bas, hükmü at. Burada eşik yok: dosya diskte ya vardır ya yoktur.
+    if missing:
+        print(f'PRINTPACK: FAIL — {len(missing)} çıktı dosyası diskte yok: '
+              + ', '.join(missing), file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

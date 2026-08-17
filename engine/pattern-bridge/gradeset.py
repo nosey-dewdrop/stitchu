@@ -409,7 +409,18 @@ def build_nests(patterns, out_dir):
 # Nothing was added to the measurement, no threshold was invented: the seam
 # tolerance is walk.py's 1mm and the monotonicity threshold is TOL_MM, both
 # unchanged.
-def verdict(deed, mono_counts, det_equal):
+#
+# TUR 11 (17 Agu) — HER UC HUKUM DE BIR SIFIRIN UZERINDE DURUYORDU.
+# `sum(... for d in deed)` bos bir listede 0 verir, `mono_counts.get('IHLAL')`
+# bos bir tabloda None verir: sekiz bedenin sekizi de uretilemese ya da kenar
+# tablosunun tamami hizalanamasa bu fonksiyon YINE bos liste dondurur ve
+# "KAPI: YESIL — 0 FAIL, 0 IHLAL" basardi. Ustelik align_lengths, kenar sayisi
+# bedene gore 1'den fazla degisen paneli tablo DISINDA birakip `struct_skipped`
+# diye rapora yaziyordu; o panel bir daha hicbir hukme girmiyordu — TUR 9'un
+# katman-lint bulgusunun aynisi (korunan sey yoksa kural sessizce atlanir).
+# Asagisi sayimdir, esik degil: hicbir tolerans gevsetilmedi, olculen uc sey
+# aynen duruyor, sadece "olculecek sey yok" hali artik bir GECME degil.
+def verdict(deed, mono_counts, det_equal, struct_skipped=()):
     """Return the list of (name, count) findings that make this run RED."""
     red = []
     seam_fail = sum(d['summary']['fail'] for d in deed)
@@ -420,11 +431,31 @@ def verdict(deed, mono_counts, det_equal):
                     mono_counts['IHLAL']))
     if not det_equal:
         red.append(('determinizm: EU38 iki kosuda ayni spec\'i vermedi', 1))
+
+    # --- SAYIM: yargilanacak sey olmamasi bir gecme degildir ---------------
+    if len(deed) != len(SIZES):
+        red.append((f'SAYIM: {len(SIZES)} beden bekleniyordu, dikis tapusu '
+                    f'{len(deed)} bedenden geldi', len(SIZES) - len(deed)))
+    bos = [SIZES[i] for i, d in enumerate(deed)
+           if not d['summary'].get('pairs')]
+    if bos:
+        red.append((f'SAYIM: dikis cifti OLMAYAN beden ({", ".join(bos)}) — '
+                    f'parcalari birbirine hic baglanmamis giysi yargilanmis '
+                    f'sayilmaz', len(bos)))
+    judged = sum(mono_counts.get(k, 0)
+                 for k in ('artan', 'sabit', 'IHLAL'))
+    if judged == 0:
+        red.append(('SAYIM: monotonluk tablosunda TEK kenar yargilanmadi', 1))
+    if struct_skipped:
+        red.append((f'SAYIM: kenar tablosu disinda birakilan panel '
+                    f'({", ".join(struct_skipped)}) — hizalanamayan panel '
+                    f'monotonlukta hic yargilanmiyor, bu bir atlama, gecme '
+                    f'degil', len(struct_skipped)))
     return red
 
 
-def verdict_lines(deed, mono_counts, det_equal):
-    red = verdict(deed, mono_counts, det_equal)
+def verdict_lines(deed, mono_counts, det_equal, struct_skipped=()):
+    red = verdict(deed, mono_counts, det_equal, struct_skipped)
     if not red:
         return ['KAPI: YESIL — dikis tapusu 0 FAIL, monotonluk 0 IHLAL, '
                 'determinizm ozdes']
@@ -627,9 +658,9 @@ def main():
     print(report)
     print(f'rapor: {out / "gradeset-report.txt"}')
 
-    for line in verdict_lines(deed, mono_counts, det_equal):
+    for line in verdict_lines(deed, mono_counts, det_equal, struct_skipped):
         print(line)
-    if verdict(deed, mono_counts, det_equal):
+    if verdict(deed, mono_counts, det_equal, struct_skipped):
         sys.exit(1)
 
 
