@@ -1,6 +1,7 @@
 {
   "_rol": "L0 TEK VÜCUT KONTRATI — kalıp gövdesi (cm, gerçek) + flat croquis (oran, stilize) tek dosyada. Üretici: engine-check/harness/uret-body-kontrat.py; bekçi: h0-vucut.py. Elle düzenlenmez.",
   "beden": "EU38",
+  "_kolon_sayimi": "TUR 17B (2026-08-17) — BU 26 SAYININ HİÇBİRİ BU BEDENDE ÖLÇÜLMEDİ. Hepsi engine/pattern-bridge/bodies/mean_all.yaml adlı TEK gövdeden (GarmentCode ortalama seti, ~EU44 çapası) mapping.py GRADE_PER_SIZE kuralıyla doğrusal olarak uzatılmıştır: 16 alan +sabit adım/beden, 10 alan hiç kımıldamıyor (arm_length, arm_pose_angle, bust_line, crotch_hip_diff, head_l, height, hip_inclination, hips_line, shoulder_incl, vert_bust_line). Sekiz beden taşımak sekiz ölçüm yapmaz. ⚠ Bu yüzden buradaki bel 72.3338cm, contract/tables.json euSizeChart EU38 belinin (70.0cm) yerine GEÇMEZ — ikisi ayrı gövde ve bu dosya motoru beslemiyor (Tur 7 ölçtü: tek tüketici flatten-research/17-garment-surface.py). ★ shoulder_incl 21.6777 sekiz bedende de aynıdır ve bu bir kusur DEĞİL: gerçek bir 8 bedenli endüstriyel kalıpta (Buğra Locket) omuz EĞİMİ ön 0.18°, arka 0.09° aralıkta sabit kalıyor, graded olan omuz BOYU (ön 63.00→67.75mm). Ölçüm: flatten-research/20-shoulder-slope.py. Sabitlik doğrulandı, DEĞERİN kendisi (nape→uç düşüşü) doğrulanmadı.",
   "olculer_cm": {
     "arm_length": 53.9697,
     "arm_pose_angle": 45.483,

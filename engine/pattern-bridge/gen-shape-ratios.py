@@ -47,6 +47,84 @@ RINGS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# COLUMN CENSUS (TUR 17B, 2026-08-17). CARRYING EIGHT SIZES DOES NOT MAKE A
+# COLUMN EIGHT MEASUREMENTS. Every column this file publishes descends from ONE
+# body — bodies/mean_all.yaml, a single mean set anchored at ~EU44 — pushed
+# through mapping.py's linear GRADE_PER_SIZE rule. Nothing here was measured on
+# eight bodies, and nothing here was measured on eight garments. The census is
+# published next to the numbers rather than hidden, because a reader who sees
+# eight rows will otherwise assume eight readings.
+#
+# The signature is mechanical and reproducible from the JSON alone:
+#   - a stretched column has a PERFECTLY CONSTANT step and a FROZEN decimal tail
+#     (shoulder.width_cm: +1.0000 x7, tail .4568 in all eight rows)
+#   - a copied column has a ZERO step (shoulder.incl_deg: 21.6777 x8, tail .6777)
+#   - back_arc_fraction LOOKS measured because its steps decay, but it is the
+#     ratio of two stretched numbers, so its curvature is arithmetic, not
+#     anthropometry: (back + 2*delta) / (girth + 4*delta) over one (back, girth)
+#     pair. That is the same fact the drift_note above states; the census names
+#     it as PROVENANCE rather than as drift.
+#
+# Underlying body, counted (mapping.GRADE_PER_SIZE vs bodies/mean_all.yaml):
+# 26 measurements, 16 stretched linearly off one number, 10 frozen at one number
+# (arm_length, arm_pose_angle, bust_line, crotch_hip_diff, head_l, height,
+# hip_inclination, hips_line, shoulder_incl, vert_bust_line). ZERO of the 26 is
+# eight readings.
+#
+# ★ AND THE FROZEN SLOPE IS NOT A DEFECT — MEASURED, NOT ASSUMED. Tur 17B took
+# the shoulder-seam slope off Buğra's bought industrial pattern (Locket Top,
+# eight nested rings, PDF vector, mm calibrated) in all eight sizes, each piece
+# measured against its own centre-front / centre-back fold edge so sheet
+# rotation cannot enter (flatten-research/20-shoulder-slope.py):
+#     front  12.5070 ... 12.6865 deg   range 0.1795 deg, NOT monotone
+#     back   19.0619 ... 19.1493 deg   range 0.0874 deg, NOT monotone
+# A real graded pattern holds shoulder SLOPE constant across eight sizes and
+# grades shoulder LENGTH instead (front 63.00 -> 67.75mm, back 63.93 -> 68.70mm).
+# So incl_deg standing still is the RIGHT behaviour and the thing that ought to
+# grade — the width — already does. What is NOT verified is the VALUE 21.6777:
+# it is nape-to-tip drop in this engine's construction (bodysurface.cpp) while
+# the measured 12.6/19.1 are neck-point-to-tip seam slopes on a flat piece.
+# Different quantities; the measurement licenses the CONSTANCY, not the number.
+# ---------------------------------------------------------------------------
+COLUMN_CENSUS = {
+    '_law': 'carrying eight sizes does not make a column eight measurements; '
+            'every column below is ONE number from bodies/mean_all.yaml pushed '
+            'through mapping.py GRADE_PER_SIZE',
+    'back_arc_fraction.bust': 'STRETCHED — ratio of two linearly graded numbers '
+                              '(back_width +2.0/size over bust +4.0/size, both off '
+                              'the single mean_all body). The decaying step is '
+                              'arithmetic curvature, not anthropometry.',
+    'back_arc_fraction.waist': 'STRETCHED — waist_back_width +2.0/size over waist '
+                               '+4.0/size, same single body.',
+    'back_arc_fraction.hip': 'STRETCHED — hip_back_width +2.0/size over hips '
+                             '+4.0/size, same single body.',
+    'shoulder.width_cm': 'STRETCHED — mean_all shoulder_w 36.4568 at EU44, +1.0000cm '
+                         'per size, decimal tail .4568 frozen in all eight rows. '
+                         'This is the column TUR 16A measured -19.3...-10.6mm short '
+                         'of Aldrich in 8/8 sizes; the linear stretch off one anchor '
+                         'is the mechanical reason a single-direction miss is possible.',
+    'shoulder.incl_deg': 'COPIED — mean_all shoulder_incl 21.6777, absent from '
+                         'GRADE_PER_SIZE, so one number appears eight times. ★ TUR 17B '
+                         'measured a real 8-size industrial pattern and the shoulder '
+                         'slope IS constant there (front range 0.18 deg, back range '
+                         '0.09 deg, neither monotone) while shoulder LENGTH grades. '
+                         'The constancy is therefore CORRECT and is no longer an open '
+                         'question; the VALUE 21.6777 is a different quantity from what '
+                         'was measured (nape-to-tip drop vs neck-point-to-tip seam '
+                         'slope) and stays UNVERIFIED. Evidence: '
+                         'flatten-research/20-shoulder-slope.py.',
+    'EU50_EU52': 'ABSENT, and publishing incl_deg alone would NOT unblock them: '
+                 'sizechart.hpp grafts a whole BackArcRow, so EU50/EU52 carry '
+                 'shoulderWidthCM 0 AND shoulderInclDeg 0 AND all three back arc '
+                 'fractions 0. Measured TUR 17B: surface-pattern EU50 does not draft '
+                 'a shoulderless garment, it ABORTS — "need neck/shoulder/bust/waist/'
+                 'hip rings". Extending mapping.SIZES to ten would extrapolate +4cm '
+                 'girth per size while the chart itself steps +6cm from EU46 on, so '
+                 'the two rows are a CHART decision, not a generator token.',
+}
+
+
 def build():
     table = {}
     shoulder = {}
@@ -87,6 +165,7 @@ def build():
                     "note over sizechart.hpp's grafting loop. This is published "
                     'rather than smoothed, and it is not a tolerance.',
         'sizes': mapping.SIZES,
+        'column_census': COLUMN_CENSUS,
         'back_arc_fraction': table,
         'shoulder': shoulder,
     }
