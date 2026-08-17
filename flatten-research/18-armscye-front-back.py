@@ -11,7 +11,12 @@
 #         korukorune indis kullanilmaz. CLAUDE.md'deki EU38 indisleri capraz kontrol edilir.
 #
 # DIKIS CIZGISI: dikis payi 10mm (satici talimati, KANITLI). Ofset nokta-normali ile yapilir
-#         (miter YOK) -> kose yapaylıgı bu olcume girmez. Analitik capraz kontrol: dL = -d*(toplam donus).
+#         (miter YOK) -> kose yapaylıgı bu olcume girmez. Analitik capraz kontrol: dL = -w*d*(toplam donus),
+#         w = +1 CCW / -1 CW.  ⚠ T15 (17.08): bu mandal ONCE SARILIM-KORDU (w hep +1 sayiliyordu).
+#         Ic normal CCW'de tegetin SOLU, CW'de SAGI; carpansiz mandal CW parcada 2*d*dtheta sahte
+#         sapma basar. Bu dosya YALNIZ Front/Back Body olcuyor ve ikisi de 8/8 bedende CCW
+#         (asagida OLCULUP basiliyor), o yuzden duzeltme burada hicbir sayiyi degistirmedi —
+#         ama mandal artik kol gibi CW bir parca eklendiginde de dogru.
 import json, math, sys
 import numpy as np
 
@@ -155,9 +160,19 @@ for piece in ["Front Body", "Back Body"]:
             seam = plen(B)
             out[name] = {"cut": cut, "chord": float(np.hypot(*(A[-1] - A[0]))),
                          "turn": tt, "seam": seam,
-                         "seam_analytic": cut - SA * math.radians(tt),
+                         # T15: sarilim carpani. CCW -> ic normal teget SOLU (+1), CW -> SAGI (-1).
+                         "seam_analytic": cut - (1.0 if ccw else -1.0) * SA * math.radians(tt),
                          "dx": float(abs(A[-1, 0] - A[0, 0])), "dy": float(abs(A[-1, 1] - A[0, 1]))}
         data[(piece, size)] = out
+
+# --- T15: SARILIM OLCULUR, VARSAYILMAZ. Analitik mandalin isareti buna bagli.
+print("\n--- SARILIM (T15): analitik mandal dL = -w*d*dtheta, w = +1 CCW / -1 CW ---")
+for piece in ["Front Body", "Back Body"]:
+    ws = ["CCW" if data[(piece, s)]["ccw"] else "CW" for s in SIZES if (piece, s) in data]
+    n_ccw = ws.count("CCW")
+    print("  %-12s %s  -> CCW %d/%d" % (piece, " ".join(ws), n_ccw, len(ws)))
+print("  NOT: bu dosya kol parcasi OLCMUYOR. Kol parcalari (Upper/Lower Sleeve) CW 8/8 —")
+print("       olcumu 19-cap-vs-armscye.py'da; oraya da ayni carpan konuldu (T12/T14).")
 
 # EU38 capraz kontrol
 print("\n--- CAPRAZ KONTROL: EU38 kose arc'lari vs CLAUDE.md kaydi ---")
