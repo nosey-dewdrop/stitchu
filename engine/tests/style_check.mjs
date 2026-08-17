@@ -19,9 +19,24 @@ const pins = existsSync(PIN_DIR)
   ? readdirSync(PIN_DIR).filter((f) => f.endsWith('.svg'))
   : [];
 
+// T17 (17 Ağu): burası "PASS (nothing to enforce)" basıyordu. Yani bu kapı
+// ctest'te YEŞİLDİ ve HİÇBİR ŞEYİ tutmuyordu — engine/STYLE-PIN dizini diskte
+// hiç yok, pin sayısı sıfır, ve sıfır pin sıfır hüküm demek. T7'nin walk.py'ı
+// ile aynı sınıf: yeşil olduğu için doğru sanılan bir kapı kapı değildir.
+// Emsal printpack_sheet_check: aracı/girdisi eksikse sessizce atlamaz, FAIL eder.
+// Pin'i BU TEST kendi çıktısından ÜRETEMEZ — üretirse regen-vs-regen olur ve
+// kalem kendi kendini onaylamış olur (dosyanın kendi yasası, satır 3-4).
+// Tek dürüst çıkış: Damla kalemi onaylar, repin script'i pinler, defter yazılır.
 if (!pins.length) {
-  console.log('style_check: no pins yet (engine/STYLE-PIN boş) — PASS (nothing to enforce)');
-  process.exit(0);
+  console.log(`style_check FAIL: pinlenmiş stil 0 — ${PIN_DIR} yok/boş.`);
+  console.log('  Bu kapı bugüne kadar YEŞİL basıyordu ve hiçbir kalemi tutmuyordu (T17).');
+  console.log('  Kalem yasası pinsiz koşamaz; sessiz skip yasak.');
+  console.log('  Tek dürüst çıkış: Damla kalemi onaylar -> scripts/repin-style.sh');
+  console.log('  -> engine/STYLE-PIN/<style>.svg + engine/STYLE-PIN/STYLE-PIN.md defter girdisi.');
+  console.log('  ⚠ scripts/repin-style.sh de DİSKTE YOK (17 Ağu): bu kapının ilan ettiği');
+  console.log('    çıkış yolu hiç yazılmamış. Pinleme aracı da bu kırmızının kapsamında.');
+  console.log('  Bu testin kendi çıktısını pinlemesi (regen-vs-regen) kanıt DEĞİLDİR.');
+  process.exit(1);
 }
 
 const { renderGarmentFlatAsync } = await import('../tools/render-garment-flat.mjs');
