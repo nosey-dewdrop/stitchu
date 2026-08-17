@@ -1,15 +1,19 @@
 // header-diff.mjs — proves the canonical site header is byte-identical on every
-// page that carries it: the 7 hand-written main pages, the 24 generated style
-// pages (styles/) AND the 13 generated pattern pages (patterns/). One header,
-// no drift: same brandpatch, same 7 nav items (create · closet · patterns ·
-// blog · benchmark · patch notes · API) in the same order with the same EN/TR text,
-// same EN·TR toggle.
+// page that carries it: the 12 hand-written main pages and the 24 generated
+// style pages (styles/). One header, no drift: same brandpatch, same 6 nav items
+// (create · closet · collections · benchmark · patch notes · API) in the same
+// order with the same EN/TR text, same EN·TR toggle.
+//
+// The 7th item, "Pattern Blog", was removed in TUR 13: it pointed into
+// web/patterns/, which af49514 deleted, so on 95 pages it was a link to a 404 —
+// and on the 24 styles/ pages it was href="index.html" class="sh-active", i.e.
+// it resolved to the styles hub and every styles page announced itself as the
+// Pattern Blog. Not a 404, so no link checker could see it; only this tool did,
+// by going DRIFT the moment the other 95 were repaired.
 //
 // Two axes are legitimately allowed to vary and are normalised away before the
 // compare:
-//   1. relative-path prefix — subdir pages (styles/, patterns/) reach root pages
-//      with "../"; the "patterns" link itself is "patterns/index.html" from root
-//      but "index.html" from inside a subdir.
+//   1. relative-path prefix — subdir pages (styles/) reach root pages with "../".
 //   2. active marker — the current page marks ONE link with class="sh-active".
 // Everything else must match exactly. Exit non-zero on any drift.
 //   run: node engine/tools/header-diff.mjs
@@ -57,10 +61,6 @@ function normalise(header) {
     .replace(/ class="sh-active"/g, '')
     // strip subdir "../" prefixes so root and subdir headers align
     .replace(/href="\.\.\//g, 'href="')
-    // collapse the patterns link href to one canonical token: from root it is
-    // "patterns/index.html", from a subdir it is "index.html"
-    .replace(/href="patterns\/index\.html"/g, 'href="__PATTERNS__"')
-    .replace(/(<a href=")index\.html(" data-en="Pattern Blog")/g, '$1__PATTERNS__$2')
     // collections link: "collections/index.html" (root, after "../" strip) vs
     // "index.html" on the collections index page itself.
     .replace(/href="collections\/index\.html"/g, 'href="__COLLECTIONS__"')

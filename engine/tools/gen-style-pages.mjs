@@ -553,7 +553,6 @@ const header = `<header class="sh-header">
   <nav class="sh-nav">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="../closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
-    <a href="index.html" class="sh-active" data-en="Pattern Blog" data-tr="Kalıp Günlüğü">Pattern Blog</a>
     <a href="../collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
     <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
