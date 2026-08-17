@@ -131,10 +131,102 @@ for f in print-info.pdf print-a0.pdf print-a4.pdf print-report.txt; do
   cmp -s "$D/$f" "$D2/$f" || fail "$f iki koşuda bayt-özdeş değil"
 done
 
+# =========================================================================
+# ==== 8C BLOĞU BAŞLANGIÇ (H1.1a + H1.1b) — bu blok dışına dokunulmadı ====
+# =========================================================================
+# ---------------------------------------------------------------- 6. NESTING
+# H1.1a. Şartname §3 "nesting yarım parçalarla: sayfa sayısı önce/sonra
+# raporlanır" diyor. Kazanç ŞART DEĞİL, ÖLÇÜM şart: bugün kazanç 0 ve 0 da
+# basılmak zorunda. Bu mandal sayının VARLIĞINI değil, DOĞRULUĞUNU tutuyor:
+# basılan sayfa sayısı gerçekten basılan PDF'in sayfa sayısına eşit olmalı,
+# yoksa "15 sayfa" yazan bir kalıp 16 sayfa çıkar.
+grep -q 'NESTING — half pieces' "$D/print-report.txt" \
+  || fail "print-report.txt nesting önce/sonra bloğunu taşımıyor (H1.1a)"
+grep -Eq 'A4 pages: [0-9]+ whole -> [0-9]+ folded' "$D/print-report.txt" \
+  || fail "print-report.txt A4 önce/sonra satırını taşımıyor"
+grep -Eq 'A0 pages: [0-9]+ whole -> [0-9]+ folded' "$D/print-report.txt" \
+  || fail "print-report.txt A0 önce/sonra satırını taşımıyor"
+grep -q 'BASKI: A4' "$INFO_TXT" \
+  || fail "print-info.pdf sayfa sayısını (BASKI satırı) taşımıyor — rapor \
+dosyası alıcının eline geçmiyor (T4/T10 sınıfı)"
+
+if command -v pdfinfo >/dev/null 2>&1; then
+  A4_REAL=$(pdfinfo "$D/print-a4.pdf" | awk '/^Pages:/{print $2}')
+  A0_REAL=$(pdfinfo "$D/print-a0.pdf" | awk '/^Pages:/{print $2}')
+  A4_SAID=$(grep -oE 'A4 pages: [0-9]+ whole -> [0-9]+ folded' \
+            "$D/print-report.txt" | awk '{print $6}')
+  A0_SAID=$(grep -oE 'A0 pages: [0-9]+ whole -> [0-9]+ folded' \
+            "$D/print-report.txt" | awk '{print $6}')
+  [ "$A4_SAID" = "$A4_REAL" ] \
+    || fail "nesting 'sonra' A4 sayısı $A4_SAID, basılan print-a4.pdf $A4_REAL sayfa"
+  [ "$A0_SAID" = "$A0_REAL" ] \
+    || fail "nesting 'sonra' A0 sayısı $A0_SAID, basılan print-a0.pdf $A0_REAL sayfa"
+  A4_SHEET=$(grep -oE 'BASKI: A4 [0-9]+ sayfa' "$INFO_TXT" | awk '{print $3}')
+  [ "$A4_SHEET" = "$A4_REAL" ] \
+    || fail "alıcının sayfası A4 $A4_SHEET sayfa diyor, PDF $A4_REAL sayfa"
+else
+  fail "pdfinfo (poppler) yok — basılan sayfa sayısı doğrulanamıyor"
+fi
+
+# ----------------------------------------------------------------- 7. KUMAS
+# H1.1b. Şartname §4 "kumaş önerisi, weight/drape GEREKÇESİYLE" diyor. Üç şart
+# ve üçü de ayrı bir yalanı kapatıyor:
+#   (a) sayfa var mı           — paket kumaş türünü hiç söylemiyordu,
+#   (b) gerekçe var mı         — isim tek başına öneri değil,
+#   (c) isim KAYNAKTAN mı      — en önemlisi. Basılan kumaş adı
+#       knowledge/stitchu.db'nin fabrics tablosunda GERÇEKTEN olmalı; elle
+#       yazılmış bir kumaş adı bu satırdan geçemez.
+# satır BAŞLIĞIN kendisi olmalı: s.1'in "…KUMAS SECIMI sayfasi" işaretçisi
+# sayfanın yerine geçemez (M2 mutasyonu tam buradan sızıyordu)
+grep -q '^KUMAS SECIMI$' "$INFO_TXT" \
+  || fail "print-info.pdf KUMAS SECIMI sayfasını taşımıyor (H1.1b)"
+grep -q 'ONERILEN:' "$INFO_TXT" \
+  || fail "print-info.pdf önerilen kumaşı adıyla söylemiyor"
+grep -q 'KACININ:' "$INFO_TXT" \
+  || fail "print-info.pdf kaçınılacak kumaşları söylemiyor"
+grep -Eq 'agirlik: [0-9]+-[0-9]+ g/m2' "$INFO_TXT" \
+  || fail "print-info.pdf kumaş AĞIRLIĞINI (gramaj) söylemiyor — \
+şartname weight/drape gerekçesi istiyor"
+grep -q 'acilma orani' "$INFO_TXT" \
+  || fail "print-info.pdf öneriyi kalıbın kendi ölçüsüne bağlamıyor \
+(döküm gerekçesi yok, genel liste olur)"
+grep -q 'knowledge/stitchu.db' "$INFO_TXT" \
+  || fail "print-info.pdf kumaş önerisinin kaynağını söylemiyor"
+
+DBOK=$("$PY" - "$ROOT" "$INFO_TXT" <<'EOF'
+import re, sqlite3, sys, unicodedata
+root, txt = sys.argv[1], sys.argv[2]
+db = root + '/knowledge/stitchu.db'
+try:
+    con = sqlite3.connect('file:%s?mode=ro' % db, uri=True)
+    names = {r[0] for r in con.execute('SELECT name FROM fabrics')}
+    con.close()
+except Exception as e:
+    print('NODB %s' % e)
+    raise SystemExit
+body = open(txt, encoding='utf-8', errors='replace').read()
+body = ''.join(c for c in unicodedata.normalize('NFKD', body)
+               if not unicodedata.combining(c))
+body = body.replace('-\n', '').replace('\n', ' ')
+m = re.search(r'ONERILEN:(.*?)agirlik:', body, re.S)
+hit = sorted(n for n in names if m and n in m.group(1))
+print('OK %d %s' % (len(hit), ','.join(hit)) if hit else 'MISS')
+EOF
+)
+case "$DBOK" in
+  OK*) : ;;
+  *) fail "basılan kumaş adı knowledge/stitchu.db fabrics tablosunda YOK \
+($DBOK) — öneri kaynaktan gelmiyor, elle yazılmış olabilir" ;;
+esac
+# =========================================================================
+# ==== 8C BLOĞU SON ========================================================
+# =========================================================================
+
 if [ "$FAILS" -eq 0 ]; then
   say "OK printpack_sheet_check: montaj sırası + açıklık uyarısı basılı pakette \
 (talimat sayfası + $LBL A0 / $LBL4 A4 kalıp etiketi), rapor ile aynı fermuar \
-boyu, iki koşu bayt-özdeş"
+boyu, iki koşu bayt-özdeş; nesting önce/sonra basılı ve basılan sayfa sayısı \
+PDF ile aynı; kumaş önerisi $DBOK (stitchu.db fabrics)"
   exit 0
 fi
 say "printpack_sheet_check: $FAILS FAIL"

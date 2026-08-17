@@ -1,18 +1,30 @@
 # SATIŞ ŞARTNAMESİ — stitchu v1.1 fashion zinciri
 
-> **MÜHÜRLENDİ 2026-08-17 (H1.1).** Her kutucuk BUGÜN ölçüldü; `[x]` = çalışan komut + sayı,
-> `[ ]` = neyin eksik olduğu yazılı. Tahmin yok. Ölçüm kapısına (aşağıda) **DOKUNULMADI** —
-> eşik, tanım, çözünürlük mühürden önceki hâliyle duruyor.
+> **MÜHÜRLENDİ 2026-08-17 (H1.1) · GÜNCELLENDİ TUR 8 (H1.1a + H1.1b).** Her kutucuk BUGÜN
+> ölçüldü; `[x]` = çalışan komut + sayı, `[ ]` = neyin eksik olduğu yazılı. Tahmin yok.
+> Ölçüm kapısına (aşağıda) **DOKUNULMADI** — eşik, tanım, çözünürlük mühürden önceki hâliyle
+> duruyor.
 >
 > **ÖLÇÜM KOŞUSU (hepsi bundan okundu):**
 > ```
-> ./engine/build/surface-pattern EU38 > /tmp/h11pack/stitchu_specification.json
+> ./engine/build/surface-pattern EU38 > /tmp/h11e/stitchu_specification.json
 > ./engine/pattern-bridge/.venv/bin/python3 engine/pattern-bridge/printpack.py \
->     /tmp/h11pack --size EU38 --date 2026-01-01
+>     /tmp/h11e --size EU38 --date 2026-01-01
 > ```
-> Çıktı: `print-info.pdf` (4 sayfa) · `print-a0.pdf` (1 sayfa) · `print-a4.pdf` (1 harita + 14 içerik)
-> · `print-report.txt` · 20 SVG. Determinizm sha256 (sayfa SVG'leri) `160146aeb579e07e…`.
-> Ağaç: `main`, T15 commit'inden sonra.
+> Çıktı: `print-info.pdf` (**5 sayfa**: beden+kumaş / KUMAŞ SEÇİMİ / montaj / 2 kesim planı)
+> · `print-a0.pdf` (1 sayfa) · `print-a4.pdf` (1 harita + 14 içerik) · `print-report.txt` · 21 SVG.
+> Determinizm sha256 (sayfa SVG'leri) `ec3b0f11a3eae3ae…`; iki bağımsız koşu, 4 çıktı dosyası
+> `cmp` ile bayt-özdeş (`print-info.pdf` sha256 `e457f8a4371254a7…`).
+> Ağaç: `main`, `5209e0c`'den sonra (8A'nın omuz-pens commit'i dahil, yeniden derlenmiş).
+>
+> ⚠ **TUR 7'NİN BİR ÖLÇÜMÜ SEVK EDİLEN PAKETİ ANLATMIYORDU — DÜZELTİLDİ.** §4'ün
+> *"14 adım"*ı **bayrak AÇIKKEN** ölçülmüş. Sevk edilen paket **10 adım**. Kanıt:
+> `instructions.build()` aynı gün, aynı ağaç, iki spec üstünde → `shoulderSeam kapalı
+> (sevk edilen) = 10 adım, 1 kapatan` · `STITCHU_SHOULDER_SEAM=1 = 14 adım, 1 kapatan`.
+> Fark tam olarak **4 pens kapatma adımı**: sevk edilen spec'te panelin kendine dikildiği
+> (pens) dikiş **0 tane**, bayrak açıkken **8 tane** (4 mantıksal pense grupllanıyor).
+> `HEDEF.md`'nin "T4'te 13 / taze koşu 14 / Logs 10" üçlemesinin cevabı budur: **10 doğru
+> sayı**, `Logs/taban-T10-SONRA/pack-EU38/print-report.txt` de 10 diyor.
 
 F0'da `benchmark-58/dress_patterns/` Etsy emsallerinden çıkarıldı. Her madde ÖLÇÜLEBİLİR ve bir görsel rayın (F1/F2/F3) teknik denetimine girer. Kontakt sayfasında çıktı 3 gerçek Etsy emsalinin YANINA konur; Damla "bunların yanında durur mu" diye bakar. Kaynak envanteri: `reports/2026-07-19-stitchu-f0-gusto-korpus.md`.
 
@@ -73,7 +85,7 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
       Bant (`contract/gusto-corpus.json`): A4-multi **8–24**, A0-single **1–2**.
       Ölçülen: A4 **15** sayfa (1 harita + 14) ✓ bandın içinde · A0 **1** sayfa ✓ bandın içinde.
 
-## 3. PARÇA + SAYFA EMSAL BANDI (verimlilik) — **3/4 GEÇTİ**
+## 3. PARÇA + SAYFA EMSAL BANDI (verimlilik) — **4/4 GEÇTİ**
 
 - [x] **Parça sayısı: elbise ≤8.**
       `printpack.log` → `8 panels in the specification -> 4 pieces drawn -> 8 pieces cut from cloth`.
@@ -85,11 +97,21 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
       dördü de tam çiziliyor. Sebebi yapısal: bu giysinin **ön ortası da arka ortası da DİKİŞ**
       (montaj adım 9 arka orta + fermuar, adım 10 ön orta). KAT'a giden parça yok, çünkü olamaz.
       Kural tetiklenseydi ne yapacağı kodda yazılı ve raporda ölçülü → madde geçiyor.
-- [ ] **Nesting yarım parçalarla: sayfa sayısı önce/sonra raporlanmıyor.**
-      → **EKSİK.** `printpack.log` yalnız SON sayfa sayısını basıyor (A4 15 / A0 1); yarım-parça
-      **öncesi** sayı hiç üretilmiyor, dolayısıyla "F3 azaltma kanıtı" **yok**. Üstelik yukarıdaki
-      madde gereği bugün yarım çizilen parça da yok → kıyas bugün **anlamsız**, ama ölçüm yolu da yok.
-      → **HALKA: H1.1a** (aşağıda).
+- [x] **Nesting yarım parçalarla: sayfa sayısı önce/sonra raporlanıyor — kazanç ölçüldü ve SIFIR.**
+      **H1.1a KAPANDI (Tur 8).** `printpack.nesting_proof()` aynı paketleyiciyi, aynı sayfalarda,
+      aynı koşuda **iki kez** çalıştırıyor: bir kez her parça TAM çizilerek, bir kez sevk edilen
+      kat kuralıyla. `print-report.txt` NESTING bloğu:
+      `pieces that can be cut on the fold: 0 of 4 drawn` ·
+      `A4 pages: 15 whole -> 15 folded (+0)` · `A0 pages: 1 whole -> 1 folded (+0)`.
+      **Kazanç 0 sayfa, ve 0 ölçümün kendisidir** — yukarıdaki maddenin sebebiyle (ön orta da
+      arka orta da DİKİŞ) yarıya bölünebilen parça yok, bölünemeyen parça sayfa kazandıramaz.
+      Sayı alıcının sayfasına da basılıyor (`print-info.pdf` s.1 `BASKI: A4 15 sayfa …`),
+      denetim dosyasında kalmıyor (T4/T10 dersi).
+      ⚠ **Uydurma kazanç yazılmadı.** Şartname "kanıt" istiyor, "kazanç" değil.
+      Regresyon mandalı: `printpack_sheet_check` §6 — hem önce/sonra satırlarının varlığını,
+      hem de basılan sayının **gerçekten basılan PDF'in sayfa sayısına** eşitliğini tutuyor
+      (`pdfinfo print-a4.pdf` = 15 ↔ raporun "sonra"sı = 15 ↔ alıcı sayfası = 15).
+      Mutasyon kanıtı: nesting blokları çıkarıldığında mandal **7 FAIL** veriyor.
 - [x] **Register sistemi: sayfa kodu + hizalama işaretleri + bindirme.**
       `printpack.py:1063-1077` her içerik sayfasına: 4 köşede **hizalama haçı** (`_cross_mark`),
       kesikli **kırpma çerçevesi**, sol üstte **sayfa kodu** (A1..D4), sağ üstte `stitchu EU38 1:1`.
@@ -98,23 +120,44 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
       sayfası var. Bu üçü okun işini fazlasıyla yapıyor (ok yalnız yön verir, haç hizalar), madde geçiyor;
       sapma burada **kayıtlıdır**, sessizce geçilmedi.
 
-## 4. TALİMAT İSKELETİ (kullanılabilirlik) — **3/4 GEÇTİ**
+## 4. TALİMAT İSKELETİ (kullanılabilirlik) — **4/4 GEÇTİ**
 
-- [ ] **Kumaş önerisi (weight/drape gerekçesiyle).**
-      → **EKSİK.** `print-info.pdf` s.1 KUMAS bölümü yalnız **metraj** veriyor
-      (110cm en → 1.53m, 140cm en → 1.53m, gerekçesiyle). **Kumaş TÜRÜ / ağırlığı / dökümü
-      hiçbir yerde yazmıyor.** "Mevcut sewing companion katmanı" diyen eski satır **bayattı**:
-      `knowledge/sewing-guide.md` diskte var ama pakete basılan hiçbir sayfaya girmiyor
-      (`grep -ri "kumas\|fabric" print-svg/info-page*.svg` → yalnız metraj satırları).
-      → **HALKA: H1.1b** (aşağıda).
-- [x] **Dikiş sırası — dikiş grafiğinden türetiliyor, `print-info.pdf` s.2'de basılı.**
-      `pdftotext -f 2 -l 2 print-info.pdf` → `MONTAJ SIRASI … 14 adim, 1 kapatan dikis`,
-      adımlar tek tek yazılı (1–4 pens kapatma, 5–8 bel dikişleri, 9 arka orta + fermuar,
-      10 ön orta, … son adım halkayı kapatan yan dikiş).
-      ⚠ **BAYAT DÜZELTİLDİ:** eski satır *"9 fazlı construction order"* diyordu. Sayı **elle yazılmış
-      bir sabit değil**, dikiş grafiğinden düşüyor ve bugün **14**. (T4 kapanışında 13'tü; aradaki
-      fark pens adımlarının ayrışması — sayıyı şartnameye SABİT yazmak yanlıştı, kural yazılır.)
+- [x] **Kumaş önerisi (weight/drape gerekçesiyle) — kendi sayfası, kendi ölçüsünden.**
+      **H1.1b KAPANDI (Tur 8).** `print-info.pdf` **s.2 = KUMAS SECIMI**. Öneri bir listeden
+      kopyalanmıyor, üç ölçüden çözülüyor (`instructions.shape_facts`, kalıbın kendi kenar
+      uzunlukları):
+      | ölçü | EU38 | ne söylüyor |
+      |---|---|---|
+      | kalıbın bel çevresi | **72.5cm** (vücut 70.0 → **+2.5cm bolluk**) | şekil dikişten çıkıyor, dökümden değil |
+      | etek ucu / bel | 127cm / 72cm = **1.75** | etek vücuttan AÇILIYOR → kumaş bu açıklığı ayakta tutmalı |
+      | açıklık (fermuar) | var | esneme gerekmiyor → **dokuma (non-stretch) şart** |
+      → **ÖNERİLEN: pamuklu poplin** (medium, crisp holds shape) · **keten** (light-medium,
+      somewhat stiff) · **ağırlık 150–250 g/m²**.
+      → **KAÇININ: jarse** (bad_for: *structured tailored designs, woven-drafted patterns
+      (needs negative ease)* — bu kalıp dokumaya, **artı** bollukla çizildi) · **saten**
+      (*structured skirt/top*) · **viskon** (*fitted skirt, tailored/structured designs*).
+      → **BEDELİ basılı:** keten doğası gereği kırışır; her doğal lif kesmeden önce yıkanmalı.
+      **KAYNAK, UYDURMA DEĞİL:** her kumaş adı/gerekçesi baskı anında
+      `knowledge/stitchu.db → fabrics` tablosundan okunuyor (NMSU G-401 · SDSU Extension ·
+      UNL NF00-415, satır başına `source_url`), kural `knowledge/sewing-guide.md §1`.
+      ⚠ **İki kaynak bir noktada çelişti, ölçümle çözüldü:** db ketenin `bad_for`'unda
+      *"**tight** fitted styles"* yazıyor; sewing-guide §1 ise keteni oturmalı elbise için
+      **öneriyor**. Niteleyici ölçüldü: bu kalıp +2.5cm bollukla ve 1.75 açılma oranıyla
+      *fitted* ama *tight* değil, o yüzden o satır ısırmıyor ve iki kaynak aynı cevabı veriyor.
+      Niteleyici okunmasaydı keten yanlışlıkla "kaçının" listesine düşüyordu.
+      Regresyon mandalı: `printpack_sheet_check` §7 — sayfanın varlığı + gerekçe + gramaj +
+      kaynak satırı, **ve basılan kumaş adının db'de gerçekten bulunması**. Mutasyon kanıtı:
+      sayfa çıkarılınca **6 FAIL**; ad elle (`sifon`) yazılınca **1 FAIL** ("kaynaktan gelmiyor").
+- [x] **Dikiş sırası — dikiş grafiğinden türetiliyor, `print-info.pdf` s.3'te basılı.**
+      `pdftotext print-info.pdf` → `MONTAJ SIRASI … 10 adim, 1 kapatan dikis`,
+      adımlar tek tek yazılı (1–4 bel dikişleri, 5 arka orta + fermuar açıklığı, 6 ön orta,
+      7–8 yan dikişler — 8. halkayı kapatan, 9 fermuar, 10 yaka + etek ucu temizleme).
+      ⚠ **İKİ KEZ BAYATLADI, İKİSİ DE DÜZELTİLDİ:** (a) eski satır *"9 fazlı construction
+      order"* diyordu — sayı elle yazılmış bir sabit değil, dikiş grafiğinden düşüyor.
+      (b) Tur 7 buraya **14** yazdı; o sayı **omuz dikişi bayrağı AÇIKKEN** ölçülmüştü ve
+      sevk edilen paketi anlatmıyordu. Sevk edilen **10**. Kanıt yukarıda, mühür başlığında.
       **Bu, TUR 7'nin kapattığı T4 halkasının şartnamedeki karşılığıdır ve artık YAZILI.**
+      Sayfa numarası da kaydı: kumaş sayfası araya girdiği için montaj **s.2 → s.3**.
 - [x] **Kalibrasyon karesi / ölçek çubuğu.**
       `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi,
       `printpack.log` → `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.
@@ -128,7 +171,8 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
 **satılamaz** kılar. TUR 7 öncesi T10 halkası bunu kapattı, şartname sözümüz olduğu için buraya giriyor.
 
 - [x] **"BURAYI DİKMEYİN" açıklık uyarısı, üç yüzeyde birden.**
-      (1) `print-info.pdf` **s.2**, montaj adımlarının ÜSTÜNDE çerçeveli kutu:
+      (1) `print-info.pdf` **s.3** (Tur 8'de kumaş sayfası araya girdi, s.2'ydi), montaj
+      adımlarının ÜSTÜNDE çerçeveli kutu:
       *"DİKİLMEYEN DİKİŞ — BURAYI DİKMEYİN · centre_back_zip: arka orta dikişin 563.4mm (22.18 inç)
       üst kısmı DİKİLMEZ … Fermuarsız bu elbise kafadan geçmez. Fermuar: 22 inç."*
       (2) **Kalıbın kendi üstünde**, dikilmeyen kenar boyunca etiket:
@@ -150,7 +194,7 @@ yasak (miras: PROVE don't claim).
 | şart | bugün |
 |---|---|
 | gusto-lint PASS | **KOŞULAMADI** — girdi (listing flat) üretilmiyor (§1) |
-| şartname 1-4 PASS | **14/17 madde geçti** · §1 5 eksik · §3 nesting eksik · §4 kumaş önerisi eksik |
+| şartname 1-4 PASS | **16/17 madde geçti** (Tur 8: 14 → 16) · kalan eksik yalnız **§1'in 5 listing görseli maddesi**, hepsi H1.3 |
 | kontakt sayfası + Damla onayı | **AÇILMADI** — kontakt sayfası basılmadı, emsaller diskte yok (aşağı) |
 
 ## EMSAL REFERANSLARI — ⚠ **DOSYALAR DİSKTE YOK**
@@ -181,11 +225,21 @@ Damla'nın gözü açılamaz. Bu bir ölçüm eksiği değil, **VARLIK eksiği**
 
 ## MÜHÜRDEN ÇIKAN HALKALAR — `HEDEF.md` sayacına eklendi
 
-| # | Halka | Neden |
-|---|---|---|
-| H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üretilmiyor |
-| H1.1b | kumaş önerisi (tür/ağırlık/döküm) pakete girmiyor | §4 madde 1; `knowledge/sewing-guide.md` diskte var, hiçbir sayfaya basılmıyor |
-| H1.1c | emsal PDF'leri diskte yok → kontakt sayfası açılamıyor | ÖLÇÜM KAPISI'nın 3. şartı; Damla kararı gerekir |
+| # | Halka | Neden | durum |
+|---|---|---|---|
+| H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üretilmiyor | **KAPANDI Tur 8** — 0/4 parça katlanabiliyor, A4 15→15, A0 1→1, kazanç **0**; mandal §6 |
+| H1.1b | kumaş önerisi (tür/ağırlık/döküm) pakete girmiyor | §4 madde 1; `knowledge/sewing-guide.md` diskte var, hiçbir sayfaya basılmıyor | **KAPANDI Tur 8** — `print-info.pdf` s.2 KUMAS SECIMI, kaynak `stitchu.db`; mandal §7 |
+| H1.1c | emsal PDF'leri diskte yok → kontakt sayfası açılamıyor | ÖLÇÜM KAPISI'nın 3. şartı; Damla kararı gerekir | **AÇIK — Damla'da** |
+
+**H1.1 HÂLÂ KAPANMADI**, ama kalan iki sebebin ikisi de bu şartnamenin dışında:
+§1'in beş maddesi **H1.3**'ün işi (kasten H1.0'ın arkasında), kontakt sayfası **H1.1c**
+(Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1.
+
+### TUR 8'DE AÇILAN KUYRUK SATIRLARI (`DAMLA-KUYRUK.md`)
+- **Etsy listing dili** — kesim notu Türkçe (`2 kes · aynali cift`), emsal korpus İngilizce
+  (`cut 2` / `cut 1 pair`). Kumaş sayfası da Türkçe. Tek karar bütün yüzeyleri bağlar (H1.4).
+- **A1 sayfası** — `print-a1.pdf` **üretilmiyor** (ölçüldü: koşu A0 + A4 basıyor, `render_tiled`
+  A1'i çağırmıyor). §2 "ya A0 ya A1" okumasıyla geçiyor; A1'in de istenip istenmediği karar.
 
 §1'in 5 eksiği **yeni halka değildir** — `HEDEF.md` **H1.3** zaten o iştir ve kasten H1.0'ın arkasındadır.
 `style_check`'in boş koşması (§1, `engine/STYLE-PIN/` yok) H1.3'ün içinde kapanır.

@@ -226,6 +226,29 @@ Yani Upper Sleeve = **dış büzgülü puf katmanı**, Lower = iç astar. Motoru
 **Bu bir bilgi düzeltmesi, senden karar istemiyorum — ama defterin yanlış olduğunu bilmen gerekiyordu.**
 **Cevap (gerekmiyorsa kapat):**
 
+### [ ] K13 — Paketin dili: Türkçe mi İngilizce mi? · 2026-08-17
+Bugün paket **Türkçe** basıyor ve bu hiç karar verilmedi, sadece öyle yazılmış:
+- kesim notu `2 kes · aynali cift` — emsal korpusun karşılığı `cut 2` / `cut 1 pair`
+  (`contract/gusto-corpus.json → piece_page_bands.cut_instruction_language`).
+- montaj sırası, açıklık uyarısı (`BURAYI DİKMEYİN`), kumaş sayfası — hepsi Türkçe.
+- kalıbın üstündeki etiketler de Türkçe.
+Satış yüzeyi **Etsy** (HEDEF.md). Etsy'de Türkçe listing satılabilir ama alıcı kitlesi
+başka; İngilizce listing + Türkçe paket **tutarsız** olur.
+**Soru:** paket hangi dilde basılsın — TR, EN, yoksa ikisi birden mi (iki PDF)?
+Bu karar **H1.4'ü (listing metni)** doğrudan bağlıyor ve tek tek sayfa düzeltmekten
+ucuz: motorda tek yerden çıkıyor.
+**Cevap:**
+
+### [ ] K14 — A1 sayfası basılsın mı? · 2026-08-17
+Ölçüldü: koşu bugün **`print-a0.pdf` (1 sayfa) + `print-a4.pdf` (15 sayfa)** basıyor.
+`print-a1.pdf` **yok** — `render_tiled` herhangi bir sayfa boyunu alabiliyor, A1 sadece
+çağrılmıyor. Şartname §2 "A0/A1 ikisi de üretilebilir" diyor ve bugün "ya A0 ya A1"
+okumasıyla geçiyor, yani bu bir kırmızı değil, bir **ürün kararı**.
+A1 kimin işine yarar: A0 baskısı olmayan ama A4'ten büyük çıktı alabilen kopyacılar
+(TR'de A1 plotter çok yaygın). Maliyeti düşük (bir çağrı + bir PDF).
+**Soru:** pakete A1 de girsin mi, yoksa A0 + A4 yeterli mi?
+**Cevap:**
+
 ---
 
 ## KAPANDI

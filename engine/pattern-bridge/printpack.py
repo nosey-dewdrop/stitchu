@@ -933,6 +933,44 @@ def _row_code(r):
     return code
 
 
+def build_arts(geos, drawn, plan, panels, size_label, date_str, use_fold=True):
+    """The drawings that get laid out, with the cut-on-fold rule on or off.
+
+    Split out of build() so the SAME pagination can be asked the question
+    twice. A counterfactual measured with a second, hand-written layout would
+    only prove that the second layout agrees with itself.
+    """
+    total = len(drawn)
+    return {name: PanelArt(geos[name], i + 1, total, size_label, date_str,
+                           cut_note=plan[name]['label'],
+                           fold_axis=(plan[name].get('fold_axis')
+                                      if (use_fold and plan[name]['fold'])
+                                      else None),
+                           human=seamrules.human_name(name, panels[name]))
+            for i, name in enumerate(drawn)}
+
+
+def nesting_proof(geos, drawn, plan, panels, size_label, date_str):
+    """F3 evidence: what the cut-on-fold rule costs in paper, before/after.
+
+    The sales spec asks for "page count before and after", which is a
+    MEASUREMENT, not a promise of a saving. A piece is drawn as a half only
+    when its own outline AND the places that outline is cut into edges are
+    symmetric about its centre line (cutplan, 0.1mm). On a dress whose centre
+    front and centre back are both SEAMS, no piece can qualify, and the only
+    honest number is zero -- printed as zero, with the reason, rather than
+    left out so the page count looks like it was earned.
+    """
+    whole = build_arts(geos, drawn, plan, panels, size_label, date_str,
+                       use_fold=False)
+    _, a0_whole, a0t_whole = render_a0_pages(whole, size_label, date_str)
+    _, _, _, a4_whole = render_tiled(whole, size_label, date_str,
+                                     A4_W, A4_H, with_map=True)
+    folded = sorted(n for n in drawn if plan[n]['fold'])
+    return {'folded': folded, 'drawn': len(drawn),
+            'a0_before': a0_whole + a0t_whole, 'a4_before': a4_whole + 1}
+
+
 def render_a0_pages(arts, size_label, date_str):
     """Shelf-packed A0 sheets; panels too big for ONE A0 (a klos maxi skirt
     is 200cm+ wide) are tiled over several A0 sheets with the same overlap
@@ -1184,16 +1222,53 @@ def _opening_lines(opening):
     return [title] + ['  ' + ln for ln in lines] + ['']
 
 
+def _nesting_lines(nest):
+    """NESTING — the before/after the sales spec asks for, saving or none."""
+    if not nest:
+        return []
+    saved_a4 = nest['a4_before'] - nest['a4_after']
+    saved_a0 = nest['a0_before'] - nest['a0_after']
+    lines = [
+        'NESTING — half pieces (cut on fold): pages BEFORE and AFTER',
+        '(before = every piece drawn whole; after = the shipped pack, with '
+        'the cut-on-fold rule applied. Same packer, same sheets, same run.)',
+        f"  pieces that can be cut on the fold: {len(nest['folded'])} "
+        f"of {nest['drawn']} drawn"
+        + (f" ({', '.join(nest['folded'])})" if nest['folded'] else ''),
+        f"  A4 pages: {nest['a4_before']} whole -> {nest['a4_after']} "
+        f"folded  ({saved_a4:+d})",
+        f"  A0 pages: {nest['a0_before']} whole -> {nest['a0_after']} "
+        f"folded  ({saved_a0:+d})",
+    ]
+    if not nest['folded']:
+        lines.append(
+            '  the saving is ZERO, and zero is the measurement: no piece of '
+            'this garment is symmetric about its own centre line (see CUT '
+            'PLAN above), because centre front and centre back are both '
+            'SEAMS. A piece that cannot be halved cannot save a sheet.')
+    lines.append('')
+    return lines
+
+
+def _fabric_report_lines(fabric):
+    if not fabric:
+        return []
+    return ['KUMAS ONERISI — kalibin kendi olculerinden'] + \
+           [f'  {ln}' for ln in fabric] + ['']
+
+
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                pages_info, svg_hash, size_label, date_str, plan, quotes,
-               opening=None, pattern_for_steps=None):
+               opening=None, pattern_for_steps=None, nest=None, fabric=None):
     lines = [
         'PRINT PACK (baski tapusu) — allowance, notches, pagination: '
         'measured, not claimed',
         f'size: {size_label}   date: {date_str}   allowance: 10mm   '
         f'scale: 1cm = {CM_PT:.4f}pt',
         '',
-    ] + _opening_lines(opening) + _assembly_lines(pattern_for_steps) + cutplan.report_lines(plan) + [
+    ] + _opening_lines(opening) + _assembly_lines(pattern_for_steps) + \
+        _fabric_report_lines(fabric) + cutplan.report_lines(plan) + \
+        _nesting_lines(nest) + [
         '',
         'SEAM ALLOWANCE — perpendicular distance of the cut line to the '
         'seam line',
@@ -1352,7 +1427,8 @@ def render_steps_pages(pattern, size_label, date_str):
     return pages
 
 
-def render_info_pages(arts, plan, size_label, date_str):
+def render_info_pages(arts, plan, size_label, date_str, nest=None,
+                      pattern=None, geos=None):
     """A4 pages a person reads before touching scissors.
 
     Everything on them is a consequence of the pieces that were just drawn.
@@ -1397,6 +1473,21 @@ def render_info_pages(arts, plan, size_label, date_str):
     quotes = packpages.yardage(arts)
     body.append(_text(MARGIN, y, 0.55, 'KUMAS', weight='bold'))
     y += 0.85
+
+    # WHAT to buy comes before HOW MUCH: a yardage with no cloth named is a
+    # number the buyer cannot act on. The reasoning gets its own page; the
+    # names belong next to the metres.
+    fabric = []
+    if pattern is not None and geos is not None:
+        _, fabric, head_line = instructions.fabric_lines(
+            pattern, geos, body_waist_cm=size_table['girths_cm']
+            .get(size_label, {}).get('waist'))
+        body.append(_text(MARGIN, y, 0.45, head_line, weight='bold'))
+        y += 0.6
+        body.append(_text(MARGIN, y, 0.4,
+                          'gerekcesi, gramaji ve kacinilacaklar: '
+                          'KUMAS SECIMI sayfasi'))
+        y += 0.8
     body.append(_text(MARGIN, y, 0.42,
                       'kumas boyuna ikiye katlanir, kenar kenara. '
                       'katlamada kesilen parcalar katin ustune oturur,'))
@@ -1452,9 +1543,27 @@ def render_info_pages(arts, plan, size_label, date_str):
                       'DIKIS PAYI 10mm, her kenarda, kaliba DAHIL. '
                       'kesim cizgisi duz, dikis cizgisi kesikli.',
                       weight='bold'))
+    y += 0.75
+    if nest:
+        # the test square owns the bottom right, so this column stops short
+        wrap_n = int((A4_W - 2 * MARGIN - 5.0) / (0.40 * 0.52))
+        note = (f"BASKI: A4 {nest['a4_after']} sayfa (1 yerlesim haritasi + "
+                f"{nest['a4_after'] - 1} kalip) · A0 "
+                f"{nest['a0_after']} sayfa. ")
+        note += (
+            f"{len(nest['folded'])} parca katlamada YARIM basiliyor; tam "
+            f"basilsalardi A4 {nest['a4_before']} sayfa olurdu."
+            if nest['folded'] else
+            'Katlamada kesilen parca yok (on orta da arka orta da DIKIS), '
+            'o yuzden yarim basip sayfa kazanmak mumkun degil: kazanc 0.')
+        for chunk in textwrap.wrap(note, wrap_n):
+            body.append(_text(MARGIN, y, 0.40, chunk))
+            y += 0.55
 
     body.append(_test_square(A4_W - MARGIN - 4.2, A4_H - MARGIN - 5.2))
     pages = [_svg_doc(A4_W, A4_H, '\n'.join(body))]
+    if fabric:
+        pages.append(_render_fabric_page(fabric, size_label, date_str))
 
     # --- cutting layout, one page per bolt width ---------------------------
     for q in quotes:
@@ -1497,7 +1606,27 @@ def render_info_pages(arts, plan, size_label, date_str):
                                   art.human, 'middle'))
         pages.append(_svg_doc(A4_W, A4_H, '\n'.join(art_body)))
 
-    return pages, quotes
+    return pages, quotes, fabric
+
+
+def _render_fabric_page(lines, size_label, date_str):
+    """WHICH cloth, and the measurement behind every clause of the answer."""
+    wrap_w = int((A4_W - 2 * MARGIN) / (0.40 * 0.52))
+    body = [_text(MARGIN, MARGIN + 0.9, 0.8,
+                  f'stitchu · {size_label} · {date_str}', weight='bold'),
+            _text(MARGIN, MARGIN + 1.8, 0.55, 'KUMAS SECIMI', weight='bold'),
+            _text(MARGIN, MARGIN + 2.5, 0.38,
+                  'bu sayfadaki her cumle bu kalibin kendi olcusunden '
+                  'cikti; genel bir kumas listesi degil.')]
+    y = MARGIN + 3.6
+    for ln in lines:
+        strong = ln.startswith(('ONERILEN:', 'KACININ:'))
+        for chunk in (textwrap.wrap(ln, wrap_w) or ['']):
+            body.append(_text(MARGIN, y, 0.42, _xml_escape(chunk),
+                              weight='bold' if strong else 'normal'))
+            y += 0.58
+        y += 0.22
+    return _svg_doc(A4_W, A4_H, '\n'.join(body))
 
 
 # ===========================================================================
@@ -1521,16 +1650,15 @@ def build(out_dir, spec_path, size_label, date_str=None):
     plan = cutplan.derive(names, geos)
     drawn = [n for n in names if plan[n]['printed']]
     total = len(drawn)
-    arts = {name: PanelArt(geos[name], i + 1, total, size_label, date_str,
-                           cut_note=plan[name]['label'],
-                           fold_axis=(plan[name].get('fold_axis')
-                                      if plan[name]['fold'] else None),
-                           human=seamrules.human_name(name, panels[name]))
-            for i, name in enumerate(drawn)}
+    arts = build_arts(geos, drawn, plan, panels, size_label, date_str,
+                      use_fold=True)
 
     a0_svgs, a0_shelf, a0_tiled = render_a0_pages(arts, size_label, date_str)
     a4_svgs, rows, cols, a4_live = render_tiled(arts, size_label, date_str,
                                                 A4_W, A4_H, with_map=True)
+    nest = nesting_proof(geos, drawn, plan, panels, size_label, date_str)
+    nest['a0_after'] = a0_shelf + a0_tiled
+    nest['a4_after'] = a4_live + 1
 
     svg_dir = out_dir / 'print-svg'
     svg_dir.mkdir(exist_ok=True)
@@ -1542,11 +1670,15 @@ def build(out_dir, spec_path, size_label, date_str=None):
         (svg_dir / f'a4-page{i + 1}.svg').write_text(svg)
         h.update(svg.encode())
 
-    info_svgs, quotes = render_info_pages(arts, plan, size_label, date_str)
+    info_svgs, quotes, fabric = render_info_pages(
+        arts, plan, size_label, date_str, nest, pattern, geos)
     # the order goes ABOVE the cut plan: the sheet says what to do with the
     # pieces on the page after the one that told you to cut them
     steps_svgs = render_steps_pages(pattern, size_label, date_str)
-    info_svgs = info_svgs[:1] + steps_svgs + info_svgs[1:]
+    # what to buy (page 1) -> what cloth (fabric page) -> what to do with it
+    # (assembly) -> how to lay it out (cut plan)
+    n_head = 2 if fabric else 1
+    info_svgs = info_svgs[:n_head] + steps_svgs + info_svgs[n_head:]
     for i, svg in enumerate(info_svgs):
         (svg_dir / f'info-page{i + 1}.svg').write_text(svg)
         h.update(svg.encode())
@@ -1559,7 +1691,7 @@ def build(out_dir, spec_path, size_label, date_str=None):
                      {'a0_shelf': a0_shelf, 'a0_tiled': a0_tiled,
                       'a4_rows': rows, 'a4_cols': cols, 'a4_live': a4_live},
                      h.hexdigest(), size_label, date_str, plan, quotes, opening=pattern.get('openings'),
-                     pattern_for_steps=pattern)
+                     pattern_for_steps=pattern, nest=nest, fabric=fabric)
     (out_dir / 'print-report.txt').write_text(txt)
     return {
         'print_info': out_dir / 'print-info.pdf',

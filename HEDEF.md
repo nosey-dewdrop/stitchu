@@ -174,13 +174,24 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 | H1.2 | kitapçık — motor çıktısından | **H1.0'ın ARKASINA alındı** (rota kararı: giysinin şekli değişecek) | ~4s |
 | H1.3 | kapak + tek line drawing | **H1.0'ın ARKASINA alındı.** Damla'nın gözü (→ DAMLA-KUYRUK K3) | ~3s |
 | H1.4 | listing — metin, fiyat, beden tablosu, lisans | **H1.0'ın ARKASINA alındı.** Etsy'ye yapıştırılabilir halde | ~3s |
-| H1.1a | nesting önce/sonra sayfa sayısı | `printpack.log` yalnız SON sayıyı basıyor (A4 15 / A0 1); yarım-parça **öncesi** hiç üretilmiyor → F3 azaltma kanıtı YOK | ~1s |
-| H1.1b | kumaş önerisi pakete girmiyor | `print-info.pdf` s.1 KUMAS yalnız **metraj** (110/140cm en → 1.53m); tür/ağırlık/döküm hiçbir sayfada yok. `knowledge/sewing-guide.md` diskte var, basılmıyor | ~1s |
+| H1.1a | nesting önce/sonra sayfa sayısı | **KAPANDI 17.08 (Tur 8).** `printpack.nesting_proof()` aynı paketleyiciyi aynı koşuda İKİ kez koşuyor (her parça TAM çizilerek / sevk edilen kat kuralıyla). Ölçüm: **katlanabilen parça 0/4** · **A4 15 → 15** · **A0 1 → 1** → **kazanç 0 sayfa**. Uydurma kazanç yazılmadı: ön orta da arka orta da DİKİŞ, bölünemeyen parça sayfa kazandıramaz — şartname "kanıt" istiyordu, "kazanç" değil. Sayı denetim dosyasında kalmadı, alıcının sayfasına da basılıyor (`print-info.pdf` s.1 `BASKI: A4 15 sayfa`). Mandal `printpack_sheet_check` §6 — basılan sayının **gerçek PDF sayfa sayısına** eşitliğini de tutuyor (`pdfinfo`); mutasyon kanıtı: bloklar çıkarılınca **7 FAIL** | ~1s |
+| H1.1b | kumaş önerisi pakete girmiyor | **KAPANDI 17.08 (Tur 8).** `print-info.pdf` **s.2 = KUMAS SECIMI**. Öneri listeden kopyalanmadı, kalıbın **kendi kenar uzunluklarından** çözüldü: bel çevresi **72.5cm** (vücut 70.0 → **+2.5cm bolluk**, şekil dikişten çıkıyor) · etek ucu/bel **127/72 = 1.75** (etek vücuttan AÇILIYOR, kumaş bunu ayakta tutmalı) · fermuar var (esnemeye ihtiyaç yok → **dokuma şart**). → **poplin + keten, 150–250 g/m²**; **KAÇININ: jarse · saten · viskon**, her biri kendi `bad_for` cümlesiyle. Her ad ve gerekçe baskı anında `knowledge/stitchu.db → fabrics`'ten okunuyor (NMSU G-401 · SDSU · UNL, satır başına source_url). ★ **İki kaynak çelişti, ölçümle çözüldü:** db keteni *"**tight** fitted styles"* için kötülüyor, `sewing-guide.md §1` keteni oturmalı elbise için **öneriyor**; niteleyici ölçüldü (+2.5cm bolluk = fitted ama tight DEĞİL) → keten önerilenlerde kaldı, iki kaynak aynı cevabı verdi. Mandal §7 **basılan adın db'de bulunmasını** şart koşuyor; mutasyon: sayfa çıkarılınca **6 FAIL**, ad elle yazılınca (`sifon`) **1 FAIL** | ~1s |
 | H1.1c | emsal PDF'leri diskte YOK → kontakt sayfası açılamıyor | ÖLÇÜM KAPISI'nın 3. şartı. `patterns_real/` telifli, Damla kararı olmadan kontakt sayfasına konamaz → `DAMLA-KUYRUK` | **Damla'da** |
 | H1.5 | **Damla'nın dikimi** | giysi ayakta duruyor | Damla'da — **BLOKE ETMEZ** |
 | H1.6 | kabul testi | 3 soru EVET + **hesaba geçen para** | Damla'da |
 
 **Pazar emsali (repoda ölçülü):** `benchmark-58/bugra-ref/` — BugraPatterns elle Illustrator ile çiziyor, **5 ayda 1.1k satış**.
+
+> ★ **TUR 8 — "13 / 14 / 10" ÜÇLEMESİ ÇÖZÜLDÜ: DOĞRU SAYI 10, VE 14 SEVK EDİLEN PAKETİ ANLATMIYORDU.**
+> Adım sayısı grafikten düşüyor, o yüzden oynayabilir — ama bu sefer oynatan motor değil **ölçüm koşusuydu**.
+> Kanıt, aynı gün aynı ağaçta `instructions.build()`, iki spec:
+> `shoulderSeam KAPALI (sevk edilen) → 10 adım, 1 kapatan` · `STITCHU_SHOULDER_SEAM=1 → 14 adım, 1 kapatan`.
+> Fark tam olarak **4 pens kapatma adımı**: sevk edilen spec'te panelin kendine dikildiği (pens) dikiş
+> **0 tane**, bayrak açıkken **8 tane** (4 mantıksal pense gruplanıyor).
+> Yani Tur 7'nin "taze koşu 14" ölçümü **bayrak açıkken** alınmış; `Logs/taban-T10-SONRA/pack-EU38`'in
+> **10**'u doğruydu. `T4` satırındaki **13** bugünkü ağaçta üretilemiyor (ne bayrak açık ne kapalı) —
+> hangi ara durumdan geldiği **DOĞRULANMADI**, ama artık kayıtta değil: şartname sayıyı sabit yazmıyor,
+> koşudan okuyor. `docs/SATIS-SARTNAMESI.md` §4 düzeltildi (14 → 10).
 
 ---
 
