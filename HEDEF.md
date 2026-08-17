@@ -17,6 +17,47 @@ H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
 TABAN:       2 halka / ~1 koşu saati       [T13,T15,T16 KAPANDI · T1 yok-hükmünde · T5 bloke · +T17 style_check boş koşuyor]
 ```
 
+## TUR 8 — H1.0a: İKİ BLOKÖRDEN BİRİ DÜŞTÜ, KALAN TEK SAYIYA İNDİ
+
+**`walkgate_check` AÇIK BAYRAKLA YEŞİL: 6 hüküm → 0.** Kendini-kesen 6 panel (EU34/36/46)
+uydurma pens kamalarıydı; kama gidince kesme gitti. `edgemono_check` de yeşil (46.89s).
+**`surface_pattern_check` kesim çizgisi kapısı ilk kez GEÇİYOR:** ön **1.8318 → 0.4162%**,
+arka **1.8646 → 0.2908%** (kapı 0.5). Pens bacağı gerinimi **8.929 → 0.000%**.
+
+**KÖK — pens bir KIRPMA tarafından uydurulmuştu.** `dartColumnsFromDeficitRows` yükü
+kolon başına `max(0, def[j])` diye topluyordu. Omuz bandı net **NEGATİF**: EU38 ön gövde
+çeyreği üst iki satır bandında **+34.57° / −64.34°**, net −24; kırpma negatif yarıyı atıp
+pozitif yarıyı gerçekmiş gibi veriyordu → `total` **+48.806°**, n=2, pens başına 24.4°.
+Panelden olmayan 73°'lik kama kesiliyordu. Artık **yer kırpılı, yük İŞARETLİ**: nereye
+sorusu pozitif kolonların sorusu, ne kadar sorusu bandın kendisinin. Bant net negatifse
+pens **yok** — eyer, pensin yapamadığı tek şeydir.
+⚠ **BAYRAK KAPALI SEVK EDİLEN GİYSİ HİÇ DEĞİŞMEDİ, kanıtlı:** `STITCHU_SLIT_DEBUG` bayrak
+kapalı **sıfır yarık** basıyor (gövde+etek, 4 panel) → değişen satır orada hiç koşmuyor;
+`surface_pattern_check` bayrak kapalı **OK**, 8 panel (ftorso 0.0208/0.8302, btorso
+0.0011/0.0386, etek 4×0.0000).
+
+**KALAN TEK KIRMIZI: İÇ GERİNİM.** ön **6.9609 → 24.0671%**, arka **7.7931 → 18.1417%**
+(kapı 3.0). Bu **yeni eğrilik değil** — hep orada duran −64°'lik eyerin, sahte pens onu
+gizlemeyi bıraktığı için görünür hale gelmesi. Kapı sayısı düşmedi: `surface_pattern_check`
+4 FAIL, `h10_gate_check` **24/63** — ikisi de aynı. Düşen, kırmızının SINIFI.
+
+**İKİ ŞEKİL HİPOTEZİ ÖLÇÜLDÜ VE İKİSİ DE ALINMADI** (Tur 5/6/7 emsali, kod içinde sayılarıyla):
+| hipotez | ön kesim | arka kesim | ön iç | arka iç | dipol |
+|---|---|---|---|---|---|
+| (a) bant, tırtıklı üst yerine kolonun kendi açıklığının KESRİ | 1.8318→**1.9540** | 1.8646→**1.9371** | 6.96→6.89 | 7.79→**11.91** | +34.57/−64.34 → **+41.59/−65.29** |
+| (b) katlama düzleme değil ORTA-YÜZEYE (ön/arka y ortalaması) | 0.4162→0.3951 | 0.2908→**0.3038** | 24.07→23.11 | 18.14→**18.73** | +48.27/−64.05 → **+48.63/−65.07** |
+(a) kötüleşti, (b) yalpa. **Asıl okuma (b)'nin son sütunu: DİPOL KIMILDAMIYOR.** Yani eyer
+ne tırtıklı üstten ne de kesitin düzleşmesinden geliyor. Bu turun test ettiği iki şekil
+hipotezi de **eyerin sebebi değil**.
+
+**ALT KALEM 1 ve 2 KONUSUZ KALDI, çürütülmedi.** Bayrak açıkken gövde artık **hiç pens
+türetmiyor** (`STITCHU_SLIT_DEBUG`: 4 panelde de boş liste), etek deficit'i +0.000°.
+Dolayısıyla (1) "üst pens bacakları dikiş listesine pens çifti olarak girmiyor" — girecek
+pens yok; PNG'de mavi yok çünkü pens yok, iki serbest-uç çentiği de **kayboldu** (gözle
+bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi yerinde).
+(2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
+yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
+
 ## TUR 7 — ALICIYA ULAŞAN BİR HATA KAPANDI + H1.0a'NIN TEŞHİSİ YER DEĞİŞTİRDİ
 
 ### ★ Bugünün en somut bulgusu: basılan beden tablosu kalıptan farklıydı
