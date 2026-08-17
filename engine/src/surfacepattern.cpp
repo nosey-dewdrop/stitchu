@@ -13,6 +13,10 @@ namespace stitchu {
 namespace {
 
 constexpr double kPi = 3.14159265358979323846;
+// The repo's declared production tolerance, 1/32 inch. Not invented here and
+// not tuned to a gate: flatten.cpp's solver already calls it "the 0.79375mm
+// production tolerance". Two lengths this close are one length to the cutter.
+constexpr double kProdTolMM = 0.79375;
 
 double levelHeight(const BodySurface& body, const std::string& name) {
     for (const BodyLevel& lv : body.levels())
@@ -1488,9 +1492,47 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                 if (std::getenv("STITCHU_TOP_DEBUG"))
                     std::fprintf(stderr, "  XCROSS j=%3d half=%d prevX=%8.3f x=%8.3f u=%.4f z=%9.3f\n",
                                  j, half2, prevX[half2], x, u, zc);
-            } else if (bestDx[half2] > 0.0 && std::fabs(x - xTarget) < bestDx[half2]) {
-                bestDx[half2] = std::fabs(x - xTarget);  // never reached: nearest column
-                bestZ[half2] = p.z;
+            } else if (bestDx[half2] > 0.0) {
+                // NEAREST COLUMN — AND THE SAME RULE THE CROSSING BRANCH USES.
+                //
+                // This branch runs when the boundary never reaches xTarget at
+                // all: the shoulder point sits a fraction of a millimetre
+                // OUTSIDE the widest column, so no pair of columns straddles it
+                // and there is no crossing to interpolate. Measured (16A, with
+                // the shoulder source taken from the chart): EU42 asks x=180.0,
+                // the boundary tops out at x=179.895. 0.105mm short.
+                //
+                // Taking the single nearest column is then a coin toss on the
+                // SAME corner the crossing branch was fixed for. The two
+                // columns either side of the turnover are 0.45mm apart in x and
+                // 18.5mm apart in z (EU42: j=6 x=179.895 z=1354.923 on the
+                // ARMHOLE branch, j=7 x=179.449 z=1373.472 on the SHOULDER
+                // branch). |dx| alone hands it to the armhole column by 0.1mm,
+                // and K6 then reports the armhole's depth — K1's question, not
+                // K6's — as the shoulder carry.
+                //
+                // 0.45mm is not a distinguishable distance in this trade: the
+                // repo's own production tolerance is 0.79375mm (1/32", see
+                // flatten.cpp). Two columns that close in x ARE the same column
+                // as far as the cut is concerned, so the tie is broken the way
+                // the crossing branch already breaks it: the shoulder seam's
+                // end is the HIGHER of the two. Nothing about the threshold,
+                // the question or the fixture moves; what moves is which point
+                // of the boundary is called the shoulder point, and it now
+                // means the same thing on both branches.
+                const double dx = std::fabs(x - xTarget);
+                if (dx < bestDx[half2] - kProdTolMM) {
+                    bestDx[half2] = dx;  // strictly nearer: it decides alone
+                    bestZ[half2] = p.z;
+                } else if (dx < bestDx[half2] + kProdTolMM) {
+                    // tied within the tolerance: keep the higher, and keep the
+                    // nearer |dx| so a third, genuinely nearer column can still win
+                    bestDx[half2] = std::min(bestDx[half2], dx);
+                    if (p.z > bestZ[half2]) bestZ[half2] = p.z;
+                }
+                if (std::getenv("STITCHU_TOP_DEBUG"))
+                    std::fprintf(stderr, "  XNEAR j=%3d half=%d x=%8.3f dx=%7.3f z=%9.3f -> keep z=%9.3f\n",
+                                 j, half2, x, dx, p.z, bestZ[half2]);
             }
             prevX[half2] = x;
             prevZ[half2] = p.z;
