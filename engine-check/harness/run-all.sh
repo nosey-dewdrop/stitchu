@@ -28,7 +28,21 @@ python3 "$ROOT/scripts/karar-lint.py" || true
 
 adim "H2/L2 — shell + drape (ctest alt kümesi)"
 if [ -d "$ROOT/engine/build" ]; then
-  ctest --test-dir "$ROOT/engine/build" -R "body_volume|garment_shell|drape" 2>&1 | grep -E "tests passed|Failed" || FAILS=$((FAILS+1))
+  # T17 (17 Ağu): burası bir kapı DEĞİLDİ. `ctest ... | grep` boru hattının
+  # exit kodu ctest'in değil GREP'in koduydu ve ctest arıza hâlinde de
+  # "0% tests passed, 1 tests failed" satırını basıyor — grep eşleşiyor,
+  # kod 0, arıza SAYILMIYORDU. Ölçüldü: h10_gate_check (kasten kırmızı) ile
+  # boru hattı exit 0 döndü. walk.py ile aynı sınıf: hükmünü basan ama
+  # iletemeyen hakem. Artık ctest'in KENDİ kodu okunuyor, çıktı ayrıca basılır.
+  H2LOG=$(mktemp /tmp/harness-h2-XXXX.log)
+  if ctest --test-dir "$ROOT/engine/build" -R "body_volume|garment_shell|drape" \
+       >"$H2LOG" 2>&1; then
+    grep -E "tests passed|Failed" "$H2LOG" || true
+  else
+    grep -E "tests passed|Failed" "$H2LOG" || echo "  ctest çıktı vermedi ($H2LOG)"
+    echo "  FAIL H2/L2 ctest alt kümesi"; FAILS=$((FAILS+1))
+  fi
+  rm -f "$H2LOG"
 else
   echo "engine/build yok — cmake ile kur"; FAILS=$((FAILS+1))
 fi
