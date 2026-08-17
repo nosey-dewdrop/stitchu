@@ -247,7 +247,19 @@ struct SheathOptions {
     // is treated as lying over the top of the shoulder rather than hanging off
     // it. Too small and the fold is a crease no dart set can absorb; too large
     // and the bodice stops following the body well below the armhole.
-    double shoulderCrestBandMM = 60.0;
+    //
+    // MEASURED, not chosen: at 60mm the fold is a crease and the torso panels'
+    // cut-line strain went 0.0071-0.1501% -> 1.83/1.86% (gate 0.5) with the
+    // interior at 6.96/7.79% (gate 3.0) — four FAILs in surface_pattern_check
+    // that were not there before. Spreading the same fold over 120mm halves the
+    // tilt and takes the cut lines back inside the gate (0.4587/0.4790%) and
+    // the BACK's interior down to 2.79%. The FRONT's interior is still 7.29%
+    // and that is an open red, recorded in the shift report rather than tuned
+    // away: the front's deficit sits in the columns next to the centre-front
+    // cut, where dartColumnsFromDeficitRows weights it down to nothing on
+    // purpose (a seam absorbs suppression beside it), so no dart is derived
+    // there and the curvature has nowhere to go.
+    double shoulderCrestBandMM = 120.0;
     double easeNeckMM = 0.0;   // a neckline is cut, not fitted — declared, not omitted
     double easeBustMM = 60.0;
     double easeWaistMM = 25.0;
