@@ -124,6 +124,20 @@ struct SurfacePattern {
     // never gets to the shoulder at all, and the honest reading is "the cloth
     // does not arrive", not "the cloth is low".
     double carryReachXMM = 0.0;
+    // PER-COLUMN TOP-BOUNDARY X, mm, signed, length NR+1 (the ring's own column
+    // count, phi ascending, column NR repeating column 0).
+    //
+    // WHY IT IS PUBLISHED. The engine already evaluates this array inside the
+    // K6 block; not handing it out forced every consumer to rebuild it from the
+    // ZONE MODEL instead (x = shoulderHalf * cos phi), which is a different
+    // curve: the surface's own x comes from a fixed-point solve, and the two
+    // disagree by -9.4 to -9.7mm at the shoulder point in all eight sizes
+    // (docs/H1.0-KAPI.md § 4.1). A second parallel model of the same boundary
+    // is exactly the class of error the single-waist-ring law killed, so the
+    // boundary is now single-sourced upward as well as downward.
+    // Signed, not |x|: the sign is the only thing that separates the two sides
+    // of the garment, and a consumer that wants the magnitude can take it.
+    std::vector<double> topColXMM;
 };
 
 struct SheathOptions {
@@ -252,16 +266,42 @@ struct SheathOptions {
     //
     // ROOT, MEASURED: the fold's Gaussian curvature has to leave through
     // top-anchored darts, and it cannot.
-    //   (a) the top darts CROSS the waist darts on the torso panels — visible
-    //       in flatten-research/20-panel-png.py's render — because a waist slit
-    //       runs rows [0, bodiceApexFrac = 0.80) and a top slit runs
-    //       (topDartApexFrac = 0.55, rowsN], and those ranges OVERLAP over a
-    //       quarter of the panel. The claim at topDartApexFrac that the two
-    //       "cannot cross by construction" is FALSE.
-    //   (b) on the front the deficit sits in the columns beside the
-    //       centre-front cut, exactly where dartColumnsFromDeficitRows weights
-    //       suppression to zero on purpose (a seam absorbs suppression next to
-    //       it), so no dart is derived there at all.
+    //   (a) ⚠ WITHDRAWN 17.08 (Tur 7) — THE DIAGNOSIS WAS WRONG, AND IT IS
+    //       WITHDRAWN BY MEASUREMENT, NOT BY OPINION. It said "the top darts
+    //       CROSS the waist darts on the torso panels". They do not, because
+    //       THERE ARE NO WAIST DARTS ON THE TORSO — with the flag on OR off,
+    //       in every size, the torso derives top anchors only and the skirt
+    //       derives none at all (STITCHU_SLIT_DEBUG=1, EU34/38/42/48: torso
+    //       "T19 T25" / "T18 T24", skirt empty; skirt develop-deficit +0.000
+    //       deg, because skimBodice + hemSweep make it a cone). What WAS true
+    //       is the row arithmetic: a waist slit duplicates rows [0,
+    //       bodiceApexFrac = 0.80) and a top slit duplicates (topDartApexFrac
+    //       = 0.55, rowsN], the ranges overlap, and two slits sharing a column
+    //       would duplicate every row and sever the panel. So the claim that
+    //       they "cannot cross by construction" was indeed FALSE — it just was
+    //       not what is breaking the gates today. It is now ENFORCED rather
+    //       than asserted: flattenGrid throws on a column carrying both
+    //       anchors, and the caller steps a colliding top dart aside first, so
+    //       the throw is unreachable rather than merely unobserved.
+    //   (b) ⚠ ALSO NOT THE ROOT, MEASURED. The claim was that the front's
+    //       deficit sits beside the centre-front cut where
+    //       dartColumnsFromDeficitRows weights suppression to zero, so nothing
+    //       is derived there. The weighting is real, but the deficit it drops
+    //       LEAVES THROUGH THE SEAM, exactly as the weighting says it should:
+    //       on EU38 left_ftorso the two vertical seam edges carry 0.012% and
+    //       0.092% boundary strain and the waist carries 0.011%, all far under
+    //       the 0.5% gate. The 1.83% that fails the gate is on the DART LEGS
+    //       (8.929%), not beside the seams.
+    //   (c) WHAT THE INSTRUMENT ACTUALLY SHOWS (EU38, STITCHU_SP_DEBUG=1,
+    //       left_ftorso): the panel's deficit is not spread, it is a spike and
+    //       a trough in the top two row bands — +34.57 deg then -64.34 deg,
+    //       against -0.12..-0.18 everywhere below. The trough is a SADDLE, and
+    //       a dart cannot absorb a saddle: dartColumnsFromDeficitRows clamps
+    //       negative bands to zero for placement, so the fold's negative
+    //       curvature is never given anywhere to go and surfaces as leg strain.
+    //       That is the next ring's problem, and it is a question about the
+    //       fold's shape (CrestFold collapses y onto the crest over bandMM
+    //       while the neckline zone keeps its own y), not about dart bookkeeping.
     // Two fixes were tried and BOTH made it worse, so neither is in the code:
     //   crest band 60 -> 120mm: cut line 1.83 -> 0.46% (inside the gate) but
     //     walkgate 6 -> 30 hüküm-FAIL, every size self-intersecting. Rejected

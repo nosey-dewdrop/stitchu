@@ -539,7 +539,24 @@ std::vector<DerivedDart> dartColumnsFromDeficitRows(const PanelGrid& g, double c
     if (total <= kNothingToAbsorbRad || weighted <= 0.0) return {};
 
     // The COUNT still follows the load the darts actually have to carry.
-    const int n = std::max(1, static_cast<int>(std::ceil(weighted / capRad - 1e-9)));
+    // ⚠ MEASURED INCONSISTENCY, LEFT IN PLACE ON PURPOSE (Tur 7).
+    // The count comes off `weighted` but every dart is handed `total / n`, and
+    // weighted <= total by construction, so `maxDartDeg` does NOT bind: on EU38
+    // with the shoulder seam on, the front torso quarter measures +48.806 deg,
+    // gets n = 2, and each dart is handed 24.4 deg against a declared cap of 14.
+    // Counting off `total` instead was measured (STITCHU_DART_COUNT_TOTAL=1,
+    // STITCHU_SHOULDER_SEAM=1, surface_pattern_check) and is NOT taken:
+    //   cut line  front 1.8318 -> 2.2734%   back 1.8646 -> 2.0431%   (gate 0.5)
+    //   interior  front 6.9609 -> 6.7592%   back 7.7931 -> 4.1882%   (gate 3.0)
+    // Still 4 FAIL, and the gate that decides — the cut line — got WORSE on
+    // both faces. The reason is visible in the layout: n goes 2 -> 4 but the
+    // quantile walk stacks three of them on ADJACENT columns (EU38 front
+    // T16 T23 T24 T25, back T15 T22 T24 T25), which is a shredded panel rather
+    // than a dart set. The cap will bind when the placement can spread; changing
+    // the count alone trades one defect for a worse one, so it stays measured
+    // and rejected rather than shipped for a better-looking interior number.
+    const double countBasis = std::getenv("STITCHU_DART_COUNT_TOTAL") ? total : weighted;
+    const int n = std::max(1, static_cast<int>(std::ceil(countBasis / capRad - 1e-9)));
     std::vector<DerivedDart> out;
     double run = 0.0;
     int k = 0;
@@ -577,6 +594,30 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     // itself is never duplicated — that is what makes it the tip of a wedge
     // rather than a second cut.
     std::map<std::pair<int, int>, int> dup;  // (i, col) -> vertex id
+    // "CUTS CANNOT CROSS BY CONSTRUCTION" IS NOW ENFORCED, NOT ASSERTED.
+    //
+    // The comment at topDartApexFrac claimed the two anchors could not meet
+    // because their tips sit on the same fraction scale. That is not what the
+    // scale says: a waist slit duplicates rows [0, apexRow) and a top slit
+    // duplicates (apexRow, rowsN], so with bodiceApexFrac 0.80 above
+    // topDartApexFrac 0.55 the two ranges OVERLAP over a quarter of the panel.
+    // Two slits on one column would then duplicate every row of it and cut the
+    // panel clean in half — not a dart, a severed piece. The claim was false and
+    // is replaced by a check that cannot be false: if it ever fires the caller
+    // placed the darts wrong, and a severed panel is not shipped quietly.
+    // MEASURED 17.08 (Tur 7): on the shipped tree this never fires, with the
+    // shoulder seam on or off, because the torso derives NO waist darts at all.
+    {
+        std::map<int, std::pair<bool, bool>> anchors;  // col -> (waist, top)
+        for (const Slit& s : slits) {
+            auto& a = anchors[s.col];
+            (s.fromTop ? a.second : a.first) = true;
+            if (a.first && a.second)
+                throw std::runtime_error("surface pattern: column " + std::to_string(s.col) +
+                                         " carries both a waist-anchored and a top-anchored "
+                                         "dart; the two cuts would sever the panel");
+        }
+    }
     for (const Slit& s : slits) {
         const int lo = s.fromTop ? s.apexRow + 1 : 0;
         const int hi = s.fromTop ? rowsN : s.apexRow - 1;
@@ -884,7 +925,28 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
 
 }  // namespace
 
-SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& opt) {
+// DIAL OVERRIDE FOR MEASUREMENT, and it is declared rather than hidden.
+//
+// The shoulder seam ships behind a flag (SheathOptions::shoulderSeam) and every
+// gate fixture builds SheathOptions{} by value, so the only way to measure the
+// flag's other position was to edit the header and rebuild — which makes the
+// measured tree different from the shipped tree and is exactly how the shared
+// tree got polluted four times in this shift. These read ONLY from the
+// environment: with no variable set the options are the caller's, unchanged and
+// bit-identical, so nothing here can move a shipped number.
+static SheathOptions probeOverrides(const SheathOptions& in) {
+    SheathOptions o = in;
+    if (const char* e = std::getenv("STITCHU_SHOULDER_SEAM")) o.shoulderSeam = (*e == '1');
+    if (const char* e = std::getenv("STITCHU_TOP_DART_APEX")) o.topDartApexFrac = std::atof(e);
+    if (const char* e = std::getenv("STITCHU_TOP_DART_SPLIT")) o.topDartSplitFrac = std::atof(e);
+    if (const char* e = std::getenv("STITCHU_BODICE_APEX")) o.bodiceApexFrac = std::atof(e);
+    if (const char* e = std::getenv("STITCHU_CREST_BAND")) o.shoulderCrestBandMM = std::atof(e);
+    if (const char* e = std::getenv("STITCHU_MAX_DART_DEG")) o.maxDartDeg = std::atof(e);
+    return o;
+}
+
+SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& optIn) {
+    const SheathOptions opt = probeOverrides(optIn);
     const double bustH = levelHeight(body, "bust");
     const double waistH = levelHeight(body, "waist");
     const double hipH = levelHeight(body, "hip");
@@ -1026,11 +1088,15 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         double bestX[2] = {0.0, 0.0};
         const std::vector<double>& tH = layers[0].topH;
         double prevX[2] = {-1.0, -1.0}, prevZ[2] = {0.0, 0.0};
+        pat.topColXMM.assign(NR + 1, 0.0);
         for (int j = 0; j <= NR; ++j) {
             const double phi = 2 * kPi * j / NR;
             const Vec3 p = surf.at(tH[j], phi);
             const int half2 = std::sin(phi) >= 0.0 ? 0 : 1;  // 0 front, 1 back
             const double x = std::fabs(p.x);
+            // the same evaluation the carry number is read off — published, not
+            // recomputed, so a consumer cannot drift from it
+            pat.topColXMM[j] = p.x;
             bestX[half2] = std::max(bestX[half2], x);
             // bracket: consecutive columns of the same half straddling xTarget
             if (prevX[half2] >= 0.0 &&
@@ -1291,9 +1357,31 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                              std::max(1, static_cast<int>(
                                              std::lround(rowsN * opt.topDartApexFrac))));
                 std::vector<Slit> slits;
-                for (const DerivedDart& d : dartCols[&L])
-                    if (d.col > c0 && d.col < c1)
-                        slits.push_back({d.col - c0, d.fromTop ? topApex : apex, d.fromTop});
+                // Waist anchors first, then top anchors, so a top dart that
+                // wants a column a waist dart already holds is STEPPED ASIDE to
+                // the nearest free interior column rather than dropped. Dropping
+                // it would throw away suppression the panel measured and needs;
+                // one column is 1/64 of a half-panel and the deficit either side
+                // of it is the same to that resolution. This is what keeps the
+                // guard in flattenGrid from ever having to fire.
+                std::set<int> taken;
+                for (int pass = 0; pass < 2; ++pass)
+                    for (const DerivedDart& d : dartCols[&L]) {
+                        if (d.fromTop != (pass == 1) || d.col <= c0 || d.col >= c1) continue;
+                        int col = d.col - c0;
+                        const int lim = c1 - c0;
+                        while (taken.count(col) && col + 1 < lim) ++col;
+                        if (taken.count(col)) continue;  // no free column: honest skip
+                        taken.insert(col);
+                        slits.push_back({col, d.fromTop ? topApex : apex, d.fromTop});
+                    }
+                if (std::getenv("STITCHU_SLIT_DEBUG")) {
+                    std::fprintf(stderr, "  SLITS %s h%d s%zu rowsN=%d apexW=%d apexT=%d :",
+                                 L.isSkirt ? "skirt" : "torso", h, s, rowsN, apex, topApex);
+                    for (const Slit& q : slits)
+                        std::fprintf(stderr, " %s%d", q.fromTop ? "T" : "W", q.col);
+                    std::fprintf(stderr, "\n");
+                }
                 // the waist seam breaks wherever EITHER layer darts, so run r
                 // spans the same ring arc on both sides of the waist stitch.
                 // With derived darts the two layers no longer dart in the same
