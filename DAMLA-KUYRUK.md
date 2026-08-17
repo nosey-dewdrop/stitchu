@@ -109,6 +109,46 @@ Komut: `python3 flatten-research/18-armscye-front-back.py` · kaynak `patterns_r
 
 ---
 
+## K10 — BEDEN TABLOSUNDA ÜÇ KIRIK GRADE ADIMI (6B, Tur 6, T13/K6 kökü)
+
+Kaynak: `engine/src/contract.gen.hpp` → `draft.euSizeChart` (sözleşme `contract/tables.json`).
+**Ölçülmedi, OKUNDU** — tablo satırlarının kendisi. Bu yüzden koşu kirliliğinden etkilenmiyor.
+
+Beden tablosunu tek taraflı değiştirmek ajanın işi değildir. **Üç kalem, üçü de karar bekliyor:**
+
+**1. EU48 satırı grade'i 1.5 KATINA çıkarıyor.**
+
+| ölçü | EU34→EU46 (6 adımın 6'sı) | **EU46→EU48** |
+|---|---|---|
+| bust | +4.0 cm | **+6.0 cm** |
+| waist | +4.0 cm | **+6.0 cm** |
+| hip | +4.0 cm | **+6.0 cm** |
+| shoulder (chart) | +0.5 cm | **+1.0 cm** |
+| shoulderWidth (`shaperatios.gen.hpp`) | +1.0 cm | +1.0 cm — **kırılmıyor** |
+
+Sonucu ölçüldü: `h10_gate_check` K6 (taşıyıcı yüzey) EU46'da −32.70mm, EU48'de **−57.34mm** —
+tek adımda **−24.64mm** sıçrama, diğer altı adımın hepsi −0.34…−9.62mm (commit `15d4495`).
+Sebep zinciri: armscye derinliği **büst'ten** grade ediliyor, omuz noktası ise
+`shaperatios`'tan geliyor ve o 8 bedende **tam +5.0mm** adımlarla düzgün ilerliyor
+(147.3…182.3). EU48'de büst +6cm ile açılınca oyuk derinleşiyor, kapının soru sorduğu omuz
+noktası yerinde kalıyor.
+**Soru: EU48 satırı kasten mi 1.5 kat (gerçek beden tablolarında büyük bedenlerde olur),
+yoksa bir dizgi hatası mı?** Kasıtlıysa kapı bunu bilmeli; değilse tablo düzelmeli.
+
+**2. `neckCM` adımları düzensiz:** 34 · 34.5 · 35 · **36** · 36.5 · 37 · **38** · **39**
+→ +0.5, +0.5, **+1.0**, +0.5, +0.5, **+1.0**, **+1.0**.
+Bu doğrudan kapıyı vuruyor: K5-çevrenin **ALT SINIRI** `neckGirth`'ün kendisi, yani kapının
+tabanı üç bedende iki kat sıçrıyor. K5-çevrenin bedenler arası monoton olmaması bununla
+ilişkili olabilir — **ilişki DOĞRULANMADI.**
+
+**3. `backLengthCM` bir adımda HİÇ büyümüyor:** 39.5 · 40 · 40.5 · 41 · 41.5 · 42 · **42** ·
+42.5 → EU44→EU46 adımı **0.0 cm**, diğer altı adım +0.5. Dizgi hatası gibi duruyor ama
+**DOĞRULANMADI** ve tek taraflı düzeltilmedi.
+
+**Cevap:**
+
+---
+
 ## KAPANDI
 
 _(henüz yok)_
