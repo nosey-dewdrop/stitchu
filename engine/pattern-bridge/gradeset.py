@@ -350,19 +350,132 @@ def bust_girth_mm(pattern):
     return total * 10.0, used
 
 
+# TUR 16 (17 Agu) — BU OLCUM BIR HALKAYI DEGIL BIR ADI ARIYORDU.
+# Eski hali yalnizca `torso`<->`wb` ciftlerini topluyordu ve sevk edilen motorda
+# `wb` (korsaj bandi) rolu yok, cunku BU GIYSIDE KEMER YOK. 8 bedende de (0.0, 0)
+# donuyordu; 15A onu dogru biçimde "olculemedi" diye kirmiziya bagladi, ama
+# olculemez OLAN yalnizca ADdi. Bel, gövdenin BITTIGI halkadir: kemerli bir
+# giyside o halka torso<->wb, kemersiz bir giyside AYNI halka torso<->skirt'tir.
+# Ölçüldü (94ab73d, engine/build-16c Release): sevk edilen motorda 8 bedende de
+# 14 adet torso<->skirt dikis cifti var ve toplamlari
+#   644.90 684.90 724.89 764.89 804.88 844.88 884.87 944.87 mm
+# yani adim +40.00mm x6 ve EU46->EU48 +59.99mm — beden cizelgesinin bel kolonunun
+# (62 66 70 74 78 82 86 92 cm) TAM olcegi, EU48'in +6cm rejimi dahil. EU38'de
+# 724.89mm = 700mm bel + 25mm Steiner ease, CLAUDE.md'nin ilan ettigi hedefe
+# 0.11mm. Bu bir tapudur, uydurma degil.
+# Rol cifti ADIYLA raporlanir: hangi halkanin olculdugu tahmin edilmez.
+# Kirmizi kalkmadi, DARALDI: hicbir ad altinda bel halkasi bulunamazsa hukum.
+WAIST_RING_PAIRS = (
+    frozenset({'torso', 'wb'}),     # kemerli: govde korsaj bandina diker
+    frozenset({'torso', 'skirt'}),  # kemersiz: govde dogrudan etege diker
+)
+
+
 def waist_seam_girth_mm(pattern):
-    """Waist girth from the stitch graph: total torso-side length of
-    every torso<->waistband stitch pair."""
-    total = 0.0
-    n = 0
+    """Waist-ring girth from the stitch graph.
+
+    Returns (total_mm, n_pairs, source) where `source` names the role pair the
+    ring was read from ('torso<->wb' / 'torso<->skirt') or None if the garment
+    carries no waist ring under any known name. The torso side is measured: the
+    bodice is what the ring has to fit.
+    """
+    for want in WAIST_RING_PAIRS:
+        total, n = 0.0, 0
+        for stitch in pattern['stitches']:
+            roles = {walklib.panel_role(e['panel']): e for e in stitch}
+            if set(roles) == set(want):
+                e = roles['torso']
+                panel = pattern['panels'][e['panel']]
+                total += walklib.edge_length_mm(panel,
+                                                panel['edges'][e['edge']])
+                n += 1
+        if n:
+            a, b = sorted(want)
+            return total, n, f'{a}<->{b}'
+    return 0.0, 0, None
+
+
+# TUR 16 — CEVRE OLCEN TEK OLCUM BUYDU VE O DA CEVRE OLCMUYORDU.
+# `bust_girth_mm` duzlestirilmis panelin YATAY KIRISini topluyor; bir koni
+# aciliminda o kiris cevrenin degil, cevre ile koni acisinin fonksiyonudur
+# (govde kisalirsa acilim kivrilir, kiris kuculur — 15A'nin gordugu
+# EU44->EU46 -3.86mm tam olarak budur, asagida). Alicinin "yanlis beden"
+# yasadigi yer ise gercek halkalardir. Onlar dikis grafiginden okunur:
+#   - govdenin serbest (dikilmemis) ust siniri = giysinin ust cevresi
+#   - bel halkasi = torso<->skirt|wb dikisi (waist_seam_girth_mm)
+#   - etegin serbest alt siniri = etek ucu cevresi
+# Bunlar KAPALI halkalardir ve beden buyurken kucululmeleri bir hukumdur.
+# Olculdu (94ab73d, engine/build-16c Release): ucu de 8 bedende monoton artan,
+# yani bu kapi bugun ATESLEMIYOR — kirmizi gizlemek icin degil, ilerideki
+# gercek daralmayi yakalamak icin kuruldu (once olcüldü, sonra silahlandirildi).
+def free_boundary_girth_mm(pattern, role):
+    """Total length of the edges of `role` panels that no stitch uses — the
+    garment's raw boundary at that end (neckline+armhole ring, or hem)."""
+    sewn = set()
     for stitch in pattern['stitches']:
-        roles = {walklib.panel_role(e['panel']): e for e in stitch}
-        if set(roles) == {'torso', 'wb'}:
-            e = roles['torso']
-            panel = pattern['panels'][e['panel']]
-            total += walklib.edge_length_mm(panel, panel['edges'][e['edge']])
-            n += 1
-    return total, n
+        for e in stitch:
+            sewn.add((e['panel'], e['edge']))
+    total = 0.0
+    for name, panel in pattern['panels'].items():
+        if walklib.panel_role(name) != role:
+            continue
+        for i, e in enumerate(panel['edges']):
+            if (name, i) not in sewn:
+                total += walklib.edge_length_mm(panel, e)
+    return total
+
+
+def girth_series(patterns, waists):
+    """[(label, [mm per size])] of the CLOSED rings of the garment."""
+    out = [('govde ust siniri (serbest)',
+            [free_boundary_girth_mm(p, 'torso') for p in patterns])]
+    if any(waists):
+        out.append(('bel halkasi', list(waists)))
+    hem = [free_boundary_girth_mm(p, 'skirt') for p in patterns]
+    if any(hem):
+        out.append(('etek ucu (serbest)', hem))
+    return out
+
+
+def girth_shrinks(girths):
+    """[(label, 'EU44->EU46 -3.86mm'), ...] for every DECREASING step."""
+    bad = []
+    for name, seq in girths:
+        for i in range(len(seq) - 1):
+            d = seq[i + 1] - seq[i]
+            if d < -TOL_MM:
+                bad.append((name, f'{SIZES[i]}->{SIZES[i + 1]} {d:+.2f}mm'))
+    return bad
+
+
+# TUR 16 — VE BIR HALKA HIC GRADELENMIYOR.
+# Monotonluk kuralinin "sabit kalmak ihlal degildir" muafiyeti BOY kenarlari
+# icindir (boy gradelenmiyor, mapping.py kaydi). Bir CEVRE icin ayni muafiyet
+# yoktur: kapali bir halka sekiz bedende de ayni kaliyorsa o halka
+# gradelenmemistir. Olculdu (94ab73d, engine/build-16c Release):
+#   etek ucu (serbest) = 1269.86 1269.86 1269.86 1269.86 1269.84 1269.84
+#                        1269.85 1269.85 mm  -> toplam degisim 0.02mm
+# Kaynak bulundu: engine/src/surfacepattern.hpp:176 `hemSweepMM = 1270.0`,
+# MUTLAK bir sabit; surfacepattern.cpp:1336-1341 bel kesitini bu sayiya olcekler.
+# Yorumun kendisi kaynagini soyluyor: 1960'lar Big-4 zarf arkasi, 36 INCLIK
+# KALCA icin 48.5-52.5 inc etek ucu. O tek vucut EU40/42'dir; EU34 (kalca 86cm)
+# ve EU48 (kalca 116cm) ayni 127cm etek ucunu aliyor. Sonuc: bel halkasi
+# +40mm/beden buyurken etek ucu sabit kaldigi icin A-formu bedenle KAPANIYOR —
+# EU34 tam A, EU48 neredeyse duz. Ayni stil sekiz bedende ayni stil degil.
+# ★ Bu, 30 monotonluk IHLALinin de koku: yargilanan 34 kenarin hepsi etek, ve
+# etek panelinin kenarlari sabit bir etek ucu ile buyuyen bir bel arasinda
+# SIKISIP kisaliyor.
+# Sabit bir cevre "olculdu ve degismedi" demek degildir; "gradelenmedi"dir.
+def girth_ungraded(girths):
+    """[(label, 'toplam degisim 0.02mm'), ...] for every ring that does not
+    grade AT ALL across the size run."""
+    out = []
+    for name, seq in girths:
+        span = max(seq) - min(seq)
+        if span <= TOL_MM:
+            out.append((name, f'8 bedende toplam degisim {span:.2f}mm '
+                              f'(sabit {seq[0]:.2f}mm)'))
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -583,7 +696,7 @@ def status_counts(d):
 #       yine basiliyordu.
 # Ikisi de esik DEGIL sayimdir; hicbir tolerans gevsetilmedi.
 def verdict(deed, mono_counts, det_equal, struct_skipped=(),
-            waist_pairs=(), nest_missing=()):
+            waist_pairs=(), nest_missing=(), girths=()):
     """Return the list of (name, count) findings that make this run RED."""
     red = []
     drift = deed_schema_faults(deed)
@@ -634,10 +747,29 @@ def verdict(deed, mono_counts, det_equal, struct_skipped=(),
                     f'monotonlukta hic yargilanmiyor, bu bir atlama, gecme '
                     f'degil', len(struct_skipped)))
     if waist_pairs and not any(waist_pairs):
-        red.append(('SAYIM: bel dikisi cevresi HIC olculmedi — 8 bedenin '
-                    'hicbirinde torso<->wb dikis cifti yok (motorda korsaj '
-                    'bandi rolu yok); 0.00mm bir grade adimi degil, olcum '
-                    'yoklugudur', len(SIZES)))
+        red.append(('SAYIM: bel halkasi HIC olculmedi — 8 bedenin hicbirinde '
+                    'ne torso<->wb ne torso<->skirt dikis cifti var, yani '
+                    'govdenin bittigi halka bu spec\'te yok; 0.00mm bir grade '
+                    'adimi degil, olcum yoklugudur', len(SIZES)))
+    elif waist_pairs and not all(waist_pairs):
+        eksik = [SIZES[i] for i, n in enumerate(waist_pairs) if not n]
+        red.append((f'SAYIM: bel halkasi bazi bedenlerde olculemedi '
+                    f'({", ".join(eksik)}) — kismi olcum bir grade serisi '
+                    f'degildir', len(eksik)))
+    shrink = girth_shrinks(girths)
+    if shrink:
+        red.append(('CEVRE KUCULMESI (beden buyurken kapali bir halka '
+                    'daraliyor = alicida YANLIS BEDEN): '
+                    + '; '.join(f'{n} {d}' for n, d in shrink), len(shrink)))
+    ungraded = girth_ungraded(girths)
+    if ungraded:
+        red.append(('GRADELENMEMIS CEVRE (kapali bir halka 8 bedende ayni; '
+                    'boy muafiyeti cevrelere gecmez): '
+                    + '; '.join(f'{n} {d}' for n, d in ungraded),
+                    len(ungraded)))
+    if girths is not None and not girths:
+        red.append(('SAYIM: TEK bir kapali cevre serisi bile olculemedi — '
+                    'giysinin hicbir halkasi yargilanmadi', 1))
     if nest_missing:
         red.append((f'SAYIM: nest istenen panel motorda yok '
                     f'({", ".join(nest_missing)}) — gozun bakacagi cizim '
@@ -646,9 +778,9 @@ def verdict(deed, mono_counts, det_equal, struct_skipped=(),
 
 
 def verdict_lines(deed, mono_counts, det_equal, struct_skipped=(),
-                  waist_pairs=(), nest_missing=()):
+                  waist_pairs=(), nest_missing=(), girths=()):
     red = verdict(deed, mono_counts, det_equal, struct_skipped,
-                  waist_pairs, nest_missing)
+                  waist_pairs, nest_missing, girths)
     if not red:
         return ['KAPI: YESIL — dikis tapusu 0 FAIL, monotonluk 0 IHLAL, '
                 'determinizm ozdes']
@@ -673,7 +805,8 @@ MOTOR_HAT = {
 
 def fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs, nudges,
                det_equal, nest_paths, state_src, motor,
-               struct_notes=(), struct_skipped=(), nest_missing=()):
+               struct_notes=(), struct_skipped=(), nest_missing=(),
+               waist_src=None, girths=()):
     L = []
     L.append('GRADESET RAPORU — 8 beden (EU34..EU48), denetimli uretim')
     L.append(f'MOTOR: {motor} — {MOTOR_HAT[motor][0]}')
@@ -769,42 +902,66 @@ def fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs, nudges,
     L.append('')
 
     L.append('3) GRADE ADIMI DUZGUNLUGU')
-    L.append('gogus hatti cevresi = 4 torso panelinin max yatay kesit '
-             'genisligi toplami (scanline 0.5mm); bel dikisi = torso<->'
-             'korsaj bandi dikis ciftlerinin torso tarafi toplami')
-    L.append(f"{'beden':<7} {'gogus mm':>10} {'delta':>8} "
-             f"{'bel dikisi mm':>14} {'delta':>8}")
-    L.append('-' * 52)
+    L.append('★ "gogus mm" BIR CEVRE DEGILDIR ve oyle okunmamalidir. Olculen '
+             'sey, DUZLESTIRILMIS 4 torso panelinin kendi yerlesim '
+             'duzlemindeki en genis YATAY KIRISlerinin toplamidir (scanline '
+             f'{SCAN_STEP * 10:.1f}mm). Bir koni acilimi olarak duzlestirilen '
+             'panelde bu kiris hem cevreye hem KONI ACISINA baglidir: govde '
+             'kisalir ama cevresi buyurse acilim daha cok kivrilir ve yatay '
+             'kiris KUCULUR. Gercek cevreler asagida, dikis grafigindan.')
+    L.append(f'bel halkasi kaynagi: {waist_src or "YOK"} — dikis ciftinin '
+             'torso tarafi toplami (govdenin BITTIGI halka; kemerli giyside '
+             'torso<->wb, kemersizde ayni halka torso<->skirt)')
+    L.append(f"{'beden':<7} {'duz kiris mm':>13} {'delta':>8} "
+             f"{'bel halkasi mm':>15} {'delta':>8}")
+    L.append('-' * 56)
     for i in range(8):
         db = f'{bust[i] - bust[i - 1]:+8.2f}' if i else ' ' * 8
         dw = f'{waist[i] - waist[i - 1]:+8.2f}' if i else ' ' * 8
-        L.append(f'{SIZES[i]:<7} {bust[i]:>10.2f} {db} '
-                 f'{waist[i]:>14.2f} {dw}')
+        L.append(f'{SIZES[i]:<7} {bust[i]:>13.2f} {db} '
+                 f'{waist[i]:>15.2f} {dw}')
     bd = [bust[i + 1] - bust[i] for i in range(7)]
     wd = [waist[i + 1] - waist[i] for i in range(7)]
-    L.append(f'gogus delta araligi: {min(bd):.2f}..{max(bd):.2f}mm '
-             f'(hedef girth grade 4cm/beden -> desen duzleminde ~sabit '
-             'artis; ease carpani mutlak degeri buyutebilir)')
+    L.append(f'duz kiris delta araligi: {min(bd):.2f}..{max(bd):.2f}mm '
+             '(BILGI — hukum degil, cunku bu bir cevre degil)')
     if not any(waist_pairs):
-        L.append('bel dikisi: OLCULMEDI — 8 bedenin hicbirinde torso<->wb '
-                 'dikis cifti yok (bu motorda korsaj bandi rolu yok). '
-                 'Yukaridaki 0.00 sutunu bir grade adimi DEGIL, olcum '
-                 'yokluguDUR; delta araligi basilmiyor.')
+        L.append('bel halkasi: OLCULEMEDI — 8 bedenin hicbirinde ne '
+                 'torso<->wb ne torso<->skirt dikis cifti var. Yukaridaki '
+                 '0.00 sutunu bir grade adimi DEGIL, olcum yokluguDUR; '
+                 'delta araligi basilmiyor.')
     else:
-        L.append(f'bel dikisi delta araligi: {min(wd):.2f}..{max(wd):.2f}mm '
+        L.append(f'bel halkasi delta araligi: {min(wd):.2f}..{max(wd):.2f}mm '
                  f'(beden basina dikis cifti: {list(waist_pairs)})')
     med = sorted(bd)[len(bd) // 2]
     for i, d in enumerate(bd):
         if abs(d - med) > 2.0:
-            L.append(f'  DIKKAT: {SIZES[i]}->{SIZES[i + 1]} gogus adimi '
-                     f'{d:.2f}mm (medyan {med:.2f}mm) — duzgun grade '
-                     'disi sapma')
+            L.append(f'  DIKKAT (BILGI): {SIZES[i]}->{SIZES[i + 1]} duz '
+                     f'kiris adimi {d:.2f}mm (medyan {med:.2f}mm)')
     if any(waist_pairs):
         med_w = sorted(wd)[len(wd) // 2]
         for i, d in enumerate(wd):
             if abs(d - med_w) > 2.0:
                 L.append(f'  DIKKAT: {SIZES[i]}->{SIZES[i + 1]} bel adimi '
                          f'{d:.2f}mm (medyan {med_w:.2f}mm)')
+    L.append('')
+
+    # --- 3b: the girths that ARE girths -------------------------------------
+    L.append('3b) GERCEK CEVRE SERILERI (dikis grafiginden, duzlem '
+             'yerlesiminden DEGIL) — bir alici icin "yanlis beden" burada '
+             'olculur')
+    L.append(f"{'seri':<26} " + ' '.join(f'{s:>9}' for s in SIZES))
+    for name, seq in girths:
+        L.append(f'{name:<26} ' + ' '.join(f'{v:9.2f}' for v in seq))
+    for name, seq in girths:
+        st = [seq[i + 1] - seq[i] for i in range(7)]
+        bad = [f'{SIZES[i]}->{SIZES[i + 1]} {d:+.2f}mm'
+               for i, d in enumerate(st) if d < -TOL_MM]
+        span = max(seq) - min(seq)
+        L.append(f'  {name}: adim {min(st):+.2f}..{max(st):+.2f}mm — '
+                 + ('AZALMA YOK' if not bad
+                    else 'AZALMA: ' + '; '.join(bad))
+                 + (f'  ★ GRADELENMEMIS: 8 bedende toplam degisim '
+                    f'{span:.2f}mm' if span <= TOL_MM else ''))
     L.append('')
 
     L.append('4) OMUZ NUDGE KAYITLARI (generate.py cut_corner merdiveni)')
@@ -888,13 +1045,21 @@ def main():
     # --- audits ------------------------------------------------------------
     aligned, struct_notes, struct_skipped = align_lengths(lengths_by_size)
     mono_rows, mono_counts = monotonicity(aligned)
-    bust, waist, waist_pairs = [], [], []
+    bust, waist, waist_pairs, waist_srcs = [], [], [], []
     for pat in patterns:
         b, _ = bust_girth_mm(pat)
-        w, n = waist_seam_girth_mm(pat)
+        w, n, src = waist_seam_girth_mm(pat)
         bust.append(b)
         waist.append(w)
         waist_pairs.append(n)
+        waist_srcs.append(src)
+    # One garment, one ring: if the sizes disagree about WHICH stitch pair the
+    # waist is, say so rather than averaging two different rings into a series.
+    uniq = sorted({s for s in waist_srcs if s})
+    waist_src = (uniq[0] if len(uniq) == 1
+                 else ('/'.join(uniq) + ' — BEDENLER ARASI TUTARSIZ'
+                       if uniq else None))
+    girths = girth_series(patterns, waist)
 
     # --- determinism: EU38 twice -------------------------------------------
     det_dir = run_size(state, 2, out / 'EU38-rerun', motor)
@@ -907,16 +1072,17 @@ def main():
 
     report = fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs,
                         nudges, det_equal, nest_paths, state_src, motor,
-                        struct_notes, struct_skipped, nest_missing)
+                        struct_notes, struct_skipped, nest_missing,
+                        waist_src, girths)
     (out / 'gradeset-report.txt').write_text(report)
     print(report)
     print(f'rapor: {out / "gradeset-report.txt"}')
 
     for line in verdict_lines(deed, mono_counts, det_equal, struct_skipped,
-                              waist_pairs, nest_missing):
+                              waist_pairs, nest_missing, girths):
         print(line)
     if verdict(deed, mono_counts, det_equal, struct_skipped,
-               waist_pairs, nest_missing):
+               waist_pairs, nest_missing, girths):
         sys.exit(1)
 
 
