@@ -432,6 +432,17 @@ struct SheathOptions {
             const double v = std::atof(e);
             if (v > 0.0 && v < 120.0) shoulderNarrowMM = v;
         }
+        // RESOLUTION PROBE, not a dial to turn a gate green. h10_gate_check's
+        // splitFar sums WHOLE columns, so every zone length carries a
+        // quantisation error of up to one column edge. The only way to tell a
+        // real grade break from that error is to make the column narrower and
+        // watch: an artefact shrinks with the column, a real break does not.
+        // Even is enforced by buildSheathPattern (two halves), so an odd value
+        // throws rather than silently rounding.
+        if (const char* e = std::getenv("STITCHU_RING_SAMPLES")) {
+            const int v = std::atoi(e);
+            if (v >= 16 && v <= 4096) ringSamples = v;
+        }
     }
 };
 

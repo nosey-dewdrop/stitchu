@@ -270,6 +270,35 @@ Bugün yalnız **A0 (1 sayfa)** ve **A4 (15 sayfa)** basılıyor. Kod yolu (`ren
 Şartname "A0/A1 ikisi de üretilebilir" diyor; "ya A0 ya A1" okumasıyla madde geçti, o yüzden **çağırmadım** — bu bir ürün kararı: kopya dükkânlarında A1 A0'dan yaygın ve ucuz.
 **Cevap:**
 
+### [ ] K16 — Silinen galeri verisi geri gelsin mi? Dört üreteç onsuz koşamıyor · 2026-08-17 (TUR 12)
+`af49514` (29 Tem, *"delete fake pattern gallery"*, 198 dosya / 77386 satır) `web/patterns/` ağacını sildi. O ağaçtaki **iki meta.json dört üretecin tek veri kaynağıydı**:
+`gen-collection-pattern.mjs` · `gen-vintage-page.mjs` · `gen-taste-collections.mjs` · `gen-collections-page.mjs` — **dördü de bugün koşturuldu, dördü de `ENOENT` ile exit 1.**
+Çıktıları **canlı ve linkli**: `collection-60s70s.html` → HTTP 200, `collections/babydoll.html` → 200, ikisi de `web/index.html`'den linkli, 23'ü sitemap'te. **Yani site bu sayfaları servis ediyor ama yeniden üretemiyor.**
+**SİLMEDİM** (kanıt canlı olduklarını söylüyor) ve **"elle bakımlı" İLAN ETMEDİM** (veri tek komutla geri geliyor: `git show af49514^:web/patterns/vintage6070/meta.json` — okunabilirliği doğrulandı; "elle bakımlı" demek kapı boyamak olurdu). `guard.json` kuralı **gevşetilmedi, sıkılaştırıldı**.
+⚠ **Ama geri getirmek tek başına yetmiyor, ve bir yarısı ZARARLI:** `web/patterns/svg/meta.json`'ı geri koymak `gen-style-pages.mjs`'in sitemap'ine **silinmiş galerinin 22 URL'sini geri enjekte eder** (ölçüldü). `vintage6070/meta.json` ise yalnız canlı sayfaları besliyor, geri gelmesi güvenli.
+**Soru: `vintage6070/meta.json` geri gelsin mi (üreteçler koşar, sayfalar yeniden üretilebilir olur), yoksa bu dört sayfa ailesi tamamen kalksın mı?** İkincisi site'den canlı+linkli sayfa götürür, o yüzden tek başıma yapmadım. Restore ~1–2 saat (SVG bağımlılığı ayrıca ölçülmeli).
+**Cevap:**
+
+### [ ] K17 — Sitemap iki ayrı üreteçten çıkıyor ve İKİSİ DE YANLIŞ · 2026-08-17 (TUR 12)
+"İki doğru bırakılmaz" ihlali, canlı SEO yüzeyinde:
+- `web/gen-sitemap.py` — `scripts/deploy.sh`'in koştuğu. `SKIP_DIRS`'ünde **`styles`** var → **canlı 24 stil sayfasını hiç indexlemiyor.**
+- `engine/tools/gen-style-pages.mjs` — `web/sitemap.xml`'i de yazıyor. Stil sayfalarını koyuyor ama `signature.html`'i (canlı, 200) **düşürüyor**.
+**Bugün ağaçtaki `sitemap.xml` 2026-07-28 tarihli**, yani `af49514`'ten BİR GÜN ÖNCESİNDEN, ve o günden beri hiç yenilenmemiş. Sonucu: **22 `/patterns/*` URL'sini Google'a hâlâ bildiriyor ve hepsi 404** (`/patterns/yoke-doll-dress.html` → doğrulandı **404**), **24 canlı `/styles/*` sayfası ise sitemap'te hiç yok.**
+**Hangisi kanonik olsun?** Tek üretece indirmek gerek; ikisini de kendi başıma seçmedim çünkü ikisi de bugünkü ağacı doğru anlatmıyor. ~1 saat.
+**Cevap:**
+
+### [ ] K18 — Sitede 187 kırık iç link var (silinen galeriye) · 2026-08-17 (TUR 12)
+`web/` ağacında **187 adet `href=".../patterns/..."`** duruyor ve `web/patterns/` **yok**. Paylaşılan header'da olduğu için **`web/index.html` dahil neredeyse her sayfada**: `collections/babydoll.html` tek başına 17, `collections/retro-dresses.html` 17, 61 patch sayfasının her birinde 1.
+Görseller etkilenmiyor (SVG'ler sayfaların içine gömülü, 16 adet inline), **kırılan gezinme**. Bu, K16'nın dört üretecinden bağımsız ve ondan büyük: üreteçler onarılsa bile bu linkler geri gelir, çünkü şablonların içinde yazılı.
+**Bu Damla'nın yüzü** — silmedim, elle de düzeltmedim (guard: üreteci değiştir). ~2 saat, ama önce K16 kararı gerek.
+**Cevap:**
+
+### [ ] K19 — Uyuyan 16 alet: silinmedi, envanteri çıkarıldı · 2026-08-17 (TUR 12)
+11B'nin listesi, **hiçbiri silinmedi**, her biri tek satır — *ne yapıyor · neden uyuyor · uyandırmaya değer mi*:
+`accuracy-benchmark.cpp` (kalıp doğruluk kıyası · CMakeLists'te YOK, hiç derlenmiyor · **DEĞER** — H1.0 kırmızısına sayı üretebilir) · `vocab-sweep.cpp` (sözlük süpürme · CMakeLists'te YOK · deploy.sh motor-kanıt setinde ADI GEÇİYOR ama koşamaz, **DEĞER**) · `one-figure-lint.mjs` (tek-figür render denetimi · figür hattı 3.30'da kaldırıldı · hayır) · `bugra/bugra-parity.mjs` (Buğra landmark paritesi · `patterns_real` yolu · **DEĞER**, K1'in tanığı) · `render-grade-nest.mjs` (8-beden nest render · nestpack.py devraldı · hayır) · `komuta.mjs` (vardiya komuta paneli · rabadon devraldı · hayır) · `collect.mjs` (foto toplama · `collect.config.example.json` var, gerçeği yok · hayır) · `emsal-crop.py` (emsal PDF kırpma · girdi PDF'leri diskte yok, H1.1c ile aynı kök · **ŞARTLI**) · `vision-probe.mjs` (görsel LLM sondası · wrapper sınıfı · hayır) · `virtual-sew.js` (tarayıcıda sanal dikiş · walk.py devraldı ve hüküm veriyor · hayır) · `gen-gore-grid/contact.mjs` + `gen-wrap-grid/contact.mjs` (gore/wrap kontakt sayfaları · vitrin hattı, ürün değil · hayır) · `flat-metre/` alt ağacı (flat ölçüm defteri · preview-truth devraldı · hayır).
+**Özet: 16'nın 3'ü uyandırmaya değer** (`accuracy-benchmark`, `vocab-sweep`, `bugra-parity`), 1'i şartlı, 12'si halefi olduğu için uyuyor. **Silme kararı Damla'nın; ben yalnız envanter çıkardım.**
+**Cevap:**
+
 ---
 
 ## KAPANDI
