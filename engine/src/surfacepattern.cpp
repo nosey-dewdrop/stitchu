@@ -1553,6 +1553,89 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         pat.shoulderCarryMM = std::min(pat.frontCarryMM, pat.backCarryMM);
     }
 
+    // ---- H1.0 / TUR 15 — IS THE ENGINE'S "SHOULDER" ALDRICH'S SHOULDER? ----
+    //
+    // 12A measured the gate's shoulder run at 103.93mm (EU38, one shoulder) and
+    // set it against Aldrich p.11's shoulder LENGTH, 12.25 cm at bust 88. It
+    // left the comparison DOGRULANMADI: "neckHalf was never compared with
+    // Aldrich's neck point". This block answers that question with numbers
+    // instead of closing it by assertion, and it prints FOUR lengths because the
+    // two quantities differ in two independent ways and only one of them is a
+    // geometry fault:
+    //
+    //   (1) WHERE THE OUTER END IS. The gate stops at strapHalf = shoulderHalf -
+    //       10mm, which is Aldrich's own sleeveless inset (p.28, "1 cm in from
+    //       the shoulder edge"). Aldrich's 12.25 cm is the SLEEVED block's
+    //       shoulder, neck point to shoulder tip. Like for like, the sleeveless
+    //       comparand is 12.25 - 1.0 = 11.25 cm. Ten of the eighteen missing
+    //       millimetres are this, and they are not a defect.
+    //   (2) WHAT PATH IS BEING MEASURED. Aldrich's shoulder is a line across the
+    //       top of the shoulder; this surface is a TUBE and its top boundary
+    //       runs AROUND the body, so between the same two ends it also sweeps in
+    //       y (measured EU38: +42.5mm front). That sweep is length the gate
+    //       counts and Aldrich's tape never travels. So the honest comparand for
+    //       Aldrich is the run projected into the x-z plane (`xz` below), and
+    //       the gate's own number (`arc3d`) is the INFLATED one.
+    //
+    // Both ends are found on the SOLVED surface x, interpolated between columns,
+    // never snapped — the same discipline K6 needed above and for the same
+    // reason (a zone corner sits inside one column).
+    if (std::getenv("STITCHU_SHOULDER_DEBUG")) {
+        const std::vector<double>& tH = layers[0].topH;
+        for (int hh = 0; hh < 2; ++hh) {  // 0 front, 1 back
+            // walk the quarter from the side seam to centre, collecting the run
+            // between modelx = strapHalf and modelx = neckHalf
+            double arc3d = 0.0, xz = 0.0, ySweep = 0.0;
+            Vec3 pEnd{}, pStart{};
+            bool haveStart = false;
+            const int j0 = hh == 0 ? 0 : NR / 2, j1 = hh == 0 ? NR / 4 : 3 * NR / 4;
+            const int step = 1;
+            Vec3 prev{};
+            double prevMx = 0.0;
+            for (int j = j0; j <= j1; j += step) {
+                const double phi = 2 * kPi * j / NR;
+                const Vec3 p = surf.at(tH[j], phi);
+                const double mx = std::fabs(shoulderHalf * std::cos(phi));
+                if (j > j0) {
+                    auto interp = [&](double target) {
+                        const double t = (prevMx - target) / (prevMx - mx);
+                        return Vec3{prev.x + (p.x - prev.x) * t, prev.y + (p.y - prev.y) * t,
+                                    prev.z + (p.z - prev.z) * t};
+                    };
+                    if (!haveStart && prevMx >= strapHalfMM && mx < strapHalfMM) {
+                        pStart = interp(strapHalfMM);
+                        haveStart = true;
+                    }
+                    if (haveStart) {
+                        const Vec3 a = (prevMx > strapHalfMM) ? pStart : prev;
+                        const Vec3 b = (mx < neckHalfMM) ? interp(neckHalfMM) : p;
+                        const double d3 = dist3(a, b);
+                        const double dxz = std::hypot(a.x - b.x, a.z - b.z);
+                        arc3d += d3;
+                        xz += dxz;
+                        ySweep += std::fabs(a.y - b.y);
+                        if (mx < neckHalfMM) {
+                            pEnd = b;
+                            break;
+                        }
+                    }
+                }
+                prev = p;
+                prevMx = mx;
+            }
+            const double dxModel = strapHalfMM - neckHalfMM;
+            const double modelLen = dxModel * std::hypot(1.0, tanIncl);
+            const double modelFull = (shoulderHalf - neckHalfMM) * std::hypot(1.0, tanIncl);
+            std::fprintf(stderr,
+                         "  SHOULDER %s neckHalf=%.3f strapHalf=%.3f shoulderHalf=%.3f "
+                         "incl=%.4fdeg | arc3d=%.3f xz=%.3f ySweep=%.3f | model(neck->strap)=%.3f "
+                         "model(neck->tip)=%.3f | ends (%.2f,%.2f,%.2f)->(%.2f,%.2f,%.2f)\n",
+                         hh == 0 ? "FRONT" : "BACK ", neckHalfMM, strapHalfMM, shoulderHalf,
+                         std::atan(tanIncl) * 180.0 / kPi, arc3d, xz, ySweep, modelLen, modelFull,
+                         pStart.x, pStart.y, pStart.z, pEnd.x, pEnd.y, pEnd.z);
+        }
+    }
+
     // ---- sub-panel column bounds, shared by both passes ----
     auto boundsFor = [&](const GarmentLayer& L) {
         std::vector<int> b = {0};
