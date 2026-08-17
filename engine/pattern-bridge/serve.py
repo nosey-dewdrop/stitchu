@@ -94,12 +94,33 @@ class AtolyeHandler(SimpleHTTPRequestHandler):
                                  'detail': (proc.stderr or proc.stdout)[-2000:]})
                 return
 
+            # A MISSING MEMBER IS NOT A SMALLER ZIP, IT IS A BROKEN PACKAGE.
+            # TUR 14 sweep: this loop was `if p.exists(): z.write(...)` with no
+            # else. generate.py can exit 0 and still not have written a member —
+            # printpack.py did exactly that in TUR 11 (the line writing the A0
+            # PDF was silenced, the screen said `print_a0 ... MISSING` and the
+            # exit code stayed 0). Under the old loop the buyer got HTTP 200 and
+            # a zip with a hole in it, and in the limit a zip with NOTHING in it,
+            # because zero members present is zero iterations of a silent skip.
+            # The subprocess EXIT CODE was checked; its OUTPUT was not.
+            missing = [arc for src, arc in ZIP_MEMBERS
+                       if not (out_dir / src).exists()]
+            if missing:
+                sys.stderr.write('[atolye-serve] EKSIK PAKET: %s\n'
+                                 % ', '.join(missing))
+                self._json(500, {
+                    'error': 'pattern package incomplete',
+                    'missing': missing,
+                    'detail': 'generate.py exited 0 but did not write %d of the '
+                              '%d declared package members; an incomplete '
+                              'package is never shipped'
+                              % (len(missing), len(ZIP_MEMBERS))})
+                return
+
             buf = io.BytesIO()
             with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as z:
                 for src, arc in ZIP_MEMBERS:
-                    p = out_dir / src
-                    if p.exists():
-                        z.write(p, arc)
+                    z.write(out_dir / src, arc)
                 if flat_svg:
                     # pattern + flat from ONE source: the zip carries the
                     # technical drawing next to the sewing pattern (members

@@ -72,6 +72,17 @@ add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_chec
     ${CMAKE_CURRENT_SOURCE_DIR}/golden-reference.csv
     ${CMAKE_CURRENT_SOURCE_DIR}/GOLDEN-PIN.md)
 
+# generated_ratchet_check: K21. guard.json's protectedPaths are enforced inside
+# rabadon's Edit/Write branch only (native/gate.cpp:2892) — TOOL-shaped, not
+# PATH-shaped — and TUR 13/13C wrote to protected paths from `node /tmp/*.mjs`.
+# The command-line shapes were closed in guard.json (no-shell-write-protected-path,
+# 23/23); a path that lives INSIDE a script cannot be closed there at all. This is
+# the door on the repo side: a generated file whose bytes move without its declared
+# sha256 moving with it, in the same commit, is refused. Mutation proof 2026-08-17:
+# `node /tmp/mutate.mjs` (13C's exact route) is ALLOW at the guard and FAIL(1) here.
+add_test(NAME generated_ratchet_check
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/generated_ratchet_check.sh)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
