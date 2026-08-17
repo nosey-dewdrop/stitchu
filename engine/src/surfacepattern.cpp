@@ -147,9 +147,38 @@ struct GarmentSurf {
             {
                 const double u = (h - waistH) / (topH - waistH);
                 const Section a0 = section(waistH), a1 = section(topH);
-                const Section mid{a0.a + (a1.a - a0.a) * u, a0.bm + (a1.bm - a0.bm) * u,
-                                  a0.bd + (a1.bd - a0.bd) * u};
-                const double d = profile(waistH, 3) + (profile(topH, 3) - profile(waistH, 3)) * u;
+                Section mid{a0.a + (a1.a - a0.a) * u, a0.bm + (a1.bm - a0.bm) * u,
+                            a0.bd + (a1.bd - a0.bd) * u};
+                double d = profile(waistH, 3) + (profile(topH, 3) - profile(waistH, 3)) * u;
+                // ★ H1.0b (Tur 10) — THE SKIM IS AN ENVELOPE, NOT A SHORTCUT.
+                //
+                // The straight run waist -> shoulder is a cone and a cone
+                // develops exactly, which is why it was chosen. But between
+                // those two rings the body is CONVEX in height: waist 124.48,
+                // bust 159.57, shoulder 167.28 (EU38 half-widths). A straight
+                // chord from the first to the last passes UNDER the middle one,
+                // so the garment was 27mm narrower than the bust at bust height
+                // and, where it matters, 19.04mm narrower than the body at
+                // armscye depth (measured, SKIMCOST above: cone 149.678 vs
+                // body+ease 168.718). That is not a slim silhouette, it is
+                // cloth inside the ribcage, and it is why the underarm sat
+                // 8.098mm INSIDE the shoulder point instead of outside it:
+                // there was no width at armscye level for a hole to be cut in.
+                //
+                // Skimming means the cloth does not ENTER the hollows (the
+                // waist), not that it passes through the solids. So the run is
+                // the outer envelope of the two: the cone where the cone is
+                // outside the body, the body where the body is outside the
+                // cone. Below the waist ring nothing here runs, so the single
+                // shared ring and the whole skirt are untouched by construction.
+                const Section b = section(h);
+                const double bodyD = profile(h, 3);
+                if (b.bm > mid.bm) {  // depth and its front/back split travel together
+                    mid.bm = b.bm;
+                    mid.bd = b.bd;
+                }
+                mid.a = std::max(mid.a, b.a);
+                d = std::max(d, bodyD);
                 double px = 0, py = 0;
                 mid.offsetPoint(d, phi, px, py);
                 return {px, py, h};
@@ -1320,6 +1349,21 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                          " | dx=%+.3f dy=%+.3f dz=%+.3f arc3d=%.3f | strapHalf=%.3f shoulderHalf=%.3f\n",
                          u.x, u.z, t.x, t.y, t.z, 360.0 * jTip / NR, t.x - u.x, t.y - u.y,
                          t.z - u.z, arc, strapHalfMM, shoulderHalf);
+            // ★ WHAT THE SKIM COST AT ARMSCYE DEPTH. The run's near end is the
+            // underarm and its x is whatever the skim cone happens to be wide at
+            // that height. The BODY (plus the ease the size already carries) has
+            // its own half-width there, and that number is not a design choice:
+            // cloth cannot be narrower than the body it goes round. Printing the
+            // two side by side is the whole of H1.0b's question.
+            const double zU = tH[0];
+            std::fprintf(stderr,
+                         "  SKIMCOST at underarm z=%.3f: cone x=%.3f  body+ease x=%.3f"
+                         "  deficit=%+.3f | rings:",
+                         zU, surf.at(zU, 0.0).x, surf.atBody(zU, 0.0).x,
+                         surf.atBody(zU, 0.0).x - surf.at(zU, 0.0).x);
+            for (const GarmentSurf::Ring& r : surf.rings)
+                std::fprintf(stderr, " (h=%.1f a=%.2f d=%.2f)", r.h, r.a, r.d);
+            std::fprintf(stderr, "\n");
         }
         pat.shoulderLevelMM = shoulderLevelH;
         pat.shoulderPointXMM = xTarget;
