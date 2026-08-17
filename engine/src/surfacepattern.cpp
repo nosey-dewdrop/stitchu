@@ -341,7 +341,20 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
         const double mid = 0.5 * (lo + hi);
         (fp(mid).first < top.strapHalfMM ? lo : hi) = mid;
     }
-    const double cStrap = 0.5 * (lo + hi);
+    double cStrap = 0.5 * (lo + hi);
+    // ★ H1.0b — THE ARMHOLE'S ANGULAR SPAN, MADE ASKABLE (experiment dial).
+    // Today the scoop begins where the solved shoulder line is strapHalf wide,
+    // and that place is an ACCIDENT of the section's aspect ratio, not a
+    // drafting decision: measured EU34 it lands at phi = 19.7 deg, so the whole
+    // hole opens only 25.9mm front to back. This dial starts the scoop at a
+    // declared half-span in degrees instead. BOTH drafting laws stay intact —
+    // the underarm depth is untouched and the boundary above the scoop is still
+    // the solved shoulder line. Off by default; it exists so the span can be
+    // MEASURED against K1 and against the saddle instead of argued about.
+    if (const char* e = std::getenv("STITCHU_ARMHOLE_SPANDEG")) {
+        const double d = std::atof(e);
+        if (d > 0.0 && d < 89.0) cStrap = std::min(cStrap, std::cos(d * kPi / 180.0));
+    }
     if (c <= cStrap) return fp(c).second;
     const double strapZ = fp(cStrap).second;
     const double u = (c - cStrap) / std::max(1.0 - cStrap, 1e-9);
@@ -1255,6 +1268,34 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             std::fprintf(stderr, "  TOP nape=%.3f shoulderH=%.3f tanIncl=%.5f strap=%.3f neck=%.3f underarmZ=%.3f\n",
                          napeZ, shoulderLevelH, tanIncl, strapHalfMM, neckHalfMM, underarmZ);
         }
+        // ★ H1.0b — WHY THE ARMHOLE IS A LENS AND NOT A HOLE, IN NUMBERS.
+        //
+        // The armhole run is the stretch of the top boundary from the side seam
+        // (phi = 0, the underarm) out to the shoulder point, and the shoulder
+        // point is where the boundary's |x| TURNS OVER (it rises up the scoop
+        // and falls again along the shoulder line into the neck — the same
+        // four-crossing fact K6 records above). Its LENGTH is K1's question;
+        // this prints the three spans that make it. The third one, how far the
+        // hole opens FRONT TO BACK, is the one nobody had measured.
+        if (std::getenv("STITCHU_ARMHOLE_DEBUG")) {
+            const std::vector<double>& tH = layers[0].topH;
+            double arc = 0.0;
+            int jTip = 0;
+            for (int j = 1; j <= NR / 4; ++j) {
+                const Vec3 a = surf.at(tH[j - 1], 2 * kPi * (j - 1) / NR);
+                const Vec3 b = surf.at(tH[j], 2 * kPi * j / NR);
+                if (std::fabs(b.x) < std::fabs(a.x)) break;
+                arc += dist3(a, b);
+                jTip = j;
+            }
+            const Vec3 u = surf.at(tH[0], 0.0);
+            const Vec3 t = surf.at(tH[jTip], 2 * kPi * jTip / NR);
+            std::fprintf(stderr,
+                         "  ARMHOLE underarm x=%.3f z=%.3f | tip x=%.3f y=%.3f z=%.3f phi=%.2fdeg"
+                         " | dx=%+.3f dy=%+.3f dz=%+.3f arc3d=%.3f | strapHalf=%.3f shoulderHalf=%.3f\n",
+                         u.x, u.z, t.x, t.y, t.z, 360.0 * jTip / NR, t.x - u.x, t.y - u.y,
+                         t.z - u.z, arc, strapHalfMM, shoulderHalf);
+        }
         pat.shoulderLevelMM = shoulderLevelH;
         pat.shoulderPointXMM = xTarget;
         pat.frontCarryMM = bestZ[0] - shoulderLevelH;
@@ -1328,6 +1369,21 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
                                      c1 - c0, tot * 180.0 / kPi);
                         for (const DerivedDart& q : dartColumnsFromDeficit(g, opt.maxDartDeg * kPi / 180.0))
                             std::fprintf(stderr, " %d(%.1f°)", q.col, q.loadRad * 180.0 / kPi);
+                        std::fprintf(stderr, "\n");
+                        // ★ H1.0b — THE SADDLE, PER ROW BAND. The dipole the
+                        // last three turns chased (+34.57 / -64.34 deg in the
+                        // top two bands) is a per-BAND number, so it is printed
+                        // per band: a shape hypothesis is only TESTED if this
+                        // line moves, and twice now it has not.
+                        const int gN = static_cast<int>(g.rows.size()) - 1;
+                        std::fprintf(stderr, "  BANDS %s h%d s%zu:", L.isSkirt ? "skirt" : "torso",
+                                     h, s);
+                        for (int i = gN; i >= 1 && i > gN - 6; --i) {
+                            const std::vector<double> db = columnDeficitRows(g, i - 1, i);
+                            double tb = 0;
+                            for (size_t q = 1; q + 1 < db.size(); ++q) tb += db[q];
+                            std::fprintf(stderr, " row%d %+.2f\u00b0", i, tb * 180.0 / kPi);
+                        }
                         std::fprintf(stderr, "\n");
                     }
                 } else {
