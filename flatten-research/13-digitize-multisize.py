@@ -8,8 +8,10 @@
 #
 # 3 SOMUT DUZELTME (onceki turun bulgulari):
 #   (1) YONTEM BIRLIGI — 12 miter kosesi kurmuyordu, 10 kuruyordu; ayni oyugu 430.4 vs 431.5
-#       olcuyorlardi. Burada TEK yontem: miter'li dikis polyline'i, hem kenar hem centik-bolgesi
-#       ayni polyline'dan olculur. (38 sayilari bu yuzden yeniden olculur; fark durustce basilir.)
+#       olcuyorlardi. Burada TEK yontem, hem kenar hem centik-bolgesi ayni yontemle olculur.
+#       ⚠ T12 (17.08): o TEK yontem BOZUKTU (budama+miter, her kenar ~ -2xSA). 10 ve 12 Tur 5'te
+#       duzeltilmisti, 13 unutulmustu. Artik 18-armscye'nin nokta-normali ofseti kullaniliyor;
+#       B/C/D tablolarinin BUTUN dikis-cizgisi sayilari degisti (kesim sayilari degismedi).
 #   (2) CENTIK/BEDEN — 11 sadece 38 rengini biliyordu ve Upper Sleeve'de 0 centik buluyordu.
 #       Burada geometry-full.json'daki pdfColorToSize haritasi kullanilir: her centik KENDI
 #       bedenine atanir, her halka KENDI centiklerini alir.
@@ -17,15 +19,21 @@
 #       kenar-uzunluk imzasi uzerinden cevrimsel hizalamayla diger bedenlere tasinir; hizalama
 #       maliyeti basilir, kose sayisi tutmayan halka ATLANIR (tahmin YOK).
 #
-# CIKTI: patterns_real/geometry/seamgraph.json  +  ekrana grade/anomali raporu.
-# Girdi telifli (satin alinmis Bugra PDF'leri) — cikti da gitignore'da kalir.
+# CIKTI: flatten-research/out-13-seamgraph.json  +  ekrana grade/anomali raporu.
+# Girdi telifli (satin alinmis Bugra PDF'leri) — poligon KOORDINATI cikmiyor, sadece uzunluk/indis.
 import json, math, importlib.util, sys
 from collections import defaultdict
 import numpy as np
 
 ROOT = "/Users/damummyphus/damla_projects_2026/stitchu"
 GEOM = ROOT + "/patterns_real/geometry/geometry-full.json"
-OUT  = ROOT + "/patterns_real/geometry/seamgraph.json"
+# CIKTI YERI DEGISTI (T12, 17.08): eskiden patterns_real/geometry/seamgraph.json'a yaziyordu.
+# patterns_real/ SATIN ALINMIS ve SADECE-OKU (repo yasasi) — arastirma ciktisi oraya yazilmaz.
+# Oradaki dosya HEAD'de duruyor ve `patterns_real/tools/trace-match.py` onu okuyor; o dosyanin
+# `cutMM`/`notches` alanlari BOZUK OFSETTEN ETKILENMEZ (kesim cizgisi ofsete girmiyor), sadece
+# `stitchMM` alani zehirliydi ve `stitchMM`'in bu repoda 13 disinda TEK BIR TUKETICISI YOK.
+OUT  = ROOT + "/flatten-research/out-13-seamgraph.json"
+REF  = ROOT + "/patterns_real/geometry/seamgraph.json"   # sadece CAPRAZ KONTROL icin okunur
 SA, STEP = 10.0, 1.0                      # dikis payi 10mm = satici talimati (s.3/4/7/8/9/11)
 SIZES = ["34", "36", "38", "40", "42", "44", "46", "48"]
 SEED_SIZE = "38"                          # etiketlemesi gozle+sayiyla dogrulanmis beden
@@ -77,71 +85,62 @@ def signed_area(P):
     x, y = P[:, 0], P[:, 1]
     return 0.5*float(np.sum(x*np.roll(y, -1) - np.roll(x, -1)*y))
 
-def inward_offset(Q, d=SA):
-    """her noktayi IC normal boyunca d otele; mesafe-alani budamasiyla ilmekleri at."""
-    m = len(Q)
-    tg = np.roll(Q, -1, axis=0) - np.roll(Q, 1, axis=0)
-    tg /= (np.linalg.norm(tg, axis=1)[:, None] + 1e-12)
-    ccw = signed_area(Q) > 0
-    n = np.column_stack([-tg[:, 1], tg[:, 0]]) if ccw else np.column_stack([tg[:, 1], -tg[:, 0]])
-    O = Q + d * n
-    valid = np.ones(m, bool)
-    for a in range(0, m, 2000):
-        blk = O[a:a+2000]
-        valid[a:a+2000] = np.sqrt(((blk[:, None, :] - Q[None, :, :])**2).sum(-1)).min(1) > d - 0.6
-    return O, valid
+# --------------------------------------------------------- DIKIS CIZGISI (T12)
+# ESKI YONTEM SILINDI — neden: `inward_offset` mesafe-alani budamasi + `line_isect`
+# miter'i. Budama her kenarin UCLARINDAN 17-28 nokta atiyordu => her kenar ~ -2xSA
+# kisaliyordu; miter onu geri getiremiyordu. Tek satirlik curutme: on-orta (CF) kenari
+# DUZ bir cizgidir, paralel otelemek boyunu DEGISTIREMEZ — eski yontem EU38'de
+# 421.0 yerine 401.5 basiyordu (-19.5 = -2xSA). Ayrinti: knowledge/seam-line-offset-2026-08-17.md
+# YERINE: 18-armscye-front-back.py'nin yontemi — nokta-normali ofset, teget +-3mm
+# merkezi farkla, BUDAMA YOK, MITER YOK. Mandal: duz kenar + analitik dL = -d*dtheta.
 
-def line_isect(p1, d1, p2, d2):
-    den = d1[0]*d2[1] - d1[1]*d2[0]
-    if abs(den) < 1e-9: return None
-    t = ((p2[0]-p1[0])*d2[1] - (p2[1]-p1[1])*d2[0]) / den
-    return p1 + t*d1
+def polyline(Q, i, j):
+    """kose i -> kose j arasi nokta dizisi (dairesel)."""
+    m = len(Q); n = (j - i) % m
+    return Q[[(i + k) % m for k in range(n + 1)]]
 
-def stitch_polyline(Q, corners, d=SA):
-    """TEK dogruluk kaynagi: miter'li dikis polyline'i.
-    Doner: (idx[], pts[]) — her dikis noktasi hangi KESIM indeksine karsilik geliyor.
-    Kose noktalarinda miter kesisimi eklenir; gecersiz (budanmis) offset noktalari atlanir."""
-    m = len(Q); O, valid = inward_offset(Q, d); k = len(corners)
-    cset = {c: i for i, c in enumerate(corners)}
-    # her kenarin gecerli offset indeksleri
-    runs = []
-    for i in range(k):
-        a, b = corners[i], corners[(i+1) % k]
-        idx = [(a+t) % m for t in range((b-a) % m + 1)]
-        runs.append([j for j in idx if valid[j]])
-    # miter: kenar i'nin sonu ile kenar i+1'in basi
-    miters = {}
-    for i in range(k):
-        va, vb = runs[i], runs[(i+1) % k]
-        c = corners[(i+1) % k]
-        if len(va) < 3 or len(vb) < 3: continue
-        pa, pa2 = O[va[-1]], O[va[-3]]
-        pb, pb2 = O[vb[0]],  O[vb[2]]
-        da = pa - pa2; db = pb2 - pb
-        na, nb = np.linalg.norm(da), np.linalg.norm(db)
-        if na < 1e-9 or nb < 1e-9: continue
-        X = line_isect(pa, da/na, pb, db/nb)
-        if X is None or np.linalg.norm(X-pa) > 8*d or np.linalg.norm(X-pb) > 8*d:
-            X = 0.5*(pa+pb)
-        miters[c] = X
-    # kesim indeksi sirasinda tek polyline kur
-    idxs, pts = [], []
-    for i in range(m):
-        if i in miters:                       # kose -> miter noktasi
-            idxs.append(i); pts.append(miters[i])
-        elif valid[i] and i not in cset:      # normal gecerli offset noktasi
-            idxs.append(i); pts.append(O[i])
-    return np.array(idxs), np.array(pts)
+def plen(A):
+    return float(np.sum(np.linalg.norm(np.diff(A, axis=0), axis=1)))
 
-def stitch_len(idxs, pts, i0, i1, m):
-    """kesim indeksi araligi [i0,i1] (cevrimsel) icin DIKIS cizgisi uzunlugu."""
-    span = (i1 - i0) % m
-    rel = (idxs - i0) % m
-    sel = np.where(rel <= span)[0]
-    if len(sel) < 2: return 0.0
-    order = sel[np.argsort(rel[sel])]
-    P = pts[order]
-    return float(np.sum(np.linalg.norm(np.diff(P, axis=0), axis=1)))
+def tangents(A, win_mm=3.0, step=STEP):
+    """+-win_mm merkezi farkla teget (tek segmentin gurultusu ICERI GIRMEZ)."""
+    k = max(1, int(round(win_mm / step))); n = len(A)
+    lo = np.clip(np.arange(n) - k, 0, n - 1); hi = np.clip(np.arange(n) + k, 0, n - 1)
+    T = A[hi] - A[lo]
+    nrm = np.linalg.norm(T, axis=1, keepdims=True); nrm[nrm < 1e-12] = 1.0
+    return T / nrm
+
+def total_turn_deg(A):
+    T = tangents(A)
+    ang = np.unwrap(np.arctan2(T[:, 1], T[:, 0]))
+    return math.degrees(ang[-1] - ang[0])
+
+def offset_polyline(A, d, ccw):
+    """nokta-normali ile d kadar ICERI ofset (miter yok, budama yok)."""
+    T = tangents(A)
+    N = np.column_stack([-T[:, 1], T[:, 0]]) * (1.0 if ccw else -1.0)
+    return A + N * d
+
+def seam_len(Q, ccw, i0, i1, d=SA):
+    """kose i0 -> i1 arasi DIKIS cizgisi uzunlugu (ic ofset)."""
+    A = polyline(Q, i0, i1)
+    if len(A) < 2: return 0.0
+    return plen(offset_polyline(A, d, ccw))
+
+def seam_len_analytic(Q, ccw, i0, i1, d=SA):
+    """analitik mandal: L' = INTEGRAL(1 - d*kappa) ds = L - d*(toplam isaretli donus).
+    ⚠ ISARET SARILIMA BAGLI: ic normal CCW'de tegetin SOLU, CW'de SAGI. 18-armscye'nin
+    mandali bu carpani tasimiyor (orada iki parca da CCW oldugu icin hic yakalanmadi);
+    Lower/Upper Sleeve poligonlari TERS SARIM ve carpansiz formul 2*d*dtheta kadar
+    (EU38'de 14.2 / 20.9mm) sahte sapma basiyordu. Kusur mandaldaydi, ofsette degil."""
+    A = polyline(Q, i0, i1)
+    if len(A) < 2: return 0.0
+    return plen(A) - (1.0 if ccw else -1.0) * d * math.radians(total_turn_deg(A))
+
+# --- SENTETIK MANDAL: duz kenari otele, boyu DEGISMEMELI. Eski yontem bunu gecemezdi.
+_str = np.column_stack([np.arange(0.0, 400.0 + 1e-9, STEP), np.zeros(int(400.0 / STEP) + 1)])
+_off = plen(offset_polyline(_str, SA, True))
+assert abs(_off - 400.0) < 1e-6, f"DUZ-KENAR MANDALI DUSTU: {_off:.6f} != 400.0"
 
 # --------------------------------------------------- etiket tasima (hizalama)
 def edge_fracs(corners, m):
@@ -199,15 +198,18 @@ R = {(x["pattern"], x["piece"], x["sizeGuess"]): x for x in G["rings"] if x["rin
 pieces = sorted({(p, pc) for (p, pc, s) in R})
 
 print("=" * 104)
-print("13 — BEDEN-BAGIMSIZ DIJITALLESTIRICI   (SA=10mm, tek yontem: miter'li dikis polyline'i)")
+print("13 — BEDEN-BAGIMSIZ DIJITALLESTIRICI   (SA=10mm, dikis cizgisi = 18'in nokta-normali ofseti)")
+print("     DUZ-KENAR MANDALI: 400.0000mm duz kenar, %.1fmm ic ofset -> %.4fmm (fark %.2e)" % (SA, _off, abs(_off - 400.0)))
 print("=" * 104)
 print("centik cikarimi (renk -> beden):")
 NOTCH = load_notches(G)
 
-graph = {"meta": {"sa_mm": SA, "step_mm": STEP, "method": "miter stitch polyline",
+graph = {"meta": {"sa_mm": SA, "step_mm": STEP,
+                  "method": "point-normal inward offset, tangent +-3mm, NO pruning, NO miter (18)",
                   "seed_size": SEED_SIZE, "source": "geometry-full.json (PDF vektor, mm)"},
          "pieces": {}}
 skipped = []
+ANALYTIC = []          # (pat, pc, sz, isim, numerik_dikis, analitik_dikis) — T12 mandali
 
 for (pat, pc) in pieces:
     seed = R.get((pat, pc, SEED_SIZE))
@@ -230,13 +232,15 @@ for (pat, pc) in pieces:
             continue
         rot, cost = align_to_seed(seed_f, edge_fracs(cs, m))
         cs_al = cs[rot:] + cs[:rot]                      # 38 ile ayni semantik sirada
-        idxs, pts = stitch_polyline(Q, cs_al)
+        ccw = signed_area(Q) > 0
         nt = notches_on_ring(NOTCH.get((pat, sz), []), Q)
         edges = []
         for i, nm in enumerate(names):
             a, b = cs_al[i], cs_al[(i+1) % len(cs_al)]
-            cut = float(np.sum(np.linalg.norm(np.diff(Q[[(a+t) % m for t in range((b-a) % m + 1)]], axis=0), axis=1)))
-            st = stitch_len(idxs, pts, a, b, m)
+            cut = plen(polyline(Q, a, b))
+            st = seam_len(Q, ccw, a, b)
+            an = seam_len_analytic(Q, ccw, a, b)
+            ANALYTIC.append((pat, pc, sz, nm, st, an))
             en = [int(v) for v in nt if (v - a) % m <= (b - a) % m and v not in (a, b)]
             edges.append({"name": nm, "i0": int(a), "i1": int(b),
                           "cutMM": round(cut, 2), "stitchMM": round(st, 2),
@@ -251,6 +255,47 @@ print(f"islenen halka: {sum(len(v) for v in graph['pieces'].values())} / {len(R)
 if skipped:
     print("ATLANAN (tahmin YOK, durustce disarida):")
     for s in skipped: print("   ", s)
+
+# ------------------------------------------------- T12 MANDALLARI (dikis cizgisi)
+print("\n" + "=" * 104)
+print("0) DIKIS-CIZGISI MANDALLARI (T12) — analitik dL = -d*dtheta ve HEAD'deki seamgraph ile kesim karsilastirmasi")
+print("=" * 104)
+_named = [r for r in ANALYTIC if r[0] == "locket_top" and r[1] in
+          ("Front Body", "Back Body", "Upper Sleeve", "Lower Sleeve")]
+for lbl, rows in (("locket_top ISIMLENDIRILMIS (K9/T14 hatti)", _named), ("TUM kenarlar", ANALYTIC)):
+    rows = sorted(rows, key=lambda r: -abs(r[4] - r[5]))
+    print("  %-38s %3d olcum, en kotu sapma %.4fmm" % (lbl, len(rows), abs(rows[0][4] - rows[0][5])))
+    for r in rows[:3]:
+        print("      %-34s EU%-3s %-24s numerik %8.3f analitik %8.3f fark %+7.3f"
+              % (r[0] + "/" + r[1], r[2], r[3], r[4], r[5], r[4] - r[5]))
+print("  NOT: dL=-d*dtheta mandali TEK bir teget dalinda gecerli; 'EXTRA-TL' (deftere girmeyen,")
+print("       hic incelenmemis parca) ve corset kupleri sivri uclarda teget sarmali yapiyor.")
+_T14 = {"OYUK-on", "OYUK-arka", "KAPAK(oyuga giden)", "UST-kenar(buzgulu)"}
+_t14 = sorted([r for r in _named if r[3] in _T14], key=lambda r: -abs(r[4] - r[5]))
+print("  T14 KENARLARI (oyuk + kapak + puf ust kenari), %d olcum, en kotu sapma %.4fmm:"
+      % (len(_t14), abs(_t14[0][4] - _t14[0][5])))
+for r in _t14[:4]:
+    print("      %-14s EU%-3s %-22s numerik %8.3f analitik %8.3f fark %+7.4f"
+          % (r[1], r[2], r[3], r[4], r[5], r[4] - r[5]))
+try:
+    _ref = json.load(open(REF))["pieces"]
+    dcut = dnot = 0; ncmp = 0; mx = 0.0
+    for key, szs in graph["pieces"].items():
+        for sz, dd in szs.items():
+            r = _ref.get(key, {}).get(sz)
+            if not r: continue
+            for e, re_ in zip(dd["edges"], r["edges"]):
+                ncmp += 1
+                if abs(e["cutMM"] - re_["cutMM"]) > 1e-9:
+                    dcut += 1; mx = max(mx, abs(e["cutMM"] - re_["cutMM"]))
+                if e["notches"] != re_["notches"]: dnot += 1
+    print("  HEAD'deki patterns_real/geometry/seamgraph.json ile %d kenar karsilastirildi:" % ncmp)
+    print("    cutMM farki olan kenar: %d (en buyuk %.4fmm)   notches farki olan kenar: %d" % (dcut, mx, dnot))
+    print("    -> KESIM CIZGISI ve CENTIKLER OFSET HATASINDAN ETKILENMEDI; K1 bandi (h10_gate_check")
+    print("       kBugraArmholeMM, trace-match.py cutMM'den) BU DUZELTMEDEN ETKILENMEZ." if dcut == 0
+          else "    -> !! KESIM CIZGISI DEGISTI, K1 bandi YENIDEN INCELENMELI")
+except FileNotFoundError:
+    print("  (REF bulunamadi, capraz kontrol atlandi)")
 
 # ---------------------------------------------------------------- raporlama
 def E(key, sz, nm):
@@ -334,18 +379,17 @@ for s in SIZES:
         Qf, _ = resample(np.array(R[(LT, "Front Body", s)]["polygon"], float))
         Qb, _ = resample(np.array(R[(LT, "Back Body", s)]["polygon"], float))
         Qc, _ = resample(np.array(R[(LT, "Lower Sleeve", s)]["polygon"], float))
-        csf = find_corners(Qf, turning(Qf)); csb = find_corners(Qb, turning(Qb)); csc = find_corners(Qc, turning(Qc))
-        If, Pf = stitch_polyline(Qf, csf); Ib, Pb = stitch_polyline(Qb, csb); Ic, Pc = stitch_polyline(Qc, csc)
+        wf, wb, wc = signed_area(Qf) > 0, signed_area(Qb) > 0, signed_area(Qc) > 0
         mf, mb, mc = len(Qf), len(Qb), len(Qc)
         if not fe["notches"] or not be["notches"] or len(ce["notches"]) < 2: raise ValueError
         fn = fe["notches"][0]; bn = be["notches"][-1]
-        f_under = stitch_len(If, Pf, fe["i0"], fn, mf)          # koltukalti -> centik
-        b_under = stitch_len(Ib, Pb, bn, be["i1"], mb)          # centik -> koltukalti
-        f_crown = stitch_len(If, Pf, fn, fe["i1"], mf)
-        b_crown = stitch_len(Ib, Pb, be["i0"], bn, mb)
+        f_under = seam_len(Qf, wf, fe["i0"], fn)                # koltukalti -> centik
+        b_under = seam_len(Qb, wb, bn, be["i1"])                # centik -> koltukalti
+        f_crown = seam_len(Qf, wf, fn, fe["i1"])
+        b_crown = seam_len(Qb, wb, be["i0"], bn)
         cn = sorted(ce["notches"]); a, b = ce["i0"], ce["i1"]
-        zA = stitch_len(Ic, Pc, a, cn[0], mc)                   # A ucu -> ilk centik
-        zB = stitch_len(Ic, Pc, cn[-1], b, mc)                  # son centik -> B ucu
+        zA = seam_len(Qc, wc, a, cn[0])                         # A ucu -> ilk centik
+        zB = seam_len(Qc, wc, cn[-1], b)                        # son centik -> B ucu
         cap = ce["stitchMM"]
         # en iyi eslesme: hangi uc one gidiyor
         o1 = abs(zB - f_under) + abs(zA - b_under)
