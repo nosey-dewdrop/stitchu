@@ -420,12 +420,85 @@ def build_nests(patterns, out_dir):
 # katman-lint bulgusunun aynisi (korunan sey yoksa kural sessizce atlanir).
 # Asagisi sayimdir, esik degil: hicbir tolerans gevsetilmedi, olculen uc sey
 # aynen duruyor, sadece "olculecek sey yok" hali artik bir GECME degil.
+# TUR 13 (17 Agu) — BU KAPI HIC KOSMUYORDU: `d['summary']['fail']` KeyError.
+# walk.py'nin `summary` semasi duz sayaclardan (`within_1mm`/`gathered_pass`/
+# `fail`) `by_status` sozlugune tasindi; gradeset iki yerde (426 verdict, 485
+# fmt_report) eski adi okumaya devam etti. fmt_report once cagrildigi icin
+# `KeyError: 'within_1mm'` ile cokuyor, rapor DISKE HIC YAZILMIYORDU ve bu
+# hukum satiri da hicbir zaman degerlendirilemiyordu. Cokme durusttu (sahte
+# yesil yok) ama grade raporu 8 bedeni uretip cope atiyordu.
+#
+# Ayni okumada ikinci ve daha buyuk delik: bu kapi walk.py'nin ALTI hukum
+# sinifindan (seam · armhole · closed_contour · self_intersection ·
+# mirror_panels · mirror_seams) SADECE birincisini sayiyordu, ve walk'un
+# BOS TAPU sayimini (panel 0 / dikis cifti 0) hic sormuyordu. Kendini kesen
+# panel TUR 8'de gercek bir kusurdu ve bu kapidan gecerdi. Yeni esik
+# ICAT EDILMEDI: her bedenin kendi seam-report.json'u walk.gate()'e — walk'un
+# KENDI hukmune — geri veriliyor, sadece 8 bedene toplaniyor.
+def size_gates(deed):
+    """walk.py's own verdict, re-run per size on that size's full report."""
+    return [walklib.gate(d) for d in deed]
+
+
+# Schema guard: the drift above was silent for as long as it took someone to
+# run the script. A name that walk.py no longer writes must be a HUKUM, not a
+# traceback and not a zero.
+_DEED_KEYS = ('pairs', 'armholes', 'closed_contour', 'self_intersection',
+              'mirror_panels', 'mirror_seams', 'summary')
+_SUMMARY_KEYS = ('pairs', 'by_status', 'max_diff_mm')
+
+
+def deed_schema_faults(deed):
+    """Return ['EU38: summary.by_status yok', ...] for every drifted report."""
+    out = []
+    for i, d in enumerate(deed):
+        label = SIZES[i] if i < len(SIZES) else f'#{i}'
+        for k in _DEED_KEYS:
+            if k not in d:
+                out.append(f'{label}: {k} yok')
+        s = d.get('summary') or {}
+        for k in _SUMMARY_KEYS:
+            if k not in s:
+                out.append(f'{label}: summary.{k} yok')
+    return out
+
+
+def status_counts(d):
+    """(pairs, PASS, GATHERED-PASS, FAIL, other) — `other` so the row sums."""
+    bs = d['summary']['by_status']
+    npass = bs.get('PASS', 0)
+    ngath = bs.get('GATHERED-PASS', 0)
+    nfail = bs.get('FAIL', 0)
+    other = sum(v for k, v in bs.items()
+                if k not in ('PASS', 'GATHERED-PASS', 'FAIL'))
+    return d['summary']['pairs'], npass, ngath, nfail, other
+
+
 def verdict(deed, mono_counts, det_equal, struct_skipped=()):
     """Return the list of (name, count) findings that make this run RED."""
     red = []
-    seam_fail = sum(d['summary']['fail'] for d in deed)
-    if seam_fail:
-        red.append(('dikis tapusu FAIL (walk.py, tolerans 1mm)', seam_fail))
+    drift = deed_schema_faults(deed)
+    if drift:
+        red.append((f'SEMA: dikis tapusu walk.py semasini tasimiyor '
+                    f'({"; ".join(drift)}) — okunamayan alan sifir '
+                    f'sayilamaz', len(drift)))
+        # Every count below reads those fields; judging on a drifted report
+        # would be inventing zeroes. Say so and stop.
+        return red
+
+    gates = size_gates(deed)
+    per_class = {}
+    for g in gates:
+        for k, n in g['verdicts'].items():
+            per_class[k] = per_class.get(k, 0) + n
+    for k in sorted(per_class):
+        if per_class[k]:
+            red.append((f'walk.py hukum-FAIL [{k}] (tolerans 1mm)',
+                        per_class[k]))
+    bos_tapu = [f'{SIZES[i]}: {c}' for i, g in enumerate(gates)
+                for c in g['census']]
+    if bos_tapu:
+        red.append((f'BOS TAPU ({"; ".join(bos_tapu)})', len(bos_tapu)))
     if mono_counts.get('IHLAL'):
         red.append(('monotonluk IHLAL (girth-only grade\'de AZALMA)',
                     mono_counts['IHLAL']))
@@ -477,18 +550,35 @@ def fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
     L.append('')
 
     L.append('1) DIKIS TAPUSU BEDEN BAZINDA (walk.py, tolerans 1mm)')
+    drift = deed_schema_faults(deed)
+    if drift:
+        # The table below reads walk.py's fields by name. If the names moved,
+        # print the drift instead of a table of invented numbers.
+        L.append('SEMA IHLALI — tablo basilamadi, alanlar walk.py semasinda '
+                 'degil:')
+        for f in drift:
+            L.append(f'  {f}')
+        L.append('')
+        return '\n'.join(L)
+    # `diger` = REPORTED/UNVERIFIABLE/... — carried as its own column so the
+    # row sums to `cift`; a status walk.py adds tomorrow cannot vanish here.
     L.append(f"{'beden':<7} {'cift':>5} {'PASS':>5} {'GATHERED':>9} "
-             f"{'FAIL':>5} {'max fark mm':>12}")
-    L.append('-' * 50)
+             f"{'FAIL':>5} {'diger':>6} {'max fark mm':>12}")
+    L.append('-' * 58)
+    fails = []
     for i, d in enumerate(deed):
-        s = d['summary']
-        L.append(f"{SIZES[i]:<7} {s['pairs']:>5} {s['within_1mm']:>5} "
-                 f"{s['gathered_pass']:>9} {s['fail']:>5} "
-                 f"{s['max_diff_mm']:>12.2f}")
-    fails = [d['summary']['fail'] for d in deed]
+        npair, npass, ngath, nfail, other = status_counts(d)
+        fails.append(nfail)
+        L.append(f"{SIZES[i]:<7} {npair:>5} {npass:>5} "
+                 f"{ngath:>9} {nfail:>5} {other:>6} "
+                 f"{d['summary']['max_diff_mm']:>12.2f}")
     L.append(f'FAIL serisi 34->48: {fails} — '
              + ('bedenle BUYUYOR' if fails[-1] > fails[0]
                 else 'bedenle buyumuyor (sabit/dalgali)'))
+    gates = size_gates(deed)
+    L.append('walk.py hukum-FAIL (alti sinif, beden toplami): ' + '   '.join(
+        f'{k} {sum(g["verdicts"][k] for g in gates)}'
+        for k in sorted(gates[0]['verdicts'])) if gates else '')
     L.append('')
 
     L.append('2) MONOTONLUK — her panelin her kenari, 34->48 uzunluk (mm)')
