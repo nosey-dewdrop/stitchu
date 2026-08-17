@@ -24,7 +24,17 @@ python3 "$ROOT/scripts/katman-lint.py" --strict || FAILS=$((FAILS+1))
 "$VENVPY" "$ROOT/engine/pattern-bridge/gen-shape-ratios.py" --check || FAILS=$((FAILS+1))
 
 adim "H1b — KARAR DEFTERİ: yazılmış ama yapılmamış karar var mı"
-python3 "$ROOT/scripts/karar-lint.py" || true
+# T17/TUR 9 (17 Ağu): burası `|| true` idi — karar defteri linti HİÇBİR koşulda
+# arıza sayılmıyordu. Kasıt/unutma ayrımı ölçüldü (karar-lint.py başlığında
+# yazılı): rapor kipi KASITLI (3 yapılmamış karar bilinen açık cephe), ama
+# `|| true` bundan fazlasını yutuyordu — defterin KAYBOLMASI da yeşil geçiyordu.
+# Artık çıkış kodu ayrışıyor: 0/1 rapor, 2 alet arızası (defter yok/boş/bozuk),
+# 3 ratchet kırıldı (yapılmamış karar tavanı aştı). 2 ve 3 ARIZADIR.
+python3 "$ROOT/scripts/karar-lint.py"; KL=$?
+if [ "$KL" -ge 2 ]; then
+  echo "  FAIL H1b — karar defteri (exit $KL: 2=alet arızası, 3=ratchet kırıldı)"
+  FAILS=$((FAILS+1))
+fi
 
 adim "H2/L2 — shell + drape (ctest alt kümesi)"
 if [ -d "$ROOT/engine/build" ]; then
