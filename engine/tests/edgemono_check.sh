@@ -33,5 +33,12 @@ for S in EU34 EU36 EU38 EU40 EU42 EU44 EU46 EU48; do
   SPECS="$SPECS $OUT/$S.json"
 done
 
+# T15 SAYIM. edgemono_check.py'ın kendi tabanı VAR ama "en az bir kenar
+# yargılandı" tabanı — ölçüldü: sekiz bedenin sekizi birden 2 panele düşse
+# kenarlar hâlâ yargılanır ve o taban GEÇER. Panel sayısının kendisi ayrı bir
+# hüküm, ve çapraz sabitlik burada da gerekiyor.
+# shellcheck disable=SC2086
+"$PY" "$ROOT/engine/tests/spec_census.py" 8 $SPECS
+
 # shellcheck disable=SC2086
 "$PY" "$ROOT/engine/pattern-bridge/edgemono_check.py" $SPECS

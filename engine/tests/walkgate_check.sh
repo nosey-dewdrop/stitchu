@@ -33,8 +33,30 @@ fi
 
 RED=0
 TOTAL=0
+SPECS=""
 for S in EU34 EU36 EU38 EU40 EU42 EU44 EU46 EU48; do
   "$BIN" "$S" > "$OUT/$S.json" 2>"$OUT/$S.motor.txt"
+  SPECS="$SPECS $OUT/$S.json"
+done
+
+# ---------------------------------------------------------------- 0. SAYIM
+# T15. walk.py "elimdeki panelleri yargıla" diye yazılmış bir hakem: elde panel
+# yoksa yargı da yoktur ve bu kapı hüküm-FAIL 0 okuyup YEŞİL basar. 13B deliğin
+# yarısını (bir bedende panel düşmesi) çapraz kontrolle kapalı ölçtü ve kalan
+# yarıyı kendi notuna yazdı: "8 bedenin 8'i birden 2 panele düşse çapraz-beden
+# tutarlılığı da yakalamaz." Sekiz beden birden aynı yanlışı yaparsa
+# birbirleriyle kusursuz tutarlıdır. Taban, karşılaştırdığı şey diğer bedenler
+# değil GİYSİNİN KENDİSİ olduğu için tekdüze çöküşü yakalayan tek hükümdür.
+# Taban 8 = 4 çeyrek gövde + 4 çeyrek etek, tek-yüzey hattının inşasından;
+# eşik değil, bu giysinin parça sayısı. Burada gevşetilmez.
+# shellcheck disable=SC2086
+if ! "$PY" "$ROOT/engine/tests/spec_census.py" 8 $SPECS; then
+  echo "walkgate_check: spec sayımı düştü — yargılanacak panel yoksa" >&2
+  echo "walkgate_check: 'hüküm-FAIL 0' bir GEÇME değildir." >&2
+  exit 1
+fi
+
+for S in EU34 EU36 EU38 EU40 EU42 EU44 EU46 EU48; do
   if "$PY" "$ROOT/engine/pattern-bridge/walk.py" "$OUT/$S.json" \
        --out-txt "$OUT/$S.walk.txt" > "$OUT/$S.walk.log" 2>&1; then
     RC=0

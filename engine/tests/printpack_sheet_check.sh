@@ -36,6 +36,14 @@ mkdir -p "$D"
 "$SP" EU38 >"$D/stitchu_specification.json" 2>"$TMP/motor.txt" \
   || { say "FAIL: surface-pattern EU38 çalışmadı"; exit 1; }
 
+# T15 SAYIM. Bu mandal tek beden (EU38) koşuyor, yani çapraz-beden sabitliği
+# burada yok — geriye kalan tek koruma MUTLAK TABAN. Aşağıdaki bütün grep'ler
+# basılan PDF'in METNİNE bakıyor; talimat sayfası, kumaş sayfası ve fermuar
+# satırı panel sayısından bağımsız basılıyor, yani 2 panelli bir spec bu
+# mandalın çoğunu GEÇER. Taban o yüzden burada da duruyor.
+"$PY" "$ROOT/engine/tests/spec_census.py" 8 "$D/stitchu_specification.json" \
+  || { say "FAIL: spec sayımı düştü — panel tabanı tutmuyor"; exit 1; }
+
 # Bu mandalın konusu açıklık: spec açıklık taşımıyorsa test yargılayacak bir
 # şey bulamaz. Bunu "geçti" saymak, tam olarak T10'un kaçtığı delik.
 "$PY" - "$D/stitchu_specification.json" <<'EOF' || exit 1
