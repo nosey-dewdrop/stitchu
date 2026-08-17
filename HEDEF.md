@@ -278,7 +278,7 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 "Sağlam nokta" branch değil, **git tag**. `scripts/taban.sh` **tam yeşil** bir mühürde `taban-<etiket>` tag'i atar ve push'lar (`FAILS=0` şartına bağlı, kod satır 200'ün altında). Satılabilir/dönülebilir noktalar **tag listesidir**; bir şey bozulursa **dönüş adresi son tag'dir**. `.vardiya/state.json` → `son_saglam_tag`.
 Var olan tag'in üzerine yazılmaz — mühür geçmişi silinmez.
 
-## PUSH KAPISI — İLAN EDİLEN KIRMIZILAR (3)
+## PUSH KAPISI — İLAN EDİLEN KIRMIZILAR (5)
 
 `rabadon` `pushGate`'i suite tam yeşil olmadan push'u blokluyor. Binary **commit mesajını okumuyor** (`gate.cpp:2823`; bilinen üst-seviye anahtarlar sabit liste) — "KIRMIZI öneki" kuralı guard'a yazılamaz, uydurma anahtar sessizce yok sayılırdı. Yerine **isimle dışlama**, üç ad, üçünün de gerekçesi ve **bitiş şartı** `.rabadon/guard.json` → `pushGate._ilan_listesi`'nde yazılı.
 
@@ -287,11 +287,14 @@ Var olan tag'in üzerine yazılmaz — mühür geçmişi silinmez.
 | `h10_gate_check` | H1.0'ın kabul kapısı, **kasten** kırmızı doğdu. Kendini geçiren kapı kapı değildir | H1.0 yeşillenince |
 | `style_check` | **T17: bu test BOŞ KOŞUYORDU.** `engine/STYLE-PIN/` diskte hiç yok, test `PASS (nothing to enforce)` basıp yeşil görünüyordu. Artık dürüstçe FAIL ediyor — kırmızı bir gerileme **değil**, sahte yeşilin sonu | 31 stilin pini Damla onayından geçince (**K15**) |
 | `figure_check` | **T17: 31 stilin 7'si son `else` dalından KOŞULSUZ `OK` alıyordu** (tanık: `dress_bandeau_circle` 0.872 — figürel bandın üstünde, boxy eşiğinin altında, iki yasanın da dışında, yine "ok") | 7 tasarımın pini Damla onayından geçince (**K15**) |
+| `preview_truth_check` | **TUR 9: landmark ratchet'inin %61.3'ü SESSİZDİ.** 31 stil × 10 landmark = 310 yargı yuvasının **190'ı** "honest skip" ile atlanıyordu ve **11 stil (princessSeam ailesinin TAMAMI) 0/10 yargı alıyordu** — tek kök, önü Center/Side Front'a bölünen stillerde draft'ta `Bodice Front` olmaması → `D.bustHalf` undefined → ÇAPA yok → on landmark'ın hepsi düşüyor. Atlama artık GEREKÇE istiyor; `bustHalf`/`waistHalf` hiçbir koşulda atlanamaz. Eşik (%8) ve `landmarkAllow` DEĞİŞMEDİ | 11 princess stili gerçek bir çapa alınca (Center Front + Side Front'tan `bustHalf`, prenses dikiş payını çift saymadan). **Ölçüm işi, Damla kararı değil.** Bugün **90 FAIL / 11 stil** |
+| `contract_check` | **TUR 9: 9 kontrolün 1'i bu makinede HİÇ koşmuyordu** (58-set manifest yok → "skipped honestly"). Ölçüldü ve **adı yanlış çıktı**: o bir gizlilik taraması değil KAPSAM taramasıydı; manifest'siz eşdeğeri YOK ve uydurulmadı. Yerine adını taşıdığı sınırın ölçülebilir kısmı kuruldu (`contract/gizlilik.json` + kontrol 5b) ve **kurulduğu anda kırmızı doğdu**: `patterns_real/` **49 dosyayla HEAD'de takipli** (8 satın alınmış BugraPatterns PDF'i + 25 jpg, ~65.5 MB) ve repo **bugün PUBLIC** | `DAMLA-KUYRUK` **K1** cevaplanıp `patterns_real/` ağaçtan çıkınca. Eşik/tolerans/pin yok: sayılan şey "takipli telifli dosya", hedef **0**, bugün **49**. Geçmişi yeniden yazmak **Damla'nın kararıdır** |
 
-**Dışlama tek tek AD regexi** → başka bir test kırmızıya dönerse push **YİNE bloke olur**, gerileme gizlenemez. Ölçüm 17.08: `97% tests passed, 3 tests failed out of 91` — düşen tam olarak bu üçü, **dördüncü yok**.
-**Kapıların hiçbirinin eşiği/toleransı/tanımı değişmedi.**
+**Dışlama tek tek AD regexi** → başka bir test kırmızıya dönerse push **YİNE bloke olur**, gerileme gizlenemez.
+Ölçüm 17.08 TUR 9: dışlamalı **`100% tests passed, 0 tests failed out of 87`** · tam süit **`95% tests passed, 5 tests failed out of 92`** — düşen tam olarak bu beşi, **altıncı yok**.
+**Kapıların hiçbirinin eşiği/toleransı/tanımı değişmedi.** İki yeni kırmızının ikisi de gerileme değil, **sahte yeşilin sonu**.
 
-⚠ **AJANLARA:** `ctest` koşarken **iki sayıyı da** raporla — dışlamalı (`-E '^(h10_gate_check|style_check|figure_check)$'`) ve **tam süit**. Tek sayıya bakmak sahte yeşilin nasıl doğduğunun ta kendisidir.
+⚠ **AJANLARA:** `ctest` koşarken **iki sayıyı da** raporla — dışlamalı (`-E '^(h10_gate_check|style_check|figure_check|preview_truth_check|contract_check)$'`) ve **tam süit**. Tek sayıya bakmak sahte yeşilin nasıl doğduğunun ta kendisidir.
 
 ## TUR — tekrarlanan tek adım
 
