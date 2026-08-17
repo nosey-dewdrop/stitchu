@@ -174,6 +174,40 @@ Sevk edilen motorda ilk koşu (`d336514`, `engine/build-15a` Release):
 
 **ctest** (`engine/build-15a`, Release): dışlamalı **`100% tests passed, 0 tests failed out of 89`** · tam süit **`95% tests passed, 5 tests failed out of 94`** — düşen tam olarak ilan edilen beşi (`style_check`, `contract_check`, `preview_truth_check`, `figure_check`, `h10_gate_check`). Gerileme yok.
 
+## TUR 16 — KARARIM ÖLÇÜLDÜ VE GERİ ALINDI, VE ETEĞİN KLOŞU HİÇ GRADELENMİYOR
+
+### ★ OMUZ GEÇİŞİ: DOĞRUYDU, ÇALIŞTI, YİNE DE GERİ ALINDI (on üçüncü emsal)
+Geçiş yapıldı (`943f313`) ve **omuz Aldrich bandına GİRDİ**: sapma **−19.3…−10.6mm (8/8 kısa) → +5.2…−2.9mm**. Kırışık açıkken EU38 **91.69 → 109.01mm**, Aldrich kolsuz 112.5'e karşı **%18.5 kısa → %3.1 kısa**. **K5-çevre 8/8 KAPANDI** (4 FAIL → 0). K2 adımları düzleşti (`+9.24/+8.03/+6.84/+5.36/+4.88/+5.17/+9.54` → **`+6.50…+6.97`**).
+
+**GERİ ALMA SEBEBİ h10'da DEĞİL:** geçişten sonra **üç sevk edilen kapı birden kırmızı** — `edgemono_check` · `walkgate_check` (Tur 14'ten beri yeşil) · `cutplan_check` — ve **üçü de TEK hükümden**: `spec_census` çapraz **dikiş sayısı sabitliği** (29/29/27/27/27/27/26/26). Kanıt aynı build'de iki yön: geçiş öncesi `3/3 Passed`, sonrası `3/3 FAIL`. Ve h10 toplamı **düşmedi (44→44)**. Kural açıktı, geri alındı (`fd20267`), hükümler taban ile **satır satır özdeş**.
+
+**Kararım ölü değil — önündeki iki blokör artık ADIYLA belli**, ikisi de `surfacepattern.cpp`'de: (a) dikiş sayısı sabitliği, (b) K6'nın *"never reached: nearest column"* **fallback dalı** *"yükseği tut"* kuralını uygulamıyor (EU42 sorgu x=180.0, sınır x=179.895'te **armhole dalında** dönüyor; komşu kolon x'te 0.45mm ama z'de **18.5mm** ayrı). O iki halka kapanırsa geçiş **tek token'lık** ve K5-çevre 8/8 hazır bekliyor.
+
+★ **`shoulderInclDeg` sekiz bedende de 21.6777° — HİÇ GRADE EDİLMİYOR.** Omzun eğimi bedene göre sabit; ölçüm değil, tek bir vücuttan taşınmış tek sayı.
+★ **`shape-ratios.json` `width_cm` sekiz ölçüm DEĞİL:** adımlar tam +1.0000cm ve sekizinin de ondalık kuyruğu `.4568` — **EU44'e çapalanmış tek sayının doğrusal uzatması.** Kolonun 8/8 tek yönde sapmasının mekanik sebebi bu.
+★ **Kolon flip'i bir YER değil:** geçiş öncesi flip EU40→EU42, sonrası EU48'e kayıyor, probda tamamen kayboluyor. **Omuz kolonunun grade adımının kolon ızgarasına kuantalanması.** `docs/H1.0-KAPI.md` §4.3'ün *"elendi"* hükmü ölü.
+
+### ★ KENAR ZIPLAMASININ KÖKÜ: SERBEST KENAR
+| zincir | tip | `left_ftorso` 8 beden | `left_btorso` 8 beden |
+|---|---|---|---|
+| bel · seam1 · seam0 | **PAYLAŞILAN** | 3·2·2, hepsi **sabit** | 4·1·2, hepsi **sabit** |
+| **far** (yaka+omuz+kol oyuğu) | **SERBEST** | **13 14 15 13 13 14 14 14** | **15 15 15 13 13 13 13 13** |
+
+**Dikte edilen her zincir 8 bedende sabit; dikte edilmeyen tek zincir zıplıyor.** Yapısal: üst kenarın **dikiş partneri yok**, T9'un birleşim kuralı ona uygulanamıyor.
+**Kapıyı gevşetmek çözmüyor** — beş toleransta ölçüldü (0.01→1.0), hiçbirinde sabit değil: **kararsızlık eşikte değil ARAMADA.** İki hamle daha ölçülüp reddedildi (13. ve 14. emsal); tam dikte kapıyı geçirebiliyor ama panel başına **32 kenarlık** üst kenar = her kenar 5mm'lik çıta.
+★ 16A'nın geçişi kenar sayılarını da oynattı: **zıplama kapanmadı, YERİ DEĞİŞTİ.** Kenar sayısı bu motorda **kaotik bir işlev**.
+
+### ★ GÖĞÜS KÜÇÜLMESİ DİYE BİR ŞEY YOK — KÜÇÜLEN BOY
+15A'nın `−3.86mm`'si bir çevre değil, düzleştirilmiş panelin **yatay kirişi**. Dikiş grafiğinden ölçüldü, EU44→EU46: gövde üst sınırı **+34.75**, bel halkası **+40.00**, torso **dikey** dikiş toplamı **−11.56mm**. Çevreler büyüyor, **boy kısalıyor.** Kök: `backLengthCM` EU44→EU46 adımı **0.0cm** (sekiz bedenin tek düz adımı) ve aynı adımda `shoulderWidthCM` +1.0cm büyümeye devam edip omuz halkasını aşağı indiriyor.
+Düz kiriş artık **BİLGİ**; yerine **gerçek çevre serileri hüküm** oldu (azalırsa kırmızı) — ölçüldükten sonra silahlandırıldı.
+
+### ★ YENİ KIRMIZI: ETEĞİN KLOŞU HİÇ GRADELENMİYOR
+`etek ucu = 1269.86mm × 8 beden`, toplam değişim **0.03mm**. Kök: `surfacepattern.hpp:176` **`hemSweepMM = 1270.0`, mutlak sabit** — ve kodun kendi yorumu kaynağını söylüyor: 1960'lar Big-4 zarfı, **36 inçlik kalça** için. O tek vücut EU40/42; **EU34 (kalça 86) ve EU48 (kalça 116) aynı 127cm'i alıyor** → bel +40mm/beden büyürken **A-formu bedenle KAPANIYOR**: EU34 tam A, **EU48 neredeyse düz etek.**
+*"Sabit kalmak ihlal değildir"* muafiyeti **BOY** kenarlarınındır, bir **ÇEVREYE** geçmez → **hüküm**.
+★ **Ve bu, 30 monotonluk ihlalinin de kökü:** yargılanan 34 kenarın hepsi etek, **sabit etek ucu ile büyüyen bel arasında sıkışıyorlar.** İhlallerin **30'unun 30'u gerçek** (birleşme hiçbirinin iki ucuna değmiyor), ama **15 tekil kenar** — sol/sağ ayna aynı kusuru iki kez sayıyor.
+
+**Bel tapusu KURULDU:** ölçülemez olan halka değil **AD**dı (bu motorda kemer yok; bel = `torso↔skirt`). 8 bedende **14 dikiş çifti**, `644.90 … 944.87mm`, **+40.00×6**; EU38 = 700 + 25 Steiner ease, hedefe **0.11mm**.
+
 ## TUR 15 — OMZUN KÖKÜ BİR HATA DEĞİL, İKİ SİSTEMİN KARIŞMASI
 
 ### ★ GÖVDE ÇİZELGESİNDE İKİ OMUZ GENİŞLİĞİ VAR, YÜZEY DAR OLANI KULLANIYOR
