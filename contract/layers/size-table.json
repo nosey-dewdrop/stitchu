@@ -1,5 +1,5 @@
 {
-  "comment": "graded body girths (cm) per EU size; produced by engine/pattern-bridge/gen-size-table.py from mapping.py — edit mapping, then regenerate",
+  "comment": "body girths (cm) per EU size, COPIED from contract/tables.json draft.euSizeChart — the same table the engine drafts from (sizechart.hpp euSize). Edit the contract, then regenerate. Rows are the shipped size range (mapping.SIZES); the chart itself carries EU50/52 too. See the T16 note at the head of gen-size-table.py.",
   "sizes": [
     "EU34",
     "EU36",
@@ -12,44 +12,44 @@
   ],
   "girths_cm": {
     "EU34": {
-      "bust": 79.8407,
-      "waist": 64.3338,
-      "hips": 83.478
+      "bust": 80,
+      "waist": 62,
+      "hips": 86
     },
     "EU36": {
-      "bust": 83.8407,
-      "waist": 68.3338,
-      "hips": 87.478
+      "bust": 84,
+      "waist": 66,
+      "hips": 90
     },
     "EU38": {
-      "bust": 87.8407,
-      "waist": 72.3338,
-      "hips": 91.478
+      "bust": 88,
+      "waist": 70,
+      "hips": 94
     },
     "EU40": {
-      "bust": 91.8407,
-      "waist": 76.3338,
-      "hips": 95.478
+      "bust": 92,
+      "waist": 74,
+      "hips": 98
     },
     "EU42": {
-      "bust": 95.8407,
-      "waist": 80.3338,
-      "hips": 99.478
+      "bust": 96,
+      "waist": 78,
+      "hips": 102
     },
     "EU44": {
-      "bust": 99.8407,
-      "waist": 84.3338,
-      "hips": 103.478
+      "bust": 100,
+      "waist": 82,
+      "hips": 106
     },
     "EU46": {
-      "bust": 103.8407,
-      "waist": 88.3338,
-      "hips": 107.478
+      "bust": 104,
+      "waist": 86,
+      "hips": 110
     },
     "EU48": {
-      "bust": 107.8407,
-      "waist": 92.3338,
-      "hips": 111.478
+      "bust": 110,
+      "waist": 92,
+      "hips": 116
     }
   }
 }

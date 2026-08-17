@@ -145,6 +145,65 @@ ilişkili olabilir — **ilişki DOĞRULANMADI.**
 42.5 → EU44→EU46 adımı **0.0 cm**, diğer altı adım +0.5. Dizgi hatası gibi duruyor ama
 **DOĞRULANMADI** ve tek taraflı düzeltilmedi.
 
+---
+
+### ★ TUR 7 (7B, T16) — ÜÇ KALEM YENİDEN ÖLÇÜLDÜ, İKİSİNİN SORUSU DEĞİŞTİ
+
+Ölçüm ağacı: HEAD **`1922374`**, `engine/build-7b` Release, ctest **90/91**
+(tek kırmızı `h10_gate_check` **44/63**). Tablo yine **okundu**, koşulmadı.
+
+**(1) EU48 "sıçraması" tek bir satır DEĞİL — bir REJİM DEĞİŞİMİ. Kasıtlı olma
+ihtimali çok güçlendi.**
+6B tablonun yalnız motorun sürdüğü 8 bedenine baktı, orada EU48 son satır olduğu
+için sapma tek adım gibi göründü. Sözleşmede **10 beden** var ve üst üste **ÜÇ
+adımın üçü de** aynı rejimde:
+
+| adım | bust | waist | hip | shoulder |
+|---|---|---|---|---|
+| EU34→…→EU46 (6 adım) | +4.0 | +4.0 | +4.0 | +0.5 |
+| **EU46→EU48** | **+6.0** | **+6.0** | **+6.0** | **+1.0** |
+| **EU48→EU50** | **+6.0** | **+6.0** | **+6.0** | **+1.0** |
+| **EU50→EU52** | **+6.0** | **+6.0** | **+6.0** | **+1.0** |
+
+Bir dizgi hatası kendini dört sütunda üst üste üç kez **aynı** tekrar etmez.
+Tablo doğduğu gün (`1eafc16`, `engine/src/sizechart.hpp`) bu haldeydi ve o
+commit'in tek gerekçesi başlıktaki *"EU (German) convention"* satırı — yazılı
+başka kaynak YOK. Alman DOB serisinde 46 üstü adımın 6cm'e çıkması **bu turda
+dış kaynağa karşı DOĞRULANMADI**; içeriden gelen kanıt tutarlılıktır, dış
+kaynak değil.
+
+**(2) Bu kalemin dayandığı MÜHENDİSLİK BELİRTİSİ BUGÜN YOK.**
+Yukarıdaki `15d4495` K6 dizisi bayat (omuz bandı işinden önce ölçülmüş).
+`1922374`'te K6 taşıyıcı yüzey **8/8 ok**:
+
+```
++0.17 · +1.69 · +2.91 · +3.73 · +3.98 · −4.28 · −4.67 · −3.33 mm   (kapı >= −5.0)
+adımlar: +1.52 +1.22 +0.82 +0.25 −8.26 −0.39 +1.34
+```
+
+→ **EU46→EU48 adımı +1.34mm, yani K6 orada İYİLEŞİYOR.** −24.64mm'lik sıçrama
+kalmadı. Bugünkü en büyük tek adım **EU42→EU44'te −8.26mm** ve orası grade
+rejiminin kırıldığı yer **değil**. Yani "EU48 grade kırığı K6'yı bozuyor"
+zinciri **düştü**; EU48 satırının hükmü artık bir mühendislik acili değil,
+tablonun kendi doğruluğu meselesidir.
+
+**(3) `backLengthCM`'in tek-hücrelik bir düzeltmesi YOK.**
+10 satırlık tam dizi: 39.5 · 40 · 40.5 · 41 · 41.5 · 42 · **42** · 42.5 · 43 · 43.5.
+EU46'yı 42.5 yapmak sıfır adımı silmiyor, **EU46→EU48'e taşıyor**. Kusursuz
++0.5/beden için EU46…EU52'nin dördü birden yeniden yazılmalı (42.5 · 43 · 43.5 · 44)
+— yani bu bir dizgi düzeltmesi değil, **sütuna kaynak bulma** işi. Uydurulmadı.
+⚠ Bu sütun **ölü değil, taşıyıcı**: `bodysurface.cpp:266-267` bel ve büst
+seviyesini (`waistZ`, `bustZ`) doğrudan `backLengthMM()`'den kuruyor,
+`garment.cpp:699` kol oyuğu derinliğini `backLengthMM()*0.44` yapıyor.
+Belirtisi h10 çıktısında görünüyor ama küçük: omuz seviyesi 1382.3 → 1368.4,
+adımlar altı kez −2.0 ve **EU44→EU46'da −1.9**.
+✅ Alıcıya ULAŞMIYOR: basılan beden tablosu yalnız göğüs/bel/basen taşıyor.
+
+**Damla'ya giden soru sadeleşti — tek soru:**
+> Beden tablosu (`contract/tables.json` → `draft.euSizeChart`) 46 üstünde 6cm'e
+> geçen Alman serisi mi, yoksa 34–52'nin tamamı 4cm mi olmalı? Ve `backLengthCM`
+> sütununun kaynağı ne? Bu iki cevap gelene kadar tabloya dokunulmadı.
+
 **Cevap:**
 
 ### [ ] K11 — İki kapı birbirini yiyor: omuz dengesi vs dikiş eşitliği · 2026-08-17
