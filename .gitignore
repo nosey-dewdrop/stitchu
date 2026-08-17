@@ -113,6 +113,25 @@ engine/build-*/
 
 .rabadon/handoff.md
 
+# rabadon per-agent scratch state, scattered into 9 subdirectories (2026-08-17):
+# every agent working in a subdir grows its own .rabadon/, and all of it was
+# untracked AND unignored, so every `git status` in this shared tree printed 15
+# lines of another agent's noise. That noise is how a staged deletion gets swept
+# into someone else's commit. Session transcripts, net/handoff caches and the
+# native state dump are per-machine and per-run — never shared history.
+# NOT ignored, on purpose: .rabadon/guard.json (the law) and the already-tracked
+# .rabadon/state.json files under engine/ and engine/pattern-bridge/.
+**/.rabadon/sessions/
+**/.rabadon/net.json
+**/.rabadon/handoff.md
+**/.rabadon/.rabadon/
+**/.rabadon/state-native-*.txt
+# per-agent counters, same class as the root .rabadon/state.json already ignored
+# above. the three state.json files under engine/ and engine/pattern-bridge/ were
+# committed before this rule and STAY tracked — gitignore never untracks anything.
+**/.rabadon/state.json
+core/third_party/.rabadon/
+
 # the drawing path's own venv (numpy/scipy/matplotlib/svgpathtools/pyyaml,
 # no GarmentCode): recreated with python3 -m venv + pip install
 engine/pattern-bridge/.venv/
