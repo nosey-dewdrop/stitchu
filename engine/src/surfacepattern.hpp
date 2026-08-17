@@ -90,6 +90,36 @@ struct SurfaceStitch {
     Kind kind = Waist;
 };
 
+// ★ TUR 18 — WHY THE SPEC'S STITCH COUNT MOVES WITH SIZE, MEASURED.
+//
+// spec_census requires the eight sizes to publish the SAME number of stitches,
+// and it is right to: one graded pattern is one recipe. Tur 16's shoulder
+// source switch broke that (29/29/27/27/27/27/26/26) and took three shipped
+// gates red with it. The count that moved is not this list — it is the SPEC's,
+// and the spec's count is not a recipe fact at all. It is decided by the
+// adaptive cubic fit in tools/surface-pattern.cpp (naturalBreaks -> fitCubics,
+// kFitTolMM = 0.15mm): a seam side is cut into as many cubics as it takes to
+// stay inside that tolerance, and the chain emits one stitch per cubic. So the
+// stitch count is a FITTING RESIDUAL, not a construction.
+//
+// AND TODAY'S CONSTANT 26 IS LUCK, NOT LAW. Worst fit deviation per size on the
+// shipped tree (STITCHU_FIT_DEBUG=1, commit cd8456f), against the 0.15mm gate:
+//   EU34 0.1298  EU36 0.1251  EU38 0.1261  EU40 0.1246
+//   EU42 0.1299  EU44 0.1307  EU46 0.1296  EU48 0.1305
+// Every size sits 0.019..0.025mm under the threshold. Two hundredths of a
+// millimetre of geometry anywhere in the bodice flips a seam from two cubics to
+// three and the census goes red — which is exactly what the shoulder switch
+// did. Under the switch the same worst deviations run 0.1472 (EU42) and 0.1474
+// (EU48), i.e. 0.003mm of margin, and the two seams that flip are the BACK
+// WAIST run (4 stitches <-> 5) and the FRONT PRINCESS (2 <-> 3).
+//
+// NOT 16B's CLASS. 16B found a chain that jumps because it has no stitch
+// partner to dictate its segmentation (the free `far` edge). This one is
+// dictated on both sides — the two sides take the UNION of their breaks — and
+// still moves, because what dictates it is a threshold, not a partner. Fixing
+// it means giving a seam a segmentation that is a property of the STYLE and
+// not of the size's fit residual. That work is in tools/surface-pattern.cpp and
+// it will move every golden pin, so it is not smuggled in under a K6 fix.
 struct SurfacePattern {
     std::vector<SurfacePanel> panels;
     std::vector<SurfaceStitch> stitches;
