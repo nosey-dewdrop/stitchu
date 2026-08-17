@@ -1257,6 +1257,45 @@ def _fabric_report_lines(fabric):
            [f'  {ln}' for ln in fabric] + ['']
 
 
+# TUR 13 (17 Agu) — YARDAGE OLCULUYOR, BASILIYOR, ATILIYOR.
+# `quotes` report_txt'e 2 Agu'dan beri PARAMETRE olarak geliyor ve govdesinde
+# hic kullanilmiyordu: kumas satiri SADECE info PDF'ine ciziliyordu. Metni
+# okuyan hicbir kapi (taban.sh dahil) onu goremiyordu.
+#
+# Altindaki asil kusur: packpages.cut_layout bir parca kumas enine sigmiyorsa
+# None donuyor, yardage onu `length_cm: None` diye tasiyor, info sayfasi
+# "YERLESMEDI — bir parca bu ene sigmiyor" diye BASIYOR ve printpack **0 ile
+# cikiyor**. OLCULDU: ayni EU38 spec'i x4 olceklenince 110cm ve 140cm
+# enlerinin IKISI DE YERLESMEDI ve `printpack.py` exit **0** verdi
+# (temel spec: 1.44m / 1.44m, exit 0). Alici hicbir ende kumas alamayacagi bir
+# paketi yesil damgayla teslim aliyordu — TUR 12'nin "A0'siz paket exit 0"
+# sinifinin aynisi.
+#
+# Esik ICAT EDILMEDI. BOLTS zaten (110, 140); tek en yerlesmeyip digeri
+# yerlesiyorsa bu bir BILGI ("genis top al"), hukum degil. Hukum, HICBIR
+# enin yerlesmemesi: o zaman pakette kumas sayfasi yoktur.
+CLOTH_RED = 'KAPI KUMAS: KIRMIZI'
+
+
+def _cloth_lines(quotes):
+    if not quotes:
+        return ['KUMAS — olculmedi', CLOTH_RED + ' — hic en yargilanmadi', '']
+    out = ['KUMAS — kumas boyuna ikiye katlanmis, yerlesim OLCULDU']
+    for q in quotes:
+        out.append(f"  {q['bolt_cm']:.0f} cm eninde: " + (
+            f"{q['length_cm'] / 100.0:.2f} m"
+            if q['length_cm'] is not None
+            else 'YERLESMEDI — bir parca bu ene sigmiyor'))
+    laid = [q for q in quotes if q['length_cm'] is not None]
+    if not laid:
+        out.append(CLOTH_RED + f' — {len(quotes)} enin hicbirine yerlesmedi, '
+                               'bu paketle kumas satin alinamaz')
+    else:
+        out.append(f'KAPI KUMAS: YESIL — {len(laid)}/{len(quotes)} en '
+                   'yerlesti')
+    return out + ['']
+
+
 def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
                pages_info, svg_hash, size_label, date_str, plan, quotes,
                opening=None, pattern_for_steps=None, nest=None, fabric=None):
@@ -1266,7 +1305,8 @@ def report_txt(offset_stats, notch_records, dart_pairs, short_pairs,
         f'size: {size_label}   date: {date_str}   allowance: 10mm   '
         f'scale: 1cm = {CM_PT:.4f}pt',
         '',
-    ] + _opening_lines(opening) + _assembly_lines(pattern_for_steps) + \
+    ] + _opening_lines(opening) + _cloth_lines(quotes) + \
+        _assembly_lines(pattern_for_steps) + \
         _fabric_report_lines(fabric) + cutplan.report_lines(plan) + \
         _nesting_lines(nest) + [
         '',
@@ -1711,7 +1751,8 @@ def main():
     args = ap.parse_args()
     spec = Path(args.out_dir) / 'stitchu_specification.json'
     paths = build(args.out_dir, spec, args.size, args.date)
-    print((Path(args.out_dir) / 'print-report.txt').read_text())
+    report = (Path(args.out_dir) / 'print-report.txt').read_text()
+    print(report)
     missing = []
     for k, p in paths.items():
         ok = Path(p).exists()
@@ -1726,11 +1767,21 @@ def main():
     # yazıyor — sekiz alıcı paketinin sekizi de A0 sayfası olmadan çıksa
     # vardiya mührü yine YEŞİL basılırdı. Bu, gradeset.sh sınıfıdır: ölç,
     # bas, hükmü at. Burada eşik yok: dosya diskte ya vardır ya yoktur.
+    red = 0
     if missing:
         print(f'PRINTPACK: FAIL — {len(missing)} çıktı dosyası diskte yok: '
               + ', '.join(missing), file=sys.stderr)
-        return 1
-    return 0
+        red += 1
+
+    # TUR 13 — kumas hukmu. Dosya var/yok denetiminin yanina, IÇI bos olan
+    # paket. Marker report_txt'in kendi yazdigi satirdir; burada yeniden
+    # hesaplanmaz, yoksa iki dogru olurdu.
+    if CLOTH_RED in report:
+        for ln in report.splitlines():
+            if ln.startswith(CLOTH_RED):
+                print('PRINTPACK: FAIL — ' + ln, file=sys.stderr)
+        red += 1
+    return 1 if red else 0
 
 
 if __name__ == '__main__':

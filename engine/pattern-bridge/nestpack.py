@@ -143,6 +143,105 @@ def _legend(x, y, size_label_order):
     return body, y
 
 
+# ---------------------------------------------------------------------------
+# TUR 13 (17 Agu) — "AYNI GIYSI" INVARYANTI: COKME DEGIL, KAPI.
+#
+# 12 Agu'dan 17 Agu'ya kadar burada ciplak bir `raise ValueError('the sizes do
+# not draw the same pieces')` duruyordu. Bugunun motoruna kosuldugunda
+# `build()` Python traceback'i ile oluyor: exit kodu 1, ama ne rapor ne sayim
+# kaliyor, ve hukum "bu paket cikmadi" degil "arac coktu" gibi okunuyor.
+# Satilan sey "8 beden TEK sayfa" oldugu icin bu invaryant urunun kendisi;
+# duserse KIRMIZI dogru, ama ne kadar dustugu OLCULMEK zorunda.
+#
+# Kok sebep BU DOSYADA DEGIL — 13A'nin alani: `right_btorso`'nun kenar sirasi
+# ters oldugu icin `cutplan.derive` bazi bedenlerde onu ayri bir cizim, bazi
+# bedenlerde eslenik bir cift sayiyor, ve `printed` bayragi bedenden bedene
+# degisiyor. Burasi kokun BUGUNKU halini sayar ve nest-census.txt'ye yazar,
+# boylece 13A kokunu kapattiginda geri gelip gelmedigi tek dosyadan okunur.
+#
+# Uc eksen sayiliyor, ucu de urunun sozunun parcasi:
+#   1. cizilen parca kumesi     — ayni sayfada ayni parcalar olmali
+#   2. parca basina KESIM SAYISI — "4 kes aynali cift" bedene gore degisemez
+#   3. parca basina KENAR SAYISI — ayni parcanin topolojisi bedene gore sabit
+# Hicbir esik icat edilmedi: her uc sayim da "8 bedende ayni mi" sorusudur.
+# ---------------------------------------------------------------------------
+class SameGarment(Exception):
+    """The eight sizes did not draw the same garment. Carries the census."""
+
+    def __init__(self, census):
+        super().__init__(census['headline'])
+        self.census = census
+
+
+def piece_census(per_size, plan_by, panels_by, order):
+    """Per-size drawn set / cut count / edge count, and what disagrees."""
+    drawn = {s: frozenset(per_size[s]) for s in order}
+    common = frozenset.intersection(*drawn.values()) if drawn else frozenset()
+    union = frozenset.union(*drawn.values()) if drawn else frozenset()
+
+    rows, faults = [], []
+    for n in sorted(union):
+        missing = [s for s in order if n not in drawn[s]]
+        cuts = {s: (plan_by[s][n]['cut'] if n in plan_by[s] else None)
+                for s in order}
+        edges = {s: (len(panels_by[s][n]['edges'])
+                     if n in panels_by[s] else None)
+                 for s in order}
+        cut_vals = {v for v in cuts.values() if v is not None}
+        edge_vals = {v for v in edges.values() if v is not None}
+        row = {'piece': n, 'missing': missing,
+               'cuts': cuts, 'edges': edges,
+               'cut_split': len(cut_vals) > 1,
+               'edge_split': len(edge_vals) > 1}
+        rows.append(row)
+        if missing:
+            faults.append(f'{n}: {len(order) - len(missing)}/{len(order)} '
+                          f'bedende cizilmis, eksik: {", ".join(missing)}')
+        if row['cut_split']:
+            faults.append(f'{n}: kesim sayisi bedene gore degisiyor '
+                          + ' '.join(f'{s}={cuts[s]}' for s in order))
+        if row['edge_split']:
+            faults.append(f'{n}: kenar sayisi bedene gore degisiyor '
+                          + ' '.join(f'{s}={edges[s]}' for s in order))
+
+    head = (f'AYNI GIYSI: KIRMIZI — {len(faults)} ayrism'
+            if faults else
+            f'AYNI GIYSI: YESIL — {len(common)} parca, '
+            f'{len(order)} bedende ozdes cizim/kesim/kenar sayimi')
+    return {'order': list(order), 'rows': rows, 'faults': faults,
+            'common': set(common), 'union': set(union),
+            'red': bool(faults), 'headline': head}
+
+
+def census_txt(c):
+    o = c['order']
+    L = ['NEST SAYIMI — sekiz beden ayni giysiyi mi ciziyor?',
+         'olcum: cizilen parca kumesi · parca basina kesim sayisi · '
+         'parca basina kenar sayisi',
+         '', f"{'parca':<20}" + ''.join(f'{s:>8}' for o_ in [0] for s in o)
+         + '   (kesim / kenar)', '-' * (20 + 8 * len(o) + 18)]
+    for r in c['rows']:
+        cells = []
+        for s in o:
+            cu, ed = r['cuts'][s], r['edges'][s]
+            cells.append('  -' if cu is None and ed is None
+                         else f'{cu}/{ed}')
+        flag = ''
+        if r['missing']:
+            flag += ' YOK'
+        if r['cut_split']:
+            flag += ' KESIM-AYRISIK'
+        if r['edge_split']:
+            flag += ' KENAR-AYRISIK'
+        L.append(f"{r['piece']:<20}" + ''.join(f'{c_:>8}' for c_ in cells)
+                 + flag)
+    L += ['']
+    for f in c['faults']:
+        L.append(f'  {f}')
+    L.append(c['headline'])
+    return '\n'.join(L)
+
+
 def build(out_dir, specs, date_str=None):
     """specs: [(size_label, spec_path)] in size order -> one nested pack."""
     out_dir = Path(out_dir)
@@ -155,12 +254,11 @@ def build(out_dir, specs, date_str=None):
             _one_size(path, size)
 
     order = [s for s, _ in specs]
-    drawn_sets = {frozenset(per_size[s]) for s in order}
-    if len(drawn_sets) != 1:
-        raise ValueError('the sizes do not draw the same pieces: '
-                         + '; '.join(f'{s}={sorted(per_size[s])}'
-                                     for s in order))
-    pieces = sorted(next(iter(drawn_sets)))
+    census = piece_census(per_size, plan_by, panels_by, order)
+    (out_dir / 'nest-census.txt').write_text(census_txt(census) + '\n')
+    if census['red']:
+        raise SameGarment(census)
+    pieces = sorted(census['common'])
 
     arts = {}
     for n in pieces:
@@ -288,7 +386,19 @@ def main():
     missing = [p for _, p in specs if not Path(p).exists()]
     if missing:
         raise SystemExit('missing specifications: ' + ', '.join(missing))
-    paths = build(args.out, specs, args.date)
+    try:
+        paths = build(args.out, specs, args.date)
+    except SameGarment as e:
+        # A verdict, not a traceback: the census is on disk and on stdout so
+        # the size of the defect is readable, and it is readable AGAIN after
+        # the root is fixed.
+        print(census_txt(e.census))
+        print(f'nest sayimi: {Path(args.out) / "nest-census.txt"}')
+        print('NESTPACK HÜKÜM: KIRMIZI — sekiz beden ayni giysiyi cizmiyor, '
+              f'{len(e.census["faults"])} ayrisim; tek sayfa nest '
+              'URETILEMEZ (kok: cutplan parca eslemesi, 13A)',
+              file=sys.stderr)
+        return 1
     print((Path(args.out) / 'nest-report.txt').read_text())
     # T12/TUR 12: this loop printed MISSING and then main() fell off its end,
     # so the process exited 0. Identical in class to the printpack.py bug
