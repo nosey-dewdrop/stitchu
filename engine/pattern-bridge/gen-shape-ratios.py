@@ -76,15 +76,16 @@ def build():
                 'symmetric (0.5) and that is a DECLARED ASSUMPTION, not data',
         'shoulder_note': 'shoulder.width_cm is TIP-TO-TIP across the body and '
                     'shoulder.incl_deg is the slope in degrees; both verified in '
-                    "GarmentCode's own code, not assumed. ONLY incl_deg is still "
-                    'consumed by the surface. TUR 16A measured width_cm against '
-                    'Aldrich in eight sizes and it is -19.3...-10.6mm SHORT in all '
-                    "eight, one direction; the chart's own shoulderCM lands within "
-                    '+5.2...-2.9mm, so sizechart.hpp now drives the shoulder tip '
-                    'from the chart column. width_cm is kept and published because '
-                    'it is what the mean body says, and because retiring a number '
-                    'silently is how the two shoulder widths got confused in the '
-                    'first place.',
+                    "GarmentCode's own code, not assumed. ⚠ width_cm IS THE WRONG "
+                    'NUMBER FOR THIS BODY AND IS STILL THE ONE THE SURFACE USES. '
+                    'TUR 16A measured it against Aldrich in eight sizes: -19.3...'
+                    "-10.6mm SHORT in all eight, one direction, while the chart's "
+                    'own shoulderCM lands within +5.2...-2.9mm. The switch to the '
+                    'chart column was built, measured and BACKED OUT because it '
+                    'breaks spec_census stitch-count constancy and with it three '
+                    'shipped gates; the record and the ordered way out are in the '
+                    "note over sizechart.hpp's grafting loop. This is published "
+                    'rather than smoothed, and it is not a tolerance.',
         'sizes': mapping.SIZES,
         'back_arc_fraction': table,
         'shoulder': shoulder,

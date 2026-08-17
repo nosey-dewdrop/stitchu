@@ -35,19 +35,36 @@ inline const std::vector<SizeChartEntry>& euSizeChart() {
         // lookup for callers. Sizes with no published ratio (EU50/EU52) keep 0
         // and the surface falls back to the symmetric section, visibly.
         //
-        // ★ TUR 16A — THE SHOULDER WIDTH IS THE CHART'S OWN COLUMN, NOT
-        //   shaperatios'. Measured, eight sizes (15B's probe, 184860c, and the
-        //   table in HEDEF.md §TUR 15): shaperatios' shoulderWidthCM (the
+        // ★★ TUR 16A — THE SWITCH TO THE CHART COLUMN WAS MADE, MEASURED IN FULL,
+        //    AND THEN BACKED OUT. THIRTEENTH PRECEDENT. The line below still reads
+        //    shaperatios' width, and everything from here down is the record of why
+        //    the better shoulder is not shipped yet. Read the whole note before
+        //    trying it again — it has been tried, and the number that stops it is
+        //    NOT in h10.
+        //
+        //    THE THING THAT STOPS IT: spec_census's cross-size stitch-count
+        //    constancy. With the chart column the eight specs carry 29/29/27/27/
+        //    27/27/26/26 stitches instead of one constant count (panels stay 8/8),
+        //    so "tarif tek tarif değil" fires and THREE SHIPPED GATES GO RED AT
+        //    ONCE off that single judgment: edgemono_check, walkgate_check (green
+        //    since Tur 14) and cutplan_check. Measured both ways in engine/build-16a
+        //    Release: with shaperatios' width 'ctest -R' over the three reads
+        //    100% tests passed, 0 tests failed out of 3; with the chart column all
+        //    three fail. h10 itself does NOT get worse (44/63 either way) — the
+        //    switch trades four K5-girth FAILs for three K6 and one K2 — so h10
+        //    alone would call this a wash, and it is the census that refuses it.
+        //
+        // ★ AND THE SHOULDER IS STILL WRONG. Measured, eight sizes (15B's probe,
+        //   184860c, and the table in HEDEF.md §TUR 15): shaperatios' shoulderWidthCM (the
         //   GarmentCode mean body, graded +1cm/size off an EU44 anchor) puts the
         //   shoulder tip so far in that the shoulder line runs -19.3...-10.6mm
         //   SHORT of Aldrich in ALL EIGHT sizes; the chart's own shoulderCM lands
         //   within +5.2...-2.9mm. One measurement missing in the same direction in
-        //   eight sizes out of eight is a wrong measurement, not a tolerance. The
-        //   slope (shoulderInclDeg) still comes from shaperatios — it is the only
-        //   published source for it — so the ratio row still gates whether this
-        //   body gets shoulders at all.
+        //   eight sizes out of eight is a wrong measurement, not a tolerance. That
+        //   verdict is UNCHANGED by the revert: what is shipped below is the worse
+        //   of the two numbers, knowingly, because the better one costs three gates.
         //
-        //   WHAT IT BOUGHT, MEASURED (h10_gate_check, build-16a Release, 943f313
+        //   WHAT THE SWITCH BOUGHT, MEASURED (h10_gate_check, build-16a Release, 943f313
         //   against 94ab73d): shoulder line neck->tip 106.84 -> 125.904mm at EU38,
         //   and against Aldrich the eight-size band goes -19.3...-10.6mm (8/8 SHORT)
         //   to +5.2...-2.9mm. With the crest fold on (STITCHU_SHOULDER_SEAM=1, the
@@ -84,13 +101,28 @@ inline const std::vector<SizeChartEntry>& euSizeChart() {
         //       against a floor of 390.00 — a margin of 0.59mm in 390. K5-girth's
         //       8/8 close is NOT robust at EU48; one number carries both conditions
         //       and they point opposite ways.
+        //
+        //   NEXT TURN, IN ORDER, AND NONE OF IT IS A THRESHOLD CHANGE:
+        //   (a) the stitch count must stop moving with size before this switch can
+        //       ship. That is the same class of defect Tur 15 already found in the
+        //       shipped motor (ftorso/btorso edge counts jumping by 2 with size);
+        //       the wider shoulder does not create it, it makes it worse in a place
+        //       spec_census can see. Owner: surfacepattern.cpp.
+        //   (b) K6's fallback branch should keep the HIGHER bracketing column, the
+        //       rule the crossing branch a few lines above it already follows.
+        //       Owner: surfacepattern.cpp. This is not gate painting — the gate's
+        //       threshold, question and fixture are untouched; what is wrong is
+        //       which point of the boundary the engine calls the shoulder point.
+        //   (c) only then is the chart column worth re-trying, and (2)'s EU48 step
+        //       is a question for the CHART, i.e. for Damla, not for a probe.
+        //   ⚠ THE SWITCH IS ONE TOKEN: r.shoulderWidthCM -> e.body.shoulderCM.
         for (SizeChartEntry& e : c)
             for (const contract::BackArcRow& r : contract::kBackArcFraction)
                 if (e.label == r.label) {
                     e.body.bustBackFrac = r.bust;
                     e.body.waistBackFrac = r.waist;
                     e.body.hipBackFrac = r.hip;
-                    e.body.shoulderWidthCM = e.body.shoulderCM;
+                    e.body.shoulderWidthCM = r.shoulderWidthCM;
                     e.body.shoulderInclDeg = r.shoulderInclDeg;
                 }
         return c;
