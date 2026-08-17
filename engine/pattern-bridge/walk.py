@@ -819,6 +819,17 @@ def report_txt(report):
         lines += ['', 'MIRROR (seams) — the same seam deviating differently '
                       'on the two sides of a garment drawn symmetric']
         for m in faults:
+            # T12/TUR 12: a mirror pair that could not be aligned now arrives
+            # here as a FAIL with no numbers to print — the finding IS that no
+            # seam verdict exists. Print the reason instead of crashing on it.
+            if m['diff_mm'] is None:
+                lines.append(f"  FAIL          {m['seam']}  "
+                             'UNJUDGED — no mirror-seam verdict')
+                lines.append(f"                {m.get('reason', '')}")
+                if m['spread_mm'] is not None:
+                    lines.append(f"                best alignment "
+                                 f"{m['spread_mm']:.3f}mm")
+                continue
             lines.append(f"  FAIL          {m['seam']}  {m['diff_mm']:+.3f}mm")
             lines.append(f"                {m['mirror']}  "
                          f"{m['mirror_diff_mm']:+.3f}mm")

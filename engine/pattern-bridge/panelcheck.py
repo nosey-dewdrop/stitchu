@@ -358,13 +358,26 @@ def check_mirror_symmetry(panels, edge_length_mm, mirror_name,
     return results
 
 
-def edge_mirror_map(panels, edge_length_mm, mirror_name):
+def edge_mirror_map(panels, edge_length_mm, mirror_name, unmapped=None):
     """(panel, edge) -> (mirror panel, mirror edge), for panels that mirror.
 
     Derived from the same alignment the panel audit found, so an edge is only
     mapped when the two loops actually line up. Panels with no mirror, such as
     a single waistband spanning both sides of the body, are absent from the
     map on purpose.
+
+    `unmapped`, if a list is passed, collects the pairs that DO have a mirror
+    partner and still could not be aligned. T12/TUR 12: that case used to be a
+    bare `continue`. It is not a "no mirror here" — it is a pair whose seams
+    then receive NO mirror-seam verdict at all, and the pair that fails to
+    align is by construction the WORST-deviating pair in the garment. Measured
+    on today's engine, EU34/36/42/44/46: left_btorso/right_btorso misaligns by
+    3.77-3.94mm (~5x the 0.79375mm production standard), drops out here, and
+    the mirror-seam audit falls from 10 judged seam pairs to 4 — six verdicts
+    vanish and walk.py printed `mirror-seam 0 ... KAPI HUKUM: YESIL`.
+    The panel-level audit does NOT cover it: called with `segments_for` it
+    measures the OUTLINE on purpose (0.0005mm, PASS) and says so in its own
+    `reason`. So both levels excused it. Silence is now a finding.
     """
     mapping, seen = {}, set()
     for name in panels:
@@ -377,13 +390,30 @@ def edge_mirror_map(panels, edge_length_mm, mirror_name):
         seen.add(key)
         a, b = panels[key[0]], panels[key[1]]
         if len(a['edges']) != len(b['edges']):
+            if unmapped is not None:
+                unmapped.append({
+                    'pair': list(key),
+                    'why': 'edge counts differ '
+                           f"({len(a['edges'])} vs {len(b['edges'])})",
+                    'worst_diff_mm': None,
+                })
             continue
         n = len(a['edges'])
         lens_a = [edge_length_mm(a, e) for e in a['edges']]
         lens_b = [edge_length_mm(b, e) for e in b['edges']]
         worst, reverse, shift, _ = _best_alignment(lens_a, lens_b)
         if worst > TOL_MIRROR_MM:
-            continue          # the loops do not correspond; do not pretend
+            # the loops do not correspond; do not pretend — AND do not go
+            # quiet about it, see the docstring.
+            if unmapped is not None:
+                unmapped.append({
+                    'pair': list(key),
+                    'why': 'no rotation or direction lines the two edge '
+                           f'tables up: best is {worst:.4f}mm against the '
+                           f'{TOL_MIRROR_MM}mm standard',
+                    'worst_diff_mm': round(worst, 4),
+                })
+            continue
         for i in range(n):
             j = (i + shift) % n
             if reverse:
@@ -407,7 +437,9 @@ def check_stitch_mirror_symmetry(panels, stitches, edge_length_mm, mirror_name):
     no mirror panel is matched on the panel alone, which is exactly the
     waistband case.
     """
-    emap = edge_mirror_map(panels, edge_length_mm, mirror_name)
+    unmapped = []
+    emap = edge_mirror_map(panels, edge_length_mm, mirror_name,
+                           unmapped=unmapped)
 
     index = {}
     for st in stitches:
@@ -462,5 +494,21 @@ def check_stitch_mirror_symmetry(panels, stitches, edge_length_mm, mirror_name):
             'mirror_diff_mm': round(partner[1], 4),
             'spread_mm': round(spread, 4),
             'status': 'PASS' if spread <= TOL_MIRROR_MM else 'FAIL',
+        })
+
+    # A pair that has a mirror partner and could not be aligned produced no
+    # verdict above. That absence is the finding, and it is emitted as one so
+    # the caller's FAIL count can carry it. No threshold is introduced here:
+    # the number compared is the same TOL_MIRROR_MM the rest of the file uses.
+    for u in unmapped:
+        results.append({
+            'seam': f"{u['pair'][0]} <-> {u['pair'][1]}",
+            'mirror': 'NONE — no mirror-seam verdict was produced',
+            'diff_mm': None,
+            'mirror_diff_mm': None,
+            'spread_mm': u['worst_diff_mm'],
+            'status': 'FAIL',
+            'reason': 'this pair mirrors by name but ' + u['why']
+                      + '; every seam on it went UNJUDGED',
         })
     return results
