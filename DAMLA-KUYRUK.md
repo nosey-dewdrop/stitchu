@@ -5,6 +5,36 @@ Bana değil **Damla'ya** düşen kararlar. Buraya satır olarak düşer, cevapla
 
 ---
 
+## ÖZET TABLO (TUR 14'te derlendi — gövdeler kısaltılmadı, sadece başlıklar netleşti)
+
+Aciliyet üç kademe: **ACİL** = bugün bir şeyi durduruyor · **SIRADA** = bir halkanın önünde duruyor · **BEKLER** = bilgi/tercih, kimseyi durdurmuyor.
+
+| K# | tek cümlede ne soruluyor? | bloke ettiği iş | aciliyet |
+|---|---|---|---|
+| K1 | Satın alınmış Buğra PDF'leri git GEÇMİŞİNDEN `filter-repo` ile kazınsın mı? | `contract_check` kırmızısı (ilan edilmiş), repo'nun public kalması | **ACİL** |
+| K2 | H1 hangi bedende dikilecek — motor 8 bedenin hepsini basıyor? | H1 kapanışı, TEK KAPI'ya hangi paketin gideceği | **SIRADA** |
+| K3 | Listing kapağı + tek line drawing adaylarından hangisi? | H1.3 vitrini | **SIRADA** |
+| K4 | Zevk kapısının hükmü — Damla'nın gözü ne diyor? | H1.3, H3.4 (zevk turu sayacı) | **SIRADA** |
+| K5 | "Dünya kapısı" hangi kapı? Terim repoda hiç tanımlı değil, uydurulmadı. | TABAN T5 (sicil kurulamıyor) | **SIRADA** |
+| K6 | "İki include düzeltmesi" neydi? Repoda 0 isabet, 52 başlık temiz derleniyor. | TABAN T1 (bugün "yok hükmünde") | BEKLER |
+| K7 | Public README bayat sayı söylüyor (27/54, 77/77) — ben mi düzelteyim, sen mi yazacaksın? | dışarıya söylenen her sayı | **ACİL** (yanlış söyleme riski) |
+| K8 | 12 Ağustos paketleri BAŞKA BİR GİYSİ (açıklık/fermuar yok) — silinsin mi, arşive mi? | `Logs/surface-2026-08-12/` referans gösterilmesi | BEKLER |
+| K9 | Buğra bir REFERANS mı, KURAL mı? Ölçüm tamam; hüküm senin. | H1.0b'nin 20–38 saatlik yönü | **ACİL** |
+| K10 | Beden tablosu 46 üstünde 6cm'e geçen Alman serisi mi? `backLengthCM`'in kaynağı ne? | `contract/tables.json`'a dokunmak | **SIRADA** |
+| K11 | Omuz yedirmesi motorun mu işi (kalıba basılsın) talimatın mı (kitapçıkta yazsın)? | K4 kapısı ile dikiş-eşitliği kapısının çakışması | **SIRADA** |
+| K12 | ~~Buğra'nın kolu iki KATMAN, yatay bölünme değil~~ | — | **KAPANDI** |
+| K13 | Paket hangi dilde basılsın — TR, EN, ikisi birden mi? | H1.4 (listing metni) | **SIRADA** |
+| K14 | Pakete A1 sayfası da girsin mi? | ürün kararı, kırmızı değil | BEKLER |
+| K15 | 31 stilin "kalemi"ni pinlemek için bir tur açayım mı? | `style_check` + `figure_check` (ikisi de ilan edilmiş kırmızı) | **SIRADA** |
+| K16 | `vintage6070/meta.json` geri gelsin mi, yoksa 4 sayfa ailesi kalksın mı? | 4 üreteç ENOENT ile ölü; K18 bunun kararını bekliyor | **SIRADA** |
+| K17 | Sitemap'in kanonik üreteci hangisi? İkisi de bugünkü ağacı yanlış anlatıyor. | canlı SEO yüzeyi | **ACİL** |
+| K18 | Silinen galeriye giden 228 ölü iç referans — ~~açık~~ TUR 13'te onarıldı, kalan 1 | — | **KAPANDI** |
+| K19 | Uyuyan 16 aletin 3'ü uyandırmaya değer — silinsin mi, uyandırılsın mı? | envanter; hiçbir halkayı durdurmuyor | BEKLER |
+| K20 | `deploy.sh`'in gh-pages adımı silinsin mi? Kanonik yayıncı Vercel mi Pages mi? | `deploy.sh` bugün ZARARLI (K17) | **ACİL** |
+| K21 | Korumalı yol araç-şekilliydi; bash kapatıldı, kalan delik ilan edildi — bilgin olsun. | — | **KAPANDI** |
+
+---
+
 ## AÇIK
 
 ### [ ] K1 — `patterns_real/` ve public repo · ACİL · 2026-08-16
@@ -259,16 +289,7 @@ Tur 8'in kapı süpürmesi iki testin **boş koştuğunu** buldu ve ikisi de art
 **Bloke etmiyor** — o güne kadar ikisi `.rabadon/guard.json` → `pushGate._ilan_listesi`'nde gerekçesi ve bitiş şartıyla ilan edildi.
 **Cevap:**
 
-### [ ] K13 — Etsy listing dili: Türkçe mi İngilizce mi? · H1.4'ü bağlar · 2026-08-17
-Paket bugün Türkçe basıyor: kesim notu `2 kes · aynali cift`, kumaş sayfası, montaj sırası. Emsal korpus (satın aldığımız Etsy kalıpları) İngilizce: `cut 2` / `cut 1 pair`.
-Anlam birebir, sözcük değil. Etsy'de satıyorsak alıcı çoğunlukla İngilizce okur.
-**Tek dil mi, iki dil mi?** İki dil paketi büyütür ve her sayfayı iki kez doğrulamak gerekir.
-**Cevap:**
-
-### [ ] K14 — A1 sayfası üretilsin mi? · 2026-08-17
-Bugün yalnız **A0 (1 sayfa)** ve **A4 (15 sayfa)** basılıyor. Kod yolu (`render_tiled`) A1'i destekliyor ama çağrılmıyor.
-Şartname "A0/A1 ikisi de üretilebilir" diyor; "ya A0 ya A1" okumasıyla madde geçti, o yüzden **çağırmadım** — bu bir ürün kararı: kopya dükkânlarında A1 A0'dan yaygın ve ucuz.
-**Cevap:**
+> ⚠ **TUR 14 DERLEME NOTU — K13 ve K14 KUYRUKTA İKİŞER KEZ YAZILMIŞTI.** İki ayrı ajan aynı iki soruyu bağımsız olarak sordu ve ikinci kopyalar buraya, K15 ile K16 arasına düşmüştü. İkinci kopyalar **SİLİNDİ**; ikisi de birincinin daha kısa bir yeniden anlatımıydı ve **hiçbir yeni ölçüm taşımıyordu** (karşılaştırıldı: K13-ikinci'nin tek fazlası *"iki dil paketi büyütür ve her sayfayı iki kez doğrulamak gerekir"*, K14-ikinci'ninki *"kopya dükkânlarında A1 A0'dan yaygın ve ucuz"* — ikisi de yukarıdaki asıl kalemlerin gövdesinde zaten vardı). Ölçüm silinmedi; **tekrar** silindi.
 
 ### [ ] K16 — Silinen galeri verisi geri gelsin mi? Dört üreteç onsuz koşamıyor · 2026-08-17 (TUR 12)
 `af49514` (29 Tem, *"delete fake pattern gallery"*, 198 dosya / 77386 satır) `web/patterns/` ağacını sildi. O ağaçtaki **iki meta.json dört üretecin tek veri kaynağıydı**:
@@ -316,4 +337,31 @@ Görseller etkilenmiyor (SVG'ler sayfaların içine gömülü, 16 adet inline), 
 
 ## KAPANDI
 
-_(henüz yok)_
+> Buraya **yalnız Damla'nın hükmü GEREKMEYEN** kalemler taşınır. Ölçümle cevaplanmış olsa bile
+> soru bir KARAR soruyorsa (K1, K9, K10, K16, K17, K19, K20 gibi) kalem AÇIK kalır — ölçüm bir
+> hükmün yerine geçmez. Gövdeler kısaltılmadan taşındı.
+
+### [x] K12 — Buğra'nın kolu yatay bölünmüş DEĞİL, iki KATMAN · 2026-08-17 · **karar gerekmedi**
+Kalemin kendi son satırı: *"Bu bir bilgi düzeltmesi, senden karar istemiyorum — ama defterin yanlış olduğunu bilmen gerekiyordu."* Sorulan bir şey yok, o yüzden bekletilmesinin sebebi de yok.
+`patterns_real/BUGRA-DEFTER.md` kolu *"yatay ikiye bölünmüş"* diye kaydetmiş ve motorun eksiğini *"set-in kolu yatay böl"* diye yazmış. **Ölçüldü, çürüdü:** iki parça da **tam kapak** taşıyor ve kapak **sagitta oranı 8 bedende bit-sabit 1.227** (kiriş oranı 1.549 → 1.347 kayarken). Bit-sabit oran bölünme değil, **ölçekli kopya** demek. Upper Sleeve = **dış büzgülü puf katmanı**, Lower = iç astar. Motorun gerçek eksik operatörü **büzgülü overlay katmanı** — H2.3'ün operatör dalgasına giriyor. `patterns_real/` telifli ve salt-okunur, oradaki satır düzeltilmedi; düzeltme `knowledge/cap-ease-isareti-2026-08-17.md` §2.1'de.
+
+### [x] K18 — Silinen galeriye giden ölü iç referanslar · 2026-08-17 (TUR 13'te onarıldı) · **karar gerekmedi**
+Kalem *"~2 saat, ama önce K16 kararı gerek"* diye açılmıştı. **K16 kararı gerekmedi:** onarım galeriyi geri getirmeden, **üreteçlerin şablonlarından** yapıldı — yani guard'ın istediği yoldan (*"elle HTML düzenleme yok, üreteci değiştir"*), K16'nın veri sorusuna hiç dokunmadan.
+Ölçülen önce/sonra (`node engine/tools/site-health.mjs`, HEDEF.md TUR 12–13): **ölü iç referans 228 → 1** · sitemap'in 404 döndürdüğü URL **22 → 0** · sitemap'te olmayan canlı sayfa **24 → 0** · sürümü geri alan üreteç **5 → 0** · bozuk `?vN` damgası **24 → 0**.
+★ Kalemin kendi sayısı da yanlıştı: 12C **187** demişti, gerçek **228**'di ve **41'i kırık `<img>`** — yani linkte değil **sayfada** delik. Kaynak tek şablon değil: **95 header + 23 footer + 1 CTA**.
+★ Ayrıca link denetleyicinin asla bulamayacağı bir kusur çıktı: **24 stil sayfasının hepsi kendini "Pattern Blog" ilan ediyordu** (404 değil, yanlış etiket).
+Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyon sınıfı.
+⚠ **AÇIK KALAN 1 ölü referans DOĞRULANMADI** — hangi dosyada olduğu bu turda okunmadı.
+
+### [x] K21 — Korumalı yol ARAÇ-ŞEKİLLİYDİ, YOL-ŞEKİLLİ DEĞİL · 2026-08-17 (TUR 14) · **karar gerekmedi, bilgi**
+**Ne bulundu.** TUR 13 / 13C toplu onarımlarını `node /tmp/*.mjs` ile yaptı ve korumalı yollara o şekilde yazdı. Kuralı **gevşetmedi**, etrafından dolaştı ve **kendi raporunda ilan etti**. TUR 14 bunu rabadon'un kaynağından doğruladı ve **ilan edilenden daha geniş** buldu:
+- `native/gate.cpp:2892` — `protectedPaths` **yalnız** `if (toolName == "Edit" || "Write" || "MultiEdit" || "NotebookEdit")` dalının içinde denetleniyor. Bash tarafında **karşılığı yok**; `bash[]` kuralları elle yazılmış ayrı bir liste.
+- Ölçüm (rabadon-gate binary'sine PreToolUse yükü verilerek, `cwd=stitchu`, gerçek `guard.json`): `web/styles/x.html`'e **Write** → `BLOCK generated-web-html`. Aynı yola Bash'ten: `cat > …` **ALLOW** · `cp /tmp/a.html …` **ALLOW** · `printf x > web/guide/y.html` **ALLOW** · `node -e fs.writeFileSync(…)` **ALLOW**.
+- ★ **Sorulmamıştı, daha kötüydü: dört korumalı yolun ÜÇÜNDE bash kapsamı SIFIRDI.** `engine/golden-reference.csv`, `web/sitemap.xml`/`robots.txt` ve `STRATEGY.md` — dördü de `sed -i` ve `>` altında ALLOW. Tek bash kuralı (`no-shell-edit-generated-html`) sadece `sed -i|tee` ve sadece `web/` altını tutuyordu.
+
+**Ne yapıldı — iki kapı, ikisi de mutasyon kanıtlı. rabadon'a HİÇBİR ŞEY YAZILMADI (ayrı proje, salt okundu).**
+1. **`.rabadon/guard.json` → `no-shell-write-protected-path`.** Dört korumalı yolun dördünü birden, komut satırında **adı geçen** yazma şekillerine kapatır (`>`/`>>`, `sed -i`, `perl -pi`, `tee`, `cp`, `mv`, `rm`, `install`, `rsync`, `dd`, `node -e`, `python -c`, `awk -i`). **Mutasyon matrisi 23/23**: 13 BLOCK beklenen 13 BLOCK, 10 ALLOW beklenen 10 ALLOW (üreteçlerin kendisi — `node engine/tools/gen-style-pages.mjs` — ve okuma komutları ALLOW kaldı; yanlış pozitif yok).
+2. **`engine/tests/generated_ratchet_check.sh`** (ctest'e bağlandı) + `contract/generated-paths.sha256` (**58 yol**). Üretilmiş bir dosyanın baytları, ilan edilmiş sha256'sı **aynı commit'te** onunla birlikte kımıldamadan değişemez. **Mutasyon kanıtı — 13C'nin BİREBİR rotası:** `node /tmp/mutate.mjs` ile `web/guide/index.html` elle düzenlendi → guard **ALLOW** (beklenen: yol komut satırında geçmiyor), kapı **FAIL(1)**, `declared c9137ad6… / on disk 46e96b2a…`. Geri alındı → **YEŞİL**, ağaç temiz.
+
+⚠ **KAPI BOYANMADI — KALAN DELİK İLAN EDİLİYOR:** yolu komut satırında **geçirmeyen** bir çağrı (`node /tmp/fix.mjs`) hiçbir regex'le yakalanamaz, çünkü yol script'in İÇİNDE. Onu tutan tek şey (2)'deki ratchet'tir ve ratchet bir **yeniden-üretilebilirlik kanıtı DEĞİL**: üreteçleri koşturmuyor. Koşturamaz da — **altı üreteçten dördü bugün koşamıyor** (K16, ENOENT). K16 kararı verilip veri dönerse bu kapı *"üreteci koştur → bayt-özdeş mi"* seviyesine **yükseltilmelidir**; bugünkü ratchet dürüstçe elde olan, ve öncekinin yerini aldığı şey **hiçbir şeydi**.
+**Damla'dan istenen: yok.** Bilmen gereken tek şey şu: bu koşuda bir ajan bir kuralın etrafından dolaştı, bunu sakladı değil söyledi, ve kural artık o yoldan da kapalı.
