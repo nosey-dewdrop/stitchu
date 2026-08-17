@@ -321,9 +321,11 @@ int main(int argc, char** argv) {
     // that happened to agree; the moment the body got a front and a back it
     // stopped ("chain mismatch right_skirt_front(40) vs left_skirt_back(29)").
     // So: fit each side, take the UNION of the two sides' breakpoints, refit
-    // both there. Orientation is MEASURED, not assumed — a mirrored panel runs
-    // its seam the other way, and pairing break i with break i in that case
-    // would quietly put the notches on backwards.
+    // both there. A mirrored panel runs its seam the other way, and pairing
+    // break i with break i in that case would quietly put the notches on
+    // backwards — so the orientation has to be right. It is DERIVED from the
+    // construction, not measured; see sideAscends() below for why measuring it
+    // could not work.
     const int NP = static_cast<int>(pat.panels.size());
     std::vector<std::vector<int>> brk0(NP), brk1(NP);
     // ---- THE ZIP END IS A NOTCH, SO IT HAS TO BE A BREAK ----
@@ -354,11 +356,50 @@ int main(int argc, char** argv) {
             }
             return b;
         };
-        auto cumulative = [&](const std::vector<Vec2>& pts) {
-            std::vector<double> c(pts.size(), 0.0);
-            for (size_t i = 1; i < pts.size(); ++i)
-                c[i] = c[i - 1] + std::hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
-            return c;
+        // ---- ORIENTATION IS CONSTRUCTED, SO READ IT OFF THE CONSTRUCTION ----
+        //
+        // This used to compare the two sides' cumulative arc-length profiles and
+        // take whichever alignment (direct or reversed) summed smaller. That is
+        // not a direction test. The two sides of a seam are sewn together, so
+        // they are the SAME LENGTH by design: on the torso side seam the two
+        // curves total 184.5428mm and 184.5179mm, agreeing to 0.02mm in 184.5mm.
+        // sum|ca - cb| and sum|ca - reverse(cb)| are then the same number to
+        // within fitting noise and the winner is a coin toss. It landed
+        // differently on the two halves of one mirror-image PAIR
+        //     right_ftorso <-> left_btorso   ters=0
+        //     right_btorso <-> left_ftorso   ters=1   <- the same seam mirrored
+        // on all eight sizes, and the skirt made the same split the other way
+        // round (rSF<->lSB 1, rSB<->lSF 0). The 1s are the wrong answer: both
+        // seams walk y ascending on both sides. That single flipped bit put the
+        // one side-seam break at mirror-opposite heights on left_btorso and
+        // right_btorso (EU34 y=32.97 vs y=33.05 in the same 31.15..34.86 span),
+        // which is the whole of the sixth red and the mirror_seams half of the
+        // seventh.
+        //
+        // Nothing has to be guessed. The engine emits a panel's contour in ONE
+        // fixed order (surfacepattern.cpp, buildPanel): the waist run with phi
+        // ascending, then seam1 pushed row 1..rowsN, then the far row, then
+        // seam0 pushed row rowsN-1..1. sidePoints() walks a side by CONTOUR
+        // INDEX (lo..hi+1), never by list order, so each side's walk direction
+        // is fixed the moment the contour is built:
+        //     seam1 -> row ASCENDING    (waist upward)
+        //     seam0 -> row DESCENDING   (downward to the waist)
+        // A right_ sub-panel is not solved at all: it is the left one reflected,
+        // and the reflection swaps which physical side of the garment each list
+        // describes (surfacepattern.cpp does exactly one thing about it,
+        // `std::swap(p.seam0Edges, p.seam1Edges)`), while the contour index
+        // order is copied untouched. So on a mirrored panel the two directions
+        // swap along with the lists.
+        //
+        // This is a statement about the panel, not about this seam, so ask the
+        // panel. It is the same signal the shoulder indexer in surfacepattern
+        // already uses ("const bool mirrored = p.name.rfind(\"right_\", 0)").
+        auto isMirrored = [](const SurfacePanel& p) {
+            return p.name.rfind("right_", 0) == 0;
+        };
+        // does walking this side by ascending contour index go UP the garment?
+        auto sideAscends = [&](const SurfacePanel& p, bool seam1) {
+            return seam1 != isMirrored(p);
         };
         // the fixed seam graph of the four-panel sheath, both layers
         struct Pair { int pa, pb; };
@@ -376,13 +417,9 @@ int main(int argc, char** argv) {
             const std::vector<Vec2> pb = sidePoints(B, B.seam0Edges);
             if (pa.size() != pb.size() || pa.size() < 2) continue;
             const int n = static_cast<int>(pa.size());
-            const std::vector<double> ca = cumulative(pa), cb = cumulative(pb);
-            double direct = 0, rev = 0;
-            for (int i = 0; i < n; ++i) {
-                direct += std::fabs(ca[i] - cb[i]);
-                rev += std::fabs(ca[i] - (cb.back() - cb[n - 1 - i]));
-            }
-            const bool reversed = rev < direct;
+            // every seam here joins A's seam1 to B's seam0; they are walked in
+            // opposite senses exactly when their derived directions disagree
+            const bool reversed = sideAscends(A, true) != sideAscends(B, false);
             std::vector<int> u = naturalBreaks(A, A.seam1Edges);
             for (int b : naturalBreaks(B, B.seam0Edges))
                 u.push_back(reversed ? n - 1 - b : b);
@@ -445,13 +482,16 @@ int main(int argc, char** argv) {
                 const std::vector<Vec2> pb = sidePoints(B, B.waistRuns[r]);
                 if (pa.size() != pb.size() || pa.size() < 2) continue;
                 const int n = static_cast<int>(pa.size());
-                const std::vector<double> ca = cumulative(pa), cb = cumulative(pb);
-                double direct = 0, rev = 0;
-                for (int i = 0; i < n; ++i) {
-                    direct += std::fabs(ca[i] - cb[i]);
-                    rev += std::fabs(ca[i] - (cb.back() - cb[n - 1 - i]));
-                }
-                const bool reversed = rev < direct;
+                // Both sides are waist runs, and a waist run is emitted phi
+                // ascending on every panel; a mirrored copy inherits that index
+                // order untouched, which in the garment means phi DESCENDING.
+                // So the two sides run the same way exactly when the bodice sub
+                // and the skirt sub are mirrored alike — which they always are,
+                // sub s of one layer facing sub s of the other. Derived, not
+                // measured, for the same reason as the seams above: the two
+                // sides of a waist run are the same length by construction, so
+                // an arc-length comparison has nothing to discriminate on.
+                const bool reversed = isMirrored(A) != isMirrored(B);
                 std::vector<int> u = naturalBreaks(A, A.waistRuns[r]);
                 for (int b : naturalBreaks(B, B.waistRuns[r]))
                     u.push_back(reversed ? n - 1 - b : b);
