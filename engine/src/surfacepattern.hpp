@@ -141,19 +141,6 @@ struct SurfacePattern {
     std::vector<double> topColXMM;
 };
 
-// The shipped default is 10.0 and is Aldrich's. STITCHU_SHOULDER_NARROW is an
-// EXPERIMENT DIAL and lives in the default member initializer for one reason:
-// h10_gate_check and surface-pattern both build `const SheathOptions opt;`, so
-// this is the only place a probe can move the strap point for the engine and
-// its judge at once. Unset = 10.0 = the shipped garment, bit-identical.
-inline double defaultShoulderNarrowMM() {
-    if (const char* e = std::getenv("STITCHU_SHOULDER_NARROW")) {
-        const double v = std::atof(e);
-        if (v > 0.0 && v < 120.0) return v;
-    }
-    return 10.0;
-}
-
 struct SheathOptions {
     double hemDropBelowHipMM = 200.0;  // skirt length past the hip ring — a design dial
     // WEARING EASE per ring, mm of girth. A zero-ease garment is skin and
@@ -272,7 +259,13 @@ struct SheathOptions {
     // inset is a distance across the shoulder, not an angle, and an angle would
     // not grade — the same degree count is a different inset in every size.
     // Default 10.0 = Aldrich, "Mark points 3 and 4 1 cm in from shoulder edge".
-    double shoulderNarrowMM = defaultShoulderNarrowMM();
+    // ★ THE DEFAULT STAYS A LITERAL ON PURPOSE. It was briefly a call to
+    // defaultShoulderNarrowMM() and specv2_check went RED, correctly: the
+    // contract declares this quantity's default and reads it out of THIS text
+    // (tools/specv2-check.mjs matches `field = <number>`). A field whose default
+    // is a function call has no default the contract can check, so the probe
+    // moved into the constructor below and the declared value stayed declared.
+    double shoulderNarrowMM = 10.0;   // Aldrich: 1 cm in from the shoulder edge
 
     // ---- THE SHOULDER SEAM: the surface stops being a tube ----
     //
@@ -427,6 +420,19 @@ struct SheathOptions {
     double topDartApexFrac = 0.55;    // top dart tip height, same fraction scale
     double skirtApexFrac = 1.35;  // dart tip runs through the hip blend band
     double hipBlendMM = 90.0;  // hip-corner rounding half-width (drafting "hip curve")
+
+    // THE ONE PLACE A PROBE CAN MOVE THE STRAP POINT FOR THE ENGINE AND ITS
+    // JUDGE AT ONCE. h10_gate_check and surface-pattern both build
+    // `const SheathOptions opt;`, so an override applied anywhere else reaches
+    // one of them and not the other — which is exactly how Tur 9 rejected the
+    // span dial on a reading the gate could not make (see shoulderNarrowMM).
+    // Unset = every field above, unchanged; the shipped garment is bit-identical.
+    SheathOptions() {
+        if (const char* e = std::getenv("STITCHU_SHOULDER_NARROW")) {
+            const double v = std::atof(e);
+            if (v > 0.0 && v < 120.0) shoulderNarrowMM = v;
+        }
+    }
 };
 
 // Builds the four-panel sheath from the body surface with zero ease.
