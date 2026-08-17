@@ -66,6 +66,27 @@ jobs:
       - name: header-diff
         run: node engine/tools/header-diff.mjs
 
+      # TUR 13: site health — dead internal links, sitemap vs reality, and any
+      # generator that would rewind the site's ?v. Until this step existed
+      # NOTHING measured the live site, and three defects reached Damla's public
+      # face while every tool involved exited 0:
+      #   228 dead internal references, web/index.html among them (187 dead
+      #       hrefs and 41 broken <img> — holes in the page, not just links);
+      #    22 sitemap URLs returning 404 to Google, while 24 live pages were
+      #       absent from the sitemap entirely;
+      #     5 generators pinned at ?v=80/84/85/90 against a site at 136.
+      #
+      # RED TODAY, declared rather than hidden: ONE dead reference remains,
+      # web/blog/index.html -> ../patterns/. It is a noindex redirect stub whose
+      # target af49514 deleted, so it redirects old inbound links into a 404 —
+      # its only job, failed. It is NOT fixed here because guard.json's
+      # generated-web-html rule covers web/blog/**, i.e. "change the generator,
+      # not the HTML", and NO generator produces this file. Resolving that
+      # mismatch is Damla's call (DAMLA-KUYRUK). This gate only refuses to stay
+      # silent about it — the same posture as validate-contract below.
+      - name: site-health
+        run: node engine/tools/site-health.mjs
+
       # deploy.sh proof 3: contract/vocab/gen drift AND the copyright boundary
       # (check 5b). This one is RED today and it is red for a real reason:
       # patterns_real/ has 49 tracked files, 8 of them purchased BugraPatterns

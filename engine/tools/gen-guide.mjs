@@ -9,10 +9,17 @@
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { siteVersion } from './site-version.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = join(here, '..', '..', 'web', 'guide');
-const V = 'v83'; // shared asset cache stamp (bump on deploy with the rest)
+// Shared asset cache stamp, read from web/ (the single record). This was the
+// literal 'v83' until TUR 13 and it was wrong TWICE: frozen 53 bumps behind a
+// site at 136, and malformed — it is interpolated as `?${V}`, so it emitted
+// `?v83`, with no '=', which is not the `?v=N` param every other page and
+// every check in this repo uses. Found by mutation testing site-health, not
+// by reading: no version-shaped regex can match the string 'v83'.
+const V = `v=${siteVersion()}`;
 
 // The 9-phase construction order (mirrors knowledge/sewing-guide.md section 2).
 const ORDER = [

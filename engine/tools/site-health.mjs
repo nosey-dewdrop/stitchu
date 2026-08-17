@@ -161,9 +161,27 @@ if (missing.length) {
 }
 
 // ------------------------------------------------ D. ?v single source + regression
+const assetFiles = walk(WEB, (n) => /\.(html|js|css)$/.test(n));
+
+// D0 — the stamp must be `?v=N`. gen-guide.mjs wrote `?v83` (no "="), because it
+// held 'v83' and interpolated it as `?${V}`. Nothing caught it: deploy.sh bumps
+// with s/\?v=[0-9]+/, pages.yml counts /\?v=[0-9]*/, and BOTH skip a stamp with
+// no "=". So 6 live guide pages sat frozen at v83 while the rest of the site
+// advanced to 136 — browsers cached them under a key no deploy could ever move.
+const malformed = [];
+for (const f of assetFiles) {
+  for (const m of readFileSync(f, 'utf8').matchAll(/\?v(\d+)/g)) {
+    malformed.push(`${relative(ROOT, f)} carries "?v${m[1]}" — must be "?v=${m[1]}"`);
+  }
+}
+if (malformed.length) {
+  red(`FAIL  ${malformed.length} malformed cache-bust stamp(s) — a "?vN" without "=" is invisible to every bump:`);
+  for (const s of malformed.slice(0, 20)) console.error(`        ${s}`);
+  if (malformed.length > 20) console.error(`        ... and ${malformed.length - 20} more`);
+}
+
 const vLits = [...new Set(
-  walk(WEB, (n) => /\.(html|js|css)$/.test(n))
-    .flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/\?v=(\d+)/g)].map((m) => m[1]))
+  assetFiles.flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/\?v=(\d+)/g)].map((m) => m[1]))
 )];
 if (vLits.length !== 1) {
   red(`FAIL  web/ carries ${vLits.length} distinct ?v versions (must be exactly 1): ${vLits.join(', ')}`);
@@ -181,15 +199,25 @@ if (vLits.length !== 1) {
     const hits = new Set();
     // inline literal:  ?v=84
     for (const m of src.matchAll(/\?v=(\d+)/g)) hits.add(m[1]);
-    // hardcoded fallback:  process.env.V || '85'
-    for (const m of src.matchAll(/process\.env\.V\s*\|\|\s*['"](\d+)['"]/g)) hits.add(m[1]);
-    // bare version-string default:  process.argv[2] || 'v=80'. gen-vintage-page
-    // used exactly this and the two patterns above BOTH missed it — the literal
-    // is "v=80", with no "?" — so the first version of this gate reported three
-    // frozen generators when there were four. A gate that only catches the
-    // shapes you happened to think of is the mute button it was written against.
+    // bare version-string literal anywhere:  'v=80'
     for (const m of src.matchAll(/['"`]v=(\d+)['"`]/g)) hits.add(m[1]);
-    for (const v of hits) if (v !== CANON) stale.push(`${relative(ROOT, g)} hardcodes ?v=${v} (site is at ?v=${CANON})`);
+    // ANY digit literal reachable from the version variable's own declaration.
+    // This deliberately does not enumerate shapes. Three earlier attempts here
+    // each enumerated, and each one had a hole:
+    //   /\?v=(\d+)/                    missed gen-vintage-page's 'v=80'
+    //   /process\.env\.V \|\| '(\d+)'/ missed a plain  const V = '84'
+    // and the second hole was found by MUTATION, not by reading — re-arming the
+    // original TUR 12 defect as `const V = '84'` sailed through a gate written
+    // to catch that exact defect. So: take the whole right-hand side of the V
+    // declaration and refuse every number in it. siteVersion() has no digits,
+    // which is the point — the only passing form is the shared reader.
+    for (const decl of src.matchAll(/(?:const|let|var)\s+V\s*=\s*([^;]+);/g)) {
+      // Array/argument indexing is not a version: process.argv[2] must not be
+      // read as "pinned at 2". Everything else numeric in the declaration is.
+      const rhs = decl[1].replace(/\[\s*\d+\s*\]/g, '[]');
+      for (const m of rhs.matchAll(/(\d+)/g)) hits.add(m[1]);
+    }
+    for (const v of hits) if (v !== CANON) stale.push(`${relative(ROOT, g)} hardcodes version ${v} (site is at ?v=${CANON})`);
   }
   if (stale.length) {
     red(`FAIL  ${stale.length} generator version literal(s) would push the live site BACKWARD:`);
