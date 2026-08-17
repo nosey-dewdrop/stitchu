@@ -177,6 +177,14 @@ Her turun sonunda tek ajan, sadece `state.json` + son 5 raporu okur. Üç soru: 
 
 **Her 10 turda bir kapsam hakemi:** bitiş tanımını halka listesine karşı okur, eksik olanı halka olarak ekler.
 
+### DURMA SEBEBİ — sadece iki tane (Damla emri, 17.08)
+
+**Vardiya raporu bir DURMA sebebi DEĞİLDİR, günlük ÇIKTIDIR.** Raporu yaz, commit'le, **sonraki tura DEVAM et.**
+Meşru durma sebebi yalnız ikidir:
+1. **KOTA** — kalan halka + kalan saat tahmini yazılır, durulur.
+2. **DUR-SOR-DAMLA** — hedefe ya da kabul testine dokunmak gerekiyorsa.
+Bunun dışında hiçbir şey turu bitirmez: taban kırmızısı değil, rapor değil, faz kapanışı değil.
+
 ### GÜNLÜK RAPOR
 Her ~24 koşu saatinde `reports/YYYY-MM-DD-vardiya.txt` — **üç sayı + tek paragraf.** Tüccar raporu: hedefe mesafe, para ve tarih dilinde. Virtüöz anlatısı yok.
 
