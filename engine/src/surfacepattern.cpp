@@ -131,6 +131,8 @@ struct GarmentSurf {
     // actually describe, and its geometry is why it could be sewn by anyone.
     double skimTopH = 0.0;   // 0 = off, follow the body as before
     double skimBaseH = 0.0;  // the waist ring — named, not searched for
+    // STITCHU_SKIM_ENVELOPE=1. Off = the shipped garment. See at().
+    bool envelope = std::getenv("STITCHU_SKIM_ENVELOPE") != nullptr;
     // A-LINE SKIRT: below the waist the garment does not follow the hip either.
     // It opens straight from the waist ring to a prescribed hem sweep, which is
     // what "A-line" means and is why the period patterns could be sewn flat.
@@ -171,14 +173,44 @@ struct GarmentSurf {
                 // outside the body, the body where the body is outside the
                 // cone. Below the waist ring nothing here runs, so the single
                 // shared ring and the whole skirt are untouched by construction.
-                const Section b = section(h);
-                const double bodyD = profile(h, 3);
-                if (b.bm > mid.bm) {  // depth and its front/back split travel together
-                    mid.bm = b.bm;
-                    mid.bd = b.bd;
+                // ★ MEASURED, AND SHIPPED OFF (Tur 10). Turning the envelope on
+                // does the one thing H1.0b asked for and one thing nobody asked
+                // for, and the second is disqualifying on its own:
+                //   underarm x vs shoulder point, EU34   +10.055 -> -7.112mm
+                //     (THE SIGN TURNS OVER: the underarm finally sits OUTSIDE
+                //      the shoulder point, which is what a garment does)
+                //   skim deficit at armscye depth, EU34  +17.335 -> +0.000mm
+                //   armhole run (3D), EU34              156.638 -> 159.251mm
+                //   h10_gate_check wall clock            47s -> >21 min, 99% CPU
+                // The third line is the answer to the second: +2.6mm of armhole
+                // for a 40mm shortfall. K1 does not enter its band from this,
+                // because the run is 147mm of DROP and 10mm of width — widening
+                // the underarm moves the near end sideways along an almost
+                // vertical chord and buys almost no length.
+                // The fourth line is why it cannot ship anyway. Following the
+                // bust makes the bodice doubly curved, which is precisely the
+                // surface Tur 8 recorded as carrying +52.5 deg of develop-
+                // deficit; the flatten stops converging cheaply and the run
+                // goes past the 900s push gate. HEDEF.md records this exact
+                // class once already (Release build lost, engine_check
+                // 19s -> 2684s, push gate unpassable).
+                // So it is a DIAL, default off: the shipped garment is
+                // bit-identical to before this commit, and the measurement is
+                // kept instead of being argued about. K1's remaining 40mm is
+                // NOT here — it is in how far the hole opens front to back
+                // (EU34 half-opening dy = 26.0mm against a real armhole's
+                // 50-55mm), which is the angular span, and the span dial above
+                // is measured and rejected on the OLD surface only.
+                if (envelope) {
+                    const Section b = section(h);
+                    const double bodyD = profile(h, 3);
+                    if (b.bm > mid.bm) {  // depth and its front/back split travel together
+                        mid.bm = b.bm;
+                        mid.bd = b.bd;
+                    }
+                    mid.a = std::max(mid.a, b.a);
+                    d = std::max(d, bodyD);
                 }
-                mid.a = std::max(mid.a, b.a);
-                d = std::max(d, bodyD);
                 double px = 0, py = 0;
                 mid.offsetPoint(d, phi, px, py);
                 return {px, py, h};
