@@ -235,8 +235,17 @@ def align_lengths(lengths_by_size):
       aligned  {panel: (labels, [[mm per size] per edge])}
       notes    human-readable structural notes (merge positions etc.)
       skipped  panels whose structure could not be aligned
+      merges   {panel: (merged_row_label, {size indices whose row is a SUM})}
+               — 15A left this open: "IHLAL 30'un ne kadari gercek kusur, ne
+               kadari align_lengths'in tek-birlestirmesinin artigi? Olcmedim."
+               A merged cell is a SUM of two edges and a step whose endpoint is
+               such a cell is not comparable to a step between two raw edges.
+               So every violating step is now stamped with whether the merge
+               touched EITHER of its two endpoints. Not a threshold, a
+               provenance label: the count does not move, the reader stops
+               having to guess.
     """
-    aligned, notes, skipped = {}, [], []
+    aligned, notes, skipped, merges = {}, [], [], {}
     panels = sorted(lengths_by_size[0])
     for L in lengths_by_size[1:]:
         assert sorted(L) == panels, 'panel set differs across sizes'
@@ -293,6 +302,9 @@ def align_lengths(lengths_by_size):
                  for si in range(len(lengths_by_size))]
                 for i in range(nmin)]
         aligned[panel] = (labels, seqs)
+        merges[panel] = (labels[best_k],
+                         {si for si, L in enumerate(lengths_by_size)
+                          if len(L[panel]) == nmax})
         notes.append(f'{panel}: ham kenar sayisi bedene gore {counts} '
                      '(GarmentCode cut_corner mikro-kenari, bedenle '
                      'monoton DEGIL); tum bedenlerde ayni pozisyonda '
@@ -301,7 +313,7 @@ def align_lengths(lengths_by_size):
                      + f' — tablo indeksleri {nmin}-kenarli bedenlerin '
                        'numarasidir, birlesik satir fazla-kenarli '
                        'bedenlerde o cifttir')
-    return aligned, notes, skipped
+    return aligned, notes, skipped, merges
 
 
 def panel_outline(panel, per_edge=64):
@@ -481,7 +493,7 @@ def girth_ungraded(girths):
 # ---------------------------------------------------------------------------
 # monotonicity audit
 # ---------------------------------------------------------------------------
-def monotonicity(aligned):
+def monotonicity(aligned, merges=None):
     """aligned: {panel: (labels, [[mm per size] per edge])} from
     align_lengths().
 
@@ -490,19 +502,29 @@ def monotonicity(aligned):
       sabit   |every step| stays within TOL and |total| <= TOL
       IHLAL   any consecutive step below -TOL (a size DECREASED the edge)
     """
+    merges = merges or {}
     rows = []
     counts = {'artan': 0, 'sabit': 0, 'IHLAL': 0}
     for panel in sorted(aligned):
         labels, seqs = aligned[panel]
+        merged_label, merged_sizes = merges.get(panel, (None, set()))
         for ei, seq in enumerate(seqs):
             steps = [seq[i + 1] - seq[i] for i in range(len(seq) - 1)]
             worst = min(steps)
             total = seq[-1] - seq[0]
+            merged_row = (labels[ei] == merged_label)
+            touched = None
             if worst < -TOL_MM:
                 verdict = 'IHLAL'
                 at = steps.index(worst)
+                # Provenance of THIS step, not of the panel: a merged panel can
+                # still violate between two sizes neither of which was merged.
+                touched = bool(merged_row and (at in merged_sizes
+                                               or at + 1 in merged_sizes))
                 detail = (f'{SIZES[at]}->{SIZES[at + 1]} '
-                          f'{worst:+.2f}mm')
+                          f'{worst:+.2f}mm'
+                          + ('  [BIRLESIK HUCRE — artik olabilir]' if touched
+                             else '  [ham kenar, birlesme DEGMEDI]'))
             elif total > TOL_MM:
                 verdict, detail = 'artan', f'toplam {total:+.2f}mm'
             else:
@@ -510,6 +532,7 @@ def monotonicity(aligned):
             counts[verdict] += 1
             rows.append({'panel': panel, 'edge': labels[ei],
                          'verdict': verdict, 'detail': detail,
+                         'merged_row': merged_row, 'merge_touched': touched,
                          'seq': [round(x, 2) for x in seq]})
     return rows, counts
 
@@ -866,6 +889,22 @@ def fmt_report(deed, mono_rows, mono_counts, bust, waist, waist_pairs, nudges,
              f"{mono_counts['artan']}   sabit: {mono_counts['sabit']}   "
              f"IHLAL: {mono_counts['IHLAL']}")
     if mono_counts['IHLAL']:
+        viol = [r for r in mono_rows if r['verdict'] == 'IHLAL']
+        n_touch = sum(1 for r in viol if r['merge_touched'])
+        L.append(f'★ IHLALIN KAYNAGI (15A\'nin acik birakip olcmedigi soru): '
+                 f'{len(viol)} ihlalin {n_touch}\'i align_lengths\'in '
+                 f'birlestirdigi bir HUCREYE degiyor, {len(viol) - n_touch}\'i '
+                 f'iki ucu da HAM kenar olan bir adimda — yani birlesmenin '
+                 f'artigi OLAMAZ, gercek kusurdur.')
+
+        def piece0(name):
+            for pre in ('left_', 'right_'):
+                if name.startswith(pre):
+                    return name[len(pre):]
+            return name
+        tekil = {(piece0(r['panel']), r['edge'], r['detail']) for r in viol}
+        L.append(f'   ayrica {len(viol)} ihlal {len(tekil)} TEKIL kenardir: '
+                 f'sol/sag ayna panelleri ayni kusuru iki kez sayiyor.')
         L.append('ihlaller:')
         for r in mono_rows:
             if r['verdict'] == 'IHLAL':
@@ -1043,8 +1082,9 @@ def main():
                        if n.get('field') == 'body.shoulder_w'])
 
     # --- audits ------------------------------------------------------------
-    aligned, struct_notes, struct_skipped = align_lengths(lengths_by_size)
-    mono_rows, mono_counts = monotonicity(aligned)
+    aligned, struct_notes, struct_skipped, merges = \
+        align_lengths(lengths_by_size)
+    mono_rows, mono_counts = monotonicity(aligned, merges)
     bust, waist, waist_pairs, waist_srcs = [], [], [], []
     for pat in patterns:
         b, _ = bust_girth_mm(pat)
