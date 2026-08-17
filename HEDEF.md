@@ -11,7 +11,7 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 > **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
 
 ```
-H1'e kalan:  6 halka / 29–41 koşu saati    [H1.0: 14–24 → **18–30s** · H1.0a ve H1.0b artık TEK problem]
+H1'e kalan:  6 halka / 23–33 koşu saati    [H1.0: 18–30 → **12–22s** — zarf kritik yolda DEĞİLMİŞ]
 H2'ye kalan: 6 halka / 158–285 koşu saati   [**H2.1 KAPANDI** — operatör sicili kuruldu, red cümlesi eksik operatörü ADIYLA söylüyor]
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
 TABAN:       2 halka / DAMLA'DA           [T17 KAPANDI · T1 yok-hükmünde · T5 = K5'e bloke · style/figure pinleri = K15'e bloke]
@@ -57,6 +57,48 @@ pens yok; PNG'de mavi yok çünkü pens yok, iki serbest-uç çentiği de **kayb
 bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi yerinde).
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
+
+## TUR 11 — ★ TUR 9'UN REDDİ BOZUK BİR ÖLÇÜMDÜ, VE KOL OYUĞU İLK KEZ BANDA GİRDİ
+
+### Kapı kendi penceresini ölçüyordu, deliği değil
+`STITCHU_ARMHOLE_SPANDEG` oyuğun **başlangıç açısını** kaydırıyor ama `opt.shoulderNarrowMM`'i 10mm'de bırakıyordu. `h10_gate_check.cpp:104` hangi kenarın oyuk olduğuna **tam olarak o sayıdan** karar veriyor (`strapHalf = shoulderHalf − shoulderNarrowMM`). 40°'de motor **φ=39.4°'ye açılan bir delik kesiyor**, kapı ise **φ≤20°**'yi oyuk sayıp gerisine "omuz" diyor.
+
+| span | 3B koşu (koltukaltı→omuz ucu) | kapının K1'i |
+|---|---|---|
+| as-is | 165.26mm | 330.13 |
+| 30° | 179.36 | 158.15 |
+| 40° | **191.39** | **88.27** |
+| 50° | **212.51** | 70.47 |
+
+**Kapının "kısaldı" dediği her durumda delik UZAMIŞ.** `330→158→88→70` deliğin değil, kapının topladığı **φ-penceresinin** çöküşü. Tur 9'un iki hükmü — *"geniş açı omzu yiyor"* ve *"oyuğun uzunluğu açısal açıklığın özelliği değil"* — **İKİSİ DE YANLIŞ**, ve yanlışlık zarftan bağımsızdı. Kayış noktası artık **üç okuyucunun paylaştığı TEK sayı** (`c032fac`).
+
+### ★ K1 BU VARDİYADA İLK KEZ BANDA GİRDİ — ama alınmadı (sekizinci emsal)
+`STITCHU_SHOULDER_NARROW` süpürmesi, 8 bedende:
+
+| narrow | K1 EU38 | banda giren | K2 grade | kapı |
+|---|---|---|---|---|
+| **10mm (sevk edilen)** | 330.13 | 0/8 | **7/7 ok** | 44/63 |
+| 38mm | 380.89 | 0/8 | 6/7 | 45/63 |
+| **50mm** | **399.17** | **4/8 ok** | **4/7** | **43/63** |
+
+50mm'de EU34/36/38/40 bandın içinde. **ALINMADI:** K2 7/7 → 4/7 ve düşen adımlar **negatif** (−3.166…−5.891mm), komşuları +6…+14mm. Kapının kendi `splitFar` yorumundaki **kolon kuantizasyonu** gibi duruyor ama **DOĞRULANMADI** — daha yüksek `ringSamples` ile koşulmadı. *"Yedi yeşili doğrulanmamış bir okumaya harcamadım."* Ayrıca 50mm Aldrich'in 1cm'inin **5 katı**, yaşarsa kaynak ister.
+
+### Zarf (envelope) KRİTİK YOLDA DEĞİLMİŞ
+- **dy'ye 0.15mm bile katmıyor** (kapalı 25.85→33.40mm, açık 26.00→33.42mm). Katan tek şey **açısal açıklık**: sp40'ta EU38 `dy` **27.58 → 52.05mm** — gerçek kol oyuğunun 50–55mm bandı tam orası.
+- ★ **Zarf altında dört gövde panelinin İKİSİ YAKINSAMIYOR** (ARAP 1761/1441/**2000 TAVAN**/**2000 TAVAN**, `lastMove` 1.2e-4 ve 4.8e-4 vs eşik 1e-4). Yani **Tur 10'un zarf altında okuduğu +2.6mm yakınsamamış bir düzleştirmeden geldi.**
+- Bedel: kapı **47s → 21dk+** (27×).
+
+### Eyer — iki turdur ertelenen üçüncü hipotez ÖLÇÜLDÜ
+Zarf açıkken ön çukur **−64.05 → −49.58°** (%22.6 azaldı), **arka 1° bile kımıldamadı**. Karşılığında zarf panelin ortasına **yeni bir çift-eğrilik lobu** koydu (+14.80/+12.16, kapalıyken −0.04). Toplam deficit **işaret değiştirdi** — ARAP'ın tavana çarpmasının sebebi tam olarak bu +27°.
+
+### Ve dört kapı daha: `walk.py` bütün dikişleri silinmiş bir giysiyi "dikilebilir" ilan ediyordu
+- **`walk.py`:** gerçek 8 panelli EU38 spec'i, **26 dikişin HEPSİ silinmiş** → önce exit 0 "KAPI HÜKÜM: YEŞİL". **Parçaları birbirine hiç bağlanmamış bir giysi dikilebilir sayılıyordu.**
+- **`printpack.py`:** A0 PDF'i yazan satır susturuldu → ekranda `print_a0 ... MISSING` yazılı, **exit 0**. `taban.sh` o exit koduna bakıyor: **sekiz alıcı paketi A0'sız çıksa vardiya mührü yeşil basılırdı.**
+- `edgemono_check.py` ve `gradeset.py` de aynı sınıf (boş mühür / sıfırın üzerinde duran hüküm). Dördü de mutasyon kanıtlı silahlandırıldı, **hiçbir tolerans gevşetilmedi**.
+
+### `engine/tools/` 125 → 117 · v1 şeması ÖLÜ DEĞİL, İKİNCİ BİR SORU
+v1 (`ne görüyorum?`) ile v2 (`üretebiliyor muyum?`) **iki ayrı soru** — v1'i v2'ye daraltmak red cümlesinin yazıldığı kelimeleri silerdi, motor dürüst olmak yerine **susardı**. Kurulan: `contract/spec-v1-v2-map.json`, **79 v1 enum değeri, bugün 31'i üretilebilir, 48'i değil**, hüküm elle yazılmıyor **hesaplanıyor**.
+★ **v2'de yaka-ŞEKLİ ekseni HİÇ YOK** — `necklineDraft` shipped ama şekli enum'la değil kadranlarla çiziyor → **9 v1 yakası okunuyor ama AYIRT EDİLMİYOR.**
 
 ## TUR 9 — ÜÇ SERT SONUÇ
 
