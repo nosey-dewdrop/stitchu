@@ -76,14 +76,25 @@ jobs:
       #       absent from the sitemap entirely;
       #     5 generators pinned at ?v=80/84/85/90 against a site at 136.
       #
-      # RED TODAY, declared rather than hidden: ONE dead reference remains,
-      # web/blog/index.html -> ../patterns/. It is a noindex redirect stub whose
-      # target af49514 deleted, so it redirects old inbound links into a 404 —
-      # its only job, failed. It is NOT fixed here because guard.json's
-      # generated-web-html rule covers web/blog/**, i.e. "change the generator,
-      # not the HTML", and NO generator produces this file. Resolving that
-      # mismatch is Damla's call (DAMLA-KUYRUK). This gate only refuses to stay
-      # silent about it — the same posture as validate-contract below.
+      # GREEN SINCE TUR 18 (18C). The one remaining dead reference was
+      # web/blog/index.html -> ../patterns/: a noindex redirect stub whose
+      # target af49514 deleted, so it sent every old inbound /blog/ link into a
+      # 404 — the one job it existed for, failed. It stayed red for two turns
+      # because guard.json's generated-web-html rule covers web/blog/**
+      # ("change the generator, not the HTML") and NO generator produced the
+      # file, so every honest exit was blocked. 18C resolved it the only way
+      # the rule sanctions: the path was given its producer (step below), which
+      # declares the stub's target as permanently gone and therefore REMOVES it
+      # rather than pointing old links into a 404. Neither guard pattern was
+      # loosened — the match is byte-identical and web/blog/ stays sealed.
+      # Measured: 1 FAIL -> 0 FAIL, 128 -> 127 pages, 2598 -> 2597 refs,
+      # sitemap 124 and indexable 124 both unchanged.
+      #
+      # This step runs FIRST so a fabricated redirect target can never reach
+      # site-health: a declared target that is not on disk is fatal here.
+      - name: legacy-redirects
+        run: node engine/tools/gen-legacy-redirects.mjs --check
+
       - name: site-health
         run: node engine/tools/site-health.mjs
 
