@@ -658,6 +658,16 @@ add_test(NAME edgemono_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/edgemono_
 add_test(NAME walkgate_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/walkgate_check.sh
          $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
+# cutplan_check: the cut plan's own verdict, wired to an exit code. cutplan.py
+# had no exit code and no __main__ at all, so its hardest finding — the naming
+# rule and the outlines contradicting each other on a mirrored pair — was a
+# sentence printed into print-report.txt and read by nobody. That is the exact
+# class of the Tur 12/13 mirror-seam defect, which stood in the shipped garment
+# in five of eight sizes for the same reason. Which finding is a verdict and
+# which is information is written into cutplan.py's verdict() header.
+add_test(NAME cutplan_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/cutplan_check.sh
+         $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
 # printpack_sheet_check: what the PRINTED pack actually says. Twice now a
 # sentence was derived, proved, and shipped only into print-report.txt -- the
 # audit file, which no buyer holds: the assembly order (T4) and the "BURAYI

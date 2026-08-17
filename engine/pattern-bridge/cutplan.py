@@ -407,3 +407,124 @@ def report_lines(plan):
                 'fixed rather than trusted)']
         out += [f'  {r["name_disagreement"]}' for r in rows]
     return out
+
+
+# ============================================================================
+# THE GATE (T15). Everything above measures; until now nothing here could
+# REFUSE. This file had no exit code and no __main__: its hardest finding,
+# `name_disagreement` — "X is named as the mirror of Y but the outlines do not
+# match" — was a sentence printed into print-report.txt and nothing else.
+#
+# That is exactly the class of the Tur 12/13 mirror-seam defect: a real fault,
+# correctly measured, printed as prose, read by nobody, and standing in the
+# shipped garment in five of eight sizes. A judge that cannot refuse is not a
+# judge. The measurements are not touched; they are given a status.
+#
+# WHAT IS A VERDICT AND WHAT IS INFORMATION — the split is deliberate:
+#
+#   VERDICT   name_disagreement: the naming rule and the geometry contradict
+#             each other. One of the two is wrong and the sheet carries both.
+#   VERDICT   census: a plan covering no panels is not a passing plan. Same
+#             class as T17 style_check ("PASS, nothing to enforce").
+#   VERDICT   coverage / dangling copy-of: every panel must get a row, and a
+#             copy must point at a drawing that is actually printed. These are
+#             internal consistency, not tolerances.
+#
+#   INFO      rivals ("same outline, different piece"). This is NOT a fault:
+#             it is cutplan doing its job. The two pieces are measured as
+#             different, kept apart and drawn separately, which is the whole
+#             point of the edge gate added in KOŞU 2 FAZ 1. Making it red
+#             would be inventing a failure out of a correct answer.
+#
+# No threshold is introduced here. TOL_CM is the file's own and is not touched.
+# ============================================================================
+
+MIN_PANELS = 8      # 4 quarter bodices + 4 quarter skirts; see spec_census.py
+
+
+def verdict(plan, panel_names, min_panels=MIN_PANELS):
+    """(judgments, info). A judgment is a fault; info is reported, not counted.
+
+    Returns lists of plain strings so the caller can print them and count them
+    without this file deciding how a report looks.
+    """
+    judgments, info = [], []
+
+    if len(plan) < min_panels:
+        judgments.append(
+            f'the cut plan covers {len(plan)} panels, below the floor of '
+            f'{min_panels}: a plan with nothing in it is not a plan that '
+            f'passed')
+
+    missing = sorted(set(panel_names) - set(plan))
+    if missing:
+        judgments.append(
+            f'{len(missing)} panel(s) in the specification get no row in the '
+            f'cut plan ({", ".join(missing)}): a piece nobody was told to cut '
+            f'is a piece that does not reach the cloth')
+
+    for name in sorted(plan):
+        r = plan[name]
+        if r.get('name_disagreement'):
+            judgments.append(f'{name}: {r["name_disagreement"]}')
+        if not r['printed']:
+            reps = [m for m in r['members'] if plan.get(m, {}).get('printed')]
+            if len(reps) != 1:
+                judgments.append(
+                    f'{name} is marked as a copy but {len(reps)} of its '
+                    f'members are drawn; the cutter has no drawing to use')
+        for other, gap in r.get('rivals', ()):
+            info.append(f'{other} and {name} are one shape cut into edges '
+                        f'{gap:.4f}mm apart, so they are drawn separately')
+
+    return judgments, info
+
+
+def gate_lines(plan, panel_names, min_panels=MIN_PANELS):
+    judgments, info = verdict(plan, panel_names, min_panels)
+    out = [f'KAPI  sayım: panel {len(panel_names)}  plan satırı {len(plan)}  '
+           f'çizilen {sum(1 for r in plan.values() if r["printed"])}',
+           f'KAPI  hüküm-FAIL: {len(judgments)}']
+    out += [f'KAPI  HÜKÜM-FAIL {j}' for j in judgments]
+    out += [f'KAPI  bilgi (kapıyı düşürmez): {i}' for i in info] or \
+           ['KAPI  bilgi (kapıyı düşürmez): yok']
+    out.append('KAPI  HÜKÜM: ' + ('KIRMIZI' if judgments else 'YEŞİL'))
+    return out, len(judgments)
+
+
+def main(argv):
+    """cutplan.py <spec.json> [<spec.json> ...] — derive and JUDGE."""
+    import json
+    import walk
+
+    if len(argv) < 2:
+        print('kullanım: cutplan.py <spec.json> [<spec.json> ...]')
+        return 2
+
+    total = 0
+    for path in argv[1:]:
+        with open(path, encoding='utf-8') as fh:
+            spec = json.load(fh)
+        pat = spec.get('pattern', spec)
+        panels = pat['panels']
+        names = sorted(panels)
+        geos = {n: [walk.edge_curve(panels[n]['vertices'], e)
+                    for e in panels[n]['edges']] for n in names}
+        plan = derive(names, geos)
+        lines, n = gate_lines(plan, names)
+        print(f'== {path}')
+        for line in lines:
+            print('  ' + line)
+        total += n
+
+    print(f'CUTPLAN GATE  spec {len(argv) - 1}  toplam hüküm-FAIL {total}')
+    if total:
+        print('CUT PLAN: FAIL')
+        return 1
+    print('CUT PLAN: PASS')
+    return 0
+
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main(sys.argv))
