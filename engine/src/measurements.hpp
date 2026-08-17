@@ -32,8 +32,16 @@ struct BodyMeasurementsSnapshot {
     // shoulderInclDeg is the slope in DEGREES (body_params.py keeps it as-is and
     // every use site feeds it to deg2rad). 0 means not supplied and the surface
     // simply has no shoulders, which is what it had before.
-    // NOTE: this is NOT the chart's own shoulderCM (37 at EU38) — that is a
-    // different quantity and only the legacy 2D line reads it.
+    // ★ TUR 16A CORRECTION. This comment used to read "this is NOT the chart's
+    // own shoulderCM (37 at EU38) — that is a different quantity". That was an
+    // ASSERTION and the measurement contradicts it: driven from shaperatios'
+    // width the shoulder line misses Aldrich by -19.3...-10.6mm in eight sizes
+    // out of eight, all in the same direction; driven from the chart column it
+    // lands within +5.2...-2.9mm. sizechart.hpp now feeds shoulderCM in here, so
+    // for every graded body the two ARE the same number and the note is retired.
+    // A caller building a body by hand may still set them apart — the field
+    // stays separate because shoulderCM is a chart entry and this is what the
+    // surface was actually built with.
     double shoulderWidthCM = 0, shoulderInclDeg = 0;
 
     double bustMM() const { return bustCM * 10; }

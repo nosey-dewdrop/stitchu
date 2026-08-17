@@ -29,18 +29,30 @@ inline const std::vector<SizeChartEntry>& euSizeChart() {
             STITCHU_CONTRACT_EU_SIZE_CHART(X)
 #undef X
         };
-        // The chart carries GIRTHS and nothing else — it has never carried a
+        // The chart carries GIRTHS and a SHOULDER WIDTH; it has never carried a
         // shape. The back's share of each girth arc comes from the graded body
         // (shaperatios.gen.hpp) and is grafted on here so there is still ONE
         // lookup for callers. Sizes with no published ratio (EU50/EU52) keep 0
         // and the surface falls back to the symmetric section, visibly.
+        //
+        // ★ TUR 16A — THE SHOULDER WIDTH IS THE CHART'S OWN COLUMN, NOT
+        //   shaperatios'. Measured, eight sizes (15B's probe, 184860c, and the
+        //   table in HEDEF.md §TUR 15): shaperatios' shoulderWidthCM (the
+        //   GarmentCode mean body, graded +1cm/size off an EU44 anchor) puts the
+        //   shoulder tip so far in that the shoulder line runs -19.3...-10.6mm
+        //   SHORT of Aldrich in ALL EIGHT sizes; the chart's own shoulderCM lands
+        //   within +5.2...-2.9mm. One measurement missing in the same direction in
+        //   eight sizes out of eight is a wrong measurement, not a tolerance. The
+        //   slope (shoulderInclDeg) still comes from shaperatios — it is the only
+        //   published source for it — so the ratio row still gates whether this
+        //   body gets shoulders at all.
         for (SizeChartEntry& e : c)
             for (const contract::BackArcRow& r : contract::kBackArcFraction)
                 if (e.label == r.label) {
                     e.body.bustBackFrac = r.bust;
                     e.body.waistBackFrac = r.waist;
                     e.body.hipBackFrac = r.hip;
-                    e.body.shoulderWidthCM = r.shoulderWidthCM;
+                    e.body.shoulderWidthCM = e.body.shoulderCM;
                     e.body.shoulderInclDeg = r.shoulderInclDeg;
                 }
         return c;
