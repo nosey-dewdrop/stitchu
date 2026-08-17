@@ -58,6 +58,93 @@ bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
 
+## TUR 16 / 16B — KENAR ZIPLAMASININ KÖKÜ: SERBEST ÜST KENAR, VE KAPI GEVŞETMEK ÇÖZMÜYOR (ÖLÇÜLDÜ)
+
+**Halka açık kaldı. Bu tur bir DÜZELTME değil, bir KÖK TEŞHİS + iki reddedilmiş hamle üretti.**
+Ölçüm ağacı: `94ab73d` (tur başı) · doğrulama `518d442` (16A'nın omuz kaynağı değişikliğinden sonra).
+Build: `engine/build-16b`, `-DCMAKE_BUILD_TYPE=Release`.
+
+### ★ (a) MI (b) MI? — CEVAP (a) DEĞİL, (b) DEĞİL: **SERBEST KENAR**
+Dört gövde panelinin zıplaması **tamamen `far` (gövde ÜSTÜ = yaka + omuz + kol oyuğu) zincirinde.**
+Panelin dört zincirinin 8 bedendeki parça sayısı (`STITCHU_FIT_DEBUG`, `94ab73d`):
+
+| zincir | tip | `left_ftorso` 8 beden | `left_btorso` 8 beden |
+|---|---|---|---|
+| bel | PAYLAŞILAN | 3 3 3 3 3 3 3 3 | 4 4 4 4 4 4 4 4 |
+| seam1 | PAYLAŞILAN | 2 2 2 2 2 2 2 2 | 1 1 1 1 1 1 1 1 |
+| seam0 | PAYLAŞILAN | 2 2 2 2 2 2 2 2 | 2 2 2 2 2 2 2 2 |
+| **far** | **SERBEST** | **13 14 15 13 13 14 14 14** | **15 15 15 13 13 13 13 13** |
+
+Toplam = 7 + far → `[20,21,22,20,20,21,21,21]` / `[22,22,22,20,20,20,20,20]`, ilan edilen tabloyla birebir.
+★ **Kural görünür oldu: DİKTE EDİLEN her zincir 8 bedende SABİT, dikte edilmeyen tek zincir zıplıyor.**
+Sebep yapısal: bir dikişin iki tarafı vardır ve T9'un birleşim kuralı onları paylaştırır; **üst kenarın
+dikiş partneri YOK**, o yüzden bölünmeyi tek başına açgözlü arama seçiyor.
+
+### ★ KAPIYI GEVŞETMEK ÇÖZMÜYOR — ÖLÇÜLDÜ, BEŞ TOLERANSTA
+Aynı 8 polyline, izole edilmiş `fitCubics` (kapıdan bağımsız ölçüm aleti):
+
+| tol (mm) | 0.01 | 0.05 | **0.15 (kapı)** | 0.5 | 1.0 |
+|---|---|---|---|---|---|
+| `ftorso` far | 17..19 | 14..16 | **13..15** | 9..13 | 7..12 |
+| `btorso` far | 16..18 | 13..16 | **13..15** | 10..11 | 8..10 |
+
+**Hiçbir toleransta sabit değil.** Kararsızlık EŞİKTE değil ARAMADA. Yani `kFitTolMM`'i oynatmak
+bu halkayı açmaz — kapı boyamak burada işe bile yaramıyor, sadece yasak değil.
+
+### ★ KARARSIZLIĞIN GEOMETRİK KÖKÜ: BOYUN NOKTASI BİR KOLON ZIPLIYOR (15B DOĞRULANDI)
+`far` polyline'ı 8 bedende de **33 nokta** taşıyor ve indeksi doğrudan **grid kolonudur**, yani
+indeks uzayı bedene göre değişmiyor. Üst profil üç bölge taşıyor (yaka | omuz | kol oyuğu) ve bölge
+sınırları kontur indeksi olarak ölçüldü (`solveTopH`'a bölge çıkışı eklenerek):
+
+| | EU34 | EU36 | EU38 | EU40 | EU42 | EU44 | EU46 | EU48 |
+|---|---|---|---|---|---|---|---|---|
+| omuz↔kol oyuğu sınırı | 7 | 7 | 7 | 7 | 7 | 7 | 7 | 7 |
+| **yaka↔omuz sınırı** | **24** | **24** | **25** | **25** | **25** | **25** | **25** | **25** |
+
+Aynı yerde polyline'ın dönme açısı ~**−74°**'lik tek bir köşe taşıyor ve o köşe iki örnek arasında
+**göç ediyor**: indeks 24'teki dönüş EU34 −43.8° → EU38 −12.9° → EU40 −1.8° → EU42 +1.4°, indeks
+25'teki −30.9° → −60.0° → −69.8° → −71.1°. **15B'nin "kapının bölge sayımı flip ediyor" bulgusu
+motorun kendi üst profilinde DOĞRULANDI** ve zıplamanın mekanizması tam olarak budur.
+
+### ★ İKİ HAMLE ÖLÇÜLDÜ VE İKİSİ DE ALINMADI (on üçüncü ve on dördüncü emsal)
+**(1) Bölge köşelerinde dikte edilmiş ön-bölünme** (`fitCubicsSplitAt`: köşeler dikte, aralarda
+uyarlamalı fit; köşeler `SurfacePanel::farBreaks` olarak inşadan türetildi, aranmadı):
+kenar sayısı `ftorso` `[20,21,22,20,20,21,21,21]` → **`[21,21,23,22,21,21,20,20]`** —
+farklı değer sayısı **3 → 4**, yani **DAHA KÖTÜ**. Üstelik `left_skirt_back` 8 bedende `10` iken
+iki bedende `11` oldu. **ALINMADI, geri alındı.**
+
+**(2) Tamamen dikte edilmiş (bölge içi düzgün) bölünme** — sayıyı inşaen sabitler, ama fiti
+kapıdan atar. Aynı 8 polyline, kolon başına bölme D:
+
+| D | far kenar sayısı | en kötü sapma `ftorso` | en kötü sapma `btorso` | kapı 0.15 |
+|---|---|---|---|---|
+| 4 | 10 | 2.3326mm | 2.1463mm | ✗ 15× aşıyor |
+| 3 | 13 | 0.8489mm | 0.7901mm | ✗ |
+| 2 | 18 | 0.7807mm | 0.5134mm | ✗ |
+| **1** | **32** | 0.0000mm | 0.0000mm | ✓ |
+
+D=1 kapıyı geçen tek seçenek ve **panel başına 32 kenarlık üst kenar** demek: her "kenar" 5mm'lik
+bir çıta, `curvefit.hpp`'nin kendi cümlesinin ("satılabilir bir kalıp kenarı bir avuç düzgün eğridir")
+tam tersi. **Sayıyı düzeltip giysiyi bozan hamle. ALINMADI.**
+
+### ★ VE BU TURUN EN AĞIR YAN BULGUSU: SAYILAR TUR İÇİNDE ALTIMDAN DEĞİŞTİ
+16A'nın `943f313` (omuz kaynağı çizelgenin kendi kolonuna) commit'i **kenar sayılarını da oynattı**.
+`518d442`'de aynı ölçüm, aynı build:
+`ftorso` **`[21,21,21,22,21,21,20,20]`** · `btorso` **`[21,21,21,20,20,20,20,22]`** ·
+`skirt_back` **`[11,11,10,10,10,10,10,10]`** (tur başında `[10]×8`).
+**Zıplama kapanmadı, YERİ DEĞİŞTİ** (ftorso'nun 2'lik zıplaması EU46→EU48'e, btorso'nunki de oraya).
+→ Kenar sayısı bu motorda **kaotik bir işlev**: gövde çizelgesinin omuz kolonundaki bir değişiklik
+bile üst sınırı bir kolon oynatıp bölünme ağacını baştan yazıyor. Halkayı çözecek hamle
+**bölünmeyi ölçümden değil İNŞADAN alan** hamledir; bu turun (1)'i doğru sınıftaydı ama yanlış
+köşe kümesiyle ölçüldü ve sayısıyla reddedildi.
+
+### KALAN
+`gradeset.sh default` bu turda **KOŞULMADI** (kod değişikliği alınmadığı için yargılanacak yeni bir
+şey yok; IHLAL 30 ve hizalanamayan panel 4 **DEĞİŞMEDİ**). `ctest` de koşulmadı — çalışma ağacı
+`518d442` ile birebir, C++ tarafında sıfır satır değişti. **DOĞRULANMADI:** `worst fit` marjının
+(0.003mm) (1) altında ne olduğu ölçülmedi; `walkgate_check`/`edgemono_check`/`h10_gate_check`
+16A'nın iki commit'inden sonra bu ağaçta koşulmadı.
+
 ## TUR 15 — İKİ MOTOR TEKE İNDİ, VE SEVK EDİLEN MOTORUN GRADE'İ İLK KEZ ÖLÇÜLDÜ
 
 **KARAR (a).** `gradeset.py`'a `--motor` eklendi, **varsayılan `surface`** = sevk edilen C++ tek-yüzey motoru. Arşiv GarmentCode hattı **silinmedi**, `--motor garmentcode` ile adıyla çağrılıyor. Çıktı dizini de motoru taşıyor: `Logs/gradeset-<motor>-<tarih>/`. Rapor ilk satırında hangi motoru yargıladığını **adıyla** yazıyor. Tur 14'ün ilan ettiği *"iki doğru"* ihlali kapandı: tek alet, tek varsayılan.
