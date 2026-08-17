@@ -275,6 +275,85 @@ adımlar altı kez −2.0 ve **EU44→EU46'da −1.9**.
 
 **Cevap:**
 
+---
+
+### ★ TUR 18B — TABLONUN KAYNAĞI ARANDI: BİR SORU KAPANDI, İKİ SORU SERTLEŞTİ, İKİ YENİ KALEM AÇILDI
+
+Ölçüm ağacı: HEAD **`1fe3309`**, `engine/build-18b` Release. Tablo yine **okundu**;
+kaynak git geçmişinden **ölçüldü** ve dışarıdan **araştırıldı**.
+Tam dosya: **`knowledge/eu-beden-cizelgesi-kaynak-2026-08-17.md`**.
+Kapı: **`sizechart_source_check`** (ctest, bugün **4 FAIL**, mutasyon kanıtı 7/7).
+
+**★ ÖNCE DOĞUM YERİ: TABLO BİR TEST FIXTURE'IYDI.**
+`git log -S` ile ilk giriş: **`77193d5`** (7 Tem 2026) — **`engine-check/main.swift`**,
+yani bir **test koşum takımı**. Tek gerekçe bir yorum satırı: *"EU size chart (German
+convention) + edge cases"*, ve **aynı dizide** uydurma `tall / petite / pear / apple /
+bigNeckSmallShoulder` gövdeleri. **`1eafc16`** (15 Tem) o on satırı `sizechart.hpp`'ye
+**birebir kopyalayıp motorun gövde gerçeği yaptı** ve terfi anında **hiçbir kaynak
+eklemedi**; `c3c07b0` kontrata taşıdı. Repoda (`reports/`, `docs/`, `knowledge/`,
+`CLAUDE.md`, `HEDEF.md`, `ROADMAP.md`, tüm commit mesajları) **kaynak beyanı yok**;
+`EN 13402` · `DOB` · `Hohenstein` · `Burda` kelimeleri repoda **hiç geçmiyor**.
+
+**✅ KALEM 1 (+6cm rejimi) — CEVAP GELDİ, KASITLI VE ARTIK KAYNAKLI.**
+**burda style, "Richtig Maßnehmen + Maßtabellen — Damengrößen"**, NORMALE
+DAMENGRÖSSEN, Körpergröße 168
+(<https://burda-product-cms.s3.amazonaws.com/public_files/Damen_Ma%C3%9Ftabellen_online.pdf>):
+Brustumfang `80 84 88 92 96 100 104 **110 116 122**` · Taillenumfang
+`62 66 70 74 78 82 86 **92 98 104**` · Hüftumfang `86 90 94 98 102 106 110 **116 122 128**`.
+**Çizelgemizle 30 hücrede 30 BİREBİR.** Teyit: Aldrich *Metric Pattern Cutting for
+Women's Wear* 4./6. baskı, başlığı **"4cm and 6cm Increments (European Sizing)"**.
+⇒ Tur 7'nin "dizgi hatası kendini üç kez tekrar etmez" çıkarımı **doğruydu**; artık
+iç tutarlılık değil **birincil yayın**. **Bu soruya Damla'nın cevap vermesi gerekmiyor.**
+⚠ Kapanmayan yan hüküm: aynı kenarda `shoulderCM` de +0.5 → +1.0 kırılıyor (Tur 16A:
+K2 EU48 −15.823mm). **Göğüs kırılması kaynaklı, omuz kırılması kaynaksız.**
+
+**⛔ KALEM 3 (`backLengthCM` 0.0 adımı) — SORU SERTLEŞTİ: HÜCRE DEĞİL, KOLON KAYNAKSIZ.**
+Yayınlanmış sırt boyu serilerinin **hepsi düzgün**: Burda **+0.5 tekdüze** (40.5→45),
+Aldrich 6. baskı **+0.4 tekdüze**, Aldrich 4. baskı +0.5, Müller +0.2 sonra +0.3.
+Var olan düz koşular yalnız serinin **UÇLARINDA** ve bir daha yükselmiyor (Aldrich 4.
+baskı 43 @ 20/22/24/26; Müller 41.4 @ 32/34/36). **Serinin ORTASINDA olup sonra +0.5'e
+DÖNEN bir düz adım hiçbir yayında bulunamadı** ⇒ bir grade geleneği değil.
+Ve kolonun **tamamı** kaynaksız: her bedende Burda'nın **~1cm altında**, Burda'nın
+Kurz-168 ile Normal-168 serilerinin **arasında** duruyor (köken hipotezi, **DOĞRULANMADI**).
+**Yani tek hücreyi düzeltmek kolonu kaynaklı yapmaz.** Tek taraflı düzeltilmedi.
+
+**⛔ KALEM 2 (`neckCM` düzensizliği) — SORU SERTLEŞTİ: HİÇBİR YAYINDA KARŞILIĞI YOK.**
+Yayınlanmış her kadın boyun çevresi serisi **düzgün**: Aldrich 6. baskı **+1.0 tekdüze**
+(35…44) · Aldrich 4. baskı +1.0 sonra +1.4 · Müller +0.6 sonra +1.2 — ve Müller'in **tek**
+kırılması **göğüs kırılmasıyla hizalı**. Bizimki **üç kez** kırılıyor, göğüsle hizasız,
+ve değerleri Aldrich/Müller'in **1–3cm altında**. ⚠ Burda'nın kadın tablosunda boyun
+çevresi **HİÇ YOK**; EN 13402-3 · ISO 8559-2/-3 · DIN 33402-2 · GB/T 1335.2 · GOST 17522
+· ASTM D5585/D5586 (2020'de geri çekildi) · Hohenstein · Müller resmi tablo (82 EUR)
+**arandı, sayı çıkarılamadı**. Tek taraflı düzeltilmedi.
+
+**★ YENİ KALEM 4 — `shoulderCM`: DEĞER DEĞİL, TANIM UYUŞMAZLIĞI.**
+Yayınlanan her çizim standardında `Schulterbreite/shoulder` **tek omuz dikişidir**:
+Burda 12–14.5 · Müller 11.8–13.6 · Aldrich 11.75–14.2 cm. Müller tanımı kendi sayfasında
+yazıyor (*"from the beginning of the neck to the beginning of the arm"*).
+**36–42cm'i bir VÜCUT ölçüsü olarak basan hiçbir standart bulunamadı** — o aralık yalnız
+perakendecilerin **bitmiş giysi** "across-shoulder" tablolarında görünüyor (DOĞRULANMADI).
+⇒ Kolon sadece kaynaksız değil, **hangi büyüklüğü ölçtüğü belirsiz**. Bu, Tur 15/16'nın
+"chart kolonu Aldrich bandına giriyor, `shaperatios` 8/8 kısa" hükmüyle **çelişmiyor**
+ama onu **kaynaksız** bırakıyor.
+
+**★ YENİ KALEM 5 — `armLengthCM`: kusursuz `+0.5 ×9`, ve dış kaynak bunu DESTEKLEMİYOR.**
+En yakın yayın Aldrich sleeve length `57.5 58 58.5 59 59.5 60 60.25 60.5 60.75 61`
+(eğim beden 18'de +0.25'e kırılıyor); bizimki ondan **−0.5 kaydırılmış** ve **kırılma
+düzleştirilmiş**. Burda Armlänge `59 59 60 60 61 61 61 61 62 62` — hiç tutmuyor.
+Yani "kusursuz doğrusallık" bir uzatma imzası ve **gerçek yayınlar bu sütunu düz uzatmıyor.**
+
+**Damla'ya giden GÜNCEL soru — artık üç soru, ve hiçbiri "4 mü 6 mı" değil:**
+> 1. `neckCM` ve `backLengthCM` kolonları **hangi kaynaktan** yeniden yazılsın?
+>    (Aldrich 6. baskı ikisini de basıyor: neck +1.0 tekdüze 35…44, nape-to-waist
+>    +0.4 tekdüze 40.2…43.8. Burda **neck basmıyor**, Rückenlänge basıyor.)
+>    ⚠ Bunları değiştirmek K5 neck-girth'ü ve gövde boyunu **birden** oynatır.
+> 2. `shoulderCM` **hangi büyüklük**: omuz dikişi mi (11–14cm, standartların tanımı),
+>    across-shoulder mu (36–42cm, bugünkü sayılar)? Motorun beklentisi ne?
+> 3. Bir kolonu Burda'dan, bir kolonu Aldrich'ten almak **karma bir vücut** yaratır.
+>    Tek yayına mı yaslanılsın (Burda: neck yok), yoksa kolon kolon kaynak mı beyan edilsin?
+
+**Cevap:**
+
 ### [ ] K11 — İki kapı birbirini yiyor: omuz dengesi vs dikiş eşitliği · 2026-08-17
 Tur 6'da ölçüldü, uydurulmadı.
 - **K4 (omuz dengesi):** arka omuz ön omuzdan uzun olmalı, bant `[+0.5, +12.0]mm` (kürek payı).

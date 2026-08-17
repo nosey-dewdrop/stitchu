@@ -13,6 +13,64 @@
     "euSizes": ["EU34", "EU36", "EU38", "EU40", "EU42", "EU44", "EU46", "EU48", "EU50", "EU52"],
     "euSizeChart": {
       "_fields": ["bustCM", "waistCM", "hipCM", "shoulderCM", "backLengthCM", "armLengthCM", "neckCM"],
+      "_sourcesROL": "KAYNAK BEYANI (TUR 18B, 2026-08-17). Bu 70 sayı bir alıcının bedenini belirler ve DOĞDUĞU GÜNDEN 17 Ağu'ya kadar KAYNAKSIZ DURDU. Doğum yeri ölçüldü: 77193d5 (7 Tem 2026) `engine-check/main.swift` — bir TEST KOŞUM TAKIMI. Tek gerekçe bir yorum satırıydı: 'EU size chart (German convention) + edge cases', ve aynı listede uydurma 'tall/petite/pear/apple/bigNeckSmallShoulder' gövdeleri duruyordu. 1eafc16 (15 Tem) o fixture'ı `engine/src/sizechart.hpp`'ye BİREBİR kopyaladı ve motorun gövde gerçeği yaptı; c3c07b0 buraya taşıdı. Aşağıda her kolon bir kaynak beyanı taşımak ZORUNDA — kapı: `engine/tests/sizechart_source_check.mjs`. status='verified' = birincil yayınla eşleşti; status='NONE' = KAYNAK YOK, kapı KIRMIZI, kalem DAMLA-KUYRUK K10'da bekliyor. Tam dosya: knowledge/eu-beden-cizelgesi-kaynak-2026-08-17.md",
+      "_sources": {
+        "bustCM": {
+          "status": "verified",
+          "source": "burda style, 'Richtig Maßnehmen + Maßtabellen — Damengrößen', NORMALE DAMENGRÖSSEN, Körpergröße 168, Brustumfang",
+          "url": "https://burda-product-cms.s3.amazonaws.com/public_files/Damen_Ma%C3%9Ftabellen_online.pdf",
+          "published": [80, 84, 88, 92, 96, 100, 104, 110, 116, 122],
+          "match": "exact 10/10",
+          "note": "★ EU46 ÜSTÜ +6.0cm REJİMİ GERÇEK VE KASITLI — yayının kendi serisi 104 -> 110 -> 116 -> 122. Tur 7'nin 'dizgi hatası kendini üç kez tekrar etmez' çıkarımı DOĞRU çıktı, ve artık iç tutarlılık değil DIŞ KAYNAK. Bağımsız teyit: Aldrich 'Metric Pattern Cutting for Women's Wear' 4./6. baskı, '4cm and 6cm Increments (European Sizing)' başlığı altında aynı dizi (https://catalogimages.wiley.com/images/db/pdf/9781444335057.excerpt.pdf). Alman perakende bandı da örtüşür (de.wikipedia Konfektionsgröße 48: 108-113, 50: 114-119, 52: 120-125; orta noktalar 110.5/116.5/122.5)."
+        },
+        "waistCM": {
+          "status": "verified",
+          "source": "burda style Damen Maßtabellen, Taillenumfang, Körpergröße 168",
+          "url": "https://burda-product-cms.s3.amazonaws.com/public_files/Damen_Ma%C3%9Ftabellen_online.pdf",
+          "published": [62, 66, 70, 74, 78, 82, 86, 92, 98, 104],
+          "match": "exact 10/10",
+          "note": "Aldrich 4. baskı ile de aynı. Aldrich 6. baskı bel ve basen'i her bedende +2cm kaldırdı; bu kolon 6. baskıyla EŞLEŞMEZ, 4. baskı/Burda ile eşleşir."
+        },
+        "hipCM": {
+          "status": "verified",
+          "source": "burda style Damen Maßtabellen, Hüftumfang, Körpergröße 168",
+          "url": "https://burda-product-cms.s3.amazonaws.com/public_files/Damen_Ma%C3%9Ftabellen_online.pdf",
+          "published": [86, 90, 94, 98, 102, 106, 110, 116, 122, 128],
+          "match": "exact 10/10"
+        },
+        "shoulderCM": {
+          "status": "NONE",
+          "source": null,
+          "url": null,
+          "published": null,
+          "match": "no published table found",
+          "note": "KAYNAK YOK, ve bu bir DEĞER uyuşmazlığından ağır: TANIM uyuşmazlığı. Yayınlanan her çizim standardında 'Schulterbreite / shoulder' TEK OMUZ DİKİŞİdir — Burda 12-14.5, Müller & Sohn 11.8-13.6, Aldrich 11.75-14.2 cm. 36-42cm aralığını bir VÜCUT ölçüsü olarak basan hiçbir standart bulunamadı; o aralık yalnız perakendecilerin BİTMİŞ GİYSİ 'across-shoulder' tablolarında görünüyor (DOĞRULANMADI). Müller tanımı kendi sayfasında yazıyor: 'from the beginning of the neck to the beginning of the arm at the shoulder' (https://www.muellerundsohn.com/en/allgemein/taking-measurements/). ⚠ Motor bugün bu kolonu ZATEN KULLANMIYOR: sizechart.hpp shaperatios.gen.hpp'nin width_cm'ini üstüne yazıyor — Tur 16A notu."
+        },
+        "backLengthCM": {
+          "status": "NONE",
+          "source": null,
+          "url": null,
+          "published": null,
+          "match": "no published table found; the flat EU44->EU46 step matches nothing",
+          "note": "KAYNAK YOK. Yayınlanan sırt boyu (nape-to-waist / Rückenlänge) serileri DÜZGÜN artar: Burda +0.5 tekdüze (40.5 -> 45, beden 34-52), Aldrich 6. baskı +0.4 tekdüze, Aldrich 4. baskı +0.5, Müller +0.2 sonra +0.3. Bu kolon her bedende Burda'nın ~1cm ALTINDA (Burda Kurz/Normal serilerinin ARASINDA duruyor — muhtemel köken). ★ EU44=42.0 VE EU46=42.0 (adım 0.0) olup sonra +0.5'e DÖNEN bir seri hiçbir yayında bulunamadı. Var olan düz koşular yalnız serinin UÇLARINDA ve geri dönmüyor (Aldrich 4. baskı 43 @ beden 20/22/24/26; Müller 41.4 @ 32/34/36). Serinin ORTASINDA olup sonra devam eden düz adım bir grade geleneği DEĞİL. Tur 16 ölçtü: gövdenin boyunun EU44->EU46'da KISALMASININ kökü tam olarak bu hücre. TEK TARAFLI DÜZELTİLMEDİ: DAMLA-KUYRUK K10."
+        },
+        "armLengthCM": {
+          "status": "NONE",
+          "source": null,
+          "url": null,
+          "published": null,
+          "match": "no published table found",
+          "note": "KAYNAK YOK. Kusursuz +0.5 x9 doğrusal — bir uzatmadan ayırt edilemiyor. En yakın yayın Aldrich sleeve length 57.5, 58, 58.5, 59, 59.5, 60, 60.25, 60.5, 60.75, 61 (eğim beden 18'de +0.25'e kırılıyor); bu kolon ondan -0.5 kaydırılmış VE kırılma düzleştirilmiş. Burda Armlänge 59, 59, 60, 60, 61, 61, 61, 61, 62, 62 — hiç tutmuyor."
+        },
+        "neckCM": {
+          "status": "NONE",
+          "source": null,
+          "url": null,
+          "published": null,
+          "match": "no published table found; the irregular grade matches nothing",
+          "note": "KAYNAK YOK, ve bu kolon en sert kapıyı sürüyor (K5 neck-girth alt sınırı 8 bedende 8 FAIL). Adımlar .5, .5, 1, .5, .5, 1, 1, 1, 1. Yayınlanan her kadın boyun çevresi serisi DÜZGÜN: Aldrich 6. baskı +1.0 tekdüze (35..44), Aldrich 4. baskı +1.0 sonra +1.4, Müller +0.6 sonra +1.2 (tek temiz kırılma ve o kırılma GÖĞÜS kırılmasıyla HİZALI). Bu kolonun değerleri Aldrich ve Müller'in 1-3cm ALTINDA. ARANDI, BULUNAMADI/PAYWALL: EN 13402-3 sayısal ek, ISO 8559-2/-3 (boyun çevresini 'designated dimension' sayar, sayı basmaz), DIN 33402-2 Tab.14, ASTM D5585/D5586 (2020'de geri çekildi), GB/T 1335.2-2008, GOST 17522-72 (taranmış görsel), Hohenstein 'Größentabelle Damen Normalgröße', M. Müller & Sohn resmi Maßtabelle (82 EUR). ⚠ Burda'nın kadın tablosunda boyun çevresi HİÇ YOK. TEK TARAFLI DÜZELTİLMEDİ: DAMLA-KUYRUK K10."
+        }
+      },
       "EU34": [80, 62, 86, 36, 39.5, 57, 34],
       "EU36": [84, 66, 90, 36.5, 40, 57.5, 34.5],
       "EU38": [88, 70, 94, 37, 40.5, 58, 35],

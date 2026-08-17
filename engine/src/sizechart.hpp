@@ -4,6 +4,36 @@
 // design = drafting it against each of these standard bodies. Values match the
 // EU (German) convention used by the engine_check matrix (bust, waist, hip,
 // shoulder, backLength, armLength, neck — all cm).
+//
+// ★★ TUR 18B — WHERE THESE 70 NUMBERS CAME FROM, AND WHICH OF THEM STILL HAVE
+//    NO SOURCE. That "EU (German) convention" sentence one line above was, from
+//    7 Jul 2026 to 17 Aug 2026, the ONLY provenance the chart had — and it was
+//    copied here from a TEST HARNESS. Measured from git: the numbers first
+//    appear in 77193d5, engine-check/main.swift, in the same array as the
+//    hand-invented bodies tall/petite/pear/apple/bigNeckSmallShoulder; 1eafc16
+//    lifted the ten EU rows verbatim into this file and made them the engine's
+//    body, adding no citation. A guessed pattern number once cost 07-sleeve; a
+//    guessed BODY number is worn by a person.
+//    WHAT IS SOURCED NOW (contract/tables.json draft.euSizeChart._sources):
+//      bust / waist / hip  — EXACT 10/10 against burda style's published
+//        "Damen Maßtabellen", NORMALE DAMENGRÖSSEN, Körpergröße 168. So the
+//        +6.0cm regime above EU46 (the 4,4,4,4,4,4,6,6,6 step pattern doubted
+//        since Tur 7) is REAL AND DELIBERATE, corroborated by Aldrich's own
+//        "4cm and 6cm Increments (European Sizing)" table. Not a typo.
+//      shoulder / backLength / armLength / neck — NO PUBLISHED SOURCE FOUND.
+//        A verified absence, recorded rather than deleted. In particular the
+//        flat backLength step at EU44->EU46 (42.0, 42.0 — Tur 16 traced the
+//        body SHORTENING there to exactly this cell) matches no published
+//        table: every one of them grades nape-to-waist smoothly (+0.4 or +0.5),
+//        and the flat runs that do exist sit at the ENDS of a series and never
+//        resume. neck's .5/.5/1/.5/.5/1/1/1/1 matches nothing either, and it is
+//        what drives K5's neck-girth floor (8 of 8 sizes FAIL). shoulder is
+//        worse than unsourced: every drafting standard defines "shoulder" as
+//        the single SEAM (11-14cm), so 36-42cm is a different QUANTITY.
+//    THE CHART WAS NOT EDITED. Fixing a body measurement without a source
+//    breaks a buyer's body; the four open columns are questions for Damla in
+//    DAMLA-KUYRUK K10. Gate: engine/tests/sizechart_source_check.mjs (born red,
+//    4 of 7 columns). Full record: knowledge/eu-beden-cizelgesi-kaynak-2026-08-17.md
 #include <string>
 #include <vector>
 
