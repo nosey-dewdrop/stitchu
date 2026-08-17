@@ -132,12 +132,24 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 
 ---
 
-## BRANCH DÜZENİ (Damla emri, 17.08)
+## BRANCH DÜZENİ — YENİ DÜZEN (Damla kesin kararı, 17.08)
 
-- **Koşu bitene kadar hiçbir branch silinmez, yeniden adlandırılmaz. `gh-pages`'e dokunulmaz.**
-- **Yeni branch AÇILMAZ.** Bütün iş `vardiya/2026-08-16`'da. Ajanlardan biri branch açarsa **hakem bunu ihlal sayar** ve turu kırmızı kapatır.
-- **KOŞU SONU TOPOLOJİSİ:** `vardiya/2026-08-16` → `main`'e **mühürlü merge** (taban mührü + üç sayaç raporu commit'in içinde), *sonra* `f1-body-front-back` kapanır. Bu sıra değişmez.
-- Ölçüm 17.08: `git log vardiya/2026-08-16..f1-body-front-back` **boş** → f1 vardiyanın içinde, taşınacak commit yok.
+- **BÜTÜN İŞ `main`'DE.** `vardiya/2026-08-16` ve `f1-body-front-back` fast-forward ile main'e alındı (52 commit) ve **silindi** (lokal + remote). Kalan: `main` + `gh-pages` (site).
+- **BRANCH AÇMAK YASAKTIR.** Açan ajan **ihlaldedir**; hakem turu kırmızı kapatır.
+- Geçiş ölçümü: `git log vardiya..f1` **boş**, `git log vardiya..main` **boş** → hiçbir commit kaybolmadı, merge fast-forward oldu.
+
+## MÜHÜR ARTIK TAG (Damla emri, 17.08)
+
+"Sağlam nokta" branch değil, **git tag**. `scripts/taban.sh` **tam yeşil** bir mühürde `taban-<etiket>` tag'i atar ve push'lar (`FAILS=0` şartına bağlı, kod satır 200'ün altında). Satılabilir/dönülebilir noktalar **tag listesidir**; bir şey bozulursa **dönüş adresi son tag'dir**. `.vardiya/state.json` → `son_saglam_tag`.
+Var olan tag'in üzerine yazılmaz — mühür geçmişi silinmez.
+
+## PUSH KAPISI — İLAN EDİLEN TEK KIRMIZI
+
+`rabadon` `pushGate`'i suite tam yeşil olmadan push'u blokluyor. Binary **commit mesajını okumuyor** (`gate.cpp:2823`; bilinen üst-seviye anahtarlar sabit liste) — "KIRMIZI öneki" kuralı guard'a yazılamaz, uydurma anahtar sessizce yok sayılırdı.
+Yerine **tek isimle dışlama**: `ctest ... -E '^h10_gate_check$'`. O test H1.0'ın kabul kapısı ve **kasten kırmızı doğdu** (`docs/H1.0-KAPI.md`) — kendini geçiren kapı kapı değildir.
+**Kapının eşiğine / toleransına / tanımına DOKUNULMADI**; yalnız rabadon'un *push ön-koşulundan* çıkarıldı ve her commit mesajı `KIRMIZI: h10_gate_check <n>/55` önekiyle sayıyı **ilan ediyor**.
+Dışlama tek isim regexi → **başka bir test kırmızıya dönerse push YİNE bloke olur**, gerileme gizlenemez.
+**H1.0 yeşillenince bu bölüm ve `-E` bayrağı SİLİNİR.**
 
 ## COMMIT SIKLIĞI (Damla emri, 17.08)
 

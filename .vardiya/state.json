@@ -1,6 +1,8 @@
 {
   "vardiya": "2026-08-16",
-  "branch": "vardiya/2026-08-16",
+  "branch": "main",
+  "son_saglam_tag": null,
+  "son_saglam_tag_not": "Damla 17.08: muhur artik TAG. taban.sh tam yesilde taban-<etiket> tag'i atar ve pushlar; donus adresi son tag'dir. null = henuz tam yesil muhur alinmadi (h10_gate_check kasten kirmizi).",
   "tur": 1,
   "otorite": "HEDEF.md",
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",

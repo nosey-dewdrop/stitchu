@@ -198,4 +198,33 @@ say "beklenmedik arıza: $FAILS"
 say "=========================================================="
 
 [ "$FAILS" -gt 0 ] && exit 1
+
+# ------------------------------------------------------- SAĞLAM NOKTA = TAG
+# Damla, 17.08: "Mühür artık tag." Sağlam nokta bir branch değil; branch YASAK.
+# Tam yeşil bir mühür bir git tag'i bırakır ve push'lar — bir şey bozulursa
+# dönüş adresi son tag'dir. Buraya SADECE FAILS=0 iken gelinir (yukarıdaki satır).
+TAG="taban-$ETIKET"
+if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+  say "tag              : $TAG ZATEN VAR — üzerine yazılmadı (mühür geçmişi silinmez)"
+else
+  if git -c user.name="$(git config user.name)" tag -a "$TAG" \
+       -m "taban seal $ETIKET · manifest $MSUM · walk $WALKPASS/$WALKTOT · ${CT:-ctest ?}" >/dev/null 2>&1; then
+    say "tag              : $TAG atıldı"
+    if git push origin "$TAG" >/dev/null 2>&1; then
+      say "                   push edildi"
+    else
+      say "                   ⚠ PUSH EDİLEMEDİ — tag lokalde duruyor, elle push'la"
+    fi
+    # state.json'a son sağlam tag'i yaz (dönüş adresi orada aransın)
+    python3 - "$ROOT/.vardiya/state.json" "$TAG" "$MSUM" <<'PY' 2>/dev/null || say "                   ⚠ state.json güncellenemedi"
+import json, sys
+p, tag, msum = sys.argv[1], sys.argv[2], sys.argv[3]
+d = json.load(open(p))
+d["son_saglam_tag"] = {"tag": tag, "manifest_sha256": msum}
+json.dump(d, open(p, "w"), indent=2, ensure_ascii=False)
+PY
+  else
+    say "tag              : ⚠ ATILAMADI"
+  fi
+fi
 exit 0
