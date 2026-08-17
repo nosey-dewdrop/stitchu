@@ -19,6 +19,7 @@
 // developable, and exactly what a sheath skirt is).
 //
 // Units mm.
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -140,6 +141,19 @@ struct SurfacePattern {
     std::vector<double> topColXMM;
 };
 
+// The shipped default is 10.0 and is Aldrich's. STITCHU_SHOULDER_NARROW is an
+// EXPERIMENT DIAL and lives in the default member initializer for one reason:
+// h10_gate_check and surface-pattern both build `const SheathOptions opt;`, so
+// this is the only place a probe can move the strap point for the engine and
+// its judge at once. Unset = 10.0 = the shipped garment, bit-identical.
+inline double defaultShoulderNarrowMM() {
+    if (const char* e = std::getenv("STITCHU_SHOULDER_NARROW")) {
+        const double v = std::atof(e);
+        if (v > 0.0 && v < 120.0) return v;
+    }
+    return 10.0;
+}
+
 struct SheathOptions {
     double hemDropBelowHipMM = 200.0;  // skirt length past the hip ring — a design dial
     // WEARING EASE per ring, mm of girth. A zero-ease garment is skin and
@@ -229,7 +243,36 @@ struct SheathOptions {
     // bust — see TopProfile for the derivation and for the one instruction on
     // that page deliberately NOT applied.
     bool armhole = true;
-    double shoulderNarrowMM = 10.0;   // Aldrich: 1 cm in from the shoulder edge
+    // ★ H1.0b (Tur 11) — THE STRAP POINT IS ONE NUMBER, AND IT HAS TO BE.
+    //
+    // This inset decides THREE things that must agree or nothing can be
+    // measured: where the engine's scoop starts (TopProfile::strapHalfMM),
+    // where the shoulder seam band ends (CrestFold), and which contour edges
+    // h10_gate_check counts as ARMHOLE rather than shoulder (its own
+    // `strapHalf = shoulderHalf - opt.shoulderNarrowMM`). All three read THIS
+    // field, and the gate builds a default-constructed SheathOptions, so the
+    // dial has to live in the DEFAULT or the three readers disagree.
+    //
+    // They did disagree, and it invalidated a rejection. STITCHU_ARMHOLE_SPANDEG
+    // (Tur 9) clamps the scoop's start ANGLE inside solveTopH and leaves this
+    // inset at 10mm. So at 40 deg the engine cut a hole opening to phi=39.4 deg
+    // while the gate still called everything inside phi=20 deg the armhole and
+    // the rest "shoulder" — it measured the first third of the scoop. Tur 9 read
+    // the result (K1 330 -> 158 -> 88 -> 70mm) as "a wide angle eats the
+    // shoulder". MEASURED, Tur 11, EU38, same tree, same run:
+    //   3D armhole run, underarm -> shoulder point   as-is 165.26mm
+    //     STITCHU_ARMHOLE_SPANDEG=30  179.36  =40  191.39  =50  212.51mm
+    //   h10_gate_check K1 for those same runs        as-is 330.13mm
+    //                                  =30 158.15  =40  88.27  =50  70.47mm
+    // The hole got LONGER in every case the gate called shorter. The angle dial
+    // is not measurable by that gate and its rejection does not stand; it is
+    // kept, off, with this correction written next to it.
+    //
+    // So the span is declared HERE, in mm, and in mm on purpose: a drafter's
+    // inset is a distance across the shoulder, not an angle, and an angle would
+    // not grade — the same degree count is a different inset in every size.
+    // Default 10.0 = Aldrich, "Mark points 3 and 4 1 cm in from shoulder edge".
+    double shoulderNarrowMM = defaultShoulderNarrowMM();
 
     // ---- THE SHOULDER SEAM: the surface stops being a tube ----
     //
