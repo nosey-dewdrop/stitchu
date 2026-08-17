@@ -435,10 +435,51 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
     // 30 deg the boundary's |x| stops turning over at all, i.e. the garment
     // loses its shoulder POINT and the run measures zero. A wider angle does
     // not open a hole on this surface; it eats the shoulder.
-    // So the armhole's length is NOT a property of its angular span. It is a
-    // property of the SURFACE: at armscye depth the skim cone is narrower than
-    // the shoulder point, and no scoop of any span cut into that can reach
-    // 392.99-432.99mm. The dial is kept, off, with its measurement.
+    // ★★ THE TWO SENTENCES ABOVE ARE WRONG AND THE MEASUREMENT THAT WROTE THEM
+    // WAS BROKEN (Tur 11). "A wider angle does not open a hole on this surface;
+    // it eats the shoulder" and "the armhole's length is NOT a property of its
+    // angular span" are both FALSIFIED, on this same surface, with the envelope
+    // OFF. They are kept here struck through rather than deleted so the class of
+    // error stays visible: a dial was rejected by a gate that could not see it.
+    //
+    // THE FAULT IS IN THIS FUNCTION. Clamping cStrap moves where the engine
+    // STARTS the scoop, and leaves opt.shoulderNarrowMM — which is what
+    // h10_gate_check uses to decide which contour edges ARE the armhole — at
+    // 10mm. At 40 deg the engine cut a hole opening to phi = 39.4 deg while the
+    // gate counted only phi <= 20 deg as armhole and called the rest shoulder.
+    // Both numbers, EU38, same tree, same run:
+    //   span   3D run underarm->shoulder pt   gate K1
+    //   as-is             165.26mm            330.13mm
+    //   30 deg            179.36mm            158.15mm
+    //   40 deg            191.39mm             88.27mm
+    //   50 deg            212.51mm             70.47mm
+    // The hole got LONGER in every case the gate scored shorter. The K1 collapse
+    // 330 -> 158 -> 88 -> 70 is the shrinking phi-WINDOW the gate was summing
+    // over, not a shrinking hole.
+    //
+    // Asked properly — through SheathOptions::shoulderNarrowMM, the one number
+    // the engine, the crest fold and the gate all read (STITCHU_SHOULDER_NARROW,
+    // see the header) — the span is the biggest lever H1.0b has found, and it
+    // works with the envelope OFF, on the cheap surface:
+    //   narrow   K1 EU38    K1 in band   K2 grade ok   h10_gate_check
+    //   10mm     330.13mm      0/8          7/7          44/63 FAIL   <- shipped
+    //   20mm     349.12mm      0/8          6/7          45/63 FAIL
+    //   30mm     360.31mm      0/8          6/7          45/63 FAIL
+    //   38mm     380.89mm      0/8          6/7          45/63 FAIL
+    //   50mm     399.17mm    **4/8**        4/7        **43/63 FAIL**
+    // At 50mm K1 is inside its band for the first time in this shift, in four
+    // sizes (EU34 393.22 / EU36 389.12 / EU38 399.17 / EU40 408.64), and the
+    // gate's total falls. NOT TAKEN YET, and the reason is K2, the only
+    // condition that was green: it drops to 4/7. The K2 failures are NEGATIVE
+    // steps (-3.166 / -5.700 / -5.891 / -4.098 / -5.640mm) sitting among +6 to
+    // +14mm ones, i.e. the armhole gets SHORTER in one size and longer either
+    // side — which is the column quantisation the gate documents at its own
+    // splitFar (zone lengths are sums over WHOLE columns, and a boundary that
+    // moves less than one column changes the count by one). That is a
+    // measurement artefact HYPOTHESIS and it is DOGRULANMADI: it was not proved
+    // by re-running at a higher ringSamples. Until it is, 50mm is a dial, off,
+    // and K2's seven greens are not spent on an unproven reading.
+    // 50mm is also 5x Aldrich's 1cm inset, so if it survives it needs a source.
     if (const char* e = std::getenv("STITCHU_ARMHOLE_SPANDEG")) {
         const double d = std::atof(e);
         if (d > 0.0 && d < 89.0) cStrap = std::min(cStrap, std::cos(d * kPi / 180.0));
