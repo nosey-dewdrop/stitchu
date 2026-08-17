@@ -366,6 +366,12 @@ struct CrestFold {
     double neckHalfMM = 0.0, strapHalfMM = 0.0, shoulderHalfMM = 0.0;
     double seamYMM = 0.0;
     double bandMM = 0.0;
+    // THE BAND IS A FRACTION OF THE COLUMN, NOT A HEIGHT IN mm — see apply().
+    // spanRefMM is the tallest column of the bodice (the crest), waistZMM the
+    // single shared ring. Both zero means the old absolute-mm profile, which is
+    // what the skirt (fold off) and any caller that does not set them get.
+    double spanRefMM = 0.0;
+    double waistZMM = 0.0;
 
     static double ease(double u) { return 0.5 * (1.0 - std::cos(kPi * u)); }
 
@@ -379,17 +385,83 @@ struct CrestFold {
         return ease((shoulderHalfMM - x) / sp);
     }
 
-    // Bend y onto the seam line over the top bandMM of THIS column. Nothing
-    // below the band moves, so the waist ring — the one shared curve — is
-    // untouched by construction, and x and z are untouched everywhere: the
-    // fold is a fold, not a re-draft of the boundary.
+    // Bend y onto the seam line over the top of THIS column. Nothing below the
+    // band moves, so the waist ring — the one shared curve — is untouched by
+    // construction, and x and z are untouched everywhere: the fold is a fold,
+    // not a re-draft of the boundary.
+    //
+    // ★ THE BAND IS A FRACTION OF THE COLUMN'S OWN SPAN (H1.0a, Tur 8).
+    //
+    // It used to be an absolute height: t = (z - (topZ - bandMM)) / bandMM.
+    // That reads the band off the RAGGED top, and the top is ragged on purpose —
+    // it dips for the neckline and scoops for the armhole, so topZ swings by
+    // more than the band is wide between neighbouring columns. Two adjacent
+    // columns then fold over DISJOINT height ranges, and the y they carry at the
+    // same row differs by an amount that has nothing to do with the shoulder.
+    // That is a crease across phi, and its signature is exactly what the
+    // deficit measured: +34.57 deg in the second-from-top row band and
+    // -64.34 in the top one, spike and trough back to back, while every band
+    // below them sits at -0.12...-0.18. A saddle a dart cannot absorb, made by
+    // the fold rather than by the body.
+    //
+    // Anchoring the band to a FRACTION of each column's own span puts the fold
+    // on the same ROWS in every column. The transition then varies across phi
+    // only through weight(phi) and through the surface's own y — both smooth —
+    // and the fold still completes (t = 1) exactly at every column's top, which
+    // is what makes the front and back boundaries meet on one curve at all.
+    // The fraction is taken at the CREST column (the tallest, i.e. the shoulder
+    // itself), so the band is still bandMM tall where the seam actually runs.
     Vec3 apply(Vec3 p, double phi, double topZ) const {
         const double w = weight(phi);
         if (w <= 0.0) return p;
-        double t = (p.z - (topZ - bandMM)) / bandMM;
+        const double span = topZ - waistZMM;
+        double t;
+        if (spanRefMM > 1e-9 && span > 1e-9) {
+            const double f = std::min(1.0, bandMM / spanRefMM);
+            t = ((p.z - waistZMM) / span - (1.0 - f)) / f;
+        } else {
+            t = (p.z - (topZ - bandMM)) / bandMM;
+        }
         t = std::max(0.0, std::min(1.0, t));
-        p.y += (seamYMM - p.y) * w * ease(t);
+        p.y += (target(p, phi) - p.y) * w * ease(t);
         return p;
+    }
+
+    // ★ WHAT THE FOLD FOLDS ONTO (H1.0a, Tur 8).
+    //
+    // It used to be the plane y = seamYMM, a constant. That is what makes the
+    // front and the back meet, but it also flattens the section: across the
+    // shoulder band the top row goes from the body's own ellipse to a straight
+    // line, so the section's curvature is driven to zero over the band while
+    // the rows below keep it. A curvature gradient in one direction against a
+    // curvature that stays in the other is a saddle, and that is the +34.57 /
+    // -64.34 deg dipole in the top two row bands.
+    //
+    // The seam does not have to be flat. Front column phi and back column
+    // 2*pi - phi sit at the same x, and the pattern already sews exactly that
+    // pair; the curve they can BOTH reach with the least bending is the one
+    // half way between them. Folding onto the mid-surface keeps the section
+    // curved, so the shoulder stays a shoulder instead of a crease, and the two
+    // faces still land on one curve, which is all K3 and K5 ask for.
+    // seamYMM stays what it always was: an offset off that line, for a shoulder
+    // seam drafted forward of the mid.
+    //
+    // MEASURED AND NOT TAKEN (Tur 8, surface_pattern_check, STITCHU_SHOULDER_SEAM=1,
+    // on top of the signed-load fix below). It is a WASH, and half of it is
+    // worse, so the extra coupling to the surface is not worth carrying:
+    //   cut line  front 0.4162 -> 0.3951%   back 0.2908 -> 0.3038%  (back WORSE)
+    //   interior  front 24.0671 -> 23.1100%  back 18.1417 -> 18.7330% (back WORSE)
+    //   deficit band  front +48.27/-64.05 -> +48.63/-65.07 deg
+    // The reading that matters is the last line: the dipole DOES NOT MOVE. So
+    // the saddle is not made by flattening the section either, and neither of
+    // the two shape hypotheses this turn tested is its cause. What remains is
+    // that the shoulder itself is a saddle and a flat panel cannot hold it —
+    // which is a statement about where the ARMHOLE is (H1.0b), not about the
+    // fold. The dead field is kept with its measurement rather than deleted.
+    const GarmentSurf* surf = nullptr;  // LEFT UNWIRED ON PURPOSE — measured below
+    double target(const Vec3& p, double phi) const {
+        if (!surf) return seamYMM;
+        return 0.5 * (p.y + surf->at(p.z, 2 * kPi - phi).y) + seamYMM;
     }
 };
 
@@ -522,11 +594,27 @@ std::vector<DerivedDart> dartColumnsFromDeficitRows(const PanelGrid& g, double c
     // and the interior strain went 3.58% -> 16.35%, worse than the single
     // middle dart it replaced, while the FRONT improved 3.39% -> 0.86%. Equal
     // shares are the wrong law; distance to a seam is the missing term.
+    //
+    // ★ THE LOAD IS SIGNED, THE PLACEMENT IS CLAMPED (H1.0a, Tur 8).
+    //
+    // These are two different questions and they were being answered with one
+    // number. WHERE a dart goes is a question about the positive columns, so the
+    // weight keeps the clamp. HOW MUCH a dart has to take out is a question
+    // about the band as a whole, and a band that is net NEGATIVE has nothing to
+    // take out at all — it is a saddle, and a saddle is the one thing a dart
+    // cannot do. Clamping the load per column threw the negative half of the
+    // shoulder band away and then handed the darts the positive half as if it
+    // were real: with the shoulder seam on, EU38's front bodice quarter reads
+    // +34.57 deg in one row band and -64.34 in the next, net -24, and the old
+    // sum said +48.806 and cut two 24.4 deg wedges out of it. The wedges are the
+    // 8.929% strain on the dart legs, which is the 1.83% cut line the gate
+    // fails. Nothing was wrong with the fold's arithmetic; the dart was invented
+    // by the clamp.
     std::vector<double> w(cols + 1, 0.0);
     double total = 0.0, weighted = 0.0;
     for (int j = 1; j < cols; ++j) {
         const double d = std::max(0.0, def[j]);
-        total += d;
+        total += def[j];  // SIGNED: the band's real intake, saddle included
         w[j] = d * std::min(j, cols - j) / (0.5 * cols);  // 0 at a seam, 1 mid-panel
         weighted += w[j];
     }
@@ -1054,6 +1142,22 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         L.topH.assign(NR + 1, L.farH);
         if (!L.isSkirt && opt.shoulderTop)
             for (int j = 0; j <= NR; ++j) L.topH[j] = solveTopH(surf, top, 2 * kPi * j / NR);
+    }
+    // The fold's band is a fraction of the CREST column — the tallest column of
+    // the bodice, which is the shoulder line itself. Taken from the one shared
+    // top array, so no second source of the boundary can appear here either.
+    // MEASURED AND NOT TAKEN (Tur 8, surface_pattern_check, STITCHU_SHOULDER_SEAM=1):
+    //   cut line  front 1.8318 -> 1.9540%   back 1.8646 -> 1.9371%   (gate 0.5)
+    //   interior  front 6.9609 -> 6.8939%   back 7.7931 -> 11.9096%  (gate 3.0)
+    //   deficit band  front +34.57/-64.34 -> +41.59/-65.29 deg
+    // The ragged top is NOT what makes the dipole: putting the fold on the same
+    // rows in every column made both the spike and the cut line WORSE. The
+    // enabling line is left out rather than shipped; see the note in apply().
+    if (false && fold.on) {
+        double spanRef = 0.0;
+        for (int j = 0; j <= NR; ++j) spanRef = std::max(spanRef, layers[0].topH[j] - waistH);
+        fold.spanRefMM = spanRef;
+        fold.waistZMM = waistH;
     }
 
     // ---- K6: THE ENGINE CAN NOW BE ASKED WHETHER IT CARRIES (docs/H1.0-KAPI.md) ----
