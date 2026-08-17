@@ -325,4 +325,15 @@ for name, ok, detail in _results:
     print(f'{mark}  {name}' + (f'\n        {detail}' if not ok and detail else ''))
 print('-' * 78)
 print(f'{len(_results) - failed} passed, {failed} failed, {len(_results)} total')
+# T12/TUR 12 — CENSUS. `1 if failed else 0` alone means an empty _results is a
+# green: "0 passed, 0 failed, 0 total" and exit 0. This file is harness H4's
+# only gate on the rule layer, so a collection that silently stopped filling
+# would hand run-all.sh an "ok test_seamdeed" with nothing behind it. Same
+# class as the BOŞ TAPU census walk.py and edgemono_check.py were given in
+# TUR 11: having nothing to judge is not a pass. 37 checks are registered
+# today; the floor is that at least one ran.
+if not _results:
+    print('SEAM DEED: FAIL — hiç kural koşmadı (_results boş); '
+          'yargılanacak şey olmaması bir GEÇME değildir')
+    sys.exit(1)
 sys.exit(1 if failed else 0)
