@@ -223,6 +223,12 @@
         "neden": "TUR 12 / 12B: panelcheck.edge_mirror_map hizalanamayan ayna ciftini SESSIZCE dusuruyordu. Bugunun SEVK EDILEN giysisinde olculdu: 8 bedenin 5'inde 10 ayna-dikis yargisinin 6'si yok oluyor ve walk.py 'mirror-seam 0 ... KAPI HUKUM: YESIL' basiyordu. 'Panel seviyesinde yakalanir' varsayimi da YANLIS cikti: check_mirror_symmetry KONTURU olcuyor (0.0005mm PASS), iki seviye de ayni cifti affediyordu. Kok kusur GERCEK: right_btorso'nun son iki kenari left_btorso ile ayni iki uzunluk TERS SIRADA (EU34 L=[90.3082,94.2346] R=[94.2346,90.3082]); 8 bedenin 8'inde de var, 3'unde iki kenar tesaduefen esit oldugu icin gorunmuyor.",
         "bitis": "GECICI — bu bir sahte-yesilin-sonu DEGIL, sevk edilen giyside GERCEK BIR KUSUR. TUR 13'un BIRINCI isi. Kapandigi anda dislamadan CIKAR. Ilan edilmesinin tek sebebi 12A'nin olcum commit'lerinin mahsur kalmamasi.",
         "gecici": true
+      },
+      {
+        "test": "scripts/gradeset.sh (ctest disi)",
+        "neden": "TUR 13 / 13B: gradeset.py walk.py'in ESKI summary semasini okuyordu (within_1mm/fail), sema by_status'a tasinmis -> fmt_report VE verdict ikisi de KeyError. Rapor hic yazilmiyordu. Ustelik verdict() alti hukum sinifindan yalniz 'seam'i sayiyordu: 8 mutasyonun 6'si ESKI KAPIDA YESILDI (panel kendini kesiyor / kontur acik / ayna dikisi FAIL / butun dikisler silinmis / hic panel yok / armhole FAIL). Simdi exit 1, 2 hukum: mirror_seams 8 + monotonluk IHLAL 18.",
+        "bitis": "Kok 13A'da (ayna kenar sirasi + curvefit yon bagimliligi). O kapanınca gradeset.sh default exit 0 doner (mirror_seams 0 VE mono IHLAL 0).",
+        "gecici": true
       }
     ]
   },
