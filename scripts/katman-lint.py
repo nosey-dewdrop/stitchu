@@ -29,10 +29,19 @@ KURALLAR = [
 ]
 
 ihlal = 0
+kayip = 0
 for rel, pat, neden in KURALLAR:
     f = ROOT / rel
     if not f.exists():
-        print(f'  ? {rel} yok (kural atlandı)'); continue
+        # TUR 9 (17 Ağu) — BURASI BOŞ KOŞUYORDU. Korunan dosya diskte yoksa kural
+        # SESSİZCE atlanıyor ve sayıya hiç girmiyordu: yedi dosyanın YEDİSİ birden
+        # silinse katman-lint "0 ihlal (STRICT)" basıp exit 0 dönerdi. taban.sh'ın
+        # sessiz beden atlaması + BOŞ MÜHÜR ile aynı sınıf (T17 md.4-5): girdisi
+        # yokken de yeşil basan kapı, kapı değildir. Kaybolan dosya ihlalden DAHA
+        # AĞIRDIR — sınırın kendisi ortadan kalkmıştır, ölçülecek şey yoktur.
+        print(f'KAYIP {rel} — korunan dosya diskte YOK; sınır ölçülemiyor ({neden})')
+        kayip += 1
+        continue
     hits = [(i + 1, l.strip()[:90]) for i, l in enumerate(f.read_text(errors='ignore').splitlines())
             if re.search(pat, l) and not l.strip().startswith(('#', '//', '*'))]
     if hits:
@@ -42,5 +51,10 @@ for rel, pat, neden in KURALLAR:
     else:
         print(f'  ok {rel}')
 
-print(f'\nkatman-lint: {ihlal} ihlal ({"STRICT" if STRICT else "rapor modu"})')
-sys.exit(1 if (STRICT and ihlal) else 0)
+print(f'\nkatman-lint: {ihlal} ihlal, {kayip} kayıp korunan dosya '
+      f'({len(KURALLAR)} kural) ({"STRICT" if STRICT else "rapor modu"})')
+if kayip:
+    print('  KAYIP DOSYA ATLAMA DEĞİLDİR: korunan dosya yoksa katman sınırı')
+    print('  ölçülemez. Ya dosya geri gelir, ya kural KURALLAR listesinden')
+    print('  çıkarılır ve NEDEN çıkarıldığı yazılır. Sessiz atlama yasak (TUR 9).')
+sys.exit(1 if (STRICT and (ihlal or kayip)) else 0)
