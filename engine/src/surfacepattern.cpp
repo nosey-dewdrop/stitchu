@@ -480,6 +480,80 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
     // by re-running at a higher ringSamples. Until it is, 50mm is a dial, off,
     // and K2's seven greens are not spent on an unproven reading.
     // 50mm is also 5x Aldrich's 1cm inset, so if it survives it needs a source.
+    //
+    // ---- TUR 12: THE QUANTISATION IS REAL, AND 50mm IS STILL REFUSED ----
+    //
+    // (1) THE ARTEFACT IS CONFIRMED. STITCHU_RING_SAMPLES (see the header) was
+    // added and narrow=50 re-run. The negative steps are a column artefact and
+    // they scale as 1/NR exactly as an artefact must:
+    //   K2 step, narrow=50      NR=128     NR=256
+    //   EU36                    -4.098     +9.636
+    //   EU38                   +10.042     +2.513
+    //   EU40                    +9.478     +9.695
+    //   EU42                    +8.879     +2.079
+    //   EU44                    -5.640     +9.202
+    //   EU46                   +10.173     +1.945
+    //   EU48                   +14.768    +14.988
+    // Every negative step is GONE at NR=256. The mechanism is visible in the
+    // gate's own zone counts: the armhole column count per panel goes
+    // 34/32/32/32/32/30/30/30 at NR=128, and a size where it drops by two
+    // columns is exactly a size where the step goes negative. The size that
+    // loses two columns loses ~14mm; at NR=256 the same drop costs ~7.5mm.
+    // Half the column, half the error. That is quantisation, proved.
+    //
+    // (2) AND IT DOES NOT MATTER, because the source question answers first.
+    // 11A asked for a source for 50mm. There is one, and it REFUSES the dial.
+    // Aldrich p.11 gives EU38 shoulder length ("omuz boyu") = 12.25cm (bust 88)
+    // / 12.5cm (bust 92) — knowledge/drafting-math-eu38.md. The gate already
+    // measures that exact quantity: K4's front.shoulder, which sums the TWO
+    // mirrored front quarter-panels, so ONE shoulder seam is half of it.
+    //   narrow    one shoulder seam, EU38      Aldrich 122.5-125mm
+    //   10mm      207.85/2 = 103.93mm          -15% short
+    //   50mm      104.47/2 =  52.24mm          -57% short
+    // At 50mm the shoulder seam is 5.2cm. That is a strap, not a shoulder, and
+    // no bodice in Aldrich has one. The relation is near-linear (-1.292mm of
+    // shoulder per mm of narrow), so Aldrich's 122.5mm would need narrow to go
+    // NEGATIVE (~-4.4mm): the engine's shoulder is already short at the shipped
+    // 10mm, and every millimetre of narrow makes it shorter.
+    //
+    // (3) SO WHERE DID K1's +69mm COME FROM? Out of the shoulder. EU38, the
+    // gate's own zone counts, per panel, out of 64 columns:
+    //   narrow=10   armhole 14 · shoulder 32 · neck 18
+    //   narrow=50   armhole 32 · shoulder 14 · neck 18
+    // The two zones SWAP. At 50mm the armhole occupies half the panel — a
+    // quarter of the whole body ring. K1 gains 330.13 -> 399.17 (+69.04mm) and
+    // one shoulder seam loses 103.93 -> 52.24 (-51.69mm). Tur 9 said "a wide
+    // angle eats the shoulder" and Tur 11 falsified that FOR THE SPAN DIAL,
+    // correctly: span moved the engine and left the gate behind, so the collapse
+    // there was the gate's window. narrow is not that dial — it moves the
+    // boundary for all three readers at once, so what it does is real, and what
+    // it really does is move length from the shoulder into the armhole. Tur 9's
+    // sentence was right about the wrong dial. K1's first entry into its band in
+    // this shift is BOUGHT, and the price is on Aldrich's only shoulder number.
+    // NOT TAKEN. Ninth measured-and-refused correction of this shift.
+    //
+    // (4) ONE FAILURE IS NOT QUANTISATION AND IT IS NOT THE SURFACE'S. K2 EU48
+    // is +14.768 at NR=128 and +14.988 at NR=256 — it does not shrink with the
+    // column, it grows. Its root is in the SOURCE TABLE, contract.gen.hpp:
+    // bustCM steps +4.0 for every size up to EU46 and then EU46->EU48 steps
+    // +6.0 (104 -> 110), and shoulderCM steps +0.5 throughout and then +1.0
+    // (39 -> 40). EU48 is a double-rate size in the chart, so a K2 ceiling of
+    // 14.0mm cannot hold across it. Same column, the Tur 7 finding stands:
+    // backLengthCM EU44->EU46 is 42 -> 42, the only ZERO step in the table.
+    // Neither is a surface bug and neither is fixed by any dial in this file.
+    //
+    // (5) WHY EU42-EU48 LAG ON K1 (11A's question). It is NOT the same
+    // phenomenon as the quantisation. At the shipped narrow=10 the engine's
+    // armhole grade DECELERATES through the middle sizes while Bugra's
+    // ACCELERATES:
+    //   step        EU36  EU38  EU40  EU42  EU44  EU46  EU48
+    //   engine      9.24  8.03  6.84  5.36  4.88  5.17  9.54
+    //   Bugra       4.41  4.08 14.81 10.03  9.00  7.81 11.84
+    // The engine is FASTER than Bugra in the two smallest steps and roughly
+    // HALF his speed in EU40-EU46. The band's floor climbs faster than the
+    // armhole does, so a gap that is uniform in absolute terms opens up at the
+    // top. The large sizes are not a separate defect: they are the same
+    // ~85mm shortfall, measured against a floor that has walked away from it.
     if (const char* e = std::getenv("STITCHU_ARMHOLE_SPANDEG")) {
         const double d = std::atof(e);
         if (d > 0.0 && d < 89.0) cStrap = std::min(cStrap, std::cos(d * kPi / 180.0));
