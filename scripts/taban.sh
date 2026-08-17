@@ -141,7 +141,13 @@ if [ "$HIZLI" -eq 0 ]; then
   adim "6. BASKI PAKETİ (8 beden — 1:1 A0+A4, çentik, pay, test karesi)"
   for S in "${SIZES[@]}"; do
     D="$OUT/packs/pack-$S"; mkdir -p "$D"
-    cp "$OUT/specs/$S.json" "$D/stitchu_specification.json" 2>/dev/null || continue
+    # T17 (17 Ağu): burada `|| continue` vardı — spec yoksa beden SESSİZCE
+    # atlanıyor, hiçbir FAIL sayılmıyordu. 8 bedenin sekizi birden atlansa
+    # bile bu adım "ok" görünüp mühür atılırdı. Sessiz skip yasak.
+    cp "$OUT/specs/$S.json" "$D/stitchu_specification.json" 2>/dev/null || {
+      say "  $S  FAIL spec yok — paket basılamadı (sessizce atlanmaz)"
+      FAILS=$((FAILS+1)); continue
+    }
     if "$GCPY" engine/pattern-bridge/printpack.py "$D" --size "$S" --date 2026-01-01 \
          >"$D/printpack.log" 2>&1; then
       DRAWN=$(grep -Eo '[0-9]+ panels in the specification -> [0-9]+ pieces drawn -> [0-9]+ pieces cut' "$D/printpack.log" | tail -1)
@@ -184,6 +190,15 @@ MSUM=$(shasum -a 256 "$OUT/manifest.sha256" | cut -d' ' -f1)
 NFILE=$(wc -l <"$OUT/manifest.sha256" | tr -d ' ')
 say "  $NFILE dosya mühürlendi"
 say "  MANİFEST SHA256: $MSUM"
+# T17 (17 Ağu): BOŞ MÜHÜR KAPISI. `find` hiçbir şey bulamasa da manifest.sha256
+# boş dosya olarak yazılıyor, kendi sha256'sı hesaplanıyor ve panele geçerli bir
+# MANİFEST SHA256 basılıyordu — yani SIFIR dosyalık bir mühür "mühür" sayılıyor,
+# hatta tam yeşilse git tag'i bile atılabiliyordu. Mühürlenecek ürün yoksa
+# mühür yoktur.
+if [ "$NFILE" -eq 0 ]; then
+  say "  FAIL mühür BOŞ — 0 dosya hashlendi, mühürlenecek ürün yok"
+  FAILS=$((FAILS+1))
+fi
 
 # ---------------------------------------------------------------- PANEL
 say ""
