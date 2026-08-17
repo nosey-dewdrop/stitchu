@@ -177,10 +177,27 @@
   "pushGate": {
     "why": "RULES 9: ctest must be fully green before any push; a change that breaks a test is reverted, not pushed.",
     "testHint": "cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure (engine-check harness = full draft matrix, must be FULLY green)",
-    "run": "cd /Users/damummyphus/damla_projects_2026/stitchu && cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release >/dev/null && cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure -E '^h10_gate_check$'",
+    "run": "cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release >/dev/null && cmake --build engine/build -j8 && ctest --test-dir engine/build --output-on-failure -E '^(h10_gate_check|style_check|figure_check)$'",
     "timeoutSec": 900,
     "_run_eklendi": "2026-08-04: pushGate'in 'run' anahtari YOKTU. gate.cpp:2367 runCmd bos olunca dogrudan block ediyor ve suiti hic catallamiyor, lastTestVerified ise SADECE rabadon'un kendi catalladigi kosunun exit 0'ini okuyunca damgalaniyor (gate.cpp:2381). Yani kapi kapanik dogmustu: yesil suit gostermek ise yaramiyordu, state.json'da lastTestVerified 0'da cakiliydi ve lastCodeEdit her zaman ondan buyuktu. Kural gevsetilmedi, calistirilacak komut verildi; artik rabadon suiti KENDI kosuyor, iddiaya degil kendi okudugu exit koduna bakiyor. 2026-08-05 duzeltme: komut PROJE KOKUNE cd ediyor. Kapi forku oturumun o anki calisma dizininde kosuyor ve oturum engine/pattern-bridge icindeyken 'engine/build is not a directory' ile kirmizi dondu; yani kapi testin degil bulundugum dizinin hukmunu veriyordu.",
-    "_ilan_edilen_kirmizi": "2026-08-17, DAMLA IMZASI (mesaj: 'rabadon hook'u main'de kirmizi commit'i engelliyorsa, KIRMIZI onekli commit'lere izin verecek sekilde ayarla'). rabadon'un binary'si commit MESAJINI okumuyor (gate.cpp:2823, bilinen ust-seviye anahtarlar sabit liste) — bu yuzden onek kurali guard'a yazilamaz. Yerine TEK ISIMLE dislama: h10_gate_check. O test H1.0'in kabul kapisi ve KASTEN kirmizi dogdu (docs/H1.0-KAPI.md); kendini geciren kapi kapi degildir. Kapinin esigine/tolerans/tanimina DOKUNULMADI, sadece rabadon'un PUSH on-kosulundan cikarildi ve her commit mesaji 'KIRMIZI: h10_gate_check <n>/55' onekiyle sayiyi ILAN ediyor. Dislama TEK isim regexi ('^h10_gate_check$'), yani BASKA bir test kirmiziya donerse push YINE bloke olur — gerileme gizlenemez. H1.0 yesillenince bu satir ve -E bayragi SILINIR."
+    "_ilan_edilen_kirmizi": "2026-08-17, DAMLA IMZASI ('KIRMIZI onekli commit'lere izin verecek sekilde ayarla'). rabadon'un binary'si commit MESAJINI okumuyor (gate.cpp:2823, bilinen ust-seviye anahtarlar sabit liste) — onek kurali guard'a yazilamaz. Yerine ISIMLE DISLAMA. Uc ad, ucunun de gerekcesi yazili ve BITIS SARTI var. Dislama tek tek AD regexi; BASKA bir test kirmiziya donerse push YINE bloke olur — gerileme gizlenemez. Her commit mesaji 'KIRMIZI: <kapi, kac FAIL>' onekiyle sayiyi ILAN ediyor.",
+    "_ilan_listesi": [
+      {
+        "test": "h10_gate_check",
+        "neden": "H1.0'in kabul kapisi, KASTEN kirmizi dogdu (docs/H1.0-KAPI.md). Kendini geciren kapi kapi degildir.",
+        "bitis": "H1.0 yesillenince dislamadan CIKAR"
+      },
+      {
+        "test": "style_check",
+        "neden": "T17 (17 Agu) bu testin BOS KOSTUGUNU buldu: engine/STYLE-PIN/ diskte hic yok, test 'PASS (nothing to enforce)' basip yesil goruniyordu. Artik durustce FAIL ediyor. Kirmizi bir gerileme DEGIL, sahte yesilin sonu.",
+        "bitis": "31 stilin pini Damla'nin kalem onayindan gecince (DAMLA-KUYRUK K15) dislamadan CIKAR. Pin olcumden degil KARARDAN gelir, motor kendi ciktisini pinleyemez (regen-vs-regen yasagi)."
+      },
+      {
+        "test": "figure_check",
+        "neden": "T17: 31 stilin 7'si son else dalindan KOSULSUZ 'OK' aliyordu (tanik: dress_bandeau_circle 0.872, iki yasanin da disinda, yine ok). Dal gercek kapi yapildi, 7 pinsiz tasarim ortaya cikti.",
+        "bitis": "7 tasarimin pini Damla onayindan gecince (K15) dislamadan CIKAR"
+      }
+    ]
   },
   "generatedBy": "rabadon guard (claude code cli)"
 }
