@@ -98,6 +98,18 @@ diyordu, düzeltilmiş hat **237.8 vs 247.1 = +9.4mm**. Kalanın kök sebebi ayr
 
 ## 4. AÇIK / DOĞRULANMADI
 
+> **✅ §4.1 ve §4.3 KAPANDI 17.08 Tur 6.** Cevaplar `knowledge/cap-ease-isareti-2026-08-17.md`
+> (T14) ve `HEDEF.md` T12'de. Kısaca: (1) ease negatif değil — **kesim çizgisinde 8/8 pozitif**
+> (+1.54…+4.22%), işaret dikiş payının işaretinden geliyor; oyuğa giden kenar **gerçekten
+> Lower Sleeve**'in kapağıdır (kiriş 345.88 = bicep, sagitta 129.81 = kapak yüksekliği),
+> Upper Sleeve onun **yatayda ölçeklenmiş büzgülü ÜST KATMANI** (sagitta oranı 8 bedende
+> 1.227 sabit). (3) `13` düzeltildi; ondan türemiş **kullanılan** sayı çıkmadı.
+> ★ Ayrıca: bu dosyanın dayandığı `18`'in **analitik mandalı sarılım-kör** — `ΔL=−d·Δθ`
+> iç normali hep teğetin solu sayıyor, bu yalnız CCW poligonda doğru. Gövde parçaları CCW,
+> **kol parçaları CW**; kol kenarlarında formül `2·d·Δθ` kadar sahte sapma basıyor
+> (EU38 Lower KAPAK 14.18mm, Upper ÜST 20.89mm). `13` ve `19` düzeltildi, **`18` DÜZELTİLMEDİ.**
+> §4.2 (`12`'nin 1.0mm örneklemesi) HÂLÂ AÇIK ve artık K1'e de dokunuyor — `DAMLA-KUYRUK` yan bulgu 3.
+
 1. **Net cap ease −21.9mm neden negatif?** Üç ihtimal, hiçbiri ölçülmedi:
    (a) oyuğa giden dikiş `Lower Sleeve` değil, `Upper Sleeve`'in üst kenarıdır
    (düzeltilmiş 604.16mm → ease +135.8mm = büzgünün kendisi);
