@@ -20,7 +20,7 @@ Aciliyet üç kademe: **ACİL** = bugün bir şeyi durduruyor · **SIRADA** = bi
 | K7 | Public README bayat sayı söylüyor (27/54, 77/77) — ben mi düzelteyim, sen mi yazacaksın? | dışarıya söylenen her sayı | **ACİL** (yanlış söyleme riski) |
 | K8 | 12 Ağustos paketleri BAŞKA BİR GİYSİ (açıklık/fermuar yok) — silinsin mi, arşive mi? | `Logs/surface-2026-08-12/` referans gösterilmesi | BEKLER |
 | K9 | Buğra bir REFERANS mı, KURAL mı? Ölçüm tamam; hüküm senin. | H1.0b'nin 20–38 saatlik yönü | **ACİL** |
-| K10 | Beden tablosu 46 üstünde 6cm'e geçen Alman serisi mi? `backLengthCM`'in kaynağı ne? | `contract/tables.json`'a dokunmak | **SIRADA** |
+| K10 | Beden tablosu 46 üstünde 6cm'e geçen Alman serisi mi? `backLengthCM`'in EU44→EU46 düz adımı kasıtlı mı (16C ölçtü: gövde o adımda −11.56mm KISALIYOR)? | `contract/tables.json`'a dokunmak | **SIRADA** |
 | K11 | Omuz yedirmesi motorun mu işi (kalıba basılsın) talimatın mı (kitapçıkta yazsın)? | K4 kapısı ile dikiş-eşitliği kapısının çakışması | **SIRADA** |
 | K12 | ~~Buğra'nın kolu iki KATMAN, yatay bölünme değil~~ | — | **KAPANDI** |
 | K13 | Paket hangi dilde basılsın — TR, EN, ikisi birden mi? | H1.4 (listing metni) | **SIRADA** |
@@ -174,6 +174,44 @@ ilişkili olabilir — **ilişki DOĞRULANMADI.**
 **3. `backLengthCM` bir adımda HİÇ büyümüyor:** 39.5 · 40 · 40.5 · 41 · 41.5 · 42 · **42** ·
 42.5 → EU44→EU46 adımı **0.0 cm**, diğer altı adım +0.5. Dizgi hatası gibi duruyor ama
 **DOĞRULANMADI** ve tek taraflı düzeltilmedi.
+
+---
+
+### ★ TUR 16 (16C) — KALEM 3 (`backLengthCM`) ARTIK "DOĞRULANMADI" DEĞİL: SONUCU ÖLÇÜLDÜ
+
+Ölçüm ağacı: HEAD **`94ab73d`**, `engine/build-16c` Release (ctest dışlamalı
+**90/90**). Tablo yine **okundu**; sonucu ise sevk edilen motordan **koşuldu**.
+
+6B *"dizgi hatası gibi duruyor ama DOĞRULANMADI"* demişti. Kalem hâlâ bir KARAR
+ama artık bedeli sayıyla duruyor:
+
+`backLengthCM` = 39.5 · 40 · 40.5 · 41 · 41.5 · **42** · **42** · 42.5 —
+EU44→EU46 adımı **0.0cm**, sekiz bedenin tek düz adımı.
+Aynı adımda `shaperatios.gen.hpp` `shoulderWidthCM` **+1.0cm** (36.4568→37.4568)
+gibi hiç kırılmadan büyümeye devam ediyor. `bodysurface.cpp:338-346` omuz
+halkasını nape'ten **kendi genişliğinin eğimi kadar** aşağı indiriyor
+(`drop = tan(21.6777°)·halfW`), yani omuz genişledikçe omuz halkası ALÇALIYOR.
+backLength sabit kalınca nape↔bel mesafesi de sabit kalıyor →
+**bel→omuz koşusu tam EU44→EU46'da KISALIYOR.**
+
+Sevk edilen motorda ölçülen sonuç (`gradeset.py --motor surface`, `94ab73d`):
+
+| adım | torso dikey dikiş toplamı | düzleştirilmiş panelin yatay kirişi |
+|---|---|---|
+| EU42→EU44 | **+10.29mm** | +17.92mm |
+| **EU44→EU46** | **−11.56mm** | **−3.86mm** |
+| EU46→EU48 | +4.54mm | +16.96mm |
+
+★ **15A'nın "göğüs çevresi küçülüyor" DİKKAT satırının kökü budur, ve o bir çevre
+değildi:** gerçek çevreler (govde üst sınırı 1541.70→1576.45, bel halkası
+844.88→884.87) o adımda **BÜYÜYOR**. Küçülen şey gövdenin BOYU; düzleştirilmiş
+koni açılımının yatay kirişi boy kısalınca daha çok kıvrıldığı için küçülüyor.
+Yani tabloda **bir çevre hatası yok**, bir **BOY** hatası var.
+
+**Karar Damla'nın, tek taraflı düzeltilmedi.** Sorulan tek şey: EU46'nın
+`backLengthCM`'i 42.0 mı 42.5 mi? 42.5 olursa EU44→EU46'daki −11.56mm'lik gövde
+kısalması kalkar; kalırsa EU46 alıcısı EU44'ten **daha kısa** bir gövde alır ve
+kapı bunu bilerek geçirmelidir.
 
 ---
 
