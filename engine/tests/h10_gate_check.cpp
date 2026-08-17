@@ -65,6 +65,13 @@ double levelOf(const BodySurface& b, const char* name, bool girth) {
 
 struct FarSplit {
     double armhole = 0.0, shoulder = 0.0, neck = 0.0;
+    // K9 needs the armhole's CHORD as well as its arc: the sign law is about the
+    // shape of the curve (arc/chord), not about its length. Chord is the straight
+    // distance between the two ends of this panel's armhole run, measured in the
+    // same cut space the arc is measured in — which is the space Buğra's printed
+    // pattern was measured in too.
+    double armholeChord = 0.0;
+    int armholePanels = 0;
 };
 
 // Üst sınırın rejimi phi'nin fonksiyonu (surfacepattern.cpp TopProfile::at):
@@ -79,6 +86,7 @@ FarSplit splitFar(const SurfacePanel& p, int NR, double shoulderHalf, double str
     FarSplit s;
     const int n = static_cast<int>(p.farEdges.size());
     const bool mirrored = p.name.rfind("right_", 0) == 0;
+    int firstAh = -1, lastAh = -1;
     for (int k = 0; k < n; ++k) {
         const int col = mirrored ? p.ringOffset + n - k : p.ringOffset + k;
         const double phi = 2 * kPi * (col + (mirrored ? -0.5 : 0.5)) / NR;
@@ -87,9 +95,21 @@ FarSplit splitFar(const SurfacePanel& p, int NR, double shoulderHalf, double str
         const Vec2 a = p.contour[e];
         const Vec2 b = p.contour[(e + 1) % p.contour.size()];
         const double len = std::hypot(a.x - b.x, a.y - b.y);
-        if (x >= strapHalf) s.armhole += len;
-        else if (x >= neckHalf) s.shoulder += len;
-        else s.neck += len;
+        if (x >= strapHalf) {
+            s.armhole += len;
+            if (firstAh < 0) firstAh = k;
+            lastAh = k;
+        } else if (x >= neckHalf) {
+            s.shoulder += len;
+        } else {
+            s.neck += len;
+        }
+    }
+    if (firstAh >= 0) {
+        const Vec2 a = p.contour[p.farEdges[firstAh]];
+        const Vec2 b = p.contour[(p.farEdges[lastAh] + 1) % p.contour.size()];
+        s.armholeChord = std::hypot(a.x - b.x, a.y - b.y);
+        s.armholePanels = 1;
     }
     return s;
 }
@@ -129,7 +149,14 @@ int main() {
             t.armhole += s.armhole;
             t.shoulder += s.shoulder;
             t.neck += s.neck;
+            t.armholeChord += s.armholeChord;
+            t.armholePanels += s.armholePanels;
         }
+        // one garment armhole = one panel's run; the mirrored pair is congruent
+        const double fArc = front.armhole / 2.0, bArc = back.armhole / 2.0;
+        const double fChord =
+            front.armholePanels ? front.armholeChord / front.armholePanels : 0.0;
+        const double bChord = back.armholePanels ? back.armholeChord / back.armholePanels : 0.0;
 
         // --- K1: kol oyuğu çevresi. Giyside İKİ oyuk var, gövde simetrik. ---
         const double ah = (front.armhole + back.armhole) / 2.0;
@@ -141,6 +168,29 @@ int main() {
         std::snprintf(buf, sizeof buf, "%8.2fmm  kapı [%.2f, %.2f]  (ön %.2f / arka %.2f, BİLGİ)",
                       ah, lo, hi, front.armhole / 2.0, back.armhole / 2.0);
         verdict(kSizes[si], "K1 armhole", k1, buf);
+
+        // --- K9: ÖN/ARKA KOL OYUĞU İŞARETİ (docs/H1.0-KAPI.md § 2) ---
+        // Belge bu şartı 17.08'de taşıyordu, fikstür taşımıyordu: iki yayı
+        // sadece BASIYORDU. Bir kapı bastığı şeyi yargılamıyorsa o şart kapıda
+        // değildir. Şart iki parça, ikisi de ÖLÇÜLDÜ (Buğra Locket, 8/8 beden):
+        //   (a) ön_yay <= arka_yay
+        //   (b) ön_yay/kiriş > arka_yay/kiriş   (ön 1.232-1.262 / arka 1.161-1.177)
+        // BÜYÜKLÜK KAPIYA GİRMİYOR ve girmeyecek. ön-arka = -13.83 ... -1.50mm,
+        // yani fark 8 bedende 9 KAT daralıyor: bu bir kanun değil, ölçülen
+        // giysinin GRADE'i. Sayıyı şart yapmak referansı kural yapmaktır
+        // (Damla 28 Tem: "Buğra bir REFERANS, kural değil") ve motoru Buğra'nın
+        // grade'ine kilitler. Büyüklük REPORTED kalır, aşağıda basılıyor.
+        // ⚠ TANIK SAYISI 1. Ölçüm tek giysiden (locket_top); corset_bustier
+        // STRAPLESS, oyuğu yok, ikinci tanık olamaz. Bu şart n=1 üstünde duruyor
+        // ve öyle okunmalıdır — büyüklüğün şart olmamasının ikinci sebebi budur.
+        const double fRatio = fChord > 1e-9 ? fArc / fChord : 0.0;
+        const double bRatio = bChord > 1e-9 ? bArc / bChord : 0.0;
+        const bool k9 = fChord > 1e-9 && bChord > 1e-9 && fArc <= bArc && fRatio > bRatio;
+        std::snprintf(buf, sizeof buf,
+                      "ön/arka yay %.2f/%.2f (kapı ön<=arka)  yay/kiriş %.4f/%.4f "
+                      "(kapı ön>arka)  [ön-arka %+.2fmm, REPORTED]",
+                      fArc, bArc, fRatio, bRatio, fArc - bArc);
+        verdict(kSizes[si], "K9 armhole-sign", k9, buf);
 
         // --- K3: omuz dikişi. Ön gövdenin üst kenarı arka gövdenin üst kenarına dikili mi? ---
         int shoulderSeams = 0;
