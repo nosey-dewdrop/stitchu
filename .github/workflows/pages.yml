@@ -1,4 +1,23 @@
-name: deploy github.io
+# pages.yml — publishes web/ to GitHub Pages, BEHIND A REAL GATE.
+#
+# Until 2026-08-17 this workflow ran ZERO checks: every push touching web/**
+# shipped straight to the public site. scripts/deploy.sh carries a five-step
+# proof chain, but nothing forced anyone through it, and proof #2 (header-diff)
+# had been crashing since af49514 deleted web/patterns/ — so the honest path was
+# dead while the blind path was live. That is the T7/T17 class: a green badge
+# holding nothing.
+#
+# The `verify` job below is the subset of scripts/deploy.sh that is TRUE in a
+# fresh clone with node alone. `deploy` cannot run unless it passes.
+#
+# WHAT IS DELIBERATELY NOT HERE: the C++ ctest suite. Reason, declared rather
+# than hidden — the suite needs a full cmake build and today carries FIVE
+# declared reds (h10_gate_check, style_check, figure_check, preview_truth_check,
+# contract_check). Wiring it with an -E exclusion list would put a maintained
+# lie in CI: the list would rot into a mute button. ctest stays where it is
+# measured honestly and in full, on both numbers: the local rabadon pushGate.
+# See HEDEF.md § SAYAÇ.
+name: pages (gated deploy)
 on:
   push:
     branches: [main]
@@ -12,7 +31,52 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # deploy.sh step 1 tail: web/ must carry exactly ONE ?v cache-bust version.
+      # More than one means a half-applied bump ships stale assets to a live page.
+      - name: single ?v version across web/
+        run: |
+          set -euo pipefail
+          VCOUNT=$(grep -rho '?v=[0-9]*' web --include='*.html' --include='*.js' --include='*.css' \
+            | sort -u | wc -l | tr -d ' ')
+          echo "distinct ?v versions in web/: $VCOUNT"
+          [ "$VCOUNT" = "1" ] || { echo "FAIL: web/ carries $VCOUNT distinct ?v versions (must be exactly 1)"; exit 1; }
+
+      # deploy.sh step 2: every hardcoded workers.dev URL must equal config.js
+      # (K0 5.5 divergence class — a stale inline copy points the live site at a
+      # dead backend).
+      - name: worker URL single source
+        run: |
+          set -euo pipefail
+          CANON=$(grep -o "https://[a-z0-9.-]*workers\.dev" web/js/config.js | head -1)
+          [ -n "$CANON" ] || { echo "FAIL: no canonical worker URL in web/js/config.js"; exit 1; }
+          echo "canonical: $CANON"
+          BAD=$(grep -rho "https://[a-z0-9.-]*\.workers\.dev" web --include='*.html' --include='*.js' \
+            | grep -v '<account>' | grep -vF "$CANON" | sort -u || true)
+          [ -z "$BAD" ] || { echo "FAIL: worker URL drift vs config.js:"; echo "$BAD"; exit 1; }
+
+      # deploy.sh proof 2: one canonical header, byte-identical on every page.
+      - name: header-diff
+        run: node engine/tools/header-diff.mjs
+
+      # deploy.sh proof 3: contract/vocab/gen drift AND the copyright boundary
+      # (check 5b). This one is RED today and it is red for a real reason:
+      # patterns_real/ has 49 tracked files, 8 of them purchased BugraPatterns
+      # PDFs, in a PUBLIC repo. A pipeline must not be able to publish a public
+      # site while that is live. Clearing it is Damla's call (DAMLA-KUYRUK K1);
+      # this gate only refuses to stay silent about it.
+      - name: validate-contract
+        run: node engine/tools/validate-contract.mjs
+
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     environment:
       name: github-pages
