@@ -4,7 +4,9 @@
 // a commercial Etsy pattern shows. Both draw the engine's own drafted pieces
 // only (no source photo, ever) with cut line, sewing line, darts/markings,
 // BALANCE NOTCHES, GRAINLINE arrows and the CLOSURE mark (STEP 2 + STEP 3).
-//   imported by render-patterns.mjs and render-vintage6070.mjs
+//   CANLI TÜKETİCİ: web/js/sheet.js. Eski tüketicileri render-patterns.mjs ve
+//   render-vintage6070.mjs 2026-08-17'de SİLİNDİ (ikisi de af49514'te silinmiş olan
+//   web/patterns/ dizinine yazıyordu; sıfır canlı çağıranları kalmıştı).
 import { pathD, bounds, shelfPack } from '../../web/js/sheet.js';
 import { renderGarmentFlat } from './render-garment-flat.mjs';
 
