@@ -1036,12 +1036,35 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             if (prevX[half2] >= 0.0 &&
                 ((prevX[half2] - xTarget) * (x - xTarget) <= 0.0) &&
                 std::fabs(x - prevX[half2]) > 1e-9) {
+                // FOUR CROSSINGS, NOT ONE — and the old code kept the LAST.
+                //
+                // x is NOT monotone along the top boundary. It rises up the
+                // armhole scoop, turns over at the shoulder point, and falls
+                // again along the shoulder line into the neck. So the boundary
+                // meets x = xTarget twice per shoulder: once on the ARMHOLE
+                // branch and once on the SHOULDER branch. Worse, the turning
+                // point sits within a millimetre of xTarget (measured: EU38
+                // peaks at 157.776 against a target of 157.284), so bracketing
+                // on x there is ill-conditioned — a fraction of a millimetre
+                // of overshoot decides which side is read, and the two sides
+                // are 16mm apart in height.
+                //
+                // K6 asks how far below the shoulder the cloth sits AT THE
+                // SHOULDER POINT. The armhole-branch crossing is a point part
+                // way DOWN the armhole; its height is the armhole's depth,
+                // which is K1's question and has its own gate. The shoulder
+                // seam's end is the higher of the two, so that is the one kept.
+                // The threshold, the question and the fixture are untouched;
+                // what changed is which point of the boundary is called the
+                // shoulder point. Every crossing is printed under
+                // STITCHU_TOP_DEBUG so the discarded reading stays visible.
                 const double u = (xTarget - prevX[half2]) / (x - prevX[half2]);
-                bestZ[half2] = prevZ[half2] + (p.z - prevZ[half2]) * u;
+                const double zc = prevZ[half2] + (p.z - prevZ[half2]) * u;
+                if (bestDx[half2] > 0.0 || zc > bestZ[half2]) bestZ[half2] = zc;
                 bestDx[half2] = 0.0;
                 if (std::getenv("STITCHU_TOP_DEBUG"))
                     std::fprintf(stderr, "  XCROSS j=%3d half=%d prevX=%8.3f x=%8.3f u=%.4f z=%9.3f\n",
-                                 j, half2, prevX[half2], x, u, bestZ[half2]);
+                                 j, half2, prevX[half2], x, u, zc);
             } else if (bestDx[half2] > 0.0 && std::fabs(x - xTarget) < bestDx[half2]) {
                 bestDx[half2] = std::fabs(x - xTarget);  // never reached: nearest column
                 bestZ[half2] = p.z;
