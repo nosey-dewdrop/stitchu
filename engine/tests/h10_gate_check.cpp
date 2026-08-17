@@ -72,6 +72,12 @@ struct FarSplit {
     // pattern was measured in too.
     double armholeChord = 0.0;
     int armholePanels = 0;
+    // Zone COLUMN COUNTS. The three zone lengths above are sums over whole
+    // columns, so a zone boundary that moves less than one column changes
+    // nothing and one that crosses a column changes the sum by a whole edge.
+    // Printing the counts is what turns "the number jumped" into "a column
+    // flipped" — and it is what found the size-table break (see § 4 of the doc).
+    int nArmhole = 0, nShoulder = 0, nNeck = 0;
 };
 
 // Üst sınırın rejimi phi'nin fonksiyonu (surfacepattern.cpp TopProfile::at):
@@ -97,12 +103,15 @@ FarSplit splitFar(const SurfacePanel& p, int NR, double shoulderHalf, double str
         const double len = std::hypot(a.x - b.x, a.y - b.y);
         if (x >= strapHalf) {
             s.armhole += len;
+            ++s.nArmhole;
             if (firstAh < 0) firstAh = k;
             lastAh = k;
         } else if (x >= neckHalf) {
             s.shoulder += len;
+            ++s.nShoulder;
         } else {
             s.neck += len;
+            ++s.nNeck;
         }
     }
     if (firstAh >= 0) {
@@ -151,6 +160,9 @@ int main() {
             t.neck += s.neck;
             t.armholeChord += s.armholeChord;
             t.armholePanels += s.armholePanels;
+            t.nArmhole += s.nArmhole;
+            t.nShoulder += s.nShoulder;
+            t.nNeck += s.nNeck;
         }
         // one garment armhole = one panel's run; the mirrored pair is congruent
         const double fArc = front.armhole / 2.0, bArc = back.armhole / 2.0;
@@ -246,6 +258,30 @@ int main() {
                       carry, -kCarryMaxDropMM, pat.frontCarryMM, pat.backCarryMM,
                       pat.shoulderLevelMM, pat.shoulderPointXMM, pat.carryReachXMM);
         verdict(kSizes[si], "K6 shoulder-carry", k6, buf);
+
+        // --- BİLGİ, hüküm DEĞİL: bölge kolon sayımı + fikstür/motor x sapması ---
+        // Bir kapının kendi ölçüsünü nasıl kestiğini gizlememesi gerekir. Zone
+        // sınırları KOLON sınırlarına yuvarlanır (NR=128), yani sınır bir kolondan
+        // az kaydığında hiçbir sayı kımıldamaz, bir kolon geçtiğinde bir kenar
+        // boyu topluca yer değiştirir. K5-çevrenin bedenler arası sıçraması bu
+        // sayımda okunur, "sayı zıpladı"da değil.
+        //
+        // ⚠ AÇIK KALEM (5B, Tur 6'da KAPANMADI): yukarıdaki bölge ayrımı
+        // fikstürün KENDİ modelini kullanıyor (x = shoulderHalf*cos phi), motorun
+        // gerçek yüzey x'ini değil. Motor Tur 5'te bu modeli terk etti. Sapmanın
+        // büyüklüğü motorun kendi yayınladığı iki sayıdan ölçülebiliyor ve
+        // aşağıda basılıyor: fikstürün varsaydığı tepe x (= shoulderHalf) ile
+        // yüzeyin üst sınırda GERÇEKTEN ulaştığı tepe x (carryReachXMM).
+        // Kapatmak için motorun kolon başına gerçek x'i yayınlaması gerekiyor
+        // (ör. SurfacePattern.topColXMM, NR+1 uzunluğunda); o alan bu turda
+        // eklenemedi, çünkü surfacepattern.cpp başka bir ajanın elindeydi.
+        // Kapı GEVŞETİLMEDİ — sapma gizlenmiyor, ölçülüp basılıyor.
+        std::printf(
+            "  %-5s %-18s %-6s oyuk %d+%d · omuz %d+%d · yaka %d+%d kolon (ön+arka) | "
+            "fikstür tepe x %.1f vs motorun ulaştığı %.1f = SAPMA %+.1fmm\n",
+            kSizes[si], "-- bölge sayımı", "bilgi", front.nArmhole, back.nArmhole,
+            front.nShoulder, back.nShoulder, front.nNeck, back.nNeck, shoulderHalf,
+            pat.carryReachXMM, pat.carryReachXMM - shoulderHalf);
     }
 
     // --- K2: grade. Tüm bedenler ölçüldükten sonra. ---
