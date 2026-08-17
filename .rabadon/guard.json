@@ -206,6 +206,16 @@
         "test": "contract_check",
         "neden": "TUR 9 (17 Agu): 9 kontrolun 1'i BU MAKINEDE HIC KOSMUYORDU. 5. kontrol ('58-set manifest leak scan') girdisi telifli 58-set oldugu ve diskte olmadigi icin 'skipped honestly' basiyordu — durustce ilan edilmis ama yine de tutmayan bir kapi. OLCULDU VE ISIM YANLIS CIKTI: o kontrol bir GIZLILIK taramasi degil, bir KAPSAM taramasidir (58-set'in her oov ifadesi terms.json'da bir term id'sine dusmeli). Onun manifest'siz esdegeri YOKTUR ve uydurulmadi — kuramadigim yazildi (5a yorumu). Yerine, adini tasidigi SINIRIN olculebilir kismi kuruldu: 5b GIZLILIK SINIRI. Yasa CLAUDE.md'de duz yaziyla duruyordu, CLAUDE.md gitignore'da, yani makine onu okuyamiyordu; yasa artik contract/gizlilik.json'da ve kapi git indeksini okuyor — manifest gerekmiyor. Kapi kuruldugu anda KIRMIZI dogdu ve sebebi gercek: `patterns_real/` 49 dosyayla HEAD'de TAKIPLI (8 satin alinmis BugraPatterns PDF'i + 25 jpg, ~65.5 MB) ve repo BUGUN PUBLIC (gh repo view: PUBLIC). O dosyalar su anda internetten indirilebiliyor. Kirmizi bir gerileme DEGIL: olcusuz duran bir gercegin ilk kez olculmesi. MUTASYON KANITI: (a) dataset/ izinli listesi bosaltildi -> 6 arac dosyasi ihlal sayildi, FAIL 1->2; (b) contract/gizlilik.json silindi -> 'A missing law is never a pass' ile temiz FAIL; ikisi de geri alindi, 1 FAIL'e donuldu. NOT: rabadon'un bash kapisi `no-git-add-never-push-dirs` bu dizinlerin YENI eklenmesini zaten blokluyor (olculdu: mutasyon denemesi blokland i) — eksik olan, ZATEN ICERIDE olani sayan kapiydi.",
         "bitis": "DAMLA-KUYRUK K1 cevaplanip `patterns_real/` agactan cikinca (ve/veya gecmis git filter-repo ile kazininca) kapi kendiliginden YESILE doner. Esik yok, tolerans yok, pin yok: sayilan sey 'takipli telifli dosya sayisi', hedefi 0, bugun 49. GECMISI YENIDEN YAZMAK DAMLA'NIN KARARIDIR (K1) — ajan dosyalari silmedi, isik yakti."
+      },
+      {
+        "test": "preview_truth_check",
+        "neden": "TUR 9 / 9B: bu test 310 yargi yuvasinin 190'ini (%61.3) ATLIYORDU ve 11 stil = princessSeam ailesinin TAMAMI 0/10 yargi aliyordu. Kok: princess stilleri onu bolunce draft'ta 'Bodice Front' yok -> D.bustHalf undefined -> capa dusunce on landmark birden dusuyor. Atlama artik gerekce istiyor. Kirmizi bir gerileme DEGIL, sahte yesilin sonu (mutasyon: duzeltmeden ONCE bozuk kol aramasi exit 0 / 0 FAIL, SONRA exit 1 / 104 FAIL).",
+        "bitis": "11 princessSeam stilinin bustHalf capasi kurulunca CIKAR"
+      },
+      {
+        "test": "contract_check",
+        "neden": "TUR 9 / 9B: 'leak scan' adli kontrol aslinda KAPSAM taramasiydi ve girdisi (telifli 58-set) diskte yok. Yerine gercek gizlilik siniri kuruldu (contract/gizlilik.json + kontrol 5b, girdisi git indeksi) ve KURULDUGU ANDA kirmizi dogdu: patterns_real/ 49 dosyayla HEAD'de takipli (8 satin alinmis BugraPatterns PDF'i + 25 jpg, 66MB) ve repo PUBLIC. Bu kirmizi GERCEK BIR IHLALI gosteriyor.",
+        "bitis": "DAMLA-KUYRUK K1 karari uygulaninca CIKAR — ve o zamana kadar KIRMIZI KALMALI"
       }
     ]
   },

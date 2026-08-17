@@ -11,8 +11,8 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 > **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
 
 ```
-H1'e kalan:  6 halka / 22–31 koşu saati    [H1.0: 13–24 → **11–20s** · H1.1a,H1.1b KAPANDI]
-H2'ye kalan: 7 halka / 168–295 koşu saati
+H1'e kalan:  6 halka / 25–35 koşu saati    [H1.0: 11–20 → **14–24s**, kök bir kademe daha indi]
+H2'ye kalan: 6 halka / 158–285 koşu saati   [**H2.1 KAPANDI** — operatör sicili kuruldu, red cümlesi eksik operatörü ADIYLA söylüyor]
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
 TABAN:       2 halka / DAMLA'DA           [T17 KAPANDI · T1 yok-hükmünde · T5 = K5'e bloke · style/figure pinleri = K15'e bloke]
 ```
@@ -57,6 +57,37 @@ pens yok; PNG'de mavi yok çünkü pens yok, iki serbest-uç çentiği de **kayb
 bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi yerinde).
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
+
+## TUR 9 — ÜÇ SERT SONUÇ
+
+### ⚠⚠ 1. GİZLİLİK — İHLAL AKTİF, ÖLÇÜLDÜ
+`gh repo view` → **PUBLIC**. `git ls-files patterns_real/` → **49 dosya takipli**, bunların **8'i satın alınmış BugraPatterns PDF'i**, 25'i jpg, toplam **66 MB**. **Şu anda internetten indirilebiliyor.**
+9B bunu bir kapıya bağladı: `contract/gizlilik.json` (yasa `CLAUDE.md`'de düz yazıydı ve o dosya gitignore'da — **makine okuyamıyordu**) + `contract_check` kontrol 5b, girdisi git indeksi. **Kurulduğu anda kırmızı doğdu ve kırmızı gerçek bir ihlali gösteriyor.** Dosyalar **silinmedi** — `DAMLA-KUYRUK` **K1**, Damla'nın kararı. Işık yakıldı.
+
+### 2. H1.0b — kök bir kademe daha indi: delik dar değil, **GİYSİ KOLTUKALTINDA OMUZDAN DAR**
+Ölçüldü, 8 bedende: koltukaltı `x` **omuz ucunun İÇİNDE** ve beden büyüdükçe daha da içeri giriyor (**dx +10.055 → +2.473mm**). Skim konisi belden omuz ucuna düz koştuğu için giysi armscye derinliğinde omuzdan geniş değil.
+★ **K1'in açığı YAY açığı değil, KİRİŞ açığı:** bizim EU38 yay/kiriş **1.3247**, Buğra'nınki **1.232–1.262** — bizimki zaten **daha kıvrımlı**. Kiriş bizde 124.75mm, Buğra'da ≈171mm. Eğri yeterince bükülüyor; **iki ucu birbirine çok yakın**. K1'i kapatacak şey daha çok kavis değil, **uçların ayrılması**.
+★ Motorun kendi yorumundaki aritmetik yanlıştı: *"±19.9° = ±56mm, ve gerçek kol oyuğu 10-11cm ön-arka"* — ölçüldü, ±19.7°'nin ön-arka açıklığı **±25.9mm = 51.7mm**. ±56mm yanın etrafındaki **yay uzunluğu**; iki büyüklük aynı ada konmuş.
+**Bir düzeltme daha üç değerde ölçülüp reddedildi** (açısal açıklık 30/40/50°): K1 330→158→88→70mm, K2 grade 7/7 → **FAIL**. Geniş açı delik açmıyor, **omzu yiyor**. Bu vardiyada **altıncı** ölçülüp reddedilen düzeltme.
+→ Sıradaki halka `GarmentSurf`'ün **skim konisi (armscye seviyesindeki genişlik)**, üst sınır değil.
+
+### 3. ALTI KAPI DAHA SİLAHLANDI — ve biri %61 sessizdi
+- **`preview_truth_check`: 310 yargı yuvasının 190'ı (%61.3) atlanıyordu** ve **11 stil — princessSeam ailesinin TAMAMI — 0/10 yargı alıyordu.** Kök: princess stilleri önü bölünce draft'ta `Bodice Front` yok → `D.bustHalf` undefined → çapa düşünce on landmark birden düşüyor. Mutasyon kanıtı en güçlüsü: kol araması bilerek bozuldu → **düzeltmeden önce exit 0 / 0 FAIL (tamamen sessiz)**, sonra **exit 1 / 104 FAIL**.
+- `scripts/repin-style.sh` **yazıldı** — pin ölçümden değil karardan gelir: tty şartı var, boru hattından beslenen onay reddediliyor (**ajan/CI pinleyemez**).
+- `run-all.sh` H1b: rapor kipi **kasıtlıymış** (`--strict` tam bunun için yazılmış) ama `|| true` "defter YOK" hâlini de yutuyordu — `taban.sh` BOŞ MÜHÜR sınıfı. Çıkış kodları ayrıştırıldı.
+- `scripts/katman-lint.py`: korunan dosya diskte yoksa kural **sessizce atlanıyordu**; yedi korunan dosyanın yedisi birden yokken bile `"0 ihlal (STRICT)"` + exit 0 basıyordu.
+- ⚠ **`.github/workflows/` — CI HİÇBİR ŞEY TUTMUYOR.** Tek workflow `web/`'i Pages'e yüklüyor, **sıfır test koşuyor**. Tek test kapısı lokal `rabadon pushGate`.
+
+### 4. H2.1 KAPANDI — operatör sicili kuruldu, red cümlesi çalışıyor
+`contract/garment-spec-v2.json` mühürlendi: **15 operatör × 3 durum** (`shipped` 9 · `flagged` 1 · `absent` 5), 7 kapalı topoloji ekseni, 19 sınırlı skaler, `additionalProperties:false`. Üçü **kusurlu-ama-shipped** ve sicil hangisi olduğunu söylüyor (`armholeNotch` %22 kısa · `necklineDraft` · `topAnchoredDart` bu giyside hiç pens türetmiyor). **Kusurlu ≠ yok.**
+**Bitiş tanımının red yarısı ÇALIŞIYOR** — Buğra puf kollu top fikstürü, tüm enum'lar geçerli:
+> `BU GİYSİYİ ÇIKARAMIYORUM. Eksik operatör: shoulderSeam, sleeve, gatheredOverlayLayer, collarFamily, zipperPiece`
+`sleeve:"puuf"` **reddediliyor ve alıntılanıyor, İKAME EDİLMİYOR** (DERSLER: sessiz enum fallback = halüsinasyon).
+★ **Ama: SPEC'İ MOTORA VEREN YOL HİÇ YOK.** `engine/tools/surface-pattern.cpp:313` → `const SheathOptions opt;` — sevk edilen CLI **yalnız beden adı** alıyor, hiçbir spec dosyası okumuyor. Sözleşme motora **mandalla** bağlandı (`specv2_check` `SheathOptions` gövdesini okuyup her alanı ve varsayılanı doğruluyor), **girdiyle değil**. ~2–4 saat, H2.2'nin içinde.
+
+### ⚠ 5. BİR AJAN BİR AJANIN İŞİNİ SİLDİ — YASA EKLENDİ
+9B bir mutasyon testini geri alırken `git checkout -- .` koştu ve **9A'nın commit'lenmemiş `surfacepattern.cpp` düzenlemesini sildi**. Release build olduğu için kurtarılamadı. 9B bunu **kendi raporunun ilk satırında ilan etti**.
+**YASA:** paylaşılan ağaçta `git checkout -- .`, `git stash`, `git reset --hard` **YASAKTIR**. Mutasyon testi geri alınırken yalnız **kendi dosyan**, açık yolla. Her düzenlemeden sonra **hemen commit**.
 
 ## TUR 8 — PENSİN KÖKÜ BİR KADEME DAHA DERİNDEYMİŞ + BEŞ BOŞ KOŞAN KAPI
 
