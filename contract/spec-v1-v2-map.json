@@ -1,0 +1,781 @@
+{
+  "_contract": "v1 (okuma dili) <-> v2 (operator sicili) ESLEME TABLOSU. URETILMIS DOSYA — elle duzenleme. Kaynak: engine/tools/gen-spec-v1v2-map.mjs. Hukum (expressible/missing) YAZILMAZ, contract/garment-spec.schema.json + contract/garment-spec-v2.json okunarak HESAPLANIR.",
+  "_law": [
+    "v1 OLU DEGIL: contract_check ve collar_bridge_check onu okuyor, gen-contract.mjs $defs.visionReading i backend/ ve web/ e gomuyor. Damgalanacak ceset degil.",
+    "v1 v2 nin TUREVI de DEGIL: bir giysiyi ADIYLA reddedebilmek icin once onu OKUYABILMEK gerekir (HEDEF.md bitis tanimi). v1 i v2 ye daraltmak red cumlesini susturur.",
+    "IKI DOGRU YOK, cunku iki AYRI SORU var: v1 = \"ne goruyorum?\", v2 = \"uretebiliyor muyum?\". Uretilebilirligin TEK cevabi v2.operators tir.",
+    "Bir v1 enum degerine bakip \"motor bunu cikarir\" DEME. Bu tablodaki expressible alanina bak."
+  ],
+  "generatedFrom": {
+    "v1": "contract/garment-spec.schema.json",
+    "v2": "contract/garment-spec-v2.json",
+    "v2specVersion": "garment-spec/2"
+  },
+  "summary": {
+    "v1EnumValuesMapped": 79,
+    "expressibleToday": 31,
+    "notExpressibleToday": 48
+  },
+  "v1NonEnumFields": [
+    "keyhole",
+    "fabricName",
+    "cupSeams",
+    "outOfVocab",
+    "details",
+    "ratios"
+  ],
+  "axes": {
+    "garment": {
+      "note": null,
+      "values": {
+        "skirt": {
+          "v2": "garment.skirt",
+          "layer": "topology",
+          "requires": [
+            "skirtSurface"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "dress": {
+          "v2": "garment.sheathDress",
+          "layer": "topology",
+          "requires": [
+            "bodiceSurface",
+            "skirtSurface",
+            "necklineDraft",
+            "armholeNotch"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "top": {
+          "v2": "garment.top",
+          "layer": "topology",
+          "requires": [
+            "bodiceSurface",
+            "necklineDraft",
+            "armholeNotch"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "trousers": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 garment enum pantolon tasimiyor; motorda bacak yuzeyi yok",
+          "expressible": false,
+          "missing": []
+        },
+        "other": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "kapali enum kacak degeri kabul etmez",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "neckline": {
+      "note": "v2 YAKA SEKLI ekseni tasimiyor. necklineDraft operatoru SHIPPED ama sekli enum ile degil, quantities.neckDrop*/neckWidth* kadranlariyla ciziyor. Yani bu dokuz kelime OKUNUR, motor tarafindan AYIRT EDILMEZ.",
+      "values": {
+        "crew": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "scoop": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "vNeck": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "square": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "boat": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "sweetheart": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "halter": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "cowl": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "pussyBow": {
+          "v2": "QUANTITY.necklineDraft",
+          "layer": "quantity",
+          "requires": [
+            "necklineDraft"
+          ],
+          "expressible": true,
+          "missing": []
+        }
+      }
+    },
+    "sleeveStyle": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "sleeve.none",
+          "layer": "topology",
+          "requires": [
+            "armholeNotch"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "straight": {
+          "v2": "sleeve.setIn",
+          "layer": "topology",
+          "requires": [
+            "sleeve"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve"
+          ]
+        },
+        "balloon": {
+          "v2": "sleeve.puff",
+          "layer": "topology",
+          "requires": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ]
+        }
+      }
+    },
+    "sleeveLength": {
+      "note": "kol UZUNLUGU v2 de hic yok: sleeve operatoru absent oldugu icin bagli bir kadran da yok.",
+      "values": {
+        "short": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "sleeve operatoru absent",
+          "expressible": false,
+          "missing": []
+        },
+        "elbow": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "sleeve operatoru absent",
+          "expressible": false,
+          "missing": []
+        },
+        "long": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "sleeve operatoru absent",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "skirtStyle": {
+      "note": null,
+      "values": {
+        "aLine": {
+          "v2": "skirtShape.aLine",
+          "layer": "topology",
+          "requires": [
+            "skirtSurface",
+            "hemSweepCone"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "straight": {
+          "v2": "skirtShape.straight",
+          "layer": "topology",
+          "requires": [
+            "skirtSurface"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "gathered": {
+          "v2": "skirtShape.gathered",
+          "layer": "topology",
+          "requires": [
+            "skirtFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "skirtFamily"
+          ]
+        },
+        "pleated": {
+          "v2": "skirtShape.pleated",
+          "layer": "topology",
+          "requires": [
+            "skirtFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "skirtFamily"
+          ]
+        },
+        "gore": {
+          "v2": "skirtShape.gore",
+          "layer": "topology",
+          "requires": [
+            "skirtFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "skirtFamily"
+          ]
+        },
+        "halfCircle": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 sadece fullCircle tasiyor; yarim daire EN YAKIN karsilik ama AYNI degil",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "length": {
+      "note": "v1 kelimeyle (mini/midi/maxi), v2 mm ile olcer: quantities.hemDropBelowHipMM.",
+      "values": {
+        "mini": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "midi": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "maxi": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        }
+      }
+    },
+    "topLength": {
+      "note": null,
+      "values": {
+        "cropped": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "hip": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "tunic": {
+          "v2": "QUANTITY.hemDropBelowHipMM",
+          "layer": "quantity",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        }
+      }
+    },
+    "shaping": {
+      "note": null,
+      "values": {
+        "princess": {
+          "v2": "suppression.seamOnly",
+          "layer": "topology",
+          "requires": [
+            "princessCut"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "dart": {
+          "v2": "suppression.dart",
+          "layer": "topology",
+          "requires": [
+            "princessCut",
+            "waistAnchoredDart"
+          ],
+          "expressible": true,
+          "missing": []
+        }
+      }
+    },
+    "waistline": {
+      "note": null,
+      "values": {
+        "natural": {
+          "v2": "QUANTITY.bodiceSurface",
+          "layer": "quantity",
+          "requires": [
+            "bodiceSurface"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "empire": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "v2 de bel yuksekligi ekseni yok; govde yuzeyi tek dogal bel halkasi tasiyor",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "fabric": {
+      "note": "malzeme geometri ekseni degil; v2 topolojisi kumas tanimaz (kumas onerisi H1.1b, ayri hat).",
+      "values": {
+        "woven": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "kumas v2 topolojisinde yok",
+          "expressible": false,
+          "missing": []
+        },
+        "knit": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "kumas v2 topolojisinde yok",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "hemRuffle": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "closure.none",
+          "layer": "topology",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "single": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "etek ucu firfiri icin operator yok",
+          "expressible": false,
+          "missing": []
+        },
+        "tiered": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "etek ucu firfiri icin operator yok",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "closure": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "closure.none",
+          "layer": "topology",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "zipper": {
+          "v2": "closure.centreBackZip",
+          "layer": "topology",
+          "requires": [
+            "backOpening",
+            "zipperPiece"
+          ],
+          "expressible": false,
+          "missing": [
+            "zipperPiece"
+          ]
+        },
+        "buttons": {
+          "v2": "closure.buttonFront",
+          "layer": "topology",
+          "requires": [
+            "zipperPiece"
+          ],
+          "expressible": false,
+          "missing": [
+            "zipperPiece"
+          ]
+        },
+        "placket": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum patlet tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "ties": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum bag tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "lace-up": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum kordon tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "hookEye": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum kopca tasimiyor",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "collar": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "collar.none",
+          "layer": "topology",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "stand": {
+          "v2": "collar.stand",
+          "layer": "topology",
+          "requires": [
+            "collarFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "collarFamily"
+          ]
+        },
+        "shirt": {
+          "v2": "collar.shirt",
+          "layer": "topology",
+          "requires": [
+            "collarFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "collarFamily"
+          ]
+        },
+        "peterPan": {
+          "v2": "collar.peterPan",
+          "layer": "topology",
+          "requires": [
+            "collarFamily"
+          ],
+          "expressible": false,
+          "missing": [
+            "collarFamily"
+          ]
+        },
+        "mandarin": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 collar enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "notched": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 collar enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "sailor": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 collar enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "other": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "kapali enum kacak degeri kabul etmez",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "straps": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "shoulder.strapless",
+          "layer": "topology",
+          "requires": [
+            "bodiceSurface"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "shoulder": {
+          "v2": "shoulder.shoulderSeam",
+          "layer": "topology",
+          "requires": [
+            "shoulderSeam"
+          ],
+          "expressible": false,
+          "missing": [
+            "shoulderSeam"
+          ]
+        },
+        "spaghetti": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        },
+        "wide": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        },
+        "halter": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        },
+        "ruffled": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        },
+        "oneShoulder": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        },
+        "offShoulder": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 shoulder enum sadece strapless|shoulderSeam",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "sleeveHead": {
+      "note": null,
+      "values": {
+        "plain": {
+          "v2": "sleeve.setIn",
+          "layer": "topology",
+          "requires": [
+            "sleeve"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve"
+          ]
+        },
+        "gathered": {
+          "v2": "sleeve.puff",
+          "layer": "topology",
+          "requires": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ]
+        },
+        "puffed": {
+          "v2": "sleeve.puff",
+          "layer": "topology",
+          "requires": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve",
+            "gatheredOverlayLayer"
+          ]
+        },
+        "capped": {
+          "v2": "sleeve.cap",
+          "layer": "topology",
+          "requires": [
+            "sleeve"
+          ],
+          "expressible": false,
+          "missing": [
+            "sleeve"
+          ]
+        }
+      }
+    },
+    "yoke": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "closure.none",
+          "layer": "topology",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "shoulderYoke": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "roba operatoru yok",
+          "expressible": false,
+          "missing": []
+        },
+        "shirring": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "buzgu katmani absent",
+          "expressible": false,
+          "missing": []
+        },
+        "smocking": {
+          "v2": null,
+          "reason": "NO_AXIS",
+          "why": "buzgu katmani absent",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    },
+    "backDetail": {
+      "note": null,
+      "values": {
+        "none": {
+          "v2": "closure.none",
+          "layer": "topology",
+          "requires": [],
+          "expressible": true,
+          "missing": []
+        },
+        "openBack": {
+          "v2": "closure.backOpening",
+          "layer": "topology",
+          "requires": [
+            "backOpening"
+          ],
+          "expressible": true,
+          "missing": []
+        },
+        "keyholeBack": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "vBack": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "tieBack": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "lacedBack": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        },
+        "buttonBack": {
+          "v2": null,
+          "reason": "NO_VALUE",
+          "why": "v2 closure enum tasimiyor",
+          "expressible": false,
+          "missing": []
+        }
+      }
+    }
+  }
+}

@@ -507,6 +507,19 @@ add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_D
 # and it fails if a refusal ever stops naming what is missing.
 add_test(NAME specv2_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/specv2-check.mjs)
 
+# specv1v2_map_check (Tur 11, 2026-08-17): v1 ile v2 arasinda iki dogru kalmasin.
+# contract/garment-spec.schema.json (v1) OLU DEGIL — contract_check ve
+# collar_bridge_check onu okuyor ve gen-contract.mjs $defs.visionReading'i
+# backend/ + web/ icine gomuyor. Ama v1 79 enum degeri OKUYOR, v2 sicili bugun
+# bunlarin 31'ini URETEBILIYOR. Bosluk kusur degil, bitis taniminin kendisidir:
+# bir giysiyi ADIYLA reddedebilmek icin once onu okuyabilmek gerekir. Tehlike,
+# birinin v1'in enum'una bakip "motor peterPan yaka cikarir" demesidir. Bu kapi
+# contract/spec-v1-v2-map.json'u iki sozlesmeden YENIDEN URETIP diskteki ile
+# karsilastirir: v1'e bir kelime eklenirse ya da v2'de bir operator durum
+# degistirirse tablo bayatlar ve test KIRMIZI olur. Hukum tabloya yazilmaz,
+# hesaplanir — elle "guncellendi" denemez.
+add_test(NAME specv1v2_map_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-spec-v1v2-map.mjs --check)
+
 # K2 flat render lint (2026-07-19): every flat style record in styles.json is
 # rendered headlessly and checked for self-intersection, inconsistent winding
 # (reversed normals), zero-area loops and sampleX y-monotonicity.
