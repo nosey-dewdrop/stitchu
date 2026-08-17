@@ -10,13 +10,17 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { siteVersion } from './site-version.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const WEB = join(here, '../../web');
 const OUT = join(WEB, 'collections');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://stitchu.noseydewdrop.com';
-const V = process.env.V || '90';
+// Asset cache-bust version: read from web/ (the single record), never a
+// frozen literal. TUR 13 found this file pinned at 90 while the live site
+// stood at 136 — running it would have rewound the pages it writes.
+const V = process.env.V || siteVersion();
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

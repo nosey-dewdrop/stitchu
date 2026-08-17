@@ -35,9 +35,17 @@ if [ "${1:-}" = "--no-bump" ]; then BUMP=0; shift; fi
 MSG="${1:-}"
 if [ -z "$MSG" ]; then echo "usage: scripts/deploy.sh [--no-bump] \"commit message\""; exit 2; fi
 
-# auto-regenerate sitemap.xml from every real page (no manual per-page indexing)
+# auto-regenerate sitemap.xml from every real page (no manual per-page indexing).
+# Was python3 web/gen-sitemap.py until TUR 13. That script's SKIP_DIRS listed
+# "styles" among the ASSET dirs (assets/css/js/vendor/data), but web/styles/ is
+# 24 real content pages — so running deploy.sh would have deleted 24 live pages
+# from the sitemap. One generator now, and it derives the list from disk.
 echo "== deploy.sh: regenerating sitemap =="
-python3 web/gen-sitemap.py || { echo "sitemap generation failed"; exit 3; }
+node engine/tools/gen-sitemap.mjs || { echo "sitemap generation failed"; exit 3; }
+
+# site health: no dead internal links, sitemap matches the site, one ?v version.
+echo "== deploy.sh: site health =="
+node engine/tools/site-health.mjs || { echo "site-health failed"; exit 3; }
 
 LIVE_BASE="https://stitchu.noseydewdrop.com"
 

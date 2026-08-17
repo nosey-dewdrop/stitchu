@@ -183,6 +183,12 @@ if (vLits.length !== 1) {
     for (const m of src.matchAll(/\?v=(\d+)/g)) hits.add(m[1]);
     // hardcoded fallback:  process.env.V || '85'
     for (const m of src.matchAll(/process\.env\.V\s*\|\|\s*['"](\d+)['"]/g)) hits.add(m[1]);
+    // bare version-string default:  process.argv[2] || 'v=80'. gen-vintage-page
+    // used exactly this and the two patterns above BOTH missed it — the literal
+    // is "v=80", with no "?" — so the first version of this gate reported three
+    // frozen generators when there were four. A gate that only catches the
+    // shapes you happened to think of is the mute button it was written against.
+    for (const m of src.matchAll(/['"`]v=(\d+)['"`]/g)) hits.add(m[1]);
     for (const v of hits) if (v !== CANON) stale.push(`${relative(ROOT, g)} hardcodes ?v=${v} (site is at ?v=${CANON})`);
   }
   if (stale.length) {

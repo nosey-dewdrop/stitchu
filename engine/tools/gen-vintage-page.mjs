@@ -5,11 +5,15 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { siteVersion } from './site-version.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const VDIR = join(here, '../../web/patterns/vintage6070');
 const meta = JSON.parse(readFileSync(join(VDIR, 'meta.json'), 'utf8'));
-const V = (process.argv[2] || 'v=80').replace(/^\?/, '');
+// Asset cache-bust version: read from web/ (the single record), never a
+// frozen literal. TUR 13 found this file pinned at 80 while the live site
+// stood at 136 — running it would have rewound the pages it writes.
+const V = (process.argv[2] || `v=${siteVersion()}`).replace(/^\?/, '');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
