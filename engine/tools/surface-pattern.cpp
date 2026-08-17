@@ -397,6 +397,33 @@ int main(int argc, char** argv) {
         auto isMirrored = [](const SurfacePanel& p) {
             return p.name.rfind("right_", 0) == 0;
         };
+        // THE WITNESS. The claim above — "that test was a coin toss" — is the
+        // reason this file no longer measures, so the file has to be able to
+        // show it rather than assert it. Under STITCHU_FIT_DEBUG each seam
+        // still reports what the discarded comparison WOULD have said and by
+        // what margin. A margin near 0% means the two sums were separated by
+        // fitting noise and the old answer was luck; when 14B made curvefit's
+        // Newton sweep direction-symmetric the luck changed sign on the two
+        // seams that had been landing on 1, without the tie itself getting any
+        // wider. Debug only: nothing here reaches the spec.
+        auto tieMargin = [](const std::vector<Vec2>& pa, const std::vector<Vec2>& pb) {
+            struct R { bool measured; double pct; } r{false, 0.0};
+            const size_t n = pa.size();
+            std::vector<double> ca(n, 0.0), cb(n, 0.0);
+            for (size_t i = 1; i < n; ++i) {
+                ca[i] = ca[i - 1] + std::hypot(pa[i].x - pa[i - 1].x, pa[i].y - pa[i - 1].y);
+                cb[i] = cb[i - 1] + std::hypot(pb[i].x - pb[i - 1].x, pb[i].y - pb[i - 1].y);
+            }
+            double direct = 0, rev = 0;
+            for (size_t i = 0; i < n; ++i) {
+                direct += std::fabs(ca[i] - cb[i]);
+                rev += std::fabs(ca[i] - (cb.back() - cb[n - 1 - i]));
+            }
+            r.measured = rev < direct;
+            const double big = std::max(direct, rev);
+            r.pct = big > 0 ? 100.0 * std::fabs(direct - rev) / big : 0.0;
+            return r;
+        };
         // does walking this side by ascending contour index go UP the garment?
         auto sideAscends = [&](const SurfacePanel& p, bool seam1) {
             return seam1 != isMirrored(p);
@@ -450,13 +477,16 @@ int main(int argc, char** argv) {
                                           ? (interior + 1) - (before + (zipEnd > 0 ? 1 : 0))
                                           : before + 1;
             }
-            if (std::getenv("STITCHU_FIT_DEBUG"))
+            if (std::getenv("STITCHU_FIT_DEBUG")) {
+                const auto t = tieMargin(pa, pb);
                 std::fprintf(stderr,
                              "  BIRLESIM %-16s <-> %-16s n=%3d ters=%d "
-                             "dogal(%zu,%zu) -> birlesim=%zu\n",
+                             "dogal(%zu,%zu) -> birlesim=%zu | eski-olcum=%d marj=%.4f%%\n",
                              A.name.c_str(), B.name.c_str(), n, reversed ? 1 : 0,
                              naturalBreaks(A, A.seam1Edges).size(),
-                             naturalBreaks(B, B.seam0Edges).size(), u.size());
+                             naturalBreaks(B, B.seam0Edges).size(), u.size(),
+                             t.measured ? 1 : 0, t.pct);
+            }
             brk1[q.pa] = u;
             std::vector<int> v;
             for (int b : u) v.push_back(reversed ? n - 1 - b : b);
@@ -500,9 +530,14 @@ int main(int argc, char** argv) {
                 std::vector<int> v;
                 for (int b : u) v.push_back(reversed ? n - 1 - b : b);
                 std::sort(v.begin(), v.end());
-                if (std::getenv("STITCHU_FIT_DEBUG"))
-                    std::fprintf(stderr, "  BEL %-18s <-> %-18s n=%3d ters=%d birlesim=%zu\n",
-                                 A.name.c_str(), B.name.c_str(), n, reversed ? 1 : 0, u.size());
+                if (std::getenv("STITCHU_FIT_DEBUG")) {
+                    const auto t = tieMargin(pa, pb);
+                    std::fprintf(stderr,
+                                 "  BEL %-18s <-> %-18s n=%3d ters=%d birlesim=%zu"
+                                 " | eski-olcum=%d marj=%.4f%%\n",
+                                 A.name.c_str(), B.name.c_str(), n, reversed ? 1 : 0, u.size(),
+                                 t.measured ? 1 : 0, t.pct);
+                }
                 wbrk[s][r] = u;
                 wbrk[4 + s][r] = v;
             }
