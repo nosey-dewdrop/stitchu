@@ -486,20 +486,31 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
     // (1) THE ARTEFACT IS CONFIRMED. STITCHU_RING_SAMPLES (see the header) was
     // added and narrow=50 re-run. The negative steps are a column artefact and
     // they scale as 1/NR exactly as an artefact must:
-    //   K2 step, narrow=50      NR=128     NR=256
-    //   EU36                    -4.098     +9.636
-    //   EU38                   +10.042     +2.513
-    //   EU40                    +9.478     +9.695
-    //   EU42                    +8.879     +2.079
-    //   EU44                    -5.640     +9.202
-    //   EU46                   +10.173     +1.945
-    //   EU48                   +14.768    +14.988
-    // Every negative step is GONE at NR=256. The mechanism is visible in the
-    // gate's own zone counts: the armhole column count per panel goes
-    // 34/32/32/32/32/30/30/30 at NR=128, and a size where it drops by two
+    //   K2 step, narrow=50      NR=128     NR=256     NR=512
+    //   EU36                    -4.098     +9.636     +6.184
+    //   EU38                   +10.042     +2.513     +6.028
+    //   EU40                    +9.478     +9.695     +6.211
+    //   EU42                    +8.879     +2.079     +5.723
+    //   EU44                    -5.640     +9.202     +5.571
+    //   EU46                   +10.173     +1.945     +5.837
+    //   EU48                   +14.768    +14.988    +11.102
+    //   K2 ok                      4/7        3/7      **7/7**
+    //   h10_gate_check           43/63      43/63    **42/63**
+    // Every negative step is GONE at NR=256, and at NR=512 the whole column
+    // collapses onto ~+5.6 to +6.2mm and K2 is GREEN 7/7. The mechanism is
+    // visible in the gate's own zone counts: the armhole column count per panel
+    // goes 34/32/32/32/32/30/30/30 at NR=128, and a size where it drops by two
     // columns is exactly a size where the step goes negative. The size that
-    // loses two columns loses ~14mm; at NR=256 the same drop costs ~7.5mm.
-    // Half the column, half the error. That is quantisation, proved.
+    // loses two columns loses ~14mm; at NR=256 the same drop costs ~7.5mm; at
+    // NR=512 the count walks down one column at a time and no step is bought
+    // out of its neighbour at all. Half the column, half the error, converging
+    // on the real grade. That is quantisation, PROVED.
+    //
+    // ⚠ AND THE EXCUSE 11A REFUSED TO SPEND ITS GREENS ON WAS CORRECT. At
+    // NR=512, narrow=50 is strictly better than the shipped garment on every
+    // number the gate has: K1 4/8 in band (0/8 shipped), K2 7/7 (7/7 shipped),
+    // total 42/63 (44/63 shipped). The quantisation argument for refusing 50mm
+    // is DEAD. It is refused below on a different and better ground.
     //
     // (2) AND IT DOES NOT MATTER, because the source question answers first.
     // 11A asked for a source for 50mm. There is one, and it REFUSES the dial.
@@ -508,9 +519,13 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
     // measures that exact quantity: K4's front.shoulder, which sums the TWO
     // mirrored front quarter-panels, so ONE shoulder seam is half of it.
     //   narrow    one shoulder seam, EU38      Aldrich 122.5-125mm
-    //   10mm      207.85/2 = 103.93mm          -15% short
-    //   50mm      104.47/2 =  52.24mm          -57% short
-    // At 50mm the shoulder seam is 5.2cm. That is a strap, not a shoulder, and
+    //   10mm      207.85/2 = 103.93mm          -15% short   (NR=128)
+    //   50mm      104.47/2 =  52.24mm          -57% short   (NR=128)
+    //   50mm      112.67/2 =  56.34mm          -54% short   (NR=256)
+    //   50mm      109.19/2 =  54.60mm          -55% short   (NR=512)
+    // This one does NOT move with resolution — it is converged, not an artefact,
+    // which is exactly what makes it the ground the refusal stands on.
+    // At 50mm the shoulder seam is 5.5cm. That is a strap, not a shoulder, and
     // no bodice in Aldrich has one. The relation is near-linear (-1.292mm of
     // shoulder per mm of narrow), so Aldrich's 122.5mm would need narrow to go
     // NEGATIVE (~-4.4mm): the engine's shoulder is already short at the shipped
@@ -532,15 +547,19 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi,
     // this shift is BOUGHT, and the price is on Aldrich's only shoulder number.
     // NOT TAKEN. Ninth measured-and-refused correction of this shift.
     //
-    // (4) ONE FAILURE IS NOT QUANTISATION AND IT IS NOT THE SURFACE'S. K2 EU48
-    // is +14.768 at NR=128 and +14.988 at NR=256 — it does not shrink with the
-    // column, it grows. Its root is in the SOURCE TABLE, contract.gen.hpp:
-    // bustCM steps +4.0 for every size up to EU46 and then EU46->EU48 steps
-    // +6.0 (104 -> 110), and shoulderCM steps +0.5 throughout and then +1.0
-    // (39 -> 40). EU48 is a double-rate size in the chart, so a K2 ceiling of
-    // 14.0mm cannot hold across it. Same column, the Tur 7 finding stands:
-    // backLengthCM EU44->EU46 is 42 -> 42, the only ZERO step in the table.
-    // Neither is a surface bug and neither is fixed by any dial in this file.
+    // (4) EU48 IS QUANTISATION TOO — I GOT THIS WRONG AT NR=256 AND THE THIRD
+    // RESOLUTION CORRECTED ME. K2 EU48 reads +14.768 at NR=128 and +14.988 at
+    // NR=256, i.e. it GREW, which is why it was written up here as a real break
+    // in the source table. At NR=512 it is +11.102, comfortably in band. Two
+    // resolutions are not a trend; a quantity that has not converged has not
+    // been measured. The size table's double-rate row is still a fact worth
+    // carrying — contract.gen.hpp has bustCM stepping +4.0 every size up to
+    // EU46 and then +6.0 across EU46->EU48 (104 -> 110), with shoulderCM
+    // stepping +0.5 throughout and then +1.0 (39 -> 40), and the Tur 7 finding
+    // stands beside it (backLengthCM EU44->EU46 is 42 -> 42, the only ZERO step
+    // in the table) — but it is NOT what makes K2 EU48 fail, because at proper
+    // resolution K2 EU48 does not fail. It is an open question about the chart,
+    // not a diagnosis of this gate.
     //
     // (5) WHY EU42-EU48 LAG ON K1 (11A's question). It is NOT the same
     // phenomenon as the quantisation. At the shipped narrow=10 the engine's
