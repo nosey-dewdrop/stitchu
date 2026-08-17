@@ -11,10 +11,10 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 > **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
 
 ```
-H1'e kalan:  8 halka / 26–37 koşu saati    [H1.0: 12–22 → **13–24s**, teşhis yer değiştirdi] [+H1.1a/b/c]
+H1'e kalan:  6 halka / 22–31 koşu saati    [H1.0: 13–24 → **11–20s** · H1.1a,H1.1b KAPANDI]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / ~1 koşu saati       [T13,T15,T16 KAPANDI · T1 yok-hükmünde · T5 bloke · +T17 style_check boş koşuyor]
+TABAN:       2 halka / DAMLA'DA           [T17 KAPANDI · T1 yok-hükmünde · T5 = K5'e bloke · style/figure pinleri = K15'e bloke]
 ```
 
 ## TUR 8 — H1.0a: İKİ BLOKÖRDEN BİRİ DÜŞTÜ, KALAN TEK SAYIYA İNDİ
@@ -57,6 +57,39 @@ pens yok; PNG'de mavi yok çünkü pens yok, iki serbest-uç çentiği de **kayb
 bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi yerinde).
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
+
+## TUR 8 — PENSİN KÖKÜ BİR KADEME DAHA DERİNDEYMİŞ + BEŞ BOŞ KOŞAN KAPI
+
+### H1.0a — pens EYERİ YUTAMIYOR değildi; **PENS HİÇ OLMAMALIYDI**
+`dartColumnsFromDeficitRows` yükü kolon başına `max(0, def[j])` topluyordu. Omuz bandı net **NEGATİF** (+34.57° / −64.34°, net −24). Kırpma **negatif yarıyı atıp pozitif yarıyı gerçek sanıyordu** → `total` +48.806°, n=2, pens başına 24.4°. **Panelden, orada olmayan 73°'lik kama kesiliyordu.** Yer sorusu ile yük sorusu tek sayıyla cevaplanıyordu; ayrıldı: **yer kırpılı kalır, yük İŞARETLİ olur.**
+
+| kapı (bayrak AÇIK) | önce | sonra |
+|---|---|---|
+| `walkgate_check` | **6 hüküm** (EU34/36/46, hepsi kendini-kesme) | **0 — YEŞİL** |
+| kesim çizgisi (kapı %0.5) | ön **%1.8318** · arka **%1.8646** | ön **%0.4162** · arka **%0.2908** — **GEÇİYOR** |
+| pens bacağı gerinimi | %8.929 / %10.749 | **%0.000** |
+| iç gerinim (kapı %3.0) | %6.96 / %7.79 | **%24.07 / %18.14** |
+
+Kendini kesen 6 panel **uydurma pens kamalarıydı**; kama gidince kesme gitti. Bayrak **kapalı** sevk edilen giysi hiç değişmedi (kapalıyken sıfır yarık, kanıtlı).
+**Blokör ikiden bire indi.** Kalan tek şart iç gerinim — ve bu **yeni eğrilik değil**, hep orada duran −64°'lik eyerin, sahte pens onu gizlemeyi bıraktığı için görünür hale gelmesi.
+
+**İki şekil hipotezi ölçüldü ve ALINMADI** (kod içinde sayılarıyla duruyor): (a) bant = kolonun kendi açıklığının kesri → arka iç %7.79→**%11.91**; (b) katlama düzleme değil orta-yüzeye → arka kesim %0.2908→**%0.3038**. **Asıl okuma: dipol kımıldamıyor** (+34.57/−64.34 → +41.59/−65.29 → +48.63/−65.07). Eyer ne tırtıklı üstten ne kesitin düzleşmesinden geliyor.
+→ **ROTA: kalan aday, eyerin kol oyuğunun bugünkü ince mercek şeklinden gelmesi. H1.0a'nın kalan kırmızısı H1.0b'nin ALTINDA olabilir.**
+
+### T17 — BEŞ KAPI BOŞ KOŞUYORDU, hepsi mutasyon kanıtıyla düzeltildi
+91 testin **89'u gerçek** hüküm taşıyordu. Boş olanlar:
+1. **`style_check` — TAM BOŞ.** `engine/STYLE-PIN/` diskte yok → `PASS (nothing to enforce)`. Sıfır pin = sıfır hüküm. ⚠ Kapının ilan ettiği çıkış yolu `scripts/repin-style.sh` **de diskte yok**.
+2. **`figure_check` — %23 hükümsüz.** 31 stilin 7'si son `else` dalından **koşulsuz OK** alıyordu.
+3. **`run-all.sh` H2/L2 — T7'nin BİREBİR AYNISI.** `ctest ... | grep -E "..."` → boru hattının exit kodu **ctest'in değil grep'in**; ctest arıza hâlinde de eşleşen bir satır basıyor, kod **daima 0**. Bu adım hiçbir koşulda arıza sayamazdı.
+4. **`taban.sh` sessiz beden atlama.** `cp ... || continue` — spec yoksa beden sessizce atlanıyor, FAIL sayılmıyordu; **sekizi birden atlansa mühür yine atılırdı.**
+5. **`taban.sh` BOŞ MÜHÜR.** `find` hiçbir şey bulamasa da manifest yazılıp sha256'sı hesaplanıyor ve panele geçerli bir MANİFEST basılıyordu; o sha `e3b0c442…` = **boş dizginin hash'i, hiçliğin mührü** — ve tam yeşilse **git tag'i bile atılabilirdi**.
+
+Her düzeltme **mutasyon kanıtlı** (korunan şey bilerek bozuldu, test kırmızıya döndü, geri alındı). Yeni çıkan kırmızı: **2 test / 8 FAIL** — ikisi de sahte yeşilin sonu.
+
+### H1.1 — şartname 16/17. Motorun bu şartnameye borcu bitti.
+- **H1.1a nesting kanıtı KAPANDI:** kazanç **0 sayfa** (A4 15→15, A0 1→1) ve **sıfır yazıldı, uydurulmadı** — 4 çizimin hiçbiri kendi orta çizgisine simetrik değil. ★ Sıfırın enstrüman hatası olmadığının bağımsız tanığı: aynı kod kemerli elbisede **A4 24→20, A0 2→1** kazanç görüyor.
+- **H1.1b kumaş önerisi KAPANDI:** `print-info.pdf` s.2, kalıbın kendi kenarlarından çözülüyor (bel +2.5cm bolluk, etek/bel 1.75, fermuar var), her ad ve gerekçe `knowledge/stitchu.db`'den `source_url` ile. ★ İki kaynak çelişti (db keteni "tight fitted" için kötülüyor, sewing-guide öneriyor), **niteleyici ölçülerek çözüldü** — +2.5cm *fitted* ama *tight* değil.
+- ★ **"13/14/10 adım" üçlemesi çözüldü:** oynatan motor değil **ölçüm koşusuydu**. Sevk edilen giysi **10 adım**; 14, `shoulderSeam=1` ile ölçülen ve **sevk etmediğimiz** paketin sayısı. Tur 7 yanlış paketi ölçmüş.
 
 ## TUR 7 — ALICIYA ULAŞAN BİR HATA KAPANDI + H1.0a'NIN TEŞHİSİ YER DEĞİŞTİRDİ
 
@@ -245,19 +278,20 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 "Sağlam nokta" branch değil, **git tag**. `scripts/taban.sh` **tam yeşil** bir mühürde `taban-<etiket>` tag'i atar ve push'lar (`FAILS=0` şartına bağlı, kod satır 200'ün altında). Satılabilir/dönülebilir noktalar **tag listesidir**; bir şey bozulursa **dönüş adresi son tag'dir**. `.vardiya/state.json` → `son_saglam_tag`.
 Var olan tag'in üzerine yazılmaz — mühür geçmişi silinmez.
 
-## PUSH KAPISI — İLAN EDİLEN TEK KIRMIZI
+## PUSH KAPISI — İLAN EDİLEN KIRMIZILAR (3)
 
-`rabadon` `pushGate`'i suite tam yeşil olmadan push'u blokluyor. Binary **commit mesajını okumuyor** (`gate.cpp:2823`; bilinen üst-seviye anahtarlar sabit liste) — "KIRMIZI öneki" kuralı guard'a yazılamaz, uydurma anahtar sessizce yok sayılırdı.
-Yerine **tek isimle dışlama**: `ctest ... -E '^h10_gate_check$'`. O test H1.0'ın kabul kapısı ve **kasten kırmızı doğdu** (`docs/H1.0-KAPI.md`) — kendini geçiren kapı kapı değildir.
-**Kapının eşiğine / toleransına / tanımına DOKUNULMADI**; yalnız rabadon'un *push ön-koşulundan* çıkarıldı ve her commit mesajı `KIRMIZI: h10_gate_check <n>/55` önekiyle sayıyı **ilan ediyor**.
-Dışlama tek isim regexi → **başka bir test kırmızıya dönerse push YİNE bloke olur**, gerileme gizlenemez.
-**H1.0 yeşillenince bu bölüm ve `-E` bayrağı SİLİNİR.**
+`rabadon` `pushGate`'i suite tam yeşil olmadan push'u blokluyor. Binary **commit mesajını okumuyor** (`gate.cpp:2823`; bilinen üst-seviye anahtarlar sabit liste) — "KIRMIZI öneki" kuralı guard'a yazılamaz, uydurma anahtar sessizce yok sayılırdı. Yerine **isimle dışlama**, üç ad, üçünün de gerekçesi ve **bitiş şartı** `.rabadon/guard.json` → `pushGate._ilan_listesi`'nde yazılı.
 
-## COMMIT SIKLIĞI (Damla emri, 17.08)
+| test | neden ilan edildi | dışlamadan ne zaman çıkar? |
+|---|---|---|
+| `h10_gate_check` | H1.0'ın kabul kapısı, **kasten** kırmızı doğdu. Kendini geçiren kapı kapı değildir | H1.0 yeşillenince |
+| `style_check` | **T17: bu test BOŞ KOŞUYORDU.** `engine/STYLE-PIN/` diskte hiç yok, test `PASS (nothing to enforce)` basıp yeşil görünüyordu. Artık dürüstçe FAIL ediyor — kırmızı bir gerileme **değil**, sahte yeşilin sonu | 31 stilin pini Damla onayından geçince (**K15**) |
+| `figure_check` | **T17: 31 stilin 7'si son `else` dalından KOŞULSUZ `OK` alıyordu** (tanık: `dress_bandeau_circle` 0.872 — figürel bandın üstünde, boxy eşiğinin altında, iki yasanın da dışında, yine "ok") | 7 tasarımın pini Damla onayından geçince (**K15**) |
 
-- **Bir adım = bir commit + push. MUTLAK, kırmızıdan etkilenmez.** Her alt-ajan işi bitince, her hakem kararından sonra, `HEDEF.md` / `.vardiya/state.json` / `DAMLA-KUYRUK.md` güncellemeleri dahil — istisnasız.
-- **Taban kırmızıyken atılan commit `KIRMIZI: <kapı, kaç FAIL>` önekiyle atılır.** Bu kapı boyamak değil, kırmızılığın **İLANIDIR**.
-- **30 dakikadan eski commit'lenmemiş değişiklik çalışma ağacında DURAMAZ.**
+**Dışlama tek tek AD regexi** → başka bir test kırmızıya dönerse push **YİNE bloke olur**, gerileme gizlenemez. Ölçüm 17.08: `97% tests passed, 3 tests failed out of 91` — düşen tam olarak bu üçü, **dördüncü yok**.
+**Kapıların hiçbirinin eşiği/toleransı/tanımı değişmedi.**
+
+⚠ **AJANLARA:** `ctest` koşarken **iki sayıyı da** raporla — dışlamalı (`-E '^(h10_gate_check|style_check|figure_check)$'`) ve **tam süit**. Tek sayıya bakmak sahte yeşilin nasıl doğduğunun ta kendisidir.
 
 ## TUR — tekrarlanan tek adım
 
