@@ -1580,6 +1580,87 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     // Both ends are found on the SOLVED surface x, interpolated between columns,
     // never snapped — the same discipline K6 needed above and for the same
     // reason (a zone corner sits inside one column).
+    //
+    // ★★ MEASURED, 8 SIZES, TUR 15B. THE ANSWER TO 12A'S OPEN QUESTION IS: NO,
+    // THE TWO ARE NOT THE SAME MEASUREMENT, AND THE GEOMETRY IS SHORT ANYWAY.
+    //
+    //   size  gate run   arc3d    xz      ySweep   model(neck->tip)  Aldrich*
+    //   EU34   100.12     99.30   88.35    41.58        98.23         117.5
+    //   EU36   101.61    103.08   91.44    43.41       102.54         120.0
+    //   EU38   103.92    107.29   94.88    45.24       106.84         122.5  <- p.11
+    //   EU40   107.03    111.73   98.44    47.39       110.07         125.0  <- p.11
+    //   EU42   118.71    118.85  105.13    49.22       114.37         127.5
+    //   EU44   122.25    125.16  111.01    51.08       118.68         130.0
+    //   EU46   125.95    129.85  114.98    53.43       121.91         132.5
+    //   EU48   129.89    134.07  118.34    56.01       125.13         136.3
+    //   (* Aldrich p.11 gives 12.25cm at bust 88 and 12.5cm at bust 92; the other
+    //    six rows are +0.25cm per +4cm bust, EXTRAPOLATED, and marked as such.)
+    //
+    //   The neck point IS Aldrich's: neckHalf = neck/5 - 0.2cm = 68.0mm at EU38,
+    //   which is the same construction Aldrich draws the shoulder from (p.16).
+    //   So the inner end is not the discrepancy. The OUTER end is Aldrich's too,
+    //   but one centimetre in (p.28 sleeveless), so the honest comparand for the
+    //   gate's number is 112.5mm, not 122.5mm.
+    //
+    //   WHAT THE GATE'S 103.93mm IS: an arc that travels 45.24mm in y. Aldrich's
+    //   tape does not. Fold the top onto the crest (STITCHU_SHOULDER_SEAM=1) so
+    //   the y-sweep is gone and the SAME gate reads 91.69mm per shoulder. That is
+    //   the engine's real shoulder, and against Aldrich's 112.5 it is 20.8mm =
+    //   18.5% SHORT — worse than the 15% that was declared, because the declared
+    //   number was inflated by the tube.
+    //
+    // ★ ROOT, AND IT IS NOT IN THIS FILE. The shoulder line's length is fixed by
+    //   two numbers: neckHalf (Aldrich, triple-sourced, correct) and the shoulder
+    //   TIP x, which is the body's own shoulder level half-width. There are TWO
+    //   shoulder widths in this engine and the surface uses the narrower:
+    //     shaperatios.gen.hpp shoulderWidthCM  EU38 33.4568  (GarmentCode mean
+    //         body, graded +1cm/size off EU44) -> shoulder length 106.84mm
+    //     contract.gen.hpp    shoulderCM       EU38 37.0     (the size chart's
+    //         own column, read today only by the legacy 2D line)
+    //                                          -> shoulder length 125.93mm
+    //   Against Aldrich the first misses by -19.3...-10.6mm in ALL EIGHT sizes;
+    //   the second lands within +5.2...-2.9mm. measurements.hpp:35 says the two
+    //   are "a different quantity"; that note is an assertion and this is the
+    //   measurement, and the chart column is the one that reproduces Aldrich.
+    //
+    //   THE SHOULDER TIP CANNOT BE FIXED HERE. TopProfile's shoulderHalfMM is not
+    //   a free dial: solveTopH bisects on the SOLVED surface, and the cloth never
+    //   reaches past the body's own shoulder half-width, so widening the profile
+    //   alone deletes the armhole instead of lengthening the shoulder. The fix is
+    //   one line in the chart layer (sizechart.hpp feeding shoulderWidthCM), which
+    //   this turn does not own.
+    //
+    // ★ AND IT WAS MEASURED ANYWAY, THEN NOT TAKEN (twelfth precedent). A probe
+    //   replaying h10_gate_check's own splitFar on a body whose shoulderWidthCM is
+    //   overridden reproduces the gate exactly at delta 0 (63 judgments, 44 FAIL):
+    //     delta       EU38 shoulder run   total   K1 K9 K3 K4 K5c K5g K6 K2
+    //     +0.0 cm (shipped)  103.92mm      44      8  8  8  8   8   4  0  0
+    //     +1.0 cm            114.63mm      50      8  8  8  8   8   7  3  0
+    //     +2.0 cm            117.25mm      47      8  8  8  8   8   3  3  1
+    //     +3.0 cm            119.94mm      44      8  8  8  8   8   0  2  2
+    //     = chart shoulderCM 121.40mm      44      8  8  8  8   8   0  3  1
+    //   The chart column lengthens the shoulder by 16.8% and CLOSES K5-girth in
+    //   all eight sizes (4 FAIL -> 0), but pays for it with three K6 judgments and
+    //   K2 — the only condition green for this whole shift — and the total does
+    //   not fall. A move that does not lower the number and breaks the one green
+    //   condition is not taken.
+    //
+    // ★ K4's INVERTED SIGN — SOLVED AS A DIAGNOSIS, AND IT IS NOT A BUG.
+    //   Front and back x-z runs are IDENTICAL to 0.009mm in all eight sizes
+    //   (EU38: 94.875 vs 94.884). The entire front-back gap is the y-sweep
+    //   (45.237 front vs 43.421 back), i.e. the body ellipse being DEEPER in
+    //   front than in back — which has nothing to do with a blade allowance and
+    //   points the wrong way. Confirmed by removing it: with the crest fold on,
+    //   K4 collapses from -2.336mm to -0.150mm (EU38; -0.133...-0.171 across all
+    //   eight), a 94% collapse, and K3 closes 8/8.
+    //   So the residual is ZERO, and zero is the correct reading of the SECOND
+    //   LAW: one top boundary is sampled once over the whole circle, so the
+    //   shoulder line is single-valued and CANNOT differ front to back. A blade
+    //   allowance IS a front-back difference in the shoulder line. K4 is
+    //   therefore unsatisfiable by any dial in this file — it needs the boundary
+    //   to carry two values, exactly the change SheathOptions already refuses for
+    //   Aldrich's 5mm front neck. K4 is blocked by K3 and by the second law, not
+    //   by a sign error.
     if (std::getenv("STITCHU_SHOULDER_DEBUG")) {
         const std::vector<double>& tH = layers[0].topH;
         for (int hh = 0; hh < 2; ++hh) {  // 0 front, 1 back
