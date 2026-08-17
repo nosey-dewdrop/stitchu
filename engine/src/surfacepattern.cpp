@@ -351,6 +351,25 @@ double solveTopH(const GarmentSurf& surf, const TopProfile& top, double phi) {
     // the underarm depth is untouched and the boundary above the scoop is still
     // the solved shoulder line. Off by default; it exists so the span can be
     // MEASURED against K1 and against the saddle instead of argued about.
+    // ★ MEASURED AND NOT TAKEN — THREE TIMES (Tur 9, h10_gate_check, 8 sizes).
+    // Widening the span does not lengthen the hole, it DESTROYS it, and it
+    // breaks the only condition that was green:
+    //   span      K1 EU38            K2 grade (was 7/7 ok)
+    //   as-is     330.13mm           +4.88...+9.54mm/size, 7/7 ok
+    //   30 deg    158.15mm           +3.26/+3.30/+3.49 -> FAIL
+    //   40 deg     88.27mm           +2.74/+2.77/+3.00 -> FAIL
+    //   50 deg     70.47mm           +2.73/+2.76/+3.01 -> FAIL
+    // The reason is the measurement above: the underarm sits INSIDE the
+    // shoulder point (dx only +10.055mm at EU34, falling to +2.473mm at EU48),
+    // so there is no width to spend. Starting the scoop earlier just starts it
+    // LOWER down the shoulder line — the drop falls 147.8 -> 128.3mm — and past
+    // 30 deg the boundary's |x| stops turning over at all, i.e. the garment
+    // loses its shoulder POINT and the run measures zero. A wider angle does
+    // not open a hole on this surface; it eats the shoulder.
+    // So the armhole's length is NOT a property of its angular span. It is a
+    // property of the SURFACE: at armscye depth the skim cone is narrower than
+    // the shoulder point, and no scoop of any span cut into that can reach
+    // 392.99-432.99mm. The dial is kept, off, with its measurement.
     if (const char* e = std::getenv("STITCHU_ARMHOLE_SPANDEG")) {
         const double d = std::atof(e);
         if (d > 0.0 && d < 89.0) cStrap = std::min(cStrap, std::cos(d * kPi / 180.0));
@@ -1279,15 +1298,21 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         // hole opens FRONT TO BACK, is the one nobody had measured.
         if (std::getenv("STITCHU_ARMHOLE_DEBUG")) {
             const std::vector<double>& tH = layers[0].topH;
-            double arc = 0.0;
+            // ARGMAX, not first-decrease: |x| dips by 0.4mm over the first
+            // three columns because cos(phi) falls faster than the section
+            // widens on the nearly flat underarm floor, so a first-decrease
+            // scan stops at the underarm itself and reports a zero-length
+            // armhole. Measured and corrected rather than left as a plausible
+            // scan.
             int jTip = 0;
-            for (int j = 1; j <= NR / 4; ++j) {
-                const Vec3 a = surf.at(tH[j - 1], 2 * kPi * (j - 1) / NR);
-                const Vec3 b = surf.at(tH[j], 2 * kPi * j / NR);
-                if (std::fabs(b.x) < std::fabs(a.x)) break;
-                arc += dist3(a, b);
-                jTip = j;
-            }
+            for (int j = 1; j <= NR / 4; ++j)
+                if (std::fabs(surf.at(tH[j], 2 * kPi * j / NR).x) >
+                    std::fabs(surf.at(tH[jTip], 2 * kPi * jTip / NR).x))
+                    jTip = j;
+            double arc = 0.0;
+            for (int j = 1; j <= jTip; ++j)
+                arc += dist3(surf.at(tH[j - 1], 2 * kPi * (j - 1) / NR),
+                             surf.at(tH[j], 2 * kPi * j / NR));
             const Vec3 u = surf.at(tH[0], 0.0);
             const Vec3 t = surf.at(tH[jTip], 2 * kPi * jTip / NR);
             std::fprintf(stderr,
