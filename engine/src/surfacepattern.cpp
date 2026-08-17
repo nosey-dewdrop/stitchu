@@ -1689,6 +1689,55 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             }();
             std::vector<int>& subs = h == 0 ? L.frontSubs : L.backSubs;
             for (size_t s = 0; s + 1 < bounds.size(); ++s) {
+                // THE SIXTH RED IS NOT HERE. MEASURED (TUR 13), AND THE FIX THAT
+                // LOOKED OBVIOUS WAS TRIED AND REJECTED WITH ITS NUMBER.
+                //
+                // The fault: right_btorso's spec edge table is left_btorso's
+                // with the LAST TWO ENTRIES SWAPPED (EU34 L=[90.3082, 94.2346],
+                // R=[94.2346, 90.3082]); every other entry is bit-identical, and
+                // left/right_ftorso are bit-identical throughout. No rotation or
+                // global reversal lines that up, so the mirror map drops the
+                // pair and six seam verdicts vanish. Those two entries are the
+                // SIDE SEAM, split in two by one break, and the two panels put
+                // the break at mirror-opposite heights: EU34 left_btorso breaks
+                // at y=32.97, right_btorso at y=33.05 in the same 31.15..34.86
+                // span — 0.49 of the way up on one, 0.51 on the other.
+                //
+                // The break is not placed here. It is placed in
+                // engine/tools/surface-pattern.cpp, which unions the two sides'
+                // natural breaks and maps them across with a `reversed` flag
+                // decided by comparing cumulative arc-length profiles. The four
+                // torso seams are two mirror-image PAIRS, and that test answers
+                // them DIFFERENTLY: (right_ftorso, left_btorso) -> 0,
+                // (right_btorso, left_ftorso) -> 1. Both seams walk y ascending
+                // on both sides (measured), so 0 is the true answer and the 1 is
+                // the fault. It is also a near-tie by construction: the two
+                // curves total 184.54mm and 184.52mm, agreeing to 0.02mm, so
+                // sum|ca - cb| and sum|ca - reverse(cb)| are the same number to
+                // within noise. `direct`/`rev` is not measuring direction.
+                //
+                // WHAT WAS TRIED AND NOT TAKEN — the ninth-plus precedent.
+                // A reflection reverses the boundary's winding, so this copy,
+                // which keeps the source's vertex order, really is walked
+                // backwards relative to every other panel (the shoulder indexer
+                // below already carries a special case for exactly that). The
+                // copy was re-traversed properly: contour reversed about index 0
+                // (edge e -> n-1-e), waist/far lists reversed, seam lists mapped
+                // and swapped, dart legs swapped, and the shoulder special case
+                // deleted. The side seams then came out symmetric — and the
+                // gate got WORSE, not better:
+                //     walkgate_check  5 hukum-FAIL / 5 of 8 sizes red
+                //                  -> 18 hukum-FAIL / 8 of 8 sizes red
+                //     mirror-panel FAIL 0 -> 2 (EU34, EU36)
+                //     mirror-seam FAIL 5 -> 16
+                // Because a SECOND consumer is direction-dependent: curvefit's
+                // Newton reparameterisation updates u[i] in place, left to
+                // right, so the same polyline walked backwards fits differently.
+                // The far edge of right_btorso went from 13 segments to 15 while
+                // left_btorso kept 13, and unequal edge COUNTS are a harder
+                // failure for the mirror audit than an unequal order. Reverted.
+                // Re-traversing is still the honest shape of this copy, but it
+                // cannot land before the fitter is made direction-symmetric.
                 if (mirrorable && s == 1) {
                     const SurfacePanel& src = pat.panels[subs[0]];
                     SurfacePanel p = src;  // congruent copy
