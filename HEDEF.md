@@ -8,11 +8,13 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 
 ## SAYAÇ
 
+> **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
+
 ```
-H1'e kalan:  5 halka / 23–33 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → 14–26 → **12–22s**]
+H1'e kalan:  8 halka / 25–36 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → 14–26 → **12–22s**] [+H1.1a/b/c]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       3 halka / ~2–3 koşu saati     [T13 KAPANDI · T1 yok-hükmünde · T5 bloke · +T15, T16]
+TABAN:       2 halka / ~1–2 koşu saati     [T13 KAPANDI · T15 KAPANDI · T1 yok-hükmünde · T5 bloke · +T16]
 ```
 
 ## TUR 6 — OMUZ DİKİŞİ İNŞA EDİLDİ, BAYRAK ARKASINDA BEKLİYOR
@@ -37,7 +39,7 @@ TABAN:       3 halka / ~2–3 koşu saati     [T13 KAPANDI · T1 yok-hükmünde 
 > **KAPSAM BÜYÜDÜ: +4 halka (H1.0a, H1.0b, T15, T16). Sebebi:**
 > **H1.0a — pens düzeni** (3–6s): üst pens ↔ bel pensi kesişmesi + ön-orta ölü bölge. **Bu çözülmeden omuz dikişi açılamaz.** Kritik yolun kendisi.
 > **H1.0b — kol oyuğu gerçek 2B delik** (6–12s): K1 "%19 eksik" değil, **YAPISAL**. Oyuk bugün φ∈[0, 19.9°] bandında ince bir mercek — derinlik ~148mm, ön-arka genişlik **~52mm**. Elips aritmetiği: 150×52 → ~333mm (ölçülen 330 ✓); Buğra'nın 424–486'sı için delik **~110mm geniş** olmalı. Katlama buna +1mm bile katmıyor. Oyuk, φ'nin fonksiyonu olan bir çentik olmaktan çıkıp **gerçek bir 2B delik** olmalı.
-> **T15** (~0.3s): `flatten-research/18`'in analitik mandalı **sarılım-kör** — `ΔL=−d·Δθ` iç normalin hep teğet-solda olduğunu varsayıyor, bu yalnız CCW'de doğru. Gövde parçaları CCW 8/8, **kol parçaları CW 8/8** → kol kenarlarında sahte `2·d·Δθ` sapma basıyor (EU38: 14.18 / 20.89mm). Kusur mandalda, ofsette değil. `13` ve `19`'da düzeltildi, **`18` DÜZELTİLMEDİ**.
+> **T15 — KAPANDI 17.08. ÇARPAN KONDU, TEK BİR SAYI DEĞİŞMEDİ, K9 AYAKTA.** `18`'in mandalına sarılım çarpanı (`w = +1 CCW / −1 CW`) kondu ve sarılım artık **ölçülüp basılıyor**, varsayılmıyor. **Ölçüm: Front Body CCW 8/8, Back Body CCW 8/8** — bu dosya **kol parçası hiç ölçmüyor**, o yüzden körlük burada hiçbir zaman tetiklenmemişti. Önce/sonra: 728 sayıda **en büyük fark 0.0000000000mm**, konsol çıktısı sarılım bloğu dışında **bayt bayt aynı**. Bağımsız tanık: düzeltmeden ÖNCE bile Tablo 6'nın numerik-vs-analitik farkı 32 ölçümde en kötü **0.013mm** (CW olsaydı ~2·d·Δθ ≈ 30–40mm olurdu) → körlük zaten sessizdi. <br>★ **K9 HÜKMÜ SARSILMADI, çünkü tablo kımıldamadı:** `ön_yay ≤ arka_yay` kesim çizgisinde **8/8** (fark −13.83…−1.50mm) ve `ön_yay/kiriş > arka_yay/kiriş` **8/8** (1.2323–1.2620 vs 1.1610–1.1767). `docs/H1.0-KAPI.md`'nin şartı **devredilmedi, gerek kalmadı**. ⚠ Değişmeyen ama **kayda geçen** yan bulgu: DİKİŞ çizgisinde `ön ≤ arka` yalnız **6/8** (EU46 **+0.08**, EU48 **+1.33mm** ters); K9 kesim çizgisi hükmüdür, dikiş çizgisine genişletilirse iki bedende düşer.
 > **T16** (~1s): **İKİ BEDEN TABLOSU VAR VE UYUŞMUYORLAR.** `contract/layers/size-table.json` bust'u kusursuz doğrusal (EU48 = **107.84**), `contract.gen.hpp` EU48'i **110** yazıyor; `h10_gate_check` ikincisini kullanıyor. `CLAUDE.md`'nin "ÜÇÜNCÜ VÜCUT KAYNAĞI" teşhisi hâlâ canlı. Ayrıca `backLengthCM` EU44→EU46 adımı **0.0cm** (diğer altı adım +0.5) — dizgi hatası gibi, DOĞRULANMADI.
 
 ### K4 — 5B'NİN REÇETESİ BU NOKTADA YANLIŞTI, DÜZELTİLDİ
@@ -111,10 +113,13 @@ Giysi: **mevcut oturtmalı elbise** (motorun bugün ürettiği tek aile).
 | # | Halka | Kabul | Süre |
 |---|---|---|---|
 | H1.0 | **giyilebilirlik** | **KABUL KAPISI YAZILDI 17.08 → `docs/H1.0-KAPI.md`** (6 şart × 8 beden; kol oyuğu çevresi + grade · omuz dikişinin VARLIĞI · omuz ön/arka dengesi · yakanın KAPALI delik olması + çevresi · omzun üstünden geçen taşıyıcı yüzey). Fikstür `engine/tests/h10_gate_check.cpp`, ctest `h10_gate_check`, **bugün 55 yargıdan 48 FAIL** — sadece K2 (grade) yeşil. "Balensiz durur" ölçüye ÇEVRİLEMEDİ, sebebi kapı belgesinde yazılı. <br>**KIRMIZI — ÖLÇÜLDÜ 16.08.** Giysi hâlâ tüp. `GarmentSurf` 4 halka taşıyor (neck/bust/waist/hip), **omuz halkası yok**; omzun üstünden geçen hiçbir yüzey yok. Kol oyuğu bir DELİK değil, kenardaki çentik: **EU38 33.55cm**, Buğra Locket-38 **43.30cm** → bandın **6.45cm altında (%22 kısa)**. Yaka 23.34cm, boyun çevresi 35cm → yaka boyundan küçük. Omuz noktasında kumaş omzun **153.5mm altında**. PNG'ye gözle bakıldı: omuz yok, askı yok. Yapısal blokör: `buildGrid`'in (h,φ) ızgarası + `Slit`'in yalnız-bel çapası — ~610–1180 satır, 9 dosya | **25–45s** |
-| H1.1 | paket tanımı mührü | `docs/SATIS-SARTNAMESI.md` zaten kalem kalem tanımlıyor → mühürlenecek | ~1s |
+| H1.1 | paket tanımı mührü | **ÖLÇÜLDÜ 17.08 — AÇIK KALIYOR. `docs/SATIS-SARTNAMESI.md`** artık 17 maddenin hepsini bugünkü pakete karşı kanıtla taşıyor (taze koşu: `surface-pattern EU38` → `printpack.py`, sha256 `160146ae…`). **14/17 GEÇTİ.** §2 kalıp paketi **6/6** · §3 verimlilik **3/4** · §4 talimat **3/4** · §4b açıklık uyarısı (T10) **eklendi ve geçti** · §1 listing görseli **0/5**. <br>**Kapanmadı çünkü 3 madde gerçekten eksik** → aşağıdaki üç halka. <br>**Şartname 3 yerde BAYATTI, düzeltildi:** (a) *"SA 15mm gömülü"* — gerçek pay **10mm**, satıcı talimatıyla KANITLI, 15mm hiç ölçülmemişti; (b) *"9 fazlı construction order"* — sayı sabit değil, dikiş grafiğinden düşüyor, bugün **14 adım**; (c) **EMSAL REFERANSLARI'nın 3 dosyası da diskte YOK** (`benchmark-58/`) — silinmedi, üstü çizilip yazıldı; bantlar `contract/gusto-corpus.json`'da donmuş olduğu için §2/§3 ölçümleri ayakta, kaybolan yalnız kontakt sayfasının GÖRSELİ. <br>★ **Yan bulgu — BOŞ KOŞAN KAPI:** `style_check` (ctest) `engine/STYLE-PIN/` dizini **hiç yok** diye `PASS (nothing to enforce)` basıyor. Yeşil ama hiçbir şeyi tutmuyor; şartnamede kutucuk **işaretlenmedi**. **Ölçüm kapısına DOKUNULMADI.** | ~1s |
 | H1.2 | kitapçık — motor çıktısından | **H1.0'ın ARKASINA alındı** (rota kararı: giysinin şekli değişecek) | ~4s |
 | H1.3 | kapak + tek line drawing | **H1.0'ın ARKASINA alındı.** Damla'nın gözü (→ DAMLA-KUYRUK K3) | ~3s |
 | H1.4 | listing — metin, fiyat, beden tablosu, lisans | **H1.0'ın ARKASINA alındı.** Etsy'ye yapıştırılabilir halde | ~3s |
+| H1.1a | nesting önce/sonra sayfa sayısı | `printpack.log` yalnız SON sayıyı basıyor (A4 15 / A0 1); yarım-parça **öncesi** hiç üretilmiyor → F3 azaltma kanıtı YOK | ~1s |
+| H1.1b | kumaş önerisi pakete girmiyor | `print-info.pdf` s.1 KUMAS yalnız **metraj** (110/140cm en → 1.53m); tür/ağırlık/döküm hiçbir sayfada yok. `knowledge/sewing-guide.md` diskte var, basılmıyor | ~1s |
+| H1.1c | emsal PDF'leri diskte YOK → kontakt sayfası açılamıyor | ÖLÇÜM KAPISI'nın 3. şartı. `patterns_real/` telifli, Damla kararı olmadan kontakt sayfasına konamaz → `DAMLA-KUYRUK` | **Damla'da** |
 | H1.5 | **Damla'nın dikimi** | giysi ayakta duruyor | Damla'da — **BLOKE ETMEZ** |
 | H1.6 | kabul testi | 3 soru EVET + **hesaba geçen para** | Damla'da |
 
