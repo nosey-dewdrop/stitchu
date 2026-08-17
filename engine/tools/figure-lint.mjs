@@ -87,8 +87,19 @@ for (const key of Object.keys(ST)) {
     verdict = wb > M.boxy_min ? `OK boxy > ${M.boxy_min}` : `FAIL boxy figürelleşmiş (${wb} ≤ ${M.boxy_min})`;
   } else if (st.garment === 'top') {                     // figürel top: band
     verdict = wb >= bandLo && wb <= bandHi ? `OK band [${bandLo},${bandHi}]` : `FAIL band dışı [${bandLo},${bandHi}]`;
-  } else {                                               // yeni dress (tabansız): banda değil rapora
-    verdict = `OK yeni stil (tabana eklenecek — figure-bands mandal.taban_v3)`;
+  } else {
+    // T17 (17 Ağu): burası KOŞULSUZ "OK" basıyordu. Ölçü alınıyor, ekrana
+    // yazılıyor ve HİÇBİR ŞEYLE karşılaştırılmıyordu — 31 stilin 7'si bu
+    // daldan geçiyor, yani figure_check'in yeşilinin %23'ü hükümsüzdü. Bu
+    // dalda bir stil boruya da dönse kutuya da kaçsa mandal kımıldamıyordu
+    // (ölçüldü: dress_bandeau_circle 0.872 — figürel bandın üstünde (0.84),
+    // boxy eşiğinin altında (0.93), iki yasanın da dışında, yine "ok").
+    // "Bir daha kimse fark etmeden boru üretemez" emri tam burada deliniyordu.
+    // Tabansız stil HÜKÜMSÜZDÜR ve hükümsüz yeşil sayılmaz: FAIL.
+    // Eşik gevşetilmedi, sınıf taşınmadı, uydurma bant konmadı — eksik olan
+    // pinin kendisi, ve pin ölçülen değerden değil KARARDAN gelir (yoksa
+    // regen-vs-regen olur: stil kendi çizdiği sayıyı kendine yasa yapar).
+    verdict = `FAIL tabansız — figure-bands mandal.taban_v3'te pin yok, hükümsüz`;
   }
   if (verdict.startsWith('FAIL')) fails++;
   console.log(`  ${verdict.startsWith('FAIL') ? 'FAIL' : 'ok  '} ${key.padEnd(32)} waist/bust ${wb}  ${verdict}`);
