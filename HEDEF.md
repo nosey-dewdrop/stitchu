@@ -58,6 +58,50 @@ bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
 
+## TUR 14 — ALTINCI KIRMIZI KAPANDI, VE BİR KAYIT HATAM DÜZELTİLDİ
+
+### ★ `reversed` artık ÖLÇÜLMÜYOR, İNŞADAN TÜRETİLİYOR — walkgate 5/8 → 0
+`sidePoints()` bir kenarı liste sırasıyla değil **kontur indeksiyle** yürüyor. Motor konturu tek sırayla basıyor (bel → `seam1` satır artan → far → `seam0` satır azalan), yani **yön inşa anında belli**. `right_` panel çözülmüyor, solun yansıması ve motor onun için tek şey yapıyor: `swap(seam0Edges, seam1Edges)`. Kural: `reversed = sideAscends(A,seam1) != sideAscends(B,seam0)`.
+
+| | önce | sonra |
+|---|---|---|
+| `ters` bayrağı (12 dikiş × 8 beden) | 2'si `1`, 10'u `0` | **12'sinin 12'si `0`** |
+| `left/right_btorso` kenar dizisi | ters sıralı | **8/8 bedende bit-birebir** |
+| `walkgate_check` | **5 hüküm-FAIL, 5 beden kırmızı** | **0, 8 beden YEŞİL** |
+| ayna-dikiş yargısı | kırmızı bedenlerde 5 | **8/8 bedende 10** |
+| `nestpack` ayrışım | 7 | **3** |
+
+★ **"0.02mm'de berabere" hikâyesi EKSİKMİŞ, gerçek daha ağır:** eski test doğru cevapladığı çiftte marj **%0.10–0.49** (gürültü), **yanlış** cevapladığında **%7.09–7.74**. Yani test sadece berabere değil, **kararlı biçimde yanlış** — ayna çiftinin iki yarısına sistematik olarak zıt cevap veriyordu.
+
+### `curvefit` yön-simetrik oldu — ve `>` beraberlik kuralı SUÇSUZ çıktı
+2000 rastgele + 112 gerçek panel konturu, ileri vs geri fit:
+
+| | parça sayısı farklı | en kötü sapma |
+|---|---|---|
+| yerinde Gauss-Seidel (eski) | **402/2000** · gerçek veride 2/112 | 73.695038mm |
+| **Jacobi (alınan)** | **0/2000** · gerçek veride **0/112** | 0.0000000007mm |
+| `>` beraberlik kuralı (aday B) | 721 → **721/2000**, tam-beraberlikte 545 → **638 (kötüleşti)** | — |
+
+Aday B **ölçüldü ve reddedildi (on birinci emsal)**; 13A'nın *"`>` kuralının katkısı ölçülmedi"* notunun cevabı: **Newton tek kaynak, `>` kuralı suçsuz.**
+**Hiçbir kapı gerilemedi:** `flatten_check` · `surface_pattern_check` · K2 grade **7/7** çıktıları **bayt-aynı**; `edgemono` ters teğet 60.383° → **42.857°** (kapı 90°, marj arttı); T9 `worst fit` 8 bedende **bit-aynı** (0.003mm marjı kımıldamadı). Determinizm: iki koşu bayt-özdeş.
+
+### ⚠ KAYIT HATAM — ALTINCI VE YEDİNCİ KIRMIZI AYNI MOTORDAN BESLENMİYOR
+`HEDEF.md` ve `guard.json` *"yedinci kırmızının kökü 13A'da, altıncıyla aynı panel çifti"* diyordu. **YANLIŞ, ölçüldü:**
+- `engine/pattern-bridge/`'in tamamında `surface-pattern`'e **tek fonksiyonel referans yok** (üç isabetin üçü de **yorum satırı**).
+- `gradeset.sh` → `gradeset.py` → `generate.py` → `mapping.py` + **GarmentCode**, saf Python.
+- `taban.sh` (mühür) ise **`surface-pattern`**'i, yani sevk edilen C++ tek-yüzey motoru yargılıyor.
+- **İkisi aynı panel ADINI kullanıyor ama aynı panelleri DEĞİL.**
+→ Altıncı kapandığında yedincinin `mirror_seams 8` + `IHLAL 18`'i **kımıldamadı** ve bu **başarısızlık değil, ERİŞİLEMEZLİK**.
+→ ★ **Ve bu, `HEDEF.md`'nin "iki doğru bırakılmaz" yasasının ihlali:** 8 bedeni **iki ayrı harness, iki ayrı motorda** gradeliyor. **TUR 15 KARARI.**
+
+### Guard deliği İLAN EDİLENDEN GENİŞ ÇIKTI — kapatıldı
+`gate.cpp:2892`: `protectedPaths` **yalnız** `Edit/Write/MultiEdit/NotebookEdit` dalında denetleniyor. Ölçüldü: **dört korumalı yolun ÜÇÜNDE bash kapsamı SIFIRDI** — `golden-reference.csv`, `sitemap.xml`/`robots.txt`, `STRATEGY.md` hepsi `sed -i` ve `>` altında ALLOW.
+İki kapı silahlandı: `no-shell-write-protected-path` (13 yazma şekli, **mutasyon matrisi 23/23**) + `generated_ratchet_check` (58 yol, ctest'te). **13C'nin BİREBİR rotasıyla mutasyon**: `node /tmp/mutate.mjs` ile korumalı dosya düzenlendi → guard ALLOW, **kapı FAIL**.
+
+### ★ Ve alıcıya 22 baytlık BOŞ ZIP gönderiliyormuş
+`serve.py`: `if p.exists(): z.write(...)`, else yok. Ölçüldü, uçtan uca HTTP: üretici 0/12 üye yazdığında sunucu **HTTP 200 `application/zip`, 22 baytlık boş zip** sevk ediyordu; 11/12'de 200 + delikli paket. Artık 500 + eksik üyelerin adı. Alt kod doğruydu, **çıktısı hiç kontrol edilmiyordu** — `printpack` A0-MISSING sınıfının aynısı.
+★ **`discover.py`'ın repoda SIFIR tüketicisi var** (185 satır, başlığındaki iddia projenin novelty cümlesi). **Hiç koşmuyor, o yüzden hiç kırmızı dönemez.**
+
 ## TUR 12–13 — ÜÇ ALET AYNI KÖKE İŞARET ETTİ, VE SİTE BOZUKMUŞ
 
 ### ★ TEK KÖK, ÜÇ BAĞIMSIZ ALET

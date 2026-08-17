@@ -234,8 +234,8 @@
       },
       {
         "test": "scripts/gradeset.sh (ctest disi)",
-        "neden": "TUR 13 / 13B: gradeset.py walk.py'in ESKI summary semasini okuyordu (within_1mm/fail), sema by_status'a tasinmis -> fmt_report VE verdict ikisi de KeyError. Rapor hic yazilmiyordu. Ustelik verdict() alti hukum sinifindan yalniz 'seam'i sayiyordu: 8 mutasyonun 6'si ESKI KAPIDA YESILDI (panel kendini kesiyor / kontur acik / ayna dikisi FAIL / butun dikisler silinmis / hic panel yok / armhole FAIL). Simdi exit 1, 2 hukum: mirror_seams 8 + monotonluk IHLAL 18.",
-        "bitis": "Kok 13A'da (ayna kenar sirasi + curvefit yon bagimliligi). O kapanınca gradeset.sh default exit 0 doner (mirror_seams 0 VE mono IHLAL 0).",
+        "neden": "TUR 13 / 13B: gradeset.py walk.py'in ESKI summary semasini okuyordu (within_1mm/fail), sema by_status'a tasinmis -> fmt_report VE verdict ikisi de KeyError. Rapor hic yazilmiyordu. Ustelik verdict() alti hukum sinifindan yalniz 'seam'i sayiyordu: 8 mutasyonun 6'si ESKI KAPIDA YESILDI (panel kendini kesiyor / kontur acik / ayna dikisi FAIL / butun dikisler silinmis / hic panel yok / armhole FAIL). Simdi exit 1, 2 hukum: mirror_seams 8 + monotonluk IHLAL 18. ★ TUR 14 DUZELTMESI: 'Kok 13A'da, altinci kirmiziyla AYNI panel cifti' iddiasi YANLISTI. Olculdu: engine/pattern-bridge'de surface-pattern'e TEK fonksiyonel referans yok (uc isabetin ucu de yorum). gradeset.sh -> gradeset.py -> generate.py -> mapping.py + GarmentCode, saf Python. taban.sh (muhur) ise surface-pattern'i yargiliyor. Ikisi ayni panel ADINI kullaniyor ama AYNI PANELLERI DEGIL. Altinci kirmizi (walkgate_check) 14A+14B ile KAPANDI ve gradeset'in 8/18'i KIMILDAMADI — bu basarisizlik degil, ERISILEMEZLIK.",
+        "bitis": "KARAR GEREKIYOR (TUR 15): gradeset.sh sevk edilen motora (surface-pattern) baglanacak MI, yoksa 'eski GarmentCode hattini yargiliyor' diye mi damgalanacak? Bugunku hali HEDEF.md'nin 'iki dogru birakilmaz' yasasini ihlal ediyor: 8 bedeni iki ayri harness iki ayri motorda gradeliyor.",
         "gecici": true
       }
     ]
