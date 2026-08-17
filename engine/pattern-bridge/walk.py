@@ -655,16 +655,41 @@ def walk(spec_path, design_path=None):
 # defect is real and reached, it stays a verdict and the gate stays red.
 # ---------------------------------------------------------------------------
 VERDICT_CLASSES = ('seam', 'armhole', 'closed_contour', 'self_intersection',
-                   'mirror_panels', 'mirror_seams')
+                   'mirror_panels', 'mirror_seams', 'census')
 INFORMATION_STATUSES = ('UNVERIFIABLE', 'GATHERED-UNSCORED', 'REPORTED',
                         'DEFERRED')
 
 
 def gate(report):
     """Split the report into verdicts and information. Returns a dict with the
-    per-class verdict-failure counts, the information counts, and `red`."""
+    per-class verdict-failure counts, the information counts, and `red`.
+
+    TUR 11 (17 Agu) — EMPTY DEED. Every verdict class above counts FAIL rows,
+    so a specification carrying NOTHING scored zero in all six and the gate
+    printed YESIL. Measured, not argued: a spec with `panels: {}` and
+    `stitches: []` exited 0, and so did a REAL eight-panel EU38 spec with all
+    twenty-six of its stitches deleted — a garment whose pieces are never
+    joined to each other was called sewable. That is the `taban.sh` BOS MUHUR
+    class (the sha256 of the empty string) one level up: a deed with no
+    entries is not a clean deed, it is no deed.
+
+    This is a census, not a threshold. Nothing is tuned here: the counts are
+    zero or they are not. A pattern is a set of pieces AND the seams that join
+    them, so both floors are 1.
+    """
     def n_fail(rows):
         return sum(1 for r in rows if r.get('status') == 'FAIL')
+
+    census = []
+    # one closed-contour row per panel, so this is the panel count as the
+    # audit itself saw it, not as the file claims it.
+    n_panels = len(report.get('closed_contour') or [])
+    n_pairs = len(report.get('pairs') or [])
+    if n_panels == 0:
+        census.append('the specification carries NO panel — nothing was judged')
+    if n_pairs == 0:
+        census.append('the specification carries NO stitch pair — the pieces '
+                      'are never joined, so no seam was judged')
 
     verdicts = {
         'seam': n_fail(report['pairs']),
@@ -673,6 +698,7 @@ def gate(report):
         'self_intersection': n_fail(report['self_intersection']),
         'mirror_panels': n_fail(report['mirror_panels']),
         'mirror_seams': n_fail(report['mirror_seams']),
+        'census': len(census),
     }
     information = {}
     for row in report['pairs']:
@@ -685,6 +711,7 @@ def gate(report):
             information[st] = information.get(st, 0) + 1
     total = sum(verdicts.values())
     return {'verdicts': verdicts, 'verdict_fails': total,
+            'census': census, 'panels': n_panels, 'judged_pairs': n_pairs,
             'information': information, 'red': total > 0}
 
 
@@ -697,17 +724,24 @@ def gate_txt(g):
     """
     v = g['verdicts']
     info = '  '.join(f'{k} {n}' for k, n in sorted(g['information'].items()))
-    return [
+    lines = [
         '',
         'KAPI — hüküm (dikilebilirliği bozar, kapıyı düşürür)',
+        f"KAPI  sayım: panel {g['panels']}  dikiş çifti {g['judged_pairs']}",
         f"KAPI  hukum-FAIL: {g['verdict_fails']}  "
         f"(seam {v['seam']}  armhole {v['armhole']}  "
         f"contour {v['closed_contour']}  "
         f"self-intersection {v['self_intersection']}  "
-        f"mirror-panel {v['mirror_panels']}  mirror-seam {v['mirror_seams']})",
+        f"mirror-panel {v['mirror_panels']}  mirror-seam {v['mirror_seams']}  "
+        f"census {v['census']})",
+    ]
+    for c in g['census']:
+        lines.append(f"KAPI  BOŞ TAPU: {c}")
+    lines += [
         f"KAPI  bilgi (kapıyı düşürmez): {info or 'yok'}",
         f"KAPI  HUKUM: {'KIRMIZI' if g['red'] else 'YESIL'}",
     ]
+    return lines
 
 
 def report_txt(report):

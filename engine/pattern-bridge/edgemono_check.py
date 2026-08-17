@@ -108,6 +108,19 @@ def main(argv):
     if tot_viol or tot_unjudged:
         print('EDGE MONOTONICITY: FAIL')
         return 1
+
+    # TUR 11 (17 Agu) — NOTHING TO ENFORCE IS NOT A PASS. Every number above
+    # is a max() with default 0.0 and a counter that starts at 0, so a
+    # specification with no panels scored a perfect run: measured, a spec with
+    # `panels: {}` printed "edges 0 ... violations 0 / EDGE MONOTONICITY: PASS"
+    # and exited 0. That is the T17 style_check class (a gate looking at a
+    # directory that does not exist and reporting "PASS, nothing to enforce").
+    # Census, not threshold: the floor is one judged edge, and it is not tuned.
+    if tot_edges == 0 or tot_judged == 0:
+        print(f'EDGE MONOTONICITY: FAIL — hiç kenar yargılanmadı '
+              f'(edges {tot_edges}, judged {tot_judged}); '
+              f'yargılanacak şey olmaması bir GEÇME değildir')
+        return 1
     print('EDGE MONOTONICITY: PASS')
     return 0
 
