@@ -100,11 +100,20 @@ try {
   fail(`constants table out of sync/invalid: ${String(e.stdout || e.stderr || e).slice(0, 300)}`);
 }
 
-// ---- 5. manifest leak scan (local only) --------------------------------------
+// ---- 5a. manifest vocabulary-coverage scan (local only) ----------------------
+// TUR 9 (17 Ağu) düzeltmesi — İSİM YANLIŞTI. Bu kontrol bir GİZLİLİK taraması
+// değil, bir KAPSAM taramasıdır: 58-set'in ürettiği her oov ifadesinin
+// terms.json'da bir term id'sine düşmesini şart koşar. Girdisi telifli 58-set;
+// bu makinede yok ve olmayacak, dolayısıyla 9 kontrolün 1'i BURADA ÖLÜ.
+// Dürüstçe ilan edilmişti ama yine de hiçbir şeyi tutmuyordu.
+// KURAMADIĞIM ŞEY: bu kapsamın manifest'siz eşdeğeri YOKTUR. Korpusun kelime
+// dağarcığı ancak korpustan okunur; uydurulmuş bir vekil sahte bir kontrol olur.
+// Onun yerine, korumaya ÇALIŞTIĞI şeyin (telifli girdi ile repo arasındaki
+// sınır) manifest gerektirmeyen ve bugün ölçülebilen kısmı 5b'de kuruldu.
 {
   const manPath = join(root, 'benchmark-58', 'manifest.json');
   if (!existsSync(manPath)) {
-    ok('58-set manifest absent on this machine — leak scan skipped honestly');
+    ok('58-set manifest absent — vocabulary-coverage scan CANNOT run here (input is the copyrighted set; no honest manifest-free equivalent exists). The privacy boundary it was named after is enforced by 5b instead.');
   } else {
     const man = JSON.parse(readFileSync(manPath, 'utf8'));
     const norm = (s) => String(s).toLowerCase().replace(/\s+/g, ' ').trim();
@@ -118,6 +127,34 @@ try {
     if (unmapped.size) for (const [t, n] of unmapped) fail(`manifest oov phrase unmapped in terms.json (x${n}): '${t}'`);
     else ok('leak scan: every 58-set oov phrase resolves to a term id');
   }
+}
+
+// ---- 5b. copyright boundary: no protected input is TRACKED in git ------------
+// TUR 9 (17 Ağu). 5a'nın adı "leak scan"di ama gerçek sızıntı hiç ölçülmüyordu.
+// Yasa CLAUDE.md'de düz yazıyla duruyor ("patterns_real/ ASLA push edilmez") ve
+// CLAUDE.md gitignore'da — makine onu okuyamıyor, ve 2026-08-16'da ölçüldü:
+// yasa ile ağaç UYUŞMUYOR. Yasa artık contract/gizlilik.json'da, makine okuyor.
+// Manifest gerekmez: girdi git'in kendi indeksi. Eşik/tolerans/pin yok — sayı
+// "takipli telifli dosya" ve hedefi 0.
+{
+  let law;
+  try { law = JSON.parse(read('contract/gizlilik.json')); }
+  catch (e) { law = null; fail(`copyright boundary: contract/gizlilik.json unreadable — the LAW itself is gone, so the gate cannot run (${String(e.message).slice(0, 120)}). A missing law is never a pass.`); }
+  let leaked = law ? 0 : 1;
+  for (const p of (law ? law.korunan_yollar : [])) {
+    const allow = new Set(p.izinli || []);
+    let tracked = [];
+    try {
+      tracked = execFileSync('git', ['ls-files', '-z', '--', p.yol], { cwd: root, encoding: 'utf8' })
+        .split('\0').filter(Boolean);
+    } catch (e) { fail(`copyright boundary: git ls-files failed for '${p.yol}' — the gate lost its input (${String(e.message).slice(0, 120)})`); leaked += 1; continue; }
+    const bad = tracked.filter((f) => !allow.has(f));
+    if (!bad.length) { ok(`copyright boundary '${p.yol}': 0 tracked files beyond the ${allow.size} declared tools`); continue; }
+    leaked += bad.length;
+    const shown = bad.slice(0, 6).join(', ');
+    fail(`copyright boundary BREACHED — '${p.yol}' has ${bad.length} TRACKED file(s) in git: ${shown}${bad.length > 6 ? `, +${bad.length - 6} more` : ''}\n      why protected: ${p.neden}\n      the repo is public unless proven otherwise; tracked means downloadable. Deleting history is DAMLA'S call (DAMLA-KUYRUK K1) — this gate only refuses to stay silent.`);
+  }
+  if (!leaked) ok('copyright boundary clean: no protected input tracked in git');
 }
 
 // ---- 6. flat style records inside the contract's flat.* namespace ------------
