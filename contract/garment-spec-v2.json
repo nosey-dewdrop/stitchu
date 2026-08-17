@@ -1,0 +1,240 @@
+{
+  "_contract": "garment-spec v2 — SEALED 2026-08-17 (H2.1). K1 discipline: this file is the SINGLE SOURCE. contract/garment-spec-v2.schema.json is GENERATED from it by engine/tools/gen-spec-v2.mjs; consumers never copy values out of here by hand, and engine/tools/specv2-check.mjs (ctest: specv2_check) fails if the generated schema drifts, if an operator's engine binding has vanished, or if a declared quantity's default no longer matches engine/src/surfacepattern.hpp. It replaces contract/garment-spec-v2.DRAFT.md (12 Ağu), whose topology/quantity split is kept and whose scope was re-measured against the engine of 17 Ağu.",
+  "version": "2.0.0",
+  "specVersion": "garment-spec/2",
+
+  "_law": [
+    "1. AN LLM WRITES JSON, NEVER CODE. Every topology axis is a CLOSED enum; every quantity is a bounded scalar with a unit. additionalProperties is false everywhere in the generated schema. A field the schema does not declare is a rejection, not a warning.",
+    "2. NO SILENT SUBSTITUTION. DERSLER: a quiet enum fallback (puff -> None) is hallucination. If a requested enum value is not in the registry as `shipped`, the spec is REFUSED and the refusal names the operator. Never the nearest neighbour, never a default.",
+    "3. THE REGISTRY IS THE SCOPE. `operators` below is the sicil. An enum value declares which operators it requires. A spec is expressible if and only if every operator it requires has status `shipped`. This is the machine side of the bitiş tanımı: 'the remaining two refuse honestly, naming the missing operator'.",
+    "4. SOLVER KNOBS ARE NOT SPEC. `solverKnobs` lists the numerical dials of the flattener. They are declared here so nobody re-declares them elsewhere, and they are EXCLUDED from the generated schema — an LLM/VLM that writes arapRounds is writing code, and rule 1 forbids it.",
+    "5. NOTHING IS WRITTEN HERE THAT THE ENGINE CANNOT DO. An operator with no engine binding today carries status `absent` and says so in its own line. A field with a fake capability is a painted gate."
+  ],
+
+  "_statuses": {
+    "shipped": "runs on the DEFAULT path the buyer receives today (surface-pattern with a default-constructed SheathOptions). Binding is a real symbol in engine/src/surfacepattern.hpp.",
+    "flagged": "the code exists and is measured, but it is switched OFF in the shipped configuration because turning it on breaks a green gate. A spec requiring it is REFUSED — an unshippable capability is not a capability.",
+    "absent": "SİCİLDE YOK. No engine symbol, no derivative, no approximation. A spec requiring it is REFUSED and the refusal names it."
+  },
+
+  "operators": {
+    "bodiceSurface": {
+      "status": "shipped",
+      "tr": "gövde yüzeyi (bel halkasından omuza)",
+      "binds": "SheathOptions::skimBodice, SheathOptions::shoulderTop",
+      "proof": "surfacepattern.cpp buildSheathPattern; ftorso/btorso panels, 8 sizes"
+    },
+    "skirtSurface": {
+      "status": "shipped",
+      "tr": "etek yüzeyi (bel -> basen -> etek ucu)",
+      "binds": "SheathOptions::hemDropBelowHipMM",
+      "proof": "surfacepattern.cpp panel row {true, hemH, ...}; skirt_front/skirt_back"
+    },
+    "hemSweepCone": {
+      "status": "shipped",
+      "tr": "A-line etek açılımı (koni)",
+      "binds": "SheathOptions::hemSweepMM",
+      "proof": "surfacepattern.cpp:1100 surf.hemScale = hemSweepMM / base; skirt develop-deficit +0.000 deg (it is a cone, it develops exactly)"
+    },
+    "princessCut": {
+      "status": "shipped",
+      "tr": "dikey tam kesim (prenses / yan dikiş)",
+      "binds": "SheathOptions::bodiceCutFracs, SheathOptions::skirtCutFracs",
+      "proof": "surfacepattern.cpp:1133-1134; 8 panels from one waist ring"
+    },
+    "waistAnchoredDart": {
+      "status": "shipped",
+      "tr": "bel çapalı pens (yüzeyde yarık)",
+      "binds": "SheathOptions::skirtDartFracs, SheathOptions::bodiceApexFrac, SheathOptions::skirtApexFrac",
+      "proof": "Slit, waist row anchor; G2: dart angle falls out of develop-deficit, only the total is a law"
+    },
+    "topAnchoredDart": {
+      "status": "shipped",
+      "tr": "üst çapalı pens (omuz / yaka pensi)",
+      "binds": "SheathOptions::topDartSplitFrac, SheathOptions::topDartApexFrac, SheathOptions::maxDartDeg",
+      "proof": "surfacepattern.hpp topDartApexFrac note; Tur 8: the load is now SIGNED, a net-negative band derives NO dart",
+      "defect": "on the shipped garment the torso derives top anchors only and, since Tur 8, a net-negative shoulder band derives none at all (STITCHU_SLIT_DEBUG: empty list). The operator exists and runs; it produces nothing on this garment."
+    },
+    "necklineDraft": {
+      "status": "shipped",
+      "tr": "yaka açıklığı (Aldrich katsayılarıyla, bedenden türetilir)",
+      "binds": "SheathOptions::neckWidthCoefCM, SheathOptions::frontNeckDropCoefCM, SheathOptions::backNeckDropMM",
+      "proof": "Aldrich 5th ed. p.16 + GRAFIS + Hofenbitzer, three systems inside 5mm",
+      "defect": "ONE top boundary sampled over the whole circle: the front neck cannot be 5mm narrower than the back. Written down in surfacepattern.hpp, not hidden. Expressing it is a change to the law, not a number."
+    },
+    "armholeNotch": {
+      "status": "shipped",
+      "tr": "kol oyuğu",
+      "binds": "SheathOptions::armhole, SheathOptions::shoulderNarrowMM",
+      "proof": "Aldrich close-fitting sleeveless block p.28",
+      "defect": "H1.0 K1, MEASURED: the armhole is not a 2D hole but a thin lens in phi in [0, 19.9 deg] — EU38 33.55cm against Buğra Locket-38 43.30cm, 22% short. Shipped and defective, NOT absent."
+    },
+    "backOpening": {
+      "status": "shipped",
+      "tr": "arka açıklık (dikilmeyen kenar)",
+      "binds": "SheathOptions::backOpeningMM",
+      "proof": "surfacepattern.cpp:1665-1682; 558.8mm = 22 inch, the 1960s envelope default. T10: the 'BURAYI DİKMEYİN' warning reaches print-info.pdf s.2 and the pattern itself.",
+      "defect": "an UNSEWN SEAM, not a drafted zip. See operator `zipperPiece`."
+    },
+
+    "shoulderSeam": {
+      "status": "flagged",
+      "tr": "omuz dikişi (tüp -> katlanmış crest)",
+      "binds": "SheathOptions::shoulderSeam (default false), SheathOptions::shoulderCrestBandMM, SheathOptions::shoulderSeamForwardMM",
+      "proof": "Tur 6: ON -> h10_gate_check 52/63 -> 24/63 FAIL, K3 0 -> 30 shoulder stitches 8/8, K5 neck closed 8/8, K6 +2.91mm 8/8",
+      "refusalReason": "omuz dikişi bayrak arkasında: açıkken surface_pattern_check 0 -> 4 FAIL (gövde kesim çizgisi %0.4162/%0.2908 iç gerinim %24.07/%18.14, kapı %3.0). Sevk edilen giysi kolsuz ve omuz dikişsizdir.",
+      "ring": "H1.0a"
+    },
+
+    "gatheredOverlayLayer": {
+      "status": "absent",
+      "tr": "büzgülü overlay katmanı (ikinci, dış katman)",
+      "binds": null,
+      "proof": "T14 (17.08): Buğra'nın Upper Sleeve'i aynı kapağın yatayda ölçeklenmiş kopyası — kapak sagitta oranı 8 bedende BİT-SABİT 1.227, kiriş oranı 1.549->1.347 (= büzgü payı). İki KATMAN, yatay bölünme değil; patterns_real/BUGRA-DEFTER.md'nin 'kol yatay 2'ye bölünmüş' satırı bununla çürüdü. Motorda karşılığı: surfacepattern.cpp + .hpp içinde 'gather|pleat|ruffle' geçen SIFIR satır (17.08 ölçüldü).",
+      "refusalReason": "büzgülü overlay katmanı operatörü sicilde YOK: motor tek katmanlı bir yüzey kesiyor, bir panelin üstüne büzgüyle oturan ikinci katman üretemez."
+    },
+    "sleeve": {
+      "status": "absent",
+      "tr": "kol (ayrı yüzey yaması)",
+      "binds": null,
+      "proof": "surfacepattern.cpp/.hpp içinde 'sleeve' geçen 6 satırın 6'sı da 'sleeveless' kelimesi, hepsi yorum (17.08 ölçüldü). Kol oyuğu var, kol yok. engine/src/sleeve.cpp ESKİ 2B-formül motoruna aittir (CLAUDE.md: 'AT'), sevk edilen yüzey hattına bağlı değildir.",
+      "refusalReason": "kol operatörü sicilde YOK: sevk edilen giysi kolsuzdur ve kol oyuğu bugün gerçek bir 2B delik değil (H1.0b). Kol, omuz dikişi (flagged) açılmadan konulamaz.",
+      "blockedBy": "shoulderSeam"
+    },
+    "collarFamily": {
+      "status": "absent",
+      "tr": "yaka ailesi (ayrı yaka parçası: peterPan / stand / shirt / notched)",
+      "binds": null,
+      "proof": "surfacepattern.cpp/.hpp içinde 'collar' geçen SIFIR satır (17.08). contract/spec-grammar.json yalnız ESKİ flat/2B motorun peterPan'ini 'pinli' diye taşır; yüzey hattında karşılığı yok.",
+      "refusalReason": "yaka ailesi operatörü sicilde YOK: motor bir yaka AÇIKLIĞI (necklineDraft) keser, boyna oturan ayrı bir yaka parçası üretemez."
+    },
+    "skirtFamily": {
+      "status": "absent",
+      "tr": "etek ailesi (gore / fullCircle / gathered / pleated / straight)",
+      "binds": null,
+      "proof": "yüzey hattının tek etek operatörü hemSweepCone (hemSweepMM ile ölçeklenen koni). 'pleat' geçen SIFIR satır (17.08). contract/spec-grammar.json'un gore/fullCircle/gathered değerleri ESKİ flat/2B motorundandır.",
+      "refusalReason": "etek ailesi operatörü sicilde YOK: motorun tek eteği bel halkasından açılan bir konidir (A-line); gore, tam daire, büzgülü ve pileli etekler üretilemez."
+    },
+    "zipperPiece": {
+      "status": "absent",
+      "tr": "fermuar (kendi payıyla çizilmiş)",
+      "binds": null,
+      "proof": "backOpening bir DİKİLMEYEN KENAR üretir; fermuarın kendi payı/parçası çizilmez. web/js/missing.js zaten bunu ESKİ motor için ilan ediyor: 'fermuar kendi payıyla çizili değil, o dikişe fermuarı kendin tak'.",
+      "refusalReason": "fermuar operatörü sicilde YOK: motor açıklığı kesip 'burayı dikmeyin' diye işaretler, fermuarı kendi payıyla çizmez."
+    }
+  },
+
+  "topology": {
+    "_role": "AYRIK katman. Her eksen KAPALI enum; her değer gerektirdiği operatörleri `requires` ile ilan eder. Bir değer, gerektirdiği operatörlerden biri `shipped` değilse İFADE EDİLEMEZ ve red o operatörün ADIYLA verilir.",
+    "garment": {
+      "type": "enum",
+      "values": {
+        "sheathDress": { "requires": ["bodiceSurface", "skirtSurface", "necklineDraft", "armholeNotch"] },
+        "top":         { "requires": ["bodiceSurface", "necklineDraft", "armholeNotch"] },
+        "skirt":       { "requires": ["skirtSurface"] }
+      }
+    },
+    "skirtShape": {
+      "type": "enum",
+      "values": {
+        "straight":   { "requires": ["skirtSurface"] },
+        "aLine":      { "requires": ["skirtSurface", "hemSweepCone"] },
+        "gore":       { "requires": ["skirtFamily"] },
+        "fullCircle": { "requires": ["skirtFamily"] },
+        "gathered":   { "requires": ["skirtFamily"] },
+        "pleated":    { "requires": ["skirtFamily"] }
+      }
+    },
+    "shoulder": {
+      "type": "enum",
+      "values": {
+        "strapless":     { "requires": ["bodiceSurface"] },
+        "shoulderSeam":  { "requires": ["shoulderSeam"] }
+      }
+    },
+    "sleeve": {
+      "type": "enum",
+      "values": {
+        "none":    { "requires": ["armholeNotch"] },
+        "setIn":   { "requires": ["sleeve"] },
+        "puff":    { "requires": ["sleeve", "gatheredOverlayLayer"] },
+        "cap":     { "requires": ["sleeve"] }
+      }
+    },
+    "collar": {
+      "type": "enum",
+      "values": {
+        "none":     { "requires": [] },
+        "peterPan": { "requires": ["collarFamily"] },
+        "stand":    { "requires": ["collarFamily"] },
+        "shirt":    { "requires": ["collarFamily"] }
+      }
+    },
+    "closure": {
+      "type": "enum",
+      "values": {
+        "none":          { "requires": [] },
+        "backOpening":   { "requires": ["backOpening"] },
+        "centreBackZip": { "requires": ["backOpening", "zipperPiece"] },
+        "buttonFront":   { "requires": ["zipperPiece"] }
+      }
+    },
+    "suppression": {
+      "type": "enum",
+      "values": {
+        "seamOnly": { "requires": ["princessCut"] },
+        "dart":     { "requires": ["princessCut", "waistAnchoredDart"] },
+        "topDart":  { "requires": ["princessCut", "topAnchoredDart"] },
+        "gather":   { "requires": ["gatheredOverlayLayer"] },
+        "pleat":    { "requires": ["skirtFamily"] }
+      }
+    }
+  },
+
+  "quantities": {
+    "_role": "SÜREKLİ katman. Her kadran bir SheathOptions alanına bağlı; `default` o alanın engine/src/surfacepattern.hpp'deki bugünkü değeridir ve specv2_check onu başlıktan okuyup karşılaştırır (sürüklenirse KIRMIZI). Sınırlar İLAN EDİLMİŞ tasarım bandıdır, ölçülmüş kanun değil — kaynağı olan `source` taşır.",
+    "hemDropBelowHipMM": { "binds": "hemDropBelowHipMM", "unit": "mm", "min": 0, "max": 900, "default": 200.0 },
+    "hemSweepMM":        { "binds": "hemSweepMM", "unit": "mm", "min": 0, "max": 2000, "default": 1270.0, "source": "1960s Big-4 envelope backs, 48.5-52.5 inch over a 36 inch hip; 1270mm = 50 inch" },
+    "backOpeningMM":     { "binds": "backOpeningMM", "unit": "mm", "min": 0, "max": 900, "default": 558.8, "source": "Vogue 6900 / Vogue Couturier 2063 '22 inch neckline zipper'" },
+    "easeNeckMM":        { "binds": "easeNeckMM", "unit": "mm", "min": 0, "max": 100, "default": 0.0 },
+    "easeBustMM":        { "binds": "easeBustMM", "unit": "mm", "min": 0, "max": 200, "default": 60.0, "source": "Threads/RTW 2 inch bust; Aldrich close-fitting 7cm" },
+    "easeWaistMM":       { "binds": "easeWaistMM", "unit": "mm", "min": 0, "max": 200, "default": 25.0, "source": "Threads/RTW 1 inch waist" },
+    "easeHipMM":         { "binds": "easeHipMM", "unit": "mm", "min": 0, "max": 200, "default": 50.0, "source": "Threads/RTW 2 inch hip" },
+    "shoulderNarrowMM":  { "binds": "shoulderNarrowMM", "unit": "mm", "min": 0, "max": 40, "default": 10.0, "source": "Aldrich p.28, 1 cm in from the shoulder edge" },
+    "backNeckDropMM":    { "binds": "backNeckDropMM", "unit": "mm", "min": 0, "max": 120, "default": 15.0, "source": "Aldrich 0-1, a flat 1.5 cm at every size" },
+    "neckWidthCoefCM":       { "binds": "neckWidthCoefCM", "unit": "cm", "min": -3, "max": 3, "default": -0.2, "source": "Aldrich back neck width, off 1/5 neck" },
+    "frontNeckDropCoefCM":   { "binds": "frontNeckDropCoefCM", "unit": "cm", "min": -3, "max": 8, "default": -0.2, "source": "Aldrich front neck drop, off 1/5 neck" },
+    "maxDartDeg":        { "binds": "maxDartDeg", "unit": "deg", "min": 0, "max": 45, "default": 14.0 },
+    "bodiceApexFrac":    { "binds": "bodiceApexFrac", "unit": "frac", "min": 0, "max": 2, "default": 0.80 },
+    "skirtApexFrac":     { "binds": "skirtApexFrac", "unit": "frac", "min": 0, "max": 2, "default": 1.35 },
+    "topDartSplitFrac":  { "binds": "topDartSplitFrac", "unit": "frac", "min": 0, "max": 1, "default": 0.55 },
+    "topDartApexFrac":   { "binds": "topDartApexFrac", "unit": "frac", "min": 0, "max": 1, "default": 0.55 },
+    "hipBlendMM":        { "binds": "hipBlendMM", "unit": "mm", "min": 0, "max": 300, "default": 90.0 },
+    "shoulderCrestBandMM":    { "binds": "shoulderCrestBandMM", "unit": "mm", "min": 0, "max": 200, "default": 60.0, "requiresOperator": "shoulderSeam" },
+    "shoulderSeamForwardMM":  { "binds": "shoulderSeamForwardMM", "unit": "mm", "min": -30, "max": 30, "default": 0.0, "requiresOperator": "shoulderSeam" }
+  },
+
+  "solverKnobs": {
+    "_role": "MOTORUN SAYISAL KADRANLARI — SPEC DEĞİL. Üretilen şemaya GİRMEZ; bunları yazan bir LLM kod yazıyordur (yasa 1/4). Burada, unutulmasınlar ve başka bir yerde ikinci kez ilan edilmesinler diye duruyorlar.",
+    "fields": ["ringSamples", "rowStepMM", "arapRounds", "polishIters", "cutRounds", "cutSweeps", "cutEmphasis", "skimBodice", "shoulderTop", "armhole", "shoulderSeam", "bodiceCutFracs", "bodiceDartFracs", "skirtCutFracs", "skirtDartFracs"]
+  },
+
+  "_notMigratedFromDraft": {
+    "_role": "12 Ağu taslağının bugünkü motora karşı ölçümü. Taslağın taşımadığı, bu mühürde KARŞILANAN ve KARŞILANMAYAN kalemler.",
+    "draftMissedAndNowSealed": [
+      "shoulder ekseni + shoulderSeam operatörü (Tur 6, taslaktan 5 gün sonra)",
+      "üst çapalı pens (topDartSplitFrac / topDartApexFrac) — taslakta suppression tek eksendi, çapa yoktu",
+      "armholeNotch ve necklineDraft ayrı operatör olarak (taslakta 'attachment' diye G5+'a ertelenmişti)",
+      "backOpening / açıklık (taslakta `closure` sadece bir enum satırıydı, motorda karşılığı ölçülmemişti)",
+      "operatör sicili ve RED yolu — taslakta hiç yoktu"
+    ],
+    "draftHadNoEngineCounterpart": [
+      "`bands` ekseni: motorun halka listesi (neck/bust/waist/hip) SEÇİLEBİLİR değil, BodySurface'in kendisi. Spec ekseni olarak yazılmadı — sahte kapsam olurdu.",
+      "`edge-finish sınıfı` (hem/band/facing): motorda ek panel üreten hiçbir operatör yok. Sicile absent olarak bile yazılmadı çünkü ölçülmedi — DOĞRULANMADI.",
+      "9 malzeme kategorisinden `stand & fall`, `roll line`, `contouring`, `spring`: bugünkü motorda kadran karşılığı yok. spring flatten'da kendiliğinden çıkıyor (kadran değil), diğer üçü G5+/collarFamily'ye bağlı."
+    ],
+    "notSpecFields": [
+      "topColXMM ve shoulderCarryMM SPEC ALANI DEĞİL — SurfacePattern'in ÇIKTI alanları (surfacepattern.hpp:117,140). Taslağın onları taşımaması doğrudur."
+    ]
+  }
+}

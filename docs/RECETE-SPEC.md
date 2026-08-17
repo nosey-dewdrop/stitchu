@@ -1,5 +1,13 @@
 # REÇETE-SPEC v1 — reçete veri modeli (PIPELINE Aşama 1 tasarım belgesi)
 
+> ⚠ **KAPSAM SINIRI (H2.1, 17.08).** Bu belge **eski 2B-formül yolunun** reçete
+> DSL'idir ve mühürlü kapsamı **tek reçetedir** (`skirt.aline.dart`, + v1.1'in
+> `top` çekirdeği). Sevk edilen tek-yüzey motorunu (`engine/src/surfacepattern.*`)
+> **anlatmaz** ve HEDEF 2'nin "cümle → giysi" dili DEĞİLDİR.
+> O dil `contract/garment-spec-v2.md` + `contract/garment-spec-v2.json`'dur
+> (operatör sicili orada; kapı `specv2_check`). İkisi çelişirse v2 kazanır —
+> bu belge yalnızca `recipe.hpp`/`recipe.cpp` yorumlayıcısının sözleşmesidir.
+
 Bu belge PIPELINE.md Aşama 1'in ("REÇETE VERİ MODELİ") teknik şartnamesidir.
 Bugün (2026-07-27) bu model kodda yoktur; bu belge, yazılacak yorumlayıcının ve
 ilk reçete dosyasının sözleşmesidir. İş sırası dayatmaz (o yetki yalnız

@@ -494,6 +494,19 @@ add_test(NAME compose_check COMMAND compose_check)
 find_program(NODE_EXECUTABLE node REQUIRED)
 add_test(NAME contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/validate-contract.mjs)
 
+# specv2_check: the garment-spec v2 seal (H2.1, 2026-08-17). The v2 contract sat
+# as a .DRAFT.md for five days with "kod bağlanmadı" written at the top; this is
+# what stops it being a draft. It holds the generated schema in sync with its
+# single source, and it holds the OPERATOR REGISTRY against the engine: every
+# operator declared `shipped`/`flagged` must still bind a real SheathOptions
+# field with the declared default, and every operator declared `absent` must
+# still bind nothing. Then it runs the fixtures the bitiş tanımı is made of — a
+# valid spec passes, a bad enum is rejected rather than substituted (DERSLER: a
+# silent puff->None fallback is hallucination), and an unbuildable garment is
+# refused BY THE MISSING OPERATOR'S NAME. That last fixture is H2.7's foundation
+# and it fails if a refusal ever stops naming what is missing.
+add_test(NAME specv2_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/specv2-check.mjs)
+
 # K2 flat render lint (2026-07-19): every flat style record in styles.json is
 # rendered headlessly and checked for self-intersection, inconsistent winding
 # (reversed normals), zero-area loops and sampleX y-monotonicity.
