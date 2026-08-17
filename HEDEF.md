@@ -11,7 +11,7 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 > **KAPSAM BÜYÜDÜ: +3 halka (H1.1a, H1.1b, H1.1c). Sebebi:** H1.1'in mührü şartnameyi ilk kez BUGÜNKÜ pakete karşı ölçtü ve üç madde gerçekten sağlanmıyor çıktı — nesting önce/sonra kanıtı hiç üretilmiyor, kumaş önerisi hiçbir sayfaya basılmıyor, kontakt sayfasının emsal PDF'leri diskte yok. Üçü de "H1.0 yeşillenince geçer" cinsinden **değil**; üçü de alıcıya verdiğimiz sözün eksik kalan parçası. Şartnameyi "tam" diye kapatıp bunları sessizce taşımak kapı boyamak olurdu.
 
 ```
-H1'e kalan:  6 halka / 23–33 koşu saati    [H1.0: 18–30 → **12–22s** — zarf kritik yolda DEĞİLMİŞ]
+H1'e kalan:  6 halka / 25–35 koşu saati    [H1.0: 12–22 → **14–24s** · +altıncı/yedinci kırmızı aynı kökten]
 H2'ye kalan: 6 halka / 158–285 koşu saati   [**H2.1 KAPANDI** — operatör sicili kuruldu, red cümlesi eksik operatörü ADIYLA söylüyor]
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
 TABAN:       2 halka / DAMLA'DA           [T17 KAPANDI · T1 yok-hükmünde · T5 = K5'e bloke · style/figure pinleri = K15'e bloke]
@@ -57,6 +57,48 @@ pens yok; PNG'de mavi yok çünkü pens yok, iki serbest-uç çentiği de **kayb
 bakıldı, `/tmp/eu38-8a.png`, 8 panel, omuz kenarı 32, kırmızı omuz dikişi yerinde).
 (2) `maxDartDeg`'in bağlayıp bağlamadığı bu giyside artık **GÖZLENEMEZ** — türetilen pens
 yok. İkisi de "çözüldü" değil, **konusuz**; gövde yeniden pens türetirse geri gelirler.
+
+## TUR 12–13 — ÜÇ ALET AYNI KÖKE İŞARET ETTİ, VE SİTE BOZUKMUŞ
+
+### ★ TEK KÖK, ÜÇ BAĞIMSIZ ALET
+`right_btorso`'nun son iki kenarı `left_btorso` ile **aynı iki uzunluk, TERS SIRADA** (EU34 `L=[90.3082, 94.2346]` / `R=[94.2346, 90.3082]`). Kusur **8 bedenin 8'inde de var**; EU38/40/48'de o iki kenar **tesadüfen eşit** olduğu için görünmüyor — **yok değil, görünmüyor.**
+Kalan 18 kenarın 18'i bit-aynı, `left/right_ftorso` 8 bedende baştan sona bit-aynı. Kusur **tek bir yerde: yan dikiş.**
+
+**KÖK — `engine/tools/surface-pattern.cpp`'nin `reversed` testi YAZI-TURA ATIYOR.** Kırılma noktası karşı panele *kümülatif yay-uzunluğu profillerini karşılaştıran* bir bayrakla taşınıyor ve gövdenin **iki ayna çiftine FARKLI cevap veriyor** (`rF↔lB ters=0`, `rB↔lF ters=1` — aynı dikişin aynası). İkisi de y artan yönde yürüyor, doğru cevap **0**. Karar **berabere**: iki eğrinin toplamı **184.5428 vs 184.5179mm**, 184.5mm'de **0.02mm** fark. Aynı tutarsızlık etekte de var.
+
+**Üç alet, aynı çift:**
+1. `walkgate_check` — 8 bedenin **5'inde** 10 ayna-dikiş yargısının 6'sı yok oluyordu ve `walk.py` `mirror-seam 0 … KAPI HÜKÜM: YEŞİL` basıyordu. ⚠ *"Panel seviyesinde yakalanır"* varsayımı **YANLIŞ**: `check_mirror_symmetry` **konturu** ölçüyor (0.0005mm PASS) — **iki seviye de aynı çifti affediyordu.**
+2. `gradeset.sh` — `mirror_seams` 8 hüküm.
+3. `nestpack.py` — **satılan "8 beden tek sayfa" nest'i bugün üretilemiyor.** Kenar sayıları **EU40'ta zıplıyor** (`left_btorso` 14→15, `right_btorso` 13→14, `left_sleeve_b` 4→5). ★ **EU40 bir topoloji sınırı:** dikiş çifti sayısı EU34-38'de **41**, EU40-48'de **43**; 18 monotonluk ihlalinin hepsi o sınırlarda.
+
+**DÜZELTME DENENDİ VE REDDEDİLDİ (onuncu emsal):** aynayı düzgün yeniden yürütmek yan dikişleri simetrik yaptı **ama kapıyı kötüleştirdi** (5 → **18** hüküm-FAIL, 8/8 kırmızı). Sebep: **ikinci bir tüketici de yön-bağımlı** — `curvefit.cpp`'nin Newton yeniden-parametrizasyonu `u[i]`'yi yerinde günceller (Gauss-Seidel), ters yürünen aynı çokgen **başka fit** veriyor (13 → 15 parça). Kenar **SAYISI**nın tutmaması sıranın tutmamasından daha sert düşüyor.
+→ Sıradaki: `reversed`'ı **ölçümden değil İNŞADAN** türet (~1–2s) + `curvefit`'i yön-simetrik yap (Jacobi, 3–6s, geniş etki alanı).
+
+### ★ YEDİNCİ KIRMIZI — `gradeset.sh`: sekiz mutasyonun ALTISI eski kapıda YEŞİLDİ
+`gradeset.py`, `walk.py`'ın **eski** summary şemasını okuyordu (`within_1mm`/`fail`); şema `by_status`'a taşınmış → `fmt_report` **ve** `verdict` ikisi de `KeyError`. **Rapor hiç yazılmıyordu.** Üstelik `verdict()` altı hüküm sınıfından yalnız `seam`'i sayıyordu:
+
+| mutasyon | ESKİ KAPI |
+|---|---|
+| panel kendini kesiyor · kontur açık · ayna dikişi FAIL | **YEŞİL** |
+| bütün dikişler silinmiş · hiç panel yok · armhole FAIL | **YEŞİL** |
+
+### ★ SİTE BOZUKMUŞ — ölçüldü ve onarıldı
+| | önce | sonra |
+|---|---|---|
+| ölü iç referans | **228** | **1** |
+| sitemap'in 404 döndürdüğü URL | 22 | **0** |
+| sitemap'te olmayan canlı sayfa | 24 | **0** |
+| sürümü geri alan üreteç | **5** | 0 |
+| bozuk `?vN` damgası | 24 | 0 |
+
+- 12C "187 link" demişti; **228**'di — **41'i kırık `<img>`**, yani linkte değil **sayfada** delik. Kaynak tek şablon değil: 95 header + 23 footer + 1 CTA.
+- ★ **24 stil sayfasının hepsi kendini "Pattern Blog" ilan ediyordu** (404 değil, yanlış etiket — link denetleyici bunu asla bulamaz).
+- ★ **`?v` donması bir üreteçte değil BEŞ'te**; altıncısı `gen-guide.mjs` `const V = 'v83'` — **`=` yok**, ve iki bump mekanizması da `=` istiyor → **6 rehber sayfası v83'ten beri ziyaretçi cache'inde donmuş**, hiçbir deploy'un oynatamayacağı bir anahtarla.
+- ★ **`CLAUDE.md`'nin "noindex korunuyor" satırı YANLIŞ:** 128 sayfanın **yalnız 4'ünde** noindex var, **124'ü Google'a tamamen açık.** Yani 22 ölü sitemap URL'i teorik bir sorun değildi.
+- Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyon sınıfı. ★ Kapının kendisi ilk mutasyonda **geçti** — şekil sayıyordu; genişletilince **beşinci donmuş üreteci** buldu.
+
+### ⚠ GUARD'DA BİR DELİK — ajan kendi ilan etti
+13C toplu onarımları `node /tmp/*.mjs` ile yaptı ve `guard.json`'ın `generated-web-html` kuralı **Write/Edit'te ateşliyor, Bash'ten koşan script'te ateşlemiyor**. Kural **gevşetilmedi**, sessizce etrafından dolaşıldı ve ajan bunu raporunda yazdı. **Kural araç-şekilli, yol-şekilli değil** → `DAMLA-KUYRUK` **K21**.
 
 ## TUR 11 — ★ TUR 9'UN REDDİ BOZUK BİR ÖLÇÜMDÜ, VE KOL OYUĞU İLK KEZ BANDA GİRDİ
 
