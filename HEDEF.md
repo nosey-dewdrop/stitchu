@@ -174,6 +174,54 @@ Sevk edilen motorda ilk koşu (`d336514`, `engine/build-15a` Release):
 
 **ctest** (`engine/build-15a`, Release): dışlamalı **`100% tests passed, 0 tests failed out of 89`** · tam süit **`95% tests passed, 5 tests failed out of 94`** — düşen tam olarak ilan edilen beşi (`style_check`, `contract_check`, `preview_truth_check`, `figure_check`, `h10_gate_check`). Gerileme yok.
 
+## TUR 17 — ETEĞİN KLOŞU GRADELENDİ, VE ATÖLYENİN 60 KADRANININ 45'İ HİÇBİR ŞEY YAPMIYOR
+
+### ★ KLOŞ GRADELENDİ — kaynak kodun kendi yorumundaymış, yarısı sevk edilmemiş
+Yorum bir **ÇİFT** yazıyordu: *"50 inç, **36 İNÇLİK KALÇA** üzerinde"*. Sevk edilen sadece çiftin **sol yarısıydı**. Çift geri kondu: **etek ucu = o bedenin kalça çevresi + 355.6mm** (= 50−36 inç, kaynağın kendi farkı).
+
+| | EU34 | EU38 | EU44 | EU48 |
+|---|---|---|---|---|
+| etek ucu **önce** | 1269.86 | 1269.86 | 1269.84 | 1269.85 |
+| etek ucu **sonra** | 1215.47 | 1295.45 | 1415.44 | 1515.43 |
+| **A-payı (etek−bel) önce** | **624.96** | 544.97 | 424.96 | **324.98** |
+| **A-payı sonra** | **570.57** | 570.56 | 570.56 | **570.56** |
+
+Yarıçap payı **99.47 → 51.72mm** (bedenle **yarıya** iniyordu) → **90.81mm × 8, sabit.** Sekiz bedende aynı A-açısı.
+**Monotonluk ihlali 30 → 14** · `gradeset.sh` **3 → 2 hüküm** · **hiçbir kapı gerilemedi**, K2 7/7 bit-aynı, `spec_census` dikiş sabitliği (16A'yı düşüren hüküm) **ateşlemedi**.
+★ Brifingimdeki *"o tek vücut EU40/42"* **yanlıştı**: 36 inç = 914.4mm, **EU36 (900) ile EU38 (940) arasında**. Donmuş vücut EU36/38'di.
+
+### ★ GÖVDE ÇİZELGESİNİN BEŞ KOLONUNUN BEŞİ DE ÖLÇÜM DEĞİL, UZATMA
+| kolon | gerçekten 8 ölçüm mü | imza |
+|---|---|---|
+| `shoulder.width_cm` | **HAYIR — saf uzatma** | adım tam **+1.0000 ×7**, kuyruk **`.4568` sekizinde de** |
+| `shoulder.incl_deg` | **HAYIR — kopya** | **21.6777 ×8** |
+| `back_arc_fraction` ×3 (bust/waist/hip) | **HAYIR** | iki doğrusalın oranı; adım tekdüze sönüyor |
+| **`mean_all.yaml` 26 ölçü** | **SIFIRI 8 ölçüm** | 16'sı doğrusal uzatma, **10'u tamamen donuk** |
+| `euSizeChart` 7 kolon | uzatma **değil** | adımlar düzensiz (`4,4,4,4,4,4,6,6,6`) |
+
+★ **Ama `euSizeChart`'ın kendi kaynağı repoda HİÇBİR YERDE beyan edilmemiş** — motorun bütün gövdesini besleyen **70 sayı**, *"standard EU convention"* deniyor, kitap/standart adı yok. **Uzatma sorunundan daha ağır bir kaynak boşluğu olabilir.**
+★ `flat.size` çizelgesi **EU42'de bitiyor** ama motor 8 beden sevk ediyor → `web/atolye.html:378` ve `_engine-full.mjs:21` en büyük üç bedende **`undefined`** okuyor.
+
+### ★ OMUZ EĞİMİ: GRADELENEMEZ VE BU DOĞRU DAVRANIŞ (şüphe dürüstçe kapandı)
+Buğra'nın satın alınmış kalıbından **ölçüldü** (8 iç içe halka, her parça kendi CF/CB katlama kenarına normalize, eksen düzlüğü 8/8'de 1.0001): ön gövde **12.5070…12.6865°** (aralık **0.1795°**), arka **19.0619…19.1493°** (aralık **0.0874°**), ikisi de **monoton değil**. Grade edilen omuz **BOYU** (ön 63.00→67.75mm).
+**Hüküm: gerçek bir endüstriyel kalıp omuz eğimini 8 bedende SABİT tutar, omuz BOYUNU gradeler.** `incl_deg`'in kımıldamaması **kusur değil.** ⚠ Doğrulanan **sabitlik**; **21.6777 değerinin kendisi** hiçbir kaynakla eşleşmedi (farklı büyüklük olduğu için çürütülmedi de).
+
+### ★ ATÖLYENİN 60 KADRANININ 45'İ KALIBI HİÇ OYNATMIYOR
+`serve.py:89` → `generate.py` → GarmentCode. **Canlı atölye ARŞİV hattını sürüyor**, `surface-pattern` hiç çağrılmıyor (grep değil, **130+ koşu** ile ölçüldü).
+
+| | sayı |
+|---|---|
+| kalıbı oynatan | **15** |
+| oynatmayan | **45** |
+| bunların UI'ın **zaten SOLDURDUĞU** (dürüst ölü) | 18 |
+| **ekranda PARLAK durup kalıbı hiç oynatmayan** | **27** |
+| bunlardan `mapping-notes.json`'da hiç geçmeyen | **14** |
+
+★ **En ağır sınıf — notların YAPICA göremediği:** `waistNip` 0.12→0.38 `design.yaml`'a **gerçekten işleniyor** (`shirt.width` 1.2053→1.0), `yokeDrop` 12→26 → `skirt.rise` 0.85→0.5. **İki halde de panel geometrisi BAYT ÖZDEŞ.** Notlar mekanizması yalnız *mapping'in düşürdüğünü bildiği* kadranı görür, **üretecin yuttuğunu göremez.**
+★ **Arşiv hat BAYT DETERMİNİST DEĞİL:** aynı durum, iki koşu, farklı sha256 (yalnız dikiş listesinin **sırası**; geometri özdeş). `PYTHONHASHSEED=0` çözmüyor, **kök sebep DOĞRULANMADI.** `CLAUDE.md`'nin *"iki koşu aynı sha256"* satırı bu hat için bugün **tutmuyor**.
+Karar **(c)**: kadran silinmedi, motor değiştirilmedi, **etiketlendi** — sayfadaki her sayı `bridge-dead.json`'dan basılıyor. Kapı: `atolye-bridge-check.py`, mutasyon kanıtlı, venv yoksa **yeşil basmaz** (exit 2 "ÖLÇÜLEMEDİ").
+✅ **Canlı ziyaretçi bugün yanlış paket indiremiyor** — statik yayında `/api/health` 404, "kalıp indir" butonu **kalıcı devre dışı**. Açık, **yerel sunucuyu çalıştıranın** aldığı pakette.
+
 ## TUR 16 — KARARIM ÖLÇÜLDÜ VE GERİ ALINDI, VE ETEĞİN KLOŞU HİÇ GRADELENMİYOR
 
 ### ★ OMUZ GEÇİŞİ: DOĞRUYDU, ÇALIŞTI, YİNE DE GERİ ALINDI (on üçüncü emsal)
