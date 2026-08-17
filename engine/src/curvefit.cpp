@@ -161,7 +161,28 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
     // came back as 42 cubics over 48 points while the true nearest-point
     // deviation was 0.026mm against a 0.15mm tolerance. Newton on
     // (Q(u)-p).Q'(u) = 0 moves each parameter onto the actual foot point.
+    //
+    // THE SWEEP IS JACOBI, NOT GAUSS-SEIDEL, AND THAT IS THE WHOLE OF IT.
+    // Updating u[i] in place makes every later point in the sweep see the
+    // already-moved u[i-1] through the ordering clamp below, so the sweep
+    // carries information one way along the run — and the SAME polyline walked
+    // backwards therefore lands on different parameters, a different worst
+    // point, a different split, and a different NUMBER of cubics. That is not
+    // a cosmetic asymmetry: a garment's right panel is the left one mirrored
+    // and traversed the other way, so the two sides of a mirror seam came back
+    // with different edge counts and the mirror map gave up on the pair
+    // ("edge counts differ (14 vs 13)"). Reading every parameter from the
+    // previous pass and writing them all at once makes the sweep order-free.
+    // Isolated and measured on 2000 random panel-like polylines fitted forward
+    // and backward: segment counts differed on 402, control points on a
+    // further 319, worst mismatch 73.695038mm; with the Jacobi sweep BOTH are
+    // 0 and the worst mismatch is 6.9e-10mm. The other suspect, the `>` tie
+    // in the split search, was measured separately on the same corpus and
+    // contributes NOTHING (721/2000 direction-dependent either way) — it was
+    // tried and REJECTED, numbers in the shift report.
+    std::vector<double> unew;
     for (int pass = 0; pass < 3; ++pass) {
+        unew = u;
         for (int i = i0 + 1; i < i1; ++i) {
             const double t = u[i - i0];
             const Vec2 q = evalCubic(s, t);
@@ -183,8 +204,9 @@ void fitRange(const std::vector<Vec2>& pts, int i0, int i1, Vec2 t0, Vec2 t1,
             // stay inside this run and keep the samples ordered
             const double lo = u[i - i0 - 1] + 1e-9;
             const double hi = (i + 1 <= i1) ? u[i - i0 + 1] - 1e-9 : 1.0;
-            if (nt > lo && nt < hi) u[i - i0] = nt;
+            if (nt > lo && nt < hi) unew[i - i0] = nt;
         }
+        u = unew;
         s = fitOne(pts, i0, i1, t0, t1, u);
     }
 
