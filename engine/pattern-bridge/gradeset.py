@@ -397,6 +397,42 @@ def build_nests(patterns, out_dir):
 # ---------------------------------------------------------------------------
 # report
 # ---------------------------------------------------------------------------
+# --- VERDICT -----------------------------------------------------------------
+# Until 2026-08-17 this script's ONLY exit condition was `if not det_equal`.
+# It measured the per-size seam-deed FAIL counts and the monotonicity IHLAL
+# count, printed both, and then threw them away: every size could report
+# broken seams and the grading audit still exited 0. scripts/gradeset.sh execs
+# this file, so the shell inherited the same blind verdict. That is the T7/T17
+# class — a report wearing a gate's exit code.
+#
+# The three things this tool already MEASURES now all bind the exit code.
+# Nothing was added to the measurement, no threshold was invented: the seam
+# tolerance is walk.py's 1mm and the monotonicity threshold is TOL_MM, both
+# unchanged.
+def verdict(deed, mono_counts, det_equal):
+    """Return the list of (name, count) findings that make this run RED."""
+    red = []
+    seam_fail = sum(d['summary']['fail'] for d in deed)
+    if seam_fail:
+        red.append(('dikis tapusu FAIL (walk.py, tolerans 1mm)', seam_fail))
+    if mono_counts.get('IHLAL'):
+        red.append(('monotonluk IHLAL (girth-only grade\'de AZALMA)',
+                    mono_counts['IHLAL']))
+    if not det_equal:
+        red.append(('determinizm: EU38 iki kosuda ayni spec\'i vermedi', 1))
+    return red
+
+
+def verdict_lines(deed, mono_counts, det_equal):
+    red = verdict(deed, mono_counts, det_equal)
+    if not red:
+        return ['KAPI: YESIL — dikis tapusu 0 FAIL, monotonluk 0 IHLAL, '
+                'determinizm ozdes']
+    out = [f'KAPI: KIRMIZI — {len(red)} hukum:']
+    out += [f'  {n}: {c}' for n, c in red]
+    return out
+
+
 def fmt_report(deed, mono_rows, mono_counts, bust, waist, nudges,
                det_equal, nest_paths, state_src,
                struct_notes=(), struct_skipped=()):
@@ -590,7 +626,10 @@ def main():
     (out / 'gradeset-report.txt').write_text(report)
     print(report)
     print(f'rapor: {out / "gradeset-report.txt"}')
-    if not det_equal:
+
+    for line in verdict_lines(deed, mono_counts, det_equal):
+        print(line)
+    if verdict(deed, mono_counts, det_equal):
         sys.exit(1)
 
 
