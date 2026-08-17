@@ -110,6 +110,22 @@ add_test(NAME compile_dialect_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 # farklı L/W -> farklı spec (mm + fullness sınıfı); tablo + veto deterministik.
 add_test(NAME photo_ratio_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/photo_ratio_wire_check.mjs)
 
+# sizechart_source_check: KAYNAK BEYANI KAPISI (TUR 18B, 2026-08-17). The 70
+# numbers of contract/tables.json draft.euSizeChart are the whole body of the
+# engine and a buyer picks a size off them, and from 77193d5 (7 Jul 2026) until
+# 17 Aug they carried NO source at all — one comment, "EU size chart (German
+# convention)", written inside a TEST HARNESS next to invented tall/petite/pear
+# bodies, copied verbatim into the engine by 1eafc16. This gate asks one
+# question per column: does it name the publication it came from, and does it
+# still match that publication value-for-value. ⚠ BORN RED ON PURPOSE, 4 of 7:
+# bust/waist/hip are exact against burda style's published Damen Maßtabelle
+# (so the +6cm regime above EU46 is now SOURCED, not just self-consistent);
+# shoulder/backLength/armLength/neck are a VERIFIED ABSENCE, recorded not
+# deleted, and queued in DAMLA-KUYRUK K10. It closes by finding a publication or
+# by Damla replacing the numbers from a named one — NOT by editing the chart and
+# NOT by softening the question (seven mutation probes are what stop that).
+add_test(NAME sizechart_source_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/sizechart_source_check.mjs)
+
 add_executable(ruffle_check tests/ruffle_check.cpp)
 target_link_libraries(ruffle_check PRIVATE engine)
 add_test(NAME ruffle_check COMMAND ruffle_check)
