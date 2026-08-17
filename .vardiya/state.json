@@ -3,65 +3,304 @@
   "branch": "main",
   "son_saglam_tag": null,
   "son_saglam_tag_not": "Damla 17.08: muhur artik TAG. taban.sh tam yesilde taban-<etiket> tag'i atar ve pushlar; donus adresi son tag'dir. null = henuz tam yesil muhur alinmadi (h10_gate_check kasten kirmizi).",
-  "tur": 1,
+  "tur": 6,
   "otorite": "HEDEF.md",
   "bitis_tanimi": "Damla 10 cumle/gorsel atar; >=8 dikilebilir kalip + zevk kapisindan gecmis flat doner; kalan 2 eksik operatorunu ADIYLA soyleyerek durust reddeder.",
-
   "sayac": {
-    "H1": { "kalan_halka": 5, "kalan_saat": "25-37  [H1.0: 25-45 -> 20-38 -> 18-35 -> 14-26s; h10_gate_check 48 -> 44 FAIL/55, K5-cevre 4/8 kapandi, K6 artik OLCULEBILIR]" },
-    "H2": { "kalan_halka": 7, "kalan_saat": "168-295" },
-    "H3": { "kalan_halka": 4, "kalan_saat": "80-120 + zevk turu 0" },
-    "TABAN": { "kalan_halka": 4, "kalan_saat": "~3-4  [T9 KAPANDI; T5 bloke; +T12 (13.py ayni bozuk ofset ~0.5s), T13 (fikstur isaret sartini yargilamiyor ~1s), T14 (negatif cap ease koku 1-2s)]" }
+    "H1": {
+      "kalan_halka": 5,
+      "kalan_saat": "23-33  [H1.0: 25-45 -> 20-38 -> 18-35 -> 14-26 -> 12-22s]"
+    },
+    "H2": {
+      "kalan_halka": 7,
+      "kalan_saat": "168-295"
+    },
+    "H3": {
+      "kalan_halka": 4,
+      "kalan_saat": "80-120 + zevk turu 0"
+    },
+    "TABAN": {
+      "kalan_halka": 3,
+      "kalan_saat": "~2-3  [T13 KAPANDI; T1 yok-hukmunde; T5 bloke; +T15 (18.py sarilim-kor mandal ~0.3s), T16 (iki beden tablosu uyusmuyor ~1s)]"
+    }
   },
   "sayac_gecmisi": [
-    { "tur": 0, "H1": 5, "H2": 7, "H3": 4, "TABAN": 6 },
-    { "tur": 1, "H1": 5, "H2": 7, "H3": 4, "TABAN": 7, "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu." },
-    { "tur": 2, "H1": 5, "H2": 7, "H3": 4, "TABAN": 3, "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12." },
-    { "tur": 5, "H1": 5, "H2": 7, "H3": 4, "TABAN": 4, "not": "T9 KAPANDI (arapFlatten yakinsama testi; maxStrain %28-35 -> %0.77-0.87, bel donus 8/8 +-0.54 derece). h10_gate 48 -> 44 FAIL, K5-cevre 4/8 kapandi, K6 ilk kez OLCULEBILIR. H1.0 18-35 -> 14-26s. TABAN 2 -> 1 dustu sonra 1 -> 4 cikti (+T12,T13,T14 bozuk-kaynak temizliginden). Uc bozuk kaynak kapandi: drafting-math 47-49 uzunluk yarisi silindi, iki kapi belgesi ISARET sartina cevrildi, 10+12 scriptleri duzeltildi ve CLAUDE.md'nin zehirli sayilari (oyuk 430.4->468.33, cap ease -5.0->-21.90mm) geri cekildi." },
-    { "tur": 4, "H1": 5, "H2": 7, "H3": 4, "TABAN": 2, "not": "H1 31-49 -> 29-46. Slit ust capasi indi. T9 kok sebebi kanitlandi (ARAP yakinsamiyor). K9 cozuldu: iki iddia ayni seyden bahsetmiyor." },
-    { "tur": 3, "H1": 5, "H2": 7, "H3": 4, "TABAN": 2, "not": "TABAN 3->2 (T11 kapandi, T9 yarim). walkgate hukum-FAIL 12->0, ctest 90/90. worst fit 7.1717->0.1469mm. H1.0 kapisi kuruldu (h10_gate_check, 48 FAIL/55) ve H1.0 tahmini 25-45 -> 20-38s dustu. Kalan iki taban halkasi da BAGLI: kritik yol artik TEK, H1.0." }
+    {
+      "tur": 6,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 3,
+      "not": "OMUZ DIKISI INSA EDILDI. Acikken kapi 52/63 -> 24/63 (K3 30 dikis ok 8/8, K5-kapali ok 8/8, K5-cevre 503.80 ok 8/8, K6 +2.91mm ok 8/8, K4 -2.336 -> -0.015mm, K2 7/7 korundu). Iki taban kapisini kirdigi icin shoulderSeam=false bayragi arkasinda sevk edildi. T13 kapandi (kapi 55 -> 63 yargi, mevcut 55 verdict'in diff'i BOS = sikilasti). T12, T14 kapandi. +4 halka: H1.0a, H1.0b, T15, T16."
+    },
+    {
+      "tur": 0,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 6
+    },
+    {
+      "tur": 1,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 7,
+      "not": "TABAN 6->4 dustu (T2,T4,T6 kapandi, T1 yok-hukmunde) sonra 4->7 cikti (+T7,T8,T9,T10). H1 halka sayisi dusmedi ama H1.0 OLCULMEDI'den 25-45s'e cikti — bu bir ilerleme, bilinmeyen sayiya dondu."
+    },
+    {
+      "tur": 2,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 3,
+      "not": "TABAN 7->2 dustu (T3,T7,T8,T10 kapandi) sonra 2->3 cikti (+T11 ters omuz). Kubik ihlal 968->0, kendini kesen panel 60->0, walkgate hukum-FAIL 72->12."
+    },
+    {
+      "tur": 5,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 4,
+      "not": "T9 KAPANDI (arapFlatten yakinsama testi; maxStrain %28-35 -> %0.77-0.87, bel donus 8/8 +-0.54 derece). h10_gate 48 -> 44 FAIL, K5-cevre 4/8 kapandi, K6 ilk kez OLCULEBILIR. H1.0 18-35 -> 14-26s. TABAN 2 -> 1 dustu sonra 1 -> 4 cikti (+T12,T13,T14 bozuk-kaynak temizliginden). Uc bozuk kaynak kapandi: drafting-math 47-49 uzunluk yarisi silindi, iki kapi belgesi ISARET sartina cevrildi, 10+12 scriptleri duzeltildi ve CLAUDE.md'nin zehirli sayilari (oyuk 430.4->468.33, cap ease -5.0->-21.90mm) geri cekildi."
+    },
+    {
+      "tur": 4,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 2,
+      "not": "H1 31-49 -> 29-46. Slit ust capasi indi. T9 kok sebebi kanitlandi (ARAP yakinsamiyor). K9 cozuldu: iki iddia ayni seyden bahsetmiyor."
+    },
+    {
+      "tur": 3,
+      "H1": 5,
+      "H2": 7,
+      "H3": 4,
+      "TABAN": 2,
+      "not": "TABAN 3->2 (T11 kapandi, T9 yarim). walkgate hukum-FAIL 12->0, ctest 90/90. worst fit 7.1717->0.1469mm. H1.0 kapisi kuruldu (h10_gate_check, 48 FAIL/55) ve H1.0 tahmini 25-45 -> 20-38s dustu. Kalan iki taban halkasi da BAGLI: kritik yol artik TEK, H1.0."
+    }
   ],
-
   "tripwire": {
     "aktif": false,
     "dusmeyen_tur_sayisi": 0,
     "kural": "Sayac 3 tur ust uste dusmezse HAKEM'in DEVAM secenegi KAPANIR; ROTA DEGIS ya da DUR-SOR-DAMLA secmek zorundadir."
   },
-
   "kuyruk": [
-    { "id": "T8", "durum": "acik", "sure": "3-6s", "sira": 1, "not": "TUR 2 — curvefit.cpp kubik kontrol parametresi [0,1] disina cikiyor (1.9678'e kadar) -> 480 kenar geri donuyor. T3'un kok sebebi" },
-    { "id": "T7", "durum": "acik", "sure": "2-4s", "sira": 2, "not": "TUR 2 — walk.py kapi degil yazici (main hep exit 0); taban.sh grep '^FAIL' girintili 76 FAIL'i saymiyor" },
-    { "id": "T10", "durum": "acik", "sure": "~0.5s", "sira": 3, "not": "TUR 2 — _opening_lines() sadece print-report.txt'e gidiyor; alici arka ortayi kapatip kafasi gecmeyen elbise diker" },
-    { "id": "T9", "durum": "acik", "sure": "4-8s", "sira": 1, "not": "TUR 3 — KOK SEBEP ADAYI: surface-pattern.cpp emitChain, bel kosularini singleCubic=true ile tek kubige zorluyor (tol 1e9) -> kFitTolMM BY-PASS. worst fit EU46 7.1717mm, T8'den sonra kimildamadi. waist-attach 3 ayri kusur (EU46 5.350mm, EU42 2.651, EU48 1.142)" },
-    { "id": "T11", "durum": "acik", "sure": "OLCULMEDI", "sira": 2, "not": "TUR 3 — ters omuz: on omuz arkadan uzun (walkgate 6 hukum = 3 dikis). CLAUDE.md: arka omzun uzun olmasi STANDART (kurek payi 6-12mm). Isaret hatasi mi gercek geometri mi olculmedi. KAPSAM BUYUDU +1" },
-    { "id": "H1.0-KAPI", "durum": "acik", "sure": "2-4s", "sira": 3, "not": "TUR 3 — H1.0 KOD DEGIL, KAPI. 25-45 saatlik yapisal is baslamadan once kabul kapisi + fikstur Bugra landmark paritesinden cikarilacak (docs/G5-OMUZ-PLANI.md). Kapi olmadan 25-45 saat yon secemez" },
-    { "id": "H1.0", "durum": "acik-KIRMIZI", "sure": "25-45s", "sira": 5, "not": "OLCULDU: giysi tup. Omuz halkasi yok, kol oyugu 33.55cm vs Bugra 43.30cm. Yapisal: buildGrid (h,phi) izgarasi + Slit yalniz-bel capasi, ~610-1180 satir, 9 dosya" },
-    { "id": "T1", "durum": "YOK-HUKMUNDE", "sure": "0", "not": "terim repoda yok (tum revizyonlar arandi). 52 baslik derlendi, 0 basarisiz. Uydurulmadi -> DAMLA-KUYRUK K6" },
-    { "id": "T2", "durum": "KAPANDI", "sure": "~0.5s", "not": "iki bagimsiz temiz kosu, manifest sha256 8abec243... ozdes, 24 PDF cmp 0 fark" },
-    { "id": "T3", "durum": "OLCULDU-KAPI-KIRMIZI", "sure": "-> T8", "not": "2096 kenar, 480 ihlal, en kotu EU34 left_ftorso[20] 22.99mm. edgemono_check ctest'e baglandi (859f3fe)" },
-    { "id": "T4", "durum": "KAPANDI", "sure": "~1s", "not": "84e79a9 sadece print-report.txt'e basiyordu; artik print-info.pdf s.2'de 13 adim. a65881e" },
-    { "id": "T5", "durum": "acik-BLOKE", "sure": "OLCULMEDI", "not": "tanim repoda YOK (tum revizyonlar arandi, 2 isabet = halkanin kendisi). Uydurulmadi -> DAMLA-KUYRUK K5" },
-    { "id": "T6", "durum": "KAPANDI", "sure": "~2s", "not": "tek sayac = HEDEF.md § SAYAC. contract/kapsam-checkpoint.json DISKTE YOK; bayat sayac+otorite satirlari silindi" },
-    { "id": "H1.1", "durum": "acik", "sure": "~1s", "not": "docs/SATIS-SARTNAMESI.md zaten tanimliyor -> muhurle" },
-    { "id": "H1.2", "durum": "acik", "sure": "~4s", "not": "kitapcik, motor ciktisindan" },
-    { "id": "H1.3", "durum": "acik", "sure": "~3s", "not": "kapak + line drawing -> DAMLA-KUYRUK K3" },
-    { "id": "H1.4", "durum": "acik", "sure": "~3s", "not": "listing + fiyat + lisans" },
-    { "id": "H2.1", "durum": "acik", "sure": "10s", "not": "spec semasi muhru" },
-    { "id": "H2.7", "durum": "acik", "sure": "8-15s", "not": "operator sicili + durust red — KAPSAM BUYUDU +1" },
-    { "id": "H2.2", "durum": "acik", "sure": "40-80s", "not": "style line / bolge cikarimi — KRITIK YOL" },
-    { "id": "H2.3", "durum": "acik", "sure": "60-100s", "not": "operator dalgasi: yaka, kol, etek, boy, kumas" },
-    { "id": "H2.4", "durum": "acik", "sure": "30-50s", "not": "sanal muslin hakemi" },
-    { "id": "H2.5", "durum": "acik", "sure": "10-20s", "not": "F8 frontend" },
-    { "id": "H2.6", "durum": "acik", "sure": "10-20s", "not": "foto->spec siniflandirma (operatorler bitince)" },
-    { "id": "H3.1", "durum": "acik", "sure": "80-120s", "not": "yuzeyden cizgi cikarimi" },
-    { "id": "H3.2", "durum": "acik", "sure": "dahil", "not": "sadelestirme" },
-    { "id": "H3.3", "durum": "acik", "sure": "dahil", "not": "Damla'nin kalemine oturtma" },
-    { "id": "H3.4", "durum": "acik", "sure": "TAAHHUT EDILEMEZ", "not": "zevk turlari, hakem Damla" }
+    {
+      "id": "T8",
+      "durum": "acik",
+      "sure": "3-6s",
+      "sira": 1,
+      "not": "TUR 2 — curvefit.cpp kubik kontrol parametresi [0,1] disina cikiyor (1.9678'e kadar) -> 480 kenar geri donuyor. T3'un kok sebebi"
+    },
+    {
+      "id": "T7",
+      "durum": "acik",
+      "sure": "2-4s",
+      "sira": 2,
+      "not": "TUR 2 — walk.py kapi degil yazici (main hep exit 0); taban.sh grep '^FAIL' girintili 76 FAIL'i saymiyor"
+    },
+    {
+      "id": "T10",
+      "durum": "acik",
+      "sure": "~0.5s",
+      "sira": 3,
+      "not": "TUR 2 — _opening_lines() sadece print-report.txt'e gidiyor; alici arka ortayi kapatip kafasi gecmeyen elbise diker"
+    },
+    {
+      "id": "T9",
+      "durum": "acik",
+      "sure": "4-8s",
+      "sira": 1,
+      "not": "TUR 3 — KOK SEBEP ADAYI: surface-pattern.cpp emitChain, bel kosularini singleCubic=true ile tek kubige zorluyor (tol 1e9) -> kFitTolMM BY-PASS. worst fit EU46 7.1717mm, T8'den sonra kimildamadi. waist-attach 3 ayri kusur (EU46 5.350mm, EU42 2.651, EU48 1.142)"
+    },
+    {
+      "id": "T11",
+      "durum": "acik",
+      "sure": "OLCULMEDI",
+      "sira": 2,
+      "not": "TUR 3 — ters omuz: on omuz arkadan uzun (walkgate 6 hukum = 3 dikis). CLAUDE.md: arka omzun uzun olmasi STANDART (kurek payi 6-12mm). Isaret hatasi mi gercek geometri mi olculmedi. KAPSAM BUYUDU +1"
+    },
+    {
+      "id": "H1.0-KAPI",
+      "durum": "acik",
+      "sure": "2-4s",
+      "sira": 3,
+      "not": "TUR 3 — H1.0 KOD DEGIL, KAPI. 25-45 saatlik yapisal is baslamadan once kabul kapisi + fikstur Bugra landmark paritesinden cikarilacak (docs/G5-OMUZ-PLANI.md). Kapi olmadan 25-45 saat yon secemez"
+    },
+    {
+      "id": "H1.0",
+      "durum": "acik-KIRMIZI",
+      "sure": "25-45s",
+      "sira": 5,
+      "not": "OLCULDU: giysi tup. Omuz halkasi yok, kol oyugu 33.55cm vs Bugra 43.30cm. Yapisal: buildGrid (h,phi) izgarasi + Slit yalniz-bel capasi, ~610-1180 satir, 9 dosya"
+    },
+    {
+      "id": "T1",
+      "durum": "YOK-HUKMUNDE",
+      "sure": "0",
+      "not": "terim repoda yok (tum revizyonlar arandi). 52 baslik derlendi, 0 basarisiz. Uydurulmadi -> DAMLA-KUYRUK K6"
+    },
+    {
+      "id": "T2",
+      "durum": "KAPANDI",
+      "sure": "~0.5s",
+      "not": "iki bagimsiz temiz kosu, manifest sha256 8abec243... ozdes, 24 PDF cmp 0 fark"
+    },
+    {
+      "id": "T3",
+      "durum": "OLCULDU-KAPI-KIRMIZI",
+      "sure": "-> T8",
+      "not": "2096 kenar, 480 ihlal, en kotu EU34 left_ftorso[20] 22.99mm. edgemono_check ctest'e baglandi (859f3fe)"
+    },
+    {
+      "id": "T4",
+      "durum": "KAPANDI",
+      "sure": "~1s",
+      "not": "84e79a9 sadece print-report.txt'e basiyordu; artik print-info.pdf s.2'de 13 adim. a65881e"
+    },
+    {
+      "id": "T5",
+      "durum": "acik-BLOKE",
+      "sure": "OLCULMEDI",
+      "not": "tanim repoda YOK (tum revizyonlar arandi, 2 isabet = halkanin kendisi). Uydurulmadi -> DAMLA-KUYRUK K5"
+    },
+    {
+      "id": "T6",
+      "durum": "KAPANDI",
+      "sure": "~2s",
+      "not": "tek sayac = HEDEF.md § SAYAC. contract/kapsam-checkpoint.json DISKTE YOK; bayat sayac+otorite satirlari silindi"
+    },
+    {
+      "id": "H1.1",
+      "durum": "acik",
+      "sure": "~1s",
+      "not": "docs/SATIS-SARTNAMESI.md zaten tanimliyor -> muhurle"
+    },
+    {
+      "id": "H1.2",
+      "durum": "acik",
+      "sure": "~4s",
+      "not": "kitapcik, motor ciktisindan"
+    },
+    {
+      "id": "H1.3",
+      "durum": "acik",
+      "sure": "~3s",
+      "not": "kapak + line drawing -> DAMLA-KUYRUK K3"
+    },
+    {
+      "id": "H1.4",
+      "durum": "acik",
+      "sure": "~3s",
+      "not": "listing + fiyat + lisans"
+    },
+    {
+      "id": "H2.1",
+      "durum": "acik",
+      "sure": "10s",
+      "not": "spec semasi muhru"
+    },
+    {
+      "id": "H2.7",
+      "durum": "acik",
+      "sure": "8-15s",
+      "not": "operator sicili + durust red — KAPSAM BUYUDU +1"
+    },
+    {
+      "id": "H2.2",
+      "durum": "acik",
+      "sure": "40-80s",
+      "not": "style line / bolge cikarimi — KRITIK YOL"
+    },
+    {
+      "id": "H2.3",
+      "durum": "acik",
+      "sure": "60-100s",
+      "not": "operator dalgasi: yaka, kol, etek, boy, kumas"
+    },
+    {
+      "id": "H2.4",
+      "durum": "acik",
+      "sure": "30-50s",
+      "not": "sanal muslin hakemi"
+    },
+    {
+      "id": "H2.5",
+      "durum": "acik",
+      "sure": "10-20s",
+      "not": "F8 frontend"
+    },
+    {
+      "id": "H2.6",
+      "durum": "acik",
+      "sure": "10-20s",
+      "not": "foto->spec siniflandirma (operatorler bitince)"
+    },
+    {
+      "id": "H3.1",
+      "durum": "acik",
+      "sure": "80-120s",
+      "not": "yuzeyden cizgi cikarimi"
+    },
+    {
+      "id": "H3.2",
+      "durum": "acik",
+      "sure": "dahil",
+      "not": "sadelestirme"
+    },
+    {
+      "id": "H3.3",
+      "durum": "acik",
+      "sure": "dahil",
+      "not": "Damla'nin kalemine oturtma"
+    },
+    {
+      "id": "H3.4",
+      "durum": "acik",
+      "sure": "TAAHHUT EDILEMEZ",
+      "not": "zevk turlari, hakem Damla"
+    }
   ],
-
-  "damla_kuyrugu": ["K1 patterns_real/public", "K2 beden", "K3 kapak", "K4 zevk", "K5 dunya kapisi ne demek (T5'i BLOKE EDER)"],
-
+  "damla_kuyrugu": [
+    "K1 patterns_real/public",
+    "K2 beden",
+    "K3 kapak",
+    "K4 zevk",
+    "K5 dunya kapisi ne demek (T5'i BLOKE EDER)"
+  ],
   "karar_sicili": [
+    {
+      "tur": 6,
+      "karar": "DEVAM",
+      "gerekce": "Sayac dustu: H1 25-37 -> 23-33, H1.0 14-26 -> 12-22s, TABAN'da T12/T13/T14 kapandi. Omuz dikisi INSA EDILDI ve olculdu — kapi acikken 24/63. Tripwire pasif."
+    },
+    {
+      "tur": 6,
+      "karar": "OMUZ DIKISI BAYRAK ARKASINDA SEVK EDILDI",
+      "gerekce": "Acikken surface_pattern_check 0->4 FAIL (kesim cizgisi %0.02 -> %1.83, kapi %0.5) ve walkgate_check 0->6 hukum (kendini kesme). Kirik test yamalanmaz, geri alinir. shoulderSeam=false; tek bool ile 24/63 geri gelir, hicbir sey silinmedi. Kok sebep OLCULDU: ust pensler bel pensleriyle KESISIYOR (bel yarigi [0,0.80), ust yarik (0.55,rowsN] — bantlar cakisiyor; koddaki 'cuts cannot cross by construction' yorumu YANLIS)."
+    },
+    {
+      "tur": 6,
+      "karar": "IKI DUZELTME ALINMADI — TUR 5 EMSALI UYGULANDI",
+      "gerekce": "crest bandi 60->120mm kesim cizgisini %0.46'ya indirdi ama walkgate'i 6->30 cikardi (8 bedenin 8'i kendini kesiyor). topDartApexFrac 0.55->0.80: ic gerinim 6.96 -> %11.67. Ikisi de sayiyi dusurup giysiyi kotulestiriyordu, alinmadi ve ilan edildi."
+    },
+    {
+      "tur": 6,
+      "karar": "5B'NIN K4 RECETESI YANLISTI — DUZELTILDI",
+      "gerekce": "'K4'un isareti bu insadan duser' olmadi: dikis tek egri olunca iki kenar tanim geregi esit (-2.336 -> -0.015mm). arka > on bir YUZEY ozelligi degil, dikiste YEDIRMEdir. K4 [0.5,12.0] ile dikis-esitligi 0.79375 yalniz 0.5-0.79 araliginda kesisiyor -> DAMLA-KUYRUK K11."
+    },
+    {
+      "tur": 6,
+      "karar": "KAPSAM BUYUDU: +4 halka (H1.0a, H1.0b, T15, T16)",
+      "gerekce": "H1.0a pens duzeni (3-6s) omuz dikisinin onundeki tek blokor. H1.0b kol oyugu 2B delik (6-12s): K1 '%19 eksik' degil YAPISAL — oyuk bugun ince bir mercek (derinlik ~148mm, genislik ~52mm, elips ~333mm = olculen 330); Bugra'nin 424-486'si icin delik ~110mm genis olmali. T15 18.py'nin sarilim-kor mandali. T16 iki beden tablosu uyusmuyor (size-table.json EU48 bust 107.84 vs contract.gen.hpp 110)."
+    },
+    {
+      "tur": 6,
+      "karar": "PAYLASILAN AGAC 4. KEZ OLCUM KIRLETTI",
+      "gerekce": "6A'nin onceki-durum tablosunun paydasi 55 sanildi, 6B'nin commitsiz K9'u yuzunden 63'tu. 6B vardiya ortasinda HEAD degisimi yakaladi. Kural zaten uygulaniyordu (her ajan olctugu commit hash'ini yaziyor) ve bu sayede yakalandi — kural calisti."
+    },
     {
       "tur": 0,
       "karar": "ACILIS",
@@ -198,6 +437,8 @@
       "gerekce": "'dunya kapisi' terimi tum revizyonlarda 2 yerde geciyor, ikisi de halkanin kendisi (HEDEF.md:40 + state.json). Tanim yok, sicil kurulamaz. Tanim uydurmak yerine K5 acildi ve T5 bloke birakildi."
     }
   ],
-
-  "kota": { "harcanan_kosu_saati": 0, "son_durus_sebebi": null }
+  "kota": {
+    "harcanan_kosu_saati": 0,
+    "son_durus_sebebi": null
+  }
 }

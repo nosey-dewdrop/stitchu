@@ -147,6 +147,26 @@ ilişkili olabilir — **ilişki DOĞRULANMADI.**
 
 **Cevap:**
 
+### [ ] K11 — İki kapı birbirini yiyor: omuz dengesi vs dikiş eşitliği · 2026-08-17
+Tur 6'da ölçüldü, uydurulmadı.
+- **K4 (omuz dengesi):** arka omuz ön omuzdan uzun olmalı, bant `[+0.5, +12.0]mm` (kürek payı).
+- **Dikiş eşitliği kapısı:** birbirine dikilen iki kenar `0.79375mm` içinde eşit olmalı (üretim standardı).
+
+İkisi yalnız **0.5–0.79mm** aralığında aynı anda sağlanabiliyor. Yani aynı anda hem "arka omuz uzun olsun" hem "iki kenar eşit olsun" diyoruz.
+
+Omuz dikişi inşa edilince ölçüldü: dikiş **tek eğri** olunca iki kenar tanım gereği eşitleniyor (−2.336 → **−0.015mm**). Yani `arka > ön` bir **yüzey özelliği DEĞİL**, dikişte **YEDİRME**dir — terzi arka omzu gererek diker. Buğra'nın +0.95…+1.13mm'si tam olarak bu pay.
+
+**Soru:** yedirme **motorun** mu işi (kalıba ayrı uzunluk olarak basılsın, terzi gererek diksin) yoksa **talimatın** mı (kalıpta eşit, kitapçıkta "arka omzu gererek dikin")?
+Sen dikeceksin — hangisi elinde çalışır?
+**Cevap:**
+
+### [ ] K12 — Buğra'nın kolu yatay bölünmüş DEĞİL, iki KATMAN · motorun eksik operatörü · 2026-08-17
+`patterns_real/BUGRA-DEFTER.md` kolu "yatay ikiye bölünmüş" diye kaydetmiş ve motorun eksiğini "set-in kolu yatay böl" diye yazmış. **Ölçüldü, çürüdü:** iki parça da **tam kapak** taşıyor ve kapak **sagitta oranı 8 bedende bit-sabit 1.227** (kiriş oranı 1.549 → 1.347 kayarken). Bit-sabit oran bölünme değil, **ölçekli kopya** demek.
+Yani Upper Sleeve = **dış büzgülü puf katmanı**, Lower = iç astar. Motorun gerçek eksik operatörü **büzgülü overlay katmanı** — H2.3'ün operatör dalgasına giriyor.
+`patterns_real/` telifli ve salt-okunur, oradaki satırı düzeltmedim; düzeltme `knowledge/cap-ease-isareti-2026-08-17.md`'de.
+**Bu bir bilgi düzeltmesi, senden karar istemiyorum — ama defterin yanlış olduğunu bilmen gerekiyordu.**
+**Cevap (gerekmiyorsa kapat):**
+
 ---
 
 ## KAPANDI

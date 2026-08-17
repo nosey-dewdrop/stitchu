@@ -9,11 +9,40 @@ Açıldı: 2026-08-16 · Branch: `vardiya/2026-08-16`
 ## SAYAÇ
 
 ```
-H1'e kalan:  5 halka / 25–37 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → **14–26s**]
+H1'e kalan:  5 halka / 23–33 koşu saati    [H1.0: 25–45 → 20–38 → 18–35 → 14–26 → **12–22s**]
 H2'ye kalan: 7 halka / 168–295 koşu saati
 H3'e kalan:  4 halka / 80–120 koşu saati + zevk turu 0
-TABAN:       2 halka / ~2–3 koşu saati     [T2,T3,T4,T6,T7,T8,T9,T10,T11,T12,T14 kapandı · T1 yok-hükmünde · T5 bloke · T13 açık]
+TABAN:       3 halka / ~2–3 koşu saati     [T13 KAPANDI · T1 yok-hükmünde · T5 bloke · +T15, T16]
 ```
+
+## TUR 6 — OMUZ DİKİŞİ İNŞA EDİLDİ, BAYRAK ARKASINDA BEKLİYOR
+
+**İnşa bitti ve çalışıyor.** Tüp → omuz bandında ön/arka üst sınır **tek bir crest eğrisine** katlanıyor, `farEdges` c ↔ NR−c dikişleri planda, aynalama panel bazında türetiliyor. Açıkken kapı **52/63 → 24/63 FAIL**:
+
+| şart | kapalı (sevk edilen) | **AÇIK** |
+|---|---|---|
+| K3 omuz dikişi | 0 | **30 dikiş, ok 8/8** |
+| K5 yaka kapalı çevrim | açık | **ok 8/8** |
+| K5 yaka çevresi | 364.67, 4/8 | **503.80, ok 8/8** |
+| K6 taşıyıcı yüzey | −12.79mm | **+2.91mm, ok 8/8** |
+| K4 omuz dengesi | −2.336mm | **−0.015mm** (hâlâ FAIL) |
+| K2 grade | 7/7 ok | **7/7 ok, korundu** |
+
+**Neden sevk edilmedi:** açıkken iki taban kapısını kırıyor — `surface_pattern_check` 0→4 FAIL (gövde kesim çizgisi %0.02 → **%1.83**, kapı %0.5) ve `walkgate_check` 0→**6 hüküm, hepsi kendini-kesme**. Kırık test yamalanmaz, geri alınır. `SheathOptions.shoulderSeam=false` bayrağıyla sevk edildi; **tek bool ile 24/63 geri gelir**, hiçbir şey silinmedi.
+
+**Kök sebep ölçüldü:** katlamanın Gauss eğriliği üst-çapalı penslerden çıkamıyor. (a) Üst pensler bel pensleriyle **KESİŞİYOR** — bel yarığı `[0, 0.80)`, üst yarık `(0.55, rowsN]`, bantlar çakışıyor; koddaki *"cuts cannot cross by construction"* yorumu **YANLIŞ**. (b) Ön-orta kesiğin yanında pens türetilmeyen ölü bölge var.
+
+**İki düzeltme denendi, İKİSİ DE ALINMADI** (Tur 5 emsali): crest bandı 60→120mm kesim çizgisini %0.46'ya indirdi ama walkgate'i **6→30**'a çıkardı — sayı düştü, giysi kötüleşti. `topDartApexFrac` 0.55→0.80: iç gerinim 6.96→**%11.67**.
+
+> **KAPSAM BÜYÜDÜ: +4 halka (H1.0a, H1.0b, T15, T16). Sebebi:**
+> **H1.0a — pens düzeni** (3–6s): üst pens ↔ bel pensi kesişmesi + ön-orta ölü bölge. **Bu çözülmeden omuz dikişi açılamaz.** Kritik yolun kendisi.
+> **H1.0b — kol oyuğu gerçek 2B delik** (6–12s): K1 "%19 eksik" değil, **YAPISAL**. Oyuk bugün φ∈[0, 19.9°] bandında ince bir mercek — derinlik ~148mm, ön-arka genişlik **~52mm**. Elips aritmetiği: 150×52 → ~333mm (ölçülen 330 ✓); Buğra'nın 424–486'sı için delik **~110mm geniş** olmalı. Katlama buna +1mm bile katmıyor. Oyuk, φ'nin fonksiyonu olan bir çentik olmaktan çıkıp **gerçek bir 2B delik** olmalı.
+> **T15** (~0.3s): `flatten-research/18`'in analitik mandalı **sarılım-kör** — `ΔL=−d·Δθ` iç normalin hep teğet-solda olduğunu varsayıyor, bu yalnız CCW'de doğru. Gövde parçaları CCW 8/8, **kol parçaları CW 8/8** → kol kenarlarında sahte `2·d·Δθ` sapma basıyor (EU38: 14.18 / 20.89mm). Kusur mandalda, ofsette değil. `13` ve `19`'da düzeltildi, **`18` DÜZELTİLMEDİ**.
+> **T16** (~1s): **İKİ BEDEN TABLOSU VAR VE UYUŞMUYORLAR.** `contract/layers/size-table.json` bust'u kusursuz doğrusal (EU48 = **107.84**), `contract.gen.hpp` EU48'i **110** yazıyor; `h10_gate_check` ikincisini kullanıyor. `CLAUDE.md`'nin "ÜÇÜNCÜ VÜCUT KAYNAĞI" teşhisi hâlâ canlı. Ayrıca `backLengthCM` EU44→EU46 adımı **0.0cm** (diğer altı adım +0.5) — dizgi hatası gibi, DOĞRULANMADI.
+
+### K4 — 5B'NİN REÇETESİ BU NOKTADA YANLIŞTI, DÜZELTİLDİ
+"K4'ün işareti bu inşadan düşer" **olmadı**: dikiş tek eğri olunca iki kenar **tanım gereği eşit** (−2.336 → −0.015mm). `arka > ön` bir **yüzey özelliği değil, dikişte YEDİRME**dir; Buğra'nın +0.95…+1.13mm'si onun payıdır.
+⚠ **İKİ KAPI ARASINDA GERÇEK GERİLİM:** K4 bandı `[0.5, 12.0]mm` ile dikiş-eşitliği kapısı `0.79375mm` yalnız **0.5–0.79mm** aralığında kesişiyor. → `DAMLA-KUYRUK` **K11**.
 
 **T9 KAPANDI 17.08.** `arapFlatten`'ın `rounds`'u sayaç olmaktan çıkıp **TAVAN** oldu; duruş şartı çözücünün kendi cevabı (bir turda max düğüm yer değişimi `< 1e-4mm`). `60 → 400` YAPILMADI — ölçüldü, gövde panelleri **69–95 turda** bitiyor, 60 sadece 10–35 tur eksikmiş. Sonuç: bel dönüş açısı 8 bedende **±0.54°** içinde (önce EU46 +88.31°), `maxStrain` **%28.61/32.51/34.62 → 8 bedende %0.77–0.87**, bel dikiş sayısı 10–26 arası dağınıktan **8 bedende de 14**'e. `flatten_check`'in sertifikaları ayakta (koni bit-aynı 0.005814°). Bedel **+3.1 saniye**.
 
