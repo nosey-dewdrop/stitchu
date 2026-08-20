@@ -62,14 +62,16 @@ trap 'say "kesildi -- geri aliniyor"; GERI_AL' INT TERM
 cmake -S engine -B "$BUILD" -DCMAKE_BUILD_TYPE=Release >"$TMP/mut.cmake.log" 2>&1 \
   || { KIRMIZI "cmake configure patladi -- $TMP/mut.cmake.log"; exit 1; }
 
-derle(){ cmake --build "$BUILD" -j >"$TMP/mut.build.log" 2>&1; }
+# NOT: hepsi </dev/null ile kosuyor -- yoksa ctest/cmake manifesto satirlarini
+# stdin'den yer ve dongu sessizce yarim kalir.
+derle(){ cmake --build "$BUILD" -j >"$TMP/mut.build.log" 2>&1 </dev/null; }
 kapi_kos(){  # <test_adi> -> 0 yesil, 1 kirmizi
-  ( cd "$BUILD" && ctest -R "^$1\$" --output-on-failure ) >"$TMP/mut.$1.txt" 2>&1
+  ( cd "$BUILD" && ctest -R "^$1\$" --output-on-failure ) >"$TMP/mut.$1.txt" 2>&1 </dev/null
 }
-test_var(){ ( cd "$BUILD" && ctest -N -R "^$1\$" ) 2>/dev/null | grep -q "Test *#"; }
+test_var(){ ( cd "$BUILD" && ctest -N -R "^$1\$" </dev/null ) 2>/dev/null | grep -q "Test *#"; }
 
 BULUNAN=""
-while IFS=$'\t' read -r MF AD KAPI KOMUT; do
+while IFS=$'\t' read -r MF AD KAPI KOMUT <&3; do
   case "$MF" in ''|'#'*) continue ;; esac
   [ "$MF" = "$F" ] || continue
   [ -n "${KOMUT:-}" ] || { KIRMIZI "$AD: manifestoda bozma komutu bos"; continue; }
@@ -91,7 +93,7 @@ while IFS=$'\t' read -r MF AD KAPI KOMUT; do
   fi
 
   # 3) bicagi sapla
-  bash -c "$KOMUT" >"$TMP/mut.$AD.komut.txt" 2>&1
+  bash -c "$KOMUT" >"$TMP/mut.$AD.komut.txt" 2>&1 </dev/null
   DIFF=$(git status --porcelain)
   if [ -z "$DIFF" ]; then
     KIRMIZI "$AD: bozma komutu HICBIR SEYI degistirmedi (sahte knob). Komut: $KOMUT"
@@ -123,7 +125,7 @@ while IFS=$'\t' read -r MF AD KAPI KOMUT; do
     git status --porcelain | head -10
     exit 1
   fi
-done < "$MAN"
+done 3< "$MAN"
 
 # --- zorunlu mutasyonlarin hepsi manifestoda var miydi
 for Z in $ZORUNLU; do

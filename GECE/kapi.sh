@@ -55,6 +55,22 @@ if ! git worktree add --detach -f "$WT" "$ONCE" >"$TMP/$F.worktree.log" 2>&1; th
   kirmizi "K1 KIRMIZI -- '$ONCE' icin worktree acilamadi"
   cat "$TMP/$F.worktree.log"
 else
+  # Worktree SADECE takipli dosyalari alir. Gitignore'daki uretim artefaktlari
+  # (wasm dist, venv'ler, node_modules) orada YOKTUR ve o eksiklik 16 testi
+  # sahte kirmizi yapar -- olculdu, 2026-08-21: api_wire_check "engine/dist/
+  # stitchu-engine.js yok", walkgate_check "garmentcode/.venv/bin/python yok",
+  # dxf/nest_marker/tech_pack "ezdxf yok" (engine/.venv-dxf).
+  # Once/sonra ayni ortamda olculmezse K1 hicbir sey karsilastirmiyor demektir.
+  # Liste sabit degil, taranarak bulunur: yarin yeni bir artefakt dizini
+  # dogarsa kimsenin bu dosyayi hatirlamasi gerekmesin.
+  ARTEFAKT=$(git ls-files --others --ignored --exclude-standard --directory \
+             | grep -E 'venv|node_modules|dist/' | sed 's:/$::')
+  for A in $ARTEFAKT core/third_party; do
+    if [ -e "$ROOT/$A" ] && [ ! -e "$WT/$A" ]; then
+      mkdir -p "$(dirname "$WT/$A")"
+      ln -s "$ROOT/$A" "$WT/$A" && say "K1 ortam: $A -> gercek agactan baglandi"
+    fi
+  done
   kur_ve_kos "$WT" "$BONCE" > GECE/log/$F.red.before
   git worktree remove --force "$WT" >/dev/null 2>&1
 fi

@@ -39,10 +39,44 @@ F0 ✓ Damar %0, flat kalıptan türemiyor ve kontrat bunu zaten beyan etmiş ->
 ## [HAT-VARSAYIM] ETİKETLİ İŞLER
 (yok — hiçbir faz açılmadı)
 
-## HARNESS (21 Ağu kuruldu, mühürlü)
+## HARNESS (21 Ağu kuruldu, mühürlü, KOŞTURULARAK doğrulandı)
 `GECE/gece.sh` · `GECE/kapi.sh` (K1–K7) · `GECE/mutasyon.sh` · `GECE/mutasyon.tsv` · `GECE/hakem-sorusu.md` · `GECE/kapi.sha`
 **Faz ajanına düşen tek ek görev:** kendi kapısını `GECE/mutasyon.tsv`'ye yazmak. Boş satır = o faz kapanamaz (§2.3).
+
+Doğrulama (sözdizimi değil, **koşturuldu**):
+- `kapi.sh F0 66e2732` üç kez koştu; yedi alt kapı da ateşledi. Log: `GECE/log/F0.kapi.txt`.
+- **K1'in tabanı ilk koşuda YALANDI ve düzeltildi.** Worktree sadece takipli dosyaları alır;
+  `engine/dist` · `engine/.venv-dxf` · `engine/pattern-bridge/.venv` · `engine/tools/node_modules` ·
+  `core/third_party` orada olmadığı için **16 test sahte kırmızı** düşüyordu
+  (19 → 9 → **6**). Artefakt dizinleri artık taranıp worktree'ye bağlanıyor. Taban artık F0'ın
+  yazdığı 6 kırmızıyla **birebir**: `GECE/log/F0.red.before`.
+- **Mutasyon kanıtlayıcısı koşturuldu.** Temiz bir worktree'de `hem_check` yeşilken
+  `engine/src/hem.cpp`'nin merkez-panel kaydırması bozuldu → kapı **kırmızıya döndü**,
+  ağaç geri alındı, mühür sağlam kaldı. Yani `mutasyon.sh` bir nesneyi gerçekten bozabiliyor.
+
 Koşu **başlatılmadı**. Tek komut: `bash GECE/gece.sh > GECE/log/gece.txt 2>&1 &`
+
+## ⛔ KOŞUYU BUGÜN BLOKE EDEN TEK ŞEY
+Çalışma ağacında **benden önce bırakılmış 285 commit'siz değişiklik** var:
+`reports/` → `gate/` + `docs/kanit/` taşıması, `REPORTS.md` yeni, `devlog.md` ve `linkedin.md`
+**silinmiş** (CLAUDE.md "DOKUNMA, dağıtım kanalı" diyor), `engine/tests/capability_check.cpp`
+**değiştirilmiş**. Ben bunlara dokunmadım.
+- `gece.sh` kirli ağaçta **başlamaz** (neyin ajandan geldiği ayırt edilemez).
+- `kapi.sh` bu ağaçta zaten iki kırmızı veriyor: **K6** (var olan test değişmiş) ve
+  **K1** (`figure_check` yeni kırmızı — 7 stil `figure-bands mandal.taban_v3`'te pinsiz;
+  o stiller `66e2732`'de yok, yani kırmızıyı bu commit'siz yığın doğuruyor).
+- Bunlar commit edilmeden ya da geri alınmadan gece koşusu başlayamaz. **Karar senin.**
+
+## DOĞRULANIRKEN ÇIKAN, SORULMAMIŞ BULGULAR
+- **Test sayısı 95 değil 96.** Temiz bir build 96 test kaydediyor; `engine/build` 95'te kalmış
+  (bayat cache). F0'ın "89/95"i bu yüzden bir test eksik sayıyor.
+- **7. bir devralınan kırmızı var: `sizechart_source_check`** — F0'ın altı kırmızısında yok.
+  Sebebi ortam değil, içerik: `shoulderCM`/`backLengthCM`/`armLengthCM`/`neckCM` **kaynaksız**
+  (70 sayının 4 sütunu, yani 40 değer bir yayına dayanmıyor). Son commit `97c1c4d` zaten bunu
+  söylüyor. `GECE/log/F0.red.before` altı satır gösteriyor çünkü o ölçüm `66e2732`'de yapıldı;
+  gerçek ağaçta yedi. **F8'in "kaç kırmızı" sayımı buna dikkat etmeli.**
+- `RULES.md` "agent context = ENV.md + RULES.md ONLY" diyor; `GECE-KOSUSU.md` §1 ise
+  `RULES.md + KOSU.md + brief`. `gece.sh` §1'i uyguluyor, `ENV.md`'yi ajana vermiyor.
 
 ## DAMLA'YA DÜŞEN (bloke etmez)
 - **`patterns_real/` kararı açık:** `contract_check` kırmızısı oradaki 41 satın alınmış takipli dosyadan.
