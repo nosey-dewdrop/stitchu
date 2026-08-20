@@ -1,0 +1,28 @@
+# GECE/mutasyon.tsv -- her fazin MUTASYON SOZU (§2.3)
+#
+# Bu dosya kapinin kendi kanitidir. Faz ajani buraya kendi kapisinin
+# NEREDEN bozulacagini yazar. Mutasyonun ADINI ve beklenen sonucu SECEMEZ:
+# zorunlu isimler GECE/mutasyon.sh icinde sabittir.
+#
+# BOS SATIR = O FAZ KAPANAMAZ. Kapisi olmayan bir faz yesil basamaz.
+#
+# Format (alanlar TAB ile ayrilir, bosluk degil):
+#   FAZ <TAB> mutasyon_adi <TAB> kapi_testi <TAB> bozma_komutu
+#
+# bozma_komutu repo kokunden bash ile calisir ve OLCULEN NESNEYI bozar.
+# engine/tests/, GECE/kapi.sh, GECE/mutasyon.sh'e dokunan komut REDDEDILIR.
+# Hicbir seyi degistirmeyen komut ("sahte knob") REDDEDILIR.
+#
+# Fazlarin zorunlu mutasyon isimleri:
+#   F1  flat-olcek-1.1
+#   F2  primitif-sil
+#   F3  omuz-6mm
+#   F4  kenar-arti-5mm · centik-kaydir · panel-sil · kalip-olcek-1.1
+#   F5  kol-kapak-arti-5mm
+#   F6  kumas-sinifi-degistir
+#   F7  uzak-panel-oynat
+#
+# Ornek (SAHTE, kopyalama -- dosya ve test adlari bu repoda henuz yok):
+#   F3	omuz-6mm	flat_convention_check	sed -i '' 's/shoulderY: 412/shoulderY: 418/' engine/flat-engine/croquis.mjs
+#
+# --- fazlar buraya yazar, asagisi bos ---
