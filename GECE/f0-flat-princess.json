@@ -1,0 +1,21 @@
+{
+  "style": "dress_princess_scoop_aline",
+  "unit": "SVG-user-unit",
+  "unitDeclared": false,
+  "viewBox": "0 0 940 680",
+  "bodyPaths": 2,
+  "centerAxis_x": 240,
+  "measures": {
+    "shoulder_half": 56.84,
+    "chest_half": 62.42,
+    "waist_half": 46.26,
+    "hem_half": 56.17,
+    "body_height": 314.91
+  },
+  "ratios": {
+    "hem_over_waist": 1.2141,
+    "chest_over_waist": 1.3493,
+    "shoulder_over_chest": 0.9106,
+    "length_over_chest": 2.5224
+  }
+}
