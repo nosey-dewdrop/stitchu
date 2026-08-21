@@ -56,7 +56,7 @@ for F in "${FAZLAR[@]}"; do
   claude -p "$ORTAK
 
 $BRIEF" \
-         --append-system-prompt "$(cat RULES.md; echo; cat GECE/KOSU.md)" \
+         --append-system-prompt "$(cat ENV.md; echo; cat RULES.md; echo; cat GECE/KOSU.md)" \
          --allowedTools "Bash,Read,Edit,Write,Grep,Glob" \
          --output-format stream-json --verbose \
          > GECE/log/$F.ajan.txt 2>&1

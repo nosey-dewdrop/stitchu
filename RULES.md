@@ -17,7 +17,7 @@ Agent/loop context = ENV.md + RULES.md ONLY. STRATEGY.md and full PROJECT.md are
    zero issues" as standing fact — name the tool/test that prints the number instead.
 7. "Bugs: none known" is banned. PROJECT.md keeps an OPEN SUSPICIONS list; if it is empty, nobody looked.
 8. Report only AFTER push, precisely (done vs not done). Blanket "done/bitti/ready" is banned.
-9. ctest must be fully green before any push; a change that breaks a test is reverted, not pushed.
+9. The inherited red SET (test NAMES, not the count) must not grow; a change that adds a new red name is reverted, not pushed, and both ctest logs go into the commit.
 10. Scope is decided by what is BEST, not by decree (Damla, 2026-07-27): she is human, errs and
     under-thinks — complete and improve her ideas. Her explicit vetoes stand; contradictions are
     surfaced honestly, then the best path is taken, not the most obedient one.
