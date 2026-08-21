@@ -13,7 +13,15 @@ ONCE=${2:?faz oncesi commit lazim}
 
 cd "$(dirname "$0")/.."
 ROOT=$(pwd)
-TMP=/tmp/stitchu-gece
+# TMP FIZIKSEL yol olmak ZORUNDA. macOS'ta /tmp -> /private/tmp bir symlink'tir ve
+# repodaki .mjs testleri "import.meta.url === pathToFileURL(argv[1])" deyimini
+# kullaniyor: import.meta.url gercek yolu (/private/tmp/...), argv[1] verilen yolu
+# (/tmp/...) verir, esitlik tutmaz, suit HIC KOSMAZ ve node 0 ile ciker.
+# Olculdu 2026-08-21: figure-lint.mjs gercek yoldan exit 1, /tmp symlink'inden
+# CIKTISIZ exit 0. Yani taban worktree'si gercekten daha YESIL gorunuyordu ve
+# K1 her faza sahte "yeni kirmizi: figure_check" basacakti. Kapinin kendisi
+# §2'nin yasakladigi vacuous-green'i uretiyordu.
+TMP=$(mkdir -p /tmp/stitchu-gece && cd /tmp/stitchu-gece && pwd -P)
 mkdir -p "$TMP" GECE/log
 
 RED=0
