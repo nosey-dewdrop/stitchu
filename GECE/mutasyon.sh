@@ -21,7 +21,8 @@ set -uo pipefail
 F=${1:?faz adi lazim (F1..F8)}
 cd "$(dirname "$0")/.."
 ROOT=$(pwd)
-TMP=/tmp/stitchu-gece
+# TMP fiziksel yol (kapi.sh'teki ayni symlink tuzagi -- /tmp -> /private/tmp).
+TMP=$(mkdir -p /tmp/stitchu-gece && cd /tmp/stitchu-gece && pwd -P)
 BUILD=$TMP/b-mut
 mkdir -p "$TMP" GECE/log
 MAN=GECE/mutasyon.tsv
@@ -42,8 +43,13 @@ case "$F" in
   *)  say "bu faz icin zorunlu mutasyon tanimli degil -- gecildi"; exit 0 ;;
 esac
 
-# --- calisma agaci temiz baslamali, yoksa geri alma guvenli degil
-BASLANGIC=$(git status --porcelain)
+# --- calisma agaci temiz baslamali, yoksa geri alma guvenli degil.
+# GECE/log HARIC: gece.sh bu script'in ciktisini GECE/log/$F.mutasyon.txt'ye
+# yonlendiriyor, yani dosya bu satir kosarken zaten VAR ve untracked. Haric
+# tutulmazsa mutasyon KENDI LOGU yuzunden her fazda duser -- 21 Agu'da F1
+# tam olarak boyle oldu (kapisi yesildi, mutasyon "agac kirli: ?? GECE/log/
+# F1.mutasyon.txt" deyip fazi kapatmadi).
+BASLANGIC=$(git status --porcelain -- . ':!GECE/log')
 if [ -n "$BASLANGIC" ]; then
   KIRMIZI "calisma agaci kirli, mutasyon guvenle geri alinamaz:"
   echo "$BASLANGIC" | head -20
@@ -94,7 +100,7 @@ while IFS=$'\t' read -r MF AD KAPI KOMUT <&3; do
 
   # 3) bicagi sapla
   bash -c "$KOMUT" >"$TMP/mut.$AD.komut.txt" 2>&1 </dev/null
-  DIFF=$(git status --porcelain)
+  DIFF=$(git status --porcelain -- . ':!GECE/log')
   if [ -z "$DIFF" ]; then
     KIRMIZI "$AD: bozma komutu HICBIR SEYI degistirmedi (sahte knob). Komut: $KOMUT"
     cat "$TMP/mut.$AD.komut.txt"
@@ -120,9 +126,9 @@ while IFS=$'\t' read -r MF AD KAPI KOMUT <&3; do
 
   # 5) geri al
   GERI_AL
-  if [ -n "$(git status --porcelain)" ]; then
+  if [ -n "$(git status --porcelain -- . ':!GECE/log')" ]; then
     KIRMIZI "$AD: mutasyon GERI ALINAMADI, agac hala kirli. Elle temizle."
-    git status --porcelain | head -10
+    git status --porcelain -- . ':!GECE/log' | head -10
     exit 1
   fi
 done 3< "$MAN"
@@ -137,7 +143,7 @@ done
 
 # --- son kontrol: agac temiz, muhur saglam
 derle >/dev/null 2>&1
-[ -n "$(git status --porcelain)" ] && { KIRMIZI "bitiste agac kirli"; git status --porcelain | head; }
+[ -n "$(git status --porcelain -- . ':!GECE/log')" ] && { KIRMIZI "bitiste agac kirli"; git status --porcelain -- . ':!GECE/log' | head; }
 [ -f GECE/kapi.sha ] && { sha256sum -c GECE/kapi.sha >/dev/null 2>&1 || KIRMIZI "bitiste kapi muhru kirik"; }
 
 trap - INT TERM

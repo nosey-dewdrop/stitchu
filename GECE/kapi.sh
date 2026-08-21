@@ -55,8 +55,15 @@ kur_ve_kos(){   # <kaynak_kok> <build_dir> -> kirmizi isimleri stdout'a
 # "before" olcumu ayri bir git worktree'de yapilir -- calisma agacina
 # DOKUNULMAZ. (stash/checkout gece yarisi ajanin isini yiyebilir.)
 WT=$TMP/wt-$F
-BONCE=$TMP/b-once-$(git rev-parse --short "$ONCE")
+# BONCE fazin ADIYLA anilir, sadece commit'le DEGIL. Sebep olculdu 21 Agu:
+# build dizini yalniz commit'le anilinca ikinci faz ayni dizini yeniden
+# yapilandirmaya calisiyor, ama CMake cache'i birinci fazin ARTIK SILINMIS
+# worktree yolunu tutuyor -> "source directory does not match" -> configure
+# patliyor -> K1 "before agaci DERLENMIYOR" diyor ve F2/F3/F4 hepsi bu
+# yalanci sebeple kirmizi dustu.
+BONCE=$TMP/b-once-$F-$(git rev-parse --short "$ONCE")
 BNOW=$TMP/b-now-$F
+rm -rf "$BONCE"
 
 git worktree remove --force "$WT" >/dev/null 2>&1
 if ! git worktree add --detach -f "$WT" "$ONCE" >"$TMP/$F.worktree.log" 2>&1; then
@@ -103,7 +110,12 @@ fi
 # ============================================================== K2
 # Vacuous test kapani: fazin EKLEDIGI her yeni test, faz oncesi commit'te
 # kirmizi dusmus olmali (§2.2-4). Dusmuyorsa hicbir hukum kosmuyordur.
-YENI_TESTLER=$(git diff --name-only --diff-filter=A "$ONCE" -- 'engine/tests/*')
+# DIKKAT: kapi, gece.sh'in commit'inden ONCE kosar, yani fazin ekledigi test
+# hala UNTRACKED'dir ve `git diff` onu GORMEZ. 21 Agu'da F1 213 satirlik yeni
+# bir test ekledi, K2 "faz yeni test eklememis" dedi: vacuous-test kapani
+# yapisal olarak OLUYDU. Untracked olanlar da sayilir.
+YENI_TESTLER=$( { git diff --name-only --diff-filter=A "$ONCE" -- 'engine/tests/*'
+                  git ls-files --others --exclude-standard -- 'engine/tests/*'; } | sort -u )
 if [ -n "$YENI_TESTLER" ]; then
   for P in $YENI_TESTLER; do
     T=$(basename "$P"); T=${T%%.*}
