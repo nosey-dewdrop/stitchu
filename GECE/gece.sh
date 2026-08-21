@@ -17,10 +17,14 @@ if ! sha256sum -c GECE/kapi.sha; then
   echo "KAPI MUHRU KIRIK -- kosu baslamadi. GECE/kapi.sh ya da GECE/mutasyon.sh degismis."
   exit 1
 fi
-# --- kirli agacla gece baslamaz: neyin ajandan geldigi ayirt edilemez
-if [ -n "$(git status --porcelain)" ]; then
+# --- kirli agacla gece baslamaz: neyin ajandan geldigi ayirt edilemez.
+# GECE/log/ haric tutulur -- bu dosyanin kendi ciktisi oraya yaziliyor, yani
+# kendi logu yuzunden kendini bloke ederdi. Log yine de commit'e girer (§0.6:
+# iki ctest logu kanit olarak kapidan gecer), sadece TEMIZLIK sartinda sayilmaz.
+KIRLI=$(git status --porcelain -- . ':!GECE/log')
+if [ -n "$KIRLI" ]; then
   echo "CALISMA AGACI KIRLI -- kosu baslamadi. Once commit et ya da temizle."
-  git status --porcelain | head -20
+  echo "$KIRLI" | head -20
   exit 1
 fi
 
