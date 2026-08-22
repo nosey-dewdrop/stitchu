@@ -508,3 +508,26 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
 
 ⚠ **KAPI BOYANMADI — KALAN DELİK İLAN EDİLİYOR:** yolu komut satırında **geçirmeyen** bir çağrı (`node /tmp/fix.mjs`) hiçbir regex'le yakalanamaz, çünkü yol script'in İÇİNDE. Onu tutan tek şey (2)'deki ratchet'tir ve ratchet bir **yeniden-üretilebilirlik kanıtı DEĞİL**: üreteçleri koşturmuyor. Koşturamaz da — **altı üreteçten dördü bugün koşamıyor** (K16, ENOENT). K16 kararı verilip veri dönerse bu kapı *"üreteci koştur → bayt-özdeş mi"* seviyesine **yükseltilmelidir**; bugünkü ratchet dürüstçe elde olan, ve öncekinin yerini aldığı şey **hiçbir şeydi**.
 **Damla'dan istenen: yok.** Bilmen gereken tek şey şu: bu koşuda bir ajan bir kuralın etrafından dolaştı, bunu sakladı değil söyledi, ve kural artık o yoldan da kapalı.
+
+## 22 AĞU — v3 GECE KOŞUSU AÇILIŞINDA ÇIKAN KARARLAR
+
+- **[KARAR ALINDI] Landing elle yazılır.** v3 taslağı "web/index.html gen-landing.js'den
+  üretilir" diyordu; ölçüldü, yanlış: gen-landing.js index.html üretmiyor (stdout'a SVG
+  parçalarından JSON basıyor), ratchet manifestinde 57 yol var ve index.html onlardan biri
+  değil, rabadon guard onu allow listesinde tutuyor ("root pages are hand-written", 28 Tem).
+  Damla hükmü: **elle düzenlenir.** `GECE-KOSUSU.md` §0.15 ve F10 buna göre düzeltildi.
+- **[AÇIK] Kota.** v2 koşusu 4 faz × 2 oturum = 8 oturumdu. v3 en fazla 12 faz × 3 oturum
+  (şef+hakem+kâtip) = 36 oturum, artı faz başına 2–6 işçi → **60–100 oturum.** Önceki hesap
+  21 Ağu'da %90'daydı (sıfırlanma 24 Ağu 11:00). Koşu kotaya takılırsa `gece.sh` fazı
+  "koşmadı" sayar, bir kez tekrar dener, sonra `GECE/STOP.md`'ye yazıp durur — kırmızı
+  saymaz. Uzatma (F6–F8) kalan süre 4 saatin altındaysa kendiliğinden atlanır.
+- **[AÇIK, v2'den devrediyor] `patterns_real/` kararı** — `contract_check` ve
+  `bugra_bridge_check` kırmızıları oradan. §0.10 gereği kapatılmaya ÇALIŞILMIYOR.
+- **[AÇIK, v2'den devrediyor] `stash@{0}` geri gelecek mi?** İçinde `devlog.md` ve
+  `linkedin.md` silinmiş duruyor; CLAUDE.md o ikisi için "DOKUNMA, dağıtım kanalı" diyor.
+  v3 §6.0 gereği bu koşu stash'e dokunmuyor.
+- **[AÇIK] Kapanma dili** — F5 lace-up/fermuar/düğme seçimini artık tek karara bağlamıyor,
+  araştırma kartından çıkan SEÇİM TABLOSUYLA hesaplıyor. Tablo `knowledge/kapanma-<tarih>.md`
+  olarak çıkınca bakmak istersen orada.
+- **[AÇIK] Zevk panosu** — F4 konvansiyon kapısını geçen flat'ler `~/Desktop/gece-zevk-panosu/`
+  altına ESKİ|YENİ yan yana basılacak. Hakemi sensin, koşu bloke olmuyor.

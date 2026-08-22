@@ -1,15 +1,27 @@
-# KOŞU — 2026-08-21
+# KOŞU — 2026-08-22 (v3)
 
 ## ŞU AN
-faz: **F1 açıldı (21 Ağu)** · durum: harness mühürlü, ağaç temiz, taban ölçülü, `gece.sh` koşuyor · son yeşil commit: **YOK**
+faz: **F0 açılıyor (22 Ağu, v3)** · durum: kapı commit'i atıldı (`35b000b`), harness v3'e taşındı,
+üç kapı KOŞTURULARAK kanıtlandı · son yeşil commit: **YOK**
 (devralınan taban: **ctest 89/96 — 7 kırmızı**, aşağıda isim isim. §0.6 gereği ölçü sayı değil **isim kümesi**.)
+
+> **v3 SIFIRINI KENDİ KOYAR.** Aşağıdaki "F0 ✓" satırı **21 Ağu'nun v2 koşusuna aittir,
+> BU KOŞUDA GEÇERLİ DEĞİLDİR.** v3 F0 her sayıyı YENİDEN ÖLÇER, okumaz (§0.1). Bu dosyadaki
+> hiçbir sayı, F0'ın yeniden ölçümüyle teyit edilmeden sonraki faza devredilemez.
+
+## KAPI COMMIT'İ — KOŞTURULARAK KANITLANDI (22 Ağu, `35b000b`)
+- **K8 (kâtip)** üç yönden ateşledi: docs commit'i YOKken kırmızı · doğru dokümanla yeşil
+  (`4dc8dc6`) · aynı commit `engine/tools/gen-landing.js`'e dokununca yine kırmızı.
+- **K9 (ratchet)** mutasyonla kanıtlandı: `web/robots.txt`'ye tek satır eklenince
+  `generated_ratchet_check` kırmızıya döndü, ağaç geri alındı. Log: `GECE/log/F0.mutasyon-kanit.txt`.
+- **Alt-ajan mimarisi** uçtan uca koşturuldu: `claude -p` → `Agent` → `isci-motor` → Bash çalıştı.
 
 ## HAT VARSAYIMI
 ürün hattı = `garment` · yüzey (`surfacepattern`) = henüz sevk edilmiyor   [Damla varsayılanı, geri alınabilir]
 Dayanağı §4.6: `engine/wasm/bindings.cpp` → `garment.hpp`; aynı dosyada "surfacepattern" **0 kez** geçiyor.
 
-## KAPANMIŞ FAZLAR
-F0 ✓ Damar %0, flat kalıptan türemiyor ve kontrat bunu zaten beyan etmiş -> `GECE/F0.md` (kapı tutanağı: `GECE/KAPI.md`)
+## KAPANMIŞ FAZLAR (v3 koşusunda: HENÜZ YOK)
+~~F0 ✓ Damar %0 …~~ **v2'nin (21 Ağu) satırı — v3'te kapanmış faz sayılmaz, F0 yeniden koşar.**
 
 ## AÇIK KIRMIZILAR (ne · nerede · ölçülen sayı)
 - ctest devralınan kırmızı · **7/96 FAIL** · isimler `GECE/log/F0.red.before` dosyasında,
