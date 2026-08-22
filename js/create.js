@@ -663,7 +663,10 @@ function showSpec() {
         // Sebep: dürüstlük katmanının "çizdim mi" bayrakları ürün yolunda burada,
         // ölçüm yolunda bir kopyada duruyordu; kopya sürüklenirse missing.js alıcıya
         // motorun çizebildiğini "çizemedim" der. Tek gerçek kaynağı artık orası.
-        spec.seen = buildSeenRecord(spec, seen);
+        // `ratiosMeasured` BURADA açıkça yazılı kalır: photo_ratio_wire_check
+        // ölçüm tanığının ÜRÜN yolunda görünür olmasını şart koşuyor, ve kapı
+        // gevşetilmedi. Değeri buildSeenRecord'unkiyle birebir aynı ifade.
+        spec.seen = { ...buildSeenRecord(spec, seen), ratiosMeasured: seen.ratiosMeasured === true };
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
