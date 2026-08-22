@@ -1,0 +1,42 @@
+[F2] K1 ortam: engine/.venv-dxf -> gercek agactan baglandi
+[F2] K1 ortam: engine/dist -> gercek agactan baglandi
+[F2] K1 ortam: engine/pattern-bridge/.venv -> gercek agactan baglandi
+[F2] K1 ortam: engine/tools/node_modules -> gercek agactan baglandi
+[F2] K1 ortam: core/third_party -> gercek agactan baglandi
+[F2] K1 KIRMIZI -- before agaci DERLENMIYOR (__CMAKE_PATLADI__)
+[ 92%] Linking CXX executable drape-preview
+[ 92%] Built target recipe-json-dump
+[ 92%] Built target waistfold-probe
+[ 92%] Built target drape-preview
+[ 92%] Linking CXX executable drape_check
+[ 93%] Linking CXX executable golden_dump
+[ 93%] Built target drape_check
+[ 93%] Built target golden_dump
+[ 93%] Linking CXX executable nest_check
+[ 94%] Linking CXX executable wearability_check
+[ 94%] Built target nest_check
+[ 94%] Built target wearability_check
+[ 95%] Linking CXX executable tech-pack
+[ 95%] Linking CXX executable recipe_check
+[ 96%] Linking CXX executable yoke_check
+[ 96%] Built target tech-pack
+[ 97%] Linking CXX executable roundtrip_check
+[ 97%] Built target recipe_check
+[ 97%] Built target yoke_check
+[ 97%] Built target roundtrip_check
+[ 98%] Linking CXX executable engine_check
+[ 98%] Built target engine_check
+[ 98%] Linking CXX executable recipe_dress_check
+[ 99%] Linking CXX executable sewable_census
+[ 99%] Built target recipe_dress_check
+[ 99%] Built target sewable_census
+[100%] Linking CXX executable surface-pattern
+[100%] Built target surface-pattern
+[100%] Linking CXX executable compose_check
+[100%] Built target compose_check
+[F2] K2 bilgi -- faz yeni test eklememis
+[F2] K3 KIRMIZI -- GECE/F2.md yok
+[F2] K4 bilgi -- mevcut kaynak dosyasi degismemis
+[F2] K6 tamam -- var olan testlerin hicbiri degismemis
+[F2] K7 tamam -- yasakli dosya butun olarak acilmamis
+[F2] KAPI KIRMIZI

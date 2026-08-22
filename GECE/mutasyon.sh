@@ -18,7 +18,7 @@
 #   F3	omuz-6mm	flat_convention_check	sed -i '' 's/SHOULDER_Y = 412/SHOULDER_Y = 418/' engine/flat-engine/croquis.mjs
 set -uo pipefail
 
-F=${1:?faz adi lazim (F1..F8)}
+F=${1:?faz adi lazim (F0..F11)}
 cd "$(dirname "$0")/.."
 ROOT=$(pwd)
 # TMP fiziksel yol (kapi.sh'teki ayni symlink tuzagi -- /tmp -> /private/tmp).
@@ -32,14 +32,25 @@ RED=0
 KIRMIZI(){ say "MUTASYON DUSTU -- $*"; RED=1; }
 
 # --- her fazin ZORUNLU mutasyonlari (§2.3). Ajan bu listeyi degistiremez.
+#
+# v3 NUMARALANDIRMASI (22 Agu). v2'nin fazlari v3'te BIR KAYDI: v2 F1..F7 =
+# v3 F2..F8. Bu case blogu v2 numaralariyla kalsaydi her faz YANLIS mutasyonu
+# zorunlu tutardi -- ornek: v3 F3 (sozluk reformu) "omuz-6mm" isterdi, ki o
+# flat konvansiyonunun bicagi. Sonuc: her faz "zorunlu mutasyon YOK" diye
+# duserdi ve gece hicbir fazi kapatamazdi. Olculdu, kaydirildi.
+#
+# F1 (dunya taramasi) ve F11 (rapor) kod yazmaz, kapi kurmaz -> mutasyonu yok.
 case "$F" in
-  F1) ZORUNLU="flat-olcek-1.1" ;;
-  F2) ZORUNLU="primitif-sil" ;;
-  F3) ZORUNLU="omuz-6mm" ;;
-  F4) ZORUNLU="kenar-arti-5mm centik-kaydir panel-sil kalip-olcek-1.1" ;;
-  F5) ZORUNLU="kol-kapak-arti-5mm" ;;
-  F6) ZORUNLU="kumas-sinifi-degistir" ;;
-  F7) ZORUNLU="uzak-panel-oynat" ;;
+  F0)  ZORUNLU="uretilmis-dosya-elle" ;;                                   # K9 ratchet
+  F2)  ZORUNLU="flat-olcek-1.1 kalip-olcek-1.1" ;;                         # flat_pattern_agree_check
+  F3)  ZORUNLU="primitif-sil" ;;                                           # preset_resolve_check
+  F4)  ZORUNLU="omuz-6mm" ;;                                               # flat_convention_check
+  F5)  ZORUNLU="kenar-arti-5mm centik-kaydir panel-sil" ;;                 # sewability_check
+  F6)  ZORUNLU="kol-kapak-arti-5mm" ;;                                     # kol kapisi
+  F7)  ZORUNLU="kumas-sinifi-degistir" ;;                                  # fabric_ease_check
+  F8)  ZORUNLU="uzak-panel-oynat" ;;                                       # edit_locality_check
+  F9)  ZORUNLU="docs-duran-iddia" ;;                                       # docs_truth_check
+  F10) ZORUNLU="landing-yalan" ;;                                          # landing_truth_check
   *)  say "bu faz icin zorunlu mutasyon tanimli degil -- gecildi"; exit 0 ;;
 esac
 
@@ -58,7 +69,7 @@ fi
 
 GERI_AL(){
   git checkout -- . >/dev/null 2>&1
-  git clean -fdq -- engine contract web knowledge >/dev/null 2>&1
+  git clean -fdq -- engine contract web knowledge docs vision-student >/dev/null 2>&1
 }
 trap 'say "kesildi -- geri aliniyor"; GERI_AL' INT TERM
 

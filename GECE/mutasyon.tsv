@@ -14,15 +14,22 @@
 # Hicbir seyi degistirmeyen komut ("sahte knob") REDDEDILIR.
 #
 # Fazlarin zorunlu mutasyon isimleri:
-#   F1  flat-olcek-1.1
-#   F2  primitif-sil
-#   F3  omuz-6mm
-#   F4  kenar-arti-5mm · centik-kaydir · panel-sil · kalip-olcek-1.1
-#   F5  kol-kapak-arti-5mm
-#   F6  kumas-sinifi-degistir
-#   F7  uzak-panel-oynat
+#   F0   uretilmis-dosya-elle                      -> generated_ratchet_check (K9)
+#   F2   flat-olcek-1.1 · kalip-olcek-1.1          -> flat_pattern_agree_check
+#   F3   primitif-sil                              -> preset_resolve_check
+#   F4   omuz-6mm                                  -> flat_convention_check
+#   F5   kenar-arti-5mm · centik-kaydir · panel-sil -> sewability_check
+#   F6   kol-kapak-arti-5mm
+#   F7   kumas-sinifi-degistir                     -> fabric_ease_check
+#   F8   uzak-panel-oynat                          -> edit_locality_check
+#   F9   docs-duran-iddia                          -> docs_truth_check
+#   F10  landing-yalan                             -> landing_truth_check
+#
+# (22 Agu: numaralar v3'e kaydirildi. v2 F1..F7 = v3 F2..F8.
+#  F1 dunya taramasi ve F11 rapor kod yazmaz -> mutasyonu yok.)
 #
 # Ornek (SAHTE, kopyalama -- dosya ve test adlari bu repoda henuz yok):
 #   F3	omuz-6mm	flat_convention_check	sed -i '' 's/shoulderY: 412/shoulderY: 418/' engine/flat-engine/croquis.mjs
 #
 # --- fazlar buraya yazar, asagisi bos ---
+F0	uretilmis-dosya-elle	generated_ratchet_check	printf '\n# mutasyon\n' >> web/robots.txt

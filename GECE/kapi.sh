@@ -8,8 +8,14 @@
 # Bir fazin ajani bu dosyaya dokunamaz (K5).
 set -uo pipefail
 
-F=${1:?faz adi lazim (F1..F8)}
+F=${1:?faz adi lazim (F0..F11)}
 ONCE=${2:?faz oncesi commit lazim}
+# MOD: "tam" (varsayilan) -> K1..K7 + K9, gece.sh'in COMMIT'inden ONCE kosar.
+#      "katip"            -> yalnizca K8, katip oturumu ve commit'inden SONRA.
+# Neden iki mod: K8 bir COMMIT'in varligini olcuyor, ama kapi.sh gece.sh'in
+# commit adimindan once cagriliyor. Tek modda K8 her zaman kirmizi olurdu --
+# yani hicbir sey olcmeyen, yapisal olarak yalanci bir kapi.
+MOD=${3:-tam}
 
 cd "$(dirname "$0")/.."
 ROOT=$(pwd)
@@ -49,6 +55,39 @@ kur_ve_kos(){   # <kaynak_kok> <build_dir> -> kirmizi isimleri stdout'a
     || { echo "__BUILD_PATLADI__"; return; }
   kirmizilar "$B"
 }
+
+# ============================================================== K8 (MOD=katip)
+# Katip kapisi (§3.1-5). Faz ancak dokumani da tasidiysa kapanir: o fazda
+# docs/ | README.md | GECE/INDEX.md dokunan ve mesaji "docs(F#):" ile baslayan
+# bir commit YOKSA faz KAPANMAMISTIR.
+#
+# Ayrica katip KODA DOKUNAMAZ (§1). Bu mekanik olarak olculur: katip commit'i
+# engine/ contract/ web/ altinda tek dosya degistirmisse kapi kirmizidir.
+# Boylece "katip" adi altinda kod tasiyan bir commit kapiyi acamaz.
+if [ "$MOD" = "katip" ]; then
+  KATIP=$(git log --format='%H %s' "$ONCE"..HEAD | grep -E "^[0-9a-f]+ docs\($F\):" | cut -d' ' -f1)
+  if [ -z "$KATIP" ]; then
+    kirmizi "K8 KIRMIZI -- 'docs($F):' ile baslayan katip commit'i YOK. Faz kapanmadi."
+    say "K8 bilgi -- $ONCE..HEAD arasindaki commit'ler:"
+    git log --format='  %h %s' "$ONCE"..HEAD | head -10
+  else
+    for C in $KATIP; do
+      DOSYA=$(git show --name-only --format= "$C")
+      if ! echo "$DOSYA" | grep -qE '^(docs/|README\.md$|GECE/INDEX\.md$)'; then
+        kirmizi "K8 KIRMIZI -- $(git log -1 --format=%h "$C") katip commit'i docs/README/INDEX'e hic dokunmamis:"
+        echo "$DOSYA" | head -10
+      fi
+      KOD=$(echo "$DOSYA" | grep -E '^(engine/|contract/|web/|flatten-research/|vision-student/)' || true)
+      if [ -n "$KOD" ]; then
+        kirmizi "K8 KIRMIZI -- katip commit'i KODA dokunmus (§1: katip koda dokunmaz):"
+        echo "$KOD" | head -10
+      fi
+      [ $RED -eq 0 ] && say "K8 tamam -- katip commit'i $(git log -1 --format=%h "$C"), yalniz dokuman"
+    done
+  fi
+  if [ $RED -eq 0 ]; then say "KATIP KAPISI YESIL"; else say "KATIP KAPISI KIRMIZI"; fi
+  exit $RED
+fi
 
 # ============================================================== K1
 # Devralinan kirmizi KUMESI degismedi mi (§0.6).
@@ -193,6 +232,24 @@ if [ -f "$LOG" ]; then
   fi
 else
   say "K7 bilgi -- ajan logu yok, context hijyeni olculemedi"
+fi
+
+# ============================================================== K9
+# Uretilmis-dosya ratchet'i (§0.15). K1 yalnizca kirmizi KUMESININ buyumedigine
+# bakar; generated_ratchet_check zaten kirmizi olsaydi K1 sesini cikarmazdi.
+# K9 mutlak konusur: bu test YESIL olmak zorunda. Bir uretilmis dosyanin
+# baytlari, ilan edilmis sha256'si AYNI commit'te degismeden oynadiysa faz kapanmaz.
+#
+# Kaynak zaten olculmus dosya (K1'in ctest kosusu) -- ikinci kez derlemiyoruz.
+if [ -f GECE/log/$F.red.after ]; then
+  if grep -qx 'generated_ratchet_check' GECE/log/$F.red.after; then
+    kirmizi "K9 KIRMIZI -- generated_ratchet_check KIRMIZI: uretilmis dosya elle oynamis (§0.15)"
+    say "K9 bilgi -- duzeltme: ureteci kostur, sonra engine/tests/generated_ratchet_check.sh --accept, sha AYNI commit'te"
+  else
+    say "K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor"
+  fi
+else
+  kirmizi "K9 KIRMIZI -- GECE/log/$F.red.after yok, ratchet olculemedi (K1 kosmamis)"
 fi
 
 # ==============================================================

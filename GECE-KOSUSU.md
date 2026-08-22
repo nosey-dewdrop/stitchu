@@ -1,664 +1,579 @@
-# GECE KOŞUSU — stitchu · TEK DOSYA
+# STITCHU GECE KOŞUSU v3 — şef/işçi/hakem/kâtip mimarisiyle fazlı koşu protokolü
 
-Bu dosya bir oturum brief'i **değil**, bir **koşu protokolüdür**.
-Baştan sona tek context'te okunmaz. Her faz kendi context'inde açılır, kendi
-kapısından geçer, kapanır.
+Bu dosya bir oturum brief'i değil, bir koşu protokolüdür. Tek context'te baştan
+sona okunmaz: her faz kendi context'inde açılır, kendi kapısından geçer, kapanır.
+Koşu kendi sıfırını kendisi koyar — hiçbir eski beyan, rapor veya "kapandı"
+cümlesi bu koşuda geçerli değildir; her sayı bu gece yeniden ölçülür.
+**İstisna (v3):** `GECE/gece.sh` · `GECE/kapi.sh` · `GECE/mutasyon.sh` ve
+`GECE/kapi.sha` mühürü ölçülerek kurulmuş harness'tır; sıfırlanmaz, genişletilir (§3.0).
 
-> **Bu dosyayı okuyan ilk ajana:** §0, §1, §2'yi oku. Sonra §4'ü (F0 sicili) oku.
-> Sonra **sadece sana verilen fazın** §5'teki bölümünü oku. Diğer fazları açma.
+> **Bu dosyayı okuyan ilk ajana:** §0, §1, §2, §3'ü oku. Sonra SADECE sana
+> verilen fazın `<!--FAZ:F#-->` bloğunu oku. Diğer fazları AÇMA.
 
----
-
-# §0 — DEĞİŞMEZLER
-
-1. **Otorite sırası:** `HEDEF.md` > `ANAYASA.md` > `RULES.md` > diğer her şey.
-   Çelişki tek karar commit'iyle kapanır, çelişen satır **silinir**. İki doğru bırakılmaz.
-   Arşiv dosyaları (`reports/`, `Logs/`, `NABIZ.md`, eski `DEVAM-*`) **otorite değildir**
-   ve iş sırası dayatamaz. Bir cümleyi bir otorite dosyasına atfetmeden önce
-   `grep` ile o dosyada olduğunu doğrula. (F0'da bu bir kez yanlış yapıldı, §4.7.)
-
-2. **Kanıt = dosya yolu.** "Baktım", "doğru görünüyor", "çalışıyor" yasak.
-   Bir adım ancak ürettiği dosyanın yolu raporda geçiyorsa yapılmıştır.
-
-3. **Sessiz ikame yasak.** İstenen değer sicilde `shipped` değilse spec **reddedilir**
-   ve red cümlesi **eksik operatörü adıyla söyler**. Fallback = halüsinasyon.
-
-4. **Hata bulmak iş değil, çözümünü tasarlamak iştir.** Kırmızı raporunun şekli §2.4'te.
-   "Burada sorun var" tek başına çıktı sayılmaz.
-
-5. **Kapsamı en iyi olan belirler, en itaatkâr olan değil.** Damla'nın açık vetosu
-   kalıcıdır; geri kalanda çelişkiyi dürüstçe önüne koy, sonra en iyi yolu seç.
-
-6. **Push kuralı — devralınan kırmızı istisnası.**
-   Kural: yeni kırmızı doğuran değişiklik geri alınır, push edilmez.
-   İstisna: faz öncesi ve sonrası kırmızı **kümesi birebir aynıysa** (isim isim,
-   sayı değil) push serbesttir. Şart: **iki ctest logu da commit'e girer.**
-   İtiraf yeterli değil, kanıt kapıdan geçer (`kapi.sh` K1).
-
-7. **Buğra bir referanstır, kural değildir.** Hiçbir kapı "Buğra'ya benziyor mu"
-   diye sormaz. Kapılar geometri, dikilebilirlik ve zevk üzerinden kurulur.
-
-8. **Ürün hattı kararı (Damla, geri alınabilir varsayılan):**
-   > **Ürün hattı = `garment`** — tarayıcıya giden hat (`engine/wasm/bindings.cpp`
-   > `garment.hpp` include ediyor). Damarın 14 bileşeni orada yazılı.
-   > **Yüzey hattı (`surfacepattern`) = "henüz sevk edilmiyor"** — ölü değil, DAR.
-   > Uzun vadede sınırsız sözlüğü mümkün kılan tek hat o; bugün ürün değil.
-   >
-   > Bu varsayıma dayanan her iş `GECE/KOSU.md`'de **etiketlenir**
-   > (`[HAT-VARSAYIM]`). Etiketsiz iş yapmak yasak — sabah karar tersine dönerse
-   > etiketli işler tek tek geri alınabilir olmalı.
+v3'te v2'ye göre değişen: §1 (işçi mekaniği Claude Code'a bağlandı), §2 (harness
+arşivlenmez; FAZ işaretleri), §3.0 (K8 kâtip kapısı + kapı commit'i), F0 (test
+envanteri + hat varsayımı), F2/F5/F6 (mevcut testler üstüne kurulur), F10
+(landing üreteçten çıkar, elle HTML yok), §6 (açılış repo'nun 21 Ağu hâline göre).
 
 ---
 
-# §1 — CONTEXT HİJYENİ
+# §0 DEĞİŞMEZLER (her şef ve her işçi oturumunun başında okunur, atlanmaz)
 
-Bu koşu 8–14 saat sürecek. Tek context'te yürümez.
-**Her faz ayrı bir ajan sürecidir.** Süreç ölünce context yok olur.
-Aralarında geçen tek şey **diskteki dosyalar**.
+0.1 Otorite sırası: HEDEF.md > ANAYASA.md > RULES.md > bu dosya > diğer her şey.
+Çelişki tek karar commit'iyle kapanır; çelişen satır silinir. İki doğru bırakılmaz.
+Arşiv dosyaları (`reports/`, `Logs/`, `docs/archive/`, `GECE/arsiv/`,
+`gece/*-reddedildi` dalları, HEDEF.md'nin TUR bölümleri, eski PDF/tutanaklar)
+OTORİTE DEĞİLDİR ve GİRDİ DE DEĞİLDİR: hiçbir oturuma okunmaz, hiçbir
+iddia oradan devralınmaz, hiçbir sayı "daha önce ölçülmüştü" diye alınmaz.
+Bu koşuda geçerli tek kanıt, bu koşuda üretilen dosya yoludur. Bir cümleyi bir
+otorite dosyasına atfetmeden önce `grep` ile doğrula.
+0.2 Kanıt = dosya yolu. "Baktım / doğru görünüyor / çalışıyor" yasak. Bir adım
+ancak ürettiği dosyanın yolu raporda geçiyorsa yapılmıştır.
+0.3 Sessiz ikame yasak. İstenen operatör sicilde shipped değilse spec reddedilir
+ve red cümlesi eksik operatörü ADIYLA söyler. Fallback = halüsinasyon.
+0.4 Hata bulmak iş değil, çözümünü tasarlamak iştir. Her kırmızı rapor yanında
+en az bir ÖLÇÜLMÜŞ çözüm adayı taşır; ölçülüp reddedilen hamle de kayda geçer.
+0.5 Kapsamı en iyi olan belirler, en itaatkâr olan değil. Damla'nın açık vetoları
+kalıcıdır; geri kalanda çelişki dürüstçe önüne konur, sonra en iyi yol seçilir.
+0.6 Kırmızı test KÜMESİ (adlar, sayı değil) koşu boyunca büyüyemez. Taban:
+`GECE/log/F0.red.before` (7 ad: bugra_bridge_check · contract_check · figure_check ·
+h10_gate_check · preview_truth_check · sizechart_source_check · style_check).
+Yeni kırmızı ad doğuran değişiklik geri alınır; iki ctest logu commit'e girer.
+0.7 Buğra bir referanstır, kural değildir. Hiçbir kapı "Buğra'ya benziyor mu"
+diye kurulmaz; kapılar geometri, dikilebilirlik ve konvansiyon üzerinden kurulur.
+0.8 Dünya ölçüsü tabandır, tavan değil. "Başkası yapmış, biz yapamayız" cümlesi
+yasaktır; başkası yaptıysa daha iyisi ve hızlısı hedeflenir (F1'in varlık sebebi).
+0.9 fal.ai / bulut görsel servis çağrısı YASAK (Damla vetosu, kalıcı). Yeni model
+ağırlığı indirme veya harici API anahtarı gerektiren her yol kendiliğinden
+kurulmaz, DAMLA-KUYRUK'a karar satırı olarak yazılır.
+0.10 patterns_real/ altındaki satın alınmış PDF'ler silinmez, taşınmaz, yeniden
+yayınlanmaz. Onlara bağlı kırmızılar (`bugra_bridge_check`, `contract_check`)
+"ilan edilmiş karar"dır, kapatılmaya çalışılmaz.
+0.11 Telifli görsel (Chanel/Bershka/emsal flat vb.) repoya İNDİRİLMEZ. Referans
+panoları link + özellik-dili tarifi olarak tutulur (bkz. F4).
+0.12 Kapıyı gevşeterek geçmek yasak. Tolerans değişikliği bir hamledir: ölçülür,
+gerekçesi yazılır, DAMLA-KUYRUK'a bildirilir. Sessizce yapılmaz.
+0.13 Rapor dili: virtüöz raporu yok. Cevaplanan soru "kesim çizgisi kaç mm" değil,
+"bu kalıp dikilir mi, bu flat Etsy'lik mi, bu sayfa ürünü anlatıyor mu".
+0.14 HAT VARSAYIMI (KOSU.md'den devralındı): ürün hattı = `garment`
+(`engine/wasm/bindings.cpp` → `garment.hpp`); `surfacepattern` sevk edilmiyor.
+Her faz bu hat üzerinde ölçer; surfacepattern'e yazılan iş `[HAT-VARSAYIM]` etiketi taşır.
+0.15 Üretilmiş dosya elle yazılmaz. `contract/generated-paths.sha256`'daki **57 yol**
+ÜRETEÇ değiştirilerek yenilenir ve sha aynı commit'te güncellenir
+(`generated_ratchet_check`, `--accept` ile). Etrafından dolaşan (`node /tmp/x.mjs`)
+işçi kovulur, işi reddedilir.
+**ÖLÇÜLDÜ 22 Ağu — v3 taslağının bu maddesi üç yerde yanlıştı, düzeltildi:**
+manifest 58 değil **57** yol; **`web/index.html` manifestte YOK**; ve
+`engine/tools/gen-landing.js` index.html ÜRETMİYOR (139 satır, stdout'a SVG
+parçalarından ibaret bir JSON basıyor). rabadon guard `web/index.html`'i
+`generated-web-html` kuralının **allow listesinde** tutuyor — kök sayfalar
+(index/create/closet/studio) 28 Tem'de BİLEREK "hand-written" ilan edildi.
+Yani `web/index.html` ELLE düzenlenir (Damla hükmü, 22 Ağu) ve bu §0.15'in
+istisnası değil, kapsamı dışıdır. Korunan 57 yol için kural aynen yürür.
 
-## Klasör
+---
+
+# §1 MİMARİ — dört rol, dört ayrı context
+
+Koşu 10–16 saat sürecek; tek context'te yürümez. Dört rol vardır ve hiçbiri
+diğerinin oturumunda yaşamaz.
+
+**ŞEF (faz başına 1):** `gece.sh`'in açtığı `claude -p` süreci. Her faz için taze
+bir oturum. Şef KOD YAZMAZ (Edit/Write yalnız `GECE/KART/` ve `GECE/F#.md` için;
+`engine/ contract/ web/` için Edit/Write şefe VERİLMEZ — allowedTools ile). İşi:
+görev kartlarına böler, işçileri `Agent` aracıyla salar, dönen tutanakları
+KOSU.md'ye işler, kapıyı çağırır, fazı kapatır ve ÖLÜR. Şef sonraki faza taşınmaz.
+
+**İŞÇİ (faz başına 2–6):** tek iş, tek context, tek görev kartı. Mekanik (v3):
+- İşçiler `.claude/agents/` altında tanımlı alt-ajanlardır: `isci-motor.md`
+  (Bash,Read,Edit,Write,Grep,Glob) · `isci-arastirma.md` (Read,Grep,Glob,WebSearch,
+  WebFetch,Write — yazma alanı yalnız `knowledge/`) · `isci-vitrin.md` (Read,Grep,
+  Glob,Bash(node engine/tools/site-health.mjs),Write — yalnız `GECE/`) ·
+  `hakem.md` (Read,Grep,Glob,Bash(git diff*),Bash(ctest*)) · `katip.md`
+  (Read,Grep,Glob,Edit,Write — yalnız `docs/ README.md GECE/INDEX.md`).
+- Her tanımda `maxTurns` = ORAKÇI (varsayılan 40; F2 çekirdek işçisi 80).
+  Tur bitti = kesildi: o ana kadarki iş commit'lenir, kalan iş yeni kart olur.
+- `gece.sh` şefi `CLAUDE_CODE_FORK_SUBAGENT=0` ile ve `Agent` aracı allowedTools'ta
+  olacak şekilde açar. Alt-ajanlar ÖN PLANDA çalıştırılır; arka plan alt-ajanın
+  araç listesini sessizce kırpar ve işçi Bash'siz kalır (ölçülmüş davranış, v2.1.198+).
+- İşçiye giren context SADECE: RULES.md + ENV.md + kendi kartı (≤80 satır) +
+  kartın adıyla saydığı kaynak dosyalar. Alt-ajana tek kanal `Agent` prompt'udur:
+  şef kartı ve dosya yollarını prompt'a yazar; "KOSU.md'ye bak" demez.
+  KOSU.md, HEDEF.md ve bu dosyanın tamamı işçiye girmez.
+- Aynı fazda aynı dosyaya TEK işçi yazar; çapraz kirlenme yasaktır.
+- İşçi raporundaki her ölçülen sayının yanına commit hash yazılır; işçi commit
+  ATMAZ, şef atar (tek el, tek mesaj dili: küçük harf İngilizce, co-author yok).
+- Paralellik kuralı: birbirini görmesi gereken işler (karar, sicil, birleştirme)
+  SIRALI; kapalı listeden dağıtılan işler PARALEL. Şef her kart setini önce
+  "sıralı mı paralel mi" diye etiketler — kuyruk kapalı değilse iş paralelleşmez.
+  Paralel işçi tavanı 4 (eşzamanlı alt-ajan limiti ve iki Max hesabı kotası).
+
+**HAKEM (kapı başına 1):** `gece.sh`'in ayrı `claude -p` ile açtığı temiz oturum,
+fazın brief'ini GÖRMEZ (`GECE/hakem-sorusu.md` zaten bunu yapıyor; korunur).
+Eline sadece fazın diff'i + fazın eklediği test + RULES.md verilir. Tek sorusu:
+"bu çıktı, geçtiğini iddia ettiği şeyi gerçekten yapıyor mu, yoksa testi geçmek
+için mi şekillendirilmiş?" Hakem hayır derse faz kapanmaz.
+
+**KÂTİP (faz kapanışı başına 1):** `gece.sh`'in açtığı üçüncü ayrı oturum. Eline
+sadece fazın tutanağı (`GECE/F#.md`) + o fazın `git diff <once>..HEAD` + `docs/`
+ağacı + README.md verilir. İşi: docs/, README.md ve GECE/INDEX.md'de o fazla
+bayatlayan her cümleyi bulmak; güncellemek ya da gerekçesiyle silmek. Kâtibin
+anayasası: docs'a "ALL PASS / 0.00mm / bitti / kapandı" gibi duran-iddia yazılmaz —
+sayıyı basan testin/aletin ADI yazılır. Kâtip koda, contract/'a, engine/'e
+DOKUNMAZ. Kâtibin commit'i faz kapısının K8'idir: o commit yoksa faz kapanmamıştır.
+
+**ARAŞTIRMA KARTI (her faz, v3):** F2–F8'in her biri kapı kurmadan ÖNCE bir
+`isci-arastirma` işçisi salar: fazın tek sorusu ("dünyada bu nasıl ölçülüyor /
+sektör standardı ne / hangi kaynak") + URL'li cevap →
+`knowledge/<konu>-<tarih>.md`. F1'in TEKNOLOJI dosyası bu kartın girdisidir,
+yerine geçmez. Kural: o faza ait knowledge dosyası yoksa kapı tasarlanamaz —
+araştırmasız tolerans, eşik veya sınıflandırma "gelişigüzel" sayılır ve K3'te
+düşer. Her kapının eşiği yanında kaynağı yazar (ör. "1/32" — kaynak: X").
+Araştırma işçisi kodu görmez, motor işçisi web görmez; ikisi aynı kartta olmaz.
+
+---
+
+# §2 CONTEXT HİJYENİ
 
 ```
 GECE/
-  KOSU.md          <= CANLI DURUM. ≤150 satır. HARD CAP. Eklemek için sil.
-  F0.md .. F8.md   <= faz tutanakları (uzun, serbest; canlı duruma girmez)
-  STOP.md          <= koşu durursa yazılır (yoksa dosya da yok)
-  kapi.sh          <= makine kapısı (MÜHÜRLÜ, sha256 GECE/kapi.sha'da)
-  mutasyon.sh      <= kapının kendi kanıtı (MÜHÜRLÜ)
-  mutasyon.tsv     <= faz basina mutasyon manifestosu (faza ait, muhurlu DEGIL)
-  gece.sh          <= dış döngü
-  hakem-sorusu.md  <= hakem oturumunun tek sorusu
-  log/             <= faz + kapı + hakem logları
+  KOSU.md      <= CANLI DURUM. ≤150 satır HARD CAP. Satır eklemek için satır sil.
+  INDEX.md     <= "şu soruyu sorarsan şu dosyaya bak" tablosu (kâtip günceller)
+  KART/        <= görev kartları (≤80 satır; işçinin tek girdisi)
+  F0.md...     <= faz tutanakları (uzun, serbest; canlı duruma girmez)
+  KAPI.md      <= kapı sonuçları
+  DAMLA-KUYRUK  -> repo kökündeki DAMLA-KUYRUK.md (tek kuyruk, ikincisi açılmaz)
+  log/         <= ajan, hakem, kâtip ve ctest kütükleri
+  gece.sh kapi.sh mutasyon.sh mutasyon.tsv kapi.sha hakem-sorusu.md  <= HARNESS
+  arsiv/       <= bu koşuya ait olmayan eski dosyalar
 ```
-
-## Her ajanın göreceği tek şey
-
-```
-RULES.md            (50 satır tavanlı)
-GECE/KOSU.md        (150 satır tavanlı — canlı durum)
-GECE-KOSUSU.md'nin §0 + §1 + §2 + §4 + o fazın §5 bölümü
-+ fazın kendi ADIYLA saydığı kaynak dosyalar
-```
-
-**Hiçbir faza girmeyecekler:** `HEDEF.md`, `DAMLA-KUYRUK.md`, `devlog.md`,
-`linkedin.md`, `ANAYASA.md`'nin envanter tabloları, `reports/`, `Logs/`.
-Gerekirse `grep` ile tek satır çekilir; dosya bütün olarak açılmaz.
-Bu öneri değil — `kapi.sh` ajan logunda bu dosyaların bütün okunduğunu görürse
-fazı kırmızı sayar.
-
-## KOSU.md şablonu
-
-```
-# KOŞU — <tarih>
-## ŞU AN
-faz: F#  ·  durum: <tek cümle>  ·  son yeşil commit: <hash>
-## HAT VARSAYIMI
-ürün hattı = garment · yüzey = henüz sevk edilmiyor   [Damla varsayılanı, geri alınabilir]
-## KAPANMIŞ FAZLAR
-F0 ✓ <tek satır sonuç> -> GECE/F0.md
-## AÇIK KIRMIZILAR (her satır: ne · nerede · ölçülen sayı)
-## BİR SONRAKİ FAZIN DEVRALDIĞI ÜÇ SAYI
-## [HAT-VARSAYIM] ETİKETLİ İŞLER
-## DAMLA'YA DÜŞEN (bloke etmez)
-```
+- Koşu başlarken GECE/ altında harness ve bu koşunun F0 çıktısı DIŞINDA kalan
+  dosya varsa `GECE/arsiv/`e taşınır ve hiçbir faza OKUNMAZ. `F0.md · KOSU.md ·
+  KAPI.md · INDEX.md · log/F0.*` bu koşunundur, kalır; içindeki sayılar F0'ın
+  yeniden-ölçümüyle TEYİT edilmeden sonraki faza devredilmez.
+- HEDEF.md'nin tamamı, DAMLA-KUYRUK.md'nin tamamı, devlog.md, linkedin.md,
+  STRATEGY.md, reports/, Logs/ hiçbir oturuma girmez; HEDEF'ten gerekirse
+  grep ile tek satır çekilir (TUR bölümlerinden asla).
+- Görev kartı şablonu: NE (tek cümle) · GİRDİ DOSYALARI (isim isim) · ÇIKTI
+  (dosya yolu + kapı adı) · ÖNCE GREP (hangi mevcut test/alet okunacak) ·
+  YASAKLAR (o karta özel) · SÜRE TAVANI (maxTurns).
+- KOSU.md şablonu: ŞU AN (faz + tek cümle durum + son yeşil commit) · HAT
+  VARSAYIMI · KAPANMIŞ FAZLAR (faz başına tek satır + tutanak yolu) · AÇIK
+  KIRMIZILAR (ne · nerede · ölçülen sayı) · SONRAKİ FAZIN DEVRALDIĞI ÜÇ SAYI ·
+  DAMLA'YA DÜŞEN (bloke etmez).
+- Faz brief'leri bu dosyada `<!--FAZ:F#-->` … `<!--FAZ-SON:F#-->` arasında durur;
+  `gece.sh` yalnız o bloğu + §0–§3'ü şefe verir.
 
 ---
 
-# §2 — KAPI YASASI: "yeşil" ne demek
+# §3 KAPI PROTOKOLÜ
 
-**`ctest` yeşil bir kapı DEĞİLDİR.** Ajan test dosyasını yazabiliyorsa, testin
-verdiği sayı ajanın kendi beyanıdır. Kurnazlıkların tamamı burada yaşar: eşiği
-gevşetmek · testi silmek · testi çıktıya göre seçmek · girdiyi kırpmak · hiçbir
-hüküm koşmayan test yazıp `0 FAIL` bastırmak.
+## 3.0 Harness (v3 — sıfırlanmaz, genişletilir)
+`GECE/kapi.sh` bugün K1–K7 koşturuyor (K1 ctest tabanı · K2 yeni test faz-öncesi
+kırmızı mı · K3 kanıt yolları · K4 eşik sabiti oynadı mı · K5 harness dokunulmazlığı
++ mühür · K6 mevcut teste dokunuldu mu · K7 context hijyeni). v3'ün ilk hamlesi TEK
+"kapı commit'i"dir: `kapi.sh`'a **K8 kâtip** (o fazda `docs/|README.md|GECE/INDEX.md`
+dokunan ve mesajı `docs(F#):` ile başlayan bir commit var mı) ve **K9 üretilmiş-dosya
+ratchet'i** (`generated_ratchet_check` yeşil mi) eklenir; `mutasyon.tsv`'ye K9'u kıran
+satır yazılır; mühür yenilenir; gerekçe commit mesajına. Sessiz kapı değişikliği yasak.
+`gece.sh`'e eklenen: `FAZLAR` dizisi v3 numaralarıyla; şef/hakem/kâtip için üç
+ayrı `claude -p` çağrısı; `--allowedTools`'a `Agent` ve araştırma fazı için
+`WebSearch,WebFetch`; `is_error:true` → "koşmadı", kırmızı değil (zaten var,
+korunur); `--bare` KULLANILMAZ (`.claude/agents/` okunmalı).
+`mutasyon.sh`'in ZORUNLU listesi v3 numaralarına kaydırılır (v2 F1..F7 = v3 F2..F8).
 
-**Bu repoda emsali var:** `test_seamdeed` sıfır kural koşarken yeşil basıyordu;
-`spec_census` 8 beden 2 panele çökerken dikişler korunduğu için yeşildi.
-Teorik risk değil, iki kez olmuş bir şey.
+**ÖLÇÜLDÜ 22 Ağu — v3 taslağının iki mekaniği bu sürümde YOK, gece.sh'a yazılmadı:**
+- `--max-turns` **yok** (kurulu sürüm 2.1.172; `claude --help`'te sadece
+  `--max-budget-usd` var). Yazsaydım `claude` flag'i reddederdi ve HER FAZ
+  "koşmadı" düşerdi. Şefin tur tavanı yok; işçilerin var (`maxTurns`, frontmatter).
+- `CLAUDE_CODE_FORK_SUBAGENT` dokümanda bulunamadı (UNVERIFIED). Zararsız
+  olduğu için set ediliyor, ama ona GÜVENİLMİYOR.
+- Doğrulanan (uçtan uca koşturuldu): alt-ajan aracının adı **`Agent`** (`Task` değil);
+  `.claude/agents/` `-p` modunda yükleniyor; alt-ajanın Bash'i çalışıyor;
+  `maxTurns` frontmatter alanı geçerli.
 
-## 2.1 KATMAN A — ARTEFAKT KAPISI (ajan yazamaz, çünkü test değil ÖLÇÜM)
-
-Kapı test dosyasına değil **üretilen nesnenin geometrisine** bakar.
-Ajan çıktıyı değiştirmeden bu sayıları oynatamaz.
-
-**A1 · Dikilebilirlik — KALIBIN kapısı** (flat bu teste TABİ DEĞİL)
-
-| ölçü | hüküm |
-|---|---|
-| dikiş çifti uzunluk eşitliği | her kenar çifti eşit, ya da beyan edilmiş yedirme oranıyla farklı · tol **0.79375mm** (1/32") |
-| çentik eşleşmesi | her çiftte çentikler aynı sırada, aynı yay uzunluğunda |
-| panel kapalılığı | kapalı · kendini kesmiyor · sıfır alanlı üçgen yok |
-| köşe açısı tutarlılığı | dikiş birleşimlerinde açı toplamı tutarlı (kırışık/körük kökü) |
-| **geçiş** | en dar halka gereken kesitten geçiyor mu; geçmiyorsa açıklık operatörü ZORUNLU ve red cümlesi onu adıyla söyler |
-| **durma** | strapless ise düşmeden duruyor mu (balensiz durmaz — geçiş sorusunun yerine bu geçer) |
-| **geri projeksiyon** | panelleri dikili varsay → 3B'ye sar → gövde yüzeyine otur → her noktada gerinim ölç |
-
-**A2 · Geri projeksiyon, kapının belkemiği.**
-İnsan vücudu hacimli bir cisim; kalıptan ne çıkacağı **hesaplanabilir**. Bu bir
-görüş değil, bir integral. Ajan bu sayıyı ancak **gerçekten daha iyi bir kalıp
-çizerek** düşürebilir — test dosyasına dokunarak düşüremez, çünkü sayı testten
-değil geometriden geliyor.
-Yarısı yazılı: `flatten-research/15-arap-proper.py` + `02-gore-flatten-strain.py`.
-
-**A3 · Satılabilirlik — FLAT'in kapısı** (dikilebilirlik testine tabi değil)
-Flat gerçek mankene göredir, kalıp insana göredir. Ölçülebilir kısım:
-tek croquis (omuz/göğüs/bel yüksekliği mm cinsinden eşit, ±2mm) · ölçek beyanı ·
-üç katman çizgi hiyerarşisi · sıfır gölge · ön+arka zorunlu.
-**Zevk kısmı bu kapıda değil** — Etsy hakemi Damla'dır (ANAYASA).
-
-**A4 · Damar yüzdesi.** ANAYASA'nın altı yumuşak primitifinden kaçı üretilebiliyor.
-Bugün **0**. Gece boyunca gerçekten ilerlenip ilerlenmediğinin tek sayılık özeti.
-
-## 2.2 KATMAN B — KAPININ KENDİSİ KİLİTLİ
-
-1. `GECE/kapi.sh`, `GECE/mutasyon.sh` ve `engine/tests/**` **diff'te geçerse faz
-   OTOMATİK KIRMIZI.** Ajan kapıya ve var olan teste dokunamaz.
-   Yeni test **ekleyebilir**, mevcut olanı değiştiremez/silemez.
-   Kapı script'lerinin sha256'sı `GECE/kapi.sha`'da; döngü her fazdan önce doğrular.
-2. **Tolerans/eşik sabiti diff'te oynamışsa KIRMIZI** — çıktı ne kadar iyi olursa
-   olsun. Tolerans oynatmak bir HAMLE'dir; gündüz ölçülür, gerekçesi yazılır,
-   Damla'ya sorulur. **Gece yapılmaz.**
-3. **Golden byte-identical.** Yeni özellik opt-in, varsayılan KAPALI.
-4. **Yeni test faz öncesi commit'te KIRMIZI düşmeli.** Düşmüyorsa boştur (vacuous).
-
-## 2.3 KATMAN C — MUTASYON: "bu kapı gerçekten bir şey ölçüyor mu"
-
-En önemli madde. Yeşil basmak, kapının çalıştığını **kanıtlamaz** — hiç koşmamış
-da olabilir.
-
-> Faz kapanmadan önce, kapının ölçtüğü şey **kasten bozulur** ve kapı
-> **kırmızıya dönmek zorundadır.** Dönmüyorsa kapı boştur, faz kapanmaz.
-
-`GECE/mutasyon.sh` içindeki zorunlu mutasyonlar:
-- bir dikiş çiftinin kenarını **+5mm** uzat → A1 kırmızı olmalı
-- bir çentiği kaydır → çentik hükmü kırmızı olmalı
-- bir paneli sil → panel sayısı tabanı kırmızı olmalı
-- flat'in omuz yüksekliğini **6mm** oynat → tek croquis kırmızı olmalı
-- bir kalıbı düzlemde **1.1** ile ölçekle → geri projeksiyon gerinimi kırmızı olmalı
-
-Mutasyon geçmezse **"yeşil" kelimesi o gece kullanılmaz.**
-
-## 2.4 KIRMIZI RAPORUNUN ŞEKLİ (kural 4)
-
-```
-hata:       <ne · hangi sayı · hangi dosya>
-kök:        <ÖLÇÜLMÜŞ sebep, tahmin değil>
-adaylar:    <en az 2 çözüm, her biri ölçülmüş sonucuyla>
-alınan:     <hangisi · neden>
-reddedilen: <hangisi · hangi sayıyla reddedildi>
-```
-Ölçülüp reddedilen hamle de kayda geçer (repoda emsali var: Tur 5/6/7/8).
-
-## 2.5 HAKEM — brief'i görmeyen göz
-
-Makine kapısı geçtikten sonra ayrı temiz oturum. Eline verilen: diff + fazın
-eklediği test + `RULES.md`. Brief'i **görmez ve isteyemez**.
-Cevap tek satırla başlar: `HAKEM: EVET` / `HAKEM: HAYIR`. Hayır derse faz kapanmaz.
-
-## 2.6 ÖZET — "yeşil" bundan sonra şu demek
-
-1. Artefaktın geometrisi ölçüldü, hüküm geçti (test dosyası değil, **nesne**)
-2. Kapıya ve teste dokunulmadı (sha + diff kilidi)
-3. Tolerans oynatılmadı
-4. Kapı **mutasyonla** kırmızıya döndüğü kanıtlandı
-5. Brief'i görmeyen hakem `EVET` dedi
-
-**Beşi birden yoksa yeşil yok.**
-
-## 2.7 GECE KURALI GÜNDÜZDEN SERT
-
-Gündüz: kırmızı → ajan çözüm arar.
-**Gece: kırmızı → ajan BİR kez düzeltme dener, yine kırmızıysa DURUR.**
-
-Damla uyuyor. Kırmızıda ısrar eden ajan gecenin kalanını yanlış yöne kürek
-çekerek geçirir ve sabah 8 saatlik çöp bırakır. **Durmuş koşu, yanlış yöne
-koşmuş koşudan iyidir.**
-
-Durunca `GECE/STOP.md` yazılır: hangi faz · hangi kapı · hangi sayı · denenen
-düzeltme · **çözüm adayları** (§2.4 şekliyle).
-Sonra sıradaki fazı **açmaz**, ama bağımsız bir faz varsa ona geçer.
-(F1 durursa F2 koşabilir — birbirine bağlı değiller.)
+## 3.1 Beş alt kapı — hiçbir faz kendini "geçti" ilan edemez
+1. **Makine kapısı (K1+K2)** — ctest koşar: kırmızı ad kümesi büyüdü mü; fazın
+   eklediği yeni test, faz-öncesi commit'te KIRMIZI düşüyor mu. Düşmüyorsa test
+   boştur (vacuous) ve bu tek başına fazı çürütür. Mühür kırılırsa koşu durur.
+2. **Kanıt kapısı (K3)** — rapordaki her sayı ve dosya yolu `test -f` ile doğrulanır.
+3. **Hakem kapısı (K4)** — §1'deki temiz oturum.
+4. **Yazma kapısı (K6+K7+K9)** — KOSU.md + KAPI.md güncellenir, commit atılır;
+   üretilmiş dosya değiştiyse sha aynı commit'te.
+5. **Kâtip kapısı (K8)** — kâtip oturumu koşar, docs commit'i atılır.
+Kapı kırmızıysa faz kapanmaz ve sonraki faz açılmaz; reddedilen iş
+`gece/F#-reddedildi` dalına alınır, ana dal temiz kalır. Tek istisna: kırmızı
+Damla'ya bağlıysa DAMLA-KUYRUK'a satır düşer, koşu devam eder. Kırmızı "sonraki
+faza" taşınmaz. Ajan ölümü (API hatası, kota) kırmızı DEĞİLDİR: koşmamış faz
+koşmamıştır, bir kez yeniden başlatılır; ikinci ölümde koşu o fazda durur ve
+`GECE/STOP.md`'ye yazar.
 
 ---
 
-# §3 — HARNESS
+# §4 FAZLAR
 
-Script'lerin kendisi `GECE/gece.sh`, `GECE/kapi.sh`, `GECE/mutasyon.sh`,
-`GECE/hakem-sorusu.md` dosyalarındadır. Bu bölüm **niyeti** anlatır; **otorite
-dosyanın kendisidir**, buradaki alıntı değil. (Kurulum sırasında bu makineye göre
-yapılan sapmalar `GECE/KOSU.md` → DAMLA'YA DÜŞEN altında tek tek yazılıdır.)
+Çekirdek: **F0 → F1 → F2 → F3 → F4 → F5.** Sırayla; biri kapanmadan sonraki
+açılmaz. Uzatma: **F6 → F7 → F8** (kalan süreye göre). Kapanış: **F9 (docs) →
+F10 (landing) → F11 (rapor)** — uzatmalardan BAĞIMSIZ zorunludur: çekirdek
+nerede biterse bitsin sabaha bu üçü koşar. Bağımlılık istisnası: F3, F2'ye sert
+bağlı DEĞİL (gece.sh F2 düşse de F3'ü açar); F4 ve F5 F2'ye bağlı; F6 F3+F5'e.
 
-## 3.1 `GECE/gece.sh` — dış döngü
+<!--FAZ:F0-->
+## F0 — DÜRÜST ENVANTER (45–90 dk) · ÖLÇÜM, ONARIM YOK
 
-Fazları **ayrı ajan süreçleriyle** sırayla koşturur. Her faz için sırasıyla:
+Bu fazda hiçbir şey düzeltilmez. F0 bir kez koştu (21 Ağu); bu koşu onu
+YENİDEN ÖLÇER, okumaz. Şef önce §3.0 kapı commit'ini bir işçiye yaptırır
+(tek işçi, sıralı), sonra 3 işçiyi paralel salar:
 
-1. **faz ajanı** — temiz oturum; eline geçen: `§0..§5-başlığı` ortak metni + kendi
-   `<!--FAZ:F#-->` bloğu + system prompt olarak `RULES.md` + `GECE/KOSU.md`.
-   Diğer fazların brief'ini **görmez**.
-2. **makine kapısı** — `GECE/kapi.sh F# <once_commit>` (K1..K7).
-3. **mutasyon** — `GECE/mutasyon.sh F#`; kapı gerçekten ölçüyor mu.
-4. **hakem** — brief'i görmeyen temiz oturum, `GECE/hakem-sorusu.md`.
+**İşçi 0A — motor.** (1) ctest tam koşusu temiz worktree'de: kaç test, kaçı
+kırmızı, İSİM İSİM — `Testing/Temporary/LastTestsFailed.log`'dan, dokümandan
+değil; `GECE/log/F0.red.before` ile karşılaştır, fark varsa sebebi.
+(2) Operatör sicili (contract/garment-spec-v2.json): shipped/flagged/absent
+sayıları ve absent adları; ANAYASA damar detaylarından (fiyonk, büzgü/shirring,
+mini-düğme, fırfır/volan/peplum, lace-up, dantel + kol/yaka/etek aileleri)
+hangileri sicilde İSİM olarak bile yok. (3) DAMAR YÜZDESİ: damarın kaç yüzdesi
+bugün SEVK EDİLEN (`garment`) hatta üretilebiliyor; hesap yöntemi tutanağa
+yazılır ki F11 aynı yöntemle yeniden ölçebilsin. (4) Flat ↔ kalıp: flat
+kalıptan türüyor mu (render hattının kaynağı okunarak); aynı spec'ten üretilen
+flat ile kalıbın ortak ölçüleri yan yana. (5) Flat kalem envanteri: flat kaç ayrı
+üreticiden çıkıyor (`render-garment-flat.mjs` · `flat-engine/_engine-full.mjs`
+ve diğerleri). **(6) KAPI ÖN-ENVANTERİ (v3):** `engine/tests/` altındaki 96
+testten hangileri F2/F5/F6/F7 kapılarının parçasını ZATEN ölçüyor — en az şu
+adlar okunur: `closed_garment_check · notch_alignment_check · wearability_check ·
+wearable_check · flatten_check · body_volume_check · garment_shell_check ·
+drape_check · sewable_census · sleeve_check · cap_sleeve_check · gather_check`.
+Her biri için: ne ölçüyor · hangi v3 kapısına denk · eksik ne. Bu tablo olmadan
+F2/F5/F6 yeni test YAZAMAZ (§5 "önce grep").
+**İşçi 0B — sözlük.** İki sözlüğün felsefe farkı: hangi dosya malzeme diliyle
+(sürekli parametre), hangisi yemek diliyle (kapalı enum) konuşuyor; sevk edilen
+taraf hangisi. `vision-student`'ın kelime listesi nereden kopyalanmış.
+`engine/vocab.json` · `contract/spec-grammar.json` · `contract/terms.json` okunur.
+**İşçi 0C — vitrin.** `docs/` ve `web/`deki her iddia cümlesi tablolanır: iddia ·
+hâlâ doğru mu · kanıtlayan test/alet · hüküm adayı (kal/güncelle/sil). Hangi
+sayfa hangi üreteçten çıkıyor (`gen-landing.js`, `gen-style-pages.mjs`,
+`gen-guide.mjs`, `gen-collections-page.mjs` …) ve üreteç bugün koşuyor mu
+(K16 ENOENT durumu). `node engine/tools/site-health.mjs` çıktısı. Atölyenin
+gösterdiği beden = seçilen beden mi. Bu işçi hüküm vermez, sayar; tablosu
+F9 ve F10'un girdisidir.
 
-Dördü de geçerse commit + push. Biri kırmızıysa `GECE/STOP.md`'ye yazılır ve
-faz **kapanmaz** (§2.7 gereği döngü sıradaki bağımsız faza geçer).
-
-Koşudan önce `GECE/kapi.sha` doğrulanır; mühür kırıksa koşu **başlamaz**.
-
-Kritik olan: her ajan çağrısı **yeni bir süreç**, yani yeni bir context. Dört fazı
-aynı oturuma sıkıştırırsan bu dosyanın hiçbir anlamı kalmaz.
-
-## 3.2 `GECE/kapi.sh` — yargılamayan kapı
-
-`GECE/kapi.sh <FAZ> <once_commit>` → exit 0 yeşil, 1 kırmızı. Alt kapılar:
-
-| kapı | ne ölçer |
-|---|---|
-| K1 | devralınan kırmızı **kümesi** değişti mi (isim isim, sayı değil) — §0.6 |
-| K2 | fazın eklediği yeni test, faz **öncesi** commit'te kırmızı düşüyor mu (vacuous test kapanı) |
-| K3 | `GECE/F#.md` raporunda geçen her dosya yolu diskte gerçekten var mı |
-| K4 | tolerans/eşik sabiti **mevcut** bir dosyada oynatılmış mı |
-| K5 | dokunulmazlar (`patterns_real/`, `ANAYASA.md`, `GECE/kapi.sh`, `GECE/mutasyon.sh`) değişmiş mi + mühür sağlam mı |
-| K6 | var olan test **silinmiş ya da değiştirilmiş** mi (yeni test eklemek serbest) |
-| K7 | ajan logunda §1'in yasakladığı dosyalar bütün olarak okunmuş mu |
-
-## 3.3 `GECE/hakem-sorusu.md`
-
-Hakem fazın brief'ini **görmez ve isteyemez**. Tek sorusu: bu çıktı, testin
-geçtiğini iddia ettiği şeyi gerçekten yapıyor mu, yoksa testi geçmek için mi
-şekillendirilmiş? Cevap `HAKEM: EVET` / `HAKEM: HAYIR` ile başlar.
-
-## 3.4 Mühürleme (koşudan önce bir kez)
-
-```bash
-sha256sum GECE/kapi.sh GECE/mutasyon.sh > GECE/kapi.sha
-chmod +x GECE/gece.sh GECE/kapi.sh GECE/mutasyon.sh
-```
-
-## 3.5 Uyumadan önce tek komut
-
-```bash
-bash GECE/gece.sh > GECE/log/gece.txt 2>&1 &
-```
-
----
-
-# §4 — F0 SİCİLİ (ölçüldü, commit 66e2732 · TEKRAR ÖLÇÜLMEYECEK)
-
-Bu bölüm hazır ölçümdür. Hiçbir faz bunları baştan ölçmek için zaman harcamaz.
-Şüphe varsa tek satır `grep` ile doğrulanır, bütün dosya açılmaz.
-
-**4.1 · Üç sayı:** `DAMAR = %0` · `ctest 89/95` · hem/bel oranı: **kalıp 1.787 · flat 1.214**
-
-**4.2 · Flat kalıptan türemiyor — ve kontrat bunu yazmış.**
-`engine/tools/render-garment-flat.mjs:23` kendi başlığında: `pieces … NOT used to
-derive the outline`. Asıl kanıt `contract/tables.json` → `flat._layer`:
-*"NOT millimetres and NOT the same quantity as draft."*
-Yani ortada birbirini denetlemeyen iki doğru **yok** — **bir doğru + bir resim** var.
-Flat SVG'de hiçbir ölçek beyanı yok (`unitDeclared: false`).
-
-**4.3 · Damar %0.** Kalıp yolunda ANAYASA'nın altı yumuşak detayından
-(fiyonk / büzgü / fırfır / mini-düğme / lace-up / dantel) **sıfırı** üretilebiliyor.
-Flat yolunda 9/31 stil = %29 çiziyor, ama flat satılabilir nesne değil.
-Sevk edilen kalıp ayrıca **strapless** (shoulderSeam flagged, sleeve absent).
-
-**4.4 · Sicil deliği.** Damarın en sık 5 detayı (fiyonk ~14, mini-düğme 9,
-fırfır/peplum ~9, lace-up 2, dantel 2-3) sicilde `absent` bile **değil — adı yok**.
-Kural "red cümlesi eksik operatörü adıyla söyler" diyor; adı olmayanı adıyla
-reddedemezsin. Gerçek `absent` sayısı **4**: `sleeve · collarFamily ·
-gatheredOverlayLayer · skirtFamily`. (`zipperPiece` absent olması **doğru** —
-görünür fermuar damar dışı, ANAYASA.)
-
-**4.5 · `shoulderSeam` flagged, gerekçesi yazılı.** Kod **var**:
-`engine/src/shoulder.cpp` 9981 byte, `engine/CMakeLists.txt:40`'ta derleniyor,
-Tur 6 sayılarıyla ölçmüş (kapı 52/63 → 24/63). Bayrak açıkken
-`surface_pattern_check` 0 → 4 FAIL, iç gerinim %24.07 / %18.14, kapı %3.0.
-**Omuz eksik koddan değil, GEOMETRİDEN kapalı.**
-
-**4.6 · "Yazılmış ama sevk edilmemiş" 14 dosyanın gerçek durumu.**
-Çağrılmıyor **değil** — **başka hatta** çağrılıyor:
-```
-ruffle · peplum · buttonrow · gather · laceupback · hemflounce · sleeve · shoulder
-      -> hepsi garment.cpp'den cagriliyor
-
-surfacepattern.hpp'yi include eden URETIM dosyasi: 1 (surfacepattern.cpp)
-                                    + 3 probe + 4 test. Baska yok.
-engine/wasm/bindings.cpp -> #include "../src/garment.hpp"
-                            "surfacepattern" gecme sayisi: 0
-```
-Yani tarayıcıya giden WASM **garment hattından** derleniyor; yüzey hattı bugün
-pratikte bir **test hattı**. §0.8'deki hat kararının dayanağı budur.
-
-**4.7 · F0'ın kendi düzelttiği üç iddia** (hakem çürüttü, dürüstçe kayıtta):
-"Damar %0" gerekçesi delikti — ANAYASA'nın üyelik testi bir **çizim** testidir,
-kalıba uygulanmaz; sonuç ayakta kaldı ama üç yeni bacağa oturdu.
-"5 eksik operatör" yanlış sayımdı → 4.
-"Tek croquis" fazla cömertti — `engine/flat-engine/_engine-full.mjs:256`'da
-**2 stil-pinli sert kodlanmış kaçış** var.
-Ayrıca F0'ın kendi ölçüm aletinin ürettiği üç sayı **silindi** (EU38'de göğüs
-çevresi 129cm veriyordu, gerçek ~88 — yöntem çürüktü).
-
-**4.8 · `G5` çelişkisi YOKTUR — kaynak yanlış atfedilmiş.**
-`HEDEF.md`'de `G5` **0 kez**, `SIRADAKİ` **0 kez** geçiyor.
-`docs/G5-OMUZ-PLANI.md` commit `2f748db`'de **silinmiş**, bugün diskte yok.
-Muhtemel kaynak `reports/gate/NABIZ.md` (arşiv) ya da gitignore'lu `CLAUDE.md`.
-**Arşiv otorite değildir** (§0.1). Bu satır tekrar açılmaz.
-
-**4.9 · Kapanma dili (Damla hükmü).** Görünür fermuar **yok** (ANAYASA: kapanma
-dili yumuşak — düğme/bağcık/fiyonk). Damarın üç meşru açıklığı ve kodu:
-`buttonrow.cpp` · `laceupback.cpp` · `tie.cpp`.
-**Tercih: lace-up.** Ayarlanabilir olduğu için grade hatasını yutar; monotonluk
-ihlali 34 kenarın 30'unda açıkken bu ölçülebilir bir avantaj.
-
-**4.10 · Açık kalanlar (Damla'da, hiçbir fazı bloke etmez):**
-K1 — `patterns_real/` altında 41 takipli satın alınmış dosya, `contract_check`
-kırmızısının kaynağı. **Dokunulmaz** (§2.2 K5).
-
----
-
-# §5 — FAZLAR
-
-Çekirdek **F1–F4** (bu gece). Uzatma **F5–F8** (sabah / kalan süreye göre).
-Her fazın ajanı **yalnız kendi bölümünü** okur.
+Çıktı: `GECE/F0.md` (yeniden) + KOSU.md. Kapı: her maddenin en az bir dosya
+yolu / komut çıktısı var mı; damar yüzdesinin hesap yöntemi yazılı mı; (6)
+tablosu var mı.
+<!--FAZ-SON:F0-->
 
 <!--FAZ:F1-->
-## F1 — İKİ DOĞRUYU TEKE İNDİR: flat kalıptan türesin (3–5 s)
+## F1 — DÜNYA TARAMASI: tech stack araştır, al ya da aş (1.5–2.5 s)
 
-**Devralınan teşhis (§4.2):** ortada iki motor yok; **bir kalıp + bir resim** var.
-`contract/tables.json` bunu açıkça beyan etmiş: flat katmanı milimetre değil ve
-kalıpla aynı büyüklük değil. Damla'nın *"iyi flat yok, öyleyse iyi kalıp da olamaz"*
-cümlesinin makine karşılığı budur.
+Amaç: sonraki her fazın "dünyada bu nasıl çözülmüş" sorusuna gidebileceği TEK
+kaynak dosya. Bu faz onarmaz, motor koduna dokunmaz. Şef `isci-arastirma`
+tipinde 3 işçiyi PARALEL salar; bu işçilerin WebSearch/WebFetch'i VARDIR ve
+her satırın yanına erişilen URL yazılır — URL'siz satır K3'te düşer.
 
-**Hedef:** flat'in dış konturu **çizilmesin, HESAPLANSIN.**
+**İşçi R1 — akademik hat.** GarmentCode/PyGarment + GarmentCodeData; ChatGarment
+(VLM'e geometri değil JSON ürettiriyor — "LLM spec yazar, kod yazmaz" emsali;
+GarmentCode'u VLM için nasıl sadeleştirdiklerini özellikle incele);
+Design2GarmentCode; AIpparel; Sewformer/SewFactory (in-the-wild zaafları dahil);
+DressCode/SewingGPT; GarmentDiffusion; NeuralTailor; GarmageNet/GarmageSet;
+Dress-1-to-3 — ve 2025–26'da çıkan, bu listede olmayan en az 3 yeni iş (arama
+zorunlu, liste donuk değil). Beş kolon: ne çözüyor · girdi/çıktı temsili ·
+LİSANS · hüküm (adopt / port / matematiğini-al / ret + tek cümle) · hangi fazı besliyor.
+**İşçi R2 — endüstri hat.** CLO3D, Browzwear VStitcher, Style3D, Optitex,
+Gerber AccuMark, TUKAcad: vaat, çıktı formatları (DXF-AAMA, tech-pack, graded
+DXF — parite listesi), fiyat sınıfı. Hüküm: hangi vaadi bizim hangi kapımız
+ölçebilir hale getirmeli. Mevcut `dxf_check.sh` / `tech_pack_check.sh` ile çakıştır.
+**İşçi R3 — açık kaynak zanaat.** Seamly2D (parametrik nokta/çizgi "malzeme"
+dili, sözlük adlandırması) ve FreeSewing (part/point/path/macro mimarisi);
+ayrıca düzlemleştirme/kumaş için kullanılabilir serbest lisanslı kütüphaneler
+(libigl/ARAP-flatten, CGAL, Clipper2 vb.). `knowledge/` altındaki mevcut
+defterlerle çakıştır; doğrulanmış yokluklar YENİDEN ARANMAZ.
 
-```
-BodySurface  (bodysurface.cpp — var)
-   └─> giysi kabugu (ease + siluet uygulanmis)
-         ├─> ON PROJEKSIYON   -> flat on siluet  (ortografik, duz onden)
-         ├─> ARKA PROJEKSIYON -> flat arka siluet
-         └─> ACILIM (flatten.cpp) -> kalip panelleri
-```
-
-Flat bir *manüfaktür* çizimi değil, *bitmiş giysi* çizimidir: pensler kapalı,
-dikişler kapanmış, giysi vücut üstünde. İç çizgiler (prenses dikişi, pens, empire
-kesiği) kalıbın **gerçek dikiş hatlarının** aynı projeksiyona düşmüş hâlidir.
-
-**ÖN HALKA — ZORUNLU, 30 dk, ilk iş bu:**
-§0.8'deki hat varsayımı `GECE/KOSU.md`'nin başına yazılır. Projeksiyon **hangi
-kabuktan** alınacaksa (garment hattı) bu açıkça beyan edilir. Yüzey hattından
-alınırsa **üçüncü bir doğru** üretilmiş olur — yasak. Bu halkanın çıktısı tek
-paragraf: "flat şu kabuktan türüyor, şu commit'te, şu dosyada."
-
-**Kabul kapısı — yeni test `flat_pattern_agree_check`:**
-aynı spec'ten üretilen flat ve kalıp için şu 6 ölçü toleransta eşit olmalı:
-`etek ucu çevresi · göğüs çevresi · bel çevresi · gövde boyu (omuz→etek ucu) ·
-yaka açıklığı genişliği · omuz genişliği` — **tolerans %1.5**.
-Bugünkü başlangıç noktası ölçülü: hem/bel oranı kalıp **1.787**, flat **1.214**
-(≈%47 sapma). Test F1 öncesi commit'te **kırmızı düşmeli** (§2.2-4).
-
-**ANTI-HACK (hakeme sorulacak tam soru):** kapıyı geçmek için flat'e sabit çarpan,
-ölçek katsayısı ya da stil-özel düzeltme eklemek **YASAK**. Kapı, iki üretim
-hattının **aynı kaynaktan beslendiğini** kanıtlamalı — sayıları eşitlemeyi değil.
-`_engine-full.mjs:256`'daki iki sert kodlanmış kaçış (§4.7) **kaldırılmalı ya da
-sayısıyla ilan edilmeli**; sessizce bırakılamaz.
-
-**MUTASYON SÖZÜ (§2.3, zorunlu):** `GECE/mutasyon.tsv`'ye `F1` satırı yazılır:
-flat üretim hattına sabit ölçek çarpanı (**1.1**) sokan bir knob göster; mutasyon
-uygulandığında `flat_pattern_agree_check` **kırmızıya dönmek zorunda**. Dönmüyorsa
-kapı boştur ve faz kapanmaz.
-
-**Bitmezse:** kabuk→projeksiyon hattının **ön gövdesi tek bedende (EU38)** çalışsın
-yeter; grade F3'e kalır. Eski şablon hattı **silinmez**, `_LEGACY` bayrağı arkasına
-alınır. **Kısmi çalışan hat, tam çalışan sahte hattan iyidir.**
-
-**Çıktı:** `GECE/F1.md` (§2.4 şekli) + en az bir PNG/SVG yolu + güncellenmiş `KOSU.md`.
+Çıktı: `knowledge/TEKNOLOJI-<tarih>.md` — üç tablo + F2–F10'un her biri için
+"bu faza düşenler" (boşsa "dünyada emsal bulunamadı" AÇIKÇA). Serbest lisanslı
+kod/matematik almak serbesttir, alınan her parça kaynağını başlıkta söyler;
+model ağırlığı / GPU / harici API = §0.9. Kapı: her hüküm bir URL'ye bağlı mı;
+her "adopt"un lisansı yazılı mı.
 <!--FAZ-SON:F1-->
 
 <!--FAZ:F2-->
-## F2 — SÖZLÜK REFORMU: menü değil mutfak (3–5 s) · F1'e bağlı DEĞİL
+## F2 — TEK NESNE: flat ile kalıp aynı kabuktan türesin (3–5 s)
 
-**Teşhis:** iki sözlük var, ikisi aynı felsefede değil.
-- `engine/tools/atolye/lexicon.js` **doğru felsefede**: "puf kol ayrı bir kol türü
-  değil, kapak yüksekliği 2.4"; "kloş etek ayrı bir tür değil, etek bolluğu 2.55".
-- `contract/garment-spec-v2.json` `topology` ekseni **kapalı enum**
-  (`crew, scoop, vNeck, square, boat, sweetheart, halter`);
-  `vision-student/vocab.py` aynı kapalı listeyi elle kopyalıyor.
-
-Mutfak JS tarafında, menü C++ tarafında, **sevk edilen taraf menü.**
-"Sınırsız ürün çıkmıyor" şikâyetinin kökü budur.
-
-**Hedef mimarî** (GarmentCode / PyGarment'in kanıtlanmış şekli — `scripts/setup-garmentcode.sh`
-zaten pinli duruyor):
+Damla'nın yasası: flat ile kalıp tek matematiksel nesnenin iki izdüşümüdür.
+Birbirini denetlemeyen iki üretim hattı varsa ikisi de güvenilmezdir. F0 hangi
+hattın nereden beslendiğini ölçtü (hem/bel oranı: kalıp 1.787 · flat 1.214 —
+yeniden ölçülür); bu faz ikisini tek kaynağa bağlar.
 
 ```
-KATMAN 1 — PRIMITIF (surekli, kapali liste DEGIL)
-  Edge : parametrik kenar (duz/yay/spline) · uzunluk + egrilik + gerginlik
-  Panel: kapali kenar zinciri + grainline + katlama ekseni
-  Seam : iki kenari eslestiren bag (uzunluk esitligi + yedirme orani + centik)
-  Op   : olculebilir islem — suppress(pens/prenses) · gather(oran) · flare(koni acisi)
-         extend(mm) · split(oran) · overlay(katman) · attach(arayuz)
-
-KATMAN 2 — BILESEN (primitiflerden kurulmus)
-  bodice · sleeve · skirt · collar · cuff · band · overlay
-  Her biri kendi PARAMETRE KUMESINI acar, kapali bir isim listesi degildir.
-
-KATMAN 3 — TARIF / PRESET (sadece bir isim + parametre demeti)
-  "sweetheart" = necklineDraft(centerNotch=… , cupRise=… , cupWidth=…)
-  "puf kol"    = sleeve(capHeight=2.4, capEase=… , hemGather=…)
-  "peplum"     = overlay(anchor=waist, flare=… , length=…)
-  "fiyonk"     = tie(anchor=… , loopW=… , tailL=…)   <-- bugun sicilde ADI YOK
+Gövde yüzeyi ─> giysi kabuğu (ease + siluet uygulanmış)
+      ├─> ÖN/ARKA ORTOGRAFİK PROJEKSİYON -> flat siluetleri
+      └─> AÇILIM (flatten)               -> kalıp panelleri
 ```
+Flat bitmiş giysi çizimidir: pensler kapalı, dikişler kapanmış, giysi vücut
+üstünde. Dış kontur ÇİZİLMEZ, HESAPLANIR; iç çizgiler kalıbın gerçek dikiş
+hatlarının aynı projeksiyona düşürülmüş hâli.
 
-**Yasa:** Katman 3'teki her isim Katman 1/2 parametrelerine **çözülebilir olmalı**.
-Çözülemeyen isim sözlüğe **girmez**. Bir isim silinince arkasındaki geometri **kalır**
-— "heart neck" kelimesini attığında o giysi hâlâ üretilebilir olmalı.
-İki tarif arasındaki her ara değer de geçerli bir giysidir; kapalı liste bunu yasaklıyordu.
+ÖNCE GREP (v3): `garment_shell_check.cpp · body_volume_check.cpp · flatten_check.cpp
+· engine/src/shoulder.cpp` ve `flatten-research/` okunur; kabuk zaten kısmen
+varsa üstüne yazılmaz, genişletilir. F1'in F2 bölümündeki matematik işlenir.
 
-**İş:**
-1. Katman 1'i `contract/primitives-v1.json` olarak tanımla; `spec-v2`'nin `topology`
-   enum'larını bu primitiflere **çözen** tabloyu yaz.
-2. §4.4'teki **adı olmayan 5 detayı** sicile yaz — `absent` olarak, gerekçesiyle.
-   Adı olmayanı adıyla reddedemezsin; önce ad, sonra geometri.
-3. `lexicon.js`'in kural tabanını Katman 3 preset tablosuna taşı — **tek kaynak**.
-4. `vision-student/vocab.py`'ın listesi Katman 3'ten **üretilsin**, elle yazılmasın.
-
-**Kanıt testi `preset_resolve_check`:** her preset ismi primitiflere çözülüyor mu,
-**ve** çözümü motorda gerçekten bir panel üretiyor mu (0.9 draft-proof).
-
-**ANTI-HACK:** preset tablosuna isim eklemek bedava ve **hiçbir şey çizmez**.
-Bir ismin `drawable` sayılması, arkasındaki primitif zincirinin **çizen** bir panel
-üretmesine bağlıdır. `terms.json`'daki `status: honest` (kayıtlı ama çizilmiyor)
-ayrımı korunur ve bu fazda **genişletilir**.
-
-**MUTASYON SÖZÜ (§2.3, zorunlu):** `GECE/mutasyon.tsv`'ye `F2` satırı yazılır:
-bir primitifi çözüm tablosundan düşür; `preset_resolve_check` **kırmızıya dönmek
-zorunda**. Dönmüyorsa test isimleri sayıyor, geometriyi değil — faz kapanmaz.
+Kapı `flat_pattern_agree_check` (yeni test): aynı spec'ten üretilen flat ve kalıp
+için 6 ölçü %1.5 toleransta eşit — etek ucu çevresi · göğüs çevresi · bel
+çevresi · gövde boyu · yaka açıklığı genişliği · omuz genişliği. Test faz-öncesi
+commit'te KIRMIZI düşmeli. Anti-hack: flat'e sabit çarpan YASAK — kapı iki
+hattın aynı kaynaktan beslendiğini kanıtlar, sayıları eşitlemeyi değil.
+Gece bitmezse: ön gövde tek bedende çalışan hat, tam çalışan sahte hattan
+iyidir. Eski çizim hattı silinmez, `_LEGACY` bayrağı arkasına alınır;
+`_engine-full.mjs:256`'daki 2 stil-pinli kaçış bu fazda ölçülüp kaldırılır ya da
+gerekçesiyle DAMLA-KUYRUK'a.
+İşçi bölümü: kabuk→projeksiyon çekirdeği SIRALI tek işçide (maxTurns 80, gerekirse
+iki kartta); ölçüm aleti ve test yazımı PARALEL ayrı işçilerde, aynı dosyaya
+iki el değmeden.
 <!--FAZ-SON:F2-->
 
 <!--FAZ:F3-->
-## F3 — FLAT KONVANSİYONU: "aynı modelden çıkmış gibi" ölçülebilir olsun (2–4 s)
+## F3 — MUTFAK: sözlük reformu, menü değil malzeme (3–5 s)
 
-Damla'nın şikâyeti zevk değil **tutarlılık**: flat'ler aynı croquis'ten gelmediği
-için her biri başka bir orana oturuyor.
+Damla'nın teşhisi: doğru dağarcık yemek değil MALZEMEDİR. Kapalı isim listesi
+menüdür; Valentina/Gerber sınıfının tuttuğu şey mutfak sözlüğüdür. Sözlük hep
+DİKİŞ ve malzeme diliyle kurulur. F0-0B hangi dosyanın hangi dilde olduğunu
+ölçtü; bu faz mutfağı sevk edilen hat yapar.
 
-**Endüstri konvansiyonu (tartışmasız kısım):**
-- Flat **ölçekli** çizilir. Yetişkinde yerleşik ölçek **1:8** (çocukta 1:4), formül `d/D = 1/S`.
-- **Çizgi hiyerarşisi anlam taşır:** dış siluet + ana dikişler KALIN · iç dikiş,
-  pens, panel İNCE · topstitch KESİKLİ · gizli hat NOKTALI. Fabrika bunu tek bakışta
-  okur; eşit ağırlık = şema hissi, flat hissi değil.
-- **Gölge, doku, perspektif yok.** Ön + arka zorunlu; karmaşık bölge için büyütülmüş
-  detay callout'u (yaka, bağcık, manşet).
-- Tüm flat'ler **tek temel bloktan/croquis'ten** türer. Kategori değişse bile taban
-  aynı kalır — "aynı mankenin üstünde" hissi buradan gelir, çizim stilinden değil.
-
-**Kapı `flat_convention_check`:**
-1. **Tek croquis yasası** — iki farklı stilin flat'inde `omuz genişliği`,
-   `göğüs hattı yüksekliği`, `bel hattı yüksekliği` piksel değil **mm cinsinden**
-   eşit, tolerans ±2mm. (F1 kapandıysa bedava gelir.)
-   §4.7'deki **iki sert kodlanmış kaçış** burada kapanmalı.
-2. **Ölçek beyanı** — her SVG `data-scale` taşır ve gerçek ölçüyle tutarlıdır.
-   Bugün `unitDeclared: false` (§4.2).
-3. **Üç katman çizgi** — `W_OUTLINE > W_SEAM > W_MARK`, oran sabit ve dosyada beyan
-   edilmiş. (`render-garment-flat.mjs`'de bugün 2.0 / 1.4 / 1.0 — kapı bunu ölçsün.)
-4. **Sıfır gölge / sıfır dolgu gradyanı.**
-5. **Ön + arka zorunlu.** ANAYASA "arka çizildiyse arkada olay var" diyor; arka
-   çizilmiyorsa çıktı damar dışıdır.
-
-**Bu fazda düzeltilecek somut kusur:** bugünkü çıktıda etek ucu **tırtıklı/dalgalı**
-(`engine/tools/flat-metre/out/dress_princess_scoop_aline.png` ve `top_princess_peplum.png`).
-Tasarım değil — koni açılımının **kenar örneklemesinden** gelen artefakt.
-Kökünü ölç, sonra düzelt. **Kırpma ile gizleme.**
-
-**MUTASYON SÖZÜ (§2.3, zorunlu):** `GECE/mutasyon.tsv`'ye `F3` satırı yazılır:
-flat croquis'inin omuz yüksekliğini **6mm** oynatan knob; `flat_convention_check`
-**kırmızıya dönmek zorunda**.
-
-**Etsy kapısı burada DEĞİL** (§2.1-A3). Bu faz sadece ölçülebilir olanı kapatır ki
-zevk turuna temiz çıktı gitsin.
+```
+KATMAN 1 — PRİMİTİF (sürekli, kapalı liste değil):
+   Edge  : parametrik kenar (düz/yay/spline), uzunluk + eğrilik + gerginlik
+   Panel : kapalı kenar zinciri + grainline + katlama ekseni
+   Seam  : iki kenarı eşleştiren bağ (uzunluk eşitliği + yedirme oranı + çentik)
+   Op    : suppress(pens/prenses) · gather(oran) · flare(koni açısı) ·
+           extend(mm) · split(oran) · overlay · attach
+KATMAN 2 — BİLEŞEN: bodice · sleeve · skirt · collar · cuff · band · overlay
+KATMAN 3 — TARİF: sadece isim + parametre demeti
+   "sweetheart" = necklineDraft(...) · "puf kol" = sleeve(capHeight=...,...)
+```
+Yasa: Katman 3'teki her isim Katman 1/2'ye çözülür; çözülmeyen isim sözlüğe
+girmez. İsim silinince geometri kalır. İki tarif arasındaki her ara değer geçerli
+bir giysidir. İş: primitif tanım dosyası `contract/`a; mevcut enum'ları
+primitiflere çözen tablo; kural tabanı Katman 3 preset tablosuna taşınır ve TEK
+kaynak olur; `vision-student` kelime listesi Katman 3'ten ÜRETİLİR (`gen-vocab.mjs`
+üzerinden, elle değil). F0'ın "sicilde adı yok" saydığı her damar detayı sicile
+İSİM olarak girer (statüsü absent olsa bile). Kapı `preset_resolve_check`: her
+preset primitiflere çözülüyor ve çözümü motorda gerçekten panel üretiyor mu.
+Anti-hack: tabloya isim eklemek bedava — sözlüğe girişin bedeli çizen bir panel zinciridir.
 <!--FAZ-SON:F3-->
 
 <!--FAZ:F4-->
-## F4 — DİKİLEBİLİRLİK KAPISI: kalıp gerçekten dikilir mi (3–5 s)
+## F4 — FLAT KONVANSİYONU + ZEVK ÖN-TARAMASI (2–4 s)
 
-Damla'nın ayrımı mimarîye yazılır:
-> **flat** gerçek mankene göredir → *satılabilirlik* testine tabidir.
-> **kalıp** insana göredir → *dikilebilirlik* testine tabidir.
-> İki test asla birbirinin yerine geçmez.
+Damla'nın şartı: bütün flat'ler aynı modelden çıkmış gibi — tek manken, tek
+konvansiyon. Ölçülebilir. Figür yasası (memory'den, anayasa hükmünde): gerçek
+36–38 beden kadın, bel oyuk, kalça dolgun; etek doğal kalçadan düşer; prenses
+dikişi anatomik.
 
-Kapının maddeleri **§2.1-A1'de** tanımlı. Bu faz onları **koda bağlar**.
+Kapı `flat_convention_check`:
+- Tek croquis: iki farklı stilin flat'inde omuz genişliği / göğüs hattı
+  yüksekliği / bel hattı yüksekliği ±2mm (F2 biterse bedava).
+- Ölçek beyanı: her SVG `data-scale` taşır, gerçek ölçüyle tutarlı (1:8).
+- Çizgi hiyerarşisi: dış siluet + ana dikiş KALIN · iç dikiş/pens İNCE ·
+  topstitch KESİKLİ · gizli hat NOKTALI; oranlar dosyada beyanlı.
+- Sıfır gölge/gradyan, tek kontur rengi. Ön + arka zorunlu. Karmaşık bölgeye callout.
+- Çizim artefaktları (koni açılımından tırtıklı etek ucu sınıfı) kökten
+  düzeltilir; kırpmayla GİZLENMEZ. `render-lint.mjs` varsa ona bağlanır.
 
-**Notlar:**
-- Geri projeksiyonun yarısı yazılı: `flatten-research/15-arap-proper.py` ve
-  `02-gore-flatten-strain.py`. Önce oku, sonra yaz (§6).
-- **Geçiş maddesi:** en dar halka gereken kesitten geçmiyorsa açıklık operatörü
-  **zorunlu** ve red cümlesi onu **adıyla** söyler. Fermuar yok; seçim
-  `buttonrow / laceupback / tie` (§4.9, tercih lace-up).
-  `DAMLA-KUYRUK` K8'in "kafadan geçmeyen kapalı tüp"ü tam bu kapının eksikliğinden çıkmış.
-- **Durma maddesi:** sevk edilen giysi bugün **strapless** (§4.3). Orada "kafadan
-  geçiyor mu" konusuz; yerine **"düşmeden duruyor mu"** geçer. Balensiz durmaz.
-- **Mutasyon zorunlu** (§2.3): bu kapı yazıldıktan sonra `GECE/mutasyon.tsv`'ye `F4`
-  için **dört** satır yazılır — kenar **+5mm** · çentik kayması · panel silme ·
-  düzlemde **1.1** ölçekleme. Dördünün de kapıyı kırmızıya döndürdüğü
-  **kanıtlanmadan** faz kapanmaz.
-
-**Ve kural 4 burada yürür:** kapı kırmızı verdiğinde çıktı "hata var" değil,
-§2.4'teki beş satırdır. Ölçülüp reddedilen hamle de kayda geçer.
+ZEVK ÖN-TARAMASI (isci-arastirma, paralel): Chanel haute couture, Bershka/
+Stradivarius, gen-z estetiği ve profesyonel Etsy flat listinglerinden REFERANS
+PANOSU — link + özellik-dili tarifi; görsel indirilmez (§0.11). Konvansiyon
+kapısını geçen adaylar ESKİ|YENİ yan yana `~/Desktop/gece-zevk-panosu/`na
+basılır. Flat'in testi SATILABİLİRLİKTİR ve hakemi Damla'dır: pano hazır
+olunca DAMLA-KUYRUK'a satır, koşu BLOKE OLMAZ. Ölçülmüş bantlardan geçmeyen
+render panoya KONMAZ (Damla "beğendin mi" turu istemiyor).
 <!--FAZ-SON:F4-->
 
 <!--FAZ:F5-->
-## F5 — KOL (uzatma, 4–8 s) · sicildeki en pahalı `absent`
+## F5 — DİKİLEBİLİRLİK KAPISI: kalıp gerçekten dikilir mi (3–5 s)
 
-`sleeve` operatörü **absent** (§4.4), ama ANAYASA'nın 43 görselinin ezici çoğunluğu
-kolsuz **ya da kısa puf/balon/kap kol**. Sicilin tek eksik satırı damarın büyük bir
-dilimini kilitliyor.
+Ayrım: flat gerçek mankene göredir ve SATILABİLİRLİK testine tabidir; kalıp
+insana göredir ve DİKİLEBİLİRLİK testine tabidir. Asla yer değiştirmezler.
 
-Kol, primitif katmanında **ayrı bir giysi türü değil**: bir Panel + iki Seam
-(kol oyuğu arayüzü + kol içi dikişi) + kapak eğrisi. `lexicon.js` doğru söylüyor:
-"puf kol" = kapak yüksekliği; "balon kol" = kapak + kol ağzı büzgüsü.
-
-**Kapı:** kol oyuğu yayı ile kol kapağı yayı **yedirme oranıyla** eşleşiyor mu
-(F4 kapısı bunu zaten ölçebiliyor olmalı). Başlangıç: `flatten-research/19-cap-vs-armscye.py`,
-`knowledge/cap-ease-isareti-2026-08-17.md`.
-
-**Ön koşul:** `shoulderSeam` bayrağı **geometriden** kapalı (§4.5) — iç gerinim
-%24.07/%18.14, kapı %3.0. Kol inşa edilmeden önce çözülecek şey kol değil, **o gerinim**.
-
-**Not:** `DAMLA-KUYRUK` K9 açık — ön/arka oyuk uzunluğunda kitap ile satın alınmış
-kalıp ters söylüyor. Hangi kaynağın kural olduğu **Damla'nın hükmüdür**. Hüküm
-gelene kadar kol motoru ölçüyü **basar, yargılamaz** (bugünkü fikstür davranışı doğru).
+ÖNCE GREP (v3): F0-0A(6) tablosu girdidir. `sewability_check` YENİ BİR DOSYA
+DEĞİL, mevcut testleri bağlayan bir ÇATI testidir; olmayan parça yazılır:
+1. Dikiş çifti eşitliği (1/32" tolerans, beyan edilmiş yedirme) — `notch_alignment_check`
+   ve `sewable_census` ne ölçüyor, eksik ne.
+2. Çentik eşleşmesi — aynı sıra, aynı yay uzunluğu.
+3. Kapalılık — `closed_garment_check`: kendini kesmiyor, sıfır alanlı üçgen yok.
+4. Köşe açısı — dikiş birleşim noktalarında açı toplamı (kırışık kökü).
+5. GEÇİŞ ve dünya arayüzü — `wearability_check`/`wearable_check`: en dar halka
+   baş/omuz çevresinden geçmiyorsa kapanma zorunlu VE kapanma donanımı dükkânda
+   satılan boyda. Kapanma dili TEK KARAR DEĞİL (Damla hükmü): lace-up / fermuar /
+   gizli fermuar / düğme / kapanmasız, giysinin fonksiyonudur — yaka açıklığı,
+   kumaş esnemesi, oturma payı ve stil belirler. F5'in araştırma kartı terzilik
+   kaynaklarından kapanma SEÇİM TABLOSUNU çıkarır (hangi açıklık + hangi esneme
+   → hangi kapanma, hangi boy); motor bu tabloyla spec'ten kapanmayı HESAPLAR
+   ve sicile operatör olarak yazar; kapı "hesaplanan kapanma ile giysi vücuttan
+   geçiyor mu" diye ölçer. Tablo `knowledge/kapanma-<tarih>.md`.
+6. Geri projeksiyon — `drape_check`/`body_volume_check` üstüne: paneller dikili
+   varsayılır, 3B'ye geri sarılır; gerinim eşiği aşıyorsa kalıp yanlıştır
+   (`shoulderSeam` iç gerinimi %24/%18, kapı %3 — F0 sayısı yeniden ölçülür).
+Kural 0.4 burada tam yürür: kırmızı = "hata şu, kökü şu, çözüm adayları şunlar,
+ölçülen sonuçları şunlar".
 <!--FAZ-SON:F5-->
 
 <!--FAZ:F6-->
-## F6 — KUMAŞ KATMANI + REHBER (uzatma, 2–3 s)
+## F6 — KOL (uzatma, 4–8 s)
 
-Ürün artık "kalıp + flat" değil, **"kalıp + flat + rehber"**.
-**Kumaş spec'in bir ekseni olmalı** (bugün değil).
-
-| kumaş sınıfı | esneme | kalıp davranışı |
-|---|---|---|
-| dokuma (woven) | ~0 | **pozitif ease** zorunlu, şekil pens/prenses ile verilir |
-| stable knit | %0–25 | kalıp ≈ vücut ölçüsü, indirim yok |
-| orta esnek | %26–50 | ~%3 daraltma |
-| esnek | %51–75 | ~%5 daraltma |
-| süper esnek | %76–100+ | ~%10 daraltma, pens genelde kalkar |
-
-Negatif ease formülü: `(1 − 1/esneme_oranı) × 100`.
-**Ham formül tek başına uygulanmaz:** toparlanma (recovery) olmadan esneme sayısı
-yanıltıcıdır — toparlaması zayıf kumaş bir saatte torbalanır. Ayrıca kullanılabilir
-esneme, kumaşın "ağırlaşmaya" başladığı noktaya kadardır, maksimumuna kadar değil.
-
-**Yasa:** kumaş sınıfı değişince kalıp **değişmeli**. Aynı spec + farklı kumaş =
-farklı kalıp.
-**Kapı `fabric_ease_check`:** woven ve %50 knit için üretilen aynı spec'in göğüs
-çevresi farkı beklenen **yönde ve büyüklükte** mi.
-
-**Rehber çıktısı** (satılan pakete girer): kumaş önerisi + esneme testi tarifi
-(10cm işaretle, rahat gerdir, ölç) + o kumaşa özel püf noktalar (tela nerede, hangi
-dikiş, hangi iğne) + kesim planı. Yarısı yazılı: `knowledge/sewing-guide.md`,
-`knowledge/seed_fabrics.sql` — üretime bağlanmamış.
-`DAMLA-KUYRUK` H1.1a bunu zaten kırmızı sayıyor: "kumaş önerisi hiçbir sayfaya basılmıyor".
+Damar setinin ezici çoğunluğu puf/balon/kap kollu. Kol mutfağın ürünüdür: bir
+Panel + iki Seam (kol oyuğu arayüzü + kol içi) + kapak eğrisi. "Puf kol" =
+kapak yüksekliği; "balon kol" = kapak + kol ağzı büzgüsü — Katman 3 tarifi.
+ÖNCE GREP: `sleeve_check.cpp · cap_sleeve_check.cpp · gather_check.cpp ·
+knowledge/cap-ease-isareti-2026-08-17.md · knowledge/armscye-on-arka-2026-08-17.md`.
+Kapı: kol oyuğu yayı ile kapak yayı beyan edilmiş yedirme oranıyla eşleşiyor
+mu (F5 madde 1 bunu ölçebiliyor olmalı). Kaynaklar çelişirse motor ölçüyü
+basar, yargılamaz; hüküm DAMLA-KUYRUK'a.
 <!--FAZ-SON:F6-->
 
 <!--FAZ:F7-->
-## F7 — DÜZENLEME OPERATÖRÜ: "şuraya fiyonk ekle" (uzatma)
+## F7 — KUMAŞ EKSENİ + REHBER (uzatma, 2–3 s)
 
-Doğru şekli literatürde çözülmüş: **model geometri üretmez, program/parametre üretir.**
-Spec zaten bu yasayı taşıyor (`garment-spec-v2.json` `_law` 1: LLM JSON yazar, kod yazmaz).
-Düzenleme de aynı yasanın altında kalır.
-
-```
-mevcut spec + "arka bele fiyonk ekle"
-  -> spec DIFF (sadece degisen alanlar)
-  -> sema dogrulamasi (kapali eksen + sinirli skaler)
-  -> operator sicili kontrolu (gereken operator shipped mi; degilse ADIYLA reddet)
-  -> yeniden uretim (ayni seed, ayni beden)
-  -> ONCE/SONRA farki: sadece istenen bolge mi degisti?
-```
-
-**Kritik kapı `edit_locality_check`:** "yakayı değiştir" dendiğinde etek ucu
-**değişmemeli**; dokunulmayan panellerde diff **byte-identical** olmalı.
-Midjourney benzeri düzenleme hissinin tamamı bu kapıda yaşar.
-Bu kapı yoksa özellik düzenleme değil, **yeniden üretimdir**.
-
-**Ön koşul:** F2 bitmiş olmalı — "fiyonk" bugün sicilde **adı olmayan** bir şey (§4.4).
+Ürün **kalıp + flat + rehber**. Kumaş spec'in bir ekseni olur. Sektör hesabı:
+dokuma ~0 esneme (pozitif ease zorunlu) · stable knit %0–25 · orta %26–50
+(~%3) · esnek %51–75 (~%5) · süper %76+ (~%10, pens kalkar). Negatif ease ham
+formülle uygulanmaz (recovery). Yasa: aynı spec + farklı kumaş = FARKLI kalıp.
+ÖNCE GREP: `knowledge/seed_fabrics.sql · guide_check.cpp · web/guide/
+choosing-fabric.html (üreteç: gen-guide.mjs)`. Kapı `fabric_ease_check`: dokuma
+ve %50 örme için aynı spec'in göğüs çevresi farkı beklenen yön ve büyüklükte mi.
+Rehber (satılan pakete girer): kumaş önerisi + esneme testi tarifi + kumaşa özel
+püf noktalar + kesim planı (`cutplan_check.sh` var). Sayfaya basılmayan öneri
+yok hükmündedir — ve sayfa üreteçten çıkar (§0.15).
 <!--FAZ-SON:F7-->
 
 <!--FAZ:F8-->
-## F8 — KAPANIŞ (atlanmaz)
+## F8 — GİRİŞ HATTI: foto + prompt → spec, ve "şuraya fiyonk ekle" (uzatma)
 
-1. `ctest` durumu: kaç test, kaç kırmızı, hangileri — **test çıktısından**, dokümandan değil.
-2. §4.1'in **damar yüzdesini yeniden ölç**. Değişmediyse gece boyunca zevk tarafında
-   hiçbir şey ilerlememiş demektir — bunu **açıkça yaz**.
-3. `KOSU.md` son hâli + `[HAT-VARSAYIM]` etiketli işlerin listesi.
-4. `DAMLA-KUYRUK.md`'ye gece düşen yeni sorular.
-5. **Yalnızca push edildikten sonra rapor.** "Bitti / hazır" toptan cümlesi yasak;
-   yapılan ve yapılmayan ayrı ayrı yazılır.
-6. Rapor **üç sayı** ile başlar: kaç kapı yeşile döndü · kaç yeni kırmızı doğdu ·
-   damar yüzdesi ne oldu.
+Önce ÖLÇ: bugün kaç foto doğru spec'e iniyor (sayı), hatalar hangi sınıfta
+(görme / kelime listesi / motor). `photo_ratio_wire_check.mjs` ve
+`vision-student/` okunur. F3 sonrası görü dili mutfakla hizalı olduğundan
+kapalı-liste kaynaklı hatalar yeniden ölçülür. F1 bulgusu işlenir: emsal VLM'e
+JSON ürettiriyor — bizim yasamız bu; iyileştirme spec şemasında aranır. Yeni
+model ağırlığı = §0.9.
+
+Düzenleme: model geometri üretmez, spec DIFF üretir:
+```
+mevcut spec + talimat -> spec DIFF -> şema doğrulaması
+  -> operatör sicili (shipped mı; değilse ADIYLA red, §0.3)
+  -> yeniden üretim (aynı seed, aynı beden) -> ÖNCE/SONRA farkı
+```
+Kapı `edit_locality_check`: "yakayı değiştir" deyince etek ucu DEĞİŞMEMELİ —
+dokunulmayan panellerde çıktı byte-identical. Bu kapı yoksa düzenleme değil
+yeniden üretimdir.
 <!--FAZ-SON:F8-->
 
+<!--FAZ:F9-->
+## F9 — DOCS BÜYÜK TURU (kapanış, zorunlu, 1–1.5 s)
+
+Kâtip her fazda artımlı çalıştı; bu faz tam taramadır. Ayrı kâtip oturumu
+`docs/` (ARCHITECTURE.md · KATMAN-HARITASI.md · SATIS-SARTNAMESI.md ·
+loop-engineering.md · reference/) + README.md'yi bugünkü koda karşı okur,
+F0-0C tablosunu girdi alır: her iddia için kal/güncelle/sil UYGULANIR. Bayat
+bölüm güncellenir ya da `docs/archive/`e gerekçeyle taşınır; sessiz silme yok.
+`GECE/INDEX.md` son hâline getirilir: koşunun her kalıcı dosyası (TEKNOLOJI,
+primitif tanımları, rehber) yönlendirme tablosuna girer.
+Kapı `docs_truth_check` (yeni, mekanik, `engine/tests/docs_truth_check.sh`):
+docs içinde duran-iddia kalıpları — İngilizce ("ALL PASS", "0.00mm",
+"byte-identical", "zero issues", "done", "complete") VE Türkçe ("bitti",
+"kapandı", "tamam", "hazır", "sıfır hata") — `docs/archive/` hariç 0 adet;
+docs'taki her sayısal iddianın aynı satırında bir test/alet adı. Faz-öncesi
+commit'te kırmızı düşmeli — düşmüyorsa ya docs zaten temizdir (ölç, kanıtla)
+ya test boştur.
+<!--FAZ-SON:F9-->
+
+<!--FAZ:F10-->
+## F10 — LANDING: incele, sonra ürünü anlatan sayfaya çevir (2–3 s)
+
+Sıra kesindir: ÖNCE ÖLÇÜM, SONRA TASARIM.
+**YÖNTEM (Damla hükmü, 22 Ağu — v3 taslağı burada yanlıştı, §0.15'e bak):**
+`web/index.html` **ELLE düzenlenir**. Reponun 28 Tem kararı bu: kök sayfalar
+hand-written, rabadon guard onları açıkça allow ediyor, ratchet manifesti
+(57 yol) index.html'i içermiyor ve `gen-landing.js` onu üretmiyor.
+Tasarım işçisinin yazma alanı: `web/index.html` + `web/css/` + `web/assets/`.
+`gen-landing.js`'i index.html üreteci hâline getirmek BU GECENİN İŞİ DEĞİL
+(408 satırlık el yazısı sayfayı üretece çevirmek tek başına bir gece).
+Korunan 57 yoldan birine dokunulursa §0.15 aynen yürür: üreteci değiştir,
+`generated_ratchet_check.sh --accept`, sha aynı commit'te.
+Bitişte `node engine/tools/site-health.mjs` yeşil olmak zorunda.
+
+**10a — Envanter (isci-vitrin):** F0-0C tablosu tazelenir: `web/` altındaki her
+sayfada her iddia · hâlâ doğru mu · kanıtlayan test/alet · hüküm. Ölü link
+taraması (`site-health.mjs`). UI'ın söylediği ile motorun yaptığı arasındaki
+her fark YALAN olarak listelenir. Bugünkü başlık "a fixed-size pattern CAD …
+DXF-AAMA a factory reads": fabrika-B2B dili; ürün bu değil — tabloya girer.
+**10b — Tasarım (isci-motor, 10a bitmeden başlamaz):** sayfa şu ürünü anlatır:
+- foto + prompt → **kalıp + flat + rehber** (üç çıktı, üçü de sayfada görünür);
+- mutfak anlatısı: sınırlı malzeme → sınırsız ürün (F3 gerçekleştiyse canlı
+  örnekle; gerçekleşmediyse VİZYON etiketi + gelecek zaman — asla karıştırılmaz);
+- düzenleme vizyonu ("şuraya fiyonk ekle") — F8 durumuna göre demo ya da vizyon;
+- kumaş ekseni: aynı elbise, iki kumaş, iki kalıp (F7 çıktıysa gerçek görselle);
+- ileriye dönük katman (üyelik, forum, iOS) vizyon bölümünde tek satır.
+Tasarım şartları: premium his, flop UI yasak (kalıcı veto); mevcut görsel kimlik
+(renk `#1f3a5f`, tipografi, og-card) YENİDEN YAZILMAZ — düzen ve içerik
+yenilenir; kimlik değişikliği gerekiyorsa iki yönlü taslak DAMLA-KUYRUK'a;
+waitlist korunur; mobil kırılım kontrol edilir (ekran görüntüsü: headless
+chromium/playwright varsa, yoksa `npx` ile kurulmaz — DAMLA-KUYRUK'a).
+Kapı `landing_truth_check` (yeni, mekanik): sayfadaki her sayı ve özellik
+iddiası repoda bir test/alet adıyla eşleşir ya da sayfada durmaz; VİZYON
+bölümleri şimdiki zamanla yazılmaz; ölü link 0; gösterilen beden = seçilen
+beden; `generated_ratchet_check` yeşil. Deploy YAPILMAZ (ENV: Damla'nın adımı);
+yayın öncesi ekran görüntüleri DAMLA-KUYRUK'a, koşu bloke olmaz.
+<!--FAZ-SON:F10-->
+
+<!--FAZ:F11-->
+## F11 — KAPANIŞ (her koşunun sonunda, atlanmaz)
+
+1. ctest: F0'ın saydığı kırmızı kümesinden kaçı kapandı, isim isim; yeni
+   kırmızı ad 0 mı. İki log commit'e girer.
+2. DAMAR YÜZDESİ, F0'ın AYNI yöntemiyle yeniden ölçülür. Kımıldamadıysa açıkça yazılır.
+3. KOSU.md son hâli + DAMLA-KUYRUK'a düşen yeni kararlar (tek kuyruk).
+4. Yalnızca `git push origin main` sonrası rapor (force yok, guard zaten yasaklar).
+   "Bitti/hazır" toptan cümlesi yasak; yapılan ve yapılmayan ayrı ayrı.
+5. Rapor Damla'ya üç sayıyla başlar: kaç kapı yeşile döndü · kaç yeni kırmızı
+   doğdu (hedef 0) · damar yüzdesi neden nereye geldi. Dördüncü satır: docs ve
+   landing'in önce/sonra ekran görüntüsü yolları. Beşinci: reddedilip yan dalda
+   kalan işlerin dal adları.
+<!--FAZ-SON:F11-->
+
 ---
 
-# §6 — YASAKLAR
+# §5 KOŞU BOYUNCA YASAK OLANLAR
+- Kapıyı gevşeterek geçmek · kırmızıyı sonraki faza taşımak · boş (vacuous) test.
+- Yeni dosya enflasyonu: faz başına en fazla 3 yeni kaynak dosya; fazlası gerekçeyle.
+- Araştırma kartı olmadan kapı/eşik/tolerans yazmak (§1 ARAŞTIRMA KARTI).
+- Var olan aleti/testi okumadan ikincisini yazmak: `engine/tools/` 99 alet,
+  `engine/tests/` 94 dosya (ctest 96 test) — önce grep, sonra yaz (her kartta ÖNCE GREP satırı).
+- Damla'nın onaylamadığı çıktıyı "geçti" saymak.
+- Şefin kod yazması · işçinin KOSU.md'ye dokunması · kâtibin koda dokunması ·
+  işçinin commit atması.
+- Üretilmiş dosyayı elle yazmak (§0.15) · telifli görsel (§0.11) ·
+  patterns_real (§0.10) · bulut görsel servis (§0.9) · deploy (ENV).
+- `--bare` ile şef açmak (işçi tanımları yüklenmez) · alt-ajanı arka planda salmak.
 
-- **Kapıyı gevşeterek geçmek.** Tolerans değiştirmek bir HAMLE'dir; gece yapılmaz (§2.2-2).
-- **Kırmızıyı "sonraki fazda" diye taşımak.** Kapı kırmızıysa faz kapanmaz.
-- **Var olan testi değiştirmek ya da silmek.** Yeni test eklenir, eskisine dokunulmaz.
-- **Yeni dosya enflasyonu.** Bir faz en fazla **3 yeni kaynak dosya** açar; fazlası
-  gerekiyorsa gerekçesi `GECE/F#.md`'ye yazılır.
-- **Var olan aleti okumadan ikincisini yazmak.** `engine/tools/` altında 100+ alet
-  var ve bir kısmı uyuyor — önce `grep`, sonra yaz.
-- **Arşive dayanarak otoriteye cümle atfetmek** (§0.1, §4.8).
-- **Damla'nın onaylamadığı çıktıyı "geçti" saymak.** ANAYASA: başarı beyanı yalnızca
-  Damla'nın evet'idir.
-- **`patterns_real/` altındaki satın alınmış PDF'leri silmek, taşımak, yayınlamak.**
-- **Etiketsiz iş.** Hat varsayımına dayanan her iş `[HAT-VARSAYIM]` etiketi taşır (§0.8).
-
----
-
-# §7 — AÇILIŞ (yeni oturuma yapıştırılacak)
-
-> `GECE-KOSUSU.md` dosyasının **§0, §1, §2, §3 ve §4**'ünü oku. §5'i **açma**.
-> Yapacağın tek iş şu: `GECE/` klasörünü kur — `gece.sh`, `kapi.sh`,
-> `hakem-sorusu.md` dosyalarını §3'ten çıkar, `mutasyon.sh`'i §2.3'teki beş
-> mutasyona göre yaz, `GECE/KOSU.md`'yi §1'deki şablonla ve §4'ün üç sayısıyla
-> doldur, sonra §3.4'teki mühürleme komutunu çalıştır.
-> Sonra **DUR ve bana söyle.** Hiçbir fazı açma — `gece.sh` açacak.
+# §6 AÇILIŞ (ilk oturuma yapıştırılacak — repo'nun 21 Ağu hâline göre)
+```
+0) `stash@{0}` ve `gece/F1-reddedildi` koşunun konusu değil: dokunulmaz,
+   okunmaz, kuyruğa yazılmaz. patterns_real kırmızıları (contract_check,
+   bugra_bridge_check) ilan edilmiş karardır (Damla, 22 Ağu): kapatılmaz.
+1) Bu dosyayı repo köküne GECE-KOSUSU.md olarak commit et (eskisi
+   GECE/arsiv/GECE-KOSUSU-v2.md'ye). GECE/ altında harness + F0 çıktısı dışında
+   kalan dosya varsa GECE/arsiv/'e taşı (§2).
+2) .claude/agents/ (gitignore'lu, yerelde VAR) önce OKUNUR; mevcut tanımlar
+   §1'deki beş rolle çakıştırılır, eksik olan eklenir, olan ezilmez. CLAUDE.md
+   ve CLAUDE.context.md'deki kurallar §0 ile çelişiyorsa §0.1 uygulanır.
+3) KAPI COMMIT'İ (§3.0): kapi.sh'a K8+K9, mutasyon.tsv'ye K9'u kıran satır,
+   mutasyon.sh'in ZORUNLU listesi v3 numaralarına, gece.sh'a
+   FAZLAR=(F0 F1 F2 F3 F4 F5) + uzatma/kapanış dizileri, üç ayrı claude -p
+   (şef/hakem/kâtip), Agent+WebSearch+WebFetch allowedTools,
+   CLAUDE_CODE_FORK_SUBAGENT=0, --max-turns. mutasyon.sh'ı KOŞTUR (mühür
+   yenilenmeden önce K8'in gerçekten kırılabildiğini kanıtla). sha256 mühürü
+   yenile, gerekçe commit mesajına. Ağaç temiz.
+4) F0'ı koş: ölçüm, onarım yok. Kapıdan geçir, commit at.
+5) Sırayla F1→F5. Çekirdek biterse F6→F8 uzatması. Süre ne kalırsa kalsın
+   sabah F9→F11 kapanışı KOŞULUR.
+6) Damla'ya tek bloke olmayan kuyruk: DAMLA-KUYRUK.md (beden cevabı, zevk
+   panosu, model-ağırlığı, landing kimlik yönü, yayın onayı).
+7) Başlat: bash GECE/gece.sh > GECE/log/gece.txt 2>&1 &
+```
