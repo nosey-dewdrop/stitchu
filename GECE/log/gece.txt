@@ -37,3 +37,5 @@ GECE/mutasyon.sh: OK
     SEF KOSMADI (API hatasi) -- kapi calistirilmadi
     F11 kosmadi, bir kez daha
 --- F11 basliyor 18:40 · once=6208704
+    sef bitti 18:46
+    KAPI KIRMIZI

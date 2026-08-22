@@ -582,3 +582,22 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
   sonra harness onu "koşmadı" sanıp yeniden açtı (`GECE/STOP.md` son blok).
   Koşu bitti; süreç durdurulmazsa F11'i tekrar tekrar açar. Durdurma komutu
   Damla'nın elinde (gece.sh'i başlatan kabuk).
+## v4 KURULUMU — 22 Ağu, Damla uyanıkken yapıldı (bilgi, karar bekleyen tek satır var)
+
+- **[BİLGİ] `GECE-KOSUSU-v4.md` repoya girdi**, `~/Downloads`'daki yüklediğin
+  sürümle **byte-identical** (`diff` boş, kurulum commit'inde koşuldu).
+- **[SAPMA — ONAYINA AÇIK] `GECE/bekci.sh`'in işareti v4'e özel yapıldı.**
+  §L'nin özgün grep'i `faz: **F11 kapandı` arıyor; v3'ün `GECE/KOSU.md:4` satırı
+  **zaten** bunu yazıyor (`faz: **F11 kapandı, koşu bitti**`). Koşturarak ölçüldü:
+  özgün bekçi `exit 0` veriyordu, yani PM daha F0' açılmadan durabilirdi — §A-2'nin
+  ("kapı yapısal olarak ölü") aynı kusuru. Yeni işaret: `faz: **F11 kapandı (v4)**`,
+  F11 şefi bunu yazar (`.claude/agents/sef.md` adım 6b). İki yönde de sınandı:
+  v3 metniyle exit 2, sahte v4 işaretiyle exit 0, `GECE/KOSU.md` dokunulmadı.
+  Sapma `GECE-KOSUSU-v4.md` §L'ye uyarı bloğu olarak yazıldı; özgün metin duruyor.
+- **[BİLGİ] Ajan dosyalarında `COMMIT ATMA` kuralı tersine çevrildi** (§A-1'in ilacı):
+  `isci-motor`, `isci-arastirma`, `isci-vitrin` artık kendi dalına commit atmadan
+  rapor veremez; `katip` commit atıp hash döndürür. v3'te işçiler `git add`
+  çağırmadığı için F0+F6+F9+F10'un işi git nesnesi bırakmadan silinmişti.
+- **[DAMLA'YA DÜŞEN] Koşu `~/damla_projects_2026/stitchu` içinden açılmalı.**
+  `.claude/settings.json` ve `.claude/agents/*` proje-yerel; ev dizininden açılan
+  oturumda ne hook'lar ne de `sef`/`danisman`/`mutasyoncu`/`orakci` ajanları yüklenir.

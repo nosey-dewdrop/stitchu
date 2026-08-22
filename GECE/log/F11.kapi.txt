@@ -1,0 +1,17 @@
+[F11] K1 ortam: engine/.venv-dxf -> gercek agactan baglandi
+[F11] K1 ortam: engine/dist -> gercek agactan baglandi
+[F11] K1 ortam: engine/pattern-bridge/.venv -> gercek agactan baglandi
+[F11] K1 ortam: engine/tools/node_modules -> gercek agactan baglandi
+[F11] K1 ortam: core/third_party -> gercek agactan baglandi
+[F11] K1 devralinan kirmizi sayisi: once=       7 sonra=       7
+[F11] K2 bilgi -- faz yeni test eklememis
+[F11] K3 KIRMIZI -- raporda gecen yollar diskte yok:
+yok: GECE/FTEST.md
+yok: GECE/kurtarma/F9/F10.ctest
+yok: engine/tests/docs_truth_check.sh
+yok: web/patterns/svg/meta.json
+[F11] K4 bilgi -- mevcut kaynak dosyasi degismemis
+[F11] K6 tamam -- var olan testlerin hicbiri degismemis
+[F11] K7 tamam -- yasakli dosya butun olarak acilmamis
+[F11] K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor
+[F11] KAPI KIRMIZI
