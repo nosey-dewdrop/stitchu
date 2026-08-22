@@ -71,6 +71,17 @@ export function pieceCard(piece) {
   if (piece.markings.length) {
     inner += `<path d="${pathD(piece.markings, s)}" fill="none" stroke="#8f2038" stroke-width="1.4" stroke-dasharray="6 4"/>`;
   }
+  // Balance notches (ASTM layer 4) — the ticks that make two seams meet.
+  if ((piece.notches || []).length) {
+    inner += `<path d="${pathD(piece.notches, s)}" fill="none" stroke="#111" stroke-width="1"/>`;
+  }
+  // CUT ON FOLD (ASTM layer 6 mirror line): dash-dot + the word.
+  if ((piece.foldLine || []).length >= 2) {
+    const f0 = piece.foldLine[0], f1 = piece.foldLine[piece.foldLine.length - 1];
+    const mx = ((f0.x + f1.x) / 2) * s, my = ((f0.y + f1.y) / 2) * s;
+    inner += `<path d="${pathD(piece.foldLine, s)}" fill="none" stroke="#111" stroke-width="1.2" stroke-dasharray="14 4 3 4"/>` +
+      `<text x="${mx + 7}" y="${my}" transform="rotate(-90 ${mx + 7} ${my})" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#111">KAT · CUT ON FOLD</text>`;
+  }
   if (piece.grainline) {
     const g = piece.grainline;
     inner += `<line x1="${g.fromX * s}" y1="${g.fromY * s}" x2="${g.toX * s}" y2="${g.toY * s}" stroke="#111" stroke-width="1.2"/>`;

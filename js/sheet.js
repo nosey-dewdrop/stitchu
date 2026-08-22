@@ -376,6 +376,16 @@ export function pieceGroup(d) {
   if ((d.p.notches || []).length) {
     inner += `<path d="${pathD(d.p.notches, 1)}" fill="none" stroke="#111" stroke-width="0.5"/>`;
   }
+  // CUT ON FOLD — the mirror edge (ASTM D6673 layer 6 / FreeSewing cutOnFold).
+  // Drawn dash-dot so it can never be read as a cut line or a dart, and
+  // labelled, because to a cutter it is an INSTRUCTION: lay this edge on the
+  // fabric fold, add no allowance here. Engine field: PatternPiece.foldLine.
+  if ((d.p.foldLine || []).length >= 2) {
+    const a = d.p.foldLine[0], b2 = d.p.foldLine[d.p.foldLine.length - 1];
+    const mx = (a.x + b2.x) / 2, my = (a.y + b2.y) / 2;
+    inner += `<path d="${pathD(d.p.foldLine, 1)}" fill="none" stroke="#111" stroke-width="0.5" stroke-dasharray="8 2 1.5 2"/>` +
+      `<text x="${mx + 3}" y="${my}" transform="rotate(-90 ${mx + 3} ${my})" text-anchor="middle" font-family="Helvetica" font-size="5" fill="#111">KAT · CUT ON FOLD</text>`;
+  }
   if (d.p.grainline) {
     // grainline with real arrowheads (the legend promises an arrow)
     const g = d.p.grainline;
