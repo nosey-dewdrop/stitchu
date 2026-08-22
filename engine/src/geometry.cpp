@@ -183,6 +183,7 @@ void translatePiece(PatternPiece& piece, double dx, double dy) {
     shift(piece.markings);
     shift(piece.cutLine);
     shift(piece.notches);
+    shift(piece.foldLine);
     piece.grainline.from.x += dx; piece.grainline.from.y += dy;
     piece.grainline.to.x += dx; piece.grainline.to.y += dy;
 }
@@ -387,6 +388,57 @@ std::vector<PathCommand> offsetOutline(
         if (keep[i]) result.push_back(PathCommand::line(off[i]));
     result.push_back(PathCommand::close());
     return result;
+}
+
+std::vector<PathCommand> foldLineOf(const std::vector<PathCommand>& outline,
+                                    double tolMM) {
+    if (outline.size() < 3) return {};
+
+    // Flatten to the same polygon the offset/length code walks (24 steps), so
+    // the fold edge is read off the engine's own samples, not re-derived math.
+    std::vector<Point> poly;
+    Point current{0, 0};
+    for (const auto& cmd : outline) {
+        switch (cmd.type) {
+            case CmdType::Move:
+                current = cmd.to;
+                poly.push_back(current);
+                break;
+            case CmdType::Line:
+                poly.push_back(cmd.to);
+                current = cmd.to;
+                break;
+            case CmdType::Curve: {
+                const auto pts = flattenCubic(current, cmd.to, cmd.cp1, cmd.cp2, 24);
+                for (size_t i = 1; i < pts.size(); ++i) poly.push_back(pts[i]);
+                current = cmd.to;
+                break;
+            }
+            case CmdType::Close:
+                break;
+        }
+    }
+    while (poly.size() > 1 && distance(poly.front(), poly.back()) < 0.01) poly.pop_back();
+    const size_t n = poly.size();
+    if (n < 3) return {};
+
+    // Keep the edges whose BOTH ends sit on the fold axis x = 0. A single
+    // vertex grazing x = 0 (a dart tip, a curve turning point) is not a fold
+    // edge and is deliberately not enough.
+    bool found = false;
+    double yMin = 0, yMax = 0;
+    for (size_t i = 0; i < n; ++i) {
+        const Point& a = poly[i];
+        const Point& b = poly[(i + 1) % n];
+        if (std::fabs(a.x) > tolMM || std::fabs(b.x) > tolMM) continue;
+        if (std::fabs(a.y - b.y) <= tolMM) continue;   // zero-length on the axis
+        const double lo = std::min(a.y, b.y), hi = std::max(a.y, b.y);
+        if (!found) { yMin = lo; yMax = hi; found = true; }
+        else { yMin = std::min(yMin, lo); yMax = std::max(yMax, hi); }
+    }
+    if (!found) return {};
+
+    return { PathCommand::move({0.0, yMin}), PathCommand::line({0.0, yMax}) };
 }
 
 } // namespace stitchu

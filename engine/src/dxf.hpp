@@ -32,6 +32,7 @@ struct Layers {
     static constexpr const char* kSeamline    = "8";   // sewing line
     static constexpr const char* kGrainline   = "7";   // grainline
     static constexpr const char* kNotch       = "4";   // balance notches
+    static constexpr const char* kFold        = "6";   // mirror line (cut on fold)
     static constexpr const char* kInternal    = "11";  // darts, fold lines (markings)
     static constexpr const char* kAnnotation  = "15";  // piece-name text
 };

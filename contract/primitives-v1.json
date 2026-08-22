@@ -9,6 +9,62 @@
     "5. Cozulemeyen isim SILINMEZ, `absent` diye durustce isaretlenir. Bilgi atmak, bilgi vermemekten beterdir."
   ],
 
+  "_malzeme_eksigi_kapandi": {
+    "_not": "KATMAN 1 MALZEMESI — knowledge/TEKNOLOJI-2026-08-23.md:368-381 'bizim sozlukte OLMAYAN ama dunyada temel olan' alti kalem. Bunlar MENU DEGIL: yeni isim eklemezler, tabani genisletirler. Her kalem asagida (a) dunyadaki karsiligi + kaynak satiri, (b) hangi primitif alanina bagli, (c) motorda uretilir mi (KAPI: engine/tests/cuttable_output_check.cpp) ile birlikte durur. Bu blok bir tarif listesi degil, malzeme envanteridir.",
+
+    "seamAllowance": {
+      "tanim": "Kesim cizgisi = dikis cizgisinin disa ofseti. Alici kesim cizgisinden keser, dikis cizgisinden diker.",
+      "dunya": "FreeSewing `sa` makrosu + tasarim ayari (TEKNOLOJI:368-371) · ASTM D6673 KATMAN 14 dikis cizgisi, KATMAN 1 kesim cizgisi AYRI geometri (TEKNOLOJI:216-239)",
+      "baglandi": "panel.seamAllowanceMM (bu dosya) · PatternPiece.seamAllowance + PatternPiece.cutLine (engine/src/geometry.hpp) · offsetOutline (engine/src/geometry.cpp:219)",
+      "birim": "mm",
+      "aralik": "0..30",
+      "olculen": "Bugra Locket satici talimati: 10mm (1 cm / 3/8 inch), s.3/4/7/8/9/11 — CLAUDE.md, kalibin basili konturu KESIM cizgisidir",
+      "cizilen_ciktida": "EVET — cutLine kesikli disa hat: web/js/sheet.js:366 · web/js/render.js:66 · engine/tools/pdf-core.mjs:249 · DXF layer 1 (engine/src/dxf.cpp:98)"
+    },
+
+    "grainline": {
+      "tanim": "Kumas yonu oku. Parca kumasa bu ok cozgu (warp) ipligine paralel gelecek sekilde yerlestirilir. Yonsuz parca kesilemez.",
+      "dunya": "ASTM D6673 KATMAN 7 grainline · FreeSewing `grainline` makrosu (TEKNOLOJI:372-373)",
+      "baglandi": "panel.grainAngleDeg (bu dosya) · PatternPiece.hasGrainline + PatternPiece.grainline (engine/src/geometry.hpp) · fallback pass engine/src/garment.cpp:178",
+      "birim": "aci (deg), 0 = duz cozgu, 45 = bias/verev",
+      "cizilen_ciktida": "EVET — cift okli duz segment: web/js/sheet.js:379 · engine/tools/pdf-core.mjs:256 · DXF layer 7 (engine/src/dxf.cpp:107)"
+    },
+
+    "notch": {
+      "tanim": "Iki parcanin ayni dikiste bulusmasi gereken noktayi isaretleyen kisa cizik. Denge centigi olmadan egri dikis yanlis yerden yedirilir ve giysi burulur.",
+      "dunya": "ASTM D6673'te BES ayri tip / bes katman: 4 (denge), 80/81/82/83 (slit, castle, V, U) — TEKNOLOJI:374-375 · endustrideki dogrulama adi 'walk pieces' (Gerber AccuMark), TEKNOLOJI:188-192",
+      "baglandi": "seam.notchFractions (bu dosya) · PatternPiece.notches (engine/src/geometry.hpp) · yerlestiren pass GarmentDrafter::annotateTechnical",
+      "kural": "Bir cift cizgi olmak zorunda: iki parcanin centigi kendi dikis kenari uzerinde AYNI kesirsel konumda durur (kapi: engine/tests/notch_alignment_check.cpp).",
+      "cizilen_ciktida": "EVET — web/js/sheet.js:376 · web/js/studio.js:224 · engine/tools/pdf-core.mjs · DXF layer 4 (engine/src/dxf.cpp:104)",
+      "acik_kalem": "Kol KAPAGI centikleri per-centik veride YOK (olculdu: 0 kayit; notch_alignment_check.cpp'nin DURUST BOSLUK notu). Oyuk<->kapak cift eslesmesi bugun kapak isaretleri + tarif metniyle tasiniyor."
+    },
+
+    "cutOnFold": {
+      "tanim": "Parca kumasin katina yerlestirilip TEK kesilir; kat cizgisi parcanin ayna eksenidir. Kat kenarina dikis payi EKLENMEZ.",
+      "dunya": "ASTM D6673 KATMAN 6 'mirror line' · FreeSewing `cutOnFold` makrosu (TEKNOLOJI:376-377)",
+      "baglandi": "panel.onFold + panel.mirrorAxis (bu dosya) · PatternPiece.onFold + PatternPiece.foldLine (engine/src/geometry.hpp) · foldLineOf (engine/src/geometry.cpp)",
+      "kural": "Motor konvansiyonu: kat kenari x = 0'da duz bir kenardir. offsetOutline(..., clampFoldX=true) kesim cizgisini x >= 0'a kilitler, yani kata pay eklenmez.",
+      "cizilen_ciktida": "EVET — nokta-cizgi ayna hatti + 'KAT / CUT ON FOLD' etiketi: web/js/sheet.js · web/js/studio.js · web/js/render.js · engine/tools/pdf-core.mjs · DXF layer 6 (engine/src/dxf.cpp)"
+    },
+
+    "regionEase": {
+      "tanim": "Bolluk giysi TIPININ degil, BOLGENIN ozelligidir. Her cevre halkasi kendi bolluk sayisini tasir.",
+      "dunya": "FreeSewing `ease` + AYRI `seatEase` / `sleeveEase` (TEKNOLOJI:157-170, 378-380)",
+      "baglandi": "contract/garment-spec-v2.json:199-202 easeNeckMM / easeBustMM / easeWaistMM / easeHipMM (mm, kaynakli: Threads-RTW + Aldrich bandi) · kol tarafi engine/src/sleeve.hpp capEase (0.04 dokuma / knitCapEase orgu)",
+      "durum": "KISMEN VAR — dort govde halkasi mm cinsinden bolge-bazli; TEKNOLOJI:378'in 'bizde fabric: woven|knit iki kelime' cumlesi spec-v2 icin ARTIK DOGRU DEGIL. EKSIK olan: bicep/kol cevresi ve basen-oturak (seat) icin AYRI mm alani yok; kol tarafinda tek sayi capEase kumas isminden turuyor.",
+      "acik_kalem": "sleeveEase/seatEase mm alani — Damla karari, tek tarafli acilmadi (K10 komsulugu: bolluk beden tablosunun okunusunu degistirir)."
+    },
+
+    "ruffleRatio": {
+      "tanim": "Buzgu bir stil ismi degil, bir SAYIDIR: toplanan kenarin dikildigi kenara uzunluk orani.",
+      "dunya": "GarmentCode'da her Interface'in oznitelegi (Interface.ruffle) — TEKNOLOJI:63-64, 381-382",
+      "baglandi": "seam.ratio + op.gather.ratio + op.split.seamRatio + op.attach.ratio + op.overlay.excessRatio (hepsi bu dosyada, aralik 1.0..3.5)",
+      "durum": "PRIMITIFTE VAR, SOZLUKTE YOK — bugun kullanici yuzeyinde `gatherType` + `gatherZone` iki MENU alani duruyor, sayi yok (TEKNOLOJI:381-383).",
+      "olculen": "Bugra Locket Upper Sleeve buzgu fazlaligi: ust kenar %29 fazlalik; buzgu oranlari %35.3 ust / %30.6 alt (CLAUDE.md, olculdu). Overlay fazlalik bandi 1.29-1.35.",
+      "acik_kalem": "gatherType/gatherZone menusunun tek `ratio` eksenine cozulmesi — sozluk isi (F-B), bu kartin isi degil."
+    }
+  },
+
   "_katmanlar": {
     "1_primitif": "Bu dosya. Edge · Panel · Seam · Op(suppress/gather/flare/extend/split/overlay/attach).",
     "2_bilesen": "bodice · sleeve · skirt · collar · cuff · band · overlay — primitif demetlerinin isimlendirilmis, tekrar kullanilan gruplari. Bu dosyanin `bilesenler` bolumunde tanimli.",

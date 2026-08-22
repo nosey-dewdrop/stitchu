@@ -224,6 +224,10 @@ function pieceSVG(piece, idx, screen) {
   if ((piece.notches || []).length) {
     s += `<path d="${pathD(piece.notches, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" ${vec}/>`;
   }
+  // CUT ON FOLD (ASTM D6673 layer 6 mirror line) — dash-dot mirror edge.
+  if ((piece.foldLine || []).length >= 2) {
+    s += `<path d="${pathD(piece.foldLine, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" stroke-dasharray="10 3 2 3" ${vec}/>`;
+  }
   if (piece.grainline) s += grainlineSVG(piece.grainline, `stroke-width="${wFine}" ${vec}`);
   return s;
 }

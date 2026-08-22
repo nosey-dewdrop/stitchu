@@ -60,6 +60,16 @@ struct PatternPiece {
     bool hasGrainline = false;
     Grainline grainline;
     double seamAllowance = constants::kSeamAllowanceMM; // mm, drawn into cutLine
+    // CUT ON FOLD (ASTM D6673 layer 6 "mirror line" / FreeSewing cutOnFold).
+    // `onFold` mirrors the cut note ("cut 1 on fold"); `foldLine` is that note
+    // turned into GEOMETRY — the straight x=0 mirror edge of the outline, so a
+    // cutter can see which edge goes on the fabric fold instead of reading a
+    // sentence. Kept OUT of `markings` on purpose: the golden dump reads
+    // commands + markings, so the drawn sewing/cut geometry stays byte-identical
+    // while this technical layer is added (same discipline as `notches`).
+    // Empty when the piece is not cut on fold (never fabricated).
+    bool onFold = false;
+    std::vector<PathCommand> foldLine;
 };
 
 struct DraftedPattern {
@@ -133,5 +143,14 @@ void translatePiece(PatternPiece& piece, double dx, double dy);
 // line is clamped to x >= 0 so no allowance is ever added across the fold.
 std::vector<PathCommand> offsetOutline(
     const std::vector<PathCommand>& outline, double sa, bool clampFoldX);
+
+// FOLD line (ASTM D6673 layer 6 mirror line): the straight x = 0 edge of a
+// "cut on fold" outline, as a 2-point move+line path. Found by flattening the
+// outline with the SAME 24-step flattening the offset/length code uses and
+// keeping the edges whose BOTH endpoints sit on x = 0 (within `tolMM`); the
+// returned segment spans their y range. Returns EMPTY when the outline has no
+// such edge — an on-fold note without a fold edge is reported, never invented.
+std::vector<PathCommand> foldLineOf(const std::vector<PathCommand>& outline,
+                                    double tolMM = 0.5);
 
 } // namespace stitchu

@@ -208,6 +208,8 @@ std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
         out += R"(,"notches":)" + commandsJSON(piece.notches);
         if (!piece.closure.empty()) out += R"(,"closure":")" + escape(piece.closure) + "\"";
         out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
+        out += R"(,"onFold":)" + std::string(piece.onFold ? "true" : "false");
+        out += R"(,"foldLine":)" + commandsJSON(piece.foldLine);
         out += "}";
     }
     out += R"(]},"issues":[)";

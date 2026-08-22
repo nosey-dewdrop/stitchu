@@ -223,6 +223,12 @@ add_test(NAME bustier_check COMMAND bustier_check)
 add_executable(locket_check tests/locket_check.cpp)
 target_link_libraries(locket_check PRIVATE engine)
 add_test(NAME locket_check COMMAND locket_check)
+# cuttable_output_check — the six missing materials gate (F-G): seam allowance,
+# grain line and cut-on-fold must be DRAWN geometry on the EU38 Locket output,
+# and the side-seam notches must walk. Anti-hack sabotages inside.
+add_executable(cuttable_output_check tests/cuttable_output_check.cpp)
+target_link_libraries(cuttable_output_check PRIVATE engine)
+add_test(NAME cuttable_output_check COMMAND cuttable_output_check)
 add_executable(cup_check tests/cup_check.cpp)
 target_link_libraries(cup_check PRIVATE engine)
 add_test(NAME cup_check COMMAND cup_check)
@@ -637,7 +643,7 @@ add_test(NAME surface_pattern_check COMMAND surface_pattern_check)
 # omuz ön/arka dengesi (arka uzun, kürek payı), yakanın KAPALI delik olması ve
 # çevresi, omzun üstünden geçen taşıyıcı yüzey. Sayılar satın alınmış Buğra
 # kalıbından ölçülü; tahmin edilen sayı yok. KIRMIZI DOĞMASI beklenendir.
-add_executable(h10_gate_check tests/h10_gate_check.cpp)
+add_executable(h10_gate_check tests/h10_gate_check_LEGACY.cpp)
 target_link_libraries(h10_gate_check PRIVATE engine)
 add_test(NAME h10_gate_check COMMAND h10_gate_check)
 

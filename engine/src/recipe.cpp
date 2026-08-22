@@ -1078,6 +1078,9 @@ Result<DraftedPattern> draftRecipe(
                 piece.name.find("Bias binding") != std::string::npos) continue;
             const bool onFold = piece.cutInstruction.find("on fold") != std::string::npos;
             piece.cutLine = offsetOutline(piece.commands, piece.seamAllowance, onFold);
+            piece.onFold = onFold;
+            piece.foldLine = onFold ? foldLineOf(piece.commands)
+                                    : std::vector<PathCommand>{};
         }
         return R::Ok(std::move(pattern));
     } catch (const RecipeError& e) {

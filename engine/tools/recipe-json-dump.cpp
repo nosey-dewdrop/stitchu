@@ -135,6 +135,8 @@ int main(int argc, char** argv) {
         out += R"(,"markings":)" + commandsJSON(piece.markings);
         out += R"(,"notches":)" + commandsJSON(piece.notches);
         out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
+        out += R"(,"onFold":)" + std::string(piece.onFold ? "true" : "false");
+        out += R"(,"foldLine":)" + commandsJSON(piece.foldLine);
         out += "}";
     }
     out += "]}";

@@ -11,6 +11,7 @@ own flattened samples; actual == what ezdxf reads out of the file.
 Layer contract (AAMA-250 / ASTM D6673):
   1  boundary/cut   <- piece.cutLine        8  seamline   <- piece.commands
   7  grainline      <- piece.grainline      4  notch      <- piece.notches
+  6  mirror line    <- piece.foldLine       (cut on fold, ASTM D6673 layer 6)
   11 internal       <- piece.markings       15 annotation <- piece.name (TEXT)
 
 Fails loudly (exit 1) on: ezdxf missing, layer set mismatch, any vertex off by
@@ -86,7 +87,7 @@ def to_dxf(p):
 
 def expected_polylines(pattern):
     """Build the layer->list-of-(closed, pts) map the DXF MUST contain."""
-    exp = {"1": [], "8": [], "11": [], "4": [], "7": []}
+    exp = {"1": [], "8": [], "11": [], "4": [], "6": [], "7": []}
     for piece in pattern["pieces"]:
         if piece.get("cutLine"):
             for closed, pts in flatten_path(piece["cutLine"]):
@@ -95,6 +96,8 @@ def expected_polylines(pattern):
             exp["8"].append((closed, [to_dxf(p) for p in pts]))
         for closed, pts in flatten_path(piece["markings"]):
             exp["11"].append((closed, [to_dxf(p) for p in pts]))
+        for closed, pts in flatten_path(piece.get("foldLine") or []):
+            exp["6"].append((closed, [to_dxf(p) for p in pts]))
         for closed, pts in flatten_path(piece["notches"]):
             exp["4"].append((closed, [to_dxf(p) for p in pts]))
         g = piece.get("grainline")
@@ -154,7 +157,7 @@ def main():
     # Layer name parity: every expected non-empty layer is present in the file's
     # LAYER table, and no geometry sits on an undeclared layer.
     declared = set(doc.layers.entries.keys())
-    expected_layers = {"1", "8", "11", "4", "7", "15"}
+    expected_layers = {"1", "8", "11", "4", "6", "7", "15"}
     missing_decl = expected_layers - declared
     if missing_decl:
         print(f"FAIL: layers not declared in LAYER table: {sorted(missing_decl)}",

@@ -253,6 +253,14 @@ function drawPieceScaled(c, d, ox, oy, scale) {
   c.stroke(0.7, NAVY); c.dash(null);
   c.path(toSegs(p.commands), 'S');
   if ((p.markings || []).length) { c.stroke(0.5, HEX('#3f74a8')); c.dash([3, 3]); c.path(toSegs(p.markings), 'S'); c.dash(null); }
+  // Balance notches (ASTM layer 4): solid ticks, no dash — a notch is a cut.
+  if ((p.notches || []).length) { c.stroke(0.5, NAVY); c.dash(null); c.path(toSegs(p.notches), 'S'); }
+  // CUT ON FOLD (ASTM layer 6 mirror line): dash-dot, so the cutter sees which
+  // edge goes on the fabric fold instead of having to read the cut note.
+  if ((p.foldLine || []).length) {
+    c.stroke(0.5, NAVY); c.dash([4, 1.2, 0.8, 1.2]);
+    c.path(toSegs(p.foldLine), 'S'); c.dash(null);
+  }
   if (p.grainline) {
     const g = p.grainline;
     c.stroke(0.6, HEX('#3f74a8')); c.dash(null);

@@ -104,6 +104,9 @@ DxfPiece flattenPiece(const PatternPiece& piece, int steps) {
     appendPolylines(out.polylines, Layers::kInternal, piece.markings, steps);
     // Balance notches.
     appendPolylines(out.polylines, Layers::kNotch, piece.notches, steps);
+    // Mirror line = the "cut on fold" edge (ASTM D6673 layer 6). Emitted only
+    // when the motor actually found a fold edge; never fabricated from the note.
+    appendPolylines(out.polylines, Layers::kFold, piece.foldLine, steps);
     // Grainline (a single straight segment) as a 2-point polyline.
     if (piece.hasGrainline) {
         DxfPolyline g;
@@ -166,6 +169,7 @@ std::string writeDocument(const std::vector<DxfPiece>& pieces) {
         {Layers::kSeamline,   1},  // red
         {Layers::kGrainline,  3},  // green
         {Layers::kNotch,      5},  // blue
+        {Layers::kFold,       6},  // magenta
         {Layers::kInternal,   2},  // yellow
         {Layers::kAnnotation, 4},  // cyan
     };

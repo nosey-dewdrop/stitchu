@@ -186,10 +186,19 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
         const Rect bb = boundingBox(pc.commands);
         const bool isBack = nameHas(pc, "Back");
         const bool isFront = nameHas(pc, "Front");
+        // TORSO panel — the role, not one spelling of it. The notch pass used to
+        // ask for "Bodice"/"Top" only, so every post-pass that renames the torso
+        // panels shipped a piece with ZERO balance notches: measured 2026-08-23,
+        // the EU38 Bugra Locket (Front Body / Back Body, locket.cpp) came out of
+        // the motor with 0 notch ticks while the plain top carried 4. "Body" is
+        // the third spelling in use (locket.cpp, cupseam.cpp princess panels);
+        // it is a role name, not a per-style exception.
+        const bool isTorso = nameHas(pc, "Bodice") || nameHas(pc, "Top") ||
+                             nameHas(pc, "Body");
         // --- Bodice / Top: armhole + waist balance notches on the side seam ---
         // Side seam is the max-x edge; armhole notch sits high (near the scye),
         // waist notch sits at the bottom edge. Front = single, back = double.
-        if ((nameHas(pc, "Bodice") || nameHas(pc, "Top")) && (isFront || isBack)) {
+        if (isTorso && (isFront || isBack)) {
             const double sideX = bb.x + bb.width;
             if (sleeved) {
                 const Point armPt{sideX, bb.y + bb.height * 0.18};
@@ -212,7 +221,7 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
         // pieces (bodice back + skirt back, cut on a CB seam) with the zipper
         // glyph down the center-back edge + a human closure label. ---
         if (dressZipper && isBack &&
-            (nameHas(pc, "Bodice") || nameHas(pc, "Skirt") || nameHas(pc, "Top"))) {
+            (isTorso || nameHas(pc, "Skirt"))) {
             // Center-back seam edge = min-x for a "cut 2" back panel.
             const double cbX = bb.x;
             const double top = bb.y + bb.height * 0.02;
@@ -1057,6 +1066,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             piece.name.find("Bias binding") != std::string::npos) continue;
         const bool onFold = piece.cutInstruction.find("on fold") != std::string::npos;
         piece.cutLine = offsetOutline(piece.commands, piece.seamAllowance, onFold);
+        // FOLD LINE (ASTM layer 6): the cut note's "on fold" turned into a drawn
+        // mirror edge, so the cutter sees the fold instead of reading it.
+        piece.onFold = onFold;
+        piece.foldLine = onFold ? foldLineOf(piece.commands)
+                                : std::vector<PathCommand>{};
     }
     return pattern;
 }
