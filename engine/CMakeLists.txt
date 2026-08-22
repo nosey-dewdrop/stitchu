@@ -727,3 +727,11 @@ add_test(NAME preset_resolve_check COMMAND preset_resolve_check
          ${CMAKE_CURRENT_SOURCE_DIR}/vocab.json
          ${CMAKE_CURRENT_SOURCE_DIR}/../contract/primitives-v1.json
          ${CMAKE_CURRENT_SOURCE_DIR}/../contract/vocab-resolution-v1.json)
+
+# F-I EDİTLEME KAPISI: "yakayı değiştir" deyince dokunulmayan paneller
+# BAYT-AYNI kalmalı. Bölge ilanı contract/edit-locality-v1.json'da (kaynağı
+# composition.json'un conflictClass'ı), motorun çıktısından türetilmiş değil.
+# Üç anti-hack mandalı test dosyasının başında yazılı; en sertı: aynı düzenleme
+# "tüm spec'i yeniden yaz" kipinde uygulanınca kapı KIRMIZI düşmek zorunda.
+add_test(NAME edit_locality_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/edit_locality_check.mjs)

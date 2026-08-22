@@ -1,0 +1,6 @@
+{
+  "why": "Damla: 'yakayi degistirme' — bebe yaka olsun. Model sadece BU alani yazar.",
+  "ops": [
+    { "op": "set", "field": "collarType", "value": "peterPan" }
+  ]
+}

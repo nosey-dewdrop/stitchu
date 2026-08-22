@@ -193,8 +193,14 @@ export function missingFeatures(seen, lang) {
   // a corset lace-up closure is now DRAWN as real eyelet columns + a lacing cord
   // (seen.laceUpBackDrawn), so a 'lace-up' closure read is no longer missing.
   const laceClosureDrawn = seen.laceUpBackDrawn && seen.closure && seen.closure.type === 'lace-up';
+  // F-I (2026-08-23), TERS YALAN #1 — ÖLÇÜLDÜ: an exposed zip read set
+  // exposedZipDrawn (the teeth glyph + opened seam ARE drafted, and the
+  // outOfVocab channel below has suppressed that term since 2026-07-17), but
+  // THIS branch never asked, so the buyer was told "fermuar cizili degil" about
+  // a zip the engine had just drawn. Kanit: engine/tools/missing-olcum.mjs.
+  const zipClosureDrawn = seen.exposedZipDrawn && seen.closure && seen.closure.type === 'zipper';
   if (seen.closure && seen.closure.type && seen.closure.type !== 'none' &&
-      !seen.closureDrawn && !tieClosureDrawn && !laceClosureDrawn) {
+      !seen.closureDrawn && !tieClosureDrawn && !laceClosureDrawn && !zipClosureDrawn) {
     const d = CLOSURE_DERIVATIVE[seen.closure.type];
     const loc = seen.closure.location ? ` (${seen.closure.location})` : '';
     push((L === 'tr' ? closureLabelTr(seen.closure.type) : closureLabelEn(seen.closure.type)) + loc, d ? d[L] : null);
@@ -417,6 +423,15 @@ export function missingFeatures(seen, lang) {
   // button circles down the front, so an outOfVocab term naming a button
   // row/front is no longer missing when a row was drawn.
   const buttonRowTerm = (t) => /button\s*(row|front|down|placket|closure)|row of buttons/i.test(t);
+  // F-I (2026-08-23), TERS YALAN #2 — OLCULDU: tie.cpp draws a simple applied
+  // tie / sash / bow as real self-fabric strips + a placement notch, and the
+  // closure branch above already skips its card (tieClosureDrawn); the free
+  // channel had NO tie suppression, so the same bow came back as
+  // "neck bow (pattern'de yok)" right next to the drafted "Neck/Front Tie"
+  // piece. A DRAWSTRING never reaches here: pickTiePlacement returns 'none' for
+  // it upstream, so tieDrawn is false and the term stays honest.
+  const tieTerm = (t) => /\b(bow|sash|tie|ties|ribbon)\b/i.test(t) &&
+    !/drawstring|shirr|smock|gather/i.test(t);
   // laceupback.cpp: a corset lace-up back is now drawn (CB facing + trued eyelet
   // columns + a lacing cord), so an outOfVocab term naming a corset/laced/eyelet
   // back lacing is no longer missing. A front-laced / shoulder-laced closure is a
@@ -456,7 +471,12 @@ export function missingFeatures(seen, lang) {
     if (seen.cupSeamDrawn && cupSeamTerm(label)) continue;
     if (seen.yokeDrawn && yokeTerm(label)) continue;
     if (seen.exposedZipDrawn && exposedZipTerm(label)) continue;
-    if (seen.buttonRowDrawn && buttonRowTerm(label)) continue;
+    // F-I (2026-08-23), TERS YALAN #3 — OLCULDU: a SYMMETRIC front button
+    // placket sets closureDrawn (not buttonRowDrawn — the placket path wins and
+    // leaves buttonRow 'none'), so "button front placket" in the free channel
+    // was reported missing while placket.cpp had drawn the stand + buttonholes.
+    if ((seen.buttonRowDrawn || seen.closureDrawn) && buttonRowTerm(label)) continue;
+    if (seen.tieDrawn && tieTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
       push(label, null);

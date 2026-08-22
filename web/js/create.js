@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=136';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness } from './vision-bridge.js?v=136';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=136';
 import { measureGarment } from './measure.js?v=136';
 
 const screen = document.getElementById('screen');
@@ -659,129 +659,11 @@ function showSpec() {
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
         // the honesty layer can tell the user what the pattern is missing).
-        spec.seen = {
-          // Olcum kapisi: which proportion source drove this spec — true =
-          // the deterministic pixel measurement, false = the standard enum
-          // table (measurement honestly refused). The result screen prints
-          // the matching one-line note; no third (silent) state exists.
-          ratiosMeasured: seen.ratiosMeasured === true,
-          closure: seen.closure || null,
-          collar: seen.collar || null,
-          straps: seen.straps || null,
-          cupSeams: typeof seen.cupSeams === 'boolean' ? seen.cupSeams : null,
-          sleeveHead: seen.sleeveHead || null,
-          yoke: seen.yoke || null,
-          backDetail: seen.backDetail || null,
-          outOfVocab: Array.isArray(seen.outOfVocab) ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12) : [],
-          // Loop 3 + R1.2: the front button placket is now DRAWN (symmetric CF or
-          // asymmetric off-center), so the honesty layer must NOT list it as
-          // missing. Every other closure stays honest.
-          closureDrawn: spec.frontPlacket === true || spec.placketStyle === 'asymmetric',
-          // R1.2: an ASYMMETRIC button placket is now drawn, so an outOfVocab term
-          // naming it is no longer missing. A symmetric front stays covered by
-          // closureDrawn above.
-          placketAsymDrawn: spec.placketStyle === 'asymmetric',
-          // Loop 4b: a simple applied tie/sash/bow is now DRAWN as strips, so
-          // the honesty layer must NOT list that tie/back-tie as missing.
-          // Drawstring-gathered ties are NOT drawn → tieDrawn false, stay honest.
-          tieDrawn: spec.tieClosure && spec.tieClosure !== 'none',
-          // Loop 6 + R1.2: a gathered/puff sleeve HEAD (raised + widened cap +
-          // crown gather) AND the short CAP-sleeve wing are now DRAWN, so the
-          // honesty layer must NOT list them as missing. A drawstring-gathered
-          // sleeve (needs an arm casing) stays honest.
-          sleeveCapDrawn: !!(spec.sleeveCap && spec.sleeveCap !== 'plain'),
-          // R1.2: whether the drawn head is specifically the CAP wing (so the
-          // honesty layer can suppress the "cap sleeve" derivative note).
-          capSleeveDrawn: spec.sleeveCap === 'cap',
-          // Loop 7/8: a stand/mock/flat/peter-pan/shirt collar is now DRAWN as a
-          // real piece, so the honesty layer must NOT list it as missing. A
-          // bias-bound / notched / sailor finish stays honest (collarType none).
-          collarDrawn: !!(spec.collarType && spec.collarType !== 'none'),
-          // Loop 8: a drawstring/shirred/smocked gathered panel is now DRAWN, so
-          // the honesty layer must NOT list that gathering as missing. A special
-          // sub-type the engine still can't draft stays honest (gatherType none).
-          gatherDrawn: !!(spec.gatherType && spec.gatherType !== 'none'),
-          // Loop 9b: an open-back cutout (round/low-V/square/keyhole) is now DRAWN
-          // as a facing-finished opening in the back piece, so the honesty layer
-          // must NOT list the open-back as missing. A pocket / special back
-          // finish clustered with it stays honest (its own oov term still shows).
-          backOpeningDrawn: !!(spec.backOpening && spec.backOpening !== 'none'),
-          // corset lace-up back: an eyelet-laced CB closure is now DRAWN (CB facing
-          // strip + two trued eyelet columns + a lacing cord), so the honesty layer
-          // must NOT list the laced back as missing / degrade it to a single tie.
-          laceUpBackDrawn: !!(spec.laceUpBack && spec.laceUpBack !== 'none'),
-          // wrapfront.cpp: a true wrap / surplice front is now DRAWN (the front
-          // reshaped into a crossed double front, cut 2 mirror, surplice V), so the
-          // honesty layer must NOT degrade a wrap/surplice read to a mere tie strip.
-          wrapFrontDrawn: !!(spec.wrapFront && spec.wrapFront !== 'none'),
-          // Loop M1: a back hem slit / walking vent is now DRAWN (CB seam +
-          // top-point bar tack + a lapped extension for a vent), so the honesty
-          // layer must NOT list the back slit as missing. A front/side slit stays
-          // honest (only the CB walking vent is drawn). Also false when the slit
-          // was read on a non-hosting (gathered) skirt → stays honest.
-          hemSlitDrawn: !!(spec.backSlit && spec.backSlit !== 'none'),
-          // queue #3: a ruffled shoulder strap is now DRAWN as a separate gathered
-          // strip pair, so the honesty layer must NOT list it as missing. A plain /
-          // spaghetti / one-shoulder / off-shoulder / halter strap stays honest
-          // (ruffledStraps none — a different construction the engine does not draw).
-          ruffledStrapsDrawn: !!(spec.ruffledStraps && spec.ruffledStraps !== 'none'),
-          // R1.1: a full/half/pointed circular peplum is now DRAWN as a separate
-          // flared piece trued to the waist, so the honesty layer must NOT list it
-          // as missing. A pleated/gathered/draped/tiered peplum stays honest
-          // (peplum none — a different construction the engine does not draw).
-          peplumDrawn: !!(spec.peplum && spec.peplum !== 'none'),
-          // All-around hem flounce: a gathered flounce is now DRAWN as a separate
-          // strip trued to the whole hem, so the honesty layer must NOT list an
-          // all-around / tiered hem flounce as missing. A pleated/circular/multi-
-          // tier hem flounce stays honest (hemFlounce none).
-          hemFlounceDrawn: !!(spec.hemFlounce && spec.hemFlounce !== 'none'),
-          // vocab 2026-07-17: an OFF-SHOULDER / bardot neckline is now DRAWN
-          // (top edge dropped below the shoulder + elastic casing + optional
-          // frill), so the honesty layer must NOT list off-shoulder as missing. A
-          // one-shoulder / strapless / structured off-shoulder stays honest.
-          bardotDrawn: !!(spec.bardotStyle && spec.bardotStyle !== 'none'),
-          // vocab 2026-07-17: a BACK DETAIL (ruffle/cape/flounce at the back neck)
-          // is now DRAWN as a separate piece, so the honesty layer must NOT list a
-          // caped/ruffled/flounced back as missing. A hood/watteau stays honest.
-          backDetailDrawn: !!(spec.backDetail && spec.backDetail !== 'none'),
-          // vocab 2026-07-17: an EXPOSED / visible zipper (CF or CB) is now DRAWN
-          // as a teeth glyph + opened seam, so the honesty layer must NOT list an
-          // exposed zip as missing. A separating/two-way zip stays honest.
-          exposedZipDrawn: !!(spec.exposedZip && spec.exposedZip !== 'none'),
-          // vocab 2026-07-17: a decorative/functional BUTTON ROW is now DRAWN as
-          // real button circles down the front, so the honesty layer must NOT list
-          // a plain button row as missing.
-          buttonRowDrawn: !!(spec.buttonRow && spec.buttonRow !== 'none'),
-          // patch 3.12: a patch pocket OR a side-seam in-seam pocket is now DRAWN
-          // as real piece(s) + a placement/mouth mark, so the honesty layer must
-          // NOT list that pocket as missing. A welt/besom/bound/cargo/kangaroo
-          // pocket stays honest (pocketStyle none — a different construction the
-          // engine does not draw).
-          pocketDrawn: !!(spec.pocketStyle && spec.pocketStyle !== 'none'),
-          // patch 3.13: a button/ribbed cuff at the sleeve end is now DRAWN as a
-          // separate band trued to the wrist (the sleeve hem gathered in), so the
-          // honesty layer must NOT list it as missing. A French / elastic-casing /
-          // ruffle cuff stays honest (cuffStyle none — a construction the engine
-          // does not draft).
-          cuffDrawn: !!(spec.cuffStyle && spec.cuffStyle !== 'none'),
-          // patch 3.15: a shirt-tail / high-low hem is now DRAWN by reshaping the
-          // fitted lower edge, so the honesty layer must NOT list it as missing. An
-          // asymmetric-diagonal / handkerchief / mullet-on-a-gathered-skirt hem is a
-          // different construction that stays honest (hemShape straight).
-          hemShapeDrawn: !!(spec.hemShape && spec.hemShape !== 'straight'),
-          // cupseam.cpp: a horizontal bust-cup seam (Upper Cup + Lower Cup + Front
-          // Body) is now DRAWN when the host is a strapless princess bustier, so the
-          // honesty layer must NOT list cup seams as missing. A sleeved bodice cup
-          // seam / a dart bust the engine refused stays honest (cupSeam none).
-          cupSeamDrawn: spec.cupSeam !== 'none',
-          // yoke.cpp: a plain/gathered yoke split (Front/Back Yoke + Body) is now
-          // DRAWN, so the honesty layer must NOT list the yoke as missing. A yoke on
-          // a skirt (no bodice) the engine refused stays honest (yoke none).
-          yokeDrawn: spec.yoke !== 'none',
-          // boxpleat.cpp: a center inverted box pleat is now DRAWN behind the CF
-          // panel, so the honesty layer must NOT list a center box pleat as missing.
-          boxPleatDrawn: spec.boxPleat !== 'none',
-        };
+        // F-I (2026-08-23): bu blok vision-bridge.js'e TAŞINDI (buildSeenRecord).
+        // Sebep: dürüstlük katmanının "çizdim mi" bayrakları ürün yolunda burada,
+        // ölçüm yolunda bir kopyada duruyordu; kopya sürüklenirse missing.js alıcıya
+        // motorun çizebildiğini "çizemedim" der. Tek gerçek kaynağı artık orası.
+        spec.seen = buildSeenRecord(spec, seen);
         status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
         rebuild();
       } catch (err) {
