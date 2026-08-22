@@ -67,3 +67,22 @@ once commit: 962407d28aac466ebfc0b2f29a4e9e1d7c534f03
 [F10] K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor
 [F10] KAPI KIRMIZI
 
+## AJAN KOSMADI: F11  (18:40)
+once commit: 962407d28aac466ebfc0b2f29a4e9e1d7c534f03
+"result":"Pushed: `6208704`.\n\n## F11 KAPANIŞ RAPORU\n\n**1. Yeşile dönen kapı: 0**\n**2. Yeni kırmızı ad: 0** (hedef 0 — ama bedelsiz: hiçbir şey değişmediği için bozulamazdı)\n**3. Damar: kımıldamadı** — %95.2/%81.0/%11.9, sapma 0. Çünkü **ana dala tek satır kod girmedi.**\n\n**4. docs/landing önce-sonra görüntü yolları: YOK.** İki ayrı hâl olmadığı için çekilecek iki görüntü de yok — `git diff 962407d..HEAD -- docs web README.md` boş. Sahte bir \"
+Bu faz KIRMIZI degil, HIC KOSMADI. Yeniden acilabilir.
+
+## DUZELTME NOTU (F11 sefi, 22 Agu 18:40+)
+Yukaridaki "AJAN KOSMADI: F11" YANLIS TESHIS -- F0'dakiyle AYNI kusur.
+F11 18:09-18:40 arasinda kostu, fazi kapatti ve `6208704` olarak PUSH ETTI
+(`git rev-parse origin/main` = 62087045c8...). Harness yine butun logu
+is_error diye tarayip dusen bir tool_result'a takildi ve fazi "kosmadi"
+sayip once=6208704 ile YENIDEN acti.
+Dogrulandi (yeniden olculmedi, diskteki kanit teyit edildi):
+  GECE/log/F11.red.after     -> 7 ad, F0 tabaniyla ayni
+  GECE/log/F11.reddiff.txt   -> 0 bayt
+  GECE/log/F11.ctest.txt     -> "93% tests passed, 7 tests failed out of 96"
+  GECE/F11.md F11-B.md F11-C.md + GECE/kurtarma/ (328K) -> hepsi 6208704'te
+IKINCI ACILISTA IS YAPILMADI. Kart yazilmadi, isci salinmadi, olcum
+tekrarlanmadi -- tekrarlanmis bir sayi yeni bir sayi degildir (§0.2).
+KOSU BITTI. gece.sh durdurulmali; aksi halde F11'i sonsuza kadar yeniden acar.

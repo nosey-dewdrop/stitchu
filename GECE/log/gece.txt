@@ -33,3 +33,7 @@ GECE/mutasyon.sh: OK
     KAPI KIRMIZI
     F10 kapanmadi -- kapanisin geri kalani YINE de kosar
 --- F11 basliyor 18:09 · once=962407d
+    sef bitti 18:40
+    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+    F11 kosmadi, bir kez daha
+--- F11 basliyor 18:40 · once=6208704

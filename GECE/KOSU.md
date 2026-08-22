@@ -7,6 +7,11 @@ son yeşil commit: **YOK** · ağaç: `962407d` (koşu başındaki commit)
 > **BU KOŞU KOD ÜRETMEDİ.** F0/F6/F9/F10 iş üretti; dördünün işi de `gece.sh`'in
 > kendi temizleme mantığınca **git nesnesi bırakmadan silindi**. Kapanış raporu
 > `GECE/F11.md`. Kök sebep §"HARNESS KUSURU" altında, ölçülmüş.
+>
+> ⚠ **gece.sh HÂLÂ DÖNÜYOR.** F11 `6208704` olarak push edildikten SONRA aynı
+> `is_error` yanlış teşhisiyle F11'i `once=6208704` ile yeniden açtı. İkinci
+> açılışta iş YAPILMADI (`GECE/F11.md` son bölüm). **Süreç durdurulmalı**,
+> yoksa F11'i sonsuza kadar yeniden açar.
 
 ## ÜÇ SAYI (F11'in yeniden ölçtüğü)
 1. **ctest 96 test · 7 kırmızı · yeni kırmızı ad 0 · kapanan kırmızı 0**

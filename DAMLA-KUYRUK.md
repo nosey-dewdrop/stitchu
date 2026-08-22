@@ -577,3 +577,8 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
   `gen-sitemap.mjs:15` → *"af49514 deleted that tree"*. Sayfalar canlı, üreteçleri ölü.
 - **[DEVREDİYOR] `patterns_real/`** (§0.10, kapatılmaya çalışılmıyor) ·
   **`stash@{0}`** (`devlog.md`/`linkedin.md` silinmiş duruyor, hükmün gerek).
+
+- **gece.sh süreci ŞU AN durdurulsun mu?** F11 `6208704` olarak push edildikten
+  sonra harness onu "koşmadı" sanıp yeniden açtı (`GECE/STOP.md` son blok).
+  Koşu bitti; süreç durdurulmazsa F11'i tekrar tekrar açar. Durdurma komutu
+  Damla'nın elinde (gece.sh'i başlatan kabuk).
