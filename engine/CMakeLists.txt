@@ -83,6 +83,17 @@ add_test(NAME golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/golden_chec
 add_test(NAME generated_ratchet_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/generated_ratchet_check.sh)
 
+# bundle_fresh_check: the SHIPPED PAIR may not be older than its source.
+# Measured 22 Aug 2026: web/vendor/stitchu-engine.js and both
+# backend/engine/stitchu-worker.* files were last built 28 Jul (dd30846) while
+# 53 commits had landed in engine/src since. Every other ctest was green for
+# those four weeks, because not one of them looks at the shipped artefact —
+# the repo could prove the source was right, never that the right source had
+# actually shipped. Compares COMMIT DATES, not mtimes, so `touch` cannot turn
+# it green (proven 22 Aug: bytes identical, gate stayed red at 53 commits).
+add_test(NAME bundle_fresh_check
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/bundle_fresh_check.sh)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
