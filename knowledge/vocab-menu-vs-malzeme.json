@@ -1,0 +1,216 @@
+{
+ "_note": "M=MENU (style name, must be resolved into a bundle of stitch primitives). P=MALZEME (primitive/axis: an operation, a landmark, a ratio). NONE=absence sentinel, counted separately.",
+ "labels": {
+  "garment": {
+   "skirt": "M",
+   "dress": "M",
+   "top": "M"
+  },
+  "shaping": {
+   "princess": "M",
+   "dart": "P"
+  },
+  "waistline": {
+   "natural": "P",
+   "empire": "P"
+  },
+  "fabric": {
+   "woven": "P",
+   "knit": "P"
+  },
+  "neckline": {
+   "crew": "M",
+   "scoop": "M",
+   "vNeck": "M",
+   "square": "M",
+   "boat": "M",
+   "sweetheart": "M",
+   "halter": "M",
+   "cowl": "M",
+   "pussyBow": "M"
+  },
+  "sleeveStyle": {
+   "none": "NONE",
+   "straight": "P",
+   "balloon": "M"
+  },
+  "sleeveLength": {
+   "short": "M",
+   "elbow": "M",
+   "long": "M"
+  },
+  "skirtStyle": {
+   "aLine": "P",
+   "straight": "P",
+   "gathered": "P",
+   "halfCircle": "P",
+   "pleated": "P",
+   "gore": "P"
+  },
+  "skirtLength": {
+   "mini": "M",
+   "midi": "M",
+   "maxi": "M"
+  },
+  "topLength": {
+   "cropped": "M",
+   "hip": "M",
+   "tunic": "M"
+  },
+  "tieClosure": {
+   "none": "NONE",
+   "backWaist": "M",
+   "backWaistBow": "M",
+   "frontNeckBow": "M",
+   "tieBack": "M",
+   "cuffTies": "M",
+   "frontWaistTie": "M",
+   "wrapFront": "M",
+   "frontWaistBow": "M"
+  },
+  "sleeveCap": {
+   "plain": "P",
+   "gathered": "P",
+   "puffed": "M",
+   "cap": "M"
+  },
+  "collarType": {
+   "none": "NONE",
+   "stand": "M",
+   "mock": "M",
+   "flat": "M",
+   "peterPan": "M",
+   "shirt": "M",
+   "crescent": "M"
+  },
+  "collarEdge": {
+   "round": "P",
+   "pointed": "P",
+   "scallop": "P"
+  },
+  "gatherType": {
+   "none": "NONE",
+   "drawstring": "P",
+   "shirred": "P",
+   "smocked": "P"
+  },
+  "gatherZone": {
+   "neckline": "P",
+   "bust": "P",
+   "waist": "P",
+   "sleeve": "P"
+  },
+  "backOpening": {
+   "none": "NONE",
+   "round": "M",
+   "lowV": "M",
+   "square": "M",
+   "keyhole": "M"
+  },
+  "laceUpBack": {
+   "none": "NONE",
+   "corset": "M"
+  },
+  "wrapFront": {
+   "none": "NONE",
+   "surplice": "M"
+  },
+  "backSlit": {
+   "none": "NONE",
+   "vent": "P",
+   "slit": "P"
+  },
+  "ruffledStraps": {
+   "none": "NONE",
+   "ruffled": "M",
+   "wide": "M",
+   "spaghetti": "M"
+  },
+  "peplum": {
+   "none": "NONE",
+   "full": "M",
+   "half": "M",
+   "pointed": "M"
+  },
+  "hemFlounce": {
+   "none": "NONE",
+   "gathered": "P"
+  },
+  "placketStyle": {
+   "none": "NONE",
+   "standard": "M",
+   "asymmetric": "M"
+  },
+  "edgeFinish": {
+   "biasBinding": "P",
+   "facing": "P"
+  },
+  "pocketStyle": {
+   "none": "NONE",
+   "patch": "M",
+   "sideSeam": "M",
+   "slash": "M"
+  },
+  "cuffStyle": {
+   "none": "NONE",
+   "button": "M",
+   "ribbed": "M"
+  },
+  "hemShape": {
+   "straight": "P",
+   "shirttail": "M",
+   "highLow": "M",
+   "pointedV": "M",
+   "boxPleatHem": "M"
+  },
+  "shoulderStyle": {
+   "set": "M",
+   "dropped": "M",
+   "raglan": "M"
+  },
+  "buttonRow": {
+   "none": "NONE",
+   "functional": "M",
+   "decorative": "M"
+  },
+  "exposedZip": {
+   "none": "NONE",
+   "centerFront": "P",
+   "centerBack": "P"
+  },
+  "backDetail": {
+   "none": "NONE",
+   "ruffle": "M",
+   "cape": "M",
+   "flounce": "M"
+  },
+  "bardotStyle": {
+   "none": "NONE",
+   "plain": "M",
+   "frill": "M"
+  },
+  "cupSeam": {
+   "none": "NONE",
+   "horizontal": "P",
+   "bugra": "M"
+  },
+  "locketTop": {
+   "none": "NONE",
+   "bugra": "M"
+  },
+  "yoke": {
+   "none": "NONE",
+   "plain": "P",
+   "gathered": "P"
+  },
+  "boxPleat": {
+   "none": "NONE",
+   "centerInverted": "P"
+  }
+ },
+ "counts": {
+  "M": 74,
+  "P": 36,
+  "NONE": 22
+ }
+}
