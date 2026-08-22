@@ -1,3 +1,13 @@
+// ⛔ LEGACY — DEVRE DIŞI 2026-08-23 (CMakeLists: DISABLED TRUE). SİLİNMEDİ.
+// GEREKÇE: bu kapı `SurfacePattern` hattını yargılıyor. ÖLÇÜLDÜ (grep,
+// engine/src içinde 0 satır): `surfacepattern` motorun sevk edilen çizim
+// hattından SIFIR kez include ediliyor. Yani müşteriye giden giysiyi değil,
+// onun yanında duran ayrı bir hattı yargılıyordu — kırmızısı da yeşili de
+// ürüne bir şey söylemiyor. Sevk edilen hattın kapısı artık
+// `garment_armhole_check` (BodiceBlock::draft, varsayılan BodiceOptions).
+// Buradaki ÖLÇÜLEN Buğra sayıları hâlâ geçerli; yeni kapı onları PARİTE
+// sütunu olarak devraldı (ORTAK.md md.4).
+//
 // h10_gate_check — H1.0'ın KABUL KAPISI. Tanım: docs/H1.0-KAPI.md
 //
 // Bu bir kod testi değil, bir BİTİŞ TANIMI. H1.0 (giyilebilirlik) 25-45 saatlik

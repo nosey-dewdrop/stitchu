@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <limits>
 
 #include "shoulder.hpp"
@@ -126,25 +127,65 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     }
     const double dx = armholeBottom.x - shoulder.x;   // horizontal span (>0)
     const double dy = armholeBottom.y - shoulder.y;   // vertical drop   (>0)
+    const double chord = std::hypot(dx, dy);
+    // HOW DEEP the scye hollows is not a free constant any more. The hollow SHARE
+    // is only a bisection seed; the drawn curve is SOLVED so its arc/chord equals
+    // the ratio MEASURED on the bought Bugra pattern (bodice.hpp armholeArcChord*,
+    // 8 sizes, per half). The share alone left the shipped scye at arc/chord 1.01
+    // — a straight diagonal wearing the word "scye".
+    // cp2 is the only free point: it sits near the underarm, pulled INSIDE the
+    // chord (the concave scye belly), rising toward the underarm near-vertically
+    // so the turn into the side seam is smooth.
+    const double targetArc = chord * (isFront ? BodiceBlock::armholeArcChordFront
+                                              : BodiceBlock::armholeArcChordBack);
+    // cp1Of(h) lets a branch grow its OWN control arm with the hollow. A cubic
+    // kinks when one control arm is long and the other short; the tangent branch
+    // uses this to keep the two arms balanced (see below).
+    const auto solveHollow = [&](const std::function<Point(double)>& cp1Of,
+                                 double cp2Y, double seed) {
+        const auto arcFor = [&](double h) {
+            const Point c2{armholeBottom.x - dx * 0.06 - h, cp2Y};
+            return pathLength({PathCommand::move(shoulder),
+                               PathCommand::curve(armholeBottom, cp1Of(h), c2)});
+        };
+        // GEOMETRİK TAVAN — ayarlanmış bir sayı değil: cp2 omuz ucunun İÇİNE
+        // geçemez. Geçince oyuğun karnı panelin kendi kenarını kesiyor; ölçüldü
+        // 2026-08-23, `[selfintersect] Upper Cup Side Front` (kap dikişli
+        // princess paneli). Kontrol poligonu [omuz ucu, koltukaltı] açıklığında
+        // kalır: cp2.x = bottom.x - 0.06*dx - h, shoulder.x = bottom.x - dx
+        //   => cp2.x >= shoulder.x  <=>  h <= 0.94 * dx.
+        // Tavan bağlarsa ölçülen oran TUTTURULAMAZ; bu bir gevşetme değil, kapıya
+        // kırmızı olarak yansır (garment_armhole_check K1).
+        (void)seed;
+        double lo = 0.0;
+        double hi = 0.94 * dx;
+        if (arcFor(hi) < targetArc) return hi;
+        for (int i = 0; i < 64; ++i) {
+            const double mid = 0.5 * (lo + hi);
+            if (arcFor(mid) < targetArc) lo = mid; else hi = mid;
+        }
+        return 0.5 * (lo + hi);
+    };
     if (setIn) {
-        // Set-in-sleeve scye (opt-in): cp1 breaks from the shoulder seam and heads
+        // Set-in-sleeve scye: cp1 breaks from the shoulder seam and heads
         // DOWN into the armhole — a real set-in armhole corners at the tip and the
         // sleeve cap covers it. Deeper hollow than the sleeveless/tangent scye.
         // No tangent lock (that lock is what a single cubic could not reconcile
         // with a set-in scye — the measured 20.6 mm structural residual).
-        const double hollowIn = (isFront ? BodiceBlock::setInArmholeHollowShareFront
-                                         : BodiceBlock::setInArmholeHollowShareBack) * dx;
         const Point cp1In{
             shoulder.x + dx * BodiceBlock::setInArmholeCp1OutShare,
             shoulder.y + dy * BodiceBlock::setInArmholeUpperDropShare};
+        const double cp2YIn = shoulder.y + dy * BodiceBlock::setInArmholeLowerDropShare;
+        const double seedIn = (isFront ? BodiceBlock::setInArmholeHollowShareFront
+                                       : BodiceBlock::setInArmholeHollowShareBack) * dx;
         const Point cp2In{
-            armholeBottom.x - dx * 0.06 - hollowIn,
-            shoulder.y + dy * BodiceBlock::setInArmholeLowerDropShare};
+            armholeBottom.x - dx * 0.06 -
+                solveHollow([&](double) { return cp1In; }, cp2YIn, seedIn),
+            cp2YIn};
         return PathCommand::curve(armholeBottom, cp1In, cp2In);
     }
-    const double hollow = (isFront ? BodiceBlock::armholeHollowShareFront
-                                   : BodiceBlock::armholeHollowShareBack) * dx;
-    const double chord = std::hypot(dx, dy);
+    const double hollowSeed = (isFront ? BodiceBlock::armholeHollowShareFront
+                                       : BodiceBlock::armholeHollowShareBack) * dx;
 
     // Shoulder-seam tangent AT the tip: the seam runs neckPoint -> shoulderTip,
     // so its outgoing direction (continuing past the tip) is that unit vector.
@@ -160,17 +201,23 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     // it sideways, so the seam and the scye share a tangent and the old ~77 deg
     // spike is gone. The scye hollow is carried entirely by cp2 (mid/lower),
     // which keeps the belly concave without breaking the shoulder tangent.
-    const double tanReach = chord * BodiceBlock::armholeShoulderTangentShare;
-    const Point cp1{
-        shoulder.x + stx * tanReach,
-        shoulder.y + sty * tanReach};
-    // cp2: near the underarm, pulled deep INSIDE the chord (the concave scye
-    // belly), rising toward the underarm near-vertically so the turn into the
-    // side seam is smooth. All of the hollow lives here now.
-    const Point cp2{
-        armholeBottom.x - dx * 0.06 - hollow,
-        shoulder.y + dy * BodiceBlock::armholeLowerDropShare};
-    return PathCommand::curve(armholeBottom, cp1, cp2);
+    // ...but the reach GROWS with the hollow. A cubic kinks where one control arm
+    // is long and the other short: loading a deep scye hollow onto cp2 alone made
+    // the validator's kink rule fire ("curve turns 25 deg in one step", measured
+    // on halter/cup/grade 2026-08-23). Keeping the two arms the same LENGTH is a
+    // geometric rule, not a tuned number — the floor stays the old tangent share
+    // so a shallow scye is byte-unchanged in shape family.
+    const double cp2Y = shoulder.y + dy * BodiceBlock::armholeLowerDropShare;
+    const double tanFloor = chord * BodiceBlock::armholeShoulderTangentShare;
+    const auto cp1Of = [&](double h) {
+        const Point c2{armholeBottom.x - dx * 0.06 - h, cp2Y};
+        const double arm = std::hypot(armholeBottom.x - c2.x, armholeBottom.y - c2.y);
+        const double reach = std::max(tanFloor, arm);
+        return Point{shoulder.x + stx * reach, shoulder.y + sty * reach};
+    };
+    const double hollow = solveHollow(cp1Of, cp2Y, hollowSeed);
+    const Point cp2{armholeBottom.x - dx * 0.06 - hollow, cp2Y};
+    return PathCommand::curve(armholeBottom, cp1Of(hollow), cp2);
 }
 
 // y on the waist bezier at a given x (the curve is monotonic in x).
@@ -614,7 +661,14 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // just under the BUST, and must not move when the armhole is lowered to seat a
     // fuller arm (else on a fuller-bust short-back body the "empire" seam slides
     // down to or below the natural waist and it stops being an empire dress).
-    const double torsoArmholeY = backLength * armholeDepthFactor + shoulderDrop;
+    // Aldrich p.11 scye depth against BUST (bodice.hpp scyeDepth*): the old
+    // backLength * 0.44 rode an unsourced size-table column that STALLS at
+    // EU44->46, which is where the armhole grade broke. Aldrich measures the
+    // depth FROM THE NAPE; our y origin is the neck-point line and the nape is
+    // backNeckCutoutFactor * neck below it, so that offset is added back.
+    const double napeBelowNeckLine = m.neckMM() * backNeckCutoutFactor;
+    const double torsoArmholeY =
+        m.bustMM() * scyeDepthPerBust + scyeDepthInterceptMM + napeBelowNeckLine;
     double armholeY = torsoArmholeY;
     // Deepen the armscye when the arm needs it. The torso-only depth
     // (backLength * 0.44) leaves the armhole too shallow to seat a fuller arm on

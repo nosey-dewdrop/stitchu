@@ -80,7 +80,25 @@ inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitWaistEase 
 // Empire waist seam: this far below the armhole line, girth = underbust.
 inline constexpr double empireDrop = 60;
 inline constexpr double empireBalanceDrop = 15; // CF drop at underbust (M&S balance, reduced)
-inline constexpr double armholeDepthFactor = 0.44;
+inline constexpr double armholeDepthFactor = 0.44;  // LEGACY (see scyeDepth* below)
+// ── SCYE DEPTH: SOURCED, BUST-DRIVEN (2026-08-23) ────────────────────────────
+// The old base was backLength * 0.44. backLengthCM is an UNSOURCED column of the
+// size table and it STALLS at EU44->46 (420.0 -> 420.0 mm), which flat-lined the
+// torso depth there and handed the size run over to the tuned biceps floor in
+// one step: the armhole grade broke (+34.11mm at EU46->48 against 9-13mm
+// everywhere else, measured by engine/tools/armhole-basis-probe).
+// Aldrich p.11 publishes scye DEPTH (nape -> underarm level) against BUST, two
+// points, both re-read in knowledge/drafting-math-eu38.md:35 before use:
+//     21.0 cm @ bust 88 cm   ·   21.4 cm @ bust 92 cm
+// The line through them: depth_mm = 0.10 * bust_mm + 122.0  (880 -> 210, 920 -> 214).
+// FRAME (this is where a careless read goes wrong): Aldrich measures scye depth
+// down the centre back FROM THE NAPE. Our y origin is the neck-POINT line and
+// the nape sits backNeckCutoutFactor * neck BELOW it, so the nape offset is
+// added. The independent hand draft in tests/sloper_check.cpp (pinned July,
+// never derived from engine output) measures exactly this landmark and is the
+// witness that the frame is right.
+inline constexpr double scyeDepthPerBust    = 0.10;
+inline constexpr double scyeDepthInterceptMM = 122.0;
 // Armscye-for-arm floor: the armhole must be deep enough to seat the biceps on
 // a short-backed, fuller-armed body (else the set-in sleeve can't ease in).
 // bicepsRatioForArmscye mirrors the sleeve's biceps ratio (bare arm, no ease);
@@ -175,8 +193,33 @@ struct BodiceOptions {
 // AND carries the correct scye hollow.
 // hollowShare = how far the mid-armhole pulls INSIDE the shoulder->underarm
 // chord (fraction of the chest width span); front deeper than back.
-inline constexpr double armholeHollowShareFront = 0.34;
-inline constexpr double armholeHollowShareBack  = 0.24;
+inline constexpr double armholeHollowShareFront = 0.34;  // bisection SEED only
+inline constexpr double armholeHollowShareBack  = 0.24;  // (see arc/chord below)
+// ── SCYE SHAPE: MEASURED ARC/CHORD (2026-08-23) ──────────────────────────────
+// A hollow SHARE cannot say how hollow a scye is: it is a fraction of dx, and on
+// a bodice dx (shoulder-tip -> underarm horizontal span) is about a third of dy
+// (scye depth), so 0.34 buys almost no arc. Measured on the shipped line
+// (armhole-basis-probe): our arc/chord is 1.001..1.023 — a straight line — while
+// the bought Bugra Locket pattern measures 1.229..1.262 front and 1.161..1.177
+// back on the SAME per-half decomposition, 8 sizes, primary PDF-vector
+// measurement (docs/H1.0-KAPI.md ss0 ground table; per-half terms in
+// engine/tools/armhole-basis-probe.cpp kBugraHalf).
+// The chord is NOT short — EU38 front ours 190.7mm vs Bugra 171.7mm, ours is
+// LONGER. The whole armhole deficit is arc/chord. So the shape target is the
+// measured ratio (mean over the 8 measured sizes) and the hollow is SOLVED to
+// hit it. These are shape numbers from a real pattern, not from our own output
+// and not from the 40-44cm band the gate judges.
+// ⚠ BU BİR HEDEF, BİR SONUÇ DEĞİL — 2026-08-23 ölçüldü: TUTTURULAMIYOR.
+// Tek kübiğin tek serbest noktası (cp2) bu oranı taşıyamıyor; taşıması için
+// cp2'nin omuz ucunun İÇİNE geçmesi gerekiyor, o da paneli kendi kenarıyla
+// kesiyor (`[selfintersect] Upper Cup Side Front`, kap dikişli princess).
+// Geometrik tavan bağlandığında ulaşılan oran 1.006..1.073 (armhole-basis-probe).
+// KÖK SEBEP: gerçek bir scye tek yaylı değil, S kavisli — üstte dışbükey, altta
+// içbükey. Tek kübik + omuz teğet kilidi bu S'i çizemez.
+// SONRAKİ ADAY: oyuğu İKİ kübiğe ayır (omuz ucundan çentiğe dışbükey, çentikten
+// koltukaltına içbükey); Buğra'nın ölçülen çentiği zaten o kırılma noktasında.
+inline constexpr double armholeArcChordFront = 1.242118;
+inline constexpr double armholeArcChordBack  = 1.170485;
 // Where along the drop the two control points sit (upper leaves the shoulder
 // heading down + slightly out; lower approaches the underarm near-tangent to
 // the side seam so the underarm is a smooth turn, not a corner).

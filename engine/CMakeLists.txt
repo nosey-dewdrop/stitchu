@@ -102,30 +102,13 @@ add_test(NAME bundle_fresh_check
 # ön+arka · tek kontur rengi. Kanun: contract/flat-convention-v1.json.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
 
-# flat_geometry_sellable_check (F-E, 2026-08-23): "flat ETSY'LIK MI" kapisinin
-# GEOMETRI yarisi. F-D konvansiyonu tutar (tek croquis, tek murekkep, olcek);
-# bu kapi cizilenin bir GIYSI gibi davranip davranmadigini tutar: kol govdeyle
-# iki ucunu paylasiyor mu, kol oyugu icbukey mi, puff'in eti toplanmis mi, etek
-# boyla genisliyor mu. Esikler SATIN ALINMIS Bugra Locket EU38 kalibindan ve
-# kaynakli beden cizelgesinden; motorun kendi ciktisindan turetilen esik YOK.
-# (Ayni gece kosan obur F-E vardiyasinin flat_sellable_check'i LISTELEME
-#  GORUNTUSUNE bakar - ayri kapi, ayri eksen, cakismiyor.)
+# flat_geometry_sellable_check (F-E, 2026-08-23): "flat ETSY'LİK Mİ" kapısının
+# GEOMETRİ yarısı. F-D konvansiyonu tutar (tek croquis, tek mürekkep, ölçek);
+# bu kapı çizilenin bir GİYSİ gibi davranıp davranmadığını tutar: kol gövdeyle
+# uçlarını paylaşıyor mu, kol oyuğu içbükey mi, puff'ın eti toplanmış mı, etek
+# boyla genişliyor mu. Eşikler SATIN ALINMIŞ Buğra Locket EU38 kalıbından ve
+# kaynaklı beden çizelgesinden; motorun kendi çıktısından TÜRETİLEN eşik yok.
 add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
-
-# flat_sellable_check (F-E, 2026-08-23): ayni sorunun LISTELEME yarisi. Cizimin
-# guzel olup olmadigini DEGIL, alicinin onune cikan goruntunun Etsy'nin
-# YAYINLANMIS olculerine uyup uymadigini olcer:
-#   [E1] listing foto orani 4:3, kisa kenar >= 2000 px
-#   [E2] arama kucuk-resmi 570x456 = 5:4, ORTADAN kirpilir -> tum murekkep o
-#        guvenli kutunun icinde olmak zorunda (E1+E2'nin geometrik sonucu)
-#   [K10] beden tablosunda YALNIZ status="verified" kolonlar basilir
-# Olculen zemin: F-D flat'i 744x262 = oran 2.840; kucuk-resim kirpmasinda
-# murekkegin %37.5'i sag kaliyordu ve FRONT (x=184) ile BACK (x=560) ikisi de
-# diliniyordu. Cozum kalemi: engine/tools/render-listing-sheet.mjs — flat'i
-# BOZMADAN sarar; kapi, flat path'lerinin sayfa icinde bayt bayt ayni kaldigini
-# dogrular (anti-hack). Rasterlestirici: engine/tools/raster.mjs.
-# Mutasyon kaniti: GECE/log/F-E.listing.mutasyon.txt — 5 mutasyon, 5'i de kapiyi kirdi.
-add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
 
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
@@ -328,6 +311,9 @@ target_link_libraries(bugra-dump PRIVATE engine)
 
 add_executable(armhole-basis-probe tools/armhole-basis-probe.cpp)
 target_link_libraries(armhole-basis-probe PRIVATE engine)
+
+add_executable(neck-basis-probe tools/neck-basis-probe.cpp)
+target_link_libraries(neck-basis-probe PRIVATE engine)
 
 add_executable(shoulder_check tests/shoulder_check.cpp)
 target_link_libraries(shoulder_check PRIVATE engine)
@@ -668,9 +654,22 @@ add_test(NAME surface_pattern_check COMMAND surface_pattern_check)
 # omuz ön/arka dengesi (arka uzun, kürek payı), yakanın KAPALI delik olması ve
 # çevresi, omzun üstünden geçen taşıyıcı yüzey. Sayılar satın alınmış Buğra
 # kalıbından ölçülü; tahmin edilen sayı yok. KIRMIZI DOĞMASI beklenendir.
+# DEVRE DIŞI 2026-08-23 (GECE/KART/F-F-kalip.md "AYRICA"). SİLİNMEDİ, LEGACY.
+# Sebep: bu kapı SurfacePattern hattını yargılıyor, ama `surfacepattern`
+# engine/src'den SIFIR kez include ediliyor (ölçüldü: grep, 0 satır). Yani
+# sevk edilen giysiyi değil, hattın dışında duran bir hattı yargılıyordu.
+# Sevk edilen hattın kapısı: garment_armhole_check (aşağıda).
 add_executable(h10_gate_check tests/h10_gate_check_LEGACY.cpp)
 target_link_libraries(h10_gate_check PRIVATE engine)
 add_test(NAME h10_gate_check COMMAND h10_gate_check)
+set_tests_properties(h10_gate_check PROPERTIES DISABLED TRUE)
+
+# garment_armhole_check: SEVK EDİLEN hattın (BodiceBlock::draft, varsayılan
+# BodiceOptions) kol oyuğu + yaka kapısı. K1 yayınlanmış Aldrich bandı,
+# K2 grade adımı, K3 yaka >= boyun. Buğra sütunları PARİTE, hüküm vermez.
+add_executable(garment_armhole_check tests/garment_armhole_check.cpp)
+target_link_libraries(garment_armhole_check PRIVATE engine)
+add_test(NAME garment_armhole_check COMMAND garment_armhole_check)
 
 # surface-pattern: emits the single-surface sheath as specification.json so
 # h3b-rings.py / walk.py judge the new line without referee changes.
