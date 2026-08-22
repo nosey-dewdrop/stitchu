@@ -635,3 +635,56 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
   omuzdan 96u = 288 mm aşağı indiriyor; bitmiş flat'te kol büstün altında bitiyor.
   Kısa puff kolun olması gereken boyu ölçülmedi (Buğra'nın Üst/Alt Kol parçaları
   nest'te döndürülmüş; eksen çıkarımı yapılmadı — aşağıdaki "yapamadım"a bak).
+
+---
+
+## F-E / LİSTELEME VARDİYASI (2026-08-23) — ölçülebilmeyeni kapıya koymadım
+
+Bu satırlar `knowledge/ETSY-KAPISI-2026-08-23.md`'nin kuyruğu. Mekanik olanı
+`flat_sellable_check`'e koydum; aşağısı **zevk ya da kaynaksız**, hakem Damla.
+
+- **[KARAR — çelişki] Manken kaç kafa olacak?** Damla: *"flatler kadınların
+  olduğundan daha ince gerçek mankenlere göredir."* Ama yayınlanmış konvansiyon
+  şunu diyor: moda İLLÜSTRASYONU 9–10 kafa (abartılı), **TEKNİK ÇİZİM 7–8 kafaya
+  geri çeker**, çünkü muhatabı kalıpçıdır — RTW geliştirme 9 kafayı kullanır.
+  Bizim ürünümüz ikisinin arasında: Etsy'de SATILAN bir teknik flat.
+  `contract/flat-convention-v1.json referenceBody.openItem` hâlâ "manken çizelgesi
+  KAYNAK YOK" diyor. **Uydurmadım.** Damla: 7–8 mi, 9 mu, yoksa croquis insan
+  bloğunda mı kalsın? Kaynak: fashionillustrationtribe.com/whats-up-with-fashion-proportions
+
+- **[ZEVK — kapıya girmedi] Sayfa doluluğu.** Listeleme sayfasında mürekkep
+  kapsama oranı **%2.94** (2000 px'te ölçüldü); çıplak flat'te **%3.68**'di.
+  Yani sayfa daha çok beyaz taşıyor. Karşılığında 47 görünür bilgi kalemi ve
+  küçük-resimde %100 sağ kalma geldi. **Bir doluluk eşiği YAYINDA bulamadım**;
+  kendi çıktımdan eşik türetmek dairesel olurdu (SSC), o yüzden kapıya koymadım.
+  Damla: sayfa boş mu duruyor, ikinci bir görsel mi gerek?
+
+- **[ZEVK — kapıya girmedi] Kaç görsel, hangi sırayla, kaç paraya?** Etsy listing
+  başına **20 foto + 1 video (5–15 sn)** sınırı doğrulandı. Profesyonellerin kaçını
+  kullandığı, ilk görselin flat mi foto mu olduğu ve fiyat bandı **DOĞRULANMADI** —
+  `WebFetch` etsy.com'da 5/5 denemede 403 döndü, tekil listing açılamadı. Aramada
+  $7.50 / $9.00 / $10.00 tekil fiyatlar göründü; ORTALAMA yayını yok, o yüzden
+  "$8–12 bandı" cümlesini KURMADIM.
+
+- **[ÖLÇÜLDÜ, DÜZELTİLMEDİ] Kol oyuğu SİLUET ağırlığında çiziliyor.** Set-in kolda
+  kol oyuğu bir KONSTRÜKSİYON DİKİŞİDİR (`seam`, 1.4), ama bugün gövde konturunun
+  parçası olarak `outline` (2.0) basılıyor (`render-garment-flat.mjs:427`). Kartın
+  "kollar gövdeden KOPUK" kusurunun gerçek adı bu — **omuzda boşluk YOK**, ölçtüm:
+  gövde ve kol path'i `(78.0, 19.4)` ve `(73.3, 92.0)` uçlarını paylaşıyor, açıklık
+  **0 mm**. Kopukluk hissi ağırlıktan ve koltukaltındaki keskin V köşesinden.
+  **Neden yapmadım:** kontur TEK kapalı path; segmenti ayırmak
+  `flat_convention_check` §1b uç-nokta beyanını kırma riski taşıyor ve o var olan
+  bir test. Sonraki aday: konturu bölmeden, kol oyuğu yayını `seam` sınıfında
+  İKİNCİ bir path olarak üstüne çiz. Bir satır, ama ölçmeden dokunmadım.
+
+- **[BAŞKA FAZ] Manşet/lastik bitişi bir primitif değil.** Puff kolun altı düz
+  kesik duruyor çünkü `contract/primitives-v1.json`'da `cuffBand` yok. Sözlük
+  reformu F-C'nin işi; primitif eklemeden çizilemez.
+
+- **[YAPI] Vitrindeki flat, kapının ölçtüğü kalemden ÇIKMIYOR.**
+  `flat_convention_check` ÜRETİM kalemini (`render-garment-flat.mjs`) 8 stilde
+  ölçüyor; ama Damla'nın baktığı `locket-EU38-flat.svg` **REFERANS kalemden**
+  (`engine/flat-engine/_engine-full.mjs`, salt-okunur) çıkmış. Locket görüntüsünde
+  `hidden` sınıfı (1.0 + "1 3") hiç kullanılmıyor (41 eleman: 26×1.0, 7×1.4,
+  6×2.0, 2×topstitch). Kanuna aykırı değil — ama "5/5 sınıf kullanıldı" yeşili
+  vitrinden değil, üretim kaleminden geliyor. Damla: iki kalem tek kalem mi olacak?

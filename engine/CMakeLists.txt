@@ -112,6 +112,21 @@ add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 #  GORUNTUSUNE bakar - ayri kapi, ayri eksen, cakismiyor.)
 add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
 
+# flat_sellable_check (F-E, 2026-08-23): ayni sorunun LISTELEME yarisi. Cizimin
+# guzel olup olmadigini DEGIL, alicinin onune cikan goruntunun Etsy'nin
+# YAYINLANMIS olculerine uyup uymadigini olcer:
+#   [E1] listing foto orani 4:3, kisa kenar >= 2000 px
+#   [E2] arama kucuk-resmi 570x456 = 5:4, ORTADAN kirpilir -> tum murekkep o
+#        guvenli kutunun icinde olmak zorunda (E1+E2'nin geometrik sonucu)
+#   [K10] beden tablosunda YALNIZ status="verified" kolonlar basilir
+# Olculen zemin: F-D flat'i 744x262 = oran 2.840; kucuk-resim kirpmasinda
+# murekkegin %37.5'i sag kaliyordu ve FRONT (x=184) ile BACK (x=560) ikisi de
+# diliniyordu. Cozum kalemi: engine/tools/render-listing-sheet.mjs — flat'i
+# BOZMADAN sarar; kapi, flat path'lerinin sayfa icinde bayt bayt ayni kaldigini
+# dogrular (anti-hack). Rasterlestirici: engine/tools/raster.mjs.
+# Mutasyon kaniti: GECE/log/F-E.listing.mutasyon.txt — 5 mutasyon, 5'i de kapiyi kirdi.
+add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
