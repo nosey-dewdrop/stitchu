@@ -708,3 +708,14 @@ add_test(NAME cutplan_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/cutplan_ch
 # garmentcode venv and pdftotext; either missing FAILS instead of skipping.
 add_test(NAME printpack_sheet_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/printpack_sheet_check.sh
          $<TARGET_FILE:surface-pattern> ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# F-C MUTFAK (GECE-KOSUSU-v5 SSB-4): the price of admission into the vocabulary.
+# Every Layer-3 menu name must resolve into Layer-1 primitives AND draw a
+# distinct panel chain in this engine; what cannot is marked `absent` with a
+# reason, never deleted and never invented around.
+add_executable(preset_resolve_check tests/preset_resolve_check.cpp)
+target_link_libraries(preset_resolve_check PRIVATE engine)
+add_test(NAME preset_resolve_check COMMAND preset_resolve_check
+         ${CMAKE_CURRENT_SOURCE_DIR}/vocab.json
+         ${CMAKE_CURRENT_SOURCE_DIR}/../contract/primitives-v1.json
+         ${CMAKE_CURRENT_SOURCE_DIR}/../contract/vocab-resolution-v1.json)

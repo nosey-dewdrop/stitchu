@@ -1,0 +1,161 @@
+{
+  "_baslik": "KATMAN 1 PRIMITIF v1 — Edge / Panel / Seam / Op. Fikir kaynagi: GarmentCode (PyGarment, MIT) Edge + Panel + StitchingRule ucgeni, knowledge/TEKNOLOJI-2026-08-23.md:33-72 (edge.py:33-40, panel.py:42-46, interface.py:52-56, connector.py:57-59). Alinan fikir KOD DEGIL, AYRIM: (a) kenar bir nesnedir ve oranla bolunebilir (Edge.subdivide_len), (b) panel kenar dizisinin kapali halkasidir ve pens bir stil degil kenara uygulanan operatordur (Panel.add_dart), (c) dikis iki kenar KUMESI arasinda bir oran tasir, buzgu o orandir (Interface.ruffle) ve gecerliligi iki tarafin uzunlugunun eslesmesidir (StitchingRule.isMatching). Ikinci kaynak: FreeSewing (MIT) shiftTowards / shiftFractionTowards, ayni iki primitife bagimsiz varmis (knowledge/TEKNOLOJI-2026-08-23.md:130-136). Ucuncu kaynak: ASTM D6673-10 katman tablosu (knowledge/TEKNOLOJI-2026-08-23.md:216-239) — kesim cizgisi (1) ile dikis cizgisi (14), donus noktasi (2) ile egri noktasi (3) AYRI katmandir; bu ayrim edge.kind ve panel.cutLine alanlarinda korunur.",
+
+  "_yasa": [
+    "1. KATMAN 3'teki (tarif) her isim KATMAN 1/2'ye COZULUR. Cozulmeyen isim sozluge GIRMEZ.",
+    "2. Isim silinince GEOMETRI KALIR. Bir tarif, primitif demetinin kisaltmasidir; kisaltma atilinca demet ayakta kalir.",
+    "3. Iki tarif arasi HER ARA DEGER gecerli bir giysidir. Sinirsiz urun buradan cikar: parametreler surekli, isimler ayrik.",
+    "4. Bir isim sozluge GIRERKEN bedelini oder: cozumu motorda CIZEN bir panel zinciri uretmek zorundadir (kapi: engine/tests/preset_resolve_check.cpp).",
+    "5. Cozulemeyen isim SILINMEZ, `absent` diye durustce isaretlenir. Bilgi atmak, bilgi vermemekten beterdir."
+  ],
+
+  "_katmanlar": {
+    "1_primitif": "Bu dosya. Edge · Panel · Seam · Op(suppress/gather/flare/extend/split/overlay/attach).",
+    "2_bilesen": "bodice · sleeve · skirt · collar · cuff · band · overlay — primitif demetlerinin isimlendirilmis, tekrar kullanilan gruplari. Bu dosyanin `bilesenler` bolumunde tanimli.",
+    "3_tarif": "isim + parametre demeti. Ornek: 'sweetheart' = neckline tarifi. Tablo: contract/vocab-resolution-v1.json."
+  },
+
+  "_birimler": {
+    "uzunluk": "mm",
+    "aci": "derece (deg), CCW pozitif",
+    "oran": "boyutsuz katsayi (1.0 = degisim yok)",
+    "kesir": "0..1 arasi kenar uzerindeki konum (yay uzunlugu ile)"
+  },
+
+  "primitifler": {
+    "edge": {
+      "tanim": "Iki nokta arasinda tek bir kenar. Kalibin en kucuk cizilebilir birimi.",
+      "kaynak_fikir": "GarmentCode Edge / CurveEdge / CircleEdge — knowledge/TEKNOLOJI-2026-08-23.md:37-40",
+      "parametreler": {
+        "kind": { "tip": "enum", "degerler": ["line", "curve", "circleArc"], "not": "line = ASTM katman 2 donus noktalari; curve = katman 3 egri noktalari" },
+        "from": { "tip": "point", "birim": "mm" },
+        "to": { "tip": "point", "birim": "mm" },
+        "control": { "tip": "point[]", "birim": "mm", "aralik": "0, 1 ya da 2 kontrol noktasi (kubik)" },
+        "label": { "tip": "string", "not": "id — FreeSewing makro id'si gibi; geri-alinabilir editlemenin dayanagi (TEKNOLOJI:143-149)" }
+      },
+      "turetilen": { "length": "mm, yay uzunlugu", "midpoint": "point" },
+      "operatorler": {
+        "subdivideLen": { "fractions": { "tip": "kesir[]", "aralik": "her eleman 0..1, artan" } },
+        "shiftTowards": { "target": "point", "fraction": { "tip": "kesir", "aralik": "0..1" } },
+        "reverse": {},
+        "rotate": { "angleDeg": { "tip": "aci", "aralik": "-360..360" } }
+      }
+    },
+
+    "panel": {
+      "tanim": "Kapali kenar halkasi = bir kez kesilecek parca. Kesim cizgisi ile dikis cizgisi ayri tutulur (ASTM 1 vs 14).",
+      "kaynak_fikir": "GarmentCode Panel — knowledge/TEKNOLOJI-2026-08-23.md:42-46",
+      "parametreler": {
+        "edges": { "tip": "edge[]", "aralik": "en az 3, kapali halka" },
+        "cutCount": { "tip": "int", "aralik": "1..4", "not": "kac kez kesilecek" },
+        "onFold": { "tip": "bool", "not": "ASTM katman 6 mirror line / FreeSewing cutOnFold. Sozlukte eksik olan 6 malzemeden biri (TEKNOLOJI:370-372)" },
+        "grainAngleDeg": { "tip": "aci", "aralik": "0..360", "varsayilan": 0, "not": "ASTM katman 7 grain line; 45 = bias" },
+        "seamAllowanceMM": { "tip": "uzunluk", "aralik": "0..30", "not": "FreeSewing `sa` makrosu; kesim cizgisi = dikis cizgisinin bu kadar disa ofseti" },
+        "mirrorAxis": { "tip": "enum", "degerler": ["none", "x", "y"] }
+      },
+      "turetilen": { "bbox": "mm", "isSelfIntersecting": "bool", "area": "mm^2" }
+    },
+
+    "seam": {
+      "tanim": "Iki kenar KUMESINI birlestiren dikis. Buzgu bir stil ismi degil, bu dikisin uzunluk ORANIDIR.",
+      "kaynak_fikir": "GarmentCode Interface(ruffle) + StitchingRule.isMatching — knowledge/TEKNOLOJI-2026-08-23.md:52-59, 63-67. Endustrideki adi 'walk pieces' (TEKNOLOJI:188-192).",
+      "parametreler": {
+        "a": { "tip": "edgeRef[]", "not": "panel.label + edge.label" },
+        "b": { "tip": "edgeRef[]" },
+        "ratio": { "tip": "oran", "aralik": "1.0..3.5", "varsayilan": 1.0, "not": "len(a)/len(b); 1.0 = duz dikis, >1 = a tarafi buzuluyor" },
+        "easeMM": { "tip": "uzunluk", "aralik": "-50..50", "not": "oran disi mutlak fazlalik (cap ease gibi)" },
+        "notchFractions": { "tip": "kesir[]", "not": "ASTM katman 4/80/81/82/83; iki tarafta AYNI kesirlere dusen hizalama isaretleri" }
+      },
+      "not_esik": "Gecerlilik esigi bu dosyada TANIMLI DEGIL. GarmentCode'un tol=0.05'i onlarin yayinlanmis bandidir, referans; bizim kapimizin esigi Damla'nin karari (GECE-KOSUSU-v5 SSC)."
+    },
+
+    "op.suppress": {
+      "tanim": "Fazlaligi bir kenardan iceri alma: pens, kup, kesme. Pens bir STIL degil, bir kenara uygulanan operatordur.",
+      "kaynak_fikir": "GarmentCode Panel.add_dart — knowledge/TEKNOLOJI-2026-08-23.md:45, 72",
+      "parametreler": {
+        "edge": { "tip": "edgeRef" },
+        "atFraction": { "tip": "kesir", "aralik": "0..1" },
+        "angleDeg": { "tip": "aci", "aralik": "0..60", "not": "gercek Bugra pensi 41.5 = develop-deficit 41.48 (CLAUDE.md, olculdu)" },
+        "apexDepthMM": { "tip": "uzunluk", "aralik": "0..300" },
+        "trueLegs": { "tip": "bool", "varsayilan": true, "not": "iki bacak esit uzunluga cekilir" }
+      }
+    },
+
+    "op.gather": {
+      "tanim": "Bir kenari kendinden kisa bir kenara toplama. Tek sayi: oran.",
+      "kaynak_fikir": "GarmentCode Interface.ruffle — knowledge/TEKNOLOJI-2026-08-23.md:63-64. Bizde bugun gatherType+gatherZone iki MENU alani, sayi yok (TEKNOLOJI:376-378).",
+      "parametreler": {
+        "edge": { "tip": "edgeRef" },
+        "ratio": { "tip": "oran", "aralik": "1.0..3.5" },
+        "mode": { "tip": "enum", "degerler": ["free", "drawstring", "shirred", "smocked", "elastic"], "not": "mode BITIRME teknigidir; toplama miktari her zaman ratio'dur" }
+      }
+    },
+
+    "op.flare": {
+      "tanim": "Bir kenari daire diliminin yayina acma: kloş. Etek, peplum, volan hepsi bu.",
+      "kaynak_fikir": "FreeSewing ringSector / GarmentCode SkirtCircle sweep — knowledge/TEKNOLOJI-2026-08-23.md:139-141, 74-76",
+      "parametreler": {
+        "edge": { "tip": "edgeRef", "not": "ic yay (bel/kol agzi)" },
+        "sweepDeg": { "tip": "aci", "aralik": "0..360", "not": "360 = tam daire, 180 = yarim daire" },
+        "hemFactor": { "tip": "oran", "aralik": "1.0..4.0", "not": "dis yayin ic yaya orani; sweepDeg ile birlikte fazlalik" }
+      }
+    },
+
+    "op.extend": {
+      "tanim": "Bir kenari/paneli bir yon boyunca uzatma ya da kisaltma. SUREKLI eksen — mini/midi/maxi gibi dondurulmus isimlerin yerine gecen sey budur.",
+      "kaynak_fikir": "FreeSewing Point.shift / shiftTowards — knowledge/TEKNOLOJI-2026-08-23.md:130-136; dondurulmus eksen teshisi TEKNOLOJI:337-342",
+      "parametreler": {
+        "edge": { "tip": "edgeRef" },
+        "deltaMM": { "tip": "uzunluk", "aralik": "-500..1500" },
+        "fromLandmark": { "tip": "enum", "degerler": ["nape", "shoulder", "bust", "waist", "hip", "knee", "wrist", "hem"] },
+        "direction": { "tip": "enum", "degerler": ["down", "up", "out", "in"] }
+      },
+      "sureklilik": "deltaMM surekli oldugu icin iki tarif arasi her ara deger gecerlidir (yasa 3). 'mini ile midi arasi' bu operatorle cizilir."
+    },
+
+    "op.split": {
+      "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu.",
+      "kaynak_fikir": "GarmentCode Edge.subdivide_param + Interface.substitute — knowledge/TEKNOLOJI-2026-08-23.md:70-71, 355",
+      "parametreler": {
+        "panel": { "tip": "panelRef" },
+        "atFraction": { "tip": "kesir", "aralik": "0..1", "not": "bolme cizgisinin panel yuksekligindeki/genisligindeki yeri" },
+        "axis": { "tip": "enum", "degerler": ["horizontal", "vertical", "diagonal"] },
+        "seamRatio": { "tip": "oran", "aralik": "1.0..3.5", "varsayilan": 1.0, "not": "bolunen iki parca arasinda buzgu birakilacaksa" }
+      }
+    },
+
+    "op.overlay": {
+      "tanim": "Var olan bir panelin uzerine, ayni bolgeye, fazlalikli ikinci bir KATMAN. Bugra Locket'in Upper Sleeve'i tam olarak budur (yatay bolunmus kol DEGIL, buzgulu ust katman).",
+      "kaynak_fikir": "olculdu — CLAUDE.md 'Upper ayni kapagin yatayda olceklenmis kopyasi, sagitta orani 8 bedende bit-sabit 1.227'; dunya karsiligi GarmentCode Interface(ruffle) ikinci panelde",
+      "parametreler": {
+        "hostPanel": { "tip": "panelRef" },
+        "region": { "tip": "enum", "degerler": ["cap", "yoke", "front", "back", "hem", "neck"] },
+        "excessRatio": { "tip": "oran", "aralik": "1.0..2.0", "not": "ust katmanin alt katmana gore fazlaligi; olculen Bugra degeri 1.29-1.35" },
+        "attachEdges": { "tip": "edgeRef[]" }
+      }
+    },
+
+    "op.attach": {
+      "tanim": "Ana govdeye AYRI bir parca asma: yaka, manset, bant, cep, volan, kordon. Yeni panel + onu tutan seam.",
+      "kaynak_fikir": "GarmentCode StitchingRule + Component.assembly — knowledge/TEKNOLOJI-2026-08-23.md:57-59",
+      "parametreler": {
+        "hostEdge": { "tip": "edgeRef" },
+        "panel": { "tip": "panelRef" },
+        "ratio": { "tip": "oran", "aralik": "1.0..3.5", "varsayilan": 1.0 },
+        "standHeightMM": { "tip": "uzunluk", "aralik": "0..120", "not": "yaka ailesi: 6 isim, 2 sayi (stand yuksekligi + kenar profili) — TEKNOLOJI:355" },
+        "position": { "tip": "enum", "degerler": ["neck", "waist", "wrist", "hem", "shoulder", "centerFront", "centerBack", "sideSeam"] }
+      }
+    }
+  },
+
+  "bilesenler": {
+    "_not": "KATMAN 2. Her bilesen bir primitif demetinin tekrar kullanilan grubudur; kendi basina bir isim DEGIL, bir montaj birimidir.",
+    "bodice": { "primitifler": ["panel", "op.suppress", "seam"], "aciklama": "gogus-bel arasi govde kabugu; fazlalik op.suppress ile alinir" },
+    "sleeve": { "primitifler": ["panel", "seam", "op.gather", "op.extend"], "aciklama": "kol oyuguna dikilen kapak + kol govdesi; kapak fazlaligi seam.easeMM" },
+    "skirt": { "primitifler": ["panel", "op.flare", "op.gather", "op.extend"], "aciklama": "belden asagi kabuk" },
+    "collar": { "primitifler": ["panel", "op.attach"], "aciklama": "boyun kenarinin kopyasi + stand yuksekligi + kenar profili" },
+    "cuff": { "primitifler": ["panel", "op.attach", "op.gather"], "aciklama": "kol agzi bandi" },
+    "band": { "primitifler": ["panel", "op.attach"], "aciklama": "kemer / patlet / bias serit / kasnak" },
+    "overlay": { "primitifler": ["op.overlay", "op.gather"], "aciklama": "ikinci katman" }
+  }
+}

@@ -1,0 +1,37 @@
+MUTASYON KANITI — preset_resolve_check kapisinin KIRILABILIR oldugunun kaniti
+tarih: 2026-08-22T21:18:15Z  commit-oncesi calisma agaci
+binary: engine/build/preset_resolve_check (Release)
+
+== 0. TEMIZ HAL (mutasyonsuz) ==
+  [PASS] bijection vocab<->table (132 vocabulary values)
+  [INFO] resolved=107 absent=3 sentinel=22 (total 132)
+  [PASS] every resolved preset decomposes into primitives AND draws a distinct panel chain
+PASS: 0 failure(s)
+exit=0
+
+== 1. MUTASYON A — tabloya cozumu olmayan SAHTE isim eklendi ==
+   eklenen: neckline.moonheart (engine/vocab.json'da BOYLE BIR DEGER YOK), status=resolved, dolu gorunumlu demet
+  [FAIL] resolution table names a preset the vocabulary does not have: neckline.moonheart (a name with no vocabulary value cannot resolve to anything)
+  [PASS] bijection vocab<->table (132 vocabulary values)
+  [INFO] resolved=107 absent=3 sentinel=22 (total 132)
+FAIL: 1 failure(s)
+exit=1
+
+== 2. MUTASYON B — gercek bir presetin primitif demeti BOSALTILDI ==
+   bosaltilan: neckline.sweetheart .bundle = []
+  [PASS] bijection vocab<->table (132 vocabulary values)
+  [FAIL] neckline.sweetheart: status=resolved with an EMPTY primitive bundle — a name with no primitives is exactly the menu item this gate exists to refuse
+  [INFO] resolved=107 absent=3 sentinel=22 (total 132)
+FAIL: 1 failure(s)
+exit=1
+
+== GERI ALMA ==
+Iki mutasyon da repo dosyasina DEGIL, /tmp/mut1.json ve /tmp/mut2.json kopyalarina
+uygulandi ve kapiya o kopyalar verildi. contract/vocab-resolution-v1.json hic
+degistirilmedi, dolayisiyla geri alinacak bir sey yok — `git checkout --`, `git stash`,
+`git clean` KULLANILMADI. Dogrulama (mutasyondan sonra, ayni dosya):
+  [PASS] bijection vocab<->table (132 vocabulary values)
+  [INFO] resolved=107 absent=3 sentinel=22 (total 132)
+  [PASS] every resolved preset decomposes into primitives AND draws a distinct panel chain
+PASS: 0 failure(s)
+exit=0
