@@ -13,6 +13,7 @@
 // Buğra sayıları docs/H1.0-KAPI.md §0 zemin tablosundan, kesim çizgisi, tek kol
 // oyuğu (ön + arka). Fikstürdeki kopyasıyla aynı: h10_gate_check.cpp:41.
 
+#include <cmath>
 #include <cstdio>
 #include <string>
 
@@ -36,6 +37,33 @@ constexpr double kOffsetHiMM = 36.2;
 }  // namespace
 
 int main() {
+    // --- REJIM TABLOSU -------------------------------------------------------
+    // bodice.cpp:642  armholeY = min(cap, max(torsoArmholeY, armholeDepthForArm))
+    // Iki rejim FARKLI hizda buyuyor: torso backLength'e, arm bust'a bagli.
+    // max() iki farkli egimli dogruyu birlestirdiginde gecis noktasinda KIRILIR.
+    // Bu tablo o gecisin hangi bedende oldugunu basar; kol oyugu adimindaki
+    // sicrama orada aranir, ozel-durum if'iyle yamanmaz.
+    std::printf("--- derinlik rejimi (bodice.cpp:642) ---\n");
+    std::printf("beden |    bust | backLen | torso*.44 |  arm b*.18 |  cap*.72 | rejim\n");
+    for (int i = 0; i < 8; ++i) {
+        const std::string label = "EU" + std::to_string(kSizes[i]);
+        const SizeChartEntry* e = euSize(label);
+        if (!e) continue;
+        const BodyMeasurementsSnapshot m = e->body;
+        const double drop = BodiceBlock::shoulderSeamTargetMM *
+                            std::sin(BodiceBlock::shoulderSlopeDeg * M_PI / 180.0);
+        const double torso = m.backLengthMM() * BodiceBlock::armholeDepthFactor + drop;
+        const double arm = m.bustMM() * BodiceBlock::bicepsRatioForArmscye *
+                               BodiceBlock::armscyeArmFactor + drop;
+        const double cap = m.backLengthMM() * BodiceBlock::armscyeMaxDepthShare + drop;
+        const double y = std::min(cap, std::max(torso, arm));
+        const char* which = (std::fabs(y - cap) < 1e-9) ? "CAP"
+                          : (arm > torso ? "ARM" : "TORSO");
+        std::printf("EU%2d  | %7.1f | %7.1f | %9.2f | %10.2f | %8.2f | %s\n",
+                    kSizes[i], m.bustMM(), m.backLengthMM(), torso, arm, cap, which);
+    }
+    std::printf("\n");
+
     std::printf(
         "beden | bizim DIKIS | Bugra DIKIS (kesim+ofset) | fark mm | fark %% | "
         "Bugra KESIM\n");
@@ -43,6 +71,7 @@ int main() {
         "------|-------------|---------------------------|---------|--------|"
         "-----------\n");
 
+    double prevOurs = 0.0;
     for (int i = 0; i < 8; ++i) {
         const std::string label = "EU" + std::to_string(kSizes[i]);
         const SizeChartEntry* e = euSize(label);
@@ -60,9 +89,12 @@ int main() {
         const double diff = ours - bugraSewMid;
         const double pct = 100.0 * diff / bugraSewMid;
 
-        std::printf("EU%2d  | %11.2f | %9.2f (%.2f..%.2f) | %+7.2f | %+5.1f%% | %10.2f\n",
+        std::printf("EU%2d  | %11.2f | %9.2f (%.2f..%.2f) | %+7.2f | %+5.1f%% | %10.2f",
                     kSizes[i], ours, bugraSewMid, bugraSewLo, bugraSewHi, diff, pct,
                     kBugraCutMM[i]);
+        if (i > 0) std::printf("  adim %+6.2f", ours - prevOurs);
+        std::printf("\n");
+        prevOurs = ours;
     }
 
     std::printf(
