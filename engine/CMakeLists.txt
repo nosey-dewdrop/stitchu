@@ -276,6 +276,9 @@ target_link_libraries(wearability-bench PRIVATE engine)
 add_executable(bugra-dump tools/bugra-dump.cpp)
 target_link_libraries(bugra-dump PRIVATE engine)
 
+add_executable(armhole-basis-probe tools/armhole-basis-probe.cpp)
+target_link_libraries(armhole-basis-probe PRIVATE engine)
+
 add_executable(shoulder_check tests/shoulder_check.cpp)
 target_link_libraries(shoulder_check PRIVATE engine)
 add_test(NAME shoulder_check COMMAND shoulder_check)
