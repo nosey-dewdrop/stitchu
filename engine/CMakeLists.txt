@@ -94,6 +94,14 @@ add_test(NAME generated_ratchet_check
 add_test(NAME bundle_fresh_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/bundle_fresh_check.sh)
 
+# flat_convention_check (F-D, 2026-08-23): "flatlerin hepsi aynı convention'da
+# değil — hepsinin AYNI MODELDEN ÇIKMA gibi olması lazım" (Damla). Üretim
+# kalemini 8 farklı stilde koşturur, SVG'yi PARSE eder, altı şartı MEKANİK ölçer:
+# tek croquis ±2mm · data-scale beyanlı + kaynaklı beden çizelgesiyle tutarlı ·
+# çizgi ağırlık sınıfları beyanlı ve kullanılmış · gradient/gölge/tint 0 ·
+# ön+arka · tek kontur rengi. Kanun: contract/flat-convention-v1.json.
+add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)

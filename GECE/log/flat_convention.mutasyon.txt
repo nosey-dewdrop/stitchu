@@ -1,0 +1,49 @@
+MUTASYON KANITI — flat_convention_check (F-D, 2026-08-22T22:09:58Z)
+Kapi: engine/tests/flat_convention_check.mjs   Kanun: contract/flat-convention-v1.json
+git checkout/stash/clean/reset YASAK — her mutasyon python ile ELLE uygulandi,
+ELLE geri alindi, sonunda kapinin yesile dondugu gosterildi.
+
+=== 0. MUTASYONSUZ TABAN
+$ node engine/tests/flat_convention_check.mjs
+rc=0   PASS flat_convention_check — 0 ihlal
+
+=== MUTASYON 1 — SVG'den data-scale + data-unit-mm SILINDI (svgDoc, satir 51)
+rc=1
+FAIL  [2 olcek] princess_scoop_dress: kokte data-scale YOK
+FAIL  [2 olcek] boat_shift_dress: kokte data-scale YOK
+FAIL  [2 olcek] vneck_empire_dress: kokte data-scale YOK
+FAIL  [2 olcek] square_gathered_dress: kokte data-scale YOK
+FAIL  [2 olcek] crew_sleeved_top: kokte data-scale YOK
+FAIL  [2 olcek] sweetheart_crop_top: kokte data-scale YOK
+FAIL  [2 olcek] scoop_tunic_placket: kokte data-scale YOK
+FAIL  [2 olcek] cowl_openback_top: kokte data-scale YOK
+FAIL flat_convention_check — 8 ihlal
+    ELLE GERI ALINDI -> rc=0  PASS flat_convention_check — 0 ihlal
+
+=== MUTASYON 2 — bir flat'e GRADIENT eklendi (linearGradient + fill=url(#mut))
+rc=1
+FAIL  [4 boya] princess_scoop_dress: yasak "linearGradient" x2
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="url(#mut)"
+FAIL  [4 boya] boat_shift_dress: yasak "linearGradient" x2
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="url(#mut)"
+FAIL  [4 boya] vneck_empire_dress: yasak "linearGradient" x2
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="url(#mut)"
+FAIL  [4 boya] square_gathered_dress: yasak "linearGradient" x2
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="url(#mut)"
+    ELLE GERI ALINDI -> rc=0  PASS flat_convention_check — 0 ihlal
+
+=== MUTASYON 3 — omuz ucu yuksekligi YAKAYA geri baglandi (F-D oncesi eski hal)
+    halfOutline(): shoulderTipY = U.shoulderTipY  ->  shoulderNeckY + (tipX - nHalf)*slope
+rc=1
+FAIL  [1 croquis] omuz ucu y             min 12.300u  max 19.400u  SAPMA 21.30 mm  (> 2 mm)
+FAIL  [1b] princess_scoop_dress/front: data-shoulder-y beyan 19.36 ama CIZILEN 16.200
+FAIL  [1b] princess_scoop_dress/back: data-shoulder-y beyan 19.36 ama CIZILEN 16.200
+FAIL  [1b] boat_shift_dress/front: data-shoulder-y beyan 19.36 ama CIZILEN 12.300
+FAIL  [1b] boat_shift_dress/back: data-shoulder-y beyan 19.36 ama CIZILEN 12.300
+FAIL  [1b] square_gathered_dress/front: data-shoulder-y beyan 19.36 ama CIZILEN 18.100
+FAIL  [1b] square_gathered_dress/back: data-shoulder-y beyan 19.36 ama CIZILEN 18.100
+FAIL  [1b] sweetheart_crop_top/front: data-shoulder-y beyan 19.36 ama CIZILEN 16.200
+    ELLE GERI ALINDI -> rc=0  PASS flat_convention_check — 0 ihlal
+
+=== SONUC: uc mutasyonun ucu de kapiyi KIRDI, ucu de elle geri alindi.
+    git checkout/stash/reset KULLANILMADI.

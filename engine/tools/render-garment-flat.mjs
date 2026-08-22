@@ -23,21 +23,34 @@
 // Exports renderGarmentFlat(pieces, spec). `pieces` is accepted for signature
 // compatibility but NOT used to derive the outline — the flat is spec-driven.
 
-const NAVY = '#1f3a5f';
-const SEAM = '#5c7aa0';   // interior seam / dart / detail lines
+// F-D FLAT KONVANSİYONU (2026-08-23) — bu kalem artık kendi sayısını TUTMUYOR.
+// Croquis, ölçek, mürekkep ve çizgi sınıfları TEK KANUN dosyasından okunuyor:
+// contract/flat-convention-v1.json. Kapı: engine/tests/flat_convention_check.mjs.
+import { readFileSync } from 'node:fs';
+const LAW = JSON.parse(readFileSync(new URL('../../contract/flat-convention-v1.json', import.meta.url), 'utf8'));
+const CQ = LAW.croquis.landmarks;
 
-// F2 çizgi hiyerarşisi (Damla kalemi, gusto-corpus line_hierarchy 3 katman):
-// gövde konturu KALIN, konstrüksiyon dikişi (prenses seam / dart / empire seam)
-// ORTA — konturdan ince ama işaretten kalın, "bu bir dikiş çizgisi" okunur;
-// yardımcı işaret (grainline dash, buton, gather tick) İNCE. Eşit ağırlık =
-// vektör-şema hissi (MIHENK-01 reddi: "dikiş çizgisi kontur ile aynı ağırlıkta").
-const W_OUTLINE = 2.0;    // dış siluet
-const W_SEAM = 1.4;       // konstrüksiyon dikişi (orta katman — eksikti)
-const W_MARK = 1.0;       // yardımcı işaret
+const NAVY = LAW.ink.color;
+// TEK MÜREKKEP (F-D): hiyerarşi RENKLE değil AĞIRLIK + KESİKLE kurulur. Eski
+// ikinci renk (#5c7aa0) hiyerarşiyi renge kaçırıyordu — teknik flat kanunu bunu
+// kabul etmez. Sabit korunuyor ki çağrı yerleri okunur kalsın; değeri tek mürekkep.
+const SEAM = NAVY;
+
+// F2 çizgi hiyerarşisi (gusto-corpus line_hierarchy 3 katman) + F-D'nin iki yeni
+// sınıfı: topstitch KESİK, gizli hat NOKTALI. Değerler kanundan.
+const W_OUTLINE = LAW.lineClasses.classes.outline.width;
+const W_SEAM = LAW.lineClasses.classes.seam.width;
+const W_MARK = LAW.lineClasses.classes.mark.width;
+const D_TOPSTITCH = LAW.lineClasses.classes.topstitch.dash;
+const D_HIDDEN = LAW.lineClasses.classes.hidden.dash;
+const W_TOPSTITCH = LAW.lineClasses.classes.topstitch.width;
+const W_HIDDEN = LAW.lineClasses.classes.hidden.width;
 
 const svgDoc = (w, h, inner) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
-  `width="100%" role="img"><rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#fff"/>${inner}</svg>`;
+  `width="100%" role="img" data-scale="${LAW.scale.declared}" data-unit-mm="${LAW.scale.unitMM}" ` +
+  `data-croquis="${LAW.croquis.id}" data-ref-size="${LAW.referenceBody.size}">` +
+  `<rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${LAW.ink.paper}"/>${inner}</svg>`;
 
 const n = (v) => (Math.round(v * 10) / 10).toFixed(1);
 
@@ -132,14 +145,27 @@ function circleFlare(kind) {                      // hemHalf multiplier vs waist
 // drawing, not the pattern). x=0 is center front/back; y grows downward from the
 // shoulder line. We draw the RIGHT half (positive x) and mirror it.
 // ---------------------------------------------------------------------------
+// TEK CROQUIS (F-D). Bütün stiller bu tek manken işaretlerinden çıkar. Sayılar
+// contract/flat-convention-v1.json'dan; chestW/waistW/hipW KAYNAKLI EU38 beden
+// çizelgesinden çözüldü (çevre/4, düz serili tüp geometrisi), gerisi AÇIK ilan
+// edildi. Buraya elle sayı yazılmaz.
 const U = {
-  shoulderW: 78,     // half shoulder width (shoulder tip x)
-  neckBase: 30,      // half neck width at a crew/round base
-  chestW: 74,        // half chest / bust width
-  waistW: 60,        // half waist width
-  hipW: 76,          // half hip width
-  shoulderY: 0,      // shoulder line
-  neckDrop: 4,       // how far the shoulder-neck point sits below the shoulder line
+  shoulderW: CQ.shoulderTipX.u,   // half shoulder width (shoulder tip x)
+  neckBase: CQ.neckBase.u,        // half neck width at a crew/round base
+  chestW: CQ.chestX.u,            // half chest / bust width  = bustCM*10/4/unitMM
+  waistW: CQ.waistX.u,            // half waist width         = waistCM*10/4/unitMM
+  hipW: CQ.hipX.u,                // half hip width           = hipCM*10/4/unitMM
+  shoulderY: 0,                   // shoulder line
+  neckDrop: CQ.neckDrop.u,        // shoulder-neck point below the shoulder line
+  chestY: CQ.chestY.u,            // underarm / bottom of armhole (göğüs hattı)
+  waistY: CQ.waistY.u,            // natural (body) waist line
+  slope: CQ.shoulderSlope.value,  // shoulder seam slope dy/dx
+  // OMUZ UCU YÜKSEKLİĞİ CROQUIS SABİTİDİR. Eskiden yakanın genişliğine bağlıydı
+  // (shoulderNeckY + (tipX - nHalf)*slope) → her yakada başka bir omuz ucu, yani
+  // her stil başka bir mankenden çıkıyordu. Ölçüldü: 12.30u … 19.40u = 21.30 mm
+  // sapma (GECE/log/F-D.gate.before.txt). Artık yakadan BAĞIMSIZ: eğim boyun
+  // TABANINDAN ölçülür, yakanın kendisinden değil.
+  shoulderTipY: CQ.shoulderTipY.u,
 };
 
 // Resolve the finished-garment geometry from the spec into numbers the templates
@@ -151,7 +177,7 @@ function geom(spec) {
   // --- body length (shoulder -> hem) -------------------------------------
   // top/shell lengths, then dress skirt length adds on below the waist.
   const topLen = spec.topLength || 'hip';
-  const bodyToWaist = 150;                 // shoulder to natural waist
+  const bodyToWaist = U.waistY;            // croquis: shoulder -> natural (body) waist
   const empire = spec.waistline === 'empire';
   const waistY = empire ? bodyToWaist * 0.66 : bodyToWaist;
 
@@ -198,6 +224,7 @@ function geom(spec) {
 
   return {
     isDress, empire, waistY, hemY, hemHalf, neck, hasSleeve, apexY, apexHalfX,
+    shoulderTipY: U.shoulderTipY, chestY: U.chestY,
     shoulderW: U.shoulderW, neckBase: U.neckBase, chestW: U.chestW,
     waistW, shoulderY: U.shoulderY, neckDrop: U.neckDrop,
   };
@@ -248,8 +275,9 @@ function halfOutline(g, view) {
   // real garment shoulder slopes DOWN from neck point to tip (~22deg). Tip must
   // sit clearly BELOW the shoulder-neck point so the seam reads as a natural
   // sloping shoulder, never an upward "smile" that sags at center.
-  const shoulderTipY = shoulderNeckY + (shoulderTipX - shoulderNeckX) * 0.32;
-  const armDeepY = 92;                          // underarm / bottom of armhole
+  // CROQUIS SABİTİ — yakadan bağımsız (F-D). Bkz. U.shoulderTipY yorumu.
+  const shoulderTipY = U.shoulderTipY;
+  const armDeepY = U.chestY;                    // underarm / bottom of armhole
   const chestX = g.chestW;
   const waistX = g.waistW;
   const hemX = g.hemHalf;
@@ -363,7 +391,7 @@ function sleeveHalf(g, spec) {
   // detaches from the body and reads as an outward kink/ear. Same formula.
   const shoulderNeckY = g.shoulderY + g.neckDrop;
   const shoulderTipX = g.shoulderW;
-  const shoulderTipY = shoulderNeckY + (shoulderTipX - g.neck.half) * 0.32;
+  const shoulderTipY = U.shoulderTipY;          // CROQUIS SABİTİ (F-D)
   const underX = g.chestW, underY = 92;
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
@@ -396,7 +424,7 @@ function sleeveHalf(g, spec) {
   // up the underarm seam back to the underarm point on the body
   d += `L ${n(underX)} ${n(underY)} `;
 
-  let s = `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="2" ` +
+  let s = `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="${W_OUTLINE}" ` +
     `stroke-linejoin="round" stroke-linecap="round"/>`;
   if (puff) {
     // gather ticks at the cap head
@@ -421,7 +449,7 @@ function interior(g, spec, view) {
   // empire / waist seam
   if (g.isDress) {
     s += `<line x1="${n(-g.waistW * 1.02)}" y1="${n(waistY)}" x2="${n(g.waistW * 1.02)}" y2="${n(waistY)}" ` +
-      `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="7 4"/>`;
+      `stroke="${SEAM}" stroke-width="${W_SEAM}"/>`;
   }
 
   if (spec.shaping === 'princess') {
@@ -521,18 +549,18 @@ function interior(g, spec, view) {
   if (isBack) {
     if (spec.closure && /zip/i.test(spec.closure)) {
       s += `<line x1="0" y1="${n(g.neck.depth + 4)}" x2="0" y2="${n(g.isDress ? waistY + 40 : g.hemY * 0.8)}" ` +
-        `stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="2 3"/>`;
+        `stroke="${SEAM}" stroke-width="${W_TOPSTITCH}" stroke-dasharray="${D_TOPSTITCH}"/>`;
     }
     if (spec.tie && spec.tie > 0) {
       const ty = g.isDress ? waistY : g.hemY * 0.86;
       for (const dir of [-1, 1]) {
         s += `<path d="M ${n(dir * g.waistW)} ${n(ty - 6)} Q ${n(dir * g.waistW * 0.4)} ${n(ty)} 0 ${n(ty + 2)}" ` +
-          `fill="none" stroke="${SEAM}" stroke-width="1.4" stroke-linecap="round"/>`;
+          `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
       }
     }
     if (spec.backOpening && spec.backOpening > 0) {
       s += `<path d="M ${n(-g.neck.half * 0.72)} ${n(g.neck.depth + 6)} Q 0 ${n(waistY * 0.5)} ${n(g.neck.half * 0.72)} ${n(g.neck.depth + 6)}" ` +
-        `fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-dasharray="4 3"/>`;
+        `fill="none" stroke="${SEAM}" stroke-width="${W_HIDDEN}" stroke-dasharray="${D_HIDDEN}"/>`;
     }
   }
 
@@ -565,7 +593,7 @@ function interior(g, spec, view) {
     const uwx = dir * overW * 0.5;
     let du = `M ${n(-dir * snX)} ${n(snY)} ` +
       `C ${n(-dir * snX * 0.6)} ${n(snY + (byA - snY) * 0.6)} ${n(-dir * g.apexHalfX * 0.4)} ${n(byA + 6)} ${n(uwx)} ${n(wy)}`;
-    s += `<path d="${du}" fill="none" stroke="${SEAM}" stroke-width="${W_MARK}" stroke-linecap="round" stroke-dasharray="5 4"/>`;
+    s += `<path d="${du}" fill="none" stroke="${SEAM}" stroke-width="${W_HIDDEN}" stroke-linecap="round" stroke-dasharray="${D_HIDDEN}"/>`;
     // (3) WRAP TIE: self-fabric strip exits the side seam at the waist on the
     // overlap side, wraps to the front, knots near CF. Two soft strokes = the tie.
     const ty = waistY;
@@ -659,26 +687,87 @@ function interior(g, spec, view) {
   return s;
 }
 
-// ---------------------------------------------------------------------------
-// collar (front only, hugs the neckline). Peter-pan = two rounded leaves; stand /
-// mock / shirt = a band along the neckline.
-// ---------------------------------------------------------------------------
-function collar(g, spec) {
-  const t = spec.collarType || 0;
-  if (!t) return '';
-  const nHalf = g.neck.half, ny = g.neck.depth * 0.5 + 2;
-  if (t === 4) {                                  // peter-pan: rounded flat leaves
-    let s = '';
-    for (const dir of [-1, 1]) {
-      s += `<path d="M 0 ${n(ny + 4)} Q ${n(dir * nHalf * 0.9)} ${n(ny - 4)} ${n(dir * nHalf * 1.2)} ${n(ny + 34)} ` +
-        `Q ${n(dir * nHalf * 0.85)} ${n(ny + 44)} ${n(dir * nHalf * 0.32)} ${n(ny + 20)} Z" ` +
-        `fill="#fff" stroke="${NAVY}" stroke-width="1.4" stroke-linejoin="round"/>`;
+// YAKA (F-D kök düzeltmesi, 2026-08-23). ESKİ HAL BİR ARTEFAKTTI: Peter Pan
+// yaprakları CF'den sabit oranlarla çiziliyordu — gerçek yaka çizgisine
+// DEĞMİYORDU, arka görünümde ön yakanın kopyası basılıyordu, iki yaprak boşlukta
+// duran iki badem gibi okunuyordu. Kırpmayla GİZLENMEDİ, kök sebep düzeltildi:
+// yaka artık O GÖRÜNÜMÜN GERÇEK yaka çizgisinden türüyor — silüetin kullandığı
+// `necklineSegs` örneklenir, dış kenar o eğrinin normal ofsetidir, genişlik
+// uçlarda 0'a iner (yuvarlak yaprak ucu). Arka görünüm ARKA yaka çizgisini
+// kullanır ve CF yarığı YOKTUR (gerçek Peter Pan arkada tektir).
+function samplePolyFromSegs(segs, start) {
+  const pts = [start.slice()];
+  let cur = start;
+  for (const sg of segs) {
+    if (sg.t === 'L') { pts.push(sg.p[0].slice()); cur = sg.p[0]; }
+    else if (sg.t === 'Q') {
+      const c = sg.p[0], e = sg.p[1];
+      for (let i = 1; i <= 10; i++) { const t = i / 10, u = 1 - t;
+        pts.push([u * u * cur[0] + 2 * u * t * c[0] + t * t * e[0], u * u * cur[1] + 2 * u * t * c[1] + t * t * e[1]]); }
+      cur = e;
+    } else if (sg.t === 'C') {
+      const c1 = sg.p[0], c2 = sg.p[1], e = sg.p[2];
+      for (let i = 1; i <= 12; i++) { const t = i / 12, u = 1 - t;
+        pts.push([u * u * u * cur[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * e[0],
+                  u * u * u * cur[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * e[1]]); }
+      cur = e;
     }
-    return s;
   }
-  // stand / mock / shirt band along the neckline
-  return `<path d="M ${n(-nHalf)} ${n(ny + 10)} Q 0 ${n(ny - 8)} ${n(nHalf)} ${n(ny + 10)}" ` +
-    `fill="none" stroke="${NAVY}" stroke-width="2" stroke-linecap="round"/>`;
+  return pts;
+}
+
+const COLLAR_W = 26;      // yaprak genişliği (birim) = 78 mm bitmiş yaka bandı
+
+function collar(g, spec, view, cfNeckY) {
+  const kind = spec.collarType || 0;
+  if (!kind) return '';
+  const isBack = view === 'back';
+  const nHalf = g.neck.half;
+  const snY = g.shoulderY + g.neckDrop;
+  const segs = necklineSegs(g.neck.kind, isBack, nHalf, cfNeckY, nHalf, snY);
+  const line = samplePolyFromSegs(segs, [0, cfNeckY]);
+  const L = line.length;
+  // stand / mock / shirt bandı: yaka çizgisine yapışık ince bant
+  if (kind !== 4) {
+    let d = `M ${n(line[0][0])} ${n(line[0][1])} `;
+    for (let i = 1; i < L; i++) d += `L ${n(line[i][0])} ${n(line[i][1])} `;
+    const band = `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+    return band + `<g transform="scale(-1,1)">${band}</g>`;
+  }
+  // peter-pan / hilal: yaka çizgisinden ofsetlenmiş yaprak
+  const i0 = isBack ? 0 : Math.round(0.10 * (L - 1));   // önde CF yarığı, arkada yok
+  const P = line.slice(i0), m = P.length;
+  const outer = [];
+  for (let i = 0; i < m; i++) {
+    const a = P[Math.max(0, i - 1)], b = P[Math.min(m - 1, i + 1)];
+    const dx = b[0] - a[0], dy = b[1] - a[1], dd = Math.hypot(dx, dy) || 1;
+    const u = m > 1 ? i / (m - 1) : 0.5;
+    const w = COLLAR_W * Math.pow(Math.sin(Math.PI * Math.min(Math.max(u, 0.02), 0.98)), 0.45);
+    outer.push([P[i][0] - (dy / dd) * w, P[i][1] + (dx / dd) * w]);
+  }
+  let d = `M ${n(P[0][0])} ${n(P[0][1])} `;
+  for (let i = 1; i < m; i++) d += `L ${n(P[i][0])} ${n(P[i][1])} `;
+  for (let i = m - 1; i >= 0; i--) d += `L ${n(outer[i][0])} ${n(outer[i][1])} `;
+  d += 'Z';
+  const leaf = (mir) => `<path d="${d}" fill="${LAW.ink.paper}" stroke="${NAVY}" ` +
+    `stroke-width="${W_SEAM}" stroke-linejoin="round" stroke-linecap="round"` + (mir ? ' transform="scale(-1,1)"' : '') + '/>';
+  return leaf(false) + leaf(true);
+}
+
+// ETEK UCU ÜST DİKİŞİ (F-D). Bitmiş giysinin eteği kıvrılıp bastırılır; teknik
+// flat bunu etek kenarına PARALEL kesik çizgiyle gösterir. Silüetin son iki
+// segmentinden (etek kenarı + orta-ön dip) türetilir, ayrı bir sayı uydurulmaz:
+// aynı eğri, yukarı 6 birim (18 mm) ofsetlenmiş.
+const HEM_TS_OFF = 6;
+function hemTopstitchPath(half) {
+  const segs = half.segs, last = segs[segs.length - 1];
+  const prev = segs[segs.length - 2];
+  const hemPt = prev.p[prev.p.length - 1];
+  const c = last.p[0], end = last.p[1];
+  const o = HEM_TS_OFF;
+  let d = `M ${n(hemPt[0])} ${n(hemPt[1] - o)} Q ${n(c[0])} ${n(c[1] - o)} ${n(end[0])} ${n(end[1] - o)} `;
+  d += `Q ${n(-c[0])} ${n(c[1] - o)} ${n(-hemPt[0])} ${n(hemPt[1] - o)}`;
+  return d;
 }
 
 // ---------------------------------------------------------------------------
@@ -693,15 +782,15 @@ function viewPanel(spec, view) {
   // outline: ONE continuous closed silhouette (right half + reversed mirror),
   // so there is no stroked center-front line / fake seam down the garment.
   const outline =
-    `<path d="${fullOutlinePath(half)}" fill="#fbfcfe" stroke="${NAVY}" ` +
-    `stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    `<path d="${fullOutlinePath(half)}" fill="${LAW.ink.paper}" stroke="${NAVY}" ` +
+    `stroke-width="${W_OUTLINE}" stroke-linejoin="round" stroke-linecap="round"/>`;
 
   const slv = sleeveHalf(g, spec);
   const sleeves = slv
     ? `<g>${slv}<g transform="scale(-1,1)">${slv}</g></g>`
     : '';
 
-  const details = collar(g, spec) + interior(g, spec, view);
+  const details = collar(g, spec, view, half.cfNeckY) + interior(g, spec, view);
 
   const bottom = g.hemY + (g.isDress ? 10 : 4);
   // widest extent: outline hem/hip/chest, or sleeve reach if sleeved
@@ -710,8 +799,16 @@ function viewPanel(spec, view) {
   const pad = 20;
   const w = (maxX + pad) * 2;
   const h = bottom + pad;
+  const hemTs = `<path d="${hemTopstitchPath(half)}" fill="none" stroke="${NAVY}" ` +
+    `stroke-width="${W_TOPSTITCH}" stroke-dasharray="${D_TOPSTITCH}" stroke-linecap="round"/>`;
+  // CROQUIS BEYANI — kapı bu beyanın gerçekten çizilen path'in bir ucu olduğunu
+  // doğrular (engine/tests/flat_convention_check.mjs §1b). Beyan yalan söyleyemez.
+  const decl = `data-croquis="${LAW.croquis.id}" data-shoulder-x="${U.shoulderW}" ` +
+    `data-shoulder-y="${U.shoulderTipY}" data-chest-x="${U.chestW}" data-chest-y="${U.chestY}" ` +
+    `data-waist-y="${U.waistY}" data-waistline="${g.empire ? 'empire' : 'natural'}"`;
   // shift so x=0 maps to w/2, y starts at pad
-  const inner = `<g transform="translate(${n(w / 2)} ${pad})">${outline}${sleeves}${details}</g>`;
+  const inner = `<g data-view="${view}" ${decl} transform="translate(${n(w / 2)} ${pad})">` +
+    `${outline}${hemTs}${sleeves}${details}</g>`;
   return { inner, w, h };
 }
 
@@ -854,8 +951,8 @@ export function renderGarmentFlat(pieces, spec = {}) {
   const bx = PAD + fp.w + GAP;
   inner += head(bx, bp.w, 'BACK');
   inner += `<g transform="translate(${n(bx)} ${HEAD})">${bp.inner}</g>`;
-  const dx = PAD + fp.w + GAP / 2;
-  inner += `<line x1="${n(dx)}" y1="${HEAD}" x2="${n(dx)}" y2="${n(HEAD + panelH)}" stroke="#e2e9f2" stroke-width="1"/>`;
+  // PANEL AYIRICI ÇİZGİ KALDIRILDI (F-D): üçüncü bir mürekkep rengiydi (#e2e9f2)
+  // ve giysiye ait olmayan bir çizgiydi. FRONT / BACK başlıkları panelleri ayırıyor.
 
   return svgDoc(W, H, inner);
 }

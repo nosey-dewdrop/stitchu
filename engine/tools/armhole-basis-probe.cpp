@@ -34,6 +34,29 @@ constexpr double kBugraCutMM[8] = {424.50, 428.91, 432.99, 447.80,
 constexpr double kOffsetLoMM = 34.3;
 constexpr double kOffsetHiMM = 36.2;
 
+// Buğra'nın oyuğunun TERİM TERİM ölçümü — aynı ring/seamgraph verisinden,
+// patterns_real/geometry/geometry-full.json + seamgraph.json, `OYUK-on` ve
+// `OYUK-arka` kenarları. Sütunlar, her yarı için:
+//   dx (yatay açıklık), dy (dikey derinlik), kiriş, yay (=kesim mm), yay/kiriş.
+// Yay sütunları docs/H1.0-KAPI.md §0'ın oyuk-ön / oyuk-arka sütunlarıyla
+// birebir aynı sayıyı basıyor (205.50 / 219.00 ...) — aynı zemin.
+// Üretim: patterns_real/tools/trace-match.py ile aynı resample(1mm) yolu.
+constexpr double kBugraHalf[8][10] = {
+    {58.82, 162.21, 166.06, 205.50, 1.24, 48.24, 185.81, 186.16, 219.00, 1.18},  // EU34
+    {62.60, 163.12, 168.55, 207.99, 1.23, 51.81, 186.67, 187.71, 220.92, 1.18},  // EU36
+    {67.92, 163.35, 171.65, 210.99, 1.23, 55.84, 186.58, 188.91, 222.00, 1.18},  // EU38
+    {76.13, 166.04, 175.80, 221.80, 1.26, 58.83, 189.35, 192.56, 226.00, 1.17},  // EU40
+    {81.64, 168.19, 180.86, 226.98, 1.25, 63.45, 192.36, 197.24, 230.85, 1.17},  // EU42
+    {87.13, 170.21, 186.02, 231.97, 1.25, 67.61, 194.62, 201.37, 234.86, 1.17},  // EU44
+    {91.63, 171.77, 189.96, 235.95, 1.24, 71.24, 196.80, 205.01, 238.69, 1.16},  // EU46
+    {100.44, 174.01, 197.18, 242.63, 1.23, 77.69, 198.72, 210.10, 243.85, 1.16},  // EU48
+};
+
+// Buğra'nın KENDİ beden tablosu (geometry-full.json:sizeChartMM) — bizimkiyle
+// aynı etikette AYNI BEDEN DEĞİL. Buğra EU34 büst 840mm, bizim EU34 800mm.
+// Kıyas yapılırken bu ofset raporda basılır, sessizce yutulmaz.
+constexpr double kBugraBustMM[8] = {840, 880, 920, 960, 1000, 1040, 1080, 1120};
+
 }  // namespace
 
 int main() {
@@ -61,6 +84,41 @@ int main() {
                           : (arm > torso ? "ARM" : "TORSO");
         std::printf("EU%2d  | %7.1f | %7.1f | %9.2f | %10.2f | %8.2f | %s\n",
                     kSizes[i], m.bustMM(), m.backLengthMM(), torso, arm, cap, which);
+    }
+    std::printf("\n");
+
+    // --- TERIM TERIM AYRISTIRMA ---------------------------------------------
+    // Toplam farkin nereden geldigini soyler: genislik (dx), derinlik (dy),
+    // yoksa egrinin OYULMASI (yay/kiris) mi?
+    std::printf("--- oyuk terim terim (bizim vs Bugra, ayni yari) ---\n");
+    std::printf("beden | yari  |    dx  |  Bdx  |    dy  |  Bdy  | kiris | Bkiris"
+                " |  yay  |  Byay | y/k  | By/k\n");
+    for (int i = 0; i < 8; ++i) {
+        const std::string label = "EU" + std::to_string(kSizes[i]);
+        const SizeChartEntry* e = euSize(label);
+        if (!e) continue;
+        BodiceBlock::BodiceOptions o;
+        const BodiceDraft d = BodiceBlock::draft(e->body, o);
+        for (int h = 0; h < 2; ++h) {
+            const double dx = (h == 0 ? d.frontChestWidth : d.backChestWidth) -
+                              (h == 0 ? d.frontShoulderTipX : d.backShoulderTipX);
+            const double dy = d.armholeUnderarmY -
+                              (h == 0 ? d.frontShoulderTipY : d.backShoulderTipY);
+            const double arc = h == 0 ? d.frontArmholeLength : d.backArmholeLength;
+            const double chord = std::hypot(dx, dy);
+            const double* B = &kBugraHalf[i][h * 5];
+            std::printf("EU%2d  | %s | %6.2f | %5.2f | %6.2f | %5.2f | %5.1f | %5.1f "
+                        "| %5.1f | %5.1f | %.3f | %.3f\n",
+                        kSizes[i], h == 0 ? "on   " : "arka ", dx, B[0], dy, B[1],
+                        chord, B[2], arc, B[3], arc / chord, B[4]);
+        }
+    }
+    std::printf("\nBugra kendi beden tablosu bizimkiyle ayni degil (mm bust):\n");
+    for (int i = 0; i < 8; ++i) {
+        const SizeChartEntry* e = euSize("EU" + std::to_string(kSizes[i]));
+        std::printf("  EU%2d bizim %6.1f | Bugra %6.1f | fark %+5.1f\n", kSizes[i],
+                    e ? e->body.bustMM() : 0.0, kBugraBustMM[i],
+                    (e ? e->body.bustMM() : 0.0) - kBugraBustMM[i]);
     }
     std::printf("\n");
 

@@ -911,9 +911,15 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     draft.backPieceWaistY = bSeamSideY + deltaBack;
     draft.frontPieceLength = frontLength;
     draft.backPieceLength = bSeamSideY;
-    draft.armholeLength = (backPrincess ? backSplit.armholeLength : back.armholeLength) +
-                          (frontPrincess ? frontSplit.armholeLength : front.armholeLength);
+    draft.backArmholeLength = backPrincess ? backSplit.armholeLength : back.armholeLength;
+    draft.frontArmholeLength = frontPrincess ? frontSplit.armholeLength : front.armholeLength;
+    draft.armholeLength = draft.backArmholeLength + draft.frontArmholeLength;
     draft.armholeDepth = armholeY - shoulderDrop;
+    draft.frontShoulderTipX = fShoulderHalf;
+    draft.frontShoulderTipY = fShoulderDrop;
+    draft.backShoulderTipX = bShoulderHalf;
+    draft.backShoulderTipY = bShoulderDrop;
+    draft.armholeUnderarmY = armholeY;
     draft.sideWaistY = seamSideY;
     draft.waistSeamY = seamSideY;
     draft.frontChestWidth = frontWidth;

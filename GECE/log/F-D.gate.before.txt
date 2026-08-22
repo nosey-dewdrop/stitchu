@@ -1,0 +1,171 @@
+=== FLAT KONVANSIYON KAPISI — uretim kalemi, 8 stil
+    kanun: contract/flat-convention-v1.json  unitMM=3  tolerans=2mm
+FAIL  [5 on+arka] princess_scoop_dress: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] boat_shift_dress: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] vneck_empire_dress: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] square_gathered_dress: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] crew_sleeved_top: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] sweetheart_crop_top: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] scoop_tunic_placket: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+FAIL  [5 on+arka] cowl_openback_top: data-view paneli eksik, bulunan=[front(legacy),back(legacy)]
+
+--- 1. TEK CROQUIS (geometrik olcum, beyana bakmadan)
+ok    1 croquis — omuz ucu x             min 78.000u  max 78.000u  SAPMA 0.00 mm
+FAIL  [1 croquis] omuz ucu y             min 12.300u  max 19.400u  SAPMA 21.30 mm  (> 2 mm)
+ok    1 croquis — gogus (koltukalti) x   min 74.000u  max 74.000u  SAPMA 0.00 mm
+ok    1 croquis — gogus hatti y          min 92.000u  max 92.000u  SAPMA 0.00 mm
+FAIL  [1 croquis] bel hatti y (dogal)    min 99.000u  max 150.000u  SAPMA 153.00 mm  (> 2 mm)
+
+--- 1b. BEYAN == CIZILEN (croquis data-* yalan soyleyemez)
+FAIL  [1b] princess_scoop_dress/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] princess_scoop_dress/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] boat_shift_dress/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] boat_shift_dress/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] vneck_empire_dress/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] vneck_empire_dress/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] square_gathered_dress/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] square_gathered_dress/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] crew_sleeved_top/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] crew_sleeved_top/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] sweetheart_crop_top/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] sweetheart_crop_top/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] scoop_tunic_placket/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] scoop_tunic_placket/back(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] cowl_openback_top/front(legacy): data-croquis beyani yok/yanlis (undefined)
+FAIL  [1b] cowl_openback_top/back(legacy): data-croquis beyani yok/yanlis (undefined)
+
+--- 2. OLCEK BEYANI
+FAIL  [2 olcek] princess_scoop_dress: kokte data-scale YOK
+FAIL  [2 olcek] boat_shift_dress: kokte data-scale YOK
+FAIL  [2 olcek] vneck_empire_dress: kokte data-scale YOK
+FAIL  [2 olcek] square_gathered_dress: kokte data-scale YOK
+FAIL  [2 olcek] crew_sleeved_top: kokte data-scale YOK
+FAIL  [2 olcek] sweetheart_crop_top: kokte data-scale YOK
+FAIL  [2 olcek] scoop_tunic_placket: kokte data-scale YOK
+FAIL  [2 olcek] cowl_openback_top: kokte data-scale YOK
+ok    2 olcek — gogus yari-genisligi 222.00 mm == bustCM/4 220.00 mm (burda EU38, verified)
+
+--- 3. CIZGI HIYERARSISI
+FAIL  [3 hiyerarsi] princess_scoop_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="150.0" x2="61.2" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] princess_scoop_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="150.0" x2="61.2" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] princess_scoop_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=2 3) -> <line x1="0" y1="44.0" x2="0" y2="190.0" stroke="#5c7aa0" stroke-width="1.4" stroke-dashar
+FAIL  [3 hiyerarsi] boat_shift_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-69.4" y1="150.0" x2="69.4" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] boat_shift_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-69.4" y1="150.0" x2="69.4" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] vneck_empire_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="99.0" x2="61.2" y2="99.0" stroke="#5c7aa0" stroke-width="1.4" stroke-
+FAIL  [3 hiyerarsi] vneck_empire_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="99.0" x2="61.2" y2="99.0" stroke="#5c7aa0" stroke-width="1.4" stroke-
+FAIL  [3 hiyerarsi] square_gathered_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="150.0" x2="61.2" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] square_gathered_dress: beyan edilmemis cizgi sinifi (width=1.4 dash=7 4) -> <line x1="-61.2" y1="150.0" x2="61.2" y2="150.0" stroke="#5c7aa0" stroke-width="1.4" strok
+FAIL  [3 hiyerarsi] cowl_openback_top: beyan edilmemis cizgi sinifi (width=1.4 dash=4 3) -> <path d="M -25.9 56.0 Q 0 75.0 25.9 56.0" fill="none" stroke="#5c7aa0" stroke-width="1.4" 
+FAIL  [3 hiyerarsi] "topstitch" sinifi beyan edilmis ama matriste HIC kullanilmamis (olu beyan)
+FAIL  [3 hiyerarsi] "hidden" sinifi beyan edilmis ama matriste HIC kullanilmamis (olu beyan)
+
+--- 4. SIFIR GOLGE / GRADYAN / TINT
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] princess_scoop_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] boat_shift_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] vneck_empire_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] square_gathered_dress: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] crew_sleeved_top: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] crew_sleeved_top: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] sweetheart_crop_top: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] sweetheart_crop_top: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] scoop_tunic_placket: izinsiz fill="#5c7aa0"
+FAIL  [4 boya] cowl_openback_top: izinsiz fill="#fbfcfe"
+FAIL  [4 boya] cowl_openback_top: izinsiz fill="#fbfcfe"
+
+--- 6. TEK KONTUR RENGI
+FAIL  [6 renk] kontur renkleri: {#1f3a5f, #5c7aa0, #e2e9f2} — kanun {#1f3a5f}
+
+=== PARITE RAPORU (KAPI DEGIL) — REFERANS KALEM
+    engine/flat-engine/_engine-full.mjs SALT-OKUNUR (Damla emri 2026-07-19).
+    princess_dress                     data-scale=false renk=0 agirlik={}
+    gore_skirt_dress                   data-scale=false renk=0 agirlik={}
+    wrap_dress                         data-scale=false renk=0 agirlik={}
+    top_boat_princess                  data-scale=false renk=0 agirlik={}
+    -> referans kalem konvansiyona UYMUYOR; duzeltmek Damla'nin kalem revizyonuna bagli (F-D raporu).
+
+FAIL flat_convention_check — 143 ihlal

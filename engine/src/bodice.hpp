@@ -35,6 +35,18 @@ struct BodiceDraft {
     double halterBindingEdgeMM = 0;
     double armholeLength = 0;   // one arm, front half + back half, sewing line
     double armholeDepth = 0;
+    // Audit split of the line above: which half is short, and whether the
+    // shortfall is WIDTH (dx), DEPTH (dy) or CURVE (arc/chord). Buğra's
+    // measured armhole is decomposed the same way in
+    // patterns_real/geometry/geometry-full.json, so the two are comparable
+    // term by term instead of only as one total.
+    double frontArmholeLength = 0;
+    double backArmholeLength = 0;
+    // Armhole dx per half = chestWidth - tipX; dy = armholeY - tipDrop.
+    // The back tip is NOT the front tip (shoulder truing, bodice.cpp:685).
+    double frontShoulderTipX = 0, frontShoulderTipY = 0;
+    double backShoulderTipX = 0, backShoulderTipY = 0;
+    double armholeUnderarmY = 0;  // piece-frame underarm level (body frame)
     double sideWaistY = 0;      // shared side waist basis (= waist seam level)
     double waistSeamY = 0;      // absolute y of the waist seam (empire < natural)
     // Audit values consumed by the validator.
