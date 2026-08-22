@@ -1,0 +1,5670 @@
+{
+ "meta": {
+  "sa_mm": 10.0,
+  "step_mm": 1.0,
+  "method": "point-normal inward offset, tangent +-3mm, NO pruning, NO miter (18)",
+  "seed_size": "38",
+  "source": "geometry-full.json (PDF vektor, mm)"
+ },
+ "pieces": {
+  "corset_bustier/Back Body (center fold)": {
+   "34": {
+    "perimMM": 1117.63,
+    "align_cost": 0.0407,
+    "notchArcs": [
+     107,
+     257,
+     770,
+     809,
+     913
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 472,
+      "cutMM": 472.0,
+      "stitchMM": 470.5,
+      "notches": [
+       107,
+       257
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 472,
+      "i1": 514,
+      "cutMM": 41.79,
+      "stitchMM": 40.87,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 514,
+      "i1": 767,
+      "cutMM": 252.67,
+      "stitchMM": 267.77,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 767,
+      "i1": 1018,
+      "cutMM": 251.0,
+      "stitchMM": 253.12,
+      "notches": [
+       770,
+       809,
+       913
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1018,
+      "i1": 0,
+      "cutMM": 99.38,
+      "stitchMM": 94.33,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 1136.08,
+    "align_cost": 0.0262,
+    "notchArcs": [
+     107,
+     257,
+     776,
+     815,
+     920
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 474,
+      "cutMM": 474.0,
+      "stitchMM": 472.43,
+      "notches": [
+       107,
+       257
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 474,
+      "i1": 516,
+      "cutMM": 41.91,
+      "stitchMM": 41.56,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 516,
+      "i1": 773,
+      "cutMM": 256.6,
+      "stitchMM": 271.31,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 773,
+      "i1": 1026,
+      "cutMM": 253.0,
+      "stitchMM": 255.17,
+      "notches": [
+       776,
+       815,
+       920
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1026,
+      "i1": 0,
+      "cutMM": 109.88,
+      "stitchMM": 105.33,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 1139.23,
+    "align_cost": 0.0,
+    "notchArcs": [
+     102,
+     249,
+     779,
+     817,
+     920
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 469,
+      "cutMM": 469.0,
+      "stitchMM": 467.46,
+      "notches": [
+       102,
+       249
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 469,
+      "i1": 513,
+      "cutMM": 43.74,
+      "stitchMM": 42.44,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 513,
+      "i1": 776,
+      "cutMM": 262.49,
+      "stitchMM": 276.89,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 776,
+      "i1": 1021,
+      "cutMM": 244.99,
+      "stitchMM": 247.33,
+      "notches": [
+       779,
+       817,
+       920
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1021,
+      "i1": 0,
+      "cutMM": 117.98,
+      "stitchMM": 113.05,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 1161.53,
+    "align_cost": 0.0135,
+    "notchArcs": [
+     102,
+     249,
+     792,
+     829,
+     931
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 474,
+      "cutMM": 474.0,
+      "stitchMM": 472.43,
+      "notches": [
+       102,
+       249
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 474,
+      "i1": 520,
+      "cutMM": 45.48,
+      "stitchMM": 42.3,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 520,
+      "i1": 788,
+      "cutMM": 268.0,
+      "stitchMM": 284.81,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 788,
+      "i1": 1034,
+      "cutMM": 245.63,
+      "stitchMM": 245.88,
+      "notches": [
+       792,
+       829,
+       931
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1034,
+      "i1": 0,
+      "cutMM": 127.53,
+      "stitchMM": 124.15,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 1195.83,
+    "align_cost": 0.0201,
+    "notchArcs": [
+     105,
+     255,
+     812,
+     850,
+     954
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 486,
+      "cutMM": 486.0,
+      "stitchMM": 484.42,
+      "notches": [
+       105,
+       255
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 486,
+      "i1": 533,
+      "cutMM": 46.5,
+      "stitchMM": 43.7,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 533,
+      "i1": 808,
+      "cutMM": 275.0,
+      "stitchMM": 291.81,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 808,
+      "i1": 1060,
+      "cutMM": 251.68,
+      "stitchMM": 251.8,
+      "notches": [
+       812,
+       850,
+       954
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1060,
+      "i1": 0,
+      "cutMM": 135.83,
+      "stitchMM": 132.42,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 1216.86,
+    "align_cost": 0.0427,
+    "notchArcs": [
+     106,
+     258,
+     814,
+     853,
+     957
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 485,
+      "cutMM": 485.0,
+      "stitchMM": 483.17,
+      "notches": [
+       106,
+       258
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 485,
+      "i1": 532,
+      "cutMM": 46.73,
+      "stitchMM": 45.58,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 532,
+      "i1": 810,
+      "cutMM": 278.0,
+      "stitchMM": 294.81,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 810,
+      "i1": 1064,
+      "cutMM": 253.79,
+      "stitchMM": 254.38,
+      "notches": [
+       814,
+       853,
+       957
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1064,
+      "i1": 0,
+      "cutMM": 152.86,
+      "stitchMM": 149.53,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 1253.55,
+    "align_cost": 0.049,
+    "notchArcs": [
+     105,
+     265,
+     836,
+     877,
+     987
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 498,
+      "cutMM": 497.73,
+      "stitchMM": 495.26,
+      "notches": [
+       105,
+       265
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 498,
+      "i1": 547,
+      "cutMM": 49.0,
+      "stitchMM": 49.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 547,
+      "i1": 832,
+      "cutMM": 284.8,
+      "stitchMM": 300.34,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 832,
+      "i1": 1093,
+      "cutMM": 260.63,
+      "stitchMM": 260.39,
+      "notches": [
+       836,
+       877,
+       987
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1093,
+      "i1": 0,
+      "cutMM": 160.55,
+      "stitchMM": 157.17,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 1303.18,
+    "align_cost": 0.0515,
+    "notchArcs": [
+     109,
+     275,
+     869,
+     912,
+     1026
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 517,
+      "cutMM": 517.0,
+      "stitchMM": 515.77,
+      "notches": [
+       109,
+       275
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 517,
+      "i1": 569,
+      "cutMM": 51.71,
+      "stitchMM": 50.39,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 569,
+      "i1": 865,
+      "cutMM": 295.99,
+      "stitchMM": 312.7,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 865,
+      "i1": 1136,
+      "cutMM": 270.85,
+      "stitchMM": 271.77,
+      "notches": [
+       869,
+       912,
+       1026
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 1136,
+      "i1": 0,
+      "cutMM": 167.18,
+      "stitchMM": 163.8,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "corset_bustier/Back Body (side)": {
+   "34": {
+    "perimMM": 512.57,
+    "align_cost": 0.0052,
+    "notchArcs": [
+     21,
+     56,
+     232,
+     321,
+     365,
+     436
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 27,
+      "cutMM": 26.76,
+      "stitchMM": 25.19,
+      "notches": [
+       21
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 27,
+      "i1": 248,
+      "cutMM": 221.0,
+      "stitchMM": 223.23,
+      "notches": [
+       56,
+       232
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 248,
+      "i1": 273,
+      "cutMM": 25.0,
+      "stitchMM": 25.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 273,
+      "i1": 0,
+      "cutMM": 239.49,
+      "stitchMM": 234.35,
+      "notches": [
+       321,
+       365,
+       436
+      ]
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 516.97,
+    "align_cost": 0.003,
+    "notchArcs": [
+     22,
+     57,
+     235,
+     324,
+     368,
+     440
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 27,
+      "cutMM": 26.84,
+      "stitchMM": 26.14,
+      "notches": [
+       22
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 27,
+      "i1": 251,
+      "cutMM": 223.91,
+      "stitchMM": 225.91,
+      "notches": [
+       57,
+       235
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 251,
+      "i1": 276,
+      "cutMM": 25.0,
+      "stitchMM": 25.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 276,
+      "i1": 0,
+      "cutMM": 240.87,
+      "stitchMM": 235.57,
+      "notches": [
+       324,
+       368,
+       440
+      ]
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 530.42,
+    "align_cost": 0.0,
+    "notchArcs": [
+     22,
+     58,
+     241,
+     335,
+     379,
+     453
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 27,
+      "cutMM": 27.0,
+      "stitchMM": 27.0,
+      "notches": [
+       22
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 27,
+      "i1": 257,
+      "cutMM": 229.79,
+      "stitchMM": 231.09,
+      "notches": [
+       58,
+       241
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 257,
+      "i1": 283,
+      "cutMM": 25.78,
+      "stitchMM": 24.53,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 283,
+      "i1": 0,
+      "cutMM": 247.41,
+      "stitchMM": 242.48,
+      "notches": [
+       335,
+       379,
+       453
+      ]
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 549.75,
+    "align_cost": 0.0034,
+    "notchArcs": [
+     22,
+     60,
+     250,
+     347,
+     391,
+     468
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 28,
+      "cutMM": 27.96,
+      "stitchMM": 27.79,
+      "notches": [
+       22
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 28,
+      "i1": 267,
+      "cutMM": 238.85,
+      "stitchMM": 240.5,
+      "notches": [
+       60,
+       250
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 267,
+      "i1": 293,
+      "cutMM": 26.0,
+      "stitchMM": 26.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 293,
+      "i1": 0,
+      "cutMM": 256.69,
+      "stitchMM": 251.56,
+      "notches": [
+       347,
+       391,
+       468
+      ]
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 578.67,
+    "align_cost": 0.0062,
+    "notchArcs": [
+     23,
+     63,
+     264,
+     363,
+     409,
+     490
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 29,
+      "cutMM": 28.77,
+      "stitchMM": 27.56,
+      "notches": [
+       23
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 29,
+      "i1": 281,
+      "cutMM": 252.0,
+      "stitchMM": 254.37,
+      "notches": [
+       63,
+       264
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 281,
+      "i1": 308,
+      "cutMM": 26.89,
+      "stitchMM": 26.39,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 308,
+      "i1": 0,
+      "cutMM": 270.6,
+      "stitchMM": 265.55,
+      "notches": [
+       363,
+       409,
+       490
+      ]
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 592.57,
+    "align_cost": 0.0108,
+    "notchArcs": [
+     23,
+     65,
+     270,
+     371,
+     417,
+     501
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 29,
+      "cutMM": 28.95,
+      "stitchMM": 28.75,
+      "notches": [
+       23
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 29,
+      "i1": 288,
+      "cutMM": 259.0,
+      "stitchMM": 261.35,
+      "notches": [
+       65,
+       270
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 288,
+      "i1": 315,
+      "cutMM": 26.98,
+      "stitchMM": 26.9,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 315,
+      "i1": 0,
+      "cutMM": 277.38,
+      "stitchMM": 271.84,
+      "notches": [
+       371,
+       417,
+       501
+      ]
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 622.53,
+    "align_cost": 0.0134,
+    "notchArcs": [
+     24,
+     68,
+     284,
+     389,
+     438,
+     526
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 30,
+      "cutMM": 30.0,
+      "stitchMM": 30.0,
+      "notches": [
+       24
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 30,
+      "i1": 303,
+      "cutMM": 272.51,
+      "stitchMM": 272.0,
+      "notches": [
+       68,
+       284
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 303,
+      "i1": 331,
+      "cutMM": 28.0,
+      "stitchMM": 28.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 331,
+      "i1": 0,
+      "cutMM": 291.38,
+      "stitchMM": 286.07,
+      "notches": [
+       389,
+       438,
+       526
+      ]
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 647.18,
+    "align_cost": 0.0114,
+    "notchArcs": [
+     25,
+     71,
+     295,
+     405,
+     456,
+     547
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 32,
+      "cutMM": 31.75,
+      "stitchMM": 30.36,
+      "notches": [
+       25
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 32,
+      "i1": 315,
+      "cutMM": 282.76,
+      "stitchMM": 283.63,
+      "notches": [
+       71,
+       295
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 315,
+      "i1": 344,
+      "cutMM": 29.0,
+      "stitchMM": 29.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 344,
+      "i1": 0,
+      "cutMM": 302.95,
+      "stitchMM": 297.21,
+      "notches": [
+       405,
+       456,
+       547
+      ]
+     }
+    ]
+   }
+  },
+  "corset_bustier/Front Body (center)": {
+   "34": {
+    "perimMM": 806.26,
+    "align_cost": 0.0284,
+    "notchArcs": [
+     188,
+     336
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 127,
+      "cutMM": 126.59,
+      "stitchMM": 141.03,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 127,
+      "i1": 446,
+      "cutMM": 318.75,
+      "stitchMM": 319.32,
+      "notches": [
+       188,
+       336
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 446,
+      "i1": 540,
+      "cutMM": 93.89,
+      "stitchMM": 92.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 540,
+      "i1": 0,
+      "cutMM": 266.26,
+      "stitchMM": 266.26,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 809.41,
+    "align_cost": 0.0279,
+    "notchArcs": [
+     189,
+     337
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 127,
+      "cutMM": 127.0,
+      "stitchMM": 141.52,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 127,
+      "i1": 447,
+      "cutMM": 319.14,
+      "stitchMM": 320.6,
+      "notches": [
+       189,
+       337
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 447,
+      "i1": 542,
+      "cutMM": 94.74,
+      "stitchMM": 92.06,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 542,
+      "i1": 0,
+      "cutMM": 267.41,
+      "stitchMM": 267.41,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 801.89,
+    "align_cost": 0.0,
+    "notchArcs": [
+     194,
+     339
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 132,
+      "cutMM": 131.21,
+      "stitchMM": 145.47,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 132,
+      "i1": 444,
+      "cutMM": 311.89,
+      "stitchMM": 313.3,
+      "notches": [
+       194,
+       339
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 444,
+      "i1": 543,
+      "cutMM": 98.69,
+      "stitchMM": 95.54,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 543,
+      "i1": 0,
+      "cutMM": 258.89,
+      "stitchMM": 258.89,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 808.85,
+    "align_cost": 0.0074,
+    "notchArcs": [
+     199,
+     347
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 135,
+      "cutMM": 134.57,
+      "stitchMM": 148.99,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 135,
+      "i1": 448,
+      "cutMM": 313.0,
+      "stitchMM": 314.79,
+      "notches": [
+       199,
+       347
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 448,
+      "i1": 549,
+      "cutMM": 100.71,
+      "stitchMM": 97.67,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 549,
+      "i1": 0,
+      "cutMM": 259.54,
+      "stitchMM": 257.95,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 829.17,
+    "align_cost": 0.0047,
+    "notchArcs": [
+     204,
+     356
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 138,
+      "cutMM": 138.0,
+      "stitchMM": 152.47,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 138,
+      "i1": 460,
+      "cutMM": 321.44,
+      "stitchMM": 322.11,
+      "notches": [
+       204,
+       356
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 460,
+      "i1": 563,
+      "cutMM": 103.0,
+      "stitchMM": 101.56,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 563,
+      "i1": 0,
+      "cutMM": 265.95,
+      "stitchMM": 265.05,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 812.08,
+    "align_cost": 0.0273,
+    "notchArcs": [
+     180,
+     334
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 127,
+      "cutMM": 126.55,
+      "stitchMM": 139.85,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 127,
+      "i1": 439,
+      "cutMM": 311.95,
+      "stitchMM": 312.86,
+      "notches": [
+       180,
+       334
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 439,
+      "i1": 544,
+      "cutMM": 104.69,
+      "stitchMM": 101.55,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 544,
+      "i1": 0,
+      "cutMM": 268.08,
+      "stitchMM": 268.08,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 867.46,
+    "align_cost": 0.0161,
+    "notchArcs": [
+     216,
+     378
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 147,
+      "cutMM": 146.22,
+      "stitchMM": 160.5,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 147,
+      "i1": 482,
+      "cutMM": 334.74,
+      "stitchMM": 335.31,
+      "notches": [
+       216,
+       378
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 482,
+      "i1": 592,
+      "cutMM": 109.69,
+      "stitchMM": 106.56,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 592,
+      "i1": 0,
+      "cutMM": 275.46,
+      "stitchMM": 275.46,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 901.78,
+    "align_cost": 0.0137,
+    "notchArcs": [
+     225,
+     393
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 152,
+      "cutMM": 152.0,
+      "stitchMM": 166.48,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 152,
+      "i1": 501,
+      "cutMM": 347.97,
+      "stitchMM": 348.51,
+      "notches": [
+       225,
+       393
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 501,
+      "i1": 615,
+      "cutMM": 113.92,
+      "stitchMM": 112.19,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 615,
+      "i1": 0,
+      "cutMM": 286.78,
+      "stitchMM": 286.78,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "corset_bustier/Front Body (side)": {
+   "34": {
+    "perimMM": 617.71,
+    "align_cost": 0.0364,
+    "notchArcs": [
+     16,
+     181
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 77,
+      "cutMM": 77.0,
+      "stitchMM": 74.98,
+      "notches": [
+       16
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 77,
+      "i1": 287,
+      "cutMM": 209.76,
+      "stitchMM": 209.28,
+      "notches": [
+       181
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 287,
+      "i1": 372,
+      "cutMM": 85.0,
+      "stitchMM": 82.13,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 372,
+      "i1": 0,
+      "cutMM": 245.45,
+      "stitchMM": 244.01,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 620.82,
+    "align_cost": 0.0325,
+    "notchArcs": [
+     16,
+     182
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 78,
+      "cutMM": 77.87,
+      "stitchMM": 75.02,
+      "notches": [
+       16
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 78,
+      "i1": 288,
+      "cutMM": 210.0,
+      "stitchMM": 211.04,
+      "notches": [
+       182
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 288,
+      "i1": 374,
+      "cutMM": 85.78,
+      "stitchMM": 81.71,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 374,
+      "i1": 0,
+      "cutMM": 246.6,
+      "stitchMM": 245.6,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 609.46,
+    "align_cost": 0.0,
+    "notchArcs": [
+     16,
+     181
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 81,
+      "cutMM": 80.85,
+      "stitchMM": 77.86,
+      "notches": [
+       16
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 81,
+      "i1": 282,
+      "cutMM": 201.0,
+      "stitchMM": 202.07,
+      "notches": [
+       181
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 282,
+      "i1": 372,
+      "cutMM": 89.64,
+      "stitchMM": 85.1,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 372,
+      "i1": 0,
+      "cutMM": 237.46,
+      "stitchMM": 237.46,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 611.73,
+    "align_cost": 0.008,
+    "notchArcs": [
+     17,
+     181
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 83,
+      "cutMM": 82.84,
+      "stitchMM": 79.71,
+      "notches": [
+       17
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 83,
+      "i1": 283,
+      "cutMM": 199.8,
+      "stitchMM": 199.85,
+      "notches": [
+       181
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 283,
+      "i1": 374,
+      "cutMM": 91.0,
+      "stitchMM": 88.25,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 374,
+      "i1": 0,
+      "cutMM": 237.47,
+      "stitchMM": 236.11,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 627.1,
+    "align_cost": 0.0094,
+    "notchArcs": [
+     17,
+     186
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 85,
+      "cutMM": 84.86,
+      "stitchMM": 81.94,
+      "notches": [
+       17
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 85,
+      "i1": 290,
+      "cutMM": 204.86,
+      "stitchMM": 205.32,
+      "notches": [
+       186
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 290,
+      "i1": 384,
+      "cutMM": 93.82,
+      "stitchMM": 90.3,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 384,
+      "i1": 0,
+      "cutMM": 243.1,
+      "stitchMM": 243.1,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 633.31,
+    "align_cost": 0.0103,
+    "notchArcs": [
+     17,
+     188
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 86,
+      "cutMM": 85.83,
+      "stitchMM": 82.37,
+      "notches": [
+       17
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 86,
+      "i1": 293,
+      "cutMM": 206.79,
+      "stitchMM": 206.75,
+      "notches": [
+       188
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 293,
+      "i1": 388,
+      "cutMM": 94.73,
+      "stitchMM": 90.48,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 388,
+      "i1": 0,
+      "cutMM": 245.31,
+      "stitchMM": 245.31,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 653.01,
+    "align_cost": 0.0204,
+    "notchArcs": [
+     18,
+     197
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 90,
+      "cutMM": 89.94,
+      "stitchMM": 87.6,
+      "notches": [
+       18
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 90,
+      "i1": 301,
+      "cutMM": 211.0,
+      "stitchMM": 212.04,
+      "notches": [
+       197
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 301,
+      "i1": 401,
+      "cutMM": 99.77,
+      "stitchMM": 95.67,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 401,
+      "i1": 0,
+      "cutMM": 251.95,
+      "stitchMM": 251.75,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 678.87,
+    "align_cost": 0.0196,
+    "notchArcs": [
+     19,
+     205
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 93,
+      "cutMM": 93.0,
+      "stitchMM": 90.99,
+      "notches": [
+       19
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 93,
+      "i1": 313,
+      "cutMM": 219.83,
+      "stitchMM": 219.41,
+      "notches": [
+       205
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 313,
+      "i1": 417,
+      "cutMM": 103.74,
+      "stitchMM": 99.73,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 417,
+      "i1": 0,
+      "cutMM": 261.87,
+      "stitchMM": 261.87,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "corset_bustier/Lower Cup": {
+   "34": {
+    "perimMM": 715.44,
+    "align_cost": 0.0557,
+    "notchArcs": [
+     108,
+     241,
+     459
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 212,
+      "cutMM": 212.0,
+      "stitchMM": 214.39,
+      "notches": [
+       108
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 212,
+      "i1": 356,
+      "cutMM": 143.66,
+      "stitchMM": 141.68,
+      "notches": [
+       241
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 356,
+      "i1": 566,
+      "cutMM": 209.89,
+      "stitchMM": 211.13,
+      "notches": [
+       459
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 566,
+      "i1": 0,
+      "cutMM": 149.44,
+      "stitchMM": 145.92,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 733.08,
+    "align_cost": 0.0377,
+    "notchArcs": [
+     110,
+     244,
+     465
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 214,
+      "cutMM": 214.0,
+      "stitchMM": 216.23,
+      "notches": [
+       110
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 214,
+      "i1": 361,
+      "cutMM": 146.97,
+      "stitchMM": 146.53,
+      "notches": [
+       244
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 361,
+      "i1": 573,
+      "cutMM": 211.5,
+      "stitchMM": 210.75,
+      "notches": [
+       465
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 573,
+      "i1": 0,
+      "cutMM": 160.08,
+      "stitchMM": 156.54,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 722.9,
+    "align_cost": 0.0,
+    "notchArcs": [
+     104,
+     235,
+     455
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 204,
+      "cutMM": 204.0,
+      "stitchMM": 206.09,
+      "notches": [
+       104
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 204,
+      "i1": 355,
+      "cutMM": 150.61,
+      "stitchMM": 148.46,
+      "notches": [
+       235
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 355,
+      "i1": 557,
+      "cutMM": 202.0,
+      "stitchMM": 203.65,
+      "notches": [
+       455
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 557,
+      "i1": 0,
+      "cutMM": 165.78,
+      "stitchMM": 161.92,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 736.78,
+    "align_cost": 0.0268,
+    "notchArcs": [
+     104,
+     234,
+     458
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 203,
+      "cutMM": 202.71,
+      "stitchMM": 204.1,
+      "notches": [
+       104
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 203,
+      "i1": 360,
+      "cutMM": 156.93,
+      "stitchMM": 156.37,
+      "notches": [
+       234
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 360,
+      "i1": 561,
+      "cutMM": 200.82,
+      "stitchMM": 201.75,
+      "notches": [
+       458
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 561,
+      "i1": 0,
+      "cutMM": 175.78,
+      "stitchMM": 172.34,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 763.96,
+    "align_cost": 0.0472,
+    "notchArcs": [
+     106,
+     240,
+     473
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 206,
+      "cutMM": 206.0,
+      "stitchMM": 208.01,
+      "notches": [
+       106
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 206,
+      "i1": 373,
+      "cutMM": 166.53,
+      "stitchMM": 163.85,
+      "notches": [
+       240
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 373,
+      "i1": 578,
+      "cutMM": 205.0,
+      "stitchMM": 206.65,
+      "notches": [
+       473
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 578,
+      "i1": 0,
+      "cutMM": 185.67,
+      "stitchMM": 180.74,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 782.88,
+    "align_cost": 0.058,
+    "notchArcs": [
+     108,
+     243,
+     483
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 209,
+      "cutMM": 208.74,
+      "stitchMM": 209.69,
+      "notches": [
+       108
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 209,
+      "i1": 381,
+      "cutMM": 171.81,
+      "stitchMM": 170.74,
+      "notches": [
+       243
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 381,
+      "i1": 589,
+      "cutMM": 207.78,
+      "stitchMM": 208.5,
+      "notches": [
+       483
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 589,
+      "i1": 0,
+      "cutMM": 193.88,
+      "stitchMM": 190.46,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 810.31,
+    "align_cost": 0.075,
+    "notchArcs": [
+     107,
+     250,
+     501
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 213,
+      "cutMM": 213.0,
+      "stitchMM": 215.02,
+      "notches": [
+       107
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 213,
+      "i1": 394,
+      "cutMM": 180.79,
+      "stitchMM": 179.73,
+      "notches": [
+       250
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 394,
+      "i1": 606,
+      "cutMM": 212.0,
+      "stitchMM": 213.68,
+      "notches": [
+       501
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 606,
+      "i1": 0,
+      "cutMM": 204.06,
+      "stitchMM": 199.42,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 842.31,
+    "align_cost": 0.0745,
+    "notchArcs": [
+     112,
+     259,
+     521
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 222,
+      "cutMM": 221.7,
+      "stitchMM": 222.34,
+      "notches": [
+       112
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 222,
+      "i1": 410,
+      "cutMM": 187.71,
+      "stitchMM": 185.84,
+      "notches": [
+       259
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 410,
+      "i1": 630,
+      "cutMM": 220.0,
+      "stitchMM": 221.66,
+      "notches": [
+       521
+      ]
+     },
+     {
+      "name": "edge-3",
+      "i0": 630,
+      "i1": 0,
+      "cutMM": 212.06,
+      "stitchMM": 207.44,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "corset_bustier/Upper Cup": {
+   "34": {
+    "perimMM": 828.58,
+    "align_cost": 0.0128,
+    "notchArcs": [
+     539,
+     626,
+     696,
+     740
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 285,
+      "cutMM": 284.99,
+      "stitchMM": 298.58,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 285,
+      "i1": 328,
+      "cutMM": 42.74,
+      "stitchMM": 41.09,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 328,
+      "i1": 536,
+      "cutMM": 207.81,
+      "stitchMM": 229.54,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 536,
+      "i1": 551,
+      "cutMM": 14.67,
+      "stitchMM": 13.13,
+      "notches": [
+       539
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 551,
+      "i1": 788,
+      "cutMM": 236.86,
+      "stitchMM": 231.22,
+      "notches": [
+       626,
+       696,
+       740
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 788,
+      "i1": 0,
+      "cutMM": 40.58,
+      "stitchMM": 40.58,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 830.45,
+    "align_cost": 0.0057,
+    "notchArcs": [
+     538,
+     626,
+     697,
+     742
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 287,
+      "cutMM": 286.91,
+      "stitchMM": 300.07,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 287,
+      "i1": 330,
+      "cutMM": 42.78,
+      "stitchMM": 42.1,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 330,
+      "i1": 535,
+      "cutMM": 204.99,
+      "stitchMM": 227.05,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 535,
+      "i1": 550,
+      "cutMM": 14.75,
+      "stitchMM": 13.73,
+      "notches": [
+       538
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 550,
+      "i1": 790,
+      "cutMM": 239.71,
+      "stitchMM": 232.92,
+      "notches": [
+       626,
+       697,
+       742
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 790,
+      "i1": 0,
+      "cutMM": 40.45,
+      "stitchMM": 40.45,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 852.1,
+    "align_cost": 0.0,
+    "notchArcs": [
+     551,
+     641,
+     715,
+     758
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 294,
+      "cutMM": 294.0,
+      "stitchMM": 307.52,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 294,
+      "i1": 339,
+      "cutMM": 44.72,
+      "stitchMM": 43.61,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 339,
+      "i1": 548,
+      "cutMM": 208.99,
+      "stitchMM": 231.02,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 548,
+      "i1": 563,
+      "cutMM": 14.79,
+      "stitchMM": 13.49,
+      "notches": [
+       551
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 563,
+      "i1": 810,
+      "cutMM": 246.71,
+      "stitchMM": 240.23,
+      "notches": [
+       641,
+       715,
+       758
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 810,
+      "i1": 0,
+      "cutMM": 41.81,
+      "stitchMM": 40.17,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 875.2,
+    "align_cost": 0.0076,
+    "notchArcs": [
+     564,
+     658,
+     734,
+     779
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 301,
+      "cutMM": 300.99,
+      "stitchMM": 314.56,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 301,
+      "i1": 347,
+      "cutMM": 45.76,
+      "stitchMM": 44.51,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 347,
+      "i1": 561,
+      "cutMM": 213.75,
+      "stitchMM": 234.95,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 561,
+      "i1": 576,
+      "cutMM": 15.0,
+      "stitchMM": 15.0,
+      "notches": [
+       564
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 576,
+      "i1": 833,
+      "cutMM": 256.5,
+      "stitchMM": 249.07,
+      "notches": [
+       658,
+       734,
+       779
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 833,
+      "i1": 0,
+      "cutMM": 42.2,
+      "stitchMM": 42.2,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 902.56,
+    "align_cost": 0.0191,
+    "notchArcs": [
+     576,
+     677,
+     758,
+     804
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 309,
+      "cutMM": 308.94,
+      "stitchMM": 322.2,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 309,
+      "i1": 356,
+      "cutMM": 46.83,
+      "stitchMM": 46.34,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 356,
+      "i1": 573,
+      "cutMM": 216.99,
+      "stitchMM": 239.09,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 573,
+      "i1": 589,
+      "cutMM": 15.85,
+      "stitchMM": 15.05,
+      "notches": [
+       576
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 589,
+      "i1": 859,
+      "cutMM": 269.84,
+      "stitchMM": 264.14,
+      "notches": [
+       677,
+       758,
+       804
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 859,
+      "i1": 0,
+      "cutMM": 43.56,
+      "stitchMM": 43.56,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 914.2,
+    "align_cost": 0.0263,
+    "notchArcs": [
+     581,
+     685,
+     768,
+     815
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 312,
+      "cutMM": 311.99,
+      "stitchMM": 325.49,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 312,
+      "i1": 359,
+      "cutMM": 47.0,
+      "stitchMM": 47.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 359,
+      "i1": 578,
+      "cutMM": 218.41,
+      "stitchMM": 237.59,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 578,
+      "i1": 593,
+      "cutMM": 15.0,
+      "stitchMM": 15.0,
+      "notches": [
+       581
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 593,
+      "i1": 870,
+      "cutMM": 276.71,
+      "stitchMM": 269.9,
+      "notches": [
+       685,
+       768,
+       815
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 870,
+      "i1": 0,
+      "cutMM": 44.14,
+      "stitchMM": 43.93,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 960.94,
+    "align_cost": 0.0267,
+    "notchArcs": [
+     611,
+     720,
+     808,
+     856
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 328,
+      "cutMM": 327.82,
+      "stitchMM": 340.43,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 328,
+      "i1": 378,
+      "cutMM": 49.61,
+      "stitchMM": 48.1,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 378,
+      "i1": 607,
+      "cutMM": 228.99,
+      "stitchMM": 251.03,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 607,
+      "i1": 624,
+      "cutMM": 16.83,
+      "stitchMM": 15.6,
+      "notches": [
+       611
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 624,
+      "i1": 915,
+      "cutMM": 290.71,
+      "stitchMM": 284.01,
+      "notches": [
+       720,
+       808,
+       856
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 915,
+      "i1": 0,
+      "cutMM": 45.94,
+      "stitchMM": 45.94,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 999.0,
+    "align_cost": 0.0257,
+    "notchArcs": [
+     635,
+     749,
+     840,
+     890
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 341,
+      "cutMM": 340.81,
+      "stitchMM": 353.39,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 341,
+      "i1": 392,
+      "cutMM": 51.0,
+      "stitchMM": 51.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 392,
+      "i1": 631,
+      "cutMM": 238.6,
+      "stitchMM": 259.04,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 631,
+      "i1": 649,
+      "cutMM": 17.57,
+      "stitchMM": 15.14,
+      "notches": [
+       635
+      ]
+     },
+     {
+      "name": "edge-4",
+      "i0": 649,
+      "i1": 951,
+      "cutMM": 301.83,
+      "stitchMM": 295.99,
+      "notches": [
+       749,
+       840,
+       890
+      ]
+     },
+     {
+      "name": "edge-5",
+      "i0": 951,
+      "i1": 0,
+      "cutMM": 48.0,
+      "stitchMM": 48.0,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "locket_top/Back Body": {
+   "34": {
+    "perimMM": 1243.05,
+    "align_cost": 0.0228,
+    "notchArcs": [
+     239,
+     446,
+     1216
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 64,
+      "cutMM": 63.91,
+      "stitchMM": 63.59,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 64,
+      "i1": 283,
+      "cutMM": 219.0,
+      "stitchMM": 236.71,
+      "notches": [
+       239
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 283,
+      "i1": 525,
+      "cutMM": 241.9,
+      "stitchMM": 244.45,
+      "notches": [
+       446
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 525,
+      "i1": 703,
+      "cutMM": 177.43,
+      "stitchMM": 173.48,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 703,
+      "i1": 1112,
+      "cutMM": 409.0,
+      "stitchMM": 409.0,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1112,
+      "i1": 0,
+      "cutMM": 130.75,
+      "stitchMM": 139.03,
+      "notches": [
+       1216
+      ]
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 1263.51,
+    "align_cost": 0.0131,
+    "notchArcs": [
+     241,
+     451,
+     1237
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 65,
+      "cutMM": 64.72,
+      "stitchMM": 63.15,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 65,
+      "i1": 286,
+      "cutMM": 220.92,
+      "stitchMM": 238.16,
+      "notches": [
+       241
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 286,
+      "i1": 531,
+      "cutMM": 244.79,
+      "stitchMM": 246.78,
+      "notches": [
+       451
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 531,
+      "i1": 718,
+      "cutMM": 186.71,
+      "stitchMM": 184.42,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 718,
+      "i1": 1132,
+      "cutMM": 413.69,
+      "stitchMM": 412.09,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1132,
+      "i1": 0,
+      "cutMM": 131.5,
+      "stitchMM": 141.19,
+      "notches": [
+       1237
+      ]
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 1274.66,
+    "align_cost": 0.0,
+    "notchArcs": [
+     242,
+     452,
+     1248
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 65,
+      "cutMM": 64.73,
+      "stitchMM": 63.15,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 65,
+      "i1": 287,
+      "cutMM": 222.0,
+      "stitchMM": 239.11,
+      "notches": [
+       242
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 287,
+      "i1": 532,
+      "cutMM": 244.82,
+      "stitchMM": 247.1,
+      "notches": [
+       452
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 532,
+      "i1": 729,
+      "cutMM": 196.78,
+      "stitchMM": 195.0,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 729,
+      "i1": 1143,
+      "cutMM": 413.75,
+      "stitchMM": 412.65,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1143,
+      "i1": 0,
+      "cutMM": 131.66,
+      "stitchMM": 141.33,
+      "notches": [
+       1248
+      ]
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 1309.23,
+    "align_cost": 0.0152,
+    "notchArcs": [
+     247,
+     459,
+     1281
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 66,
+      "cutMM": 65.73,
+      "stitchMM": 64.06,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 66,
+      "i1": 292,
+      "cutMM": 226.0,
+      "stitchMM": 242.91,
+      "notches": [
+       247
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 292,
+      "i1": 541,
+      "cutMM": 248.63,
+      "stitchMM": 249.73,
+      "notches": [
+       459
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 541,
+      "i1": 750,
+      "cutMM": 209.0,
+      "stitchMM": 208.27,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 750,
+      "i1": 1171,
+      "cutMM": 420.43,
+      "stitchMM": 417.53,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1171,
+      "i1": 0,
+      "cutMM": 138.22,
+      "stitchMM": 147.87,
+      "notches": [
+       1281
+      ]
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 1342.22,
+    "align_cost": 0.029,
+    "notchArcs": [
+     251,
+     468,
+     1313
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 67,
+      "cutMM": 66.74,
+      "stitchMM": 65.07,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 67,
+      "i1": 298,
+      "cutMM": 230.85,
+      "stitchMM": 246.97,
+      "notches": [
+       251
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 298,
+      "i1": 550,
+      "cutMM": 252.0,
+      "stitchMM": 254.87,
+      "notches": [
+       468
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 550,
+      "i1": 773,
+      "cutMM": 222.91,
+      "stitchMM": 221.8,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 773,
+      "i1": 1200,
+      "cutMM": 426.67,
+      "stitchMM": 425.0,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1200,
+      "i1": 0,
+      "cutMM": 142.22,
+      "stitchMM": 151.89,
+      "notches": [
+       1313
+      ]
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 1369.16,
+    "align_cost": 0.0416,
+    "notchArcs": [
+     255,
+     474,
+     1339
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 67,
+      "cutMM": 67.0,
+      "stitchMM": 67.0,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 67,
+      "i1": 302,
+      "cutMM": 234.86,
+      "stitchMM": 250.6,
+      "notches": [
+       255
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 302,
+      "i1": 557,
+      "cutMM": 254.67,
+      "stitchMM": 256.01,
+      "notches": [
+       474
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 557,
+      "i1": 792,
+      "cutMM": 234.82,
+      "stitchMM": 233.3,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 792,
+      "i1": 1223,
+      "cutMM": 430.73,
+      "stitchMM": 429.43,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1223,
+      "i1": 0,
+      "cutMM": 146.02,
+      "stitchMM": 155.17,
+      "notches": [
+       1339
+      ]
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 1389.0,
+    "align_cost": 0.0451,
+    "notchArcs": [
+     259,
+     480,
+     1359
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 68,
+      "cutMM": 67.88,
+      "stitchMM": 67.35,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 68,
+      "i1": 307,
+      "cutMM": 238.69,
+      "stitchMM": 253.45,
+      "notches": [
+       259
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 307,
+      "i1": 564,
+      "cutMM": 256.93,
+      "stitchMM": 259.56,
+      "notches": [
+       480
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 564,
+      "i1": 806,
+      "cutMM": 242.0,
+      "stitchMM": 241.24,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 806,
+      "i1": 1242,
+      "cutMM": 435.41,
+      "stitchMM": 432.26,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1242,
+      "i1": 0,
+      "cutMM": 147.0,
+      "stitchMM": 156.7,
+      "notches": [
+       1359
+      ]
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 1418.25,
+    "align_cost": 0.0562,
+    "notchArcs": [
+     264,
+     488,
+     1388
+    ],
+    "edges": [
+     {
+      "name": "omuz-arka",
+      "i0": 0,
+      "i1": 69,
+      "cutMM": 68.8,
+      "stitchMM": 67.62,
+      "notches": []
+     },
+     {
+      "name": "OYUK-arka",
+      "i0": 69,
+      "i1": 313,
+      "cutMM": 243.85,
+      "stitchMM": 259.16,
+      "notches": [
+       264
+      ]
+     },
+     {
+      "name": "yan-dikis-arka",
+      "i0": 313,
+      "i1": 573,
+      "cutMM": 260.0,
+      "stitchMM": 262.92,
+      "notches": [
+       488
+      ]
+     },
+     {
+      "name": "etek-arka",
+      "i0": 573,
+      "i1": 829,
+      "cutMM": 255.54,
+      "stitchMM": 252.66,
+      "notches": []
+     },
+     {
+      "name": "arka-orta(CB)",
+      "i0": 829,
+      "i1": 1269,
+      "cutMM": 440.0,
+      "stitchMM": 440.0,
+      "notches": []
+     },
+     {
+      "name": "yaka-arka",
+      "i0": 1269,
+      "i1": 0,
+      "cutMM": 149.24,
+      "stitchMM": 158.93,
+      "notches": [
+       1388
+      ]
+     }
+    ]
+   }
+  },
+  "locket_top/Collar": {
+   "34": {
+    "perimMM": 565.49,
+    "align_cost": 0.0042,
+    "notchArcs": [
+     89,
+     109
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 74,
+      "i1": 247,
+      "cutMM": 172.44,
+      "stitchMM": 183.09,
+      "notches": [
+       89,
+       109
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 247,
+      "i1": 303,
+      "cutMM": 56.0,
+      "stitchMM": 56.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 303,
+      "i1": 0,
+      "cutMM": 262.4,
+      "stitchMM": 248.16,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 74,
+      "cutMM": 74.0,
+      "stitchMM": 74.0,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 568.41,
+    "align_cost": 0.0051,
+    "notchArcs": [
+     89,
+     110
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 74,
+      "i1": 248,
+      "cutMM": 173.75,
+      "stitchMM": 186.0,
+      "notches": [
+       89,
+       110
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 248,
+      "i1": 304,
+      "cutMM": 55.76,
+      "stitchMM": 54.74,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 304,
+      "i1": 0,
+      "cutMM": 264.17,
+      "stitchMM": 249.13,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 74,
+      "cutMM": 74.0,
+      "stitchMM": 74.0,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 567.81,
+    "align_cost": 0.0,
+    "notchArcs": [
+     15,
+     35
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 174,
+      "cutMM": 173.93,
+      "stitchMM": 187.21,
+      "notches": [
+       15,
+       35
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 174,
+      "i1": 229,
+      "cutMM": 55.0,
+      "stitchMM": 55.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 229,
+      "i1": 493,
+      "cutMM": 263.88,
+      "stitchMM": 248.72,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 493,
+      "i1": 0,
+      "cutMM": 74.54,
+      "stitchMM": 72.91,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 596.69,
+    "align_cost": 0.056,
+    "notchArcs": [
+     209,
+     230
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 65,
+      "i1": 245,
+      "cutMM": 180.0,
+      "stitchMM": 193.52,
+      "notches": [
+       209,
+       230
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 245,
+      "i1": 319,
+      "cutMM": 73.89,
+      "stitchMM": 73.44,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 319,
+      "i1": 0,
+      "cutMM": 277.41,
+      "stitchMM": 262.39,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 65,
+      "cutMM": 64.76,
+      "stitchMM": 63.74,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 595.09,
+    "align_cost": 0.0628,
+    "notchArcs": [
+     208,
+     230
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 60,
+      "i1": 245,
+      "cutMM": 185.0,
+      "stitchMM": 198.52,
+      "notches": [
+       208,
+       230
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 245,
+      "i1": 319,
+      "cutMM": 73.89,
+      "stitchMM": 73.47,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 319,
+      "i1": 0,
+      "cutMM": 275.8,
+      "stitchMM": 260.53,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 60,
+      "cutMM": 59.95,
+      "stitchMM": 59.8,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 604.33,
+    "align_cost": 0.0631,
+    "notchArcs": [
+     567,
+     589
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 416,
+      "i1": 0,
+      "cutMM": 188.33,
+      "stitchMM": 201.86,
+      "notches": [
+       567,
+       589
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 0,
+      "i1": 74,
+      "cutMM": 74.0,
+      "stitchMM": 74.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 74,
+      "i1": 354,
+      "cutMM": 279.77,
+      "stitchMM": 264.78,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 354,
+      "i1": 416,
+      "cutMM": 61.91,
+      "stitchMM": 61.61,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 607.99,
+    "align_cost": 0.0654,
+    "notchArcs": [
+     152,
+     174
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 190,
+      "cutMM": 190.0,
+      "stitchMM": 203.54,
+      "notches": [
+       152,
+       174
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 190,
+      "i1": 265,
+      "cutMM": 74.53,
+      "stitchMM": 72.18,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 265,
+      "i1": 546,
+      "cutMM": 281.0,
+      "stitchMM": 266.85,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 546,
+      "i1": 0,
+      "cutMM": 61.74,
+      "stitchMM": 60.27,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 622.38,
+    "align_cost": 0.0508,
+    "notchArcs": [
+     584,
+     606
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 430,
+      "i1": 0,
+      "cutMM": 192.38,
+      "stitchMM": 205.9,
+      "notches": [
+       584,
+       606
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 0,
+      "i1": 74,
+      "cutMM": 74.0,
+      "stitchMM": 74.0,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 74,
+      "i1": 362,
+      "cutMM": 287.75,
+      "stitchMM": 272.44,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 362,
+      "i1": 430,
+      "cutMM": 67.82,
+      "stitchMM": 67.19,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "locket_top/Collar Lining": {
+   "34": {
+    "perimMM": 451.34,
+    "align_cost": 0.0265,
+    "notchArcs": [
+     368
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 203,
+      "i1": 264,
+      "cutMM": 60.72,
+      "stitchMM": 59.17,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 264,
+      "i1": 395,
+      "cutMM": 130.74,
+      "stitchMM": 139.2,
+      "notches": [
+       368
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 395,
+      "i1": 0,
+      "cutMM": 56.34,
+      "stitchMM": 56.34,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 203,
+      "cutMM": 203.0,
+      "stitchMM": 191.6,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 452.91,
+    "align_cost": 0.0039,
+    "notchArcs": [
+     83
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 56,
+      "cutMM": 56.0,
+      "stitchMM": 56.0,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 56,
+      "i1": 188,
+      "cutMM": 131.91,
+      "stitchMM": 141.09,
+      "notches": [
+       83
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 188,
+      "i1": 249,
+      "cutMM": 60.78,
+      "stitchMM": 59.99,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 249,
+      "i1": 0,
+      "cutMM": 203.91,
+      "stitchMM": 192.8,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 451.92,
+    "align_cost": 0.0,
+    "notchArcs": [
+     82
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 55,
+      "cutMM": 55.0,
+      "stitchMM": 55.0,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 55,
+      "i1": 187,
+      "cutMM": 131.88,
+      "stitchMM": 140.8,
+      "notches": [
+       82
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 187,
+      "i1": 248,
+      "cutMM": 60.78,
+      "stitchMM": 59.95,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 248,
+      "i1": 0,
+      "cutMM": 203.92,
+      "stitchMM": 192.74,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 480.23,
+    "align_cost": 0.0065,
+    "notchArcs": [
+     170
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 60,
+      "cutMM": 60.0,
+      "stitchMM": 60.0,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 60,
+      "i1": 199,
+      "cutMM": 138.8,
+      "stitchMM": 147.36,
+      "notches": [
+       170
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 199,
+      "i1": 264,
+      "cutMM": 64.69,
+      "stitchMM": 63.28,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 264,
+      "i1": 0,
+      "cutMM": 216.23,
+      "stitchMM": 204.72,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 481.54,
+    "align_cost": 0.0168,
+    "notchArcs": [
+     89
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 60,
+      "cutMM": 59.97,
+      "stitchMM": 59.83,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 60,
+      "i1": 203,
+      "cutMM": 142.72,
+      "stitchMM": 151.01,
+      "notches": [
+       89
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 203,
+      "i1": 264,
+      "cutMM": 60.89,
+      "stitchMM": 60.47,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 264,
+      "i1": 0,
+      "cutMM": 217.53,
+      "stitchMM": 206.44,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 489.61,
+    "align_cost": 0.0413,
+    "notchArcs": [
+     92
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 62,
+      "cutMM": 61.94,
+      "stitchMM": 61.66,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 62,
+      "i1": 208,
+      "cutMM": 145.92,
+      "stitchMM": 155.25,
+      "notches": [
+       92
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 208,
+      "i1": 264,
+      "cutMM": 56.0,
+      "stitchMM": 56.0,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 264,
+      "i1": 0,
+      "cutMM": 225.36,
+      "stitchMM": 211.15,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 501.52,
+    "align_cost": 0.0229,
+    "notchArcs": [
+     410
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 230,
+      "i1": 292,
+      "cutMM": 62.0,
+      "stitchMM": 62.0,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 292,
+      "i1": 440,
+      "cutMM": 147.66,
+      "stitchMM": 155.47,
+      "notches": [
+       410
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 440,
+      "i1": 0,
+      "cutMM": 61.52,
+      "stitchMM": 61.52,
+      "notches": []
+     },
+     {
+      "name": "edge-3",
+      "i0": 0,
+      "i1": 230,
+      "cutMM": 229.83,
+      "stitchMM": 217.64,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "locket_top/EXTRA-TL (not in defter)": {
+   "34": {
+    "perimMM": 824.95,
+    "align_cost": 0.4466,
+    "notchArcs": [
+     100,
+     262
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 297,
+      "cutMM": 296.99,
+      "stitchMM": 322.2,
+      "notches": [
+       100,
+       262
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 297,
+      "i1": 778,
+      "cutMM": 480.74,
+      "stitchMM": 438.84,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 778,
+      "i1": 0,
+      "cutMM": 46.67,
+      "stitchMM": 45.31,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 833.27,
+    "align_cost": 0.0,
+    "notchArcs": [
+     521,
+     685
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 486,
+      "cutMM": 485.9,
+      "stitchMM": 444.87,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 486,
+      "i1": 786,
+      "cutMM": 299.99,
+      "stitchMM": 325.19,
+      "notches": [
+       521,
+       685
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 786,
+      "i1": 0,
+      "cutMM": 47.08,
+      "stitchMM": 46.25,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 833.28,
+    "align_cost": 0.0,
+    "notchArcs": [
+     521,
+     685
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 486,
+      "cutMM": 485.91,
+      "stitchMM": 444.91,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 486,
+      "i1": 786,
+      "cutMM": 299.99,
+      "stitchMM": 325.19,
+      "notches": [
+       521,
+       685
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 786,
+      "i1": 0,
+      "cutMM": 47.08,
+      "stitchMM": 46.22,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 845.78,
+    "align_cost": 0.0016,
+    "notchArcs": [
+     529,
+     695
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 493,
+      "cutMM": 492.99,
+      "stitchMM": 452.25,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 493,
+      "i1": 798,
+      "cutMM": 304.81,
+      "stitchMM": 329.32,
+      "notches": [
+       529,
+       695
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 798,
+      "i1": 0,
+      "cutMM": 47.75,
+      "stitchMM": 47.66,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 858.54,
+    "align_cost": 0.001,
+    "notchArcs": [
+     537,
+     706
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 501,
+      "cutMM": 500.73,
+      "stitchMM": 458.71,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 501,
+      "i1": 810,
+      "cutMM": 308.99,
+      "stitchMM": 334.17,
+      "notches": [
+       537,
+       706
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 810,
+      "i1": 0,
+      "cutMM": 48.46,
+      "stitchMM": 48.2,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 946.98,
+    "align_cost": 0.459,
+    "notchArcs": [
+     116,
+     299
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 338,
+      "cutMM": 337.92,
+      "stitchMM": 363.1,
+      "notches": [
+       116,
+       299
+      ]
+     },
+     {
+      "name": "edge-1",
+      "i0": 338,
+      "i1": 896,
+      "cutMM": 557.77,
+      "stitchMM": 513.66,
+      "notches": []
+     },
+     {
+      "name": "edge-2",
+      "i0": 896,
+      "i1": 0,
+      "cutMM": 50.98,
+      "stitchMM": 50.98,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 959.79,
+    "align_cost": 0.0116,
+    "notchArcs": [
+     604,
+     789
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 565,
+      "cutMM": 564.92,
+      "stitchMM": 521.44,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 565,
+      "i1": 907,
+      "cutMM": 341.99,
+      "stitchMM": 367.49,
+      "notches": [
+       604,
+       789
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 907,
+      "i1": 0,
+      "cutMM": 52.73,
+      "stitchMM": 52.53,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 971.29,
+    "align_cost": 0.0115,
+    "notchArcs": [
+     611,
+     798
+    ],
+    "edges": [
+     {
+      "name": "edge-0",
+      "i0": 0,
+      "i1": 572,
+      "cutMM": 571.81,
+      "stitchMM": 527.49,
+      "notches": []
+     },
+     {
+      "name": "edge-1",
+      "i0": 572,
+      "i1": 918,
+      "cutMM": 345.93,
+      "stitchMM": 371.21,
+      "notches": [
+       611,
+       798
+      ]
+     },
+     {
+      "name": "edge-2",
+      "i0": 918,
+      "i1": 0,
+      "cutMM": 53.29,
+      "stitchMM": 53.29,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "locket_top/Front Body": {
+   "34": {
+    "perimMM": 1614.96,
+    "align_cost": 0.04,
+    "notchArcs": [
+     0,
+     15,
+     277,
+     408,
+     600,
+     709,
+     1074,
+     1094,
+     1109,
+     1124,
+     1600
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 199,
+      "i1": 384,
+      "cutMM": 184.75,
+      "stitchMM": 190.57,
+      "notches": [
+       277
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 384,
+      "i1": 504,
+      "cutMM": 119.84,
+      "stitchMM": 119.28,
+      "notches": [
+       408
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 504,
+      "i1": 624,
+      "cutMM": 119.73,
+      "stitchMM": 120.19,
+      "notches": [
+       600
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 624,
+      "i1": 668,
+      "cutMM": 43.8,
+      "stitchMM": 42.95,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 668,
+      "i1": 874,
+      "cutMM": 205.5,
+      "stitchMM": 221.62,
+      "notches": [
+       709
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 874,
+      "i1": 937,
+      "cutMM": 62.78,
+      "stitchMM": 61.87,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 937,
+      "i1": 1153,
+      "cutMM": 216.0,
+      "stitchMM": 230.03,
+      "notches": [
+       1074,
+       1094,
+       1109,
+       1124
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1153,
+      "i1": 1570,
+      "cutMM": 416.71,
+      "stitchMM": 415.03,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1570,
+      "i1": 199,
+      "cutMM": 243.68,
+      "stitchMM": 239.75,
+      "notches": [
+       0,
+       15,
+       1600
+      ]
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 1655.29,
+    "align_cost": 0.021,
+    "notchArcs": [
+     15,
+     287,
+     422,
+     627,
+     740,
+     1109,
+     1129,
+     1159,
+     1640
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 209,
+      "i1": 396,
+      "cutMM": 186.74,
+      "stitchMM": 192.63,
+      "notches": [
+       287
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 396,
+      "i1": 524,
+      "cutMM": 128.0,
+      "stitchMM": 128.0,
+      "notches": [
+       422
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 524,
+      "i1": 653,
+      "cutMM": 128.96,
+      "stitchMM": 129.02,
+      "notches": [
+       627
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 653,
+      "i1": 698,
+      "cutMM": 44.79,
+      "stitchMM": 43.4,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 698,
+      "i1": 906,
+      "cutMM": 207.99,
+      "stitchMM": 226.4,
+      "notches": [
+       740
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 906,
+      "i1": 970,
+      "cutMM": 63.7,
+      "stitchMM": 62.07,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 970,
+      "i1": 1189,
+      "cutMM": 218.79,
+      "stitchMM": 232.05,
+      "notches": [
+       1109,
+       1129,
+       1159
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1189,
+      "i1": 1610,
+      "cutMM": 420.86,
+      "stitchMM": 420.31,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1610,
+      "i1": 209,
+      "cutMM": 254.06,
+      "stitchMM": 250.54,
+      "notches": [
+       15,
+       1640
+      ]
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 1685.82,
+    "align_cost": 0.0,
+    "notchArcs": [
+     15,
+     297,
+     434,
+     654,
+     769,
+     1139,
+     1160,
+     1190,
+     1671
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 219,
+      "i1": 406,
+      "cutMM": 186.73,
+      "stitchMM": 192.57,
+      "notches": [
+       297
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 406,
+      "i1": 543,
+      "cutMM": 136.43,
+      "stitchMM": 137.46,
+      "notches": [
+       434
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 543,
+      "i1": 681,
+      "cutMM": 138.0,
+      "stitchMM": 138.0,
+      "notches": [
+       654
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 681,
+      "i1": 726,
+      "cutMM": 44.69,
+      "stitchMM": 43.21,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 726,
+      "i1": 937,
+      "cutMM": 210.99,
+      "stitchMM": 228.93,
+      "notches": [
+       769
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 937,
+      "i1": 1001,
+      "cutMM": 63.78,
+      "stitchMM": 62.91,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1001,
+      "i1": 1220,
+      "cutMM": 218.75,
+      "stitchMM": 231.67,
+      "notches": [
+       1139,
+       1160,
+       1190
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1220,
+      "i1": 1641,
+      "cutMM": 420.84,
+      "stitchMM": 420.21,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1641,
+      "i1": 219,
+      "cutMM": 263.82,
+      "stitchMM": 261.37,
+      "notches": [
+       15,
+       1671
+      ]
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 1739.83,
+    "align_cost": 0.0161,
+    "notchArcs": [
+     15,
+     311,
+     450,
+     680,
+     799,
+     1185,
+     1206,
+     1236,
+     1725
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 232,
+      "i1": 421,
+      "cutMM": 189.0,
+      "stitchMM": 196.33,
+      "notches": [
+       311
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 421,
+      "i1": 564,
+      "cutMM": 142.45,
+      "stitchMM": 141.59,
+      "notches": [
+       450
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 564,
+      "i1": 709,
+      "cutMM": 144.86,
+      "stitchMM": 144.32,
+      "notches": [
+       680
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 709,
+      "i1": 754,
+      "cutMM": 45.0,
+      "stitchMM": 45.0,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 754,
+      "i1": 976,
+      "cutMM": 221.8,
+      "stitchMM": 241.04,
+      "notches": [
+       799
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 976,
+      "i1": 1041,
+      "cutMM": 64.71,
+      "stitchMM": 63.3,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1041,
+      "i1": 1267,
+      "cutMM": 225.76,
+      "stitchMM": 238.69,
+      "notches": [
+       1185,
+       1206,
+       1236
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1267,
+      "i1": 1694,
+      "cutMM": 427.0,
+      "stitchMM": 427.0,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1694,
+      "i1": 232,
+      "cutMM": 277.65,
+      "stitchMM": 274.51,
+      "notches": [
+       15,
+       1725
+      ]
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 1795.83,
+    "align_cost": 0.0313,
+    "notchArcs": [
+     15,
+     326,
+     469,
+     714,
+     837,
+     1232,
+     1254,
+     1285,
+     1780
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 246,
+      "i1": 438,
+      "cutMM": 191.98,
+      "stitchMM": 199.24,
+      "notches": [
+       326
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 438,
+      "i1": 590,
+      "cutMM": 151.73,
+      "stitchMM": 150.75,
+      "notches": [
+       469
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 590,
+      "i1": 745,
+      "cutMM": 154.82,
+      "stitchMM": 155.05,
+      "notches": [
+       714
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 745,
+      "i1": 791,
+      "cutMM": 45.92,
+      "stitchMM": 45.67,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 791,
+      "i1": 1018,
+      "cutMM": 226.98,
+      "stitchMM": 246.55,
+      "notches": [
+       837
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 1018,
+      "i1": 1084,
+      "cutMM": 65.69,
+      "stitchMM": 64.4,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1084,
+      "i1": 1316,
+      "cutMM": 231.66,
+      "stitchMM": 244.02,
+      "notches": [
+       1232,
+       1254,
+       1285
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1316,
+      "i1": 1749,
+      "cutMM": 433.0,
+      "stitchMM": 433.0,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1749,
+      "i1": 246,
+      "cutMM": 292.54,
+      "stitchMM": 288.47,
+      "notches": [
+       15,
+       1780
+      ]
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 1842.57,
+    "align_cost": 0.0447,
+    "notchArcs": [
+     16,
+     340,
+     485,
+     745,
+     871,
+     1273,
+     1295,
+     1326,
+     1827
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 258,
+      "i1": 453,
+      "cutMM": 194.41,
+      "stitchMM": 198.84,
+      "notches": [
+       340
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 453,
+      "i1": 613,
+      "cutMM": 160.0,
+      "stitchMM": 160.0,
+      "notches": [
+       485
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 613,
+      "i1": 777,
+      "cutMM": 163.73,
+      "stitchMM": 164.06,
+      "notches": [
+       745
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 777,
+      "i1": 824,
+      "cutMM": 46.61,
+      "stitchMM": 44.61,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 824,
+      "i1": 1056,
+      "cutMM": 231.97,
+      "stitchMM": 251.14,
+      "notches": [
+       871
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 1056,
+      "i1": 1122,
+      "cutMM": 66.0,
+      "stitchMM": 66.0,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1122,
+      "i1": 1357,
+      "cutMM": 234.73,
+      "stitchMM": 247.64,
+      "notches": [
+       1273,
+       1295,
+       1326
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1357,
+      "i1": 1796,
+      "cutMM": 438.49,
+      "stitchMM": 435.88,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1796,
+      "i1": 258,
+      "cutMM": 304.57,
+      "stitchMM": 302.17,
+      "notches": [
+       16,
+       1827
+      ]
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 1874.59,
+    "align_cost": 0.0554,
+    "notchArcs": [
+     16,
+     348,
+     494,
+     763,
+     892,
+     1299,
+     1322,
+     1353,
+     1859
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 266,
+      "i1": 461,
+      "cutMM": 195.0,
+      "stitchMM": 200.35,
+      "notches": [
+       348
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 461,
+      "i1": 623,
+      "cutMM": 161.79,
+      "stitchMM": 160.94,
+      "notches": [
+       494
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 623,
+      "i1": 797,
+      "cutMM": 173.31,
+      "stitchMM": 174.56,
+      "notches": [
+       763
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 797,
+      "i1": 844,
+      "cutMM": 46.83,
+      "stitchMM": 46.15,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 844,
+      "i1": 1080,
+      "cutMM": 235.95,
+      "stitchMM": 254.83,
+      "notches": [
+       892
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 1080,
+      "i1": 1147,
+      "cutMM": 66.87,
+      "stitchMM": 66.4,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1147,
+      "i1": 1385,
+      "cutMM": 237.6,
+      "stitchMM": 249.92,
+      "notches": [
+       1299,
+       1322,
+       1353
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1385,
+      "i1": 1827,
+      "cutMM": 442.0,
+      "stitchMM": 442.0,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1827,
+      "i1": 266,
+      "cutMM": 313.33,
+      "stitchMM": 309.73,
+      "notches": [
+       16,
+       1859
+      ]
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 1922.74,
+    "align_cost": 0.0692,
+    "notchArcs": [
+     16,
+     362,
+     510,
+     792,
+     925,
+     1341,
+     1363,
+     1395,
+     1907
+    ],
+    "edges": [
+     {
+      "name": "yan-dikis-alt",
+      "i0": 279,
+      "i1": 477,
+      "cutMM": 197.64,
+      "stitchMM": 201.62,
+      "notches": [
+       362
+      ]
+     },
+     {
+      "name": "pens-bacak-1",
+      "i0": 477,
+      "i1": 643,
+      "cutMM": 166.0,
+      "stitchMM": 166.0,
+      "notches": [
+       510
+      ]
+     },
+     {
+      "name": "pens-bacak-2",
+      "i0": 643,
+      "i1": 829,
+      "cutMM": 185.42,
+      "stitchMM": 185.2,
+      "notches": [
+       792
+      ]
+     },
+     {
+      "name": "yan-dikis-ust",
+      "i0": 829,
+      "i1": 876,
+      "cutMM": 47.0,
+      "stitchMM": 47.03,
+      "notches": []
+     },
+     {
+      "name": "OYUK-on",
+      "i0": 876,
+      "i1": 1119,
+      "cutMM": 242.63,
+      "stitchMM": 259.6,
+      "notches": [
+       925
+      ]
+     },
+     {
+      "name": "omuz-on",
+      "i0": 1119,
+      "i1": 1187,
+      "cutMM": 67.69,
+      "stitchMM": 66.16,
+      "notches": []
+     },
+     {
+      "name": "yaka-on",
+      "i0": 1187,
+      "i1": 1427,
+      "cutMM": 239.93,
+      "stitchMM": 253.74,
+      "notches": [
+       1341,
+       1363,
+       1395
+      ]
+     },
+     {
+      "name": "on-orta(CF)",
+      "i0": 1427,
+      "i1": 1875,
+      "cutMM": 447.88,
+      "stitchMM": 447.45,
+      "notches": []
+     },
+     {
+      "name": "etek-on",
+      "i0": 1875,
+      "i1": 279,
+      "cutMM": 326.74,
+      "stitchMM": 324.33,
+      "notches": [
+       16,
+       1907
+      ]
+     }
+    ]
+   }
+  },
+  "locket_top/Lower Sleeve": {
+   "34": {
+    "perimMM": 831.84,
+    "align_cost": 0.0137,
+    "notchArcs": [
+     83,
+     123,
+     396,
+     429
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 41,
+      "cutMM": 41.0,
+      "stitchMM": 41.0,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 41,
+      "i1": 474,
+      "cutMM": 432.59,
+      "stitchMM": 424.97,
+      "notches": [
+       83,
+       123,
+       396,
+       429
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 474,
+      "i1": 515,
+      "cutMM": 40.81,
+      "stitchMM": 40.07,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 515,
+      "i1": 0,
+      "cutMM": 316.84,
+      "stitchMM": 325.51,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 840.26,
+    "align_cost": 0.0124,
+    "notchArcs": [
+     84,
+     124,
+     400,
+     433
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 42,
+      "cutMM": 41.79,
+      "stitchMM": 40.86,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 42,
+      "i1": 479,
+      "cutMM": 436.69,
+      "stitchMM": 429.37,
+      "notches": [
+       84,
+       124,
+       400,
+       433
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 479,
+      "i1": 520,
+      "cutMM": 41.0,
+      "stitchMM": 40.99,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 520,
+      "i1": 0,
+      "cutMM": 320.26,
+      "stitchMM": 328.92,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 873.31,
+    "align_cost": 0.0,
+    "notchArcs": [
+     87,
+     127,
+     412,
+     446
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 42,
+      "cutMM": 41.77,
+      "stitchMM": 40.8,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 42,
+      "i1": 494,
+      "cutMM": 451.65,
+      "stitchMM": 444.69,
+      "notches": [
+       87,
+       127,
+       412,
+       446
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 494,
+      "i1": 535,
+      "cutMM": 40.9,
+      "stitchMM": 40.53,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 535,
+      "i1": 0,
+      "cutMM": 338.31,
+      "stitchMM": 345.65,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 903.16,
+    "align_cost": 0.0074,
+    "notchArcs": [
+     90,
+     132,
+     425,
+     460
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 42,
+      "cutMM": 42.0,
+      "stitchMM": 42.0,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 42,
+      "i1": 508,
+      "cutMM": 465.71,
+      "stitchMM": 459.38,
+      "notches": [
+       90,
+       132,
+       425,
+       460
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 508,
+      "i1": 550,
+      "cutMM": 41.68,
+      "stitchMM": 40.26,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 550,
+      "i1": 0,
+      "cutMM": 352.89,
+      "stitchMM": 358.34,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 916.78,
+    "align_cost": 0.0051,
+    "notchArcs": [
+     90,
+     134,
+     431,
+     468
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 43,
+      "cutMM": 43.0,
+      "stitchMM": 42.99,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 43,
+      "i1": 516,
+      "cutMM": 472.99,
+      "stitchMM": 467.97,
+      "notches": [
+       90,
+       134,
+       431,
+       468
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 516,
+      "i1": 559,
+      "cutMM": 42.67,
+      "stitchMM": 41.28,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 559,
+      "i1": 0,
+      "cutMM": 357.78,
+      "stitchMM": 364.66,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 925.95,
+    "align_cost": 0.0061,
+    "notchArcs": [
+     91,
+     136,
+     436,
+     472
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 43,
+      "cutMM": 43.0,
+      "stitchMM": 43.0,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 43,
+      "i1": 521,
+      "cutMM": 477.69,
+      "stitchMM": 471.17,
+      "notches": [
+       91,
+       136,
+       436,
+       472
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 521,
+      "i1": 564,
+      "cutMM": 42.76,
+      "stitchMM": 41.9,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 564,
+      "i1": 0,
+      "cutMM": 361.72,
+      "stitchMM": 367.52,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 952.26,
+    "align_cost": 0.0112,
+    "notchArcs": [
+     92,
+     139,
+     446,
+     484
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 44,
+      "cutMM": 43.87,
+      "stitchMM": 43.39,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 44,
+      "i1": 534,
+      "cutMM": 490.0,
+      "stitchMM": 485.19,
+      "notches": [
+       92,
+       139,
+       446,
+       484
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 534,
+      "i1": 578,
+      "cutMM": 43.55,
+      "stitchMM": 41.67,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 578,
+      "i1": 0,
+      "cutMM": 374.26,
+      "stitchMM": 380.7,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 980.89,
+    "align_cost": 0.0153,
+    "notchArcs": [
+     94,
+     142,
+     458,
+     497
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 44,
+      "cutMM": 44.0,
+      "stitchMM": 44.0,
+      "notches": []
+     },
+     {
+      "name": "KAPAK(oyuga giden)",
+      "i0": 44,
+      "i1": 549,
+      "cutMM": 504.35,
+      "stitchMM": 496.7,
+      "notches": [
+       94,
+       142,
+       458,
+       497
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 549,
+      "i1": 593,
+      "cutMM": 43.72,
+      "stitchMM": 42.02,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar",
+      "i0": 593,
+      "i1": 0,
+      "cutMM": 387.89,
+      "stitchMM": 393.94,
+      "notches": []
+     }
+    ]
+   }
+  },
+  "locket_top/Upper Sleeve": {
+   "34": {
+    "perimMM": 1167.74,
+    "align_cost": 0.0012,
+    "notchArcs": [
+     151,
+     592
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 65,
+      "cutMM": 65.0,
+      "stitchMM": 65.0,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 65,
+      "i1": 673,
+      "cutMM": 607.44,
+      "stitchMM": 596.68,
+      "notches": [
+       151,
+       592
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 673,
+      "i1": 732,
+      "cutMM": 59.0,
+      "stitchMM": 59.0,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 732,
+      "i1": 0,
+      "cutMM": 435.59,
+      "stitchMM": 446.73,
+      "notches": []
+     }
+    ]
+   },
+   "36": {
+    "perimMM": 1179.52,
+    "align_cost": 0.0,
+    "notchArcs": [
+     154,
+     598
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 66,
+      "cutMM": 65.98,
+      "stitchMM": 65.92,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 66,
+      "i1": 680,
+      "cutMM": 613.63,
+      "stitchMM": 603.23,
+      "notches": [
+       154,
+       598
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 680,
+      "i1": 740,
+      "cutMM": 59.77,
+      "stitchMM": 58.3,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 740,
+      "i1": 0,
+      "cutMM": 439.52,
+      "stitchMM": 451.32,
+      "notches": []
+     }
+    ]
+   },
+   "38": {
+    "perimMM": 1179.53,
+    "align_cost": 0.0,
+    "notchArcs": [
+     154,
+     598
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 66,
+      "cutMM": 65.98,
+      "stitchMM": 65.92,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 66,
+      "i1": 680,
+      "cutMM": 613.63,
+      "stitchMM": 603.24,
+      "notches": [
+       154,
+       598
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 680,
+      "i1": 740,
+      "cutMM": 59.77,
+      "stitchMM": 58.31,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 740,
+      "i1": 0,
+      "cutMM": 439.53,
+      "stitchMM": 451.31,
+      "notches": []
+     }
+    ]
+   },
+   "40": {
+    "perimMM": 1197.22,
+    "align_cost": 0.0006,
+    "notchArcs": [
+     154,
+     608
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 67,
+      "cutMM": 66.97,
+      "stitchMM": 66.89,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 67,
+      "i1": 690,
+      "cutMM": 622.8,
+      "stitchMM": 613.15,
+      "notches": [
+       154,
+       608
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 690,
+      "i1": 751,
+      "cutMM": 60.8,
+      "stitchMM": 59.71,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 751,
+      "i1": 0,
+      "cutMM": 446.22,
+      "stitchMM": 458.02,
+      "notches": []
+     }
+    ]
+   },
+   "42": {
+    "perimMM": 1215.3,
+    "align_cost": 0.0012,
+    "notchArcs": [
+     157,
+     617
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 68,
+      "cutMM": 67.98,
+      "stitchMM": 67.95,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 68,
+      "i1": 700,
+      "cutMM": 632.0,
+      "stitchMM": 622.93,
+      "notches": [
+       157,
+       617
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 700,
+      "i1": 762,
+      "cutMM": 61.72,
+      "stitchMM": 60.86,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 762,
+      "i1": 0,
+      "cutMM": 453.27,
+      "stitchMM": 464.97,
+      "notches": []
+     }
+    ]
+   },
+   "44": {
+    "perimMM": 1227.44,
+    "align_cost": 0.0016,
+    "notchArcs": [
+     158,
+     623
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 69,
+      "cutMM": 68.62,
+      "stitchMM": 67.45,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 69,
+      "i1": 707,
+      "cutMM": 638.0,
+      "stitchMM": 628.93,
+      "notches": [
+       158,
+       623
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 707,
+      "i1": 770,
+      "cutMM": 62.51,
+      "stitchMM": 60.36,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 770,
+      "i1": 0,
+      "cutMM": 457.44,
+      "stitchMM": 469.22,
+      "notches": []
+     }
+    ]
+   },
+   "46": {
+    "perimMM": 1239.72,
+    "align_cost": 0.001,
+    "notchArcs": [
+     160,
+     629
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 69,
+      "cutMM": 69.0,
+      "stitchMM": 69.0,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 69,
+      "i1": 714,
+      "cutMM": 644.61,
+      "stitchMM": 634.31,
+      "notches": [
+       160,
+       629
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 714,
+      "i1": 777,
+      "cutMM": 62.67,
+      "stitchMM": 61.56,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 777,
+      "i1": 0,
+      "cutMM": 462.51,
+      "stitchMM": 473.18,
+      "notches": []
+     }
+    ]
+   },
+   "48": {
+    "perimMM": 1254.6,
+    "align_cost": 0.0004,
+    "notchArcs": [
+     162,
+     637
+    ],
+    "edges": [
+     {
+      "name": "uc-A",
+      "i0": 0,
+      "i1": 70,
+      "cutMM": 70.0,
+      "stitchMM": 70.0,
+      "notches": []
+     },
+     {
+      "name": "UST-kenar(buzgulu)",
+      "i0": 70,
+      "i1": 723,
+      "cutMM": 652.63,
+      "stitchMM": 642.53,
+      "notches": [
+       162,
+       637
+      ]
+     },
+     {
+      "name": "uc-B",
+      "i0": 723,
+      "i1": 787,
+      "cutMM": 63.79,
+      "stitchMM": 62.61,
+      "notches": []
+     },
+     {
+      "name": "ALT-kenar(buzgulu)",
+      "i0": 787,
+      "i1": 0,
+      "cutMM": 467.6,
+      "stitchMM": 479.4,
+      "notches": []
+     }
+    ]
+   }
+  }
+ }
+}
