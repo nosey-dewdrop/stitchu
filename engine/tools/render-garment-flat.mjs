@@ -168,6 +168,10 @@ const U = {
   shoulderTipY: CQ.shoulderTipY.u,
 };
 
+// F-E YAN DİKİŞ ŞEKİL KANUNU + KOL KANUNU — ikisi de contract'tan, burada sayı yok.
+const SSP = LAW.croquis.sideSeamProfile;
+const SLAW = LAW.croquis.sleeveLaw;
+
 // Resolve the finished-garment geometry from the spec into numbers the templates
 // use. Everything is in illustration units.
 function geom(spec) {
@@ -180,6 +184,11 @@ function geom(spec) {
   const bodyToWaist = U.waistY;            // croquis: shoulder -> natural (body) waist
   const empire = spec.waistline === 'empire';
   const waistY = empire ? bodyToWaist * 0.66 : bodyToWaist;
+
+  // waist width depends on shaping (aşağıda da lazım, bu yüzden YUKARI taşındı):
+  // fitted/princess/empire bodice belde daralır, salkım shift daralmaz.
+  const fitted0 = spec.shaping === 'princess' || spec.shaping === 'darts' || empire;
+  const waistW0 = fitted0 ? U.waistW : U.chestW - 6;
 
   let hemY, hemHalf;
   if (isDress) {
@@ -196,8 +205,16 @@ function geom(spec) {
     const drop = topLen === 'crop' ? 24 : topLen === 'waist' ? 0
       : topLen === 'tunic' ? 120 : 56;     // hip default
     hemY = waistY + drop;
-    // a shell hem is close to the hip width, a touch of shaping.
-    hemHalf = spec.shaping === 'princess' ? U.hipW * 1.02 : U.hipW * 0.98;
+    // F-E KÖK DÜZELTMESİ (Damla kusur 3 "bel yok" + kusur 4 "etek ucu kavisi
+    // abartılı" — TEK kök sebep). ESKİ: hemHalf = hipW*0.98 = 76.75u, hem boydan
+    // BAĞIMSIZ hem de göğüsten (73.33u) GENİŞ. Bel doğru daralıyordu ama hemen
+    // ardından kalçaya açıldığı için bel okunmuyordu; crop boyda o açılma 24
+    // birime sıkışıp kâse kavisi üretiyordu.
+    // YENİ: etek yarı-genişliği BELDEN, ölçülmüş yan-dikiş eğimiyle türer
+    // (contract sideSeamProfile.hemRisePerU — Buğra Locket EU38 arka bedeninden).
+    // Tavan hâlâ kalça: gövde kalçanın altına inince ondan dar olamaz.
+    const ceiling = spec.shaping === 'princess' ? U.hipW * 1.02 : U.hipW * 0.98;
+    hemHalf = Math.min(ceiling, waistW0 + drop * SSP.hemRisePerU);
   }
 
   // --- neckline (half width, depth of the dip below the neck base) --------
@@ -206,11 +223,7 @@ function geom(spec) {
   // --- sleeve ------------------------------------------------------------
   const hasSleeve = spec.sleeveStyle && spec.sleeveStyle !== 'none';
 
-  // waist width depends on shaping: a fitted/princess/empire bodice nips in at
-  // the waist; a relaxed shift barely tapers (a shift hangs from bust, so a deep
-  // waist nip reads as a wrong hourglass V on the side seam).
-  const fitted = spec.shaping === 'princess' || spec.shaping === 'darts' || empire;
-  const waistW = fitted ? U.waistW : U.chestW - 6;   // shift: only a slight taper
+  const fitted = fitted0, waistW = waistW0;          // yukarıda çözüldü (F-E)
 
   // Bust apex (göğüs noktası): the anatomical landmark a princess seam passes
   // THROUGH. Height between shoulder and waist (bustHeight 0..1, default 0.42 of
@@ -294,10 +307,18 @@ function halfOutline(g, view) {
   segs.push(...necklineSegs(neck.kind, isBack, nHalf, cfY, shoulderNeckX, shoulderNeckY));
   // shoulder seam (neck point -> shoulder tip)
   segs.push({ t: 'L', p: [[shoulderTipX, shoulderTipY]] });
-  // armhole: shoulder tip -> underarm (sleeveless = clean scooped armhole, NOT a
-  // sleeve). First control drops STRAIGHT DOWN from the tip (x = tip, not tip+4)
-  // so the sloped shoulder flows into the armhole without an outward kink/point.
-  segs.push({ t: 'C', p: [[shoulderTipX, shoulderTipY + 26], [underX + 12, armDeepY - 26], [underX, armDeepY]] });
+  // armhole: shoulder tip -> underarm.
+  // F-E KÖK DÜZELTMESİ (Damla kusur 1 "kollar gövdeden KOPUK"). ESKİ ikinci
+  // kontrol noktası [underX + 12, ...] = 85.33u idi; kübik oradan beslenince
+  // eğri 80u'ya kadar şişip OMUZ UCUNUN (78u, artık 70.18u) DIŞINA taşıyordu.
+  // Kollu bir flat'te bu, gövde konturunun kolun içinden dışarı sızıp ikinci bir
+  // çizgi gibi okunması demek — kolun gövdeye değmediği hissi tam olarak buydu.
+  // Kol oyuğu İÇBÜKEYDİR: omuz ucundan koltukaltına x MONOTON AZALIR, hiçbir
+  // noktası omuz ucundan dışarı çıkamaz (contract sleeveLaw.armholeNeverWiderThanShoulder).
+  // İki kontrol de [shoulderTipX .. underX] aralığında tutulur.
+  const scyeC1X = shoulderTipX;                              // omuz ucundan dik iniş
+  const scyeC2X = Math.min(shoulderTipX, underX) * 0.94;     // İÇE oyulur (içbükey scye)
+  segs.push({ t: 'C', p: [[scyeC1X, shoulderTipY + 26], [scyeC2X, armDeepY - 26], [underX, armDeepY]] });
   // side seam: underarm -> waist. Ease INTO the waist (control point stays near
   // waistX, not pulled sharply in) so the bust-to-waist curve reads as a soft
   // taper, never a hard hourglass corner that snaps in then out at the seam.
@@ -392,7 +413,10 @@ function sleeveHalf(g, spec) {
   const shoulderNeckY = g.shoulderY + g.neckDrop;
   const shoulderTipX = g.shoulderW;
   const shoulderTipY = U.shoulderTipY;          // CROQUIS SABİTİ (F-D)
-  const underX = g.chestW, underY = 92;
+  // F-E: koltukaltı ARTIK CROQUIS'TEN. Eskiden `underY = 92` elle yazılıydı ve
+  // U.chestY ile aynı sayı olması TESADÜFTÜ — croquis değişse kol gövdeden
+  // kopardı (contract sleeveLaw.sleeveSharesArmholeEndpoints).
+  const underX = g.chestW, underY = U.chestY;
   const style = spec.sleeveStyle;
   const len = spec.sleeveLength || 'short';
   const puff = spec.sleeveCap === 2;
@@ -414,23 +438,68 @@ function sleeveHalf(g, spec) {
 
   // cap head: puff rises above the shoulder; plain/cap follows the shoulder line
   const capRise = puff ? 22 : cap ? 6 : 8;
+
+  // -------------------------------------------------------------------------
+  // F-E KÖK DÜZELTMESİ (Damla kusur 2: "puff kol alttan DÜZ KESİK ve sivriliyor
+  // — manşet/lastik bitişi yok"). ESKİ kalem puff kolu bir BORU çiziyordu: dış
+  // kenar (hemX, hemTopY)'den (hemX-4, hemBotY)'ye düz bir L, yani kolun en
+  // geniş yeri ETİYDİ. "Puff" tam olarak bunun tersidir — dolgunluk yukarıda,
+  // et bir manşet/lastikle TOPLANIR. Eşitlik (et == en geniş) puff DEĞİLDİR;
+  // contract sleeveLaw.puffHemNarrowerThanWidest bu eşitliği yasaklıyor.
+  // Buğra Locket EU38 Alt Kol parçası kendi ekseninde: en geniş 342.22 mm,
+  // dış ucu 319.20 mm — oran 0.933, yani gerçek kalıpta bile et en geniştne dar.
+  // Uygulanan: puff kol en geniş yerine ETİN ÜSTÜNDE ulaşır (bicep hattı), sonra
+  // manşete daralır; ete iki paralel çizgiden bir bant + büzgü tırtıkları konur.
+  // -------------------------------------------------------------------------
+  const CUFF_RATIO = 0.72;     // manşet / en geniş — toplanan et (puff)
+  const CUFF_BAND = 7;         // manşet bandı yüksekliği (birim) = 21 mm
+  const bicepY = puff ? shoulderTipY + drop * 0.62 : hemTopY;  // en geniş hat
+  const bicepX = hemX;                                          // = shoulderTip + outW
+  const cuffOutX = puff ? shoulderTipX + outW * CUFF_RATIO : hemX - (cap ? 6 : 4);
+  const cuffInX = underX + (cap ? 6 : 10);
+  const cuffInY = cap ? underY + 6 : hemBotY - drop * 0.12;
+
   let d = `M ${n(shoulderTipX)} ${n(shoulderTipY)} `;
-  // over the cap head, out to the outer shoulder of the sleeve
-  d += `C ${n(shoulderTipX + outW * 0.4)} ${n(shoulderTipY - capRise)} ${n(hemX - outW * 0.1)} ${n(shoulderTipY + 6)} ${n(hemX)} ${n(hemTopY)} `;
-  // down the outer sleeve edge to the hem
-  d += `L ${n(hemX - (cap ? 6 : 4))} ${n(hemBotY)} `;
+  // over the cap head, out to the widest point of the sleeve (bicep line)
+  d += `C ${n(shoulderTipX + outW * 0.4)} ${n(shoulderTipY - capRise)} ${n(bicepX - outW * 0.1)} ${n(shoulderTipY + 6)} ${n(bicepX)} ${n(bicepY)} `;
+  // down the outer sleeve edge to the cuff. PUFF: eğri İÇERİ toplanır (manşet),
+  // düz L değil — düz L "sivrilen boru" okumasının kendisiydi.
+  if (puff) d += `C ${n(bicepX)} ${n(bicepY + (hemBotY - bicepY) * 0.45)} ${n(cuffOutX + (bicepX - cuffOutX) * 0.35)} ${n(hemBotY - CUFF_BAND)} ${n(cuffOutX)} ${n(hemBotY)} `;
+  else d += `L ${n(cuffOutX)} ${n(hemBotY)} `;
   // along the sleeve hem back toward the body
-  d += `Q ${n((hemX + underX) * 0.5)} ${n(hemBotY + (cap ? 4 : 8))} ${n(underX + (cap ? 6 : 10))} ${n(cap ? underY + 6 : hemBotY - drop * 0.12)} `;
+  d += `Q ${n((cuffOutX + underX) * 0.5)} ${n(hemBotY + (cap ? 4 : 8))} ${n(cuffInX)} ${n(cuffInY)} `;
   // up the underarm seam back to the underarm point on the body
   d += `L ${n(underX)} ${n(underY)} `;
 
-  let s = `<path d="${d}" fill="none" stroke="${NAVY}" stroke-width="${W_OUTLINE}" ` +
+  let s = `<path data-part="sleeve" d="${d}" fill="none" stroke="${NAVY}" stroke-width="${W_OUTLINE}" ` +
     `stroke-linejoin="round" stroke-linecap="round"/>`;
   if (puff) {
     // gather ticks at the cap head
     for (let t = 0.2; t <= 0.85; t += 0.16) {
       const gx = shoulderTipX + outW * t;
       s += `<line x1="${n(gx)}" y1="${n(shoulderTipY - 2)}" x2="${n(gx)}" y2="${n(shoulderTipY + 9)}" stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
+    }
+    // MANŞET BANDI: bitmiş puff kolun eti kesik değil, toplanmış ve bir banda
+    // (lastik/manşet) dikilmiş. Teknik flat bunu ete PARALEL ikinci bir çizgiyle
+    // gösterir; bandın içine büzgü tırtıkları düşer.
+    const bandD = `M ${n(cuffOutX - 1.5)} ${n(hemBotY - CUFF_BAND)} ` +
+      `Q ${n((cuffOutX + underX) * 0.5)} ${n(hemBotY + 8 - CUFF_BAND)} ${n(cuffInX + 1.5)} ${n(cuffInY - CUFF_BAND * 0.55)}`;
+    s += `<path data-part="cuff-band" d="${bandD}" fill="none" stroke="${SEAM}" stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+    // büzgü tırtıkları: ET EĞRİSİNİN ÜSTÜNDE, ona DİK. Konumları uydurulmuyor —
+    // etin kendi quadratic'i örnekleniyor, tırtık o noktadaki NORMALE çiziliyor.
+    const hq0 = [cuffOutX, hemBotY], hqc = [(cuffOutX + underX) * 0.5, hemBotY + 8], hq1 = [cuffInX, cuffInY];
+    for (let t = 0.16; t <= 0.88; t += 0.18) {
+      const u = 1 - t;
+      const px = u * u * hq0[0] + 2 * u * t * hqc[0] + t * t * hq1[0];
+      const py = u * u * hq0[1] + 2 * u * t * hqc[1] + t * t * hq1[1];
+      const tx = 2 * u * (hqc[0] - hq0[0]) + 2 * t * (hq1[0] - hqc[0]);
+      const ty = 2 * u * (hqc[1] - hq0[1]) + 2 * t * (hq1[1] - hqc[1]);
+      const LL = Math.hypot(tx, ty) || 1;
+      // normal KOLUN İÇİNE bakmalı (et aşağıda, kol yukarıda): işaret buradan.
+      const nx = -ty / LL, ny = tx / LL;
+      s += `<line x1="${n(px + nx * 1.5)}" y1="${n(py + ny * 1.5)}" ` +
+        `x2="${n(px + nx * (CUFF_BAND - 0.5))}" y2="${n(py + ny * (CUFF_BAND - 0.5))}" ` +
+        `stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
     }
   }
   return s;

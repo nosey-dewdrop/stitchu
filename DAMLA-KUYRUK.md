@@ -601,3 +601,37 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
 - **[DAMLA'YA DÜŞEN] Koşu `~/damla_projects_2026/stitchu` içinden açılmalı.**
   `.claude/settings.json` ve `.claude/agents/*` proje-yerel; ev dizininden açılan
   oturumda ne hook'lar ne de `sef`/`danisman`/`mutasyoncu`/`orakci` ajanları yüklenir.
+
+## F-E — ETSY KAPISI, 23 Ağu (bir karar + iki zevk kalemi)
+
+- **[KARAR BEKLİYOR — K-FE-1] Croquis'in omzu ÖLÇÜLEREK YANLIŞ, ama bu gece
+  düzeltilmedi.** `flat-convention-v1.json` `shoulderTipX = 78.0u = 234 mm`
+  yarı-omuz, yani **omuzdan omuza 46.8 cm**. Aynı croquis'in göğüs yarı-genişliği
+  `chestX = 73.3333u = 220 mm`. Yani **omuz ucu büstün DIŞINDA** (oran 1.0636).
+  Set-in kollu hiçbir giyside omuz noktası göğüs çizgisinin dışında olamaz.
+  Satın alınmış Buğra Locket EU38 Arka Beden'de ölçülen oran **0.9570**
+  (196.13 / 204.94 mm) → doğru değer **70.1799u = 210.54 mm**, türeyen
+  `shoulderTipY = 16.8576u`. Damla'nın 5. kusuru ("omuz çok dar") bunun yüzü.
+  **Neden yapılmadı:** değişiklik denendi, `flat_geometry_sellable_check` S1
+  yeşile döndü, AMA mevcut `flat_convention_check.mjs`'in `measureCroquis()`
+  çıkarımını kırdı — o çıkarım omuz ucunu "x'in ilk yerel maksimumu" diye arıyor,
+  bu da sadece omuz göğüsten genişse doğru; yani kapı **düzeltmeye çalıştığımız
+  kusurun kendisini varsayıyor**. Omuz içeri alınınca çıkarım koltukaltını omuz
+  sanıp 27.00 / 153.00 / 750.00 mm sapma bastı. Düzeltmek **var olan bir testin
+  çıkarımını** değiştirmeyi gerektiriyor; `GECE/KART/ORTAK.md` md.5 bunu yasaklıyor.
+  Eşik gevşetilmedi, kapı susturulmadı. **Damla'nın kararı:** `measureCroquis()`
+  omuz ucunu "ilk yerel maksimum" yerine "omuz dikişi ile kol oyuğu arasındaki en
+  keskin köşe" diye bulsun mu? Bir satırlık iş, ama var olan bir teste dokunuyor.
+  Ölçüm dökümü: `GECE/log/F-E.bugra-olcum.txt`, gerekçe: `knowledge/ETSY-KAPISI-2026-08-23.md`.
+
+- **[ZEVK — kapıya girmedi] Boyun genişliği.** `neckBase = 30u = 90 mm` yarı,
+  yani 180 mm yaka açıklığı. Damla "boyun çok geniş" dedi. Buğra Locket'in ön
+  bedeninde ölçülen yaka yarı-genişliği **45.0 mm** (omuz dikişi 127.07 mm).
+  ⚠ Bu iki sayı doğrudan kıyaslanamaz: Buğra'nınki **yakalı, düğmeli** bir
+  parçanın yaka çizgisi (üstüne Peter Pan yaka biniyor), bizimki bitmiş giysinin
+  yaka açıklığı. **DOĞRULANMADI**, o yüzden ne kapıya kondu ne de değiştirildi.
+
+- **[ZEVK — kapıya girmedi] Puff kolun boyu.** `sleeveLength: 'short'` puff kolu
+  omuzdan 96u = 288 mm aşağı indiriyor; bitmiş flat'te kol büstün altında bitiyor.
+  Kısa puff kolun olması gereken boyu ölçülmedi (Buğra'nın Üst/Alt Kol parçaları
+  nest'te döndürülmüş; eksen çıkarımı yapılmadı — aşağıdaki "yapamadım"a bak).

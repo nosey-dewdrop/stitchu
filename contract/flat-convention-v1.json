@@ -24,7 +24,9 @@
     "toleranceMM": 2.0,
     "units": "SVG kullanici birimi; x=0 on-orta (CF), y=0 omuz cizgisi, +y asagi",
     "landmarks": {
-      "shoulderTipX": { "u": 78.0, "mm": 234.0, "source": "ACIK — kaynaksiz. Bugun eski kalemden devralindi. Kapi yalnizca STILLER ARASI AYNILIGINI zorluyor, dis bir yayina esitligini DEGIL." },
+      "shoulderTipX": { "u": 78.0, "mm": 234.0, "source": "ACIK — kaynaksiz. Bugun eski kalemden devralindi. Kapi yalnizca STILLER ARASI AYNILIGINI zorluyor, dis bir yayina esitligini DEGIL.",
+        "_F_E_OLCULDU_AMA_DEGISTIRILMEDI": "23 Agu (F-E): bu deger OLCULEREK YANLIS bulundu ama BU GECE DEGISTIRILMEDI, gerekcesi asagida. Yanlisligi: 78.0u = 234 mm yari-omuz = 468 mm omuzdan omuza; ayni croquis'in gogus yari-genisligi 73.3333u = 220 mm. Yani omuz ucu BUSTUN DISINDA (oran 1.0636). Set-in kollu hicbir giyside omuz noktasi gogus cizgisinin disinda olamaz — kol oyugu omuzdan asagi ve ICERI iner; disarida olursa omuz bir raf gibi durur. SATIN ALINMIS Bugra Locket EU38 Arka Beden parcasinda olculen oran 196.13/204.94 = 0.9570 (bkz. sideSeamProfile), yani DOGRU deger 73.3333 x 0.9570 = 70.1799u (210.54 mm) ve tureyen shoulderTipY 16.8576u. Damla'nin 5. kusuru ('boyun cok genis, omuz cok dar') bunun gorunen yuzu.",
+        "_NEDEN_DEGISTIRILMEDI": "Degisiklik denendi ve ISE YARADI (flat_geometry_sellable_check S1 yesile dondu), AMA mevcut engine/tests/flat_convention_check.mjs'yi KIRDI: o kapinin measureCroquis() cikarimi omuz ucunu 'CF yakadan asagi yurunurken x'in ILK YEREL MAKSIMUMU' diye buluyor. Bu sezgi sadece omuz gogusten GENISSE dogrudur — yani kapi, duzeltmeye calistigimiz kusurun kendisini varsayiyor. Omuz iceri alininca yerel maksimum kalmiyor, cikarim koltukaltini omuz sanip 27.00 mm / 153.00 mm / 750.00 mm sapma basiyor. Duzeltmek MEVCUT BIR TESTIN cikarimini degistirmeyi gerektiriyor; GECE/KART/ORTAK.md md.5 'Var olan teste dokunma' diyor. Esik gevsetilmedi, kapi susturulmadi, karar Damla'ya birakildi: DAMLA-KUYRUK.md K-FE-1." },
       "shoulderTipY": { "u": 19.36, "mm": 58.08, "derivation": "neckDrop 4.0 + (shoulderTipX 78.0 - neckBase 30.0) x omuz egimi 0.32. ONCEDEN yakanin genisligine (nHalf) bagliydi -> her yakada baska yukseklik; croquis olamaz. Artik yakadan BAGIMSIZ.", "source": "ACIK — egim 0.32 kaynaksiz, stiller arasi ayniligi zorunlu" },
       "chestX": { "u": 73.3333, "mm": 220.0, "derivation": "bustCM 88.0 -> 880 mm; duz serili tup yari-genisligi = 880/4 = 220 mm; 220 / unitMM 3.0", "source": "burda EU38 bustCM (verified) + tup geometrisi" },
       "chestY": { "u": 92.0, "mm": 276.0, "source": "ACIK — koltukalti derinligi kaynaksiz devralindi. NOT: Aldrich p.11 armscye DEPTH 21.0 cm NAPE'ten olculur, omuz cizgisinden degil; dogrudan capa olarak KULLANILMADI (yanlis temel olurdu)." },
@@ -34,6 +36,27 @@
       "neckBase": { "u": 30.0, "mm": 90.0, "source": "ACIK — kaynaksiz devralindi" },
       "neckDrop": { "u": 4.0, "mm": 12.0, "source": "ACIK — kaynaksiz devralindi" },
       "shoulderSlope": { "value": 0.32, "unit": "dy/dx", "source": "ACIK — kaynaksiz devralindi" }
+    },
+    "sideSeamProfile": {
+      "_law": "YAN DIKIS SEKIL KANUNU (F-E, 2026-08-23). Bir flat'in 'giysi' okunmasini saglayan sey mutlak genislikler degil, yan dikisin OMUZ -> GOGUS -> BEL -> ETEK boyunca izledigi ORAN dizisidir. Bu dizi bizim ciktimizdan TURETILEMEZ (dairesel olurdu); SATIN ALINMIS Bugra Locket EU38 kalibindan OLCULDU.",
+      "_source": "patterns_real/geometry/geometry-full.json -> rings[pattern=locket_top, piece='Back Body', sizeGuess='38']. Arka beden secildi cunku ARKA ORTA kenari tam dikey (90.00 deg, 413.97 mm duz kosu) ve on bedenin aksine pens/placket parcanin dis konturunu kirletmiyor. Olcum: GECE/log/F-E.bugra-olcum.txt. Yari-genislikler arka-ortadan.",
+      "_measuredMM": { "shoulder": 196.13, "chestMax": 204.94, "waistMin": 157.46, "hem": 179.22, "shoulderToHem": 413.97, "waistBelowShoulder": 289.8 },
+      "_normalizedToChest": { "shoulder": 0.9570, "chest": 1.0, "waist": 0.7683, "hem": 0.8745 },
+      "shoulder": 0.9570,
+      "hemRisePerU": 0.1881,
+      "_hemRiseDerivation": "Belden asagi inen govde yan dikisi yeniden ACILIR (bel en dar yer, etek kalcaya dogru genisler). Bugra'da bel 0.7683 -> etek 0.8745, arada 124.17 mm = 41.39 birim dusus. Egim = (0.8745 - 0.7683) x chestX 73.3333 / 41.39 = 0.1881 birim/birim. Ust etek yari-genisligi artik SABIT kalca genisligi degil, bu egimle bel genisliginden turuyor; tavan hipX x 0.98.",
+      "_whyItMatters": "ESKI KALEM her ust icin hemHalf = hipX x 0.98 = 76.75u yaziyordu, yani etek gogusten GENIS (76.75 > 73.3333, oran 1.047). Bugra'da oran 0.8745 — etek gogusten DAR. Damla'nin '3. bel yok' ve '4. etek ucu kavisi abartili' kusurlarinin TEK kok sebebi buydu: bel dogru daralıyordu ama hemen ardindan kalca genisligine acildigi icin bel okunmuyor, ve crop boyda o acilma 72 mm'ye sıkısıp bir can/kase kavisi uretiyordu."
+    },
+    "sleeveLaw": {
+      "_law": "KOL KANUNU (F-E, 2026-08-23). Uc sart, ucu de ESITSIZLIK/OZDESLIK — disaridan sayi gerekmez, o yuzden gevsetilemez de.",
+      "armholeNeverBulgesOutward": true,
+      "_a1": "Kol oyugu ICBUKEYDIR: egrinin hicbir noktasi kendi IKI UCUNUN disina tasamaz, yani max x <= max(shoulderTipX, chestX). Eski kalem ikinci kontrol noktasini underX + 12 = 85.33u koyuyordu; egri 80.4u'ya kadar sisip her iki ucunu da (omuz ucu 78u, koltukalti 73.33u) asiyordu — govde konturu kolun icinden disari sizip ikinci bir cizgi gibi okunuyordu. Kolun gövdeye degmedigi hissi tam olarak buydu. Damla'nin '1. kollar govdeden KOPUK' kusuru.",
+      "sleeveSharesArmholeEndpoints": true,
+      "_a2": "Kol path'i govde silueti ile IKI ucu da paylasmak zorunda: omuz ucu (shoulderTipX, shoulderTipY) ve koltukalti (chestX, chestY). Aradaki bosluk 0 mm.",
+      "puffHemNarrowerThanWidest": true,
+      "puffHemOverWidestMax": 0.9327,
+      "_puffRatioSource": "Bugra Locket EU38 ALT KOL parcasi, kendi min-alan donuk kutusunda olculdu: en genis 342.22 mm, dis ucu 319.20 mm -> 0.9327. Olcum: GECE/log/F-E.bugra-olcum.txt. Bu KASITLI OLARAK MUHAFAZAKAR bir tavandir: alt kol, puff'in ICINDEKI duz katmandir ve eti neredeyse hic toplanmaz; gorunen puff (Ust Kol) ondan cok daha fazla toplanir (kapak buzgu orani 1.549x). Yani gercek bir puff bu tavanin ALTINDA kalir; tavan sadece 'boru cizip puff demeyi' yasaklar. Salt esitsizlik (< 1.0) yetmiyordu: olculdu, 0.9889'luk bir boru ondan geciyordu (GECE/log/F-E.mutasyon.txt, MUTASYON C).",
+      "_a3": "PUFF kolun et (hem) yari-genisligi, kolun EN GENIS yari-genisliginden KUCUK olmak zorunda. 'Puff' tanimi budur: dolgunluk yukarida, et toplanmis. Esitlik (duz kesik boru) = puff degil. Damla'nin '2. puff kol alttan duz kesik ve sivriliyor' kusuru. Bugra Locket'te de olculuyor: Alt Kol parcasi kendi ekseninde en genis 342.22 mm, dis ucu 319.20 mm (oran 0.933) — yani gercek kalipta bile et en genis yerden DAR."
     },
     "easeNote": "Croquis BEDEN CIZGISIDIR (sifir bolluk). Giysi bollugu bugun flat siluetine EKLENMIYOR — yani flat, giysiyi vucut cizgisinde gosteriyor. ACIK KALEM: bolluk ekseni (FreeSewing seatEase/sleeveEase gibi bolge-bazli) F-H'nin isi."
   },

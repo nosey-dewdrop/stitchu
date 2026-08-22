@@ -1,0 +1,146 @@
+== BUGRA LOCKET EU38 — GERCEK KALIP OLCUMU (kaynak: patterns_real/geometry/geometry-full.json)
+   NOT: bu KESIM cizgisidir (basili kontur); satici talimati 10mm dikis payi ilan ediyor.
+   NOT: Bugra'nin KENDI beden cizelgesi EU38 = bust 920 / bel 720 / kalca 980 mm.
+        burda EU38 = 880 / 700 / 940. Bugra'nin 38'i burda'nin 40'i. (yeni bulgu)
+
+--- Front Body  n=435  bbox 301.12 x 510.82 mm
+    duz kenar  idx  430-> 431  L= 421.13 mm  aci= 90.00 deg  (20.7,725.0)->(20.7,303.9)
+    duz kenar  idx  207-> 208  L= 138.73 mm  aci= 13.74 deg  (187.1,561.8)->(321.9,594.7)
+    duz kenar  idx  206-> 207  L= 136.66 mm  aci=151.94 deg  (307.7,497.5)->(187.1,561.8)
+    duz kenar  idx    0->  56  L= 127.07 mm  aci=  1.22 deg  (65.7,303.9)->(192.8,306.6)
+    duz kenar  idx  339-> 340  L=  63.76 mm  aci=167.39 deg  (256.4,800.8)->(194.2,814.7)
+
+--- Back Body  n=410  bbox 212.76 x 451.65 mm
+    duz kenar  idx  340-> 341  L= 413.97 mm  aci= 90.00 deg  (801.6,306.2)->(801.6,720.2)
+    duz kenar  idx  117-> 153  L=  89.26 mm  aci=102.58 deg  (588.9,547.0)->(608.3,459.9)
+    duz kenar  idx  293-> 334  L=  86.17 mm  aci=  1.41 deg  (698.4,304.1)->(784.5,306.2)
+    duz kenar  idx    0->   1  L=  64.55 mm  aci= 19.07 deg  (679.4,755.1)->(618.4,734.0)
+    duz kenar  idx    1->  34  L=  64.29 mm  aci=105.29 deg  (618.4,734.0)->(635.4,672.0)
+
+--- Upper Sleeve  n=539  bbox 504.74 x 207.44 mm
+    duz kenar  idx    0->   1  L=  65.98 mm  aci=138.29 deg  (278.4,920.6)->(229.2,964.5)
+    duz kenar  idx   56->  88  L=  62.56 mm  aci= 49.56 deg  (315.4,1026.5)->(356.0,1074.1)
+    duz kenar  idx  315-> 316  L=  59.95 mm  aci= 48.11 deg  (733.9,957.8)->(693.9,913.2)
+    duz kenar  idx  291-> 315  L=  46.13 mm  aci=153.25 deg  (692.7,978.6)->(733.9,957.8)
+    duz kenar  idx  222-> 244  L=  43.32 mm  aci=134.64 deg  (587.0,1061.9)->(617.4,1031.1)
+
+--- Lower Sleeve  n=437  bbox 345.92 x 169.73 mm
+    duz kenar  idx  396-> 427  L=  65.63 mm  aci= 24.33 deg  (383.4,820.2)->(323.6,793.1)
+    duz kenar  idx  281-> 307  L=  45.32 mm  aci=154.46 deg  (591.2,804.2)->(550.3,823.7)
+    duz kenar  idx    0->   1  L=  41.73 mm  aci=107.03 deg  (307.6,787.0)->(295.4,826.9)
+    duz kenar  idx  262-> 263  L=  41.37 mm  aci= 67.68 deg  (641.3,826.9)->(625.6,788.7)
+    duz kenar  idx   52->  75  L=  38.20 mm  aci= 57.83 deg  (360.5,882.9)->(380.8,915.2)
+
+== GOVDE PROFILI (CF'den yari-genislik, omuz cizgisinden asagi)
+
+--- Front Body: CF x=20.74, omuz y=303.90, etek y=725.03, boy=421.13 mm
+    y+    0.0 mm (  0.0%)   yari-genislik   45.00 mm   kesim sayisi 2
+    y+    8.4 mm (  2.0%)   yari-genislik  242.56 mm   kesim sayisi 2
+    y+   21.1 mm (  5.0%)   yari-genislik  262.64 mm   kesim sayisi 2
+    y+   42.1 mm ( 10.0%)   yari-genislik  260.13 mm   kesim sayisi 2
+    y+   63.2 mm ( 15.0%)   yari-genislik  258.33 mm   kesim sayisi 2
+    y+   84.2 mm ( 20.0%)   yari-genislik  257.54 mm   kesim sayisi 2
+    y+  105.3 mm ( 25.0%)   yari-genislik  259.02 mm   kesim sayisi 2
+    y+  126.3 mm ( 30.0%)   yari-genislik  262.14 mm   kesim sayisi 2
+    y+  168.5 mm ( 40.0%)   yari-genislik  273.54 mm   kesim sayisi 2
+    y+  210.6 mm ( 50.0%)   yari-genislik  255.07 mm   kesim sayisi 2
+    y+  252.7 mm ( 60.0%)   yari-genislik  176.06 mm   kesim sayisi 2
+    y+  294.8 mm ( 70.0%)   yari-genislik  300.00 mm   kesim sayisi 2
+    y+  336.9 mm ( 80.0%)   yari-genislik  253.54 mm   kesim sayisi 2
+    y+  379.0 mm ( 90.0%)   yari-genislik  222.13 mm   kesim sayisi 2
+    y+  400.1 mm ( 95.0%)   yari-genislik  221.21 mm   kesim sayisi 2
+    y+  421.1 mm (100.0%)   yari-genislik  222.84 mm   kesim sayisi 3
+
+--- Back Body: CF x=801.61, omuz y=306.24, etek y=720.21, boy=413.97 mm
+    y+    0.0 mm (  0.0%)   yari-genislik  196.70 mm   kesim sayisi 3
+    y+    8.3 mm (  2.0%)   yari-genislik  196.13 mm   kesim sayisi 2
+    y+   20.7 mm (  5.0%)   yari-genislik  194.87 mm   kesim sayisi 2
+    y+   41.4 mm ( 10.0%)   yari-genislik  191.31 mm   kesim sayisi 2
+    y+   62.1 mm ( 15.0%)   yari-genislik  186.98 mm   kesim sayisi 2
+    y+   82.8 mm ( 20.0%)   yari-genislik  184.60 mm   kesim sayisi 2
+    y+  103.5 mm ( 25.0%)   yari-genislik  185.35 mm   kesim sayisi 2
+    y+  124.2 mm ( 30.0%)   yari-genislik  188.00 mm   kesim sayisi 2
+    y+  165.6 mm ( 40.0%)   yari-genislik  195.77 mm   kesim sayisi 2
+    y+  207.0 mm ( 50.0%)   yari-genislik  204.94 mm   kesim sayisi 2
+    y+  248.4 mm ( 60.0%)   yari-genislik  183.87 mm   kesim sayisi 2
+    y+  289.8 mm ( 70.0%)   yari-genislik  157.46 mm   kesim sayisi 2
+    y+  331.2 mm ( 80.0%)   yari-genislik  159.11 mm   kesim sayisi 2
+    y+  372.6 mm ( 90.0%)   yari-genislik  167.94 mm   kesim sayisi 2
+    y+  393.3 mm ( 95.0%)   yari-genislik  173.41 mm   kesim sayisi 2
+    y+  414.0 mm (100.0%)   yari-genislik  179.22 mm   kesim sayisi 4
+
+== KOL PROFILI (kapak tepesinden ete, TAM genislik)
+
+--- Lower Sleeve  boy 169.73 mm
+    y+    0.0 (  0.0%)  tam genislik     0.00 mm
+    y+    8.5 (  5.0%)  tam genislik   323.40 mm
+    y+   17.0 ( 10.0%)  tam genislik   329.48 mm
+    y+   33.9 ( 20.0%)  tam genislik   341.64 mm
+    y+   50.9 ( 30.0%)  tam genislik   289.75 mm
+    y+   67.9 ( 40.0%)  tam genislik   243.29 mm
+    y+   84.9 ( 50.0%)  tam genislik   212.82 mm
+    y+  101.8 ( 60.0%)  tam genislik   188.79 mm
+    y+  118.8 ( 70.0%)  tam genislik   166.60 mm
+    y+  129.0 ( 76.0%)  tam genislik   152.50 mm
+    y+  135.8 ( 80.0%)  tam genislik   142.10 mm
+    y+  144.3 ( 85.0%)  tam genislik   127.05 mm
+    y+  152.8 ( 90.0%)  tam genislik   108.00 mm
+    y+  161.2 ( 95.0%)  tam genislik    80.39 mm
+    y+  168.0 ( 99.0%)  tam genislik    37.38 mm
+    y+  169.7 (100.0%)  tam genislik     0.00 mm
+    -> EN GENIS 341.64 mm · ET (hem) 0.00 mm · ORAN hem/enGenis = 0.0000
+
+--- Upper Sleeve  boy 207.44 mm
+    y+    0.0 (  0.0%)  tam genislik     0.00 mm
+    y+   10.4 (  5.0%)  tam genislik   428.14 mm
+    y+   20.7 ( 10.0%)  tam genislik   449.09 mm
+    y+   41.5 ( 20.0%)  tam genislik   490.97 mm
+    y+   62.2 ( 30.0%)  tam genislik   447.75 mm
+    y+   83.0 ( 40.0%)  tam genislik   379.64 mm
+    y+  103.7 ( 50.0%)  tam genislik   327.41 mm
+    y+  124.5 ( 60.0%)  tam genislik   285.44 mm
+    y+  145.2 ( 70.0%)  tam genislik   248.11 mm
+    y+  157.7 ( 76.0%)  tam genislik   225.23 mm
+    y+  166.0 ( 80.0%)  tam genislik   208.88 mm
+    y+  176.3 ( 85.0%)  tam genislik   185.89 mm
+    y+  186.7 ( 90.0%)  tam genislik   157.34 mm
+    y+  197.1 ( 95.0%)  tam genislik   116.60 mm
+    y+  205.4 ( 99.0%)  tam genislik    50.98 mm
+    y+  207.4 (100.0%)  tam genislik     0.00 mm
+    -> EN GENIS 490.97 mm · ET (hem) 0.00 mm · ORAN hem/enGenis = 0.0000
+
+== KOL PROFILI v2 — PARCANIN KENDI EKSENINDE (min-alan donuk kutu)
+
+--- Lower Sleeve  donuk kutu 345.92 x 168.95 mm  (aci 0.3 deg)
+      1.0%  tam genislik   319.20 mm
+      5.0%  tam genislik   324.05 mm
+     10.0%  tam genislik   330.11 mm
+     20.0%  tam genislik   342.22 mm
+     30.0%  tam genislik   287.36 mm
+     40.0%  tam genislik   242.09 mm
+     50.0%  tam genislik   212.11 mm
+     60.0%  tam genislik   188.33 mm
+     70.0%  tam genislik   166.28 mm
+     80.0%  tam genislik   141.86 mm
+     90.0%  tam genislik   107.83 mm
+     95.0%  tam genislik    80.27 mm
+     99.0%  tam genislik    37.38 mm
+    -> EN GENIS 342.22 · ust uc(1%) 319.20 · alt uc(99%) 37.38
+    -> ORAN altUc/enGenis = 0.1092 · ustUc/enGenis = 0.9327
+
+--- Upper Sleeve  donuk kutu 203.45 x 504.78 mm  (aci 89.0 deg)
+      1.0%  tam genislik     8.18 mm
+      5.0%  tam genislik    41.05 mm
+     10.0%  tam genislik    63.60 mm
+     20.0%  tam genislik    73.56 mm
+     30.0%  tam genislik   104.43 mm
+     40.0%  tam genislik   132.59 mm
+     50.0%  tam genislik   139.53 mm
+     60.0%  tam genislik   139.30 mm
+     70.0%  tam genislik   128.53 mm
+     80.0%  tam genislik    94.90 mm
+     90.0%  tam genislik    73.10 mm
+     95.0%  tam genislik    35.17 mm
+     99.0%  tam genislik     6.92 mm
+    -> EN GENIS 139.53 · ust uc(1%) 8.18 · alt uc(99%) 6.92
+    -> ORAN altUc/enGenis = 0.0496 · ustUc/enGenis = 0.0586

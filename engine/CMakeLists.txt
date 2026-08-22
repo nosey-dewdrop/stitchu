@@ -102,6 +102,16 @@ add_test(NAME bundle_fresh_check
 # ön+arka · tek kontur rengi. Kanun: contract/flat-convention-v1.json.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
 
+# flat_geometry_sellable_check (F-E, 2026-08-23): "flat ETSY'LIK MI" kapisinin
+# GEOMETRI yarisi. F-D konvansiyonu tutar (tek croquis, tek murekkep, olcek);
+# bu kapi cizilenin bir GIYSI gibi davranip davranmadigini tutar: kol govdeyle
+# iki ucunu paylasiyor mu, kol oyugu icbukey mi, puff'in eti toplanmis mi, etek
+# boyla genisliyor mu. Esikler SATIN ALINMIS Bugra Locket EU38 kalibindan ve
+# kaynakli beden cizelgesinden; motorun kendi ciktisindan turetilen esik YOK.
+# (Ayni gece kosan obur F-E vardiyasinin flat_sellable_check'i LISTELEME
+#  GORUNTUSUNE bakar - ayri kapi, ayri eksen, cakismiyor.)
+add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
