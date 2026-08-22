@@ -89,3 +89,29 @@ F-E ETSY KAPISI / GEOMETRI YARISI — OLCUM KARTI (2026-08-23)
   geliyor; bu vardiya o dosyaya HIC dokunmadi.
   once/sonra: GECE/log/F-E.ctest.before.txt · F-E.ctest.after.txt
   kirmizi kumeler: GECE/log/F-E.red.before · F-E.red.after
+
+== CTEST SONUCU (kosuldu, atfedildi)
+  102 testin 89'u yesil, 13 kirmizi.  GECE/log/F-E.ctest.after.txt
+  YENI KAPI:  flat_geometry_sellable_check ... Passed  (0.10 sn)
+  KORUNDU:    flat_convention_check .......... Passed  (4.14 sn)   <- kartin sarti
+
+  F-D taban kirmizisi (6): style_check sizechart_source_check contract_check
+    preview_truth_check figure_check h10_gate_check
+    (h10_gate_check bu gece F-F tarafindan LEGACY yapildi, listeden dustu)
+
+  BU GECE EKLENEN 8 KIRMIZI — HEPSI MOTOR TARAFI, HICBIRI BU VARDIYANIN DEGIL:
+    engine_check · golden_check · bundle_fresh_check · sewable_census
+    recipe_dress_check · dxf_wasm_parity · dxf_wasm_parity_dress · garment_armhole_check
+  ATIF KANITI:
+    - `git show --stat 700188c` : bu vardiyanin commit'inde SIFIR .cpp/.hpp dosyasi.
+    - golden_check farki `piece0:Bodice Front` geometrisinde; `git log d3e1fdf..HEAD
+      -- engine/src/bodice.cpp` tek commit veriyor: a571407 (F-G).
+    - dxf_wasm_parity.mjs'de `render-garment-flat` / `flat-convention-v1` gecen
+      SIFIR satir var.
+    - bundle_fresh_check tek basina yeniden kosuldu: PASSED (ctest anlik goruntusu
+      uc vardiya ayni anda derlerken alinmisti).
+  YANI: bu vardiyanin actigi YENI KIRMIZI = 0. Ama ctest IZOLE DEGIL ve bu
+  gizlenmiyor: HEAD bu vardiya calisirken BES kez ilerledi, calisma agacinda
+  surekli baska vardiyalarin yarim isi vardi, ve engine/CMakeLists.txt'ye
+  eklenen kayit satiri bir kez baska bir vardiyanin commit'iyle EZILDI (fark
+  edildi, yeniden eklendi, commit'te var).
