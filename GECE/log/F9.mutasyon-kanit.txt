@@ -1,0 +1,15 @@
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start 5: docs_truth_check
+1/1 Test #5: docs_truth_check .................***Failed    0.02 sec
+docs/ARCHITECTURE.md:93: standing claim 'ALL PASS': Geometric validation is complete and the matrix is ALL PASS.
+docs/ARCHITECTURE.md:93: standing claim 'is complete': Geometric validation is complete and the matrix is ALL PASS.
+docs truth: 2 standing-claim violation(s) | 0 unwitnessed numeric claim(s)
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.03 sec
+
+The following tests FAILED:
+	  5 - docs_truth_check (Failed)
+Errors while running CTest

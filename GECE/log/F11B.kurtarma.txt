@@ -1,0 +1,841 @@
+===== F11-B KURTARMA HAM CIKTI  2026-08-22 18:15:10 =====
+
+----- [1] grep -n 'reset --hard|git clean|git branch -f|git checkout --' GECE/gece.sh
+83:      git branch -f "gece/$F-reddedildi" HEAD
+84:      # `git add -A` bu dosyanin KENDI logunu da commit'e almisti; reset --hard
+89:      git reset --hard "$ONCE" >/dev/null
+93:      git checkout -- . >/dev/null 2>&1
+94:      git clean -fdq -- engine contract web knowledge docs vision-student >/dev/null 2>&1
+
+----- [2] git status --porcelain | grep -v '^?? GECE/'
+(exit=1  bos ise kod degisikligi yok)
+
+----- [3] git branch -a
+  gece/F1-reddedildi
+  gh-pages
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/gh-pages
+  remotes/origin/main
+
+----- [4] git log --oneline -12
+962407d KOSU.md: v3 sets its own zero — v2's closed-phase line is not inherited; queue gets tonight's decisions
+35b000b gate commit: v3 harness — K8 katip gate, K9 generated-file ratchet, v3 phase renumbering
+0781886 gece harness: four measured defects from the first real run — mutation killed by its own log, K2 blind to untracked tests, per-phase build dir, API failure mistaken for a red phase
+b874e87 gece.sh: exclude its own GECE/log output from the clean-tree gate
+c62c64f kapi: pin TMP to the physical path — /tmp symlink made 6 .mjs suites skip silently and pass vacuously; baseline is 7 reds of 96
+bf178aa RULES 9: the red SET must not grow, not 'all green'; give phase agents ENV.md too
+e41663d GECE harness verified by running it: fix K1 baseline (16 phantom reds from missing ignored artifacts), fix manifest stdin, prove the mutation gate turns red
+9cdfdd5 GECE harness: sealed gate K1-K7, mutation prover, phase runner — no phase opened
+66e2732 F0: honest inventory — the vein is 0% shippable and the flat was never derived from the pattern
+2f748db move stitchu reports into a single corpus dump, drop the duplicates from the repo
+97c1c4d tur 18: the size chart was born as a test fixture next to made-up bodies, and the shoulder column is not even a body measurement
+b633b19 KIRMIZI: sizechart_source_check 4 FAIL (yeni kapi, kasten kirmizi dogdu) — the chart's 7 columns must each name the publication they came from, and 4 of them cannot
+
+----- [5] kayip dosyalar diskte mi
+YOK: engine/tests/docs_truth_check.sh
+YOK: engine/tests/landing_truth_check.sh
+YOK: engine/tests/sleeve_armhole_agree_check.cpp
+
+----- [6] engine/src/sleeve.cpp:100-110
+    // the underarm-to-notch length still matches the armhole 1:1). VERIFIED rule
+    // (dresspatternmaking / M.Müller): a puff RAISES the cap by the spread amount;
+    // a plain gathered head keeps the height. The biceps/hem width below is left
+    // on the fitted base `width` so the sleeve still clears the arm. See FORMULAS.
+    const double spread = capSpreadFrac(cap) * width;      // 0 when Plain / Cap
+    const double capWidth = width + spread;                // widened crown
+    const double capRise = (cap == SleeveCap::Puffed) ? spread : 0.0;
+    capHeight += capRise;                                  // Plain/Cap: +0 → identical
+
+    // CAP SLEEVE WING (R1.2). A cap sleeve keeps the ordinary set-in cap head
+    // (the same cap curve, fitted to the armhole above so it sets in 1:1) but has
+
+----- [7] GECE/log/gece.txt TAM ZAMAN CIZELGESI (--- / KAPI / reddedildi / KAPANDI satirlari)
+3:=== GECE KOSUSU v3 basladi 2026-08-22 15:20 · dal=main · HEAD=962407d
+4:=== cekirdek: F0 F1 F2 F3 F4 F5 · uzatma: F6 F7 F8 · kapanis: F9 F10 F11
+5:--- F0 basliyor 15:20 · once=962407d
+6:    sef bitti 15:46
+7:    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+8:    F0 yeniden aciliyor (ajan olumu, 1. tekrar)
+9:--- F0 basliyor 15:46 · once=962407d
+10:    sef bitti 15:52
+11:    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+12:    F0 iki kez kosmadi -- cekirdek durduruldu, kapanisa geciliyor
+13:=== uzatma aciliyor (kalan ~15s >= esik 4s)
+14:--- F6 basliyor 15:52 · once=962407d
+15:    sef bitti 16:26
+16:    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+17:    F6 kosmadi -- uzatma durdu
+18:=== kapanis basliyor 16:26 -- uzatmalardan BAGIMSIZ, atlanmaz (§4)
+19:--- F9 basliyor 16:26 · once=962407d
+20:    sef bitti 16:57
+21:    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+22:    F9 kosmadi, bir kez daha
+23:--- F9 basliyor 16:57 · once=962407d
+24:    sef bitti 16:59
+25:    KAPI KIRMIZI
+26:    F9 kapanmadi -- kapanisin geri kalani YINE de kosar
+27:--- F10 basliyor 17:08 · once=962407d
+28:    sef bitti 17:59
+29:    SEF KOSMADI (API hatasi) -- kapi calistirilmadi
+30:    F10 kosmadi, bir kez daha
+31:--- F10 basliyor 17:59 · once=962407d
+32:    sef bitti 18:00
+33:    KAPI KIRMIZI
+34:    F10 kapanmadi -- kapanisin geri kalani YINE de kosar
+35:--- F11 basliyor 18:09 · once=962407d
+
+----- [8] kapi log dosyalarinin mtime'i (silme ani)
+-rw-r--r--@ 1 damummyphus  staff   787 22 Ağu 18:09:49 2026 GECE/log/F10.kapi.txt
+-rw-r--r--@ 1 damummyphus  staff  1103 22 Ağu 17:08:19 2026 GECE/log/F9.kapi.txt
+
+----- [9] F9.kapi.txt son 25 satir (neden kirmizi)
+[F9] K1 ortam: engine/.venv-dxf -> gercek agactan baglandi
+[F9] K1 ortam: engine/dist -> gercek agactan baglandi
+[F9] K1 ortam: engine/pattern-bridge/.venv -> gercek agactan baglandi
+[F9] K1 ortam: engine/tools/node_modules -> gercek agactan baglandi
+[F9] K1 ortam: core/third_party -> gercek agactan baglandi
+[F9] K1 devralinan kirmizi sayisi: once=       7 sonra=       7
+[F9] K2 KIRMIZI -- docs_truth_check faz oncesi commit'te kirmizi dusmuyor (bos test)
+[F9] K2 KIRMIZI -- sleeve_armhole_agree_check faz oncesi commit'te kirmizi dusmuyor (bos test)
+[F9] K3 KIRMIZI -- raporda gecen yollar diskte yok:
+yok: engine/SPECS-next-vocabulary.md
+yok: flatten-research/FINDINGS.md
+[F9] K4 KIRMIZI -- esik sabiti mevcut dosyada oynamis:
++# (GECE/log/F9A.gate.before.txt). Kapı doğruluğu bilmez; bir iddianın ZAMANSIZ
++    // GECE/F6-B.md S3 / GECE/log/F6C.gate.before.txt). So the spread is now
+[F9] K6 tamam -- var olan testlerin hicbiri degismemis
+[F9] K7 tamam -- yasakli dosya butun olarak acilmamis
+[F9] K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor
+[F9] KAPI KIRMIZI
+
+----- [10] F10.kapi.txt son 25 satir
+[F10] K1 ortam: engine/.venv-dxf -> gercek agactan baglandi
+[F10] K1 ortam: engine/dist -> gercek agactan baglandi
+[F10] K1 ortam: engine/pattern-bridge/.venv -> gercek agactan baglandi
+[F10] K1 ortam: engine/tools/node_modules -> gercek agactan baglandi
+[F10] K1 ortam: core/third_party -> gercek agactan baglandi
+[F10] K1 devralinan kirmizi sayisi: once=       7 sonra=       7
+[F10] K2 KIRMIZI -- landing_truth_check faz oncesi commit'te kirmizi dusmuyor (bos test)
+[F10] K3 tamam --       41 yolun hepsi diskte var
+[F10] K4 tamam -- degisen dosyalarda esik oynamasi yok
+[F10] K6 tamam -- var olan testlerin hicbiri degismemis
+[F10] K7 tamam -- yasakli dosya butun olarak acilmamis
+[F10] K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor
+[F10] KAPI KIRMIZI
+
+----- [11] GECE/STOP.md icindeki DUR kayitlari (baslik satirlari)
+1:## AJAN KOSMADI: F0  (15:46)
+6:## DUZELTME NOTU (F0 sefi, 22 Agu)
+12:## AJAN KOSMADI: F0  (15:52)
+17:## KOSU DURDU: F0 iki kez kosmadi (15:52)
+18:## AJAN KOSMADI: F6  (16:26)
+23:## AJAN KOSMADI: F9  (16:57)
+28:## KAPI KIRMIZI: F9  (17:08)
+49:## AJAN KOSMADI: F10  (17:59)
+54:## KAPI KIRMIZI: F10  (18:09)
+
+===== KURTARMA DENEMELERI =====
+----- [12] git fsck --lost-found --unreachable --dangling
+unreachable tree bc03362109fea8c80efc6b3d6c0ed1ac2bd4be1b
+unreachable commit dd05f49bce0f6b996a9901ab2996788ec0551147
+unreachable commit 18081a87a98e5fcdb9298919e6b2189ef523aebf
+unreachable tree 5f0be7bcbd85d2b6e4af9adef7ec202ecb9a309d
+unreachable tree e80c85b17cad3e772aff3dfa329ab7c9896d815e
+unreachable blob 490dc70782ad6d98dcfcf112eee703e0419e53ab
+unreachable tree 6d11ec7da38c522d87330a3c27d22a072b390780
+unreachable commit 0b12adff2a77706f12c8439793eca852211351f1
+unreachable tree b01415e8002a7f96d5f087f4608980b4b0492126
+unreachable commit fb1445caef55d7c6f37faa17cf91930d1d71303d
+unreachable commit 4115358bef0d98013010569b916dfe935ff33f73
+unreachable commit e517642c0d7f0c0a9dc0e7faae50d804c17a3f8d
+unreachable tree 152061e7a59bea1ed45bc565bef3758a753cfe9b
+unreachable tree 142010738ea08981742b95fe03418e7eb8eabf10
+unreachable commit 18209f0f51ba7fb2c43a7c6b054a4f1d7dc93ba4
+unreachable commit 2320783c11e62db47050cc49dfe6c0fa316830f3
+unreachable tree 62205381cd1ff96b71426dda2d6bf2bfee0e8b90
+unreachable blob e222cc07f0a65cde768a3b433479628127bcd0b7
+unreachable tree 7c25aaa939b5e4356f02c9c3665630bc1366369e
+unreachable tree 0e269339068090001c3aa063548f891f2157f0dd
+unreachable blob f52919dd3f04ecea2476f13039dc93cf04de383a
+unreachable commit e92a2b3859c3f937cc41deb404021022373868f6
+unreachable tree 392b0828c5f2b4d36a43fd75ccfdc15cfce7d115
+unreachable tree be2d1c64e8277858c826d9719cb68f70f710a247
+unreachable commit c42d262b34aa10ab0cb1037547ac18d655689fa8
+unreachable tree a931934291cec6a2ee27b6df08130c5879c1b3b4
+unreachable tree 1a3302eab5e3ce261e95efd16bebd276a6294b1a
+unreachable commit 4c330a72f8ffbdd38dc9ca2c871e89c8520c1d77
+unreachable tree 7b3387b66dd6289b085585bbf7a7acd48baad33a
+unreachable tree a23308b77df0b29c3bbc38fbc62d2ee6f345a2a6
+unreachable tree e73cf212ad0ea0c0e6d0714c7829fe5c404b71dd
+unreachable tree 483d26e5c697f23f61b07c474fff5f55854fb692
+unreachable tree 0f41a8a9d69c7c7fad8423c8a0634cf1c14ca248
+unreachable tree 4a41fbfac42dbd10dbb75485efe75e31d4fec6ef
+unreachable tree 294258ef46f4faf4d3fbfcb9c72cb49c66acb3f4
+unreachable blob 5c44e5b895322528fd1160c86205b2c2f574d204
+unreachable blob 2246ff7ecc17ddf0450f2fc8d045d92bd151ae6d
+unreachable tree e54808c93a2028d193236bd3a76013e5d48b117b
+unreachable tree f34d9b677d6a6705da9273d3e8ad007a9af0d17f
+unreachable commit 0e507dac6bc1c005631f8131590977ea8d90358e
+unreachable tree e9520e1fc551a2ffae7e3aa43032304926a28b7b
+unreachable tree bd53a621bd73f73c46a9b2b8522fbb667dbbab9e
+unreachable tree bb55fd97f7c1ee7db47f43ab1a91f2d364be4ae4
+unreachable commit 1f5871546380a6bba98049d6a81367e5f02c5532
+unreachable tree 6e59d5e9098b4c2adadad809979c77a0a626198a
+unreachable tree 715a98864a914112ef74f5912fcfb1da2172b7b2
+unreachable tree 735efbc7fe2a5225fd49e27ad43e4dca4b959254
+unreachable blob 646238cdbe5706f5abee192ba75637c11bdd43ec
+unreachable blob 9165094e087345110d5d39778643d0b9ec7f229a
+unreachable tree 396bd34a5f3a735e7d5506dd2cec63e34954165e
+unreachable tree 406b1fa977424267ecb1301caa210221d997b3d8
+unreachable blob 436bc3ddea19c724b9d3e20f6953838137569d9e
+unreachable commit 836b7a9cf765a91bef5738576db533bae1ae407a
+unreachable commit 9d7433c9c81d15c7c04d4d210b3167bb4411a4bf
+unreachable blob f4756fc7790cc22b96938ff0468222f695c186a9
+unreachable blob be7844d81aa2b84a104440c0f6118908a6375803
+unreachable tree f6789bb866b69bca46f039928d9f6fd5b390d533
+unreachable blob 8979fc5f6c1b98df492175632d5f9f3ca50db65e
+unreachable tree 357bb26fe0a87023bc5a1851077f68310f189d8a
+unreachable tree 1f7cb35f18e385fa160f652539824e53cf57e9e6
+(fsck exit=0)
+
+----- [13] ls -la .git/lost-found/
+total 0
+drwxr-xr-x@  4 damummyphus  staff  128 17 Ağu 06:21 .
+drwxr-xr-x@ 17 damummyphus  staff  544 22 Ağu 18:15 ..
+drwxr-xr-x@ 16 damummyphus  staff  512 17 Ağu 06:21 commit
+drwxr-xr-x@  4 damummyphus  staff  128 17 Ağu 06:21 other
+.git/lost-found/commit/:
+total 112
+drwxr-xr-x@ 16 damummyphus  staff  512 17 Ağu 06:21 .
+drwxr-xr-x@  4 damummyphus  staff  128 17 Ağu 06:21 ..
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 0b12adff2a77706f12c8439793eca852211351f1
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 18081a87a98e5fcdb9298919e6b2189ef523aebf
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 1f5871546380a6bba98049d6a81367e5f02c5532
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 2ee39cbae747333b7daa9670b7de1daaa1063a7b
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 8dce008f8f310098dd7d3693255b6c4245ff1af1
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 91b7d8b3d598c83ee129590a917153e5f4f3b710
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 9bef2959114f4cc3e973e4754608d5e3cfa5ae36
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 b1851f2c1bfa2e5615c581267e39c4e99fbd2602
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 dabc9bb8bf8a630dfff72847cd30b0ef8caec044
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 e92a2b3859c3f937cc41deb404021022373868f6
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 eeaebe314fd42cc3c10e43f3e05d609354a9e918
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 f69a3a940cda2f300c2c605158e0ccc1e4dd6793
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 f6b038f7ab72afa63a8a425b82c9d41054757bfb
+-rw-r--r--@  1 damummyphus  staff   41 17 Ağu 06:21 fb1445caef55d7c6f37faa17cf91930d1d71303d
+
+.git/lost-found/other/:
+total 16
+drwxr-xr-x@ 4 damummyphus  staff  128 17 Ağu 06:21 .
+drwxr-xr-x@ 4 damummyphus  staff  128 17 Ağu 06:21 ..
+-rw-r--r--@ 1 damummyphus  staff   41 17 Ağu 06:21 0e269339068090001c3aa063548f891f2157f0dd
+-rw-r--r--@ 1 damummyphus  staff   41 17 Ağu 06:21 0eb4476535676e24616f2801a47e3fbf50c08ba5
+
+----- [14] git stash list (ICINE BAKILMADI)
+stash@{0}: On main: onceki oturum artigi
+stash@{1}: On main: wip pen revision _engine-full
+
+----- [15] editor/OS yedegi
+(eval):16: no matches found: engine/src/*.orig
+
+----- [16] /tmp altinda kapi/gece worktree kalintisi
+(eval):19: no matches found: /private/tmp/*kapi*
+
+----- [17] git reflog -20
+962407d HEAD@{0}: commit: KOSU.md: v3 sets its own zero — v2's closed-phase line is not inherited; queue gets tonight's decisions
+35b000b HEAD@{1}: checkout: moving from gece/k8-kanit to main
+06a1769 HEAD@{2}: commit (amend): docs(FTEST): k8 kanit commit'i
+4dc8dc6 HEAD@{3}: commit: docs(FTEST): k8 kanit commit'i
+35b000b HEAD@{4}: checkout: moving from main to gece/k8-kanit
+35b000b HEAD@{5}: commit: gate commit: v3 harness — K8 katip gate, K9 generated-file ratchet, v3 phase renumbering
+0781886 HEAD@{6}: checkout: moving from gece/F1-reddedildi to main
+c7c3566 HEAD@{7}: checkout: moving from main to gece/F1-reddedildi
+0781886 HEAD@{8}: commit: gece harness: four measured defects from the first real run — mutation killed by its own log, K2 blind to untracked tests, per-phase build dir, API failure mistaken for a red phase
+b874e87 HEAD@{9}: reset: moving to b874e87c91e00730419f1aae65a949cd56b3f450
+5d4ad03 HEAD@{10}: commit: F1: F1 — İKİ DOĞRUYU TEKE İNDİR: flat kalıptan türüyor
+b874e87 HEAD@{11}: commit: gece.sh: exclude its own GECE/log output from the clean-tree gate
+c62c64f HEAD@{12}: commit: kapi: pin TMP to the physical path — /tmp symlink made 6 .mjs suites skip silently and pass vacuously; baseline is 7 reds of 96
+bf178aa HEAD@{13}: commit: RULES 9: the red SET must not grow, not 'all green'; give phase agents ENV.md too
+e41663d HEAD@{14}: reset: moving to HEAD
+e41663d HEAD@{15}: commit: GECE harness verified by running it: fix K1 baseline (16 phantom reds from missing ignored artifacts), fix manifest stdin, prove the mutation gate turns red
+9cdfdd5 HEAD@{16}: commit: GECE harness: sealed gate K1-K7, mutation prover, phase runner — no phase opened
+66e2732 HEAD@{17}: reset: moving to HEAD
+66e2732 HEAD@{18}: reset: moving to HEAD~1
+0cc70f5 HEAD@{19}: commit: GECE harness: sealed gate, mutation prover, phase runner — no phase opened
+
+----- [18] /tmp kalintilari (glob ayri ayri, hatasiz)
+  pattern /private/tmp/*gece*:
+    ls: /private/tmp/*gece*: No such file or directory
+  pattern /private/tmp/*kapi*:
+    ls: /private/tmp/*kapi*: No such file or directory
+  pattern /private/tmp/stitchu*:
+    ls: /private/tmp/stitchu*: No such file or directory
+  pattern /private/tmp/*mutasyon*:
+    ls: /private/tmp/*mutasyon*: No such file or directory
+
+----- [19] kapi.sh gecici agac kullaniyor mu (TMP/worktree/rsync/cp -a)
+22:# TMP FIZIKSEL yol olmak ZORUNDA. macOS'ta /tmp -> /private/tmp bir symlink'tir ve
+27:# CIKTISIZ exit 0. Yani taban worktree'si gercekten daha YESIL gorunuyordu ve
+30:TMP=$(mkdir -p /tmp/stitchu-gece && cd /tmp/stitchu-gece && pwd -P)
+31:mkdir -p "$TMP" GECE/log
+44:  ( cd "$B" && ctest ) >"$TMP/$F.ctest.$(basename "$B").txt" 2>&1
+52:  cmake -S "$S/engine" -B "$B" -DCMAKE_BUILD_TYPE=Release >"$TMP/$F.cmake.log" 2>&1 \
+54:  cmake --build "$B" -j >"$TMP/$F.build.log" 2>&1 \
+94:# "before" olcumu ayri bir git worktree'de yapilir -- calisma agacina
+96:WT=$TMP/wt-$F
+100:# worktree yolunu tutuyor -> "source directory does not match" -> configure
+103:BONCE=$TMP/b-once-$F-$(git rev-parse --short "$ONCE")
+104:BNOW=$TMP/b-now-$F
+107:git worktree remove --force "$WT" >/dev/null 2>&1
+108:if ! git worktree add --detach -f "$WT" "$ONCE" >"$TMP/$F.worktree.log" 2>&1; then
+109:  kirmizi "K1 KIRMIZI -- '$ONCE' icin worktree acilamadi"
+110:  cat "$TMP/$F.worktree.log"
+129:  git worktree remove --force "$WT" >/dev/null 2>&1
+137:    tail -30 "$TMP/$F.build.log" 2>/dev/null
+175:    | sed 's/[.,)]*$//' | sort -u > "$TMP/$F.yollar"
+176:  : > "$TMP/$F.k3"
+177:  while read -r P; do [ -e "$P" ] || echo "yok: $P" >> "$TMP/$F.k3"; done < "$TMP/$F.yollar"
+178:  if [ -s "$TMP/$F.k3" ]; then
+179:    kirmizi "K3 KIRMIZI -- raporda gecen yollar diskte yok:"; cat "$TMP/$F.k3"
+181:    say "K3 tamam -- $(wc -l < "$TMP/$F.yollar") yolun hepsi diskte var"
+195:     | grep -E 'tolerance|TOLERANCE|Tolerance|threshold|THRESHOLD|EPS|epsilon|0\.79375|kapi|gate' > "$TMP/$F.k4"; then
+196:    kirmizi "K4 KIRMIZI -- esik sabiti mevcut dosyada oynamis:"; cat "$TMP/$F.k4"
+210:  sha256sum -c GECE/kapi.sha >"$TMP/$F.sha" 2>&1 || { kirmizi "K5 KIRMIZI -- kapi muhru kirik"; cat "$TMP/$F.sha"; }
+228:  if grep -nE '"file_path": *"[^"]*(HEDEF\.md|DAMLA-KUYRUK\.md|devlog\.md|linkedin\.md|ANAYASA\.md)"' "$LOG" > "$TMP/$F.k7"; then
+229:    kirmizi "K7 KIRMIZI -- yasakli dosya butun olarak okunmus:"; head -5 "$TMP/$F.k7"
+
+----- [20] BUGUN 15:20 SONRASI olusan loose git objesi var mi
+  sayi:        0
+
+----- [21] .git/index ve ORIG_HEAD mtime
+-rw-r--r--@ 1 damummyphus  staff      41 21 Ağu 16:13:32 2026 .git/ORIG_HEAD
+-rw-r--r--@ 1 damummyphus  staff  135918 22 Ağu 18:10:09 2026 .git/index
+
+----- [22] unreachable objelerin en yenisi (tarih)
+};
+};
+};
+};
+};
+};
+
+----- [23] /tmp/stitchu-gece gercekten var mi (kapi.sh:30 TMP)
+  TMPDIR=/var/folders/5b/s4fb775925l775xmnt2zt_mr0000gn/T/
+drwxr-xr-x@ 31 damummyphus  wheel  992 22 Ağu 18:09 /private/tmp/stitchu-gece
+drwxr-xr-x@ 31 damummyphus  wheel  992 22 Ağu 18:09 /tmp/stitchu-gece
+total 221400
+drwxrwxrwt  574 root         wheel     18368 22 Ağu 18:16 .
+drwxr-xr-x    6 root         wheel       192 21 Ağu 23:09 ..
+srwxrwxrwx@   1 damummyphus  wheel         0 22 Ağu 18:15 .s.PGSQL.5432
+-rw-------@   1 damummyphus  wheel        57 22 Ağu 18:15 .s.PGSQL.5432.lock
+-rw-r--r--@   1 damummyphus  wheel     77548 22 Ağu 17:53 F10D.index.orig
+-rw-r--r--@   1 damummyphus  wheel     22826 22 Ağu 00:49 a.json
+-rw-r--r--@   1 damummyphus  wheel    132768 22 Ağu 00:49 a1.html
+-rw-r--r--@   1 damummyphus  wheel    174985 22 Ağu 00:50 a2.html
+-rw-r--r--@   1 damummyphus  wheel    377547 22 Ağu 00:51 aa.html
+-rw-r--r--@   1 damummyphus  wheel     39930 22 Ağu 00:46 ab.html
+-rw-r--r--@   1 damummyphus  wheel      5480 22 Ağu 00:49 acm.html
+-rw-r--r--@   1 damummyphus  wheel    120072 22 Ağu 00:50 ah.java
+-rw-r--r--@   1 damummyphus  wheel      3451 22 Ağu 15:26 all_html.txt
+-rw-r--r--@   1 damummyphus  wheel    170588 22 Ağu 00:47 ao.html
+-rw-r--r--@   1 damummyphus  wheel    160871 22 Ağu 00:46 art.html
+-rw-r--r--@   1 damummyphus  wheel    162359 22 Ağu 15:25 atolye_nolineCT.html
+-rw-r--r--@   1 damummyphus  wheel        14 22 Ağu 00:51 b.rst
+-rw-r--r--@   1 damummyphus  wheel    123061 22 Ağu 00:49 battery_oss.html
+-rw-r--r--@   1 damummyphus  wheel    123061 22 Ağu 00:49 battery_oss2.html
+-rw-r--r--@   1 damummyphus  wheel   1889508 22 Ağu 00:49 bench.html
+-rw-r--r--@   1 damummyphus  wheel   1068016 22 Ağu 00:49 benchsvc.html
+-rw-r--r--@   1 damummyphus  wheel   1581888 22 Ağu 00:50 blog.html
+-rw-r--r--@   1 damummyphus  wheel    137928 22 Ağu 00:50 bm100.html
+-rw-r--r--@   1 damummyphus  wheel     36475 22 Ağu 00:51 bmblog.txt
+-rw-r--r--@   1 damummyphus  wheel   1538467 22 Ağu 00:51 bmsm.xml
+-rw-r--r--@   1 damummyphus  wheel      6003 22 Ağu 00:50 bt.html
+-rw-r--r--@   1 damummyphus  wheel   6507700 22 Ağu 00:51 c3.pdf
+-rw-r--r--@   1 damummyphus  wheel    670249 22 Ağu 00:51 c3.txt
+-rw-r--r--@   1 damummyphus  wheel    501064 22 Ağu 00:49 c_2d5dcd08bb754ee589fde0280c46a698.jpg
+
+----- [24] kapi.sh KAPANIS temizligi: TMP siliniyor mu
+105:rm -rf "$BONCE"
+
+----- [25] gece.sh TMP_KUTUK yolu ve mevcut mu
+ls: /tmp/stitchu-gece/gece-kutuk.txt: No such file or directory
+
+----- [26] build dir kalintisi (derlenmis nesne / kopyalanmis test scripti)
+drwxr-xr-x@ 90 damummyphus  wheel  2880 22 Ağu 15:18 /tmp/stitchu-gece/b-mut
+drwxr-xr-x@ 90 damummyphus  wheel  2880 22 Ağu 18:05 /tmp/stitchu-gece/b-now-F10
+drwxr-xr-x@ 92 damummyphus  wheel  2944 22 Ağu 17:04 /tmp/stitchu-gece/b-now-F9
+drwxr-xr-x@ 90 damummyphus  wheel  2880 22 Ağu 18:01 /tmp/stitchu-gece/b-once-F10-962407d
+drwxr-xr-x@ 90 damummyphus  wheel  2880 22 Ağu 16:59 /tmp/stitchu-gece/b-once-F9-962407d
+drwxr-xr-x@ 96 damummyphus  staff  3072 22 Ağu 18:14 engine/build
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 12:47 engine/build-10c
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 13:29 engine/build-11a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 12:58 engine/build-11c
+drwxr-xr-x@ 10 damummyphus  staff   320 17 Ağu 14:11 engine/build-12a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 13:50 engine/build-12b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 14:35 engine/build-13a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 14:27 engine/build-13b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 15:28 engine/build-14a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 15:25 engine/build-14b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 15:02 engine/build-14c
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 16:04 engine/build-15a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 16:47 engine/build-15b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 16:15 engine/build-15c
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 17:30 engine/build-16a
+drwxr-xr-x@ 89 damummyphus  staff  2848 17 Ağu 17:23 engine/build-16b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 17:11 engine/build-16c
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 17:56 engine/build-17a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 17:53 engine/build-17b
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 18:42 engine/build-18a
+drwxr-xr-x@ 90 damummyphus  staff  2880 17 Ağu 18:50 engine/build-18b
+drwxr-xr-x@  8 damummyphus  staff   256 17 Ağu 05:35 engine/build-8b
+-rwxr-xr-x@  1 damummyphus  staff  4308 28 Tem 13:34 engine/build-wasm.sh
+
+----- [27] unreachable BLOB'larin en yeni dosya mtime'i (.git/objects)
+      37
+20 Ağu 23:09:12 2026
+20 Ağu 23:09:12 2026
+20 Ağu 23:09:12 2026
+20 Ağu 23:09:12 2026
+20 Ağu 23:09:12 2026
+
+===== [28] KURTARMA VEKTORU: kapi.sh'in DIRTY agactan kurdugu build dizinleri =====
+  b-now-F9 (17:04, F9 kapisi ONCESI = F0+F6+F9 isi agactayken)
+  b-now-F10 (18:05, F10 kapisi oncesi)
+
+--- b-now-F9: kayip testlerin izi var mi (CTestTestfile / binary / .o)
+/tmp/stitchu-gece/b-now-F9/CTestTestfile.cmake:15:add_test([=[docs_truth_check]=] "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/docs_truth_check.sh")
+/tmp/stitchu-gece/b-now-F9/CTestTestfile.cmake:16:set_tests_properties([=[docs_truth_check]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;93;add_test;/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;0;")
+/tmp/stitchu-gece/b-now-F9/CTestTestfile.cmake:93:add_test([=[sleeve_armhole_agree_check]=] "/private/tmp/stitchu-gece/b-now-F9/sleeve_armhole_agree_check")
+/tmp/stitchu-gece/b-now-F9/CTestTestfile.cmake:94:set_tests_properties([=[sleeve_armhole_agree_check]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;256;add_test;/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;0;")
+  --- b-now-F10:
+/tmp/stitchu-gece/b-now-F10/CTestTestfile.cmake:199:add_test([=[landing_truth_check]=] "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/landing_truth_check.sh")
+/tmp/stitchu-gece/b-now-F10/CTestTestfile.cmake:200:set_tests_properties([=[landing_truth_check]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;707;add_test;/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;0;")
+
+--- ikisinde de bu adlari tasiyan DOSYA var mi
+/tmp/stitchu-gece/b-now-F9/sleeve_armhole_agree_check
+/tmp/stitchu-gece/b-now-F9/CMakeFiles/sleeve_armhole_agree_check.dir
+/tmp/stitchu-gece/b-now-F9/CMakeFiles/sleeve_armhole_agree_check.dir/tests/sleeve_armhole_agree_check.cpp.o
+/tmp/stitchu-gece/b-now-F9/CMakeFiles/sleeve_armhole_agree_check.dir/tests/sleeve_armhole_agree_check.cpp.o.d
+
+--- /private/tmp/F10D.index.orig (17:53) nedir
+-rw-r--r--@ 1 damummyphus  wheel  77548 22 Ağu 17:53:25 2026 /private/tmp/F10D.index.orig
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  web/index.html ile ayni mi:
+12252166e24b5fadb6c7bcd3ee83d3bae4170f74  /private/tmp/F10D.index.orig
+012f6c72cbc44148cf8f7182427b91d8f15983a8  web/index.html
+
+===== [29] KURTARILAN ARTEFAKTLARIN ICERIGI =====
+--- [29a] sleeve_armhole_agree_check BINARY: DWARF/kaynak var mi
+-rwxr-xr-x@ 1 damummyphus  wheel  553688 22 Ağu 17:04:22 2026 /tmp/stitchu-gece/b-now-F9/sleeve_armhole_agree_check
+/tmp/stitchu-gece/b-now-F9/sleeve_armhole_agree_check:	file format Mach-O arm64
+
+.debug_info contents:
+  -- binary'deki string literalleri (testin ne olctugu):
+h"lx:B@S 
+Gathered
+Princess
+size chart has 
+: side panel command layout (
+: panel command layout (
+: expected bodice panel count
+: a sleeve piece was emitted
+%-5s %-8s %-6s %-9s %13.6f %10.6f %10.6f %10.6f %10.6f
+: drawn armhole vs declared 
+: drawn cap ease 
+ vs declared 
+: drawn arc excess 
+ vs declared spread 
+cells=%d
+worst H1 = %.6f mm   (%s)   limit %.5f mm
+worst H2 = %.6f      (%s)   limit %.4f
+worst H3 = %.6f      (%s)   limit %.4f
+%s (%d failures)
+sleeve_armhole_agree_check FAILED
+sleeve_armhole_agree_check OK
+basic_string
+  [FAIL] %s
+size  shaping  fabric  cap       drawn_armhole  declared   H1(mm)     H2(dev)    H3(dev)
+Bodice Back
+cut 1 on fold
+Bodice Front
+Bias binding (halter)
+ strip(s) 
+ mm ON THE BIAS (45
+ to the grain), join end to end (total 
+ mm), trim the excess as you bind
+Bias binding (
+ mm = edge 
+ mm + overlap), press in half, wrap the edge and trim the excess
+Front Neck Facing
+Back Neck Facing
+Bodice Center 
+Bodice Side 
+Waistband
+
+--- [29b] .o.d bagimlilik dosyasi (hangi header'lari kullaniyordu)
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/sleeve_armhole_agree_check.cpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/garment.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/bodice.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/geometry.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/constants.gen.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/measurements.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/contract.gen.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/sizechart.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/shaperatios.gen.hpp
+/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/../src/sleeve.hpp
+
+--- [29c] CMakeLists.txt farklari: b-now-F9/F10 hangi test hedeflerini biliyordu, bugun agacta hangileri yok
+  [b-now-F9]
+      98
+  [b-now-F10]
+      97
+  once (962407d) test sayisi:       96
+  F9 agacinda VAR, 962407d'de YOK olan testler:
+comm: /tmp/f11b.b-now-F9: No such file or directory
+  F10 agacinda VAR, 962407d'de YOK olan testler:
+comm: /tmp/f11b.b-now-F10: No such file or directory
+
+--- [29c-DUZELTME] yeni test adlari
+docs_truth_check
+sleeve_armhole_agree_check
+  (F9)
+landing_truth_check
+  (F10)
+
+===== [30] KURTARILAN BINARY KOSTURULDU (izole /tmp scratch, repo'ya dokunmadan)
+size  shaping  fabric  cap       drawn_armhole  declared   H1(mm)     H2(dev)    H3(dev)
+EU34  Dart     Woven  Plain        353.206270 353.206270   0.000000   0.000514   0.000000
+EU34  Dart     Woven  Gathered     353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Woven  Puffed       353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Plain        348.235270 348.235270   0.000000   0.001191   0.000000
+EU34  Dart     Knit   Gathered     348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Puffed       348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Princess Woven  Plain        353.208479 353.206270   0.002210   0.000508   0.000000
+EU34  Princess Woven  Gathered     353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Woven  Puffed       353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Knit   Plain        348.236243 348.235270   0.000973   0.001194   0.000000
+EU34  Princess Knit   Gathered     348.236243 348.235270   0.000973   0.000000   0.000000
+EU34  Princess Knit   Puffed       348.236243 348.235270   0.000973   0.000000   0.000000
+EU36  Dart     Woven  Plain        362.592279 362.592279   0.000000   0.001287   0.000000
+EU36  Dart     Woven  Gathered     362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Woven  Puffed       362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Plain        355.720285 355.720285   0.000000   0.000495   0.000000
+EU36  Dart     Knit   Gathered     355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Puffed       355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Princess Woven  Plain        362.595753 362.592279   0.003474   0.001297   0.000000
+EU36  Princess Woven  Gathered     362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Woven  Puffed       362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Knit   Plain        355.722043 355.720285   0.001758   0.000500   0.000000
+EU36  Princess Knit   Gathered     355.722043 355.720285   0.001758   0.000000   0.000000
+EU36  Princess Knit   Puffed       355.722043 355.720285   0.001758   0.000000   0.000000
+EU38  Dart     Woven  Plain        373.055575 373.055575   0.000000   0.000559   0.000000
+EU38  Dart     Woven  Gathered     373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Woven  Puffed       373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Plain        364.245656 364.245656   0.000000   0.000963   0.000000
+EU38  Dart     Knit   Gathered     364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Puffed       364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Princess Woven  Plain        373.060573 373.055575   0.004998   0.000545   0.000000
+EU38  Princess Woven  Gathered     373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Woven  Puffed       373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Knit   Plain        364.248467 364.245656   0.002811   0.000955   0.000000
+EU38  Princess Knit   Gathered     364.248467 364.245656   0.002811   0.000000   0.000000
+EU38  Princess Knit   Puffed       364.248467 364.245656   0.002811   0.000000   0.000000
+EU40  Dart     Woven  Plain        383.758019 383.758019   0.000000   0.001036   0.000000
+EU40  Dart     Woven  Gathered     383.758019 383.758019   0.000000   0.000000   0.000000
+EU40  Dart     Woven  Puffed       383.758019 383.758019   0.000000   0.000000   0.000000
+  (exit=)
+  scratch'e yazilan dosyalar:
+total 0
+drwxr-xr-x@   2 damummyphus  wheel     64 22 Ağu 18:17 .
+drwxrwxrwt  580 root         wheel  18560 22 Ağu 18:17 ..
+
+--- [29c-DUZELTME] yeni test adlari (b-now vs b-once/962407d)
+  F9 agacinda VAR, 962407d'de YOK:
+docs_truth_check
+sleeve_armhole_agree_check
+  F10 agacinda VAR, 962407d'de YOK:
+landing_truth_check
+
+===== [30] KURTARILAN BINARY KOSTURULDU (izole /tmp/f11b-scratch, repo'ya dokunulmadi)
+size  shaping  fabric  cap       drawn_armhole  declared   H1(mm)     H2(dev)    H3(dev)
+EU34  Dart     Woven  Plain        353.206270 353.206270   0.000000   0.000514   0.000000
+EU34  Dart     Woven  Gathered     353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Woven  Puffed       353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Plain        348.235270 348.235270   0.000000   0.001191   0.000000
+EU34  Dart     Knit   Gathered     348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Puffed       348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Princess Woven  Plain        353.208479 353.206270   0.002210   0.000508   0.000000
+EU34  Princess Woven  Gathered     353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Woven  Puffed       353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Knit   Plain        348.236243 348.235270   0.000973   0.001194   0.000000
+EU34  Princess Knit   Gathered     348.236243 348.235270   0.000973   0.000000   0.000000
+EU34  Princess Knit   Puffed       348.236243 348.235270   0.000973   0.000000   0.000000
+EU36  Dart     Woven  Plain        362.592279 362.592279   0.000000   0.001287   0.000000
+EU36  Dart     Woven  Gathered     362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Woven  Puffed       362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Plain        355.720285 355.720285   0.000000   0.000495   0.000000
+EU36  Dart     Knit   Gathered     355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Puffed       355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Princess Woven  Plain        362.595753 362.592279   0.003474   0.001297   0.000000
+EU36  Princess Woven  Gathered     362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Woven  Puffed       362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Knit   Plain        355.722043 355.720285   0.001758   0.000500   0.000000
+EU36  Princess Knit   Gathered     355.722043 355.720285   0.001758   0.000000   0.000000
+EU36  Princess Knit   Puffed       355.722043 355.720285   0.001758   0.000000   0.000000
+EU38  Dart     Woven  Plain        373.055575 373.055575   0.000000   0.000559   0.000000
+EU38  Dart     Woven  Gathered     373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Woven  Puffed       373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Plain        364.245656 364.245656   0.000000   0.000963   0.000000
+EU38  Dart     Knit   Gathered     364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Puffed       364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Princess Woven  Plain        373.060573 373.055575   0.004998   0.000545   0.000000
+EU38  Princess Woven  Gathered     373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Woven  Puffed       373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Knit   Plain        364.248467 364.245656   0.002811   0.000955   0.000000
+EU38  Princess Knit   Gathered     364.248467 364.245656   0.002811   0.000000   0.000000
+EU38  Princess Knit   Puffed       364.248467 364.245656   0.002811   0.000000   0.000000
+EU40  Dart     Woven  Plain        383.758019 383.758019   0.000000   0.001036   0.000000
+EU40  Dart     Woven  Gathered     383.758019 383.758019   0.000000   0.000000   0.000000
+EU40  Dart     Woven  Puffed       383.758019 383.758019   0.000000   0.000000   0.000000
+EU40  Dart     Knit   Plain        373.139351 373.139351   0.000000   0.000054   0.000000
+EU40  Dart     Knit   Gathered     373.139351 373.139351   0.000000   0.000000   0.000000
+EU40  Dart     Knit   Puffed       373.139351 373.139351   0.000000   0.000000   0.000000
+EU40  Princess Woven  Plain        383.764594 383.758019   0.006575   0.001054   0.000000
+EU40  Princess Woven  Gathered     383.764594 383.758019   0.006575   0.000000   0.000000
+  (binary exit=)
+  scratch'e yazilan dosyalar:
+total 0
+drwxr-xr-x@   2 damummyphus  wheel     64 22 Ağu 18:17 .
+drwxrwxrwt  581 root         wheel  18592 22 Ağu 18:17 ..
+
+--- [30b] binary OZET + exit
+EXIT=0
+satir=     103
+EU48  Princess Knit   Gathered     437.659725 437.648519   0.011206   0.000000   0.000000
+EU48  Princess Knit   Puffed       437.659725 437.648519   0.011206   0.000000   0.000000
+
+cells=96
+worst H1 = 0.015479 mm   (EU48 Princess Woven Plain)   limit 0.79375 mm
+worst H2 = 0.001297      (EU36 Princess Woven Plain)   limit 0.0015
+worst H3 = 0.000000      (EU42 Dart Knit Puffed)   limit 0.0200
+sleeve_armhole_agree_check OK (0 failures)
+
+===== [31] /tmp/stitchu-gece icindeki DIGER kurtarilabilir kutukler
+total 280
+-rw-r--r--@  1 damummyphus  wheel  17073 22 Ağu 18:05:59 2026 F10.build.log
+-rw-r--r--@  1 damummyphus  wheel    401 22 Ağu 18:05:30 2026 F10.cmake.log
+-rw-r--r--@  1 damummyphus  wheel  10667 22 Ağu 18:09:49 2026 F10.ctest.b-now-F10.txt
+-rw-r--r--@  1 damummyphus  wheel  10577 22 Ağu 18:05:29 2026 F10.ctest.b-once-F10-962407d.txt
+-rw-r--r--@  1 damummyphus  wheel      0 22 Ağu 18:09:49 2026 F10.k3
+-rw-r--r--@  1 damummyphus  wheel      0 22 Ağu 18:09:49 2026 F10.k4
+-rw-r--r--@  1 damummyphus  wheel      0 22 Ağu 18:09:49 2026 F10.k7
+-rw-r--r--@  1 damummyphus  wheel     38 22 Ağu 18:09:49 2026 F10.sha
+-rw-r--r--@  1 damummyphus  wheel    172 22 Ağu 18:00:56 2026 F10.worktree.log
+-rw-r--r--@  1 damummyphus  wheel    963 22 Ağu 18:09:49 2026 F10.yollar
+-rw-r--r--@  1 damummyphus  wheel  17449 22 Ağu 17:04:24 2026 F9.build.log
+-rw-r--r--@  1 damummyphus  wheel    400 22 Ağu 17:04:00 2026 F9.cmake.log
+-rw-r--r--@  1 damummyphus  wheel  10777 22 Ağu 17:08:19 2026 F9.ctest.b-now-F9.txt
+-rw-r--r--@  1 damummyphus  wheel  10575 22 Ağu 17:03:59 2026 F9.ctest.b-once-F9-962407d.txt
+-rw-r--r--@  1 damummyphus  wheel     71 22 Ağu 17:08:19 2026 F9.k3
+-rw-r--r--@  1 damummyphus  wheel    162 22 Ağu 17:08:19 2026 F9.k4
+-rw-r--r--@  1 damummyphus  wheel      0 22 Ağu 17:08:19 2026 F9.k7
+-rw-r--r--@  1 damummyphus  wheel     38 22 Ağu 17:08:19 2026 F9.sha
+-rw-r--r--@  1 damummyphus  wheel    172 22 Ağu 16:59:27 2026 F9.worktree.log
+-rw-r--r--@  1 damummyphus  wheel    691 22 Ağu 17:08:19 2026 F9.yollar
+drwxr-xr-x@ 90 damummyphus  wheel   2880 22 Ağu 15:18:37 2026 b-mut
+drwxr-xr-x@ 90 damummyphus  wheel   2880 22 Ağu 18:05:59 2026 b-now-F10
+drwxr-xr-x@ 92 damummyphus  wheel   2944 22 Ağu 17:04:24 2026 b-now-F9
+drwxr-xr-x@ 90 damummyphus  wheel   2880 22 Ağu 18:01:30 2026 b-once-F10-962407d
+drwxr-xr-x@ 90 damummyphus  wheel   2880 22 Ağu 16:59:59 2026 b-once-F9-962407d
+-rw-r--r--@  1 damummyphus  wheel   2817 22 Ağu 15:18:40 2026 mut.build.log
+-rw-r--r--@  1 damummyphus  wheel    397 22 Ağu 15:18:04 2026 mut.cmake.log
+-rw-r--r--@  1 damummyphus  wheel    871 22 Ağu 15:18:39 2026 mut.generated_ratchet_check.txt
+-rw-r--r--@  1 damummyphus  wheel      0 22 Ağu 15:18:38 2026 mut.uretilmis-dosya-elle.komut.txt
+
+--- [31b] F9/F10 ctest kutukleri: kirli agacta hangi testler kosmus
+  == /tmp/stitchu-gece/F9.ctest.b-now-F9.txt
+
+The following tests FAILED:
+	  6 - style_check (Failed)
+	 13 - sizechart_source_check (Failed)
+	 73 - bugra_bridge_check (Failed)
+	 80 - contract_check (Failed)
+	 84 - preview_truth_check (Failed)
+	 85 - figure_check (Failed)
+	 91 - h10_gate_check (Failed)
+Errors while running CTest
+Output from these tests are in: /private/tmp/stitchu-gece/b-now-F9/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+  == /tmp/stitchu-gece/F10.ctest.b-now-F10.txt
+
+The following tests FAILED:
+	  5 - style_check (Failed)
+	 12 - sizechart_source_check (Failed)
+	 71 - bugra_bridge_check (Failed)
+	 78 - contract_check (Failed)
+	 82 - preview_truth_check (Failed)
+	 83 - figure_check (Failed)
+	 89 - h10_gate_check (Failed)
+Errors while running CTest
+Output from these tests are in: /private/tmp/stitchu-gece/b-now-F10/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+
+===== [32] LastTest.log: silinen .sh testlerinin TAM CIKTISI kurtarildi mi
+-rw-r--r--@ 1 damummyphus  wheel  325538 22 Ağu 18:09:49 2026 /tmp/stitchu-gece/b-now-F10/Testing/Temporary/LastTest.log
+-rw-r--r--@ 1 damummyphus  wheel  334675 22 Ağu 17:08:19 2026 /tmp/stitchu-gece/b-now-F9/Testing/Temporary/LastTest.log
+
+--- [32a] docs_truth_check ciktisi (b-now-F9 LastTest.log)
+5/98 Testing: docs_truth_check
+5/98 Test: docs_truth_check
+Command: "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/docs_truth_check.sh"
+Directory: /private/tmp/stitchu-gece/b-now-F9
+"docs_truth_check" start time: Aug 22 17:04 +03
+Output:
+----------------------------------------------------------
+docs truth: 0 standing-claim violation(s) | 0 unwitnessed numeric claim(s)
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"docs_truth_check" end time: Aug 22 17:04 +03
+"docs_truth_check" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/98 Testing: style_check
+6/98 Test: style_check
+Command: "/opt/homebrew/bin/node" "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/style_check.mjs"
+Directory: /private/tmp/stitchu-gece/b-now-F9
+"style_check" start time: Aug 22 17:04 +03
+Output:
+----------------------------------------------------------
+style_check FAIL: pinlenmiş stil 0 — /Users/damummyphus/damla_projects_2026/stitchu/engine/STYLE-PIN yok/boş.
+  Bu kapı bugüne kadar YEŞİL basıyordu ve hiçbir kalemi tutmuyordu (T17).
+  Kalem yasası pinsiz koşamaz; sessiz skip yasak.
+  Tek dürüst çıkış: Damla kalemi onaylar -> scripts/repin-style.sh
+  -> engine/STYLE-PIN/<style>.svg + engine/STYLE-PIN/STYLE-PIN.md defter girdisi.
+  scripts/repin-style.sh YAZILDI (TUR 9). Onay ÖLÇÜMDEN değil KARARDAN gelir:
+    script render'ı açar, Damla terminale "bu benim kalemim" yazar, pin donar.
+    Onay yoksa tek bayt yazılmaz; boru hattından beslenen onay reddedilir.
+    Durum: scripts/repin-style.sh --status
+  Bu testin kendi çıktısını pinlemesi (regen-vs-regen) kanıt DEĞİLDİR.
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Failed.
+
+--- [32b] landing_truth_check ciktisi (b-now-F10 LastTest.log)
+97/97 Testing: landing_truth_check
+97/97 Test: landing_truth_check
+Command: "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/landing_truth_check.sh"
+Directory: /private/tmp/stitchu-gece/b-now-F10
+"landing_truth_check" start time: Aug 22 18:09 +03
+Output:
+----------------------------------------------------------
+----
+rule A: 1 number-carrying claims on the page, 16 declared in web/landing-claims.json, 0 violation(s)
+  claims seen: "EU38"
+rule B: 4 data-vizyon element(s), 0 violation(s)
+rule D: 16 proof-claims on the page, 15 declared, 0 violation(s)
+rule C: site-health.mjs exit 0, 0 violation(s)
+====
+landing_truth_check: A=0  B=0  C=0  D=0
+HUKUM: YESIL
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"landing_truth_check" end time: Aug 22 18:09 +03
+"landing_truth_check" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Aug 22 18:09 +03
+
+===== [33] DUZELTME ADAYI SAHTE FAZLA KOSTURULDU (izole local clone, ana repo'ya dokunulmadi)
+  clone HEAD=962407d
+  faz sonrasi kirli:
+ M engine/src/sleeve.cpp
+?? GECE/FTEST.md
+?? GECE/log/gece.txt
+?? engine/tests/sahte_yeni_test.sh
+?? knowledge/sahte-not.md
+
+--- ONERILEN DUR() (kapi kirmizisi kolu) kosuluyor:
+  snapshot commit=76302cf
+
+--- SONUC OLCUMU
+  HEAD == ONCE ?  EVET
+  main temiz mi:  ''
+  agacta sahte test var mi: YOK-dogru
+  sleeve.cpp geri alindi mi:        0 satir diff
+  GECE/FTEST.md tutanak sag mi: SAG
+  GECE/log/gece.txt sag mi:     SAG (kutuk-canli)
+  DALDA is duruyor mu -> git show --stat gece/FTEST-reddedildi:
+76302cf REDDEDILDI(kapi) FTEST
+ engine/src/sleeve.cpp           | 1 +
+ engine/tests/sahte_yeni_test.sh | 1 +
+ knowledge/sahte-not.md          | 1 +
+ 3 files changed, 3 insertions(+)
+  daldan geri alinabilir mi (git checkout gece/FTEST-reddedildi -- engine/tests/sahte_yeni_test.sh):
+    GERI GELDI: #!/bin/sh
+
+===== [34] KONTROL: MEVCUT gece.sh:82-95 ayni sahte fazda ne yapiyor
+  HEAD != ONCE ?  HAYIR-ELSE-DALINA-GIRER
+  sahte test: SILINDI
+  sleeve.cpp diff:        0 satir (0 = geri alindi)
+  acilan dal: ''  (bos = dal ACILMADI)
+  git nesnesi kaldi mi:     1557 loose obje
+  GECE/FTEST.md: SAG
+
+===== [35] F10'un uretim artefaktlari diskte mi
+  YOK: web/landing-claims.json
+  YOK: engine/STYLE-PIN
+  VAR: GECE/log/F10D.site-health.txt
+
+===== SON: kurtarma ozeti =====
+  loose git obje (15:20 sonrasi): 0  -> silinen is git nesne veritabanina HIC girmedi
+  kurtarilan: /tmp/stitchu-gece/b-now-F9/sleeve_armhole_agree_check (calisan binary, 17:04)
+  kurtarilan: /tmp/stitchu-gece/b-now-F9/Testing/Temporary/LastTest.log (334675 B)
+  kurtarilan: /tmp/stitchu-gece/b-now-F10/Testing/Temporary/LastTest.log (325538 B)
+  kurtarilan: /private/tmp/F10D.index.orig (77548 B, 17:53)
+  KAYNAK KODU kurtarilamadi: 3 dosya + sleeve.cpp/CMakeLists.txt duzenlemeleri
+
+===== [36] /private/tmp/F10D.index.orig ile bugunku web/index.html farki
+7,8c7,8
+< <title>stitchu · a photo becomes a pattern, a flat and a sewing guide</title>
+< <meta name="description" content="Give stitchu one photo or one sentence. A C++ kernel drafts the pattern, draws the technical flat, and writes the sewing guide, in the browser, true-scale on A4.">
+---
+> <title>stitchu · a fixed-size pattern CAD</title>
+> <meta name="description" content="A deterministic fixed-size pattern CAD. Draft from a photo or recipe, grade across EU34–48, and export the DXF-AAMA and tech-pack a factory reads. Every number computed by a C++ kernel, published with proof.">
+12,13c12,13
+< <meta property="og:title" content="stitchu · a photo becomes a pattern, a flat and a sewing guide">
+< <meta property="og:description" content="One photo or one sentence in. A drafted pattern, a technical flat and a step-by-step sewing guide out.">
+---
+> <meta property="og:title" content="stitchu · a fixed-size pattern CAD">
+> <meta property="og:description" content="From a photo or recipe to a factory-ready pattern, graded to every size and exported to DXF-AAMA.">
+20,22c20,22
+< <meta name="twitter:title" content="stitchu · a photo becomes a pattern, a flat and a sewing guide">
+< <meta name="twitter:description" content="One photo or one sentence in. A drafted pattern, a technical flat and a step-by-step sewing guide out.">
+< <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"One photo or one sentence becomes a drafted pattern, a technical flat and a sewing guide, all from a deterministic C++ kernel.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic pattern engine: a hand-written C++ kernel drafts a garment from a photo or a sentence, draws its technical flat, writes the sewing guide, and prints true-scale, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"Give it a photo or a sentence: the kernel drafts the pattern, draws the technical flat and writes the sewing guide, with true-scale A4 printing for home sewing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
+---
+> <meta name="twitter:title" content="stitchu · a fixed-size pattern CAD">
+> <meta name="twitter:description" content="From a photo or recipe to a factory-ready pattern, graded to every size and exported to DXF-AAMA.">
+> <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"A deterministic fixed-size pattern CAD: draft from a photo or recipe, grade across EU34–48, and export DXF-AAMA and a tech-pack a factory reads.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic fixed-size pattern CAD: a C++ kernel drafts a garment, grades it across the full size run, and exports DXF-AAMA, per-size graded DXF and a tech-pack, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic fixed-size pattern CAD. Draft from a photo or recipe, grade across EU34–48, and export DXF-AAMA and a tech-pack, with true-scale A4 printing for home sewing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
+130,146d129
+<   /* the kitchen: a short list of primitives, a long list of garments */
+<   .kit{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:24px auto 0}
+<   .kit span{font-size:11px;letter-spacing:.4px;padding:6px 14px;border:1px solid var(--bb-line);border-radius:16px;background:#fff;color:var(--navy);white-space:nowrap}
+<   .kit span.op{background:var(--bb-pale);border-color:var(--bb-deep);color:var(--bb-deep);font-weight:700}
+< 
+<   /* VISION sections. Visually separated on purpose: dashed frame, no white
+<      paper, and a badge that says out loud this part has not been built. */
+<   .viz{border:1.5px dashed var(--bb-line);background:repeating-linear-gradient(135deg,#fff 0 14px,var(--bb-pale) 14px 15px);
+<        max-width:1000px;margin:0 auto 70px;padding:34px 40px 38px;text-align:center;position:relative;z-index:1}
+  ...toplam diff satiri:      192
+  bugunku web/index.html HEAD ile ayni mi:        0 satir (0=ayni)
+
+===== [37] yanlis alarm kontrolu: web/patterns, web/blog, engine/STYLE-PIN GECE ONCESI de yoktu
+af49514 delete fake pattern gallery (67 svgs + 22 product pages) and style-pin artifacts: they presented output that fails the buyable-object test and were steering the work
+  GECE/F0-C.md:240 -> 'web/patterns/*/meta.json af49514 silmis, 29 Tem' (bu gece degil)
+  style_check 962407d'de ZATEN kirmizi (7 devralinan kirmizinin biri) -> STYLE-PIN bu gece silinmedi

@@ -1,0 +1,15 @@
+     125 GECE/KOSU.md
+=== son ctest dogrulamasi (kapi + devralinan kume) ===
+93% tests passed, 7 tests failed out of 97
+
+Total Test time (real) = 223.02 sec
+
+The following tests FAILED:
+	  5 - style_check (Failed)
+	 12 - sizechart_source_check (Failed)
+	 72 - bugra_bridge_check (Failed)
+	 79 - contract_check (Failed)
+	 83 - preview_truth_check (Failed)
+	 84 - figure_check (Failed)
+	 90 - h10_gate_check (Failed)
+=== kirmizi adlar ===

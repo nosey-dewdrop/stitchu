@@ -1,120 +1,115 @@
-# KOŞU — 2026-08-22 (v3)
+# KOŞU — 2026-08-22 (v3) — **KAPANDI, F11 tarafından**
 
 ## ŞU AN
-faz: **F0 açılıyor (22 Ağu, v3)** · durum: kapı commit'i atıldı (`35b000b`), harness v3'e taşındı,
-üç kapı KOŞTURULARAK kanıtlandı · son yeşil commit: **YOK**
-(devralınan taban: **ctest 89/96 — 7 kırmızı**, aşağıda isim isim. §0.6 gereği ölçü sayı değil **isim kümesi**.)
+faz: **F11 kapandı, koşu bitti** · durum: **ana dala tek satır KOD girmedi** ·
+son yeşil commit: **YOK** · ağaç: `962407d` (koşu başındaki commit)
 
-> **v3 SIFIRINI KENDİ KOYAR.** Aşağıdaki "F0 ✓" satırı **21 Ağu'nun v2 koşusuna aittir,
-> BU KOŞUDA GEÇERLİ DEĞİLDİR.** v3 F0 her sayıyı YENİDEN ÖLÇER, okumaz (§0.1). Bu dosyadaki
-> hiçbir sayı, F0'ın yeniden ölçümüyle teyit edilmeden sonraki faza devredilemez.
+> **BU KOŞU KOD ÜRETMEDİ.** F0/F6/F9/F10 iş üretti; dördünün işi de `gece.sh`'in
+> kendi temizleme mantığınca **git nesnesi bırakmadan silindi**. Kapanış raporu
+> `GECE/F11.md`. Kök sebep §"HARNESS KUSURU" altında, ölçülmüş.
 
-## KAPI COMMIT'İ — KOŞTURULARAK KANITLANDI (22 Ağu, `35b000b`)
-- **K8 (kâtip)** üç yönden ateşledi: docs commit'i YOKken kırmızı · doğru dokümanla yeşil
-  (`4dc8dc6`) · aynı commit `engine/tools/gen-landing.js`'e dokununca yine kırmızı.
-- **K9 (ratchet)** mutasyonla kanıtlandı: `web/robots.txt`'ye tek satır eklenince
-  `generated_ratchet_check` kırmızıya döndü, ağaç geri alındı. Log: `GECE/log/F0.mutasyon-kanit.txt`.
-- **Alt-ajan mimarisi** uçtan uca koşturuldu: `claude -p` → `Agent` → `isci-motor` → Bash çalıştı.
+## ÜÇ SAYI (F11'in yeniden ölçtüğü)
+1. **ctest 96 test · 7 kırmızı · yeni kırmızı ad 0 · kapanan kırmızı 0**
+   (`GECE/log/F11.ctest.txt` · diff `GECE/log/F11.reddiff.txt` **0 bayt**)
+   §0.6 sağlandı ama **bedelsiz**: hiçbir şey değişmediği için bozulamazdı.
+2. **DAMAR-YETENEK = garment %95.2 · flat %81.0 · surfacepattern %11.9**
+   (21 kalemlik ANAYASA paydası, F0-A §3.1 yöntemi, F11-C yeniden ölçtü —
+   **sapma 0**, çünkü ana dala kod girmedi)
+   **DAMAR-SEVKİYAT = garment %9.5 (2/21)** — aynı payda, VARSAYILAN
+   `GarmentSpec`: 21 kalemin **19'u opt-in `None`**
+   (`engine/src/measurements.hpp:248-320`)
+3. **Vitrin önce == sonra, bayt bayt** (`git diff 962407d..HEAD -- docs web
+   README.md` BOŞ). Landing'de **18 iddia · DOĞRU 0 · YALAN 1 · KANITSIZ 17**.
 
-## HAT VARSAYIMI
-ürün hattı = `garment` · yüzey (`surfacepattern`) = henüz sevk edilmiyor   [Damla varsayılanı, geri alınabilir]
-Dayanağı §4.6: `engine/wasm/bindings.cpp` → `garment.hpp`; aynı dosyada "surfacepattern" **0 kez** geçiyor.
+> **"%0" ARTIK KULLANILMIYOR.** O sayı sevk EDİLMEYEN `surfacepattern`
+> hattında ölçülmüştü. Gevşetme değil (§0.12): payda aynı, kriter sertleşti
+> (varsayılan yapılandırma), sayı ilan edilen hatta (`garment`, §0.14) taşındı.
+> Üçüncü ölçü **DAMAR-ÜYELİK = flat 9/31 = %29** (6-primitifli üyelik testi,
+> 21'lik paydadan DEĞİL). Hangisinin "damar yüzdesi" adını taşıyacağı Damla'da.
 
-## KAPANMIŞ FAZLAR (v3 koşusunda: HENÜZ YOK)
-~~F0 ✓ Damar %0 …~~ **v2'nin (21 Ağu) satırı — v3'te kapanmış faz sayılmaz, F0 yeniden koşar.**
+## HARNESS KUSURU — KOŞUYU ÖLDÜREN ŞEY (ölçüldü, `GECE/F11-B.md`)
+`gece.sh:158` kapıyı, `:164-165` commit'i koşturuyor → kapı kırmızısında
+`HEAD == $ONCE` her zaman doğru → `DUR()`'un `:82` if'i **hiç** doğru olmaz →
+`:83`'teki `git branch -f gece/$F-reddedildi` **hiç çalışamaz** → akış
+`:93-94`'e (`git clean -fdq`) düşer ve iş **geri dönüşsüz** silinir.
+**§3.1'in "reddedilen iş dalına alınır" sözü TUTULMUYORDU.**
+İkinci kusur: `:154` (`return 2`, ajan ölümü) `DUR()` çağırmıyor → iş fazlar
+arası **birikiyor**. Sonuç: **17:08 F9'un kapı kırmızısı F0+F6+F9'un birikmiş
+işini toptan sildi**; 18:09 F10'unkini. **F6 kendi kapısına hiç girmedi.**
+Yama tasarlandı + klonda koşturularak ölçüldü, **UYGULANMADI** (Damla kararı).
+
+## KURTARILAN (uçucu `/tmp`'den `GECE/kurtarma/`ya alındı, 328K)
+Kaynak kodu **KURTARILAMAZ** (`.git/objects`'te 15:20 sonrası 0 dosya; işçiler
+hiç `git add` çağırmadı). Sözleşmeler kurtarıldı: `F10.index.html.orig` (F10'un
+düzenlediği landing, BAYT) · `F9.arch-backup.md` · `b-now-F9/F10.LastTest.log.gz`
+(silinen üç kapının TAM çıktısı) · `*.silinen-add_test.txt` · kapı ctest'leri.
+⚠ `/private/tmp/stitchu-gece/` (338M) repoya ALINMADI — içinde F6'nın
+düzeltilmiş `sleeve.cpp`'siyle derlenmiş **çalışan ikili** var
+(koşturuldu: `cells=96 · H3 0.000000`). **Makine yeniden başlarsa gider.**
+
+## YENİDEN İNŞA TARİFİ (bir sonraki koşu sıfırdan başlamasın)
+- **F6 — TAM yeniden yazılabilir.** Kök sebep tutanakta yazılı: `sleeve.cpp`
+  `capSpreadFrac` **genişlik** kesri uygulanıyor, oysa fazlalık **yay**.
+  ÖNCE/SONRA kodu `GECE/F6-C.md:103-120`. Eksik: 96-hücrelik döngü gövdesi.
+- **F9** — `GECE/F9-A.md:22-44` (dosya adı, `add_test`, ilk kırmızı) + yeşil
+  çıktının tam metni. Eksik: gömülü perl regex'i.
+- **F10** — `GECE/F10-A.md` iddia tablosu + landing bayt olarak. Eksik:
+  `landing_truth_check.sh` parse kodu, `landing-claims.json` şeması.
+- **F0** — kayıp yok, kod üretmedi.
 
 ## AÇIK KIRMIZILAR (ne · nerede · ölçülen sayı)
-- ctest devralınan kırmızı · **7/96 FAIL** · isimler `GECE/log/F0.red.before` dosyasında,
-  temiz ağaçta ölçüldü (kapı `Testing/Temporary/LastTestsFailed.log`'dan okuyor):
-  - `style_check` · `engine/STYLE-PIN` dosyası yok · pinlenmiş stil **0**
-  - `bugra_bridge_check` · `patterns_real/geometry/ring-trace-locket-front-38.json` yok
-  - `contract_check` · `patterns_real/` git'te **41 takipli dosya** (Damla'nın kararında, dokunulmaz)
-  - `preview_truth_check` · `princess_dress` → `bustHalf`/`neckHalf`/`neckDepth` **ÖLÇÜLMEDİ**
-  - `figure_check` · 3+ stil `waist/bust 0.637` tabansız · `figure-bands` `mandal.taban_v3` pin yok
-  - `h10_gate_check` · EU34 armhole **312.86 mm** (kapı 384.50–424.50) · shoulder-seam **0 dikiş** (kapı ≥2)
-  - `sizechart_source_check` · beden tablosunun 70 sayısından **40'ı kaynaksız**
-    (`shoulderCM` `backLengthCM` `armLengthCM` `neckCM` — hiçbiri bir yayına dayanmıyor)
-- Sicilde **adı bile olmayan** damar detayları · `contract/garment-spec-v2.json` · 6 primitiften **5'i YOK**
-  (fiyonk, mini-düğme, fırfır/peplum, lace-up, dantel) → red cümlesi ismi söyleyemiyor (§0.3 ihlali).
-  Gerçek `absent` sayısı **4**: `sleeve` `collarFamily` `gatheredOverlayLayer` `skirtFamily`.
-- Flat ↔ kalıp ortak birim yok · `contract/tables.json` → `flat._layer` bunu **beyan ediyor** ("NOT millimetres")
-- Flat SVG'de ölçek beyanı yok · `unitDeclared: false`
-- İkinci flat kalemi ayakta · `engine/tools/render-garment-flat.mjs` kendi 2 şablonu + `engine/flat-engine/_engine-full.mjs`
-- `engine/flat-engine/_engine-full.mjs:256` · **2 stil-pinli sert kodlanmış kaçış** (tek croquis yasasını deliyor)
-- `shoulderSeam` **geometriden** kapalı · iç gerinim **%24.07 / %18.14**, kapı **%3.0** (kod var: `engine/src/shoulder.cpp`)
-- Sevk edilmeyen kütüphane · `engine/src/` · 14 .cpp derleniyor ama yüzey hattında; WASM garment hattından
+- **ctest 7 devralınan kırmızı**, isimler `GECE/log/F11.red.after`:
+  `style_check` (`engine/STYLE-PIN` yok) · `bugra_bridge_check` +
+  `contract_check` (**§0.10, Damla kararı, kapatılmaya ÇALIŞILMIYOR**) ·
+  `preview_truth_check` · `figure_check` · `h10_gate_check` (EU34 armhole
+  312.86mm, kapı 384.50–424.50; shoulder-seam 0 dikiş, kapı ≥2) ·
+  `sizechart_source_check` (70 sayının 40'ı kaynaksız)
+- **docs: 52 ihlal BUGÜN de duruyor** — 16 duran-iddia + 36 tanıksız
+  (`GECE/log/F9A.gate.before.txt`; `docs/` baytları `962407d` ile aynı olduğu
+  için bu **bugünün** sayısıdır). Ölçen kapı ana dalda YOK.
+- **landing YALAN, `web/index.html:212`:** *"Every drawing on this page is real
+  engine output… and live."* Ölçüldü: `gen-landing.js`'in 7 SVG çıktısının
+  **7'si de** sayfadaki baytlarla eşleşmiyor; dahası `gen-landing.js` hiçbir
+  dosyaya **yazmıyor** — SVG'ler **elle yapıştırılmış**, "live" mimari olarak
+  imkânsız. `web/index.html` §0.15'in 57 korunan yolunda DEĞİL (elle yazılır).
+- **`web/index.html` kendi içinde çelişiyor:** `:8`/`:22` **EU34–48**,
+  `:179`/`:316`/`:317` **EU34–52**. Ölçen test yok.
+- **`CAD` yasağı 8 satırda ihlal:** `web/index.html:7,8,12,20,22,176,191,192`.
+  F10-C kaldırmıştı, iş silindi; yedek `GECE/kurtarma/F10.index.html.orig`.
+- **`web/js/missing.js` motorun GERİSİNDE olabilir** — alıcıya "lace-up /
+  fiyonk / düğme patı çizili değil" diyor (`:30-56`), oysa beş kapı da yeşil.
+  **Dürüstlük katmanının TERS yönde yalanı.** Koşturarak **DOĞRULANMADI**.
+- **Üç üreteç KOŞMUYOR** (EXIT=1, ENOENT `web/patterns/*/meta.json`):
+  `gen-collections-page.mjs` · `gen-vintage-page.mjs` ·
+  `gen-taste-collections.mjs`. Sebep kodda: `gen-sitemap.mjs:15` *"af49514
+  deleted that tree"*. Yayındaki koleksiyon sayfaları **öksüz**.
+- **Üç katman üç etek sözlüğü konuşuyor:** `vocab.json:12`'de `fullCircle` YOK,
+  `garment-spec-v2.json topology.skirtShape`'te VAR, flat'te 6 stil öyle etiketli.
+- **Sicilde 5 `absent`** (KOSU'nun eski "4"ü yanlıştı, `zipperPiece` sayılmamış):
+  `gatheredOverlayLayer sleeve collarFamily skirtFamily zipperPiece`.
+- **ADIYLA EKSİK damar detayı** (§0.3): garment'ta **dantel/fisto** ·
+  flat'te **mini-düğme sırası · lace-up · halter · kutu-pili**.
+- **F9'un K4 kırmızısı muhtemelen YANLIŞ POZİTİF** — yakaladığı iki satır
+  YORUM; `kapi.sh:195` grep'i yorumu koddan ayırmıyor. **DOĞRULANMADI**
+  (`kapi.sh` mühürlü, açılmadı).
+- Flat ↔ kalıp ortak birim yok (`contract/tables.json` `flat._layer` beyan
+  ediyor) · flat SVG'de ölçek beyanı yok (`unitDeclared: false`)
+- İkinci flat kalemi ayakta (`render-garment-flat.mjs` kendi 2 şablonu +
+  `flat-engine/_engine-full.mjs`) · `_engine-full.mjs:256` **2 stil-pinli sert
+  kodlanmış kaçış** · `shoulderSeam` geometriden kapalı (iç gerinim
+  %24.07/%18.14, kapı %3.0)
 
-## BİR SONRAKİ FAZIN DEVRALDIĞI ÜÇ SAYI
-1. **DAMAR = %0** (kalıp yolu %0 · flat yolu 9/31 = %29, ama flat satılabilir nesne değil)
-2. **hem/bel oranı: kalıp 1.787 · flat 1.214** — iki hattı karşılaştıran tek birimsiz sayı (≈%47 sapma)
-3. **ctest 89/96** — 7 devralınan kırmızı, isimleri yukarıda
+## HAT VARSAYIMI — GEÇERLİ (F11-C uçtan uca izledi)
+ürün hattı = `garment` · `surfacepattern` sevk edilmiyor.
+`draftJSON` (`bindings.cpp:238`) → `buildSpec` → `GarmentDrafter::draft` →
+`web/js/create.js:9` / `studio.js:11` → `print.js` 1:1 A4.
+`grep -c surfacepattern engine/wasm/bindings.cpp` → **0**.
 
-## [HAT-VARSAYIM] ETİKETLİ İŞLER
-(fazlar buraya yazacak)
+## DAMLA'YA DÜŞEN (bloke etmez — hepsi DAMLA-KUYRUK.md'de)
+`gece.sh` yaması uygulansın mı · 338M `/tmp` ikili kurtarılsın mı ·
+damar hangi ad · landing:212 yalanı · `missing.js` ölçülsün mü ·
+(devreden) `patterns_real/` · `stash@{0}`
 
-## HARNESS (21 Ağu kuruldu, mühürlü, KOŞTURULARAK doğrulandı)
-`GECE/gece.sh` · `GECE/kapi.sh` (K1–K7) · `GECE/mutasyon.sh` · `GECE/mutasyon.tsv` · `GECE/hakem-sorusu.md` · `GECE/kapi.sha`
-**Faz ajanına düşen tek ek görev:** kendi kapısını `GECE/mutasyon.tsv`'ye yazmak. Boş satır = o faz kapanamaz (§2.3).
-
-Doğrulama (sözdizimi değil, **koşturuldu**):
-- `kapi.sh F0 66e2732` üç kez koştu; yedi alt kapı da ateşledi. Log: `GECE/log/F0.kapi.txt`.
-- **K1'in tabanı YALANDI, iki ayrı kusurdan, ikisi de ölçülüp kapatıldı.**
-  (a) Worktree sadece takipli dosyaları alır; `engine/dist` · `engine/.venv-dxf` ·
-  `engine/pattern-bridge/.venv` · `engine/tools/node_modules` · `core/third_party` orada
-  olmadığı için **16 test sahte KIRMIZI** düşüyordu (19 → 9 → 6). Artefakt dizinleri artık
-  taranıp bağlanıyor.
-  (b) `/tmp` symlink'i **1 testi sahte YEŞİL** yapıyordu (aşağıda ayrı bölüm). 6 → **7**.
-- **Mutasyon kanıtlayıcısı koşturuldu.** Temiz bir worktree'de `hem_check` yeşilken
-  `engine/src/hem.cpp`'nin merkez-panel kaydırması bozuldu → kapı **kırmızıya döndü**,
-  ağaç geri alındı, mühür sağlam kaldı. Yani `mutasyon.sh` bir nesneyi gerçekten bozabiliyor.
-
-Koşu **başlatıldı** (21 Ağu, Damla açtı): `bash GECE/gece.sh > GECE/log/gece.txt 2>&1 &`
-
-## TABAN (21 Ağu 14:5x, temiz ağaçta ölçüldü) — **7 kırmızı, 96 test**
-```
-bugra_bridge_check · contract_check · figure_check · h10_gate_check
-preview_truth_check · sizechart_source_check · style_check
-```
-F0'ın "89/95"i iki yerde eksikti: test sayısı **96** (bayat `engine/build` 95'te kalmış) ve
-`sizechart_source_check` sayılmamış. `figure_check` **gerçek devralınan kırmızı** — stash'lenen
-yığından gelmiyor (aşağıdaki sahte-yeşil kusuru düzeltilince taban listesine girdi).
-
-## KAPININ KENDİ SAHTE YEŞİLİ (bulundu, ölçüldü, kapatıldı)
-Worktree'yi `/tmp` altına kurmuştum; macOS'ta `/tmp` → `/private/tmp` bir **symlink**.
-Repodaki 6 `.mjs` dosyası `import.meta.url === pathToFileURL(argv[1])` deyimini kullanıyor:
-symlink yolundan çağrılınca eşitlik tutmuyor, **süit hiç koşmuyor, node 0 ile çıkıyor.**
-Ölçüldü: `engine/tools/figure-lint.mjs` gerçek yoldan `exit 1`, `/tmp` yolundan **çıktısız `exit 0`**.
-Yani kapı, §2'nin tam olarak yasakladığı **vacuous green**'i kendi üretiyordu ve her faza sahte
-"yeni kırmızı: figure_check" basacaktı. `TMP` artık `pwd -P` ile fiziksel yola sabit.
-Aynı kırılgan deyimi kullanan diğer 5 dosya: `cloth-solver.mjs` · `_engine-full.mjs` ·
-`compiler/parse.mjs` · `compiler/gate.mjs` · `compiler/compile.mjs`.
-
-## ÖNCEKİ OTURUM ARTIĞI — STASH'LENDİ
-Benden önce bırakılmış **285 commit'siz değişiklik** vardı (`reports/` → `gate/` + `docs/kanit/`
-taşıması, `REPORTS.md` yeni, `devlog.md` ve `linkedin.md` **silinmiş**,
-`engine/tests/capability_check.cpp` **değiştirilmiş**). Damla'nın emriyle stash'lendi:
-```
-git stash list -> stash@{0}: On main: onceki oturum artigi
-```
-**Silinmedi, duruyor.** `devlog.md`/`linkedin.md` silmesi CLAUDE.md'nin "DOKUNMA, dağıtım kanalı"
-satırıyla çelişiyor — geri almadan önce Damla'nın hükmü gerek. Ağaç artık temiz, `gece.sh` başlayabilir.
-
-## DOĞRULANIRKEN ÇIKAN, SORULMAMIŞ BULGULAR
-- **Test sayısı 95 değil 96.** Temiz build 96 kaydediyor; `engine/build` 95'te kalmış (bayat cache).
-- **`sizechart_source_check` F0'ın listesinde hiç yoktu** ama devralınan bir kırmızı. Sebebi ortam
-  değil içerik; son commit `97c1c4d` zaten bunu söylüyor. F8'in sayımı buna dikkat etmeli.
-- **DOĞRULANMADI:** `gece.sh` uçtan uca hiç koşmamıştı — `claude -p` / hakem / push yolu ilk kez
-  bu gece deneniyor. `claude -p --output-format stream-json --allowedTools` ayrı ayrı sınandı, çalışıyor.
-- **DOĞRULANMADI:** K7 (context hijyeni) hiç ateşlemedi, ajan logu yoktu. İlk gerçek fazda sınanacak.
-
-## DAMLA'YA DÜŞEN (bloke etmez)
-- **`patterns_real/` kararı açık:** `contract_check` kırmızısı oradaki 41 satın alınmış takipli dosyadan.
-  Silme/taşıma yasak, karar senin.
-- **Stash geri gelecek mi?** `stash@{0}` içinde `devlog.md` ve `linkedin.md` **silinmiş** duruyor;
-  CLAUDE.md o ikisi için "DOKUNMA, dağıtım kanalı" diyor. Hükmün ne?
-- **Kapanma dili:** §4.9 lace-up öneriyor (ayarlanabilir olduğu için grade hatasını yutar). F4'ün "geçiş"
-  maddesi bu seçime dayanacak. Onaylıyor musun?
-- **F3, F1'e kısmen yaslanıyor** ("F1 kapandıysa bedava gelir"). `gece.sh` F1 düşse bile F3'ü açıyor
-  (§2.7: bağımsız faza geç). Sert bağımlılık istersen söyle.
-- **Kullanım limiti:** önceki hesap %90'daydı (sıfırlanma 24 Ağu 11:00), Damla ikinci hesaba geçti.
-  Koşu 4 faz × (ajan + hakem) = 8 oturum.
+## KAPANMIŞ FAZLAR
+**YOK.** F0/F6/F9/F10 iş üretti, hiçbiri kapanmadı. F11 kapandı (ölçüm fazı,
+kod yazmaz). Tutanaklar: `GECE/F0.md F6.md F9.md F10.md F11.md` + alt kartlar.

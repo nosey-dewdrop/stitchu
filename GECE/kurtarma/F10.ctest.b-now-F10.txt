@@ -1,0 +1,211 @@
+Test project /private/tmp/stitchu-gece/b-now-F10
+      Start  1: geometry
+ 1/97 Test  #1: geometry .........................   Passed    0.29 sec
+      Start  2: engine_check
+ 2/97 Test  #2: engine_check .....................   Passed   18.75 sec
+      Start  3: golden_check
+ 3/97 Test  #3: golden_check .....................   Passed    0.29 sec
+      Start  4: generated_ratchet_check
+ 4/97 Test  #4: generated_ratchet_check ..........   Passed    0.71 sec
+      Start  5: style_check
+ 5/97 Test  #5: style_check ......................***Failed    0.11 sec
+      Start  6: bridge_guard
+ 6/97 Test  #6: bridge_guard .....................   Passed    0.09 sec
+      Start  7: api_wire_check
+ 7/97 Test  #7: api_wire_check ...................   Passed    0.07 sec
+      Start  8: collar_bridge_check
+ 8/97 Test  #8: collar_bridge_check ..............   Passed    0.03 sec
+      Start  9: skirtlen_refresh_check
+ 9/97 Test  #9: skirtlen_refresh_check ...........   Passed    0.03 sec
+      Start 10: compile_dialect_check
+10/97 Test #10: compile_dialect_check ............   Passed    0.09 sec
+      Start 11: photo_ratio_wire_check
+11/97 Test #11: photo_ratio_wire_check ...........   Passed    0.05 sec
+      Start 12: sizechart_source_check
+12/97 Test #12: sizechart_source_check ...........***Failed    0.03 sec
+      Start 13: ruffle_check
+13/97 Test #13: ruffle_check .....................   Passed    0.16 sec
+      Start 14: tiered_ruffle_check
+14/97 Test #14: tiered_ruffle_check ..............   Passed    0.12 sec
+      Start 15: sweetheart_check
+15/97 Test #15: sweetheart_check .................   Passed    0.12 sec
+      Start 16: keyhole_check
+16/97 Test #16: keyhole_check ....................   Passed    0.12 sec
+      Start 17: placket_check
+17/97 Test #17: placket_check ....................   Passed    0.12 sec
+      Start 18: tie_check
+18/97 Test #18: tie_check ........................   Passed    0.12 sec
+      Start 19: collar_check
+19/97 Test #19: collar_check .....................   Passed    0.13 sec
+      Start 20: gather_check
+20/97 Test #20: gather_check .....................   Passed    0.12 sec
+      Start 21: backopen_check
+21/97 Test #21: backopen_check ...................   Passed    0.12 sec
+      Start 22: laceupback_check
+22/97 Test #22: laceupback_check .................   Passed    0.13 sec
+      Start 23: wrapfront_check
+23/97 Test #23: wrapfront_check ..................   Passed    0.13 sec
+      Start 24: slit_check
+24/97 Test #24: slit_check .......................   Passed    0.13 sec
+      Start 25: skirtlen_check
+25/97 Test #25: skirtlen_check ...................   Passed    0.12 sec
+      Start 26: strap_check
+26/97 Test #26: strap_check ......................   Passed    0.12 sec
+      Start 27: peplum_check
+27/97 Test #27: peplum_check .....................   Passed    0.14 sec
+      Start 28: hemflounce_check
+28/97 Test #28: hemflounce_check .................   Passed    0.12 sec
+      Start 29: gore_check
+29/97 Test #29: gore_check .......................   Passed    0.11 sec
+      Start 30: pocket_check
+30/97 Test #30: pocket_check .....................   Passed    0.13 sec
+      Start 31: bustier_check
+31/97 Test #31: bustier_check ....................   Passed    0.13 sec
+      Start 32: locket_check
+32/97 Test #32: locket_check .....................   Passed    0.13 sec
+      Start 33: cup_check
+33/97 Test #33: cup_check ........................   Passed    0.15 sec
+      Start 34: yoke_check
+34/97 Test #34: yoke_check .......................   Passed    0.13 sec
+      Start 35: boxpleat_check
+35/97 Test #35: boxpleat_check ...................   Passed    0.12 sec
+      Start 36: cuff_check
+36/97 Test #36: cuff_check .......................   Passed    0.13 sec
+      Start 37: neckline_ext_check
+37/97 Test #37: neckline_ext_check ...............   Passed    0.12 sec
+      Start 38: hem_check
+38/97 Test #38: hem_check ........................   Passed    0.12 sec
+      Start 39: halter_check
+39/97 Test #39: halter_check .....................   Passed    0.12 sec
+      Start 40: bias_check
+40/97 Test #40: bias_check .......................   Passed    0.12 sec
+      Start 41: cutline_check
+41/97 Test #41: cutline_check ....................   Passed    0.12 sec
+      Start 42: sleeve_check
+42/97 Test #42: sleeve_check .....................   Passed    0.19 sec
+      Start 43: cap_sleeve_check
+43/97 Test #43: cap_sleeve_check .................   Passed    0.12 sec
+      Start 44: placket_asym_check
+44/97 Test #44: placket_asym_check ...............   Passed    0.12 sec
+      Start 45: fit_proof
+45/97 Test #45: fit_proof ........................   Passed    0.14 sec
+      Start 46: sloper_check
+46/97 Test #46: sloper_check .....................   Passed    0.11 sec
+      Start 47: fba_check
+47/97 Test #47: fba_check ........................   Passed    0.17 sec
+      Start 48: grade_check
+48/97 Test #48: grade_check ......................   Passed    0.14 sec
+      Start 49: wearability_check
+49/97 Test #49: wearability_check ................   Passed    0.13 sec
+      Start 50: shoulder_check
+50/97 Test #50: shoulder_check ...................   Passed    0.13 sec
+      Start 51: buttonrow_check
+51/97 Test #51: buttonrow_check ..................   Passed    0.12 sec
+      Start 52: exposedzip_check
+52/97 Test #52: exposedzip_check .................   Passed    0.11 sec
+      Start 53: backdetail_check
+53/97 Test #53: backdetail_check .................   Passed    0.13 sec
+      Start 54: fronttie_check
+54/97 Test #54: fronttie_check ...................   Passed    0.12 sec
+      Start 55: offshoulder_check
+55/97 Test #55: offshoulder_check ................   Passed    0.11 sec
+      Start 56: sideseam_adversarial_check
+56/97 Test #56: sideseam_adversarial_check .......   Passed    0.12 sec
+      Start 57: notch_alignment_check
+57/97 Test #57: notch_alignment_check ............   Passed    0.11 sec
+      Start 58: closed_garment_check
+58/97 Test #58: closed_garment_check .............   Passed    0.12 sec
+      Start 59: sewable_census
+59/97 Test #59: sewable_census ...................   Passed   21.81 sec
+      Start 60: roundtrip_check
+60/97 Test #60: roundtrip_check ..................   Passed    0.16 sec
+      Start 61: guide_check
+61/97 Test #61: guide_check ......................   Passed    0.18 sec
+      Start 62: recipe_check
+62/97 Test #62: recipe_check .....................   Passed    0.12 sec
+      Start 63: recipe_golden_check
+63/97 Test #63: recipe_golden_check ..............   Passed    0.17 sec
+      Start 64: recipe_dress_check
+64/97 Test #64: recipe_dress_check ...............   Passed    0.13 sec
+      Start 65: recipe_dress_golden_check
+65/97 Test #65: recipe_dress_golden_check ........   Passed    0.18 sec
+      Start 66: recipe_grade_check
+66/97 Test #66: recipe_grade_check ...............   Passed    0.13 sec
+      Start 67: recipe_wasm_parity
+67/97 Test #67: recipe_wasm_parity ...............   Passed    0.30 sec
+      Start 68: recipe_wasm_parity_dress
+68/97 Test #68: recipe_wasm_parity_dress .........   Passed    0.09 sec
+      Start 69: dxf_wasm_parity
+69/97 Test #69: dxf_wasm_parity ..................   Passed    0.27 sec
+      Start 70: dxf_wasm_parity_dress
+70/97 Test #70: dxf_wasm_parity_dress ............   Passed    0.10 sec
+      Start 71: bugra_bridge_check
+71/97 Test #71: bugra_bridge_check ...............***Failed    0.09 sec
+      Start 72: dxf_check
+72/97 Test #72: dxf_check ........................   Passed    0.64 sec
+      Start 73: nest_check
+73/97 Test #73: nest_check .......................   Passed    0.16 sec
+      Start 74: nest_marker_check
+74/97 Test #74: nest_marker_check ................   Passed    0.88 sec
+      Start 75: drape_check
+75/97 Test #75: drape_check ......................   Passed    0.69 sec
+      Start 76: tech_pack_check
+76/97 Test #76: tech_pack_check ..................   Passed    1.22 sec
+      Start 77: compose_check
+77/97 Test #77: compose_check ....................   Passed    0.34 sec
+      Start 78: contract_check
+78/97 Test #78: contract_check ...................***Failed    0.15 sec
+      Start 79: specv2_check
+79/97 Test #79: specv2_check .....................   Passed    0.04 sec
+      Start 80: specv1v2_map_check
+80/97 Test #80: specv1v2_map_check ...............   Passed    0.03 sec
+      Start 81: flat_render_lint
+81/97 Test #81: flat_render_lint .................   Passed    0.45 sec
+      Start 82: preview_truth_check
+82/97 Test #82: preview_truth_check ..............***Failed    0.10 sec
+      Start 83: figure_check
+83/97 Test #83: figure_check .....................***Failed    0.44 sec
+      Start 84: volume_check
+84/97 Test #84: volume_check .....................   Passed    0.16 sec
+      Start 85: body_volume_check
+85/97 Test #85: body_volume_check ................   Passed    6.15 sec
+      Start 86: garment_shell_check
+86/97 Test #86: garment_shell_check ..............   Passed    0.87 sec
+      Start 87: flatten_check
+87/97 Test #87: flatten_check ....................   Passed    0.58 sec
+      Start 88: surface_pattern_check
+88/97 Test #88: surface_pattern_check ............   Passed    4.52 sec
+      Start 89: h10_gate_check
+89/97 Test #89: h10_gate_check ...................***Failed   34.87 sec
+      Start 90: section_check
+90/97 Test #90: section_check ....................   Passed    0.45 sec
+      Start 91: capability_check
+91/97 Test #91: capability_check .................   Passed    0.15 sec
+      Start 92: wearable_check
+92/97 Test #92: wearable_check ...................   Passed    4.64 sec
+      Start 93: edgemono_check
+93/97 Test #93: edgemono_check ...................   Passed   36.26 sec
+      Start 94: walkgate_check
+94/97 Test #94: walkgate_check ...................   Passed   39.16 sec
+      Start 95: cutplan_check
+95/97 Test #95: cutplan_check ....................   Passed   38.50 sec
+      Start 96: printpack_sheet_check
+96/97 Test #96: printpack_sheet_check ............   Passed    8.55 sec
+      Start 97: landing_truth_check
+97/97 Test #97: landing_truth_check ..............   Passed    0.14 sec
+
+93% tests passed, 7 tests failed out of 97
+
+Total Test time (real) = 230.25 sec
+
+The following tests FAILED:
+	  5 - style_check (Failed)
+	 12 - sizechart_source_check (Failed)
+	 71 - bugra_bridge_check (Failed)
+	 78 - contract_check (Failed)
+	 82 - preview_truth_check (Failed)
+	 83 - figure_check (Failed)
+	 89 - h10_gate_check (Failed)
+Errors while running CTest
+Output from these tests are in: /private/tmp/stitchu-gece/b-now-F10/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.

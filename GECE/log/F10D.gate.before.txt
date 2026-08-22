@@ -1,0 +1,35 @@
+FAIL D  undeclared proof claim "equalised" in: "a photo, or a sentence pattern + technical flat + sewing guide seams that must sew together are equalised on-device"
+FAIL D  undeclared proof claim "proof" in: "same engine, same proof A small kitchen, a long menu."
+FAIL D  undeclared proof claim "proof" in: "stitchu publishes the proof."
+FAIL D  undeclared proof claim "equalised" in: "Seams that must sew together are equalised by the kernel , and that equality is a test in the repo, not a sentence on a page: when it stops being true the bu..."
+FAIL D  undeclared proof claim "equalised" in: "equalised seams"
+FAIL D  undeclared proof claim "proofs" in: "checked by a test that can fail Read the engineering proofs + textbook audit → Fits every body, not one block."
+FAIL D  undeclared proof claim "checked by" in: "checked by a test that can fail Read the engineering proofs + textbook audit → Fits every body, not one block."
+FAIL D  undeclared proof claim "every size" in: "stitchu redraws the whole garment for your seven measurements, so the proportions hold at every size."
+FAIL D  undeclared proof claim "proof" in: "nothing uploaded Tools in this corner are sold by subscription and publish no accuracy proof at all."
+FAIL D  undeclared proof claim "proofs" in: "stitchu publishes its engineering proofs, seams match, proportions hold, and it runs in your browser free ."
+FAIL D  undeclared proof claim "Proofs" in: "Join the Beta → See the Engineering Proofs → What can it already send to the factory floor?"
+FAIL D  undeclared proof claim "machine-checked" in: "The same geometry exports to the files a production line actually reads, each one machine-checked against third-party tools, misses and limits published."
+FAIL D  undeclared proof claim "vertex for vertex" in: "Opened in ezdxf and measured vertex for vertex against the engine's own millimetres."
+FAIL D  undeclared proof claim "parity" in: "vertex-for-vertex DXF parity"
+FAIL D  undeclared proof claim "vertex-for-vertex" in: "vertex-for-vertex DXF parity"
+FAIL D  undeclared proof claim "validator-clean" in: "Every size in the run comes out validator-clean , the seams still match, and the growth follows the size chart's own steps instead of a fake fixed one."
+FAIL D  undeclared proof claim "Every size" in: "Every size in the run comes out validator-clean , the seams still match, and the growth follows the size chart's own steps instead of a fake fixed one."
+FAIL D  undeclared proof claim "no pairwise overlap" in: "The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine ( shapely ), not an in-house script: it ..."
+FAIL D  undeclared proof claim "checked by" in: "The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine ( shapely ), not an in-house script: it ..."
+FAIL D  undeclared proof claim "no overlap" in: "no overlap"
+FAIL D  undeclared proof claim "cross-checked" in: "The weight and efficiency maths are cross-checked, and a tampered value fails the verifier loudly ."
+FAIL D  undeclared proof claim "fails the verifier" in: "The weight and efficiency maths are cross-checked, and a tampered value fails the verifier loudly ."
+FAIL D  undeclared proof claim "machine-checked" in: "manifest + graded DXF per size + PDF spec These are the machine-checked gates: DXF, grading, nesting, tech-pack."
+----
+rule A: 1 number-carrying claims on the page, 1 declared in web/landing-claims.json, 0 violation(s)
+  claims seen: "EU38"
+rule B: 4 data-vizyon element(s), 0 violation(s)
+rule D: 23 proof-claims on the page, 0 declared, 23 violation(s)
+rule C: site-health.mjs exit 0, 0 violation(s)
+====
+landing_truth_check: A=0  B=0  C=0  D=23
+HUKUM: FAIL
+A number on web/index.html is not tied to a proof file that exists,
+or the vision copy claims the present, or the site has a dead link.
+EXIT=1

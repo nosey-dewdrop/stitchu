@@ -1,0 +1,13 @@
+[F10] K1 ortam: engine/.venv-dxf -> gercek agactan baglandi
+[F10] K1 ortam: engine/dist -> gercek agactan baglandi
+[F10] K1 ortam: engine/pattern-bridge/.venv -> gercek agactan baglandi
+[F10] K1 ortam: engine/tools/node_modules -> gercek agactan baglandi
+[F10] K1 ortam: core/third_party -> gercek agactan baglandi
+[F10] K1 devralinan kirmizi sayisi: once=       7 sonra=       7
+[F10] K2 KIRMIZI -- landing_truth_check faz oncesi commit'te kirmizi dusmuyor (bos test)
+[F10] K3 tamam --       41 yolun hepsi diskte var
+[F10] K4 tamam -- degisen dosyalarda esik oynamasi yok
+[F10] K6 tamam -- var olan testlerin hicbiri degismemis
+[F10] K7 tamam -- yasakli dosya butun olarak acilmamis
+[F10] K9 tamam -- generated_ratchet_check yesil, 57 uretilmis yolun sha'si tutuyor
+[F10] KAPI KIRMIZI

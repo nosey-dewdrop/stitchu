@@ -1,0 +1,3 @@
+checked: 127 pages, 2599 internal refs, 124 sitemap urls, 124 indexable pages
+OK  site-health: no dead links, sitemap matches the site, one version.
+EXIT=0

@@ -1,0 +1,58 @@
+# F9A gate vs TODAY'S docs (working tree)
+# HEAD: 962407d28aac466ebfc0b2f29a4e9e1d7c534f03
+# docs vs 962407d diff --stat (bu 5 dosya):
+ README.md | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+# (boş = kâtip henüz yazmadı, bugünkü docs faz-öncesiyle AYNI)
+# date: 2026-08-22T13:33:50Z
+----------------------------------------------------------------
+README.md:3: standing claim 'byte for byte': **A deterministic FIXED-SIZE (EU34-48) pattern engine.** Give it a body and a garment, and it does n
+README.md:44: standing claim '0.00 mm': - **Seam-pair precision is printed by `node engine/tools/precision-report.js`**; its 2026-08-22 run 
+README.md:44: standing claim '0 failures': - **Seam-pair precision is printed by `node engine/tools/precision-report.js`**; its 2026-08-22 run 
+README.md:53: unwitnessed numeric claim: - **3D drape preview (in progress, honest scope).** A geometric mass-spring preview off the pattern 
+docs/ARCHITECTURE.md:27: unwitnessed numeric claim: Parametric drafting blocks from published sources (FreeSewing Bella/Titan, Muller & Sohn, Aldrich), 
+docs/ARCHITECTURE.md:30: standing claim 'byte-identical': Combines blocks into garments (dress = bodice + skirt + CB invisible zipper; tops with hem variants)
+docs/ARCHITECTURE.md:39: standing claim 'byte-identical': - `tests/engine_check.cpp`: the matrix — EU 34-52 + edge bodies × the full spec space = 70,200 dr
+docs/ARCHITECTURE.md:41: standing claim '0.00 mm': - `tools/precision-report.js` ("the tailor's micrometer"): measures every seam pair a sewist pins; >
+docs/ARCHITECTURE.md:42: standing claim '0 failures': - `tools/web-fuzz.js`: fuzzes the WEB layer's spec mapping (what `create.js` actually sends to `draf
+docs/ARCHITECTURE.md:56: unwitnessed numeric claim: Goal: kill the per-call LLM cost. The vision step is bounded classification into a fixed vocabulary.
+docs/ARCHITECTURE.md:64: unwitnessed numeric claim: - Drafting: 100% client-side (WASM) — zero server cost per draft, and simultaneously the KVKK/priv
+docs/ARCHITECTURE.md:73: standing claim 'ALL PASS': - Opt-in vocabulary: every new feature defaults off and must keep the matrix ALL PASS and the base d
+docs/ARCHITECTURE.md:73: standing claim 'byte-identical': - Opt-in vocabulary: every new feature defaults off and must keep the matrix ALL PASS and the base d
+docs/ARCHITECTURE.md:80: standing claim 'is complete': - Bodice carries documented assumptions (underbust offset, shoulder slope); geometric validation is 
+docs/ARCHITECTURE.md:81: unwitnessed numeric claim: - Vision is rented (Opus per call) until the Track B student ships; its accuracy ceiling is the 86% 
+docs/KATMAN-HARITASI.md:24: unwitnessed numeric claim:    kontrolü yok → 2.95mm / 17 kombinasyon arızası (kanıt `Logs/paket-2026-08-06`). Harness H3b
+docs/SATIS-SARTNAMESI.md:31: standing claim 'BITTI': Bir stitchu paketi "satılabilir" sayılır ancak aşağıdaki maddelerin HEPSİ ölçülüp geçti�
+docs/SATIS-SARTNAMESI.md:35: unwitnessed numeric claim: ## 1. LISTING GÖRSELİ (vitrin) — **5/5 EKSİK**
+docs/SATIS-SARTNAMESI.md:46: unwitnessed numeric claim:       → `PASS overall=0.90 (esik 0.7), line_hierarchy 1 (3/3 katman, navy var)`. Ama o dosya **esk
+docs/SATIS-SARTNAMESI.md:57: unwitnessed numeric claim: ## 2. KALIP PAKETİ TAM (ürün) — **6/6 GEÇTİ**
+docs/SATIS-SARTNAMESI.md:61: unwitnessed numeric claim:       `etek arka` / `parca 3/4 · EU38 · 2 kes · aynali cift` / `stitchu · 2026-01-01 · pay 10mm
+docs/SATIS-SARTNAMESI.md:71: unwitnessed numeric claim:       *"DIKIS PAYI 10mm, her kenarda, kaliba DAHIL. kesim cizgisi duz, dikis cizgisi kesikli."*
+docs/SATIS-SARTNAMESI.md:72: unwitnessed numeric claim:       `printpack.log` SEAM ALLOWANCE tablosu 8 panelde düz bantta **min 9.980 / max 10.009 / mean 1
+docs/SATIS-SARTNAMESI.md:73: unwitnessed numeric claim:       ⚠ **BAYAT DÜZELTİLDİ:** bu satır *"mevcut motor: SA 15mm gömülü"* diyordu. **15mm hi�
+docs/SATIS-SARTNAMESI.md:74: unwitnessed numeric claim:       Gerçek pay **10mm** ve keyfi değil: satıcı talimatı s.3/4/7/8/9/11 *"1 cm (3/8 inch) seam
+docs/SATIS-SARTNAMESI.md:75: unwitnessed numeric claim:       (`CLAUDE.md` — KANITLI). Şartname 15mm yazarken pakete karşı **hiç ölçülmemişti**.
+docs/SATIS-SARTNAMESI.md:80: unwitnessed numeric claim:       `print-a4.pdf` = 1 harita + **14 içerik sayfası** (4×4 grid, 2 boş hücre atlandı), bindi
+docs/SATIS-SARTNAMESI.md:88: unwitnessed numeric claim: ## 3. PARÇA + SAYFA EMSAL BANDI (verimlilik) — **4/4 GEÇTİ**
+docs/SATIS-SARTNAMESI.md:95: unwitnessed numeric claim:       `left_btorso 81.2436mm` · `left_ftorso 116.9624mm` · `left_skirt_back 34.2360mm` ·
+docs/SATIS-SARTNAMESI.md:96: unwitnessed numeric claim:       `left_skirt_front 63.6849mm` asimetri → **hiçbiri kendi orta çizgisine simetrik değil**,
+docs/SATIS-SARTNAMESI.md:101: standing claim 'KAPANDI':       **H1.1a KAPANDI (Tur 8).** `printpack.nesting_proof()` aynı paketleyiciyi, aynı sayfalarda,
+docs/SATIS-SARTNAMESI.md:128: unwitnessed numeric claim: ## 4. TALİMAT İSKELETİ (kullanılabilirlik) — **4/4 GEÇTİ**
+docs/SATIS-SARTNAMESI.md:131: standing claim 'KAPANDI':       **H1.1b KAPANDI (Tur 8).** `print-info.pdf` **s.2 = KUMAS SECIMI**. Öneri bir listeden
+docs/SATIS-SARTNAMESI.md:136: unwitnessed numeric claim:       | kalıbın bel çevresi | **72.5cm** (vücut 70.0 → **+2.5cm bolluk**) | şekil dikişten �
+docs/SATIS-SARTNAMESI.md:137: unwitnessed numeric claim:       | etek ucu / bel | 127cm / 72cm = **1.75** | etek vücuttan AÇILIYOR → kumaş bu açıklı�
+docs/SATIS-SARTNAMESI.md:150: unwitnessed numeric claim:       **öneriyor**. Niteleyici ölçüldü: bu kalıp +2.5cm bollukla ve 1.75 açılma oranıyla
+docs/SATIS-SARTNAMESI.md:167: unwitnessed numeric claim:       `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi,
+docs/SATIS-SARTNAMESI.md:168: unwitnessed numeric claim:       `printpack.log` → `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.
+docs/SATIS-SARTNAMESI.md:181: unwitnessed numeric claim:       *"DİKİLMEYEN DİKİŞ — BURAYI DİKMEYİN · centre_back_zip: arka orta dikişin 563.4mm (
+docs/SATIS-SARTNAMESI.md:184: unwitnessed numeric claim:       `print-svg/a4-page5.svg` → `BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI 563mm`.
+docs/SATIS-SARTNAMESI.md:187: unwitnessed numeric claim:       **0.0000mm** eşleşiyor — uyarı metin değil, **geometriye bağlı**.
+docs/SATIS-SARTNAMESI.md:202: unwitnessed numeric claim: | şartname 1-4 PASS | **16/17 madde geçti** (Tur 8: 14 → 16) · kalan eksik yalnız **§1'in 5 l
+docs/SATIS-SARTNAMESI.md:235: standing claim 'KAPANDI': | H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üret
+docs/SATIS-SARTNAMESI.md:235: unwitnessed numeric claim: | H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üret
+docs/SATIS-SARTNAMESI.md:236: standing claim 'KAPANDI': | H1.1b | kumaş önerisi (tür/ağırlık/döküm) pakete girmiyor | §4 madde 1; `knowledge/sewing
+docs/SATIS-SARTNAMESI.md:241: standing claim 'BITTI': (Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1.
+docs/SATIS-SARTNAMESI.md:241: unwitnessed numeric claim: (Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1.
+docs/loop-engineering.md:34: unwitnessed numeric claim:    >= 85% but full-pattern gain < +3, invest in the bridge next"). The
+docs truth: 16 standing-claim violation(s) | 32 unwitnessed numeric claim(s)
+EXIT=1

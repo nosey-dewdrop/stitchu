@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<title>stitchu · a photo becomes a pattern, a flat and a sewing guide</title>
+<meta name="description" content="Give stitchu one photo or one sentence. A C++ kernel drafts the pattern, draws the technical flat, and writes the sewing guide, in the browser, true-scale on A4.">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="stitchu · a photo becomes a pattern, a flat and a sewing guide">
+<meta property="og:description" content="One photo or one sentence in. A drafted pattern, a technical flat and a step-by-step sewing guide out.">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta name="twitter:title" content="stitchu · a photo becomes a pattern, a flat and a sewing guide">
+<meta name="twitter:description" content="One photo or one sentence in. A drafted pattern, a technical flat and a step-by-step sewing guide out.">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://stitchu.noseydewdrop.com/#website","name":"stitchu","alternateName":["Stitchu","stitchu pattern engine"],"url":"https://stitchu.noseydewdrop.com/","inLanguage":["en","tr"],"description":"One photo or one sentence becomes a drafted pattern, a technical flat and a sewing guide, all from a deterministic C++ kernel.","publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}},{"@type":"Organization","@id":"https://stitchu.noseydewdrop.com/#org","name":"stitchu","alternateName":"Stitchu","url":"https://stitchu.noseydewdrop.com/","description":"A deterministic pattern engine: a hand-written C++ kernel drafts a garment from a photo or a sentence, draws its technical flat, writes the sewing guide, and prints true-scale, entirely in the browser.","sameAs":["https://github.com/nosey-dewdrop/stitchu"]},{"@type":"WebApplication","name":"stitchu","url":"https://stitchu.noseydewdrop.com/","description":"Give it a photo or a sentence: the kernel drafts the pattern, draws the technical flat and writes the sewing guide, with true-scale A4 printing for home sewing.","applicationCategory":"DesignApplication","operatingSystem":"Any","browserRequirements":"Requires a modern browser with WebAssembly","isAccessibleForFree":true,"inLanguage":["en","tr"],"publisher":{"@id":"https://stitchu.noseydewdrop.com/#org"}}]}</script>
+<link rel="stylesheet" href="css/theme-transitions.css?v=136">
+<link rel="stylesheet" href="css/shared-button.css?v=136">
+<link rel="stylesheet" href="css/shared-header.css?v=136">
+<style>
+  /* RESKIN 2026-07-16 (patch 2.1): baby-blue world. Layout/composition/Didot
+     structure preserved from the vişne landing; only the color turns. Gingham
+     wallpaper is reserved for the ENTRY (hero/waitlist); all other sections and
+     pages are calm white-blue. Text is navy for WCAG-AA contrast. */
+  :root{ --accent:#2f6f7e; --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{min-height:100%}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);overflow-x:hidden;background:#fff}
+  #silk{position:fixed;inset:0;width:100%;height:100vh;display:block;z-index:0}
+  /* Canonical header floats over the hero canvas on the landing only; the bar's
+     own height/padding/font come from shared-header.css (one source, no drift). */
+  .sh-header{position:fixed;top:0;left:0;z-index:6}
+
+  .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:44px 48px 56px}
+  .col{max-width:76ch;text-align:center}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:44px;line-height:1.1;font-weight:400;margin:0 auto 18px;max-width:22ch;color:var(--navy)}
+  h1 em{font-style:italic}
+  .lead{font-size:14.5px;line-height:1.5;max-width:62ch;margin:0 auto 20px;color:#2b4a6b}
+  .lead b{font-weight:700}
+  .items{max-width:66ch;margin:4px auto 0;text-align:left}
+  .item{font-size:13px;line-height:1.5;margin-bottom:13px;color:#2b4a6b}
+  .item .lbl{display:block;color:var(--bb-deep);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
+  .item b{font-weight:700}
+  /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
+  .cta{margin-top:22px}
+  .cta2{margin:22px 0 0 14px;color:var(--navy);text-decoration:none;border-bottom:1px dashed var(--bb-deep);padding-bottom:2px}
+  .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px auto 4px;max-width:64ch}
+  .chip{font-size:11px;letter-spacing:.4px;padding:6px 14px;border:1px solid var(--bb-line);border-radius:16px;background:#fff;color:var(--navy);white-space:nowrap;text-decoration:none}
+  a.chip:hover{background:var(--bb-pale);border-color:var(--bb-deep)}
+  /* Field + button pair: one aligned row, matched height, no wrap on desktop. */
+  .betaform{display:flex;gap:10px;justify-content:center;align-items:stretch;margin:22px auto 6px;max-width:520px}
+  .betaform input{height:48px;box-sizing:border-box;padding:0 16px;border:1.5px solid var(--bb-line);border-radius:6px;font-size:14px;flex:1 1 auto;min-width:0;color:var(--navy);background:#fff}
+  .betaform input:focus{outline:none;border-color:var(--bb-deep)}
+  .betaform .betabtn{height:48px;margin-top:0;box-sizing:border-box;padding:0 28px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;white-space:nowrap}
+  @media (max-width:460px){ .betaform{flex-wrap:wrap} .betaform input,.betaform .betabtn{flex:1 1 100%} }
+  .betamsg{min-height:20px;font-size:13px;color:var(--navy);margin-top:4px}
+  .apiwait{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
+  .btn{position:absolute;z-index:2;filter:drop-shadow(0 6px 12px rgba(63,116,168,.4))}
+  .t1{top:5%;right:6%;width:66px;transform:rotate(-10deg)}
+  .t2{top:15%;right:13%;width:50px;transform:rotate(12deg)}
+  .t3{top:4%;right:17%;width:44px;transform:rotate(6deg)}
+  .l1{bottom:6%;left:5%;width:68px;transform:rotate(8deg)}
+  .l2{bottom:16%;left:11%;width:52px;transform:rotate(-9deg)}
+  .l3{bottom:4%;left:15%;width:46px;transform:rotate(16deg)}
+  .l4{bottom:21%;left:4%;width:40px;transform:rotate(-5deg)}
+  .l5{bottom:10%;left:18%;width:38px;transform:rotate(21deg)}
+  .a1{top:9%;left:6%;width:50px;transform:rotate(-14deg)}
+  .a2{bottom:8%;right:7%;width:56px;transform:rotate(10deg)}
+
+  /* mini proof papers pinned in the hero sides */
+  .hpaper{position:absolute;z-index:2;background:#fff;color:var(--navy);width:236px;padding:16px 16px 17px;box-shadow:0 14px 34px rgba(63,116,168,.26);border:1px solid var(--bb-line)}
+  .hpaper figcaption{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bb-deep);font-weight:700;margin-bottom:9px;text-align:left}
+  .hpaper svg{width:100%;height:auto;display:block}
+  .hpaper .pin{top:-12px;left:-9px;width:30px}
+  .hpL{left:8%;top:50%;transform:translateY(-50%) rotate(-6deg)}
+  .hpR{right:8%;top:50%;transform:translateY(-50%) rotate(5deg)}
+  @media (max-width:1240px){.hpaper{display:none}}
+
+  /* everything below the hero sits on a calm white-blue ground (opaque, so the
+     fixed gingham canvas only shows through the hero viewport) */
+  .rest{position:relative;z-index:1;background:linear-gradient(180deg,var(--bb-pale) 0%,#fff 22%,#fff 100%)}
+
+  /* how it works, one row */
+  .how{position:relative;z-index:1;padding:44px 48px 70px;display:flex;justify-content:center}
+  .flow{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:6px 2px;max-width:960px}
+  .flow .step{display:flex;align-items:baseline;gap:10px;font-size:14.5px;padding:0 8px;color:var(--navy)}
+  .flow .n{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:21px;color:var(--bb-deep)}
+  .flow .seam{width:66px;height:2px;margin:0 6px;background:repeating-linear-gradient(90deg,var(--bb-deep) 0 7px,transparent 7px 12px);opacity:.65}
+
+  /* gallery, real engine output (never Etsy source photos) */
+  .gallery{position:relative;z-index:1;padding:16px 48px 84px;text-align:center}
+  .gcount{font-size:13px;letter-spacing:.5px;color:var(--bb-deep);margin:2px auto 30px}
+  .gcount a{color:var(--bb-deep)}
+  .gcount .num{font-weight:700;color:var(--navy)}
+
+  /* the proof, real drafting output */
+  .proof{position:relative;z-index:1;padding:16px 48px 84px;text-align:center}
+  .ptitle{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:32px;font-weight:400;margin-bottom:8px;color:var(--navy)}
+  .psub{font-size:13px;color:#2b4a6b;max-width:52ch;margin:0 auto 36px}
+  .papers{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;max-width:1060px;margin:0 auto}
+  .paper{position:relative;background:#fff;color:var(--navy);width:308px;max-width:90vw;padding:22px 22px 24px;box-shadow:0 16px 40px rgba(63,116,168,.2);border:1px solid var(--bb-line)}
+  .paper.wide{width:420px}
+  .paper.wide svg{width:100%}
+  .paper figcaption{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--bb-deep);font-weight:700;margin-bottom:14px;text-align:left}
+  .paper svg{width:100%;height:auto;display:block}
+  .pin{position:absolute;top:-15px;left:-12px;width:36px;transform:rotate(-14deg);filter:drop-shadow(0 3px 6px rgba(63,116,168,.35))}
+
+  /* the moat, why stitchu, with the proof numbers nobody else publishes */
+  .why{position:relative;z-index:1;padding:24px 48px 84px;text-align:center}
+  .why.blue{background:var(--bb-pale)}
+  .why .ptitle{margin-bottom:10px}
+  .cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;max-width:1000px;margin:26px auto 0}
+  .card{background:#fff;color:var(--navy);width:300px;max-width:90vw;padding:24px 24px 26px;text-align:left;box-shadow:0 16px 40px rgba(63,116,168,.2);border:1px solid var(--bb-line)}
+  .card h3{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:20px;font-weight:400;margin:0 0 10px;color:var(--navy)}
+  .card p{font-size:13px;line-height:1.5;margin:0;color:#2b4a6b}
+  .card .stat{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bb-deep);font-weight:700;margin-top:14px}
+  .versus{max-width:60ch;margin:34px auto 0;font-size:13px;line-height:1.6;color:#2b4a6b}
+  .versus b{color:var(--navy)}
+  /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
+  .whycta{margin-top:30px}
+  .whycta.sb-secondary{margin-left:14px}
+
+  /* the kitchen: a short list of primitives, a long list of garments */
+  .kit{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:24px auto 0}
+  .kit span{font-size:11px;letter-spacing:.4px;padding:6px 14px;border:1px solid var(--bb-line);border-radius:16px;background:#fff;color:var(--navy);white-space:nowrap}
+  .kit span.op{background:var(--bb-pale);border-color:var(--bb-deep);color:var(--bb-deep);font-weight:700}
+
+  /* VISION sections. Visually separated on purpose: dashed frame, no white
+     paper, and a badge that says out loud this part has not been built. */
+  .viz{border:1.5px dashed var(--bb-line);background:repeating-linear-gradient(135deg,#fff 0 14px,var(--bb-pale) 14px 15px);
+       max-width:1000px;margin:0 auto 70px;padding:34px 40px 38px;text-align:center;position:relative;z-index:1}
+  .vizbadge{display:inline-block;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;font-weight:700;
+       color:var(--bb-deep);border:1px solid var(--bb-deep);border-radius:14px;padding:5px 13px;background:#fff;margin-bottom:16px}
+  .viz .ptitle{font-size:27px;margin-bottom:10px}
+  .viz p{font-size:13.5px;line-height:1.65;max-width:60ch;margin:0 auto;color:#2b4a6b}
+  .viz p + p{margin-top:12px}
+  .vizwrap{padding:0 48px}
+  @media (max-width:460px){ .vizwrap{padding:0 20px} .viz{padding:26px 20px 30px} }
+
+  footer{position:relative;z-index:1;padding:24px 48px 34px;border-top:1px solid var(--bb-line);background:#fff;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:1px;color:#5b7089}
+  footer a{color:var(--navy);text-decoration:none}
+</style>
+</head>
+<body>
+<canvas id="silk"></canvas>
+<header class="sh-header">
+  <a class="brandpatch" href="index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="closet.html" data-en="Closet" data-tr="Dolap">Closet</a>
+    <a href="collections/index.html" data-en="Collections" data-tr="Koleksiyonlar">Collections</a>
+    <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
+    <a href="api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+
+<section class="hero">
+  <img class="btn t1" src="assets/buttons/b6.png" alt="">
+  <img class="btn t2" src="assets/buttons/b1.png" alt="">
+  <img class="btn t3" src="assets/buttons/b3.png" alt="">
+  <img class="btn l1" src="assets/buttons/b7.png" alt="">
+  <img class="btn l2" src="assets/buttons/b2.png" alt="">
+  <img class="btn l3" src="assets/buttons/b6.png" alt="">
+  <img class="btn l4" src="assets/buttons/b1.png" alt="">
+  <img class="btn l5" src="assets/buttons/b3.png" alt="">
+  <img class="btn a1" src="assets/buttons/b2.png" alt="">
+  <img class="btn a2" src="assets/buttons/b7.png" alt="">
+
+  <figure class="hpaper hpL">
+    <img class="pin" src="assets/buttons/b3.png" alt="">
+    <figcaption>the princess seam pair · engine drawing, pasted in</figcaption>
+    <svg viewBox="0 0 220 260" fill="none"><path d="M12.0 71.7C27.4 71.7 37.3 38.1 40.1 20.0L99.3 40.1C101.1 51.9 103.0 62.6 105.0 72.0C93.3 87.2 66.1 114.6 66.1 132.8L57.1 224.0C40.0 227.7 24.8 230.0 12.0 230.0C12.0 166.7 12.0 119.2 12.0 71.7Z" stroke="#1a1a1a" stroke-width="1.8" stroke-linejoin="round"/><path d="M66.1 132.8L60.4 134.2" stroke="#3f74a8" stroke-width="1.1" stroke-dasharray="3 2.5"/><path d="M157.9 66.2C163.8 93.6 170.8 110.8 180.2 118.3L173.1 201.5C157.2 206.1 142.1 214.6 128.0 218.2L119.0 126.9C119.0 108.7 146.2 81.4 157.9 66.2Z" stroke="#1a1a1a" stroke-width="1.8" stroke-linejoin="round"/><path d="M119.0 126.9L124.7 128.4" stroke="#3f74a8" stroke-width="1.1" stroke-dasharray="3 2.5"/><text x="12" y="246" font-size="10.5" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">BODICE FRONT · TWO PANELS</text><text x="12" y="257" font-size="8" fill="#3f74a8" font-family="Helvetica">the princess seam joins them over the bust · drafted for EU38</text></svg>
+  </figure>
+
+  <figure class="hpaper hpR">
+    <img class="pin" src="assets/buttons/b2.png" alt="">
+    <figcaption>tiled to a4 · engine drawing, pasted in</figcaption>
+    <svg viewBox="0 0 240 260" fill="none"><line x1="42.1" y1="18" x2="42.1" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="120.0" y1="18" x2="120.0" y2="223.0" stroke="#1a1a1a" stroke-width="1"/><line x1="197.9" y1="18" x2="197.9" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="42.1" y1="18.0" x2="197.9" y2="18.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="42.1" y1="120.5" x2="197.9" y2="120.5" stroke="#1a1a1a" stroke-width="1"/><line x1="42.1" y1="223.0" x2="197.9" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><text x="47.1" y="30.0" font-size="8" fill="#3f74a8" font-family="Helvetica">1</text><text x="125.0" y="30.0" font-size="8" fill="#3f74a8" font-family="Helvetica">2</text><text x="47.1" y="132.5" font-size="8" fill="#3f74a8" font-family="Helvetica">3</text><text x="125.0" y="132.5" font-size="8" fill="#3f74a8" font-family="Helvetica">4</text><path d="M79.6 74.2C93.0 74.2 101.6 45.0 104.0 29.3L155.4 46.7C157.0 57.0 158.6 66.3 160.4 74.5C150.3 87.7 126.6 111.4 126.6 127.3L118.8 206.5C103.9 209.7 90.7 211.7 79.6 211.7C79.6 156.7 79.6 115.4 79.6 74.2Z" stroke="#1a1a1a" stroke-width="1.8" stroke-linejoin="round"/><path d="M126.6 127.3L121.7 128.5" stroke="#3f74a8" stroke-width="1.1" stroke-dasharray="3 3"/><rect x="47.1" y="23.0" width="12.3" height="12.3" stroke="#1a1a1a" stroke-width="1.2"/><text x="12" y="246" font-size="10.5" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">BODICE · CENTER FRONT</text><text x="12" y="257" font-size="8" fill="#3f74a8" font-family="Helvetica">real tiling · 2x2 A4 sheets · square = 3 cm check</text></svg>
+  </figure>
+
+  <div class="col">
+    <h1 data-en="One photo, or one sentence. Out comes a pattern you can cut." data-tr="Bir fotoğraf, ya da bir cümle. Karşılığında kesebileceğin bir kalıp.">One photo, or one sentence. Out comes a <em>pattern you can cut</em>.</h1>
+    <p class="lead" data-en="Show stitchu a dress you love, or just describe it. A hand-written C++ kernel drafts the whole pattern, draws its technical flat, and writes the sewing guide that goes with it. It runs in your browser and prints true-scale on A4, so the next thing you touch is fabric." data-tr="stitchu'ya sevdiğin bir elbiseyi göster, ya da sadece anlat. Elle yazılmış bir C++ çekirdeği bütün kalıbı çizer, teknik çizimini çıkarır ve yanına dikiş rehberini yazar. Tarayıcında çalışır ve A4'e gerçek ölçekte basar, yani dokunacağın bir sonraki şey kumaş."><b>Show stitchu a dress you love, or just describe it.</b> A hand-written C++ kernel drafts the whole pattern, draws its technical flat, and writes the sewing guide that goes with it. It runs in your browser and prints true-scale on A4, so the next thing you touch is fabric.</p>
+    <div class="chips">
+      <a class="chip" href="create.html" data-en="a photo, or a sentence" data-tr="bir fotoğraf, ya da bir cümle">a photo, or a sentence</a>
+      <a class="chip" href="studio.html" data-en="pattern + technical flat + sewing guide" data-tr="kalıp + teknik çizim + dikiş rehberi">pattern + technical flat + sewing guide</a>
+      <a class="chip" href="benchmark.html" data-en="seams that must sew together are equalised" data-tr="birbirine dikilecek dikişler eşitlenir">seams that must sew together are equalised</a>
+      <a class="chip" href="privacy.html" data-en="on-device · your patterns stay yours" data-tr="cihazda · kalıpların sende kalır">on-device · your patterns stay yours</a>
+    </div>
+    <form class="betaform" onsubmit="return betaWaitlist(event)">
+      <input type="email" id="betaemail" required
+        data-en-ph="you@example.com" data-tr-ph="sen@ornek.com" placeholder="you@example.com">
+      <button type="submit" class="cta betabtn sb-btn sb-primary" data-en="Join the Beta" data-tr="Beta'ya Katıl">Join the Beta</button>
+    </form>
+    <p class="betamsg" id="betamsg"></p>
+    <a class="cta2" href="studio.html" data-en="or draft a pattern free in the live studio →" data-tr="ya da canlı stüdyoda ücretsiz kalıp çiz →">or draft a pattern free in the live studio →</a>
+    <div class="items">
+      <p class="item"><span class="lbl" data-en="what comes out?" data-tr="ne çıkıyor?">what comes out?</span><span data-en="Three things, from one description. The pattern itself, with every panel, dart, notch and grainline. The technical flat, the line drawing a maker reads at a glance. And the sewing guide: which piece meets which, in what order. Not a filter, not a one-size template." data-tr="Tek bir tariften üç şey. Kalıbın kendisi: her panel, pens, çentik ve grainline. Teknik çizim: bir dikişçinin bir bakışta okuduğu çizgi. Ve dikiş rehberi: hangi parça hangisine, hangi sırada. Filtre değil, tek beden şablon değil.">Three things, from one description. <b>The pattern</b> itself, with every panel, dart, notch and grainline. <b>The technical flat</b>, the line drawing a maker reads at a glance. And <b>the sewing guide</b>: which piece meets which, in what order. Not a filter, not a one-size template.</span></p>
+      <p class="item"><span class="lbl" data-en="under the hood?" data-tr="içinde ne var?">under the hood?</span><span data-en="A hand-built C++ kernel is the single source of every number: geometry, seam equalisation, notches, grainlines. Take the AI away and the whole engine remains, because the model only reads the picture, it never draws the line." data-tr="Elle yazılmış bir C++ çekirdeği her sayının tek kaynağı: geometri, dikiş eşitleme, çentikler, grainline'lar. AI'yı çıkar, geriye motorun tamamı kalır, çünkü model sadece resmi okur, çizgiyi asla o çizmez.">A hand-built C++ kernel is the single source of every number: geometry, seam equalisation, notches, grainlines. <b>Take the AI away and the whole engine remains</b>, because the model only reads the picture, it never draws the line.</span></p>
+      <p class="item"><span class="lbl" data-en="sewing at home?" data-tr="evde mi dikeceksin?">sewing at home?</span><span data-en="That path is yours too. Draft any garment to your own seven measurements and print it true-scale, tiled to A4, free in the browser, with nothing about your body uploaded. " data-tr="O yol da senin. Herhangi bir kıyafeti kendi yedi ölçüne çiz ve gerçek ölçekte, A4'e döşenmiş bas, tarayıcıda ücretsiz, vücudunla ilgili hiçbir şey yüklenmez. ">That path is yours too. Draft any garment to your own seven measurements and print it true-scale, tiled to A4, free in the browser, with nothing about your body uploaded. </span><a href="studio.html" style="color:var(--bb-deep)" data-en="Open the studio ↓" data-tr="Studio'yu aç ↓">Open the studio ↓</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="rest">
+<section class="how">
+  <div class="flow">
+    <div class="step"><span class="n">01</span><span data-en="a photo, or a sentence" data-tr="bir fotoğraf, ya da bir cümle">a photo, or a sentence</span></div>
+    <span class="seam"></span>
+    <div class="step"><span class="n">02</span><span data-en="the kernel drafts the pattern and draws its flat" data-tr="çekirdek kalıbı çizer ve teknik çizimini çıkarır">the kernel drafts the pattern and draws its flat</span></div>
+    <span class="seam"></span>
+    <div class="step"><span class="n">03</span><span data-en="print true-scale, follow the sewing guide, cut fabric" data-tr="gerçek ölçekte bas, dikiş rehberini izle, kumaşı kes">print true-scale, follow the sewing guide, cut fabric</span></div>
+  </div>
+</section>
+
+<section class="proof">
+  <h2 class="ptitle" data-en="This is what the engine makes." data-tr="Motorun ürettiği şey bu.">This is what the engine makes.</h2>
+  <p class="psub" data-en="No filters, no clip art. Real drafting geometry, cut to your seven measurements and tiled true-scale to print." data-tr="Filtre yok, çizim klibi yok. Gerçek kalıp geometrisi, senin yedi ölçüne kesilmiş ve gerçek ölçekte A4'e döşenmiş.">No filters, no clip art. Real drafting geometry, cut to your seven measurements and tiled true-scale to print.</p>
+  <p class="gcount"><span data-en="Straight about what you are looking at: every drawing below was drawn by the engine and then pasted in here as a static SVG. This page shows the output, it does not run the kernel — the studio does. Each one was drafted for EU38 unless the sheet says otherwise. Fixes and misses are published openly." data-tr="Ne gördüğün konusunda açık olalım: aşağıdaki her çizimi motor çizdi, sonra buraya statik SVG olarak yapıştırıldı. Bu sayfa çıktıyı gösterir, çekirdeği çalıştırmaz — onu stüdyo yapar. Sayfada aksi yazmadıkça hepsi EU38 için çizildi. Düzeltmeler ve eksikler açıkça yayınlanır.">Straight about what you are looking at: every drawing below was drawn by the engine and then pasted in here as a static SVG. This page shows the output, it does not run the kernel — the studio does. Each one was <b>drafted for EU38</b> unless the sheet says otherwise. Fixes and misses are published openly.</span> <a href="patches.html" data-en="see the patch notes →" data-tr="yama notlarını gör →">see the patch notes →</a></p>
+  <p class="gcount"><span data-en="Want to see it stretch? Four couture looks stack the full feature vocabulary onto one dress." data-tr="Zorlanmasını görmek ister misin? Dört couture görünüm, tüm öğe dağarcığını tek bir elbisede topluyor.">Want to see it stretch? Four couture looks stack the full feature vocabulary onto one dress.</span> <a href="showcase.html" data-en="open the showcase →" data-tr="vitrini aç →">open the showcase →</a></p>
+  <p class="gcount"><span data-en="Or the period I love most: twelve sixties and seventies silhouettes, read from museum photos and drafted to full patterns." data-tr="Ya da en sevdiğim dönem: müze fotoğraflarından okunup tam kalıba çizilmiş on iki altmışlar yetmişler silueti.">Or the period I love most: twelve sixties and seventies silhouettes, read from museum photos and drafted to full patterns.</span> <a href="collection-60s70s.html" data-en="open the collection →" data-tr="koleksiyonu aç →">open the collection →</a></p>
+  <p class="gcount"><span data-en="Newest on the rack: the signature collection, the house silhouettes in one place." data-tr="Askıda en yeni: imza koleksiyonu, evin siluetleri tek yerde.">Newest on the rack: the signature collection, the house silhouettes in one place.</span> <a href="signature.html" data-en="open the signature collection →" data-tr="imza koleksiyonunu aç →">open the signature collection →</a></p>
+  <div class="papers">
+
+    <figure class="paper">
+      <img class="pin" src="assets/buttons/b1.png" alt="">
+      <figcaption>01 · your photo</figcaption>
+      <svg viewBox="0 0 220 250" fill="none" stroke="#1a1a1a" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M83 32 Q110 48 137 32" stroke-width="2"/>
+        <path d="M83 32 L70 38 M137 32 L150 38" stroke-width="2"/>
+        <path d="M70 38 Q63 58 72 74 M150 38 Q157 58 148 74" stroke-width="2"/>
+        <path d="M72 74 Q77 94 81 106 M148 74 Q143 94 139 106" stroke-width="2"/>
+        <path d="M81 106 Q110 114 139 106" stroke-width="1.3"/>
+        <path d="M81 106 Q64 166 56 216 M139 106 Q156 166 164 216" stroke-width="2"/>
+        <path d="M56 216 Q110 228 164 216" stroke-width="2"/>
+        <path d="M79 58 Q92 74 93 90 Q94 99 92 107 M141 58 Q128 74 127 90 Q126 99 128 107" stroke-width="1.3"/>
+        <path d="M92 107 Q89 162 84 218 M128 107 Q131 162 136 218" stroke-width="1.3"/>
+      </svg>
+    </figure>
+
+    <figure class="paper wide">
+      <img class="pin" src="assets/buttons/b6.png" alt="">
+      <figcaption>02 · your pattern · the full set of panels</figcaption>
+      <svg viewBox="0 0 300 260" fill="none"><path d="M19.1 18.1C27.3 17.5 33.9 16.5 38.6 16.2C41.8 28.7 43.8 45.7 43.8 60.3L56.3 150.1C37.0 153.8 22.5 153.8 8.0 153.8L16.3 37.4L19.1 18.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M16.3 37.4L18.8 38.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M76.4 18.1C84.6 17.5 91.2 16.5 95.9 16.2C99.1 28.7 101.1 45.7 101.1 60.3L113.6 150.1C94.3 153.8 79.8 153.8 65.3 153.8L73.6 45.7L76.4 18.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M73.6 45.7L76.1 46.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M122.6 16.8C129.7 16.8 136.2 16.6 142.1 16.2L144.9 35.5L153.2 151.9L122.6 151.9L122.6 16.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M144.9 35.5L142.4 36.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M162.2 16.8C169.3 16.8 175.9 16.6 181.7 16.2L184.6 43.8L192.9 151.9L162.2 151.9L162.2 16.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M184.6 43.8L182.1 44.7" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M201.9 39.0C208.7 39.0 213.0 24.2 214.3 16.2L240.3 25.1C241.1 30.3 242.0 35.0 242.9 39.1C237.7 45.8 225.7 57.9 225.7 65.9L221.7 106.1C214.2 107.7 207.5 108.7 201.9 108.7C201.9 80.8 201.9 59.9 201.9 39.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M225.7 65.9L223.2 66.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M251.9 20.6C259.7 20.6 264.8 17.7 266.2 16.2L290.3 25.1C290.8 30.3 291.4 35.0 292.0 39.1C287.2 42.6 276.1 48.9 276.1 53.0L271.9 100.0C265.0 100.3 258.8 100.4 253.6 100.4C252.9 68.5 251.9 44.5 251.9 20.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M276.1 53.0L273.6 53.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M25.1 162.8C27.7 174.9 30.8 182.5 34.9 185.8L31.8 222.5C24.8 224.5 18.2 228.2 12.0 229.8L8.0 189.6C8.0 181.6 20.0 169.5 25.1 162.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M8.0 189.6L10.5 190.2" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M59.8 162.8C61.6 174.9 63.7 182.5 66.4 185.8L66.4 222.5C60.0 222.8 53.8 223.4 48.1 223.7L43.9 176.7C43.9 172.6 55.1 166.3 59.8 162.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M43.9 176.7L46.4 177.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M75.4 185.6C82.2 185.6 86.6 170.8 87.8 162.8L98.6 166.5L98.6 167.2L98.1 169.9L97.3 172.8L96.4 175.8L95.4 178.8L94.1 181.9L92.6 184.9L90.8 187.9L88.5 190.9L85.3 193.8L80.9 196.1L77.4 196.9Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M107.6 167.2C115.5 167.2 120.5 164.4 122.0 162.8L132.7 166.8L128.9 172.0L127.6 173.0L126.1 174.0L124.6 174.8L123.0 175.6L121.2 176.3L119.3 177.0L117.2 177.5L115.0 178.0L112.7 178.3L110.2 178.6L108.0 178.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><text x="265.4" y="107.4" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center back</text><text x="222.4" y="115.7" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center front</text><text x="137.9" y="158.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center front</text><text x="177.6" y="167.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center back</text><text x="32.2" y="160.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side front</text><text x="89.5" y="169.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side back</text><text x="120.2" y="185.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">back neck facing</text><text x="87.0" y="203.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">front neck facing</text><text x="55.2" y="230.7" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side back</text><text x="32.9" y="239.7" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side front</text><text x="10" y="254" font-size="8" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">A-LINE DRESS</text><text x="290" y="254" font-size="7" fill="#3f74a8" font-family="Helvetica" text-anchor="end">10 pieces · 2.5 m · drafted for EU38</text></svg>
+    </figure>
+
+    <figure class="paper">
+      <img class="pin" src="assets/buttons/b7.png" alt="">
+      <figcaption>03 · true-scale, tiled to A4</figcaption>
+      <svg viewBox="0 0 240 260" fill="none"><line x1="42.1" y1="18" x2="42.1" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="120.0" y1="18" x2="120.0" y2="223.0" stroke="#1a1a1a" stroke-width="1"/><line x1="197.9" y1="18" x2="197.9" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="42.1" y1="18.0" x2="197.9" y2="18.0" stroke="#1a1a1a" stroke-width="1.6"/><line x1="42.1" y1="120.5" x2="197.9" y2="120.5" stroke="#1a1a1a" stroke-width="1"/><line x1="42.1" y1="223.0" x2="197.9" y2="223.0" stroke="#1a1a1a" stroke-width="1.6"/><text x="47.1" y="30.0" font-size="8" fill="#3f74a8" font-family="Helvetica">1</text><text x="125.0" y="30.0" font-size="8" fill="#3f74a8" font-family="Helvetica">2</text><text x="47.1" y="132.5" font-size="8" fill="#3f74a8" font-family="Helvetica">3</text><text x="125.0" y="132.5" font-size="8" fill="#3f74a8" font-family="Helvetica">4</text><path d="M79.6 74.2C93.0 74.2 101.6 45.0 104.0 29.3L155.4 46.7C157.0 57.0 158.6 66.3 160.4 74.5C150.3 87.7 126.6 111.4 126.6 127.3L118.8 206.5C103.9 209.7 90.7 211.7 79.6 211.7C79.6 156.7 79.6 115.4 79.6 74.2Z" stroke="#1a1a1a" stroke-width="1.8" stroke-linejoin="round"/><path d="M126.6 127.3L121.7 128.5" stroke="#3f74a8" stroke-width="1.1" stroke-dasharray="3 3"/><rect x="47.1" y="23.0" width="12.3" height="12.3" stroke="#1a1a1a" stroke-width="1.2"/><text x="12" y="246" font-size="10.5" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">BODICE · CENTER FRONT</text><text x="12" y="257" font-size="8" fill="#3f74a8" font-family="Helvetica">real tiling · 2x2 A4 sheets · square = 3 cm check</text></svg>
+    </figure>
+
+  </div>
+
+  <p class="psub" style="margin-top:52px" data-en="…and it isn't a one-dress trick. Same engine, same body, other silhouettes, every line below is real output." data-tr="…ve tek-elbise numarası değil. Aynı motor, aynı beden, başka siluetler, aşağıdaki her çizgi gerçek çıktı.">…and it isn't a one-dress trick. Same engine, same body, other silhouettes, every line below came out of that same kernel.</p>
+  <div class="papers">
+
+    <figure class="paper wide">
+      <img class="pin" src="assets/buttons/b2.png" alt="">
+      <figcaption>babydoll dress · the full set</figcaption>
+      <svg viewBox="0 0 300 260" fill="none"><path d="M8.0 15.8L91.5 15.8L91.5 175.2L8.0 175.2Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M8.0 19.5L91.5 19.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M100.5 15.8L184.0 15.8L184.0 175.2L100.5 175.2Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M100.5 19.5L184.0 19.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M193.0 38.3C199.7 38.3 204.0 23.7 205.2 15.8L231.0 24.5C234.1 44.7 237.8 56.8 243.2 61.2L240.1 71.9C221.3 74.5 204.8 76.7 193.0 76.7C193.0 61.3 193.0 49.8 193.0 38.3Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M215.7 75.1L216.6 72.5L217.4 74.9" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M252.2 20.1C260.0 20.1 265.0 17.3 266.4 15.8L290.3 24.5C290.9 29.7 291.4 34.3 292.0 38.5C287.1 42.3 275.8 49.3 275.8 54.0L274.0 73.1C266.0 73.4 258.9 73.6 253.0 73.6C252.7 52.2 252.2 36.1 252.2 20.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M275.8 54.0L273.3 54.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M14.6 211.7C21.3 211.2 29.8 184.7 42.3 184.2C47.3 184.7 57.5 211.2 69.9 211.7C76.6 219.1 72.5 226.5 71.0 230.2L13.5 230.2C12.1 226.5 8.0 219.1 14.6 211.7Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M32.3 189.1L32.3 185.6M52.2 189.1L52.2 185.6M13.5 225.1L71.0 225.1" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M101.8 184.2C103.5 196.1 105.6 203.7 108.3 206.9L108.3 217.6C100.9 218.0 93.8 218.5 87.3 218.8L85.6 199.7C85.6 195.0 96.9 188.1 101.8 184.2Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M85.6 199.7L88.0 200.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M117.3 206.7C124.1 206.7 128.4 192.1 129.6 184.2L140.3 187.8L140.3 188.5L139.7 191.2L139.0 194.0L138.1 197.0L137.1 200.0L135.9 203.0L134.4 206.1L132.6 209.0L130.2 212.0L127.1 214.8L122.8 217.1L119.3 217.9Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M149.3 188.5C157.1 188.5 162.1 185.7 163.5 184.2L174.2 188.1L170.4 193.2L169.1 194.3L167.7 195.2L166.1 196.0L164.5 196.8L162.8 197.5L160.9 198.2L158.8 198.7L156.6 199.2L154.3 199.5L151.9 199.8L149.7 199.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M183.2 184.2L226.0 184.2L226.0 196.5L183.2 196.5Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M183.2 190.4L226.0 190.4" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><text x="265.4" y="80.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center back</text><text x="218.1" y="89.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice front</text><text x="49.7" y="182.2" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt front</text><text x="142.2" y="182.2" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt back</text><text x="204.6" y="203.5" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">sleeve cuff</text><text x="161.7" y="212.5" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">back neck facing</text><text x="128.8" y="224.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">front neck facing</text><text x="97.0" y="233.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side back</text><text x="42.3" y="242.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">balloon sleeve</text><text x="10" y="254" font-size="8" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">BALLOON-SLEEVE BABYDOLL DRESS</text><text x="290" y="254" font-size="7" fill="#3f74a8" font-family="Helvetica" text-anchor="end">9 pieces · 2.3 m · drafted for EU38</text></svg>
+    </figure>
+
+    <figure class="paper wide">
+      <img class="pin" src="assets/buttons/b3.png" alt="">
+      <figcaption>knit dress · the full set</figcaption>
+      <svg viewBox="0 0 300 260" fill="none"><path d="M11.1 18.1C19.1 17.5 25.5 16.4 30.1 16.1C33.2 28.6 35.3 45.7 35.3 60.3L35.3 154.0C24.4 154.0 16.2 154.0 8.0 154.0L8.0 37.4L11.1 18.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M8.0 37.4L10.5 38.2" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M47.4 18.1C55.4 17.5 61.8 16.4 66.4 16.1C69.5 28.6 71.6 45.7 71.6 60.3L71.6 154.0C60.7 154.0 52.5 154.0 44.3 154.0L44.3 45.7L47.4 18.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M44.3 45.7L46.8 46.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M80.6 16.7C87.5 16.7 93.9 16.5 99.6 16.1L102.7 35.5L102.7 152.1L80.6 152.1L80.6 16.7Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M102.7 35.5L100.2 36.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M111.7 16.7C118.6 16.7 125.0 16.5 130.7 16.1L133.8 43.8L133.8 152.1L111.7 152.1L111.7 16.7Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M133.8 43.8L131.3 44.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M142.8 44.0C149.0 43.4 156.9 16.7 168.4 16.1C173.0 16.7 182.5 43.4 194.0 44.0C192.0 79.2 189.9 114.5 188.9 132.1L148.0 132.1C146.9 114.5 144.9 79.2 142.8 44.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M159.2 21.2L159.2 17.5M177.6 21.2L177.6 17.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M203.0 44.2L215.4 16.1L241.5 25.0C242.1 30.2 242.7 34.9 243.4 39.1C238.0 45.9 225.3 58.0 225.3 66.1L222.3 106.0C215.0 107.7 208.5 108.8 203.0 108.8C203.0 82.9 203.0 63.5 203.0 44.2Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M225.3 66.1L222.8 66.7" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M252.4 20.5C260.3 20.5 265.3 17.7 266.7 16.1L290.9 25.0C291.3 30.2 291.6 34.9 292.0 39.1C286.9 42.6 275.0 48.9 275.0 53.0L271.7 100.0C264.9 100.3 258.9 100.5 253.8 100.5C253.3 68.5 252.4 44.5 252.4 20.5Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M275.0 53.0L272.5 53.7" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M26.1 163.0C28.0 175.1 30.3 182.7 33.4 186.0L30.3 222.7C23.4 224.8 17.0 228.2 10.9 229.9L8.0 190.0C8.0 181.9 20.7 169.7 26.1 163.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M8.0 190.0L10.5 190.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M59.3 163.0C60.5 175.1 61.8 182.7 63.6 186.0L63.6 222.7C57.3 223.0 51.3 223.6 45.8 223.9L42.4 176.9C42.4 172.7 54.3 166.5 59.3 163.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M42.4 176.9L44.9 177.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M72.6 191.0L85.0 163.0L95.8 166.7L83.1 195.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M104.8 167.4C112.7 167.4 117.7 164.5 119.2 163.0L129.9 166.9L126.1 172.1L124.8 173.2L123.4 174.1L121.8 175.0L120.2 175.8L118.4 176.5L116.5 177.1L114.4 177.7L112.2 178.2L109.9 178.5L107.4 178.7L105.2 178.8Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><text x="265.4" y="107.5" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center back</text><text x="223.2" y="115.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center front</text><text x="168.4" y="139.1" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">sleeve</text><text x="91.7" y="159.1" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center front</text><text x="122.8" y="168.1" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center back</text><text x="31.2" y="161.0" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side front</text><text x="58.0" y="170.0" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side back</text><text x="117.4" y="185.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">back neck facing</text><text x="84.2" y="202.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">front neck facing</text><text x="53.0" y="230.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side back</text><text x="32.9" y="239.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side front</text><text x="10" y="254" font-size="8" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">STRAIGHT STRAIGHT-SLEEVE DRESS</text><text x="290" y="254" font-size="7" fill="#3f74a8" font-family="Helvetica" text-anchor="end">11 pieces · 2.4 m · drafted for EU38</text></svg>
+    </figure>
+
+    <figure class="paper wide">
+      <img class="pin" src="assets/buttons/b1.png" alt="">
+      <figcaption>bustier-length top · the full set</figcaption>
+      <svg viewBox="0 0 300 260" fill="none"><path d="M28.7 51.6C39.9 51.6 47.1 27.2 49.1 14.0L92.2 28.6C93.5 37.2 94.9 45.0 96.4 51.9C87.9 62.9 68.0 82.8 68.0 96.1L61.5 162.4C49.1 165.1 38.0 166.8 28.7 166.8C28.7 120.7 28.7 86.2 28.7 51.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M68.0 96.1L63.9 97.1" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M105.4 21.2C118.4 21.2 126.7 16.5 129.0 14.0L168.9 28.6C169.8 37.2 170.7 45.0 171.7 51.9C163.8 57.6 145.4 67.9 145.4 74.8L138.6 152.4C127.1 152.8 116.9 153.1 108.3 153.1C107.1 100.3 105.4 60.8 105.4 21.2Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M145.4 74.8L141.3 75.8" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M209.0 14.0C213.3 33.9 218.4 46.5 225.2 51.9L220.0 112.5C208.5 115.8 197.5 122.0 187.2 124.6L180.7 58.2C180.7 44.9 200.5 25.1 209.0 14.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M180.7 58.2L184.8 59.2" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M260.4 14.0C263.3 33.9 266.7 46.5 271.3 51.9L271.3 112.5C260.7 113.0 250.5 114.1 241.0 114.5L234.2 36.9C234.2 30.0 252.6 19.7 260.4 14.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M234.2 36.9L238.3 38.0" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M28.7 213.4C39.9 213.4 47.1 189.0 49.1 175.8L67.0 181.9L67.0 182.9L66.1 187.5L64.9 192.2L63.4 197.2L61.7 202.2L59.6 207.2L57.1 212.3L54.1 217.3L50.2 222.2L45.0 226.9L37.7 230.7L32.0 232.0Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M76.0 183.0C89.1 183.0 97.3 178.3 99.7 175.8L117.4 182.3L111.2 190.9L108.9 192.6L106.6 194.2L104.1 195.6L101.4 196.9L98.4 198.1L95.3 199.1L91.9 200.1L88.2 200.8L84.4 201.4L80.3 201.8L76.6 201.9Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><text x="252.7" y="121.5" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">top side back</text><text x="202.9" y="131.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">top side front</text><text x="138.5" y="160.1" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">top center back</text><text x="62.5" y="173.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">top center front</text><text x="96.7" y="208.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">back neck facing</text><text x="47.9" y="239.0" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">front neck facing</text><text x="10" y="254" font-size="8" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">CROPPED TOP</text><text x="290" y="254" font-size="7" fill="#3f74a8" font-family="Helvetica" text-anchor="end">6 pieces · 1.2 m · drafted for EU38</text></svg>
+    </figure>
+
+    <figure class="paper wide">
+      <img class="pin" src="assets/buttons/b7.png" alt="">
+      <figcaption data-en="a fuller body · same engine, same kernel" data-tr="daha dolgun bir beden · aynı motor, aynı çekirdek">a fuller body · same engine, same kernel</figcaption>
+      <svg viewBox="0 0 300 260" fill="none"><path d="M18.1 15.6C29.2 15.1 38.1 14.2 44.4 14.0C47.1 24.8 48.9 39.5 48.9 52.1L59.7 129.8C39.6 133.1 24.4 133.1 9.3 133.1L16.5 32.3L18.1 15.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M16.5 32.3L18.7 33.1" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M79.9 15.7C89.7 15.2 97.7 14.2 103.5 14.0C106.2 24.8 108.0 39.5 108.0 52.1L118.8 129.8C98.7 133.1 83.7 133.1 68.7 133.1L75.9 39.5L79.9 15.7Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M75.9 39.5L78.0 40.3" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M127.8 14.6C137.2 14.6 145.8 14.3 153.4 14.0L155.0 30.8L162.2 131.5L127.8 131.5L127.8 14.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M155.0 30.8L152.9 31.5" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M171.2 14.5C179.8 14.5 187.6 14.3 194.8 14.0L198.8 37.9L206.0 131.4L171.2 131.4L171.2 14.5Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M198.8 37.9L196.6 38.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M215.0 38.9C224.0 38.4 235.8 14.5 252.8 14.0C259.6 14.5 273.6 38.4 290.7 38.9C290.7 70.4 284.6 101.9 283.1 117.6L222.5 117.6C221.0 101.9 215.0 70.4 215.0 38.9Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M239.2 18.5L239.2 15.2M266.4 18.5L266.4 15.2" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M9.3 168.4L22.2 142.1L48.9 151.2C50.3 156.7 51.7 161.7 53.3 166.2C48.8 173.2 38.4 185.8 38.4 194.2L34.9 229.5C25.2 231.0 16.5 232.0 9.3 232.0C9.3 206.6 9.3 187.5 9.3 168.4Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M38.4 194.2L36.3 194.7" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M62.3 146.6C70.4 146.6 75.7 143.7 77.1 142.1L103.6 151.8C104.7 157.3 105.7 162.2 106.9 166.6C102.4 170.7 91.9 177.8 91.9 182.9L87.6 224.4C78.7 224.7 70.7 224.8 64.1 224.8C63.3 193.5 62.3 170.1 62.3 146.6Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M91.9 182.9L89.7 183.4" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M130.7 142.1C135.2 154.9 140.6 163.0 147.7 166.6L145.0 199.3C136.0 201.1 127.4 204.0 119.5 205.4L115.9 170.1C115.9 161.7 126.3 149.1 130.7 142.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M115.9 170.1L118.1 170.6" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M171.7 142.1C175.1 154.7 179.1 162.7 184.5 166.1L184.5 199.0C176.2 199.2 168.3 199.7 160.9 199.9L156.7 158.4C156.7 153.2 167.2 146.1 171.7 142.1Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M156.7 158.4L158.9 158.9" stroke="#3f74a8" stroke-width="1" stroke-dasharray="3 2.5"/><path d="M193.5 168.4L206.3 142.1L215.7 145.3L202.4 172.7Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M224.7 146.6C232.9 146.6 238.1 143.7 239.6 142.1L248.9 145.5L245.5 150.1L244.2 151.0L242.9 151.9L241.4 152.7L239.8 153.5L238.1 154.2L236.2 154.8L234.2 155.4L232.0 155.9L229.7 156.2L227.3 156.4L225.0 156.5Z" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><text x="252.8" y="124.6" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">sleeve</text><text x="188.6" y="138.4" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center back</text><text x="145.0" y="147.4" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt center front</text><text x="34.5" y="140.1" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side front</text><text x="93.7" y="156.4" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">skirt side back</text><text x="236.8" y="163.5" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">back neck facing</text><text x="204.6" y="179.7" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">front neck facing</text><text x="170.6" y="206.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side back</text><text x="131.8" y="215.9" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice side front</text><text x="84.6" y="231.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center back</text><text x="36.3" y="240.8" font-size="6.5" fill="#3f74a8" font-family="Helvetica" text-anchor="middle">bodice center front</text><text x="10" y="254" font-size="8" fill="#1a1a1a" font-family="Helvetica" font-weight="bold">A-LINE STRAIGHT-SLEEVE DRESS</text><text x="290" y="254" font-size="7" fill="#3f74a8" font-family="Helvetica" text-anchor="end">11 pieces · 3.2 m · drafted for bust 122 cm</text></svg>
+    </figure>
+
+  </div>
+</section>
+
+<section class="why" id="kitchen" style="border-top:1px solid var(--bb-line);padding-top:56px">
+  <h2 class="ptitle" data-en="A small kitchen, a long menu." data-tr="Küçük bir mutfak, uzun bir menü.">A small kitchen, a long menu.</h2>
+  <p class="psub" data-en="The engine does not keep a folder of dresses. It keeps parts: a panel, a dart, a seam that has to equalise against its partner, a sleeve cap, a facing, a cuff, a hem. A garment is an arrangement of those parts, which is why the dresses above are not four programs — they are four arrangements of one short list." data-tr="Motor bir elbise klasörü tutmuyor. Parça tutuyor: bir panel, bir pens, eşine karşı eşitlenmesi gereken bir dikiş, bir kol kapağı, bir tela, bir manşet, bir etek ucu. Bir giysi bu parçaların bir dizilişi; yukarıdaki elbiseler bu yüzden dört program değil — tek bir kısa listenin dört dizilişi.">The engine does not keep a folder of dresses. It keeps parts: a panel, a dart, a seam that has to equalise against its partner, a sleeve cap, a facing, a cuff, a hem. A garment is an arrangement of those parts, which is why the dresses above are not four programs — they are four arrangements of one short list.</p>
+  <div class="kit">
+    <span class="op">panel</span><span class="op">dart</span><span class="op">seam</span><span class="op">sleeve cap</span>
+    <span class="op">facing</span><span class="op">cuff</span><span class="op">waistband</span><span class="op">notch</span><span class="op">grainline</span>
+  </div>
+</section>
+
+<div class="vizwrap">
+<section class="viz" data-vizyon>
+  <span class="vizbadge" data-en="planned · not built yet" data-tr="planlanan · henüz yapılmadı">planned · not built yet</span>
+  <h2 class="ptitle" data-en="A longer menu, from the same short list." data-tr="Aynı kısa listeden, daha uzun bir menü.">A longer menu, from the same short list.</h2>
+  <p data-en="From that same handful of parts the plan will reach past dresses: a coat, trousers, a tailored jacket. Each one will be a new arrangement rather than a new program, and the kernel will draw it with the pieces it knows. The menu will grow; the kitchen will stay small." data-tr="Aynı avuç dolusu parçadan plan elbiselerin ötesine geçecek: bir palto, pantolon, terzi ceketi. Her biri yeni bir program değil yeni bir diziliş olacak ve çekirdek onu bildiği parçalarla çizecek. Menü uzayacak; mutfak küçük kalacak.">From that same handful of parts the plan will reach past dresses: a coat, trousers, a tailored jacket. Each one will be a new arrangement rather than a new program, and the kernel will draw it with the pieces it knows. The menu will grow; the kitchen will stay small.</p>
+</section>
+
+<section class="viz" data-vizyon>
+  <span class="vizbadge" data-en="planned · not built yet" data-tr="planlanan · henüz yapılmadı">planned · not built yet</span>
+  <h2 class="ptitle" data-en="Say “put a bow here.”" data-tr="“Şuraya bir fiyonk ekle” de.">Say &#8220;put a bow here.&#8221;</h2>
+  <p data-en="The next layer will let you talk to a pattern the way you talk to a tailor. Point at a panel, ask for a bow at the waist, a deeper neckline, a sleeve a hand longer — and the kernel will redraw only the pieces that move, then re-equalise every seam it touched." data-tr="Bir sonraki katman, bir kalıpla terziyle konuştuğun gibi konuşmanı sağlayacak. Bir paneli göster, bele bir fiyonk iste, daha derin bir yaka, bir el boyu daha uzun kol — çekirdek sadece oynayan parçaları yeniden çizecek, sonra dokunduğu her dikişi yeniden eşitleyecek.">The next layer will let you talk to a pattern the way you talk to a tailor. Point at a panel, ask for a bow at the waist, a deeper neckline, a sleeve a hand longer — and the kernel will redraw only the pieces that move, then re-equalise every seam it touched.</p>
+  <p data-en="Nothing will be regenerated from scratch. The edit will land on the pattern in front of you, and the sewing guide will follow it." data-tr="Hiçbir şey sıfırdan yeniden üretilmeyecek. Düzenleme önündeki kalıbın üstüne inecek ve dikiş rehberi onu izleyecek.">Nothing will be regenerated from scratch. The edit will land on the pattern in front of you, and the sewing guide will follow it.</p>
+</section>
+</div>
+
+<section class="why" id="fabric" style="border-top:1px solid var(--bb-line);padding-top:56px">
+  <h2 class="ptitle" data-en="Cloth is not a detail." data-tr="Kumaş bir detay değil.">Cloth is not a detail.</h2>
+  <p class="psub" data-en="For a shape it knows, the engine already names the cloths that suit it and the ones that will fight it, from a sourced knowledge base rather than a guess." data-tr="Bildiği bir siluet için motor, tahminle değil kaynaklı bir bilgi tabanından, ona yakışan kumaşları ve onunla kavga edecek olanları şimdiden söylüyor.">For a shape it knows, the engine already names the cloths that suit it and the ones that will fight it, from a sourced knowledge base rather than a guess.</p>
+</section>
+
+<div class="vizwrap">
+<section class="viz" data-vizyon>
+  <span class="vizbadge" data-en="planned · not built yet" data-tr="planlanan · henüz yapılmadı">planned · not built yet</span>
+  <h2 class="ptitle" data-en="One dress, two fabrics, two patterns." data-tr="Tek elbise, iki kumaş, iki kalıp.">One dress, two fabrics, two patterns.</h2>
+  <p data-en="Cloth will become an input to the geometry instead of a note beside it. The same dress cut in crisp cotton and in a fluid viscose will not want the same pattern: ease, dart depth and hem sweep will move with the cloth. Two files will come out of one design, one per fabric, and the cutting layout will change with them." data-tr="Kumaş, yanına düşülmüş bir not değil geometrinin girdisi olacak. Aynı elbise sert pamukta ve akışkan viskonda aynı kalıbı istemez: bolluk, pens derinliği ve etek genişliği kumaşla birlikte oynayacak. Tek tasarımdan iki dosya çıkacak, kumaş başına bir tane, ve kesim yerleşimi de onlarla değişecek.">Cloth will become an input to the geometry instead of a note beside it. The same dress cut in crisp cotton and in a fluid viscose will not want the same pattern: ease, dart depth and hem sweep will move with the cloth. Two files will come out of one design, one per fabric, and the cutting layout will change with them.</p>
+</section>
+
+<section class="viz" data-vizyon>
+  <span class="vizbadge" data-en="planned · not built yet" data-tr="planlanan · henüz yapılmadı">planned · not built yet</span>
+  <h2 class="ptitle" data-en="Further out." data-tr="Daha ilerisi.">Further out.</h2>
+  <p data-en="An account that will carry your closet between devices · a place where makers will post what they sewed and swap fixes · an iOS app. Named here so the line between the built and the promised stays visible; none of it exists yet." data-tr="Dolabını cihazlar arasında taşıyacak bir hesap · dikenlerin diktiklerini paylaşıp düzeltme takas edeceği bir yer · bir iOS uygulaması. Yapılanla söz verilen arasındaki çizgi görünsün diye buraya yazıldı; hiçbiri henüz mevcut değil.">An account that will carry your closet between devices · a place where makers will post what they sewed and swap fixes · an iOS app. Named here so the line between the built and the promised stays visible; none of it exists yet.</p>
+</section>
+</div>
+
+<section class="why blue" id="why">
+  <h2 class="ptitle" data-en="Others promise fit. stitchu publishes the proof." data-tr="Başkaları uyum vaat eder. stitchu kanıtı yayınlar.">Others promise fit. stitchu publishes the proof.</h2>
+  <p class="psub" data-en="Photo-to-pattern isn't new, but no one else shows you how accurate it is. stitchu does." data-tr="Fotoğraftan kalıp yeni değil, ama başka kimse ne kadar doğru olduğunu göstermiyor. stitchu gösteriyor.">Photo-to-pattern isn't new, but no one else shows you how accurate it is. stitchu does.</p>
+  <div class="cards">
+    <div class="card">
+      <h3 data-en="Measured, not just claimed." data-tr="İddia değil, ölçülmüş.">Measured, not just claimed.</h3>
+      <p data-en="Seams that must sew together are equalised by the kernel, and that equality is a test in the repo, not a sentence on a page: when it stops being true the build goes red. That is engineering stability, not a fit guarantee; the real fit test is still a muslin. Fixes and misses are published in the patch notes." data-tr="Birbirine dikilmesi gereken dikişleri çekirdek eşitler ve bu eşitlik bir sayfadaki cümle değil, depodaki bir test: doğru olmaktan çıktığı an build kırmızıya düşer. Bu bir uyum garantisi değil, mühendislik istikrarı; gerçek uyum testi hâlâ bir prova. Düzeltmeler ve eksikler yama notlarında yayınlı.">Seams that must sew together <b>are equalised by the kernel</b>, and that equality is a test in the repo, not a sentence on a page: when it stops being true the build goes red. That is engineering stability, not a fit guarantee; the real fit test is still a muslin. Fixes and misses are published in the patch notes.</p>
+      <span class="stat" data-en="equalised seams · checked by a test that can fail" data-tr="eşitlenmiş dikişler · düşebilen bir testle kontrollü">equalised seams · checked by a test that can fail</span>
+      <a href="benchmark.html" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--bb-deep);border-bottom:1px dashed var(--bb-line);text-decoration:none" data-en="Read the engineering proofs + textbook audit →" data-tr="Mühendislik kanıtlarını + kitap denetimini oku →">Read the engineering proofs + textbook audit →</a>
+    </div>
+    <div class="card">
+      <h3 data-en="Fits every body, not one block." data-tr="Tek kalıba değil, her bedene uyar.">Fits every body, not one block.</h3>
+      <p data-en="The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders, because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the shoulders and armholes are drawn for that body instead of stretched from a smaller one." data-tr="Dikiş kalıplarına en büyük şikâyet, büyük bedenlerde dev kol oyuntuları ve geniş omuzlar çıkması, çünkü tek bir küçük kalıbı ölçekliyorlar. stitchu tüm kıyafeti senin yedi ölçüne yeniden çizer, böylece omuz ve kol oyuntusu küçük bir bedenden esnetilmek yerine o beden için çizilir.">The #1 complaint about sewing patterns is that larger sizes get giant armholes and wide shoulders, because they scale one small block. stitchu redraws the whole garment for your seven measurements, so the shoulders and armholes are drawn for that body instead of stretched from a smaller one.</p>
+      <span class="stat" data-en="drafted per body · no grading distortion" data-tr="bedene göre çizilir · grading bozulması yok">drafted per body · no grading distortion</span>
+    </div>
+    <div class="card">
+      <h3 data-en="Your measurements never leave." data-tr="Ölçülerin asla çıkmaz.">Your measurements never leave.</h3>
+      <p data-en="The pattern is drafted inside your browser by the engine itself. Your body measurements are never uploaded anywhere, it's not a privacy policy, it's the architecture." data-tr="Kalıp, motorun kendisiyle senin tarayıcının içinde çizilir. Vücut ölçülerin hiçbir yere yüklenmez, bu bir gizlilik politikası değil, mimarinin kendisi.">The pattern is drafted inside your browser by the engine itself. Your body measurements are never uploaded anywhere, it's not a privacy policy, it's the architecture.</p>
+      <span class="stat" data-en="on-device · nothing uploaded" data-tr="cihazda · hiçbir şey yüklenmez">on-device · nothing uploaded</span>
+    </div>
+  </div>
+  <p class="versus" data-en="Tools in this corner are sold by subscription and keep their geometry closed. stitchu publishes its engineering proofs, seams match, proportions hold, and it runs in your browser free." data-tr="Bu köşedeki araçlar abonelikle satılıyor ve geometrilerini kapalı tutuyor. stitchu mühendislik kanıtlarını yayınlar, dikişler tutar, oranlar korunur, ve tarayıcında ücretsiz çalışır.">Tools in this corner are sold by subscription and keep their geometry closed. stitchu publishes its engineering proofs, seams match, proportions hold, and it runs in your browser <b>free</b>.</p>
+  <p class="versus" style="margin-top:14px;font-size:13px;opacity:.85" data-en="One honest thing: every pattern is a starting block. The engine drafts to seven measurements and fills the rest from documented assumptions, so sew a muslin and check the fit before you cut your real fabric." data-tr="Dürüst bir not: her kalıp bir başlangıç bloğudur. Motor yedi ölçüye çizer ve gerisini belgelenmiş varsayımlardan doldurur, o yüzden gerçek kumaşını kesmeden önce bir prova dik ve uyumu kontrol et.">One honest thing: every pattern is a starting block. The engine drafts to seven measurements and fills the rest from documented assumptions, so sew a muslin and check the fit before you cut your real fabric.</p>
+  <a class="whycta sb-btn sb-primary" href="#top" onclick="document.getElementById('betaemail').focus();return false" data-en="Join the Beta →" data-tr="Beta'ya Katıl →">Join the Beta →</a>
+  <a class="whycta sb-btn sb-secondary" href="benchmark.html" data-en="See the Engineering Proofs →" data-tr="Mühendislik Kanıtlarını Gör →">See the Engineering Proofs →</a>
+</section>
+
+<section class="why" id="industry" style="border-top:1px solid var(--bb-line);padding-top:56px">
+  <h2 class="ptitle" data-en="What can it already send to the factory floor?" data-tr="Fabrikaya şimdiden ne gönderebiliyor?">What can it already send to the factory floor?</h2>
+  <p class="psub" data-en="The recipe doesn't stop at an A4 printout. The same geometry exports to the files a production line actually reads, machine-checked against third-party tools where one exists, misses and limits published." data-tr="Reçete bir A4 çıktıda bitmiyor. Aynı geometri, bir üretim hattının gerçekten okuduğu dosyalara çıkar, üçüncü taraf araç olan yerde makinece doğrulanmış, eksikleri ve sınırları açık.">The recipe doesn't stop at an A4 printout. The same geometry exports to the files a production line actually reads, machine-checked against third-party tools where one exists, misses and limits published.</p>
+  <div class="cards">
+    <div class="card">
+      <h3 data-en="Industry interchange, not a screenshot." data-tr="Ekran görüntüsü değil, endüstri dosyası.">Industry interchange, not a screenshot.</h3>
+      <p data-en="The kernel's own geometry exports to DXF-AAMA/ASTM R12 in millimetres, on the standard layer convention: cut line, seamline, grainline, darts and notches, each on its named layer. Opened in ezdxf and measured vertex for vertex against the engine's own millimetres." data-tr="Motorun kendi geometrisi DXF-AAMA/ASTM R12'ye milimetre cinsinden, standart katman düzeniyle çıkar: kesim çizgisi, dikiş çizgisi, grainline, pensler ve çentikler, her biri kendi adlı katmanında. ezdxf'te açıldı ve motorun kendi milimetresine karşı vertex vertex ölçüldü.">The kernel's own geometry exports to DXF-AAMA/ASTM R12 in millimetres, on the standard layer convention: cut line, seamline, grainline, darts and notches, each on its named layer. Opened in <b>ezdxf</b> and measured vertex for vertex against the engine's own millimetres.</p>
+      <span class="stat" data-en="vertex-for-vertex DXF parity · opens in Valentina / Seamly2D" data-tr="vertex vertex DXF paritesi · Valentina / Seamly2D'de açılır">vertex-for-vertex DXF parity · opens in Valentina / Seamly2D</span>
+    </div>
+    <div class="card">
+      <h3 data-en="One design, a full size run." data-tr="Tek tasarım, tam beden serisi.">One design, a full size run.</h3>
+      <p data-en="One recipe covers the full EU size run by re-drafting to each standard body rather than scaling one block. Each size gets its own draft rather than a scaled copy, and the growth follows the size chart's own steps instead of a fake fixed one. The manifest carries the clean count per run, and prints the misses next to it." data-tr="Tek reçete, tek bir bloğu ölçeklemek yerine her standart bedene yeniden çizilerek tüm EU beden serisini kapsar. Her beden ölçeklenmiş bir kopya değil kendi çizimini alır ve büyüme sahte sabit bir adımı değil, beden tablosunun kendi adımlarını izler. Manifest, koşu başına temiz beden sayısını taşır ve eksikleri yanına yazar.">One recipe covers the full EU size run by re-drafting to each standard body rather than scaling one block. Each size gets its <b>own draft</b> rather than a scaled copy, and the growth follows the size chart's own steps instead of a fake fixed one. The manifest carries the clean count per run, and prints the misses next to it.</p>
+      <span class="stat" data-en="the full EU size run · dart topology fixed" data-tr="tüm EU beden serisi · pens topolojisi sabit">the full EU size run · dart topology fixed</span>
+    </div>
+    <div class="card">
+      <h3 data-en="Cut pieces packed onto the fabric." data-tr="Kumaşa yerleşen kesim parçaları.">Cut pieces packed onto the fabric.</h3>
+      <p data-en="The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine (shapely), not an in-house script: it reports no pairwise overlap at all, and the layout fits inside the width." data-tr="Graded parçalar top eninde bir marker'a yerleşir, örtüşme bir iç script'le değil bağımsız bir geometri motoruyla (shapely) kontrol edilir: hiçbir ikili örtüşme raporlamıyor ve yerleşim ene sığar.">The graded pieces nest onto a marker at the roll width, and the overlap is checked by an independent geometry engine (<b>shapely</b>), not an in-house script: it reports no pairwise overlap at all, and the layout fits inside the width.</p>
+      <span class="stat" data-en="no overlap · shapely-checked" data-tr="örtüşme yok · shapely doğrulamalı">no overlap · shapely-checked</span>
+    </div>
+    <div class="card">
+      <h3 data-en="A production package a factory can read." data-tr="Bir fabrikanın okuyabileceği üretim paketi.">A production package a factory can read.</h3>
+      <p data-en="One recipe becomes a single machine-readable tech-pack: size table, cut list, fabric weight, marker efficiency and a graded DXF per size, plus a human-readable PDF spec sheet. The weight and efficiency maths are cross-checked against the manifest's own reported numbers." data-tr="Tek reçete, tek makine-okur tech-pack'e dönüşür: beden tablosu, kesim listesi, kumaş ağırlığı, marker verimi ve beden başına graded DXF, artı insan-okur PDF spec sayfası. Ağırlık ve verim hesapları, manifestin kendi bildirdiği sayılara karşı çapraz kontrol edilir.">One recipe becomes a single machine-readable tech-pack: size table, cut list, fabric weight, marker efficiency and a graded DXF per size, plus a human-readable PDF spec sheet. The weight and efficiency maths are <b>cross-checked</b> against the manifest's own reported numbers.</p>
+      <span class="stat" data-en="manifest + graded DXF per size + PDF spec" data-tr="manifest + beden başına graded DXF + PDF spec">manifest + graded DXF per size + PDF spec</span>
+    </div>
+  </div>
+  <p class="versus" data-en="These are the gates that can go red: DXF, grading, nesting, tech-pack. The taste of a pattern and its true fit are still judged the old way, sew a toile, and a real pattern-cutter has the final word." data-tr="Bunlar kırmızıya düşebilen kapılar: DXF, grading, nesting, tech-pack. Bir kalıbın zevki ve gerçek uyumu hâlâ eski yolla yargılanır, bir prova dik, ve son sözü gerçek bir kalıpçı söyler.">These are the gates that can go red: DXF, grading, nesting, tech-pack. The taste of a pattern and its true fit are still judged the old way, sew a toile, and a real pattern-cutter has the final word.</p>
+  <a class="whycta sb-btn sb-primary" href="studio.html" data-en="Open the studio → download a real DXF + factory pack" data-tr="Studio'yu aç → gerçek bir DXF + fabrika paketi indir">Open the studio → download a real DXF + factory pack</a>
+</section>
+
+<section class="why" id="api" style="border-top:1px solid var(--bb-line);padding-top:56px">
+  <h2 class="ptitle" data-en="Build with the stitchu engine." data-tr="stitchu motoruyla geliştir.">Build with the stitchu engine.</h2>
+  <p class="psub" data-en="The same C++ drafting engine, behind one endpoint. POST /api/draft → a true-scale, measurement-fitted pattern. One photo → the full size run via /api/grade. No per-call AI cost." data-tr="Aynı C++ kalıp motoru, tek bir uçta. POST /api/draft → gerçek ölçekli, bedene çizilmiş bir kalıp. Tek fotoğraf → tüm beden serisi, /api/grade ile. Çağrı başına yapay zeka maliyeti yok.">The same C++ drafting engine, behind one endpoint. <span style="color:var(--bb-deep)">POST /api/draft</span> → a true-scale, measurement-fitted pattern. One photo → the full size run via <span style="color:var(--bb-deep)">/api/grade</span>. No per-call AI cost.</p>
+  <form class="apiwait" onsubmit="return apiWaitlist(event)">
+    <input type="email" id="apiemail" placeholder="you@studio.com" required
+      style="padding:13px 16px;border:1.5px solid var(--bb-line);border-radius:2px;font-size:14px;width:260px;max-width:70vw;color:var(--navy)">
+    <button type="submit" class="whycta sb-btn sb-primary" style="margin-top:0;cursor:pointer" data-en="Become a Beta Partner" data-tr="Beta Ortağı Ol">Become a Beta Partner</button>
+  </form>
+  <p class="versus" id="apimsg" style="margin-top:16px;min-height:20px"></p>
+  <p class="versus" style="opacity:.85;font-size:12px"><span data-en="Beta partners: free during the build. Studios, made-to-measure brands and pattern shops, send your volume." data-tr="Beta ortakları: inşa sürerken ücretsiz. Atölyeler, ısmarlama markalar ve kalıp dükkanları, hacminizi yazın.">Beta partners: free during the build. Studios, made-to-measure brands and pattern shops, send your volume.</span> · <a href="api.html" style="color:var(--bb-deep)" data-en="see the API →" data-tr="API'yi gör →">see the API →</a></p>
+</section>
+
+<footer>
+  <span>stitchu · a pattern-making engine</span>
+  <span><a href="benchmark.html">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · <a href="styles/index.html" data-en="Style Library" data-tr="Stil Kütüphanesi">Style Library</a> · @nosey-dewdrop · <span style="opacity:.55">v86</span></span>
+</footer>
+</div>
+<!-- /.rest -->
+
+<script src="js/shared-header.js?v=136"></script>
+<script>
+// Waitlist, real capture to the worker (no fake form). Honest states, TR/EN.
+const API_BASE = 'https://stitchu-api.damummyphus.workers.dev';
+const isTR = () => document.documentElement.lang === 'tr';
+async function submitWaitlist(inputId, msgId, note){
+  const inp = document.getElementById(inputId);
+  const email = inp.value.trim();
+  const msg = document.getElementById(msgId);
+  msg.textContent = isTR() ? 'Gönderiliyor…' : 'Sending…';
+  try{
+    const r = await fetch(API_BASE + '/api/waitlist', {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify({ email, note })
+    });
+    if(r.ok){ msg.textContent = isTR() ? 'Listedesin, yakında haber vereceğiz.' : 'You’re on the list. A reply will follow shortly.'; inp.value=''; }
+    else if(r.status===429){ msg.textContent = isTR() ? 'Bir saniye, birazdan tekrar dene.' : 'One moment, please try again shortly.'; }
+    else { msg.textContent = isTR() ? 'Kaydedilemedi, hello@ adresine yaz?' : 'Could not save that, email hello@ instead?'; }
+  }catch(_){ msg.textContent = isTR() ? 'Sunucuya ulaşılamadı, hello@ adresine yaz?' : 'Could not reach the server, email hello@ instead?'; }
+  return false;
+}
+function betaWaitlist(e){ e.preventDefault(); return submitWaitlist('betaemail','betamsg','beta-waitlist'); }
+function apiWaitlist(e){ e.preventDefault(); return submitWaitlist('apiemail','apimsg','api-waitlist'); }
+</script>
+<script>
+// hero-only baby-blue poplin gingham (pötikare), soft blue checks on white.
+// RESKIN 2026-07-16: reserved for the entry; other sections sit on opaque
+// white-blue (.rest) so this shows through the hero viewport alone.
+const cv=document.getElementById('silk'), ctx=cv.getContext('2d');
+// woven baby-blue on white: base=white ground, thread=baby blue #8fbfe8,
+// overlaps deepen toward #5e93c4. Light, calm, never loud.
+const BASE=[255,255,255], THREAD=[143,191,232], DEEP=[94,147,196];
+function draw(){
+  const W=Math.max(200, Math.round(innerWidth*0.4)), H=Math.max(200, Math.round(innerHeight*0.4));
+  cv.width=W; cv.height=H;
+  const img=ctx.createImageData(W,H), d=img.data;
+  const C=Math.max(3, Math.round(W*0.012));
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const p=(y*W+x)*4;
+      const stripe=((x%(C*2))<C?1:0)+((y%(C*2))<C?1:0);
+      // 0 stripes = white; 1 stripe = single baby-blue thread; 2 = crossed (deeper)
+      let col;
+      if(stripe===0) col=BASE;
+      else if(stripe===1){ const w=0.34; col=[BASE[0]+(THREAD[0]-BASE[0])*w,BASE[1]+(THREAD[1]-BASE[1])*w,BASE[2]+(THREAD[2]-BASE[2])*w]; }
+      else { const w=0.62; col=[BASE[0]+(DEEP[0]-BASE[0])*w,BASE[1]+(DEEP[1]-BASE[1])*w,BASE[2]+(DEEP[2]-BASE[2])*w]; }
+      const th=((x&1)?-0.02:0.015)+((y&1)?-0.02:0.015);
+      d[p]=col[0]*(1+th); d[p+1]=col[1]*(1+th); d[p+2]=col[2]*(1+th); d[p+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
+draw(); addEventListener('resize', draw);
+</script>
+</body>
+</html>

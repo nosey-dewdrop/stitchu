@@ -1,0 +1,147 @@
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start 43: sleeve_armhole_agree_check
+1/1 Test #43: sleeve_armhole_agree_check .......***Failed    0.45 sec
+size  shaping  fabric  cap       drawn_armhole  declared   H1(mm)     H2(dev)    H3(dev)
+EU34  Dart     Woven  Plain        353.206270 353.206270   0.000000   0.013876   0.000000
+  [FAIL] H2 EU34 Dart Woven Plain: drawn cap ease 0.053876 vs declared 0.040000 (dev 0.013876 > 0.001500)
+EU34  Dart     Woven  Gathered     353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Woven  Puffed       353.206270 353.206270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Plain        348.235270 348.235270   0.000000   0.013024   0.000000
+  [FAIL] H2 EU34 Dart Knit Plain: drawn cap ease 0.033024 vs declared 0.020000 (dev 0.013024 > 0.001500)
+EU34  Dart     Knit   Gathered     348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Dart     Knit   Puffed       348.235270 348.235270   0.000000   0.000000   0.000000
+EU34  Princess Woven  Plain        353.208479 353.206270   0.002210   0.013869   0.000000
+  [FAIL] H2 EU34 Princess Woven Plain: drawn cap ease 0.053869 vs declared 0.040000 (dev 0.013869 > 0.001500)
+EU34  Princess Woven  Gathered     353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Woven  Puffed       353.208479 353.206270   0.002210   0.000000   0.000000
+EU34  Princess Knit   Plain        348.236243 348.235270   0.000973   0.013021   0.000000
+  [FAIL] H2 EU34 Princess Knit Plain: drawn cap ease 0.033021 vs declared 0.020000 (dev 0.013021 > 0.001500)
+EU34  Princess Knit   Gathered     348.236243 348.235270   0.000973   0.000000   0.000000
+EU34  Princess Knit   Puffed       348.236243 348.235270   0.000973   0.000000   0.000000
+EU36  Dart     Woven  Plain        362.592279 362.592279   0.000000   0.014778   0.000000
+  [FAIL] H2 EU36 Dart Woven Plain: drawn cap ease 0.054778 vs declared 0.040000 (dev 0.014778 > 0.001500)
+EU36  Dart     Woven  Gathered     362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Woven  Puffed       362.592279 362.592279   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Plain        355.720285 355.720285   0.000000   0.013261   0.000000
+  [FAIL] H2 EU36 Dart Knit Plain: drawn cap ease 0.033261 vs declared 0.020000 (dev 0.013261 > 0.001500)
+EU36  Dart     Knit   Gathered     355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Dart     Knit   Puffed       355.720285 355.720285   0.000000   0.000000   0.000000
+EU36  Princess Woven  Plain        362.595753 362.592279   0.003474   0.014768   0.000000
+  [FAIL] H2 EU36 Princess Woven Plain: drawn cap ease 0.054768 vs declared 0.040000 (dev 0.014768 > 0.001500)
+EU36  Princess Woven  Gathered     362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Woven  Puffed       362.595753 362.592279   0.003474   0.000000   0.000000
+EU36  Princess Knit   Plain        355.722043 355.720285   0.001758   0.013256   0.000000
+  [FAIL] H2 EU36 Princess Knit Plain: drawn cap ease 0.033256 vs declared 0.020000 (dev 0.013256 > 0.001500)
+EU36  Princess Knit   Gathered     355.722043 355.720285   0.001758   0.000000   0.000000
+EU36  Princess Knit   Puffed       355.722043 355.720285   0.001758   0.000000   0.000000
+EU38  Dart     Woven  Plain        373.055575 373.055575   0.000000   0.012936   0.000000
+  [FAIL] H2 EU38 Dart Woven Plain: drawn cap ease 0.052936 vs declared 0.040000 (dev 0.012936 > 0.001500)
+EU38  Dart     Woven  Gathered     373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Woven  Puffed       373.055575 373.055575   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Plain        364.245656 364.245656   0.000000   0.014278   0.000000
+  [FAIL] H2 EU38 Dart Knit Plain: drawn cap ease 0.034278 vs declared 0.020000 (dev 0.014278 > 0.001500)
+EU38  Dart     Knit   Gathered     364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Dart     Knit   Puffed       364.245656 364.245656   0.000000   0.000000   0.000000
+EU38  Princess Woven  Plain        373.060573 373.055575   0.004998   0.012922   0.000000
+  [FAIL] H2 EU38 Princess Woven Plain: drawn cap ease 0.052922 vs declared 0.040000 (dev 0.012922 > 0.001500)
+EU38  Princess Woven  Gathered     373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Woven  Puffed       373.060573 373.055575   0.004998   0.000000   0.000000
+EU38  Princess Knit   Plain        364.248467 364.245656   0.002811   0.014270   0.000000
+  [FAIL] H2 EU38 Princess Knit Plain: drawn cap ease 0.034270 vs declared 0.020000 (dev 0.014270 > 0.001500)
+EU38  Princess Knit   Gathered     364.248467 364.245656   0.002811   0.000000   0.000000
+EU38  Princess Knit   Puffed       364.248467 364.245656   0.002811   0.000000   0.000000
+EU40  Dart     Woven  Plain        383.758019 383.758019   0.000000   0.013862   0.000000
+  [FAIL] H2 EU40 Dart Woven Plain: drawn cap ease 0.053862 vs declared 0.040000 (dev 0.013862 > 0.001500)
+EU40  Dart     Woven  Gathered     383.758019 383.758019   0.000000   0.000000   0.000000
+EU40  Dart     Woven  Puffed       383.758019 383.758019   0.000000   0.000000   0.000000
+EU40  Dart     Knit   Plain        373.139351 373.139351   0.000000   0.014526   0.000000
+  [FAIL] H2 EU40 Dart Knit Plain: drawn cap ease 0.034526 vs declared 0.020000 (dev 0.014526 > 0.001500)
+EU40  Dart     Knit   Gathered     373.139351 373.139351   0.000000   0.000000   0.000000
+EU40  Dart     Knit   Puffed       373.139351 373.139351   0.000000   0.000000   0.000000
+EU40  Princess Woven  Plain        383.764594 383.758019   0.006575   0.013844   0.000000
+  [FAIL] H2 EU40 Princess Woven Plain: drawn cap ease 0.053844 vs declared 0.040000 (dev 0.013844 > 0.001500)
+EU40  Princess Woven  Gathered     383.764594 383.758019   0.006575   0.000000   0.000000
+EU40  Princess Woven  Puffed       383.764594 383.758019   0.006575   0.000000   0.000000
+EU40  Princess Knit   Plain        373.143317 373.139351   0.003966   0.014515   0.000000
+  [FAIL] H2 EU40 Princess Knit Plain: drawn cap ease 0.034515 vs declared 0.020000 (dev 0.014515 > 0.001500)
+EU40  Princess Knit   Gathered     373.143317 373.139351   0.003966   0.000000   0.000000
+EU40  Princess Knit   Puffed       373.143317 373.139351   0.003966   0.000000   0.000000
+EU42  Dart     Woven  Plain        395.990493 395.990493   0.000000   0.013801   0.000000
+  [FAIL] H2 EU42 Dart Woven Plain: drawn cap ease 0.053801 vs declared 0.040000 (dev 0.013801 > 0.001500)
+EU42  Dart     Woven  Gathered     395.990493 395.990493   0.000000   0.000000   0.000000
+EU42  Dart     Woven  Puffed       395.990493 395.990493   0.000000   0.000000   0.000000
+EU42  Dart     Knit   Plain        383.411115 383.411115   0.000000   0.012884   0.000000
+  [FAIL] H2 EU42 Dart Knit Plain: drawn cap ease 0.032884 vs declared 0.020000 (dev 0.012884 > 0.001500)
+EU42  Dart     Knit   Gathered     383.411115 383.411115   0.000000   0.000000   0.000000
+EU42  Dart     Knit   Puffed       383.411115 383.411115   0.000000   0.000000   0.000000
+EU42  Princess Woven  Plain        395.998980 395.990493   0.008488   0.013778   0.000000
+  [FAIL] H2 EU42 Princess Woven Plain: drawn cap ease 0.053778 vs declared 0.040000 (dev 0.013778 > 0.001500)
+EU42  Princess Woven  Gathered     395.998980 395.990493   0.008488   0.000000   0.000000
+EU42  Princess Woven  Puffed       395.998980 395.990493   0.008488   0.000000   0.000000
+EU42  Princess Knit   Plain        383.416557 383.411115   0.005442   0.012869   0.000000
+  [FAIL] H2 EU42 Princess Knit Plain: drawn cap ease 0.032869 vs declared 0.020000 (dev 0.012869 > 0.001500)
+EU42  Princess Knit   Gathered     383.416557 383.411115   0.005442   0.000000   0.000000
+EU42  Princess Knit   Puffed       383.416557 383.411115   0.005442   0.000000   0.000000
+EU44  Dart     Woven  Plain        409.014076 409.014076   0.000000   0.011888   0.000000
+  [FAIL] H2 EU44 Dart Woven Plain: drawn cap ease 0.051888 vs declared 0.040000 (dev 0.011888 > 0.001500)
+EU44  Dart     Woven  Gathered     409.014076 409.014076   0.000000   0.000000   0.000000
+EU44  Dart     Woven  Puffed       409.014076 409.014076   0.000000   0.000000   0.000000
+EU44  Dart     Knit   Plain        394.484043 394.484043   0.000000   0.012487   0.000000
+  [FAIL] H2 EU44 Dart Knit Plain: drawn cap ease 0.032487 vs declared 0.020000 (dev 0.012487 > 0.001500)
+EU44  Dart     Knit   Gathered     394.484043 394.484043   0.000000   0.000000   0.000000
+EU44  Dart     Knit   Puffed       394.484043 394.484043   0.000000   0.000000   0.000000
+EU44  Princess Woven  Plain        409.024630 409.014076   0.010555   0.011861   0.000000
+  [FAIL] H2 EU44 Princess Woven Plain: drawn cap ease 0.051861 vs declared 0.040000 (dev 0.011861 > 0.001500)
+EU44  Princess Woven  Gathered     409.024630 409.014076   0.010555   0.000000   0.000000
+EU44  Princess Woven  Puffed       409.024630 409.014076   0.010555   0.000000   0.000000
+EU44  Princess Knit   Plain        394.491140 394.484043   0.007097   0.012468   0.000000
+  [FAIL] H2 EU44 Princess Knit Plain: drawn cap ease 0.032468 vs declared 0.020000 (dev 0.012468 > 0.001500)
+EU44  Princess Knit   Gathered     394.491140 394.484043   0.007097   0.000000   0.000000
+EU44  Princess Knit   Puffed       394.491140 394.484043   0.007097   0.000000   0.000000
+EU46  Dart     Woven  Plain        422.151076 422.151076   0.000000   0.011702   0.000000
+  [FAIL] H2 EU46 Dart Woven Plain: drawn cap ease 0.051702 vs declared 0.040000 (dev 0.011702 > 0.001500)
+EU46  Dart     Woven  Gathered     422.151076 422.151076   0.000000   0.000000   0.000000
+EU46  Dart     Woven  Puffed       422.151076 422.151076   0.000000   0.000000   0.000000
+EU46  Dart     Knit   Plain        405.831117 405.831117   0.000000   0.013451   0.000000
+  [FAIL] H2 EU46 Dart Knit Plain: drawn cap ease 0.033451 vs declared 0.020000 (dev 0.013451 > 0.001500)
+EU46  Dart     Knit   Gathered     405.831117 405.831117   0.000000   0.000000   0.000000
+EU46  Dart     Knit   Puffed       405.831117 405.831117   0.000000   0.000000   0.000000
+EU46  Princess Woven  Plain        422.163607 422.151076   0.012530   0.011671   0.000000
+  [FAIL] H2 EU46 Princess Woven Plain: drawn cap ease 0.051671 vs declared 0.040000 (dev 0.011671 > 0.001500)
+EU46  Princess Woven  Gathered     422.163607 422.151076   0.012530   0.000000   0.000000
+EU46  Princess Woven  Puffed       422.163607 422.151076   0.012530   0.000000   0.000000
+EU46  Princess Knit   Plain        405.839827 405.831117   0.008710   0.013428   0.000000
+  [FAIL] H2 EU46 Princess Knit Plain: drawn cap ease 0.033428 vs declared 0.020000 (dev 0.013428 > 0.001500)
+EU46  Princess Knit   Gathered     405.839827 405.831117   0.008710   0.000000   0.000000
+EU46  Princess Knit   Puffed       405.839827 405.831117   0.008710   0.000000   0.000000
+EU48  Dart     Woven  Plain        456.260358 456.260358   0.000000   0.010669   0.000000
+  [FAIL] H2 EU48 Dart Woven Plain: drawn cap ease 0.050669 vs declared 0.040000 (dev 0.010669 > 0.001500)
+EU48  Dart     Woven  Gathered     456.260358 456.260358   0.000000   0.000000   0.000000
+EU48  Dart     Woven  Puffed       456.260358 456.260358   0.000000   0.000000   0.000000
+EU48  Dart     Knit   Plain        437.648519 437.648519   0.000000   0.010798   0.000000
+  [FAIL] H2 EU48 Dart Knit Plain: drawn cap ease 0.030798 vs declared 0.020000 (dev 0.010798 > 0.001500)
+EU48  Dart     Knit   Gathered     437.648519 437.648519   0.000000   0.000000   0.000000
+EU48  Dart     Knit   Puffed       437.648519 437.648519   0.000000   0.000000   0.000000
+EU48  Princess Woven  Plain        456.275837 456.260358   0.015479   0.010634   0.000000
+  [FAIL] H2 EU48 Princess Woven Plain: drawn cap ease 0.050634 vs declared 0.040000 (dev 0.010634 > 0.001500)
+EU48  Princess Woven  Gathered     456.275837 456.260358   0.015479   0.000000   0.000000
+EU48  Princess Woven  Puffed       456.275837 456.260358   0.015479   0.000000   0.000000
+EU48  Princess Knit   Plain        437.659725 437.648519   0.011206   0.010771   0.000000
+  [FAIL] H2 EU48 Princess Knit Plain: drawn cap ease 0.030771 vs declared 0.020000 (dev 0.010771 > 0.001500)
+EU48  Princess Knit   Gathered     437.659725 437.648519   0.011206   0.000000   0.000000
+EU48  Princess Knit   Puffed       437.659725 437.648519   0.011206   0.000000   0.000000
+
+cells=96
+worst H1 = 0.015479 mm   (EU48 Princess Woven Plain)   limit 0.79375 mm
+worst H2 = 0.014778      (EU36 Dart Woven Plain)   limit 0.0015
+worst H3 = 0.000000      (EU36 Dart Knit Gathered)   limit 0.0200
+sleeve_armhole_agree_check FAILED (32 failures)
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.45 sec
+
+The following tests FAILED:
+	 43 - sleeve_armhole_agree_check (Failed)
+Errors while running CTest

@@ -1,0 +1,23 @@
+FAIL A  undeclared number on the landing page: "$34–49 a month"
+FAIL A  undeclared number on the landing page: "0.00 mm"
+FAIL A  undeclared number on the landing page: "1 mm"
+FAIL A  undeclared number on the landing page: "0.000 mm"
+FAIL A  undeclared number on the landing page: "6 cm"
+FAIL A  undeclared number on the landing page: "0.000000 mm²"
+FAIL A  undeclared number on the landing page: "10 pieces"
+FAIL A  undeclared number on the landing page: "70,200-draft"
+FAIL A  undeclared number on the landing page: "EU34–52"
+FAIL A  undeclared number on the landing page: "EU34 to 52"
+FAIL A  undeclared number on the landing page: "10 of 10 sizes"
+FAIL A  undeclared number on the landing page: "10/10 sizes"
+----
+rule A: 12 number-carrying claims on the page, 0 declared in web/landing-claims.json, 12 violation(s)
+  claims seen: "$34–49 a month" · "0.00 mm" · "1 mm" · "0.000 mm" · "6 cm" · "0.000000 mm²" · "10 pieces" · "70,200-draft" · "EU34–52" · "EU34 to 52" · "10 of 10 sizes" · "10/10 sizes"
+rule B: 0 data-vizyon element(s), 0 violation(s) (no vision markup — rule passes in silence)
+rule C: site-health.mjs exit 0, 0 violation(s)
+====
+landing_truth_check: A=12  B=0  C=0
+HUKUM: FAIL
+A number on web/index.html is not tied to a proof file that exists,
+or the vision copy claims the present, or the site has a dead link.
+EXIT=1

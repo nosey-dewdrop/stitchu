@@ -531,3 +531,49 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
   olarak çıkınca bakmak istersen orada.
 - **[AÇIK] Zevk panosu** — F4 konvansiyon kapısını geçen flat'ler `~/Desktop/gece-zevk-panosu/`
   altına ESKİ|YENİ yan yana basılacak. Hakemi sensin, koşu bloke olmuyor.
+
+## 22 AĞU — F11 KAPANIŞI: KOŞU KOD ÜRETMEDİ, KARARLAR
+
+- **[KARAR GEREK — EN ACİL] `gece.sh` yaması uygulansın mı?** Bu gece dört fazın
+  (F0/F6/F9/F10) işi `gece.sh`'in kendi mantığınca **geri dönüşsüz silindi**.
+  Kök sebep ölçüldü (`GECE/F11-B.md`): kapı (`:158`) commit'ten (`:164`) önce
+  koşuyor → kapı kırmızısında `HEAD == $ONCE` → `DUR()`'un dal açan `if`'i
+  (`:82-83`) **hiç çalışamıyor** → akış `git clean -fdq`'ya (`:93-94`) düşüyor.
+  Yani §3.1'in *"reddedilen iş `gece/F#-reddedildi` dalına alınır"* sözü
+  **hiçbir zaman tutulmamıştı.** Yama tasarlandı, reponun klonunda sahte bir
+  fazla koşturularak ölçüldü, **uygulanmadı** — `gece.sh` harness, sessiz
+  değişiklik yasak (§3.0). Uygula dersen tek commit, gerekçesi mesajda.
+- **[KARAR GEREK — ZAMANA DUYARLI] `/private/tmp/stitchu-gece/` (338M) kurtarılsın mı?**
+  İçinde F6'nın düzeltilmiş `sleeve.cpp`'siyle 17:04'te derlenmiş **çalışan
+  ikili** var (koşturuldu: `cells=96 · H1 0.015479 · H2 0.001297 · H3 0.000000`).
+  Kaynak kodu KURTARILAMAZ ama bu ikili F6'nın iddiasının tek canlı kanıtı.
+  **Makine yeniden başlarsa gider.** Metin kanıtlar zaten `GECE/kurtarma/`ya
+  alındı (328K, commitli); soru 338M'lik build ağacının saklanıp saklanmayacağı.
+- **[KARAR GEREK] Damar hangi adı taşıyacak?** Tek sayı değil, üç ayrı ölçü:
+  **YETENEK %95.2** (motor çizebiliyor mu) · **SEVKİYAT %9.5** (varsayılan
+  nesnede var mı) · **ÜYELİK %29** (flat stil başına). F11 ikisinin KOSU.md'de
+  yan yana durmasını öneriyor; eski tek "%0" sevk EDİLMEYEN hatta ölçülmüştü.
+- **[KARAR GEREK] `web/index.html:212` yalanı.** *"Every drawing on this page is
+  real engine output… and live."* Ölçüldü: `gen-landing.js`'in 7 SVG çıktısının
+  7'si de sayfadaki baytlarla eşleşmiyor; üstelik `gen-landing.js` hiçbir dosyaya
+  **yazmıyor** — SVG'ler elle yapıştırılmış, "live" mimari olarak imkânsız.
+  Bu cümle canlı sitede duruyor ve **dışarıya söylenen bir yalan.** Düzeltilmiş
+  hâli `GECE/kurtarma/F10.index.html.orig`'de bayt olarak duruyor (F10-C yazmıştı,
+  iş silindi). Aynı dosyada `CAD` yasağı 8 satırda ihlal (`:7,8,12,20,22,176,191,192`)
+  ve EU34–48 ↔ EU34–52 iç çelişkisi (`:8`/`:22` vs `:179`/`:316`/`:317`).
+- **[ÖLÇÜM GEREK] `web/js/missing.js` ters yönde yalan söylüyor olabilir.**
+  Alıcıya *"lace-up çizili değil / fiyonk parça olarak çizili değil / düğme patı
+  çizili değil"* diyor (`:30-56`), oysa `laceupback.cpp tie.cpp buttonrow.cpp
+  collar.cpp gather.cpp` var ve beş kapı da yeşil. Yani dürüstlük katmanı
+  motorun **çizebildiğini** "çizemedim" diyor olabilir. Sadece grep'le bakıldı,
+  **koşturarak DOĞRULANMADI.** Tek soru: vision yolu `tieClosure`/`laceUpBack`/
+  `buttonRow` eksenlerini set ediyor mu, yoksa doğrudan `missing.js`'e mi düşüyor.
+- **[BİLGİ] `kapi.sh` K4 muhtemelen yanlış pozitif üretiyor** — F9'u düşüren iki
+  satır YORUM'du; `kapi.sh:195` grep'i yorumu koddan ayırmıyor. DOĞRULANMADI,
+  `kapi.sh` mühürlü, açılmadı. Bir sonraki koşudan önce bakılmalı.
+- **[BİLGİ] Yayındaki koleksiyon sayfaları öksüz.** Üç üreteç bugün koşmuyor
+  (`gen-collections-page.mjs`, `gen-vintage-page.mjs`, `gen-taste-collections.mjs`,
+  hepsi ENOENT `web/patterns/*/meta.json`). Sebep kodda yazılı:
+  `gen-sitemap.mjs:15` → *"af49514 deleted that tree"*. Sayfalar canlı, üreteçleri ölü.
+- **[DEVREDİYOR] `patterns_real/`** (§0.10, kapatılmaya çalışılmıyor) ·
+  **`stash@{0}`** (`devlog.md`/`linkedin.md` silinmiş duruyor, hükmün gerek).

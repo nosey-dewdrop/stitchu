@@ -1,0 +1,10 @@
+----
+rule A: 1 number-carrying claims on the page, 16 declared in web/landing-claims.json, 0 violation(s)
+  claims seen: "EU38"
+rule B: 4 data-vizyon element(s), 0 violation(s)
+rule D: 16 proof-claims on the page, 15 declared, 0 violation(s)
+rule C: site-health.mjs exit 0, 0 violation(s)
+====
+landing_truth_check: A=0  B=0  C=0  D=0
+HUKUM: YESIL
+EXIT=0

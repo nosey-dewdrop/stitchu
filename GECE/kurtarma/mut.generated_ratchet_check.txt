@@ -1,0 +1,22 @@
+Test project /private/tmp/stitchu-gece/b-mut
+    Start 4: generated_ratchet_check
+1/1 Test #4: generated_ratchet_check ..........***Failed    0.70 sec
+FAIL bytes     web/robots.txt
+     declared  ba93d7ac9f05e9d65e7ef38202cc17e8f628db22d7a70f1cb4c212153e323e4e
+     on disk   0642867483e1dd4da92f5cd269c579a62befb801e019b090ded0a341165b90c8
+----
+generated_ratchet_check: 57 declared paths, 57 on disk
+  bytes moved: 1 · declared-but-missing: 0 · undeclared: 0
+HUKUM: FAIL (1)
+A generated file's bytes moved without its declared sha moving with it.
+If this was a real regeneration: run the producer, then --accept, and put
+the manifest in the SAME commit. If it was a hand-edit: it is refused.
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.70 sec
+
+The following tests FAILED:
+	  4 - generated_ratchet_check (Failed)
+Errors while running CTest

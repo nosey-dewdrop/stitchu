@@ -33,3 +33,8 @@
 #
 # --- fazlar buraya yazar, asagisi bos ---
 F0	uretilmis-dosya-elle	generated_ratchet_check	printf '\n# mutasyon\n' >> web/robots.txt
+# F11 (kapanis, 22 Agu): MUTASYON YOK -- gerekcesi bu dosyanin kendi kurali,
+# "F1 dunya taramasi ve F11 rapor kod yazmaz -> mutasyonu yok". F11 bu kosuda
+# engine/ contract/ web/ altinda SIFIR dosya degistirdi (git status porcelain
+# GECE/ disi BOS), dolayisiyla bozulacak olculen nesne yok. Sahte knob
+# YAZILMADI -- uydurma mutasyon bu dosyanin kendi yasagini ihlal ederdi.

@@ -1,0 +1,167 @@
+size  shaping  fabric  cap       drawn_armhole  declared   H1(mm)     H2(dev)    H3(dev)
+EU34  Dart     Woven  Plain        353.206270 353.206270   0.000000   0.000514   0.000000
+EU34  Dart     Woven  Gathered     353.206270 353.206270   0.000000   0.000000   0.080528
+  [FAIL] H3 EU34 Dart Woven Gathered: drawn arc excess 0.119472 vs declared spread 0.200000 (dev 0.080528 > 0.020000)
+EU34  Dart     Woven  Puffed       353.206270 353.206270   0.000000   0.000000   0.293531
+  [FAIL] H3 EU34 Dart Woven Puffed: drawn arc excess 0.743531 vs declared spread 0.450000 (dev 0.293531 > 0.020000)
+EU34  Dart     Knit   Plain        348.235270 348.235270   0.000000   0.001191   0.000000
+EU34  Dart     Knit   Gathered     348.235270 348.235270   0.000000   0.000000   0.089922
+  [FAIL] H3 EU34 Dart Knit Gathered: drawn arc excess 0.110078 vs declared spread 0.200000 (dev 0.089922 > 0.020000)
+EU34  Dart     Knit   Puffed       348.235270 348.235270   0.000000   0.000000   0.266370
+  [FAIL] H3 EU34 Dart Knit Puffed: drawn arc excess 0.716370 vs declared spread 0.450000 (dev 0.266370 > 0.020000)
+EU34  Princess Woven  Plain        353.208479 353.206270   0.002210   0.000508   0.000000
+EU34  Princess Woven  Gathered     353.208479 353.206270   0.002210   0.000000   0.080528
+  [FAIL] H3 EU34 Princess Woven Gathered: drawn arc excess 0.119472 vs declared spread 0.200000 (dev 0.080528 > 0.020000)
+EU34  Princess Woven  Puffed       353.208479 353.206270   0.002210   0.000000   0.293531
+  [FAIL] H3 EU34 Princess Woven Puffed: drawn arc excess 0.743531 vs declared spread 0.450000 (dev 0.293531 > 0.020000)
+EU34  Princess Knit   Plain        348.236243 348.235270   0.000973   0.001194   0.000000
+EU34  Princess Knit   Gathered     348.236243 348.235270   0.000973   0.000000   0.089922
+  [FAIL] H3 EU34 Princess Knit Gathered: drawn arc excess 0.110078 vs declared spread 0.200000 (dev 0.089922 > 0.020000)
+EU34  Princess Knit   Puffed       348.236243 348.235270   0.000973   0.000000   0.266370
+  [FAIL] H3 EU34 Princess Knit Puffed: drawn arc excess 0.716370 vs declared spread 0.450000 (dev 0.266370 > 0.020000)
+EU36  Dart     Woven  Plain        362.592279 362.592279   0.000000   0.001287   0.000000
+EU36  Dart     Woven  Gathered     362.592279 362.592279   0.000000   0.000000   0.075261
+  [FAIL] H3 EU36 Dart Woven Gathered: drawn arc excess 0.124739 vs declared spread 0.200000 (dev 0.075261 > 0.020000)
+EU36  Dart     Woven  Puffed       362.592279 362.592279   0.000000   0.000000   0.307552
+  [FAIL] H3 EU36 Dart Woven Puffed: drawn arc excess 0.757552 vs declared spread 0.450000 (dev 0.307552 > 0.020000)
+EU36  Dart     Knit   Plain        355.720285 355.720285   0.000000   0.000495   0.000000
+EU36  Dart     Knit   Gathered     355.720285 355.720285   0.000000   0.000000   0.084566
+  [FAIL] H3 EU36 Dart Knit Gathered: drawn arc excess 0.115434 vs declared spread 0.200000 (dev 0.084566 > 0.020000)
+EU36  Dart     Knit   Puffed       355.720285 355.720285   0.000000   0.000000   0.282191
+  [FAIL] H3 EU36 Dart Knit Puffed: drawn arc excess 0.732191 vs declared spread 0.450000 (dev 0.282191 > 0.020000)
+EU36  Princess Woven  Plain        362.595753 362.592279   0.003474   0.001297   0.000000
+EU36  Princess Woven  Gathered     362.595753 362.592279   0.003474   0.000000   0.075261
+  [FAIL] H3 EU36 Princess Woven Gathered: drawn arc excess 0.124739 vs declared spread 0.200000 (dev 0.075261 > 0.020000)
+EU36  Princess Woven  Puffed       362.595753 362.592279   0.003474   0.000000   0.307552
+  [FAIL] H3 EU36 Princess Woven Puffed: drawn arc excess 0.757552 vs declared spread 0.450000 (dev 0.307552 > 0.020000)
+EU36  Princess Knit   Plain        355.722043 355.720285   0.001758   0.000500   0.000000
+EU36  Princess Knit   Gathered     355.722043 355.720285   0.001758   0.000000   0.084566
+  [FAIL] H3 EU36 Princess Knit Gathered: drawn arc excess 0.115434 vs declared spread 0.200000 (dev 0.084566 > 0.020000)
+EU36  Princess Knit   Puffed       355.722043 355.720285   0.001758   0.000000   0.282191
+  [FAIL] H3 EU36 Princess Knit Puffed: drawn arc excess 0.732191 vs declared spread 0.450000 (dev 0.282191 > 0.020000)
+EU38  Dart     Woven  Plain        373.055575 373.055575   0.000000   0.000559   0.000000
+EU38  Dart     Woven  Gathered     373.055575 373.055575   0.000000   0.000000   0.071593
+  [FAIL] H3 EU38 Dart Woven Gathered: drawn arc excess 0.128407 vs declared spread 0.200000 (dev 0.071593 > 0.020000)
+EU38  Dart     Woven  Puffed       373.055575 373.055575   0.000000   0.000000   0.316796
+  [FAIL] H3 EU38 Dart Woven Puffed: drawn arc excess 0.766796 vs declared spread 0.450000 (dev 0.316796 > 0.020000)
+EU38  Dart     Knit   Plain        364.245656 364.245656   0.000000   0.000963   0.000000
+EU38  Dart     Knit   Gathered     364.245656 364.245656   0.000000   0.000000   0.080101
+  [FAIL] H3 EU38 Dart Knit Gathered: drawn arc excess 0.119899 vs declared spread 0.200000 (dev 0.080101 > 0.020000)
+EU38  Dart     Knit   Puffed       364.245656 364.245656   0.000000   0.000000   0.294699
+  [FAIL] H3 EU38 Dart Knit Puffed: drawn arc excess 0.744699 vs declared spread 0.450000 (dev 0.294699 > 0.020000)
+EU38  Princess Woven  Plain        373.060573 373.055575   0.004998   0.000545   0.000000
+EU38  Princess Woven  Gathered     373.060573 373.055575   0.004998   0.000000   0.071593
+  [FAIL] H3 EU38 Princess Woven Gathered: drawn arc excess 0.128407 vs declared spread 0.200000 (dev 0.071593 > 0.020000)
+EU38  Princess Woven  Puffed       373.060573 373.055575   0.004998   0.000000   0.316796
+  [FAIL] H3 EU38 Princess Woven Puffed: drawn arc excess 0.766796 vs declared spread 0.450000 (dev 0.316796 > 0.020000)
+EU38  Princess Knit   Plain        364.248467 364.245656   0.002811   0.000955   0.000000
+EU38  Princess Knit   Gathered     364.248467 364.245656   0.002811   0.000000   0.080101
+  [FAIL] H3 EU38 Princess Knit Gathered: drawn arc excess 0.119899 vs declared spread 0.200000 (dev 0.080101 > 0.020000)
+EU38  Princess Knit   Puffed       364.248467 364.245656   0.002811   0.000000   0.294699
+  [FAIL] H3 EU38 Princess Knit Puffed: drawn arc excess 0.744699 vs declared spread 0.450000 (dev 0.294699 > 0.020000)
+EU40  Dart     Woven  Plain        383.758019 383.758019   0.000000   0.001036   0.000000
+EU40  Dart     Woven  Gathered     383.758019 383.758019   0.000000   0.000000   0.067481
+  [FAIL] H3 EU40 Dart Woven Gathered: drawn arc excess 0.132519 vs declared spread 0.200000 (dev 0.067481 > 0.020000)
+EU40  Dart     Woven  Puffed       383.758019 383.758019   0.000000   0.000000   0.326641
+  [FAIL] H3 EU40 Dart Woven Puffed: drawn arc excess 0.776641 vs declared spread 0.450000 (dev 0.326641 > 0.020000)
+EU40  Dart     Knit   Plain        373.139351 373.139351   0.000000   0.000054   0.000000
+EU40  Dart     Knit   Gathered     373.139351 373.139351   0.000000   0.000000   0.075497
+  [FAIL] H3 EU40 Dart Knit Gathered: drawn arc excess 0.124503 vs declared spread 0.200000 (dev 0.075497 > 0.020000)
+EU40  Dart     Knit   Puffed       373.139351 373.139351   0.000000   0.000000   0.306941
+  [FAIL] H3 EU40 Dart Knit Puffed: drawn arc excess 0.756941 vs declared spread 0.450000 (dev 0.306941 > 0.020000)
+EU40  Princess Woven  Plain        383.764594 383.758019   0.006575   0.001054   0.000000
+EU40  Princess Woven  Gathered     383.764594 383.758019   0.006575   0.000000   0.067481
+  [FAIL] H3 EU40 Princess Woven Gathered: drawn arc excess 0.132519 vs declared spread 0.200000 (dev 0.067481 > 0.020000)
+EU40  Princess Woven  Puffed       383.764594 383.758019   0.006575   0.000000   0.326641
+  [FAIL] H3 EU40 Princess Woven Puffed: drawn arc excess 0.776641 vs declared spread 0.450000 (dev 0.326641 > 0.020000)
+EU40  Princess Knit   Plain        373.143317 373.139351   0.003966   0.000043   0.000000
+EU40  Princess Knit   Gathered     373.143317 373.139351   0.003966   0.000000   0.075497
+  [FAIL] H3 EU40 Princess Knit Gathered: drawn arc excess 0.124503 vs declared spread 0.200000 (dev 0.075497 > 0.020000)
+EU40  Princess Knit   Puffed       373.143317 373.139351   0.003966   0.000000   0.306941
+  [FAIL] H3 EU40 Princess Knit Puffed: drawn arc excess 0.756941 vs declared spread 0.450000 (dev 0.306941 > 0.020000)
+EU42  Dart     Woven  Plain        395.990493 395.990493   0.000000   0.000595   0.000000
+EU42  Dart     Woven  Gathered     395.990493 395.990493   0.000000   0.000000   0.064915
+  [FAIL] H3 EU42 Dart Woven Gathered: drawn arc excess 0.135085 vs declared spread 0.200000 (dev 0.064915 > 0.020000)
+EU42  Dart     Woven  Puffed       395.990493 395.990493   0.000000   0.000000   0.332499
+  [FAIL] H3 EU42 Dart Woven Puffed: drawn arc excess 0.782499 vs declared spread 0.450000 (dev 0.332499 > 0.020000)
+EU42  Dart     Knit   Plain        383.411115 383.411115   0.000000   0.001091   0.000000
+EU42  Dart     Knit   Gathered     383.411115 383.411115   0.000000   0.000000   0.071784
+  [FAIL] H3 EU42 Dart Knit Gathered: drawn arc excess 0.128216 vs declared spread 0.200000 (dev 0.071784 > 0.020000)
+EU42  Dart     Knit   Puffed       383.411115 383.411115   0.000000   0.000000   0.316325
+  [FAIL] H3 EU42 Dart Knit Puffed: drawn arc excess 0.766325 vs declared spread 0.450000 (dev 0.316325 > 0.020000)
+EU42  Princess Woven  Plain        395.998980 395.990493   0.008488   0.000617   0.000000
+EU42  Princess Woven  Gathered     395.998980 395.990493   0.008488   0.000000   0.064915
+  [FAIL] H3 EU42 Princess Woven Gathered: drawn arc excess 0.135085 vs declared spread 0.200000 (dev 0.064915 > 0.020000)
+EU42  Princess Woven  Puffed       395.998980 395.990493   0.008488   0.000000   0.332499
+  [FAIL] H3 EU42 Princess Woven Puffed: drawn arc excess 0.782499 vs declared spread 0.450000 (dev 0.332499 > 0.020000)
+EU42  Princess Knit   Plain        383.416557 383.411115   0.005442   0.001106   0.000000
+EU42  Princess Knit   Gathered     383.416557 383.411115   0.005442   0.000000   0.071784
+  [FAIL] H3 EU42 Princess Knit Gathered: drawn arc excess 0.128216 vs declared spread 0.200000 (dev 0.071784 > 0.020000)
+EU42  Princess Knit   Puffed       383.416557 383.411115   0.005442   0.000000   0.316325
+  [FAIL] H3 EU42 Princess Knit Puffed: drawn arc excess 0.766325 vs declared spread 0.450000 (dev 0.316325 > 0.020000)
+EU44  Dart     Woven  Plain        409.014076 409.014076   0.000000   0.000742   0.000000
+EU44  Dart     Woven  Gathered     409.014076 409.014076   0.000000   0.000000   0.063174
+  [FAIL] H3 EU44 Dart Woven Gathered: drawn arc excess 0.136826 vs declared spread 0.200000 (dev 0.063174 > 0.020000)
+EU44  Dart     Woven  Puffed       409.014076 409.014076   0.000000   0.000000   0.336348
+  [FAIL] H3 EU44 Dart Woven Puffed: drawn arc excess 0.786348 vs declared spread 0.450000 (dev 0.336348 > 0.020000)
+EU44  Dart     Knit   Plain        394.484043 394.484043   0.000000   0.000445   0.000000
+EU44  Dart     Knit   Gathered     394.484043 394.484043   0.000000   0.000000   0.069285
+  [FAIL] H3 EU44 Dart Knit Gathered: drawn arc excess 0.130715 vs declared spread 0.200000 (dev 0.069285 > 0.020000)
+EU44  Dart     Knit   Puffed       394.484043 394.484043   0.000000   0.000000   0.322391
+  [FAIL] H3 EU44 Dart Knit Puffed: drawn arc excess 0.772391 vs declared spread 0.450000 (dev 0.322391 > 0.020000)
+EU44  Princess Woven  Plain        409.024630 409.014076   0.010555   0.000715   0.000000
+EU44  Princess Woven  Gathered     409.024630 409.014076   0.010555   0.000000   0.063174
+  [FAIL] H3 EU44 Princess Woven Gathered: drawn arc excess 0.136826 vs declared spread 0.200000 (dev 0.063174 > 0.020000)
+EU44  Princess Woven  Puffed       409.024630 409.014076   0.010555   0.000000   0.336348
+  [FAIL] H3 EU44 Princess Woven Puffed: drawn arc excess 0.786348 vs declared spread 0.450000 (dev 0.336348 > 0.020000)
+EU44  Princess Knit   Plain        394.491140 394.484043   0.007097   0.000427   0.000000
+EU44  Princess Knit   Gathered     394.491140 394.484043   0.007097   0.000000   0.069285
+  [FAIL] H3 EU44 Princess Knit Gathered: drawn arc excess 0.130715 vs declared spread 0.200000 (dev 0.069285 > 0.020000)
+EU44  Princess Knit   Puffed       394.491140 394.484043   0.007097   0.000000   0.322391
+  [FAIL] H3 EU44 Princess Knit Puffed: drawn arc excess 0.772391 vs declared spread 0.450000 (dev 0.322391 > 0.020000)
+EU46  Dart     Woven  Plain        422.151076 422.151076   0.000000   0.000455   0.000000
+EU46  Dart     Woven  Gathered     422.151076 422.151076   0.000000   0.000000   0.061018
+  [FAIL] H3 EU46 Dart Woven Gathered: drawn arc excess 0.138982 vs declared spread 0.200000 (dev 0.061018 > 0.020000)
+EU46  Dart     Woven  Puffed       422.151076 422.151076   0.000000   0.000000   0.340968
+  [FAIL] H3 EU46 Dart Woven Puffed: drawn arc excess 0.790968 vs declared spread 0.450000 (dev 0.340968 > 0.020000)
+EU46  Dart     Knit   Plain        405.831117 405.831117   0.000000   0.001154   0.000000
+EU46  Dart     Knit   Gathered     405.831117 405.831117   0.000000   0.000000   0.066357
+  [FAIL] H3 EU46 Dart Knit Gathered: drawn arc excess 0.133643 vs declared spread 0.200000 (dev 0.066357 > 0.020000)
+EU46  Dart     Knit   Puffed       405.831117 405.831117   0.000000   0.000000   0.329234
+  [FAIL] H3 EU46 Dart Knit Puffed: drawn arc excess 0.779234 vs declared spread 0.450000 (dev 0.329234 > 0.020000)
+EU46  Princess Woven  Plain        422.163607 422.151076   0.012530   0.000486   0.000000
+EU46  Princess Woven  Gathered     422.163607 422.151076   0.012530   0.000000   0.061018
+  [FAIL] H3 EU46 Princess Woven Gathered: drawn arc excess 0.138982 vs declared spread 0.200000 (dev 0.061018 > 0.020000)
+EU46  Princess Woven  Puffed       422.163607 422.151076   0.012530   0.000000   0.340968
+  [FAIL] H3 EU46 Princess Woven Puffed: drawn arc excess 0.790968 vs declared spread 0.450000 (dev 0.340968 > 0.020000)
+EU46  Princess Knit   Plain        405.839827 405.831117   0.008710   0.001176   0.000000
+EU46  Princess Knit   Gathered     405.839827 405.831117   0.008710   0.000000   0.066357
+  [FAIL] H3 EU46 Princess Knit Gathered: drawn arc excess 0.133643 vs declared spread 0.200000 (dev 0.066357 > 0.020000)
+EU46  Princess Knit   Puffed       405.839827 405.831117   0.008710   0.000000   0.329234
+  [FAIL] H3 EU46 Princess Knit Puffed: drawn arc excess 0.779234 vs declared spread 0.450000 (dev 0.329234 > 0.020000)
+EU48  Dart     Woven  Plain        456.260358 456.260358   0.000000   0.000986   0.000000
+EU48  Dart     Woven  Gathered     456.260358 456.260358   0.000000   0.000000   0.066605
+  [FAIL] H3 EU48 Dart Woven Gathered: drawn arc excess 0.133395 vs declared spread 0.200000 (dev 0.066605 > 0.020000)
+EU48  Dart     Woven  Puffed       456.260358 456.260358   0.000000   0.000000   0.328665
+  [FAIL] H3 EU48 Dart Woven Puffed: drawn arc excess 0.778665 vs declared spread 0.450000 (dev 0.328665 > 0.020000)
+EU48  Dart     Knit   Plain        437.648519 437.648519   0.000000   0.001080   0.000000
+EU48  Dart     Knit   Gathered     437.648519 437.648519   0.000000   0.000000   0.070911
+  [FAIL] H3 EU48 Dart Knit Gathered: drawn arc excess 0.129089 vs declared spread 0.200000 (dev 0.070911 > 0.020000)
+EU48  Dart     Knit   Puffed       437.648519 437.648519   0.000000   0.000000   0.318467
+  [FAIL] H3 EU48 Dart Knit Puffed: drawn arc excess 0.768467 vs declared spread 0.450000 (dev 0.318467 > 0.020000)
+EU48  Princess Woven  Plain        456.275837 456.260358   0.015479   0.000950   0.000000
+EU48  Princess Woven  Gathered     456.275837 456.260358   0.015479   0.000000   0.066605
+  [FAIL] H3 EU48 Princess Woven Gathered: drawn arc excess 0.133395 vs declared spread 0.200000 (dev 0.066605 > 0.020000)
+EU48  Princess Woven  Puffed       456.275837 456.260358   0.015479   0.000000   0.328665
+  [FAIL] H3 EU48 Princess Woven Puffed: drawn arc excess 0.778665 vs declared spread 0.450000 (dev 0.328665 > 0.020000)
+EU48  Princess Knit   Plain        437.659725 437.648519   0.011206   0.001106   0.000000
+EU48  Princess Knit   Gathered     437.659725 437.648519   0.011206   0.000000   0.070911
+  [FAIL] H3 EU48 Princess Knit Gathered: drawn arc excess 0.129089 vs declared spread 0.200000 (dev 0.070911 > 0.020000)
+EU48  Princess Knit   Puffed       437.659725 437.648519   0.011206   0.000000   0.318467
+  [FAIL] H3 EU48 Princess Knit Puffed: drawn arc excess 0.768467 vs declared spread 0.450000 (dev 0.318467 > 0.020000)
+
+cells=96
+worst H1 = 0.015479 mm   (EU48 Princess Woven Plain)   limit 0.79375 mm
+worst H2 = 0.001297      (EU36 Princess Woven Plain)   limit 0.0015
+worst H3 = 0.340968      (EU46 Dart Woven Puffed)   limit 0.0200
+sleeve_armhole_agree_check FAILED (64 failures)
