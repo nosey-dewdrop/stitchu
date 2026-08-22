@@ -207,3 +207,36 @@ kümesi) hâline getir ve `benchmark-58`'in UNMAPPED sayacını aynı kurala ba�
 - Lokallik kapısı **tek gövde/tek bedende** koşuyor. Bedenler arası (grade)
   lokallik ölçülmedi.
 - `contract/primitives-v1.json` ve `vocab-resolution-v1.json` OKUNDU, yazılmadı.
+
+---
+
+## 7. CTEST — tam koşu (2404 sn, 23 Ağu)
+
+`ctest --test-dir engine/build --output-on-failure` → **80% geçti, 101 testin 20'si
+kırmızı** (+1 devre dışı: `h10_gate_check`, başka bir fazın ilan edilmiş kararı).
+
+**Bu koşu benim yamamdan ÖNCE başladı ve ağaç o sırada üç-dört ajan tarafından
+yazılıyordu** (`engine/src/{bodice,garment,geometry,dxf,recipe}.cpp`,
+`wasm/bindings.cpp` hepsi aynı anda değişik). Yani bu 20 sayı F-I'ye ait değil;
+attribution ayrı ayrı yapıldı:
+
+- **Bana ait olan TEK kırmızı: `photo_ratio_wire_check`** — `spec.seen` bloğunu
+  taşıyınca kapının `create.js` üzerindeki grep'i düştü. **Gevşetilmedi**: tanık
+  (`ratiosMeasured: seen.ratiosMeasured === true`) ürün yolunda birebir aynı
+  ifadeyle geri yazıldı, test dosyasına DOKUNULMADI. Yamadan sonra ölçüldü: Passed.
+- **İlan edilmiş, kapatılmaya ÇALIŞILMAYAN üçlü** (ORTAK.md): `style_check`,
+  `sizechart_source_check`, `contract_check` (`patterns_real/`, Damla'nın 17 Ağu kararı).
+- **`bundle_fresh_check`**: `web/vendor` + `backend/engine` WASM'ı C++ HEAD'inden
+  1 commit eski. Benim değişikliğim değil, ama **beni ilgilendirir**: bu dosyanın
+  bütün ölçümleri `engine/dist/stitchu-engine.js` üstünden koştu, yani bugünkü
+  C++ kaynağının değil, sevk edilen ikilinin davranışı ölçüldü. İLAN EDİLİYOR.
+- Kalan 15'i (`engine_check`, `golden_check`, `cup_check`, `halter_check`,
+  `sloper_check`, `grade_check`, `sewable_census`, `recipe_dress_check`,
+  `dxf_*`, `compose_check`, `preview_truth_check`, `figure_check`,
+  `garment_armhole_check`) C++/üreteç hattında; hiçbiri `web/js`'i okumuyor
+  (ölçüldü: `grep -rl web/js engine/tests engine/tools`). Uçuş hâlindeki
+  diğer fazların işi.
+
+Yamadan sonra ayrı ayrı yeşil doğrulanan beşli:
+`edit_locality_check` · `photo_ratio_wire_check` · `api_wire_check` ·
+`bridge_guard` · `collar_bridge_check` · `compile_dialect_check`.
