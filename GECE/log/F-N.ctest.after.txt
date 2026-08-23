@@ -1,66 +1,21 @@
 Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build-n2
         Start   1: geometry
-  1/106 Test   #1: geometry .........................   Passed    0.01 sec
+  1/106 Test   #1: geometry .........................   Passed    0.36 sec
         Start   2: engine_check
-  2/106 Test   #2: engine_check .....................***Failed   22.38 sec
-engine check: 70200 drafts across 15 bodies x 4680 specs
-FAILED drafts: 225
-  rule selfintersect: 225 violations
-examples:
-  EU36 dress/woven/princess/empire/crew/aLine/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/aLine/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/aLine/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/straight/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/straight/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/straight/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/gathered/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/gathered/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/gathered/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/halfCircle/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/halfCircle/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/halfCircle/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/pleated/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/pleated/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/crew/pleated/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/aLine/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/aLine/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/aLine/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/straight/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/straight/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/straight/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/gathered/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/gathered/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/gathered/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/halfCircle/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/halfCircle/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/halfCircle/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/pleated/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/pleated/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/scoop/pleated/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/aLine/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/aLine/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/aLine/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/straight/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/straight/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/straight/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/gathered/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/gathered/midi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/gathered/maxi/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-  EU36 dress/woven/princess/empire/vNeck/halfCircle/mini/none.short: [selfintersect] Bodice Side Front: outline crosses itself near (97.3, 32.1)
-
+  2/106 Test   #2: engine_check .....................   Passed   25.11 sec
         Start   3: golden_check
-  3/106 Test   #3: golden_check .....................***Failed    0.28 sec
+  3/106 Test   #3: golden_check .....................***Failed    0.49 sec
 golden_check FAIL: engine output differs from the REPO PIN (/Users/damummyphus/damla_projects_2026/stitchu/engine/golden-reference.csv).
   dump: 23406 lines   pin: 23406 lines
   first differing lines:
-310c310
-< EU38|dress/crew/aLine/none.short|fabric,1.5000
----
-> EU38|dress/crew/aLine/none.short|fabric,1.6000
 313,314c313,314
 < EU38|dress/crew/aLine/none.short|piece0:Bodice Front,outline,2,line,167.3252,47.2004
 < EU38|dress/crew/aLine/none.short|piece0:Bodice Front,outline,3,curve,244.2000,219.4004,212.2411,66.8624,213.4501,181.5164
 ---
+> EU38|dress/crew/aLine/none.short|piece0:Bodice Front,outline,2,line,164.0800,45.8893
+> EU38|dress/crew/aLine/none.short|piece0:Bodice Front,outline,3,curve,244.2000,225.0000,245.0965,81.4390,164.9867,185.5956
+320c320
+< EU38|dress/crew/aLine/none.short|piece0:Bodice Front,marking,1,line,120.6000,242.2415
 
 Two honest ways out, nothing else:
   1. UNINTENDED change -> fix the engine until this test passes.
@@ -71,15 +26,38 @@ Comparing two fresh dumps to each other (regen-vs-regen) is not a golden
 check and must never be reported as one.
 
         Start   4: generated_ratchet_check
-  4/106 Test   #4: generated_ratchet_check ..........   Passed    0.75 sec
+  4/106 Test   #4: generated_ratchet_check ..........   Passed    0.88 sec
         Start   5: bundle_fresh_check
-  5/106 Test   #5: bundle_fresh_check ...............   Passed    0.15 sec
+  5/106 Test   #5: bundle_fresh_check ...............***Failed    0.21 sec
+engine source HEAD : 11c199a  2026-08-23
+
+FAIL  web/vendor/stitchu-engine.js
+      built  : 06911d9  2026-08-23
+      source : 11c199a  2026-08-23
+      STALE BY 1 COMMITS to engine sources (0 days).
+      The engine being served is not the engine in this repo.
+      Fix: bash engine/build-wasm.sh && git add web/vendor/stitchu-engine.js && commit it.
+FAIL  backend/engine/stitchu-worker.js
+      built  : 06911d9  2026-08-23
+      source : 11c199a  2026-08-23
+      STALE BY 1 COMMITS to engine sources (0 days).
+      The engine being served is not the engine in this repo.
+      Fix: bash engine/build-wasm.sh && git add backend/engine/stitchu-worker.js && commit it.
+FAIL  backend/engine/stitchu-worker.wasm
+      built  : 06911d9  2026-08-23
+      source : 11c199a  2026-08-23
+      STALE BY 1 COMMITS to engine sources (0 days).
+      The engine being served is not the engine in this repo.
+      Fix: bash engine/build-wasm.sh && git add backend/engine/stitchu-worker.wasm && commit it.
+
+bundle_fresh_check: FAIL — the shipped engine is behind its source.
+
         Start   6: flat_convention_check
-  6/106 Test   #6: flat_convention_check ............   Passed    0.44 sec
+  6/106 Test   #6: flat_convention_check ............   Passed    0.56 sec
         Start   7: flat_geometry_sellable_check
-  7/106 Test   #7: flat_geometry_sellable_check .....   Passed    0.04 sec
+  7/106 Test   #7: flat_geometry_sellable_check .....   Passed    0.05 sec
         Start   8: style_check
-  8/106 Test   #8: style_check ......................***Failed    0.03 sec
+  8/106 Test   #8: style_check ......................***Failed    0.04 sec
 style_check FAIL: pinlenmiş stil 0 — /Users/damummyphus/damla_projects_2026/stitchu/engine/STYLE-PIN yok/boş.
   Bu kapı bugüne kadar YEŞİL basıyordu ve hiçbir kalemi tutmuyordu (T17).
   Kalem yasası pinsiz koşamaz; sessiz skip yasak.
@@ -92,19 +70,19 @@ style_check FAIL: pinlenmiş stil 0 — /Users/damummyphus/damla_projects_2026/s
   Bu testin kendi çıktısını pinlemesi (regen-vs-regen) kanıt DEĞİLDİR.
 
         Start   9: bridge_guard
-  9/106 Test   #9: bridge_guard .....................   Passed    0.08 sec
+  9/106 Test   #9: bridge_guard .....................   Passed    0.10 sec
         Start  10: api_wire_check
- 10/106 Test  #10: api_wire_check ...................   Passed    0.07 sec
+ 10/106 Test  #10: api_wire_check ...................   Passed    0.09 sec
         Start  11: collar_bridge_check
- 11/106 Test  #11: collar_bridge_check ..............   Passed    0.09 sec
+ 11/106 Test  #11: collar_bridge_check ..............   Passed    0.04 sec
         Start  12: skirtlen_refresh_check
- 12/106 Test  #12: skirtlen_refresh_check ...........   Passed    0.03 sec
+ 12/106 Test  #12: skirtlen_refresh_check ...........   Passed    0.04 sec
         Start  13: compile_dialect_check
- 13/106 Test  #13: compile_dialect_check ............   Passed    0.09 sec
+ 13/106 Test  #13: compile_dialect_check ............   Passed    0.12 sec
         Start  14: photo_ratio_wire_check
- 14/106 Test  #14: photo_ratio_wire_check ...........   Passed    0.06 sec
+ 14/106 Test  #14: photo_ratio_wire_check ...........   Passed    0.07 sec
         Start  15: sizechart_source_check
- 15/106 Test  #15: sizechart_source_check ...........***Failed    0.03 sec
+ 15/106 Test  #15: sizechart_source_check ...........***Failed    0.04 sec
 euSizeChart: 7 columns x 10 sizes = 70 numbers on a buyer's body
   sourced (verified against a publication): 3 -> bustCM, waistCM, hipCM
   UNSOURCED (verified absence, declared):   4 -> shoulderCM, backLengthCM, armLengthCM, neckCM
@@ -127,137 +105,117 @@ columns are matched to a publication or replaced from a named source by Damla
 (DAMLA-KUYRUK K10). Do NOT close it by editing the chart or softening the question.
 
         Start  16: ruffle_check
- 16/106 Test  #16: ruffle_check .....................   Passed    0.02 sec
+ 16/106 Test  #16: ruffle_check .....................   Passed    0.19 sec
         Start  17: tiered_ruffle_check
- 17/106 Test  #17: tiered_ruffle_check ..............   Passed    0.01 sec
+ 17/106 Test  #17: tiered_ruffle_check ..............   Passed    0.20 sec
         Start  18: sweetheart_check
- 18/106 Test  #18: sweetheart_check .................   Passed    0.01 sec
+ 18/106 Test  #18: sweetheart_check .................   Passed    0.18 sec
         Start  19: keyhole_check
- 19/106 Test  #19: keyhole_check ....................   Passed    0.01 sec
+ 19/106 Test  #19: keyhole_check ....................   Passed    0.18 sec
         Start  20: placket_check
- 20/106 Test  #20: placket_check ....................   Passed    0.01 sec
+ 20/106 Test  #20: placket_check ....................   Passed    0.18 sec
         Start  21: tie_check
- 21/106 Test  #21: tie_check ........................   Passed    0.01 sec
+ 21/106 Test  #21: tie_check ........................   Passed    0.18 sec
         Start  22: collar_check
- 22/106 Test  #22: collar_check .....................   Passed    0.01 sec
+ 22/106 Test  #22: collar_check .....................   Passed    0.18 sec
         Start  23: collar_lies_flat_check
- 23/106 Test  #23: collar_lies_flat_check ...........   Passed    0.01 sec
+ 23/106 Test  #23: collar_lies_flat_check ...........   Passed    0.18 sec
         Start  24: gather_check
- 24/106 Test  #24: gather_check .....................   Passed    0.01 sec
+ 24/106 Test  #24: gather_check .....................   Passed    0.17 sec
         Start  25: backopen_check
- 25/106 Test  #25: backopen_check ...................   Passed    0.01 sec
+ 25/106 Test  #25: backopen_check ...................   Passed    0.18 sec
         Start  26: laceupback_check
- 26/106 Test  #26: laceupback_check .................   Passed    0.01 sec
+ 26/106 Test  #26: laceupback_check .................   Passed    0.18 sec
         Start  27: wrapfront_check
- 27/106 Test  #27: wrapfront_check ..................   Passed    0.01 sec
+ 27/106 Test  #27: wrapfront_check ..................   Passed    0.18 sec
         Start  28: slit_check
- 28/106 Test  #28: slit_check .......................   Passed    0.01 sec
+ 28/106 Test  #28: slit_check .......................   Passed    0.20 sec
         Start  29: skirtlen_check
- 29/106 Test  #29: skirtlen_check ...................   Passed    0.01 sec
+ 29/106 Test  #29: skirtlen_check ...................   Passed    0.18 sec
         Start  30: strap_check
- 30/106 Test  #30: strap_check ......................   Passed    0.01 sec
+ 30/106 Test  #30: strap_check ......................   Passed    0.18 sec
         Start  31: peplum_check
- 31/106 Test  #31: peplum_check .....................   Passed    0.01 sec
+ 31/106 Test  #31: peplum_check .....................   Passed    0.18 sec
         Start  32: hemflounce_check
- 32/106 Test  #32: hemflounce_check .................   Passed    0.01 sec
+ 32/106 Test  #32: hemflounce_check .................   Passed    0.18 sec
         Start  33: gore_check
- 33/106 Test  #33: gore_check .......................   Passed    0.01 sec
+ 33/106 Test  #33: gore_check .......................   Passed    0.18 sec
         Start  34: pocket_check
- 34/106 Test  #34: pocket_check .....................   Passed    0.01 sec
+ 34/106 Test  #34: pocket_check .....................   Passed    0.18 sec
         Start  35: bustier_check
- 35/106 Test  #35: bustier_check ....................   Passed    0.01 sec
+ 35/106 Test  #35: bustier_check ....................   Passed    0.18 sec
         Start  36: locket_check
- 36/106 Test  #36: locket_check .....................   Passed    0.01 sec
+ 36/106 Test  #36: locket_check .....................   Passed    0.18 sec
         Start  37: cuttable_output_check
- 37/106 Test  #37: cuttable_output_check ............   Passed    0.01 sec
+ 37/106 Test  #37: cuttable_output_check ............   Passed    0.18 sec
         Start  38: cup_check
- 38/106 Test  #38: cup_check ........................   Passed    0.02 sec
+ 38/106 Test  #38: cup_check ........................   Passed    0.19 sec
         Start  39: yoke_check
- 39/106 Test  #39: yoke_check .......................   Passed    0.02 sec
+ 39/106 Test  #39: yoke_check .......................   Passed    0.18 sec
         Start  40: boxpleat_check
- 40/106 Test  #40: boxpleat_check ...................   Passed    0.01 sec
+ 40/106 Test  #40: boxpleat_check ...................   Passed    0.19 sec
         Start  41: cuff_check
- 41/106 Test  #41: cuff_check .......................   Passed    0.01 sec
+ 41/106 Test  #41: cuff_check .......................   Passed    0.18 sec
         Start  42: neckline_ext_check
- 42/106 Test  #42: neckline_ext_check ...............   Passed    0.01 sec
+ 42/106 Test  #42: neckline_ext_check ...............   Passed    0.18 sec
         Start  43: hem_check
- 43/106 Test  #43: hem_check ........................   Passed    0.01 sec
+ 43/106 Test  #43: hem_check ........................   Passed    0.18 sec
         Start  44: halter_check
- 44/106 Test  #44: halter_check .....................   Passed    0.01 sec
+ 44/106 Test  #44: halter_check .....................   Passed    0.18 sec
         Start  45: bias_check
- 45/106 Test  #45: bias_check .......................   Passed    0.01 sec
+ 45/106 Test  #45: bias_check .......................   Passed    0.20 sec
         Start  46: cutline_check
- 46/106 Test  #46: cutline_check ....................   Passed    0.01 sec
+ 46/106 Test  #46: cutline_check ....................   Passed    0.18 sec
         Start  47: sleeve_check
- 47/106 Test  #47: sleeve_check .....................   Passed    0.05 sec
+ 47/106 Test  #47: sleeve_check .....................   Passed    0.23 sec
         Start  48: cap_sleeve_check
- 48/106 Test  #48: cap_sleeve_check .................   Passed    0.01 sec
+ 48/106 Test  #48: cap_sleeve_check .................   Passed    0.18 sec
         Start  49: placket_asym_check
- 49/106 Test  #49: placket_asym_check ...............   Passed    0.01 sec
+ 49/106 Test  #49: placket_asym_check ...............   Passed    0.18 sec
         Start  50: fit_proof
- 50/106 Test  #50: fit_proof ........................   Passed    0.01 sec
+ 50/106 Test  #50: fit_proof ........................   Passed    0.18 sec
         Start  51: sloper_check
- 51/106 Test  #51: sloper_check .....................   Passed    0.01 sec
+ 51/106 Test  #51: sloper_check .....................   Passed    0.17 sec
         Start  52: fba_check
- 52/106 Test  #52: fba_check ........................   Passed    0.03 sec
+ 52/106 Test  #52: fba_check ........................   Passed    0.21 sec
         Start  53: grade_check
- 53/106 Test  #53: grade_check ......................   Passed    0.02 sec
+ 53/106 Test  #53: grade_check ......................   Passed    0.18 sec
         Start  54: wearability_check
- 54/106 Test  #54: wearability_check ................   Passed    0.01 sec
+ 54/106 Test  #54: wearability_check ................   Passed    0.18 sec
         Start  55: shoulder_check
- 55/106 Test  #55: shoulder_check ...................   Passed    0.01 sec
+ 55/106 Test  #55: shoulder_check ...................   Passed    0.18 sec
         Start  56: buttonrow_check
- 56/106 Test  #56: buttonrow_check ..................   Passed    0.01 sec
+ 56/106 Test  #56: buttonrow_check ..................   Passed    0.20 sec
         Start  57: exposedzip_check
- 57/106 Test  #57: exposedzip_check .................   Passed    0.01 sec
+ 57/106 Test  #57: exposedzip_check .................   Passed    0.17 sec
         Start  58: backdetail_check
- 58/106 Test  #58: backdetail_check .................   Passed    0.01 sec
+ 58/106 Test  #58: backdetail_check .................   Passed    0.18 sec
         Start  59: fronttie_check
- 59/106 Test  #59: fronttie_check ...................   Passed    0.01 sec
+ 59/106 Test  #59: fronttie_check ...................   Passed    0.18 sec
         Start  60: offshoulder_check
- 60/106 Test  #60: offshoulder_check ................   Passed    0.01 sec
+ 60/106 Test  #60: offshoulder_check ................   Passed    0.18 sec
         Start  61: sideseam_adversarial_check
- 61/106 Test  #61: sideseam_adversarial_check .......   Passed    0.01 sec
+ 61/106 Test  #61: sideseam_adversarial_check .......   Passed    0.18 sec
         Start  62: notch_alignment_check
- 62/106 Test  #62: notch_alignment_check ............   Passed    0.01 sec
+ 62/106 Test  #62: notch_alignment_check ............   Passed    0.18 sec
         Start  63: closed_garment_check
- 63/106 Test  #63: closed_garment_check .............   Passed    0.01 sec
+ 63/106 Test  #63: closed_garment_check .............   Passed    0.18 sec
         Start  64: sewable_census
- 64/106 Test  #64: sewable_census ...................***Failed   26.01 sec
-========================================================
-SEWABLE CENSUS — 82980 drafts across 15 bodies x 5532 specs
-========================================================
-fully sewable (0 issues, incl shoulder-match): 82710 / 82980  (99.7%)
-
-SHOULDER-SEAM MATCH (validator OMITS this):
-  drafts with a shoulder seam on both halves: 70200
-  matched within 3.0 mm: 70200
-  MISMATCHED (> 3.0 mm): 0
-  skipped (halter/strapless, no shoulder seam): 11700
-
-FAILURE BREAKDOWN BY ISSUE RULE:
-  selfintersect       270
-
-WORST OFFENDER PER RULE:
-  [selfintersect] 0.0 mm
-     
-
-VERDICT: NOT ALL DRAFTS SEWABLE — see breakdown above
-
+ 64/106 Test  #64: sewable_census ...................   Passed   30.79 sec
         Start  65: roundtrip_check
- 65/106 Test  #65: roundtrip_check ..................   Passed    0.01 sec
+ 65/106 Test  #65: roundtrip_check ..................   Passed    0.35 sec
         Start  66: fabric_ease_check
- 66/106 Test  #66: fabric_ease_check ................   Passed    0.02 sec
+ 66/106 Test  #66: fabric_ease_check ................   Passed    0.20 sec
         Start  67: guide_completeness_check
- 67/106 Test  #67: guide_completeness_check .........   Passed    0.11 sec
+ 67/106 Test  #67: guide_completeness_check .........   Passed    0.28 sec
         Start  68: guide_check
- 68/106 Test  #68: guide_check ......................   Passed    0.05 sec
+ 68/106 Test  #68: guide_check ......................   Passed    0.21 sec
         Start  69: recipe_check
- 69/106 Test  #69: recipe_check .....................   Passed    0.01 sec
+ 69/106 Test  #69: recipe_check .....................   Passed    0.17 sec
         Start  70: recipe_golden_check
- 70/106 Test  #70: recipe_golden_check ..............   Passed    0.04 sec
+ 70/106 Test  #70: recipe_golden_check ..............   Passed    0.21 sec
         Start  71: recipe_dress_check
- 71/106 Test  #71: recipe_dress_check ...............***Failed    0.01 sec
+ 71/106 Test  #71: recipe_dress_check ...............***Failed    0.17 sec
 == parse ==
   [PASS] recipe parses: top.shift.square.spaghetti
   [PASS] sealed kernel block resolves to top/square/tunic/spaghetti/dart/woven, sleeveless
@@ -392,33 +350,33 @@ VERDICT: NOT ALL DRAFTS SEWABLE — see breakdown above
 recipe_dress_check: FAILURES
 
         Start  72: recipe_dress_golden_check
- 72/106 Test  #72: recipe_dress_golden_check ........   Passed    0.04 sec
+ 72/106 Test  #72: recipe_dress_golden_check ........   Passed    0.21 sec
         Start  73: recipe_grade_check
- 73/106 Test  #73: recipe_grade_check ...............   Passed    0.01 sec
+ 73/106 Test  #73: recipe_grade_check ...............   Passed    0.18 sec
         Start  74: recipe_wasm_parity
- 74/106 Test  #74: recipe_wasm_parity ...............   Passed    0.09 sec
+ 74/106 Test  #74: recipe_wasm_parity ...............   Passed    0.28 sec
         Start  75: recipe_wasm_parity_dress
- 75/106 Test  #75: recipe_wasm_parity_dress .........   Passed    0.08 sec
+ 75/106 Test  #75: recipe_wasm_parity_dress .........   Passed    0.10 sec
         Start  76: dxf_wasm_parity
- 76/106 Test  #76: dxf_wasm_parity ..................   Passed    0.10 sec
+ 76/106 Test  #76: dxf_wasm_parity ..................   Passed    0.29 sec
         Start  77: dxf_wasm_parity_dress
- 77/106 Test  #77: dxf_wasm_parity_dress ............   Passed    0.12 sec
+ 77/106 Test  #77: dxf_wasm_parity_dress ............   Passed    0.13 sec
         Start  78: bugra_bridge_check
- 78/106 Test  #78: bugra_bridge_check ...............   Passed   72.40 sec
+ 78/106 Test  #78: bugra_bridge_check ...............   Passed   92.47 sec
         Start  79: dxf_check
- 79/106 Test  #79: dxf_check ........................   Passed    0.67 sec
+ 79/106 Test  #79: dxf_check ........................   Passed    0.76 sec
         Start  80: nest_check
- 80/106 Test  #80: nest_check .......................   Passed    0.02 sec
+ 80/106 Test  #80: nest_check .......................   Passed    0.36 sec
         Start  81: nest_marker_check
- 81/106 Test  #81: nest_marker_check ................   Passed    0.77 sec
+ 81/106 Test  #81: nest_marker_check ................   Passed    1.08 sec
         Start  82: drape_check
- 82/106 Test  #82: drape_check ......................   Passed    0.52 sec
+ 82/106 Test  #82: drape_check ......................   Passed    0.78 sec
         Start  83: tech_pack_check
- 83/106 Test  #83: tech_pack_check ..................   Passed    1.07 sec
+ 83/106 Test  #83: tech_pack_check ..................   Passed    1.46 sec
         Start  84: compose_check
- 84/106 Test  #84: compose_check ....................   Passed    0.25 sec
+ 84/106 Test  #84: compose_check ....................   Passed    0.41 sec
         Start  85: contract_check
- 85/106 Test  #85: contract_check ...................***Failed    0.16 sec
+ 85/106 Test  #85: contract_check ...................***Failed    0.23 sec
 ok: contract/tables.json, garment-spec.schema.json, terms.json, vocab.json, styles.json parse
 ok: schema draftSpec enums match engine/vocab.json (37 fields)
 ok: term registry sound: 52 terms, 246 phrases, ids unique, capabilities valid
@@ -439,15 +397,15 @@ ok: create.js picker options subset of the vocabulary (110 option values checked
 contract validation FAILED (1)
 
         Start  86: specv2_check
- 86/106 Test  #86: specv2_check .....................   Passed    0.03 sec
+ 86/106 Test  #86: specv2_check .....................   Passed    0.04 sec
         Start  87: specv1v2_map_check
- 87/106 Test  #87: specv1v2_map_check ...............   Passed    0.03 sec
+ 87/106 Test  #87: specv1v2_map_check ...............   Passed    0.04 sec
         Start  88: flat_render_lint
- 88/106 Test  #88: flat_render_lint .................   Passed    0.46 sec
+ 88/106 Test  #88: flat_render_lint .................   Passed    0.56 sec
         Start  89: preview_truth_check
- 89/106 Test  #89: preview_truth_check ..............   Passed    0.11 sec
+ 89/106 Test  #89: preview_truth_check ..............   Passed    0.13 sec
         Start  90: figure_check
- 90/106 Test  #90: figure_check .....................***Failed    0.44 sec
+ 90/106 Test  #90: figure_check .....................***Failed    0.56 sec
   ok   princess_dress                   waist/bust 0.637  OK taban 0.643 ±0.02
   ok   gore_skirt_dress                 waist/bust 0.681  OK taban 0.68 ±0.02
   ok   wrap_dress                       waist/bust 0.661  OK taban 0.662 ±0.02
@@ -483,51 +441,50 @@ contract validation FAILED (1)
 figure-lint: 1 FAILURE(S) — boru/drift üretildi, mandal düştü
 
         Start  91: volume_check
- 91/106 Test  #91: volume_check .....................   Passed    0.02 sec
+ 91/106 Test  #91: volume_check .....................   Passed    0.19 sec
         Start  92: body_volume_check
- 92/106 Test  #92: body_volume_check ................   Passed    6.09 sec
+ 92/106 Test  #92: body_volume_check ................   Passed    8.23 sec
         Start  93: garment_shell_check
- 93/106 Test  #93: garment_shell_check ..............   Passed    0.75 sec
+ 93/106 Test  #93: garment_shell_check ..............   Passed    1.11 sec
         Start  94: flatten_check
- 94/106 Test  #94: flatten_check ....................   Passed    0.43 sec
+ 94/106 Test  #94: flatten_check ....................   Passed    0.71 sec
         Start  95: surface_pattern_check
- 95/106 Test  #95: surface_pattern_check ............   Passed    4.45 sec
+ 95/106 Test  #95: surface_pattern_check ............   Passed    5.82 sec
         Start  96: h10_gate_check
  96/106 Test  #96: h10_gate_check ...................***Not Run (Disabled)   0.00 sec
         Start  97: garment_armhole_check
- 97/106 Test  #97: garment_armhole_check ............   Passed    0.01 sec
+ 97/106 Test  #97: garment_armhole_check ............   Passed    0.18 sec
         Start  98: section_check
- 98/106 Test  #98: section_check ....................   Passed    0.16 sec
+ 98/106 Test  #98: section_check ....................   Passed    0.37 sec
         Start  99: capability_check
- 99/106 Test  #99: capability_check .................   Passed    0.01 sec
+ 99/106 Test  #99: capability_check .................   Passed    0.18 sec
         Start 100: wearable_check
-100/106 Test #100: wearable_check ...................   Passed    4.55 sec
+100/106 Test #100: wearable_check ...................   Passed    6.08 sec
         Start 101: edgemono_check
-101/106 Test #101: edgemono_check ...................   Passed   39.37 sec
+101/106 Test #101: edgemono_check ...................   Passed   40.33 sec
         Start 102: walkgate_check
-102/106 Test #102: walkgate_check ...................   Passed   42.37 sec
+102/106 Test #102: walkgate_check ...................   Passed   43.11 sec
         Start 103: cutplan_check
-103/106 Test #103: cutplan_check ....................   Passed   42.82 sec
+103/106 Test #103: cutplan_check ....................   Passed   52.62 sec
         Start 104: printpack_sheet_check
-104/106 Test #104: printpack_sheet_check ............   Passed   10.45 sec
+104/106 Test #104: printpack_sheet_check ............   Passed   11.07 sec
         Start 105: preset_resolve_check
-105/106 Test #105: preset_resolve_check .............   Passed    0.04 sec
+105/106 Test #105: preset_resolve_check .............   Passed    0.39 sec
         Start 106: edit_locality_check
-106/106 Test #106: edit_locality_check ..............   Passed    0.16 sec
+106/106 Test #106: edit_locality_check ..............   Passed    0.15 sec
 
-92% tests passed, 8 tests failed out of 105
+93% tests passed, 7 tests failed out of 105
 
-Total Test time (real) = 280.43 sec
+Total Test time (real) = 340.00 sec
 
 The following tests did not run:
 	 96 - h10_gate_check (Disabled)
 
 The following tests FAILED:
-	  2 - engine_check (Failed)
 	  3 - golden_check (Failed)
+	  5 - bundle_fresh_check (Failed)
 	  8 - style_check (Failed)
 	 15 - sizechart_source_check (Failed)
-	 64 - sewable_census (Failed)
 	 71 - recipe_dress_check (Failed)
 	 85 - contract_check (Failed)
 	 90 - figure_check (Failed)
