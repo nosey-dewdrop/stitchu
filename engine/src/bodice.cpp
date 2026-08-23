@@ -4,6 +4,8 @@
 #include <cmath>
 #include <functional>
 #include <limits>
+#include <cstdio>
+#include <cstdlib>
 
 #include "shoulder.hpp"
 #include "validator.hpp"  // kinkAngleDegrees — motorun kendi kink kurali
@@ -288,10 +290,70 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
             return lo;
         };
         if (useWidthLine) {
-            // h büyüdükçe karın küçülür (monoton). Üst sınır aranarak bulunur;
-            // uydurulmuş bir tavan yok — çizgiye ulaşılamıyorsa ulaşılabilen en
-            // derin oyuk çizilir ve kapı bunu K1'de kırmızı olarak görür.
-            double lo = 0.0, hi = std::max(4.0 * dx, 4.0 * (armholeBottom.x - scyeInnerX));
+            // h büyüdükçe karın küçülür (monoton). Çizgiye ulaşılamıyorsa
+            // ulaşılabilen en derin oyuk çizilir ve kapı bunu K1'de kırmızı görür.
+            //
+            // ★ AMA ARAMANIN TAVANI YOKTU (düzeltildi 2026-08-23). Aşağıdaki dal
+            // bir GEOMETRİK tavan taşıyor, bu dal hiç taşımıyordu: `hi` 4*dx idi,
+            // yani bir sınır değil bir başlangıç sayısı. Sonuç, ULAŞILAMAZ bir
+            // çizgiyi kovalayan bir arama (ölçüldü, EU38 ön kolsuz: innerX=162.00
+            // omuz ucunun sadece 2.08mm içinde -> useWidthLine açılıyor; h 199.73'e
+            // çıkıyor, cp1=(354.8,129.6) cp2=(39.7,185.6) — kontrol poligonu
+            // katlanmış). Ve çizgiye yine ULAŞILMIYOR: h=199.73'te bile eğrinin en
+            // küçük x'i 164.08, yani omuz ucunun ta kendisi. Ulaşamaz da: oyuk
+            // uçtan omuz dikişinin teğetiyle, yani DIŞARI doğru ayrılıyor.
+            //
+            // Katlanan poligonun bedeli: eğri önce dışarı taşıyor, sonra içeri
+            // dönüyor, sonra yine dışarı — DIŞ-İÇ-DIŞ. O ortadaki dönüş, oyuğu
+            // kendi panelinin prenses dikişinin soluna sokuyor ve panel kendini
+            // kesiyordu (`sewable_census` 270 draft, hepsi `[selfintersect]
+            // Bodice Side Front`, hepsi KOLSUZ — çünkü çizgiyi omuz ucunun içine
+            // düşüren şey kolsuz kesimin omuzdan aldığı paydır).
+            //
+            // TAVAN = KATLANMAMA ŞARTININ KENDİSİ. Aşağıdaki dalın "cp2 omuz
+            // ucunu geçemez" (h <= 0.94*dx) kuralı bu şartın kontrol-poligonu
+            // üzerinden yazılmış bir VEKİLİ. Burada vekile gerek yok, şartın
+            // kendisi yazılabiliyor: kübiğin x(t)'si (0,1) aralığında EN FAZLA BİR
+            // kez dönebilir. Bir dönüş = "oyul, sonra koltukaltına çık" (doğru
+            // oyuk). İki dönüş = DIŞ-İÇ-DIŞ, yani katlanma. x'(t) bir parabol,
+            // kökleri kapalı formda sayılıyor — örnekleme değil.
+            // Ölçüm neden vekil değil de şartın kendisi: ikisi de kesişmeyi
+            // sıfırlıyor (82980/82980), ama vekil EU38'in oyuğunu 398.26mm'ye
+            // düşürüp K1'i (400-440mm) kırıyor, şartın kendisi 404.26mm'de
+            // bırakıyor. Vekil, ölçtüğü şeyden fazlasını kesiyordu.
+            const auto turnsFor = [&](double h) {
+                const Point c1 = cp1Of(h);
+                const Point c2{armholeBottom.x - dx * 0.06 - h, cp2Y};
+                // x'(t)/3 = qa*t^2 + qb*t + qc  (Bezier turev kontrol farklari)
+                const double A = c1.x - shoulder.x;
+                const double B = c2.x - c1.x;
+                const double C = armholeBottom.x - c2.x;
+                const double qa = A - 2 * B + C, qb = 2 * B - 2 * A, qc = A;
+                const auto interior = [](double t) { return t > 1e-9 && t < 1 - 1e-9; };
+                int n = 0;
+                if (std::fabs(qa) < 1e-12) {
+                    if (std::fabs(qb) > 1e-12 && interior(-qc / qb)) n = 1;
+                } else {
+                    const double disc = qb * qb - 4 * qa * qc;
+                    if (disc > 0) {
+                        const double sd = std::sqrt(disc);
+                        if (interior((-qb - sd) / (2 * qa))) ++n;
+                        if (interior((-qb + sd) / (2 * qa))) ++n;
+                    }
+                }
+                return n;
+            };
+            // Katlanmama tavanı: tek dönüşün korunduğu en büyük h.
+            double foldLo = 0.0, foldHi = std::max(4.0 * dx, 4.0 * (armholeBottom.x - scyeInnerX));
+            if (turnsFor(foldHi) <= 1) {
+                foldLo = foldHi;
+            } else {
+                for (int i = 0; i < 64; ++i) {
+                    const double mid = 0.5 * (foldLo + foldHi);
+                    if (turnsFor(mid) <= 1) foldLo = mid; else foldHi = mid;
+                }
+            }
+            double lo = 0.0, hi = foldLo;
             if (bellyFor(hi) > innerLimit) return kinkClamp(cp1Of, cp2Y, hi);
             for (int i = 0; i < 64; ++i) {
                 const double mid = 0.5 * (lo + hi);
@@ -368,6 +430,18 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     };
     const double hollow = solveHollow(cp1Of, cp2Y, hollowSeed);
     const Point cp2{armholeBottom.x - dx * 0.06 - hollow, cp2Y};
+    if (std::getenv("STITCHU_SCYE_DEBUG")) {
+        const auto s = flattenCubic(shoulder, armholeBottom, cp1Of(hollow), cp2, 200);
+        double maxX = shoulder.x, minX = shoulder.x;
+        for (const auto& p : s) { maxX = std::max(maxX, p.x); minX = std::min(minX, p.x); }
+        std::fprintf(stderr,
+            "[scye] front=%d tip=(%.2f,%.2f) bottom=(%.2f,%.2f) dx=%.2f innerX=%.2f "
+            "maxInset=%.2f innerLimit=%.2f useWidth=%d hollow=%.2f (0.94dx=%.2f) "
+            "cp1=(%.2f,%.2f) cp2=(%.2f,%.2f) minX=%.2f maxX=%.2f\n",
+            (int)isFront, shoulder.x, shoulder.y, armholeBottom.x, armholeBottom.y, dx,
+            scyeInnerX, scyeMaxInset, innerLimit, (int)useWidthLine, hollow, 0.94 * dx,
+            cp1Of(hollow).x, cp1Of(hollow).y, cp2.x, cp2.y, minX, maxX);
+    }
     return PathCommand::curve(armholeBottom, cp1Of(hollow), cp2);
 }
 
