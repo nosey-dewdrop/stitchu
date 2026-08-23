@@ -1,0 +1,76 @@
+# F-M · YENI KAPI, ESKI MOTOR (HEAD 6a64726, git worktree /tmp/stitchu-fm)
+# Amac: kapinin vakum OLMADIGINI kanitlamak. Yeni K1/K1b/K1c dosyasi HEAD'in
+# bodice.cpp'siyle derlendi -> K1 (EU38 392.80mm, bandin ALTI) ve K1b (1.619 > 1.6)
+# KIRMIZI dusuyor. Yani uc alt kapi da yuk tasiyor.
+# komut: cmake --build /tmp/stitchu-fm/engine/build --target garment_armhole_check
+#        && /tmp/stitchu-fm/engine/build/garment_armhole_check   -> exit 1
+
+== garment_armhole_check — sevk edilen hat, EU34..EU48 ==
+
+-- PARITE RAPORU (KAPI DEGIL) — ESLESTIRME BUST UZERINDEN, ETIKET UZERINDEN DEGIL --
+   Bugra beden tablosu bizimkiyle ayni degil: her etikette +40mm bust
+   (patterns_real/Locket Top/1 Sizes.jpg vs contract/tables.json).
+bizim | bust | Bugra | bust | bizim oyuk(dikis) | Bugra oyuk(kesim) | Bugra oyuk(dikis~) | fark(dikis)
+EU34  |   80 | -     |    - |            360.41 |                 - |                  - | ayni bustte Bugra bedeni YOK
+EU36  |   84 | B34   |   84 |            376.01 |            424.50 |             459.75 |    -83.74
+EU38  |   88 | B36   |   88 |            392.80 |            428.91 |             464.16 |    -71.36
+EU40  |   92 | B38   |   92 |            410.17 |            432.99 |             468.24 |    -58.07
+EU42  |   96 | B40   |   96 |            428.64 |            447.80 |             483.05 |    -54.41
+EU44  |  100 | B42   |  100 |            447.76 |            457.83 |             493.08 |    -45.32
+EU46  |  104 | B44   |  104 |            466.81 |            466.83 |             502.08 |    -35.27
+EU48  |  110 | -     |    - |            496.71 |                 - |                  - | ayni bustte Bugra bedeni YOK
+   yaka: EU36/B34 345.69 vs 346.75  EU38/B36 350.34 vs 350.29  EU40/B38 359.65 vs 350.41  EU42/B40 364.31 vs 363.98  EU44/B42 368.96 vs 373.88  EU46/B44 378.27 vs 380.75  
+
+-- BILGI (hukum degil): K1 bandi SATIN ALINMIS kalibi gecirir mi? --
+  B34  dikis  459.75mm -> DISINDA | kesim  424.50mm -> ICINDE
+  B36  dikis  464.16mm -> DISINDA | kesim  428.91mm -> ICINDE
+  B38  dikis  468.24mm -> DISINDA | kesim  432.99mm -> ICINDE
+  B40  dikis  483.05mm -> DISINDA | kesim  447.80mm -> DISINDA
+  B42  dikis  493.08mm -> DISINDA | kesim  457.83mm -> DISINDA
+  B44  dikis  502.08mm -> DISINDA | kesim  466.83mm -> DISINDA
+  B46  dikis  509.89mm -> DISINDA | kesim  474.64mm -> DISINDA
+  B48  dikis  521.73mm -> DISINDA | kesim  486.48mm -> DISINDA
+  -> dikis cizgisinde 8 bedenin 0'i bantta, kesimde 3'i.
+  -> 40-44cm SEKIZ bedenlik bir kapi olsaydi, referans kalip da duserdi.
+
+-- K1: TABAN BEDEN EU38, kol oyugu 400-440mm (Aldrich sanity, dikis cizgisi) --
+  EU34  K1 oyuk    bilgi 360.41mm (taban beden degil, yargilanmiyor)
+  EU36  K1 oyuk    bilgi 376.01mm (taban beden degil, yargilanmiyor)
+  EU38  K1 oyuk    FAIL  392.80mm
+  EU40  K1 oyuk    bilgi 410.17mm (taban beden degil, yargilanmiyor)
+  EU42  K1 oyuk    bilgi 428.64mm (taban beden degil, yargilanmiyor)
+  EU44  K1 oyuk    bilgi 447.76mm (taban beden degil, yargilanmiyor)
+  EU46  K1 oyuk    bilgi 466.81mm (taban beden degil, yargilanmiyor)
+  EU48  K1 oyuk    bilgi 496.71mm (taban beden degil, yargilanmiyor)
+
+-- K1b: grade gorunur (adim > 0) + max/medyan <= 1.6 (URBN sevkiyat kurali) --
+  EU36  K1b adim   ok    15.60mm (gorunur grade mi)
+  EU38  K1b adim   ok    16.79mm (gorunur grade mi)
+  EU40  K1b adim   ok    17.36mm (gorunur grade mi)
+  EU42  K1b adim   ok    18.47mm (gorunur grade mi)
+  EU44  K1b adim   ok    19.12mm (gorunur grade mi)
+  EU46  K1b adim   ok    19.06mm (gorunur grade mi)
+  EU48  K1b adim   ok    29.90mm (gorunur grade mi)
+  hepsi K1b oran   FAIL  max 29.90 / medyan 18.47 = 1.619
+
+-- K1c: uretim toleransi (AH01 W1 = 3/16" = 4.7625mm), ayni spec iki kez --
+  EU34  K1c tekrar ok    kosu1 360.4126 vs kosu2(ters sira) 360.4126 = 0.0000mm
+  EU36  K1c tekrar ok    kosu1 376.0097 vs kosu2(ters sira) 376.0097 = 0.0000mm
+  EU38  K1c tekrar ok    kosu1 392.8033 vs kosu2(ters sira) 392.8033 = 0.0000mm
+  EU40  K1c tekrar ok    kosu1 410.1681 vs kosu2(ters sira) 410.1681 = 0.0000mm
+  EU42  K1c tekrar ok    kosu1 428.6356 vs kosu2(ters sira) 428.6356 = 0.0000mm
+  EU44  K1c tekrar ok    kosu1 447.7588 vs kosu2(ters sira) 447.7588 = 0.0000mm
+  EU46  K1c tekrar ok    kosu1 466.8148 vs kosu2(ters sira) 466.8148 = 0.0000mm
+  EU48  K1c tekrar ok    kosu1 496.7100 vs kosu2(ters sira) 496.7100 = 0.0000mm
+
+-- K3: yaka deligi >= boyun cevresi --
+  EU34  K3 yaka    ok    delik 341.04 vs boyun 340.00 (+1.04)
+  EU36  K3 yaka    ok    delik 345.69 vs boyun 345.00 (+0.69)
+  EU38  K3 yaka    ok    delik 350.34 vs boyun 350.00 (+0.34)
+  EU40  K3 yaka    FAIL  delik 359.65 vs boyun 360.00 (-0.35)
+  EU42  K3 yaka    FAIL  delik 364.31 vs boyun 365.00 (-0.69)
+  EU44  K3 yaka    FAIL  delik 368.96 vs boyun 370.00 (-1.04)
+  EU46  K3 yaka    FAIL  delik 378.27 vs boyun 380.00 (-1.73)
+  EU48  K3 yaka    FAIL  delik 387.58 vs boyun 390.00 (-2.42)
+
+25 yargi, 7 FAIL
