@@ -875,3 +875,29 @@ için **daha dar bir iğne**: prenses + **empire** bel + EU36. F-N buraya
 DOKUNMADI (`engine/src` geometrisi paralel ajanın hattı). O kök kapanınca
 `engine_check`'in geriye bir pin farkı bırakıp bırakmadığı YENİDEN ölçülmeli —
 bugün pin tarafı hiç yargılanamadı.
+
+## K-FN1 — KOL OYUĞU BANDI: taban beden mi, sekiz beden mi? (23 Ağu 05:20)
+
+**Ölçülmüş gerçek, sabah bakılacak üç şeyden biri.**
+
+Dün gece `garment_armhole_check` K1 yeşil basıyordu: EU38 = 421.27mm, bant 400–440.
+Bugün ölçüldü ki o **421.27'nin 17.01mm'i, kendi üstüne katlanmış bir eğrinin
+uydurduğu yoldu.** Yani kapı bir süredir kendini kesen bir oyuk sayesinde geçiyormuş.
+Katlanma düzeltildi (270 draft → 0), dürüst sayı **404.26mm**. Bant hâlâ tutuyor.
+
+**Karar gereken:** EU34 (375.92mm) ve EU36 (389.75mm) bandın ALTINDA. Bugün
+yargılanmıyorlar çünkü K1 tasarım gereği yalnız **taban bedene** (EU38) bakıyor —
+kaynağı `knowledge/drafting-math-eu38.md:38`, dosya adı zaten `eu38`, ve satın alınmış
+Buğra kalıbının kendisi de bu bandan 8/8 düşüyor (ölçüldü, `GECE/log/F-M.*`).
+
+İki yol:
+- **(A) Kalsın.** K1 taban beden çapası, K1b grade tutarlılığını, K1c üretim
+  toleransını ayrı ayrı ölçüyor. Yayınlanmış kaynak da tek bedeni destekliyor.
+- **(B) Bant sekiz bedene baksın.** O zaman EU34/36 kırmızı düşer ve oyma
+  (`armholeHollowShare*`) küçük bedenlerde ayrıca çözülür.
+
+Ölçülmüş yan bilgi: yay/kiriş oranımız bugün 1.033–1.066, Buğra'da 1.180–1.240
+(`./engine/build/armhole-basis-probe`). Yani oyuk hâlâ Buğra kadar oyuk DEĞİL —
+(B) seçilirse iş bu oranı kapatmak olur.
+
+Tek taraflı seçilmedi.
