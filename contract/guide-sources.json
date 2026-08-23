@@ -1,0 +1,54 @@
+{
+  "_role": "REHBER SOURCE REGISTRY (F-H İŞ 2, 2026-08-23). Every advice the engine prints either carries a number THIS draft measured (basis 'computed:...') or points at a row here (basis 'source:<id>'). guide_completeness_check refuses any advice whose printed numbers are not accounted for by one of the two. A sentence with no basis is not an advice, it is filler.",
+  "_rule": "`values` lists EVERY numeric token the advice text is allowed to print off this source. If the engine wants to print a new number, the number goes here with its citation first — that is the whole point.",
+
+  "sources": {
+    "coats-seams": {
+      "title": "Coats — Seam Types (ISO 4916 seam classes / ISO 4915 stitch types)",
+      "url": "https://cdn.coats.com/wp-content/uploads/Seam-Types.pdf",
+      "quotes": [
+        "Class 3 (bound) application: Necklines of t-shirts.",
+        "For the seam specification to be meaningful, the designation of the stitch type has to be added after the designation of the stitched seam."
+      ],
+      "values": ["4916", "4915", "1.01.01", "301", "6.01.01", "3", "1", "2.5"],
+      "note": "The two ISO numbers, the plain-seam pair (1.01.01 + 301), the serging code (6.01.01) and the bound class (3) are all stated verbatim in the source or in knowledge/DIKIS-SOZLUGU-ISO-2026-08-23.md §3. The 2.5 mm stitch length is the standard lockstitch setting quoted alongside; it is a SETTING, not a tolerance, and nothing in the engine reads it."
+    },
+    "unl-knits": {
+      "title": "University of Nebraska–Lincoln extension, Sewing With Knits (the 4-inch stretch test)",
+      "url": "https://digitalcommons.unl.edu/extensionhist/1186",
+      "quotes": [
+        "stable <12.5%, moderate ~30%, super 50%+ (4-inch test)",
+        "plain straight stitch (seams pop; use narrow zigzag 1-1.5mm)",
+        "regular needle (use ballpoint 75/11-80/12)"
+      ],
+      "values": ["75", "11", "80", "12", "1", "1.5", "500", "12.5", "30", "50", "4"],
+      "note": "Mirrored in knowledge/stitchu.db, table `fabrics`, row 'jersey' (columns stretch / common_mistakes). ⚠ UNL's band edges are NOT the band this engine drafts on — see fabricease.hpp: the F-H card's band is implemented and UNL is recorded as the cross-reference, not averaged in.",
+      "iso4915Class500": "overlock class, ISO 4915 §2 (knowledge/DIKIS-SOZLUGU-ISO-2026-08-23.md)"
+    },
+    "iso-4915": {
+      "title": "ISO 4915:1991 — Textiles, Stitch types, classification and terminology",
+      "url": "https://cdn.standards.iteh.ai/samples/10932/49dcbdca6036446bacaac82c74211176/ISO-4915-1991.pdf",
+      "quotes": [
+        "6 classes: 100 chain · 200 hand-origin · 300 lockstitch · 400 multi-thread chain · 500 overedge · 600 covering",
+        "First digit = class, second and third = type within class."
+      ],
+      "values": ["4915", "100", "200", "300", "301", "400", "500", "600"],
+      "note": "Read in knowledge/DIKIS-SOZLUGU-ISO-2026-08-23.md §2. Only class numbers and 301 are quoted by the engine; a 3-digit type is never invented from the class."
+    },
+    "unl-knits+iso-4915": {
+      "title": "UNL Sewing With Knits + ISO 4915:1991 stitch classes (combined advice)",
+      "url": "https://cdn.standards.iteh.ai/samples/10932/49dcbdca6036446bacaac82c74211176/ISO-4915-1991.pdf",
+      "quotes": [
+        "6 sınıf: 100 zincir · 200 el kökenli · 300 düz (lock) · 400 çok iplikli zincir · 500 overlok · 600 kaplama"
+      ],
+      "values": ["4915", "500", "1", "1.5"],
+      "note": "One advice legitimately needs both: the millimetres come from UNL, the class number from ISO 4915."
+    },
+    "nmsu-g401": {
+      "title": "New Mexico State University extension G-401, Selecting Fabrics",
+      "url": "https://pubs.nmsu.edu/_g/G401.pdf",
+      "values": ["80", "12"],
+      "note": "The same source printpack's 'KUMAS SECIMI' page already cites (knowledge/stitchu.db `fabrics`, rows 1-4). This advice EXTENDS that page, it does not replace it."
+    }
+  }
+}

@@ -152,6 +152,11 @@ export function validateDraftRequest(body) {
       shaping: spec.shaping ?? 'princess',
       waistline: spec.waistline ?? 'natural',
       fabric: spec.fabric ?? 'woven',
+      // KUMAŞ EKSENİ (F-H, 2026-08-23): the fabric word carries a stretch
+      // percentage. -1 = NOT DECLARED (the word's own band drives) — this is
+      // deliberately not 0, because 0 means "measured a woven".
+      fabricStretchPct: (typeof spec.fabricStretchPct === 'number' && spec.fabricStretchPct >= 0)
+        ? Math.min(spec.fabricStretchPct, 100) : -1,
       neckline: spec.neckline ?? 'crew',
       sleeveStyle: spec.sleeveStyle ?? 'none',
       sleeveLength: spec.sleeveLength ?? 'short',
@@ -202,7 +207,10 @@ export function validateDraftRequest(body) {
 export function engineSpec(spec) {
   return {
     garment: spec.garment, shaping: spec.shaping, waistline: spec.waistline,
-    fabric: spec.fabric, neckline: spec.neckline,
+    fabric: spec.fabric,
+    fabricStretchPct: (typeof spec.fabricStretchPct === 'number' && spec.fabricStretchPct >= 0)
+      ? Math.min(spec.fabricStretchPct, 100) : -1,
+    neckline: spec.neckline,
     sleeveStyle: spec.sleeveStyle, sleeveLength: spec.sleeveLength,
     skirtStyle: spec.skirtStyle, skirtLength: spec.skirtLength, topLength: spec.topLength,
     // Foto-oran kablosu: continuous mm target (0 = off, the table drives).

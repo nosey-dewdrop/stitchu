@@ -3,6 +3,7 @@
 #include <optional>
 
 #include "geometry.hpp"
+#include "fabricease.hpp"
 #include "measurements.hpp"
 
 namespace stitchu {
@@ -19,8 +20,12 @@ inline constexpr double gatherRatio = 1.9;
 inline constexpr double pleatRatio = 3.0;    // knife pleats take 3x their sewn width
 inline constexpr int    goreCount = 6;       // default number of vertical gore panels
 inline constexpr double goreHemFlare = 90;   // extra width per panel edge added at the hem (below hip)
-inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : waistEase; }
-inline double hipEaseFor(Fabric f) { return f == Fabric::Knit ? knitEase : hipEase; }
+static_assert(FabricBand::easeAt(FabricBand::Girth::WaistSkirt, 0.0) == waistEase, "woven skirt waist anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::WaistSkirt, FabricBand::kKnitDefaultPct) == knitEase, "knit skirt waist anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::HipSkirt, 0.0) == hipEase, "woven skirt hip anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::HipSkirt, FabricBand::kKnitDefaultPct) == knitEase, "knit skirt hip anchor drifted");
+inline double waistEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::WaistSkirt, f); }
+inline double hipEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::HipSkirt, f); }
 
 // Dress-mode join targets (princess shaping only): each quarter drafts
 // against its own bodice half-waist and places the gore seam at the same arc
@@ -33,7 +38,7 @@ struct SkirtJoin {
 };
 
 DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                     Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
+                     Shaping shaping = Shaping::Princess, FabricAxis fabric = Fabric::Woven,
                      double lengthOverrideMM = 0);
 
 // Skirt pieces alone, reusable by the dress block (waistband optional).
@@ -51,25 +56,25 @@ std::vector<PatternPiece> pieces(
     bool includeWaistband,
     std::optional<double> targetWaistMM = std::nullopt,
     Shaping shaping = Shaping::Princess,
-    Fabric fabric = Fabric::Woven,
+    FabricAxis fabric = Fabric::Woven,
     double lengthExtraMM = 0,
     const SkirtJoin* join = nullptr,
     double lengthOverrideMM = 0);
 
-PatternPiece waistbandPiece(double waistMM, Fabric fabric = Fabric::Woven);
+PatternPiece waistbandPiece(double waistMM, FabricAxis fabric = Fabric::Woven);
 
 // Rough estimate for 140cm-wide fabric, 10% cutting margin.
 double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                      Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
+                      Shaping shaping = Shaping::Princess, FabricAxis fabric = Fabric::Woven,
                       double lengthExtraMM = 0, double lengthOverrideMM = 0);
 
 // Finished (sewn) hem circumference in mm — the edge a hem ruffle trims.
 double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                          Shaping shaping = Shaping::Princess, Fabric fabric = Fabric::Woven,
+                          Shaping shaping = Shaping::Princess, FabricAxis fabric = Fabric::Woven,
                           double lengthExtraMM = 0, double lengthOverrideMM = 0);
 
 std::vector<std::string> guide(SkirtStyle style, Shaping shaping = Shaping::Princess,
-                               Fabric fabric = Fabric::Woven);
+                               FabricAxis fabric = Fabric::Woven);
 
 } // namespace SkirtBlock
 } // namespace stitchu

@@ -1,4 +1,5 @@
 #include "garment.hpp"
+#include "rehber.hpp"
 
 #include <cmath>
 
@@ -1072,6 +1073,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         piece.foldLine = onFold ? foldLineOf(piece.commands)
                                 : std::vector<PathCommand>{};
     }
+
+    // REHBER (F-H İŞ 2) — LAST, after every post-pass piece and every cut line
+    // exists, because the advice counts pieces, notches and fold edges off the
+    // FINISHED draft. Metadata only: no geometry is touched here, so the golden
+    // dump is unaffected. Damla: kalıp + flat + REHBER, all three in the output.
+    pattern.rehber = rehber::build(pattern, spec.fabric);
     return pattern;
 }
 

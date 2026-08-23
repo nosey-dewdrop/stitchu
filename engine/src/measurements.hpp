@@ -74,6 +74,37 @@ enum class SkirtStyle { ALine, Straight, Gathered, HalfCircle, Pleated, Gore };
 enum class Waistline { Natural, Empire };
 // Fabric class scales every ease: knits stretch, so they need far less room.
 enum class Fabric { Woven, Knit };
+// ── THE FABRIC AXIS (F-H, 2026-08-23) ───────────────────────────────────────
+// The WORD (woven/knit) decides construction: zigzag or straight stitch, ballpoint
+// or sharp needle, whether a zipper is needed at all. It cannot decide GEOMETRY,
+// because "knit" covers a 5%-stretch ponte and a 90%-stretch swim knit and those
+// two want different pieces. So the word carries a NUMBER beside it: crosswise
+// stretch in percent, from the 10 cm stretch test the guide prints.
+//   stretchPct < 0  ==  not declared  ->  the word's own default is used, which
+//   sits exactly on the legacy ease anchor, so an undeclared spec drafts
+//   byte-identically to before this axis existed.
+// The band -> ease mapping lives in fabricease.hpp (sourced there, once).
+// Implicitly convertible BOTH ways with Fabric on purpose: every existing call
+// site that passes or compares a bare `Fabric` keeps compiling and keeps meaning
+// the same thing.
+struct FabricAxis {
+    Fabric cls = Fabric::Woven;
+    double stretchPct = -1.0;  // < 0 = undeclared
+
+    constexpr FabricAxis() = default;
+    constexpr FabricAxis(Fabric f) : cls(f) {}  // NOLINT(google-explicit-constructor)
+    constexpr FabricAxis(Fabric f, double pct) : cls(f), stretchPct(pct) {}
+    constexpr operator Fabric() const { return cls; }  // NOLINT(google-explicit-constructor)
+
+    constexpr bool declared() const { return stretchPct >= 0.0; }
+    // Defaults live in fabricease.hpp as named constants; the two literals are
+    // repeated here only because measurements.hpp may not depend on it (the
+    // dependency runs the other way). fabricease.hpp static_asserts they agree.
+    constexpr double effectiveStretchPct() const {
+        return declared() ? (stretchPct > 100.0 ? 100.0 : stretchPct)
+                          : (cls == Fabric::Knit ? 12.5 : 0.0);
+    }
+};
 enum class SkirtLength { Mini, Midi, Maxi };
 enum class SleeveStyle { None, Straight, Balloon };
 enum class SleeveLength { Short, Elbow, Long };
@@ -254,7 +285,7 @@ struct GarmentSpec {
     // count, which a clean commercial pattern only spends when the style needs it.
     Shaping shaping = Shaping::Dart;
     Waistline waistline = Waistline::Natural; // dress only
-    Fabric fabric = Fabric::Woven;
+    FabricAxis fabric = Fabric::Woven;
     Neckline neckline = Neckline::Crew;
     SleeveStyle sleeveStyle = SleeveStyle::None;
     SleeveLength sleeveLength = SleeveLength::Short;

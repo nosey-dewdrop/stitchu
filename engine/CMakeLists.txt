@@ -313,6 +313,10 @@ add_executable(wearability-bench tools/wearability-bench.cpp)
 target_link_libraries(wearability-bench PRIVATE engine)
 
 # Bugra corset micro-loop dump (patterns_real IoU harness input; not a test)
+# F-H ÇIKTI: same spec on two fabrics (SVG) + the rehber as a printed page (PDF).
+add_executable(fabric-axis-shot tools/fabric-axis-shot.cpp)
+target_link_libraries(fabric-axis-shot PRIVATE engine)
+
 add_executable(bugra-dump tools/bugra-dump.cpp)
 target_link_libraries(bugra-dump PRIVATE engine)
 
@@ -365,6 +369,20 @@ add_test(NAME sewable_census COMMAND sewable_census)
 add_executable(roundtrip_check tests/roundtrip_check.cpp)
 target_link_libraries(roundtrip_check PRIVATE engine)
 add_test(NAME roundtrip_check COMMAND roundtrip_check)
+
+# KUMAŞ EKSENİ (F-H İŞ 1): the fabric axis is a real axis, not a relabelled knit.
+add_executable(fabric_ease_check tests/fabric_ease_check.cpp)
+target_link_libraries(fabric_ease_check PRIVATE engine)
+add_test(NAME fabric_ease_check COMMAND fabric_ease_check)
+
+# REHBER (F-H İŞ 2): every printed advice is computed off this draft or cited.
+# The repo root is handed in so the gate can read the source registry AND the
+# wasm emit site (an advice the engine never hands out does not exist).
+add_executable(guide_completeness_check tests/guide_completeness_check.cpp)
+target_link_libraries(guide_completeness_check PRIVATE engine)
+target_compile_definitions(guide_completeness_check PRIVATE
+    STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+add_test(NAME guide_completeness_check COMMAND guide_completeness_check)
 
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)

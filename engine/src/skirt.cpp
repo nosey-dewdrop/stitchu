@@ -379,7 +379,7 @@ std::vector<PatternPiece> gorePanels(double fullWaist, double fullHip, double le
 
 } // namespace
 
-PatternPiece waistbandPiece(double waistMM, Fabric fabric) {
+PatternPiece waistbandPiece(double waistMM, FabricAxis fabric) {
     const double bandLength = waistMM * (1 + waistEaseFor(fabric)) / 2 + 30; // half band (cut 2) + button stand
     const double bandHeight = 80;                                 // folds to 4cm
     PatternPiece piece;
@@ -409,7 +409,7 @@ std::vector<PatternPiece> pieces(
     bool includeWaistband,
     std::optional<double> targetWaistMM,
     Shaping shaping,
-    Fabric fabric,
+    FabricAxis fabric,
     double lengthExtraMM,
     const SkirtJoin* join,
     double lengthOverrideMM
@@ -480,7 +480,7 @@ std::vector<PatternPiece> pieces(
 }
 
 double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                      Shaping shaping, Fabric fabric, double lengthExtraMM, double lengthOverrideMM) {
+                      Shaping shaping, FabricAxis fabric, double lengthExtraMM, double lengthOverrideMM) {
     const double len = resolvedLength(length, lengthOverrideMM) + lengthExtraMM;
     double meters = 0;
     switch (style) {
@@ -524,7 +524,7 @@ double fabricEstimate(const BodyMeasurementsSnapshot& m, SkirtStyle style, Skirt
 }
 
 double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                          Shaping shaping, Fabric fabric, double lengthExtraMM, double lengthOverrideMM) {
+                          Shaping shaping, FabricAxis fabric, double lengthExtraMM, double lengthOverrideMM) {
     const double len = resolvedLength(length, lengthOverrideMM) + lengthExtraMM;
     switch (style) {
         case SkirtStyle::ALine:
@@ -553,7 +553,7 @@ double hemCircumferenceMM(const BodyMeasurementsSnapshot& m, SkirtStyle style, S
     return 0;
 }
 
-std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric) {
+std::vector<std::string> guide(SkirtStyle style, Shaping shaping, FabricAxis fabric) {
     std::vector<std::string> steps{
         "Print the pattern and check the 3 cm calibration square with a ruler before cutting anything.",
     };
@@ -631,7 +631,7 @@ std::vector<std::string> guide(SkirtStyle style, Shaping shaping, Fabric fabric)
 }
 
 DraftedPattern draft(const BodyMeasurementsSnapshot& m, SkirtStyle style, SkirtLength length,
-                     Shaping shaping, Fabric fabric, double lengthOverrideMM) {
+                     Shaping shaping, FabricAxis fabric, double lengthOverrideMM) {
     DraftedPattern pattern;
     pattern.garment = std::string(title(style)) + " skirt";
     pattern.pieces = pieces(m, style, length, /*includeWaistband=*/true, std::nullopt, shaping, fabric,

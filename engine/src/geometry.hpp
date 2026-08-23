@@ -72,12 +72,27 @@ struct PatternPiece {
     std::vector<PathCommand> foldLine;
 };
 
+// REHBER entry (F-H, 2026-08-23). The sewing GUIDE says what to do in what
+// order; this says what to do it WITH and where this particular pattern will
+// fight you. `basis` is the reason the sentence is allowed to exist:
+//   "computed:<key>=<value>;..." a number this draft measured, or
+//   "source:<id>"               a row in contract/guide-sources.json.
+// Metadata only — never a piece, so the golden dump is untouched. Built by
+// rehber.hpp; policed by engine/tests/guide_completeness_check.cpp.
+struct GuideAdvice {
+    std::string id;
+    std::string text;
+    std::string basis;
+};
+
 struct DraftedPattern {
     std::string garment;
     std::vector<PatternPiece> pieces;
     std::string fabricAdviceKey;
     double fabricMeters140 = 0.0;
     std::vector<std::string> guideSteps;
+    // Material + technique layer beside the sewing order (F-H İŞ 2).
+    std::vector<GuideAdvice> rehber;
     // Measured drop from the front bust apex to the natural waist, in the drafted
     // panel frame (drafted waist Y minus drafted apex Y). Carried out of the bodice
     // draft so the opt-in cup-seam post-pass can cut the second (waist) seam that

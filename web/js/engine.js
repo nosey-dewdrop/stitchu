@@ -88,6 +88,9 @@ export function engineSpec(spec) {
     shaping: spec.shaping ?? 'dart',
     waistline: spec.waistline ?? 'natural',
     fabric: spec.fabric ?? 'woven',
+    // KUMAŞ EKSENİ (F-H): -1 = undeclared, the fabric word's own band drives.
+    fabricStretchPct: (typeof spec.fabricStretchPct === 'number' && spec.fabricStretchPct >= 0)
+      ? Math.min(spec.fabricStretchPct, 100) : -1,
     neckline: spec.neckline ?? 'crew',
     sleeveStyle: spec.sleeveStyle ?? 'none',
     sleeveLength: spec.sleeveLength ?? 'short',

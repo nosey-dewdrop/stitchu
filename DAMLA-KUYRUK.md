@@ -718,3 +718,29 @@ Bu satırlar `knowledge/ETSY-KAPISI-2026-08-23.md`'nin kuyruğu. Mekanik olanı
   "Kol oyuğu derinliği, bicep ve kapak yüksekliği — üçünden biri diğer ikisinin
   SONUCUDUR." Kalem bugün üçünü de bağımsız sabit taşıyor (`chestY`, `outW`,
   `capRise`). Uygulanmadı.
+
+- **[KARAR BEKLİYOR — F-H-1] Süper esnek kumaşta pens KALKMIYOR (motor tarafı).**
+  Kumaş ekseni (`engine/src/fabricease.hpp`) bandı %76+ için "pens kalkar" diye
+  **ilan ediyor** (`FabricBand::dartsDropOut`) ve rehber bunu sayfaya basıyor,
+  ama pens intake'ini sıfırlayan yer `engine/src/bodice.cpp` — bu gece paralel
+  vardiyanın (F-L pin/golden onarımı) sahibinde, dokunulmadı. Bugünkü hâl:
+  ease negatife iniyor, pens duruyor. Seçenekler: (a) `Shaping` enum'una üçüncü
+  değer eklemek (APPEND-only, ama bodice.cpp'nin o dalı yazması gerek),
+  (b) `maxDartDeg`'i banda bağlamak (spec-v2'de zaten kadran). **Tek taraflı
+  yapılmadı.**
+
+- **[KARAR BEKLİYOR — F-H-2] `sleeveEase` / `seatEase` mm alanı AÇILMADI.**
+  Kart uyardı: bu alanlar beden tablosunun okunuşunu değiştirir. Bu gece kol
+  (biceps) ve kapak ease'i **oran** olarak banda bağlandı (eski `knitBicepsEase`
+  / `knitCapEase` sabitleri artık bandın 0 ve 12.5 çapaları), yeni bir mm alanı
+  AÇILMADI. `contract/garment-spec-v2.json`'daki `easeBust/Waist/HipMM` de
+  değiştirilmedi — kumaş ekseni onların ÜSTÜNE ikinci sistem kurmuyor, bugün
+  ayrı bir eksende (oran) duruyor. **Damla: bu ikisi tek alanda mı birleşsin?**
+
+- **[ÖLÇÜLDÜ — F-H-3] İki kaynak bandı aynı yere koymuyor.**
+  F-H kartının bandı: stable %0–25 · orta %26–50 · esnek %51–75 · süper %76+.
+  UNL 4-inch testi (`knowledge/stitchu.db` → `fabrics`, jersey satırı,
+  https://digitalcommons.unl.edu/extensionhist/1186): stable <%12.5, orta ~%30,
+  **süper %50+**. Yani UNL'in "süper"i kartın "orta"sının bittiği yerde başlıyor.
+  **Kartın bandı uygulandı** (talimat o), UNL çapraz referans olarak yazıldı,
+  ORTALAMA ALINMADI. Hangisi kanun olacak Damla'nın kararı.

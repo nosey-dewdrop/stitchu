@@ -112,6 +112,18 @@ GarmentSpec buildSpec(const val& o) {
     spec.shaping = shapingFrom(strField(o, "shaping", "dart"));
     spec.waistline = waistlineFrom(strField(o, "waistline", "natural"));
     spec.fabric = fabricFrom(strField(o, "fabric", "woven"));
+    // KUMAŞ EKSENİ (F-H): the fabric WORD carries an optional crosswise-stretch
+    // percentage beside it. ABSENT (or < 0) means UNDECLARED, and undeclared is
+    // NOT the same as 0 — undeclared knit keeps the stable-knit band, declared 0
+    // is a woven. numField() cannot tell the two apart (it returns 0 for a
+    // missing key), so the key is probed directly.
+    {
+        const val sv = o["fabricStretchPct"];
+        if (!sv.isUndefined() && !sv.isNull()) {
+            const double s = sv.as<double>();
+            if (std::isfinite(s) && s >= 0) spec.fabric.stretchPct = s;
+        }
+    }
     spec.neckline = necklineFrom(strField(o, "neckline", "crew"));
     spec.sleeveStyle = sleeveStyleFrom(strField(o, "sleeveStyle", "none"));
     spec.sleeveLength = sleeveLengthFrom(strField(o, "sleeveLength", "short"));
@@ -189,6 +201,18 @@ std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
             out += "\"" + escape(guideAudit.stepPieces[i][j]) + "\"";
         }
         out += "]";
+    }
+    // REHBER (F-H İŞ 2): the material/technique layer, each entry with the
+    // BASIS that lets it exist. Emitted on the SAME surface as the pieces, which
+    // is what "sayfaya basılmayan öneri yok hükmünde" means in practice: an
+    // advice the engine builds and does not hand out is an advice that is not
+    // there. guide_completeness_check reads this file to prove the wire exists.
+    out += R"(],"rehber":[)";
+    for (size_t i = 0; i < draft.rehber.size(); ++i) {
+        if (i) out += ",";
+        out += R"({"id":")" + escape(draft.rehber[i].id) + "\"";
+        out += R"(,"text":")" + escape(draft.rehber[i].text) + "\"";
+        out += R"(,"basis":")" + escape(draft.rehber[i].basis) + "\"}";
     }
     out += R"(],"pieces":[)";
     for (size_t i = 0; i < draft.pieces.size(); ++i) {

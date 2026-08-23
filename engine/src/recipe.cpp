@@ -467,7 +467,7 @@ struct RecipeDoc {
     TopLength topLength = TopLength::Tunic;      // top kernel only
     StrapStyle strapStyle = StrapStyle::None;    // top kernel only
     Shaping shaping = Shaping::Dart;
-    Fabric fabric = Fabric::Woven;
+    FabricAxis fabric = Fabric::Woven;
     std::vector<std::string> measurements;
     std::vector<ParamDef> params;
     std::string lengthParam;  // the param bound to draft.skirtLengthMM

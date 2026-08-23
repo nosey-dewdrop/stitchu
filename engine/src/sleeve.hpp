@@ -1,5 +1,6 @@
 #pragma once
 // Set-in sleeve block, cap fitted by bisection to the armhole. See FORMULAS.md.
+#include "fabricease.hpp"
 #include "geometry.hpp"
 #include "measurements.hpp"
 
@@ -12,8 +13,14 @@ inline constexpr double capEase = 0.04;      // classic 3-5% cap ease for settin
 inline constexpr double knitBicepsEase = 0.06; // knits stretch around the arm
 inline constexpr double knitCapEase = 0.02;    // knits ease in with far less cap
 inline constexpr double convergenceTolerance = 0.5;
-inline double bicepsEaseFor(Fabric f) { return f == Fabric::Knit ? knitBicepsEase : bicepsEase; }
-inline double capEaseFor(Fabric f) { return f == Fabric::Knit ? knitCapEase : capEase; }
+// Legacy constants above = the stretch-0 and stretch-12.5 anchors of the
+// continuous fabric axis (fabricease.hpp); undeclared specs are byte-identical.
+static_assert(FabricBand::easeAt(FabricBand::Girth::Biceps, 0.0) == bicepsEase, "woven biceps anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::Biceps, FabricBand::kKnitDefaultPct) == knitBicepsEase, "knit biceps anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 0.0) == capEase, "woven cap anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, FabricBand::kKnitDefaultPct) == knitCapEase, "knit cap anchor drifted");
+inline double bicepsEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::Biceps, f); }
+inline double capEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::SleeveCap, f); }
 
 // Gathered / puff sleeve HEAD (Loop 6). The classic slash-and-spread adds
 // fullness across the crown ONLY (above the notches); the length below the
@@ -46,7 +53,7 @@ std::vector<PatternPiece> draft(
     SleeveLength length,
     double armholeLength,
     double armholeDepth,
-    Fabric fabric = Fabric::Woven,
+    FabricAxis fabric = Fabric::Woven,
     SleeveCap cap = SleeveCap::Plain);
 
 } // namespace SleeveBlock

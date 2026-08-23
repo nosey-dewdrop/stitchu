@@ -45,7 +45,7 @@ std::vector<PatternPiece> draft(
     SleeveLength length,
     double armholeLength,
     double armholeDepth,
-    Fabric fabric,
+    FabricAxis fabric,
     SleeveCap cap
 ) {
     if (style == SleeveStyle::None) return {};
