@@ -20,6 +20,23 @@ constexpr double flatWidth = 60;    // finished flat/peter-pan collar width
 constexpr double shirtStandH = 28;  // shirt collar stand height
 constexpr double shirtBladeH = 48;  // shirt collar blade (= stand + 20, covers seam)
 
+// --- flat / peter-pan collar: the shoulder overlap (F-K) ---------------------
+// A flat collar is NOT drafted as a strip. Front and back bodice are OVERLAPPED
+// at the shoulder, pivoting about the neck point, and the neckline is traced
+// through the overlap — that trace is the collar's neck edge. The overlap AMOUNT
+// is what decides how much the finished collar rolls: overlap 0 = dead flat (and
+// prone to ripple), more overlap = more roll.
+//
+// SOURCE: Aldrich's single hard number for this draft — "overlap the shoulders
+// by 2 cm" — recorded in this repo at
+//   knowledge/FLAT-DIS-KAYNAKLAR-2026-08-23.md:97
+// ⚠ SOURCE STATUS: that line is a research agent's reading of Aldrich; the file's
+// own header states the primary editions were NOT opened here, and it carries no
+// edition/page. So the ATTRIBUTION is DOĞRULANMADI. The number itself is taken
+// from the repo's knowledge layer, not invented, and it is NOT tuned to make any
+// gate pass (the gate only asks for sagitta > 0 and the right sign).
+constexpr double flatShoulderOverlapMM = 20.0;
+
 // --- Crescent (Bugra Locket) collar dimensions -------------------------------
 // Every proportion measured off the purchased Locket Top's size-36 vector rings
 // (patterns_real/geometry/geometry-full.json: the 'EXTRA-TL' cluster is the true
@@ -49,12 +66,14 @@ PatternPiece* findPiece(DraftedPattern& pattern, std::initializer_list<const cha
 // The neckline runs from commands[0] (centre-neck) up to the neck point at the
 // shoulder — that neck point is the outline vertex with the SMALLEST y (the
 // bodice draws neckPoint at y = 0, then a line down/out to the shoulder tip).
-// Sum the sewing-line length of exactly those commands: that is HALF the front
-// (or back) neckline, on the drafted curve. Returns 0 if degenerate.
-double halfNecklineLen(const PatternPiece* piece) {
-    if (!piece || piece->commands.size() < 3) return 0;
+// Return exactly those commands as a sub-path: that is HALF the front (or back)
+// neckline, on the drafted curve — its LENGTH is what truing measures and its
+// TURNING is what the flat collar has to copy. Empty if degenerate.
+std::vector<PathCommand> necklineSubPath(const PatternPiece* piece, size_t* neckEndOut) {
+    if (neckEndOut) *neckEndOut = 0;
+    if (!piece || piece->commands.size() < 3) return {};
     const auto& c = piece->commands;
-    if (c[0].type != CmdType::Move) return 0;
+    if (c[0].type != CmdType::Move) return {};
     // Index of the neck point = minimum-y vertex among the leading commands.
     // Scan from 1 forward until y stops decreasing (the neck point), so we never
     // walk past the neckline into the shoulder/armhole.
@@ -69,7 +88,78 @@ double halfNecklineLen(const PatternPiece* piece) {
     neck.reserve(neckEnd + 1);
     neck.push_back(PathCommand::move(c[0].to));
     for (size_t i = 1; i <= neckEnd; ++i) neck.push_back(c[i]);
-    return pathLength(neck);
+    if (neckEndOut) *neckEndOut = neckEnd;
+    return neck;
+}
+
+double halfNecklineLen(const PatternPiece* piece) {
+    return pathLength(necklineSubPath(piece, nullptr));
+}
+
+// Walk a path into a dense polyline so turning/curvature can be measured on the
+// SAME geometry the length is measured on (curves included, not just vertices).
+std::vector<Point> polyline(const std::vector<PathCommand>& cmds, int steps = 48) {
+    std::vector<Point> pts;
+    Point cur{0, 0};
+    bool started = false;
+    for (const auto& c : cmds) {
+        if (c.type == CmdType::Move) {
+            cur = c.to; pts.push_back(cur); started = true;
+        } else if (c.type == CmdType::Line) {
+            if (!started) { cur = c.to; pts.push_back(cur); started = true; continue; }
+            pts.push_back(c.to); cur = c.to;
+        } else if (c.type == CmdType::Curve) {
+            if (!started) { cur = c.to; pts.push_back(cur); started = true; continue; }
+            const std::vector<Point> seg = flattenCubic(cur, c.to, c.cp1, c.cp2, steps);
+            for (size_t i = 1; i < seg.size(); ++i) pts.push_back(seg[i]);
+            cur = c.to;
+        }
+    }
+    return pts;
+}
+
+// Total turning (rad, absolute) of a polyline: the signed exterior angles summed
+// along the walk, then made positive. For a circular arc this is exactly the
+// arc's subtended angle, which is what the flat-collar draft needs.
+double turningRad(const std::vector<Point>& pts) {
+    if (pts.size() < 3) return 0;
+    double total = 0;
+    double px = 0, py = 0;
+    bool have = false;
+    for (size_t i = 1; i < pts.size(); ++i) {
+        const double dx = pts[i].x - pts[i - 1].x, dy = pts[i].y - pts[i - 1].y;
+        const double n = std::sqrt(dx * dx + dy * dy);
+        if (n < 1e-12) continue;
+        const double ux = dx / n, uy = dy / n;
+        if (have) {
+            const double cross = px * uy - py * ux;
+            const double dot = px * ux + py * uy;
+            total += std::atan2(cross, dot);
+        }
+        px = ux; py = uy; have = true;
+    }
+    return std::fabs(total);
+}
+
+// Turning of the piece's neckline run (centre-neck -> shoulder neck point).
+double halfNecklineTurn(const PatternPiece* piece) {
+    return turningRad(polyline(necklineSubPath(piece, nullptr)));
+}
+
+// The drafted shoulder seam: the command that leaves the neck point. The flat
+// collar's shoulder overlap is an ARC at the shoulder tip about the neck-point
+// pivot, so overlap-in-mm becomes an angle only through this length.
+double shoulderSeamLen(const PatternPiece* piece) {
+    if (!piece) return 0;
+    size_t neckEnd = 0;
+    const std::vector<PathCommand> neck = necklineSubPath(piece, &neckEnd);
+    if (neck.empty()) return 0;
+    const auto& c = piece->commands;
+    if (neckEnd + 1 >= c.size()) return 0;
+    const PathCommand& sh = c[neckEnd + 1];
+    if (sh.type != CmdType::Line && sh.type != CmdType::Curve) return 0;
+    std::vector<PathCommand> seg = {PathCommand::move(c[neckEnd].to), sh};
+    return pathLength(seg);
 }
 
 // One collar stand/band. The bottom (attach) SEAM edge is drafted STRAIGHT to
@@ -111,62 +201,128 @@ PatternPiece standBand(const std::string& name, double neckLen, double bandH,
     return piece;
 }
 
-// One flat-family collar half (peter-pan / flat): neck edge length = `neckLen`
-// (CB fold at x = 0 to CF at x = neckLen along a shallow arc matching the
-// neckline), outer edge offset `width` outward and shaped per `edge`. Drawn as a
-// gentle arc so the neck edge is not a dead-straight line (it hugs the round
-// neckline). CB on fold at x = 0.
-PatternPiece flatCollar(const std::string& name, double neckLen, double width,
-                        CollarEdge edge, const std::string& role) {
+// --- flat-collar ARC FRAME (F-K) ---------------------------------------------
+// The flat collar is drafted around a circle whose arc IS the neck seam: neck
+// edge = arc of radius R subtending `turn`, arc length exactly `neckLen`; every
+// other landmark is placed in (u, v) = (fraction along the neck seam, depth out
+// from it), so the collar keeps its width and the whole piece curves WITH the
+// neckline instead of being a straight strip.
+//
+// Frame: centre O below the chord; at(0,0) = CB on the fold at the origin,
+// at(1,0) = the CF tip on the y = 0 line, at(0.5,0) = the sagitta apex at
+// +R(1-cos(turn/2)) — i.e. the neck seam bows INTO the collar's own fabric,
+// which is the same way the garment neckline bows into the bodice's fabric
+// (both edges ring the same neck hole, fabric on the outside of it).
+struct FlatFrame {
+    bool straight = true;
+    double turn = 0, R = 0, len = 0;
+    Point O{0, 0};
+    Point at(double u, double v) const {
+        if (straight) return Point{len * u, v};
+        const double th = -turn * 0.5 + u * turn;
+        const double rr = R + v;
+        return Point{O.x + rr * std::sin(th), O.y + rr * std::cos(th)};
+    }
+    // The neck seam as ONE cubic (kappa arc), so the gate can keep reading the
+    // neck edge as commands[0..1] exactly as it always did.
+    std::vector<PathCommand> neckEdge() const {
+        if (straight) return {PathCommand::move(at(0, 0)), PathCommand::line(at(1, 0))};
+        const double k = (4.0 / 3.0) * std::tan(turn * 0.25) * R;
+        const double ch = std::cos(turn * 0.5), sh = std::sin(turn * 0.5);
+        const Point p0 = at(0, 0), p3 = at(1, 0);
+        return {PathCommand::move(p0),
+                PathCommand::curve(p3, {p0.x + k * ch, p0.y + k * sh},
+                                       {p3.x - k * ch, p3.y + k * sh})};
+    }
+};
+
+// Build the frame and SOLVE R so the DRAWN cubic measures `neckLen` — the kappa
+// arc is not exactly circular, so we do not assume R = neckLen/turn, we measure
+// the path we actually emit and correct until truing is at machine precision.
+FlatFrame makeFlatFrame(double neckLen, double turn) {
+    FlatFrame f;
+    f.len = neckLen;
+    if (!(turn > 1e-6) || !(neckLen > 1e-6)) return f;  // straight (legacy) frame
+    f.straight = false;
+    f.turn = turn;
+    f.R = neckLen / turn;
+    for (int i = 0; i < 6; ++i) {
+        f.O = Point{f.R * std::sin(turn * 0.5), -f.R * std::cos(turn * 0.5)};
+        const double m = pathLength(f.neckEdge());
+        if (!(m > 1e-9)) break;
+        const double err = std::fabs(m - neckLen);
+        f.R *= neckLen / m;
+        if (err < 1e-10) break;
+    }
+    f.O = Point{f.R * std::sin(turn * 0.5), -f.R * std::cos(turn * 0.5)};
+    return f;
+}
+
+// One flat-family collar half (peter-pan / flat). Neck edge length = `neckLen`
+// and its TURNING = `neckTurn` (rad), the measured half-neckline turning less
+// the shoulder-overlap pivot. Outer edge sits `width` out from the neck seam,
+// following the same arc frame, shaped per `edge`. CB on fold at at(0, ·).
+//
+// `neckTurn == 0` keeps the old straight seam on purpose — that is the correct
+// draft for the SHIRT blade, whose attach edge sews to the stand band's straight
+// top edge, not to the neckline.
+PatternPiece flatCollar(const std::string& name, double neckLen, double neckTurn,
+                        double width, CollarEdge edge, const std::string& role) {
     PatternPiece piece;
     piece.name = name;
     piece.cutInstruction = "cut 2 + interfacing (1 upper, 1 under + interfacing), " + role;
 
-    // Neck (attach) SEAM edge: a STRAIGHT line CB(0,0) -> CF(neckLen,0). Its
-    // length is exactly neckLen (the neckline) — trued to 0.00 mm. In a real flat
-    // collar the neck edge is a shallow arc traced off the overlapped shoulders;
-    // its LENGTH still equals the neckline, which is what truing measures, so we
-    // draft the seam straight-to-length and shape the free OUTER edge below it.
-    const Point cbNeck{0, 0};
-    const Point cfNeck{neckLen, 0};
-    const Point cfOuter{neckLen, width};   // CF end, down the collar depth
-    const Point cbOuter{0, width};         // CB end
+    const FlatFrame f = makeFlatFrame(neckLen, neckTurn);
 
-    std::vector<PathCommand> cmds;
-    cmds.push_back(PathCommand::move(cbNeck));
-    cmds.push_back(PathCommand::line(cfNeck));    // straight neck seam, length = neckLen
-    cmds.push_back(PathCommand::line(cfOuter));   // CF corner down
+    // Neck (attach) SEAM edge: the traced arc, length exactly neckLen (trued to
+    // 0.00 mm) AND curving the same way as the neckline it sews to. A straight
+    // seam here would true perfectly and still be wrong: it makes a rectangular
+    // strip that stands up like a band instead of lying on the shoulders.
+    std::vector<PathCommand> cmds = f.neckEdge();
+    const Point cfOuter = f.at(1, width);  // CF end, out the collar depth
+    const Point cbOuter = f.at(0, width);  // CB end
+    cmds.push_back(PathCommand::line(cfOuter));   // CF end cut
 
     if (edge == CollarEdge::Pointed) {
         // A pointed outer edge: dip to a point partway, classic collar corner.
-        const Point pt{neckLen * 0.5, width + 22};
-        cmds.push_back(PathCommand::line(pt));
+        cmds.push_back(PathCommand::line(f.at(0.5, width + 22)));
         cmds.push_back(PathCommand::line(cbOuter));
     } else if (edge == CollarEdge::Scallop) {
-        // Scalloped outer edge: a run of small arcs CF->CB.
+        // Scalloped outer edge: a run of small arcs CF->CB. Each lobe is a REAL
+        // circular arc of chord `c` and depth `dip`, so its handles leave the
+        // cusp on the arc's own tangent (angle phi/2 off the chord), not square
+        // to it. Square handles used to be tolerable on a straight strip; on the
+        // curved frame they read as a fold (validator 'kink'). Nothing here is a
+        // free constant: phi, R and k all fall out of `c` and `dip`.
         const int scallops = 4;
-        Point prev = cfOuter;
+        const double dip = 14;  // scallop depth
+        const double c = neckLen / scallops;
+        const double phi = 4 * std::atan(2 * dip / c);
+        const double Rl = c / (2 * std::sin(phi * 0.5));
+        const double k = (4.0 / 3.0) * std::tan(phi * 0.25) * Rl;
+        const double du = k * std::cos(phi * 0.5) / neckLen;  // handle, along the seam
+        const double dv = k * std::sin(phi * 0.5);            // handle, out from it
+        double uPrev = 1.0;
         for (int i = 1; i <= scallops; ++i) {
-            const double t = static_cast<double>(i) / scallops;
-            const double x = neckLen * (1 - t);
-            const double dip = 14;  // scallop depth
-            const Point next{x, width};
-            const double midY = width + dip;
-            cmds.push_back(PathCommand::curve(next, {prev.x, midY}, {next.x, midY}));
-            prev = next;
+            const double u = 1 - static_cast<double>(i) / scallops;
+            cmds.push_back(PathCommand::curve(f.at(u, width),
+                                              f.at(uPrev - du, width + dv),
+                                              f.at(u + du, width + dv)));
+            uPrev = u;
         }
     } else {  // Round (peter-pan)
-        cmds.push_back(PathCommand::curve(
-            cbOuter, {neckLen * 0.72, width + 10}, {neckLen * 0.28, width - 4}));
+        cmds.push_back(PathCommand::curve(cbOuter, f.at(0.72, width + 10),
+                                          f.at(0.28, width - 4)));
     }
     cmds.push_back(PathCommand::close());
     piece.commands = cmds;
 
     // CB fold line + roll line (parallel to the neck edge, ~6 mm out).
-    piece.markings.push_back(PathCommand::move({0, 0}));
-    piece.markings.push_back(PathCommand::line({0, width}));
+    const double uMark = std::min(0.25, 6.0 / std::max(neckLen, 1.0));
+    piece.markings.push_back(PathCommand::move(f.at(0, 0)));
+    piece.markings.push_back(PathCommand::line(f.at(0, width)));
     piece.hasGrainline = true;
-    piece.grainline = Grainline{{6, 4}, {6, width - 6}};
+    piece.grainline = Grainline{f.at(uMark, 4), f.at(uMark, width - 6)};
     piece.seamAllowance = SA;
     return piece;
 }
@@ -299,7 +455,7 @@ void necklineNotch(PatternPiece* piece) {
 
 } // namespace
 
-double necklineLengthMM(const DraftedPattern& pattern) {
+NecklineShape necklineShapeMM(const DraftedPattern& pattern) {
     // Front is cut 1 on fold (or centre front piece) — its neckline is HALF the
     // front neckline; ×2 for the full front. Same for back. Sum both.
     // Use a non-const scan.
@@ -315,13 +471,35 @@ double necklineLengthMM(const DraftedPattern& pattern) {
     }
     const double frontHalf = halfNecklineLen(front);
     const double backHalf = halfNecklineLen(back);
-    return 2 * frontHalf + 2 * backHalf;
+    NecklineShape s;
+    s.lengthMM = 2 * frontHalf + 2 * backHalf;
+    // One on-fold collar half spans CB round the shoulder to CF: half the back
+    // neckline plus half the front neckline. The two pieces are mirrored when
+    // they are joined at the shoulder, so their turnings ADD (they ring the same
+    // neck hole the same rotational way) — take magnitudes, not signed sums.
+    s.halfTurnRad = halfNecklineTurn(back) + halfNecklineTurn(front);
+    s.shoulderMM = shoulderSeamLen(front);
+    return s;
+}
+
+double necklineLengthMM(const DraftedPattern& pattern) {
+    return necklineShapeMM(pattern).lengthMM;
+}
+
+double flatCollarNeckTurnRad(const NecklineShape& shape) {
+    // The 2 cm shoulder overlap is an arc at the shoulder TIP about the neck
+    // point, so it costs the traced neck curve exactly overlap / shoulderLen
+    // radians of turning — one shoulder seam per collar half.
+    if (!(shape.shoulderMM > 1.0)) return 0;
+    const double pivot = flatShoulderOverlapMM / shape.shoulderMM;
+    return std::max(0.0, shape.halfTurnRad - pivot);
 }
 
 bool apply(DraftedPattern& pattern, CollarType type, CollarEdge edge) {
     if (type == CollarType::None) return true;
 
-    const double neckFull = necklineLengthMM(pattern);
+    const NecklineShape shape = necklineShapeMM(pattern);
+    const double neckFull = shape.lengthMM;
     if (neckFull < 60) {
         pattern.guideSteps.push_back(
             "Collar: skipped — this garment has no measurable neckline to carry a "
@@ -358,12 +536,20 @@ bool apply(DraftedPattern& pattern, CollarType type, CollarEdge edge) {
                 ? "Peter Pan Collar (bebe yaka)" : "Flat Collar (yatık yaka)";
             const char* edgeName = edge == CollarEdge::Pointed ? "pointed"
                                  : edge == CollarEdge::Scallop ? "scalloped" : "rounded";
+            // F-K: the neck edge is TRACED off the overlapped shoulders, so it
+            // curves the way the neckline curves. Length still equals the
+            // neckline; the shape condition is new, the truing condition kept.
+            const double turn = flatCollarNeckTurnRad(shape);
             pattern.pieces.push_back(flatCollar(
-                label, half, flatWidth, edge,
+                label, half, turn, flatWidth, edge,
                 std::string("lies flat on the shoulders, ") + edgeName + " outer edge"));
             pattern.guideSteps.push_back(
                 std::string("Collar (") + label +
-                "): drafted so its neck edge equals the garment neckline and its "
+                "): drafted the way a flat collar is drafted — front and back "
+                "shoulders overlapped 2 cm at the shoulder tip, the neckline traced "
+                "through the overlap — so the neck edge is a curve that matches your "
+                "neckline (not a straight strip, which would stand up instead of "
+                "lying down). Its length still equals the garment neckline and its "
                 "outer edge is " + edgeName +
                 ". Interface the under-collar, sew upper to under-collar right sides "
                 "together along the outer edge, clip the curves"
@@ -379,8 +565,11 @@ bool apply(DraftedPattern& pattern, CollarType type, CollarEdge edge) {
             pattern.pieces.push_back(standBand(
                 "Shirt Collar Stand (yaka bandı)", half, shirtStandH, cfRise * 0.6,
                 "the button-end band the blade rolls over"));
+            // The blade does NOT sew to the neckline — it sews to the stand
+            // band's TOP edge, which standBand() draws straight. So its attach
+            // edge is straight (turn = 0) on purpose, not by omission.
             pattern.pieces.push_back(flatCollar(
-                "Shirt Collar Blade (yaka yaprağı)", half, shirtBladeH,
+                "Shirt Collar Blade (yaka yaprağı)", half, 0.0, shirtBladeH,
                 CollarEdge::Pointed, "the turnover blade; sits on the stand and rolls over the seam"));
             pattern.guideSteps.push_back(
                 "Collar (Shirt Collar / gömlek yaka): a two-piece convertible collar "

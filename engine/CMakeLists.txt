@@ -181,6 +181,13 @@ add_executable(collar_check tests/collar_check.cpp)
 target_link_libraries(collar_check PRIVATE engine)
 add_test(NAME collar_check COMMAND collar_check)
 
+# F-K: bir düz/Peter Pan yaka YATMAK zorunda. Truing sadece UZUNLUK ölçtüğü için
+# düz çizgi bir boyun kenarı yeşil geçiyordu; bu kapı ŞEKLİ ölçer (sagitta > 0 +
+# eğrilik yönü giysinin yaka çizgisiyle aynı). Tolerans gevşetilmedi.
+add_executable(collar_lies_flat_check tests/collar_lies_flat_check.cpp)
+target_link_libraries(collar_lies_flat_check PRIVATE engine)
+add_test(NAME collar_lies_flat_check COMMAND collar_lies_flat_check)
+
 add_executable(gather_check tests/gather_check.cpp)
 target_link_libraries(gather_check PRIVATE engine)
 add_test(NAME gather_check COMMAND gather_check)

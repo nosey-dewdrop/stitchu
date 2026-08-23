@@ -66,5 +66,33 @@ bool apply(DraftedPattern& pattern, CollarType type, CollarEdge edge);
 // equals it to 0.00 mm. Returns 0 when no neckline piece is present.
 double necklineLengthMM(const DraftedPattern& pattern);
 
+// The neckline's SHAPE, not just its length (F-K root cause: flatCollar() only
+// ever received a scalar, so it could not know which way — or how hard — the
+// neckline it sews to curves, and drew a dead-straight seam = a rectangular
+// strip that stands up like a band instead of lying flat).
+//
+// All three numbers are MEASURED off the finished front/back pieces:
+//   lengthMM     — full neckline (front + back, both sides)
+//   halfTurnRad  — total turning of HALF the neckline (centre back round to
+//                  centre front = exactly the span one on-fold collar half
+//                  covers): |turn(back half)| + |turn(front half)|
+//   shoulderMM   — the drafted front shoulder-seam length; the flat-collar
+//                  draft pivots the shoulders about the neck point, so the
+//                  2 cm shoulder overlap converts to an angle through it
+// Zeroes when no neckline piece is present.
+struct NecklineShape {
+    double lengthMM = 0;
+    double halfTurnRad = 0;
+    double shoulderMM = 0;
+};
+NecklineShape necklineShapeMM(const DraftedPattern& pattern);
+
+// The turning (rad) of the flat/peter-pan collar's neck edge as this block
+// drafts it: the measured half-neckline turning MINUS the shoulder-overlap
+// pivot angle. Exposed so the gate can re-derive it instead of trusting a
+// number printed by the code under test. Returns 0 when the overlap eats the
+// whole turning (the honest band-collar limit).
+double flatCollarNeckTurnRad(const NecklineShape& shape);
+
 } // namespace CollarBlock
 } // namespace stitchu
