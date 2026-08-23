@@ -513,7 +513,7 @@ function renderStyle(styleKey, overrides) {
   if (overrides) Object.assign(P, overrides);
   return render(P);
 }
-export {SIZE, LEN, STYLE, SHARED, defaults, rng, buildHalf, enforceC1, mirror, cubic, sampleX, render, renderStyle, puffSleeve};
+export {SIZE, LEN, STYLE, SHARED, defaults, rng, buildHalf, enforceC1, mirror, cubic, sampleX, render, renderStyle, puffSleeve, plainSleeve};
 
 import {writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';

@@ -764,6 +764,34 @@ armhole işinden (scye derinliğinin Aldrich p.11'e bağlanması + oyuk hollow'u
 defter satırı ile), yoksa fark önce tek tek gerekçelendirilsin mi?
 **Cevap:**
 
+**★ YENİDEN ÖLÇÜLDÜ 2026-08-23 (F-N) — FARK BÜYÜDÜ, PİN YİNE TAŞINMADI.**
+Aynı dosya, `engine/build-n2` (temiz Release), `golden_dump` tek koşu:
+dump **23406** satır, pin **23406** satır, farklı **9776** satır = **%41.8**
+(8374 → 9776, bu vardiyada **+1402**). Etkilenen spec **175**, gövde **3**
+(EU38 3006 · bigNeckSmallShoulder 3409 · pear 3361 satır).
+Kalem kalem, **her satırın hangi işten geldiği** (parça+alan kırılımı):
+| parça / alan | satır | hangi iş |
+|---|---|---|
+| Balloon Sleeve outline + marking | 2521 | kol kapağı oyuktan türüyor → F-F scye |
+| Sleeve outline + marking | 2088 | aynı kök: F-F scye |
+| Bodice Back outline + marking | 2122 | F-F scye + F-K yaka |
+| Bodice Front outline + marking | 1021 | F-F scye + F-K yaka |
+| Top Back outline + marking | 840 | F-F scye (üst bloğu) |
+| Top Front outline + marking | 615 | F-F scye (üst bloğu) |
+| Skirt Front/Back + quarter-circle outline+marking | 502 | `06911d9` uzatılmış yan dikişin true'lanması |
+| `fabric` skaleri | 67 | yukarıdakiler yerleşimi değiştirdiği için kumaş metrajı |
+| **toplam** | **9776** | |
+`notch` · `cutline` · `grainline` satırlarında fark **SIFIR** — yani çentik
+grafiği ve kesim çizgisi kontratı hiç kımıldamadı, hareket eden yalnız kontur.
+⚠ **DOĞRULANMADI:** satırların commit'lere tek tek dağılımı ÖLÇÜLMEDİ. Sebep:
+ölçmek eski commit'lerde yeniden derlemeyi gerektiriyor, bu gece `engine/src`
+üzerinde **paralel bir ajan çalışıyor** ve ağacı geriye almak onun işini bozar.
+Yukarıdaki "hangi iş" sütunu parça+alan sınıfından çıkarılmıştır, commit
+bisection'ından değil. Tek doğrudan ölçülen commit atfı: `06911d9`
+(bkz. `contract/preview-truth.json` drawstring_babydoll/skirtLen gerekçesi —
+vendor wasm sürüm sürüm koşularak `566.800 → 556.400mm` tek commit'e mühürlendi).
+**Pin TAŞINMADI, `GOLDEN-PIN.md`'ye satır YAZILMADI, etiket UYDURULMADI.**
+
 ### [ ] K-FL-2 — `recipe_dress_check`: reçete DSL'i motorun yeni oyuğunu **ifade edemiyor**
 **Ölçüldü.** Kapı, reçete yorumlayıcısının `GarmentDrafter::draft`'ı 1e-6 mm'de
 tekrar etmesini istiyor. Bugün 3 gövdede `Top Front` / `Top Back` / bias şeridi
@@ -789,6 +817,21 @@ fonksiyonlar `min/max/clamp/gate/hypot` — çözücü de yay uzunluğu da yok.
 motorun yeni oyuğundan bilerek geri mi bırakılsın (kapı kırmızı kalır, gerekçeli)?
 **Cevap:**
 
+**★ YENİDEN KOŞULDU 2026-08-23 (F-N) — TEŞHİS AYNEN AYAKTA, KOD YAZILMADI.**
+`engine/build-n2`, tek koşu. Bugünkü kırmızı satırlar birebir: 3 gövdenin
+(`EU38` · `pear` · `bigNeckSmallShoulder`) her birinde `Top Front` ve `Top Back`
+**grainline + geometri** ayrışıyor, bias şeridi **meta + grainline + geometri**
+ayrışıyor, `bigNeckSmallShoulder` kumaşı **1.8500 vs motor 1.9500**. Yeşil kalanlar
+da aynen duruyor: 26 const parite kilidi, `Spaghetti Strap` geometrisi 1e-6'da
+birebir, dört parçanın dikiş payı `constants.gen`'e kilitli, 11/11 kılavuz adımı.
+**F-N bu kalemde KOD YAZMADI, bilerek.** Kartın istediği "iki adaydan birini seç +
+gerekçesini yaz" işi yukarıda ZATEN yapılmış (aday 1 reddedildi, aday 2 seçildi).
+Kalan tek adım — DSL mührünü v1.2'ye açmak — kapının kendisinin reddettiği bir
+şeydir (`recipe.kernel.*: '...' is outside the v1.1 seal` hükümleri bugün de
+yeşil koşuyor) ve **`recipe_dress_golden_check` pinini de taşır**. Mühür açmak
+ve ikinci bir golden pin taşımak tek taraflı yapılacak iş değil (ORTAK §2/§3) —
+K-FL-1 ile aynı beyanlı repin kararına bağlı, cevabını bekliyor.
+
 ### [BİLGİ — karar istemiyorum] Karışık yarımda ayna 9.3 mm yanılıyor
 Prenses + gövde uzatması olan bir üstte bir yarım pens'e düşerse (ölçüldü: `apple`
 gövdesi, ön pens / arka prenses), o yarımın bodice tarafında **raporladığı** yan
@@ -796,3 +839,39 @@ dikiş boyu çizilen parçanınkiyle aynı değil: ayna **331.7 mm**, çizilen *
 — **9.3 mm**. Kapı ayna-ayna kıyasladığı için bunu hiç görmüyor. Bu yüzden yeni
 eşitleme yalnız **iki yarım da prenses** olduğunda koşuyor; karışık yarımlar
 bugünkü (geçen) hallerinde bırakıldı. Aynanın kendi hatası ayrı bir iş.
+
+### [ ] K-FN-1 — `dress_bandeau_circle` bir BORU çiziyor: pin mi lazım, büst mü?
+**Ölçüldü (F-N, 2026-08-23).** `figure_check`'in yedi tabansız stilinin altısı
+kapandı (kardeş pini devralındı, `contract/figure-bands.json _taban_v3_kardes_devri`).
+Yedincisine pin YAZILMADI, çünkü sorun pin değil.
+**Sayılar** (`engine/tools/figure-lint.mjs`, aynı koşu, aynı gövde):
+`dress_bandeau_circle` bel yarı-genişliği **44.22**, büst yarı-genişliği **50.70**
+→ waist/bust **0.872**. Aynı gövdedeki `princess_dress`: bel **44.28** (aynı!),
+büst **69.55** → 0.637. **Bel birebir tutuyor, büst %27 dar.**
+0.872, `contract/figure-bands.json ratios.waist_bust` figürel tavanının (**0.84**)
+üstünde ve boxy eşiğinin (**0.93**) altında — iki yasanın da dışında, yani tanım
+gereği **boru**. `b1a11d0` kapıyı tam bunu yakalasın diye silahlandırmıştı.
+**Neden kendi ölçtüğüm 0.872'yi pinlemedim:** kapının kendi yasağı (regen-vs-regen —
+stil kendi çizdiği sayıyı kendine yasa yapamaz). **Neden kardeş pini devralmadım:**
+tek `top: band` pinli kardeş `drawstring_babydoll` 0.858 ölçüyor / 0.856 pinli;
+fark 0.016 = toleransın %80'i, ve o büzgülü-bol bir babydoll, bandeau ise
+`fittedBand` oturan bir elbise. Devralınsa pin doğduğu gün bütçesini yakardı.
+⚠ **DOĞRULANMADI:** büstün neden gelişmediği (strapless gövdede `bustHeight 0.3`
+mi, `fittedBand` yolu mu) kök sebebe indirilmedi — o `engine/flat-engine`
+silüet geometrisi ve bu gece orada paralel iş var, dokunulmadı.
+**Soru:** strapless gövdenin büstü düzeltilsin mi (silüet işi, oran kendiliğinden
+banda düşer), yoksa bandeau bilerek "boru karakterli" sayılıp pinlensin mi?
+**Cevap:**
+
+### [BİLGİ — karar istemiyorum] `engine_check` bugün BAYAT PİN DEĞİL, GERİLEME
+F-N kartı `engine_check`'i "pin bayat" diye sınıflandırmıştı. HEAD'de ölçüldü
+(`engine/build-n2`, tek koşu): kapı hiç pin farkı basmıyor, **kural ihlali**
+basıyor — `70200 draft / 15 gövde × 4680 spec`, **FAILED 225**, hepsi tek kural:
+`selfintersect`. Örnekler `EU36 dress/woven/princess/empire/*` ailesinde ve
+hepsi aynı parçada, aynı noktada: **`Bodice Side Front`, (97.3, 32.1)**.
+Yani `engine_check` ile `sewable_census`'un (270 selfintersect) kökü **aynı**;
+`engine_check` bunu 225 hücrede, tek koordinatta gösteriyor — kök sebebi arayan
+için **daha dar bir iğne**: prenses + **empire** bel + EU36. F-N buraya
+DOKUNMADI (`engine/src` geometrisi paralel ajanın hattı). O kök kapanınca
+`engine_check`'in geriye bir pin farkı bırakıp bırakmadığı YENİDEN ölçülmeli —
+bugün pin tarafı hiç yargılanamadı.

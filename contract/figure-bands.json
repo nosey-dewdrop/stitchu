@@ -114,8 +114,16 @@
       "drawstring_babydoll": 0.856,
       "peterpan_puff": 1.001,
       "lace_vneck_70s": 1.003,
-      "courtney_lace_vneck": 1.003
+      "courtney_lace_vneck": 1.003,
+      "dress_square_princess_circle": 0.643,
+      "dress_boat_princess_circle": 0.643,
+      "dress_vneck_gathered": 0.643,
+      "dress_sweetheart_princess_circle": 0.643,
+      "dress_sweetheart_spag_circle": 0.643,
+      "dress_vneck_aline": 0.643
     },
+    "_taban_v3_kardes_devri": "F-N, 2026-08-23. b1a11d0 tabansız dalı FAIL yaptı ve YEDİ stil düştü (kart/teşhis 'iki' diyordu — sayım eksikti, ölçüldü: 7). Altısına pin UYDURULMADI, var olan bir pin DEVRALINDI: bu altısı ile zaten 0.643 pinli princess_dress AYNI oranı ölçüyor. Ölçüm (engine/tools/figure-lint.mjs, aynı koşu): princess_dress 0.637 · dress_square_princess_circle 0.637 · dress_boat_princess_circle 0.637 · dress_vneck_gathered 0.637 · dress_sweetheart_princess_circle 0.638 · dress_sweetheart_spag_circle 0.638 · dress_vneck_aline 0.638. Yani devralınan taban, stilin KENDİ çıktısı değil (regen-vs-regen değil): 0.643 kardeşin 2026-08-04'te taşınmış pini, sapma 0.005-0.006, drift_tolerans 0.02'nin dörtte biri. Paydanın niye ortak olduğu da ölçüldü: yedisi de 'top: shoulder' ve figure-lint'in büst maksimumu bu sınıfta profilin ÜST ucunda (f≈0.09, koltukaltı/omuz genişliği) okunuyor — princess_dress'te büst 69.55, bel 44.28. drift_tolerans 0.02 DEĞİŞMEDİ, mevcut on pinin hiçbiri KIMILDAMADI, sınıf taşınmadı, uydurma bant konmadı.",
+    "_taban_v3_pinsiz_kalan": "dress_bandeau_circle — DEVRALINACAK KARDEŞ YOK, pin YAZILMADI, kırmızı BİLEREK bırakıldı (DAMLA-KUYRUK'a düşüldü). Ölçüm: 0.872. Tek 'top: band' pinli kardeş drawstring_babydoll 0.858 ölçüyor / 0.856 pinli; fark 0.016, toleransın %80'i — devralınsa pin doğduğu gün bütçesini yakmış olurdu, ve babydoll BÜZGÜLÜ-BOL bir babydoll, bandeau ise fittedBand oturan bir elbise: sınıf ortaklığı 'top: band' dışında yok. Kendi ölçtüğü 0.872'yi pinlemek gate'in kendi yasağı (regen-vs-regen). ★ Asıl bulgu, eksik pin DEĞİL: bandeau'nun beli princess_dress'le AYNI (44.22 vs 44.28) ama büstü 50.70 vs 69.55 — %27 dar. Strapless gövdede büst gelişmiyor, oran ratios.waist_bust figürel tavanının (0.84) üstüne çıkıyor = boru. Kapı DOĞRU şeyi yakalıyor; kapanışı silüet kararı, pin kararı değil.",
     "_taban_v3_repin": "YENİDEN ÇAKILDI 2026-08-04. Yedi pinli değer 43fd696'da (1 Ağu, 'four fixes damla asked for twice, this time verified on screen') kaydı, çünkü o commit BÜSTÜ DARALTTI: _engine-full.mjs buildHalf'ta bustX çarpanı (1+0.07*bustProject) -> (0.975+0.05*bustProject), varsayılan bustProject 0.5'te büst yarı-genişliği 1.0350 -> 1.0000, yani %3.38 daha dar; apex de bustHeight*0.58 ile yukarı alındı. Bel değişmedi, PAYDA değişti, o yüzden waist/bust yedisinde de aynı yönde ve aynı büyüklükte arttı: ölçülen +%3.21..+%3.44, aritmetiğin verdiği +%3.50. Beli oyuk OLMAYAN üç pin (peterpan_puff, lace_vneck_70s, courtney_lace_vneck) hiç kımıldamadı (oran ~1.0, bel ve büst aynı hatta okunuyor) — kaymanın büstten geldiğinin kanıtı. Commit commit ölçüldü: a87a72d..ba5cb1b'nin dokuzunda değerler eski pinde duruyor, 43fd696'da yedisi birden zıplıyor. Çizim kasıtlı ve ekranda doğrulanmış, eski pin bayattı; drift_tolerans 0.02 elle GENİŞLETİLMEDİ, taban ölçülen yeni değere taşındı.",
     "_taban_v3_onceki": {
       "princess_dress": 0.623,

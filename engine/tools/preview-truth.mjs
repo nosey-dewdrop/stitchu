@@ -115,10 +115,72 @@ const allowStructural = (style, item, side) => truth.structuralAllow.some((a) =>
 
 // ---- landmark measurement ----------------------------------------------------
 const verts = (piece) => piece.commands.filter((c) => c.x !== undefined).map((c) => [c.x, c.y]);
+
+// ---- F-N (23 Ağu): PRENSES BÖLÜNMESİ ARTIK ÇAPA KAYBETTİRMİYOR ---------------
+// Kök sebep (ölçülerek bulundu, tahmin değil): prenses stilleri önü Center +
+// Side olarak İKİ parça kesiyor, bu yüzden 'Bodice Front' / 'Skirt Front'
+// parçası YOK; draftLandmarks çapasını (D.bustHalf) bulamıyor ve on landmark'ın
+// onu da düşüyordu. 11 stil × 8-10 yargı = 91 kırmızının 90'ı bu tek kök.
+//
+// Panelleri BİRLEŞTİRMEK uydurma değil, motorun kendi inşasının tersi:
+// engine/src/bodice.cpp:757 ve engine/src/skirt.cpp:235 iki paneli AYNI yarım
+// gövde çerçevesinde çiziyor, sonra SADECE yan paneli kendi bbox köşesine
+// taşıyor (`translatePiece(side, -sideBox.x, -sideBox.y)`). Merkez panel hiç
+// taşınmıyor. Yani kaybolan tek şey o ötelemedir ve geri alınabilir.
+//
+// Ötelemeyi hangi noktadan alıyoruz: EŞLEŞTİRME ÇENTİĞİ. İki panel de
+// markings'inin ilk (move) noktasına aynı fiziksel noktayı basıyor — gövdede
+// büst apeksi (bodice.cpp:693/731), etekte gore ucu (skirt.cpp:206/224).
+// Zaten dikişçinin iki paneli hizalamak için kullandığı nokta bu; ölçüm de
+// aynı noktayı kullanır. dx,dy = center.markings[0] - side.markings[0].
+// Dikiş payı ÇİFT SAYILMIYOR: parça komutları NET kesim çizgisi, pay ayrı bir
+// alan (piece.seamAllowance = 15mm), yani panelleri toplamak pay eklemez.
+// DOĞRULAMA (aynı gövde, aynı koşu): birleştirilmiş prenses ön bustHalf
+// 249.81mm; bölünmemiş 'Bodice Front' çizen drawstring_babydoll 249.81mm.
+// Birebir aynı sayı — rekonstrüksiyon doğru.
+//
+// Yürüyüş: her iki panelde de çentiğin İKİ komşusu o panelin İÇ dikiş ucudur
+// (gövdede split ve legA/legB, etekte legA/legB ve goreHem). Dikildiğinde bu
+// uçlar zaten çakışır. Dış kontur = merkezin çentik-komşuları arası dış yayı +
+// yan panelin çentik-komşuları arası dış yayı:
+//   merkez[0..ai-1] ++ yanİç((j+1)..(j-1)) ++ merkez[ai+1..son]
+// İç dikişin kendisi (prenses/gore) düşer — o zaten görünmeyen bir birleşme.
+const dedupeLoop = (v) => (v.length > 1
+  && Math.abs(v[0][0] - v[v.length - 1][0]) < 1e-9
+  && Math.abs(v[0][1] - v[v.length - 1][1]) < 1e-9 ? v.slice(0, -1) : v);
+const nearest = (v, p) => v.reduce((b, q, i) => (
+  Math.hypot(q[0] - p[0], q[1] - p[1]) < Math.hypot(v[b][0] - p[0], v[b][1] - p[1]) ? i : b), 0);
+function joinSplitFront(pat, centerName, sideName) {
+  const c = pat.pieces.find((x) => x.name === centerName);
+  const s = pat.pieces.find((x) => x.name === sideName);
+  if (!c || !s) return null;
+  const cm = (c.markings || []).find((m) => m.x !== undefined);
+  const sm = (s.markings || []).find((m) => m.x !== undefined);
+  if (!cm || !sm) return null;                       // çentik yok → uydurma yok, atla
+  const dx = cm.x - sm.x, dy = cm.y - sm.y;
+  const cv = dedupeLoop(verts(c));
+  const sv = dedupeLoop(verts(s)).map((q) => [q[0] + dx, q[1] + dy]);
+  if (cv.length < 4 || sv.length < 4) return null;
+  const notch = [cm.x, cm.y];
+  const ai = nearest(cv, notch), sj = nearest(sv, notch);
+  // Çentik iki panelde de gerçekten bir KÖŞE olmalı; değilse eşleştirme
+  // varsayımı tutmuyor demektir ve sessizce sayı uydurmaktansa atlanır.
+  if (Math.hypot(cv[ai][0] - cm.x, cv[ai][1] - cm.y) > 1e-6) return null;
+  if (Math.hypot(sv[sj][0] - cm.x, sv[sj][1] - cm.y) > 1e-6) return null;
+  if (ai === 0 || ai === cv.length - 1) return null;  // merkezde çentik uçta olamaz
+  const n = sv.length, sideOuter = [];
+  for (let k = (sj + 2) % n; k !== (sj - 1 + n) % n; k = (k + 1) % n) sideOuter.push(sv[k]);
+  const merged = [...cv.slice(0, ai), ...sideOuter, ...cv.slice(ai + 1)];
+  return { commands: merged.map(([x, y]) => ({ type: 'line', x, y })), cutInstruction: c.cutInstruction || '' };
+}
+
 function draftLandmarks(pat) {
   const L = {};
-  const bf = pat.pieces.find((x) => x.name === 'Bodice Front' || x.name === 'Top Front');
-  const sf = pat.pieces.find((x) => x.name === 'Skirt Front');
+  const bf = pat.pieces.find((x) => x.name === 'Bodice Front' || x.name === 'Top Front')
+    || joinSplitFront(pat, 'Bodice Center Front', 'Bodice Side Front')
+    || joinSplitFront(pat, 'Top Center Front', 'Top Side Front');
+  const sf = pat.pieces.find((x) => x.name === 'Skirt Front')
+    || joinSplitFront(pat, 'Skirt Center Front', 'Skirt Side Front');
   const sl = pat.pieces.find((x) => /Sleeve/.test(x.name));
   const panel = pat.pieces.find((x) => /Panel/.test(x.name));
   if (bf) {
@@ -143,6 +205,28 @@ function draftLandmarks(pat) {
     const v = verts(sf);
     L.hemSweepHalf = Math.max(...v.map((q) => q[0]));
     L.skirtLen = Math.max(...v.map((q) => q[1]));
+  } else {
+    // F-N: TAM/YARIM DAİRE ETEK — draft'ta 'Skirt Front' YOK, çünkü etek
+    // çeyrek daire panel olarak kesiliyor (engine/src/skirt.cpp:294
+    // halfCirclePanel, "cut 2"). Beş stil (circle aileleri) bu yüzden
+    // hemSweepHalf + skirtLen'i hiç yayınlamıyordu.
+    // "Beyanda açıklanmış say" diye ATLAMIYORUZ (kartın yasağı) — panelin
+    // KENDİ geometrisinden ölçüyoruz. Panel dört köşe: (r,0) (0,r) (0,R) (R,0),
+    // r = bel yarıçapı, R = r + etek boyu (skirt.cpp:295-297).
+    //   skirtLen      = R - r  (etek düşüşü, Skirt Front'un max y'siyle aynı şey)
+    //   hemSweepHalf  = pi*R/4 (Skirt Front 'cut 1 on fold' olduğu için max x'i
+    //                   TOPLAM eteğin dörtte biridir; daire etekte toplam etek
+    //                   ucu pi*R, dörtte biri pi*R/4 — aynı yasa, aynı payda)
+    // Doğrulama (dress_bandeau_circle): r 245.5 → bel pi*r = 771.3mm; R 895.5;
+    // skirtLen 650.0mm = princess_dress'in bölünmüş midi eteğiyle aynı düşüş.
+    const cp = pat.pieces.find((x) => x.name === 'Skirt Panel (quarter circle)');
+    if (cp) {
+      const v = verts(cp);
+      const coords = v.flat();
+      const R = Math.max(...coords);
+      const r = Math.min(...coords.filter((z) => z > 1e-6));
+      if (R > r) { L.skirtLen = R - r; L.hemSweepHalf = Math.PI * R / 4; }
+    }
   }
   if (sl && bf) {
     // Sleeve landmarks are only trustworthy when the bodice front anchor (bf)
@@ -176,9 +260,29 @@ function flatLandmarks(styleKey) {
     L.armholeDepth = k.uaY - k.stY;
   }
   if (styles.styles[styleKey].parts.sleeve) {
-    const s = flat.puffSleeve(p, k);   // the exact worn-sleeve geometry render() draws
+    // F-N (23 Ağu): burada KOŞULSUZ `flat.puffSleeve` çağrılıyordu ve yanındaki
+    // "the exact worn-sleeve geometry render() draws" yorumu YANLIŞTI.
+    // render() (_engine-full.mjs:389) kolu şöyle seçiyor:
+    //     p.capPuff > 0.05 ? puffSleeve(p,k) : plainSleeve(p,k)
+    // Yani puf OLMAYAN kollu stillerde (cap/short/elbow/long) ölçüm, ekranda
+    // çizilmeyen bir kolu ölçüyordu. İki sonucu ölçüldü:
+    //  (1) capPuff=0 ve own.sleeveLen'i olmayan cap-kollu stillerde (
+    //      dress_square_princess_circle, dress_boat_princess_circle)
+    //      puffSleeve p.sleeveLen undefined'la NaN üretiyordu — `undefined`
+    //      olmadığı için atlama kapısına da takılmıyor, "deviates NaN%" diye
+    //      hükümsüz bir FAIL basıyordu.
+    //  (2) dress_vneck_gathered gibi own.sleeveLen'i OLAN düz-kollu stillerde
+    //      sayı üretiliyordu ama YANLIŞ kolun sayısıydı; pini de o yanlış
+    //      ölçüme çakılmıştı.
+    // Eşik/pin gevşetilmedi — ölçüm aleti render'ın kendi seçimine bağlandı.
+    const s = (p.capPuff > 0.05 ? flat.puffSleeve(p, k) : flat.plainSleeve(p, k));
     L.sleeveWidth = s.outX - k.stX;
-    L.sleeveLen = s.hemY - s.capTop;
+    // plainSleeve capTop DÖNDÜRMEZ: puf olmayan kolda kapağın tepesi omuz
+    // ucunun kendisidir (puffSleeve'in capTop'u da capPuff=0'da tam k.stY'ye
+    // iner — _engine-full.mjs:297). Bu olmadan sayı NaN çıkıyordu ve NaN
+    // `undefined` sayılmadığı için atlama kapısına takılmadan hükümsüz bir
+    // FAIL basıyordu.
+    L.sleeveLen = s.hemY - (s.capTop !== undefined ? s.capTop : k.stY);
   }
   // panelCutWidth: the flat never keeps a private ratio truth (contract
   // flat.derived) — its derived cut number IS finished x draft.gatherRatios.
