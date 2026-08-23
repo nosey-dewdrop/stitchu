@@ -6,6 +6,7 @@
 #include <limits>
 
 #include "shoulder.hpp"
+#include "validator.hpp"  // kinkAngleDegrees — motorun kendi kink kurali
 
 namespace stitchu {
 namespace {
@@ -87,6 +88,58 @@ std::vector<PathCommand> neckCommands(Neckline neckline, Point centerNeck, Point
     return {PathCommand::line(neckPoint)};
 }
 
+// Length of a neck half from centerNeck to neckPoint, flattening the drafted
+// neckline commands exactly as makeFacing does — same samples, same truth.
+double halfNeckLength(Neckline neckline, Point centerNeck, Point neckPoint) {
+    const auto inner = neckCommands(neckline, centerNeck, neckPoint);
+    double len = 0;
+    Point current = centerNeck;
+    for (const auto& cmd : inner) {
+        if (cmd.type == CmdType::Curve) {
+            const auto s = flattenCubic(current, cmd.to, cmd.cp1, cmd.cp2, 12);
+            for (size_t i = 1; i < s.size(); ++i)
+                len += std::hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
+        } else {
+            len += std::hypot(cmd.to.x - current.x, cmd.to.y - current.y);
+        }
+        current = cmd.to;
+    }
+    return len;
+}
+
+// ── YAKA DELİĞİ BOYUNDAN KISA OLAMAZ (geometrik zorunluluk, v5 §C-c) ────────
+// Yaka deliği boynu ÇEVRELEYEN kapalı bir eğridir; boyun o delikten geçmek
+// zorunda olduğu için deliğin uzunluğu boyun çevresinden küçük olamaz. Bu bir
+// stil tercihi değil, giyilebilirlik şartı.
+// ÖLÇÜLDÜ 2026-08-23 (neck-basis-probe + garment_armhole_check K3): sekiz
+// bedenin BEŞİNDE delik boyundan KISAydı (-0.35 .. -2.42mm), ve sapan şey
+// collar PARÇASI değil DELİĞİN kendisiydi (parça 8 bedende 0.12..0.14mm trued).
+// KÖK SEBEP: crew derinliği `neckW + 15` — o 15mm SABİT, boyunla büyümüyor, o
+// yüzden delik/boyun oranı bedenle düşüyor (EU34 1.003 -> EU48 0.994).
+// DÜZELTME YÖNÜ — GENİŞLİK DEĞİL DERİNLİK: yaka noktası (neckW) aynı zamanda
+// omuz dikişinin başlangıcıdır; onu dışarı itmek omuz ucunu, dolayısıyla kol
+// oyuğunu taşır. Derinlik CF'de, hiçbir başka kenarı hareket ettirmez. Ölçülen
+// bedel sekiz bedende en çok +2.4mm ön derinlik.
+double neckClearanceDropMM(Neckline neckline, double neckGirth, double frontNeckW,
+                           double frontCutout, double backNeckW, double backCutout) {
+    const auto holeFor = [&](double add) {
+        return 2.0 * (halfNeckLength(neckline, {0, frontCutout + add}, {frontNeckW, 0}) +
+                      halfNeckLength(Neckline::Crew, {0, backCutout}, {backNeckW, 0}));
+    };
+    if (holeFor(0.0) >= neckGirth) return 0.0;
+    double lo = 0.0, hi = 4.0;
+    while (hi < 512.0 && holeFor(hi) < neckGirth) hi *= 2.0;
+    if (holeFor(hi) < neckGirth) return hi;  // ulaşılamıyorsa kapı K3'te kırmızı görür
+    for (int i = 0; i < 48; ++i) {
+        const double mid = 0.5 * (lo + hi);
+        if (holeFor(mid) < neckGirth) lo = mid; else hi = mid;
+    }
+    // Aralığın YETEN ucu döner (lo hep kısa, hi hep >= boyun). Orta noktayı
+    // dönmek 48 adım sonra bile yuvarlamayla eksi tarafa düşebiliyor (ölçüldü:
+    // EU40 -0.00mm). Bu bir pay değil, bisection'ın doğru ucu.
+    return hi;
+}
+
 struct HalfBodice {
     PatternPiece piece;
     double armholeLength = 0;
@@ -114,9 +167,15 @@ struct HalfBodice {
 //   isFront   — deeper hollow on the front piece.
 //   sleeveless — cut the shoulder tip in and raise the underarm so a bare
 //                shoulder edge sits close to the body instead of gaping.
+//   scyeInnerX — YAYINLANMIŞ scye genişlik çizgisi (Aldrich p.11, bodice.hpp
+//                scyeBackWidthHalf*/scyeChestWidthHalf*), katlama çizgisinden
+//                mutlak x. Oyuğun KARNI bu çizgiye oturur. 0 verilirse çizgi
+//                yok sayılır ve eski arc/chord hedefi çalışır (halter gibi
+//                kendi çerçevesini kuran stiller).
 PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
                             const Point& armholeBottomIn, const Point& neckPoint,
-                            bool isFront, bool sleeveless, bool setIn = false) {
+                            bool isFront, bool sleeveless, bool setIn = false,
+                            double scyeInnerX = 0.0, double scyeMaxInset = 1e9) {
     Point shoulder{shoulderHalf, shoulderDrop};
     Point armholeBottom = armholeBottomIn;
     if (sleeveless) {
@@ -138,6 +197,21 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
     // so the turn into the side seam is smooth.
     const double targetArc = chord * (isFront ? BodiceBlock::armholeArcChordFront
                                               : BodiceBlock::armholeArcChordBack);
+    // YAYINLANMIŞ İÇ ÇİZGİ (Aldrich p.11) — oyuğun karnının oturacağı x. Omuz
+    // ucundan daha içeride olmak ZORUNDA (yayın öyle diyor: büst 88'de arka
+    // 172.0mm, omuz ucu 185.0mm); değilse (halter/kesik omuz çerçeveleri) çizgi
+    // devre dışı kalır ve eski arc/chord hedefi sürer.
+    // ★ OYUK BLOĞUN MALI, STİLİN DEĞİL. Omuz ucunu bilerek dışarı iten stiller
+    // (düşük omuz, bateau yaka) sabit vücut çizgisine kadar oyulunca panel
+    // kendini kesiyor (ölçüldü 2026-08-23: `[selfintersect] Bodice Side Front`,
+    // 2339 draft). Doğru okuma: scye kavisi bloğun bir özelliğidir; omuz ucu
+    // dışarı kayınca oyuk ONUNLA BİRLİKTE kayar, daha derin oyulmaz. Bu yüzden
+    // karnın omuz ucundan içeri girebileceği mesafe, DOĞAL bloktaki mesafeyle
+    // sınırlıdır (scyeMaxInset, draft()'te doğal omuz ucundan hesaplanır).
+    const double innerLimit = std::max(scyeInnerX, shoulder.x - scyeMaxInset);
+    const bool useWidthLine = scyeInnerX > 0.0 &&
+                              innerLimit < shoulder.x - 1.0 &&
+                              innerLimit < armholeBottom.x - 1.0;
     // cp1Of(h) lets a branch grow its OWN control arm with the hollow. A cubic
     // kinks when one control arm is long and the other short; the tangent branch
     // uses this to keep the two arms balanced (see below).
@@ -148,6 +222,83 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
             return pathLength({PathCommand::move(shoulder),
                                PathCommand::curve(armholeBottom, cp1Of(h), c2)});
         };
+        // KARIN: çizilen eğrinin ulaştığı en küçük x. Kontrol noktası değil,
+        // EĞRİNİN kendisi — yayınlanan genişlik çizgisi kalıbın kenarına konur,
+        // kontrol poligonuna değil.
+        const auto bellyFor = [&](double h) {
+            const Point c1 = cp1Of(h);
+            const Point c2{armholeBottom.x - dx * 0.06 - h, cp2Y};
+            double minX = std::min(shoulder.x, armholeBottom.x);
+            for (int i = 0; i <= 200; ++i) {
+                const double t = static_cast<double>(i) / 200.0;
+                const double mt = 1 - t;
+                const double x = mt * mt * mt * shoulder.x + 3 * mt * mt * t * c1.x +
+                                 3 * mt * t * t * c2.x + t * t * t * armholeBottom.x;
+                minX = std::min(minX, x);
+            }
+            return minX;
+        };
+        // KINK: motorun kendi doğrulayıcısının kuralı (validator.hpp
+        // kinkAngleDegrees = 25 derece, düzleştirilmiş adım başına). Oyuk
+        // yayınlanmış çizgiye kadar açılır AMA çizilen eğri kendi kapımızın
+        // kink kuralını ihlal edemez — ihlal eden bir kalıp zaten sevk
+        // edilemez. Bu bir gevşetme değil: tavan bizim yayınlanmış İÇ kuralımız,
+        // ve bağladığında sonucu K1'de seviye açığı olarak GÖRÜNÜR.
+        const auto maxTurnFor = [&](const std::function<Point(double)>& cp1Of,
+                                    double cp2Y, double h) {
+            const Point c1 = cp1Of(h);
+            const Point c2{armholeBottom.x - dx * 0.06 - h, cp2Y};
+            const auto samples = flattenCubic(shoulder, armholeBottom, c1, c2, 24);
+            double worst = 0.0;
+            bool hasPrev = false;
+            Point prev{0, 0};
+            for (size_t i = 1; i < samples.size(); ++i) {
+                const double sx = samples[i].x - samples[i - 1].x;
+                const double sy = samples[i].y - samples[i - 1].y;
+                if (std::hypot(sx, sy) <= 0.3) continue;
+                if (hasPrev) {
+                    const double dot = prev.x * sx + prev.y * sy;
+                    const double mag = std::hypot(prev.x, prev.y) * std::hypot(sx, sy);
+                    if (mag > 0) {
+                        const double c = std::min(1.0, std::max(-1.0, dot / mag));
+                        worst = std::max(worst, std::acos(c) * 180.0 / M_PI);
+                    }
+                }
+                prev = Point{sx, sy};
+                hasPrev = true;
+            }
+            return worst;
+        };
+        // ÖLÇÜLDÜ VE REDDEDİLDİ (2026-08-23): eğrinin KENDİ ilmeğini arayan bir
+        // kelepçe de yazıldı (48 örnek, kesişen segment testi) — kalan 225
+        // selfintersect draftının HİÇBİRİNİ düşürmedi, yani katlanan şey kübiğin
+        // kendisi değil. Kesişme oyuk ile panelin BAŞKA bir kenarı arasında;
+        // sonraki aday makePrincessPieces içinde, bölme noktası bilinirken.
+        const auto kinkClamp = [&](const std::function<Point(double)>& cp1Of,
+                                   double cp2Y, double h) {
+            const auto clean = [&](double v) {
+                return maxTurnFor(cp1Of, cp2Y, v) <= PatternValidator::kinkAngleDegrees;
+            };
+            if (clean(h)) return h;
+            double lo = 0.0, hi = h;   // lo hep temiz (h=0 düz çizgi), hi kirli
+            for (int i = 0; i < 48; ++i) {
+                const double mid = 0.5 * (lo + hi);
+                if (clean(mid)) lo = mid; else hi = mid;
+            }
+            return lo;
+        };
+        if (useWidthLine) {
+            // h büyüdükçe karın küçülür (monoton). Üst sınır aranarak bulunur;
+            // uydurulmuş bir tavan yok — çizgiye ulaşılamıyorsa ulaşılabilen en
+            // derin oyuk çizilir ve kapı bunu K1'de kırmızı olarak görür.
+            double lo = 0.0, hi = std::max(4.0 * dx, 4.0 * (armholeBottom.x - scyeInnerX));
+            if (bellyFor(hi) > innerLimit) return kinkClamp(cp1Of, cp2Y, hi);
+            for (int i = 0; i < 64; ++i) {
+                const double mid = 0.5 * (lo + hi);
+                if (bellyFor(mid) > innerLimit) lo = mid; else hi = mid;
+            }
+            return kinkClamp(cp1Of, cp2Y, 0.5 * (lo + hi));
+        }
         // GEOMETRİK TAVAN — ayarlanmış bir sayı değil: cp2 omuz ucunun İÇİNE
         // geçemez. Geçince oyuğun karnı panelin kendi kenarını kesiyor; ölçüldü
         // 2026-08-23, `[selfintersect] Upper Cup Side Front` (kap dikişli
@@ -261,7 +412,9 @@ HalfBodice makePiece(
     double centerTakeIn,
     bool isFront = false,
     bool sleeveless = false,
-    bool setIn = false
+    bool setIn = false,
+    double scyeInnerX = 0.0,  // Aldrich p.11 genislik cizgisi (bodice.hpp)
+    double scyeMaxInset = 1e9 // karnin omuz ucundan iceri girebilecegi tavan
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
@@ -278,7 +431,7 @@ HalfBodice makePiece(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn, scyeInnerX, scyeMaxInset);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -378,7 +531,9 @@ PrincessHalf makePrincessPieces(
     bool isFront = false,
     bool sleeveless = false,
     double princessShare = 0.5,
-    bool setIn = false
+    bool setIn = false,
+    double scyeInnerX = 0.0,  // Aldrich p.11 genislik cizgisi (bodice.hpp)
+    double scyeMaxInset = 1e9 // karnin omuz ucundan iceri girebilecegi tavan
 ) {
     const Point centerNeck{0, neckCutout};
     const Point neckPoint{neckW, 0};
@@ -392,7 +547,7 @@ PrincessHalf makePrincessPieces(
     const Point sideWaist{waistlineWidth, sideWaistY - 8};
     const Point centerWaist{centerTakeIn, centerWaistY};
 
-    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn);
+    const PathCommand armholeCurve = armholeCurveFor(shoulderTipX, shoulderDrop, armholeBottom, neckPoint, isFront, /*sleeveless=*/false, /*setIn=*/setIn, scyeInnerX, scyeMaxInset);
     const double armholeLen = pathLength({PathCommand::move(shoulderTip), armholeCurve});
 
     const double waistSpan = waistlineWidth - centerTakeIn;
@@ -647,10 +802,17 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         neck * frontNeckWidthFactor * neckWidthMultiplier(neckline),
         shoulderHalf * maxNeckShoulderShare);
     const double shoulderSlopeRad = BodiceBlock::shoulderSlopeDeg * M_PI / 180.0;
-    const double shoulderDrop = BodiceBlock::shoulderSeamTargetMM * std::sin(shoulderSlopeRad);
+    // ★ 2026-08-23: omuz DİKİŞİ ARTIK BEDENLE BÜYÜYOR. Sabit 126mm bir tek bedende
+    // doğruydu; sekiz bedende omuz ucu neredeyse yerinde durup koltukaltı büstle
+    // dışa kaçtığı için oyuk büyük bedenlerde açılıp uzuyordu (ölçüldü: EU48 oyuk
+    // 496.7mm, yayınlanmış bandın 57mm üstü). Aldrich p.11 omuz boyunu da büste
+    // karşı yayınlıyor — 12.25cm @ büst 88 · 12.5cm @ büst 92 — o iki noktadan
+    // geçen doğru bodice.hpp shoulderSeamPerBust/InterceptMM'de.
+    const double shoulderSeamMM = m.bustMM() * BodiceBlock::shoulderSeamPerBust +
+                                  BodiceBlock::shoulderSeamInterceptMM;
+    const double shoulderDrop = shoulderSeamMM * std::sin(shoulderSlopeRad);
     // Tip x = neck point + horizontal run of the target-length seam at target slope.
-    shoulderHalf = frontNeckWForSlope +
-                   BodiceBlock::shoulderSeamTargetMM * std::cos(shoulderSlopeRad);
+    shoulderHalf = frontNeckWForSlope + shoulderSeamMM * std::cos(shoulderSlopeRad);
     naturalShoulderHalf = shoulderHalf; // dropped-shoulder extends off the new tip
     // Dropped shoulder: slide the tip out now that the slope is fixed. The
     // armhole point drop + widen is applied to armholeY and the chest widths
@@ -678,6 +840,21 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // accept the biceps line (bust * bicepsRatio); floor the armhole depth so it
     // does. armholeLength runs roughly linear in depth, so scale the floor to
     // the biceps and clamp it so the underarm never drops past the waist.
+    // YAYINLANMIŞ scye genişlik çizgileri (Aldrich p.11, bodice.hpp'de iki nokta
+    // ve doğrusu yazılı). Oyuğun karnı bunlara oturur; büstle büyürler, yani
+    // KAYNAKLI bir kolona bağlıdırlar (kaynaksız beden kolonlarına değil).
+    // Doğal blok omuz ucu: yaka çarpanı 1.0 (crew) ve düşük-omuz uzatması YOK.
+    // Sadece scyeMaxInset için kullanılır, çizime girmez.
+    const double naturalTipXForScye =
+        std::min(neck * frontNeckWidthFactor, naturalShoulderHalf * maxNeckShoulderShare) +
+        (m.bustMM() * BodiceBlock::shoulderSeamPerBust + BodiceBlock::shoulderSeamInterceptMM) *
+            std::cos(BodiceBlock::shoulderSlopeDeg * M_PI / 180.0);
+    const double backScyeInnerX  = m.bustMM() * BodiceBlock::scyeBackWidthHalfPerBust +
+                                   BodiceBlock::scyeBackWidthHalfInterceptMM;
+    const double frontScyeInnerX = m.bustMM() * BodiceBlock::scyeChestWidthHalfPerBust +
+                                   BodiceBlock::scyeChestWidthHalfInterceptMM;
+    const double backScyeMaxInset  = std::max(0.0, naturalTipXForScye - backScyeInnerX);
+    const double frontScyeMaxInset = std::max(0.0, naturalTipXForScye - frontScyeInnerX);
     const double bicepsGirth = m.bustMM() * BodiceBlock::bicepsRatioForArmscye;
     const double armholeDepthForArm = bicepsGirth * armscyeArmFactor + shoulderDrop;
     double armholeDepthCap = backLength * armscyeMaxDepthShare + shoulderDrop;
@@ -843,7 +1020,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backDartLength,
             cbTakeIn,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/false, sleevelessScye, options.princessShareBack, /*setIn=*/setInScye);
+            /*isFront=*/false, sleevelessScye, options.princessShareBack, /*setIn=*/setInScye,
+            backScyeInnerX, backScyeMaxInset);
     } else {
         back = makePiece(
             "Bodice Back", "cut 2",
@@ -854,7 +1032,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             backWaistlineWidth, backDart,
             backDartLength,
             cbTakeIn,
-            /*isFront=*/false, sleevelessScye, /*setIn=*/setInScye);
+            /*isFront=*/false, sleevelessScye, /*setIn=*/setInScye, backScyeInnerX, backScyeMaxInset);
     }
 
     // ---- FRONT (cut 1 on fold, suppression in the waist dart + side seam) ----
@@ -867,7 +1045,14 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double fShoulderDrop = halter ? 10 : shoulderDrop;
     const double fArmholeY = halter ? armholeY + halterStrapRise : armholeY;
     const double fSeamSideY = halter ? seamSideY + halterStrapRise : seamSideY;
-    const double frontCutout = frontNeckDepth(neckline, frontNeckW) + (halter ? halterStrapRise : 0);
+    // Yaka deliği boyundan kısa çıkıyorsa ÖN derinlik açılır (yukarıdaki
+    // neckClearanceDropMM: geometrik zorunluluk, genişlik değil derinlik).
+    // Halter kendi çerçevesini kurar (omuz dikişi yok, delik boynu çevrelemez).
+    const double neckClearAdd = halter ? 0.0
+        : neckClearanceDropMM(neckline, neck, frontNeckW,
+                              frontNeckDepth(neckline, frontNeckW), backNeckW, backCutout);
+    const double frontCutout = frontNeckDepth(neckline, frontNeckW) + neckClearAdd +
+                               (halter ? halterStrapRise : 0);
     const double frontLength = frontSeamCenterY + (halter ? halterStrapRise : 0);
     // (front waist numbers were computed above, before the side-seam truing)
 
@@ -893,7 +1078,8 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontDartLength,
             0,
             extendBelowWaist, hipHalfQuarter,
-            /*isFront=*/true, sleevelessScye, options.princessShareFront, /*setIn=*/setInScye);
+            /*isFront=*/true, sleevelessScye, options.princessShareFront, /*setIn=*/setInScye,
+            frontScyeInnerX, frontScyeMaxInset);
     } else {
         front = makePiece(
             "Bodice Front", "cut 1 on fold",
@@ -904,7 +1090,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
             frontWaistlineWidth, frontDart,
             frontDartLength,
             0,
-            /*isFront=*/true, sleevelessScye, /*setIn=*/setInScye);
+            /*isFront=*/true, sleevelessScye, /*setIn=*/setInScye, frontScyeInnerX, frontScyeMaxInset);
     }
 
     // A half that stays unsplit under princess+extension is extended later by
@@ -1081,24 +1267,6 @@ PatternPiece biasBinding(double edgeMM, const std::string& label) {
 
 namespace {
 
-// Length of a neck half from centerNeck to neckPoint, flattening the drafted
-// neckline commands exactly as makeFacing does — same samples, same truth.
-double halfNeckLength(Neckline neckline, Point centerNeck, Point neckPoint) {
-    const auto inner = neckCommands(neckline, centerNeck, neckPoint);
-    double len = 0;
-    Point current = centerNeck;
-    for (const auto& cmd : inner) {
-        if (cmd.type == CmdType::Curve) {
-            const auto s = flattenCubic(current, cmd.to, cmd.cp1, cmd.cp2, 12);
-            for (size_t i = 1; i < s.size(); ++i)
-                len += std::hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
-        } else {
-            len += std::hypot(cmd.to.x - current.x, cmd.to.y - current.y);
-        }
-        current = cmd.to;
-    }
-    return len;
-}
 
 // One facing piece. Inner edge = the garment's neckline commands verbatim
 // (seam match by construction). Outer edge = the neckline flattened to a
@@ -1184,9 +1352,13 @@ std::vector<PatternPiece> neckFacings(const BodyMeasurementsSnapshot& m, Necklin
     const Point shoulderTip{shoulderHalf, shoulderDrop};
 
     const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
-    const double frontCutout = frontNeckDepth(neckline, frontNeckW);
     const double backNeckW = std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = neck * backNeckCutoutFactor;
+    // draft() ile AYNI açma (neckClearanceDropMM): delik boyundan kısa olamaz.
+    const double frontCutout = frontNeckDepth(neckline, frontNeckW) +
+        (neckline == Neckline::Halter ? 0.0
+         : neckClearanceDropMM(neckline, neck, frontNeckW,
+                               frontNeckDepth(neckline, frontNeckW), backNeckW, backCutout));
 
     return {
         makeFacing("Front Neck Facing", frontCut, neckline, frontNeckW, frontCutout, shoulderTip),
@@ -1203,9 +1375,14 @@ double neckEdgeLength(const BodyMeasurementsSnapshot& m, Neckline neckline) {
     const double widthMultiplier = neckWidthMultiplier(neckline);
 
     const double frontNeckW = std::min(neck * frontNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
-    const double frontCutout = frontNeckDepth(neckline, frontNeckW);
     const double backNeckW = std::min(neck * backNeckWidthFactor * widthMultiplier, shoulderHalf * maxNeckShoulderShare);
     const double backCutout = neck * backNeckCutoutFactor;
+    // draft()/neckFacings ile AYNI acma (neckClearanceDropMM): delik boyundan
+    // kisa olamaz - boyun oradan gecer.
+    const double frontCutout = frontNeckDepth(neckline, frontNeckW) +
+        (neckline == Neckline::Halter ? 0.0
+         : neckClearanceDropMM(neckline, neck, frontNeckW,
+                               frontNeckDepth(neckline, frontNeckW), backNeckW, backCutout));
 
     const double frontHalf = halfNeckLength(neckline, {0, frontCutout}, {frontNeckW, 0});
     const double backHalf = halfNeckLength(Neckline::Crew, {0, backCutout}, {backNeckW, 0});

@@ -1,5 +1,6 @@
 #pragma once
 // Parametric bodice block (FreeSewing Bella + Muller & Sohn). See FORMULAS.md.
+#include "fabricease.hpp"
 #include "geometry.hpp"
 #include "measurements.hpp"
 
@@ -75,8 +76,20 @@ inline constexpr double waistEase = 0.05;
 // Knits stretch; they need a fraction of the woven ease.
 inline constexpr double knitChestEase = 0.04;
 inline constexpr double knitWaistEase = 0.02;
-inline double chestEaseFor(Fabric f) { return f == Fabric::Knit ? knitChestEase : chestEase; }
-inline double waistEaseFor(Fabric f) { return f == Fabric::Knit ? knitWaistEase : waistEase; }
+// The two legacy constants above are now the stretch-0 and stretch-12.5 anchors
+// of the continuous fabric axis (fabricease.hpp). An undeclared woven/knit spec
+// lands exactly on them, so the drafted ease is unchanged; a spec that declares
+// a stretch percentage moves along the published band instead.
+static_assert(FabricBand::easeAt(FabricBand::Girth::Chest, 0.0) == chestEase,
+              "woven chest ease anchor drifted from the fabric band");
+static_assert(FabricBand::easeAt(FabricBand::Girth::Chest, FabricBand::kKnitDefaultPct) == knitChestEase,
+              "stable-knit chest ease anchor drifted from the fabric band");
+static_assert(FabricBand::easeAt(FabricBand::Girth::WaistBodice, 0.0) == waistEase,
+              "woven waist ease anchor drifted from the fabric band");
+static_assert(FabricBand::easeAt(FabricBand::Girth::WaistBodice, FabricBand::kKnitDefaultPct) == knitWaistEase,
+              "stable-knit waist ease anchor drifted from the fabric band");
+inline double chestEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::Chest, f); }
+inline double waistEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::WaistBodice, f); }
 // Empire waist seam: this far below the armhole line, girth = underbust.
 inline constexpr double empireDrop = 60;
 inline constexpr double empireBalanceDrop = 15; // CF drop at underbust (M&S balance, reduced)
@@ -120,6 +133,20 @@ inline constexpr double shoulderDropFactor = constants::kShoulderDropFactorDepre
 // at ~22 deg from horizontal (Aldrich womenswear block).
 inline constexpr double shoulderSlopeDeg = constants::kShoulderSlopeDeg;      // seam angle from horizontal (constants.yaml)
 inline constexpr double shoulderSeamTargetMM = constants::kShoulderSeamTargetMM; // neck point -> tip; drawn seam ~118 after
+// ── OMUZ DİKİŞİ BÜSTLE BÜYÜR (Aldrich p.11, YAYINLANMIŞ, 2026-08-23) ────────
+// shoulderSeamTargetMM tek bir sayıydı ve sekiz bedende AYNI kalıyordu; omuz ucu
+// yerinde dururken koltukaltı büstle dışarı kaçınca oyuk kendiliğinden açılıp
+// uzuyordu (EU48 496.7mm = yayın bandının 57mm üstü, garment_armhole_check).
+// Aldrich p.11 omuz boyunu da büste karşı yayınlıyor
+// (knowledge/drafting-math-eu38.md:26, verbatim tablo):
+//     omuz boyu 12.25 cm @ büst 88   ·   12.5 cm @ büst 92
+// O iki noktadan geçen doğru, mm:  seam = 0.0625 * bust_mm + 67.5
+//     (880 -> 122.5 · 920 -> 125.0). Eski sabit 126 bu doğrunun büst 936'daki
+//     değeriydi — yani her bedene EU41'in omzunu takıyorduk.
+// constants.yaml'daki 126 SİLİNMEDİ: reçete DSL aynası ve contract_check onu
+// kapalı formda taşıyor, ve o ayna Damla'nın kararını bekleyen ayrı bir kalem.
+inline constexpr double shoulderSeamPerBust     = 0.0625;
+inline constexpr double shoulderSeamInterceptMM = 67.5;
                                                       // the neck/armhole curves trim the corners
 // How much of the front waist suppression slants the side seam (rest = bust dart).
 // Lowered from 15 mm to 5 mm so the single waist->apex dart deepens to the Aldrich
@@ -149,7 +176,7 @@ struct BodiceOptions {
     Neckline neckline = Neckline::Crew;
     Shaping shaping = Shaping::Princess;
     Waistline waistline = Waistline::Natural; // Empire: seam at underbust
-    Fabric fabric = Fabric::Woven;
+    FabricAxis fabric = Fabric::Woven;
     double extendBelowWaist = 0;
     double hipHalfQuarter = 0;
     // Shoulder/sleeve-join style (patch 3.13). Set (default) is byte-identical:
@@ -209,17 +236,41 @@ inline constexpr double armholeHollowShareBack  = 0.24;  // (see arc/chord below
 // measured ratio (mean over the 8 measured sizes) and the hollow is SOLVED to
 // hit it. These are shape numbers from a real pattern, not from our own output
 // and not from the 40-44cm band the gate judges.
-// ⚠ BU BİR HEDEF, BİR SONUÇ DEĞİL — 2026-08-23 ölçüldü: TUTTURULAMIYOR.
-// Tek kübiğin tek serbest noktası (cp2) bu oranı taşıyamıyor; taşıması için
-// cp2'nin omuz ucunun İÇİNE geçmesi gerekiyor, o da paneli kendi kenarıyla
-// kesiyor (`[selfintersect] Upper Cup Side Front`, kap dikişli princess).
-// Geometrik tavan bağlandığında ulaşılan oran 1.006..1.073 (armhole-basis-probe).
-// KÖK SEBEP: gerçek bir scye tek yaylı değil, S kavisli — üstte dışbükey, altta
-// içbükey. Tek kübik + omuz teğet kilidi bu S'i çizemez.
-// SONRAKİ ADAY: oyuğu İKİ kübiğe ayır (omuz ucundan çentiğe dışbükey, çentikten
-// koltukaltına içbükey); Buğra'nın ölçülen çentiği zaten o kırılma noktasında.
+// ⚠ ARTIK ÇİZİMİ SÜRMÜYOR — 2026-08-23 ikinci vardiya. İki sebeple bırakıldı:
+// (1) TUTTURULAMIYOR: tek kübiğin tek serbest noktası bu oranı taşıyamıyor,
+//     ulaşılan 1.006..1.073 (armhole-basis-probe).
+// (2) TUTTURULSA DA YANLIŞ OLURDU: bizim kirişimiz Buğra'nınkinden UZUN
+//     (EU38 ön 195.9 vs 171.7mm), o yüzden onun oranı bize kol oyuğu
+//     ~459mm verir — Aldrich'in yayınlanmış 40–44cm bandının ÜSTÜ. Buğra bir
+//     PARİTE tanığıdır, kapı değildir (v5 §C); şekli ona kilitlemek bizi
+//     yayınlanmış bandın dışına iterdi.
+// Yerine geçen: aşağıdaki YAYINLANMIŞ scye genişlik çizgisi. Bu iki sayı
+// yalnızca parite raporunda basılır.
 inline constexpr double armholeArcChordFront = 1.242118;
 inline constexpr double armholeArcChordBack  = 1.170485;
+// ── SCYE'NİN İÇ ÇİZGİSİ: ALDRICH p.11, YAYINLANMIŞ (2026-08-23) ─────────────
+// Bir scye'yi ne kadar oyacağını söyleyen şey bir "oran" değil, bloğun ARKA
+// GENİŞLİK / ÖN (chest) GENİŞLİK çizgisidir: oyuk eğrisi omuz ucundan iner,
+// bu çizgiye kadar İÇERİ girer, sonra koltukaltına açılır. Aldrich p.11 ikisini
+// de büste karşı yayınlıyor (knowledge/drafting-math-eu38.md:27-28, HIGH,
+// verbatim tablo):
+//     arka genişlik  34.4 cm @ büst 88   ·   35.4 cm @ büst 92
+//     ön   genişlik  32.4 cm @ büst 88   ·   33.6 cm @ büst 92
+// Katlama çizgisinden YARIM genişlik, mm, o iki noktadan geçen doğru:
+//     arka_yarim = 0.125 * bust_mm + 62.0   (880 -> 172.0 · 920 -> 177.0)
+//     on_yarim   = 0.150 * bust_mm + 30.0   (880 -> 162.0 · 920 -> 168.0)
+// ★ BU AYNI ZAMANDA ESKİ "GEOMETRİK TAVAN"I ÇÜRÜTÜR. Eski kural cp2'nin omuz
+// ucunun içine geçemeyeceğini söylüyordu (h <= 0.94*dx). Yayın tersini diyor:
+// büst 88'de arka genişlik yarısı 172.0mm, omuz ucumuz 185.0mm — gerçek scye
+// omuz ucunun 13mm İÇİNDEN geçer. Tavan geometri değil, fazla sıkı bir
+// varsayımdı; oyuğu düz bir çizgi olmaya mahkûm ediyordu.
+inline constexpr double scyeBackWidthHalfPerBust      = 0.125;
+inline constexpr double scyeBackWidthHalfInterceptMM  = 62.0;
+inline constexpr double scyeChestWidthHalfPerBust     = 0.150;
+inline constexpr double scyeChestWidthHalfInterceptMM = 30.0;
+// Oyuk karnı bu çizgiye oturur; omuz ucunun İÇİNDE kalması gereken bir pay
+// bırakılmaz, ama karın omuz ucundan daha içeri geçemeyeceği stiller (halter,
+// kesilmiş omuz) için çizgi omuz ucuyla sınırlanır — orada eski davranış sürer.
 // Where along the drop the two control points sit (upper leaves the shoulder
 // heading down + slightly out; lower approaches the underarm near-tangent to
 // the side seam so the underarm is a smooth turn, not a corner).
