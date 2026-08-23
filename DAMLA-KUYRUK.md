@@ -622,7 +622,14 @@ Site sağlığı artık bir **kapı** ve `pages.yml verify`'a bağlı, 6 mutasyo
   Eşik gevşetilmedi, kapı susturulmadı. **Damla'nın kararı:** `measureCroquis()`
   omuz ucunu "ilk yerel maksimum" yerine "omuz dikişi ile kol oyuğu arasındaki en
   keskin köşe" diye bulsun mu? Bir satırlık iş, ama var olan bir teste dokunuyor.
-  Ölçüm dökümü: `GECE/log/F-E.bugra-olcum.txt`, gerekçe: `knowledge/ETSY-KAPISI-2026-08-23.md`.
+  Ölçüm dökümü: `GECE/log/F-E.bugra-olcum.txt`, gerekçe:
+  `knowledge/ETSY-KAPISI-GEOMETRI-2026-08-23.md`.
+  ★ **ÜÇÜNCÜ KAYNAK GELDİ (geç, iş bittikten sonra):** Aldrich 4. baskı ve
+  Armstrong 5. baskı bağımsız olarak **çapraz omuz = tam büstün %44'ü** diyor
+  (38.94/88 ve 40.64/91.44). EU38 için → yarı-omuz **194.7 mm**. Yani üç kaynak
+  da 234.0'ın fazla olduğunda birleşiyor; hangi değerin alınacağı ayrı bir karar
+  (Aldrich 194.7 · Buğra 210.5). Detay + tuzaklar:
+  `knowledge/FLAT-DIS-KAYNAKLAR-2026-08-23.md` §1.
 
 - **[ZEVK — kapıya girmedi] Boyun genişliği.** `neckBase = 30u = 90 mm` yarı,
   yani 180 mm yaka açıklığı. Damla "boyun çok geniş" dedi. Buğra Locket'in ön
@@ -688,3 +695,26 @@ Bu satırlar `knowledge/ETSY-KAPISI-2026-08-23.md`'nin kuyruğu. Mekanik olanı
   `hidden` sınıfı (1.0 + "1 3") hiç kullanılmıyor (41 eleman: 26×1.0, 7×1.4,
   6×2.0, 2×topstitch). Kanuna aykırı değil — ama "5/5 sınıf kullanıldı" yeşili
   vitrinden değil, üretim kaleminden geliyor. Damla: iki kalem tek kalem mi olacak?
+
+- **[ÖLÇÜLDÜ, DOKUNULMADI — K-FE-2] Yaka kafadan geçmiyor olabilir.**
+  Sally Melville "10 Kuralı": yaka genişliği + ön yaka derinliği **≥ 25.5 cm**,
+  yoksa yaka ortalama bir yetişkin kafasından geçmez. Bizim crew yaka:
+  180 mm genişlik + 66 mm derinlik = **246 mm**, eşiğin **9 mm altında**.
+  ⚠ Damla'nın "boyun çok geniş" şikâyetiyle ters yönde duruyor (kural yakanın
+  DAR olduğunu söylüyor); ikisi çelişmeyebilir — 180 mm genişken 66 mm derinlik
+  çok sığ olabilir. Dokunulmadı çünkü (i) düğmeli bir önde yaka zaten açılıyor,
+  kural bu giyside geçerli olmayabilir, (ii) kaynak birincil yayından okunmadı.
+  **DOĞRULANMADI.** `knowledge/FLAT-DIS-KAYNAKLAR-2026-08-23.md` §2a.
+
+- **[ÖLÇÜLDÜ, DOKUNULMADI — K-FE-3] Puff kapak yükselişi iki katından fazla.**
+  Kalemdeki `capRise = 22u = 66 mm`. Tek birincil yayınlanmış sayı Armstrong:
+  **2 in = 5.1 cm = 51 mm** (orijinal kapak çizgisinin üstüne). Ayrıca ajan
+  "puff kapak yükselişini bicep'in ORANI olarak veren bir konvansiyon **yok**"
+  diyor — o sayıyı biz koyarsak konvansiyonu takip etmiyor, **tanımlıyor** oluruz.
+  Aynı yerde: manşet bandımız 21 mm, Armstrong'un bitmiş bandı 25.4 mm (band
+  1.3–2.5 cm) — bandın içinde ama `CUFF_BAND` hâlâ **kaynağa bağlı değil**.
+
+- **[BİLGİ — üreteç için sert kısıt] Kol üçgeni: üçten sadece ikisi seçilebilir.**
+  "Kol oyuğu derinliği, bicep ve kapak yüksekliği — üçünden biri diğer ikisinin
+  SONUCUDUR." Kalem bugün üçünü de bağımsız sabit taşıyor (`chestY`, `outW`,
+  `capRise`). Uygulanmadı.
