@@ -1,56 +1,11 @@
-Test project /tmp/fl-wt0/engine/build
+Test project /tmp/fl-wt/engine/build
         Start   1: geometry
-  1/103 Test   #1: geometry .........................   Passed    0.01 sec
+  1/104 Test   #1: geometry .........................   Passed    0.18 sec
         Start   2: engine_check
-  2/103 Test   #2: engine_check .....................***Failed   45.42 sec
-engine check: 70200 drafts across 15 bodies x 4680 specs
-FAILED drafts: 30
-  rule sideseam: 54 violations
-examples:
-  pear top/knit/princess/crew/hip/none.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/crew/hip/straight.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/crew/hip/straight.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/crew/hip/straight.long: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/crew/hip/straight.long: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/crew/hip/balloon.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/crew/hip/balloon.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/crew/hip/balloon.elbow: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/crew/hip/balloon.elbow: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/scoop/hip/none.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/scoop/hip/straight.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/scoop/hip/straight.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/scoop/hip/straight.long: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/scoop/hip/straight.long: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/scoop/hip/balloon.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/scoop/hip/balloon.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/scoop/hip/balloon.elbow: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/scoop/hip/balloon.elbow: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/vNeck/hip/none.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/vNeck/hip/straight.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/vNeck/hip/straight.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/vNeck/hip/straight.long: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/vNeck/hip/straight.long: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/vNeck/hip/balloon.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/vNeck/hip/balloon.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/vNeck/hip/balloon.elbow: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/vNeck/hip/balloon.elbow: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/square/hip/none.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/square/hip/straight.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/square/hip/straight.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/square/hip/straight.long: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/square/hip/straight.long: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/square/hip/balloon.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/square/hip/balloon.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/square/hip/balloon.elbow: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/square/hip/balloon.elbow: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/boat/hip/none.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/boat/hip/straight.short: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-  pear top/knit/princess/boat/hip/straight.short: [sideseam] Top: front side seam 348.9 vs back 351.9
-  pear top/knit/princess/boat/hip/straight.long: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-
+  2/104 Test   #2: engine_check .....................   Passed   50.62 sec
         Start   3: golden_check
-  3/103 Test   #3: golden_check .....................***Failed    0.50 sec
-golden_check FAIL: engine output differs from the REPO PIN (/tmp/fl-wt0/engine/golden-reference.csv).
+  3/104 Test   #3: golden_check .....................***Failed    1.15 sec
+golden_check FAIL: engine output differs from the REPO PIN (/tmp/fl-wt/engine/golden-reference.csv).
   dump: 23406 lines   pin: 23406 lines
   first differing lines:
 314c314
@@ -65,45 +20,22 @@ golden_check FAIL: engine output differs from the REPO PIN (/tmp/fl-wt0/engine/g
 Two honest ways out, nothing else:
   1. UNINTENDED change -> fix the engine until this test passes.
   2. INTENDED behavior change -> DECLARED re-pin: run scripts/repin-golden.sh
-     with a declaration label, add the ledger entry (/tmp/fl-wt0/engine/GOLDEN-PIN.md),
+     with a declaration label, add the ledger entry (/tmp/fl-wt/engine/GOLDEN-PIN.md),
      and get Damla's approval BEFORE pinning.
 Comparing two fresh dumps to each other (regen-vs-regen) is not a golden
 check and must never be reported as one.
 
         Start   4: generated_ratchet_check
-  4/103 Test   #4: generated_ratchet_check ..........   Passed    1.69 sec
+  4/104 Test   #4: generated_ratchet_check ..........   Passed    2.04 sec
         Start   5: bundle_fresh_check
-  5/103 Test   #5: bundle_fresh_check ...............***Failed    0.45 sec
-engine source HEAD : 52ae85c  2026-08-23
-
-FAIL  web/vendor/stitchu-engine.js
-      built  : a571407  2026-08-23
-      source : 52ae85c  2026-08-23
-      STALE BY 1 COMMITS to engine sources (0 days).
-      The engine being served is not the engine in this repo.
-      Fix: bash engine/build-wasm.sh && git add web/vendor/stitchu-engine.js && commit it.
-FAIL  backend/engine/stitchu-worker.js
-      built  : a571407  2026-08-23
-      source : 52ae85c  2026-08-23
-      STALE BY 1 COMMITS to engine sources (0 days).
-      The engine being served is not the engine in this repo.
-      Fix: bash engine/build-wasm.sh && git add backend/engine/stitchu-worker.js && commit it.
-FAIL  backend/engine/stitchu-worker.wasm
-      built  : a571407  2026-08-23
-      source : 52ae85c  2026-08-23
-      STALE BY 1 COMMITS to engine sources (0 days).
-      The engine being served is not the engine in this repo.
-      Fix: bash engine/build-wasm.sh && git add backend/engine/stitchu-worker.wasm && commit it.
-
-bundle_fresh_check: FAIL — the shipped engine is behind its source.
-
+  5/104 Test   #5: bundle_fresh_check ...............   Passed    0.50 sec
         Start   6: flat_convention_check
-  6/103 Test   #6: flat_convention_check ............   Passed    0.96 sec
+  6/104 Test   #6: flat_convention_check ............   Passed    2.07 sec
         Start   7: flat_geometry_sellable_check
-  7/103 Test   #7: flat_geometry_sellable_check .....   Passed    0.08 sec
+  7/104 Test   #7: flat_geometry_sellable_check .....   Passed    0.10 sec
         Start   8: style_check
-  8/103 Test   #8: style_check ......................***Failed    0.06 sec
-style_check FAIL: pinlenmiş stil 0 — /private/tmp/fl-wt0/engine/STYLE-PIN yok/boş.
+  8/104 Test   #8: style_check ......................***Failed    0.09 sec
+style_check FAIL: pinlenmiş stil 0 — /private/tmp/fl-wt/engine/STYLE-PIN yok/boş.
   Bu kapı bugüne kadar YEŞİL basıyordu ve hiçbir kalemi tutmuyordu (T17).
   Kalem yasası pinsiz koşamaz; sessiz skip yasak.
   Tek dürüst çıkış: Damla kalemi onaylar -> scripts/repin-style.sh
@@ -115,19 +47,19 @@ style_check FAIL: pinlenmiş stil 0 — /private/tmp/fl-wt0/engine/STYLE-PIN yok
   Bu testin kendi çıktısını pinlemesi (regen-vs-regen) kanıt DEĞİLDİR.
 
         Start   9: bridge_guard
-  9/103 Test   #9: bridge_guard .....................   Passed    0.17 sec
+  9/104 Test   #9: bridge_guard .....................   Passed    0.29 sec
         Start  10: api_wire_check
- 10/103 Test  #10: api_wire_check ...................   Passed    0.14 sec
+ 10/104 Test  #10: api_wire_check ...................   Passed    0.23 sec
         Start  11: collar_bridge_check
- 11/103 Test  #11: collar_bridge_check ..............   Passed    0.07 sec
+ 11/104 Test  #11: collar_bridge_check ..............   Passed    0.16 sec
         Start  12: skirtlen_refresh_check
- 12/103 Test  #12: skirtlen_refresh_check ...........   Passed    0.08 sec
+ 12/104 Test  #12: skirtlen_refresh_check ...........   Passed    0.14 sec
         Start  13: compile_dialect_check
- 13/103 Test  #13: compile_dialect_check ............   Passed    0.19 sec
+ 13/104 Test  #13: compile_dialect_check ............   Passed    0.34 sec
         Start  14: photo_ratio_wire_check
- 14/103 Test  #14: photo_ratio_wire_check ...........   Passed    0.13 sec
+ 14/104 Test  #14: photo_ratio_wire_check ...........   Passed    0.15 sec
         Start  15: sizechart_source_check
- 15/103 Test  #15: sizechart_source_check ...........***Failed    0.06 sec
+ 15/104 Test  #15: sizechart_source_check ...........***Failed    0.07 sec
 euSizeChart: 7 columns x 10 sizes = 70 numbers on a buyer's body
   sourced (verified against a publication): 3 -> bustCM, waistCM, hipCM
   UNSOURCED (verified absence, declared):   4 -> shoulderCM, backLengthCM, armLengthCM, neckCM
@@ -150,131 +82,113 @@ columns are matched to a publication or replaced from a named source by Damla
 (DAMLA-KUYRUK K10). Do NOT close it by editing the chart or softening the question.
 
         Start  16: ruffle_check
- 16/103 Test  #16: ruffle_check .....................   Passed    0.01 sec
+ 16/104 Test  #16: ruffle_check .....................   Passed    0.26 sec
         Start  17: tiered_ruffle_check
- 17/103 Test  #17: tiered_ruffle_check ..............   Passed    0.01 sec
+ 17/104 Test  #17: tiered_ruffle_check ..............   Passed    0.25 sec
         Start  18: sweetheart_check
- 18/103 Test  #18: sweetheart_check .................   Passed    0.01 sec
+ 18/104 Test  #18: sweetheart_check .................   Passed    0.26 sec
         Start  19: keyhole_check
- 19/103 Test  #19: keyhole_check ....................   Passed    0.01 sec
+ 19/104 Test  #19: keyhole_check ....................   Passed    0.26 sec
         Start  20: placket_check
- 20/103 Test  #20: placket_check ....................   Passed    0.01 sec
+ 20/104 Test  #20: placket_check ....................   Passed    0.27 sec
         Start  21: tie_check
- 21/103 Test  #21: tie_check ........................   Passed    0.01 sec
+ 21/104 Test  #21: tie_check ........................   Passed    0.26 sec
         Start  22: collar_check
- 22/103 Test  #22: collar_check .....................   Passed    0.01 sec
-        Start  23: gather_check
- 23/103 Test  #23: gather_check .....................   Passed    0.01 sec
-        Start  24: backopen_check
- 24/103 Test  #24: backopen_check ...................   Passed    0.01 sec
-        Start  25: laceupback_check
- 25/103 Test  #25: laceupback_check .................   Passed    0.01 sec
-        Start  26: wrapfront_check
- 26/103 Test  #26: wrapfront_check ..................   Passed    0.01 sec
-        Start  27: slit_check
- 27/103 Test  #27: slit_check .......................   Passed    0.01 sec
-        Start  28: skirtlen_check
- 28/103 Test  #28: skirtlen_check ...................   Passed    0.01 sec
-        Start  29: strap_check
- 29/103 Test  #29: strap_check ......................   Passed    0.01 sec
-        Start  30: peplum_check
- 30/103 Test  #30: peplum_check .....................   Passed    0.01 sec
-        Start  31: hemflounce_check
- 31/103 Test  #31: hemflounce_check .................   Passed    0.01 sec
-        Start  32: gore_check
- 32/103 Test  #32: gore_check .......................   Passed    0.01 sec
-        Start  33: pocket_check
- 33/103 Test  #33: pocket_check .....................   Passed    0.01 sec
-        Start  34: bustier_check
- 34/103 Test  #34: bustier_check ....................   Passed    0.01 sec
-        Start  35: locket_check
- 35/103 Test  #35: locket_check .....................   Passed    0.01 sec
-        Start  36: cuttable_output_check
- 36/103 Test  #36: cuttable_output_check ............   Passed    0.01 sec
-        Start  37: cup_check
- 37/103 Test  #37: cup_check ........................   Passed    0.03 sec
-        Start  38: yoke_check
- 38/103 Test  #38: yoke_check .......................   Passed    0.01 sec
-        Start  39: boxpleat_check
- 39/103 Test  #39: boxpleat_check ...................   Passed    0.01 sec
-        Start  40: cuff_check
- 40/103 Test  #40: cuff_check .......................   Passed    0.01 sec
-        Start  41: neckline_ext_check
- 41/103 Test  #41: neckline_ext_check ...............   Passed    0.01 sec
-        Start  42: hem_check
- 42/103 Test  #42: hem_check ........................   Passed    0.01 sec
-        Start  43: halter_check
- 43/103 Test  #43: halter_check .....................   Passed    0.01 sec
-        Start  44: bias_check
- 44/103 Test  #44: bias_check .......................   Passed    0.01 sec
-        Start  45: cutline_check
- 45/103 Test  #45: cutline_check ....................   Passed    0.01 sec
-        Start  46: sleeve_check
- 46/103 Test  #46: sleeve_check .....................   Passed    0.08 sec
-        Start  47: cap_sleeve_check
- 47/103 Test  #47: cap_sleeve_check .................   Passed    0.01 sec
-        Start  48: placket_asym_check
- 48/103 Test  #48: placket_asym_check ...............   Passed    0.01 sec
-        Start  49: fit_proof
- 49/103 Test  #49: fit_proof ........................   Passed    0.00 sec
-        Start  50: sloper_check
- 50/103 Test  #50: sloper_check .....................   Passed    0.00 sec
-        Start  51: fba_check
- 51/103 Test  #51: fba_check ........................   Passed    0.05 sec
-        Start  52: grade_check
- 52/103 Test  #52: grade_check ......................   Passed    0.02 sec
-        Start  53: wearability_check
- 53/103 Test  #53: wearability_check ................   Passed    0.01 sec
-        Start  54: shoulder_check
- 54/103 Test  #54: shoulder_check ...................   Passed    0.01 sec
-        Start  55: buttonrow_check
- 55/103 Test  #55: buttonrow_check ..................   Passed    0.01 sec
-        Start  56: exposedzip_check
- 56/103 Test  #56: exposedzip_check .................   Passed    0.01 sec
-        Start  57: backdetail_check
- 57/103 Test  #57: backdetail_check .................   Passed    0.01 sec
-        Start  58: fronttie_check
- 58/103 Test  #58: fronttie_check ...................   Passed    0.03 sec
-        Start  59: offshoulder_check
- 59/103 Test  #59: offshoulder_check ................   Passed    0.03 sec
-        Start  60: sideseam_adversarial_check
- 60/103 Test  #60: sideseam_adversarial_check .......   Passed    0.01 sec
-        Start  61: notch_alignment_check
- 61/103 Test  #61: notch_alignment_check ............   Passed    0.00 sec
-        Start  62: closed_garment_check
- 62/103 Test  #62: closed_garment_check .............   Passed    0.01 sec
-        Start  63: sewable_census
- 63/103 Test  #63: sewable_census ...................***Failed   59.19 sec
-========================================================
-SEWABLE CENSUS — 82980 drafts across 15 bodies x 5532 specs
-========================================================
-fully sewable (0 issues, incl shoulder-match): 82950 / 82980  (100.0%)
-
-SHOULDER-SEAM MATCH (validator OMITS this):
-  drafts with a shoulder seam on both halves: 70200
-  matched within 3.0 mm: 70200
-  MISMATCHED (> 3.0 mm): 0
-  skipped (halter/strapless, no shoulder seam): 11700
-
-FAILURE BREAKDOWN BY ISSUE RULE:
-  sideseam             54
-
-WORST OFFENDER PER RULE:
-  [sideseam] 3.0 mm
-     pear top/knit/princess/crew/hip/none.short :: [sideseam] Bodice: front side seam 348.9 vs back 351.9 differ by 3.0 mm (max 3.0)
-
-VERDICT: NOT ALL DRAFTS SEWABLE — see breakdown above
-
-        Start  64: roundtrip_check
- 64/103 Test  #64: roundtrip_check ..................   Passed    0.02 sec
-        Start  65: guide_check
- 65/103 Test  #65: guide_check ......................   Passed    0.07 sec
-        Start  66: recipe_check
- 66/103 Test  #66: recipe_check .....................   Passed    0.01 sec
-        Start  67: recipe_golden_check
- 67/103 Test  #67: recipe_golden_check ..............   Passed    0.10 sec
-        Start  68: recipe_dress_check
- 68/103 Test  #68: recipe_dress_check ...............***Failed    0.02 sec
+ 22/104 Test  #22: collar_check .....................   Passed    0.27 sec
+        Start  23: collar_lies_flat_check
+ 23/104 Test  #23: collar_lies_flat_check ...........   Passed    0.26 sec
+        Start  24: gather_check
+ 24/104 Test  #24: gather_check .....................   Passed    0.27 sec
+        Start  25: backopen_check
+ 25/104 Test  #25: backopen_check ...................   Passed    0.30 sec
+        Start  26: laceupback_check
+ 26/104 Test  #26: laceupback_check .................   Passed    0.26 sec
+        Start  27: wrapfront_check
+ 27/104 Test  #27: wrapfront_check ..................   Passed    0.23 sec
+        Start  28: slit_check
+ 28/104 Test  #28: slit_check .......................   Passed    0.23 sec
+        Start  29: skirtlen_check
+ 29/104 Test  #29: skirtlen_check ...................   Passed    0.40 sec
+        Start  30: strap_check
+ 30/104 Test  #30: strap_check ......................   Passed    0.42 sec
+        Start  31: peplum_check
+ 31/104 Test  #31: peplum_check .....................   Passed    0.23 sec
+        Start  32: hemflounce_check
+ 32/104 Test  #32: hemflounce_check .................   Passed    0.23 sec
+        Start  33: gore_check
+ 33/104 Test  #33: gore_check .......................   Passed    0.22 sec
+        Start  34: pocket_check
+ 34/104 Test  #34: pocket_check .....................   Passed    0.23 sec
+        Start  35: bustier_check
+ 35/104 Test  #35: bustier_check ....................   Passed    0.23 sec
+        Start  36: locket_check
+ 36/104 Test  #36: locket_check .....................   Passed    0.23 sec
+        Start  37: cuttable_output_check
+ 37/104 Test  #37: cuttable_output_check ............   Passed    0.21 sec
+        Start  38: cup_check
+ 38/104 Test  #38: cup_check ........................   Passed    0.23 sec
+        Start  39: yoke_check
+ 39/104 Test  #39: yoke_check .......................   Passed    0.22 sec
+        Start  40: boxpleat_check
+ 40/104 Test  #40: boxpleat_check ...................   Passed    0.22 sec
+        Start  41: cuff_check
+ 41/104 Test  #41: cuff_check .......................   Passed    0.24 sec
+        Start  42: neckline_ext_check
+ 42/104 Test  #42: neckline_ext_check ...............   Passed    0.22 sec
+        Start  43: hem_check
+ 43/104 Test  #43: hem_check ........................   Passed    0.22 sec
+        Start  44: halter_check
+ 44/104 Test  #44: halter_check .....................   Passed    0.22 sec
+        Start  45: bias_check
+ 45/104 Test  #45: bias_check .......................   Passed    0.24 sec
+        Start  46: cutline_check
+ 46/104 Test  #46: cutline_check ....................   Passed    0.26 sec
+        Start  47: sleeve_check
+ 47/104 Test  #47: sleeve_check .....................   Passed    0.46 sec
+        Start  48: cap_sleeve_check
+ 48/104 Test  #48: cap_sleeve_check .................   Passed    0.26 sec
+        Start  49: placket_asym_check
+ 49/104 Test  #49: placket_asym_check ...............   Passed    0.26 sec
+        Start  50: fit_proof
+ 50/104 Test  #50: fit_proof ........................   Passed    0.26 sec
+        Start  51: sloper_check
+ 51/104 Test  #51: sloper_check .....................   Passed    0.25 sec
+        Start  52: fba_check
+ 52/104 Test  #52: fba_check ........................   Passed    0.31 sec
+        Start  53: grade_check
+ 53/104 Test  #53: grade_check ......................   Passed    0.30 sec
+        Start  54: wearability_check
+ 54/104 Test  #54: wearability_check ................   Passed    0.26 sec
+        Start  55: shoulder_check
+ 55/104 Test  #55: shoulder_check ...................   Passed    0.27 sec
+        Start  56: buttonrow_check
+ 56/104 Test  #56: buttonrow_check ..................   Passed    0.25 sec
+        Start  57: exposedzip_check
+ 57/104 Test  #57: exposedzip_check .................   Passed    0.26 sec
+        Start  58: backdetail_check
+ 58/104 Test  #58: backdetail_check .................   Passed    0.26 sec
+        Start  59: fronttie_check
+ 59/104 Test  #59: fronttie_check ...................   Passed    0.26 sec
+        Start  60: offshoulder_check
+ 60/104 Test  #60: offshoulder_check ................   Passed    0.26 sec
+        Start  61: sideseam_adversarial_check
+ 61/104 Test  #61: sideseam_adversarial_check .......   Passed    0.28 sec
+        Start  62: notch_alignment_check
+ 62/104 Test  #62: notch_alignment_check ............   Passed    0.26 sec
+        Start  63: closed_garment_check
+ 63/104 Test  #63: closed_garment_check .............   Passed    0.27 sec
+        Start  64: sewable_census
+ 64/104 Test  #64: sewable_census ...................   Passed   63.69 sec
+        Start  65: roundtrip_check
+ 65/104 Test  #65: roundtrip_check ..................   Passed    0.23 sec
+        Start  66: guide_check
+ 66/104 Test  #66: guide_check ......................   Passed    0.39 sec
+        Start  67: recipe_check
+ 67/104 Test  #67: recipe_check .....................   Passed    0.29 sec
+        Start  68: recipe_golden_check
+ 68/104 Test  #68: recipe_golden_check ..............   Passed    0.36 sec
+        Start  69: recipe_dress_check
+ 69/104 Test  #69: recipe_dress_check ...............***Failed    0.34 sec
 == parse ==
   [PASS] recipe parses: top.shift.square.spaghetti
   [PASS] sealed kernel block resolves to top/square/tunic/spaghetti/dart/woven, sleeveless
@@ -408,59 +322,59 @@ VERDICT: NOT ALL DRAFTS SEWABLE — see breakdown above
   [PASS] shoulder 0 -> Err: draft: measurement 'shoulderMM' is missing or non-positive (0.000000)
 recipe_dress_check: FAILURES
 
-        Start  69: recipe_dress_golden_check
- 69/103 Test  #69: recipe_dress_golden_check ........   Passed    0.09 sec
-        Start  70: recipe_grade_check
- 70/103 Test  #70: recipe_grade_check ...............   Passed    0.01 sec
-        Start  71: recipe_wasm_parity
- 71/103 Test  #71: recipe_wasm_parity ...............   Passed    0.23 sec
-        Start  72: recipe_wasm_parity_dress
- 72/103 Test  #72: recipe_wasm_parity_dress .........   Passed    0.17 sec
-        Start  73: dxf_wasm_parity
- 73/103 Test  #73: dxf_wasm_parity ..................   Passed    0.21 sec
-        Start  74: dxf_wasm_parity_dress
- 74/103 Test  #74: dxf_wasm_parity_dress ............   Passed    0.23 sec
-        Start  75: bugra_bridge_check
- 75/103 Test  #75: bugra_bridge_check ...............***Failed    0.12 sec
+        Start  70: recipe_dress_golden_check
+ 70/104 Test  #70: recipe_dress_golden_check ........   Passed    0.35 sec
+        Start  71: recipe_grade_check
+ 71/104 Test  #71: recipe_grade_check ...............   Passed    0.36 sec
+        Start  72: recipe_wasm_parity
+ 72/104 Test  #72: recipe_wasm_parity ...............   Passed    0.39 sec
+        Start  73: recipe_wasm_parity_dress
+ 73/104 Test  #73: recipe_wasm_parity_dress .........   Passed    0.12 sec
+        Start  74: dxf_wasm_parity
+ 74/104 Test  #74: dxf_wasm_parity ..................   Passed    0.43 sec
+        Start  75: dxf_wasm_parity_dress
+ 75/104 Test  #75: dxf_wasm_parity_dress ............   Passed    0.17 sec
+        Start  76: bugra_bridge_check
+ 76/104 Test  #76: bugra_bridge_check ...............***Failed    0.09 sec
 Traceback (most recent call last):
-  File "/tmp/fl-wt0/engine/../engine/tools/tracer/ring2recipe.py", line 684, in <module>
+  File "/tmp/fl-wt/engine/../engine/tools/tracer/ring2recipe.py", line 684, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/tmp/fl-wt0/engine/../engine/tools/tracer/ring2recipe.py", line 507, in main
+  File "/tmp/fl-wt/engine/../engine/tools/tracer/ring2recipe.py", line 507, in main
     doc, segs = rc.load_trace(trace_path)
                 ~~~~~~~~~~~~~^^^^^^^^^^^^
-  File "/tmp/fl-wt0/engine/tools/tracer/ring-compare.py", line 59, in load_trace
+  File "/tmp/fl-wt/engine/tools/tracer/ring-compare.py", line 59, in load_trace
     d = json.load(open(path))
                   ~~~~^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/tmp/fl-wt0/engine/../patterns_real/geometry/ring-trace-locket-front-38.json'
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/fl-wt/engine/../patterns_real/geometry/ring-trace-locket-front-38.json'
 
-        Start  76: dxf_check
- 76/103 Test  #76: dxf_check ........................***Failed    0.09 sec
+        Start  77: dxf_check
+ 77/104 Test  #77: dxf_check ........................***Failed    0.06 sec
 [skirt-eu38] 1) determinizm: 2 kosu bayt-ozdes
 FAIL: ezdxf not importable — install into the venv the harness points at (engine/.venv-dxf).
 
-        Start  77: nest_check
- 77/103 Test  #77: nest_check .......................   Passed    0.01 sec
-        Start  78: nest_marker_check
- 78/103 Test  #78: nest_marker_check ................***Failed    0.10 sec
+        Start  78: nest_check
+ 78/104 Test  #78: nest_check .......................   Passed    0.35 sec
+        Start  79: nest_marker_check
+ 79/104 Test  #79: nest_marker_check ................***Failed    0.42 sec
 [skirt-eu38-1400] 1) determinizm: 2 kosu bayt-ozdes
 Traceback (most recent call last):
-  File "/tmp/fl-wt0/engine/../engine/tools/nest-verify.py", line 14, in <module>
+  File "/tmp/fl-wt/engine/../engine/tools/nest-verify.py", line 14, in <module>
     import ezdxf
 ModuleNotFoundError: No module named 'ezdxf'
 
-        Start  79: drape_check
- 79/103 Test  #79: drape_check ......................   Passed    0.99 sec
-        Start  80: tech_pack_check
- 80/103 Test  #80: tech_pack_check ..................***Failed    0.38 sec
+        Start  80: drape_check
+ 80/104 Test  #80: drape_check ......................   Passed    1.13 sec
+        Start  81: tech_pack_check
+ 81/104 Test  #81: tech_pack_check ..................***Failed    0.47 sec
 [skirt-eu-1400-220] 1+2) determinizm: manifest + 10 DXF bayt-ozdes
 [skirt-eu-1400-220] pdf: iki kosu bayt-ozdes
 FAIL: ezdxf not importable — install into engine/.venv-dxf; no silent skip
 
-        Start  81: compose_check
- 81/103 Test  #81: compose_check ....................   Passed    0.41 sec
-        Start  82: contract_check
- 82/103 Test  #82: contract_check ...................***Failed    0.38 sec
+        Start  82: compose_check
+ 82/104 Test  #82: compose_check ....................   Passed    0.63 sec
+        Start  83: contract_check
+ 83/104 Test  #83: contract_check ...................***Failed    0.27 sec
 ok: contract/tables.json, garment-spec.schema.json, terms.json, vocab.json, styles.json parse
 ok: schema draftSpec enums match engine/vocab.json (37 fields)
 ok: term registry sound: 52 terms, 246 phrases, ids unique, capabilities valid
@@ -480,14 +394,14 @@ ok: create.js picker options subset of the vocabulary (110 option values checked
 
 contract validation FAILED (1)
 
-        Start  83: specv2_check
- 83/103 Test  #83: specv2_check .....................   Passed    0.07 sec
-        Start  84: specv1v2_map_check
- 84/103 Test  #84: specv1v2_map_check ...............   Passed    0.06 sec
-        Start  85: flat_render_lint
- 85/103 Test  #85: flat_render_lint .................   Passed    0.97 sec
-        Start  86: preview_truth_check
- 86/103 Test  #86: preview_truth_check ..............***Failed    0.24 sec
+        Start  84: specv2_check
+ 84/104 Test  #84: specv2_check .....................   Passed    0.06 sec
+        Start  85: specv1v2_map_check
+ 85/104 Test  #85: specv1v2_map_check ...............   Passed    0.05 sec
+        Start  86: flat_render_lint
+ 86/104 Test  #86: flat_render_lint .................   Passed    0.91 sec
+        Start  87: preview_truth_check
+ 87/104 Test  #87: preview_truth_check ..............***Failed    0.23 sec
 
 == princess_dress — draft 10 pieces
   flat 'sleeve' -> draft counterpart OK
@@ -533,7 +447,7 @@ FAIL [princess_dress] landmark 'sleeveWidth' ÖLÇÜLMEDİ: draft tarafında say
   neckHalf      flat 1.017  draft 0.453  dev +124.4%  DECLARED (pin 150%: contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres'))
   neckDepth     flat 0.439  draft 0.112  dev +291.4%  DECLARED (pin 291.6%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.445  draft 0.471  dev -5.5%  OK
-  armholeDepth  flat 1.291  draft 0.681  dev +89.6%  DECLARED (pin 89.8%: contract/tables.json flat._layer (stylised drawing units))
+  armholeDepth  flat 1.291  draft 0.722  dev +78.7%  DECLARED (pin 89.8%: contract/tables.json flat._layer (stylised drawing units))
   waistHalf     flat 0.876  draft 0.988  dev -11.3%  DECLARED (pin 36%: contract/tables.json review.waistNip (0.07 waist suppression, layer undecided))
   hemSweepHalf  SKIP — etek gore panellerine bölünmüş (parts.gorePanels) — tek Skirt Front parçası yok (draft tarafı yok)
   skirtLen      SKIP — etek gore panellerine bölünmüş (parts.gorePanels) — tek Skirt Front parçası yok (draft tarafı yok)
@@ -548,16 +462,15 @@ FAIL [princess_dress] landmark 'sleeveWidth' ÖLÇÜLMEDİ: draft tarafında say
   draft 'Bias binding (neckline)' internal construction (invisible worn) OK
   draft 'Sleeve' -> flat 'sleeve' OK
   draft 'Wrap Front Tie (kruvaze bağ)' cut as a real piece; flat draws 'wrapTie' as ink — DECLARED (allowlist)
-FAIL [wrap_dress] landmark 'sleeveLen' deviates 95.8% (>8%) with no contract-declared stylisation — BEYOND its 90.9% pin (ratchet)
   bustHalf      flat 1.000  draft 1.000  dev +0.0%  ANCHOR (0 by construction)
   neckHalf      flat 0.836  draft 0.245  dev +241.1%  DECLARED (pin 241.3%: contract/tables.json flat._layer (stylised drawing units))
   neckDepth     flat 1.463  draft 0.545  dev +168.2%  DECLARED (pin 168.4%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.580  draft 0.505  dev +15.0%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 1.291  draft 0.705  dev +83.2%  DECLARED (pin 83.4%: contract/tables.json flat._layer (stylised drawing units))
+  armholeDepth  flat 1.291  draft 0.746  dev +72.9%  DECLARED (pin 83.4%: contract/tables.json flat._layer (stylised drawing units))
   waistHalf     flat 0.851  draft 0.988  dev -13.9%  DECLARED (pin 38%: contract/tables.json review.waistNip (0.07 waist suppression, layer undecided))
   hemSweepHalf  flat 1.490  draft 1.241  dev +20.1%  DECLARED (pin 20.3%: contract/tables.json flat._layer (stylised drawing units))
   skirtLen      flat 3.072  draft 2.603  dev +18.0%  DECLARED (pin 21%: contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop'))
-  sleeveLen     flat 1.548  draft 0.791  dev +95.8%  FAIL
+  sleeveLen     flat 1.548  draft 0.885  dev +75.0%  DECLARED (pin 90.9%: contract/tables.json flat._layer (stylised drawing units))
   sleeveWidth   flat 0.623  draft 1.243  dev -49.9%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
 
 == top_boat_princess — draft 5 pieces
@@ -617,7 +530,7 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   neckHalf      flat 0.555  draft 0.245  dev +126.6%  DECLARED (pin 150%: contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres'))
   neckDepth     flat 0.615  draft 0.305  dev +101.5%  DECLARED (pin 200%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.513  draft 0.471  dev +9.0%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 0.986  draft 0.681  dev +44.9%  DECLARED (pin 105%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
+  armholeDepth  flat 0.986  draft 0.722  dev +36.5%  DECLARED (pin 105%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
   waistHalf     flat 0.965  draft 0.988  dev -2.3%  OK
   hemSweepHalf  SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
   skirtLen      SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
@@ -635,6 +548,7 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   draft 'Drawstring Yoke Panel (büzgü yaka panosu)' -> flat 'shirr' OK
   draft 'Drawstring Cord (büzgü bağı)' -> flat 'tie' OK
   draft 'Ruffled Strap (fırfırlı askı)' drawn in pattern, flat flag declared-but-not-drawn — DECLARED
+FAIL [drawstring_babydoll] landmark 'skirtLen' deviates 37.9% (>8%) with no contract-declared stylisation — BEYOND its 35.6% pin (ratchet)
   bustHalf      flat 1.000  draft 1.000  dev +0.0%  ANCHOR (0 by construction)
   neckHalf      SKIP — bant/askı üstü — flat'in omuz noktası yok (k.nX undefined) (flat tarafı yok)
   neckDepth     SKIP — bant/askı üstü — flat'in omuz noktası yok (k.nX undefined) (flat tarafı yok)
@@ -642,7 +556,7 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   armholeDepth  SKIP — bant/askı üstü — flat'in omuz noktası yok (k.nX undefined) (flat tarafı yok)
   waistHalf     flat 0.856  draft 0.988  dev -13.3%  DECLARED (pin 22%: contract/tables.json review.waistNip (0.07 waist suppression, layer undecided))
   hemSweepHalf  flat 1.657  draft 1.663  dev -0.4%  OK
-  skirtLen      flat 3.072  draft 2.269  dev +35.4%  DECLARED (pin 35.6%: contract/tables.json flat._layer (stylised drawing units))
+  skirtLen      flat 3.072  draft 2.228  dev +37.9%  FAIL
   sleeveLen     SKIP — stil kolsuz (styles.json parts.sleeve yok) (flat+draft tarafı yok)
   sleeveWidth   SKIP — stil kolsuz (styles.json parts.sleeve yok) (flat+draft tarafı yok)
   panelCutWidth draft ratio 1.800  contract 1.8  dev +0.0%  OK
@@ -662,11 +576,11 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   neckHalf      flat 0.622  draft 0.245  dev +153.8%  DECLARED (pin 154%: contract/tables.json flat._layer (stylised drawing units))
   neckDepth     flat 0.754  draft 0.545  dev +38.3%  DECLARED (pin 67.67%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.457  draft 0.505  dev -9.4%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 0.986  draft 0.705  dev +39.9%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
+  armholeDepth  flat 0.986  draft 0.746  dev +32.1%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
   waistHalf     flat 1.002  draft 0.988  dev +1.4%  OK
   hemSweepHalf  flat 1.448  draft 1.663  dev -12.9%  DECLARED (pin 13.1%: contract/tables.json flat._layer (stylised drawing units))
-  skirtLen      flat 2.347  draft 2.269  dev +3.4%  OK
-  sleeveLen     flat 1.227  draft 1.350  dev -9.1%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
+  skirtLen      flat 2.347  draft 2.228  dev +5.3%  OK
+  sleeveLen     flat 1.227  draft 1.444  dev -15.0%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
   sleeveWidth   flat 0.492  draft 1.803  dev -72.7%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
 
 == peterpan_puff — draft 9 pieces
@@ -683,11 +597,11 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   neckHalf      flat 0.750  draft 0.245  dev +205.9%  DECLARED (pin 206.1%: contract/tables.json flat._layer (stylised drawing units))
   neckDepth     flat 0.419  draft 0.305  dev +37.4%  DECLARED (pin 67.67%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.359  draft 0.505  dev -28.9%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 0.986  draft 0.705  dev +39.9%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
+  armholeDepth  flat 0.986  draft 0.746  dev +32.1%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
   waistHalf     flat 1.002  draft 0.988  dev +1.4%  OK
   hemSweepHalf  flat 1.448  draft 1.663  dev -12.9%  DECLARED (pin 13.1%: contract/tables.json flat._layer (stylised drawing units))
-  skirtLen      flat 2.347  draft 2.269  dev +3.4%  OK
-  sleeveLen     flat 1.250  draft 1.350  dev -7.4%  OK
+  skirtLen      flat 2.347  draft 2.228  dev +5.3%  OK
+  sleeveLen     flat 1.250  draft 1.444  dev -13.5%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
   sleeveWidth   flat 0.555  draft 1.803  dev -69.2%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
   panelCutWidth draft ratio 1.998  contract 2  dev -0.1%  OK
 
@@ -706,11 +620,11 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   neckHalf      flat 0.622  draft 0.245  dev +153.8%  DECLARED (pin 154%: contract/tables.json flat._layer (stylised drawing units))
   neckDepth     flat 0.754  draft 0.545  dev +38.3%  DECLARED (pin 67.67%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.457  draft 0.505  dev -9.4%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 0.986  draft 0.705  dev +39.9%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
+  armholeDepth  flat 0.986  draft 0.746  dev +32.1%  DECLARED (pin 81.125%: contract/tables.json review.armholeHollow (layer undecided: fit or style) + flat._layer)
   waistHalf     flat 1.002  draft 0.988  dev +1.4%  OK
   hemSweepHalf  flat 1.448  draft 1.663  dev -12.9%  DECLARED (pin 13.1%: contract/tables.json flat._layer (stylised drawing units))
-  skirtLen      flat 2.347  draft 2.269  dev +3.4%  OK
-  sleeveLen     flat 1.294  draft 1.350  dev -4.1%  OK
+  skirtLen      flat 2.347  draft 2.228  dev +5.3%  OK
+  sleeveLen     flat 1.294  draft 1.444  dev -10.4%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
   sleeveWidth   flat 0.666  draft 1.803  dev -63.0%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
 
 == top_crew_boxy_sleeve — draft 4 pieces
@@ -725,7 +639,7 @@ FAIL [top_boat_princess] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında sa
   waistHalf     flat 0.965  draft 1.000  dev -3.5%  OK
   hemSweepHalf  SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
   skirtLen      SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
-  sleeveLen     flat 1.104  draft 0.775  dev +42.5%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
+  sleeveLen     flat 1.104  draft 0.867  dev +27.4%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
   sleeveWidth   flat 0.555  draft 1.219  dev -54.4%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
 
 == dress_princess_scoop_aline — draft 9 pieces
@@ -828,7 +742,7 @@ FAIL [dress_square_princess_circle] landmark 'sleeveWidth' ÖLÇÜLMEDİ: draft 
   neckHalf      flat 1.017  draft 0.453  dev +124.4%  DECLARED (pin 150%: contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres'))
   neckDepth     flat 0.512  draft 0.112  dev +356.7%  DECLARED (pin 356.9%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.445  draft 0.471  dev -5.5%  OK
-  armholeDepth  flat 1.291  draft 0.681  dev +89.6%  DECLARED (pin 89.8%: contract/tables.json flat._layer (stylised drawing units))
+  armholeDepth  flat 1.291  draft 0.722  dev +78.7%  DECLARED (pin 89.8%: contract/tables.json flat._layer (stylised drawing units))
   waistHalf     flat 0.897  draft 0.988  dev -9.2%  DECLARED (pin 34%: contract/tables.json review.waistNip (0.07 waist suppression, layer undecided))
   hemSweepHalf  flat 1.431  draft 1.241  dev +15.3%  DECLARED (pin 16%: contract/tables.json flat._layer (stylised drawing units) + draft aLine sweep)
   skirtLen      flat 3.072  draft 1.802  dev +70.5%  DECLARED (pin 70.7%: contract/tables.json flat.len ('flat.len.mini=42 is a stylised drawing length, draft.skirtLengthMM.mini=450 is a real hem drop'))
@@ -884,7 +798,6 @@ FAIL [top_princess_peplum] landmark 'waistHalf' ÖLÇÜLMEDİ: draft tarafında 
   draft 'Bias binding (neckline)' internal construction (invisible worn) OK
   draft 'Sleeve' -> flat 'sleeve' OK
   draft 'Shirred Bust Panel (büzgü büst panosu)' -> flat 'shirr' OK
-FAIL [top_sq_puff_shirred_peplum] landmark 'sleeveLen' deviates 58.3% (>8%) with no contract-declared stylisation — BEYOND its 55% pin (ratchet)
   bustHalf      flat 1.000  draft 1.000  dev +0.0%  ANCHOR (0 by construction)
   neckHalf      flat 0.638  draft 0.240  dev +165.8%  DECLARED (pin 178%: contract/tables.json flat._layer + flat.size ('stylised drawing units, NOT millimetres'))
   neckDepth     flat 0.671  draft 0.397  dev +68.8%  DECLARED (pin 152%: contract/tables.json flat._layer (stylised drawing units))
@@ -893,7 +806,7 @@ FAIL [top_sq_puff_shirred_peplum] landmark 'sleeveLen' deviates 58.3% (>8%) with
   waistHalf     flat 0.626  draft 1.000  dev -37.4%  DECLARED (pin 37.6%: contract/figure-bands.json ratios.waist_bust (EU36 66/84, band [0.72,0.84]))
   hemSweepHalf  SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
   skirtLen      SKIP — stil ÜST (preview-truth spec garment=top) — etek yok (draft tarafı yok)
-  sleeveLen     flat 1.227  draft 0.775  dev +58.3%  FAIL
+  sleeveLen     flat 1.227  draft 0.867  dev +41.6%  DECLARED (pin 55%: contract/tables.json flat.derived ('per-style recipe fields (gatherRatio, capPuff, ...) are ink/drawing knobs only'))
   sleeveWidth   flat 0.516  draft 1.219  dev -57.7%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
   panelCutWidth draft ratio 2.000  contract 2  dev +0.0%  OK
 
@@ -1023,16 +936,15 @@ FAIL [dress_boat_princess_circle] landmark 'sleeveWidth' ÖLÇÜLMEDİ: draft ta
   flat 'backSeam' -> draft counterpart OK
   draft 'Bias binding (neckline)' internal construction (invisible worn) OK
   draft 'Sleeve' -> flat 'sleeve' OK
-FAIL [dress_vneck_gathered] landmark 'sleeveLen' deviates 82.8% (>8%) with no contract-declared stylisation — BEYOND its 78.3% pin (ratchet)
   bustHalf      flat 1.000  draft 1.000  dev +0.0%  ANCHOR (0 by construction)
   neckHalf      flat 0.763  draft 0.245  dev +211.4%  DECLARED (pin 211.6%: contract/tables.json flat._layer (stylised drawing units))
   neckDepth     flat 1.024  draft 0.545  dev +87.8%  DECLARED (pin 88%: contract/tables.json flat._layer (stylised drawing units))
   shoulderLen   flat 0.641  draft 0.505  dev +27.0%  DECLARED (pin 62%: contract/tables.json flat._layer (stylised drawing units))
-  armholeDepth  flat 1.291  draft 0.705  dev +83.2%  DECLARED (pin 83.4%: contract/tables.json flat._layer (stylised drawing units))
+  armholeDepth  flat 1.291  draft 0.746  dev +72.9%  DECLARED (pin 83.4%: contract/tables.json flat._layer (stylised drawing units))
   waistHalf     flat 0.820  draft 0.988  dev -17.0%  DECLARED (pin 33%: engine/flat-engine/styles.json dress_vneck_gathered own.waistNip (0.22) + gatheredSkirt (dirndl waist gather) + contract/figure-bands.json)
   hemSweepHalf  flat 1.660  draft 1.458  dev +13.8%  DECLARED (pin 13.85%: engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) dirndl hem sweep)
   skirtLen      flat 3.072  draft 1.802  dev +70.5%  DECLARED (pin 70.7%: engine/flat-engine/styles.json dress_vneck_gathered own.skirtFull (2.0) + gatheredSkirt drape (cloth-solver profile:skirt))
-  sleeveLen     flat 1.446  draft 0.791  dev +82.8%  FAIL
+  sleeveLen     flat 1.446  draft 0.885  dev +63.4%  DECLARED (pin 78.3%: contract/tables.json flat._layer (stylised drawing units))
   sleeveWidth   flat 1.038  draft 1.243  dev -16.5%  DECLARED (pin 84%: contract/tables.json flat.derived (drawing knobs) + draft.gatherRatios (cut carries gather fullness))
 
 == dress_sweetheart_princess_circle — draft 6 pieces
@@ -1168,24 +1080,24 @@ FAIL [dress_vneck_aline] landmark 'skirtLen' ÖLÇÜLMEDİ: draft tarafında say
   sleeveLen     SKIP — stil kolsuz (styles.json parts.sleeve yok) (flat+draft tarafı yok)
   sleeveWidth   SKIP — stil kolsuz (styles.json parts.sleeve yok) (flat+draft tarafı yok)
 
-preview-truth: 93 FAILURE(S)
+preview-truth: 91 FAILURE(S)
 
-        Start  87: figure_check
- 87/103 Test  #87: figure_check .....................   Passed    0.06 sec
-        Start  88: volume_check
- 88/103 Test  #88: volume_check .....................   Passed    0.03 sec
-        Start  89: body_volume_check
- 89/103 Test  #89: body_volume_check ................   Passed   13.74 sec
-        Start  90: garment_shell_check
- 90/103 Test  #90: garment_shell_check ..............   Passed    1.55 sec
-        Start  91: flatten_check
- 91/103 Test  #91: flatten_check ....................   Passed    0.92 sec
-        Start  92: surface_pattern_check
- 92/103 Test  #92: surface_pattern_check ............   Passed    9.64 sec
-        Start  93: h10_gate_check
- 93/103 Test  #93: h10_gate_check ...................***Not Run (Disabled)   0.00 sec
-        Start  94: garment_armhole_check
- 94/103 Test  #94: garment_armhole_check ............***Failed    0.01 sec
+        Start  88: figure_check
+ 88/104 Test  #88: figure_check .....................   Passed    0.12 sec
+        Start  89: volume_check
+ 89/104 Test  #89: volume_check .....................   Passed    0.21 sec
+        Start  90: body_volume_check
+ 90/104 Test  #90: body_volume_check ................   Passed   14.40 sec
+        Start  91: garment_shell_check
+ 91/104 Test  #91: garment_shell_check ..............   Passed    2.58 sec
+        Start  92: flatten_check
+ 92/104 Test  #92: flatten_check ....................   Passed    1.14 sec
+        Start  93: surface_pattern_check
+ 93/104 Test  #93: surface_pattern_check ............   Passed    8.52 sec
+        Start  94: h10_gate_check
+ 94/104 Test  #94: h10_gate_check ...................***Not Run (Disabled)   0.00 sec
+        Start  95: garment_armhole_check
+ 95/104 Test  #95: garment_armhole_check ............***Failed    0.27 sec
 == garment_armhole_check — sevk edilen hat, EU34..EU48 ==
 
 -- PARITE RAPORU (KAPI DEGIL) — ESLESTIRME BUST UZERINDEN, ETIKET UZERINDEN DEGIL --
@@ -1256,45 +1168,42 @@ EU48  |  110 | -     |    - |            496.71 |                 - |           
 
 25 yargi, 7 FAIL
 
-        Start  95: section_check
- 95/103 Test  #95: section_check ....................   Passed    0.33 sec
-        Start  96: capability_check
- 96/103 Test  #96: capability_check .................   Passed    0.01 sec
-        Start  97: wearable_check
- 97/103 Test  #97: wearable_check ...................   Passed   11.71 sec
-        Start  98: edgemono_check
- 98/103 Test  #98: edgemono_check ...................   Passed   89.06 sec
-        Start  99: walkgate_check
- 99/103 Test  #99: walkgate_check ...................   Passed   88.71 sec
-        Start 100: cutplan_check
-100/103 Test #100: cutplan_check ....................   Passed   85.47 sec
-        Start 101: printpack_sheet_check
-101/103 Test #101: printpack_sheet_check ............   Passed   23.55 sec
-        Start 102: preset_resolve_check
-102/103 Test #102: preset_resolve_check .............   Passed    0.10 sec
-        Start 103: edit_locality_check
-103/103 Test #103: edit_locality_check ..............   Passed    0.68 sec
+        Start  96: section_check
+ 96/104 Test  #96: section_check ....................   Passed    0.45 sec
+        Start  97: capability_check
+ 97/104 Test  #97: capability_check .................   Passed    0.17 sec
+        Start  98: wearable_check
+ 98/104 Test  #98: wearable_check ...................   Passed    9.17 sec
+        Start  99: edgemono_check
+ 99/104 Test  #99: edgemono_check ...................   Passed   68.77 sec
+        Start 100: walkgate_check
+100/104 Test #100: walkgate_check ...................   Passed   90.24 sec
+        Start 101: cutplan_check
+101/104 Test #101: cutplan_check ....................   Passed   79.61 sec
+        Start 102: printpack_sheet_check
+102/104 Test #102: printpack_sheet_check ............   Passed   19.45 sec
+        Start 103: preset_resolve_check
+103/104 Test #103: preset_resolve_check .............   Passed    0.23 sec
+        Start 104: edit_locality_check
+104/104 Test #104: edit_locality_check ..............   Passed    0.25 sec
 
-86% tests passed, 14 tests failed out of 102
+89% tests passed, 11 tests failed out of 103
 
-Total Test time (real) = 440.40 sec
+Total Test time (real) = 438.17 sec
 
 The following tests did not run:
-	 93 - h10_gate_check (Disabled)
+	 94 - h10_gate_check (Disabled)
 
 The following tests FAILED:
-	  2 - engine_check (Failed)
 	  3 - golden_check (Failed)
-	  5 - bundle_fresh_check (Failed)
 	  8 - style_check (Failed)
 	 15 - sizechart_source_check (Failed)
-	 63 - sewable_census (Failed)
-	 68 - recipe_dress_check (Failed)
-	 75 - bugra_bridge_check (Failed)
-	 76 - dxf_check (Failed)
-	 78 - nest_marker_check (Failed)
-	 80 - tech_pack_check (Failed)
-	 82 - contract_check (Failed)
-	 86 - preview_truth_check (Failed)
-	 94 - garment_armhole_check (Failed)
+	 69 - recipe_dress_check (Failed)
+	 76 - bugra_bridge_check (Failed)
+	 77 - dxf_check (Failed)
+	 79 - nest_marker_check (Failed)
+	 81 - tech_pack_check (Failed)
+	 83 - contract_check (Failed)
+	 87 - preview_truth_check (Failed)
+	 95 - garment_armhole_check (Failed)
 Errors while running CTest

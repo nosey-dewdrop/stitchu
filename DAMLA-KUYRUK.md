@@ -744,3 +744,55 @@ Bu satırlar `knowledge/ETSY-KAPISI-2026-08-23.md`'nin kuyruğu. Mekanik olanı
   **süper %50+**. Yani UNL'in "süper"i kartın "orta"sının bittiği yerde başlıyor.
   **Kartın bandı uygulandı** (talimat o), UNL çapraz referans olarak yazıldı,
   ORTALAMA ALINMADI. Hangisi kanun olacak Damla'nın kararı.
+---
+
+## F-L — RATCHET ONARIMI, 23 Ağu (iki karar, ikisi de PIN TAŞIMA kararı)
+
+Kart: `GECE/KART/F-L-ratchet.md`. Bu vardiyada **gerileme kapatıldı** (kök sebep,
+eşiğe dokunmadan); geriye kalan iki kalem pin taşıma istiyor ve pin taşımak senin
+kararın (`GOLDEN-PIN.md` beyan etiketi şart koşuyor). Tek taraflı taşınmadı.
+
+### [ ] K-FL-1 — `golden_check`: pin, motorun bugünkü çizgisinin **8374 satır** gerisinde
+**Ölçüldü, taşınmadı.** `engine/golden-reference.csv` 23406 satır; bugünkü
+`golden_dump` çıktısıyla **8374 satırı** farklı (%35.8), **187 spec'in 175'i**
+etkileniyor. Fark kalemleri: 4631 `outline`, 3700 `marking`, 43 skaler.
+**Kaynağı bu vardiya DEĞİL:** HEAD'in dumpı ile benim değişikliğimden sonraki dump
+**bayt bayt aynı** (`diff -q` → identical). Yani 8374 satırın tamamı bu geceki
+armhole işinden (scye derinliğinin Aldrich p.11'e bağlanması + oyuk hollow'unun
+ölçülen arc/chord oranına bisection'la çözülmesi, `52ae85c`/`168902f`).
+**Soru:** pin bu ölçülen çizgiye taşınsın mı (beyan etiketi + `GOLDEN-PIN.md`
+defter satırı ile), yoksa fark önce tek tek gerekçelendirilsin mi?
+**Cevap:**
+
+### [ ] K-FL-2 — `recipe_dress_check`: reçete DSL'i motorun yeni oyuğunu **ifade edemiyor**
+**Ölçüldü.** Kapı, reçete yorumlayıcısının `GarmentDrafter::draft`'ı 1e-6 mm'de
+tekrar etmesini istiyor. Bugün 3 gövdede `Top Front` / `Top Back` / bias şeridi
+geometri + grainline'da ayrışıyor, ve `bigNeckSmallShoulder` kumaşı 1.85 vs motor 1.95.
+**Kök sebep tek:** reçete DSL'i (v1.1 mühürlü) `hollow = hollowShareFront * dx`
+**kapalı formunu** taşıyor (`recipes/shift-dress-square-spaghetti.json:88`), motor ise
+oyuğu artık **bisection'la çözüyor** (ölçülen arc/chord hedefi, `bodice.cpp` solveHollow)
+ve scye derinliğini `backLengthMM*0.44` yerine büstten alıyor. DSL'in izin verdiği
+fonksiyonlar `min/max/clamp/gate/hypot` — çözücü de yay uzunluğu da yok.
+
+**İKİ ADAYDAN SEÇİM + GEREKÇE (kart bunu istiyordu):**
+- **(1) Oymayı kapalı-form kesre indir → REDDEDİLDİ.** Bu, motoru aynasına uydurmak
+  için zayıflatmak olur; oyuğun ölçülen orana çözülmesi F-F'in kazandığı işin ta
+  kendisi ve `garment_armhole_check` K1 tam onu yargılıyor. ORTAK §2/§3.
+- **(2) DSL'e `solve` primitifi ekle → DOĞRU YOL, ama SENİN kararın.**
+  Gerekçe: ayna motoru anlatamıyorsa eksik olan aynadır, motor değil.
+  **Bedeli ölçüldü:** DSL "v1.1 **mühürlü**" (kapı seal ihlallerini tek tek reddediyor)
+  → v1.2 açmak gerekir; `solve` tek başına yetmez, hedef bir **kübik yay uzunluğu**
+  olduğu için `arclen` primitifi de gerekir; ve reçete çıktısı değişince
+  **`recipe_dress_golden_check` pini de taşınır** — yani bu kalem K-FL-1 ile
+  **aynı beyanlı repin kararına** bağlı.
+**Soru:** DSL mührü v1.2'ye açılsın mı (`solve` + `arclen`), yoksa reçete hattı
+motorun yeni oyuğundan bilerek geri mi bırakılsın (kapı kırmızı kalır, gerekçeli)?
+**Cevap:**
+
+### [BİLGİ — karar istemiyorum] Karışık yarımda ayna 9.3 mm yanılıyor
+Prenses + gövde uzatması olan bir üstte bir yarım pens'e düşerse (ölçüldü: `apple`
+gövdesi, ön pens / arka prenses), o yarımın bodice tarafında **raporladığı** yan
+dikiş boyu çizilen parçanınkiyle aynı değil: ayna **331.7 mm**, çizilen **341.0 mm**
+— **9.3 mm**. Kapı ayna-ayna kıyasladığı için bunu hiç görmüyor. Bu yüzden yeni
+eşitleme yalnız **iki yarım da prenses** olduğunda koşuyor; karışık yarımlar
+bugünkü (geçen) hallerinde bırakıldı. Aynanın kendi hatası ayrı bir iş.

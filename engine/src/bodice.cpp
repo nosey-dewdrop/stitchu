@@ -963,26 +963,9 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double frontDart = frontReduction - sideTake;
     const double frontWaistlineWidth = frontWaistTarget + frontDart;
 
-    // SIDE-SEAM TRUING (2026-07-13, precision pass): the two halves slant
-    // inward by different amounts, so on short (empire) bodices the seams
-    // mismatched by up to ~2 mm. Drop the SHORTER half's side-waist end until
-    // both measure the same — the legBTrued move, applied to the side seam.
-    const double sideH = (seamSideY - 8) - armholeY; // frame shifts cancel
-    const double runF = frontWidth - frontWaistlineWidth;
-    const double runB = backWidth - backWaistlineWidth;
-    const double sideLenF = std::hypot(runF, sideH);
-    const double sideLenB = std::hypot(runB, sideH);
-    double deltaBack = 0, deltaFront = 0;
-    // Extended tops (hip/tunic) sew the EXTENDED side seam, whose own curves
-    // already pair up — moving the waist anchor would skew them. True only
-    // where the waist end IS the seam end.
-    if (extendBelowWaist <= 0) {
-        if (sideLenF > sideLenB) {
-            deltaBack = std::sqrt(std::max(0.0, sideLenF * sideLenF - runB * runB)) - sideH;
-        } else if (sideLenB > sideLenF) {
-            deltaFront = std::sqrt(std::max(0.0, sideLenB * sideLenB - runF * runF)) - sideH;
-        }
-    }
+    // (SIDE-SEAM TRUING moved below: it now needs BOTH halves' frames and the
+    // princess/dart decision, because it measures the seam each half will
+    // actually draw. See "SIDE-SEAM TRUING" after frontPrincess.)
 
     // Halter back frame: local y = 0 at the low top edge.
     const double bShoulderHalf = halter ? backWidth * 0.85 : bTipHalf;
@@ -1006,6 +989,104 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const bool backPrincess = shaping == Shaping::Princess && backDart >= minPrincessIntake &&
                               (!halter || !backCramped) &&
                               !(smallBody && backDart < princessCleanIntakeMM);
+    // Halter front frame values the truing below needs (the rest of the front
+    // frame is set where the front is drawn).
+    const double fArmholeY = halter ? armholeY + halterStrapRise : armholeY;
+    const double fSeamSideY = halter ? seamSideY + halterStrapRise : seamSideY;
+    const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake &&
+                               !(smallBody && frontDart < princessCleanIntakeMM);
+
+    // SIDE-SEAM TRUING (2026-07-13, precision pass): the two halves slant
+    // inward by different amounts, so on short (empire) bodices the seams
+    // mismatched by up to ~2 mm. Drop the SHORTER half's side-waist end until
+    // both measure the same — the legBTrued move, applied to the side seam.
+    const double sideH = (seamSideY - 8) - armholeY; // frame shifts cancel
+    const double runF = frontWidth - frontWaistlineWidth;
+    const double runB = backWidth - backWaistlineWidth;
+    const double sideLenF = std::hypot(runF, sideH);
+    const double sideLenB = std::hypot(runB, sideH);
+    double deltaBack = 0, deltaFront = 0;
+    // ── EXTENDED TOPS ARE TRUED TOO (2026-08-23) ──────────────────────────────
+    // This block used to be skipped whenever extendBelowWaist > 0, on the claim
+    // that "the extension curves already pair up". MEASURED FALSE: an extended
+    // half sews a CURVED seam from the underarm all the way to the hem, and its
+    // length is not the hypotenuse the closed form above assumes — the two hem
+    // ends carry different dart-gap widths and different waist slants. Across
+    // the census sweep 146 body x style cells missed by more than 1 mm and
+    // pear/knit/princess/crew/hip missed by 3.0 mm, i.e. exactly on the
+    // pairedSeamTolerance ceiling, which is the [sideseam] red the sewable
+    // census and engine_check were both reporting.
+    // The fix is not a looser ceiling and not a special case: the seam is trued
+    // against the seam the half will ACTUALLY draw. For the closed (cropped /
+    // dress) case that seam IS the hypotenuse, so the branch below is byte-for-
+    // byte the old code; only the extended branch is new.
+    const double hipBlendDepth = 200; // = makePrincessPieces (waist-to-hip depth)
+    // The drawn side seam of an extended half, as a function of its side-waist
+    // level. Mirrors makePrincessPieces' side panel (princess) and the top
+    // block's classic extension (dart fallback) command for command.
+    const auto extendedSideLen = [&](bool princess, double chestW, double aY, double sY,
+                                     double waistlineWidth, double dartW) {
+        if (princess) {
+            const double underarmY = sleevelessScye ? aY - sleevelessUnderarmRaiseMM : aY;
+            const double gapHem = dartW * std::max(0.0, 1.0 - extendBelowWaist / hipBlendDepth);
+            const double sideHemX = hipHalfQuarter + gapHem;
+            return pathLength({PathCommand::move({chestW, underarmY}), PathCommand::curve(
+                {sideHemX, sY + extendBelowWaist - 10},
+                {waistlineWidth, sY + extendBelowWaist * 0.35},
+                {sideHemX, sY + extendBelowWaist * 0.7})});
+        }
+        return pathLength({PathCommand::move({chestW, aY}), PathCommand::curve(
+            {hipHalfQuarter, sY + extendBelowWaist - 10},
+            {waistlineWidth, sY + extendBelowWaist * 0.35},
+            {hipHalfQuarter, sY + extendBelowWaist * 0.7})});
+    };
+    if (extendBelowWaist <= 0) {
+        if (sideLenF > sideLenB) {
+            deltaBack = std::sqrt(std::max(0.0, sideLenF * sideLenF - runB * runB)) - sideH;
+        } else if (sideLenB > sideLenF) {
+            deltaFront = std::sqrt(std::max(0.0, sideLenB * sideLenB - runF * runF)) - sideH;
+        }
+    } else if (frontPrincess && backPrincess) {
+        // BOTH halves must draw the seam HERE for this to be truing rather than
+        // guessing. A half that falls back to a dart under princess+extension is
+        // extended later by the top block; the length reported for it below is a
+        // MIRROR of that extension, not the drawn seam (measured on the apple
+        // body: mirror 331.7 mm vs drawn 341.0 mm — 9.3 mm apart). Matching the
+        // other half to a mirror moves the REAL seams apart: measured, it opened
+        // apple/princess/hip from paired to 5.9 mm and lit [sideseam] Top on 24
+        // drafts. Mixed halves therefore stay untrued (they pair today) and the
+        // mirror's own error is logged as an open item, not hidden here.
+        // Dropping the side-waist level lengthens the drawn curve monotonically
+        // (start point fixed, end point and both control points move down), so
+        // the drop that makes the shorter half reach the longer one is a plain
+        // bisection — no tuned constant, no tolerance.
+        const double lenF = extendedSideLen(frontPrincess, frontWidth, fArmholeY, fSeamSideY,
+                                            frontWaistlineWidth, frontDart);
+        const double lenB = extendedSideLen(backPrincess, backWidth, bArmholeY, bSeamSideY,
+                                            backWaistlineWidth, backDart);
+        const auto dropTo = [&](bool princess, double chestW, double aY, double sY,
+                                double waistlineWidth, double dartW, double target) {
+            double lo = 0.0, hi = 1.0;
+            while (hi < 512.0 &&
+                   extendedSideLen(princess, chestW, aY, sY + hi, waistlineWidth, dartW) < target)
+                hi *= 2.0;
+            for (int i = 0; i < 60; ++i) {
+                const double mid = 0.5 * (lo + hi);
+                if (extendedSideLen(princess, chestW, aY, sY + mid, waistlineWidth, dartW) < target)
+                    lo = mid;
+                else
+                    hi = mid;
+            }
+            return 0.5 * (lo + hi);
+        };
+        if (lenF > lenB) {
+            deltaBack = dropTo(backPrincess, backWidth, bArmholeY, bSeamSideY,
+                               backWaistlineWidth, backDart, lenF);
+        } else if (lenB > lenF) {
+            deltaFront = dropTo(frontPrincess, frontWidth, fArmholeY, fSeamSideY,
+                                frontWaistlineWidth, frontDart, lenB);
+        }
+    }
 
     HalfBodice back;
     PrincessHalf backSplit;
@@ -1043,8 +1124,6 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double fNeckW = halter ? frontNeckW * 0.55 : frontNeckW;
     const double fShoulderHalf = halter ? fNeckW + halterStrapWidth : shoulderHalf;
     const double fShoulderDrop = halter ? 10 : shoulderDrop;
-    const double fArmholeY = halter ? armholeY + halterStrapRise : armholeY;
-    const double fSeamSideY = halter ? seamSideY + halterStrapRise : seamSideY;
     // Yaka deliği boyundan kısa çıkıyorsa ÖN derinlik açılır (yukarıdaki
     // neckClearanceDropMM: geometrik zorunluluk, genişlik değil derinlik).
     // Halter kendi çerçevesini kurar (omuz dikişi yok, delik boynu çevrelemez).
@@ -1062,9 +1141,6 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     const double frontDartLength = empire
         ? std::max(12.0, (fSeamSideY - 8) - (fArmholeY + 40))
         : frontLength - fArmholeY - 40;
-    const bool frontPrincess = shaping == Shaping::Princess && frontDart >= minPrincessIntake &&
-                               !(smallBody && frontDart < princessCleanIntakeMM);
-
     HalfBodice front;
     PrincessHalf frontSplit;
     if (frontPrincess) {
@@ -1095,13 +1171,11 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
 
     // A half that stays unsplit under princess+extension is extended later by
     // the top block's classic extension; report the matching side-seam length
-    // so the front/back audit compares like with like.
+    // so the front/back audit compares like with like. Same lambda the truing
+    // solved against (one formula, one truth) — and it reads the TRUED waist
+    // level, because that is where the piece was actually drawn.
     auto extendedDartSideLen = [&](double waistlineWidth, double chestW, double aY, double sY) {
-        const Point armholeBottom{chestW, aY};
-        return pathLength({PathCommand::move(armholeBottom), PathCommand::curve(
-            {hipHalfQuarter, sY + extendBelowWaist - 10},
-            {waistlineWidth, sY + extendBelowWaist * 0.35},
-            {hipHalfQuarter, sY + extendBelowWaist * 0.7})});
+        return extendedSideLen(/*princess=*/false, chestW, aY, sY, waistlineWidth, 0.0);
     };
 
     BodiceDraft draft;
@@ -1119,7 +1193,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     } else {
         draft.back = back.piece;
         draft.backSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)
-            ? extendedDartSideLen(backWaistlineWidth, backWidth, bArmholeY, bSeamSideY)
+            ? extendedDartSideLen(backWaistlineWidth, backWidth, bArmholeY, bSeamSideY + deltaBack)
             : back.sideSeam;
         draft.backSewnWaist = back.sewnWaist;
         draft.backStraightWaist = back.straightWaist;
@@ -1136,7 +1210,7 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     } else {
         draft.front = front.piece;
         draft.frontSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)
-            ? extendedDartSideLen(frontWaistlineWidth, frontWidth, fArmholeY, fSeamSideY)
+            ? extendedDartSideLen(frontWaistlineWidth, frontWidth, fArmholeY, fSeamSideY + deltaFront)
             : front.sideSeam;
         draft.frontSewnWaist = front.sewnWaist;
         draft.frontStraightWaist = front.straightWaist;
