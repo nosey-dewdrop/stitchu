@@ -53,3 +53,18 @@ Tam ctest, sakin ağaçta, tek koşu:
 ## YASAK
 Pin taşımayı "yaklaşsın diye" tek tek yapmak · toleransı büyütmek · testi
 DISABLED yapmak · assert çıkarmak · `git checkout --` ile temizlemek.
+
+---
+## EK — F-F ajanı kök sebebi ZATEN buldu, tekrar arama
+`sewable_census` + `engine_check`: 82980 draftın **30'unda** `[sideseam] 3.0mm`
+(tavan 3.0), hepsi `pear` gövde, hepsi tam sınırda.
+**KÖK:** yan dikiş eşitlemesi, oyuk seviyesi değişince yeniden koşmuyor.
+**ADAY:** eşitlemeyi `armholeY` çözüldükten SONRA çağır.
+Bunu uygula, eşiği büyütme.
+
+`golden_check` / `recipe_dress_check`: çizim değişti → pin ve reçete-DSL aynası bayat.
+⚠ Reçete DSL'i `hollow = share * dx` KAPALI FORM istiyor, F-F'in bisection'ını ifade
+edemiyor. İki aday: (1) oymayı kirişin kapalı-form kesrine indir, (2) DSL'e `solve`
+primitifi ekle. Hangisini seçtiğini gerekçesiyle yaz.
+⚠ `golden_check` repin **Damla kararı** (`GOLDEN-PIN.md` etiket istiyor) — pin'i
+taşıma, farkı ÖLÇ ve `DAMLA-KUYRUK.md`'ye satır düş.
