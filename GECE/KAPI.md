@@ -71,3 +71,20 @@ kapatan bir aday değil (o commit onları bilerek sildi) ama kartın "ölçülem
 aday-1 reddindeki ENV/REAL ayrımı hakem tarafından yeniden koşturulmadı
 (**DOĞRULANMADI**); 4.7 adayın ölçülmüş+kayıtlı olmasını ister, reddin doğruluğunu
 değil, o yüzden hüküm bu ayrımdan bağımsızdır.
+
+---
+
+## V0-0 · YAZMA VE KÂTİP KAPILARI (şef kaydı, 2026-08-24)
+
+- V0-0 · yazma kapısı · **GEÇTİ** · tutanak `GECE/V0.md`, koşu durumu `GECE/KOSU.md`
+  (65 satır, tavan 150) ve kuyruğun başındaki üç karar satırı (`K-FN1`, `K-V0A`,
+  `K-V0B`, hepsi 3.8.d formatında ve VARSAYILANIYLA) tek commit'te bankalandı. ·
+  commit `04118d1`
+- V0-0 · kâtip kapısı · **GEÇTİ** · kâtip ayrı temiz oturumda koştu, yalnız
+  `docs/` + `README.md` + `GECE/INDEX.md`'ye yazdı, fazın kalıcı dosyalarını
+  yönlendirme tablosuna aldı ve koşunun ÇÜRÜTTÜĞÜ 5 bayat cümleyi (77/77 ·
+  EU34-52 10/10 · byte-identical · ALL PASS · ~218 KB bundle) sessiz silmeden
+  emekliye ayırdı. · commit `65bca82`
+
+**FAZ HÜKMÜ: V0 KAPANDI.** Altı alt kapı + yazma + kâtip yeşil; 4.7 önce KALDI
+aldı, 0F kartıyla kapatıldı, ikinci hakem GEÇTİ dedi. Yeni kırmızı ad: 0.
