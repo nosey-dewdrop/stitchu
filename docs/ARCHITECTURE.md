@@ -44,7 +44,7 @@ Geometric invariants run on every draft, and at runtime before any PDF: side-sea
 The required loop after engine changes: `engine_check` + `cutline_check` + `precision-report.js` + `web-fuzz.js` + golden diff.
 
 ### 7. WASM boundary (`engine/wasm/bindings.cpp`)
-A thin embind layer exposing `draftJSON(measurements, spec) → JSON pieces`. Built by `engine/build-wasm.sh` into a single-file bundle (`engine/dist/stitchu-engine.js`, ~218 KB), copied to `web/vendor/`. The same file is `require()`-able from Node, which is how the fuzz/precision/proof tools drive the real engine — no parallel JS implementation to drift.
+A thin embind layer exposing `draftJSON(measurements, spec) → JSON pieces`. Built by `engine/build-wasm.sh` into a single-file bundle (`engine/dist/stitchu-engine.js`), copied to `web/vendor/`. `ls -l engine/dist/stitchu-engine.js` is what prints its size; on 24 Aug 2026 that read 1 209 765 bytes (~1.2 MB), so the "~218 KB" figure this line used to carry was stale by roughly 5.5× and was corrected, not deleted (`GECE/V0.md` §1.4). The same file is `require()`-able from Node, which is how the fuzz/precision/proof tools drive the real engine — no parallel JS implementation to drift.
 
 ### 8. Web app (`web/`)
 Static, framework-free, GitHub Pages. `store.js` (measurements + closet, local), `analyze.js`/`create.js` (photo → Worker → confirm → draft), `render.js` (SVG pieces with darts, grainline, double cut/sew line), `print.js` (client-side tiled A4 PDF, 3 cm calibration square, 190×250 mm printable page, page map), `wall.js` (communal stitch wall via Worker KV). EN/TR i18n. Cache-busting is manual: bump `?v=N` on every deploy (deploy = `git subtree split --prefix web` → `gh-pages`).
@@ -70,7 +70,7 @@ Goal: kill the per-call LLM cost. The vision step is bounded classification into
 - C++ core, multiple consumers: one engine feeds web (WASM), Node tooling (same bundle), later iOS (static lib) and Android (NDK). Chosen over Rust deliberately (synergy with coursework); the golden matrix is what made a full Swift→C++ rewrite safe.
 - Client-side drafting: no server cost, no measurement upload, shareable static hosting.
 - Spec-driven port: `FORMULAS.md` is the source of truth, not line-by-line translation — the port implements the spec.
-- Opt-in vocabulary: every new feature defaults off and must keep the matrix ALL PASS and the base draft byte-identical.
+- Opt-in vocabulary: every new feature defaults off, and the draft matrix plus the base-draft golden pin are the gates that decide whether it stayed clean. Their verdict is read from their own output (`ctest`, `golden_check`), never asserted here — the standing-claim wording this line used to carry was replaced on 24 Aug 2026 under RULES §6, after `golden_check` was measured red (`GECE/V0.md` §1.2).
 - Prove, don't claim: a feature exists only when it is in `engine/src`, has a passing `_check` test, renders correctly, and survives the matrix + golden + precision + fuzz loop (discipline codified in `PLAN.md`).
 - One truth, one place: neck width, armhole curve, binding length each have a single computing site; derived values are measured from the same geometry, never recomputed.
 
