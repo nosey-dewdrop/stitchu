@@ -1,0 +1,109 @@
+=== ADIM 1: recete sevk + recipe_dress_check ===
+$ cp GECE/log/V1-B.recipe-FIXED.json recipes/shift-dress-square-spaghetti.json
+$ ./engine/build/recipe_dress_check recipes/shift-dress-square-spaghetti.json
+exit=0
+PASS sayimi: $ grep -cE '^\s*\[PASS\]' -> 125
+FAIL sayimi: $ grep -cE '^\s*\[FAIL\]' -> 0
+son satir: recipe_dress_check: ALL PASS
+
+=== ADIM 2: web aynasi + cmp ===
+$ cp recipes/shift-dress-square-spaghetti.json web/recipes/shift-dress-square-spaghetti.json
+$ cmp recipes/shift-dress-square-spaghetti.json web/recipes/shift-dress-square-spaghetti.json
+cmp exit=0 (0 = bayt ayni, cikti yok)
+94c3c77eb8d0312aee01f4d2da72aa10
+94c3c77eb8d0312aee01f4d2da72aa10
+
+=== ADIM 3: wasm derleme ===
+$ bash engine/build-wasm.sh   -> exit 0
+emcc: /opt/homebrew/bin/emcc / emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.2-git
+--- derleme logu (tam) ---
+-rw-r--r--@ 1 damummyphus  staff  1218186 24 Ağu 05:56 dist/stitchu-engine.js
+copied to web/vendor/
+copied to backend/engine/
+--- web/vendor + backend/engine ciktilari ---
+-rw-r--r--@ 1 damummyphus  staff    46910 24 Ağu 05:56 backend/engine/stitchu-worker.js
+-rwxr-xr-x@ 1 damummyphus  staff  1045192 24 Ağu 05:56 backend/engine/stitchu-worker.wasm
+-rw-r--r--@ 1 damummyphus  staff  1218186 24 Ağu 05:56 web/vendor/stitchu-engine.js
+f9cd002ee8a6635d6d467f8053b1c8d9
+f9cd002ee8a6635d6d467f8053b1c8d9
+(md5 esitligi = kopya bayt ayni)
+
+=== ADIM 4: repin ===
+$ scripts/repin-golden.sh "<etiket>"
+re-pinned: 23406 -> 23406 lines, md5 d5b5f28b2ef41a776b14699e9220982a
+label: scye derinligi Aldrich p.11'e baglandi (52ae85c) — depth = 0.10*bust + 122mm + nape ofseti, kaynaksiz backLength*0.44 kolonu terk edildi; bagimsiz tanik sloper_check (temmuz pini) scye depth 189.0 -> 210.0mm, Aldrich 215 icinde
+
+NOW REQUIRED (the pin is not valid without these):
+  1. add a dated ledger entry to engine/GOLDEN-PIN.md with this label,
+     the divergence commit, a content diff summary (garments changed in
+     place, not just line arithmetic), and evidence links.
+  2. Damla's explicit approval for the behavior change.
+  3. commit the csv + ledger together.
+eski md5: fcaa935448b58ef38d108ffeda49e2df
+yeni md5: d5b5f28b2ef41a776b14699e9220982a
+
+--- icerik diff olcumu (python3, eski pin vs yeni dump) ---
+degisen satir 9651 / 23406 = %41.23 ; max 62.7764mm ; medyan 5.6000mm ; anahtar eklenmedi/silinmedi
+Bodice Front n=1020 max=62.7764 med=6.1286
+Top Front    n=615  max=62.7764 med=6.1286
+Balloon Sleeve n=2520 max=49.7051 med=23.7478
+Sleeve       n=1995 max=49.7051 med=23.2728
+Bodice Back  n=2120 max=47.4355 med=0.0022
+Top Back     n=840  max=47.4355 med=3.2499
+fabric       n=41   max=0.1000  med=0.1000
+Skirt Front / Skirt Back / Skirt Panel: max=0.0001mm (KIMILDAMADI)
+
+--- ON-KONTROL: recete == taze motor (repin oncesi) ---
+$ cmp <(golden_dump | grep top/square/tunic/none.short | grep ,outline,) <(recipe_dress_golden_dump recipes/...json)  -> 51/51 satir, bayt ayni
+
+--- bagimsiz tanik: sloper_check ---
+$ ctest --test-dir engine/build -R '^sloper_check$'  -> 100% tests passed, 0 failed out of 1
+  scye depth below nape                  engine    210.0   aldrich    215.0   err    -5.0 mm
+  [PASS] scye depth below nape within 15 mm of the Aldrich draft
+all sloper checks pass — EU38 block within the pinned Aldrich bounds
+
+=== ADIM 5: defter girdisi ===
+engine/GOLDEN-PIN.md 2026-08-24 girdisi yazildi (onay statusu: DAMLA ONAYI BEKLIYOR K-V1A)
+
+=== ADIM 6: TAM ctest ===
+$ ctest --test-dir engine/build --output-on-failure
+
+--- (a) COMMIT ONCESI kosu -> GECE/log/V1-A.ctest.after-precommit.txt ---
+94% tests passed, 6 tests failed out of 105
+KIRMIZI ADLAR: generated_ratchet_check · bundle_fresh_check · style_check ·
+               sizechart_source_check · contract_check · figure_check
+generated_ratchet_check ve bundle_fresh_check = COMMIT-ZAMANI defter kapilari:
+  - generated_ratchet_check: golden-reference.csv baytlari kaydi, manifest sha'si
+    kaymamis. Testin KENDI ilan ettigi yol: producer'i kosur, --accept, manifesti
+    AYNI commit'e koy. Yapildi (contract/generated-paths.sha256, 57 yol).
+  - bundle_fresh_check: 'built' = artifact'a dokunan son COMMIT (git log -1),
+    'source' = engine/src'e dokunan son commit. Yeni derlenmis ama commitlenmemis
+    bundle git gecmisinde hala b197ccf'te duruyordu. Commit edilince kapaniyor.
+  Ikisi de test dosyasina DOKUNULMADAN, testlerin kendi ilan ettigi yolla kapandi.
+
+--- (b) COMMIT SONRASI kosu -> GECE/log/V1-A.ctest.after.txt (BAGLAYICI) ---
+
+Total Test time (real) = 266.26 sec
+
+The following tests did not run:
+	 96 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  8 - style_check (Failed)
+	 15 - sizechart_source_check (Failed)
+	 85 - contract_check (Failed)
+	 90 - figure_check (Failed)
+Errors while running CTest
+
+=== KAPI 1: KIRMIZI AD KUMESI (RULES 9) ===
+ONCE (6): golden_check · style_check · sizechart_source_check · recipe_dress_check · contract_check · figure_check
+SONRA (4): style_check · sizechart_source_check · contract_check · figure_check
+DUSEN: golden_check, recipe_dress_check.  YENI AD: 0.  KUME BUYUMEDI.
+
+=== KAPI 2: risk testleri ===
+ 72/106 Test  #72: recipe_dress_golden_check ........   Passed    0.03 sec
+ 75/106 Test  #75: recipe_wasm_parity_dress .........   Passed    0.09 sec
+ 77/106 Test  #77: dxf_wasm_parity_dress ............   Passed    0.10 sec
+
+=== KAPI 3: build type ===
+CMAKE_BUILD_TYPE:STRING=Release

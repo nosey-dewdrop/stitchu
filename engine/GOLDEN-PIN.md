@@ -8,6 +8,69 @@ required for behavior changes).
 
 ## Pin history
 
+### 2026-08-24 — 23406 lines, md5 d5b5f28b2ef41a776b14699e9220982a (DAMLA ONAYI BEKLIYOR, K-V1A)
+- Label: "scye derinligi Aldrich p.11'e baglandi (52ae85c) — depth = 0.10*bust
+  + 122mm + nape ofseti, kaynaksiz backLength*0.44 kolonu terk edildi; bagimsiz
+  tanik sloper_check (temmuz pini) scye depth 189.0 -> 210.0mm, Aldrich 215
+  icinde".
+- Divergence commit: 52ae85c "KIRMIZI: source the scye depth to aldrich, solve
+  the scye hollow, gate the shipped line" (23 Aug 2026). Site of the change:
+  `engine/src/bodice.cpp:905-907` (shoulder seam length now bust-sourced) and
+  `engine/src/bodice.cpp:917-924` (scye depth).
+  - OLD: `torsoArmholeY = backLength * armholeDepthFactor + shoulderDrop`
+    (backLength * 0.44, an unsourced size-table column that STALLS at EU44->46 —
+    that stall is where the armhole grade broke).
+  - NEW: `torsoArmholeY = bust * scyeDepthPerBust + scyeDepthInterceptMM +
+    neck * backNeckCutoutFactor`, i.e. `0.10*bust + 122mm` from Aldrich p.11's
+    two published points (21.0cm @ bust 88, 21.4cm @ bust 92), plus the nape
+    offset because Aldrich measures the depth FROM THE NAPE while our y origin
+    is the neck-point line.
+  - Same commit also sources the shoulder seam to Aldrich p.11 (12.25cm @ bust
+    88, 12.5cm @ bust 92 -> `shoulderSeamMM = 0.0625*bust + 67.5`), replacing a
+    flat 126mm that was only right at one size.
+- CONTENT DIFF (what moved, not line arithmetic). 23406 -> 23406 lines, ZERO
+  keys added or removed, key order byte-identical. 9651 lines (41.23%) changed
+  IN PLACE; overall max delta 62.7764mm, median 5.6000mm. Per piece
+  (`n` = changed lines, max/median in mm):
+
+  | piece | n | max mm | median mm |
+  |---|---|---|---|
+  | Bodice Front | 1020 | 62.7764 | 6.1286 |
+  | Top Front | 615 | 62.7764 | 6.1286 |
+  | Balloon Sleeve | 2520 | 49.7051 | 23.7478 |
+  | Sleeve | 1995 | 49.7051 | 23.2728 |
+  | Bodice Back | 2120 | 47.4355 | 0.0022 |
+  | Top Back | 840 | 47.4355 | 3.2499 |
+  | fabric (yardage rows) | 41 | 0.1000 | 0.1000 |
+  | Skirt Front | 150 | 0.0001 | 0.0001 |
+  | Skirt Back | 150 | 0.0001 | 0.0001 |
+  | Skirt Skirt Panel (quarter circle) | 200 | 0.0001 | 0.0001 |
+
+  Reading: everything that moved is a BODICE/SLEEVE piece — the six garment
+  pieces the scye depth and shoulder seam actually feed. The skirt pieces DID
+  NOT MOVE: their largest delta across all 500 changed skirt rows is 0.0001mm
+  (last-digit print noise, not geometry). The 41 `fabric` rows moved by exactly
+  0.1 (yardage rounding step) and no more. Sleeves carry the largest median
+  because the cap re-seats by bisection onto the new armhole.
+- INDEPENDENT WITNESS: `sloper_check` (ctest #51) — pinned in July from an
+  independent Aldrich hand-draft, i.e. it was NOT written to match this change.
+  It was RED before 52ae85c and is GREEN today with the NEW number:
+  `engine/build/sloper_check` prints
+  `scye depth below nape   engine 210.0   aldrich 215.0   err -5.0 mm`
+  `[PASS] scye depth below nape within 15 mm of the Aldrich draft`
+  `all sloper checks pass — EU38 block within the pinned Aldrich bounds`
+  (`ctest -R ^sloper_check$` -> `100% tests passed, 0 tests failed out of 1`).
+  So this re-pin seals a real improvement measured by a third party; it does not
+  silence a red.
+- Recipe path shipped in the same chain: `recipes/shift-dress-square-spaghetti.json`
+  now draws the scye with the motor's OWN solver (`scye` op, e4516cf) instead of
+  copying its control points. `recipe_dress_check` -> PASS 125 / FAIL 0, exit 0.
+  Evidence log: `GECE/log/V1-A.olcum.txt`, full ctest `GECE/log/V1-A.ctest.after.txt`.
+- APPROVAL STATUS: **DAMLA ONAYI BEKLIYOR (K-V1A)** — varsayilan yurudu (the pin
+  and the ledger are committed together so the tree is coherent), but the
+  behavior change is NOT taste-approved yet. Damla's eye on the new armhole is
+  the open gate.
+
 ### 2026-07-28 — 23406 lines, md5 fcaa935448b58ef38d108ffeda49e2df (DAMLA APPROVAL PENDING)
 - Label (pending Damla's wording): "set-in armscye — kollu giysiler artik
   set-in kol oyugu aliyor, kolsuz-teget degil".
