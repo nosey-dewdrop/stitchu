@@ -14,10 +14,15 @@ constexpr double kPi = 3.14159265358979323846;
 
 // ---- GarmentSurf: DEFINITIONS. The declaration is in surfacepattern.hpp so the
 // projection line can be fed from this same shell; the code stays here. ----
+const std::array<const char*, 5>& GarmentSurf::ringNames() {
+    static const std::array<const char*, 5> kNames{"neck", "shoulder", "bust", "waist", "hip"};
+    return kNames;
+}
+
 GarmentSurf GarmentSurf::fromBody(const BodySurface& body, const double easeMM[5]) {
     GarmentSurf s;
     int k = 0;
-    for (const char* name : {"neck", "shoulder", "bust", "waist", "hip"}) {
+    for (const char* name : ringNames()) {
         for (const BodyLevel& lv : body.levels())
             if (lv.name == name) {
                 const Section sec = body.sectionAt(body.parameterFor(lv.heightMM));

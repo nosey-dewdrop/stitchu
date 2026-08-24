@@ -95,15 +95,21 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
     out.front = front;
     const double sgn = front ? 1.0 : -1.0;
 
-    const GarmentSurf::Ring& neck = ringNamed(surf, "neck");
-    const GarmentSurf::Ring& shoulder = ringNamed(surf, "shoulder");
-    const GarmentSurf::Ring& bust = ringNamed(surf, "bust");
-    const GarmentSurf::Ring& waist = ringNamed(surf, "waist");
-    const GarmentSurf::Ring& hip = ringNamed(surf, "hip");
+    // The five ring names come from GarmentSurf's own list, not from five string
+    // literals repeated here: one closed list, one authority (surfacepattern.hpp).
+    const std::array<const char*, 5>& RN = GarmentSurf::ringNames();
+    const GarmentSurf::Ring& neck = ringNamed(surf, RN[0]);
+    const GarmentSurf::Ring& shoulder = ringNamed(surf, RN[1]);
+    const GarmentSurf::Ring& bust = ringNamed(surf, RN[2]);
+    const GarmentSurf::Ring& waist = ringNamed(surf, RN[3]);
+    const GarmentSurf::Ring& hip = ringNamed(surf, RN[4]);
     // The hem is not one of the five body rings — it is where the SHELL stops
     // (GarmentSurf::hemH, set by the A-line sweep). With the sweep off there is
     // no hem ring and the shell's bottom is the hip, which is what a straight
-    // sheath is; reported as such rather than invented.
+    // sheath is; reported as such rather than invented. Being outside the ring
+    // list, it is the ONE level name written here; every other one is read off
+    // the ring it belongs to.
+    const std::string kHemRing = "hem";
     const bool hasHem = surf.hemScale > 0.0 && surf.hemH > 0.0;
     const double hemZ = hasHem ? surf.hemH : hip.h;
 
@@ -173,11 +179,11 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
     }
 
     // ---- THE SIX MEASURES ----
-    out.measures.push_back({"hem_circumference", hasHem ? "hem" : "hip",
+    out.measures.push_back({"hem_circumference", hasHem ? kHemRing : hip.name,
                             girthAt(surf, hemZ)});
     out.measures.push_back({"bust_circumference", bust.name, girthAt(surf, bust.h)});
     out.measures.push_back({"waist_circumference", waist.name, girthAt(surf, waist.h)});
-    const std::string down = "shoulder->" + std::string(hasHem ? "hem" : "hip");
+    const std::string down = shoulder.name + "->" + (hasHem ? kHemRing : hip.name);
     out.measures.push_back({"body_length", down, centreLineArc(surf, shoulder.h, hemZ, front)});
     out.measures.push_back({"neck_opening_width", neck.name, 2.0 * halfWidthAt(surf, neck.h)});
     out.measures.push_back({"shoulder_width", shoulder.name,

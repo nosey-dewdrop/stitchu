@@ -20,6 +20,7 @@
 //
 // Units mm.
 #include <cstdlib>
+#include <array>
 #include <string>
 #include <vector>
 
@@ -84,6 +85,13 @@ struct GarmentSurf {
     // shoulder height the garment surface is now exactly as wide as the
     // shoulder the chart declares.
     static GarmentSurf fromBody(const BodySurface& body, const double easeMM[5]);
+
+    // THE RING NAMES, ONCE. fromBody() built its rings from a literal list and
+    // every consumer that wanted a ring by role wrote the same five words again
+    // (shellprojection.cpp had all five). Five literals in two files is two
+    // sources for one closed list, and the whole point of Ring::name is that a
+    // consumer never re-derives which ring it is holding. Descending height.
+    static const std::array<const char*, 5>& ringNames();
 
     double blendMM = 50.0;  // hip-corner rounding half-width (the drafting "hip curve")
 

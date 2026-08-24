@@ -1,0 +1,14 @@
+olculen       : agac /Users/damummyphus/damla_projects_2026/stitchu
+taban commit  : 94870917d17c686780c0d5f275850292c0393374
+taban toplam  : 10418
+bugun toplam  : 10438 (delta +20)
+
+  FAIL ARTTI  eksen ADI   garment                 1172 ->  1186  (+14)
+  FAIL ARTTI  eksen ADI   neckline                 991 ->   995  (+4)
+  FAIL ARTTI  enum DEGERI hip                      102 ->   103  (+1)
+  FAIL ARTTI  enum DEGERI waist                     86 ->    87  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (4 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.

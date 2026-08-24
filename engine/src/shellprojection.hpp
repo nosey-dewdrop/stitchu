@@ -76,11 +76,15 @@ struct ShellProjection {
     double topZMM = 0.0, bottomZMM = 0.0;
 };
 
-// The six numbers, all read off the SAME shell, each carrying its ring:
-//   hem_circumference   (ring "hem")       ellipse perimeter + 2*pi*d
-//   bust_circumference  (ring "bust")      ellipse perimeter + 2*pi*d
-//   waist_circumference (ring "waist")     ellipse perimeter + 2*pi*d
-//   body_length         (ring "shoulder->hem")   ARC of the centre-front line
+// The six numbers, all read off the SAME shell, each carrying its ring. The ring
+// each one is read at is NOT restated here as a literal: every measure carries
+// Ring::name, and the ring names themselves have exactly one authority,
+// GarmentSurf::ringNames() — a second copy of that list in a comment is a second
+// source, which is the failure mode this whole file was written against.
+//   hem_circumference       ellipse perimeter + 2*pi*d, at the hem level
+//   bust_circumference      ellipse perimeter + 2*pi*d
+//   waist_circumference     ellipse perimeter + 2*pi*d
+//   body_length         (top ring -> hem level)   ARC of the centre-front line
 //                                                ALONG the shell surface
 // and, after them, one measure that is reported but DELIBERATELY NOT GATED:
 //   body_height_projected (same ring pair)       the vertical drop, top z - bottom z
@@ -92,8 +96,8 @@ struct ShellProjection {
 // comparison that had no meaning. body_length is now the same KIND of thing on
 // both sides — a length along the cloth — and the height is kept under its own
 // name so nothing is lost. No factor was applied to make the two agree.
-//   neck_opening_width  (ring "neck")      2*(a + d) at the neck ring
-//   shoulder_width      (ring "shoulder")  2*(a + d) at the shoulder ring
+//   neck_opening_width      2*(a + d) at the topmost ring
+//   shoulder_width          2*(a + d) at the ring below it
 //
 // neck_opening_width is the SHELL's neck ring, not a drafted neckline: where the
 // neckline is actually cut is TopProfile's decision inside surfacepattern.cpp,
