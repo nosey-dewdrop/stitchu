@@ -5,6 +5,32 @@ Bana değil **Damla'ya** düşen kararlar. Buraya satır olarak düşer, cevapla
 
 ---
 
+## ★ KUYRUĞUN BAŞI — v6 gece koşusu V0'ın (24 Ağu) öne koyduğu üç satır
+
+**K-FN1 · KOL OYUĞU BANDI: taban beden mi, sekiz beden mi?** (tam gövdesi bu
+dosyanın sonunda, "K-FN1" başlığı altında — tek sayfa, ölçümler hazır)
+· SEÇENEKLER: **(A)** K1 taban bedene (EU38) baksın; yayınlanmış kaynak tek
+bedeni destekliyor ve satın alınmış Buğra kalıbı da banttan 8/8 düşüyor.
+**(B)** bant sekiz bedene baksın; o zaman EU34 (375.92mm) ve EU36 (389.75mm)
+kırmızı düşer ve oyma işi küçük bedenlerde ayrıca çözülür.
+· VARSAYILAN: **(A)** · ETKİLEDİĞİ FAZ: V7 (kol) — (B) seçilirse oyma o faza kart olur.
+
+**K-V0A · `patterns_real/` git'ten çıkarılsın mı?** 41 takipli telifli dosya
+`contract_check`'i kırmızı tutuyor. · SEÇENEKLER: **(A)** dokunma, kırmızı
+kalsın (ilan edilmiş karar borcu olarak durur). **(B)** `git rm -r --cached
+patterns_real` — V0'da ÖLÇÜLDÜ, kapı **GREEN, exit 0** döndü; ama git
+GEÇMİŞİNDEKİ iz ayrı bir iştir (filter-repo). · VARSAYILAN: **(A)**
+· ETKİLEDİĞİ FAZ: V1 (pin ve kaynak temizliği).
+
+**K-V0B · `style_check` yeniden pinlensin mi?** `engine/STYLE-PIN` `af49514`'te
+silinmiş; V0'da aday ÜRETİLEMEDİ çünkü pin testin kendi çıktısından
+üretilemiyor (dosyanın kendi yasağı) ve `scripts/repin-style.sh` terminalden
+senin onayını bekliyor. · SEÇENEKLER: **(A)** kırmızı kalsın. **(B)** repin
+script'ini sen koştur, pin farkının sebebi commit mesajına yazılsın.
+· VARSAYILAN: **(A)** · ETKİLEDİĞİ FAZ: V1.
+
+---
+
 ## ÖZET TABLO (TUR 14'te derlendi — gövdeler kısaltılmadı, sadece başlıklar netleşti)
 
 Aciliyet üç kademe: **ACİL** = bugün bir şeyi durduruyor · **SIRADA** = bir halkanın önünde duruyor · **BEKLER** = bilgi/tercih, kimseyi durdurmuyor.
