@@ -1,0 +1,113 @@
+V1-F — sloper_check TANIK OLCUMU (worker, 2026-08-24 06:21 +03)
+Amac: GOLDEN-PIN.md 2026-08-24 girdisindeki "sloper_check 52ae85c'den ONCE KIRMIZIYDI, scye depth 189.0 -> 210.0" cumlesini bagimsiz olcmek.
+
+================================================================
+A) ONCE — 52ae85c^ = c3d4359 (ayri Release worktree'de derlendi)
+================================================================
+$ git rev-parse 52ae85c^
+c3d43594557c805c17df8dc7e5c19c317e79531f
+$ git worktree add /tmp/stitchu-c3d4359 c3d4359
+$ cmake -S /tmp/stitchu-c3d4359/engine -B /tmp/stitchu-c3d4359-build -DCMAKE_BUILD_TYPE=Release
+$ cmake --build /tmp/stitchu-c3d4359-build --target sloper_check -j8
+$ /tmp/stitchu-c3d4359-build/sloper_check ; echo EXIT=$?
+----------------------------------------------------------------
+sloper check — engine EU38 vs independent Aldrich hand draft (mm)
+  [PASS] EU38 bodice drafted with the expected outline layout
+
+ bodice landmarks
+  back neck width                        engine     69.0   aldrich     70.0   err    -1.0 mm
+  [PASS] back neck width within 5 mm of the Aldrich draft
+  front neck width                       engine     59.5   aldrich     65.0   err    -5.5 mm   (report-only)
+  scye depth below nape                  engine    204.4   aldrich    215.0   err   -10.6 mm
+  [PASS] scye depth below nape within 15 mm of the Aldrich draft
+  shoulder seam (drawn)                  engine    126.0   aldrich    122.5   err    +3.5 mm
+  [PASS] shoulder seam (drawn) within 10 mm of the Aldrich draft
+  shoulder tip drop                      engine     50.7   aldrich     50.0   err    +0.7 mm
+  [PASS] shoulder tip drop within 8 mm of the Aldrich draft
+  bust-line girth (sewn)                 engine    938.0   aldrich    980.0   err   -42.0 mm   (report-only)
+  waist girth (sewn)                     engine    746.0   aldrich    720.0   err   +26.0 mm
+  [PASS] waist girth (sewn) within 35 mm of the Aldrich draft
+  front waist dart intake                engine     50.1   aldrich     43.3   err    +6.8 mm   (report-only)
+  back waist dart intake                 engine     39.9   aldrich     43.3   err    -3.4 mm
+  [PASS] back waist dart intake within 12 mm of the Aldrich draft
+  [PASS] bust-line girth inside the positive-ease band (bust+30 .. bust+120)
+  [PASS] front/back balance carries the 40 mm CF drop (M&S)
+  [PASS] straight skirt drafts as front + back quarters
+
+ skirt landmarks
+  skirt waist girth (sewn)               engine    715.6   aldrich    710.0   err    +5.6 mm
+  [PASS] skirt waist girth (sewn) within 12 mm of the Aldrich draft
+  skirt hip girth                        engine    958.8   aldrich    970.0   err   -11.2 mm
+  [PASS] skirt hip girth within 20 mm of the Aldrich draft
+  skirt hip depth                        engine    200.0   aldrich    206.0   err    -6.0 mm
+  [PASS] skirt hip depth within 10 mm of the Aldrich draft
+  skirt side waist rise                  engine     12.0   aldrich     12.5   err    -0.5 mm
+  [PASS] skirt side waist rise within 2 mm of the Aldrich draft
+  skirt back dart total / quarter        engine     36.2   aldrich     40.0   err    -3.8 mm
+  [PASS] skirt back dart total / quarter within 8 mm of the Aldrich draft
+  [PASS] back quarter splits its intake into two darts (Aldrich: two back darts)
+
+all sloper checks pass — EU38 block within the pinned Aldrich bounds
+EXIT=0
+
+================================================================
+B) SONRA — bugunku HEAD (156710a)
+================================================================
+$ grep CMAKE_BUILD_TYPE engine/build/CMakeCache.txt   -> CMAKE_BUILD_TYPE:STRING=Release
+$ cmake --build engine/build --target sloper_check -j8
+$ ./engine/build/sloper_check ; echo EXIT=$?
+----------------------------------------------------------------
+sloper check — engine EU38 vs independent Aldrich hand draft (mm)
+  [PASS] EU38 bodice drafted with the expected outline layout
+
+ bodice landmarks
+  back neck width                        engine     69.0   aldrich     70.0   err    -1.0 mm
+  [PASS] back neck width within 5 mm of the Aldrich draft
+  front neck width                       engine     59.5   aldrich     65.0   err    -5.5 mm   (report-only)
+  scye depth below nape                  engine    210.0   aldrich    215.0   err    -5.0 mm
+  [PASS] scye depth below nape within 15 mm of the Aldrich draft
+  shoulder seam (drawn)                  engine    122.5   aldrich    122.5   err    +0.0 mm
+  [PASS] shoulder seam (drawn) within 10 mm of the Aldrich draft
+  shoulder tip drop                      engine     49.4   aldrich     50.0   err    -0.6 mm
+  [PASS] shoulder tip drop within 8 mm of the Aldrich draft
+  bust-line girth (sewn)                 engine    938.0   aldrich    980.0   err   -42.0 mm   (report-only)
+  waist girth (sewn)                     engine    746.0   aldrich    720.0   err   +26.0 mm
+  [PASS] waist girth (sewn) within 35 mm of the Aldrich draft
+  front waist dart intake                engine     50.1   aldrich     43.3   err    +6.8 mm   (report-only)
+  back waist dart intake                 engine     39.9   aldrich     43.3   err    -3.4 mm
+  [PASS] back waist dart intake within 12 mm of the Aldrich draft
+  [PASS] bust-line girth inside the positive-ease band (bust+30 .. bust+120)
+  [PASS] front/back balance carries the 40 mm CF drop (M&S)
+  [PASS] straight skirt drafts as front + back quarters
+
+ skirt landmarks
+  skirt waist girth (sewn)               engine    715.6   aldrich    710.0   err    +5.6 mm
+  [PASS] skirt waist girth (sewn) within 12 mm of the Aldrich draft
+  skirt hip girth                        engine    958.8   aldrich    970.0   err   -11.2 mm
+  [PASS] skirt hip girth within 20 mm of the Aldrich draft
+  skirt hip depth                        engine    200.0   aldrich    206.0   err    -6.0 mm
+  [PASS] skirt hip depth within 10 mm of the Aldrich draft
+  skirt side waist rise                  engine     12.0   aldrich     12.5   err    -0.5 mm
+  [PASS] skirt side waist rise within 2 mm of the Aldrich draft
+  skirt back dart total / quarter        engine     36.2   aldrich     40.0   err    -3.8 mm
+  [PASS] skirt back dart total / quarter within 8 mm of the Aldrich draft
+  [PASS] back quarter splits its intake into two darts (Aldrich: two back darts)
+
+all sloper checks pass — EU38 block within the pinned Aldrich bounds
+EXIT=0
+
+================================================================
+HUKUM
+================================================================
+sloper_check 52ae85c ONCESINDE DE YESILDI: exit 0, 'all sloper checks pass',
+scye depth satiri [PASS] (204.4 vs aldrich 215.0, err -10.6 mm; esik 15 mm).
+Hareket KIRMIZI->YESIL degil, YESIL->DAHA-YESIL: err -10.6 mm -> -5.0 mm.
+"189.0" sayisi iki sondanin HICBIRINDE yok. Defterdeki ve e8b7f19 govdesindeki
+cumle OLCUMLE CURUDU. Tolerans/esik degistirilmedi, kaynak dosyaya dokunulmadi.
+
+YAN BULGU (sorulmadi, ayni ciktida duruyor): ayni degisiklik omuz dikisini de
+tasidi — shoulder seam (drawn) 126.0 (err +3.5) -> 122.5 (err +0.0). O satir da
+ONCE de SONRA da [PASS]. Ayni sinif: yesilden daha-yesile.
+shoulder tip drop 50.7 (+0.7) -> 49.4 (-0.6). Diger 18 satirin sayisi degismedi.
+front neck width -5.5 ve bust-line girth -42.0 iki sondada da (report-only), yani
+hukum vermiyorlar; degismediler.

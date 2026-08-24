@@ -11,8 +11,11 @@ required for behavior changes).
 ### 2026-08-24 — 23406 lines, md5 d5b5f28b2ef41a776b14699e9220982a (DAMLA ONAYI BEKLIYOR, K-V1A)
 - Label: "scye derinligi Aldrich p.11'e baglandi (52ae85c) — depth = 0.10*bust
   + 122mm + nape ofseti, kaynaksiz backLength*0.44 kolonu terk edildi; bagimsiz
-  tanik sloper_check (temmuz pini) scye depth 189.0 -> 210.0mm, Aldrich 215
-  icinde".
+  tanik sloper_check (temmuz pini) ONCE de SONRA da YESIL, scye depth hatasi
+  Aldrich 215'e gore -10.6mm -> -5.0mm iyilesti".
+  (Bu etiketin 2026-08-24 tarihli ilk hali "scye depth 189.0 -> 210.0mm" diyordu;
+  o sayi ve ondan turetilen "once kirmiziydi" iddiasi ayni gun OLCUMLE CURUDU —
+  asagidaki INDEPENDENT WITNESS maddesine bak.)
 - Divergence commit: 52ae85c "KIRMIZI: source the scye depth to aldrich, solve
   the scye hollow, gate the shipped line" (23 Aug 2026). Site of the change:
   `engine/src/bodice.cpp:905-907` (shoulder seam length now bust-sourced) and
@@ -54,14 +57,31 @@ required for behavior changes).
   because the cap re-seats by bisection onto the new armhole.
 - INDEPENDENT WITNESS: `sloper_check` (ctest #51) — pinned in July from an
   independent Aldrich hand-draft, i.e. it was NOT written to match this change.
-  It was RED before 52ae85c and is GREEN today with the NEW number:
-  `engine/build/sloper_check` prints
-  `scye depth below nape   engine 210.0   aldrich 215.0   err -5.0 mm`
-  `[PASS] scye depth below nape within 15 mm of the Aldrich draft`
-  `all sloper checks pass — EU38 block within the pinned Aldrich bounds`
-  (`ctest -R ^sloper_check$` -> `100% tests passed, 0 tests failed out of 1`).
-  So this re-pin seals a real improvement measured by a third party; it does not
-  silence a red.
+  MEASURED, both sides (2026-08-24, `GECE/log/V1-F.sloper-tanik.txt`): the check
+  is GREEN BEFORE the change AND GREEN AFTER it. What moved is the error it
+  carries against the Aldrich target, from **-10.6 mm to -5.0 mm**.
+  - BEFORE (`52ae85c^` = `c3d4359`, built in a separate `-DCMAKE_BUILD_TYPE=Release`
+    worktree): `scye depth below nape   engine 204.4   aldrich 215.0   err -10.6 mm`
+    -> `[PASS] ... within 15 mm`, `all sloper checks pass`, exit 0.
+  - AFTER (today's HEAD, `engine/build/sloper_check`):
+    `scye depth below nape   engine 210.0   aldrich 215.0   err -5.0 mm`
+    -> `[PASS] ... within 15 mm`, `all sloper checks pass`, exit 0.
+  - WHAT THIS WITNESS IS WORTH: it supports the DIRECTION of the new pin — the
+    draft moved TOWARD Aldrich on a bound that a third party pinned in July. It
+    is NOT evidence of the "turned a red green" class. The check would have
+    passed either way; it never gated this change.
+  - ⚠ CORRECTION (2026-08-24). The earlier sentence in this ledger and the same
+    sentence in the `e8b7f19` commit body — "sloper_check was RED before 52ae85c",
+    "scye depth 189.0 -> 210.0" — is REFUTED BY MEASUREMENT. It was green before.
+    The number `189.0` appears in NEITHER probe; it was never measured. The label
+    line at the top of this entry carries the same wrong claim and is corrected
+    here rather than deleted, so the refutation stays visible. `e8b7f19`'s commit
+    message cannot be rewritten (history is not rewritten), so its body is covered
+    by THIS correction.
+  - Same probe, unasked but in the same output: `shoulder seam (drawn)` moved
+    126.0 (err +3.5) -> 122.5 (err +0.0) and `shoulder tip drop` 50.7 -> 49.4.
+    Both were [PASS] before and after — same class, green to greener.
+  - Command trail and both full outputs: `GECE/log/V1-F.sloper-tanik.txt`.
 - Recipe path shipped in the same chain: `recipes/shift-dress-square-spaghetti.json`
   now draws the scye with the motor's OWN solver (`scye` op, e4516cf) instead of
   copying its control points. `recipe_dress_check` -> PASS 125 / FAIL 0, exit 0.
