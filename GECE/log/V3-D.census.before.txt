@@ -1,0 +1,46 @@
+=== KANAT (b)+(c) — ARTEFAKT SAYIMI · beden EU38
+    C1 eşiği 1.0° — McNeel Rhino "Understanding Tolerances" doküman varsayılanı (GÜVEN: YÜKSEK)
+    daha sıkı emsal: CATIA V5 GSD 0.5° (GÜVEN: ORTA, sayfa 403) — kapıya BAĞLANMADI
+
+    front: 192 nokta · kapalı kontur 378 nokta · alan 2451.09 cm²
+
+    back: 192 nokta · kapalı kontur 378 nokta · alan 2451.09 cm²
+
+--- SAYIM (kaç adet · kaynak dosya:satır · kök çözüm)
+
+    1 tırtıklı/dişli kenar
+      adet   : 0
+      kaynak : engine/src/shellprojection.cpp:94-97 (halfWidthAt örneklemesi, kSampleStepMM=4.0)
+      KÖK ÇÖZÜM: siluet noktası `effectiveSection`'dan tek tek okunuyor; tırtık çıkarsa kesitin kendi C1'i kırıktır, örneklemeyi sıklaştırmak DEĞİL kesit karışımını (hip blend) sürekli hale getirmek gerekir. HAM işaret değişimi 246 (gürültü dahil, gizlenmiyor).
+
+    2 kendini kesen kontur
+      adet   : 0
+      kaynak : engine/src/shellprojection.cpp:89-118 (project(), tek yanlı zincir + ayna)
+      KÖK ÇÖZÜM: yarı-genişlik h boyunca monoton örneklendiği için öz-kesişim ancak halfWidthAt işaret değiştirirse doğar; çözüm kesim değil, negatif yarı-genişliği Result::Err ile reddetmek.
+
+    3 eğrilik süreksizliği (C1)
+      adet   : 2
+      kaynak : engine/src/surfacepattern.cpp:71-81 (GarmentSurf::effectiveSection, SKIM RUN başlangıcı h=skimBaseH=bel) — ikincil aday: engine/src/surfacepattern.cpp:43-52 (profile()'ın halkalar arası DOĞRUSAL lin() interpolasyonu). shellprojection.cpp:104'ün fitCubics'i DEĞİL: kırık, fit'ten ÖNCE ham örneklenmiş poligonda ölçüldü.
+      KÖK ÇÖZÜM: bel yüksekliğinin ÜSTÜNDE kabuk "skim envelope" yasasına, ALTINDA halka interpolasyonuna uyuyor; iki yasa skimBaseH'de HİÇBİR TEĞET KOŞULU OLMADAN buluşuyor, o yüzden bel bir V köşesi. Kalçada bu sorun zaten çözülmüş (surfacepattern.cpp:55-60, blendMM ile kuadratik köşe yuvarlama) — aynı köşe yuvarlaması BELDE YOK; ya oraya da uygulanmalı ya da skim run'ın alt ucu halka interpolasyonunun bel eğimiyle eşitlenmeli.
+
+    4 dejenere segment / sıfır alan
+      adet   : 6
+      kaynak : engine/src/shellprojection.cpp:94-97 + 112-115 (her koşu r.top..r.bot KAPALI aralık örnekliyor, ardışık koşuların uç noktası AYNI h)
+      KÖK ÇÖZÜM: koşu sınırındaki nokta iki kez push_back ediliyor (bir önceki koşunun son noktası = sonraki koşunun ilk noktası). Kırpma değil: ikinci koşu i=1'den başlamalı ya da out.outline'a yazarken sınır noktası tekilleştirilmeli.
+
+    en büyük teğet farkı: 20.560216° @ front ham-i87 span bust->waist  (eşik 1°)
+
+--- KAPI HÜKÜMLERİ
+ok    1 tırtıklı — anlamlı işaret değişimi 0 (ham 246, hepsi 1° altında)
+ok    2 öz-kesişim — 0 (global overlap yok)
+FAIL  [3 C1] 2 nokta teğet farkı 1°'yi aşıyor
+FAIL  [4 dejenere] 6 sıfır uzunluklu segment — ikili yüklem, tolerans YOK, KIRPILMADI SAYILDI
+ok    4 sıfır alan — her görünümün kapalı konturu pozitif alanlı
+
+--- YER LİSTESİ (ilk 20)
+    4 dejenere segment: front i50->51 @z=1181.550 span shoulder->bust|bust->waist ; front i87->88 @z=1039.800 span bust->waist|waist->hip ; front i140->141 @z=834.800 span waist->hip|hip->hem
+    3 C1 kırığı: front ham-i87 teğet farkı 20.5602° > 1° @z=1039.800 span bust->waist|waist->hip
+    4 dejenere segment: back i50->51 @z=1181.550 span shoulder->bust|bust->waist ; back i87->88 @z=1039.800 span bust->waist|waist->hip ; back i140->141 @z=834.800 span waist->hip|hip->hem
+    3 C1 kırığı: back ham-i87 teğet farkı -20.5602° > 1° @z=1039.800 span bust->waist|waist->hip
+
+FAIL flat_artifact_census — 2 ihlal

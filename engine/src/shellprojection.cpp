@@ -109,8 +109,26 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
         }
         sp.segCount = static_cast<int>(segs.size());
         sp.polyLenMM = polylineLen(pts, 0, static_cast<int>(pts.size()) - 1);
-        for (const Vec2& p : pts) {
-            out.outline.push_back(p);
+        // HALF-OPEN ON THE WRITE SIDE. Consecutive runs share a boundary height
+        // (bust.h ends one run and starts the next), so writing every run closed
+        // put that one point into the chain TWICE and left a zero-length segment
+        // at each of the three interior ring heights (6 across front+back,
+        // measured by tests/flat_artifact_census.mjs). The run is still SAMPLED
+        // closed — fitCubics needs both endpoints, and the fitted chain, the
+        // span lengths and the drawn geometry are unchanged. Only the duplicate
+        // write is dropped: the shared point is written once, by the run that
+        // reached it first, and the next run's firstPt names that same index.
+        // No point is moved, none is removed, nothing is smoothed.
+        size_t i0 = 0;
+        if (!out.outline.empty()) {
+            const Vec2& prev = out.outline.back();
+            if (std::fabs(prev.x - pts[0].x) <= 1e-9 && std::fabs(prev.y - pts[0].y) <= 1e-9) {
+                i0 = 1;
+                sp.firstPt = static_cast<int>(out.outline.size()) - 1;
+            }
+        }
+        for (size_t i = i0; i < pts.size(); ++i) {
+            out.outline.push_back(pts[i]);
             out.ptSpan.push_back(r.name);
         }
         sp.lastPt = static_cast<int>(out.outline.size()) - 1;
