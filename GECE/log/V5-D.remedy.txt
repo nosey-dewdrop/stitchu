@@ -1,0 +1,38 @@
+=== ÖLÇÜLMÜŞ ÇÖZÜM ADAYI (v6 §4.7) — kırmızı iki kalem için
+koşan komut: node /tmp/remedy.mjs  (motor: web/vendor/stitchu-engine.js, spec = bugra-parity.mjs:63)
+
+--- KÖK TEŞHİS (ölçüm, iddia değil): motorun payı ÇARPIMSAL, yayınlanmış bant TOPLAMSAL.
+beden  büst  kalça | büst payı  kalça payı | büst payı/büstCM  kalça payı/kalçaCM
+EU34     80    86 |     49.15       17.20 |           0.6144             0.2000
+EU36     84    90 |     53.55       18.00 |           0.6375             0.2000
+EU38     88    94 |     57.95       18.80 |           0.6585             0.2000
+EU40     92    98 |     62.35       19.60 |           0.6777             0.2000
+EU42     96   102 |     66.75       20.40 |           0.6953             0.2000
+EU44    100   106 |     71.15       21.20 |           0.7115             0.2000
+EU46    104   110 |     75.55       22.00 |           0.7264             0.2000
+EU48    110   116 |     82.15       23.20 |           0.7468             0.2000
+
+--- ADAY: gövde girdisine SABİT bir kaydırma; hangi kaydırma 8 bedende de bandı tutturur?
+  bust +1.0cm -> 8 bedende pay 60.25..93.25mm   bant 63.5..101.6  TUTMUYOR
+  bust +1.5cm -> 8 bedende pay 65.80..98.80mm   bant 63.5..101.6  HEPSİ BANTTA ✔
+  bust +2.0cm -> 8 bedende pay 71.35..104.35mm   bant 63.5..101.6  TUTMUYOR
+  hip +3.5cm -> 8 bedende pay 52.90..58.90mm   bant 50.8..76.2  HEPSİ BANTTA ✔
+  hip +4.0cm -> 8 bedende pay 58.00..64.00mm   bant 50.8..76.2  HEPSİ BANTTA ✔
+  hip +4.5cm -> 8 bedende pay 63.10..69.10mm   bant 50.8..76.2  HEPSİ BANTTA ✔
+  hip +5.0cm -> 8 bedende pay 68.20..74.20mm   bant 50.8..76.2  HEPSİ BANTTA ✔
+
+--- KART DIŞI, ÖLÇÜLDÜ: body.shoulder (contract shoulderCM) ÖLÜ GİRDİ
+komut: node /tmp/sd3.mjs
+body.shoulder= 10cm -> KALIP GEOMETRİSİ shoulder=37 ile FARKLI   (kumaş metresi 1.5)
+body.shoulder= 20cm -> KALIP GEOMETRİSİ shoulder=37 ile BAYT BAYT AYNI   (kumaş metresi 1.4)
+body.shoulder= 30cm -> KALIP GEOMETRİSİ shoulder=37 ile BAYT BAYT AYNI   (kumaş metresi 1.4)
+body.shoulder= 37cm -> KALIP GEOMETRİSİ shoulder=37 ile BAYT BAYT AYNI   (kumaş metresi 1.4)
+body.shoulder= 50cm -> KALIP GEOMETRİSİ shoulder=37 ile BAYT BAYT AYNI   (kumaş metresi 1.4)
+body.shoulder= 80cm -> KALIP GEOMETRİSİ shoulder=37 ile BAYT BAYT AYNI   (kumaş metresi 1.4)
+HÜKÜM: draftJSON KALIP GEOMETRİSİ body.shoulder değerinden BAĞIMSIZ (10..80cm).
+shoulder=10cm koşusunda yalnız kumaş/yerleşim metnini taşıyan alanlar oynuyor,
+tek bir kalıp koordinatı bile kımıldamıyor -> contract/tables.json shoulderCM
+kolonu bu hatta ÖLÜ GİRDİ. Kapının omuz kalemi (K3) motorun KENDİ çizdiği omuz
+dikişini ölçüyor; o dikiş Aldrich tablosundan ön -8.30mm, arka -18.18mm KISA.
+(V5-R KART DIŞI #5 kolonu "kaynaksız ve yanlış büyüklük şüphesi altında" diye
+işaretlemişti; burada ayrıca KULLANILMADIĞI ölçüldü.)

@@ -1,0 +1,54 @@
+=== V5-D §4.5 MUTASYON KANITI  (koşuldu 2026-08-25, HEAD 87b0feb)
+Kanca: V5D_MUTATE=<ölçü>:<±mm>  ÖLÇÜLEN değere mm ekler (EŞİĞE DEĞİL).
+Referans (kancasız): FAIL draft_math_check — 12 ihlal
+
+Kapı zaten KIRMIZI (12 ihlal, hepsi YAYINLANMIŞ ease bandı ihlali), o yüzden
+mutasyon 'yeşil->kırmızı' diye gösterilemez. Gösterilen: bozmanın ihlal
+sayısını ADIYLA oynattığı ve geri alınca 12'ye döndüğü.
+
+★ +5mm HER KALEMDE BOZMA DEĞİLDİR — ÖLÇÜLDÜ:
+  omuz kalemlerinde sapma NEGATİF (motor Aldrich'ten KISA çiziyor: ön -8.30mm,
+  arka -18.18mm), yani +5mm |sapmayı| KÜÇÜLTÜR = kapıyı İYİLEŞTİRİR.
+  Aynı şekilde bust_ease bandın ALTINDA olduğu için +5mm ihlal SAYISINI DÜŞÜRÜR.
+  Bu yüzden her kalem İKİ YÖNDE de bozuldu.
+
+ölçü                     V5D_MUTATE=<ölçü>:+5         V5D_MUTATE=<ölçü>:-5
+scye_depth               13 ihlal                     12 ihlal
+shoulder_width_front     12 ihlal                     13 ihlal
+shoulder_width_back      12 ihlal                     13 ihlal
+back_neck_drop           13 ihlal                     12 ihlal
+bust_ease                11 ihlal                     13 ihlal
+waist_ease               12 ihlal                     12 ihlal
+hip_ease                 12 ihlal                     12 ihlal
+armhole_circumference    12 ihlal                     12 ihlal
+
+OKUMA:
+  * scye_depth, back_neck_drop        : +5 -> 13 ihlal (RATCHET KIRILDI). Bozma yakalandı.
+  * shoulder_width_front/back         : -5 -> 13 ihlal (RATCHET KIRILDI). Bozma yakalandı
+                                        (bu iki kalemde bozan yön EKSİ, yukarıdaki gerekçe).
+  * waist_ease                        : ±5 -> ihlal artışı YOK, çünkü ölçülen 44-53mm ve
+                                        yayınlanmış bant 25.4-60mm; ±5mm hâlâ bandın İÇİNDE.
+                                        BU KALEMİN BANDI ±5mm'yi YAKALAYAMAYACAK KADAR GENİŞ —
+                                        bant yayından geldiği için DARALTILMADI (sayı uydurma yasağı).
+                                        ÖLÇÜLDÜ: waist_ease:20 -> 20 ihlal
+  * hip_ease, bust_ease               : sayı kayıyor ve satırda görünüyor (aşağıda), ama
+                                        zaten bandın dışında oldukları için ihlal SAYISI
+                                        her yönde değişmiyor / azalıyor.
+  * armhole_circumference             : KAYNAKSIZ = KAPIYA GİRMİYOR (yayın yok). Mutasyon
+                                        ihlal sayısını DEĞİŞTİRMEZ ve bu KASITLIDIR.
+
+--- tam çıktı: V5D_MUTATE=back_neck_drop:5
+    ⚠ KANIT KANCASI AKTİF: V5D_MUTATE=back_neck_drop:5
+    back_neck_drop           en kötü |sapma|    13.4000 mm   tavan     8.40 mm
+FAIL  RATCHET KIRILDI — back_neck_drop: en kötü sapma 13.4000mm > tavan 8.40mm
+FAIL draft_math_check — 13 ihlal
+
+--- tam çıktı: V5D_MUTATE=shoulder_width_back:-5
+    ⚠ KANIT KANCASI AKTİF: V5D_MUTATE=shoulder_width_back:-5
+    shoulder_width_back      en kötü |sapma|    23.1823 mm   tavan    18.18 mm
+FAIL  RATCHET KIRILDI — shoulder_width_back: en kötü sapma 23.1823mm > tavan 18.18mm
+FAIL draft_math_check — 13 ihlal
+
+--- GERİ ALMA (kanca YOK, aynı komut)
+node engine/tests/draft_math_check.mjs -> FAIL draft_math_check — 12 ihlal
+0 RATCHET KIRILDI satırı: 0
