@@ -1,0 +1,36 @@
+=== V4-A MUTASYON KANITI (RULES §4.5) — 2026-08-24T15:04:01Z
+Kapi: engine/tests/flat_convention_check.mjs, yeni sart 1c (omuz ucu x <= gogus x).
+Mutasyon: contract/flat-convention-v1.json croquis.landmarks.shoulderTipX
+          70.1799u -> KASTEN 78.0u (+ tureyen shoulderTipY 16.8576 -> 19.36).
+
+--- MUTASYON UYGULANDI (shoulderTipX = 78.0) — KAPI KIRMIZI DUSMELI
+komut: node engine/tests/flat_convention_check.mjs ; echo EXIT=$?
+-----------------------------------------------------------------------
+   [dogrulama] shoulderTipX = 78.0  shoulderTipY = 19.36
+ok    1 croquis — omuz ucu x             min 78.000u  max 78.000u  SAPMA 0.00 mm
+FAIL  [1c omuz>gogus] princess_scoop_dress/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] princess_scoop_dress/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] boat_shift_dress/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] boat_shift_dress/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] vneck_empire_dress/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] vneck_empire_dress/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] square_gathered_dress/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] square_gathered_dress/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] crew_sleeved_top/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] crew_sleeved_top/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] sweetheart_crop_top/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] sweetheart_crop_top/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] scoop_tunic_placket/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] scoop_tunic_placket/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] cowl_openback_top/front: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL  [1c omuz>gogus] cowl_openback_top/back: omuz ucu 234.00 mm, gogus 219.90 mm, oran 1.0641 — omuz gogusten 14.10 mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez
+FAIL flat_convention_check — 16 ihlal
+EXIT=1
+
+--- MUTASYON GERI ALINDI (shoulderTipX = 70.1799) — KAPI YESIL DONMELI
+komut: node engine/tests/flat_convention_check.mjs ; echo EXIT=$?
+-----------------------------------------------------------------------
+   [dogrulama] shoulderTipX = 70.1799  shoulderTipY = 16.8576
+ok    1 croquis — omuz ucu x             min 70.200u  max 70.200u  SAPMA 0.00 mm
+PASS flat_convention_check — 0 ihlal
+EXIT=0

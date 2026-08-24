@@ -12,6 +12,9 @@
 //
 //   1. TEK CROQUIS       omuz ucu (x,y) + gogus/koltukalti (x,y) + bel yuksekligi
 //                        butun stillerde +-2 mm icinde ayni (contract toleranceMM).
+//   1c. OMUZ ICERIDE     omuz ucu x <= gogus (koltukalti) x. GEOMETRIK YASA, esik
+//                        degil: set-in kol oyugu omuz ucu ile koltukaltini paylasir
+//                        ve omuzdan asagi/iceri iner, disari sisemez.
 //   2. OLCEK BEYANI      kokte data-scale + data-unit-mm; beyan contract ile ayni;
 //                        VE olculen croquis genislikleri KAYNAKLI beden cizelgesiyle
 //                        tutarli (gogus yari-genisligi x unitMM == bustCM*10/4).
@@ -102,18 +105,38 @@ function silhouette(panelSvg) {
 }
 
 // GEOMETRIK croquis cikarimi — beyana bakmadan. Siluetin SAG yarisi CF yakadan
-// CF etek ucuna kadar; sag yarinin en genis UST noktasi omuz ucu, ondan sonraki
-// uc koltukalti, ondan sonraki bel.
+// CF etek ucuna kadar; icinden omuz ucu / koltukalti / bel isaretleri cikarilir.
+//
+// ★ V4-A KOK DUZELTMESI (2026-08-24). ESKI cikarim omuz ucunu "CF yakadan asagi
+// yurunurken x'in ILK KESIN YEREL MAKSIMUMU" diye buluyordu. O sezgi YALNIZCA
+// omuz gogusten GENISSE dogrudur — yani kapi, duzeltmeye calistigi kusurun ta
+// kendisini VARSAYIYORDU: omuz ucu buste geri cekilince (dogru giysi) yerel
+// maksimum kaybolur, cikarim koltukaltini omuz sanar ve kapi 27/153/750 mm
+// sapma basardi. Kapi kendi kusurunu koruyordu.
+//
+// YENI KRITER — omuz/gogus ORANINDAN BAGIMSIZ, tamamen SIRT-GEOMETRIK:
+//   omuz ucu = OMUZ CIZGISI ile KOL OYUGU EGRISININ bulustugu KOSE.
+// Iki komsu kirisin karakteri bunu yeterince belirler:
+//   * omuz cizgisi SIGDIR ve DISA gider  (|dx| >= |dy|, dx > 0)
+//   * kol oyugu DIK INER                 (|dy| >  |dx|, dy > 0)
+// Kol oyugu tanimi geregi omuzdan ASAGI iner (set-in armscye); omuz cizgisi
+// tanimi geregi boyun noktasindan omuz ucuna yatay yurur. Bu ayrim omuzun
+// gogusten genis mi dar mi oldugunu HIC SORMAZ.
+// Yukari giden dik kirisler (kare/sweetheart yakanin dikey kenari) dy > 0
+// sartiyla elenir; onlar yaka, omuz degil.
+// ANTI-HACK: hicbir data-* beyani, hicbir kanun sayisi okunmaz — sadece cizilen
+// poligonun kendi kirisleri.
 function measureCroquis(pts) {
   // sag yari: bastan, |x|<0.5 ile CF etege donene kadar
   let end = pts.length - 1;
   for (let i = 1; i < pts.length; i++) { if (Math.abs(pts[i][0]) < 0.5) { end = i; break; } }
   const half = pts.slice(0, end + 1);
-  // Omuz ucu = CF yakadan asagi yurunurken x'in ILK KESIN yerel maksimumu.
-  // ("en genis nokta" DEGIL — A-line etekte etek ucu daha genistir.)
+  const chord = (i) => [half[i + 1][0] - half[i][0], half[i + 1][1] - half[i][1]];
+  const shallowOut = (c) => c[0] > 0 && Math.abs(c[0]) >= Math.abs(c[1]);
+  const steepDown = (c) => c[1] > 0 && Math.abs(c[1]) > Math.abs(c[0]);
   let si = -1;
   for (let i = 1; i + 1 < half.length; i++) {
-    if (half[i][0] > half[i - 1][0] && half[i][0] > half[i + 1][0]) { si = i; break; }
+    if (shallowOut(chord(i - 1)) && steepDown(chord(i))) { si = i; break; }
   }
   if (si < 0) return { shoulder: null, chest: null, waist: null, half };
   const shoulder = half[si];
@@ -199,6 +222,29 @@ for (const r of emp) {
   const dmm = Math.abs(r.waY - LAW.croquis.landmarks.waistY.u) * UNIT;
   if (dmm <= TOL_MM) FAIL(`[1 croquis] ${r.style}/${r.view}: data-waistline="empire" beyan ediyor ama siluet dogal belde (${r.waY}u) — beyan kacamak`);
   else OK(`1 croquis — ${r.style}/${r.view} empire beyani gercek: siluet beli ${r.waY}u, dogal belden ${dmm.toFixed(1)}mm yukarida`);
+}
+
+// --- 1c. OMUZ GOGUSTEN DISARI TASAMAZ --------------------------------------
+// GEOMETRIK YASA (esik degil, esitsizlik): set-in kollu bir giyside omuz ucu,
+// gogus (koltukalti) hattinin DISINDA olamaz — cunku kol oyugu egrisi omuz ucu
+// ile koltukaltini PAYLASIR (croquis.sleeveLaw.sleeveSharesArmholeEndpoints) ve
+// omuzdan asagi ve ICERI iner (armholeNeverBulgesOutward). Omuz ucu bustun
+// disinda kalirsa kol oyugu disa dogru sismek zorunda kalir ve omuz bir RAF
+// gibi durur; giysi okunmaz. Sart bu yuzden gevsetilemez: ustunde bir SAYI yok.
+// BUYUKLUK nereden: shoulderTipX = chestX x 0.9570; 0.9570 SATIN ALINMIS Bugra
+// Locket EU38 'Back Body' parcasinda olculdu (196.13/204.94 mm yari-genislik,
+// olcum GECE/log/F-E.bugra-olcum.txt). Bugra sayisi yalnizca BUYUKLUGU besler;
+// kapinin sarti "Bugra'ya benziyor mu" DEGIL, "omuz bustun disinda mi" dir.
+console.log('\n--- 1c. OMUZ UCU GOGUS HATTININ ICINDE (set-in kol yasasi)');
+for (const r of rows) {
+  const dmm = (r.shX - r.chX) * UNIT;
+  const line = `${r.style}/${r.view}: omuz ucu ${(r.shX * UNIT).toFixed(2)} mm, gogus ${(r.chX * UNIT).toFixed(2)} mm, ` +
+    `oran ${(r.shX / r.chX).toFixed(4)}`;
+  if (r.shX > r.chX + 1e-9) {
+    FAIL(`[1c omuz>gogus] ${line} — omuz gogusten ${dmm.toFixed(2)} mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez`);
+  } else {
+    OK(`1c omuz icerde — ${line}`);
+  }
 }
 
 // --- ANTI-YALAN: beyan == cizilen ------------------------------------------

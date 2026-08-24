@@ -1,0 +1,47 @@
+=== V4-A / madde 1 KANITI — CIKARIM OMUZ-GOGUS ORANINDAN BAGIMSIZ MI?
+Ayni measureCroquis(), IKI FARKLI croquis'te kosuldu. Tarih: 2026-08-24T15:02:01Z
+
+KOSU A — shoulderTipX = 78.0u (OMUZ GOGUSTEN GENIS, chestX 73.3333u; oran 1.0636)
+komut: node engine/tests/flat_convention_check.mjs
+-----------------------------------------------------------------------
+--- 1. TEK CROQUIS (geometrik olcum, beyana bakmadan)
+ok    1 croquis — omuz ucu x             min 78.000u  max 78.000u  SAPMA 0.00 mm
+ok    1 croquis — omuz ucu y             min 19.400u  max 19.400u  SAPMA 0.00 mm
+ok    1 croquis — gogus (koltukalti) x   min 73.300u  max 73.300u  SAPMA 0.00 mm
+ok    1 croquis — gogus hatti y          min 92.000u  max 92.000u  SAPMA 0.00 mm
+ok    1 croquis — bel hatti y (dogal)    min 150.000u  max 150.000u  SAPMA 0.00 mm
+ok    1 croquis — vneck_empire_dress/front empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+ok    1 croquis — vneck_empire_dress/back empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+
+-----------------------------------------------------------------------
+BEKLENEN: omuz ucu x = 78.000u (kanunun degeri), gogus x = 73.300u. TUTTU.
+
+KOSU B — shoulderTipX = 70.1799u (OMUZ GOGUSTEN DAR, chestX 73.3333u; oran 0.9570)
+komut: node engine/tests/flat_convention_check.mjs
+-----------------------------------------------------------------------
+--- 1. TEK CROQUIS (geometrik olcum, beyana bakmadan)
+ok    1 croquis — omuz ucu x             min 70.200u  max 70.200u  SAPMA 0.00 mm
+ok    1 croquis — omuz ucu y             min 16.900u  max 16.900u  SAPMA 0.00 mm
+ok    1 croquis — gogus (koltukalti) x   min 73.300u  max 73.300u  SAPMA 0.00 mm
+ok    1 croquis — gogus hatti y          min 92.000u  max 92.000u  SAPMA 0.00 mm
+ok    1 croquis — bel hatti y (dogal)    min 150.000u  max 150.000u  SAPMA 0.00 mm
+ok    1 croquis — vneck_empire_dress/front empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+ok    1 croquis — vneck_empire_dress/back empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+
+-----------------------------------------------------------------------
+BEKLENEN: omuz ucu x = 70.200u (kalem 0.1u'ya yuvarliyor; kanun 70.1799),
+          gogus x = 73.300u. TUTTU. Sapma iki kosuda da 0.00 mm.
+
+SONUC: AYNI cikarim, omuz gogusten GENISKEN de DARKEN de omuz ucunu DOGRU
+buluyor. Cikarim omuz/gogus oranindan BAGIMSIZ. (Eski 'x'in ilk yerel
+maksimumu' cikarimi KOSU B'de omuz ucunu bulamaz — asagidaki kontrol.)
+
+KONTROL — ESKI CIKARIM, KOSU B croquis'inde (neden kokten degistirildigi)
+komut: node -e '<eski measureCroquis, ayni siluet uzerinde>'
+-----------------------------------------------------------------------
+siluet sag yari kose dizisi (x,y): [[0,40],[40,4],[70.2,16.9],[73.3,92],[58.3,150],[92.2,400],[0,410]]
+ESKI cikarim (x ilk yerel maksimumu) -> index 3 nokta [73.3,92]
+YENI cikarim (omuz kirisi/kol oyugu kosesi) -> index 2 nokta [70.2,16.9]
+-----------------------------------------------------------------------
+ESKI cikarim KOSU B'de omuz ucunu KACIRIYOR (koltukaltini omuz saniyor ya da
+hic bulamiyor); YENI cikarim (70.2, 16.9) = kanunun omuz ucu. Kok duzeltme SART idi.
