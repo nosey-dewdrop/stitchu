@@ -1,6 +1,6 @@
 # V3-A — kabuk → ortografik projeksiyon (flat artık HESAPLANIYOR)
 
-Commit: `8dc47bd` (push edilmedi, şef edecek)
+Commit: `25f0f45` (kodun ve bu raporun commit'i; bu satırın kendisi 1 commit sonra düzeltildi). Push EDİLMEDİ, şef edecek.
 
 ## NE YAPILDI
 
