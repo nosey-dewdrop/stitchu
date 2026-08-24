@@ -28,6 +28,72 @@ silinmiş; V0'da aday ÜRETİLEMEDİ çünkü pin testin kendi çıktısından
 senin onayını bekliyor. · SEÇENEKLER: **(A)** kırmızı kalsın. **(B)** repin
 script'ini sen koştur, pin farkının sebebi commit mesajına yazılsın.
 · VARSAYILAN: **(A)** · ETKİLEDİĞİ FAZ: V1.
+· **V1 GÜNCELLEMESİ (24 Ağu):** kırmızı duruyor ama kapı ARTIK GERÇEK KAPI.
+`513b175` hüküm listesini `engine/flat-engine/styles.json`'dan türetti: kısmi
+pinleme yeşil sayılmıyor, sahipsiz pin FAIL. Mutasyon kanıtı
+`GECE/log/V1-E.mutasyon.txt` (M8: aynı dizinde eski kapı YEŞİL, yeni kapı
+KIRMIZI). Ölçülen maliyet: tek render 0.05 sn, darboğaz makine değil **31 kez
+GÖZ**. Kapsam bugün **0/31**.
+
+---
+
+## ★ V1'İN (24 Ağu) EKLEDİĞİ ÜÇ SATIR
+
+**K-V1A · GOLDEN MÜHRÜ YENİLENDİ — ONAYLIYOR MUSUN?**
+`engine/golden-reference.csv` bu gece yeniden mühürlendi ve `golden_check` +
+`recipe_dress_check` kırmızıları düştü. Mührün taşıdığı hareket ÖLÇÜLDÜ:
+**9651 satır (%41.23) yerinde değişti, max 62.7764 mm, medyan 5.6000 mm**;
+gövde ve kol hattında (`Bodice Front` max 62.78 · `Balloon Sleeve` 49.71 ·
+`Bodice Back` 47.44), **etek parçaları kımıldamadı** (max 0.0001 mm).
+Sebep tek commit: `52ae85c` scye derinliğini kaynaksız `backLengthCM`
+kolonundan Aldrich p.11'in büst formülüne taşıdı. Defter girdisi
+`engine/GOLDEN-PIN.md` 2026-08-24.
+· SEÇENEKLER: **(A)** mühür dursun — motor Aldrich'e yaklaştı, `sloper_check`
+tanığı err **−10.6 mm → −5.0 mm** iyileşti (iki ağaçta da PASS; "önce
+kırmızıydı" diye yazılan ilk cümle UYDURMAYDI, ölçüldü ve `05156a1`'de
+düzeltildi). **(B)** mühürü geri al — `git revert` ile tek commit, dokunduğu
+tek dosya `engine/golden-reference.csv`; o zaman iki kırmızı geri gelir.
+· VARSAYILAN: **(A)** yürüdü. `scripts/repin-golden.sh:33-38`'in şart 2'si
+("Damla's explicit approval") HÂLÂ AÇIK ve defterde ilan edili — mühür kendi
+usulüne göre onayın gelmesine kadar geçersiz sayılır.
+· ETKİLEDİĞİ FAZ: hepsi (golden bütün çizim hattının mandalı).
+· ★ SENİN GÖZÜNE DÜŞEN: sayı değil, **yeni oyuk eğrisi**. Bilinen tavanı
+`52ae85c` kendi gövdesinde yazmış: *"tek kübik gerçek scye'nin S kavisini
+çizemiyor"*, sonraki aday "oyuğu çentikten iki kübiğe ayır".
+
+**K-V1B · `figure_check`: bandeau'ya 4. sınıf mı, siluet düzeltmesi mi?**
+`dress_bandeau_circle` 31 stilin tek `fittedBand`'i; band gövde + oturan bel +
+daire etek birleşimi başka hiçbir stilde yok. V1'de KANITLANDI (tabloyla, iddiayla
+değil): devralınacak kardeş **YOK** — payı prenses-daire ailesinden (bel 44.22 vs
+44.28), paydası band ailesinden (büst 50.70 vs 293.9 düğümü). Kesişim boş.
+· SEÇENEKLER: **(A)** `top:band` için 4. bant açılsın — iki band stili 0.857/0.872
+ölçüyor, aday bant **[0.84, 0.90]**; `figure-lint.mjs` değişir + senin bant onayın.
+**(B)** siluet düzeltilsin — bandeau'nun büstü y=133.8'de 50.70; prenses ailesinin
+aynı hattaki 53.90'ına çıkarılırsa oran **0.820** olur, figürel bandın İÇİNE düşer
+ve pin bile gerekmez (`engine/flat-engine` işi). **(C)** kırmızı kalsın.
+· VARSAYILAN: **(C)** · ETKİLEDİĞİ FAZ: V4 (flat konvansiyonu).
+· ⚠ Yan bulgu: `figure-bands.json`'un kendi gerekçesindeki *"büstü 50.70 vs 69.55,
+%27 dar"* cümlesi ÇÜRÜDÜ — 69.55 prenses'in büstü değil OMZU; gerçek fark **%5.9**.
+Hüküm ayakta, dayanak sayı yanlış landmark'tan.
+
+**K-V1C · Kaynaksız 4 kolon: aranacak mı, atılacak mı?**
+`contract/tables.json` `euSizeChart`'ta `shoulderCM` · `backLengthCM` ·
+`armLengthCM` · `neckCM` = 40 sayı, arkasında yayın yok (`sizechart_source_check`
+kırmızısı). V1'in R-kartı iki birincil tabloyu diske çekip ölçtü: **dördü de
+BAĞLANAMAZ.** Burda'da `neckCM` satırı **hiç yok**; Aldrich'e `shoulderCM`
+**+242…+278 mm** uzak (tanım uyuşmazlığı), `backLengthCM` −7…−2 mm testere dişi,
+`armLengthCM` yalnız EU48'de kesişiyor. Erişilemeyen 5 yayın künyesi
+`GECE/V1-R.md`'de (EN 13402-3 Annex A · ISO 8559-1/-2 · ASTM D5585 · Müller &
+Sohn · ANSUR II).
+· SEÇENEKLER: **(A)** aramaya devam — ücretli standart satın alınsın (EN 13402-3
+Annex A, Müller & Sohn ~82 EUR). **(B)** kolonlar ÇİZELGEDEN ATILSIN — motor
+`backLengthCM`'i `52ae85c`'de zaten TERK ETTİ, çizelge onu hâlâ satıyor;
+kullanılmayan kaynaksız kolon yalan üretiyor. **(C)** kırmızı kalsın.
+· VARSAYILAN: **(C)** · ETKİLEDİĞİ FAZ: V5 (draft_math_check).
+· ★ V1'in istenmemiş bulgusu: kapının KENDİ zayıflığı ölçüldü — `sizechart_source_check`
+"yayın var mı"yı DEĞİL, "`_sources` kendi kendisiyle tutarlı mı"yı ölçüyor.
+`https://example.invalid/probe` + çizelgenin kendi sayıları dört kolon hükmünü
+birden düşürüyor. Kapıyı ayakta tutan tek şey META-PROBE.
 
 ---
 
