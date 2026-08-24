@@ -28,6 +28,108 @@
 
 namespace stitchu {
 
+// ---- THE GARMENT SHELL, PUBLISHED (V3-A) ----
+//
+// GarmentSurf was private to surfacepattern.cpp, so the ONLY line that could see
+// the surface the pattern is cut from was the pattern line itself. The flat
+// (technical drawing) line drew its outline from a 2D croquis instead
+// (tools/render-garment-flat.mjs, contract/flat-convention-v1.json) with zero
+// ease, and the two disagreed by a measured 24.89mm at the EU38 waist: flat
+// 700.0mm against the pattern's 724.89mm. The DECLARATION moves here so a second
+// line can be fed from THIS object; every definition stays in surfacepattern.cpp.
+// Writing a second shell class instead is forbidden — two shells is exactly the
+// class of error the single-waist-ring law was built to kill.
+// The GARMENT surface is not the body surface. Cloth bridges between the
+// anatomical rings — it does not enter the waist hollow (the body there has
+// K<0, measured -17.8deg per bodice half; a fitted bodice skims it). So the
+// garment is the RULED surface through the level rings: section semi-axes
+// interpolated linearly bust->waist->hip, the hip section continued straight
+// down below (sheath skirt cylinder). This is the certified model of
+// flatten-research/17 generalized to the chart rings; curvature concentrates
+// on the rings themselves, which is exactly where darts point.
+struct GarmentSurf {
+    struct Ring {
+        double h;
+        double a, bm, bd;  // BODY section: width, mean depth, front/back asymmetry
+        double d = 0.0;    // wearing-ease offset, d = ease/(2*pi) — Steiner-exact
+        // WHICH ring this is. Carried on the ring itself so a consumer never has
+        // to re-derive it from an index: shellprojection reports every measure
+        // next to the ring it came from, and an index would be a second source.
+        std::string name;
+    };
+    std::vector<Ring> rings;  // descending height: neck, shoulder, bust, waist, hip
+
+    // easeMM: girth ease per ring, in ring order (neck, shoulder, bust, waist,
+    // hip). A
+    // garment with zero ease is skin and cannot be put on; the offset is the
+    // OUTER PARALLEL CURVE of the body section (garmentshell.cpp theorem:
+    // perimeter grows by exactly 2*pi*d, so d = ease/(2*pi), no fitted constant).
+    //
+    // The NECK ring is what lets a garment exist above the bust at all. Until
+    // now the top ring was the bust and profile() returned the bust section
+    // unchanged for every height above it — a straight cylinder of bust width
+    // where the chest, shoulder and neck belong. That was invisible while the
+    // dress was strapless, because nothing was ever cut up there.
+    //
+    // ★ THE SHOULDER IS THE FIFTH RING (Tur 5). It was the missing one, and its
+    // absence was not a detail: the shoulder is the WIDEST level of this body
+    // (bodysurface.cpp measured EU38 tip at 167.28mm against a bust of 159.57),
+    // so a garment surface interpolated neck->bust straight through it was
+    // NARROWER at shoulder height than the shoulder it is supposed to sit on.
+    // Every top-boundary zone (TopProfile) is decided by a distance ACROSS the
+    // body, x = shoulderHalf*cos(phi) — a shoulder-wide model — while the
+    // surface being cut was a neck->bust cone. The two disagreed, and the
+    // neckline, the shoulder strap and the armhole were all cut on the wrong
+    // width because of it. The ring closes that gap by construction: at
+    // shoulder height the garment surface is now exactly as wide as the
+    // shoulder the chart declares.
+    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[5]);
+
+    double blendMM = 50.0;  // hip-corner rounding half-width (the drafting "hip curve")
+
+    // piecewise-linear profile value with the HIP corner rounded C¹: neither a
+    // body nor cloth creases sharply, and a sharp cone->cylinder ring carries
+    // singular curvature no finite dart set can absorb. sel: 0=a, 1=bm, 2=bd, 3=d.
+    double profile(double h, int sel) const;
+
+    // The BODY section at this height (before ease).
+    Section section(double h) const;
+
+    // SKIM MODE. A 1960s shift does not follow the body: it hangs from the
+    // shoulders and skims. Sourced from the envelope copy of the period — the
+    // Big 4 describe these as "semi-fitted", "lightly fitted and flared",
+    // "four panel", and the flare is carried by PANEL SEAMS, not by dart
+    // suppression (McCall's 7229, P-22, 8808; Butterick 3393; Vogue 2063).
+    //
+    // Geometrically that is the whole difference. A surface that follows the
+    // bust and then tapers to the neck is doubly curved and its quarter panel
+    // carried +52.5 deg of develop-deficit — unflattenable with waist darts
+    // alone. A straight run from the waist ring to the shoulder ring is a CONE,
+    // and a cone develops exactly. The shift silhouette is not a way of dodging
+    // the hard problem; it is the garment whose construction the period sources
+    // actually describe, and its geometry is why it could be sewn by anyone.
+    double skimTopH = 0.0;   // 0 = off, follow the body as before
+    double skimBaseH = 0.0;  // the waist ring — named, not searched for
+    // STITCHU_SKIM_ENVELOPE=1. Off = the shipped garment. See at().
+    bool envelope = std::getenv("STITCHU_SKIM_ENVELOPE") != nullptr;
+    // A-LINE SKIRT: below the waist the garment does not follow the hip either.
+    // It opens straight from the waist ring to a prescribed hem sweep, which is
+    // what "A-line" means and is why the period patterns could be sewn flat.
+    // The sweep is SOURCED, not chosen: 1960s Big-4 envelope backs print
+    // "width at lower edge" for these dresses at 48.5-52.5 inches over a 36 inch
+    // hip (Simplicity 7129, Vogue 6900, Vogue Couturier 2063 / Valentino).
+    double hemH = 0.0, hemScale = 0.0;
+
+    // The shell's SECTION at a height, with the ease offset it is to be taken
+    // at — skim run, A-line hem and hip blend already applied. at() is this plus
+    // one offsetPoint, and a consumer that needs the girth or the silhouette
+    // half-width asks HERE instead of re-deriving the same three rules.
+    Section effectiveSection(double h, double& dOut) const;
+    Vec3 at(double h, double phi) const;
+
+    Vec3 atBody(double h, double phi) const;
+};
+
 struct SurfacePanel {
     std::string name;             // walk.py role comes from the name (torso/skirt)
     std::vector<Vec2> contour;    // closed boundary polyline, cut space, mm
@@ -509,6 +611,13 @@ struct SheathOptions {
         }
     }
 };
+
+// THE ONE PLACE the garment shell is configured out of a body and its options —
+// eases per ring, the skim run, the A-line hem sweep, the hip blend. It used to
+// live inside buildSheathPattern, which meant any other consumer of the shell had
+// to REPEAT that configuration and would have been a second source of the
+// garment. buildSheathPattern now calls this and nothing else does the setup.
+GarmentSurf buildGarmentSurf(const BodySurface& body, const SheathOptions& optIn);
 
 // Builds the four-panel sheath from the body surface with zero ease.
 // Throws if the body lacks bust/waist/hip levels.

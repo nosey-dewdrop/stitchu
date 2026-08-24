@@ -10,9 +10,173 @@
 
 namespace stitchu {
 
+constexpr double kPi = 3.14159265358979323846;
+
+// ---- GarmentSurf: DEFINITIONS. The declaration is in surfacepattern.hpp so the
+// projection line can be fed from this same shell; the code stays here. ----
+GarmentSurf GarmentSurf::fromBody(const BodySurface& body, const double easeMM[5]) {
+    GarmentSurf s;
+    int k = 0;
+    for (const char* name : {"neck", "shoulder", "bust", "waist", "hip"}) {
+        for (const BodyLevel& lv : body.levels())
+            if (lv.name == name) {
+                const Section sec = body.sectionAt(body.parameterFor(lv.heightMM));
+                // A level the chart gives as a WIDTH (the shoulder) carries
+                // its half-width as law; the lofted surface may round it off
+                // between knots, and a shoulder that is not shoulder-wide is
+                // the whole failure this ring exists to end.
+                const double a = lv.halfWidthMM > 0.0 ? lv.halfWidthMM : sec.a;
+                s.rings.push_back({lv.heightMM, a, sec.bm, sec.bd,
+                                   easeMM[k] / (2 * kPi), name});
+            }
+        ++k;
+    }
+    if (s.rings.size() != 5)
+        throw std::runtime_error("need neck/shoulder/bust/waist/hip rings");
+    return s;
+}
+
+double GarmentSurf::profile(double h, int sel) const {
+    auto val = [&](const Ring& r) {
+        return sel == 0 ? r.a : sel == 1 ? r.bm : sel == 2 ? r.bd : r.d;
+    };
+    auto lin = [&](size_t k, double hh) {  // value on segment k..k+1 (extended)
+        const double u = (rings[k].h - hh) / (rings[k].h - rings[k + 1].h);
+        return val(rings[k]) + (val(rings[k + 1]) - val(rings[k])) * u;
+    };
+    const double hipH = rings.back().h;
+    if (h > hipH + blendMM) {
+        if (h >= rings.front().h) return val(rings.front());
+        size_t k = 0;
+        while (h < rings[k + 1].h) ++k;
+        return lin(k, h);
+    }
+    if (h < hipH - blendMM) return val(rings.back());  // cylinder below the hip
+    // quadratic corner rounding: endpoints on the two lines at hip±blend,
+    // control point at the corner itself (tangent-matching at both ends)
+    const double t = (hipH + blendMM - h) / (2 * blendMM);
+    const double pTop = lin(rings.size() - 2, hipH + blendMM);
+    const double pC = val(rings.back());
+    return (1 - t) * (1 - t) * pTop + 2 * t * (1 - t) * pC + t * t * pC;
+}
+
+Section GarmentSurf::section(double h) const {
+    return Section{profile(h, 0), profile(h, 1), profile(h, 2)};
+}
+
+// THE SHELL'S SECTION AND ITS EASE OFFSET AT ONE HEIGHT — the whole of at()
+// except the last two lines, which is the part a projection needs and could not
+// have without re-deriving the skim run and the hem sweep for itself. Splitting
+// it out moves no arithmetic: at() below does exactly what it did.
+Section GarmentSurf::effectiveSection(double h, double& dOut) const {
+    if (skimTopH > 0.0 && h > skimBaseH) {
+        // straight (conical) run from the waist ring up to the shoulder, so
+        // nothing in between bulges out to meet the bust
+        const double waistH = skimBaseH, topH = skimTopH;
+        {
+            const double u = (h - waistH) / (topH - waistH);
+            const Section a0 = section(waistH), a1 = section(topH);
+            Section mid{a0.a + (a1.a - a0.a) * u, a0.bm + (a1.bm - a0.bm) * u,
+                        a0.bd + (a1.bd - a0.bd) * u};
+            double d = profile(waistH, 3) + (profile(topH, 3) - profile(waistH, 3)) * u;
+            // ★ H1.0b (Tur 10) — THE SKIM IS AN ENVELOPE, NOT A SHORTCUT.
+            //
+            // The straight run waist -> shoulder is a cone and a cone
+            // develops exactly, which is why it was chosen. But between
+            // those two rings the body is CONVEX in height: waist 124.48,
+            // bust 159.57, shoulder 167.28 (EU38 half-widths). A straight
+            // chord from the first to the last passes UNDER the middle one,
+            // so the garment was 27mm narrower than the bust at bust height
+            // and, where it matters, 19.04mm narrower than the body at
+            // armscye depth (measured, SKIMCOST above: cone 149.678 vs
+            // body+ease 168.718). That is not a slim silhouette, it is
+            // cloth inside the ribcage, and it is why the underarm sat
+            // 8.098mm INSIDE the shoulder point instead of outside it:
+            // there was no width at armscye level for a hole to be cut in.
+            //
+            // Skimming means the cloth does not ENTER the hollows (the
+            // waist), not that it passes through the solids. So the run is
+            // the outer envelope of the two: the cone where the cone is
+            // outside the body, the body where the body is outside the
+            // cone. Below the waist ring nothing here runs, so the single
+            // shared ring and the whole skirt are untouched by construction.
+            // ★ MEASURED, AND SHIPPED OFF (Tur 10). Turning the envelope on
+            // does the one thing H1.0b asked for and one thing nobody asked
+            // for, and the second is disqualifying on its own:
+            //   underarm x vs shoulder point, EU34   +10.055 -> -7.112mm
+            //     (THE SIGN TURNS OVER: the underarm finally sits OUTSIDE
+            //      the shoulder point, which is what a garment does)
+            //   skim deficit at armscye depth, EU34  +17.335 -> +0.000mm
+            //   armhole run (3D), EU34              156.638 -> 159.251mm
+            //   h10_gate_check wall clock            47s -> >21 min, 99% CPU
+            // The third line is the answer to the second: +2.6mm of armhole
+            // for a 40mm shortfall. K1 does not enter its band from this,
+            // because the run is 147mm of DROP and 10mm of width — widening
+            // the underarm moves the near end sideways along an almost
+            // vertical chord and buys almost no length.
+            // The fourth line is why it cannot ship anyway. Following the
+            // bust makes the bodice doubly curved, which is precisely the
+            // surface Tur 8 recorded as carrying +52.5 deg of develop-
+            // deficit; the flatten stops converging cheaply and the run
+            // goes past the 900s push gate. HEDEF.md records this exact
+            // class once already (Release build lost, engine_check
+            // 19s -> 2684s, push gate unpassable).
+            // So it is a DIAL, default off: the shipped garment is
+            // bit-identical to before this commit, and the measurement is
+            // kept instead of being argued about. K1's remaining 40mm is
+            // NOT here — it is in how far the hole opens front to back
+            // (EU34 half-opening dy = 26.0mm against a real armhole's
+            // 50-55mm), which is the angular span, and the span dial above
+            // is measured and rejected on the OLD surface only.
+            if (envelope) {
+                const Section b = section(h);
+                const double bodyD = profile(h, 3);
+                if (b.bm > mid.bm) {  // depth and its front/back split travel together
+                    mid.bm = b.bm;
+                    mid.bd = b.bd;
+                }
+                mid.a = std::max(mid.a, b.a);
+                d = std::max(d, bodyD);
+            }
+            dOut = d;
+            return mid;
+        }
+    }
+    if (hemScale > 0.0 && h < skimBaseH && skimBaseH > 0.0) {
+        const double u = (skimBaseH - h) / (skimBaseH - hemH);
+        const Section w = section(skimBaseH);
+        const double k = 1.0 + (hemScale - 1.0) * u;
+        const Section mid{w.a * k, w.bm * k, w.bd * k};
+        dOut = profile(skimBaseH, 3) * k;
+        return mid;
+    }
+    dOut = profile(h, 3);
+    return section(h);
+}
+
+Vec3 GarmentSurf::at(double h, double phi) const {
+    double d = 0.0;
+    const Section s = effectiveSection(h, d);
+    double px = 0, py = 0;
+    s.offsetPoint(d, phi, px, py);
+    return {px, py, h};
+}
+
+Vec3 GarmentSurf::atBody(double h, double phi) const {
+    // Outer parallel curve of the body section at distance d. The old code
+    // had this in closed form because the section was a centred ellipse;
+    // the section now has a front and a back, so the offset is taken along
+    // the TRUE unit normal. Steiner is unharmed — the identity
+    // P_d = P + 2*pi*d holds for ANY convex curve, which is exactly why the
+    // ease conversion d = ease/(2*pi) still needs no fitted constant.
+    const Section sec = section(h);
+    double px = 0, py = 0;
+    sec.offsetPoint(profile(h, 3), phi, px, py);
+    return {px, py, h};
+}
+
 namespace {
 
-constexpr double kPi = 3.14159265358979323846;
 // The repo's declared production tolerance, 1/32 inch. Not invented here and
 // not tuned to a gate: flatten.cpp's solver already calls it "the 0.79375mm
 // production tolerance". Two lengths this close are one length to the cutter.
@@ -24,227 +188,6 @@ double levelHeight(const BodySurface& body, const std::string& name) {
     throw std::runtime_error("body level missing: " + name);
 }
 
-// The GARMENT surface is not the body surface. Cloth bridges between the
-// anatomical rings — it does not enter the waist hollow (the body there has
-// K<0, measured -17.8deg per bodice half; a fitted bodice skims it). So the
-// garment is the RULED surface through the level rings: section semi-axes
-// interpolated linearly bust->waist->hip, the hip section continued straight
-// down below (sheath skirt cylinder). This is the certified model of
-// flatten-research/17 generalized to the chart rings; curvature concentrates
-// on the rings themselves, which is exactly where darts point.
-struct GarmentSurf {
-    struct Ring {
-        double h;
-        double a, bm, bd;  // BODY section: width, mean depth, front/back asymmetry
-        double d = 0.0;    // wearing-ease offset, d = ease/(2*pi) — Steiner-exact
-    };
-    std::vector<Ring> rings;  // descending height: neck, shoulder, bust, waist, hip
-
-    // easeMM: girth ease per ring, in ring order (neck, shoulder, bust, waist,
-    // hip). A
-    // garment with zero ease is skin and cannot be put on; the offset is the
-    // OUTER PARALLEL CURVE of the body section (garmentshell.cpp theorem:
-    // perimeter grows by exactly 2*pi*d, so d = ease/(2*pi), no fitted constant).
-    //
-    // The NECK ring is what lets a garment exist above the bust at all. Until
-    // now the top ring was the bust and profile() returned the bust section
-    // unchanged for every height above it — a straight cylinder of bust width
-    // where the chest, shoulder and neck belong. That was invisible while the
-    // dress was strapless, because nothing was ever cut up there.
-    //
-    // ★ THE SHOULDER IS THE FIFTH RING (Tur 5). It was the missing one, and its
-    // absence was not a detail: the shoulder is the WIDEST level of this body
-    // (bodysurface.cpp measured EU38 tip at 167.28mm against a bust of 159.57),
-    // so a garment surface interpolated neck->bust straight through it was
-    // NARROWER at shoulder height than the shoulder it is supposed to sit on.
-    // Every top-boundary zone (TopProfile) is decided by a distance ACROSS the
-    // body, x = shoulderHalf*cos(phi) — a shoulder-wide model — while the
-    // surface being cut was a neck->bust cone. The two disagreed, and the
-    // neckline, the shoulder strap and the armhole were all cut on the wrong
-    // width because of it. The ring closes that gap by construction: at
-    // shoulder height the garment surface is now exactly as wide as the
-    // shoulder the chart declares.
-    static GarmentSurf fromBody(const BodySurface& body, const double easeMM[5]) {
-        GarmentSurf s;
-        int k = 0;
-        for (const char* name : {"neck", "shoulder", "bust", "waist", "hip"}) {
-            for (const BodyLevel& lv : body.levels())
-                if (lv.name == name) {
-                    const Section sec = body.sectionAt(body.parameterFor(lv.heightMM));
-                    // A level the chart gives as a WIDTH (the shoulder) carries
-                    // its half-width as law; the lofted surface may round it off
-                    // between knots, and a shoulder that is not shoulder-wide is
-                    // the whole failure this ring exists to end.
-                    const double a = lv.halfWidthMM > 0.0 ? lv.halfWidthMM : sec.a;
-                    s.rings.push_back({lv.heightMM, a, sec.bm, sec.bd,
-                                       easeMM[k] / (2 * kPi)});
-                }
-            ++k;
-        }
-        if (s.rings.size() != 5)
-            throw std::runtime_error("need neck/shoulder/bust/waist/hip rings");
-        return s;
-    }
-
-    double blendMM = 50.0;  // hip-corner rounding half-width (the drafting "hip curve")
-
-    // piecewise-linear profile value with the HIP corner rounded C¹: neither a
-    // body nor cloth creases sharply, and a sharp cone->cylinder ring carries
-    // singular curvature no finite dart set can absorb. sel: 0=a, 1=bm, 2=bd, 3=d.
-    double profile(double h, int sel) const {
-        auto val = [&](const Ring& r) {
-            return sel == 0 ? r.a : sel == 1 ? r.bm : sel == 2 ? r.bd : r.d;
-        };
-        auto lin = [&](size_t k, double hh) {  // value on segment k..k+1 (extended)
-            const double u = (rings[k].h - hh) / (rings[k].h - rings[k + 1].h);
-            return val(rings[k]) + (val(rings[k + 1]) - val(rings[k])) * u;
-        };
-        const double hipH = rings.back().h;
-        if (h > hipH + blendMM) {
-            if (h >= rings.front().h) return val(rings.front());
-            size_t k = 0;
-            while (h < rings[k + 1].h) ++k;
-            return lin(k, h);
-        }
-        if (h < hipH - blendMM) return val(rings.back());  // cylinder below the hip
-        // quadratic corner rounding: endpoints on the two lines at hip±blend,
-        // control point at the corner itself (tangent-matching at both ends)
-        const double t = (hipH + blendMM - h) / (2 * blendMM);
-        const double pTop = lin(rings.size() - 2, hipH + blendMM);
-        const double pC = val(rings.back());
-        return (1 - t) * (1 - t) * pTop + 2 * t * (1 - t) * pC + t * t * pC;
-    }
-
-    // The BODY section at this height (before ease).
-    Section section(double h) const {
-        return Section{profile(h, 0), profile(h, 1), profile(h, 2)};
-    }
-
-    // SKIM MODE. A 1960s shift does not follow the body: it hangs from the
-    // shoulders and skims. Sourced from the envelope copy of the period — the
-    // Big 4 describe these as "semi-fitted", "lightly fitted and flared",
-    // "four panel", and the flare is carried by PANEL SEAMS, not by dart
-    // suppression (McCall's 7229, P-22, 8808; Butterick 3393; Vogue 2063).
-    //
-    // Geometrically that is the whole difference. A surface that follows the
-    // bust and then tapers to the neck is doubly curved and its quarter panel
-    // carried +52.5 deg of develop-deficit — unflattenable with waist darts
-    // alone. A straight run from the waist ring to the shoulder ring is a CONE,
-    // and a cone develops exactly. The shift silhouette is not a way of dodging
-    // the hard problem; it is the garment whose construction the period sources
-    // actually describe, and its geometry is why it could be sewn by anyone.
-    double skimTopH = 0.0;   // 0 = off, follow the body as before
-    double skimBaseH = 0.0;  // the waist ring — named, not searched for
-    // STITCHU_SKIM_ENVELOPE=1. Off = the shipped garment. See at().
-    bool envelope = std::getenv("STITCHU_SKIM_ENVELOPE") != nullptr;
-    // A-LINE SKIRT: below the waist the garment does not follow the hip either.
-    // It opens straight from the waist ring to a prescribed hem sweep, which is
-    // what "A-line" means and is why the period patterns could be sewn flat.
-    // The sweep is SOURCED, not chosen: 1960s Big-4 envelope backs print
-    // "width at lower edge" for these dresses at 48.5-52.5 inches over a 36 inch
-    // hip (Simplicity 7129, Vogue 6900, Vogue Couturier 2063 / Valentino).
-    double hemH = 0.0, hemScale = 0.0;
-
-    Vec3 at(double h, double phi) const {
-        if (skimTopH > 0.0 && h > skimBaseH) {
-            // straight (conical) run from the waist ring up to the shoulder, so
-            // nothing in between bulges out to meet the bust
-            const double waistH = skimBaseH, topH = skimTopH;
-            {
-                const double u = (h - waistH) / (topH - waistH);
-                const Section a0 = section(waistH), a1 = section(topH);
-                Section mid{a0.a + (a1.a - a0.a) * u, a0.bm + (a1.bm - a0.bm) * u,
-                            a0.bd + (a1.bd - a0.bd) * u};
-                double d = profile(waistH, 3) + (profile(topH, 3) - profile(waistH, 3)) * u;
-                // ★ H1.0b (Tur 10) — THE SKIM IS AN ENVELOPE, NOT A SHORTCUT.
-                //
-                // The straight run waist -> shoulder is a cone and a cone
-                // develops exactly, which is why it was chosen. But between
-                // those two rings the body is CONVEX in height: waist 124.48,
-                // bust 159.57, shoulder 167.28 (EU38 half-widths). A straight
-                // chord from the first to the last passes UNDER the middle one,
-                // so the garment was 27mm narrower than the bust at bust height
-                // and, where it matters, 19.04mm narrower than the body at
-                // armscye depth (measured, SKIMCOST above: cone 149.678 vs
-                // body+ease 168.718). That is not a slim silhouette, it is
-                // cloth inside the ribcage, and it is why the underarm sat
-                // 8.098mm INSIDE the shoulder point instead of outside it:
-                // there was no width at armscye level for a hole to be cut in.
-                //
-                // Skimming means the cloth does not ENTER the hollows (the
-                // waist), not that it passes through the solids. So the run is
-                // the outer envelope of the two: the cone where the cone is
-                // outside the body, the body where the body is outside the
-                // cone. Below the waist ring nothing here runs, so the single
-                // shared ring and the whole skirt are untouched by construction.
-                // ★ MEASURED, AND SHIPPED OFF (Tur 10). Turning the envelope on
-                // does the one thing H1.0b asked for and one thing nobody asked
-                // for, and the second is disqualifying on its own:
-                //   underarm x vs shoulder point, EU34   +10.055 -> -7.112mm
-                //     (THE SIGN TURNS OVER: the underarm finally sits OUTSIDE
-                //      the shoulder point, which is what a garment does)
-                //   skim deficit at armscye depth, EU34  +17.335 -> +0.000mm
-                //   armhole run (3D), EU34              156.638 -> 159.251mm
-                //   h10_gate_check wall clock            47s -> >21 min, 99% CPU
-                // The third line is the answer to the second: +2.6mm of armhole
-                // for a 40mm shortfall. K1 does not enter its band from this,
-                // because the run is 147mm of DROP and 10mm of width — widening
-                // the underarm moves the near end sideways along an almost
-                // vertical chord and buys almost no length.
-                // The fourth line is why it cannot ship anyway. Following the
-                // bust makes the bodice doubly curved, which is precisely the
-                // surface Tur 8 recorded as carrying +52.5 deg of develop-
-                // deficit; the flatten stops converging cheaply and the run
-                // goes past the 900s push gate. HEDEF.md records this exact
-                // class once already (Release build lost, engine_check
-                // 19s -> 2684s, push gate unpassable).
-                // So it is a DIAL, default off: the shipped garment is
-                // bit-identical to before this commit, and the measurement is
-                // kept instead of being argued about. K1's remaining 40mm is
-                // NOT here — it is in how far the hole opens front to back
-                // (EU34 half-opening dy = 26.0mm against a real armhole's
-                // 50-55mm), which is the angular span, and the span dial above
-                // is measured and rejected on the OLD surface only.
-                if (envelope) {
-                    const Section b = section(h);
-                    const double bodyD = profile(h, 3);
-                    if (b.bm > mid.bm) {  // depth and its front/back split travel together
-                        mid.bm = b.bm;
-                        mid.bd = b.bd;
-                    }
-                    mid.a = std::max(mid.a, b.a);
-                    d = std::max(d, bodyD);
-                }
-                double px = 0, py = 0;
-                mid.offsetPoint(d, phi, px, py);
-                return {px, py, h};
-            }
-        }
-        if (hemScale > 0.0 && h < skimBaseH && skimBaseH > 0.0) {
-            const double u = (skimBaseH - h) / (skimBaseH - hemH);
-            const Section w = section(skimBaseH);
-            const double k = 1.0 + (hemScale - 1.0) * u;
-            const Section mid{w.a * k, w.bm * k, w.bd * k};
-            double px = 0, py = 0;
-            mid.offsetPoint(profile(skimBaseH, 3) * k, phi, px, py);
-            return {px, py, h};
-        }
-        return atBody(h, phi);
-    }
-
-    Vec3 atBody(double h, double phi) const {
-        // Outer parallel curve of the body section at distance d. The old code
-        // had this in closed form because the section was a centred ellipse;
-        // the section now has a front and a back, so the offset is taken along
-        // the TRUE unit normal. Steiner is unharmed — the identity
-        // P_d = P + 2*pi*d holds for ANY convex curve, which is exactly why the
-        // ease conversion d = ease/(2*pi) still needs no fitted constant.
-        const Section sec = section(h);
-        double px = 0, py = 0;
-        sec.offsetPoint(profile(h, 3), phi, px, py);
-        return {px, py, h};
-    }
-};
 
 struct PanelGrid {
     // rows.front() is the waist row and is SHARED ring storage, never resampled
@@ -1277,13 +1220,20 @@ static SheathOptions probeOverrides(const SheathOptions& in) {
     return o;
 }
 
-SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& optIn) {
+// ---- THE SHELL, CONFIGURED ONCE (V3-A) ----
+//
+// Everything that turns a BodySurface into the garment shell — wearing ease per
+// ring, the skim run up to the shoulder, the A-line hem sweep, the hip blend —
+// used to live inside buildSheathPattern. Any second consumer of the shell would
+// have had to repeat it, and a repeated configuration is a second garment: the
+// projection line would have been drawing a dress the pattern line never cut.
+// The statements below are moved verbatim and in the same order, so the pattern
+// line is unchanged; what changed is who else can ask for the same object.
+GarmentSurf buildGarmentSurf(const BodySurface& body, const SheathOptions& optIn) {
     const SheathOptions opt = probeOverrides(optIn);
-    const double bustH = levelHeight(body, "bust");
     const double waistH = levelHeight(body, "waist");
     const double hipH = levelHeight(body, "hip");
     const double hemH = hipH - opt.hemDropBelowHipMM;
-
     // The neck ring carries ZERO wearing ease and that is a declaration, not an
     // omission: a neckline is CUT, not fitted, so there is no girth to ease at
     // that ring. It exists to give the surface a shape above the bust.
@@ -1294,6 +1244,52 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     const double easeMM[5] = {opt.easeNeckMM, 0.0, opt.easeBustMM, opt.easeWaistMM,
                               opt.easeHipMM};
     GarmentSurf surf = GarmentSurf::fromBody(body, easeMM);
+
+    const double napeZ = levelHeight(body, "neck");
+    double shoulderHalf = 0.0, tanIncl = 0.0;
+    for (const BodyLevel& lv : body.levels())
+        if (lv.name == "shoulder") {
+            shoulderHalf = lv.halfWidthMM;
+            tanIncl = (napeZ - lv.heightMM) / shoulderHalf;
+        }
+    if (shoulderHalf <= 0.0)
+        throw std::runtime_error("body has no shoulder level: a bodice cannot be cut");
+    if (opt.skimBodice) {
+        surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
+        surf.skimBaseH = waistH;                          // the single shared ring
+        // ★ TUR 17 — THE SWEEP GRADES, because it is derived from THIS body's
+        // hip and not from the one 36-inch hip the source happened to print.
+        // See SheathOptions::hemSweepOverHipMM for why the offset and not the
+        // ratio. The hip girth is the chart's own row, so nothing here can go
+        // stale between sizes.
+        double hipGirthMM = 0.0;
+        for (const BodyLevel& lv : body.levels())
+            if (lv.name == "hip") hipGirthMM = lv.girthMM;
+        double sweepMM = opt.hemSweepMM;
+        if (hipGirthMM > 0.0 && opt.hemSweepHipRatio > 0.0)
+            sweepMM = hipGirthMM * opt.hemSweepHipRatio;
+        else if (hipGirthMM > 0.0 && opt.hemSweepOverHipMM >= 0.0)
+            sweepMM = hipGirthMM + opt.hemSweepOverHipMM;
+        if (sweepMM > 0.0) {
+            surf.hemH = hemH;
+            // scale the waist section until its perimeter reaches the sourced sweep
+            const Section w = surf.section(waistH);
+            const double base = w.perimeter(24) + 2 * kPi * surf.profile(waistH, 3);
+            surf.hemScale = sweepMM / base;
+        }
+    }
+    surf.blendMM = opt.hipBlendMM;
+    return surf;
+}
+
+SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& optIn) {
+    const SheathOptions opt = probeOverrides(optIn);
+    const double bustH = levelHeight(body, "bust");
+    const double waistH = levelHeight(body, "waist");
+    const double hipH = levelHeight(body, "hip");
+    const double hemH = hipH - opt.hemDropBelowHipMM;
+
+    GarmentSurf surf = buildGarmentSurf(body, opt);
 
     // the top boundary, built once from the chart's own shoulder numbers
     const double napeZ = levelHeight(body, "neck");
@@ -1338,31 +1334,6 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
     fold.shoulderHalfMM = shoulderHalf;
     fold.seamYMM = opt.shoulderSeamForwardMM;
     fold.bandMM = opt.shoulderCrestBandMM;
-    if (opt.skimBodice) {
-        surf.skimTopH = napeZ - tanIncl * shoulderHalf;  // shoulder tip
-        surf.skimBaseH = waistH;                          // the single shared ring
-        // ★ TUR 17 — THE SWEEP GRADES, because it is derived from THIS body's
-        // hip and not from the one 36-inch hip the source happened to print.
-        // See SheathOptions::hemSweepOverHipMM for why the offset and not the
-        // ratio. The hip girth is the chart's own row, so nothing here can go
-        // stale between sizes.
-        double hipGirthMM = 0.0;
-        for (const BodyLevel& lv : body.levels())
-            if (lv.name == "hip") hipGirthMM = lv.girthMM;
-        double sweepMM = opt.hemSweepMM;
-        if (hipGirthMM > 0.0 && opt.hemSweepHipRatio > 0.0)
-            sweepMM = hipGirthMM * opt.hemSweepHipRatio;
-        else if (hipGirthMM > 0.0 && opt.hemSweepOverHipMM >= 0.0)
-            sweepMM = hipGirthMM + opt.hemSweepOverHipMM;
-        if (sweepMM > 0.0) {
-            surf.hemH = hemH;
-            // scale the waist section until its perimeter reaches the sourced sweep
-            const Section w = surf.section(waistH);
-            const double base = w.perimeter(24) + 2 * kPi * surf.profile(waistH, 3);
-            surf.hemScale = sweepMM / base;
-        }
-    }
-    surf.blendMM = opt.hipBlendMM;
 
     // THE ring: sampled once, at the waist, over the full circle.
     const int NR = opt.ringSamples;

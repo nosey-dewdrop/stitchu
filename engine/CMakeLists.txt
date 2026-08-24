@@ -12,6 +12,7 @@ add_library(engine
     src/flatten.cpp
     src/surfacepattern.cpp
     src/curvefit.cpp
+    src/shellprojection.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -709,6 +710,11 @@ add_test(NAME garment_armhole_check COMMAND garment_armhole_check)
 # h3b-rings.py / walk.py judge the new line without referee changes.
 add_executable(surface-pattern tools/surface-pattern.cpp)
 target_link_libraries(surface-pattern PRIVATE engine)
+
+# shell-flat: the fashion flat computed as an orthographic projection of the
+# SAME GarmentSurf the pattern is cut from, instead of drawn from a 2D croquis.
+add_executable(shell-flat tools/shell-flat.cpp)
+target_link_libraries(shell-flat PRIVATE engine)
 
 # waistfold-probe: DIAGNOSTIC, not a gate and not in ctest. Re-runs the sheath
 # with solver knobs that carry no geometric meaning and prints the waist fold,
