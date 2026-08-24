@@ -90,3 +90,57 @@ değil, o yüzden hüküm bu ayrımdan bağımsızdır.
 aldı, 0F kartıyla kapatıldı, ikinci hakem GEÇTİ dedi. Yeni kırmızı ad: 0.
 
 - V1 · sınıf hakemi · **GEÇTİ** · altı kırmızı sınıflandı: iki (b) bilinçli bayat pin (`golden_check`, `recipe_dress_check` — kökü `52ae85c`, kırmızı commit gövdesinde ilan edilmiş, mühür yenileme şartı Damla onayı), dört (c) kaynak/karar eksiği (`style_check`, `sizechart_source_check`, `contract_check`, `figure_check`), sıfır (a) gerileme · `GECE/V1-SINIF.md`
+
+---
+
+## V1 (uygulama fazı: 513b175 · e4516cf · e8b7f19) — hakem hükmü, 2026-08-24
+
+Hakem temiz oturumda koştu, brief/kart/niyet dosyası görmedi. Aşağıdaki her satır
+hakemin KENDİ yeniden koşturduğu komutlara dayanır; faz-öncesi hâller `/tmp`'de
+ayrı bir Release worktree'de derlendi ve worktree koşu sonunda kaldırıldı.
+
+- V1 · 4.1 makine · **GEÇTİ** · hakem tam süiti kendi koşturdu (`ctest --test-dir engine/build --output-on-failure`, Release, 286.09 sn) ve fazın bağlayıcı logunu satır satır tekrarladı: 105 koşan / 4 kırmızı / 1 disabled (`h10_gate_check`), kırmızı adlar `style_check` · `sizechart_source_check` · `contract_check` · `figure_check` — fazın bastığı kümeyle bire bir aynı. · `GECE/log/V1-A.ctest.after.txt`
+- V1 · 4.2 boş test · **GEÇTİ** · bu turun TEK yeni denetimi `style_check.mjs`'in kapsam kuralıdır (`git diff --numstat` ile doğrulandı: `e4516cf` ve `e8b7f19` hiçbir test dosyasına dokunmuyor, `recipe_dress_check.cpp` ve `golden_check` bayt bayt değişmedi), ve o kural boş değil — bugünkü 0-pin hâlinde de, sahte 1-pin hâlinde de KIRMIZI düşüyor. · `GECE/log/V1-E.mutasyon.txt` · hakemin kendi koşusu
+- V1 · 4.5 mutasyon (M8 karşı-kanıtı) · **GEÇTİ — DOĞRULANDI** · hakem M8'i sıfırdan üretti: `engine/STYLE-PIN/` yokken dizini açtı, üretim yolundan (`renderGarmentFlatAsync`) `dress_vneck_aline` için TEK gerçek pin yazdı (12117 bayt), sonra aynı dizinde iki testi koşturdu — `git show 513b175^:engine/tests/style_check.mjs` → `PASS ... exit 0` (YEŞİL), HEAD'in testi → `FAIL: 30 stilin pini YOK ... exit 1` (KIRMIZI); delik gerçekti ve yeni kural onu kapatıyor, mutasyon harness'ı temizlendi (`ls engine/STYLE-PIN` → yok, `git status` sızıntısız). · `GECE/log/V1-E.mutasyon.txt` §M8 · hakemin kendi koşusu
+- V1 · 4.4 hakem (kaynak okuması: `scye` opu testi geçmek için mi şekillendirilmiş?) · **GEÇTİ** · op bir düzeltme katsayısı ya da ikinci el-yazması eğri DEĞİL, iki hattı AYNI KAYNAĞA bağlıyor: `recipe.cpp:975-983` doğrudan `BodiceBlock::scyeCurve`'ü çağırıyor, o da `bodice.cpp:820-821`'de motorun kendi `armholeCurveFor`'una düşüyor — motorun `makePiece`/`makePrincessPieces` yollarının çağırdığı fonksiyonun ta kendisi (`bodice.cpp:508`, `:624`) — ve reçete karşılığında 10 adet el-yazması kontrol-noktası skalerini (`cp1x/cp1y/cp2x/cp2y/hollow/stx/sty/tanReach/slen/stxRaw`) her iki parçadan da SİLDİ, yani sayı eşitlenmedi, kod paylaşıldı. · `engine/src/recipe.cpp` · `engine/src/bodice.cpp:804-822`
+- V1 · mühür (`engine/golden-reference.csv` re-pin) · **KALDI** · mührün ÖLÇÜM tarafı kusursuz — hakem `engine/build/golden_dump`'ı koşturdu ve çıktı pinle BAYT-ÖZDEŞ (md5 `d5b5f28b2ef41a776b14699e9220982a`, 23406 satır, `cmp` exit 0, `contract/generated-paths.sha256`'daki `d28297e4…` da tuttu), defterin içerik-diff tablosunun ON SATIRININ HEPSİNİ bağımsız yeniden hesapladı ve birebir çıktı (9651 satır / %41.23, max 62.7764, medyan 5.6000, Bodice Front 1020/62.7764/6.1286 … Skirt 150/0.0001/0.0001), sebep de yazılı yerinde duruyor (`engine/GOLDEN-PIN.md` 2026-08-24 girdisi: ayrışma commit'i `52ae85c`, `bodice.cpp:905-907` ve `:917-924`, eski/yeni formül, Aldrich p.11'in iki noktası) — **AMA mührü taşıyan en güçlü cümle ÖLÇÜLMEMİŞ VE YANLIŞ**: defter (`GOLDEN-PIN.md:56-57`) ve commit gövdesi "bağımsız tanık `sloper_check` `52ae85c`'den ÖNCE KIRMIZIYDI, bugün YEŞİL, scye depth 189.0 → 210.0" diyor; hakem `52ae85c^` (c3d4359) ve `af49514` ağaçlarını ayrı Release worktree'de derleyip `sloper_check`'i koşturdu ve İKİSİNDE DE **exit 0, sıfır FAIL satırı, "all sloper checks pass"** çıktı, scye kalemi de ÖNCEDEN GEÇİYORDU (`engine 204.4 / aldrich 215.0 / err -10.6 mm`, tolerans 15 mm) — yani hareket kırmızıdan yeşile değil, yeşilden daha-yeşile (−10.6 → −5.0 mm); "189.0" sayısı iki sondanın hiçbirinde yok ve fazın ölçüm defteri `sloper_check`'i yalnız HEAD'de koşturmuş, "önce" tarafı hiç ölçülmemiş. İyileşmenin YÖNÜ gerçek ve mühür bir kırmızıyı susturmuyor; düşen, mührü savunan "üçüncü tarafça ölçüldü" iddiasının kendisidir ve o iddia düzeltilmeden mühür geçemez. · `GECE/log/V1-A.olcum.txt:59-63` · `engine/GOLDEN-PIN.md:55-64`
+- V1 · mühür usulü (`scripts/repin-golden.sh:33-38` kendi şartları) · **KALDI** · script'in üç şartından ikisi tam (1: tarihli defter girdisi VAR ve içeriği GERÇEK — hakem tablonun her sayısını yeniden hesapladı; 3: csv + defter AYNI commit'te, `e8b7f19`), fakat 2. şart — "Damla's explicit approval for the behavior change" — SAĞLANMADI ve defter bunu kendisi yazıyor ("DAMLA ONAYI BEKLIYOR (K-V1A) — varsayilan yurudu"); script'in kendi cümlesi "the pin is not valid without these" olduğuna göre mühür bugün kendi usulüne göre GEÇERSİZDİR (gizlenmiş değil, ilan edilmiş bir eksik — ama eksik). · `scripts/repin-golden.sh:33-38` · `engine/GOLDEN-PIN.md:69-72`
+- V1 · 4.1/RULES 9 kırmızı AD kümesi · **GEÇTİ** · iki log isim isim karşılaştırıldı ve hakemin kendi taze koşusu SONRA kümesini birebir üretti: ÖNCE (6) `contract_check` · `figure_check` · `golden_check` · `recipe_dress_check` · `sizechart_source_check` · `style_check`, SONRA (4) `contract_check` · `figure_check` · `sizechart_source_check` · `style_check`; `diff` yalnız İKİ SİLME gösteriyor, sıfır ekleme — küme büyümedi, küçüldü. · `GECE/log/V1.ctest.before.txt` · `GECE/log/V1-A.ctest.after.txt`
+- V1 · 4.6 tolerans · **GEÇTİ** · faz aralığında tek bir tolerans/eşik gevşemedi: üç commit'in `--numstat`'ı `engine/tests/` altında yalnız `style_check.mjs`'i gösteriyor ve o değişiklik kapıyı SIKIYOR (kısmi pin artık kırmızı), `golden-diff` toleransına, `sloper_check` bantlarına, `recipe_dress_check`'in 1e-6 mm eşiğine hiç dokunulmadı; kımıldayan tek şey mührün kendisidir ve o bir tolerans değil ilan edilmiş bir re-pin'dir (usul hükmü ayrı satırda). · `git diff 513b175^ e8b7f19 --numstat` · `GECE/log/V1-A.olcum.txt:31-43`
+
+**Hakem notu 1 (hükmü değiştirmez, 4.4'e iliştirilmiştir):** `scye` opu EĞRİYİ
+paylaşıyor ama ÇERÇEVEYİ paylaşmıyor — reçete JSON'una 8 yeni katsayı elle
+kopyalandı (`scyeDepthPerBust`, `scyeDepthInterceptMM`, `shoulderSeamPerBust`,
+`shoulderSeamInterceptMM`, `scyeBackWidthHalfPerBust/InterceptMM`,
+`scyeChestWidthHalfPerBust/InterceptMM`) ve **sekizinin hiçbiri
+`recipe_dress_check.cpp:124-154`'ün K0 sabit-parite mandalında YOK**; dosyanın
+kendi başlık cümlesi ("every recipe const == its motor counterpart",
+`recipe_dress_check.cpp:3`) bugün artık DOĞRU DEĞİLDİR. Risk kapalı sayılır
+çünkü çapraz parite üç gövdede çizilmiş çıktıyı karşılaştırıyor, ama mandalın
+ilan ettiği garanti kodda karşılıksız (RULES §1'in tam tanımı). Aynı mandalda
+altı sabit (`shoulderSeamTargetMM`, `armholeDepthFactor`, `hollowShareFront`,
+`hollowShareBack`, `tangentShare`, `lowerDropShare`) hâlâ latch'leniyor ama
+reçetede artık ÖLÜ — hiçbir skaler onları okumuyor.
+
+**Hakem notu 2 (hükmü değiştirmez):** `scye` opu ile birlikte
+`recipe_dress_check`'in "canlı ikinci-yol kanıtı" (`recipe_dress_check.cpp:6-9`)
+oyuk parçasında TOTOLOJİK hâle geldi: artık iki taraf da aynı C++ fonksiyonunu
+çağırdığı için oyuk eğrisi tanım gereği ayrışamaz. Mühendislik kararı doğrudur
+(bir JSON DSL bisection çözücü taşıyamaz) ve çerçeve aritmetiği hâlâ bağımsız,
+ama testin kendi yorumu bu daralmayı yazmıyor — kapı 125 hükmün 125'ini
+geçerken, o hükümlerden bir bölümü artık kendi kendini doğruluyor.
+
+**Hakem notu 3 — ÖLÇÜLMEYENLER:** (a) `sloper_check`'in `a15bdd3` (19 Tem)
+tarihli TEK commit'i olduğu ve o günden bugüne bayt bayt DEĞİŞMEDİĞİ
+doğrulandı (`git diff a15bdd3 HEAD -- engine/tests/sloper_check.cpp` boş), yani
+tanığın bağımsızlığı sağlam — çürüyen yalnız "kırmızıydı" iddiasıdır. (b) Yeni
+oyuğun GÖRSEL doğruluğu (Damla'nın gözü) ölçülmedi ve ölçülemez; K-V1A açık.
+(c) 62.7764 mm'lik en büyük hareketin hangi bedene/giysiye düştüğü hakem
+tarafından ayrıştırılmadı — tablo parça bazında doğrulandı, giysi bazında
+DEĞİL. (d) `web/vendor/stitchu-engine.js` ve worker bundle'larının bu ağaçtan
+derlendiği iddiası hakem tarafından yeniden derlenerek DOĞRULANMADI; yalnız
+`bundle_fresh_check`'in bugün yeşil olduğu görüldü.
+
+**FAZ HÜKMÜ: V1 KAPANMADI.** Beş alt kapı geçti, mühürle ilgili iki satır KALDI:
+biri ölçülmemiş bir tanık iddiası, diğeri script'in kendi 2. şartı (Damla onayı).
+Yeni kırmızı ad: 0.
