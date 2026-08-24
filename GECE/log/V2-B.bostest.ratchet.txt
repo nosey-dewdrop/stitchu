@@ -1,0 +1,39 @@
+# 4.2 BOS TEST KAPISI — vocab_reference_check
+# tarih: 2026-08-24T10:35:57Z  HEAD: b799748
+
+## A) EKSIK REFERANSLI TABAN (kartin istedigi bos test)
+# taban dosyasinin bir kopyasinda TEK bir anahtar 1 eksiltilir; bugunku agac
+# degismedi, sadece taban bir referans eksik. Kapi KIRMIZI dusmek zorunda.
+# komut: python3 (eksenAdi.garment -= 1) ; engine/tests/vocab_reference_check.sh
+
+olculen       : commit HEAD (b799748)
+taban commit  : b799748fc132f5aecc75f967d6467c7e421276c6
+taban toplam  : 10415
+bugun toplam  : 10416 (delta +1)
+
+  FAIL ARTTI  eksen ADI   garment                 1171 ->  1172  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (1 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+EXIT=1
+
+## B) KARTIN a6b473a TABANI — bugunku agacta KIRMIZI (olculdu, secilmedi)
+# komut: engine/tests/vocab_reference_check.sh --baseline a6b473a && engine/tests/vocab_reference_check.sh
+# a6b473a toplam 10349 · inis agaci (b799748) 10416 · delta +67, 32 anahtar artmis.
+# 67 satirin tamami uc dosyaya yazildi (asagidaki komut basiyor, toplam TAM tutuyor):
+
+  contract/garment-spec-v2.md          +25
+  contract/vocab-resolution-v1.json    +25
+  engine/tools/gen-vision-vocab.mjs    +17
+  TOPLAM                               +67
+
+  engine/vocab.json a6b473a..b799748 degisti mi: (bos diff = DEGISMEDI)
+
+## C) TABAN DOSYASI YOKKEN — eksik yasa asla PASS degildir
+# komut: mv taban /tmp; engine/tests/vocab_reference_check.sh
+
+FAIL: no baseline at /Users/damummyphus/damla_projects_2026/stitchu/engine/tests/vocab-reference-baseline.json — a missing law is never a pass.
+      cut it once with: engine/tests/vocab_reference_check.sh --baseline <commit>
+EXIT=1

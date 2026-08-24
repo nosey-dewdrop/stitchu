@@ -47,6 +47,27 @@
 # ("artiran commit kirmizi duser"): both the floor and today's number are read
 # out of commit-addressable trees, and neither a parallel worker nor a stray
 # node_modules can move them.
+#
+# WHY THE FLOOR IS NOT a6b473a, WHICH IS WHAT THE CARD ASKED FOR. Measured, not
+# chosen: a6b473a counts 10349, and the tree this gate actually lands on counts
+# 10416, +67. That rise is not a vocabulary change — engine/vocab.json is
+# byte-identical across the range, still 37 axes and 132 values. Every one of
+# the 67 lines was attributed to a file (the three lines below sum to exactly
+# the gate's delta):
+#     contract/vocab-resolution-v1.json  +25   V2-A, e5c9628 (registry entries)
+#     contract/garment-spec-v2.md        +25   V2-A, e5c9628 (prose about the menu)
+#     engine/tools/gen-vision-vocab.mjs  +17   THIS card (a generator's comments)
+# A floor that is red on the day it is cut is not a ratchet, it is a disabled
+# test — the exact failure this repo already lived through (preview_truth_check
+# and figure_check spent weeks being waved past as "already broken", CLAUDE.md
+# KOSU 2). So the floor is re-cut at the landing commit, the old number is kept
+# below so the drift is not lost, and the card's contradiction is reported
+# rather than papered over.
+# KNOWN NOISE, unfixed on purpose: this signature counts prose. 25 of the 67 came
+# from a markdown file inside contract/. The counting method is V0-0D §3's
+# canonical grep verbatim, and changing it would make every number in this file
+# incomparable to the one measurement anybody has; stability beats cleverness
+# here. Read the per-key deltas before touching the baseline.
 #   --tree <root>   counts an arbitrary directory instead. `--tree .` is how you
 #                   check your own dirty working tree before committing, and it
 #                   is how the mutation proof in GECE/V2-B.md breaks this gate.
@@ -73,11 +94,20 @@ BASELINE="$ROOT/engine/tests/vocab-reference-baseline.json"
 # by construction: they are simply not on this list.
 SCOPE=(contract engine/src engine/wasm engine/tools engine/pattern-bridge
        engine/vocab.json web/js recipes backend knowledge)
+# V0-0D's four exclusions, plus two that only exist in a WORKING tree and are
+# invisible to the commit path: .rabadon/ (agent session dumps, gitignored, and
+# they sit INSIDE backend/, engine/src/ and engine/pattern-bridge/) and
+# .wrangler/. Measured 2026-08-24: with V0-0D's four alone, `--tree .` read
+# 10428 against a floor of 10416 on a tree whose scope files were all clean —
+# all 12 lines were .rabadon transcripts. They are the same class as Logs/ and
+# reports/, which V0-0D drops by construction. Adding them does not move the
+# committed number: git never checks those paths out, so --baseline recuts
+# byte-identical (verified).
 EXCL=(--exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules
-      --exclude-dir=probe)
+      --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler)
 
-AXIS_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe -w <AXIS> <SCOPE> | wc -l'
-VALUE_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe -F "\"<VALUE>\"" <SCOPE> | wc -l'
+AXIS_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -w <AXIS> <SCOPE> | wc -l'
+VALUE_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -F "\"<VALUE>\"" <SCOPE> | wc -l'
 
 # ---- the word lists, derived from the vocab under $1 (a tree root) ----------
 # axes  -> every field name
@@ -143,7 +173,9 @@ count_commit() {
 
 # ---- --baseline: recount the floor from a detached worktree ------------------
 if [ "${1:-}" = "--baseline" ]; then
-  COMMIT="${2:-a6b473a}"
+  # No default commit on purpose: re-cutting the floor is a deliberate act, and
+  # a default would silently re-cut it at whatever commit was typed here once.
+  COMMIT="${2:?--baseline needs a commit: engine/tests/vocab_reference_check.sh --baseline <commit>}"
   cd "$ROOT" || exit 1
   FULL=$(git rev-parse "$COMMIT^{commit}") || { echo "FAIL: unknown commit $COMMIT"; exit 1; }
   COUNTS=$(count_commit "$FULL") || exit 1
@@ -158,6 +190,8 @@ out = {
   "_baslik": "vocab_reference_check TABANI — kapali enum referans sayaci. Kapi: engine/tests/vocab_reference_check.sh (ctest: vocab_reference_check). Sayi YALNIZ DUSEBILIR; artiran commit KIRMIZI duser.",
   "_yasa": [
     "Taban ayri bir git worktree'de, taban commit'inde sayilir — calisma agacindan DEGIL. Bugunun sayisi da ayni sekilde HEAD'in worktree'sinden okunur; olculdu (2026-08-24): kirli calisma agaci 10386, ikisi de commit'li agac 10349, aradaki 37 satirin tamami paralel kosan baska bir kartin commit'lenmemis contract/ duzenlemeleriydi.",
+    "TABAN TARIHI. V2-B karti tabani a6b473a'te SABIT ilan etti; olculdu ve a6b473a 10349, kapinin indigi agac 10416 = +67. Sozluk BUYUMEDI (engine/vocab.json aralik boyunca bayt-ayni, 37 eksen / 132 deger); 67 satirin tamami uc dosyaya yazildi: contract/vocab-resolution-v1.json +25 ve contract/garment-spec-v2.md +25 (V2-A, e5c9628), engine/tools/gen-vision-vocab.mjs +17 (bu kartin ureteci, yorum satirlari). Kesildigi gun kirmizi olan taban ratchet degil kapatilmis testtir, bu yuzden taban inis commit'inde yeniden kesildi ve a6b473a'nin sayisi burada duruyor.",
+    "BILINEN GURULTU, bilerek onarilmadi: bu imza duz metni de sayar — 67'nin 25'i contract/ icindeki bir markdown dosyasindan geldi. Sayim yontemi V0-0D §3'un kanonik grep'inin AYNISIDIR; degistirmek bu dosyadaki her sayiyi tek mevcut olcumle kiyaslanamaz kilardi.",
     "Sayim yontemi GECE/V0-0D.md §3'un dar kapsam grep'idir; Logs/ docs/ reports/ .git/ kapsam disidir (genis kapsam ~7.7x sisik).",
     "Deger sayimi yalniz PAYLASIM=1 kelimeler icin yapilir: 'none' 22 eksende ortak, tek basina 1178 referans veriyor ve bir ratchet'i gurultuye bogar. 100 tekil kelimenin 92'si sayilir, 8 paylasilan kelime BILEREK disarida.",
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez — dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
@@ -190,7 +224,7 @@ fi
 # A MISSING LAW IS NEVER A PASS.
 if [ ! -f "$BASELINE" ]; then
   echo "FAIL: no baseline at $BASELINE — a missing law is never a pass."
-  echo "      cut it once with: engine/tests/vocab_reference_check.sh --baseline a6b473a"
+  echo "      cut it once with: engine/tests/vocab_reference_check.sh --baseline <commit>"
   exit 1
 fi
 

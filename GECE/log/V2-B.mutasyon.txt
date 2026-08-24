@@ -1,0 +1,133 @@
+# 4.5 MUTASYON KANITI — iki kapi, her biri en az bir kasitli bozma.
+# tarih: 2026-08-24T10:36:36Z  HEAD: b799748
+
+================================================================
+KAPI 1/2 — vocab_source_check
+================================================================
+## M1a. ELLE BIR KELIME EKLE (kartin onerdigi mutasyon)
+# komut: python3 ile vision-student/vocab.py GARMENT_CLASSES sonuna "trousers" eklendi
+#        engine/tests/vocab_source_check.sh
+
+ok: generator deterministic — two runs, byte-identical (3892 bytes)
+FAIL: vision-student/vocab.py is STALE or HAND-EDITED — it is not what engine/tools/gen-vision-vocab.mjs produces.
+      fix: node engine/tools/gen-vision-vocab.mjs   (never by editing vision-student/vocab.py)
+      --- diff (generated <-> on disk) ---
+      --- /var/folders/5b/s4fb775925l775xmnt2zt_mr0000gn/T/tmp.3EQvpzdpzX/a.py	2026-08-24 13:36:36
+      +++ vision-student/vocab.py	2026-08-24 13:36:36
+      @@ -29,7 +29,7 @@
+       NECKLINE_CLASSES = ["crew", "scoop", "vNeck", "square", "boat", "sweetheart", "halter", "cowl", "pussyBow"]
+       
+       # garment: Kaskadin koku: giysi ailesi secilmeden diger kafalar anlamsiz.
+      -GARMENT_CLASSES = ["skirt", "dress", "top"]
+      +GARMENT_CLASSES = ["skirt", "dress", "top", "trousers"]
+       
+       # sleeveLength: Fotograftan okunabilen, motorun da tanidigi tek kol ekseni.
+       SLEEVE_LENGTH_CLASSES = ["short", "elbow", "long"]
+FAIL: FIELDS['garment'] carries 'trousers', which is not a value of that axis
+FAIL: FIELDS['garment'] carries 'trousers', absent from the resolution table
+FAIL: FIELDS['garment'] order/content drift: ['skirt', 'dress', 'top', 'trousers'] != ['skirt', 'dress', 'top']
+FAIL: 'garment.trousers' is in BOTH FIELDS and _UNRESOLVED
+_UNRESOLVED/FIELDS audit: 4 FAIL
+----
+vocab_source_check: HUKUM FAIL (2)
+The vision word list is a BUILD PRODUCT. It stopped matching its sources.
+EXIT=1
+
+## M1a-geri. mutasyon geri alindi
+# komut: engine/tests/vocab_source_check.sh
+
+ok: generator deterministic — two runs, byte-identical (3892 bytes)
+ok: vision-student/vocab.py is byte-identical to the generator's output
+ok: 4 heads, 21 classes, 2 unresolved names — every class resolved, every unresolved name still unresolvable
+----
+vocab_source_check: HUKUM YESIL
+EXIT=0
+
+## M1b. URETECIN KENDISI YALAN SOYLESIN (adim 3 tek basina yetmez kanitı)
+# gen-vision-vocab.mjs FOREIGN listesine COZULEBILIR bir kelime eklendi
+# ({field:'neckline', value:'cowl'}), sonra dosya YENIDEN URETILDI — yani
+# adim 3'un diff'i TERTEMIZ. Kapiyi kiran adim 4'un bagimsiz denetimidir.
+# komut: node engine/tools/gen-vision-vocab.mjs ; engine/tests/vocab_source_check.sh
+
+wrote /Users/damummyphus/damla_projects_2026/stitchu/vision-student/vocab.py (3979 bytes)
+ok: generator deterministic — two runs, byte-identical (3989 bytes)
+ok: vision-student/vocab.py is byte-identical to the generator's output
+FAIL: 'neckline.cowl' is in BOTH FIELDS and _UNRESOLVED
+FAIL: _UNRESOLVED['neckline.cowl'] is resolvable today — it must ship as a class, not sit here
+_UNRESOLVED/FIELDS audit: 2 FAIL
+----
+vocab_source_check: HUKUM FAIL (1)
+The vision word list is a BUILD PRODUCT. It stopped matching its sources.
+EXIT=1
+
+## M1b-geri. mutasyon geri alindi (ureteci + uretilmis dosya)
+# komut: engine/tests/vocab_source_check.sh
+
+ok: generator deterministic — two runs, byte-identical (3892 bytes)
+ok: vision-student/vocab.py is byte-identical to the generator's output
+ok: 4 heads, 21 classes, 2 unresolved names — every class resolved, every unresolved name still unresolvable
+----
+vocab_source_check: HUKUM YESIL
+EXIT=0
+
+================================================================
+KAPI 2/2 — vocab_reference_check
+================================================================
+## M2-once. mutasyon ONCESI calisma agaci (--tree .) TABANLA AYNI
+# komut: engine/tests/vocab_reference_check.sh --tree .
+# NOT: ilk kosuda delta +12 cikti ve 12 satirin tamami gitignore'lu
+#      .rabadon/ oturum dokumlerinden geliyordu (backend/, engine/src/,
+#      engine/pattern-bridge/ ICINDE duruyorlar). EXCL'e .rabadon ve
+#      .wrangler eklendi; commit tarafi DEGISMEDI (taban yeniden kesildi,
+#      10416 -> 10416, eksenAdi ve enumDegeri sozlukleri bayt-ayni).
+
+olculen       : agac /Users/damummyphus/damla_projects_2026/stitchu
+taban commit  : b799748fc132f5aecc75f967d6467c7e421276c6
+taban toplam  : 10416
+bugun toplam  : 10416 (delta +0)
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.
+EXIT=0
+
+## M2. KASITLI BOZMA — kapali bir enuma YENI referans
+# engine/tools/gen-vision-vocab.mjs'e tek satir yorum eklendi; icinde
+# 'neckline' ekseninin adi ve "cowl" degeri geciyor.
+# komut: engine/tests/vocab_reference_check.sh --tree .
+
+olculen       : agac /Users/damummyphus/damla_projects_2026/stitchu
+taban commit  : b799748fc132f5aecc75f967d6467c7e421276c6
+taban toplam  : 10416
+bugun toplam  : 10418 (delta +2)
+
+  FAIL ARTTI  eksen ADI   neckline                 991 ->   992  (+1)
+  FAIL ARTTI  enum DEGERI cowl                      14 ->    15  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (2 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+EXIT=1
+
+## M2-geri. mutasyon geri alindi
+# komut: engine/tests/vocab_reference_check.sh --tree . ; ayrica commit yolu (HEAD)
+
+olculen       : agac /Users/damummyphus/damla_projects_2026/stitchu
+taban commit  : b799748fc132f5aecc75f967d6467c7e421276c6
+taban toplam  : 10416
+bugun toplam  : 10416 (delta +0)
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.
+EXIT=0
+olculen       : commit HEAD (b799748)
+taban commit  : b799748fc132f5aecc75f967d6467c7e421276c6
+taban toplam  : 10416
+bugun toplam  : 10416 (delta +0)
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.
+EXIT=0

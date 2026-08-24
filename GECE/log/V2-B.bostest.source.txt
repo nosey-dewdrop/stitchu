@@ -1,13 +1,13 @@
-# 4.2 BOS TEST KAPISI — vocab_source_check, FAZ ONCESI (elle yazilmis vision-student/vocab.py)
+# 4.2 BOS TEST (yeniden kosuldu, V2-B2)
 # komut: engine/tests/vocab_source_check.sh
-# tarih: 2026-08-24T04:50:15Z  HEAD: e5c9628
-# on kosul: vision-student/vocab.py HENUZ URETILMEDI, git HEAD'deki elle yazilmis 55 satir.
+# tarih: 2026-08-24T10:32:22Z  HEAD: ffcd512
+# on kosul: vision-student/vocab.py HALA elle yazilmis 55 satir (git HEAD)
 
 ok: generator deterministic — two runs, byte-identical (3892 bytes)
 FAIL: vision-student/vocab.py is STALE or HAND-EDITED — it is not what engine/tools/gen-vision-vocab.mjs produces.
       fix: node engine/tools/gen-vision-vocab.mjs   (never by editing vision-student/vocab.py)
       --- diff (generated <-> on disk) ---
-      --- /var/folders/5b/s4fb775925l775xmnt2zt_mr0000gn/T/tmp.XBcIqBNk7A/a.py	2026-08-24 07:50:15
+      --- /var/folders/5b/s4fb775925l775xmnt2zt_mr0000gn/T/tmp.PfVKxwqxha/a.py	2026-08-24 13:32:23
       +++ vision-student/vocab.py	2026-07-24 20:27:46
       @@ -1,18 +1,9 @@
       -"""Shared vocabulary for the student CV heads. URETILMISTIR — ELLE DUZENLENMEZ.
@@ -89,5 +89,4 @@ _UNRESOLVED/FIELDS audit: 9 FAIL
 ----
 vocab_source_check: HUKUM FAIL (2)
 The vision word list is a BUILD PRODUCT. It stopped matching its sources.
-
-EXIT=0
+EXIT=1

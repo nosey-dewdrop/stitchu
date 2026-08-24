@@ -790,3 +790,26 @@ add_test(NAME preset_resolve_check COMMAND preset_resolve_check
 # "tüm spec'i yeniden yaz" kipinde uygulanınca kapı KIRMIZI düşmek zorunda.
 add_test(NAME edit_locality_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/edit_locality_check.mjs)
+
+# V2-B, KAPI 1/2 — vocab_source_check: the vision word list is a BUILD PRODUCT.
+# vision-student/vocab.py opened with "the classes MUST stay identical to the
+# teacher schema" and nothing checked the sentence; measured against
+# engine/vocab.json it was false on three of its four lists (neckline 7 vs 9,
+# garment carried two words no engine axis has, skirtStyle 5 vs 6). Same
+# regen-and-diff pattern as specv2_check, with the k8s twist: the generator
+# writes into mktemp, never into the tree it is judging. The tolerance is zero
+# bytes. A word that cannot ship lands in _UNRESOLVED with its reason and the
+# gate re-derives that block from the JSON tables, so the generator cannot pass
+# itself by writing both sides of the diff.
+add_test(NAME vocab_source_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/vocab_source_check.sh)
+
+# V2-B, KAPI 2/2 — vocab_reference_check: the closed-enum ratchet. V2's
+# direction is BREADTH -> DEPTH, so a reference to a closed enum value may fall
+# and may not rise. The floor is a committed count file, and both sides are
+# counted in a detached git worktree — the unit is the COMMIT, so a parallel
+# worker's dirty tree cannot move the number. A fall leaves the gate green and
+# does NOT rewrite the floor; locking a decrease in is a separate, deliberate
+# `--baseline` commit. Read the per-key deltas before touching the baseline:
+# this signature counts comments and prose too, on purpose (stability over
+# accuracy), and the reasons are in the script's header.
+add_test(NAME vocab_reference_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/vocab_reference_check.sh)
