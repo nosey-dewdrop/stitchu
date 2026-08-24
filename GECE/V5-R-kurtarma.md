@@ -168,3 +168,172 @@ Erişim notu (sonraki koşular için): ScienceDirect, MDPI doğrudan, HAL,
 ResearchGate, Academia, SAGE, SpringerLink otomatik çekimi engelliyor.
 Çalışanlar: PMC / Europe PMC, Frontiers, arXiv abs, Semantic Scholar API
 (özet), üretici yardım siteleri, üniversite repo PDF'leri.
+
+---
+
+## C) KES-F / FAST — kumaş uzayabilirliğinin yayınlanmış sayıları
+
+Merkezî uyarı (IEEE SA raporunun kendi bulgusu): KES, FAST, Browzwear FAB,
+CLO Kit, Optitex, FTT çıktıları arasında **standart yok, birim uzlaşması
+yok, çapraz korelasyon yok**. "Uzayabilirlik sayısı"na dayanan her hüküm
+alet-bağımlıdır. Kaynak: Kuijpers S., Luible-Bär C., Gong R.H. (2020),
+"The Measurement of Fabric Properties for Virtual Simulation — A Critical
+Review", IEEE SA Industry Connections Report STDVA24083,
+ISBN 978-1-5044-6497-0.
+https://pure.manchester.ac.uk/ws/portalfiles/portal/160056173/3DBP_Measurement_of_fabric_properties.pdf
+
+### KES-FB1 çekme (birincil, PDF okundu)
+> "After the tensile force attains the maximum stress F_m = 500 gf/cm, the
+> recovery process starts."
+Numune 5 × 20 cm, hız 0.1–0.2 mm/s. Esnek/örme için hassas ayar: 50 gf/cm.
+Kesme: aynı numune ±8°, sabit dik gerginlik W = 10 gf/cm; G birimi
+gf/(cm·derece), 2HG 0.5°'de, 2HG5 5°'de.
+Birim dönüşümü doğrulandı: **500 gf/cm ≈ 490 N/m** (FAST tarafından çapraz
+onay: 5 gf/cm = 4.9 N/m). Mahnić Naglić ve ark. 2025 (Polymers 17(15):2013)
+maksimum yükü 490.35 cN olarak veriyor ve EMT-1/EMT-2'yi bu yükteki
+çözgü/atkı uzamaları olarak tanımlıyor.
+
+### Ölçülmüş EMT değerleri (birincil)
+- M1 dimi, çözgü %65 CO/%33 PES/%2 EL, atkı PES sarılı elastan,
+  226.58 g/m²: **EMT çözgü %1.730 · EMT atkı %11.180**. Bu ASİMETRİ tamamen
+  elastan atkıdan geliyor — "tipik dokuma" sayısı olarak KULLANILMAZ.
+  Polymers 17(15):2013. https://pmc.ncbi.nlm.nih.gov/articles/PMC12349057/
+- Kontrol pamuklu (158 g/m²) EMT ≈ **%2.29**; fotokromik inkjet basılı
+  ≈ %1.21; iletken inkjet ≈ %2.61 (çözgü+atkı ortalaması, yön ayrımı
+  yayınlanmamış). Tadesse ve ark. 2018, Materials 11(12):2466.
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC6316920/
+- SECONDARY / DOĞRULANMADI: "normal dokuma kumaşlarda EMT tipik olarak
+  %3–10 arasıdır" — ScienceDirect Topics alıntısı, sayfa 403 döndü,
+  kitap bölümü adlandırılamadı.
+
+### Kawabata/HESC ideal bant (erkek takım kumaşı) — SECONDARY, ÇEKİNCELİ
+Fan J., Yu W., Hunter L., "Engineering Apparel Fabrics and Garments",
+Woodhead 2004, Tablo 1.12 (TAV > 4.0 ölçütü):
+EM1 (çözgü) **%4.3–5.1** · EM2 (atkı) **%7.5–18** · EM2/EM1 = 1.3–3.0 ·
+G = 0.50–0.65 gf·cm/deg · 2HG5 = 0.8–1.5 gf/cm · LT = 0.50–0.60 ·
+RT = %73–78. Genel: çözgü εM1 > %3.5, atkı εM2 > %4.0.
+ÇEKİNCE: bu tablo iki KORSAN kitap aynasından çıkarıldı (epdf.pub,
+vdoc.pub) ve özetleyici tarafından okundu, sayfa görüntüsüyle
+DOĞRULANMADI; kış/yaz satırları aynı döndü (özetleyici artefaktı olabilir).
+Yayına girmeden önce basılı Tablo 1.12 ile karşılaştırılmalı ve atıf
+Woodhead kitabına verilmeli.
+Kawabata & Niwa'nın kategori bazlı "kar tanesi" kontrol grafiği ortalama±σ
+değerleri: HİÇBİR ücretsiz kaynakta BULUNAMADI.
+
+### FAST / SiroFAST (birincil tanımlar, IEEE SA raporu Tablo 2)
+E5 / E20 / E100 = 5 / 20 / 100 gf/cm'de uzayabilirlik [%] ·
+EB5 = 45° bias uzaması 5 gf/cm'de · **Kesme rijitliği G = 123/EB5, birim N/m**
+· B [µN·m] · C [mm] · T2 (2 g/cm²) / T100 (100 g/cm²) · RS, HE [%] ·
+F = formability (raporun dipnotu: "no unit of measure given").
+SI karşılıkları (SECONDARY, CSIRO el kitabını tekrarlayan ders sunumu):
+E5 → 4.9 N/m · E20 → 19.6 N/m · E100 → 98.1 N/m.
+B = 9.8e-6 · M · C³ [µN·m] · **F = B(E20 − E5)/14.7**.
+RS = (L1−L3)/L1 ×100 · HE = (L2−L3)/L3 ×100.
+Numune 150×50 mm (FAST-1/2/3), 300×300 mm (FAST-4); tekrar: 5 sıkışma,
+3+3 eğilme, 3 çözgü + 3 atkı + 6 bias uzama.
+
+### FAST işlem sınırları (SECONDARY, alıntı düzeyinde, sayfalar 403)
+- **E100 < ~%2** ise kumaş dikişte overfeed ile uzatılamıyor.
+- **G < 30 N/m** kolay deforme, serme/dikmede sorun; **G > 80 N/m**
+  overfeed/kalıplama zor → çalışma bandı **G ≈ 30–80 N/m**,
+  yani EB5 ≈ %1.5–4.1 (G = 123/EB5 ile).
+- Erkek takım kumaşı kesme rijitliği "67–91" — kaynak birimi gf/cm yazmış,
+  bu neredeyse kesin bir dizgi hatası, N/m olmalı (67–91 N/m ⇒
+  EB5 = %1.35–1.84). BİRİM ŞÜPHELİ, öyle işaretle.
+- Formability: çözgü için **0.4–0.6 optimum**, "tercihen 0.25'ten büyük".
+  Finish stability tercihen > %75.
+
+### Bias (45°) ve ana yön karşılaştırması
+Pan N., Kovar R., Dolatabadi M.K. ve ark. (2015), R. Soc. Open Sci.
+2(5):140499. https://pmc.ncbi.nlm.nih.gov/articles/PMC4453249/
+45° bias şeritte kopmadaki uzama (L = 100 mm):
+polyester/pamuk %27.06 (W=5mm) → %32.19 (W=25mm) · yün %26.67 → %33.09 ·
+cam %25.14 → %28.20.
+YÖNTEMSEL KRİTİK NOKTA: bias testinde **numune genişliği W bağımsız bir
+değişken** — dik şerit testlerinin aksine. Yani bias "uzayabilirliği" tek
+bir kumaş sabiti DEĞİLDİR.
+FAST üzerinden düşük yük karşılaştırması: worsted E100 (çözgü/atkı) ~%2
+mertebesi, EB5 (bias, yükün 1/20'sinde) ~%1.35–4.1 → yaklaşık **20×
+uyumluluk oranı**. Bu oran iki banttan ÇIKARILMIŞ aritmetiktir, yayınlanmış
+bir sayı DEĞİLDİR.
+
+### Ek olarak görülen (simülasyon hattı için)
+Gerçek↔simüle drape korelasyonu: KES sürücülü r = 0.97, FAST sürücülü
+r = 0.94 (IEEE SA raporu, ref [19] üzerinden).
+CLO Fabric Kit 2.0: 2 kgf kuvvet eşiği, 22×3 cm çözgü/atkı/bias numune,
+dokumada 1 mm adım, yüksek esnemede ve dokuma bias'ta 10 mm.
+Browzwear FAB: 8 cm kıskaç aralığı, 5×25 cm numune, sürtünme ÖLÇÜLMÜYOR
+(varsayılan 0.20).
+
+### ERİŞİLEMEYENLER
+SAWTRI/CSIR "The FAST Fabric Objective Measurement Properties of
+Commercial Worsted Apparel Fabrics" (Hunter & Botha) — aranan ortalama/
+min/maks FAST tablosu büyük olasılıkla burada; CORE'un üç URL biçimi de
+403/timeout verdi (https://core.ac.uk/download/327307906.pdf). Tarayıcıdan
+denenmeli. CSIRO SiroFAST el kitabı (De Boos & Tester 1994, WT92.02):
+ücretsiz PDF YOK. Minazio 1995 (IJCST 7(2/3)): paywall.
+Açılamayan alan adları: sciencedirect topics, mdpi doğrudan, tandfonline,
+core.ac.uk, ias.ac.in, inflibnet, researchgate.
+Erkek worsted takım kumaşı için AÇILABİLEN kaynaktan çözgü-atkı EMT çifti
+BULUNAMADI.
+
+### BİRİM TUZAĞI
+KES G birimi gf/(cm·derece) [veya cN/(cm·°)], FAST G birimi N/m.
+**Aynı büyüklük DEĞİLLER**, dönüşümsüz karşılaştırılamazlar. Yukarıdaki
+kaynakların birkaçı bunu özensizce karıştırıyor ("67–91 gf/cm" satırı
+bunun bir örneği).
+
+---
+
+## D) Natalie Bray ease sayıları — İKİNCİL KAYNAK ARAMASI: BULUNAMADI
+
+HÜKÜM: Bray'in kol kapağı easing'i, omuz dikişi ease'i ve yan dikiş ease'i
+için SAYI + KİTABA AÇIK ATIF içeren hiçbir topluluk kaynağı bulunamadı.
+Bu üç sayı bu koşuda KAYNAKLANDIRILAMADI; §5.1 gereği eşik olarak
+kullanılamaz, kullanılacaksa "yayınlanmış kaynak YOK, bant şu ölçümden"
+yazılır.
+
+Bulunan tek doğrudan alıntı (Open Library search-inside, Bray'in kendi
+metni): "With this type of 'flattened' sleeve head a total of 1 cm sleeve
+head easing is usually quite sufficient for most fabrics".
+https://openlibrary.org/search/inside?q=%22sleeve+head+easing%22
+ÇEKİNCE: cümle açıkça "bu tip YASSILAŞTIRILMIŞ kol kapağı" için — temel
+kol bloğu için DEĞİL. Bray'in standart blok değeri hiçbir sorguda
+yüzeye çıkmadı. Sayfa numarası yok.
+
+Omuz dikişi: Bray fazla arka omuz uzunluğunu ya pens ya ease olarak ele
+alıyor (iki snippet bunu doğruluyor) ama SAYI hiçbir snippet'te yok.
+Yan dikiş: Open Library'de "side seam ease" ifadesi ~20 kitapta geçiyor,
+Bray'de SIFIR. Bu olumsuz kanıt, yokluk kanıtı değil.
+
+Bulunan tek gerçek ikincil atıf, ve HEDEF DIŞI: "the Natalie Bray block
+(circa 1950's) drafts with 5 cm of ease on the half bust (or hips if the
+hips are bigger)" — A Tailor Made It blogu, 2021.
+http://atailormadeit.blogspot.com/2021/05/benefits-of-basic-block.html
+Bu BÜST ease'i, aranan üç sayıdan hiçbiri değil, sayfa numarası yok.
+
+YANLIŞ ATIF TUZAKLARI (Bray'e bağlanmasın): PatternReview 111067'deki
+"at least 1 1/4 in (3 cm), no more than 1 1/2 in (3.75 cm)" ceket bloğu
+talimatı, Bray'den DEĞİL. Ledbetter ve DiMarco'nun omuz ease cümleleri
+de Bray değil.
+
+ARAMA NOTU (sonraki koşular için değerli):
+- Bray'in kendi sözcüğü **"sleeve head easing"** — Amerikan terimi
+  "sleeve cap ease" ile arama kitabı tamamen ıskalıyor. İngiliz imlası,
+  santimetre.
+- Bray dört blok adlandırıyor (Simplified, Trade, Tailoring, STANDARD);
+  ease değerleri bloktan bloğa değişebilir, harvest edilen her sayı hangi
+  bloğa ait olduğuyla birlikte yazılmalı.
+- Bray ease'i en azından büst için SABİT SAYI olarak değil, ÖLÇÜ ALMA
+  KURALI olarak veriyor olabilir ("küçük bedende sıkı, büyük bedende
+  gevşek ölç"). Doğruysa tek bir kanonik "yan dikiş ease"i kitapta
+  gerçekten YOK olabilir. DOĞRULANMADI.
+- `openlibrary.org/search/inside` bu ortamdan çekilebiliyor ve Bray'in
+  GERÇEK metnini arıyor; kitap başına ~3 kırpılmış snippet, sayfa numarası
+  yok. Bu koşuda bulunan en değerli alet.
+- ERİŞİLEMEDİ: sewing.patternreview.com'un tamamı (403 + Cloudflare),
+  özellikle Bray'e özel iki başlık (topic/119676, topic/79353);
+  web.archive.org bu ortamda engelli; archive.org full-text 403;
+  curvysewingcollective sloper karşılaştırması HTTP 500.
+  YouTube'da ~12 "Natalie Bray method" video var, sayıları sözlü
+  söylüyor olmaları çok muhtemel, transcript alınamadı.
