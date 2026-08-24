@@ -88,3 +88,5 @@ değil, o yüzden hüküm bu ayrımdan bağımsızdır.
 
 **FAZ HÜKMÜ: V0 KAPANDI.** Altı alt kapı + yazma + kâtip yeşil; 4.7 önce KALDI
 aldı, 0F kartıyla kapatıldı, ikinci hakem GEÇTİ dedi. Yeni kırmızı ad: 0.
+
+- V1 · sınıf hakemi · **GEÇTİ** · altı kırmızı sınıflandı: iki (b) bilinçli bayat pin (`golden_check`, `recipe_dress_check` — kökü `52ae85c`, kırmızı commit gövdesinde ilan edilmiş, mühür yenileme şartı Damla onayı), dört (c) kaynak/karar eksiği (`style_check`, `sizechart_source_check`, `contract_check`, `figure_check`), sıfır (a) gerileme · `GECE/V1-SINIF.md`
