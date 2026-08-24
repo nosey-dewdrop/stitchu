@@ -47,6 +47,43 @@ double girthAt(const GarmentSurf& s, double h) {
     return sec.perimeter(kPerimOrder) + 2.0 * kPi * d;
 }
 
+// THE CENTRE-FRONT (or CENTRE-BACK) LINE OF THE SHELL, AS A LENGTH ALONG THE
+// CLOTH. Why it exists: body_length used to be shoulder.h - hemZ, a VERTICAL
+// HEIGHT DIFFERENCE, and it was compared against the pattern side, which sums
+// the arc of the centre-front seam ACROSS THE CLOTH (tools/pattern-measure.mjs).
+// Two different quantities, so the -1.9795% the gate printed was not a
+// disagreement about one number, it was a wrong verdict about two. Measured
+// EU38: flat 743.5050 vs pattern 728.7870.
+//
+// The line itself is not invented: the shell's own section is
+// c(phi) = (a cos phi, bm sin phi + bd sin^2 phi) offset outward by d, so the
+// centre front of the garment is phi = +pi/2 and the centre back phi = -pi/2 —
+// the same convention surfacepattern.cpp cuts its front/back panels on. The arc
+// is the plain integral of |d/dh at(h, phi)| between the same two heights the
+// height difference used, and NO correction factor, offset or calibration
+// constant is applied to it anywhere.
+//
+// The step is 0.05mm because that is the step tools/pattern-measure.mjs
+// integrates its cubics at; one ruler for both sides, so a difference cannot be
+// the sampling. (V3-B measured the pattern side unchanged to four decimals at
+// 0.25 / 0.05 / 0.01mm, so the number is the curve's, not the ruler's.)
+constexpr double kArcStepMM = 0.05;
+
+double centreLineArc(const GarmentSurf& s, double topZ, double botZ, bool front) {
+    if (topZ - botZ <= 1e-9) return 0.0;
+    const double phi = front ? 0.5 * kPi : -0.5 * kPi;
+    const int n = std::max(2, static_cast<int>(std::ceil((topZ - botZ) / kArcStepMM)));
+    double L = 0.0;
+    Vec3 prev = s.at(topZ, phi);
+    for (int i = 1; i <= n; ++i) {
+        const Vec3 cur = s.at(topZ - (topZ - botZ) * i / n, phi);
+        L += std::sqrt((cur.x - prev.x) * (cur.x - prev.x) + (cur.y - prev.y) * (cur.y - prev.y) +
+                       (cur.z - prev.z) * (cur.z - prev.z));
+        prev = cur;
+    }
+    return L;
+}
+
 double polylineLen(const std::vector<Vec2>& p, int a, int b) {
     double L = 0.0;
     for (int i = a; i < b; ++i) L += std::hypot(p[i + 1].x - p[i].x, p[i + 1].y - p[i].y);
@@ -140,11 +177,16 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
                             girthAt(surf, hemZ)});
     out.measures.push_back({"bust_circumference", bust.name, girthAt(surf, bust.h)});
     out.measures.push_back({"waist_circumference", waist.name, girthAt(surf, waist.h)});
-    out.measures.push_back({"body_length", "shoulder->" + std::string(hasHem ? "hem" : "hip"),
-                            shoulder.h - hemZ});
+    const std::string down = "shoulder->" + std::string(hasHem ? "hem" : "hip");
+    out.measures.push_back({"body_length", down, centreLineArc(surf, shoulder.h, hemZ, front)});
     out.measures.push_back({"neck_opening_width", neck.name, 2.0 * halfWidthAt(surf, neck.h)});
     out.measures.push_back({"shoulder_width", shoulder.name,
                             2.0 * halfWidthAt(surf, shoulder.h)});
+    // NOT DELETED, MOVED OUT OF THE GATE. The vertical drop is a real and useful
+    // number — it is what a size chart calls a garment length — but it is not the
+    // quantity the pattern side can produce, so it is reported under its own name
+    // and no gate compares it to a length along the cloth.
+    out.measures.push_back({"body_height_projected", down, shoulder.h - hemZ});
     return out;
 }
 

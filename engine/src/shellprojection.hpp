@@ -72,7 +72,7 @@ struct ShellProjection {
     std::vector<CubicSeg> segs;        // curvefit.hpp, per span
     std::vector<std::string> segSpan;  // per segment, the ring interval
     std::vector<ShellSpan> spans;
-    std::vector<ShellMeasure> measures;  // exactly six, see projectFront
+    std::vector<ShellMeasure> measures;  // the gated six, then the ungated rest
     double topZMM = 0.0, bottomZMM = 0.0;
 };
 
@@ -80,7 +80,18 @@ struct ShellProjection {
 //   hem_circumference   (ring "hem")       ellipse perimeter + 2*pi*d
 //   bust_circumference  (ring "bust")      ellipse perimeter + 2*pi*d
 //   waist_circumference (ring "waist")     ellipse perimeter + 2*pi*d
-//   body_length         (ring "shoulder->hem")   a height difference
+//   body_length         (ring "shoulder->hem")   ARC of the centre-front line
+//                                                ALONG the shell surface
+// and, after them, one measure that is reported but DELIBERATELY NOT GATED:
+//   body_height_projected (same ring pair)       the vertical drop, top z - bottom z
+//
+// body_length WAS the vertical drop, and that was a definition mismatch, not a
+// disagreement: tools/pattern-measure.mjs sums the centre-front seam's arc
+// across the cloth, and an arc and a height are two quantities. The gate was
+// therefore reading -1.9795% (EU38 flat 743.5050 vs pattern 728.7870) off a
+// comparison that had no meaning. body_length is now the same KIND of thing on
+// both sides — a length along the cloth — and the height is kept under its own
+// name so nothing is lost. No factor was applied to make the two agree.
 //   neck_opening_width  (ring "neck")      2*(a + d) at the neck ring
 //   shoulder_width      (ring "shoulder")  2*(a + d) at the shoulder ring
 //

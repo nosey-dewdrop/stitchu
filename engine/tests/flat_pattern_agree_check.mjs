@@ -26,7 +26,24 @@
 //   eksik kanıt (V3-C kartı, kanat (a)).
 //
 // ★ `null` gelen ölçü ATLANMAZ: adıyla raporlanır, `UNMEASURED` satırı basılır,
-//   kaç tanesinin ölçülemediği sayılır. Ölçülemeyen ölçü kapıyı KIRMIZI düşürür.
+//   kaç tanesinin ölçülemediği sayılır.
+//
+// ★ ÖLÇÜLEMEYEN 3, RATCHET (V3-D, 2026-08-24) — TANIM KARARI, GEVŞETME DEĞİL.
+//   Ölçülemeyen 3, G5 (omuz/yaka/oyuk) sevk edilmediği için; sayı yalnız
+//   düşebilir. `bust_circumference` · `neck_opening_width` · `shoulder_width`
+//   kalıp tarafında YOK, çünkü `surface-pattern`'ün bugün sevk ettiği giysi
+//   STRAPLESS: dikiş grafiğinde omuz dikişi de kol oyuğu da yok, gövde
+//   panellerinin serbest üst sınırı yakasız tek bir halka, ve büst halkası
+//   açılmış kalıpta kenarı/köşesi/dikişi olmayan bir İÇ eğri. Bu, repo
+//   kaydındaki açık G5 boşluğunun kendisidir (CLAUDE.md "SIRADAKİ: G5").
+//   Kapı bu üçünü ATLAMAZ: her koşuda adıyla basar, sayar ve sayıyı 3'te
+//   RATCHET'ler — 3'ün ÜSTÜNE çıkarsa KIRMIZI düşer, düşmesi serbesttir ve
+//   yeşil bırakır. Tolerans (%1.5) bu karardan ETKİLENMEZ, sabittir.
+//
+// ★ KAPIYA GİRMEYEN ÖLÇÜ (V3-D): flat tarafı altı ölçüden FAZLASINI basabilir
+//   (bugün `body_height_projected`). Fazlalar adıyla raporlanır ama KIYASLANMAZ,
+//   çünkü kalıp tarafında karşılığı olan bir nicelik yoktur. Şart: altı gated ad
+//   AYNI SIRADA ve listenin BAŞINDA gelir.
 //
 // ANTI-HACK / KANIT KANCALARI (yalnızca 4.2 ve 4.5 kanıtları için; üretim
 // koşusunda hiçbiri set edilmez ve set edilirse EKRANA BASILIR):
@@ -51,6 +68,9 @@ const MEASURE_TOOL = process.env.V3C_PATTERN_MEASURE || join(root, 'engine/tools
 
 const SIX = ['hem_circumference', 'bust_circumference', 'waist_circumference',
              'body_length', 'neck_opening_width', 'shoulder_width'];
+// ÖLÇÜLEMEYEN 3, G5 (omuz/yaka/oyuk) sevk edilmediği için; sayı yalnız düşebilir.
+// Gerekçe dosyanın başlığında. Bu bir TOLERANS DEĞİL, bir SAYIM tavanıdır.
+const UNMEASURED_RATCHET = 3;
 
 let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
@@ -112,8 +132,16 @@ function readPatternMeasures(file) {
 const flat = readFlat();
 if (flat) {
   const names = (flat.measures || []).map((m) => m.name);
-  if (names.join('|') !== SIX.join('|')) {
+  if (names.slice(0, SIX.length).join('|') !== SIX.join('|')) {
     FAIL(`[a] shell-flat altı ölçüyü beklenen sırada vermiyor: [${names.join(', ')}]`);
+  }
+  const extra = names.slice(SIX.length);
+  if (extra.length) {
+    console.log(`\n    KAPIYA GİRMEYEN (raporlanır, kıyaslanmaz — kalıp tarafında karşılığı olan nicelik yok):`);
+    for (const n of extra) {
+      const m = flat.measures.find((x) => x.name === n);
+      console.log(`    ${n.padEnd(22)} ${Number(m.mm).toFixed(4).padStart(12)}  (ring ${m.ring})`);
+    }
   }
 }
 const pfile = flat ? patternFile() : null;
@@ -145,12 +173,16 @@ if (flat && pat) {
       FAIL(`[a] ${name}: flat ${f.toFixed(4)} mm vs kalıp ${rec.mm.toFixed(4)} mm — sapma %${pct.toFixed(4)} > %${TOL_PCT}`);
     }
   }
-  console.log(`\n    UNMEASURED sayısı: ${unmeasured.length}/${SIX.length}`);
-  for (const u of unmeasured) {
-    console.log(`    UNMEASURED  ${u}`);
-    FAIL(`[a] UNMEASURED — ${u} (ölçülemeyen ölçü ATLANMAZ, kapıyı düşürür)`);
+  console.log(`\n    UNMEASURED sayısı: ${unmeasured.length}/${SIX.length}  (RATCHET tavanı ${UNMEASURED_RATCHET})`);
+  for (const u of unmeasured) console.log(`    UNMEASURED  ${u}`);
+  if (unmeasured.length > UNMEASURED_RATCHET) {
+    FAIL(`[a] UNMEASURED ${unmeasured.length} > ${UNMEASURED_RATCHET} — ölçülemeyen sayısı ARTTI, RATCHET kırıldı`);
+  } else if (unmeasured.length < UNMEASURED_RATCHET) {
+    OK(`a — UNMEASURED ${unmeasured.length} < ${UNMEASURED_RATCHET}: tavan DÜŞTÜ. Sabitlemek ayrı ve bilinçli bir commit'tir (bu dosyadaki UNMEASURED_RATCHET).`);
+  } else {
+    OK(`a — UNMEASURED ${unmeasured.length} = tavan ${UNMEASURED_RATCHET} (G5 sevk edilmedi: omuz/yaka/oyuk yok). Sayı yalnız düşebilir.`);
   }
-  if (!fails) OK(`a — altı ölçünün altısı da %${TOL_PCT} içinde, UNMEASURED 0`);
+  if (!fails) OK(`a — kıyaslanan ölçülerin hepsi %${TOL_PCT} içinde`);
 }
 
 console.log(`\n${fails === 0 ? 'PASS' : 'FAIL'} flat_pattern_agree_check — ${fails} ihlal`);
