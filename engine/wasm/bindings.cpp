@@ -30,7 +30,18 @@ std::string escape(const std::string& s) {
     return out;
 }
 
+// %.4f prints a non-finite double as the bare token `nan` / `inf`, which is NOT
+// JSON: the browser's JSON.parse throws (SyntaxError: Unexpected token 'a')
+// BEFORE any caller can read the `issues` array that names the problem. So an
+// honest refusal the validator DID produce was destroyed by the writer. The
+// writer therefore refuses to emit a non-JSON token and throws instead; the
+// draftJSON/gradeJSON catch turns it into {"error": ...} that JSON.parse can
+// read. This is a LOUD failure, not a filter — nothing is clipped or hidden.
 std::string num(double v) {
+    if (!std::isfinite(v))
+        throw std::invalid_argument(
+            "non-finite coordinate reached the JSON writer (nan/inf); the draft is "
+            "corrupt and no pattern is returned");
     char buf[32];
     std::snprintf(buf, sizeof(buf), "%.4f", v);
     return buf;
@@ -70,7 +81,6 @@ SkirtStyle skirtStyleFrom(const std::string& s) { return parseEnum<SkirtStyle>("
 SkirtLength skirtLengthFrom(const std::string& s) { return parseEnum<SkirtLength>("skirtLength", s, kSkirtLength, kSkirtLengthCount); }
 SleeveStyle sleeveStyleFrom(const std::string& s) { return parseEnum<SleeveStyle>("sleeveStyle", s, kSleeveStyle, kSleeveStyleCount); }
 SleeveLength sleeveLengthFrom(const std::string& s) { return parseEnum<SleeveLength>("sleeveLength", s, kSleeveLength, kSleeveLengthCount); }
-SleeveCap sleeveCapFrom(int v) { return static_cast<SleeveCap>(parseEnumInt("sleeveCap", v, kSleeveCap, kSleeveCapCount)); }
 GarmentType garmentFrom(const std::string& s) { return parseEnum<GarmentType>("garment", s, kGarment, kGarmentCount); }
 TopLength topLengthFrom(const std::string& s) { return parseEnum<TopLength>("topLength", s, kTopLength, kTopLengthCount); }
 Shaping shapingFrom(const std::string& s) { return parseEnum<Shaping>("shaping", s, kShaping, kShapingCount); }
@@ -88,10 +98,46 @@ std::string strField(const val& o, const char* key, const char* dflt) {
     if (v.isUndefined() || v.isNull()) return dflt;
     return v.as<std::string>();
 }
+// Print a double the way the caller wrote it (1.5, not 1.500000) so the refusal
+// message quotes the value that was actually rejected.
+std::string asWritten(double d) {
+    if (!std::isfinite(d)) return std::isnan(d) ? "NaN" : (d > 0 ? "Infinity" : "-Infinity");
+    char buf[40];
+    std::snprintf(buf, sizeof(buf), "%.10g", d);
+    return buf;
+}
+
+// PLAIN int field (not a vocabulary axis, e.g. ruffleTiers). A fractional count
+// is a WRONG value, not a roundable one — same rule as the enum axes below.
 int intField(const val& o, const char* key) {
     const val v = o[key];
     if (v.isUndefined() || v.isNull()) return 0;
-    return v.as<int>();
+    const double d = v.as<double>();
+    if (!std::isfinite(d) || d != std::floor(d) || d < -2147483648.0 || d > 2147483647.0)
+        throw std::invalid_argument(std::string("invalid ") + key + " '" + asWritten(d) +
+                                    "' (must be a whole number)");
+    return static_cast<int>(d);
+}
+
+// INT VOCABULARY AXIS. The bug this replaces (measured on the shipped byte,
+// GECE/V0-0D.md §4a): the field was read with v.as<int>(), which truncates
+// toward zero INSIDE the JS->C++ conversion, so parseEnumInt never saw the real
+// value. sleeveCap=1.5 drafted sleeveCap=1 byte-identically; 0.9 -> 0,
+// 2.999 -> 2, -0.5 -> 0. No error, no warning, `issues` unchanged — a silent
+// coercion, i.e. RULES.md invariant 1 broken on the shipped path while the
+// comment above claimed the opposite. The value is now read as a DOUBLE and a
+// non-integral / non-finite / out-of-int-range one is refused BY NAME, in the
+// same wording the string axes already use (specparse.hpp vocabError):
+//   invalid sleeveCap '1.5' (valid: plain, gathered, puffed, ...)
+// Absence (undefined/null) is NOT an error: it keeps the enum default, because
+// absence is not a wrong word.
+int enumIntField(const val& o, const char* field, const char* const* names, int count) {
+    const val v = o[field];
+    if (v.isUndefined() || v.isNull()) return 0;
+    const double d = v.as<double>();
+    if (!std::isfinite(d) || d != std::floor(d) || d < -2147483648.0 || d > 2147483647.0)
+        vocabError(field, asWritten(d), names, count);
+    return parseEnumInt(field, static_cast<int>(d), names, count);
 }
 bool boolField(const val& o, const char* key) {
     const val v = o[key];
@@ -143,33 +189,34 @@ GarmentSpec buildSpec(const val& o) {
     spec.frontPlacket = boolField(o, "frontPlacket");
     // Every int enum range-checked against the generated vocabulary; an
     // out-of-range value is an error, never a silent None/default.
-    spec.tieClosure = parseEnumInt("tieClosure", intField(o, "tieClosure"), kTieClosure, kTieClosureCount);
-    spec.sleeveCap = sleeveCapFrom(intField(o, "sleeveCap"));
-    spec.collarType = parseEnumInt("collarType", intField(o, "collarType"), kCollarType, kCollarTypeCount);
-    spec.collarEdge = parseEnumInt("collarEdge", intField(o, "collarEdge"), kCollarEdge, kCollarEdgeCount);
-    spec.gatherType = parseEnumInt("gatherType", intField(o, "gatherType"), kGatherType, kGatherTypeCount);
-    spec.gatherZone = parseEnumInt("gatherZone", intField(o, "gatherZone"), kGatherZone, kGatherZoneCount);
-    spec.backOpening = parseEnumInt("backOpening", intField(o, "backOpening"), kBackOpening, kBackOpeningCount);
-    spec.laceUpBack = parseEnumInt("laceUpBack", intField(o, "laceUpBack"), kLaceUpBack, kLaceUpBackCount);
-    spec.wrapFront = parseEnumInt("wrapFront", intField(o, "wrapFront"), kWrapFront, kWrapFrontCount);
-    spec.backSlit = parseEnumInt("backSlit", intField(o, "backSlit"), kBackSlit, kBackSlitCount);
-    spec.ruffledStraps = parseEnumInt("ruffledStraps", intField(o, "ruffledStraps"), kRuffledStraps, kRuffledStrapsCount);
-    spec.peplum = parseEnumInt("peplum", intField(o, "peplum"), kPeplum, kPeplumCount);
-    spec.hemFlounce = parseEnumInt("hemFlounce", intField(o, "hemFlounce"), kHemFlounce, kHemFlounceCount);
-    spec.placketStyle = parseEnumInt("placketStyle", intField(o, "placketStyle"), kPlacketStyle, kPlacketStyleCount);
-    spec.edgeFinish = parseEnumInt("edgeFinish", intField(o, "edgeFinish"), kEdgeFinish, kEdgeFinishCount);
-    spec.pocketStyle = parseEnumInt("pocketStyle", intField(o, "pocketStyle"), kPocketStyle, kPocketStyleCount);
-    spec.cuffStyle = parseEnumInt("cuffStyle", intField(o, "cuffStyle"), kCuffStyle, kCuffStyleCount);
-    spec.hemShape = parseEnumInt("hemShape", intField(o, "hemShape"), kHemShape, kHemShapeCount);
-    spec.shoulderStyle = parseEnumInt("shoulderStyle", intField(o, "shoulderStyle"), kShoulderStyle, kShoulderStyleCount);
-    spec.buttonRow = parseEnumInt("buttonRow", intField(o, "buttonRow"), kButtonRow, kButtonRowCount);
-    spec.exposedZip = parseEnumInt("exposedZip", intField(o, "exposedZip"), kExposedZip, kExposedZipCount);
-    spec.backDetail = parseEnumInt("backDetail", intField(o, "backDetail"), kBackDetail, kBackDetailCount);
-    spec.bardotStyle = parseEnumInt("bardotStyle", intField(o, "bardotStyle"), kBardotStyle, kBardotStyleCount);
-    spec.cupSeam = parseEnumInt("cupSeam", intField(o, "cupSeam"), kCupSeam, kCupSeamCount);
-    spec.locketTop = parseEnumInt("locketTop", intField(o, "locketTop"), kLocketTop, kLocketTopCount);
-    spec.yoke = parseEnumInt("yoke", intField(o, "yoke"), kYoke, kYokeCount);
-    spec.boxPleat = parseEnumInt("boxPleat", intField(o, "boxPleat"), kBoxPleat, kBoxPleatCount);
+    spec.tieClosure = enumIntField(o, "tieClosure", kTieClosure, kTieClosureCount);
+    spec.sleeveCap = static_cast<SleeveCap>(
+        enumIntField(o, "sleeveCap", kSleeveCap, kSleeveCapCount));
+    spec.collarType = enumIntField(o, "collarType", kCollarType, kCollarTypeCount);
+    spec.collarEdge = enumIntField(o, "collarEdge", kCollarEdge, kCollarEdgeCount);
+    spec.gatherType = enumIntField(o, "gatherType", kGatherType, kGatherTypeCount);
+    spec.gatherZone = enumIntField(o, "gatherZone", kGatherZone, kGatherZoneCount);
+    spec.backOpening = enumIntField(o, "backOpening", kBackOpening, kBackOpeningCount);
+    spec.laceUpBack = enumIntField(o, "laceUpBack", kLaceUpBack, kLaceUpBackCount);
+    spec.wrapFront = enumIntField(o, "wrapFront", kWrapFront, kWrapFrontCount);
+    spec.backSlit = enumIntField(o, "backSlit", kBackSlit, kBackSlitCount);
+    spec.ruffledStraps = enumIntField(o, "ruffledStraps", kRuffledStraps, kRuffledStrapsCount);
+    spec.peplum = enumIntField(o, "peplum", kPeplum, kPeplumCount);
+    spec.hemFlounce = enumIntField(o, "hemFlounce", kHemFlounce, kHemFlounceCount);
+    spec.placketStyle = enumIntField(o, "placketStyle", kPlacketStyle, kPlacketStyleCount);
+    spec.edgeFinish = enumIntField(o, "edgeFinish", kEdgeFinish, kEdgeFinishCount);
+    spec.pocketStyle = enumIntField(o, "pocketStyle", kPocketStyle, kPocketStyleCount);
+    spec.cuffStyle = enumIntField(o, "cuffStyle", kCuffStyle, kCuffStyleCount);
+    spec.hemShape = enumIntField(o, "hemShape", kHemShape, kHemShapeCount);
+    spec.shoulderStyle = enumIntField(o, "shoulderStyle", kShoulderStyle, kShoulderStyleCount);
+    spec.buttonRow = enumIntField(o, "buttonRow", kButtonRow, kButtonRowCount);
+    spec.exposedZip = enumIntField(o, "exposedZip", kExposedZip, kExposedZipCount);
+    spec.backDetail = enumIntField(o, "backDetail", kBackDetail, kBackDetailCount);
+    spec.bardotStyle = enumIntField(o, "bardotStyle", kBardotStyle, kBardotStyleCount);
+    spec.cupSeam = enumIntField(o, "cupSeam", kCupSeam, kCupSeamCount);
+    spec.locketTop = enumIntField(o, "locketTop", kLocketTop, kLocketTopCount);
+    spec.yoke = enumIntField(o, "yoke", kYoke, kYokeCount);
+    spec.boxPleat = enumIntField(o, "boxPleat", kBoxPleat, kBoxPleatCount);
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }
@@ -252,12 +299,40 @@ std::string patternJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
     return draftedJSON(spec, m, draft);
 }
 
+// A MISSING measurement is not a measurement of zero. numField() cannot tell
+// the two apart (absent key -> 0), so a body object with a typo'd or dropped
+// key used to arrive as a person 0 cm wide and the engine drafted it: the neck
+// facing normalises the shoulder vector by its own length, and with a zero
+// shoulder that is 0/0 = NaN (engine/src/bodice.cpp, shoulderEnd). That NaN
+// then reached the JSON writer as the bare token `nan`, so JSON.parse threw in
+// the browser and the validator's honest "[finite] ... non-finite coordinate"
+// verdict could never be read. This is the same class as the enum axes above:
+// an unusable input must be refused BY NAME, not coerced.
+// upperBust stays optional (0 = "not declared", the documented FBA fallback).
+double bodyField(const val& bodyObj, const char* key) {
+    const val v = bodyObj[key];
+    const double d = (v.isUndefined() || v.isNull()) ? 0.0 : v.as<double>();
+    // Same wording the recipe interpreter already refuses with
+    // (engine/src/recipe.cpp:938) — one vocabulary for one fault, so a caller
+    // never has to learn two ways of being told the body is unusable.
+    if (!std::isfinite(d) || d <= 0)
+        throw std::invalid_argument(
+            std::string("invalid body: measurement '") + key +
+            "' is missing or non-positive (" + asWritten(d) + ") - every body "
+            "measurement must be a positive length in cm");
+    return d;
+}
+
 BodyMeasurementsSnapshot bodyFrom(const val& bodyObj) {
     BodyMeasurementsSnapshot m{
-        numField(bodyObj, "bust"), numField(bodyObj, "waist"), numField(bodyObj, "hip"),
-        numField(bodyObj, "shoulder"), numField(bodyObj, "backLength"),
-        numField(bodyObj, "armLength"), numField(bodyObj, "neck")};
+        bodyField(bodyObj, "bust"), bodyField(bodyObj, "waist"), bodyField(bodyObj, "hip"),
+        bodyField(bodyObj, "shoulder"), bodyField(bodyObj, "backLength"),
+        bodyField(bodyObj, "armLength"), bodyField(bodyObj, "neck")};
     m.upperBustCM = numField(bodyObj, "upperBust"); // optional FBA; 0 = old behaviour
+    if (!std::isfinite(m.upperBustCM) || m.upperBustCM < 0)
+        throw std::invalid_argument(
+            "invalid body: upperBust '" + asWritten(m.upperBustCM) +
+            "'; leave it out (or 0) when it is not measured, otherwise give a positive cm value");
     return m;
 }
 
@@ -280,13 +355,12 @@ std::string draftJSON(val specObj, val bodyObj) {
 // This is the seller/brand deliverable: one design, a whole size run, from the
 // same engine that fits a custom body — no manual grade rules to maintain.
 std::string gradeJSON(val specObj, val rangeObj) {
-    GarmentSpec spec;
+    // The catch spans the WHOLE run, not just buildSpec: the JSON writer refuses
+    // a non-finite coordinate by throwing, and that refusal must reach the caller
+    // as JSON too (a half-written "sizes" string would be unparseable).
     try {
-        spec = buildSpec(specObj);
-    } catch (const std::exception& e) {
-        return std::string(R"({"error":")") + escape(e.what()) +
-               R"(","sizes":[],"issues":[")" + escape(e.what()) + "\"]}";
-    }
+    GarmentSpec spec;
+    spec = buildSpec(specObj);
     const std::string fromLabel = strField(rangeObj, "from", "");
     const std::string toLabel = strField(rangeObj, "to", "");
 
@@ -314,6 +388,10 @@ std::string gradeJSON(val specObj, val rangeObj) {
     }
     out += "]}";
     return out;
+    } catch (const std::exception& e) {
+        return std::string(R"({"error":")") + escape(e.what()) +
+               R"(","sizes":[],"issues":[")" + escape(e.what()) + "\"]}";
+    }
 }
 
 // Recipe path (PIPELINE Aşama 2, kanvas): recipe JSON text + measurements +
@@ -328,25 +406,33 @@ std::string draftRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) 
         return std::string(R"({"error":")") + escape(msg) +
                R"(","pattern":null,"issues":[")" + escape(msg) + "\"]}";
     };
-    const auto parsed = recipe::parseRecipe(recipeText);
-    if (!parsed.ok) return errJSON(parsed.error);
+    // bodyFrom() and the JSON writer now REFUSE by throwing (an unusable body,
+    // a non-finite coordinate). This boundary hands JavaScript a JSON string,
+    // never an unwrapped C++ throw, so every refusal is caught here and comes
+    // back through the same errJSON the interpreter's refusals use.
+    try {
+        const auto parsed = recipe::parseRecipe(recipeText);
+        if (!parsed.ok) return errJSON(parsed.error);
 
-    // params: every own key of the JS object is handed to the interpreter,
-    // which rejects undeclared keys and enforces declared [min, max] ranges.
-    recipe::RecipeParams params;
-    const val keys = val::global("Object").call<val>("keys", paramsObj);
-    const int n = keys["length"].as<int>();
-    for (int i = 0; i < n; ++i) {
-        const std::string key = keys[i].as<std::string>();
-        params[key] = paramsObj[key.c_str()].as<double>();
+        // params: every own key of the JS object is handed to the interpreter,
+        // which rejects undeclared keys and enforces declared [min, max] ranges.
+        recipe::RecipeParams params;
+        const val keys = val::global("Object").call<val>("keys", paramsObj);
+        const int n = keys["length"].as<int>();
+        for (int i = 0; i < n; ++i) {
+            const std::string key = keys[i].as<std::string>();
+            params[key] = paramsObj[key.c_str()].as<double>();
+        }
+
+        const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
+        const auto drafted = recipe::draftRecipe(parsed.value, m, params);
+        if (!drafted.ok) return errJSON(drafted.error);
+        // Validator verdict with the GarmentSpec built ONLY from the recipe's
+        // sealed kernel block (no magic recipeId→enum mapping).
+        return draftedJSON(recipe::kernelSpec(parsed.value), m, drafted.value);
+    } catch (const std::exception& e) {
+        return errJSON(e.what());
     }
-
-    const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
-    const auto drafted = recipe::draftRecipe(parsed.value, m, params);
-    if (!drafted.ok) return errJSON(drafted.error);
-    // Validator verdict with the GarmentSpec built ONLY from the recipe's
-    // sealed kernel block (no magic recipeId→enum mapping).
-    return draftedJSON(recipe::kernelSpec(parsed.value), m, drafted.value);
 }
 
 // DXF-AAMA/ASTM export at the recipe boundary (PIPELINE Aşama 5, in-browser).
@@ -362,28 +448,34 @@ std::string dxfRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) {
     const auto errJSON = [](const std::string& msg) {
         return std::string(R"({"error":")") + escape(msg) + R"(","dxf":null})";
     };
-    const auto parsed = recipe::parseRecipe(recipeText);
-    if (!parsed.ok) return errJSON(parsed.error);
+    // Same reason as draftRecipeJSON: an unusable body is refused, and a
+    // refusal must arrive as JSON, not as an unwrapped C++ throw.
+    try {
+        const auto parsed = recipe::parseRecipe(recipeText);
+        if (!parsed.ok) return errJSON(parsed.error);
 
-    recipe::RecipeParams params;
-    const val keys = val::global("Object").call<val>("keys", paramsObj);
-    const int n = keys["length"].as<int>();
-    for (int i = 0; i < n; ++i) {
-        const std::string key = keys[i].as<std::string>();
-        params[key] = paramsObj[key.c_str()].as<double>();
+        recipe::RecipeParams params;
+        const val keys = val::global("Object").call<val>("keys", paramsObj);
+        const int n = keys["length"].as<int>();
+        for (int i = 0; i < n; ++i) {
+            const std::string key = keys[i].as<std::string>();
+            params[key] = paramsObj[key.c_str()].as<double>();
+        }
+
+        const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
+        const auto drafted = recipe::draftRecipe(parsed.value, m, params);
+        if (!drafted.ok) return errJSON(drafted.error);
+
+        // A validator-blocked draft must not hand out an "industry" DXF: refuse
+        // it the same way the studio refuses the SVG/PDF when issues are non-empty.
+        const auto issues = PatternValidator::issues(recipe::kernelSpec(parsed.value), m, drafted.value);
+        if (!issues.empty()) return errJSON(issues.front().description());
+
+        const std::string doc = dxf::exportPattern(drafted.value);
+        return std::string(R"({"dxf":")") + escape(doc) + "\"}";
+    } catch (const std::exception& e) {
+        return errJSON(e.what());
     }
-
-    const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
-    const auto drafted = recipe::draftRecipe(parsed.value, m, params);
-    if (!drafted.ok) return errJSON(drafted.error);
-
-    // A validator-blocked draft must not hand out an "industry" DXF: refuse it
-    // the same way the studio refuses the SVG/PDF when issues are non-empty.
-    const auto issues = PatternValidator::issues(recipe::kernelSpec(parsed.value), m, drafted.value);
-    if (!issues.empty()) return errJSON(issues.front().description());
-
-    const std::string doc = dxf::exportPattern(drafted.value);
-    return std::string(R"({"dxf":")") + escape(doc) + "\"}";
 }
 
 } // namespace

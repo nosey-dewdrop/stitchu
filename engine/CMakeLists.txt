@@ -474,6 +474,15 @@ add_test(NAME dxf_wasm_parity_dress COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
     $<TARGET_FILE:dxf-export>
     ${CMAKE_CURRENT_SOURCE_DIR}/../recipes/shift-dress-square-spaghetti.json)
 
+# KART V2-C ratchet: the shipped wasm boundary keeps RULES invariant 1 on the
+# INT vocabulary axes (an in-between value is refused by name, never truncated
+# into a neighbouring member) and always returns valid, finite JSON for every
+# collarType. Both defects were measured on the shipped byte first
+# (GECE/V0-0D.md §4a and §5 item 1); this gate is what keeps them closed.
+# Requires engine/build-wasm.sh output (same as recipe_wasm_parity).
+add_test(NAME wasm_spec_honesty_check COMMAND node
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/wasm_spec_honesty_check.mjs)
+
 # Aşama 3 köprü v1 mandalı (2026-07-28): izlenen Buğra mm konturu (pinli
 # trace-ring dökümü) -> ring2recipe fit reçetesi. İddialar: üretim 2 koşu +
 # repo pini bayt-özdeş; reçete çizimi 2 koşu bayt-özdeş; ring-compare

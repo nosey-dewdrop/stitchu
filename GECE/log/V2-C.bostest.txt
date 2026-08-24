@@ -1,0 +1,153 @@
+=== (a) int vocabulary axes: in-between value refused by name ===
+FAIL: tieClosure = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: tieClosure = 8.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: tieClosure = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: tieClosure = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: tieClosure: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: sleeveCap = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: sleeveCap = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: sleeveCap = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: sleeveCap = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: sleeveCap: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: collarType = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarType = 6.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarType = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarType = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarType: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: collarEdge = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarEdge = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarEdge = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarEdge = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: collarEdge: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: gatherType = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherType = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherType = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherType = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherType: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: gatherZone = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherZone = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherZone = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherZone = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: gatherZone: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: backOpening = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backOpening = 4.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backOpening = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backOpening = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backOpening: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: laceUpBack = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: laceUpBack = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: laceUpBack = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: laceUpBack = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: laceUpBack: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: wrapFront = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: wrapFront = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: wrapFront = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: wrapFront = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: wrapFront: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: backSlit = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backSlit = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backSlit = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backSlit = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backSlit: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: ruffledStraps = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: ruffledStraps = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: ruffledStraps = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: ruffledStraps = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: ruffledStraps: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: peplum = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: peplum = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: peplum = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: peplum = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: peplum: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: hemFlounce = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemFlounce = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemFlounce = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemFlounce = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemFlounce: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: placketStyle = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: placketStyle = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: placketStyle = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: placketStyle = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: placketStyle: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: edgeFinish = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: edgeFinish = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: edgeFinish = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: edgeFinish = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: edgeFinish: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: pocketStyle = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: pocketStyle = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: pocketStyle = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: pocketStyle = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: pocketStyle: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: cuffStyle = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cuffStyle = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cuffStyle = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cuffStyle = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cuffStyle: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: hemShape = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemShape = 4.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemShape = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemShape = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: hemShape: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: shoulderStyle = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: shoulderStyle = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: shoulderStyle = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: shoulderStyle = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: shoulderStyle: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: buttonRow = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: buttonRow = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: buttonRow = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: buttonRow = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: buttonRow: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: exposedZip = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: exposedZip = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: exposedZip = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: exposedZip = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: exposedZip: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: backDetail = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backDetail = 3.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backDetail = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backDetail = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: backDetail: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: bardotStyle = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: bardotStyle = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: bardotStyle = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: bardotStyle = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: bardotStyle: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: cupSeam = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cupSeam = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cupSeam = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cupSeam = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: cupSeam: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: locketTop = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: locketTop = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: locketTop = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: locketTop = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: locketTop: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: yoke = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: yoke = 2.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: yoke = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: yoke = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: yoke: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+FAIL: boxPleat = 0.5 (fractional between two members): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: boxPleat = 1.5 (fractional above the last member): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: boxPleat = -0.5 (fractional negative): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: boxPleat = NaN (NaN): accepted silently — no error, JSON came back as a pattern. That is the coercion RULES invariant 1 forbids.
+FAIL: boxPleat: 1.5 and 1 return BYTE-IDENTICAL JSON — the value was truncated before the vocabulary saw it
+=== (a2) plain int fields: fractional count refused by name ===
+FAIL: ruffleTiers = 1.5 (fractional): accepted silently — the count was truncated
+FAIL: ruffleTiers = -0.5 (fractional negative): accepted silently — the count was truncated
+FAIL: ruffleTiers = NaN (NaN): accepted silently — the count was truncated
+FAIL: ruffleTiers = Infinity (Infinity): accepted silently — the count was truncated
+=== (b) collarType 0..N: valid JSON, finite coordinates ===
+=== (b2) a body that is not a body is refused by name ===
+FAIL: body "empty object": drafted a pattern instead of refusing
+FAIL: body "wrong key spelling (bustCM instead of bust)": drafted a pattern instead of refusing
+FAIL: body "one field missing (shoulder)": drafted a pattern instead of refusing
+FAIL: body "one field zero (shoulder)": drafted a pattern instead of refusing
+FAIL: body "one field negative (neck)": drafted a pattern instead of refusing
+FAIL: body "one field NaN (bust)": drafted a pattern instead of refusing
+
+engine: /tmp/v2c/stitchu-engine.PRE.js
+165 assertions passed, 145 FAILED
+exit=1

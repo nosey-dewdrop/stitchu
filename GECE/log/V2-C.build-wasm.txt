@@ -1,0 +1,3 @@
+-rw-r--r--@ 1 damummyphus  staff  1214594 24 Ağu 14:00 dist/stitchu-engine.js
+copied to web/vendor/
+copied to backend/engine/

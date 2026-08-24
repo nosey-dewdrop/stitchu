@@ -1,0 +1,8 @@
+=== (a) int vocabulary axes: in-between value refused by name ===
+=== (a2) plain int fields: fractional count refused by name ===
+=== (b) collarType 0..N: valid JSON, finite coordinates ===
+=== (b2) a body that is not a body is refused by name ===
+
+engine: /Users/damummyphus/damla_projects_2026/stitchu/engine/dist/stitchu-engine.js
+310 assertions passed, 0 FAILED
+exit=0

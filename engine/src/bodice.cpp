@@ -1481,7 +1481,15 @@ PatternPiece makeFacing(
     double sx = shoulderTip.x - neckPoint.x, sy = shoulderTip.y - neckPoint.y;
     const double shoulderLen = std::hypot(sx, sy);
     const double along = std::min(BodiceBlock::facingDepth, shoulderLen * 0.6);
-    const Point shoulderEnd{neckPoint.x + sx / shoulderLen * along, neckPoint.y + sy / shoulderLen * along};
+    // Degenerate shoulder (neck point AND shoulder tip at the same place): the
+    // direction sx/shoulderLen is 0/0 = NaN, and that NaN used to travel all the
+    // way out to the JSON writer. The same guard the vertex normals above
+    // already carry (len < 1e-6 -> fall back), missing only here: with no
+    // shoulder to walk along, the facing simply ends AT the neck point.
+    const Point shoulderEnd =
+        shoulderLen < 1e-6
+            ? neckPoint
+            : Point{neckPoint.x + sx / shoulderLen * along, neckPoint.y + sy / shoulderLen * along};
 
     std::vector<PathCommand> commands{PathCommand::move(centerNeck)};
     for (const auto& cmd : inner) commands.push_back(cmd);
