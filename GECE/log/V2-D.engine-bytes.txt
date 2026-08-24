@@ -1,0 +1,4 @@
+=== the shipped engine bytes are UNCHANGED by this card (only the stamp line was added) ===
+fe570bae84137ad3354d8ca3935718e3e375bed8e4f7d57d3edf10b319020887    5d649d2 web/vendor/stitchu-engine.js (pre-card)
+fe570bae84137ad3354d8ca3935718e3e375bed8e4f7d57d3edf10b319020887    HEAD  web/vendor/stitchu-engine.js MINUS line 1 (the stamp)
+fe570bae84137ad3354d8ca3935718e3e375bed8e4f7d57d3edf10b319020887  engine/dist/stitchu-engine.js

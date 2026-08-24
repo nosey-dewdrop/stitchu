@@ -1,0 +1,5 @@
+baseline written: /Users/damummyphus/damla_projects_2026/stitchu/engine/tests/vocab-reference-baseline.json
+  commit 94870917d17c686780c0d5f275850292c0393374
+  axes 37 sum 7577
+  unique values 92 sum 2841
+  TOTAL 10418

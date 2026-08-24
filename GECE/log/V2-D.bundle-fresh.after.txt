@@ -1,0 +1,7 @@
+engine source HEAD : 9487091  2026-08-24
+
+ok    web/vendor/stitchu-engine.js  (9487091 2026-08-24 >= source 2026-08-24)
+ok    backend/engine/stitchu-worker.js  (9487091 2026-08-24 >= source 2026-08-24)
+ok    backend/engine/stitchu-worker.wasm  (9487091 2026-08-24 >= source 2026-08-24)
+
+bundle_fresh_check: PASS — every shipped artefact is at or ahead of engine source.
