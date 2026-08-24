@@ -52,12 +52,29 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       → **YOK.** `find . -name "*flat*.svg" -path "./web/*"` → **0 dosya**; `web/` tarafına hiçbir
       şey sevk edilmedi. Bugünkü giysinin **siluet dış konturu** artık çiziliyor
       (`shell-flat EU38 --svg`), ama ön ve arka aynı eğri ve tek karo düzeni yok.
+      ⚠ 24 Ağu (V4): "ön ve arka aynı eğri" cümlesi **`shell-flat` için** doğruluğunu
+      koruyor ve sebebi ölçüldü — arka, önün x-işareti çevrilmiş kopyası, fark
+      **0.000000000 mm** (`GECE/V4-K.md` §2d). Çizim kaleminde durum başka: 8 stilin
+      8'inde ön ve arka AYNI SVG'de, aynı ölçekte, `data-view="front"`/`"back"` ile
+      basılıyor ve iç fark (yaka/kapama) 3.39–211.91 mm arası gerçek bir fark. Yine de
+      `web/` tarafına sevk YOK, tek karo düzeni de yok → kutucuk açık.
 - [ ] Çizgi hiyerarşisi 3 katman (2.0 outline / 1.4 iç yapı / 1.0 işaret) — gusto-lint line_hierarchy ≥ tipik.
       → **ÖLÇÜLECEK NESNE YOK.** Araç çalışıyor: `node engine/tools/gusto-lint.mjs dataset/taste-pool/svg/g016-flat.svg`
       → `PASS overall=0.90 (esik 0.7), line_hierarchy 1 (3/3 katman, navy var)`. Ama o dosya **eski
       taste-pool korpusundan**, bugünkü giysi değil. Kendi çıktımızda 0 aday.
       ⚠ 24 Ağu: `shell-flat --svg` bir aday DEĞİL — tek katman dış kontur basıyor, iç yapı ve
       işaret katmanı hiç yok, yani üç katmanlı hiyerarşi sorusu ona sorulamaz. Koşulmadı.
+      ⚠ **24 Ağu (V4) — "0 aday" cümlesi TAM DOĞRU DEĞİL ARTIK, ama kutucuk da açık kalıyor.**
+      Üretim kalemi (`engine/tools/render-garment-flat.mjs`) 8 stilde beş çizgi sınıfının
+      beşini de kullanıyor ve beşi de kanunda beyanlı bir sınıfa EŞİT çıkıyor
+      (`2|none` outline · `1.4|none` seam · `1|4 3` topstitch · `1|1 3` hidden · `1|none` mark
+      — sayım `GECE/V4-K.md` §2c). Beyan edilen oranlar da artık kapıda okunuyor
+      (`flat_convention_check` 3b; tolerans ISO 128-2:2020 md. 5.2'nin ±0,1d'sinden türer,
+      uydurulmuş bir eşik değil). **AMA:** (a) bu çıktıların hiçbiri `web/`'e sevk edilmedi,
+      (b) zevk panosunun 9 stil hücresi bu kalemden DEĞİL, referans kalemden çıkıyor ve
+      onun ağırlık tablosu `{.65, 1.05, 1.4, 1.5, 1.9}`, mürekkebi `#111` — yani panoya
+      bakan biri `lineClasses`'ı görmüyor (`GECE/V4-D.md` §1 ve §3). `gusto-lint` bu yeni
+      çıktılara **koşulmadı**. Kutucuk bu yüzden işaretlenmedi.
 - [ ] Marka rengi: navy `#1f3a5f` gövde, seam `#5c7aa0` iç; başka renk yok.
       → ölçülecek flat yok (yukarısı).
 - [ ] STYLE-PIN uyumlu (`style_check` ctest).

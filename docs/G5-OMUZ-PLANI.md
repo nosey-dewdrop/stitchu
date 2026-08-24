@@ -12,6 +12,24 @@
 > kalıbınki strapless üst serbest kenardan başlıyor — `GECE/V3-D.md` §3, ayrıştırılmadı).
 > Bu oturumda 2. maddedeki "GarmentSurf'e 4. halka" işi YAPILMADI; `GarmentSurf` yalnızca
 > `engine/src/surfacepattern.hpp`'ye yayınlandı, halka sayısı değişmedi.
+>
+> ★ **24 Ağu (V4-A) — OMUZ SAYISI ARTIK KAYNAKLI, AMA YANLIŞ KATMANDA. G5 AÇIK.**
+> Kaynaklanan şey **FLAT croquis'inin** omuz ucu: `contract/flat-convention-v1.json →
+> croquis.landmarks.shoulderTipX` 78.0u (kaynaksız, devralınmış) → **70.1799u = 210.54 mm**
+> yarı-omuz, türetme `chestX 73.3333u × 0.9570`. 0.9570 satın alınmış Buğra Locket EU38
+> `Back Body` parçasında ölçülen omuz/göğüs yarı-genişlik oranı (196.13/204.94,
+> `GECE/log/F-E.bugra-olcum.txt`) — yani bu sayfanın "SAYI KURALI" bölümünün istediği türden
+> bir landmark paritesi, tahmin değil. Üstüne bir kapı satırı kondu
+> (`flat_convention_check` md. 1c: omuz ucu x ≤ göğüs x) ve şartın kendisi bir GEOMETRİK
+> YASADIR (set-in kol oyuğu omuz ucu ile koltukaltını paylaşır), "Buğra'ya benzerlik" bir
+> eşik DEĞİLDİR — Damla'nın 28 Tem kuralı korundu.
+> **Bu, aşağıdaki 1-3. maddelerin HİÇBİRİNİ kapatmaz:** düzeltilen şey çizimin manken
+> çapasıdır, `GarmentSurf`'ün omuz halkası değil. Kalıp tarafı hâlâ STRAPLESS, `shoulder_width`
+> hâlâ `null`, `flat_pattern_agree_check`'in UNMEASURED sayacı hâlâ 3. Ölçüm ve mutasyon
+> kanıtı: `GECE/V4-A.md`.
+> ⚠ Aynı croquis'in `waistY`, `chestY` ve `shoulderSlope 0.32` değerleri hâlâ `source: ACIK`
+> — `shoulderTipY` tamamen o kaynaksız eğimden türüyor, yani omuz ucunun **x'i** kaynaklı,
+> **y'si** değil.
 
 ## Mekanizma (mevcut motora eklemeler, ölçüldü/denendi değil — plan)
 1. **Pürtüklü üst sınır (ragged grid):** `buildGrid`'e kolon başına tepe

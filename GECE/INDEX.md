@@ -13,6 +13,10 @@ dosyayı aç.
 | hangi operatör sevk edilmiş | `contract/garment-spec-v2.json` → `operators` |
 | damar nedir, ne çizilir ne çizilmez | `ANAYASA.md:28-58` |
 | flat ile kalıp neden aynı sayıyı vermiyor | `contract/tables.json` → `flat._layer` (kontrat beyanı); bugünkü FARKI basan kapı `node engine/tests/flat_pattern_agree_check.mjs` |
+| flat çizimi konvansiyona uyuyor mu (tek croquis, ölçek, çizgi sınıfları, omuz) | `node engine/tests/flat_convention_check.mjs` basar; kanun `contract/flat-convention-v1.json` |
+| farklı spec değeri farklı giysi çiziyor mu | `node engine/tests/flat_expresses_spec_check.mjs` basar (ölçü: çizen eleman kümesi + kontur uzunluğu, sha değil) |
+| bugünkü flat'ler yan yana nasıl görünüyor | `node engine/tools/flat-board.mjs <çıktıDizini> [--eski <dizin>] [--ek <dizin>...]`; son iki koşu `GECE/log/V4-C.pano/`, `GECE/log/V4-D.pano/` |
+| çizgi kalınlıkları / kesik oranları hangi yayına dayanıyor | `GECE/V4-R.md` (ISO 128-2:2020, ISO 128-3:2022, ISO 5455:1979 — birincil okundu / erişilemedi ayrımıyla) |
 | flat'in dış konturu nereden geliyor | `engine/src/shellprojection.{hpp,cpp}` ← `GarmentSurf` (`engine/src/surfacepattern.hpp`); alet `./engine/build/shell-flat EU38 [--svg]`; teşhis `GECE/V3-A.md` |
 | kalıbın kendi altı ölçüsü | `node engine/tools/pattern-measure.mjs <pattern.json>`; kenarı olmayan ölçü `null` + sebep (`GECE/V3-B.md`) |
 | kabuk siluetinde artefakt var mı | `node engine/tests/flat_artifact_census.mjs` basar (dört sınıf, eşik kaynaklarıyla) |
@@ -117,6 +121,36 @@ reddedilen hamle, beyan edilmiş sınırlar), `docs/KATMAN-HARITASI.md` (yeni **
 boşluk 3/4/5), `docs/G5-OMUZ-PLANI.md` (G5'in açığını sayan kapı), `docs/H1.0-KAPI.md` K6
 (`GarmentSurf` yayınlandı, `TopProfile` hâlâ kapalı), `docs/SATIS-SARTNAMESI.md` §1
 (kontur hesaplanıyor ama listing flat'i değil).
+
+## V4 fazı — flat konvansiyonu: croquis çıkarımı, ifade kapısı, zevk panosu (24 Ağu 2026)
+
+Faz kuralı: kapı, düzeltmeye çalıştığı kusuru VARSAYAMAZ; eşik dış yayına ya da ölçüme
+bağlanır, uydurulmaz; devralınan kırmızı ADLARI büyüyemez (RULES §9).
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V4-R.md` | eşiklerin yayınlanmış zemini: ISO 128-2:2020 md.5.1 izinli kalınlık serisi ve ±0,1d toleransı, Tablo 4 kesik alfabesi (3d boşluk / 6d / 12d / ≈24d), ISO 128-3:2022 md.4.12 detay callout'un dört şartı, ISO 5455:1979 ölçek dizisi. ★ `1:3` o dizide YOKTUR, yalnız md.5.1 NOTU'nun "intermediate scale" istisnasıyla meşrudur. ASME gövdeleri ödeme duvarında = **ERİŞİLEMEDİ**, "yok" değil. |
+| `GECE/V4-K.md` | iki flat hattının ölçümü: HAT-1 (hesaplanan kabuk, `shell-flat`) vs HAT-2 (çizim kalemi, `render-garment-flat.mjs`). Beş konvansiyon maddesinin ikisi HAT-1'de ÜRETİLEMEZ (stil parametresi 0, beyanlı çizgi sınıfı 0); HAT-1'de ön panel = arka panelin ayna kopyası (fark 0.000000000 mm); teknik çizim öğesi sicili HAT-1 0/9, HAT-2 9/9. Hangi hattın yargılanacağı hükmü ve her seçeneğin ölçülmüş bedeli. |
+| `GECE/V4-C.md` | zevk panosunun referans dili (Chanel / hızlı moda / Gen-Z / indie Etsy kalıp listingleri) ve her satır için "bizde karşılığı + ölçülebilir mi + eksiklik nasıl kapanır". ⚠ Chanel, Bershka PDP ve Etsy **403 / bot duvarı** — o kovalardan görsel doğrulama SIFIR. Ayrıca bugünkü 10 hücrelik ESKİ panosunun kaydı. |
+| `GECE/V4-A.md` | croquis çıkarımının KÖKTEN değişmesi: omuz ucu artık "x'in ilk yerel maksimumu" değil, omuz kirişi ile kol oyuğu kirişinin buluştuğu köşe — omuz/göğüs oranından bağımsız. Ardından ölçülmüş düzeltme uygulandı: `shoulderTipX` 78.0u → **70.1799u**, `shoulderTipY` 19.36u → **16.8576u**. Mutasyon kanıtı + yan etki ölçümü. |
+| `GECE/V4-B.md` | ifade kapısının kuruluşu (`flat_expresses_spec_check`) ve iki sessiz çökertmenin kökten onarımı (`sleeveStyle` puff yalnız sayısal alandan okunuyordu, raglan hiçbir dalın koşulu değildi). Kapalı-enum ratchet'inin onarımı; `flat_convention_check`'e 3b/3c/3d kanatları. |
+| `GECE/V4-D.md` | ESKİ\|YENİ panosu (3 sayfa, 30 hücre) ve fazın **en sert bulgusu**: 10 stil hücresinin 10'u da eski ile bayt bayt AYNI, çünkü 9 stilin 9'u referans kaleme düşüyor — kanunun bağladığı kalem panoyu basan kalem DEĞİL. Kol ailesinde görünen fark ve kırpma sayımı (30 gömmenin 30'u `xMidYMid meet`, kırpma aracı 0). |
+| `GECE/KART/V4-*.md` | altı işçi kartının brief'i: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. |
+| `engine/tests/flat_expresses_spec_check.mjs` | KAPI (yeni, `engine/CMakeLists.txt`'te kayıtlı). Kalemin ayırt ettiğini iddia ettiği her değer ölçülebilir biçimde FARKLI çizmeli; motorun kesemediği değer `data-engine-gap`'te eksik operatörün ADIYLA geçmeli. Bugün ayrılamayan eksenler gizlenmiyor, (C) bölümünde sayıyla basılıyor. |
+| `engine/tools/flat-board.mjs` | zevk panosu / kıyas aleti. `--eski <dizin>` sol sütunu DİSKTEN okur (yoksa yüksek sesle çöker), `--ek` ek satır dizinleri ekler. Hücre altına `bayt bayt AYNI` / `FARK VAR` basar ama **exit kodunu etkilemez** — bugün bir kapı değil, gösterge. |
+| `GECE/log/V4-C.pano/` · `V4-D.pano/` | panoların kendisi (PNG + SVG) ve hücre başına kaynak stil SVG'leri, kırpmasız. |
+| `GECE/log/V4-B.kol/` · `V4-D.kol-eski/` | kol ailesinin YENİ (HEAD) ve ESKİ (`c396fb4` detached worktree'sinden üretilmiş) çıktıları. Sol sütun onsuz yeniden üretilemezdi. |
+| `GECE/log/V4-A.inference.txt` | aynı çıkarımın iki croquis'te (omuz dışarıda / omuz içeride) doğru omuz ucunu bulduğunun kanıtı; eski çıkarımın koltukaltını omuz sandığı köşe dizisi yan yana. |
+| `GECE/log/V4-A.mutasyon.txt` · `V4-B.mutasyon.txt` | mutasyon kanıtı: kasıtlı bozma → kırmızı + exit 1, geri alma → yeşil + exit 0. |
+| `GECE/log/V4-B.ratchet.txt` | kapalı-enum ratchet'inin önce/sonra defteri. Taban YENİDEN KESİLMEDİ; artıran geri alındı. |
+| `GECE/log/V4.ctest.before.txt` · `V4-A.ctest.after.txt` · `V4-B.ctest.after.txt` · `V4.ctest.after.txt` | fazın tam `ctest` koşuları. Kırmızı AD kümesinin büyüyüp büyümediği bu dosyaların `diff`'inden okunur, buradaki bir cümleden değil. ⚠ V4-D'de tam ctest KOŞULMADI (`engine/build` başka koşuda) — o kart bunu **DOĞRULANMADI** diye işaretliyor. |
+| `GECE/log/V4-D.kapilar.txt` | üç node kapısının peş peşe koşusu (konvansiyon · ifade · geometri/satılabilirlik), yan sayılarıyla birlikte. |
+
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §12 (croquis çıkarımı,
+iki yeni kapı kanadı, iki kalem sorunu), `docs/KATMAN-HARITASI.md` L3a satırı + boşluk 6,
+`docs/G5-OMUZ-PLANI.md` (flat croquis'inin omzu artık kaynaklı, yüzeyin omzu değil),
+`docs/SATIS-SARTNAMESI.md` §1 (çizgi hiyerarşisi kutucuğunun bugünkü ölçüm durumu),
+`README.md` (determinizm cümlesinin ayırt-etme yüzü).
 
 ## Ölçüm aletlerini çalıştır
 

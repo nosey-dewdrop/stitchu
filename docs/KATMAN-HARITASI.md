@@ -11,7 +11,7 @@
 | **L0 VÜCUT** | Tek vücut gerçeği | `contract/figure-bands.json` (figur_croquis), `engine/src/bodysurface.{cpp,hpp}`, `engine/pattern-bridge/bodies/mean_all.yaml` | `contract/layers/body.EU38.json` (26 ölçü + girth mm + croquis px↔mm kalibrasyonu) | üst katmanların hiçbirini |
 | **L1 TASARIM** | Stil uzayı (vücutsuz) | atolye state (46 kadran), `engine/flat-engine/styles.json`, `contract/figure-bands.json garment_ease` (bel/gogus çarpanları) | design-state JSON — **içinde mm YASAK**, sadece oran/enum/çarpan | L0'ın mm'lerini |
 | **L2 GİYSİ YÜZEYİ** | vücut+tasarım → 3B shell | `engine/src/garmentshell.{cpp,hpp}`, `drape.{cpp,hpp}`, `volume.hpp` | shell ölçüm raporu: `rings.waist_mm` TEK SAYI, bust/hip, ease hacmi | L3/L4'ü |
-| **L3a FLAT (croquis hattı)** | Yüzeyin çizimi | `engine/flat-engine/_engine-full.mjs` (referans kalem, 31 stil), `engine/tools/render-garment-flat.mjs` (üretim kalemi) | SVG (ölçüsüz, stilize) | kalıp dünyasından HİÇBİR ŞEYİ (`body.yaml`, specification, mapping) |
+| **L3a FLAT (croquis hattı)** | Yüzeyin çizimi | `engine/flat-engine/_engine-full.mjs` (referans kalem, 31 stil, SALT-OKUNUR), `engine/tools/render-garment-flat.mjs` (üretim kalemi) | SVG. ⚠ **"ölçüsüz" artık iki kalem için ayrı ayrı okunur (24 Ağu, V4):** üretim kalemi `data-scale="1:3"` + `data-unit-mm="3"` + `data-croquis` + `data-ref-size` beyan ediyor ve kanunu `contract/flat-convention-v1.json`; referans kalem **31 stilin 0'ında** `data-scale` beyan ediyor ve stilize kalıyor | kalıp dünyasından HİÇBİR ŞEYİ (`body.yaml`, specification, mapping) |
 | **L3a′ FLAT (kabuk projeksiyonu)** ★ 24 Ağu | Yüzeyin İZDÜŞÜMÜ — çizim değil | `engine/src/shellprojection.{cpp,hpp}`, alet `engine/build/shell-flat` | JSON: 6 ölçü mm + ön/arka kontur + halka aralığı; `--svg` ile `data-scale="1"` 1:1 SVG | — **L2'nin kabuğunu DOĞRUDAN okur** (aynı `GarmentSurf`), bu istisna kasıtlı |
 | **L3b KALIP** | Yüzeyin düzleştirilmesi | `engine/src/bodice.cpp` vb., `engine/pattern-bridge/mapping.py`, GarmentCode (kara kutu) | `stitchu_specification.json` + panel kenar uzunlukları mm | `figur_croquis`'i doğrudan; kalemi |
 | **L4 DOĞRULAMA** | Hakem | `engine/pattern-bridge/walk.py`, `printpack.py`, `test_seamdeed.py` | tapu + print-report | üretici katmanların İÇİNİ |
@@ -40,6 +40,15 @@
    halka interpolasyonu, aralarında hiçbir teğet koşulu yok. Sayıyı basan kapı
    `node engine/tests/flat_artifact_census.mjs` (sınıf 3). Kalçadaki köşe yuvarlaması emsali
    denendi, bel halkasını şişirdiği için geri alındı — ölçüm `GECE/V3-D.md` §2.
+
+6. **L3a KENDİ İÇİNDE İKİYE BÖLÜNMÜŞ, kanun yalnız birine ulaşıyor (24 Ağu, V4).** Konvansiyon
+   kanunu (`contract/flat-convention-v1.json`) yalnız ÜRETİM kalemini bağlıyor; canlı sitenin
+   31 stili ve zevk panosunun 10 hücresinin 9'u REFERANS kalemden çıkıyor. Ölçüldü: bu gecenin
+   iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'le **bayt bayt
+   aynı** (`cmp`, `GECE/V4-D.md` §1) — yani kanuna uygunluk kapısını geçen bir onarım, alıcının
+   gördüğü çizimde hiç görünmeyebiliyor. Sayan aletler: `node engine/tests/flat_convention_check.mjs`
+   (üretim kalemi, 8 stil) ve `node engine/tools/flat-board.mjs <dizin> --eski <dizin>`.
+   Kök çözüm — stilleri kanunun bağladığı kaleme taşımak — YAPILMADI, karar alınmadı.
 
 ## Teşhis ilkesi?
 
