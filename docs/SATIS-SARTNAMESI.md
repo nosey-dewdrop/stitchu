@@ -48,9 +48,19 @@ Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 
 - [ ] Marka rengi: navy `#1f3a5f` gövde, seam `#5c7aa0` iç; başka renk yok.
       → ölçülecek flat yok (yukarısı).
 - [ ] STYLE-PIN uyumlu (`style_check` ctest).
-      → **KAPI BOŞ KOŞUYOR.** `node engine/tests/style_check.mjs` →
-      `no pins yet (engine/STYLE-PIN boş) — PASS (nothing to enforce)`; `engine/STYLE-PIN/` **dizin olarak YOK**.
-      Yeşil ama **hiçbir şeyi tutmuyor**; bu kutucuk o yeşille işaretlenemez.
+      → **KAPI ARTIK BOŞ KOŞMUYOR — KIRMIZI KOŞUYOR.** ⚠ Bu satırın 17 Ağu'daki hâli
+      (*"boş koşuyor, `no pins yet … PASS (nothing to enforce)`, yeşil ama hiçbir şeyi
+      tutmuyor"*) **BAYAT**: test o sessiz yeşili basmıyor. Kapı önce dürüstçe FAIL etmeye
+      başladı, 24 Ağu'da (`513b175`) kapsam kuralı da sıkıldı — hüküm listesi artık
+      `engine/flat-engine/styles.json`'dan TÜRÜYOR, yani **kısmi pinleme yeşil saymaz**;
+      sözlükteki her stil pinlenmeden kapı kırmızı kalır, sahipsiz pin de FAIL sayılır.
+      Kuralın gerçekten böyle davrandığı mutasyonla gösterildi (pin yok / tek pin / tam
+      kapsam üç hâli): `GECE/log/V1-E.mutasyon.txt`. `engine/STYLE-PIN/` **hâlâ dizin
+      olarak YOK**, yani pinli stil yok. Bu kutucuk hâlâ işaretlenemez — ama sebebi
+      "kapı boş" değil, "kalem kararı hiç verilmedi": pin bir ölçüm değil bir KARARDIR,
+      ve `scripts/repin-style.sh` onayı yalnız Damla'nın terminale elle yazdığı cümleden
+      alır. Sayılar (kaç stil, kaçı pinli) `scripts/repin-style.sh --status` ile
+      `node engine/tests/style_check.mjs` çıktısında yaşar, bu dosyada değil.
 - [ ] gusto-lint overall ≥ 0.70, hiçbir boyut taban-altı değil.
       → çalıştırılacak girdi yok.
 
@@ -247,4 +257,5 @@ Damla'nın gözü açılamaz. Bu bir ölçüm eksiği değil, **VARLIK eksiği**
   A1'i çağırmıyor). §2 "ya A0 ya A1" okumasıyla geçiyor; A1'in de istenip istenmediği karar.
 
 §1'in 5 eksiği **yeni halka değildir** — `HEDEF.md` **H1.3** zaten o iştir ve kasten H1.0'ın arkasındadır.
-`style_check`'in boş koşması (§1, `engine/STYLE-PIN/` yok) H1.3'ün içinde kapanır.
+`style_check`'in pinsizliği (§1, `engine/STYLE-PIN/` yok) H1.3'ün içinde kapanır. ⚠ Bu satır
+"boş koşması" diyordu; 24 Ağu'da bayatladı — kapı boş koşmuyor, kırmızı koşuyor (§1'e bak).
