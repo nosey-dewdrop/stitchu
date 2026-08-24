@@ -1,0 +1,254 @@
+#!/bin/bash
+# vocab_reference_check.sh — THE CLOSED-ENUM RATCHET (§6/V2 madde b).
+#
+# WHY THIS FILE EXISTS. engine/vocab.json is the single vocabulary authority
+# (GECE/V2-R.md §3.3), and V2's direction is BREADTH -> DEPTH: the menu is to be
+# dismantled, not grown. But nothing in this repo could tell you whether the
+# menu was getting bigger or smaller. V0-0D §3 measured the spread once — 37
+# axes, 132 values, `garment` alone referenced 1167 times in the narrow scope —
+# and that number was a snapshot in a markdown file, which is to say a number
+# nobody could break.
+#
+# WHAT IT ENFORCES. A ratchet, in the PHPStan / Android-lint class rather than
+# the betterer class (GECE/V2-R.md §2.1): a committed baseline of counts, and a
+# gate that goes RED when a count RISES. A count that FALLS leaves the gate
+# green and does NOT rewrite the baseline — locking a decrease in is a separate,
+# deliberate commit (`--baseline`), so the shrink is visible in the diff and
+# cannot happen by accident. There is no published formula for "how many
+# references are normal"; every source in §2.1 says the same thing — take
+# today's number as the floor. So this baseline is measured, not chosen.
+#
+# HOW IT COUNTS — and why the counting method is not obvious.
+# V0-0D §3 left two warnings and both are obeyed here:
+#   1. NARROW SCOPE. Counting over the whole tree inflates by ~7.7x (`garment`
+#      8978 wide vs 1167 narrow) because Logs/, docs/, reports/ and .git/ carry
+#      transcripts of the words, not references to them. The scope below is
+#      V0-0D's canonical list, verbatim.
+#   2. THE "none" POLLUTION. 132 enum values collapse to 100 distinct words, and
+#      the shared ones are almost all of the noise: "none" alone lives on 22
+#      axes and a single grep for it counts all 22 at once. So VALUES ARE ONLY
+#      COUNTED WHEN THE WORD BELONGS TO EXACTLY ONE AXIS (PAYLASIM=1, 92 of the
+#      100 words). The 8 shared words are deliberately not in the baseline; a
+#      ratchet built on them would be counting other axes' traffic.
+# The healthy baseline is therefore 37 axis-NAME counts + 92 unique-VALUE
+# counts. Each is one grep, and both greps are printed verbatim in the baseline
+# file so any number in it can be reproduced by hand.
+#
+# WHY BOTH SIDES ARE MEASURED IN A DETACHED WORKTREE, NOT IN THE WORKING TREE.
+# This is the k8s hack/verify-generated.sh move (GECE/V2-R.md §2.2b) and it is
+# not decoration — it was forced by a measurement. Counting this repo's working
+# tree on 2026-08-24 gave 10386 against a floor of 10349, twenty axes/words
+# "risen". Every one of those 37 lines came from ANOTHER CARD'S UNCOMMITTED
+# EDITS to contract/ (`git status --porcelain -- contract` showed two modified
+# files) plus untracked .rabadon/ session dumps sitting inside the scope. The
+# committed trees agree exactly: a6b473a..HEAD has a ZERO-line diff over the
+# scope, and HEAD counted in a worktree reproduces the floor key for key.
+# So the ratchet's unit is the COMMIT, which is also what the card asks for
+# ("artiran commit kirmizi duser"): both the floor and today's number are read
+# out of commit-addressable trees, and neither a parallel worker nor a stray
+# node_modules can move them.
+#   --tree <root>   counts an arbitrary directory instead. `--tree .` is how you
+#                   check your own dirty working tree before committing, and it
+#                   is how the mutation proof in GECE/V2-B.md breaks this gate.
+#
+# WHAT IT IS NOT. It is not a claim that the counted lines are all "real" uses:
+# a grep for a bare word matches comments and generated tables too. It does not
+# have to be exact to be a ratchet — it has to be STABLE and REPRODUCIBLE, so
+# that a rise means something moved. Line-count signatures are noisy under file
+# moves (detekt's warning, §2.1); when this gate fires, read the per-key deltas
+# it prints before touching the baseline.
+#
+# HOW TO GO GREEN AFTER A DELIBERATE INCREASE. You do not. That is the point:
+# adding a new reference to a closed enum is the thing being forbidden. If the
+# vocabulary genuinely gained an axis or a value, that is a scope decision and
+# the baseline is re-cut by hand with --baseline, in its own commit, with the
+# reason in the message.
+set -uo pipefail
+export LC_ALL=C
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+BASELINE="$ROOT/engine/tests/vocab-reference-baseline.json"
+
+# V0-0D §3 canonical narrow scope, verbatim. Logs/ docs/ reports/ .git/ are out
+# by construction: they are simply not on this list.
+SCOPE=(contract engine/src engine/wasm engine/tools engine/pattern-bridge
+       engine/vocab.json web/js recipes backend knowledge)
+EXCL=(--exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules
+      --exclude-dir=probe)
+
+AXIS_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe -w <AXIS> <SCOPE> | wc -l'
+VALUE_GREP='grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe -F "\"<VALUE>\"" <SCOPE> | wc -l'
+
+# ---- the word lists, derived from the vocab under $1 (a tree root) ----------
+# axes  -> every field name
+# values-> only words owned by exactly ONE axis (V0-0D's PAYLASIM=1)
+word_lists() {
+  python3 - "$1" <<'PY'
+import json, sys, collections
+root = sys.argv[1]
+v = json.load(open(root + "/engine/vocab.json"))["fields"]
+owner = collections.defaultdict(list)
+for f, d in v.items():
+    for x in d["values"]:
+        owner[x].append(f)
+for f in sorted(v):
+    print("axis\t" + f)
+for w in sorted(owner):
+    if len(owner[w]) == 1:
+        print("value\t" + w)
+PY
+}
+
+# ---- count every key inside a tree root, emit "kind<TAB>key<TAB>count" -------
+count_tree() {
+  local root="$1" kind key n
+  cd "$root" || return 1
+  local present=()
+  for p in "${SCOPE[@]}"; do [ -e "$p" ] && present+=("$p"); done
+  if [ ${#present[@]} -eq 0 ]; then
+    echo "FAIL: none of the scope paths exist under $root" >&2
+    return 1
+  fi
+  while IFS=$'\t' read -r kind key; do
+    if [ "$kind" = "axis" ]; then
+      n=$(grep -rIn "${EXCL[@]}" -w -- "$key" "${present[@]}" 2>/dev/null | wc -l | tr -d ' ')
+    else
+      n=$(grep -rIn "${EXCL[@]}" -F -- "\"$key\"" "${present[@]}" 2>/dev/null | wc -l | tr -d ' ')
+    fi
+    printf '%s\t%s\t%s\n' "$kind" "$key" "$n"
+  done < <(word_lists "$root")
+}
+
+WT=""
+cleanup_worktree() {
+  [ -n "$WT" ] || return 0
+  cd "$ROOT" && git worktree remove -f "$WT" >/dev/null 2>&1
+  rm -rf "$(dirname "$WT")"
+  WT=""
+}
+
+# ---- count a COMMIT: check it out detached, count there, clean up -----------
+count_commit() {
+  local rev="$1" full
+  cd "$ROOT" || return 1
+  full=$(git rev-parse "$rev^{commit}" 2>/dev/null) || { echo "FAIL: unknown commit $rev" >&2; return 1; }
+  WT="$(mktemp -d)/wt"
+  git worktree add -f -q "$WT" "$full" || { echo "FAIL: git worktree add" >&2; return 1; }
+  trap cleanup_worktree EXIT
+  count_tree "$WT"
+  local rc=$?
+  cleanup_worktree
+  return $rc
+}
+
+# ---- --baseline: recount the floor from a detached worktree ------------------
+if [ "${1:-}" = "--baseline" ]; then
+  COMMIT="${2:-a6b473a}"
+  cd "$ROOT" || exit 1
+  FULL=$(git rev-parse "$COMMIT^{commit}") || { echo "FAIL: unknown commit $COMMIT"; exit 1; }
+  COUNTS=$(count_commit "$FULL") || exit 1
+  cd "$ROOT" || exit 1
+  python3 - "$BASELINE" "$FULL" "$AXIS_GREP" "$VALUE_GREP" <<PY
+import json, sys
+path, commit, axis_cmd, value_cmd = sys.argv[1:5]
+rows = [l.split("\t") for l in """$COUNTS""".strip().split("\n") if l.strip()]
+axes = {k: int(n) for kind, k, n in rows if kind == "axis"}
+values = {k: int(n) for kind, k, n in rows if kind == "value"}
+out = {
+  "_baslik": "vocab_reference_check TABANI — kapali enum referans sayaci. Kapi: engine/tests/vocab_reference_check.sh (ctest: vocab_reference_check). Sayi YALNIZ DUSEBILIR; artiran commit KIRMIZI duser.",
+  "_yasa": [
+    "Taban ayri bir git worktree'de, taban commit'inde sayilir — calisma agacindan DEGIL. Bugunun sayisi da ayni sekilde HEAD'in worktree'sinden okunur; olculdu (2026-08-24): kirli calisma agaci 10386, ikisi de commit'li agac 10349, aradaki 37 satirin tamami paralel kosan baska bir kartin commit'lenmemis contract/ duzenlemeleriydi.",
+    "Sayim yontemi GECE/V0-0D.md §3'un dar kapsam grep'idir; Logs/ docs/ reports/ .git/ kapsam disidir (genis kapsam ~7.7x sisik).",
+    "Deger sayimi yalniz PAYLASIM=1 kelimeler icin yapilir: 'none' 22 eksende ortak, tek basina 1178 referans veriyor ve bir ratchet'i gurultuye bogar. 100 tekil kelimenin 92'si sayilir, 8 paylasilan kelime BILEREK disarida.",
+    "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez — dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
+    "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK."
+  ],
+  "tabanCommit": commit,
+  "sayimKomutu": {"eksenAdi": axis_cmd, "enumDegeri": value_cmd,
+                  "kapsam": "contract engine/src engine/wasm engine/tools engine/pattern-bridge engine/vocab.json web/js recipes backend knowledge",
+                  "yeniden_uret": "engine/tests/vocab_reference_check.sh --baseline <commit>",
+                  "kirli_agaci_denetle": "engine/tests/vocab_reference_check.sh --tree ."},
+  "toplam": sum(axes.values()) + sum(values.values()),
+  "toplamEksenAdi": sum(axes.values()),
+  "toplamEnumDegeri": sum(values.values()),
+  "eksenSayisi": len(axes),
+  "paylasim1KelimeSayisi": len(values),
+  "eksenAdi": dict(sorted(axes.items())),
+  "enumDegeri": dict(sorted(values.items())),
+}
+open(path, "w").write(json.dumps(out, indent=2, ensure_ascii=True) + "\n")
+print("baseline written:", path)
+print("  commit", commit)
+print("  axes", len(axes), "sum", sum(axes.values()))
+print("  unique values", len(values), "sum", sum(values.values()))
+print("  TOTAL", out["toplam"])
+PY
+  exit $?
+fi
+
+# ---- default: measure HEAD (or --tree <root>) against the committed floor ----
+# A MISSING LAW IS NEVER A PASS.
+if [ ! -f "$BASELINE" ]; then
+  echo "FAIL: no baseline at $BASELINE — a missing law is never a pass."
+  echo "      cut it once with: engine/tests/vocab_reference_check.sh --baseline a6b473a"
+  exit 1
+fi
+
+if [ "${1:-}" = "--tree" ]; then
+  SUBJECT_ROOT="$(cd "${2:?--tree needs a directory}" && pwd)"
+  SUBJECT="agac $SUBJECT_ROOT"
+  NOW=$(count_tree "$SUBJECT_ROOT") || exit 1
+else
+  SUBJECT="commit HEAD ($(cd "$ROOT" && git rev-parse --short HEAD))"
+  NOW=$(count_commit HEAD) || exit 1
+fi
+cd "$ROOT" || exit 1
+
+python3 - "$BASELINE" "$SUBJECT" <<PY
+import json, sys
+b = json.load(open(sys.argv[1]))
+subject = sys.argv[2]
+rows = [l.split("\t") for l in """$NOW""".strip().split("\n") if l.strip()]
+now = {"axis": {}, "value": {}}
+for kind, k, n in rows:
+    now[kind][k] = int(n)
+base = {"axis": b["eksenAdi"], "value": b["enumDegeri"]}
+label = {"axis": "eksen ADI", "value": "enum DEGERI"}
+
+risen, new, fallen = [], [], []
+for kind in ("axis", "value"):
+    for k, n in sorted(now[kind].items()):
+        if k not in base[kind]:
+            if n > 0:
+                new.append((kind, k, n))
+        elif n > base[kind][k]:
+            risen.append((kind, k, base[kind][k], n))
+        elif n < base[kind][k]:
+            fallen.append((kind, k, base[kind][k], n))
+
+t_now = sum(now["axis"].values()) + sum(now["value"].values())
+print("olculen       :", subject)
+print("taban commit  :", b["tabanCommit"])
+print("taban toplam  :", b["toplam"])
+print("bugun toplam  :", t_now, "(delta %+d)" % (t_now - b["toplam"]))
+print()
+for kind, k, was, got in fallen:
+    print("  DUSTU  %-11s %-22s %5d -> %5d" % (label[kind], k, was, got))
+if fallen:
+    print("  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —")
+    print("   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)")
+    print()
+for kind, k, was, got in risen:
+    print("  FAIL ARTTI  %-11s %-22s %5d -> %5d  (+%d)" % (label[kind], k, was, got, got - was))
+for kind, k, n in new:
+    print("  FAIL YENI   %-11s %-22s taban YOK -> %5d" % (label[kind], k, n))
+
+print()
+print("vocab_reference_check: %d eksen + %d kelime olculdu" % (len(now["axis"]), len(now["value"])))
+if risen or new:
+    print("HUKUM: FAIL (%d artan, %d yeni)" % (len(risen), len(new)))
+    print("Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).")
+    print("Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.")
+    sys.exit(1)
+print("HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.")
+PY
