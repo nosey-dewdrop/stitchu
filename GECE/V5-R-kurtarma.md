@@ -287,6 +287,24 @@ bunun bir örneği).
 
 ## D) Natalie Bray ease sayıları — İKİNCİL KAYNAK ARAMASI: BULUNAMADI
 
+> ★ SONRADAN GELEN DÜZELTME (V5 şefi işledi, 25 Ağu). Aşağıdaki D bölümünün
+> hükmü KISMEN ÇÜRÜDÜ. Sonradan gelen bulgu:
+> - Bray'in ELBİSE KOLU için normal kol kapağı easing'i **2 cm**'dir —
+>   *"over and above the usual 2 cm extra of a dress sleeve"*, **More Dress
+>   Pattern Designing**. Aşağıda bulunan **1 cm** yalnız YASSILAŞTIRILMIŞ
+>   (flattened) kol kapağı içindir; aşağıdaki çekince doğruydu ama "standart
+>   blok değeri hiçbir sorguda yüzeye çıkmadı" cümlesi ARTIK YANLIŞ.
+> - **Omuz dikişi ease'i Bray'de YOK** — yöntemi fazlalığı ease'le değil arka
+>   omuz PENSİYLE ya da arkayı öne EŞİTLEYEREK çözüyor. Citable omuz ease
+>   sayısı gerekiyorsa kaynak **Aldrich**: 0.5 cm (ceket kitabında 0.85 cm).
+> - **Yan dikiş ease'i Bray'de yok** (zayıf olumsuz kanıt, aşağıdaki gibi).
+> - TERİM NOTU: Bray'de **"crown" = YÜKSEKLİK** demektir; easing hep
+>   **"sleeve head"** üstünde tarif edilir. Amerikan "sleeve cap ease" terimi
+>   kitabı ıskalıyor.
+> Bu blok İKİNCİL/sonradan bildirilmiş girdidir: sayfa numarası YOK,
+> birincil kitap sayfasıyla DOĞRULANMADI. Kapıya eşik olarak girmeden önce
+> V5-R2 işçisi künyeyi kendisi teyit eder.
+
 HÜKÜM: Bray'in kol kapağı easing'i, omuz dikişi ease'i ve yan dikiş ease'i
 için SAYI + KİTABA AÇIK ATIF içeren hiçbir topluluk kaynağı bulunamadı.
 Bu üç sayı bu koşuda KAYNAKLANDIRILAMADI; §5.1 gereği eşik olarak
