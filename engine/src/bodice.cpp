@@ -804,6 +804,23 @@ constexpr double princessCleanIntakeMM = 20;  // suppression a small-frame panel
 
 namespace BodiceBlock {
 
+// The scye cubic, exposed so the RECIPE INTERPRETER draws it with THIS code
+// instead of a DSL copy of it. The hollow is no longer a closed-form share: it
+// is bisected against the measured arc/chord target under a published width
+// line, a fold cap and the validator's own kink rule (armholeCurveFor above).
+// A JSON DSL cannot carry a solver, and a second hand-written cubic in the
+// recipe is exactly the drift recipe_dress_check exists to catch — so the two
+// paths share the function, not the number.
+PathCommand scyeCurve(const Point& shoulderTip, const Point& armholeBottom,
+                      const Point& neckPoint, bool isFront,
+                      double scyeInnerX, double scyeMaxInset) {
+    // sleeveless=false: the caller passes the ALREADY cut-in tip / raised
+    // underarm (the recipe applies cutInMM / underarmRaiseMM in its own points),
+    // so the cut must not be applied twice.
+    return armholeCurveFor(shoulderTip.x, shoulderTip.y, armholeBottom, neckPoint, isFront,
+                           /*sleeveless=*/false, /*setIn=*/false, scyeInnerX, scyeMaxInset);
+}
+
 BodiceDraft draft(const BodyMeasurementsSnapshot& m, Neckline neckline, Shaping shaping,
                   double extendBelowWaist, double hipHalfQuarter) {
     BodiceOptions options;

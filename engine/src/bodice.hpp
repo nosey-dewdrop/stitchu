@@ -350,6 +350,16 @@ PatternPiece biasBinding(double edgeMM, const std::string& label);
 // bias neck strip is trued to the exact edge it binds. One truth, one place.
 double neckEdgeLength(const BodyMeasurementsSnapshot& m, Neckline neckline);
 
+// The drawn scye cubic (shoulder tip -> underarm). Shared with the recipe
+// interpreter so the DSL never carries a second copy of the hollow solver.
+// shoulderTip / armholeBottom are the FINAL points (any sleeveless cut-in and
+// underarm raise already applied by the caller). scyeInnerX is the published
+// Aldrich width line (0 disables it); scyeMaxInset caps how far inside the
+// natural shoulder tip the belly may reach.
+PathCommand scyeCurve(const Point& shoulderTip, const Point& armholeBottom,
+                      const Point& neckPoint, bool isFront,
+                      double scyeInnerX, double scyeMaxInset);
+
 } // namespace BodiceBlock
 
 } // namespace stitchu

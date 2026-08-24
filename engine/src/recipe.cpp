@@ -426,10 +426,17 @@ struct PathTarget {
     Expr x, y;
 };
 struct OutlineOp {
-    enum class K { Move, Line, Curve, Close };
+    enum class K { Move, Line, Curve, Scye, Close };
     K k = K::Close;
     PathTarget to;
     Expr cp1x, cp1y, cp2x, cp2y;  // Curve only
+    // Scye only. The armhole cubic is SOLVED (bisection against the measured
+    // arc/chord under the published width line, plus fold and kink caps), so a
+    // JSON DSL cannot state its control points. The op names the frame and the
+    // motor's own BodiceBlock::scyeCurve draws it — one solver, two paths.
+    PathTarget from, neck;
+    Expr innerX, maxInset;
+    bool front = false;
 };
 struct MarkingOp {
     enum class K { Move, Line, Dart };
@@ -619,6 +626,18 @@ PieceDef parsePiece(const JValue& jv, const std::set<std::string>& globalScope, 
             out.cp1y = parseCoord(cp1.arr[1], scope, ow + ".cp1.y");
             out.cp2x = parseCoord(cp2.arr[0], scope, ow + ".cp2.x");
             out.cp2y = parseCoord(cp2.arr[1], scope, ow + ".cp2.y");
+        } else if (op == "scye") {
+            checkKeys(ov, {"op", "to", "from", "neck", "half", "innerX", "maxInset"}, ow);
+            out.k = OutlineOp::K::Scye;
+            out.to = parseTarget(need(ov, "to", ow), pointIds, scope, ow + ".to");
+            out.from = parseTarget(need(ov, "from", ow), pointIds, scope, ow + ".from");
+            out.neck = parseTarget(need(ov, "neck", ow), pointIds, scope, ow + ".neck");
+            const std::string half = asStr(need(ov, "half", ow), ow + ".half");
+            if (half != "front" && half != "back")
+                fail(ow + ".half: expected \"front\" or \"back\", got '" + half + "'");
+            out.front = half == "front";
+            out.innerX = parseCoord(need(ov, "innerX", ow), scope, ow + ".innerX");
+            out.maxInset = parseCoord(need(ov, "maxInset", ow), scope, ow + ".maxInset");
         } else if (op == "close") {
             checkKeys(ov, {"op"}, ow);
             out.k = OutlineOp::K::Close;
@@ -952,6 +971,15 @@ Result<DraftedPattern> draftRecipe(
                             evalTarget(op.to, points, penv),
                             Point{evalExpr(op.cp1x, penv), evalExpr(op.cp1y, penv)},
                             Point{evalExpr(op.cp2x, penv), evalExpr(op.cp2y, penv)}));
+                        break;
+                    case OutlineOp::K::Scye:
+                        piece.commands.push_back(BodiceBlock::scyeCurve(
+                            evalTarget(op.from, points, penv),
+                            evalTarget(op.to, points, penv),
+                            evalTarget(op.neck, points, penv),
+                            op.front,
+                            evalExpr(op.innerX, penv),
+                            evalExpr(op.maxInset, penv)));
                         break;
                     case OutlineOp::K::Close:
                         piece.commands.push_back(PathCommand::close());
