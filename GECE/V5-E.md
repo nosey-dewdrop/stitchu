@@ -1,6 +1,12 @@
 # V5-E — İKİ KAPI CTEST'E BAĞLANDI: RATCHET, GEVŞETME DEĞİL
 
-Koşu: 2026-08-25. SÜRE TAVANI 60 dk — **aşılmadı** (tam ctest 330.62 sn dahil).
+Koşu: 2026-08-25. SÜRE TAVANI 60 dk — **aşılmadı** (tam ctest dahil).
+
+★ Bu rapor İKİ koşuyla yazıldı: kurulum koşusu (330.62 sn) ve **bağımsız
+doğrulama koşusu** (325.59 sn, `GECE/log/V5-E.ctest.after.txt` bugünkü hali).
+Aşağıdaki her sayı doğrulama koşusunda YENİDEN basıldı; taban dosyasındaki
+tavanlar loga körü körüne güvenilerek değil, komut yeniden koşturularak
+karşılaştırıldı (kartın ŞEF DÜZELTMESİ maddesi).
 
 ## YAPILAN (dosya yolu + hash)
 
@@ -21,8 +27,8 @@ Commit: `e1ab3ea`
 ### 1. Kırmızı AD kümesi — ★ KABUL ÖLÇÜTÜ
 Komut: `ctest --test-dir engine/build --output-on-failure`
 
-**113 test · 6 kırmızı · 330.62 sn.** Faz-öncesi (`GECE/log/V5.ctest.opening.txt`)
-111 test · 6 kırmızı · 302.32 sn.
+**113 test · 6 kırmızı · 325.59 sn** (doğrulama koşusu; kurulum koşusu 330.62 sn).
+Faz-öncesi (`GECE/log/V5.ctest.opening.txt`) 111 test · 6 kırmızı · 302.32 sn.
 
 `GECE/log/V5-E.reddiff.txt` → **DIFF BOŞ.** Aynı altı ad, birebir:
 `contract_check · figure_check · flat_artifact_census · flat_pattern_agree_check ·
@@ -78,10 +84,39 @@ Log: `GECE/log/V5-E.mutasyon.txt`. Zemin: iki kapı da exit 0.
 | 7 | `V5D_MUTATE=bust_ease:-5` | bant dışı **5 > 4** | 1 |
 | 8 | `V5D_MUTATE=waist_ease:20` | bant dışı **8 > 0** | 1 |
 
+Logdaki bölüm numaraları: 1-6 ilk blok, 8-9 ek blok (tablodaki 6 ve 8),
+10 = **kör nokta kanıtı** `V5D_MUTATE=waist_ease:5` → **exit 0, YAKALANMIYOR**
+(aşağıda YAPILAMAYAN 1). Exit kodları logun `EXIT KODLARI` bölümünde ayrı koşuyla
+basıldı (PIPESTATUS tuzağına düşmemek için).
+
 **GERİ ALMA (kanca yok, aynı komut): iki kapı da PASS, 0 tavan aşımı.**
 Yani ratchet süs değil — hem sayaç kalemlerinde hem mm kalemlerinde hem de
 yayınlanmış bant kalemlerinde bozma yakalanıyor. Mutasyon 5, tavanın yönlü
 olduğunu da gösteriyor: omuzda bozan yön EKSİ (motor Aldrich'ten KISA çiziyor).
+
+## ★ ŞEF EKİ — §4.2'NİN RATCHET KATMANINDAKİ DELİĞİ (ayrı başlık, kart emri)
+
+**"4.2 geçti" DENMEZ. Şart YARIM karşılanıyor ve hangi yarısı olduğu şudur:**
+
+Bu faz `engine/src/` altında hiçbir şey değiştirmedi (kartın YASAKLARI). Dolayısıyla
+ratchet katmanı faz-ÖNCESİ motorda da AYNI sayıları basar — 211 / 32 / 342 / 11.4mm /
+18.18mm / 4-8 bant dışı — ve tavanla eşit oldukları için orada da **YEŞİL düşer.**
+Yani:
+
+| §4.2 şartı: "yeni denetim faz-öncesinde KIRMIZI düşmeli" | durum |
+|---|---|
+| **HAM KAPI** (ratchet'siz, V5-A/V5-D'nin bıraktığı hali) | **KARŞILIYOR.** Tanık: `GECE/log/V5-A.bostest.txt` (exit=1) ve `GECE/log/V5-D.bostest.txt`. İkisi de "ihlal = 0" hükmüne bağlıydı ve faz-öncesi motorda kırmızı düşüyordu. |
+| **RATCHET KATMANI** (bu fazın eklediği şey) | **KARŞILAMIYOR.** Tavan = faz-öncesi ölçüm olduğu için faz-öncesinde tanım gereği yeşil. Bu bir kaçamak değil, ratchet'in matematiği. |
+
+Ratchet katmanının ısırdığının kanıtı §4.2 DEĞİL, **§4.5 mutasyonudur** ve bu kartta
+yeniden koşturuldu: `GECE/log/V5-E.mutasyon.txt`, 8 tavan-aşan bozmanın 8'i exit 1,
+geri alınca iki kapı da exit 0.
+
+★ Bu deliğin pratik anlamı: ratchet, **motorun BUGÜNKÜ kusurunu YAKALAMAZ** (onu
+tavan olarak dondurur, ama her ihlali adıyla basmaya devam eder); yakaladığı şey
+**kusurun BÜYÜMESİDİR**. `notch_off_boundary = 211` bir başarı satırı değil, dondurulmuş
+bir borçtur ve kökü (`engine/src/` altında çentiğin parça sınırından bağımsız bir x'e
+basılması) hâlâ açık.
 
 ## YAPILAMAYAN (sebep)
 

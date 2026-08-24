@@ -111,3 +111,36 @@ draft_math exit=
   exit=0   (GERI ALINMIS) node engine/tests/draft_math_check.mjs
 
 HUKUM: 6 mutasyonun 6'si tavani asti ve exit 1 dondu; geri alinca ikisi de exit 0. RATCHET ISIRIYOR.
+
+########## EK MUTASYONLAR — rapor tablosundaki 6 ve 8 numarali satirlarin kaniti
+########## [8] draft_math_check / V5D_MUTATE=back_neck_drop:5 (tavan 8.40mm)
+    ⚠ KANIT KANCASI AKTİF: V5D_MUTATE=back_neck_drop:5
+    back_neck_drop               25.4000       15.00    10.4000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               25.7000       15.00    10.7000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               26.0000       15.00    11.0000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               26.6000       15.00    11.6000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               26.9000       15.00    11.9000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               27.2000       15.00    12.2000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               27.8000       15.00    12.8000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop               28.4000       15.00    13.4000  KAYNAKSIZ  Aldrich 4.bs s.14/16 "0-1 1.5 cm" SABİT — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET
+    back_neck_drop           en kötü |sapma|    13.4000 mm   tavan     8.40 mm
+FAIL  RATCHET KIRILDI — back_neck_drop: en kötü sapma 13.4000mm > tavan 8.40mm
+FAIL draft_math_check — RATCHET: 1 tavan aşımı · adıyla basılan ihlal satırı 12
+  exit=1
+
+########## [9] draft_math_check / V5D_MUTATE=waist_ease:20 (bant disi tavan 0/8)
+  NOT: +-5mm bu bandi (25.4..60.0mm) ASMIYOR — olculen 40.1..53.3mm bandin ORTASINDA.
+       Yakalandigi esik +20mm; bant YAYINDAN geldigi icin DARALTILMADI.
+    ⚠ KANIT KANCASI AKTİF: V5D_MUTATE=waist_ease:20
+    waist_ease               bant dışı beden          8/8   tavan        0   bant 25.4..60mm
+FAIL  RATCHET KIRILDI — waist_ease: bant dışı 8 > tavan 0 (bant 25.4..60mm, künye: Threads #221 s.71 MINIMUM EASE bel elbise 1in=25.4mm .. Aldrich 4.bs s.28 "half waist plus 3cm"=+60mm)
+FAIL draft_math_check — RATCHET: 1 tavan aşımı · adıyla basılan ihlal satırı 20
+  exit=1
+
+########## [10] +-5mm KOR NOKTA KANITI: V5D_MUTATE=waist_ease:5
+    waist_ease               bant dışı beden          0/8   tavan        0   bant 25.4..60mm
+PASS draft_math_check — RATCHET: 0 tavan aşımı · adıyla basılan ihlal satırı 12
+  exit=0  (YESIL — kor nokta, adiyla yazili)
+
+HUKUM (guncel): 8 tavan-asan mutasyonun 8'i exit 1; geri alinca iki kapi da exit 0.
+                waist_ease +5mm YAKALANMIYOR (exit 0) — bandin genisligi, RAPORDA YAZILI.

@@ -409,21 +409,21 @@ figure-lint: 1 FAILURE(S) — boru/drift üretildi, mandal düştü
         Start 108: walkgate_check
 108/114 Test #108: walkgate_check ...................   Passed   40.62 sec
         Start 109: cutplan_check
-109/114 Test #109: cutplan_check ....................   Passed   50.61 sec
+109/114 Test #109: cutplan_check ....................   Passed   40.25 sec
         Start 110: printpack_sheet_check
-110/114 Test #110: printpack_sheet_check ............   Passed   10.65 sec
+110/114 Test #110: printpack_sheet_check ............   Passed    9.04 sec
         Start 111: preset_resolve_check
 111/114 Test #111: preset_resolve_check .............   Passed    0.03 sec
         Start 112: edit_locality_check
-112/114 Test #112: edit_locality_check ..............   Passed    0.16 sec
+112/114 Test #112: edit_locality_check ..............   Passed    0.17 sec
         Start 113: vocab_source_check
-113/114 Test #113: vocab_source_check ...............   Passed    0.11 sec
+113/114 Test #113: vocab_source_check ...............   Passed    0.10 sec
         Start 114: vocab_reference_check
-114/114 Test #114: vocab_reference_check ............   Passed    5.37 sec
+114/114 Test #114: vocab_reference_check ............   Passed    4.66 sec
 
 95% tests passed, 6 tests failed out of 113
 
-Total Test time (real) = 330.62 sec
+Total Test time (real) = 325.59 sec
 
 The following tests did not run:
 	102 - h10_gate_check (Disabled)
@@ -436,4 +436,5 @@ The following tests FAILED:
 	 91 - contract_check (Failed)
 	 96 - figure_check (Failed)
 Errors while running CTest
+EXIT=8
 EXIT=8
