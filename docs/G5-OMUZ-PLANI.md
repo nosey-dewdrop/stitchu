@@ -2,6 +2,16 @@
 
 > Durum: TASARIM HAZIR, KOD YOK. Bu oturum (12 Ağu gece) strapless kılıfı
 > 8 bedende iki hakemden yeşil geçirdi; elbiseyi "satılır" yapan son eksik bu.
+>
+> ★ **24 Ağu (V3) — G5'in açıklığı artık bir KAPI tarafından her koşuda sayılıyor.**
+> `node engine/tests/flat_pattern_agree_check.mjs` altı ölçüyü kıyaslıyor; kalıp tarafı
+> STRAPLESS olduğu için `bust_circumference`, `neck_opening_width`, `shoulder_width`
+> ölçülecek kenar bulamıyor ve sebebiyle `null` dönüyor (`engine/tools/pattern-measure.mjs`).
+> Kapı bu sayıyı 3'te ratchet'liyor: G5 kod olarak indikçe yalnız düşebilir. Aynı boşluk
+> `body_length` farkının ayrıştırılamayan kısmının da kaynağı (kabuğun yayı OMUZ halkasından,
+> kalıbınki strapless üst serbest kenardan başlıyor — `GECE/V3-D.md` §3, ayrıştırılmadı).
+> Bu oturumda 2. maddedeki "GarmentSurf'e 4. halka" işi YAPILMADI; `GarmentSurf` yalnızca
+> `engine/src/surfacepattern.hpp`'ye yayınlandı, halka sayısı değişmedi.
 
 ## Mekanizma (mevcut motora eklemeler, ölçüldü/denendi değil — plan)
 1. **Pürtüklü üst sınır (ragged grid):** `buildGrid`'e kolon başına tepe

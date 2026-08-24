@@ -12,7 +12,10 @@ dosyayı aç.
 | flat'in siluet ölçüleri, ölçek beyanı var mı | `GECE/f0-flat-princess.json` (üreten: `GECE/f0-measure-flat.mjs`) |
 | hangi operatör sevk edilmiş | `contract/garment-spec-v2.json` → `operators` |
 | damar nedir, ne çizilir ne çizilmez | `ANAYASA.md:28-58` |
-| flat ile kalıp neden aynı sayıyı vermiyor | `contract/tables.json` → `flat._layer` (kontrat beyanı) |
+| flat ile kalıp neden aynı sayıyı vermiyor | `contract/tables.json` → `flat._layer` (kontrat beyanı); bugünkü FARKI basan kapı `node engine/tests/flat_pattern_agree_check.mjs` |
+| flat'in dış konturu nereden geliyor | `engine/src/shellprojection.{hpp,cpp}` ← `GarmentSurf` (`engine/src/surfacepattern.hpp`); alet `./engine/build/shell-flat EU38 [--svg]`; teşhis `GECE/V3-A.md` |
+| kalıbın kendi altı ölçüsü | `node engine/tools/pattern-measure.mjs <pattern.json>`; kenarı olmayan ölçü `null` + sebep (`GECE/V3-B.md`) |
+| kabuk siluetinde artefakt var mı | `node engine/tests/flat_artifact_census.mjs` basar (dört sınıf, eşik kaynaklarıyla) |
 | ctest bugün ne durumda | `GECE/KOSU.md` → AÇIK KIRMIZILAR |
 | görü kelime listesi nereden geliyor | üreteç `engine/tools/gen-vision-vocab.mjs` → `vision-student/vocab.py` (elle düzenlenmez); bekçi `ctest -R vocab_source_check` |
 | menü büyüdü mü, ratchet ne diyor | `engine/tests/vocab_reference_check.sh` basar; taban `engine/tests/vocab-reference-baseline.json` |
@@ -83,6 +86,37 @@ geri alınır (`f0c1398` bunun uygulandığı commit).
 | `GECE/log/V2-C.baseline.txt` · `V2-D.baseline.txt` | `node engine/tools/wasm-baseline.mjs` koşuları. V2-D'de gecikme bantları AŞILDI; kök teşhis makine yükü (ölçülen modül baytı bu kartla aynı), `GECE/V2-D.md` §5.1. |
 | `GECE/log/V2-D.{build-wasm,engine-bytes,bundle-fresh.after,generated-ratchet.after}.txt` | damgalı sevk hattının koşuları: `build-wasm.sh` exit'i, motor baytının değişmediğinin sha256'sı, iki kapının damgadan sonraki çıktısı. |
 | `engine/tests/vocab-reference-baseline.json` | ratchet TABANI. Deftersiz taban geçersiz; yeniden kesme gerekçesi commit mesajına ve faz tutanağına yazılır (`--baseline` `_yasa` metnini yeniden ürettiği için taban dosyasına elle yazılan gerekçe bir sonraki kesmede silinir). |
+
+## V3 fazı — flat'in dış konturu kabuktan hesaplanıyor (24 Ağu 2026)
+
+Faz kuralı: flat ile kalıp AYNI 3B kabuktan beslenir; eski çizim hattı silinmez, yan yana
+durur. Kurulan kapı kırmızı düşerse gevşetilmez, sayısıyla raporlanır (RULES §6, §9).
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V3-K.md` | keşif: flat hattı ve kalıp hattı bugün nereden çıkıyor, iki kalem (üretim + referans), `contract/flat-convention-v1.json`'un kaynaksız 6 sabiti, kalıp tarafının `BodySurface`→`GarmentSurf` zinciri, altı ölçüyü bugün hangi aletin basabildiği. Hüküm: ortak beden çizelgesi var, ORTAK KABUK YOK. |
+| `GECE/V3-A.md` | `GarmentSurf` `surfacepattern.hpp`'ye yayınlandı, yapılandırma `buildGarmentSurf`'te tek yere indi, `shellprojection.{hpp,cpp}` ortografik izdüşümü, `shell-flat` aleti. Kalıp hattının bayt bayt değişmediğinin stash'li kanıtı §"KALIP HATTI BAYT BAYT DEĞİŞMEDİ". |
+| `GECE/V3-B.md` | `engine/tools/pattern-measure.mjs`: kalıp panellerinden altı ölçü, üçü `null` + yazılı sebep. Determinizm (üç örnekleme adımında aynı dört basamak) ve `shell-flat` ile yan yana tablo. |
+| `GECE/V3-C.md` | iki kapının kuruluşu ve İLK KIRMIZI hükümleri: eşiklerin kaynağı (1.0° McNeel; %1.5 kaynak DEĞİL karar), dört artefakt sınıfının sayımı, sınıf 4'ün sınıf 3'ü maskelediğinin bulunması. |
+| `GECE/V3-D.md` | onarım turu: dejenere 6→0, `body_length` tanımının düzeltilmesi, iki devralınan kırmızının kapanması; bel köşe yuvarlamasının ölçülüp REDDEDİLMESİ ve geri alınması. Kırmızı AD kümesi büyümedi, küçüldü. |
+| `engine/src/shellprojection.{hpp,cpp}` | ortografik izdüşüm; tek iddia (`siluet yarı-genişliği = a + d`) dosyanın başında beyanlı. |
+| `engine/src/surfacepattern.hpp` | `GarmentSurf` bildirimi + `buildGarmentSurf`. Tanımlar `surfacepattern.cpp`'de; **ikinci kabuk sınıfı yazmak yasak**, gerekçesi dosyanın başında. |
+| `engine/tools/shell-flat.cpp` | alet: `./engine/build/shell-flat EU38` → JSON, `--svg` → 1:1 SVG. |
+| `engine/tools/pattern-measure.mjs` | kalıp tarafının cetveli; kenarı olmayan ölçüye sayı türetmez, `null` + sebep basar. |
+| `engine/tests/flat_pattern_agree_check.mjs` | KAPI, **24 Ağu'da KIRMIZI: 1 ihlal** (`body_length` −3.7979%, tolerans %1.5) + UNMEASURED 3/6 ratchet tavanında. |
+| `engine/tests/flat_artifact_census.mjs` | KAPI, **24 Ağu'da KIRMIZI: 1 ihlal** (sınıf 3, 2 nokta × 20.560216°, eşik 1.0°). Sınıf 1/2/4 sıfır basıyor. |
+| `GECE/log/V3.ctest.{before,after}.txt` · `V3-D.ctest.txt` | fazın tam `ctest` koşuları. Kırmızı AD kümesinin büyüyüp büyümediği bu dosyaların `diff`'inden okunur. |
+| `GECE/log/V3-C.vacuous.txt` | BOŞ TEST: faz ÖNCESİ flat artefaktı aynı aletlerle yargılandı, dört sınıfın dördü de ateşledi, altı ölçünün altısı kırmızı. Kapatılmış test olmadığının kanıtı. |
+| `GECE/log/V3-C.mutation.txt` | mutasyon kanıtı: her kanat için kasıtlı bozma → kırmızı, geri alma → yeşil; +5mm'nin eşiği neden kırmadığı sayıyla. |
+| `GECE/log/V3-D.census.{before,after1}.txt` · `V3-D.agree.after.txt` | dejenere segment 6→0 ve `body_length` tanım düzeltmesinin önce/sonra çıktıları. |
+| `GECE/log/V3-D.waistblend.rejected.txt` | REDDEDİLEN hamle: bel köşe yuvarlaması kırığı 20.5602°→0.4582° kapatıyor ama bel halkasını +36.1166mm şişirip dört kapıyı kırmızıya düşürüyor. Tam ctest + geri alınan yamanın diff'i. |
+| `GECE/log/V3-D.{wasm,vocab.after-dedup}.txt` | sevk edilen üç artefaktın tazelenmesi ve vocab ratchet tabanının yeniden kesilmesinin ölçüm defteri. |
+
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §11 (hat, aletler, iki kapı,
+reddedilen hamle, beyan edilmiş sınırlar), `docs/KATMAN-HARITASI.md` (yeni **L3a′** satırı +
+boşluk 3/4/5), `docs/G5-OMUZ-PLANI.md` (G5'in açığını sayan kapı), `docs/H1.0-KAPI.md` K6
+(`GarmentSurf` yayınlandı, `TopProfile` hâlâ kapalı), `docs/SATIS-SARTNAMESI.md` §1
+(kontur hesaplanıyor ama listing flat'i değil).
 
 ## Ölçüm aletlerini çalıştır
 

@@ -39,12 +39,25 @@ Bir stitchu paketi "satılabilir" sayılır ancak aşağıdaki maddelerin HEPSİ
 Vitrin flat'i eski `engine/flat-engine/` rayının işi ve bugünkü giysiye bağlı **değil**.
 Bu bölüm `HEDEF.md` **H1.3**'e (kapak + tek line drawing) bağlıdır ve H1.3 kasten H1.0'ın arkasındadır.
 
+⚠ **24 AĞU (V3) — KÖK SEBEP TAM OLARAK BURADA DEĞİL ARTIK, AMA MADDE DE KAPANMADI.**
+`engine/build/shell-flat EU38 --svg` bugünkü giysinin **dış konturunu** basıyor ve o kontur
+kalıbın kesildiği aynı 3B kabuktan (`GarmentSurf`) ortografik izdüşümle HESAPLANIYOR, eski
+croquis rayından değil; SVG `data-scale="1"` / `data-source="GarmentSurf"` taşıyor, yani
+ölçüsüz-stilize değil. Ama bu bir **siluet dış hattıdır, teknik çizim değildir**: kol, kol
+oyuğu, yaka, iç dikiş çizgileri YOK (kontur omuz halkasından etek ucuna iniyor), ön ve arka
+görünüm birbirinin aynı, marka rengi/çizgi hiyerarşisi hiç kurulmadı. Aşağıdaki beş kutucuğun
+hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/ARCHITECTURE.md` §11.
+
 - [ ] ÖN + ARKA flat, tek karo (viewBox front+back yan yana, emsal: 496 genişlik oranı).
-      → **YOK.** `find . -name "*flat*.svg" -path "./web/*"` → **0 dosya**. Bugünkü giysinin flat'i hiç çizilmedi.
+      → **YOK.** `find . -name "*flat*.svg" -path "./web/*"` → **0 dosya**; `web/` tarafına hiçbir
+      şey sevk edilmedi. Bugünkü giysinin **siluet dış konturu** artık çiziliyor
+      (`shell-flat EU38 --svg`), ama ön ve arka aynı eğri ve tek karo düzeni yok.
 - [ ] Çizgi hiyerarşisi 3 katman (2.0 outline / 1.4 iç yapı / 1.0 işaret) — gusto-lint line_hierarchy ≥ tipik.
       → **ÖLÇÜLECEK NESNE YOK.** Araç çalışıyor: `node engine/tools/gusto-lint.mjs dataset/taste-pool/svg/g016-flat.svg`
       → `PASS overall=0.90 (esik 0.7), line_hierarchy 1 (3/3 katman, navy var)`. Ama o dosya **eski
       taste-pool korpusundan**, bugünkü giysi değil. Kendi çıktımızda 0 aday.
+      ⚠ 24 Ağu: `shell-flat --svg` bir aday DEĞİL — tek katman dış kontur basıyor, iç yapı ve
+      işaret katmanı hiç yok, yani üç katmanlı hiyerarşi sorusu ona sorulamaz. Koşulmadı.
 - [ ] Marka rengi: navy `#1f3a5f` gövde, seam `#5c7aa0` iç; başka renk yok.
       → ölçülecek flat yok (yukarısı).
 - [ ] STYLE-PIN uyumlu (`style_check` ctest).
@@ -208,7 +221,7 @@ yasak (miras: PROVE don't claim).
 **KAPI BUGÜN AÇIK DEĞİL — mühür bunu değiştirmez, ilan eder:**
 | şart | bugün |
 |---|---|
-| gusto-lint PASS | **KOŞULAMADI** — girdi (listing flat) üretilmiyor (§1) |
+| gusto-lint PASS | **KOŞULAMADI** — girdi (listing flat) üretilmiyor (§1). 24 Ağu'dan beri bir siluet dış konturu üretiliyor (`shell-flat --svg`) ama o gusto-lint'in sorduğu nesne değil, koşturulmadı. |
 | şartname 1-4 PASS | **16/17 madde geçti** (Tur 8: 14 → 16) · kalan eksik yalnız **§1'in 5 listing görseli maddesi**, hepsi H1.3 |
 | kontakt sayfası + Damla onayı | **AÇILMADI** — kontakt sayfası basılmadı, emsaller diskte yok (aşağı) |
 

@@ -11,7 +11,8 @@
 | **L0 VÜCUT** | Tek vücut gerçeği | `contract/figure-bands.json` (figur_croquis), `engine/src/bodysurface.{cpp,hpp}`, `engine/pattern-bridge/bodies/mean_all.yaml` | `contract/layers/body.EU38.json` (26 ölçü + girth mm + croquis px↔mm kalibrasyonu) | üst katmanların hiçbirini |
 | **L1 TASARIM** | Stil uzayı (vücutsuz) | atolye state (46 kadran), `engine/flat-engine/styles.json`, `contract/figure-bands.json garment_ease` (bel/gogus çarpanları) | design-state JSON — **içinde mm YASAK**, sadece oran/enum/çarpan | L0'ın mm'lerini |
 | **L2 GİYSİ YÜZEYİ** | vücut+tasarım → 3B shell | `engine/src/garmentshell.{cpp,hpp}`, `drape.{cpp,hpp}`, `volume.hpp` | shell ölçüm raporu: `rings.waist_mm` TEK SAYI, bust/hip, ease hacmi | L3/L4'ü |
-| **L3a FLAT** | Yüzeyin çizimi | `engine/flat-engine/_engine-full.mjs` (kalem), `engine/tools/render-garment-flat.mjs` | SVG (ölçüsüz, stilize) | kalıp dünyasından HİÇBİR ŞEYİ (`body.yaml`, specification, mapping) |
+| **L3a FLAT (croquis hattı)** | Yüzeyin çizimi | `engine/flat-engine/_engine-full.mjs` (referans kalem, 31 stil), `engine/tools/render-garment-flat.mjs` (üretim kalemi) | SVG (ölçüsüz, stilize) | kalıp dünyasından HİÇBİR ŞEYİ (`body.yaml`, specification, mapping) |
+| **L3a′ FLAT (kabuk projeksiyonu)** ★ 24 Ağu | Yüzeyin İZDÜŞÜMÜ — çizim değil | `engine/src/shellprojection.{cpp,hpp}`, alet `engine/build/shell-flat` | JSON: 6 ölçü mm + ön/arka kontur + halka aralığı; `--svg` ile `data-scale="1"` 1:1 SVG | — **L2'nin kabuğunu DOĞRUDAN okur** (aynı `GarmentSurf`), bu istisna kasıtlı |
 | **L3b KALIP** | Yüzeyin düzleştirilmesi | `engine/src/bodice.cpp` vb., `engine/pattern-bridge/mapping.py`, GarmentCode (kara kutu) | `stitchu_specification.json` + panel kenar uzunlukları mm | `figur_croquis`'i doğrudan; kalemi |
 | **L4 DOĞRULAMA** | Hakem | `engine/pattern-bridge/walk.py`, `printpack.py`, `test_seamdeed.py` | tapu + print-report | üretici katmanların İÇİNİ |
 
@@ -25,6 +26,20 @@
    bu sınırın bekçisi. Kök çözüm Faz C (bel = 3B'de tek spline).
 3. **L3a↔L3b köprüsü sadece pinli makas:** `preview-truth` stilizasyon makasını ölçüp pinliyor;
    makası kapatan şey değil. Kök çözüm Faz C (ikisi tek yüzeyden türetilir).
+   ⚠ **KISMEN AŞILDI 24 Ağu (V3):** yeni **L3a′** satırı tam olarak o kök çözümün ilk parçası —
+   dış kontur artık kalıbın kesildiği AYNI kabuktan (`GarmentSurf`) ortografik izdüşümle
+   hesaplanıyor, stilize edilmiyor. Ama **eski L3a hattı silinmedi ve makas kapanmadı**: iki hat
+   yan yana duruyor, aynı EU38 belinde farklı sayı taşıyorlar (croquis sıfır bolluk, kabuk
+   bolluklu). Bugünkü farkı basan kapı `node engine/tests/flat_pattern_agree_check.mjs`.
+4. **L3a′ ↔ L3b altı ölçünün üçünü kıyaslayamıyor:** kalıp tarafı STRAPLESS bir giysi üretiyor,
+   kabuk projeksiyonu omuz halkasından başlıyor. `bust`/`neck_opening_width`/`shoulder_width`
+   kalıp tarafında ölçülecek kenar bulamıyor ve `null` + sebep dönüyor
+   (`engine/tools/pattern-measure.mjs`). Tek kök: açık G5 işi (omuz/oyuk/yaka yüzeyde).
+   Kapı bu boşluğu her koşuda adıyla sayıyor ve 3'te ratchet'liyor.
+5. **Kabuk siluetinde belde teğet kırığı var:** bel yüksekliğinin üstünde skim zarfı, altında
+   halka interpolasyonu, aralarında hiçbir teğet koşulu yok. Sayıyı basan kapı
+   `node engine/tests/flat_artifact_census.mjs` (sınıf 3). Kalçadaki köşe yuvarlaması emsali
+   denendi, bel halkasını şişirdiği için geri alındı — ölçüm `GECE/V3-D.md` §2.
 
 ## Teşhis ilkesi?
 
