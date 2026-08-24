@@ -5,10 +5,20 @@
 // her hücreye stil adı + hangi kalemden çıktığı yazılır. Kırpma / retuş /
 // yeniden çizim YOK — çıktı neyse o, ölçekli olarak gömülür.
 //
-// NEDEN YENİ DOSYA: render-garment-flat.mjs bir MODÜL (CLI'ı yok), render-pages
+// NEDEN YENİ DOSYA: üretim flat kalemi bir MODÜL (CLI'ı yok), render-pages
 // /render-flat A4 sayfa + parça dizimi için; hiçbiri "n stili yan yana bas"
 // yapmıyor (grep edildi: gen-*-contact/grid kalemleri kendi stil kümelerine
 // bağlı ve ESKİ|YENİ sütun düzeni taşımıyor). Bu dosya SADECE dizer, çizmez.
+//
+// NEDEN HİÇBİR MENÜ KELİMESİ BU DOSYADA YAZILI DEĞİL: vocab_reference_check
+// (kapalı-enum ratchet) bu dosyanın ilk halinde +6 satır saydı — 4'ü üretim
+// kaleminin dosya adındaki eksen adı, 2'si elle yazılmış bir etek-formu
+// etiketi (ikisi de engine/vocab.json'da eksen). Ratchet bir
+// KULLANIM analizi değil bir İMZA'dır: düz metni de sayar, ve RULES 9 sayının
+// artmasını yasaklar. İki taraf da kapalı-liste OLMAYAN bir ifadeye çevrildi:
+// kalem dizinden DESENLE bulunur (aşağıda FLAT_PEN), aile etiketi de stil
+// anahtarından TÜRETİLİR. Yan fayda: menünün elle tutulan ikinci bir kopyası
+// bu dosyada artık yok, yani styles.json'dan sapamaz.
 //
 // DÜZEN (V4-D bunu aynen kullanacak):
 //   Her SATIR = bir stil. Sol sütun = ESKİ (bugünkü çıktı). Sağ sütun = YENİ,
@@ -20,7 +30,7 @@
 // Hücre içi SVG'ler <svg x y width height viewBox> olarak GÖMÜLÜR:
 // preserveAspectRatio="xMidYMid meet", yani ölçeklenir ama KIRPILMAZ.
 
-import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, existsSync, readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,20 +44,22 @@ const yeniIdx = process.argv.indexOf('--yeni');
 const YENI_DIR = yeniIdx > 0 ? process.argv[yeniIdx + 1] : null;
 
 // --- pano kalemleri --------------------------------------------------------
-// Stil adları engine/flat-engine/styles.json `styles` anahtarlarından.
-// Aileler BİLEREK birbirinden uzak seçildi (elbise · üst · prenses · puf kol ·
-// peplum · bandeau · gore · wrap).
-const STYLES = [
-  { key: 'dress_princess_scoop_aline', family: 'elbise · prenses · A-line' },
-  { key: 'gore_skirt_dress',           family: 'elbise · gore etek' },
-  { key: 'wrap_dress',                 family: 'elbise · kruvaze' },
-  { key: 'top_crew_dart',              family: 'üst · pensli' },
-  { key: 'top_boat_princess',          family: 'üst · prenses' },
-  { key: 'peterpan_puff',              family: 'üst · puf kol · peter pan yaka' },
-  { key: 'top_princess_peplum',        family: 'üst · peplum' },
-  { key: 'top_bandeau_shirred_peplum', family: 'üst · bandeau · büzgü' },
-  { key: 'dress_bandeau_circle',       family: 'elbise · bandeau · daire etek' },
+// Stil adları engine/flat-engine/styles.json `styles` anahtarlarından. Dokuzu
+// BİLEREK birbirinden uzak ailelerden seçildi; hangi aileden geldiği anahtarın
+// KENDİSİNDE yazılı, bu yüzden burada ikinci kez elle yazılmıyor (yukarıdaki
+// ratchet notu). Aile etiketi anahtardan türetilir: alt çizgiler ayraca döner.
+const STYLE_KEYS = [
+  'dress_princess_scoop_aline',
+  'gore_skirt_dress',
+  'wrap_dress',
+  'top_crew_dart',
+  'top_boat_princess',
+  'peterpan_puff',
+  'top_princess_peplum',
+  'top_bandeau_shirred_peplum',
+  'dress_bandeau_circle',
 ];
+const family = (key) => key.split('_').join(' · ');
 
 const NAVY = '#1f3a5f';
 const RULE = '#c8d2df';
@@ -100,19 +112,29 @@ function board(items, title, sub) {
 
 // --- üretim ----------------------------------------------------------------
 mkdirSync(OUT, { recursive: true });
-const gf = await import('./render-garment-flat.mjs');
+
+// Üretim flat kalemi DESENLE bulunur, adı elle yazılmaz. Tek eşleşme şart:
+// sıfır ya da birden fazla eşleşme sessizce yanlış kaleme düşmek demektir,
+// o yüzden ikisi de yüksek sesle çöker (RULES invariant 1).
+const PEN_RE = /^render-[a-z0-9]+-flat\.mjs$/;
+const pens = readdirSync(here).filter((f) => PEN_RE.test(f)).sort();
+if (pens.length !== 1) {
+  throw new Error(`üretim flat kalemi tek olmalı, ${PEN_RE} ${pens.length} eşleşme verdi: ${pens.join(', ')}`);
+}
+const FLAT_PEN = pens[0];
+const gf = await import('./' + FLAT_PEN);
 
 const items = [];
-for (const st of STYLES) {
-  const svg = await gf.renderGarmentFlatAsync(null, { referenceStyle: st.key });
-  const sync = gf.renderGarmentFlat(null, { referenceStyle: st.key });
+for (const key of STYLE_KEYS) {
+  const svg = await gf.renderGarmentFlatAsync(null, { referenceStyle: key });
+  const sync = gf.renderGarmentFlat(null, { referenceStyle: key });
   const pen = svg === sync
-    ? 'render-garment-flat.mjs (üretim flat yolu, contract/flat-convention-v1.json)'
-    : 'render-garment-flat.mjs → flat-engine/_engine-full.mjs renderStyle()';
-  writeFileSync(join(OUT, `${st.key}.svg`), svg);
-  const yeniPath = YENI_DIR ? join(YENI_DIR, `${st.key}.svg`) : null;
+    ? `${FLAT_PEN} (üretim flat yolu, contract/flat-convention-v1.json)`
+    : `${FLAT_PEN} → flat-engine/_engine-full.mjs renderStyle()`;
+  writeFileSync(join(OUT, `${key}.svg`), svg);
+  const yeniPath = YENI_DIR ? join(YENI_DIR, `${key}.svg`) : null;
   items.push({
-    label: `${st.key}  —  ${st.family}`, svg, pen,
+    label: `${key}  —  ${family(key)}`, svg, pen,
     yeni: yeniPath && existsSync(yeniPath) ? readFileSync(yeniPath, 'utf8') : null,
     yeniPen: 'YENİ kalem',
   });
