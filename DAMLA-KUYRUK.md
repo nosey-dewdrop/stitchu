@@ -993,3 +993,75 @@ Buğra kalıbının kendisi de bu bandan 8/8 düşüyor (ölçüldü, `GECE/log/
 (B) seçilirse iş bu oranı kapatmak olur.
 
 Tek taraflı seçilmedi.
+
+---
+
+## K-V4A — ZEVK HÜKMÜ SENİN: ESKİ | YENİ panosu (V4, 24 Ağu)
+
+**KARAR GEREKEN:** bu gecenin flat düzeltmeleri gözüne nasıl geliyor?
+
+**PANO:**
+- `GECE/log/V4-D.pano/board-eski-yeni-1.png`
+- `GECE/log/V4-D.pano/board-eski-yeni-2.png`
+- `GECE/log/V4-D.pano/board-eski-yeni-3.png`  ← **kol ailesi, tek görünen fark**
+
+**ÖLÇÜLMÜŞ YAN BİLGİ (bakmadan bil):** 1. ve 2. sayfadaki 10 stil hücresinin
+**10'u da ESKİ ile bayt bayt AYNI** (`cmp`, iki bağımsız hakem doğruladı).
+Sebep gizlenmedi: o 9 stil salt-okunur REFERANS kaleme düşüyor, kanunun
+bağladığı ÜRETİM kalemine değil; `web/atolye.html` de referans kalemi taşıyor.
+Yani bu gecenin işi henüz senin gördüğün yüzeye ULAŞMIYOR. 3. sayfa gerçek fark:
+eskiden `set`/`raglan`/`puff` bayt bayt aynı çiziliyordu, artık beşi de ayrı.
+
+**SEÇENEKLER:**
+- **(A)** Devam: bir sonraki flat fazının 1. kartı "kanunu sevk edilen kaleme
+  bağla" olarak kuyruğun başında duruyor.
+- **(B)** Kalem revizyonu iste: gözüne çarpan kusuru söyle, o kusur ölçülebilir
+  bir kapıya çevrilsin (bu gece `shoulderTipX` ile aynen böyle oldu).
+
+**VARSAYILAN: (A)** — koşu bloke olmaz.
+**HANGİ FAZI ETKİLER:** bir sonraki flat fazı.
+
+---
+
+## K-V4B — `data-scale="1:3"` ISO 5455'in izinli dizisinde YOK (V4, 24 Ağu)
+
+**KARAR GEREKEN:** flat'lerin ölçek beyanı ISO dizisine çekilsin mi?
+
+**ÖLÇÜLMÜŞ YAN BİLGİ:** ISO 5455:1979 yalnız 1:2 / 1:5 / 1:10 ailesini ve 10'un
+kuvvetlerini sayıyor; 1:3 hiçbir izinli ölçekten türemiyor. Tek meşru dayanak
+md.5.1 NOTU'nun "exceptional cases … intermediate scales may be chosen" cümlesi
+— yani yasak değil, tavsiye dizisinde değil. Bizim 3.0 mm/birim sayısı
+uydurulmadı, iki bağımsız çapadan çözüldü (EU38 bust 88.0 ve waist 70.0 aynı
+sayıyı veriyor). Ek bilgi: moda alanının kullandığı 1:8 ve 1:4 de dizide yok.
+Kaynak: `GECE/V4-R.md` §4.
+
+**SEÇENEKLER:**
+- **(A)** 1:3 kalsın; `contract/flat-convention-v1.json → scale` bunu açıkça
+  "ISO 5455 md.5.1 ara ölçeği" diye BEYAN etsin (bugün beyan etmiyor).
+- **(B)** ISO dizisine geç (1:2 ya da 1:5); croquis yeniden ölçeklenir.
+
+**VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V5
+★ Dışarı "teknik çizim konvansiyonuna uyuyoruz" demeden önce bunu bil. Aynı
+sınıfta ikinci kalem: `topstitch` kesik oranı `"4 3"` — 4d, ISO 128-2 Tablo 4'ün
+kesik alfabesinde YOK (en yakınları 6d ve 12d).
+
+---
+
+## K-V4C — tanınmayan kol/yaka değeri ÇİZİLSİN Mİ, REDDEDİLSİN Mİ? (V4, 24 Ağu)
+
+**KARAR GEREKEN:** motorun bilmediği bir spec değeri geldiğinde flat ne yapsın?
+
+**ÖLÇÜLMÜŞ YAN BİLGİ:** bugün `kimono` · `dolman` · `flutter` · `bell` ·
+`batwing` ve uydurma bir değer, `straight` ile **eleman kümesi özdeş** çiziliyor
+(2705.08u); tek fark `data-engine-gap="...:unknown"` damgası. Yani sessiz
+çökertme değil ama açık red de değil — **etiketli çökertme**. RULES invariant 1
+açık red istiyor; denendi ve ölçüldü: reddedip çizmemek
+`flat_geometry_sellable_check` S5/S6'yı kırmızıya düşürüyor (o kapı kollu
+stilin kolu ÇİZMESİNİ şart koşuyor), yani kırmızı ad kümesi 6→7 olacaktı.
+
+**SEÇENEKLER:**
+- **(A)** Damga kalsın; ifade ratchet'i (bugün 5 UNEXPRESSED) zamanla düşsün.
+- **(B)** Açık red kurulsun; `flat_geometry_sellable_check` aynı hamlede
+  uyarlansın (iki kapı tek karta girer).
+
+**VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V5
