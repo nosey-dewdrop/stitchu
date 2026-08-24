@@ -38,6 +38,32 @@ stamp_copy() {
   cat "$1" >> "$2"
 }
 
+# The .wasm is the THIRD shipped artefact and it is in exactly the same class,
+# measured: commit aa55a60 changed build-wasm.sh (a watched source) without
+# changing a single compiler flag, so stitchu-worker.wasm came out byte-identical
+# and its commit date froze at 5d649d2 -> gate red. A comment-only edit under
+# engine/src does the same. A binary has no comment line, but the wasm format
+# does have one: a CUSTOM SECTION (id 0) is spec-legal anywhere after the
+# header, is ignored by every runtime, and is what the "name" and "producers"
+# sections already are. So the same digest is appended as one custom section.
+stamp_wasm() {
+  python3 - "$1" "$2" "$STAMP" <<'PY'
+import sys
+src, dst, stamp = sys.argv[1:4]
+def leb(n):
+    out = bytearray()
+    while True:
+        b = n & 0x7f; n >>= 7
+        out.append(b | (0x80 if n else 0));
+        if not n: return bytes(out)
+name = b"stitchu.source-stamp"
+payload = leb(len(name)) + name + stamp.encode()
+data = open(src, "rb").read()
+assert data[:4] == b"\0asm", "not a wasm module"
+open(dst, "wb").write(data + b"\x00" + leb(len(payload)) + payload)
+PY
+}
+
 # -fexceptions + DISABLE_EXCEPTION_CATCHING=0: the boundary throws
 # std::invalid_argument on an unknown spec value and catches it INSIDE
 # draftJSON/gradeJSON (returns {"error": ...}); without these flags a C++ throw
@@ -91,5 +117,5 @@ em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
 
 # copy the worker bundle where the backend imports it (dist/ is gitignored)
 stamp_copy dist/stitchu-worker.js ../backend/engine/stitchu-worker.js
-cp dist/stitchu-worker.wasm ../backend/engine/stitchu-worker.wasm
+stamp_wasm dist/stitchu-worker.wasm ../backend/engine/stitchu-worker.wasm
 echo "copied to backend/engine/ (glue stamped $STAMP)"
