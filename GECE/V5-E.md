@@ -14,7 +14,7 @@ Koşu: 2026-08-25. SÜRE TAVANI 60 dk — **aşılmadı** (tam ctest 330.62 sn d
 | `GECE/log/V5-E.ctest.after.txt` | tam ctest |
 | `GECE/log/V5-E.reddiff.txt` | kırmızı AD farkı |
 
-Commit: `__HASH__`
+Commit: `e1ab3ea`
 
 ## ÖLÇÜLEN (sayı + onu basan komut)
 
