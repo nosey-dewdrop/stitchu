@@ -144,3 +144,13 @@ derlendiği iddiası hakem tarafından yeniden derlenerek DOĞRULANMADI; yalnız
 **FAZ HÜKMÜ: V1 KAPANMADI.** Beş alt kapı geçti, mühürle ilgili iki satır KALDI:
 biri ölçülmemiş bir tanık iddiası, diğeri script'in kendi 2. şartı (Damla onayı).
 Yeni kırmızı ad: 0.
+
+---
+
+## V1 · mühür — YENİDEN YARGI (2026-08-24, üçüncü hakem, düzeltme commit'i `05156a1`)
+
+Bir önceki **KALDI** hükmü tarihsel kayıt olarak yukarıda durur ve silinmedi; aşağıdaki
+satır yalnız mühür alt kapısını yeniden yargılar, `mühür usulü` satırına (Damla onayı,
+`repin-golden.sh` şart 2) dokunmaz — o **KALDI** olarak yürürlüktedir.
+
+- V1 · mühür (`engine/golden-reference.csv` re-pin, yeniden) · **GEÇTİ** · Çürüyen "önce KIRMIZIYDI / 189.0 → 210.0" cümlesi sessizce silinmemiş, defterde etiket satırının altına ve ayrı bir `⚠ CORRECTION` maddesine ÇÜRÜDÜĞÜ görünür kalacak şekilde yazılmış (yeniden yazılamayan `e8b7f19` gövdesi de adıyla kapsanmış); yeni metin tanığın gücünü dürüstçe indiriyor ("supports the DIRECTION … NOT evidence of the 'turned a red green' class … never gated this change"); hakem iki sondayı da KENDİ koşturdu — ÖNCE `52ae85c^` = `c3d4359` ayrı `-DCMAKE_BUILD_TYPE=Release` worktree'de derlendi, çıktı `GECE/log/V1-F.sloper-tanik.txt` A bölümüyle `diff` sonucu BAYT-ÖZDEŞ (`scye depth 204.4 / 215.0 / err -10.6 mm`, `[PASS]`, `all sloper checks pass`, exit 0), SONRA bugünkü `engine/build/sloper_check` (Release, cache doğrulandı) `210.0 / 215.0 / err -5.0 mm`, `[PASS]`, exit 0 — yani hareket yeşilden daha-yeşile ve defter artık tam olarak bunu söylüyor; `05156a1` yalnız defter+log'a dokunmuş (`git diff --name-only 05156a1^ 05156a1` iki dosya; `engine/golden-reference.csv`, `engine/src`, `engine/tests`, `recipes`, `web`, `contract`, `scripts` diff'leri BOŞ), ve kalan tek eksik (Damla'nın açık onayı) defterde gizlenmeden ilan edilmiş (başlık `DAMLA ONAYI BEKLIYOR, K-V1A` + `APPROVAL STATUS` maddesi). · `GECE/log/V1-F.sloper-tanik.txt` · `engine/GOLDEN-PIN.md:11-18,58-84,89-92`
