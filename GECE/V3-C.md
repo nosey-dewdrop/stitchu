@@ -226,7 +226,30 @@ Total Tests: 111
 ```
 
 ### 4.4 Tam ctest — `GECE/log/V3.ctest.after.txt`
-Sonuç ve miras kırmızı ad kümesi karşılaştırması log dosyasının sonunda.
+`ctest --test-dir engine/build --output-on-failure` → **93% tests passed, 8 tests failed out of 110**
+(1 disabled: `h10_gate_check`). Toplam süre 399.22 sn.
+
+**MİRAS KIRMIZI AD KÜMESİ BÜYÜMEDİ.** Kartın beyan ettiği dört ad — `style_check` ·
+`sizechart_source_check` · `contract_check` · `figure_check` — dördü de hâlâ kırmızı, yenisi
+bu kümeye eklenmedi.
+
+Bu kartın kurduğu iki kapı **kasıtlı kırmızı**: `#8 flat_pattern_agree_check`,
+`#9 flat_artifact_census`. Kart "kapı kırmızı düşerse düzeltme, RAPORLA" diyor; düzeltilmedi.
+
+### ★ İKİ YENİ KIRMIZI AD DAHA VAR — ADIYLA YAZILIYOR
+`#5 bundle_fresh_check` ve `#111 vocab_reference_check`. **İkisi de bu kartın işinden değil:**
+- `bundle_fresh_check` kendi çıktısında `engine source HEAD : 25f0f45` diyor. **25f0f45 =
+  V3-A'nın commit'i** (`engine/src/shellprojection.{cpp,hpp}`, `engine/src/surfacepattern.{cpp,hpp}`,
+  `engine/tools/shell-flat.cpp`). Sevk edilen wasm paketi o commit'e göre 1 commit bayat.
+  Bu kartın dosyalarının wasm paketiyle ilgisi yok.
+- `vocab_reference_check`'in KAPSAMI kendi dosyasında yazılı (`engine/tests/vocab_reference_check.sh:95`):
+  `contract engine/src engine/wasm engine/tools engine/pattern-bridge engine/vocab.json web/js
+  recipes backend knowledge`. **`engine/tests/` ve `GECE/` kapsam DIŞI**, yani bu kartın yazdığı
+  hiçbir dosya o sayıma girmiyor. +25'lik delta (garment +12, neckline +4, hip +4, waist +3,
+  bust +2) V3-A'nın `engine/src`'sinden ve/veya V3-B'nin `engine/tools/pattern-measure.mjs`'inden
+  geliyor.
+
+Sorumlusu bu kart değil, ama sayı bu koşuda görüldü ve gizlenmedi.
 
 ---
 
