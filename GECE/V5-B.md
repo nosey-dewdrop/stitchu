@@ -35,16 +35,32 @@ OK  /Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V5-B.overlay/locket_
 
 ---
 
-## 2. Yeniden koşu — KOŞTU, YENİDEN KOŞTURULMADI
+## 2. Yeniden koşu — HEDEF YENİDEN KURULDU, ALET BUGÜN YENİDEN KOŞTU
 
-Alet kart yazıldıktan sonra bugün (25 Ağu 01:30-01:35) yeniden koşmuş, çıktısı diskte:
-- fark tablosu: `/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V5-B2.rerun.txt`
+Kart md.2 "BUGÜN yeniden koştur" diyor; koşuldu, iki adım da komut çıktısıyla:
+
+**(a) Release hedefi yeniden kuruldu.** Kartın `-DCMAKE_BUILD_TYPE=Release` şartı
+önce cache'ten doğrulandı, sonra hedef gerçekten kuruldu:
+```
+$ grep -E "^CMAKE_BUILD_TYPE" engine/build/CMakeCache.txt
+CMAKE_BUILD_TYPE:STRING=Release
+$ cmake --build engine/build -j8 --target bugra-dump --config Release
+[ 95%] Built target engine
+[100%] Built target bugra-dump
+```
+İkili: `engine/build/bugra-dump`, 667800 bayt.
+
+**(b) Alet bugün koştu**, çıktısı ayrı klasöre yazıldı ki kesilen oturumun
+levhaları kıyas için BOZULMADAN kalsın:
+```
+$ node engine/tools/bugra/overlay-png.mjs locket --size=36 --out=GECE/log/V5-B2.overlay
+exit=0
+```
+- fark tablosu: `/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V5-B2.rerun.txt` (27 satır)
 - levhalar: `/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V5-B2.overlay/` (6 PNG + 6 SVG)
 
-Koşmuş iş ikinci kez koşturulmadı. `engine/build/bugra-dump` diskte var
-(667800 bayt, 24 Ağu 16:46) ve `engine/build/CMakeCache.txt` içinde
-`CMAKE_BUILD_TYPE:STRING=Release` — yani kart md.2'nin Release şartı sağlanmış,
-yeniden kurmaya gerek kalmadı.
+Aletin koşmasını engelleyen HATA çıkmadı; `overlay-png.mjs`'e tek satır
+dokunulmadı (kartın "iyileştirme yasağı").
 
 ---
 
@@ -75,6 +91,22 @@ SAME upper-sleeve.png  57e1beabbdf8d8f48100ef039a9df6fb
 SAME upper-sleeve.svg  5e49108116cff8435dc32f73ac6656ae
 ```
 Yani alet deterministik: aynı ağaçtan aynı raster bile çıkıyor.
+
+Bağımsız ikinci doğrulama (eleme yapmadan, ham `diff` — tek fark satırı görünsün diye):
+```
+$ diff GECE/log/V5-B.run-locket-36.txt GECE/log/V5-B2.rerun.txt
+24c24
+< PNG 6 adet -> /Users/.../GECE/log/V5-B.overlay
+---
+> PNG 6 adet -> /Users/.../GECE/log/V5-B2.overlay
+diff exit=1
+$ diff <(sed -n '1,23p' GECE/log/V5-B.run-locket-36.txt) <(sed -n '1,23p' GECE/log/V5-B2.rerun.txt) \
+  && echo "SATIR 1-23 (tum sayi tablosu + kesim talimatlari) BIREBIR AYNI"
+SATIR 1-23 (tum sayi tablosu + kesim talimatlari) BIREBIR AYNI
+```
+Yani 28 satırın 27'si birebir aynı; farklı olan tek satır sayı taşımıyor, benim
+verdiğim `--out` bayrağının yazdığı hedef klasör adı. `md5` yerine `cmp` ile de
+koşuldu, 12/12 `IDENTICAL`.
 
 ### locket_top — beden 36, ÖLÇÜLEN SAYILAR
 Basan komut: `node engine/tools/bugra/overlay-png.mjs locket --size=36`
@@ -207,7 +239,24 @@ olabilir, DOĞRULANMADI.
 olmayan 7. halka; 175.3x264.49mm, çevre 833.3mm. `patterns_real/BUGRA-DEFTER.md`'de
 kaydı yok. Ne olduğu araştırılmadı.
 
-**5. Görmediğim/erişemediğim.** Levha PNG'lerinin İÇİNE bakılmadı (RULES 3 gereği
+**5. `patterns_real/geometry/` GIT'TE TAKİPLİ DEĞİL — aletin GİRDİSİ HEAD'de yok.**
+Aletin Buğra tarafını okuduğu `patterns_real/geometry/geometry-full.json`
+(kaynak sat. 114) çalışma ağacında var ama commitli değil:
+```
+$ git ls-files --error-unmatch patterns_real/geometry/geometry-full.json
+error: pathspec ... did not match any file(s) known to git
+$ git status --porcelain patterns_real
+?? patterns_real/BUGRA-DEFTER.md
+?? patterns_real/geometry/
+?? patterns_real/tools/bugra-geometry-2026-07-23.json
+$ git ls-files patterns_real | wc -l
+41
+```
+Sonuç: bu raporun bütün Buğra sayıları temiz bir klonda YENİDEN ÜRETİLEMEZ.
+Ayrıca CLAUDE.md'nin "patterns_real 49 dosyayla HEAD'de takipli" satırı bugün
+**41**. Dokunulmadı (`patterns_real/` kalıcı veto); karar Damla'nın.
+
+**6. Görmediğim/erişemediğim.** Levha PNG'lerinin İÇİNE bakılmadı (RULES 3 gereği
 "baktım" denmez; burada verilen şey dosya yolu ve komut çıktısıdır — konturların
 görsel yorumu Damla'nın kapısıdır). `bugra-dump.cpp` yalnız okundu
 (`engine/CMakeLists.txt:349-350` hedefi tanımlıyor), gövde sayıları kaynaktan
