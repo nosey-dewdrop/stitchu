@@ -1,0 +1,6 @@
+golden_check
+style_check
+sizechart_source_check
+recipe_dress_check
+contract_check
+figure_check
