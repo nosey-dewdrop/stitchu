@@ -1,0 +1,42 @@
+=== V5-A §4.5 MUTASYON KANITI — 2026-08-24T23:30:52Z · HEAD 87b0feb
+Komut: [V5A_MUTATE=<mod>] node engine/tests/sewability_check.mjs
+
+### ZEMİN (mutasyonsuz): madde 3 ve 4 YEŞİL, madde 2 KIRMIZI (211)
+        bunlardan tabanı kesim çizgisinde DEĞİL: 211   (eşik 0.79375mm [E1] ev değeri, yayın YOK)
+      → SINIFLANAMAYAN işaret [E2b]: uzunluk ≥ dikiş payı: 32 · her kenardan paydan uzak: 342 (en uzağı 78.9269mm)
+FAIL  [2] 211 kenar çentiğinin tabanı kesim çizgisinde değil
+      yargılanan kontur 96 · AÇIK kontur 0 · gerçek kesişme 0
+ok    3 — 96 konturun hepsi kapalı ve kendini kesmiyor (örnekleme adımı ≤2mm)
+      yargılanan kapalı kontur 96 · bant dışı 0 · max |Σ−360| = 0.0000°  (bant ±1° [E3])
+ok    4 — 96 konturun hepsi ±360°±1° içinde
+FAIL sewability_check — 1 ihlal
+  exit=1
+
+### MUTASYON 1: selfcross (madde 3 — bugün YEŞİL olan bölüm)
+    ⚠ MUTASYON UYGULANDI → selfcross: 'Top Front' cutLine[13] ile cutLine[40] TAKAS edildi
+FAIL  [2] 211 kenar çentiğinin tabanı kesim çizgisinde değil
+      yargılanan kontur 96 · AÇIK kontur 0 · gerçek kesişme 44
+FAIL  [3] 44 kendini kesme
+      yargılanan kapalı kontur 96 · bant dışı 8 · max |Σ−360| = 360.0000°  (bant ±1° [E3])
+FAIL  [4] 8 konturun toplam dönmesi ±360° değil
+FAIL sewability_check — 3 ihlal
+
+### MUTASYON 2: notch-off (madde 2 — kenarda duran bir çentik kenardan koparılıyor)
+    ⚠ MUTASYON UYGULANDI → notch-off: 'Top Back' işaret #3 (kenara en yakın, taban 0.3121mm) +5mm kaydırıldı
+        bunlardan tabanı kesim çizgisinde DEĞİL: 216   (eşik 0.79375mm [E1] ev değeri, yayın YOK)
+FAIL  [2] 216 kenar çentiğinin tabanı kesim çizgisinde değil
+
+### MUTASYON 3: notch-deep (madde 2/[E2] — çentik dikiş payından derin)
+    ⚠ MUTASYON UYGULANDI → notch-deep: 'Top Back' işaret #3 (taban 0.3121mm) dikiş payından 5mm DERİN yapıldı
+        bunlardan tabanı kesim çizgisinde DEĞİL: 211   (eşik 0.79375mm [E1] ev değeri, yayın YOK)
+      → SINIFLANAMAYAN işaret [E2b]: uzunluk ≥ dikiş payı: 45 · her kenardan paydan uzak: 342 (en uzağı 78.9269mm)
+
+### GERİ ALMA (env kaldırıldı) — zemin sayıları AYNEN döndü mü?
+        bunlardan tabanı kesim çizgisinde DEĞİL: 211   (eşik 0.79375mm [E1] ev değeri, yayın YOK)
+      → SINIFLANAMAYAN işaret [E2b]: uzunluk ≥ dikiş payı: 32 · her kenardan paydan uzak: 342 (en uzağı 78.9269mm)
+FAIL  [2] 211 kenar çentiğinin tabanı kesim çizgisinde değil
+      yargılanan kontur 96 · AÇIK kontur 0 · gerçek kesişme 0
+ok    3 — 96 konturun hepsi kapalı ve kendini kesmiyor (örnekleme adımı ≤2mm)
+      yargılanan kapalı kontur 96 · bant dışı 0 · max |Σ−360| = 0.0000°  (bant ±1° [E3])
+ok    4 — 96 konturun hepsi ±360°±1° içinde
+FAIL sewability_check — 1 ihlal

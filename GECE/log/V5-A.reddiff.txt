@@ -1,0 +1,26 @@
+=== V5-A RED DIFF — 2026-08-24T23:36:25Z
+before: GECE/log/V5.ctest.opening.txt   (6 kırmızı ad)
+after : GECE/log/V5-A.ctest.after.txt   (6 kırmızı ad)
+komut : ctest --test-dir engine/build --output-on-failure
+
+--- BEFORE
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+
+--- AFTER
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+
+--- diff (boş = ad kümesi BÜYÜMEDİ, RULES 9 korundu)
+(FARK YOK)
+
+toplam test: 6 tests failed out of 111
+NOT: sewability_check bu koşuda ctest'te YOK — add_test satırı BİLEREK eklenmedi (gerekçe GECE/V5-A.md §KARAR).

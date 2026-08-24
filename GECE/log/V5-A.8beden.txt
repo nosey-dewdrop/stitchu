@@ -1,0 +1,126 @@
+=== V5-A — SEKİZ BEDEN TEK TEK — 2026-08-24T23:36:38Z · HEAD d11e986
+Komut: V5A_SIZES=<beden> node engine/tests/sewability_check.mjs
+
+beden     isaret   centik    off-bnd   sinifsiz   kontur  kesisme donme-kotu
+EU34          75       31         29         44       12        0        0
+EU36          75       30         27         45       12        0        0
+EU38          76       31         29         45       12        0        0
+EU40          76       30         28         46       12        0        0
+EU42          76       29         26         47       12        0        0
+EU44          77       28         25         49       12        0        0
+EU46          76       27         23         49       12        0        0
+EU48          76       27         24         49       12        0        0
+
+--- EU38 tam çıktı
+=== sewability_check — SEVK EDİLEN kalıbın dikilebilirlik kapısı (kart V5-A)
+    motor: web/vendor/stitchu-engine.js
+    bedenler: EU38  (kaynak: contract/layers/size-table.json)
+    eşikler: ON_BOUNDARY_TOL 0.79375mm [E1 ev değeri, yayın YOK] · dönme ±360°±1° [E3 Hopf Umlaufsatz]
+    ⚠ KANIT KANCASI AKTİF: V5A_SIZES=EU38
+
+--- ÖLÇÜM ZEMİNİ: 2 draft (2 spec × 1 beden), 14 parça, 12 kapalı-aday kontur
+
+[madde 1] DİKİŞ ÇİFTİ UZUNLUK EŞİTLİĞİ
+ABSENT: [madde 1] sevk edilen artefakt (draftJSON) DİKİŞ GRAFİĞİ TAŞIMIYOR. Ölçüldü: 14 parçada seams/seamGraph/edges/edgeNames/pairs/stitches alanı sayısı = 0. Parça başına yalnız kapalı kontur (cutLine) + isimsiz çentik çizgileri var; hangi kenarın hangi kenara dikildiği ARTEFAKTTA YOK, dolayısıyla çift uzunlukları ADI KONARAK karşılaştırılamaz.
+      ⚠ SAYI: sevk edilen rehber 9 adet dikiş SÖZÜ veriyor ("Sew the shoulder seams", "Sew the side seams", "set the sleeves in") — hiçbirinin geometrik karşılığı artefaktta yok, yani hiçbiri doğrulanamıyor.
+      Bu maddeyi ölçen aletler NATIVE tarafta var ve ayrı koşuyor: engine/pattern-bridge/walk.py (kapı engine/tests/walkgate_check.sh), engine/tests/sewable_census.cpp (omuz dikişi), engine/src/validator.cpp:412,526-527,625.
+
+[madde 2] ÇENTİK EŞLEŞMESİ
+      işaretli parça 10 · notches kanalındaki TOPLAM işaret 76
+      → kenar çentiği sayılan (uzunluk < pay VE tabanı paya ≤ pay): 31
+        bunlardan tabanı kesim çizgisinde DEĞİL: 29   (eşik 0.79375mm [E1] ev değeri, yayın YOK)
+      → SINIFLANAMAYAN işaret [E2b]: uzunluk ≥ dikiş payı: 4 · her kenardan paydan uzak: 41 (en uzağı 58.6819mm)
+ABSENT: [madde 2] ÇENTİK ÇİFTİ eşleşmesi ölçülemedi: eşleşme bir dikiş grafiği ister, artefaktta yok (madde 1'in aynı boşluğu). Karşılığı aranamayan çentik sayısı = 31. NATIVE tarafta engine/tests/notch_alignment_check.cpp yan-dikiş çentiğini yargılıyor ama kendi satır 23'ü oyuk↔taç çentik ÇİFTİNİ kapsam DIŞI ilan ediyor (PatternPiece.notches verified: 0).
+ABSENT: [madde 2] sevk edilen artefaktın notches kanalında İŞARET TÜRÜ ALANI YOK [E2b]: 45 işaret (toplam 76'nin %59.2'i) kenar çentiği mi, katlama çizgisi mi, iç işaret mi yoksa HAVADA duran bir çentik mi — ARTEFAKTTAN ÇIKARILAMIYOR, o yüzden YARGILANMADI. Bu bir geçiş değil, ölçülmüş bir boşluktur.
+FAIL  [2] 29 kenar çentiğinin tabanı kesim çizgisinde değil
+
+[madde 3] KAPALILIK / KENDİNİ KESME
+      yargılanan kontur 12 · AÇIK kontur 0 · gerçek kesişme 0
+ok    3 — 12 konturun hepsi kapalı ve kendini kesmiyor (örnekleme adımı ≤2mm)
+
+[madde 4] KÖŞE AÇISI TOPLAMI (Hopf Umlaufsatz / theorem of turning tangents)
+      yargılanan kapalı kontur 12 · bant dışı 0 · max |Σ−360| = 0.0000°  (bant ±1° [E3])
+ok    4 — 12 konturun hepsi ±360°±1° içinde
+      ⚠ Bu, 2B kontur köşelerinin toplamıdır. 3B köşe açısı AÇIĞI (2π − komşu açı toplamı) engine/src/surfacepattern.cpp:717 columnDeficitRows / :747 columnDeficit'te VAR ama tüketicisi PENS'tir — dikilebilirlik HÜKMÜ basmıyor, ve surfacepattern kullanıcıya SEVK EDİLMİYOR.
+
+[madde 5] GEÇİŞ (donning)
+      sevk edilen 2 draftta BEYAN EDİLEN kapanma donanımı (backOpening/exposedZip/buttonRow/backSlit/tieClosure/placket): 0
+      → donanım SIFIR: giysi baştan/omuzdan GEÇMEK ZORUNDA
+      yayınlanan geçiş zarfı [E4] ANSUR II kadın n=1986 (NATICK/TR-15/007):
+        baş çevresi   5/50/95 = 532 / 560 / 597 mm  (ölçü 46, s.135–136)
+        omuz çevresi  5/50/95 = 944 / 1027 / 1119 mm  (ölçü 68, s.179–180)
+      ★ sevk edilen rehberin kendisi 1 kez ALICIYA bu kontrolü YAPTIRIYOR ("Check the neck opening against your head circumference — a top has no zipper, it must slip over your head"), ama artefakt o sayıyı TAŞIMIYOR: kontrolü alıcıya devrediyoruz.
+ABSENT: [madde 5] "en dar halka baş/omuz çevresinden geçiyor mu" ADIYLA ölçülemedi: bitmiş yaka açıklığı bir HALKA'dır, sevk edilen artefaktta yaka kenarı adlandırılmış bir kenar değil — parça konturunun isimsiz bir parçası. Yarım alet NATIVE tarafta: engine/src/wearability.hpp:68,75,80 (finishedNeckOpeningMM, hasDonningOpening; kapılar wearability_check, wearable_check).
+ABSENT: [madde 5] kapanma donanımının SATILAN BOYU hiç ölçülmüyor ve ölçülemez: V5-R §D3 hükmü — hiçbir fermuar ÜRETİCİSİ bitmiş-boy merdiveni YAYINLAMIYOR (YKK kataloğu ve Coats/Opti veri sayfası açıldı: sıfır cm/inç boy; zincir metreyle satılıp siparişe göre kesiliyor). Boy merdiveni bir STOKLAMA konvansiyonudur, fiziksel kısıt değil.
+
+[madde 6] GERİ PROJEKSİYON (2B kalıp → 3B yüzeye geri taşıma)
+ABSENT: [madde 6] motorda YOK. engine/src/drape.hpp kendi satır 12'si: "no seam-sewing of multiple panels — one panel, one hang". grep -rniE "backProject|reproject|wrap3d|liftTo3D" engine/ → 0 sonuç (kart V5-A'nın ölçümü). Ölçülebilecek bir şey olmadığı için bu bölüm SAYI BASAMIYOR; sayısı = 0 alet, 0 kapı.
+
+[madde 7] draft_math_check
+ABSENT: [madde 7] BU KARTIN İŞİ DEĞİL — ayrı kart (V5-D). Burada bilerek ölçülmedi.
+
+--- İHLAL DÖKÜMÜ (74)
+    [2·sınıflanamadı] dart_crew_top EU38 'Top Front' işaret #0: her kenardan 43.1021mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] dart_crew_top EU38 'Top Front' işaret #1: her kenardan 25.2715mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] dart_crew_top EU38 'Top Back' işaret #0: her kenardan 35.8180mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] dart_crew_top EU38 'Top Back' işaret #1: her kenardan 35.7224mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2] dart_crew_top EU38 'Top Back' çentik #2: tabanı kesim çizgisinde DEĞİL, 10.9869mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Front' çentik #0: tabanı kesim çizgisinde DEĞİL, 14.2816mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Front' işaret #1: her kenardan 52.9209mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Side Front' işaret #0: her kenardan 22.2489mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Side Front' işaret #1: her kenardan 16.6199mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #0: tabanı kesim çizgisinde DEĞİL, 14.4956mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #1: tabanı kesim çizgisinde DEĞİL, 14.5427mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #2: her kenardan 57.5707mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #3: her kenardan 58.6819mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #4: uzunluk 396.9000mm ≥ dikiş payı 15mm — ya KATLAMA/iç çizgi ya da seam blowout; artefaktta TÜR ALANI YOK
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #5: tabanı kesim çizgisinde DEĞİL, 2.1611mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #6: her kenardan 18.9836mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #7: her kenardan 18.8329mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #8: her kenardan 18.6472mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #9: her kenardan 18.2982mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #10: her kenardan 17.9056mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #11: her kenardan 17.4921mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #12: her kenardan 16.9185mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #13: her kenardan 16.3449mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #14: her kenardan 15.7713mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Center Back' işaret #15: her kenardan 15.1977mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #16: tabanı kesim çizgisinde DEĞİL, 14.6240mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #17: tabanı kesim çizgisinde DEĞİL, 14.0504mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #18: tabanı kesim çizgisinde DEĞİL, 13.4768mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #19: tabanı kesim çizgisinde DEĞİL, 12.9032mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #20: tabanı kesim çizgisinde DEĞİL, 12.3295mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #21: tabanı kesim çizgisinde DEĞİL, 11.7559mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #22: tabanı kesim çizgisinde DEĞİL, 11.1823mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Center Back' çentik #23: tabanı kesim çizgisinde DEĞİL, 10.6087mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #0: tabanı kesim çizgisinde DEĞİL, 9.9532mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #1: tabanı kesim çizgisinde DEĞİL, 6.1914mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #2: tabanı kesim çizgisinde DEĞİL, 15.0000mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #3: tabanı kesim çizgisinde DEĞİL, 3.1454mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Side Back' işaret #4: uzunluk 278.8609mm ≥ dikiş payı 15mm — ya KATLAMA/iç çizgi ya da seam blowout; artefaktta TÜR ALANI YOK
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #5: tabanı kesim çizgisinde DEĞİL, 14.0892mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #6: tabanı kesim çizgisinde DEĞİL, 2.3590mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #7: tabanı kesim çizgisinde DEĞİL, 11.2748mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Side Back' işaret #8: her kenardan 18.7250mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Bodice Side Back' işaret #9: her kenardan 16.6981mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #10: tabanı kesim çizgisinde DEĞİL, 14.6711mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #11: tabanı kesim çizgisinde DEĞİL, 12.6441mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #12: tabanı kesim çizgisinde DEĞİL, 10.6172mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #13: tabanı kesim çizgisinde DEĞİL, 8.5902mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #14: tabanı kesim çizgisinde DEĞİL, 6.5632mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #15: tabanı kesim çizgisinde DEĞİL, 4.5363mm > 0.79375mm [E1]
+    [2] princess_scoop_dress EU38 'Bodice Side Back' çentik #16: tabanı kesim çizgisinde DEĞİL, 2.5093mm > 0.79375mm [E1]
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Front' işaret #0: her kenardan 21.0521mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Side Front' işaret #0: her kenardan 55.7001mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #0: her kenardan 32.4095mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #1: her kenardan 30.7036mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #2: uzunluk 166.9494mm ≥ dikiş payı 15mm — ya KATLAMA/iç çizgi ya da seam blowout; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #3: her kenardan 19.0000mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #4: her kenardan 19.0000mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #5: her kenardan 19.0000mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #6: her kenardan 19.0000mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    [2·sınıflanamadı] princess_scoop_dress EU38 'Skirt Center Back' işaret #7: her kenardan 19.0000mm uzak (> dikiş payı 15mm) — ya İÇ işaret ya HAVADA duran çentik; artefaktta TÜR ALANI YOK
+    … +14 tane daha
+
+ABSENT sayısı: 7 — hiçbiri kapıyı YEŞİL YAPMAK için kullanılmadı, altısı da adıyla yukarıda.
+FAIL sewability_check — 1 ihlal
