@@ -7,3 +7,20 @@ parca eslemesi                          Dbbox_W   Dbbox_H    Dcevre     Dcevre% 
                                              mm        mm        mm         %          mm         mm         mm
   Upper Cup                               16.84    -23.02     95.44     11.49      19.65     117.89     148.49   corset_bustier-36-upper-cup.png
   Lower Cup                               54.13   -159.75   -216.40    -29.52      99.39     159.54     159.75   corset_bustier-36-lower-cup.png
+  Front Body Center                       80.52   -109.29    -33.15     -4.10      14.13     108.28     109.29   corset_bustier-36-front-body-center.png
+  Front Body Side                         25.74    -28.82     14.69      2.37      23.14      29.25      30.04   corset_bustier-36-front-body-side.png
+  Back Body Side                         -82.10    372.18    636.48    123.12      31.29     124.04     145.31   corset_bustier-36-back-body-side.png
+  Back Body Center                      -366.08    194.70   -296.49    -26.10     142.00     346.94     375.71   corset_bustier-36-back-body-center.png
+
+KESIM TALIMATLARI (kat/ayna farki bbox ve cevre farkinin kaynagi olabilir):
+  Upper Cup                motor kesim talimati: "cut 2 mirrored (Upper Cup — ONE piece across the whole front cup, no center/side split, with a grown cut-on strap over the bust; the lower edge is your 208 mm crescent cup seam, matched to the Lower Cup at the notches)"   |   Bugra parca adi: "Upper Cup"
+  Lower Cup                motor kesim talimati: "cut 2 mirrored (Lower Cup — the under-bust crescent; the top edge is your 208 mm crescent cup seam matched to the Upper Cup, the bottom edge is your 125 + 79 mm underbust seam matched to the Front Body Center and Front Body Side at the notches)"   |   Bugra parca adi: "Lower Cup"
+  Front Body Center        motor kesim talimati: "cut 2 mirrored (Front Body Center — underbust seam to the corset hem; the center-front edge is the grown button-placket edge, the top edge is your 125 mm underbust seam matched to the Lower Cup at the notches)"   |   Bugra parca adi: "Front Body (center)"
+  Front Body Side          motor kesim talimati: "cut 2 mirrored (Front Body Side — underbust seam to the corset hem, starting AT the underbust; the top edge is your 79 mm underbust seam matched to the Lower Cup at the notches)"   |   Bugra parca adi: "Front Body (side)"
+  Back Body Side           motor kesim talimati: "cut 2 mirrored (Back Body Side — body, lower armhole sweep and grown cut-on strap in ONE piece; the strap runs over the shoulder and joins the Upper Cup strap — try on and pin to length before sewing the join)"   |   Bugra parca adi: "Back Body (side)"
+  Back Body Center         motor kesim talimati: "cut 1 on fold (Back Body Center — the SHORT corset back; the top edge ends under the shoulder blade, the center back is the fold — this is not a shoulder-to-hip tank back)"   |   Bugra parca adi: "Back Body (center fold)"
+
+PNG 6 adet -> /Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V5-B2.corset
+OKUMA NOTU: Dbbox/Dcevre/sapma pozitifse motor parcasi Bugra konturundan BUYUK.
+Bugra basili kontur KESIM cizgisidir (defter: 1cm dikis payi dahil); motor tarafi da cutPoly.
+Sapma sutunu Bugra noktalarindan motor poligonuna dik mesafedir (bbox hizalamasi sonrasi).
