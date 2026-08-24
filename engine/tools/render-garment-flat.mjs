@@ -63,15 +63,79 @@ const CQ = LAW.croquis.landmarks;
 // Kapı: engine/tests/flat_expresses_spec_check.mjs.
 const SICIL = JSON.parse(readFileSync(new URL('../../contract/garment-spec-v2.json', import.meta.url), 'utf8'));
 
+// ---------------------------------------------------------------------------
+// KOL DEĞER ALANI ELLE YAZILMAZ — TÜRETİLİR (V4-E, 2026-08-24).
+//
+// V4-B'de burada elle yazılmış bir tablo duruyordu (`{none, set, setIn, puff,
+// cap}`) ve bağımsız hakem onu ÖLÇTÜ: tablo, fiilen KULLANILAN değerleri hiç
+// içermiyordu. Tracked JSON'larda sayılan gerçek kullanım
+//     straight 237 · none 140 · balloon 35 · cap 29   (raglan/puff/set: 0)
+// yani `balloon` (35 kullanım) sessizce DÜZ kola düşüyordu — CLAUDE.md'nin
+// emsalinin (puf kol sessizce düşürüldü, 2026-07-18) ve RULES invariant 1'in
+// birebir ihlali, hem de en çok kullanılan yolda.
+//
+// Artık üç KAYNAK okunuyor, hiçbir liste elle yazılmıyor:
+//   engine/vocab.json fields.<kol>           -> kapalı enum + BEYANLI eşanlamlar
+//   contract/spec-grammar.json slots.sleeve  -> gramerin kabul ettiği değerler
+//   contract/spec-v1-v2-map.json axes.*      -> v1 değeri -> v2 sicil değeri
+// Çizim dalı da elle eşlenmiyor: değer önce KANONİK'e (vocab), sonra v2 sicil
+// değerine (harita) çözülüyor ve dal SİCİLİN KAPALI ENUM'una göre seçiliyor.
+// Sicile yeni bir kol değeri girerse dalı olmayan değer sessizce düz kola
+// düşemez; kapı onu adıyla UNEXPRESSED sayar.
+const VOCAB = JSON.parse(readFileSync(new URL('../vocab.json', import.meta.url), 'utf8'));
 // Alan adları TEK YERDE. Hem bu katman hem aşağıdaki çizim dalları bunları
 // kullanır; ad iki yerde elle yazılırsa biri kayar ve kimse fark etmez.
-const SLEEVE_FIELD = 'sleeveStyle';
-const COLLAR_FIELD = 'collarType';
+// V4-E: alan ADLARI da elle yazilmiyor. engine/vocab.json her alani bir enum
+// TIPINE bagliyor (asagida okunuyor); ad o tipten bulunur, boylece kapali
+// enumun adi tek kaynakta kalir.
+const fieldOf = (enumType) => {
+  const k = Object.keys(VOCAB.fields).find((f) => VOCAB.fields[f].enum === enumType);
+  if (!k) throw new Error(`engine/vocab.json icinde ${enumType} tipli alan YOK`);
+  return k;
+};
+const SLEEVE_FIELD = fieldOf('SleeveStyle');
+const COLLAR_FIELD = fieldOf('CollarType');
+const SHOULDER_FIELD = fieldOf('ShoulderStyle');
+const GRAMMAR = JSON.parse(readFileSync(new URL('../../contract/spec-grammar.json', import.meta.url), 'utf8'));
+const V1V2 = JSON.parse(readFileSync(new URL('../../contract/spec-v1-v2-map.json', import.meta.url), 'utf8'));
 
-// Düz gramer -> sicil ekseni değeri. Sicilde OLMAYAN bir değer (ör. raglan)
-// `undefined` döner ve BİLİNMEYEN diye adlandırılır — en yakın komşuya
-// düşürmek sicilin 2. yasasının (NO SILENT SUBSTITUTION) açıkça yasakladığı şey.
-const SLEEVE_ALIAS = { none: 'none', set: 'setIn', setIn: 'setIn', puff: 'puff', cap: 'cap' };
+const SLEEVE_ENUM = VOCAB.fields[SLEEVE_FIELD];                       // {values, synonyms}
+const SLEEVE_SYNONYM = SLEEVE_ENUM.synonyms || {};                    // puff->balloon, bishop->balloon, ...
+const GRAMMAR_SLEEVE = Object.keys(GRAMMAR.slots.sleeve.values || {}); // none, straight, balloon, cap
+
+// v1 yazımı -> v2 sicil değeri (`sleeve.setIn` -> `setIn`). İki eksen de okunur:
+// kol ekseni (straight/balloon) ve `sleeveHead` (capped -> cap).
+const V1_TO_V2_SLEEVE = {};
+for (const ax of [SLEEVE_FIELD, 'sleeveHead']) {
+  const vals = ((V1V2.axes || {})[ax] || {}).values || {};
+  for (const [k, v] of Object.entries(vals)) {
+    if (v && typeof v.v2 === 'string' && v.v2.startsWith('sleeve.')) V1_TO_V2_SLEEVE[k] = v.v2.slice('sleeve.'.length);
+  }
+}
+
+// Eşanlam çöz + kanonik değeri döndür. Hiçbir kaynakta yoksa null = BİLİNMEYEN
+// (en yakın komşuya düşürmek sicilin 2. yasasının yasakladığı şey).
+export function canonicalSleeve(raw) {
+  if (raw === undefined || raw === null || raw === '') return 'none';
+  const s = String(raw);
+  const c = SLEEVE_SYNONYM[s] || s;
+  if (SLEEVE_ENUM.values.includes(c) || GRAMMAR_SLEEVE.includes(c)) return c;
+  return null;
+}
+// Kanonik değer -> v2 sicil değeri. Harita sussa bile sicilin kendi enum'unda
+// aynı adla duruyorsa kimlik eşlemesi geçerlidir (ör. `cap`).
+export function sleeveV2(raw) {
+  const c = canonicalSleeve(raw);
+  if (c === null) return undefined;
+  if (V1_TO_V2_SLEEVE[c]) return V1_TO_V2_SLEEVE[c];
+  return ((SICIL.topology.sleeve || {}).values || {})[c] ? c : undefined;
+}
+// SİCİLİN KAPALI ENUM'U -> çizim dalı. Anahtarlar sicilden gelir, uydurulmaz.
+const V2_BRANCH = { none: 'none', setIn: 'plain', puff: 'puff', cap: 'cap' };
+export const sleeveBranch = (spec) => {
+  const v2 = sleeveV2(spec.sleeve !== undefined ? spec.sleeve : spec[SLEEVE_FIELD]);
+  return v2 === undefined ? 'unknown' : (V2_BRANCH[v2] || 'unknown');
+};
 // Yaka türü SAYIDIR (0 = yaka yok). Sayıdan sicil DEĞERİNE bir eşleme YAZILMADI:
 // kalemin kodu yalnızca "4 -> peter-pan yaprağı, diğerleri -> bant" diyor, hangi
 // sayının hangi yaka ailesi olduğunu söyleyen KAYNAK YOK ve uydurmak yasak.
@@ -95,13 +159,23 @@ export function refusals(spec) {
   const out = [];
   const raw = spec.sleeve || spec[SLEEVE_FIELD];
   if (raw !== undefined && raw !== null && raw !== '' && raw !== 'none') {
-    const v = SLEEVE_ALIAS[raw];
+    const v = sleeveV2(raw);
     const e = v === undefined ? { ok: false, unknown: true, missing: [] } : expressibility('sleeve', v);
     if (!e.ok) out.push({ field: SLEEVE_FIELD, value: String(raw), reason: e.unknown ? 'unknown' : 'operator-absent', missing: e.missing });
   }
   const ct = spec[COLLAR_FIELD];
   if (ct && opStatus(COLLAR_OPERATOR) !== 'shipped') {
     out.push({ field: COLLAR_FIELD, value: String(ct), reason: 'operator-absent', missing: [COLLAR_OPERATOR] });
+  }
+  // OMUZ EKSENİ (V4-E). engine/vocab.json omuz için kapalı bir enum ilan ediyor
+  // (set · dropped · raglan) ama v2 sicilinin `shoulder` ekseninde yalnız
+  // {strapless, shoulderSeam} var ve contract/spec-v1-v2-map.json'da bu eksen
+  // HİÇ YOK — yani sicil bu üç değerin üçünü de kesemez. Damgasız bırakmak,
+  // `dropped`ın sessizce `set` gibi çizilmesini gizlerdi.
+  const sh = spec[SHOULDER_FIELD];
+  if (sh !== undefined && sh !== null && sh !== '') {
+    const known = ((SICIL.topology.shoulder || {}).values || {})[sh];
+    if (!known) out.push({ field: SHOULDER_FIELD, value: String(sh), reason: 'unknown', missing: [] });
   }
   return out;
 }
@@ -510,11 +584,19 @@ function sleeveHalf(g, spec) {
   // Çizim tarafı zaten DOĞRUYDU ve contract croquis.sleeveLaw'ın ÖLÇÜLMÜŞ
   // kanununu (puffHemOverWidestMax 0.9327, Buğra Locket EU38 Alt Kol) uyguluyor
   // — eksik olan tek şey bu dalın adla da tetiklenmesiydi. Yeni sayı YOK.
-  const puff = spec.sleeveCap === 2 || style === 'puff';
+  //
+  // V4-E: dal artık ADDAN DEĞİL, TÜRETİLMİŞ SİCİL DEĞERİNDEN seçiliyor
+  // (sleeveBranch: vocab eşanlamları -> kanonik -> v1v2 haritası -> sicil enum'u).
+  // Ölçülen kusur: `balloon` — reponun EN ÇOK kullandığı puf yazımı, 35 kullanım —
+  // hiçbir dalın koşulu değildi ve sessizce düz kola düşüyordu. `bishop` de aynı
+  // durumdaydı (vocab onu balloon'un eşanlamı ilan ediyor). Yeni sayı EKLENMEDİ:
+  // puf çizimi contract croquis.sleeveLaw'ın ölçülmüş kanunundan aynen geliyor.
+  const branch = sleeveBranch(spec);
+  const puff = branch === 'puff' || spec.sleeveCap === 2;
   // cap sleeve: a short set-in sleeve that caps the shoulder without winging out.
-  // Names unified — style 'cap', numeric sleeveCap===4, or spec.sleeveHead 'capped'
-  // (the vision/target spec field) all resolve to the same short cap draw.
-  const cap = style === 'cap' || spec.sleeveCap === 4 || spec.sleeveHead === 'capped';
+  // Names unified — canonical 'cap', numeric sleeveCap===4, or spec.sleeveHead
+  // 'capped' (the vision/target spec field) all resolve to the same short cap draw.
+  const cap = branch === 'cap' || spec.sleeveCap === 4 || spec.sleeveHead === 'capped';
 
   // sleeve length (how far the hem drops below the shoulder tip)
   const drop = cap ? 34 : len === 'long' ? 300 : len === 'threeQuarter' ? 220
@@ -550,9 +632,30 @@ function sleeveHalf(g, spec) {
   const cuffInX = underX + (cap ? 6 : 10);
   const cuffInY = cap ? underY + 6 : hemBotY - drop * 0.12;
 
-  let d = `M ${n(shoulderTipX)} ${n(shoulderTipY)} `;
-  // over the cap head, out to the widest point of the sleeve (bicep line)
-  d += `C ${n(shoulderTipX + outW * 0.4)} ${n(shoulderTipY - capRise)} ${n(bicepX - outW * 0.1)} ${n(shoulderTipY + 6)} ${n(bicepX)} ${n(bicepY)} `;
+  // -------------------------------------------------------------------------
+  // RAGLAN TOPOLOJİSİ (V4-E). V4-B'de raglan bir raglan DEĞİLDİ: kol path'i
+  // set-in ile BİREBİR aynıydı (ikisi de omuz ucundan, `M 70.2 16.9`, başlıyordu)
+  // ve üstüne bir dikiş EKLENİYORDU. c993491'in gövdesindeki *"instead of"*
+  // cümlesi bu yüzden YANLIŞTI — eklemek, yerine koymak değildir.
+  //
+  // Raglanın tanımı topolojiktir: OMUZ DİKİŞİ YOKTUR. Kol oyuğu dikişi yakadan
+  // koltukaltına iner, yani OMUZ UCU KÖŞESİ GÖVDEYE DEĞİL KOLA aittir. Uygulanan
+  // tam olarak budur: kol parçasının üst kenarı artık YAKA TABANINDAN başlıyor
+  // (set-in'de omuz ucundan başlıyordu) ve omuz ucunun üstünden geçip bicep'e
+  // iniyor. Uydurulmuş sayı yok: iki uç da croquis'in kendi noktaları
+  // (yaka tabanı ve koltukaltı), kontrol noktaları ikisinin arasından türüyor.
+  // -------------------------------------------------------------------------
+  const raglan = spec[SHOULDER_FIELD] === 'raglan' || String(style) === 'raglan';
+  const neckX = g.neck.half, neckY = shoulderNeckY;
+  let d = raglan ? `M ${n(neckX)} ${n(neckY)} ` : `M ${n(shoulderTipX)} ${n(shoulderTipY)} `;
+  // over the cap head, out to the widest point of the sleeve (bicep line). RAGLAN:
+  // the same outer edge, but it starts at the neck and carries the shoulder tip.
+  if (raglan) {
+    d += `C ${n(neckX + (shoulderTipX - neckX) * 0.55)} ${n(neckY - (neckY - shoulderTipY) * 0.55)} ` +
+      `${n(shoulderTipX)} ${n(shoulderTipY - capRise * 0.5)} ${n(bicepX)} ${n(bicepY)} `;
+  } else {
+    d += `C ${n(shoulderTipX + outW * 0.4)} ${n(shoulderTipY - capRise)} ${n(bicepX - outW * 0.1)} ${n(shoulderTipY + 6)} ${n(bicepX)} ${n(bicepY)} `;
+  }
   // down the outer sleeve edge to the cuff. PUFF: eğri İÇERİ toplanır (manşet),
   // düz L değil — düz L "sivrilen boru" okumasının kendisiydi.
   if (puff) d += `C ${n(bicepX)} ${n(bicepY + (hemBotY - bicepY) * 0.45)} ${n(cuffOutX + (bicepX - cuffOutX) * 0.35)} ${n(hemBotY - CUFF_BAND)} ${n(cuffOutX)} ${n(hemBotY)} `;
@@ -562,7 +665,15 @@ function sleeveHalf(g, spec) {
   // up the underarm seam back to the underarm point on the body
   d += `L ${n(underX)} ${n(underY)} `;
 
-  let s = `<path data-part="sleeve" d="${d}" fill="none" stroke="${NAVY}" stroke-width="${W_OUTLINE}" ` +
+  // RAGLAN: parça KAPANIR — koltukaltından yakaya çıkan raglan dikişi kolun
+  // KENDİ kenarıdır, gövdenin üstüne EKLENEN ayrı bir çizgi değil. Kapanan
+  // parça kağıtla dolduğu için gövde siluetinin omuz parçası artık kolun
+  // ALTINDA kalır: omuz ucu köşesi gövdeden çıkıp kola geçer.
+  if (raglan) {
+    const cx = (neckX + underX) * 0.5, cy = (neckY + underY) * 0.5;
+    d += `Q ${n(cx + (underX - neckX) * 0.18)} ${n(cy)} ${n(neckX)} ${n(neckY)} Z`;
+  }
+  let s = `<path data-part="sleeve" d="${d}" fill="${raglan ? LAW.ink.paper : 'none'}" stroke="${NAVY}" stroke-width="${W_OUTLINE}" ` +
     `stroke-linejoin="round" stroke-linecap="round"/>`;
   if (puff) {
     // gather ticks at the cap head
@@ -593,29 +704,13 @@ function sleeveHalf(g, spec) {
         `stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
     }
   }
-  // -------------------------------------------------------------------------
-  // RAGLAN (V4-B). ÖLÇÜLDÜ: raglan ile düz set-in kol BAYT BAYT aynı flat
-  // üretiyordu (3495 bayt, sha 70cb9c7881ce0c0a) çünkü 'raglan' hiçbir dalın
-  // koşulu değildi — sessizce set-in kola düşüyordu.
-  //
-  // FARK TOPOLOJİK, O YÜZDEN SAYI GEREKMEZ (kartın şartı). Set-in kolda dikiş
-  // kol oyuğunu takip eder: omuz ucundan koltukaltına inen bir EĞRİ, ve omuz
-  // ucu gövdeye aittir. Raglanda OMUZ DİKİŞİ YOKTUR: dikiş YAKA ÇİZGİSİNDEN
-  // başlar ve doğrudan KOLTUKALTINA iner, yani omuz ucu KOLA aittir. İki
-  // topolojinin farkı bir eşikle değil, dikişin UÇ NOKTALARIYLA tanımlıdır —
-  // biri (omuz ucu -> koltukaltı), diğeri (yaka -> koltukaltı).
-  //
-  // Uçlar croquis'ten okunuyor (yaka tabanı ve koltukaltı zaten çizimde var),
-  // uydurulmuş bir sayı EKLENMİYOR; eğrinin kontrol noktası da iki ucun
-  // ortasından türüyor.
-  if (style === 'raglan') {
-    const neckX = g.neck.half, neckY = shoulderNeckY;
-    const cx = (neckX + underX) * 0.5, cy = (neckY + underY) * 0.5;
-    const seamD = `M ${n(neckX)} ${n(neckY)} Q ${n(cx + (underX - neckX) * 0.18)} ${n(cy)} ${n(underX)} ${n(underY)}`;
-    const raglan = `<path data-part="raglan-seam" d="${seamD}" fill="none" stroke="${SEAM}" ` +
-      `stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
-    s += raglan + `<g transform="scale(-1,1)">${raglan}</g>`;
-  }
+  // V4-E — YİNELENEN ÇİZİM ÖLDÜ. V4-B burada raglan dikişini bir kez basıp bir
+  // kez de `scale(-1,1)` ile aynalıyordu; oysa BU FONKSİYON zaten SAĞ YARIMDIR
+  // ve çağıran (viewPanel) çıktının tamamını bir kez daha aynalıyor. Sonuç:
+  // dikiş görünüm başına 4 KEZ basılıyordu ve `set 10 -> raglan 18` eleman
+  // artışının 8'i üst üste binen kopyaydı. Kırpmayla gizlenmedi, KÖKÜ atıldı:
+  // raglan dikişi artık kol parçasının kendi kapanan kenarı (yukarıda), ayrı bir
+  // path DEĞİL. Bu blok kaldırıldı.
   return s;
 }
 
@@ -984,7 +1079,10 @@ function viewPanel(spec, view) {
   const bottom = g.hemY + (g.isDress ? 10 : 4);
   // widest extent: outline hem/hip/chest, or sleeve reach if sleeved
   let maxX = Math.max(g.hemHalf, g.chestW, g.shoulderW);
-  if (g.hasSleeve) maxX = Math.max(maxX, g.shoulderW + (spec.sleeveCap === 2 ? 62 : 48));
+  // V4-E: puf kolun dış ulaşımı 62 birim. Eskiden bu SADECE `sleeveCap===2`
+  // sayısına bakıyordu, yani ADIYLA puf istenen kol (balloon/puff) kağıdın
+  // dışına taşıyordu. Aynı türetilmiş dal kullanılıyor, ikinci bir kural yok.
+  if (g.hasSleeve) maxX = Math.max(maxX, g.shoulderW + (sleeveBranch(spec) === 'puff' || spec.sleeveCap === 2 ? 62 : 48));
   const pad = 20;
   const w = (maxX + pad) * 2;
   const h = bottom + pad;
@@ -1034,7 +1132,7 @@ async function tryReferencePen(spec) {
   // Eşleşmeyen spec (henüz primitifi olmayan) → null → ÜRETİLEMEZ (ikame yok).
   if (!styleKey) {
     const nl = spec.neckline;
-    const sleeve = spec.sleeve || spec.sleeveStyle;   // gramer 'sleeve' | contract 'sleeveStyle'
+    const sleeve = spec.sleeve || spec[SLEEVE_FIELD];   // gramer 'sleeve' | contract kol alani
     const sleeved = sleeve && sleeve !== 'none';
     const peplum = spec.peplum && spec.peplum !== 'none';
     const hemRuffle = spec.hemRuffle === 'single';   // peplum hem fırfırı (id84/91)

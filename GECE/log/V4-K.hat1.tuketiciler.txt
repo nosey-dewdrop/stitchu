@@ -1,0 +1,7 @@
+engine/CMakeLists.txt
+engine/tests/flat_artifact_census.mjs
+engine/tests/flat_pattern_agree_check.mjs
+engine/tests/vocab-reference-baseline.json
+engine/tools/flat-board.mjs
+engine/tools/pattern-measure.mjs
+engine/tools/shell-flat.cpp
