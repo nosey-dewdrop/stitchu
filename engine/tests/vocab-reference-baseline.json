@@ -9,7 +9,7 @@
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez \u2014 dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK."
   ],
-  "tabanCommit": "b799748fc132f5aecc75f967d6467c7e421276c6",
+  "tabanCommit": "94870917d17c686780c0d5f275850292c0393374",
   "sayimKomutu": {
     "eksenAdi": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -w <AXIS> <SCOPE> | wc -l",
     "enumDegeri": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -F \"\\\"<VALUE>\\\"\" <SCOPE> | wc -l",
@@ -17,8 +17,8 @@
     "yeniden_uret": "engine/tests/vocab_reference_check.sh --baseline <commit>",
     "kirli_agaci_denetle": "engine/tests/vocab_reference_check.sh --tree ."
   },
-  "toplam": 10416,
-  "toplamEksenAdi": 7575,
+  "toplam": 10418,
+  "toplamEksenAdi": 7577,
   "toplamEnumDegeri": 2841,
   "eksenSayisi": 37,
   "paylasim1KelimeSayisi": 92,
@@ -52,7 +52,7 @@
     "shoulderStyle": 41,
     "skirtLength": 153,
     "skirtStyle": 334,
-    "sleeveCap": 144,
+    "sleeveCap": 146,
     "sleeveLength": 274,
     "sleeveStyle": 351,
     "tieClosure": 172,
