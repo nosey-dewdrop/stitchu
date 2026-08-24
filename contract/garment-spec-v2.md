@@ -76,6 +76,21 @@ arkadan 5mm dar olamaz) · `topAnchoredDart` (Tur 8'den beri net-negatif omuz ba
 
 Beşi de **ölçüldü, uydurulmadı**:
 
+**Çapraz referans (V2-A, 2026-08-24).** Beşinin v1 tarafındaki karşılığı — yani
+`contract/vocab-resolution-v1.json`'ın hangi girdileri / `engine/vocab.json`'ın hangi
+enum ekseni bu operatörü ister. ⚠ Aynı kalem v1'de `resolved`, v2'de `absent` olabilir
+ve bu bir çelişki değil: v1 **eski 2B hattın** ne çizdiğini, v2 **yüzey hattının** ne
+üretebildiğini söyler (iki otorite, `GECE/V2-R.md` §3.3). Statüler
+`node -e '...vocab-resolution-v1.json...'` ile okundu, atanmadı.
+
+| absent operatör | v1 enum ekseni (`engine/vocab.json`) | `vocab-resolution-v1.json` girdileri (v1 statüsü) |
+|---|---|---|
+| `gatheredOverlayLayer` | `gatherType`, `gatherZone`, `sleeveCap`, `yoke`, `hemFlounce`, `skirtStyle`, `backDetail`, `ruffledStraps` | `gatherType.drawstring/shirred/smocked` · `gatherZone.neckline/bust/waist/sleeve` · `sleeveCap.gathered/puffed` · `yoke.gathered` · `hemFlounce.gathered` · `skirtStyle.gathered` · `backDetail.ruffle/flounce` · `ruffledStraps.ruffled` — **hepsi v1'de `resolved`** |
+| `sleeve` | `sleeveStyle`, `sleeveLength`, `sleeveCap`, `cuffStyle`, `shoulderStyle` | `sleeveStyle.straight/balloon` · `sleeveLength.short/elbow/long` · `sleeveCap.plain/gathered/puffed/cap` · `cuffStyle.button/ribbed` · `shoulderStyle.set/dropped/raglan` — **hepsi v1'de `resolved`**; `sleeveStyle.none` sentinel |
+| `collarFamily` | `collarType`, `collarEdge` | `collarType.stand/mock/flat/peterPan/shirt/crescent` · `collarEdge.round/pointed/scallop` — **hepsi v1'de `resolved`**; `collarType.none` sentinel. ⚠ v2 `collar` enum'u yalnız 4 taşıyor (`none/peterPan/stand/shirt`); `mock`, `flat`, `crescent` v2'de ADI BİLE YOK |
+| `skirtFamily` | `skirtStyle`, `skirtLength`, `hemShape`, `boxPleat`, `peplum` | `skirtStyle.gore/gathered/pleated/halfCircle` (v2'nin RED ettiği dördü, v1'de `resolved`) · `hemShape.boxPleatHem` · `boxPleat.centerInverted` · `peplum.full/half/pointed` — **hepsi v1'de `resolved`** |
+| `zipperPiece` | `exposedZip`, `backOpening`, `buttonRow`, `placketStyle` | `exposedZip.centerFront/centerBack` · `backOpening.round/lowV/square/keyhole` · `buttonRow.functional/decorative` · `placketStyle.standard/asymmetric` — **hepsi v1'de `resolved`**. ⚠ v2'nin `closure.buttonFront`'u da bu operatöre bağlanmış; düğme sırası v1'de ayrı bir eksendir (`buttonRow`), fermuar parçasıyla aynı operatör DEĞİLDİR |
+
 - **`gatheredOverlayLayer`** — T14 (17.08): Buğra'nın puf kolu **iki KATMAN**,
   yatay bölünme değil. Upper Sleeve aynı kapağın yatayda ölçeklenmiş kopyası;
   kapak **sagitta oranı 8 bedende bit-sabit 1.227**, kiriş oranı 1.549→1.347

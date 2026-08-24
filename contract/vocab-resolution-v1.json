@@ -17,7 +17,95 @@
  "_sayim": {
   "resolved": 107,
   "sentinel": 22,
-  "absent": 3
+  "absent": 3,
+  "damarKalemi": 13,
+  "damarIsimlendirilmis": 12,
+  "damarIsimsiz": 1
+ },
+ "_damar_sicili": {
+  "_neden": "GECE/V0-0A.md MADDE 3.4, ANAYASA damar dilinden 11 (+2 yarim) kalemi 'sicilde ISIM olarak bile yok' diye sayar. Orada olculen sicil contract/garment-spec-v2.json'un OPERATOR sicilidir; BU dosya ayri bir sicildir (Katman 3 -> Katman 1/2). V2-A kalem kalem olctu: 13 kalemin 12'si BU tabloda ZATEN ISIMLE duruyor. Blok, motorun red cumlesinin AD soyleyebilmesi icin o adlari tek yerde capalar ve gercekten isimsiz olan TEK kalemi durustce absent birakir.",
+  "_kapi": "engine/tests/preset_resolve_check.cpp:470-475 BIJECTION sarti: `resolutions` anahtarlari engine/vocab.json'un 132 field.value'su ile BIREBIR olmak zorundadir ('resolution table names a preset the vocabulary does not have'). Bu yuzden karsiligi olan bir vocab ekseni OLMAYAN damar kalemi `resolutions`'a EKLENEMEZ — eklenirse kapi, status'u absent olsa bile kirmizi duser. Kart V2-A md.(2)'nin 'resolutions'a ekle' talimati bu kapiyla catisti; kapi ustun tutuldu (kartin kendi hukmu: 'Kapiyi gevsetme, preset_resolve_check.cpp'ye DOKUNMA') ve kalemler bu KARDES blokta adlandirildi. Blogu okuyan program yoktur: preset_resolve_check.cpp:412 yalniz `resolutions`'i, engine/tools/foto-spec-olcum.mjs:65 yalniz `RESOLUTION.resolutions`'i aliyor.",
+  "_statuler": "named = kalem bu dosyanin `resolutions` blogunda ISIMLE var, anahtarlari vocabKeys'te. absent = engine/vocab.json'da karsiligi olan hicbir eksen yok, dolayisiyla `resolutions`'a giremez; absentReason zorunlu.",
+  "kalemler": {
+   "fiyonk": {
+    "anayasa": "ANAYASA.md:42-44 detay primitifleri — fiyonk/bag",
+    "status": "named",
+    "vocabKeys": ["tieClosure.frontNeckBow", "tieClosure.frontWaistBow", "tieClosure.backWaistBow", "neckline.pussyBow"],
+    "note": "Bag ailesi = (konum landmark) x (form serit/fiyonk) x (uzunluk mm). tieClosure.backWaistBow bu dosyada ZATEN absent (ENGINE-DUPLICATE, engine/src/tie.cpp:129-130); digerleri resolved."
+   },
+   "minikDugmeSirasi": {
+    "anayasa": "ANAYASA.md:42-44 — minik sik dugme sirasi",
+    "status": "named",
+    "vocabKeys": ["buttonRow.functional", "buttonRow.decorative", "placketStyle.standard", "placketStyle.asymmetric"],
+    "note": "Dugme sirasi bir SAYI dizisidir (kesir listesi), islevli/dekoratif farki tek primitifin (pat uzatmasi) varligi. v2 operator sicilinde adi yok, burada dort anahtarla var."
+   },
+   "firfirVolan": {
+    "anayasa": "ANAYASA.md:42-44 — firfir / volan",
+    "status": "named",
+    "vocabKeys": ["backDetail.ruffle", "backDetail.flounce", "hemFlounce.gathered", "ruffledStraps.ruffled"],
+    "note": "Firfir = ratio>1 toplama, volan = dairesel sweep. Ikisi de asilan panel; ayni iki primitif, farkli host kenar."
+   },
+   "peplum": {
+    "anayasa": "ANAYASA.md:56 + korpus :71,:76,:94",
+    "status": "named",
+    "vocabKeys": ["peplum.full", "peplum.half", "peplum.pointed"],
+    "note": "Bel Interface'inden asilan flare paneli; full<->half arasi her sweep acisi gecerli."
+   },
+   "laceUp": {
+    "anayasa": "ANAYASA.md:42-44 — lace-up / korse baglama",
+    "status": "named",
+    "vocabKeys": ["laceUpBack.corset"],
+    "note": "Bagcik = iki kenar arasinda ACIK seam + notchFractions'a oturan kus gozu dizisi."
+   },
+   "dantelFisto": {
+    "anayasa": "ANAYASA.md:42-44 — dantel / fisto",
+    "status": "absent",
+    "vocabKeys": [],
+    "absentReason": "KOK SEBEP: dantel/fisto bir SILUET ekseni degil, bir KENAR SUSU / yuzey malzemesidir; engine/vocab.json'un 37 ekseninin hicbiri kenar susu tasimiyor. En yakin eksen `edgeFinish` (biasBinding, facing) ve o da dikis payini kapatma YONTEMI, sus degil — bu yuzden `edgeFinish.lace` sahte bir kardes olurdu. DENENEN HAMLE: kalemi mevcut bir eksene sokup `resolutions`'a ISIMLE eklemek denendi ve REDDEDILDI; iki sebeple: (a) engine/vocab.json OTORITE'dir (GECE/V2-R.md Bolum 3.3) ve bu kartin YASAKLAR bolumu engine/ altina tek bayt yazmayi yasakliyor; (b) yeni bir vocab degeri uc uretilmis tabloyu (engine/src/vocab.gen.hpp, web/js/vocab.gen.js, backend/vocab.gen.js) bayatlatir ve preset_resolve_check `status=resolved` icin motorun host'u gercekten cizmesini sart kosuyor (preset_resolve_check.cpp:544-548) — cizen kod olmadan resolved yalan olurdu. SONRAKI ADAY: once contract/primitives-v1.json'a iki primitif; (1) kenara oturan ayri serit paneli + tekrar orani (FreeSewing `hem` makrosunun kardesi, GECE/V2-R.md Bolum 1 FreeSewing satiri), (2) fisto/kus gozu deliklerini tasiyacak PANEL ICI geometri = Seamly2D `internal_path_tool` (GECE/V2-R.md Bolum 1.3 md.3, 'ALINIR' hukmu). Ikisi de bugun primitif sicilinde YOK; primitif gelmeden vocab ekseni acilirsa cozulmeyen isim sozluge girer ve bu dosyanin `_yasa` md.1'i ihlal edilir."
+   },
+   "derinV": {
+    "anayasa": "ANAYASA.md:45 yakalar — derin V",
+    "status": "named",
+    "vocabKeys": ["neckline.vNeck"],
+    "note": "Iki DUZ Edge; derinlik omuz landmark'indan shiftTowards ile. Derinlik bir mm, 'derin' o mm'nin ismi."
+   },
+   "kayikYaka": {
+    "anayasa": "ANAYASA.md:45 yakalar — kayik (boat)",
+    "status": "named",
+    "vocabKeys": ["neckline.boat"],
+    "note": "Genislik ekseni buyuk, derinlik kucuk — vNeck/scoop ile ayni ailenin ucuncu ucu."
+   },
+   "kareYaka": {
+    "anayasa": "ANAYASA.md:45 yakalar — kare",
+    "status": "named",
+    "vocabKeys": ["neckline.square"],
+    "note": "Iki dikey + bir yatay Edge, kose yaricapi 0."
+   },
+   "sweetheart": {
+    "anayasa": "ANAYASA.md:45 yakalar — sweetheart",
+    "status": "named",
+    "vocabKeys": ["neckline.sweetheart"],
+    "note": "2x CurveEdge, kontrol noktalari gogus apex'ine dogru, ortada birlesim."
+   },
+   "halter": {
+    "anayasa": "ANAYASA.md:45 yakalar — halter",
+    "status": "named",
+    "vocabKeys": ["neckline.halter"],
+    "note": "Boyun Interface'i + omuz dikisinin KALDIRILMASI + strap paneli. Yaka degil, topoloji degisikligi."
+   },
+   "askili": {
+    "anayasa": "ANAYASA.md:45-46 kollar — askili (strap)",
+    "status": "named",
+    "vocabKeys": ["ruffledStraps.spaghetti", "ruffledStraps.wide", "ruffledStraps.ruffled"],
+    "note": "V0-0A 'strapless != askili' diyerek bu kalemi yarim saymisti; dogru — ama karsiligi `shoulder.strapless` degil `ruffledStraps` eksenidir ve uc degeri de burada resolved."
+   },
+   "buzguluManset": {
+    "anayasa": "ANAYASA.md:45-46 kollar — uzun puf + buzgulu manset",
+    "status": "named",
+    "vocabKeys": ["cuffStyle.button", "cuffStyle.ribbed", "tieClosure.cuffTies"],
+    "note": "Manset = bant paneli + toplama orani; ribbed ayni demet, ratio buyuk + elastik mode. V0-0A `grep -ic cuff contract/garment-spec-v2.json` -> 0 olctu; o sicilde yok, BU sicilde uc anahtarla var."
+   }
+  }
  },
  "resolutions": {
   "garment.skirt": {
