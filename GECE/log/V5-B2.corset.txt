@@ -1,0 +1,9 @@
+overlay-png | corset_bustier | motor: bugra-dump (corset) | Bugra halkasi: beden 36
+hizalama: bbox min kosesi (ring-compare.py usulu, serbest parametre YOK) | mm=mm, olcek 1:1
+BEDEN NOTU: bugra-dump govdesi bust 88 / waist 68 / hip 94 cm = Bugra 36 (sizeChartMM tam esitlik). Bu kosu beden 36 halkasina karsi. UYUSUYOR.
+motor parcasi 6 | Bugra halkasi 6 | validator issue 0
+
+parca eslemesi                          Dbbox_W   Dbbox_H    Dcevre     Dcevre%   sapma_med  sapma_p95  sapma_max   PNG
+                                             mm        mm        mm         %          mm         mm         mm
+  Upper Cup                               16.84    -23.02     95.44     11.49      19.65     117.89     148.49   corset_bustier-36-upper-cup.png
+  Lower Cup                               54.13   -159.75   -216.40    -29.52      99.39     159.54     159.75   corset_bustier-36-lower-cup.png
