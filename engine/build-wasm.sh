@@ -6,6 +6,38 @@ cd "$(dirname "$0")"
 source "$HOME/emsdk/emsdk_env.sh" >/dev/null 2>&1
 
 mkdir -p dist
+
+# ---- SOURCE STAMP ----------------------------------------------------------
+# WHY. bundle_fresh_check reads the COMMIT DATE of each shipped artefact and
+# compares it to the commit date of engine/src + engine/wasm + build-wasm.sh.
+# Git cannot commit a file whose bytes did not change, so an engine change that
+# leaves the emscripten GLUE byte-identical (measured: 5d649d2 changed
+# wasm/bindings.cpp + src/bodice.cpp, stitchu-worker.wasm changed, but
+# stitchu-worker.js did not) freezes the glue's commit date in the past and the
+# gate goes red forever. Stamping the glue with a digest of the watched sources
+# makes the glue's bytes a FUNCTION of those sources: change any watched byte
+# and the glue changes too, so it lands in the same commit and the gate's
+# "built commit" tells the truth.
+#
+# The digest, not the HEAD commit sha: a sha stamp is only correct if the build
+# runs after the source commit, so building from a dirty tree (the normal order:
+# edit, build, commit once) would re-emit the same sha and leave the gate red —
+# the exact failure being fixed. The digest is also DETERMINISTIC: the same
+# sources produce the same byte, so a rebuild with no source change produces no
+# diff. It is a JS line comment on line 1, so the glue's behaviour is untouched.
+src_stamp() {
+  { find src wasm -type f -print0 | sort -z | xargs -0 shasum -a 256
+    shasum -a 256 build-wasm.sh; } | shasum -a 256 | cut -c1-16
+}
+STAMP="$(src_stamp)"
+echo "source stamp: $STAMP"
+
+# copy a built glue file to its shipped path with the stamp line prepended
+stamp_copy() {
+  printf '// stitchu source-stamp %s -- sha256 of engine/src + engine/wasm + engine/build-wasm.sh (see bundle_fresh_check)\n' "$STAMP" > "$2"
+  cat "$1" >> "$2"
+}
+
 # -fexceptions + DISABLE_EXCEPTION_CATCHING=0: the boundary throws
 # std::invalid_argument on an unknown spec value and catches it INSIDE
 # draftJSON/gradeJSON (returns {"error": ...}); without these flags a C++ throw
@@ -26,8 +58,8 @@ em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
 ls -la dist/stitchu-engine.js
 
 # copy the wasm bundle where the web app serves it
-cp dist/stitchu-engine.js ../web/vendor/stitchu-engine.js
-echo "copied to web/vendor/"
+stamp_copy dist/stitchu-engine.js ../web/vendor/stitchu-engine.js
+echo "copied to web/vendor/ (stamped $STAMP)"
 
 # Second target: the Cloudflare Worker build for the /api/draft engine. TWO
 # files — the .wasm is a separate module Cloudflare pre-compiles (CompiledWasm
@@ -58,6 +90,6 @@ em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
   -o dist/stitchu-worker.js
 
 # copy the worker bundle where the backend imports it (dist/ is gitignored)
-cp dist/stitchu-worker.js ../backend/engine/stitchu-worker.js
+stamp_copy dist/stitchu-worker.js ../backend/engine/stitchu-worker.js
 cp dist/stitchu-worker.wasm ../backend/engine/stitchu-worker.wasm
-echo "copied to backend/engine/"
+echo "copied to backend/engine/ (glue stamped $STAMP)"

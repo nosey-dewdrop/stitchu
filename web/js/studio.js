@@ -6,9 +6,9 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=136';
-import { pathD, bounds } from './sheet.js?v=136';
-import { printPattern } from './print.js?v=136';
+import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=137';
+import { pathD, bounds } from './sheet.js?v=137';
+import { printPattern } from './print.js?v=137';
 
 const $ = (id) => document.getElementById(id);
 
@@ -382,7 +382,7 @@ function downloadFactoryPack() {
   const pack = state.doc ? factoryPackFor(state.doc.id) : null;
   if (!pack) return;
   const a = document.createElement('a');
-  a.href = `factory/${pack.file}?v=136`;
+  a.href = `factory/${pack.file}?v=137`;
   a.download = pack.file;
   a.click();
 }
@@ -400,7 +400,7 @@ function downloadPDF() {
 
 // ------------------------------------------------------------------ startup
 async function loadRecipe(entry) {
-  const res = await fetch(`recipes/${entry.file}?v=136`);
+  const res = await fetch(`recipes/${entry.file}?v=137`);
   if (!res.ok) throw new Error(`recipe fetch failed: HTTP ${res.status}`);
   state.text = await res.text();
   state.doc = JSON.parse(state.text); // form metadata only; the engine re-parses
@@ -421,7 +421,7 @@ async function init() {
   // re-evaluation itself, not the one-off engine download.
   const warmup = loadEngine().catch(() => {});
   try {
-    const res = await fetch('recipes/index.json?v=136');
+    const res = await fetch('recipes/index.json?v=137');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.recipes = (await res.json()).recipes;
   } catch (e) {
@@ -431,7 +431,7 @@ async function init() {
   // Factory-pack index (optional): the pre-built graded size runs per recipe.
   // A missing index just leaves the factory button disabled, never a crash.
   try {
-    const fres = await fetch('factory/index.json?v=136');
+    const fres = await fetch('factory/index.json?v=137');
     if (fres.ok) state.factory = (await fres.json()).packs || [];
   } catch { state.factory = []; }
   for (const r of state.recipes) {
