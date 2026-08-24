@@ -1,0 +1,104 @@
+V0-0E RAW LOG — 2026-08-24T01:21:42Z  HEAD=13ba644
+machine: Darwin 24.2.0 arm64  node v26.5.0
+
+########## CMD: node --expose-gc engine/tools/wasm-baseline.mjs --reps 200 --soak 5000
+=== 1. WASM PARITY (native golden_dump vs dist/stitchu-engine.js draftJSON) ===
+native binary      : /Users/damummyphus/damla_projects_2026/stitchu/engine/build/golden_dump
+wasm bundle        : /Users/damummyphus/damla_projects_2026/stitchu/engine/dist/stitchu-engine.js
+spec x body blocks : 561
+  identical        : 436
+  shape differs    : 0
+  wasm errored     : 0
+lines compared     : 23406
+  byte-identical   : 23281
+  numeric differs  : 125
+worst abs delta    : 1.0000e-4 mm
+  at               : pear|dress/crew/aLine/none.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000  |  pear|dress/crew/aLine/none.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+  VALUE  native: pear|dress/crew/aLine/none.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000
+    wasm  : pear|dress/crew/aLine/none.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+  VALUE  native: pear|dress/crew/aLine/straight.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000
+    wasm  : pear|dress/crew/aLine/straight.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+  VALUE  native: pear|dress/crew/aLine/straight.long|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000
+    wasm  : pear|dress/crew/aLine/straight.long|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+  VALUE  native: pear|dress/crew/aLine/balloon.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000
+    wasm  : pear|dress/crew/aLine/balloon.short|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+  VALUE  native: pear|dress/crew/aLine/balloon.elbow|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1252,406.4125,71.0067,410.0000
+    wasm  : pear|dress/crew/aLine/balloon.elbow|piece1:Bodice Back,outline,5,curve,12.3506,410.0000,153.1253,406.4125,71.0067,410.0000
+
+=== 2. SINGLE DRAFT LATENCY (node, wasm module) ===
+spec               : dress/scoop/aLine/straight.long, body EU38
+draftJSON only     : n=200  median 1.052  min 0.983  p95 1.232  max 1.770  (ms)
+draftJSON + parse  : n=200  median 1.144  min 1.065  p95 1.336  max 1.864  (ms)
+json payload       : 20222 bytes
+gradeJSON EU34-48  : n=30  median 8.874  min 8.489  p95 9.402  max 9.485  (ms)
+
+=== 3. HEAP / LEAK ===
+build pins INITIAL_MEMORY=64MB, ALLOW_MEMORY_GROWTH=0 (engine/build-wasm.sh),
+and the module exports only: draftJSON, draftRecipeJSON, dxfRecipeJSON, gradeJSON
+-> HEAPU8 / _malloc are NOT exported, so the wasm-internal high-water
+   mark is NOT readable from here. Reported instead: process memory and
+   survival of a soak inside a heap that cannot grow.
+soak repeats       : 5000  -> SURVIVED (no abort, no heap exhaustion)
+soak wall time     : 6290.1 ms  (1.258 ms/draft)
+process rss        : 102.55 -> 68.86 MB   delta -33.69 MB
+process external   : 6.46 -> 6.46 MB   delta 0.00 MB
+node heapUsed      : 6.09 -> 6.15 MB   delta 0.06 MB
+arrayBuffers       : 1.12 -> 1.12 MB   delta 0.00 MB
+NOTE: process rss/external here also covers V8, not only the wasm heap.
+      The load-bearing number is the SURVIVAL line: a leaking draftJSON
+      cannot survive N repeats in a non-growable 64MB heap.
+(node:9877) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/damummyphus/damla_projects_2026/stitchu/web/js/vocab.gen.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/damummyphus/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+########## CMD: bash engine/tests/bundle_fresh_check.sh
+engine source HEAD : 11c199a  2026-08-23
+
+ok    web/vendor/stitchu-engine.js  (b197ccf 2026-08-23 >= source 2026-08-23)
+ok    backend/engine/stitchu-worker.js  (b197ccf 2026-08-23 >= source 2026-08-23)
+ok    backend/engine/stitchu-worker.wasm  (b197ccf 2026-08-23 >= source 2026-08-23)
+
+bundle_fresh_check: PASS — every shipped artefact is at or ahead of engine source.
+exit=0
+
+########## CMD: cmp engine/dist/stitchu-engine.js web/vendor/stitchu-engine.js
+byte-identical (exit 0)
+
+########## CMD: git rev-list --count b197ccf..HEAD -- engine/src engine/wasm engine/build-wasm.sh
+0
+########## CMD: git rev-list --count b197ccf..HEAD
+3
+
+########## CMD: grep -rn 'new Worker|Worker(' web/js/ web/*.html
+(no output above = zero matches)
+
+########## CMD: grep -n 'draft(|grade(|loadEngine' web/js/create.js web/js/studio.js web/js/engine.js
+web/js/create.js:730:      const result = await draft(spec, values);
+web/js/create.js:865:      const graded = await grade(spec, from, to);
+web/js/engine.js:52:export function loadEngine() {
+web/js/engine.js:56:      script.src = 'vendor/stitchu-engine.js?v=136';
+web/js/engine.js:68:  const engine = await loadEngine();
+web/js/engine.js:141:export async function draftRecipe(recipeText, measurements, params) {
+web/js/engine.js:142:  const engine = await loadEngine();
+web/js/engine.js:166:export async function dxfRecipe(recipeText, measurements, params) {
+web/js/engine.js:167:  const engine = await loadEngine();
+web/js/engine.js:184:  const engine = await loadEngine();
+web/js/studio.js:140:  const out = await draftRecipe(state.text, state.measurements, state.params);
+web/js/studio.js:338:    const out = await dxfRecipe(state.text, state.measurements, state.params);
+web/js/studio.js:422:  const warmup = loadEngine().catch(() => {});
+
+########## OUT-OF-CARD: CMD: engine/build/golden_dump | diff - engine/golden-reference.csv | grep -c '^<'
+9651
+(count of native dump lines that differ from the committed golden PIN)
+
+########## OUT-OF-CARD (corrected, file-based & reproducible 3/3):
+########## CMD: engine/build/golden_dump > /tmp/gd.csv ; diff /tmp/gd.csv engine/golden-reference.csv | grep -c '^<'
+9661
+(NOTE: the earlier PIPED form in this log printed 9651 — same diff, different
+ hunking when diff reads stdin. The file-based 9661 is the number to quote;
+ golden_dump itself is deterministic: md5 identical across 3 runs.)
+########## CMD: for i in 1 2 3; do engine/build/golden_dump | md5; done
+d5b5f28b2ef41a776b14699e9220982a
+d5b5f28b2ef41a776b14699e9220982a
+d5b5f28b2ef41a776b14699e9220982a
