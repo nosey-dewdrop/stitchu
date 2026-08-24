@@ -50,3 +50,24 @@ bastığı ilk fark satırı, V0-0E'nin bulduğu satırın ta kendisi (313/314,
 kapı kırmızı ve sapmayı gösteriyor. **(b) YANLIŞTIR** — `golden-diff.py`
 toleransı bu farkı SOĞURMUYOR, kapı soğurmadığı için kırmızı.
 
+
+---
+
+## V0-0 · 4.7 YENİDEN YARGI (2026-08-24, ikinci hakem)
+
+Birinci hakemin **KALDI** hükmü tarihsel kayıt olarak yukarıda durur ve silinmedi;
+faz o hükmün üzerine yeni bir ölçüm çıktısı (`GECE/V0-0F.md` + `GECE/log/V0-0F.aday.txt`)
+üretti. Aşağıdaki satır yalnız 4.7'yi yeniden yargılar, diğer alt kapılara dokunmaz.
+
+- V0-0 · 4.7 kırmızı raporlama (yeniden) · **GEÇTİ** · Ana ağaçta onarım yok (`git diff --stat e1d71a9..HEAD` yalnız `GECE/`; `git status --porcelain engine contract recipes web` boş) ve altı kırmızının altısı da kök teşhis taşıyor, beşi ölçülmüş çözüm adayı taşıyor (golden: motoru `a571407`'ye döndürme tam ctest'le ölçülüp RULES 9 gerekçesiyle **reddedildi** + re-pin'in taşıyacağı dağılım ölçüldü · recipe: reçetenin `torsoArmholeY` satırı ölçülüp FAIL 10→9 kazandı · contract: `git rm --cached` ile GREEN ölçüldü · figure: 0.872 pini yeşile döndürdüğü ölçüldü ve regen-vs-regen diye **reddedildi** · sizechart: uydurma kaynak ölçüldü, **reddedildi**, üstüne kapının kendi zayıflığı ölçüldü), altıncısında (`style_check`) adayın yokluğu mazeret değil dosya düzeyinde doğrulanmış bir engel (`ls -ld engine/STYLE-PIN` → yok, `style_check.mjs:3-4,25-27` regen-vs-regen yasağı, `repin-style.sh` insanın terminale yazacağı onay cümlesi); hakem beş sayıyı bağımsız yeniden koşturdu ve hepsi birebir tuttu: golden sapması **9651 satır / %41.23 / max 62.7764 mm / medyan 5.6000**, `a571407` golden_dump'ı pinle **BAYT-ÖZDEŞ** ve `52ae85c` **8356 satır / %35.70 / medyan 11.0424** (temiz iki Release build, "ilk sapan commit" sınırı doğrulandı), recipe adayı **PASS 115→116 / FAIL 10→9**, `git ls-files patterns_real` **41** ve untrack sonrası gate **GREEN**, `taban_v3` **16 pin, `dress_bandeau_circle` yok**. · `GECE/log/V0-0F.hakem.txt` · `GECE/log/V0-0F.aday.txt` · `GECE/V0-0F.md`
+
+**İkinci hakem notu (hükmü değiştirmez):** (1) Eski KAPI.md satırındaki **9661** ile
+V0-0F'in **9651**'i çelişki değil, yöntem farkı — `diff | grep -c '^<'` 9661,
+satır-pozisyonu eşlemesi 9651; hakem ikisini de koşturup uzlaştırdı, V0-0F bu farkı
+uzlaştırmamıştı. (2) `style_check` için kartın denemediği bir ÖLÇÜM yolu vardı:
+`af49514^` ağacında iki eski pin duruyor, "pin varsa kapı ne diyor" ölçülebilirdi;
+kapatan bir aday değil (o commit onları bilerek sildi) ama kartın "ölçülemedi" dediği
+şeyin ta kendisi — kart bunu gizlemeyip ÖLÇÜLEMEYEN listesine yazmış. (3) A3'ün
+aday-1 reddindeki ENV/REAL ayrımı hakem tarafından yeniden koşturulmadı
+(**DOĞRULANMADI**); 4.7 adayın ölçülmüş+kayıtlı olmasını ister, reddin doğruluğunu
+değil, o yüzden hüküm bu ayrımdan bağımsızdır.
