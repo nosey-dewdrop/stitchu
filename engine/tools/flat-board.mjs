@@ -27,6 +27,21 @@
 //
 //   node engine/tools/flat-board.mjs <outDir> [--yeni <dir>]
 //
+// V4-D EKİ — İKİ TARAF DA DİSKTEN OKUNABİLİR:
+//   `--eski <dir>`   sol sütunu o dizindeki <anahtar>.svg dosyalarından okur.
+//                    NEDEN ŞART: sol sütun BAŞKA BİR COMMIT'in çıktısıdır ve
+//                    bu süreç o commit'i çalıştıramaz. Yeniden üretilseydi
+//                    sol sütun da bugünün çıktısı olurdu ve pano YALAN
+//                    söylerdi (iki sütun aynı şeyi gösterip "fark yok"
+//                    derdi). Dosya yoksa SESSİZ GEÇMEZ, yüksek sesle çöker.
+//   `--eski-ad <s>`  sol sütun başlığına yazılacak künye (hangi commit).
+//   `--yeni-ad <s>`  sağ sütun başlığına yazılacak künye.
+//   `--ek <eskiDir> <yeniDir>`
+//                    EK SATIRLAR: her iki taraf da diskten. Satır listesi
+//                    <eskiDir> içindeki .svg adlarından ÇIKARILIR (sıralı),
+//                    etiket dosya adının kökü. Hiçbir menü kelimesi bu
+//                    dosyada yazılı olmaz — adlar veriden gelir, koddan değil.
+//
 // Hücre içi SVG'ler <svg x y width height viewBox> olarak GÖMÜLÜR:
 // preserveAspectRatio="xMidYMid meet", yani ölçeklenir ama KIRPILMAZ.
 
@@ -40,8 +55,28 @@ const here = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(here, '../..');
 
 const OUT = process.argv[2] || '/tmp/stitchu-flat-board';
-const yeniIdx = process.argv.indexOf('--yeni');
-const YENI_DIR = yeniIdx > 0 ? process.argv[yeniIdx + 1] : null;
+const argAfter = (flag, n = 1) => {
+  const i = process.argv.indexOf(flag);
+  if (i <= 0) return null;
+  const got = process.argv.slice(i + 1, i + 1 + n);
+  if (got.length !== n || got.some((g) => g === undefined || g.startsWith('--'))) {
+    throw new Error(`${flag} ${n} deger ister`);
+  }
+  return n === 1 ? got[0] : got;
+};
+const YENI_DIR = argAfter('--yeni');
+const ESKI_DIR = argAfter('--eski');
+const ESKI_AD = argAfter('--eski-ad') || 'ESKİ — bugünkü çıktı (kırpmasız)';
+const YENI_AD = argAfter('--yeni-ad') || 'YENİ';
+const EK = argAfter('--ek', 2); // [eskiDir, yeniDir]
+
+// Diskten okuma: yoksa SESSİZ GEÇMEZ. Bir hücrenin boş kalması "fark yok"
+// gibi okunur, ve okunmayan dosya en pahalı yalandır (RULES invariant 1).
+function mustRead(dir, name) {
+  const p = join(dir, name);
+  if (!existsSync(p)) throw new Error(`beklenen dosya yok: ${p}`);
+  return readFileSync(p, 'utf8');
+}
 
 // --- pano kalemleri --------------------------------------------------------
 // Stil adları engine/flat-engine/styles.json `styles` anahtarlarından. Dokuzu
@@ -99,8 +134,8 @@ function board(items, title, sub) {
   let inner = `<rect width="${BOARD_W}" height="${H}" fill="#ffffff"/>`;
   inner += txt(PAD, 56, title, 34, 700);
   inner += txt(PAD, 84, sub, 17, 400, 'start', '#5c7080');
-  inner += txt(PAD, HEAD - 14, 'ESKİ — bugünkü çıktı (kırpmasız)', 20, 700);
-  inner += txt(PAD + CELL_W + COLGAP, HEAD - 14, 'YENİ', 20, 700, 'start', '#9fb0c4');
+  inner += txt(PAD, HEAD - 14, ESKI_AD, 20, 700);
+  inner += txt(PAD + CELL_W + COLGAP, HEAD - 14, YENI_AD, 20, 700, 'start', ESKI_DIR ? NAVY : '#9fb0c4');
   inner += `<line x1="${PAD}" y1="${HEAD - 6}" x2="${BOARD_W - PAD}" y2="${HEAD - 6}" stroke="${RULE}" stroke-width="1.5"/>`;
   items.forEach((it, i) => {
     const y = HEAD + 18 + i * ROW_H;
@@ -133,33 +168,72 @@ for (const key of STYLE_KEYS) {
     : `${FLAT_PEN} → flat-engine/_engine-full.mjs renderStyle()`;
   writeFileSync(join(OUT, `${key}.svg`), svg);
   const yeniPath = YENI_DIR ? join(YENI_DIR, `${key}.svg`) : null;
+  // --eski verildiyse: SOL diskten (başka commit), SAĞ bugün üretilen.
+  // Verilmediyse eski davranış aynen korunur (sol = bugün, sağ = --yeni ya da boş).
+  const solda = ESKI_DIR ? mustRead(ESKI_DIR, `${key}.svg`) : svg;
+  const sagda = ESKI_DIR ? svg : (yeniPath && existsSync(yeniPath) ? readFileSync(yeniPath, 'utf8') : null);
   items.push({
-    label: `${key}  —  ${family(key)}`, svg, pen,
-    yeni: yeniPath && existsSync(yeniPath) ? readFileSync(yeniPath, 'utf8') : null,
-    yeniPen: 'YENİ kalem',
+    label: `${key}  —  ${family(key)}`,
+    svg: solda,
+    pen: ESKI_DIR ? 'diskten okundu, yeniden üretilmedi' : pen,
+    yeni: sagda,
+    yeniPen: ESKI_DIR ? `${pen} · ${solda === sagda ? 'bayt bayt AYNI' : 'FARK VAR'}` : 'YENİ kalem',
   });
 }
 
 // shell-flat: hesaplanan kabuk konturu (C++ motorun kendi çıktısı)
 const shellSvg = execFileSync(join(REPO, 'engine/build/shell-flat'), ['EU38', '--svg'], { encoding: 'utf8' });
 writeFileSync(join(OUT, 'shell-flat-EU38.svg'), shellSvg);
-items.push({
-  label: 'shell-flat EU38  —  hesaplanan kabuk konturu (stil değil)',
-  svg: shellSvg, pen: 'engine/build/shell-flat EU38 --svg (GarmentSurf)',
-  yeni: null, yeniPen: '—',
-});
+{
+  const solda = ESKI_DIR ? mustRead(ESKI_DIR, 'shell-flat-EU38.svg') : shellSvg;
+  items.push({
+    label: 'shell-flat EU38  —  hesaplanan kabuk konturu (stil değil)',
+    svg: solda,
+    pen: ESKI_DIR ? 'diskten okundu, yeniden üretilmedi' : 'engine/build/shell-flat EU38 --svg (GarmentSurf)',
+    yeni: ESKI_DIR ? shellSvg : null,
+    yeniPen: ESKI_DIR
+      ? `engine/build/shell-flat EU38 --svg · ${solda === shellSvg ? 'bayt bayt AYNI' : 'FARK VAR'}`
+      : '—',
+  });
+}
+
+// --- EK SATIRLAR: iki taraf da diskten -------------------------------------
+// Satır listesi VERİDEN gelir: <eskiDir> içindeki .svg adları sıralanır.
+// Böylece bu dosyada tek bir menü kelimesi yazılı olmaz ve liste diskten
+// sapamaz. Sağ tarafta karşılığı olmayan ad = yüksek sesle çöker.
+if (EK) {
+  const [ekEski, ekYeni] = EK;
+  const adlar = readdirSync(ekEski).filter((f) => f.endsWith('.svg')).sort();
+  if (adlar.length === 0) throw new Error(`ek satir dizini bos: ${ekEski}`);
+  for (const ad of adlar) {
+    const kok = ad.replace(/\.svg$/, '');
+    const solda = mustRead(ekEski, ad);
+    const sagda = mustRead(ekYeni, ad);
+    items.push({
+      label: `${kok}  —  aynı taban spec, tek alan oynatıldı`,
+      svg: solda,
+      pen: 'diskten okundu, yeniden üretilmedi',
+      yeni: sagda,
+      yeniPen: solda === sagda ? 'bayt bayt AYNI' : `FARK VAR (${solda.length} → ${sagda.length} bayt)`,
+    });
+  }
+}
 
 // panoyu sayfalara böl (tek PNG çok uzun olurdu; düzen her sayfada AYNI)
 const PER = 5;
 const stamp = new Date().toISOString().slice(0, 10);
+const BASENAME = ESKI_DIR ? 'board-eski-yeni' : 'board-eski';
 const pngs = [];
 for (let i = 0, p = 1; i < items.length; i += PER, p++) {
   const chunk = items.slice(i, i + PER);
   const total = Math.ceil(items.length / PER);
-  const svg = board(chunk, `ZEVK PANOSU — ESKİ (sayfa ${p}/${total})`,
-    `stitchu · ${stamp} · kırpma/retuş/yeniden çizim YOK · sağ sütun V4-D için ayrıldı`);
-  const svgPath = join(OUT, `board-eski-${p}.svg`);
-  const pngPath = join(OUT, `board-eski-${p}.png`);
+  const svg = board(chunk,
+    ESKI_DIR ? `ESKİ | YENİ PANOSU (sayfa ${p}/${total})` : `ZEVK PANOSU — ESKİ (sayfa ${p}/${total})`,
+    ESKI_DIR
+      ? `stitchu · ${stamp} · kırpma/retuş/yeniden çizim YOK · sol sütun diskten, yeniden üretilmedi`
+      : `stitchu · ${stamp} · kırpma/retuş/yeniden çizim YOK · sağ sütun V4-D için ayrıldı`);
+  const svgPath = join(OUT, `${BASENAME}-${p}.svg`);
+  const pngPath = join(OUT, `${BASENAME}-${p}.png`);
   writeFileSync(svgPath, svg);
   rasterise(svgPath, pngPath, 1600);
   pngs.push(pngPath);

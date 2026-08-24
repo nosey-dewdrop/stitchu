@@ -1,0 +1,171 @@
+=== node engine/tests/flat_convention_check.mjs ===
+=== FLAT KONVANSIYON KAPISI — uretim kalemi, 8 stil
+    kanun: contract/flat-convention-v1.json  unitMM=3  tolerans=2mm
+ok    5 on+arka — 8 stilin hepsinde front+back paneli var
+
+--- 1. TEK CROQUIS (geometrik olcum, beyana bakmadan)
+ok    1 croquis — omuz ucu x             min 70.200u  max 70.200u  SAPMA 0.00 mm
+ok    1 croquis — omuz ucu y             min 16.900u  max 16.900u  SAPMA 0.00 mm
+ok    1 croquis — gogus (koltukalti) x   min 73.300u  max 73.300u  SAPMA 0.00 mm
+ok    1 croquis — gogus hatti y          min 92.000u  max 92.000u  SAPMA 0.00 mm
+ok    1 croquis — bel hatti y (dogal)    min 150.000u  max 150.000u  SAPMA 0.00 mm
+ok    1 croquis — vneck_empire_dress/front empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+ok    1 croquis — vneck_empire_dress/back empire beyani gercek: siluet beli 99u, dogal belden 153.0mm yukarida
+
+--- 1c. OMUZ UCU GOGUS HATTININ ICINDE (set-in kol yasasi)
+ok    1c omuz icerde — princess_scoop_dress/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — princess_scoop_dress/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — boat_shift_dress/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — boat_shift_dress/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — vneck_empire_dress/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — vneck_empire_dress/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — square_gathered_dress/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — square_gathered_dress/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — crew_sleeved_top/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — crew_sleeved_top/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — sweetheart_crop_top/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — sweetheart_crop_top/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — scoop_tunic_placket/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — scoop_tunic_placket/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — cowl_openback_top/front: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+ok    1c omuz icerde — cowl_openback_top/back: omuz ucu 210.60 mm, gogus 219.90 mm, oran 0.9577
+
+--- 1b. BEYAN == CIZILEN (croquis data-* yalan soyleyemez)
+ok    1b beyan == cizilen == kanun
+
+--- 2. OLCEK BEYANI
+ok    2 olcek — gogus yari-genisligi 219.90 mm == bustCM/4 220.00 mm (burda EU38, verified)
+
+--- 3. CIZGI HIYERARSISI
+ok    3 hiyerarsi — 5/5 sinif beyanli ve kullanilmis: outline, topstitch, seam, mark, hidden
+
+--- 3b. CIZGI ORANLARI (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d)
+ok    3b oran — outline:seam: beyan 1.4286 == olculen 1.4286 (sapma %0.00, ISO md.5.2 tavani %22.22)
+ok    3b oran — seam:mark: beyan 1.4 == olculen 1.4000 (sapma %0.00, ISO md.5.2 tavani %22.22)
+ok    3b oran — outline:mark: beyan 2 == olculen 2.0000 (sapma %0.00, ISO md.5.2 tavani %22.22)
+
+--- 3c. DETAY CALLOUT (bugun SAYI, kapi degil)
+    HAT-2 (uretim kalemi, 8 stil): tek-harf etiketi 0 · "HARF (n:1)" olcek beyani 0
+    -> bugun toplam callout 0 (ISO 128-3:2022 md.4.12 uc parcasi birlikte aranir)
+    URETIM TARAFI BU KARTTA YAPILMADI (butce) — V4-D/kuyruk karti, GECE/V4-B.md.
+
+--- 3d. HAT-1 RAPOR SATIRI (esige BAGLANMAZ)
+    bel             croquis 700.0 mm vs kabuk 725.0000 mm  -> fark 25.0 mm
+    gogus yari-gen  croquis 219.90 mm vs kabuk 229.56 mm  -> fark 9.66 mm
+    Bu satir iki hattin yakinsamasini olculebilir kilar. KAPI DEGIL: kirmizi dusurmez.
+
+--- 4. SIFIR GOLGE / GRADYAN / TINT
+
+--- 6. TEK KONTUR RENGI
+ok    6 renk — tek murekkep #1f3a5f
+
+=== PARITE RAPORU (KAPI DEGIL) — REFERANS KALEM
+    engine/flat-engine/_engine-full.mjs SALT-OKUNUR (Damla emri 2026-07-19).
+    stil sayisi                 31
+    data-scale beyan eden       0/31
+    murekkep renkleri           {#111}  (uretim kalemi: #1f3a5f)
+    cizgi agirliklari           {.65, 1.05, 1.4, 1.5, 1.9}
+    kesik desenleri             {3.5 3}
+    croquis sapmasi (kendi ici, SVG birimi): omuz x 30.40  omuz y 51.30  gogus x 19.90  gogus y 69.60  (n=31)
+    NOT: croquis sapma sayisi GOSTERGE, DOGRULANMADI — referans kalemde askisiz/band
+    stiller var, orada "ilk yerel maksimum" omuz ucu DEGIL band ucu olabilir.
+    -> referans kalem uretim konvansiyonuna UYMUYOR (ayri murekkep, ayri agirlik tablosu,
+       olcek beyani yok). SALT-OKUNUR oldugu icin bu gece DUZELTILMEDI; kirmizi da dusurmuyor.
+
+PASS flat_convention_check — 0 ihlal
+EXIT=0
+
+=== node engine/tests/flat_expresses_spec_check.mjs ===
+flat_expresses_spec_check
+  flat kanunu : contract/flat-convention-v1.json  (ifade gucunu BU tanimlar)
+  kalip sicili: contract/garment-spec-v2.json     (SALT OKUNUR, bosluğu ADLANDIRIR)
+
+--- (A) KOL DEGERLERI AYRISIYOR MU? (olcu: cizen eleman kumesi + kontur uzunlugu)
+    sleeveStyle none    eleman   6  kontur 1917.76u
+    sleeveStyle set     eleman  10  kontur 2705.08u  kalip-boslugu="sleeveStyle=set:sleeve"
+    sleeveStyle raglan  eleman  18  kontur 3497.78u  kalip-boslugu="sleeveStyle=raglan:unknown"
+    sleeveStyle puff    eleman  54  kontur 2996.36u  kalip-boslugu="sleeveStyle=puff:sleeve+gatheredOverlayLayer"
+    sleeveStyle cap     eleman  10  kontur 2354.75u  kalip-boslugu="sleeveStyle=cap:sleeve"
+ok    (A) 'none' != 'set'  (eleman farki 1, kontur farki 787.31u)
+ok    (A) 'none' != 'raglan'  (eleman farki 1, kontur farki 1580.01u)
+ok    (A) 'none' != 'puff'  (eleman farki 1, kontur farki 1078.59u)
+ok    (A) 'none' != 'cap'  (eleman farki 1, kontur farki 436.98u)
+ok    (A) 'set' != 'raglan'  (eleman farki 1, kontur farki 792.70u)
+ok    (A) 'set' != 'puff'  (eleman farki 1, kontur farki 291.28u)
+ok    (A) 'set' != 'cap'  (eleman farki 1, kontur farki 350.33u)
+ok    (A) 'raglan' != 'puff'  (eleman farki 1, kontur farki 501.42u)
+ok    (A) 'raglan' != 'cap'  (eleman farki 1, kontur farki 1143.03u)
+ok    (A) 'puff' != 'cap'  (eleman farki 1, kontur farki 641.61u)
+
+--- (B) KALIP BOSLUGU ADLANDIRILIYOR MU? (sicil: garment-spec-v2 operators)
+ok    (B) sleeve 'setIn' -> sleeveStyle=set:sleeve
+ok    (B) sleeve 'puff' -> sleeveStyle=puff:sleeve+gatheredOverlayLayer
+ok    (B) sleeve 'cap' -> sleeveStyle=cap:sleeve
+ok    (B) sleeve 'none' sicilde shipped — bosluk yok
+ok    (B) collarType 1 -> collarType=1:collarFamily
+ok    (B) collarType 2 -> collarType=2:collarFamily
+ok    (B) collarType 3 -> collarType=3:collarFamily
+ok    (B) collarType 4 -> collarType=4:collarFamily
+
+--- (C) BUGUN AYRILAMAYAN (KAPI DEGIL, SAYI) ---
+    collarType 1 vs 2: AYNI CIZIM (ayrilamadi)  kontur 2053.59u / 2053.59u
+    collarType 1 vs 3: AYNI CIZIM (ayrilamadi)  kontur 2053.59u / 2053.59u
+    collarType 1 vs 4: farkli  kontur 2053.59u / 2337.96u
+    collarType 2 vs 3: AYNI CIZIM (ayrilamadi)  kontur 2053.59u / 2053.59u
+    collarType 2 vs 4: farkli  kontur 2053.59u / 2337.96u
+    collarType 3 vs 4: farkli  kontur 2053.59u / 2337.96u
+    sleeveStyle 'straight' vs 'set': AYNI CIZIM (ayrilamadi)
+    -> yaka ailesi (peterPan/stand/shirt) ve 'straight' AYRILMADI. Sebep: olculmus kanun yok,
+       sayi uydurmak yasak. Kuyruk kalemi olarak GECE/V4-B.md icinde yaziyor.
+
+flat_expresses_spec_check: 0 FAIL
+EXIT=0
+
+=== node engine/tests/flat_geometry_sellable_check.mjs ===
+=== ETSY KAPISI / GEOMETRİ — üretim kalemi, 5 stil
+    kanun : contract/flat-convention-v1.json  unitMM=3
+    ölçüt : Buğra Locket EU38 Arka Beden — {"shoulder":0.957,"chest":1,"waist":0.7683,"hem":0.8745}
+    kaynak: patterns_real/geometry/geometry-full
+
+--- S1/S2/S3 YAN DİKİŞ PROFİLİ (çizilen silüetten ölçüldü)
+    stil/görünüm                  omuz/göğüs  bel/göğüs  etek/göğüs
+    locket_puff_top/front             0.9559     0.7954      0.8590
+    locket_puff_top/back              0.9559     0.7954      0.8590
+    crew_sleeved_top/front            0.9559     0.7954      0.9400
+    crew_sleeved_top/back             0.9559     0.7954      0.9400
+    scoop_tunic_placket/front         0.9564     0.7954      1.0477
+    scoop_tunic_placket/back          0.9564     0.7954      1.0477
+    sweetheart_crop_top/front         0.9564     0.7954      0.8590
+    sweetheart_crop_top/back          0.9564     0.7954      0.8590
+    princess_scoop_dress/front        0.9564     0.7954      1.2578
+    princess_scoop_dress/back         0.9564     0.7954      1.2578
+
+--- S2b ETEK MERDİVENİ (boy arttıkça etek genişler)
+    crop 0.8590  <  hip 0.9400  <  tunic 1.0477
+ok    S2/S3 — on panelde yan dikiş profili giysi gibi, etek merdiveni monoton
+
+--- S1 OMUZ UCU BÜSTÜN İÇİNDE Mİ? (AÇIK KALEM — KAPI DEĞİL, K-FE-1)
+    ihlal yok.
+
+--- S4 KOL OYUĞU İÇBÜKEY
+ok    S4 — oyuk hiçbir panelde kendi uçlarının dışına taşmıyor (tavan 73.333u)
+
+--- S5/S6 KOL  (uç özdeşliği toleransı 0.15 mm = kalemin yarım yazı adımı)
+    locket_puff_top/front        puff: en geniş 396.6 mm · et 341.3 mm · oran 0.8606
+    locket_puff_top/back         puff: en geniş 396.6 mm · et 341.3 mm · oran 0.8606
+ok    S5/S6 — 4 kollu panel uçlarını gövdeyle paylaşıyor, 2 puff eti toplanmış
+
+=== PARİTE RAPORU (KAPI DEĞİL) — Buğra Locket EU38 vs bizim locket flat
+    omuz     bizim 0.9559   Buğra 0.9570   fark -0.11 puan
+    göğüs    bizim 1.0000   Buğra 1.0000   fark 0.00 puan
+    bel      bizim 0.7954   Buğra 0.7683   fark 2.71 puan
+    etek     bizim 0.8590   Buğra 0.8745   fark -1.55 puan
+    NOT: etek satırı BOY’a bağlıdır (Buğra’nın eteği belden 124.2 mm aşağıda,
+         bizim crop 72 mm) — sayı eşitlenmez, YÖN eşitlenir. Kapı oranı değil
+         "üst büstten geniş olamaz" eşitsizliğini tutuyor.
+    NOT: Buğra’nın KENDİ beden çizelgesi EU38 = büst 920 / bel 720 / kalça 980 mm;
+         burda EU38 = 880 / 700 / 940. Buğra’nın 38’i burda’nın 40’ı. Bu yüzden
+         MUTLAK mm değil, sadece ORAN ölçüt olarak kullanıldı.
+
+PASS flat_geometry_sellable_check — 0 ihlal · tolerans 2 mm
+EXIT=0
