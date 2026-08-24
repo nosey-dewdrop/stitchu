@@ -1,0 +1,25 @@
+=== V5-E REDDIFF — kırmızı AD kümesi farkı (kart V5-E md.6)
+faz-öncesi: GECE/log/V5.ctest.opening.txt   (6 failed / 111 test, 302.32 sn)
+faz-sonrası: GECE/log/V5-E.ctest.after.txt  (6 failed / 113 test, 330.62 sn)
+komut: ctest --test-dir engine/build --output-on-failure
+
+--- ÖNCE (6)
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+--- SONRA (6)
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+--- DIFF (boş olmalı)
+(BOŞ — kırmızı AD kümesi BİREBİR AYNI, yeni kırmızı ad YOK)
+
+--- TEST SAYISI: 111 -> 113  (+sewability_check, +draft_math_check; ikisi de YEŞİL)
+ 10/114 Test  #10: sewability_check .................   Passed    0.13 sec
+ 11/114 Test  #11: draft_math_check .................   Passed    0.11 sec

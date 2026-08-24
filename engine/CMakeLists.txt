@@ -130,6 +130,16 @@ add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_D
 # UNMEASURED olarak sayılır ve kapıyı düşürür.
 add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs)
 
+# sewability_check (V5-A) ve draft_math_check (V5-D), ctest'e V5-E'de BAĞLANDI.
+# İkisi de RATCHET'li: eşikler (Aldrich/Threads bantları, çentik kesim-çizgisi
+# kuralı, Hopf Umlaufsatz, ANSUR II zarfı) DEĞİŞMEDİ ve her ihlal ADIYLA
+# basılmaya devam ediyor; exit kodu "ihlal = 0" yerine "ihlal ≤ bugünkü ölçülmüş
+# tavan"a bağlı. Tavanlar elle yazılmaz, tek kaynak:
+# engine/tests/v5-ratchet-baseline.json (künye + ölçüm tarihi + basan komut).
+# Gerekçe: bağlanmayan kapı çürür; kırmızı AD eklemek RULES 9 ihlali olurdu.
+add_test(NAME sewability_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/sewability_check.mjs)
+add_test(NAME draft_math_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/draft_math_check.mjs)
+
 # flat_artifact_census (V3-C kanat (b)+(c), 2026-08-24): shell-flat konturunda
 # dört artefakt sınıfını SAYAR ve her birini kaynak satırına + tek cümlelik kök
 # çözüme bağlar: tırtıklı kenar · kendini kesen kontur (global overlap) · C1

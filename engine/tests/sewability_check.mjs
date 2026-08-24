@@ -75,6 +75,19 @@
 //     V5A_MUTATE   — kasıtlı bozma: `notch-off` | `selfcross` | `notch-deep`
 //     V5A_SIZES    — virgüllü beden listesi (varsayılan sekiz bedenin hepsi)
 //
+// ═══ RATCHET (kart V5-E, 2026-08-25) — EŞİK GEVŞETME DEĞİL ══════════════════
+//   Bu kapı ctest'e BAĞLI. Bağlanmayan kapı çürür; bağlamanın tek dürüst yolu,
+//   bugünkü ihlal sayısını TAVAN yapmaktı — çünkü ihlallerin kökü (çentiklerin
+//   parça sınırından bağımsız bir x'e basılması) `engine/src/` altında ve V5-A
+//   kartı kaynağa dokunmayı yasaklıyordu.
+//   ★ DEĞİŞMEYEN: yukarıdaki [E1]..[E4] eşiklerinin HİÇBİRİ oynatılmadı ve her
+//     ihlal aşağıda ADIYLA basılmaya devam ediyor (İHLAL DÖKÜMÜ bölümü).
+//   ★ DEĞİŞEN: exit kodu artık "ihlal = 0"a değil, "ihlal ≤ tavan"a bağlı.
+//   Tavanlar ELLE YAZILMAZ, `engine/tests/v5-ratchet-baseline.json`'dan okunur;
+//   her tavanın künyesi, ölçüm tarihi ve onu basan komut o dosyada.
+//   Emsal: `flat_pattern_agree_check.mjs` UNMEASURED_RATCHET ·
+//          `flat_expresses_spec_check.mjs` UNEXPRESSED · `vocab_reference_check.sh`.
+//
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
@@ -94,6 +107,7 @@ const SHOULDER_CIRC_MM = { p5: 944, p50: 1027, p95: 1119 }; // [E4] ANSUR II kad
 const ENGINE_PATH = process.env.V5A_ENGINE || join(root, 'web/vendor/stitchu-engine.js');
 const MUTATE = process.env.V5A_MUTATE || '';
 
+const BASELINE_PATH = join(here, 'v5-ratchet-baseline.json');
 const CHART = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8')).draft.euSizeChart;
 const SHIPPED_SIZES = JSON.parse(readFileSync(join(root, 'contract/layers/size-table.json'), 'utf8')).sizes;
 const SIZES = (process.env.V5A_SIZES ? process.env.V5A_SIZES.split(',') : SHIPPED_SIZES).map((s) => s.trim());
@@ -260,6 +274,7 @@ function mutate(pattern) {
 // ─── ÖLÇÜM ─────────────────────────────────────────────────────────────────
 const T = {
   pieces: 0, drafts: 0, seamGraphFields: 0,
+  engineErrors: 0,
   marks: 0, notches: 0, notchOffBoundary: 0, notchTooDeep: 0, notchPieces: 0,
   markOverSA: 0, markFarFromEdge: 0, maxFarMM: 0,
   contours: 0, unclosed: 0, selfCross: 0,
@@ -273,7 +288,7 @@ const HEAD_PROMISE = /head circumference|slip over your head/i;
 for (const { id, spec } of SPECS) {
   for (const size of SIZES) {
     const out = JSON.parse(engine.draftJSON({ ...BASE, ...spec }, bodyOf(size)));
-    if (out.error) { FAIL(`[draft] ${id} ${size}: motor hata: ${out.error}`); continue; }
+    if (out.error) { T.engineErrors += 1; FAIL(`[draft] ${id} ${size}: motor hata: ${out.error}`); continue; }
     const pat = out.pattern;
     T.drafts += 1;
     if (MUTATE) { const m = mutate(pat); if (T.drafts === 1) console.log(`    ⚠ MUTASYON UYGULANDI → ${m}`); }
@@ -430,5 +445,31 @@ if (T.offenders.length) {
 }
 const absentCount = 7; // madde 1, 2(çift), 2(tür alanı), 5(halka), 5(donanım boyu), 6, 7
 console.log(`\nABSENT sayısı: ${absentCount} — hiçbiri kapıyı YEŞİL YAPMAK için kullanılmadı, altısı da adıyla yukarıda.`);
-console.log(`${fails === 0 ? 'PASS' : 'FAIL'} sewability_check — ${fails} ihlal`);
-process.exit(fails === 0 ? 0 : 1);
+console.log(`ADIYLA basılan ihlal satırı: ${fails} · adıyla basılan ihlal kalemi: ${T.offenders.length}`);
+
+// ═══ RATCHET HÜKMÜ ═════════════════════════════════════════════════════════
+// Yukarıdaki hiçbir satır bu bölüm yüzünden kısalmadı/gizlenmedi. Burada YALNIZ
+// exit kodu belirleniyor: tavan = bugünün ölçülmüş DÜRÜST sayısı, tavan yalnız düşer.
+const RBFILE = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+const RB = RBFILE.kapilar.sewability_check;
+const MEASURED = {
+  notch_off_boundary: T.notchOffBoundary,
+  mark_over_seam_allowance: T.markOverSA,
+  mark_far_from_edge: T.markFarFromEdge,
+  unclosed_contour: T.unclosed,
+  self_intersection: T.selfCross,
+  turn_out_of_band: T.turnBad,
+  engine_error: T.engineErrors,
+};
+console.log(`\n--- RATCHET (tavan dosyası: engine/tests/v5-ratchet-baseline.json · ölçüm ${RBFILE.olcumTarihi}, ağaç ${RBFILE.olcumAgaci})`);
+let broken = 0, lowered = 0;
+for (const [name, measured] of Object.entries(MEASURED)) {
+  const ceil = RB.tavanlar[name];
+  if (ceil === undefined) { console.log(`FAIL  RATCHET TABANI EKSİK — '${name}' için tavan yok`); broken += 1; continue; }
+  console.log(`    ${String(name).padEnd(26)} ölçülen ${String(measured).padStart(6)}   tavan ${String(ceil).padStart(6)}`);
+  if (measured > ceil) { console.log(`FAIL  RATCHET KIRILDI — ${name}: ${measured} > tavan ${ceil}`); broken += 1; }
+  else if (measured < ceil) { console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${measured}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); lowered += 1; }
+}
+if (lowered) console.log(`    ${lowered} kalemde tavan düşürülebilir; kapı YEŞİL kalır, dosya kendiliğinden güncellenmez.`);
+console.log(`\n${broken === 0 ? 'PASS' : 'FAIL'} sewability_check — RATCHET: ${broken} tavan aşımı · adıyla basılan ihlal kalemi ${T.offenders.length}`);
+process.exit(broken === 0 ? 0 : 1);

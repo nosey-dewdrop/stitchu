@@ -134,21 +134,23 @@ const EASE_BANDS = {
 };
 
 // ---------------------------------------------------------------------------
-// RATCHET TAVANLARI (mm) — YAYIN DEĞİL, EV KARARI. Bugün ölçülen en kötü
-// sapma, 8 bedende. Basan komut:  node engine/tests/draft_math_check.mjs
-// (tavanı aşan bir sapma KIRMIZI düşer; tavan yalnız İNDİRİLEBİLİR ve
-// indirmek ayrı, bilinçli bir commit'tir).
+// RATCHET TAVANLARI — YAYIN DEĞİL, EV KARARI. Bugün ölçülen en kötü sapma,
+// 8 bedende. Basan komut:  node engine/tests/draft_math_check.mjs
+// ★ TAVANLAR ELLE YAZILMAZ (kart V5-E): tek kaynak
+//   `engine/tests/v5-ratchet-baseline.json` — her tavanın künyesi, ölçüm tarihi
+//   ve onu basan komut orada. Emsal: engine/tests/vocab-reference-baseline.json.
+// ★ EŞİK GEVŞETME DEĞİL: Aldrich tabloları, Threads/Aldrich ease bantları ve
+//   her GEÇTİ/KALDI satırı AYNEN duruyor ve ADIYLA basılıyor. Değişen tek şey
+//   exit kodunun bağlandığı yer: "ihlal = 0" yerine "ihlal ≤ ölçülmüş tavan".
+//   Tavanı aşan KIRMIZI düşer; tavanın altına düşülürse "TAVAN DÜŞÜRÜLEBİLİR"
+//   uyarısı basılır ve indirmek ayrı, bilinçli bir commit'tir.
 // ---------------------------------------------------------------------------
-const RATCHET = {
-  scye_depth:           11.4000,  // 2026-08-25 ölçüldü, 8 beden, en kötü EU34
-  shoulder_width_front:  8.298841,  // en kötü EU46
-  shoulder_width_back:  18.182277,  // en kötü EU46
-  back_neck_drop:        8.4000,  // en kötü EU48
-};
-// ÖLÇÜLEMEYEN (UNMEASURABLE) tavanı: bu hatta 0. surface-pattern hattındaki
-// STRAPLESS boşluğu (V5-Z §5) BU hattı bağlamıyor — draftJSON omuz dikişi,
-// kol oyuğu ve ense oyuntusunu taşıyor, ölçüldü. Sayı yalnız düşebilir.
-const UNMEASURABLE_RATCHET = 0;
+const RBFILE = JSON.parse(readFileSync(join(here, 'v5-ratchet-baseline.json'), 'utf8'));
+const RB = RBFILE.kapilar.draft_math_check;
+const RATCHET = RB.sapmaTavaniMM;
+const BAND_RATCHET = RB.bantDisiTavani;
+const UNMEASURABLE_RATCHET = RB.digerTavanlar.unmeasurable;
+const ENGINE_ERROR_RATCHET = RB.digerTavanlar.engine_error;
 
 // ---------------------------------------------------------------------------
 // MOTOR
@@ -304,7 +306,9 @@ function measure(size) {
 // YARGI
 // ---------------------------------------------------------------------------
 const worst = { scye_depth: 0, shoulder_width_front: 0, shoulder_width_back: 0, back_neck_drop: 0 };
+const bandOut = { bust_ease: 0, waist_ease: 0, hip_ease: 0 };
 let unmeasurable = 0;
+let engineErrors = 0;
 const tally = { GECTI: 0, KALDI: 0, KAYNAKSIZ: 0 };
 
 const W = (s, n) => String(s).padStart(n);
@@ -313,8 +317,8 @@ const L = (s, n) => String(s).padEnd(n);
 for (const size of SIZES) {
   let r;
   try { r = measure(size); }
-  catch (e) { FAIL(`${size}: motor çöktü — ${e.message}`); continue; }
-  if (r.err) { FAIL(`${size}: ${r.err}`); continue; }
+  catch (e) { engineErrors += 1; FAIL(`${size}: motor çöktü — ${e.message}`); continue; }
+  if (r.err) { engineErrors += 1; FAIL(`${size}: ${r.err}`); continue; }
   const { body, m } = r;
   const ald = ALDRICH_P11[body.bust];
 
@@ -363,21 +367,42 @@ for (const size of SIZES) {
     const inb = m[name] >= b.lo - 1e-9 && m[name] <= b.hi + 1e-9;
     console.log(`    ${L(name, 24)} ${W(m[name].toFixed(4), 11)} ${W(`${b.lo}..${b.hi}`, 11)} ${W('', 10)}  ${L(inb ? 'GEÇTİ' : 'KALDI', 10)} ${b.cite}`);
     if (inb) tally.GECTI += 1;
-    else { tally.KALDI += 1; FAIL(`${size} ${name}: ${m[name].toFixed(4)}mm yayınlanmış bant [${b.lo}, ${b.hi}]mm DIŞINDA — ${b.cite}`); }
+    else { tally.KALDI += 1; bandOut[name] += 1; FAIL(`${size} ${name}: ${m[name].toFixed(4)}mm yayınlanmış bant [${b.lo}, ${b.hi}]mm DIŞINDA — ${b.cite}`); }
   }
 }
 
 // ---------------------------------------------------------------------------
-console.log('\n--- RATCHET (tolerans yayınlanmamış kalemler; tavan EV KARARI, yalnız düşebilir)');
+console.log(`    yargı sayımı: GEÇTİ ${tally.GECTI} · KALDI ${tally.KALDI} · KAYNAKSIZ ${tally.KAYNAKSIZ}`);
+const namedFails = fails;
+console.log(`ADIYLA basılan ihlal satırı: ${namedFails}`);
+
+// ═══ RATCHET HÜKMÜ ═════════════════════════════════════════════════════════
+// Yukarıdaki hiçbir satır bu bölüm yüzünden kısalmadı/gizlenmedi: her beden,
+// her kalem, her GEÇTİ/KALDI ve her KALDI'nın FAIL satırı adıyla basıldı.
+// Burada YALNIZ exit kodu belirleniyor.
+console.log(`\n--- RATCHET (tavan dosyası: engine/tests/v5-ratchet-baseline.json · ölçüm ${RBFILE.olcumTarihi}, ağaç ${RBFILE.olcumAgaci})`);
+console.log('    (a) NOKTA-DEĞERLİ KALEMLER — tolerans YAYINLANMAMIŞ (V5-R §A), sapma dondurulmuş');
+let broken = 0, lowered = 0;
 for (const [name, ceil] of Object.entries(RATCHET)) {
   const w = worst[name];
   console.log(`    ${L(name, 24)} en kötü |sapma| ${W(w.toFixed(4), 10)} mm   tavan ${W(ceil.toFixed(2), 8)} mm`);
-  if (w > ceil + 1e-9) FAIL(`RATCHET KIRILDI — ${name}: en kötü sapma ${w.toFixed(4)}mm > tavan ${ceil.toFixed(2)}mm`);
-  else if (w < ceil - 1e-9) OK(`${name} — sapma tavanın altında (${w.toFixed(4)} < ${ceil.toFixed(2)}). Tavanı indirmek AYRI ve BİLİNÇLİ bir commit'tir.`);
+  if (w > ceil + 1e-9) { broken += 1; FAIL(`RATCHET KIRILDI — ${name}: en kötü sapma ${w.toFixed(4)}mm > tavan ${ceil.toFixed(2)}mm`); }
+  else if (w < ceil - 1e-9) { lowered += 1; console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${w.toFixed(6)}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); }
 }
-console.log(`\n    UNMEASURABLE sayısı: ${unmeasurable}  (RATCHET tavanı ${UNMEASURABLE_RATCHET})`);
-if (unmeasurable > UNMEASURABLE_RATCHET) FAIL(`UNMEASURABLE ${unmeasurable} > ${UNMEASURABLE_RATCHET} — ölçülemeyen sayısı ARTTI`);
-console.log(`    yargı sayımı: GEÇTİ ${tally.GECTI} · KALDI ${tally.KALDI} · KAYNAKSIZ ${tally.KAYNAKSIZ}`);
+console.log('    (b) YAYINLANMIŞ BANT KALEMLERİ — bant DEĞİŞMEDİ, bant DIŞI BEDEN SAYISI tavanlandı');
+for (const [name, ceil] of Object.entries(BAND_RATCHET)) {
+  const n = bandOut[name];
+  const b = EASE_BANDS[name];
+  console.log(`    ${L(name, 24)} bant dışı beden ${W(n, 10)}/${SIZES.length}   tavan ${W(ceil, 8)}   bant ${b.lo}..${b.hi}mm`);
+  if (n > ceil) { broken += 1; FAIL(`RATCHET KIRILDI — ${name}: bant dışı ${n} > tavan ${ceil} (bant ${b.lo}..${b.hi}mm, künye: ${b.cite})`); }
+  else if (n < ceil) { lowered += 1; console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${n}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); }
+}
+console.log('    (c) DİĞER');
+console.log(`    ${L('unmeasurable', 24)} ${W(unmeasurable, 10)}      tavan ${W(UNMEASURABLE_RATCHET, 8)}`);
+if (unmeasurable > UNMEASURABLE_RATCHET) { broken += 1; FAIL(`RATCHET KIRILDI — UNMEASURABLE ${unmeasurable} > ${UNMEASURABLE_RATCHET} — ölçülemeyen sayısı ARTTI`); }
+console.log(`    ${L('engine_error', 24)} ${W(engineErrors, 10)}      tavan ${W(ENGINE_ERROR_RATCHET, 8)}`);
+if (engineErrors > ENGINE_ERROR_RATCHET) { broken += 1; FAIL(`RATCHET KIRILDI — engine_error ${engineErrors} > ${ENGINE_ERROR_RATCHET}`); }
+if (lowered) console.log(`    ${lowered} kalemde tavan düşürülebilir; kapı YEŞİL kalır, taban dosyası kendiliğinden güncellenmez.`);
 
-console.log(`\n${fails === 0 ? 'PASS' : 'FAIL'} draft_math_check — ${fails} ihlal`);
-process.exit(fails === 0 ? 0 : 1);
+console.log(`\n${broken === 0 ? 'PASS' : 'FAIL'} draft_math_check — RATCHET: ${broken} tavan aşımı · adıyla basılan ihlal satırı ${namedFails}`);
+process.exit(broken === 0 ? 0 : 1);

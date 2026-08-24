@@ -1,0 +1,68 @@
+{
+  "_baslik": "V5 RATCHET TABANI — iki kapinin (sewability_check, draft_math_check) TAVAN dosyasi. Tavan = BUGUN OLCULEN durust ihlal sayisi. Sayi YALNIZ DUSEBILIR; artiran commit KIRMIZI duser. Emsal: engine/tests/vocab-reference-baseline.json.",
+  "_yasa": [
+    "ESIK DEGISMEDI. Aldrich/Threads bantlari, centik kesim-cizgisi kurali, Hopf Umlaufsatz bandi, ANSUR II zarfi — hepsi kapi dosyalarinda AYNEN duruyor ve her ihlal ADIYLA basilmaya devam ediyor. Degisen tek sey EXIT KODU'nun neye baglandigi: 'ihlal = 0' yerine 'ihlal <= bugunku olculmus tavan'.",
+    "RATCHET SAYIYI tavanlar, ALANI DEGIL. Ihlal listesi kisaltilmaz, gizlenmez, sayiya indirgenmez. Kapinin ekrana bastigi her satir ratchet'ten ONCE ve ratchet'ten BAGIMSIZ olarak basilir.",
+    "Tavan ELLE BUYUTULEMEZ. Bir kalem tavani asiyorsa cevap tavani yukseltmek degil, kusuru duzeltmektir. Tavanin ALTINA dusuldugunde kapi YESIL kalir ve 'TAVAN DUSURULEBILIR: X -> Y' uyarisi basar; dususu bu dosyaya islemek AYRI ve BILINCLI bir commit'tir.",
+    "Bu tavanlarin HICBIRI bir YAYIN degildir. Yayin yoklugunun kaniti GECE/V5-R.md §A: apparel kalip toleransi icin ASTM/ISO/Handford/Joseph-Armstrong/Cooklin/Gerber/Lectra'da dayanak BULUNAMADI. Uydurulmus bir tolerans yazmak yerine BUGUNKU OLCUM donduruldu.",
+    "Ratchet ISIRIYOR mu — olculdu (GECE/log/V5-A.mutasyon.txt, GECE/log/V5-D.mutasyon.txt ve GECE/log/V5-E.mutasyon.txt): sewability notch-off mutasyonu 211 -> 216, selfcross 0 -> 44, notch-deep 32 -> 45; draft_math scye_depth:+5 11.4 -> 16.4mm, shoulder_width_back:-5 18.18 -> 23.18mm, bust_ease:-5 bant disi 4 -> 5. Hepsi tavani asiyor, yani kapi sus DEGIL."
+  ],
+  "olcumTarihi": "2026-08-25",
+  "olcumAgaci": "d566a8a (V5-A ve V5-D kapilarinin banklandigi commit)",
+  "kapilar": {
+    "sewability_check": {
+      "dosya": "engine/tests/sewability_check.mjs",
+      "basanKomut": "node engine/tests/sewability_check.mjs",
+      "olcumZemini": "16 draft (2 sevk edilen spec x 8 beden EU34..EU48), 112 parca, 96 kapali kontur; motor web/vendor/stitchu-engine.js",
+      "tavanlar": {
+        "notch_off_boundary": 211,
+        "mark_over_seam_allowance": 32,
+        "mark_far_from_edge": 342,
+        "unclosed_contour": 0,
+        "self_intersection": 0,
+        "turn_out_of_band": 0,
+        "engine_error": 0
+      },
+      "tavanKunyesi": {
+        "notch_off_boundary": "[E1 0.79375mm] Tabani kesim cizgisinde OLMAYAN kenar centigi. Kok teshis GECE/V5-A.md §KOK: centik isaretleri parcanin kendi sinirindan bagimsiz bir x'e basiliyor, sapma bedenle BUYUYOR (EU34 28.83mm -> EU48 78.93mm). Olculmus cozum adayi: centigi kesim cizgisi uzerindeki en yakin noktadan baslat -> sayac insaat geregi 211 -> 0 olur. Kaynak degistirmek bu kartin disindaydi.",
+        "mark_over_seam_allowance": "[E2] Uzunlugu dikis payindan (bugun 15mm) BUYUK isaret: ya katlama/ic cizgi ya seam blowout. Artefaktta TUR ALANI YOK, o yuzden ayrilamiyor; ayrilamayan SAYILIYOR ve tavanlaniyor.",
+        "mark_far_from_edge": "[E2b] Her kenardan dikis payindan uzak duran isaret (en uzagi 78.93mm): ya IC isaret ya HAVADA duran centik. Ayni TUR ALANI boslugu. 342'nin izdusumle kurtarilamayacagi V5-A.md §KOK'te olculdu.",
+        "unclosed_contour": "Bugun SIFIR. Kapali kontur bir kalibin tanimidir; bu kalem asla artmamali.",
+        "self_intersection": "Bugun SIFIR. selfcross mutasyonu 44 gercek kesisme basiyor -> ratchet isiriyor.",
+        "turn_out_of_band": "[E3 Hopf Umlaufsatz, +-1 derece] Bugun SIFIR, max |toplam donme - 360| = 0.0000 derece.",
+        "engine_error": "draftJSON'in hata dondurdugu kombinasyon sayisi. Bugun SIFIR; motorun sevk ettigi bir kalibin cizilememesi ratchet'lenecek bir sey degil, dogrudan kirmizidir."
+      }
+    },
+    "draft_math_check": {
+      "dosya": "engine/tests/draft_math_check.mjs",
+      "basanKomut": "node engine/tests/draft_math_check.mjs",
+      "olcumZemini": "8 beden EU34..EU48, tek sevk edilen ana kalip (bugra-parity.mjs:63 ile ayni temel spec); motor web/vendor/stitchu-engine.js",
+      "sapmaTavaniMM": {
+        "scye_depth": 11.4,
+        "shoulder_width_front": 8.298840316324,
+        "shoulder_width_back": 18.182276104732,
+        "back_neck_drop": 8.4
+      },
+      "bantDisiTavani": {
+        "bust_ease": 4,
+        "waist_ease": 0,
+        "hip_ease": 8
+      },
+      "digerTavanlar": {
+        "unmeasurable": 0,
+        "engine_error": 0
+      },
+      "tavanKunyesi": {
+        "scye_depth": "En kotu |sapma| EU34, motor DERIN ciziyor. Beklenen: Aldrich 4.bs s.11 tablosu + s.14 'plus 0.5 cm'. Tolerans YAYIN YOK -> ratchet.",
+        "shoulder_width_front": "En kotu EU46, motor KISA ciziyor. Beklenen: Aldrich s.11 tablosu, on blokta EKLEME YOK (s.14). Bozan yon EKSI (V5-D.mutasyon.txt).",
+        "shoulder_width_back": "En kotu EU46, motor KISA ciziyor. Beklenen: Aldrich s.11 tablosu + s.14 arka 'plus 1 cm'. Bozan yon EKSI.",
+        "back_neck_drop": "En kotu EU48. Aldrich s.14/16 butun bedenlerde SABIT 1.5cm der; motorunki 0.6 x yakaCM ile GRADUATE ediliyor (20.4 -> 23.4mm) — bu bir SINIF hatasi, sayi degil, ve tavan onu gizlemiyor: satir her kosuda basiliyor.",
+        "bust_ease": "Threads #221 s.71 MINIMUM EASE (63.5mm) .. FIT AND EASE 'Fitted' (101.6mm) bandinin DISINDA kalan beden sayisi. Bugun 4/8 (EU34/36/38/40). Olculmus duzeltme: govde girdisi +1.5cm karsiligi +16.65mm halka -> 8/8 bantta (GECE/V5-D.md).",
+        "waist_ease": "Bugun SIFIR: 8/8 beden yayinlanmis bandin (25.4..60.0mm) icinde. ⚠ Bu bant +-5mm mutasyonu YAKALAYAMAYACAK kadar genis (olculdu: yakalandigi esik +20mm); bant YAYINDAN geldigi icin DARALTILMADI.",
+        "hip_ease": "Threads #221 s.71 MINIMUM EASE kalca 2-3 in (50.8..76.2mm) bandinin DISINDA kalan beden sayisi. Bugun 8/8: olculen pay 17.2-23.2mm, yani yayinlanmis minimumun UCTE BIRI. Kok: motorun payi CARPIMSAL (kalca payi / kalcaCM = 0.2000, 8 bedende bit-sabit), yayinlanmis bant TOPLAMSAL. Olculmus duzeltme: kalca +3.5..+5.0cm.",
+        "unmeasurable": "Olculemeyen kalem sayisi. Bugun SIFIR — draftJSON hatti omuz dikisi, kol oyugu ve yakayi TASIYOR (surface-pattern hattinin STRAPLESS boslugu BU hatti baglamiyor).",
+        "engine_error": "draftJSON'in cokme/hata dondurme sayisi. Bugun SIFIR."
+      }
+    }
+  }
+}
