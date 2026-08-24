@@ -103,6 +103,17 @@ add_test(NAME bundle_fresh_check
 # ön+arka · tek kontur rengi. Kanun: contract/flat-convention-v1.json.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
 
+# flat_expresses_spec_check (V4-B, 2026-08-24): konvansiyon "hepsi aynı MANKEN"
+# demektir, "hepsi aynı ÇİZİM" değil. Ölçüldü: kalem sleeveStyle set/raglan/puff
+# için BAYT BAYT aynı flat'i, collarType 1/2/3 için de aynısını basıyordu —
+# RULES invariant 1'in yasakladığı sessiz çökertme (emsal: CLAUDE.md, sleeveStyle
+# 'puff' silently dropped, 2026-07-18). Kapsamı contract/garment-spec-v2.json
+# SİCİLİ belirler (salt okunur): `shipped` olan her değer ölçülebilir biçimde
+# FARKLI bir flat üretmek zorunda; olmayan değer ADIYLA reddedilmek VE
+# çizilmemek zorunda. Fark ölçüsü sha değil GEOMETRİ (çizen eleman kümesi +
+# kontur uzunluğu), yargı eşitlik/eşitsizlik — gevşetilecek eşik yok.
+add_test(NAME flat_expresses_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_expresses_spec_check.mjs)
+
 # flat_geometry_sellable_check (F-E, 2026-08-23): "flat ETSY'LİK Mİ" kapısının
 # GEOMETRİ yarısı. F-D konvansiyonu tutar (tek croquis, tek mürekkep, ölçek);
 # bu kapı çizilenin bir GİYSİ gibi davranıp davranmadığını tutar: kol gövdeyle

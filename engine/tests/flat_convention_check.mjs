@@ -314,6 +314,67 @@ for (const cname of Object.keys(CLASSES)) {
 }
 if (used.size === Object.keys(CLASSES).length) OK(`3 hiyerarsi — ${used.size}/${Object.keys(CLASSES).length} sinif beyanli ve kullanilmis: ${[...used].join(', ')}`);
 
+// --- 3b. BEYAN EDILEN ORANLAR OKUNSUN (V4-B) --------------------------------
+// ISO 128-2:2020 md.5.1 izinli kalinlik serisi (0,13 ... 2 mm, ortak oran
+// 1:sqrt(2)) + md.5.2 sapma toleransi +-0,1d. Kaynak kunyesi: GECE/V4-R.md §1.
+// NEDEN VAR: contract/flat-convention-v1.json -> lineClasses.ratios (1.4286 /
+// 1.4 / 2.0) diskte duruyordu ama bu kapi o alani HIC OKUMUYORDU — dogrulanmayan
+// bir beyan. Beyan ile SINIF TABLOSU birbirinden kayarsa kimse fark etmezdi.
+// ESIK: ISO md.5.2 +-0,1d. Iki kalinligin orani icin en kotu hal
+// (0.9a)/(1.1b) ... (1.1a)/(0.9b) = nominal oranin 0.8182x ... 1.2222x araligi.
+console.log('\n--- 3b. CIZGI ORANLARI (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d)');
+const RATIOS = LAW.lineClasses.ratios || {};
+if (!Object.keys(RATIOS).filter((k) => !k.startsWith('_')).length) {
+  FAIL('[3b oran] lineClasses.ratios beyan edilmemis — bos beyan');
+}
+for (const [pair, declared] of Object.entries(RATIOS)) {
+  if (pair.startsWith('_')) continue;
+  const [a, b] = pair.split(':');
+  if (!CLASSES[a] || !CLASSES[b]) { FAIL(`[3b oran] "${pair}" beyan edildi ama siniflardan biri tabloda yok`); continue; }
+  const measured = CLASSES[a].width / CLASSES[b].width;
+  const lo = declared * (0.9 / 1.1), hi = declared * (1.1 / 0.9);
+  const dev = Math.abs(measured - declared) / declared;
+  if (measured < lo || measured > hi) {
+    FAIL(`[3b oran] ${pair}: beyan ${declared} ama tablodan olculen ${measured.toFixed(4)} ` +
+         `(${CLASSES[a].width}/${CLASSES[b].width}), ISO md.5.2 bandi [${lo.toFixed(4)}, ${hi.toFixed(4)}] disinda`);
+  } else {
+    OK(`3b oran — ${pair}: beyan ${declared} == olculen ${measured.toFixed(4)} (sapma %${(dev * 100).toFixed(2)}, ISO md.5.2 tavani %22.22)`);
+  }
+}
+
+// --- 3c. DETAY CALLOUT SAYIMI (KAPI DEGIL, SAYI) ---------------------------
+// ISO 128-3:2022 md.4.12 mekanigi (GECE/V4-R.md §3): bir detay callout'u KAPALI
+// INCE SUREKLI bir sinir + TEK BUYUK HARF etiketi + `HARF (n:1)` olcek beyani
+// ile kurulur. Bu kapi bugun yalnizca SAYIYOR; uretim tarafi V4-D/kuyruk karti.
+console.log('\n--- 3c. DETAY CALLOUT (bugun SAYI, kapi degil)');
+let calloutLetters = 0, calloutScales = 0;
+for (const [, , svg] of rendered) {
+  for (const m of svg.matchAll(/<text\b[^>]*>([^<]*)<\/text>/g)) {
+    const t = m[1].trim();
+    if (/^[A-Z]$/.test(t)) calloutLetters += 1;
+    if (/^[A-Z]\s*\(\s*\d+\s*:\s*\d+\s*\)$/.test(t)) calloutScales += 1;
+  }
+}
+console.log(`    HAT-2 (uretim kalemi, ${rendered.length} stil): tek-harf etiketi ${calloutLetters} · "HARF (n:1)" olcek beyani ${calloutScales}`);
+console.log(`    -> bugun toplam callout ${Math.min(calloutLetters, calloutScales)} (ISO 128-3:2022 md.4.12 uc parcasi birlikte aranir)`);
+console.log('    URETIM TARAFI BU KARTTA YAPILMADI (butce) — V4-D/kuyruk karti, GECE/V4-B.md.');
+
+// --- 3d. HAT-1 <-> HAT-2 YAKINSAMA (RAPOR SATIRI, ESIGE BAGLI DEGIL) -------
+// GECE/V4-K.md hukmu: kapi HAT-2'yi yargilar, HAT-1 rapor satiri olarak girer.
+// Iki sayi da OLCULDU (GECE/V4-K.md md.214 + md.290-292, GECE/log/V4-K.probe.txt:20,
+// GECE/log/V4-K.hat2.convention.txt:18). Ileride yalniz DUSMESI beklenir.
+console.log('\n--- 3d. HAT-1 RAPOR SATIRI (esige BAGLANMAZ)');
+{
+  const croquisWaistMM = LAW.croquis.landmarks.waistX.u * UNIT * 4;   // yari-genislik -> cevre
+  const shellWaistMM = 725.0000;                                      // shell-flat EU38, V4-K.md:214
+  const croquisChestHalfMM = 219.90;                                  // V4-K.hat2.convention.txt:18
+  const shellChestHalfMM = 229.56;                                    // V4-K.probe.txt:20
+  console.log(`    bel             croquis ${croquisWaistMM.toFixed(1)} mm vs kabuk ${shellWaistMM.toFixed(4)} mm  -> fark ${(shellWaistMM - croquisWaistMM).toFixed(1)} mm`);
+  console.log(`    gogus yari-gen  croquis ${croquisChestHalfMM.toFixed(2)} mm vs kabuk ${shellChestHalfMM.toFixed(2)} mm  -> fark ${(shellChestHalfMM - croquisChestHalfMM).toFixed(2)} mm`);
+  console.log('    Bu satir iki hattin yakinsamasini olculebilir kilar. KAPI DEGIL: kirmizi dusurmez.');
+
+}
+
 // --- 4. SIFIR BOYA ---------------------------------------------------------
 console.log('\n--- 4. SIFIR GOLGE / GRADYAN / TINT');
 const allowFill = new Set(LAW.fillLaw.allowedFills.map((s) => s.toLowerCase()));

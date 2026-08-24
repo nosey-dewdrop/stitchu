@@ -1,0 +1,35 @@
+=== V4-B §4.5 MUTASYON KANITI (2. TUR — gercek onarima karsi) 2026-08-24T15:55:12Z ===
+
+MUTASYON 1: raglan yeniden set'e ESITLENIYOR (topolojik raglan dikisi kaldirildi).
+MUTASYON 2: puff yeniden SADECE sleeveCap===2'den okunuyor (ad ile tetiklenmiyor),
+            yani sleeveStyle 'puff' tekrar sessizce set-in kola dusuyor.
+Beklenen: KAPI KIRMIZI, 'raglan'=='set' ve 'puff'=='set' diye.
+
+$ node engine/tests/flat_expresses_spec_check.mjs
+--- (A) KOL DEGERLERI AYRISIYOR MU? (olcu: cizen eleman kumesi + kontur uzunlugu)
+    sleeveStyle none    eleman   6  kontur 1917.76u
+    sleeveStyle set     eleman  10  kontur 2705.08u  kalip-boslugu="sleeveStyle=set:sleeve"
+    sleeveStyle raglan  eleman  10  kontur 2705.08u  kalip-boslugu="sleeveStyle=raglan:unknown"
+    sleeveStyle puff    eleman  10  kontur 2705.08u  kalip-boslugu="sleeveStyle=puff:sleeve+gatheredOverlayLayer"
+    sleeveStyle cap     eleman  10  kontur 2354.75u  kalip-boslugu="sleeveStyle=cap:sleeve"
+ok    (A) 'none' != 'set'  (eleman farki 1, kontur farki 787.31u)
+ok    (A) 'none' != 'raglan'  (eleman farki 1, kontur farki 787.31u)
+ok    (A) 'none' != 'puff'  (eleman farki 1, kontur farki 787.31u)
+ok    (A) 'none' != 'cap'  (eleman farki 1, kontur farki 436.98u)
+FAIL  (A) 'set' ile 'raglan' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+FAIL  (A) 'set' ile 'puff' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+ok    (A) 'set' != 'cap'  (eleman farki 1, kontur farki 350.33u)
+FAIL  (A) 'raglan' ile 'puff' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+ok    (A) 'raglan' != 'cap'  (eleman farki 1, kontur farki 350.33u)
+ok    (A) 'puff' != 'cap'  (eleman farki 1, kontur farki 350.33u)
+
+--- (B) KALIP BOSLUGU ADLANDIRILIYOR MU? (sicil: garment-spec-v2 operators)
+...(kisaltildi)
+FAIL  (A) 'set' ile 'raglan' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+FAIL  (A) 'set' ile 'puff' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+FAIL  (A) 'raglan' ile 'puff' AYNI flat'i uretiyor (eleman kumesi ozdes, kontur farki 0.00u) — sessiz cokertme
+flat_expresses_spec_check: 3 FAIL
+
+=== GERI ALINDI ===
+$ node engine/tests/flat_expresses_spec_check.mjs
+flat_expresses_spec_check: 0 FAIL

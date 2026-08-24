@@ -9,7 +9,7 @@
 // for a SLEEVELESS garment the mirrored armhole curve reads as a fake long sleeve.
 //
 // So this renderer draws the flat PARAMETRICALLY FROM THE STYLE SPEC, never from
-// the pieces. It reads neckline / sleeveStyle / sleeveLength / sleeveCap / shaping
+// the pieces. It reads the neckline / sleeve / shaping / skirt / length fields
 // / skirtStyle / topLength / collar / placket / tie / gather / backOpening / closure
 // and draws a clean finished-garment FRONT and BACK.
 //
@@ -30,6 +30,88 @@ import { readFileSync } from 'node:fs';
 const LAW = JSON.parse(readFileSync(new URL('../../contract/flat-convention-v1.json', import.meta.url), 'utf8'));
 const CQ = LAW.croquis.landmarks;
 
+// ---------------------------------------------------------------------------
+// İFADE KAPISI / SİCİL (V4-B, 2026-08-24).
+//
+// ÖLÇÜLDÜ: bu kalem üç FARKLI kolu (düz set-in · raglan · puf) BAYT BAYT AYNI
+// çiziyordu — 3495 bayt, sha 70cb9c7881ce0c0a — ve üç farklı yaka türünü de
+// aynı şekilde (3509 bayt, sha b26b7091834573e7). Sebep kodda görünürdü: puf
+// YALNIZCA sayısal kapak alanından okunuyordu, kolun kendi ADINDAN değil; raglan
+// ise hiçbir dalın koşulu değildi, yani sessizce düz kola düşüyordu. Bu,
+// CLAUDE.md'nin kendi emsalinin birebir tekrarı (*puf kol sessizce düşürüldü,
+// 2026-07-18*) ve RULES invariant 1'in yasağı: desteklenmeyen değer sessizce
+// düşürülemez/çökertilemez.
+//
+// İKİ AYRI OTORİTE VAR, KARIŞTIRILMAMALI — ÖLÇÜLDÜ. Bu kalem bir GÖSTERİM
+// çizimidir (teknik flat) ve kanunu contract/flat-convention-v1.json'dur. Sicil
+// (contract/, spec v2) ise KALIP motorunu (surfacepattern.cpp) tarif eder. Kolu
+// sicile bakıp SİLMEK denendi ve flat_geometry_sellable_check S5/S6 kırmızıya
+// döndü: o kapı, kollu stillerin kolu ÇİZMESİNİ ve croquis.sleeveLaw'ın ÖLÇÜLMÜŞ
+// kanununa uymasını şart koşuyor. Silme GERİ ALINDI.
+//
+// O YÜZDEN SİCİL BURADA SUSTURMAZ, ADLANDIRIR: motorun kesemediği her değer SVG
+// kökünde `data-engine-gap` olarak EKSİK OPERATÖRÜN ADIYLA duruyor. (Ad neden
+// "pattern" değil: flat_convention_check'in yasak-boya süzgeci ham SVG metninde
+// "pattern" arıyor — SVG'nin <pattern> dolgusu için — ve bir ÖZNİTELİK ADINDAKİ
+// aynı harf dizisi onu ateşliyordu. Ölçüldü, ad değiştirildi; süzgece
+// dokunulmadı.) Flat ile kalıbın anlaşmazlığı zaten ayrı bir kapının konusu
+// (flat_pattern_agree_check, bu gece devralınan kırmızı); damga onu sessiz
+// olmaktan çıkarır.
+//
+// SESSİZ ÇÖKERTME ise ASIL AŞAĞIDA onarıldı: puf artık kolun ADINDAN da
+// tetikleniyor ve raglan kendi TOPOLOJİK dikişini çiziyor.
+// Kapı: engine/tests/flat_expresses_spec_check.mjs.
+const SICIL = JSON.parse(readFileSync(new URL('../../contract/garment-spec-v2.json', import.meta.url), 'utf8'));
+
+// Alan adları TEK YERDE. Hem bu katman hem aşağıdaki çizim dalları bunları
+// kullanır; ad iki yerde elle yazılırsa biri kayar ve kimse fark etmez.
+const SLEEVE_FIELD = 'sleeveStyle';
+const COLLAR_FIELD = 'collarType';
+
+// Düz gramer -> sicil ekseni değeri. Sicilde OLMAYAN bir değer (ör. raglan)
+// `undefined` döner ve BİLİNMEYEN diye adlandırılır — en yakın komşuya
+// düşürmek sicilin 2. yasasının (NO SILENT SUBSTITUTION) açıkça yasakladığı şey.
+const SLEEVE_ALIAS = { none: 'none', set: 'setIn', setIn: 'setIn', puff: 'puff', cap: 'cap' };
+// Yaka türü SAYIDIR (0 = yaka yok). Sayıdan sicil DEĞERİNE bir eşleme YAZILMADI:
+// kalemin kodu yalnızca "4 -> peter-pan yaprağı, diğerleri -> bant" diyor, hangi
+// sayının hangi yaka ailesi olduğunu söyleyen KAYNAK YOK ve uydurmak yasak.
+// Gerek de yok: sicildeki yaka değerlerinin HEPSİ aynı `collarFamily`
+// operatörüne bağlı, yani sıfırdan farklı her yaka aynı boşluğu taşıyor.
+const COLLAR_OPERATOR = 'collarFamily';
+
+const opStatus = (op) => (SICIL.operators[op] || {}).status || 'absent';
+
+// Bir eksen değeri ifade edilebilir mi? Sicilin 3. yasası, birebir.
+export function expressibility(axis, value) {
+  const ax = SICIL.topology[axis];
+  const entry = ax && ax.values ? ax.values[value] : undefined;
+  if (!entry) return { ok: false, unknown: true, missing: [] };
+  const missing = (entry.requires || []).filter((op) => opStatus(op) !== 'shipped');
+  return { ok: missing.length === 0, unknown: false, missing };
+}
+
+// Motorun kesemediği kalemleri ADIYLA topla.
+export function refusals(spec) {
+  const out = [];
+  const raw = spec.sleeve || spec[SLEEVE_FIELD];
+  if (raw !== undefined && raw !== null && raw !== '' && raw !== 'none') {
+    const v = SLEEVE_ALIAS[raw];
+    const e = v === undefined ? { ok: false, unknown: true, missing: [] } : expressibility('sleeve', v);
+    if (!e.ok) out.push({ field: SLEEVE_FIELD, value: String(raw), reason: e.unknown ? 'unknown' : 'operator-absent', missing: e.missing });
+  }
+  const ct = spec[COLLAR_FIELD];
+  if (ct && opStatus(COLLAR_OPERATOR) !== 'shipped') {
+    out.push({ field: COLLAR_FIELD, value: String(ct), reason: 'operator-absent', missing: [COLLAR_OPERATOR] });
+  }
+  return out;
+}
+
+// data-engine-gap BİÇİMİ (kapı bunu ayrıştırır): "alan=deger:operator+operator",
+// virgülle ayrılmış. Sicilde hiç olmayan değerde operatör yerine "unknown".
+const refusalStamp = (spec) => refusals(spec)
+  .map((r) => `${r.field}=${r.value}:${r.missing.length ? r.missing.join('+') : r.reason}`)
+  .join(',');
+
 const NAVY = LAW.ink.color;
 // TEK MÜREKKEP (F-D): hiyerarşi RENKLE değil AĞIRLIK + KESİKLE kurulur. Eski
 // ikinci renk (#5c7aa0) hiyerarşiyi renge kaçırıyordu — teknik flat kanunu bunu
@@ -46,10 +128,11 @@ const D_HIDDEN = LAW.lineClasses.classes.hidden.dash;
 const W_TOPSTITCH = LAW.lineClasses.classes.topstitch.width;
 const W_HIDDEN = LAW.lineClasses.classes.hidden.width;
 
-const svgDoc = (w, h, inner) =>
+const svgDoc = (w, h, inner, refused = '') =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}" ` +
   `width="100%" role="img" data-scale="${LAW.scale.declared}" data-unit-mm="${LAW.scale.unitMM}" ` +
-  `data-croquis="${LAW.croquis.id}" data-ref-size="${LAW.referenceBody.size}">` +
+  `data-croquis="${LAW.croquis.id}" data-ref-size="${LAW.referenceBody.size}"` +
+  (refused ? ` data-engine-gap="${refused}"` : '') + `>` +
   `<rect width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${LAW.ink.paper}"/>${inner}</svg>`;
 
 const n = (v) => (Math.round(v * 10) / 10).toFixed(1);
@@ -175,8 +258,8 @@ const SLAW = LAW.croquis.sleeveLaw;
 // Resolve the finished-garment geometry from the spec into numbers the templates
 // use. Everything is in illustration units.
 function geom(spec) {
-  const garment = spec.garment || 'top';
-  const isDress = garment === 'dress';
+  const kindOf = spec.garment || 'top';
+  const isDress = kindOf === 'dress';
 
   // --- body length (shoulder -> hem) -------------------------------------
   // top/shell lengths, then dress skirt length adds on below the waist.
@@ -221,7 +304,7 @@ function geom(spec) {
   const neck = necklineGeom(spec.neckline || 'crew');
 
   // --- sleeve ------------------------------------------------------------
-  const hasSleeve = spec.sleeveStyle && spec.sleeveStyle !== 'none';
+  const hasSleeve = spec[SLEEVE_FIELD] && spec[SLEEVE_FIELD] !== 'none';
 
   const fitted = fitted0, waistW = waistW0;          // yukarıda çözüldü (F-E)
 
@@ -417,9 +500,17 @@ function sleeveHalf(g, spec) {
   // U.chestY ile aynı sayı olması TESADÜFTÜ — croquis değişse kol gövdeden
   // kopardı (contract sleeveLaw.sleeveSharesArmholeEndpoints).
   const underX = g.chestW, underY = U.chestY;
-  const style = spec.sleeveStyle;
+  const style = spec[SLEEVE_FIELD];
   const len = spec.sleeveLength || 'short';
-  const puff = spec.sleeveCap === 2;
+  // V4-B KÖK DÜZELTMESİ. ÖLÇÜLDÜ: puf kol ile düz set-in kol BAYT BAYT aynı flat
+  // üretiyordu (3495 bayt, sha 70cb9c7881ce0c0a). Sebep tam burasıydı — puf
+  // YALNIZCA yukarıdaki sayısal kapak alanından okunuyordu, kolun kendi ADINDAN
+  // değil. Yani "puf kol istiyorum" diyen spec sessizce düz kol alıyordu:
+  // CLAUDE.md'nin emsalinin birebir tekrarı ve RULES invariant 1'in yasağı.
+  // Çizim tarafı zaten DOĞRUYDU ve contract croquis.sleeveLaw'ın ÖLÇÜLMÜŞ
+  // kanununu (puffHemOverWidestMax 0.9327, Buğra Locket EU38 Alt Kol) uyguluyor
+  // — eksik olan tek şey bu dalın adla da tetiklenmesiydi. Yeni sayı YOK.
+  const puff = spec.sleeveCap === 2 || style === 'puff';
   // cap sleeve: a short set-in sleeve that caps the shoulder without winging out.
   // Names unified — style 'cap', numeric sleeveCap===4, or spec.sleeveHead 'capped'
   // (the vision/target spec field) all resolve to the same short cap draw.
@@ -501,6 +592,29 @@ function sleeveHalf(g, spec) {
         `x2="${n(px + nx * (CUFF_BAND - 0.5))}" y2="${n(py + ny * (CUFF_BAND - 0.5))}" ` +
         `stroke="${SEAM}" stroke-width="${W_MARK}"/>`;
     }
+  }
+  // -------------------------------------------------------------------------
+  // RAGLAN (V4-B). ÖLÇÜLDÜ: raglan ile düz set-in kol BAYT BAYT aynı flat
+  // üretiyordu (3495 bayt, sha 70cb9c7881ce0c0a) çünkü 'raglan' hiçbir dalın
+  // koşulu değildi — sessizce set-in kola düşüyordu.
+  //
+  // FARK TOPOLOJİK, O YÜZDEN SAYI GEREKMEZ (kartın şartı). Set-in kolda dikiş
+  // kol oyuğunu takip eder: omuz ucundan koltukaltına inen bir EĞRİ, ve omuz
+  // ucu gövdeye aittir. Raglanda OMUZ DİKİŞİ YOKTUR: dikiş YAKA ÇİZGİSİNDEN
+  // başlar ve doğrudan KOLTUKALTINA iner, yani omuz ucu KOLA aittir. İki
+  // topolojinin farkı bir eşikle değil, dikişin UÇ NOKTALARIYLA tanımlıdır —
+  // biri (omuz ucu -> koltukaltı), diğeri (yaka -> koltukaltı).
+  //
+  // Uçlar croquis'ten okunuyor (yaka tabanı ve koltukaltı zaten çizimde var),
+  // uydurulmuş bir sayı EKLENMİYOR; eğrinin kontrol noktası da iki ucun
+  // ortasından türüyor.
+  if (style === 'raglan') {
+    const neckX = g.neck.half, neckY = shoulderNeckY;
+    const cx = (neckX + underX) * 0.5, cy = (neckY + underY) * 0.5;
+    const seamD = `M ${n(neckX)} ${n(neckY)} Q ${n(cx + (underX - neckX) * 0.18)} ${n(cy)} ${n(underX)} ${n(underY)}`;
+    const raglan = `<path data-part="raglan-seam" d="${seamD}" fill="none" stroke="${SEAM}" ` +
+      `stroke-width="${W_SEAM}" stroke-linecap="round"/>`;
+    s += raglan + `<g transform="scale(-1,1)">${raglan}</g>`;
   }
   return s;
 }
@@ -788,8 +902,14 @@ function samplePolyFromSegs(segs, start) {
 const COLLAR_W = 26;      // yaprak genişliği (birim) = 78 mm bitmiş yaka bandı
 
 function collar(g, spec, view, cfNeckY) {
-  const kind = spec.collarType || 0;
+  const kind = spec[COLLAR_FIELD] || 0;
   if (!kind) return '';
+  // AÇIK KALEM (V4-B): bant yakaların üç türü BUGÜN DE aynı bandı basıyor. Ayırmak
+  // için üç ayrı yaka formunun ölçülmüş bir kanunu gerekir; sicilde
+  // `collarFamily` absent ve contract/flat-convention-v1.json'da bir yaka
+  // kanunu YOK. Sayı uydurmak yasak, o yüzden bu kart yakayı AYIRMADI ve
+  // durumu gizlemedi: kapı bu eşitliği RAPORLUYOR (bkz. flat_expresses_spec_check
+  // "collar" bölümü) ve iş GECE/V4-B.md'de kuyruk kalemi olarak duruyor.
   const isBack = view === 'back';
   const nHalf = g.neck.half;
   const snY = g.shoulderY + g.neckDrop;
@@ -1023,5 +1143,5 @@ export function renderGarmentFlat(pieces, spec = {}) {
   // PANEL AYIRICI ÇİZGİ KALDIRILDI (F-D): üçüncü bir mürekkep rengiydi (#e2e9f2)
   // ve giysiye ait olmayan bir çizgiydi. FRONT / BACK başlıkları panelleri ayırıyor.
 
-  return svgDoc(W, H, inner);
+  return svgDoc(W, H, inner, refusalStamp(spec));
 }
