@@ -21,6 +21,12 @@
 #   scripts/repin-style.sh <styleKey> "<beyan etiketi>"
 #   scripts/repin-style.sh --list            pinlenebilir stilleri say
 #   scripts/repin-style.sh --status          hangi stil pinli, hangisi değil
+#                                            + sıradaki komutu hazır yazar
+#
+# KAPSAM: style_check'in hüküm listesi bu script'in listesiyle AYNI kaynaktan
+# gelir (engine/flat-engine/styles.json). Kısmi pin YEŞİL SAYILMAZ — sözlükteki
+# her stil pinlenene kadar kapı kırmızıdır. Yani bu script tek tek koşulur ve
+# --status geri kalanı sayar; "bir tane pinledim, kapı yeşil" diye bir hâl yok.
 #
 # Onaydan sonra yazılanlar (ikisi birden, ayrılamazlar):
 #   engine/STYLE-PIN/<styleKey>.svg          pinin kendisi
@@ -45,18 +51,43 @@ case "${1:-}" in
     exit 0
     ;;
 --status)
-    total=0; pinned=0
+    total=0; pinned=0; next=''
     for k in $(style_keys); do
         total=$((total + 1))
         if [ -f "$PIN_DIR/$k.svg" ]; then
             pinned=$((pinned + 1)); echo "  PIN  $k"
         else
             echo "  --   $k"
+            [ -n "$next" ] || next="$k"
         fi
     done
+    # sahipsiz pin: dizinde var, sözlükte yok — style_check bunu da FAIL sayar
+    orphans=0
+    if [ -d "$PIN_DIR" ]; then
+        for f in "$PIN_DIR"/*.svg; do
+            [ -e "$f" ] || continue
+            b=$(basename "$f" .svg)
+            style_keys | grep -qx "$b" || { orphans=$((orphans + 1)); echo "  ??   $b (SAHİPSİZ: styles.json'da yok)"; }
+        done
+    fi
     echo
-    echo "pinli $pinned / $total stil"
-    [ "$pinned" -eq "$total" ] || echo "style_check bu sayı $total olana kadar kırmızı kalır (guard.json _ilan_listesi)."
+    if [ "$orphans" -gt 0 ]; then
+        echo "pinli $pinned / $total stil · SAHİPSİZ PİN $orphans (style_check bunu da FAIL sayar)"
+    else
+        echo "pinli $pinned / $total stil"
+    fi
+    if [ "$pinned" -eq "$total" ] && [ "$orphans" -eq 0 ]; then
+        echo "kapsam TAM. style_check artık her stili repo pinine byte-byte diff'liyor."
+    else
+        echo "style_check bu sayı $total olana kadar KIRMIZI kalır (guard.json _ilan_listesi)."
+        echo "kısmi pin yeşil saymaz: kapsam kuralı testin İÇİNDE (engine/tests/style_check.mjs)."
+        [ -z "$next" ] || {
+            echo
+            echo "SIRADAKİ KOMUT (kopyala, beyanı kendi cümlenle değiştir):"
+            echo "  scripts/repin-style.sh $next \"<beyan, ör. 'F2 çizgi hiyerarşisi, Damla onayı $(date +%d.%m)'>\""
+            echo "  -> render açılır, GÖZLE bak, beğenirsen terminale yaz: $APPROVAL_PHRASE"
+        }
+    fi
     exit 0
     ;;
 esac
@@ -167,6 +198,9 @@ echo "DEFTER  : $LEDGER"
 echo
 echo "ŞİMDİ GEREKLİ (pin bunlarsız geçerli değil):"
 echo "  1. ikisini AYNI commit'te commit'le (pin + defter ayrılamaz)."
-echo "  2. 31 stilin hepsi pinlenince style_check yeşile döner ve"
-echo "     .rabadon/guard.json _ilan_listesi'nden ÇIKAR (bitiş şartı orada yazılı)."
-echo "  3. durum: scripts/repin-style.sh --status"
+TOTAL=$(style_keys | wc -l | tr -d ' ')
+PINNED=$(ls "$PIN_DIR"/*.svg 2>/dev/null | wc -l | tr -d ' ')
+echo "  2. kapsam $PINNED/$TOTAL. style_check ancak $TOTAL stilin HEPSİ pinliyken yeşile döner"
+echo "     ve .rabadon/guard.json _ilan_listesi'nden ÇIKAR (bitiş şartı orada yazılı)."
+echo "     Kısmi pin yeşil saymaz — kapsam kuralı engine/tests/style_check.mjs içinde."
+echo "  3. durum + sıradaki komut: scripts/repin-style.sh --status"
