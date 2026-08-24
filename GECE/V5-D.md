@@ -14,7 +14,7 @@ Koşu: 2026-08-25, ağaç HEAD `87b0feb`. SÜRE TAVANI 60 dk — tavana gelindi,
 | `GECE/log/V5-D.remedy.txt` | v6 §4.7 kök teşhis + ÖLÇÜLMÜŞ çözüm adayı + kart dışı ölü-girdi ölçümü |
 | `GECE/log/V5-D.addtest.txt` | `engine/CMakeLists.txt`'e eklenecek TEK satır (dosya KİLİTLİ, şef ekleyecek) |
 
-Commit hash: bu dosyanın altında, "COMMIT" başlığında.
+Commit: `30054c1` — "gece v5-d: draft_math_check gate — sourced aldrich/threads thresholds, 8 sizes, red on published bust and hip ease minimums"
 
 **DOKUNULMAYANLAR (emir gereği):** `engine/CMakeLists.txt` (kilitli — kartın 3.
 maddesi askıya alındı), `engine/tests/sewability_check.mjs` (açılmadı, okunmadı),
