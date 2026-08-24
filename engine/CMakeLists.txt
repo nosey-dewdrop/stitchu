@@ -111,6 +111,23 @@ add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 # kaynaklı beden çizelgesinden; motorun kendi çıktısından TÜRETİLEN eşik yok.
 add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
 
+# flat_pattern_agree_check (V3-C kanat (a), 2026-08-24): aynı bedenden üretilen
+# TEKNİK ÇİZİM (shell-flat) ile KALIP (surface-pattern + tools/pattern-measure.mjs)
+# altı ölçüde %1.5 içinde mi. ★ %1.5 YAYINDAN DEĞİL KARARDAN — GECE/V3-R.md
+# "EŞİK 2": technical flat ↔ kalıp uyumu için yayınlanmış formül YOK. Ölçüm aleti
+# diskte yoksa kapı SKIP değil KIRMIZI düşer; `null` gelen ölçü atlanmaz,
+# UNMEASURED olarak sayılır ve kapıyı düşürür.
+add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs)
+
+# flat_artifact_census (V3-C kanat (b)+(c), 2026-08-24): shell-flat konturunda
+# dört artefakt sınıfını SAYAR ve her birini kaynak satırına + tek cümlelik kök
+# çözüme bağlar: tırtıklı kenar · kendini kesen kontur (global overlap) · C1
+# kırığı · dejenere segment / sıfır alan. C1 eşiği 1.0°, kaynak McNeel Rhino
+# "Understanding Tolerances" doküman açı toleransı varsayılanı (GECE/V3-R.md
+# EŞİK 1, güven YÜKSEK); daha sıkı emsal CATIA V5 GSD 0.5° dosya başlığında NOT.
+# Kırpma/smoothing/çözünürlük düşürme YOK — bulunan sayılır ve basılır.
+add_test(NAME flat_artifact_census COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_artifact_census.mjs)
+
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
 # render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
