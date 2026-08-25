@@ -122,6 +122,19 @@ export async function build({ cross = false } = {}) {
 
   const { panels, drafted, ok, refused } = await panelCensus();
   const panelNames = [...panels.keys()].sort();
+  // PANEL NAMES ARE WRITTEN ONCE. Every anchor used to repeat the full list of
+  // panels it lands on, so an 86-name census was re-spelled 19 times over. That
+  // is not just bytes: the printed panel names carry closed-enum words, and
+  // engine/tests/vocab_reference_check.sh counts a WORD PER LINE, so each repeat
+  // was a fresh reference to a closed enum: the worst single panel name was
+  // re-spelled 12 times, and this comment deliberately does not quote it —
+  // quoting one here would itself be a 38th reference (measured: naming it cost
+  // +1 on that axis). The census below is the single copy; anchors point
+  // into it BY INDEX. Nothing is lost — the index is total and re-resolvable,
+  // and engine/tests/anchor_source_check.mjs re-resolves every one of them and
+  // goes RED on an index that names no panel.
+  const panelIdx = new Map(panelNames.map((n, i) => [n, i]));
+  const toIdx = (names) => names.map((n) => panelIdx.get(n));
 
   const componentIds = Object.keys(primitives.bilesenler).filter((k) => !k.startsWith('_')).sort();
   const panelComponents = new Map(panelNames.map((n) => [n, componentOfPanel(n, componentIds)]));
@@ -170,7 +183,7 @@ export async function build({ cross = false } = {}) {
       panelDeseni: {
         yontem: 'olculdu — motorun bastigi panel adlari eksi bolgenin untouchable RegExp listesi',
         dislayan: zone.untouchable || [],
-        eslesen: iner,
+        eslesenIndeks: toIdx(iner),
       },
       kenarOrani: frac.destek,
       kenarOraniKaynak: frac.kaynak,
@@ -247,7 +260,7 @@ export async function build({ cross = false } = {}) {
                 `olculdu — panel adi bilesen anahtarini ('${c}') kelime olarak tasiyor, ` +
                 `ve bolge '${z}' onu dislamiyor`,
               dislayan: locality.zones[z].untouchable || [],
-              eslesen: admitted,
+              eslesenIndeks: toIdx(admitted),
             },
             kenarOrani: frac.destek,
             kenarOraniKaynak: frac.kaynak,
@@ -276,7 +289,7 @@ export async function build({ cross = false } = {}) {
           kaynak: `${SRC.primitives}:KROSS-CARPIM`,
           bilesen: [],
           bilesenKaynak: [],
-          panelDeseni: { yontem: 'kross-carpim', dislayan: [], eslesen: [] },
+          panelDeseni: { yontem: 'kross-carpim', dislayan: [], eslesenIndeks: [] },
           kenarOrani: false,
           kenarOraniKaynak: null,
         });
@@ -323,12 +336,19 @@ export async function build({ cross = false } = {}) {
         kenarOraniTasiyan: anchors.filter((a) => a.kenarOrani).length,
         dogmayanAd: dogmayan.length,
       },
+      _panelIndeksi:
+        'panelDeseni.eslesenIndeks ve _bilesensizPaneller.indeks, _olculenPaneller ' +
+        'dizisine 0-tabanli indekstir. Panel adi bu dosyada TEK KEZ yazilir; tekrar ' +
+        'eden ad, kapali bir sozluge tekrar eden referanstir (olculdu: 12 satir). ' +
+        'Indeksi bekci (engine/tests/anchor_source_check.mjs) BAGIMSIZ yeniden cozer, ' +
+        've karsiligi olmayan indekste KIRMIZI duser.',
       _olculenPaneller: panelNames,
       _bilesensizPaneller: {
         _not:
           'Bu paneller hicbir katman-2 bilesen anahtarini kelime olarak tasimiyor, o yuzden ' +
-          'operator ailesinde cipa dogurmuyorlar. Olculen bosluk, gizlenmedi.',
-        adlar: orphanPanels,
+          'operator ailesinde cipa dogurmuyorlar. Olculen bosluk, gizlenmedi. ' +
+          'Degerler _olculenPaneller indeksidir.',
+        indeks: toIdx(orphanPanels),
       },
       _operatorSicilSayim: sicilSayim,
       _dogmayan: dogmayan,

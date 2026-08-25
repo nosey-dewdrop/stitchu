@@ -185,8 +185,55 @@ for (const z of Object.keys(load('contract/edit-locality-v1.json').zones || {}))
 if (tokens.size < 8) fail(`position token set collapsed to ${tokens.size} — the re-derivation is broken, not the data`);
 
 const locality = load('contract/edit-locality-v1.json');
+
+// ── 3a. THE PANEL INDEX RESOLVES ─────────────────────────────────────────────
+// Panel names are written ONCE (_olculenPaneller) and anchors point into that
+// array by index, because a re-spelled panel name is a re-spelled reference to
+// a closed enum (vocab_reference_check counts one line per word). An index is
+// cheaper to write and easier to LIE with than a name: `[3]` looks valid
+// whatever is at 3, and an out-of-range index reads like data. So the census is
+// re-checked here as a structure — sorted and unique, which is what makes an
+// index canonical — and every index is resolved back to a name before any of
+// the panel judgements below run on it.
+const census = doc._olculenPaneller;
+if (!Array.isArray(census) || !census.length) {
+  fail('_olculenPaneller is absent or empty — anchors index into nothing');
+} else {
+  const sorted = census.slice().sort();
+  if (JSON.stringify(sorted) !== JSON.stringify(census)) {
+    fail('_olculenPaneller is not sorted — indices are not canonical and will shift under regeneration');
+  }
+  if (new Set(census).size !== census.length) {
+    fail('_olculenPaneller has duplicate panel names — the whole point of the index is that a name appears once');
+  }
+}
+const resolvePanels = (idxs, where) => {
+  const out = [];
+  for (const i of idxs) {
+    if (!Number.isInteger(i) || i < 0 || i >= (census || []).length) {
+      fail(`${where}: panel index ${JSON.stringify(i)} points at no panel (_olculenPaneller has ${(census || []).length})`);
+      continue;
+    }
+    out.push(census[i]);
+  }
+  return out;
+};
 for (const an of doc.anchors || []) {
-  const landed = ((an.panelDeseni || {}).eslesen) || [];
+  const pd = an.panelDeseni || {};
+  if ('eslesen' in pd) {
+    fail(`anchor '${an.ad}': panelDeseni still spells panel NAMES (eslesen) — it must carry eslesenIndeks`);
+  }
+  if (!Array.isArray(pd.eslesenIndeks)) fail(`anchor '${an.ad}': panelDeseni.eslesenIndeks is absent or not an array`);
+}
+{
+  const orphan = (doc._bilesensizPaneller || {});
+  if ('adlar' in orphan) fail('_bilesensizPaneller still spells panel NAMES (adlar) — it must carry indeks');
+  if (!Array.isArray(orphan.indeks)) fail('_bilesensizPaneller.indeks is absent or not an array');
+  else resolvePanels(orphan.indeks, '_bilesensizPaneller');
+}
+
+for (const an of doc.anchors || []) {
+  const landed = resolvePanels(((an.panelDeseni || {}).eslesenIndeks) || [], `anchor '${an.ad}'`);
   if (!landed.length) {
     fail(`anchor '${an.ad}' lands on ZERO panels — the frontCenterback class: a name with nowhere to go`);
   }
