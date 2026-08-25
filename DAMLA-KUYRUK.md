@@ -1172,3 +1172,21 @@ kısmen gereksiz kılıyor olabilir — üreteç zaten sayılmıyor.
 
 ★ Kapının bastığı satır bu ada atıf vermiyor (`vocab_reference_check.sh`
 DEĞİŞTİRİLMEZ, kart yasağı) — gerekçe `GECE/V6-H.md` ve `GECE/V6-J.md`'dedir.
+
+---
+
+## K-V7A — V7-F'in sicil şerhi işaretçiye indirildi: böyle mi kalsın? (V7, 25 Ağu)
+
+**K-V7A · V7-F'in sicil şerhi, vocab ratchet'i kırdığı için işaretçiye
+indirildi (tam metin GECE/V7-F.md'de) · SEÇENEKLER: (A) böyle kalsın —
+sicil kısa, kanıt kayıtta, kapı yeşil; (B) tam metin sicile dönsün ve
+ratchet tabanı bu kapsam kararı için elle yeniden kesilsin · VARSAYILAN (A)
+· ETKİLEDİĞİ FAZ: V9 (docs turu)**
+
+**ÖLÇÜM:** `contract/garment-spec-v2.json`'a V7-F ile eklenen düz yazı, kapalı
+enum kelimelerini yeni referans olarak saydırdı — `garment 1186 → 1189 (+3)`,
+`sleeveCap 146 → 147 (+1)` → `HUKUM: FAIL`. Şerh işaretçiye indirilince
+`delta -6`, `HUKUM: YESIL`. Sözlük bu gece hiçbir eksen/değer KAZANMADI, yani
+kapının kendi yasasına göre taban yeniden KESİLEMEZDİ (`--baseline` kullanılmadı).
+Çıkarılan 10 dizginin 10'u `GECE/V7-F.md` §5'te `grep -F` ile kelimesi kelimesine
+doğrulandı (kanıt `GECE/V7-G.md` §2).

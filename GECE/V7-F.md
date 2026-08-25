@@ -233,3 +233,64 @@ log'u yalnız `sleeve`'i sayıp `garment`/`skirtStyle` enum düşüşlerini ayr�
 raporlamış (onun sleeve sayısı 34, benimki 35 — aradaki 1 fotonun sebebi
 **DOĞRULANMADI**). İki sayı kıyaslanamaz; kıyaslanabilir olan, aynı aletin
 ÖNCE/SONRA'sıdır ve o fark 0.
+
+---
+## 5. SİCİLDEN İŞARETÇİYE İNDİRİLEN TAM METİN (V7-G, 25.08)
+
+V7-G, bu şerhin `contract/garment-spec-v2.json` içindeki uzun kanıt düz yazısını
+işaretçiye indirdi: `vocab_reference_check` ratchet'i o düz yazıdaki kapalı-enum
+kelimelerini (`garment` +3, `sleeveCap` +1) YENİ referans sayıp kırmızıya düştü, ve
+sözlük bu gece hiçbir eksen/değer KAZANMADIĞI için taban yeniden kesilemezdi.
+Aşağıdakiler sicilden çıkarılan dizgilerin **kelimesi kelimesine** kopyalarıdır —
+bu bir gizleme değil, yer değiştirmedir. Hiçbir cümle yok olmadı.
+
+### 5.1 `_serh.V7-F-2026-08-24` — çıkarılan alanlar
+
+`başlık` (çıkarıldı):
+
+```
+'shipped' kelimesi BU SİCİLDE yüzey hattını anlatır; alıcının indirdiği artefakt ESKİ 2B motordur
+```
+
+`ölçüm` (tamamı çıkarıldı, 5 madde):
+
+```
+engine/build-wasm.sh:72 (web hedefi) ve :111 (Cloudflare Worker hedefi) 35 çeviri birimi derliyor; `grep -c surfacepattern engine/build-wasm.sh` = 0. Yani sevk edilen paketin İÇİNDE surfacepattern.cpp YOK.
+Aynı iki satırda src/sleeve.cpp ve src/garment.cpp VAR.
+Takipli artefakt backend/engine/stitchu-worker.wasm (1042915 bayt) içinde ham dizgi sayımı: 'sleeveStyle' 5 · 'sleeveCap' 3 · 'sleeveLength' 1 · 'Sleeve' 16 — ve 'SheathOptions' 0 · 'surfacepattern' 0 · 'shoulderSeam' 0.
+web/, backend/ ve engine/wasm/ altında surfacepattern.hpp / SurfacePattern / SheathOptions'a değen SIFIR dosya var; yüzey hattının tüm tüketicileri engine/tests/ ve engine/tools/ altında.
+Alıcı bugün web/js/create.js:42'de kol SİPARİŞ EDEBİLİYOR (none/straight/balloon) ve :47'de kol başı seçebiliyor (plain/gathered/puffed/cap).
+```
+
+`hüküm` — sicilde KISALTILARAK kaldı; çıkarılan kuyruğuyla birlikte tam hâli:
+
+```
+İki cümle de aynı anda doğru: (a) yüzey hattında `sleeve` operatörü YOK (absent, doğru); (b) alıcının indirdiği motor kol çiziyor. Çelişki bir yalan değil, KAPSAM kaymasıdır: bu sicil surfacepattern.cpp'yi anlatıyor, sevkiyat garment.cpp'yi yapıyor.
+```
+
+`KARARA BAĞLANMAMIŞ` — sicilde kısaldı; çıkarılan kuyruğuyla birlikte tam hâli:
+
+```
+Ürünün gerçeği hangi motor? Bu bir Damla kararıdır; V7-F ölçtü, seçmedi. Aynı çelişki GECE/V0-0B.md yan bulgu 2'de de duruyor ('iki kapı aynı şeyi ölçmüyor').
+```
+
+### 5.2 `operators.sleeve` — çıkarılan alanlar
+
+`blockedByStillValid` (kısaltıldı) tam hâli:
+
+```
+V7-F (24.08) ÖLÇÜLDÜ, GEÇERLİ: shoulderSeam hâlâ `flagged` ve motorun kendi varsayılanı KAPALI — engine/src/surfacepattern.hpp:521 `bool shoulderSeam = false;`. _statuses'a göre flagged bir operatörü isteyen spec REDDEDİLİR, dolayısıyla kol da bugün konulamaz. Gerekçe bayat DEĞİL.
+```
+
+`serh` (kısaltıldı) tam hâli:
+
+```
+V7-F (24.08) — SİCİL↔ARTEFAKT ÇELİŞKİSİ, KARAR (B): motorun bastığı kol bu operatör DEĞİLDİR. Kanıt: (1) sicildeki 10 shipped/flagged operatörün 10'u da `SheathOptions::` sembolüne bağlı (0'ı başka bir yere), yani bu sicilin evreni yalnız engine/src/surfacepattern.hpp'dir; (2) engine/src/sleeve.cpp ve engine/src/garment.cpp içinde `SheathOptions` geçen SIFIR satır var — garment.cpp:303 ve :621'deki SleeveBlock::draft çağrıları v1 GarmentSpec'in SleeveStyle/SleeveLength/SleeveCap alanlarını okur (engine/src/measurements.hpp:290-294), bu sicilin hiçbir alanını değil; (3) o kol ESKİ 2B-formül motorunun kolu ve KENDİ omuz dikişi vardır (engine/src/shoulder.cpp, bodice.cpp:158-190 omuz tepesine teğet oyuk eğrisi) — yani sicilin `blockedBy=shoulderSeam` gerekçesini ihlal etmiyor, çünkü o gerekçe yüzey hattının omuz dikişi hakkındadır. Ayrıntılı ölçüm: GECE/V7-F.md. Bu satır bir status DEĞİŞTİRMEZ: `sleeve` yüzey hattında absent olmaya devam eder.
+```
+
+### 5.3 Sicilde MUTLAKA kalanlar (kart §NE)
+
+1. `sleeve` statüsü DEĞİŞMİYOR (`absent`) — V7-F kararı (B).
+2. Çelişkinin ADI: sicil bir motoru, sevkiyat başka bir motoru anlatıyor — yalan değil KAPSAM kayması.
+3. Kanıtın yolu: `GECE/V7-F.md`.
+4. `_statuses.shipped` metninin bugün fiilen yanlış olduğu şerhi (tek cümle, dosya adı yok).

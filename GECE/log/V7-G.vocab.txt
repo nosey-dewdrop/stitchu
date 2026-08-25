@@ -1,0 +1,55 @@
+=== ONCE (HEAD=383936e, degisiklikten once) ===
+$ bash engine/tests/vocab_reference_check.sh
+olculen       : commit HEAD (383936e)
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10438 (delta +0)
+
+  DUSTU  eksen ADI   collarType                81 ->    80
+  DUSTU  eksen ADI   sleeveStyle              351 ->   348
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+  FAIL ARTTI  eksen ADI   garment                 1186 ->  1189  (+3)
+  FAIL ARTTI  eksen ADI   sleeveCap                146 ->   147  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (2 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+
+$ bash engine/tests/vocab_reference_check.sh --tree .
+olculen       : agac /Users/damummyphus/damla_projects_2026/stitchu
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10438 (delta +0)
+
+  DUSTU  eksen ADI   collarType                81 ->    80
+  DUSTU  eksen ADI   sleeveStyle              351 ->   348
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+  FAIL ARTTI  eksen ADI   garment                 1186 ->  1189  (+3)
+  FAIL ARTTI  eksen ADI   sleeveCap                146 ->   147  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (2 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+
+=== SONRA (commit 1eef61d) ===
+$ bash engine/tests/vocab_reference_check.sh
+olculen       : commit HEAD (1eef61d)
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10432 (delta -6)
+
+  DUSTU  eksen ADI   collarType                81 ->    80
+  DUSTU  eksen ADI   sleeveLength             274 ->   273
+  DUSTU  eksen ADI   sleeveStyle              351 ->   347
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.
