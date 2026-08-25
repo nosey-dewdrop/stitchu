@@ -203,6 +203,16 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       sevk edilen paketi anlatmıyordu. Sevk edilen **10**. Kanıt yukarıda, mühür başlığında.
       **Bu, TUR 7'nin kapattığı T4 halkasının şartnamedeki karşılığıdır ve artık YAZILI.**
       Sayfa numarası da kaydı: kumaş sayfası araya girdiği için montaj **s.2 → s.3**.
+      ⚠ **25 AĞU (V5-A + V5-Z §5) — BU MADDEDEKİ "DİKİŞ GRAFİĞİ" HANGİ ARTEFAKTTA VAR,
+      HANGİSİNDE YOK, AYRIŞTIRILDI.** Yukarıdaki `print-info.pdf` `printpack.py` hattının
+      çıktısı ve o hat motorun kendi dikiş planını okuyabiliyor. Alıcının `web/` üzerinden
+      indirdiği artefakt AYNI ŞEY DEĞİL: o zincir `web/js/print.js:381 printPattern` →
+      `:172 buildPrintPages` üzerinden tarayıcıda kuruluyor ve girdisi `draftJSON`.
+      `draftJSON` sınırında dikiş grafiği **YOK** — 112 parçada
+      `seams`/`seamGraph`/`edges`/`edgeNames`/`pairs`/`stitches` alan sayısı **0**
+      (sayan alet: `node engine/tests/sewability_check.mjs`, teşhis `GECE/V5-A.md`).
+      Yani bu satır `printpack.py` paketi için ayakta, web indirmesi için **DOĞRULANMADI**:
+      web PDF'inin montaj sırası sayfası taşıyıp taşımadığı ölçülmedi.
 - [x] **Kalibrasyon karesi / ölçek çubuğu.**
       `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi,
       `printpack.log` → `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.

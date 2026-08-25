@@ -13,7 +13,7 @@
 | **L2 GİYSİ YÜZEYİ** | vücut+tasarım → 3B shell | `engine/src/garmentshell.{cpp,hpp}`, `drape.{cpp,hpp}`, `volume.hpp` | shell ölçüm raporu: `rings.waist_mm` TEK SAYI, bust/hip, ease hacmi | L3/L4'ü |
 | **L3a FLAT (croquis hattı)** | Yüzeyin çizimi | `engine/flat-engine/_engine-full.mjs` (referans kalem, 31 stil, SALT-OKUNUR), `engine/tools/render-garment-flat.mjs` (üretim kalemi) | SVG. ⚠ **"ölçüsüz" artık iki kalem için ayrı ayrı okunur (24 Ağu, V4):** üretim kalemi `data-scale="1:3"` + `data-unit-mm="3"` + `data-croquis` + `data-ref-size` beyan ediyor ve kanunu `contract/flat-convention-v1.json`; referans kalem **31 stilin 0'ında** `data-scale` beyan ediyor ve stilize kalıyor | kalıp dünyasından HİÇBİR ŞEYİ (`body.yaml`, specification, mapping) |
 | **L3a′ FLAT (kabuk projeksiyonu)** ★ 24 Ağu | Yüzeyin İZDÜŞÜMÜ — çizim değil | `engine/src/shellprojection.{cpp,hpp}`, alet `engine/build/shell-flat` | JSON: 6 ölçü mm + ön/arka kontur + halka aralığı; `--svg` ile `data-scale="1"` 1:1 SVG | — **L2'nin kabuğunu DOĞRUDAN okur** (aynı `GarmentSurf`), bu istisna kasıtlı |
-| **L3b KALIP** | Yüzeyin düzleştirilmesi | `engine/src/bodice.cpp` vb., `engine/pattern-bridge/mapping.py`, GarmentCode (kara kutu) | `stitchu_specification.json` + panel kenar uzunlukları mm | `figur_croquis`'i doğrudan; kalemi |
+| **L3b KALIP** | Yüzeyin düzleştirilmesi | `engine/src/bodice.cpp` vb., `engine/pattern-bridge/mapping.py`, GarmentCode (kara kutu). ⚠ **L3b İKİYE AYRILDI (25 Ağu, V5-Z §5):** "yüzeyin düzleştirilmesi" (`surfacepattern.cpp` + `flatten.cpp`) YALNIZ native ctest'te koşuyor; alıcıya giden hat eski 2B blok çizicisi `engine/src/garment.cpp` `GarmentDrafter::draft`. Ayıran ölçüm md.9 | `stitchu_specification.json` + panel kenar uzunlukları mm | `figur_croquis`'i doğrudan; kalemi |
 | **L4 DOĞRULAMA** | Hakem | `engine/pattern-bridge/walk.py`, `printpack.py`, `test_seamdeed.py` | tapu + print-report | üretici katmanların İÇİNİ |
 
 ## Bugünkü bilinen ihlaller / boşluklar (lint --report envanteri günceller)?
@@ -67,6 +67,21 @@
    −18.18 mm kısa düşüyor. Yani L0'ın bu kolonu ne besliyor ne de doğrulanabiliyor.
    ⚠ Aynı kesişimin `neckCM` için de var olduğu iki çıktı yan yana konarak görüldü ama
    nedensel bağ **DOĞRULANMADI**.
+9. **★ L3b'nin SEVK EDİLEN HATTI, HARİTANIN L3b TANIMI DEĞİL (25 Ağu, V5-Z §5).** Bu tablo
+   L3b'yi *"yüzeyin düzleştirilmesi"* diye tanımlıyor. Ölçüldü: alıcının `web/` üzerinden
+   indirdiği kalıp o hattan ÇIKMIYOR. Zincir dosya dosya yürütüldü —
+   `web/js/create.js:730` → `web/js/engine.js:187 engine.draftJSON(...)` →
+   `engine/wasm/bindings.cpp:339` → `:298 GarmentDrafter::draft(spec, m)` →
+   `engine/src/garment.cpp` (eski 2B blok çizicisi). Hükmü kesen alet sembol grep'i değil
+   (emscripten adları kısaltıyor), **wasm kaynak listesi**:
+   `grep -c "surfacepattern\|flatten.cpp\|curvefit\|bodysurface\|garmentshell\|shellprojection" engine/build-wasm.sh`
+   → **0**; aynı altı dosya native kütüphanede duruyor (`engine/CMakeLists.txt:12-17`).
+   Yani `surfacepattern.cpp` (2240 satır) ve `flatten.cpp` (340 satır) yalnız
+   `surface_pattern_check` · `flatten_check` · `walkgate_check` altında koşuyor,
+   **kullanıcıya hiç ulaşmıyor**. Bu, md.3'te L3a için yazılan tablonun kalıp tarafındaki
+   eşi: orada da kanunun bağladığı kalem sevk edilen kalem değildi. Karar ALINMADI,
+   yalnız ölçüldü — ama bundan sonra "L3b kapısı yeşil" cümlesi hangi L3b olduğunu
+   söylemeden kurulamaz.
 
 ## Teşhis ilkesi?
 

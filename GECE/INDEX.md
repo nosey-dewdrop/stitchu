@@ -178,24 +178,44 @@ soru geçmiş sayılmaz, `ABSENT:` diye ADIYLA basılır; devralınan kırmızı
 | `GECE/log/V5-A.bostest.txt` · `V5-D.bostest.txt` | BOŞ TEST: iki kapının da ratchet'siz hâliyle faz-öncesi ağaca karşı **exit 1** düştüğü koşular. Kapatılmış test olmadıklarının kanıtı burada. |
 | `GECE/log/V5-A.mutasyon.txt` · `V5-D.mutasyon.txt` · `V5-E.mutasyon.txt` | mutasyon kanıtı. Sonuncusu ratchet katmanının 8 bozmasını taşıyor: 8/8 exit 1, geri alınca iki kapı da exit 0. |
 | `GECE/log/V5.ctest.opening.txt` · `V5-A.ctest.after.txt` · `V5-E.ctest.after.txt` · `V5-E.reddiff.txt` | fazın tam `ctest` koşuları ve kırmızı AD farkı. Kümenin büyüyüp büyümediği bu dosyaların `diff`'inden okunur, buradaki bir cümleden değil. |
-| `GECE/log/V5-A.8beden.txt` · `V5-D.run.txt` · `V5-D.remedy.txt` · `V5-D.addtest.txt` | beden beden dökümler, kapının ham koşusu, ölçülmüş çözüm adaylarının koşusu ve `add_test` satırının hazırlığı. |
+| `GECE/log/V5-A.8beden.txt` · `V5-D.run.txt` · `V5-D.remedy.txt` · `V5-D.addtest.txt` | beden beden dökümler, kapının ham koşusu, ölçülmüş çözüm adaylarının koşusu ve `add_test` satırının hazırlığı. ⚠ `V5-D.remedy.txt`'in "hepsi bantta ✔" çözüm adayı V5-F'te YENİDEN KOŞULDU ve **aritmetik olarak çürüdü** (halka artışı doğrudan paya eklenmiş; gerçek kazanç 16.65 değil 1.65 mm). Dosya düzeltilmedi; çürütme `GECE/V5-F.md` §KÖK TEŞHİS'te. |
+| `GECE/V5-Z.md` | ZEMİN KEŞFİ — onarım yok, yalnız ölçüm. **Fazın en ağır bulgusu burada: sevk edilen kalıp motoru TEK-YÜZEY motoru DEĞİL**, eski 2B çizici `GarmentDrafter::draft` (`engine/src/garment.cpp`). Hükmü kesen alet sembol grep'i değil wasm KAYNAK LİSTESİ (`grep -c "surfacepattern\|flatten.cpp\|…" engine/build-wasm.sh` → 0, aynı altı dosya `engine/CMakeLists.txt:12-17`'de VAR). Ayrıca sekiz kalemlik grep sicili (dikiş çifti · çentik · kapalılık · köşe açısı · giyilebilirlik · geri projeksiyon · strain · ölçüm aleti) ve Buğra overlay'i için diskte hazır olanın envanteri. |
+| `GECE/V5-F.md` | **§7.1 DÜZELTMESİ: YAYINLANMIŞ BİR BANT RATCHET'LENEMEZ.** `draft_math_check`'in ease bölümü tavandan çıkarılıp REGRESYON ÇİZGİSİNE bağlandı; 12 ihlal her koşuda `SERT HUKUM, ratchet DEGIL` diye beden+mm+bant+künyeyle basılıyor, kapanması Damla kararı (`K-V5A`). Ayrıca V5-D'nin çözüm adayının çürütülmesi ve adayın ölçülmüş BEDELİ: 8 bugün-yeşil kapı risk altında, en pahalısı `bugra_bridge_check` (75.38 sn). |
+| `GECE/V5-G.md` · `GECE/KART/V5-G.md` · `KART/V5-H.md` | uzlaşma + hakem turları: kırmızı AD kümesini 6→7 büyüten hamlenin geri alınması (RULES §9), `DAMLA-KUYRUK.md` K-V5A satırının yazılması, hakemin büyüklük körlüğünün kapatılması. |
+| `GECE/log/V5-F.mutasyon.txt` · `V5-F.ctest.after.txt` · `V5-F.reddiff.txt` · `V5-G.*` · `V5.ctest.final.txt` | V5-F'in 8 koşuluk mutasyon defteri — bandın ALT ve ÜST ucunun ayrı ayrı bekçilik ettiği, ve ratchet ile bandın exit kodunu AYRI AYRI düşürdüğü orada görülüyor — artı fazın kapanış ctest'i. |
 
-Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §13 (iki kapı, ratchet'in
-ne demek olduğu, overlay aleti, çürütülen tolerans künyesi) + "Known limits" dört yeni satır,
-`docs/KATMAN-HARITASI.md` boşluk 7 (dikiş grafiği yok) ve 8 (`shoulderCM` ölü girdi),
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §13 (sevk edilen motorun
+kimliği · iki kapı · ratchet'in NEREDE meşru nerede değil · overlay aleti · çürütülen
+tolerans künyesi) + §10'a düşülen şerh + "Known limits" beş satır,
+`docs/KATMAN-HARITASI.md` L3b satırı + boşluk 7 (dikiş grafiği yok), 8 (`shoulderCM` ölü
+girdi), 9 (L3b'nin sevk edilen hattı haritanın tanımı değil),
 `docs/G5-OMUZ-PLANI.md` (üç kapının da künyesi: tolerans, armhole bandı, Buğra paritesi aleti),
-`docs/SATIS-SARTNAMESI.md` §4b (rehberin ölçülmeyen baş-geçiş kontrolü),
-`README.md` (iki kapının halka açık ifadesi + payın cinsi dürüst limit olarak).
+`docs/SATIS-SARTNAMESI.md` §4b (rehberin ölçülmeyen baş-geçiş kontrolü) + montaj sırası
+maddesine "hangi artefaktta dikiş grafiği var" şerhi,
+`README.md` (mühürlü mimari ile sevk edilen hattın AYRIŞTIRILMASI — iki yerde, biri
+çürütülmüş bir cümlenin üstü çizilerek; iki kapının halka açık ifadesi; payın cinsi
+dürüst limit olarak).
+
+⚠ **25 Ağu düzeltmesi:** bu bölümün ilk hâli iki kapıyı da "ratchet" diye anlatıyordu.
+V5-F o cümleyi böldü — `sewability_check` düz ratchet, `draft_math_check` ise (a)+(c)'de
+ratchet ama (b) girth ease'de **değil**. Eski cümle silinmedi, docs'ta gerekçesiyle
+güncellendi.
 
 ## Ölçüm aletlerini çalıştır
 
 ```
 python3 GECE/f0-measure-pattern.py EU38          # kalıp ölçüleri (cm)
 node    GECE/f0-measure-flat.mjs <styleKey>      # flat siluet ölçüleri (birimsiz)
-cd engine/build && ctest                          # süreyi koşunun kendisi basar;
-                                                  # son iki okuma: 302.32 sn / 111 test
-                                                  # (V5.ctest.opening) ve 325.59 sn / 113 test
-                                                  # (V5-E.ctest.after)
+cd engine/build && ctest                          # sayıyı koşunun kendisi basar;
+                                                  # V5 boyunca üç okuma:
+                                                  #   302.32 sn / 111 test  (V5.ctest.opening)
+                                                  #   325.59 sn / 113 test  (V5-E.ctest.after)
+                                                  #   310.93 sn / 113 test, 6 kırmızı
+                                                  #                         (V5.ctest.final)
+                                                  # kırmızı ADLARI logdan okunur, buradan değil
+node engine/tests/sewability_check.mjs            # dikilebilirlik: ihlal + ABSENT, adıyla
+node engine/tests/draft_math_check.mjs            # kalıp matematiği: 3 ayrı hüküm satırı,
+                                                  # exit kodunu düşüren bölüm ADIYLA basılır
 ```
 
 ## Kural
