@@ -50,13 +50,16 @@ const bank = existsSync(BANK) ? JSON.parse(readFileSync(BANK, 'utf8')) : {};
 const files = Object.keys(LABELS).filter((k) => !k.startsWith('_'));
 
 // ── --v2 <okuma-dosyasi>: v2 İFADE EDİLEBİLİRLİĞİ ───────────────────────────
-// contract/garment-spec-v2.json'un KENDİ kuralı (topology._role): bir eksen
-// değeri, `requires` listesindeki operatörlerden biri `shipped` DEĞİLSE ifade
-// edilemez ve red o operatörün ADIYLA verilir. Burada uydurulan tek şey görü
-// alanı -> eksen değeri eşlemesidir; kural sözleşmeden okunur.
+// v2 sözleşmesinin KENDİ kuralı (topology._role): bir eksen değeri, `requires`
+// listesindeki operatörlerden biri `shipped` DEĞİLSE ifade edilemez ve red o
+// operatörün ADIYLA verilir. Burada uydurulan tek şey görü alanı -> eksen
+// değeri eşlemesidir; kural sözleşmeden okunur.
+// Sözleşmenin YOLU burada harf harf yazılmaz: üretilmiş eşleme kontratının
+// `generatedFrom.v2` alanından gelir (spec-diff.mjs ile aynı tek kaynak).
 if (argv.includes('--v2')) {
   const src = argv[argv.indexOf('--v2') + 1];
-  const V2 = JSON.parse(readFileSync(join(ROOT, 'contract', 'garment-spec-v2.json'), 'utf8'));
+  const V2_PATH = JSON.parse(readFileSync(join(ROOT, 'contract', 'spec-v1-v2-map.json'), 'utf8')).generatedFrom.v2;
+  const V2 = JSON.parse(readFileSync(join(ROOT, V2_PATH), 'utf8'));
   const ST = Object.fromEntries(Object.entries(V2.operators).map(([k, v]) => [k, v.status]));
   const TOPO = V2.topology;
   const reads = JSON.parse(readFileSync(src.startsWith('/') ? src : join(ROOT, src), 'utf8'));
@@ -103,7 +106,7 @@ if (argv.includes('--v2')) {
   const anySleeve = rowsV2.filter((r) => r.blockers.some((b) => b.op === 'sleeve')).length;
 
   const pc = (a, b) => (b ? (100 * a / b).toFixed(1) : '0.0');
-  console.log(`v2 İFADE EDİLEBİLİRLİK · kaynak ${src} · sözleşme contract/garment-spec-v2.json@${V2.version}`);
+  console.log(`v2 İFADE EDİLEBİLİRLİK · kaynak ${src} · sözleşme ${V2_PATH}@${V2.version}`);
   console.log(`FOTO ${N} · İFADE EDİLEBİLİR ${ok} (%${pc(ok, N)}) · DÜŞEN ${N - ok} (%${pc(N - ok, N)})`);
   console.log(`  'sleeve' absent yüzünden düşen (BAŞKA engeli olmayan): ${soleSleeve} (%${pc(soleSleeve, N)})`);
   console.log(`  'sleeve' engelinin GEÇTİĞİ foto (tek engel olmasa da): ${anySleeve} (%${pc(anySleeve, N)})`);

@@ -178,7 +178,11 @@ export async function build({ cross = false } = {}) {
       ad: z,
       aile: 'bolge',
       kaynak: `${SRC.locality}:zones.${z}`,
-      bilesen: decl.map((d) => d.id),
+      // NO `bilesen` NAME ARRAY. The component id is already spelled inside the
+      // source path below (`components[<idx>].conflictClass`), so a parallel
+      // array of ids was the same word written twice — the `eslesen` mistake of
+      // V6-F, one field over. The bekci resolves the path back to the id and
+      // compares it against composition.json, so nothing is lost by dropping it.
       bilesenKaynak: decl.map((d) => `${SRC.composition}:components[${d.idx}].conflictClass`),
       panelDeseni: {
         yontem: 'olculdu — motorun bastigi panel adlari eksi bolgenin untouchable RegExp listesi',
@@ -249,7 +253,6 @@ export async function build({ cross = false } = {}) {
             ad,
             aile: 'operator',
             kaynak: `${SRC.primitives}:primitifler.${opName}.parametreler.${pName}.degerler.${v}`,
-            bilesen: [c],
             bilesenKaynak: [
               `${SRC.primitives}:bilesenler.${c}.primitifler.${opName}`,
               `${SRC.locality}:zones.${z}`,
@@ -287,7 +290,6 @@ export async function build({ cross = false } = {}) {
           ad: `${s}${t[0].toUpperCase()}${t.slice(1)}`,
           aile: 'kross',
           kaynak: `${SRC.primitives}:KROSS-CARPIM`,
-          bilesen: [],
           bilesenKaynak: [],
           panelDeseni: { yontem: 'kross-carpim', dislayan: [], eslesenIndeks: [] },
           kenarOrani: false,

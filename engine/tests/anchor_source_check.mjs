@@ -143,8 +143,11 @@ for (const an of doc.anchors || []) {
   if (!an.ad || !an.kaynak) { fail(`${w}: missing ad/kaynak`); continue; }
   checkSource(an.kaynak, w);
   for (const bk of an.bilesenKaynak || []) checkSource(bk, w);
-  if (!Array.isArray(an.bilesen) || !an.bilesen.length) fail(`${w}: no bilesen — an anchor no component declares is a menu entry`);
-  if (!(an.bilesenKaynak || []).length) fail(`${w}: bilesen has no source path`);
+  // The component id is NOT stored as a name any more (V6-H): it lives inside
+  // bilesenKaynak, which is a source path, and a returning name array is the
+  // repeated-reference regression this gate exists to catch.
+  if ('bilesen' in an) fail(`${w}: still spells component NAMES (bilesen) — the id belongs in bilesenKaynak's path`);
+  if (!(an.bilesenKaynak || []).length) fail(`${w}: no component source path — an anchor no component declares is a menu entry`);
   if (an.kenarOrani && !an.kenarOraniKaynak) fail(`${w}: claims kenarOrani with no source`);
   if (an.kenarOraniKaynak) checkSource(an.kenarOraniKaynak, `${w} kenarOrani`);
 }
@@ -162,9 +165,19 @@ composition.components.forEach((c, i) => {
 });
 for (const an of (doc.anchors || []).filter((x) => x.aile === 'bolge')) {
   const want = (declaring.get(an.ad) || []).slice().sort((x, y) => x.id.localeCompare(y.id));
-  const got = an.bilesen || [];
+  // The ids are no longer written down, so RESOLVE them: walk each source path
+  // back into composition.json and read the id out of the component it points
+  // at. This is strictly stronger than comparing two written lists — it proves
+  // the path is the id's only home and that the index still lands on it.
+  const got = (an.bilesenKaynak || []).map((p) => {
+    const m = /^contract\/composition\.json:components\[(\d+)\]\.conflictClass$/.exec(p);
+    if (!m) { fail(`anchor '${an.ad}': bilesenKaynak '${p}' is not a composition component path`); return null; }
+    const c = composition.components[Number(m[1])];
+    if (!c) { fail(`anchor '${an.ad}': bilesenKaynak '${p}' points at no component`); return null; }
+    return c.id;
+  });
   if (JSON.stringify(want.map((x) => x.id)) !== JSON.stringify(got)) {
-    fail(`anchor '${an.ad}': bilesen ${JSON.stringify(got)} != composition.json's declarers ${JSON.stringify(want.map((x) => x.id))}`);
+    fail(`anchor '${an.ad}': bilesenKaynak resolves to ${JSON.stringify(got)} != composition.json's declarers ${JSON.stringify(want.map((x) => x.id))} (composition.json reordered?)`);
   }
   const wantPaths = want.map((x) => `contract/composition.json:components[${x.idx}].conflictClass`);
   if (JSON.stringify(wantPaths) !== JSON.stringify(an.bilesenKaynak || [])) {

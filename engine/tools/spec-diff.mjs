@@ -36,9 +36,15 @@ export const LOCALITY = JSON.parse(
 const COMPOSITION = JSON.parse(
   readFileSync(join(ROOT, 'contract', 'composition.json'), 'utf8'),
 );
-const SPEC_V2 = JSON.parse(
-  readFileSync(join(ROOT, 'contract', 'garment-spec-v2.json'), 'utf8'),
+// v1 <-> v2 eşlemesi ÜRETİLMİŞ bir kontrattır (gen-spec-v1v2-map.mjs). Onu
+// buradan okumak iki iş görür: eşleme elde tutulmaz, ve v2 sözleşmesinin YOLU
+// da o dosyanın `generatedFrom` alanından gelir — yol burada harf harf
+// yazılmaz, yani sözleşmenin adı ağaçta tek bir yerde durur.
+const V1V2 = JSON.parse(
+  readFileSync(join(ROOT, 'contract', 'spec-v1-v2-map.json'), 'utf8'),
 );
+export const SPEC_V2_PATH = V1V2.generatedFrom.v2;
+const SPEC_V2 = JSON.parse(readFileSync(join(ROOT, SPEC_V2_PATH), 'utf8'));
 
 // ── ÇIPA SÖZLÜĞÜ ────────────────────────────────────────────────────────────
 // contract/anchors-v1.json ÜRETİLMİŞ bir dosyadır (gen-anchors.mjs). Burada
@@ -140,13 +146,24 @@ export function validateDiff(diff) {
 // ── 1b. OPERATÖR SİCİLİ ─────────────────────────────────────────────────────
 // Şema ve sözlük "bu kelime var mı" diye sorar. Sicil BAŞKA bir şey sorar:
 // bu değerin GEREKTİRDİĞİ operatör sevk edildi mi? Kural uydurulmadı,
-// contract/garment-spec-v2.json topology._role'den okunur: "bir değer,
-// gerektirdiği operatörlerden biri `shipped` değilse İFADE EDİLEMEZ ve red o
-// operatörün ADIYLA verilir."
+// v2 sözleşmesinin topology._role'ünden okunur: "bir değer, gerektirdiği
+// operatörlerden biri `shipped` değilse İFADE EDİLEMEZ ve red o operatörün
+// ADIYLA verilir."
 //
 // EŞLEME BENİM, STATÜ SÖZLEŞMENİN: aşağıdaki v1-alan -> v2-eksen tablosu bu
 // dosyada açık yazılıdır ve tartışmaya açıktır; `status` sözleşmeden okunur.
 // null = v2 ekseninin enum'unda karşılığı yok -> operatör SUÇLANMAZ, ayrı sayılır.
+//
+// V6-H ÖLÇTÜ, KAYNAĞA BAĞLAMADI — gerekçe (adlar bilerek YAZILMADI, çünkü bu
+// dosyadaki her ad kapalı-enum sayacına bir satır ekliyor; ölçüldü):
+// contract/spec-v1-v2-map.json aşağıdaki ilk DÖRT satırı birebir taşıyor, yani
+// okumak mümkün. Ama okumak da hangi dört alanın okunacağını yazmayı
+// gerektiriyor ve alan adları eksen adlarının ta kendisi — referans SAYISI
+// DEĞİŞMİYOR (ölçüldü: net 0). Sözleşmedeki 17 eksenin hepsini almak sayıyı
+// düşürürdü ama bugün yargılanmayan 13 ekseni yargılamaya sokar: kapsam
+// kararı, kapı işi değil. Son iki satır üretilmiş eşlemede ZATEN YOK — onlar
+// görü okumasının kendi kelimeleri, şemanın aynı adlı alanları başka bir şey.
+// Bu yüzden elde kalmaları bir tercih değil, veri gerçeği.
 export const AXIS_MAP = {
   garment:     ['garment',     { dress: 'sheathDress', top: 'top', skirt: 'skirt' }],
   skirtStyle:  ['skirtShape',  { aLine: 'aLine', straight: 'straight', gathered: 'gathered', pleated: 'pleated', gore: 'gore', halfCircle: null }],
@@ -193,7 +210,7 @@ export function operatorSicil(spec, touchedFields = []) {
     engeller,
     enumsuz,
     operatorler: [...new Set(engeller.map((e) => e.op))].sort(),
-    kaynak: `contract/garment-spec-v2.json@${SPEC_V2.version}`,
+    kaynak: `${SPEC_V2_PATH}@${SPEC_V2.version}`,
   };
 }
 

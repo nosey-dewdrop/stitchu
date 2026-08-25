@@ -329,13 +329,6 @@
       "ad": "backZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.backZone",
-      "bilesen": [
-        "backDetail",
-        "backSlit",
-        "exposedZip",
-        "openBack",
-        "tie"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[18].conflictClass",
         "contract/composition.json:components[8].conflictClass",
@@ -420,13 +413,6 @@
       "ad": "cfZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.cfZone",
-      "bilesen": [
-        "buttonRow",
-        "exposedZip",
-        "keyhole",
-        "placket",
-        "tie"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[16].conflictClass",
         "contract/composition.json:components[17].conflictClass",
@@ -500,11 +486,6 @@
       "ad": "hemZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.hemZone",
-      "bilesen": [
-        "backSlit",
-        "hemShape",
-        "ruffleHem"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[8].conflictClass",
         "contract/composition.json:components[13].conflictClass",
@@ -581,13 +562,6 @@
       "ad": "neckZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.neckZone",
-      "bilesen": [
-        "bardot",
-        "collar",
-        "edgeFinish",
-        "neckline.ext",
-        "neckline.halter"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[15].conflictClass",
         "contract/composition.json:components[5].conflictClass",
@@ -681,13 +655,6 @@
       "ad": "shoulderZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.shoulderZone",
-      "bilesen": [
-        "bardot",
-        "neckline.halter",
-        "ruffledStraps",
-        "shoulderStyle",
-        "sleeveCap"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[15].conflictClass",
         "contract/composition.json:components[19].conflictClass",
@@ -781,9 +748,6 @@
       "ad": "sideSeamZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.sideSeamZone",
-      "bilesen": [
-        "pocket"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[11].conflictClass"
       ],
@@ -872,10 +836,6 @@
       "ad": "sleeveZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.sleeveZone",
-      "bilesen": [
-        "cuff",
-        "sleeveCap"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[12].conflictClass",
         "contract/composition.json:components[20].conflictClass"
@@ -950,9 +910,6 @@
       "ad": "surface",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.surface",
-      "bilesen": [
-        "pocket"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[11].conflictClass"
       ],
@@ -1043,10 +1000,6 @@
       "ad": "waistZone",
       "aile": "bolge",
       "kaynak": "contract/edit-locality-v1.json:zones.waistZone",
-      "bilesen": [
-        "peplum",
-        "tie"
-      ],
       "bilesenKaynak": [
         "contract/composition.json:components[10].conflictClass",
         "contract/composition.json:components[4].conflictClass"
@@ -1138,9 +1091,6 @@
       "ad": "band.hem",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.hem",
-      "bilesen": [
-        "band"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.band.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.hemZone"
@@ -1169,9 +1119,6 @@
       "ad": "band.neck",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.neck",
-      "bilesen": [
-        "band"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.band.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.neckZone"
@@ -1200,9 +1147,6 @@
       "ad": "band.shoulder",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.shoulder",
-      "bilesen": [
-        "band"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.band.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.shoulderZone"
@@ -1229,9 +1173,6 @@
       "ad": "band.sideSeam",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.sideSeam",
-      "bilesen": [
-        "band"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.band.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.sideSeamZone"
@@ -1257,9 +1198,6 @@
       "ad": "band.waist",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.waist",
-      "bilesen": [
-        "band"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.band.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.waistZone"
@@ -1285,9 +1223,6 @@
       "ad": "collar.neck",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.neck",
-      "bilesen": [
-        "collar"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.collar.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.neckZone"
@@ -1322,9 +1257,6 @@
       "ad": "collar.shoulder",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.shoulder",
-      "bilesen": [
-        "collar"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.collar.primitifler.op.attach",
         "contract/edit-locality-v1.json:zones.shoulderZone"
@@ -1357,9 +1289,6 @@
       "ad": "skirt.hem",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.extend.parametreler.fromLandmark.degerler.hem",
-      "bilesen": [
-        "skirt"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.skirt.primitifler.op.extend",
         "contract/edit-locality-v1.json:zones.hemZone"
@@ -1395,9 +1324,6 @@
       "ad": "skirt.waist",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.extend.parametreler.fromLandmark.degerler.waist",
-      "bilesen": [
-        "skirt"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.skirt.primitifler.op.extend",
         "contract/edit-locality-v1.json:zones.waistZone"
@@ -1430,9 +1356,6 @@
       "ad": "sleeve.shoulder",
       "aile": "operator",
       "kaynak": "contract/primitives-v1.json:primitifler.op.extend.parametreler.fromLandmark.degerler.shoulder",
-      "bilesen": [
-        "sleeve"
-      ],
       "bilesenKaynak": [
         "contract/primitives-v1.json:bilesenler.sleeve.primitifler.op.extend",
         "contract/edit-locality-v1.json:zones.shoulderZone"
