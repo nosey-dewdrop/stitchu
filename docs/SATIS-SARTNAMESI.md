@@ -11,8 +11,8 @@
 > ./engine/pattern-bridge/.venv/bin/python3 engine/pattern-bridge/printpack.py \
 >     /tmp/h11e --size EU38 --date 2026-01-01
 > ```
-> Çıktı: `print-info.pdf` (**5 sayfa**: beden+kumaş / KUMAŞ SEÇİMİ / montaj / 2 kesim planı)
-> · `print-a0.pdf` (1 sayfa) · `print-a4.pdf` (1 harita + 14 içerik) · `print-report.txt` · 21 SVG.
+> Çıktı — hepsini `engine/pattern-bridge/printpack.py` basar: `print-info.pdf` (**5 sayfa**: beden+kumaş / KUMAŞ SEÇİMİ / montaj / 2 kesim planı).
+> Aynı koşudan `print-a0.pdf` (1 sayfa) · `print-a4.pdf` (1 harita + 14 içerik) · `print-report.txt` · 21 SVG — sayfa sayılarının mandalı `printpack_sheet_check` (`engine/pattern-bridge/printpack.py` çıktısına karşı).
 > Determinizm sha256 (sayfa SVG'leri) `ec3b0f11a3eae3ae…`; iki bağımsız koşu, 4 çıktı dosyası
 > `cmp` ile bayt-özdeş (`print-info.pdf` sha256 `e457f8a4371254a7…`).
 > Ağaç: `main`, `5209e0c`'den sonra (8A'nın omuz-pens commit'i dahil, yeniden derlenmiş).
@@ -26,7 +26,7 @@
 > `HEDEF.md`'nin "T4'te 13 / taze koşu 14 / Logs 10" üçlemesinin cevabı budur: **10 doğru
 > sayı**, `Logs/taban-T10-SONRA/pack-EU38/print-report.txt` de 10 diyor.
 
-F0'da `benchmark-58/dress_patterns/` Etsy emsallerinden çıkarıldı. Her madde ÖLÇÜLEBİLİR ve bir görsel rayın (F1/F2/F3) teknik denetimine girer. Kontakt sayfasında çıktı 3 gerçek Etsy emsalinin YANINA konur; Damla "bunların yanında durur mu" diye bakar. Kaynak envanteri: `reports/2026-07-19-stitchu-f0-gusto-korpus.md`.
+Bu maddeler F0'da `benchmark-58/dress_patterns/` Etsy emsallerinden çıkarıldı ve envanteri `reports/2026-07-19-stitchu-f0-gusto-korpus.md`'ye yazıldı. ⚠ **İKİ KAYNAK DA BUGÜN DİSKTE YOK** — 25 Ağu'da yeniden yoklandı: `ls -d benchmark-58` → *No such file or directory*, `ls reports/` çıktısında o rapor adı geçmiyor. Yani maddelerin nereden türediği bugün yeniden okunamaz; aynı yokluğun tam kaydı aşağıda **EMSAL REFERANSLARI** bölümünde. Kaybolmayan şey, emsallerden çıkarılan SAYILAR: `contract/gusto-corpus.json` içinde donmuş duruyorlar ve §2/§3'ün bant ölçümleri bugün onlardan koşuyor. Her madde ÖLÇÜLEBİLİR ve bir görsel rayın (F1/F2/F3) teknik denetimine girer. Kontakt sayfasında çıktı 3 gerçek Etsy emsalinin YANINA konur; Damla "bunların yanında durur mu" diye bakar.
 
 Bir stitchu paketi "satılabilir" sayılır ancak aşağıdaki maddelerin HEPSİ ölçülüp geçtiğinde. Ölçen: gusto-lint (görsel/oran) + şartname-check (paket bütünlüğü) + preview-truth (flat=kalıp). "Bitti" demek için her satırın PASS'i raporda olmalı.
 
@@ -97,7 +97,8 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
 ## 2. KALIP PAKETİ TAM (ürün) — **6/6 GEÇTİ**
 
 - [x] **Numaralı parçalar — her parça etiketli (isim + kesim notu).**
-      `grep -oE "<text[^>]*>[^<]*</text>" /tmp/h11pack/print-svg/a4-page5.svg` →
+      Ölçüm koşusunun `/tmp` dizini uçtuğu için 25 Ağu'da diskte DURAN pakette tekrarlandı:
+      `grep -oE "<text[^>]*>[^<]*</text>" Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg` →
       `etek arka` / `parca 3/4 · EU38 · 2 kes · aynali cift` / `stitchu · 2026-01-01 · pay 10mm dahil`.
       4 çizimin dördü de `parca i/4` numaralı, isimli, kesim notlu.
 - [x] **Kesim tablosu emsal diliyle — her parçada net.**
@@ -107,7 +108,8 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       (`contract/gusto-corpus.json → piece_page_bands.cut_instruction_language`). Anlam birebir,
       **sözcük İngilizce değil.** Etsy listing dili kararı `DAMLA-KUYRUK`'a düşer, paket bütünlüğü etkilenmez.
 - [x] **Gömülü dikiş payı (SA) — kesim + dikiş çizgisi ikisi de basılı.**
-      `grep -c "<polygon" print-svg/a4-page5.svg` → **2** (cut + seam). `print-info.pdf` s.1:
+      `grep -c "<polygon" Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg` → **2** (cut + seam,
+      25 Ağu'da yeniden koşuldu). `print-info.pdf` s.1:
       *"DIKIS PAYI 10mm, her kenarda, kaliba DAHIL. kesim cizgisi duz, dikis cizgisi kesikli."*
       `printpack.log` SEAM ALLOWANCE tablosu 8 panelde düz bantta **min 9.980 / max 10.009 / mean 10.000mm**.
       ⚠ **BAYAT DÜZELTİLDİ:** bu satır *"mevcut motor: SA 15mm gömülü"* diyordu. **15mm hiç doğru değildi.**
@@ -117,6 +119,7 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       `pdftotext -f 1 -l 1 print-info.pdf` → BEDEN TABLOSU, 8 beden × 3 ölçü:
       EU34 gogus 79.8 / bel 64.3 / basen 83.5 … EU48 107.8 / 92.3 / 111.5.
 - [x] **A4 (çok-sayfalı, register+tile) VE A0 (tek-tabaka) ikisi de üretiliyor.**
+      Sayfa sayılarını basan alet `engine/pattern-bridge/printpack.py`, mandalı `printpack_sheet_check`:
       `print-a4.pdf` = 1 harita + **14 içerik sayfası** (4×4 grid, 2 boş hücre atlandı), bindirme 10mm,
       sayfa kodları A1..D4. `print-a0.pdf` = **1 shelf-packed sayfa**. İkisi de aynı koşudan.
       ⚠ **A1 üretilmiyor** — kod yolu `render_tiled` ile A1'i destekleyebilir ama koşuda çağrılmıyor.
@@ -125,13 +128,14 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       Bant (`contract/gusto-corpus.json`): A4-multi **8–24**, A0-single **1–2**.
       Ölçülen: A4 **15** sayfa (1 harita + 14) ✓ bandın içinde · A0 **1** sayfa ✓ bandın içinde.
 
-## 3. PARÇA + SAYFA EMSAL BANDI (verimlilik) — **4/4 GEÇTİ**
+## 3. PARÇA + SAYFA EMSAL BANDI (verimlilik) — **4/4 GEÇTİ** (mandal: `printpack_sheet_check`)
 
 - [x] **Parça sayısı: elbise ≤8.**
-      `printpack.log` → `8 panels in the specification -> 4 pieces drawn -> 8 pieces cut from cloth`.
+      `engine/pattern-bridge/printpack.py`'nin bastığı `printpack.log` →
+      `8 panels in the specification -> 4 pieces drawn -> 8 pieces cut from cloth`.
       Korpus bandı `dress: min 4, max 8`. Spec'te 8, çizimde 4 → **ikisi de bandın içinde.**
 - [x] **"Cut on fold" doğru uygulanmış — kural KOŞUYOR, bugün TETİKLENMİYOR.**
-      `printpack.log` CUT PLAN her paneli kendi orta çizgisine karşı ölçüyor:
+      `engine/pattern-bridge/printpack.py`'nin CUT PLAN bloğu her paneli kendi orta çizgisine karşı ölçüyor:
       `left_btorso 81.2436mm` · `left_ftorso 116.9624mm` · `left_skirt_back 34.2360mm` ·
       `left_skirt_front 63.6849mm` asimetri → **hiçbiri kendi orta çizgisine simetrik değil**,
       dördü de tam çiziliyor. Sebebi yapısal: bu giysinin **ön ortası da arka ortası da DİKİŞ**
@@ -173,8 +177,8 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       uzunlukları):
       | ölçü | EU38 | ne söylüyor |
       |---|---|---|
-      | kalıbın bel çevresi | **72.5cm** (vücut 70.0 → **+2.5cm bolluk**) | şekil dikişten çıkıyor, dökümden değil |
-      | etek ucu / bel | 127cm / 72cm = **1.75** | etek vücuttan AÇILIYOR → kumaş bu açıklığı ayakta tutmalı |
+      | kalıbın bel çevresi | **72.5cm** (vücut 70.0 → **+2.5cm bolluk**) | şekil dikişten çıkıyor, dökümden değil — sayıyı `engine/pattern-bridge/printpack.py` basar |
+      | etek ucu / bel | 127cm / 72cm = **1.75** | etek vücuttan AÇILIYOR → kumaş bu açıklığı ayakta tutmalı — sayıyı `engine/pattern-bridge/printpack.py` basar |
       | açıklık (fermuar) | var | esneme gerekmiyor → **dokuma (non-stretch) şart** |
       → **ÖNERİLEN: pamuklu poplin** (medium, crisp holds shape) · **keten** (light-medium,
       somewhat stiff) · **ağırlık 150–250 g/m²**.
@@ -220,11 +224,15 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       çizilen kenardan ölçülebiliyor (`node engine/tests/sleeve_cap_ease_check.mjs`,
       `docs/ARCHITECTURE.md` §15).
 - [x] **Kalibrasyon karesi / ölçek çubuğu.**
-      `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi,
-      `printpack.log` → `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.
+      `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi.
+      Sayıyı `engine/pattern-bridge/printpack.py` basar:
+      `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.
 - [x] **Beden başı iç dikiş sayfası damgası.**
-      `print-svg/a4-page5.svg` içeriğinde `stitchu EU38 1:1` — 14 içerik sayfasının **hepsinde**
-      (`printpack.py:1075` her tile'a basıyor). Hangi tile hangi beden, sayfanın kendisinde yazılı.
+      `Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg` içeriğinde `stitchu EU38 1:1`.
+      25 Ağu'da diskteki paketin **14 içerik sayfasının 14'ünde** de sayıldı
+      (`grep -l "stitchu EU38 1:1" Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page*.svg | wc -l` → 14;
+      15. sayfa harita sayfasıdır, damga taşımaz). Basan satır `printpack.py:1075`, her tile'a yazıyor.
+      Hangi tile hangi beden, sayfanın kendisinde yazılı.
 
 ## 4b. AÇIKLIK UYARISI — **GEÇTİ** (T10, şartnameye BU MÜHÜRDE eklendi)
 
@@ -237,11 +245,17 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       *"DİKİLMEYEN DİKİŞ — BURAYI DİKMEYİN · centre_back_zip: arka orta dikişin 563.4mm (22.18 inç)
       üst kısmı DİKİLMEZ … Fermuarsız bu elbise kafadan geçmez. Fermuar: 22 inç."*
       (2) **Kalıbın kendi üstünde**, dikilmeyen kenar boyunca etiket:
-      `print-svg/a4-page5.svg` → `BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI 563mm`.
+      `Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg` → `BURAYI DİKMEYİN — FERMUAR AÇIKLIĞI 563mm`
+      (25 Ağu'da diskteki pakette yeniden okundu).
       (3) Montaj adım 9 aynı hükmü tekrarlıyor (*"eteğin altından başla, zip-end yazan üçlü çentiğe
-      kadar dik ve DUR"*) ve `printpack.log` NOTCHES tablosunda iki `triple zip-end` çentiği
-      **0.0000mm** eşleşiyor — uyarı metin değil, **geometriye bağlı**.
-      Regresyon mandalı: `printpack_sheet_check` (ctest).
+      kadar dik ve DUR"*) ve uyarı metin değil, **geometriye bağlı**: iki `triple zip-end` çentiğinin
+      eşleşme farkını bu dosya değil `engine/pattern-bridge/printpack.py`'nin NOTCHES tablosu basar.
+      25 Ağu'da diskteki paketten okunan iki satır aynen
+      (`Logs/taban-T10-SONRA/pack-EU38/print-report.txt` satır 72-73):
+      `triple   zip-end   0.0000   left_skirt_back[1] 200.4mm <-> ZIP END 0.0mm` ve
+      `triple   zip-end   0.0000   right_skirt_back[1] 200.4mm <-> ZIP END 0.0mm`.
+      Sütun başlığı aynı dosyanın 56. satırında: *"ratio diff re-measured by independent chord
+      integration, must be < 1mm"*. Regresyon mandalı: `printpack_sheet_check` (ctest).
 
 ⚠ **25 AĞU (V5-A) — SEVK EDİLEN REHBER, MOTORUN ÖLÇMEDİĞİ BİR KONTROLÜ ALICIYA YAPTIRIYOR.**
 Bu madde fermuarlı elbiseyi kapatıyor; fermuarSIZ üstte durum tersine dönüyor. `guideSteps[2]`
@@ -269,7 +283,7 @@ yasak (miras: PROVE don't claim).
 | şart | bugün |
 |---|---|
 | gusto-lint PASS | **KOŞULAMADI** — girdi (listing flat) üretilmiyor (§1). 24 Ağu'dan beri bir siluet dış konturu üretiliyor (`shell-flat --svg`) ama o gusto-lint'in sorduğu nesne değil, koşturulmadı. |
-| şartname 1-4 PASS | **16/17 madde geçti** (Tur 8: 14 → 16) · kalan eksik yalnız **§1'in 5 listing görseli maddesi**, hepsi H1.3 |
+| şartname 1-4 PASS | **20 kutucuğun 15'i işaretli, 5'i açık** — sayan komut `grep -c "^- \[x\]" docs/SATIS-SARTNAMESI.md` → 15, `grep -c "^- \[ \]" docs/SATIS-SARTNAMESI.md` → 5 (25 Ağu). Açık olan 5'in beşi de **§1 listing görseli**, hepsi H1.3. ⚠ Eski *"16/17 madde geçti"* satırı hiçbir sayımla tutmuyordu, düzeltildi. |
 | kontakt sayfası + Damla onayı | **AÇILMADI** — kontakt sayfası basılmadı, emsaller diskte yok (aşağı) |
 
 ## EMSAL REFERANSLARI — ⚠ **DOSYALAR DİSKTE YOK**
@@ -302,13 +316,27 @@ Damla'nın gözü açılamaz. Bu bir ölçüm eksiği değil, **VARLIK eksiği**
 
 | # | Halka | Neden | durum |
 |---|---|---|---|
-| H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üretilmiyor | **KAPANDI Tur 8** — 0/4 parça katlanabiliyor, A4 15→15, A0 1→1, kazanç **0**; mandal §6 |
+| H1.1a | nesting önce/sonra sayfa sayısı raporlanmıyor | §3 madde 3; F3 azaltma kanıtı üretilmiyor | **KAPANDI Tur 8** — 0/4 parça katlanabiliyor, A4 15→15, A0 1→1, kazanç **0**; sayıyı `engine/pattern-bridge/printpack.py` basar, mandalı `printpack_sheet_check` §6 |
 | H1.1b | kumaş önerisi (tür/ağırlık/döküm) pakete girmiyor | §4 madde 1; `knowledge/sewing-guide.md` diskte var, hiçbir sayfaya basılmıyor | **KAPANDI Tur 8** — `print-info.pdf` s.2 KUMAS SECIMI, kaynak `stitchu.db`; mandal §7 |
 | H1.1c | emsal PDF'leri diskte yok → kontakt sayfası açılamıyor | ÖLÇÜM KAPISI'nın 3. şartı; Damla kararı gerekir | **AÇIK — Damla'da** |
 
-**H1.1 HÂLÂ KAPANMADI**, ama kalan iki sebebin ikisi de bu şartnamenin dışında:
-§1'in beş maddesi **H1.3**'ün işi (kasten H1.0'ın arkasında), kontakt sayfası **H1.1c**
-(Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1.
+**H1.1 HÂLÂ KAPANMADI.** Motorun bu şartnameye olan borcu tek cümleyle kapatılamaz — bölüm bölüm:
+
+| bölüm | kutucuk | durum | kapanmadıysa nerede / mandalı |
+|---|---|---|---|
+| §1 listing görseli | 0/5 işaretli | **AÇIK** | H1.3; `gusto-lint.mjs` girdisi üretilmiyor, `style_check` pinsiz kırmızı |
+| §2 kalıp paketi | 6/6 işaretli | ölçüldü | mandal `printpack_sheet_check` |
+| §3 emsal bandı | 4/4 işaretli | ölçüldü | mandal `printpack_sheet_check` §6 |
+| §4 talimat iskeleti | 4/4 işaretli | ölçüldü, **bir şerhle** | §4 md.2'nin "dikiş grafiği" cümlesi web indirmesi için **DOĞRULANMADI** (`sewability_check`) |
+| §4b açıklık uyarısı | 1/1 işaretli | ölçüldü, **bir şerhle** | fermuarSIZ üstte kontrol alıcıya devrediliyor, eşik yayınlanmış değil |
+| ÖLÇÜM KAPISI | — | **AÇIK** | kontakt sayfası **H1.1c** (Damla kararı), emsal görselleri diskte yok |
+
+Yani "§2/§3/§4/§4b'nin kutucukları bugün ölçülüp işaretli" demek doğru; "borç kalmadı" demek
+**değil** — §1'in beş maddesi **H1.3**'ün işi (kasten H1.0'ın arkasında), kapının üçüncü şartı
+**H1.1c**'de duruyor, ve §4/§4b'nin iki şerhi yukarıda adıyla yazılı.
+⚠ Bu paragrafın eski hâli *"Motorun bu şartnameye borcu bitti"* diyordu; aynı dosyanın §1
+başlığı **5/5 EKSİK** dediği için kendi kendisiyle çelişiyordu (RULES §8 blanket-done yasağı).
+25 Ağu'da emekli edildi, silinmedi — yerine geçen bölüm bölüm tablo yukarıda.
 
 ### TUR 8'DE AÇILAN KUYRUK SATIRLARI (`DAMLA-KUYRUK.md`)
 - **Etsy listing dili** — kesim notu Türkçe (`2 kes · aynali cift`), emsal korpus İngilizce

@@ -43,9 +43,10 @@
 
 6. **L3a KENDİ İÇİNDE İKİYE BÖLÜNMÜŞ, kanun yalnız birine ulaşıyor (24 Ağu, V4).** Konvansiyon
    kanunu (`contract/flat-convention-v1.json`) yalnız ÜRETİM kalemini bağlıyor; canlı sitenin
-   31 stili ve zevk panosunun 10 hücresinin 9'u REFERANS kalemden çıkıyor. Ölçüldü: bu gecenin
-   iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'le **bayt bayt
-   aynı** (`cmp`, `GECE/V4-D.md` §1) — yani kanuna uygunluk kapısını geçen bir onarım, alıcının
+   31 stili ve zevk panosunun 10 hücresinin 9'u REFERANS kalemden çıkıyor.
+   O gecenin iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'in
+   çıktısıyla **bayt bayt aynı** çıktı — 24 Ağu 2026'da `cmp` ile ölçüldü, `GECE/V4-D.md` §1 —
+   yani kanuna uygunluk kapısını geçen bir onarım, alıcının
    gördüğü çizimde hiç görünmeyebiliyor. Sayan aletler: `node engine/tests/flat_convention_check.mjs`
    (üretim kalemi, 8 stil) ve `node engine/tools/flat-board.mjs <dizin> --eski <dizin>`.
    Kök çözüm — stilleri kanunun bağladığı kaleme taşımak — YAPILMADI, karar alınmadı.
@@ -71,7 +72,7 @@
 8. **L0 ↔ L3b: `shoulderCM` hem KAYNAKSIZ hem KULLANILMIYOR (25 Ağu, V5).** `contract/tables.json`
    alıcıya on beden için `shoulderCM` yayınlıyor (`_sources` status **NONE**, bekçisi kırmızı:
    `sizechart_source_check`), ama L3b geometrisi o girdiden **bağımsız**: `body.shoulder`
-   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor (`GECE/V5-D.md`).
+   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor — 25 Ağu 2026'da ölçüldü, `GECE/V5-D.md`.
    Motor omzu kendi çiziyor ve Aldrich'in yayınlanmış omuz boyundan ön −8.30 mm / arka
    −18.18 mm kısa düşüyor. Yani L0'ın bu kolonu ne besliyor ne de doğrulanabiliyor.
    ⚠ Aynı kesişimin `neckCM` için de var olduğu iki çıktı yan yana konarak görüldü ama
@@ -105,6 +106,12 @@
     **sevk edilen** hattını yargılıyor: `engine/dist/stitchu-engine.js` yükleniyor ve
     kaynak damgası `web/vendor/stitchu-engine.js` ile birebir (`7023c808195429b3`),
     yani md.9'daki ayrımın *2B* tarafı. Yüzey hattı hakkında hiçbir şey söylemiyor.
+    ⚠ **BU DAMGANIN SINIRI, 25 Ağu'da yazıldı:** `engine/dist/stitchu-engine.js`
+    **gitignore'da** — `git check-ignore -v engine/dist/stitchu-engine.js` `engine/.gitignore`'ın
+    5. satırındaki `dist/` kuralını gösteriyor —
+    yani damga TEMİZ BİR CHECKOUT'TA ÜRETİLEMEZ — üstteki onaltılık dizi bir kere okunmuş
+    değerdir, bu dosyadan doğrulanamaz. Aynı sınırı `docs/ARCHITECTURE.md:263` de ilan ediyor.
+    Bundle'ın kaynağıyla tazeliğini yargılayan ayrı kapı `bundle_fresh_check` ctest'te kayıtlı.
     ★ **Boşluk:** editlemenin istediği çıpa bir panelin KENARIDIR; md.7'nin saydığı
     dikiş grafiği eksikliği burada ikinci kez ısırıyor — o gün 88 spec'te **0 adlandırılmış
     kenar** ölçüldü, ve `contract/primitives-v1.json:primitifler.edge.parametreler.label`

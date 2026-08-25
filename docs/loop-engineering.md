@@ -64,5 +64,12 @@ Born 2026-07-16, after four capability loops moved the 58-photo benchmark
 less than expected. The diagnosis root found the real brake in a different
 layer than we'd been polishing (vision word instability, not engine
 geometry). The first full chain: patch 2.0 taxonomy → 2.1 storefront →
-2.2 targeted repair → 2.3 conditional consistency repair → verdict. See
-reports/stitchu-vision-progress.md for its scoreboard.
+2.2 targeted repair → 2.3 conditional consistency repair → verdict.
+
+Its scoreboard used to live at `reports/stitchu-vision-progress.md`. Checked again on
+25 Aug 2026: that file does not exist — neither `reports/` in this repo nor the reports
+directory outside it holds it. The link is kept here rather than deleted, so
+the reader knows the scoreboard existed and where it was: the numbers behind the 2.x chain
+cannot be re-read today. The vision accuracy figure that chain produced is still auditable
+from a different artefact — `vision/eval/live-2026-08-22.json`, printed by
+`engine/tools/foto-spec-olcum.mjs`.
