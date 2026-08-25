@@ -285,6 +285,15 @@ const BANNED = [
   ['sabit beden yok (TR)', /sabit beden yok/gi],
   ['ısmarlama (TR)', /ısmarlama/gi],
   ['vücudunuza göre (TR)', /vücudunuz[a-zçğıöşü]* göre/gi],
+  // ── V10-J: iki kalıp EKLENDİ (hiçbiri silinmedi/gevşetilmedi).
+  // 3. tekil iyelik: yukarıdaki `ölçüleriniz[a-zçğıöşü]* göre` 2. çoğulu ister,
+  // `ölçülerine göre`yi KAÇIRIYOR — ölçüldü, o kalıp bu metinde false döner.
+  // Hakem 16 canlı hit saydı (`grep -roc "ölçülerine göre" web/` → 16 dosya,
+  // 16 hit, hepsi web/collections/*.html, hepsi data-tr, yani CANLI metin).
+  ['ölçülerine göre (TR)', /ölçüler(?:in|iniz)e göre/gi],
+  // Hakem ADIYLA istedi; bugün web/ altında 0 hit (`grep -roc "kişiye özel" web/`),
+  // yani ileriye dönük mandal: MTM'nin en yaygın Türkçe satış cümlesi.
+  ['kişiye özel (TR)', /kişiye özel/gi],
 ];
 function scanL2() {
   const hits = []; const perPattern = {};

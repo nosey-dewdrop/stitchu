@@ -442,7 +442,7 @@ const STYLES = [
       'A yoke of fabric at the shoulders is what hangs the garment, so the opening starts 40 mm below the centre-back nape and must clear the waist seam by 55 mm. Length is clamped to 55–320 mm: shorter reads as a keyhole, longer than 320 is a full backless span.',
       'Four shapes with real half-width-to-length ratios: round 0.42, low-V 0.34, square 0.36, teardrop keyhole 0.24.',
       'The opening is drawn as a HALF against the centre-back seam, the back is cut 2, and the mirror axis unfolds it into the full symmetric cutout (the same on-fold convention as the front keyhole).',
-      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0, sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing is unchanged under golden_check to the opening drawn on the back: truing 0.00 mm, tested.',
+      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0, sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing matches the opening drawn on the back: truing 0.00 mm in tests/backopen_check.',
       'It coexists with a tie-back closure on the same draft: the tie draws the strips, this draws the opening they fasten over.',
     ],
     numbers: [
@@ -453,7 +453,7 @@ const STYLES = [
       ['facing margin', '+34 mm, truing 0.00 mm'],
     ],
     compat: 'Dresses and tops (needs a back bodice). Laced backs and back button plackets stay in the honesty layer.',
-    tests: 'tests/backopen_check, facing stitch line unchanged under golden_check to the opening, base outlines untouched, all four shapes rendered.',
+    tests: 'tests/backopen_check, facing stitch line matches the opening, base outlines untouched, all four shapes rendered.',
   },
   {
     slug: 'princess-seams', group: 'construction', name: 'Princess seams',
