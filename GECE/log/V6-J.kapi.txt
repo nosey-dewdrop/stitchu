@@ -52,3 +52,12 @@ bugun toplam  : 10432 (delta -6)
 vocab_reference_check: 37 eksen + 92 kelime olculdu
 HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.
 EXIT=0
+
+=== CTEST (commit 52777a1) ===
+95% tests passed, 6 tests failed out of 113 · CTEST_EXIT=8 · 271.31 sn
+kirmizi AD kumesi acilis (V6.ctest.opening.txt) ile BIREBIR: 9 flat_pattern_agree_check ·
+12 flat_artifact_census · 13 style_check · 20 sizechart_source_check · 91 contract_check ·
+96 figure_check. Yeni kirmizi AD 0.
+114/114 Test #114: vocab_reference_check Passed 4.57 sec
+NOT: kapi --tree olmadan COMMIT-i olcer; commit oncesi kosuda ayni test FAIL basiyordu
+(olctugu agac hala 3d8903c idi). Bu bir hata degil, kapinin birimi commit.

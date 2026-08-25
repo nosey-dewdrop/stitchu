@@ -67,8 +67,21 @@ Kalan kod farkı `git diff --stat 3fa8002 -- contract engine web recipes backend
 
 - `bash engine/tests/vocab_reference_check.sh --tree .` → **`HUKUM: YESIL`**, `EXIT=0`,
   10432 (delta −6). Tam çıktı `GECE/log/V6-J.kapi.txt`.
-- `ctest --test-dir engine/build --output-on-failure` → `GECE/log/V6.ctest.final.txt`
-  (sayılar orada; kırmızı AD kümesi `GECE/log/V6.ctest.opening.txt` ile karşılaştırıldı).
+- `bash engine/tests/vocab_reference_check.sh` (ctest'in koştuğu hâli, COMMIT'i ölçer)
+  → **`HUKUM: YESIL`**, `EXIT=0`, commit `52777a1`, 10432 (delta −6).
+  ⚠ Kapı `--tree` olmadan **commit'i** okur: bu yüzden commit ÖNCESİ ctest koşusunda
+  `114 - vocab_reference_check` hâlâ FAIL basıyordu (ölçtüğü ağaç `3d8903c`'ti).
+  Commit sonrası koşu aşağıdadır.
+- `ctest --test-dir engine/build --output-on-failure` TAM koşu (271.31 sn),
+  log `GECE/log/V6.ctest.final.txt`, `CTEST_EXIT=8`:
+  **`95% tests passed, 6 tests failed out of 113`** — açılıştaki
+  (`GECE/log/V6.ctest.opening.txt`) `95% tests passed, 6 tests failed out of 113`
+  ile aynı yüzde, aynı sayı, aynı toplam.
+  `114/114 Test #114: vocab_reference_check ... Passed 4.57 sec`.
+  **KIRMIZI AD KÜMESİ BİREBİR AYNI (6 ad):**
+  `flat_pattern_agree_check · flat_artifact_census · style_check ·
+  sizechart_source_check · contract_check · figure_check`.
+  Yeni kırmızı AD **0**, kapanan miras kırmızı **0** (hiçbirine dokunulmadı).
 
 ## 5. YAPILMAYAN / AÇIK
 
