@@ -1104,61 +1104,71 @@ MINIMUM EASE · Aldrich 4.bs s.28. Bel payı 8/8 bedende bandın İÇİNDE.
 ★ Test çıktısı bu ada atıf veriyor: `draft_math_check` son hüküm satırı
 "YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)".
 
-## K-V6A — `vocab_reference_check` yeşile dönsün diye ÖLÇÜM ALETLERİNİN KAPSAMI daraltılsın mı? (V6, 25 Ağu)
+## K-V6A — çıpa/ölçüm işi yan dalda mı kalsın, yoksa ratchet üretilmiş `contract/` dosyalarını kapsam dışı mı bıraksın? (V6, 25 Ağu — V6-J'de yeniden yazıldı)
 
-**KARAR GEREKEN:** Kapıyı yeşile döndürmenin kalan tek yolu, `foto-spec-olcum.mjs`
-+ `spec-diff.mjs`'in elle yazılmış v1→v2 eşlemesini üretilmiş kontrata devretmek —
-ama bu, bugün yargılanan **4 ekseni 17 eksene** çıkarır. Kapsam büyüsün mü, yoksa
-kapı KIRMIZI mı kalsın?
+**DURUM DEĞİŞTİ.** Bu kart 25 Ağu'da "kapı kırmızı kalsın mı" diye soruyordu.
+Hakem **KALDI** dedi, V6-J geri almayı yaptı: **ana dal artık `HUKUM: YESIL`**
+(10432, delta −6, `bash engine/tests/vocab_reference_check.sh`). Yani kapı artık
+bir karar beklemiyor. Bekleyen tek şey, yan daldaki işin ana dala nasıl döneceği.
 
-**ÖLÇÜM (basan komut: `bash engine/tests/vocab_reference_check.sh`):**
-faz öncesi `3fa8002` **10432, HUKUM: YESIL** · V6 sonu `a38b7b2` **10478,
-FAIL (20 artan)** · V6-H sonrası `63abc19` **10452, FAIL (7 artan)** ·
-**V6-I sonrası `6b3378f` 10448, FAIL (6 artan, 0 yeni)** — `topLength` kapandı.
-**BUGÜNKÜ KALAN BORÇ = 16 satır** (taban 10438'e göre +10; artan eksenler
-`garment +4 · neckline +2 · shaping +2 · skirtStyle +2 · yoke +2 · backOpening +1`,
-düşen `sleeveLength −1 · sleeveStyle −2`). Ödenen borç 30/46. Dağılım:
-- **10 satır KAPSAM kararına bağlı** (`garment` 4 · `shaping` 2 · `skirtStyle` 2'nin
-  kod kısmı + `backOpening` 1 + `AXIS_MAP` anahtarları),
-- **3 satır ÖLÇÜLMÜŞ VERİ, silinemez**: `anchors-v1.json`'daki iki panel adı
-  (`"Bias binding (neckline)"`, `"Bias binding (neckline + armholes)"` — motorun
-  bastığı adlar, `_olculenPaneller` indeksin tabanı) ve `_dogmayan`'daki
-  `"overlay.yoke"` (doğmayan adın kendisi; bekçinin 4. kapısı onu ADIYLA doğrular),
-- kalanı `foto-spec-olcum.mjs`'in KONUM kelime listesi + FIELD_MAP/SPEC_DEFAULTS.
+**İŞ NEREDE:** yan dal **`research/v6-cipa-editleme`**, son commit
+**`3d8903cc39b5e7a99dac462aed1e982221018886`**, `origin`'e pushlu. Hiçbir satır
+silinmedi. İçinde: `contract/anchors-v1.json` · `engine/tools/gen-anchors.mjs` ·
+`engine/tests/anchor_source_check.mjs` · `foto-spec-olcum.mjs` KONUM/`--v2` ekleri ·
+`spec-diff.mjs` V6-G ekleri (`operatorSicil`, `AXIS_MAP`, `anchorNames`, `OP_KEYS`) ·
+`edit_locality_check.mjs` A5/A6.
 
-**V6-I ÖLÇTÜ — KONUM SÖZLÜĞÜ `engine/vocab.json`'DAN ÜRETİLEMEZ (yeni bulgu).**
-V6-H'nin denenmemiş bıraktığı ve V6-I kartının önerdiği yol kapalı çıktı:
-`engine/vocab.json` 37 alan adından **44 jeton** veriyor, bunun yalnız **9'u**
-(`back cuff front hem neckline shoulder skirt sleeve yoke`) KONUM listesindedir;
-kalan **35 jeton** (`button collar dart pleat straight round…`) konum değildir ve
-listeye girerse KONUM sınıfı yeniden tanımlanır. Değerlerle birlikte sayı 134
-jetona çıkıyor, oran daha da kötüleşiyor. Alternatif üretilmiş kaynak olan çıpa
-adları (`anchorNames()`) **14 jeton** veriyor ve içinde ne `neckline` ne `yoke`
-var — yani kapıyı kıran iki kelimeyi hiçbir üretilmiş kaynak basmıyor.
-Sözlükte konum/konum-değil ayrımı YOK; ayrımı yapmak o 9 kelimeyi harf harf
-yazmak demek, yani üretim referans sayısını **düşürmüyor**.
-(Basan komutlar `GECE/V6-I.md` §3'te.)
+**ANA DALDA KALAN:** V6-E'nin onarımı (`LOCALITY_GRANULARITY = 'bayt'` ilanı +
+`pieceBytes` export). Ölçülmüş gerekçe: bu onarımı KORUYAN ağaç ile onu da ATAN
+ağaç **aynı 10432**'yi basıyor → ratchet maliyeti **sıfır**. (`GECE/V6-J.md` §2.)
+
+**KARAR GEREKEN:** çıpa sözlüğü ve foto→spec ölçüm hattı ana dala hangi şartla döner?
 
 **SEÇENEKLER:**
-- **(A) KAPI KIRMIZI KALSIN** (bugünkü hal, VARSAYILAN). `vocab_reference_check`
-  miras 6'ya ek **7.** kırmızı ad olarak durur ve `HUKUM: FAIL (7 artan, 0 yeni)`
-  basar. Bedeli: RULES md.9'un "kırmızı AD kümesi büyümesin" yasası V6 için
-  ihlalli kalır, ve faz kapanmaz. Kazancı: hiçbir ölçüm hattı sayı uğruna
-  genişletilmez.
-- **(B) EŞLEME ÜRETİLMİŞ KONTRATA DEVREDİLSİN** — `contract/spec-v1-v2-map.json`
-  17 ekseni taşıyor, `AXIS_MAP` bugün 6'sını (4'ü birebir aynı) kullanıyor.
-  ⚠ **BEDELİ ÖLÇÜLMEDİ** (uygulanıp ctest koşulmadı): bugün yargılanmayan 13 eksen
-  yargıya girer, `operatorSicil` yeni red satırları basar, ve `edit_locality_check`
-  A6 kapısı ile `foto-spec-olcum --v2` sayıları değişir. Ölçülen tek şey:
-  4 ekseni okumak referans sayısını **net 0** oynatıyor (alan adı = eksen adı),
-  yani kazanç YALNIZ 17'ye çıkıldığında geliyor.
-- **(C) TABANI YENİDEN KES** (`--baseline 63abc19`). Sayıyı bir commit'te sabitler
-  ve kapı yeşile döner. ⚠ Bu bir GEVŞETMEDİR: ratchet'in "sayi YALNIZ DUSEBILIR"
-  yasasını V6'nın açtığı borç için affeder. Kapının kendi başlığı (§"HOW TO GO
-  GREEN AFTER A DELIBERATE INCREASE") bunu yalnız gerçek bir kapsam kararı için
-  meşru sayıyor — yani (C) ancak (B) seçilirse dürüsttür.
+- **(A) YAN DALDA KALSIN — VARSAYILAN.** V7 işi yan dalı bir kapıyla (yeni bir
+  ölçüm ya da yeni bir ürün çıktısı) haklı çıkarana kadar ana dal `3fa8002` +
+  V6-E hâlinde kalır.
+  *Ölçülmüş yan bilgi:* geri dönüşün ana dala getireceği borç **+10 satır**
+  (`garment +4 · neckline +2 · shaping +2 · skirtStyle +2 · yoke +2 ·
+  backOpening +1`, düşen `sleeveLength −1 · sleeveStyle −2`), yani kapı yeniden
+  kırmızıya döner. Dağılımı: `anchors-v1.json` **4 satır** (10452→10448 ölçüldü,
+  bunun 3'ü SİLİNEMEZ ölçülmüş veri: `"Bias binding (neckline)"`,
+  `"Bias binding (neckline + armholes)"` panel adları ve `_dogmayan`'daki
+  `"overlay.yoke"`), `foto-spec-olcum.mjs` **10 satır** (10448→10438 ölçüldü,
+  KONUM kelime listesi + FIELD_MAP/SPEC_DEFAULTS), `spec-diff.mjs` V6-G ekleri
+  **4 anahtar** (`backOpening · garment · shaping · skirtStyle`, her biri +1).
+  `gen-anchors.mjs`'in katkısı **0** — kapıya hiç görünmüyor (aşağıdaki delik).
+  Bedeli: 2217 satırlık gerçek mühendislik ana dalda kullanılmıyor.
+- **(B) RATCHET ÜRETİLMİŞ `contract/` DOSYALARINI KAPSAM DIŞI BIRAKSIN.**
+  `anchors-v1.json` bir BUILD PRODUCT'tır (üreteci `gen-anchors.mjs`, bekçisi
+  `anchor_source_check.mjs`); üretilmiş dosyayı elle-yazılmış referansla aynı
+  kefeye koymak ratchet'in amacı değil. Kapsam listesinden `contract/`in
+  üretilmiş alt kümesini düşürmek çıpa işinin **4 satırlık** borcunu sıfırlar.
+  *Ölçülmüş yan bilgi:* bu, `foto-spec-olcum.mjs`'in **10 satırını ÇÖZMEZ** —
+  o dosya `engine/tools/` altında ve elle yazılmış. Yani (B) tek başına yeşil
+  getirmiyor; çıpa işini geri getirir, ölçüm hattını getirmez.
+  ⚠ **BEDELİ ÖLÇÜLMEDİ:** kapsam daraltmak ratchet'in kapsadığı yüzeyi kalıcı
+  olarak küçültür ve `contract/vocab-resolution-v1.json` + `garment-spec-v2.md`
+  gibi bugün sayılan 50 satırı da düşürebilir (kapının kendi başlığındaki
+  "KNOWN NOISE" notu). `vocab_reference_check.sh`'in DEĞİŞTİRİLMESİ demektir.
+- **(C) TABANI ELLE YENİDEN KES** (`--baseline`). V6-J'den sonra buna gerek YOK
+  ve kapının kendi kuralı bunu ancak gerçek bir kapsam kararı için meşru sayıyor.
+  Kayıt için duruyor, önerilmiyor.
 
-**VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V6 kapanışı (bu kart kapıyı bloke
-ediyor), sonra V7.
+**VARSAYILAN: (A)** · **ETKİLEDİĞİ FAZ: V7.**
+
+**V6-I'İN ÖLÇÜMÜ AYAKTA (silinmedi):** KONUM sözlüğü `engine/vocab.json`'dan
+ÜRETİLEMEZ. 37 alan adı **44 jeton** veriyor, yalnız **9'u**
+(`back cuff front hem neckline shoulder skirt sleeve yoke`) KONUM listesinde;
+kalan 35 (`button collar dart pleat straight round…`) konum değil. Değerlerle
+134 jetona çıkıyor, oran kötüleşiyor. `anchorNames()` **14 jeton** veriyor ve
+içinde ne `neckline` ne `yoke` var — kapıyı kıran iki kelimeyi hiçbir üretilmiş
+kaynak basmıyor. (Basan komutlar `GECE/V6-I.md` §3.)
+
+★ **KAPIDA DOĞRULANMIŞ DELİK (hakem + V6-J):** `file engine/tools/gen-anchors.mjs`
+→ "binary data"; kapı `grep -I` kullandığı için o **421 satır ratchet'e HİÇ
+görünmüyor**. Aynı sınıftan başka dosya var mı **DOĞRULANMADI**. Bu, (B)'yi
+kısmen gereksiz kılıyor olabilir — üreteç zaten sayılmıyor.
+
 ★ Kapının bastığı satır bu ada atıf vermiyor (`vocab_reference_check.sh`
-DEĞİŞTİRİLMEZ, kart yasağı) — gerekçe `GECE/V6-H.md`'dedir.
+DEĞİŞTİRİLMEZ, kart yasağı) — gerekçe `GECE/V6-H.md` ve `GECE/V6-J.md`'dedir.

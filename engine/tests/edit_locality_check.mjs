@@ -20,15 +20,9 @@
 //       (V6-B ölçtü: karşılaştırma bayttan panel varlığına indirilince kapı
 //       yeşil kalıyordu — A1'in eşiği `antiCaught > 0` olduğu için 10/12'den
 //       9/12'ye düşmek yetmiyordu. A4 + A1 tabanı o açığı kapatır.)
-//   A5  ÇIPA + ORAN: konumlu edit `anchor` (ÜRETİLMİŞ sözlükteki ad) + `t`
-//       (0..1 oran) ile ifade edilir. Sözlükte olmayan çıpa ya da aralık dışı
-//       oran ADIYLA reddedilmek ZORUNDA; koordinat/vertex anahtarı şemadan
-//       ADIYLA geri çevrilmeli. Geçerli çıpa lokalliği BOZMAMALI.
-//   A6  OPERATÖR SİCİLİ: `absent` bir operatör isteyen diff, o operatörün ADI
-//       ve statüsüyle raporlanmak ZORUNDA. Sessiz geçiş = RULES 1 ihlali.
 import {
   runEdit, applyDiff, draft, localityReport, touchedZones, untouchablePatterns, BODY,
-  LOCALITY_GRANULARITY, anchorNames, operatorSicil, OPERATOR_STATUS,
+  LOCALITY_GRANULARITY,
 } from '../tools/spec-diff.mjs';
 
 const BASE = {
@@ -149,98 +143,6 @@ line(LOCALITY_GRANULARITY === 'bayt',
         `kontrol: oynatmasız kopya ${temiz.checked} panelde ${temiz.violations.length} ihlal (beklenen 0, checked>0)`);
     }
   }
-}
-
-// ── A5: ÇIPA + ORAN ────────────────────────────────────────────────────────
-// Konum, spec'te bir AD ile ifade edilir. Sözlük ÜRETİLMİŞTİR (gen-anchors.mjs
-// -> contract/anchors-v1.json); burada elde yazılmış çıpa listesi YOKTUR.
-console.log('--- A5: ÇIPA + ORAN');
-{
-  const anchors = anchorNames();
-  line(anchors.length > 0,
-    `çıpa sözlüğü okundu: ${anchors.length} çıpa (contract/anchors-v1.json)` +
-    (anchors.length ? ` — ${anchors.slice(0, 6).join(', ')}…` : ' — SÖZLÜK BOŞ, çıpa doğrulanamaz'));
-
-  // (a) GEÇERLİ çıpa + oran -> kabul, lokallik korunuyor.
-  if (anchors.length) {
-    const anchor = anchors.includes('neckZone') ? 'neckZone' : anchors[0];
-    const r = await runEdit(BASE, {
-      why: 'fiyonk ekle (çıpalı)',
-      ops: [{ op: 'set', field: 'tieClosure', value: 'frontNeckBow', anchor, t: 0.5 }],
-    });
-    if (r.stage !== 'tamam') {
-      line(false, `(a) geçerli çıpa '${anchor}' t=0.5 REDDEDİLDİ -> ${r.stage}: ${r.rejected.join(' / ')}`);
-    } else {
-      line(r.locality.checked > 0 && r.locality.violations.length === 0,
-        `(a) geçerli çıpa '${anchor}' t=0.5 kabul; bölge dışı ${r.locality.checked} panel bayt-aynı` +
-        (r.locality.violations.length ? ` | İHLAL: ${r.locality.violations.join('; ')}` : ''));
-    }
-  }
-
-  // (b) SÖZLÜKTE OLMAYAN çıpa -> red, ve red cümlesi ÇIPA ADINI içeriyor.
-  {
-    const uydurma = 'sagKoltukAltiUcNokta';
-    const r = await runEdit(BASE, {
-      ops: [{ op: 'set', field: 'tieClosure', value: 'frontNeckBow', anchor: uydurma }],
-    });
-    const red = (r.rejected || []).join(' | ');
-    line(r.stage === 'şema' && red.includes(uydurma),
-      `(b) sözlükte olmayan çıpa reddedildi ve red cümlesi ADI taşıyor -> ${r.stage}: ${red || '(RED YOK — SESSİZ GEÇTİ)'}`);
-  }
-
-  // (b2) ORAN aralık dışı -> red, cümle hem çıpayı hem t'yi adıyla söylüyor.
-  if (anchors.length) {
-    const anchor = anchors.includes('neckZone') ? 'neckZone' : anchors[0];
-    const r = await runEdit(BASE, {
-      ops: [{ op: 'set', field: 'tieClosure', value: 'frontNeckBow', anchor, t: 1.4 }],
-    });
-    const red = (r.rejected || []).join(' | ');
-    line(r.stage === 'şema' && red.includes('1.4') && red.includes(anchor),
-      `(b2) aralık dışı oran reddedildi -> ${r.stage}: ${red || '(RED YOK)'}`);
-  }
-
-  // (b3) MİMARİ İHLAL: koordinat/vertex anahtarı şemadan ADIYLA geri çevrilmeli.
-  {
-    const r = await runEdit(BASE, {
-      ops: [{ op: 'set', field: 'tieClosure', value: 'frontNeckBow', x: 124.5, y: 88.2 }],
-    });
-    const red = (r.rejected || []).join(' | ');
-    line(r.stage === 'şema' && red.includes("'x'") && red.includes("'y'"),
-      `(b3) koordinat anahtarı reddedildi -> ${r.stage}: ${red || '(RED YOK — MODEL KOORDİNAT GÖNDEREBİLİYOR)'}`);
-  }
-}
-
-// ── A6: OPERATÖR SİCİLİ ────────────────────────────────────────────────────
-console.log('--- A6: OPERATÖR SİCİLİ (garment-spec-v2.json)');
-{
-  // Sicilde gerçekten `absent` bir operatör olmalı, yoksa vaka boştur.
-  const absentOps = Object.entries(OPERATOR_STATUS).filter(([, s]) => s !== 'shipped').map(([o]) => o);
-  line(absentOps.length > 0, `sicilde sevk edilmemiş operatör: ${absentOps.join(', ') || 'YOK — vaka boş'}`);
-
-  // (c) ABSENT operatör isteyen diff -> sicil raporu operatörün ADINI basıyor.
-  // 'balloon' kol v2'de sleeve='puff' demek; requires = [sleeve, gatheredOverlayLayer],
-  // ikisi de sicilde ABSENT.
-  const ABSENT_DIFF = { ops: [{ op: 'set', field: 'sleeveStyle', value: 'balloon' }] };
-  const r = await runEdit(BASE, ABSENT_DIFF);
-  const rapor = r.sicil ? r.sicil.rejected.join(' | ') : '';
-  const adiGecen = r.sicil ? r.sicil.operatorler : [];
-  line(!!r.sicil && adiGecen.length > 0 && adiGecen.every((o) => rapor.includes(o)),
-    `(c) sicil raporu operatör ADIYLA basıldı: ${adiGecen.join(', ') || '(BOŞ — SESSİZ GEÇTİ)'}`);
-  line(rapor.includes('ABSENT') || rapor.includes('FLAGGED'),
-    `(c) red cümlesi STATÜYÜ söylüyor: ${rapor.split(' | ')[0] || '(cümle yok)'}`);
-
-  // (c2) Kapı AÇIKKA aynı diff hattı KESMELİ — uyarı kanalı bir kapıya
-  // dönüşebiliyor mu, ölçülür (varsayılan KAPALI, RULES 4).
-  const g = await runEdit(BASE, ABSENT_DIFF, { operatorGate: true });
-  line(g.stage === 'sicil' && g.rejected.length > 0,
-    `(c2) operatorGate:true -> aşama '${g.stage}', ${g.rejected.length} red (kapı çalışıyor)`);
-
-  // (c3) ANTI-HACK: sicil "her şeye kırmızı basan" ucuz bir mandal olmasın —
-  // yalnız SHIPPED operatör gerektiren bir spec'te rapor BOŞ olmalı.
-  const temiz = operatorSicil({ garment: 'dress', skirtStyle: 'aLine', sleeveStyle: 'none', shaping: 'dart', collarType: 'none', backOpening: 'none' });
-  line(temiz.rejected.length === 0,
-    `(c3) yalnız shipped operatör gerektiren spec'te sicil BOŞ: ${temiz.rejected.length} red` +
-    (temiz.rejected.length ? ` | ${temiz.rejected.join('; ')}` : ''));
 }
 
 console.log(fail ? `edit_locality_check: ${fail} KIRMIZI` : 'edit_locality_check: hepsi yeşil');
