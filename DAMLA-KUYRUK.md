@@ -1190,3 +1190,41 @@ enum kelimelerini yeni referans olarak saydırdı — `garment 1186 → 1189 (+3
 kapının kendi yasasına göre taban yeniden KESİLEMEZDİ (`--baseline` kullanılmadı).
 Çıkarılan 10 dizginin 10'u `GECE/V7-F.md` §5'te `grep -F` ile kelimesi kelimesine
 doğrulandı (kanıt `GECE/V7-G.md` §2).
+
+---
+
+## K-V10C — Landing'in görsel kimliği kartın tarif ettiği kimlik DEĞİL: hangisi kalsın? (V10-C, 25 Ağu)
+
+**K-V10C · `web/index.html`'in yaşayan kimliği ile `GECE/KART/V10-C-tasarim.md`
+TASARIM YASASI'nın tarif ettiği kimlik BİRBİRİNİ TUTMUYOR · SEÇENEKLER:
+(A) yaşayan kimlik kalsın — kart "mevcut görsel kimlik YENİDEN YAZILMAZ" dediği
+için bu tur öyle davranıldı, sadece düzen ve içerik yenilendi; (B) yasa harfiyen
+uygulansın — bebek mavisi pötikare + Didot + gölge + pill chip dünyası SÖKÜLÜP
+düz teal / 1px tel çizgi / Arial dünyasına dönülsün, bu 128 sayfayı birden
+etkiler · VARSAYILAN (A) · ETKİLEDİĞİ FAZ: bütün `web/**`**
+
+**ÖLÇÜM (bu gece, `web/index.html` HEAD'de okundu):** kart "stitchu = düz teal
+tek renk dünyası, 1px tel çizgi kenarlıklar, Arial/Helvetica, küçük harf ses"
+diyor ve şunları "otomatik ret" sayıyor: 3px üstü yuvarlak köşe · pill/rozet ·
+gradient · dekor gölge. Yaşayan sayfa bunların DÖRDÜNÜ DE taşıyor ve bu tur
+başlamadan önce de taşıyordu:
+
+| yasak kalem | yaşayan satır (kart öncesi) |
+|---|---|
+| pill / 16px yuvarlak köşe | `web/index.html:54` `.chip{...border-radius:16px}` |
+| gradient | `web/index.html:88` `.rest{background:linear-gradient(180deg,...)}` |
+| dekor gölge | `web/index.html:78,108,113,120` `box-shadow: 0 14px 34px rgba(...)` / `drop-shadow` |
+| teal olmayan aksan | `web/index.html:31` `--bb:#8fbfe8; --bb-deep:#3f74a8; --navy:#1f3a5f` (bebek mavisi + lacivert) |
+| serif başlık | `web/index.html:42` `h1{font-family:'Didot','Bodoni 72',Georgia,serif}` |
+
+Kart aynı anda iki şey emrediyor: (1) "Mevcut görsel kimlik YENİDEN YAZILMAZ",
+(2) yukarıdaki liste "otomatik ret". Yaşayan sayfada ikisi aynı anda tutulamaz.
+Bu tur (1)'e uyuldu: **tek satır CSS eklenmedi, silinmedi, değiştirilmedi**;
+yalnız düzen ve metin yenilendi, ve YENİ ihlal eklenmedi. Kartın kendi kaçış
+kapısı da bunu söylüyor: "Kimlik değişikliği gerekiyorsa KOD YAZMA".
+
+★ **Yan bulgu (bu kartın işi değil, ölçüldü):** kart `web/index.html:34`
+`body{overflow-x:hidden}` taşmayı gizliyor diyor — satır **hâlâ orada**, bu tur
+dokunulmadı. 320px'te gerçek bir tarayıcı render'ı **YAPILMADI**; eklenen her
+şey `width:100%` + `viewBox`'lı SVG, yani statik olarak yeni sabit genişlik
+girmedi, ama bu **ÖLÇÜM DEĞİL, ÇIKARIM**.
