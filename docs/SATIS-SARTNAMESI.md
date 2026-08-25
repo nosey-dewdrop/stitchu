@@ -227,6 +227,20 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       **0.0000mm** eşleşiyor — uyarı metin değil, **geometriye bağlı**.
       Regresyon mandalı: `printpack_sheet_check` (ctest).
 
+⚠ **25 AĞU (V5-A) — SEVK EDİLEN REHBER, MOTORUN ÖLÇMEDİĞİ BİR KONTROLÜ ALICIYA YAPTIRIYOR.**
+Bu madde fermuarlı elbiseyi kapatıyor; fermuarSIZ üstte durum tersine dönüyor. `guideSteps[2]`
+birebir şunu diyor: *"Check the neck opening against your head circumference — a top has no
+zipper, it must slip over your head."* Ölçüldü: 16 draftın **8'inde** bu cümle var, o
+draftlarda beyan edilen kapanma donanımı **0**, ve motor bitmiş yaka açıklığını **hiç
+basmıyor** — `sewability_check` madde 5'i bu yüzden `ABSENT:` diye basıyor (yaka kenarı
+artefaktta adlandırılmış bir kenar değil; yarım alet `engine/src/wearability.hpp:68,75,80`
+NATIVE'de duruyor, JS artefaktına inmiyor). Yani şartnamenin "alıcıya söylenmeyen şey paketi
+satılamaz kılar" ilkesi burada **ters yönden** ihlal ediliyor: söylüyoruz ama ölçmüyoruz,
+kontrolü alıcıya devrediyoruz. Zemin sayıları var (ANSUR II kadın baş çevresi P5/P50/P95 =
+532/560/597 mm, `GECE/V5-R.md` §D), ama giysi için yayınlanmış **minimum baş geçiş açıklığı
+YOK** — dolaşan "57 cm" kuralı tek kaynaksız bloga dayanıyor ve **DOĞRULANMADI**. Kutucuk
+açılmadı, eşik uydurulmadı.
+
 ---
 
 ## ÖLÇÜM KAPISI

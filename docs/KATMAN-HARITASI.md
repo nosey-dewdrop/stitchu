@@ -50,6 +50,24 @@
    (üretim kalemi, 8 stil) ve `node engine/tools/flat-board.mjs <dizin> --eski <dizin>`.
    Kök çözüm — stilleri kanunun bağladığı kaleme taşımak — YAPILMADI, karar alınmadı.
 
+7. **L3b'nin SEVK ETTİĞİ ARTEFAKT DİKİŞ GRAFİĞİ TAŞIMIYOR (25 Ağu, V5).** L4'ün hakemleri
+   (`walk.py`, `printpack.py`) motorun kendi içindeki dikiş planını okuyabiliyor, ama
+   `draftJSON` sınırından geçen artefaktta o plan YOK: 112 parçada
+   `seams`/`seamGraph`/`edges`/`edgeNames`/`pairs`/`stitches` alan sayısı **0**, yalnız
+   `cutLine` + isimsiz işaret çizgileri var. Sonuç: dikiş çifti uzunluk eşitliği ve çentik
+   ÇİFTİ eşleşmesi bu katmandan **sorulamıyor**. Ek olarak `notches` **tipsiz tek kanal**
+   (`type` yalnız `move`/`line`), yani kenar çentiği / katlama / iç işaret ayrımı artefakttan
+   çıkarılamıyor. Sayan kapı: `node engine/tests/sewability_check.mjs` — cevaplayamadığı her
+   soruyu ADIYLA `ABSENT:` diye basıyor (bugün 7). Teşhis `GECE/V5-A.md`.
+8. **L0 ↔ L3b: `shoulderCM` hem KAYNAKSIZ hem KULLANILMIYOR (25 Ağu, V5).** `contract/tables.json`
+   alıcıya on beden için `shoulderCM` yayınlıyor (`_sources` status **NONE**, bekçisi kırmızı:
+   `sizechart_source_check`), ama L3b geometrisi o girdiden **bağımsız**: `body.shoulder`
+   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor (`GECE/V5-D.md`).
+   Motor omzu kendi çiziyor ve Aldrich'in yayınlanmış omuz boyundan ön −8.30 mm / arka
+   −18.18 mm kısa düşüyor. Yani L0'ın bu kolonu ne besliyor ne de doğrulanabiliyor.
+   ⚠ Aynı kesişimin `neckCM` için de var olduğu iki çıktı yan yana konarak görüldü ama
+   nedensel bağ **DOĞRULANMADI**.
+
 ## Teşhis ilkesi?
 
 Her harness testi SADECE kontrat dosyası okur. H3b FAIL + H0 PASS ⇒ arıza kesin L3b'de.

@@ -56,7 +56,29 @@
 
 ## Kapılar
 1. omuz dikişi çifti ≤0.79375mm (yapıdan ~0 beklenir).
-2. armhole toplamı 40-44cm bandında. **Ön/arka İŞARET şartı** (düzeltildi 17.08 —
+   ⚠ **25 Ağu (V5-R): bu eşiğin KÜNYESİ çürüdü, sayısı değil.** Repo bu 1/32 inç'i
+   "üretim standardı" diye Kathleen Fasanella'ya bağlı bir alıntıyla taşıyor
+   (`engine/pattern-bridge/seamrules.py:33-35`); o cümle yazarın hiçbir metninde
+   bulunamadı, yayınladığı cümle *"I guarantee accuracy to 1/32nd of an inch — but even
+   that is fudged"*. Apparel kalıbını bir toleransa bağlayan **yayın hiç bulunamadı**
+   (ASTM D6673-10 §1.1 parça-parça karşılığı açıkça kapsam dışı bırakıyor ve standart
+   2019'da geri çekildi); apparel'e özel yayınlanmış tek sayı CLO3D'nin 3 mm'si ve biz
+   onun 3.8× altındayız. Eşik korunacaksa gerekçesi *"reponun kendi ölçüm gürültüsünün
+   üstünde seçilmiş ev değeri"* diye yazılır, kaynak diye değil. Döküm `GECE/V5-R.md` §A.
+   ⚠ Repo **iki** tolerans taşıyor — `engine/src/surfacepattern.cpp:19` 0.79375 ve
+   `engine/src/validator.hpp:23` `pairedSeamTolerance = 3.0` — hangisinin hangi kapıda
+   koştuğu **haritalanmadı**.
+2. armhole toplamı 40-44cm bandında.
+   ⚠ **25 Ağu (V5-R §C2 + V5-D): bu bant VÜCUT ile GİYSİYİ aynı ada koyuyor.** Aldrich
+   hedef oyuk ÇEVRESİ yayınlamıyor — yayınladığı şey oyuk eğrisinin derinlikleri; 40-44 cm
+   bandının bulunabilen tek zemini bir VÜCUT armscye çevresi (Jill Wolcott, EU38 için
+   40.0–40.6 cm). Giysinin oyuğu ondan büyük olmak zorunda; Buğra EU38 kesim çizgisi
+   **433.45 mm** zaten bandın üstünde. Ölçüldü: motorun `armhole_circumference` değeri
+   8 bedenin yalnız **3'ünde** bizim ölçüm bandımızın içinde (EU34 374.2 · EU36 388.1 ·
+   EU38 403.6 · EU40 417.8 mm altında, EU48 485.1 üstünde). `draft_math_check` bu satırı
+   BİLGİ olarak basıyor ve **hiçbir tavana bağlamıyor** — yayın yokken eşik yazmak sayı
+   uydurmak olurdu. Bant kapıya girecekse önce vücut/giysi ayrımı adlandırılmalı.
+   **Ön/arka İŞARET şartı** (düzeltildi 17.08 —
    önceki hali *"ön>arka"* ÇÜRÜK, gerekçe `knowledge/armscye-on-arka-2026-08-17.md`):
    - `ön_oyuk_yay ≤ arka_oyuk_yay` (kesim çizgisinde)
    - `ön_oyuk_yay/kiriş > arka_oyuk_yay/kiriş`
@@ -65,4 +87,12 @@
    kural yapmaktır (Damla 28 Tem: *"Buğra bir REFERANS, kural değil"*).
    ⚠ **Tanık sayısı 1** (`locket_top`); `corset_bustier` strapless, oyuğu yok.
 3. Buğra landmark mm paritesi (rapor: parça-parça fark tablosu).
+   ★ **25 Ağu (V5-B): o fark tablosunu basan alet artık VAR** —
+   `node engine/tools/bugra/overlay-png.mjs locket --size=36`. Motor parçasını Buğra'nın
+   aynı beden halkasıyla 1:1 mm üst üste basıyor (döndürme/en-iyi-oturtma/ölçek YOK) ve
+   parça başına Δbbox · Δçevre · sapma med/p95/max çıkarıyor; levhalar
+   `GECE/log/V5-B2.overlay/` ve `GECE/log/V5-B2.corset/` (mutlak yollar `GECE/V5-B.md`'de).
+   **Bu bir KAPI DEĞİL, alet** — aletin kendi başlığı da öyle diyor; buradaki hiçbir
+   sayıdan "kalıp yanlış" hükmü çıkarılmaz (Buğra referans, kural değil).
+   G5 kapandığında bu tablo *"kapı"* yapılacaksa eşiği ayrıca kararlaştırılmalı, bugün yok.
 4. Tüm mevcut kapılar (halka, sınır, walk 8 beden) YEŞİL KALIR.

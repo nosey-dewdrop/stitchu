@@ -21,6 +21,10 @@ dosyayı aç.
 | kalıbın kendi altı ölçüsü | `node engine/tools/pattern-measure.mjs <pattern.json>`; kenarı olmayan ölçü `null` + sebep (`GECE/V3-B.md`) |
 | kabuk siluetinde artefakt var mı | `node engine/tests/flat_artifact_census.mjs` basar (dört sınıf, eşik kaynaklarıyla) |
 | ctest bugün ne durumda | `GECE/KOSU.md` → AÇIK KIRMIZILAR |
+| sevk edilen kalıp dikilebilir mi, hangi soru sorulamıyor | `node engine/tests/sewability_check.mjs` basar; cevaplanamayan soru `ABSENT:` satırı olur, teşhis `GECE/V5-A.md` |
+| kalıbın ölçüleri yayınlanmış bir bloğa uyuyor mu | `node engine/tests/draft_math_check.mjs` basar; kaynağı olmayan kalem `KAYNAKSIZ` basar, künyeler `GECE/V5-R.md` |
+| bu iki kapı "yeşil" derken ne diyor | tavanlar `engine/tests/v5-ratchet-baseline.json`'da; yeşil = "ihlal ≤ dondurulmuş tavan", ihlaller yine adıyla basılıyor (`GECE/V5-E.md` §ŞEF EKİ) |
+| motorun parçası Buğra'nınkiyle nasıl örtüşüyor | `node engine/tools/bugra/overlay-png.mjs locket --size=36 --out=<dizin>`; son koşu `GECE/log/V5-B2.overlay/`, `V5-B2.corset/`. **Alet, kapı değil** |
 | görü kelime listesi nereden geliyor | üreteç `engine/tools/gen-vision-vocab.mjs` → `vision-student/vocab.py` (elle düzenlenmez); bekçi `ctest -R vocab_source_check` |
 | menü büyüdü mü, ratchet ne diyor | `engine/tests/vocab_reference_check.sh` basar; taban `engine/tests/vocab-reference-baseline.json` |
 | sevk edilen bayt kaynağıyla aynı mı | `engine/tests/bundle_fresh_check.sh` basar; damgayı `engine/build-wasm.sh` koyuyor (`stitchu.source-stamp`) |
@@ -153,12 +157,45 @@ iki yeni kapı kanadı, iki kalem sorunu), `docs/KATMAN-HARITASI.md` L3a satır�
 `docs/SATIS-SARTNAMESI.md` §1 (çizgi hiyerarşisi kutucuğunun bugünkü ölçüm durumu),
 `README.md` (determinizm cümlesinin ayırt-etme yüzü).
 
+## V5 fazı — dikilebilirlik + kalıp matematiği kapıları, RATCHET'li (25 Ağu 2026)
+
+Faz kuralı: eşik yayına bağlanır ya da **KAYNAKSIZ** diye basılır, uydurulmaz; cevaplanamayan
+soru geçmiş sayılmaz, `ABSENT:` diye ADIYLA basılır; devralınan kırmızı ADLARI büyüyemez
+(RULES §9) — bu yüzden iki yeni kapı ctest'e ancak ölçülmüş bir tavanla girdi.
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V5-R.md` | eşiklerin kaynak sicili (761 satır): 1/32 inç toleransı için **yayın bulunamadı** hükmü ve reponun `seamrules.py:33-35`'teki Fasanella alıntısının ÇÜRÜTÜLMESİ · Aldrich blok formülleri (scye derinliği, omuz, yaka) baskı baskı ayrıştırılmış · Threads #221 s.71 minimum ease tablosu birincil · ANSUR II baş/omuz antropometrisi ham CSV'den hesaplanmış · Coats'un 2.5 cm gizli fermuar kuralı. Erişilemeyenler ve DOĞRULANMADI'lar ayrı bölümde. |
+| `GECE/V5-A.md` | `sewability_check`'in kuruluşu: 16 draft · 112 parça · 96 kapalı kontur, **585 ihlal kalemi adıyla**, ve cevaplanamayan **7 soru ABSENT olarak**. Kök teşhis: sevk edilen artefaktta dikiş grafiği YOK, `notches` tipsiz tek kanal; çentikler parçanın kendi sınırından bağımsız bir x'e basılıyor ve sapma bedenle büyüyor (EU34 28.83 → EU48 78.93 mm). |
+| `GECE/V5-B.md` | `overlay-png.mjs`'in kanıt koşusu: locket_top ve corset_bustier beden 36, parça başına Δbbox/Δçevre/sapma tablosu, ve kesilen oturumun koşusuyla bayt bayt aynı çıktığının `diff`/`md5` kanıtı. **Kapı değil, alet** — buradan "kalıp yanlış" hükmü çıkmaz. |
+| `GECE/V5-D.md` | `draft_math_check`'in kuruluşu: 8 kalem × 8 beden = 64 yargı (GEÇTİ 12 · KALDI 12 · **KAYNAKSIZ 40**). **12 ease ihlali adıyla**; kök teşhis payın CİNSİ (motor çarpımsal, yayın toplamsal — kalça payı/kalçaCM 8 bedende bit-sabit 0.2000). Çözüm adayları ve kıracakları golden pinler adıyla yazılı, UYGULANMADI. Ayrıca `body.shoulder`'ın ölü girdi olduğunun ölçümü. |
+| `GECE/V5-E.md` | iki kapının ctest'e BAĞLANMASI: **111 → 113 test**, `reddiff` boş (yeni kırmızı ad yok). Ratchet'in ne yakalayıp ne yakalamadığı §ŞEF EKİ'nde: ham kapı faz-öncesi motorda kırmızı düşüyor, **ratchet katmanı düşmüyor** — çünkü ratchet bugünkü kusuru dondurur, BÜYÜMESİNİ yakalar. |
+| `GECE/KART/V5-E.md` · `V5-RAP.md` | iki işçi kartının brief'i: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. |
+| `engine/tests/sewability_check.mjs` · `draft_math_check.mjs` | KAPILAR, `engine/CMakeLists.txt`'te kayıtlı ve gerekçesi `add_test`'in üstünde. İkisi de her ihlali ADIYLA basar; exit kodu tabana bağlıdır. |
+| `engine/tests/v5-ratchet-baseline.json` | ratchet TABANI — iki kapının bütün tavanları, her tavanın künyesi + ölçüm tarihi + ölçüm ağacı + basan komut. Tavan ELLE BÜYÜTÜLEMEZ; altına düşünce kapı `TAVAN DÜŞÜRÜLEBİLİR: X -> Y` basar ve dosyayı güncellemek AYRI bir commit'tir. Emsal: `vocab-reference-baseline.json`. |
+| `engine/tools/bugra/overlay-png.mjs` | ALET: motor parçasını satın alınmış Buğra halkasıyla 1:1 mm üst üste basar (döndürme/en-iyi-oturtma/ölçek yok, eşleme elle yazılmış `NAME_MAP`'ten), yanına sayısal fark tablosu çıkarır. Exit kodu bir hüküm taşımaz. |
+| `GECE/log/V5-B2.overlay/` · `V5-B2.corset/` | levhaların kendisi (6+6 PNG + 6+6 SVG), kırpmasız, `data-scale="1:1"`. Sayı tabloları `V5-B2.rerun.txt` ve `V5-B2.corset.txt`. |
+| `GECE/log/V5-A.bostest.txt` · `V5-D.bostest.txt` | BOŞ TEST: iki kapının da ratchet'siz hâliyle faz-öncesi ağaca karşı **exit 1** düştüğü koşular. Kapatılmış test olmadıklarının kanıtı burada. |
+| `GECE/log/V5-A.mutasyon.txt` · `V5-D.mutasyon.txt` · `V5-E.mutasyon.txt` | mutasyon kanıtı. Sonuncusu ratchet katmanının 8 bozmasını taşıyor: 8/8 exit 1, geri alınca iki kapı da exit 0. |
+| `GECE/log/V5.ctest.opening.txt` · `V5-A.ctest.after.txt` · `V5-E.ctest.after.txt` · `V5-E.reddiff.txt` | fazın tam `ctest` koşuları ve kırmızı AD farkı. Kümenin büyüyüp büyümediği bu dosyaların `diff`'inden okunur, buradaki bir cümleden değil. |
+| `GECE/log/V5-A.8beden.txt` · `V5-D.run.txt` · `V5-D.remedy.txt` · `V5-D.addtest.txt` | beden beden dökümler, kapının ham koşusu, ölçülmüş çözüm adaylarının koşusu ve `add_test` satırının hazırlığı. |
+
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §13 (iki kapı, ratchet'in
+ne demek olduğu, overlay aleti, çürütülen tolerans künyesi) + "Known limits" dört yeni satır,
+`docs/KATMAN-HARITASI.md` boşluk 7 (dikiş grafiği yok) ve 8 (`shoulderCM` ölü girdi),
+`docs/G5-OMUZ-PLANI.md` (üç kapının da künyesi: tolerans, armhole bandı, Buğra paritesi aleti),
+`docs/SATIS-SARTNAMESI.md` §4b (rehberin ölçülmeyen baş-geçiş kontrolü),
+`README.md` (iki kapının halka açık ifadesi + payın cinsi dürüst limit olarak).
+
 ## Ölçüm aletlerini çalıştır
 
 ```
 python3 GECE/f0-measure-pattern.py EU38          # kalıp ölçüleri (cm)
 node    GECE/f0-measure-flat.mjs <styleKey>      # flat siluet ölçüleri (birimsiz)
-cd engine/build && ctest                          # 232 sn
+cd engine/build && ctest                          # süreyi koşunun kendisi basar;
+                                                  # son iki okuma: 302.32 sn / 111 test
+                                                  # (V5.ctest.opening) ve 325.59 sn / 113 test
+                                                  # (V5-E.ctest.after)
 ```
 
 ## Kural
