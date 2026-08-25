@@ -1,8 +1,11 @@
 ########################################################################
 ### ⚠ UYARI — BU DOSYANIN "ADAY" BÖLÜMÜNÜN ARİTMETİĞİ YANLIŞ (2026-08-25)
 ###
-### GEÇERSİZ SATIRLAR: aşağıdaki 15-22 arası "--- ADAY" bloğunun TAMAMI
-### (bust +1.0 / +1.5 / +2.0cm ve hip +3.5 / +4.0 / +4.5 / +5.0cm satırları).
+### GEÇERSİZ SATIRLAR: BU DOSYANIN 51-58 SATIRLARI = "--- ADAY" bloğunun
+### TAMAMI (bust +1.0 / +1.5 / +2.0cm ve hip +3.5 / +4.0 / +4.5 / +5.0cm).
+### (Bu uyarı bloğu eklenmeden önceki numaralamada 15-22 idi; kayma +36
+### satır. Eski kayıtlarda geçen "satır 17" = bugün 53, "satır 19-22" =
+### bugün 55-58. 2026-08-25, kart V5-I md.3 tamamlaması.)
 ### Bu satırlar gövde girdisini kaydırmanın payı bandın içine taşıdığını
 ### söylüyor; İKİ BAĞIMSIZ KOŞU bunu ÇÜRÜTTÜ:
 ###   - "bust +1.5cm -> 65.80..98.80mm, HEPSİ bantta" -> bugün ölçülen

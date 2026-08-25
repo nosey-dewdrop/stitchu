@@ -296,3 +296,28 @@ Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
 100% tests passed, 0 tests failed out of 2
 
 Total Test time (real) =   0.23 sec
+=== V5-I EK DOGRULAMA (kart md.3 tamamlamasi: satir isaretcileri) — 2026-08-25T01:27:08Z
+NE DEGISTI: SADECE METIN. GECE/log/V5-D.remedy.txt bas uyari blogundaki gecersiz-satir
+araligi (15-22 = ekleme oncesi numaralama, bugun uyari blogunun KENDISINI isaret ediyordu)
+-> 51-58 olarak duzeltildi; v5-ratchet-baseline.json'daki iki 'satir 17' / 'satir 19-22'
+atifi de bugunku numaralamayla eslendi. HICBIR SAYI/BANT/TAVAN/CIZGI degismedi.
+
+--- KAPI 1: node engine/tests/sewability_check.mjs (son hukum)
+PASS sewability_check — RATCHET: 0 tavan aşımı · adıyla basılan ihlal kalemi 585
+EXIT=0
+
+--- KAPI 2: node engine/tests/draft_math_check.mjs (son hukum)
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 0 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+EXIT=0
+
+--- SAYI DRIFT: bu edit oncesi (HEAD=933a557) vs simdi
+sayisal alan: HEAD=57 simdi=57 | FARK ADEDI=0  -> SAYILAR BIREBIR AYNI
+
+--- ctest --test-dir engine/build -R draft_math_check|sewability_check --output-on-failure
+1/2 Test #10: sewability_check .................   Passed    0.12 sec
+    Start 11: draft_math_check
+2/2 Test #11: draft_math_check .................   Passed    0.12 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.24 sec
