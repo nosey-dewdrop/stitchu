@@ -2,21 +2,21 @@ Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
         Start   1: geometry
   1/117 Test   #1: geometry .........................   Passed    0.00 sec
         Start   2: engine_check
-  2/117 Test   #2: engine_check .....................   Passed   19.94 sec
+  2/117 Test   #2: engine_check .....................   Passed   21.08 sec
         Start   3: golden_check
   3/117 Test   #3: golden_check .....................   Passed    0.12 sec
         Start   4: generated_ratchet_check
-  4/117 Test   #4: generated_ratchet_check ..........   Passed    0.71 sec
+  4/117 Test   #4: generated_ratchet_check ..........   Passed    0.79 sec
         Start   5: bundle_fresh_check
-  5/117 Test   #5: bundle_fresh_check ...............   Passed    0.18 sec
+  5/117 Test   #5: bundle_fresh_check ...............   Passed    0.21 sec
         Start   6: flat_convention_check
-  6/117 Test   #6: flat_convention_check ............   Passed    0.44 sec
+  6/117 Test   #6: flat_convention_check ............   Passed    0.52 sec
         Start   7: flat_expresses_spec_check
-  7/117 Test   #7: flat_expresses_spec_check ........   Passed    0.10 sec
+  7/117 Test   #7: flat_expresses_spec_check ........   Passed    0.12 sec
         Start   8: flat_geometry_sellable_check
-  8/117 Test   #8: flat_geometry_sellable_check .....   Passed    0.04 sec
+  8/117 Test   #8: flat_geometry_sellable_check .....   Passed    0.05 sec
         Start   9: flat_pattern_agree_check
-  9/117 Test   #9: flat_pattern_agree_check .........***Failed    4.57 sec
+  9/117 Test   #9: flat_pattern_agree_check .........***Failed    4.80 sec
 === KANAT (a) — FLAT ↔ KALIP UYUMU · beden EU38
     tolerans %1.5 — YAYINDAN DEĞİL, KARARDAN (GECE/V3-R.md "EŞİK 2": yayınlanmış formül YOK)
     flat  tarafı: engine/build/shell-flat EU38
@@ -44,11 +44,11 @@ ok    a — UNMEASURED 3 = tavan 3 (G5 sevk edilmedi: omuz/yaka/oyuk yok). Sayı
 FAIL flat_pattern_agree_check — 1 ihlal
 
         Start  10: sewability_check
- 10/117 Test  #10: sewability_check .................   Passed    0.09 sec
+ 10/117 Test  #10: sewability_check .................   Passed    0.11 sec
         Start  11: draft_math_check
- 11/117 Test  #11: draft_math_check .................   Passed    0.09 sec
+ 11/117 Test  #11: draft_math_check .................   Passed    0.11 sec
         Start  12: sleeve_cap_ease_check
- 12/117 Test  #12: sleeve_cap_ease_check ............   Passed    0.13 sec
+ 12/117 Test  #12: sleeve_cap_ease_check ............   Passed    0.16 sec
         Start  13: flat_artifact_census
  13/117 Test  #13: flat_artifact_census .............***Failed    0.05 sec
 === KANAT (b)+(c) — ARTEFAKT SAYIMI · beden EU38
@@ -97,7 +97,7 @@ ok    4 sıfır alan — her görünümün kapalı konturu pozitif alanlı
 FAIL flat_artifact_census — 1 ihlal
 
         Start  14: style_check
- 14/117 Test  #14: style_check ......................***Failed    0.03 sec
+ 14/117 Test  #14: style_check ......................***Failed    0.04 sec
 style_check kapsam: 0/31 stil pinli (sözlük: engine/flat-engine/styles.json)
 style_check FAIL: pinlenmiş stil 0 — engine/STYLE-PIN yok/boş, 31 stilin hepsi korumasız.
   Bu kapı T17'ye kadar bu hâlde YEŞİL basıyordu ve hiçbir kalemi tutmuyordu.
@@ -147,19 +147,19 @@ style_check FAIL: pinlenmiş stil 0 — engine/STYLE-PIN yok/boş, 31 stilin hep
   Durum: scripts/repin-style.sh --status
 
         Start  15: bridge_guard
- 15/117 Test  #15: bridge_guard .....................   Passed    0.08 sec
+ 15/117 Test  #15: bridge_guard .....................   Passed    0.09 sec
         Start  16: api_wire_check
- 16/117 Test  #16: api_wire_check ...................   Passed    0.07 sec
+ 16/117 Test  #16: api_wire_check ...................   Passed    0.08 sec
         Start  17: collar_bridge_check
- 17/117 Test  #17: collar_bridge_check ..............   Passed    0.03 sec
+ 17/117 Test  #17: collar_bridge_check ..............   Passed    0.06 sec
         Start  18: skirtlen_refresh_check
- 18/117 Test  #18: skirtlen_refresh_check ...........   Passed    0.03 sec
+ 18/117 Test  #18: skirtlen_refresh_check ...........   Passed    0.04 sec
         Start  19: compile_dialect_check
- 19/117 Test  #19: compile_dialect_check ............   Passed    0.09 sec
+ 19/117 Test  #19: compile_dialect_check ............   Passed    0.11 sec
         Start  20: photo_ratio_wire_check
- 20/117 Test  #20: photo_ratio_wire_check ...........   Passed    0.06 sec
+ 20/117 Test  #20: photo_ratio_wire_check ...........   Passed    0.08 sec
         Start  21: sizechart_source_check
- 21/117 Test  #21: sizechart_source_check ...........***Failed    0.03 sec
+ 21/117 Test  #21: sizechart_source_check ...........***Failed    0.04 sec
 euSizeChart: 7 columns x 10 sizes = 70 numbers on a buyer's body
   sourced (verified against a publication): 3 -> bustCM, waistCM, hipCM
   UNSOURCED (verified absence, declared):   4 -> shoulderCM, backLengthCM, armLengthCM, neckCM
@@ -182,13 +182,13 @@ columns are matched to a publication or replaced from a named source by Damla
 (DAMLA-KUYRUK K10). Do NOT close it by editing the chart or softening the question.
 
         Start  22: ruffle_check
- 22/117 Test  #22: ruffle_check .....................   Passed    0.00 sec
+ 22/117 Test  #22: ruffle_check .....................   Passed    0.01 sec
         Start  23: tiered_ruffle_check
- 23/117 Test  #23: tiered_ruffle_check ..............   Passed    0.00 sec
+ 23/117 Test  #23: tiered_ruffle_check ..............   Passed    0.01 sec
         Start  24: sweetheart_check
- 24/117 Test  #24: sweetheart_check .................   Passed    0.00 sec
+ 24/117 Test  #24: sweetheart_check .................   Passed    0.01 sec
         Start  25: keyhole_check
- 25/117 Test  #25: keyhole_check ....................   Passed    0.00 sec
+ 25/117 Test  #25: keyhole_check ....................   Passed    0.01 sec
         Start  26: placket_check
  26/117 Test  #26: placket_check ....................   Passed    0.01 sec
         Start  27: tie_check
@@ -210,7 +210,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  35: skirtlen_check
  35/117 Test  #35: skirtlen_check ...................   Passed    0.00 sec
         Start  36: strap_check
- 36/117 Test  #36: strap_check ......................   Passed    0.00 sec
+ 36/117 Test  #36: strap_check ......................   Passed    0.01 sec
         Start  37: peplum_check
  37/117 Test  #37: peplum_check .....................   Passed    0.01 sec
         Start  38: hemflounce_check
@@ -234,9 +234,9 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  47: cuff_check
  47/117 Test  #47: cuff_check .......................   Passed    0.01 sec
         Start  48: neckline_ext_check
- 48/117 Test  #48: neckline_ext_check ...............   Passed    0.00 sec
+ 48/117 Test  #48: neckline_ext_check ...............   Passed    0.01 sec
         Start  49: hem_check
- 49/117 Test  #49: hem_check ........................   Passed    0.00 sec
+ 49/117 Test  #49: hem_check ........................   Passed    0.01 sec
         Start  50: halter_check
  50/117 Test  #50: halter_check .....................   Passed    0.00 sec
         Start  51: bias_check
@@ -246,7 +246,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  53: sleeve_check
  53/117 Test  #53: sleeve_check .....................   Passed    0.05 sec
         Start  54: cap_sleeve_check
- 54/117 Test  #54: cap_sleeve_check .................   Passed    0.00 sec
+ 54/117 Test  #54: cap_sleeve_check .................   Passed    0.01 sec
         Start  55: placket_asym_check
  55/117 Test  #55: placket_asym_check ...............   Passed    0.01 sec
         Start  56: fit_proof
@@ -262,7 +262,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  61: shoulder_check
  61/117 Test  #61: shoulder_check ...................   Passed    0.01 sec
         Start  62: buttonrow_check
- 62/117 Test  #62: buttonrow_check ..................   Passed    0.01 sec
+ 62/117 Test  #62: buttonrow_check ..................   Passed    0.00 sec
         Start  63: exposedzip_check
  63/117 Test  #63: exposedzip_check .................   Passed    0.00 sec
         Start  64: backdetail_check
@@ -276,9 +276,9 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  68: notch_alignment_check
  68/117 Test  #68: notch_alignment_check ............   Passed    0.00 sec
         Start  69: closed_garment_check
- 69/117 Test  #69: closed_garment_check .............   Passed    0.00 sec
+ 69/117 Test  #69: closed_garment_check .............   Passed    0.01 sec
         Start  70: sewable_census
- 70/117 Test  #70: sewable_census ...................   Passed   23.21 sec
+ 70/117 Test  #70: sewable_census ...................   Passed   24.43 sec
         Start  71: roundtrip_check
  71/117 Test  #71: roundtrip_check ..................   Passed    0.01 sec
         Start  72: fabric_ease_check
@@ -294,35 +294,35 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  77: recipe_dress_check
  77/117 Test  #77: recipe_dress_check ...............   Passed    0.01 sec
         Start  78: recipe_dress_golden_check
- 78/117 Test  #78: recipe_dress_golden_check ........   Passed    0.03 sec
+ 78/117 Test  #78: recipe_dress_golden_check ........   Passed    0.04 sec
         Start  79: recipe_grade_check
  79/117 Test  #79: recipe_grade_check ...............   Passed    0.01 sec
         Start  80: recipe_wasm_parity
- 80/117 Test  #80: recipe_wasm_parity ...............   Passed    0.11 sec
+ 80/117 Test  #80: recipe_wasm_parity ...............   Passed    0.14 sec
         Start  81: recipe_wasm_parity_dress
  81/117 Test  #81: recipe_wasm_parity_dress .........   Passed    0.09 sec
         Start  82: dxf_wasm_parity
- 82/117 Test  #82: dxf_wasm_parity ..................   Passed    0.10 sec
+ 82/117 Test  #82: dxf_wasm_parity ..................   Passed    0.11 sec
         Start  83: dxf_wasm_parity_dress
  83/117 Test  #83: dxf_wasm_parity_dress ............   Passed    0.10 sec
         Start  84: wasm_spec_honesty_check
- 84/117 Test  #84: wasm_spec_honesty_check ..........   Passed    0.26 sec
+ 84/117 Test  #84: wasm_spec_honesty_check ..........   Passed    0.27 sec
         Start  85: bugra_bridge_check
- 85/117 Test  #85: bugra_bridge_check ...............   Passed   71.53 sec
+ 85/117 Test  #85: bugra_bridge_check ...............   Passed   74.43 sec
         Start  86: dxf_check
- 86/117 Test  #86: dxf_check ........................   Passed    0.64 sec
+ 86/117 Test  #86: dxf_check ........................   Passed    0.65 sec
         Start  87: nest_check
- 87/117 Test  #87: nest_check .......................   Passed    0.00 sec
+ 87/117 Test  #87: nest_check .......................   Passed    0.01 sec
         Start  88: nest_marker_check
- 88/117 Test  #88: nest_marker_check ................   Passed    0.73 sec
+ 88/117 Test  #88: nest_marker_check ................   Passed    0.78 sec
         Start  89: drape_check
  89/117 Test  #89: drape_check ......................   Passed    0.53 sec
         Start  90: tech_pack_check
- 90/117 Test  #90: tech_pack_check ..................   Passed    1.02 sec
+ 90/117 Test  #90: tech_pack_check ..................   Passed    1.08 sec
         Start  91: compose_check
  91/117 Test  #91: compose_check ....................   Passed    0.19 sec
         Start  92: contract_check
- 92/117 Test  #92: contract_check ...................***Failed    0.15 sec
+ 92/117 Test  #92: contract_check ...................***Failed    0.19 sec
 ok: contract/tables.json, garment-spec.schema.json, terms.json, vocab.json, styles.json parse
 ok: schema draftSpec enums match engine/vocab.json (37 fields)
 ok: term registry sound: 52 terms, 246 phrases, ids unique, capabilities valid
@@ -343,7 +343,7 @@ ok: create.js picker options subset of the vocabulary (110 option values checked
 contract validation FAILED (1)
 
         Start  93: specv2_check
- 93/117 Test  #93: specv2_check .....................   Passed    0.03 sec
+ 93/117 Test  #93: specv2_check .....................   Passed    0.04 sec
         Start  94: specv1v2_map_check
  94/117 Test  #94: specv1v2_map_check ...............   Passed    0.03 sec
         Start  95: flat_render_lint
@@ -351,7 +351,7 @@ contract validation FAILED (1)
         Start  96: preview_truth_check
  96/117 Test  #96: preview_truth_check ..............   Passed    0.11 sec
         Start  97: figure_check
- 97/117 Test  #97: figure_check .....................***Failed    0.43 sec
+ 97/117 Test  #97: figure_check .....................***Failed    0.46 sec
   ok   princess_dress                   waist/bust 0.637  OK taban 0.643 ±0.02
   ok   gore_skirt_dress                 waist/bust 0.681  OK taban 0.68 ±0.02
   ok   wrap_dress                       waist/bust 0.661  OK taban 0.662 ±0.02
@@ -389,13 +389,13 @@ figure-lint: 1 FAILURE(S) — boru/drift üretildi, mandal düştü
         Start  98: volume_check
  98/117 Test  #98: volume_check .....................   Passed    0.01 sec
         Start  99: body_volume_check
- 99/117 Test  #99: body_volume_check ................   Passed    6.06 sec
+ 99/117 Test  #99: body_volume_check ................   Passed    6.30 sec
         Start 100: garment_shell_check
-100/117 Test #100: garment_shell_check ..............   Passed    0.72 sec
+100/117 Test #100: garment_shell_check ..............   Passed    0.74 sec
         Start 101: flatten_check
-101/117 Test #101: flatten_check ....................   Passed    0.41 sec
+101/117 Test #101: flatten_check ....................   Passed    0.43 sec
         Start 102: surface_pattern_check
-102/117 Test #102: surface_pattern_check ............   Passed    4.41 sec
+102/117 Test #102: surface_pattern_check ............   Passed    4.64 sec
         Start 103: h10_gate_check
 103/117 Test #103: h10_gate_check ...................***Not Run (Disabled)   0.00 sec
         Start 104: garment_armhole_check
@@ -405,31 +405,31 @@ figure-lint: 1 FAILURE(S) — boru/drift üretildi, mandal düştü
         Start 106: capability_check
 106/117 Test #106: capability_check .................   Passed    0.00 sec
         Start 107: wearable_check
-107/117 Test #107: wearable_check ...................   Passed    4.56 sec
+107/117 Test #107: wearable_check ...................   Passed    4.85 sec
         Start 108: edgemono_check
-108/117 Test #108: edgemono_check ...................   Passed   36.47 sec
+108/117 Test #108: edgemono_check ...................   Passed   38.77 sec
         Start 109: walkgate_check
-109/117 Test #109: walkgate_check ...................   Passed   39.86 sec
+109/117 Test #109: walkgate_check ...................   Passed   42.81 sec
         Start 110: cutplan_check
-110/117 Test #110: cutplan_check ....................   Passed   39.20 sec
+110/117 Test #110: cutplan_check ....................   Passed   41.64 sec
         Start 111: printpack_sheet_check
-111/117 Test #111: printpack_sheet_check ............   Passed    8.98 sec
+111/117 Test #111: printpack_sheet_check ............   Passed    9.16 sec
         Start 112: preset_resolve_check
 112/117 Test #112: preset_resolve_check .............   Passed    0.03 sec
         Start 113: edit_locality_check
-113/117 Test #113: edit_locality_check ..............   Passed    0.16 sec
+113/117 Test #113: edit_locality_check ..............   Passed    0.17 sec
         Start 114: vocab_source_check
-114/117 Test #114: vocab_source_check ...............   Passed    0.14 sec
+114/117 Test #114: vocab_source_check ...............   Passed    0.10 sec
         Start 115: vocab_reference_check
-115/117 Test #115: vocab_reference_check ............   Passed    4.73 sec
+115/117 Test #115: vocab_reference_check ............   Passed    4.87 sec
         Start 116: docs_truth_check
-116/117 Test #116: docs_truth_check .................   Passed    0.17 sec
+116/117 Test #116: docs_truth_check .................   Passed    0.18 sec
         Start 117: landing_truth_check
-117/117 Test #117: landing_truth_check ..............   Passed    0.94 sec
+117/117 Test #117: landing_truth_check ..............   Passed    0.96 sec
 
 95% tests passed, 6 tests failed out of 116
 
-Total Test time (real) = 274.22 sec
+Total Test time (real) = 289.20 sec
 
 The following tests did not run:
 	103 - h10_gate_check (Disabled)
