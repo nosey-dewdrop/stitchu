@@ -325,7 +325,21 @@ const EXT_TOKEN = /^\.[A-Za-z0-9]+$/;                // .cpp
 // (§4.5'in ilk koşusunda tam bunu yaptı, GECE/log/V9-B.mutasyon.txt).
 const DECLARED_MISSING_STRONG =
   /\bYOK\b|does not exist|was moved out|üretilmiyor|\bdiskte yok\b|\bDOSYA YOK\b|left the repo/;
+// ⚠ SIKILAŞTIRILDI (V9-B2, 2026-08-25). V9-B'nin BİLİNEN ZAAF md.2'si: yalın Türkçe
+// `yok` SATIRIN HERHANGİ BİR YERİNDE arandığı için `docs/H1.0-KAPI.md:189`'daki
+// *"Armhole ÇEVRESİ Aldrich'te yok"* ifadesi, aynı satırda ANDIĞI BAŞKA bir yolu
+// (`reports/2026-07-29-endustri-arastirmasi.md`) da muaf kılıyordu — "yok" o yol için
+// değildi. Artık `yok` YALNIZ hedefin SAĞINDA aranır: Türkçe yokluk ilanı hedefi
+// ÖNCE söyler, sonra "yok" der (`\`engine/STYLE-PIN/\` … diskte yok`).
+// ÖLÇÜLDÜ: bütün ağaçta bu sınıfın 2 düşüşü var; 1'i (SATIS-SARTNAMESI:348) sağda,
+// 1'i (H1.0:189) solda. Sıkılaştırma yalnız ikincisini kapatır, yeni yanlış pozitif 0.
 const DECLARED_MISSING_LOOSE = /\byok\b/;
+// GEÇMİŞ ALINTISI: bir yolun HEMEN SAĞINDA git commit hash'i varsa (`(git \`0e67777\`)`),
+// doküman o yolun DİSKTE değil GEÇMİŞTE olduğunu açıkça ilan etmiştir — D2'nin zaten
+// tanıdığı "dürüst yokluk kaydı" sınıfının aynısı, sadece kelimeyle değil hash'le.
+// Hash hedefin SAĞINDA aranır ki tek alıntı bütün satırı muaf kılmasın.
+// ÖLÇÜLDÜ (V9-B2): bugünkü ağaçta bu sınıfa giren tek aday H1.0-KAPI.md:189.
+const GIT_HISTORY_CITE = /^[`'"\s)(\]]{0,6}\(?\s*git\s+`?[0-9a-f]{7,40}`?/;
 
 function scanD2() {
   const dead = [];
@@ -353,9 +367,13 @@ function scanD2() {
         const ev = resolveTarget(tgt, baseDir);
         if (ev) { alive++; continue; }
         // düşürülen sınıflar
+        // hedefin SAĞINDAKİ metin: yalın `yok` ve git-hash alıntısı burada aranır.
+        const tIdx = line.indexOf(tgt);
+        const rightOf = tIdx < 0 ? '' : line.slice(tIdx + tgt.length);
         if (BRANCHES.has(tgt) || FORMAT_ID.test(tgt) || EXT_TOKEN.test(tgt)
             || DECLARED_MISSING_STRONG.test(para[i])
-            || DECLARED_MISSING_LOOSE.test(line)) { droppedClass++; continue; }
+            || DECLARED_MISSING_LOOSE.test(rightOf)
+            || GIT_HISTORY_CITE.test(rightOf)) { droppedClass++; continue; }
         dead.push({ dosya: rel, satirNo: i + 1, hedef: tgt, tur: kind,
                     satir: line.trim().slice(0, 160) });
       }
@@ -402,6 +420,9 @@ const fpD2 = (h) => `${h.dosya}|${h.hedef}`;
 
 const argv = process.argv.slice(2);
 const WRITE = argv.includes('--baseline');
+// `--note=...` — kesim gerekçesi. RULES §4.6: taban yeniden kesilirken ESKİ değer,
+// YENİ değer ve GEREKÇE hem commit mesajına hem taban dosyasının içine yazılır.
+const NOTE = (argv.find(a => a.startsWith('--note=')) ?? '').slice('--note='.length);
 const NO_BASELINE = argv.includes('--no-baseline');
 
 const d1 = scanD1(), d2 = scanD2(), d3 = scanD3();
@@ -423,6 +444,7 @@ if (WRITE) {
       'İSTİSNA KURALI ZORUNLUDUR (V9-A §2B): bugünkü ağaçta 16 ham hit\'in 13\'ü yanlış pozitif; 2\'si emekli edilen cümleyi tırnak içinde taşıyor. İstisnasız kapı RULES §6 ONARIMINI cezalandırır.',
       'Kapının kendi arızası (taban yok, git yok vb.) exit 3 alır; ihlal exit 1 alır. Ayrık exit kodu lychee emsali (V9-R §1 B3). EKSİK YASA ASLA GEÇİŞ DEĞİLDİR: taban dosyası yoksa kapı FAIL verir.',
     ],
+    _note: NOTE || 'GEREKÇE YAZILMADI — RULES §4.6 ihlali. Yeniden kes: --note="eski X -> yeni Y, sebep"',
     olcumCommit: commit,
     olcumTarihi: new Date().toISOString().slice(0, 10),
     kapsam: {

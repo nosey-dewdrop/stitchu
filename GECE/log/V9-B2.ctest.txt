@@ -1,0 +1,8 @@
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start 116: docs_truth_check
+1/1 Test #116: docs_truth_check .................   Passed    4.68 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   4.68 sec
+EXIT=0

@@ -1,0 +1,157 @@
+V9-B2 — §4.5 MUTASYON KANITI (2026-08-25)
+taban: engine/tests/docs-truth-baseline.json — D1 0 · D2 0 · D3 0, bilinenAcik BOŞ.
+Kapı artık kayıtlı borç TAŞIMIYOR; her ihlal YENİ sayılır. Mutasyon hedefi: docs/ARCHITECTURE.md (sonuna eklenir, geri alınır).
+komut: node engine/tests/docs_truth_check.mjs   (taban kipi, --no-baseline DEĞİL)
+
+==================================================================
+§0  ÖNCE — TEMİZ AĞAÇ
+==================================================================
+git status --porcelain -- docs/ README.md  ->  [0 satır]
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 4a5f0de64aeb
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 14 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 0 · kayıtlı borç 0 · YENİ 0
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 568 · VAR 540 · düşen yanlış-pozitif sınıfı 28
+  GERÇEK ölü 0 · kayıtlı borç 0 · YENİ 0
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 139 · SAĞLAYICISIZ 0
+  taban 0 · delta +0
+
+HÜKÜM: YEŞİL — yeni duran-iddia 0, yeni ölü hedef 0, D3 0 <= taban 0
+AÇIK BORÇ (kapıyı kırmaz, kayıtlıdır): D1 0 · D2 0 — onarım V9-C/D/E'nin işi.
+EXIT=0
+
+==================================================================
+§1  D1 MUTASYONU — duran iddia
+==================================================================
+eklendi -> docs/ARCHITECTURE.md:269  :  The matrix is ALL PASS and the draft is byte-identical.
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 4a5f0de64aeb
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 16 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 2 · kayıtlı borç 0 · YENİ 2
+  FAIL YENI  docs/ARCHITECTURE.md:269  [ALL PASS]  The matrix is ALL PASS and the draft is byte-identical.
+  FAIL YENI  docs/ARCHITECTURE.md:269  [byte-identical]  The matrix is ALL PASS and the draft is byte-identical.
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 568 · VAR 540 · düşen yanlış-pozitif sınıfı 28
+  GERÇEK ölü 0 · kayıtlı borç 0 · YENİ 0
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 139 · SAĞLAYICISIZ 0
+  taban 0 · delta +0
+
+HÜKÜM: FAIL — D1 yeni 2 · D2 yeni 0 · D3 tamam
+Docs bir sayıyı sabit gerçek olarak ilan etti, olmayan bir yola atıf yaptı ya da
+sağlayıcısız sayı ekledi. RULES §6: sayı TEST ÇIKTISINDA yaşar, dokümanda değil.
+Yanlış pozitifse: kalıbı gevşetme — aynı commit'te tabana GÖRÜNÜR biçimde ekle
+(node engine/tests/docs_truth_check.mjs --baseline) ve gerekçesini commit mesajına yaz.
+EXIT=1
+-- geri alındı --
+
+HÜKÜM: YEŞİL — yeni duran-iddia 0, yeni ölü hedef 0, D3 0 <= taban 0
+AÇIK BORÇ (kapıyı kırmaz, kayıtlıdır): D1 0 · D2 0 — onarım V9-C/D/E'nin işi.
+EXIT=
+
+==================================================================
+§2  D2 MUTASYONU — olmayan yola backtick referansı
+==================================================================
+eklendi -> docs/ARCHITECTURE.md:269
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 4a5f0de64aeb
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 14 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 0 · kayıtlı borç 0 · YENİ 0
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 570 · VAR 540 · düşen yanlış-pozitif sınıfı 28
+  GERÇEK ölü 2 · kayıtlı borç 0 · YENİ 2
+  FAIL YENI  docs/ARCHITECTURE.md:269  -> docs/BOYLE-BIR-DOSYA-ASLA-OLMADI.md  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:269  -> engine/src/hayalet-modul.cpp  [TICK]
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 139 · SAĞLAYICISIZ 0
+  taban 0 · delta +0
+
+HÜKÜM: FAIL — D1 yeni 0 · D2 yeni 2 · D3 tamam
+Docs bir sayıyı sabit gerçek olarak ilan etti, olmayan bir yola atıf yaptı ya da
+sağlayıcısız sayı ekledi. RULES §6: sayı TEST ÇIKTISINDA yaşar, dokümanda değil.
+Yanlış pozitifse: kalıbı gevşetme — aynı commit'te tabana GÖRÜNÜR biçimde ekle
+(node engine/tests/docs_truth_check.mjs --baseline) ve gerekçesini commit mesajına yaz.
+EXIT=1
+-- geri alındı --
+
+HÜKÜM: YEŞİL — yeni duran-iddia 0, yeni ölü hedef 0, D3 0 <= taban 0
+AÇIK BORÇ (kapıyı kırmaz, kayıtlıdır): D1 0 · D2 0 — onarım V9-C/D/E'nin işi.
+
+==================================================================
+§3  D3 MUTASYONU — sağlayıcısı olmayan sayısal cümle
+==================================================================
+eklendi -> docs/ARCHITECTURE.md:269
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 4a5f0de64aeb
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 14 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 0 · kayıtlı borç 0 · YENİ 0
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 568 · VAR 540 · düşen yanlış-pozitif sınıfı 28
+  GERÇEK ölü 0 · kayıtlı borç 0 · YENİ 0
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 140 · SAĞLAYICISIZ 1
+  taban 0 · delta +1
+  FAIL  docs/ARCHITECTURE.md:269  The worst pair measured 3.75 mm across eight sizes.
+
+HÜKÜM: FAIL — D1 yeni 0 · D2 yeni 0 · D3 taban aşıldı (0 -> 1)
+Docs bir sayıyı sabit gerçek olarak ilan etti, olmayan bir yola atıf yaptı ya da
+sağlayıcısız sayı ekledi. RULES §6: sayı TEST ÇIKTISINDA yaşar, dokümanda değil.
+Yanlış pozitifse: kalıbı gevşetme — aynı commit'te tabana GÖRÜNÜR biçimde ekle
+(node engine/tests/docs_truth_check.mjs --baseline) ve gerekçesini commit mesajına yaz.
+EXIT=1
+-- geri alındı --
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 4a5f0de64aeb
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 14 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 0 · kayıtlı borç 0 · YENİ 0
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 568 · VAR 540 · düşen yanlış-pozitif sınıfı 28
+  GERÇEK ölü 0 · kayıtlı borç 0 · YENİ 0
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 139 · SAĞLAYICISIZ 0
+  taban 0 · delta +0
+
+HÜKÜM: YEŞİL — yeni duran-iddia 0, yeni ölü hedef 0, D3 0 <= taban 0
+AÇIK BORÇ (kapıyı kırmaz, kayıtlıdır): D1 0 · D2 0 — onarım V9-C/D/E'nin işi.
+EXIT=0
+
+==================================================================
+§4  SONRA — AĞAÇ GERİ ALINDI MI?
+==================================================================
+git status --porcelain -- docs/ README.md  ->  [0 satır]
+git diff --stat -- docs/ README.md:
+(BOŞ = docs/ ve README.md kalıcı olarak DEĞİŞTİRİLMEDİ)
+
+(NOT: §1 sonundaki "EXIT=" satırı boş kaldı — pipe içinde PIPESTATUS okundu, çıktı `tail` ile kırpıldığı için kabuk boş bastı. Aynı geri-alma §2/§3 sonunda tam çıktıyla tekrarlandı ve EXIT=0 ölçüldü; §4 ağacın BOŞ olduğunu gösteriyor.)
