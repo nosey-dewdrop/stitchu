@@ -844,6 +844,19 @@ add_test(NAME preset_resolve_check COMMAND preset_resolve_check
 add_test(NAME edit_locality_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/edit_locality_check.mjs)
 
+# V6-D — anchor_source_check: the ANCHOR DICTIONARY is a BUILD PRODUCT. A list
+# of place names is the one artefact here that cannot be told from taste by
+# reading it; V6-C priced the failure mode (naive `taraf × jeton` gives 54
+# candidates, >=8 self-contradictory: frontCenterback, frontBack, ...). So the
+# gate regenerates (twice, into mktemp — determinism measured, tree untouched),
+# re-resolves every record's `kaynak` dosya:anahtar path in the named contract
+# INDEPENDENTLY of the generator, refuses any anchor that lands on zero panels
+# or carries two position tokens, and audits `_dogmayan` so the generator
+# cannot pass itself by writing both sides of the diff. Go green by editing the
+# contract and rerunning `node engine/tools/gen-anchors.mjs`, never the JSON.
+add_test(NAME anchor_source_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/anchor_source_check.mjs)
+
 # V2-B, KAPI 1/2 — vocab_source_check: the vision word list is a BUILD PRODUCT.
 # vision-student/vocab.py opened with "the classes MUST stay identical to the
 # teacher schema" and nothing checked the sentence; measured against

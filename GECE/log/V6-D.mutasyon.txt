@@ -1,0 +1,229 @@
+V6-D MUTASYON KANITI — kapi: engine/tests/anchor_source_check.mjs
+tarih: 2026-08-25T02:13:40Z  ·  node v26.5.0
+Her mutasyon UYGULANIR -> kapi kosulur -> GERI ALINIR -> kapi tekrar kosulur.
+EXIT=1 = kirmizi (istenen), EXIT=0 = yesil.
+
+=== T0 — mutasyonsuz taban ===
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+----
+anchor_source_check: HUKUM YESIL — 19 anchors, every kaynak resolved, 7 carry an edge fraction, 37 names refused.
+EXIT=0
+
+=== M1 — anchors-v1.json'a ELLE bir cipa eklendi ===
+  mutasyon: anchors[] sonuna elle 'elleYazilanCipa' eklendi (backZone kopyasi)
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+FAIL: contract/anchors-v1.json is STALE or HAND-EDITED — it is not what engine/tools/gen-anchors.mjs produces. fix: node engine/tools/gen-anchors.mjs
+FAIL: line 1 does not carry the GENERATED / DO NOT EDIT stamp
+FAIL: anchor 'elleYazilanCipa': bilesen ["backDetail","backSlit","exposedZip","openBack","tie"] != composition.json's declarers []
+FAIL: anchor 'elleYazilanCipa': bilesenKaynak indices point at the wrong components (composition.json reordered?)
+FAIL: _olcum.cipa=19 but anchors has 20
+FAIL: _olcum.kenarOraniTasiyan does not match the records
+----
+anchor_source_check: HUKUM FAIL (6)
+The anchor dictionary is a BUILD PRODUCT. It stopped matching its sources.
+EXIT=1
+--- M1 GERI ALINIYOR
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+----
+anchor_source_check: HUKUM YESIL — 19 anchors, every kaynak resolved, 7 carry an edge fraction, 37 names refused.
+EXIT=0
+
+=== M2 — bir cipanin 'kaynak' alani OLMAYAN bir anahtara cevrildi ===
+  onceki kaynak: contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.neck
+  yeni    kaynak: contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.OLMAYAN_ANAHTAR
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+FAIL: contract/anchors-v1.json is STALE or HAND-EDITED — it is not what engine/tools/gen-anchors.mjs produces. fix: node engine/tools/gen-anchors.mjs
+FAIL: line 1 does not carry the GENERATED / DO NOT EDIT stamp
+FAIL: anchor 'collar.neck': kaynak 'contract/primitives-v1.json:primitifler.op.attach.parametreler.position.degerler.OLMAYAN_ANAHTAR' does NOT resolve — 'primitifler.op.attach.parametreler.position.degerler.OLMAYAN_ANAHTAR' is absent from contract/primitives-v1.json
+----
+anchor_source_check: HUKUM FAIL (3)
+The anchor dictionary is a BUILD PRODUCT. It stopped matching its sources.
+EXIT=1
+--- M2 GERI ALINIYOR
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+----
+anchor_source_check: HUKUM YESIL — 19 anchors, every kaynak resolved, 7 carry an edge fraction, 37 names refused.
+EXIT=0
+
+=== M3 — URETECE KROSS-CARPIM eklendi (celisik ad dogsun) ===
+  mutasyon: gen-anchors.mjs icinde build({cross:...}) varsayilan ACILDI = taraf x jeton
+Binary file engine/tools/gen-anchors.mjs matches
+wrote /Users/damummyphus/damla_projects_2026/stitchu/contract/anchors-v1.json: 51 anchors, 7 carry an edge fraction, 86 panel names measured over 390 drafts (59 refused by the engine), 37 names NOT born.
+  kross-carpimla dogan ad sayisi: 32
+  kendiyle celisik ornekler: ['backBack', 'backCenterFront', 'backFront', 'frontBack', 'frontCenterBack', 'frontFront']
+ok: generator deterministic — two runs, byte-identical (59796 bytes)
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+FAIL: anchor 'backBack': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backBack': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backBack': bilesen has no source path
+FAIL: anchor 'backBust': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backBust': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backBust': bilesen has no source path
+FAIL: anchor 'backCap': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backCap': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backCap': bilesen has no source path
+FAIL: anchor 'backCenterBack': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backCenterBack': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backCenterBack': bilesen has no source path
+FAIL: anchor 'backCenterFront': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backCenterFront': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backCenterFront': bilesen has no source path
+FAIL: anchor 'backFront': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backFront': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backFront': bilesen has no source path
+FAIL: anchor 'backHem': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backHem': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backHem': bilesen has no source path
+FAIL: anchor 'backHip': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backHip': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backHip': bilesen has no source path
+FAIL: anchor 'backKnee': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backKnee': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backKnee': bilesen has no source path
+FAIL: anchor 'backNape': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backNape': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backNape': bilesen has no source path
+FAIL: anchor 'backNeck': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backNeck': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backNeck': bilesen has no source path
+FAIL: anchor 'backShoulder': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backShoulder': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backShoulder': bilesen has no source path
+FAIL: anchor 'backSideSeam': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backSideSeam': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backSideSeam': bilesen has no source path
+FAIL: anchor 'backWaist': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backWaist': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backWaist': bilesen has no source path
+FAIL: anchor 'backWrist': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backWrist': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backWrist': bilesen has no source path
+FAIL: anchor 'backYoke': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'backYoke': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'backYoke': bilesen has no source path
+FAIL: anchor 'frontBack': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontBack': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontBack': bilesen has no source path
+FAIL: anchor 'frontBust': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontBust': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontBust': bilesen has no source path
+FAIL: anchor 'frontCap': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontCap': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontCap': bilesen has no source path
+FAIL: anchor 'frontCenterBack': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontCenterBack': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontCenterBack': bilesen has no source path
+FAIL: anchor 'frontCenterFront': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontCenterFront': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontCenterFront': bilesen has no source path
+FAIL: anchor 'frontFront': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontFront': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontFront': bilesen has no source path
+FAIL: anchor 'frontHem': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontHem': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontHem': bilesen has no source path
+FAIL: anchor 'frontHip': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontHip': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontHip': bilesen has no source path
+FAIL: anchor 'frontKnee': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontKnee': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontKnee': bilesen has no source path
+FAIL: anchor 'frontNape': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontNape': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontNape': bilesen has no source path
+FAIL: anchor 'frontNeck': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontNeck': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontNeck': bilesen has no source path
+FAIL: anchor 'frontShoulder': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontShoulder': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontShoulder': bilesen has no source path
+FAIL: anchor 'frontSideSeam': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontSideSeam': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontSideSeam': bilesen has no source path
+FAIL: anchor 'frontWaist': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontWaist': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontWaist': bilesen has no source path
+FAIL: anchor 'frontWrist': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontWrist': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontWrist': bilesen has no source path
+FAIL: anchor 'frontYoke': kaynak 'contract/primitives-v1.json:KROSS-CARPIM' does NOT resolve — 'KROSS-CARPIM' is absent from contract/primitives-v1.json
+FAIL: anchor 'frontYoke': no bilesen — an anchor no component declares is a menu entry
+FAIL: anchor 'frontYoke': bilesen has no source path
+FAIL: anchor 'backBack' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backBust' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backBust' carries 2 position tokens (bust, back) — self-contradictory name
+FAIL: anchor 'backCap' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backCap' carries 2 position tokens (cap, back) — self-contradictory name
+FAIL: anchor 'backCenterBack' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backCenterFront' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backCenterFront' carries 2 position tokens (back, centerFront) — self-contradictory name
+FAIL: anchor 'backFront' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backFront' carries 2 position tokens (front, back) — self-contradictory name
+FAIL: anchor 'backHem' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backHem' carries 2 position tokens (hem, back) — self-contradictory name
+FAIL: anchor 'backHip' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backHip' carries 2 position tokens (hip, back) — self-contradictory name
+FAIL: anchor 'backKnee' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backKnee' carries 2 position tokens (knee, back) — self-contradictory name
+FAIL: anchor 'backNape' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backNape' carries 2 position tokens (nape, back) — self-contradictory name
+FAIL: anchor 'backNeck' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backNeck' carries 2 position tokens (back, neck) — self-contradictory name
+FAIL: anchor 'backShoulder' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backShoulder' carries 2 position tokens (shoulder, back) — self-contradictory name
+FAIL: anchor 'backSideSeam' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backSideSeam' carries 2 position tokens (back, sideSeam) — self-contradictory name
+FAIL: anchor 'backWaist' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backWaist' carries 2 position tokens (waist, back) — self-contradictory name
+FAIL: anchor 'backWrist' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backWrist' carries 2 position tokens (wrist, back) — self-contradictory name
+FAIL: anchor 'backYoke' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'backYoke' carries 2 position tokens (yoke, back) — self-contradictory name
+FAIL: anchor 'frontBack' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontBack' carries 2 position tokens (front, back) — self-contradictory name
+FAIL: anchor 'frontBust' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontBust' carries 2 position tokens (bust, front) — self-contradictory name
+FAIL: anchor 'frontCap' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontCap' carries 2 position tokens (cap, front) — self-contradictory name
+FAIL: anchor 'frontCenterBack' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontCenterBack' carries 2 position tokens (front, centerBack) — self-contradictory name
+FAIL: anchor 'frontCenterFront' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontFront' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontHem' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontHem' carries 2 position tokens (hem, front) — self-contradictory name
+FAIL: anchor 'frontHip' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontHip' carries 2 position tokens (hip, front) — self-contradictory name
+FAIL: anchor 'frontKnee' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontKnee' carries 2 position tokens (knee, front) — self-contradictory name
+FAIL: anchor 'frontNape' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontNape' carries 2 position tokens (nape, front) — self-contradictory name
+FAIL: anchor 'frontNeck' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontNeck' carries 2 position tokens (front, neck) — self-contradictory name
+FAIL: anchor 'frontShoulder' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontShoulder' carries 2 position tokens (shoulder, front) — self-contradictory name
+FAIL: anchor 'frontSideSeam' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontSideSeam' carries 2 position tokens (front, sideSeam) — self-contradictory name
+FAIL: anchor 'frontWaist' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontWaist' carries 2 position tokens (waist, front) — self-contradictory name
+FAIL: anchor 'frontWrist' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontWrist' carries 2 position tokens (wrist, front) — self-contradictory name
+FAIL: anchor 'frontYoke' lands on ZERO panels — the frontCenterback class: a name with nowhere to go
+FAIL: anchor 'frontYoke' carries 2 position tokens (yoke, front) — self-contradictory name
+----
+anchor_source_check: HUKUM FAIL (156)
+The anchor dictionary is a BUILD PRODUCT. It stopped matching its sources.
+EXIT=1
+--- M3 GERI ALINIYOR
+wrote /Users/damummyphus/damla_projects_2026/stitchu/contract/anchors-v1.json: 19 anchors, 7 carry an edge fraction, 86 panel names measured over 390 drafts (59 refused by the engine), 37 names NOT born.
+ok: generator deterministic — two runs, byte-identical (48922 bytes)
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+----
+anchor_source_check: HUKUM YESIL — 19 anchors, every kaynak resolved, 7 carry an edge fraction, 37 names refused.
+EXIT=0
+
+=== SONUC ===
+3 mutasyon -> 3 KIRMIZI · 3 geri alma -> 3 YESIL. Calisma agaci mutasyonlardan once neyse o:
+(yukarisi bos ise kirlilik yok)

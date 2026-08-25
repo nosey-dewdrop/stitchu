@@ -1,0 +1,36 @@
+# V6-D ctest — RULES md.9 kapisi
+# komut: ctest --test-dir engine/build -R "edit_locality|anchor|vocab" --output-on-failure
+# NOT: vocab_reference_check'in per-eksen dokumu bu dosyadan BILEREK cikarildi.
+#      O dokum kapali enum ADLARINI satir satir basiyor ve dosya commitlenince
+#      ratchet'in KENDI sayimini +18 buyutuyordu (kendine referans). Tam dokum
+#      yukaridaki komutla her an yeniden basilir.
+
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start 112: edit_locality_check
+1/4 Test #112: edit_locality_check ..............   Passed    0.14 sec
+    Start 113: anchor_source_check
+2/4 Test #113: anchor_source_check ..............   Passed    1.48 sec
+    Start 114: vocab_source_check
+3/4 Test #114: vocab_source_check ...............   Passed    0.10 sec
+    Start 115: vocab_reference_check
+4/4 Test #115: vocab_reference_check ............***Failed    4.60 sec
+olculen       : commit HEAD (572316a)
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10444 (delta +6)
+
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (6 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+
+
+75% tests passed, 1 tests failed out of 4
+
+Total Test time (real) =   6.32 sec
+
+The following tests FAILED:
+	115 - vocab_reference_check (Failed)
+Errors while running CTest
