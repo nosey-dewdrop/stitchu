@@ -31,6 +31,11 @@ dosyayı aç.
 | sınır kesirli/eksik değere ne yapıyor | `ctest -R wasm_spec_honesty_check` basar; teşhis `GECE/V2-C.md` |
 | bir edit bölgesinde kaldı mı, kapı ne kadar ince ölçüyor | `node engine/tests/edit_locality_check.mjs` basar; kanun `contract/edit-locality-v1.json` (ELLE yazılmış, bekçisi YOK), granülarite ilanı `engine/tools/spec-diff.mjs` `LOCALITY_GRANULARITY`; teşhis `GECE/V6-B.md`, onarım `GECE/V6-E.md` |
 | "şuraya ekle" bugün neyi gösterebiliyor | PANELİ, kenarı değil — `GECE/V6-C.md` (88 spec'te 0 adlandırılmış kenar). Kenar çıpası işi yan dalda: `research/v6-cipa-editleme` @ `3d8903c`, dönüş şartı `DAMLA-KUYRUK.md` K-V6A |
+| bir kenarın ADI var mı, kim veriyor | `engine/src/geometry.hpp:40-71` `struct EdgeRole` (rol + komut aralığı + uç-nokta çapası, **uzunluk YOK**); çapa bayatlarsa ad DÜŞER (`geometry.cpp:233-262 reanchorEdgeRoles`, tek boğaz noktası `garment.cpp:1077-1085`). Teşhis `GECE/V7-A.md`, kuruluş `GECE/V7-C.md` |
+| kol kapağı oyuğa uyuyor mu, hangi çizgiden ölçülüyor | `node engine/tests/sleeve_cap_ease_check.mjs` basar — oyuk (`armhole_front`+`armhole_back`) ve kapak (`sleeve_cap`) **ÇİZİLEN kenardan**, skaler kopyadan değil; eşik künyesi dosyanın kendi başlığında. Teşhis `GECE/V7-D.md` |
+| hangi yollarda oyuk hâlâ ADSIZ (borç) | aynı kapının `ADSIZ OYUK SAYIMI` bölümü — 25 Ağu: `bardot_off_shoulder`, `yoke_top`, `cupseam_bustier`. Gerekçe `validator.cpp:333-352`, kayıt `GECE/V7-D.md` §8.5 |
+| cap ease için yayınlanmış sayı var mı | `GECE/V7-R.md` (yayınlanmış / ikincil / DOĞRULANMADI ayrımıyla). Bedene göre ölçekleyen formül **BULUNAMADI**; puf/balonun nicel tanımı da yok |
+| sevk edilen paketten kollu kalıp/flat nasıl görünüyor | `GECE/log/V7-E.png/` (3 kalıp PNG + 4 flat kol PNG/SVG); üreten `node engine/tools/render-pages.mjs <dizin>`, hat doğrulaması `GECE/V7-E.md` §0 |
 | foto→spec isabeti bugün kaç | `node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json` basar; payda **5** ve neden büyütülemediği `GECE/V6-A.md` §1 |
 
 ## V0 fazı — envanter (24 Ağu 2026)
@@ -235,6 +240,41 @@ dişsiz yönü ve onarımı, panel granülaritesi, yan dala alınan iş, foto→
 eşit-olmayan-payda şerhi + "Known limits" dört satır, `docs/KATMAN-HARITASI.md` boşluk 10,
 `README.md` (editleme invariantının halka açık ifadesi, "önce dişsiz ölçüldü, sonra SIKILAŞTIRILDI"
 diye).
+
+## V7 fazı — kenar kimliği + kol oyuğu↔kapak kapısı (25 Ağu 2026)
+
+Faz kuralı: yargı bir SKALER KOPYADAN değil ÇİZİLEN kenardan kurulur; eşik yayına bağlanır
+ya da **REPORTED** basılır (§7.6: kaynaksız eşik yasak); devralınan kırmızı ADLARI büyüyemez
+(RULES §9); adın olmaması ile adın çözülmemesi AYRI muamele görür — ilki üreticideki borçtur
+ve ADIYLA sayılır, ikincisi bütünlük hatasıdır ve reddedilir.
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V7-A.md` | ÖLÇÜM: `PatternPiece` bir kenar ADI TAŞIMIYOR, sevk edilen artefaktta adlandırılmış kenar **0**, ve oyuk↔kapak eşleşmesi ÜÇ tahminle kuruluyor — parça adında `"Sleeve"` alt-dizgisi (`validator.cpp:280-286`), sabit `commands[0..2]` indeksi (`:289-295`), ve çizilen kenar yerine skaler `bodice.armholeLength` (`bodice.cpp:509`). Kol o skalere ikili aramayla uydurulduğu için (`sleeve.cpp:46-96`) ölçülen uyum AYNI SAYININ KENDİSİYLE uyumuydu. Her iddia dosya:satır. |
+| `GECE/V7-B.md` | ÖLÇÜM: sekiz kol yazımının nerede tanımlı olduğu (4 kanonik + 4 BEYANLI eşanlam, `engine/vocab.json:9-10`) ve kartın öncülünün ölçümle DÜŞMESİ — flat sekizi aynı çizmiyor, dört ayrı geometri üretiyor (sha256 tablosu). `cap` değerinin tek kaynaklı olduğu (yalnız `contract/spec-grammar.json:47`) burada. |
+| `GECE/V7-C.md` | ONARIM: `struct EdgeRole` (`geometry.hpp:40-71`) ve dört rol adı sevk edilen hatta girdi. Uzunluk alanı BİLEREK yok. `edgePathOf()` çapa tutmazsa BOŞ döner (reddet, uydurma). Artefaktta adlandırılmış kenar **0 → 5** (4 panelli kollu üstte); yay uzunluğu motordan alınmıyor, JSON'un kendi komutlarından yeniden hesaplanıyor. Yeni kaynak dosya: 0. |
+| `GECE/V7-D.md` | KAPI: `sleeve_cap_ease_check` ctest'e bağlandı (ratchet YOK, **0 ihlalle**). Tüketici taşındı: parça-adı tahmini → rol, sabit indeks → `edgeLengthOf`, skaler → `armhole_front`+`armhole_back` toplamı. 48 satır (spec × beden) ölçüm tablosu. ★ §7: kartın görmediği üç kök engel — `locket.cpp rebuildFront()` rolü BAYATLATIYORDU (V7-C'nin teorik sandığı delik canlı hatta çıktı), sonra dört kapı daha aynı sebeple düştü ve tek boğaz noktası (`reanchorEdgeRoles`) kuruldu. ★ §8.5: **DÜRÜST SINIR** — adlandırılmış oyuk yoksa skalere düşülüyor, düşen üç yol ADIYLA sayılıyor, ve "yarım ad ad değildir" kuralı. §9: açık bırakılanlar. |
+| `GECE/V7-E.md` | GÖRÜNÜR ÇIKTI (hüküm yok, yol + bayt + sha): sevk hattının damgayla doğrulanması (`dist` ile `vendor` farkı tam **127 bayt** = kaynak-damgası yorumu, `vendor.includes(dist)` true), üç kollu kalıbın A4 strip PNG'si ve dört kol yazımının flat'i. Yüzey motoru (`surfacepattern`) sevk EDİLMİYOR (`grep -c` = 0), ondan render alınmadı. |
+| `GECE/V7-F.md` | KARAR (B): sicildeki `sleeve` operatörü `absent` KALDI, çelişki ŞERH olarak yazıldı. Gerekçe ölçümle: sicilin 10 bağının 10'u `SheathOptions::`, kolu basan kod (`garment.cpp:303` → `SleeveBlock::draft`) `SheathOptions`'a **0 kez** dokunuyor, yani uydurulmadan yazılabilecek tek bir `binds` yok. Hüküm: *çelişki bir yalan değil KAPSAM kaymasıdır* — sicil `surfacepattern.cpp`'yi anlatıyor, sevkiyat `garment.cpp`'yi yapıyor. Ürünün gerçeği hangi motor: **Damla kararı, seçilmedi.** |
+| `GECE/V7-G.md` | RULES 9 ONARIMI: 7. kırmızının kökü V7-F'in sicile eklediği ŞERH DÜZ YAZISIYDI. Kapı GEVŞETİLMEDİ, taban YENİDEN KESİLMEDİ — kırmızıyı doğuran 10 dizgi geri alındı, hüküm/karar/kanıt yolu sicilde KALDI, indirmenin sebebi de sicilin içine yazıldı (`_serh._neden_isaretci`). |
+| `GECE/V7-H.md` | UYDURULMUŞ SAYI: `validator.cpp:419`'da 6 belirteç / 7 argüman — reddiye mesajı `armhole 0.0 (-60261330 named edge(s))` basıyordu. Dal canlı ve erişilebilirdi ama sevk edilen 48 satırın hiçbiri onu açmıyor, o yüzden hiçbir kapı görmedi. Onarım tek karakterle bitmedi: `fmt` artık `__attribute__((format(printf,1,2)))` taşıyor, yani bütün hata SINIFI derleme hatası. |
+| `GECE/V7-R.md` | ARAŞTIRMA (kod yazılmadı): cap ease künyeleri **yayınlanmış / ikincil / DOĞRULANMADI** diye ayrıştırılmış. Birincil sayfasından doğrulanan tek tavan Linda Lee'nin 1½ in'i (38.1mm). ★ **Bedene göre ölçekleyen yayınlanmış formül YOK** ve puf/balonun NİCEL tanımı için eşik BULUNAMADI. Ayrıca kapak yüksekliğinde üç yayının 2× mertebesinde çeliştiği (AH/3 vs AH/4 vs AH/6) bağımsız olarak doğrulandı. |
+| `GECE/KART/V7-A.md` … `V7-G.md` · `V7-R.md` | işçi kartlarının brief'i: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. ⚠ V7-H'nin kartı YOK — o iş bir kapı çıktısından değil, hakemin bulduğu biçim-dizgisi hatasından doğdu. |
+| `engine/tests/sleeve_cap_ease_check.mjs` | KAPI, `engine/CMakeLists.txt:143-151`'de kayıtlı, gerekçesi `add_test`'in üstünde. Motoru `web/vendor/stitchu-engine.js` üzerinden yükler → aynı koşu **WASM paritesi** kanıtıdır. Eşik künyesi dosyanın kendi başlığında: [S1] 38.1mm tavan (Linda Lee, YAYINLANMIŞ) · [S2] işaret şartı (motorun kendi `fabricease.hpp kCap` gerekçesinden) · [S3] alt uç **REPORTED, yargılanmaz** (yayın yok) · [S4] büzgülü/puf başta tavan UYGULANMAZ — gevşetme değil KAPSAM. |
+| `GECE/log/V7-D.bostest.txt` | BOŞ TEST: AYNI alet, faz-ÖNCESİ (`e4249b7`) paketin ürettiği artefakta verildi → **EXIT=1, 184 ihlal, 48 satırın hepsi `[a]` ile**. Bugünkü artefaktla EXIT=0. Değişen tek şey GİRDİ, derleme hatası değil. Adlandırılmış kenar: faz öncesi 0 / sonrası 240. |
+| `GECE/log/V7-D.mutasyon.txt` | mutasyon: kapak +40mm → `[c]` tavan · kapak −40mm → `[b]` işaret · kenarın ucu +5mm (post-pass taklidi) → `[a]` BAYAT ROL (88 ihlal). Üçü de geri alınınca PASS. Sonuncusu V7-C'nin açıkça açık bıraktığı deliği kapatan mutasyondur. |
+| `GECE/log/V7.ctest.opening.txt` · `V7-C.ctest.txt` · `V7-D.ctest.txt` · `V7-H.ctest.txt` · `V7.ctest.final.txt` | fazın tam `ctest` koşuları. Kırmızı AD kümesinin büyüyüp büyümediği bu dosyaların `diff`'inden okunur, buradaki bir cümleden değil. ⚠ V7-D koşusunda ARADA dört kırmızı düştü (`cup_check`, `yoke_check`, `boxpleat_check`, `compose_check`) ve koşu içinde KÖKTEN kapatıldı — kayıt `GECE/V7-D.md` §8'de duruyor ki "hiç kırmızı olmadı" gibi okunmasın. |
+| `GECE/log/V7-F.gate.txt` · `V7-G.gate.txt` · `V7-G.vocab.txt` | sicil değişikliğinin kapı çıktıları: `specv2-check.mjs` ve `vocab_reference_check`'in şerh eklenmeden önceki/sonraki okumaları. |
+| `GECE/log/V7-H.fmt.txt` | biçim-dizgisi hatasının ÖNCE/SONRA çıktısı. Dal her koşuda ateşlesin diye mandal geçici olarak `if (true)` yapıldı, ölçüm alındı, geri konuldu. |
+| `GECE/log/V7-E.png/` | sevk edilen bayttan üretilmiş görsel artefaktlar: üç kollu kalıbın A4 strip PNG'si (+`.info.txt` parça listeleri) ve dört kol yazımının flat PNG/SVG'si. |
+
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §15 (kenar rolü, çapa/bayatlama
+disiplini, kapı ve eşik künyesi, ADSIZ oyuk borcu, uydurulmuş sayı, karara bağlanmayanlar) + §5'e
+düşülen şerh + §13/§14'ün "0 adlandırılmış kenar" cümlelerinin düzeltilmesi + "Known limits" iki
+yeni satır, `docs/KATMAN-HARITASI.md` boşluk 7 (kısmen aşıldı) + 9 (sevk hattı yeniden ölçüldü) +
+10 (bayat cümle düzeltildi) + **yeni boşluk 11** (kenar kimliği girdi, üç pas'ta hâlâ yok),
+`docs/SATIS-SARTNAMESI.md` montaj maddesine `edgeRoles` şerhi,
+`README.md` (dikiş-çifti eşitliğinin "hiç iddia edilemez" kuyruğunun düzeltilmesi).
 
 ## Ölçüm aletlerini çalıştır
 

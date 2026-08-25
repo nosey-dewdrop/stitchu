@@ -59,6 +59,15 @@
    (`type` yalnız `move`/`line`), yani kenar çentiği / katlama / iç işaret ayrımı artefakttan
    çıkarılamıyor. Sayan kapı: `node engine/tests/sewability_check.mjs` — cevaplayamadığı her
    soruyu ADIYLA `ABSENT:` diye basıyor (bugün 7). Teşhis `GECE/V5-A.md`.
+   ⚠ **KISMEN AŞILDI 25 Ağu (V7-C/V7-D):** artefakt artık YEDİNCİ bir alan taşıyor —
+   `edgeRoles` — ve orada **dört kenar ROLÜ** var (`armhole_front`, `armhole_back`,
+   `sleeve_cap`, `sleeve_underarm`). Rol bir uzunluk TAŞIMAZ, kenarı ADRESLER
+   (komut aralığı + uç-nokta çapası, `engine/src/geometry.hpp:40-71`); tüketici yayı
+   `commands[first..last]`'tan kendi hesaplar. Yani "0 adlandırılmış kenar" cümlesi
+   bayattır. **Ama ad sözlüğü dikiş grafiği DEĞİL:** artefaktta hangi iki kenarın
+   birbirine dikildiğini söyleyen hiçbir şey yok, yaka/yan dikiş/bel/band kenarları
+   hâlâ adsız, `notches` hâlâ tipsiz tek kanal. Yukarıdaki altı alan adının sayısı
+   bugün de **0**.
 8. **L0 ↔ L3b: `shoulderCM` hem KAYNAKSIZ hem KULLANILMIYOR (25 Ağu, V5).** `contract/tables.json`
    alıcıya on beden için `shoulderCM` yayınlıyor (`_sources` status **NONE**, bekçisi kırmızı:
    `sizechart_source_check`), ama L3b geometrisi o girdiden **bağımsız**: `body.shoulder`
@@ -82,6 +91,12 @@
    eşi: orada da kanunun bağladığı kalem sevk edilen kalem değildi. Karar ALINMADI,
    yalnız ölçüldü — ama bundan sonra "L3b kapısı yeşil" cümlesi hangi L3b olduğunu
    söylemeden kurulamaz.
+   ⚠ **25 Ağu (V7-E/V7-F) — BAYAT DEĞİL, YENİDEN ÖLÇÜLDÜ.** `grep -c surfacepattern
+   engine/build-wasm.sh` bugün de **0**. Ayrıca sevk hattının kendisi damgayla doğrulandı:
+   `engine/dist/stitchu-engine.js` ile `web/vendor/stitchu-engine.js` arasındaki tek fark
+   127 baytlık kaynak-damgası yorumu (`vendor.includes(dist)` = true), ve `V7-E` PNG'leri o
+   bayttan üretildi. Takipli wasm artefaktında ham dizgi sayımı: `Sleeve` 16 · `sleeveStyle` 5,
+   buna karşılık `surfacepattern` / `SheathOptions` / `shoulderSeam` **0** (`GECE/V7-F.md` §2.3).
 
 10. **EDİTLEME BİR KATMAN DEĞİL, L3b ARTEFAKTININ ÜSTÜNE OTURUYOR — VE ORASI PANELDEN İNCE DEĞİL (25 Ağu, V6).**
     "Yakayı değiştir, gerisi yerinde kalsın" hükmünü bugün `engine/tools/spec-diff.mjs`
@@ -91,9 +106,13 @@
     kaynak damgası `web/vendor/stitchu-engine.js` ile birebir (`7023c808195429b3`),
     yani md.9'daki ayrımın *2B* tarafı. Yüzey hattı hakkında hiçbir şey söylemiyor.
     ★ **Boşluk:** editlemenin istediği çıpa bir panelin KENARIDIR; md.7'nin saydığı
-    dikiş grafiği eksikliği burada ikinci kez ısırıyor — 88 spec'te **0 adlandırılmış
-    kenar**, ve `contract/primitives-v1.json:primitifler.edge.parametreler.label`
-    bir kenar etiketi alanı TANIMLIYOR ama dolduran üretici yok. Bölge→panel adı
+    dikiş grafiği eksikliği burada ikinci kez ısırıyor — o gün 88 spec'te **0 adlandırılmış
+    kenar** ölçüldü, ve `contract/primitives-v1.json:primitifler.edge.parametreler.label`
+    bir kenar etiketi alanı TANIMLIYOR ama dolduran üretici yok.
+    ⚠ **"0 adlandırılmış kenar" bir gün sonra bayatladı (V7, md.11) — düzeltiliyor, silinmiyor:**
+    artefaktta artık dört ROL var. Bu maddeyi KAPATMIYOR: dördü oyuk/kapak/koltukaltına ait,
+    ÖLÇÜLMEK için var (gösterilmek için değil), ve `edge.label` alanının üreticisi hâlâ yok.
+    "Şuraya ekle" bugün de en fazla `Bodice Front`'un tamamını gösteriyor. Bölge→panel adı
     çözümü çalışıyor (varsayılan 6 panelli elbisede 35 serbest bölge-panel çifti),
     dolayısıyla "şuraya" bugün en fazla `Bodice Front`'un tamamını gösterebiliyor.
     Kenar granülaritesindeki çıpa sözlüğü ÜRETİLDİ ama ana dala ALINMADI —
@@ -103,6 +122,27 @@
     `_bolge_kaynagi`'nın "composition.json'dan birebir taşındı" cümlesi 22 bileşenin
     3'ünde YANLIŞ ölçüldü ve `fieldZones`'un 41 alanının 21'i hiçbir bileşenden
     gelmiyor (`GECE/V6-B.md` §3). Kapı doğrulanmamış bir iddiayı ölçüyor.
+
+11. **★ KENAR KİMLİĞİ L3b'ye GİRDİ — AMA OYUĞU YENİDEN ÇİZEN ÜÇ PAS'TA HÂLÂ YOK (25 Ağu, V7).**
+    `PatternPiece` artık kenar ROLÜ taşıyor (md.7'deki `edgeRoles`). Rol, kenarı ÇİZEN kod
+    tarafından verilir ve **komut aralığı + uç-nokta çapasıyla adreslenir**; bir post-pass
+    komutları yeniden yazarsa `garment.cpp:1077-1085`'teki tek boğaz noktası
+    (`reanchorEdgeRoles()`) rolü çapasından yeniden adresler, çapa gitmişse **adı DÜŞÜRÜR** —
+    yanlış kenara işaret eden ad, adsızlıktan beterdir. Bunu kullanan kapı
+    `node engine/tests/sleeve_cap_ease_check.mjs`: oyuk yayını (`armhole_front` +
+    `armhole_back`) kapak yayıyla (`sleeve_cap`) karşılaştırır ve **ikisini de ÇİZİLEN
+    kenardan** ölçer — eskiden yargı skaler `bodice.armholeLength` kopyasının kendisiyle
+    karşılaştırılmasıydı (teşhis `GECE/V7-A.md`, onarım `GECE/V7-C.md` + `GECE/V7-D.md`).
+    ★ **BORÇ, GİZLENMİYOR:** adlandırılmış oyuk YOKSA `validator.cpp:333-352` hâlâ eski
+    skalere düşüyor — gerekçe orada yazılı (adın hiç olmaması ÜRETİCİDEKİ borçtur, o
+    taslağın kusuru değil; reddetmek doğru çizilmiş kalıba sahte "dikilemez" derdi). Adın
+    VAR OLUP çözülmemesi ise reddediliyor. Düşen yollar kapının kendi çıktısında ADIYLA
+    sayılıyor: 25 Ağu'da `bardot_off_shoulder`, `yoke_top`, `cupseam_bustier`. Ayrıca
+    **yarım ad, ad değildir**: cup seam yalnız ÖN bedeni yeniden yazdığı için taslak
+    `armhole_back` ADLI + `armhole_front` ADSIZ gelebiliyor; var olanı toplamak kapağı
+    YARIM oyuğa göre yargılamak olurdu. Sıradaki iş: o üç pas'ın çizdiği kenara ad vermesi.
+    ⚠ Diğer post-pass'ler (`gather.cpp`, `shoulder.cpp`, `offshoulder.cpp`, `yoke.cpp`)
+    **taranmadı** — bugün yalnız ctest'in kırmızıya düşürdüğü yol arandı, **DOĞRULANMADI**.
 
 ## Teşhis ilkesi?
 

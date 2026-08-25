@@ -213,6 +213,12 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       (sayan alet: `node engine/tests/sewability_check.mjs`, teşhis `GECE/V5-A.md`).
       Yani bu satır `printpack.py` paketi için ayakta, web indirmesi için **DOĞRULANMADI**:
       web PDF'inin montaj sırası sayfası taşıyıp taşımadığı ölçülmedi.
+      ⚠ **25 AĞU (V7) — ALTI ALAN ADI HÂLÂ 0, AMA ARTEFAKT YEDİNCİ BİR ALAN KAZANDI.**
+      `edgeRoles`: dört kenar rolü (`armhole_front`, `armhole_back`, `sleeve_cap`,
+      `sleeve_underarm`), uzunluk değil ADRES taşır. Montaj sırası için yetmez — hangi iki
+      kenarın birbirine dikildiğini söyleyen bir alan yok — ama oyuk↔kapak çifti artık
+      çizilen kenardan ölçülebiliyor (`node engine/tests/sleeve_cap_ease_check.mjs`,
+      `docs/ARCHITECTURE.md` §15).
 - [x] **Kalibrasyon karesi / ölçek çubuğu.**
       `print-info.pdf` s.1 ve `print-a4.pdf` s.1 ve **her A0 sayfası**: `4 cm` karesi,
       `printpack.log` → `test square: 4cm = 113.3858pt (assert 113.386pt PASSED in code)`.
