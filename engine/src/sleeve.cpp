@@ -125,8 +125,14 @@ std::vector<PatternPiece> draft(
         std::vector<PathCommand> capCmds{PathCommand::move(cl)};
         // cap head (armhole edge): left underarm → crown → right underarm, the
         // SAME S-curve the plain cap uses, so it eases into the armhole identically.
+        const int capFirst = static_cast<int>(capCmds.size());
         for (const auto& c : capCurve(cl, apex, true)) capCmds.push_back(c);
         for (const auto& c : capCurve(apex, cr, false)) capCmds.push_back(c);
+        // NAME THE CAP HERE, where it is drawn (V7-C). A cap sleeve has NO
+        // underarm seam, so it names one edge and no `sleeve_underarm` — an
+        // absent edge stays absent instead of being invented downstream.
+        const EdgeRole capRole{"sleeve_cap", capFirst,
+                               static_cast<int>(capCmds.size()) - 1, cl, cr};
         // outer wing edge: right underarm → wing point → left underarm (a shallow
         // hem arc a short depth below the crown; the underarm ends meet the cap
         // base so there is no seam to sew shut).
@@ -148,6 +154,7 @@ std::vector<PatternPiece> draft(
         capPiece.name = "Cap Sleeve";
         capPiece.cutInstruction = "cut 2";
         capPiece.commands = capCmds;
+        capPiece.edgeRoles = {capRole};
         capPiece.markings = capMarks;
         capPiece.hasGrainline = true;
         capPiece.grainline = Grainline{{0, capHeight * 0.35}, {0, wingY - 12}};
@@ -176,18 +183,34 @@ std::vector<PatternPiece> draft(
     // bulge stays outboard as intended.
     const double capSideX = balloon ? midBulge : std::max(midBulge, capHalf);
     std::vector<PathCommand> commands{PathCommand::move(capLeft)};
+    const int capFirst = static_cast<int>(commands.size());
     for (const auto& c : capCurve(capLeft, top, true)) commands.push_back(c);
     for (const auto& c : capCurve(top, capRight, false)) commands.push_back(c);
+    // NAME THE CAP HERE, where it is drawn (V7-C): the whole crown arc, left
+    // underarm point to right underarm point. This is the edge that is sewn into
+    // the armhole, so `armhole_front` + `armhole_back` and `sleeve_cap` can now
+    // be measured against each other as two DRAWN edges.
+    std::vector<EdgeRole> sleeveRoles{
+        {"sleeve_cap", capFirst, static_cast<int>(commands.size()) - 1, capLeft, capRight}};
     // underarm seams (bowed out for balloon)
+    const int underarmRightIndex = static_cast<int>(commands.size());
     commands.push_back(PathCommand::curve(
         hemRight,
         {capSideX, capHeight + (hemY - capHeight) * 0.4},
         {hemHalf * 1.05, hemY - (hemY - capHeight) * 0.2}));
+    // The underarm seam is the piece's TWO side edges sewn to each other, so both
+    // carry the name: the hem between them is a finished edge, not a seam. Naming
+    // only one of them would hide the pair a consumer has to compare.
+    sleeveRoles.push_back({"sleeve_underarm", underarmRightIndex, underarmRightIndex,
+                           capRight, hemRight});
     commands.push_back(PathCommand::line(hemLeft));
+    const int underarmLeftIndex = static_cast<int>(commands.size());
     commands.push_back(PathCommand::curve(
         capLeft,
         {-hemHalf * 1.05, hemY - (hemY - capHeight) * 0.2},
         {-capSideX, capHeight + (hemY - capHeight) * 0.4}));
+    sleeveRoles.push_back({"sleeve_underarm", underarmLeftIndex, underarmLeftIndex,
+                           hemLeft, capLeft});
     commands.push_back(PathCommand::close());
 
     // Gather notches on the cap; balloon also gathers into the hem.
@@ -229,6 +252,7 @@ std::vector<PatternPiece> draft(
                 : "Sleeve";
     sleeve.cutInstruction = "cut 2";
     sleeve.commands = commands;
+    sleeve.edgeRoles = sleeveRoles;
     sleeve.markings = markings;
     sleeve.hasGrainline = true;
     sleeve.grainline = Grainline{{0, capHeight * 0.4}, {0, hemY - 40}};

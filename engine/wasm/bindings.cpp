@@ -281,6 +281,25 @@ std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
         out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
         out += R"(,"onFold":)" + std::string(piece.onFold ? "true" : "false");
         out += R"(,"foldLine":)" + commandsJSON(piece.foldLine);
+        // NAMED EDGES (V7-C). The name is given by the code that DRAWS the edge
+        // and travels with the artifact, so a consumer no longer has to guess
+        // "the armhole" from a piece-name substring or a hard-coded command
+        // index. `first`/`last` address commands[] inclusively; `startX/Y` and
+        // `endX/Y` are the endpoint anchor that lets the consumer prove the
+        // range is still the edge that was named. No length is published on
+        // purpose — the arc length is measured off the addressed commands.
+        out += R"(,"edgeRoles":[)";
+        for (size_t r = 0; r < piece.edgeRoles.size(); ++r) {
+            const auto& role = piece.edgeRoles[r];
+            if (r) out += ",";
+            out += R"({"role":")" + escape(role.role) + "\"";
+            out += R"(,"first":)" + std::to_string(role.firstCommand);
+            out += R"(,"last":)" + std::to_string(role.lastCommand);
+            out += R"(,"startX":)" + num(role.start.x) + R"(,"startY":)" + num(role.start.y);
+            out += R"(,"endX":)" + num(role.end.x) + R"(,"endY":)" + num(role.end.y);
+            out += "}";
+        }
+        out += "]";
         out += "}";
     }
     out += R"(]},"issues":[)";

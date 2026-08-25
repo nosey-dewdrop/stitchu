@@ -517,6 +517,14 @@ HalfBodice makePiece(
     std::vector<PathCommand> commands{PathCommand::move(centerNeck)};
     for (const auto& cmd : neckCommands(neckline, centerNeck, neckPoint)) commands.push_back(cmd);
     commands.push_back(PathCommand::line(shoulderTip));
+    // NAME THE ARMHOLE HERE, where it is drawn (V7-C). The role addresses this
+    // one command; a consumer measures the drawn curve itself instead of reading
+    // the `armholeLength` scalar below, which is what made the old armhole<->cap
+    // check compare a number with itself.
+    const EdgeRole armholeRole{
+        isFront ? "armhole_front" : "armhole_back",
+        static_cast<int>(commands.size()), static_cast<int>(commands.size()),
+        shoulderTip, armholeCurve.to};
     commands.push_back(armholeCurve);
     commands.push_back(PathCommand::line(sideWaist));
     commands.push_back(waistCurve);
@@ -547,6 +555,7 @@ HalfBodice makePiece(
     piece.cutInstruction = cutInstruction;
     piece.commands = commands;
     piece.markings = markings;
+    piece.edgeRoles = {armholeRole};
     piece.hasGrainline = true;
     piece.grainline = Grainline{
         {std::max(centerTakeIn, 20.0) + 20, armholeY},
@@ -700,6 +709,14 @@ PrincessHalf makePrincessPieces(
     std::vector<PathCommand> centerCommands{PathCommand::move(centerNeck)};
     for (const auto& cmd : neckCommands(neckline, centerNeck, neckPoint)) centerCommands.push_back(cmd);
     centerCommands.push_back(PathCommand::line(shoulderTip));
+    // The princess split cuts ONE armhole across two panels: the upper part is
+    // drawn here, the lower part on the side panel below. Both carry the same
+    // role name, so a consumer that wants the whole armhole sums the pieces of
+    // it that exist instead of guessing which panel owns it (V7-C).
+    const EdgeRole centerArmholeRole{
+        isFront ? "armhole_front" : "armhole_back",
+        static_cast<int>(centerCommands.size()), static_cast<int>(centerCommands.size()),
+        shoulderTip, armSplit.first.to};
     centerCommands.push_back(armSplit.first);
     centerCommands.push_back(seamUpper);
     centerCommands.push_back(PathCommand::line(legA));
@@ -724,6 +741,7 @@ PrincessHalf makePrincessPieces(
     center.name = "Bodice Center " + baseName;
     center.cutInstruction = centerCut;
     center.commands = centerCommands;
+    center.edgeRoles = {centerArmholeRole};
     // Bust-apex match notch, pointing into the panel.
     center.markings = {PathCommand::move(apex), PathCommand::line({apex.x - 12, apex.y + 3})};
     center.hasGrainline = true;
@@ -734,6 +752,11 @@ PrincessHalf makePrincessPieces(
 
     // ---- side panel ----
     std::vector<PathCommand> sideCommands{PathCommand::move(split)};
+    // Lower half of the same armhole (see centerArmholeRole).
+    const EdgeRole sideArmholeRole{
+        isFront ? "armhole_front" : "armhole_back",
+        static_cast<int>(sideCommands.size()), static_cast<int>(sideCommands.size()),
+        split, armSplit.second.to};
     sideCommands.push_back(armSplit.second);
     if (extra > 0) {
         // Side seam nips at the waist and flares out to the hip in one curve
@@ -760,6 +783,7 @@ PrincessHalf makePrincessPieces(
     side.name = "Bodice Side " + baseName;
     side.cutInstruction = sideCut;
     side.commands = sideCommands;
+    side.edgeRoles = {sideArmholeRole};
     side.markings = {PathCommand::move(apex), PathCommand::line({apex.x + 12, apex.y + 3})};
     side.hasGrainline = true;
     const double grainX = (legB.x + chestWidth) / 2;

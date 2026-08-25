@@ -37,6 +37,37 @@ struct Grainline {
     Point to;
 };
 
+// EDGE ROLE (V7-C, 2026-08-24). Until now a PatternPiece carried no name for
+// any of its edges, so every consumer that needed "the armhole" or "the cap"
+// had to GUESS it back: by a substring of the piece name, by a hard-coded
+// command index, or by a scalar length copied out of the draft. A guess cannot
+// be wrong out loud, which is why the armhole<->cap agreement measured 0.00 mm
+// (one scalar agreeing with itself) instead of measuring two drawn edges.
+//
+// An EdgeRole is a NAME given by the code that DRAWS the edge, and it ADDRESSES
+// the edge instead of summarising it: `firstCommand..lastCommand` is an
+// inclusive index range into PatternPiece::commands, so a consumer can rebuild
+// the edge and measure its own arc length with pathLength(). No length is
+// stored — a copied scalar is exactly the failure this replaces.
+//
+// `start`/`end` are the edge's endpoints as the drawing code knew them. They
+// are an INTEGRITY ANCHOR, not data: a later post-pass that rewrites `commands`
+// would leave the index range pointing at some other edge, and a name that can
+// go quietly stale is worse than no name. edgePathOf() checks the anchor and
+// returns EMPTY on a mismatch rather than handing back the wrong edge
+// (RULES invariant 1: refuse, never coerce).
+//
+// Metadata only — never geometry, never a piece — so the golden dump (which
+// reads commands + markings) is untouched, same discipline as `notches`.
+struct EdgeRole {
+    std::string role;       // "armhole_front" | "armhole_back"
+                            // | "sleeve_cap" | "sleeve_underarm"
+    int firstCommand = -1;  // inclusive index into PatternPiece::commands
+    int lastCommand = -1;   // inclusive
+    Point start;            // endpoint anchor: where the edge begins
+    Point end;              // endpoint anchor: where the edge ends
+};
+
 struct PatternPiece {
     std::string name;
     std::string cutInstruction;
@@ -70,7 +101,22 @@ struct PatternPiece {
     // Empty when the piece is not cut on fold (never fabricated).
     bool onFold = false;
     std::vector<PathCommand> foldLine;
+    // NAMED EDGES (see EdgeRole). Empty on a piece whose drafting code names
+    // nothing — an absent name is reported as absent, never invented later.
+    std::vector<EdgeRole> edgeRoles;
 };
+
+// The commands of one named edge as a standalone path: a Move to `role.start`
+// followed by commands[first..last]. Returns EMPTY when the range is out of
+// bounds or when the endpoints no longer match the anchor (a stale role after
+// some post-pass rewrote `commands`) — never a silently wrong edge.
+std::vector<PathCommand> edgePathOf(const PatternPiece& piece, const EdgeRole& role,
+                                    double tolMM = 1e-6);
+// Arc length of one named edge, in mm, measured off the DRAWN commands with the
+// same pathLength()/flattenCubic() primitives the rest of the engine uses.
+// Returns 0 when edgePathOf() refuses the role.
+double edgeLengthOf(const PatternPiece& piece, const EdgeRole& role,
+                    double tolMM = 1e-6);
 
 // REHBER entry (F-H, 2026-08-23). The sewing GUIDE says what to do in what
 // order; this says what to do it WITH and where this particular pattern will

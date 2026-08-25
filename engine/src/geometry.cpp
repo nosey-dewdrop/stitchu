@@ -186,6 +186,47 @@ void translatePiece(PatternPiece& piece, double dx, double dy) {
     shift(piece.foldLine);
     piece.grainline.from.x += dx; piece.grainline.from.y += dy;
     piece.grainline.to.x += dx; piece.grainline.to.y += dy;
+    // Named edges move with the piece: the index range is unaffected, but the
+    // endpoint anchors are coordinates and would otherwise go stale the moment a
+    // panel is rebased to its own origin (the princess side panel does exactly
+    // this), which would make edgePathOf() refuse a perfectly valid name.
+    for (auto& role : piece.edgeRoles) {
+        role.start.x += dx; role.start.y += dy;
+        role.end.x += dx;   role.end.y += dy;
+    }
+}
+
+std::vector<PathCommand> edgePathOf(const PatternPiece& piece, const EdgeRole& role,
+                                    double tolMM) {
+    const int n = static_cast<int>(piece.commands.size());
+    if (role.firstCommand < 0 || role.lastCommand < role.firstCommand || role.lastCommand >= n)
+        return {};
+    // The last command of the range must still END where the drawing code said,
+    // and the command before the range must still end at `start` (a range that
+    // begins at index 0 starts at the Move itself).
+    const Point drawnEnd = piece.commands[static_cast<size_t>(role.lastCommand)].to;
+    if (std::fabs(drawnEnd.x - role.end.x) > tolMM || std::fabs(drawnEnd.y - role.end.y) > tolMM)
+        return {};
+    const Point drawnStart = role.firstCommand == 0
+        ? piece.commands[0].to
+        : piece.commands[static_cast<size_t>(role.firstCommand - 1)].to;
+    if (std::fabs(drawnStart.x - role.start.x) > tolMM ||
+        std::fabs(drawnStart.y - role.start.y) > tolMM)
+        return {};
+
+    std::vector<PathCommand> out{PathCommand::move(role.start)};
+    for (int i = role.firstCommand; i <= role.lastCommand; ++i) {
+        if (i == 0) continue; // the Move is already the start point
+        out.push_back(piece.commands[static_cast<size_t>(i)]);
+    }
+    if (out.size() < 2) return {};
+    return out;
+}
+
+double edgeLengthOf(const PatternPiece& piece, const EdgeRole& role, double tolMM) {
+    const std::vector<PathCommand> path = edgePathOf(piece, role, tolMM);
+    if (path.empty()) return 0.0;
+    return pathLength(path);
 }
 
 namespace {
