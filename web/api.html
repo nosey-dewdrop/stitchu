@@ -148,7 +148,10 @@
         <select id="gr-from"><option>EU34</option><option selected>EU36</option><option>EU38</option><option>EU40</option><option>EU42</option></select>
       </label>
       <label>to
-        <select id="gr-to"><option>EU40</option><option>EU42</option><option selected>EU44</option><option>EU46</option><option>EU48</option><option>EU50</option><option>EU52</option></select>
+        <!-- V10-D L5: EU50/EU52 kaldirildi. Motorun beden kumesi sekiz beden,
+             EU34-EU48 (contract/layers/shape-ratios.json `sizes`); bu iki etiketin
+             yayinlanmis bir sekil orani YOK, sectirilmeleri yalandi. -->
+        <select id="gr-to"><option>EU40</option><option>EU42</option><option selected>EU44</option><option>EU46</option><option>EU48</option></select>
       </label>
     </div>
     <button id="gr-run" type="button" class="sb-btn sb-primary">POST /api/grade →</button>

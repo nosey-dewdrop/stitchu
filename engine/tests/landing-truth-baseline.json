@@ -7,20 +7,20 @@
     "--no-baseline: tabanı yok sayan HARD-0 kipi; §4.2 kırmızı kanıtı bu kiple alınır (GECE/log/V10-B.red-before.txt).",
     "--dir=<yol>: hedef dizin. Mutasyon fikstürü `web/` DIŞINDA koşar (kart V10-B yasağı: web/ altına tek bayt yazma)."
   ],
-  "_note": "V10-B ikinci kesim (aynı koşu): L1 1068->1063 DÜŞTÜ, L2 548->541 DÜŞTÜ, L5 6->6, L4 0->0. L3 2->5 YÜKSELDİ ve sebebi ADIYLA şudur: ilk kesimde sitede data-vision=1 taşıyan blok SIFIRDI; paralel işçi V10-C bu koşu sırasında web/index.html:383'e ilk vizyon bloğunu ekledi (30 cümle). Yükselme yeni bir YÜZEYİN doğmasıdır, bir gevşetme değil. Kalan 3 ihlal ADIYLA V10-B.md'de listeli ve V10-C'nin işi.",
-  "olcumCommit": "450c86cfdfb13eee373d33bf55f969f64bd387ef",
+  "_note": "V10-D: L2 MTM ve duran-iddia süpürüldü (540->0), L3 i18n.js vizyon vaadi silindi (2->0), L5 api.html EU50/EU52 düşürüldü (6->4), L1 kanıtsız matris sayıları çıkarıldı (1063->937)",
+  "olcumCommit": "7a1e535be82983a10a43fb039ca5d41cd4a40a20",
   "olcumTarihi": "2026-08-25",
   "kapsam": {
     "dizin": "web",
     "html": 127,
     "js": 26,
-    "iddiaBlogu": 18782,
+    "iddiaBlogu": 18780,
     "atlananScope": {
       "style": 127,
       "script": 344,
-      "comment": 63,
+      "comment": 64,
       "svgdata": 2774,
-      "jscomment": 1445
+      "jscomment": 1448
     },
     "saglayiciEvreni": {
       "testAdi": 117,
@@ -30,28 +30,19 @@
     }
   },
   "L1": {
-    "taban": 1063,
+    "taban": 937,
     "sayisalBlok": 1106,
     "yontem": "sayı+birim taşıyan iddia bloğu; blok içinde add_test adı ∪ engine/tools dosya adı ∪ GECE|Logs|reports/ yolu YOKSA sağlayıcısız"
   },
   "L2": {
-    "taban": 540,
-    "kalipBasina": {
-      "your measurements": 153,
-      "your own measurements": 69,
-      "always": 21,
-      "byte-identical": 213,
-      "zero issues": 36,
-      "made to measure": 2,
-      "no fixed sizes": 23,
-      "0.000000 mm": 23
-    }
+    "taban": 0,
+    "kalipBasina": {}
   },
   "L3": {
-    "taban": 5,
+    "taban": 0,
     "isaretliBlok": 1,
     "isaretliCumle": 30,
-    "muafYoklukBeyani": 6,
+    "muafYoklukBeyani": 5,
     "muafiyet": "ADLANDIRILMIŞ: V10-R §2 C2c vizyon bloğunun neyin canlı OLMADIĞINI saymasını ZORUNLU kılar; böyle bir cümle zorunlu olarak şimdiki zamandır. Muafiyet kurala gömülü değil, ayrı ve SAYILIYOR."
   },
   "L4": {
@@ -60,7 +51,7 @@
     "not": "koşuldu: node engine/tools/site-health.mjs"
   },
   "L5": {
-    "taban": 6,
+    "taban": 4,
     "motorBedenKumesi": [
       "EU34",
       "EU36",
@@ -71,7 +62,7 @@
       "EU46",
       "EU48"
     ],
-    "kacakEtiket": 6,
+    "kacakEtiket": 4,
     "ustkumeSecim": 0,
     "secimListeleri": [
       {
@@ -83,10 +74,10 @@
     ]
   },
   "_neden0Degil": {
-    "L1": "1063 sağlayıcısız sayısal blok. Kapı ÖLÇER, ONARMAZ; onarım web/ altına yazmayı gerektirir, bu kart web/'e tek bayt yazamaz. Onaracak kart: V10-C (paralel, web/ onarımı). En yoğun dosyalar kapı çıktısında ADIYLA basılıyor.",
-    "L2": "540 yasak-vaat hit'i. Ağırlığı MTM dili (\"your own measurements\" vb.) — V10-A §1 bunu YALAN diye hükme bağladı (motorun kümesi 8 sabit beden). Onaracak kart: V10-C.",
-    "L3": "5 vizyon ihlali. Bugün sitede data-vision=\"1\" taşıyan blok SIFIR; yani vizyon dili hiç işaretlenmemiş. Onaracak kart: V10-C.",
+    "L1": "937 sağlayıcısız sayısal blok. Kapı ÖLÇER, ONARMAZ; onarım web/ altına yazmayı gerektirir, bu kart web/'e tek bayt yazamaz. Onaracak kart: V10-C (paralel, web/ onarımı). En yoğun dosyalar kapı çıktısında ADIYLA basılıyor.",
+    "L2": "0 yasak-vaat hit'i. Ağırlığı MTM dili (\"your own measurements\" vb.) — V10-A §1 bunu YALAN diye hükme bağladı (motorun kümesi 8 sabit beden). Onaracak kart: V10-C.",
+    "L3": "0 vizyon ihlali. Bugün sitede data-vision=\"1\" taşıyan blok SIFIR; yani vizyon dili hiç işaretlenmemiş. Onaracak kart: V10-C.",
     "L4": "0. site-health.mjs bugün exit 0 veriyor; bu sayı 0 ise L4 borcu YOKTUR.",
-    "L5": "6. web/ EU50 ve EU52 etiketlerini taşıyor, contract/layers/shape-ratios.json sizes kümesi 8 beden (EU34–EU48). Zincir V10-A §5'te satır satır yazılı (web/js/create.js:810 EU_SIZES 10 beden). Onaracak kart: V10-C."
+    "L5": "4. web/ EU50 ve EU52 etiketlerini taşıyor, contract/layers/shape-ratios.json sizes kümesi 8 beden (EU34–EU48). Zincir V10-A §5'te satır satır yazılı (web/js/create.js:810 EU_SIZES 10 beden). Onaracak kart: V10-C."
   }
 }

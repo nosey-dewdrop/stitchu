@@ -1228,3 +1228,51 @@ kapısı da bunu söylüyor: "Kimlik değişikliği gerekiyorsa KOD YAZMA".
 dokunulmadı. 320px'te gerçek bir tarayıcı render'ı **YAPILMADI**; eklenen her
 şey `width:100%` + `viewBox`'lı SVG, yani statik olarak yeni sabit genişlik
 girmedi, ama bu **ÖLÇÜM DEĞİL, ÇIKARIM**.
+
+---
+
+## K-V10D — Süpürdüğüm yalanların çoğu ÜRETİLMİŞ sayfada: üreteç mi düzelsin, kontrat mı? (V10-D, 25 Ağu)
+
+**K-V10D · İKİ KALEM, İKİSİ DE `engine/` altında ve V10-D'nin YASAK BÖLGESİ ·
+3.8.d · ETKİLEDİĞİ FAZ: bütün `web/**` + `contract/`**
+
+### (a) Üreteçler yalanı geri getirecek · SEÇENEK: (A) üreteci düzelt · (B) sayfayı elden çevir · VARSAYILAN (A)
+
+V10-D bu gece `web/` genelinden **540 yasak-vaat hit'ini 0'a** indirdi. Ama
+düzeltilen 41 sayfa elle yazılmıyor, üreteçten çıkıyor ve **üretecin kaynağında
+yalan cümle cümle duruyor** (bu gece basıldı):
+
+```
+engine/tools/gen-style-pages.mjs:810      "… to your own measurements … with no fixed sizes and no paywall."
+engine/tools/gen-style-pages.mjs:730      const GOLDEN = '0.000000 mm';   // uydurma hassasiyet: alet toFixed(2) basıyor
+engine/tools/gen-collection-pattern.mjs:113  "… To get it in your own measurements …"
+engine/tools/gen-collection-pattern.mjs:119  "… drafts the pattern to your exact measurements …"
+grep -rIF "byte-identical" engine/tools/  →  28 satır
+```
+
+Basılan alan: `gen-style-pages.mjs` → `web/styles/*.html` (24 sayfa) ·
+`gen-vintage-page.mjs` → `web/collection-60s70s.html` · `gen-collection-pattern.mjs`
++ `gen-collections-page.mjs` → `web/collections/**` (16 sayfa).
+
+**Sonuç: bu üreteçlerden biri bir daha koşarsa 41 sayfa yalanıyla geri gelir ve
+`landing_truth_check` L2 tabanı 0'dan fırlar.** V10-D kartı `engine/` altına
+yazmayı yasakladığı için üreteçlere DOKUNULMADI.
+
+### (b) İki kontrat birbirinin tersini söylüyor · SEÇENEK: (A) `tables.json` 8 bedene insin · (B) `shape-ratios.json` 10 bedene çıksın · VARSAYILAN (A)
+
+```
+contract/layers/shape-ratios.json  sizes   →  8 beden (EU34–EU48)
+contract/tables.json:13            euSizes →  10 beden (… EU50, EU52)
+contract/tables.json:82,83         EU50/EU52 için tam ölçü satırları VAR
+```
+
+`web/js/contract.gen.js` (ÜRETİLMİŞ, `engine/tools/gen-contract.mjs`) o 10 bedeni
+tarayıcıya taşıyor; kapının kalan **4 L5 kaçağının hepsi** bu dosyanın
+`:28`, `:29`, `:104`, `:113` satırları. Elle düzeltilemez (üretilmiş dosya),
+`contract/` de V10-D'nin alanı değil. **Bu 4 kaçak, kapının BİLİNEN İSTİSNASI
+olarak `GECE/V10-D.md` §5'te adıyla yazılı.**
+
+★ **Yan bulgu (dokunulmadı, ölçüldü):** `web/benchmark.html:113` hâlâ
+"Similar tools charge **$34–49/mo**" diyor. V10-C aynı cümleyi
+`web/index.html:299`'dan **ölçülmediği için SİLMİŞTİ**; benchmark'taki kopyası
+kaldı, çünkü kapının kalıp listesinde yok.
