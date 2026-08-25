@@ -19,8 +19,8 @@ canlı bir bug buldu → `8a8424f` ile düzeltildi, kanıtlı.
 1. `style_check` — `engine/STYLE-PIN` diskte YOK · kapsam **0/31** · 31 kez GÖZ
 2. `sizechart_source_check` — 7 kolonun **4'ü UNSOURCED**; aday AT (V5:
    `body.shoulder` 20→80cm'de geometri BAYT AYNI = **ÖLÜ GİRDİ**)
-3. `contract_check` — **41** takipli telifli dosya · aday ölçüldü (untrack →
-   GREEN exit 0) ama Damla kararı. ⚠ Kapı metni "49" diyor, saydığı **41**
+3. `contract_check` — **41** takipli telifli dosya · aday untrack → GREEN exit 0,
+   Damla kararı. ⚠ Kapı metni "49" diyor, saydığı **41**
 4. `figure_check` — tek `fittedBand` · ⚠ V4+V5+V6+**V7**'ye yazıldı, DÖRDÜNDE
    DE KESİLMEDİ
 5. `flat_pattern_agree_check` — `body_length` −%3.7979 (tol %1.5) + UNMEASURED
@@ -59,8 +59,8 @@ yeniden üretilemiyor.
   `sleeve.cpp`; `grep -c surfacepattern engine/build-wasm.sh` = **0**, yüzey
   motorunun ürün tarafında tüketicisi YOK = **KAPSAM KAYMASI**, karar **(B)**
 - ★★ **KAPI BİR TAUTOLOJİYMİŞ:** `bodice.cpp:509` skaleri yazıyor →
-  `sleeve.cpp:55` uyuyor → `validator.cpp:300` **aynı skalerle** doğruluyor;
-  "0.00mm oyuk↔kapak uyumu" = **aynı sayının kendisiyle uyumu**
+  `sleeve.cpp:55` uyuyor → `validator.cpp:300` **aynı skalerle** doğruluyor =
+  "0.00mm oyuk↔kapak uyumu" **aynı sayının kendisiyle uyumuydu**
 - **KENAR KİMLİĞİ** (`geometry.hpp:40-71 EdgeRole`): komut aralığı + uç-nokta
   çapası, **uzunluk alanı bilerek YOK**, çapa bayatlarsa rol DÜŞER. Adlandırılmış
   kenar **0 → 5**; yeni kaynak dosya **0**; golden BAYT-AYNI. `reanchorEdgeRoles()`
@@ -91,7 +91,6 @@ SAYI:** `armhole 0.0 (-60261330 named edge(s))` → düzeltilmiş `armhole 375.9
 `__attribute__((format(printf,1,2)))`; bozuk dizgi geri konunca **4 `-Wformat`**,
 başka yerde **0 uyarı** = gizli başka format hatası YOK.
 ★ Fazın 8 işçisi ve 5 yeşil kapısı bu bugu GÖRMEDİ. Hakem kapısı süs değil.
-
 ## ★ V7'NİN AÇIK BIRAKTIĞI BORÇ (tam liste `GECE/V7.md`; gizlenmedi)
 - **ADSIZ OYUK:** oyuk adlandırılmamışsa validator eski skalere düşüyor. Kapı
   borcu her koşuda ADIYLA sayıyor: `bardot_off_shoulder · yoke_top ·
@@ -137,7 +136,6 @@ başka yerde **0 uyarı** = gizli başka format hatası YOK.
    ölç** — tautoloji ancak "bugün hangi kod eşliyor" diye SORULDUĞU için çıktı.
    3. Orakçı işletildi; **V7-D tavanı ~2s20dk'ya taştı** ama COMMIT'ledi; diğer
    8 işçi tavanın altında, her işçi kendi commit'ini attı.
-
 ## DAMLA'YA DÜŞEN (bloke etmez — tam gövdeler `DAMLA-KUYRUK.md`'de)
 - **K-FN1** kol oyuğu bandı (A) — **V7 KUYRUĞU OKUDU**, (A) yürüdü, EU34/36 oyma
   işi V7'ye kart OLMADI — **K-V0A** `patterns_real/` 41 telifli dosya (A) —
