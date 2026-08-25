@@ -20,7 +20,8 @@ karşılaştırıldı (kartın ŞEF DÜZELTMESİ maddesi).
 | `GECE/log/V5-E.ctest.after.txt` | tam ctest |
 | `GECE/log/V5-E.reddiff.txt` | kırmızı AD farkı |
 
-Commit: `e1ab3ea`
+Commit: `e1ab3ea` (kurulum) → `fedce96` (hash kaydı) → **`d680564`** (bağımsız
+doğrulama koşusu + ŞEF EKİ + eksik iki mutasyonun kanıtı).
 
 ## ÖLÇÜLEN (sayı + onu basan komut)
 
