@@ -4,147 +4,150 @@ Protokol: GECE-KOSUSU-v6.md. Eski v5 koşusunun kayıtları GECE/arsiv/ altında
 ve bu koşuda kanıt DEĞİLDİR.
 
 ## ŞU AN
-Faz: **V7 KAPANDI** (KOL — kenar kimliği KURULDU, oyuk↔kapak kapısı ÇİZİLEN
-kenardan ölçüyor). Sıradaki V8. HEAD'de 6 kırmızı (miras), **114 test**.
-Hakem **GEÇTİ** dedi (`GECE/KAPI.md` `067e084`) ve aynı turda fazın SOKTUĞU
-canlı bir bug buldu → `8a8424f` ile düzeltildi, kanıtlı.
+Faz: **V9 KAPANDI** (DOCS — `docs/` + `README.md` bugünkü koda doğrultuldu,
+`docs_truth_check` kuruldu). Sıradaki **V10 (landing)**, sonra V11.
+HEAD'de 6 kırmızı (miras), **115 test**. Hakem **GEÇTİ** dedi (`GECE/KAPI.md`
+`5885b80`) ve aynı turda kapının TAŞINAMAZ olduğunu buldu → `f3bd10b` +
+`f4b5235` ile kökünden onarıldı, iki bağımsız kanıtla.
 
-## KAPANMIŞ FAZLAR (tutanaklar `GECE/V0..V7.md`)
+## KAPANMIŞ FAZLAR (tutanaklar `GECE/V0..V9.md`)
 **V0** 7 kart · **V1** 5 kart, hakem önce KALDI, kırmızı 6→4 · **V2** 105→108 ·
 **V3** 6 kart, flat konturu ÇİZİLMİYOR `GarmentSurf`'ten HESAPLANIYOR 108→110 ·
 **V4** 7 kart 110→111 · **V5** 12 kart 111→113 · **V6** 10 kart 113→113 ·
-**V7** 9 kart (R·A·B·C·D·E·F·G·H) 113→114. V5/V6/V7'de ad kümesi birebir.
+**V7** 9 kart (kol, kenar kimliği) 113→114 · **V8 KOŞMADI (atlandı)** ·
+**V9** 10 kart (R·A·B·B2·B3·C·D·E·F·G) 114→115. V5/V6/V7/V9'da ad kümesi birebir.
 
-## AÇIK KIRMIZILAR (6 — V7 hiçbirine dokunmadı, ad ad)
-1. `style_check` — `engine/STYLE-PIN` diskte YOK · kapsam **0/31** · 31 kez GÖZ
+## AÇIK KIRMIZILAR (6 — V9 hiçbirine dokunmadı, kâtip koda dokunamaz)
+1. `style_check` — `engine/STYLE-PIN` diskte YOK · kapsam **0/31** · 32 kez GÖZ
 2. `sizechart_source_check` — 7 kolonun **4'ü UNSOURCED**; aday AT (V5:
    `body.shoulder` 20→80cm'de geometri BAYT AYNI = **ÖLÜ GİRDİ**)
 3. `contract_check` — **41** takipli telifli dosya · aday untrack → GREEN exit 0,
    Damla kararı. ⚠ Kapı metni "49" diyor, saydığı **41**
-4. `figure_check` — tek `fittedBand` · ⚠ V4+V5+V6+**V7**'ye yazıldı, DÖRDÜNDE
-   DE KESİLMEDİ
+4. `figure_check` — tek `fittedBand` · ⚠ V4+V5+V6+V7'ye yazıldı, DÖRDÜNDE DE
+   KESİLMEDİ; V9 kâtip fazı olduğu için kart olamadı
 5. `flat_pattern_agree_check` — `body_length` −%3.7979 (tol %1.5) + UNMEASURED
    3/6. KÖK: strapless = G5
 6. `flat_artifact_census` — sınıf 3, 2 nokta, **20.5602° > 1°**, belde. KÖK:
-   `surfacepattern.cpp:71-81` — ⚠ o dosya SEVK EDİLMİYOR (aşağı bak)
+   `surfacepattern.cpp:71-81` — ⚠ o dosya SEVK EDİLMİYOR
 
-## DEVİR ÜÇ SAYI (V8'e) — V7 şefi kendi ölçtü
-1. **KIRMIZI = 6 · TEST = 114.** Açılış `GECE/log/V7.ctest.opening.txt`
-   (113/6, 274.55 sn, `e4249b7`), kapanış `GECE/log/V7.ctest.final.txt`
-   (114/6, 272.74 sn). **AD kümesi birebir**; hakem bağımsız `diff` aldı
+## DEVİR ÜÇ SAYI (V10'a) — V9 şefi kendi ölçtü
+1. **KIRMIZI = 6 · TEST = 115.** Açılış `GECE/log/V9.ctest.opening.txt`
+   (114/6, 274.01 sn, `a6689ef`), kapanış `GECE/log/V9.ctest.final.txt`
+   (115/6, 271.98 sn). **AD kümesi birebir**; hakem bağımsız `diff` aldı.
+   116. tanımlı test `h10_gate_check` **(Disabled)** — kırmızı değil, KOŞMUYOR
 2. **SÖZLÜK TABANI = 10438 @ `495d58a` · bugün 10432 (−6, tabanın ALTINDA),
-   YEŞİL.** `bash engine/tests/vocab_reference_check.sh`. Yalnız DÜŞEBİLİR.
-   ⚠ Gece bir kez FAIL'e düştü, **kökünden geri alındı** (aşağı bak)
-3. **YENİ KİLİTLİ BANT — kol yedirmesi** (`sleeve_cap_ease_check.mjs`):
-   `[S1]` tavan **38.1mm** (Linda Lee *Setting in a Sleeve* sl.6, YAYINLANMIŞ) ·
-   `[S2]` işaret **POZİTİF** zorunlu · `[S3]` ölçülen **15.0430…19.1027mm**
-   REPORTED (alt uç için yayın YOK) · `[S4]` puf/balon nicel kapısı **YOK** ·
-   ADSIZ oyuk borcu **3 spec**. Yalnız SIKILAŞABİLİR. ★ İFADE RATCHET **5
-   UNEXPRESSED** (kol **0/0** · yaka 4/4 · omuz 1/1), V7 yaka/omza DOKUNMADI.
-   Taban bantlar (§4.1) V6'dan DEĞİŞMEDİ
+   YEŞİL.** `bash engine/tests/vocab_reference_check.sh`. Yalnız DÜŞEBİLİR
+3. **YENİ KİLİTLİ TABAN — docs doğruluğu** (`docs_truth_check`, Test #116):
+   **D1 duran-iddia 0 · D2 ölü repo yolu 0 · D3 sağlayıcısız sayı 0 / 140.**
+   Kapsam `docs/**` + `README.md`. Taban `engine/tests/docs-truth-baseline.json`,
+   yalnız DÜŞEBİLİR. ★ **TAŞINABİLİR**: temiz worktree ile çalışma dizini bit
+   bit aynı hükmü veriyor (`GECE/log/V9-B3.kanit.txt`). Bilinen zaaf 4 madde
 
 ## ★ FOTO→SPEC İSABETİ: **%20.0 → %20.0** (V11'in 3. sorusu)
-V7 görü hattına DOKUNMADI (prompt/model değişmedi = §5.3 veto). v2 ifade
-edilebilirliği **15/68 = %22.1 → %22.1, fark 0**; kol tek başına 68 okumanın
-**35'ini** düşürüyor — V7 kolu ÇİZİM+DOĞRULAMA'da kurdu, SİCİL'de `sleeve`
-bilinçli absent kaldı (karar B). ⚠ **V0-0B'nin %36.8 aleti REPODA YOK** →
-yeniden üretilemiyor.
+V9 görü hattına DOKUNMADI (prompt/model değişmedi = §5.3 veto). V7'den beri
+kımıldamadı. ⚠ **V0-0B'nin %36.8 aleti REPODA YOK** → yeniden üretilemiyor.
 
-## ★ V7'NİN ÖLÇTÜĞÜ + KATTIĞI (ayrıntı `GECE/V7.md`)
-- **"KOL 0/8 İFADESİZ" İDDİASI DÜŞTÜ.** `flat_expresses_spec_check.mjs` →
-  `sleeveStyle UNEXPRESSED **0/0**`; doğru okunuş "8'in 0'ı ifadesiz", kol
-  kapının **en temiz ekseni** (8 değer = 4 kanonik + 4 beyanlı eşanlam, 4 ayrı
-  geometri). İfadesiz olan **yaka 4/4 + omuz 1/1**
-- **SEVK EDİLEN HAT:** wasm → `bindings.cpp:339` → `garment.cpp:303,621` →
-  `sleeve.cpp`; `grep -c surfacepattern engine/build-wasm.sh` = **0**, yüzey
-  motorunun ürün tarafında tüketicisi YOK = **KAPSAM KAYMASI**, karar **(B)**
-- ★★ **KAPI BİR TAUTOLOJİYMİŞ:** `bodice.cpp:509` skaleri yazıyor →
-  `sleeve.cpp:55` uyuyor → `validator.cpp:300` **aynı skalerle** doğruluyor =
-  "0.00mm oyuk↔kapak uyumu" **aynı sayının kendisiyle uyumuydu**
-- **KENAR KİMLİĞİ** (`geometry.hpp:40-71 EdgeRole`): komut aralığı + uç-nokta
-  çapası, **uzunluk alanı bilerek YOK**, çapa bayatlarsa rol DÜŞER. Adlandırılmış
-  kenar **0 → 5**; yeni kaynak dosya **0**; golden BAYT-AYNI. `reanchorEdgeRoles()`
-  — bayatlama teorik değil **canlı**: tüketici taşınınca **5 kapı düştü**
-  (`locket·cup·yoke·boxpleat·compose`). ★ **YARIM AD, AD DEĞİLDİR**
-- **YENİ KAPI `sleeve_cap_ease_check`** sevk edilen **wasm** artefaktını yükler,
-  iki yayı ÇİZİLEN komutlardan ölçer: **48 satır 0 ihlal**, EU38 **+16.1246mm =
-  %3.9887**. Boş test §4.2 birincil usul: `e4249b7` artefaktı → **EXIT 1, 184
-  ihlal**; mutasyon §4.5 **üç ayrı yönden** kırıyor. **7 PNG** (RULES md.3)
+## ★ V9'UN ÖLÇTÜĞÜ + KATTIĞI (ayrıntı `GECE/V9.md`)
+- **İDDİA TABLOSU** (`docs/`+`README`, 35 taşıyıcı): **doğru 21→25 · YALAN
+  3→0 · kanıtsız 10→10 (hepsi artık ADLI sağlayıcı taşıyor) · ölü referans 1→0**
+- **KAPI SAYILARI:** D1 **9→0** · D2 **9→0** · D3 **52→0**. §4.2 birincil usul:
+  `a6689ef` ağacına karşı **EXIT 1, D1 9 · D2 9 · D3 52** — hakem KENDİ
+  worktree'sinde bağımsız üretti, aynı sayı. §4.5 mutasyon **üç denetimi de**
+  kırıyor; hakem loglara güvenmeyip üçünü kendisi de kırdı
+- ★ **D3 TABANI 52'YKEN KAPI SERT DEĞİLDİ** — tek cümlelik mutasyon eşiğin
+  altında kalıyordu. Ancak 0'a kesilince kırılabildi. Borç kaydeden taban süstür
+- **3 YALAN kapandı, adıyla:** (a) "EU34-52 / 70,200 drafts" — TEST GİRDİ
+  aralığı (`engine_check.cpp:30-44` = 15) ile SATILAN aralık (`shape-ratios.json`
+  = 8, EU34-48) ayrıldı; (b) `H1.0-KAPI.md` kapıyı canlı gibi anlatıyordu —
+  fikstür `h10_gate_check_LEGACY.cpp`, `CMakeLists.txt:748` `DISABLED TRUE`,
+  `build-h10` dizini YOK, yani test **kırmızı değil, hiç koşmuyor**;
+  (c) `SATIS-SARTNAMESI.md` "borcu bitti" ↔ aynı dosya "5/5 EKSİK" (kutucuk
+  sayımı `grep -c` ile **15 işaretli / 5 boş**; "16/17" hiç tutmuyormuş)
+- ★ **BİR İDDİA DÜZELTİLMEDİ, ÇÜRÜTÜLDÜ:** README'nin Z-spread "143/238mm"
+  çifti. Alet BULUNDU (`drape-preview.cpp`, kapı `drape_check` #89) ve koştu:
+  **174.3978 / 229.4973mm**. Hakem bağımsız yeniden bastı, aynı sayı.
+  V9-A'nın "alet adı olmayan iddia 4" sayısı da düzeldi → **3**
 
-## ★ RULES md.9 BİR KEZ İHLAL EDİLDİ, AYNI GECE KÖKÜNDEN GERİ ALINDI
-`vocab_reference_check` 7. kırmızı düştü (`garment +3`, `sleeveCap +1`). Şef
-izole etti: kırmızının **TAMAMI** V7-F'in `contract/garment-spec-v2.json`'a
-yazdığı **ŞERH DÜZ YAZISIYDI** (`grep -cw garment` 4→7; `validator.cpp` 22→22).
-Onarım `75c9103`: şerh **işaretçiye indi**, çıkarılan **10 dizginin 10'u**
-`GECE/V7-F.md` §5'te kelimesi kelimesine duruyor (`grep -F` kanıtlı). **Taban
-KESİLMEDİ**, SCOPE/EXCL ellenmedi. Hakem: **"GİZLEME DEĞİL, YER DEĞİŞTİRME"**,
-ama kapsam dışına taşındığını kayda geçirdi (**K-V7A**). ⚠ **KAPININ BİLİNEN
-SINIFI:** ratchet `grep -w` ile ham kelime sayıyor; `contract/` altındaki bir
-Türkçe cümlede eksen adı geçince sözlük büyümese de kırmızı düşer — betiğin
-kendi başlığı "KNOWN NOISE, unfixed on purpose" diyor.
+## ★ HAKEM KAPININ TAŞINAMAZ OLDUĞUNU BULDU (`f3bd10b`)
+Temiz worktree'de kapı **EXIT 1, D2 YENİ 42**: varlık sorusu git'e değil DİSKE
+soruluyordu, 42 hedef gitignore'lı artefaktti. **Mühürlenen "D2 0" dokümanın
+değil TEK BİR ÇALIŞMA DİZİNİNİN özelliğiydi** → temiz klonda/CI'da yeni kırmızı
+ad = RULES md.9 ihlali. Onarım kökünden: `git ls-files` + `ls-tree -r HEAD`;
+gitignore'lı hedefler AYRI sınıf, sayısı BASILIYOR. VAR 540→491 = SIKILAŞTI.
+★ Kusurun ikinci yarısı ancak ölçünce çıktı: `dist/` gibi dizin-ignore kuralları
+yalnız GERÇEK dizinlere uyuyor, git bunu diskten öğreniyor.
+`f4b5235` son borcu kapattı: `H1.0-KAPI.md:54`'ün "Birincil kaynak" dediği iki
+dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
+★ Fazın 8 işçisi ve 5 mutasyon logu bunu GÖRMEDİ. Hakem kapısı süs değil.
 
-## ★ HAKEM FAZIN SOKTUĞU CANLI BUG'I BULDU (V7-H `8a8424f`)
-`validator.cpp:419` format 6 belirteç / 7 argüman, `%.1f`'e `const char*`; `fmt`
-varargs ve format attribute YOK → derleyici sessizdi. **Kullanıcıya UYDURMA
-SAYI:** `armhole 0.0 (-60261330 named edge(s))` → düzeltilmiş `armhole 375.9
-(4 named edge(s))`, 375.9×1.04=391.0 ✓ (`GECE/log/V7-H.fmt.txt`). KORUMA:
-`__attribute__((format(printf,1,2)))`; bozuk dizgi geri konunca **4 `-Wformat`**,
-başka yerde **0 uyarı** = gizli başka format hatası YOK.
-★ Fazın 8 işçisi ve 5 yeşil kapısı bu bugu GÖRMEDİ. Hakem kapısı süs değil.
-## ★ V7'NİN AÇIK BIRAKTIĞI BORÇ (tam liste `GECE/V7.md`; gizlenmedi)
-- **ADSIZ OYUK:** oyuk adlandırılmamışsa validator eski skalere düşüyor. Kapı
-  borcu her koşuda ADIYLA sayıyor: `bardot_off_shoulder · yoke_top ·
-  cupseam_bustier` ADSIZ · `boxpleat_swing` ADLI. Tautoloji varsayılan hatta
-  ÖLDÜ, bu 3 pas'ta yaşıyor
-- ★ **[S2] işaret şartı kaynağıyla aynı çizgide DEĞİL** (hakem): V7-R "KESİM
-  çizgisinde pozitif" diyor, `commands` **DİKİŞ** çizgisi; Buğra dikiş
-  çizgisinde 8/8 NEGATİF → **kapı referans kalıbı kırmızı düşürürdü.** Motor %4
-  çözdüğü için ateşlemiyor. **KARARA BAĞLANMADI**
-- ★ **[S1] 38.1mm tavanı bugün hiçbir şeyi bağlamıyor** (bant 15.04…19.10);
-  bağlayan tek şart rol çözünürlüğü + işaret. Ölçülen %4.00 ± 0.055 puan beyan
-  edilen `kCap[0]`'a karşı → **henüz boş bir farkı ölçüyor** (hakem kaydı)
-- `sleeve_underarm` çifti yargılanmıyor · prensesde oyuk süreklilik/sıra şartı
-  yok · yaka/yan dikiş/bel/etek ucu hâlâ **ADSIZ** · `recipe-json-dump.cpp`
-  `edgeRoles` basmıyor · `engine/tests/` ratchet KAPSAMI DIŞINDA · `fmt` 256B'de
-  sessizce kırpıyor · `h10_gate_check` **Disabled** (sebebi DOĞRULANMADI) ·
-  `render-garment-flat.mjs:381` `hasSleeve` **HAM değer** (`kimono`/`dolman`
-  reddedilmiyor, set-in kolla geometri-özdeş = RULES md.1 ihlali) · `:648`
-  **`raglan` arka kapısı** · `cap` motorda kalıp tarafında YOK · UI 8'in **3'ünü**
-  sunuyor
-- **GİZLİLİK:** `patterns_real/` **41 dosya takipli, `.gitignore`'da HİÇ YOK**;
-  `dataset/` 6 takipli. CLAUDE.md ikisini de "ASLA push edilmez" diyor
+## ★ V9'UN AÇIK BIRAKTIĞI BORÇ (tam liste `GECE/V9.md` §8; gizlenmedi)
+- **HAKEMİN 3 AÇIK KUSURU:** kaçış grameri **tek jetonluk** (tırnak / tarih+bağlam
+  / "does not exist" / rastgele bir `GECE/` yolu kapıyı yeşil bırakıyor — **sayı
+  ile kanıtın ALAKASI aranmıyor**) · kapı **kendi fazını denetlemiyor** (`GECE/`,
+  `CLAUDE.md`, `HEDEF.md`, `knowledge/`, `contract/`, `engine/*.md` DIŞARIDA) ·
+  **D3'ün sağlayıcısı semantik değil** (`ctest -R nothing_at_all` da sağlayıcı
+  sayılıyor; 140 satırın kaçı gerçekten o aletten çıkıyor ÖLÇÜLMEDİ)
+- **V9-B3 İKİ YENİ KAÇIŞ KANALI AÇTI, işçi kendi ilan etti:** gitignore'lı dizin
+  altına uydurma yol · dizinsiz uydurma dosya adı (`hayalet.cpp`). İkisi de her
+  koşuda BASILIYOR ama denetlenmiyor. **Bu bir gevşetmedir ve öyle yazıldı**
+- **"D2 0" ≠ "ölü kaynak referansı kalmadı"**: `G5-OMUZ-PLANI.md:64` (backtick
+  YOK) ve `SATIS-SARTNAMESI.md:299` (kapsayıcı maddedeki BAŞKA yol için verilen
+  "DOSYA YOK" ilanı bunu da muaf kılıyor) kapının kör noktasında
+- **238 iddia cümlesinin 214'ü tek tek YARGILANMADI** (süre). Kapı kalıp sayar,
+  ANLAM yargılamaz — "her cümle doğru" DENMEDİ
+- Docs'un sayıları yeniden ÜRETİLMEDİ: `70,200` · `19,555` · `27 of 54` (alet
+  VAR, girdi `benchmark-58/manifest.json` telifli ve repoda YOK) · `86%`.
+  Hepsinin ALET ADI bağlandı, sayının o aletten çıktığı doğrulanmadı
+- `H1.0-KAPI.md` içinde **iki uzlaşmayan ön−arka dizisi**: §0 −13.50…−1.22mm
+  (`trace-match.py`) ↔ §2/G5 −13.83…−1.50mm (`18-armscye-front-back.py`).
+  **UZLAŞTIRILMADI** · `H1.0` §3 sayıları yeniden ÖLÇÜLEMEDİ (fikstür DISABLED)
+- `Logs/taban-T10-SONRA` ile mühür başlığı **aynı paket değil** (print-info
+  4 sayfa ↔ başlık 5 sayfa) → **"5 sayfa" diskten doğrulanamıyor**
+- `stitchu-engine.js` **1 günde +44 052 bayt** (1 209 765→1 253 817), gitignore'da
+- `SATIS-SARTNAMESI.md:31` **`şartname-check` diye bir ctest YOK** ·
+  `ENV.md:10` `~/damla_projects_2026/reports/` diyor, o dizin **YOK**
+- `GECE/INDEX.md` **hiçbir mekanik kapının denetiminde DEĞİL**
 
 ## SONRAKİ FAZLARIN HAZIR GİRDİSİ + KUYRUKTAKİ KARTLAR
-- **V8 (kumaş)** ← `GECE/V5-R.md` §C · **+V7:** ADSIZ oyuk borcu (3 spec) ·
-  `[S2]` kesim↔dikiş çizgisi kararı · `sleeve_underarm` çift kapısı · yaka ve
-  omuz İFADE borcu (4/4 + 1/1, kolun yolundan gidilebilir) · `raglan` arka kapısı
-- V9/V10 ← `GECE/V0-0C.md` (1248 iddia) · `?v` **136'da donmuş** · kâtip V7 turu
-  bitti (`6c90b58`: ARCHITECTURE §15, KATMAN-HARITASI boşluk 11, INDEX V7)
-- ★ `sewability_check` ratchet'i **SAYIYI tavanlıyor, YERİ değil** ·
-  `edit_locality_check` tek beden/tek spec'te ölçüyor · `back_neck_drop` SINIF
-  hatası kapısız · repo **iki üretim toleransı** (0.79375 vs 3.0) ·
-  `virtual-sew.js` çürük · `flat-board.mjs` exit koduna bağlı DEĞİL ·
-  `h3b-rings.py` koşmuyor · ⚠ WebFetch'e PDF özetletmek YANLIŞ SAYI üretti ·
-  `vision/eval/photos` 29 dosya 19 etiket · `vision/eval.js` ↔ `foto-spec-olcum`
-  aynı banka farklı sayı (%94/%92.2) · ★ **V7-R: `drafting-math-eu38.md`'nin
-  "HIGH" cap-ease tablosu birincil yayında BULUNAMADI → DOĞRULANMADI**
+- **V10 (landing)** ← `GECE/V0-0C.md` §1 (web'de 28 taşıyıcı iddia) · §2
+  (duran-iddia **292 hit**, 119'u tek başına `web/patches.html`) · §4 (F1–F8),
+  en ağırı ★ **SİTE MTM SATIYOR, MOTOR SABİT BEDEN** — 44 dosyada "your own
+  measurements", 23'ünde "no fixed sizes" ↔ `README.md:3` "FIXED-SIZE (EU34-48)".
+  ⚠ **DEVRALMA, TAZELE:** 0C 24 Ağu'da ölçüldü; V9-A docs'ta 0C'nin 6 kaleminden
+  **5'ini bayat** buldu. `?v` **136'da donmuş** · `node engine/tools/site-health.mjs`
+  0C'de exit 0 idi, V10 yeniden koştursun
+- **V8 (kumaş ekseni + rehber) KOŞMADI, ATLANDI** ← girdisi `GECE/V5-R.md` §C.
+  V11 raporunda "yapılmadı" satırında ADIYLA durur (§6 anti-bahane)
+- **V7'den devreden:** ADSIZ oyuk borcu (`bardot_off_shoulder · yoke_top ·
+  cupseam_bustier`) · `[S2]` kesim↔dikiş çizgisi kararı · `sleeve_underarm`
+  çift kapısı · yaka 4/4 + omuz 1/1 İFADE borcu · `raglan` arka kapısı
+- ★ `sewability_check` **SAYIYI tavanlıyor, YERİ değil** · `edit_locality_check`
+  tek beden/tek spec · `back_neck_drop` SINIF hatası kapısız · repo **iki üretim
+  toleransı** (0.79375 vs 3.0) · `virtual-sew.js` çürük · `flat-board.mjs` exit
+  koduna bağlı DEĞİL · `h3b-rings.py` koşmuyor · `vision/eval/photos` 29 dosya
+  19 etiket · `vision/eval.js` ↔ `foto-spec-olcum` aynı banka farklı sayı
 
-## ★ PROTOKOL DERSİ (V8 ŞEFİNE — kart değil KURAL)
-1. **Devralınan cümleyi ÖLÇMEDEN kartına yazma.** V7'nin brief'i "kol 0/8
-   ifadesiz" diyordu; ölçüm ÇÜRÜTTÜ. Ölçüm kartı kesilmeseydi faz **yanlış bir
-   problemi** çözecekti. 2. **Kapı kurmadan önce kapının bugün NE ölçtüğünü
-   ölç** — tautoloji ancak "bugün hangi kod eşliyor" diye SORULDUĞU için çıktı.
-   3. Orakçı işletildi; **V7-D tavanı ~2s20dk'ya taştı** ama COMMIT'ledi; diğer
-   8 işçi tavanın altında, her işçi kendi commit'ini attı.
+## ★ PROTOKOL DERSİ (V10 ŞEFİNE — kart değil KURAL)
+1. **Kapının TABANI kapı kadar önemlidir.** D3 tabanı 52'yken mutasyonu
+   yutuyordu. **Borç kaydeden taban kapıyı süse çevirir** — onarımı bitir,
+   sonra kes. 2. **"Yeşil" bir DİZİNİN özelliği olabilir, dokümanın değil.**
+   Kurduğun kapıyı **temiz worktree'de de koştur**; `git worktree add` bedava,
+   hakem koşmasaydı kapı CI'da yeni kırmızı ad olacaktı. 3. **Devralınan cümleyi
+   ölçmeden kartına yazma** — brief "12 YALAN" diyordu, 5'i çoktan kapanmıştı;
+   ölçüm kartı olmasa faz **kapanmış işi** yeniden yapardı. 4. **İşçinin kendi
+   kusurunu ilan etmesi ÇIKTIDIR** (V9-B3 açtığı iki kaçışı, V9-G kapısının
+   sınırını, V9-C V9-A'nın hatasını kendi yazdı).
+
 ## DAMLA'YA DÜŞEN (bloke etmez — tam gövdeler `DAMLA-KUYRUK.md`'de)
-- **K-FN1** kol oyuğu bandı (A) — **V7 KUYRUĞU OKUDU**, (A) yürüdü, EU34/36 oyma
-  işi V7'ye kart OLMADI — **K-V0A** `patterns_real/` 41 telifli dosya (A) —
-  **K-V0B** `style_check` pinleme (A) — **K-V1A** golden mührü — **K-V1B**
-  `figure_check` ⚠ V4+V5+V6+**V7**'ye yazıldı, DÖRDÜNDE DE KESİLMEDİ — **K-V1C**
+- **K-FN1** kol oyuğu bandı (A) — **K-V0A** `patterns_real/` 41 telifli dosya (A)
+  — **K-V0B** `style_check` pinleme (A) — **K-V1A** golden mührü — **K-V1B**
+  `figure_check` ⚠ V4+V5+V6+V7'ye yazıldı, DÖRDÜNDE DE KESİLMEDİ — **K-V1C**
   kaynaksız 4 kolon — **K-V2A** görü kafası — **K-V2B** `?v=136` — **K-V3A**
   20.56° kırığı (A) — **K-V4A/B/C** pano · ISO 5455 · tanınmayan değer —
   **K-V5A** pay yayınlanmış minimumun ALTINDA (A) — **K-V5B** Buğra levhaları —
-  **K-V6A** çıpa/editleme işi REDDEDİLDİ, yan dalda `3d8903c` (A)
-- **K-V7A** (YENİ) V7-F'in sicil şerhi ratchet'i kırdığı için **işaretçiye
-  indirildi** (tam metin `GECE/V7-F.md` §5): (A) böyle kalsın · (B) tam metin
-  sicile dönsün, ratchet tabanı elle kesilsin · **VARSAYILAN (A)** · ETKİLER V9
+  **K-V6A** çıpa/editleme REDDEDİLDİ, yan dalda `3d8903c` (A) — **K-V7A** V7-F
+  sicil şerhi işaretçiye indi, tam metin `GECE/V7-F.md` §5 (A)
+- **K-V9A** (YENİ) `patterns_real/geometry/` + 2 dosya **ne izleniyor ne
+  gitignore'da**; `2f748db` repodan çıkardı ama diskte duruyor ve `H1.0-KAPI.md`
+  onları "Birincil kaynak" sayıyor: (A) böyle kalsın, docs yokluğu ilan etsin
+  (yapıldı) · (B) gitignore'a girsin · (C) geri izlensin · **VARSAYILAN (A)**
