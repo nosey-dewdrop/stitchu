@@ -1,0 +1,986 @@
+id	dosya:satir	iddia	sinif	basan_alet	zaman
+C1	web//index.html:176	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:176	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:176	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:179	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:179	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:179	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:316	EU34 to 52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:316	EU34 to 52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:317	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:317	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:317	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:336	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:336	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//index.html:336	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//js/studio.js:356	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//js/studio.js:372	EU34 to 52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//studio.html:56	EU34 to 52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C1	web//api.html:161	EU34–52	YALAN	contract/layers/shape-ratios.json sizes=8 (python -c json)	present
+C2	web//index.html:316	10 of 10	YALAN	shape-ratios.json 8 sizes; contract.gen.hpp has 10 rows but shaperatios.gen.hpp gives EU50/52 zeros	present
+C2	web//index.html:316	10 of 10	YALAN	shape-ratios.json 8 sizes; contract.gen.hpp has 10 rows but shaperatios.gen.hpp gives EU50/52 zeros	present
+C3	web//js/print.js:69	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches/3-12.html:84	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches/3-12.html:84	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches/3-27.html:82	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches/3-27.html:82	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/halter-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/halter-neckline.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/pleated-skirt.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/pleated-skirt.html:110	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/princess-seams.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/princess-seams.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/puff-sleeve.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/puff-sleeve.html:112	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/shirring-drawstring.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/shirring-drawstring.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/v-neck.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/v-neck.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/half-circle-skirt.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/half-circle-skirt.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/button-placket.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/button-placket.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/straight-skirt.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/straight-skirt.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/gathered-skirt.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/gathered-skirt.html:110	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/square-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/square-neckline.html:109	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/balloon-sleeve.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/balloon-sleeve.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/crew-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/crew-neckline.html:109	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/empire-waist.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/empire-waist.html:112	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/boat-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/boat-neckline.html:109	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/a-line-skirt.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/a-line-skirt.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/sweetheart-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/sweetheart-neckline.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/open-back.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/open-back.html:113	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/hem-ruffle.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/hem-ruffle.html:112	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/scoop-neckline.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/scoop-neckline.html:109	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/collars.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/collars.html:112	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/fabric-ties.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/fabric-ties.html:112	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/keyhole.html:26	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//styles/keyhole.html:111	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//shop-shift-dress.html:9	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches.html:249	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches.html:249	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches.html:424	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//patches.html:424	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-front-button-pinafore.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-front-button-pinafore.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-front-button-pinafore.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mod-colorblock-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mod-colorblock-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mod-colorblock-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-shift-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mondrian-shift-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mondrian-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-mondrian-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-vneck-front-zip-dress.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-vneck-front-zip-dress.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-vneck-front-zip-dress.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-princess-seam-shift.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-princess-seam-shift.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-princess-seam-shift.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-side-tie-tweed-shift.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-side-tie-tweed-shift.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-side-tie-tweed-shift.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-babydoll-scoop-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-babydoll-scoop-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-babydoll-scoop-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/seventies-scoop-neck-shift-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/seventies-scoop-neck-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/seventies-scoop-neck-shift-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-pointed-collar-tunic.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-pointed-collar-tunic.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-pointed-collar-tunic.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-fit-flare-knit-dress.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-fit-flare-knit-dress.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-fit-flare-knit-dress.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-gathered-babydoll.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-gathered-babydoll.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-gathered-babydoll.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-longsleeve-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-longsleeve-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-boat-neck-longsleeve-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-tent-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-tent-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-tent-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-jersey-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-jersey-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-crew-neck-jersey-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-knit-mini.html:22	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-knit-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C3	web//collections/sixties-empire-knit-mini.html:114	your own measurements	YALAN	README.md:3 FIXED-SIZE; contract/layers/size-table.json 8 sizes	present
+C4	web//collections/sixties-front-button-pinafore.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-front-button-pinafore.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-front-button-pinafore.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mod-colorblock-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mod-colorblock-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mod-colorblock-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-shift-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mondrian-shift-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mondrian-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-mondrian-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-vneck-front-zip-dress.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-vneck-front-zip-dress.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-vneck-front-zip-dress.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-princess-seam-shift.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-princess-seam-shift.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-princess-seam-shift.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-side-tie-tweed-shift.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-side-tie-tweed-shift.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-side-tie-tweed-shift.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-babydoll-scoop-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-babydoll-scoop-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-babydoll-scoop-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/seventies-scoop-neck-shift-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/seventies-scoop-neck-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/seventies-scoop-neck-shift-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-pointed-collar-tunic.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-pointed-collar-tunic.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-pointed-collar-tunic.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-fit-flare-knit-dress.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-fit-flare-knit-dress.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-fit-flare-knit-dress.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-gathered-babydoll.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-gathered-babydoll.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-gathered-babydoll.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-longsleeve-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-longsleeve-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-boat-neck-longsleeve-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-tent-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-tent-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-tent-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-jersey-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-jersey-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-crew-neck-jersey-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-knit-mini.html:22	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-knit-mini.html:118	your exact measurements	YALAN	same	present
+C4	web//collections/sixties-empire-knit-mini.html:118	your exact measurements	YALAN	same	present
+C5	web//styles/halter-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/halter-neckline.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/pleated-skirt.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/pleated-skirt.html:110	no fixed sizes	YALAN	same	present
+C5	web//styles/princess-seams.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/princess-seams.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/puff-sleeve.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/puff-sleeve.html:112	no fixed sizes	YALAN	same	present
+C5	web//styles/shirring-drawstring.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/shirring-drawstring.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/v-neck.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/v-neck.html:111	no fixed sizes	YALAN	same	present
+C5	web//styles/half-circle-skirt.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/half-circle-skirt.html:111	no fixed sizes	YALAN	same	present
+C5	web//styles/button-placket.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/button-placket.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/straight-skirt.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/straight-skirt.html:111	no fixed sizes	YALAN	same	present
+C5	web//styles/gathered-skirt.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/gathered-skirt.html:110	no fixed sizes	YALAN	same	present
+C5	web//styles/square-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/square-neckline.html:109	no fixed sizes	YALAN	same	present
+C5	web//styles/balloon-sleeve.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/balloon-sleeve.html:111	no fixed sizes	YALAN	same	present
+C5	web//styles/crew-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/crew-neckline.html:109	no fixed sizes	YALAN	same	present
+C5	web//styles/empire-waist.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/empire-waist.html:112	no fixed sizes	YALAN	same	present
+C5	web//styles/boat-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/boat-neckline.html:109	no fixed sizes	YALAN	same	present
+C5	web//styles/a-line-skirt.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/a-line-skirt.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/sweetheart-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/sweetheart-neckline.html:111	no fixed sizes	YALAN	same	present
+C5	web//styles/open-back.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/open-back.html:113	no fixed sizes	YALAN	same	present
+C5	web//styles/hem-ruffle.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/hem-ruffle.html:112	no fixed sizes	YALAN	same	present
+C5	web//styles/scoop-neckline.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/scoop-neckline.html:109	no fixed sizes	YALAN	same	present
+C5	web//styles/collars.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/collars.html:112	no fixed sizes	YALAN	same	present
+C5	web//styles/fabric-ties.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/fabric-ties.html:112	no fixed sizes	YALAN	same	present
+C5	web//styles/keyhole.html:26	no fixed sizes	YALAN	same	present
+C5	web//styles/keyhole.html:111	no fixed sizes	YALAN	same	present
+C6	web//js/i18n.js:19	to your measurements	YALAN	same	present
+C6	web//js/print.js:53	to your measurements	YALAN	same	present
+C6	web//styles/index.html:8	to your measurements	YALAN	same	present
+C6	web//styles/index.html:13	to your measurements	YALAN	same	present
+C6	web//styles/index.html:21	to your measurements	YALAN	same	present
+C6	web//styles/index.html:130	to your measurements	YALAN	same	present
+C6	web//styles/v-neck.html:7	to your measurements	YALAN	same	present
+C6	web//styles/v-neck.html:12	to your measurements	YALAN	same	present
+C6	web//styles/v-neck.html:20	to your measurements	YALAN	same	present
+C6	web//styles/square-neckline.html:7	to your measurements	YALAN	same	present
+C6	web//styles/square-neckline.html:12	to your measurements	YALAN	same	present
+C6	web//styles/square-neckline.html:20	to your measurements	YALAN	same	present
+C6	web//shop-shift-dress.html:87	to your measurements	YALAN	same	present
+C6	web//collections/sixties-front-button-pinafore.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-front-button-pinafore.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-front-button-pinafore.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-front-button-pinafore.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mod-colorblock-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mod-colorblock-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mod-colorblock-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mod-colorblock-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mondrian-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mondrian-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mondrian-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-mondrian-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-vneck-front-zip-dress.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-vneck-front-zip-dress.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-vneck-front-zip-dress.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-vneck-front-zip-dress.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-princess-seam-shift.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-princess-seam-shift.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-princess-seam-shift.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-princess-seam-shift.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-side-tie-tweed-shift.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-side-tie-tweed-shift.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-side-tie-tweed-shift.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-side-tie-tweed-shift.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-babydoll-scoop-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-babydoll-scoop-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-babydoll-scoop-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-babydoll-scoop-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/seventies-scoop-neck-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/seventies-scoop-neck-shift-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/seventies-scoop-neck-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/seventies-scoop-neck-shift-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-pointed-collar-tunic.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-pointed-collar-tunic.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-pointed-collar-tunic.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-pointed-collar-tunic.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-fit-flare-knit-dress.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-fit-flare-knit-dress.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-fit-flare-knit-dress.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-fit-flare-knit-dress.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-gathered-babydoll.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-gathered-babydoll.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-gathered-babydoll.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-gathered-babydoll.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-longsleeve-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-longsleeve-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-longsleeve-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-boat-neck-longsleeve-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-tent-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-tent-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-tent-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-tent-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-jersey-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-jersey-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-jersey-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-crew-neck-jersey-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-knit-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-knit-mini.html:95	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-knit-mini.html:136	to your measurements	YALAN	same	present
+C6	web//collections/sixties-empire-knit-mini.html:136	to your measurements	YALAN	same	present
+C7	web//index.html:336	measurement-fitted	YALAN	same	present
+C7	web//index.html:336	measurement-fitted	YALAN	same	present
+C7	web//api.html:85	measurement-fitted	YALAN	same	present
+C8	web//patches/3-21.html:82	15 mm seam allowance	DOGRU	engine/constants.yaml:29-32 seamAllowanceMM=15 -> engine/src/constants.gen.hpp:13 kSeamAllowanceMM=15 (wasm line)	present
+C8	web//patches/3-21.html:82	15 mm seam allowance	DOGRU	engine/constants.yaml:29-32 seamAllowanceMM=15 -> engine/src/constants.gen.hpp:13 kSeamAllowanceMM=15 (wasm line)	present
+C8	web//shop-shift-dress.html:110	15 mm seam allowance	DOGRU	engine/constants.yaml:29-32 seamAllowanceMM=15 -> engine/src/constants.gen.hpp:13 kSeamAllowanceMM=15 (wasm line)	present
+C8	web//patches.html:335	15 mm seam allowance	DOGRU	engine/constants.yaml:29-32 seamAllowanceMM=15 -> engine/src/constants.gen.hpp:13 kSeamAllowanceMM=15 (wasm line)	present
+C8	web//patches.html:335	15 mm seam allowance	DOGRU	engine/constants.yaml:29-32 seamAllowanceMM=15 -> engine/src/constants.gen.hpp:13 kSeamAllowanceMM=15 (wasm line)	present
+C9	web//styles/halter-neckline.html:123	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/pleated-skirt.html:119	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/princess-seams.html:122	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/puff-sleeve.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/shirring-drawstring.html:122	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/v-neck.html:120	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/half-circle-skirt.html:120	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/button-placket.html:122	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/straight-skirt.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/gathered-skirt.html:120	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/square-neckline.html:118	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/balloon-sleeve.html:120	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/crew-neckline.html:118	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/empire-waist.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/boat-neckline.html:118	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/a-line-skirt.html:123	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/sweetheart-neckline.html:120	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/open-back.html:123	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/hem-ruffle.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/scoop-neckline.html:118	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/collars.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/fabric-ties.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C9	web//styles/keyhole.html:121	seam-pair precision	DOGRU	node engine/tools/precision-report.js -> 'worst pair mismatch 0.00 mm | 0 FAILURES' exit 0	present
+C10	web//index.html:321	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//index.html:321	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//index.html:322	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//index.html:322	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/halter-neckline.html:123	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/pleated-skirt.html:119	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/princess-seams.html:122	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/puff-sleeve.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/shirring-drawstring.html:122	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/v-neck.html:120	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/half-circle-skirt.html:120	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/button-placket.html:122	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/straight-skirt.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/gathered-skirt.html:120	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/square-neckline.html:118	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/balloon-sleeve.html:120	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/crew-neckline.html:118	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/empire-waist.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/boat-neckline.html:118	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/a-line-skirt.html:123	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/sweetheart-neckline.html:120	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/open-back.html:123	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/hem-ruffle.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/scoop-neckline.html:118	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/collars.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/fabric-ties.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C10	web//styles/keyhole.html:121	0.000000 mm	KANITSIZ	precision-report.js prints 2 decimals (toFixed(2), :50/:121); no tool in tree prints 6 decimals for a seam pair	present
+C11	web//index.html:284	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//index.html:284	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//index.html:285	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//index.html:285	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/halter-neckline.html:124	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/pleated-skirt.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/pleated-skirt.html:112	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/pleated-skirt.html:120	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/pleated-skirt.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/princess-seams.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/index.html:91	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/puff-sleeve.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/shirring-drawstring.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/v-neck.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/v-neck.html:113	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/v-neck.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/v-neck.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/half-circle-skirt.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/half-circle-skirt.html:113	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/half-circle-skirt.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/half-circle-skirt.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/button-placket.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/straight-skirt.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/straight-skirt.html:114	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/straight-skirt.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/straight-skirt.html:124	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/gathered-skirt.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/gathered-skirt.html:113	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/gathered-skirt.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/gathered-skirt.html:123	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/square-neckline.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/square-neckline.html:111	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/square-neckline.html:119	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/square-neckline.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/balloon-sleeve.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/crew-neckline.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/crew-neckline.html:111	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/crew-neckline.html:119	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/crew-neckline.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/empire-waist.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/empire-waist.html:114	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/empire-waist.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/empire-waist.html:124	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/boat-neckline.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/boat-neckline.html:111	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/boat-neckline.html:119	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/boat-neckline.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/a-line-skirt.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/a-line-skirt.html:116	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/a-line-skirt.html:124	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/a-line-skirt.html:126	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/sweetheart-neckline.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/open-back.html:124	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/hem-ruffle.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/scoop-neckline.html:26	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/scoop-neckline.html:111	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/scoop-neckline.html:119	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/scoop-neckline.html:121	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/collars.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/fabric-ties.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//styles/keyhole.html:122	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//benchmark.html:78	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//benchmark.html:78	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C11	web//benchmark.html:93	70,200	KANITSIZ	engine_check (ctest) - NOT RUN this round	present
+C12	web//styles/halter-neckline.html:125	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/pleated-skirt.html:121	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/princess-seams.html:124	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/puff-sleeve.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/shirring-drawstring.html:124	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/v-neck.html:122	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/half-circle-skirt.html:122	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/button-placket.html:124	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/straight-skirt.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/gathered-skirt.html:122	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/square-neckline.html:120	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/balloon-sleeve.html:122	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/crew-neckline.html:120	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/empire-waist.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/boat-neckline.html:120	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/a-line-skirt.html:125	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/sweetheart-neckline.html:122	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/open-back.html:125	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/hem-ruffle.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/scoop-neckline.html:120	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/collars.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/fabric-ties.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C12	web//styles/keyhole.html:123	19,780	KANITSIZ	engine/tools/web-fuzz.js exists; NOT RUN this round	present
+C13	web//patches/3-15.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-15.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-15.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-1.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-1.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-1.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-7.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-7.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-7.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-12.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-12.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-8.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-8.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-8.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-9.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-9.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-9.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-10.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-10.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-10.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-5.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-5.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-5.html:85	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-17.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-17.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches/3-17.html:86	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/halter-neckline.html:125	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/pleated-skirt.html:121	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/princess-seams.html:124	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/puff-sleeve.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/shirring-drawstring.html:124	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/v-neck.html:122	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/half-circle-skirt.html:122	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/button-placket.html:124	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/straight-skirt.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/gathered-skirt.html:122	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/square-neckline.html:120	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/balloon-sleeve.html:122	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/crew-neckline.html:120	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/empire-waist.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/boat-neckline.html:120	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/a-line-skirt.html:125	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/sweetheart-neckline.html:122	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/open-back.html:125	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/hem-ruffle.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/scoop-neckline.html:120	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/collars.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/fabric-ties.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//styles/keyhole.html:123	37,800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:398	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:398	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:398	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:425	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:425	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:438	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:438	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:438	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:450	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:450	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:450	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:462	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:462	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:462	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:474	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:474	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:474	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:487	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:487	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:487	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:511	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:511	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:511	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:565	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:565	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C13	web//patches.html:565	37800	KANITSIZ	engine/tools/vocab-sweep.cpp exists; NOT RUN this round	present
+C15	web//showcase.html:83	zero validator	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//showcase.html:83	zero validator	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//showcase.html:109	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//showcase.html:109	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//showcase.html:193	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//showcase.html:193	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-35.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-35.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-39.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-39.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-33.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-33.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-32.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-32.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-31.html:82	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-31.html:82	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-40.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-40.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-41.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-41.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-3.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches/3-3.html:83	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:84	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:84	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:96	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:96	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:108	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:108	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:155	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:155	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:179	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:179	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:191	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:191	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:202	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:202	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:535	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C15	web//patches.html:535	zero issues	KANITSIZ	YOK - RULES 6 banned standing assertion	present
+C16	web//css/shared-header.css:43	Byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//js/render.js:154	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//js/studio.js:329	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//js/engine.js:163	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//js/sheet.js:403	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-23.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-23.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-15.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-15.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-39.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-39.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-39.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-39.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-0.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-0.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-1.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-1.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-38.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-22.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-22.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:6	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:7	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:13	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:14	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:21	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:22	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:24	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:24	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:79	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-9.html:79	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-34.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-34.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-34.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-34.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-18.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-18.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-12.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-12.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-29.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-29.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-29.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-29.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-33.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-33.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-33.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-33.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-32.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-32.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-32.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-32.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-7.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-7.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-12.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-10.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-10.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/1-5.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/1-5.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-27.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-27.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-27.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-27.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-31.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-31.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-31.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-31.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:88	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-26.html:88	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-9.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-9.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-11.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/2-11.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-5.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-5.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-21.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-21.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-21.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-21.html:87	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-37.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-37.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-37.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-37.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-40.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-17.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-17.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-16.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-16.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-41.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-41.html:83	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-41.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-41.html:85	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-36.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-36.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:82	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:88	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches/3-20.html:88	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/shirring-drawstring.html:26	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/shirring-drawstring.html:115	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/shirring-drawstring.html:125	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/open-back.html:26	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/open-back.html:98	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/open-back.html:116	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/open-back.html:126	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/collars.html:26	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/collars.html:114	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/collars.html:124	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/fabric-ties.html:26	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/fabric-ties.html:114	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//styles/fabric-ties.html:124	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:84	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:86	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:95	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:95	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:96	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:96	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:98	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:98	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:108	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:108	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:110	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:110	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:119	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:119	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:120	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:120	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:122	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:122	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:132	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:132	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:134	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:134	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:145	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:145	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:167	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:167	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:169	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:169	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:179	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:179	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:181	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:181	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:191	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:191	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:193	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:193	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:203	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:203	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:205	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:205	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:226	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:226	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:228	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:228	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:250	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:250	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:252	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:252	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:262	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:262	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:266	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:266	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:267	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:267	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:310	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:310	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:325	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:325	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:335	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:335	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:340	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:340	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:350	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:350	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:352	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:352	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:356	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:356	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:384	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:384	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:398	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:398	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:412	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:412	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:425	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:450	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:450	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:474	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:474	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:487	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:487	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:511	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:511	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:565	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:565	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:578	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:578	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:591	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:591	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:604	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:604	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:617	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:617	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:623	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:623	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:796	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//patches.html:796	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-front-button-pinafore.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-mod-colorblock-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-boat-neck-shift-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/index.html:30	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-mondrian-shift-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-vneck-front-zip-dress.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-princess-seam-shift.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-side-tie-tweed-shift.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-babydoll-scoop-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/seventies-scoop-neck-shift-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-pointed-collar-tunic.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-fit-flare-knit-dress.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-empire-gathered-babydoll.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-boat-neck-longsleeve-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-crew-neck-tent-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-crew-neck-jersey-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//collections/sixties-empire-knit-mini.html:31	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:315	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:536	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:598	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:639	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:646	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:697	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:764	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:786	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:826	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C16	web//atolye.html:894	byte-identical	KANITSIZ	engine/golden-diff.py + ctest golden_check exist; NOT RUN this round	present
+C17	web//index.html:336	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//index.html:336	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//index.html:336	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:7	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:12	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:20	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:86	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:133	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C17	web//api.html:197	POST /api/draft	DOGRU	curl -X POST https://stitchu-api.damummyphus.workers.dev/api/draft -> HTTP 422 {"error":"missing_spec"} = deployed	present
+C18	web//index.html:336	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//index.html:336	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//index.html:336	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches/2-4.html:82	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches/2-4.html:82	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches/2-4.html:82	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches/2-4.html:85	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches.html:691	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches.html:691	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches.html:691	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//patches.html:694	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:138	POST /api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:154	POST /api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:161	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:221	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:230	POST /api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C18	web//api.html:232	/api/grade	DOGRU	curl -> HTTP 422 = deployed	present
+C19	web//js/guide-tr.js:5	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//js/guide-tr.js:55	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//patches/2-12.html:83	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//patches/2-12.html:83	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/halter-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/halter-neckline.html:117	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/pleated-skirt.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/pleated-skirt.html:113	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/princess-seams.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/princess-seams.html:116	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/puff-sleeve.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/puff-sleeve.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/shirring-drawstring.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/shirring-drawstring.html:116	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/v-neck.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/v-neck.html:114	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/half-circle-skirt.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/half-circle-skirt.html:114	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/button-placket.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/button-placket.html:116	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/straight-skirt.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/straight-skirt.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/gathered-skirt.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/gathered-skirt.html:114	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/square-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/square-neckline.html:112	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/balloon-sleeve.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/balloon-sleeve.html:114	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/crew-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/crew-neckline.html:112	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/empire-waist.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/empire-waist.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/boat-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/boat-neckline.html:112	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/a-line-skirt.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/a-line-skirt.html:117	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/sweetheart-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/sweetheart-neckline.html:114	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/open-back.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/open-back.html:117	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/hem-ruffle.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/hem-ruffle.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/scoop-neckline.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/scoop-neckline.html:112	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/collars.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/collars.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/fabric-ties.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/fabric-ties.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/keyhole.html:26	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//styles/keyhole.html:115	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//shop-shift-dress.html:151	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//patches.html:588	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//patches.html:588	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//api.html:103	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-front-button-pinafore.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-front-button-pinafore.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-mod-colorblock-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-mod-colorblock-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-boat-neck-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-boat-neck-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-mondrian-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-mondrian-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-vneck-front-zip-dress.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-vneck-front-zip-dress.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-princess-seam-shift.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-princess-seam-shift.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-side-tie-tweed-shift.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-side-tie-tweed-shift.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-babydoll-scoop-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-babydoll-scoop-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/seventies-scoop-neck-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/seventies-scoop-neck-shift-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-crew-neck-tent-mini-guide.pdf:28	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-vneck-front-zip-dress-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-princess-seam-shift-guide.pdf:33	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-pointed-collar-tunic-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-side-tie-tweed-shift-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-babydoll-scoop-mini-guide.pdf:28	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-mondrian-shift-mini-guide.pdf:28	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-boat-neck-longsleeve-mini-guide.pdf:33	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/seventies-scoop-neck-shift-mini-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-boat-neck-shift-mini-guide.pdf:32	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-empire-gathered-babydoll-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-empire-knit-mini-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-front-button-pinafore-guide.pdf:28	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-mod-colorblock-mini-guide.pdf:32	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-fit-flare-knit-dress-guide.pdf:33	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/pdf/sixties-crew-neck-jersey-mini-guide.pdf:29	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-pointed-collar-tunic.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-pointed-collar-tunic.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-fit-flare-knit-dress.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-fit-flare-knit-dress.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-empire-gathered-babydoll.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-empire-gathered-babydoll.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-boat-neck-longsleeve-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-boat-neck-longsleeve-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-crew-neck-tent-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-crew-neck-tent-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-crew-neck-jersey-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-crew-neck-jersey-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-empire-knit-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C19	web//collections/sixties-empire-knit-mini.html:130	3 cm calibration square	KANITSIZ	YOK on the web line; printpack.py test square is 4cm (113.3858pt)	present
+C20	web//patches/3-8.html:85	all pass	KANITSIZ	YOK - RULES 6 banned	present
+C20	web//patches/3-8.html:85	all pass	KANITSIZ	YOK - RULES 6 banned	present
+C20	web//patches.html:462	all pass	KANITSIZ	YOK - RULES 6 banned	present
+C20	web//patches.html:462	all pass	KANITSIZ	YOK - RULES 6 banned	present
+C22	web//index.html:343	free during the build	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//index.html:343	free during the build	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/halter-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/halter-neckline.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/pleated-skirt.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/pleated-skirt.html:110	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/princess-seams.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/princess-seams.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/puff-sleeve.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/puff-sleeve.html:112	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/shirring-drawstring.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/shirring-drawstring.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/v-neck.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/v-neck.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/half-circle-skirt.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/half-circle-skirt.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/button-placket.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/button-placket.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/straight-skirt.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/straight-skirt.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/gathered-skirt.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/gathered-skirt.html:110	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/square-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/square-neckline.html:109	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/balloon-sleeve.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/balloon-sleeve.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/crew-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/crew-neckline.html:109	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/empire-waist.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/empire-waist.html:112	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/boat-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/boat-neckline.html:109	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/a-line-skirt.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/a-line-skirt.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/sweetheart-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/sweetheart-neckline.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/open-back.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/open-back.html:113	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/hem-ruffle.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/hem-ruffle.html:112	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/scoop-neckline.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/scoop-neckline.html:109	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/collars.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/collars.html:112	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/fabric-ties.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/fabric-ties.html:112	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/keyhole.html:26	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//styles/keyhole.html:111	no paywall	KANITSIZ	YOK - pricing promise, no tool	future
+C22	web//api.html:165	free during the build	KANITSIZ	YOK - pricing promise, no tool	future
