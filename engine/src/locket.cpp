@@ -182,6 +182,31 @@ bool rebuildFront(PatternPiece& front, double& outMouth, double& outWedgeApexX) 
         }
     }
     front.commands = outlineFromLoop(out);
+    // V7-D: THE NAMED ARMHOLE MUST SURVIVE THIS REBUILD — OR BE DROPPED.
+    // This is the post-pass V7-C warned about: it re-emits the whole outline as
+    // a polyline, so every `EdgeRole` index range written by bodice.cpp now
+    // addresses some OTHER edge. The armhole's geometry is untouched (transfer()
+    // is the identity for dy <= 0, i.e. everywhere above the bust line, and the
+    // armhole lives entirely above it) — only its ADDRESS moved. So re-address
+    // it from its own endpoint anchors, which are vertices of the rebuilt loop.
+    // If an anchor is not there to the tolerance edgePathOf() uses, the name is
+    // DROPPED, not guessed: a name that quietly points at the wrong edge is
+    // worse than no name (RULES invariant 1).
+    {
+        const auto vertexAt = [&out](const Point& p) -> int {
+            for (size_t i = 0; i < out.size(); ++i)
+                if (std::fabs(out[i].x - p.x) <= 1e-9 && std::fabs(out[i].y - p.y) <= 1e-9)
+                    return static_cast<int>(i);
+            return -1;
+        };
+        std::vector<EdgeRole> kept;
+        for (const auto& role : front.edgeRoles) {
+            const int is = vertexAt(role.start), ie = vertexAt(role.end);
+            if (is < 0 || ie < 0 || ie <= is) continue;
+            kept.push_back(EdgeRole{role.role, is + 1, ie, role.start, role.end});
+        }
+        front.edgeRoles = std::move(kept);
+    }
 
     // Drop the (transferred) waist-dart triple; keep the placket markings
     // (fold line, facing line, buttons) that follow it. Add a notch tick at
@@ -342,6 +367,16 @@ bool apply(DraftedPattern& pattern, const GarmentSpec& spec,
         upper.name = "Upper Sleeve";
         upper.commands = {PathCommand::move(tipL), crownL, crownR,
                           bandR, bandL, PathCommand::close()};
+        // NAME THE CAP HERE, where it is drawn (V7-C discipline, wired in V7-D).
+        // On the two-piece Locket sleeve it is the UPPER piece's crown that goes
+        // into the armhole — the cut instruction below says so in words, and the
+        // surplus over the armhole is GATHERED, not eased. Without this name the
+        // Locket's sleeve carried no named edge at all, so the moved consumer
+        // (validator.cpp sleeveIssues) refused it by name instead of measuring
+        // it. The lower piece's top edge is the BAND seam, not the armhole, so
+        // it is deliberately left unnamed: an edge that is not the armhole must
+        // not be given the armhole's name.
+        upper.edgeRoles = {EdgeRole{"sleeve_cap", 1, 2, tipL, tipR}};
         upper.cutInstruction =
             "cut 2 mirrored (Upper Sleeve — the gathered crown band, the ruffled "
             "edge. The crown, drawn " + mmStr(crownLen) +

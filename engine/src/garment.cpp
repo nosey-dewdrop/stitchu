@@ -1074,6 +1074,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                                 : std::vector<PathCommand>{};
     }
 
+    // NAMED EDGES, RE-ADDRESSED (V7-D) — after every post-pass has finished
+    // rewriting outlines and BEFORE any consumer reads a name. One choke point
+    // instead of a repair in each pass: the shoulder-panel split, the bardot
+    // rework, the cup seam, the pleat and the Locket dart transfer all re-emit
+    // `commands`, and an index range written upstream would then address a
+    // different edge. Coordinates survive that; indices do not. A role whose
+    // endpoints are gone is DROPPED here, so the consumer refuses by name
+    // rather than measuring the wrong edge (RULES invariant 1).
+    for (auto& piece : pattern.pieces) reanchorEdgeRoles(piece);
+
     // REHBER (F-H İŞ 2) — LAST, after every post-pass piece and every cut line
     // exists, because the advice counts pieces, notches and fold edges off the
     // FINISHED draft. Metadata only: no geometry is touched here, so the golden

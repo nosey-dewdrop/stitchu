@@ -1,0 +1,54 @@
+=== V7-D §4.5 MUTASYON — kapı kırılabiliyor mu? (üç ayrı bozma, üçü de geri alındı)
+Alet: engine/tests/sleeve_cap_ease_check.mjs · motor: web/vendor/stitchu-engine.js
+Mutasyon SEVK EDİLEN artefakta uygulanır (kapağın İÇ noktaları); uç-nokta çapasına
+dokunulmaz, yani bozulan sadece YAYIN UZUNLUĞUDUR — 'role-stale' hariç.
+
+--- 0) ÖNCE (mutasyonsuz) — YEŞİL
+$ node engine/tests/sleeve_cap_ease_check.mjs | tail -2
+
+PASS sleeve_cap_ease_check — 0 ihlal
+EXIT=
+
+--- 1) cap-grow: kapak yayı +40mm  → [S1] 38.1mm tavanı AŞILMALI
+$ V7D_MUTATE=cap-grow node engine/tests/sleeve_cap_ease_check.mjs
+EXIT=1
+    ⚠ MUTASYON UYGULANDI → 'Sleeve' sleeve_cap yayı 390.9768 → 430.9768mm (+40.0000mm)
+FAIL  [c] dart_top_plain_short/EU34: |cap ease| 55.0560mm > tavan 38.1mm [S1]
+FAIL  [c] dart_top_plain_short/EU36: |cap ease| 55.5576mm > tavan 38.1mm [S1]
+FAIL  [c] dart_top_plain_short/EU38: |cap ease| 56.1246mm > tavan 38.1mm [S1]
+FAIL  [c] dart_top_plain_short/EU40: |cap ease| 56.8817mm > tavan 38.1mm [S1]
+FAIL  [c] dart_top_plain_short/EU42: |cap ease| 57.2066mm > tavan 38.1mm [S1]
+... toplam ihlal:
+FAIL sleeve_cap_ease_check — 32 ihlal
+
+--- 2) cap-shrink: kapak yayı −40mm → [S2] işaret POZİTİF şartı DÜŞMELİ
+$ V7D_MUTATE=cap-shrink node engine/tests/sleeve_cap_ease_check.mjs
+EXIT=1
+    ⚠ MUTASYON UYGULANDI → 'Sleeve' sleeve_cap yayı 390.9768 → 350.9768mm (-40.0000mm)
+FAIL  [b] dart_top_plain_short/EU34: cap ease -24.9440mm — İŞARET POZİTİF DEĞİL (kapak 350.9768 < oyuk 375.9207) [S2]
+FAIL  [b] dart_top_plain_short/EU36: cap ease -24.4424mm — İŞARET POZİTİF DEĞİL (kapak 365.3097 < oyuk 389.7521) [S2]
+FAIL  [b] dart_top_plain_short/EU38: cap ease -23.8754mm — İŞARET POZİTİF DEĞİL (kapak 380.3840 < oyuk 404.2594) [S2]
+FAIL  [b] dart_top_plain_short/EU40: cap ease -23.1183mm — İŞARET POZİTİF DEĞİL (kapak 393.2040 < oyuk 416.3223) [S2]
+FAIL  [b] dart_top_plain_short/EU42: cap ease -22.7934mm — İŞARET POZİTİF DEĞİL (kapak 408.4261 < oyuk 431.2195) [S2]
+... toplam ihlal:
+FAIL sleeve_cap_ease_check — 32 ihlal
+
+--- 3) role-stale: bir post-pass komutu yeniden kurmuş gibi kenarın ucu +5mm kaydı
+     → V7-C'nin AÇIK BIRAKTIĞI delik: rol SESSİZCE bayatlıyordu, artık [a] ile FAIL
+$ V7D_MUTATE=role-stale node engine/tests/sleeve_cap_ease_check.mjs
+EXIT=1
+    ⚠ MUTASYON UYGULANDI → 'Sleeve' sleeve_cap son komutunun ucu +5mm kaydırıldı (çapa artık tutmuyor)
+FAIL  [a] dart_top_plain_short/EU34: 'sleeve_cap' ('Sleeve' cmds[1..2]) BOŞ yay — aralık taştı ya da uç-nokta çapası tutmuyor (BAYAT ROL)
+FAIL  [a] dart_top_plain_short/EU34: 'sleeve_underarm' ('Sleeve' cmds[3..3]) BOŞ yay — aralık taştı ya da uç-nokta çapası tutmuyor (BAYAT ROL)
+FAIL  [a] dart_top_plain_short/EU36: 'sleeve_cap' ('Sleeve' cmds[1..2]) BOŞ yay — aralık taştı ya da uç-nokta çapası tutmuyor (BAYAT ROL)
+... toplam ihlal:
+FAIL sleeve_cap_ease_check — 88 ihlal
+
+--- 4) GERİ AL (mutasyon kancası kapalı) — YEŞİLE DÖNDÜ
+$ node engine/tests/sleeve_cap_ease_check.mjs | tail -2
+
+PASS sleeve_cap_ease_check — 0 ihlal
+EXIT=
+
+HUKUM: kapı üç ayrı yönden KIRILDI ([a] bayat rol, [b] işaret, [c] tavan) ve
+       bozma kalkınca YEŞİLE döndü. Kırılamayan kapı süstür — bu kırılıyor.

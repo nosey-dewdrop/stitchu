@@ -140,6 +140,16 @@ add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
 add_test(NAME sewability_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/sewability_check.mjs)
 add_test(NAME draft_math_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/draft_math_check.mjs)
 
+# sleeve_cap_ease_check (V7-D, 2026-08-25): oyuk yayı ↔ kapak yayı, İKİSİ DE
+# ÇİZİLEN kenardan (V7-C'nin `edgeRoles` adları), skaler `bodice.armholeLength`
+# kopyasından DEĞİL. Aynı koşu WASM PARİTESİ kanıtıdır: kapı motoru
+# `web/vendor/stitchu-engine.js` üzerinden yükler, yani SEVK EDİLEN artefaktı
+# ölçer — native yeşil + wasm patlak burada kırmızı düşer. Eşik künyesi
+# (Linda Lee 38.1mm tavanı, işaret şartı, kaynağı OLMAYAN alt uç = REPORTED,
+# büzgülü başta tavanın uygulanMAması) dosyanın kendi başlığındadır; kaynaksız
+# eşik yok (§7.6). RATCHET YOK, tavan yok: kapı 0 ihlalle bağlandı.
+add_test(NAME sleeve_cap_ease_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/sleeve_cap_ease_check.mjs)
+
 # flat_artifact_census (V3-C kanat (b)+(c), 2026-08-24): shell-flat konturunda
 # dört artefakt sınıfını SAYAR ve her birini kaynak satırına + tek cümlelik kök
 # çözüme bağlar: tırtıklı kenar · kendini kesen kontur (global overlap) · C1

@@ -277,28 +277,96 @@ std::vector<ValidationIssue> sleeveIssues(
     // A halter has no shoulders to hang a sleeve from — the engine skips the
     // sleeve choice (and says so in the guide), so none is expected here.
     if (spec.sleeveStyle == SleeveStyle::None || spec.neckline == Neckline::Halter) return {};
+    // ── V7-D: THE CONSUMER MOVED ONTO THE NAMED EDGES ────────────────────────
+    // Until this commit the armhole<->cap agreement rested on THREE guesses:
+    //   1. the sleeve piece was found by the substring "Sleeve" in its NAME,
+    //   2. the cap was assumed to be commands[0..2] (a hard-coded layout), and
+    //   3. the armhole was not the drawn armhole at all but the SCALAR
+    //      `bodice.armholeLength` (written at bodice.cpp:509) — the very number
+    //      the cap solver had just been fitted to. So the "agreement" it printed
+    //      was one scalar agreeing with ITSELF, and no drawing error could ever
+    //      show up in it. V7-C gave the four edges names (geometry.hpp:40-71);
+    //      this reads them.
+    // Both sides now come off DRAWN geometry: the armhole is summed from every
+    // piece that carries `armhole_front`/`armhole_back` (the princess cut splits
+    // ONE armhole across two panels, bodice.cpp:709-715 and :743-748, so the
+    // consumer adds the parts that exist instead of guessing the owner), and the
+    // cap is the `sleeve_cap` arc. A role that cannot be resolved is REFUSED by
+    // name, never silently dropped (RULES invariant 1) — edgeLengthOf() returns
+    // 0 when the command range overflows or the endpoint anchor no longer holds.
+    const std::string& where = draft.garment;   // one handle, both refusals below
     const PatternPiece* sleeve = nullptr;
+    const EdgeRole* capRole = nullptr;
+    double armholeDrawn = 0.0;
+    int armholeParts = 0;
+    bool haveFront = false, haveBack = false;
+    bool staleArmhole = false;
+    std::string staleWhere;
     for (const auto& piece : draft.pieces) {
-        if (contains(piece.name, "Sleeve") && !contains(piece.name, "Cuff")) {
-            sleeve = &piece;
-            break;
+        for (const auto& role : piece.edgeRoles) {
+            if (role.role == "sleeve_cap") {
+                if (!sleeve) { sleeve = &piece; capRole = &role; }
+            } else if (role.role == "armhole_front" || role.role == "armhole_back") {
+                const double len = edgeLengthOf(piece, role);
+                if (len <= 0.0) { staleArmhole = true; staleWhere = piece.name + "/" + role.role; }
+                else {
+                    armholeDrawn += len; armholeParts += 1;
+                    if (role.role == "armhole_front") haveFront = true; else haveBack = true;
+                }
+            }
         }
     }
-    if (!sleeve) {
-        return {{"sleeve", draft.garment, "sleeve requested but no sleeve piece drafted"}};
+    if (!sleeve || !capRole) {
+        return {{"sleeve", where, "sleeve requested but no piece carries a 'sleeve_cap' edge"}};
     }
-    // Cap = move(capLeft) + the two cap curves, a stable layout of SleeveBlock.
-    if (sleeve->commands.size() < 3 ||
-        sleeve->commands[0].type != CmdType::Move ||
-        sleeve->commands[1].type != CmdType::Curve ||
-        sleeve->commands[2].type != CmdType::Curve) {
-        return {{"sleeve", sleeve->name, "unexpected sleeve command layout, cannot measure cap"}};
+    const double capLength = edgeLengthOf(*sleeve, *capRole);
+    if (capLength <= 0.0) {
+        return {{"sleeve", sleeve->name,
+                 "'sleeve_cap' edge does not resolve (stale command range or endpoint anchor) — "
+                 "cannot measure the cap"}};
     }
-    const double capLength = pathLength({
-        PathCommand::move(sleeve->commands[0].to), sleeve->commands[1], sleeve->commands[2]});
+    if (staleArmhole) {
+        return {{"armhole", staleWhere,
+                 "armhole edge does not resolve (stale command range or endpoint anchor) — "
+                 "cannot measure the armhole the sleeve is set into"}};
+    }
+    // NO NAME AT ALL vs a BROKEN name are two different facts and are treated
+    // differently on purpose.
+    //   · A name that exists and does NOT resolve is an INTEGRITY failure: the
+    //     piece was rewritten under a name that stayed behind. Refused above,
+    //     by name (RULES invariant 1). That is the hole V7-C left open, and it
+    //     was not theoretical — locket.cpp's front rebuild really did it.
+    //   · NO name is a MEASURED GAP in the PRODUCER, not a fault in this draft.
+    //     Today the passes that re-emit a bodice outline and reshape the armhole
+    //     itself (bardot/off-shoulder, shoulder-panel split, cup seam, pleat) do not
+    //     re-name the edge they redraw, so those garments arrive here unnamed.
+    //     Refusing them would turn a naming debt into a false sewability
+    //     verdict on patterns that draft correctly. So the old SCALAR is used
+    //     for exactly those paths, and the fallback is NOT silent: it is stated
+    //     here, listed in GECE/V7-D.md §9, and COUNTED by
+    //     engine/tests/sleeve_cap_ease_check.mjs, which reports every shipped
+    //     spec whose armhole is unnamed. The tautology it restores is confined
+    //     to the un-named paths and shrinks to zero as they get named.
+    // HALF a name is NOT a name. The cup seam rebuilds only the FRONT bodice, so
+    // a draft can arrive with `armhole_back` named and `armhole_front` gone —
+    // summing what is there would judge the cap against HALF an armhole and call
+    // a correct pattern unsewable. Both halves, or the scalar.
+    const bool armholeNamed = (armholeParts > 0 && armholeDrawn > 0.0 && haveFront && haveBack);
+    if (!armholeNamed) { armholeDrawn = 0.0; armholeParts = 0; }
+    if (!armholeNamed) {
+        if (bodice.armholeLength <= 0 || !std::isfinite(bodice.armholeLength)) {
+            return {{"armhole", where,
+                     "a sleeve was drafted, no piece carries an 'armhole_front'/'armhole_back' "
+                     "edge, and the drafted armhole length is not sane — nothing to judge the "
+                     "cap against"}};
+        }
+        armholeDrawn = bodice.armholeLength;
+    }
+    const Point capStart = capRole->start;
+    const Point capEnd = capRole->end;
     const double capEase = SleeveBlock::capEaseFor(spec.fabric);
-    const double target = bodice.armholeLength * (1 + capEase);
-    const double ease = capLength / bodice.armholeLength - 1;
+    const double target = armholeDrawn * (1 + capEase);
+    const double ease = capLength / armholeDrawn - 1;
     std::vector<ValidationIssue> issues;
     // GATHERED / PUFF HEAD (Loop 6): the crown arc is INTENTIONALLY longer than
     // armhole + ease — that surplus is GATHERED in, not eased. So the plain 1–9%
@@ -320,7 +388,7 @@ std::vector<ValidationIssue> sleeveIssues(
         }
         const double bicepsEstimate =
             m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(spec.fabric));
-        const double capWidth = distance(sleeve->commands[0].to, sleeve->commands[2].to);
+        const double capWidth = distance(capStart, capEnd);
         if (capWidth < bicepsEstimate - 1.0) {
             issues.push_back({"biceps", sleeve->name,
                 fmt("sleeve %.0f mm wide is narrower than the %.0f mm biceps line — it would bind on the arm",
@@ -338,8 +406,11 @@ std::vector<ValidationIssue> sleeveIssues(
     const bool easeInWindow = ease >= capEaseMin && ease <= capEaseMax;
     if (std::fabs(capLength - target) > capLengthTolerance && !easeInWindow) {
         issues.push_back({"cap", sleeve->name,
-            fmt("cap seam %.1f vs target %.1f (armhole %.1f + %.0f%% ease) — convergence missed by %.1f mm",
-                capLength, target, bodice.armholeLength, capEase * 100, std::fabs(capLength - target))});
+            fmt("cap seam %.1f vs DRAWN armhole %.1f (%d named edge(s)) + %.0f%% ease = %.1f — "
+                "convergence missed by %.1f mm",
+                capLength, armholeNamed ? "DRAWN" : "SCALAR(unnamed)", armholeDrawn,
+                armholeParts, capEase * 100, target,
+                std::fabs(capLength - target))});
     }
     if (!easeInWindow) {
         issues.push_back({"cap", sleeve->name,
@@ -351,7 +422,7 @@ std::vector<ValidationIssue> sleeveIssues(
     // fit from ever silently returning a too-narrow sleeve.
     const double bicepsEstimate =
         m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(spec.fabric));
-    const double capWidth = distance(sleeve->commands[0].to, sleeve->commands[2].to);
+    const double capWidth = distance(capStart, capEnd);
     if (capWidth < bicepsEstimate - 1.0) {
         issues.push_back({"biceps", sleeve->name,
             fmt("sleeve %.0f mm wide is narrower than the %.0f mm biceps line — it would bind on the arm",

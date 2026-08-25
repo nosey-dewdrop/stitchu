@@ -118,6 +118,23 @@ std::vector<PathCommand> edgePathOf(const PatternPiece& piece, const EdgeRole& r
 double edgeLengthOf(const PatternPiece& piece, const EdgeRole& role,
                     double tolMM = 1e-6);
 
+// RE-ADDRESS THE NAMED EDGES AFTER A POST-PASS (V7-D).
+// An EdgeRole addresses `commands` by INDEX, so any pass that re-emits a piece's
+// outline (the shoulder-panel split, the bardot/off-shoulder rework, the cup
+// seam, the pleat, the Locket dart transfer) leaves every name pointing at some
+// other edge.
+// V7-C made that failure LOUD (edgePathOf refuses on a broken anchor) but nothing
+// repaired it, so a piece that went through a post-pass simply lost its names.
+//
+// This repairs the ADDRESS from the role's own endpoint ANCHORS, which are
+// coordinates and therefore survive a re-emission: find the two commands that
+// still END at `start` and `end`, and re-point the index range between them.
+// It never invents an edge — if either anchor is no longer a vertex of the
+// outline (the post-pass genuinely reshaped that edge), the name is DROPPED, and
+// a consumer then refuses BY NAME instead of measuring the wrong thing
+// (RULES invariant 1). Roles that still resolve are left untouched.
+void reanchorEdgeRoles(PatternPiece& piece, double tolMM = 1e-6);
+
 // REHBER entry (F-H, 2026-08-23). The sewing GUIDE says what to do in what
 // order; this says what to do it WITH and where this particular pattern will
 // fight you. `basis` is the reason the sentence is allowed to exist:

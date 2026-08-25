@@ -229,6 +229,31 @@ double edgeLengthOf(const PatternPiece& piece, const EdgeRole& role, double tolM
     return pathLength(path);
 }
 
+void reanchorEdgeRoles(PatternPiece& piece, double tolMM) {
+    if (piece.edgeRoles.empty()) return;
+    const int n = static_cast<int>(piece.commands.size());
+    // Index of the command that ENDS at p (the Move counts: it ends at its own
+    // point). -1 when the outline no longer passes through p.
+    const auto endsAt = [&](const Point& p) -> int {
+        for (int i = 0; i < n; ++i) {
+            if (piece.commands[static_cast<size_t>(i)].type == CmdType::Close) continue;
+            const Point& q = piece.commands[static_cast<size_t>(i)].to;
+            if (std::fabs(q.x - p.x) <= tolMM && std::fabs(q.y - p.y) <= tolMM) return i;
+        }
+        return -1;
+    };
+    std::vector<EdgeRole> kept;
+    kept.reserve(piece.edgeRoles.size());
+    for (const auto& role : piece.edgeRoles) {
+        if (!edgePathOf(piece, role, tolMM).empty()) { kept.push_back(role); continue; }
+        const int is = endsAt(role.start);
+        const int ie = endsAt(role.end);
+        if (is < 0 || ie <= is) continue;   // reshaped or gone: DROP the name
+        kept.push_back(EdgeRole{role.role, is + 1, ie, role.start, role.end});
+    }
+    piece.edgeRoles = std::move(kept);
+}
+
 namespace {
 
 // Douglas-Peucker on an open polyline (first/last kept).
