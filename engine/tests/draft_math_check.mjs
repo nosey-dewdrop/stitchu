@@ -92,11 +92,18 @@
 //
 // ANTI-HACK / KANIT KANCALARI (yalnız §4.2 boş-test ve §4.5 mutasyon kanıtı
 // için; üretim koşusunda hiçbiri set edilmez, set edilirse EKRANA BASILIR):
-//   V5D_MUTATE=<ölçü_adı>:<mm>[,<ölçü_adı>:<mm>...]  ölçülen değere mm ekler
+//   V5D_MUTATE=<ölçü_adı>[@<BEDEN>]:<mm>[,...]        ölçülen değere mm ekler;
+//     `@BEDEN` verilirse mutasyon YALNIZ o bedene uygulanır (kart V5-H md.5:
+//     "(a) tarafında yalnız TEK bedeni bozan bir mutasyon exit 1 dönmeli").
 //   V5D_ENGINE=<yol>                                  başka bir motor .js'i yükler
 //   V5D_SIZES=EU38[,EU40...]                          beden alt kümesi
+//
+// KAYIT YAZMA (sayı ELLE YAZILMAZ — kart V5-H md.3):
+//   node engine/tests/draft_math_check.mjs --write-baseline
+//   Bugünkü koşunun KENDİ ölçtüğü sayıları v5-ratchet-baseline.json'a işler.
+//   ASLA GEVŞETMEZ: mevcut bir çizgi varsa min(mevcut, bugün) yazılır.
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -175,10 +182,30 @@ const EASE_BANDS = {
 //       ALTINA düştüğünde de ölçülür ve "TAVAN DÜŞÜRÜLEBİLİR" basar.
 //   Son hüküm İKİ bölümü AYRI AYRI adlandırır ve exit kodunu hangi bölümün
 //   düşürdüğü ADIYLA yazılır.
+//
+// ★★ İKİ KÖRLÜK KAPATILDI (kart V5-H, 2026-08-25) ★★
+//   (I) MAGNİTÜD KÖRLÜĞÜ — (b) bölümü yalnız bant dışı BEDEN SAYISINI ölçüyordu,
+//       MİLİMETREYİ değil. Ölçüldü: `V5D_MUTATE=hip_ease:-15` payı 17.2..23.2mm'den
+//       2.2..8.2mm'ye (yayınlanmış minimumun ~1/12'si) düşürüyor, sayı 8/8 SABİT
+//       kalıyor, kapı exit 0 dönüyordu. `hip_ease`'in 8/8 doymuşluğu o çizgiyi
+//       YAPISAL olarak ısırmaz yapmıştı. -> (b) artık İKİ çizgi taşıyor:
+//       bant dışı BEDEN SAYISI **ve** bandın dışına EN KÖTÜ MİLİMETRE SAPMASI
+//       (bant içindeyse 0). İkisinden biri kayıttan ARTARSA exit 1.
+//  (II) ORTALAMA/MAKSİMUM KÖRLÜĞÜ — (a) bölümünün ratchet'i 8 bedenin yalnız
+//       MAKSİMUM sapmasını donduruyordu. `scye_depth` EU34 11.4 -> EU48 7.4mm
+//       yayıldığı için EU48 4mm bozulup tavana değmeden geçebiliyordu.
+//       -> (a) artık BEDEN BAŞINA çizgi taşıyor (8 sayı); her beden kendi
+//       çizgisini aşarsa exit 1. Maksimum tavanı SİLİNMEDİ, üstüne eklendi.
+//   Bu bir SIKILAŞTIRMADIR: hiçbir eşik, bant ya da kayıt gevşetilmedi;
+//   yalnız kapının yakaladığı bozma kümesi genişletildi.
 // ---------------------------------------------------------------------------
-const RBFILE = JSON.parse(readFileSync(join(here, 'v5-ratchet-baseline.json'), 'utf8'));
+const WRITE_BASELINE = process.argv.includes('--write-baseline');
+const RBPATH = join(here, 'v5-ratchet-baseline.json');
+const RBFILE = JSON.parse(readFileSync(RBPATH, 'utf8'));
 const RB = RBFILE.kapilar.draft_math_check;
 const RATCHET = RB.sapmaTavaniMM;
+// (a) BEDEN BAŞINA ÇİZGİ — V5-H md.2. Yoksa kalem çizgisiz sayılır ve DÜŞER.
+const RATCHET_PER_SIZE = RB.sapmaTavaniPerBedenMM || null;
 // (b) YAYINLANMIŞ BANT KALEMLERİ — ARTIK RATCHET DEĞİL (kart V5-F, 2026-08-25).
 // Tavan kayıtları SİLİNMEDİ; `bantDisiKayit` altında statü + künye + gerekçe +
 // ölçüm tarihiyle duruyorlar. Bantın kaynağı YAYINLANMIŞ olduğu için
@@ -331,10 +358,13 @@ function measure(size) {
   m.hip_ease = hipRing - body.hip * 10;
 
   // Mutasyon kancası — DEĞERE uygulanır, EŞİĞE değil.
+  // Sözdizimi: `ad:mm` (bütün bedenler) ya da `ad@BEDEN:mm` (yalnız o beden).
   if (process.env.V5D_MUTATE) {
     for (const part of process.env.V5D_MUTATE.split(',')) {
-      const [k, v] = part.split(':');
+      const [lhs, v] = part.split(':');
+      const [k, onlySize] = lhs.split('@');
       if (!(k in m)) { FAIL(`V5D_MUTATE bilinmeyen ölçü adı: ${k}`); continue; }
+      if (onlySize && onlySize !== size) continue;
       m[k] += Number(v);
     }
   }
@@ -345,7 +375,14 @@ function measure(size) {
 // YARGI
 // ---------------------------------------------------------------------------
 const worst = { scye_depth: 0, shoulder_width_front: 0, shoulder_width_back: 0, back_neck_drop: 0 };
+// V5-H md.2: aynı sapma BEDEN BAŞINA da tutulur — maksimum tek çizgi, 8 bedenin
+// yayılımını (scye_depth 11.4 -> 7.4mm) örtüyordu.
+const perSize = { scye_depth: {}, shoulder_width_front: {}, shoulder_width_back: {}, back_neck_drop: {} };
 const bandOut = { bust_ease: 0, waist_ease: 0, hip_ease: 0 };
+// V5-H md.1: bant dışına EN KÖTÜ mm sapması (bant içindeyse 0) — beden SAYISI
+// doymuşken (hip 8/8) magnitüdün sınırsız kötüleşmesini durduran ikinci çizgi.
+const bandOutMM = { bust_ease: 0, waist_ease: 0, hip_ease: 0 };
+const bandOutMMWhere = { bust_ease: '—', waist_ease: '—', hip_ease: '—' };
 let unmeasurable = 0;
 let engineErrors = 0;
 const tally = { GECTI: 0, KALDI: 0, KAYNAKSIZ: 0 };
@@ -379,6 +416,7 @@ for (const size of SIZES) {
   for (const [name, exp, cite] of pointItems) {
     const d = Math.abs(m[name] - exp);
     if (d > worst[name]) worst[name] = d;
+    if (!(size in perSize[name]) || d > perSize[name][size]) perSize[name][size] = d;
     row(name, m[name], exp, exp.toFixed(2), 'KAYNAKSIZ', cite + ' — TOLERANS YAYIN YOK (V5-R §A) -> RATCHET');
     tally.KAYNAKSIZ += 1;
   }
@@ -404,9 +442,12 @@ for (const size of SIZES) {
   for (const name of ['bust_ease', 'waist_ease', 'hip_ease']) {
     const b = EASE_BANDS[name];
     const inb = m[name] >= b.lo - 1e-9 && m[name] <= b.hi + 1e-9;
-    console.log(`    ${L(name, 24)} ${W(m[name].toFixed(4), 11)} ${W(`${b.lo}..${b.hi}`, 11)} ${W('', 10)}  ${L(inb ? 'GEÇTİ' : 'KALDI', 10)} ${b.cite}`);
+    // V5-H md.1: bandın dışına ne kadar mm taşıldığı. Bant içi = 0.
+    const outMM = m[name] < b.lo ? b.lo - m[name] : (m[name] > b.hi ? m[name] - b.hi : 0);
+    if (outMM > bandOutMM[name]) { bandOutMM[name] = outMM; bandOutMMWhere[name] = size; }
+    console.log(`    ${L(name, 24)} ${W(m[name].toFixed(4), 11)} ${W(`${b.lo}..${b.hi}`, 11)} ${W(outMM > 0 ? `dışı ${outMM.toFixed(4)}` : '', 16)}  ${L(inb ? 'GEÇTİ' : 'KALDI', 10)} ${b.cite}`);
     if (inb) tally.GECTI += 1;
-    else { tally.KALDI += 1; bandOut[name] += 1; FAIL(`${size} ${name}: ${m[name].toFixed(4)}mm yayınlanmış bant [${b.lo}, ${b.hi}]mm DIŞINDA — ${b.cite}`); }
+    else { tally.KALDI += 1; bandOut[name] += 1; FAIL(`${size} ${name}: ${m[name].toFixed(4)}mm yayınlanmış bant [${b.lo}, ${b.hi}]mm DIŞINDA (bandın ${outMM.toFixed(4)}mm dışında) — ${b.cite}`); }
   }
 }
 
@@ -428,10 +469,54 @@ for (const [name, ceil] of Object.entries(RATCHET)) {
   if (w > ceil + 1e-9) { broken += 1; FAIL(`RATCHET KIRILDI — ${name}: en kötü sapma ${w.toFixed(4)}mm > tavan ${ceil.toFixed(2)}mm`); }
   else if (w < ceil - 1e-9) { lowered += 1; console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${w.toFixed(6)}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); }
 }
+
+// --- (a2) BEDEN BAŞINA ÇİZGİ (kart V5-H md.2) --------------------------------
+// Yukarıdaki tavan 8 bedenin yalnız MAKSİMUMUNU donduruyor. scye_depth EU34
+// 11.4 -> EU48 7.4mm yayıldığı için EU48 4mm bozulup maksimum tavana değmeden
+// geçebiliyordu (kart V5-H, hakemin yapısal çıkarımı). Artık HER BEDEN kendi
+// çizgisini taşıyor. SIKILAŞTIRMA: maksimum tavanı yerinde duruyor.
+console.log('    (a2) BEDEN BAŞINA ÇİZGİ — maksimum tek çizgi 8 bedenin yayılımını örtüyordu (V5-H md.2)');
+let perSizeBroken = 0, perSizeLowered = 0;
+if (!RATCHET_PER_SIZE) {
+  broken += 1;
+  FAIL('BEDEN BAŞINA ÇİZGİ YOK — v5-ratchet-baseline.json içinde sapmaTavaniPerBedenMM okunamadı; çizgisiz kapı geçirilemez (yazmak için: node engine/tests/draft_math_check.mjs --write-baseline)');
+} else {
+  for (const name of Object.keys(perSize)) {
+    const rec = RATCHET_PER_SIZE[name];
+    const cells = [];
+    for (const size of SIZES) {
+      const d = perSize[name][size];
+      if (d === undefined) { cells.push(`${size} —`); continue; }
+      const ceil = rec && typeof rec[size] === 'number' ? rec[size] : null;
+      if (ceil === null) {
+        perSizeBroken += 1;
+        FAIL(`BEDEN BAŞINA ÇİZGİ YOK — ${name}/${size}: sapmaTavaniPerBedenMM.${name}.${size} okunamadı`);
+        cells.push(`${size} ${d.toFixed(2)}/YOK`);
+        continue;
+      }
+      if (d > ceil + 1e-9) {
+        perSizeBroken += 1;
+        FAIL(`BEDEN BAŞINA RATCHET KIRILDI — ${name} ${size}: sapma ${d.toFixed(4)}mm > çizgi ${ceil.toFixed(4)}mm (maksimum tavan ${RATCHET[name]}mm bunu YAKALAMAZDI)`);
+        cells.push(`${size} ${d.toFixed(2)}>${ceil.toFixed(2)}`);
+      } else if (d < ceil - 1e-9) {
+        perSizeLowered += 1;
+        cells.push(`${size} ${d.toFixed(2)}<${ceil.toFixed(2)}`);
+      } else {
+        cells.push(`${size} ${d.toFixed(2)}`);
+      }
+    }
+    console.log(`    ${L(name, 24)} ${cells.join(' · ')}`);
+  }
+}
+// perSizeBroken `broken`a EKLENMEZ: (a) satırı 8 bedenin MAKSİMUMUNU, (a2) satırı
+// beden başına çizgiyi ayrı ayrı adlandırsın diye. İkisi de exit kodunu düşürür.
+if (perSizeLowered) console.log(`    ${perSizeLowered} beden-kaleminde ÇİZGİ DÜŞÜRÜLEBİLİR; taban dosyası kendiliğinden güncellenmez (--write-baseline ayrı ve bilinçli bir commit'tir).`);
 console.log('    (b) YAYINLANMIŞ BANT KALEMLERİ — RATCHET YOK, SERT HÜKÜM: bant dışı beden > 0 ise KIRMIZI');
 console.log('        (gerekçe: bandın kaynağı YAYINLANMIŞ; tavan koymak yayını susturur — v6 §7.1)');
 console.log('        exit kodu: bu KIRMIZI Damla kararına bağlı (DAMLA-KUYRUK K-V5A) -> exit 0;');
 console.log('        AMA bant dışı beden sayısı 2026-08-25 kaydından ARTARSA REGRESYON -> exit 1.');
+console.log('        V5-H md.1: İKİNCİ ÇİZGİ — bandın dışına EN KÖTÜ mm sapması da kayıtlı;');
+console.log('        beden sayısı sabit kalsa bile mm derinleşirse REGRESYON -> exit 1.');
 let bandViolations = 0, bandRegressions = 0, bandLowered = 0;
 for (const name of ['bust_ease', 'waist_ease', 'hip_ease']) {
   const n = bandOut[name];
@@ -451,6 +536,24 @@ for (const name of ['bust_ease', 'waist_ease', 'hip_ease']) {
     bandLowered += 1;
     console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} bant dışı ${kayit} -> ${n}  (kaydı indirmek AYRI ve BİLİNÇLİ bir commit'tir)`);
   }
+
+  // --- İKİNCİ ÇİZGİ: MAGNİTÜD (kart V5-H md.1) ------------------------------
+  // Beden SAYISI doymuşken (hip 8/8) kalem SINIRSIZ kötüleşebiliyordu:
+  // V5D_MUTATE=hip_ease:-15 payı 17.2..23.2 -> 2.2..8.2mm yapıyor, sayı 8/8
+  // sabit kalıyor, kapı ısırmıyordu. Bu çizgi o körlüğü kapatır.
+  const mmRec = rec.olculenBantDisiEnKotuMM_2026_08_25;
+  const mmNow = bandOutMM[name];
+  console.log(`    ${L(name, 24)} bant dışı EN KÖTÜ ${W(mmNow.toFixed(4), 10)} mm (${bandOutMMWhere[name]})   2026-08-25 kaydı: ${mmRec === undefined ? '—' : mmRec.toFixed(4) + 'mm'}`);
+  if (typeof mmRec !== 'number') {
+    bandRegressions += 1;
+    FAIL(`MAGNİTÜD ÇİZGİSİ YOK — ${name}: v5-ratchet-baseline.json bantDisiKayit.${name}.olculenBantDisiEnKotuMM_2026_08_25 okunamadı; çizgisiz kalem geçirilemez (yazmak için --write-baseline)`);
+  } else if (mmNow > mmRec + 1e-9) {
+    bandRegressions += 1;
+    FAIL(`MAGNİTÜD REGRESYONU — ${name}: bant dışı en kötü sapma ${mmNow.toFixed(4)}mm (${bandOutMMWhere[name]}) > 2026-08-25 kaydı ${mmRec.toFixed(4)}mm. İhlalin BÜYÜKLÜĞÜ kötüleşti; beden SAYISI sabit kalsa bile bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız bugünkü ihlali örter, derinleşmesini DEĞİL).`);
+  } else if (mmNow < mmRec - 1e-9) {
+    bandLowered += 1;
+    console.log(`      ÇİZGİ DÜŞÜRÜLEBİLİR: ${name} bant dışı en kötü ${mmRec.toFixed(4)} -> ${mmNow.toFixed(4)}mm  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`);
+  }
 }
 console.log('    (c) DİĞER');
 console.log(`    ${L('unmeasurable', 24)} ${W(unmeasurable, 10)}      tavan ${W(UNMEASURABLE_RATCHET, 8)}`);
@@ -469,20 +572,81 @@ const ratchetVerdict = broken === 0 ? 'GEÇTİ' : 'KIRMIZI';
 const bandVerdict = bandViolations === 0 ? 'GEÇTİ' : 'KIRMIZI';
 console.log(`\nRATCHET: ${broken} tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> ${ratchetVerdict}`);
 console.log(`YAYINLANMIŞ BANT: ${bandViolations} bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> ${bandVerdict}`);
-console.log(`BANT REGRESYONU: ${bandRegressions} kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> ${bandRegressions === 0 ? 'GEÇTİ' : 'KIRMIZI'}`);
+console.log(`BANT REGRESYONU: ${bandRegressions} çizgi 2026-08-25 kaydının ÜSTÜNDE  [İKİ çizgi: bant dışı BEDEN SAYISI + bant dışı EN KÖTÜ mm — V5-H md.1]  -> ${bandRegressions === 0 ? 'GEÇTİ' : 'KIRMIZI'}`);
+console.log(`BEDEN BAŞINA RATCHET: ${perSizeBroken} beden-kalemi kendi çizgisinin ÜSTÜNDE  [8 beden x 4 kalem — V5-H md.2]  -> ${perSizeBroken === 0 ? 'GEÇTİ' : 'KIRMIZI'}`);
 
 const culprits = [];
 if (broken > 0) culprits.push('RATCHET (a/c)');
-if (bandRegressions > 0) culprits.push('BANT REGRESYONU (b, kayıt aşıldı)');
+if (perSizeBroken > 0) culprits.push('BEDEN BAŞINA RATCHET (a2, V5-H md.2)');
+if (bandRegressions > 0) culprits.push('BANT REGRESYONU (b, kayıt aşıldı — beden sayısı ya da mm)');
 const failed = culprits.length > 0;
 console.log(`EXIT KODUNU DÜŞÜREN BÖLÜM: ${failed ? culprits.join(' + ') : 'YOK (hiçbiri)'}`);
 if (!failed && bandViolations > 0) {
   console.log(`EXIT KODUNU DÜŞÜRMEYEN KIRMIZI: YAYINLANMIŞ BANT (b) — ${bandViolations} ihlal DURUYOR ve yukarıda beden+mm+bant+künyeyle adıyla basıldı.`);
   console.log(`  exit 0, ÇÜNKÜ kapanması bir ÖLÇÜM değil bir DAMLA KARARI (gövde girdisini kaydırmak) — v6 §4 istisnası, kuyruk satırı DAMLA-KUYRUK.md K-V5A.`);
-  console.log(`  Bu satır "geçti" DEMEZ. Kayıt (bust 4 · waist 0 · hip 8) aşılırsa exit 1 döner.`);
+  const recLine = ['bust_ease', 'waist_ease', 'hip_ease'].map((n) => {
+    const r = BAND_RECORD[n] || {};
+    return `${n.replace('_ease', '')} ${r.olculenBantDisi_2026_08_25 ?? '—'} beden / ${typeof r.olculenBantDisiEnKotuMM_2026_08_25 === 'number' ? r.olculenBantDisiEnKotuMM_2026_08_25.toFixed(2) + 'mm' : '—'}`;
+  }).join(' · ');
+  console.log(`  Bu satır "geçti" DEMEZ. İKİ çizgiden biri aşılırsa exit 1 döner — kayıt: ${recLine}.`);
 }
 const bandTail = bandViolations > 0
   ? `${bandViolations} bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)`
   : `0 ihlal`;
-console.log(`\ndraft_math_check — RATCHET: ${broken} tavan aşımı · YAYINLANMIŞ BANT: ${bandTail} · BANT REGRESYONU: ${bandRegressions} · adıyla basılan ihlal satırı ${namedFails} · exit ${failed ? 1 : 0}`);
+console.log(`\ndraft_math_check — RATCHET: ${broken} tavan aşımı · BEDEN BAŞINA RATCHET: ${perSizeBroken} çizgi aşımı · YAYINLANMIŞ BANT: ${bandTail} · BANT REGRESYONU: ${bandRegressions} · adıyla basılan ihlal satırı ${namedFails} · exit ${failed ? 1 : 0}`);
+
+// ═══ KAYIT YAZMA — SAYI ELLE YAZILMAZ (kart V5-H md.3) ══════════════════════
+// Bu bayrak yalnız BU koşunun ÖLÇTÜĞÜ sayıları dosyaya işler. Mevcut bir çizgi
+// varsa min(mevcut, bugün) yazılır: kayıt ASLA GEVŞEYEMEZ. Künye (ölçüm tarihi,
+// basan komut, ne olduğunun tek cümlesi) her yeni alanın yanında yazılır.
+if (WRITE_BASELINE) {
+  if (process.env.V5D_MUTATE || process.env.V5D_ENGINE || process.env.V5D_SIZES) {
+    console.log('\n--write-baseline REDDEDİLDİ: kanıt kancası (V5D_*) aktifken kayıt yazılamaz — mutasyonlu sayı kayda geçemez.');
+    process.exit(1);
+  }
+  const OLCUM_TARIHI = '2026-08-25';
+  const KOMUT = 'node engine/tests/draft_math_check.mjs --write-baseline';
+  const f = JSON.parse(readFileSync(RBPATH, 'utf8'));
+  const d = f.kapilar.draft_math_check;
+
+  const prevPS = d.sapmaTavaniPerBedenMM || {};
+  const ps = {
+    _kunye: {
+      neyiOlcer: 'Kalem x BEDEN kiriliminda |olculen - Aldrich beklenen| sapmasi; her beden KENDI cizgisini asarsa exit 1.',
+      nedenVar: 'sapmaTavaniMM 8 bedenin yalniz MAKSIMUMUNU donduruyordu; scye_depth EU34 11.4 -> EU48 7.4mm yayildigi icin EU48 4mm bozulup tavana degmeden geciyordu (kart V5-H md.2, hakemin yapisal cikarimi).',
+      statu: 'SIKILASTIRMA — maksimum tavan (sapmaTavaniMM) SILINMEDI, bu cizgi onun USTUNE eklendi.',
+      olcumTarihi: OLCUM_TARIHI,
+      basanKomut: KOMUT,
+      gevsemeKurali: 'Yeniden yazilirken min(mevcut, bugun) alinir; sayi yalniz DUSEBILIR.',
+    },
+  };
+  for (const name of Object.keys(perSize)) {
+    ps[name] = {};
+    for (const size of ALL_SIZES) {
+      const today = perSize[name][size];
+      const prev = prevPS[name] ? prevPS[name][size] : undefined;
+      if (today === undefined && typeof prev !== 'number') continue;
+      if (today === undefined) { ps[name][size] = prev; continue; }
+      ps[name][size] = typeof prev === 'number' ? Math.min(prev, today) : today;
+    }
+  }
+  d.sapmaTavaniPerBedenMM = ps;
+
+  for (const name of ['bust_ease', 'waist_ease', 'hip_ease']) {
+    const rec = d.bantDisiKayit[name];
+    const prev = rec.olculenBantDisiEnKotuMM_2026_08_25;
+    const today = bandOutMM[name];
+    rec.olculenBantDisiEnKotuMM_2026_08_25 = typeof prev === 'number' ? Math.min(prev, today) : today;
+    rec.enKotuMM_kunye = `Bandin (${EASE_BANDS[name].lo}..${EASE_BANDS[name].hi}mm) disina en kotu mm sapmasi, 8 bedende; bant icindeyse 0. `
+      + `Bu cizgi bant disi BEDEN SAYISINDAN bagimsizdir ve V5-H md.1 ile eklendi: sayi doymusken (hip 8/8) kalem sinirsiz kotulesebiliyordu `
+      + `(V5D_MUTATE=hip_ease:-15 payi 17.2..23.2 -> 2.2..8.2mm yapiyor, sayi 8/8 SABIT, kapi exit 0 donuyordu). `
+      + `Olcum tarihi ${OLCUM_TARIHI}. Basan komut: ${KOMUT}. Artarsa exit 1; azalirsa "CIZGI DUSURULEBILIR" basar.`;
+  }
+  d._V5H = `V5-H (${OLCUM_TARIHI}): iki KORLUK kapatildi. (I) (b) bolumu artik IKI cizgi tasiyor — bant disi BEDEN SAYISI ve bant disi EN KOTU mm (bantDisiKayit.*.olculenBantDisiEnKotuMM_2026_08_25). (II) (a) bolumu artik BEDEN BASINA cizgi tasiyor (sapmaTavaniPerBedenMM), maksimum tavan yerinde duruyor. Hicbir esik/bant/kayit gevsetilmedi; yalnizca kapinin yakaladigi bozma kumesi genisledi. Basan komut: ${KOMUT}.`;
+
+  writeFileSync(RBPATH, JSON.stringify(f, null, 2) + '\n');
+  console.log(`\n--write-baseline: ${RBPATH.replace(root + '/', '')} YAZILDI (bugunku olcumden, min-kurali ile).`);
+  console.log('    Kontrol: bayraksiz yeniden kostur; sayilar birebir tutmali.');
+  process.exit(0);
+}
 process.exit(failed ? 1 : 0);

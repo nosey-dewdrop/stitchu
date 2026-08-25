@@ -1,0 +1,66 @@
+=== V5-H MUTASYON KANITI — kart V5-H md.5 · 2026-08-25 00:52 UTC · ağaç cb81b9c
+Soru: bu kartın eklediği İKİ bekçi (b-magnitüd, a2-beden başına) GERÇEKTEN ısırıyor mu?
+
+--- 0) TABAN (mutasyonsuz) — komut: node engine/tests/draft_math_check.mjs
+EXIT=0
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 0 çizgi 2026-08-25 kaydının ÜSTÜNDE  [İKİ çizgi: bant dışı BEDEN SAYISI + bant dışı EN KÖTÜ mm — V5-H md.1]  -> GEÇTİ
+BEDEN BAŞINA RATCHET: 0 beden-kalemi kendi çizgisinin ÜSTÜNDE  [8 beden x 4 kalem — V5-H md.2]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: YOK (hiçbiri)
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 0 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+
+--- 1) V5D_MUTATE=hip_ease:-15  (kart: 'artık exit 1 dönmeli' — mm regresyonu)
+    ESKİ kapı bunda exit 0 dönüyordu: pay 17.2..23.2 -> 2.2..8.2mm olsa da bant dışı beden 8/8 SABİT.
+EXIT=1
+    bust_ease                bant dışı EN KÖTÜ    14.3500 mm (EU34)   2026-08-25 kaydı: 14.3500mm
+    waist_ease               bant dışı EN KÖTÜ     0.0000 mm (—)   2026-08-25 kaydı: 0.0000mm
+    hip_ease                 bant dışı EN KÖTÜ    48.6000 mm (EU34)   2026-08-25 kaydı: 33.6000mm
+FAIL  MAGNİTÜD REGRESYONU — hip_ease: bant dışı en kötü sapma 48.6000mm (EU34) > 2026-08-25 kaydı 33.6000mm. İhlalin BÜYÜKLÜĞÜ kötüleşti; beden SAYISI sabit kalsa bile bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız bugünkü ihlali örter, derinleşmesini DEĞİL).
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 1 çizgi 2026-08-25 kaydının ÜSTÜNDE  [İKİ çizgi: bant dışı BEDEN SAYISI + bant dışı EN KÖTÜ mm — V5-H md.1]  -> KIRMIZI
+BEDEN BAŞINA RATCHET: 0 beden-kalemi kendi çizgisinin ÜSTÜNDE  [8 beden x 4 kalem — V5-H md.2]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: BANT REGRESYONU (b, kayıt aşıldı — beden sayısı ya da mm)
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 0 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 1 · adıyla basılan ihlal satırı 12 · exit 1
+
+--- 2) V5D_MUTATE=bust_ease:-3  (kart: 'artık exit 1 dönmeli')
+    ESKİ kapı bunda exit 0 dönüyordu: EU34 49.15 -> 46.15mm olsa da bant dışı beden 4/8 SABİT.
+EXIT=1
+    bust_ease                bant dışı EN KÖTÜ    17.3500 mm (EU34)   2026-08-25 kaydı: 14.3500mm
+FAIL  MAGNİTÜD REGRESYONU — bust_ease: bant dışı en kötü sapma 17.3500mm (EU34) > 2026-08-25 kaydı 14.3500mm. İhlalin BÜYÜKLÜĞÜ kötüleşti; beden SAYISI sabit kalsa bile bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız bugünkü ihlali örter, derinleşmesini DEĞİL).
+    waist_ease               bant dışı EN KÖTÜ     0.0000 mm (—)   2026-08-25 kaydı: 0.0000mm
+    hip_ease                 bant dışı EN KÖTÜ    33.6000 mm (EU34)   2026-08-25 kaydı: 33.6000mm
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 1 çizgi 2026-08-25 kaydının ÜSTÜNDE  [İKİ çizgi: bant dışı BEDEN SAYISI + bant dışı EN KÖTÜ mm — V5-H md.1]  -> KIRMIZI
+BEDEN BAŞINA RATCHET: 0 beden-kalemi kendi çizgisinin ÜSTÜNDE  [8 beden x 4 kalem — V5-H md.2]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: BANT REGRESYONU (b, kayıt aşıldı — beden sayısı ya da mm)
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 0 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 1 · adıyla basılan ihlal satırı 12 · exit 1
+
+--- 3) V5D_MUTATE=scye_depth@EU48:4  ('(a) tarafında YALNIZ TEK bedeni bozan mutasyon exit 1')
+    EU48 sapması 7.4 -> 11.4mm; MAKSİMUM tavan 11.4mm olduğu için ESKİ ratchet bunu YAKALAMAZDI
+    (aşağıda '(a) scye_depth en kötü 11.4000 / tavan 11.40' satırı hâlâ GEÇTİ diyor; düşüren (a2)).
+EXIT=1
+    scye_depth               en kötü |sapma|    11.4000 mm   tavan    11.40 mm
+FAIL  BEDEN BAŞINA RATCHET KIRILDI — scye_depth EU48: sapma 11.4000mm > çizgi 7.4000mm (maksimum tavan 11.4mm bunu YAKALAMAZDI)
+    scye_depth               EU34 11.40 · EU36 10.70 · EU38 10.00 · EU40 9.60 · EU42 8.90 · EU44 8.20 · EU46 7.80 · EU48 11.40>7.40
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+BANT REGRESYONU: 0 çizgi 2026-08-25 kaydının ÜSTÜNDE  [İKİ çizgi: bant dışı BEDEN SAYISI + bant dışı EN KÖTÜ mm — V5-H md.1]  -> GEÇTİ
+BEDEN BAŞINA RATCHET: 1 beden-kalemi kendi çizgisinin ÜSTÜNDE  [8 beden x 4 kalem — V5-H md.2]  -> KIRMIZI
+EXIT KODUNU DÜŞÜREN BÖLÜM: BEDEN BAŞINA RATCHET (a2, V5-H md.2)
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 1 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 1
+
+--- 4) HEPSİ GERİ ALINDI — exit 0 ve sayılar BİREBİR dönmeli
+EXIT=0
+diff /tmp/v5h.m0.txt /tmp/v5h.m4.txt ->
+    (BOŞ — birebir aynı)
+
+--- 5) İHLAL LİSTESİ KISALDI MI (kart YASAKLAR: '12 ihlal ADIYLA basılmaya devam etsin')
+beden-bazlı FAIL satırı sayısı: 12
+draft_math_check — RATCHET: 0 tavan aşımı · BEDEN BAŞINA RATCHET: 0 çizgi aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+
+--- 6) --write-baseline MUTASYON ALTINDA REDDEDİLİYOR MU (kayıt kirletilemesin)
+EXIT=1
+
+--write-baseline REDDEDİLDİ: kanıt kancası (V5D_*) aktifken kayıt yazılamaz — mutasyonlu sayı kayda geçemez.

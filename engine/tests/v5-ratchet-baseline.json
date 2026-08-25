@@ -52,30 +52,45 @@
           "statu": "SERT HUKUM, ratchet DEGIL",
           "exitKodu_V5G": "V5-G: KIRMIZI DURUYOR, exit kodunu DUSURMUYOR (Damla karari: DAMLA-KUYRUK K-V5A). Regresyon cizgisi 4; 5'e cikarsa exit 1.",
           "olculenBantDisi_2026_08_25": 4,
-          "bantMM": [63.5, 101.6],
+          "bantMM": [
+            63.5,
+            101.6
+          ],
           "bantKunyesi": "Threads #221 s.71 MINIMUM EASE bust 2.5in=63.5mm .. ayni yazinin FIT AND EASE tablosu 'Fitted' 4in=101.6mm (birincil-verbatim, V5-R §C4)",
           "gerekce": "Bant YAYINLANMIS. 4/8 beden (EU34/36/38/40) disarida; bunu tavanlamak yayinlanmis minimumu susturur.",
           "basanKomut": "node engine/tests/draft_math_check.mjs",
-          "olculmusCozumAdayi": "govde girdisi bust +1.5cm -> 8 bedende pay 65.80..98.80mm, HEPSI bantta (GECE/log/V5-D.remedy.txt). Kaynak degistirmek DAMLA karari, bu kartin isi degil."
+          "olculmusCozumAdayi": "govde girdisi bust +1.5cm -> 8 bedende pay 65.80..98.80mm, HEPSI bantta (GECE/log/V5-D.remedy.txt). Kaynak degistirmek DAMLA karari, bu kartin isi degil.",
+          "olculenBantDisiEnKotuMM_2026_08_25": 14.350000000000023,
+          "enKotuMM_kunye": "Bandin (63.5..101.6mm) disina en kotu mm sapmasi, 8 bedende; bant icindeyse 0. Bu cizgi bant disi BEDEN SAYISINDAN bagimsizdir ve V5-H md.1 ile eklendi: sayi doymusken (hip 8/8) kalem sinirsiz kotulesebiliyordu (V5D_MUTATE=hip_ease:-15 payi 17.2..23.2 -> 2.2..8.2mm yapiyor, sayi 8/8 SABIT, kapi exit 0 donuyordu). Olcum tarihi 2026-08-25. Basan komut: node engine/tests/draft_math_check.mjs --write-baseline. Artarsa exit 1; azalirsa \"CIZGI DUSURULEBILIR\" basar."
         },
         "waist_ease": {
           "statu": "SERT HUKUM, ratchet DEGIL",
           "exitKodu_V5G": "V5-G: bugun 0/8, ihlal YOK. Regresyon cizgisi 0; 1 bedenlik ihlal bile exit 1 dusurur.",
           "olculenBantDisi_2026_08_25": 0,
-          "bantMM": [25.4, 60.0],
+          "bantMM": [
+            25.4,
+            60
+          ],
           "bantKunyesi": "Threads #221 s.71 MINIMUM EASE bel elbise 1in=25.4mm .. Aldrich 4.bs s.28 'half the waist measurement plus 3 cm ease'=+60mm (birincil-verbatim)",
           "gerekce": "Bugun 8/8 beden bant ICINDE. ⚠ Bant +-5mm mutasyonuna kor (yakalandigi esik +20mm); bant YAYINDAN geldigi icin DARALTILMADI. Sert hukmun ISIRDIGI bu kalemde olculdu: GECE/log/V5-F.mutasyon.txt.",
-          "basanKomut": "node engine/tests/draft_math_check.mjs"
+          "basanKomut": "node engine/tests/draft_math_check.mjs",
+          "olculenBantDisiEnKotuMM_2026_08_25": 0,
+          "enKotuMM_kunye": "Bandin (25.4..60mm) disina en kotu mm sapmasi, 8 bedende; bant icindeyse 0. Bu cizgi bant disi BEDEN SAYISINDAN bagimsizdir ve V5-H md.1 ile eklendi: sayi doymusken (hip 8/8) kalem sinirsiz kotulesebiliyordu (V5D_MUTATE=hip_ease:-15 payi 17.2..23.2 -> 2.2..8.2mm yapiyor, sayi 8/8 SABIT, kapi exit 0 donuyordu). Olcum tarihi 2026-08-25. Basan komut: node engine/tests/draft_math_check.mjs --write-baseline. Artarsa exit 1; azalirsa \"CIZGI DUSURULEBILIR\" basar."
         },
         "hip_ease": {
           "statu": "SERT HUKUM, ratchet DEGIL",
           "exitKodu_V5G": "V5-G: KIRMIZI DURUYOR, exit kodunu DUSURMUYOR (Damla karari: DAMLA-KUYRUK K-V5A). Regresyon cizgisi 8 = tavan olarak DOYMUS ama cizgi olarak degil: 8'in ALTINA dusmek olculur ve 'TAVAN DUSURULEBILIR' basar; 8 zaten SIZES.length oldugu icin yukari yon yapisal olarak kapali, bu YAPISAL SINIR raporda ADIYLA yaziliyor.",
           "olculenBantDisi_2026_08_25": 8,
-          "bantMM": [50.8, 76.2],
+          "bantMM": [
+            50.8,
+            76.2
+          ],
           "bantKunyesi": "Threads #221 s.71 MINIMUM EASE kalca 2in=50.8mm .. etek/pantolon 'Fitted' 3in=76.2mm",
           "gerekce": "8/8 beden disarida, olculen pay 17.2-23.2mm = yayinlanmis minimumun UCTE BIRI. Tavan 8/8 zaten DOYMUSTU: 8'i asan sayi olmadigi icin o ratchet yapisal olarak ASLA isiramazdi (V5-E hakem bulgusu). Kok: motorun payi CARPIMSAL (kalca payi / kalcaCM = 0.2000, 8 bedende bit-sabit), yayinlanmis bant TOPLAMSAL.",
           "basanKomut": "node engine/tests/draft_math_check.mjs",
-          "olculmusCozumAdayi": "kalca +3.5..+5.0cm -> 8 bedende bantta (GECE/log/V5-D.remedy.txt)."
+          "olculmusCozumAdayi": "kalca +3.5..+5.0cm -> 8 bedende bantta (GECE/log/V5-D.remedy.txt).",
+          "olculenBantDisiEnKotuMM_2026_08_25": 33.59999999999995,
+          "enKotuMM_kunye": "Bandin (50.8..76.2mm) disina en kotu mm sapmasi, 8 bedende; bant icindeyse 0. Bu cizgi bant disi BEDEN SAYISINDAN bagimsizdir ve V5-H md.1 ile eklendi: sayi doymusken (hip 8/8) kalem sinirsiz kotulesebiliyordu (V5D_MUTATE=hip_ease:-15 payi 17.2..23.2 -> 2.2..8.2mm yapiyor, sayi 8/8 SABIT, kapi exit 0 donuyordu). Olcum tarihi 2026-08-25. Basan komut: node engine/tests/draft_math_check.mjs --write-baseline. Artarsa exit 1; azalirsa \"CIZGI DUSURULEBILIR\" basar."
         }
       },
       "digerTavanlar": {
@@ -92,7 +107,58 @@
         "hip_ease": "[V5-F 2026-08-25: ARTIK TAVAN DEGIL — SERT HUKUM, bantDisiKayit'e bak. Asagisi tarihsel kayit.] Threads #221 s.71 MINIMUM EASE kalca 2-3 in (50.8..76.2mm) bandinin DISINDA kalan beden sayisi. Bugun 8/8: olculen pay 17.2-23.2mm, yani yayinlanmis minimumun UCTE BIRI. Kok: motorun payi CARPIMSAL (kalca payi / kalcaCM = 0.2000, 8 bedende bit-sabit), yayinlanmis bant TOPLAMSAL. Olculmus duzeltme: kalca +3.5..+5.0cm.",
         "unmeasurable": "Olculemeyen kalem sayisi. Bugun SIFIR — draftJSON hatti omuz dikisi, kol oyugu ve yakayi TASIYOR (surface-pattern hattinin STRAPLESS boslugu BU hatti baglamiyor).",
         "engine_error": "draftJSON'in cokme/hata dondurme sayisi. Bugun SIFIR."
-      }
+      },
+      "sapmaTavaniPerBedenMM": {
+        "_kunye": {
+          "neyiOlcer": "Kalem x BEDEN kiriliminda |olculen - Aldrich beklenen| sapmasi; her beden KENDI cizgisini asarsa exit 1.",
+          "nedenVar": "sapmaTavaniMM 8 bedenin yalniz MAKSIMUMUNU donduruyordu; scye_depth EU34 11.4 -> EU48 7.4mm yayildigi icin EU48 4mm bozulup tavana degmeden geciyordu (kart V5-H md.2, hakemin yapisal cikarimi).",
+          "statu": "SIKILASTIRMA — maksimum tavan (sapmaTavaniMM) SILINMEDI, bu cizgi onun USTUNE eklendi.",
+          "olcumTarihi": "2026-08-25",
+          "basanKomut": "node engine/tests/draft_math_check.mjs --write-baseline",
+          "gevsemeKurali": "Yeniden yazilirken min(mevcut, bugun) alinir; sayi yalniz DUSEBILIR."
+        },
+        "scye_depth": {
+          "EU34": 11.400000000000006,
+          "EU36": 10.699999999999989,
+          "EU38": 10,
+          "EU40": 9.599999999999994,
+          "EU42": 8.900000000000006,
+          "EU44": 8.199999999999989,
+          "EU46": 7.800000000000011,
+          "EU48": 7.400000000000006
+        },
+        "shoulder_width_front": {
+          "EU34": 8.292592785562391,
+          "EU36": 8.293727462375685,
+          "EU38": 8.294902677288519,
+          "EU40": 8.295938589781699,
+          "EU42": 8.297021370688896,
+          "EU44": 8.297930541752919,
+          "EU46": 8.298840316323933,
+          "EU48": 8.050247685077537
+        },
+        "shoulder_width_back": {
+          "EU34": 18.173752121093997,
+          "EU36": 18.17602835594687,
+          "EU38": 18.17806900467434,
+          "EU40": 18.178353585262286,
+          "EU42": 18.180259678039874,
+          "EU44": 18.18216992829005,
+          "EU46": 18.18227610473238,
+          "EU48": 17.93401758523072
+        },
+        "back_neck_drop": {
+          "EU34": 5.399999999999999,
+          "EU36": 5.699999999999999,
+          "EU38": 6,
+          "EU40": 6.600000000000001,
+          "EU42": 6.899999999999999,
+          "EU44": 7.199999999999999,
+          "EU46": 7.800000000000001,
+          "EU48": 8.399999999999999
+        }
+      },
+      "_V5H": "V5-H (2026-08-25): iki KORLUK kapatildi. (I) (b) bolumu artik IKI cizgi tasiyor — bant disi BEDEN SAYISI ve bant disi EN KOTU mm (bantDisiKayit.*.olculenBantDisiEnKotuMM_2026_08_25). (II) (a) bolumu artik BEDEN BASINA cizgi tasiyor (sapmaTavaniPerBedenMM), maksimum tavan yerinde duruyor. Hicbir esik/bant/kayit gevsetilmedi; yalnizca kapinin yakaladigi bozma kumesi genisledi. Basan komut: node engine/tests/draft_math_check.mjs --write-baseline."
     }
   }
 }
