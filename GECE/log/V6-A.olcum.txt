@@ -1,0 +1,223 @@
+=== ADIM 1a: node engine/tools/foto-spec-olcum.mjs --offline (bayrak EKLENMEDEN) ===
+25 Ağu 2026 Sal +03 04:50:49
+(node:32917) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/damummyphus/damla_projects_2026/stitchu/web/js/vocab.gen.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/damummyphus/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+foto                                     alan    GORME   KELIME  MOTOR   panel  oov(çözülmeyen)
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+FOTO 0 · TAM DOĞRU SPEC 0 (%0.0)
+ALAN YARGISI 0 · tutan 0 (%0.0)
+HATA SINIFI: GORME 0 (%0.0) · KELIME 0 (%0.0) · MOTOR 0 (%0.0)
+SERBEST KANAL (outOfVocab): 0 terim, 0 tanesi terim sicilinde YOK (%0.0)
+banka: /Users/damummyphus/damla_projects_2026/stitchu/vision/eval/live-2026-08-25.json
+
+=== ADIM 1b: --bank bayragi EKLENDI, tekrar kosuldu ===
+$ node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json
+foto                                     alan    GORME   KELIME  MOTOR   KONUM   panel  oov(çözülmeyen)
+----------------------------------------------------------------------------------------------------------------------------------
+01-a-line-cocktail-dress-mannequin.jpg   10/11   1       0       0       0       10     3/3
+02-ball-gown-exhibit.jpg                 9/10    1       0       0       2       10     5/5
+03-wedding-dress-mannequin.jpg           9/10    1       0       0       1       10     4/4
+04-babydoll-dress.jpg                    9/10    1       0       0       3       6      6/6
+05-empire-waist-gown.jpg                 10/10   0       0       0       5       8      8/8
+----------------------------------------------------------------------------------------------------------------------------------
+FOTO 5 · TAM DOĞRU SPEC 1 (%20.0)
+ALAN YARGISI 51 · tutan 47 (%92.2)
+HATA SINIFI: GORME 4 (%100.0) · KELIME 0 (%0.0) · MOTOR 0 (%0.0)
+KONUM (ayrı sınıf, alan yargısıyla ÇAKIŞMAZ — serbest kanal terimleri üstünde): 11 / 26 terim (%42.3)
+  konum ibaresi TAŞIYAN terim: 15/26 (%57.7) · bunların 11'i spec'te yer bulamıyor
+SERBEST KANAL (outOfVocab): 26 terim
+  SİCİL 1 contract/terms.json          : 26  YOK (%100.0)
+  SİCİL 2 dataset/vocab-canonical.json : 26 YOK (%100.0)
+  İKİSİNDE DE YOK                      : 26 (%100.0)
+banka: /Users/damummyphus/damla_projects_2026/stitchu/vision/eval/live-2026-08-22.json
+
+01-a-line-cocktail-dress-mannequin.jpg
+  GORME  shaping: göz 'dart' / vision 'princess'
+
+02-ball-gown-exhibit.jpg
+  GORME  neckline: göz 'square' / vision 'boat'
+  KONUM  beaded empire waist sash → konum 'waist' spec'te yok
+  KONUM  lace overlay bodice and sleeves → konum 'bodice' spec'te yok
+
+03-wedding-dress-mannequin.jpg
+  GORME  skirtStyle: göz 'aLine' / vision 'straight'
+  KONUM  lace applique bodice overlay → konum 'bodice' spec'te yok
+
+04-babydoll-dress.jpg
+  GORME  sleeveLength: göz 'elbow' / vision 'long'
+  KONUM  dropped waist → konum 'dropped,waist' spec'te yok
+  KONUM  front hip welt pockets → konum 'front' spec'te yok
+  KONUM  neck ribbon tie → konum 'neck' spec'te yok
+
+05-empire-waist-gown.jpg
+  KONUM  robe à la française open front over petticoat → konum 'front' spec'te yok
+  KONUM  pointed bodice front (stomacher) → konum 'bodice,front' spec'te yok
+  KONUM  peplum at waist → konum 'waist' spec'te yok
+  KONUM  self-fabric ruched robings trimming front opening → konum 'front' spec'te yok
+  KONUM  open-front overskirt revealing matching underskirt → konum 'front' spec'te yok
+
+=== ADIM 2: PAYDA NEDEN 5? ===
+$ ls vision/eval/photos | wc -l
+      29
+$ python3 -c 'labels.json goz etiketli foto sayisi'
+19
+$ python3 -c 'live-2026-08-22.json bankali foto sayisi'
+5
+$ python3 -c 'live-baseline-oldprompt.json foto sayisi (ESKI PROMPT)'
+68
+$ python3 -c 'oldprompt ile labels kesisimi'
+labels 19 oldprompt 68 kesisim 0 bank22 5 bank22 subset of labels: True
+SEBEP: 25 fotonun 5'i BUGUNKU prompt'la bankalanmis. Kalan 20 foto icin
+  banka kaydi YOK -> canli /api/analyze cagrisi gerekir = KART YASAGI (ucretli).
+  live-baseline-oldprompt.json 68 foto tasiyor ama ESKI PROMPT'un ciktisi;
+  'bugunku isabet' paydasi olarak kullanilamaz (farkli olcum).
+
+=== ADIM 3: DIGER UC TAHMIN DOSYASI (node vision/eval.js <dosya>) ===
+
+$ node vision/eval.js eval/opus-predictions.json
+eval/opus-predictions.json vs eye-labeled ground truth:
+  garment       7/9   78%  10: skirt->dress | 13: dress->top
+  neckline      5/7   71%  02: square->boat | 14: vNeck->sweetheart
+  sleeveStyle   7/8   88%  11: balloon->straight
+  sleeveLength  4/6   67%  04: elbow->long | 11: short->long
+  skirtStyle    6/8   75%  10: gathered->pleated | 11: straight->gathered
+  length        7/7  100%  
+  waistline     7/7  100%  
+  fabric        9/9  100%  
+  hemRuffle     7/8   88%  01: none->single
+  keyhole       8/9   89%  10: false->null
+  OVERALL      67/78  86%
+
+$ node vision/eval.js eval/siglip-predictions.json
+eval/siglip-predictions.json vs eye-labeled ground truth:
+  garment      15/19   79%  04: dress->skirt | 10: skirt->dress | 34: dress->top | 36: top->skirt
+  neckline      5/16   31%  02: square->boat | 03: crew->sweetheart | 04: crew->sweetheart | 05: square->scoop
+  sleeveStyle  14/16   88%  11: balloon->straight | 35: balloon->straight
+  sleeveLength  8/11   73%  04: elbow->long | 15: short->long | 30: elbow->short
+  skirtStyle    6/16   38%  01: straight->gathered | 02: straight->gathered | 03: aLine->gathered | 10: gathered->pleated
+  length        7/15   47%  01: midi->mini | 02: maxi->mini | 05: maxi->mini | 12: maxi->mini
+  waistline    11/14   79%  05: natural->empire | 11: natural->empire | 32: natural->empire
+  fabric       16/18   89%  01: woven->knit | 34: woven->knit
+  hemRuffle     9/18   50%  01: none->single | 05: none->single | 14: none->single | 30: none->single
+  keyhole      14/19   74%  05: false->true | 30: false->true | 32: false->true | 34: false->true
+  OVERALL      105/162  65%
+
+$ node vision/eval.js eval/clip-predictions.json
+eval/clip-predictions.json vs eye-labeled ground truth:
+  garment      13/19   68%  02: dress->top | 04: dress->skirt | 11: dress->skirt | 13: dress->top
+  neckline      1/16    6%  01: vNeck->square | 02: square->boat | 03: crew->boat | 04: crew->boat
+  sleeveStyle   9/16   56%  12: none->balloon | 13: none->straight | 15: balloon->straight | 32: none->straight
+  sleeveLength  5/11   45%  02: short->long | 04: elbow->long | 05: elbow->long | 11: short->long
+  skirtStyle    3/16   19%  01: straight->halfCircle | 02: straight->gathered | 03: aLine->gathered | 04: pleated->straight
+  length        3/15   20%  01: midi->mini | 02: maxi->mini | 03: maxi->mini | 05: maxi->mini
+  waistline     6/14   43%  01: natural->empire | 05: natural->empire | 11: natural->empire | 12: natural->empire
+  fabric       16/18   89%  04: woven->knit | 11: woven->knit
+  hemRuffle     7/18   39%  10: tiered->single | 11: tiered->single | 12: tiered->single | 15: none->single
+  keyhole       8/19   42%  01: false->true | 03: false->true | 04: false->true | 05: false->true
+  OVERALL      71/162  44%
+
+$ node vision/eval.js eval/live-2026-08-22.json   (bugunku banka, ayni aletle)
+eval/live-2026-08-22.json vs eye-labeled ground truth:
+  garment       5/5  100%  
+  neckline      4/5   80%  02: square->boat
+  sleeveStyle   5/5  100%  
+  sleeveLength  4/5   80%  04: elbow->long
+  skirtStyle    4/5   80%  03: aLine->straight
+  length        5/5  100%  
+  waistline     5/5  100%  
+  fabric        5/5  100%  
+  hemRuffle     5/5  100%  
+  keyhole       5/5  100%  
+  OVERALL      47/50  94%
+
+$ node vision/eval.js eval/live-baseline-oldprompt.json  (kesisim 0 beklenir)
+eval/live-baseline-oldprompt.json vs eye-labeled ground truth:
+  OVERALL      0/0  NaN%
+
+=== ADIM 5: IKI SICIL, 26 TERIM TEK TEK ===
+terim                                                terms.json  vocab-canonical.json
+------------------------------------------------------------------------------------------
+asymmetric draped pleated overlay at hip             YOK         YOK
+diagonal cascading pleated flounce                   YOK         YOK
+waistband seam                                       YOK         YOK
+beaded empire waist sash                             YOK         YOK
+metallic floral embroidery appliqué                  YOK         YOK
+beaded tassel drops                                  YOK         YOK
+lace overlay bodice and sleeves                      YOK         YOK
+sequin/crystal shoulder embellishment                YOK         YOK
+lace applique bodice overlay                         YOK         YOK
+empire seam lace trim band                           YOK         YOK
+flared bell lace cuffs                               YOK         YOK
+lace-bordered bib panel                              YOK         YOK
+dropped waist                                        YOK         YOK
+scalloped collar edge                                YOK         YOK
+white contrast cuffs                                 YOK         YOK
+front hip welt pockets                               YOK         YOK
+knife pleated skirt                                  YOK         YOK
+neck ribbon tie                                      YOK         YOK
+robe à la française open front over petticoat        YOK         YOK
+pointed bodice front (stomacher)                     YOK         YOK
+peplum at waist                                      YOK         YOK
+engageantes / tiered ruffled elbow cuffs             YOK         YOK
+self-fabric ruched robings trimming front opening    YOK         YOK
+applied floral trim garlands                         YOK         YOK
+open-front overskirt revealing matching underskirt   YOK         YOK
+vertical pinstripe woven pattern                     YOK         YOK
+------------------------------------------------------------------------------------------
+TOPLAM 26 terim · terms.json VAR 0 / YOK 26 · vocab-canonical VAR 0 / YOK 26
+sicil boyutlari: terms.json 246 isim (52 kanonik) · vocab-canonical 88 isim
+
+=== ADIM 4: KONUM SINIFI (aletin kendi ciktisi, ADIM 1b'de) ===
+$ node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json | grep -A2 '^KONUM'
+KONUM (ayrı sınıf, alan yargısıyla ÇAKIŞMAZ — serbest kanal terimleri üstünde): 11 / 26 terim (%42.3)
+  konum ibaresi TAŞIYAN terim: 15/26 (%57.7) · bunların 11'i spec'te yer bulamıyor
+
+26 terimin konum taramasi (tek tek):
+KONUMLU asymmetric draped pleated overlay at hip             hip
+        diagonal cascading pleated flounce                   
+        waistband seam                                       
+KONUMLU beaded empire waist sash                             empire,waist
+        metallic floral embroidery appliqué                  
+        beaded tassel drops                                  
+KONUMLU lace overlay bodice and sleeves                      bodice
+KONUMLU sequin/crystal shoulder embellishment                shoulder
+KONUMLU lace applique bodice overlay                         bodice
+KONUMLU empire seam lace trim band                           empire
+        flared bell lace cuffs                               
+        lace-bordered bib panel                              
+KONUMLU dropped waist                                        dropped,waist
+        scalloped collar edge                                
+        white contrast cuffs                                 
+KONUMLU front hip welt pockets                               front,hip
+KONUMLU knife pleated skirt                                  skirt
+KONUMLU neck ribbon tie                                      neck
+KONUMLU robe à la française open front over petticoat        front
+KONUMLU pointed bodice front (stomacher)                     bodice,front
+KONUMLU peplum at waist                                      waist
+        engageantes / tiered ruffled elbow cuffs             
+KONUMLU self-fabric ruched robings trimming front opening    front
+        applied floral trim garlands                         
+KONUMLU open-front overskirt revealing matching underskirt   front
+        vertical pinstripe woven pattern                     
+---
+TOPLAM 26 terim · konum ibaresi tasiyan 15 (%57.7)
+
+=== ADIM 6: v2 IFADE EDILEBILIRLIK (68 foto, eski prompt) ===
+$ node engine/tools/foto-spec-olcum.mjs --v2 vision/eval/live-baseline-oldprompt.json
+v2 İFADE EDİLEBİLİRLİK · kaynak vision/eval/live-baseline-oldprompt.json · sözleşme contract/garment-spec-v2.json@2.0.0
+FOTO 68 · İFADE EDİLEBİLİR 15 (%22.1) · DÜŞEN 53 (%77.9)
+  'sleeve' absent yüzünden düşen (BAŞKA engeli olmayan): 19 (%27.9)
+  'sleeve' engelinin GEÇTİĞİ foto (tek engel olmasa da): 35 (%51.5)
+OPERATÖR BAŞINA ENGEL (foto sayısı, çakışabilir):
+  sleeve                   ABSENT  35 foto (%51.5)
+  skirtFamily              ABSENT  20 foto (%29.4)
+  gatheredOverlayLayer     ABSENT  7 foto (%10.3)
+EKSEN ENUM'UNDA KARŞILIĞI YOK (operatör suçlanmadı):
+  skirtShape='halfCircle'  5 foto
+  garment='other'          5 foto
+ASSERT EDİLMEYEN EKSENLER: shoulder, closure — görü çıktısı bu ikisini okumuyor,
+  bu yüzden yargılanmadı. shoulder=shoulderSeam FLAGGED olduğu için, okunabilseydi
+  ifade edilebilir oran DÜŞERDİ (bu sayı bir TAVAN).

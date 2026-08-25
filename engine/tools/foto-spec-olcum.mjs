@@ -14,10 +14,15 @@
 //   KELIME  gözün gördüğü kelime motorun sözlüğünde YOK (contract/primitives-v1 +
 //           vocab-resolution-v1 ile de çözülmüyor) -> kapalı liste dar
 //   MOTOR   spec geçerli ama motor çizmeyi reddediyor / kalıp doğmuyor -> motor
+//   KONUM   terim bir yapı elemanının YERİNİ söylüyor ("at hip", "front neck",
+//           "empire waist", "back") ama üretilen spec o yeri HİÇBİR alanında
+//           taşımıyor -> spec'in yer ekseni yok. Serbest kanal (outOfVocab)
+//           terimleri üstünde ölçülür, alan yargısıyla ÇAKIŞMAZ.
 //
 // Canlı çağrı ücretlidir ve worker 15/gün/IP sigortası var: her ham cevap
 // vision/eval/live-<tarih>.json'a BANKALANIR, ikinci koşu bankadan okur.
-//   node engine/tools/foto-spec-olcum.mjs [--limit N] [--offline]
+//   node engine/tools/foto-spec-olcum.mjs [--limit N] [--offline] [--bank <yol>]
+//   node engine/tools/foto-spec-olcum.mjs --v2 <okuma-dosyasi>   (v2 ifade edilebilirliği)
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -27,15 +32,94 @@ import { ROOT, draft } from './spec-diff.mjs';
 const API = 'https://stitchu-api.damummyphus.workers.dev/api/analyze';
 const PHOTOS = join(ROOT, 'vision', 'eval', 'photos');
 const LABELS = JSON.parse(readFileSync(join(ROOT, 'vision', 'eval', 'labels.json'), 'utf8'));
-const BANK = join(ROOT, 'vision', 'eval', `live-${new Date().toISOString().slice(0, 10)}.json`);
 const RESOLUTION = JSON.parse(readFileSync(join(ROOT, 'contract', 'vocab-resolution-v1.json'), 'utf8'));
 
 const argv = process.argv.slice(2);
 const LIMIT = argv.includes('--limit') ? Number(argv[argv.indexOf('--limit') + 1]) : 99;
 const OFFLINE = argv.includes('--offline');
+// --bank <yol>: bankayı AÇIKÇA seç. Varsayılan banka adı tarih damgalıdır
+// (`live-<bugün>.json`), yani dünkü koşuyu bugün tekrar etmek imkânsızdı:
+// --offline boş `FOTO 0` basıyordu. Sahte tarihli kopya bırakmak yerine bayrak.
+const BANK = argv.includes('--bank')
+  ? (argv[argv.indexOf('--bank') + 1].startsWith('/')
+    ? argv[argv.indexOf('--bank') + 1]
+    : join(ROOT, argv[argv.indexOf('--bank') + 1]))
+  : join(ROOT, 'vision', 'eval', `live-${new Date().toISOString().slice(0, 10)}.json`);
 
 const bank = existsSync(BANK) ? JSON.parse(readFileSync(BANK, 'utf8')) : {};
 const files = Object.keys(LABELS).filter((k) => !k.startsWith('_'));
+
+// ── --v2 <okuma-dosyasi>: v2 İFADE EDİLEBİLİRLİĞİ ───────────────────────────
+// contract/garment-spec-v2.json'un KENDİ kuralı (topology._role): bir eksen
+// değeri, `requires` listesindeki operatörlerden biri `shipped` DEĞİLSE ifade
+// edilemez ve red o operatörün ADIYLA verilir. Burada uydurulan tek şey görü
+// alanı -> eksen değeri eşlemesidir; kural sözleşmeden okunur.
+if (argv.includes('--v2')) {
+  const src = argv[argv.indexOf('--v2') + 1];
+  const V2 = JSON.parse(readFileSync(join(ROOT, 'contract', 'garment-spec-v2.json'), 'utf8'));
+  const ST = Object.fromEntries(Object.entries(V2.operators).map(([k, v]) => [k, v.status]));
+  const TOPO = V2.topology;
+  const reads = JSON.parse(readFileSync(src.startsWith('/') ? src : join(ROOT, src), 'utf8'));
+
+  // görü alanı -> v2 eksen değeri. Karşılığı OLMAYAN okuma `null` döner ve
+  // "enum'da yok" diye ayrı sayılır (operatör suçlanmaz).
+  const GARMENT = { dress: 'sheathDress', top: 'top', skirt: 'skirt' };
+  const SKIRT = { straight: 'straight', aLine: 'aLine', gathered: 'gathered', pleated: 'pleated' };
+  const SLEEVE = { none: 'none', straight: 'setIn', balloon: 'puff', cap: 'cap' };
+  const SUPPR = { dart: 'dart', princess: 'seamOnly' };
+
+  const pad = (s2, n) => String(s2).padEnd(n);
+  const rowsV2 = [];
+  for (const [file, r] of Object.entries(reads)) {
+    const axes = [];        // [eksen, okuma, v2 değeri|null]
+    axes.push(['garment', r.garment, GARMENT[r.garment] ?? null]);
+    const hasSkirt = r.garment === 'dress' || r.garment === 'skirt';
+    if (hasSkirt && r.skirtStyle) axes.push(['skirtShape', r.skirtStyle, SKIRT[r.skirtStyle] ?? null]);
+    if (r.garment !== 'skirt') {
+      const sl = r.sleeveStyle ?? 'none';
+      axes.push(['sleeve', sl, SLEEVE[sl] ?? null]);
+    }
+    if (r.shaping) axes.push(['suppression', r.shaping, SUPPR[r.shaping] ?? null]);
+    axes.push(['collar', r.collar?.type ?? 'none', TOPO.collar.values[r.collar?.type ?? 'none'] ? (r.collar?.type ?? 'none') : null]);
+
+    const blockers = [];    // operatör adıyla red
+    const noEnum = [];      // eksen enum'unda karşılık yok
+    for (const [ax, read, val] of axes) {
+      if (val === null) { noEnum.push(`${ax}='${read}'`); continue; }
+      for (const op of (TOPO[ax].values[val].requires || [])) {
+        if (ST[op] !== 'shipped') blockers.push({ ax, read, val, op, st: ST[op] });
+      }
+    }
+    rowsV2.push({ file, blockers, noEnum });
+  }
+
+  const N = rowsV2.length;
+  const ok = rowsV2.filter((r) => !r.blockers.length && !r.noEnum.length).length;
+  const byOp = {};
+  for (const r of rowsV2) for (const o of new Set(r.blockers.map((b) => b.op))) byOp[o] = (byOp[o] || 0) + 1;
+  const soleSleeve = rowsV2.filter((r) => !r.noEnum.length
+    && r.blockers.length && new Set(r.blockers.map((b) => b.op)).size === 1
+    && r.blockers[0].op === 'sleeve').length;
+  const anySleeve = rowsV2.filter((r) => r.blockers.some((b) => b.op === 'sleeve')).length;
+
+  const pc = (a, b) => (b ? (100 * a / b).toFixed(1) : '0.0');
+  console.log(`v2 İFADE EDİLEBİLİRLİK · kaynak ${src} · sözleşme contract/garment-spec-v2.json@${V2.version}`);
+  console.log(`FOTO ${N} · İFADE EDİLEBİLİR ${ok} (%${pc(ok, N)}) · DÜŞEN ${N - ok} (%${pc(N - ok, N)})`);
+  console.log(`  'sleeve' absent yüzünden düşen (BAŞKA engeli olmayan): ${soleSleeve} (%${pc(soleSleeve, N)})`);
+  console.log(`  'sleeve' engelinin GEÇTİĞİ foto (tek engel olmasa da): ${anySleeve} (%${pc(anySleeve, N)})`);
+  console.log('OPERATÖR BAŞINA ENGEL (foto sayısı, çakışabilir):');
+  for (const [o, c] of Object.entries(byOp).sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${pad(o, 24)} ${ST[o] === 'shipped' ? 'shipped' : ST[o].toUpperCase()}  ${c} foto (%${pc(c, N)})`);
+  }
+  const ne = {};
+  for (const r of rowsV2) for (const x of r.noEnum) ne[x] = (ne[x] || 0) + 1;
+  console.log('EKSEN ENUM\'UNDA KARŞILIĞI YOK (operatör suçlanmadı):');
+  for (const [x, c] of Object.entries(ne).sort((a, b) => b[1] - a[1])) console.log(`  ${pad(x, 24)} ${c} foto`);
+  console.log('ASSERT EDİLMEYEN EKSENLER: shoulder, closure — görü çıktısı bu ikisini okumuyor,');
+  console.log('  bu yüzden yargılanmadı. shoulder=shoulderSeam FLAGGED olduğu için, okunabilseydi');
+  console.log('  ifade edilebilir oran DÜŞERDİ (bu sayı bir TAVAN).');
+  process.exit(0);
+}
 
 // ── canlı okuma (bankalı) ───────────────────────────────────────────────────
 function readPhoto(file) {
@@ -82,6 +166,44 @@ for (const t of TERMS.terms) {
 const norm = (s) => String(s).toLowerCase().trim().replace(/\s+/g, ' ');
 const termKnown = (t) => termNames.has(norm(t));
 
+// ── İKİNCİ SİCİL: dataset/vocab-canonical.json ──────────────────────────────
+// terms.json (K1) ile aynı soruyu ayrı bir sicile sorar. Bu dosya anahtar->
+// kanonik terim eşlemesidir; hem anahtarlar hem değerler "bilinen" sayılır.
+const VCANON = JSON.parse(readFileSync(join(ROOT, 'dataset', 'vocab-canonical.json'), 'utf8'));
+const canonNames = new Set();
+for (const [k, v] of Object.entries(VCANON)) {
+  if (k.startsWith('_')) continue;
+  canonNames.add(norm(k));
+  canonNames.add(norm(v));
+}
+const canonKnown = (t) => canonNames.has(norm(t));
+
+// ── KONUM SINIFI ────────────────────────────────────────────────────────────
+// Tanım (V6-A kartı): terim bir yapı elemanının YERİNİ söylüyor ("at hip",
+// "front neck", "empire waist", "back") ama üretilen spec o yeri HİÇBİR
+// alanında taşımıyor. Konum ibaresi taşımayan terim bu sınıfa girmez.
+const KONUM_WORDS = [
+  'front', 'back', 'side', 'centre', 'center', 'left', 'right',
+  'neck', 'neckline', 'shoulder', 'bust', 'chest', 'waist', 'empire',
+  'hip', 'hem', 'underarm', 'armhole', 'armscye', 'cuff', 'sleeve',
+  'bodice', 'skirt', 'yoke', 'upper', 'lower', 'high', 'low', 'drop',
+  'dropped', 'natural', 'shoulder-to-shoulder',
+];
+function konumWords(term) {
+  const toks = norm(term).split(/[^a-z]+/).filter(Boolean);
+  return [...new Set(toks.filter((t) => KONUM_WORDS.includes(t)))];
+}
+// spec o yeri taşıyor mu: alan ADI ya da alan DEĞERİ o konum sözcüğünü içeriyorsa taşır.
+// camelCase de ayrılır: 'vNeck' -> [v, neck], 'topLength' -> [top, length].
+const words = (s) => String(s).replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  .toLowerCase().split(/[^a-z]+/).filter(Boolean);
+function specCarries(spec, word) {
+  for (const [k, v] of Object.entries(spec)) {
+    if (words(k).includes(word) || words(v).includes(word)) return true;
+  }
+  return false;
+}
+
 // göz etiketinin alanları (labels.json'un yazdığı 12 alan); `length` -> skirtLength.
 const FIELD_MAP = {
   garment: 'garment', neckline: 'neckline', sleeveStyle: 'sleeveStyle',
@@ -108,7 +230,7 @@ for (const file of files) {
   if (seen._error) { rows.push({ file, err: seen._error }); continue; }
   if (!bank[file]) used++; else if (!OFFLINE) used += 0;
   const label = LABELS[file];
-  const miss = { GORME: [], KELIME: [], MOTOR: [] };
+  const miss = { GORME: [], KELIME: [], MOTOR: [], KONUM: [] };
   let judged = 0, agree = 0;
 
   for (const [lf, sf] of Object.entries(FIELD_MAP)) {
@@ -136,39 +258,61 @@ for (const file of files) {
   if (d.error) miss.MOTOR.push(`motor reddetti: ${d.error}`);
   else if (d.issues && d.issues.length) miss.MOTOR.push(`validator: ${d.issues[0]}`);
 
-  const oovUnknown = (seen.outOfVocab || []).filter((t) => !termKnown(t));
+  const oov = seen.outOfVocab || [];
+  const oovUnknown = oov.filter((t) => !termKnown(t));              // sicil 1: contract/terms.json
+  const oovUnknown2 = oov.filter((t) => !canonKnown(t));            // sicil 2: dataset/vocab-canonical.json
+  const oovUnknownBoth = oov.filter((t) => !termKnown(t) && !canonKnown(t));
+  // KONUM: terim konum ibaresi taşıyor VE spec o konumu hiçbir alanda taşımıyor.
+  const konum = [];
+  for (const t of oov) {
+    const ws = konumWords(t);
+    if (!ws.length) continue;
+    const missing = ws.filter((wd) => !specCarries(spec, wd));
+    if (missing.length) konum.push(`${t} → konum '${missing.join(',')}' spec'te yok`);
+  }
+  miss.KONUM = konum;
   rows.push({
     file, judged, agree, miss,
     pieces: d.error ? 0 : d.pattern.pieces.length,
-    oov: seen.outOfVocab || [], oovUnknown,
+    oov, oovUnknown, oovUnknown2, oovUnknownBoth,
+    oovKonumlu: oov.filter((t) => konumWords(t).length).length,
   });
 }
 
 // ── tablo ───────────────────────────────────────────────────────────────────
 const w = (s, n) => String(s).padEnd(n);
-console.log(w('foto', 40), w('alan', 7), w('GORME', 7), w('KELIME', 7), w('MOTOR', 7), 'panel  oov(çözülmeyen)');
-console.log('-'.repeat(120));
-let J = 0, A = 0, G = 0, K = 0, M = 0, tam = 0, oovAll = 0, oovUnk = 0;
+console.log(w('foto', 40), w('alan', 7), w('GORME', 7), w('KELIME', 7), w('MOTOR', 7), w('KONUM', 7), 'panel  oov(çözülmeyen)');
+console.log('-'.repeat(130));
+let J = 0, A = 0, G = 0, K = 0, M = 0, P = 0, tam = 0;
+let oovAll = 0, oovUnk = 0, oovUnk2 = 0, oovUnkBoth = 0, oovKonumlu = 0;
 for (const r of rows) {
   if (r.err) { console.log(w(r.file, 40), 'HATA', r.err); continue; }
   J += r.judged; A += r.agree;
   G += r.miss.GORME.length; K += r.miss.KELIME.length; M += r.miss.MOTOR.length;
+  P += r.miss.KONUM.length;
   oovAll += r.oov.length; oovUnk += r.oovUnknown.length;
+  oovUnk2 += r.oovUnknown2.length; oovUnkBoth += r.oovUnknownBoth.length;
+  oovKonumlu += r.oovKonumlu;
   const clean = r.agree === r.judged && r.miss.MOTOR.length === 0;
   if (clean) tam++;
   console.log(w(r.file, 40), w(`${r.agree}/${r.judged}`, 7), w(r.miss.GORME.length, 7),
-    w(r.miss.KELIME.length, 7), w(r.miss.MOTOR.length, 7), w(r.pieces, 6),
+    w(r.miss.KELIME.length, 7), w(r.miss.MOTOR.length, 7), w(r.miss.KONUM.length, 7), w(r.pieces, 6),
     `${r.oovUnknown.length}/${r.oov.length}`);
 }
-console.log('-'.repeat(120));
+console.log('-'.repeat(130));
 const pct = (a, b) => (b ? (100 * a / b).toFixed(1) : '0.0');
 console.log(`FOTO ${rows.filter((r) => !r.err).length} · TAM DOĞRU SPEC ${tam} (%${pct(tam, rows.filter((r) => !r.err).length)})`);
 console.log(`ALAN YARGISI ${J} · tutan ${A} (%${pct(A, J)})`);
 console.log(`HATA SINIFI: GORME ${G} (%${pct(G, G + K + M)}) · KELIME ${K} (%${pct(K, G + K + M)}) · MOTOR ${M} (%${pct(M, G + K + M)})`);
-console.log(`SERBEST KANAL (outOfVocab): ${oovAll} terim, ${oovUnk} tanesi terim sicilinde YOK (%${pct(oovUnk, oovAll)})`);
+console.log(`KONUM (ayrı sınıf, alan yargısıyla ÇAKIŞMAZ — serbest kanal terimleri üstünde): ${P} / ${oovAll} terim (%${pct(P, oovAll)})`);
+console.log(`  konum ibaresi TAŞIYAN terim: ${oovKonumlu}/${oovAll} (%${pct(oovKonumlu, oovAll)}) · bunların ${P}'i spec'te yer bulamıyor`);
+console.log(`SERBEST KANAL (outOfVocab): ${oovAll} terim`);
+console.log(`  SİCİL 1 contract/terms.json          : ${oovUnk}  YOK (%${pct(oovUnk, oovAll)})`);
+console.log(`  SİCİL 2 dataset/vocab-canonical.json : ${oovUnk2} YOK (%${pct(oovUnk2, oovAll)})`);
+console.log(`  İKİSİNDE DE YOK                      : ${oovUnkBoth} (%${pct(oovUnkBoth, oovAll)})`);
 console.log(`banka: ${BANK}`);
 for (const r of rows) {
-  if (r.err || (!r.miss.GORME.length && !r.miss.KELIME.length && !r.miss.MOTOR.length)) continue;
+  if (r.err || (!r.miss.GORME.length && !r.miss.KELIME.length && !r.miss.MOTOR.length && !r.miss.KONUM.length)) continue;
   console.log(`\n${r.file}`);
-  for (const k of ['GORME', 'KELIME', 'MOTOR']) for (const m of r.miss[k]) console.log(`  ${k}  ${m}`);
+  for (const k of ['GORME', 'KELIME', 'MOTOR', 'KONUM']) for (const m of r.miss[k]) console.log(`  ${k}  ${m}`);
 }
