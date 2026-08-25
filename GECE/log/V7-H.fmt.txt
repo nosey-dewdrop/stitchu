@@ -1,0 +1,38 @@
+V7-H — format/argument mismatch in the sleeve convergence refusal
+engine/src/validator.cpp:408-413 (fmt defined at engine/src/validator.cpp:21)
+
+The path only opens when convergence misses AND ease is out of window, which no
+shipped draft hits. To fire it on purpose the guard was TEMPORARILY replaced with
+if (true) in validator.cpp, engine_check rebuilt and run, then the guard restored.
+
+=== BEFORE (buggy format string, path forced open) ===
+$ cmake --build engine/build -j8 --target engine_check && ./engine/build/engine_check | grep -m 4 "cap seam"
+  EU34 dress/woven/princess/natural/crew/aLine/mini/straight.short: [cap] Sleeve: cap seam 391.0 vs DRAWN armhole 0.0 (-60261330 named edge(s)) + 0% ease = 4.0 — convergence missed by 391.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/straight.long: [cap] Sleeve: cap seam 391.0 vs DRAWN armhole 0.0 (-60261330 named edge(s)) + 0% ease = 4.0 — convergence missed by 391.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/balloon.short: [cap] Balloon Sleeve: cap seam 391.0 vs DRAWN armhole 0.0 (-60261330 named edge(s)) + 0% ease = 4.0 — convergence missed by 391.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/balloon.elbow: [cap] Balloon Sleeve: cap seam 391.0 vs DRAWN armhole 0.0 (-60261330 named edge(s)) + 0% ease = 4.0 — convergence missed by 391.0 mm
+
+=== AFTER (fixed format string, path still forced open) ===
+$ cmake --build engine/build -j8 --target engine_check && ./engine/build/engine_check | grep -m 4 "cap seam"
+  EU34 dress/woven/princess/natural/crew/aLine/mini/straight.short: [cap] Sleeve: cap seam 391.0 vs DRAWN armhole 375.9 (4 named edge(s)) + 4% ease = 391.0 — convergence missed by 0.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/straight.long: [cap] Sleeve: cap seam 391.0 vs DRAWN armhole 375.9 (4 named edge(s)) + 4% ease = 391.0 — convergence missed by 0.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/balloon.short: [cap] Balloon Sleeve: cap seam 391.0 vs DRAWN armhole 375.9 (4 named edge(s)) + 4% ease = 391.0 — convergence missed by 0.0 mm
+  EU34 dress/woven/princess/natural/crew/aLine/mini/balloon.elbow: [cap] Balloon Sleeve: cap seam 391.0 vs DRAWN armhole 375.9 (4 named edge(s)) + 4% ease = 391.0 — convergence missed by 0.0 mm
+
+=== GUARD PROOF: does the new format attribute catch this bug class? ===
+The buggy format string was reintroduced on purpose and the engine lib rebuilt.
+$ cmake --build engine/build -j8 --target engine 2>&1 | grep -A3 -i warning
+engine/src/validator.cpp:421:28: warning: format specifies type 'double' but the argument has type 'const char *' [-Wformat]
+  419 |             fmt("cap seam %.1f vs DRAWN armhole %.1f (%d named edge(s)) + %.0f%% ease = %.1f — "
+      |                                                 ~~~~
+      |                                                 %.1s
+engine/src/validator.cpp:421:72: warning: format specifies type 'int' but the argument has type 'double' [-Wformat]
+engine/src/validator.cpp:422:17: warning: format specifies type 'double' but the argument has type 'int' [-Wformat]
+engine/src/validator.cpp:423:17: warning: data argument not used by format string [-Wformat-extra-args]
+4 warnings generated.
+Before this phase the same code compiled silently. The attribute turns the
+whole bug class into a compile-time diagnostic.
+
+=== FINAL STATE: fix in, tamper removed, full build warning count ===
+$ cmake --build engine/build -j8 2>&1 | grep -icE "warning|error"
+0

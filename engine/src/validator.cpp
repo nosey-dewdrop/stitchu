@@ -18,6 +18,16 @@ namespace stitchu {
 namespace PatternValidator {
 namespace {
 
+// The compiler must check these format strings. A silent %.1f-fed-a-const-char*
+// mismatch printed a fabricated armhole length in the sleeve refusal (V7-H);
+// varargs + vsnprintf gives no diagnostic on its own.
+#if defined(__GNUC__) || defined(__clang__)
+#define STITCHU_PRINTF_LIKE(fmtIndex, argIndex) __attribute__((format(printf, fmtIndex, argIndex)))
+#else
+#define STITCHU_PRINTF_LIKE(fmtIndex, argIndex)
+#endif
+
+STITCHU_PRINTF_LIKE(1, 2)
 std::string fmt(const char* format, ...) {
     char buffer[256];
     va_list args;
@@ -406,7 +416,7 @@ std::vector<ValidationIssue> sleeveIssues(
     const bool easeInWindow = ease >= capEaseMin && ease <= capEaseMax;
     if (std::fabs(capLength - target) > capLengthTolerance && !easeInWindow) {
         issues.push_back({"cap", sleeve->name,
-            fmt("cap seam %.1f vs DRAWN armhole %.1f (%d named edge(s)) + %.0f%% ease = %.1f — "
+            fmt("cap seam %.1f vs %s armhole %.1f (%d named edge(s)) + %.0f%% ease = %.1f — "
                 "convergence missed by %.1f mm",
                 capLength, armholeNamed ? "DRAWN" : "SCALAR(unnamed)", armholeDrawn,
                 armholeParts, capEase * 100, target,
