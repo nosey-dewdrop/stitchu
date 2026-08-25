@@ -15,14 +15,12 @@ koşturdu). Ağaç `12ad937..7d68584`. ⚠ Yan dal
 `research/gecis-antropometri-donanim` `--ff-only` alındı, 4.3'ten geçti.
 
 ## KAPANMIŞ FAZLAR
-- **V0** — 7 kart, 6 alt kapı yeşil, 4.7 önce KALDI sonra 0F ile GEÇTİ. `GECE/V0.md`
-- **V1** — 5 kart. Hakem önce **KALDI** (tanık cümlesi UYDURMAYDI), `05156a1`
-  düzeltince GEÇTİ. Kırmızı 6→4. `GECE/V1.md` · **V2** — DEVRALINDI. 6 kart.
-  **3 yeni kapı**, test 105→108. `GECE/V2.md`
+- **V0** — 7 kart, 6 alt kapı yeşil, 4.7 KALDI→GEÇTİ · **V1** — 5 kart, hakem
+  önce **KALDI** (tanık cümlesi UYDURMAYDI), kırmızı 6→4 · **V2** —
+  DEVRALINDI, **3 yeni kapı**, 105→108. `GECE/V{0,1,2}.md`
 - **V3** — 6 kart. **Kabuk yayınlandı: flat dış konturu ÇİZİLMİYOR, kalıbın
-  beslendiği AYNI `GarmentSurf`'ten HESAPLANIYOR.** 108→110. `GECE/V3.md`
-- **V4** — 7 kart. **Sessiz çökertme kapıya bağlandı** (110→111), croquis
-  kökten düzeltildi. Hakem KALDI→GEÇTİ. `GECE/V4.md`
+  beslendiği AYNI `GarmentSurf`'ten HESAPLANIYOR.** 108→110 · **V4** — 7 kart,
+  **sessiz çökertme kapıya bağlandı** (110→111). `GECE/V3.md` · `GECE/V4.md`
 - **V5** — DEVRALINDI. 12 kart (Z·R·R2·B·B2·A·D·E·F·G·H·I). **2 yeni kapı,
   111→113**, kırmızı AD kümesi BÜYÜMEDİ. `GECE/V5.md`
 
@@ -103,8 +101,7 @@ dokunmadı (`git diff 12ad937..HEAD`).
 - V7 ← `52ae85c` tavanı **+ V3: G5 SAYIYLA KİLİTLİ** **+ V5:** çentik
   izdüşümü · `notches` TÜR ALANI · GEÇİŞ kapısı · dikiş grafiği artefakta ·
   payın CİNSİ (K-V5A) — **beşi de `engine/src/` işi**
-- V8 ← `GECE/V5-R.md` §C (KES-F/FAST, birincil)
-- V9/V10 ← `GECE/V0-0C.md` (1248 iddia) · `?v` **136'da donmuş** · kâtip
+- V8 ← `GECE/V5-R.md` §C (KES-F/FAST, birincil) · V9/V10 ← `GECE/V0-0C.md` (1248 iddia) · `?v` **136'da donmuş** · kâtip
   ARCHITECTURE §13 + README + INDEX tazeledi (`0aebee0`)
 
 ## KUYRUKTAKİ KART TASLAKLARI (tamamı + gerekçe: `GECE/V5.md` §5)
