@@ -130,11 +130,22 @@ BAĞIMSIZ ateşliyor:
 
 ## KART DIŞI FARK EDİLENLER (dokunulmadı)
 
-1. **FAZI ASIL BLOKE EDEN +6 BENİM KARTIMDA DEĞİL.** `ada3bf9`'te duran
-   `garment +6 · neckline/shaping/skirtStyle/topLength/yoke +1`. Bu satırlar
-   taban commit'i `495d58a` ile `ada3bf9` arasında bir yerde girmiş; hangi
-   dosyadan geldiği **ARAŞTIRILMADI** (süre + kart yasağı). Kapı yeşile
-   dönecekse iş BURADA, çıpa sözlüğünde değil. **Bu bir kart olarak yazılmalı.**
+1. **FAZI ASIL BLOKE EDEN +6 BENİM KARTIMDA DEĞİL — KAYNAĞI BULUNDU.**
+   `ada3bf9`'te duran `garment +6 · neckline/shaping/skirtStyle/topLength/yoke +1`.
+   Kapsam içinde `495d58a..ada3bf9` yalnız 5 dosyaya dokunmuş; artan 6 kelimenin
+   hepsi **ikisinden** geliyor (komut: `git diff -U0 495d58a..ada3bf9 -- <kapsam>`
+   + eklenen satırlarda `grep -w`):
+   - `engine/tools/foto-spec-olcum.mjs` — `garment` 6 · `neckline` 1 ·
+     `shaping` 1 · `skirtStyle` 1 · `topLength` 1 · `yoke` 1
+   - `engine/tools/render-garment-flat.mjs` — `garment` 2 · `neckline` 1 ·
+     `shaping` 1
+   Bunların çoğu **gerçek kod referansı** (`axes.push(['garment', r.garment, …])`,
+   `if (hasSkirt && r.skirtStyle)`), birkaçı yorum satırı
+   (`// 'topLength' -> [top, length]`, `// It reads the neckline / sleeve /
+   shaping / skirt / length …`). **Yorum satırları bedelsiz düşürülebilir;
+   kod referansları bir KAPSAM kararıdır.** Kapı yeşile dönecekse iş BURADA,
+   çıpa sözlüğünde değil. `foto-spec-olcum.mjs` bu kartta YASAKLI (V6-G'nin
+   dosyası), o yüzden dokunulmadı. **Kuyruk kartı olarak yazılmalı.**
 2. **Ratchet, kaynaklı bir sözlükle yapısal olarak çatışıyor.** Kapı satır
    sayıyor; kaynağına bağlı her yeni kontrat, kaynağın ADINI yazmak zorunda,
    ve o adlar kapalı enum sözcükleri. Yani "her kaydın yanında kaynağı dursun"

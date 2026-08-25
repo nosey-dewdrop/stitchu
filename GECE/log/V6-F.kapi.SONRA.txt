@@ -1,0 +1,53 @@
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start 112: edit_locality_check
+1/4 Test #112: edit_locality_check ..............   Passed    0.15 sec
+    Start 113: anchor_source_check
+2/4 Test #113: anchor_source_check ..............   Passed    1.46 sec
+    Start 114: vocab_source_check
+3/4 Test #114: vocab_source_check ...............   Passed    0.10 sec
+    Start 115: vocab_reference_check
+4/4 Test #115: vocab_reference_check ............***Failed    4.56 sec
+olculen       : commit HEAD (b66135e)
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10468 (delta +30)
+
+  DUSTU  eksen ADI   collarType                81 ->    80
+  DUSTU  eksen ADI   sleeveLength             274 ->   273
+  DUSTU  eksen ADI   sleeveStyle              351 ->   348
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+  FAIL ARTTI  eksen ADI   backDetail               193 ->   194  (+1)
+  FAIL ARTTI  eksen ADI   backSlit                 161 ->   163  (+2)
+  FAIL ARTTI  eksen ADI   buttonRow                 52 ->    53  (+1)
+  FAIL ARTTI  eksen ADI   edgeFinish                60 ->    61  (+1)
+  FAIL ARTTI  eksen ADI   exposedZip                40 ->    42  (+2)
+  FAIL ARTTI  eksen ADI   garment                 1186 ->  1193  (+7)
+  FAIL ARTTI  eksen ADI   hemShape                  64 ->    65  (+1)
+  FAIL ARTTI  eksen ADI   neckline                 995 ->  1001  (+6)
+  FAIL ARTTI  eksen ADI   peplum                   335 ->   336  (+1)
+  FAIL ARTTI  eksen ADI   ruffledStraps            194 ->   195  (+1)
+  FAIL ARTTI  eksen ADI   shaping                  383 ->   384  (+1)
+  FAIL ARTTI  eksen ADI   shoulderStyle             41 ->    42  (+1)
+  FAIL ARTTI  eksen ADI   skirtStyle               334 ->   335  (+1)
+  FAIL ARTTI  eksen ADI   sleeveCap                146 ->   148  (+2)
+  FAIL ARTTI  eksen ADI   topLength                275 ->   276  (+1)
+  FAIL ARTTI  eksen ADI   yoke                     316 ->   318  (+2)
+  FAIL ARTTI  enum DEGERI keyhole                   59 ->    60  (+1)
+  FAIL ARTTI  enum DEGERI skirt                     96 ->    98  (+2)
+  FAIL ARTTI  enum DEGERI sleeve                    46 ->    47  (+1)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (19 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
+
+
+75% tests passed, 1 tests failed out of 4
+
+Total Test time (real) =   6.28 sec
+
+The following tests FAILED:
+	115 - vocab_reference_check (Failed)
+Errors while running CTest
