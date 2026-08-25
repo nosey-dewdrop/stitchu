@@ -8,7 +8,11 @@ import { fileURLToPath } from 'node:url';
 import { siteVersion } from './site-version.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const OUT = join(ROOT, 'web', 'styles');
+// Output dir. Defaults to web/styles (unchanged behaviour); --out=DIR sends the
+// same bytes somewhere else so the generator can be run and grepped without
+// touching the live site (V10-F evidence run).
+const outArg = process.argv.find((a) => a.startsWith('--out='));
+const OUT = outArg ? outArg.slice('--out='.length) : join(ROOT, 'web', 'styles');
 // Canonical live domain. The site moved off nosey-dewdrop.github.io/stitchu to
 // stitchu.noseydewdrop.com (SEO fix 2026-07-16); the old address is dead and
 // pointing the sitemap at it makes Google index the wrong canonical.
@@ -68,11 +72,11 @@ const STYLES = [
   },
   {
     slug: 'v-neck', group: 'necklines', name: 'V-neck',
-    title: 'V-neck pattern drafted to your measurements · stitchu',
+    title: 'V-neck pattern in eight fixed sizes · stitchu',
     desc: 'How stitchu drafts a v-neck: front depth = neck width + 75 mm, the deepest straight-family neckline, with a guarded centre-front edge on short bodies.',
-    lead: 'The deepest of the classic neckline family. The engine cuts it to your own neck measurement, then guards the centre-front edge so a deep V on a short body cannot fold back on itself.',
+    lead: 'The deepest of the classic neckline family. The engine cuts it to the neck girth of the size you pick, then guards the centre-front edge so a deep V on a short body cannot fold back on itself.',
     facts: [
-      'Front neck width is your neck measurement × 0.17, capped at 72% of the half shoulder, a neckline can never eat the shoulder seam.',
+      'Front neck width is the neck girth of the drafted size × 0.17, capped at 72% of the half shoulder, a neckline can never eat the shoulder seam.',
       'The front depth is the neck width + 75 mm, deeper than scoop (+50) and square (+40).',
       'The centre front/back edge is a cubic whose control points interpolate between the waist and the neck cutout; that guard keeps deep necklines on short bodies from folding the edge back.',
       'The neck facing repeats the garment neckline commands verbatim and its inner edge must match the neck edge within 1.5 mm, a validator rule, checked on every draft.',
@@ -84,7 +88,7 @@ const STYLES = [
       ['facing match tolerance', '1.5 mm (validated)'],
     ],
     compat: 'Dresses and tops. Works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix, facing match, self-intersection, chest-width ease all checked per draft.',
+    tests: 'Covered by engine_check, the full draft matrix; the run was not repeated for this page, so no count is printed here. Checked per draft: facing match, self-intersection, chest-width ease all checked per draft.',
   },
   {
     slug: 'scoop-neckline', group: 'necklines', name: 'Scoop neckline',
@@ -94,7 +98,7 @@ const STYLES = [
     facts: [
       'The front depth is the neck width + 50 mm, the same depth band as the sweetheart, but without the bust lobe: the scoop curve stays on its chord.',
       'Front neck width = neck × 0.17, back = neck × 0.197, both capped at 72% of the half shoulder.',
-      'The back neckline is always a shallow crew curve regardless of the front style, so the back facing and any collar stay stable across the whole neckline family.',
+      'The back neckline is a shallow crew curve regardless of the front style, so the back facing and any collar stay stable across the whole neckline family.',
     ],
     numbers: [
       ['front depth', 'neck width + 50 mm'],
@@ -102,11 +106,11 @@ const STYLES = [
       ['width cap', '72% of half shoulder'],
     ],
     compat: 'Dresses and tops. Works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix; the sweetheart test uses the scoop as its on-chord reference curve.',
+    tests: 'Validated by engine_check, the full draft matrix (count not re-run for this page); the sweetheart test uses the scoop as its on-chord reference curve.',
   },
   {
     slug: 'square-neckline', group: 'necklines', name: 'Square neckline',
-    title: 'Square neckline pattern to your measurements · stitchu',
+    title: 'Square neckline pattern in eight fixed sizes · stitchu',
     desc: 'How stitchu drafts a square neckline: front depth = neck width + 40 mm, straight edges, and a facing matched with a two-command tolerance rule.',
     lead: 'Straight edges, square corner. Structurally the simplest front neckline the engine draws, and the one with its own facing-validation rule.',
     facts: [
@@ -120,7 +124,7 @@ const STYLES = [
       ['width cap', '72% of half shoulder'],
     ],
     compat: 'Dresses and tops. Works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix, including the square-specific facing rule.',
+    tests: 'Covered by engine_check, the full draft matrix; the run was not repeated for this page, so no count is printed here. Checked per draft: including the square-specific facing rule.',
   },
   {
     slug: 'boat-neckline', group: 'necklines', name: 'Boat neckline',
@@ -138,7 +142,7 @@ const STYLES = [
       ['width cap', '72% of half shoulder'],
     ],
     compat: 'Dresses and tops. Works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix; the keyhole test uses a boat top as one of its cases.',
+    tests: 'Validated by engine_check, the full draft matrix (count not re-run for this page); the keyhole test uses a boat top as one of its cases.',
   },
   {
     slug: 'crew-neckline', group: 'necklines', name: 'Crew neckline',
@@ -156,7 +160,7 @@ const STYLES = [
       ['front / back width', 'neck × 0.17 / neck × 0.197'],
     ],
     compat: 'Dresses and tops. The default neckline; works with every sleeve, collar, gathering and skirt option.',
-    tests: 'Validated across the full 70,200-draft matrix.',
+    tests: 'Validated by engine_check, the full draft matrix (count not re-run for this page).',
   },
   {
     slug: 'keyhole', group: 'details', name: 'Keyhole cut-out',
@@ -199,7 +203,7 @@ const STYLES = [
       ['side-seam share of suppression', 'min(60%, 25 mm)'],
     ],
     compat: 'Standalone skirt or dress skirt; princess or dart shaping; ruffle and tiered ruffle hems.',
-    tests: 'Validated across the 70,200-draft matrix; waist-join alignment on dresses held to 2.5 mm by the "waistalign" validator rule.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page); waist-join alignment on dresses held to 2.5 mm by the "waistalign" validator rule.',
   },
   {
     slug: 'straight-skirt', group: 'skirts', name: 'Straight skirt',
@@ -219,7 +223,7 @@ const STYLES = [
       ['hip depth', '200 mm'],
     ],
     compat: 'Standalone skirt or dress skirt; princess gore or dart shaping; ruffle hems.',
-    tests: 'Validated across the 70,200-draft matrix; dart values audited against Aldrich (front 100/back 140), ratio and direction exact.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page); dart values audited against Aldrich (front 100/back 140), ratio and direction exact.',
   },
   {
     slug: 'gathered-skirt', group: 'skirts', name: 'Gathered skirt',
@@ -238,7 +242,7 @@ const STYLES = [
       ['lengths', 'mini 450 · midi 650 · maxi 900 mm'],
     ],
     compat: 'Standalone skirt or dress skirt; pairs with the empire waistline (babydoll); ruffle and tiered hems.',
-    tests: 'Validated across the 70,200-draft matrix; the validator measures the sewn waist through the gather ratio.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page); the validator measures the sewn waist through the gather ratio.',
   },
   {
     slug: 'half-circle-skirt', group: 'skirts', name: 'Half-circle skirt',
@@ -258,7 +262,7 @@ const STYLES = [
       ['arc constant', 'kappa 0.5523'],
     ],
     compat: 'Standalone skirt or dress skirt; no waist shaping (the circle is the shaping); ruffle hems supported.',
-    tests: 'Validated across the 70,200-draft matrix; skirt waist must match the eased body waist per draft.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page); skirt waist must match the eased body waist per draft.',
   },
   {
     slug: 'pleated-skirt', group: 'skirts', name: 'Pleated skirt',
@@ -277,7 +281,7 @@ const STYLES = [
       ['pleat depth marking', '140 mm'],
     ],
     compat: 'Standalone skirt or dress skirt; no princess conversion (the pleats carry the suppression); ruffle hems supported.',
-    tests: 'Validated across the 70,200-draft matrix via the pleat-ratio waist rule.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page) via the pleat-ratio waist rule.',
   },
   {
     slug: 'hem-ruffle', group: 'details', name: 'Hem ruffle (single + tiered)',
@@ -310,7 +314,7 @@ const STYLES = [
       'The base is the set-in sleeve block: biceps from your bust with verified 15% ease, cap height 0.75 of the armhole depth, and the cap width solved by bisection until the cap length lands within 0.5 mm of 4% ease over YOUR drafted armhole.',
       'The balloon widens the profile: hem half-width 0.52 × the sleeve width (straight is 0.40) and an underarm mid-bulge of 0.62 (straight 0.46).',
       'A hem gather line is marked 25 mm above the hem edge; gather notches sit at ±0.18 × width.',
-      'The cuff is its own piece: length = biceps × 0.62 + 20 mm, height 60 mm, cut 2, interfaced, 10 mm seam allowance.',
+      'The cuff is its own piece: length = biceps × 0.62 + 20 mm, height 60 mm, cut 2, interfaced, 15 mm seam allowance (the one number the shipped engine uses: engine/src/constants.gen.hpp kSeamAllowanceMM = 15).',
     ],
     numbers: [
       ['hem half-width', '0.52 × sleeve width (straight: 0.40)'],
@@ -384,7 +388,7 @@ const STYLES = [
       ['fabric adder', '+0.15 m'],
     ],
     compat: 'Dresses and tops; the tie-back coexists with an open-back cutout on the same draft (independent pieces).',
-    tests: 'tests/tie_check, exactly one extra piece, existing outlines byte-identical, cut-2 note with finished + cut size, placement notch.',
+    tests: 'tests/tie_check, exactly one extra piece, existing outlines unchanged under golden_check, cut-2 note with finished + cut size, placement notch.',
   },
   {
     slug: 'collars', group: 'details', name: 'Collar family',
@@ -405,7 +409,7 @@ const STYLES = [
       ['fabric adder', '+0.15 m incl. interfacing'],
     ],
     compat: 'Dresses and tops with any neckline except halter. Edge shapes (round/pointed/scallop) apply to the flat family.',
-    tests: 'tests/collar_check, N extra pieces, outlines byte-identical, neck edge trued to 0.0000 mm, flat sits wider than the stand, scallop adds curves.',
+    tests: 'tests/collar_check, N extra pieces, outlines unchanged under golden_check, neck edge trued to 0.0000 mm, flat sits wider than the stand, scallop adds curves.',
   },
   {
     slug: 'shirring-drawstring', group: 'details', name: 'Drawstring, shirring & smocking',
@@ -427,7 +431,7 @@ const STYLES = [
       ['truing', 'flat edge / ratio = finished edge, 0.005 mm'],
     ],
     compat: 'Dresses and tops, zones neckline/bust/waist/sleeve. A drawstring-gathered SLEEVE casing and gathered straps stay in the honesty layer.',
-    tests: 'tests/gather_check, panel + cord counts, ratio ordering smocked > shirred > drawstring, byte-identical base, placement notch.',
+    tests: 'tests/gather_check, panel + cord counts, ratio ordering smocked > shirred > drawstring, unchanged under golden_check base, placement notch.',
   },
   {
     slug: 'open-back', group: 'details', name: 'Open-back cutout',
@@ -438,7 +442,7 @@ const STYLES = [
       'A yoke of fabric at the shoulders is what hangs the garment, so the opening starts 40 mm below the centre-back nape and must clear the waist seam by 55 mm. Length is clamped to 55–320 mm: shorter reads as a keyhole, longer than 320 is a full backless span.',
       'Four shapes with real half-width-to-length ratios: round 0.42, low-V 0.34, square 0.36, teardrop keyhole 0.24.',
       'The opening is drawn as a HALF against the centre-back seam, the back is cut 2, and the mirror axis unfolds it into the full symmetric cutout (the same on-fold convention as the front keyhole).',
-      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0, sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing is byte-identical to the opening drawn on the back: truing 0.00 mm, tested.',
+      'The facing is the opening silhouette pushed out by 34 mm on every side, cut 1 on fold, interfaced, seam allowance 0, sewn ON the marked line, slashed inside, turned and understitched. The marked stitch line on the facing is unchanged under golden_check to the opening drawn on the back: truing 0.00 mm, tested.',
       'It coexists with a tie-back closure on the same draft: the tie draws the strips, this draws the opening they fasten over.',
     ],
     numbers: [
@@ -449,7 +453,7 @@ const STYLES = [
       ['facing margin', '+34 mm, truing 0.00 mm'],
     ],
     compat: 'Dresses and tops (needs a back bodice). Laced backs and back button plackets stay in the honesty layer.',
-    tests: 'tests/backopen_check, facing stitch line byte-identical to the opening, base outlines untouched, all four shapes rendered.',
+    tests: 'tests/backopen_check, facing stitch line unchanged under golden_check to the opening, base outlines untouched, all four shapes rendered.',
   },
   {
     slug: 'princess-seams', group: 'construction', name: 'Princess seams',
@@ -492,7 +496,7 @@ const STYLES = [
       ['hip depth', 'kept 200 mm below the natural waist'],
     ],
     compat: 'Dresses with any skirt style; combines with princess or dart shaping, sleeves, collars, gathering and ruffles.',
-    tests: 'Validated across the 70,200-draft matrix; apex and dart-leg anchoring covered by the bodice checks.',
+    tests: 'Validated across the engine_check draft matrix (count not re-run for this page); apex and dart-leg anchoring covered by the bodice checks.',
   },
 ];
 
@@ -719,15 +723,16 @@ function flatSketch_REMOVED(sk) {
 }
 
 // ---------------------------------------------------------------------------
-// TEST-RESULTS BLOCK — the proof box. Every number is sourced: the 0.00 mm
-// seam truing and the 70,200-draft matrix are engine-wide constants (published
-// on benchmark.html); the per-style test name and the patch that made the
-// feature possible come from the style's own record. No invented figures.
+// TEST-RESULTS BLOCK — the proof box. RULES 6: a generated page may NOT assert a
+// standing number it did not just measure. Every row below names the TOOL that
+// prints the figure instead of freezing a count into this file. The four frozen
+// constants that used to live here (19,780 / 37,800 / 70,200 / 0.000000 mm) were
+// removed in V10-F: nothing re-ran them per page, and the six-decimal one was
+// invented — precision-report.js prints two decimals (toFixed(2)).
 // ---------------------------------------------------------------------------
-const FUZZ = '19,780';        // web-fuzz.js draws, zero geometry failures (constitution)
-const VOCAB = '37,800';       // vocab-sweep decoupled body × vocab drafts, zero failures
-const MATRIX = '70,200';      // engine-check body × option matrix
-const GOLDEN = '0.000000 mm'; // opt-in features leave the base golden byte-identical
+const FUZZ_TOOLS = 'engine/tools/web-fuzz.js and engine/tools/vocab-sweep.cpp';
+const MATRIX_HARNESS = 'engine_check (the full draft matrix)';
+const PRECISION = 'worst pair mismatch 0.00 mm, printed by engine/tools/precision-report.js (the tool prints two decimals)';
 
 function testBlock(s) {
   const patchLink = s.patch
@@ -740,9 +745,9 @@ function testBlock(s) {
   <p class="fact">This is the evidence box: the seam truing, the validation runs and the patch that drew this style, straight from the test suite, misses included on the <a href="../patches.html">patch notes</a>.</p>
   <table class="proof">
     <tr><th>evidence</th><th>result</th></tr>
-    <tr><td>seam-pair precision</td><td class="v">${GOLDEN}</td></tr>
-    <tr><td>validation matrix</td><td class="v">${MATRIX} body × option drafts, 0 failures</td></tr>
-    <tr><td>web fuzz sweep</td><td class="v">${FUZZ} / 0 · vocab sweep ${VOCAB} / 0</td></tr>
+    <tr><td>seam-pair precision</td><td class="v">${PRECISION}</td></tr>
+    <tr><td>validation matrix</td><td class="v">harness: ${MATRIX_HARNESS}. Not re-run for this page, so no count is printed here.</td></tr>
+    <tr><td>web fuzz sweep</td><td class="v">tools: ${FUZZ_TOOLS}. Not re-run for this page, so no count is printed here.</td></tr>
     <tr><td>dedicated test</td><td class="v">${esc(s.tests)}</td></tr>
     ${madeBy}
   </table>`;
@@ -807,7 +812,7 @@ function styleFaqEntries(s) {
   const q = [];
   q.push({
     q: `Can I get a free ${low} sewing pattern?`,
-    a: `Yes. stitchu drafts the ${low} to your own measurements and gives you a printable PDF for free, with no fixed sizes and no paywall.`,
+    a: `Yes. stitchu drafts the ${low} in the eight fixed sizes EU34 to EU48 that contract/layers/shape-ratios.json publishes, and gives you a printable PDF for free, with no paywall.`,
   });
   if (s.compat) q.push({
     q: `What can I combine the ${low} with?`,
@@ -816,7 +821,7 @@ function styleFaqEntries(s) {
   const lenRow = (s.numbers || []).find(([k]) => /length|ease|flare/i.test(k));
   if (lenRow) q.push({
     q: `What measurements does the ${low} use?`,
-    a: `The engine drafts it from your body, not fixed sizes. Key numbers: ${s.numbers.map(([k, v]) => `${k} ${v}`).slice(0, 3).join('; ')}.`,
+    a: `The engine drafts it in eight fixed sizes, EU34 to EU48 (contract/layers/shape-ratios.json). Key numbers: ${s.numbers.map(([k, v]) => `${k} ${v}`).slice(0, 3).join('; ')}.`,
   });
   if (s.tests) q.push({
     q: `Is the ${low} draft tested?`,
@@ -928,7 +933,7 @@ ${footer}
 function hubPage() {
   const url = `${BASE}/styles/`;
   const title = 'Sewing pattern style library, every drafted style · stitchu';
-  const desc = `${STYLES.length} garment styles the stitchu engine drafts to your measurements, necklines, skirts, sleeves, collars, shirring, with the real numbers behind each.`;
+  const desc = `${STYLES.length} garment styles the stitchu engine drafts in eight fixed sizes, necklines, skirts, sleeves, collars, shirring, with the real numbers behind each.`;
   const sections = GROUPS.map(([key, label]) => {
     const items = STYLES.filter((s) => s.group === key);
     if (!items.length) return '';
@@ -955,9 +960,9 @@ ${header}
 <div class="wrap">
   <p class="crumbs"><a href="../index.html">stitchu</a> / style library</p>
   <h1>The style <em>library.</em></h1>
-  <p class="lead">Every style below is drafted by the same engine, real pattern-cutting geometry computed against your seven measurements, validated on a 70,200-draft matrix, seams held to 0.00 mm. Each page shows the actual drafting numbers, straight from the engine's formula spec.</p>
+  <p class="lead">Every style below is drafted by the same engine, real pattern-cutting geometry computed against the eight fixed sizes EU34 to EU48 published in contract/layers/shape-ratios.json, validated on a engine_check draft matrix (count not re-run for this page), seams held to 0.00 mm. Each page shows the actual drafting numbers, straight from the engine's formula spec.</p>
 ${sections}
-  <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern to your measurements, free</a>
+  <a class="sb-btn sb-primary" style="margin-top:34px" href="../create.html">Draft a pattern in a fixed size, free</a>
 </div>
 ${footer}
 <script src="../js/shared-header.js?v=${V}"></script>

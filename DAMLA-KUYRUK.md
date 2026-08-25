@@ -1276,3 +1276,39 @@ olarak `GECE/V10-D.md` §5'te adıyla yazılı.**
 "Similar tools charge **$34–49/mo**" diyor. V10-C aynı cümleyi
 `web/index.html:299`'dan **ölçülmediği için SİLMİŞTİ**; benchmark'taki kopyası
 kaldı, çünkü kapının kalıp listesinde yok.
+
+---
+
+## K-V10F — 3.8.d · İki kontrat hâlâ birbirinin tersini söylüyor: 10 beden mi, 8 beden mi? (V10-F, 25 Ağu)
+
+**Bu tek taraflı DEĞİŞTİRİLMEDİ. Kontrat kararı senindir; ben sadece ölçtüm.**
+(K-V10D (b) aynı çelişkiyi bildirmişti; V10-F onu üreteç tarafından yeniden
+ölçtü ve bir gerekçe daha ekledi.)
+
+İki kaynak, ADIYLA:
+
+```
+contract/layers/shape-ratios.json   "sizes" → 8 beden: EU34 EU36 EU38 EU40 EU42 EU44 EU46 EU48
+contract/tables.json:13             "euSizes" → 10 beden: … EU48, EU50, EU52
+contract/tables.json:82,83          EU50 [116,98,122,41,43,61,40] · EU52 [122,104,128,42,43.5,61.5,41]
+```
+
+**VARSAYILAN: 8 beden (A).** Gerekçe — kendi ölçümüm değil, `shape-ratios.json`'un
+kendi `drift_note.EU50_EU52` alanı: *"sizechart.hpp grafts a whole BackArcRow,
+so EU50/EU52 carry shoulderWidthCM 0 AND shoulderInclDeg 0 AND all three back arc
+fractions 0"* ve TUR 17B ölçümü *"surface-pattern EU50 does not draft a
+shoulderless garment, it ABORTS"*. Yani `tables.json`'daki iki satır motorun
+çizebildiği bir şeye karşılık gelmiyor.
+
+Bugünkü etkisi ölçüldü: `node engine/tests/landing_truth_check.mjs` → L5'in
+**4 kaçağının 4'ü de** `web/js/contract.gen.js:28,29,104,113` (EU50/EU52), ve o
+dosyayı `engine/tools/gen-contract.mjs` `contract/tables.json`'dan üretiyor.
+Yani kaçak sayfada değil, KONTRATTA.
+
+- (A) `contract/tables.json` 8 bedene insin → 4 kaçak kökten ölür, `gen-contract.mjs`
+  yeniden koşar, EU50/EU52 vaadi geri çekilir.
+- (B) `shape-ratios.json` 10 bedene çıksın → EU50/EU52 için gerçek omuz/back-arc
+  ölçüsü ÜRETİLMESİ gerekir; bugün o veri YOK, ve `tables.json` çizelgesi EU46'dan
+  sonra +6cm adımlıyorken mapping +4cm ekstrapole ederdi.
+
+**V10-F'te koda dokunulmadı; borç adıyla kaydedildi.**

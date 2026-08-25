@@ -22,9 +22,9 @@ const html = `<!doctype html><html lang=tr><head><meta charset=utf-8><meta name=
   `.art svg{width:100%;height:auto;display:block}code{display:block;background:#0f1b2b;color:#cfe3ff;padding:7px 9px;border-radius:6px;font-size:10.5px;margin-top:8px;word-break:break-all}` +
   `.note{max-width:820px;font-size:13px;color:#5b7089;margin:22px 0 0;line-height:1.6}</style></head><body>` +
   `<h1>MIHENK-07 — wrap elbise (yeni primitif: surplice + bel bağı)</h1>` +
-  `<p class=sub>Mihenk 5'lisinin 2. hedefi. Yeni opt-in <b>spec.wrap</b> treatment: omuzdan karşı bele apex üzerinden geçen surplice çapraz kapanma + alttaki underlap + yan-dikişten çıkan bel bağı (düğüm+kuyruk). Body simetrik (gerçek wrap panel başına simetrik kesilir). Golden + pinler byte-identical (opt-in). Tarif verme, SEÇ: hangi wrap "kalemim"? Vekil taslağı: w1 (kanonik), runner-up w3 (akışkanlık için karşılaştır).</p>` +
+  `<p class=sub>Mihenk 5'lisinin 2. hedefi. Yeni opt-in <b>spec.wrap</b> treatment: omuzdan karşı bele apex üzerinden geçen surplice çapraz kapanma + alttaki underlap + yan-dikişten çıkan bel bağı (düğüm+kuyruk). Body simetrik (gerçek wrap panel başına simetrik kesilir). Opt-in: taban golden'ı ve pinler değişmiyor — bekçi engine/golden-diff.py (bu sayfa için yeniden koşulmadı). Tarif verme, SEÇ: hangi wrap "kalemim"? Vekil taslağı: w1 (kanonik), runner-up w3 (akışkanlık için karşılaştır).</p>` +
   `<div class=grid>${cells}</div>` +
-  `<p class=note>NOT: surplice yaka outline'da hâlâ simetrik vNeck notch; overlap edge surplice'i çiziyor. "Yaka çift okunuyor" dersen F3'te asimetrik surplice outline hakkı var. Teknik: ctest 48/48, golden byte-identical, flat_render_lint 6 varyant üretilebilir-temiz.</p>` +
+  `<p class=note>NOT: surplice yaka outline'da hâlâ simetrik vNeck notch; overlap edge surplice'i çiziyor. "Yaka çift okunuyor" dersen F3'te asimetrik surplice outline hakkı var. Teknik: kapılar ctest, engine/golden-diff.py ve flat_render_lint (6 varyant) — sayıları o aletler basar, bu sayfa için yeniden koşulmadı.</p>` +
   `</body></html>`;
 fs.writeFileSync('reports/gate/MIHENK-07-contact.html', html);
 console.log('MIHENK-07-contact.html', html.length, 'bytes');

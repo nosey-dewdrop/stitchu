@@ -33,7 +33,11 @@ const sheet = await import(join(here, '../../web/js/sheet.js'));
 
 const WEB = join(here, '../../web');
 const VDIR = join(WEB, 'patterns/vintage6070');
-const COLDIR = join(WEB, 'collections');
+// --out=DIR redirects both the HTML and the PDF pack (default unchanged:
+// web/collections), so the generator can be run and grepped without touching
+// the live site.
+const outArg = process.argv.find((a) => a.startsWith('--out='));
+const COLDIR = outArg ? outArg.slice('--out='.length) : join(WEB, 'collections');
 const PDFDIR = join(COLDIR, 'pdf');
 mkdirSync(PDFDIR, { recursive: true });
 const BASE = 'https://stitchu.noseydewdrop.com';
@@ -98,8 +102,8 @@ function faqEntries(m, dp, diff) {
   q.push({
     q_en: `What fabric works best for the ${m.en.toLowerCase()}?`,
     q_tr: `${m.en} için en uygun kumaş nedir?`,
-    a_en: `This pattern is drafted for ${fabricType}. Plan for roughly ${m.fabric} m at 140 cm wide; the estimate scales with your measurements when you draft it.`,
-    a_tr: `Bu kalıp ${fabricTypeTr} için çizildi. 140 cm ende yaklaşık ${m.fabric} m planlayın; tahmin, kalıbı çizdiğinizde ölçülerinize göre değişir.`,
+    a_en: `This pattern is drafted for ${fabricType}. Plan for roughly ${m.fabric} m at 140 cm wide; the estimate scales with the size you draft.`,
+    a_tr: `Bu kalıp ${fabricTypeTr} için çizildi. 140 cm ende yaklaşık ${m.fabric} m planlayın; tahmin, çizdiğiniz bedene göre değişir.`,
   });
   q.push({
     q_en: `Is the ${m.en.toLowerCase()} a beginner sewing pattern?`,
@@ -110,14 +114,14 @@ function faqEntries(m, dp, diff) {
   q.push({
     q_en: `What size is this pattern and can I fit it to my body?`,
     q_tr: `Bu kalıp hangi bedende ve kendi vücuduma göre ayarlayabilir miyim?`,
-    a_en: `The printable PDF is drafted to an EU38 demo body. To get it in your own measurements, draft it free on the create page and the engine redraws every piece to fit you.`,
-    a_tr: `Baskıya hazır PDF, EU38 örnek beden üzerine çizilir. Kendi ölçülerinizde almak için çiz sayfasında ücretsiz çizin; motor her parçayı size uyacak şekilde yeniden çizer.`,
+    a_en: `The printable PDF is drafted to an EU38 demo body. To get it in another size, draft it free on the create page in any of the eight fixed sizes, EU34 to EU48.`,
+    a_tr: `Baskıya hazır PDF, EU38 örnek beden üzerine çizilir. Başka bir bedende almak için çiz sayfasında sekiz sabit bedenden (EU34–EU48) birini ücretsiz çizin.`,
   });
   q.push({
     q_en: `How is this different from a store-bought sewing pattern?`,
     q_tr: `Bu, hazır satın alınan bir dikiş kalıbından nasıl farklı?`,
-    a_en: `A store pattern ships in fixed graded sizes. stitchu drafts the pattern to your exact measurements from a real pattern-making engine, and every look is benchmark-checked against a sewn reference.`,
-    a_tr: `Hazır kalıp sabit beden ölçeklerinde gelir. stitchu, kalıbı gerçek bir kalıp motorundan tam ölçülerinize göre çizer ve her görünüm dikilmiş bir referansa karşı kıyaslanır.`,
+    a_en: `A store pattern ships in fixed graded sizes. stitchu also ships fixed sizes, the eight in contract/layers/shape-ratios.json, EU34 to EU48; the difference is that a real pattern-making engine draws them, not a scanned sheet.`,
+    a_tr: `Hazır kalıp sabit beden ölçeklerinde gelir. stitchu da sabit beden veriyor: contract/layers/shape-ratios.json'daki sekiz beden, EU34–EU48. Fark, onları taranmış bir sayfanın değil gerçek bir kalıp motorunun çizmesi.`,
   });
   return q;
 }
@@ -138,7 +142,7 @@ for (const m of meta) {
 }
 writeFileSync(join(PDFDIR, 'pdf-manifest.json'), JSON.stringify(Object.values(pdfBySlug), null, 2));
 
-// ---- shared shell (byte-identical to the collections index header) ------
+// ---- shared shell (same header as the collections index; guard: header-diff.mjs) ----
 // Same canonical header used across the site. Collections is sh-active. Path
 // prefix is "../" because detail pages live one level deep in web/collections/.
 const HEADER = `<header class="sh-header">
@@ -167,7 +171,7 @@ const STYLE = `<style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
   a{color:var(--bb-deep)}
-  /* Header comes from ../css/shared-header.css (one source, byte-identical bar). */
+  /* Header comes from ../css/shared-header.css (one source, one bar; guard: engine/tools/header-diff.mjs). */
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 100px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:16px}
   .crumbs a{text-decoration:none;color:var(--navy)}
@@ -350,7 +354,7 @@ ${HEADER}
   <h2 data-en="What Is In The Pattern." data-tr="Kalıpta Ne Var.">What Is In The Pattern.</h2>
   <table>
     <tr><th data-en="pattern pieces" data-tr="kalıp parçaları">pattern pieces</th><th data-en="fabric estimate" data-tr="kumaş tahmini">fabric estimate</th></tr>
-    <tr><td><ul style="list-style:none;margin:0">${pieceRows}</ul></td><td class="v"><span data-en="Roughly ${m.fabric} m at 140 cm wide." data-tr="140 cm ende yaklaşık ${m.fabric} m.">Roughly ${m.fabric} m at 140 cm wide.</span><br><span style="font-weight:400;color:#5b7089;font-size:12px" data-en="${m.pieces} pieces · fabric scales to your measurements" data-tr="${m.pieces} parça · kumaş ölçülerinize göre değişir">${m.pieces} pieces · fabric scales to your measurements</span></td></tr>
+    <tr><td><ul style="list-style:none;margin:0">${pieceRows}</ul></td><td class="v"><span data-en="Roughly ${m.fabric} m at 140 cm wide." data-tr="140 cm ende yaklaşık ${m.fabric} m.">Roughly ${m.fabric} m at 140 cm wide.</span><br><span style="font-weight:400;color:#5b7089;font-size:12px" data-en="${m.pieces} pieces · fabric scales with the size" data-tr="${m.pieces} parça · kumaş bedene göre değişir">${m.pieces} pieces · fabric scales with the size</span></td></tr>
   </table>
 
   <h2 data-en="The Honest Note." data-tr="Dürüst Not.">The Honest Note.</h2>
@@ -364,7 +368,7 @@ ${dlSection}
   <h2 data-en="More From This Collection." data-tr="Bu Koleksiyondan Daha Fazlası.">More From This Collection.</h2>
   <ul class="related">${relatedHtml}
   </ul>
-  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this to your measurements, free." data-tr="Bunu ölçülerine göre çiz, ücretsiz.">Draft this to your measurements, free.</a>
+  <a class="sb-btn sb-primary" href="../create.html" data-en="Draft this in a fixed size, free." data-tr="Bunu sabit bir bedende çiz, ücretsiz.">Draft this in a fixed size, free.</a>
   <a class="cta2" href="${COLLECTION.href}" data-en="Back to the collection →" data-tr="Koleksiyona geri dön →">Back to the collection →</a>
 </div>
 ${FOOTER}

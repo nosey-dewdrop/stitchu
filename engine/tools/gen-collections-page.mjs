@@ -14,7 +14,10 @@ import { siteVersion } from './site-version.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const WEB = join(here, '../../web');
-const OUT = join(WEB, 'collections');
+// --out=DIR redirects the write (default unchanged: web/collections), so the
+// generator can be run and grepped without touching the live site.
+const outArg = process.argv.find((a) => a.startsWith('--out='));
+const OUT = outArg ? outArg.slice('--out='.length) : join(WEB, 'collections');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://stitchu.noseydewdrop.com';
 // Asset cache-bust version: read from web/ (the single record), never a
@@ -72,7 +75,7 @@ const STYLE = `<style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
   a{color:var(--bb-deep)}
-  /* Header comes from ../css/shared-header.css (one source, byte-identical bar). */
+  /* Header comes from ../css/shared-header.css (one source, one bar; guard: engine/tools/header-diff.mjs). */
   .wrap{max-width:840px;margin:0 auto;padding:14px 32px 100px}
   .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:16px}
   .crumbs a{text-decoration:none;color:var(--navy)}
