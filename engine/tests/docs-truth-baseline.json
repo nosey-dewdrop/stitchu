@@ -8,8 +8,8 @@
     "İSTİSNA KURALI ZORUNLUDUR (V9-A §2B): bugünkü ağaçta 16 ham hit'in 13'ü yanlış pozitif; 2'si emekli edilen cümleyi tırnak içinde taşıyor. İstisnasız kapı RULES §6 ONARIMINI cezalandırır.",
     "Kapının kendi arızası (taban yok, git yok vb.) exit 3 alır; ihlal exit 1 alır. Ayrık exit kodu lychee emsali (V9-R §1 B3). EKSİK YASA ASLA GEÇİŞ DEĞİLDİR: taban dosyası yoksa kapı FAIL verir."
   ],
-  "_note": "V9-B3 (2026-08-25): D2'nin VARLIK SORUSU DİSKTEN GİT'E TAŞINDI (git ls-files + git ls-tree -r HEAD; disk okunmaz). ESKİ taban: D1 0 / D2 0 / D3 0, ama o 'D2 0' TEK BİR ÇALIŞMA DİZİNİNİN ozelligiydi - temiz worktree'de ayni commit EXIT 1 / D2 YENI 42 veriyordu (GECE/log/V9-B3.clean-checkout.txt). YENİ taban: D1 0 / D2 acik borc 1 / D3 0. D2 borcu 0 -> 1 YUKSELDI ve bu BİLİNCLİ: 19 tekil hedefin 17'si gitignore'li URETILEN ARTEFAKT sinifina (git check-ignore ile kanitli, sayisi basiliyor), 1'i cipasiz ad, geriye kalan 'docs/H1.0-KAPI.md -> patterns_real/geometry/geometry-full.json' GERCEKTEN OLU: 2f748db commit'inde repodan cikarildi, gitignore'da da degil, yani temiz klonda yok. Onarimi docs/ duzenlemesi gerektirir, bu kart docs/'a dokunamaz; borcu SAKLAMAK yerine adiyla ve satiriyla KAYDA GECIRILDI. D3 tabani 0'da KALDI, yukseltilmedi. Hicbir kalip gevsetilmedi: disk yoklamasi kalktigi icin kapi butun yollarda SIKILASTI (VAR 540 -> 491).",
-  "olcumCommit": "5885b80198f63a5fbd6e84684ec1f7e095fcf8d8",
+  "_note": "v9-g: H1.0-KAPI.md:54 kaynak durumu dürüstçe ilan edildi, D2 kayıtlı borcu 1 -> 0",
+  "olcumCommit": "f3bd10bf7a2e62664f85e552d047dea03303b841",
   "olcumTarihi": "2026-08-25",
   "kapsam": {
     "D1_D2": "docs/**/*.{md,html} + README.md, docs/archive/tools/*.{mjs,js} HARİÇ",
@@ -31,23 +31,17 @@
   "D2": {
     "esik": 0,
     "kaynak": "VARLIK SORUSU GİT'E SORULUR (git ls-files + git ls-tree -r HEAD); disk okunmaz — verdict çalışma dizininden bağımsızdır (V9-B3)",
-    "yoklananHedef": 568,
-    "var": 491,
-    "dusenSinif": 35,
+    "yoklananHedef": 570,
+    "var": 492,
+    "dusenSinif": 38,
     "uretilenArtefakt": 24,
-    "cipasizAd": 17,
-    "acikBorc": 1,
-    "bilinenAcik": [
-      {
-        "dosya": "docs/H1.0-KAPI.md",
-        "hedef": "patterns_real/geometry/geometry-full.json",
-        "tur": "TICK"
-      }
-    ]
+    "cipasizAd": 16,
+    "acikBorc": 0,
+    "bilinenAcik": []
   },
   "D3": {
     "taban": 0,
-    "sayisalSatir": 139,
+    "sayisalSatir": 140,
     "yontem": "sayı+birim taşıyan prose satırı; satırda ya da kapsayıcı paragrafta backtick içinde alet/test adı (*_check, *.mjs/.py/.js/.sh, ctest, grep, ls -l) ya da kanıt yolu (GECE/, Logs/, reports/) YOKSA sağlayıcısız sayılır"
   }
 }
