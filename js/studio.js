@@ -353,7 +353,7 @@ async function downloadDXF() {
 }
 
 // ------------------------------------------------------------ factory pack
-// The pre-built graded EU34–52 production package for the SELECTED recipe at its
+// The pre-built graded EU34–48 production package for the SELECTED recipe at its
 // default parameter (web/factory/<id>.zip, built by engine/tools/gen-factory-
 // pack.mjs with the native tech-pack tool: manifest + one graded DXF per size +
 // PDF spec sheet). A factory size run grades one design over the standard size
@@ -369,7 +369,7 @@ function refreshFactoryButton() {
   btn.disabled = !pack;
   if (pack) {
     note.textContent =
-      `A graded EU34 to 52 production package for this demo recipe at its default ` +
+      `A graded EU34 to 48 production package for this demo recipe at its default ` +
       `${pack.param} (${pack.paramMM} mm): machine manifest, one graded DXF per size, ` +
       `marker at ${pack.fabricWidthMM} mm width, and a human-readable PDF spec sheet ` +
       `(${pack.gradedSizesClean}/${pack.gradedSizesTotal} sizes clean). A factory size run ` +
