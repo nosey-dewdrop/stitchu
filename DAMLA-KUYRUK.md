@@ -1065,3 +1065,31 @@ stilin kolu ÇİZMESİNİ şart koşuyor), yani kırmızı ad kümesi 6→7 olac
   uyarlansın (iki kapı tek karta girer).
 
 **VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V5
+
+---
+
+## K-V5A — sevk edilen kalıbın payı yayınlanmış minimumun ALTINDA, düzeltilsin mi? (V5, 25 Ağu)
+
+**KARAR GEREKEN:** sevk edilen kalıbın **kalça payı 8/8 bedende**, **göğüs payı
+4/8 bedende** (EU34/36/38/40) yayınlanmış minimumun ALTINDA. Düzeltilsin mi?
+
+**ÖLÇÜM (basan komut: `node engine/tests/draft_math_check.mjs`):** kalça payı
+8 bedende 17.2–23.2mm, yayınlanmış minimum 50.8mm — yani minimumun **üçte biri**.
+Kök: motorun payı **ÇARPIMSAL** (kalça payı / kalçaCM = 0.2000, 8 bedende
+bit-sabit), yayınlanmış bant **TOPLAMSAL**. Bant künyesi: Threads #221 s.71
+MINIMUM EASE · Aldrich 4.bs s.28. Bel payı 8/8 bedende bandın İÇİNDE.
+
+**SEÇENEKLER:**
+- **(A)** Bugünkü pay kalsın; kapı ihlali **adıyla basmaya devam etsin**
+  (12 satır, beden+mm+bant+künye), son hüküm satırı `PASS` demesin, **exit 0**.
+  Kapı yine ısırır: bant dışı beden sayısı bugünkü kayıttan (bust 4 · waist 0 ·
+  hip 8) ARTARSA exit 1 (ölçüldü: `GECE/log/V5-G.mutasyon.txt` M1/M2).
+- **(B)** Ölçülmüş çözüm uygulansın: **büst girdisi +1.5cm** → 8 bedende pay
+  65.80–98.80mm, 8/8 bantta · **kalça +3.5…+5.0cm** → 8/8 bantta
+  (`GECE/log/V5-D.remedy.txt`).
+  ⚠ **BEDELİ ÖLÇÜLMEDİ:** sevk edilen geometri değişir; `golden_check` ve
+  figür/önizleme mandalları etkilenir (RULES 4).
+
+**VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V7
+★ Test çıktısı bu ada atıf veriyor: `draft_math_check` son hüküm satırı
+"YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)".

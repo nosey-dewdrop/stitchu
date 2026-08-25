@@ -1,0 +1,94 @@
+V5-F MUTASYON — §4.5: (b) BANT BÖLÜMÜ ISIRIYOR MU, (a) RATCHET HÂLÂ ISIRIYOR MU?
+tarih: 2026-08-25 · ağaç: a65cfc9 + çalışma ağacı (draft_math_check.mjs, v5-ratchet-baseline.json değişik)
+koşan komut şablonu: [V5D_MUTATE=...] node engine/tests/draft_math_check.mjs ; echo $?
+kanca DEĞERE uygulanır, EŞİĞE değil (measure(): m[k] += Number(v)). Üretim koşusunda hiçbir
+kanca set edilmez; set edilince kapı '⚠ KANIT KANCASI AKTİF' basar (her log dosyasında görünür).
+
+⚠ HANGİ TASARIM ÖLÇÜLDÜ: (b) bölümü bu koşularda V5-G uzlaşmasındaki halindedir —
+   ihlal ADIYLA basılır ve KIRMIZI diye adlandırılır, exit kodunu DÜŞÜRMEZ (Damla kararı,
+   DAMLA-KUYRUK K-V5A); ama bant dışı beden sayısı 2026-08-25 kaydını (bust 4 · waist 0 ·
+   hip 8) AŞARSA REGRESYON düşer ve exit 1 döner. V5-F'in ilk yazdığı 'her ihlal exit 1'
+   hali GERİ ALINDI (gerekçe: devralınan kırmızı AD kümesini 6->7 büyütüyordu, RULES 9).
+
+===== M0 — ÜRETİM KOŞUSU (kanca YOK) =====
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 0 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: YOK (hiçbiri)
+EXIT KODUNU DÜŞÜRMEYEN KIRMIZI: YAYINLANMIŞ BANT (b) — 12 ihlal DURUYOR ve yukarıda beden+mm+bant+künyeyle adıyla basıldı.
+draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+exit = 0
+
+===== M1 — waist_ease BANDIN ÜSTÜNE itildi (kartın istediği mutasyon) =====
+V5D_MUTATE=waist_ease:20 — ölçülen 50.82..53.32mm (8/8 bant İÇİ) -> 70.82..73.32mm, üst sınır 60.0mm AŞILDI.
+    waist_ease               bant dışı beden          8/8   bant 25.4..60mm   [SERT HUKUM, ratchet DEGIL; 2026-08-25 kaydı: 0/8]
+FAIL  REGRESYON — waist_ease: bant dışı beden 8 > 2026-08-25 kaydı 0. İhlal KÖTÜLEŞTİ; bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız kaydın kendisini örter, büyümesini DEĞİL).
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 20 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 1 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> KIRMIZI
+EXIT KODUNU DÜŞÜREN BÖLÜM: BANT REGRESYONU (b, kayıt aşıldı)
+draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 20 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 1 · adıyla basılan ihlal satırı 20 · exit 1
+exit = 1   ★ KAPI KIRILDI. waist_ease 0/8 -> 8/8, kayıt 0 aşıldı.
+
+===== M1b — waist_ease BANDIN ALTINA itildi (ikinci yön) =====
+V5D_MUTATE=waist_ease:-30 -> 20.82..23.32mm, alt sınır 25.4mm'nin ALTINDA.
+    waist_ease               bant dışı beden          8/8   bant 25.4..60mm   [SERT HUKUM, ratchet DEGIL; 2026-08-25 kaydı: 0/8]
+BANT REGRESYONU: 1 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> KIRMIZI
+EXIT KODUNU DÜŞÜREN BÖLÜM: BANT REGRESYONU (b, kayıt aşıldı)
+draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 20 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 1 · adıyla basılan ihlal satırı 20 · exit 1
+exit = 1   ★ Bandın İKİ ucu da bekçilik ediyor, tek taraflı değil.
+
+===== M2 — bust_ease KÖTÜLEŞTİRİLDİ (kayıt 4, ihlal 5'e çıkıyor) =====
+V5D_MUTATE=bust_ease:-5
+    bust_ease                bant dışı beden          5/8   bant 63.5..101.6mm   [SERT HUKUM, ratchet DEGIL; 2026-08-25 kaydı: 4/8]
+FAIL  REGRESYON — bust_ease: bant dışı beden 5 > 2026-08-25 kaydı 4. İhlal KÖTÜLEŞTİ; bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız kaydın kendisini örter, büyümesini DEĞİL).
+BANT REGRESYONU: 1 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> KIRMIZI
+EXIT KODUNU DÜŞÜREN BÖLÜM: BANT REGRESYONU (b, kayıt aşıldı)
+draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 13 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 1 · adıyla basılan ihlal satırı 13 · exit 1
+exit = 1   ★ Regresyon çizgisi DOYMAMIŞ kalemde de ısırıyor.
+
+===== M3 — (a) RATCHET HÂLÂ ISIRIYOR: scye_depth +5mm =====
+V5D_MUTATE=scye_depth:5
+    scye_depth               en kötü |sapma|    16.4000 mm   tavan    11.40 mm
+FAIL  RATCHET KIRILDI — scye_depth: en kötü sapma 16.4000mm > tavan 11.40mm
+RATCHET: 1 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> KIRMIZI
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 0 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: RATCHET (a/c)
+draft_math_check — RATCHET: 1 tavan aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 1
+exit = 1   ★ (a) bölümü V5-F'ten ETKİLENMEDİ, ratchet olarak duruyor ve ısırıyor.
+  İki bölüm birbirinden AYRI: M1/M2'de 'BANT REGRESYONU', M3'te 'RATCHET (a/c)' düşürdü;
+  düşüren bölüm her koşuda ADIYLA basıldı.
+
+===== M4 — hip_ease'in YAPISAL SINIRI, ADIYLA ÖLÇÜLDÜ =====
+hip_ease bugün 8/8 = SIZES.length. Yukarı yön yapısal olarak KAPALI: 8'i aşan sayı yok.
+V5D_MUTATE=hip_ease:-100  (daha da kötüleştir):
+    hip_ease                 bant dışı beden          8/8   bant 50.8..76.2mm   [SERT HUKUM, ratchet DEGIL; 2026-08-25 kaydı: 8/8]
+  -> 8/8 kaldı, exit 0. ★ Bu kalem YUKARI yönde ASLA ısıramaz — dosyada ve raporda ADIYLA yazılı.
+V5D_MUTATE=hip_ease:35  (düzelt):
+    hip_ease                 bant dışı beden          0/8   bant 50.8..76.2mm   [SERT HUKUM, ratchet DEGIL; 2026-08-25 kaydı: 8/8]
+      TAVAN DÜŞÜRÜLEBİLİR: hip_ease bant dışı 8 -> 0  (kaydı indirmek AYRI ve BİLİNÇLİ bir commit'tir)
+  -> 0/8, exit 0 + 'TAVAN DÜŞÜRÜLEBİLİR' uyarısı. ★ AŞAĞI yön ÖLÇÜLÜYOR; V5-E hakeminin
+  'o kalem yapısal olarak asla ısıramaz' bulgusuna verilen cevap budur: ısırmıyor ama artık KÖR de değil.
+
+===== B0 — GERİ ALMA: kanca kaldırıldı, hüküm AYNEN döndü =====
+komut: diff <(mutasyondan ÖNCEKİ üretim koşusu) <(mutasyondan SONRAKİ üretim koşusu)
+diff = BOŞ (bayt bayt aynı) — mutasyon dosyaya sızmadı, hüküm AYNEN döndü.
+RATCHET: 0 tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> GEÇTİ
+YAYINLANMIŞ BANT: 12 bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> KIRMIZI
+BANT REGRESYONU: 0 kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> GEÇTİ
+EXIT KODUNU DÜŞÜREN BÖLÜM: YOK (hiçbiri)
+EXIT KODUNU DÜŞÜRMEYEN KIRMIZI: YAYINLANMIŞ BANT (b) — 12 ihlal DURUYOR ve yukarıda beden+mm+bant+künyeyle adıyla basıldı.
+draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+exit = 0
+
+===== ÖLÇÜLEN SAYILAR TABLOSU =====
+koşu                               RATCHET   BANT    REGRES.  exit   düşüren bölüm
+M0 üretim (kanca yok)              0         12      0        0      YOK
+M1 waist_ease:+20                  0         20      1        1      BANT REGRESYONU (b)
+M1b waist_ease:-30                 0         20      1        1      BANT REGRESYONU (b)
+M2 bust_ease:-5                    0         13      1        1      BANT REGRESYONU (b)
+M3 scye_depth:+5                   1         12      0        1      RATCHET (a/c)
+M4a hip_ease:-100                  0         12      0        0      YOK (yapısal sınır)
+M4b hip_ease:+35                   0         4       0        0      YOK (kayıt düşürülebilir)
+B0 geri alma (kanca yok)           0         12      0        0      YOK

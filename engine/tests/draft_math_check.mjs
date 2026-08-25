@@ -144,11 +144,50 @@ const EASE_BANDS = {
 //   exit kodunun bağlandığı yer: "ihlal = 0" yerine "ihlal ≤ ölçülmüş tavan".
 //   Tavanı aşan KIRMIZI düşer; tavanın altına düşülürse "TAVAN DÜŞÜRÜLEBİLİR"
 //   uyarısı basılır ve indirmek ayrı, bilinçli bir commit'tir.
+//
+// ★★ RATCHET NEREDE MEŞRU, NEREDE DEĞİL (kart V5-F, 2026-08-25) ★★
+//   (a) NOKTA-DEĞERLİ KALEMLER (scye_depth, shoulder_width_front/back,
+//       back_neck_drop): toleransları YAYINLANMAMIŞ (V5-R §A). Yayınlanmış bir
+//       eşik yokken tek dürüst kapı "bugünkü sapma tavandır, yalnız düşebilir".
+//       -> RATCHET KALIR.
+//   (b) YAYINLANMIŞ BANT KALEMLERİ (bust_ease, waist_ease, hip_ease): bandın
+//       kaynağı VAR (Threads #221 s.71 · Aldrich 4.bs s.28) ve kalıp bandın
+//       DIŞINDA. Buraya tavan koymak yayınlanmış bir hükmü susturmaktır — yani
+//       kapıyı GEVŞETEREK geçmektir (v6 §7.1). -> SERT HÜKÜM: her ihlal, beden
+//       + mm + bant + künyeyle ADIYLA basılır ve KIRMIZI diye adlandırılır;
+//       TAVANLANMAZ. Bandın SAYISI değişmedi (63.5..101.6 · 25.4..60
+//       · 50.8..76.2 aynen).
+//   (c) DİĞER (unmeasurable, engine_error): RATCHET KALIR.
+//
+// ★★ (b)'NİN EXIT KODU — V5-G UZLAŞMASI (kart V5-G, 2026-08-25) ★★
+//   V5-F bu bölümü `exit 1`e bağlamıştı. O hamle GERİ ALINDI, çünkü devralınan
+//   KIRMIZI AD KÜMESİNİ 6'dan 7'ye çıkarıyordu (RULES 9). Gevşetme DEĞİL,
+//   ADLANDIRMA düzeltmesi:
+//     · İhlal "geçti" diye ADLANDIRILMIYOR — son hüküm satırı `PASS` DEMİYOR,
+//       ihlali "İHLAL (DAMLA KARARINA BAĞLI, K-V5A)" diye adıyla yazıyor.
+//     · Kırmızının kapanması bir ÖLÇÜM değil bir DAMLA KARARI (gövde girdisini
+//       kaydırmak): v6 §4'ün AÇIK istisnası — kuyruğa 3.8.d satırı düşer
+//       (DAMLA-KUYRUK.md K-V5A), koşu varsayılanla devam eder. exit 0.
+//     · KAPI YİNE ISIRIR: bant dışı beden sayısı 2026-08-25 kaydından
+//       (bust 4 · waist 0 · hip 8) ARTARSA -> REGRESYON -> exit 1.
+//       Yani kalem hem "ihlal var" diye bağırır hem kötüleşmeyi durdurur.
+//       `hip_ease`'in 8/8 doymuşluğu böyle çözülür: 8'i aşamaz ama 8'in
+//       ALTINA düştüğünde de ölçülür ve "TAVAN DÜŞÜRÜLEBİLİR" basar.
+//   Son hüküm İKİ bölümü AYRI AYRI adlandırır ve exit kodunu hangi bölümün
+//   düşürdüğü ADIYLA yazılır.
 // ---------------------------------------------------------------------------
 const RBFILE = JSON.parse(readFileSync(join(here, 'v5-ratchet-baseline.json'), 'utf8'));
 const RB = RBFILE.kapilar.draft_math_check;
 const RATCHET = RB.sapmaTavaniMM;
-const BAND_RATCHET = RB.bantDisiTavani;
+// (b) YAYINLANMIŞ BANT KALEMLERİ — ARTIK RATCHET DEĞİL (kart V5-F, 2026-08-25).
+// Tavan kayıtları SİLİNMEDİ; `bantDisiKayit` altında statü + künye + gerekçe +
+// ölçüm tarihiyle duruyorlar. Bantın kaynağı YAYINLANMIŞ olduğu için
+// (Threads #221 s.71 · Aldrich 4.bs s.28) onun üstüne "bu kadar ihlal
+// normaldir" tavanı koymak yayınlanmış bir hükmü susturmaktır (v6 §7.1).
+// V5-G: kayıt exit koduna YALNIZ REGRESYON YÖNÜNDE bağlıdır — sayı kayıttan
+// büyürse exit 1, kayda eşit/altındaysa exit 0 (kırmızı Damla kararına bağlı,
+// DAMLA-KUYRUK K-V5A). Kayıt bir TAVAN DEĞİL, bir REGRESYON ÇİZGİSİDİR.
+const BAND_RECORD = RB.bantDisiKayit;
 const UNMEASURABLE_RATCHET = RB.digerTavanlar.unmeasurable;
 const ENGINE_ERROR_RATCHET = RB.digerTavanlar.engine_error;
 
@@ -389,13 +428,29 @@ for (const [name, ceil] of Object.entries(RATCHET)) {
   if (w > ceil + 1e-9) { broken += 1; FAIL(`RATCHET KIRILDI — ${name}: en kötü sapma ${w.toFixed(4)}mm > tavan ${ceil.toFixed(2)}mm`); }
   else if (w < ceil - 1e-9) { lowered += 1; console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${w.toFixed(6)}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); }
 }
-console.log('    (b) YAYINLANMIŞ BANT KALEMLERİ — bant DEĞİŞMEDİ, bant DIŞI BEDEN SAYISI tavanlandı');
-for (const [name, ceil] of Object.entries(BAND_RATCHET)) {
+console.log('    (b) YAYINLANMIŞ BANT KALEMLERİ — RATCHET YOK, SERT HÜKÜM: bant dışı beden > 0 ise KIRMIZI');
+console.log('        (gerekçe: bandın kaynağı YAYINLANMIŞ; tavan koymak yayını susturur — v6 §7.1)');
+console.log('        exit kodu: bu KIRMIZI Damla kararına bağlı (DAMLA-KUYRUK K-V5A) -> exit 0;');
+console.log('        AMA bant dışı beden sayısı 2026-08-25 kaydından ARTARSA REGRESYON -> exit 1.');
+let bandViolations = 0, bandRegressions = 0, bandLowered = 0;
+for (const name of ['bust_ease', 'waist_ease', 'hip_ease']) {
   const n = bandOut[name];
   const b = EASE_BANDS[name];
-  console.log(`    ${L(name, 24)} bant dışı beden ${W(n, 10)}/${SIZES.length}   tavan ${W(ceil, 8)}   bant ${b.lo}..${b.hi}mm`);
-  if (n > ceil) { broken += 1; FAIL(`RATCHET KIRILDI — ${name}: bant dışı ${n} > tavan ${ceil} (bant ${b.lo}..${b.hi}mm, künye: ${b.cite})`); }
-  else if (n < ceil) { lowered += 1; console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} ${ceil} -> ${n}  (indirmek AYRI ve BİLİNÇLİ bir commit'tir)`); }
+  const rec = BAND_RECORD[name] || {};
+  const kayit = rec.olculenBantDisi_2026_08_25;
+  bandViolations += n;
+  console.log(`    ${L(name, 24)} bant dışı beden ${W(n, 10)}/${SIZES.length}   bant ${b.lo}..${b.hi}mm   [${rec.statu || 'SERT HUKUM, ratchet DEGIL'}; 2026-08-25 kaydı: ${kayit ?? '—'}/8]`);
+  if (n > 0) FAIL(`YAYINLANMIŞ BANT İHLALİ — ${name}: ${n}/${SIZES.length} beden bandın DIŞINDA (bant ${b.lo}..${b.hi}mm, künye: ${b.cite}) — bu kalem TAVANLANMAZ`);
+  if (typeof kayit !== 'number') {
+    bandRegressions += 1;
+    FAIL(`REGRESYON ÇİZGİSİ YOK — ${name}: v5-ratchet-baseline.json bantDisiKayit.${name}.olculenBantDisi_2026_08_25 okunamadı; çizgisiz kalem geçirilemez`);
+  } else if (n > kayit) {
+    bandRegressions += 1;
+    FAIL(`REGRESYON — ${name}: bant dışı beden ${n} > 2026-08-25 kaydı ${kayit}. İhlal KÖTÜLEŞTİ; bu exit kodunu DÜŞÜRÜR (K-V5A istisnası yalnız kaydın kendisini örter, büyümesini DEĞİL).`);
+  } else if (n < kayit) {
+    bandLowered += 1;
+    console.log(`      TAVAN DÜŞÜRÜLEBİLİR: ${name} bant dışı ${kayit} -> ${n}  (kaydı indirmek AYRI ve BİLİNÇLİ bir commit'tir)`);
+  }
 }
 console.log('    (c) DİĞER');
 console.log(`    ${L('unmeasurable', 24)} ${W(unmeasurable, 10)}      tavan ${W(UNMEASURABLE_RATCHET, 8)}`);
@@ -404,5 +459,30 @@ console.log(`    ${L('engine_error', 24)} ${W(engineErrors, 10)}      tavan ${W(
 if (engineErrors > ENGINE_ERROR_RATCHET) { broken += 1; FAIL(`RATCHET KIRILDI — engine_error ${engineErrors} > ${ENGINE_ERROR_RATCHET}`); }
 if (lowered) console.log(`    ${lowered} kalemde tavan düşürülebilir; kapı YEŞİL kalır, taban dosyası kendiliğinden güncellenmez.`);
 
-console.log(`\n${broken === 0 ? 'PASS' : 'FAIL'} draft_math_check — RATCHET: ${broken} tavan aşımı · adıyla basılan ihlal satırı ${namedFails}`);
-process.exit(broken === 0 ? 0 : 1);
+if (bandLowered) console.log(`    ${bandLowered} bant kaleminde kayıt düşürülebilir; taban dosyası kendiliğinden güncellenmez.`);
+
+// ═══ SON HÜKÜM — İKİ BÖLÜM AYRI AYRI ADLANDIRILIR ══════════════════════════
+// (kart V5-G md.2) Bu satır `PASS` DEMEZ. Bant bölümü KIRMIZI iken "geçti"
+// demek v6 §7.1'in yasakladığı şeydir; exit 0 olması ihlalin yokluğu değil,
+// kapanmasının bir DAMLA KARARI olmasıdır (v6 §4 istisnası, DAMLA-KUYRUK K-V5A).
+const ratchetVerdict = broken === 0 ? 'GEÇTİ' : 'KIRMIZI';
+const bandVerdict = bandViolations === 0 ? 'GEÇTİ' : 'KIRMIZI';
+console.log(`\nRATCHET: ${broken} tavan aşımı  [(a) nokta-değerli + (c) diğer · tolerans YAYIN YOK, V5-R §A]  -> ${ratchetVerdict}`);
+console.log(`YAYINLANMIŞ BANT: ${bandViolations} bedende ihlal  [(b) bust/waist/hip ease · Threads #221 s.71 · Aldrich 4.bs s.28]  -> ${bandVerdict}`);
+console.log(`BANT REGRESYONU: ${bandRegressions} kalem 2026-08-25 kaydının ÜSTÜNDE  [kayıt: bust 4 · waist 0 · hip 8]  -> ${bandRegressions === 0 ? 'GEÇTİ' : 'KIRMIZI'}`);
+
+const culprits = [];
+if (broken > 0) culprits.push('RATCHET (a/c)');
+if (bandRegressions > 0) culprits.push('BANT REGRESYONU (b, kayıt aşıldı)');
+const failed = culprits.length > 0;
+console.log(`EXIT KODUNU DÜŞÜREN BÖLÜM: ${failed ? culprits.join(' + ') : 'YOK (hiçbiri)'}`);
+if (!failed && bandViolations > 0) {
+  console.log(`EXIT KODUNU DÜŞÜRMEYEN KIRMIZI: YAYINLANMIŞ BANT (b) — ${bandViolations} ihlal DURUYOR ve yukarıda beden+mm+bant+künyeyle adıyla basıldı.`);
+  console.log(`  exit 0, ÇÜNKÜ kapanması bir ÖLÇÜM değil bir DAMLA KARARI (gövde girdisini kaydırmak) — v6 §4 istisnası, kuyruk satırı DAMLA-KUYRUK.md K-V5A.`);
+  console.log(`  Bu satır "geçti" DEMEZ. Kayıt (bust 4 · waist 0 · hip 8) aşılırsa exit 1 döner.`);
+}
+const bandTail = bandViolations > 0
+  ? `${bandViolations} bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)`
+  : `0 ihlal`;
+console.log(`\ndraft_math_check — RATCHET: ${broken} tavan aşımı · YAYINLANMIŞ BANT: ${bandTail} · BANT REGRESYONU: ${bandRegressions} · adıyla basılan ihlal satırı ${namedFails} · exit ${failed ? 1 : 0}`);
+process.exit(failed ? 1 : 0);
