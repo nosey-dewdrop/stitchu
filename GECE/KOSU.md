@@ -104,9 +104,9 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
 - `Logs/taban-T10-SONRA` ile mühür başlığı **aynı paket değil** (print-info
   4 sayfa ↔ başlık 5 sayfa) → **"5 sayfa" diskten doğrulanamıyor**
 - `stitchu-engine.js` **1 günde +44 052 bayt** (1 209 765→1 253 817), gitignore'da
-- `SATIS-SARTNAMESI.md:31` **`şartname-check` diye bir ctest YOK** ·
-  `ENV.md:10` `~/damla_projects_2026/reports/` diyor, o dizin **YOK**
-- `GECE/INDEX.md` **hiçbir mekanik kapının denetiminde DEĞİL**
+- `SATIS-SARTNAMESI.md:31` **`şartname-check` diye bir ctest YOK** · `ENV.md:10`
+  `~/damla_projects_2026/reports/` diyor, o dizin **YOK** · `GECE/INDEX.md`
+  **hiçbir mekanik kapının denetiminde DEĞİL**
 
 ## SONRAKİ FAZLARIN HAZIR GİRDİSİ + KUYRUKTAKİ KARTLAR
 - **V10 (landing)** ← `GECE/V0-0C.md` §1 (web'de 28 taşıyıcı iddia) · §2
@@ -122,10 +122,10 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
   cupseam_bustier`) · `[S2]` kesim↔dikiş çizgisi kararı · `sleeve_underarm`
   çift kapısı · yaka 4/4 + omuz 1/1 İFADE borcu · `raglan` arka kapısı
 - ★ `sewability_check` **SAYIYI tavanlıyor, YERİ değil** · `edit_locality_check`
-  tek beden/tek spec · `back_neck_drop` SINIF hatası kapısız · repo **iki üretim
-  toleransı** (0.79375 vs 3.0) · `virtual-sew.js` çürük · `flat-board.mjs` exit
-  koduna bağlı DEĞİL · `h3b-rings.py` koşmuyor · `vision/eval/photos` 29 dosya
-  19 etiket · `vision/eval.js` ↔ `foto-spec-olcum` aynı banka farklı sayı
+  tek beden/tek spec · `back_neck_drop` kapısız · repo **iki üretim toleransı**
+  (0.79375 vs 3.0) · `virtual-sew.js` çürük · `flat-board.mjs` exit koduna bağlı
+  DEĞİL · `h3b-rings.py` koşmuyor · `vision/eval.js` ↔ `foto-spec-olcum` aynı
+  bankada farklı sayı
 
 ## ★ PROTOKOL DERSİ (V10 ŞEFİNE — kart değil KURAL)
 1. **Kapının TABANI kapı kadar önemlidir.** D3 tabanı 52'yken mutasyonu
