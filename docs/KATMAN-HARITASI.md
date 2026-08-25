@@ -83,6 +83,27 @@
    yalnız ölçüldü — ama bundan sonra "L3b kapısı yeşil" cümlesi hangi L3b olduğunu
    söylemeden kurulamaz.
 
+10. **EDİTLEME BİR KATMAN DEĞİL, L3b ARTEFAKTININ ÜSTÜNE OTURUYOR — VE ORASI PANELDEN İNCE DEĞİL (25 Ağu, V6).**
+    "Yakayı değiştir, gerisi yerinde kalsın" hükmünü bugün `engine/tools/spec-diff.mjs`
+    veriyor, kanunu `contract/edit-locality-v1.json`, kapısı
+    `node engine/tests/edit_locality_check.mjs` (ctest'te kayıtlı). Kapı L3b'nin
+    **sevk edilen** hattını yargılıyor: `engine/dist/stitchu-engine.js` yükleniyor ve
+    kaynak damgası `web/vendor/stitchu-engine.js` ile birebir (`7023c808195429b3`),
+    yani md.9'daki ayrımın *2B* tarafı. Yüzey hattı hakkında hiçbir şey söylemiyor.
+    ★ **Boşluk:** editlemenin istediği çıpa bir panelin KENARIDIR; md.7'nin saydığı
+    dikiş grafiği eksikliği burada ikinci kez ısırıyor — 88 spec'te **0 adlandırılmış
+    kenar**, ve `contract/primitives-v1.json:primitifler.edge.parametreler.label`
+    bir kenar etiketi alanı TANIMLIYOR ama dolduran üretici yok. Bölge→panel adı
+    çözümü çalışıyor (varsayılan 6 panelli elbisede 35 serbest bölge-panel çifti),
+    dolayısıyla "şuraya" bugün en fazla `Bodice Front`'un tamamını gösterebiliyor.
+    Kenar granülaritesindeki çıpa sözlüğü ÜRETİLDİ ama ana dala ALINMADI —
+    `research/v6-cipa-editleme` @ `3d8903c`, dönüş şartı `DAMLA-KUYRUK.md` K-V6A.
+    ★ İkinci boşluk: `contract/edit-locality-v1.json`'un kendisi ELLE yazılmış,
+    üreteci ve `--check` bekçisi yok, `contract/generated-paths.sha256`'da geçmiyor;
+    `_bolge_kaynagi`'nın "composition.json'dan birebir taşındı" cümlesi 22 bileşenin
+    3'ünde YANLIŞ ölçüldü ve `fieldZones`'un 41 alanının 21'i hiçbir bileşenden
+    gelmiyor (`GECE/V6-B.md` §3). Kapı doğrulanmamış bir iddiayı ölçüyor.
+
 ## Teşhis ilkesi?
 
 Her harness testi SADECE kontrat dosyası okur. H3b FAIL + H0 PASS ⇒ arıza kesin L3b'de.

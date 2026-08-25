@@ -29,6 +29,9 @@ dosyayı aç.
 | menü büyüdü mü, ratchet ne diyor | `engine/tests/vocab_reference_check.sh` basar; taban `engine/tests/vocab-reference-baseline.json` |
 | sevk edilen bayt kaynağıyla aynı mı | `engine/tests/bundle_fresh_check.sh` basar; damgayı `engine/build-wasm.sh` koyuyor (`stitchu.source-stamp`) |
 | sınır kesirli/eksik değere ne yapıyor | `ctest -R wasm_spec_honesty_check` basar; teşhis `GECE/V2-C.md` |
+| bir edit bölgesinde kaldı mı, kapı ne kadar ince ölçüyor | `node engine/tests/edit_locality_check.mjs` basar; kanun `contract/edit-locality-v1.json` (ELLE yazılmış, bekçisi YOK), granülarite ilanı `engine/tools/spec-diff.mjs` `LOCALITY_GRANULARITY`; teşhis `GECE/V6-B.md`, onarım `GECE/V6-E.md` |
+| "şuraya ekle" bugün neyi gösterebiliyor | PANELİ, kenarı değil — `GECE/V6-C.md` (88 spec'te 0 adlandırılmış kenar). Kenar çıpası işi yan dalda: `research/v6-cipa-editleme` @ `3d8903c`, dönüş şartı `DAMLA-KUYRUK.md` K-V6A |
+| foto→spec isabeti bugün kaç | `node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json` basar; payda **5** ve neden büyütülemediği `GECE/V6-A.md` §1 |
 
 ## V0 fazı — envanter (24 Ağu 2026)
 
@@ -200,6 +203,38 @@ dürüst limit olarak).
 V5-F o cümleyi böldü — `sewability_check` düz ratchet, `draft_math_check` ise (a)+(c)'de
 ratchet ama (b) girth ease'de **değil**. Eski cümle silinmedi, docs'ta gerekçesiyle
 güncellendi.
+
+## V6 fazı — editleme zinciri: lokallik kapısının dişi + çıpa granülaritesi (25 Ağu 2026)
+
+Faz kuralı: kapı GEVŞETİLMEZ; devralınan kırmızı ADLARI büyüyemez (RULES §9) — bu faz o kuralı
+İHLAL ETTİ, hakem **KALDI** dedi, ve yeşile dönüş kapıyı kandırarak değil **işi geri alarak**
+yapıldı. Ana dala kalan net mühendislik **89 satır**: `edit_locality_check.mjs` +79,
+`spec-diff.mjs` +10. Kalan her şey tutanak/log/kart ya da yan dal.
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V6-R.md` | araştırma hükümleri (549 satır): ChatGarment (CVPR 2025, arXiv:2412.17811, kod Apache-2.0) VLM→GarmentCode JSON'da üç sadeleştirme — koşullu alan budama (900→350 token), float [0,1] normalizasyonu, sayıyı dilden ayırıp MLP ile çözme — ve konumlu edit dili emsalleri. Her sayı kaynağın HTML gövdesinden birebir; görülemeyen sayı "metinde bulunamadı" diye yazılı, tahmin edilmedi. |
+| `GECE/V6-A.md` | foto→spec ÖNCE ölçümü: `--bank` bayrağı neden eklendi (banka adı tarih damgalıydı, dünkü koşu tekrar edilemiyordu), bugünkü isabet (FOTO 5 · TAM DOĞRU SPEC 1 · ALAN 47/51), paydanın neden 5'ten büyük yapılamadığı (14 etiketli foto ücretli çağrı ister), dört tahmin dosyasının EŞİT OLMAYAN paydalarla yan yana tablosu, KONUM hata sınıfının tanımı ve iki sicilin (terms.json / vocab-canonical.json) 26 terimden 0'ını tanıması. |
+| `GECE/V6-B.md` | `edit_locality_check` TEŞHİSİ (onarım yok): kapının hangi motoru koştuğu dosya:satır kanıtıyla (WASM, kaynak damgası sevk edilen baytla aynı), 12 vakanın panel-yargısı dökümü, bölge listesinin ELLE yazıldığının kanıtı + `_bolge_kaynagi` iddiasının 22 bileşende 3 YANLIŞ ölçülmesi, ve dört mutasyon: M2/M3/M4 kırdı, **M1 KIRMADI** (bayt→panel varlığı, kapı yeşil kaldı). |
+| `GECE/V6-C.md` | çıpa kaynağı teşhisi: kenar granülaritesinde ÜRETİLEMEZ (88 spec'te 0 adlandırılmış kenar; `primitives-v1.json` `edge.label` alanını tanımlıyor, dolduran yok), panel granülaritesinde üretiliyor (35 serbest bölge-panel çifti). Üç aday kontrat dosyası isim isim açılmış. |
+| `GECE/V6-E.md` | **ana dala kalan onarım.** M1 açığının kök teşhisi (`antiCaught > 0` mutlak sıfır eşiği), A1 tabanı (`A1_FLOOR = 10`, iki yönlü ratchet), sessiz atlama tavanı (`A1_SKIP_CAP = 1`, atlananlar ADIYLA), A4 granülarite mandalı (ilan + 0.001mm oynatma + oynatmasız kontrol). Üç mutasyon, üçü de kırıyor. "10/12"nin gerçek anlamı: 10 yakalandı + 1 yakalanmadı + 1 hiç koşulamadı. |
+| `GECE/V6-J.md` | **kapanış:** reddedilen işin yan dala alınması ve ana dalın yeşile dönmesi. Beş adımlı ölçüm zinciri (10448 FAIL → 10452 FAIL → 10448 → 10438 **hâlâ FAIL** → 10432 YEŞİL) ve iki dersi: toplamı tabana eşitlemek yeşillik değildir (ratchet anahtar bazında yargılar), ve V6-E'nin ratchet maliyeti ÖLÇÜLDÜ = **sıfır satır**, o yüzden ana dalda kaldı. |
+| `GECE/V6-D.md` · `V6-F.md` · `V6-G.md` · `V6-H.md` · `V6-I.md` | **REDDEDİLEN İŞİN KAYDI — ana dalda karşılığı YOK.** Çıpa sözlüğü üreteci + `anchor_source_check` (D) · sözlüğün indekslenmesi ve kapının yeşile DÖNEMEYECEĞİNİN ölçülmesi (F) · operatör sicil reddi + KONUM/`--v2` ölçüm eklentileri (G) · ratchet borcunun 46→20 ödenmesi (H) · borcun 20→16'ya inmesi ve kartın önerdiği yolun KAPALI çıkması (I). ⚠ V6-F'in "RULES md.9 ihlal edilmedi" hükmü YANLIŞ TABANDAN (`ada3bf9`, faz öncesi değil) çıktı; V6-H doğru tabanla (`3fa8002`) ölçüp düzeltti ama F metni düzeltilmedi. ⚠ `6b3378f` kapıyı yorumdan kelime silerek geçen commit'tir, hakem adıyla düşürdü, V6-J geri aldı. |
+| `research/v6-cipa-editleme` @ `3d8903c` | **YAN DAL, origin'e pushlu, hiçbir satır silinmedi.** `contract/anchors-v1.json` (1382 satır) · `engine/tools/gen-anchors.mjs` (421) · `engine/tests/anchor_source_check.mjs` (294) · `foto-spec-olcum.mjs` KONUM/`--v2` ekleri · `spec-diff.mjs` V6-G ekleri · `edit_locality_check.mjs` A5/A6. Ana dala dönüş şartı = `DAMLA-KUYRUK.md` **K-V6A** (ölçülmüş bedel: +10 satır ratchet borcu, dosya dosya dökülü). |
+| `engine/tests/edit_locality_check.mjs` | KAPI (ctest'te `edit_locality_check`). A1 tabanı + sessiz atlama tavanı + A2/A3 + A4 granülarite mandalı. Taban sayıları dosyanın içinde, yanlarında ölçüm tarihi ve yakalanmayan iki vakanın ADI. |
+| `engine/tools/spec-diff.mjs` | editleme zinciri. `LOCALITY_GRANULARITY = 'bayt'` İLANI ve `pieceBytes`'ın export'u burada — denetim kopyayı değil GERÇEK karşılaştırma fonksiyonunu ölçsün diye. |
+| `GECE/log/V6-B.mutasyon.txt` · `V6-E.mutasyon.txt` | mutasyon defterleri. B'de M1 exit **0** basıyor (dişin olmadığı yön), E'de aynı mutasyon exit **1** + 2 KIRMIZI. İkisini yan yana okumak onarımın ne yaptığını tek bakışta gösterir. |
+| `GECE/log/V6-D.mutasyon.txt` · `V6-G.mutasyon.txt` · `V6-F.mutasyon.txt` | yan dala giden işin mutasyon defterleri. ⚠ `V6-F.mutasyon.txt`'de üç mutasyonun `EXIT=` satırı BOŞ ve sondaki `git diff --stat` geri almadan sonra hâlâ fark gösteriyor — o logun "GERİ ALINDI" iddiası çıkış koduyla kanıtlanmıyor (hakemin bulgusu; kusurlu olan LOG, kapı değil). |
+| `GECE/log/V6-J.kapi.txt` · `V6-H.kapi.txt` · `V6-I.kapi.txt` · `V6-F.kapi.{ONCE,SONRA}.txt` · `V6-H.3fa8002.txt` | `vocab_reference_check` koşuları. Kapının `--tree` ile AĞACI, bayraksız COMMIT'i ölçtüğü ayrımı ve faz-öncesi tabanın (`3fa8002`, YEŞİL) ölçümü burada. |
+| `GECE/log/V6.ctest.opening.txt` · `V6.ctest.final.txt` | fazın tam `ctest` koşuları. Kırmızı AD kümesinin büyüyüp büyümediği bu iki dosyanın `diff`'inden okunur, buradaki bir cümleden değil. |
+| `GECE/log/V6-A.olcum.txt` · `V6-C.topoloji.txt` · `V6-D.{ctest,kapsam}.txt` · `V6-G.olcum.txt` · `V6-H.{borc-dagilimi,korumalar}.txt` · `V6-I.korumalar.txt` · `V6-F.{ada3bf9,indeks-denemesi,revert-tavani}.txt` · `V6.build.opening.txt` | ham ölçüm çıktıları; her sayının yanında onu basan komut. |
+| `GECE/KART/V6-A.md` … `V6-R.md` | on bir işçi kartının brief'i: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. Reddedilen kartlar da duruyor. |
+
+Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §14 (editleme zinciri, kapının
+dişsiz yönü ve onarımı, panel granülaritesi, yan dala alınan iş, foto→spec paydası) + §10'a
+eşit-olmayan-payda şerhi + "Known limits" dört satır, `docs/KATMAN-HARITASI.md` boşluk 10,
+`README.md` (editleme invariantının halka açık ifadesi, "önce dişsiz ölçüldü, sonra SIKILAŞTIRILDI"
+diye).
 
 ## Ölçüm aletlerini çalıştır
 
