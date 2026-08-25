@@ -1,0 +1,135 @@
+{
+  "_baslik": "docs_truth_check TABANI — doküman doğruluk kapısı. Kapı: engine/tests/docs_truth_check.mjs (ctest: docs_truth_check). Yeniden kes: node engine/tests/docs_truth_check.mjs --baseline",
+  "_yasa": [
+    "D1/D2 EŞİĞİ SIFIRDIR. Yayınlanmış hiçbir kaynak \"N ihlale kadar tolerans\" vermiyor (GECE/V9-R.md §2 Soru 2); yayınlanan tek eşik sıfır + AÇIK muafiyet. Bu yüzden burada tolerans SAYISI yok, KAYITLI BORÇ listesi var.",
+    "bilinenAcik listeleri BORÇTUR, taban DEĞİL. Listede olmayan her ihlal kapıyı KIRMIZI düşürür. Emsal: Vale accept.txt / woke .wokeignore / Crossplane-Elastic-Grafana pratiği (V9-R §1 D3): yanlış pozitif kapıyı gevşetmez, aynı commit içinde GÖRÜNÜR ve versiyonlanmış bir listeye girer.",
+    "Liste yalnız KÜÇÜLEBİLİR. Bir borç kapanınca kapı yeşil kalır ama bu dosya KENDİLİĞİNDEN güncellenmez — düşüşü sabitlemek ayrı, bilinçli bir --baseline commit'idir (vocab_reference_check emsali).",
+    "D3 bir RATCHET'tir: sağlayıcısız sayısal satır sayısı tabanı AŞARSA kırmızı. İDDİA CÜMLESİ SAYISI değil, SAĞLAYICISIZ cümle sayısı ölçülür — V9-A §1: RULES §6 onarımı cümle sayısını YÜKSELTİR (0C 28 → bugün 104), o yüzden cümle sayısına eşik koymak yanlış yöne bastırır.",
+    "İSTİSNA KURALI ZORUNLUDUR (V9-A §2B): bugünkü ağaçta 16 ham hit'in 13'ü yanlış pozitif; 2'si emekli edilen cümleyi tırnak içinde taşıyor. İstisnasız kapı RULES §6 ONARIMINI cezalandırır.",
+    "Kapının kendi arızası (taban yok, git yok vb.) exit 3 alır; ihlal exit 1 alır. Ayrık exit kodu lychee emsali (V9-R §1 B3). EKSİK YASA ASLA GEÇİŞ DEĞİLDİR: taban dosyası yoksa kapı FAIL verir."
+  ],
+  "olcumCommit": "b0a0b1db62fcb54c14adb06ce47df9f2bcb74ef6",
+  "olcumTarihi": "2026-08-25",
+  "kapsam": {
+    "D1_D2": "docs/**/*.{md,html} + README.md, docs/archive/tools/*.{mjs,js} HARİÇ",
+    "D3": "docs/**/*.md + README.md (V9-A §1 sayım kapsamı)",
+    "taranan_D1_D2": 18,
+    "taranan_D3": 7
+  },
+  "D1": {
+    "esik": 0,
+    "hamHit": 16,
+    "dusen": {
+      "tirnak_kod_span": 4,
+      "olcum_baglami_tarihli": 3,
+      "fenced_blok": 0
+    },
+    "acikBorc": 9,
+    "bilinenAcik": [
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "kalip": "byte-identical",
+        "satir": "**A second gate was added because the pen was silently collapsing different garments into the same drawing.** `flat_expresses_spec_check` (registered in `engine"
+      },
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "kalip": "byte-identical",
+        "satir": "**A comparison board was built, and its first honest result was that this phase changed nothing visible in it.** `engine/tools/flat-board.mjs` renders one row p"
+      },
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "kalip": "byte-identical",
+        "satir": "- **`body.shoulder` is a dead input.** The drafted geometry is byte-identical for shoulder values from 20 to 80 cm (`GECE/V5-D.md`), while `contract/tables.json"
+      },
+      {
+        "dosya": "docs/H1.0-KAPI.md",
+        "kalip": "bitti",
+        "satir": "> Kapı, 25–45 saatlik yapısal işin yön seçebilmesi için var: iş bittiğinde hangi sayının"
+      },
+      {
+        "dosya": "docs/KATMAN-HARITASI.md",
+        "kalip": "bayt bayt",
+        "satir": "iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'le **bayt bayt"
+      },
+      {
+        "dosya": "docs/KATMAN-HARITASI.md",
+        "kalip": "bayt bayt",
+        "satir": "20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor (`GECE/V5-D.md`)."
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "kalip": "0.0000mm",
+        "satir": "**0.0000mm** eşleşiyor — uyarı metin değil, **geometriye bağlı**."
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "kalip": "bitti",
+        "satir": "(Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1."
+      },
+      {
+        "dosya": "docs/archive/mocks/babyblue-stil-1.html",
+        "kalip": "0.00mm",
+        "satir": "<div>0.00 mm seam match</div><div>70,200-draft matrix</div><div>on-device · nothing uploaded</div>"
+      }
+    ]
+  },
+  "D2": {
+    "esik": 0,
+    "yoklananHedef": 502,
+    "var": 477,
+    "dusenSinif": 16,
+    "acikBorc": 9,
+    "bilinenAcik": [
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "hedef": "PROJECT.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "hedef": "PLAN.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "hedef": "PLAN.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/ARCHITECTURE.md",
+        "hedef": "engine/SPECS-next-vocabulary.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/H1.0-KAPI.md",
+        "hedef": "engine/tests/h10_gate_check.cpp",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "hedef": "benchmark-58/dress_patterns/",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "hedef": "reports/2026-07-19-stitchu-f0-gusto-korpus.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "hedef": "print-svg/a4-page5.svg",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/SATIS-SARTNAMESI.md",
+        "hedef": "print-svg/a4-page5.svg",
+        "tur": "TICK"
+      }
+    ]
+  },
+  "D3": {
+    "taban": 52,
+    "sayisalSatir": 133,
+    "yontem": "sayı+birim taşıyan prose satırı; satırda ya da kapsayıcı paragrafta backtick içinde alet/test adı (*_check, *.mjs/.py/.js/.sh, ctest, grep, ls -l) ya da kanıt yolu (GECE/, Logs/, reports/) YOKSA sağlayıcısız sayılır"
+  }
+}

@@ -876,3 +876,21 @@ add_test(NAME vocab_source_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/vocab
 # this signature counts comments and prose too, on purpose (stability over
 # accuracy), and the reasons are in the script's header.
 add_test(NAME vocab_reference_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/vocab_reference_check.sh)
+
+# V9-B — docs_truth_check: DOKÜMAN DOĞRULUK KAPISI. RULES §6 ("Numbers live in
+# TEST OUTPUT, not in docs — name the tool/test that prints the number") bugüne
+# kadar hiçbir şeyin koşmadığı bir cümleydi; V9-A onu elle ölçtü (16 ham
+# duran-iddia hit'i, 502 yol referansı, 238 iddia cümlesi) ve o sayılar bir
+# markdown dosyasında durdu, yani kimsenin kıramayacağı sayılardı. Bu kapı üç
+# alt denetimi tek exit koduna bağlar: D1 duran iddia (hard 0, kayıtlı borç
+# listesiyle), D2 ölü repo yolu (hard 0, aynı liste), D3 sağlayıcısız sayısal
+# satır (RATCHET, taban yalnız DÜŞEBİLİR — vocab_reference_check emsali).
+# İSTİSNA KURALI ZORUNLU: tırnak/kod-span içindeki hit ve tarihli ölçüm
+# bağlamındaki hit DÜŞER, yoksa kapı RULES §6 ONARIMINI cezalandırır (V9-A §2B:
+# 16 hit'in 13'ü yanlış pozitif). Kaçış mekanizması yayınlanmış pratikten
+# (V9-R §2: doctest +SKIP, Vale accept.txt, woke .wokeignore) ve GÖRÜNÜR:
+# yanlış pozitif kapıyı gevşetmez, aynı commit'te tabana yazılır.
+# Kırmızı kanıtı GECE/log/V9-B.red-before.txt, mutasyon kanıtı
+# GECE/log/V9-B.mutasyon.txt.
+add_test(NAME docs_truth_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/docs_truth_check.mjs)
