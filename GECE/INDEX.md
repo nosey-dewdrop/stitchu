@@ -37,6 +37,10 @@ dosyayı aç.
 | cap ease için yayınlanmış sayı var mı | `GECE/V7-R.md` (yayınlanmış / ikincil / DOĞRULANMADI ayrımıyla). Bedene göre ölçekleyen formül **BULUNAMADI**; puf/balonun nicel tanımı da yok |
 | sevk edilen paketten kollu kalıp/flat nasıl görünüyor | `GECE/log/V7-E.png/` (3 kalıp PNG + 4 flat kol PNG/SVG); üreten `node engine/tools/render-pages.mjs <dizin>`, hat doğrulaması `GECE/V7-E.md` §0 |
 | foto→spec isabeti bugün kaç | `node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json` basar; payda **5** ve neden büyütülemediği `GECE/V6-A.md` §1 |
+| sitenin cümleleri motorun gerçeğini mi söylüyor | `node engine/tests/landing_truth_check.mjs` basar (ctest adı `landing_truth_check`); beş denetim L1…L5, kayıtlı borç `engine/tests/landing-truth-baseline.json`. Kapı cümlenin BİÇİMİNİ ölçer, DOĞRULUĞUNU değil — sınırları kendi başlığında |
+| sitede hangi bedenler yazabilir | L5 tek kaynağa bağlar: `contract/layers/shape-ratios.json` beden kümesi; kullanıcının seçebildiği liste (`web/js/create.js` `EU_SIZES`) motorun kümesinin üstkümesi olamaz |
+| MTM (ısmarlama) dili siteden nasıl çıktı | `GECE/V10-C.md` (landing) → `GECE/V10-D.md` (site geneli) → `GECE/V10-F.md` (üreteçler) → `GECE/V10-G.md` (kapıdan kaçan 20 kalıp). Cümle cümle önce/sonra tablosu her dosyanın içinde |
+| sayfa 320/390/1440 px'te taşıyor mu | `node GECE/v10-e-olcu.mjs` basar; ölçümler `GECE/log/V10-E.olcum-{320,390,1440}.json`, ekran görüntüleri `GECE/log/V10-E.png/` (9 PNG), tutanak `GECE/V10-E.md` |
 
 ## Faz tutanakları — tek satır, tek yol
 
@@ -53,6 +57,7 @@ Faz başına ŞEF tutanağı. Alt tutanaklar ve loglar aşağıdaki faz bölüml
 | V6 | giriş hattı: foto+prompt → spec ve editleme lokalliği | `GECE/V6.md` |
 | V7 | kol çekirdek fazı: kenar kimliği + oyuk↔kapak kapısı | `GECE/V7.md` |
 | V9 | doküman doğruluğu: sayım, `docs_truth_check`, kâtip turları | ⚠ şef tutanağı `GECE/V9.md` bu satır yazılırken **diskte YOK**; alt tutanaklar aşağıda |
+| V10 | site doğruluğu: MTM dili ve duran iddialar `web/`'den ve üreteçlerden söküldü, sabit 8 beden (EU34–48) `landing_truth_check` ile mekanik hâle geldi | `GECE/V10.md` (şef yazacak; kâtip bu satırı yazarken **diskte YOK**) — alt tutanaklar aşağıda |
 
 ⚠ **V8 fazı YOKTUR** — numara atlanmıştır, kayıp dosya değildir (`GECE/V8*.md` diskte yok).
 
@@ -323,6 +328,43 @@ kapanma hükmü `GECE/KAPI.md`'de hakemindir.
 | `GECE/log/V9-A.links.txt` · `V9-A.standing.txt` | o iki aletin ham çıktısı: dosya:satır → hedef → TICK/VAR-YOK tablosu, ve duran-iddia taramasının ham dökümü. |
 | `GECE/KART/V9-A.md` … `V9-F.md` · `V9-R.md` | fazın **7 işçi kartı**: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. |
 
+## V10 fazı — site doğruluğu: MTM dili söküldü, beden ekseni kapıya bağlandı (25 Ağu 2026)
+
+Fazın tek cümlesi: **sitenin sattığı ürün ile motorun yaptığı ürün aynı şey değildi.** Sayfalar
+ısmarlama (made-to-measure) ve EU34–52 bir beden koşusu satıyordu; motorun yayınlanmış beden
+kümesi `contract/layers/shape-ratios.json`'daki **sekiz sabit beden, EU34–48**. Faz o farkı önce
+saydı, sonra sayfalardan ve o sayfaları YAZAN üreteçlerden söktü, sonra beden eksenini bir
+kapıya bağladı ki aynı yalan elle geri gelemesin. Bu bölümdeki her satır bir YOLDUR — kapanma
+hükmü `GECE/KAPI.md`'de hakemindir.
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V10-A.md` | bugünkü sayım (ölçüm, onarım YOK): `web/` genelindeki her iddia motorun bugünkü hâline karşı ölçüldü; ham tablo `GECE/log/V10-A.iddia.tsv`. |
+| `GECE/V10-B.md` | `landing_truth_check` kapısının tutanağı: beş denetim (L1…L5), taban kesimi, boş-test ve mutasyon kanıtı. |
+| `GECE/V10-C.md` | landing tasarımı + cümle cümle önce/sonra: `web/index.html` MTM satmayı bıraktı, üç çıktı gerçek çıktı olarak sayfaya girdi, vizyon bloğu gelecek zamana çevrildi, `EU_SIZES` motorun kümesinden türedi. |
+| `GECE/V10-D.md` | site geneli süpürme: kalan MTM dili ve duran iddialar `web/` altından çıkarıldı, `landing-truth-baseline.json` kesildi. |
+| `GECE/V10-E.md` | ekran kanıtı: 320 / 390 / 1440 CSS px'te gerçek tarayıcı render'ı ve taşma ölçümü. Aleti `GECE/v10-e-olcu.mjs`. |
+| `GECE/V10-F.md` | üreteçler: sayfaları yazan `engine/tools/gen-*.mjs` ailesi aynı yalanı KAYNAKTA basmayı bıraktı — düzeltilmemiş üreteç, düzeltilmiş sayfayı bir sonraki koşuda geri bozar. |
+| `GECE/V10-G.md` | kapıdan KAÇAN MTM cümleleri: kapının `BANNED` listesi 13 → 20 kalıba çıkarıldı, kaçan her cümle dosya:satır ile yargılandı, 7/7 mutasyon + yanlış-pozitif negatif kontrolü. |
+| `GECE/V10-R.md` | araştırma (kod yazılmadı): landing iddialarının dayanağı ve reflow eşikleri için yayınlanmış kaynak tabanı. |
+| `GECE/V10.md` | fazın ŞEF tutanağı. ⚠ bu satır yazılırken diskte **YOK** — şef yazacak. |
+| `engine/tests/landing_truth_check.mjs` | KAPI (node, bağımlılık yok), ctest adı `landing_truth_check`. Kapsam `web/**/*.html` + `web/js/*.js`, iddia bloklarına AYRIŞTIRILARAK; `--dir=<yol>` ile fikstüre gösterilebilir. |
+| `engine/tests/landing-truth-baseline.json` | kapının TABANI / kayıtlı borcu. Emsal `engine/tests/docs-truth-baseline.json`; liste yalnız küçülebilir, yeniden kesim `--baseline --note=` ile bilinçli bir commit'tir. |
+| `GECE/log/V10.build.opening.txt` · `V10.ctest.opening.txt` | fazın AÇILIŞ build'i ve tam `ctest` koşusu. Kırmızı AD kümesi buradan okunur, buradaki bir cümleden değil. |
+| `GECE/log/V10.build.final.txt` · `V10.ctest.final.txt` | fazın KAPANIŞ build'i ve tam `ctest` koşusu; kırmızı AD kümesinin büyüyüp büyümediği açılışla `diff`'lenerek okunur (RULES md.9). |
+| `GECE/log/V10-A.iddia.tsv` · `V10-A.site-health.txt` | sayımın ham çıktısı: iddia tablosu ve site sağlığı koşusu. |
+| `GECE/log/V10-B.red-before.txt` | BOŞ TEST: kapı, faz-öncesi ONARILMAMIŞ `web/` ağacına karşı kırmızı düşüyor. Kapatılmış test olmadığının kanıtı. |
+| `GECE/log/V10-B.mutasyon.sh` · `V10-B.mutasyon.txt` | kapının ilk mutasyon koşusu: koşucu betik ve çıktısı. |
+| `GECE/log/V10-C.landing-truth.txt` · `V10-C.site-health.txt` | landing turunun kapı ve site-sağlığı çıktıları. |
+| `GECE/log/V10-D.kapi.txt` · `V10-D.site-health.txt` | süpürme turunun kapı ve site-sağlığı çıktıları. |
+| `GECE/log/V10-E.kapi.txt` · `V10-E.olcum-{320,390,1440}.json` | ekran turunun kapı çıktısı ve üç genişlikteki ham taşma ölçümü. |
+| `GECE/log/V10-E.png/` (9 PNG) | `index` · `create` · `api` sayfalarının 320 / 390 / 1440 px ekran görüntüleri — RULES invariant 3'ün istediği dosya YOLU budur. |
+| `GECE/log/V10-F.uretec.txt` | üreteç turunun çıktısı: hangi üreteç hangi cümleyi basıyordu. |
+| `GECE/log/V10-G.kapi.txt` · `V10-G.mutasyon.sh` · `V10-G.mutasyon.txt` | sıkılaştırılmış kapının çıktısı + 7 yeni kalıbın 7/7 mutasyon kanıtı ve doğru cümleyi cezalandırmadığını gösteren negatif kontrol. |
+| `GECE/v10-e-olcu.mjs` | ekran ölçüm aleti (kapı değil, alet): sayfayı üç genişlikte açar, taşan elemanı basar. |
+| `GECE/log/V10-K.docs-truth.txt` | kâtip turunun kapanış koşusu: `docs/` + `README.md` düzeltildikten sonra `ctest -R docs_truth_check` çıktısı, komut ve commit satırıyla. |
+| `GECE/KART/V10-A-envanter.md` … `V10-G-kacan-yalan.md` · `V10-R-arastirma.md` | fazın **8 işçi kartı**: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. |
+
 ## `GECE/KART/` — kart dosyaları (faz başına)
 
 Kart = işçinin brief'i: kapalı kaynak listesi + çıktı dosya kümesi + teslim şartı.
@@ -339,6 +381,7 @@ Kart kart liste burada yok; kartın kendisi dizinde adıyla duruyor.
 | V6 | 11 | `GECE/KART/V6-A.md` … `V6-R.md` (reddedilen kartlar da duruyor) |
 | V7 | 8 | `GECE/KART/V7-A.md` … `V7-R.md`. ⚠ V7-H'nin kartı YOK — o iş hakemin bulgusundan doğdu |
 | V9 | 7 | `GECE/KART/V9-A.md` · `V9-B.md` · `V9-C.md` · `V9-D.md` · `V9-E.md` · `V9-F.md` · `V9-R.md` |
+| V10 | 8 | `GECE/KART/V10-A-envanter.md` · `V10-B-kapi.md` · `V10-C-tasarim.md` · `V10-D-yalan-suprugu.md` · `V10-E-ekran.md` · `V10-F-uretec.md` · `V10-G-kacan-yalan.md` · `V10-R-arastirma.md` |
 
 ## `GECE/log/` — faz dışı ve devralınan loglar
 
@@ -396,6 +439,11 @@ cd engine/build && ctest                          # sayıyı koşunun kendisi ba
 node engine/tests/sewability_check.mjs            # dikilebilirlik: ihlal + ABSENT, adıyla
 node engine/tests/draft_math_check.mjs            # kalıp matematiği: 3 ayrı hüküm satırı,
                                                   # exit kodunu düşüren bölüm ADIYLA basılır
+node engine/tests/landing_truth_check.mjs         # sitenin cümleleri: L1..L5, her ihlal adıyla
+                                                  # --dir=<yol> fikstüre gösterir, --no-baseline
+                                                  # tabanı yok sayan hard-0 kipidir
+node engine/tests/docs_truth_check.mjs            # docs/ + README.md: duran iddia, ölü yol,
+                                                  # sağlayıcısız sayı (D1/D2/D3)
 ```
 
 ## Kural

@@ -49,8 +49,15 @@ görünüm birbirinin aynı, marka rengi/çizgi hiyerarşisi hiç kurulmadı. A�
 hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/ARCHITECTURE.md` §11.
 
 - [ ] ÖN + ARKA flat, tek karo (viewBox front+back yan yana, emsal: 496 genişlik oranı).
-      → **YOK.** `find . -name "*flat*.svg" -path "./web/*"` → **0 dosya**; `web/` tarafına hiçbir
-      şey sevk edilmedi. Bugünkü giysinin **siluet dış konturu** artık çiziliyor
+      → **YOK.** ⚠ **25 AĞU (V10) — BU SATIRIN ÖLÇÜMÜ BAYATLADI, KUTUCUK AÇIK KALIYOR.**
+      Aynı komut bugün: `find . -name "*flat*.svg" -path "./web/*"` → `web/assets/flats/
+      flat-sleeve-{straight,balloon,cap,none}.svg`, yani **artık boş dönmüyor**. Dördü de
+      kanuna bağlı kalemin (`engine/tools/render-garment-flat.mjs`) çıktısı, `GECE/log/
+      V7-E.png/`'den kopyalandı ve landing sayfasına kondu (`GECE/V10-C.md` §3). Yani
+      *"`web/` tarafına hiçbir şey sevk edilmedi"* cümlesi **artık doğru değil** ve silinmiyor,
+      düzeltiliyor. **AMA kutucuk yine de işaretlenemez:** sevk edilenler KOL çizimleri, istenen
+      nesne ÖN+ARKA tek karo; ön/arka yan yana viewBox düzeni hâlâ yok. Bugünkü giysinin
+      **siluet dış konturu** artık çiziliyor
       (`shell-flat EU38 --svg`), ama ön ve arka aynı eğri ve tek karo düzeni yok.
       ⚠ 24 Ağu (V4): "ön ve arka aynı eğri" cümlesi **`shell-flat` için** doğruluğunu
       koruyor ve sebebi ölçüldü — arka, önün x-işareti çevrilmiş kopyası, fark
@@ -70,7 +77,10 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       (`2|none` outline · `1.4|none` seam · `1|4 3` topstitch · `1|1 3` hidden · `1|none` mark
       — sayım `GECE/V4-K.md` §2c). Beyan edilen oranlar da artık kapıda okunuyor
       (`flat_convention_check` 3b; tolerans ISO 128-2:2020 md. 5.2'nin ±0,1d'sinden türer,
-      uydurulmuş bir eşik değil). **AMA:** (a) bu çıktıların hiçbiri `web/`'e sevk edilmedi,
+      uydurulmuş bir eşik değil). **AMA:** (a) bu çıktıların hiçbiri `web/`'e sevk edilmedi
+      — ⚠ **25 AĞU (V10): bu şık da bayatladı**, aynı kalemin dört kol çizimi
+      `web/assets/flats/` altında ve landing sayfasında duruyor (`GECE/V10-C.md` §3);
+      `gusto-lint` onlara **koşulmadı**, yani sevk oldu ama ölçüm hâlâ yok,
       (b) zevk panosunun 9 stil hücresi bu kalemden DEĞİL, referans kalemden çıkıyor ve
       onun ağırlık tablosu `{.65, 1.05, 1.4, 1.5, 1.9}`, mürekkebi `#111` — yani panoya
       bakan biri `lineClasses`'ı görmüyor (`GECE/V4-D.md` §1 ve §3). `gusto-lint` bu yeni
