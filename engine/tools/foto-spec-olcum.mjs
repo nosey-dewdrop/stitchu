@@ -197,7 +197,7 @@ function konumWords(term) {
   return [...new Set(toks.filter((t) => KONUM_WORDS.includes(t)))];
 }
 // spec o yeri taşıyor mu: alan ADI ya da alan DEĞERİ o konum sözcüğünü içeriyorsa taşır.
-// camelCase de ayrılır: 'vNeck' -> [v, neck], 'topLength' -> [top, length].
+// camelCase de ayrılır: 'vNeck' -> [v, neck], 'hipBand' -> [hip, band].
 const words = (s) => String(s).replace(/([a-z0-9])([A-Z])/g, '$1 $2')
   .toLowerCase().split(/[^a-z]+/).filter(Boolean);
 function specCarries(spec, word) {

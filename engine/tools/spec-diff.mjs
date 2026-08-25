@@ -240,11 +240,11 @@ export function sicilCheck(ops) {
     }
     // Bileşen kaydı: composition.json bir bileşeni bu alana bağlamışsa, kapalı
     // olmayan değer o bileşenin ilan ettiği değerlerden biri olmalı. Temel
-    // alanlar (neckline crew/scoop...) bileşen değildir, sözlük onlar için sicildir.
+    // alanlar (yaka biçimi crew/scoop...) bileşen değildir, sözlük onlar için sicildir.
     const comps = COMPOSITION.components.filter((k) => k.specField === field);
     if (comps.length && c !== OFF(field)) {
       const declared = comps.flatMap((k) => k.values);
-      const baseField = comps.some((k) => k.id.includes('.')); // neckline.ext gibi kısmi kayıt
+      const baseField = comps.some((k) => k.id.includes('.')); // '<alan>.ext' gibi kısmi kayıt
       if (!declared.includes(c) && !baseField) {
         rejects.push(
           `SEVK EDİLMEDİ: ${field}='${c}' — composition.json bu alanda sadece ` +
@@ -263,7 +263,7 @@ export function sicilCheck(ops) {
 export function applyDiff(base, ops, mode = 'diff') {
   const out = mode === 'rewrite' ? {} : { ...base };
   if (mode === 'rewrite') {
-    // Model "her şeyi yeniden yazdı": sadece garment/temel iskelet + diff kalır.
+    // Model "her şeyi yeniden yazdı": sadece temel iskelet + diff kalır.
     out.garment = base.garment;
   }
   for (const o of ops) {
