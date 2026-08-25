@@ -1,0 +1,84 @@
+{
+  "width": 320,
+  "height": 640,
+  "pages": {
+    "index": {
+      "viewport": 320,
+      "scrollWidth_clipped": 320,
+      "scrollWidth_unclipped": 320,
+      "bodyScrollWidth": 320,
+      "count": 0,
+      "top": [],
+      "innerScrollers": [],
+      "domNodes": 470,
+      "pageHeight": 13832,
+      "png": "/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V10-E.png/index-320.png"
+    },
+    "create": {
+      "viewport": 320,
+      "scrollWidth_clipped": 320,
+      "scrollWidth_unclipped": 320,
+      "bodyScrollWidth": 320,
+      "count": 0,
+      "top": [],
+      "innerScrollers": [],
+      "domNodes": 245,
+      "pageHeight": 4692,
+      "png": "/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V10-E.png/create-320.png"
+    },
+    "api": {
+      "viewport": 320,
+      "scrollWidth_clipped": 320,
+      "scrollWidth_unclipped": 320,
+      "bodyScrollWidth": 320,
+      "count": 5,
+      "top": [
+        {
+          "sel": "span.s",
+          "right": 688.69,
+          "over": 368.69,
+          "w": 639.69
+        },
+        {
+          "sel": "span.k",
+          "right": 636.05,
+          "over": 316.05,
+          "w": 60.22
+        },
+        {
+          "sel": "span.k",
+          "right": 485.52,
+          "over": 165.52,
+          "w": 90.31
+        },
+        {
+          "sel": "span.k",
+          "right": 462.95,
+          "over": 142.95,
+          "w": 120.42
+        },
+        {
+          "sel": "span.s",
+          "right": 327.47,
+          "over": 7.47,
+          "w": 240.83
+        }
+      ],
+      "innerScrollers": [
+        {
+          "sel": "pre",
+          "inner": 680,
+          "box": 262
+        },
+        {
+          "sel": "pre",
+          "inner": 755,
+          "box": 262
+        }
+      ],
+      "domNodes": 163,
+      "pageHeight": 4378,
+      "png": "/Users/damummyphus/damla_projects_2026/stitchu/GECE/log/V10-E.png/api-320.png"
+    }
+  }
+}
