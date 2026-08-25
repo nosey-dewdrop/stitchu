@@ -1,0 +1,14 @@
+olculen       : agac /var/folders/5b/s4fb775925l775xmnt2zt_mr0000gn/T/tmp.tVgUrlBdU7/wt
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10432 (delta -6)
+
+  DUSTU  eksen ADI   collarType                81 ->    80
+  DUSTU  eksen ADI   sleeveLength             274 ->   273
+  DUSTU  eksen ADI   sleeveStyle              351 ->   347
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.

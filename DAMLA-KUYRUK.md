@@ -1103,3 +1103,46 @@ MINIMUM EASE · Aldrich 4.bs s.28. Bel payı 8/8 bedende bandın İÇİNDE.
 **VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V7
 ★ Test çıktısı bu ada atıf veriyor: `draft_math_check` son hüküm satırı
 "YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)".
+
+## K-V6A — `vocab_reference_check` yeşile dönsün diye ÖLÇÜM ALETLERİNİN KAPSAMI daraltılsın mı? (V6, 25 Ağu)
+
+**KARAR GEREKEN:** Kapıyı yeşile döndürmenin kalan tek yolu, `foto-spec-olcum.mjs`
++ `spec-diff.mjs`'in elle yazılmış v1→v2 eşlemesini üretilmiş kontrata devretmek —
+ama bu, bugün yargılanan **4 ekseni 17 eksene** çıkarır. Kapsam büyüsün mü, yoksa
+kapı KIRMIZI mı kalsın?
+
+**ÖLÇÜM (basan komut: `bash engine/tests/vocab_reference_check.sh`):**
+faz öncesi `3fa8002` **10432, HUKUM: YESIL** · V6 sonu `a38b7b2` **10478,
+FAIL (20 artan)** · bu kart sonrası `63abc19` **10452, FAIL (7 artan)**.
+Ödenen borç 26/46. Kalan 20 satırın dağılımı (`GECE/V6-H.md` §6):
+- **9 satır KAPSAM kararına bağlı** (`garment` 5 · `shaping` 2 · `skirtStyle` 2'nin
+  kod kısmı + `backOpening` 1 + `AXIS_MAP` anahtarları),
+- **3 satır ÖLÇÜLMÜŞ VERİ, silinemez**: `anchors-v1.json`'daki iki panel adı
+  (`"Bias binding (neckline)"`, `"Bias binding (neckline + armholes)"` — motorun
+  bastığı adlar, `_olculenPaneller` indeksin tabanı) ve `_dogmayan`'daki
+  `"overlay.yoke"` (doğmayan adın kendisi; bekçinin 4. kapısı onu ADIYLA doğrular),
+- kalanı yorum/künye satırı.
+
+**SEÇENEKLER:**
+- **(A) KAPI KIRMIZI KALSIN** (bugünkü hal, VARSAYILAN). `vocab_reference_check`
+  miras 6'ya ek **7.** kırmızı ad olarak durur ve `HUKUM: FAIL (7 artan, 0 yeni)`
+  basar. Bedeli: RULES md.9'un "kırmızı AD kümesi büyümesin" yasası V6 için
+  ihlalli kalır, ve faz kapanmaz. Kazancı: hiçbir ölçüm hattı sayı uğruna
+  genişletilmez.
+- **(B) EŞLEME ÜRETİLMİŞ KONTRATA DEVREDİLSİN** — `contract/spec-v1-v2-map.json`
+  17 ekseni taşıyor, `AXIS_MAP` bugün 6'sını (4'ü birebir aynı) kullanıyor.
+  ⚠ **BEDELİ ÖLÇÜLMEDİ** (uygulanıp ctest koşulmadı): bugün yargılanmayan 13 eksen
+  yargıya girer, `operatorSicil` yeni red satırları basar, ve `edit_locality_check`
+  A6 kapısı ile `foto-spec-olcum --v2` sayıları değişir. Ölçülen tek şey:
+  4 ekseni okumak referans sayısını **net 0** oynatıyor (alan adı = eksen adı),
+  yani kazanç YALNIZ 17'ye çıkıldığında geliyor.
+- **(C) TABANI YENİDEN KES** (`--baseline 63abc19`). Sayıyı bir commit'te sabitler
+  ve kapı yeşile döner. ⚠ Bu bir GEVŞETMEDİR: ratchet'in "sayi YALNIZ DUSEBILIR"
+  yasasını V6'nın açtığı borç için affeder. Kapının kendi başlığı (§"HOW TO GO
+  GREEN AFTER A DELIBERATE INCREASE") bunu yalnız gerçek bir kapsam kararı için
+  meşru sayıyor — yani (C) ancak (B) seçilirse dürüsttür.
+
+**VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V6 kapanışı (bu kart kapıyı bloke
+ediyor), sonra V7.
+★ Kapının bastığı satır bu ada atıf vermiyor (`vocab_reference_check.sh`
+DEĞİŞTİRİLMEZ, kart yasağı) — gerekçe `GECE/V6-H.md`'dedir.
