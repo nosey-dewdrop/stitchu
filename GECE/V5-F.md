@@ -15,7 +15,11 @@ Kart: `GECE/KART/V5-F.md` · tarih 2026-08-25 · süre tavanı 45 dk.
 | `GECE/log/V5-F.reddiff.txt` | kırmızı AD kümesi diff'i (grep+comm ile iki logdan kuruldu, reddiff dosyasına güvenilmedi). |
 | `GECE/V5-F.md` | bu dosya. |
 
-Commit hash: **aşağıdaki "COMMIT" bölümünde** (commit'ten sonra yazıldı).
+**COMMIT HASH'LERİ.** Paralel koşan V5-G uzlaşması, V5-F'in dosyalarını kendi commit'ine
+aldı; iki hash birden yazılıyor, ikisi de doğrulandı (`git show --stat`):
+- `f0b7dd4` — `engine/tests/draft_math_check.mjs` · `engine/tests/v5-ratchet-baseline.json` ·
+  `GECE/log/V5-F.mutasyon.txt` · `GECE/log/V5-F.ctest.after.txt` (+ V5-G'nin kendi dosyaları).
+- `99497eb` — `GECE/V5-F.md` · `GECE/log/V5-F.reddiff.txt`.
 
 **DOKUNULMAYAN:** `engine/src/` · `engine/CMakeLists.txt` · `engine/tests/sewability_check.mjs` ·
 `patterns_real/` · `contract/tables.json` · başka hiçbir test. `git add -A` kullanılmadı,
@@ -161,9 +165,9 @@ koşulmadı (kart `engine/src/` ve `contract/tables.json` değişikliğini yasak
 
 1. **Kartın "BİR yeni kırmızı ad" beklentisi karşılanmadı** — hüküm yazıldı, koşturuldu
    (7 kırmızı ölçüldü), sonra V5-G uzlaşmasıyla geri alındı. Yukarıda ADIYLA yazılı.
-2. **`DAMLA-KUYRUK.md` K-V5A satırı YAZILMADI** — o dosya bu kartın ÇIKTI listesinde yok,
-   manifest dışı. Kapının çıktısı ve taban dosyası ona atıf veriyor ama satır YOK.
-   **Bunu bir sonraki kart yazmalı.**
+2. **`DAMLA-KUYRUK.md` K-V5A satırını BU KART YAZMADI** — o dosya bu kartın ÇIKTI listesinde
+   yok, manifest dışı. Satır V5-G tarafından yazıldı (`DAMLA-KUYRUK.md:1071`, commit `f0b7dd4`)
+   ve doğrulandı; V5-F'in bir eksiği değil, sınırı.
 3. **`hip_ease`/`bust_ease` kırmızısı KAPANMADI** — kökü `engine/src/` altındaki çarpan,
    kart onu yasakladı ve bu bir DAMLA kararı.
 4. **`GECE/log/V5-D.remedy.txt` DÜZELTİLMEDİ** — çürüdüğü ölçüldü ama o dosya ÇIKTI
