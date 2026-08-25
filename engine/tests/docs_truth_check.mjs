@@ -423,7 +423,16 @@ function ignoreCandidates(target, baseDir) {
     if (!member || member.includes('*')) continue;
     for (const a of ANCHORS(baseDir)) {
       const rel = relOf(path.resolve(a, member));
-      if (rel !== null) out.push(rel);
+      if (rel === null) continue;
+      out.push(rel);
+      // ⚠ ÖLÇÜLDÜ (V9-B3): `dist/` gibi DİZİN kuralları yalnız GERÇEK dizinlere
+      // uyar; `git check-ignore` dizin olup olmadığını DİSKTEN öğrenir. Çalışma
+      // dizininde `engine/dist/` var olduğu için eşleşiyor, temiz checkout'ta
+      // yok olduğu için eşleşmiyordu → aynı commit iki farklı hüküm (24 vs 21
+      // artefakt, 1 vs 4 ölü). Diskten bağımsız çözüm: hedefin ALTINDAKİ
+      // varsayımsal bir yolu da sor — bir dizin ignore'luysa içindeki her yol
+      // ignore'ludur ve bu sorunun cevabı dosya sisteminden bağımsızdır.
+      out.push(rel.replace(/\/+$/, '') + '/.stitchu-ignore-probe');
     }
   }
   return out;
