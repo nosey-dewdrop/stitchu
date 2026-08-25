@@ -1,7 +1,6 @@
 # KOSU.md — v6 gece koşusu (24-25 Ağu 2026)
 
-Protokol: GECE-KOSUSU-v6.md. Eski v5 koşusunun kayıtları GECE/arsiv/ altındadır
-ve bu koşuda kanıt DEĞİLDİR.
+Protokol: GECE-KOSUSU-v6.md. Eski v5 kayıtları GECE/arsiv/'de, kanıt DEĞİL.
 
 ## ŞU AN
 Faz: **V9 KAPANDI** (DOCS — `docs/` + `README.md` bugünkü koda doğrultuldu,
@@ -13,22 +12,20 @@ HEAD'de 6 kırmızı (miras), **115 test**. Hakem **GEÇTİ** dedi (`GECE/KAPI.m
 ## KAPANMIŞ FAZLAR (tutanaklar `GECE/V0..V9.md`)
 **V0** 7 kart · **V1** 5 kart, hakem önce KALDI, kırmızı 6→4 · **V2** 105→108 ·
 **V3** 6 kart, flat konturu ÇİZİLMİYOR `GarmentSurf`'ten HESAPLANIYOR 108→110 ·
-**V4** 7 kart 110→111 · **V5** 12 kart 111→113 · **V6** 10 kart 113→113 ·
+**V4** 7 · **V5** 12 · **V6** 10 kart 110→111→113→113 ·
 **V7** 9 kart (kol, kenar kimliği) 113→114 · **V8 KOŞMADI (atlandı)** ·
 **V9** 10 kart (R·A·B·B2·B3·C·D·E·F·G) 114→115. V5/V6/V7/V9'da ad kümesi birebir.
 
 ## AÇIK KIRMIZILAR (6 — V9 hiçbirine dokunmadı, kâtip koda dokunamaz)
 1. `style_check` — `engine/STYLE-PIN` diskte YOK · kapsam **0/31** · 32 kez GÖZ
-2. `sizechart_source_check` — 7 kolonun **4'ü UNSOURCED**; aday AT (V5:
-   `body.shoulder` 20→80cm'de geometri BAYT AYNI = **ÖLÜ GİRDİ**)
+2. `sizechart_source_check` — 7 kolonun **4'ü UNSOURCED** · V5: `body.shoulder` 20→80cm'de geometri BAYT AYNI = **ÖLÜ GİRDİ**
 3. `contract_check` — **41** takipli telifli dosya · aday untrack → GREEN exit 0,
    Damla kararı. ⚠ Kapı metni "49" diyor, saydığı **41**
-4. `figure_check` — tek `fittedBand` · ⚠ V4+V5+V6+V7'ye yazıldı, DÖRDÜNDE DE
-   KESİLMEDİ; V9 kâtip fazı olduğu için kart olamadı
-5. `flat_pattern_agree_check` — `body_length` −%3.7979 (tol %1.5) + UNMEASURED
-   3/6. KÖK: strapless = G5
-6. `flat_artifact_census` — sınıf 3, 2 nokta, **20.5602° > 1°**, belde. KÖK:
-   `surfacepattern.cpp:71-81` — ⚠ o dosya SEVK EDİLMİYOR
+4. `figure_check` — tek `fittedBand` · ⚠ V4+V5+V6+V7'ye yazıldı, DÖRDÜNDE DE KESİLMEDİ; V9 kâtip fazı olduğu için kart olamadı
+5. `flat_pattern_agree_check` — `body_length` −%3.7979 (tol %1.5) +
+   UNMEASURED 3/6. KÖK strapless = G5
+6. `flat_artifact_census` — sınıf 3, 2 nokta, **20.5602° > 1°**, belde.
+   KÖK `surfacepattern.cpp:71-81` — ⚠ o dosya SEVK EDİLMİYOR
 
 ## DEVİR ÜÇ SAYI (V10'a) — V9 şefi kendi ölçtü
 1. **KIRMIZI = 6 · TEST = 115.** Açılış `GECE/log/V9.ctest.opening.txt`
@@ -119,8 +116,8 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
 - **V8 (kumaş ekseni + rehber) KOŞMADI, ATLANDI** ← girdisi `GECE/V5-R.md` §C.
   V11 raporunda "yapılmadı" satırında ADIYLA durur (§6 anti-bahane)
 - **V7'den devreden:** ADSIZ oyuk borcu (`bardot_off_shoulder · yoke_top ·
-  cupseam_bustier`) · `[S2]` kesim↔dikiş çizgisi kararı · `sleeve_underarm`
-  çift kapısı · yaka 4/4 + omuz 1/1 İFADE borcu · `raglan` arka kapısı
+  cupseam_bustier`) · `[S2]` kesim↔dikiş kararı · `sleeve_underarm` çift kapısı ·
+  yaka 4/4 + omuz 1/1 İFADE borcu · `raglan` arka kapısı
 - ★ `sewability_check` **SAYIYI tavanlıyor, YERİ değil** · `edit_locality_check`
   tek beden/tek spec · `back_neck_drop` kapısız · repo **iki üretim toleransı**
   (0.79375 vs 3.0) · `virtual-sew.js` çürük · `flat-board.mjs` exit koduna bağlı
@@ -129,14 +126,13 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
 
 ## ★ PROTOKOL DERSİ (V10 ŞEFİNE — kart değil KURAL)
 1. **Kapının TABANI kapı kadar önemlidir.** D3 tabanı 52'yken mutasyonu
-   yutuyordu. **Borç kaydeden taban kapıyı süse çevirir** — onarımı bitir,
-   sonra kes. 2. **"Yeşil" bir DİZİNİN özelliği olabilir, dokümanın değil.**
-   Kurduğun kapıyı **temiz worktree'de de koştur**; `git worktree add` bedava,
-   hakem koşmasaydı kapı CI'da yeni kırmızı ad olacaktı. 3. **Devralınan cümleyi
-   ölçmeden kartına yazma** — brief "12 YALAN" diyordu, 5'i çoktan kapanmıştı;
-   ölçüm kartı olmasa faz **kapanmış işi** yeniden yapardı. 4. **İşçinin kendi
-   kusurunu ilan etmesi ÇIKTIDIR** (V9-B3 açtığı iki kaçışı, V9-G kapısının
-   sınırını, V9-C V9-A'nın hatasını kendi yazdı).
+   yutuyordu; **borç kaydeden taban kapıyı süse çevirir** — onarımı bitir, sonra
+   kes. 2. **"Yeşil" bir DİZİNİN özelliği olabilir, dokümanın değil:** kurduğun
+   kapıyı **temiz worktree'de de koştur**; hakem koşmasaydı kapı CI'da yeni
+   kırmızı ad olacaktı. 3. **Devralınan cümleyi ölçmeden kartına yazma** — brief
+   "12 YALAN" diyordu, 5'i çoktan kapanmıştı. 4. **İşçinin kendi kusurunu ilan
+   etmesi ÇIKTIDIR** (V9-B3 iki kaçışı, V9-G kapısının sınırını, V9-C V9-A'nın
+   hatasını kendi yazdı).
 
 ## DAMLA'YA DÜŞEN (bloke etmez — tam gövdeler `DAMLA-KUYRUK.md`'de)
 - **K-FN1** kol oyuğu bandı (A) — **K-V0A** `patterns_real/` 41 telifli dosya (A)
@@ -148,6 +144,6 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
   **K-V6A** çıpa/editleme REDDEDİLDİ, yan dalda `3d8903c` (A) — **K-V7A** V7-F
   sicil şerhi işaretçiye indi, tam metin `GECE/V7-F.md` §5 (A)
 - **K-V9A** (YENİ) `patterns_real/geometry/` + 2 dosya **ne izleniyor ne
-  gitignore'da**; `2f748db` repodan çıkardı ama diskte duruyor ve `H1.0-KAPI.md`
+  gitignore'da**; `2f748db` repodan çıkardı, diskte duruyor, `H1.0-KAPI.md`
   onları "Birincil kaynak" sayıyor: (A) böyle kalsın, docs yokluğu ilan etsin
-  (yapıldı) · (B) gitignore'a girsin · (C) geri izlensin · **VARSAYILAN (A)**
+  (YAPILDI) · (B) gitignore'a girsin · (C) geri izlensin · **VARSAYILAN (A)**
