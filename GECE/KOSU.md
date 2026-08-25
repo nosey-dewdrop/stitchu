@@ -67,8 +67,9 @@ yasak — aşılıyorsa cevap kusuru düzeltmektir. Tam liste: `GECE/V5.md` §6.
   far_from_edge **342** · unclosed/selfintersect/turn/engine_error **0**
 - `draft_math_check` (a) tolerans YAYIN YOK: scye_depth **11.40** · omuz ön
   **8.2988** · omuz arka **18.1823** · back_neck_drop **8.40** mm
-- (b) YAYINLANMIŞ BANT, **RATCHET DEĞİL** — regresyon çizgisi bust **4/8** ·
-  waist **0/8** · hip **8/8**. Kapı ihlali "geçti" diye ADLANDIRMIYOR
+- (b) YAYINLANMIŞ BANT, **RATCHET DEĞİL** — İKİ çizgi: bant dışı beden
+  bust **4/8** · waist **0/8** · hip **8/8**, **VE** en kötü mm sapması
+  (hip 33.60 · bust 14.35). Kapı ihlali "geçti" diye ADLANDIRMIYOR
   (`grep -c PASS` = 0), exit 0'ın gerekçesini ADIYLA basıyor
 
 ## ★ V5'İN DÜRÜST SINIRI (V6/V7'nin 1. KARTI)
@@ -110,10 +111,12 @@ hiçbiri giyim değil. "Üretim standardı" DENEMEZ, **ev değeri** denir.
 
 ## KUYRUKTAKİ KART TASLAKLARI (tamamı + gerekçe: `GECE/V5.md` §5)
 - ★ Kanunu SEVK EDİLEN kaleme bağla (V4'ün dürüst sınırı) — flat tarafı
-- ★ **Magnitüd körlüğü** (hakem buldu): bant bölümü beden SAYISI ölçüyor, mm
-  değil — `hip_ease:-15` payı 2.2mm'ye düşürür, sayı 8/8 sabit, exit 0. Zaten
-  ihlalli kalem SINIRSIZ kötüleşebilir. Aynı sınıf: **ratchet SAYIYI
-  tavanlıyor, YERİ değil** — daha kötü yerdeki 211 çentik yeşil geçer
+- ~~★ Magnitüd + beden körlüğü~~ **V5-H'de KAPANDI** (`a40c888`): bant bölümü
+  artık İKİ çizgi (beden sayısı **+ en kötü mm**), (a) ise BEDEN BAŞINA çizgi
+  taşıyor. Şef doğruladı: `hip_ease:-15` · `bust_ease:-3` · `scye_depth@EU48:4`
+  üçü de artık **exit 1**, üçü de önce exit 0'dı. ctest 113/6, ad kümesi aynı
+- ★ AÇIK KALAN aynı sınıf: **`sewability_check` ratchet'i SAYIYI tavanlıyor,
+  YERİ değil** — aynı sayıda ama daha kötü yerdeki 211 çentik yeşil geçer
 - `back_neck_drop` **SINIF hatası** kapısız: Aldrich SABİT 1.5cm, motor
   `0.6 × yakaCM` GRADUATE ediyor · `armhole_circumference` hükümsüz (yayın yok)
 - Repo **iki üretim toleransı** taşıyor (`surfacepattern.cpp:19` 0.79375 vs
