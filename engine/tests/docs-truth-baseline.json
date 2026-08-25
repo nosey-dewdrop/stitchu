@@ -8,8 +8,8 @@
     "İSTİSNA KURALI ZORUNLUDUR (V9-A §2B): bugünkü ağaçta 16 ham hit'in 13'ü yanlış pozitif; 2'si emekli edilen cümleyi tırnak içinde taşıyor. İstisnasız kapı RULES §6 ONARIMINI cezalandırır.",
     "Kapının kendi arızası (taban yok, git yok vb.) exit 3 alır; ihlal exit 1 alır. Ayrık exit kodu lychee emsali (V9-R §1 B3). EKSİK YASA ASLA GEÇİŞ DEĞİLDİR: taban dosyası yoksa kapı FAIL verir."
   ],
-  "_note": "TABAN SIFIRA KESİLDİ (V9-B2, 2026-08-25). ESKİ: D1 açık borç 9 · D2 açık borç 9 (7 tekil) · D3 taban 52, kesim commit'i V9-B koşusu (2026-08-25, ilk kesim). YENİ: D1 0 · D2 0 · D3 0, bilinenAcik listeleri BOŞ. GEREKÇE: V9-C/D/E kâtip kartları docs/ + README.md onarımını bitirdi; kapı bugünkü ağaçta 'node engine/tests/docs_truth_check.mjs --no-baseline' ile HÜKÜM YEŞİL (D1 0 · D2 0 · D3 0, exit 0) veriyor. Kayıtlı borç kalmadığı için borcu taşımak kapıyı GEVŞETİR: kapanmış borcun parmak izi ileride bir ihlali sessizce yutabilir. Taban yalnız DÜŞEBİLİR kuralı korundu — bu kesim bir DÜŞÜŞTÜR (9/9/52 -> 0/0/0), yükseltme DEĞİL. Yükseltmek isteyen her kesim ayrı, gerekçeli bir commit olmak zorundadır. AYRICA V9-B2 düşürücü sıkılaştırması: D2'nin yalın Türkçe 'yok' muafiyeti artık YALNIZ hedefin sağında aranır (H1.0-KAPI.md:189'daki yanlış düşüş kapandı) ve yerine dar bir GIT_HISTORY_CITE sınıfı kondu; düşen yanlış-pozitif sayısı 28 -> 28, GERÇEK ölü 0 -> 0.",
-  "olcumCommit": "4a5f0de64aeb25a67e8cfe63f46175aae95cad5d",
+  "_note": "V9-B3 (2026-08-25): D2'nin VARLIK SORUSU DİSKTEN GİT'E TAŞINDI (git ls-files + git ls-tree -r HEAD; disk okunmaz). ESKİ taban: D1 0 / D2 0 / D3 0, ama o 'D2 0' TEK BİR ÇALIŞMA DİZİNİNİN ozelligiydi - temiz worktree'de ayni commit EXIT 1 / D2 YENI 42 veriyordu (GECE/log/V9-B3.clean-checkout.txt). YENİ taban: D1 0 / D2 acik borc 1 / D3 0. D2 borcu 0 -> 1 YUKSELDI ve bu BİLİNCLİ: 19 tekil hedefin 17'si gitignore'li URETILEN ARTEFAKT sinifina (git check-ignore ile kanitli, sayisi basiliyor), 1'i cipasiz ad, geriye kalan 'docs/H1.0-KAPI.md -> patterns_real/geometry/geometry-full.json' GERCEKTEN OLU: 2f748db commit'inde repodan cikarildi, gitignore'da da degil, yani temiz klonda yok. Onarimi docs/ duzenlemesi gerektirir, bu kart docs/'a dokunamaz; borcu SAKLAMAK yerine adiyla ve satiriyla KAYDA GECIRILDI. D3 tabani 0'da KALDI, yukseltilmedi. Hicbir kalip gevsetilmedi: disk yoklamasi kalktigi icin kapi butun yollarda SIKILASTI (VAR 540 -> 491).",
+  "olcumCommit": "5885b80198f63a5fbd6e84684ec1f7e095fcf8d8",
   "olcumTarihi": "2026-08-25",
   "kapsam": {
     "D1_D2": "docs/**/*.{md,html} + README.md, docs/archive/tools/*.{mjs,js} HARİÇ",
@@ -30,11 +30,20 @@
   },
   "D2": {
     "esik": 0,
+    "kaynak": "VARLIK SORUSU GİT'E SORULUR (git ls-files + git ls-tree -r HEAD); disk okunmaz — verdict çalışma dizininden bağımsızdır (V9-B3)",
     "yoklananHedef": 568,
-    "var": 540,
-    "dusenSinif": 28,
-    "acikBorc": 0,
-    "bilinenAcik": []
+    "var": 491,
+    "dusenSinif": 35,
+    "uretilenArtefakt": 24,
+    "cipasizAd": 17,
+    "acikBorc": 1,
+    "bilinenAcik": [
+      {
+        "dosya": "docs/H1.0-KAPI.md",
+        "hedef": "patterns_real/geometry/geometry-full.json",
+        "tur": "TICK"
+      }
+    ]
   },
   "D3": {
     "taban": 0,

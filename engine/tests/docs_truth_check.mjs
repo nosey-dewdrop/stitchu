@@ -241,10 +241,78 @@ const SUFFIX = ['.md', '.json', '.cpp', '.hpp', '.py', '.mjs', '.js', '.html', '
   '.png', '.csv', '.sh', '.txt', '.yaml', '.yml', '.sql', '.pdf', '.xml'];
 const SKIPPRE = ['http://', 'https://', 'mailto:', '#', '-', '$', '/tmp/', '~', '/'];
 
-const BASENAMES = new Map();
-for (const abs of walk(ROOT)) {
-  const b = path.basename(abs);
-  if (!BASENAMES.has(b)) BASENAMES.set(b, path.relative(ROOT, abs));
+// ═══ İZLENEN AĞAÇ — D2'nin VARLIK SORUSU DİSKE DEĞİL GİT'E SORULUR ═══════════
+// V9-B3'ün onardığı KÖK KUSUR: D2 hedefi `fs.existsSync` ile YOKLUYORDU, yani
+// "var mı" sorusu TEK BİR ÇALIŞMA DİZİNİNİN özelliğiydi. ÖLÇÜLDÜ (bağımsız
+// hakem + V9-B3 yeniden üretimi, `GECE/log/V9-B3.clean-checkout.txt`):
+// `git worktree add /tmp/v9head HEAD` ile TEMİZ bir checkout'ta aynı commit
+// EXIT 1 · D2 YENİ 42 veriyordu. 19 tekil hedefin 17'si gitignore'lı ÜRETİLEN
+// artefakt (`engine/dist/`, `engine/build/`, `Logs/`, `CLAUDE.md`), 2'si gerçek
+// ölü. Yani mühürlenen "D2 0" dokümanın değil bir DİZİNİN özelliğiydi; temiz
+// klonda / CI'da kapı YENİ BİR KIRMIZI AD olurdu = RULES md.9 ihlali.
+// Onarım: hedef `git ls-files` + `git ls-tree -r HEAD` BİRLEŞİMİNE yoklanır.
+// Disk hiç okunmaz → verdict çalışma dizininden BAĞIMSIZ.
+function gitZ(cmd) {
+  try {
+    return execSync(cmd, { cwd: ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'ignore'] }).split('\0').filter(Boolean);
+  } catch { return null; }
+}
+const lsFiles = gitZ('git ls-files -z');
+if (lsFiles === null)
+  die('git ls-files koşmadı — D2 izlenen ağaca soramaz. EKSİK YASA ASLA GEÇİŞ DEĞİLDİR.');
+const lsTree = gitZ('git ls-tree -r HEAD --name-only -z') ?? [];
+const TRACKED = new Set([...lsFiles, ...lsTree]);
+const TRACKED_DIRS = new Set();
+const DIRENTS = new Map();                 // dizin ('' = kök) -> Set(ad)
+const addEnt = (dir, name) => {
+  if (!DIRENTS.has(dir)) DIRENTS.set(dir, new Set());
+  DIRENTS.get(dir).add(name);
+};
+for (const f of TRACKED) {
+  let child = f;
+  let d = path.posix.dirname(f);
+  while (true) {
+    const dir = (d === '.' || d === '/') ? '' : d;
+    addEnt(dir, path.posix.basename(child));
+    if (dir === '') break;
+    TRACKED_DIRS.add(dir);
+    child = dir;
+    d = path.posix.dirname(dir);
+  }
+}
+const TRACKED_BASENAME = new Map();
+for (const f of TRACKED) {
+  const b = path.posix.basename(f);
+  if (!TRACKED_BASENAME.has(b)) TRACKED_BASENAME.set(b, f);
+}
+// ROOT-göreli posix yol; ROOT dışına çıkan hedef null döner (izlenen ağaçta olamaz).
+function relOf(abs) {
+  const r = path.relative(ROOT, abs);
+  if (!r || r === '' || r.startsWith('..')) return null;
+  return r.split(path.sep).join('/');
+}
+const inTree = (rel) => rel !== null && (TRACKED.has(rel) || TRACKED_DIRS.has(rel));
+
+// ── gitignore sınıfı: ÜRETİLEN ARTEFAKT (ölü DEĞİL, ama SAYISI BASILIR) ─────
+// `git check-ignore` indeksi de dener: izlenen bir yol ASLA ignored dönmez, yani
+// bu sınıf izlenen ağacı gölgeleyemez. Yol diskte olmasa da cevap verir — temiz
+// checkout'ta da aynı hükmü üretir (portatiflik şartı).
+function checkIgnoreBatch(cands) {
+  const uniq = [...new Set(cands)];
+  if (!uniq.length) return new Set();
+  let out = '';
+  try {
+    out = execSync('git check-ignore --stdin -z', { cwd: ROOT, encoding: 'utf8',
+      input: uniq.join('\0'), maxBuffer: 64 * 1024 * 1024,
+      stdio: ['pipe', 'pipe', 'ignore'] });
+  } catch (e) {
+    // eşleşme yoksa exit 1 — arıza değil.
+    if (e && e.status === 1) out = e.stdout ?? '';
+    else if (e && typeof e.stdout === 'string') out = e.stdout;
+    else out = '';
+  }
+  return new Set(out.split('\0').filter(Boolean));
 }
 
 let BRANCHES = new Set();
@@ -267,14 +335,19 @@ function expand(t) {
   const [, pre, body, post] = m;
   return body.split(',').flatMap(part => expand(pre + part.trim() + post));
 }
+// glob de İZLENEN AĞAÇTA çözülür (eski hâli fs.readdirSync ile diske bakıyordu).
 function globOne(pattern, anchor) {
-  const abs = path.resolve(anchor, pattern);
-  const dir = path.dirname(abs), base = path.basename(abs);
-  if (!fs.existsSync(dir)) return null;
+  const rel = relOf(path.resolve(anchor, pattern));
+  if (rel === null) return null;
+  const d = path.posix.dirname(rel);
+  const dir = (d === '.' || d === '/') ? '' : d;
+  const base = path.posix.basename(rel);
+  const ents = DIRENTS.get(dir);
+  if (!ents) return null;
   const re = new RegExp('^' + base.split('*').map(s =>
     s.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$');
-  const hit = fs.readdirSync(dir).find(f => re.test(f));
-  return hit ? path.relative(ROOT, path.join(dir, hit)) : null;
+  const hit = [...ents].find(f => re.test(f));
+  return hit ? (dir === '' ? hit : dir + '/' + hit) : null;
 }
 // V9-A §3C(i): "engine/-göreli çözüm" yanlış pozitif SINIFI — `src/dxf`,
 // `tools/tech-pack.cpp`, `tests/engine_check.cpp` hepsi engine/ altında VAR.
@@ -294,15 +367,15 @@ function resolveTarget(target, baseDir) {
       for (const a of ANCHORS(baseDir)) { got = globOne(member, a); if (got) break; }
     } else if (member.includes('/')) {
       for (const a of ANCHORS(baseDir)) {
-        const abs = path.resolve(a, member);
-        if (fs.existsSync(abs)) { got = path.relative(ROOT, abs); break; }
+        const rel = relOf(path.resolve(a, member));
+        if (inTree(rel)) { got = rel; break; }
       }
       // uzantısız gövde: `src/dxf` → engine/src/dxf.cpp
       if (!got) for (const a of ANCHORS(baseDir)) {
         got = globOne(member + '.*', a); if (got) break;
       }
     } else {
-      got = BASENAMES.get(member) ?? null;
+      got = TRACKED_BASENAME.get(member) ?? null;
     }
     if (!got) return null;
     evidence.push(got);
@@ -341,8 +414,24 @@ const DECLARED_MISSING_LOOSE = /\byok\b/;
 // ÖLÇÜLDÜ (V9-B2): bugünkü ağaçta bu sınıfa giren tek aday H1.0-KAPI.md:189.
 const GIT_HISTORY_CITE = /^[`'"\s)(\]]{0,6}\(?\s*git\s+`?[0-9a-f]{7,40}`?/;
 
+// Bir hedefin gitignore'a sorulacak ADAY yolları: üç çapaya göre çözülmüş,
+// ROOT içinde kalan hâlleri. `dist/` gibi çıplak dizin engine/ çapasında yakalanır.
+function ignoreCandidates(target, baseDir) {
+  const t = target.split('#')[0].split('?')[0].replace(LINEREF, '');
+  const out = [];
+  for (const member of expand(t)) {
+    if (!member || member.includes('*')) continue;
+    for (const a of ANCHORS(baseDir)) {
+      const rel = relOf(path.resolve(a, member));
+      if (rel !== null) out.push(rel);
+    }
+  }
+  return out;
+}
+
 function scanD2() {
   const dead = [];
+  const pending = [];      // izlenen ağaçta çözülemeyenler; sınıfı toplu sorulur
   let checked = 0, alive = 0, droppedClass = 0;
   const seen = new Set();
   for (const rel of proseFiles) {
@@ -374,12 +463,27 @@ function scanD2() {
             || DECLARED_MISSING_STRONG.test(para[i])
             || DECLARED_MISSING_LOOSE.test(rightOf)
             || GIT_HISTORY_CITE.test(rightOf)) { droppedClass++; continue; }
-        dead.push({ dosya: rel, satirNo: i + 1, hedef: tgt, tur: kind,
-                    satir: line.trim().slice(0, 160) });
+        pending.push({ dosya: rel, satirNo: i + 1, hedef: tgt, tur: kind,
+                       satir: line.trim().slice(0, 160),
+                       adaylar: ignoreCandidates(tgt, baseDir) });
       }
     }
   }
-  return { dead, checked, alive, droppedClass };
+  // ── SINIFLANDIRMA (tek toplu `git check-ignore` çağrısı) ──────────────────
+  const ignored = checkIgnoreBatch(pending.flatMap(p => p.adaylar));
+  const artefakt = [], dizinsiz = [];
+  for (const p of pending) {
+    if (p.adaylar.some(c => ignored.has(c))) { artefakt.push(p); continue; }
+    // ÇIPASIZ AD: `/` içermeyen jeton bir REPO YOLU İDDİASI DEĞİLDİR — doküman
+    // üretilen bir paketin dosya adını anıyor (`print-info.pdf`, `body.yaml`).
+    // Eski kapı bunu BÜTÜN DİSKTE arıyordu (V9-A §8'in kabul ettiği zaaf: VAR
+    // sayısını yukarı yanlı yapar). Disk kalktı; bu jetonlar artık kapsam dışı
+    // ama SAYISI ve LİSTESİ basılır — saklanmaz.
+    if (!p.hedef.replace(LINEREF, '').includes('/')) { dizinsiz.push(p); continue; }
+    dead.push({ dosya: p.dosya, satirNo: p.satirNo, hedef: p.hedef, tur: p.tur,
+                satir: p.satir });
+  }
+  return { dead, checked, alive, droppedClass, artefakt, dizinsiz };
 }
 
 // ───────────────────────── D3 — sayısal iddianın sağlayıcısı ───────────────
@@ -463,7 +567,10 @@ if (WRITE) {
     },
     D2: {
       esik: 0,
+      kaynak: 'VARLIK SORUSU GİT\'E SORULUR (git ls-files + git ls-tree -r HEAD); disk okunmaz — verdict çalışma dizininden bağımsızdır (V9-B3)',
       yoklananHedef: d2.checked, var: d2.alive, dusenSinif: d2.droppedClass,
+      uretilenArtefakt: d2.artefakt.length,
+      cipasizAd: d2.dizinsiz.length,
       acikBorc: d2.dead.length,
       bilinenAcik: d2.dead.map(h => ({ dosya: h.dosya, hedef: h.hedef, tur: h.tur })),
     },
@@ -515,7 +622,14 @@ for (const b of closedD1) console.log(`  KAPANDI   ${b.dosya}  [${b.kalip}]  ${b
 console.log();
 
 console.log('── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────');
+console.log(`  varlık kaynağı: İZLENEN AĞAÇ (git ls-files + ls-tree HEAD, ${TRACKED.size} yol) — disk okunmaz`);
 console.log(`  yoklanan hedef ${d2.checked} · VAR ${d2.alive} · düşen yanlış-pozitif sınıfı ${d2.droppedClass}`);
+console.log(`  ÜRETİLEN ARTEFAKT ${d2.artefakt.length} (gitignore'lı; temiz checkout'ta yok, ÖLÜ DEĞİL — kapıyı kırmaz)`);
+for (const h of d2.artefakt)
+  console.log(`  artefakt  ${h.dosya}:${h.satirNo}  -> ${h.hedef}`);
+console.log(`  ÇIPASIZ AD ${d2.dizinsiz.length} (dizinsiz jeton = repo yolu iddiası değil, kapsam dışı)`);
+for (const h of d2.dizinsiz)
+  console.log(`  cipasiz   ${h.dosya}:${h.satirNo}  -> ${h.hedef}`);
 console.log(`  GERÇEK ölü ${d2.dead.length} · kayıtlı borç ${knownD2.size} · YENİ ${newD2.length}`);
 for (const h of (NO_BASELINE ? d2.dead : newD2))
   console.log(`  ${NO_BASELINE ? 'IHLAL' : 'FAIL YENI'}  ${h.dosya}:${h.satirNo}  -> ${h.hedef}  [${h.tur}]`);

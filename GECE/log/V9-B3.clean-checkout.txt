@@ -1,0 +1,93 @@
+=== V9-B3 · TEMİZ CHECKOUT KUSURUNUN YENİDEN ÜRETİMİ ===
+2026-08-25T08:04:53Z
+worktree: git worktree add /tmp/v9b3 HEAD  ·  HEAD=5885b80198f63a5fbd6e84684ec1f7e095fcf8d8
+
+--- KOMUT: (cd /tmp/v9b3 && node engine/tests/docs_truth_check.mjs) ; EXIT=1 ---
+docs_truth_check — doküman doğruluk kapısı (kart V9-B)
+kip           : taban kipi
+commit        : 5885b80198f6
+kapsam        : 18 prose dosya (D1/D2) · 7 md (D3)
+
+── D1 DURAN İDDİA (RULES §6/§7) ──────────────────────────────
+  ham hit 14 · düşen: tırnak/kod-span 6, tarihli ölçüm bağlamı 8, fenced blok 0
+  GERÇEK ihlal 0 · kayıtlı borç 0 · YENİ 0
+
+── D2 ÖLÜ REPO YOLU ──────────────────────────────────────────
+  yoklanan hedef 568 · VAR 491 · düşen yanlış-pozitif sınıfı 35
+  GERÇEK ölü 42 · kayıtlı borç 0 · YENİ 42
+  FAIL YENI  docs/ARCHITECTURE.md:53  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:60  -> engine/dist/  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:113  -> CLAUDE.md  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:174  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:201  -> engine/dist/  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:219  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/ARCHITECTURE.md:263  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/H1.0-KAPI.md:54  -> patterns_real/geometry/geometry-full.json  [TICK]
+  FAIL YENI  docs/H1.0-KAPI.md:54  -> seamgraph.json  [TICK]
+  FAIL YENI  docs/H1.0-KAPI.md:82  -> CLAUDE.md  [TICK]
+  FAIL YENI  docs/H1.0-KAPI.md:127  -> CLAUDE.md  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:14  -> body.yaml  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:15  -> engine/build/shell-flat  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:16  -> stitchu_specification.json  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:25  -> Logs/paket-2026-08-06  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:97  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:106  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:109  -> engine/dist/stitchu-engine.js  [TICK]
+  FAIL YENI  docs/KATMAN-HARITASI.md:111  -> dist/  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:14  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:15  -> print-a0.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:15  -> print-a4.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:15  -> print-report.txt  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:17  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:27  -> Logs/taban-T10-SONRA/pack-EU38/print-report.txt  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:37  -> engine/build/surface-pattern  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:105  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:112  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:117  -> CLAUDE.md  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:147  -> print-report.txt  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:152  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:156  -> Logs/paket-2026-08-06  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:175  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:227  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:227  -> print-a4.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:231  -> Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:243  -> print-info.pdf  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:248  -> Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:254  -> Logs/taban-T10-SONRA/pack-EU38/print-report.txt  [TICK]
+  FAIL YENI  docs/SATIS-SARTNAMESI.md:320  -> print-info.pdf  [TICK]
+  FAIL YENI  README.md:53  -> ./engine/build/golden_dump  [TICK]
+  FAIL YENI  README.md:64  -> ./engine/build/drape-preview  [TICK]
+
+── D3 SAYISAL İDDİANIN SAĞLAYICISI (ratchet) ─────────────────
+  sayı+birim taşıyan satır 139 · SAĞLAYICISIZ 0
+  taban 0 · delta +0
+
+HÜKÜM: FAIL — D1 yeni 0 · D2 yeni 42 · D3 tamam
+Docs bir sayıyı sabit gerçek olarak ilan etti, olmayan bir yola atıf yaptı ya da
+sağlayıcısız sayı ekledi. RULES §6: sayı TEST ÇIKTISINDA yaşar, dokümanda değil.
+Yanlış pozitifse: kalıbı gevşetme — aynı commit'te tabana GÖRÜNÜR biçimde ekle
+(node engine/tests/docs_truth_check.mjs --baseline) ve gerekçesini commit mesajına yaz.
+
+=== 42 HEDEFİN SINIFLANMASI (tekil hedef:       19) ===
+yöntem: git ls-files (izlenen ağaç) + git check-ignore -v (gitignore). Tahmin yok.
+
+HEDEF                                                      SINIF     KANIT
+./engine/build/drape-preview                               ARTEFAKT  engine/.gitignore:1:build/	engine/build/drape-preview
+./engine/build/golden_dump                                 ARTEFAKT  engine/.gitignore:1:build/	engine/build/golden_dump
+CLAUDE.md                                                  ARTEFAKT  .gitignore:3:CLAUDE.md	CLAUDE.md
+Logs/paket-2026-08-06                                      ARTEFAKT  .gitignore:94:Logs/	Logs/paket-2026-08-06
+Logs/taban-T10-SONRA/pack-EU38/print-report.txt            ARTEFAKT  .gitignore:94:Logs/	Logs/taban-T10-SONRA/pack-EU38/print-report.txt
+Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg      ARTEFAKT  .gitignore:94:Logs/	Logs/taban-T10-SONRA/pack-EU38/print-svg/a4-page5.svg
+body.yaml                                                  ARTEFAKT-BASENAME diskte Logs/gradeset-2026-08-17/EU36/body.yaml ; .gitignore:94:Logs/	Logs/gradeset-2026-08-17/EU36/body.yaml
+dist/                                                      OLU       ne izlenen ne gitignore; diskte: YOK
+engine/build/shell-flat                                    ARTEFAKT  engine/.gitignore:1:build/	engine/build/shell-flat
+engine/build/surface-pattern                               ARTEFAKT  engine/.gitignore:1:build/	engine/build/surface-pattern
+engine/dist/                                               ARTEFAKT  engine/.gitignore:5:dist/	engine/dist/
+engine/dist/stitchu-engine.js                              ARTEFAKT  engine/.gitignore:5:dist/	engine/dist/stitchu-engine.js
+patterns_real/geometry/geometry-full.json                  OLU       ne izlenen ne gitignore; diskte: VAR
+print-a0.pdf                                               ARTEFAKT-BASENAME diskte Logs/paket-2026-08-06/print-a0.pdf ; .gitignore:94:Logs/	Logs/paket-2026-08-06/print-a0.pdf
+print-a4.pdf                                               ARTEFAKT-BASENAME diskte Logs/paket-2026-08-06/print-a4.pdf ; .gitignore:94:Logs/	Logs/paket-2026-08-06/print-a4.pdf
+print-info.pdf                                             ARTEFAKT-BASENAME diskte Logs/paket-2026-08-06/print-info.pdf ; .gitignore:94:Logs/	Logs/paket-2026-08-06/print-info.pdf
+print-report.txt                                           ARTEFAKT-BASENAME diskte Logs/paket-2026-08-06/print-report.txt ; .gitignore:94:Logs/	Logs/paket-2026-08-06/print-report.txt
+seamgraph.json                                             ARTEFAKT-BASENAME diskte patterns_real/geometry/seamgraph.json ; IGNORE-EDILMEMIS
+stitchu_specification.json                                 ARTEFAKT-BASENAME diskte Logs/paket-2026-08-06/stitchu_specification.json ; .gitignore:94:Logs/	Logs/paket-2026-08-06/stitchu_specification.json
