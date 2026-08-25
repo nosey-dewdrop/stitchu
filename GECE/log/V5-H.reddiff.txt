@@ -1,0 +1,32 @@
+=== V5-H KIRMIZI AD KÜMESİ FARKI — kart V5-H md.6 · 2026-08-25 00:51 UTC
+önce : GECE/log/V5.ctest.opening.txt   (faz-öncesi)
+sonra: GECE/log/V5-H.ctest.after.txt   (komut: ctest --test-dir engine/build --output-on-failure · CMAKE_BUILD_TYPE=Release, doğrulandı: engine/build/CMakeCache.txt CMAKE_BUILD_TYPE=Release)
+Kıyas AD üstünden yapılır, SIRA NUMARASI üstünden değil (RULES 9: 'test NAMES, not the count').
+
+--- ÖNCE (6 ad)
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+--- SONRA (6 ad)
+contract_check
+figure_check
+flat_artifact_census
+flat_pattern_agree_check
+sizechart_source_check
+style_check
+
+--- diff (BOŞ olmalı)
+BOŞ — aynı 6 ad. Yeni kırmızı YOK, kümede daralma da yok.
+
+--- ÖZET SATIRLARI
+önce : 95% tests passed, 6 tests failed out of 111
+önce : Total Test time (real) = 302.32 sec
+sonra: 95% tests passed, 6 tests failed out of 113
+sonra: Total Test time (real) = 374.79 sec
+
+NOT 1: toplam test sayısı 111 -> 113. Bu kart ctest'e test EKLEMEDİ (engine/CMakeLists.txt'e
+        dokunulmadı, salt okundu); iki yeni test paralel işçilerin işidir. Kırmızı AD kümesi aynı.
+NOT 2: sıra numaraları kaydı (9/10/11/18/89/94 -> 9/12/13/20/91/96) o iki eklemeden kaydı; ADLAR birebir.
