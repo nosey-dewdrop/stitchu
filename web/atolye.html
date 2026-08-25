@@ -503,7 +503,7 @@ var eX=_GE?cx+(F.waistX-cx)*_GE:F.waistX;k.sc=F.sc;
 // top) giysi koltukaltısı anatomik koltukaltından GENİŞTİR (eski onaylı üst
 // gövdesi 70.6px = vücudun 1.309'u). Bel çarpanı tek başına yetmiyordu: alet
 // minimumu koltukaltında okuyor, oran 0.78'de doyuyordu (çözücü logu 10 Ağu).
-// Çarpanı olmayan stilde giysi koltukaltısı = vücut (bugünkü hal, bayt aynı).
+// Çarpanı olmayan stilde giysi koltukaltısı = vücut (bugünkü hal, aynı kaldı).
 var _GEB=(_FB.garment_ease&&_FB.garment_ease.gogus)?_FB.garment_ease.gogus[p.style]:undefined;
 var _gUaX=_GEB?cx+(F.uaX-cx)*_GEB:F.uaX;
 // YATAY ÖLÇEK. Dantel/biye gibi ŞERİT genişlikleri gövdenin eninde ölçülür,
@@ -719,7 +719,7 @@ function plainSleeve(p,k){
   // olmamalı"). Eski yol dış kenarı wristX'e (omuz ekseninde) İÇE süpürüyordu →
   // dirsek/uzun kol gövdeye paralel 5-15px'lik cılız eğri şerit çiziyordu. Ticari
   // flat dili: kol omuzdan bileğe gövdeye ~12-13° açıyla iner, bisep→ağız düzgün
-  // konik, ağızda eksene DİK temiz kapanış. cap/short ESKİ yolda, bayt-aynı.
+  // konik, ağızda eksene DİK temiz kapanış. cap/short ESKİ yolda, aynı kaldı.
   if(p.sleeveLength==='elbow'||p.sleeveLength==='long'){
     var _sn=0.22,_cs=0.9755;                             // sin/cos ~12.7° (gövdeden dışa)
     var _bh=(outX-k.uaX)*0.5;                            // bisep yarı-genişliği

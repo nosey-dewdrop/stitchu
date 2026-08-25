@@ -265,6 +265,26 @@ const BANNED = [
   // muafiyet DEĞİL, kalıbın kendi tanımı: yasak olan gövdeye/ölçüye göre çizim.
   ['drafted per <non-size>', /drafted per (?!size\b)/gi],
   ['your <ölçü> measurement/girth', /your (?:own )?(?:neck|bust|waist|hip|underbust|arm|body) (?:measurement|girth)s?/gi],
+  // ── V10-I: KAPI TEK DİLLİYDİ. Yukarıdaki 18 kalıbın 18'i İNGİLİZCE, ama site
+  // İKİ DİLLİ: web/js/shared-header.js:20 her [data-en]/[data-tr] düğümünün
+  // innerHTML'ini değiştiriyor, yani `data-tr` CANLI KULLANICI METNİDİR.
+  // Hakem ölçtü (GECE/log/V10-hakem.txt "L2'NİN DİL KÖRLÜĞÜ"): İngilizce'de 0
+  // iken Türkçe'de 127 yasak duran-iddia YAYINDAYDI. Kalıplar SİLİNMEDİ,
+  // EKLENDİ — bu bir sıkılaştırmadır, gevşetme değil.
+  // Türkçe sondan eklemelidir: `\b` sonek sınırında güvenilmez, o yüzden
+  // kökler sınırsız yazılır (`kusursuz` → `kusursuzca` da yakalanır).
+  ['bayt-birebir (TR)', /bayt[- ]birebir/gi],
+  ['bayt-aynı (TR)', /bayt[- ]aynı/gi],
+  ['bayt bayt aynı (TR)', /bayt bayt aynı/gi],
+  ['sıfır hata (TR)', /sıfır hata/gi],
+  ['kusursuz (TR)', /kusursuz/gi],
+  ['hatasız (TR)', /hatasız/gi],
+  ['her zaman (TR)', /\bher zaman\b/gi],
+  ['ölçülerinize göre (TR)', /ölçüleriniz[a-zçğıöşü]* göre/gi],
+  ['kendi ölçülerinizle (TR)', /kendi ölçülerinizle/gi],
+  ['sabit beden yok (TR)', /sabit beden yok/gi],
+  ['ısmarlama (TR)', /ısmarlama/gi],
+  ['vücudunuza göre (TR)', /vücudunuz[a-zçğıöşü]* göre/gi],
 ];
 function scanL2() {
   const hits = []; const perPattern = {};
