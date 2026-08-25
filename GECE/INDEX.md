@@ -7,7 +7,7 @@ dosyayı aç.
 |---|---|
 | şu an neredeyiz, ne açık | `GECE/KOSU.md` (≤150 satır, canlı durum) |
 | bir faz gerçekten kapandı mı, hakem ne dedi | `GECE/KAPI.md` |
-| bugün ne var ne yok, sayılar nereden geldi | `GECE/F0.md` |
+| bugün ne var ne yok, sayılar nereden geldi | `GECE/V9-A.md` (25 Ağu sayımı). ⚠ Eski satırın gösterdiği `GECE/F0.md` bu ağaçta **YOK** (`test -e` başarısız) |
 | kalıbın EU38 ölçüleri | `GECE/f0-pattern-EU38.json` (üreten: `GECE/f0-measure-pattern.py`) |
 | flat'in siluet ölçüleri, ölçek beyanı var mı | `GECE/f0-flat-princess.json` (üreten: `GECE/f0-measure-flat.mjs`) |
 | hangi operatör sevk edilmiş | `contract/garment-spec-v2.json` → `operators` |
@@ -37,6 +37,24 @@ dosyayı aç.
 | cap ease için yayınlanmış sayı var mı | `GECE/V7-R.md` (yayınlanmış / ikincil / DOĞRULANMADI ayrımıyla). Bedene göre ölçekleyen formül **BULUNAMADI**; puf/balonun nicel tanımı da yok |
 | sevk edilen paketten kollu kalıp/flat nasıl görünüyor | `GECE/log/V7-E.png/` (3 kalıp PNG + 4 flat kol PNG/SVG); üreten `node engine/tools/render-pages.mjs <dizin>`, hat doğrulaması `GECE/V7-E.md` §0 |
 | foto→spec isabeti bugün kaç | `node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json` basar; payda **5** ve neden büyütülemediği `GECE/V6-A.md` §1 |
+
+## Faz tutanakları — tek satır, tek yol
+
+Faz başına ŞEF tutanağı. Alt tutanaklar ve loglar aşağıdaki faz bölümlerinde.
+
+| faz | ne yaptı | tutanak |
+|---|---|---|
+| V0 | dürüst envanter: motor/görü/vitrin/sözlük/wasm sayıldı, onarım yapılmadı | `GECE/V0.md` |
+| V1 | pin ve kaynak temizliği: devralınan kırmızıların sınıflandırılması ve golden mühür defteri | `GECE/V1.md` |
+| V2 | sözlük reformu + sevk hattı dürüstlüğü: iki sözlük kapısı ve sınırın iki kusuru | `GECE/V2.md` |
+| V3 | tek nesne: flat ile kalıp aynı 3B kabuktan besleniyor, iki kapı kuruldu | `GECE/V3.md` |
+| V4 | flat konvansiyonu: croquis çıkarımı, ifade kapısı, zevk ön-taraması | `GECE/V4.md` |
+| V5 | dikilebilirlik + kalıp matematiği kapıları, ratchet'li | `GECE/V5.md` |
+| V6 | giriş hattı: foto+prompt → spec ve editleme lokalliği | `GECE/V6.md` |
+| V7 | kol çekirdek fazı: kenar kimliği + oyuk↔kapak kapısı | `GECE/V7.md` |
+| V9 | doküman doğruluğu: sayım, `docs_truth_check`, kâtip turları | ⚠ şef tutanağı `GECE/V9.md` bu satır yazılırken **diskte YOK**; alt tutanaklar aşağıda |
+
+⚠ **V8 fazı YOKTUR** — numara atlanmıştır, kayıp dosya değildir (`GECE/V8*.md` diskte yok).
 
 ## V0 fazı — envanter (24 Ağu 2026)
 
@@ -115,6 +133,7 @@ durur. Kurulan kapı kırmızı düşerse gevşetilmez, sayısıyla raporlanır 
 | `GECE/V3-B.md` | `engine/tools/pattern-measure.mjs`: kalıp panellerinden altı ölçü, üçü `null` + yazılı sebep. Determinizm (üç örnekleme adımında aynı dört basamak) ve `shell-flat` ile yan yana tablo. |
 | `GECE/V3-C.md` | iki kapının kuruluşu ve İLK KIRMIZI hükümleri: eşiklerin kaynağı (1.0° McNeel; %1.5 kaynak DEĞİL karar), dört artefakt sınıfının sayımı, sınıf 4'ün sınıf 3'ü maskelediğinin bulunması. |
 | `GECE/V3-D.md` | onarım turu: dejenere 6→0, `body_length` tanımının düzeltilmesi, iki devralınan kırmızının kapanması; bel köşe yuvarlamasının ölçülüp REDDEDİLMESİ ve geri alınması. Kırmızı AD kümesi büyümedi, küçüldü. |
+| `GECE/V3-R.md` | fazın araştırma çıktısı (kart `GECE/KART/V3-R.md`, §5.1): eşiklerin yayın zemini. |
 | `engine/src/shellprojection.{hpp,cpp}` | ortografik izdüşüm; tek iddia (`siluet yarı-genişliği = a + d`) dosyanın başında beyanlı. |
 | `engine/src/surfacepattern.hpp` | `GarmentSurf` bildirimi + `buildGarmentSurf`. Tanımlar `surfacepattern.cpp`'de; **ikinci kabuk sınıfı yazmak yasak**, gerekçesi dosyanın başında. |
 | `engine/tools/shell-flat.cpp` | alet: `./engine/build/shell-flat EU38` → JSON, `--svg` → 1:1 SVG. |
@@ -190,6 +209,9 @@ soru geçmiş sayılmaz, `ABSENT:` diye ADIYLA basılır; devralınan kırmızı
 | `GECE/V5-Z.md` | ZEMİN KEŞFİ — onarım yok, yalnız ölçüm. **Fazın en ağır bulgusu burada: sevk edilen kalıp motoru TEK-YÜZEY motoru DEĞİL**, eski 2B çizici `GarmentDrafter::draft` (`engine/src/garment.cpp`). Hükmü kesen alet sembol grep'i değil wasm KAYNAK LİSTESİ (`grep -c "surfacepattern\|flatten.cpp\|…" engine/build-wasm.sh` → 0, aynı altı dosya `engine/CMakeLists.txt:12-17`'de VAR). Ayrıca sekiz kalemlik grep sicili (dikiş çifti · çentik · kapalılık · köşe açısı · giyilebilirlik · geri projeksiyon · strain · ölçüm aleti) ve Buğra overlay'i için diskte hazır olanın envanteri. |
 | `GECE/V5-F.md` | **§7.1 DÜZELTMESİ: YAYINLANMIŞ BİR BANT RATCHET'LENEMEZ.** `draft_math_check`'in ease bölümü tavandan çıkarılıp REGRESYON ÇİZGİSİNE bağlandı; 12 ihlal her koşuda `SERT HUKUM, ratchet DEGIL` diye beden+mm+bant+künyeyle basılıyor, kapanması Damla kararı (`K-V5A`). Ayrıca V5-D'nin çözüm adayının çürütülmesi ve adayın ölçülmüş BEDELİ: 8 bugün-yeşil kapı risk altında, en pahalısı `bugra_bridge_check` (75.38 sn). |
 | `GECE/V5-G.md` · `GECE/KART/V5-G.md` · `KART/V5-H.md` | uzlaşma + hakem turları: kırmızı AD kümesini 6→7 büyüten hamlenin geri alınması (RULES §9), `DAMLA-KUYRUK.md` K-V5A satırının yazılması, hakemin büyüklük körlüğünün kapatılması. |
+| `GECE/V5-H.md` | hakemin büyüklük (magnitüd) körlüğünün kapatılması ve ikinci kör yönün ölçümü; kart `GECE/KART/V5-H.md`. |
+| `GECE/V5-I.md` | kapı dosyasındaki çürümüş sayıya şerh düşülmesi; kart `GECE/KART/V5-I.md`, doğrulama `GECE/log/V5-I.dogrulama.txt`. |
+| `GECE/V5-R-kurtarma.md` | kesilen şefin banklayamadığı iki araştırma çıktısının kurtarılması; ikinci kesim `GECE/V5-R.md`, kartı `GECE/KART/V5-R2.md`. |
 | `GECE/log/V5-F.mutasyon.txt` · `V5-F.ctest.after.txt` · `V5-F.reddiff.txt` · `V5-G.*` · `V5.ctest.final.txt` | V5-F'in 8 koşuluk mutasyon defteri — bandın ALT ve ÜST ucunun ayrı ayrı bekçilik ettiği, ve ratchet ile bandın exit kodunu AYRI AYRI düşürdüğü orada görülüyor — artı fazın kapanış ctest'i. |
 
 Bu fazın kalıcı gerçekleri docs'a işlendi: `docs/ARCHITECTURE.md` §13 (sevk edilen motorun
@@ -225,7 +247,7 @@ yapıldı. Ana dala kalan net mühendislik **89 satır**: `edit_locality_check.m
 | `GECE/V6-E.md` | **ana dala kalan onarım.** M1 açığının kök teşhisi (`antiCaught > 0` mutlak sıfır eşiği), A1 tabanı (`A1_FLOOR = 10`, iki yönlü ratchet), sessiz atlama tavanı (`A1_SKIP_CAP = 1`, atlananlar ADIYLA), A4 granülarite mandalı (ilan + 0.001mm oynatma + oynatmasız kontrol). Üç mutasyon, üçü de kırıyor. "10/12"nin gerçek anlamı: 10 yakalandı + 1 yakalanmadı + 1 hiç koşulamadı. |
 | `GECE/V6-J.md` | **kapanış:** reddedilen işin yan dala alınması ve ana dalın yeşile dönmesi. Beş adımlı ölçüm zinciri (10448 FAIL → 10452 FAIL → 10448 → 10438 **hâlâ FAIL** → 10432 YEŞİL) ve iki dersi: toplamı tabana eşitlemek yeşillik değildir (ratchet anahtar bazında yargılar), ve V6-E'nin ratchet maliyeti ÖLÇÜLDÜ = **sıfır satır**, o yüzden ana dalda kaldı. |
 | `GECE/V6-D.md` · `V6-F.md` · `V6-G.md` · `V6-H.md` · `V6-I.md` | **REDDEDİLEN İŞİN KAYDI — ana dalda karşılığı YOK.** Çıpa sözlüğü üreteci + `anchor_source_check` (D) · sözlüğün indekslenmesi ve kapının yeşile DÖNEMEYECEĞİNİN ölçülmesi (F) · operatör sicil reddi + KONUM/`--v2` ölçüm eklentileri (G) · ratchet borcunun 46→20 ödenmesi (H) · borcun 20→16'ya inmesi ve kartın önerdiği yolun KAPALI çıkması (I). ⚠ V6-F'in "RULES md.9 ihlal edilmedi" hükmü YANLIŞ TABANDAN (`ada3bf9`, faz öncesi değil) çıktı; V6-H doğru tabanla (`3fa8002`) ölçüp düzeltti ama F metni düzeltilmedi. ⚠ `6b3378f` kapıyı yorumdan kelime silerek geçen commit'tir, hakem adıyla düşürdü, V6-J geri aldı. |
-| `research/v6-cipa-editleme` @ `3d8903c` | **YAN DAL, origin'e pushlu, hiçbir satır silinmedi.** `contract/anchors-v1.json` (1382 satır) · `engine/tools/gen-anchors.mjs` (421) · `engine/tests/anchor_source_check.mjs` (294) · `foto-spec-olcum.mjs` KONUM/`--v2` ekleri · `spec-diff.mjs` V6-G ekleri · `edit_locality_check.mjs` A5/A6. Ana dala dönüş şartı = `DAMLA-KUYRUK.md` **K-V6A** (ölçülmüş bedel: +10 satır ratchet borcu, dosya dosya dökülü). |
+| `research/v6-cipa-editleme` @ `3d8903c` | **YAN DAL, origin'e pushlu, hiçbir satır silinmedi.** ⚠ Bu satırın saydığı üç yol (`contract/anchors-v1.json` · `engine/tools/gen-anchors.mjs` · `engine/tests/anchor_source_check.mjs`) ANA AĞAÇTA **YOK** (`test -e` başarısız); yalnız o dalda vardır. `contract/anchors-v1.json` (1382 satır) · `engine/tools/gen-anchors.mjs` (421) · `engine/tests/anchor_source_check.mjs` (294) · `foto-spec-olcum.mjs` KONUM/`--v2` ekleri · `spec-diff.mjs` V6-G ekleri · `edit_locality_check.mjs` A5/A6. Ana dala dönüş şartı = `DAMLA-KUYRUK.md` **K-V6A** (ölçülmüş bedel: +10 satır ratchet borcu, dosya dosya dökülü). |
 | `engine/tests/edit_locality_check.mjs` | KAPI (ctest'te `edit_locality_check`). A1 tabanı + sessiz atlama tavanı + A2/A3 + A4 granülarite mandalı. Taban sayıları dosyanın içinde, yanlarında ölçüm tarihi ve yakalanmayan iki vakanın ADI. |
 | `engine/tools/spec-diff.mjs` | editleme zinciri. `LOCALITY_GRANULARITY = 'bayt'` İLANI ve `pieceBytes`'ın export'u burada — denetim kopyayı değil GERÇEK karşılaştırma fonksiyonunu ölçsün diye. |
 | `GECE/log/V6-B.mutasyon.txt` · `V6-E.mutasyon.txt` | mutasyon defterleri. B'de M1 exit **0** basıyor (dişin olmadığı yön), E'de aynı mutasyon exit **1** + 2 KIRMIZI. İkisini yan yana okumak onarımın ne yaptığını tek bakışta gösterir. |
@@ -275,6 +297,89 @@ yeni satır, `docs/KATMAN-HARITASI.md` boşluk 7 (kısmen aşıldı) + 9 (sevk h
 10 (bayat cümle düzeltildi) + **yeni boşluk 11** (kenar kimliği girdi, üç pas'ta hâlâ yok),
 `docs/SATIS-SARTNAMESI.md` montaj maddesine `edgeRoles` şerhi,
 `README.md` (dikiş-çifti eşitliğinin "hiç iddia edilemez" kuyruğunun düzeltilmesi).
+
+## V9 fazı — doküman doğruluğu: sayım, kapı, kâtipler (25 Ağu 2026)
+
+Faz kuralı: sayım önce, onarım sonra; kapı önce faz-öncesi ağaca karşı KIRMIZI düşürülür,
+sonra bağlanır; kâtip turları ayrı dosyalara yazar. Bu bölümdeki her satır bir YOLDUR —
+kapanma hükmü `GECE/KAPI.md`'de hakemindir.
+
+| dosya | içinde ne var |
+|---|---|
+| `GECE/V9-A.md` | bugünkü sayım (ölçüm, onarım YOK): `docs/**` + `README.md` kapsamında duran-iddia ve ölü-yol taraması; `GECE/V0-0C.md` devralınmadı, tazelendi. |
+| `GECE/V9-B.md` | `docs_truth_check` kapısının tutanağı: taban, ctest adı, boş-test ve mutasyon kanıtı; `docs/` ve `README.md` içeriğine dokunulmadığının `git status` kanıtı. |
+| `GECE/V9-R.md` | araştırma (kod yazılmadı): doküman doğruluğunun yayınlanmış pratiği, kapının kalıp listesi/eşiği/kaçış mekanizması için kaynak taban. |
+| `GECE/V9-C.md` | kâtip 1'in tutanağı — `README.md` + `docs/ARCHITECTURE.md`. Kart: `GECE/KART/V9-C.md`. ⚠ bu satır yazılırken diskte **YOK** (paralel işçi yazıyor). |
+| `GECE/V9-D.md` | kâtip 2'nin tutanağı — `docs/H1.0-KAPI.md` + `docs/G5-OMUZ-PLANI.md`. Kart: `GECE/KART/V9-D.md`. ⚠ bu satır yazılırken diskte **YOK**. |
+| `GECE/V9-E.md` | kâtip 3'ün tutanağı — `docs/SATIS-SARTNAMESI.md` + `docs/KATMAN-HARITASI.md` + `docs/loop-engineering.md` + arşiv mock. Kart: `GECE/KART/V9-E.md`. ⚠ bu satır yazılırken diskte **YOK**. |
+| `GECE/V9-F.md` | bu tablonun tutanağı: kaç yol tablolandı, kaçı `test -e` ile doğrulandı, hangi yol bulunamadı. Kart: `GECE/KART/V9-F.md`. |
+| `engine/tests/docs_truth_check.mjs` | KAPI (node, bağımlılık yok), ctest adı `docs_truth_check`. Duran-iddia kalıpları ve ölü yol taraması; her ihlal adıyla basılır. |
+| `engine/tests/docs-truth-baseline.json` | kapının TABANI. Deftersiz taban geçersiz; yeniden kesme gerekçesi tutanağa yazılır. Emsal: `engine/tests/vocab-reference-baseline.json`. |
+| `GECE/log/V9.build.opening.txt` · `V9.ctest.opening.txt` | fazın AÇILIŞ build'i ve tam `ctest` koşusu. Kırmızı AD kümesi buradan okunur, buradaki bir cümleden değil. |
+| `GECE/log/V9-B.red-before.txt` | BOŞ TEST: kapı, faz-öncesi ONARILMAMIŞ ağaçta (`--no-baseline`) kırmızı düşüyor. Kapatılmış test olmadığının kanıtı. |
+| `GECE/log/V9-B.mutasyon.txt` | mutasyon kanıtı: iki kasıtlı ihlal (D1 duran iddia, D2 ölü yol) enjekte edilip kapının kırılıp kırılmadığı ölçülüyor. |
+| `GECE/log/V9-B.ctest-full.txt` | kapı bağlandıktan sonraki tam `ctest` koşusu. |
+| `GECE/log/V9-A.census.py` · `V9-A.links.py` | sayımı ve link taramasını basan iki alet (hüküm basmaz, sayı basar). |
+| `GECE/log/V9-A.links.txt` · `V9-A.standing.txt` | o iki aletin ham çıktısı: dosya:satır → hedef → TICK/VAR-YOK tablosu, ve duran-iddia taramasının ham dökümü. |
+| `GECE/KART/V9-A.md` … `V9-F.md` · `V9-R.md` | fazın **7 işçi kartı**: kapalı kaynak listesi, çıktı dosya kümesi, teslim şartı. |
+
+## `GECE/KART/` — kart dosyaları (faz başına)
+
+Kart = işçinin brief'i: kapalı kaynak listesi + çıktı dosya kümesi + teslim şartı.
+Kart kart liste burada yok; kartın kendisi dizinde adıyla duruyor.
+
+| faz | kart sayısı | dizindeki adlar |
+|---|---|---|
+| V0 | 7 | `GECE/KART/V0-0A-motor.md` … `V0-0R-arastirma.md` |
+| V1 | 5 | `GECE/KART/V1-A-golden-mühür.md` … `V1-R-arastirma.md` |
+| V2 | 6 | `GECE/KART/V2-A-sokum-hukmu.md` … `V2-R-arastirma.md` |
+| V3 | 6 | `GECE/KART/V3-A.md` … `V3-R.md` |
+| V4 | 7 | `GECE/KART/V4-A.md` … `V4-R.md` |
+| V5 | 13 | `GECE/KART/V5-A.md` … `V5-Z.md` (reddedilen/ikinci kesim kartları dâhil) |
+| V6 | 11 | `GECE/KART/V6-A.md` … `V6-R.md` (reddedilen kartlar da duruyor) |
+| V7 | 8 | `GECE/KART/V7-A.md` … `V7-R.md`. ⚠ V7-H'nin kartı YOK — o iş hakemin bulgusundan doğdu |
+| V9 | 7 | `GECE/KART/V9-A.md` · `V9-B.md` · `V9-C.md` · `V9-D.md` · `V9-E.md` · `V9-F.md` · `V9-R.md` |
+
+## `GECE/log/` — faz dışı ve devralınan loglar
+
+Faz loglarının çoğu yukarıdaki faz bölümlerinde adıyla duruyor. Burada yalnız o
+bölümlere girmeyenler var.
+
+| yol | ne |
+|---|---|
+| `GECE/log/F0*.txt` · `F6*` · `F9*` · `F10*` · `F11*` · `F-C…F-N1*` (101 dosya) | ÖNCEKİ koşunun (v5) log yığını; bu koşuda kanıt değil, yalnız tarihsel kıyas için duruyor. |
+| `GECE/log/F-D.shots/` · `F-E.shots/` · `F-H.shots/` · `F-K.shots/` | önceki koşunun görsel artefaktları (5 · 10 · 3 · 8 dosya). |
+| `GECE/log/armhole-basis.txt` · `gece.txt` | tarihsiz tek koşu çıktıları; hangi faza ait olduğu dosya adından okunamıyor (**DOĞRULANMADI**). |
+| `GECE/log/flat_convention.mutasyon.txt` · `preset_resolve.mutasyon.txt` · `garment_armhole.vacuous.txt` | faz eki taşımayan mutasyon / boş-test logları. |
+
+## Kalıcı yardımcı dosyalar
+
+| yol | ne |
+|---|---|
+| `GECE/KAPI.md` | hakem hükümleri: faz · alt kapı · GEÇTİ/KALDI · gerekçe · log yolu. Bir fazın kapandığını söyleyen TEK dosya. |
+| `GECE/KOSU.md` | koşunun canlı durumu (≤150 satır): şu an neredeyiz, ne açık. Şefin dosyası. |
+| `GECE/kapi.sh` · `GECE/kapi.sha` | kapı koşturucu betik ve onun sha kaydı. |
+| `GECE/mutasyon.sh` · `GECE/mutasyon.tsv` | mutasyon koşturucu betik ve mutasyon tablosu. |
+| `GECE/f0-measure-pattern.py` → `GECE/f0-pattern-EU38.json` | kalıp ölçüleri (cm): üreteç ve çıktısı. |
+| `GECE/f0-measure-flat.mjs` → `GECE/f0-flat-princess.json` | flat siluet ölçüleri (birimsiz): üreteç ve çıktısı. |
+| `GECE/f-d-kalip-plot.mjs` · `GECE/f-e-shot.mjs` | önceki koşudan kalan iki çizim/ekran-görüntüsü aleti. |
+| `GECE/probe/` (5 dosya) | tek seferlik sondalar: `selfintersect-probe.cpp` · `si-cross.cpp` · `si-one.cpp` (kendini kesme) · `v4k-census-hat2.mjs` · `v4k-measure.mjs` (V4-K ölçümü). Kapı değil, sonda. |
+| `GECE/kurtarma/` (13 dosya) | geri alma malzemesi: silinen `add_test` satırları, `LastTest.log.gz` yedekleri, `F9.arch-backup.md`, `F10.index.html.orig`/`.yedek`, `mut.*` mutasyon notları. |
+| `GECE/arsiv/` | önceki koşuların tutanakları; bu koşuda **KANIT DEĞİL, açılmaz**. |
+
+## `docs/` ağacı
+
+| yol | ne anlatıyor |
+|---|---|
+| `docs/ARCHITECTURE.md` | mimarinin tek yeri: hat, aletler, kapılar, beyan edilmiş sınırlar (§11-§15 bu koşunun fazları) + "Known limits". |
+| `docs/KATMAN-HARITASI.md` | kim kimi okur, kim kimi OKUYAMAZ — katman katman + numaralı boşluk listesi. |
+| `docs/H1.0-KAPI.md` | giyilebilirliğin kabul kapısı: hangi şart hangi ölçümle karşılanıyor. |
+| `docs/G5-OMUZ-PLANI.md` | omuz/kol oyuğu/yaka yüzeye inerken izlenecek icra planı ve o açığı sayan kapılar. |
+| `docs/SATIS-SARTNAMESI.md` | satılabilir paketin şartnamesi: listing, rehber, montaj sırası. |
+| `docs/loop-engineering.md` | ölçüme-dallanan ajan zincirlerinin yöntemi (İngilizce, dışa dönük). |
+| `docs/edit/` (4 dosya) | editleme örneği: `base-eu38-dress.json`, `diff-yakayi-degistir.json`, `once.png`, `sonra.png`. |
+| `docs/reference/dis-llm-panel-a.html` | dış LLM panel çıktısı, referans. |
+| `docs/archive/` | **ARŞİV** — `asset-guide/` (3) · `flat-engine/` (2) · `mocks/` (9) · `tools/` (18). Tarihsel; bugünkü hat için kanıt değil. |
 
 ## Ölçüm aletlerini çalıştır
 
