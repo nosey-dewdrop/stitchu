@@ -15,8 +15,11 @@
 >
 > ★ **24 Ağu (V4-A) — OMUZ SAYISI ARTIK KAYNAKLI, AMA YANLIŞ KATMANDA. G5 AÇIK.**
 > Kaynaklanan şey **FLAT croquis'inin** omuz ucu: `contract/flat-convention-v1.json →
-> croquis.landmarks.shoulderTipX` 78.0u (kaynaksız, devralınmış) → **70.1799u = 210.54 mm**
-> yarı-omuz, türetme `chestX 73.3333u × 0.9570`. 0.9570 satın alınmış Buğra Locket EU38
+> croquis.landmarks.shoulderTipX` 78.0u (kaynaksız, devralınmış) → **70.1799u = 210.54 mm** (`flat_convention_check`)
+> yarı-omuz — iki sayıyı da yargılayan kapı `flat_convention_check`, sayının durduğu yer
+> `contract/flat-convention-v1.json`, türetme `chestX 73.3333u × 0.9570`.
+> ⚠ "78.0u kaynaksız, devralınmış" etiketi **KORUNUYOR**: 78.0u'yu basan bir alet repoda
+> BULUNAMADI, yalnız yerine geçen 70.1799u kaynaklı. 0.9570 satın alınmış Buğra Locket EU38
 > `Back Body` parçasında ölçülen omuz/göğüs yarı-genişlik oranı (196.13/204.94,
 > `GECE/log/F-E.bugra-olcum.txt`) — yani bu sayfanın "SAYI KURALI" bölümünün istediği türden
 > bir landmark paritesi, tahmin değil. Üstüne bir kapı satırı kondu
@@ -39,14 +42,21 @@
    bölünür (waistRuns gibi `farRuns` + kırılım kolonları).
 2. **Omuz halkası:** GarmentSurf'e 4. halka: yükseklik = napeZ − omuz düşüşü;
    genişlik yarı-ekseni `a_sh = boyun_yarı_genişliği + omuz_boyu·cos(13°)`
-   (omuz boyu ölçüsü charttan: 12.25cm EU38; 13° FORMULAS.md varsayımı,
+   (omuz boyu ölçüsü charttan: 12.25cm EU38 — aynı sayıyı bugün ctest'te taşıyan alet
+   `draft_math_check`, satır `engine/tests/draft_math_check.mjs:126`; 13° ise
+   `engine/FORMULAS.md` varsayımı ve **onu basan bir alet repoda BULUNAMADI**,
    Buğra'yla sınanacak); derinlik b vücut spline'ından.
 3. **Dikiş planı:** omuz koşusu ön↔arka stitch (Shoulder türü); armhole +
    yaka SERBEST kenar (stitch yok); prenses/yan/bel aynen.
 
 ## SAYI KURALI (07-sleeve çöpünün dersi — tahmin YASAK)
-- armscye DEPTH 21.0cm (EU38, knowledge/drafting-math-eu38.md, dikey düşüş).
+- armscye DEPTH 21.0cm (EU38, `knowledge/drafting-math-eu38.md`, dikey düşüş).
+  Bu sayıyı bugün ctest içinde taşıyan alet: `draft_math_check`, satır
+  `engine/tests/draft_math_check.mjs:126` (EU38 satırı: scye 21.0 · shoulder 12.25).
 - armhole ÇEVRE kapısı: 40-44cm bandı (MED sanity çapası, `knowledge/drafting-math-eu38.md`).
+  Bandı bugün basan iki alet, ikisi de ctest'te: `draft_math_check`
+  (`engine/tests/draft_math_check.mjs` — satırı BİLGİ basar, hiçbir tavana bağlamaz) ve
+  `garment_armhole_check` (`engine/tests/garment_armhole_check.cpp` — sevk edilen hattın kapısı).
 - ön/arka: **ÖN oyuk daha EĞRİ, ARKA yay daha UZUN.** 8/8 bedende ölçüldü
   (`knowledge/armscye-on-arka-2026-08-17.md`). ⚠ 17.08'e kadar burada *"ÖN eğri arkadan
   uzun/derin"* yazıyordu — kaynaksız bir çıkarımdı, `knowledge/`'dan silindi.
@@ -83,7 +93,9 @@
    - `ön_oyuk_yay ≤ arka_oyuk_yay` (kesim çizgisinde)
    - `ön_oyuk_yay/kiriş > arka_oyuk_yay/kiriş`
    **BÜYÜKLÜK ŞART DEĞİL, REPORTED.** Fark 8 bedende −13.83 → −1.50mm, yani **9 kat**
-   daralıyor: bu bir kanun değil, ölçülen giysinin grade'i. Sayıyı şart yapmak referansı
+   daralıyor (basan alet `flatten-research/18-armscye-front-back.py`, tutanağı
+   `knowledge/armscye-on-arka-2026-08-17.md` § tablo satır 45-52):
+   bu bir kanun değil, ölçülen giysinin grade'i. Sayıyı şart yapmak referansı
    kural yapmaktır (Damla 28 Tem: *"Buğra bir REFERANS, kural değil"*).
    ⚠ **Tanık sayısı 1** (`locket_top`); `corset_bustier` strapless, oyuğu yok.
 3. Buğra landmark mm paritesi (rapor: parça-parça fark tablosu).
