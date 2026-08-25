@@ -8,15 +8,18 @@ export const STRINGS = {
   // nav + landing
   'nav.create': { tr: 'oluştur' },
   'nav.closet': { tr: 'dolap' },
-  'hero.title': { en: 'Photograph a garment. Get its sewing pattern, drafted to your body.', tr: 'Bir kıyafetin fotoğrafını çek. Dikiş kalıbını kendi bedenine çizilmiş al.' },
-  'hero.sub': { en: 'True-scale A4 printing, fabric advice and a step-by-step sewing guide. Your measurements never leave this browser.', tr: 'Gerçek ölçekli A4 baskı, kumaş önerisi ve adım adım dikiş rehberi. Ölçülerin bu tarayıcıdan asla çıkmaz.' },
+  'hero.title': { en: 'Photograph a garment. Get its sewing pattern in eight fixed sizes, EU34 to EU48.', tr: 'Bir kıyafetin fotoğrafını çek. Dikiş kalıbını sekiz sabit bedenden birinde al.' },
+  'hero.sub': { en: 'True-scale A4 printing, fabric advice and a step-by-step sewing guide. The numbers you type never leave this browser.', tr: 'Gerçek ölçekli A4 baskı, kumaş önerisi ve adım adım dikiş rehberi. Ölçülerin bu tarayıcıdan asla çıkmaz.' },
   'hero.cta': { en: 'Start a pattern', tr: 'Kalıba başla' },
-  'hero.platforms': { en: 'web · iOS app · Android coming soon', tr: 'web · iOS uygulaması · Android yakında' },
+  // V10-D L3: bu satır işaretsiz bir blokta "coming soon / yakında" taşıyordu ve
+  // bir JS stringi data-vision="1" ile İŞARETLENEMEZ. Vaat silindi; yerine bugünün
+  // durumu yazıldı (App/ klasörü referans kopya, sevk edilmiş bir iOS uygulaması YOK).
+  'hero.platforms': { en: 'web only, that is the whole platform list today', tr: 'yalnız web; bugünkü platform listesi bu' },
   'hero.sewhint': { en: 'drag along the line to sew your first stitch', tr: 'ilk ilmeğini dikmek için çizgi boyunca sürükle' },
   'how.title': { en: 'How it works', tr: 'Nasıl çalışır' },
   'how.1.title': { en: 'Upload a photo', tr: 'Fotoğraf yükle' },
   'how.1.body': { en: 'Any skirt, dress or top. Stitchu reads the neckline, sleeves and silhouette, and you confirm what it saw.', tr: 'Herhangi bir etek, elbise ya da üst. Stitchu yakayı, kolları ve silueti okur; gördüğünü sen onaylarsın.' },
-  'how.2.title': { en: 'Drafted to your measurements', tr: 'Senin ölçülerine çizilir' },
+  'how.2.title': { en: 'Drafted from the seven numbers you type', tr: 'Yazdığın yedi ölçüden çizilir' },
   'how.2.body': { en: 'The pattern is calculated from your own seven measurements, right here in the browser. Nothing is uploaded.', tr: 'Kalıp, yedi ölçünden bu tarayıcının içinde hesaplanır. Hiçbir şey yüklenmez.' },
   'how.3.title': { en: 'Print and sew', tr: 'Bas ve dik' },
   'how.3.body': { en: 'Tiled A4 sheets with a calibration square, fabric meters, and a sewing order that starts at the right seam.', tr: 'Kalibrasyon kareli A4 yapraklar, kumaş metresi ve doğru dikişten başlayan dikim sırası.' },
@@ -35,7 +38,7 @@ export const STRINGS = {
   'footer.privacy': { tr: 'gizlilik' },
 
   // create flow
-  'create.measure.title': { en: 'Your measurements', tr: 'Ölçülerin' },
+  'create.measure.title': { en: 'Your body numbers', tr: 'Ölçülerin' },
   'create.measure.sub': { en: 'Seven measurements, once, saved on this device only.', tr: 'Yedi ölçü, bir kez, yalnızca bu cihazda saklanır.' },
   'create.measure.privacy': { en: 'Stored in this browser only. Nothing is uploaded.', tr: 'Yalnızca bu tarayıcıda saklanır. Hiçbir şey yüklenmez.' },
   'create.measure.numerror': { en: 'Enter a number in centimeters.', tr: 'Santimetre cinsinden bir sayı gir.' },
@@ -52,7 +55,7 @@ export const STRINGS = {
   'create.spec.sub': { en: 'Pick the garment; the pattern is drafted to your saved measurements. ', tr: 'Kıyafeti seç; kalıp kayıtlı ölçülerine çizilir. ' },
   'create.spec.subdemo': { en: 'Pick a garment (or upload a photo) and see a real pattern, drafted to a standard size for now. ', tr: 'Bir kıyafet seç (ya da fotoğraf yükle) ve gerçek bir kalıp gör, şimdilik standart bedene çizilir. ' },
   'create.spec.edit': { en: 'Edit measurements', tr: 'Ölçüleri düzenle' },
-  'create.spec.addmeasure': { en: 'add your measurements', tr: 'ölçülerini ekle' },
+  'create.spec.addmeasure': { en: 'add the seven body numbers', tr: 'ölçülerini ekle' },
   'create.demo.banner': { en: 'This is a standard EU38. Make it fit you →', tr: 'Bu standart EU38 beden. Kendine göre çizdir →' },
   'create.demo.cta': { en: 'Draft it to my measurements', tr: 'Benim ölçülerime çiz' },
   'create.demo.badge': { en: 'standard size, not yet yours', tr: 'standart beden, henüz senin değil' },

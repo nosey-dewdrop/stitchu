@@ -50,8 +50,8 @@ const P = {
     tr: `${g}, sayfa ${code} (${cols} sütunlu ızgara)`,
   }),
   demoWarn: {
-    en: 'STANDARD EU38 SIZE, this is not drafted to your measurements yet. Add your seven measurements on the site for a pattern that fits you.',
-    tr: 'STANDART EU38 BEDEN, bu henüz senin ölçülerine çizilmedi. Sana uyan bir kalıp için sitede yedi ölçünü ekle.',
+    en: 'STANDARD EU38 SIZE. Type the seven body numbers on the create page to draft it from them instead.',
+    tr: 'STANDART EU38 BEDEN. Bunun yerine yedi vücut ölçüsünü çiz sayfasına yaz.',
   },
   gradeCover: (g, n) => ({
     en: `${g}, size run, ${n} sizes`,
@@ -66,7 +66,7 @@ const P = {
     tr: 'Her beden kendi kapak sayfası ve kalibrasyon karesiyle başlar. Yazıcı ölçeğini %100 tut ve kesmeden önce her bedendeki 3 cm kareyi doğrula. Her iç sayfada bedeni yazılıdır, sadece ihtiyacın olan bedenin sayfalarını kes.',
   },
   gradeChartTitle: {
-    en: 'Size chart, pick your size by your own measurements (standard body, cm):',
+    en: 'Size chart, pick your size by comparing your body to this chart (standard body, cm):',
     tr: 'Beden tablosu, kendi ölçünle bedenini seç (standart vücut, cm):',
   },
   chartSize: { en: 'size', tr: 'beden' },
