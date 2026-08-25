@@ -20,7 +20,7 @@ export const STRINGS = {
   'how.1.title': { en: 'Upload a photo', tr: 'Fotoğraf yükle' },
   'how.1.body': { en: 'Any skirt, dress or top. Stitchu reads the neckline, sleeves and silhouette, and you confirm what it saw.', tr: 'Herhangi bir etek, elbise ya da üst. Stitchu yakayı, kolları ve silueti okur; gördüğünü sen onaylarsın.' },
   'how.2.title': { en: 'Drafted from the seven numbers you type', tr: 'Yazdığın yedi ölçüden çizilir' },
-  'how.2.body': { en: 'The pattern is calculated from your own seven measurements, right here in the browser. Nothing is uploaded.', tr: 'Kalıp, yedi ölçünden bu tarayıcının içinde hesaplanır. Hiçbir şey yüklenmez.' },
+  'how.2.body': { en: 'The pattern is calculated in the eight fixed sizes EU34 to EU48, right here in the browser. Nothing is uploaded.', tr: 'Kalıp, EU34 ile EU48 arası sekiz sabit bedende, bu tarayıcının içinde hesaplanır. Hiçbir şey yüklenmez.' },
   'how.3.title': { en: 'Print and sew', tr: 'Bas ve dik' },
   'how.3.body': { en: 'Tiled A4 sheets with a calibration square, fabric meters, and a sewing order that starts at the right seam.', tr: 'Kalibrasyon kareli A4 yapraklar, kumaş metresi ve doğru dikişten başlayan dikim sırası.' },
   'wall.title': { en: 'The stitch wall', tr: 'Dikiş duvarı' },
@@ -107,7 +107,7 @@ export const STRINGS = {
   'result.fabric.avoid': { en: 'avoid {name} here, ', tr: 'burada {name} kullanma, ' },
   'result.fabric.avoidnote': { en: 'works against this shape ({drape}).', tr: 'bu forma ters çalışır ({drape}).' },
   'result.legend': { en: 'How to read the pieces: OUTER solid line = cutting line (seam allowance included) · inner fine line = sewing line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: DIŞ kalın çizgi = kesim hattı (dikiş payı dahil) · içteki ince çizgi = dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
-  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist), please re-check your seven measurements. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi), lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
+  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist), please re-check the seven measurements you entered. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi), lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
 
   // sewing companion (web/js/sewing.js): why this fabric + construction order.
   'sew.whyfabric': { en: 'Why this fabric', tr: 'Neden bu kumaş' },

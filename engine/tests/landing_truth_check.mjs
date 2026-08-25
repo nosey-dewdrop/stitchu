@@ -252,6 +252,19 @@ const BANNED = [
   ['never fails', /never fails/gi],
   ['perfect', /\bperfect\b/gi],
   ['0.000000 mm', /0\.000000\s*mm/gi],
+  // ── V10-G: kapıdan KAÇMIŞ MTM cümleleri (V10-F "KART DIŞI" md.2/md.4).
+  // Bunların hepsi canlı web/ altındaydı ve yukarıdaki 13 kalıbın hiçbirine
+  // takılmıyordu. Motorun gerçeği: 8 SABİT beden (contract/layers/shape-ratios.json).
+  ['from your body', /from your body/gi],
+  ['your seven measurements', /your (?:own )?seven measurements/gi],
+  ['sized from your <x>', /sized from your \w+/gi],
+  ['not fixed sizes', /not fixed sizes/gi],
+  ['per body', /\bper body\b/gi],
+  // "drafted per SIZE" DÜRÜST bir cümledir (web/index.html:346) ve motorun
+  // gerçeğini söyler; kalıp onu cezalandırmasın diye `size` dışlanır. Bu bir
+  // muafiyet DEĞİL, kalıbın kendi tanımı: yasak olan gövdeye/ölçüye göre çizim.
+  ['drafted per <non-size>', /drafted per (?!size\b)/gi],
+  ['your <ölçü> measurement/girth', /your (?:own )?(?:neck|bust|waist|hip|underbust|arm|body) (?:measurement|girth)s?/gi],
 ];
 function scanL2() {
   const hits = []; const perPattern = {};

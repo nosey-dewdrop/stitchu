@@ -309,7 +309,7 @@ const STYLES = [
     slug: 'balloon-sleeve', group: 'sleeves', name: 'Balloon sleeve',
     title: 'Balloon sleeve pattern with drafted cuff · stitchu',
     desc: 'How stitchu drafts a balloon sleeve: hem half-width 0.52 vs 0.40 straight, gather line 25 mm up, cuff = biceps × 0.62 + 20 mm, interfaced.',
-    lead: 'A set-in sleeve that balloons at the hem and gathers into its own drafted cuff, the cuff sized from your arm, not a standard.',
+    lead: 'A set-in sleeve that balloons at the hem and gathers into its own drafted cuff, the cuff sized from the biceps of the drafted size, not a standard.',
     facts: [
       'The base is the set-in sleeve block: biceps from your bust with verified 15% ease, cap height 0.75 of the armhole depth, and the cap width solved by bisection until the cap length lands within 0.5 mm of 4% ease over YOUR drafted armhole.',
       'The balloon widens the profile: hem half-width 0.52 × the sleeve width (straight is 0.40) and an underarm mid-bulge of 0.62 (straight 0.46).',
@@ -371,12 +371,12 @@ const STYLES = [
   },
   {
     slug: 'fabric-ties', group: 'details', name: 'Fabric ties, sashes & bows',
-    title: 'Fabric tie & sash pattern pieces, sized to you · stitchu',
-    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm, back sash reaches from your waist, tie-back, neck bow and cuff ties.',
+    title: 'Fabric tie & sash pattern pieces, sized to the size you print · stitchu',
+    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm, back sash length follows that size's waist, tie-back, neck bow and cuff ties.',
     lead: 'A tie is a rectangle, cut wide enough to fold into a self-lined tube, and long enough to actually reach around YOUR body and knot.',
     facts: [
       'Master rule: a finished tie of width W and length L is cut (2W + 2×15) × (L + 2×15) mm. The lengthwise centre fold self-lines it; markings give the fold line and both long seam lines, grain runs the tie length.',
-      'The back waist sash is sized from your body: each half is max(300, waist × 0.5 + 250) mm long, so it reaches from the side seam round to a bow at centre back, not a fixed strip that comes up short on a real waist.',
+      'The back waist sash is sized from the waist of the size you print: each half is max(300, waist × 0.5 + 250) mm long, so it reaches from the side seam round to a bow at centre back, not a fixed strip that comes up short on a real waist.',
       'Four placements: back waist sash/bow (W 30), tie-back closure (W 25 × 300, two halves that cross and knot), front neck bow (W 25 × 350), cuff ties (W 15 × 180 each).',
       'A placement notch is stamped on the nearest outline vertex of the target piece, so you know exactly which seam catches the tie.',
       'Honest boundary: a DRAWSTRING that gathers fabric through a casing is a different construction, the gathering page covers what is drafted; simple applied ties only here.',
@@ -481,7 +481,7 @@ const STYLES = [
     slug: 'empire-waist', group: 'construction', name: 'Empire waistline',
     title: 'Empire waist pattern, seam at underbust girth · stitchu',
     desc: 'How stitchu drafts an empire line: seam 60 mm below the armhole, suppression fitted to your underbust, skirt lengthened to make up the height.',
-    lead: 'The under-bust seam, drafted against the measurement that actually lives there: the empire bodice is suppressed to your underbust girth, not your waist.',
+    lead: 'The under-bust seam, drafted against the measurement that actually lives there: the empire bodice is suppressed to the underbust girth of the drafted size, not to its waist.',
     facts: [
       'The seam sits at the armhole depth + 60 mm, just under the bust, wherever that lands on YOUR back length.',
       'Suppression targets the UNDERBUST girth (bust − 70 mm, a documented B/C-cup assumption) instead of the natural waist, an empire bodice fitted to the waist measurement would sag.',

@@ -7,8 +7,8 @@
     "--no-baseline: tabanı yok sayan HARD-0 kipi; §4.2 kırmızı kanıtı bu kiple alınır (GECE/log/V10-B.red-before.txt).",
     "--dir=<yol>: hedef dizin. Mutasyon fikstürü `web/` DIŞINDA koşar (kart V10-B yasağı: web/ altına tek bayt yazma)."
   ],
-  "_note": "V10-D: L2 MTM ve duran-iddia süpürüldü (540->0), L3 i18n.js vizyon vaadi silindi (2->0), L5 api.html EU50/EU52 düşürüldü (6->4), L1 kanıtsız matris sayıları çıkarıldı (1063->937)",
-  "olcumCommit": "7a1e535be82983a10a43fb039ca5d41cd4a40a20",
+  "_note": "V10-G: kapıdan kaçan MTM kalıpları eklendi",
+  "olcumCommit": "c72f6501b9b17236252c41e778e1382c5ef46bb9",
   "olcumTarihi": "2026-08-25",
   "kapsam": {
     "dizin": "web",
