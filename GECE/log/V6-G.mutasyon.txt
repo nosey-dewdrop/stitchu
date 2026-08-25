@@ -1,0 +1,31 @@
+=== V6-G MUTASYON LOGU (2026-08-25) ===
+
+--- TABAN: faz-sonrasi kod, mutasyonsuz
+exit=0  son satir: edit_locality_check: hepsi yeşil
+
+--- M1: SICIL REDDINI SESSIZLESTIR (operatorSicil -> rejected: [])
+exit=1  son satir: edit_locality_check: 3 KIRMIZI
+    FAIL (c) sicil raporu operatör ADIYLA basıldı: gatheredOverlayLayer, sleeve
+    FAIL (c) red cümlesi STATÜYÜ söylüyor: (cümle yok)
+    FAIL (c2) operatorGate:true -> aşama 'tamam', 0 red (kapı çalışıyor)
+
+--- M2: CIPA DOGRULAMASINI ATLA (validateDiff icindeki anchor/t/anahtar denetimi kapatilir)
+exit=1  son satir: edit_locality_check: 3 KIRMIZI
+    FAIL (b) sözlükte olmayan çıpa reddedildi ve red cümlesi ADI taşıyor -> tamam: (RED YOK — SESSİZ GEÇTİ)
+    FAIL (b2) aralık dışı oran reddedildi -> tamam: (RED YOK)
+    FAIL (b3) koordinat anahtarı reddedildi -> tamam: (RED YOK — MODEL KOORDİNAT GÖNDEREBİLİYOR)
+
+--- GERI ALINDI: taban yeniden kosuldu
+exit=0  son satir: edit_locality_check: hepsi yeşil
+
+=== FAZ-ONCESI KANITI (§4.2) ===
+worktree: git worktree add --detach /tmp/v6g-prephase HEAD  (HEAD=3815c64)
+engine/dist symlink + yeni test dosyasi kopyalandi; spec-diff.mjs'e SADECE veri okuyucu sim eklendi
+komut: cd /tmp/v6g-prephase && node engine/tests/edit_locality_check.mjs
+exit=1 · 6 KIRMIZI
+    FAIL (b) sözlükte olmayan çıpa reddedildi ve red cümlesi ADI taşıyor -> tamam: (RED YOK — SESSİZ GEÇTİ)
+    FAIL (b2) aralık dışı oran reddedildi -> tamam: (RED YOK)
+    FAIL (b3) koordinat anahtarı reddedildi -> tamam: (RED YOK — MODEL KOORDİNAT GÖNDEREBİLİYOR)
+    FAIL (c) sicil raporu operatör ADIYLA basıldı: (BOŞ — SESSİZ GEÇTİ)
+    FAIL (c) red cümlesi STATÜYÜ söylüyor: (cümle yok)
+    FAIL (c2) operatorGate:true -> aşama 'tamam', 0 red (kapı çalışıyor)

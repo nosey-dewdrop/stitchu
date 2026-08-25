@@ -27,7 +27,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { VOCAB, canonical } from '../../web/js/vocab.gen.js';
-import { ROOT, draft } from './spec-diff.mjs';
+import { ROOT, draft, anchorNames } from './spec-diff.mjs';
 
 const API = 'https://stitchu-api.damummyphus.workers.dev/api/analyze';
 const PHOTOS = join(ROOT, 'vision', 'eval', 'photos');
@@ -204,6 +204,34 @@ function specCarries(spec, word) {
   return false;
 }
 
+// ── KONUM KAPASİTESİ: ÖNCE / SONRA ─────────────────────────────────────────
+// ÖNCE: spec'in konumu ifade edebilmesinin TEK yolu, bir alan ADININ ya da
+// DEĞERİNİN o sözcüğü tesadüfen taşımasıydı (specCarries). Çıpa ekseni YOKTU.
+// SONRA: konumlu edit artık `anchor` (ÜRETİLMİŞ çıpa sözlüğünden bir AD) + `t`
+// (0..1) ile ifade edilir. Bu ölçüm, 26 serbest terimin konum ibaresi
+// taşıyanlarının kaçının ARTIK bir ÇIPAYLA karşılandığını sayar.
+//
+// İKİ SAYI BASILIR, çünkü eşlemenin bir kısmı BENİM:
+//   SIKI  — konum sözcüğü bir çıpa ADININ içinde kelime olarak geçiyor
+//           (backZone -> back, skirt.waist -> skirt/waist). Uydurma YOK.
+//   İLANLI— artı aşağıda AÇIKÇA yazılmış eşanlamlılar. Tartışmaya açıktır.
+const ANCHOR_SYNONYM = {
+  front: 'cfZone', centre: 'cfZone', center: 'cfZone',   // cf = centre front
+  neckline: 'neckZone',
+  empire: 'waistZone', dropped: 'waistZone', drop: 'waistZone', natural: 'waistZone',
+};
+const anchorTokenIndex = () => {
+  const idx = new Map();      // sözcük -> [çıpa adları]
+  for (const ad of anchorNames()) {
+    for (const t of ad.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase().split(/[^a-z]+/).filter(Boolean)) {
+      if (t === 'zone') continue;
+      if (!idx.has(t)) idx.set(t, []);
+      idx.get(t).push(ad);
+    }
+  }
+  return idx;
+};
+
 // göz etiketinin alanları (labels.json'un yazdığı 12 alan); `length` -> skirtLength.
 const FIELD_MAP = {
   garment: 'garment', neckline: 'neckline', sleeveStyle: 'sleeveStyle',
@@ -276,6 +304,7 @@ for (const file of files) {
     pieces: d.error ? 0 : d.pattern.pieces.length,
     oov, oovUnknown, oovUnknown2, oovUnknownBoth,
     oovKonumlu: oov.filter((t) => konumWords(t).length).length,
+    spec,
   });
 }
 
@@ -311,6 +340,55 @@ console.log(`  SİCİL 1 contract/terms.json          : ${oovUnk}  YOK (%${pct(o
 console.log(`  SİCİL 2 dataset/vocab-canonical.json : ${oovUnk2} YOK (%${pct(oovUnk2, oovAll)})`);
 console.log(`  İKİSİNDE DE YOK                      : ${oovUnkBoth} (%${pct(oovUnkBoth, oovAll)})`);
 console.log(`banka: ${BANK}`);
+
+// ── KONUM KAPASİTESİ ÖNCE/SONRA ────────────────────────────────────────────
+{
+  const idx = anchorTokenIndex();
+  const anchors = anchorNames();
+  const konumlu = [];   // {term, words, once, sonraSiki, sonraIlanli, cipa}
+  for (const r of rows) {
+    if (r.err) continue;
+    for (const t of r.oov) {
+      const ws = konumWords(t);
+      if (!ws.length) continue;
+      const per = ws.map((wd) => {
+        const spec = r.spec && specCarries(r.spec, wd);
+        const siki = idx.get(wd) || [];
+        const ilanli = ANCHOR_SYNONYM[wd] && anchors.includes(ANCHOR_SYNONYM[wd]) ? [ANCHOR_SYNONYM[wd]] : [];
+        return { wd, spec, siki, ilanli };
+      });
+      konumlu.push({
+        term: t, words: ws, per,
+        once: per.every((p) => p.spec),
+        sonraSiki: per.every((p) => p.spec || p.siki.length),
+        sonraIlanli: per.every((p) => p.spec || p.siki.length || p.ilanli.length),
+      });
+    }
+  }
+  const N = konumlu.length;
+  const once = konumlu.filter((k) => k.once).length;
+  const sSiki = konumlu.filter((k) => k.sonraSiki).length;
+  const sIlan = konumlu.filter((k) => k.sonraIlanli).length;
+  console.log('');
+  console.log(`KONUM KAPASİTESİ (çıpa sözlüğü: ${anchors.length} çıpa, contract/anchors-v1.json)`);
+  console.log(`  konum ibaresi taşıyan serbest terim (payda): ${N} / ${oovAll}`);
+  console.log(`  ÖNCE  (yalnız spec alan adı/değeri tesadüfen taşıyor)   : ${once}/${N} (%${pct(once, N)})`);
+  console.log(`  SONRA (SIKI: konum sözcüğü bir çıpa ADINDA kelime olarak): ${sSiki}/${N} (%${pct(sSiki, N)})`);
+  console.log(`  SONRA (İLANLI: + bu dosyada açık yazılı eşanlamlılar)     : ${sIlan}/${N} (%${pct(sIlan, N)})`);
+  console.log(`  İLANLI eşanlamlı tablosu: ${Object.entries(ANCHOR_SYNONYM).map(([a, b]) => `${a}->${b}`).join(', ')}`);
+  const kalan = {};
+  for (const k of konumlu) {
+    if (k.sonraIlanli) continue;
+    for (const p of k.per) if (!p.spec && !p.siki.length && !p.ilanli.length) kalan[p.wd] = (kalan[p.wd] || 0) + 1;
+  }
+  console.log(`  ÇIPASI OLMAYAN konum sözcükleri (kalan iş): ${Object.entries(kalan).sort((a, b) => b[1] - a[1]).map(([w2, c]) => `${w2}×${c}`).join(', ') || '-'}`);
+  console.log('  terim terim:');
+  for (const k of konumlu) {
+    const dur = k.once ? 'ÖNCE+SONRA' : (k.sonraSiki ? 'SONRA(sıkı)' : (k.sonraIlanli ? 'SONRA(ilanlı)' : 'HÂLÂ YOK'));
+    const cip = k.per.map((p) => `${p.wd}=${p.spec ? 'spec' : (p.siki[0] || p.ilanli[0] || '—')}`).join(' ');
+    console.log(`    ${w(dur, 13)} ${w(k.term, 52)} ${cip}`);
+  }
+}
 for (const r of rows) {
   if (r.err || (!r.miss.GORME.length && !r.miss.KELIME.length && !r.miss.MOTOR.length && !r.miss.KONUM.length)) continue;
   console.log(`\n${r.file}`);

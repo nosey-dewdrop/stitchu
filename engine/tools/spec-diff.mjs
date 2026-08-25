@@ -36,6 +36,25 @@ export const LOCALITY = JSON.parse(
 const COMPOSITION = JSON.parse(
   readFileSync(join(ROOT, 'contract', 'composition.json'), 'utf8'),
 );
+const SPEC_V2 = JSON.parse(
+  readFileSync(join(ROOT, 'contract', 'garment-spec-v2.json'), 'utf8'),
+);
+
+// ── ÇIPA SÖZLÜĞÜ ────────────────────────────────────────────────────────────
+// contract/anchors-v1.json ÜRETİLMİŞ bir dosyadır (gen-anchors.mjs). Burada
+// ELDE yazılmış bir liste YOKTUR: sözlük neyi ilan ediyorsa çıpa odur. Dosya
+// yoksa/bozuksa çıpa kullanan her diff ADIYLA reddedilir (sessiz kabul yok).
+let ANCHOR_CACHE = null;
+export function anchorNames() {
+  if (ANCHOR_CACHE) return ANCHOR_CACHE;
+  try {
+    const j = JSON.parse(readFileSync(join(ROOT, 'contract', 'anchors-v1.json'), 'utf8'));
+    ANCHOR_CACHE = (j.anchors || []).map((a) => a.ad).filter(Boolean).sort();
+  } catch {
+    ANCHOR_CACHE = [];
+  }
+  return ANCHOR_CACHE;
+}
 
 // Standart gövde (mm/cm karışmasın: web'in kullandığı cm alanları).
 export const BODY = {
@@ -52,17 +71,33 @@ export function loadEngine() {
 }
 
 // ── 1. ŞEMA DOĞRULAMA ───────────────────────────────────────────────────────
-// Diff = { ops: [ { op, field, value, why? } ] }. Başka bir şey yok: model
-// koordinat, panel adı ya da serbest metin gönderemez.
+// Diff = { ops: [ { op, field, value, why?, anchor?, t? } ] }. Başka bir şey
+// yok: model koordinat, vertex, panel adı ya da serbest metin gönderemez.
+//
+// KONUM NASIL İFADE EDİLİR: `anchor` = ÜRETİLMİŞ çıpa sözlüğündeki bir AD,
+// `t` = o çıpa boyunca 0..1 oran ofseti. VLM'e piksel koordinatı ya da vertex
+// indeksi seçtirmek MİMARİ İHLALDİR — bu yüzden şemada koordinat alanı YOKTUR
+// ve anahtar listesi KAPALIDIR: listede olmayan her anahtar ADIYLA reddedilir.
 const OPS = ['set', 'unset'];
+export const OP_KEYS = ['op', 'field', 'value', 'why', 'anchor', 't'];
 
 export function validateDiff(diff) {
   const errors = [];
   if (!diff || typeof diff !== 'object') return ['DIFF şema: nesne değil'];
   if (!Array.isArray(diff.ops)) return ['DIFF şema: ops dizisi yok'];
   if (!diff.ops.length) return ['DIFF şema: ops boş — düzenleme yok'];
+  const anchors = anchorNames();
   diff.ops.forEach((o, i) => {
     if (!o || typeof o !== 'object') { errors.push(`op[${i}]: nesne değil`); return; }
+    for (const k of Object.keys(o)) {
+      if (!OP_KEYS.includes(k)) {
+        errors.push(
+          `op[${i}]: '${k}' diff şemasında YOK — konum yalnız 'anchor' (çıpa adı) ` +
+          `+ 't' (0..1 oran) ile ifade edilir, koordinat/vertex gönderilemez ` +
+          `(izinli anahtarlar: ${OP_KEYS.join(', ')})`,
+        );
+      }
+    }
     if (!OPS.includes(o.op)) errors.push(`op[${i}]: bilinmeyen op '${o.op}' (geçerli: ${OPS.join(', ')})`);
     if (typeof o.field !== 'string' || !o.field) { errors.push(`op[${i}]: field yok`); return; }
     if (!LOCALITY.fieldZones[o.field]) {
@@ -71,8 +106,95 @@ export function validateDiff(diff) {
     if (o.op === 'set' && (o.value === undefined || o.value === null)) {
       errors.push(`op[${i}]: set '${o.field}' için value yok`);
     }
+    // ── ÇIPA ──
+    if (o.anchor !== undefined) {
+      if (typeof o.anchor !== 'string' || !o.anchor) {
+        errors.push(`op[${i}]: anchor bir ÇIPA ADI (metin) olmalı, '${JSON.stringify(o.anchor)}' geldi`);
+      } else if (!anchors.length) {
+        errors.push(
+          `op[${i}]: ÇIPA SÖZLÜĞÜ YOK: anchor='${o.anchor}' doğrulanamadı — ` +
+          'contract/anchors-v1.json okunamadı/boş (gen-anchors.mjs koşmamış). Sessiz kabul edilmez.',
+        );
+      } else if (!anchors.includes(o.anchor)) {
+        errors.push(
+          `op[${i}]: ÇIPA SİCİLDE YOK: anchor='${o.anchor}' — üretilmiş çıpa sözlüğünde ` +
+          `(contract/anchors-v1.json) böyle bir çıpa yok (geçerli: ${anchors.join(', ')})`,
+        );
+      }
+    }
+    // ── ORAN OFSETİ ──
+    if (o.t !== undefined) {
+      if (o.anchor === undefined) {
+        errors.push(`op[${i}]: t=${o.t} verildi ama anchor YOK — oran ofseti neyin üstünde ölçüleceği bilinmiyor`);
+      }
+      if (typeof o.t !== 'number' || !Number.isFinite(o.t)) {
+        errors.push(`op[${i}]: ÇIPA ORANI SAYI DEĞİL: t=${JSON.stringify(o.t)} (anchor='${o.anchor}', geçerli 0..1)`);
+      } else if (o.t < 0 || o.t > 1) {
+        errors.push(`op[${i}]: ÇIPA ORANI ARALIK DIŞI: t=${o.t} (anchor='${o.anchor}', geçerli 0..1)`);
+      }
+    }
   });
   return errors;
+}
+
+// ── 1b. OPERATÖR SİCİLİ ─────────────────────────────────────────────────────
+// Şema ve sözlük "bu kelime var mı" diye sorar. Sicil BAŞKA bir şey sorar:
+// bu değerin GEREKTİRDİĞİ operatör sevk edildi mi? Kural uydurulmadı,
+// contract/garment-spec-v2.json topology._role'den okunur: "bir değer,
+// gerektirdiği operatörlerden biri `shipped` değilse İFADE EDİLEMEZ ve red o
+// operatörün ADIYLA verilir."
+//
+// EŞLEME BENİM, STATÜ SÖZLEŞMENİN: aşağıdaki v1-alan -> v2-eksen tablosu bu
+// dosyada açık yazılıdır ve tartışmaya açıktır; `status` sözleşmeden okunur.
+// null = v2 ekseninin enum'unda karşılığı yok -> operatör SUÇLANMAZ, ayrı sayılır.
+export const AXIS_MAP = {
+  garment:     ['garment',     { dress: 'sheathDress', top: 'top', skirt: 'skirt' }],
+  skirtStyle:  ['skirtShape',  { aLine: 'aLine', straight: 'straight', gathered: 'gathered', pleated: 'pleated', gore: 'gore', halfCircle: null }],
+  sleeveStyle: ['sleeve',      { none: 'none', straight: 'setIn', balloon: 'puff' }],
+  shaping:     ['suppression', { dart: 'dart', princess: 'seamOnly' }],
+  collarType:  ['collar',      { none: 'none', peterPan: 'peterPan', flat: 'peterPan', crescent: 'peterPan', stand: 'stand', mock: 'stand', shirt: 'shirt' }],
+  backOpening: ['closure',     { none: 'none', round: 'backOpening', lowV: 'backOpening', square: 'backOpening', keyhole: 'backOpening' }],
+};
+
+export const OPERATOR_STATUS = Object.fromEntries(
+  Object.entries(SPEC_V2.operators).map(([k, v]) => [k, v.status]),
+);
+
+// Yalnız diff'in DOKUNDUĞU alanları sormak yetmez: "kolu değiştir" diff'i
+// geçerken spec'in kolsuz olması ayrı bir gerçektir. Bu yüzden sicil, diff
+// UYGULANDIKTAN SONRAKİ spec'in tamamına sorulur; hangi alanın diff'te
+// geçtiği `dokunulan` ile ayrıca işaretlenir.
+export function operatorSicil(spec, touchedFields = []) {
+  const touched = new Set(touchedFields);
+  const engeller = [];   // {field, axis, value, v2, op, status, dokunulan}
+  const enumsuz = [];    // eksen enum'unda karşılığı yok
+  for (const [field, [axis, map]] of Object.entries(AXIS_MAP)) {
+    const raw = spec[field];
+    if (raw === undefined || raw === null) continue;
+    if (!(raw in map)) { enumsuz.push({ field, axis, value: raw, reason: 'eşleme tablosunda yok' }); continue; }
+    const v2 = map[raw];
+    if (v2 === null) { enumsuz.push({ field, axis, value: raw, reason: `v2 ${axis} enum'unda karşılığı yok` }); continue; }
+    const node = SPEC_V2.topology[axis] && SPEC_V2.topology[axis].values[v2];
+    if (!node) { enumsuz.push({ field, axis, value: raw, reason: `v2 ${axis}.${v2} sözleşmede yok` }); continue; }
+    for (const op of (node.requires || [])) {
+      const status = OPERATOR_STATUS[op];
+      if (status !== 'shipped') {
+        engeller.push({ field, axis, value: raw, v2, op, status, dokunulan: touched.has(field) });
+      }
+    }
+  }
+  const rejected = engeller.map((e) => (
+    `SİCİL — OPERATÖR SEVK EDİLMEDİ: '${e.op}' statüsü ${String(e.status).toUpperCase()} ` +
+    `(gereken: ${e.field}='${e.value}' -> v2 ${e.axis}='${e.v2}'` +
+    `${e.dokunulan ? ', bu alan DIFF\'TE geçiyor' : ', diff\'te geçmiyor ama spec taşıyor'})`
+  ));
+  return {
+    rejected,
+    engeller,
+    enumsuz,
+    operatorler: [...new Set(engeller.map((e) => e.op))].sort(),
+    kaynak: `contract/garment-spec-v2.json@${SPEC_V2.version}`,
+  };
 }
 
 // ── 2. SİCİL KONTROLÜ ───────────────────────────────────────────────────────
@@ -193,12 +315,23 @@ export function localityReport(beforePattern, afterPattern, zones) {
 }
 
 // ── 6. TAM HAT ──────────────────────────────────────────────────────────────
-export async function runEdit(base, diff, { mode = 'diff', body = BODY } = {}) {
+export async function runEdit(base, diff, { mode = 'diff', body = BODY, operatorGate = false } = {}) {
   const schema = validateDiff(diff);
   if (schema.length) return { stage: 'şema', rejected: schema };
   const sicil = sicilCheck(diff.ops);
-  if (sicil.length) return { stage: 'sicil', rejected: sicil };
+  if (sicil.length) return { stage: 'sözlük', rejected: sicil };
   const after = applyDiff(base, diff.ops, mode);
+  // OPERATÖR SİCİLİ — diff UYGULANDIKTAN SONRA sorulur.
+  // ÖLÇÜLMÜŞ ÇELİŞKİ (V6-G): sicil `sleeve`/`collarFamily`/`skirtFamily` için
+  // absent diyor, ama sevk edilen motor 'Puff Sleeve' ve 'Peter Pan Collar'
+  // panellerini BASIYOR. Çelişki BURADA çözülmez. Bu yüzden sicil reddi
+  // varsayılan olarak UYARI KANALIDIR (`r.sicil`) ve hattı kesmez; kapı
+  // `operatorGate: true` ile AÇIKÇA istenir (RULES 4: yeni özellik opt-in,
+  // varsayılan KAPALI). Sessiz geçiş yok: red her hâlde ADIYLA raporlanır.
+  const sicilRapor = operatorSicil(after, diff.ops.map((o) => o.field));
+  if (operatorGate && sicilRapor.rejected.length) {
+    return { stage: 'sicil', rejected: sicilRapor.rejected, sicil: sicilRapor, afterSpec: after };
+  }
   const beforeDraft = await draft(base, body);
   const afterDraft = await draft(after, body);
   if (beforeDraft.error) return { stage: 'üretim', rejected: [`ÖNCE: ${beforeDraft.error}`] };
@@ -220,6 +353,7 @@ export async function runEdit(base, diff, { mode = 'diff', body = BODY } = {}) {
     afterSpec: after,
     locality,
     noop,
+    sicil: sicilRapor,
   };
 }
 
@@ -287,17 +421,23 @@ export async function writePNG(svg, outPath) {
 if (process.argv[1] && process.argv[1].endsWith('spec-diff.mjs')) {
   const [basePath, diffPath] = process.argv.slice(2);
   if (!diffPath) {
-    console.error('kullanım: node engine/tools/spec-diff.mjs <base.json> <diff.json> [--png <dizin>]');
+    console.error('kullanım: node engine/tools/spec-diff.mjs <base.json> <diff.json> [--png <dizin>] [--sicil-kapi]');
     process.exit(2);
   }
   const pngIdx = process.argv.indexOf('--png');
   const base = JSON.parse(readFileSync(basePath, 'utf8'));
   const diff = JSON.parse(readFileSync(diffPath, 'utf8'));
-  const r = await runEdit(base, diff);
+  const r = await runEdit(base, diff, { operatorGate: process.argv.includes('--sicil-kapi') });
   console.log(`aşama: ${r.stage}`);
   if (r.rejected && r.rejected.length) {
     for (const m of r.rejected) console.log('  RED: ' + m);
     process.exit(1);
+  }
+  // Sicil UYARI kanalı: kapı kapalıyken bile red ADIYLA basılır (sessiz geçiş yok).
+  if (r.sicil && r.sicil.rejected.length) {
+    console.log(`SİCİL UYARISI (${r.sicil.kaynak}) — ${r.sicil.rejected.length} operatör sevk edilmemiş:`);
+    for (const m of r.sicil.rejected) console.log('  ! ' + m);
+    console.log('  (kapı KAPALI: --sicil-kapi ile hattı kestirebilirsin)');
   }
   console.log(`bölge: ${r.zones.join(', ')}`);
   const bMap = new Map(r.before.pattern.pieces.map((p) => [p.name, JSON.stringify(p)]));

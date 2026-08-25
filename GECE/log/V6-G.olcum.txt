@@ -1,0 +1,122 @@
+=== V6-G OLCUM LOGU (2026-08-25) ===
+
+### ADIM 1 — yeni kapi, faz-sonrasi (TAM CIKTI)
+$ node engine/tests/edit_locality_check.mjs
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (atlandı: manşet ekle (üretim: invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'))
+OK   A1 sessiz atlama 1 <= tavan 1
+OK   tüm-spec-yeniden-yazma 10/12 vakada LOKALLİK İHLALİ olarak yakalandı (taban 10)
+--- ANTI-HACK A4: bölge dışı panelde 0.001mm oynama görülüyor mu
+OK   ilan edilen granülarite 'bayt' (beklenen 'bayt')
+OK   Skirt Front: tek koordinat 224.9 -> 224.901 (0.001mm) İHLAL olarak görüldü
+OK   kontrol: oynatmasız kopya 3 panelde 0 ihlal (beklenen 0, checked>0)
+--- A5: ÇIPA + ORAN
+OK   çıpa sözlüğü okundu: 19 çıpa (contract/anchors-v1.json) — backZone, band.hem, band.neck, band.shoulder, band.sideSeam, band.waist…
+OK   (a) geçerli çıpa 'neckZone' t=0.5 kabul; bölge dışı 1 panel bayt-aynı
+OK   (b) sözlükte olmayan çıpa reddedildi ve red cümlesi ADI taşıyor -> şema: op[0]: ÇIPA SİCİLDE YOK: anchor='sagKoltukAltiUcNokta' — üretilmiş çıpa sözlüğünde (contract/anchors-v1.json) böyle bir çıpa yok (geçerli: backZone, band.hem, band.neck, band.shoulder, band.sideSeam, band.waist, cfZone, collar.neck, collar.shoulder, hemZone, neckZone, shoulderZone, sideSeamZone, skirt.hem, skirt.waist, sleeve.shoulder, sleeveZone, surface, waistZone)
+OK   (b2) aralık dışı oran reddedildi -> şema: op[0]: ÇIPA ORANI ARALIK DIŞI: t=1.4 (anchor='neckZone', geçerli 0..1)
+OK   (b3) koordinat anahtarı reddedildi -> şema: op[0]: 'x' diff şemasında YOK — konum yalnız 'anchor' (çıpa adı) + 't' (0..1 oran) ile ifade edilir, koordinat/vertex gönderilemez (izinli anahtarlar: op, field, value, why, anchor, t) | op[0]: 'y' diff şemasında YOK — konum yalnız 'anchor' (çıpa adı) + 't' (0..1 oran) ile ifade edilir, koordinat/vertex gönderilemez (izinli anahtarlar: op, field, value, why, anchor, t)
+--- A6: OPERATÖR SİCİLİ (garment-spec-v2.json)
+OK   sicilde sevk edilmemiş operatör: shoulderSeam, gatheredOverlayLayer, sleeve, collarFamily, skirtFamily, zipperPiece
+OK   (c) sicil raporu operatör ADIYLA basıldı: gatheredOverlayLayer, sleeve
+OK   (c) red cümlesi STATÜYÜ söylüyor: SİCİL — OPERATÖR SEVK EDİLMEDİ: 'sleeve' statüsü ABSENT (gereken: sleeveStyle='balloon' -> v2 sleeve='puff', bu alan DIFF'TE geçiyor)
+OK   (c2) operatorGate:true -> aşama 'sicil', 2 red (kapı çalışıyor)
+OK   (c3) yalnız shipped operatör gerektiren spec'te sicil BOŞ: 0 red
+edit_locality_check: hepsi yeşil
+exit=0
+
+### ADIM 2 — SONRA olcumu (isabet + KONUM kapasitesi)
+$ node engine/tools/foto-spec-olcum.mjs --offline --bank vision/eval/live-2026-08-22.json
+foto                                     alan    GORME   KELIME  MOTOR   KONUM   panel  oov(çözülmeyen)
+----------------------------------------------------------------------------------------------------------------------------------
+01-a-line-cocktail-dress-mannequin.jpg   10/11   1       0       0       0       10     3/3
+02-ball-gown-exhibit.jpg                 9/10    1       0       0       2       10     5/5
+03-wedding-dress-mannequin.jpg           9/10    1       0       0       1       10     4/4
+04-babydoll-dress.jpg                    9/10    1       0       0       3       6      6/6
+05-empire-waist-gown.jpg                 10/10   0       0       0       5       8      8/8
+----------------------------------------------------------------------------------------------------------------------------------
+FOTO 5 · TAM DOĞRU SPEC 1 (%20.0)
+ALAN YARGISI 51 · tutan 47 (%92.2)
+HATA SINIFI: GORME 4 (%100.0) · KELIME 0 (%0.0) · MOTOR 0 (%0.0)
+KONUM (ayrı sınıf, alan yargısıyla ÇAKIŞMAZ — serbest kanal terimleri üstünde): 11 / 26 terim (%42.3)
+  konum ibaresi TAŞIYAN terim: 15/26 (%57.7) · bunların 11'i spec'te yer bulamıyor
+SERBEST KANAL (outOfVocab): 26 terim
+  SİCİL 1 contract/terms.json          : 26  YOK (%100.0)
+  SİCİL 2 dataset/vocab-canonical.json : 26 YOK (%100.0)
+  İKİSİNDE DE YOK                      : 26 (%100.0)
+banka: /Users/damummyphus/damla_projects_2026/stitchu/vision/eval/live-2026-08-22.json
+
+KONUM KAPASİTESİ (çıpa sözlüğü: 19 çıpa, contract/anchors-v1.json)
+  konum ibaresi taşıyan serbest terim (payda): 15 / 26
+  ÖNCE  (yalnız spec alan adı/değeri tesadüfen taşıyor)   : 4/15 (%26.7)
+  SONRA (SIKI: konum sözcüğü bir çıpa ADINDA kelime olarak): 7/15 (%46.7)
+  SONRA (İLANLI: + bu dosyada açık yazılı eşanlamlılar)     : 12/15 (%80.0)
+  İLANLI eşanlamlı tablosu: front->cfZone, centre->cfZone, center->cfZone, neckline->neckZone, empire->waistZone, dropped->waistZone, drop->waistZone, natural->waistZone
+  ÇIPASI OLMAYAN konum sözcükleri (kalan iş): bodice×3
+  terim terim:
+    ÖNCE+SONRA    asymmetric draped pleated overlay at hip             hip=spec
+    SONRA(sıkı)   beaded empire waist sash                             empire=spec waist=band.waist
+    HÂLÂ YOK      lace overlay bodice and sleeves                      bodice=—
+    ÖNCE+SONRA    sequin/crystal shoulder embellishment                shoulder=spec
+    HÂLÂ YOK      lace applique bodice overlay                         bodice=—
+    ÖNCE+SONRA    empire seam lace trim band                           empire=spec
+    SONRA(ilanlı) dropped waist                                        dropped=waistZone waist=band.waist
+    SONRA(ilanlı) front hip welt pockets                               front=cfZone hip=spec
+    ÖNCE+SONRA    knife pleated skirt                                  skirt=spec
+    SONRA(sıkı)   neck ribbon tie                                      neck=band.neck
+    SONRA(ilanlı) robe à la française open front over petticoat        front=cfZone
+    HÂLÂ YOK      pointed bodice front (stomacher)                     bodice=— front=cfZone
+    SONRA(sıkı)   peplum at waist                                      waist=band.waist
+    SONRA(ilanlı) self-fabric ruched robings trimming front opening    front=cfZone
+    SONRA(ilanlı) open-front overskirt revealing matching underskirt   front=cfZone
+
+01-a-line-cocktail-dress-mannequin.jpg
+  GORME  shaping: göz 'dart' / vision 'princess'
+
+02-ball-gown-exhibit.jpg
+  GORME  neckline: göz 'square' / vision 'boat'
+  KONUM  beaded empire waist sash → konum 'waist' spec'te yok
+  KONUM  lace overlay bodice and sleeves → konum 'bodice' spec'te yok
+
+03-wedding-dress-mannequin.jpg
+  GORME  skirtStyle: göz 'aLine' / vision 'straight'
+  KONUM  lace applique bodice overlay → konum 'bodice' spec'te yok
+
+04-babydoll-dress.jpg
+  GORME  sleeveLength: göz 'elbow' / vision 'long'
+  KONUM  dropped waist → konum 'dropped,waist' spec'te yok
+  KONUM  front hip welt pockets → konum 'front' spec'te yok
+  KONUM  neck ribbon tie → konum 'neck' spec'te yok
+
+05-empire-waist-gown.jpg
+  KONUM  robe à la française open front over petticoat → konum 'front' spec'te yok
+  KONUM  pointed bodice front (stomacher) → konum 'bodice,front' spec'te yok
+  KONUM  peplum at waist → konum 'waist' spec'te yok
+  KONUM  self-fabric ruched robings trimming front opening → konum 'front' spec'te yok
+  KONUM  open-front overskirt revealing matching underskirt → konum 'front' spec'te yok
+
+### ADIM 3 — ctest tek hedef
+1/1 Test #112: edit_locality_check ..............   Passed    0.14 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.14 sec
+
+### ADIM 4 — cipa sozlugu (BASKA ISCININ dosyasi, sadece OKUNDU)
+$ node -e "..." contract/anchors-v1.json
+cipa sayisi: 19
+backZone, cfZone, hemZone, neckZone, shoulderZone, sideSeamZone, sleeveZone, surface, waistZone, band.hem, band.neck, band.shoulder, band.sideSeam, band.waist, collar.neck, collar.shoulder, skirt.hem, skirt.waist, sleeve.shoulder
+dosya sha256: 62a66af9b1d94509
