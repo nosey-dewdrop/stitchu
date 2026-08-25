@@ -250,7 +250,7 @@ function fabricBlock(profileKey) {
     <tr><td class="k">ask for</td><td>${esc(f.ask)}</td></tr>
     <tr><td class="k">trade-off</td><td>${esc(f.tradeoff)}</td></tr>
   </table>
-  <p class="fact" style="margin-top:12px">Always preshrink a natural fibre (cotton, linen) before cutting; it shrinks in the first wash, and an un-preshrunk garment comes out a size small.</p>`;
+  <p class="fact" style="margin-top:12px">Preshrink a natural fibre (cotton, linen) before cutting; it shrinks in the first wash, and an un-preshrunk garment comes out a size small.</p>`;
 }
 
 function orderBlock(stepIdx) {

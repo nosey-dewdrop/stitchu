@@ -1,0 +1,13 @@
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start   4: generated_ratchet_check
+1/4 Test   #4: generated_ratchet_check ..........   Passed    0.64 sec
+    Start   5: bundle_fresh_check
+2/4 Test   #5: bundle_fresh_check ...............   Passed    0.23 sec
+    Start 116: docs_truth_check
+3/4 Test #116: docs_truth_check .................   Passed    0.16 sec
+    Start 117: landing_truth_check
+4/4 Test #117: landing_truth_check ..............   Passed    0.92 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   1.95 sec

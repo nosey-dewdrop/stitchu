@@ -372,7 +372,7 @@ const STYLES = [
   {
     slug: 'fabric-ties', group: 'details', name: 'Fabric ties, sashes & bows',
     title: 'Fabric tie & sash pattern pieces, sized to the size you print · stitchu',
-    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm, back sash length follows that size's waist, tie-back, neck bow and cuff ties.',
+    desc: 'How stitchu drafts ties: self-lined rectangles cut (2W+30) × (L+30) mm, back sash length follows that size\'s waist, tie-back, neck bow and cuff ties.',
     lead: 'A tie is a rectangle, cut wide enough to fold into a self-lined tube, and long enough to actually reach around YOUR body and knot.',
     facts: [
       'Master rule: a finished tie of width W and length L is cut (2W + 2×15) × (L + 2×15) mm. The lengthwise centre fold self-lines it; markings give the fold line and both long seam lines, grain runs the tie length.',
