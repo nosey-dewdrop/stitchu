@@ -2,21 +2,21 @@ Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
         Start   1: geometry
   1/115 Test   #1: geometry .........................   Passed    0.00 sec
         Start   2: engine_check
-  2/115 Test   #2: engine_check .....................   Passed   19.77 sec
+  2/115 Test   #2: engine_check .....................   Passed   19.84 sec
         Start   3: golden_check
-  3/115 Test   #3: golden_check .....................   Passed    0.12 sec
+  3/115 Test   #3: golden_check .....................   Passed    0.11 sec
         Start   4: generated_ratchet_check
-  4/115 Test   #4: generated_ratchet_check ..........   Passed    0.65 sec
+  4/115 Test   #4: generated_ratchet_check ..........   Passed    0.70 sec
         Start   5: bundle_fresh_check
-  5/115 Test   #5: bundle_fresh_check ...............   Passed    0.27 sec
+  5/115 Test   #5: bundle_fresh_check ...............   Passed    0.22 sec
         Start   6: flat_convention_check
-  6/115 Test   #6: flat_convention_check ............   Passed    0.45 sec
+  6/115 Test   #6: flat_convention_check ............   Passed    0.43 sec
         Start   7: flat_expresses_spec_check
   7/115 Test   #7: flat_expresses_spec_check ........   Passed    0.10 sec
         Start   8: flat_geometry_sellable_check
   8/115 Test   #8: flat_geometry_sellable_check .....   Passed    0.04 sec
         Start   9: flat_pattern_agree_check
-  9/115 Test   #9: flat_pattern_agree_check .........***Failed    4.52 sec
+  9/115 Test   #9: flat_pattern_agree_check .........***Failed    4.55 sec
 === KANAT (a) — FLAT ↔ KALIP UYUMU · beden EU38
     tolerans %1.5 — YAYINDAN DEĞİL, KARARDAN (GECE/V3-R.md "EŞİK 2": yayınlanmış formül YOK)
     flat  tarafı: engine/build/shell-flat EU38
@@ -46,9 +46,9 @@ FAIL flat_pattern_agree_check — 1 ihlal
         Start  10: sewability_check
  10/115 Test  #10: sewability_check .................   Passed    0.09 sec
         Start  11: draft_math_check
- 11/115 Test  #11: draft_math_check .................   Passed    0.09 sec
+ 11/115 Test  #11: draft_math_check .................   Passed    0.10 sec
         Start  12: flat_artifact_census
- 12/115 Test  #12: flat_artifact_census .............***Failed    0.05 sec
+ 12/115 Test  #12: flat_artifact_census .............***Failed    0.07 sec
 === KANAT (b)+(c) — ARTEFAKT SAYIMI · beden EU38
     C1 eşiği 1.0° — McNeel Rhino "Understanding Tolerances" doküman varsayılanı (GÜVEN: YÜKSEK)
     daha sıkı emsal: CATIA V5 GSD 0.5° (GÜVEN: ORTA, sayfa 403) — kapıya BAĞLANMADI
@@ -149,7 +149,7 @@ style_check FAIL: pinlenmiş stil 0 — engine/STYLE-PIN yok/boş, 31 stilin hep
         Start  15: api_wire_check
  15/115 Test  #15: api_wire_check ...................   Passed    0.07 sec
         Start  16: collar_bridge_check
- 16/115 Test  #16: collar_bridge_check ..............   Passed    0.03 sec
+ 16/115 Test  #16: collar_bridge_check ..............   Passed    0.04 sec
         Start  17: skirtlen_refresh_check
  17/115 Test  #17: skirtlen_refresh_check ...........   Passed    0.03 sec
         Start  18: compile_dialect_check
@@ -228,7 +228,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  44: yoke_check
  44/115 Test  #44: yoke_check .......................   Passed    0.01 sec
         Start  45: boxpleat_check
- 45/115 Test  #45: boxpleat_check ...................   Passed    0.00 sec
+ 45/115 Test  #45: boxpleat_check ...................   Passed    0.01 sec
         Start  46: cuff_check
  46/115 Test  #46: cuff_check .......................   Passed    0.01 sec
         Start  47: neckline_ext_check
@@ -244,7 +244,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  52: sleeve_check
  52/115 Test  #52: sleeve_check .....................   Passed    0.05 sec
         Start  53: cap_sleeve_check
- 53/115 Test  #53: cap_sleeve_check .................   Passed    0.02 sec
+ 53/115 Test  #53: cap_sleeve_check .................   Passed    0.00 sec
         Start  54: placket_asym_check
  54/115 Test  #54: placket_asym_check ...............   Passed    0.01 sec
         Start  55: fit_proof
@@ -276,7 +276,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  68: closed_garment_check
  68/115 Test  #68: closed_garment_check .............   Passed    0.00 sec
         Start  69: sewable_census
- 69/115 Test  #69: sewable_census ...................   Passed   22.95 sec
+ 69/115 Test  #69: sewable_census ...................   Passed   22.98 sec
         Start  70: roundtrip_check
  70/115 Test  #70: roundtrip_check ..................   Passed    0.00 sec
         Start  71: fabric_ease_check
@@ -288,7 +288,7 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  74: recipe_check
  74/115 Test  #74: recipe_check .....................   Passed    0.01 sec
         Start  75: recipe_golden_check
- 75/115 Test  #75: recipe_golden_check ..............   Passed    0.03 sec
+ 75/115 Test  #75: recipe_golden_check ..............   Passed    0.04 sec
         Start  76: recipe_dress_check
  76/115 Test  #76: recipe_dress_check ...............   Passed    0.01 sec
         Start  77: recipe_dress_golden_check
@@ -300,27 +300,27 @@ columns are matched to a publication or replaced from a named source by Damla
         Start  80: recipe_wasm_parity_dress
  80/115 Test  #80: recipe_wasm_parity_dress .........   Passed    0.09 sec
         Start  81: dxf_wasm_parity
- 81/115 Test  #81: dxf_wasm_parity ..................   Passed    0.13 sec
+ 81/115 Test  #81: dxf_wasm_parity ..................   Passed    0.10 sec
         Start  82: dxf_wasm_parity_dress
  82/115 Test  #82: dxf_wasm_parity_dress ............   Passed    0.10 sec
         Start  83: wasm_spec_honesty_check
- 83/115 Test  #83: wasm_spec_honesty_check ..........   Passed    0.26 sec
+ 83/115 Test  #83: wasm_spec_honesty_check ..........   Passed    0.25 sec
         Start  84: bugra_bridge_check
- 84/115 Test  #84: bugra_bridge_check ...............   Passed   71.41 sec
+ 84/115 Test  #84: bugra_bridge_check ...............   Passed   71.43 sec
         Start  85: dxf_check
- 85/115 Test  #85: dxf_check ........................   Passed    0.62 sec
+ 85/115 Test  #85: dxf_check ........................   Passed    0.63 sec
         Start  86: nest_check
  86/115 Test  #86: nest_check .......................   Passed    0.00 sec
         Start  87: nest_marker_check
  87/115 Test  #87: nest_marker_check ................   Passed    0.74 sec
         Start  88: drape_check
- 88/115 Test  #88: drape_check ......................   Passed    0.53 sec
+ 88/115 Test  #88: drape_check ......................   Passed    0.52 sec
         Start  89: tech_pack_check
- 89/115 Test  #89: tech_pack_check ..................   Passed    1.10 sec
+ 89/115 Test  #89: tech_pack_check ..................   Passed    1.02 sec
         Start  90: compose_check
  90/115 Test  #90: compose_check ....................   Passed    0.19 sec
         Start  91: contract_check
- 91/115 Test  #91: contract_check ...................***Failed    0.16 sec
+ 91/115 Test  #91: contract_check ...................***Failed    0.20 sec
 ok: contract/tables.json, garment-spec.schema.json, terms.json, vocab.json, styles.json parse
 ok: schema draftSpec enums match engine/vocab.json (37 fields)
 ok: term registry sound: 52 terms, 246 phrases, ids unique, capabilities valid
@@ -349,7 +349,7 @@ contract validation FAILED (1)
         Start  95: preview_truth_check
  95/115 Test  #95: preview_truth_check ..............   Passed    0.11 sec
         Start  96: figure_check
- 96/115 Test  #96: figure_check .....................***Failed    0.44 sec
+ 96/115 Test  #96: figure_check .....................***Failed    0.43 sec
   ok   princess_dress                   waist/bust 0.637  OK taban 0.643 ±0.02
   ok   gore_skirt_dress                 waist/bust 0.681  OK taban 0.68 ±0.02
   ok   wrap_dress                       waist/bust 0.661  OK taban 0.662 ±0.02
@@ -389,43 +389,43 @@ figure-lint: 1 FAILURE(S) — boru/drift üretildi, mandal düştü
         Start  98: body_volume_check
  98/115 Test  #98: body_volume_check ................   Passed    6.05 sec
         Start  99: garment_shell_check
- 99/115 Test  #99: garment_shell_check ..............   Passed    0.73 sec
+ 99/115 Test  #99: garment_shell_check ..............   Passed    0.72 sec
         Start 100: flatten_check
 100/115 Test #100: flatten_check ....................   Passed    0.42 sec
         Start 101: surface_pattern_check
-101/115 Test #101: surface_pattern_check ............   Passed    4.40 sec
+101/115 Test #101: surface_pattern_check ............   Passed    4.38 sec
         Start 102: h10_gate_check
 102/115 Test #102: h10_gate_check ...................***Not Run (Disabled)   0.00 sec
         Start 103: garment_armhole_check
 103/115 Test #103: garment_armhole_check ............   Passed    0.00 sec
         Start 104: section_check
-104/115 Test #104: section_check ....................   Passed    0.19 sec
+104/115 Test #104: section_check ....................   Passed    0.16 sec
         Start 105: capability_check
 105/115 Test #105: capability_check .................   Passed    0.00 sec
         Start 106: wearable_check
-106/115 Test #106: wearable_check ...................   Passed    4.51 sec
+106/115 Test #106: wearable_check ...................   Passed    4.54 sec
         Start 107: edgemono_check
-107/115 Test #107: edgemono_check ...................   Passed   36.45 sec
+107/115 Test #107: edgemono_check ...................   Passed   36.42 sec
         Start 108: walkgate_check
-108/115 Test #108: walkgate_check ...................   Passed   39.88 sec
+108/115 Test #108: walkgate_check ...................   Passed   39.71 sec
         Start 109: cutplan_check
-109/115 Test #109: cutplan_check ....................   Passed   39.15 sec
+109/115 Test #109: cutplan_check ....................   Passed   39.14 sec
         Start 110: printpack_sheet_check
-110/115 Test #110: printpack_sheet_check ............   Passed    8.65 sec
+110/115 Test #110: printpack_sheet_check ............   Passed    8.62 sec
         Start 111: preset_resolve_check
 111/115 Test #111: preset_resolve_check .............   Passed    0.03 sec
         Start 112: edit_locality_check
-112/115 Test #112: edit_locality_check ..............   Passed    0.19 sec
+112/115 Test #112: edit_locality_check ..............   Passed    0.15 sec
         Start 113: anchor_source_check
-113/115 Test #113: anchor_source_check ..............   Passed    1.50 sec
+113/115 Test #113: anchor_source_check ..............   Passed    1.49 sec
         Start 114: vocab_source_check
-114/115 Test #114: vocab_source_check ...............   Passed    0.09 sec
+114/115 Test #114: vocab_source_check ...............   Passed    0.10 sec
         Start 115: vocab_reference_check
-115/115 Test #115: vocab_reference_check ............***Failed    4.65 sec
-olculen       : commit HEAD (63abc19)
+115/115 Test #115: vocab_reference_check ............***Failed    4.68 sec
+olculen       : commit HEAD (6b3378f)
 taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
 taban toplam  : 10438
-bugun toplam  : 10452 (delta +14)
+bugun toplam  : 10448 (delta +10)
 
   DUSTU  eksen ADI   sleeveLength             274 ->   273
   DUSTU  eksen ADI   sleeveStyle              351 ->   349
@@ -433,22 +433,21 @@ bugun toplam  : 10452 (delta +14)
    sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
 
   FAIL ARTTI  eksen ADI   backOpening               85 ->    86  (+1)
-  FAIL ARTTI  eksen ADI   garment                 1186 ->  1191  (+5)
-  FAIL ARTTI  eksen ADI   neckline                 995 ->   999  (+4)
+  FAIL ARTTI  eksen ADI   garment                 1186 ->  1190  (+4)
+  FAIL ARTTI  eksen ADI   neckline                 995 ->   997  (+2)
   FAIL ARTTI  eksen ADI   shaping                  383 ->   385  (+2)
   FAIL ARTTI  eksen ADI   skirtStyle               334 ->   336  (+2)
-  FAIL ARTTI  eksen ADI   topLength                275 ->   276  (+1)
   FAIL ARTTI  eksen ADI   yoke                     316 ->   318  (+2)
 
 vocab_reference_check: 37 eksen + 92 kelime olculdu
-HUKUM: FAIL (7 artan, 0 yeni)
+HUKUM: FAIL (6 artan, 0 yeni)
 Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
 Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.
 
 
 94% tests passed, 7 tests failed out of 114
 
-Total Test time (real) = 273.50 sec
+Total Test time (real) = 273.30 sec
 
 The following tests did not run:
 	102 - h10_gate_check (Disabled)

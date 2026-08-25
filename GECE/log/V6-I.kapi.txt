@@ -1,0 +1,21 @@
+olculen       : commit HEAD (6b3378f)
+taban commit  : 495d58a4a256d7982a8d831ac893e7411afad062
+taban toplam  : 10438
+bugun toplam  : 10448 (delta +10)
+
+  DUSTU  eksen ADI   sleeveLength             274 ->   273
+  DUSTU  eksen ADI   sleeveStyle              351 ->   349
+  (dusus kapiyi kirmaz ve tabani KENDILIGINDEN guncellemez —
+   sabitlemek icin: engine/tests/vocab_reference_check.sh --baseline <commit>)
+
+  FAIL ARTTI  eksen ADI   backOpening               85 ->    86  (+1)
+  FAIL ARTTI  eksen ADI   garment                 1186 ->  1190  (+4)
+  FAIL ARTTI  eksen ADI   neckline                 995 ->   997  (+2)
+  FAIL ARTTI  eksen ADI   shaping                  383 ->   385  (+2)
+  FAIL ARTTI  eksen ADI   skirtStyle               334 ->   336  (+2)
+  FAIL ARTTI  eksen ADI   yoke                     316 ->   318  (+2)
+
+vocab_reference_check: 37 eksen + 92 kelime olculdu
+HUKUM: FAIL (6 artan, 0 yeni)
+Kapali bir enuma YENI referans eklendi. Sozluk buyumez, kucululur (BREADTH -> DEPTH).
+Bu gercekten bir kapsam karari ise: tabani elle yeniden kes ve gerekcesini commit mesajina yaz.

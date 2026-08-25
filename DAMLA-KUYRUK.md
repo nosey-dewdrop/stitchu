@@ -1113,15 +1113,31 @@ kapı KIRMIZI mı kalsın?
 
 **ÖLÇÜM (basan komut: `bash engine/tests/vocab_reference_check.sh`):**
 faz öncesi `3fa8002` **10432, HUKUM: YESIL** · V6 sonu `a38b7b2` **10478,
-FAIL (20 artan)** · bu kart sonrası `63abc19` **10452, FAIL (7 artan)**.
-Ödenen borç 26/46. Kalan 20 satırın dağılımı (`GECE/V6-H.md` §6):
-- **9 satır KAPSAM kararına bağlı** (`garment` 5 · `shaping` 2 · `skirtStyle` 2'nin
+FAIL (20 artan)** · V6-H sonrası `63abc19` **10452, FAIL (7 artan)** ·
+**V6-I sonrası `6b3378f` 10448, FAIL (6 artan, 0 yeni)** — `topLength` kapandı.
+**BUGÜNKÜ KALAN BORÇ = 16 satır** (taban 10438'e göre +10; artan eksenler
+`garment +4 · neckline +2 · shaping +2 · skirtStyle +2 · yoke +2 · backOpening +1`,
+düşen `sleeveLength −1 · sleeveStyle −2`). Ödenen borç 30/46. Dağılım:
+- **10 satır KAPSAM kararına bağlı** (`garment` 4 · `shaping` 2 · `skirtStyle` 2'nin
   kod kısmı + `backOpening` 1 + `AXIS_MAP` anahtarları),
 - **3 satır ÖLÇÜLMÜŞ VERİ, silinemez**: `anchors-v1.json`'daki iki panel adı
   (`"Bias binding (neckline)"`, `"Bias binding (neckline + armholes)"` — motorun
   bastığı adlar, `_olculenPaneller` indeksin tabanı) ve `_dogmayan`'daki
   `"overlay.yoke"` (doğmayan adın kendisi; bekçinin 4. kapısı onu ADIYLA doğrular),
-- kalanı yorum/künye satırı.
+- kalanı `foto-spec-olcum.mjs`'in KONUM kelime listesi + FIELD_MAP/SPEC_DEFAULTS.
+
+**V6-I ÖLÇTÜ — KONUM SÖZLÜĞÜ `engine/vocab.json`'DAN ÜRETİLEMEZ (yeni bulgu).**
+V6-H'nin denenmemiş bıraktığı ve V6-I kartının önerdiği yol kapalı çıktı:
+`engine/vocab.json` 37 alan adından **44 jeton** veriyor, bunun yalnız **9'u**
+(`back cuff front hem neckline shoulder skirt sleeve yoke`) KONUM listesindedir;
+kalan **35 jeton** (`button collar dart pleat straight round…`) konum değildir ve
+listeye girerse KONUM sınıfı yeniden tanımlanır. Değerlerle birlikte sayı 134
+jetona çıkıyor, oran daha da kötüleşiyor. Alternatif üretilmiş kaynak olan çıpa
+adları (`anchorNames()`) **14 jeton** veriyor ve içinde ne `neckline` ne `yoke`
+var — yani kapıyı kıran iki kelimeyi hiçbir üretilmiş kaynak basmıyor.
+Sözlükte konum/konum-değil ayrımı YOK; ayrımı yapmak o 9 kelimeyi harf harf
+yazmak demek, yani üretim referans sayısını **düşürmüyor**.
+(Basan komutlar `GECE/V6-I.md` §3'te.)
 
 **SEÇENEKLER:**
 - **(A) KAPI KIRMIZI KALSIN** (bugünkü hal, VARSAYILAN). `vocab_reference_check`

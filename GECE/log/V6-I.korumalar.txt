@@ -1,0 +1,44 @@
+=== edit_locality_check
+OK   (c) sicil raporu operatör ADIYLA basıldı: gatheredOverlayLayer, sleeve
+OK   (c) red cümlesi STATÜYÜ söylüyor: SİCİL — OPERATÖR SEVK EDİLMEDİ: 'sleeve' statüsü ABSENT (gereken: sleeveStyle='balloon' -> v2 sleeve='puff', bu alan DIFF'TE geçiyor)
+OK   (c2) operatorGate:true -> aşama 'sicil', 2 red (kapı çalışıyor)
+OK   (c3) yalnız shipped operatör gerektiren spec'te sicil BOŞ: 0 red
+edit_locality_check: hepsi yeşil
+exit=0
+=== anchor_source_check
+ok: contract/anchors-v1.json byte-identical to the generator, and --check agrees (exit 0)
+----
+anchor_source_check: HUKUM YESIL — 19 anchors, every kaynak resolved, 7 carry an edge fraction, 37 names refused.
+exit=0
+=== gen-anchors
+(node:98360) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/damummyphus/damla_projects_2026/stitchu/web/js/vocab.gen.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/damummyphus/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote /Users/damummyphus/damla_projects_2026/stitchu/contract/anchors-v1.json: 19 anchors, 7 carry an edge fraction, 86 panel names measured over 390 drafts (59 refused by the engine), 37 names NOT born.
+=== foto-spec-olcum
+
+01-a-line-cocktail-dress-mannequin.jpg
+  GORME  shaping: göz 'dart' / vision 'princess'
+
+02-ball-gown-exhibit.jpg
+  GORME  neckline: göz 'square' / vision 'boat'
+  KONUM  beaded empire waist sash → konum 'waist' spec'te yok
+  KONUM  lace overlay bodice and sleeves → konum 'bodice' spec'te yok
+
+03-wedding-dress-mannequin.jpg
+  GORME  skirtStyle: göz 'aLine' / vision 'straight'
+  KONUM  lace applique bodice overlay → konum 'bodice' spec'te yok
+
+04-babydoll-dress.jpg
+  GORME  sleeveLength: göz 'elbow' / vision 'long'
+  KONUM  dropped waist → konum 'dropped,waist' spec'te yok
+  KONUM  front hip welt pockets → konum 'front' spec'te yok
+  KONUM  neck ribbon tie → konum 'neck' spec'te yok
+
+05-empire-waist-gown.jpg
+  KONUM  robe à la française open front over petticoat → konum 'front' spec'te yok
+  KONUM  pointed bodice front (stomacher) → konum 'bodice,front' spec'te yok
+  KONUM  peplum at waist → konum 'waist' spec'te yok
+  KONUM  self-fabric ruched robings trimming front opening → konum 'front' spec'te yok
+  KONUM  open-front overskirt revealing matching underskirt → konum 'front' spec'te yok
