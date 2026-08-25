@@ -111,12 +111,12 @@ hiçbiri giyim değil. "Üretim standardı" DENEMEZ, **ev değeri** denir.
 
 ## KUYRUKTAKİ KART TASLAKLARI (tamamı + gerekçe: `GECE/V5.md` §5)
 - ★ Kanunu SEVK EDİLEN kaleme bağla (V4'ün dürüst sınırı) — flat tarafı
-- ~~★ Magnitüd + beden körlüğü~~ **V5-H'de KAPANDI** (`a40c888`): bant bölümü
-  artık İKİ çizgi (beden sayısı **+ en kötü mm**), (a) ise BEDEN BAŞINA çizgi
-  taşıyor. Şef doğruladı: `hip_ease:-15` · `bust_ease:-3` · `scye_depth@EU48:4`
-  üçü de artık **exit 1**, üçü de önce exit 0'dı. ctest 113/6, ad kümesi aynı
-- ★ AÇIK KALAN aynı sınıf: **`sewability_check` ratchet'i SAYIYI tavanlıyor,
-  YERİ değil** — aynı sayıda ama daha kötü yerdeki 211 çentik yeşil geçer
+- ~~★ Magnitüd + beden körlüğü~~ **V5-H'de KAPANDI** (`a40c888`): bant artık
+  İKİ çizgi (beden sayısı **+ en kötü mm**), (a) BEDEN BAŞINA çizgi taşıyor.
+  Şef doğruladı: `hip_ease:-15` · `bust_ease:-3` · `scye_depth@EU48:4` üçü de
+  artık **exit 1** (önce exit 0'dı). ctest 113/6, ad kümesi aynı
+- ★ AÇIK aynı sınıf: **`sewability_check` ratchet'i SAYIYI tavanlıyor, YERİ
+  değil** — daha kötü yerdeki 211 çentik yeşil geçer
 - `back_neck_drop` **SINIF hatası** kapısız: Aldrich SABİT 1.5cm, motor
   `0.6 × yakaCM` GRADUATE ediyor · `armhole_circumference` hükümsüz (yayın yok)
 - Repo **iki üretim toleransı** taşıyor (`surfacepattern.cpp:19` 0.79375 vs
@@ -126,9 +126,8 @@ hiçbiri giyim değil. "Üretim standardı" DENEMEZ, **ev değeri** denir.
   374/410/450 döndü, gerçek 406/450/499 — bir beden sapma) → PDF'ten WebFetch
   ile çekilmiş her antropometrik sayı ŞÜPHELİ · **Aldrich'in KENDİSİ çelişkili
   çizelge basıyor**: s.10 büst 88 = beden 12, s.11 büst 88 = beden 10
-- Sürekli eksen 2/37 · `bundle_fresh_check` damgası bir İDDİA · `flat-board.mjs`
-  `FARK VAR` basıyor ama exit koduna bağlı DEĞİL · `h3b-rings.py` temiz
-  makinede koşmuyor · `waistY`·`chestY`·`shoulderSlope 0.32` `source: ACIK`
+- Sürekli eksen 2/37 · `bundle_fresh_check` damgası İDDİA · `flat-board.mjs`
+  `FARK VAR` basıyor ama exit koduna bağlı DEĞİL · `h3b-rings.py` koşmuyor
 
 ## DAMLA'YA DÜŞEN (bloke etmez — hepsi varsayılanıyla yürüyor)
 - **K-FN1** kol oyuğu bandı (A) · V7 — **K-V0A** `patterns_real/` 41 takipli
@@ -143,10 +142,10 @@ hiçbiri giyim değil. "Üretim standardı" DENEMEZ, **ev değeri** denir.
   **K-V4C** tanınmayan kol/yaka değeri çizilsin mi, reddedilsin mi · **(A)**
 - **K-V5A** (yeni) **sevk edilen kalıbın payı yayınlanmış minimumun ALTINDA**:
   kalça **8/8**, göğüs **4/8** bedende. (A) bugünkü pay kalsın, kapı ihlali
-  adıyla basmaya devam etsin · (B) ölçülmüş çözüm (büst +1.5cm, kalça
-  +3.5..5.0cm → 8/8 bantta) ⚠ **BEDELİ ÖLÇÜLMEDİ**: sevk edilen geometri
-  değişir, `golden_check` + figür/önizleme mandalları etkilenir (RULES 4)
-  · **VARSAYILAN (A)** · V7
+  adıyla basmaya devam etsin · ~~(B) gövde girdisini kaydır~~ **ÇÜRÜDÜ**
+  (aritmetik hata; gerçek kazanç 1.65mm, bant için kalça **+168cm** gerekir)
+  · (B′) payın CİNSİ çarpımsal→toplamsal, `engine/src/` ⚠ **BEDELİ
+  ÖLÇÜLMEDİ**, 8 bugün-yeşil kapı risk altında · **VARSAYILAN (A)** · V7
 - **K-V5B** (yeni) **BİLGİ HÜKMÜ SENİN**: Buğra üst üste bindirme levhaları —
   `GECE/log/V5-B2.overlay/` (locket 6 PNG) · `V5-B2.corset/` (6 PNG); fark
   tabloları `V5-B2.rerun.txt` · `V5-B2.corset.txt`. Hiçbir kapıya bağlı DEĞİL

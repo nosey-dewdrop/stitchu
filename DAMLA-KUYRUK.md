@@ -1084,11 +1084,21 @@ MINIMUM EASE · Aldrich 4.bs s.28. Bel payı 8/8 bedende bandın İÇİNDE.
   (12 satır, beden+mm+bant+künye), son hüküm satırı `PASS` demesin, **exit 0**.
   Kapı yine ısırır: bant dışı beden sayısı bugünkü kayıttan (bust 4 · waist 0 ·
   hip 8) ARTARSA exit 1 (ölçüldü: `GECE/log/V5-G.mutasyon.txt` M1/M2).
-- **(B)** Ölçülmüş çözüm uygulansın: **büst girdisi +1.5cm** → 8 bedende pay
-  65.80–98.80mm, 8/8 bantta · **kalça +3.5…+5.0cm** → 8/8 bantta
-  (`GECE/log/V5-D.remedy.txt`).
-  ⚠ **BEDELİ ÖLÇÜLMEDİ:** sevk edilen geometri değişir; `golden_check` ve
-  figür/önizleme mandalları etkilenir (RULES 4).
+- ~~**(B)** büst girdisi +1.5cm · kalça +3.5…+5.0cm~~ ★ **BU SEÇENEK ÇÜRÜDÜ,
+  SEÇME.** `GECE/log/V5-D.remedy.txt` aritmetik hata taşıyor: halka artışını
+  doğrudan paya eklemiş, oysa `draft_math_check.mjs:350` birebir
+  `pay = halka − gövde·10`. Gerçek kazanç **1.65mm** (iddia 16.65mm).
+  Ölçülen duyarlılık: büst **0.1100**, kalça **0.0200** mm/mm. Bandın alt
+  sınırına varmak için gereken kaydırma büst **+13.5cm**, kalça **+168cm** —
+  yani **gövde girdisini kaydırmak kalça payını ÇÖZEMEZ**, yalnız beden
+  tablosunu yalan yapar.
+- **(B′)** **Ayakta kalan tek çözüm:** payın CİNSİNİ çarpımsaldan toplamsala
+  çevir (`engine/src/`; bir sabit değil, bir FORMÜL değişikliği).
+  ⚠ **BEDELİ ÖLÇÜLMEDİ** (uygulanıp ctest koşulmadı): sevk edilen geometri
+  değişir; `golden_check` + figür/önizleme mandalları ve 8 bugün-yeşil kapı
+  risk altında — `sewability_check` · `api_wire_check` ·
+  `recipe_wasm_parity(+_dress)` · `dxf_wasm_parity(+_dress)` ·
+  `wasm_spec_honesty_check` · `bugra_bridge_check` (RULES 4).
 
 **VARSAYILAN: (A)** · **HANGİ FAZI ETKİLER:** V7
 ★ Test çıktısı bu ada atıf veriyor: `draft_math_check` son hüküm satırı
