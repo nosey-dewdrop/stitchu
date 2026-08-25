@@ -14,7 +14,7 @@ kapının **yakaladığı bozma kümesi** genişletildi. Kapı önce de sonra da
 | `GECE/log/V5-H.ctest.after.txt` | tam ctest koşusu |
 | `GECE/log/V5-H.reddiff.txt` | kırmızı AD kümesi kıyası |
 
-Commit: `3a72ea3`.
+Commit: `989ff2e`.
 
 ### 1) (b) YAYINLANMIŞ BANT — İKİNCİ ÇİZGİ: MİLİMETRE
 
