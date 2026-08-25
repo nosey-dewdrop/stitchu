@@ -1,0 +1,41 @@
+V5-F REDDIFF — faz-öncesi (GECE/log/V5.ctest.opening.txt) vs faz-sonrası (GECE/log/V5-F.ctest.after.txt)
+komut: ctest --test-dir engine/build --output-on-failure   (build tipi Release, engine/build/CMakeCache.txt:25)
+diff ADLAR üstünden kuruldu (RULES 9: sayı değil AD kümesi), iki logdan grep+comm ile.
+
+-- ÖNCE (111 test koştu, 6 kırmızı):
+   contract_check
+   figure_check
+   flat_artifact_census
+   flat_pattern_agree_check
+   sizechart_source_check
+   style_check
+-- SONRA (113 test koştu, 6 kırmızı, 329.14 sn):
+   contract_check
+   figure_check
+   flat_artifact_census
+   flat_pattern_agree_check
+   sizechart_source_check
+   style_check
+
+-- YENİ KIRMIZI AD (comm -13):   BOŞ — yeni kırmızı ad YOK.
+-- KAPANAN KIRMIZI AD (comm -23): BOŞ — kapanan yok.
+=> Devralınan kırmızı AD kümesi DEĞİŞMEDİ (RULES 9 korundu).
+
+-- ⚠ KARTIN BEKLENTİSİ TUTMADI, ADIYLA YAZILIYOR:
+   V5-F kartı 'BEKLENEN: tam olarak BİR yeni kırmızı ad — draft_math_check' diyordu.
+   Çıkan: SIFIR yeni kırmızı ad. Sebep: kartın (b) bölümü için istediği 'bant dışı > 0
+   ise exit 1' hükmü YAZILDI ve KOŞTURULDU (o halde draft_math_check kırmızı düşüyordu,
+   ölçüldü: 7 kırmızı / 278.97 sn), sonra V5-G uzlaşmasıyla GERİ ALINDI: exit kodu artık
+   REGRESYON ÇİZGİSİNE bağlı (bant dışı beden 2026-08-25 kaydını AŞARSA exit 1).
+   İhlal SUSTURULMADI — 12 ihlal her koşuda beden+mm+bant+künyeyle ADIYLA basılıyor ve
+   son hüküm satırı 'PASS' DEMİYOR: '12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A)'.
+   Kapının bugünkü hükmü:
+     draft_math_check — RATCHET: 0 tavan aşımı · YAYINLANMIŞ BANT: 12 bedende İHLAL (DAMLA KARARINA BAĞLI, K-V5A) · BANT REGRESYONU: 0 · adıyla basılan ihlal satırı 12 · exit 0
+
+-- iki eklenen kapının bu koşudaki hükmü:
+    10/114 Test  #10: sewability_check .................   Passed    0.10 sec
+    11/114 Test  #11: draft_math_check .................   Passed    0.09 sec
+
+-- test SAYISI 111 -> 113: V5-E'de eklenen sewability_check ve draft_math_check
+   (engine/CMakeLists.txt, bu kartta DOKUNULMADI). h10_gate_check ikisinde de Disabled.
+-- toplam süre: önce 302.32 sn, sonra 329.14 sn.
