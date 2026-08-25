@@ -160,7 +160,15 @@ export async function draft(spec, body = BODY) {
   return out;
 }
 
-const pieceBytes = (p) => JSON.stringify(p);
+// ── KARŞILAŞTIRMA GRANÜLARİTESİ — İLAN EDİLİR VE DENETLENİR ─────────────────
+// Bölge dışı panelin "değişmedi" hükmü BAYT inceliğindedir: panelin tam JSON
+// serileştirmesi karşılaştırılır, panel adı/sayısı/varlığı değil. Bu satır bir
+// yorum değil, bir SÖZDÜR: edit_locality_check.mjs'in A4 mandalı hem bu ilanı
+// okur hem de dokunulmayan bir panelde tek koordinatı 0.001mm oynatıp
+// localityReport'un ihlal bastığını ölçer. Karşılaştırma bayttan panel
+// varlığına indirilirse A4 KIRMIZI düşer (V6-B'de bu yönde diş YOKTU).
+export const LOCALITY_GRANULARITY = 'bayt';
+export const pieceBytes = (p) => JSON.stringify(p);
 export const sha = (s) => createHash('sha256').update(s).digest('hex').slice(0, 12);
 
 // ── 5. LOKALLİK RAPORU ──────────────────────────────────────────────────────

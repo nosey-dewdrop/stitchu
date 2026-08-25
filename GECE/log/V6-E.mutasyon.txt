@@ -1,0 +1,185 @@
+==============================================================
+V6-E MUTASYON LOGU — ham ONCE/SONRA ciktisi
+tarih: 2026-08-25 02:05 UTC  HEAD: ada3bf9
+kosulan: node engine/tests/edit_locality_check.mjs
+==============================================================
+
+### ADIM 1 — ONARIM ONCESI TEMEL KOSU (mutasyonsuz)
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+OK   tüm-spec-yeniden-yazma 10/12 vakada LOKALLİK İHLALİ olarak yakalandı
+edit_locality_check: hepsi yeşil
+EXIT=0
+
+### ADIM 2 — M1 YENIDEN KOSULDU (V6-B'nin iddiasi dogrulaniyor)
+yama: engine/tools/spec-diff.mjs:163  pieceBytes = JSON.stringify(p)  ->  'PANEL'
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (yakalanmadı: kısalt (kol kısa))
+OK   tüm-spec-yeniden-yazma 9/12 vakada LOKALLİK İHLALİ olarak yakalandı
+edit_locality_check: hepsi yeşil
+EXIT=0
+-- GERI ALINDI: git diff --stat engine/tools/spec-diff.mjs => []
+   geri alma sonrasi EXIT=0
+
+### ADIM 3 — ONARIM SONRASI TEMEL KOSU (A1 tabani + A1 atlama tavani + A4)
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (atlandı: manşet ekle (üretim: invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'))
+OK   A1 sessiz atlama 1 <= tavan 1
+OK   tüm-spec-yeniden-yazma 10/12 vakada LOKALLİK İHLALİ olarak yakalandı (taban 10)
+--- ANTI-HACK A4: bölge dışı panelde 0.001mm oynama görülüyor mu
+OK   ilan edilen granülarite 'bayt' (beklenen 'bayt')
+OK   Skirt Front: tek koordinat 224.9 -> 224.901 (0.001mm) İHLAL olarak görüldü
+OK   kontrol: oynatmasız kopya 3 panelde 0 ihlal (beklenen 0, checked>0)
+edit_locality_check: hepsi yeşil
+EXIT=0
+
+
+### M1' — karsilastirma bayttan panel varligina indirildi
+yama: engine/tools/spec-diff.mjs  pieceBytes = JSON.stringify(p) -> 'PANEL'
+beklenti: A4 atesle (V6-B'de ayni mutasyon KIRMIYORDU, ADIM 2'ye bak)
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (yakalanmadı: kısalt (kol kısa))
+     (atlandı: manşet ekle (üretim: invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'))
+OK   A1 sessiz atlama 1 <= tavan 1
+FAIL tüm-spec-yeniden-yazma 9/12 vakada LOKALLİK İHLALİ olarak yakalandı (taban 10) — TABANIN ALTINA DÜŞTÜ, kapının dişi köreldi
+--- ANTI-HACK A4: bölge dışı panelde 0.001mm oynama görülüyor mu
+OK   ilan edilen granülarite 'bayt' (beklenen 'bayt')
+FAIL Skirt Front: tek koordinat 224.9 -> 224.901 (0.001mm) GÖRÜLMEDİ — karşılaştırma bayt değil, granülarite ilanı YALAN
+OK   kontrol: oynatmasız kopya 3 panelde 0 ihlal (beklenen 0, checked>0)
+edit_locality_check: 2 KIRMIZI
+EXIT=1
+-- GERI ALINDI: diff /tmp/v6e-bak => []
+   geri alma sonrasi EXIT=0
+
+### M2' — dokunulmayan panele +0.001mm enjeksiyon (uretim sonrasi, runEdit icinde)
+yama: engine/tools/spec-diff.mjs runEdit — ilk ^Skirt|Sleeve panelinin ilk x'ine +0.001
+beklenti: incelik kaniti — mikron mertebesinde ihlal KIRMIZI dusmeli
+FAIL yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Sleeve | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+FAIL yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+FAIL kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+FAIL manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+FAIL sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Sleeve | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+FAIL korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Sleeve | İHLAL: Skirt Front: baytları değişti ae01610930c6 -> 3f66b7e1e632
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (atlandı: manşet ekle (üretim: invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'))
+OK   A1 sessiz atlama 1 <= tavan 1
+OK   tüm-spec-yeniden-yazma 10/12 vakada LOKALLİK İHLALİ olarak yakalandı (taban 10)
+--- ANTI-HACK A4: bölge dışı panelde 0.001mm oynama görülüyor mu
+OK   ilan edilen granülarite 'bayt' (beklenen 'bayt')
+OK   Skirt Front: tek koordinat 224.9 -> 224.901 (0.001mm) İHLAL olarak görüldü
+OK   kontrol: oynatmasız kopya 3 panelde 0 ihlal (beklenen 0, checked>0)
+edit_locality_check: 6 KIRMIZI
+EXIT=1
+-- GERI ALINDI: diff /tmp/v6e-bak => []
+   geri alma sonrasi EXIT=0
+
+### M3' — A1 tabani elle DUSURULDU (ratchet kaniti)
+yama: engine/tests/edit_locality_check.mjs  const A1_FLOOR = 10 -> 9
+beklenti: taban dusurulmesi kapiyi gecmemeli
+OK   yakayı değiştir (bebe yaka) [neckZone] bölge dışı 3 panel bayt-aynı: Skirt Back, Skirt Front, Sleeve
+OK   yaka oyuğunu değiştir (V) [neckZone+shoulderZone] bölge dışı 2 panel bayt-aynı: Skirt Back, Skirt Front
+OK   fiyonk ekle (ön yaka) [cfZone+backZone+waistZone] bölge dışı 1 panel bayt-aynı: Sleeve
+OK   uzat (etek maxi) [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   kısalt (kol kısa) [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   manşet ekle [sleeveZone] bölge dışı 4 panel bayt-aynı: Bodice Back, Bodice Front, Skirt Back, Skirt Front
+OK   cep ekle (yama) [surface+sideSeamZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   peplum ekle [waistZone] bölge dışı 2 panel bayt-aynı: Bias binding (neckline), Sleeve
+OK   sırtı aç [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+OK   düğme sırası ekle [cfZone] bölge dışı 3 panel bayt-aynı: Bodice Back, Skirt Back, Sleeve
+OK   etek ucuna volan [hemZone] bölge dışı 4 panel bayt-aynı: Bias binding (neckline), Bodice Back, Bodice Front, Sleeve
+OK   korse bağcıklı sırt [backZone] bölge dışı 3 panel bayt-aynı: Bodice Front, Skirt Front, Sleeve
+--- ANTI-HACK A1: diff yerine tüm spec yeniden yazılırsa
+     (yakalanmadı: yaka oyuğunu değiştir (V))
+     (atlandı: manşet ekle (üretim: invalid spec: cuffStyle requires a sleeve: set sleeveStyle to 'straight' or 'balloon'))
+OK   A1 sessiz atlama 1 <= tavan 1
+OK   tüm-spec-yeniden-yazma 10/12 vakada LOKALLİK İHLALİ olarak yakalandı (taban 9)
+FAIL A1 TABANI BAYAT: ölçülen 10 > taban 9 — ratchet gereği edit_locality_check.mjs içindeki A1_FLOOR 10 yapılmalı (taban yalnız yükselir)
+--- ANTI-HACK A4: bölge dışı panelde 0.001mm oynama görülüyor mu
+OK   ilan edilen granülarite 'bayt' (beklenen 'bayt')
+OK   Skirt Front: tek koordinat 224.9 -> 224.901 (0.001mm) İHLAL olarak görüldü
+OK   kontrol: oynatmasız kopya 3 panelde 0 ihlal (beklenen 0, checked>0)
+edit_locality_check: 1 KIRMIZI
+EXIT=1
+-- GERI ALINDI: diff /tmp/v6e-bak => []
+   geri alma sonrasi EXIT=0
+
+### KAPANIS — ctest (kart: yeni kirmizi AD dogurmadi mi)
+$ ctest --test-dir engine/build -R "edit_locality|spec_diff|specv2" --output-on-failure
+Test project /Users/damummyphus/damla_projects_2026/stitchu/engine/build
+    Start  92: specv2_check
+1/2 Test  #92: specv2_check .....................   Passed    0.04 sec
+    Start 112: edit_locality_check
+2/2 Test #112: edit_locality_check ..............   Passed    0.14 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.18 sec
+CTEST EXIT=0
+
+### KAPANIS — calisma agaci (kart disi dosyalar baska iscilerin)
+ M engine/tests/edit_locality_check.mjs
+ M engine/tools/spec-diff.mjs
+?? GECE/log/V6-E.mutasyon.txt
+?? contract/anchors-v1.json
+?? engine/tools/gen-anchors.mjs
+?? patterns_real/BUGRA-DEFTER.md
+?? patterns_real/geometry/
+?? patterns_real/tools/bugra-geometry-2026-07-23.json
