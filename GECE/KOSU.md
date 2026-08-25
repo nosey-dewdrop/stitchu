@@ -100,8 +100,8 @@ hiçbiri giyim değil. "Üretim standardı" DENEMEZ, **ev değeri** denir.
 **63.5mm**. V5 wasm paritesi BOŞ: `git diff 17f5656..HEAD -- engine/src web/`.
 
 ## SONRAKİ FAZLARIN HAZIR GİRDİSİ
-- V6 ← `GECE/V0-0B.md` **+ V4:** `raglan` dört sözleşmede OMUZ ekseninde;
-  `cap` çelişiyor; `mandarin`/`notched`/`sailor` sayısal karşılığı YOK
+- V6 ← `GECE/V0-0B.md` **+ V4:** `raglan` OMUZ ekseninde; `cap` çelişiyor;
+  `mandarin`/`notched`/`sailor` sayısal karşılığı YOK
 - V7 ← `52ae85c` tavanı **+ V3: G5 SAYIYLA KİLİTLİ** **+ V5:** çentik
   izdüşümü · `notches` TÜR ALANI · GEÇİŞ kapısı · dikiş grafiği artefakta ·
   payın CİNSİ (K-V5A) — **beşi de `engine/src/` işi**
