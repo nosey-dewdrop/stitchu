@@ -1,0 +1,65 @@
+# V9-A DURAN-IDDIA TARAMASI — ham cikti
+# tarih: 2026-08-25 09:53 · agac: a6689ef
+# kapsam: docs/ (archive dahil) + README.md
+
+## basan komut
+grep -rnoE "ALL PASS|0\.00 ?mm|0\.0000 ?mm|byte-identical|bayt bayt|zero issues|zero failures|zero validation issues|hatasız|bitti|hazır|none known|validator[- ]clean" docs/ README.md
+
+## kalip basina
+   3 0.00 mm
+   1 0.0000mm
+   5 byte-identical
+   3 bitti
+   3 bayt bayt
+   1 validator clean
+
+## dosya basina
+   6 docs/ARCHITECTURE.md
+   3 README.md
+   2 docs/SATIS-SARTNAMESI.md
+   2 docs/KATMAN-HARITASI.md
+   2 docs/H1.0-KAPI.md
+   1 docs/archive/mocks/babyblue-stil-1.html
+
+## HAM HIT — dosya:satir + TAM SATIR
+docs/H1.0-KAPI.md:15:> Bu dosya H1.0'ın **"bitti" tanımıdır.** `HEDEF.md` § HEDEF 1 → H1.0 satırı buraya işaret eder.
+docs/H1.0-KAPI.md:16:> Kapı, 25–45 saatlik yapısal işin yön seçebilmesi için var: iş bittiğinde hangi sayının
+docs/archive/mocks/babyblue-stil-1.html:108:      <div>0.00 mm seam match</div><div>70,200-draft matrix</div><div>on-device · nothing uploaded</div>
+docs/ARCHITECTURE.md:43:- `tools/precision-report.js` ("the tailor's micrometer"): measures every seam pair a sewist pins; >1.0 mm fails. Found and zeroed a 8-10 mm shoulder-pair gap and a ~2 mm empire side-seam gap. Today's worst pair is whatever `node engine/tools/precision-report.js` prints — the standing "worst pair is now 0.00 mm" wording was replaced on 24 Aug 2026 under RULES §6. Run it after any bodice change.
+docs/ARCHITECTURE.md:113:**A second gate was added because the pen was silently collapsing different garments into the same drawing.** `flat_expresses_spec_check` (registered in `engine/CMakeLists.txt`) measured that `sleeveStyle` set / raglan / puff produced **byte-identical** SVGs, as did `collarType` 1 / 2 / 3 — the exact failure class `CLAUDE.md` already records for 2026-07-18 ("sleeveStyle 'puff' silently dropped"). The gate's unit of difference is geometry (the set of drawing elements plus contour length), not a hash, and its verdict is equality/inequality, so there is no threshold to relax. Two root causes were fixed in the pen: puff was read only off the numeric `sleeveCap === 2` field and never off the sleeve's own name, and raglan was the condition of no branch at all. No new number was invented — the puff branch already applied the contract's measured `puffHemOverWidestMax`, and raglan is a topological change (the seam runs neckline→underarm instead of shoulder-tip→underarm) between two endpoints the croquis already had. Where the pattern engine cannot cut what was asked for, the flat now stamps the missing operator's name into `data-engine-gap` on the SVG root instead of drawing something else quietly.
+docs/ARCHITECTURE.md:121:**A comparison board was built, and its first honest result was that this phase changed nothing visible in it.** `engine/tools/flat-board.mjs` renders one row per style, ESKİ on the left and YENİ on the right, embedding each SVG with `xMidYMid meet` and `overflow="visible"` — scaled, never cropped, never retouched. `--eski <dir>` reads the left column *off disk* and aborts loudly if a file is missing. That flag exists because the board's first version only had `--yeni`, which filled the right column and regenerated the left one from today — an "ESKİ|YENİ" board that would have shown today in both columns (`GECE/V4-D.md`, KART DIŞI 3). Where no old artefact existed at all, as with the sleeve family, the old commit was checked out into a detached worktree and the pen was run there, and the resulting hashes were matched against the ones already recorded in the gate's header before the column was trusted. Run against `c396fb4`, all **10 style cells came back byte-identical** (`cmp`), and the reason was measured rather than guessed: 9 of those 9 styles fall through to the read-only reference pen `engine/flat-engine/_engine-full.mjs`, whose line weights come from its own `<style>` block and not from `lineClasses`, and the tenth is the C++ shell. **The two repairs above live in the production pen, so the convention work is not yet visible in the styles the board shows.** The one row where the difference is visible is the sleeve family, which was rendered through the production pen (`GECE/V4-D.md` §2). The board prints `bayt bayt AYNI` / `FARK VAR` under each cell but does not affect its exit code; it is an instrument, not a gate.
+docs/ARCHITECTURE.md:255:- The croquis line itself is drawn by **two** pens, and the law only reaches one of them (§12). `engine/tools/render-garment-flat.mjs` reads `contract/flat-convention-v1.json`; the read-only reference pen `engine/flat-engine/_engine-full.mjs`, which is what 9 of the 10 taste-board cells and the site's 31 styles come out of, uses its own ink and its own weight table and declares `data-scale` on 0 of 31. So a convention repair can pass its gate and still not appear in what a buyer looks at — measured on 24 Aug 2026 by rendering the board against the previous commit and getting 10 byte-identical cells (`GECE/V4-D.md` §1). Moving those styles onto the law-bound pen is an open item, not a decision taken here.
+docs/ARCHITECTURE.md:260:- **`body.shoulder` is a dead input.** The drafted geometry is byte-identical for shoulder values from 20 to 80 cm (`GECE/V5-D.md`), while `contract/tables.json` publishes a `shoulderCM` column to the buyer whose own source status is NONE — the same column `sizechart_source_check` is red on. Measured separately: no published system uses a 36–42 cm figure for `shoulder`; Aldrich, Müller and burda all mean ONE shoulder seam, 12–14 cm (`GECE/V5-R.md` §2 madde 3).
+docs/KATMAN-HARITASI.md:47:   iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'le **bayt bayt
+docs/KATMAN-HARITASI.md:74:   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor (`GECE/V5-D.md`).
+docs/SATIS-SARTNAMESI.md:243:      **0.0000mm** eşleşiyor — uyarı metin değil, **geometriye bağlı**.
+docs/SATIS-SARTNAMESI.md:311:(Damla kararı). Motorun bu şartnameye borcu **bitti**: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1.
+README.md:18:- **Size grading — one recipe re-drafted against each standard body.** The run this repo can publish ratios for is EU34–48: `contract/layers/shape-ratios.json` has no published front/back split at EU50 and aborts there, so the earlier "a full EU34–52 run / 10-of-10 sizes" wording contradicted the size run stated at the top of this file. It was corrected on 24 Aug 2026 (measurement in `GECE/V0.md` §1.4), not removed silently. What the graded run asserts — validator cleanliness, seam matching, monotonic growth, fixed dart topology — is whatever `ctest recipe_grade_check` prints when you run it. The point of that test is that growth is *not* a fixed step: it follows the EU chart's own +4 cm → +6 cm change, which is what separates grading a body from relabelling one pattern as a fake series.
+README.md:48:- **Seam-pair precision — the worst pair is printed, not stated.** `node engine/tools/precision-report.js` measures every seam pair a tailor would actually pin, off the *drawn geometry* rather than the intended numbers, and fails above 1.0 mm. The standing "worst pair 0.00 mm" line was replaced on 24 Aug 2026 under RULES §6: run the tool for today's worst pair. (An earlier audit caught the benchmark reading intentions instead of geometry; it reads geometry now.)
+README.md:51:- **Determinism has a second face, and it now has its own gate.** "Same garment, same bytes" is only half the invariant; the other half is that a *different* garment must not produce the same bytes. It was measured doing exactly that on 24 Aug 2026: the flat pen drew byte-identical SVGs for `sleeveStyle` set, raglan and puff, and again for `collarType` 1, 2 and 3 — a silent collapse rather than a refusal, and the same failure class this repo already had on record from 2026-07-18. `ctest -R flat_expresses_spec_check` is what now prints how many spec values were separated and how many collapsed; its unit of difference is geometry (drawing elements plus contour length), not a hash, so its verdict is equality or inequality and there is no threshold in it to relax. Where the pattern engine genuinely cannot cut what the spec asked for, the flat stamps the missing operator's name onto the SVG root rather than drawing a substitute. The axes it still reports as collapsed are printed by the same run, not hidden (`GECE/V4-B.md`).
+
+## SINIFLANDIRMA (yanlis pozitif dusulmus) — gerekce satir satir
+
+GERCEK DURAN IDDIA — 3
+  docs/SATIS-SARTNAMESI.md:243  "0.0000mm eslesiyor"  → RULES §6 yasakli sabit sayi, satirda onu basan alet adi YOK
+  docs/SATIS-SARTNAMESI.md:311  "Motorun bu sartnameye borcu bitti: §2 6/6 · §3 4/4 · §4 4/4 · §4b 1/1"  → RULES §8 "blanket done" 
+  docs/archive/mocks/babyblue-stil-1.html:108  "0.00 mm seam match"  → ARSIV mock pazarlama metni; canli yuzey degil, ama docs/ agacinda duruyor
+
+YANLIS POZITIF — 13
+  docs/ARCHITECTURE.md:43   duran ifadeyi ALINTILIYOR ve "24 Aug 2026'da RULES §6 uyarinca degistirildi" diyor
+  README.md:48              ayni: emekli edilen "worst pair 0.00 mm" cumlesi tirnak icinde
+  docs/ARCHITECTURE.md:113  "byte-identical SVG" = OLCULEN KUSUR (sessiz cokme), kapi adi + tarih yaninda
+  docs/ARCHITECTURE.md:121  "10 style cells came back byte-identical (cmp)" = c396fb4'e karsi tarihli olcum
+  docs/ARCHITECTURE.md:255  ayni olcumun tekrari, kanit yolu GECE/V4-D.md §1
+  docs/ARCHITECTURE.md:260  "byte-identical for shoulder 20..80cm" = olu girdi kusuru, kanit GECE/V5-D.md
+  README.md:51              ayni kusurun anlatimi, kapi adi flat_expresses_spec_check
+  docs/KATMAN-HARITASI.md:47   TR "bayt bayt" = ayni tarihli olcum
+  docs/KATMAN-HARITASI.md:74   TR "bayt bayt" = olu girdi kusuru, kanit GECE/V5-D.md
+  docs/H1.0-KAPI.md:15      TR "'bitti' tanimidir" = tanim cumlesi, bitmislik iddiasi degil
+  docs/H1.0-KAPI.md:16      TR "is bittiginde" = sart cumlesi
+  README.md:18              duzeltme anlatimi ("earlier wording ... corrected on 24 Aug 2026")
+  docs/ARCHITECTURE.md:255/README.md:18 — ayni sinif
+
+DIKKAT (kapi tasarimi icin): 13 yanlis pozitifin 6'si emekli edilen cumleyi TIRNAK ICINDE
+tasiyor. Duz grep tabanli bir docs_truth_check bu 6'sina ates eder. Kapi, tirnak/kod-span
+icindeki hit'i ve ayni satirda tarih+alet adi gecen hit'i dusurmek zorunda.

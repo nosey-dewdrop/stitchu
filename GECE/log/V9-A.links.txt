@@ -1,0 +1,572 @@
+README.md:5                   flatten-research/FINDINGS.md                          TICK    VAR  flatten-research/FINDINGS.md
+README.md:7                   web/                                                  TICK    VAR  web
+README.md:7                   web/js/create.js:730                                  TICK    VAR  web/js/create.js
+README.md:7                   engine/wasm/bindings.cpp:339                          TICK    VAR  engine/wasm/bindings.cpp
+README.md:7                   engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+README.md:7                   engine/CMakeLists.txt:12-17                           TICK    VAR  engine/CMakeLists.txt
+README.md:7                   surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+README.md:7                   flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+README.md:7                   GECE/V5-Z.md                                          TICK    VAR  GECE/V5-Z.md
+README.md:15                  reports/gate/endustri-2026-07-28.txt                  MDLINK  VAR  reports/gate/endustri-2026-07-28.txt
+README.md:17                  reports/gate/endustri-2026-07-28.txt                  MDLINK  VAR  reports/gate/endustri-2026-07-28.txt
+README.md:17                  engine/src/dxf.{hpp,cpp}                              TICK    VAR  engine/src/dxf.hpp
+README.md:18                  contract/layers/shape-ratios.json                     TICK    VAR  contract/layers/shape-ratios.json
+README.md:18                  GECE/V0.md                                            TICK    VAR  GECE/V0.md
+README.md:19                  reports/gate/endustri-2026-07-28.txt                  TICK    VAR  reports/gate/endustri-2026-07-28.txt
+README.md:19                  engine/src/nest.{hpp,cpp}                             TICK    VAR  engine/src/nest.hpp
+README.md:20                  stitchu.techpack/1                                    TICK    YOK  
+README.md:20                  techpack-verify.py                                    TICK    VAR  engine/tools/techpack-verify.py
+README.md:20                  engine/tools/tech-pack.cpp                            TICK    VAR  engine/tools/tech-pack.cpp
+README.md:27                  engine/build-wasm.sh                                  TICK    VAR  engine/build-wasm.sh
+README.md:28                  .cpp                                                  TICK    YOK  
+README.md:28                  surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+README.md:28                  flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+README.md:29                  engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+README.md:32                  GECE/V5-Z.md                                          TICK    VAR  GECE/V5-Z.md
+README.md:36                  engine/src/recipe.cpp                                 TICK    VAR  engine/src/recipe.cpp
+README.md:36                  recipes/shift-dress-square-spaghetti.json             TICK    VAR  recipes/shift-dress-square-spaghetti.json
+README.md:36                  docs/RECETE-SPEC.md                                   TICK    YOK  
+README.md:41                  GECE/log/V1-B.olcum.txt                               TICK    VAR  GECE/log/V1-B.olcum.txt
+README.md:47                  GECE/log/V0-0A.ctest.txt                              TICK    VAR  GECE/log/V0-0A.ctest.txt
+README.md:47                  GECE/log/V0-SEF.ctest.txt                             TICK    VAR  GECE/log/V0-SEF.ctest.txt
+README.md:47                  GECE/log/V0-0A.red-names.txt                          TICK    VAR  GECE/log/V0-0A.red-names.txt
+README.md:47                  GECE/V0.md                                            TICK    VAR  GECE/V0.md
+README.md:47                  GECE/log/V1.ctest.before.txt                          TICK    VAR  GECE/log/V1.ctest.before.txt
+README.md:47                  GECE/log/V1-A.ctest.after.txt                         TICK    VAR  GECE/log/V1-A.ctest.after.txt
+README.md:47                  GECE/V1-SINIF.md                                      TICK    VAR  GECE/V1-SINIF.md
+README.md:47                  GECE/log/V5.ctest.final.txt                           TICK    VAR  GECE/log/V5.ctest.final.txt
+README.md:47                  GECE/log/V5.ctest.opening.txt                         TICK    VAR  GECE/log/V5.ctest.opening.txt
+README.md:50                  GECE/V2-C.md                                          TICK    VAR  GECE/V2-C.md
+README.md:50                  GECE/log/V2-C.bostest.txt                             TICK    VAR  GECE/log/V2-C.bostest.txt
+README.md:51                  GECE/V4-B.md                                          TICK    VAR  GECE/V4-B.md
+README.md:52                  engine/build-wasm.sh                                  TICK    VAR  engine/build-wasm.sh
+README.md:52                  web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+README.md:52                  backend/engine/stitchu-worker.js                      TICK    VAR  backend/engine/stitchu-worker.js
+README.md:52                  backend/engine/stitchu-worker.wasm                    TICK    VAR  backend/engine/stitchu-worker.wasm
+README.md:52                  engine/src                                            TICK    VAR  engine/src
+README.md:52                  engine/wasm                                           TICK    VAR  engine/wasm
+README.md:52                  build-wasm.sh                                         TICK    VAR  engine/build-wasm.sh
+README.md:52                  GECE/V2-D.md                                          TICK    VAR  GECE/V2-D.md
+README.md:53                  GECE/V0.md                                            TICK    VAR  GECE/V0.md
+README.md:53                  engine/GOLDEN-PIN.md                                  TICK    VAR  engine/GOLDEN-PIN.md
+README.md:53                  ./engine/build/golden_dump                            TICK    VAR  engine/build/golden_dump
+README.md:54                  engine/tests/v5-ratchet-baseline.json                 TICK    VAR  engine/tests/v5-ratchet-baseline.json
+README.md:54                  GECE/V5-A.md                                          TICK    VAR  GECE/V5-A.md
+README.md:56                  docs/ARCHITECTURE.md                                  TICK    VAR  docs/ARCHITECTURE.md
+README.md:57                  engine/tools/spec-diff.mjs                            TICK    VAR  engine/tools/spec-diff.mjs
+README.md:57                  GECE/V6-B.md                                          TICK    VAR  GECE/V6-B.md
+README.md:57                  GECE/V6-E.md                                          TICK    VAR  GECE/V6-E.md
+README.md:60                  GECE/V5-F.md                                          TICK    VAR  GECE/V5-F.md
+README.md:60                  engine/src                                            TICK    VAR  engine/src
+README.md:64                  drape.hpp                                             TICK    VAR  engine/src/drape.hpp
+README.md:76                  engine/                                               TICK    VAR  engine
+README.md:76                  src/dxf                                               TICK    YOK  
+README.md:76                  src/nest                                              TICK    YOK  
+README.md:76                  src/recipe                                            TICK    YOK  
+README.md:76                  tools/tech-pack.cpp                                   TICK    YOK  
+README.md:77                  recipes/                                              TICK    VAR  recipes
+README.md:78                  engine/src/recipe.cpp                                 TICK    VAR  engine/src/recipe.cpp
+README.md:78                  docs/RECETE-SPEC.md                                   TICK    YOK  
+README.md:79                  web/                                                  TICK    VAR  web
+README.md:80                  backend/                                              TICK    VAR  backend
+README.md:81                  reports/gate/                                         TICK    VAR  reports/gate
+docs/ARCHITECTURE.md:3        engine/FORMULAS.md                                    TICK    VAR  engine/FORMULAS.md
+docs/ARCHITECTURE.md:3        PROJECT.md                                            TICK    YOK  
+docs/ARCHITECTURE.md:3        PLAN.md                                               TICK    YOK  
+docs/ARCHITECTURE.md:5        contract/                                             TICK    VAR  contract
+docs/ARCHITECTURE.md:7        garment-spec.schema.json                              TICK    VAR  contract/garment-spec.schema.json
+docs/ARCHITECTURE.md:7        web/js/spec-validate.js                               TICK    VAR  web/js/spec-validate.js
+docs/ARCHITECTURE.md:7        tables.json                                           TICK    VAR  contract/tables.json
+docs/ARCHITECTURE.md:7        engine/tools/gen-contract.mjs                         TICK    VAR  engine/tools/gen-contract.mjs
+docs/ARCHITECTURE.md:7        engine/src/contract.gen.hpp                           TICK    VAR  engine/src/contract.gen.hpp
+docs/ARCHITECTURE.md:7        web/js/contract.gen.js                                TICK    VAR  web/js/contract.gen.js
+docs/ARCHITECTURE.md:7        backend/contract.gen.js                               TICK    VAR  backend/contract.gen.js
+docs/ARCHITECTURE.md:7        terms.json                                            TICK    VAR  contract/terms.json
+docs/ARCHITECTURE.md:7        engine/tools/validate-contract.mjs                    TICK    VAR  engine/tools/validate-contract.mjs
+docs/ARCHITECTURE.md:23       engine/src/geometry.*                                 TICK    VAR  engine/src/geometry.cpp
+docs/ARCHITECTURE.md:24       tests/test_geometry.cpp                               TICK    YOK  
+docs/ARCHITECTURE.md:24       FORMULAS.md                                           TICK    VAR  engine/FORMULAS.md
+docs/ARCHITECTURE.md:26       bodice.cpp                                            TICK    VAR  engine/src/bodice.cpp
+docs/ARCHITECTURE.md:26       skirt.cpp                                             TICK    VAR  engine/src/skirt.cpp
+docs/ARCHITECTURE.md:26       sleeve.cpp                                            TICK    VAR  engine/src/sleeve.cpp
+docs/ARCHITECTURE.md:27       FORMULAS.md                                           TICK    VAR  engine/FORMULAS.md
+docs/ARCHITECTURE.md:29       garment.cpp                                           TICK    VAR  engine/src/garment.cpp
+docs/ARCHITECTURE.md:29       ruffle.cpp                                            TICK    VAR  engine/src/ruffle.cpp
+docs/ARCHITECTURE.md:29       keyhole.cpp                                           TICK    VAR  engine/src/keyhole.cpp
+docs/ARCHITECTURE.md:35       validator.cpp                                         TICK    VAR  engine/src/validator.cpp
+docs/ARCHITECTURE.md:41       tests/engine_check.cpp                                TICK    YOK  
+docs/ARCHITECTURE.md:41       GECE/log/                                             TICK    VAR  GECE/log
+docs/ARCHITECTURE.md:41       V2.ctest.before.txt                                   TICK    VAR  GECE/log/V2.ctest.before.txt
+docs/ARCHITECTURE.md:41       V2-D.ctest.after.txt                                  TICK    VAR  GECE/log/V2-D.ctest.after.txt
+docs/ARCHITECTURE.md:42       engine/golden-reference.csv                           TICK    VAR  engine/golden-reference.csv
+docs/ARCHITECTURE.md:42       golden-diff.py                                        TICK    VAR  engine/golden-diff.py
+docs/ARCHITECTURE.md:42       engine/GOLDEN-PIN.md                                  TICK    VAR  engine/GOLDEN-PIN.md
+docs/ARCHITECTURE.md:42       scripts/repin-golden.sh                               TICK    VAR  scripts/repin-golden.sh
+docs/ARCHITECTURE.md:43       tools/precision-report.js                             TICK    YOK  
+docs/ARCHITECTURE.md:44       tools/web-fuzz.js                                     TICK    YOK  
+docs/ARCHITECTURE.md:44       create.js                                             TICK    VAR  web/js/create.js
+docs/ARCHITECTURE.md:45       engine/CMakeLists.txt                                 TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:46       vision-student/vocab.py                               TICK    VAR  vision-student/vocab.py
+docs/ARCHITECTURE.md:46       engine/vocab.json                                     TICK    VAR  engine/vocab.json
+docs/ARCHITECTURE.md:46       contract/vocab-resolution-v1.json                     TICK    VAR  contract/vocab-resolution-v1.json
+docs/ARCHITECTURE.md:46       GECE/log/V2-B.mutasyon.txt                            TICK    VAR  GECE/log/V2-B.mutasyon.txt
+docs/ARCHITECTURE.md:47       engine/tests/vocab-reference-baseline.json            TICK    VAR  engine/tests/vocab-reference-baseline.json
+docs/ARCHITECTURE.md:47       GECE/V2-B.md                                          TICK    VAR  GECE/V2-B.md
+docs/ARCHITECTURE.md:47       GECE/V2-D.md                                          TICK    VAR  GECE/V2-D.md
+docs/ARCHITECTURE.md:48       GECE/log/V2-C.bostest.txt                             TICK    VAR  GECE/log/V2-C.bostest.txt
+docs/ARCHITECTURE.md:50       precision-report.js                                   TICK    VAR  engine/tools/precision-report.js
+docs/ARCHITECTURE.md:50       web-fuzz.js                                           TICK    VAR  engine/tools/web-fuzz.js
+docs/ARCHITECTURE.md:52       engine/wasm/bindings.cpp                              TICK    VAR  engine/wasm/bindings.cpp
+docs/ARCHITECTURE.md:53       engine/build-wasm.sh                                  TICK    VAR  engine/build-wasm.sh
+docs/ARCHITECTURE.md:53       engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/ARCHITECTURE.md:53       web/vendor/                                           TICK    VAR  web/vendor
+docs/ARCHITECTURE.md:53       GECE/V0.md                                            TICK    VAR  GECE/V0.md
+docs/ARCHITECTURE.md:55       GECE/V2-C.md                                          TICK    VAR  GECE/V2-C.md
+docs/ARCHITECTURE.md:55       GECE/log/V2-C.bostest.txt                             TICK    VAR  GECE/log/V2-C.bostest.txt
+docs/ARCHITECTURE.md:58       recipe.cpp:938                                        TICK    VAR  engine/src/recipe.cpp
+docs/ARCHITECTURE.md:60       build-wasm.sh                                         TICK    VAR  engine/build-wasm.sh
+docs/ARCHITECTURE.md:60       backend/engine/stitchu-worker.wasm                    TICK    VAR  backend/engine/stitchu-worker.wasm
+docs/ARCHITECTURE.md:60       engine/src                                            TICK    VAR  engine/src
+docs/ARCHITECTURE.md:60       engine/wasm                                           TICK    VAR  engine/wasm
+docs/ARCHITECTURE.md:60       GECE/V2-D.md                                          TICK    VAR  GECE/V2-D.md
+docs/ARCHITECTURE.md:60       engine/dist/                                          TICK    VAR  engine/dist
+docs/ARCHITECTURE.md:62       web/                                                  TICK    VAR  web
+docs/ARCHITECTURE.md:63       store.js                                              TICK    VAR  web/js/store.js
+docs/ARCHITECTURE.md:63       analyze.js                                            TICK    VAR  web/js/analyze.js
+docs/ARCHITECTURE.md:63       create.js                                             TICK    VAR  web/js/create.js
+docs/ARCHITECTURE.md:63       render.js                                             TICK    VAR  web/js/render.js
+docs/ARCHITECTURE.md:63       print.js                                              TICK    VAR  web/js/print.js
+docs/ARCHITECTURE.md:63       wall.js                                               TICK    VAR  web/js/wall.js
+docs/ARCHITECTURE.md:65       backend/worker.js                                     TICK    VAR  backend/worker.js
+docs/ARCHITECTURE.md:68       vision/                                               TICK    VAR  vision
+docs/ARCHITECTURE.md:69       GECE/V6-A.md                                          TICK    VAR  GECE/V6-A.md
+docs/ARCHITECTURE.md:69       vision/corpus                                         TICK    VAR  vision/corpus
+docs/ARCHITECTURE.md:69       vision/README.md                                      TICK    VAR  vision/README.md
+docs/ARCHITECTURE.md:71       vision-student/vocab.py                               TICK    VAR  vision-student/vocab.py
+docs/ARCHITECTURE.md:71       engine/vocab.json                                     TICK    VAR  engine/vocab.json
+docs/ARCHITECTURE.md:71       engine/tools/gen-vision-vocab.mjs                     TICK    VAR  engine/tools/gen-vision-vocab.mjs
+docs/ARCHITECTURE.md:71       contract/vocab-resolution-v1.json                     TICK    VAR  contract/vocab-resolution-v1.json
+docs/ARCHITECTURE.md:71       vision-student/                                       TICK    VAR  vision-student
+docs/ARCHITECTURE.md:71       GECE/V2-B.md                                          TICK    VAR  GECE/V2-B.md
+docs/ARCHITECTURE.md:73       engine/CMakeLists.txt                                 TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:73       engine/tests/                                         TICK    VAR  engine/tests
+docs/ARCHITECTURE.md:73       scripts/                                              TICK    VAR  scripts
+docs/ARCHITECTURE.md:73       backend/                                              TICK    VAR  backend
+docs/ARCHITECTURE.md:73       web/js/                                               TICK    VAR  web/js
+docs/ARCHITECTURE.md:73       contract/                                             TICK    VAR  contract
+docs/ARCHITECTURE.md:73       vision/fetch-corpus.sh                                TICK    VAR  vision/fetch-corpus.sh
+docs/ARCHITECTURE.md:73       vision/live-eval.sh                                   TICK    VAR  vision/live-eval.sh
+docs/ARCHITECTURE.md:73       vision/corpus/manifest.json                           TICK    VAR  vision/corpus/manifest.json
+docs/ARCHITECTURE.md:73       ./vision/fetch-corpus.sh                              TICK    VAR  vision/fetch-corpus.sh
+docs/ARCHITECTURE.md:77       contract/flat-convention-v1.json                      TICK    VAR  contract/flat-convention-v1.json
+docs/ARCHITECTURE.md:77       engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/ARCHITECTURE.md:77       engine/flat-engine/_engine-full.mjs                   TICK    VAR  engine/flat-engine/_engine-full.mjs
+docs/ARCHITECTURE.md:77       engine/src/surfacepattern.cpp                         TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:77       surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:77       contract/tables.json                                  TICK    VAR  contract/tables.json
+docs/ARCHITECTURE.md:77       GECE/V3-K.md                                          TICK    VAR  GECE/V3-K.md
+docs/ARCHITECTURE.md:79       surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:79       engine/src/surfacepattern.hpp                         TICK    VAR  engine/src/surfacepattern.hpp
+docs/ARCHITECTURE.md:79       engine/src/shellprojection.{hpp,cpp}                  TICK    VAR  engine/src/shellprojection.hpp
+docs/ARCHITECTURE.md:81       engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/ARCHITECTURE.md:81       engine/flat-engine/                                   TICK    VAR  engine/flat-engine
+docs/ARCHITECTURE.md:81       web/                                                  TICK    VAR  web
+docs/ARCHITECTURE.md:83       GECE/V3-B.md                                          TICK    VAR  GECE/V3-B.md
+docs/ARCHITECTURE.md:85       engine/tests/                                         TICK    VAR  engine/tests
+docs/ARCHITECTURE.md:85       GECE/log/V3-C.vacuous.txt                             TICK    VAR  GECE/log/V3-C.vacuous.txt
+docs/ARCHITECTURE.md:85       GECE/log/V3-C.mutation.txt                            TICK    VAR  GECE/log/V3-C.mutation.txt
+docs/ARCHITECTURE.md:87       GECE/V3-R.md                                          TICK    VAR  GECE/V3-R.md
+docs/ARCHITECTURE.md:87       GECE/V3-D.md                                          TICK    VAR  GECE/V3-D.md
+docs/ARCHITECTURE.md:90       GECE/log/V3-D.census.{before,after1}.txt              TICK    VAR  GECE/log/V3-D.census.before.txt
+docs/ARCHITECTURE.md:90       surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:90       GECE/log/V3-D.waistblend.rejected.txt                 TICK    VAR  GECE/log/V3-D.waistblend.rejected.txt
+docs/ARCHITECTURE.md:90       GECE/V3-D.md                                          TICK    VAR  GECE/V3-D.md
+docs/ARCHITECTURE.md:107      engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/ARCHITECTURE.md:107      contract/flat-convention-v1.json                      TICK    VAR  contract/flat-convention-v1.json
+docs/ARCHITECTURE.md:107      engine/tests/flat_convention_check.mjs                TICK    VAR  engine/tests/flat_convention_check.mjs
+docs/ARCHITECTURE.md:107      GECE/V4-K.md                                          TICK    VAR  GECE/V4-K.md
+docs/ARCHITECTURE.md:109      GECE/log/V4-A.inference.txt                           TICK    VAR  GECE/log/V4-A.inference.txt
+docs/ARCHITECTURE.md:111      render-garment-flat.mjs                               TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/ARCHITECTURE.md:113      engine/CMakeLists.txt                                 TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:113      CLAUDE.md                                             TICK    VAR  CLAUDE.md
+docs/ARCHITECTURE.md:117      GECE/V4-R.md                                          TICK    VAR  GECE/V4-R.md
+docs/ARCHITECTURE.md:118      GECE/V4-R.md                                          TICK    VAR  GECE/V4-R.md
+docs/ARCHITECTURE.md:121      engine/tools/flat-board.mjs                           TICK    VAR  engine/tools/flat-board.mjs
+docs/ARCHITECTURE.md:121      GECE/V4-D.md                                          TICK    VAR  GECE/V4-D.md
+docs/ARCHITECTURE.md:121      engine/flat-engine/_engine-full.mjs                   TICK    VAR  engine/flat-engine/_engine-full.mjs
+docs/ARCHITECTURE.md:123      contract/garment-spec-v2.json                         TICK    VAR  contract/garment-spec-v2.json
+docs/ARCHITECTURE.md:137      engine/src/surfacepattern.cpp                         TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:137      web/js/create.js:730                                  TICK    VAR  web/js/create.js
+docs/ARCHITECTURE.md:137      web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/ARCHITECTURE.md:137      engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+docs/ARCHITECTURE.md:137      engine/CMakeLists.txt:12-17                           TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:137      surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:137      flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+docs/ARCHITECTURE.md:137      GECE/V5-Z.md                                          TICK    VAR  GECE/V5-Z.md
+docs/ARCHITECTURE.md:139      engine/CMakeLists.txt                                 TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:139      GECE/log/V5-E.reddiff.txt                             TICK    VAR  GECE/log/V5-E.reddiff.txt
+docs/ARCHITECTURE.md:141      engine/tests/sewability_check.mjs                     TICK    VAR  engine/tests/sewability_check.mjs
+docs/ARCHITECTURE.md:141      GECE/V5-A.md                                          TICK    VAR  GECE/V5-A.md
+docs/ARCHITECTURE.md:142      engine/tests/draft_math_check.mjs                     TICK    VAR  engine/tests/draft_math_check.mjs
+docs/ARCHITECTURE.md:142      GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/ARCHITECTURE.md:144      engine/tests/v5-ratchet-baseline.json                 TICK    VAR  engine/tests/v5-ratchet-baseline.json
+docs/ARCHITECTURE.md:144      engine/tests/vocab-reference-baseline.json            TICK    VAR  engine/tests/vocab-reference-baseline.json
+docs/ARCHITECTURE.md:144      GECE/log/V5-E.mutasyon.txt                            TICK    VAR  GECE/log/V5-E.mutasyon.txt
+docs/ARCHITECTURE.md:148      GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/ARCHITECTURE.md:152      DAMLA-KUYRUK.md                                       TICK    VAR  DAMLA-KUYRUK.md
+docs/ARCHITECTURE.md:154      GECE/V5-E.md                                          TICK    VAR  GECE/V5-E.md
+docs/ARCHITECTURE.md:156      contract/tables.json                                  TICK    VAR  contract/tables.json
+docs/ARCHITECTURE.md:156      GECE/V5-D.md                                          TICK    VAR  GECE/V5-D.md
+docs/ARCHITECTURE.md:156      engine/src                                            TICK    VAR  engine/src
+docs/ARCHITECTURE.md:156      GECE/V5-F.md                                          TICK    VAR  GECE/V5-F.md
+docs/ARCHITECTURE.md:158      engine/tools/bugra/overlay-png.mjs                    TICK    VAR  engine/tools/bugra/overlay-png.mjs
+docs/ARCHITECTURE.md:158      geometry-full.json                                    TICK    VAR  patterns_real/geometry/geometry-full.json
+docs/ARCHITECTURE.md:158      GECE/log/V5-B2.overlay/                               TICK    VAR  GECE/log/V5-B2.overlay
+docs/ARCHITECTURE.md:158      GECE/log/V5-B2.corset/                                TICK    VAR  GECE/log/V5-B2.corset
+docs/ARCHITECTURE.md:158      GECE/V5-B.md                                          TICK    VAR  GECE/V5-B.md
+docs/ARCHITECTURE.md:160      engine/pattern-bridge/seamrules.py:33-35              TICK    VAR  engine/pattern-bridge/seamrules.py
+docs/ARCHITECTURE.md:160      GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/ARCHITECTURE.md:174      engine/tools/spec-diff.mjs                            TICK    VAR  engine/tools/spec-diff.mjs
+docs/ARCHITECTURE.md:174      contract/edit-locality-v1.json                        TICK    VAR  contract/edit-locality-v1.json
+docs/ARCHITECTURE.md:174      engine/tests/edit_locality_check.mjs                  TICK    VAR  engine/tests/edit_locality_check.mjs
+docs/ARCHITECTURE.md:174      engine/CMakeLists.txt                                 TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:174      spec-diff.mjs:46-52                                   TICK    VAR  engine/tools/spec-diff.mjs
+docs/ARCHITECTURE.md:174      engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/ARCHITECTURE.md:174      engine/                                               TICK    VAR  engine
+docs/ARCHITECTURE.md:174      web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/ARCHITECTURE.md:174      GECE/V6-B.md                                          TICK    VAR  GECE/V6-B.md
+docs/ARCHITECTURE.md:174      surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:176      GECE/log/V6-B.mutasyon.txt                            TICK    VAR  GECE/log/V6-B.mutasyon.txt
+docs/ARCHITECTURE.md:182      spec-diff.mjs                                         TICK    VAR  engine/tools/spec-diff.mjs
+docs/ARCHITECTURE.md:184      GECE/log/V6-E.mutasyon.txt                            TICK    VAR  GECE/log/V6-E.mutasyon.txt
+docs/ARCHITECTURE.md:184      GECE/KAPI.md                                          TICK    VAR  GECE/KAPI.md
+docs/ARCHITECTURE.md:188      GECE/V6-C.md                                          TICK    VAR  GECE/V6-C.md
+docs/ARCHITECTURE.md:188      contract/primitives-v1.json                           TICK    VAR  contract/primitives-v1.json
+docs/ARCHITECTURE.md:190      research/v6-cipa-editleme                             TICK    YOK  
+docs/ARCHITECTURE.md:190      GECE/V6-J.md                                          TICK    VAR  GECE/V6-J.md
+docs/ARCHITECTURE.md:190      DAMLA-KUYRUK.md                                       TICK    VAR  DAMLA-KUYRUK.md
+docs/ARCHITECTURE.md:192      live-baseline-oldprompt.json                          TICK    VAR  vision/eval/live-baseline-oldprompt.json
+docs/ARCHITECTURE.md:201      contract/edit-locality-v1.json                        TICK    VAR  contract/edit-locality-v1.json
+docs/ARCHITECTURE.md:201      contract/generated-paths.sha256                       TICK    VAR  contract/generated-paths.sha256
+docs/ARCHITECTURE.md:201      engine/dist/                                          TICK    VAR  engine/dist
+docs/ARCHITECTURE.md:201      engine/.gitignore:5                                   TICK    VAR  engine/.gitignore
+docs/ARCHITECTURE.md:207      GECE/V7-A.md                                          TICK    VAR  GECE/V7-A.md
+docs/ARCHITECTURE.md:207      validator.cpp:280-286                                 TICK    VAR  engine/src/validator.cpp
+docs/ARCHITECTURE.md:207      bodice.cpp:509                                        TICK    VAR  engine/src/bodice.cpp
+docs/ARCHITECTURE.md:207      sleeve.cpp:46-96                                      TICK    VAR  engine/src/sleeve.cpp
+docs/ARCHITECTURE.md:209      engine/src/geometry.hpp:40-71                         TICK    VAR  engine/src/geometry.hpp
+docs/ARCHITECTURE.md:209      GECE/V7-C.md                                          TICK    VAR  GECE/V7-C.md
+docs/ARCHITECTURE.md:209      bodice.cpp                                            TICK    VAR  engine/src/bodice.cpp
+docs/ARCHITECTURE.md:209      sleeve.cpp                                            TICK    VAR  engine/src/sleeve.cpp
+docs/ARCHITECTURE.md:209      engine/wasm/bindings.cpp:283-301                      TICK    VAR  engine/wasm/bindings.cpp
+docs/ARCHITECTURE.md:211      geometry.cpp:190-231                                  TICK    VAR  engine/src/geometry.cpp
+docs/ARCHITECTURE.md:211      geometry.cpp:233-262                                  TICK    VAR  engine/src/geometry.cpp
+docs/ARCHITECTURE.md:211      garment.cpp:1077-1085                                 TICK    VAR  engine/src/garment.cpp
+docs/ARCHITECTURE.md:211      GECE/V7-D.md                                          TICK    VAR  GECE/V7-D.md
+docs/ARCHITECTURE.md:213      engine/tests/sleeve_cap_ease_check.mjs                TICK    VAR  engine/tests/sleeve_cap_ease_check.mjs
+docs/ARCHITECTURE.md:213      engine/CMakeLists.txt:143-151                         TICK    VAR  engine/CMakeLists.txt
+docs/ARCHITECTURE.md:213      web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/ARCHITECTURE.md:213      GECE/V7-R.md                                          TICK    VAR  GECE/V7-R.md
+docs/ARCHITECTURE.md:213      GECE/log/V7-D.bostest.txt                             TICK    VAR  GECE/log/V7-D.bostest.txt
+docs/ARCHITECTURE.md:213      GECE/log/V7-D.mutasyon.txt                            TICK    VAR  GECE/log/V7-D.mutasyon.txt
+docs/ARCHITECTURE.md:215      validator.cpp:333-352                                 TICK    VAR  engine/src/validator.cpp
+docs/ARCHITECTURE.md:217      GECE/V7-H.md                                          TICK    VAR  GECE/V7-H.md
+docs/ARCHITECTURE.md:217      validator.cpp:419                                     TICK    VAR  engine/src/validator.cpp
+docs/ARCHITECTURE.md:217      GECE/log/V7-H.fmt.txt                                 TICK    VAR  GECE/log/V7-H.fmt.txt
+docs/ARCHITECTURE.md:219      contract/garment-spec-v2.json                         TICK    VAR  contract/garment-spec-v2.json
+docs/ARCHITECTURE.md:219      surfacepattern.hpp                                    TICK    VAR  engine/src/surfacepattern.hpp
+docs/ARCHITECTURE.md:219      garment.cpp:303                                       TICK    VAR  engine/src/garment.cpp
+docs/ARCHITECTURE.md:219      GECE/V7-F.md                                          TICK    VAR  GECE/V7-F.md
+docs/ARCHITECTURE.md:219      GECE/log/V7-E.png/                                    TICK    VAR  GECE/log/V7-E.png
+docs/ARCHITECTURE.md:219      engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/ARCHITECTURE.md:219      web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/ARCHITECTURE.md:219      GECE/V7-E.md                                          TICK    VAR  GECE/V7-E.md
+docs/ARCHITECTURE.md:228      engine/tools/recipe-json-dump.cpp                     TICK    VAR  engine/tools/recipe-json-dump.cpp
+docs/ARCHITECTURE.md:228      gather.cpp                                            TICK    VAR  engine/src/gather.cpp
+docs/ARCHITECTURE.md:228      shoulder.cpp                                          TICK    VAR  engine/src/shoulder.cpp
+docs/ARCHITECTURE.md:228      offshoulder.cpp                                       TICK    VAR  engine/src/offshoulder.cpp
+docs/ARCHITECTURE.md:228      yoke.cpp                                              TICK    VAR  engine/src/yoke.cpp
+docs/ARCHITECTURE.md:228      GECE/V7-D.md                                          TICK    VAR  GECE/V7-D.md
+docs/ARCHITECTURE.md:236      knowledge/schema.sql                                  TICK    VAR  knowledge/schema.sql
+docs/ARCHITECTURE.md:242      FORMULAS.md                                           TICK    VAR  engine/FORMULAS.md
+docs/ARCHITECTURE.md:243      GECE/V0.md                                            TICK    VAR  GECE/V0.md
+docs/ARCHITECTURE.md:243      engine/GOLDEN-PIN.md                                  TICK    VAR  engine/GOLDEN-PIN.md
+docs/ARCHITECTURE.md:244      engine/src                                            TICK    VAR  engine/src
+docs/ARCHITECTURE.md:244      PLAN.md                                               TICK    YOK  
+docs/ARCHITECTURE.md:249      engine/SPECS-next-vocabulary.md                       TICK    YOK  
+docs/ARCHITECTURE.md:255      engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/ARCHITECTURE.md:255      contract/flat-convention-v1.json                      TICK    VAR  contract/flat-convention-v1.json
+docs/ARCHITECTURE.md:255      engine/flat-engine/_engine-full.mjs                   TICK    VAR  engine/flat-engine/_engine-full.mjs
+docs/ARCHITECTURE.md:255      GECE/V4-D.md                                          TICK    VAR  GECE/V4-D.md
+docs/ARCHITECTURE.md:256      engine/tests/notch_alignment_check.cpp                TICK    VAR  engine/tests/notch_alignment_check.cpp
+docs/ARCHITECTURE.md:256      engine/src/wearability.hpp                            TICK    VAR  engine/src/wearability.hpp
+docs/ARCHITECTURE.md:256      engine/src/drape.hpp:12                               TICK    VAR  engine/src/drape.hpp
+docs/ARCHITECTURE.md:257      engine/build-wasm.sh                                  TICK    VAR  engine/build-wasm.sh
+docs/ARCHITECTURE.md:257      .cpp                                                  TICK    YOK  
+docs/ARCHITECTURE.md:257      surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/ARCHITECTURE.md:257      flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+docs/ARCHITECTURE.md:257      curvefit.cpp                                          TICK    VAR  engine/src/curvefit.cpp
+docs/ARCHITECTURE.md:257      shellprojection.cpp                                   TICK    VAR  engine/src/shellprojection.cpp
+docs/ARCHITECTURE.md:257      bodysurface.cpp                                       TICK    VAR  engine/src/bodysurface.cpp
+docs/ARCHITECTURE.md:257      garmentshell.cpp                                      TICK    VAR  engine/src/garmentshell.cpp
+docs/ARCHITECTURE.md:257      engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+docs/ARCHITECTURE.md:257      GECE/V5-Z.md                                          TICK    VAR  GECE/V5-Z.md
+docs/ARCHITECTURE.md:258      engine/tests/v5-ratchet-baseline.json                 TICK    VAR  engine/tests/v5-ratchet-baseline.json
+docs/ARCHITECTURE.md:260      GECE/V5-D.md                                          TICK    VAR  GECE/V5-D.md
+docs/ARCHITECTURE.md:260      contract/tables.json                                  TICK    VAR  contract/tables.json
+docs/ARCHITECTURE.md:260      GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/ARCHITECTURE.md:261      contract/primitives-v1.json                           TICK    VAR  contract/primitives-v1.json
+docs/ARCHITECTURE.md:261      research/v6-cipa-editleme                             TICK    YOK  
+docs/ARCHITECTURE.md:261      DAMLA-KUYRUK.md                                       TICK    VAR  DAMLA-KUYRUK.md
+docs/ARCHITECTURE.md:262      contract/edit-locality-v1.json                        TICK    VAR  contract/edit-locality-v1.json
+docs/ARCHITECTURE.md:262      contract/generated-paths.sha256                       TICK    VAR  contract/generated-paths.sha256
+docs/ARCHITECTURE.md:263      engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/G5-OMUZ-PLANI.md:9       engine/tools/pattern-measure.mjs                      TICK    VAR  engine/tools/pattern-measure.mjs
+docs/G5-OMUZ-PLANI.md:12      GECE/V3-D.md                                          TICK    VAR  GECE/V3-D.md
+docs/G5-OMUZ-PLANI.md:14      engine/src/surfacepattern.hpp                         TICK    VAR  engine/src/surfacepattern.hpp
+docs/G5-OMUZ-PLANI.md:21      GECE/log/F-E.bugra-olcum.txt                          TICK    VAR  GECE/log/F-E.bugra-olcum.txt
+docs/G5-OMUZ-PLANI.md:29      GECE/V4-A.md                                          TICK    VAR  GECE/V4-A.md
+docs/G5-OMUZ-PLANI.md:49      knowledge/drafting-math-eu38.md                       TICK    VAR  knowledge/drafting-math-eu38.md
+docs/G5-OMUZ-PLANI.md:51      knowledge/armscye-on-arka-2026-08-17.md               TICK    VAR  knowledge/armscye-on-arka-2026-08-17.md
+docs/G5-OMUZ-PLANI.md:52      knowledge/                                            TICK    VAR  knowledge
+docs/G5-OMUZ-PLANI.md:61      engine/pattern-bridge/seamrules.py:33-35              TICK    VAR  engine/pattern-bridge/seamrules.py
+docs/G5-OMUZ-PLANI.md:67      GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/G5-OMUZ-PLANI.md:68      engine/src/surfacepattern.cpp:19                      TICK    VAR  engine/src/surfacepattern.cpp
+docs/G5-OMUZ-PLANI.md:69      engine/src/validator.hpp:23                           TICK    VAR  engine/src/validator.hpp
+docs/G5-OMUZ-PLANI.md:82      knowledge/armscye-on-arka-2026-08-17.md               TICK    VAR  knowledge/armscye-on-arka-2026-08-17.md
+docs/G5-OMUZ-PLANI.md:94      GECE/log/V5-B2.overlay/                               TICK    VAR  GECE/log/V5-B2.overlay
+docs/G5-OMUZ-PLANI.md:94      GECE/log/V5-B2.corset/                                TICK    VAR  GECE/log/V5-B2.corset
+docs/G5-OMUZ-PLANI.md:94      GECE/V5-B.md                                          TICK    VAR  GECE/V5-B.md
+docs/H1.0-KAPI.md:6           knowledge/drafting-math-eu38.md:38                    TICK    VAR  knowledge/drafting-math-eu38.md
+docs/H1.0-KAPI.md:8           engine/tests/garment_armhole_check.cpp                TICK    VAR  engine/tests/garment_armhole_check.cpp
+docs/H1.0-KAPI.md:10          h10_gate_check_LEGACY.cpp                             TICK    VAR  engine/tests/h10_gate_check_LEGACY.cpp
+docs/H1.0-KAPI.md:11          engine/src                                            TICK    VAR  engine/src
+docs/H1.0-KAPI.md:15          HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/H1.0-KAPI.md:17          HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/H1.0-KAPI.md:20          engine/tests/h10_gate_check.cpp                       TICK    YOK  
+docs/H1.0-KAPI.md:32          patterns_real/geometry/geometry-full.json             TICK    VAR  patterns_real/geometry/geometry-full.json
+docs/H1.0-KAPI.md:32          seamgraph.json                                        TICK    VAR  patterns_real/geometry/seamgraph.json
+docs/H1.0-KAPI.md:33          knowledge/drafting-math-eu38.md                       TICK    VAR  knowledge/drafting-math-eu38.md
+docs/H1.0-KAPI.md:33          knowledge/yaka-kolsuz-armhole-2026-08-16.md           TICK    VAR  knowledge/yaka-kolsuz-armhole-2026-08-16.md
+docs/H1.0-KAPI.md:56          CLAUDE.md                                             TICK    VAR  CLAUDE.md
+docs/H1.0-KAPI.md:100         CLAUDE.md                                             TICK    VAR  CLAUDE.md
+docs/H1.0-KAPI.md:117         knowledge/yaka-kolsuz-armhole-2026-08-16.md           TICK    VAR  knowledge/yaka-kolsuz-armhole-2026-08-16.md
+docs/H1.0-KAPI.md:129         engine/src/surfacepattern.hpp                         TICK    VAR  engine/src/surfacepattern.hpp
+docs/H1.0-KAPI.md:131         surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/H1.0-KAPI.md:150         drape.cpp                                             TICK    VAR  engine/src/drape.cpp
+docs/H1.0-KAPI.md:158         knowledge/drafting-math-eu38.md                       TICK    VAR  knowledge/drafting-math-eu38.md
+docs/H1.0-KAPI.md:162         reports/2026-07-29-endustri-arastirmasi.md            TICK    YOK  
+docs/H1.0-KAPI.md:163         knowledge/                                            TICK    VAR  knowledge
+docs/H1.0-KAPI.md:164         knowledge/armscye-on-arka-2026-08-17.md               TICK    VAR  knowledge/armscye-on-arka-2026-08-17.md
+docs/H1.0-KAPI.md:196         flatten-research/18-armscye-front-back.py             TICK    VAR  flatten-research/18-armscye-front-back.py
+docs/H1.0-KAPI.md:235         walk.py                                               TICK    VAR  engine/pattern-bridge/walk.py
+docs/H1.0-KAPI.md:237         walk.py                                               TICK    VAR  engine/pattern-bridge/walk.py
+docs/H1.0-KAPI.md:262         engine/src/surfacepattern.cpp                         TICK    VAR  engine/src/surfacepattern.cpp
+docs/H1.0-KAPI.md:278         engine/src/contract.gen.hpp                           TICK    VAR  engine/src/contract.gen.hpp
+docs/H1.0-KAPI.md:288         shaperatios.gen.hpp                                   TICK    VAR  engine/src/shaperatios.gen.hpp
+docs/KATMAN-HARITASI.md:3     engine-check/harness/run-all.sh                       TICK    VAR  engine-check/harness/run-all.sh
+docs/KATMAN-HARITASI.md:4     scripts/katman-lint.py                                TICK    VAR  scripts/katman-lint.py
+docs/KATMAN-HARITASI.md:11    contract/figure-bands.json                            TICK    VAR  contract/figure-bands.json
+docs/KATMAN-HARITASI.md:11    engine/src/bodysurface.{cpp,hpp}                      TICK    VAR  engine/src/bodysurface.cpp
+docs/KATMAN-HARITASI.md:11    engine/pattern-bridge/bodies/mean_all.yaml            TICK    VAR  engine/pattern-bridge/bodies/mean_all.yaml
+docs/KATMAN-HARITASI.md:11    contract/layers/body.EU38.json                        TICK    VAR  contract/layers/body.EU38.json
+docs/KATMAN-HARITASI.md:12    engine/flat-engine/styles.json                        TICK    VAR  engine/flat-engine/styles.json
+docs/KATMAN-HARITASI.md:13    engine/src/garmentshell.{cpp,hpp}                     TICK    VAR  engine/src/garmentshell.cpp
+docs/KATMAN-HARITASI.md:13    drape.{cpp,hpp}                                       TICK    VAR  engine/src/drape.cpp
+docs/KATMAN-HARITASI.md:13    volume.hpp                                            TICK    VAR  engine/src/volume.hpp
+docs/KATMAN-HARITASI.md:14    engine/flat-engine/_engine-full.mjs                   TICK    VAR  engine/flat-engine/_engine-full.mjs
+docs/KATMAN-HARITASI.md:14    engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/KATMAN-HARITASI.md:14    contract/flat-convention-v1.json                      TICK    VAR  contract/flat-convention-v1.json
+docs/KATMAN-HARITASI.md:14    body.yaml                                             TICK    VAR  Logs/gradeset-2026-08-01/EU36/body.yaml
+docs/KATMAN-HARITASI.md:15    engine/src/shellprojection.{cpp,hpp}                  TICK    VAR  engine/src/shellprojection.cpp
+docs/KATMAN-HARITASI.md:15    engine/build/shell-flat                               TICK    VAR  engine/build/shell-flat
+docs/KATMAN-HARITASI.md:16    engine/src/bodice.cpp                                 TICK    VAR  engine/src/bodice.cpp
+docs/KATMAN-HARITASI.md:16    engine/pattern-bridge/mapping.py                      TICK    VAR  engine/pattern-bridge/mapping.py
+docs/KATMAN-HARITASI.md:16    surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/KATMAN-HARITASI.md:16    flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+docs/KATMAN-HARITASI.md:16    engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+docs/KATMAN-HARITASI.md:16    stitchu_specification.json                            TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/stitchu_specification.json
+docs/KATMAN-HARITASI.md:17    engine/pattern-bridge/walk.py                         TICK    VAR  engine/pattern-bridge/walk.py
+docs/KATMAN-HARITASI.md:17    printpack.py                                          TICK    VAR  engine/pattern-bridge/printpack.py
+docs/KATMAN-HARITASI.md:17    test_seamdeed.py                                      TICK    VAR  engine/pattern-bridge/test_seamdeed.py
+docs/KATMAN-HARITASI.md:21    mean_all.yaml                                         TICK    VAR  engine/pattern-bridge/bodies/mean_all.yaml
+docs/KATMAN-HARITASI.md:23    contract/layers/body.EU*.json                         TICK    VAR  contract/layers/body.EU38.json
+docs/KATMAN-HARITASI.md:24    mapping.py                                            TICK    VAR  engine/pattern-bridge/mapping.py
+docs/KATMAN-HARITASI.md:25    Logs/paket-2026-08-06                                 TICK    VAR  Logs/paket-2026-08-06
+docs/KATMAN-HARITASI.md:37    engine/tools/pattern-measure.mjs                      TICK    VAR  engine/tools/pattern-measure.mjs
+docs/KATMAN-HARITASI.md:42    GECE/V3-D.md                                          TICK    VAR  GECE/V3-D.md
+docs/KATMAN-HARITASI.md:45    contract/flat-convention-v1.json                      TICK    VAR  contract/flat-convention-v1.json
+docs/KATMAN-HARITASI.md:48    GECE/V4-D.md                                          TICK    VAR  GECE/V4-D.md
+docs/KATMAN-HARITASI.md:54    walk.py                                               TICK    VAR  engine/pattern-bridge/walk.py
+docs/KATMAN-HARITASI.md:54    printpack.py                                          TICK    VAR  engine/pattern-bridge/printpack.py
+docs/KATMAN-HARITASI.md:61    GECE/V5-A.md                                          TICK    VAR  GECE/V5-A.md
+docs/KATMAN-HARITASI.md:65    engine/src/geometry.hpp:40-71                         TICK    VAR  engine/src/geometry.hpp
+docs/KATMAN-HARITASI.md:71    contract/tables.json                                  TICK    VAR  contract/tables.json
+docs/KATMAN-HARITASI.md:74    GECE/V5-D.md                                          TICK    VAR  GECE/V5-D.md
+docs/KATMAN-HARITASI.md:80    web/                                                  TICK    VAR  web
+docs/KATMAN-HARITASI.md:82    web/js/create.js:730                                  TICK    VAR  web/js/create.js
+docs/KATMAN-HARITASI.md:83    engine/wasm/bindings.cpp:339                          TICK    VAR  engine/wasm/bindings.cpp
+docs/KATMAN-HARITASI.md:84    engine/src/garment.cpp                                TICK    VAR  engine/src/garment.cpp
+docs/KATMAN-HARITASI.md:87    engine/CMakeLists.txt:12-17                           TICK    VAR  engine/CMakeLists.txt
+docs/KATMAN-HARITASI.md:88    surfacepattern.cpp                                    TICK    VAR  engine/src/surfacepattern.cpp
+docs/KATMAN-HARITASI.md:88    flatten.cpp                                           TICK    VAR  engine/src/flatten.cpp
+docs/KATMAN-HARITASI.md:96    engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/KATMAN-HARITASI.md:96    web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/KATMAN-HARITASI.md:99    GECE/V7-F.md                                          TICK    VAR  GECE/V7-F.md
+docs/KATMAN-HARITASI.md:102   engine/tools/spec-diff.mjs                            TICK    VAR  engine/tools/spec-diff.mjs
+docs/KATMAN-HARITASI.md:103   contract/edit-locality-v1.json                        TICK    VAR  contract/edit-locality-v1.json
+docs/KATMAN-HARITASI.md:105   engine/dist/stitchu-engine.js                         TICK    VAR  engine/dist/stitchu-engine.js
+docs/KATMAN-HARITASI.md:106   web/vendor/stitchu-engine.js                          TICK    VAR  web/vendor/stitchu-engine.js
+docs/KATMAN-HARITASI.md:110   contract/primitives-v1.json:primitifler.edge.parametreler.label  TICK    YOK  
+docs/KATMAN-HARITASI.md:119   research/v6-cipa-editleme                             TICK    YOK  
+docs/KATMAN-HARITASI.md:119   DAMLA-KUYRUK.md                                       TICK    VAR  DAMLA-KUYRUK.md
+docs/KATMAN-HARITASI.md:120   contract/edit-locality-v1.json                        TICK    VAR  contract/edit-locality-v1.json
+docs/KATMAN-HARITASI.md:121   contract/generated-paths.sha256                       TICK    VAR  contract/generated-paths.sha256
+docs/KATMAN-HARITASI.md:124   GECE/V6-B.md                                          TICK    VAR  GECE/V6-B.md
+docs/KATMAN-HARITASI.md:129   garment.cpp:1077-1085                                 TICK    VAR  engine/src/garment.cpp
+docs/KATMAN-HARITASI.md:135   GECE/V7-A.md                                          TICK    VAR  GECE/V7-A.md
+docs/KATMAN-HARITASI.md:135   GECE/V7-C.md                                          TICK    VAR  GECE/V7-C.md
+docs/KATMAN-HARITASI.md:135   GECE/V7-D.md                                          TICK    VAR  GECE/V7-D.md
+docs/KATMAN-HARITASI.md:136   validator.cpp:333-352                                 TICK    VAR  engine/src/validator.cpp
+docs/KATMAN-HARITASI.md:144   gather.cpp                                            TICK    VAR  engine/src/gather.cpp
+docs/KATMAN-HARITASI.md:144   shoulder.cpp                                          TICK    VAR  engine/src/shoulder.cpp
+docs/KATMAN-HARITASI.md:144   offshoulder.cpp                                       TICK    VAR  engine/src/offshoulder.cpp
+docs/KATMAN-HARITASI.md:144   yoke.cpp                                              TICK    VAR  engine/src/yoke.cpp
+docs/SATIS-SARTNAMESI.md:14   print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:15   print-a0.pdf                                          TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-a0.pdf
+docs/SATIS-SARTNAMESI.md:15   print-a4.pdf                                          TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-a4.pdf
+docs/SATIS-SARTNAMESI.md:15   print-report.txt                                      TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-report.txt
+docs/SATIS-SARTNAMESI.md:17   print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:26   HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/SATIS-SARTNAMESI.md:27   Logs/taban-T10-SONRA/pack-EU38/print-report.txt       TICK    VAR  Logs/taban-T10-SONRA/pack-EU38/print-report.txt
+docs/SATIS-SARTNAMESI.md:29   benchmark-58/dress_patterns/                          TICK    YOK  
+docs/SATIS-SARTNAMESI.md:29   reports/2026-07-19-stitchu-f0-gusto-korpus.md         TICK    YOK  
+docs/SATIS-SARTNAMESI.md:37   engine/build/surface-pattern                          TICK    VAR  engine/build/surface-pattern
+docs/SATIS-SARTNAMESI.md:37   printpack.py                                          TICK    VAR  engine/pattern-bridge/printpack.py
+docs/SATIS-SARTNAMESI.md:39   engine/flat-engine/                                   TICK    VAR  engine/flat-engine
+docs/SATIS-SARTNAMESI.md:40   HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/SATIS-SARTNAMESI.md:49   GECE/V3-A.md                                          TICK    VAR  GECE/V3-A.md
+docs/SATIS-SARTNAMESI.md:49   docs/ARCHITECTURE.md                                  TICK    VAR  docs/ARCHITECTURE.md
+docs/SATIS-SARTNAMESI.md:52   web/                                                  TICK    VAR  web
+docs/SATIS-SARTNAMESI.md:57   GECE/V4-K.md                                          TICK    VAR  GECE/V4-K.md
+docs/SATIS-SARTNAMESI.md:60   web/                                                  TICK    VAR  web
+docs/SATIS-SARTNAMESI.md:68   engine/tools/render-garment-flat.mjs                  TICK    VAR  engine/tools/render-garment-flat.mjs
+docs/SATIS-SARTNAMESI.md:71   GECE/V4-K.md                                          TICK    VAR  GECE/V4-K.md
+docs/SATIS-SARTNAMESI.md:73   web/                                                  TICK    VAR  web
+docs/SATIS-SARTNAMESI.md:76   GECE/V4-D.md                                          TICK    VAR  GECE/V4-D.md
+docs/SATIS-SARTNAMESI.md:85   engine/flat-engine/styles.json                        TICK    VAR  engine/flat-engine/styles.json
+docs/SATIS-SARTNAMESI.md:88   GECE/log/V1-E.mutasyon.txt                            TICK    VAR  GECE/log/V1-E.mutasyon.txt
+docs/SATIS-SARTNAMESI.md:88   engine/STYLE-PIN/                                     TICK    YOK  
+docs/SATIS-SARTNAMESI.md:91   scripts/repin-style.sh                                TICK    VAR  scripts/repin-style.sh
+docs/SATIS-SARTNAMESI.md:104  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:110  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:115  CLAUDE.md                                             TICK    VAR  CLAUDE.md
+docs/SATIS-SARTNAMESI.md:120  print-a4.pdf                                          TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-a4.pdf
+docs/SATIS-SARTNAMESI.md:121  print-a0.pdf                                          TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-a0.pdf
+docs/SATIS-SARTNAMESI.md:125  contract/gusto-corpus.json                            TICK    VAR  contract/gusto-corpus.json
+docs/SATIS-SARTNAMESI.md:143  print-report.txt                                      TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-report.txt
+docs/SATIS-SARTNAMESI.md:148  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:152  Logs/paket-2026-08-06                                 TICK    VAR  Logs/paket-2026-08-06
+docs/SATIS-SARTNAMESI.md:161  printpack.py:1063-1077                                TICK    VAR  engine/pattern-bridge/printpack.py
+docs/SATIS-SARTNAMESI.md:171  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:196  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:207  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:207  printpack.py                                          TICK    VAR  engine/pattern-bridge/printpack.py
+docs/SATIS-SARTNAMESI.md:208  web/                                                  TICK    VAR  web
+docs/SATIS-SARTNAMESI.md:213  GECE/V5-A.md                                          TICK    VAR  GECE/V5-A.md
+docs/SATIS-SARTNAMESI.md:214  printpack.py                                          TICK    VAR  engine/pattern-bridge/printpack.py
+docs/SATIS-SARTNAMESI.md:221  docs/ARCHITECTURE.md                                  TICK    VAR  docs/ARCHITECTURE.md
+docs/SATIS-SARTNAMESI.md:223  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:223  print-a4.pdf                                          TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-a4.pdf
+docs/SATIS-SARTNAMESI.md:226  print-svg/a4-page5.svg                                TICK    YOK  
+docs/SATIS-SARTNAMESI.md:227  printpack.py:1075                                     TICK    VAR  engine/pattern-bridge/printpack.py
+docs/SATIS-SARTNAMESI.md:235  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:240  print-svg/a4-page5.svg                                TICK    YOK  
+docs/SATIS-SARTNAMESI.md:252  engine/src/wearability.hpp:68,75,80                   TICK    VAR  engine/src/wearability.hpp
+docs/SATIS-SARTNAMESI.md:256  GECE/V5-R.md                                          TICK    VAR  GECE/V5-R.md
+docs/SATIS-SARTNAMESI.md:277  benchmark-58/                                         TICK    YOK  
+docs/SATIS-SARTNAMESI.md:280  benchmark-58/dress_patterns/A1Plainbustierdress.pdf   TICK    YOK  
+docs/SATIS-SARTNAMESI.md:281  benchmark-58/dress_patterns/BustierdresMixte.pdf      TICK    YOK  
+docs/SATIS-SARTNAMESI.md:282  benchmark-58/bugra-ref/                               TICK    YOK  
+docs/SATIS-SARTNAMESI.md:282  HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/SATIS-SARTNAMESI.md:284  patterns_real/                                        TICK    VAR  patterns_real
+docs/SATIS-SARTNAMESI.md:285  patterns_real/geometry/geometry-full.json             TICK    VAR  patterns_real/geometry/geometry-full.json
+docs/SATIS-SARTNAMESI.md:286  patterns_real/                                        TICK    VAR  patterns_real
+docs/SATIS-SARTNAMESI.md:289  contract/gusto-corpus.json                            TICK    VAR  contract/gusto-corpus.json
+docs/SATIS-SARTNAMESI.md:301  HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/SATIS-SARTNAMESI.md:306  knowledge/sewing-guide.md                             TICK    VAR  knowledge/sewing-guide.md
+docs/SATIS-SARTNAMESI.md:306  print-info.pdf                                        TICK    VAR  Logs/taban-F0-TAM/packs/pack-EU34/print-info.pdf
+docs/SATIS-SARTNAMESI.md:313  DAMLA-KUYRUK.md                                       TICK    VAR  DAMLA-KUYRUK.md
+docs/SATIS-SARTNAMESI.md:316  print-a1.pdf                                          TICK    YOK  
+docs/SATIS-SARTNAMESI.md:319  HEDEF.md                                              TICK    VAR  HEDEF.md
+docs/SATIS-SARTNAMESI.md:320  engine/STYLE-PIN/                                     TICK    YOK  
+
+--- SCOPE: 49 files under docs/** + README.md; 18 prose files scanned, 31 skipped ---
+    SKIPPED  docs/archive/asset-guide/asset-guide.pdf  (binary/data)
+    SKIPPED  docs/archive/flat-engine/courtney-flat.png  (binary/data)
+    SKIPPED  docs/archive/flat-engine/courtney-flat.svg  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/buttons/b1.png  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/buttons/b2.png  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/buttons/b3.png  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/buttons/b6.png  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/buttons/b7.png  (binary/data)
+    SKIPPED  docs/archive/mocks/assets/rb.png  (binary/data)
+    SKIPPED  docs/archive/tools/_render-smocked-babydoll.mjs  (code)
+    SKIPPED  docs/archive/tools/flat-v2-babydoll.svg  (binary/data)
+    SKIPPED  docs/archive/tools/flat-v2-babydoll.svg.png  (binary/data)
+    SKIPPED  docs/archive/tools/flat-v2-out.svg  (binary/data)
+    SKIPPED  docs/archive/tools/flat-v2-out.svg.png  (binary/data)
+    SKIPPED  docs/archive/tools/flat-v2.mjs  (code)
+    SKIPPED  docs/archive/tools/halter-proof.js  (code)
+    SKIPPED  docs/archive/tools/halter-proof.svg  (binary/data)
+    SKIPPED  docs/archive/tools/keyhole-proof.js  (code)
+    SKIPPED  docs/archive/tools/keyhole-proof.svg  (binary/data)
+    SKIPPED  docs/archive/tools/print-repro.js  (code)
+    SKIPPED  docs/archive/tools/render-garment-from-pieces.mjs  (code)
+    SKIPPED  docs/archive/tools/ruffle-proof.js  (code)
+    SKIPPED  docs/archive/tools/ruffle-proof.svg  (binary/data)
+    SKIPPED  docs/archive/tools/sweetheart-proof.js  (code)
+    SKIPPED  docs/archive/tools/sweetheart-proof.svg  (binary/data)
+    SKIPPED  docs/archive/tools/tiered-ruffle-proof.js  (code)
+    SKIPPED  docs/archive/tools/tiered-ruffle-proof.svg  (binary/data)
+    SKIPPED  docs/edit/base-eu38-dress.json  (binary/data)
+    SKIPPED  docs/edit/diff-yakayi-degistir.json  (binary/data)
+    SKIPPED  docs/edit/once.png  (binary/data)
+    SKIPPED  docs/edit/sonra.png  (binary/data)
+--- REFS: 502 checked · VAR 468 · YOK 34 ---
+--- DEAD by kind: MDLINK 0 · TICK 34 ---
+--- DEAD LIST ---
+    README.md:20                  stitchu.techpack/1  [TICK]
+    README.md:28                  .cpp  [TICK]
+    README.md:36                  docs/RECETE-SPEC.md  [TICK]
+    README.md:76                  src/dxf  [TICK]
+    README.md:76                  src/nest  [TICK]
+    README.md:76                  src/recipe  [TICK]
+    README.md:76                  tools/tech-pack.cpp  [TICK]
+    README.md:78                  docs/RECETE-SPEC.md  [TICK]
+    docs/ARCHITECTURE.md:3        PROJECT.md  [TICK]
+    docs/ARCHITECTURE.md:3        PLAN.md  [TICK]
+    docs/ARCHITECTURE.md:24       tests/test_geometry.cpp  [TICK]
+    docs/ARCHITECTURE.md:41       tests/engine_check.cpp  [TICK]
+    docs/ARCHITECTURE.md:43       tools/precision-report.js  [TICK]
+    docs/ARCHITECTURE.md:44       tools/web-fuzz.js  [TICK]
+    docs/ARCHITECTURE.md:190      research/v6-cipa-editleme  [TICK]
+    docs/ARCHITECTURE.md:244      PLAN.md  [TICK]
+    docs/ARCHITECTURE.md:249      engine/SPECS-next-vocabulary.md  [TICK]
+    docs/ARCHITECTURE.md:257      .cpp  [TICK]
+    docs/ARCHITECTURE.md:261      research/v6-cipa-editleme  [TICK]
+    docs/H1.0-KAPI.md:20          engine/tests/h10_gate_check.cpp  [TICK]
+    docs/H1.0-KAPI.md:162         reports/2026-07-29-endustri-arastirmasi.md  [TICK]
+    docs/KATMAN-HARITASI.md:110   contract/primitives-v1.json:primitifler.edge.parametreler.label  [TICK]
+    docs/KATMAN-HARITASI.md:119   research/v6-cipa-editleme  [TICK]
+    docs/SATIS-SARTNAMESI.md:29   benchmark-58/dress_patterns/  [TICK]
+    docs/SATIS-SARTNAMESI.md:29   reports/2026-07-19-stitchu-f0-gusto-korpus.md  [TICK]
+    docs/SATIS-SARTNAMESI.md:88   engine/STYLE-PIN/  [TICK]
+    docs/SATIS-SARTNAMESI.md:226  print-svg/a4-page5.svg  [TICK]
+    docs/SATIS-SARTNAMESI.md:240  print-svg/a4-page5.svg  [TICK]
+    docs/SATIS-SARTNAMESI.md:277  benchmark-58/  [TICK]
+    docs/SATIS-SARTNAMESI.md:280  benchmark-58/dress_patterns/A1Plainbustierdress.pdf  [TICK]
+    docs/SATIS-SARTNAMESI.md:281  benchmark-58/dress_patterns/BustierdresMixte.pdf  [TICK]
+    docs/SATIS-SARTNAMESI.md:282  benchmark-58/bugra-ref/  [TICK]
+    docs/SATIS-SARTNAMESI.md:316  print-a1.pdf  [TICK]
+    docs/SATIS-SARTNAMESI.md:320  engine/STYLE-PIN/  [TICK]
