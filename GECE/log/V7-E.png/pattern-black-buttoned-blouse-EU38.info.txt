@@ -1,0 +1,6 @@
+garment: hip straight-sleeve top
+pieces: 6 (Top Center Front | Top Side Front | Top Center Back | Top Side Back | Bias binding (neckline) | Sleeve)
+paper pieces: 5
+cols: 3  rows: 5  printed sheets: 14
+fabric: 1.9 m @140cm
+issues: []
