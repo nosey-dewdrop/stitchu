@@ -807,7 +807,14 @@ function showResult(result) {
   }
 }
 
-const EU_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48', 'EU50', 'EU52'];
+// The sizes the ENGINE publishes a shape ratio for, not the sizes the body
+// chart happens to list. Source: contract/layers/shape-ratios.json `sizes`
+// (8 labels, EU34..EU48). engine/src/shaperatios.gen.hpp:21 says it in the
+// engine's own words: "Sizes absent here (EU50/EU52) have no published ratio
+// and keep 0" — i.e. EU50/EU52 would enter the draft with bustBackFrac = 0
+// and shoulderWidthCM = 0. Offering them here would be offering a size the
+// engine cannot shape. If shape-ratios.json grows, this list grows with it.
+const EU_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48'];
 
 // A seller-facing panel under the result: pick a size range, generate the run,
 // print all sizes as one document. Honest states, errors say so, no fake run.
@@ -863,17 +870,34 @@ function gradePanel(result) {
     msg.textContent = t('create.grade.working');
     try {
       const graded = await grade(spec, from, to);
-      const sizes = (graded.sizes || []).filter((s) => !s.draft.issues.length);
+      const all = graded.sizes || [];
+      const sizes = all.filter((s) => !s.draft.issues.length);
+      // RULES invariant 1: a size the engine refuses is REFUSED BY NAME, never
+      // dropped in silence. Before this, only a count reached the user and the
+      // print stamp still carried the label they had picked.
+      const refused = all.filter((s) => s.draft.issues.length);
       if (!sizes.length) {
         msg.style.color = '#8f2038';
         msg.textContent = t('create.grade.none');
         go.disabled = false;
         return;
       }
-      const dropped = (graded.sizes || []).length - sizes.length;
-      msg.textContent = dropped
-        ? t('create.grade.done.some', { n: sizes.length, dropped })
+      msg.textContent = refused.length
+        ? t('create.grade.done.some', {
+            n: sizes.length,
+            names: refused.map((s) => s.size).join(', '),
+          })
         : t('create.grade.done', { n: sizes.length });
+      // And the reason, per size, under the message.
+      panel.querySelectorAll('.grade-refused').forEach((n) => n.remove());
+      for (const r of refused) {
+        const first = r.draft.issues[0];
+        const why = typeof first === 'string' ? first : (first && (first.message || first.code)) || '';
+        const line = el('p', 'grade-refused', t('create.grade.refused.detail', { size: r.size, issue: why }));
+        line.style.color = '#8f2038';
+        line.style.fontSize = '12px';
+        panel.appendChild(line);
+      }
       if (nestRadio.checked) printGradeNested(sizes, result.pattern.garment);
       else printGrade(sizes, result.pattern.garment);
     } catch (err) {
