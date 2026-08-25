@@ -894,3 +894,24 @@ add_test(NAME vocab_reference_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/vo
 # GECE/log/V9-B.mutasyon.txt.
 add_test(NAME docs_truth_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/docs_truth_check.mjs)
+
+# V10-B — landing_truth_check: SİTE DOĞRULUK KAPISI. docs_truth_check dokümanı
+# denetliyordu; ALICININ GÖRDÜĞÜ yüzeyi (`web/**`) hiçbir şey denetlemiyordu.
+# V10-A o yüzeyi ELLE ölçtü (985 iddia örneği: DOĞRU 54 · YALAN 298 · KANITSIZ
+# 633) ve sayılar bir markdown dosyasında durdu — yani kimsenin kıramayacağı
+# sayılardı. Bu kapı beş denetimi tek exit koduna bağlar:
+#   L1 sağlayıcısız sayı (ratchet)  · L2 yasak vaat + duran iddia (ratchet)
+#   L3 vizyon zamanı (data-vision="1" işareti) · L4 ölü link (site-health.mjs)
+#   L5 beden dürüstlüğü (contract/layers/shape-ratios.json `sizes`)
+# Sağlayıcı ad kümesi `add_test(NAME …)` ∪ `git ls-files engine/tools`'tan çıkar,
+# DİSKTEN değil (V9-B3 taşınabilirlik dersi); build dizini varsa `ctest -N` ile
+# karşılaştırılıp fark BASILIR. Kaçış grameri ADLANDIRILMIŞ ve SAYILABİLİR
+# (V10-R §4 / Vale scope dersi): `<style>`, `<script>`, html-yorumu, SVG `d=`
+# verisi ve JS yorumu kapsam dışıdır ve her koşuda SAYISI basılır.
+# Taban `engine/tests/landing-truth-baseline.json`, YALNIZ DÜŞEBİLİR; 0 DEĞİL ve
+# neden 0 olamadığı tabanın `_neden0Degil` alanında kart adıyla (V10-C) yazılı.
+# Kırmızı kanıtı GECE/log/V10-B.red-before.txt (EXIT 1), mutasyon kanıtı
+# GECE/log/V10-B.mutasyon.txt (beş denetimin BEŞİ de kırıldı ve geri döndü;
+# mutasyon `web/` DIŞINDA bir git worktree fikstüründe koştu — `--dir=`).
+add_test(NAME landing_truth_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/landing_truth_check.mjs)
