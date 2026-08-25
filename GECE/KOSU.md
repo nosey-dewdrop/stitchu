@@ -96,13 +96,13 @@ dosya **diskte VAR, izlenen ağaçta YOK, gitignore'da da YOK** (`2f748db`).
 - **238 iddia cümlesinin 214'ü tek tek YARGILANMADI** (süre). Kapı kalıp sayar,
   ANLAM yargılamaz — "her cümle doğru" DENMEDİ
 - Docs'un sayıları yeniden ÜRETİLMEDİ: `70,200` · `19,555` · `27 of 54` (alet
-  VAR, girdi `benchmark-58/manifest.json` telifli ve repoda YOK) · `86%`.
-  Hepsinin ALET ADI bağlandı, sayının o aletten çıktığı doğrulanmadı
-- `H1.0-KAPI.md` içinde **iki uzlaşmayan ön−arka dizisi**: §0 −13.50…−1.22mm
-  (`trace-match.py`) ↔ §2/G5 −13.83…−1.50mm (`18-armscye-front-back.py`).
-  **UZLAŞTIRILMADI** · `H1.0` §3 sayıları yeniden ÖLÇÜLEMEDİ (fikstür DISABLED)
-- `Logs/taban-T10-SONRA` ile mühür başlığı **aynı paket değil** (print-info
-  4 sayfa ↔ başlık 5 sayfa) → **"5 sayfa" diskten doğrulanamıyor**
+  VAR, girdi telifli ve repoda YOK) · `86%`. ALET ADI bağlandı, sayının o
+  aletten çıktığı doğrulanmadı
+- `H1.0-KAPI.md`'de **iki uzlaşmayan ön−arka dizisi**: §0 −13.50…−1.22mm
+  (`trace-match.py`) ↔ §2/G5 −13.83…−1.50mm (`18-armscye-front-back.py`),
+  **UZLAŞTIRILMADI** · §3 sayıları yeniden ÖLÇÜLEMEDİ (fikstür DISABLED) ·
+  `Logs/taban-T10-SONRA` ile mühür başlığı **aynı paket değil** (print-info
+  4 sayfa ↔ başlık 5) → **"5 sayfa" diskten doğrulanamıyor**
 - `stitchu-engine.js` **1 günde +44 052 bayt** (1 209 765→1 253 817), gitignore'da
 - `SATIS-SARTNAMESI.md:31` **`şartname-check` diye bir ctest YOK** · `ENV.md:10`
   `~/damla_projects_2026/reports/` diyor, o dizin **YOK** · `GECE/INDEX.md`
