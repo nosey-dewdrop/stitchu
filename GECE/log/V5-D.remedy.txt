@@ -1,3 +1,36 @@
+########################################################################
+### ⚠ UYARI — BU DOSYANIN "ADAY" BÖLÜMÜNÜN ARİTMETİĞİ YANLIŞ (2026-08-25)
+###
+### GEÇERSİZ SATIRLAR: aşağıdaki 15-22 arası "--- ADAY" bloğunun TAMAMI
+### (bust +1.0 / +1.5 / +2.0cm ve hip +3.5 / +4.0 / +4.5 / +5.0cm satırları).
+### Bu satırlar gövde girdisini kaydırmanın payı bandın içine taşıdığını
+### söylüyor; İKİ BAĞIMSIZ KOŞU bunu ÇÜRÜTTÜ:
+###   - "bust +1.5cm -> 65.80..98.80mm, HEPSİ bantta" -> bugün ölçülen
+###     50.80..83.80mm, TUTMUYOR. Fark tam 15.00mm = gövde girdisinin
+###     kendisi, çünkü pay = halka − gövde·10; gerçek kazanç yalnız 1.65mm.
+###   - "kalça +3.5..+5.0cm -> 8 bedende bantta" -> hakem hipCM +5cm
+###     koşturdu, hip_ease 17.2..23.2 yerine 18.2..24.2mm, 8/8 HÂLÂ BANT DIŞI.
+###     Pay ÇARPIMSAL: ease = 0.02 × hipMM.
+###   - Ölçülen duyarlılık 0–40cm aralığında SABİT:
+###     d(büst payı)/d(gövde) = 0.1100 · d(kalça payı)/d(gövde) = 0.0200.
+###   - Bandın alt sınırına varmak için gereken kaydırma: büst +13.5cm,
+###     kalça +168.0cm. Yani GÖVDE GİRDİSİNİ KAYDIRMAK BU KALEMLERİ ÇÖZEMEZ.
+###
+### AYAKTA KALAN TEK ADAY: engine/src/ içindeki payın CİNSİNİ çarpımsaldan
+### TOPLAMSALA çevirmek. Bedeli DOĞRULANMADI (uygulanıp ctest koşulmadı):
+### 8 bugün-yeşil kapı risk altında — sewability_check · api_wire_check ·
+### recipe_wasm_parity(+_dress) · dxf_wasm_parity(+_dress) ·
+### wasm_spec_honesty_check · bugra_bridge_check. Kaynak değişikliği DAMLA
+### kararıdır (K-V5A), ölçüm kartının işi değil.
+###
+### DÜZELTMESİ: kart GECE/KART/V5-I.md; işlendiği yer
+### engine/tests/v5-ratchet-baseline.json -> bantDisiKayit.{bust,hip}_ease
+### .olculmusCozumAdayi. Doğrulama: GECE/log/V5-I.dogrulama.txt.
+###
+### DOSYANIN GERİSİ SİLİNMEDİ: 4-13 arasındaki KÖK TEŞHİS tablosu ve 24-38
+### arasındaki KART DIŞI shoulder ölçümü GEÇERLİ ÖLÇÜM KAYDIDIR, öyle durur.
+########################################################################
+
 === ÖLÇÜLMÜŞ ÇÖZÜM ADAYI (v6 §4.7) — kırmızı iki kalem için
 koşan komut: node /tmp/remedy.mjs  (motor: web/vendor/stitchu-engine.js, spec = bugra-parity.mjs:63)
 
