@@ -9,7 +9,7 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 |---|---|---|
 | **0 — ISINMA** | disk + hedef koşusu tabanı | ✅ **BİTTİ** (şef koşturdu) |
 | **1 — AL DENE** | **F-İNDİR** → F0 → F2 | ✅ **KAPANDI** (F2 2. tur GEÇTİ, `F2-yesil`) |
-| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | ← **şimdi buradayız**: F3 ✅ **GEÇTİ** (`F3-yesil`), sıra **F5-A**, kart `GECE7/F5.md` |
+| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | ← **şimdi buradayız**: F3 ✅ (`F3-yesil`) · **F5-A ✅ GEÇTİ** (`F5A-yesil`), sıra **F5-B** (`op.suppress`), kart `GECE7/F5B.md`. **F5 SÜRÜYOR: 15 operatörün 1'i motorda** |
 | **3 — DERİNLİK** | F4 → F6 → F7 → F8 → F9 | bekliyor |
 
 **F1 Halka 0'a soğuruldu.** **F3B bu koşudan ÇIKARILDI**, H7 hedef koşusunda yok.
@@ -25,7 +25,31 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | F2 | ⛔ etiket YOK | 1 tur koştu, `54f2a0b`+`3c1835f` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; hüküm `GECE7/HAKEM-F2.md`, 2. tur kartı `GECE7/F2.md` sonunda |
 | **F2 (2. tur)** | **`F2-yesil`** ✅ | 1 tur koştu, `6210bc2` | 1 tur koştu | ✅ **GEÇTİ** — 6 kırmızı, cevap anahtarı İNSAN, n=10, yedek-5 hakem koşturdu; hüküm `GECE7/HAKEM-F2.md` (2. tur bölümü). **HALKA 1 KAPANDI.** |
 | **F3** | **`F3-yesil`** ✅ | 1 tur koştu, `76a4e24` | 1 tur koştu | ✅ **GEÇTİ** — tek nesne teslim, cevap anahtarı mühürlü; kart `GECE7/F3.md`, hüküm `GECE7/HAKEM-F3.md` |
-| **F5-A** | — | açılmadı | — | 🔜 kart `GECE7/F5.md` — **operatör alt-kartı** (`rotate`, K27). **F5 TEK KART DEĞİL: 6+ oturum** |
+| **F5-A** | **`F5A-yesil`** ✅ | 1 tur koştu, `6e3dd1f` | 1 tur koştu | ✅ **GEÇTİ** — `rotate` motorda + kapılı, `nodeId` siluetı hash'liyor (K24 kapandı), `expressability_check` doğdu; kart `GECE7/F5.md`, hüküm `GECE7/HAKEM-F5A.md` |
+| **F5-B** | — | açılmadı | — | 🔜 kart `GECE7/F5B.md` — **operatör alt-kartı** (`op.suppress`, K28/kuyruk). **F5 TEK KART DEĞİL: 6+ oturum** |
+
+## ✅ HAKEMİN HÜKMÜ — F5-A (`6e3dd1f`, etiket `F5A-yesil`)
+
+✅ **GEÇTİ** — ⚠ **yalnız ALT-KART F5-A, "F5 bitti" DEĞİL** (§3.12: 15 operatörün **1'i** motorda, 14'ü kuyrukta ve adlarıyla basılı); hakem kapıları **ayrı bir worktree'de `-DCMAKE_BUILD_TYPE=Release` ile SIFIRDAN derleyip** koşturdu: `ctest` **`95% tests passed, 6 tests failed out of 122`** (331.57 sn), altı ad tam olarak miras altı ve **YEDİNCİ KIRMIZI YOK** (`h10_gate_check` DISABLED kaldı, K18) · `vocab` **`HUKUM: YESIL` 10306**/10438 · `indir_check` **EXIT 0** · `hedef_kosu` **EXIT 0 `CIRCIR SAĞLAM`** · `pytest` **33 passed** · ⭐ `tek_nesne_check` **EXIT 0** (10 hüküm, +K5a/K5b/K5c) · ⭐ `rotate_check` **EXIT 0** (22 hüküm) · ⭐ `expressability_check` **EXIT 0**; **ajanın kendi bildirdiği İKİ ŞEY DE DOĞRU ÇIKTI** — (1) `engine/build` bayat nesne taşıyordu ve `garment_shell_check` temiz ağaçta **`Passed 0.72 sec`**, (2) sevk edilen `top/dart/woven` sınıfının **8/8 panelinde `pens: 0`** (hakem kendi ikilisinden okudu) → **K28**: K27'nin 1. dayanağı **düzeltildi**, `rotate` seçimi **değişmedi** çünkü hakemin **HM2**'si (`bodysurface.cpp`, ajanın açmadığı dosya) apeks derinliğini **289.1484→289.1527mm** oynattı = operatör **canlı `SeamPlan` panelini gerçekten kullanıyor**, düşen yalnız *"pens zaten orada"* varsayımı; **İŞ 0 YAPILMIŞ — hakem HM-F2'yi KENDİ tekrarladı:** `projectBack := projectFront` → ikili **`bc9ceda72237`→`a7b677c75d2f`**, düğüm **`0c1d52866882ce53`→`05cc559aa219ccdb`**, `tek_nesne_check` **EXIT 1 🔴**, geri alınınca ikili ve düğüm tabana dönüp **EXIT 0** → **K24 KAPANDI**; **F3'ün "6 kırmızı"sı ARTIK TEMİZ AĞAÇTA DOĞRULANDI → K32**: ilk tur 23 kırmızı verdi ve kökü **hiçbiri kod değildi** (17 `engine/dist/` gitignore + 7 `pattern-bridge/.venv` gitignore + 1 `patterns_real/geometry/` takipsiz), tohumlanınca **tam altı**; kapsam **17 dosya, hepsi kart içi** — taban `cf2af8c7…` **el değmemiş**, `vision/eval/` **tek bayt yok** (K19 mührü oynamamış), `KOSU-v7.md` **tek bayt yok** (K26), **`patterns_real/` PUSHLANMADI**, holdout `11`·`12`·`30`·`35` **harcanmadı**; cırcırın **on iki sayısının hiçbiri kötüleşmedi** (H10b **%40.0 kımıldamadı**, §0B tavanı harcanmadı, H6 istisnası kullanılmadı) ama ⚠ **H4 ve H5 de KIMILDAMADI** — ve bu **kartın kendi tarifidir**: H5'e *"payda büyümeden 0→0 kazanım DEĞİL"* denmişti ve ajan **kazanım yazmadı**, H4 *"F5'in tamamı"*na verilmişti ve ajan **"ÖLÇEMEDİM" yazıp uydurmadı** (§3.10); **F5-A'nın F5 hanesine yazdığı tek sayı H8-ifade'nin TABANIDIR → K31**; ⭐ ajanın hakeme bıraktığı 🔴 kalem karara bağlandı → **K29: kartın "çevre korunur" şartı YANLIŞTI** (belde duran pens kol oyuğundakinden uzun: 289.1484→206.8872/123.8691/107.9265mm), ajan **eşiği gevşetmedi, yanlış eşiği KURMADI ve hakeme getirdi** — bu turun en doğru davranışı, **emsal**; hakemin **beş mutasyonu, üçü ajanın hiç açmadığı dosyalardan** üç boşluk buldu, **hiçbiri bir iddiayı çürütmüyor**: 🚨 **HM1** (`surfacepattern.hpp`, `bodiceApexFrac 0.80→0.60`) `rotate-op` hâlâ **0.80** basıyor ve kapı **YEŞİL** → *"apeks = motorun ilan ettiği kesir"* künyesi **bağlı değil, kopyalanmış**; 🚨 **HM3** (`shellprojection.cpp`, `bust_circumference` artık **belin** çevresi) düğümü oynatıyor ama **iki kapı da YEŞİL** → **kimlik kapılı, DOĞRULUK KAPISIZ**, inen dosyada yanlış bir ölçü sessizce sevk ediliyor (ikisi de **K30**, F5-B'nin **İŞ 0**'ı); 🚨 **HM4/HM5** H8-ifade'nin **paydasının serbestçe daraltılabildiğini** ölçtü (**5/5 → 4/4** ve **5/5 → 4/5**, kapı YEŞİL) = betiğin kendi başlığının H8-SÖZLÜK için uyardığı §0B tuzağının bir üst katta tekrarı — **hakem kapattı** (§3.8 md.1): `expressability_check.mjs`'e **`TABAN_PAYDA` mührü** eklendi, HM4/HM5 artık **EXIT 1 🔴**, taban **EXIT 0**, ve mühür sonrası tam `ctest` yine **6 failed / 122** = **yedinci kırmızı doğmadı**; yan bulgular kayda geçti (**K33** `figure-lint.mjs` sembolik linkli checkout'ta **sessizce yeşil** — `import.meta.url` realpath'li, `argv[1]` ham, süitin tamamı atlanıp exit 0; **K34** sevk edilen wasm'ın `source-stamp`'i **kaynağın fonksiyonu değil** çünkü `find src wasm` **`engine/src/.rabadon/`**'u yakalıyor, kod baytları bit-aynı ama damga `12060bc08360bbb7` vs `ec4a6889fd4cb2eb`); tahmin 2–3 oturuma karşı **1 oturum**; ajan bayat `engine/build`'ı, **kendi kartının dayanağını zayıflatan** pens ölçümünü ve yanlış bir `git stash pop`'u **kendi yazdı** — hükmü bu **güçlendirdi** — **`F5A-yesil` atıldı ve pushlandı**, F5-B açıldı (kart `GECE7/F5B.md`, operatör **`op.suppress`**), gerekçe `GECE7/HAKEM-F5A.md`, kararlar **K28–K34**.
+
+### Taban — H8 İKİYE AYRILDI (K31, hakem işledi). `contract/hedef-kosu-taban.json` blob `cf2af8c7…` **DEĞİŞMEDİ**.
+
+| sayı | ÖNCE (F3 sonrası) | **SONRA (F5-A sonrası)** |
+|---|---|---|
+| **H8-sözlük** | **31** (26 oov + 5 alan) n=5 · **61** (51+10) n=10 | **31 (26+5) n=5** · **61 (51+10) n=10** — *değişmedi* |
+| **H8-ifade** | **YOK** (betik diskte yoktu) | **5 / 5** n=5, payda **ADLI ve MÜHÜRLÜ** |
+
+**CIRCIR SETİ (n=5)** — hakem kendi koşturdu, F5-A sonrası:
+
+| H1 | H2 | H3 | **H4** | **H5** | H10 | H10a | **H10b** | H10e | H10x | H11 |
+|----|----|----|----|----|-----|------|------|------|------|-----|
+| 5/5 | %95.2 (40/42) | 2 | **ÖLÇEMEDİM** | **0/5 çift** | %58.3 | %17.5 | **%40.0** | 3 | %0.8 | 4.0 ms |
+
+**HEDEF SETİ (n=10), cırcırsız, HARMANLANMADI:** H1 **10/10** · H2 %93.0 (66/71) · H3 2 · H5 0 · H8-sözlük **61** · H10 %64.4 · H10a %29.7 · H10b %33.1 · H10e 5 · H10x %1.7 · H11 3.3 ms.
+
+**H8-ifade kuyruğu (sıradaki operatörü bu sayı seçti):** `op.split` 4 giysi · **`op.suppress` 4 giysi** · `op.attach` 3 · `op.derive` 1 · `op.extend` 1 · `op.gather` 1 · `op.overlay` 1.
+
+---
 
 ## ✅ HAKEMİN HÜKMÜ — F3 (`76a4e24`, etiket `F3-yesil`)
 

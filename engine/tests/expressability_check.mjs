@@ -105,6 +105,34 @@ const GIYSILER = [
 ];
 
 // ---------------------------------------------------------------------------
+// ⭐ TABAN — MÜHÜRLÜ PAYDA. YALNIZ HAKEM DOKUNUR (§3.8 md.1). F5-A hakemi kurdu.
+//
+// NEDEN VAR: hakem F5-A turunda kendi mutasyonlarını koşturdu ve bu betiğin
+// PAYDASININ serbestçe daraltılabildiğini ölçtü — tam olarak bu betiğin kendi
+// başlığında H8-SÖZLÜK için uyardığı §0B tuzağının bir üst katta tekrarı:
+//
+//   HM4  paydadan `freesewing-bella` silinir   -> kapı YEŞİL, H8-İFADE 5/5 -> 4/4
+//   HM5  `stitchu-sheath-eu38` yalnız op.rotate istesin
+//                                              -> kapı YEŞİL, H8-İFADE 5/5 -> 4/5
+//
+// Yani H8-İFADE, motora TEK SATIR kod yazmadan düşürülebiliyordu. Ajan sayacın
+// PAY tarafını doğru korumuştu (`motorda_kapi` ↔ `add_test` kesişimi; ajanın
+// kendi mutasyonu M6 orayı kırmızı yakıyor) — korunmayan taraf PAYDAYDI.
+//
+// MÜHÜR İKİ YÖNLÜ: bir giysi adı paydadan silinemez, VE bir giysinin gereksinim
+// kümesi mühürlenen adların altına inemez. Payda BÜYÜYEBİLİR (yeni giysi, yeni
+// gereksinim) ama DARALAMAZ. Büyütmek bir cırcır kazanımı değildir; mührü
+// yalnız hakem büyütür.
+const TABAN_PAYDA = {
+  "bugra-locket-top": ["op.suppress", "op.rotate", "op.split", "op.attach",
+                       "op.derive", "op.overlay", "op.gather"],
+  "bugra-buttoned-corset-bustier": ["op.split", "op.rotate", "op.suppress", "op.attach"],
+  "stitchu-sheath-eu38": ["op.split", "op.suppress"],
+  "freesewing-bella": ["op.suppress", "op.rotate"],
+  "freesewing-aaron": ["op.split", "op.extend", "op.attach"],
+};
+
+// ---------------------------------------------------------------------------
 // MOTORDA GERÇEKTEN VAR OLAN OPERATÖRLER — İDDİA DEĞİL, İKİ KAYNAĞIN KESİŞİMİ.
 //
 // contract/primitives-v1.json her op için `motorda_kapi` taşıyor: o operatörün
@@ -147,6 +175,22 @@ for (const g of GIYSILER) {
   if (!Object.keys(g.gerektirir).length)
     fail(`${g.ad}: gereksinim listesi BOŞ. Hiçbir şey istemeyen bir giysi paydayı ` +
          `bedavaya şişirir.`);
+}
+
+// ⭐ MÜHÜR KAPISI (hakem, F5-A) — payda DARALAMAZ. HM4/HM5 buradan kırmızı yanar.
+const mevcut = new Map(GIYSILER.map((g) => [g.ad, new Set(Object.keys(g.gerektirir))]));
+for (const [ad, opsuz] of Object.entries(TABAN_PAYDA)) {
+  if (!mevcut.has(ad)) {
+    fail(`PAYDA DARALDI: mühürlü giysi "${ad}" listeden DÜŞMÜŞ. H8-ifade paydası ` +
+         `küçültülerek düşürülebilir ve bu §0B'nin reward-hacking maddesidir ` +
+         `(hakem mutasyonu HM4). Payda büyüyebilir, daralamaz — mühür hakemindir.`);
+    continue;
+  }
+  const dusen = opsuz.filter((o) => !mevcut.get(ad).has(o));
+  if (dusen.length)
+    fail(`PAYDA DARALDI: "${ad}" mühürlü gereksinimlerini kaybetmiş — ${dusen.join(", ")}. ` +
+         `Bir giysiyi daha az şey isteyecek şekilde yeniden yazmak, onu motora ` +
+         `dokunmadan "çevrilebilir" yapar (hakem mutasyonu HM5).`);
 }
 
 // ---------------------------------------------------------------------------

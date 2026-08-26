@@ -633,3 +633,217 @@ hanesine yazılacaksa **ölçülebilen çift sayısı önce/sonra yan yana** yaz
 **`expressability_check.mjs` DİSKTE YOK** — hakem ölçtü: `find` 0 dosya,
 `engine/CMakeLists.txt` **0 eşleşme**. §4A onu F5'in kapısı sayıyor; **o betik
 yazılmadan F5 kapanmaz.**
+
+---
+
+## K28 — K27'NİN 1. DAYANAĞI DÜZELTİLDİ; `rotate` SEÇİMİ **DEĞİŞMEDİ**
+
+**Ölçüm (hakem, temiz ağaçtaki ikiliden):** sevk edilen `top/dart/woven` sınıfının
+**sekiz panelinin sekizi de `pens: 0`.** `surfacepattern.cpp` kendi yorumunda
+zaten yazıyor: *"the torso derives NO waist darts at all"* — bastırma **panel
+dikişleriyle** taşınıyor.
+
+**K27 md.1 şöyle diyordu:** *"`rotate` pens transferidir, yani canlı dikiş planına
+karşı kanıtlanabilecek tek operatör odur... üçlünün ilki, sınıfın adında zaten
+duran `dart`'tır."* **O son cümle DÜŞTÜ:** `dart` bugün bir **ad**, bir geometri
+değil. Hakem bunu yumuşatmıyor.
+
+**Ama karar değişmiyor, ve sebebi bir sayı:** hakemin mutasyonu **HM2**
+(`kWaistToHipMM 205→215`, ajanın açmadığı dosya) `rotate-op`'un apeks derinliğini
+**289.1484 → 289.1527mm** oynattı. Yani `rotate` **canlı `SeamPlan`'ın gerçek
+`left_ftorso` panelini** kullanıyor: panel, apeks ve hedef kenarlar **gerçek**.
+Düşen şey *"pens zaten orada"* varsayımıydı, *"canlı plana karşı kanıtlanabilir"*
+değil. Transfer edilen pens bir **`op.suppress` fikstürüdür** ve kart bunu
+**gizlemeden** öyle bildiriyor.
+
+**Sonuç:** `rotate` **kanıtlı bir operatördür ama bugün ÜRÜNE DEĞMİYOR** — sevk
+edilen giysinin taşıyacağı bir pensi yok, ve operatör `draftJSON`/web hattına bağlı
+değil (borç md.37). **Bu bir F5-A kusuru değil, F5'in kalanının işidir**; alt-kart
+kapatmayı vaat etmedi ve kapattığını iddia etmedi (§3.12).
+
+⚠ **F5B'ye ve sonrasına bağlayıcı:** *"`rotate` çalışıyor"* cümlesi bundan sonra
+**tek başına** kurulmaz; yanında **`op.suppress` fikstürüyle** ibaresi durur, ta ki
+sevk edilen giysi kendi pensini üretene kadar.
+
+---
+
+## K29 — KARTIN "ÇEVRE KORUNUR" ŞARTI **YANLIŞTI**; KAPI TANIMI DÜZELTİLDİ
+
+F5-A kartını yazan **hakemdi** ve şart yanlıştı. Ajan onu gevşetmedi, **kurmadı** ve
+**hakeme getirdi** (§3.8 md.4) — bu turun en doğru davranışıdır ve emsal olarak
+kaydedilir.
+
+**Ölçüm:** eski pens iki bacağını (`Lold`) götürür, yenisi iki bacak (`Lnew`)
+getirir; belde duran bir göğüs pensi kol oyuğundakinden **uzundur**
+(289.1484 → 206.8872 / 123.8691 / 107.9265mm). **Çevre korunamaz, ve "korunur"
+demek YANLIŞ BİR KAPI olurdu.** Yanlış bir kapı, kapısızlıktan kötüdür.
+
+**Düzeltilen tanım (hakem, §3.8 md.1):** rijit hareketin koruduğu **üç** nicelik
+kapıdır — **ALAN · PENS AÇISI · TRUE BACAKLAR** (üçü de <1e-9 ölçüldü). Çevre bir
+**eşitlik** olarak değil bir **KİMLİK** olarak yargılanır:
+
+```
+cevre_sonra == cevre_once − 2·Lold + 2·Lnew     artık = 0.000000000 mm  (3/3 hedef)
+```
+
+Eşik **gevşetilmedi**; **yanlış eşik kurulmadı.** `rotate_check.mjs` bu tanımı
+uyguluyor ve hakem onu okuyup doğru buldu.
+
+---
+
+## K30 — İKİ YENİ BOŞLUK, İKİSİ DE **HAKEM MUTASYONUYLA** BULUNDU → F5B'nin İŞ 0'ı
+
+Üçü de ajanın **hiç açmadığı** dosyalardan koşuldu (§3.8 md.3).
+
+**(a) HM1 — KÜNYE BAĞLI DEĞİL.** `engine/tools/rotate-op.cpp:48`:
+`constexpr double kApexFracOfPanel = 0.80;  // SheathOptions::bodiceApexFrac`.
+Motordaki `bodiceApexFrac` **0.60'a çekildiğinde** `rotate-op` hâlâ **0.80** ve
+`apeks_derinlik_mm 289.1484` basıyor, **kapı yeşil**. Sayı bugün doğru; künye
+**sahte değil ama BAĞLI DEĞİL** — motor tarafı kayarsa kapı sessizce yalan söyler.
+§3.10'un ruhu: künyeli bir sayı **okunmalıdır**, kopyalanmamalıdır.
+
+**(b) HM3 — KİMLİK KAPILI, DOĞRULUK KAPISIZ.** `shellprojection.cpp`'de
+`bust_circumference` **belin** çevresini basacak şekilde değiştirildi: kullanıcıya
+inen teknik çizim **yanlış bir büst ölçüsü yayınlıyor**. Düğüm kımıldadı
+(`0c1d5286…` → `6a02dac2…`, yani K24 çalışıyor) ama **`tek_nesne_check` ve
+`rotate_check` İKİSİ DE YEŞİL**.
+
+> `tek_nesne_check` *"flat ile kalıp AYNI nesneden mi çıktı"* sorusunu tutuyor.
+> *"Yayınlanan sayı DOĞRU mu"* sorusunu **hiçbir kapı tutmuyor.** F3 ve F5-A
+> **kimliği** kurdu; **doğruluk** kurulmadı. İnen dosyada yanlış bir ölçü bugün
+> sessizce sevk edilir.
+
+**Karar:** ikisi de **F5B'nin zorunlu İŞ 0'ıdır.** Eşik gevşetilerek değil, kapı
+kolu eklenerek kapanır, ve **her biri kendi mutasyonuyla kırmızı yanar.**
+
+---
+
+## K31 — H8 TABANDA **İKİYE AYRILDI**, VE H8-İFADE'NİN PAYDASI **MÜHÜRLENDİ**
+
+**Taban hakemindir (§3.8 md.1).** Önceki ve sonraki sayı yan yana:
+
+| sayı | ÖNCE (F3 sonrası) | **SONRA (F5-A sonrası)** |
+|---|---|---|
+| **H8-sözlük** | **31** (26 oov + 5 alan), n=5 · 61 (51+10), n=10 | **31 (26+5), n=5** · **61 (51+10), n=10** — *değişmedi* |
+| **H8-ifade** | **YOK** — betik diskte yoktu | **5 / 5**, n=5, payda **ADLI ve MÜHÜRLÜ** |
+
+İkisi **ayrı satırda** basılır, **harmanlanmaz**. H8-sözlük'ün ölçücüsü
+`hedef_kosu.mjs`, H8-ifade'nin ölçücüsü `expressability_check.mjs`.
+
+**Payda neden mühürlendi — bir ölçüm, bir varsayım değil.** Hakem kendi
+mutasyonlarını koşturdu:
+
+```
+HM4  paydadan `freesewing-bella` silinir      -> kapı YEŞİL, H8-İFADE 5/5 -> 4/4
+HM5  `stitchu-sheath-eu38` yalnız op.rotate istesin -> kapı YEŞİL, H8-İFADE 5/5 -> 4/5
+```
+
+**H8-ifade, motora tek satır kod yazmadan düşürülebiliyordu** — betiğin kendi
+başlığının H8-SÖZLÜK için uyardığı §0B tuzağının **bir üst katta tekrarı**. Ajan
+sayacın **PAY** tarafını doğru korumuştu (`motorda_kapi` ↔ `add_test` kesişimi;
+kendi mutasyonu M6 orayı kırmızı yakıyor); korunmayan taraf **PAYDAYDI**.
+
+**Yapılan (yalnız hakem):** `expressability_check.mjs`'e `TABAN_PAYDA` mührü ve
+iki yönlü kapı kolu eklendi — bir giysi adı **silinemez**, bir giysinin gereksinim
+kümesi mühürlü adların **altına inemez**. Payda **büyüyebilir, daralamaz**;
+büyütmek bir cırcır kazanımı **değildir** ve mührü yalnız hakem büyütür.
+Doğrulandı: HM4 ve HM5 artık **EXIT 1 (KIRMIZI)**, taban **EXIT 0 (YEŞİL)**.
+
+⚠ **`contract/hedef-kosu-taban.json`'a DOKUNULMADI** (blob
+`cf2af8c7d3c4603eee5aea252f3568feedda8d10`). Gerekçe: H8-ifade `hedef_kosu`'nun
+fotoğraf cırcırı değildir, ve takipli bir JSON'a yeni blok eklemek
+`flat_expresses_spec_check`i kırmızı yakabiliyor — bu koşuda **iki kez** oldu (K17).
+**En kısıtlayıcı yol seçildi:** mühür kapının kendi dosyasında, sayılar burada.
+
+---
+
+## K32 — TEMİZ AĞAÇ, MİRAS ALTIYI **DOĞRULUYOR**; AMA ÜÇ GİRDİ GITIGNORE'DA
+
+F5-A ajanı haklı olarak *"F3'ün 6 kırmızısı temiz ağaçta doğrulanmadı"* dedi.
+**Hakem doğruladı, ve cevap: ALTI GERÇEKTEN ALTI.**
+
+Temiz worktree + `cmake -DCMAKE_BUILD_TYPE=Release` ilk turda **23 kırmızı** verdi.
+Kökü bulundu ve **hiçbiri kod değildi**:
+
+| kaç | sebep | kanıt |
+|---|---|---|
+| 17 | `engine/dist/` **gitignore'da** | `emcc` ile `build-wasm.sh` koşuldu → 23 → **13** |
+| 1 | `patterns_real/geometry/` **takipsiz** (K10) | kalem kopyalandı → `bugra_bridge_check` **Passed 72.09s** |
+| 7 | `engine/pattern-bridge/.venv` **gitignore'da** | 7 kapı **0.01–0.16 sn**'de düşüyor = girdisizlik |
+| **6** | **MİRAS ALTI** | `flat_pattern_agree_check` · `flat_artifact_census` · `style_check` · `sizechart_source_check` · `contract_check` · `figure_check` |
+
+**`garment_shell_check` temiz ağaçta `Passed 0.72 sec`** → ajanın "yedinci kırmızı
+bayat nesneden" teşhisi **DOĞRU**.
+
+🚨 **Ama borç doğdu (md.39):** *bir hakem turu, gitignore'daki üç girdiyi
+tohumlamadan kapıları doğrulayamaz.* Bu, kapıların bir kısmının **kaynaktan
+yeniden üretilemez** olduğu anlamına gelir. Bu bir §0B ihlali değil, bir
+**doğrulanabilirlik** açığıdır ve kayda geçer.
+
+---
+
+## K33 — `figure-lint.mjs` **SEMBOLİK LİNKLİ BİR CHECKOUT'TA TAMAMEN SESSİZCE YEŞİL**
+
+Hakem worktree'yi `/tmp/f5a-pristine`'e açtı ve `figure_check` **`Passed 0.04 sec`,
+SIFIR ÇIKTI** verdi — oysa aynı betik doğrudan koşulunca **`1 FAILURE(S)`** basıyor.
+
+**Kök sebep ölçüldü, tahmin edilmedi** (`/tmp -> private/tmp`, macOS):
+
+```js
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) { ...suitin tamami... }
+```
+
+`import.meta.url` **realpath'lidir** (`file:///private/tmp/…`), `process.argv[1]`
+ise **ham** (`/tmp/…`). Eşitlik tutmaz → **süitin tamamı atlanır, `fails` 0 kalır,
+exit 0.** Kapı *"hiçbir şey ölçmedim"* ile *"her şey geçti"*yi **ayırt etmiyor.**
+
+⚠ Damla'nın makinesindeki gerçek repo yolu sembolik link **DEĞİL**, yani bugün
+canlı bir yanlış-yeşil **yok** — ama `figure_check` **miras altıdan biridir** ve
+kök sebebi *"5'inin kökü hâlâ aranmadı"* borcunda duruyor. **Bu, o beşten birinin
+bir parçasıdır ve artık adlandırılmıştır.** Bir kapı, girdisi boşken **yeşil
+basmamalıdır**.
+
+**Karar (en kısıtlayıcı):** `figure_check`'in kökü F5B'nin işi **değildir**
+(§2 biçimi F4'e bağlı, K23 emsali) ama **borç listesine adıyla girer** ve
+*"kapı boş girdide yeşil basamaz"* ilkesi **koşunun geneline** yazılır.
+
+---
+
+## K34 — SEVK EDİLEN wasm'ın `source-stamp`'İ **KAYNAĞIN FONKSİYONU DEĞİL**
+
+Hakem `build-wasm.sh`'ı temiz worktree'de `emcc` ile koşturdu ve pushlanan ikiliyle
+karşılaştırdı:
+
+```
+engine/dist/stitchu-worker.wasm      main ve temiz agac   1577d4e0…/b177d2b3…  BIREBIR AYNI
+backend/engine/stitchu-worker.wasm   pushlanan            a3fd4bdb…
+backend/engine/stitchu-worker.wasm   temiz agactan derlenen  46d4603c…
+```
+
+**Kod baytları bit-aynı; farkın TAMAMI 15 bayt** ve o 15 bayt
+`stitchu.source-stamp`: pushlanan **`12060bc08360bbb7`**, yeniden derlenen
+**`ec4a6889fd4cb2eb`**.
+
+**Kök sebep ölçüldü:**
+
+```sh
+src_stamp() { find src wasm -type f -print0 | sort -z | xargs -0 shasum -a 256; ... }
+```
+
+`find` **`engine/src/.rabadon/`**'u da yakalıyor — rabadon'un **kendi oturum/durum
+dosyaları** `engine/src` altında duruyor:
+
+```
+src/.rabadon/net.json · src/.rabadon/state.json
+src/.rabadon/sessions/.swept · src/.rabadon/sessions/389fb805-….json
+```
+
+Yani damga **motor kaynağının değil, rabadon oturum durumunun** fonksiyonu.
+`build-wasm.sh` kendi yorumunda *"DETERMINISTIC: the same sources produce the same
+byte"* diyor — **bu cümle bugün yanlıştır** ve `bundle_fresh_check`'in dayandığı
+önerme delinmiştir.
+
+**Bu F5-A'nın ürünü DEĞİL** (kirlilik `engine/src/.rabadon/`'dan geliyor, ajan
+oraya dokunmadı) ve F5-A'nın kapatması gereken bir şey değil. **Borç md.40.**
+En kısıtlayıcı okuma: **sevk edilen wasm bugün kaynağından yeniden üretilemez**,
+ve bunu söyleyen damganın kendisi bozuktur.

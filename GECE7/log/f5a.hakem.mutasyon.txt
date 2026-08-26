@@ -1,0 +1,76 @@
+=== HAKEM MUTASYONLARI — HM-F5A (KOSU-v7 §3.8 md.3) — 2026-08-26 ===
+
+Kosucu: /tmp/hm-f5a.sh (f5a.mutasyon.sh emsali). Her turda nesne SILINIR,
+yeniden derlenir, `shasum` ile ikilinin GERCEKTEN kimildadigi kanitlanir;
+kimildamazsa HUKUM YOK yazilir. Agac sonunda TEMIZ.
+
+⚠ "ikili" alani IKI hash'in BIRLESIMIDIR: shasum(seam-plan)[1-8] + shasum(rotate-op)[1-8].
+   (F5-A ajaninin logunda bu yazmiyordu; hakem kaynaktan okudu. F5B logu yazacak.)
+
+--- HM1 ------------------------------------------------------------------
+engine/src/surfacepattern.hpp — bodiceApexFrac 0.80 -> 0.60
+AJANIN HIC ACMADIGI DOSYA.
+Soru: rotate-op.cpp:48 `kApexFracOfPanel = 0.80; // SheathOptions::bodiceApexFrac`
+      bir OKUMA mi, kopyalanmis bir sabit mi?
+  ikili bc9ceda7a872d310 -> fd3147a3b915ffb3
+  dugum 0c1d52866882ce53 -> 0c1d52866882ce53  (DEGISMEDI — pens uretilmiyor, K28)
+  apeks_mm 289.1484 -> 289.1484                (DEGISMEDI  🚨)
+  rotate_check    : EXIT 0 (YESIL)
+  tek_nesne_check : EXIT 0 (YESIL)
+  geri alindi: ikili bc9ceda7a872d310 (taban bc9ceda7a872d310)
+  HUKUM: 🚨 BOSLUK — kunye BAGLI DEGIL, KOPYALANMIS. -> K30(a), F5B IS 0a.
+
+--- HM2 ------------------------------------------------------------------
+engine/src/bodysurface.cpp — kWaistToHipMM 205.0 -> 215.0
+AJANIN HIC ACMADIGI DOSYA. Panelin GERCEK geometrisi degisir.
+  ikili bc9ceda7a872d310 -> 433a949e58176ebd
+  dugum 0c1d52866882ce53 -> 647f0f521e74501a   (kimildadi ✅)
+  apeks_mm 289.1484 -> 289.1527                (kimildadi ✅)
+  rotate_check    : EXIT 0 (YESIL)   <- DOGRU: degismezler geometriden bagimsiz
+  tek_nesne_check : EXIT 0 (YESIL)   <- DOGRU: nesne hala TEK nesne
+  geri alindi: ikili bc9ceda7a872d310 (taban bc9ceda7a872d310)
+  HUKUM: ✅ OLUMLU KONTROL — rotate-op CANLI SeamPlan panelini kullaniyor,
+         sentetik bir panel degil. K28'in "secim degismedi" dayanagi budur.
+
+--- HM3 ------------------------------------------------------------------
+engine/src/shellprojection.cpp — YAYINLANAN OLCU YALAN SOYLESIN
+  bust_circumference artik girthAt(surf, waist.h) basiyor = BELIN cevresi.
+AJANIN HIC ACMADIGI DOSYA; ajanin M1/M2'sinden BASKA bir yuzey (outline degil,
+measures).
+  ikili bc9ceda7a872d310 -> d79043388fd500d0
+  dugum 0c1d52866882ce53 -> 6a02dac2577c5b67   (kimildadi — K24 CALISIYOR ✅)
+  rotate_check    : EXIT 0 (YESIL)
+  tek_nesne_check : EXIT 0 (YESIL)             🚨
+  geri alindi: ikili bc9ceda7a872d310 (taban bc9ceda7a872d310)
+  HUKUM: 🚨 BOSLUK — KIMLIK KAPILI, DOGRULUK KAPISIZ. Kullaniciya inen teknik
+         cizim YANLIS bir bust olcusu yayinliyor ve hicbir kapi yanmiyor.
+         -> K30(b), F5B IS 0b.
+
+--- HM4 ------------------------------------------------------------------
+engine/tests/expressability_check.mjs — paydadan bir giysi SILINIR
+  (`freesewing-bella` blogu cikarilir)
+  MUHURDEN ONCE: kapi EXIT 0 (YESIL) · H8-IFADE = 4 / 4      🚨
+  MUHURDEN SONRA: FAIL PAYDA DARALDI: muhurlu giysi "freesewing-bella" DUSMUS
+                  kapi EXIT 1 (KIRMIZI) ✅
+
+--- HM5 ------------------------------------------------------------------
+engine/tests/expressability_check.mjs — bir giysinin GEREKSINIMI daraltilir
+  (`stitchu-sheath-eu38` yalniz op.rotate istesin)
+  MUHURDEN ONCE: kapi EXIT 0 (YESIL) · H8-IFADE = 4 / 5      🚨
+  MUHURDEN SONRA: FAIL PAYDA DARALDI: "stitchu-sheath-eu38" ... op.split, op.suppress
+                  kapi EXIT 1 (KIRMIZI) ✅
+  taban: EXIT 0 (YESIL)
+
+  HUKUM: 🚨 §0B — H8-IFADE motora TEK SATIR kod yazmadan dusurulebiliyordu.
+         Ajan sayacin PAY tarafini korumustu (motorda_kapi <-> add_test, M6);
+         korunmayan taraf PAYDAYDI. HAKEM KAPATTI -> K31 (TABAN_PAYDA muhru).
+
+--- HAKEMIN AYRICA TEKRARLADIGI: HM-F2 (kartin istedigi mutasyon) ----------
+engine/src/shellprojection.cpp — projectBack := projectFront
+  taban   ikili bc9ceda72237  dugum 0c1d52866882ce53  tek_nesne_check EXIT 0
+  mutant  ikili a7b677c75d2f  dugum 05cc559aa219ccdb  tek_nesne_check EXIT 1 🔴
+  geri    ikili bc9ceda72237  dugum 0c1d52866882ce53  tek_nesne_check EXIT 0
+  HUKUM: ✅ K24 KAPANDI. Ajanin iddiasi BAGIMSIZ OLARAK DOGRULANDI.
+
+=== git status (temiz) ===
+ M engine/tests/expressability_check.mjs
