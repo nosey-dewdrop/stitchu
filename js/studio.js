@@ -6,9 +6,13 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, dxfRecipe, loadEngine } from './engine.js?v=136';
-import { pathD, bounds } from './sheet.js?v=136';
-import { printPattern } from './print.js?v=136';
+import { draftRecipe, loadEngine } from './engine.js?v=136';
+// The take-it-home path lives in ONE module for the whole site (download.js).
+// It used to live here, and only here, which is why create.html could not offer
+// a single file — see the header of download.js.
+import {
+  layoutPieces, pieceSVG, escapeXML, saveSVG, saveDXF, saveA4Pdf,
+} from './download.js?v=136';
 
 const $ = (id) => document.getElementById(id);
 
@@ -25,9 +29,9 @@ const MEAS_FIELDS = {
   upperBustMM: { key: 'upperBust', label: 'Upper bust (cm)', dflt: 86 },
 };
 
-// ANAYASA flat language: thin dark contour + ONE pastel fill per piece.
-// pudra, lila, krem, bej — rotated in piece order.
-const PASTELS = ['#f4e3e0', '#eae4f1', '#f7f1e2', '#ece5d8'];
+// ANAYASA flat language: thin dark contour + ONE pastel fill per piece — the
+// fills themselves are applied by download.js pieceSVG; INK is the label colour
+// this file writes around them.
 const INK = '#1f3a5f';
 
 const state = {
@@ -175,63 +179,6 @@ async function regenerate() {
 }
 
 // ------------------------------------------------------------------ drawing
-const GUTTER = 40; // mm between pieces on the drafting table
-
-function layoutPieces(pieces) {
-  // side-by-side drafting-table layout in true mm, top-aligned
-  const placed = [];
-  let cursor = 0, maxH = 0;
-  for (const piece of pieces) {
-    const b = bounds(piece);
-    const w = b.maxX - b.minX, h = b.maxY - b.minY;
-    placed.push({ piece, b, tx: cursor - b.minX, ty: -b.minY });
-    cursor += w + GUTTER;
-    maxH = Math.max(maxH, h);
-  }
-  return { placed, totalW: Math.max(cursor - GUTTER, 1), totalH: maxH };
-}
-
-function grainlineSVG(g, strokeAttrs) {
-  const ang = Math.atan2(g.toY - g.fromY, g.toX - g.fromX);
-  let d = `M ${g.fromX} ${g.fromY} L ${g.toX} ${g.toY}`;
-  for (const [px, py, dir] of [[g.fromX, g.fromY, ang], [g.toX, g.toY, ang + Math.PI]]) {
-    const a1x = px + Math.cos(dir + 0.4) * 12, a1y = py + Math.sin(dir + 0.4) * 12;
-    const a2x = px + Math.cos(dir - 0.4) * 12, a2y = py + Math.sin(dir - 0.4) * 12;
-    d += ` M ${a1x.toFixed(1)} ${a1y.toFixed(1)} L ${px} ${py} L ${a2x.toFixed(1)} ${a2y.toFixed(1)}`;
-  }
-  return `<path d="${d}" fill="none" stroke="${INK}" ${strokeAttrs}/>`;
-}
-
-// One piece as SVG inner markup. `screen` uses non-scaling px strokes (crisp
-// at any zoom); the export uses true-mm stroke widths instead.
-function pieceSVG(piece, idx, screen) {
-  const vec = screen ? 'vector-effect="non-scaling-stroke"' : '';
-  const wCut = screen ? 1.5 : 0.5;      // px on screen, mm in the export
-  const wFine = screen ? 1 : 0.35;
-  const fill = PASTELS[idx % PASTELS.length];
-  const cut = (piece.cutLine || []).length ? piece.cutLine : piece.commands;
-  let s = '';
-  // pastel fill on the cut outline (the paper piece), thin ink contour on top
-  s += `<path class="fill" d="${pathD(cut, 1)}" fill="${fill}" stroke="none"/>`;
-  s += `<path class="cutline" d="${pathD(cut, 1)}" fill="none" stroke="${INK}" stroke-width="${wCut}" ${vec}/>`;
-  // fine dashed sewing line inside (the stitched line, topstitch feel)
-  if ((piece.cutLine || []).length) {
-    s += `<path d="${pathD(piece.commands, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" stroke-dasharray="4 3" opacity=".55" ${vec}/>`;
-  }
-  if ((piece.markings || []).length) {
-    s += `<path d="${pathD(piece.markings, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" stroke-dasharray="6 4" opacity=".8" ${vec}/>`;
-  }
-  if ((piece.notches || []).length) {
-    s += `<path d="${pathD(piece.notches, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" ${vec}/>`;
-  }
-  // CUT ON FOLD (ASTM D6673 layer 6 mirror line) — dash-dot mirror edge.
-  if ((piece.foldLine || []).length >= 2) {
-    s += `<path d="${pathD(piece.foldLine, 1)}" fill="none" stroke="${INK}" stroke-width="${wFine}" stroke-dasharray="10 3 2 3" ${vec}/>`;
-  }
-  if (piece.grainline) s += grainlineSVG(piece.grainline, `stroke-width="${wFine}" ${vec}`);
-  return s;
-}
-
 function drawPattern(pattern) {
   const { placed, totalW, totalH } = layoutPieces(pattern.pieces);
   const labelH = Math.max(18, totalH * 0.05);
@@ -254,10 +201,6 @@ function drawPattern(pattern) {
     g.addEventListener('click', () => selectPiece(Number(g.dataset.i)));
   }
   if (state.selected >= 0) renderPieceInfo();
-}
-
-function escapeXML(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ---------------------------------------------------------- piece selection
@@ -295,36 +238,20 @@ function renderPieceInfo() {
   box.appendChild(dl);
 }
 
-// -------------------------------------------------------------- SVG export
-function downloadSVG() {
-  if (!state.result || !state.result.pattern || state.result.issues.length) return;
-  const p = state.result.pattern;
-  const { placed, totalW, totalH } = layoutPieces(p.pieces);
-  const labelH = Math.max(18, totalH * 0.05);
-  let inner = '';
-  placed.forEach(({ piece, b, tx, ty }, i) => {
-    inner += `<g transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)})">`;
-    inner += pieceSVG(piece, i, false);
-    inner += `<text x="${((b.minX + b.maxX) / 2).toFixed(1)}" y="${(b.maxY + labelH).toFixed(1)}" ` +
-      `text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="${INK}">` +
-      `${escapeXML(piece.name)} · ${escapeXML(piece.cutInstruction)}</text>`;
-    inner += '</g>';
-  });
-  const w = (totalW + 40).toFixed(1), h = (totalH + labelH * 2 + 40).toFixed(1);
-  const svg = `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}mm" height="${h}mm" ` +
-    `viewBox="-20 -20 ${w} ${h}">\n<rect x="-20" y="-20" width="${w}" height="${h}" fill="#ffffff"/>\n` +
-    inner + '\n</svg>\n';
+// ----------------------------------------------------- SVG / DXF downloads
+// The writers themselves are in download.js (shared with create.html); this
+// file only supplies the studio's state and its file names.
+function exportBase() {
   const meas = Object.entries(state.measurements).map(([k, v]) => `${k}${v}`).join('-');
   const params = Object.entries(state.params).map(([k, v]) => `${k}${v}`).join('-');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-  a.download = `${state.doc.id.replace(/\./g, '-')}-${meas}-${params}.svg`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  return `${state.doc.id.replace(/\./g, '-')}-${meas}-${params}`;
 }
 
-// -------------------------------------------------------------- DXF export
+function downloadSVG() {
+  if (!state.result || !state.result.pattern || state.result.issues.length) return;
+  saveSVG(state.result.pattern, `${exportBase()}.svg`);
+}
+
 // DXF-AAMA/ASTM interchange for THIS body — the industry file. It is drafted
 // through the wasm dxfRecipeJSON path, whose output is byte-identical to the
 // native dxf-export tool the ezdxf/mm-parity proof runs on (ctest
@@ -335,18 +262,13 @@ async function downloadDXF() {
   const label = btn.textContent;
   btn.disabled = true; btn.textContent = 'Building DXF…';
   try {
-    const out = await dxfRecipe(state.text, state.measurements, state.params);
-    if (out.error || !out.dxf) {
-      $('status').textContent = `DXF export refused: ${out.error || 'no geometry'}`;
-      return;
-    }
-    const meas = Object.entries(state.measurements).map(([k, v]) => `${k}${v}`).join('-');
-    const params = Object.entries(state.params).map(([k, v]) => `${k}${v}`).join('-');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([out.dxf], { type: 'application/dxf' }));
-    a.download = `${state.doc.id.replace(/\./g, '-')}-${meas}-${params}.dxf`;
-    a.click();
-    URL.revokeObjectURL(a.href);
+    const refusal = await saveDXF({
+      kind: 'recipe',
+      recipeText: state.text,
+      measurements: state.measurements,
+      params: state.params,
+    }, `${exportBase()}.dxf`);
+    if (refusal) $('status').textContent = `DXF export refused: ${refusal}`;
   } finally {
     btn.textContent = label; btn.disabled = false;
   }
@@ -388,14 +310,16 @@ function downloadFactoryPack() {
 }
 
 // -------------------------------------------------------------- PDF export
-// Print-ready A4 PDF: the SAME builder create.html uses (print.js
-// buildPrintPages over sheet.js packing), so the studio PDF and every other
-// PDF surface share one content source: cover with cutting table + calibration
-// square, then A4-tiled sheets with corner codes. The browser print dialog
-// does the PDF encoding ("Save as PDF", scale 100%); no second layout truth.
+// A REAL FILE, not the print dialog. Until F-İNDİR this button called
+// printPattern(), i.e. window.print(): the user had to know to pick "Save as
+// PDF" and to set scale to 100%, and on a phone there is no such dialog at all.
+// It now writes the vector PDF pdf-core.js builds — the SAME pack
+// engine/tools/gen-collection-pattern.mjs publishes, cover + cut list +
+// assembly + 3 cm calibration square, then the A4-tiled sheets with register
+// marks. One PDF truth for the whole site.
 function downloadPDF() {
   if (!state.result || !state.result.pattern || state.result.issues.length) return;
-  printPattern(state.result);
+  saveA4Pdf(state.result.pattern, state.doc.title || state.doc.id, `${exportBase()}-a4.pdf`);
 }
 
 // ------------------------------------------------------------------ startup
