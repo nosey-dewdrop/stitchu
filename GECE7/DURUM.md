@@ -22,7 +22,70 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | F-İNDİR | **`F-INDIR-yesil`** ✅ | 2 tur koştu, `ee1414c`+`072705c` → `cce710d`+`fac2993` | 2 tur koştu | ✅ **GEÇTİ** (2. tur) — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
 | F0 | ⛔ etiket YOK | 1 tur koştu, `cd3bea3` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; kart `GECE7/F0.md`, hüküm `GECE7/HAKEM-F0.md` |
 | **F0 (2. tur)** | **`F0-yesil`** ✅ | 1 tur koştu, `68ba288`+`3d6dc7e` | 1 tur koştu | ✅ **GEÇTİ** — vocab yeşil, 6 kırmızı; hüküm `GECE7/HAKEM-F0.md` (2. tur bölümü) |
-| F2 | — | 1 tur koştu, `54f2a0b`+kart | ← **HAKEM BEKLİYOR** | 🕓 AJAN BİTİRDİ — kart `GECE7/F2.md` "AJAN KARTI" bölümü, mutasyon `GECE7/log/f2.mutasyon.txt` |
+| F2 | ⛔ etiket YOK | 1 tur koştu, `54f2a0b`+`3c1835f` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; hüküm `GECE7/HAKEM-F2.md`, 2. tur kartı `GECE7/F2.md` sonunda |
+
+## ⛔ HAKEMİN HÜKMÜ — F2 (1. tur, `3c1835f`)
+
+**KALDI** — kartın FAZ KAPISI md.1'i `6 failed out of 119` istiyor, hakem kendi koşturdu ve **`7 failed out of 119`** çıktı; yedincinin adı **`flat_expresses_spec_check`** ve o kırmızıyı F2 doğurdu (iki uçtan ölçüldü: `F2-oncesi` worktree'sinde **EXIT 0**, `HEAD`'de **1 FAIL**), kök sebep tek satır — F2'nin eklediği **üretilmiş** `vision/eval/h10-eksenleri.json:36`'daki `"sleeveStyle": "sleeveStyle"` kimlik eşlemesi, kapının `git ls-files '*.json'` taramasında dokuzuncu bir kol DEĞERİ sanılıyor (kol alanı **8 → 9**, `RATCHET sleeveStyle UNEXPRESSED 1/0 — TAVAN ASILDI`); geri kalan her kapı hakemin kendi koşusunda yeşil (`hedef_kosu` EXIT 0 `CIRCIR SAĞLAM` · `indir_check` EXIT 0 · `vocab` `HUKUM: YESIL` 10276/10438 · `pytest` 23 passed · `git status` temiz · `patterns_real/` **pushlanmadı**), hakemin **altı mutasyonunun altısı** doğru yerde kırmızı yandı ve **üçü ajanın hiç dokunmadığı** `create.js` · `download.js` · `pdf-core.js` dosyalarında (H-M1 **K13'ü kapattı**: F0'da EXIT 0 ile kaçan yol bugün **EXIT 8**), fazın ürünü ölçülerek sağlam bulunduğu ve yedinci kırmızının bedeli **bir satır** olduğu için **GERİ AL uygulanmadı** (K15) — `F2-yesil` atılmadı, F2 **ikinci tur** açıldı.
+
+### Hakemin kendi işi — 19 fotoğrafın GÖZ ETİKETİ KONDU (§1F md.3)
+
+Hakem **19 fotoğrafın 19'unu açtı ve baktı.** Cevap anahtarı **`vision/eval/labels-hakem.json`**
+(takipli, her satırda künye + sha256). `labels-hakem-BOS.json` **boş bırakıldı** —
+o dosya faz ajanının kendi notunu kendi vermediğinin kanıtıdır (K14).
+
+- `gorunurluk` bloğu **19 × 24 = 456 hücrenin 431'i dolu (%94.5)**; 281 görünür,
+  150 görünemez, 25 "göremedim". **24 eksenin 24'ünün artık sütunu var** —
+  F2'nin ölçtüğü *"13 eksenin sütunu bile yok"* kusuru kapandı.
+- `deger` bloğunda tahmin yok: 143 yargı, 33 `null` (fotoğraf gösteremez),
+  **52 "göremedim"** (§0B md.3, en kısıtlayıcı).
+
+**★ AYRIŞMA BU ETİKETLE ÇALIŞIYOR** — aynı 5 fixture, aynı 70 çıkarılmış alan:
+
+| | H10a | H10b | H10x | toplam |
+|---|---|---|---|---|
+| bugün (makine beyanı) | %0 (0/120) | %0 (0/120) | %58.3 (70/120) | 70 |
+| **hakemin göz etiketiyle** | **%17.5 (21/120)** | **%40.0 (48/120)** | **%0.8 (1/120)** | **70** |
+
+**21 + 48 + 1 = 70.** Kartın DEĞİŞMEZLER şartı ilk kez tutuyor. Yani **F2'nin
+kurduğu ayrışma mekanizması YANLIŞ DEĞİL, VERİSİZDİ** — ve veri artık diskte.
+
+**H2 insan etiketine karşı: 40/42 = %95.2** (makineye karşı 47/51 = %92.2).
+⚠ **İYİLEŞME DEĞİL, CEVAP ANAHTARININ DEĞİŞMESİ:** payda **51 → 42** düştü çünkü
+hakem, makinenin kendine sorduğu **9 yargıyı** fotoğraftan yapmayı **reddetti**.
+Kalan iki gerçek uyuşmazlık: `01` shaping hat `princess`/göz `dart`; `03`
+skirtStyle hat `straight`/göz `aLine`. Tabana **yazılmadı**.
+
+**Göz etiketinin bulduğu, kimsenin sormadığı:** dosya-adı-yalanı **kalan 19'da da
+var** (F2 yalnız düşürülen 10'da aramıştı) — `05` bel **empire değil normal belde** ·
+`15` **kare yaka görünmüyor** (ön gövde örtülü) · `30` **keten değil, plise**.
+Üçü de bugün `labels.json`'da makinenin "doğru cevabı" olarak duruyor.
+
+### Ölçüm seti — HAKEM SEÇTİ (§3.8 md.2), taban dosyasında `_olcum_seti`
+
+**HEDEF 10:** `01` `02` `03` `04` `05` `13` `31` `32` `37` `38` — beşi mühürlü
+fixture'da bankalı, yani n 5→10 için 14 değil **5** yeni VLM turu. Eklenen beşi
+görünürlük aralığını kapatıyor (8 · 9 · 14 · 14 · 16) ve havuzun **tek eteği**,
+**tek flat-lay'i**, **tek ön-olmayan kadrajı**, **giysi türünün bile görünmediği
+tek hali** bunlar.
+**YEDEK 5 (holdout):** `10` `14` `15` `34` `36` — faz ajanı **koşturamaz,
+ayarlayamaz, etiketine bakamaz**; yalnız hakem koşturur. Hedef ile yedek arasında
+açılan fark **ayar kanıtıdır ve kırmızıdır** (K16).
+
+### Taban — HAKEM DOKUNDU, CIRCIRLI HİÇBİR SAYI DEĞİŞMEDİ
+
+`contract/hedef-kosu-taban.json` → yeni `_hakem_dokunusu` bölümü, önceki/sonraki yan yana:
+
+| | önce | sonra | neden |
+|---|---|---|---|
+| `_n` | 5 | **5** | mühürlü fixture 5 kayıt; havuz 19 ama **n havuz değildir** |
+| H2 | %92.2 | **%92.2** | kapı hâlâ makine etiketini okuyor; insan etiketi yazıldı ama **kapıya bağlanmadı** (kod = faz ajanının işi, §3.7) |
+| H10a / H10b | anahtar yok | **yine yok** | bugünkü %0'lar bir ölçüm değil **veri yokluğu**; sıfırı taban yazmak %0→%17.5 sıçramasını *gerileme* gibi okutur ve alanları H10a'ya kaçırmaya iter (§0B) |
+| H10e | anahtar yok | **yine yok** | dayanağı (makine beyanı) değişmek üzere; dayanağı değişecek sayıya taban kesmek K2/K11'in yasağı |
+| H1/H3/H5/H8/H10/H11 | 5/5 · 4 · 0 · 31 · %58.3 · 3 ms | **aynı** | hakem altısını da kendi koşturdu |
+
+Hakemin yansıtma ölçümleri `_hakem_olcumu_YANSITMA` altında **cırcırsız** duruyor;
+kapı o dosyayı okumaya başladığında hakem sayıları `sayilar{}` içine terfi ettirir.
 
 ### F2 ajanının bildirdiği (hakem doğrulayana kadar İDDİA)
 
@@ -101,6 +164,18 @@ her şeyin önüne koymuştu). Hakemin yargılayacağı asıl soru budur.
 | **F-İNDİR 2. tur (`fac2993`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
 | **F0 1. tur (`cd3bea3`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
 | **F0 2. tur (`3d6dc7e`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
+| **F2 1. tur (`3c1835f`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
+
+⛔ **F2'NİN YEDİNCİ KIRMIZISI (hakem ölçtü, kart "yedinci ad YOK" demişti):**
+`flat_expresses_spec_check` **FAIL** — `RATCHET sleeveStyle UNEXPRESSED 1/0 —
+TAVAN ASILDI`. İki uçtan: `F2-oncesi` worktree'sinde **0 FAIL / EXIT 0**,
+`HEAD`'de **1 FAIL**. Kök sebep tek satır: kapı kol değer alanını
+`git ls-files '*.json'` ile **takipli her JSON** üstünde
+`"sleeveStyle"\s*:\s*"([^"]*)"` sayarak topluyor; F2'nin eklediği **üretilmiş**
+`vision/eval/h10-eksenleri.json:36` bir kimlik eşlemesi taşıyor
+(`"sleeveStyle": "sleeveStyle"`) ve kapı bunu dokuzuncu bir kol DEĞERİ sanıyor.
+Kol alanı `F2-oncesi`'nde **8**, `HEAD`'de **9**. Kapıya ve tabanına
+**dokunulmayacak** (K17); kalkacak olan çarpışmanın kendisi.
 
 ⛔ **F0'IN YEDİNCİ KIRMIZISI (hakem ölçtü, kart YEŞİL diye bildirmişti):**
 `vocab_reference_check` **FAIL** — `hemFlounce` **26 → 27**. İki uçtan ölçüldü:
@@ -147,7 +222,8 @@ hattına tek satır dokunmadı. `contract/hedef-kosu-taban.json`'a dokunulmadı
 (doğrulandı: dosyanın tek commit'i `f56941e`, Halka 0). H11 3.1 → 3.3 ms duvar
 saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 
-## Hakemin son hükmü
+## Önceki hüküm (F0 2. tur) — kayıt için duruyor
+### Son hüküm F2'dir, yukarıda (⛔ KALDI)
 
 ✅ **GEÇTİ (F0 2. tur, `3d6dc7e`, etiket `F0-yesil`)** — KALDI'nın tek sebebi kök sebebe inilerek kapandı ve hakem her sayıyı kendi koşturdu: `vocab_reference_check` **YEŞİL** (`hemFlounce` **26**, taban 26; toplam 10276 / taban 10438) ve taban ile kapı betiği **blob hash'i eşit** = bayt bayt el değmemiş (`e1b55e8…`, `8c01610…`, `contract/hedef-kosu-taban.json` `384af3b…`, `hedef_kosu.mjs` `84f3243…`), yani §3.8 md.4 ihlali yok; `ctest` **6 failed out of 119**, tam miras altı, **yedinci ad yok**; `hedef_kosu` Passed, `CIRCIR SAĞLAM`, H1 5/5 · H2 %92.2 · H3 4 · H5 0 · H8 31 · H10 %58.3 (n=5); `indir_check` EXIT 0 ve `KOKEN_ALANLARI` **hakem ayrıştırıp saydı: 38** (spec 33 + SPEC_GROUPS 33 → birleşim 37 + `beden`), §10-(i) **0 etiketsiz**; dize sabiti **taşınmadı, öldü** (`hemFlounce` kod referansı `create.js`'te önce 2 sonra 2, eksen artık `spec` varsayılanında ve liste türetilmiş) ve davranış değişmediği ölçüldü (vocab index 0 = `'none'`, `hemFlounce` `SPEC_GROUPS`'ta yok → URL'den set edilemiyor); hakemin **altı mutasyonu** koştu, beşi doğru yerde **EXIT 8 / FAIL** (üçü ajanın hiç dokunmadığı `download.js` · `provenance.js` · `web/lib/pdf-core.js`'te, biri `git archive` ağacına dize sabitini geri koyup vocab'ı **26→27 kırmızıya** düşürerek sebep-sonucu kapattı); ajana verilen **tek iş tek dosyada** kaldı (`5c9f844..HEAD` kaynak diffi yalnız `web/js/create.js`), yeni cephe açılmadı — **`F0-yesil` atıldı ve pushlandı, F2 açıldı** (kart `GECE7/F2.md`), gerekçe `GECE7/HAKEM-F0.md` 2. tur bölümü.
 

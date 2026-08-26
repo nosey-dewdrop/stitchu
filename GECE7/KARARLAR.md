@@ -267,3 +267,96 @@ spec** üstünde koşuyor, sevk edilen **38** eksen üstünde değil (F0'ın 14.
 **Kural:** bir faz "sayı düşmedi" diye kartına yazıyorsa, o sayıyı **düşüren
 mutasyonun kırmızı yandığını** da yazmak zorundadır. Yazamıyorsa, sayı bir
 kapı değil bir gözlemdir.
+
+---
+
+## K14 — Hakemin cevap anahtarı `labels-hakem-BOS.json`'a DEĞİL, ayrı bir dosyaya yazıldı
+
+**Karar:** Göz etiketi **`vision/eval/labels-hakem.json`** dosyasına yazıldı.
+`vision/eval/labels-hakem-BOS.json` **boş bırakıldı** ve boş kalacak.
+
+**Dayanak (kapının kendi kodu):** `engine/tests/py/test_kaynak_kunye.py::
+test_hakem_sablonu_bos_gelir` şablonda **tek bir dolu hücrede** kırmızı yanıyor
+(hakem koşturdu, mutasyon H-M5 → `1 failed, 22 passed`). O kapı bir cümleyi değil
+bir olguyu koruyor: *faz ajanı kendi işini kendi notlamadı.* Şablonu doldurmak o
+kanıtı **siler** — dolu bir dosyaya bakan kimse onu kimin doldurduğunu ayırt edemez.
+İki dosya iki ayrı şey söylüyor: `-BOS` teslimatın kanıtı, `labels-hakem.json`
+cevabın kendisi.
+
+**`dataset/hedef-19/etiket/` neden seçilmedi:** `dataset/` **gitignore'da**
+(`CLAUDE.md` gizlilik yasası). Oraya yazılan bir cevap anahtarı temiz bir
+checkout'ta **yok**tur, yani hiçbir kapı onu okuyamaz ve hiçbir hakem onu
+doğrulayamaz. Emsal aynı koşuda kurulu: F2 künyeleri de aynı sebeple
+`vision/eval/credits.json`'a (takipli) yazıp `dataset/…/KAYNAK.md`'yi ondan
+üretti. Fotoğrafların kendisi zaten `vision/eval/photos/` altında takipli ve
+lisansları yayınlanabilir (19'unun 19'u Commons, künyeli).
+
+---
+
+## K15 — F2'nin yedinci kırmızısına "GERİ AL" UYGULANMADI
+
+**Karar:** Hüküm **KALDI**. `GECE7/F2.md`'nin *"Üçüncüsü GERİ AL'dır"* cümlesi
+bu turda **uygulanmadı** ve bu, kuralın sessizce yenmesi değil, gerekçeli bir
+istisnadır.
+
+**Dayanak (sayılar):**
+1. Yedinci kırmızının nedeni **bir satır**: `vision/eval/h10-eksenleri.json:36`,
+   `"sleeveStyle": "sleeveStyle"`. Dosya **üretilmiştir**
+   (`node engine/tests/hedef_kosu.mjs --eksenler`), elle yazılmamıştır, ve çekirdek
+   işin parçası değildir. Hakem iki uçtan ölçtü: `F2-oncesi`'nde kapı **EXIT 0**,
+   `HEAD`'de **1 FAIL**; kol alanı **8 → 9** ve dokuzuncu "değer" o satır.
+2. Geri almanın bedeli **2474 satır** ve içinde ölçülerek sağlam bulunmuş üç ürün
+   var: künyesi sha256 ile kanıtlı **19'luk havuz**; **K13'ün kapanışı** (hakemin
+   H-M1 mutasyonu **EXIT 8**, F0'da **EXIT 0** ile kaçıyordu); etiketin doğruluğunu
+   koruyan **§10-(j)** (H-M4 → 4 FAIL).
+3. Ayrışma mekanizmasının **yanlış değil verisiz** olduğu ölçüldü: hakemin göz
+   etiketi aynı 5 fotoğrafa uygulandığında **H10a 21 + H10b 48 + H10x 1 = 70**,
+   yani kartın DEĞİŞMEZLER şartı ilk kez tutuyor.
+
+**Emsal:** K1 (F-İNDİR) ve F0 1. tur da aynı sınıftaydı ve ikisi de **KALDI**
+aldı; ölçüt her ikisinde de *"fazın ürünü ölçülerek sağlam mı"* idi.
+
+**Kural, bundan sonrası için:** GERİ AL, kartın ürününün ÖLÇÜLEREK çürük çıktığı
+hallere saklanır. Bir kapıyı yanlış bildirmek **KALDI**'dır ve ikinci turun tek
+işi o kapıyı kapatmaktır. Dördüncü kez olursa bu kayıt yeniden yargılanır.
+
+---
+
+## K16 — Yedek 5 fotoğraf GİZLENMEDİ, bir KURALLA korunuyor
+
+**Karar:** Hakemin holdout seti (`10` `14` `15` `34` `36`) `contract/hedef-kosu-taban.json`
+`_olcum_seti.yedek_5` altında **açıkça** yazıldı. Faz ajanı bu beşi koşturamaz,
+ayarlayamaz, etiketine bakamaz; **yalnız hakem koşturur.**
+
+**Dayanak (ölçülebilir gerçek):** Tek bir repoda gerçek gizlilik yoktur — faz ajanı
+`vision/eval/photos/` altındaki 19 dosyayı hash'leyip herhangi bir "gizli" listeyle
+eşleyebilir, ayrıca hedef 10'un tümü zaten yazılı olduğu için kalan 9 sayılabilir.
+Gizli görünen bir liste, **korunuyor sanılan** bir liste demektir ve yanlış güven
+en kötü koruma biçimidir. Yazılı kural ölçülebilir: hedef seti ile yedek set
+arasında açılan isabet farkı **ayar (overfit) kanıtıdır ve kırmızıdır.**
+
+**Set seçimi de bir hakem kararıdır (§3.8 md.2)** ve dayanağı sayıdır: hakemin
+kendi görünürlük sayımıyla (görünen eksen / 24) hedef 10 aralığı **8–20**, yedek 5
+aralığı **3–20**; yedek, hedefin aralığını aynalıyor, iki uçta da onu aşıyor.
+
+---
+
+## K17 — `flat_expresses_spec_check` ÖLÇÜM VERİSİNİ ÜRÜN SPEC'İ SAYIYOR
+
+**Karar:** Kapı **gevşetilmeyecek**, kapsamı bu turda **değiştirilmeyecek**;
+borç olarak devrediyor ve F2 ikinci turun zorunlu işi **kapıyı değil çarpışmayı**
+kaldırmaktır.
+
+**Dayanak (hakemin kendi ölçümü):** Kapı kol değer alanını beş kaynaktan topluyor;
+birincisi `git ls-files '*.json'` ile **takipli her JSON** üstünde
+`"sleeveStyle"\s*:\s*"([^"]*)"` sayıyor. `vision/eval/` **ölçüm verisidir**, ürün
+spec'i değil, ama kapı ikisini ayırmıyor: `h10-eksenleri.json`'un kimlik eşlemesi
+(`"sleeveStyle": "sleeveStyle"`) dokuzuncu bir kol "değeri" olarak alana girdi ve
+`RATCHET sleeveStyle UNEXPRESSED 1/0` ile **TAVAN ASILDI**.
+
+**Kapsamı daraltmak neden reddedildi:** *"`vision/` sayılmasın"* demek, kapının
+görüş alanını bir fazı kurtarmak için daraltmaktır — K2 ve K11'de iki kez
+reddedilen hamlenin aynısı, §3.8 md.4. **Dayanak yok, en kısıtlayıcı seçenek
+seçildi:** kapsam korunur, çarpışma kaynağında kalkar (kimlik eşlemesi bir eksen
+ADInı JSON **değeri** olarak yazmaz — anahtar listesi + `null` yeterlidir, kapıya
+tek satır dokunulmadan).

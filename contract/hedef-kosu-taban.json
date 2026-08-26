@@ -68,5 +68,78 @@
       "birim": "medyan 3.0 ms, en kötü 32.6 ms",
       "uyari": "VLM çağrısı HARİÇ (bankadan okundu) — gerçek kullanıcı süresi bunun üstüne API turu ekler"
     }
+  },
+  "_hakem_dokunusu": {
+    "_kim": "KOSU-v7 F2 hakemi, 2026-08-26 (§3.8 md.1 — tabana yalnız hakem dokunur)",
+    "_hukum": "F2 KALDI. Bu dokunuşta CIRCIRLI HİÇBİR SAYI DEĞİŞMEDİ; değişen tek şey, hakemin kendi ölçtüğü sayıların kayda geçmesidir.",
+    "_onceki_sonraki": {
+      "_n": "5 -> 5. DEĞİŞMEDİ. Havuz 29->19'a indi ama mühürlü fixture vision/eval/live-2026-08-22.json hâlâ 5 kayıt taşıyor; 10'a çıkarmak 5 yeni VLM turu = para, ve hakem para harcamadı. n'i havuz büyüklüğüyle KARIŞTIRMAK yasak: havuz 19, ölçülen n 5.",
+      "H2_gorulen_isabet": "92.2 -> 92.2. DEĞİŞMEDİ. Kapı hâlâ vision/eval/labels.json'u (MAKİNE etiketi) okuyor; hakemin insan etiketi yazıldı ama kapıya BAĞLANMADI (bağlamak kod yazmaktır, §3.7 hakemin işi değil). H2 GEÇİCİ kalır.",
+      "H10a_gorunemez": "taban ANAHTARI YOK -> yine YOK. Kapı bugün %0 (0/120) ölçüyor ve bu sayı bir ölçüm değil bir VERİ YOKLUĞUdur (H10x = 70/70). Sıfırı taban yazmak, ayrım gerçekten çalıştığında %0 -> %17.5 sıçramasını bir GERİLEME gibi okutur ve bir sonraki fazı alanları H10a'ya kaçırmaya iter — §0B'nin reward-hacking maddesi tam bu. En kısıtlayıcı seçenek: taban anahtarı AÇILMADI.",
+      "H10b_gorunen_alinamayan": "taban ANAHTARI YOK -> yine YOK. Aynı gerekçe. §0B tavanı ancak sayı gerçek bir ölçüm olduğunda anlam taşır.",
+      "H10e_etiket_hatasi": "taban ANAHTARI YOK -> yine YOK. Bugün 4 ölçülüyor, ama dayanağı MAKİNE beyanı ve o dayanak değişmek üzere (insan etiketi). Dayanağı değişecek bir sayıya taban kesmek K2/K11'in yasakladığı hamledir.",
+      "H1/H3/H5/H8/H10/H11": "hepsi DEĞİŞMEDİ: 5/5 · 4 · 0 · 31 · %58.3 · 3 ms. Hakem altısını da kendi koşturdu (node engine/tests/hedef_kosu.mjs, EXIT 0, CIRCIR SAĞLAM)."
+    },
+    "_hakem_olcumu_YANSITMA": {
+      "_not": "BUNLAR CIRCIR DEĞİLDİR ve hiçbir kapı bunlarla kıyas yapmaz. Hakemin 19 fotoğrafın 19'una GÖZLE bakıp yazdığı cevap anahtarı (vision/eval/labels-hakem.json) aynı 5 fixture fotoğrafına, aynı 70 çıkarılmış alana uygulandığında ne çıktığıdır. Kapı bu dosyayı OKUMUYOR; okuduğunda hakem bu sayıları sayilar{} içine terfi ettirir.",
+      "_kaynak": "vision/eval/labels-hakem.json (hakem, 2026-08-26, 19/19 fotoğraf açıldı ve bakıldı)",
+      "H10a_gorunemez": {
+        "deger": 17.5,
+        "n": 5,
+        "birim": "%17.5 (21/120)",
+        "onceki": "%0 (0/120)"
+      },
+      "H10b_gorunen_alinamayan": {
+        "deger": 40.0,
+        "n": 5,
+        "birim": "%40.0 (48/120)",
+        "onceki": "%0 (0/120)"
+      },
+      "H10x_beyan_yok": {
+        "deger": 0.8,
+        "n": 5,
+        "birim": "%0.8 (1/120)",
+        "onceki": "%58.3 (70/120)"
+      },
+      "_toplam_kontrolu": "21 + 48 + 1 = 70 = H10. Kartın DEĞİŞMEZLER şartı (H10a + H10b + H10x = 70/120) hakemin etiketiyle İLK KEZ TUTUYOR ve H10a+H10b 70'in 69'unu kaplıyor. F2'nin kurduğu ayrışma mekanizması DOĞRUDUR; eksik olan yalnızca veriydi.",
+      "H2_gorulen_isabet": {
+        "deger": 95.2,
+        "n": 5,
+        "birim": "%95.2 (40/42)",
+        "onceki": "%92.2 (47/51)",
+        "UYARI": "BU BİR İYİLEŞME DEĞİLDİR, CEVAP ANAHTARININ DEĞİŞMESİDİR. Payda 51 -> 42 düştü çünkü hakem, makinenin kendine sorduğu 9 yargıyı fotoğraftan yapmayı REDDETTİ ('göremedim'). Kalan 2 gerçek uyuşmazlık: 01 shaping hat 'princess' vs göz 'dart'; 03 skirtStyle hat 'straight' vs göz 'aLine'. Yüzdeyi bir cırcır kazanımı gibi okumak yasaktır."
+      }
+    },
+    "_olcum_seti": {
+      "_kim": "HAKEM SEÇTİ (§3.8 md.2 — faz ajanı seti seçemez).",
+      "hedef_10": [
+        "01-a-line-cocktail-dress-mannequin.jpg",
+        "02-ball-gown-exhibit.jpg",
+        "03-wedding-dress-mannequin.jpg",
+        "04-babydoll-dress.jpg",
+        "05-empire-waist-gown.jpg",
+        "13-keyhole-neckline-dress.jpg",
+        "31-denim-skirt.jpg",
+        "32-sleeveless-dress-mannequin.jpg",
+        "37-tunic-blouse.jpg",
+        "38-evening-gown-museum.jpg"
+      ],
+      "hedef_10_gerekce": "Beşi (01-05) zaten mühürlü fixture'da bankalı = 0 yeni VLM turu; n 5->10 için yalnız 5 yeni tur gerekiyor, 19'un tamamı için 14 gerekirdi. Eklenen beşi ÖLÇÜLEN bir aralığı kapatıyor (hakemin görünürlük sayımı, eksen/24): 13 -> 8 · 31 -> 9 · 38 -> 14 · 37 -> 14 · 32 -> 16, bankalı beşin aralığı 13-20. Ayrıca havuzdaki TEK etek (31), TEK düz-serili flat-lay (37), TEK ön-olmayan kadraj (38) ve giysi TÜRÜNÜN BİLE görünmediği tek hal (13) bu beşte.",
+      "yedek_5": [
+        "10-tiered-ruffle-dress.jpg",
+        "14-v-neck-dress-mannequin.jpg",
+        "15-square-neckline-dress.jpg",
+        "34-minidress-1960s.jpg",
+        "36-crop-top-fashion.jpg"
+      ],
+      "yedek_5_kural": "Faz ajanı bu beşi KOŞTURAMAZ, ayarlayamaz, etiketine bakamaz. Yalnız hakem koşturur. Hedef seti ile yedek set arasında açılan fark AYAR (overfit) kanıtıdır ve kırmızıdır. Liste AÇIKÇA yazıldı: tek repoda gerçek gizlilik yoktur (ajan 19 dosyayı hash'leyip eşleyebilir), o yüzden koruma sahte bir sır değil YAZILI BİR KURALDIR.",
+      "yedek_5_gerekce": "Hedef setin görünürlük aralığını AYNALIYOR ki fark anlamlı olsun: 10 -> 3 (havuzun en kör kadrajı) · 15 -> 10 · 36 -> 12 · 34 -> 19 · 14 -> 20 (havuzun en okunaklı kadrajı). İkinci bir üst (36) ve ön gövdesi ÖRTÜLÜ ikinci bir hal (15) içeriyor.",
+      "kullanilmayan_4": [
+        "11-flamenco-dress-ruffles.jpg",
+        "12-sweetheart-neckline-gown.jpg",
+        "30-linen-dress-mannequin.jpg",
+        "35-shirtdress.jpg"
+      ]
+    }
   }
 }

@@ -1,0 +1,43 @@
+F2 HAKEMİNİN KENDİ MUTASYONLARI — 2026-08-26, HEAD 3c1835f
+§3.8 md.3: loga güvenilmedi, altısı da baştan koşuldu, ALTISI DA GERİ ALINDI.
+Üçü faz ajanının HİÇ DOKUNMADIĞI dosyada (doğrulandı:
+  git diff --name-only F2-oncesi..HEAD -- web/js/create.js web/js/download.js \
+    web/lib/pdf-core.js web/lib/flat-core.js  ->  BOŞ).
+
+H-M1  web/js/create.js               [AJAN DOKUNMADI]
+      `hemFlounce: 'none'` spec varsayılanından silinir (K13 / eski H2-A)
+      beklenen EXIT 8  ->  ÖLÇÜLEN EXIT 8
+      "FAIL [köken] ... 37 axes parsed from create.js (floor 38)"
+      geri alındıktan sonra EXIT 0.
+      ** K13 KAPANDI: F0'da bu yol EXIT 0 ile kaçıyordu. **
+
+H-M2  web/js/download.js             [AJAN DOKUNMADI]
+      flatSVG köken damgasını atlar (return svg)
+      beklenen EXIT 8  ->  ÖLÇÜLEN EXIT 8, 4 FAIL
+      "cikarildi=undefined toplam=undefined" + eksen adları + iki boş-kayıt kalemi
+
+H-M3  web/lib/pdf-core.js            [AJAN DOKUNMADI]
+      A4 kapağından 'Origin / Köken' başlığı silinir
+      beklenen EXIT 8  ->  ÖLÇÜLEN EXIT 8
+      "FAIL [köken] the A4 cover has an Origin block"
+
+H-M4  web/js/provenance.js           [ajan dokundu — İŞ 3 kapısı]
+      gorunurlukCelismesi() hep [] döner
+      beklenen EXIT 8  ->  ÖLÇÜLEN EXIT 8, 4 FAIL
+      görünen eksene 'gorunmez' · görünemez eksene 'gorunur' ·
+      görünemez ekseni 'fotoğraftan okudum' · kaydı olmayan eksen hakkında beyan
+
+H-M5  vision/eval/labels-hakem-BOS.json  [ajan dokundu — teslimatın kanıtı]
+      şablona TEK dolu hücre (01 → deger.garment = "dress")
+      beklenen pytest FAIL  ->  ÖLÇÜLEN 1 failed, 22 passed
+      test_hakem_sablonu_bos_gelir
+
+H-M6  engine/tests/hedef_kosu.mjs        [ajan dokundu — İŞ 2 kapısı]
+      INF_X = 0 (ayrışma H10'u tüketmez)
+      beklenen EXIT 2  ->  ÖLÇÜLEN EXIT 2
+      "AYRIŞMA BOZUK: H10a 0 + H10b 0 + H10x 0 != H10 70"
+
+--------------------------------------------------------------------------
+SONRA: git status TEMİZ (hakemin yazdığı hüküm/karar/taban/etiket dosyaları hariç).
+Mühürlü dosyalara dokunulmadı: labels.json · labels-hakem-BOS.json ·
+vocab_reference_check.sh — `git diff --stat` üçünde de BOŞ.
