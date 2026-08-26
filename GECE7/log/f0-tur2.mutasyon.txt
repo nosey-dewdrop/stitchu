@@ -1,0 +1,12 @@
+# F0 2. TUR — mutasyon (2026-08-26)
+
+Hakemin istedigi tek mutasyon: hemFlounce eksenini ETIKETSIZ birak.
+
+  - konakSet(hemFlounce, pickHemFlounce(seen), hemFlounceHostable);
+  + spec.hemFlounce = pickHemFlounce(seen);
+
+  node engine/tests/indir_check.mjs  -> EXIT 8
+    FAIL [köken] no axis is written from the photo without an origin label NAMING IT
+      — hemFlounce (vision block line 167)
+
+  geri alindi (diff -q: birebir ayni) -> EXIT 0

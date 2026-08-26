@@ -158,7 +158,7 @@ const spec = {
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', wrapFront: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',
-  cupSeam: 'none', yoke: 'none', boxPleat: 'none',
+  cupSeam: 'none', yoke: 'none', boxPleat: 'none', hemFlounce: 'none',
 };
 
 // ── KÖKEN (F0, 2026-08-26) ──────────────────────────────────────────────────
@@ -174,8 +174,20 @@ const spec = {
 // own because §4C md.2 makes the EU38 demo body a derived value too: drafting
 // a stranger's dress on a standard body without saying so is the same lie in
 // centimetres.
+//
+// THE LIST NAMES NO AXIS OF ITS OWN (F0 2nd round, 2026-08-26). The first
+// round spelled the hem-flounce axis out as a string literal here and
+// vocab_reference_check went red: 26 -> 27 references to a closed enum, which
+// is exactly the growth that gate exists to forbid. The literal was a symptom.
+// ROOT CAUSE: that axis was the ONLY one the engine reads (see engine.js) that
+// appeared neither in the defaults above nor in SPEC_GROUPS — it existed
+// solely as a runtime write from the vision block, so `Object.keys(spec)`
+// could not see it until a photo had already been read, and the list had to
+// name it by hand. It now sits in the defaults with its siblings, where every
+// other axis lives, and this list stays derived from two sources with no third
+// place to keep in sync.
 const KOKEN_ALANLARI = [...new Set([
-  ...Object.keys(spec), ...SPEC_GROUPS.map((g) => g.key), 'hemFlounce', 'beden',
+  ...Object.keys(spec), ...SPEC_GROUPS.map((g) => g.key), 'beden',
 ])];
 const koken = yeniKoken(KOKEN_ALANLARI);
 
@@ -651,9 +663,8 @@ function showSpec() {
         // separate strip, gathered edge trued to the finished hem. Only a dress/top
         // with a real hem hosts one (a gathered/flared skirt already ripples). A
         // peplum (waist) or a back-only ruffle stays honest (pickHemFlounce null).
-        const hemFlounce = pickHemFlounce(seen);
         const hemFlounceHostable = isDress(spec) || isTop(spec);
-        konakSet('hemFlounce', hemFlounce, hemFlounceHostable);
+        konakSet('hemFlounce', pickHemFlounce(seen), hemFlounceHostable);
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
         // separate piece + a placement mark), a side-seam in-seam pocket (two bag
         // pieces + a mouth mark), and a SLASH pocket (a diagonal front-hip mouth +
