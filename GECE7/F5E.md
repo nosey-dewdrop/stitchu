@@ -757,3 +757,24 @@ on fotoğrafın onu da kalıp ve flat üretti, medyan **2.9 ms**.
 yolu (`GECE7/log/f5e.prob.ctest.txt`), iki kapı çıkışı (`56 failed out of 126` ·
 `dump 29016 / pin 23406`), HM-J2r'nin kırmızısı ve **H5'in önce/sonra paydası
 (5 → 5)**'tir.
+
+---
+---
+
+# ⛔ HÜKÜM VERİLDİ — **BU KARTIN 2. TURU YOKTUR.**
+
+**F5-E 1. tur: ✅ GEÇTİ** (`F5E-yesil`). Hüküm ve bütün sayılar:
+**`GECE7/HAKEM-F5E.md`**. Kararlar: **K51 · K52 · K53 · K54 · K55**.
+
+**K48'in iki turluk tavanı BİR turda harcandı (K54)**, çünkü hakem kartın tek
+şartının **TATMİN EDİLEMEZ** olduğunu ölçtü (**K53**): `hedef_kosu.mjs:266-269`
+satır başına **en fazla bir dikiş çifti** üretiyor, yani **H5'in paydası bir
+ölçüm değil bir TAVANDIR** (`pairs.length ≤ rows.length = n = 5`) ve motorda
+yapılacak hiçbir iş onu büyütemez. Hakem bunu ajanın probunu **kendi eliyle**
+yeniden kurarak ölçtü: `golden` farkı **birebir** çıktı (**+5610**, `0` davranış
+değişimi · `5610` yeniden basım) ama payda **yine 5** kaldı.
+
+**SIRADAKİ KART: `GECE7/F4.md`. HALKA 3 AÇILDI: F4 → F6 → F7 → F8 → F9.**
+⚠ **F5 KAPANMADI, DURDU.** Motorda **3** operatör; kuyruktaki **5** ad
+(`attach` · `derive` · `extend` · `gather` · `overlay`) **adlarıyla bekliyor**.
+`op.attach` **iptal DEĞİL, ertelendi.**
