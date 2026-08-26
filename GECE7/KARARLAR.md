@@ -1469,3 +1469,205 @@ engine/CMakeLists.txt:1036   # Saglayici ad kumesi `add_test(NAME …)` ∪ `git
 128 eşleşmenin **127'si gerçek `add_test`**, biri **kendi dokümantasyonu**.
 Adlar `ctest`in koştuğu 127 adla **birebir** örtüşüyor (`comm -23` **boş**),
 yinelenen ad **yok**. **Kayıp bir kapı YOKTU. Borç 69 SİLİNİYOR.**
+
+---
+
+## K56 — K23 **ONARILDI VE ONARIM KÖKTEN**: kapı totoloji değil, hakem mutasyonla ölçtü
+
+Altı fazdır adlandırılıp onarılmayan miras kırmızı **`flat_pattern_agree_check`
+ÖLDÜ.** Hakemin kendi temiz-Release koşusu: **`5 tests failed out of 126`,
+`739.58 sec`**, beş adın beşi miras listeden, **yedinci yok.**
+
+**Şüphe meşruydu:** ajan flat tarafını `SurfacePattern::topColZMM`'e bağladı.
+Kalıp tarafı da aynı sayıdan türüyorsa kapı kendi kendini doğrular ve EXIT 0
+hiçbir şey kanıtlamaz. **Hakem bunu okumakla bırakmadı, kırdı:**
+
+**HM-1**, `engine/tools/pattern-measure.mjs` (**`numstat` BOŞ** — ajanın hiç
+açmadığı dosya), kalıp tarafı **+20 mm** → **`flat_pattern_agree_check`
+EXIT 1**, geri alınınca **EXIT 0**.
+
+**Kalıp tarafı `cfTorso.mm + cfSkirt.mm`** — panellerin kendi merkez-ön
+dikişlerinin toplamı, `topColZMM`'den **türemiyor**. Paylaşılan tek şey
+**aralığın başlangıcı**, ve o paylaşım `shellprojection.hpp` + `shell-audit.cpp`
+içinde **K29 biçiminde ilan edildi.** **Eşik el değmedi:** blob
+`05384380c827b9ce379973308c04ff49e2216be6` **iki uçta aynı.**
+
+**K23'ün 28.7714 mm'si ile ajanın 28.5349 mm'si ÇELİŞMİYOR — iki AYRI nicelik:**
+`28.5349` **düşey z farkı** (omuz halkası 1378.3050 − kesim 1349.7702) ·
+`28.7325` o aralıktaki **yay** (757.5584 − 728.8259) · `0.0389` **düzleştirme
+strain'i**. `28.7325 + 0.0389 = 28.7714` **birebir**. Aradaki `0.2365` =
+`0.1976` (yay − düşey) + `0.0389` (strain). **Açıklanamayan kalem YOK.**
+
+**K23'ün TETİĞİ ATEŞLEMEDİ ve bu kayda geçer:** K23 *"çizelge yayınlandığı gün
+kapı yeniden yazılmak ZORUNDADIR"* demişti. İlan edilen dönüşüm
+`farkGirthMM = 0.0`, yani **hâlâ özdeşlik**, yani **eşitlik hâlâ doğru
+tahmin.** Kapı bugün yeniden yazılmadı ve **yazılmamalıydı.**
+
+---
+
+## K57 — MANKEN ÇİZELGESİ: **fark 0.0 mm ONAYLANDI** (sayı hakemindir, §3.4/§3.10)
+
+`KOSU-v7.md` F4 bölümü *"manken beli kalıp belinden kaç mm ince"* sorusunu
+**Damla'ya** yazıyordu; K51 emsali onu **hakeme** taşıdı. Ajan aramış,
+**YAYIN BULUNAMADI** demiş, **en kısıtlayıcıyı** seçmiş (`0.0 mm`, dikiş payı
+`0`) ve gerekçesini `GECE7/DAMLA.md` md.16'ya yazıp **koşuyu durdurmamış.**
+
+**HAKEM ONAYLIYOR. Gerekçe tek cümle: sıfırdan başka her değer uydurulmuş bir
+sayıdır, çünkü onu söyleyen bir yayın yok.** Hakem denetledi: `KOSU-v7.md` F4
+bunu **kendi metninde** yazıyor, ve aynı bölümün **9 kafa / 7–8 kafa** oranının
+**künyesi verilemedi** (yazar/yayın/yıl/sayfa/URL) — ajan onu **hiçbir sayıya
+beslemedi** ve *"künyesiz zemin"* diye ayrı bir alana yazdı. **Doğru davranış.**
+`contract/mannequin-chart-v1.json` kaynağını **"BİZİM KARARIMIZ"** yazıyor,
+bir yayına **atfetmiyor**.
+
+**Değişirse tek yer:** `donusum.farkGirthMM`. Croquis çapaları, kapı ve H6
+aynı aritmetikten **kendiliğinden** döner (kapı zincir kolu bunu her koşuda
+doğruluyor, en kötü **0.0003 mm**). **DAMLA md.16 KAPANDI.**
+
+---
+
+## K58 — 🔴 `flat_artifact_census` **KAPATILMAYACAK**: bir pürüzsüzlük kapısı, **kaynaklı bir beden ölçüsünü EZEMEZ**
+
+F4 kartı *"ihlal KÖKTEN kapanır (1 → 0), kapı EXIT 0"* dedi. **Hakem
+REDDEDİYOR, ve gerekçe ajanın KENDİ ölçtüğü sayı.**
+
+Belde iki **ilan edilmiş yasa** teğet koşulu olmadan buluşuyor (alttan A-line
+etek −0.24963, üstten skim koni +0.11469, sıçrama **20.5594°**). Bel bir
+**MİNİMUM**, o yüzden onu C1 yapan her yuvarlama beli **AÇMAK ZORUNDA**:
+
+| b | **bel halkası** | adım başına dönüş |
+|---|---|---|
+| 5 mm | 725.0000 → 726.5172 | 8.224° |
+| **42 mm** (kapının 1°'si için gereken en küçük) | **725.0000 → 737.7779 (+12.7779)** | **0.979°** |
+| 90 mm | 725.0000 → 752.4706 | 0.457° |
+
+**Bel halkası bir tasarım sayısı DEĞİL:** bolluk Steiner-tam çözülüp **725**
+hedefine **0.073 mm** ile oturtuldu (CLAUDE.md KOŞU 4B, Threads RTW + Aldrich
+bandı) ve o halka **bütün kalıbın TEK paylaşılan halkasıdır**. Üçüncü yol
+(A-line eteğin bel eğimini koniyle eşitlemek) **etek yasasını** değiştirir.
+
+**VE BİR SAYI DAHA, hakemin eklediği:** 12.7779 mm, motorun kendi düzleştirme
+bütçesinin (`flatten_check` <%0.5 → bel halkasında 3.64 mm) **3.5 katı** ve
+`flat_pattern_agree_check`'in **%1.5**'inin (10.88 mm) **ÜSTÜNDE**. Yani bu
+kırığı kapatmak, **F4'ün az önce onardığı kapıyı yeniden kırma riski taşır.**
+
+**HÜKÜM:** `flat_artifact_census` **İLAN EDİLMİŞ bir kırmızı** olur —
+`contract_check` gibi (Damla'nın 17 Ağu kararı). Eşik **gevşetilmez**, kapı
+**silinmez**, `-E`/`DISABLED` **yok**, gerekçe **kapının kendi çıktısında**
+(ajan yazdı, RULES 6). **Ajan bu şartı tutmadı çünkü tutulmamalıydı; kart
+yanlış istedi ve şartı yazan önceki hakemdir** (K53'ten sonra **ikinci kez**).
+**Ajana yazılmıyor. Borç 76 KAPANDI — karara bağlandı.**
+
+▸ **Miras BEŞİN bileşimi artık adlı:** **1 Damla-ilanlı** (`contract_check`) ·
+**1 hakem-ilanlı** (`flat_artifact_census`) · **3 kök sebebi HÂLÂ ARANMAMIŞ**
+(`style_check` · `sizechart_source_check` · `figure_check`).
+
+---
+
+## K59 — H6 **CIRCIRA BAĞLANDI** (mühür hakem tarafından açıldı), **H5 PAYDASI AÇILMADI ve K53 DÜZELTİLDİ**
+
+**H6 — on iki fazlık "ÖLÇEMEDİM" kapandı.** Ajan sayıyı ölçtü ve bir kapıya
+bağladı (`flat_convention_check` §1d), ama `hedef_kosu.mjs:349` **mühürlü**
+olduğu için cırcıra basamadı ve **kartında öyle yazdı** — yetkisi yoktu,
+**doğru davrandı.** Bağlamak hakemin işidir (§3.8 md.1).
+
+| | ÖNCE | **SONRA** |
+|---|---|---|
+| `hedef_kosu` H6 | **ÖLÇEMEDİM** (n=5) | **0** (n=8 stil × ön+arka = 16 flat) |
+| taban `H6_konvansiyon.deger` | `null` | **`0`** |
+| `hedef_kosu.mjs` blob | `7e3683a94f50895563c2f36ea06b3d17e3497104` | **`7370b86d39232e4c92a77ca39ecd4ad3a8a42ac0`** |
+| taban blob | `cf2af8c7d3c4603eee5aea252f3568feedda8d10` | **`0ea0cb4415ed558312d88d9b1507df055000545c`** |
+
+**Sayı HESAPLANMIYOR, OKUNUYOR** (ikinci bir hesap ikinci bir doğrudur).
+**PAYDA HARMANLANMAZ:** H6'nın `n`'i **8 stil**, H1..H11'inki **5/10 fotoğraf**.
+**MUTASYON (HM-7, `web/lib/flat-core.js`, `numstat` BOŞ):** taban yazılmadan
+önce H6 0→16 ama `hedef_kosu` **YEŞİL** (null ile kıyas yok); **taban 0'a
+yazıldıktan sonra EXIT 1**; geri alınınca EXIT 0. **Taşıyıcı satır değil,
+TABANDIR.**
+
+**H5 — K53'ün GÜÇLÜ HÂLİ YANLIŞ, ama payda YİNE DE büyütülmedi.**
+K53 *"motorda yapılacak hiçbir iş bu paydayı büyütemez"* dedi. **Teşhisi
+(`push` döngüde değil) doğru, sonucu FAZLA GENİŞ:** motor **ikinci bir çifti
+adıyla ZATEN ilan ediyor** (`sleeve.cpp:200-213`: *"the piece's TWO side edges
+sewn to each other, so both carry the name"*), ve hakemin dökümü **n=5'in
+BEŞ satırında da** `sleeve_underarm` **2 kenar** buldu. Payda **5 → 10**
+yapılabilirdi; **hakem yaptı, sonra GERİ ALDI.**
+
+🚨 **SEBEP BİR ÖLÇÜM: o çift İNŞADAN SIFIR.** `sleeve.cpp:196-213` sol kenarı
+sağ kenarın **AYNASI** olarak kuruyor. Beş satır:
+`419.60/419.60 · 96.02/96.02 · 419.60/419.60 · 419.60/419.60 · 205.77/205.77`
+→ **diff 0.00, beşinde de, ve başka türlü ÇIKAMAZ.** Payda 5→10 olurdu, pay
+**0'da KALMAK ZORUNDA OLURDU**. **Kırmızı olamayan bir çift, payda süsüdür**
+(§3.8 md.3 · §0B). **H5 = 0/5 KALDI.**
+
+**Borç 73'ün asıl deliği (ön/arka toplanması) KAPATILAMAZ ve sebebi ölçüldü:**
+`sleeve_cap` motorda **TEK ve BÖLÜNMEMİŞ** bir yaydır (`sleeve.cpp:194`,
+`locket.cpp:379`), yani kapağın hangi yarısının ön oyuğa gittiğini söyleyen
+bir **beyan yok**; uydurmak §3.10 ihlalidir. Kör nokta artık **sayısıyla
+basılıyor** (`korNokta`). **Paydayı büyüten gerçek işin adı kondu: motor
+`sleeve_cap`ı omuz ÇENTİĞİNDE ön/arka diye ilan edecek — bu bir FAZ işidir,
+bir kapı düzeltmesi değil.** → **F6'ya girdi. Borç 51/73 DARALDI, kapanmadı.**
+
+---
+
+## K60 — 🚨 BORÇ 79: **TABANI YAZAN BETİK TABANI YIKIYOR** (`hedef_kosu.mjs --taban`)
+
+`hedef_kosu.mjs:31`'in **kendi kullanım satırı** şunu yazıyor:
+*"--taban    tabanı YENİDEN yaz (hakem işi)"*. **Hakem tam olarak onu yaptı ve
+dosya şunları SESSİZCE SİLDİ:**
+
+- `_hakem_dokunusu` + `_hakem_dokunusu_2` — **iki önceki hakemin bütün
+  önceki/sonraki gerekçeleri**
+- 🚨 `_olcum_seti` — **MÜHÜRLÜ hedef-10 + yedek-5 holdout listesi** (K16,
+  §3.8 md.2). Faz ajanının göremeyeceği set **tanımıyla birlikte** giderdi.
+- 🚨 `_cevap_anahtari_MUHRU` — **`labels-hakem.json` sha256 mührü** (K19)
+
+**Ve değerleri de oynattı:** H11 **3.7 → 2.9** · H3'ün `uyari`'si düştü ·
+H2'nin `onceki`/`kaynak` künyeleri düştü · `_tarih` *"F2 2. tur hakemi"* →
+*"Halka 0"* · 🚨 **H10a'ya TABAN ANAHTARI AÇTI** — **iki hakem onu BİLEREK
+kapalı bırakmıştı**, çünkü açmak ajanı alanları H10b'den H10a'ya kaçırmaya
+iter (§0B'nin reward-hacking maddesi).
+
+**ÖLÇÜLDÜ:** `python3 -m pytest -q` → **10 failed, 23 passed**
+(`engine/tests/py/test_cevap_anahtari_muhru.py`). **Hasar sessiz değil** — ama
+**güvenlik `pytest`te, betikte DEĞİL**, ve betiğin kendi kullanım satırını
+izleyen bir hakem **önce hasarı verir.**
+
+**GERİ ALINDI** (`git checkout --`, blob `cf2af8c7…` doğrulandı, pytest **33**).
+**Taban bu turda ELLE, yalnız `H6_konvansiyon` girdisinde düzenlendi.**
+**F6'nın DEĞİŞMEZLER'ine girdi: `--taban` KOŞTURULMAZ.**
+
+---
+
+## K61 — 🚨 BORÇ 80: **CIRCIR, TAKİPSİZ VE KAPISIZ BİR İKİLİYİ KOŞUYOR**
+
+`engine/tools/spec-diff.mjs:49` → `engine/dist/stitchu-engine.js`.
+**H1 · H2 · H3 · H5 · H8 · H10 · H11 — bu koşunun on iki fazdır yargılandığı
+her sayı — o ikiliden çıkıyor.** Ve o dosya **`engine/dist/` altında, yani
+GITIGNORE'DA ve TAKİPSİZ** (K32'nin 17 kırmızısının sebebi).
+
+`bundle_fresh_check.sh:46-48` **onu ölçmüyor**; ölçtüğü şey ondan türetilen
+**damgalı kopyalar** (`web/vendor/stitchu-engine.js`,
+`backend/engine/stitchu-worker.*`).
+
+**HM-6 ölçtü** — dosya bozuldu (`shasum d14d5eb07f73 → 7f33b7c42c05`):
+
+| kapı | hüküm |
+|---|---|
+| `bundle_fresh_check` | **100% passed — GÖRMEDİ** |
+| `generated_ratchet_check` | **100% passed — GÖRMEDİ** |
+| `golden_check` | **100% passed — GÖRMEDİ** |
+| `engine_check` | **100% passed — GÖRMEDİ** |
+| **`hedef_kosu`** | **EXIT 1 (KIRMIZI)** — yalnız bu gördü |
+
+**Yani BOZUK bir dist görülüyor. Ama BAYAT-AMA-GEÇERLİ bir dist** (eski bir
+motorun başarılı derlemesi) **hiçbir kapıyı kırmızı yakmaz** ve cırcırın bütün
+sayıları sessizce **eski motoru** ölçer.
+⚠ **Bayat-ama-geçerli hâl DENENMEDİ — DOĞRULANMADI.**
+
+**İkinci sonuç, hemen kullanılan:** bir **C++ kaynak mutasyonu**,
+`build-wasm.sh` (emcc) koşulmadan **cırcıra ULAŞAMAZ.** Hakemin **HM-3**'ü
+(`bodice.cpp`'nin `armhole_back` rolü silindi) tam olarak böyle **HÜKÜMSÜZ**
+düştü — bir delik değil, bir **yol farkı**. Bundan sonraki her hakem, cırcırı
+hedefleyen bir mutasyonu **JS/kontrat tarafında** ya da **wasm'ı yeniden
+derleyerek** kurmak zorundadır.
