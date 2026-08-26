@@ -1197,3 +1197,131 @@ bu üçüncüsü.
    satın alınabilir bir nesneyle bitmiyor.**
 4. ⚠ **Kabul edilen bedel, gizlenmiyor:** bu karar H8-ifade eğrisini **bir kart
    geciktirir** (3/5 bir alt-kart daha 3/5 kalır). **Ölçülerek kabul edildi.**
+
+## K47 — 🚨 ÜRÜN YOLU **İKİ NESNEDİR**, VE F5'İN HANESİ **BAĞLANMAYAN** NESNEDE (K46'nın öncülü DÜZELTİLDİ)
+
+**K46 şunu varsaydı:** *"üç operatörün üçü de ürün hattında sıfır satır → bağlarsan
+H4 ve H5 ilk kez ölçülebilir hale gelir."* **Öncül ölçülerek YANLIŞ çıktı.**
+F5-D hakemi `grep`'le ölçtü — repoda **BİR ürün hattı değil, İKİ ürün hattı** var:
+
+```
+web/js/download.js:262   seamPlanFlat(size,0) → flatJSON → SeamPlan        ← İNEN FLAT
+web/js/create.js:8,1045  draft(spec)          → draftJSON → DraftedPattern ← İNEN KALIP
+engine/tests/hedef_kosu.mjs:258-263  H5 = d.pattern.pieces[].edgeRoles     ← İKİNCİSİNDEN
+engine/tests/hedef_kosu.mjs:346      H4 = "ÖLÇEMEDİM"                      ← İKİNCİSİNDEN
+engine/src/garment.cpp               operatör include'u: SIFIR SATIR
+```
+
+**F5-D operatörleri BİRİNCİSİNE bağladı.** Bu **ölü bir altyapı DEĞİL** — inen flat
+o hattan geliyor, `bundle_fresh_check` yeşil, sevk edilen wasm `opsJSON`'u gerçekten
+export ediyor (`strings … | grep -c opsJSON` → 1), düğme `create.js:1045`'te.
+**Ama F5'in hanesi öbür nesnede duruyor ve o nesne bağlanmadı.**
+
+**VE KART İKİ ŞEYİ AYNI ANDA ŞART KOŞTU, İKİSİ BİRLİKTE MÜMKÜN DEĞİL:**
+(a) İŞ 1 md.2 — `draftJSON` yeni çifti **ilan edecek**;
+(b) faz kapısı md.1 — **yedinci kırmızı = alt-kart kapanmaz** (+ RULES 4).
+`DraftedPattern.pieces`'a panel eklemek `validator`·`printpack`·`cutplan`·
+`flat_expresses_spec_check`·`style_check`·`figure_check` + golden diff'i **birlikte**
+oynatır. **Ajan (b)'yi seçti, hiçbir eşiği gevşetmedi, hiçbir sayı uydurmadı ve
+yeri ÜÇ SATIR olarak yazdı** — K29 / K36 / K40 emsalinin aynısı.
+
+**HÜKÜM:** çelişki **kartın**, yani **ÖNCEKİ HAKEMİN**; onarmak da **HAKEMİN**
+(§3.8 md.1). Bu **GEÇTİ'yi düşürmez** ama **KAZANIM DA YAZILMAZ.** F5-D'nin
+§3.6 hanesi (**H4·H5·H8**) **tamamen boştur** ve bu koşuda hanesi boş kalan
+**ilk** alt-karttır. → **K48**.
+
+## K48 — F5, KUYRUK BOŞALINCA **YETMEZ**: H5'İN **PAYDASI** DA BÜYÜMEK ZORUNDA (K45'e EK)
+
+**K45** F5'in kapanış eşiğini *"mühürlü paydanın kuyruğu boşalsın"* diye kurmuştu.
+**Dayanak hâlâ geçerli ama TEK BAŞINA YETERSİZ, ve gerekçe ölçülen sayıdır:**
+
+| | F5 öncesi | F5-A | F5-B | F5-C | **F5-D** |
+|---|---|---|---|---|---|
+| **H8-ifade** | — | 5/5 | 4/5 | 3/5 | **3/5** — kımıldamadı |
+| **H5 (payda)** | 0/5 (**5**) | 0/5 (**5**) | 0/5 (**5**) | 0/5 (**5**) | **0/5 (5)** — **dört kez** |
+| **H4** | ÖLÇEMEDİM | ÖLÇEMEDİM | ÖLÇEMEDİM | ÖLÇEMEDİM | **ÖLÇEMEDİM — onuncu faz** |
+
+§3.6 F5'e **üç** sayı verdi. Dört alt-kart sonra kımıldayan **bir** tanesi ve o da
+**iki alt-karttır durdu**. Kuyruğu boşaltmak (5 operatör × ~1 alt-kart) H8-ifade'yi
+0/5'e indirir ama **H4'ü ve H5'i yerinde bırakır** — yani F5, hanesinin **üçte
+ikisi ölüyken** kapanır. **Bu §0B'nin tam olarak yasakladığı şeydir.**
+
+**KARAR — F5 kapanış eşiği ÜÇ ŞARTLIDIR:**
+1. mühürlü paydanın **kuyruğu boşalacak** (K45, değişmedi), **VE**
+2. **H5'in paydası en az BİR KEZ büyüyecek** (gerçek bir dikiş çiftiyle;
+   tanım değiştirerek **değil** — `hedef_kosu.mjs` eşikleri **mühürlü**), **VE**
+3. **H4 ya bir SAYI basacak, ya da ölçülemezliği bir KAPIYA bağlanacak**
+   (bir yorum satırına değil).
+
+**SIRA — ve bu bir tercih değil, K47'nin sonucudur:**
+- **F5-E = KÖPRÜ** (`SeamPlan` ⇄ `DraftedPattern`). **`op.attach` DEĞİL.**
+- `op.attach` **F5-F'ye kaydı** (K46'nın kaydırmasının ikincisi; kabul edilen
+  bedel **ölçülerek yazıldı**: H8-ifade eğrisi **iki kart** gecikir).
+- **TAVAN:** F5-E **iki tura** kadar. İkinci turda da H5'in paydası büyümezse
+  **F5 DURUR**, `op.attach` ve kuyruk **adlarıyla kuyrukta bekler**, ve
+  **Halka 3 F4'ten açılır** — çünkü o durumda blokör bir operatör değil
+  **F4'ün geometri işidir** (K23'ün 28.7714 mm'si ve borç 57'nin **üç** ölçümü
+  aynı yerde duruyor). Bu bir kaçış değil, **ölçülen bir sıra düzeltmesidir.**
+- **Kalan tahmin:** F5-E (1–2 tur) + kuyruğun 5 operatörü ≈ **6 alt-kart**,
+  süit maliyeti ~**+100 s** (F5-D'nin +23.96 s'si emsal) → ~**840 s**.
+  Push kapısı (900 s) zaten **miras üç kırmızıdan geçilemiyor** (K37), yani süre
+  bir **maliyettir, duvar değil** — ama 900'e yaklaşıyor ve **ölçülerek yazıldı**.
+
+## K49 — `op_program_check` BİR **KİMLİK** KAPISIDIR, `op.rotate` İÇİN **DOĞRULUK** KAPISI DEĞİLDİR (hakem mutasyonu HM-J2)
+
+Hakem, ajanın **hiç açmadığı** `engine/src/dartrotate.cpp`'de transfer açısını
+`theta * 0.90` yaptı (`numstat` **BOŞ**, ikili `fc7baddf…` → `…d949f09e`):
+
+| kapı | sonuç |
+|---|---|
+| `rotate_check` | **EXIT 1 🔴** — ALAN 32473.1791 → 36134.0402 mm² (fark **3660.861111584**), AÇI 55.173533° → 49.656180° (fark **5.517353326°**) |
+| **`op_program_check`** | 🚨 **EXIT 0** |
+| `split_check` | EXIT 0 |
+
+**OP1 "soruldu, uygulandı, PLANA YAZILDI" bir KİMLİKTİR.** Rijitlik — bir transferin
+kumaş **ekleyememesi** — bir **DOĞRULUKTUR** ve ürün yolunda **kapısız**.
+Kartın kendi yeni kapısının üstünde **K30'un tam sınıfı**.
+
+⚠ **HÜKÜM BURADAN VERİLMEDİ:** ağ kör **değil**, `rotate_check` kırmızı yanıyor,
+ve temiz ağaçta program **doğru** — delik bir **yanlış sayı** değil, **eksik bir
+kapı**. → **borç 66, F5-E'nin ZORUNLU İŞ 0'ı** (emsal: borç 43/44/47/48/56 aynen
+böyle devredildi ve **hepsi kapandı**).
+
+**Aynı turda ölçülen iki şey daha, ikisi de hüküm taşımıyor ama deftere giriyor:**
+- **HM-J3** (`seamplan.cpp`, `kStatureMM` 1680→1750): `tek_nesne_check` **EXIT 1**,
+  ama `op_program_check`/`split_check` **EXIT 0** → **borç 57 / K44'ün ÜÇÜNCÜ
+  ölçümü** (`kAspectBust` · `kCapMM` · `kStatureMM`). **Halka 3 / F4.**
+- **HM-J5** (`flatten.cpp`, `strainPolish` adımı ×0.45): **ağın TAMAMI yeşil**
+  (`walkgate_check` dahil — F5-C hakeminin HM-4'ünü yakalayan kapı). Zararsız mı
+  (yakınsama kadranı) gevşek mi (strain bütçesi) — **DOĞRULANMADI** → **borç 67**.
+- **HM-J4** (`garmentshell.cpp`): ikili **kımıldamadı** → **HÜKÜM YOK**, ve öyle
+  sayıldı. Bayat-ikili tuzağına düşülmediği **`shasum` ile ölçüldü**.
+
+## K50 — BORÇ 59 **KAPANDI (SAPMA YOKTU)**, BORÇ 60 **DAMGALANDI, SİLİNMEDİ** (payda hakemin)
+
+**Borç 59.** F5-C hakemi *"bir alıntı birebir değil"* demişti. F5-D hakemi
+**seçenek sayfalarını tek tek açtı** (§3.9'a girmez — yayınlanmış doküman):
+- `freesewing.eu/docs/designs/bella/options/bustdartlength/` →
+  *"The **bust dart length** option controls the length of the bust dart.
+  **The maximum length brings the dart all the way to the bust apex.**"*
+- `freesewing.eu/docs/designs/bella/options/bustdartangle/` →
+  *"…**It attempts to set the angle of the top leg of the dart at the requested
+  angle.** However, the angle may be limited to ensure that a minimum amount of
+  fabric is left above and below the dart."*
+
+**İki alıntı da kaynağın KENDİ İKİNCİ CÜMLESİ.** Sapma **yoktu** — F5-C hakemi
+kalem sayfasını değil **liste sayfasını** okumuştu. **Tek bayt alıntı
+değiştirilmedi**, yalnız **kalem sayfalarının URL'i künyeye eklendi** ki bir
+sonraki hakem **tekrar açabilsin**. **Borç 59 KAPANDI.**
+
+**Borç 60.** `freesewing-aaron`'ın `op.split` gereksinimi *"Cut 1 back on the fold"
++ "Cut 1 front on the fold"*e dayanıyor. **Bu bir KATLAMADA KESİMDİR** — iki ayrı
+parça — **bir panelin BÖLÜNMESİ değil.** Eşleme **zayıf** ve öyle **DAMGALANDI**.
+- **SİLİNMEDİ**, çünkü silmek paydayı **gevşetmek** olurdu (§0B / K31 emsali).
+- **Doğru operatörün adı UYDURULMADI** (§3.10) — kuyrukta ona karşılık gelen bir
+  ad yok ve icat edilmedi.
+- **Bugün sayıya etkisi YOK, ölçüldü:** `aaron` zaten `op.extend` + `op.attach`'tan
+  **çevrilemiyor**. **H8-ifade `3/5` KIMILDAMADI** (hakem düzenleme öncesi ve
+  sonrası koştu, EXIT 0 · 3/5).
+- Düzeltme hakemin kendi commit'i **`b282349`**; ajan `expressability_check.mjs`'e
+  **tek bayt** yazmamıştı (`numstat` **0**).
