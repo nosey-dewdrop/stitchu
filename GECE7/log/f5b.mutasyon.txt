@@ -123,3 +123,46 @@ M7b engine/src/surfacepattern.cpp — F5-B'NIN YAZMADIGI KOD YOLU (flatten'in ke
 ?? engine/src/dartsuppress.hpp
 ?? engine/tools/shell-audit.cpp
 ?? engine/tools/suppress-op.cpp
+
+================================================================================
+=== F5-B HAKEM TURU — HAKEMIN KENDI MUTASYONLARI (2026-08-26) ===
+    Kosuldugu agac: temiz Release, sifirdan derlenmis (K32 tohumlamasi dogrulandi).
+    Checkout SEMBOLIK LINKLI DEGIL (realpath == pwd), yani K33 tuzagi kapali.
+================================================================================
+
+HM-A  contract/primitives-v1.json — VAR OLAN AMA ALAKASIZ BIR KAPININ ADINI ODUNC AL
+      op.split'in motorda_kapi'si null -> "geometry" (ctest'te KAYITLI bir test,
+      ama op.split ile hicbir ilgisi yok). Ajanin kendi mutasyonu M8 yalnizca
+      OLMAYAN bir kapi adini deniyordu ve o yakalaniyordu.
+  ONCE (F5-B ajaninin biraktigi hal):
+        expressability_check EXIT 0 (YESIL)
+        "operator kumesi: sozlesmede 15, MOTORDA 3 (op.suppress, op.rotate, op.split)"
+        H8-IFADE = 3 / 5     <-- 4/5'ten DUSTU, motora TEK SATIR kod yazilmadan
+      => 🚨 DELIK GERCEK. F5-A hakeminin PAYDA'da buldugu deligin (K31) PAY tarafi.
+  HAKEM KAPATTI (K35): motorda_kapi, operatorun KENDI adini tasimak zorunda
+        (op.X -> X_check). Kural uydurulmadi, motordaki iki operatorden okundu.
+  SONRA (K35 yurururken):
+        HM-A tekrar        -> EXIT 1 (KIRMIZI), "ODUNC ALMAK ... (§0B, K35)"
+        temiz agac         -> EXIT 0 (YESIL), H8-IFADE = 4 / 5  (DEGISMEDI)
+
+HM-B  engine/src/surfacepattern.cpp — GarmentSurf::at() YUZEYI %5 BUYUTUR
+      Ajanin K29 uslubuyla ILAN ETTIGI KOR NOKTA sinaniyor: kart diyor ki
+      "GarmentSurf::at() iki yolun da altinda; yuzey yanlissa iki okuma BIRLIKTE
+      yanlis olur ve K6 kolu goremez."
+  OLCULEN: tek_nesne_check EXIT 1 (KIRMIZI) — 14 olcunun 10'u FAIL.
+        ornek: hem_circumference YAYINLANAN 1295.6000mm, ikinci yoldan
+               1360.3800mm, delta 64.7800mm > 0.05mm
+  => AJANIN ILAN ETTIGI KOR NOKTA COK KOTUMSER. Yayinlanan sayi Gauss-Legendre +
+     STEINER KIMLIGI + kapali formdan geliyor ve bunlarin hepsi at()'ten gecmiyor;
+     denetim yolu (at()'in kiris toplami) geciyor. Iki yol AYRISIYOR, kol GORUYOR.
+     K6 ilan edildiginden GUCLU. Ajanin aleyhine degil, LEHINE bir duzeltme.
+  geri alindi: yeniden derlendi, tek_nesne_check EXIT 0 (YESIL), agac temiz.
+
+--- §3.8 md.3 DENETIMI (hakem, git numstat ile) ---
+Ajanin tablosu M1'i (surfacepattern.hpp) ve M7/M7b'yi (surfacepattern.cpp)
+"(yazmadim)" diye isaretliyor. OLCULDU, YANLIS: ajan bu kartta ikisine de yazdi
+(surfacepattern.hpp +28, surfacepattern.cpp +33/-10).
+GERCEKTEN dokunulmamis dosyalardaki mutasyonlar: M3 · M4 (shellprojection.cpp)
+ve M9 (expressability_check.mjs) = UC MUTASYON, IKI DOSYA.
+=> §3.8 md.3'un SAYISI (en az uc) TUTUYOR; ajanin ETIKETLEMESI yanlis.
+   Duzeltildi, gizlenmedi; F5-C'de yayilim UC AYRI dokunulmamis DOSYA olacak.

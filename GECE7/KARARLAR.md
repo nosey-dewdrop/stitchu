@@ -847,3 +847,142 @@ byte"* diyor — **bu cümle bugün yanlıştır** ve `bundle_fresh_check`'in da
 oraya dokunmadı) ve F5-A'nın kapatması gereken bir şey değil. **Borç md.40.**
 En kısıtlayıcı okuma: **sevk edilen wasm bugün kaynağından yeniden üretilemez**,
 ve bunu söyleyen damganın kendisi bozuktur.
+
+---
+
+## K35 — H8-İFADE'NİN **PAY** TARAFINDA DELİK VARDI; HAKEM BULDU VE KAPATTI
+
+**F5-A hakemi PAYDA'yı mühürledi (K31).** F5-B hakemi aynı deliğin **PAY**
+tarafını kendi mutasyonuyla (HM-A) ölçtü ve delik **gerçek çıktı.**
+
+`expressability_check` bir operatörü "motorda" saymak için `motorda_kapi`
+adının `engine/CMakeLists.txt`'te **kayıtlı** olmasını arıyordu. Ajanın kendi
+mutasyonu (M8) yalnız **OLMAYAN** bir adı (`split_check`) deniyor ve o
+yakalanıyordu. **Yakalanmayan, VAR OLAN bir kapının adını ÖDÜNÇ ALMAKTI.**
+
+**ÖLÇÜLDÜ (hakem, HM-A):** `op.split`'in `motorda_kapi`'si `"geometry"` yapıldı
+— ctest'te kayıtlı, ama `op.split` ile hiçbir ilgisi yok:
+
+| | önce (F5-B ajanının bıraktığı hal) | sonra (K35) |
+|---|---|---|
+| `expressability_check` | **EXIT 0 (YEŞİL)** | **EXIT 1 (KIRMIZI)** |
+| ilan | "MOTORDA **3** (suppress, rotate, split)" | ihlal basılır |
+| **H8-İFADE** | **3 / 5** ← motora TEK SATIR kod yazmadan düştü | **4 / 5** (kımıldamaz) |
+
+**KARAR — kapı tanımı DEĞİŞTİ (§3.8 md.1, yalnız hakem).** `motorda_kapi`,
+operatörün **KENDİ** adını taşımak zorunda: `op.X → X_check`. Kayıtlılık şartı
+**korundu**, üstüne konvansiyon şartı eklendi.
+
+**Kural UYDURULMADI, motordaki iki operatörden OKUNDU** (§3.10):
+`op.rotate → rotate_check`, `op.suppress → suppress_check`. İkisi de zaten bu
+konvansiyonu yazıyor, yani kural bugünkü ağacın kendi ilanıdır.
+
+**Doğrulandı, iddia edilmedi:** temiz ağaç **EXIT 0, H8-İFADE 4/5 DEĞİŞMEDİ** ·
+HM-A **EXIT 1** · ajanın **M8'i hâlâ EXIT 1** (kayıt kolu onu tutmaya devam
+ediyor, K35 hiçbir kolu gevşetmedi).
+
+---
+
+## K36 — `rotate_check` R0'IN YENİDEN BAĞLANMASI **ONAYLANDI**
+
+F5-B ajanı bunu §3.8 md.4 uyarınca **hakeme getirdi** ve **doğru davrandı** —
+kart bunun hakeme geleceğini önceden ilan etmişti (K29 emsali).
+
+| | önce | sonra |
+|---|---|---|
+| R0 kolu | `aci_deg == 41.48` (**SABİT**) | `\|suppress.kama_deg − rotate.aci_deg\| < ε` (**İKİ ARACIN ÇAPRAZ ÖLÇÜMÜ**) |
+| ölçülen | 41.48 fikstürden besleniyordu | **55.1735°**, panelin kendi develop-deficit'i |
+| 41.48'in rolü | kapının **ŞARTI** | **YALNIZ RAPOR**, hiçbir kol eşitlemiyor |
+
+**Bu bir GEVŞETME DEĞİL.** Eski kol bir fikstüre pinliyordu; `suppress` ölçtüğü
+sayıyı basar basmaz o kol, motoru **başka bir gövdedeki başka bir giysinin
+sayısını üretmeye zorlayan** yanlış bir kapı olurdu — §3.10'un açıkça yasakladığı
+şey. Yeni kol iki **ayrı aracın** çıktısını bağlıyor: ajan kadranı 41.48'e doğru
+oynatsa, `suppress-op`'un aynı paneldeki ölçümüyle ayrışır ve kol kırmızı yanar.
+
+**Doğrulandı:** `rotate_check` EXIT 0 (hakemin temiz Release koşusunda, **391.34
+sec**), alan/açı/TRUE bacaklar/çevre kimliği farkı **0.000000000**.
+
+---
+
+## K37 — F5-B PUSH KAPISINI **KIRMADI**; KAPI ZATEN GEÇİLEMEZDİ (borç 43 bir MALİYET, kırık kapı değil)
+
+**Soru (hakeme açıkça soruldu):** süit 1085s'ye çıktıysa ve push kapısı 900s ise,
+alt-kart bir kapıyı **fiilen kırmış** olur ve kapanmamalıdır.
+
+**HAKEM ÖLÇTÜ — ÖNCÜL YANLIŞ. Kapı zaman yüzünden değil, KIRMIZI SAYISI yüzünden
+zaten geçilemezdi, ve F5-B'den ÖNCE de öyleydi.**
+
+`.rabadon/guard.json` → `pushGate.run` şu beşi dışlıyor: `h10_gate_check` ·
+`style_check` · `figure_check` · `preview_truth_check` · `contract_check`.
+Miras **6 kırmızının 3'ü bu listede DEĞİL** ve kapının kapsamında kalıyor:
+
+```
+  flat_pattern_agree_check   -> KAPSAMDA, KIRMIZI
+  flat_artifact_census       -> KAPSAMDA, KIRMIZI
+  sizechart_source_check     -> KAPSAMDA, KIRMIZI
+```
+
+`pushGate.testPassPattern` = `100% tests passed,\s*0 tests failed`. Üç kırmızı
+kapsamda durdukça bu satır **hiçbir zaman basılamaz** — süre sıfır olsa bile.
+
+**Ve pratikte push'lar DÜŞMÜYOR:** `git reflog show origin/main` son beş girdinin
+beşi de `update by push`, `HEAD == origin/main`. Yani kapı bugün fiilen
+**bağlayıcı değil**.
+
+**KARAR:** F5-B **bir kapıyı kırmadı**; kırık olan kapı **miras** ve F5-B'den
+öncedir. **GERİ AL hükmü bu gerekçeyle verilmez.**
+
+**AMA MALİYET GERÇEK VE ÖLÇÜLDÜ** (hakemin kendi temiz Release koşusu):
+
+| | F5-A | F5-B (hakem ölçtü) |
+|---|---|---|
+| `rotate_check` | **4.78 sec** | **391.34 sec** (**82×**) |
+| `suppress_check` | yoktu | **375.74 sec** |
+| **tam `ctest`** | — | **1080.09 sec** (ajan 1085.64 dedi, tutuyor) |
+
+İki kapı **767.08 sn** yiyor = süitin **%71'i**. Operatör başına bir kapı daha
+eklenirse süit **1500s'yi** aşar. **Borç 43 AÇIK ve F5-C'nin ZORUNLU İŞ 0'ıdır.**
+
+---
+
+## K38 — `maxDartDeg` TAVANI: TEK KAMA İLAN EDİLEN TAVANIN **DÖRT KATI** (borç 44, F5-C'ye ZORUNLU)
+
+`op.suppress` bir panele **TEK** kama açıyor: `left_ftorso` **55.1735°**.
+Motorun kendi `SheathOptions::maxDartDeg` alanı **14°** ilan ediyor ve motorun
+kendi `dartColumnsFromDeficitRows`'u yükü **birden çok pense** bölüp sütunu
+dikişe uzaklıkla ağırlıklandırıyor. **Operatör bunu yapmıyor.**
+
+**KARAR — bugün RAPOR, kapı DEĞİL; ve gerekçe §3.10'dur.** Tek bir kamaya
+tavan koymak için **dayanak yok**: 14° motorun **çok-pensli** yerleşimine ait bir
+sayıdır, tek kamaya uygulanacağının **yayınlanmış bir dayanağı görülmedi**, ve
+bugünkü 55.17'ye uyacak bir tavan seçmek eşiği **bugünkü sayıya uydurmak** olurdu
+(K29 emsali). **Uydurma eşik, kapısızlıktan kötüdür.**
+
+**F5-C ZORUNLU:** yerleşim/bölme `op.split`'in konusudur ve F5-C'nin kartı
+`op.split`'tir — **bu borç orada karara bağlanacak**, tekrar ertelenemez.
+
+---
+
+## K39 — H8-İFADE **4/5 ÖLÇÜLDÜ AMA KÜNYESİZ BİR SATIRA DAYANIYOR**: sayı DURUR, "kazanım" olarak DIŞARI SÖYLENMEZ
+
+Düşüşün tamamı **tek kalemden**: `freesewing-bella` (`{op.suppress, op.rotate}`),
+ve o kalem paydanın **DOĞRULANMADI** iki satırından biridir (öbürü
+`freesewing-aaron`). FreeSewing deposu bu makinede yok, yayınlanmış parça
+listeleri **görülmedi**. **Ajan bunu kendi yazdı ve doğru davrandı.**
+
+**KARAR — üç parça:**
+1. **Sayı DURUR: H8-İFADE = 4/5, n=5.** Ölçüm gerçek, payda **mühürlü ve tam**,
+   `TABAN_PAYDA`'ya tek bayt yazılmadı (hakem `git diff` ile doğruladı), ve
+   operatörün kendisi **bağımsız olarak** kapılı (`suppress_check`, 5 kol).
+   Sayıyı silmek **bilgi atmaktır** ve bilgi atmak, bilgi vermemekten beterdir.
+2. **AMA "KÜNYESİZ DAYANAK" damgası taşır.** 4/5, bir **kazanım** olarak
+   dışarıya (post/pitch/site) **söylenmez** ve F5-C'de bir cırcır dayanağı olarak
+   **kullanılmaz**, künyesi bulunana kadar.
+3. **F5-C'nin İŞ 0'ı:** `freesewing-bella` ve `freesewing-aaron`'un gereksinim
+   kümeleri **yayınlanmış bir kaynağa** bağlanır. Bağlanamıyorsa **"KÜNYE
+   BULUNAMADI"** yazılır ve satır **paydada KALIR** (§3.8 md.2 ruhu: bir giysinin
+   gereksinimi yanlışsa **karta yazılır, kaldırılmaz**) — payda **DARALTILMAZ**.
+
+**Bu bir faz şartı DEĞİLDİR:** F5-B kartı 4/5'i bir kapı yapmamıştı
+(*"Olmuyorsa sebebi yazılır, sayı zorlanmaz"*), o yüzden hüküm buna asılmıyor.
