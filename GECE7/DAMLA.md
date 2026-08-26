@@ -95,3 +95,21 @@ satır başına **en fazla bir çift** üretiyor, yani payda bir ölçüm değil
 **TAVAN**. → **K53**, ve F5 bu yüzden **durdu** (**K54**).
 
 **Damla isterse sonradan bakar ve değiştirir — koşu onu beklemedi (§3.4).**
+
+---
+
+## F4 — HAKEME GİDEN BİR KALEM (ajan karar veremez, §3.4/§3.10)
+
+| # | Kalem | Ajan ne yaptı (en kısıtlayıcı) |
+|---|---|---|
+| 16 | 🚨 **"MANKEN BELİ KALIP BELİNDEN KAÇ MM İNCE OLSUN?"** `KOSU-v7.md` F4 bölümü bu cümleyi *"zevk kararı, ölçümle çıkmaz, senin vermen lazım"* diye **Damla'ya** yazıyordu. K51'in emsali bu cümlenin **hakeme** gittiğini söylüyor: koşu beklemez. Aranan sayı ARANDI ve bulunamadı — manken/croquis gövdesinin göğüs-bel-kalça çevrelerini insan beden çizelgesinden kaç mm ince veren **otoriter bir yayın YOK**, ve `KOSU-v7.md` F4 bunu kendi metninde zaten yazıyor (*"Sayısal bel/göğüs/kalça fark tablosu için otoriter yayın bulunamadı"*). Aynı bölümün taşıdığı **9 kafa / 7–8 kafa** oranının da **künyesi verilemedi** (yazar/yayın/yıl/sayfa/URL yok), o yüzden **hiçbir sayıyı beslemedi** (§3.10). | **EN KISITLAYICI SEÇİLDİ: fark 0.0 mm, dikiş payı 0.** Gerekçe tek cümle: **sıfırdan başka her değer uydurulmuş bir sayıdır**, çünkü onu söyleyen bir yayın yok. Ve karar **gizlenmedi**: `contract/mannequin-chart-v1.json` (id `stitchu-manken-v1`) kaynağını **"BİZİM KARARIMIZ"** diye yazıyor, bir yayına **atfetmiyor**. Croquis çapaları artık o çizelgeden **aritmetikle türüyor** (kapı `flat_convention_check` §1d, en kötü sapma **0.0003 mm**) ve `flatJSON`'un `bedenlendirme` bloğu **`YAYIN BULUNAMADI`** basmayı bıraktı. **Hakem başka bir sayı koyarsa değişecek TEK yer** `donusum.farkGirthMM`; croquis, kapı ve H6 aynı aritmetikten kendiliğinden döner. **Damla'ya sorulmadı, koşu durmadı.** |
+
+**Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:** F4 `flat_artifact_census`'ün
+tek ihlalini **kapatmadı** ve sebebini bir sayıya bağladı: bel köşesini C1 yapan
+her yuvarlama **paylaşılan bel halkasını** 725.0000 → **737.7779 mm** (b=42mm)
+oynatır, ve o halkanın bolluğu Steiner-tam çözülüp 725 hedefine **0.073 mm** ile
+oturtulmuş **kaynaklı** bir sayıdır. Eşik gevşetilmedi, kapı susturulmadı;
+**karar hakemin**. Ayrıca K52'nin **ikinci yarısı açık kaldı**: bu kart flat'in
+hangi bedene değerlendiğini yayınladı, ama `draft(spec, measurements)`'ın
+**serbest vücudu** ile `buildSeamPlan(sizeLabel)`'ın **EU beden etiketi**
+arasındaki köprü **hâlâ kurulmadı** ve `garment.cpp`'de hâlâ **sıfır satır**.
