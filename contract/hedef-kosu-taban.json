@@ -1,0 +1,72 @@
+{
+  "_not": "KOŞU v7 §3.6 hedef koşusu tabanı. §3.8 md.1: faz ajanı bu dosyaya DOKUNAMAZ. Değiştiren hakemdir ve önceki/sonraki sayıyı yan yana yazar.",
+  "_fixture": "vision/eval/live-2026-08-22.json",
+  "_n": 5,
+  "_tarih": "2026-08-26 (Halka 0)",
+  "sayilar": {
+    "H1_tamamlanma": {
+      "deger": 5,
+      "n": 5,
+      "birim": "5/5 girdi kalıp+flat üretti",
+      "yon": "yuksek"
+    },
+    "H2_gorulen_isabet": {
+      "deger": 92.2,
+      "n": 5,
+      "birim": "%92.2 (47/51 alan yargısı)",
+      "yon": "yuksek",
+      "uyari": "göz etiketi Fable tarafından gözle konuldu, İNSAN etiketi değil — §1F, geçici"
+    },
+    "H3_uydurma_alan": {
+      "deger": 4,
+      "n": 5,
+      "birim": "4 ilan edilmemiş uydurma alan",
+      "yon": "dusuk"
+    },
+    "H4_gereksiz_dikis": {
+      "deger": null,
+      "n": 5,
+      "birim": "ÖLÇEMEDİM — F5 dört sebep katmanı kodda yok",
+      "yon": "dusuk"
+    },
+    "H5_dikilebilirlik": {
+      "deger": 0,
+      "n": 5,
+      "birim": "0 eşleşmeyen çift / 5 ölçülebilen çift",
+      "yon": "dusuk",
+      "uyari": "kalıpta yalnız armhole+sleeve_cap rolleri ilan edili; diğer dikişler ÖLÇÜLEMİYOR"
+    },
+    "H6_konvansiyon": {
+      "deger": null,
+      "n": 5,
+      "birim": "ÖLÇEMEDİM — manken çapası flat_convention_check içinde, bu koşuya bağlanmadı",
+      "yon": "dusuk"
+    },
+    "H8_ifade_edilemeyen": {
+      "deger": 31,
+      "n": 5,
+      "yon": "dusuk",
+      "birim": "26 outOfVocab terim + 5 sözlükte olmayan alan okuması"
+    },
+    "H9_cikarim_makullugu": {
+      "deger": null,
+      "n": 5,
+      "birim": "ÖLÇEMEDİM — görünmeyen alanda makullük hakemi yok",
+      "yon": "yuksek"
+    },
+    "H10_cikarildi_orani": {
+      "deger": 58.3,
+      "n": 5,
+      "birim": "%58.3 (70/120 alan default'tan geldi)",
+      "yon": "tavan"
+    },
+    "H11_sure_ms": {
+      "deger": 3,
+      "n": 5,
+      "yon": "tavan_10sn",
+      "tavan": 10000,
+      "birim": "medyan 3.0 ms, en kötü 32.6 ms",
+      "uyari": "VLM çağrısı HARİÇ (bankadan okundu) — gerçek kullanıcı süresi bunun üstüne API turu ekler"
+    }
+  }
+}

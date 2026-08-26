@@ -915,3 +915,23 @@ add_test(NAME docs_truth_check COMMAND ${NODE_EXECUTABLE}
 # mutasyon `web/` DIŞINDA bir git worktree fikstüründe koştu — `--dir=`).
 add_test(NAME landing_truth_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/landing_truth_check.mjs)
+
+# hedef_kosu (KOŞU v7 §3.6, Halka 0 — 2026-08-26): COMPOUNDING ERROR KİLİDİ.
+# Uzun koşuda asıl tehlike her fazın kendi kapısını geçip HEDEFTEN yavaşça
+# sapmasıdır. Bu yüzden hedefin kendisi bir teste çevrildi ve her fazın sonunda
+# koşar: fotoğraf + prompt -> kalıp + flat, zincirin hiçbir halkası taklit
+# edilmeden (bankalı `seen` -> web/js/vision-bridge.js -> engine/dist draftJSON
+# -> engine/tools/render-garment-flat.mjs).
+# SIFIR API ÇAĞRISI, SIFIR KURUŞ (§3.9): VLM cevapları vision/eval/live-2026-08-22.json'a
+# bir kez bankalandı; fixture'ı yenilemek bir FAZ KARARIDIR, kartta maliyetiyle yazılır.
+# Cırcır: contract/hedef-kosu-taban.json'daki sayıların hiçbiri kötüleşemez.
+# §3.8 md.1 gereği FAZ AJANI o dosyaya DOKUNAMAZ; değiştiren hakemdir ve
+# önceki/sonraki sayıyı yan yana yazar.
+# H11 (süre) bilerek cırcıra değil TAVANA bağlı (<10 sn): duvar saati ±0.3ms
+# sallanıyor, eşitlik cırcırına bağlansa kapı gürültüde kırmızı yanar ve herkes
+# onu yok saymayı öğrenir.
+# Mutasyon kanıtı (§3.8 md.3) GECE7/log/halka0.mutasyon.txt: değişmeden üç koşu
+# yeşil · taban sıkılınca EXIT 1 · motor kırılınca H1 5/5 -> 0/5 EXIT 1 · geri
+# alınca yeşil. H4/H6/H9 bugün ÖLÇÜLEMİYOR ve karta "ÖLÇEMEDİM" diye basılıyor.
+add_test(NAME hedef_kosu COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/hedef_kosu.mjs)
