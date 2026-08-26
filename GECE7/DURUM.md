@@ -18,8 +18,12 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 
 | Faz | Etiket | Ajan | Hakem | Durum |
 |-----|--------|------|-------|-------|
-| Halka 0 | `halka0-oncesi` | şef (ajan yok) | — | ✅ BİTTİ, kart `GECE7/HALKA0.md` |
-| F-İNDİR | — | — | — | SIRADAKİ |
+| Halka 0 | `halka0-yesil` | şef (ajan yok) | — | ✅ BİTTİ, kart `GECE7/HALKA0.md` |
+| F-İNDİR | — | — | — | SIRADAKİ — **BAŞLAMADI** |
+
+> ⛔ **KOŞU DAMLA TARAFINDAN DURDURULDU** (26 Ağu, Halka 0 biter bitmez):
+> *"halka 1 başlama dur bitirince."* Halka 1'i **kendiliğinden açma.** Yeni şef
+> bu satırı görürse §3.2 döngüsüne girmez; Damla "devam" diyene kadar bekler.
 
 ## Son kapı sayıları — taban, n=5
 
