@@ -9,6 +9,7 @@
 #include "../src/dxf.hpp"
 #include "../src/garment.hpp"
 #include "../src/recipe.hpp"
+#include "../src/planops.hpp"
 #include "../src/seamplan.hpp"
 #include "../src/sizechart.hpp"
 #include "../src/guiderefs.hpp"
@@ -552,6 +553,26 @@ std::string planJSONBinding(std::string size, double neckDropMM) {
     }
 }
 
+// ⭐ THE OPERATOR PROGRAM REACHES THE BROWSER (GECE7 / F5-D, borç 45+49+51/K46).
+//
+// Until this line existed the referee could grep `panelsplit.hpp`,
+// `dartsuppress.hpp` and `dartrotate.hpp` against garment.cpp / this file /
+// web/js and find ZERO LINES IN ALL THREE — three real, gated operators that no
+// user could touch. This is the same `opsJSON` the native plan-ops tool and the
+// op_program_check gate call, so if the browser and the gate ever disagree, one
+// of them is not calling the engine.
+//
+// The program runs on a COPY of the shipped plan: planJSON and flatJSON below
+// are untouched and the pattern the site ships today is byte-identical
+// (RULES 4, opt-in / default OFF).
+std::string opsJSONBinding(std::string size, double neckDropMM) {
+    try {
+        return opsJSON(size, neckDropMM);
+    } catch (const std::exception& e) {
+        return std::string(R"({"error":")") + escape(e.what()) + "\"}";
+    }
+}
+
 std::string flatJSONBinding(std::string size, double neckDropMM) {
     try {
         SheathOptions opt;
@@ -572,4 +593,5 @@ EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("dxfSpecJSON", &dxfSpecJSON);
     emscripten::function("planJSON", &planJSONBinding);
     emscripten::function("flatJSON", &flatJSONBinding);
+    emscripten::function("opsJSON", &opsJSONBinding);
 }

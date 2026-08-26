@@ -1951,7 +1951,6 @@
      "op": "op.split",
      "params": {
       "panel": "back",
-      "atFraction": 0.75,
       "axis": "vertical"
      }
     },
@@ -1964,12 +1963,13 @@
       "b": [
        "cbRight"
       ],
-      "ratio": 1.0
+      "ratio": 1.0,
+      "sewnToFraction": 0.75
      }
     }
    ],
    "engineEffect": "reshape",
-   "note": "Yirtmac = CB dikisinin alt kismini DIKMEMEK: atFraction ile nereye kadar dikildigi."
+   "note": "Yirtmac = CB dikisinin alt kismini DIKMEMEK: seam.sewnToFraction ile nereye kadar dikildigi. \u2b50 K41 / F5-D IS 0b: bu kesir op.split.atFraction'dan TASINDI, atilmadi \u2014 bir bolme yeri degil bir dikisin ozelligi. Kunye YAYIN BULUNAMADI."
   },
   "backSlit.slit": {
    "status": "resolved",
@@ -1978,7 +1978,6 @@
      "op": "op.split",
      "params": {
       "panel": "back",
-      "atFraction": 0.6,
       "axis": "vertical"
      }
     },
@@ -1991,12 +1990,13 @@
       "b": [
        "cbRight"
       ],
-      "ratio": 1.0
+      "ratio": 1.0,
+      "sewnToFraction": 0.6
      }
     }
    ],
    "engineEffect": "reshape",
-   "note": "vent ile AYNI operator, tek fark atFraction. Ara degerler gecerli."
+   "note": "vent ile AYNI operator, tek fark seam.sewnToFraction. Ara degerler gecerli. \u2b50 K41 / F5-D IS 0b: kesir op.split.atFraction'dan TASINDI."
   },
   "ruffledStraps.none": {
    "status": "sentinel",

@@ -218,6 +218,36 @@ struct SurfacePanel {
     // the one number every gate reads today. A +30/-30 panel prints 0. Nothing
     // in the repo measured that before F5-C; split_check does, per axis.
     std::vector<double> deficitColumnDeg;
+    // ⭐ THE 3D GRID THAT PROFILE WAS SUMMED FROM (GECE7 / F5-D, borç 56 / K43).
+    //
+    // WHY A WHOLE GRID AND NOT A SUMMARY. The referee mutated `deficitColumnDeg`
+    // by MIRRORING it (defCol[j] -> defCol[cols-j]). The multiplicity, the sum
+    // and the cancellation are all invariant under a mirror; only the ORDER
+    // moves. So the cut column moved 16 -> 15, 11 -> 20, 13 -> 18 — the operator
+    // divided the panel in a provably wrong place — and `split_check` stayed
+    // EXIT 0 with zero FAIL, because SP0 re-derives the argmin from the very
+    // profile the tool prints and SP1 binds only the TOTAL, which is
+    // order-blind. K30's class: identity gated, correctness ungated.
+    //
+    // A permutation of measured values cannot be caught by any identity ON those
+    // values; it can only be caught by PREDICTING them again from something that
+    // did not move. That something is the geometry itself. rows[i][j] is the
+    // panel's own 3D mesh grid: row 0 is the sampled waist ring, row rowsN the
+    // far boundary, column j the ring column index the profile is indexed by.
+    // With it, split_check recomputes the whole per-column defect from raw
+    // coordinates — 2*pi minus the incident triangle angles over the interior
+    // vertices, the same law columnDeficitRows() states — and compares element
+    // by element. The mirror then has to survive a second, independent sum over
+    // an unmirrored geometry, and it does not.
+    //
+    // ⚠ THIS IS NOT A SECOND DEFICIT MODEL IN THE ENGINE. Nothing in engine/src
+    // reads it; the panel publishes the input, and the GATE does the second
+    // computation, exactly as split_check's SP0 already re-derives the argmin.
+    // A gate that only ever reads the answer is not checking the answer.
+    //
+    // Empty when the grid was not carried (nothing else in the tree depends on
+    // it, so a consumer must handle empty rather than assume).
+    std::vector<std::vector<Vec3>> deficitGrid3D;
     double waistLenMM = 0.0;      // flattened waist edge total (ring arcs only)
     int ringOffset = 0;           // global index of this panel's first ring arc,
                                   // so bodice and skirt zip waist stitches 1:1

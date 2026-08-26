@@ -85,6 +85,13 @@ ENGINE_SRCS=(
   src/drape.cpp
   src/seamplan.cpp
   src/dartrotate.cpp
+  # ⭐ GECE7 / F5-D (K46): the three operators and the program that wires them to
+  # the plan. Until these four lines the browser could not reach op.split,
+  # op.suppress or op.rotate at all — the referee measured ZERO lines of all
+  # three headers in wasm/bindings.cpp and web/js, three cards running.
+  src/dartsuppress.cpp
+  src/panelsplit.cpp
+  src/planops.cpp
   src/bodice.cpp
   src/skirt.cpp
   src/ruffle.cpp

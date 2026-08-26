@@ -68,6 +68,19 @@ std::string num(double v, int dp = 9) {
     return b;
 }
 
+// ⚠ THE GRID GOES OUT AT FULL DOUBLE PRECISION, AND THAT IS NOT A STYLE CHOICE.
+// split_check recomputes the whole per-column angle defect from these
+// coordinates, and a defect is 2*pi MINUS a sum of six angles: the quantity is
+// ~1e-3 rad sitting on top of ~6.28, so it is already a subtraction of nearly
+// equal numbers. At 9 decimals of a ~300 mm coordinate the recomputed column
+// sums drift ~3e-9 deg — the same size as EPS_ACI, i.e. the gate would be
+// arguing with its own printf. %.17g round-trips a double exactly.
+std::string numg(double v) {
+    char b[64];
+    std::snprintf(b, sizeof b, "%.17g", v);
+    return b;
+}
+
 std::string esc(const std::string& s) {
     std::string o;
     for (char c : s) {
@@ -126,6 +139,66 @@ void emit(const char* etiket, const char* yuzey, const SeamPlan& plan, const Sur
         r.aSelfIntersects ? "true" : "false", r.bSelfIntersects ? "true" : "false");
     for (std::size_t i = 0; i < r.columnDeficitDeg.size(); ++i)
         std::printf("%s%s", i ? ", " : "", num(r.columnDeficitDeg[i]).c_str());
+    std::printf("],\n");
+
+    // ---- K42 md.3 / borç 53: the OTHER rule, as a NUMBER not a footnote ----
+    std::printf("     \"en_egri_sutun\": %zu, \"en_egri_deg\": %s, \"en_egri_kesir\": %s,\n"
+                "     \"en_egri_vs_dengeli_sutun\": %lld,\n"
+                "     \"en_egri_kaynak\": \"BILGI, HUKUM DEGIL (K42 md.3): klasik kalipcilikta "
+                "panel dikisi bust noktasindan = MAKSIMUM EGRILIK sutunundan gecer; kesim bu "
+                "sutuna TASINMADI ve iki kural bir esikle kiyaslanmadi. Ne bu sutun ne kesim "
+                "sutunu 'prenses dikisi' diye adlandirilmaz — YAYIN BULUNAMADI (K42 md.2).\",\n",
+                r.maxCurvatureColumn, num(r.maxCurvatureDeg).c_str(),
+                num(r.maxCurvatureFraction, 9).c_str(), r.curvatureVsBalancedCols);
+
+    // ---- borç 56 / K43: THE GEOMETRY THE PROFILE WAS SUMMED FROM ------------
+    //
+    // A mirrored profile is still a well-formed profile: same multiplicity, same
+    // total, same cancellation, different ORDER — and the referee measured that
+    // the gate could not see it (cut column 16->15 / 11->20 / 13->18, EXIT 0,
+    // zero FAIL). No identity computed ON the profile can catch a permutation OF
+    // the profile. So the panel's own 3D grid goes out with it and split_check
+    // recomputes the whole per-column defect from these coordinates.
+    //
+    // `pens` is published beside it because the identity is only claimed on an
+    // UNSLIT panel: a dart duplicates its column's vertices, those copies become
+    // boundary, and they drop out of the engine's sum but not out of a naive
+    // grid walk. The gate declares that scope rather than quietly averaging over
+    // it (all five runs here are pens = 0, measured).
+    std::printf("     \"pens\": %zu,\n", p.darts.size());
+    const std::vector<std::vector<Vec3>>& grid = p.deficitGrid3D;
+    const std::size_t gr = grid.size();
+    const std::size_t gc = gr ? grid[0].size() : 0;
+    std::printf("     \"izgara_satir\": %zu, \"izgara_sutun\": %zu,\n", gr, gc);
+    std::printf("     \"izgara_kaynak\": \"panelin KENDI 3B mesh izgarasi "
+                "(SurfacePanel::deficitGrid3D): satir 0 ornek alinan bel halkasi, satir rowsN "
+                "uzak sinir, sutun j profilin indekslendigi halka sutunu. Ucgenleme "
+                "(v00,v10,v01) + (v01,v10,v11).\",\n");
+    std::printf("     \"izgara3d\": [");
+    for (std::size_t i = 0; i < gr; ++i) {
+        std::printf("%s[", i ? ",\n       " : "");
+        for (std::size_t j = 0; j < grid[i].size(); ++j)
+            std::printf("%s[%s,%s,%s]", j ? "," : "", numg(grid[i][j].x).c_str(),
+                        numg(grid[i][j].y).c_str(), numg(grid[i][j].z).c_str());
+        std::printf("]");
+    }
+    std::printf("],\n");
+
+    // The flat boundary the column index CLAIMS to address, so the gate can lock
+    // the order at both ends: waist vertex j is contour[j] and far vertex j is
+    // contour[farEdges.front()+1-j] (surfacepattern.hpp). Printed as the panel
+    // holds them, not re-derived here.
+    std::printf("     \"bel_kenar_idx\": [");
+    for (std::size_t i = 0; i < p.waistEdges.size(); ++i)
+        std::printf("%s%d", i ? "," : "", p.waistEdges[i]);
+    std::printf("],\n     \"uzak_kenar_idx\": [");
+    for (std::size_t i = 0; i < p.farEdges.size(); ++i)
+        std::printf("%s%d", i ? "," : "", p.farEdges[i]);
+    std::printf("],\n");
+    std::printf("     \"kontur\": [");
+    for (std::size_t i = 0; i < p.contour.size(); ++i)
+        std::printf("%s[%s,%s]", i ? "," : "", num(p.contour[i].x).c_str(),
+                    num(p.contour[i].y).c_str());
     std::printf("]}%s\n", last ? "" : ",");
 }
 

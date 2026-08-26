@@ -95,6 +95,25 @@ struct SplitReport {
                                            // reader can see it is not 0.5, never
                                            // used as an input
 
+    // ---- THE OTHER RULE, PRINTED BESIDE THIS ONE (K42 md.3, borç 53) --------
+    //
+    // Classical drafting puts a panel seam through the BUST POINT, i.e. through
+    // the column of maximum curvature, and the balanced-load column above is a
+    // different rule that lands on a different column on EU38. No publication
+    // was found binding a panel seam to either one on this surface, so the note
+    // is turned into a NUMBER instead of staying a footnote: the interior column
+    // carrying the largest single develop-deficit is measured on every run and
+    // printed next to the cut. Anyone who wants the other rule reads it off the
+    // same output.
+    //
+    // ⚠ INFORMATION, NOT VERDICT. The cut is NOT moved towards it and no
+    // threshold compares the two — `cutplan`'s `rivals` is the precedent. And
+    // neither column is called a "princess seam" anywhere (K42 md.2).
+    std::size_t maxCurvatureColumn = 0;    // argmax over interior j of deficitColumnDeg[j]
+    double maxCurvatureDeg = 0.0;          // the value at that column
+    double maxCurvatureFraction = 0.0;     // maxCurvatureColumn / colsN
+    long long curvatureVsBalancedCols = 0; // maxCurvatureColumn - atColumn, signed
+
     // ---- the deficit, and what the cut does to it --------------------------
     double deficitWholeDeg = 0.0;   // panel.developDeficitDeg, as the engine reads it
     double columnSumDeg = 0.0;      // sum of the column profile; MUST equal the above

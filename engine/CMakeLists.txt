@@ -17,6 +17,7 @@ add_library(engine
     src/dartrotate.cpp
     src/dartsuppress.cpp
     src/panelsplit.cpp
+    src/planops.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -198,6 +199,15 @@ set_tests_properties(suppress_check PROPERTIES FIXTURES_REQUIRED OPFIX)
 add_test(NAME split_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/split_check.mjs
                  $<TARGET_FILE:split-op>)
+
+# op_program_check (GECE7 / F5-D, borç 45+49+51 / K46): ÜRÜN YOLU. Üç operatör
+# de sevk edilen dikiş planına BAĞLI mı, bölünen panelin iki parçası plana PANEL
+# olarak girdi mi, kesilen kenarın iki tarafı DİKİŞ ÇİFTİ olarak ilan edildi mi,
+# ve her adım bir `sebep` taşıyor mu (H4'ün ilk katmanı). RET de bir cevaptır ve
+# sayısıyla görünmek zorundadır — sessizce boş dönen bir operatör §0B ihlalidir.
+add_test(NAME op_program_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/op_program_check.mjs
+                 $<TARGET_FILE:plan-ops>)
 
 add_test(NAME expressability_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/expressability_check.mjs)
@@ -868,6 +878,14 @@ target_link_libraries(suppress-op PRIVATE engine)
 # FRACTION either — splitPanel() takes a panel and nothing else.
 add_executable(split-op tools/split-op.cpp)
 target_link_libraries(split-op PRIVATE engine)
+
+# plan-ops (GECE7 / F5-D, borç 45+49+51 / K46): THE OPERATOR PROGRAM. The three
+# operators asked of the SHIPPED seam plan and their answers — refusals included
+# — written back into a COPY of it. This is the same call the wasm binding
+# `opsJSON` makes and the same one web/js/engine.js reaches, so the gate below
+# measures the artifact the user gets rather than a driver written for a gate.
+add_executable(plan-ops tools/plan-ops.cpp)
+target_link_libraries(plan-ops PRIVATE engine)
 
 # shell-audit (GECE7 / F5-B, IS 0b): a DENSE POLYLINE sampling of the shipped
 # shell, so a gate can recompute every published ShellMeasure by a second path

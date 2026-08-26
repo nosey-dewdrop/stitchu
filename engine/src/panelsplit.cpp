@@ -106,6 +106,21 @@ SplitReport splitPanel(const SurfacePanel& p) {
     r.atColumn = bestCol;
     r.atFractionMeasured = static_cast<double>(bestCol) / static_cast<double>(colsN);
 
+    // ---- K42 md.3: the OTHER rule, measured and printed beside -------------
+    // The interior column carrying the largest single develop-deficit — the
+    // discrete stand-in for "through the bust point". Read, printed, and NOT
+    // acted on: the cut above is unchanged.
+    {
+        std::size_t peak = 1;
+        for (std::size_t c = 1; c < colsN; ++c)
+            if (p.deficitColumnDeg[c] > p.deficitColumnDeg[peak]) peak = c;
+        r.maxCurvatureColumn = peak;
+        r.maxCurvatureDeg = p.deficitColumnDeg[peak];
+        r.maxCurvatureFraction = static_cast<double>(peak) / static_cast<double>(colsN);
+        r.curvatureVsBalancedCols =
+            static_cast<long long>(peak) - static_cast<long long>(bestCol);
+    }
+
     for (std::size_t j = 0; j <= bestCol; ++j) {
         r.deficitADeg += p.deficitColumnDeg[j];
         r.absSumADeg += std::fabs(p.deficitColumnDeg[j]);

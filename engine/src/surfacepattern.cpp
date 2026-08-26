@@ -1047,6 +1047,13 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
         for (double d : defBand) out.deficitBandDeg.push_back(d * 180.0 / kPi);
         out.deficitColumnDeg.reserve(defCol.size());
         for (double d : defCol) out.deficitColumnDeg.push_back(d * 180.0 / kPi);
+        // ⭐ AND THE GEOMETRY THAT SUM CAME OUT OF (GECE7 / F5-D, borç 56/K43).
+        // The profile above is a list of numbers; a mirrored list is still a
+        // valid-looking list. The grid is what makes the ORDER checkable from
+        // outside: split_check re-derives the whole profile from these
+        // coordinates and compares column by column. Nothing in engine/src reads
+        // this field — see the paragraph in surfacepattern.hpp.
+        out.deficitGrid3D = g.rows;
     }
 
     if (std::getenv("STITCHU_SP_DEBUG")) {

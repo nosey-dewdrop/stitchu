@@ -5,7 +5,7 @@ import { analyzePhoto, photoAvailable } from './analyze.js?v=136';
 import { validateVision } from './spec-validate.js?v=136';
 import { CONTRACT } from './contract.gen.js?v=136';
 import { applyStatic, getLang, t } from './i18n.js?v=136';
-import { draft, grade } from './engine.js?v=136';
+import { draft, grade, operatorProgram } from './engine.js?v=136';
 import { printPattern, printGrade, printGradeNested } from './print.js?v=136';
 import { renderResult } from './render.js?v=136';
 import {
@@ -1017,6 +1017,46 @@ function downloadPanel(result) {
   });
   row.appendChild(flatBtn);
   panel.appendChild(row);
+
+  // ⭐ THE OPERATOR PROGRAM, ON THE RESULT SCREEN (GECE7 / F5-D, K46).
+  //
+  // Three sub-cards built op.split, op.suppress and op.rotate, each with its own
+  // gate, and the referee measured three times that the three headers appeared
+  // in ZERO lines of garment.cpp, wasm/bindings.cpp and web/js — the user could
+  // not divide a panel, open a dart or move one. This is the surface where they
+  // can ask, and where the engine answers in its own words.
+  //
+  // ⚠ AND THE REFUSAL IS THE ANSWER, NOT AN ERROR. The shipped bodice is a cone
+  // and a cone develops exactly: op.suppress refuses it with the panel's own
+  // measured deficit. Printing that refusal is the whole point — a button that
+  // silently did nothing on the shipped garment would hide that the operator
+  // does not touch the product, which is precisely what happened for three
+  // cards. The sentence carries the number.
+  //
+  // ⚠ NO COUNTER, NO BADGE (F3's rule, kept). The panel names the operator and
+  // the panel it acted on; it does not tell the shopper which internal line they
+  // are on.
+  const opsMsg = el('div', 'dl-ops');
+  const opsBtn = el('button', 'dl-alt', t('create.ops.run'));
+  wire(opsBtn, async () => {
+    opsMsg.textContent = '';
+    // EU38 is the size the FLAT is valued at on this screen (download.js's own
+    // default), so the two readings answer about one garment rather than two.
+    const prog = await operatorProgram('EU38', 0);
+    if (prog.error) return prog.error;
+    opsMsg.appendChild(el('p', 'dl-ops-title', t('create.ops.head')));
+    for (const step of (prog.adimlar || [])) {
+      const line = el('p', step.uygulandi ? 'dl-ops-yes' : 'dl-ops-no',
+        `${step.op} · ${step.panel} — ${step.uygulandi ? t('create.ops.did') : t('create.ops.didnt')}`);
+      // The engine's own sentence, with the engine's own number in it. Not
+      // re-worded here: a second wording is a second truth.
+      line.appendChild(el('span', 'dl-ops-why', ` ${step.sebep}`));
+      opsMsg.appendChild(line);
+    }
+    return null;
+  });
+  panel.appendChild(opsBtn);
+  panel.appendChild(opsMsg);
 
   // A0 is a print-shop errand, not a home one, so it is a link and not a fourth
   // equal button — but it is offered, because pdf-core builds it for free and a

@@ -90,6 +90,16 @@ export const STRINGS = {
     en: 'The flat is drawn, but the engine cannot yet cut: {what}',
     tr: 'Teknik çizim çizildi, ama motorun henüz kesemediği var: {what}',
   },
+  // ⭐ OPERATÖR PROGRAMI (GECE7 / F5-D). Bir RET burada bir hata mesajı DEĞİL,
+  // motorun ölçülmüş cevabıdır: sevk edilen gövde bir konidir ve op.suppress onu
+  // reddeder. Cümle bunu bir kusur gibi değil, bir cevap gibi söyler.
+  'create.ops.run': { en: 'What can the operators do to this pattern?',
+                      tr: 'Operatörler bu kalıba ne yapabilir?' },
+  'create.ops.head': { en: 'The engine answered, panel by panel:',
+                       tr: 'Motorun cevabı, panel panel:' },
+  'create.ops.did': { en: 'DID IT', tr: 'YAPTI' },
+  'create.ops.didnt': { en: 'DID NOT — and here is why',
+                        tr: 'YAPMADI — sebebi şu' },
   'create.dl.working': { en: 'building…', tr: 'hazırlanıyor…' },
   'create.dl.refused': { en: 'That file could not be built: {why}', tr: 'Bu dosya çıkarılamadı: {why}' },
   'create.grade.title': { en: 'Grade to a size run', tr: 'Beden serisine seril' },
