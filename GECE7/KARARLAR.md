@@ -142,3 +142,82 @@ konusu budur; F-İNDİR'in `create.dl.flatgap` emsali (motorun kesemediği kol
 **Neden F0, F2 değil:** H10a/H10b ayrıştırması F2'de kalıyor (K5 değişmedi).
 F0 ayrıştırmayı YAPMAZ, ama koyduğu etiket F2'nin tablosunun ham maddesidir —
 bu yüzden şema `cikarildi` ileride ikiye bölünebilecek biçimde seçilecek.
+
+---
+
+## K9 — H3'ün tanımı GEVŞETİLMEYECEK; H3 = 4 olarak duruyor
+
+**Karar:** F0 ajanı sordu: ilan kanalı kurulduğuna göre H3'ün dört uydurma
+alanı düşürülsün mü? **HAYIR.** `engine/tests/hedef_kosu.mjs` tek satır bile
+değişmez. H3 = **4**, n=5 olarak kalır.
+
+**Dayanak (sayı):** İlan kanalı `web/js/create.js` + `web/js/provenance.js`
+hattına kuruldu ve orada **38 eksen** etiketli. Ama H3'ü sayan `hedef_kosu.mjs`
+**ölçüm hattını** okuyor ve o hat köken kaydını hiç görmüyor — ajanın kendi
+13. borç maddesi bunu doğru teşhis ediyor (*"aynı kararı İKİ AYRI YERDE
+veriyor"*). Bir alanın *"ilan edildiği"* iddiası, o alanı sayan kapının
+göremediği bir yerde ilan edilmişse **ölçülmemiş bir iddiadır** (§3.6 H3:
+ilan edildiği **sürece** H3'e girmez).
+
+Kapıyı, ölçmediği bir işi ödüllendirecek şekilde değiştirmek §3.8 md.4'ün
+tarif ettiği gevşetmedir. H3, **ilan kanalı ölçüm hattına bağlandığında**
+düşer ve **iyileşme o fazın (F2) hanesine yazılır**, F0'ınkine değil —
+ajanın kendi önerisi buydu ve doğruydu.
+
+---
+
+## K10 — 🚨 `patterns_real/` İNTERNETE AÇIK: repo PUBLIC, telifli PDF'ler anonim indirilebiliyor
+
+**Bulgu (F0'ın işi DEĞİL — hakem başka bir kontrol sırasında ölçtü):**
+
+```
+gh api repos/nosey-dewdrop/stitchu --jq '{visibility,private}'
+  -> {"visibility":"public","private":false}
+git ls-tree -r origin/main --name-only | grep -c '^patterns_real/'
+  -> 41
+curl -sI "https://raw.githubusercontent.com/nosey-dewdrop/stitchu/main/patterns_real/Locket%20Top/PDF's/A0.pdf"
+  -> HTTP 200        (kimlik doğrulaması YOK)
+```
+
+**41 dosya**, içinde satın alınmış Buğra kalıplarının A0 / A4 / US Letter
+PDF'leri ve talimat JPG'leri. `87fc9d5`'te eklenmişler (F0'dan çok önce);
+`git diff --name-only F0-oncesi HEAD -- patterns_real/` → **0 dosya**, yani
+**bu koşunun ürettiği bir ihlal değil.**
+
+`CLAUDE.md`'nin *"repo private (`nosey-dewdrop/stitchu`, **doğrulandı**)"*
+satırı **bugün YANLIŞ**, ve o satır bütün gizlilik yasasının dayanağıydı.
+
+**Karar — hakem TEK TARAFLI DEĞİŞTİRMEDİ, sebebi ölçüldü:** repoyu private
+yapmak akla ilk gelen düzeltme ama `.github/workflows/pages.yml:23`
+(`branches: [main]`, `path: web`) canlı siteyi **bu repodan** yayınlıyor;
+ücretsiz hesapta private repo Pages'i **kapatır**, yani "düzeltme" canlı siteyi
+öldürür. Geçmişten kazımak (`filter-repo`) ise `CLAUDE.md`'de zaten
+**Damla kararı** olarak mühürlü.
+
+→ **Damla'ya BİLDİRİLDİ** (hakemin dönüş metni). Koşu durmadı (§3.4).
+Kapatılana kadar `patterns_real/` altına **tek yeni dosya eklenmez**; çalışma
+ağacındaki 3 takipsiz kalem (`BUGRA-DEFTER.md`, `geometry/`,
+`bugra-geometry-2026-07-23.json`) **takipsiz kalır ve pushlanmaz.**
+
+---
+
+## K11 — `vocab_reference_check` tabanı F0'ı kurtarmak için de kesilmeyecek
+
+**Karar:** F0'ın yedinci kırmızısı (`hemFlounce 26 → 27`) **tabanı yeniden
+keserek kapatılmaz.** K2 yürürlükte kalır ve F0 ikinci tur kartına yasak
+olarak yazıldı.
+
+**Dayanak (sayı + kaynağın kendi metni):** Kapının FAIL çıktısı bir kaçış yolu
+öneriyor (*"Bu gerçekten bir kapsam kararı ise: tabanı elle yeniden kes"*).
+Ama ölçüldü: artış **kapsam kararından değil**, F0'ın `create.js:178`'e yazdığı
+**tek bir dize sabitinden** geliyor — `grep -rIn -w hemFlounce` kapsam içinde
+dosya dosya karşılaştırıldı, 16 dosyanın 15'i **bayt bayt aynı sayıda**, tek
+fark `web/js/create.js` **2 → 3**. Sözlük büyümedi, **bir kelime iki kez
+yazıldı.** Bunun için taban kesmek, kapının ölçtüğü şeyin ta kendisini
+(*"kapalı bir enuma YENİ referans"*) kapının kör noktasına taşımaktır =
+§3.8 md.4.
+
+**Kural, sonraki her faz için:** bir kapıyı yeşile döndürmenin en ucuz yolu
+kapının tabanını oynatmaksa, o faz **durur ve hakeme gelir**. Hakem tabanı
+yalnız *kapının kendisi yanlış ölçüyorsa* değiştirir — *faz sıkıştığı için*
+asla.

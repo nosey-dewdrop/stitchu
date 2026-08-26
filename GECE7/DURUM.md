@@ -20,7 +20,9 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 |-----|--------|------|-------|-------|
 | Halka 0 | `halka0-yesil` | şef (ajan yok) | — | ✅ BİTTİ, kart `GECE7/HALKA0.md` |
 | F-İNDİR | **`F-INDIR-yesil`** ✅ | 2 tur koştu, `ee1414c`+`072705c` → `cce710d`+`fac2993` | 2 tur koştu | ✅ **GEÇTİ** (2. tur) — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
-| F0 | `F-INDIR-yesil`'den dallanır | — | — | SIRADAKİ — kart **`GECE7/F0.md`** (hakem yazdı) |
+| F0 | ⛔ etiket YOK | 1 tur koştu, `cd3bea3` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; kart `GECE7/F0.md`, hüküm `GECE7/HAKEM-F0.md` |
+| F0 (2. tur) | `F-INDIR-yesil` hâlâ son yeşil | — | — | SIRADAKİ — kart `GECE7/F0.md` sonundaki **HAKEM İKİNCİ TUR KARTI** |
+| F2 | — | — | — | ⛔ **BAŞLAMAZ** — F0 yeşillenmeden açılmaz; iki zorunlu maddesi `HAKEM-F0.md` §7'de |
 
 > ▶ **KOŞU AÇILDI** (26 Ağu, Damla): Halka 1 → F-İNDİR → F0 → F2, sonra Halka 2
 > (F3 ⇄ F5), sonra Halka 3 (F4 → F6 → F7 → F8 → F9). **F9 kapanana kadar durulmaz.**
@@ -63,6 +65,15 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | Halka 0 sonu (`34586c8`) | 118 | 1 (`h10_gate_check`) | **117** | 111 | **6** |
 | F-İNDİR 1. tur (`b791db5`) | 119 | 1 (`h10_gate_check`) | **118** | 111 | **7** ⛔ |
 | **F-İNDİR 2. tur (`fac2993`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
+| **F0 1. tur (`cd3bea3`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
+
+⛔ **F0'IN YEDİNCİ KIRMIZISI (hakem ölçtü, kart YEŞİL diye bildirmişti):**
+`vocab_reference_check` **FAIL** — `hemFlounce` **26 → 27**. İki uçtan ölçüldü:
+`F0-oncesi` worktree'sinde **YESIL**, `cd3bea3`'te **FAIL**. Kapsam içinde 16
+dosyanın 15'i aynı; tek fark `web/js/create.js` **2 → 3** = `create.js:178`'e
+yazılan `'hemFlounce'` dize sabiti. Ajan yalnız `garment` eksenine bakmış
+(1137/1186, doğru) ama kapı **37 eksen + 92 kelimeyi** cırcırlıyor. Taban
+yeniden **kesilmedi** (K11); F0 2. tur bunu tek iş olarak kapatacak.
 
 F-İNDİR iki tur boyunca **iki test ekledi** (`indir_check` #120, `flat_tables_check` #95).
 Hiçbir test silinmedi/yeniden adlandırılmadı.
@@ -77,6 +88,23 @@ bilerek kırmızı) · `figure_check` (`dress_bandeau_circle` pinsiz).
 `create.js`'te doğrudan enum karşılaştırması **44 → 4**. Hakem ayrı worktree'de
 kendi saydı; −51'in dosya dosya dağılımı `GECE7/HAKEM-F-INDIR.md` §2'de.
 
+## Son kapı sayıları — F0 sonrası, taban yine DEĞİŞMEDİ (hakem koşturdu, n=5)
+
+`node engine/tests/hedef_kosu.mjs` → EXIT 0, `CIRCIR SAĞLAM`.
+
+| | H1 | H2 | H3 | H5 | H8 | H10 | H11 |
+|---|----|----|----|----|----|-----|-----|
+| F0 öncesi | 5/5 | %92.2 | 4 | 0 | 31 | %58.3 | 3.1 ms |
+| F0 sonrası | **5/5** | **%92.2** | **4** | **0** | **31** | **%58.3** | **3.1 ms** |
+
+**F0 altı sayının hiçbirini oynatmadı** ve bu bir sapma değil: H1 zaten
+**5/5 = tavan** (n=5'te yükselecek birim yok), H10'un düşmesi F0'ın işi
+değildi (§0B: çıkarmak suç değil, **sessizce** çıkarmak suç), H3 = 4 ise ilan
+kanalı `web/js/` hattına kurulup ölçüm hattı `hedef_kosu.mjs`'e bağlanmadığı
+için düşemedi (K9 — H3 gevşetilmedi, düşüşü F2'nin hanesine yazılacak).
+Fazın gerçek iyileşmesi artefaktın üstünde ölçüldü: kökenini söyleyen inen
+dosya **0/5 → 2/5**, etiketli eksen **0 → 38**, etiketleme çağrısı **0 → 50**.
+
 ## Son kapı sayıları — taban DEĞİŞMEDİ (n=5)
 
 `ctest -R hedef_kosu` **YEŞİL**, H1–H11 taban değerinde; F-İNDİR görme/çıkarım
@@ -86,11 +114,29 @@ saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 
 ## Hakemin son hükmü
 
-✅ **GEÇTİ** — kalıp **ve** flat artık ikisi de kullanıcının diskine iniyor (hakem ölçtü: 5 dosya `Logs/indir-check/`, flat ön+arka, çizime bakıldı), ctest **6 failed out of 119** = tam miras altı, `vocab_reference_check` **1137/1186** yeşil ve taban dokunulmadan, `hedef_kosu` yeşil ve altı sayı kötüleşmedi, hakemin **dört mutasyonunun dördü** kırmızı yandı; etiket `F-INDIR-yesil` atıldı, sıradaki kart `GECE7/F0.md`.
+⛔ **KALDI** — inen dosya artık kökenini gerçekten söylüyor (hakem ölçtü: A4 kapağında `Origin / Köken` + 8 alan adı, PNG'si **göze bakıldı**; flat SVG kökünde `data-koken-cikarildi="8"`; sevk edilen kayıt **38 eksen**, 0 → 38; hakemin **beş mutasyonunun beşi** EXIT 8, ikisi ajanın hiç dokunmadığı `download.js`'te) ve `hedef_kosu` yeşil, altı sayı taban değerinde, taban el değmemiş — **ama ctest `7 failed out of 119`**: `vocab_reference_check` `hemFlounce` **26 → 27** ile kırmızı ve kart onu **"YEŞİL"** diye bildirmiş, oysa kartın kendi DEĞİŞMEZLER satırı *"yedinci ad = faz kapanmaz"* diyor; kusur `create.js:178`'deki **tek dize sabiti** olduğu ve fazın ürünü ölçüldüğü için **GERİ AL değil**, `F0-yesil` **atılmadı**, F0 **ikinci tur** açıldı (kart `GECE7/F0.md` sonunda), gerekçe `GECE7/HAKEM-F0.md`.
+
+> 🚨 **KOŞU DIŞI, AMA ACİL (K10):** `nosey-dewdrop/stitchu` **PUBLIC** ve
+> `patterns_real/` **41 dosyayla origin/main'de** — satın alınmış Buğra A0/A4
+> PDF'leri anonim `curl` ile **HTTP 200** dönüyor. `CLAUDE.md`'nin *"repo
+> private (doğrulandı)"* satırı bugün yanlış. F0'ın işi değil (`87fc9d5`),
+> hakem tek taraflı kapatmadı: Pages canlı siteyi bu repodan yayınlıyor.
+> **Damla kararı.**
 
 ## Açık kuyruk
 
 `GECE7/DAMLA.md` — 4 soru, hepsi en kısıtlayıcı varsayımla ilerletildi, koşu durmadı.
+F0 birinci turdan yeni soru çıkmadı (kart md.4 zaten en kısıtlayıcı davranışı
+emrediyordu: kayıt bozuksa **dosya yazılmaz**).
+
+**Devreden borç: 15 madde** — F-İNDİR'in 9'u (`HAKEM-F-INDIR.md` sonu) +
+F0'ın 6'sı (`GECE7/F0.md` md.10-15). Hiçbiri kapatılmadı, hiçbiri silinmedi.
+
+⚠ **Hakemin bulduğu, kimsenin sormadığı iki kalem** (`HAKEM-F0.md` §9):
+inen **5 dosyanın 3'ü hâlâ sessiz** (A0, DXF, düz `.svg` köken taşımıyor) ·
+**§3.5'in "site son yeşil etiketten sevk edilir" kuralı KODDA YOK** —
+`.github/workflows/pages.yml:23` `branches: [main]` diyor, yani **main'e her
+push canlıya çıkıyor** ve şu an main **yedi kırmızıyla** yayında.
 
 ## Notlar
 
