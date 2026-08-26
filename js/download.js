@@ -16,12 +16,26 @@
 //        strings print.js and render-pages.mjs draw.
 //   PDF  pdf-core.js, the SAME builder engine/tools/gen-collection-pattern.mjs
 //        writes the published packs with, including the 3 cm calibration square.
+//   FLAT flat-core.js, the production technical-flat pen — the SAME module
+//        engine/tests/flat_convention_check.mjs and flat_expresses_spec_check.mjs
+//        judge. It used to live under engine/tools/ and could not run in a
+//        browser at all (five readFileSync calls); that path is now a one-line
+//        re-export of this one file.
+//
+// WHY THE FLAT IS HERE AT ALL (F-İNDİR, 2nd round, 2026-08-26). The referee
+// measured the first round's own claim: all ten exports wrote a PATTERN, `grep
+// -i flat` over this file found one comment, so "photo -> pattern + flat" was
+// half done. The target sentence is not "the user takes a pattern home", it is
+// PATTERN + FLAT: the pattern is what you cut, the flat is what you (or a
+// factory, or a buyer) look at to know what the thing IS. Shipping one without
+// the other is how a tech pack arrives unreadable.
 //
 // A BLOCKED DRAFT HANDS OUT NOTHING. Every builder refuses when `issues` is
 // non-empty and says why (RULES invariant 1): a validator-blocked pattern that
 // downloads as a clean "industry file" is how a shopper cuts fabric for a
 // garment the engine already knows does not close.
 
+import { renderGarmentFlat } from '../lib/flat-core.js?v=136';
 import { pathD, bounds } from './sheet.js?v=136';
 import * as sheet from './sheet.js?v=136';
 import { makePdfCore } from '../lib/pdf-core.js?v=136';
@@ -169,6 +183,38 @@ export async function patternDXF(source) {
   return { error: `dxf export: unknown source kind '${source && source.kind}'`, dxf: null };
 }
 
+/**
+ * The FINISHED-GARMENT technical flat (front + back line art) as one SVG
+ * document, drawn from the spec — never from the pattern pieces. That is the
+ * pen's own law and it is not a shortcut: mirroring a sleeveless armhole reads
+ * as a fake long sleeve (web/lib/flat-core.js, header).
+ *
+ * It refuses rather than draws a lie: a spec the pen cannot express carries a
+ * `data-engine-gap` stamp naming the MISSING OPERATOR, and an empty spec has
+ * nothing to draw. Both are errors here, not silent blank files (RULES
+ * invariant 1).
+ */
+export function flatSVG(spec) {
+  if (!spec || typeof spec !== 'object' || !spec.garment) {
+    throw new Error('flat export: the spec names no class to draw');
+  }
+  const svg = renderGarmentFlat([], spec);
+  if (!svg || svg.indexOf('<path') === -1) {
+    throw new Error('flat export: the pen drew no geometry for this spec');
+  }
+  return svg;
+}
+
+/**
+ * What the pen could NOT express for this spec, by the missing operator's name.
+ * Returned so the result screen can say it out loud instead of handing over a
+ * flat that quietly drew something else (the 2026-07-18 puff precedent).
+ */
+export function flatGaps(spec) {
+  const m = /data-engine-gap="([^"]*)"/.exec(flatSVG(spec));
+  return m && m[1] ? m[1].split(';').filter(Boolean) : [];
+}
+
 // --------------------------------------------------------------- DOM savers
 // The only DOM in this file. Kept separate from the builders above so the gate
 // can run the builders in node.
@@ -190,6 +236,10 @@ export function saveBlob(filename, data, mime) {
 
 export function saveSVG(pattern, filename) {
   saveBlob(filename, patternSVG(pattern), 'image/svg+xml');
+}
+
+export function saveFlatSVG(spec, filename) {
+  saveBlob(filename, flatSVG(spec), 'image/svg+xml');
 }
 
 export function saveA4Pdf(pattern, title, filename) {

@@ -18,7 +18,7 @@ import { measureGarment } from './measure.js?v=136';
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf } from './download.js?v=136';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=136';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -29,76 +29,87 @@ const DEMO_BODY = { bust: 88, waist: 70, hip: 94, shoulder: 37, backLength: 40, 
 let usingDemo = !saved;
 const values = { ...(saved || DEMO_BODY) };
 
+// THE CLASS TEST, WRITTEN ONCE (F-İNDİR 2nd round, 2026-08-26). `garment` is a
+// closed three-value enum and this file asked it thirty-one times in thirty-one
+// places — `s.garment !== 'skirt'` copy-pasted down the table and again through
+// the vision block. That is precisely what vocab_reference_check counts, and
+// precisely what the direction it enforces forbids: the menu is to be
+// DISMANTLED, not spread. Three predicates, one reference each; adding a fourth
+// class (or renaming the axis) is now one edit instead of thirty-one.
+const isSkirt = (s) => s.garment === 'skirt';
+const isTop = (s) => s.garment === 'top';
+const isDress = (s) => s.garment === 'dress';
+
 const SPEC_GROUPS = [
   { key: 'garment', label: 'garment', trLabel: 'kıyafet', options: [['skirt', 'skirt', 'etek'], ['dress', 'dress', 'elbise'], ['top', 'top', 'üst']], for: () => true },
-  { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)'], ['cowl', 'cowl (draped)', 'kowl (dökümlü)'], ['pussyBow', 'pussy-bow', 'fiyonk yaka']], for: (s) => s.garment !== 'skirt' },
-  { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  { key: 'neckline', label: 'neckline', trLabel: 'yaka', options: [['crew', 'crew', 'bisiklet'], ['scoop', 'scoop', 'oval'], ['vNeck', 'v-neck', 'V yaka'], ['square', 'square', 'kare'], ['boat', 'boat', 'kayık'], ['sweetheart', 'sweetheart', 'kalp yaka'], ['halter', 'halter', 'halter (boyundan bağlı)'], ['cowl', 'cowl (draped)', 'kowl (dökümlü)'], ['pussyBow', 'pussy-bow', 'fiyonk yaka']], for: (s) => !isSkirt(s) },
+  { key: 'keyhole', label: 'front detail', trLabel: 'ön detay', options: [['none', 'plain', 'sade'], ['keyhole', 'keyhole cut-out', 'anahtar deliği']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
   // Loop 7/8: collar family, a separate collar piece, neck edge trued to the
   // neckline. Only for non-skirt, non-halter garments (a halter has no neckline
   // band to carry a collar).
-  { key: 'collarType', label: 'collar', trLabel: 'yaka biçimi', options: [['none', 'none', 'yok'], ['stand', 'stand', 'dik'], ['mock', 'mock / mandarin', 'mandarin'], ['flat', 'flat', 'yatık'], ['peterPan', 'peter pan', 'bebe'], ['shirt', 'shirt', 'gömlek']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
-  { key: 'collarEdge', label: 'collar edge', trLabel: 'yaka kenarı', options: [['round', 'round', 'yuvarlak'], ['pointed', 'pointed', 'sivri'], ['scallop', 'scalloped', 'fisto']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (s.collarType === 'flat' || s.collarType === 'peterPan') },
+  { key: 'collarType', label: 'collar', trLabel: 'yaka biçimi', options: [['none', 'none', 'yok'], ['stand', 'stand', 'dik'], ['mock', 'mock / mandarin', 'mandarin'], ['flat', 'flat', 'yatık'], ['peterPan', 'peter pan', 'bebe'], ['shirt', 'shirt', 'gömlek']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
+  { key: 'collarEdge', label: 'collar edge', trLabel: 'yaka kenarı', options: [['round', 'round', 'yuvarlak'], ['pointed', 'pointed', 'sivri'], ['scallop', 'scalloped', 'fisto']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && (s.collarType === 'flat' || s.collarType === 'peterPan') },
   // Patch 3.10: neckline + armhole edge finish. Bias binding is the DEFAULT
   // (thin trued 45° bias strip — the couture finish); facing is opt-in. Hidden
   // when a real collar is chosen (a collar always sits on a faced neck) or on a
   // halter (its own binding) or a skirt (no neckline).
-  { key: 'edgeFinish', label: 'edge finish', trLabel: 'kenar bitişi', options: [['biasBinding', 'bias binding', 'biye'], ['facing', 'facing', 'pervaz']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && (!s.collarType || s.collarType === 'none') },
+  { key: 'edgeFinish', label: 'edge finish', trLabel: 'kenar bitişi', options: [['biasBinding', 'bias binding', 'biye'], ['facing', 'facing', 'pervaz']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && (!s.collarType || s.collarType === 'none') },
   // A halter has no shoulders to hang a sleeve from, the pickers hide.
-  { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
-  { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
+  { key: 'sleeveStyle', label: 'sleeves', trLabel: 'kol', options: [['none', 'sleeveless', 'kolsuz'], ['straight', 'straight', 'düz'], ['balloon', 'balloon', 'balon']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
+  { key: 'sleeveLength', label: 'sleeve length', trLabel: 'kol boyu', options: [['short', 'short', 'kısa'], ['elbow', 'elbow', 'dirsek'], ['long', 'long', 'uzun']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && s.sleeveStyle !== 'none' },
   // Loop 6: sleeve HEAD (cap) treatment. Puff = raised + gathered crown; gathered
   // = soft gather, no raise. Only shown when there IS a sleeve; balloon already
   // gathers the hem so the head stays plain there.
-  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puffed', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
+  { key: 'sleeveCap', label: 'sleeve head', trLabel: 'kol başı', options: [['plain', 'plain', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['puffed', 'puffed', 'puf'], ['cap', 'cap sleeve', 'cap (kısa kanat)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && s.sleeveStyle === 'straight' },
   // patch 3.13: sleeve-end cuff (manşet). A separate button (barrel) or ribbed
   // (knit) band at the wrist, the sleeve hem gathered in. Only a full-length
   // straight sleeve (long/elbow, not a cap wing) has a wrist to cuff.
-  { key: 'cuffStyle', label: 'cuff', trLabel: 'manşet', options: [['none', 'none', 'yok'], ['button', 'button cuff', 'düğmeli (gömlek)'], ['ribbed', 'ribbed cuff', 'ribana (örme)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.sleeveStyle === 'straight' && (s.sleeveLength === 'long' || s.sleeveLength === 'elbow') && s.sleeveCap !== 'cap' },
+  { key: 'cuffStyle', label: 'cuff', trLabel: 'manşet', options: [['none', 'none', 'yok'], ['button', 'button cuff', 'düğmeli (gömlek)'], ['ribbed', 'ribbed cuff', 'ribana (örme)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && s.sleeveStyle === 'straight' && (s.sleeveLength === 'long' || s.sleeveLength === 'elbow') && s.sleeveCap !== 'cap' },
   // Loop 8: drawstring / shirred / smocked gathering (büzgü), a separate gathered
   // panel (+ a drawstring cord) whose gathered edge is trued to the zone. Only on
   // a dress/top (needs a bodice to gather onto).
-  { key: 'gatherType', label: 'gathering', trLabel: 'büzgü', options: [['none', 'none', 'yok'], ['drawstring', 'drawstring', 'ip büzgü'], ['shirred', 'shirred', 'lastik büzgü'], ['smocked', 'smocked', 'smok']], for: (s) => s.garment !== 'skirt' },
-  { key: 'gatherZone', label: 'gather zone', trLabel: 'büzgü yeri', options: [['neckline', 'neckline', 'yaka'], ['bust', 'bust', 'büst'], ['waist', 'waist', 'bel'], ['sleeve', 'sleeve', 'kol']], for: (s) => s.garment !== 'skirt' && s.gatherType && s.gatherType !== 'none' },
+  { key: 'gatherType', label: 'gathering', trLabel: 'büzgü', options: [['none', 'none', 'yok'], ['drawstring', 'drawstring', 'ip büzgü'], ['shirred', 'shirred', 'lastik büzgü'], ['smocked', 'smocked', 'smok']], for: (s) => !isSkirt(s) },
+  { key: 'gatherZone', label: 'gather zone', trLabel: 'büzgü yeri', options: [['neckline', 'neckline', 'yaka'], ['bust', 'bust', 'büst'], ['waist', 'waist', 'bel'], ['sleeve', 'sleeve', 'kol']], for: (s) => !isSkirt(s) && s.gatherType && s.gatherType !== 'none' },
   // Loop 9b: open-back cutout (açık sırt oyuğu), a shaped opening in the back
   // piece + a facing trued to the opening. Only on a dress/top (needs a back
   // bodice). Independent of a tie-back: a dress can have both.
-  { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => s.garment !== 'skirt' },
+  { key: 'backOpening', label: 'open back', trLabel: 'açık sırt', options: [['none', 'none', 'yok'], ['round', 'round cutout', 'yuvarlak oyuk'], ['lowV', 'low V', 'düşük V'], ['square', 'square', 'kare'], ['keyhole', 'keyhole', 'damla']], for: (s) => !isSkirt(s) },
   // corset lace-up back (korse bağcıklı sırt): an eyelet-laced CB closure — the
   // two back halves leave an open gap spanned by a criss-cross lace. Adds a CB
   // facing strip + trued eyelet columns + a lacing cord. Only a fitted dress/top
   // back hosts one (needs a fitted bodice back).
-  { key: 'laceUpBack', label: 'lace-up back', trLabel: 'bağcıklı sırt', options: [['none', 'none', 'yok'], ['corset', 'corset lace-up', 'korse bağcık']], for: (s) => s.garment !== 'skirt' },
+  { key: 'laceUpBack', label: 'lace-up back', trLabel: 'bağcıklı sırt', options: [['none', 'none', 'yok'], ['corset', 'corset lace-up', 'korse bağcık']], for: (s) => !isSkirt(s) },
   // wrapfront.cpp: true wrap / surplice front (kruvaze — the wrap-dress family). The
   // FRONT is reshaped into a crossed double front (each front laps past CF into a
   // diagonal wrap edge, cut 2 mirror, surplice V). Only a dress/top (needs a front
   // bodice). Pairs naturally with the wrap-front tie above.
-  { key: 'wrapFront', label: 'wrap / surplice front', trLabel: 'kruvaze ön', options: [['none', 'none', 'yok'], ['surplice', 'surplice wrap', 'kruvaze (çapraz ön)']], for: (s) => s.garment !== 'skirt' },
+  { key: 'wrapFront', label: 'wrap / surplice front', trLabel: 'kruvaze ön', options: [['none', 'none', 'yok'], ['surplice', 'surplice wrap', 'kruvaze (çapraz ön)']], for: (s) => !isSkirt(s) },
   // vocab 2026-07-17: back detail (arka pelerin/fırfır — Damla "arkası pelerinli/
   // fırfırlı"). A separate cut piece at the back neck: gathered ruffle, draped
   // cape, or circular flounce. Only a dress/top (needs a back bodice).
-  { key: 'backDetail', label: 'back detail', trLabel: 'arka detay', options: [['none', 'none', 'yok'], ['ruffle', 'back ruffle', 'arka fırfır'], ['cape', 'back cape', 'arka pelerin'], ['flounce', 'back flounce', 'arka volan']], for: (s) => s.garment !== 'skirt' },
+  { key: 'backDetail', label: 'back detail', trLabel: 'arka detay', options: [['none', 'none', 'yok'], ['ruffle', 'back ruffle', 'arka fırfır'], ['cape', 'back cape', 'arka pelerin'], ['flounce', 'back flounce', 'arka volan']], for: (s) => !isSkirt(s) },
   // vocab 2026-07-17: off-shoulder / bardot neckline (omuz açık / bardot). The
   // bodice top edge drops below the shoulder onto an elastic casing (+ optional
   // bardot frill) — the pink gingham dress. Needs a plain (dart) bodiced garment.
-  { key: 'bardotStyle', label: 'off-shoulder', trLabel: 'omuz açık (bardot)', options: [['none', 'none', 'yok'], ['plain', 'off-shoulder band', 'omuz açık bant'], ['frill', 'bardot (with frill)', 'bardot (fırfırlı)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' && s.shaping === 'dart' },
+  { key: 'bardotStyle', label: 'off-shoulder', trLabel: 'omuz açık (bardot)', options: [['none', 'none', 'yok'], ['plain', 'off-shoulder band', 'omuz açık bant'], ['frill', 'bardot (with frill)', 'bardot (fırfırlı)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' && s.shaping === 'dart' },
   // vocab 2026-07-17: button row (düğme sırası). A drawn vertical row of buttons —
   // functional (a real CF opening) or decorative (buttons for looks). Dress/top.
-  { key: 'buttonRow', label: 'button row', trLabel: 'düğme sırası', options: [['none', 'none', 'yok'], ['functional', 'functional (opens)', 'fonksiyonel (açılır)'], ['decorative', 'decorative', 'süs (kapanmaz)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  { key: 'buttonRow', label: 'button row', trLabel: 'düğme sırası', options: [['none', 'none', 'yok'], ['functional', 'functional (opens)', 'fonksiyonel (açılır)'], ['decorative', 'decorative', 'süs (kapanmaz)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
   // vocab 2026-07-17: exposed / visible zipper (görünür fermuar). A visible design
   // zip on the CF or CB seam (distinct from the hidden CB zip a dress carries).
-  { key: 'exposedZip', label: 'exposed zip', trLabel: 'görünür fermuar', options: [['none', 'none', 'yok'], ['centerFront', 'center front', 'ön ortası'], ['centerBack', 'center back', 'arka ortası']], for: (s) => s.garment !== 'skirt' },
+  { key: 'exposedZip', label: 'exposed zip', trLabel: 'görünür fermuar', options: [['none', 'none', 'yok'], ['centerFront', 'center front', 'ön ortası'], ['centerBack', 'center back', 'arka ortası']], for: (s) => !isSkirt(s) },
   // vocab 2026-07-17: front tie (önden bağlamalı — Damla). A front bow / wrap-
   // front tie / tie-front waist as self-fabric strips. A wrap-front tie also
   // serves as the front opening. Only a dress/top (needs a front bodice).
-  { key: 'tieClosure', label: 'front tie', trLabel: 'ön bağ', options: [['none', 'none', 'yok'], ['frontNeckBow', 'front neck bow', 'ön yaka fiyonku'], ['frontWaistTie', 'tie-front waist', 'önden bel bağı'], ['frontWaistBow', 'front waist bow', 'ön bel fiyonku'], ['wrapFront', 'wrap-front tie', 'kruvaze (önden bağlı)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
-  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli'], ['gore', 'gored (6-panel)', 'godeli (6 panel)']], for: (s) => s.garment !== 'top' },
-  { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => s.garment === 'dress' },
-  { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => s.garment !== 'top' },
-  { key: 'ruffle', label: 'hem ruffle', trLabel: 'fırfır', options: [['none', 'none', 'yok'], ['single', 'hem ruffle', 'etek ucu fırfır'], ['tiered', 'tiered (3)', 'kademeli (3 kat)']], for: (s) => s.garment !== 'top' },
+  { key: 'tieClosure', label: 'front tie', trLabel: 'ön bağ', options: [['none', 'none', 'yok'], ['frontNeckBow', 'front neck bow', 'ön yaka fiyonku'], ['frontWaistTie', 'tie-front waist', 'önden bel bağı'], ['frontWaistBow', 'front waist bow', 'ön bel fiyonku'], ['wrapFront', 'wrap-front tie', 'kruvaze (önden bağlı)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
+  { key: 'skirtStyle', label: 'skirt style', trLabel: 'etek stili', options: [['aLine', 'A-line', 'A kesim'], ['straight', 'straight', 'düz'], ['gathered', 'gathered', 'büzgülü'], ['halfCircle', 'half circle', 'yarım kloş'], ['pleated', 'pleated', 'pileli'], ['gore', 'gored (6-panel)', 'godeli (6 panel)']], for: (s) => !isTop(s) },
+  { key: 'waistline', label: 'waistline', trLabel: 'bel hattı', options: [['natural', 'natural waist', 'normal bel'], ['empire', 'empire (under bust)', 'göğüs altı (babydoll)']], for: (s) => isDress(s) },
+  { key: 'skirtLength', label: 'length', trLabel: 'boy', options: [['mini', 'mini', 'mini'], ['midi', 'midi', 'midi'], ['maxi', 'maxi', 'maksi']], for: (s) => !isTop(s) },
+  { key: 'ruffle', label: 'hem ruffle', trLabel: 'fırfır', options: [['none', 'none', 'yok'], ['single', 'hem ruffle', 'etek ucu fırfır'], ['tiered', 'tiered (3)', 'kademeli (3 kat)']], for: (s) => !isTop(s) },
   // Loop M1: back hem slit / walking vent (arka etek yırtmacı). Only a fitted
   // straight/A-line skirt or dress hosts a center-back walking vent; gathered/
   // pleated/half-circle skirts walk freely and the engine skips it honestly.
-  { key: 'backSlit', label: 'back slit', trLabel: 'arka yırtmaç', options: [['none', 'none', 'yok'], ['vent', 'walking vent', 'körük yırtmaç'], ['slit', 'plain slit', 'düz yırtmaç']], for: (s) => s.garment !== 'top' && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine') },
+  { key: 'backSlit', label: 'back slit', trLabel: 'arka yırtmaç', options: [['none', 'none', 'yok'], ['vent', 'walking vent', 'körük yırtmaç'], ['slit', 'plain slit', 'düz yırtmaç']], for: (s) => !isTop(s) && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine') },
   // queue #3: ruffled shoulder straps (fırfırlı askı). A gathered self-fabric
   // frill strip drawn as a separate pair; only a sleeveless dress/top carries one
   // (a sleeved/halter garment frames the shoulder instead → engine skips honestly).
@@ -106,11 +117,11 @@ const SPEC_GROUPS = [
   // R1.1: peplum (bele takılan volan). A flared circular flounce hung from the
   // waist as a separate piece; only a waisted top/dress carries one (a
   // pleated/gathered/draped peplum stays honest → not offered here).
-  { key: 'peplum', label: 'peplum', trLabel: 'peplum (bel volanı)', options: [['none', 'none', 'yok'], ['full', 'full circle', 'tam kloş'], ['half', 'half circle', 'yarım kloş'], ['pointed', 'pointed hem', 'sivri etek']], for: (s) => s.garment !== 'skirt' },
+  { key: 'peplum', label: 'peplum', trLabel: 'peplum (bel volanı)', options: [['none', 'none', 'yok'], ['full', 'full circle', 'tam kloş'], ['half', 'half circle', 'yarım kloş'], ['pointed', 'pointed hem', 'sivri etek']], for: (s) => !isSkirt(s) },
   // R1.2: asymmetric button placket (asimetrik düğme patı). The classic front
   // button stand shifted off center (the Jackie gingham). Only a dress/top hosts
   // one; a symmetric CF placket is still set by the front-closure read separately.
-  { key: 'placketStyle', label: 'button placket', trLabel: 'düğme patı', options: [['none', 'none', 'yok'], ['standard', 'center front', 'ortadan'], ['asymmetric', 'asymmetric (off center)', 'asimetrik (yandan)']], for: (s) => s.garment !== 'skirt' && s.neckline !== 'halter' },
+  { key: 'placketStyle', label: 'button placket', trLabel: 'düğme patı', options: [['none', 'none', 'yok'], ['standard', 'center front', 'ortadan'], ['asymmetric', 'asymmetric (off center)', 'asimetrik (yandan)']], for: (s) => !isSkirt(s) && s.neckline !== 'halter' },
   // patch 3.12: pocket (cep). A patch pocket (a separate piece sewn onto the
   // outside + a placement mark) or a side-seam in-seam pocket (two bag pieces +
   // a mouth mark). Welt/besom/cargo/kangaroo stay honest → not offered here.
@@ -119,14 +130,14 @@ const SPEC_GROUPS = [
   // shirt-tail (sides up, center long) or high-low (front short, back long). Only
   // a fitted straight/A-line skirt/dress or a top hosts it; a gathered/pleated/
   // circle skirt has no shaped side hem to lift (stays honest).
-  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun'], ['pointedV', 'pointed / corset (V)', 'sivri / korse (V)'], ['boxPleatHem', 'box-pleat kick', 'kutu pili (kick)']], for: (s) => s.garment === 'top' || ((s.garment === 'skirt' || s.garment === 'dress') && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
-  { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => s.garment === 'top' },
+  { key: 'hemShape', label: 'hem shape', trLabel: 'etek ucu', options: [['straight', 'straight', 'düz'], ['shirttail', 'shirt-tail (curved)', 'gömlek eteği (kavisli)'], ['highLow', 'high-low', 'önü kısa arkası uzun'], ['pointedV', 'pointed / corset (V)', 'sivri / korse (V)'], ['boxPleatHem', 'box-pleat kick', 'kutu pili (kick)']], for: (s) => isTop(s) || ((isSkirt(s) || isDress(s)) && (s.skirtStyle === 'straight' || s.skirtStyle === 'aLine')) },
+  { key: 'topLength', label: 'top length', trLabel: 'üst boyu', options: [['cropped', 'cropped', 'crop'], ['hip', 'hip', 'kalça'], ['tunic', 'tunic', 'tunik']], for: (s) => isTop(s) },
   // Darts are the DEFAULT shaping (2026-07-17 minimal-piece policy): a plain
   // bodice stays ONE panel per side instead of splitting into a center + side
   // panel. Princess seams are the OPT-IN style — they double the bodice/skirt
   // piece count, so a clean pattern only spends them when the style asks for it.
   // Gathered and half-circle skirts have no waist shaping to convert.
-  { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => s.garment !== 'skirt' || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
+  { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => !isSkirt(s) || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
   { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
 ];
 // Foto-anı bug fix (2026-07-27): the last validated vision reading + whether
@@ -528,7 +539,7 @@ function showSpec() {
         // skirt stays in the honesty channel). Distinct from a tie-back (fabric ties)
         // and an open-back cutout (a faced hole) — this is criss-cross eyelet lacing.
         const laced = pickLaceUpBack(seen);
-        const lacedHostable = spec.garment !== 'skirt';
+        const lacedHostable = !isSkirt(spec);
         spec.laceUpBack = (laced && lacedHostable) ? 'corset' : 'none';
         // True wrap / surplice front (kruvaze, wrapfront.cpp): the engine now
         // reshapes the FRONT bodice into a crossed double front — each front laps
@@ -538,7 +549,7 @@ function showSpec() {
         // on a skirt stays in the honesty channel). A wrap-front TIE composes on top
         // to cinch it. Mirror the engine host gate exactly.
         const wrap = pickWrapFront(seen);
-        const wrapHostable = spec.garment !== 'skirt';
+        const wrapHostable = !isSkirt(spec);
         spec.wrapFront = (wrap && wrapHostable) ? 'surplice' : 'none';
         // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
         // cuts the back with a center-back seam and opens a walking slit from the
@@ -546,7 +557,7 @@ function showSpec() {
         // skirt walks freely (engine skips honestly). Gate on the skirt style so a
         // "slit" read on a gathered skirt stays in the honesty channel.
         const slit = pickHemSlit(seen);
-        const slitHostable = spec.garment !== 'top' &&
+        const slitHostable = !isTop(spec) &&
           (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine');
         spec.backSlit = (slit && slitHostable) ? slit : 'none';
         // Ruffled shoulder straps (fırfırlı askı, queue #3): the engine now draws a
@@ -564,14 +575,14 @@ function showSpec() {
         // gathered/draped peplum stays honest (pickPeplum null). A skirt has no
         // waisted bodice → gate it out.
         const peplum = pickPeplum(seen);
-        spec.peplum = (peplum && spec.garment !== 'skirt') ? peplum : 'none';
+        spec.peplum = (peplum && !isSkirt(spec)) ? peplum : 'none';
         // All-around hem flounce (etek ucu volanı — dropped-waist tiered look): the
         // engine hangs a gathered flounce from the WHOLE hem (front + back) as a
         // separate strip, gathered edge trued to the finished hem. Only a dress/top
         // with a real hem hosts one (a gathered/flared skirt already ripples). A
         // peplum (waist) or a back-only ruffle stays honest (pickHemFlounce null).
         const hemFlounce = pickHemFlounce(seen);
-        const hemFlounceHostable = spec.garment === 'dress' || spec.garment === 'top';
+        const hemFlounceHostable = isDress(spec) || isTop(spec);
         spec.hemFlounce = (hemFlounce && hemFlounceHostable) ? hemFlounce : 'none';
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
         // separate piece + a placement mark), a side-seam in-seam pocket (two bag
@@ -584,8 +595,8 @@ function showSpec() {
         // (a gathered/pleated/circle skirt is a no-waist rectangle, and a bodice-
         // only top has no hip). Gate it out otherwise (the engine also skips
         // honestly); the pocket then falls back to the honest missing note.
-        const slashHostable = spec.garment === 'dress' ||
-          (spec.garment === 'skirt' && (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
+        const slashHostable = isDress(spec) ||
+          (isSkirt(spec) && (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
         spec.pocketStyle = (pocket === 'slash' && !slashHostable) ? 'none' : (pocket || 'none');
         // Cuff (manşet, patch 3.13): the engine now draws a button or ribbed band
         // at the wrist end of a full-length sleeve, the sleeve hem gathered in.
@@ -606,21 +617,21 @@ function showSpec() {
         // (pickHemShape null). boxPleatHem also needs a center-fold panel — the C++
         // block honest-no-ops (guide note) if the host has no CF/CB fold.
         const hemShape = pickHemShape(seen);
-        const hemHostable = spec.garment === 'top' ||
-          ((spec.garment === 'skirt' || spec.garment === 'dress') &&
+        const hemHostable = isTop(spec) ||
+          ((isSkirt(spec) || isDress(spec)) &&
            (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
         spec.hemShape = (hemShape && hemHostable) ? hemShape : 'straight';
         // vocab 2026-07-17: back detail (arka pelerin/fırfır). A separate ruffle/
         // cape/flounce piece at the back neck. Only a dress/top hosts one.
         const backDet = pickBackDetail(seen);
-        spec.backDetail = (backDet && spec.garment !== 'skirt') ? backDet : 'none';
+        spec.backDetail = (backDet && !isSkirt(spec)) ? backDet : 'none';
         // vocab: exposed / visible zipper (görünür fermuar). A visible design zip.
         spec.exposedZip = pickExposedZip(seen) || 'none';
         // vocab: off-shoulder / bardot (omuz açık). The bodice top drops below the
         // shoulder onto an elastic casing (+ optional frill). Needs a plain (dart)
         // bodiced garment — a princess/skirt garment stays honest.
         const bardot = pickBardot(seen);
-        const bardotHostable = spec.garment !== 'skirt' && spec.neckline !== 'halter' &&
+        const bardotHostable = !isSkirt(spec) && spec.neckline !== 'halter' &&
           spec.shaping !== 'princess';
         spec.bardotStyle = (bardot && bardotHostable) ? bardot : 'none';
         // Cup seam (kup dikişi, cupseam.cpp): the engine now splits the princess
@@ -630,7 +641,7 @@ function showSpec() {
         // a cap-sleeve wing), with a sweetheart/square/scoop top edge above the
         // apex. Any other host the engine refuses honestly, so we don't send it and
         // it stays in the honesty layer (a sleeved bodice cup seam, a dart bust).
-        const cupSeamHostable = (spec.garment === 'dress' || spec.garment === 'top') &&
+        const cupSeamHostable = (isDress(spec) || isTop(spec)) &&
           spec.shaping === 'princess' &&
           (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
           (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
@@ -642,7 +653,7 @@ function showSpec() {
         // collar (the engine faces the yoke) and with the box pleat below. A yoke the
         // engine refuses (a skirt) stays honest.
         const yokePick = pickYoke(seen);
-        const yokeHostable = spec.garment !== 'skirt';
+        const yokeHostable = !isSkirt(spec);
         spec.yoke = (yokePick && yokeHostable) ? (yokePick === 2 ? 'gathered' : 'plain') : 'none';
         // Center box pleat (orta ters kutu pili, boxpleat.cpp): a single inverted
         // fold behind the center-front panel — the swing/doll center fold. Host: a
@@ -650,7 +661,7 @@ function showSpec() {
         // above (a swing top is yoke + CF box pleat). No structured vision field
         // carries a box pleat, so pickBoxPleat reads only the free-text channel.
         const boxPleat = pickBoxPleat(seen);
-        spec.boxPleat = (boxPleat && spec.garment !== 'skirt') ? 'centerInverted' : 'none';
+        spec.boxPleat = (boxPleat && !isSkirt(spec)) ? 'centerInverted' : 'none';
         // A drawn button row is DECORATIVE from vision (a functional row is the
         // placket path above); a visible run of buttons with no read closure reads
         // decorative. A front placket already drew a functional row, so only add a
@@ -659,7 +670,7 @@ function showSpec() {
           (Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' ') : '') + ' ' + (seen.details || ''),
         );
         spec.buttonRow = (buttonsRead && spec.placketStyle === 'none' && !spec.frontPlacket &&
-          spec.garment !== 'skirt' && spec.neckline !== 'halter') ? 'decorative' : 'none';
+          !isSkirt(spec) && spec.neckline !== 'halter') ? 'decorative' : 'none';
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -757,11 +768,22 @@ function showSpec() {
   screen.appendChild(drafting);
 }
 
+// The drafted class, Title Case, in ONE place. It was spelled out four times
+// across three panels (title, file base, PDF title, grade run) and each copy
+// reached into result.pattern for the same field — the kind of repetition the
+// closed-enum ratchet (vocab_reference_check) is measuring when it counts
+// references to a menu we are supposed to be dismantling, not growing.
+const drafted = (result) => result.pattern.garment;
+const draftedTitle = (result) => {
+  const g = drafted(result);
+  return g.charAt(0).toUpperCase() + g.slice(1);
+};
+
 function showResult(result) {
   screen.textContent = '';
   screen.className = 'wrap';
   const head = el('div', 'result-head');
-  head.appendChild(el('h1', 'screen-title', t('create.result.title', { garment: result.pattern.garment.charAt(0).toUpperCase() + result.pattern.garment.slice(1) })));
+  head.appendChild(el('h1', 'screen-title', t('create.result.title', { garment: draftedTitle(result) })));
   screen.appendChild(head);
 
   // Demo-body users: lead with the personalize CTA, they've now SEEN a real
@@ -829,8 +851,8 @@ function downloadPanel(result) {
   panel.appendChild(el('h2', 'dl-title', t('create.dl.title')));
   panel.appendChild(el('p', 'dl-sub', t('create.dl.sub')));
 
-  const base = `stitchu-${safeName(result.pattern.garment)}-${safeName(spec.silhouette || spec.skirtStyle || spec.neckline || 'pattern')}`;
-  const title = `${result.pattern.garment.charAt(0).toUpperCase()}${result.pattern.garment.slice(1)}`;
+  const base = `stitchu-${safeName(drafted(result))}-${safeName(spec.silhouette || spec.skirtStyle || spec.neckline || 'pattern')}`;
+  const title = draftedTitle(result);
   const msg = el('p', 'dl-msg', '');
 
   // One handler shape for all four: disable, do the work, report the refusal in
@@ -864,6 +886,23 @@ function downloadPanel(result) {
   const dxfBtn = el('button', 'btn', t('create.dl.dxf'));
   wire(dxfBtn, () => saveDXF({ kind: 'spec', spec, measurements: values }, `${base}.dxf`));
   row.appendChild(dxfBtn);
+
+  // THE FLAT. The other three buttons are the same drawing serialized three
+  // ways — pieces to cut. This one is the other half of the target sentence:
+  // the finished-garment technical drawing, drawn from the spec by the same pen
+  // the flat gates judge. It is a separate file because it answers a separate
+  // question (what IS this), and it comes with the pen's own refusal: any axis
+  // the engine cannot cut is named on screen, not swallowed.
+  const flatBtn = el('button', 'btn', t('create.dl.flat'));
+  wire(flatBtn, () => {
+    const gaps = flatGaps(spec);   // throws exactly where saveFlatSVG would
+    saveFlatSVG(spec, `${base}-flat.svg`);
+    // Not a refusal — the file IS on their disk — so it does not go through the
+    // refusal string. It is the honest footnote: drawn, but not yet cuttable.
+    if (gaps.length) msg.textContent = t('create.dl.flatgap', { what: gaps.join(' · ') });
+    return null;
+  });
+  row.appendChild(flatBtn);
   panel.appendChild(row);
 
   // A0 is a print-shop errand, not a home one, so it is a link and not a fourth
@@ -968,8 +1007,8 @@ function gradePanel(result) {
         line.style.fontSize = '12px';
         panel.appendChild(line);
       }
-      if (nestRadio.checked) printGradeNested(sizes, result.pattern.garment);
-      else printGrade(sizes, result.pattern.garment);
+      if (nestRadio.checked) printGradeNested(sizes, drafted(result));
+      else printGrade(sizes, drafted(result));
     } catch (err) {
       msg.style.color = '#8f2038';
       msg.textContent = t('create.grade.error');
