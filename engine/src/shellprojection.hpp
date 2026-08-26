@@ -96,13 +96,40 @@ struct ShellProjection {
 // comparison that had no meaning. body_length is now the same KIND of thing on
 // both sides — a length along the cloth — and the height is kept under its own
 // name so nothing is lost. No factor was applied to make the two agree.
+//
+// ★ AND IT STARTED IN THE WRONG PLACE (GECE7 / F4, karar K23). Fixing the KIND
+// left -3.7979% (EU38 flat 757.5584 vs pattern 728.7870, -28.7714mm), and that
+// residue was not solver noise: the waist ring agreed to 0.0272mm. It was the
+// START of the line. The flat walked the centre line from the SHOULDER RING,
+// a horizontal section of the shell; the pattern sums the centre-front seam of
+// the panel, which begins where the cloth is actually CUT — the solved top
+// boundary. Measured EU38: shoulder ring z 1378.3050, solved centre-front cut
+// z 1349.7702, a 28.5349mm head of shell that no panel contains. The two sides
+// were reading the same kind of quantity over two different intervals.
+//
+// So body_length now starts at the pattern's OWN solved top boundary, read out
+// of SurfacePattern::topColZMM at the centre column — never re-derived from the
+// zone model (TopProfile::zAt), which is the second-parallel-model error
+// surfacepattern.hpp spends a page warning about and which disagrees with the
+// surface by -9.4 to -9.7mm at the shoulder point. That is why these functions
+// take the PATTERN and not the bare shell: a caller cannot hand in a top of its
+// own choosing, because there is nowhere for it to get one from.
+// Residue after the correction, EU38: flat 728.8259 vs pattern 728.7870,
+// -0.0389mm = -0.0053%, which is the flatten's own strain and 283x inside the
+// gate's 1.5%. No factor, offset or calibration constant was introduced.
+//
+// The OUTLINE is deliberately NOT moved with it. The silhouette is a projection
+// of the shell's extreme x and it still runs shoulder ring -> hem; the top
+// boundary is a curve in phi and clipping the drawn silhouette to it is a
+// different question with its own gates (flat_artifact_census,
+// flat_convention_check). It is named here rather than done quietly.
 //   neck_opening_width      2*(a + d) at the topmost ring
 //   shoulder_width          2*(a + d) at the ring below it
 //
 // neck_opening_width is the SHELL's neck ring, not a drafted neckline: where the
 // neckline is actually cut is TopProfile's decision inside surfacepattern.cpp,
 // and reporting that here would be a second copy of it.
-ShellProjection projectFront(const GarmentSurf& surf);
-ShellProjection projectBack(const GarmentSurf& surf);
+ShellProjection projectFront(const SurfacePattern& pat);
+ShellProjection projectBack(const SurfacePattern& pat);
 
 }  // namespace stitchu

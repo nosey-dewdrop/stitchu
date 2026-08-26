@@ -143,11 +143,18 @@ int main(int argc, char** argv) {
     }
     const BodySurface body(entry->body, kStatureMM, kCapMM);
     const SheathOptions opt;
-    // THE SAME SHELL THE PATTERN IS CUT FROM. buildSheathPattern calls this very
-    // function; if it stops doing so, this tool is measuring a different dress.
-    const GarmentSurf surf = buildGarmentSurf(body, opt);
-    const ShellProjection f = projectFront(surf);
-    const ShellProjection b = projectBack(surf);
+    // THE PATTERN ITSELF, not a second build of its shell. This used to call
+    // buildGarmentSurf and hand the bare shell to the projection, which was
+    // enough while every published measure was a ring — but body_length starts
+    // at the SOLVED TOP BOUNDARY (GECE7 / F4, K23) and that boundary only
+    // exists once the panels are cut. Building the pattern here is not extra
+    // work for its own sake: it is the only way the flat can READ the cut
+    // instead of re-deriving it from the zone model, which is the known
+    // -9.4..-9.7mm error (docs/H1.0-KAPI.md § 4.1). The shell travels with the
+    // pattern (SurfacePattern::surf), so there is still exactly one of it.
+    const SurfacePattern pat = buildSheathPattern(body, opt);
+    const ShellProjection f = projectFront(pat);
+    const ShellProjection b = projectBack(pat);
     if (svg) emitSvg(size, f, b);
     else emitJson(size, f, b);
     return 0;

@@ -41,6 +41,7 @@
 // Usage: shell-audit [EU38]     -> JSON on stdout
 #include <cmath>
 #include <cstdio>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -133,12 +134,39 @@ int main(int argc, char** argv) {
         // panels on. Two chains, because the shell is NOT front/back symmetric
         // (bm+bd against bm-bd) and a front reading copied to the back is one of
         // the defects this audit has to be able to see.
-        const int n = std::max(2, static_cast<int>(std::ceil((shoulderH - hemZ) / kCentreStepMM)));
+        //
+        // ⚠ THE CHAIN STARTS WHERE THE CLOTH IS CUT, NOT AT THE SHOULDER RING
+        // (GECE7 / F4, K23). It used to start at the shoulder ring, which is a
+        // horizontal SECTION of the shell and 28.5349mm above the solved
+        // centre-front cut at EU38 — a head of shell no panel contains. Reading
+        // it that way made the audit agree with a published number that was
+        // measured over the wrong interval, which is precisely the class this
+        // tool exists to catch, on the one measure where it was blind.
+        //
+        // ⚠ AND THIS IS A SHARED INPUT, SAID RATHER THAN FAKED (K29). The top
+        // boundary comes from the same solved array shellprojection.cpp reads
+        // (SurfacePattern::topColZMM), exactly as `at()` is shared: if the
+        // BOUNDARY is wrong both readings are wrong together and this tool
+        // cannot see it. What stays audited is the arithmetic of the measure —
+        // chord sum against quadrature — over an interval both sides now agree
+        // about. Re-deriving the boundary here from the zone model would not be
+        // independence, it would be the -9.4..-9.7mm second parallel model
+        // (docs/H1.0-KAPI.md § 4.1).
+        const std::vector<double>& tz = plan.pattern.topColZMM;
+        if (tz.empty() || (tz.size() - 1) % 4 != 0)
+            throw std::runtime_error("solved top boundary missing or not sampled on the centre "
+                                     "columns: the centre chains have no start");
+        const int NR = static_cast<int>(tz.size()) - 1;
+        const double ustZ[2] = {tz[NR / 4], tz[3 * NR / 4]};  // 0 front, 1 back
+        std::printf("  \"merkez_ust_z_on\": %s,\n", num(ustZ[0]).c_str());
+        std::printf("  \"merkez_ust_z_arka\": %s,\n", num(ustZ[1]).c_str());
         for (int f = 0; f < 2; ++f) {
             const double phi = f ? -0.5 * kPi : 0.5 * kPi;
+            const double topZ = ustZ[f];
+            const int n = std::max(2, static_cast<int>(std::ceil((topZ - hemZ) / kCentreStepMM)));
             std::printf("  \"%s\": [", f ? "merkez_arka" : "merkez_on");
             for (int i = 0; i <= n; ++i) {
-                const Vec3 v = s.at(shoulderH - (shoulderH - hemZ) * i / n, phi);
+                const Vec3 v = s.at(topZ - (topZ - hemZ) * i / n, phi);
                 std::printf("%s[%s,%s,%s]", i ? "," : "", num(v.x, 5).c_str(), num(v.y, 5).c_str(),
                             num(v.z, 5).c_str());
             }

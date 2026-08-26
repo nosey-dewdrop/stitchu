@@ -90,7 +90,29 @@ double polylineLen(const std::vector<Vec2>& p, int a, int b) {
     return L;
 }
 
-ShellProjection project(const GarmentSurf& surf, bool front) {
+// WHERE THE CLOTH STOPS ON THE CENTRE LINE, taken from the pattern's own solved
+// top boundary and not from a second model of it. topColZMM is indexed over the
+// ring's own columns (NR+1 entries, phi = 2*pi*j/NR ascending, column NR
+// repeating column 0), so the centre front is the quarter turn and the centre
+// back the three-quarter turn — the same phi = +-pi/2 convention
+// surfacepattern.cpp cuts its front and back panels on. Refused rather than
+// defaulted (RULES 1): an empty array or a column count the quarter turn does
+// not land on means the boundary was never solved, and a garment length guessed
+// off the shoulder ring is exactly the defect this reads the array to avoid.
+double clothTopZ(const SurfacePattern& pat, bool front) {
+    if (pat.topColZMM.empty())
+        throw std::runtime_error("pattern carries no solved top boundary: the centre line has "
+                                 "no start and body_length cannot be measured");
+    const int NR = static_cast<int>(pat.topColZMM.size()) - 1;
+    if (NR % 4 != 0)
+        throw std::runtime_error("ring column count is not a multiple of four: the centre "
+                                 "columns are not sampled and the top boundary cannot be read "
+                                 "there without interpolating a second curve");
+    return pat.topColZMM[front ? NR / 4 : 3 * NR / 4];
+}
+
+ShellProjection project(const SurfacePattern& pat, bool front) {
+    const GarmentSurf& surf = pat.surf;
     ShellProjection out;
     out.front = front;
     const double sgn = front ? 1.0 : -1.0;
@@ -184,7 +206,13 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
     out.measures.push_back({"bust_circumference", bust.name, girthAt(surf, bust.h)});
     out.measures.push_back({"waist_circumference", waist.name, girthAt(surf, waist.h)});
     const std::string down = shoulder.name + "->" + (hasHem ? kHemRing : hip.name);
-    out.measures.push_back({"body_length", down, centreLineArc(surf, shoulder.h, hemZ, front)});
+    // The centre line runs from the CUT, not from a section. Its interval name
+    // therefore cannot be a pair of ring names, and calling it one would be the
+    // report lying about where the number came from. The top boundary is not a
+    // ring, so it is named here — the second and last level name in this file.
+    const std::string cutDown = std::string("top_boundary->") + (hasHem ? kHemRing : hip.name);
+    const double topZ = clothTopZ(pat, front);
+    out.measures.push_back({"body_length", cutDown, centreLineArc(surf, topZ, hemZ, front)});
     out.measures.push_back({"neck_opening_width", neck.name, 2.0 * halfWidthAt(surf, neck.h)});
     out.measures.push_back({"shoulder_width", shoulder.name,
                             2.0 * halfWidthAt(surf, shoulder.h)});
@@ -198,7 +226,7 @@ ShellProjection project(const GarmentSurf& surf, bool front) {
 
 }  // namespace
 
-ShellProjection projectFront(const GarmentSurf& surf) { return project(surf, true); }
-ShellProjection projectBack(const GarmentSurf& surf) { return project(surf, false); }
+ShellProjection projectFront(const SurfacePattern& pat) { return project(pat, true); }
+ShellProjection projectBack(const SurfacePattern& pat) { return project(pat, false); }
 
 }  // namespace stitchu

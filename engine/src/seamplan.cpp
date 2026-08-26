@@ -106,8 +106,8 @@ std::string SeamPlan::nodeId() const {
         mix(h, num(pattern.topColXMM[j], 6) + ";" +
                    num(j < pattern.topColZMM.size() ? pattern.topColZMM[j] : 0.0, 6));
     // the DRAWN silhouette, both views (K24 — see mixProjection above)
-    mixProjection(h, projectFront(pattern.surf));
-    mixProjection(h, projectBack(pattern.surf));
+    mixProjection(h, projectFront(pattern));
+    mixProjection(h, projectBack(pattern));
     char buf[32];
     std::snprintf(buf, sizeof buf, "%016llx", h);
     return buf;
@@ -185,8 +185,8 @@ std::string planJSON(const SeamPlan& plan) {
 std::string flatJSON(const SeamPlan& plan) {
     const SurfacePattern& pat = plan.pattern;
     // NOT a rebuilt shell: the pattern's own.
-    const ShellProjection f = projectFront(pat.surf);
-    const ShellProjection b = projectBack(pat.surf);
+    const ShellProjection f = projectFront(pat);
+    const ShellProjection b = projectBack(pat);
 
     std::ostringstream o;
     o << "{\n";
