@@ -74,13 +74,22 @@ export const STRINGS = {
   // not by their extension — a shopper knows "home printer", not "A4 tiled".
   'create.dl.title': { en: 'Take it home', tr: 'Eve götür' },
   'create.dl.sub': {
-    en: 'Three files, all straight from the engine that drafted this pattern. Print at true scale, then measure the calibration square on the cover before you cut.',
-    tr: 'Üç dosya, üçü de bu kalıbı çizen motorun kendi çıktısı. Gerçek ölçekte yazdır, kesmeden önce kapaktaki kalibrasyon karesini ölç.',
+    en: 'The pattern you cut, and the flat that says what it is — all straight from the engine that drafted this. Print at true scale, then measure the calibration square on the cover before you cut.',
+    tr: 'Keseceğin kalıp, ve onun ne olduğunu anlatan teknik çizim — hepsi bu kalıbı çizen motorun kendi çıktısı. Gerçek ölçekte yazdır, kesmeden önce kapaktaki kalibrasyon karesini ölç.',
   },
   'create.dl.pdf': { en: 'PDF, home printer (A4)', tr: 'PDF, ev yazıcısı (A4)' },
   'create.dl.a0': { en: 'PDF, print shop (A0, single sheet)', tr: 'PDF, matbaa (A0, tek sayfa)' },
   'create.dl.svg': { en: 'SVG, vector', tr: 'SVG, vektör' },
   'create.dl.dxf': { en: 'DXF, CAD / cutter', tr: 'DXF, CAD / kesim' },
+  // The flat is a DIFFERENT drawing from the pattern and the label has to say so,
+  // or a shopper downloads it expecting pieces and finds a picture of a dress.
+  'create.dl.flat': { en: 'SVG, technical flat (front + back)', tr: 'SVG, teknik çizim (ön + arka)' },
+  // Named refusal, not a silent redraw: the flat pen stamps the operator it does
+  // not have, and the shopper is told before the file is on their disk.
+  'create.dl.flatgap': {
+    en: 'The flat is drawn, but the engine cannot yet cut: {what}',
+    tr: 'Teknik çizim çizildi, ama motorun henüz kesemediği var: {what}',
+  },
   'create.dl.working': { en: 'building…', tr: 'hazırlanıyor…' },
   'create.dl.refused': { en: 'That file could not be built: {why}', tr: 'Bu dosya çıkarılamadı: {why}' },
   'create.grade.title': { en: 'Grade to a size run', tr: 'Beden serisine seril' },

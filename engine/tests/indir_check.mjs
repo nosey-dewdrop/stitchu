@@ -27,6 +27,15 @@
 //   6. REFUSAL — a spec the validator blocks hands out NO dxf (RULES
 //            invariant 1: a blocked draft must not download as a clean
 //            industry file that a shopper then cuts fabric to).
+//   9. FLAT  — added in F-İNDİR's 2nd round, because the referee measured the
+//            first round's claim and it was half true: all ten exports of
+//            web/js/download.js wrote a PATTERN. The target sentence is photo +
+//            prompt -> pattern AND FLAT. This checks that the finished-garment
+//            technical flat is a real downloadable document (front + back,
+//            geometry present), that it is a DIFFERENT drawing from the pattern
+//            SVG rather than the same bytes under a new name, that the pen
+//            NAMES what the engine cannot cut instead of drawing it anyway, and
+//            that the flat button is MOUNTED on the result screen.
 //
 // Artifacts are written next to the build so a human can open them; the paths
 // are printed (RULES invariant 3 — a file path, not "I looked at it").
@@ -51,7 +60,7 @@ const saved = [];
 globalThis.document = { createElement: () => ({ click() { saved.push(this.download); } }) };
 globalThis.URL = { ...globalThis.URL, createObjectURL: () => 'blob:stub', revokeObjectURL: () => {} };
 
-const { patternSVG, patternA4Pdf, patternA0Pdf, relayDXF, safeName } =
+const { patternSVG, patternA4Pdf, patternA0Pdf, relayDXF, safeName, flatSVG, flatGaps, saveFlatSVG } =
   await import(join(ROOT, 'web/js/download.js'));
 
 const MM = 72 / 25.4;
@@ -199,17 +208,62 @@ check('the result screen mounts the panel',
   /appendChild\(\s*downloadPanel\(/.test(createSrc),
   'a panel that is built but never appended is the 26 Aug state with extra code');
 
+// --------------------------------------------------------------------- 9. FLAT
+// The other half of the target sentence. Everything above is the PATTERN — the
+// pieces you cut. The flat is the finished garment as worn: what the thing IS.
+// It is drawn from the SPEC by web/lib/flat-core.js, the same pen the flat gates
+// (flat_convention_check, flat_expresses_spec_check) judge. Before this round
+// that pen could not run in a browser at all (five readFileSync calls), so no
+// shipped page had ever printed a pixel of it.
+const flat = flatSVG(SPEC);
+check('flat is an SVG document', flat.trimStart().startsWith('<svg') && flat.trimEnd().endsWith('</svg>'));
+check('flat draws both views', /<text[^>]*>FRONT<\/text>/.test(flat) && /<text[^>]*>BACK<\/text>/.test(flat),
+  'a technical flat without a back view is half a tech pack (contract/flat-convention-v1.json views.required)');
+const flatPaths = (flat.match(/<path/g) || []).length;
+check('flat carries real geometry', flatPaths >= 4, `${flatPaths} <path> elements`);
+// NOT the pattern under another name. If someone ever wires this button to
+// patternSVG the file still downloads, still opens, and is silently wrong.
+check('flat is a different drawing from the pattern', flat !== svg && !flat.includes('cutInstruction'),
+  'the flat must not be the pattern sheet renamed');
+// The pattern SVG is millimetres of paper; the flat is a croquis-scaled view.
+check('flat is not dimensioned as cut paper', !/width="[\d.]+mm"/.test(flat),
+  'a flat printed at "true mm" would invite someone to cut it');
+
+// NAMED REFUSAL, not a silent redraw. `sleeveStyle: straight` is expressible to
+// the reading vocabulary but the v2 registry has no shipped operator for it, and
+// the 2026-07-18 precedent in CLAUDE.md is a puff sleeve that was silently
+// dropped. The pen stamps the axis; create.js prints the stamp.
+const gaps = flatGaps({ ...SPEC, sleeveStyle: 'straight' });
+check('the flat names what the engine cannot cut', gaps.length > 0, gaps.join(' · ') || 'no stamp');
+check('a spec with nothing to draw is refused, not blank',
+  (() => { try { flatSVG({}); return false; } catch { return true; } })(),
+  'an empty file that opens is worse than an error');
+
+// The saver itself, through the same DOM stub the DXF refusal branch uses.
+const beforeFlat = saved.length;
+saveFlatSVG(SPEC, 'dress-flat.svg');
+check('the flat actually saves a file', saved.includes('dress-flat.svg'),
+  `${saved.length - beforeFlat} file(s) saved`);
+
+// And it is offered, not merely buildable — the 26 Aug disease in its own terms.
+check('create.js calls saveFlatSVG', /\bsaveFlatSVG\s*\(/.test(createSrc),
+  'the result screen must offer the flat, not merely be able to build it');
+check('the flat button is mounted in the download row',
+  /row\.appendChild\(\s*flatBtn\s*\)/.test(createSrc),
+  'a button that is built but never appended is the 26 Aug state with extra code');
+
 // ------------------------------------------------------------------ artifacts
 const base = join(OUT, safeName('stitchu-dress-aline'));
 writeFileSync(`${base}.dxf`, dxf);
 writeFileSync(`${base}.svg`, svg);
 writeFileSync(`${base}-a4.pdf`, a4);
 writeFileSync(`${base}-a0.pdf`, a0);
+writeFileSync(`${base}-flat.svg`, flat);
 
 console.log('İNDİR KAPISI — kullanıcı eve bir dosya götürüyor mu? (0 API çağrısı)');
 console.log(note.join('\n'));
 if (fails.length) console.log(fails.join('\n'));
 console.log('\nyazılan dosyalar (RULES invariant 3 — yol, "baktım" değil):');
-for (const f of ['.dxf', '.svg', '-a4.pdf', '-a0.pdf']) console.log(`  ${base}${f}`);
+for (const f of ['.dxf', '.svg', '-a4.pdf', '-a0.pdf', '-flat.svg']) console.log(`  ${base}${f}`);
 console.log(`\nİNDİR KAPISI: ${fails.length ? `KIRMIZI — ${fails.length} kalem` : 'YEŞİL'}`);
 process.exit(fails.length ? 1 : 0);

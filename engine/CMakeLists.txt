@@ -669,6 +669,14 @@ add_test(NAME specv2_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR
 # hesaplanir — elle "guncellendi" denemez.
 add_test(NAME specv1v2_map_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-spec-v1v2-map.mjs --check)
 
+# flat_tables_check (F-INDIR 2. tur, 2026-08-26): the flat pen moved into the
+# published root (web/lib/flat-core.js) so a shopper can download a technical
+# flat, and it can no longer readFileSync the five contract tables it reasons
+# from. They are emitted as web/lib/flat-tables.gen.js. A generated mirror with
+# no gate on it IS a second truth; this gate re-emits it from contract/ +
+# engine/vocab.json and fails when the committed module drifts by one byte.
+add_test(NAME flat_tables_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-flat-tables.mjs --check)
+
 # K2 flat render lint (2026-07-19): every flat style record in styles.json is
 # rendered headlessly and checked for self-intersection, inconsistent winding
 # (reversed normals), zero-area loops and sampleX y-monotonicity.
