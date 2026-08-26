@@ -338,3 +338,246 @@ hakem tarafından doğrulandı, **EXIT 8**.
   kapsamı daraltmak bugün sessizce mümkün.
 
 Kalan 21 madde silinmedi, hiçbiri kapatılmadı.
+
+---
+---
+
+# HAKEM — F2, İKİNCİ TUR (2026-08-26, `6210bc2`)
+
+Yukarısı **silinmedi**. Bu bölümü ayrı bir hakem yazdı; öncekine danışmadı,
+her sayıyı kendi koşturdu.
+
+## HÜKÜM: ✅ **GEÇTİ** — `F2-yesil` atıldı, **HALKA 1 KAPANDI**
+
+Tek satırlık sebep: **kartın FAZ KAPISI md.1'i `6 failed out of 119` istiyordu;
+hakem kendi koşturdu ve `95% tests passed, 6 tests failed out of 119` çıktı, altı
+ad tam olarak miras altı, `flat_expresses_spec_check` listede YOK** — ve
+KALDI'nın sebebi kapıya **tek bayt dokunulmadan** kaynağında kalktı.
+
+---
+
+## 1. AJANIN EN AĞIR İDDİASI — "TEK YARGI DEĞİŞMEDİ" — HÜCRE HÜCRE DOĞRULANDI
+
+Bu iddia çürüseydi H2 çürürdü ve hüküm **GERİ AL** olurdu. Hakem `afc1ca2`'nin
+ve `HEAD`'in `labels-hakem.json`'unu ayrı ayrı çıkarıp, yeni şekli **eski şekle
+geri çevirip** karşılaştırdı (52 `goremedim` adı `deger` bloğuna `"göremedim"`
+olarak geri yazıldı, sonra tam eşitlik arandı):
+
+```
+old: enum 143 · null 33 · göremedim 52 · toplam 228
+new: goremedim dizisinde 52 ad
+MISMATCHES: 0
+```
+
+- **143 enum yargısının 143'ü** birebir aynı.
+- **33 `null`'ın 33'ü** birebir aynı.
+- **52 "göremedim"in 52'si** aynı eksende, aynı fotoğrafta.
+- `gorunurluk` bloğu (19 × 24 = 456 hücre): **tek hücre değişmedi.**
+- `_hakem_notu` · `_kunye` · `_sha256`: **19 fotoğrafın 19'unda değişmedi.**
+- Değişen tek meta: `_uc_durum` açıklaması (üçüncü durumun artık ayrı anahtarda
+  olduğunu yazıyor) + yeni `_k17_yeniden_kodlama` gerekçe satırı.
+
+**Cevap anahtarı gevşetilmedi. H2 ayakta.**
+
+Ajanın "çarpışma İKİ taneydi, ikincisi önceki hakemin kendi commit'inden geldi"
+tespiti de **doğru ve dürüsttür**: `"göremedim"` bir dize sabitiydi ve
+`flat_expresses_spec_check` onu dokuzuncu/onuncu bir kol **değeri** sandı. Önceki
+hakem hükmünü yazarken bu dosya henüz doğmamıştı, o yüzden `HAKEM-F2.md` 1. turda
+yok. **Hakem de aynı kusura düştü** — kayda geçer.
+
+## 2. KAPILAR — HEPSİNİ HAKEM KENDİ KOŞTURDU
+
+| komut | ÖLÇÜLEN | kart ne demişti |
+|---|---|---|
+| `cmake --build engine/build -j8` | exit 0 | exit 0 ✅ |
+| `ctest --test-dir engine/build --output-on-failure` | **`95% tests passed, 6 tests failed out of 119`** (368.86 sn) | 6 failed / 119 ✅ |
+| kırmızı adlar | `flat_pattern_agree_check` · `flat_artifact_census` · `style_check` · `sizechart_source_check` · `contract_check` · `figure_check` | **tam miras altı, yedinci ad YOK** ✅ |
+| `ctest -R hedef_kosu` / doğrudan | **EXIT 0**, `CIRCIR SAĞLAM` | ✅ |
+| `ctest -R indir_check` / doğrudan | **EXIT 0**, `İNDİR KAPISI: YEŞİL` | ✅ |
+| `bash engine/tests/vocab_reference_check.sh` | **EXIT 0**, `HUKUM: YESIL`, toplam **10281** / taban 10438 | kart bugünün toplamını **YAZMADI** ⚠ (aşağıda) |
+| `python3 -m pytest -q` | **23 passed** | ✅ |
+| `git status` | temiz (` M KOSU-v7.md` + takipsiz `patterns_real/` — koşu öncesinden) | ✅ |
+
+⚠ **Kartın tek eksiği:** FAZ KAPISI md.2 *"bugünkü sayı karta yazılır"* diyor;
+kart `taban 10438`'i yazdı, **bugünün toplamını yazmadı**. Hakem saydı ve
+gerekçesini buldu, kusur ajanın DEĞİL: `3c1835f` → **10276**, `afc1ca2` →
+**10281**, `HEAD` → **10281**. Yani **+5 satır önceki HAKEMİN kendi commit'inden**
+(göz etiketi dosyaları), 2. tur ajanının sözlüğe net etkisi **0 satır**. Kapı
+zaten yeşil (10281 ≤ 10438) ve hiçbir eksen tabanının üstüne çıkmadı. **Faz
+düşürecek bir kalem değil; kayda geçer.**
+
+## 3. `104 - h10_gate_check` DISABLED — KOVALANDI, KAPANDI (K18)
+
+Ajan bunu bildirdi ve hiçbir kart anmamıştı. Hakem `git log -S` ile kovaladı:
+
+- Doğuran `f52db5e` **2026-08-17**, devre dışı bırakan **`52ae85c` 2026-08-23**.
+  GECE7 **2026-08-26**'da açıldı → **koşudan üç gün ÖNCE.** Faz ajanı da hakem de
+  dokunmadı, §3.8 md.4 ihlali **yok**.
+- **Ad çakışması:** testteki "h10" bu koşunun `H10_cikarildi_orani` metriği değil,
+  **H1.0 giyilebilirlik kabul kapısı** (`docs/H1.0-KAPI.md`; dosya adı
+  `tests/h10_gate_check_LEGACY.cpp`).
+- Gerekçe kapatıldığı yerde yazılı ve **ölçüye dayalı**: kapı `SurfacePattern`
+  hattını yargılıyordu ama `surfacepattern` `engine/src`'den **sıfır kez**
+  include ediliyor. Yerine `garment_armhole_check` koşuyor, bugün yeşil.
+
+**F2'nin hanesine yazılmaz.**
+
+## 4. YEDEK 5 — HAKEM KOŞTURDU, AYAR YOK (K20)
+
+Ajanın hiç görmediği 5 fotoğraf. VLM turlarını **hakem ödedi** (5 çağrı, aynı
+public uç); ham okuma **repoya yazılmadı**, yedek yedek kalsın diye.
+
+| | hedef 10 | **yedek 5 (hakem)** |
+|---|---|---|
+| H1 | 10/10 | **5/5** |
+| H2 | %93.0 (66/71) | **%87.5 (28/32)** |
+| H3 | 2 | **2** |
+| H8 | 61 | **26** |
+| H10 | %64.4 | **%67.2** |
+| H10a | %29.7 | **%35.3** |
+| **H10b** | %33.1 | **%28.6** ← yedekte DAHA İYİ |
+| H10e | 5 | **6** |
+
+**AYAR YOK.** Gerekçe dört sayı, K20'de: (a) ürün koduna 2. turda **tek bayt**
+girmedi — ayarlanacak yüzey yok; (b) anahtarı ajan yazmadı; (c) H10b yedekte
+daha iyi, ayar tek yönlü olurdu; (d) yedeğin **4 hatasının 4'ü tek fotoğrafta**
+(`34-minidress-1960s`, 5/9).
+
+## 5. HAKEMİN KENDİ MUTASYONLARI — DOKUZ, BEŞİ AJANIN HİÇ DOKUNMADIĞI DOSYADA
+
+§3.8 md.3. Loga güvenilmedi, hepsi baştan koşuldu, **hepsi geri alındı**
+(`git status` temiz, doğrulandı).
+
+| # | dosya | ajan dokundu mu | ne bozuldu | ÖLÇÜLEN |
+|---|---|---|---|---|
+| HM1 | `web/js/create.js` | **HAYIR** | `hemFlounce` `spec` varsayılanından silinir | **EXIT 8** — `37 axes parsed from create.js (floor 38)` |
+| HM2 | `web/js/provenance.js` | **HAYIR** | `gorunurlukCelismesi` hep boş döner | **EXIT 8**, **4 FAIL** — H10b→H10a kaçışı · H10b şişirme · görünemezi "okudum" sayma · kayıtsız eksen |
+| HM3 | `web/lib/pdf-core.js` | **HAYIR** | A4 kapağından `Origin / Köken` başlığı silinir | **EXIT 8** — `the A4 cover has an Origin block` |
+| HM4 | `vision/eval/credits.json` | **HAYIR** | bir künyenin lisans satırı boşaltılır | **pytest 1 failed / 22 passed** |
+| HM5 | `vision/eval/labels-hakem-BOS.json` | **HAYIR** | şablona **tek** dolu hücre (K14) | **pytest 1 failed / 22 passed** |
+| HM6 | `contract/hedef-kosu-taban.json` | hayır (yasak) | taban H2 = 99.0 | **EXIT 1** — `CIRCIR KIRIK — 1 sayı kötüleşti` |
+| HM7 | `vision/eval/h10-eksenleri.json` | evet | eksen ADI **değer** olarak geri yazılır | `flat_expresses_spec_check` **EXIT 1** — `RATCHET sleeveStyle UNEXPRESSED 1/0 TAVAN ASILDI`; geri alınca **EXIT 0** |
+| **HM8** | `vision/eval/labels-hakem.json` | evet | bir H2 uyuşmazlığı `deger`den `goremedim`'e taşınır | ⛔ **HİÇBİR KAPI YANMADI** — aşağıda |
+| HM9 | `contract/hedef-kosu-taban.json` | hayır | yeni `H10e` anahtarı 2'ye çekilir | **EXIT 1** — `H10e_etiket_hatasi: taban 2 -> şimdi 3` |
+
+**HM7 sebep-sonucu kapatıyor:** bu turun tek zorunlu işi ölçülerek yapıldı ve
+geri alınca kırmızı geri geliyor.
+
+## 6. ⭐ HAKEMİN BULDUĞU, KİMSENİN SORMADIĞI — CEVAP ANAHTARI KORUMASIZ (K19)
+
+**HM8.** `01`'in `shaping` yargısı `deger` bloğundan `goremedim` dizisine taşındı:
+
+```
+H2  %95.2 (40/42)  ->  %97.6 (40/41)
+hedef_kosu EXIT 0 · pytest 23 passed · indir_check EXIT 0
+```
+
+**Sıfır kırmızı.** Cevap anahtarını gevşetmek bugün bedava, ve bu tam olarak
+§0B'nin reward-hacking maddesidir — koşuda **yeni doğmuş** bir yüzeyde.
+
+**F2'ye hane yazılmıyor**, çünkü §1'de hücre hücre ölçüldü: bu tur o kapıyı
+**kullanmadı**, 0 uyuşmazlık. Ama kapı açık ve kapatmak kod yazmaktır →
+**F3'ün zorunlu işi**. Hakemin bugünkü en kısıtlayıcı ara önlemi: anahtarın
+`sha256`'sı + hücre sayımı tabana `_cevap_anahtari_MUHRU` olarak yazıldı.
+
+## 7. KART DIŞINA TAŞMA — YOK, VE MÜHÜRLER SAĞLAM
+
+`git diff --stat afc1ca2..HEAD` → **10 dosya**: 5'i `GECE7/` kayıt/log,
+kalan 5'i `hedef_kosu.mjs` · `h10-eksenleri.json` · `labels-hakem.json` ·
+`fetch-hedef10.sh` · `live-hedef10-2026-08-26.json`.
+
+**ÜRÜN KODUNA TEK BAYT GİRMEDİ.** Blob'lar iki uçta birebir aynı:
+`create.js` · `download.js` · `pdf-core.js` · `flat-core.js` · `provenance.js` ·
+`flat_expresses_spec_check.mjs` · `vocab_reference_check.sh` ve tabanı ·
+`labels.json` (sha256 `a2e33825…`, mühür sağlam) · `labels-hakem-BOS.json` ·
+`contract/hedef-kosu-taban.json` (`4fda57f4…` → `4fda57f4…`, **ajan dokunmadı**).
+
+**`patterns_real/` PUSHLANMADI:** `git diff --name-only F2-oncesi..HEAD -- patterns_real/`
+**0 dosya**; üç takipsiz kalem takipsiz duruyor (K10).
+
+`hedef_kosu.mjs` `labels.json`'u gerçekten **okumuyor** — `grep` ile doğrulandı,
+dosya adı yalnız bir **yorumda** geçiyor, **yedek yol yok** (`EYE_F` tek kaynak).
+`test_kaynak_kunye.py` onu hâlâ okuyor ama bir **mühür kontrolü** olarak.
+
+## 8. SAPMA SORUSU — ÖLÇÜLDÜ
+
+> *"Bir yabancı fotoğraf yükleyip kalıp + flat indirebiliyor muyum, hangi alanı
+> nereden geldi görebiliyor muyum, ve fotoğrafta **GÖRÜNEN** alanları bir önceki
+> fazdan **daha çok** mu alabiliyorum?"*
+
+1. **İNİYOR** — ve artık **15 yabancı fotoğrafta** ölçülü: H1 **10/10** (hedef) +
+   **5/5** (hakemin yedeği). `indir_check` EXIT 0. ⚠ **Gerçek tarayıcıda
+   tıklanmadı — DOĞRULANMADI**, repoda headless harness yok (beş fazdır).
+2. **GÖRÜLEBİLİYOR**, 38 eksende (HM1: 38→37 düşüşü **EXIT 8**).
+3. ⛔ **HAYIR — DAHA ÇOK ALAMIYORUM.** Çıkarım hattına bu turda **tek bayt**
+   girmedi (blob'larla doğrulandı).
+
+**Bu bir sapma mıdır — HAYIR**, ve gerekçe "altyapı" değil dört ölçülen sayı:
+(a) `ctest` **7 → 6**, kırmızı ad kümesi küçüldü;
+(b) cevap anahtarı **makineden insana** geçti — `hedef_kosu` `labels.json`'u
+artık **okumuyor** ve HM2 anahtarı geri çevirdiğinde **EXIT 1**;
+(c) ayrışma **21 + 48 + 1 = 70** ile hakemin önceden ölçtüğünü birebir üretti;
+(d) ölçüm seti **n=5 → 10**, üstüne hakemin **yedek 5**'i, **ayar yok** (K20).
+
+Ve fazın gerçek ürünü bir yüzde değil bir **kuyruk**: **H10b = 48 adlandırılmış
+alan** (n=5) — fotoğrafta gözle görünen ama motora default'tan giren alanlar.
+Dün bu sayı %0'dı çünkü **veri yoktu**; kusur yok değildi. F3'ün hedefi artık
+bu 48'dir.
+
+## 9. NEDEN "KALDI" DEĞİL — ve neden GERİ AL hiç konuşulmadı
+
+Kartın FAZ KAPISI'nın **beşi de** ölçüldü ve beşi de tuttu. En ağır iddia
+(§1) hücre hücre doğrulandı. Kapıya dokunulmadı, taban ajan tarafından
+kımıldatılmadı, ürün koduna tek bayt girmedi, dokuz mutasyonun sekizi doğru
+yerde ısırdı ve dokuzuncusu (HM8) **fazın değil kapının eksiğini** buldu.
+K15'in *"dördüncüsünde o kayıt yeniden yargılanır"* şartı **tetiklenmedi**:
+bu turda kart kırmızı bir kapıyı yeşil bildirmedi — tersine, **hiçbir kartın
+bilmediği bir DISABLED testi kendi bildirdi.**
+
+## 10. TABAN — HAKEM TERFİ ETTİRDİ (K21)
+
+Önceki/sonraki yan yana `contract/hedef-kosu-taban.json` → `_hakem_dokunusu_2`.
+H2 **%92.2 → %95.2** (insan anahtarı; 92.2 artık okunmayan bir dosyanın sayısı),
+H3 **4 → 2** (F2'ye kazanım yazılmadı, K9), **H10b %40.0 · H10e 3 · H10x %0.8
+anahtarları AÇILDI** (§0B tavanı bugünden itibaren H10b'de işliyor),
+**H10a AÇILMADI** (yedek-5'te %35.3 vs hedef-10'da %29.7 — kadrajla oynuyor,
+yükselmesi doğru davranış, cırcıra bağlamak kaçış üretir). `_n` **5** kaldı;
+n=10 ve yedek-5 **ayrı, cırcırsız bloklarda**.
+
+**Terfi ısırıyor:** HM9 → `CIRCIR KIRIK — H10e: taban 2 -> şimdi 3`, EXIT 1.
+
+## 11. BORÇ — 23 devraldı, 0 kapandı, 23 + 3 yeni = **26** devrediyor
+
+**Yeni:**
+- **K19** — cevap anahtarı korumasız (HM8). **F3'ün zorunlu işi.**
+- **24.** `vocab_reference_check` toplamı **10276 → 10281**; +5 satır önceki
+  **hakemin** göz etiketi commit'inden. Kapı yeşil, ama bir hakemin kendi
+  commit'i de bir kapıyı oynatabiliyor ve bunu hiçbir kart saymıyor.
+- **25.** `_yedek_5` bir kez koşuldu; **ikinci koşuda yedek artık yedek değildir**
+  (sayıları bu dosyada yazılı). Bir sonraki holdout için **yeni set** gerekir —
+  havuzda kullanılmayan 4 kaldı (`11` `12` `30` `35`), yani havuz bir daha
+  bölünürse **fotoğraf bitiyor**.
+
+**Kapanmayan 23 madde silinmedi.** K17 (`flat_expresses_spec_check` ölçüm
+verisini ürün spec'i sayıyor) hâlâ açık — bu tur yalnız çarpışmayı kaldırdı ve
+kusurun **iki kez** (ajanda ve hakemde) tekrar ettiğini ölçtü.
+
+## 12. ÖLÇEMEDİKLERİM — DOĞRULANMADI
+
+- **Gerçek tarayıcıda hiç tıklanmadı.** Repoda headless harness yok. **Beş fazdır.**
+- **Miras 6 kırmızının kök sebebi bu turda da aranmadı** (altı fazdır).
+- **VLM turunun para tutarı ÖLÇÜLMEDİ** — ne ajanın 5 turu ne hakemin 5 turu.
+  Repoda bir çağrının parasını döndüren uç yok; faturayı yalnız Damla'nın
+  Anthropic konsolu gösterir. Sayı **uydurulmadı** (§3.10).
+- **19 fotoğrafın göz etiketini yeniden yargılamadım.** Önceki hakemin gözüne
+  dayandım; doğruladığım şey **değişmediği**, doğru olduğu değil.
+- **Yedek 5'in VLM okumasını göz etiketiyle ayrıca gözden geçirmedim.**
+- **H4 / H6 / H9 ÖLÇEMEDİM** (beş fazdır). **H5** yalnız `armhole↔sleeve_cap`
+  çiftinden; yedek-5'te ölçülebilen çift **3'e düştü**.
+- **Künyelerin hukuki doğruluğu yorumlanmadı**; sha256'ları tek tek doğrulamadım,
+  `test_her_fotografin_kanitli_kunyesi_var`'ın 19 parametrik yeşiline dayandım.
+- **İnen 7 dosyanın 5'i** (`a0.pdf` · `.dxf` · düz `.svg` · `…-flat.svg` ·
+  `…-a4.pdf`) köken taşıyor mu — **greple tekrar saymadım**, F0 hakemine dayandım.
+- `pages.yml:23` hâlâ `branches: [main]` → **main'e her push canlıya çıkıyor.**
+  Bugün main **altı kırmızıyla** yayında. Üç hakem yazdı, **kapanmadı.**
+- **K10 açık:** repo PUBLIC, `patterns_real/` origin/main'de. **Damla kararı.**

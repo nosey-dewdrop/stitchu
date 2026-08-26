@@ -360,3 +360,106 @@ reddedilen hamlenin aynısı, §3.8 md.4. **Dayanak yok, en kısıtlayıcı seç
 seçildi:** kapsam korunur, çarpışma kaynağında kalkar (kimlik eşlemesi bir eksen
 ADInı JSON **değeri** olarak yazmaz — anahtar listesi + `null` yeterlidir, kapıya
 tek satır dokunulmadan).
+
+---
+
+## K18 — `104 - h10_gate_check` DISABLED: bu koşunun işi DEĞİL, ve H10 metriğiyle İLGİSİ YOK
+
+**Karar:** Devre dışı bırakma **meşrudur ve yerinde kalır**. F2'ye hiçbir hane
+yazılmaz. Yeniden açmak bu koşunun işi değildir; kuyrukta durur.
+
+**Dayanak (git, tek tek ölçüldü):**
+- `git log -S h10_gate_check -- engine/CMakeLists.txt` → iki commit. Doğuran
+  `f52db5e` (**2026-08-17**), devre dışı bırakan **`52ae85c` (2026-08-23)**.
+  GECE7 klasörü **2026-08-26**'da açıldı → **bu koşudan ÜÇ GÜN ÖNCE**. Hiçbir
+  faz ajanı, hiçbir hakem dokunmadı. §3.8 md.4 ihlali yok.
+- **Ad çakışması, konu çakışması değil.** Testin adındaki "h10" bu koşunun
+  `H10_cikarildi_orani` metriği değil, **H1.0** = giyilebilirlik kabul kapısıdır
+  (`docs/H1.0-KAPI.md`: kol oyuğu çevresi + grade, omuz dikişinin varlığı,
+  omuz ön/arka dengesi, yakanın kapalı delik olması). Dosyanın kendi adı da
+  bunu söylüyor: `tests/h10_gate_check_LEGACY.cpp`.
+- **Gerekçe kapatıldığı yerde yazılı** (`engine/CMakeLists.txt:743-752`) ve bir
+  ölçüme dayanıyor: kapı `SurfacePattern` hattını yargılıyordu, ama
+  `surfacepattern` `engine/src`'den **sıfır kez** include ediliyor — yani sevk
+  edilen giysiyi değil, hattın dışındaki bir hattı yargılıyordu. Yerine
+  `garment_armhole_check` koşuyor ve bugün **yeşil**.
+- Silinmedi, LEGACY olarak duruyor. **Kapı gizlenmedi, ilan edildi.**
+
+**Kuyruğa yazılan:** F2 2. tur ajanı bunu kendi kartında bildirdi ve hiçbir
+önceki kart anmamıştı. Bildirmesi **doğru davranıştı**; kök sebebi aramaması da
+doğruydu (kart dışı).
+
+---
+
+## K19 — 🚨 CEVAP ANAHTARI KORUMASIZ: bir uyuşmazlığı `goremedim`'e taşımak H2'yi şişiriyor ve HİÇBİR KAPI YANMIYOR
+
+**Bulgu — hakemin kendi mutasyonu HM8, kimse sormamıştı.**
+`vision/eval/labels-hakem.json`'da `01`'in `shaping` yargısı `deger` bloğundan
+silinip `goremedim` dizisine taşındı (tek satır, tersine çevrilebilir):
+
+```
+H2  %95.2 (40/42)  ->  %97.6 (40/41)
+hedef_kosu EXIT 0 · pytest 23 passed · indir_check EXIT 0   — SIFIR KIRMIZI
+```
+
+Yani cevap anahtarını **gevşetmek bugün bedava**. §0B'nin reward-hacking
+maddesinin tarif ettiği hamlenin, bu koşuda **yeni doğmuş** bir yüzeyi.
+
+**Karar:** F2'ye hane YAZILMAZ — hakem `afc1ca2..HEAD`'i hücre hücre karşılaştırdı
+(aşağıda, HAKEM-F2.md 2. tur §1) ve **0 uyuşmazlık** buldu: 143 enum + 33 `null`
++ 52 `goremedim` bayt bayt yerinde, `gorunurluk` bloğuna dokunulmamış. Kapı
+**açık ama kullanılmamış**. Kapatmak kod yazmaktır ve kod faz ajanının işidir
+(§3.7) → **F3'ün ZORUNLU işi** olarak karta yazıldı.
+
+**En kısıtlayıcı ara önlem (hakem, bugün):** anahtarın `sha256`'sı ve hücre
+sayımı `contract/hedef-kosu-taban.json` → `_cevap_anahtari_MUHRU` altına yazıldı.
+Kapı yazılana kadar gevşetme en azından **iki sayının kıyasıyla** görülebilir.
+
+---
+
+## K20 — YEDEK 5 KOŞULDU: AYAR (overfit) YOK
+
+**Karar:** K16'nın *"hedef ile yedek arasında açılan fark ayar kanıtıdır ve
+kırmızıdır"* kuralı **tetiklenmedi.** F2 2. tur bu maddeden temiz çıkar.
+
+**Dayanak (hakemin kendi koşusu, 5 VLM turu hakem ödedi):**
+
+| | hedef 10 | **yedek 5** |
+|---|---|---|
+| H1 | 10/10 | **5/5** |
+| H2 | %93.0 (66/71) | **%87.5 (28/32)** |
+| H10b | %33.1 | **%28.6** |
+| H10a | %29.7 | **%35.3** |
+
+H2 farkı −5.5 puan. **Ayar değil, ve gerekçe dört sayı:**
+1. **Ayarlanacak yüzey YOK.** `git diff afc1ca2..HEAD` ürün kodunda **sıfır
+   dosya** değiştirdi: `create.js` · `vision-bridge.js` · `spec-diff.mjs` ·
+   `render-garment-flat.mjs` · `vocab.gen.js` blob'ları iki uçta **birebir aynı**.
+   Çıkarım hattına bu turda tek bayt girmedi.
+2. Cevap anahtarını **ajan yazmadı**, hakem yazdı; ajan onu okuyan kodu yazdı.
+3. Ayar tek yönlü olurdu; **H10b yedekte DAHA İYİ** (%28.6 < %33.1).
+4. Yedeğin **4 hatasının 4'ü tek fotoğrafta** (`34-minidress-1960s`, 5/9).
+   Fark bir setin zorluğudur, bir hattın ayarı değil.
+
+**Ham VLM okumaları repoya YAZILMADI** — yedek set yedek kalsın diye. Bu blok
+(`_yedek_5_HAKEM_KOSTURDU`) ölçümün kendisidir.
+
+---
+
+## K21 — TABAN TERFİ ETTİ: H2 insan anahtarına, H10b/H10e/H10x anahtarları AÇILDI, H10a AÇILMADI
+
+**Karar (§3.8 md.1, tabana yalnız hakem dokunur):**
+
+| | önce | sonra | dayanak |
+|---|---|---|---|
+| H2 | %92.2 (47/51) | **%95.2 (40/42)** | 92.2 artık **hiçbir kapının okumadığı** bir dosyanın (`labels.json`) sayısı = ölü. Bırakmak 3 puanlık bedava gevşeklik demekti. |
+| H3 | 4 | **2** | Cırcır yalnız düşer. **F2'ye kazanım yazılmadı** (K9): düşüş kaynak değişiminin yan ürünü, ilan kanalı ölçüm hattına hâlâ bağlanmadı. |
+| H10b | anahtar YOK | **%40.0, `yon: tavan`** | Artık gerçek ölçüm (21+48+1=70 hakemin kendi koşusunda tuttu). Anahtar yazıldığı **an** `hedef_kosu.mjs:453`'teki §0B tavanı işlemeye başlar. |
+| H10e | anahtar YOK | **3, `yon: dusuk`** | Dayanağı artık sabit (insan beyanı); 1. turda değişmek üzereydi, o yüzden açılmamıştı. |
+| H10x | anahtar YOK | **%0.8, `yon: dusuk`** | Anahtar sabit olduğu için H10x ancak hat 24 eksenin **dışına** alan bastığında yükselir = ölçüm körlüğü. |
+| **H10a** | anahtar YOK | **YİNE YOK** | Şef emri + bir sayı: hakemin yedek-5 koşusunda H10a **%35.3**, hedef-10'da **%29.7** — kadrajla oynuyor ve **yükselmesi doğru davranıştır**. Cırcıra bağlamak ajanı alanları H10b'den H10a'ya kaçırmaya iter (§0B). |
+| `_n` | 5 | **5** | Cırcır seti hâlâ tabanın ölçüldüğü beş fotoğraf. n=10 ve yedek-5 **ayrı, cırcırsız bloklarda**; mutlak sayaçlar (H3·H8·H10e) n ile büyür, karıştırmak sahte kötüleşme üretir. |
+
+**Terfi ısırıyor mu — ölçüldü (HM9):** taban `H10e` elle 2'ye çekildi →
+`CIRCIR KIRIK — H10e_etiket_hatasi: taban 2 -> şimdi 3`, **EXIT 1**; geri alınca
+EXIT 0. Yeni anahtarlar sessiz süs değil.

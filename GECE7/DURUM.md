@@ -8,8 +8,8 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | Halka | Fazlar | Durum |
 |---|---|---|
 | **0 — ISINMA** | disk + hedef koşusu tabanı | ✅ **BİTTİ** (şef koşturdu) |
-| **1 — AL DENE** | **F-İNDİR** → F0 → F2 | ← şimdi buradayız |
-| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | bekliyor |
+| **1 — AL DENE** | **F-İNDİR** → F0 → F2 | ✅ **KAPANDI** (F2 2. tur GEÇTİ, `F2-yesil`) |
+| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | ← **şimdi buradayız**, kart `GECE7/F3.md` |
 | **3 — DERİNLİK** | F4 → F6 → F7 → F8 → F9 | bekliyor |
 
 **F1 Halka 0'a soğuruldu.** **F3B bu koşudan ÇIKARILDI**, H7 hedef koşusunda yok.
@@ -23,6 +23,60 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | F0 | ⛔ etiket YOK | 1 tur koştu, `cd3bea3` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; kart `GECE7/F0.md`, hüküm `GECE7/HAKEM-F0.md` |
 | **F0 (2. tur)** | **`F0-yesil`** ✅ | 1 tur koştu, `68ba288`+`3d6dc7e` | 1 tur koştu | ✅ **GEÇTİ** — vocab yeşil, 6 kırmızı; hüküm `GECE7/HAKEM-F0.md` (2. tur bölümü) |
 | F2 | ⛔ etiket YOK | 1 tur koştu, `54f2a0b`+`3c1835f` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; hüküm `GECE7/HAKEM-F2.md`, 2. tur kartı `GECE7/F2.md` sonunda |
+| **F2 (2. tur)** | **`F2-yesil`** ✅ | 1 tur koştu, `6210bc2` | 1 tur koştu | ✅ **GEÇTİ** — 6 kırmızı, cevap anahtarı İNSAN, n=10, yedek-5 hakem koşturdu; hüküm `GECE7/HAKEM-F2.md` (2. tur bölümü). **HALKA 1 KAPANDI.** |
+| **F3** | — | açılmadı | — | 🔜 kart `GECE7/F3.md` — **Halka 2 açık**, F3 ⇄ F5 iç içe, F3B **çıkarıldı** |
+
+## ✅ HAKEMİN HÜKMÜ — F2 (2. tur, `6210bc2`, etiket `F2-yesil`)
+
+✅ **GEÇTİ** — KALDI'nın tek sebebi kapıya **tek bayt dokunulmadan** kaynağında kalktı ve hakem her sayıyı kendi koşturdu: `ctest` **`95% tests passed, 6 tests failed out of 119`** (368.86 sn), altı ad tam olarak miras altı, **`flat_expresses_spec_check` listede YOK**; ajanın en ağır iddiası (*"52 hücre taşındı, TEK YARGI DEĞİŞMEDİ"*) hakem tarafından **hücre hücre** doğrulandı — yeni şekil eski şekle geri çevrilip tam eşitlik arandı, **MISMATCHES: 0** (143 enum + 33 `null` + 52 `goremedim` = 228 birebir yerinde, `gorunurluk`'un 456 hücresi ve 19 fotoğrafın `_sha256`/`_kunye`/`_hakem_notu` satırları el değmemiş) yani **cevap anahtarı gevşetilmedi ve H2 ayakta**; `hedef_kosu` **EXIT 0 `CIRCIR SAĞLAM`** ve `labels.json`'u **gerçekten okumuyor** (dosya adı yalnız bir yorumda, `EYE_F` tek kaynak, **yedek yol yok**, mühür sha256 `a2e33825…` sağlam); ayrışma **21 + 48 + 1 = 70** ile hakemin önceden ölçtüğünü birebir üretti; `indir_check` EXIT 0 · `vocab` `HUKUM: YESIL` **10281**/10438 · `pytest` **23 passed** · `git status` temiz · **ürün koduna 2. turda TEK BAYT girmedi** (`create.js` · `download.js` · `pdf-core.js` · `flat-core.js` · `provenance.js` · kapı betikleri · `labels.json` · `labels-hakem-BOS.json` · **taban** blob'ları iki uçta birebir aynı) · `patterns_real/` **pushlanmadı**; **`104 - h10_gate_check` DISABLED kovalandı ve kapandı (K18)** — `52ae85c` **2026-08-23**'te, koşudan **üç gün önce** kapatılmış, adındaki "h10" bu koşunun metriği değil **H1.0 giyilebilirlik kapısı** (`h10_gate_check_LEGACY.cpp`), yerine `garment_armhole_check` koşuyor, **§3.8 md.4 ihlali yok**; hakemin **dokuz mutasyonu** koştu, **beşi ajanın hiç dokunmadığı** `create.js` · `provenance.js` · `pdf-core.js` · `credits.json` · `labels-hakem-BOS.json` dosyalarında ve sekizi doğru yerde ısırdı — **`F2-yesil` atıldı ve pushlandı, Halka 2 açıldı** (kart `GECE7/F3.md`), gerekçe `GECE7/HAKEM-F2.md` 2. tur bölümü.
+
+### ⭐ HAKEMİN YEDEK 5'i — KOŞTURULDU, AYAR YOK (K20)
+
+Faz ajanının **hiç görmediği** 5 fotoğraf. VLM turlarını **hakem ödedi** (5 çağrı); ham okuma **repoya yazılmadı**.
+
+| | hedef 10 | **yedek 5 (hakem)** |
+|---|---|---|
+| H1 | 10/10 | **5/5** |
+| H2 | %93.0 (66/71) | **%87.5 (28/32)** |
+| H10 | %64.4 | **%67.2** |
+| H10a | %29.7 | **%35.3** |
+| **H10b** | %33.1 | **%28.6** ← yedekte DAHA İYİ |
+| H10e | 5 | **6** |
+
+**AYAR (overfit) YOK**, dört sayı: (a) 2. turda **ürün koduna tek bayt girmedi** — ayarlanacak yüzey yok; (b) cevap anahtarını ajan yazmadı; (c) H10b yedekte **daha iyi**, ayar tek yönlü olurdu; (d) yedeğin **4 hatasının 4'ü tek fotoğrafta** (`34-minidress-1960s`, 5/9).
+
+### 🚨 HAKEMİN BULDUĞU, KİMSENİN SORMADIĞI — CEVAP ANAHTARI KORUMASIZ (K19)
+
+Hakemin mutasyonu **HM8**: `01`'in `shaping` yargısı `deger`den `goremedim`'e taşındı →
+**H2 %95.2 → %97.6**, ve `hedef_kosu` **EXIT 0** · `pytest` **23 passed** · `indir_check` **EXIT 0** — **SIFIR KIRMIZI.** Cevap anahtarını gevşetmek bugün bedava, ve bu tam olarak §0B'nin reward-hacking maddesi. **F2 o kapıyı KULLANMADI** (0 uyuşmazlık, ölçüldü) → hane yazılmadı, **F3'ün ZORUNLU İŞİ (İŞ 0)** olarak karta geçti. Ara önlem: anahtarın sha256 + hücre sayımı tabana `_cevap_anahtari_MUHRU` olarak yazıldı.
+
+### Taban — HAKEM TERFİ ETTİRDİ (K21), önceki/sonraki yan yana
+
+| | önce | sonra | neden |
+|---|---|---|---|
+| H2 | %92.2 (47/51) | **%95.2 (40/42)** | 92.2 **okunmayan** bir dosyanın (`labels.json`) sayısı = ölü; bırakmak 3 puan bedava gevşeklik |
+| H3 | 4 | **2** | cırcır yalnız düşer; **F2'ye kazanım YAZILMADI** (K9) — kaynak değişiminin yan ürünü |
+| **H10b** | anahtar YOK | **%40.0 `tavan`** | artık gerçek ölçüm; anahtar yazıldığı **an** §0B tavanı işlemeye başladı |
+| H10e | anahtar YOK | **3** | dayanak artık sabit (insan beyanı) |
+| H10x | anahtar YOK | **%0.8** | ancak hat 24 eksenin dışına alan basarsa yükselir = ölçüm körlüğü |
+| **H10a** | anahtar YOK | **YİNE YOK** | yedek-5'te %35.3 / hedef-10'da %29.7 — kadrajla oynuyor, **yükselmesi doğru davranış**; cırcıra bağlamak kaçış üretir (§0B) |
+| `_n` | 5 | **5** | n=10 ve yedek-5 **ayrı, cırcırsız bloklarda**; mutlak sayaçlar n ile büyür |
+
+**Terfi ısırıyor — ölçüldü (HM9):** taban `H10e` elle 2'ye çekildi → `CIRCIR KIRIK — H10e_etiket_hatasi: taban 2 -> şimdi 3`, **EXIT 1**.
+
+## Son kapı sayıları — F2 SONRASI TABAN (hakem yazdı, cırcır seti n=5)
+
+| H1 | H2 | H3 | H4 | H5 | H6 | H8 | H9 | H10 | H10b | H10e | H10x | H11 |
+|----|----|----|----|----|----|----|----|-----|------|------|------|-----|
+| 5/5 | **%95.2 (40/42)** | **2** | ÖLÇEMEDİM | 0 / 5 çift | ÖLÇEMEDİM | 31 | ÖLÇEMEDİM | %58.3 | **%40.0** | **3** | **%0.8** | 3.7 ms |
+
+- **H2'nin cevap anahtarı artık İNSAN** (`vision/eval/labels-hakem.json`) — üç fazdır ilk kez.
+- **H10a taban anahtarı YOK ve açılmayacak.** H10a'yı yükselterek faz kapatılmaz.
+- **§0B tavanı H10b'de:** H10b yükselirken H2 yükselmiyorsa faz KAPANMAZ.
+
+**HEDEF SETİ (n=10), cırcırsız:** H1 10/10 · H2 %93.0 · H3 2 · H8 61 · H10 %64.4 · H10a %29.7 · H10b %33.1 · H10e 5.
+
+### Önceki hüküm (F2 1. tur) — kayıt için duruyor
 
 ## ⛔ HAKEMİN HÜKMÜ — F2 (1. tur, `3c1835f`)
 
@@ -165,6 +219,22 @@ her şeyin önüne koymuştu). Hakemin yargılayacağı asıl soru budur.
 | **F0 1. tur (`cd3bea3`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
 | **F0 2. tur (`3d6dc7e`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
 | **F2 1. tur (`3c1835f`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
+| **F2 2. tur (`6210bc2`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
+
+✅ **F2'NİN YEDİNCİ KIRMIZISI KAYNAĞINDA KALKTI (2. tur), KAPIYA TEK BAYT DOKUNULMADAN.**
+Çarpışma **İKİ** taneydi: `h10-eksenleri.json`'un kimlik eşlemesi (kartın bildiği) **ve**
+önceki **HAKEMİN kendi `afc1ca2` commit'indeki** `labels-hakem.json`'un `"göremedim"`
+dize sabiti — ikisi de `flat_expresses_spec_check`'in kol değer alanına girmişti
+(`8 → 10`, `UNEXPRESSED 2/0`). Çözüm ikisinde de aynı yasa: **bir eksen adı ya da
+sentinel dize, takipli bir JSON'da DEĞER olarak durmaz.** `flat_expresses_spec_check.mjs`
+ve tabanı **blob bazında el değmemiş**; kapsam **daraltılmadı** (K2/K11/K17).
+
+⚠ **`104 - h10_gate_check` DISABLED — kovalandı, KAPANDI (K18).** `52ae85c`
+(**2026-08-23**), koşudan **üç gün önce**; adındaki "h10" bu koşunun
+`H10_cikarildi_orani` metriği **değil**, **H1.0 giyilebilirlik kabul kapısı**
+(`tests/h10_gate_check_LEGACY.cpp`, `docs/H1.0-KAPI.md`). Gerekçesi kapatıldığı yerde
+yazılı ve ölçüye dayalı (`surfacepattern` `engine/src`'den sıfır kez include ediliyordu);
+yerine `garment_armhole_check` koşuyor, yeşil. **Faz ajanının gevşetmesi DEĞİL.**
 
 ⛔ **F2'NİN YEDİNCİ KIRMIZISI (hakem ölçtü, kart "yedinci ad YOK" demişti):**
 `flat_expresses_spec_check` **FAIL** — `RATCHET sleeveStyle UNEXPRESSED 1/0 —
@@ -260,6 +330,14 @@ saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 F0 birinci turdan yeni soru çıkmadı (kart md.4 zaten en kısıtlayıcı davranışı
 emrediyordu: kayıt bozuksa **dosya yazılmaz**).
 
+**Devreden borç (26 Ağu, F2 2. tur sonrası): 26 madde** — F2 2. turun devrettiği 23 +
+**K19** (cevap anahtarı korumasız, **F3 İŞ 0**) + **md.24** (`vocab` 10276 → 10281;
++5 satır önceki **hakemin** kendi commit'inden, hiçbir kart saymadı) + **md.25**
+(yedek-5 bir kez koşuldu, **artık yedek değil**; havuzda kullanılmayan yalnız 4
+fotoğraf kaldı: `11` `12` `30` `35`). Detay `GECE7/HAKEM-F2.md` 2. tur §11.
+
+<details><summary>eski borç sayımı (F0 sonrası, kayıt için)</summary>
+
 **Devreden borç: 18 madde** — F-İNDİR'in 9'u (`HAKEM-F-INDIR.md` sonu) +
 F0'ın 6'sı (`GECE7/F0.md` md.10-15) + F0 2. tur hakeminin 3'ü (`KOKEN_ALANLARI`
 38→37 kapısız düşüyor **K13** · `vocab_reference_check` satır sayacı **K12** ·
@@ -270,6 +348,8 @@ inen **5 dosyanın 3'ü hâlâ sessiz** (A0, DXF, düz `.svg` köken taşımıyo
 **§3.5'in "site son yeşil etiketten sevk edilir" kuralı KODDA YOK** —
 `.github/workflows/pages.yml:23` `branches: [main]` diyor, yani **main'e her
 push canlıya çıkıyor** ve şu an main **yedi kırmızıyla** yayında.
+
+</details>
 
 ## Notlar
 
