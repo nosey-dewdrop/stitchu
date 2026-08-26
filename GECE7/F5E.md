@@ -345,3 +345,415 @@ korunmuyor** · `pages.yml:23` `branches: [main]` = **main'e her push canlıya
 basılı (`attach` 3 giysi · `derive` · `extend` · `gather` · `overlay` 1'er).
 **F5'in kapanış eşiği K48'de ÜÇ ŞARTLI hale geldi.**
 *"F5'i bitirdim"* **denmiyor.** *"Sınırsız"* kelimesi **kullanılmıyor** (K45).
+
+---
+---
+
+# AJAN KARTI — F5-E (KÖPRÜ) · 1. TUR
+
+**Ağaç:** `main`. Faz öncesi etiket **`F5E-oncesi`**. Kod commit'i **`8425835`**.
+**Bu bir ALT-KARTTIR (§3.12). F5 BİTMEDİ.** *"Sınırsız"* kelimesi kullanılmadı (K45).
+
+## ⛔ EN ÖNEMLİ SATIR — KARTIN TEK ŞARTI TUTMADI, VE SEBEBİ BİR SAYI
+
+> **H5'in paydası BÜYÜMEDİ: 5 → 5 (n=5), 5 → 5 (n=10). KAZANIM YAZILMIYOR.**
+> Kart bunu **YOL (c)** diye adlandırdı ve **"BİR BAŞARISIZLIK DEĞİLDİR"** dedi;
+> şartı da yazdı: *"Gerekçeni **hangi kapı, kaç yargı, hangi sayı** diye yaz."*
+> **Aşağıda o üç sayı var, ve F5-D ajanının SAYMAKLA yetindiği liste artık ölçülü.**
+
+**Köprünün mekanizması ÇALIŞIYOR — ölçüldü, iddia değil.** `DraftedPattern.pieces`'a
+`op.split`'in doğurduğu cinsten **tek bir rol çifti** eklendiğinde `hedef_kosu`'nun
+H5 satırı **anında büyüdü: payda 5 → 10 (n=5) · 5 → 15 (n=10)**, `badPairs` **0**
+kaldı ve koşum **`CIRCIR SAĞLAM`** bastı. Yani engel bir ölçüm engeli değil.
+
+**Engel, o çiftin bedeli. TAM `ctest` KOŞULDU ve bedel şu:**
+
+```
+95% tests passed, 6 tests failed out of 126      ← TABAN (bu kartın kapanış koşumu)
+56% tests passed, 56 tests failed out of 126     ← PROB (tek bir parça çifti eklendi)
+Total Test time (real) = 730.18 sec              ← prob koşumu, GECE7/log/f5e.prob.ctest.txt
+```
+
+**ELLİ yeni kırmızı ad.** F5-D ajanı *"altı ad"* saymıştı (`validator` · `printpack` ·
+`cutplan` · `flat_expresses_spec_check` · `style_check` · `figure_check`); **doğrulandı
+ve YANLIŞ çıktı** — saydığı altının üçü zaten miras kırmızı, ve gerçek sayı **50**.
+Yeni yanan adlardan bazıları: `engine_check` · `golden_check` · `api_wire_check` ·
+`grade_check` · `locket_check` · `cuttable_output_check` · `sewable_census` ·
+`guide_check` · `recipe_dress_check` · `wasm_spec_honesty_check` · `compose_check` ·
+`preview_truth_check` · `indir_check` (tam liste: `GECE7/log/f5e.prob.ctest.txt`).
+
+**VE KIRMIZILAR AYNI CİNSTEN DEĞİL — ikinci bir prob turu onları AYIRDI.**
+Birinci prob parçayı kesim-çizgisi pasından SONRA ekliyordu; ikinci tur parçaya
+kendi kesim çizgisini ve bir rehber adımını VERDİ:
+
+| `engine_check` kuralı | prob tur 1 | **prob tur 2** | hüküm |
+|---|---|---|---|
+| `cutline` | **140400 ihlal** | **0** | ✅ **onarılabilir** — probun kusuruydu |
+| `guideCoverage` | 140400 ihlal | **140400** | onarılabilir sınıf (rehber metni) |
+| `waist` | 720 | **720** | onarılabilir sınıf |
+| `waistband` | 720 | **720** | onarılabilir sınıf |
+| **FAILED drafts** | **70200 / 70200** | **70200 / 70200** | — |
+
+🔴 **AMA BİRİ ONARILAMIYOR, VE ONU KAPININ KENDİSİ SÖYLÜYOR.**
+
+```
+golden_check FAIL: engine output differs from the REPO PIN
+  dump: 29016 lines   pin: 23406 lines            (+5610 satır)
+Two honest ways out, nothing else:
+  1. UNINTENDED change -> fix the engine until this test passes.
+  2. INTENDED behavior change -> DECLARED re-pin: run scripts/repin-golden.sh
+     with a declaration label, add the ledger entry (engine/GOLDEN-PIN.md),
+     and get Damla's approval BEFORE pinning.
+```
+
+Yol (1) **yok**: değişiklik bir hata değil, kasıtlı bir **EKLEME**. Yol (2) **ajanın
+yetkisi değil** — kapı Damla'nın onayını ŞART koşuyor ve §3.4 ajana Damla'ya soru
+sormayı YASAKLIYOR. Üstelik **RULES 4 bir kapı değil bir INVARIANT'tır:**
+*"golden diff stays byte-identical"*. **Prob GERİ ALINDI, `golden-reference.csv`'ye
+tek bayt yazılmadı** (→ `GECE7/DAMLA.md` md.14).
+
+🔴 **VE KARTIN GÖRMEDİĞİ İKİNCİ, DAHA DERİN DUVAR — ÖLÇÜLDÜ:**
+
+```
+web/js/engine.js:265   draft(spec, measurements)   -> draftJSON(spec, {bust,waist,hip,...})
+engine/src/seamplan.hpp:...  buildSeamPlan(const std::string& sizeLabel, ...)
+```
+
+**`DraftedPattern` SERBEST bir vücuttan çiziliyor; `SeamPlan` bir EU beden
+ETİKETİ istiyor ve etiketsiz kurulamıyor.** İkisi arasında **yayınlanmış bir harita
+YOK** — bu tam olarak K23'ün açık borcudur (`flatJSON`'un `bedenlendirme` bloğu
+bugün **`YAYIN BULUNAMADI`** basıyor). Yani 50 kırmızı bir şekilde kapansa bile
+`op.split`'in parçaları `DraftedPattern`'e **başka bir bedenin parçaları** olarak
+girerdi. **"En yakın beden" diye bir eşleme UYDURULMADI** (§3.10; repo bu kusuru
+daha önce *"üçüncü vücut kaynağı"* diye ölçmüştü) → `GECE7/DAMLA.md` md.15.
+
+**HÜKÜM: YOL (c). HAKEME GELİNDİ. K48 gereği bu BİRİNCİ turdur.**
+
+---
+
+## ⭐ İŞ 0 — **YAPILDI. borç 66 / K49 KAPANDI, VE HAKEMİN KENDİ MUTASYONUYLA.**
+
+`op_program_check` artık **OP8** kolunu taşıyor: her UYGULANMIŞ `op.rotate` adımının
+**plana yazdığı konturu** kapı kendi yürüyor, **alanı** ve **kama açısını** kendi
+hesaplıyor, ve `rotate_check`'in **R2/R3 kimliklerini ürün yolunda** kuruyor.
+Adımın ilan ettiği dört sayıya **bakmıyor** — onları da ölçümle karşılaştırıyor (R8).
+
+**Kontur, `planops.cpp`'den `%.17g` ile (round-trip) basılıyor.** Sebebi bir tercih
+değil bir ölçüm: 6 basamaklı baskının yuvarlama hatası, `rotate_check`'in kendi
+`EPS_ALAN` **1e-6 mm²**'sinin ÜSTÜNDE kalıyor ve bir baskı tercihini örtmek için
+epsilon gevşetmek §3.10/K29 ihlali olurdu. **Epsilonlar uydurulmadı:**
+`EPS_ALAN_R = 1e-6 mm²` ve `EPS_ACI_R = 1e-9°`, ikisi de `rotate_check.mjs`'in
+KENDİ sayıları, aynen alındı.
+
+**Temiz ağaçta ölçülen artıklar bir bant değil, SIFIR:**
+
+| transfer (6/6 ölçüldü) | ALAN artığı | AÇI artığı |
+|---|---|---|
+| `left/right_btorso#b` | **7.276e-12 mm²** | **0.000e+0 / 0.000e+0** |
+| `left/right_skirt_front#b` | **3.638e-12 mm²** | **1.243e-14°** |
+| `left/right_skirt_back#b` | **0.000e+0 mm²** | **0 / 7.105e-15°** |
+
+**KANIT ŞARTI YERİNE GETİRİLDİ — HM-J2 AYNEN TEKRARLANDI** (`GECE7/log/f5e.mutasyon.txt`):
+
+```
+HM-J2r  engine/src/dartrotate.cpp   theta * 0.90
+        YAYILIM: git numstat F5E-oncesi..HEAD  BOS -> bu kartta DOKUNULMAMIS dosya
+        ikili  ...f30f8caf...5158cf79 -> ...0018217e...b79eea97   (KIMILDADI)
+        kapi: op_program_check EXIT 1 (KIRMIZI)     ← hakemde EXIT 0 idi
+        geri alindi: ikili tabana dondu · kapi: EXIT 0 (YESIL)
+```
+
+Mutasyon altında yanan **19 `FAIL`**, kapının kendi cümlesiyle, ilk üçü:
+`OP8/R2 left_btorso#b: ALAN 17753.257178 → 17237.837979 mm², fark 515.419199 > 1e-6` ·
+`OP8/R3 left_btorso#b: AÇI 26.731427562° → 24.058284805°, fark 2.673142756° > 1e-9` ·
+`OP8/R8 left_btorso#b: kama_once_deg 24.058285° ilan edildi, konturdan 26.731427561510376° ölçüldü`.
+▸ `rotate_check`'e **DOKUNULMADI**, R0 çapraz-ölçüm kolu **sabite çevrilmedi** (K36).
+
+## ⭐ İŞ 2 — **YAPILDI. borç 68 KAPANDI: ÜÇ OPERATÖRÜN ÜÇÜ DE TARAYICIDAN ULAŞILABİLİR.**
+
+`opsJSONBinding` artık `opsJSON` yerine **`opsJSONAll`** çağırıyor — yani tarayıcı,
+`plan-ops` aracının ve `op_program_check`'in **zaten okuduğu** iki okumayı alıyor.
+**Sevk edilen wasm'dan ölçüldü** (`engine/dist/stitchu-engine.js`, koşuldu):
+
+| tarayıcıdaki okuma | uygulanan | reddedilen | **uygulanan operatörler** |
+|---|---|---|---|
+| `sevk_edilen` (`skimBodice=ON`) | 2 | 26 | `op.split` |
+| **`vucudu_izleyen`** (`skimBodice=OFF, maxDartDeg=0`) | **30** | **10** | **`op.split` · `op.suppress` · `op.rotate`** |
+
+**Önce: kullanıcı bir paneli böldürebiliyordu, pens AÇTIRAMIYOR ve DÖNDÜREMİYORDU.
+Şimdi üçü de ürün yüzeyinden ulaşılabilir.**
+▸ **GİZLİ KADRAN DEĞİL:** `create.js` her okumayı motorun **kendi `yuzey` cümlesiyle**
+başlıklıyor (`.dl-ops-surface`), yani hangi cevabın hangi giysiye ait olduğu
+**adıyla** yazılı. Cümle burada yeniden yazılmadı — ikinci bir sözcük ikinci bir
+gerçektir.
+▸ **`skimBodice` sevk edilen giyside KAPATILMADI**; sevk edilen okuma **hâlâ ÖNCE**
+geliyor ve **hâlâ sayısıyla REDDEDİYOR** (§0B).
+▸ **SEVK EDİLEN OKUMA DEĞİŞMEDİ** (RULES 4): `draftJSON` · `planJSON` · `flatJSON`
+el değmedi ve **`golden_check` Passed** (bayt aynı), **`engine_check` Passed**.
+▸ **SAYAÇ ARAYÜZE ÇIKMADI** (F3'ün kuralı).
+
+### ⭐ VE BU TURDA **borç 63 İLK KEZ ÖLÇÜLDÜ** (kart bunu şart koşmamıştı)
+
+`plan-ops EU38` (native, arm64) ile sevk edilen wasm'ın `opsJSON`'u **yan yana
+koşuldu ve alan alan karşılaştırıldı**:
+
+| | ölçüm |
+|---|---|
+| yapı | **AYNI** — aynı anahtarlar, aynı liste uzunlukları, aynı adım sayısı, aynı `uygulanan`/`reddedilen` |
+| sayısal alan | **1892**, bunların **1462'si FARKLI** |
+| **en büyük fark** | **7.100e-05** (`alan_once_mm2` **8604.483921** vs **8604.48385**) |
+| metin alan | 18 tanesi farklı, **yalnız içlerine gömülü o sayılar yüzünden** |
+
+🚨 **VE BUNUN BİR SONUCU VAR, YAZILIYOR:** en büyük sapma **7.1e-5**, yani
+`op_program_check`'in kendi `EPS_ALAN_R`'sinin (**1e-6 mm²**) **71 KATI**. Bugün
+tehlike YOK — OP8'in üç kolu da **tek bir yapının içinde** ölçüyor (aynı ikilinin
+önce/sonra konturu), wasm sayısını native sayısıyla kıyaslayan **hiçbir kol yok**.
+Ama **bir gün kıyaslayan bir kapı yazılırsa o kapı YANLIŞ olur**, ve artık bu bir
+tahmin değil bir sayı. **borç 63 KAPANMADI, ÖLÇÜLDÜ.**
+
+## ⭐ İŞ 3 — **YAPILDI. `?v` 136 → 137, VE `site-health` KOŞULDU.**
+
+`scripts/deploy.sh`'in **kendi bump satırı** kullanıldı (ikinci bir üreteç
+yazılmadı), **138 dosyada** tek değere çekildi:
+
+```
+bump ?v=136 -> ?v=137        · web/ tek deger: ?v=137
+node engine/tools/site-health.mjs
+checked: 127 pages, 2604 internal refs, 124 sitemap urls, 124 indexable pages
+OK  site-health: no dead links, sitemap matches the site, one version.
+```
+
+⚠ **`pages.yml:23` `branches: [main]` DURUYOR** — bu push canlıya çıkacak. Damgayı
+bumplamak bayat-JS riskini kapatır, **kapıyı kapatmaz** (→ `GECE7/DAMLA.md`).
+
+---
+
+## MUTASYON — `GECE7/log/f5e.mutasyon.txt` · **BEŞİ DE KIRMIZI, BEŞİ DE GERİ DÖNDÜ**
+
+`f5d.mutasyon.sh` kopyalandı; her turda ikili **silinip yeniden derleniyor** ve
+`shasum` ile kımıldadığı **kanıtlanıyor** (kımıldamazsa **"HUKUM YOK"**).
+**Dördü `numstat` BOŞ, yani bu kartın hiç açmadığı dosyalarda.**
+
+| # | dosya | `numstat` | mutasyon | kapı |
+|---|---|---|---|---|
+| **HM-J2r** | `src/dartrotate.cpp` | **BOŞ** | transfer açısı ×0.90 | `op_program_check` **EXIT 1 🔴** |
+| **MU1** | `src/dartsuppress.cpp` | **BOŞ** | shoelace kapanış terimini düşür | `op_program_check` **EXIT 1 🔴** |
+| **MU2** | `src/panelsplit.cpp` | **BOŞ** | kesiğin iki ucunu ayır | `op_program_check` **EXIT 1 🔴** |
+| **MU3** | `src/surfacepattern.cpp` | **BOŞ** | sütun profilini AYNALA (hakemin HM-1'i) | `split_check` **EXIT 1 🔴** |
+| **MP1** | `src/planops.cpp` | 32/0 | konturu adımla göndermeme | `op_program_check` **EXIT 1 🔴** |
+
+**MU1 bu kartın en öğretici turu:** motorun kendi shoelace'i bozulunca **kapının
+kendi yürüdüğü kontur DOĞRU kalıyor** ve OP8/R8 *"rapor geometriden bağımsız
+yazılıyor"* diye yanıyor. Bu, OP8'in bir **ikinci ölçüm** olduğunun kanıtıdır,
+adımın kendi beyanının tekrarı değil.
+
+---
+
+## KAPI — ÖNCE → SONRA, HER SAYIDA `n`
+
+**`ctest`in son satırı KOPYALANDI, ÖZETLENMEDİ** (temiz Release, `build` **tamamen
+silinip** `-DCMAKE_BUILD_TYPE=Release` ile sıfırdan derlendi, K32):
+
+```
+95% tests passed, 6 tests failed out of 126
+
+Total Test time (real) = 719.27 sec
+
+The following tests did not run:
+	111 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  9 - flat_pattern_agree_check (Failed)
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	 99 - contract_check (Failed)
+	105 - figure_check (Failed)
+```
+
+| kapı | ÖNCE (F5-D hakemi) | **SONRA (bu kart)** |
+|---|---|---|
+| `ctest` temiz Release | **6 failed / 126** · **741.71 s** | **6 failed / 126** · **719.27 s** (−22.44 s) |
+| `vocab_reference_check` | YESIL **10320** / taban 10438 | **YESIL 10322** / taban **10438** (taban kesilmedi) |
+| `indir_check` | EXIT 0 | **EXIT 0** · `KOKEN_ALANLARI` **38** |
+| `hedef_kosu` | EXIT 0 · CIRCIR SAĞLAM | **EXIT 0 · CIRCIR SAĞLAM** |
+| `pytest -q` | 33 passed | **33 passed** (0.67 s) |
+| `tek_nesne_check` | EXIT 0 | **EXIT 0** |
+| `rotate_check` | EXIT 0 | **EXIT 0** |
+| `suppress_check` | EXIT 0 | **EXIT 0** |
+| `split_check` | EXIT 0 | **EXIT 0** |
+| **`op_program_check`** | EXIT 0 · **8 kol** | **EXIT 0 · 9 kol (OP8 EKLENDİ)** |
+| `expressability_check` | EXIT 0 · 3/5 | **EXIT 0 · 3/5** · `TABAN_PAYDA` **el değmedi** |
+| `api_wire_check` · `bundle_fresh_check` · `preset_resolve_check` · `golden_check` · `engine_check` | Passed | **Passed** |
+| `site-health.mjs` | koşulmadı | **OK** · 127 sayfa · 2604 iç bağlantı · tek sürüm |
+| **`generated_ratchet_check`** | Passed | **Passed** — ⚠ **YEDİNCİ KIRMIZI DOĞDU VE KÖKTEN KAPANDI**, aşağıda |
+
+### 🔴 YEDİNCİ KIRMIZI DOĞDU — VE **KÖKTEN** KAPATILDI (YOL (b), kart md.3)
+
+Kapanış koşumunun **birincisinde** (`GECE7/log/f5e.ctest.kapanis.txt`) süit
+**`7 tests failed out of 126` · 736.16 s** bastı ve yedinci ad
+**`generated_ratchet_check`** idi — **54 `FAIL bytes` satırı**, hepsi
+`web/collections/*.html` · `web/styles/*.html` · `web/blog/*.html` ·
+`web/collection-60s70s.html` ailelerinden.
+
+**Kök sebep bu kartın İŞ 3'ü değil, `scripts/deploy.sh`'in KENDİSİYDİ.** K21
+cırcırı **57 üretilmiş yol** ilan ediyor; `?v` bump'ı onların **54'ünün** baytını
+oynatıyor, ve `deploy.sh` bump'tan sonra manifesti **hiç mühürlemiyordu**. Yani
+**reponun kendi sevk betiği, reponun kendi kapısından geçemiyordu** — ve bunu
+hiçbir kart bildirmemişti.
+
+**Kapatma, kapının KENDİ yazdığı yolla yapıldı ve gevşetme DEĞİLDİR:**
+`generated_ratchet_check.sh`'in başlığı şart koşuyor — *"a generated file may not
+change its bytes without its declared sha256 changing WITH IT, **in the same
+commit**, in a tracked file, under its own name … the point is not to make the
+change hard; it is to make it **VISIBLE and NAMED** in the diff."* Manifest
+`--accept` ile yeniden mühürlendi ve **sayfalarla AYNI commit'te** durdu
+(`be89dbb`, `54 insertions(+), 54 deletions(-)` — oynayan her yol diff'te **adıyla**).
+**Ve sınıf da kapatıldı:** `deploy.sh` artık bump'ın hemen ardından mührü kendisi
+yeniliyor, **sonra kapıyı tekrar koşturuyor** ve hâlâ kırmızıysa
+**"Do NOT accept it away; find it"** diye **exit 4** veriyor — yani bump'ın
+açıklamadığı bir hareket asla sessizce kabul edilemez.
+
+**İkinci kapanış koşumu (`GECE7/log/f5e.ctest.kapanis2.txt`) yukarıdaki bloktur:
+`6 tests failed out of 126`, altı ad TAM OLARAK miras altı, YEDİNCİ AD YOK.**
+
+## CIRCIR — F5'İN HANESİ: **H4 · H5 · H8**. Her sayıda `n`.
+
+| sayı | taban (F5-D) | **F5-E (ölçüldü)** | hüküm |
+|---|---|---|---|
+| H1 | 5/5 · 10/10 | **5/5 (n=5) · 10/10 (n=10)** | aynı |
+| H2 | %95.2 · %93 | **%95.2 (40/42, n=5) · %93 (66/71, n=10)** | aynı |
+| H3 | 2 · 2 | **2 (n=5) · 2 (n=10)** | aynı |
+| **H4** | **ÖLÇEMEDİM** | 🚨 **ÖLÇEMEDİM — ON BİRİNCİ FAZ** | **uydurulmadı** |
+| **H5** | **0 / 5** — payda **5** | 🚨 **0 / 5 — payda 5 → 5** (n=5) · **0/5 — payda 5 → 5** (n=10) | **KAZANIM YAZILMADI** |
+| **H8-sözlük** | 31 · 61 | **31 (26+5, n=5) · 61 (51+10, n=10)** | sözlük daraltılmadı |
+| **H8-ifade** | **3 / 5** | **3 / 5** (n=5) | **kötüleşmedi** |
+| H10 | %58.3 · %64.4 | **%58.3 (70/120) · %64.4 (154/239)** | aynı |
+| **H10a** | %17.5 · %29.7 | **%17.5 (21/120) · %29.7 (71/239)** | **yükseltilmedi** (K21) |
+| **H10b** | **%40.0 · %33.1** | **%40.0 (48/120) · %33.1 (79/239)** | **§0B tavanı KIMILDAMADI** |
+| H10e | 3 · 5 | **3 (n=5) · 5 (n=10)** | aynı |
+| H10x | %0.8 · %1.7 | **%0.8 (1/120) · %1.7 (4/239)** | aynı |
+| **H11** | 3.2 ms | **2.9 ms (n=5) · 2.1 ms (n=10)**, en kötü **35.2 ms** | **<10 sn tavanının çok altında** |
+
+▸ **H10a + H10b + H10x = H10 TUTUYOR:** 17.5 + 40.0 + 0.8 = **58.3** (n=5) ·
+29.7 + 33.1 + 1.7 = **64.5** ≈ **64.4** (yuvarlama, paylar 71+79+4 = 154/239 ✅).
+▸ **İki `n` TEK TABLODA HARMANLANMADI.**
+▸ **H11 KIMILDAMADI çünkü operatör programı hâlâ opt-in:** `hedef_kosu`
+`draftJSON` hattını ölçüyor, program ayrı bir binding'in arkasında. İŞ 2 ikinci
+okumayı ekledi ve o ikinci okumanın maliyeti **kullanıcı düğmeye basmadıkça
+ödenmiyor** — `op_program_check`'in kendi süresi bu kartta **12.68 s**.
+
+---
+
+## §5.5 DÖKÜM — SORULMADI AMA GÖRÜLDÜ / GÖRÜLEMEDİ
+
+**Kendi aleyhime:**
+1. 🚨 **KARTIN TEK ŞARTI TUTMADI.** H5 paydası **5 → 5**. Kazanım yazılmadı.
+2. 🚨 **H4 ON BİRİNCİ FAZDIR `ÖLÇEMEDİM`.** `op_program_check`'in `sebep` katmanı
+   (**OP6**) motorda duruyor ve zengin, ama `hedef_kosu` H4'ü **`draftJSON`
+   hattından** okuyor ve o hatta hâlâ sıfır `sebep` var. **Aynı köprü borcu.**
+3. **`op_program_check` hâlâ YALNIZ EU38** (borç 65) — sekiz bedenin **yedisi**
+   koşulmadı, OP8 dahil. Bu kartta genişletilmedi.
+4. **OP8, `sevk_edilen` okumasında HİÇBİR ŞEY ölçmüyor**, çünkü o yüzeyde
+   uygulanan `op.rotate` **yok** (koni). Altı ölçümün altısı `vucudu_izleyen`den.
+   Yani **sevk edilen giysinin transfer rijitliği bugün de kapısız** — kapı var,
+   ölçecek adım yok, ve bu bir **cümle değil bir sayı**: `sevk_edilen` uygulanan
+   rotate **0**.
+5. **Prob koşumunun `guideCoverage` 140400'ü ikinci turda DÜŞMEDİ** — parçaya bir
+   rehber cümlesi eklendiği hâlde. Kök sebep **ARANMADI** (prob geri alındı);
+   *"onarılabilir sınıf"* demek bir **hipotez**, **DOĞRULANMADI.**
+6. **`?v` 137 canlıya çıkacak ve gerçek tarayıcıda HİÇ TIKLANMADI.** İŞ 2'nin iki
+   yüzeyli paneli **ekranda görülmedi**; `create.js`'in yeni döngüsü yalnız
+   wasm çıktısının şekliyle (`okumalar[]`) doğrulandı. **DOĞRULANMADI.**
+7. **`.dl-ops-surface` bir CSS sınıfı ekledi** — `style_check` miras kırmızı
+   olduğu için bu satırın görsel etkisi **bir pine karşı ölçülmedi.**
+
+**Konu dışı ama önemli (ayrı kova):**
+8. **`vocab_reference_check` 10320 → 10322.** Taban 10438'in altında, `HUKUM: YESIL`,
+   ama sayı **düşmedi, yükseldi**. Sebebi bu kartın yazdığı yorum satırları
+   (`garment` ekseninin adı 1186 → 1163 DÜŞTÜ, başka eksenler yükseldi).
+   Cırcır ihlali değil (kapı yalnız tabanı aşmaya bakar) ama **yön yanlış**.
+9. **Borç 69 (`grep -c add_test(NAME` 128 vs `ctest` 127) bu turda da duruyor** ve
+   **aranmadı.**
+10. **`op_fixture` hâlâ süitin en pahalı kalemi** ve kalıcı fikstür (borç 58)
+    bu kartta **hiç yeniden üretilmedi** — OP8'in koştuğu `plan-ops` fikstür
+    okumuyor (doğrudan ikiliyi çağırıyor), o yüzden bayat-fikstür tuzağına
+    düşülmedi; ama fikstürün kendisi **denetlenmedi**.
+11. **Holdout HARCANMADI:** `11` `12` `30` `35` **dördü de** el değmemiş.
+12. **`patterns_real/` takipsiz kalemleri takipsiz kaldı**, `git add` görmedi.
+13. 🚨 **`deploy.sh` YEDİNCİ BİR KIRMIZI ÜRETİYORDU VE KİMSE BİLDİRMEMİŞTİ.** Bu
+    kartta bulundu çünkü İŞ 3 onu tetikledi; **F5-D'de `?v` bumplansaydı O TUR
+    kırmızı kapanırdı.** Kapatıldı, ama şunu da söylemek gerek: bu kapı
+    **hiçbir mutasyonla korunmuyor** — `deploy.sh`'in yeni reseal bloğu bu
+    kartın mutasyon matrisinde **YOK**, çünkü `deploy.sh` `ctest`e bağlı değil
+    ve koşturmak **canlıya deploy etmek** demek. **DOĞRULANMADI.**
+14. **`--accept` bir GÜVEN adımıdır ve öyle işaretleniyor:** 54 yolun 54'ünün
+    baytının **yalnız `?v=136` → `?v=137` yüzünden** oynadığı **tek tek
+    DOĞRULANMADI**; dayanak, aynı bump'ın `site-health` tarafından tek-sürüm
+    olarak doğrulanması ve `git diff`in 54 satırı adıyla göstermesidir.
+15. **rabadon borç 61 SEKİZİNCİ/DOKUZUNCU oturuma girdi:** `ctest-tail-hides-verdict`
+    bu turda **üç kez** yanlış ateşledi (biri `deploy.sh`'in kendi `?v` bump
+    satırını, biri geri alınmış bir prob koşumunun bayat kırmızısını, biri bir
+    ilerleme bakışını) ve **üçü de `rabadon wrong` ile kaydedildi**.
+    `guard.json`'a **DOKUNULMADI**. ⚠ **Ayrıca DÖRDÜNCÜ bir kez**, altı miras
+    kırmızının durduğu **doğru** kapanış koşumunda ateşledi — kural "kırmızı var"
+    diyor, "yedincisi var mı" diye soramıyor; borç 61'in asıl şekli budur.
+
+## BORÇ — bu turun defteri
+
+**KAPANDI:** **66** (K49 — `op_program_check` artık `op.rotate`'in geometrisini
+denetliyor, HM-J2r kırmızı yanıyor) · **68** (üç operatörün üçü de tarayıcıdan
+ulaşılabilir).
+**ÖLÇÜLDÜ AMA KAPANMADI:** **63** (wasm↔native `opsJSON`: yapı AYNI, 1892
+sayısal alanın 1462'si farklı, en büyük fark **7.100e-05**).
+**AÇILDI:** **71** — 🚨 `scripts/deploy.sh`'in `?v` bump'ı K21 cırcırının 57
+yolunun **54'ünü** oynatıyordu ve mührü **hiç yenilemiyordu**; bu turda kapatıldı
+ama **yeni reseal bloğu hiçbir mutasyonla korunmuyor** (`deploy.sh` `ctest`e
+bağlı değil).
+**AÇIK VE DEVREDİYOR:** 39 · 40 · 41 · 42 · 44→54 · 46 · **51** (H5 paydası —
+**bu kartın tutmayan şartı, YOL (c) ile hakemde**) · 52 · 55 · 57 · 58 · 60 ·
+61 · **62** (ürün yolu iki nesne — **hakemde**) · 63 · 64 · 65 · 67 · 69 · 70.
+
+**Hâlâ açık ve silinemez:** gerçek tarayıcıda **hiç tıklanmadı** (on birinci faz,
+**DOĞRULANMADI**) · miras 6 kırmızının **4'ünün** kök sebebi aranmadı ·
+`download.js`'teki `kokenKaydi = null` arka kapısı · **H4/H6/H9 ÖLÇEMEDİM** ·
+H5 **tek çiftten** okunuyor · `vocab_reference_check` bir **referans sayacı** ·
+**K17** · `conftest.py` **hiçbir mutasyonla korunmuyor** · `pages.yml:23`
+`branches: [main]` = **her push canlıya çıkıyor** (damga bumplandı, **kapı
+kapanmadı**) · `patterns_real/` **PUBLIC** · holdout **4 fotoğraf, HARCANMADI**.
+
+**Değişmezlere uyum:** `flat_pattern_agree_check` **el değmedi** (K23) ·
+`contract/hedef-kosu-taban.json` **tek bayt değişmedi** · `labels-hakem.json` ·
+`flat_expresses_spec_check` · `vocab_reference_check.sh` + tabanı ·
+`hedef_kosu.mjs` **eşikleri ve tanımları** · `KOSU-v7.md` — **hiçbirine bir bayt
+yazılmadı.** `splitPanel()`'e kesir, `suppressPanel()`'e açı **eklenmedi**.
+`rotate_check`'in R0'ı, `split_check`'in SP9/SP10/SP11'i **sökülmedi**.
+*"Prenses dikişi"* **hiçbir yüzeyde geçmiyor** (K42).
+
+---
+
+## SAPMA SORUSU — CEVAP ÖLÇÜLDÜ
+
+> *"Bir yabancı fotoğraf yükleyip kalıp + flat indirebiliyor muyum, ve **inen nesne
+> motordaki operatörlerden gerçekten etkileniyor mu**?"*
+
+**KALIP + FLAT: EVET.** `hedef_kosu` **EXIT 0**, H1 **5/5 (n=5) · 10/10 (n=10)** —
+on fotoğrafın onu da kalıp ve flat üretti, medyan **2.9 ms**.
+
+**İNEN NESNE OPERATÖRDEN ETKİLENİYOR MU: HAYIR, VE BU SEFER SAYISIYLA.**
+- İnen **flat**ın geldiği `SeamPlan`, operatör programının **KOPYASI** üstünde
+  koşuyor (`planops.cpp` `readingJSON(… SeamPlan plan)` — değer geçişi). Program
+  bittiğinde `flatJSON`'un kurduğu plan **el değmemiştir**: `golden_check` **Passed**,
+  `engine_check` **Passed**, `dugum` **`0c1d52866882ce53`** beş mutasyonun beşinde de
+  **kımıldamadı**. **Bu bir kusur değil, RULES 4'ün kendisi** (opt-in, default OFF).
+- İnen **kalıbı** (`draftJSON` → `DraftedPattern`) operatörlere bağlamak
+  **DENENDİ ve ÖLÇÜLDÜ**: bedeli **50 yeni kırmızı ad**, `engine_check`'te
+  **70200/70200 düşen çizim**, ve `golden_check`'te **+5610 satır** — sonuncusu
+  **Damla'nın onayı olmadan kapatılamaz** (kapının kendi cümlesi).
+- **H5'in paydası bu yüzden 5'te kaldı**, ve bölünen kenarın iki tarafı inen
+  kalıbın `draftJSON`'unda **hâlâ bir dikiş çifti olarak görünmüyor**.
+
+**"Köprüyü hazırladık" DENMİYOR.** Kurulmadı. Kurulamamasının gerekçesi bir dosya
+yolu (`GECE7/log/f5e.prob.ctest.txt`), iki kapı çıkışı (`56 failed out of 126` ·
+`dump 29016 / pin 23406`), HM-J2r'nin kırmızısı ve **H5'in önce/sonra paydası
+(5 → 5)**'tir.
