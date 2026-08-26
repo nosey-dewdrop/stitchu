@@ -433,3 +433,34 @@ kaldı** · `patterns_real/` **PUBLIC** (K10, Damla kararı) · borç md.30 · m
 ---
 
 **`F5D-yesil` atıldı ve pushlandı. Sıradaki kart `GECE7/F5E.md` — KÖPRÜ.**
+
+---
+
+## 12. DOĞRULAMA KOŞUSU — HAKEMİN KENDİ COMMIT'İNDEN SONRA
+
+Hakem `expressability_check.mjs`'e künye yazdı (`b282349`, K50) — bir **kapı
+dosyasıdır**, o yüzden **TAM `ctest` İKİNCİ KEZ** koşturuldu (log:
+`GECE7/log/f5d.hakem.ctest.dogrulama.txt`):
+
+```
+95% tests passed, 6 tests failed out of 126
+
+Total Test time (real) = 729.34 sec
+
+The following tests did not run:
+	111 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  9 - flat_pattern_agree_check (Failed)
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	 99 - contract_check (Failed)
+	105 - figure_check (Failed)
+```
+
+**İKİ TAM KOŞU, İKİ KEZ AYNI ALTI AD, YEDİNCİ KIRMIZI YOK.** Süre **741.71 s**
+ve **729.34 s** (aynı gürültü bandı). `vocab_reference_check` hakemin **kendi
+commit'inin** üstünde de **`HUKUM: YESIL` 10320** (K12'nin tuzağı: kapı
+**commit'ten** okur). **Hakemin künye düzeltmesi yedinci kırmızı doğurmadı ve
+H8-ifade'yi kımıldatmadı (3/5 → 3/5).**
