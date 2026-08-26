@@ -866,6 +866,39 @@ tek dize) ve md.31 (`GarmentSurf` kopyalanıyor, **DOĞRULANMADI**) açık.
 
 ---
 
+## ⚠ K17 UYARISI UYGULANDI — DOSYA EKLENDİ, TAM `ctest` **BİR KEZ DAHA** KOŞTU
+
+Kart uyarıyordu: *"Takipli yeni bir `.json` bu kapıyı kırmızı yakabilir — dosya
+eklediysen TAM `ctest`i tekrar koştur."* Bu kart takipli **yedi** yeni dosya
+ekledi (`.hpp`/`.cpp`/`.mjs`/`.sh`/`.md`/`.txt`, **`.json` YOK**) ve kart ile
+loglar commit'lendikten **sonra** süit üçüncü kez koştu:
+
+```
+95% tests passed, 6 tests failed out of 125
+
+Total Test time (real) = 698.97 sec
+
+The following tests did not run:
+	110 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  9 - flat_pattern_agree_check (Failed)
+	 19 - flat_artifact_census (Failed)
+	 20 - style_check (Failed)
+	 27 - sizechart_source_check (Failed)
+	 98 - contract_check (Failed)
+	104 - figure_check (Failed)
+```
+
+**Aynı altı ad, yedinci yok, 698.97 s.** ⚠ Ve K12 üstüne bir ölçüm: ham `ctest`
+logları kapalı enum adları içeriyor (`yoke` · `cupSeam`, ikisi de tabanda) ama
+`vocab_reference_check` **YESIL** kaldı — kapının SCOPE'u `GECE7/log/`'u
+kapsamıyor. **Log kırpılmadı, sansürlenmedi; ham hâliyle duruyor.**
+
+---
+
 **Kanıt dosyaları:** `GECE7/log/f5c.mutasyon.txt` (10 mutasyon, betiği
 `f5c.mutasyon.sh`) · `GECE7/log/f5c.ctest.acilis.txt` (9 kırmızılı ilk tur) ·
-`GECE7/log/f5c.ctest.kapanis.txt` (kapanış turu, 6 kırmızı / 125, 701.10 s).
+`GECE7/log/f5c.ctest.kapanis.txt` (kapanış turu, 6 kırmızı / 125, 701.10 s) ·
+`GECE7/log/f5c.ctest.kapanis2.txt` (dosya eklendikten sonraki teyit turu,
+6 kırmızı / 125, 698.97 s).
