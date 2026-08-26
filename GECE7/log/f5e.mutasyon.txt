@@ -1,0 +1,61 @@
+=== F5-E MUTASYONLARI — 2026-08-26 22:33 ===
+    ikili sutunu = shasum ilk-8'lerin BIRLESIMI: seam-plan|rotate-op|suppress-op|split-op|plan-ops
+    temiz agac: ikili fc7baddff30f8cafc819d0008be42d635158cf79 · dugum 0c1d52866882ce53
+    temiz agac kapilari: op_program_check EXIT 0 (YESIL) · split_check EXIT 0 (YESIL)
+
+--- IS 0 (BORC 66 / K49): HAKEMIN HM-J2'SI AYNEN TEKRARLANIYOR ---
+HM-J2r engine/src/dartrotate.cpp — TRANSFER ACISI x0.90
+    Hakemin olcumu: rotate_check EXIT 1 (ALAN 32473.1791 -> 36134.0402 mm²,
+    fark 3660.861111584; ACI 55.173533 -> 49.656180 derece) ama
+    op_program_check EXIT 0 — urun yolundaki bir transfer 3660 mm² kumas
+    uretti ve urun kapisinin sekiz kolunun sekizi de gecti.
+    F5-E SARTI: ayni mutasyon simdi op_program_check'i KIRMIZI yakmali (OP8).
+        YAYILIM: git numstat F5E-oncesi..HEAD -- engine/src/dartrotate.cpp  BOS -> bu kartta DOKUNULMAMIS dosya
+  HM-J2r  ikili[seam-plan|rotate-op|suppress-op|split-op|plan-ops] fc7baddff30f8cafc819d0008be42d635158cf79 -> fc7baddf0018217ec819d0008be42d63b79eea97
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili fc7baddff30f8cafc819d0008be42d635158cf79 (taban fc7baddff30f8cafc819d0008be42d635158cf79) · kapi: EXIT 0 (YESIL)
+
+--- YAYILIM (borc 47): UC AYRI, GERCEKTEN DOKUNULMAMIS DOSYA ---
+    Her turun basinda git numstat basiliyor; BOS satir = dokunulmadi.
+
+MU1 engine/src/dartsuppress.cpp — SHOELACE'IN KAPANIS TERIMINI DUSUR
+    contourAreaMM2 son kenari (n-1 -> 0) saymaz. Adimin ILAN ETTIGI alan
+    yanlis olur; kapinin KENDI yurudugu kontur dogru kalir.
+    OP8/R8 (beyan == olcum) YANMALI — bu tam olarak 'rapor geometriden
+    bagimsiz yaziliyor' sinifidir.
+        YAYILIM: git numstat F5E-oncesi..HEAD -- engine/src/dartsuppress.cpp  BOS -> bu kartta DOKUNULMAMIS dosya
+  MU1  ikili[seam-plan|rotate-op|suppress-op|split-op|plan-ops] fc7baddff30f8cafc819d0008be42d635158cf79 -> fc7baddfc4980ec1596d06600241044a7e5132a6
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili fc7baddff30f8cafc819d0008be42d635158cf79 (taban fc7baddff30f8cafc819d0008be42d635158cf79) · kapi: EXIT 0 (YESIL)
+
+MU2 engine/src/panelsplit.cpp — KESIGIN IKI UCUNU AYIR
+    B parcasi bir kose ILERIDEN baslar: iki kapanis segmenti artik AYNI
+    iki koordinati birlestirmiyor. op_program_check'in OP3 kolu YANMALI.
+        YAYILIM: git numstat F5E-oncesi..HEAD -- engine/src/panelsplit.cpp  BOS -> bu kartta DOKUNULMAMIS dosya
+  MU2  ikili[seam-plan|rotate-op|suppress-op|split-op|plan-ops] fc7baddff30f8cafc819d0008be42d635158cf79 -> fc7baddff30f8cafc819d00073887c499cb36415
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili fc7baddff30f8cafc819d0008be42d635158cf79 (taban fc7baddff30f8cafc819d0008be42d635158cf79) · kapi: EXIT 0 (YESIL)
+
+MU3 engine/src/surfacepattern.cpp — SUTUN PROFILINI AYNALA (hakemin HM-1'i)
+    Profilin COKLUGU, TOPLAMI ve IPTALI degismez; yalniz SIRASI degisir.
+    split_check'in SP9 kolu YANMALI (borc 56 / K43 gercekten kapali mi).
+        YAYILIM: git numstat F5E-oncesi..HEAD -- engine/src/surfacepattern.cpp  BOS -> bu kartta DOKUNULMAMIS dosya
+  MU3  ikili[seam-plan|rotate-op|suppress-op|split-op|plan-ops] fc7baddff30f8cafc819d0008be42d635158cf79 -> fab15efa22c92b1ef69379d0e09d2afecbfe16f2
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili fc7baddff30f8cafc819d0008be42d635158cf79 (taban fc7baddff30f8cafc819d0008be42d635158cf79) · kapi: EXIT 0 (YESIL)
+
+--- BU KARTIN KENDI YAZDIGI DOSYA ---
+MP1 engine/src/planops.cpp — KONTURU ADIMLA BIRLIKTE GONDERME
+    Adim UYGULANDI der, dort sayisini basar, ama plana yazdigi konturu
+    TASIMAZ: kapi yeniden olcemez. OP8 YANMALI (kanitsiz bir beyan).
+        YAYILIM: git numstat 32	0	engine/src/planops.cpp  -> bu kartta YAZILAN dosya
+  MP1  ikili[seam-plan|rotate-op|suppress-op|split-op|plan-ops] fc7baddff30f8cafc819d0008be42d635158cf79 -> fc7baddff30f8cafc819d0008be42d63c544f3c5
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili fc7baddff30f8cafc819d0008be42d635158cf79 (taban fc7baddff30f8cafc819d0008be42d635158cf79) · kapi: EXIT 0 (YESIL)
+
+=== BITTI — 2026-08-26 22:37 ===

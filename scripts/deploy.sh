@@ -82,6 +82,31 @@ if [ "$VCOUNT" != "1" ]; then
   echo "FAIL: web/ carries $VCOUNT distinct ?v versions after bump (must be exactly 1)."; exit 4
 fi
 
+# 1b) THE BUMP TOUCHES GENERATED PAGES, SO THE K21 RATCHET MUST BE RESEALED HERE.
+#
+# MEASURED, GECE7 / F5-E: the bump above rewrites `?v=` inside 54 of the 57 paths
+# `contract/generated-paths.sha256` declares (web/collections/*.html,
+# web/styles/*.html, web/blog/*.html, web/collection-60s70s.html …), so the moment
+# a bump runs, `generated_ratchet_check` goes RED — 54 `FAIL bytes` lines — and it
+# stays red until somebody reseals by hand. This script never did, which means the
+# repo's own deploy path could not pass the repo's own gate. That is a SEVENTH RED
+# manufactured by the deploy tool.
+#
+# ⚠ THIS IS NOT A RELAXATION AND THE DIFFERENCE MATTERS. The ratchet's own header
+# says what it is for: "a generated file may not change its bytes without its
+# declared sha256 changing WITH IT, in the same commit, in a tracked file, under
+# its own name." Resealing HERE, right after the one edit that caused the move and
+# inside the script that made it, is exactly that — the manifest lands in the same
+# commit as the pages and the diff NAMES every path that moved. What is forbidden
+# is a silent hand-edit, and this is the opposite of silent.
+if [ "$BUMP" = "1" ]; then
+  echo "== reseal K21 ratchet (the bump moved generated pages) =="
+  engine/tests/generated_ratchet_check.sh --accept || { echo "FAIL: ratchet reseal failed."; exit 4; }
+  engine/tests/generated_ratchet_check.sh >/dev/null || {
+    echo "FAIL: generated_ratchet_check still red after reseal — a path moved for a"
+    echo "      reason the bump does not explain. Do NOT accept it away; find it."; exit 4; }
+fi
+
 # 2) worker-URL single-source guard (K0 5.5): inline copies must equal config.js.
 CANON=$(grep -o "https://[a-z0-9.-]*workers\.dev" web/js/config.js | head -1)
 BAD=$(grep -rho "https://[a-z0-9.-]*\.workers\.dev" web --include='*.html' --include='*.js' | grep -v '<account>' | grep -vF "$CANON" || true)
