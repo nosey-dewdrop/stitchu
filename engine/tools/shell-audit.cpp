@@ -75,11 +75,22 @@ int main(int argc, char** argv) {
         const SeamPlan plan = buildSeamPlan(size);
         const GarmentSurf& s = plan.pattern.surf;
 
+        // ⚠ THE RING NAMES ARE NOT SPELLED IN THIS FILE, AND THAT IS A RULE
+        // RATHER THAN A STYLE (K12). `vocab_reference_check` counts every LINE
+        // that spells a closed enum's value — including comment lines — and the
+        // vocabulary is only ever allowed to shrink (BREADTH -> DEPTH). The
+        // first draft of this file wrote the lowest ring's name as a literal and
+        // took that counter 103 -> 104, i.e. the gate went red on a string in a
+        // ternary. The names have exactly one authority, GarmentSurf::ringNames(),
+        // which is the same reason shellprojection.cpp reads them off the ring
+        // instead of restating them.
         const bool hasHem = s.hemScale > 0.0 && s.hemH > 0.0;
+        const std::string hipName = GarmentSurf::ringNames()[4];
+        const std::string shoulderName = GarmentSurf::ringNames()[1];
         double hipH = 0.0, shoulderH = 0.0;
         for (const GarmentSurf::Ring& r : s.rings) {
-            if (r.name == GarmentSurf::ringNames()[4]) hipH = r.h;
-            if (r.name == GarmentSurf::ringNames()[1]) shoulderH = r.h;
+            if (r.name == hipName) hipH = r.h;
+            if (r.name == shoulderName) shoulderH = r.h;
         }
         const double hemZ = hasHem ? s.hemH : hipH;
 
@@ -87,6 +98,10 @@ int main(int argc, char** argv) {
         std::printf("  \"beden\": \"%s\",\n", size.c_str());
         std::printf("  \"dugum\": \"%s\",\n", plan.nodeId().c_str());
         std::printf("  \"halka_ornek\": %d,\n", kRingSamples);
+        // The hem is not one of the five body rings — it is where the SHELL
+        // stops. Being outside the closed ring list it is the ONE level name
+        // written in this file, exactly as shellprojection.cpp writes it.
+        const std::string kHemRing = "hem";
         std::printf("  \"hem_var\": %s,\n", hasHem ? "true" : "false");
         std::printf("  \"hem_z_mm\": %s,\n", num(hemZ).c_str());
         std::printf("  \"omuz_z_mm\": %s,\n", num(shoulderH).c_str());
@@ -99,7 +114,7 @@ int main(int argc, char** argv) {
         struct Lvl { std::string name; double h; };
         std::vector<Lvl> lv;
         for (const GarmentSurf::Ring& r : s.rings) lv.push_back({r.name, r.h});
-        lv.push_back({hasHem ? "hem" : "hip", hemZ});
+        lv.push_back({hasHem ? kHemRing : hipName, hemZ});
         for (std::size_t k = 0; k < lv.size(); ++k) {
             std::printf("    {\"ad\": \"%s\", \"h_mm\": %s, \"nokta\": [", lv[k].name.c_str(),
                         num(lv[k].h).c_str());
