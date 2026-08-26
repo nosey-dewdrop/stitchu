@@ -497,6 +497,31 @@ std::string dxfRecipeJSON(std::string recipeText, val bodyObj, val paramsObj) {
     }
 }
 
+// DXF-AAMA/ASTM export at the SPEC boundary — the create.html shopper's path.
+// dxfRecipeJSON only serves the recipe DSL (studio.html); the photo->pattern
+// flow never has a recipe text, so before this binding existed a shopper could
+// SEE a pattern and take nothing home. Same production path as draftJSON — the
+// SAME GarmentDrafter::draft for this spec + body — then the SAME
+// dxf::exportPattern the native dxf-export tool uses, so what downloads is the
+// motor's mm geometry, not a redraw. Returns {"dxf": "<escaped R12 text>"} or
+// {"error": ...} on an honest refusal (bad enum, unusable body, validator
+// block) — never a silent default, never a validator-blocked "industry" file.
+std::string dxfSpecJSON(val specObj, val bodyObj) {
+    const auto errJSON = [](const std::string& msg) {
+        return std::string(R"({"error":")") + escape(msg) + R"(","dxf":null})";
+    };
+    try {
+        const GarmentSpec spec = buildSpec(specObj);
+        const BodyMeasurementsSnapshot m = bodyFrom(bodyObj);
+        const DraftedPattern drafted = GarmentDrafter::draft(spec, m);
+        const auto issues = PatternValidator::issues(spec, m, drafted);
+        if (!issues.empty()) return errJSON(issues.front().description());
+        return std::string(R"({"dxf":")") + escape(dxf::exportPattern(drafted)) + "\"}";
+    } catch (const std::exception& e) {
+        return errJSON(e.what());
+    }
+}
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
@@ -504,4 +529,5 @@ EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("gradeJSON", &gradeJSON);
     emscripten::function("draftRecipeJSON", &draftRecipeJSON);
     emscripten::function("dxfRecipeJSON", &dxfRecipeJSON);
+    emscripten::function("dxfSpecJSON", &dxfSpecJSON);
 }

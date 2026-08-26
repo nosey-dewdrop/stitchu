@@ -9,6 +9,8 @@ cevap gelince şef **yalnız o kalemi** yeniden koşturur.
 | 2 | Hedef koşusu bugün **n=5** koşuyor; §3.6 on fotoğraf istiyor. 10'a çıkarmak yeni VLM çağrısı = para. Fixture yenilensin mi, ne zaman? | **n=5 ile taban basıldı**, her sayının yanına `n` yazıldı. Genişletme F2'nin kartına bırakıldı, maliyetiyle. |
 | 3 | H2'nin "doğru cevabı" **insan etiketi değil** — `labels.json` gözle Fable tarafından konuldu (§1F). %92.2 model↔model uyuşması demek. 19 fotoğrafı sen mi etiketleyeceksin? | Sayı **"geçici"** damgasıyla basıldı ve karta uyarı olarak yazıldı. Cırcır yine de bu tabandan çalışıyor. |
 | 4 | `figure_check` tek stilde kırmızı: `dress_bandeau_circle`, "figure-bands mandal.taban_v3'te pin yok". Pin konsun mu, yoksa stil düşsün mü? | **Dokunulmadı.** Halka 0 saf temizlik; kapı gevşetmek faz ajanının yetkisi bile değil (§3.8 md.4). |
+| 5 | **H10a/H10b ayrıştırması F-İNDİR'de YAPILMADI.** Ayrıştırmak `hedef_kosu.mjs`'in H10 tanımını değiştirmek demek (hangi alan "fotoğrafta görünmesi imkânsız", hangisi "görünüyor ama alınamadı" — 24 alanlık bir hüküm tablosu). Kapı tanımını değiştirmek faz ajanının yetkisi değil (§3.8 md.4). | **H10 ayrışmamış olarak, %58.3 · n=5 basıldı.** Tablo hakemin ya da F2'nin işi; F2 zaten fotoğraf havuzunu ve etiketleri devralıyor. |
+| 6 | `web/collections/pdf/` altındaki **48 yayınlanmış PDF bayatladı**: `pdf-core.js` kesim listesini artık satır kaydırıyor (uzun bir kesim talimatı sayfanın sağından taşıyordu, 26 Ağu kapak render'ında görüldü), yayınlanmış dosyalar hâlâ eski hâli taşıyor. Yeniden üretilsinler mi? | **Üretilmedi.** 48 ikili dosya + koleksiyon HTML'i tek faz push'una girmez ve site içeriği sevkiyata bağlı (§3.5: site son yeşil etiketten sevk edilir). Kalem hakeme bırakıldı. |
 
 ---
 
@@ -25,3 +27,18 @@ cevap gelince şef **yalnız o kalemi** yeniden koşturur.
 - **`Logs/` 4.0 GB → 593 MB, `design_patterns/` 787 → 490 MB, boş disk 145 → 149 GB.**
   Silinen hiçbir şey git'te değildi ama hepsi makine çıktısıydı; `Arşiv.zip`'in
   73 PNG'sinin diskteki kopyalarla **CRC'si birebir aynıydı** (73/73 doğrulandı).
+
+### F-İNDİR'in eklediği bilgi (26 Ağu)
+
+- **Kullanıcı artık eve dosya götürüyor.** 26 Ağu sabahı `create.js`'te
+  `download`/`dxf` geçen satır sayısı **0**'dı: fotoğraf yükleyen biri kalıbı
+  ekranda görüp elinde hiçbir şey olmadan çıkıyordu. Sonuç ekranında artık
+  **PDF (A4) · SVG · DXF** var, artı matbaa için **A0**.
+- **Motorda yeni bir kapı açıldı:** `dxfSpecJSON`. Öncesinde DXF yalnız
+  `studio.html`'in tarif diline bağlıydı; fotoğraf yolunda tarif metni hiç
+  yok, yani o buton teknik olarak **kurulamıyordu**. Bu bir eksik buton değil,
+  eksik bir motor kapısıydı.
+- **Yayınlanmış PDF'lerde gerçek bir kusur görüldü ve düzeltildi:** biye
+  şeridinin kesim talimatı (`1177 x 25 mm ON THE BIAS...`) sayfanın sağ
+  kenarından taşıyordu, yani diken kişinin ihtiyacı olan sayı sayfa dışına
+  basılıyordu. PDF'te metin kutusu yoktur; yazıcı kaydırmazsa kimse kaydırmaz.

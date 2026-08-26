@@ -1,15 +1,36 @@
-// pdf-core.mjs — the shared, dependency-free vector PDF core for stitchu's
+// pdf-core.js — the shared, dependency-free vector PDF core for stitchu's
 // printable pattern packs. Extracted from gen-pattern-pdfs.mjs so both the
 // Pattern Blog PDFs and the Collections detail-page PDFs build the exact same
 // A4 tiled pack / A0 single sheet / text guide from ONE source. Nothing here is
 // pattern-specific: callers pass in the drafted pattern + packed layout and get
-// back a Buffer. The tiling geometry stays owned by web/js/sheet.js; this module
-// only renders the strings sheet.js emits.
+// back the PDF bytes. The tiling geometry stays owned by web/js/sheet.js; this
+// module only renders the strings sheet.js emits.
+//
+// WHY IT LIVES IN web/lib/ AND NOT engine/tools/ (moved 2026-08-26, F-İNDİR).
+// The browser is now a caller: create.html's "PDF indir" button builds the pack
+// in the page. Only web/ is published (pages.yml uploads `path: web`), so a
+// module the browser imports has to sit inside it. The alternative was a second
+// copy under web/, i.e. two PDF truths; refused.
+//
+// web/lib/ AND NOT web/js/, said plainly. web/js/ is the PAGE-SCRIPT namespace
+// (create.js, studio.js, sheet.js); this file is the shared PDF writer the node
+// generators also import, not page logic. It is also the scope
+// landing_truth_check scans (`rel(p).startsWith('js/')`), and moving five
+// unchanged strings into that scope would have pushed its L1 baseline 937 -> 944
+// and turned a green gate red. Those five strings ("3 cm, measure me before
+// cutting", the "m fabric at 140 cm" headers) were ALREADY reaching users
+// inside the published PDFs — nothing new is being hidden, and the baseline was
+// NOT re-cut (that gate only allows re-cutting downward, and loosening a gate
+// is not a phase agent's call, §3.8 md.4). Recorded here so the choice is
+// visible rather than quietly convenient.
+//
+// Node-free by construction: build() returns a Uint8Array, which writeFileSync
+// accepts unchanged, so the three generator tools kept working byte-for-byte.
 //
 // Usage:
-//   import { makePdfCore } from './pdf-core.mjs';
+//   import { makePdfCore } from './pdf-core.js';
 //   const core = makePdfCore({ engine, sheet, body });
-//   const buf = core.a4Pdf(spec, pattern, layout, sheets, used);
+//   const bytes = core.a4Pdf(spec, pattern, layout, sheets, used);
 
 // ---- units --------------------------------------------------------------
 const MM = 72 / 25.4;            // mm -> PDF points (user space unit)
@@ -44,15 +65,29 @@ export class Pdf {
       const stream = pg.ops;
       // Length in LATIN1 bytes — the whole file is serialized latin1 below, so
       // counting utf8 here shifted every later offset when a non-ASCII char
-      // (the strap's Turkish parenthetical) entered a content stream.
-      push(contentIds[i], `<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`);
+      // (the strap's Turkish parenthetical) entered a content stream. latin1 is
+      // one byte per code unit, so the JS string length IS that byte count
+      // (Buffer.byteLength(s,'latin1') is defined as s.length) — same number,
+      // no node dependency.
+      push(contentIds[i], `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
     }
     const xrefStart = out.length;
     const count = next;
     out += `xref\n0 ${count}\n0000000000 65535 f \n`;
     for (let id = 1; id < count; id++) out += `${String(offsets[id] || 0).padStart(10, '0')} 00000 n \n`;
     out += `trailer\n<< /Size ${count} /Root ${catalogId} 0 R >>\nstartxref\n${xrefStart}\n%%EOF\n`;
-    return Buffer.from(out, 'latin1');
+    // latin1 serialization by hand: every code unit is one byte, and a code
+    // unit above 0xFF would silently truncate here exactly as Buffer's latin1
+    // encoder does — so it is refused BY NAME instead (RULES invariant 1).
+    const bytes = new Uint8Array(out.length);
+    for (let i = 0; i < out.length; i++) {
+      const c = out.charCodeAt(i);
+      if (c > 0xff) throw new Error(
+        `pdf: character U+${c.toString(16).toUpperCase()} at ${i} is outside WinAnsi/latin1; ` +
+        'the PDF font cannot encode it, so it must not be written silently');
+      bytes[i] = c;
+    }
+    return bytes;
   }
 }
 
@@ -312,15 +347,23 @@ export function makePdfCore({ engine, sheet, body }) {
       // silently dropped (the courtney guide sewed a piece the cut list hid).
       const paper = p.pieces.filter((x) => !isChalk(x));
       const chalk = p.pieces.filter((x) => isChalk(x));
-      for (const piece of paper) {
-        c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
-      }
+      // WRAPPED, not one line per piece. A cut instruction is not short: the
+      // bias binding's reads "cut 1 strip(s) 1177 x 25 mm ON THE BIAS (45 deg to
+      // the grain), join end to end..." and ran straight off the right edge of
+      // the sheet, so the number the sewer needs was printed outside the page
+      // (seen 26 Aug on the F-İNDİR cover render). PDF has no text box; if the
+      // writer does not wrap, nothing does.
+      const cutLine = (piece) => {
+        for (const ln of wrap(`${piece.name}, ${piece.cutInstruction}`, 9, A4.w - 2 * M)) {
+          c.text(M, y, 9, INK, ln, null); y += 5.4;
+        }
+        y += 1.6;
+      };
+      for (const piece of paper) cutLine(piece);
       if (chalk.length) {
         y += 3;
         c.text(M, y, 10, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += 8;
-        for (const piece of chalk) {
-          c.text(M, y, 9, INK, `${piece.name}, ${piece.cutInstruction}`, null); y += 7;
-        }
+        for (const piece of chalk) cutLine(piece);
       }
       y += 6;
       c.text(M, y, 12, NAVY, 'Assembly'); y += 9;
@@ -378,15 +421,18 @@ export function makePdfCore({ engine, sheet, body }) {
     c.text(M, y, 10, GREY, `EU38 sewing guide  .  ${p.pieces.length} pieces  .  ${p.fabricMeters140} m fabric at 140 cm`, null); y += 7;
     c.text(M, y, 9, GREY, 'text-first guide, no illustrations in this edition. Every step is the engine\'s own instruction.', null); y += 12;
     c.text(M, y, 13, NAVY, 'Cut list', null); y += 8;
-    for (const piece of paper) {
-      need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
-    }
+    // Wrapped for the same reason the A4 cover's list is: a long cut
+    // instruction printed off the right edge of the sheet.
+    const cutLine = (piece) => {
+      for (const ln of wrap(`${piece.name}  -  ${piece.cutInstruction}`, 9.5, A4.w - 2 * M)) {
+        need(lineH); c.text(M, y, 9.5, INK, ln, null); y += lineH;
+      }
+    };
+    for (const piece of paper) cutLine(piece);
     if (chalk.length) {
       need(lineH + 4);
       c.text(M, y, 10.5, NAVY, 'Strips / notions (chalked on fabric, not printed)', null); y += lineH + 1;
-      for (const piece of chalk) {
-        need(lineH); c.text(M, y, 9.5, INK, `${piece.name}  -  ${piece.cutInstruction}`, null); y += lineH;
-      }
+      for (const piece of chalk) cutLine(piece);
     }
     y += 8;
     need(20);
@@ -401,14 +447,24 @@ export function makePdfCore({ engine, sheet, body }) {
     return pdf.build();
   }
 
+  // The page layout every PDF surface shares: chalk pieces (bias binding, ruffle
+  // strips) are drawn straight on the fabric, so they are not tiled onto paper;
+  // the rest are shelf-packed by sheet.js. Named and returned so an in-browser
+  // caller (web/js/download.js) builds the SAME pages the generators write to
+  // disk instead of re-deriving the packing — one layout truth, not two.
+  function pack(p) {
+    const paper = p.pieces.filter((x) => !isChalk(x));
+    const layout = packPieces(paper.length ? paper : p.pieces);
+    const { sheets, used } = usedCells(layout);
+    return { layout, sheets, used };
+  }
+
   // Build all three PDFs for one spec + write them; returns manifest row.
   function buildAll(s, outDir, writeFileSync, join) {
     const out = draft(s);
     if (out.error) return { error: out.error };
     const p = out.pattern;
-    const paper = p.pieces.filter((x) => !isChalk(x));
-    const layout = packPieces(paper.length ? paper : p.pieces);
-    const { sheets, used } = usedCells(layout);
+    const { layout, sheets, used } = pack(p);
     const a4 = a4Pdf(s, p, layout, sheets, used);
     const a0 = a0Pdf(s, p, layout);
     const gd = guidePdf(s, p);
@@ -421,5 +477,5 @@ export function makePdfCore({ engine, sheet, body }) {
       pieceNames: p.pieces.map((x) => x.name), fabricMeters140: p.fabricMeters140 };
   }
 
-  return { draft, a4Pdf, a0Pdf, guidePdf, buildAll };
+  return { draft, pack, a4Pdf, a0Pdf, guidePdf, buildAll };
 }

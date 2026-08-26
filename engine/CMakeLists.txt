@@ -935,3 +935,22 @@ add_test(NAME landing_truth_check COMMAND ${NODE_EXECUTABLE}
 # alınca yeşil. H4/H6/H9 bugün ÖLÇÜLEMİYOR ve karta "ÖLÇEMEDİM" diye basılıyor.
 add_test(NAME hedef_kosu COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/hedef_kosu.mjs)
+
+# indir_check (KOŞU v7, F-İNDİR — 2026-08-26): KULLANICI EVE BİR DOSYA GÖTÜRÜYOR MU?
+# 26 Ağu'da ölçüldü: web/js/create.js içinde `download`/`dxf` geçen satır sayısı
+# SIFIRDI. Kullanıcı fotoğraf yüklüyor, kalıbı ekranda görüyor ve elinde hiçbir
+# dosya olmadan çıkıyordu. O gün 118 testin hiçbiri bunu göremiyordu, çünkü
+# hiçbiri "ürün bir dosya teslim ediyor mu" diye sormuyordu.
+# Bu kapı, TARAYICININ YÜKLEDİĞİ modüllerin kendisini koşturur (web/js/download.js,
+# web/js/pdf-core.js, engine/dist wasm) — node'a özel bir kopyayı değil, çünkü
+# kopyanın yeşil olması inen dosya hakkında hiçbir şey söylemez.
+# Ölçtükleri: dxfSpecJSON var mı (create.html'in tarif metni yok, bu bağlanma
+# olmadan DXF butonu KURULAMAZ) · DXF R12 + ASTM katmanları · SVG gerçek mm +
+# her parça etiketli · A4 paketinin kapağındaki KALİBRASYON KARESİ 30.000 mm
+# ÖLÇÜYOR (iddia "kare var" değil, "kare 3 cm") · A0 tek sayfa 841x1189 mm ·
+# ve REDDETME: geçersiz enum / kullanılamaz beden HİÇBİR dosya vermiyor
+# (RULES invariant 1 — bloklu taslak temiz görünen bir endüstri dosyası olarak
+# inerse kullanıcı ona göre kumaş keser).
+# Sıfır API çağrısı, sıfır kuruş: saf geometri, VLM'e hiç gitmez.
+add_test(NAME indir_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/indir_check.mjs)

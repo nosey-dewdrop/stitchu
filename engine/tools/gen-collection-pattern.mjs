@@ -24,7 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { siteVersion } from './site-version.mjs';
-import { makePdfCore } from './pdf-core.mjs';
+import { makePdfCore } from '../../web/lib/pdf-core.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);

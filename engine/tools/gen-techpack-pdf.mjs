@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { createHash } from 'crypto';
-import { Pdf, Ctx, A4, wrap } from './pdf-core.mjs';
+import { Pdf, Ctx, A4, wrap } from '../../web/lib/pdf-core.js';
 
 const [manifestPath, outPath] = process.argv.slice(2);
 if (!manifestPath || !outPath) {

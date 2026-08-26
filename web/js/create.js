@@ -14,6 +14,11 @@ import {
 } from './store.js?v=136';
 import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=136';
 import { measureGarment } from './measure.js?v=136';
+// F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
+// matching `download` or `dxf`, so a shopper could see a pattern and carry
+// nothing out of the browser. The writers are shared with studio.html, one
+// module for the whole site; see the header of download.js.
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf } from './download.js?v=136';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -800,11 +805,76 @@ function showResult(result) {
   }
   screen.appendChild(nav);
 
+  // Take it home. Placed ABOVE the grade panel on purpose: grading is a seller's
+  // job, downloading is everyone's, and the phase this shipped in (F-İNDİR)
+  // exists because the shopper's job was the one with no button.
+  if (!result.issues.length) {
+    screen.appendChild(downloadPanel(result));
+  }
+
   // Grade: sellers turn one design into a full EU size run from the same engine.
   // Only offered for a valid draft (a blocked draft has nothing to grade).
   if (!result.issues.length) {
     screen.appendChild(gradePanel(result));
   }
+}
+
+// The three files, plus the print-shop A0. Every one of them is written by
+// download.js from the pattern already on screen — the same drafted geometry,
+// serialized four ways, no second draft and no re-render. A blocked draft never
+// reaches here (showResult only calls this when issues is empty), and the DXF
+// path refuses again inside the engine for the same reason.
+function downloadPanel(result) {
+  const panel = el('div', 'dl-panel');
+  panel.appendChild(el('h2', 'dl-title', t('create.dl.title')));
+  panel.appendChild(el('p', 'dl-sub', t('create.dl.sub')));
+
+  const base = `stitchu-${safeName(result.pattern.garment)}-${safeName(spec.silhouette || spec.skirtStyle || spec.neckline || 'pattern')}`;
+  const title = `${result.pattern.garment.charAt(0).toUpperCase()}${result.pattern.garment.slice(1)}`;
+  const msg = el('p', 'dl-msg', '');
+
+  // One handler shape for all four: disable, do the work, report the refusal in
+  // words if it comes. A silent no-op button is the failure mode this phase was
+  // opened to kill, so nothing here fails quietly (yasak 8).
+  const wire = (btn, run) => {
+    btn.addEventListener('click', async () => {
+      const label = btn.textContent;
+      btn.disabled = true; btn.textContent = t('create.dl.working');
+      msg.textContent = '';
+      try {
+        const refusal = await run();
+        if (refusal) msg.textContent = t('create.dl.refused', { why: refusal });
+      } catch (e) {
+        msg.textContent = t('create.dl.refused', { why: e instanceof Error ? e.message : String(e) });
+      } finally {
+        btn.disabled = false; btn.textContent = label;
+      }
+    });
+  };
+
+  const row = el('div', 'dl-row');
+  const pdfBtn = el('button', 'btn', t('create.dl.pdf'));
+  wire(pdfBtn, () => { saveA4Pdf(result.pattern, title, `${base}-a4.pdf`); return null; });
+  row.appendChild(pdfBtn);
+
+  const svgBtn = el('button', 'btn', t('create.dl.svg'));
+  wire(svgBtn, () => { saveSVG(result.pattern, `${base}.svg`); return null; });
+  row.appendChild(svgBtn);
+
+  const dxfBtn = el('button', 'btn', t('create.dl.dxf'));
+  wire(dxfBtn, () => saveDXF({ kind: 'spec', spec, measurements: values }, `${base}.dxf`));
+  row.appendChild(dxfBtn);
+  panel.appendChild(row);
+
+  // A0 is a print-shop errand, not a home one, so it is a link and not a fourth
+  // equal button — but it is offered, because pdf-core builds it for free and a
+  // single-sheet pattern is what a copy shop actually wants.
+  const a0 = el('button', 'dl-alt', t('create.dl.a0'));
+  wire(a0, () => { saveA0Pdf(result.pattern, title, `${base}-a0.pdf`); return null; });
+  panel.appendChild(a0);
+
+  panel.appendChild(msg);
+  return panel;
 }
 
 // The sizes the ENGINE publishes a shape ratio for, not the sizes the body

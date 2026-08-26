@@ -25,7 +25,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
-import { Pdf, Ctx, A4, wrap, calibration, renderSvgChunk } from './pdf-core.mjs';
+import { Pdf, Ctx, A4, wrap, calibration, renderSvgChunk } from '../../web/lib/pdf-core.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);

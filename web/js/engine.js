@@ -180,6 +180,30 @@ export async function dxfRecipe(recipeText, measurements, params) {
   return JSON.parse(json);
 }
 
+// DXF-AAMA/ASTM export at the SPEC boundary — the create.html shopper's path.
+// dxfRecipe() only serves the recipe DSL (studio.html), and the photo -> pattern
+// flow has no recipe text, so this is what lets a create.html user take the
+// industry file home. Same spec + body draftJSON drafted, serialized by the same
+// dxf::exportPattern: the download is the motor's own mm geometry, not a redraw.
+// { dxf } on success, { error, dxf: null } on an honest refusal (bad enum,
+// unusable body, validator-blocked draft).
+export async function dxfSpec(spec, measurements) {
+  const engine = await loadEngine();
+  let json;
+  try {
+    json = engine.dxfSpecJSON(engineSpec(spec), {
+      bust: measurements.bust, waist: measurements.waist, hip: measurements.hip,
+      shoulder: measurements.shoulder, backLength: measurements.backLength,
+      armLength: measurements.armLength, neck: measurements.neck,
+      upperBust: measurements.upperBust || 0,
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: msg, dxf: null };
+  }
+  return JSON.parse(json);
+}
+
 export async function draft(spec, measurements) {
   const engine = await loadEngine();
   let json;
