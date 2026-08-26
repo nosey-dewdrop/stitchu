@@ -323,3 +323,335 @@ H4/H6/H9 **ÖLÇEMEDİM** · H5 tek çiftten okunuyor · `vocab_reference_check`
 `freesewing-bella`/`freesewing-aaron` gereksinimleri **DOĞRULANMADI** (payda 5'in
 2'si künyesiz) · borç md.30 (`SeamPlan::sinif` tek dize) ve md.31 (`GarmentSurf`
 kopyalanıyor, **DOĞRULANMADI**) açık.
+
+---
+
+# AJAN KARTI — F5-B (`op.suppress`)
+
+**Ağaç:** `main` @ `9cfb7c8`. Geri alma: `git reset --hard F5B-oncesi`.
+**Bu bir ALT-KARTTIR (§3.12).** F5 **BİTMEDİ**. Operatör kümesi **8 → 9**;
+15 hedefin **2'si** motorda (`rotate`, `suppress`), **13'ü kuyrukta** ve adlarıyla
+basılı. *"F5'i bitirdim"* denmiyor.
+
+## KAPI — önce → sonra, her sayıda `n`
+
+| kapı | önce | sonra |
+|---|---|---|
+| `ctest` (temiz Release, sıfırdan) | **6 failed / 122** | **6 failed / 123** |
+| `vocab_reference_check` | YESIL 10306 (taban 10438) | **YESIL 10310** (taban 10438, delta −128) |
+| `python3 -m pytest -q` | 33 passed | **33 passed** |
+| `indir_check` | EXIT 0 | **EXIT 0** |
+| `hedef_kosu` | EXIT 0 · CIRCIR SAĞLAM | **EXIT 0 · CIRCIR SAĞLAM** |
+| `tek_nesne_check` | EXIT 0 (kimlik) | **EXIT 0 (+ DOĞRULUK kolu K6)** |
+| `rotate_check` | EXIT 0 (pens fikstür) | **EXIT 0 (pens ÖLÇÜLMÜŞ)** |
+| `suppress_check` | **YOKTU** | **EXIT 0, `ctest`e kayıtlı** |
+
+`ctest` son satırı, **kopyalandı**:
+
+```
+95% tests passed, 6 tests failed out of 123
+
+Total Test time (real) = 1085.64 sec
+
+The following tests did not run:
+	108 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  9 - flat_pattern_agree_check (Failed)
+	 17 - flat_artifact_census (Failed)
+	 18 - style_check (Failed)
+	 25 - sizechart_source_check (Failed)
+	 96 - contract_check (Failed)
+	102 - figure_check (Failed)
+```
+
+**Yedinci ad YOK.** `N` 122 → 123 (`suppress_check`), kırmızı sayısı **büyümedi**.
+`108 - h10_gate_check` DISABLED ve öyle kaldı (K18).
+
+⚠ **YEDİNCİ KIRMIZI İKİ KEZ DOĞDU VE İKİSİ DE KÖK SEBEPTEN KAPANDI** — ikisi de
+benim açtığım delikti, ikisi de burada yazılı:
+1. **`preset_resolve_check`.** `op.suppress`'in `angleDeg` parametresini
+   sözleşmeden kaldırınca üç hazır demet (`shaping.dart` ×2, `skirtStyle.straight`)
+   kırıldı: **ürünün sözlüğü pens açısını hâlâ elle çevrilen bir kadran sanıyordu**
+   (18° · 12° · 10°, **üçü de künyesiz**). Parametreyi geri koymak operatörü
+   yalancı yapardı; **kadranlar silindi**. `resolved=107 absent=3 sentinel=22`
+   değişmedi.
+2. **`bundle_fresh_check`.** `src/dartsuppress.{hpp,cpp}` motor kütüphanesine
+   girince **sevk edilen wasm bir commit geride kaldı** (`6e3dd1f` ↔ `140949f`) —
+   yani sunulan motor bu repodaki motor değildi. `build-wasm.sh` koşuldu, damga
+   `deb96740fee41234`, üç sevk artefaktı commit'lendi.
+
+## CIRCIR — F5'in hanesi: H4 · H5 · H8 (§3.6). **H8 İKİ SATIR.**
+
+| sayı | taban | F5-B sonrası | hüküm |
+|---|---|---|---|
+| H1 | 5/5 (n=5) · **10/10 (n=10)** | 5/5 · **10/10** | tavan (K25) |
+| H2 | %95.2 (40/42, n=5) | **%95.2 (40/42, n=5)** | aynı |
+| H3 | 2 (n=5) | **2** | aynı |
+| **H4** | **ÖLÇEMEDİM** | **ÖLÇEMEDİM** | aşağıda, uydurulmadı |
+| **H5** | 0 / **5 ölçülebilen çift** | **0 / 5** | **payda BÜYÜMEDİ → kazanım YAZILMADI** |
+| **H8-sözlük** | **31** (26+5) n=5 · **61** (51+10) n=10 | **31 (26+5)** · **61 (51+10)** | **kötüleşmedi; sözlük DARALTILMADI** |
+| **H8-ifade** | **5 / 5** (n=5), payda MÜHÜRLÜ | **⭐ 4 / 5** (n=5), payda **MÜHÜRLÜ ve TAM** | **DÜŞTÜ** |
+| H10 | %58.3 (70/120) | %58.3 | aynı |
+| **H10a** | %17.5 | **%17.5** | **cırcıra bağlı değil (K21) — yükseltilmedi** |
+| **H10b** | **%40.0 (48/120)** | **%40.0 (48/120)** | **§0B tavanı KIMILDAMADI** |
+| H10e | 3 (n=5) · 5 (n=10) | 3 · 5 | aynı |
+| H10x | %0.8 (1/120) | %0.8 | aynı |
+| H11 | 3.1–4.0 ms | **2.9 ms** medyan (en kötü 32.1) | <10 sn tavanının çok altında |
+
+**HEDEF SETİ (n=10), harmanlanmadı:** H1 **10/10** · H2 %93 (66/71) · H3 2 ·
+H5 0/5 · H8-sözlük **61** · H10 %64.4 · H10a %29.7 · H10b %33.1 · H10e 5 ·
+H10x %1.7 · H11 2.1 ms.
+
+**H8-İFADE 5/5 → 4/5, VE SEBEBİ TEK KALEM:** `freesewing-bella` `{op.suppress,
+op.rotate}` istiyordu, ikisi de motorda. **Payda daraltılmadı** — beş giysinin
+beşi de listede, `TABAN_PAYDA` bloğuna **tek bayt** yazılmadı (mutasyon M9 mührü
+kırmızı yakıyor). Kuyruk: **4 giysi `op.split`** · 3 `op.attach` · 1 `op.derive`
+· 1 `op.extend` · 1 `op.gather` · 1 `op.overlay`.
+
+**H4 — ÖLÇEMEDİM, ve `suppress` onu kımıldatmadı.** `SurfaceStitch`'e `reason`
+alanı eklenmedi ve eklendiği **iddia edilmiyor**. `suppress` panel konturu
+üstünde çalışıyor, dikiş listesine yeni bir sebep katmanı ilan etmiyor.
+**H5 — 0/5, payda büyümedi.** Yüzey hâlâ dar (`armhole↔sleeve_cap`);
+`suppress` yeni bir **kenar rolü** ilan etmiyor, o yüzden 0→0 bir kazanım
+değildir ve kazanım olarak yazılmadı.
+
+## İŞ 0 — hakemin iki boşluğu, ikisi de KAPANDI
+
+### İŞ 0a — künye artık OKUNUYOR (HM1)
+`rotate-op.cpp`'deki `constexpr kApexFracOfPanel = 0.80` **SİLİNDİ**. Kesir
+`plan.opt.bodiceApexFrac`'tan okunuyor, ve `--apex-frac` değeri **SheathOptions
+üzerinden `buildSeamPlan`'a** giriyor. Kapı üç kollu:
+* **R0b** motorun ilan ettiği 0.80'i **pinler** → **M1 (HM1 aynen) KIRMIZI**.
+* **R8** aracı iki kez koşturur: `310.634709679mm (0.8) → 232.97603226mm (0.6)`,
+  **oran 0.750000000 = 0.75** → kopyalanmış bir sabit bu kolu geçemez;
+  **M2 (künyeyi geri kopyala) KIRMIZI**.
+* `kBugraDartDeg = 41.48` de **SİLİNDİ** — dosyada 41.48 artık yalnız
+  `bugra_locket_pens_deg` olarak, **hiçbir şeyin okumadığı bir rapor** olarak var.
+
+### İŞ 0b — yayınlanan sayının DOĞRULUĞU kapılı (HM3)
+`tek_nesne_check` **K6 doğruluk kolu** kazandı, girdisi yeni `engine/tools/shell-audit.cpp`:
+kabuğun **kendi noktaları** (halka başına 20000 örnek, merkez zinciri 0.02mm adım).
+Kapı yayınlanan **14 ölçünün 14'ünü** kiriş toplamıyla yeniden hesaplıyor —
+projeksiyonun Gauss-Legendre + Steiner + kapalı-form yoluna karşı **ortak kod
+yolu olmadan**. En kötü uyuşmazlık **0.000129mm**. Eşik 0.05mm ve **seçilmedi**:
+kiriş toplamının kendi çözünürlüğünden düşüyor, HM3'ün sapması (büst↔bel ~100mm)
+bunun beş bin katı.
+* **M3 (HM3 aynen: `bust_circumference` belin çevresini basar) KIRMIZI.**
+* **M4 (`shoulder_width` yarım genişlik basar — aynı sınıf, başka yüz) KIRMIZI.**
+
+⚠ **NE DENETLENMEDİĞİ YAZILI (K29):** `GarmentSurf::at()` iki yolun da altında.
+**Yüzey yanlışsa iki okuma birlikte yanlış olur ve bu kol göremez.** Gördüğü,
+HM3'ün ait olduğu sınıfın tamamı: yanlış yükseklik, yanlış halka, yanlış nicelik,
+öbür görünümden kopya.
+
+## İŞ 1 — `op.suppress` MOTORDA, VE SEVK EDİLEN GİYSİDE **REDDEDİYOR**
+
+`engine/src/dartsuppress.{hpp,cpp}` · sürücü `engine/tools/suppress-op.cpp` ·
+kapı `engine/tests/suppress_check.mjs` (`ctest` #12, Passed 387.18 sec).
+
+**`suppressPanel()`'in AÇI PARAMETRESİ YOKTUR.** Açıyı `SurfacePanel::developDeficitDeg`'den
+okur — bu, flatten'ın **zaten hesaplayıp bir debug env var'ının içinde çöpe attığı**
+ayrık açı defekti; F5-B onu hesaptan çıkarmadan dışarı taşıdı (aynı aritmetik,
+aynı sıra, aynı sayılar). Bir açı argümanı pensi **formüle geri çevirirdi**.
+
+### ⭐ SAPMA SORUSUNUN İKİNCİ YARISI, VE CEVABI RAHATSIZ EDİCİ
+
+**Sevk edilen giysi kendi pensini ÜRETMİYOR — çünkü ÜRETECEK PENSİ YOK, ve bu
+artık bir cümle değil bir SAYI.**
+
+```
+sevk_edilen        left_ftorso   develop-deficit   -1.9628°   -> op.suppress REDDETTİ
+sevk_edilen_arka   left_btorso   develop-deficit   -0.1116°   -> op.suppress REDDETTİ
+vucudu_izleyen     left_ftorso   develop-deficit  +55.1735°   -> AÇILDI, 44878.9541mm² gitti
+vucudu_izleyen_arka left_btorso  develop-deficit  +56.6688°   -> AÇILDI, 42255.3192mm² gitti
+```
+
+**K28'in KÖK SEBEBİ BULUNDU:** `skimBodice` gövdeyi bir **KONİYE** çeviriyor,
+koni birebir açılıyor, deficit **negatif** — bastırılacak hiçbir şey yok. Sınıfın
+adı `top/dart/woven` ama sekiz panelinin sekizinde pens olmamasının sebebi bir
+eksiklik değil, **yüzeyin kendi geometrisi**. Operatörün "hayır"ı **doğru
+cevaptır** ve kapı (S1) onu **bir sayıyla tutuyor**.
+
+### 41.48° YAN YANA — **TUTMUYOR, ve ayarlanmadı**
+
+| panel | ölçülen | Buğra Locket | fark |
+|---|---|---|---|
+| `left_ftorso` (vücudu izleyen) | **55.1735°** | 41.48° | **+13.6935°** |
+| `left_btorso` (vücudu izleyen) | **56.6688°** | 41.48° | **+15.1888°** |
+| `left_ftorso` (sevk edilen) | **−1.9628°** | 41.48° | **kama YOK** |
+
+41.48 **başka bir gövdedeki başka bir giysinin** sayısıdır. Hiçbir kadran ona
+doğru oynatılmadı, hiçbir kapı ona eşitlemiyor (§3.10).
+
+### `rotate`'in girdisi FİKSTÜR OLMAKTAN ÇIKTI
+`rotate-op` artık pensini `op.suppress`'ten alıyor. **R0 kolu iki AYRI ARACIN
+çıktısını kıyaslıyor:** rotate'in taşıdığı 55.1735°, suppress-op'un **aynı
+panelde ölçtüğü** deficit ile birebir aynı. Üç hedefe transfer, `rotate_check`
+EXIT 0: **alan farkı 0.000000000mm²**, **açı farkı 0.000000000°**, **TRUE bacaklar
+0.000000000mm**, **çevre kimlik artığı 0.000000000mm**, üçü de kendini kesmiyor.
+
+🚨 **HAKEME GELEN İKİ KALEM (§3.8 md.4, ajan tek başına karar vermedi):**
+
+1. **`rotate_check`'in R0 kolu YENİDEN BAĞLANDI.** Eskiden `aci_deg == 41.48`
+   sabitine bakıyordu; `suppress` ölçtüğü sayıyı basar basmaz o kol **yanlış
+   kapı** oldu. Yerine **kapı-kapıya bağ** kondu (rotate'in açısı ≡ suppress'in
+   aynı paneldeki ölçümü). **Bu bir GEVŞETME DEĞİL bir BAĞLAMADIR** ve kart
+   bunun hakeme geleceğini önceden ilan etmişti — hakem onaylamazsa geri alınır.
+2. **`rotate` ve `suppress` sevk edilen skim gövdede DEĞİL, motorun DİĞER
+   gövdesinde koşuyor** (`SheathOptions::skimBodice` kapalı **+ `maxDartDeg = 0`).
+   Gizli kadran değil: aracın **her satırında** yazılı ve sevk edilen panelin
+   reddi **aynı çıktıda** basılı (R9 onu kapıyla tutuyor). Sebep ölçüldü:
+   sevk edilen gövdede transfer edilecek pens **yok**; motorun kendi türettiği
+   pensler açıkken ikinci bir kama **paneli kendine kestiriyor** (artık deficit
+   27.8788°, giden alan 11417mm² ↔ sektör 24427mm²) — bu da `cift_bastirma`
+   satırı olarak basılı ve **S5 kolu onu kapıyla tutuyor**, yani yapılandırma
+   gerekçesi bir yorum satırı değil bir kırmızı/yeşil.
+
+### KAPININ UYDURMADIĞI EŞİK (K29)
+`kama_sektor_alani` (0.5·L²·θ) ile shoelace `alan_giden` arasındaki fark
+**türetilmemiş bir ŞEKİL terimidir** (ölçüldü: ön %3.40, arka %10.06). %10.06'yı
+geçirecek bir tolerans seçmek eşiği **bugünkü sayıya uydurmak** olurdu. O yüzden
+**RAPOR edilir, kapıya bağlanmaz.** Gatelenen şey KESİN: alan kesinlikle azaldı,
+ve **çıkan konturda apeksin gerdiği açı** ölçülen deficit'e 1e-9'da eşit.
+
+## MUTASYONLAR — 10 mutasyon, 6 dosya, ÜÇÜ bu kartın hiç yazmadığı dosyalarda
+
+Log: **`GECE7/log/f5b.mutasyon.txt`** · betik `GECE7/log/f5b.mutasyon.sh`.
+Log **kendi kendini açıklıyor**: `ikili` sütununun `seam-plan|rotate-op|suppress-op`
+shasum ilk-8'lerinin **birleşimi** olduğu logun **içinde** yazılı (hakemin F5-A notu).
+
+| | dosya | hedef | hüküm |
+|---|---|---|---|
+| M1 | `src/surfacepattern.hpp` **(yazmadım)** | HM1 aynen: `bodiceApexFrac` 0.80→0.60 | 🔴 |
+| M2 | `tools/rotate-op.cpp` | künyeyi geri kopyala | 🔴 |
+| M3 | `src/shellprojection.cpp` **(yazmadım)** | HM3 aynen: büst = belin çevresi | 🔴 |
+| M4 | `src/shellprojection.cpp` **(yazmadım)** | `shoulder_width` yarım genişlik | 🔴 |
+| M5 | `src/dartsuppress.cpp` | açıyı sabite çevir (41.48) | 🔴 |
+| M6 | `src/dartsuppress.cpp` | "açıldı" işaretle, geometriyi bırak | 🔴 |
+| **M7** | `src/surfacepattern.cpp` **(yazmadım)** | negatif bantları sıfıra kırp | **🟢 KIRMIZI YANMADI** |
+| M7b | `src/surfacepattern.cpp` **(yazmadım)** | defect'in MUTLAK değerini al | 🔴 |
+| M8 | `contract/primitives-v1.json` | `op.split` olmayan bir kapı gösterir | 🔴 |
+| M9 | `tests/expressability_check.mjs` | paydadan `freesewing-bella` sil (HM4) | 🔴 |
+
+🚨 **M7 KIRMIZI YANMADI VE SEBEBİNİ KENDİM YAZIYORUM: MUTASYON YANLIŞ
+TASARLANMIŞTI, KAPI DEĞİL.** Betiğin iddiası "negatif bantlar sıfıra kırpılınca
+−1.9628 **pozitife döner**" idi. Yanlış — kırpma negatifi **sıfıra** çevirir,
+pozitife değil; toplam 0.0000 oluyor, eşik 0.5'in hâlâ altında, ve op.suppress
+**doğru şekilde reddetmeye devam ediyor**. İkili gerçekten kımıldadı
+(`19ae6841…`), yani bayat-ikili tuzağı değil. Yerine **işareti gerçekten çeviren**
+M7b koşuldu: deficit **−1.9628 → +1.9628**, eşiği geçti, operatör "evet" dedi,
+**S1 kırmızı yandı**. Kapının bu kod yolunu kapsadığı böylece kanıtlı.
+
+## DEĞİŞMEZLER — hepsi doğrulandı
+
+* `contract/hedef-kosu-taban.json` blob **`cf2af8c7d3c4603eee5aea252f3568feedda8d10`** — **el değmedi**.
+* `expressability_check.mjs`'in **`TABAN_PAYDA`** bloğu — **tek bayt yok**.
+* `vision/eval/` — **tek bayt yok**. Cevap anahtarı mührü (K19) oynatılmadı.
+* `KOSU-v7.md` — **tek bayt yok** (K26).
+* `engine/tests/vocab_reference_check.sh` + `vocab-reference-baseline.json` — **tek bayt yok**; taban **kesilmedi** (29 sayaç DÜŞTÜ, hiçbiri artmadı).
+* `flat_expresses_spec_check.mjs` + tabanı — **tek bayt yok** (K17); yeni takipli `.json` **eklenmedi**.
+* `flat_pattern_agree_check` — **dokunulmadı** (K23 F4'e bağlı).
+* `patterns_real/` — **PUSHLANMADI**, üç kalem takipsiz duruyor (K10).
+* Holdout `11` `12` `30` `35` — **HARCANMADI**, dördü de duruyor.
+* `_olcum_seti.yedek_5` — dokunulmadı (K16).
+* Diğer operatörlere **girilmedi**: `suppress` ve `rotate` dışında hiçbir `op.*` `motorda_kapi` almadı (hakem `expressability_check`'ten doğrulayabilir: "MOTORDA 2").
+
+## BULDUĞUMU DÖKÜYORUM — sorulmamış ama önemli
+
+1. 🚨 **`suppress_check` 387s, `rotate_check` 396s, tam `ctest` 1085.64s.**
+   F5-A'da `rotate_check` **4.78s**'ydi. Sebep: her iki araç da `skimBodice=OFF`
+   planları kuruyor ve **vücudu izleyen gövdenin flatten'ı pahalı** (ARAP ucuza
+   yakınsamıyor — `surfacepattern.hpp` bunu kendi ölçmüş). Kartın "bu makinede
+   330–400 sn" cümlesi **bugün tutmuyor**; ölçtüğüm sayı 1085s ve bunun ~780s'i
+   bu iki kapı. **Push kapısının 900s tavanı için bir risktir** ve hakemin
+   bilmesi gerekir.
+2. **`bundle_fresh_check` motor kaynağı eklenince kırmızı yanıyor** — bu kapının
+   çalıştığının kanıtı, ama borç **md.40 (K34) AÇIK KALDI**: `build-wasm.sh`'ın
+   damgası hâlâ `engine/src/.rabadon/`'u tarıyor, yani DETERMINISTIC önermesi
+   bugün de yanlış. Ben yeniden derledim, önermeyi onarmadım.
+3. **Borç md.42 hâlâ AÇIK:** wasm ↔ native düğüm eşitliğini hiçbir kapı tutmuyor.
+   `tek_nesne_check`'e wasm kolu **eklenmedi**; K6 native ikiliyi denetliyor.
+   **DOĞRULANMADI.**
+4. **`STITCHU_SKIM_BODICE` env override'ı eklendi** (`probeOverrides`, mevcut
+   sekiz override'ın yanına). Varsayılan davranış **bit-aynı**; sebebi
+   `surfacepattern.hpp`'nin kendi "+52.5 deg" notunun sevk edilen ikiliden
+   **okunamıyor** olmasıydı — header'ı düzenlemeden ölçmenin yolu yoktu.
+5. **`SurfacePanel` iki yeni alan taşıyor** (`developDeficitDeg`, `deficitBandDeg`)
+   ve deficit artık **her flatten'da** hesaplanıyor, yalnız `STITCHU_SP_DEBUG`
+   altında değil. Aritmetik birebir aynı; maliyet üçgen köşesi başına bir `acos`.
+   `engine_check` yeşil kaldı, golden kımıldamadı.
+6. **`dartrotate.cpp` üç yardımcısını kaybetti** (`perimeter`, shoelace,
+   self-intersection): ikisi de artık `dartsuppress.cpp`'den. **Tek cetvel.**
+   `suppressWedge` de oraya taşındı — `dartrotate.hpp`'de artık YOK.
+7. **Ölçtüm ve rapor ediyorum:** sevk edilen ETEK panellerinin deficit'i
+   **+0.000°** (`skimBodice` + `hemSweep` koniye çeviriyor), yani `op.suppress`
+   orada da reddeder. `skirtStyle.straight` demetinden `angleDeg: 10` bu yüzden
+   kaldırıldı ve gerekçesi sözleşmeye yazıldı.
+8. **rabadon bir kez daha yanlış pozitif verdi** (`ctest-tail-hides-verdict`,
+   `cmake --build … | tail -2` üstünde — bir `ctest` koşusu değil). `guard.json`'a
+   **dokunulmadı**; `rabadon wrong ctest-tail-hides-verdict "…"` ile kaydedildi.
+9. ⚠ **Mutasyon betiği bir kez ARADA ÖLDÜ** (M7'nin geri alma adımında) ve ağacı
+   **mutasyonlu bıraktı**. Fark edildi, elle geri alındı, `grep MUTASYON` ile
+   sıfırlandığı doğrulandı, ve kalan mutasyonlar ayrı bir koşumda tamamlandı.
+   Gizlenmiyor: **uzun mutasyon zincirleri bu makinede kesilebiliyor.**
+10. **ÖLÇEMEDİM:** H4 · H6 · H9 · gerçek tarayıcıda tıklama (yedi fazdır,
+    headless harness yok) · wasm↔native düğüm eşitliği · `GarmentSurf` kopyalanması
+    (borç md.31) · miras 6 kırmızının 4'ünün kök sebebi.
+
+## BORÇ — devreden 42 + bu turun ekledikleri
+
+**F5-A'nın devrettiği 42 madde AYNEN duruyor** (md.39 K32 · md.40 K34 · md.41 K33
+· md.42 wasm düğümü), ve üstüne:
+
+43. 🚨 **İKİ KAPI 780 SANİYE YİYOR.** `suppress_check` 387s + `rotate_check` 396s;
+    F5-A'da ikincisi 4.78s'ydi. Kök sebep vücudu izleyen gövdenin flatten
+    maliyeti. Bir sonraki alt-kart operatör başına yeni bir kapı eklerse
+    **tam `ctest` push kapısının tavanını aşar**. Ölçüldü, onarılmadı.
+44. **`op.suppress` bir panele TEK kama açıyor.** Motorun kendi
+    `dartColumnsFromDeficitRows`'u yükü **birden çok pense** bölüyor ve sütunu
+    dikişe uzaklıkla ağırlıklandırıyor; operatör bunu **yapmıyor**. 55.17°'lik
+    tek bir kama, `maxDartDeg = 14`'ün ilan ettiği tavanın **dört katı**.
+    Yerleşim/bölme `op.split`'in kartına bakıyor. **Kuyruğa yazıldı, çözülmedi.**
+45. **`suppress` ÜRÜNE HÂLÂ DEĞMİYOR** (md.37'nin `rotate` için söylediğinin
+    aynısı): `draftJSON`/web hattına bağlı değil, kullanıcı bir pens açtıramıyor.
+    Bu kartın kapattığı şey **operatörün gerçekliği**, ürün yolu değil.
+    ⚠ Ama F5-A'dan bir fark var ve ölçüldü: sevk edilen giysinin sözlük demeti
+    artık **elle yazılmış üç pens açısı taşımıyor**, yani operatör ürünün
+    **sözleşmesine** değdi — geometrisine değil.
+46. **Sevk edilen giysinin pensi YOK ve bu bir ÜRÜN kararıdır, çözülmedi.**
+    `top/dart/woven` sınıfının adı ile geometrisi ayrışmaya devam ediyor. İki yol
+    var ve **ikisi de hakemin**: ya sınıfın adı düzeltilir, ya sevk edilen gövde
+    `skimBodice`'ten çıkarılır (kesim çizgisi gerinimi 0.0071–0.1501% → 2.96–48.12%,
+    `surfacepattern.hpp`'nin kendi ölçümü). **Ajan seçmedi.**
+
+## SAPMA SORUSU — cevabı ÖLÇÜLMÜŞ
+
+> *"Sevk edilen giysi artık **kendi pensini üretiyor** mu — açı bir sabitten değil
+> panelin kendi develop-deficit'inden mi düşüyor, ve `rotate` onu **fikstür
+> olmadan** taşıyabiliyor mu? Ve `suppress` yazıldıktan sonra **H8-ifade kaç**?"*
+
+**AÇI ARTIK BİR SABİTTEN DÜŞMÜYOR — EVET, ölçülerek.** `suppressPanel()`'in açı
+parametresi yok; `left_ftorso` **55.1735°**, `left_btorso` **56.6688°** — iki ayrı
+panel, iki ayrı sayı, ve açıyı sabite çeviren mutasyon (M5) kapıyı kırmızı yakıyor.
+
+**`rotate` ONU FİKSTÜR OLMADAN TAŞIYOR — EVET.** `rotate_check` R0 iki ayrı aracın
+sayısını kıyaslıyor, üç hedefe transferde alan/açı/TRUE bacaklar/çevre kimliği
+**0.000000000**.
+
+**AMA SEVK EDİLEN GİYSİ KENDİ PENSİNİ ÜRETMİYOR — HAYIR, VE BU BİR ALTYAPI
+MAZERETİ DEĞİL BİR ÖLÇÜM.** Sevk edilen gövdenin develop-deficit'i **−1.9628°**;
+üretilecek pens **yoktur** ve operatör **doğru olarak reddeder**. Transfer
+motorun **diğer** gövdesinde koşuyor ve bu her satırda yazılı. K28 **kapanmadı**,
+bir **sayıya bağlandı** (borç md.46).
+
+**H8-İFADE = 4 / 5** (n=5, payda **mühürlü ve tam**: `bugra-locket-top`,
+`bugra-buttoned-corset-bustier`, `stitchu-sheath-eu38`, `freesewing-bella`,
+`freesewing-aaron`). Sıradaki: **`op.split`, 4 giysiyi bloke ediyor.**
+
+⚠ **Payda BÜYÜTÜLMEDİ.** `freesewing-bella` ve `freesewing-aaron` künyeleri
+**hâlâ DOĞRULANMADI** (FreeSewing deposu bu makinede yok, yayınlanmış parça
+listeleri görülmedi) — kart büyütürken künyelerinin aranmasını istemişti, ben
+**büyütmedim**, o yüzden yeni künye eklenmedi. Payda 5'in 2'si künyesiz kalıyor
+ve bu **düşen sayının altındaki tek zayıf yer**: 4/5'in düşmesini sağlayan giysi
+tam olarak künyesiz ikiden biridir (`freesewing-bella`). **Hakem bunu bilmeli.**
