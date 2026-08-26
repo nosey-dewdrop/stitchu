@@ -56,6 +56,37 @@ void mix(unsigned long long& h, const std::string& s) {
 
 }  // namespace
 
+// THE DRAWN SILHOUETTE, FOLDED INTO THE IDENTITY (GECE7 / F5-A, K24).
+//
+// MEASURED GAP, and it was the referee's mutation HM-F2, not a suspicion:
+// shellprojection.cpp's `projectBack` was replaced by `projectFront` (the back
+// technical drawing became literally the front one). The binary really moved
+// (2ccf4bc7… -> 60ea1cde…, so this is not the stale-binary trap) and yet the
+// node id did NOT move at all: it stayed 3f3869aaee8b56b1. The reason is in the
+// two loops below — they hash the SHELL (rings) and the SOLVED TOP BOUNDARY,
+// and the silhouette is neither. It is a THIRD thing: an orthographic
+// projection of the shell, computed in another translation unit, and the flat
+// SVG that ships to the user is drawn out of it.
+//
+// So `data-dugum` on the downloaded file said "this flat came out of this
+// object" while binding none of the lines actually drawn on it. That sentence
+// is now a measurement: every point of both projected half-contours, and every
+// published measure of both views, goes into the token. A change to the drawn
+// silhouette that leaves rings and top boundary alone — which is exactly what
+// HM-F2 is — now moves the id.
+//
+// COST, measured rather than assumed: two projections per nodeId() call at the
+// 4mm display step, i.e. the same work flatJSON already does once. H11 is
+// gated at <10s and reads in milliseconds; this is not near it.
+static void mixProjection(unsigned long long& h, const ShellProjection& p) {
+    // The view flag itself: front and back differ by a mirror, and a back view
+    // that forgot it was a back view is precisely HM-F2.
+    mix(h, p.front ? "on" : "arka");
+    for (const Vec2& v : p.outline) mix(h, num(v.x, 6) + "," + num(v.y, 6));
+    for (const ShellMeasure& m : p.measures)
+        mix(h, m.name + "@" + m.ring + "=" + num(m.mm, 6));
+}
+
 std::string SeamPlan::nodeId() const {
     unsigned long long h = 14695981039346656037ULL;
     mix(h, size);
@@ -74,6 +105,9 @@ std::string SeamPlan::nodeId() const {
     for (size_t j = 0; j < pattern.topColXMM.size(); ++j)
         mix(h, num(pattern.topColXMM[j], 6) + ";" +
                    num(j < pattern.topColZMM.size() ? pattern.topColZMM[j] : 0.0, 6));
+    // the DRAWN silhouette, both views (K24 — see mixProjection above)
+    mixProjection(h, projectFront(pattern.surf));
+    mixProjection(h, projectBack(pattern.surf));
     char buf[32];
     std::snprintf(buf, sizeof buf, "%016llx", h);
     return buf;

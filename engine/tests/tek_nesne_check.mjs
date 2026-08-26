@@ -145,6 +145,73 @@ for (const yon of ["on", "arka"]) {
          `docs/H1.0-KAPI.md § 4.1).`);
 }
 
+// --- K5: ⭐ SİLUET KOLU (GECE7 / F5-A İŞ 0, karar K24) --------------------
+//
+// NEDEN VAR — bir SUÇLAMA değil, hakemin ÖLÇTÜĞÜ bir kapı boşluğu (HM-F2).
+// `engine/src/shellprojection.cpp`'de `projectBack` `projectFront`'un kopyası
+// yapıldı: arka teknik çizim LİTERALLY ön teknik çizim oldu. İkili gerçekten
+// kımıldadı (2ccf4bc7… -> 60ea1cde…, yani bayat-ikili tuzağı değil) ve bu kapı
+// yine de EXIT 0 verdi, düğüm de hiç değişmedi. Sebebi ikiydi:
+//   1. `nodeId()` siluetı hash'lemiyordu (yalnız halkalar + üst sınır);
+//   2. K3'ün `arka` kolu ayırt edici değil — yaka değişikliği siluetı zaten
+//      oynatmadığı için o kol 0.0000'ı 0.0000 ile kıyaslıyor, ve arka literally
+//      ön olsa bile kıyaslamaya devam ediyor.
+// K3 hâlâ doğru bir kapı; DAR. Aşağıdaki üç ölçüm o darlığı kapatır ve üçü de
+// HM-F2'de KIRMIZI yanar (log: GECE7/log/f5a.mutasyon.txt).
+{
+  const [on, arka] = base.flat.siluet;
+
+  // K5a — görünüm etiketi. İki "on" basan bir flat, arkayı hiç çizmemiştir.
+  if (on.gorunum === "on" && arka.gorunum === "arka")
+    ok(`K5a siluet iki görünüm basıyor: "${on.gorunum}" + "${arka.gorunum}"`);
+  else
+    fail(`K5a siluet görünümleri "${on.gorunum}" + "${arka.gorunum}" — ` +
+         `arka görünüm ön görünümün kopyası. Kullanıcı iki kez aynı çizimi alıyor.`);
+
+  // K5b — arka yarım kontur, önün x'te AYNASI. shellprojection.hpp bunu bir
+  // yasa olarak ilan ediyor ("the back view is the same curve mirrored in x");
+  // ilan edilmiş bir yasa ölçülmüyorsa yoktur (RULES 6). Aynalanmamış bir arka
+  // = kopyala-yapıştır, ve sayısı 2·|x|'tir, gürültü değil.
+  if (on.yari_kontur.length !== arka.yari_kontur.length) {
+    fail(`K5b ön ${on.yari_kontur.length} segment, arka ${arka.yari_kontur.length} — ` +
+         `iki görünüm aynı kabuktan çıkmıyor.`);
+  } else {
+    let enKotuX = 0, enKotuY = 0;
+    for (let i = 0; i < on.yari_kontur.length; i++)
+      for (let k = 0; k < 8; k += 2) {
+        enKotuX = Math.max(enKotuX, Math.abs(on.yari_kontur[i][k] + arka.yari_kontur[i][k]));
+        enKotuY = Math.max(enKotuY, Math.abs(on.yari_kontur[i][k + 1] - arka.yari_kontur[i][k + 1]));
+      }
+    if (enKotuX < 1e-6 && enKotuY < 1e-6)
+      ok(`K5b arka siluet önün x-aynası: en kötü |x_ön+x_arka| = ${enKotuX.toFixed(6)}mm, ` +
+         `|y_ön−y_arka| = ${enKotuY.toFixed(6)}mm (${on.yari_kontur.length} segment × 4 nokta)`);
+    else
+      fail(`K5b arka siluet önün aynası DEĞİL: en kötü |x_ön+x_arka| = ${enKotuX.toFixed(4)}mm, ` +
+           `|y_ön−y_arka| = ${enKotuY.toFixed(4)}mm. Aynalanmamış bir arka görünüm, ` +
+           `önün kopyasıdır (HM-F2).`);
+  }
+
+  // K5c — arka ölçüler önünkinden AYRI türüyor mu. Kabuk ön/arka simetrik
+  // değil (kesit c(phi) = (a cos phi, bm sin phi + bd sin²phi): merkez-ön
+  // phi=+pi/2'de bm+bd, merkez-arka phi=−pi/2'de −bm+bd), o yüzden
+  // `body_length` iki görünümde AYRI bir sayı olmak zorunda. Eşitse arka
+  // görünüm önden kopyalanmıştır — ve bu, aynanın yakalayamadığı ikinci yön.
+  const olc = (v, ad) => {
+    const m = v.olculer.find((o) => o.ad === ad);
+    if (!m) throw new Error(`siluet ${v.gorunum}: "${ad}" ölçüsü yok`);
+    return m.mm;
+  };
+  const dOn = olc(on, "body_length"), dArka = olc(arka, "body_length");
+  const fark = Math.abs(dOn - dArka);
+  if (fark > 1.0)
+    ok(`K5c arka merkez-arka yayı önden AYRI: ${dOn.toFixed(4)} vs ${dArka.toFixed(4)}mm, ` +
+       `fark ${fark.toFixed(4)}mm — arka görünüm kendi geometrisinden türüyor`);
+  else
+    fail(`K5c ön/arka body_length ${dOn.toFixed(4)} vs ${dArka.toFixed(4)}mm, fark ` +
+         `${fark.toFixed(4)}mm ≤ 1mm. Kabuk ön/arka simetrik DEĞİL; iki yayın eşit ` +
+         `çıkması arka görünümün ön görünümden kopyalandığı anlamına gelir (HM-F2).`);
+}
+
 // --- ilan: manken açık kalemi gizlenmiyor --------------------------------
 {
   const bl = base.flat.bedenlendirme;

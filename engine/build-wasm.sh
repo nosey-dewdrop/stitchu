@@ -84,6 +84,7 @@ ENGINE_SRCS=(
   src/shellprojection.cpp
   src/drape.cpp
   src/seamplan.cpp
+  src/dartrotate.cpp
   src/bodice.cpp
   src/skirt.cpp
   src/ruffle.cpp

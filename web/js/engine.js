@@ -67,8 +67,16 @@ export function loadEngine() {
 // ONE object, two readings, and the browser gets them from the SAME wasm
 // functions the native seam-plan tool and the tek_nesne_check gate call. That
 // is not a convention: measured 2026-08-26, the wasm bundle and the native
-// binary print the SAME node id for EU38 (3f3869aaee8b56b1) and the same id
-// after a 20mm neck drop (35eb8d7cf33be3ef). Two engines would not.
+// binary print the SAME node id for EU38 and the same id after a 20mm neck
+// drop. Two engines would not.
+//
+// ⚠ THE ID ITSELF MOVED IN GECE7 / F5-A AND THAT IS THE POINT (K24). It used to
+// be 3f3869aaee8b56b1 / 35eb8d7cf33be3ef; it is now 0c1d52866882ce53 /
+// d90bb6c4e1b3554d because nodeId() folds in the DRAWN SILHOUETTE, which it
+// previously did not. The referee's mutation HM-F2 made the back technical
+// drawing literally the front one and this token did not budge; it does now.
+// The numbers are not restated as a gate anywhere — tests/tek_nesne_check.mjs
+// reads them off the engine, so a stale pair here can never make a gate lie.
 //
 // `dugum` is the shared-ancestor token. A flat and a pattern carrying the same
 // one came out of one object; carrying different ones, they did not — whatever

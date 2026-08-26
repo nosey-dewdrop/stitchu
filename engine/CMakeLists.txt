@@ -14,6 +14,7 @@ add_library(engine
     src/curvefit.cpp
     src/shellprojection.cpp
     src/seamplan.cpp
+    src/dartrotate.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -140,6 +141,23 @@ add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
 add_test(NAME tek_nesne_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/tek_nesne_check.mjs
                  $<TARGET_FILE:seam-plan>)
+
+# rotate_check (GECE7 / F5-A, K27): op.rotate — pens transferi. Rijit hareketin
+# korunan üç niceliği (ALAN, PENS AÇISI, TRUE BACAKLAR) birebir ölçülür; çevre
+# EŞİTLİK olarak DEĞİL bir KİMLİK olarak yargılanır
+# (cevre_sonra = cevre_once − 2·Lold + 2·Lnew), çünkü belde duran bir pens kol
+# oyuğundakinden uzundur ve "çevre korunur" YANLIŞ bir kapı olurdu.
+add_test(NAME rotate_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/rotate_check.mjs
+                 $<TARGET_FILE:rotate-op>)
+
+# expressability_check (GECE7 / F5-A, §4A'nın kapanış testi): H8-İFADE — ADLI
+# gerçek kalıpların kaçı bugünkü operatör kümesiyle bir programa çevrilebiliyor,
+# çevrilemeyen her biri EKSİK OPERATÖRÜN ADINI veriyor. ⚠ Bu sayı
+# hedef_kosu.mjs'in H8'i DEĞİLDİR: o bir SÖZLÜK sayacıdır ve sözlük daraltılarak
+# düşürülebilir (§0B reward-hacking yüzeyi). İkisi ayrı basılır, harmanlanmaz.
+add_test(NAME expressability_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/expressability_check.mjs)
 
 # sewability_check (V5-A) ve draft_math_check (V5-D), ctest'e V5-E'de BAĞLANDI.
 # İkisi de RATCHET'li: eşikler (Aldrich/Threads bantları, çentik kesim-çizgisi
@@ -787,6 +805,12 @@ target_link_libraries(shell-flat PRIVATE engine)
 # the F3 gate interrogates the shipped engine instead of a re-implementation.
 add_executable(seam-plan tools/seam-plan.cpp)
 target_link_libraries(seam-plan PRIVATE engine)
+
+# rotate-op (GECE7 / F5-A): op.rotate — dart transfer / pivot — run against the
+# LIVE seam plan's front torso panel. Same rule as seam-plan: the tool holds no
+# geometry, every number comes out of src/dartrotate.cpp.
+add_executable(rotate-op tools/rotate-op.cpp)
+target_link_libraries(rotate-op PRIVATE engine)
 
 # waistfold-probe: DIAGNOSTIC, not a gate and not in ctest. Re-runs the sheath
 # with solver knobs that carry no geometric meaning and prints the waist fold,
