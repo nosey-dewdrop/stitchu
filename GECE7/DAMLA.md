@@ -45,3 +45,17 @@ cevap gelince şef **yalnız o kalemi** yeniden koşturur.
   şeridinin kesim talimatı (`1177 x 25 mm ON THE BIAS...`) sayfanın sağ
   kenarından taşıyordu, yani diken kişinin ihtiyacı olan sayı sayfa dışına
   basılıyordu. PDF'te metin kutusu yoktur; yazıcı kaydırmazsa kimse kaydırmaz.
+
+---
+
+## F2 2. TUR — HAKEME GİDEN ÜÇ KALEM (ajan karar veremez, §3.8 md.1/md.2)
+
+| # | Kalem | Ajan ne yaptı (en kısıtlayıcı) |
+|---|---|---|
+| 9 | **`labels-hakem.json` MÜHÜRLÜ ama SEKİZİNCİ bir kırmızı doğurdu.** Hakemin kendi commit'i (`afc1ca2`) dosyayı ekleyince `flat_expresses_spec_check`'in kol değer alanı **8 → 10** oldu: `h10-eksenleri.json`'un `"sleeveStyle": "sleeveStyle"`'ı **ve** `labels-hakem.json`'un `"sleeveStyle": "göremedim"`'i, ikisi de dokuzuncu/onuncu bir kol DEĞERİ sanıldı (`RATCHET sleeveStyle UNEXPRESSED 2/0`). Yani hakemin hükmü yazıldıktan sonra kapı bir kat daha kırmızıydı. K17'nin tam olarak tarif ettiği kusur, bu kez hakemin kaleminde. | **52 "göremedim" hücresi `deger` bloğundan `goremedim` DİZİSİNE taşındı** — bir sentinel dize artık takipli bir JSON'da değer olarak durmuyor. **TEK BİR YARGI DEĞİŞMEDİ:** 143 enum yargısı + 33 `null` + 52 "göremedim" = 228, üçü de birebir yerinde, `gorunurluk` bloğuna dokunulmadı, dönüşüm tersine çevrilebilir. Kapı **daraltılmadı** (K2/K11/K17). Hakemin cevabı düzeltilmedi, yalnız **taşınma şekli** değişti; onaylanması gereken budur. |
+| 10 | **`vision/eval/labels.json`'un `_note` satırı YANLIŞ** ("Dropped files … kept on disk" — dosyalar silindi). Dosya §3.8 md.2 mührüyle korunuyor. | **DOKUNULMADI.** Ajan artık o dosyayı **okumuyor bile** (cevap anahtarı `labels-hakem.json`), sha256 `a2e33825aa6c53828e8633ee94ad3b6900cca06e68d6ecca695704fb1e27cb02` faz öncesiyle aynı. Düzelten hakemdir. |
+| 11 | **n=10 sayıları ölçüldü ama TABANA YAZILMADI** (§3.8 md.1 — tabana yalnız hakem dokunur). Cırcır hâlâ n=5'in beş fotoğrafında koşuyor; n=10 ayrı bir blokta bilgi olarak basılıyor. | **`contract/hedef-kosu-taban.json`'a tek bayt dokunulmadı.** Tabanı n=10'a taşımak, `H10b`/`H10a`/`H10e` anahtarlarını açmak ve H2'nin yeni paydasını (42) tabana yazmak **hakemin işidir**. |
+
+**Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:**
+- **`ctest`te bir test DISABLED durumda: `104 - h10_gate_check`.** Hiçbir kart bundan söz etmedi; kırmızı sayılmıyor çünkü hiç koşmuyor. Adı H10 kapısı olan bir testin kapalı durması, H10'un ölçüldüğü bu fazda ayrıca yargılanmalı. **Kök sebebi ARANMADI — bu fazın işi değil.**
+- **5 VLM turu ÖDENDİ.** `vision/eval/fetch-hedef10.sh`, canlı worker'ın public `/api/analyze` ucu (`PUBLIC_ANALYZE=on`, varsayılan model `claude-opus-4-8`), 5 fotoğraf, tek seferlik. Ham JSON `vision/eval/live-hedef10-2026-08-26.json`'a bankalandı; koşu hâlâ **0 API çağrısı**. **Tam para tutarı ÖLÇÜLMEDİ** — repoda maliyet döndüren bir uç yok, faturayı yalnız Damla'nın Anthropic konsolu gösterir.

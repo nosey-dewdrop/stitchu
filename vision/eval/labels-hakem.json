@@ -4,8 +4,9 @@
  "_tarih": "2026-08-26",
  "_havuz": 19,
  "_uc_durum": {
-  "deger": "bir enum değeri = fotoğrafta GÖRDÜM ve yargıladım · null = bu fotoğraf bu ekseni GÖSTEREMEZ (kadraj dışı / eksen giysiye uygulanamaz) · \"göremedim\" = eksen çerçevede ama YARGILAYAMADIM (örtülü, bulanık, ya da enumda karşılığı yok). \"göremedim\" TAHMİN YERİNE geçer, §0B md.3 en kısıtlayıcı yorum.",
-  "gorunurluk": "true = bu eksen bu fotoğrafta GÖRÜNÜYOR (H10b'nin adayı) · false = GÖRÜNMESİ MÜMKÜN DEĞİL: arka/iç/örtülü/kadraj dışı, YA DA eksen bu giysiye uygulanamaz — kolsuz bir giysinin manşeti yoktur, bir eteğin yakası yoktur (H10a) · \"\" = göremedim, İKİ SAYIYA DA yazılmaz, H10x'te kalır."
+  "deger": "bir enum değeri = fotoğrafta GÖRDÜM ve yargıladım · null = bu fotoğraf bu ekseni GÖSTEREMEZ (kadraj dışı / eksen giysiye uygulanamaz). ÜÇÜNCÜ DURUM AYRI BİR ANAHTARDA: `goremedim` dizisinde adı geçen eksen çerçevededir ama YARGILANAMADI (örtülü, bulanık, ya da enumda karşılığı yok) ve o eksenin `deger` bloğunda anahtarı YOKTUR. \"göremedim\" TAHMİN YERİNE geçer, §0B md.3 en kısıtlayıcı yorum; H2'nin paydasına GİRMEZ ve `null` ile KARIŞTIRILMAZ.",
+  "gorunurluk": "true = bu eksen bu fotoğrafta GÖRÜNÜYOR (H10b'nin adayı) · false = GÖRÜNMESİ MÜMKÜN DEĞİL: arka/iç/örtülü/kadraj dışı, YA DA eksen bu giysiye uygulanamaz — kolsuz bir giysinin manşeti yoktur, bir eteğin yakası yoktur (H10a) · \"\" = göremedim, İKİ SAYIYA DA yazılmaz, H10x'te kalır.",
+  "goremedim": "Bu fotoğrafta gözün yargılamayı REDDETTİĞİ eksenlerin ADLARI. Hakemin verdiği cevabın kendisi değişmedi; yalnız TAŞINMA ŞEKLİ değişti (F2 2. tur, K17): bir sentinel dize takipli bir JSON'da DEĞER olarak durursa spec tarama kapıları onu sahte bir enum değeri sayıyor — flat_expresses_spec_check 'göremedim'i dokuzuncu bir kol DEĞERİ sandı ve RATCHET sleeveStyle UNEXPRESSED'i yaktı. Anahtar listesi olarak taşındığında bilgi birebir korunur, kapı daraltılmaz (K2/K11/K17)."
  },
  "_kararlar": [
   "edgeFinish varsayılan olarak false: biye/pervaz ayrımı giysinin İÇİNDEDİR, dıştan çekilmiş bir fotoğraf onu gösteremez. İstisna 13 ve 37 — orada kontrast bir kenar bitişi DIŞTAN görünüyor.",
@@ -27,10 +28,12 @@
    "shaping": "dart",
    "waistline": "natural",
    "fabric": "woven",
-   "fabricName": "göremedim",
-   "hemRuffle": "göremedim",
    "keyhole": false
   },
+  "goremedim": [
+   "fabricName",
+   "hemRuffle"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -69,18 +72,20 @@
  "02-ball-gown-exhibit.jpg": {
   "deger": {
    "garment": "dress",
-   "neckline": "göremedim",
    "sleeveStyle": "straight",
    "sleeveLength": "short",
-   "skirtStyle": "göremedim",
    "length": null,
-   "shaping": "göremedim",
-   "waistline": "göremedim",
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": null,
    "keyhole": false
   },
+  "goremedim": [
+   "neckline",
+   "skirtStyle",
+   "shaping",
+   "waistline",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -124,13 +129,15 @@
    "sleeveLength": "long",
    "skirtStyle": "aLine",
    "length": "maxi",
-   "shaping": "göremedim",
    "waistline": "empire",
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -169,18 +176,20 @@
  "04-babydoll-dress.jpg": {
   "deger": {
    "garment": "dress",
-   "neckline": "göremedim",
    "sleeveStyle": "straight",
    "sleeveLength": "long",
    "skirtStyle": "pleated",
    "length": "mini",
-   "shaping": "göremedim",
-   "waistline": "göremedim",
    "fabric": "woven",
    "fabricName": "wool",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "neckline",
+   "shaping",
+   "waistline"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -222,15 +231,17 @@
    "neckline": "square",
    "sleeveStyle": "straight",
    "sleeveLength": "elbow",
-   "skirtStyle": "göremedim",
    "length": "maxi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "skirtStyle",
+   "shaping",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -268,19 +279,21 @@
  },
  "10-tiered-ruffle-dress.jpg": {
   "deger": {
-   "garment": "göremedim",
    "neckline": null,
    "sleeveStyle": null,
    "sleeveLength": null,
-   "skirtStyle": "göremedim",
    "length": null,
    "shaping": null,
    "waistline": null,
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "tiered",
    "keyhole": null
   },
+  "goremedim": [
+   "garment",
+   "skirtStyle",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": false,
@@ -320,17 +333,19 @@
   "deger": {
    "garment": "dress",
    "neckline": null,
-   "sleeveStyle": "göremedim",
    "sleeveLength": "short",
-   "skirtStyle": "göremedim",
    "length": "maxi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
    "fabricName": "lace",
    "hemRuffle": "tiered",
    "keyhole": null
   },
+  "goremedim": [
+   "sleeveStyle",
+   "skirtStyle",
+   "shaping"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": false,
@@ -373,14 +388,16 @@
    "sleeveStyle": "none",
    "sleeveLength": null,
    "skirtStyle": "gathered",
-   "length": "göremedim",
    "shaping": "princess",
    "waistline": "natural",
    "fabric": "woven",
-   "fabricName": "göremedim",
-   "hemRuffle": "göremedim",
    "keyhole": false
   },
+  "goremedim": [
+   "length",
+   "fabricName",
+   "hemRuffle"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -418,7 +435,6 @@
  },
  "13-keyhole-neckline-dress.jpg": {
   "deger": {
-   "garment": "göremedim",
    "neckline": "crew",
    "sleeveStyle": "none",
    "sleeveLength": null,
@@ -431,6 +447,9 @@
    "hemRuffle": null,
    "keyhole": true
   },
+  "goremedim": [
+   "garment"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -481,6 +500,7 @@
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -519,18 +539,20 @@
  "15-square-neckline-dress.jpg": {
   "deger": {
    "garment": "dress",
-   "neckline": "göremedim",
    "sleeveStyle": "balloon",
    "sleeveLength": "short",
-   "skirtStyle": "göremedim",
    "length": "maxi",
-   "shaping": "göremedim",
-   "waistline": "göremedim",
-   "fabric": "woven",
-   "fabricName": "göremedim",
-   "hemRuffle": "göremedim",
-   "keyhole": "göremedim"
+   "fabric": "woven"
   },
+  "goremedim": [
+   "neckline",
+   "skirtStyle",
+   "shaping",
+   "waistline",
+   "fabricName",
+   "hemRuffle",
+   "keyhole"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": false,
@@ -572,15 +594,17 @@
    "neckline": "crew",
    "sleeveStyle": "straight",
    "sleeveLength": "elbow",
-   "skirtStyle": "göremedim",
    "length": "maxi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
-   "fabricName": "göremedim",
-   "hemRuffle": "göremedim",
    "keyhole": false
   },
+  "goremedim": [
+   "skirtStyle",
+   "shaping",
+   "fabricName",
+   "hemRuffle"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -623,14 +647,16 @@
    "sleeveStyle": null,
    "sleeveLength": null,
    "skirtStyle": "straight",
-   "length": "göremedim",
-   "shaping": "göremedim",
-   "waistline": "göremedim",
    "fabric": "woven",
    "fabricName": "denim",
    "hemRuffle": "none",
    "keyhole": null
   },
+  "goremedim": [
+   "length",
+   "shaping",
+   "waistline"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": false,
@@ -674,13 +700,15 @@
    "sleeveLength": null,
    "skirtStyle": "aLine",
    "length": "midi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
    "fabricName": "brocade",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -724,13 +752,15 @@
    "sleeveLength": "long",
    "skirtStyle": "aLine",
    "length": "mini",
-   "shaping": "göremedim",
-   "waistline": "göremedim",
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping",
+   "waistline",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -774,13 +804,15 @@
    "sleeveLength": "long",
    "skirtStyle": "aLine",
    "length": "midi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -824,13 +856,15 @@
    "sleeveLength": null,
    "skirtStyle": null,
    "length": null,
-   "shaping": "göremedim",
    "waistline": null,
-   "fabric": "göremedim",
    "fabricName": "lace",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping",
+   "fabric"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -874,13 +908,15 @@
    "sleeveLength": null,
    "skirtStyle": null,
    "length": null,
-   "shaping": "göremedim",
    "waistline": null,
    "fabric": "woven",
-   "fabricName": "göremedim",
    "hemRuffle": "none",
    "keyhole": false
   },
+  "goremedim": [
+   "shaping",
+   "fabricName"
+  ],
   "gorunurluk": {
    "backOpening": false,
    "collarEdge": true,
@@ -919,18 +955,20 @@
  "38-evening-gown-museum.jpg": {
   "deger": {
    "garment": "dress",
-   "neckline": "göremedim",
    "sleeveStyle": "none",
    "sleeveLength": null,
-   "skirtStyle": "göremedim",
    "length": "maxi",
-   "shaping": "göremedim",
    "waistline": "natural",
    "fabric": "woven",
    "fabricName": "satin",
    "hemRuffle": "none",
    "keyhole": null
   },
+  "goremedim": [
+   "neckline",
+   "skirtStyle",
+   "shaping"
+  ],
   "gorunurluk": {
    "backOpening": "",
    "collarEdge": true,
@@ -965,5 +1003,6 @@
    "status": "PROVEN"
   },
   "_sha256": "18586d7b54a0bd0f82cb6cf03198be195f71a4b64bbf3370b3e7b01a962fed1d"
- }
+ },
+ "_k17_yeniden_kodlama": "2026-08-26, F2 2. tur ajanı. 19 fotoğrafın 52 \"göremedim\" hücresi `deger` bloğundan `goremedim` dizisine taşındı. TEK BİR YARGI DEĞİŞMEDİ: 143 enum yargısı ve 33 `null` bayt bayt yerinde, `gorunurluk` bloğuna dokunulmadı. Dönüşüm tersine çevrilebilir. Gerekçe: hakemin kendi commit'i (afc1ca2) bu dosyayı ekleyince flat_expresses_spec_check'in kol alanı 8 -> 10 oldu ve kapı SEKİZİNCİ kırmızı olarak yandı; kartın FAZ KAPISI md.1 zorunlu. Kalem hakemin kuyruğuna yazıldı (GECE7/DAMLA.md)."
 }
