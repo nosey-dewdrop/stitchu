@@ -96,7 +96,12 @@ const GIYSILER = [
             "KÜNYE: FreeSewing docs, \"Bella\", freesewing.eu/docs/designs/bella/ " +
             "(\"A FreeSewing pattern for a womenswear bodice block\"; kesim: 1 Front on fold + " +
             "2 Back; Techniques listesinde \"dart\") ve tasarım seçenekleri sayfası " +
-            "freesewing.eu/docs/designs/bella/options/. Kod: codeberg.org/freesewing/freesewing " +
+            "freesewing.eu/docs/designs/bella/options/. ⭐ BORÇ 59 KAPANDI (F5-D hakemi, §3.8 " +
+            "md.1): iki alıntının BİREBİR OLMADIĞI bildirilmişti; hakem seçenek sayfalarını " +
+            "tek tek açtı ve ikisi de kaynağın KENDİ ikinci cümlesi çıktı — " +
+            "freesewing.eu/docs/designs/bella/options/bustdartlength/ ve " +
+            "freesewing.eu/docs/designs/bella/options/bustdartangle/. SAPMA YOKTU, " +
+            "tek bayt alıntı değişmedi. Kod: codeberg.org/freesewing/freesewing " +
             "designs/bella/src/back.mjs (repoda knowledge/seed_round2_formulas.sql:22 " +
             "aynı dosyadan pens formülünü künyeli taşıyor).",
     gerektirir: {
@@ -119,8 +124,17 @@ const GIYSILER = [
             "KÜNYE: FreeSewing docs, \"Aaron A-Shirt\", freesewing.eu/docs/designs/aaron/ " +
             "ve tasarım seçenekleri sayfası freesewing.eu/docs/designs/aaron/options/.",
     gerektirir: {
-      "op.split": "ön/arka gövde — KÜNYE: kesim talimatı \"Cut 1 back on the fold\" + " +
-                  "\"Cut 1 front on the fold\"",
+      // 🚨 BORÇ 60 — F5-D hakemi: bu EŞLEME ZAYIF ve öyle DAMGALANDI, SİLİNMEDİ.
+      // "Cut 1 back on the fold" + "Cut 1 front on the fold" İKİ AYRI parçanın
+      // katlamada kesilmesidir; op.split ise BİR panelin kendi ölçülen sütun
+      // profilinden İKİYE bölünmesidir. İkisi aynı şey değil. Gereksinim
+      // KALDIRILMADI çünkü kaldırmak paydayı gevşetmek olurdu (§0B / K31); doğru
+      // operatörün adı ise UYDURULMADI (§3.10). Bugün bu satırın sayıya etkisi
+      // YOK — aaron zaten op.extend + op.attach'tan çevrilemiyor (ölçüldü).
+      "op.split": "DAYANAK ZAYIF (borç 60, hakem damgaladı) — ön/arka gövde. " +
+                  "KÜNYE: kesim talimatı \"Cut 1 back on the fold\" + " +
+                  "\"Cut 1 front on the fold\". ⚠ Bu bir KATLAMA, bir panelin " +
+                  "BÖLÜNMESİ değil; sayı durur ama kazanım olarak dışarı söylenmez.",
       "op.extend": "boy ve kol oyuğu derinliği sürekli eksen — KÜNYE: options sayfası " +
                    "\"Length bonus: The amount to lengthen the garment. A negative value will " +
                    "shorten it\" (−20%…60%) ve \"Armhole depth: Controls the depth of the " +
