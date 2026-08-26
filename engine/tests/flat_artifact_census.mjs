@@ -190,7 +190,18 @@ if (flat) {
      'KÖK ÇÖZÜM: yarı-genişlik h boyunca monoton örneklendiği için öz-kesişim ancak halfWidthAt işaret değiştirirse doğar; çözüm kesim değil, negatif yarı-genişliği Result::Err ile reddetmek.'],
     ['3 eğrilik süreksizliği (C1)', total.c1,
      'engine/src/surfacepattern.cpp:71-81 (GarmentSurf::effectiveSection, SKIM RUN başlangıcı h=skimBaseH=bel) — ikincil aday: engine/src/surfacepattern.cpp:43-52 (profile()\'ın halkalar arası DOĞRUSAL lin() interpolasyonu). shellprojection.cpp:104\'ün fitCubics\'i DEĞİL: kırık, fit\'ten ÖNCE ham örneklenmiş poligonda ölçüldü.',
-     'KÖK ÇÖZÜM: bel yüksekliğinin ÜSTÜNDE kabuk "skim envelope" yasasına, ALTINDA halka interpolasyonuna uyuyor; iki yasa skimBaseH\'de HİÇBİR TEĞET KOŞULU OLMADAN buluşuyor, o yüzden bel bir V köşesi. Kalçada bu sorun zaten çözülmüş (surfacepattern.cpp:55-60, blendMM ile kuadratik köşe yuvarlama) — aynı köşe yuvarlaması BELDE YOK; ya oraya da uygulanmalı ya da skim run\'ın alt ucu halka interpolasyonunun bel eğimiyle eşitlenmeli.'],
+     'KÖK ÇÖZÜM: bel yüksekliğinin ÜSTÜNDE kabuk "skim envelope" yasasına, ALTINDA halka interpolasyonuna uyuyor; iki yasa skimBaseH\'de HİÇBİR TEĞET KOŞULU OLMADAN buluşuyor, o yüzden bel bir V köşesi. Kalçada bu sorun zaten çözülmüş (surfacepattern.cpp:55-60, blendMM ile kuadratik köşe yuvarlama) — aynı köşe yuvarlaması BELDE YOK; ya oraya da uygulanmalı ya da skim run\'ın alt ucu halka interpolasyonunun bel eğimiyle eşitlenmeli.\n'
+   + '      ★ KÖK ÇÖZÜMÜN FİYATI ÖLÇÜLDÜ (GECE7 / F4, İŞ 3) — ve fiyatı ödemek bu ajanın yetkisi DEĞİL (§3.8 md.4).\n'
+   + '      EU38\'de belin İKİ tarafındaki eğimler: alttan −0.24963, üstten +0.11469 (yarı-genişlik/mm), sıçrama 0.36433 = 20.5594°.\n'
+   + '      Bel bir MİNİMUMDUR (V\'nin ucu), o yüzden onu C1 yapan her yuvarlama bel yarı-genişliğini YÜKSELTMEK zorundadır:\n'
+   + '      kuadratik köşe yuvarlaması b yarı-genişliğinde beli 0.25·b·0.36433 mm açar. Bu kapı HAM örneklenmiş poligonu\n'
+   + '      4.0mm adımla ölçtüğü için 20.5594°\'lik dönüşün adım başına 1°\'nin altına inmesi 2b ≥ 82mm, yani b ≥ 42mm ister.\n'
+   + '      ÖLÇÜLEN BEDEL: b=42mm -> bel halkası 725.0000 -> 737.7779 mm (+12.7779). Kalçanın kendi kadranıyla (b=90mm)\n'
+   + '      725.0000 -> 752.4706 (+27.4706). Bel halkası bir TASARIM SAYISI DEĞİL: bolluk Steiner-tam çözülüp 725 hedefine\n'
+   + '      0.073mm ile oturtuldu (CLAUDE.md KOŞU 4B) ve bu halka bütün kalıbın TEK paylaşılan halkası. Yani bu kırığı\n'
+   + '      kapatmak, kaynaklı bir sayıyı 12.78mm oynatmak demektir; eşiği gevşetmek de, kapıyı susturmak da yasak.\n'
+   + '      KARAR HAKEMİN (K29/K36/K40 emsali). Üçüncü bir yol: A-line eteğin bel eğimini skim koniyle eşitlemek — o da\n'
+   + '      etek yasasını (1960 Big-4 kaynaklı hem sweep) değiştirir ve ÖLÇÜLMEDİ.'],
     ['4 dejenere segment / sıfır alan', total.degen + total.zeroArea,
      'engine/src/shellprojection.cpp:94-97 + 112-115 (her koşu r.top..r.bot KAPALI aralık örnekliyor, ardışık koşuların uç noktası AYNI h)',
      'KÖK ÇÖZÜM: koşu sınırındaki nokta iki kez push_back ediliyor (bir önceki koşunun son noktası = sonraki koşunun ilk noktası). Kırpma değil: ikinci koşu i=1\'den başlamalı ya da out.outline\'a yazarken sınır noktası tekilleştirilmeli.'],

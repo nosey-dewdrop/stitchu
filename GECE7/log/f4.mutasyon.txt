@@ -1,0 +1,62 @@
+=== F4 MUTASYONLARI — 2026-08-27 01:00 ===
+    temiz agac: ikili b511b7443664cedacfde6c113d837ae0
+    temiz agac olculen: body_length=728.8259 H6=0
+    temiz agac kapilari: agree EXIT 0 (YESIL) · conv EXIT 0 (YESIL)
+
+--- IS 1 (K23): body_length'in BASLANGICI bir kapiya bagli mi ---
+
+M1 engine/src/shellprojection.cpp — MERKEZ CIZGIYI YINE OMUZ HALKASINDAN BASLAT
+    Kartin K23'u tam olarak bu haldeydi: flat merkez yayi omuz HALKASINDAN
+    (yatay kesit) yururken kalip kumasin KESILDIGI yerden basliyordu.
+    flat_pattern_agree_check YANMALI ve sapma -3.7979%'a donmeli.
+        YAYILIM: git numstat 32	4	engine/src/shellprojection.cpp  -> bu kartta YAZILAN dosya
+  M1  ikili[shell-flat|surface-pattern|seam-plan|shell-audit] b511b7443664cedacfde6c113d837ae0 -> 1ec4bfef3664ceda3e16d667a8810684
+        olculen: body_length=728.8259 H6=0  ->  body_length=757.5584 H6=0
+        kapi engine/tests/flat_pattern_agree_check.mjs: EXIT 1 (KIRMIZI)
+        geri alindi: ikili b511b7443664cedacfde6c113d837ae0 (taban b511b7443664cedacfde6c113d837ae0) · olculen body_length=728.8259 H6=0 · kapi: EXIT 0 (YESIL)
+
+M2 engine/src/surfacepattern.cpp — YAYINLANAN UST SINIR YUKSEKLIGINI BOZ  (numstat BOS)
+    topColZMM cozulmus noktanin z'si olmaktan cikip 5mm yukari kayiyor.
+    Kalip panelleri DEGISMEZ (onlar tH[j]'yi kullaniyor), yalniz YAYINLANAN
+    sinir yalan soyler. Kapi bunu gormezse 'flat, kalibin cozdugu siniri
+    okuyor' cumlesi olculmemis bir iddiadir.
+        YAYILIM: git numstat F4-oncesi..HEAD -- engine/src/surfacepattern.cpp  BOS -> bu kartta DOKUNULMAMIS dosya
+  M2  ikili[shell-flat|surface-pattern|seam-plan|shell-audit] b511b7443664cedacfde6c113d837ae0 -> 1b1771273a455a426dc1016f16a7f3df
+        olculen: body_length=728.8259 H6=0  ->  body_length=733.8605 H6=0
+        kapi engine/tests/flat_pattern_agree_check.mjs: EXIT 0 (YESIL)
+        geri alindi: ikili b511b7443664cedacfde6c113d837ae0 (taban b511b7443664cedacfde6c113d837ae0) · olculen body_length=728.8259 H6=0 · kapi: EXIT 0 (YESIL)
+
+--- IS 2 (H6): manken capasi ILAN EDILMIS bir bedene bagli mi ---
+
+M3 contract/mannequin-chart-v1.json — ZINCIRI KIR
+    omuz/gogus orani 0.9570 -> 0.9000. Kanun dosyasindaki shoulderTipX
+    artik mankenden TUREMIYOR. Sekiz stil hala birbirini tutuyor, yani
+    bolum 1 YESIL kalir; yanmasi gereken 1d zincir kolu.
+        YAYILIM: git numstat 50	0	contract/mannequin-chart-v1.json  -> bu kartta YAZILAN dosya
+  M3  IKILI DE OLCULEN SAYI DA KIMILDAMADI (b511b7443664cedacfde6c113d837ae0 · body_length=728.8259 H6=0)
+        kaynak DEGISTI (cmp farkli) — derlenen bir yol yok, hukum YALNIZ kapinin cikisina dayaniyor
+        kapi engine/tests/flat_convention_check.mjs: EXIT 1 (KIRMIZI)
+        geri alindi: ikili b511b7443664cedacfde6c113d837ae0 (taban b511b7443664cedacfde6c113d837ae0) · olculen body_length=728.8259 H6=0 · kapi: EXIT 0 (YESIL)
+
+M4 web/lib/flat-core.js — CAPAYI OYNAT  (numstat BOS)
+    Uretim kalemi omuz yari-genisligini croquis'ten 2 birim (6 mm) ICERI
+    aliyor. H6 SIFIRDAN BUYUMELI: cizilen flat artik ilan edilmis mankenin
+    capasinda degil.
+        YAYILIM: git numstat F4-oncesi..HEAD -- web/lib/flat-core.js  BOS -> bu kartta DOKUNULMAMIS dosya
+  M4  ikili[shell-flat|surface-pattern|seam-plan|shell-audit] b511b7443664cedacfde6c113d837ae0 -> b511b7443664cedacfde6c113d837ae0
+        olculen: body_length=728.8259 H6=0  ->  body_length=728.8259 H6=16
+        kapi engine/tests/flat_convention_check.mjs: EXIT 1 (KIRMIZI)
+        geri alindi: ikili b511b7443664cedacfde6c113d837ae0 (taban b511b7443664cedacfde6c113d837ae0) · olculen body_length=728.8259 H6=0 · kapi: EXIT 0 (YESIL)
+
+M5 engine/src/seamplan.cpp — FARKIN KAYNAGINI SIL
+    bedenlendirme blogu cizelgeyi ve donusumu hala basiyor ama farkin
+    NEREDEN geldigini soylemiyor. tek_nesne_check'in sertlestirilmis §2
+    kolu YANMALI: sessizce uydurulmus bir manken farki gecemez.
+        YAYILIM: git numstat 20	9	engine/src/seamplan.cpp  -> bu kartta YAZILAN dosya
+  M5  ikili[shell-flat|surface-pattern|seam-plan|shell-audit] b511b7443664cedacfde6c113d837ae0 -> b511b7443664cedafb240ca5678116c6
+        olculen: body_length=728.8259 H6=0  ->  body_length=728.8259 H6=0
+        ⚠ OLCULEN SAYI KIMILDAMADI — hukum yalniz kapinin cikisina dayaniyor
+        kapi engine/tests/tek_nesne_check.mjs: EXIT 1 (KIRMIZI)
+        geri alindi: ikili b511b7443664cedacfde6c113d837ae0 (taban b511b7443664cedacfde6c113d837ae0) · olculen body_length=728.8259 H6=0 · kapi: EXIT 0 (YESIL)
+
+=== BITTI — agac: ===

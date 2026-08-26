@@ -56,7 +56,13 @@ mutate() {  # ad dosya perl-ifadesi kapi
   fi
   build; local h1 s1; h1=$(ikili); s1=$(sayilar)
   if [ "$h0" = "$h1" ] && [ "$s0" = "$s1" ]; then
-    echo "  $ad  IKILI DE SAYI DA KIMILDAMADI ($h0 · $s0) — HUKUM YOK"
+    # IKILI DE SAYI DA DURDU. Derlenen bir kaynak icin bu HUKUM YOK demektir
+    # (bayat ikili / atil yol). Ama mutasyon bir VERI dosyasindaysa derlenecek
+    # bir sey yoktur ve kapinin okudugu sayi kapinin KENDI icinde hesaplanir —
+    # o yuzden kapi yine de kosulur ve hukmun neye dayandigi ACIKCA yazilir.
+    echo "  $ad  IKILI DE OLCULEN SAYI DA KIMILDAMADI ($h0 · $s0)"
+    echo "        kaynak DEGISTI (cmp farkli) — derlenen bir yol yok, hukum YALNIZ kapinin cikisina dayaniyor"
+    echo "        kapi $kapi: $(run_gate "$kapi")"
   else
     echo "  $ad  ikili[shell-flat|surface-pattern|seam-plan|shell-audit] $h0 -> $h1"
     echo "        olculen: $s0  ->  $s1"
