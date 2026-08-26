@@ -41,10 +41,14 @@
    "uyari": "kalıpta yalnız armhole+sleeve_cap rolleri ilan edili; diğer dikişler ÖLÇÜLEMİYOR"
   },
   "H6_konvansiyon": {
-   "deger": null,
-   "n": 5,
-   "birim": "ÖLÇEMEDİM — manken çapası flat_convention_check içinde, bu koşuya bağlanmadı",
-   "yon": "dusuk"
+   "deger": 0,
+   "n": 8,
+   "birim": "0 flat manken çapasından sapıyor / 16 flat (n=8 stil × ön+arka)",
+   "yon": "dusuk",
+   "onceki": "ÖLÇEMEDİM — manken çapası flat_convention_check içinde, bu koşuya bağlanmadı (n=5)",
+   "uyari": "PAYDA BU KOŞUNUN 5/10 FOTOĞRAFI DEĞİL, flat_convention_check'in 8 STİLLİK matrisidir — H1..H11 ile AYNI n DEĞİL, harmanlanmaz (§3.6 'her sayının yanına n'). Sayı hedef_kosu.mjs'de HESAPLANMIYOR, o kapıdan OKUNUYOR: ikinci bir hesap ikinci bir doğrudur.",
+   "kim": "KOSU-v7 F4 hakemi, 2026-08-27 (§3.8 md.1 — tabana yalnız hakem dokunur). F4 ajanı sayıyı ÖLÇTÜ ve bir KAPIYA bağladı (flat_convention_check §1d, iki kollu: zincir + sayı, ikisi de mutasyonla kırmızı yandı); hedef_kosu.mjs:349 MÜHÜRLÜ olduğu için oraya basamadı ve kartında öyle yazdı — doğru davrandı, yetkisi yoktu. Bağlayan hakemdir.",
+   "mutasyon": "HM-7 (hakem, web/lib/flat-core.js — numstat BOŞ): croquis omuz çapası 2 birim oynatıldı, H6 0 -> 16, geri alınınca 0. Taban yazılmadan ÖNCE hedef_kosu EXIT 0 kalıyordu (null ile kıyas yok); taban 0'a yazıldıktan SONRA 16 bir KÖTÜLEŞMEDİR ve cırcır düşer."
   },
   "H8_ifade_edilemeyen": {
    "deger": 31,

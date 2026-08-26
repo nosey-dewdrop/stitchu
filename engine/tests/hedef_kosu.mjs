@@ -22,6 +22,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
@@ -267,7 +268,51 @@ for (const file of files) {
       const A = armhole.reduce((s, e) => s + e.L, 0);
       const C = cap.reduce((s, e) => s + e.L, 0);
       r.seamPairs.push({ pair: 'armhole↔sleeve_cap', a: +A.toFixed(2), b: +C.toFixed(2), diff: +(C - A).toFixed(2) });
+      // ⚠ VE BU ÇİFT ÖN/ARKAYI TEK SAYIYA TOPLUYOR — SÖYLENİYOR, ONARILMIYOR
+      // (GECE7 / F4 hakemi, borç 73). Ön +20 mm / arka −20 mm olan bir giysi
+      // yukarıdaki farkta KUSURSUZ okunur. Ayırmanın YOLU YOK ve bu bir tercih
+      // değil bir ÖLÇÜM: `sleeve_cap` motorda TEK ve BÖLÜNMEMİŞ bir yaydır
+      // (sleeve.cpp:194, locket.cpp:379 — tek EdgeRole, omuz çentiğinde ön/arka
+      // yarısı ilan EDİLMİYOR), yani kapağın hangi yarısının ön oyuğa gittiğini
+      // söyleyen bir beyan yok. Uydurmak §3.10 ihlalidir. Kapatmanın tek yolu
+      // MOTORUN kapağı çentikte ikiye ilan etmesidir; o bir faz işidir, bir kapı
+      // düzeltmesi değil. Kör nokta burada SAYIYLA basılıyor ki gizli kalmasın.
+      const AF = (byRole.armhole_front || []).reduce((s, e) => s + e.L, 0);
+      const AB = (byRole.armhole_back || []).reduce((s, e) => s + e.L, 0);
+      r.korNokta = { pair: 'armhole↔sleeve_cap', on: +AF.toFixed(2), arka: +AB.toFixed(2),
+                     neden: 'sleeve_cap TEK ve BÖLÜNMEMİŞ yay — ön/arka ayrı yargılanamıyor' };
     }
+    // ── PAYDA NEDEN 5? K53'ÜN CEVABI DÜZELTİLDİ, VE YERİNE ÖLÇÜLEN BİR CEVAP
+    // KONDU (GECE7 / F4 hakemi, borç 51/73).
+    //
+    // K53 "payda bir TAVANDIR, motorda yapılacak hiçbir iş onu büyütemez" dedi;
+    // teşhisi (`push` bir döngüde değil) doğruydu ama sonucu FAZLA GENİŞTİ.
+    // Motor İKİNCİ bir çifti adıyla ZATEN ilan ediyor — sleeve.cpp:200-213 kendi
+    // yorumunda yazıyor: "The underarm seam is the piece's TWO side edges sewn
+    // to each other, so both carry the name." Hakem ölçtü: n=5'in BEŞ satırında
+    // da `sleeve_underarm` İKİ kenar. Yani payda 5 -> 10 yapılabilirdi.
+    //
+    // 🚨 YAPILMADI, VE SEBEBİ BİR ÖLÇÜM: O ÇİFT İNŞADAN SIFIR.
+    // sleeve.cpp:196-213 sol kenarı sağ kenarın AYNASI olarak kuruyor, yani iki
+    // uzunluk bit-aynı. Hakemin kendi koşumu, beş satır:
+    //     419.60/419.60  96.02/96.02  419.60/419.60  419.60/419.60  205.77/205.77
+    //     -> diff 0.00, BEŞİNDE DE, ve başka türlü ÇIKAMAZ.
+    // Payda 5 -> 10 olurdu, pay 0'da KALIRDI ve KALMAK ZORUNDA OLURDU: hiçbir
+    // kusur o çifti kırmızı yakamaz. Bu bir SERTLEŞME değil, cırcırın kendi
+    // sayısını süslemesidir (§3.8 md.3: kırmızı olamayan kapı kapı değildir;
+    // §0B: yükselen bir sayı bilgi taşımıyorsa kazanım değildir).
+    // Hakem bu yüzden paydayı KENDİ ELİYLE BÜYÜTMEDİ.
+    //
+    // PAYDAYI BÜYÜTEN GERÇEK İŞ, ve artık adı var: motor `sleeve_cap`ı omuz
+    // ÇENTİĞİNDE ön/arka diye ikiye İLAN EDECEK. O zaman armhole_front ↔ ön
+    // kapak ve armhole_back ↔ arka kapak İKİ ayrı çift olur, ikisi de gerçekten
+    // kırmızı yanabilir, ve yukarıdaki kör nokta da kapanır. Bu bir FAZ işidir,
+    // bir kapı düzeltmesi değil.
+    const under = byRole.sleeve_underarm || [];
+    if (under.length === 2)
+      r.aynaCift = { pair: 'sleeve_underarm↔sleeve_underarm',
+                     a: +under[0].L.toFixed(2), b: +under[1].L.toFixed(2),
+                     neden: 'İNŞADAN AYNA — sayılmıyor, payda süslenmesin' };
   } else {
     r.draftErr = d.error || 'kalıp yok';
   }
@@ -335,6 +380,45 @@ const badPairs = pairs.filter((p) => p.a > 0 && Math.abs(p.diff / p.a) > 0.08).l
 const times = rows.map((r) => r.ms).sort((a, b) => a - b);
 const median = times.length ? times[Math.floor(times.length / 2)] : 0;
 
+// ── H6: KONVANSİYON SAPMASI — ON İKİ FAZDIR "ÖLÇEMEDİM", ARTIK DEĞİL ────────
+// (GECE7 / F4 hakemi, §3.8 md.1. F4 ajanı sayıyı ÖLÇTÜ ve bir KAPIYA bağladı
+// (flat_convention_check §1d), ama bu dosya mühürlü olduğu için buraya
+// basamadı ve kendi kartında öyle yazdı — doğru davrandı, yetkisi yoktu.)
+//
+// SAYI BURADA HESAPLANMIYOR, OKUNUYOR. İkinci bir hesap ikinci bir doğru
+// demektir ve bu koşunun tekrar tekrar öldürdüğü hata sınıfı odur; kapı
+// (flat_convention_check §1d) zaten (a) çapaların manken çizelgesinden
+// aritmetikle türediğini ve (b) kaç flat'in o tek mankenden toleransın dışına
+// düştüğünü ölçüyor. Cırcır o kapının BASTIĞI sayıyı alır.
+//
+// Kapı 0.45 sn sürüyor (hakemin kendi ctest koşusu), yani maliyet ölçüm
+// gürültüsü içinde. Kapı KIRMIZI olsa bile sayı okunur: "kapı düştü" ile
+// "sayı yok" iki ayrı şeydir (K33'ün dersi) ve cırcırın işi sayıyı taşımaktır.
+// Okunamazsa ÖLÇEMEDİM'e döner ve sebebi yazılır — uydurulmaz (§3.10).
+const H6 = (() => {
+  const kapi = join(ROOT, 'engine/tests/flat_convention_check.mjs');
+  if (!existsSync(kapi))
+    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_convention_check bulunamadı', uyari: undefined };
+  let cikti = '';
+  try {
+    cikti = execFileSync(process.execPath, [kapi], { encoding: 'utf8', maxBuffer: 64 << 20 });
+  } catch (e) {
+    // Kapı EXIT 1 verse bile stdout'u elimizde: sayı orada.
+    cikti = String((e && e.stdout) || '');
+  }
+  const m = /H6 = (\d+)\s+\(manken capasi tek cizelgeden sapan flat sayisi \/ (\d+) flat, n=(\d+) stil/.exec(cikti);
+  if (!m)
+    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_convention_check H6 satırını basmadı', uyari: undefined };
+  const [, sapan, flatN, stilN] = m;
+  return {
+    deger: Number(sapan), n: Number(stilN),
+    birim: `${sapan} flat manken çapasından sapıyor / ${flatN} flat (n=${stilN} stil × ön+arka)`,
+    uyari: 'PAYDA BU KOŞUNUN 5/10 FOTOĞRAFI DEĞİL, flat_convention_check\'in 8 STİLLİK '
+         + 'matrisidir — H1..H11 ile AYNI n DEĞİL, harmanlanmaz (§3.6 "her sayının yanına n"). '
+         + 'Sayı burada hesaplanmıyor, o kapıdan OKUNUYOR: ikinci bir hesap ikinci bir doğrudur.',
+  };
+})();
+
 return {
   H1_tamamlanma:      { deger: done,               n, birim: `${done}/${n} girdi kalıp+flat üretti`, yon: 'yuksek' },
   H2_gorulen_isabet:  { deger: pct(A, J),          n, birim: `%${pct(A, J)} (${A}/${J} alan yargısı)`, yon: 'yuksek',
@@ -346,7 +430,7 @@ return {
   H4_gereksiz_dikis:  { deger: null,               n, birim: 'ÖLÇEMEDİM — F5 dört sebep katmanı kodda yok', yon: 'dusuk' },
   H5_dikilebilirlik:  { deger: badPairs,           n, birim: `${badPairs} eşleşmeyen çift / ${pairs.length} ölçülebilen çift`, yon: 'dusuk',
                         uyari: 'kalıpta yalnız armhole+sleeve_cap rolleri ilan edili; diğer dikişler ÖLÇÜLEMİYOR' },
-  H6_konvansiyon:     { deger: null,               n, birim: 'ÖLÇEMEDİM — manken çapası flat_convention_check içinde, bu koşuya bağlanmadı', yon: 'dusuk' },
+  H6_konvansiyon:     { deger: H6.deger,           n: H6.n, birim: H6.birim, yon: 'dusuk', uyari: H6.uyari },
   H8_ifade_edilemeyen:{ deger: rows.reduce((s, r) => s + r.oov, 0) + OOD, n, yon: 'dusuk',
                         birim: `${rows.reduce((s, r) => s + r.oov, 0)} outOfVocab terim + ${OOD} sözlükte olmayan alan okuması` },
   H9_cikarim_makullugu:{ deger: null,              n, birim: 'ÖLÇEMEDİM — görünmeyen alanda makullük hakemi yok', yon: 'yuksek' },
