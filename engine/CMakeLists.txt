@@ -16,6 +16,7 @@ add_library(engine
     src/seamplan.cpp
     src/dartrotate.cpp
     src/dartsuppress.cpp
+    src/panelsplit.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -148,9 +149,27 @@ add_test(NAME tek_nesne_check
 # EŞİTLİK olarak DEĞİL bir KİMLİK olarak yargılanır
 # (cevre_sonra = cevre_once − 2·Lold + 2·Lnew), çünkü belde duran bir pens kol
 # oyuğundakinden uzundur ve "çevre korunur" YANLIŞ bir kapı olurdu.
+# ⏱ op_fixture (GECE7 / F5-C İŞ 0a, borç 43 / K37) — PAYLAŞILAN OPERATÖR
+# FİKSTÜRÜ. ÖLÇÜLDÜ: `suppress-op` 375.74 sn sürüyor ve o sürenin ~%96'sı TEK
+# bir plan kurulumundan geliyor (skimBodice=OFF + motorun kendi pensleri AÇIK —
+# çift bastırma koşumu; shipped ~5 sn, following ~8 sn, doubled ~360 sn).
+# O 375 saniye süitte İKİ KEZ ödeniyordu: bir kez `suppress_check`, bir kez
+# `rotate_check`'in R0 çapraz ölçümü için. Araç artık BURADA bir kez koşar ve
+# JSON'unu yazar; iki kapı (ve `split_check`'in yan yana bastığı sayı) onu okur.
+#
+# ⚠ KAPI SİLİNMEDİ, GEVŞETİLMEDİ, ESİK OYNAMADI (§3.8 md.4). Okunan JSON aynı
+# ikilinin aynı koşumudur, ölçülen hiçbir sayı değişmez. K36 korunuyor: R0 hâlâ
+# ÇAPRAZ bir ölçüm — kıyaslanan sayı hâlâ suppress-op'un motordan okuduğu
+# develop-deficit, bir sabit değil; iki kapı da dosyanın `op` alanını denetliyor.
+add_test(NAME op_fixture
+         COMMAND $<TARGET_FILE:suppress-op> EU38
+                 -o ${CMAKE_CURRENT_BINARY_DIR}/op-suppress.json)
+set_tests_properties(op_fixture PROPERTIES FIXTURES_SETUP OPFIX TIMEOUT 1800)
+
 add_test(NAME rotate_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/rotate_check.mjs
-                 $<TARGET_FILE:rotate-op> $<TARGET_FILE:suppress-op>)
+                 $<TARGET_FILE:rotate-op> ${CMAKE_CURRENT_BINARY_DIR}/op-suppress.json)
+set_tests_properties(rotate_check PROPERTIES FIXTURES_REQUIRED OPFIX)
 
 # expressability_check (GECE7 / F5-A, §4A'nın kapanış testi): H8-İFADE — ADLI
 # gerçek kalıpların kaçı bugünkü operatör kümesiyle bir programa çevrilebiliyor,
@@ -163,7 +182,22 @@ add_test(NAME rotate_check
 # while leaving the geometry alone.
 add_test(NAME suppress_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/suppress_check.mjs
-                 $<TARGET_FILE:suppress-op>)
+                 ${CMAKE_CURRENT_BINARY_DIR}/op-suppress.json)
+set_tests_properties(suppress_check PROPERTIES FIXTURES_REQUIRED OPFIX)
+
+# split_check (GECE7 / F5-C, §4A): op.split — panel bölme. Bölme YERİ bir
+# kesirden değil, panelin KENDİ ölçülen sütun-deficit profilinden düşer ve bu
+# kapı o argmin'i kendi içinde YENİDEN HESAPLAYIP karşılaştırır; bölme yerini
+# bir sabite çeviren mutasyon orada yanar. Korunan nicelikler ÖLÇÜLÜR (alan,
+# işaretli deficit, kesilen kenarın iki tarafı), KORUNMAYAN (çevre) bir eşitlik
+# olarak değil bir KİMLİK olarak yargılanır (K29). Ve süite ÜÇÜNCÜ bir 375
+# saniyelik kapı eklemez: split-op yalnız iki ucuz planı kuruyor, 12.8 sn.
+#
+# 🚨 K35: `op.split`'in `motorda_kapi`'si TAM OLARAK bu adı taşımak zorunda —
+# `op.X -> X_check`. Var olan bir kapının adını ödünç almak kırmızı yanar.
+add_test(NAME split_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/split_check.mjs
+                 $<TARGET_FILE:split-op>)
 
 add_test(NAME expressability_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/expressability_check.mjs)
@@ -827,6 +861,13 @@ target_link_libraries(rotate-op PRIVATE engine)
 # the angle off the panel and has no parameter for it.
 add_executable(suppress-op tools/suppress-op.cpp)
 target_link_libraries(suppress-op PRIVATE engine)
+
+# split-op (GECE7 / F5-C): op.split — the panel divided at the column its OWN
+# measured per-column develop-deficit picks out. Same rule as seam-plan,
+# rotate-op and suppress-op: the tool holds no geometry, and here it holds no
+# FRACTION either — splitPanel() takes a panel and nothing else.
+add_executable(split-op tools/split-op.cpp)
+target_link_libraries(split-op PRIVATE engine)
 
 # shell-audit (GECE7 / F5-B, IS 0b): a DENSE POLYLINE sampling of the shipped
 # shell, so a gate can recompute every published ShellMeasure by a second path

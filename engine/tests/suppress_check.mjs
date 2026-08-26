@@ -56,13 +56,21 @@
 // operatörün çalıştığı panel `maxDartDeg = 0` ile BÜTÜN geliyor, ve bu bir
 // kaçamak değil bir ölçüm: kapı çift bastırmanın kestiğini de doğruluyor, yani
 // yapılandırma seçimi bir yorum satırı değil bir kırmızı/yeşil.
+//
+// ⏱ GİRDİ İKİ BİÇİMDE GELEBİLİR (GECE7 / F5-C İŞ 0a, borç 43): bir ARAÇ yolu
+// (eski davranış, araç burada koşar) ya da suppress-op'un `-o` ile yazdığı bir
+// `.json`. İkincisi süitin ölçülen borcunu kapatır: araç 375.74 sn sürüyor ve
+// `rotate_check` ile `suppress_check` onu AYRI AYRI koşturduğu için o hesap iki
+// kez ödeniyordu. Ölçülen hiçbir sayı değişmez — okunan JSON aynı ikilinin aynı
+// koşumundan gelir; yalnız ikinci koşum kalkar. Kapı ne zayıflar ne gevşer.
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const TOOL = process.argv[2] || path.join(HERE, "..", "build", "suppress-op");
+const FIKSTUR = TOOL.endsWith(".json");
 
 const EPS_ACI = 1e-9;      // derece — kama açısı ÖLÇÜLEN deficit'in ta kendisi
 const EPS_TRUE = 1e-9;     // mm — iki bacak inşadan eşit
@@ -74,12 +82,20 @@ const fail = (m) => { console.log(`FAIL  ${m}`); fails++; };
 const ok = (m) => console.log(`ok    ${m}`);
 
 if (!existsSync(TOOL)) {
-  console.log(`FAIL  suppress-op bulunamadı: ${TOOL}`);
-  console.log("      (cmake --build engine/build --target suppress-op)");
+  console.log(`FAIL  ${FIKSTUR ? "op fikstürü" : "suppress-op"} bulunamadı: ${TOOL}`);
+  console.log(FIKSTUR ? "      (ctest fikstürü op_fixture koşmadı)"
+                      : "      (cmake --build engine/build --target suppress-op)");
   process.exit(1);
 }
 
-const r = JSON.parse(execFileSync(TOOL, ["EU38"], { encoding: "utf8", maxBuffer: 64 << 20 }));
+const r = JSON.parse(FIKSTUR ? readFileSync(TOOL, "utf8")
+                             : execFileSync(TOOL, ["EU38"], { encoding: "utf8",
+                                                              maxBuffer: 64 << 20 }));
+if (r.op !== "suppress") {
+  console.log(`FAIL  fikstür "suppress" değil, "${r.op}" taşıyor: ${TOOL}. Başka bir ` +
+              `operatörün çıktısını op.suppress sanmak, kapıyı ilgisiz bir sayıya bağlar.`);
+  process.exit(1);
+}
 const kosumlar = r.kosumlar || [];
 
 console.log("=== op.suppress — BASTIRMA · beden EU38");

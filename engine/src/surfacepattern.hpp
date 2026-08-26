@@ -197,6 +197,27 @@ struct SurfacePanel {
     // hides a saddle: left_ftorso with skimBodice off reads +27.88 overall but
     // +17.78 in one band and -11.58 in the next, and only the bands say so.
     std::vector<double> deficitBandDeg;
+    // ⭐ THE SAME DEFECT SUMMED PER COLUMN, DEGREES (GECE7 / F5-C, op.split).
+    //
+    // Size is cols+1 and index j lines up with the panel's own boundary: the
+    // waist run's vertex j is contour[j] and the far run's vertex j is
+    // contour[farEdges.front()+1-j], so a column index IS a place on this
+    // panel's boundary, not a fraction of it. Entries 0 and cols are boundary
+    // columns and are always 0 — the same interior-vertex rule deficitBandDeg
+    // uses, which is why the two vectors sum to the same total.
+    //
+    // WHY BOTH. Rows say where along the HEIGHT the curvature is and answer
+    // "how deep does a dart reach"; columns say where along the RING it is and
+    // answer "where does a panel seam belong". `op.split` needs the second and
+    // there was no way to ask for it: columnDeficitRows() takes a PanelGrid,
+    // which does not survive outside surfacepattern.cpp.
+    //
+    // ⚠ AND THE SIGNED TOTAL HIDES CANCELLATION, MEASURED. EU38 left_ftorso
+    // with skimBodice off reads +55.1735 deg overall, but its bands run
+    // ... +8.881, -11.654, +5.646 ... — 23.66 deg of curvature cancels inside
+    // the one number every gate reads today. A +30/-30 panel prints 0. Nothing
+    // in the repo measured that before F5-C; split_check does, per axis.
+    std::vector<double> deficitColumnDeg;
     double waistLenMM = 0.0;      // flattened waist edge total (ring arcs only)
     int ringOffset = 0;           // global index of this panel's first ring arc,
                                   // so bodice and skirt zip waist stitches 1:1

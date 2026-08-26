@@ -61,14 +61,24 @@
 // REDDEDİYOR. Transfer o yüzden motorun DİĞER gövdesinde koşuyor
 // (`SheathOptions::skimBodice` kapalı), ve bu araç çıktısının her satırında
 // yazılı.
+//
+// ⏱ R0'IN İKİNCİ GİRDİSİ ARTIK BİR DOSYA DA OLABİLİR (GECE7 / F5-C İŞ 0a).
+// K36 KORUNUYOR: R0 hâlâ ÇAPRAZ bir ölçümdür, bir sabit değil — kıyaslanan sayı
+// hâlâ `suppress-op`'un motordan okuduğu develop-deficit'tir. Değişen tek şey,
+// o aracın süitte KAÇ KEZ koştuğu: 375.74 sn'lik koşum `suppress_check` ile
+// burada iki kez ödeniyordu (rotate-op'un kendisi 13.4 sn). Artık bir ctest
+// fikstürü aracı BİR KEZ koşturup JSON'unu yazıyor, iki kapı onu okuyor.
+// Dosya `op.suppress` çıktısı olmak zorunda ve o da denetleniyor; ilgisiz bir
+// JSON göstermek bu kolu KIRMIZI yakar (K35'in ödünç-ad dersinin dosya hâli).
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const TOOL = process.argv[2] || path.join(HERE, "..", "build", "rotate-op");
 const SUPPRESS = process.argv[3] || path.join(HERE, "..", "build", "suppress-op");
+const SUPPRESS_FIKSTUR = SUPPRESS.endsWith(".json");
 
 const EPS_ALAN = 1e-6;    // mm² — rijit hareket, gürültü değil sıfır bekleniyor
 const EPS_ACI = 1e-9;     // derece
@@ -110,10 +120,15 @@ console.log(`    kaynak : ${r.pens.aci_kaynak}\n`);
 // kırmızı yanar. Tek bir aracın kendi kendini onaylaması değil.
 {
   if (!existsSync(SUPPRESS)) {
-    fail(`R0 suppress-op bulunamadı: ${SUPPRESS}. rotate'in pensinin nereden geldiği ` +
-         `bağımsız olarak doğrulanamaz.`);
+    fail(`R0 ${SUPPRESS_FIKSTUR ? "op fikstürü" : "suppress-op"} bulunamadı: ${SUPPRESS}. ` +
+         `rotate'in pensinin nereden geldiği bağımsız olarak doğrulanamaz.`);
   } else {
-    const s = JSON.parse(execFileSync(SUPPRESS, ["EU38"], { encoding: "utf8", maxBuffer: 64 << 20 }));
+    const s = JSON.parse(SUPPRESS_FIKSTUR
+      ? readFileSync(SUPPRESS, "utf8")
+      : execFileSync(SUPPRESS, ["EU38"], { encoding: "utf8", maxBuffer: 64 << 20 }));
+    if (s.op !== "suppress")
+      fail(`R0 çapraz ölçümün kaynağı "op": "${s.op}" taşıyor, "suppress" değil (${SUPPRESS}). ` +
+           `Başka bir operatörün çıktısını op.suppress sanmak, R0'ı ilgisiz bir sayıya bağlar.`);
     const esi = (s.kosumlar || []).find(
       (k) => k.panel === r.panel && k.acildi && !k.kesisme_bekleniyor);
     if (!esi) {

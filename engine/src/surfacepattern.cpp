@@ -997,6 +997,24 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     // the noise of the flatten it sits next to.
     {
         std::vector<double> defBand(13, 0.0);
+        // ⭐ THE SAME DEFECT SUMMED PER COLUMN (GECE7 / F5-C, op.split).
+        //
+        // WHY IT IS HOISTED HERE, exactly as F5-B hoisted deficitBandDeg. The
+        // rows say WHERE ALONG THE HEIGHT the curvature is; they cannot say
+        // where a PANEL SEAM belongs, because a panel seam runs the other way.
+        // `columnDeficitRows()` already computes this quantity and
+        // `dartColumnsFromDeficitRows()` already places darts with it — but
+        // both take a PanelGrid, which nothing outside this file can see. So an
+        // operator that wants to divide a panel had exactly two options: build
+        // a second, parallel deficit model in a tool (the two-sources error
+        // class this file keeps killing), or read a fraction off a dial. The
+        // panel carries the engine's own per-column figure instead.
+        //
+        // SAME ARITHMETIC, SAME LOOP, SAME VERTEX SET as defBand, so the two
+        // sum to the same total BY CONSTRUCTION — which is what makes
+        // "conservation of the signed deficit across a split" a measurement
+        // rather than an assertion.
+        std::vector<double> defCol(static_cast<std::size_t>(cols) + 1, 0.0);
         std::vector<double> angSum(mesh.V.size(), 0.0);
         std::vector<char> onBoundary(mesh.V.size(), 0);
         for (const auto& f : mesh.F) {
@@ -1020,12 +1038,15 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
                 if (onBoundary[v]) continue;
                 const int band = std::min(12, i * 12 / std::max(1, rowsN));
                 defBand[band] += 2 * kPi - angSum[v];
+                defCol[j] += 2 * kPi - angSum[v];
             }
         double defTotal = 0;
         for (double d : defBand) defTotal += d;
         out.developDeficitDeg = defTotal * 180.0 / kPi;
         out.deficitBandDeg.reserve(defBand.size());
         for (double d : defBand) out.deficitBandDeg.push_back(d * 180.0 / kPi);
+        out.deficitColumnDeg.reserve(defCol.size());
+        for (double d : defCol) out.deficitColumnDeg.push_back(d * 180.0 / kPi);
     }
 
     if (std::getenv("STITCHU_SP_DEBUG")) {

@@ -238,7 +238,17 @@ for (const yon of ["on", "arka"]) {
 // altında. YÜZEY yanlışsa iki okuma birlikte yanlış olur ve bu kol göremez.
 // Gördüğü şey, HM3'ün ait olduğu sınıfın tamamı: yanlış YÜKSEKLİKTE, yanlış
 // HALKADA, yanlış NİCELİKTE ya da öbür görünümden KOPYALANMIŞ bir ölçü.
+//
+// ⚠ ÖZET SATIRI KOŞULLU (GECE7 / F5-C İŞ 0e, borç 48). Hakem HM-B'de ölçtü:
+// `GarmentSurf::at()` %5 bozulunca 14 ölçünün 10'u KIRMIZI yandı ve exit kodu
+// doğru (1) oldu, AMA aşağıdaki "ok K6 ... doğrulandı" satırı yine basıldı.
+// Loga bakan bir insan on FAIL'in yanında YEŞİL bir cümle görüyordu. Bu, K33'ün
+// "hiçbir şey ölçmedim ≠ her şey geçti" dersinin küçük tekrarı, tersinden:
+// "her şey ölçüldü ≠ her şey tuttu". Özet artık YALNIZ bu kolun kendi ihlali
+// yokken basılır; kolun kendi sayacı `k6Girdi` ile alınır, global `fails`'ten
+// ayrı tutulur ki başka bir kolun kırmızısı bu satırı bastırmasın.
 {
+  const k6Girdi = fails;
   if (!existsSync(AUDIT)) {
     fail(`K6 shell-audit bulunamadı: ${AUDIT}. Yayınlanan ölçünün DOĞRULUĞUNU ` +
          `karşılaştıracak ikinci yol yok — kimlik var, doğruluk yok (HM3).`);
@@ -312,9 +322,13 @@ for (const yon of ["on", "arka"]) {
     if (!denetlenen)
       fail("K6 hiçbir ölçü denetlenemedi. Sıfır kalem doğrulayan bir kol, kapının " +
            `"hiçbir şey ölçmedim" ile "her şey geçti"yi ayırt etmemesidir (K33'ün sınıfı).`);
-    else
+    else if (fails === k6Girdi)
       ok(`K6 ${denetlenen} yayınlanan ölçü BAĞIMSIZ İKİNCİ YOLDAN doğrulandı ` +
          `(kiriş toplamı ↔ Gauss-Legendre + Steiner; ortak kod yolu yok)`);
+    else
+      console.log(`      ↳ K6 ÖZET BASILMADI: ${denetlenen} ölçü denetlendi ama ` +
+                  `${fails - k6Girdi}'i TUTMADI. "Doğrulandı" cümlesi yalnız bu kolun ` +
+                  `kendi ihlali sıfırken basılır (İŞ 0e, borç 48).`);
   }
 }
 

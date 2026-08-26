@@ -87,19 +87,48 @@ const GIYSILER = [
   },
   {
     ad: "freesewing-bella",
-    kaynak: "FreeSewing (MIT, §1E lisans tablosu) — yayınlanmış kadın gövde bloğu",
+    // ⭐ KÜNYE BULUNDU (GECE7 / F5-C İŞ 0c, K39). F5-B'de bu satır
+    // "DOĞRULANMADI" damgalıydı ve H8-ifadenin 5/5 → 4/5 düşüşünün TAMAMI
+    // ondan geliyordu; hakem sayıyı bıraktı ama "kazanım" demeyi yasakladı.
+    // Kaynak yayınlanmış dokümantasyondur, hatırlanmış değil — sayfa açıldı ve
+    // her gereksinim kendi cümlesiyle bağlandı.
+    kaynak: "FreeSewing (MIT, §1E lisans tablosu) — yayınlanmış kadın gövde bloğu. " +
+            "KÜNYE: FreeSewing docs, \"Bella\", freesewing.eu/docs/designs/bella/ " +
+            "(\"A FreeSewing pattern for a womenswear bodice block\"; kesim: 1 Front on fold + " +
+            "2 Back; Techniques listesinde \"dart\") ve tasarım seçenekleri sayfası " +
+            "freesewing.eu/docs/designs/bella/options/. Kod: codeberg.org/freesewing/freesewing " +
+            "designs/bella/src/back.mjs (repoda knowledge/seed_round2_formulas.sql:22 " +
+            "aynı dosyadan pens formülünü künyeli taşıyor).",
     gerektirir: {
-      "op.suppress": "blok tanımı gereği göğüs + bel pensi",
-      "op.rotate": "bloğun tek işi pensin taşınabilir olmasıdır",
+      "op.suppress": "blok tanımı gereği göğüs + bel pensi — KÜNYE: options sayfası " +
+                     "\"Bust Dart Length: The maximum length brings the dart all the way to the " +
+                     "bust apex\", \"Waist Dart Length\", \"Back Dart Height: Controls the height " +
+                     "(length if you will) of the back dart\"",
+      "op.rotate": "bloğun tek işi pensin taşınabilir olmasıdır — KÜNYE: options sayfası " +
+                   "\"Bust Dart Angle: The angle of the bust dart… attempts to set the angle of " +
+                   "the top leg of the dart at the requested angle\". Pensin APEKS etrafındaki " +
+                   "açısını bir tasarım seçeneği yapmak, pens transferinin ta kendisidir.",
     },
   },
   {
     ad: "freesewing-aaron",
-    kaynak: "FreeSewing (MIT, §1E lisans tablosu) — yayınlanmış A-shirt (atlet)",
+    // ⭐ KÜNYE BULUNDU (GECE7 / F5-C İŞ 0c, K39) — paydanın ikinci
+    // "DOĞRULANMADI" satırıydı; üç gereksinimin üçü de kaynağın kendi kesim
+    // talimatından ve kendi seçenek tablosundan okundu.
+    kaynak: "FreeSewing (MIT, §1E lisans tablosu) — yayınlanmış A-shirt (atlet). " +
+            "KÜNYE: FreeSewing docs, \"Aaron A-Shirt\", freesewing.eu/docs/designs/aaron/ " +
+            "ve tasarım seçenekleri sayfası freesewing.eu/docs/designs/aaron/options/.",
     gerektirir: {
-      "op.split": "ön/arka gövde",
-      "op.extend": "boy ve kol oyuğu derinliği sürekli eksen",
-      "op.attach": "biye/bias şerit kol oyuğuna ve yakaya asılıyor",
+      "op.split": "ön/arka gövde — KÜNYE: kesim talimatı \"Cut 1 back on the fold\" + " +
+                  "\"Cut 1 front on the fold\"",
+      "op.extend": "boy ve kol oyuğu derinliği sürekli eksen — KÜNYE: options sayfası " +
+                   "\"Length bonus: The amount to lengthen the garment. A negative value will " +
+                   "shorten it\" (−20%…60%) ve \"Armhole depth: Controls the depth of the " +
+                   "armhole\" (−10%…50%)",
+      "op.attach": "biye/bias şerit kol oyuğuna ve yakaya asılıyor — KÜNYE: kesim talimatı " +
+                   "\"Cut 3 strips for neck opening and armhole binding\", ve caveats " +
+                   "\"There is no seam allowance on the armholes\" / \"…on the neck opening\" " +
+                   "(kenar dikişle değil BİYEYLE bitiyor)",
     },
   },
 ];

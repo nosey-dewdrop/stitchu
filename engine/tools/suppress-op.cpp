@@ -29,7 +29,31 @@
 // different body, and moving a dial until a measurement matched a number
 // borrowed from another pattern is exactly what KOSU-v7 §3.10 forbids.
 //
-// Usage: suppress-op [EU38]      -> JSON on stdout
+// ---------------------------------------------------------------------------
+// ⏱ `-o <dosya>` — SÜİT SÜRESİ (GECE7 / F5-C İŞ 0a, borç 43 / K37).
+//
+// ÖLÇÜLDÜ, bu makinede, temiz Release: bu aracın üç plan kurulumundan İKİSİ
+// ucuz ve BİRİ değil —
+//     shipped   (skimBodice=ON)                      ~5 sec
+//     following (skimBodice=OFF, maxDartDeg=0)        ~8 sec
+//     doubled   (skimBodice=OFF, maxDartDeg=14)     ~360 sec   <- burası
+// çünkü motorun kendi türettiği pensler AÇIKKEN ızgara slit'lerle dolu ve ARAP
+// yakınsaması uzuyor. Aracın kendi toplamı 375.74 sec (hakem ölçtü).
+//
+// VE O 375 SANİYE SÜİTTE İKİ KEZ ÖDENİYORDU: `suppress_check` bu aracı
+// koşuyor, `rotate_check` de R0 çapraz-ölçümü için AYNI aracı bir kez daha
+// koşuyordu (rotate-op'un kendisi yalnız 13.4 sec). Süitin 1080.09 sn'sinin
+// 767.08'i bu iki kapıydı ve yarısı AYNI hesabın tekrarıydı.
+//
+// ÇÖZÜM BİR KAPIYI SİLMEK DEĞİL (§3.8 md.4 bunu yasaklıyor): araç bir ctest
+// FIXTURES_SETUP testinde BİR KEZ koşar, çıktısını `-o` ile dosyaya yazar, üç
+// kapı (`suppress_check` · `rotate_check` · `split_check`) o dosyayı okur.
+// Ölçülen sayıların HİÇBİRİ değişmez — aynı ikili, aynı plan, aynı JSON; yalnız
+// ikinci koşum kalkar. R0 hâlâ ÇAPRAZ bir ölçümdür (K36): rotate_check'in
+// kıyasladığı sayı hâlâ suppress-op'un motordan okuduğu sayıdır, bir sabit
+// değil.
+//
+// Usage: suppress-op [EU38] [-o dosya]      -> JSON on stdout (ya da dosyaya)
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -144,7 +168,15 @@ void emit(const char* etiket, const char* yuzey, const SeamPlan& plan, const Sur
 
 int main(int argc, char** argv) {
     std::string size = "EU38";
-    for (int i = 1; i < argc; ++i) size = argv[i];
+    const char* outPath = nullptr;
+    for (int i = 1; i < argc; ++i) {
+        if (!std::strcmp(argv[i], "-o") && i + 1 < argc) outPath = argv[++i];
+        else size = argv[i];
+    }
+    if (outPath && !std::freopen(outPath, "w", stdout)) {
+        std::fprintf(stderr, "suppress-op: cikti dosyasi acilamadi: %s\n", outPath);
+        return 1;
+    }
     try {
         // ⚠ THE SECOND SURFACE IS NOT A HIDDEN DIAL. skimBodice is a field of
         // SheathOptions with its own paragraph in surfacepattern.hpp; both

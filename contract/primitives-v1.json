@@ -357,33 +357,46 @@
       "motorda_kapi": null
     },
     "op.split": {
-      "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu.",
-      "kaynak_fikir": "GarmentCode Edge.subdivide_param + Interface.substitute — knowledge/TEKNOLOJI-2026-08-23.md:70-71, 355",
+      "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu. ⭐ BOLME YERI PARAMETRE DEGIL: motorda splitPanel() kesim sutununu panelin KENDI olculen sutun-deficit profilinden (SurfacePanel::deficitColumnDeg) argmin ile okur ve profil duzse REDDEDER. Bir atFraction parametresi bolmeyi bir KADRANA geri cevirirdi; suppressPanel()'in aci parametresi olmamasi emsaldir.",
+      "kaynak_fikir": "GarmentCode Edge.subdivide_param + Interface.substitute — knowledge/TEKNOLOJI-2026-08-23.md:70-71, 355. Kesim yeri kurali bizim: C(c)=sum sutun[0..c] icin max(|C(c)|,|T-C(c)|) minimize eden ic sutun.",
       "parametreler": {
         "panel": {
-          "tip": "panelRef"
-        },
-        "atFraction": {
-          "tip": "kesir",
-          "aralik": "0..1",
-          "not": "bolme cizgisinin panel yuksekligindeki/genisligindeki yeri"
+          "tip": "panelRef",
+          "not": "kesim sutunu BU panelden okunur; cagirana kesir parametresi VERILMEZ"
         },
         "axis": {
           "tip": "enum",
           "degerler": [
-            "horizontal",
-            "vertical",
-            "diagonal"
-          ]
+            "vertical"
+          ],
+          "not": "bugun yalnizca vertical (halka sutunlari boyunca; prenses/kup/panel dikisi). horizontal (roba) SATIR profili + iki yan dikis arasinda ikinci bir esleme ister; UYGULANMADI ve uygulandigi IDDIA EDILMIYOR, kuyrukta adiyla duruyor."
         },
         "seamRatio": {
           "tip": "oran",
           "aralik": "1.0..3.5",
           "varsayilan": 1.0,
-          "not": "bolunen iki parca arasinda buzgu birakilacaksa"
+          "not": "bolunen iki parca arasinda buzgu birakilacaksa; op.gather'a devreder, bugun motorda TUKETICISI YOK"
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "split_check",
+      "olculen": {
+        "kesim_kaynagi": "panelin kendi sutun-deficit profili uzerinde argmin; splitPanel()'in kesir parametresi YOK",
+        "sabit_degil": "EU38 uc bolunen panelde uc ayri olculen kesir: 16/32 (0.5) · 11/32 (0.34375) · 13/32 (0.40625). Tek bir atFraction bu kolu gecemez.",
+        "sevk_edilen_giysi": "skimBodice=ON left_ftorso BOLUNDU (sutun 16/32) ama bastirma yuku YOK (deficit -1.9628 deg, op.suppress zaten reddediyor); left_btorso ve left_skirt_front REDDEDILDI: mutlak sutun profili 0.1116 / 0.0000 deg, motorun kendi tabani 0.50 deg'in altinda, profil DUZ.",
+        "yuk_bolundu_borc44": "skimBodice=OFF: left_ftorso tek kama 55.1735 deg -> 26.8401 + 28.3334 (toplam KORUNDU); left_btorso 56.6688 -> 29.9374 + 26.7314. Yuk bolundu.",
+        "maxDartDeg_yan_yana": "motorun kendi ilani SheathOptions::maxDartDeg = 14 deg. Bolmeden sonraki en buyuk kama 28.3334 / 29.9374 deg = 2.02x / 2.14x — HALA TUTMUYOR ve AYARLANMADI. 14 motorun COK-PENSLI yerlesimine ait bir sayidir; tek kamaya uygulanacaginin YAYINLANMIS DAYANAGI GORULMEDI (KOSU-v7 §3.10, K38).",
+        "isaretli_toplamin_gizledigi": "developDeficitDeg ISARETLI bir toplamdir. Olculen EU38 skimBodice=OFF: left_ftorso isaretli +55.1735 deg, mutlak sutun toplami 93.4063 deg -> 38.2327 deg IPTAL oluyor; left_btorso 56.6688 / 91.0078 -> 34.3390. Bir panelde +30/-30 birbirini goturup op.suppress'i yanlislikla RET'e surukleyebilir; bu sayiyi F5-C'den once hicbir kapi olcmuyordu."
+      },
+      "korunan": {
+        "alan": "mm2 — bolme kumas eklemez/eksiltmez; olculen A+B ile butun farki 0.000000 mm2 (uc panelde de)",
+        "isaretli_deficit": "deg — A + B = butun, olculen fark 0.000000000 deg",
+        "kesilen_kenar": "iki parcada AYNI uzunluk, insadan: iki kapanis segmenti ayni iki koordinati birlestirir. Olculen fark 0.0e+0 mm (359.679077708 / 370.509791612 / 373.854685901 mm).",
+        "sinir_noktalari": "nokta_a + nokta_b = panel_nokta + 2; yeni nokta UYDURULMAZ"
+      },
+      "korunmayan": {
+        "cevre": "KORUNMAZ ve korunur demek YANLIS bir kapi olurdu (K29'un rotate'teki dersi). Kimlik: cevre_a + cevre_b = cevre_butun + 2*kesik. Olculen EU38 left_ftorso (skim OFF): 986.2984 + 843.1977 = 1829.4961 = 1088.4765 + 2*370.5098.",
+        "panel_sayisi": "1 -> 2; bolmenin tanimi bu"
+      }
     },
     "op.overlay": {
       "tanim": "Var olan bir panelin uzerine, ayni bolgeye, fazlalikli ikinci bir KATMAN. Bugra Locket'in Upper Sleeve'i tam olarak budur (yatay bolunmus kol DEGIL, buzgulu ust katman).",
