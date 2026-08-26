@@ -19,8 +19,8 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | Faz | Etiket | Ajan | Hakem | Durum |
 |-----|--------|------|-------|-------|
 | Halka 0 | `halka0-yesil` | şef (ajan yok) | — | ✅ BİTTİ, kart `GECE7/HALKA0.md` |
-| F-İNDİR | `F-INDIR-oncesi` (yeşil etiket YOK) | koştu, `ee1414c`+`072705c` | koştu | ⛔ **KALDI** — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
-| F0 | — | — | — | SIRADAKİ — önce F-İNDİR'in iki şartını kapatır |
+| F-İNDİR | **`F-INDIR-yesil`** ✅ | 2 tur koştu, `ee1414c`+`072705c` → `cce710d`+`fac2993` | 2 tur koştu | ✅ **GEÇTİ** (2. tur) — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
+| F0 | `F-INDIR-yesil`'den dallanır | — | — | SIRADAKİ — kart **`GECE7/F0.md`** (hakem yazdı) |
 
 > ▶ **KOŞU AÇILDI** (26 Ağu, Damla): Halka 1 → F-İNDİR → F0 → F2, sonra Halka 2
 > (F3 ⇄ F5), sonra Halka 3 (F4 → F6 → F7 → F8 → F9). **F9 kapanana kadar durulmaz.**
@@ -61,19 +61,21 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | ağaç | listelenen (`ctest -N`) | DISABLED | koşan | yeşil | kırmızı |
 |---|---|---|---|---|---|
 | Halka 0 sonu (`34586c8`) | 118 | 1 (`h10_gate_check`) | **117** | 111 | **6** |
-| F-İNDİR sonu (`HEAD`) | 119 | 1 (`h10_gate_check`) | **118** | 111 | **7** ⛔ |
+| F-İNDİR 1. tur (`b791db5`) | 119 | 1 (`h10_gate_check`) | **118** | 111 | **7** ⛔ |
+| **F-İNDİR 2. tur (`fac2993`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
 
-F-İNDİR bir test **ekledi** (`indir_check`, ctest #119, hakemin iki mutasyonunda
-kırmızı yaktı = gerçek kapı). Hiçbir test silinmedi/yeniden adlandırılmadı.
+F-İNDİR iki tur boyunca **iki test ekledi** (`indir_check` #120, `flat_tables_check` #95).
+Hiçbir test silinmedi/yeniden adlandırılmadı.
 
 **Miras 6 kırmızı (değişmedi):** `flat_pattern_agree_check` · `flat_artifact_census` ·
 `style_check` · `sizechart_source_check` · `contract_check` (ilan edilmiş karar,
 bilerek kırmızı) · `figure_check` (`dress_bandeau_circle` pinsiz).
 
-⛔ **YENİ 7. KIRMIZI — F-İNDİR doğurdu:** `vocab_reference_check`.
-Kapalı-enum cırcırı: SCOPE içinde `garment` tam-kelime sayısı **1186 → 1188 (+2)**,
-+2'nin kaynağı `web/js/download.js` + `web/js/create.js`. Taban yeniden KESİLMEZ (K2);
-sayı **≤ 1186**'ya düşecek. Bu kapanmadan F-İNDİR de F0 da kapanmaz.
+✅ **7. KIRMIZI KAPANDI (2. tur):** `vocab_reference_check` yeşil. `garment` SCOPE içinde
+**1188 → 1137** (taban 1186). Taban ve kapı betiği **bayt bayt dokunulmadı**
+(`git diff --stat 34586c8 HEAD` boş). Düşüş kapalı enumun sökülmesinden:
+`create.js`'te doğrudan enum karşılaştırması **44 → 4**. Hakem ayrı worktree'de
+kendi saydı; −51'in dosya dosya dağılımı `GECE7/HAKEM-F-INDIR.md` §2'de.
 
 ## Son kapı sayıları — taban DEĞİŞMEDİ (n=5)
 
@@ -84,7 +86,7 @@ saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 
 ## Hakemin son hükmü
 
-⛔ **KALDI** — yeni kırmızı `vocab_reference_check` (`garment` 1186→1188, sebebi F-İNDİR'in kendi kodu; ctest **7 failed out of 118**, kart 6 diyor). İş sağlam, geri alınmaz: F0 **önce** o sayıyı ≤1186'ya düşürüp kartın sapma cevabını "kalıp iniyor, **flat inmiyor**" diye düzeltir, sonra kendi işine başlar; yeşil etiketi hakem atar.
+✅ **GEÇTİ** — kalıp **ve** flat artık ikisi de kullanıcının diskine iniyor (hakem ölçtü: 5 dosya `Logs/indir-check/`, flat ön+arka, çizime bakıldı), ctest **6 failed out of 119** = tam miras altı, `vocab_reference_check` **1137/1186** yeşil ve taban dokunulmadan, `hedef_kosu` yeşil ve altı sayı kötüleşmedi, hakemin **dört mutasyonunun dördü** kırmızı yandı; etiket `F-INDIR-yesil` atıldı, sıradaki kart `GECE7/F0.md`.
 
 ## Açık kuyruk
 
