@@ -1,27 +1,27 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=137';
-import { validateVision } from './spec-validate.js?v=137';
-import { CONTRACT } from './contract.gen.js?v=137';
-import { applyStatic, getLang, t } from './i18n.js?v=137';
-import { draft, grade, operatorProgram } from './engine.js?v=137';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=137';
-import { renderResult } from './render.js?v=137';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=138';
+import { validateVision } from './spec-validate.js?v=138';
+import { CONTRACT } from './contract.gen.js?v=138';
+import { applyStatic, getLang, t } from './i18n.js?v=138';
+import { draft, grade, operatorProgram } from './engine.js?v=138';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=138';
+import { renderResult } from './render.js?v=138';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=137';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=137';
-import { measureGarment } from './measure.js?v=137';
+} from './store.js?v=138';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=138';
+import { measureGarment } from './measure.js?v=138';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=137';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=138';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
-import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=137';
+import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=138';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -142,6 +142,14 @@ const SPEC_GROUPS = [
   // Gathered and half-circle skirts have no waist shaping to convert.
   { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => !isSkirt(s) || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
   { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
+  // F6 — KUMAŞ KATALOĞU. The woven/knit word above decides SEWING (needle,
+  // stitch, whether a zip is needed). It cannot decide the CUT, because "knit"
+  // covers a 5%-stretch ponte and a 90%-stretch swim knit. This dial hands the
+  // engine the four MEASURED numbers instead (crosswise stretch, D3107
+  // recovery/growth, FAST-2 drape inputs, bolt width) from
+  // contract/fabric-catalog-v1.json. `unset` overlays nothing and the draft is
+  // exactly what it was before the catalog existed.
+  { key: 'fabricPreset', label: 'fabric (measured)', trLabel: 'kumaş (ölçülmüş)', options: [['unset', 'use the word above', 'yukarıdaki kelime geçerli'], ['cotton-poplin', 'cotton poplin — 0% stretch, 112 cm', 'pamuklu poplin — %0 esneme, 112 cm'], ['viscose-crepe', 'viscose crepe — 0% stretch, drapey, 140 cm', 'viskon krep — %0 esneme, düşümlü, 140 cm'], ['single-jersey', 'single jersey — 50% stretch, 165 cm', 'single jersey — %50 esneme, 165 cm']], for: () => true },
 ];
 // Foto-anı bug fix (2026-07-27): the last validated vision reading + whether
 // the user hand-picked a length AFTER it. The photo mm is a ratio x body — it
@@ -154,7 +162,7 @@ let photoLenHandPicked = false;
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
   skirtStyle: 'aLine', skirtLength: 'midi', topLength: 'hip', shaping: 'dart',
-  waistline: 'natural', fabric: 'woven', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
+  waistline: 'natural', fabric: 'woven', fabricPreset: 'unset', ruffle: 'none', keyhole: 'none', tieClosure: 'none',
   sleeveCap: 'plain', collarType: 'none', collarEdge: 'round',
   gatherType: 'none', gatherZone: 'neckline', backOpening: 'none', laceUpBack: 'none', wrapFront: 'none', backSlit: 'none',
   ruffledStraps: 'none', peplum: 'none', placketStyle: 'none', edgeFinish: 'biasBinding', pocketStyle: 'none', cuffStyle: 'none', hemShape: 'straight',

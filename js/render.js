@@ -1,11 +1,11 @@
 // SVG rendering of drafted pieces (mm -> px preview; true-scale printing is
 // the print pipeline's job, not this preview's).
-import { fabricAdvice } from './fabrics.js?v=137';
-import { getLang, t } from './i18n.js?v=137';
-import { missingFeatures, MISSING_STRINGS } from './missing.js?v=137';
-import { GUIDE_TR } from './guide-tr.js?v=137';
-import { GLOSSARY } from './glossary.js?v=137';
-import { appendSewingCompanion } from './sewing.js?v=137';
+import { fabricAdvice } from './fabrics.js?v=138';
+import { getLang, t } from './i18n.js?v=138';
+import { missingFeatures, MISSING_STRINGS } from './missing.js?v=138';
+import { GUIDE_TR } from './guide-tr.js?v=138';
+import { GLOSSARY } from './glossary.js?v=138';
+import { appendSewingCompanion } from './sewing.js?v=138';
 
 // Turn plain text into a node where known sewing terms are tappable (dotted
 // underline + a native tooltip), a beginner can learn a word without leaving
@@ -42,7 +42,7 @@ const PREVIEW_SCALE = 0.28;
 
 // pathD/bounds live in sheet.js (the pure print-geometry module), one truth,
 // one place; imported and re-exported so existing imports keep working.
-import { pathD, bounds, packPieces, usedCells, sheetInner, PAGE_W, PAGE_H } from './sheet.js?v=137';
+import { pathD, bounds, packPieces, usedCells, sheetInner, PAGE_W, PAGE_H } from './sheet.js?v=138';
 export { pathD, bounds };
 
 // Chalk-drawn pieces (a ruffle strip, a bias binding) are not cut on paper, so
@@ -250,6 +250,36 @@ export function renderResult(container, result) {
     ol.appendChild(li);
   }
   container.appendChild(ol);
+
+  // ── REHBER (F6 İŞ 2) ──────────────────────────────────────────────────────
+  // The engine has been BUILDING this list since F-H and the page never printed
+  // it, which by that card's own law meant it did not exist. Every entry carries
+  // the basis it stands on (a number this draft measured, or a registered
+  // source) and the basis is printed WITH it — a sentence whose reason is hidden
+  // is indistinguishable from one that has none. guide_completeness_check
+  // refuses any entry whose printed numbers are not in that basis.
+  if (Array.isArray(p.rehber) && p.rehber.length) {
+    const rTitle = document.createElement('h2');
+    rTitle.style.cssText = 'font-weight:400;font-size:22px;margin-top:44px';
+    rTitle.textContent = t('result.rehber');
+    container.appendChild(rTitle);
+    const rNote = document.createElement('p');
+    rNote.style.cssText = 'font-size:13px;color:#8a8a8a;margin-top:6px;max-width:640px';
+    rNote.textContent = t('result.rehbernote');
+    container.appendChild(rNote);
+    const rUl = document.createElement('ul');
+    rUl.className = 'guide-list';
+    for (const a of p.rehber) {
+      const li = document.createElement('li');
+      li.appendChild(withGlossary(a.text));
+      const basis = document.createElement('div');
+      basis.style.cssText = 'font-size:12px;color:#8a8a8a;margin-top:4px;word-break:break-word';
+      basis.textContent = a.basis;
+      li.appendChild(basis);
+      rUl.appendChild(li);
+    }
+    container.appendChild(rUl);
+  }
 
   // Fabric advice (the sourced good/avoid list) then the sewing companion
   // (WHY this fabric + construction order). Chained so the DOM order is stable:

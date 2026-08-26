@@ -3,7 +3,10 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=137';
+import { VOCAB, canonical } from './vocab.gen.js?v=138';
+// KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying the
+// four measured numbers. `unset` overlays nothing.
+import { applyFabricPreset } from './fabric-catalog.js?v=138';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -53,7 +56,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=137';
+      script.src = 'vendor/stitchu-engine.js?v=138';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -150,7 +153,17 @@ export async function grade(spec, fromLabel, toLabel) {
 // died 2026-07-18 — a one-slot shift silently drafted a different dress).
 // Exported so the API round-trip test (engine/tests/api_wire_check.mjs) can
 // prove the web path and the backend path hand the SAME values to the engine.
-export function engineSpec(spec) {
+// F6 axis numbers: a real measurement passes through, anything else is -1
+// (UNDECLARED). Never coerce a missing measurement to 0 — 0 is a claim.
+function axisNum(v) {
+  return (typeof v === 'number' && isFinite(v) && v >= 0) ? v : -1;
+}
+
+export function engineSpec(rawSpec) {
+  // F6: a chosen fabric preset is folded in HERE, at the single chokepoint every
+  // caller already goes through, so the pattern the browser downloads and the
+  // pattern the API returns are drafted from the same numbers.
+  const spec = applyFabricPreset(rawSpec);
   return {
     garment: spec.garment,
     shaping: spec.shaping ?? 'dart',
@@ -159,6 +172,16 @@ export function engineSpec(spec) {
     // KUMAŞ EKSENİ (F-H): -1 = undeclared, the fabric word's own band drives.
     fabricStretchPct: (typeof spec.fabricStretchPct === 'number' && spec.fabricStretchPct >= 0)
       ? Math.min(spec.fabricStretchPct, 100) : -1,
+    // F6: the other three numbers of the axis. -1 = undeclared (contract/
+    // fabric-catalog-v1.json). Recovery/growth are a CONDITION on the negative
+    // branch; weight+bending length give the FAST-2 drape number; width drives
+    // the yardage. An undeclared number never reaches the draft.
+    fabricRecovery15sPct: axisNum(spec.fabricRecovery15sPct),
+    fabricRecovery30minPct: axisNum(spec.fabricRecovery30minPct),
+    fabricGrowthPct: axisNum(spec.fabricGrowthPct),
+    fabricWeightGSM: axisNum(spec.fabricWeightGSM),
+    fabricBendingLengthMM: axisNum(spec.fabricBendingLengthMM),
+    fabricWidthCM: axisNum(spec.fabricWidthCM),
     neckline: spec.neckline ?? 'crew',
     sleeveStyle: spec.sleeveStyle ?? 'none',
     sleeveLength: spec.sleeveLength ?? 'short',

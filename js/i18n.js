@@ -129,6 +129,8 @@ export const STRINGS = {
   'result.assemblednote': { en: 'This is the whole pattern laid out as it prints, the faint grid is the A4 page edges. At full size it prints across those A4 sheets you tape together; this preview is scaled to fit the screen.', tr: 'Bu, kalıbın basıldığı haliyle birleşik görünümü; silik ızgara A4 sayfa kenarlarıdır. Gerçek boyutta bantlayıp birleştirdiğin A4 sayfalara basılır; bu önizleme ekrana sığacak şekilde ölçeklidir.' },
   'result.guide': { en: 'Sewing guide', tr: 'Dikiş rehberi' },
   'result.guidetrnote': { en: '', tr: 'Bu adımın Türkçesi henüz eklenmedi.' },
+  'result.rehber': { en: 'Fabric and technique', tr: 'Kumaş ve teknik' },
+  'result.rehbernote': { en: 'Every line below carries the reason it exists: either a number this draft measured, or the document it was read from. A line with neither is not printed.', tr: 'Aşağıdaki her satır var olma sebebini taşıyor: ya bu çizimin ölçtüğü bir sayı, ya okunduğu belge. İkisi de olmayan satır basılmaz.' },
   'result.fabricadvice': { en: 'Fabric advice', tr: 'Kumaş önerisi' },
   'result.photofabric.good': { en: 'The fabric in your photo looks like {name}, a good match for this project. Watch out: {note}', tr: 'Fotoğraftaki kumaş {name} görünüyor, bu proje için uygun. Dikkat: {note}' },
   'result.photofabric.bad': { en: 'The fabric in your photo looks like {name}, it works against this shape ({drape}). Consider one of the suggestions below.', tr: 'Fotoğraftaki kumaş {name} görünüyor, bu forma ters çalışır ({drape}). Aşağıdaki önerilerden birini düşün.' },
