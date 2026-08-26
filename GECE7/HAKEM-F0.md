@@ -401,3 +401,287 @@ Devreden 15 maddeye ek olarak, **bu turda hakemin kendi kör noktaları**:
   kaynak-regex'i bunu tutuyor (H-M4 kırmızı yandı), ama koruma **yapısal
   değil, metinsel**. Çağrı biçimi değişirse (ör. spread) regex kaçırır.
   **F2/F3 için kalem.**
+
+---
+---
+
+# HAKEM — F0 İKİNCİ TUR hükmü: **GEÇTİ** (2026-08-26)
+
+Commit `3d6dc7e`. Geri alma etiketi `F0-oncesi` (= `1e5d989`). Yeni etiket `F0-yesil`.
+Bu hakem F0'da iş yapmadı. Birinci turun hükmü ve gerekçesi **yukarıda duruyor,
+üstü silinmedi.** Aşağıdaki her sayı bu hakemin kendi koşusundan çıktı.
+
+## TEK SATIR
+
+✅ **GEÇTİ — KALDI'nın tek sebebi ölçülerek kapandı, ve kapatan şey bir yama değil bir kök çözüm.**
+`vocab_reference_check` **YEŞİL** (`hemFlounce` **26**, taban 26), taban ve kapı
+betiği **blob hash'i eşit** = bayt bayt el değmemiş; `ctest` **6 failed out of 119**,
+tam miras altı, yedinci ad yok. Hakem **altı mutasyon** koşturdu, beşi doğru
+yerde kırmızı yandı, üçü bu turun ajanının hiç dokunmadığı dosyada.
+
+---
+
+## 1. ÖLÇÜLEN — hakemin kendi komutları
+
+```
+cmake --build engine/build -j8                        -> exit 0
+ctest --test-dir engine/build --output-on-failure     -> 6 failed out of 119   ✅
+ctest -R hedef_kosu / -R indir_check / -R vocab_reference_check   -> hepsi Passed
+bash engine/tests/vocab_reference_check.sh            -> HUKUM: YESIL
+node engine/tests/hedef_kosu.mjs                      -> EXIT 0, CIRCIR SAĞLAM
+node engine/tests/indir_check.mjs                     -> EXIT 0, İNDİR KAPISI: YEŞİL
+git status --porcelain  -> ` M KOSU-v7.md` + 3 takipsiz patterns_real/ kalemi
+```
+
+### ctest — 6, ve altısı da miras
+
+```
+95% tests passed, 6 tests failed out of 119
+9 flat_pattern_agree_check · 13 flat_artifact_census · 14 style_check ·
+21 sizechart_source_check · 92 contract_check · 98 figure_check
+```
+`ctest -N` = 120 · DISABLED 1 (`h10_gate_check`) · koşan 119 · toplam 278.61 sn.
+**Yeni test eklenmedi, hiçbir test silinmedi, yedinci ad yok.**
+
+---
+
+## 2. §3.8 md.4 — TABAN VE KAPI BETİĞİ BAYT BAYT EL DEĞMEMİŞ
+
+Diff'e değil **blob hash'ine** bakıldı (`git rev-parse <ref>:<yol>`), çünkü diff'i
+boş göstermenin yolları var, hash'i eşitlemenin yok:
+
+| dosya | `F0-oncesi` blob | `HEAD` blob | hüküm |
+|---|---|---|---|
+| `engine/tests/vocab_reference_check.sh` | `e1b55e8…` | `e1b55e8…` | **AYNI** |
+| `engine/tests/vocab-reference-baseline.json` | `8c01610…` | `8c01610…` | **AYNI** |
+| `contract/hedef-kosu-taban.json` | `384af3b…` | `384af3b…` | **AYNI** |
+| `engine/tests/hedef_kosu.mjs` | `84f3243…` | `84f3243…` | **AYNI** |
+
+Eşik gevşetilmedi, SCOPE daraltılmadı, taban kesilmedi (K2/K11 ayakta).
+**§3.8 md.4 ihlali YOK.**
+
+### Sayının kendisi, iki uçtan
+
+| | `F0-oncesi` (worktree) | `HEAD` |
+|---|---|---|
+| `vocab` toplam (taban 10438) | **10277** | **10276** |
+| `hemFlounce` | 26 | **26** |
+| hüküm | YESIL | **YESIL** |
+
+★ **Kartın "delta −162" satırı doğru ama YANILTICI:** o −162'nin **−161'i F0'dan
+ÖNCE de vardı**. F0 ikinci turun sözlüğe net etkisi **−1 satır**. Kart bunu
+kendi hanesine yazmıyor da yazmıyor değil — hakem yine de ayırdı, çünkü
+"162 referans söktüm" diye okunabilirdi ve öyle değil.
+
+---
+
+## 3. KÖK ÇÖZÜM MÜ, YAMA MI — ölçüldü: **KÖK ÇÖZÜM**
+
+Ajanın iddiası: `hemFlounce` motorun okuduğu eksenler içinde ne `spec`
+varsayılanlarında ne `SPEC_GROUPS`'ta vardı. **Doğrulandı, ikisi de:**
+
+- `web/js/engine.js:33` `hemFlounceValue(spec)` · `:118` motor onu okuyor.
+- `SPEC_GROUPS` anahtarları sayıldı (33 ad) — **`hemFlounce` içinde YOK.**
+- `F0-oncesi`'nde `spec` varsayılanlarında da yoktu; yalnız `create.js:586`'da
+  çalışma anında yazılıyordu. Yani `Object.keys(spec)` onu bir fotoğraf
+  okunana kadar göremiyordu. **Teşhis doğru.**
+
+Bugünkü hâl:
+
+```js
+// create.js:161  — eksen kardeşlerinin yanında, spec varsayılanında
+cupSeam: 'none', yoke: 'none', boxPleat: 'none', hemFlounce: 'none',
+
+// create.js:189-191 — liste TÜRETİLMİŞ, tek dize sabiti 'beden'
+const KOKEN_ALANLARI = [...new Set([
+  ...Object.keys(spec), ...SPEC_GROUPS.map((g) => g.key), 'beden',
+]));
+```
+
+**Dize sabiti başka yere taşınmadı, öldü.** `grep -rIn -w hemFlounce
+web/js/create.js` → **2 satır** (161 · 667), `F0-oncesi`'nde de 2 satırdı
+(584 · 586). Kod referansı sayısı **değişmedi**; değişen, listenin artık
+kendi kendini türetmesi.
+
+### Ölçülen: 38 hâlâ 38
+
+Hakem `create.js`'i ayrıştırıp saydı, kartın cümlesine bakmadı:
+`spec` **33** anahtar + `SPEC_GROUPS` **33** anahtar → tekilleştirilmiş
+birleşim **37** + `beden` = **38**, ve `hemFlounce` birleşimin içinde.
+`indir_check` §10-(i): `no axis is written from the photo without an origin
+label NAMING IT — 266 lines scanned, 4 carrier fields exempt`, **0 etiketsiz.**
+**Sayı kaçamakla düşmedi.**
+
+### Davranış gerçekten değişmedi mi — ajanın iddiası, hakemin ölçümü
+
+Bir `spec` varsayılanına anahtar eklemek sessiz bir davranış değişikliği
+olabilirdi. İki yol da kapalı, ölçüldü:
+
+1. `engine/vocab.json` → `hemFlounce: {"values":["none","gathered"]}`. `intValue`
+   (`engine.js:12`) `undefined`'ı **0** sayıyor, ve **index 0 = `'none'`**.
+   Yani `undefined` ile `'none'` motorda birebir aynı sayı.
+2. `applyPreset` (`create.js:228-246`) son satırda `pickerVals[k]` istiyor;
+   `pickerVals` **`SPEC_GROUPS`'tan** kuruluyor ve `hemFlounce` orada yok →
+   `?hemFlounce=…` URL'den **set edilemiyor**. (`k in spec` guard'ını artık
+   geçiyor, ama ikinci kapı tutuyor.)
+
+**Ajanın davranış iddiası doğru.**
+
+---
+
+## 4. MUTASYON — hakemin KENDİ altı mutasyonu
+
+§3.8 md.3: en az ikisi ajanın koşmadığı yerden. **Üçü öyle** (`download.js`,
+`provenance.js`, `web/lib/pdf-core.js` — ikinci turun ajanı bu üç dosyanın
+hiçbirine dokunmadı, `git diff --name-status 5c9f844..HEAD` ile bakıldı).
+
+| # | dosya | mutasyon | beklenen | ÖLÇÜLEN |
+|---|---|---|---|---|
+| H2-A | `create.js` | `hemFlounce` **`spec` varsayılanından silinir** (KOKEN_ALANLARI 38→37) | EXIT 8 | ⚠ **EXIT 0 — KAPI KAÇIRDI** |
+| H2-B | **`download.js`** ⭐ | `flatSVG` damgayı atlar, ham SVG döner | EXIT 8 | **EXIT 8** (3 FAIL) |
+| H2-C | **`provenance.js`** ⭐ | `ilanEdilecek()` boş liste döner | EXIT 8 | **EXIT 8** |
+| H2-D | ağaç kopyası | `KOKEN_ALANLARI`'na `'hemFlounce'` dize sabiti **geri konur** | vocab FAIL | **`FAIL ARTTI hemFlounce 26 -> 27`** |
+| H2-E | ağaç kopyası | eksen adı **yalnız bir YORUM satırında** anılır | — | **`FAIL 26 -> 27`** (aşağıda §5) |
+| H2-F | **`web/lib/pdf-core.js`** ⭐ | A4 kapağındaki köken bloğu ölü dala alınır | EXIT 8 | **EXIT 8** (3 FAIL) |
+| H2-G | `create.js` | ajanın kendi mutasyonu, birebir tekrarlandı | EXIT 8 | **EXIT 8** — `… NAMING IT — hemFlounce (vision block line 167)` |
+| — | hepsi geri alındı, `diff -q` birebir | | EXIT 0 | **EXIT 0**, `git status` temiz |
+
+**H2-D ŞUNU KANITLIYOR:** kapı hâlâ ateşliyor ve yeşilin sebebi tam olarak
+ajanın yaptığı iş. `git archive HEAD` ile çıkarılmış temiz ağaç → YESIL (10276),
+aynı ağaca tek dize sabiti → **FAIL** (10277). Sebep-sonuç kapalı.
+
+**Birinci turun 7 mutasyonu sökülmemiş:** H2-B (≈M1/M4), H2-C (≈M2), H2-F (≈M7)
+üçü de bugün kırmızı yanıyor. Kapı ayakta.
+
+### ⚠ H2-A — HAKEMİN BULDUĞU, KİMSENİN SORMADIĞI BOŞLUK
+
+`hemFlounce`'u `spec` varsayılanından silmek `KOKEN_ALANLARI`'nı **38 → 37**
+düşürüyor ve **hiçbir kapı kırmızı yanmıyor** (`indir_check` EXIT 0, §10-(i)
+dahil bütün köken kalemleri `ok`). Sebep ölçülü: §10 kalemleri **10 eksenlik
+referans spec** üstünde koşuyor, sevk edilen 38 eksen üstünde değil (ajanın
+14. borcu — bugün somut bir kaçış yoluna dönüştüğü ölçüldü).
+
+**Bu, bu turun hükmünü değiştirmez:** ajan o yolu **kullanmadı**, 38'i hakem
+saydı ve 38 çıktı. Ama bir sonraki faz aynı sayıyı sessizce düşürebilir.
+**F2'ye zorunlu kalem olarak yazıldı** (`GECE7/F2.md` İŞ 4), karar `K13`.
+
+---
+
+## 5. KAPI YORUMDAN KAÇARAK GEÇİLEBİLİYOR MU — ÖLÇÜLDÜ, EVET
+
+Ajanın kendi tuzak notu doğru çıktı, ve hakem onu bir sayıya bağladı.
+`git archive HEAD` ağacına, **hiçbir kod değişikliği olmadan**, tek bir yorum
+satırı eklendi:
+
+```js
+// NOTE: hemFlounce is an axis. See hemFlounce above.
+```
+
+→ `FAIL ARTTI  eksen ADI  hemFlounce  26 -> 27  (+1)`
+
+**Üç şey birden ölçüldü:**
+1. Kapı **düz metni sayıyor** — yorum ile çağrı arasında ayrım yapmıyor.
+2. Kapı **SATIR** sayıyor, geçiş değil: aynı satırda iki kez anmak **+1**.
+   (Ajanın "26→28" gözlemi iki **ayrı satırdan** geliyordu; kart onu "iki kez
+   anıldı" diye yazmış, mekanizma budur.)
+3. Bugünkü kod, o yorumu **`hem-flounce`** diye tireleyerek yazıyor
+   (`create.js:180`) — yani **kapıya uydurulmuş bir yazım.**
+
+**Karar (K12): bu bir ihlal DEĞİL, ama kapının adı yanlış.**
+Dayanak kapının kendi metni: `vocab_reference_check.sh:194` — *"BILINEN
+GURULTU, **bilerek onarilmadi**: bu imza duz metni de sayar … Sayim yontemi
+V0-0D §3'un kanonik grep'inin AYNISIDIR; degistirmek bu dosyadaki her sayiyi
+tek mevcut olcumle kiyaslanamaz kilardi."* Kusur **ilan edilmiş** ve gerekçesi
+ölçülebilir (yöntemi değiştirmek 129 tabanın hepsini geçersiz kılar).
+
+Ve asıl mesele: **bu turda kaçılan şey bir kod bağı değil.** `hemFlounce`'un
+kod referansı 2 → 2, kapalı enuma yeni **çağrı** girmedi, motor okuması aynı.
+Kaçılan şey bir cümlenin yazılışı. §3.8'in yasakladığı şey *kapıyı gevşetmek*;
+burada kapıya **dokunulmadı**, yazı kapıya uyduruldu.
+
+**Ama kapı bugün ölçtüğünü sandığı şeyi ölçmüyor:** adı "kapalı enum cırcırı",
+işi **satır bazlı kelime sayacı**. F2'ye devrediyor (`F2.md` İŞ 5).
+
+---
+
+## 6. AJANA TEK İŞ VERİLMİŞTİ — BAŞKA İŞ AÇMADI
+
+`git diff --stat 5c9f844..HEAD` (birinci tur hükmünden bu yana):
+
+```
+GECE7/DURUM.md · GECE7/F0.md · GECE7/log/f0-tur2.mutasyon.txt · web/js/create.js
+```
+
+Kaynak kodda **tek dosya: `web/js/create.js`**. Diğer üçü kart/durum/log.
+`git diff --stat F0-oncesi..HEAD` = 12 dosya, hepsi F0'ın ilan ettiği yüzeyler.
+**Yeni cephe açılmadı.** Borç listesinin 15 maddesinin hiçbirine girilmemiş
+(doğrulandı: `download.js`, `provenance.js`, `pdf-core.js`, `indir_check.mjs`
+ikinci turda **hiç değişmedi**).
+
+---
+
+## 7. SAPMA SORUSU — hakem artefaktı KENDİ açtı
+
+> *"Bir yabancı fotoğraf yükleyip kalıp + flat indirebiliyor muyum, ve
+> indirdiğim şeyin hangi alanının nereden geldiğini görebiliyor muyum?"*
+
+**EVET, ve bu tur onu bozmadı.** Kartın cümlesine değil dosyaya bakıldı:
+
+```
+Logs/indir-check/stitchu-dress-aline-flat-koken.svg  (birinci satır)
+  data-koken-toplam="10" data-koken-cikarildi="8"
+  data-koken-alanlar="fabric garment shaping skirtLength sleeveLength sleeveStyle topLength waistline"
+
+pdftotext …-a4-koken.pdf
+  Origin / Koken
+  8 of 10 fields were NOT visible in the photo and were derived from rules …
+```
+
+**Ama tam sayı şu ve kart bunu söylemiyor: inen 7 dosyanın 2'si konuşuyor, 5'i susuyor.**
+Hakem hepsini tek tek greple:
+
+| inen dosya | köken taşıyor mu |
+|---|---|
+| `…-flat-koken.svg` | ✅ |
+| `…-a4-koken.pdf` | ✅ |
+| `…-a0.pdf` · `….dxf` · `….svg` · `…-flat.svg` · `…-a4.pdf` | ⛔ **0 eşleşme** |
+
+Bir önceki fazdan **daha iyi** (0/7 → 2/7) ve bu tur onu **eksiltmedi**.
+Faz sapmadı.
+
+---
+
+## 8. HÜKÜM
+
+✅ **GEÇTİ.**
+
+- `git tag F0-yesil` **atıldı** ve pushlandı. Site artık bu etiketten sevk edilir (§3.5).
+- Hedef değişmedi (§3.7 — hakemin yapamayacağı tek şey).
+- Taban ve kapı betiği kesilmedi (K2/K11 ayakta, blob hash'leriyle doğrulandı).
+- Birinci turun işi sökülmedi (`indir_check` §10'un 24 kalemi bugün de yeşil).
+- **Devreden borç 15 → 18** (hakem üç kalem ekledi, aşağıda). Hiçbiri silinmedi.
+
+**F2 açıldı**, kartı `GECE7/F2.md`.
+
+---
+
+## 9. GÖREMEDİĞİM / ÖLÇEMEDİĞİM — bu turun kör noktaları
+
+- **Gerçek tarayıcıda hâlâ tıklanmadı.** `.dl-koken` yalnız DOM taklidiyle
+  koştu; repoda headless harness yok. **DOĞRULANMADI.**
+- **Köken etiketlerinin DOĞRULUĞU yine hiçbir kapıda ölçülmedi.** Ölçülen:
+  etiket var, yutturulamıyor, dosyaya ulaşıyor. Bir eksenin `gorulen` yerine
+  `cikarildi` yazıp yazmadığı **ölçülmüyor** — §0B'nin reward-hacking maddesi
+  tam bunu uyarıyor, ve bu **H10a/H10b'nin ön şartı.** **DOĞRULANMADI.**
+- **Miras 6 kırmızının hiçbiri bu turda da kök sebebe indirilmedi**; yalnız
+  büyümedikleri doğrulandı.
+- **`download.js`'teki `kokenKaydi = null` arka kapısı duruyor:** argümansız
+  çağrı hâlâ sessiz dosya üretir; koruma **metinsel** (§10-h regex'i), yapısal
+  değil. Çağrı biçimi değişirse (ör. spread) regex kaçırır.
+- **H2-A boşluğu** (§4): `KOKEN_ALANLARI` 38 → 37 düşerken hiçbir kapı yanmıyor.
+- **`vocab_reference_check` bir satır sayacıdır, bağ sayacı değil** (§5).
+- **`hedef_kosu`'nun kendi uyarıları duruyor:** H2'nin göz etiketi **Fable
+  tarafından gözle konuldu, İNSAN etiketi değil** (§1F, geçici) · H4/H6/H9
+  **ÖLÇEMEDİM** · H5 yalnız `armhole↔sleeve_cap` çiftinde ölçülebiliyor ·
+  H11 **VLM turu hariç**. Altı sayının dördü hâlâ tek bir çiftten/etiketten
+  okunuyor.

@@ -221,3 +221,49 @@ yazıldı.** Bunun için taban kesmek, kapının ölçtüğü şeyin ta kendisin
 kapının tabanını oynatmaksa, o faz **durur ve hakeme gelir**. Hakem tabanı
 yalnız *kapının kendisi yanlış ölçüyorsa* değiştirir — *faz sıkıştığı için*
 asla.
+
+---
+
+## K12 — `vocab_reference_check` düz metni sayar; bu bir ihlal değil, bir AD YANLIŞLIĞIDIR
+
+**Karar:** F0 ikinci turun, açıklama yorumunu eksen adını anmadan yeniden
+yazması **§3.8 ihlali sayılmadı**; ama kapının kapsamı bir **borç** olarak
+F2'ye devredildi (`GECE7/F2.md` İŞ 5).
+
+**Dayanak — hakemin kendi mutasyonu (H2-E) ve kapının kendi metni.**
+`git archive HEAD` ağacına **hiçbir kod değişikliği olmadan** tek bir yorum
+satırı eklendi (`// NOTE: hemFlounce is an axis. See hemFlounce above.`) →
+`FAIL ARTTI eksen ADI hemFlounce 26 -> 27`. Yani kapı yorumu çağrıdan
+ayırmıyor, ve **satır** sayıyor (aynı satırda iki anma = +1).
+
+Üç ölçüm ihlal olmadığını gösteriyor:
+1. Kapının kendi kaynağı bunu **ilan ediyor**: `vocab_reference_check.sh:194`
+   *"BILINEN GURULTU, **bilerek onarilmadi** … degistirmek bu dosyadaki her
+   sayiyi tek mevcut olcumle kiyaslanamaz kilardi."* Gizli bir kör nokta değil,
+   yazılı bir tasarım kararı.
+2. Kapıya **dokunulmadı**: `vocab_reference_check.sh` blob'u `F0-oncesi` ve
+   `HEAD`'de aynı (`e1b55e8…`), taban blob'u aynı (`8c01610…`).
+3. **Kaçılan şey bir kod bağı değil:** `hemFlounce`'un `create.js`'teki kod
+   referansı `F0-oncesi`'nde 2, bugün 2. Kapalı enuma yeni çağrı girmedi.
+
+**Kural:** bir kapıya dokunmadan yazıyı ona uydurmak meşrudur **ancak** kapının
+ölçtüğü şey o yazıda değilse. Kapının adı ile işi ayrışıyorsa, faz onu **kartına
+yazar** (bu ajan yazdı) ve hakem borç olarak devreder — sessizce geçmek yasak.
+
+---
+
+## K13 — `KOKEN_ALANLARI`'nın 38'den düşmesini hiçbir kapı tutmuyor
+
+**Karar:** bu, F0 ikinci turun hükmünü değiştirmez (yol **kullanılmadı**, hakem
+saydı ve **38** çıktı), ama **F2'nin zorunlu işidir** (`GECE7/F2.md` İŞ 4).
+
+**Dayanak — hakemin H2-A mutasyonu.** `web/js/create.js:161`'den
+`hemFlounce: 'none'` silindi → `KOKEN_ALANLARI` **38 → 37** ve
+`node engine/tests/indir_check.mjs` → **EXIT 0**. §10'un 24 kaleminin hepsi,
+§10-(i) dahil, `ok` dedi. Sebep ölçülü: §10 kalemleri **10 eksenlik referans
+spec** üstünde koşuyor, sevk edilen **38** eksen üstünde değil (F0'ın 14. borcu
+— bugün somut bir kaçış yolu olduğu ölçüldü, artık teorik değil).
+
+**Kural:** bir faz "sayı düşmedi" diye kartına yazıyorsa, o sayıyı **düşüren
+mutasyonun kırmızı yandığını** da yazmak zorundadır. Yazamıyorsa, sayı bir
+kapı değil bir gözlemdir.

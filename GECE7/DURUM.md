@@ -21,8 +21,8 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | Halka 0 | `halka0-yesil` | şef (ajan yok) | — | ✅ BİTTİ, kart `GECE7/HALKA0.md` |
 | F-İNDİR | **`F-INDIR-yesil`** ✅ | 2 tur koştu, `ee1414c`+`072705c` → `cce710d`+`fac2993` | 2 tur koştu | ✅ **GEÇTİ** (2. tur) — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
 | F0 | ⛔ etiket YOK | 1 tur koştu, `cd3bea3` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; kart `GECE7/F0.md`, hüküm `GECE7/HAKEM-F0.md` |
-| F0 (2. tur) | `F-INDIR-yesil` hâlâ son yeşil | — | — | SIRADAKİ — kart `GECE7/F0.md` sonundaki **HAKEM İKİNCİ TUR KARTI** |
-| F2 | — | — | — | ⛔ **BAŞLAMAZ** — F0 yeşillenmeden açılmaz; iki zorunlu maddesi `HAKEM-F0.md` §7'de |
+| **F0 (2. tur)** | **`F0-yesil`** ✅ | 1 tur koştu, `68ba288`+`3d6dc7e` | 1 tur koştu | ✅ **GEÇTİ** — vocab yeşil, 6 kırmızı; hüküm `GECE7/HAKEM-F0.md` (2. tur bölümü) |
+| F2 | — | — | — | ← **AÇILDI**, SIRADAKİ — kart `GECE7/F2.md`; İLK işi §1F fotoğraf havuzu |
 
 > ▶ **KOŞU AÇILDI** (26 Ağu, Damla): Halka 1 → F-İNDİR → F0 → F2, sonra Halka 2
 > (F3 ⇄ F5), sonra Halka 3 (F4 → F6 → F7 → F8 → F9). **F9 kapanana kadar durulmaz.**
@@ -66,6 +66,7 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | F-İNDİR 1. tur (`b791db5`) | 119 | 1 (`h10_gate_check`) | **118** | 111 | **7** ⛔ |
 | **F-İNDİR 2. tur (`fac2993`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
 | **F0 1. tur (`cd3bea3`)** | **120** | 1 (`h10_gate_check`) | **119** | **112** | **7** ⛔ |
+| **F0 2. tur (`3d6dc7e`)** | **120** | 1 (`h10_gate_check`) | **119** | **113** | **6** ✅ |
 
 ⛔ **F0'IN YEDİNCİ KIRMIZISI (hakem ölçtü, kart YEŞİL diye bildirmişti):**
 `vocab_reference_check` **FAIL** — `hemFlounce` **26 → 27**. İki uçtan ölçüldü:
@@ -114,6 +115,26 @@ saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 
 ## Hakemin son hükmü
 
+✅ **GEÇTİ (F0 2. tur, `3d6dc7e`, etiket `F0-yesil`)** — KALDI'nın tek sebebi kök sebebe inilerek kapandı ve hakem her sayıyı kendi koşturdu: `vocab_reference_check` **YEŞİL** (`hemFlounce` **26**, taban 26; toplam 10276 / taban 10438) ve taban ile kapı betiği **blob hash'i eşit** = bayt bayt el değmemiş (`e1b55e8…`, `8c01610…`, `contract/hedef-kosu-taban.json` `384af3b…`, `hedef_kosu.mjs` `84f3243…`), yani §3.8 md.4 ihlali yok; `ctest` **6 failed out of 119**, tam miras altı, **yedinci ad yok**; `hedef_kosu` Passed, `CIRCIR SAĞLAM`, H1 5/5 · H2 %92.2 · H3 4 · H5 0 · H8 31 · H10 %58.3 (n=5); `indir_check` EXIT 0 ve `KOKEN_ALANLARI` **hakem ayrıştırıp saydı: 38** (spec 33 + SPEC_GROUPS 33 → birleşim 37 + `beden`), §10-(i) **0 etiketsiz**; dize sabiti **taşınmadı, öldü** (`hemFlounce` kod referansı `create.js`'te önce 2 sonra 2, eksen artık `spec` varsayılanında ve liste türetilmiş) ve davranış değişmediği ölçüldü (vocab index 0 = `'none'`, `hemFlounce` `SPEC_GROUPS`'ta yok → URL'den set edilemiyor); hakemin **altı mutasyonu** koştu, beşi doğru yerde **EXIT 8 / FAIL** (üçü ajanın hiç dokunmadığı `download.js` · `provenance.js` · `web/lib/pdf-core.js`'te, biri `git archive` ağacına dize sabitini geri koyup vocab'ı **26→27 kırmızıya** düşürerek sebep-sonucu kapattı); ajana verilen **tek iş tek dosyada** kaldı (`5c9f844..HEAD` kaynak diffi yalnız `web/js/create.js`), yeni cephe açılmadı — **`F0-yesil` atıldı ve pushlandı, F2 açıldı** (kart `GECE7/F2.md`), gerekçe `GECE7/HAKEM-F0.md` 2. tur bölümü.
+
+> ⚠ **Hakemin bulduğu, kartın sormadığı iki kalem — F2'ye zorunlu geçti:**
+> (1) **K13** — `hemFlounce` `spec` varsayılanından silinince `KOKEN_ALANLARI`
+> **38 → 37** düşüyor ve `indir_check` **EXIT 0** veriyor: sayıyı düşüren yolu
+> hiçbir kapı tutmuyor (§10 hâlâ **10 eksenlik** referans spec üstünde koşuyor).
+> Ajan o yolu kullanmadı, ama bir sonraki faz kullanabilir.
+> (2) **K12** — `vocab_reference_check` **düz metni ve YORUMU da sayıyor**, ve
+> **satır** sayıyor: hakem temiz ağaca tek bir yorum satırı ekleyip kapıyı
+> `26 → 27` kırmızıya düşürdü. Kapının adı "kapalı enum cırcırı", işi **satır
+> bazlı kelime sayacı**. Kusur kapının kendi kaynağında ilan edilmiş
+> (`vocab_reference_check.sh:194`, *"bilerek onarilmadi"*), o yüzden ihlal
+> sayılmadı — ama borç.
+>
+> ⚠ **İnen 7 dosyanın 5'i hâlâ SESSİZ** (hakem tek tek greple): yalnız
+> `…-flat-koken.svg` ve `…-a4-koken.pdf` köken taşıyor; `a0.pdf` · `.dxf` ·
+> düz `.svg` · `…-flat.svg` · `…-a4.pdf` **0 eşleşme**.
+
+### Önceki hüküm (F0 1. tur, `cd3bea3`) — kayıt için duruyor
+
 ⛔ **KALDI** — inen dosya artık kökenini gerçekten söylüyor (hakem ölçtü: A4 kapağında `Origin / Köken` + 8 alan adı, PNG'si **göze bakıldı**; flat SVG kökünde `data-koken-cikarildi="8"`; sevk edilen kayıt **38 eksen**, 0 → 38; hakemin **beş mutasyonunun beşi** EXIT 8, ikisi ajanın hiç dokunmadığı `download.js`'te) ve `hedef_kosu` yeşil, altı sayı taban değerinde, taban el değmemiş — **ama ctest `7 failed out of 119`**: `vocab_reference_check` `hemFlounce` **26 → 27** ile kırmızı ve kart onu **"YEŞİL"** diye bildirmiş, oysa kartın kendi DEĞİŞMEZLER satırı *"yedinci ad = faz kapanmaz"* diyor; kusur `create.js:178`'deki **tek dize sabiti** olduğu ve fazın ürünü ölçüldüğü için **GERİ AL değil**, `F0-yesil` **atılmadı**, F0 **ikinci tur** açıldı (kart `GECE7/F0.md` sonunda), gerekçe `GECE7/HAKEM-F0.md`.
 
 > 🚨 **KOŞU DIŞI, AMA ACİL (K10):** `nosey-dewdrop/stitchu` **PUBLIC** ve
@@ -129,8 +150,10 @@ saati salınımıdır ve H11 cırcıra değil **tavana** (<10 sn) bağlıdır.
 F0 birinci turdan yeni soru çıkmadı (kart md.4 zaten en kısıtlayıcı davranışı
 emrediyordu: kayıt bozuksa **dosya yazılmaz**).
 
-**Devreden borç: 15 madde** — F-İNDİR'in 9'u (`HAKEM-F-INDIR.md` sonu) +
-F0'ın 6'sı (`GECE7/F0.md` md.10-15). Hiçbiri kapatılmadı, hiçbiri silinmedi.
+**Devreden borç: 18 madde** — F-İNDİR'in 9'u (`HAKEM-F-INDIR.md` sonu) +
+F0'ın 6'sı (`GECE7/F0.md` md.10-15) + F0 2. tur hakeminin 3'ü (`KOKEN_ALANLARI`
+38→37 kapısız düşüyor **K13** · `vocab_reference_check` satır sayacı **K12** ·
+inen 7 dosyanın 5'i sessiz). Hiçbiri kapatılmadı, hiçbiri silinmedi.
 
 ⚠ **Hakemin bulduğu, kimsenin sormadığı iki kalem** (`HAKEM-F0.md` §9):
 inen **5 dosyanın 3'ü hâlâ sessiz** (A0, DXF, düz `.svg` köken taşımıyor) ·
