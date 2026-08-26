@@ -18,16 +18,17 @@ export const LAW = {
     "_why_3": "unitMM, asagidaki KAYNAKLI cevre capalarindan cozuldu (uydurulmadi): duz serilmis kapali bir tup icin yari-genislik = cevre/4 (geometri zorunlulugu, turetmesi: tup duz serilince iki kat olur, gorunen genislik = cevre/2, yari-genislik = cevre/4). EU38 bust 88.0 cm -> 220 mm yari-genislik. Croquis gogus yari-genisligi 73.333 birim -> 220/73.333 = 3.0 mm/birim. Ayni unitMM bel capasini da tutturur: EU38 bel 70.0 cm -> 175 mm; croquis bel yari-genisligi 58.333 birim x 3.0 = 175.0 mm. Iki bagimsiz capa ayni sayiyi veriyor."
   },
   "referenceBody": {
-    "_law": "Flat MANKENE gore cizilir, kalip INSANA gore (Damla, SSB-10). Bugun elimizde YAYINLANMIS bir manken cizelgesi YOK; uydurmak yasak. Bu yuzden croquis capalari bugun contract/tables.json draft.euSizeChart EU38'in KAYNAKLI uc kolonuna (bustCM/waistCM/hipCM, burda style Damen Masstabellen, status=verified) bagli. MANKEN-INSAN AYRIMI ACIK KALEM: kaynakli bir manken cizelgesi gelene kadar croquis insan blokunun uzerinde duruyor ve bu ACIKCA beyan ediliyor, gizlenmiyor.",
+    "_law": "Flat MANKENE gore cizilir, kalip INSANA gore (Damla, SSB-10). ACIK KALEM KAPANDI (GECE7 / F4, IS 2): manken cizelgesi artik ILAN EDILMIS ve tek bir dosyada duruyor — contract/mannequin-chart-v1.json, id stitchu-manken-v1. Croquis capalari o dosyadan ARITMETIKLE turer; bu blok onlari kopyalamaz. Kapi (flat_convention_check bolum 1d) her kosuda ikisinin ayni sayi oldugunu dogrular ve H6'yi oradan basar.",
     "size": "EU38",
-    "chartPath": "contract/tables.json -> draft.euSizeChart.EU38",
+    "mannequinChart": "contract/mannequin-chart-v1.json",
+    "chartPath": "contract/mannequin-chart-v1.json (manken) -> contract/tables.json draft.euSizeChart.EU38 (insan tabani)",
     "fields": {
       "bustCM": 88,
       "waistCM": 70,
       "hipCM": 94
     },
-    "sourceStatus": "verified (burda style, Damen Masstabellen, Koergroesse 168)",
-    "openItem": "manken cizelgesi (gercek kadindan ince) — KAYNAK YOK, Damla karari bekliyor"
+    "sourceStatus": "insan tabani verified (burda style, Damen Masstabellen, Koergroesse 168); manken farki BIZIM KARARIMIZ, bugun 0.0 mm — gerekce mannequin-chart-v1.json _karar blogunda",
+    "openItem": "KAPANDI (F4). Manken-insan farki 0.0 mm olarak ILAN EDILDI: sifirdan baska her deger uydurulmus bir sayi olurdu, cunku onu soyleyen bir yayin bulunamadi. Kunyeli bir yayin cikarsa tek degisecek yer mannequin-chart-v1.json donusum.farkGirthMM."
   },
   "croquis": {
     "_law": "TEK CROQUIS. Butun flat'ler bu tek isaret kumesinden cikar. Bir stilin YAKASI/KOLU/ETEGI degisir; omuz ucu, gogus (koltukalti) hatti ve bel hatti YUKSEKLIGI DEGISMEZ. Kapi bu isaretleri her flat'ten olcup +-2 mm icinde ayni olduklarini dogrular.",
