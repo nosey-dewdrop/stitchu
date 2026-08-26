@@ -241,7 +241,6 @@
      "params": {
       "edge": "sideSeam",
       "atFraction": 0.55,
-      "angleDeg": 18,
       "apexDepthMM": 95,
       "trueLegs": true
      }
@@ -251,14 +250,13 @@
      "params": {
       "edge": "waistRing",
       "atFraction": 0.5,
-      "angleDeg": 12,
       "apexDepthMM": 110,
       "trueLegs": true
      }
     }
    ],
    "engineEffect": "newPanel",
-   "note": "Ayni fazlalik pens olarak alinir. princess ile arasindaki fark TOPOLOJI, guzellik degil."
+   "note": "Ayni fazlalik pens olarak alinir. princess ile arasindaki fark TOPOLOJI, guzellik degil. GECE7/F5-B: angleDeg BU DEMETTEN KALKTI (18 ve 12 dereceydi, kunyesiz iki kadran). op.suppress'in artik bir aci parametresi YOK; aciyi panelin kendi olculen develop-deficit'inden okuyor ve deficit esigin altindaysa REDDEDIYOR. Pens formulden degil yuzey egriliginden duser (HEDEF.md), elle yazilmis bir aci kanunu tam tersine cevirirdi."
   },
   "waistline.natural": {
    "status": "resolved",
@@ -759,13 +757,12 @@
      "params": {
       "edge": "waistRing",
       "atFraction": 0.5,
-      "angleDeg": 10,
       "apexDepthMM": 140
      }
     }
    ],
    "engineEffect": "reshape",
-   "note": "sweep 0; bel fazlaligi pens ile alinir."
+   "note": "sweep 0; bel fazlaligi pens ile alinir. GECE7/F5-B: angleDeg 10 KALKTI, kunyesiz bir kadrandi. op.suppress aciyi panelin kendi develop-deficit'inden olcuyor; sevk edilen etek panelinin deficit'i +0.000 derece (skimBodice + hemSweep koniye ceviriyor), yani operator orada REDDEDER ve bu dogru cevaptir."
   },
   "skirtStyle.gathered": {
    "status": "resolved",

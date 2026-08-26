@@ -979,14 +979,23 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
     out.name = name;
     out.maxStrain = maxStrain(mesh, P);
 
-    if (std::getenv("STITCHU_SP_DEBUG")) {
-        // WHERE THE DEFICIT IS, band by band. A panel can only be flattened
-        // without stretch where the surface is developable; everywhere else the
-        // Gaussian curvature has to leave through a cut. Summing the discrete
-        // angle defect (2*pi minus the incident angles) over the INTERIOR
-        // vertices of each row band says exactly how much wants out and where —
-        // and the darts' measured openings say how much actually got out. If the
-        // two disagree, the difference is the interior strain, by definition.
+    // WHERE THE DEFICIT IS, band by band. A panel can only be flattened
+    // without stretch where the surface is developable; everywhere else the
+    // Gaussian curvature has to leave through a cut. Summing the discrete
+    // angle defect (2*pi minus the incident angles) over the INTERIOR
+    // vertices of each row band says exactly how much wants out and where —
+    // and the darts' measured openings say how much actually got out. If the
+    // two disagree, the difference is the interior strain, by definition.
+    //
+    // ⭐ HOISTED OUT OF `STITCHU_SP_DEBUG` BY F5-B, AND THAT IS THE WHOLE
+    // CHANGE — same arithmetic, same order of operations, same numbers. This is
+    // the quantity `op.suppress` sizes its wedge from, and a number that exists
+    // only under a debug env var is a number the shipped binary does not have:
+    // the operator would have had to grow a second, parallel deficit model in a
+    // tool, which is the two-sources error class this file keeps killing. Cost
+    // is one acos per triangle corner (~3k triangles per panel), measured below
+    // the noise of the flatten it sits next to.
+    {
         std::vector<double> defBand(13, 0.0);
         std::vector<double> angSum(mesh.V.size(), 0.0);
         std::vector<char> onBoundary(mesh.V.size(), 0);
@@ -1014,9 +1023,15 @@ SurfacePanel flattenGrid(const PanelGrid& g, const std::string& name,
             }
         double defTotal = 0;
         for (double d : defBand) defTotal += d;
+        out.developDeficitDeg = defTotal * 180.0 / kPi;
+        out.deficitBandDeg.reserve(defBand.size());
+        for (double d : defBand) out.deficitBandDeg.push_back(d * 180.0 / kPi);
+    }
+
+    if (std::getenv("STITCHU_SP_DEBUG")) {
         std::fprintf(stderr, "  [%s] DEFICIT toplam %+8.4f deg | bant:", name.c_str(),
-                     defTotal * 180.0 / kPi);
-        for (double d : defBand) std::fprintf(stderr, " %+.2f", d * 180.0 / kPi);
+                     out.developDeficitDeg);
+        for (double d : out.deficitBandDeg) std::fprintf(stderr, " %+.2f", d);
         std::fprintf(stderr, "\n");
 
         // strain map by row band: where does the residual live?
@@ -1218,6 +1233,14 @@ static SheathOptions probeOverrides(const SheathOptions& in) {
     if (const char* e = std::getenv("STITCHU_BODICE_APEX")) o.bodiceApexFrac = std::atof(e);
     if (const char* e = std::getenv("STITCHU_CREST_BAND")) o.shoulderCrestBandMM = std::atof(e);
     if (const char* e = std::getenv("STITCHU_MAX_DART_DEG")) o.maxDartDeg = std::atof(e);
+    // GECE7 / F5-B. The one option op.suppress had to be able to measure on the
+    // SHIPPED binary: skimBodice decides whether the bodice is a CONE (which
+    // develops exactly, deficit ~0, no dart to open) or follows the body (which
+    // does not). The header states the second case as "+52.5 deg of
+    // develop-deficit" but there was no way to read that number off the shipped
+    // tree — only by editing the header, which is the pollution this block
+    // exists to prevent.
+    if (const char* e = std::getenv("STITCHU_SKIM_BODICE")) o.skimBodice = (*e == '1');
     // TUR 17 — the two hem-sweep laws, so both can be measured on the same
     // binary instead of being argued about. See SheathOptions.
     if (const char* e = std::getenv("STITCHU_HEM_OVER_HIP")) o.hemSweepOverHipMM = std::atof(e);

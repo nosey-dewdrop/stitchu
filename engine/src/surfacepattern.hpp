@@ -169,6 +169,34 @@ struct SurfacePanel {
     //    is reported, bounded, and disclosed, not hidden.
     double boundaryStrain = 0.0;
     double maxStrain = 0.0;
+    // ⭐ THE PANEL'S OWN DEVELOP-DEFICIT, DEGREES (GECE7 / F5-B, op.suppress).
+    //
+    // WHY IT IS CARRIED HERE AND NOT RE-DERIVED IN A TOOL. `op.suppress` has to
+    // size its wedge from the SURFACE rather than from a number somebody typed,
+    // and the only place that number exists is the 3D grid this panel was
+    // flattened from — which nothing outside surfacepattern.cpp can see. A
+    // second, parallel deficit model built out in a tool is exactly the error
+    // class the single-source law exists to kill (seamplan.hpp), so the panel
+    // carries the engine's own figure instead of letting a consumer guess it.
+    //
+    // WHAT IT IS: the discrete angle defect (2*pi minus the incident triangle
+    // angles) summed over the panel mesh's INTERIOR vertices — the same law
+    // columnDeficitRows() sums per column. Until F5-B it was computed only
+    // inside `STITCHU_SP_DEBUG` and thrown away. Positive = curvature that has
+    // to leave through a cut. NEGATIVE = a saddle, and a dart cannot absorb a
+    // saddle; op.suppress REFUSES rather than opening one anyway.
+    //
+    // MEASURED, EU38, AND IT IS THE ROOT OF K28. With the shipped skimBodice
+    // the bodice is a CONE and a cone develops exactly: left_ftorso reads
+    // -1.9628 deg, there is nothing to suppress, and that is why all eight
+    // shipped panels print "pens": 0 while the class is named `top/dart/woven`.
+    // With skimBodice off (the body-following bodice the header's own note
+    // describes) the same panel reads +27.8788 deg and darts are derived.
+    double developDeficitDeg = 0.0;
+    // The same defect split into 13 row bands, waist end first. A single total
+    // hides a saddle: left_ftorso with skimBodice off reads +27.88 overall but
+    // +17.78 in one band and -11.58 in the next, and only the bands say so.
+    std::vector<double> deficitBandDeg;
     double waistLenMM = 0.0;      // flattened waist edge total (ring arcs only)
     int ringOffset = 0;           // global index of this panel's first ring arc,
                                   // so bodice and skirt zip waist stitches 1:1

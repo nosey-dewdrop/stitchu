@@ -199,9 +199,13 @@
       "not_esik": "Gecerlilik esigi bu dosyada TANIMLI DEGIL. GarmentCode'un tol=0.05'i onlarin yayinlanmis bandidir, referans; bizim kapimizin esigi Damla'nin karari (GECE-KOSUSU-v5 SSC)."
     },
     "op.suppress": {
-      "tanim": "Fazlaligi bir kenardan iceri alma: pens, kup, kesme. Pens bir STIL degil, bir kenara uygulanan operatordur.",
-      "kaynak_fikir": "GarmentCode Panel.add_dart — knowledge/TEKNOLOJI-2026-08-23.md:45, 72",
+      "tanim": "Fazlaligi bir kenardan iceri alma: pens, kup, kesme. Pens bir STIL degil, bir kenara uygulanan operatordur. ⭐ ACISI PARAMETRE DEGIL: motorda suppressPanel() aciyi panelin KENDI olculen develop-deficit'inden (SurfacePanel::developDeficitDeg) okur ve deficit esigin altindaysa REDDEDER. Bir aci parametresi, pensi formule geri cevirirdi.",
+      "kaynak_fikir": "GarmentCode Panel.add_dart — knowledge/TEKNOLOJI-2026-08-23.md:45, 72. Kanun: HEDEF.md/README — 'pensler formul degil, yuzeyin kendi develop-deficit'i'.",
       "parametreler": {
+        "panel": {
+          "tip": "panelRef",
+          "not": "aci BU panelden okunur; cagirana aci parametresi VERILMEZ"
+        },
         "edge": {
           "tip": "edgeRef"
         },
@@ -209,22 +213,29 @@
           "tip": "kesir",
           "aralik": "0..1"
         },
-        "angleDeg": {
-          "tip": "aci",
-          "aralik": "0..60",
-          "not": "gercek Bugra pensi 41.5 = develop-deficit 41.48 (CLAUDE.md, olculdu)"
-        },
         "apexDepthMM": {
           "tip": "uzunluk",
-          "aralik": "0..300"
+          "aralik": "0..400",
+          "not": "motorun kendi ilan ettigi kesirden: SheathOptions::bodiceApexFrac x sutun uzunlugu"
         },
         "trueLegs": {
           "tip": "bool",
           "varsayilan": true,
-          "not": "iki bacak esit uzunluga cekilir"
+          "not": "iki bacak INSADAN esit: biri sinir noktasi, digeri onun apeks etrafinda donmus goruntusu"
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "suppress_check",
+      "olculen": {
+        "aci_kaynagi": "panelin kendi develop-deficit'i; suppressPanel()'in aci parametresi YOK",
+        "sevk_edilen_giysi": "EU38 left_ftorso deficit -1.9628 deg, left_btorso -0.1116 deg -> OPERATOR REDDEDIYOR. skimBodice govdeyi KONIYE ceviriyor, koni birebir aciliyor. K28'in ('sevk edilen sinifin 8/8 panelinde pens YOK') kok sebebi budur ve artik bir SAYIDIR.",
+        "vucudu_izleyen": "skimBodice=OFF, maxDartDeg=0: left_ftorso 55.1735 deg, left_btorso 56.6688 deg -> ACILIYOR",
+        "bugra_locket_yan_yana": "41.48 deg (flatten-research/16). TUTMUYOR: fark +13.6935 / +15.1888 deg. Ayarlanmadi ve hicbir kapi buna esitlemiyor (KOSU-v7 §3.10).",
+        "cift_bastirma": "motorun kendi pensleri ACIKKEN ikinci bir kama panelin KENDINI KESMESINE yol aciyor (artik deficit 27.8788 deg, giden alan 11417 mm2 ↔ sektor 24427 mm2). Olculdu, gizlenmedi."
+      },
+      "korunmayan": {
+        "alan": "KORUNMAZ, ve korunur demek yanlis bir kapi olurdu: BASTIRMA KUMAS GOTURUR. Olculen EU38 left_ftorso: 44878.9541 mm2 gitti.",
+        "sektor_kiyasi": "0.5*L^2*theta kamayi L yaricapli bir daire dilimi sayar, supurulen sinir ise panelin kendi kenaridir. Aradaki fark turetilmemis bir SEKIL terimi (ol. %3.40 on, %10.06 arka) — RAPOR, kapi DEGIL; uydurma esik kapisizliktan kotudur (K29)."
+      }
     },
     "op.rotate": {
       "tanim": "Bir pensi APEKS etrafinda baska bir kenara tasima: pens transferi / pivot. Bastirma miktari sabit kalir, yalnizca NEREDEN cikacagi degisir. Klasik kalipciligin ANA islemi (KOSU-v7 §4A).",

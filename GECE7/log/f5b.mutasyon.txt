@@ -1,0 +1,125 @@
+=== F5-B MUTASYONLARI — 2026-08-26 14:26 ===
+    ikili sutunu = shasum ilk-8'lerin BIRLESIMI: seam-plan|rotate-op|suppress-op
+
+--- IS 0a: APEKS KUNYESI BAGLI MI (hakem mutasyonu HM1, karar K30) ---
+
+M1  engine/src/surfacepattern.hpp — HM1 AYNEN TEKRARLANIYOR
+    SheathOptions::bodiceApexFrac 0.80 -> 0.60. F5-A'da rotate-op hala 0.80
+    basiyordu ve rotate_check YESIL kaliyordu. Artik plan.opt'tan OKUNUYOR,
+    yani kapinin R0b kolu (kunye artik bir ESIK) KIRMIZI yanmali.
+  M1  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> dd74ccbfa4ccfcbc9902c4f9
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+M2  engine/tools/rotate-op.cpp — KUNYEYI GERI KOPYALA (F5-A'nin hali)
+    apeks kesri motordan okunmak yerine yerel bir sabitten alinir.
+    R8 (iki kosum, oran) KIRMIZI yanmali: --apex-frac artik hicbir sey yapmaz.
+  M2  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> caa074caca4f7b94553bc41b
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+--- IS 0b: YAYINLANAN SAYININ DOGRULUGU (hakem mutasyonu HM3, karar K30) ---
+
+M3  engine/src/shellprojection.cpp — HM3 AYNEN TEKRARLANIYOR
+    bust_circumference BELIN cevresini basar. Kullaniciya inen teknik cizim
+    YANLIS bir bust olcusu yayinlar. F5-A'da tek_nesne_check YESILDI.
+  M3  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> 010f2f60374be14805492df9
+        dugum 0c1d52866882ce53 -> 6a02dac2577c5b67
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+M4  engine/src/shellprojection.cpp — OLCU DOGRU YUKSEKLIKTE AMA YANLIS NICELIK
+    shoulder_width yarim genislik basar (2* carpani dusurulur). HM3'un ayni
+    sinifi, baska bir yuzu: ad bir seyi soyluyor, sayi baskasini olcuyor.
+  M4  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> 611ad1875beac9921d605d1a
+        dugum 0c1d52866882ce53 -> d406777c61c8e9cb
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+--- IS 1: op.suppress GERCEK BIR OPERATOR MU ---
+
+M5  engine/src/dartsuppress.cpp — ACIYI SABITE CEVIR (kartin 1. mutasyonu)
+    deficitDeg := 41.48. Pens artik bir SAYIDAN dusmez, YAZILIR — kartin
+    '41.48'i koda sabit yazmak bu karti KAPATMAZ' cumlesinin kapisi.
+    S1 (sevk edilen panel artik REDDETMEZ) ve S2 (aci artik SABIT) yanmali.
+  M5  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> caa074ca649e04f39df39670
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+M6  engine/src/dartsuppress.cpp — KIMLIKSIZLESTIR (kartin 2. mutasyonu)
+    'acildi' isaretlenir, geometriye DOKUNULMAZ. S3'un 'cikan konturda
+    apeksin gerdigi aci' kolu ve 'alan gercekten gitti' kolu yanmali.
+  M6  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> caa074ca784685ff848440c3
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 1 (KIRMIZI)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+M7  engine/src/surfacepattern.cpp — F5-B'NIN YAZMADIGI KOD YOLU (flatten'in kendisi)
+    develop-deficit'in NEGATIF bantlari sifira KIRPILIR. Sevk edilen panelin
+    -1.9628'i pozitife doner, op.suppress 'evet' der ve K28'in kok sebebi
+    sessizce kaybolur. S1 KIRMIZI yanmali: eyeri pens yutamaz.
+  M7  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> 19ae68417782045197c77171
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+  M7  ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> 19ae68417782045197c77171
+        dugum 0c1d52866882ce53 -> 0c1d52866882ce53
+        kapi: EXIT 0 (YESIL)
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+M8  contract/primitives-v1.json — UYGULANMAMIS OPERATORU UYGULANMIS SAY
+    op.split kendine olmayan bir kapi (split_check) gosterir; H8-ifade
+    motora tek satir yazmadan duserdi.
+    kapi: EXIT 1 (KIRMIZI)
+        geri alindi · kapi: EXIT 0 (YESIL)
+
+M9  engine/tests/expressability_check.mjs — PAYDAYI DARALT (hakemin HM4'u)
+    freesewing-bella listeden silinir. Muhur (TABAN_PAYDA) KIRMIZI yakmali.
+    Muhre DOKUNULMUYOR; silinen GIYSI satiri, muhur degil.
+    kapi: EXIT 1 (KIRMIZI)
+        geri alindi · kapi: EXIT 0 (YESIL)
+
+=== git status (temiz olmali) ===
+ M contract/primitives-v1.json
+ M contract/vocab-resolution-v1.json
+ M engine/src/dartrotate.cpp
+ M engine/src/dartrotate.hpp
+ M engine/src/surfacepattern.cpp
+ M engine/src/surfacepattern.hpp
+ M engine/tools/rotate-op.cpp
+?? engine/src/dartsuppress.cpp
+?? engine/src/dartsuppress.hpp
+?? engine/tools/shell-audit.cpp
+?? engine/tools/suppress-op.cpp
+
+⚠ M7 KIRMIZI YANMADI VE SEBEBI OLCULDU — MUTASYON YANLIS TASARLANMISTI, KAPI DEGIL.
+   Betigin iddiasi "negatif bantlar sifira kirpilinca sevk edilen panelin -1.9628'i
+   POZITIFE doner" idi. Yanlis: kirpma negatifi SIFIRA cevirir, pozitife degil.
+   Sevk edilen panelin butun bantlari kucuk negatifler oldugu icin toplam 0.0000
+   oluyor, esik 0.5'in hala ALTINDA, ve op.suppress DOGRU sekilde reddetmeye devam
+   ediyor. Ikili gercekten kimildadi (19ae6841...), yani bayat-ikili tuzagi degil.
+   Kapi haklı, mutasyon hatali. Gizlenmiyor, ve yerine ISARETI GERCEKTEN CEVIREN
+   bir mutasyon kosuluyor:
+
+M7b engine/src/surfacepattern.cpp — F5-B'NIN YAZMADIGI KOD YOLU (flatten'in kendisi)
+    defect'in MUTLAK DEGERI alinir: eyerin negatif egriligi pozitif bastirma gibi
+    gorunur. Sevk edilen panelin -1.9628'i +1.9628 olur, esigi gecer, op.suppress
+    "evet" der ve K28'in kok sebebi sessizce kaybolur. S1 KIRMIZI yanmali.
+  M7b ikili[seam-plan|rotate-op|suppress-op] caa074caef0ee673553bc41b -> 27cc4dbb42a808623c35546c
+        kapi: EXIT 1 (KIRMIZI)
+        olculen: "deficit_deg": 1.9628
+        geri alindi: ikili caa074caef0ee673553bc41b (taban caa074caef0ee673553bc41b) · kapi: EXIT 0 (YESIL)
+
+=== git status (temiz olmali) ===
+ M contract/primitives-v1.json
+ M contract/vocab-resolution-v1.json
+ M engine/src/dartrotate.cpp
+ M engine/src/dartrotate.hpp
+ M engine/src/surfacepattern.cpp
+ M engine/src/surfacepattern.hpp
+ M engine/tools/rotate-op.cpp
+?? engine/src/dartsuppress.cpp
+?? engine/src/dartsuppress.hpp
+?? engine/tools/shell-audit.cpp
+?? engine/tools/suppress-op.cpp

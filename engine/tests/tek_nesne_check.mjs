@@ -51,6 +51,7 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const TOOL = process.argv[2] || path.join(HERE, "..", "build", "seam-plan");
+const AUDIT = process.argv[3] || path.join(HERE, "..", "build", "shell-audit");
 const DROP_MM = 20.0;      // kartın kendi sayısı
 const EPS = 1e-4;          // "kımıldadı" eşiği, mm — ölçüm gürültüsünün çok üstü
 const ARC_EPS = 1e-3;      // yay/çevre karşılaştırması, mm
@@ -210,6 +211,111 @@ for (const yon of ["on", "arka"]) {
     fail(`K5c ön/arka body_length ${dOn.toFixed(4)} vs ${dArka.toFixed(4)}mm, fark ` +
          `${fark.toFixed(4)}mm ≤ 1mm. Kabuk ön/arka simetrik DEĞİL; iki yayın eşit ` +
          `çıkması arka görünümün ön görünümden kopyalandığı anlamına gelir (HM-F2).`);
+}
+
+
+// --- K6: ⭐ DOĞRULUK KOLU (GECE7 / F5-B İŞ 0b, karar K30) -----------------
+//
+// NEDEN VAR — bir HAKEM MUTASYONU, bir fikir değil (HM3).
+//
+// K1–K5 KİMLİK kuruyor: "flat ile kalıp aynı nesneden çıktı". Hakem
+// `shellprojection.cpp`'yi değiştirip `bust_circumference`'ı **BELİN** çevresini
+// basacak hâle getirdi — kullanıcıya inen teknik çizim yanlış bir büst ölçüsü
+// yayınlıyor — ve ölçtü: düğüm kımıldadı (kimlik ÇALIŞIYOR, K24 çalışıyor) ve
+// bu kapı ile rotate_check **İKİSİ DE YEŞİL** kaldı. Repoda hiçbir kapı
+// "yayınlanan sayı DOĞRU mu" diye sormuyordu, yalnız "doğru atadan mı geldi".
+//
+// ⚠ VE BU İKİNCİ BİR ÇAĞRI DEĞİL, İKİNCİ BİR YOL. Aynı fonksiyonu tekrar
+// koşturup kendisiyle kıyaslamak regen-vs-regen'dir ve hiçbir şey kanıtlamaz.
+// `shellprojection.cpp` çevreyi GAUSS-LEGENDRE kadratürü (order 24) + Steiner'in
+// ANALİTİK ofset kimliğiyle (P + 2πd), yarım genişliği KAPALI FORMLA (a + d),
+// merkez yayını 0.05mm adımla ölçüyor. `shell-audit` ise kabuğun KENDİ
+// NOKTALARINI basıyor (halka başına 20000 örnek, merkez zinciri 0.02mm) ve bu
+// kol onları düz KİRİŞ TOPLAMIYLA ölçüyor. Farklı aritmetik, Steiner yok,
+// kapalı form yok, ortak kod yolu yok.
+//
+// ⚠ NE DENETLENMİYOR, SÖYLENİYOR (K29): `GarmentSurf::at()` iki yolun da
+// altında. YÜZEY yanlışsa iki okuma birlikte yanlış olur ve bu kol göremez.
+// Gördüğü şey, HM3'ün ait olduğu sınıfın tamamı: yanlış YÜKSEKLİKTE, yanlış
+// HALKADA, yanlış NİCELİKTE ya da öbür görünümden KOPYALANMIŞ bir ölçü.
+{
+  if (!existsSync(AUDIT)) {
+    fail(`K6 shell-audit bulunamadı: ${AUDIT}. Yayınlanan ölçünün DOĞRULUĞUNU ` +
+         `karşılaştıracak ikinci yol yok — kimlik var, doğruluk yok (HM3).`);
+  } else {
+    const a = JSON.parse(execFileSync(AUDIT, ["EU38"], { encoding: "utf8", maxBuffer: 512 << 20 }));
+    if (a.dugum !== base.flat.dugum)
+      fail(`K6 shell-audit düğümü ${a.dugum}, flat ${base.flat.dugum} — denetim BAŞKA bir ` +
+           `nesneyi ölçüyor, kıyas geçersiz.`);
+
+    // Kiriş toplamı, dışbükey bir eğrinin uzunluğunu O(h²/R) ALTTAN sayar; 20000
+    // kirişte bu mikronun çok altında. Eşik ölçümün kendi çözünürlüğünden
+    // türüyor, seçilmiyor — ve HM3'ün yakaladığı sapma (büst ↔ bel, ~100mm)
+    // bunun beş bin katı.
+    const TOL_MM = 0.05;
+    const halka = new Map(a.halkalar.map((h) => [h.ad, h]));
+    const kirisToplam = (pts) => {
+      let L = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const q = pts[(i + 1) % pts.length];
+        L += Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1]);
+      }
+      return L;
+    };
+    const zincirToplam = (pts) => {
+      let L = 0;
+      for (let i = 1; i < pts.length; i++)
+        L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1],
+                        pts[i][2] - pts[i - 1][2]);
+      return L;
+    };
+    const enGenis = (pts) => 2 * Math.max(...pts.map((q) => Math.abs(q[0])));
+
+    let denetlenen = 0, olcemedim = [];
+    for (const v of base.flat.siluet) {
+      for (const m of v.olculer) {
+        let ikinci = null, nasil = "";
+        const h = halka.get(m.halka);
+        if (/_circumference$/.test(m.ad) && h) {
+          ikinci = kirisToplam(h.nokta);
+          nasil = `halka "${m.halka}" (h=${h.h_mm}mm) poligonunun kiriş toplamı`;
+        } else if (/_width$/.test(m.ad) && h) {
+          ikinci = enGenis(h.nokta);
+          nasil = `halka "${m.halka}" poligonunun 2·max|x|'i`;
+        } else if (m.ad === "body_length") {
+          const zincir = v.gorunum === "on" ? a.merkez_on : a.merkez_arka;
+          ikinci = zincirToplam(zincir);
+          nasil = `merkez-${v.gorunum} zincirinin (${a.merkez_adim_mm}mm adım) kiriş toplamı`;
+        } else if (m.ad === "body_height_projected") {
+          ikinci = a.omuz_z_mm - a.hem_z_mm;
+          nasil = "omuz halkası z'si eksi etek ucu z'si";
+        }
+
+        if (ikinci === null) {
+          olcemedim.push(`${v.gorunum}/${m.ad}`);
+          continue;
+        }
+        denetlenen++;
+        const d = Math.abs(ikinci - m.mm);
+        if (d < TOL_MM)
+          ok(`K6 ${v.gorunum.padEnd(4)} ${m.ad.padEnd(22)} yayınlanan ${m.mm.toFixed(4)}mm ` +
+             `↔ ikinci yol ${ikinci.toFixed(4)}mm (Δ ${d.toFixed(6)}mm) — ${nasil}`);
+        else
+          fail(`K6 ${v.gorunum} ${m.ad}: YAYINLANAN ${m.mm.toFixed(4)}mm, ikinci yoldan ` +
+               `${ikinci.toFixed(4)}mm, Δ ${d.toFixed(4)}mm > ${TOL_MM}mm. Ölçü, ADININ ` +
+               `söylediği şeyi ölçmüyor — ${nasil}. Kullanıcının indirdiği teknik çizim ` +
+               `YANLIŞ bir sayı yayınlıyor (hakem mutasyonu HM3).`);
+      }
+    }
+    if (olcemedim.length)
+      console.log(`      ↳ ÖLÇEMEDİM (ikinci yol yok, uydurulmadı — K29): ${olcemedim.join(", ")}`);
+    if (!denetlenen)
+      fail("K6 hiçbir ölçü denetlenemedi. Sıfır kalem doğrulayan bir kol, kapının " +
+           `"hiçbir şey ölçmedim" ile "her şey geçti"yi ayırt etmemesidir (K33'ün sınıfı).`);
+    else
+      ok(`K6 ${denetlenen} yayınlanan ölçü BAĞIMSIZ İKİNCİ YOLDAN doğrulandı ` +
+         `(kiriş toplamı ↔ Gauss-Legendre + Steiner; ortak kod yolu yok)`);
+  }
 }
 
 // --- ilan: manken açık kalemi gizlenmiyor --------------------------------

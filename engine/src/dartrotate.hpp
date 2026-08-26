@@ -57,21 +57,15 @@ struct RotateReport {
     bool selfIntersects = false;
 };
 
-// Cut a wedge of `wedgeDeg` out of a closed contour at vertex `atIdx`, with the
-// apex `apexDepthMM` in from that vertex along the ray towards `towards`.
+// ⭐ `suppressWedge` MOVED OUT (GECE7 / F5-B). It was declared here with a note
+// saying it WAS `op.suppress` and that it was a FIXTURE — `rotate` needed a
+// dart to move and the shipped plan carries none. It now lives in
+// `dartsuppress.{hpp,cpp}` beside the real operator `suppressPanel()`, which
+// takes its wedge angle from the panel's OWN measured develop-deficit and has
+// no angle parameter at all. `rotate` no longer declares its own dart: the
+// driver asks op.suppress for one and reports whatever op.suppress said,
+// refusal included.
 //
-// ⚠ THIS IS `op.suppress`, NOT `rotate`, AND IT IS A FIXTURE. It is here
-// because `rotate` needs a dart to move and the shipped seam plan carries NONE:
-// measured on the shipped EU38 tree, all eight panels print `"pens": 0` — the
-// class is called `top/dart/woven` but its suppression is carried by PANEL
-// SEAMS, not by darts (surfacepattern.hpp: "the torso derives NO waist darts at
-// all"). So the dart the operator transfers has to be declared by the caller.
-// `op.suppress` becoming a real C++ operator is a QUEUE item, not F5-A's work
-// (§4A: an unresolved name stays and is written into the queue).
-std::vector<Vec2> suppressWedge(const std::vector<Vec2>& contour, std::size_t atIdx,
-                                double apexDepthMM, Vec2 towards, double wedgeDeg,
-                                std::size_t* apexIdxOut);
-
 // ⭐ op.rotate. Move the dart whose apex is `contour[apexIdx]` onto the boundary
 // vertex `targetIdx`, pivoting about the apex. Throws std::invalid_argument on
 // a degenerate request (apex not a notch tip, target on the dart itself) —

@@ -15,6 +15,7 @@ add_library(engine
     src/shellprojection.cpp
     src/seamplan.cpp
     src/dartrotate.cpp
+    src/dartsuppress.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -140,7 +141,7 @@ add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
 # aynı bölgede oynatıyor mu (ön oynar, arka durur, iki tarafta da).
 add_test(NAME tek_nesne_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/tek_nesne_check.mjs
-                 $<TARGET_FILE:seam-plan>)
+                 $<TARGET_FILE:seam-plan> $<TARGET_FILE:shell-audit>)
 
 # rotate_check (GECE7 / F5-A, K27): op.rotate — pens transferi. Rijit hareketin
 # korunan üç niceliği (ALAN, PENS AÇISI, TRUE BACAKLAR) birebir ölçülür; çevre
@@ -149,13 +150,21 @@ add_test(NAME tek_nesne_check
 # oyuğundakinden uzundur ve "çevre korunur" YANLIŞ bir kapı olurdu.
 add_test(NAME rotate_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/rotate_check.mjs
-                 $<TARGET_FILE:rotate-op>)
+                 $<TARGET_FILE:rotate-op> $<TARGET_FILE:suppress-op>)
 
 # expressability_check (GECE7 / F5-A, §4A'nın kapanış testi): H8-İFADE — ADLI
 # gerçek kalıpların kaçı bugünkü operatör kümesiyle bir programa çevrilebiliyor,
 # çevrilemeyen her biri EKSİK OPERATÖRÜN ADINI veriyor. ⚠ Bu sayı
 # hedef_kosu.mjs'in H8'i DEĞİLDİR: o bir SÖZLÜK sayacıdır ve sözlük daraltılarak
 # düşürülebilir (§0B reward-hacking yüzeyi). İkisi ayrı basılır, harmanlanmaz.
+# suppress_check (GECE7 / F5-B, K30/§4A): op.suppress — the wedge angle falls
+# out of the panel's measured develop-deficit or the operator refuses. Two
+# mutations turn it red: making the angle a constant, and marking a wedge opened
+# while leaving the geometry alone.
+add_test(NAME suppress_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/suppress_check.mjs
+                 $<TARGET_FILE:suppress-op>)
+
 add_test(NAME expressability_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/expressability_check.mjs)
 
@@ -811,6 +820,20 @@ target_link_libraries(seam-plan PRIVATE engine)
 # geometry, every number comes out of src/dartrotate.cpp.
 add_executable(rotate-op tools/rotate-op.cpp)
 target_link_libraries(rotate-op PRIVATE engine)
+
+# suppress-op (GECE7 / F5-B): op.suppress — the panel's own develop-deficit
+# opened as a wedge, or REFUSED. Same rule as seam-plan and rotate-op: the tool
+# holds no geometry, and here it holds no angle either — suppressPanel() reads
+# the angle off the panel and has no parameter for it.
+add_executable(suppress-op tools/suppress-op.cpp)
+target_link_libraries(suppress-op PRIVATE engine)
+
+# shell-audit (GECE7 / F5-B, IS 0b): a DENSE POLYLINE sampling of the shipped
+# shell, so a gate can recompute every published ShellMeasure by a second path
+# and ask whether the number the user downloads is CORRECT — not merely whether
+# it came from the same object (which is all F3 and F5-A established).
+add_executable(shell-audit tools/shell-audit.cpp)
+target_link_libraries(shell-audit PRIVATE engine)
 
 # waistfold-probe: DIAGNOSTIC, not a gate and not in ctest. Re-runs the sheath
 # with solver knobs that carry no geometric meaning and prints the waist fold,

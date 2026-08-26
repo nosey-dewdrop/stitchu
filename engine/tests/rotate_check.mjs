@@ -27,15 +27,40 @@
 // (KOSU-v7 §3.8).
 //
 // ---------------------------------------------------------------------------
-// ⚠ KARTA GEÇEN ÖLÇÜM, VE RAHATSIZ EDİCİ OLANI: sevk edilen sınıfın adı
-// `top/dart/woven` ama sevk edilen dikiş planında PENS YOK — EU38'in sekiz
-// panelinin sekizi de `"pens": 0` basıyor (omuz dikişi açık ya da kapalı, her
-// maxDartDeg'de ölçüldü). Bastırma PANEL DİKİŞLERİYLE taşınıyor. Bu yüzden
-// transfer edilen pens `op.suppress` fikstürüyle BİLDİRİLİYOR ve iki sayısı da
-// künyeli: açı 41.48° (gerçek Buğra Locket pensi = develop-deficit,
-// flatten-research/16) · apeks 0.80 (`SheathOptions::bodiceApexFrac`, motorun
-// kendi ilan ettiği kesir). `op.suppress`'in gerçek bir operatör olması KUYRUK
-// maddesidir ve burada iddia EDİLMİYOR (§4A).
+// ---------------------------------------------------------------------------
+// ⭐ F5-B: TRANSFER EDİLEN PENS ARTIK BİR FİKSTÜR DEĞİL, VE KAPI BUNU TUTUYOR.
+//
+// F5-A'da bu kapının R0 kolu `aci_deg == 41.48` diye SABİT bir sayıya bakıyordu
+// ve apeks kesri `rotate-op.cpp`'de `constexpr 0.80` olarak duruyordu — künyesi
+// yorum satırındaydı, bağı yoktu. Hakem ikisini de ölçtü (HM1, K30): motordaki
+// `bodiceApexFrac` 0.60'a çekilince araç hâlâ 0.80 basıyor ve kapı YEŞİL
+// kalıyordu. F5-B'de:
+//
+//   * pensin AÇISI `op.suppress`'ten geliyor ve o da panelin kendi
+//     develop-deficit'inden. Kapı bunu bir cümleye değil, İKİ ARACIN
+//     karşılaştırılmasına bağlar: rotate-op'un taşıdığı açı, suppress-op'un
+//     AYNI panelde ölçtüğü deficit ile birebir aynı olmak ZORUNDA (R0).
+//   * apeks kesri `plan.opt.bodiceApexFrac`'tan OKUNUYOR. Kapı bunu iki koşumla
+//     kanıtlar: `--apex-frac` motorun alanına girer ve derinlik TAM oranında
+//     oynar (R8). Kopyalanmış bir sabit bu kolu geçemez.
+//   * ve kesir künyesi artık bir YORUM değil bir EŞİK: R0b motorun ilan ettiği
+//     0.80'i pinler, yani motor tarafı kayarsa kapı kırmızı yanar ve künye
+//     yeniden okunur (HM1 buradan kırmızıdır).
+//
+// ⚠ 41.48° BU KAPININ ŞARTI OLMAKTAN ÇIKTI, VE BU BİR GEVŞETME DEĞİL BİR
+// BAĞLAMADIR — kart bunu önceden ilan etti ve HAKEME GELİR. Sabit bir sayıya
+// bakan kol, `op.suppress` ölçtüğü sayıyı basar basmaz yanlış kapı olurdu:
+// ölçülen 55.1735°, Buğra'nın 41.48°'i BAŞKA bir gövdedeki BAŞKA bir giysinin
+// sayısı. Kapı artık ölçüme ölçümle bakıyor, 41.48'i YAN YANA basıyor ve
+// hiçbir yerde eşitlemiyor (§3.10).
+//
+// ⚠ VE SEVK EDİLEN GİYSİDE PENS HÂLÂ YOK, KAPI ONU DA BASIYOR (R9). EU38'in
+// sekiz panelinin sekizi de `"pens": 0` (K28). Sebebi artık bir sayı: sevk
+// edilen gövdenin develop-deficit'i NEGATİF (-1.9628°), skimBodice onu KONİYE
+// çeviriyor ve koni birebir açılıyor — bastırılacak bir şey yok, op.suppress
+// REDDEDİYOR. Transfer o yüzden motorun DİĞER gövdesinde koşuyor
+// (`SheathOptions::skimBodice` kapalı), ve bu araç çıktısının her satırında
+// yazılı.
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
@@ -43,13 +68,20 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const TOOL = process.argv[2] || path.join(HERE, "..", "build", "rotate-op");
+const SUPPRESS = process.argv[3] || path.join(HERE, "..", "build", "suppress-op");
 
 const EPS_ALAN = 1e-6;    // mm² — rijit hareket, gürültü değil sıfır bekleniyor
 const EPS_ACI = 1e-9;     // derece
 const EPS_TRUE = 1e-9;    // mm
 const EPS_KIMLIK = 1e-6;  // mm
-const BUGRA_DEG = 41.48;  // künyeli: flatten-research/16
+const BUGRA_DEG = 41.48;  // künyeli: flatten-research/16 — YALNIZ RAPOR, hiçbir kol eşitlemez
 const EN_AZ_HEDEF = 2;    // kartın şartı: "en az İKİ hedef, sayıyla"
+// Motorun kendi ilan ettiği apeks kesri (SheathOptions::bodiceApexFrac, header'da
+// kendi çizim gerekçesiyle). PİN, çünkü künye bir yorum satırı olarak bağlı
+// DEĞİLDİ (HM1): motor tarafı kayarsa bu kol kırmızı yanar ve künye elle
+// yeniden okunur. Gevşetme değil, yorumun kapıya bağlanması.
+const MOTOR_APEKS_FRAC = 0.80;
+const APEKS_PROBE = 0.60;  // HM1'in kullandığı değer; oranın ölçülebildiği ikinci koşum
 
 let fails = 0;
 const fail = (m) => { console.log(`FAIL  ${m}`); fails++; };
@@ -66,15 +98,64 @@ const r = JSON.parse(execFileSync(TOOL, ["EU38"], { encoding: "utf8", maxBuffer:
 console.log("=== op.rotate — PENS TRANSFERİ (pivot) · beden EU38");
 console.log(`    panel: ${r.panel} (${r.panel_nokta} nokta) · düğüm ${r.dugum}`);
 console.log(`    canlı planda pens sayısı: ${r.canli_planda_pens_sayisi}`);
-console.log(`    fikstür: op.suppress ${r.fikstur.aci_deg}° · apeks ${r.fikstur.apeks_derinlik_mm}mm`);
-console.log(`    kaynak : ${r.fikstur.kaynak}\n`);
+console.log(`    yüzey  : ${r.yuzey}`);
+console.log(`    pens   : op.suppress ${r.pens.aci_deg}° · apeks ${r.pens.apeks_derinlik_mm}mm ` +
+            `(frac ${r.pens.apeks_frac})`);
+console.log(`    kaynak : ${r.pens.aci_kaynak}\n`);
 
-// --- R0: fikstürün açısı künyeli sayı mı --------------------------------
-if (Math.abs(r.fikstur.aci_deg - BUGRA_DEG) < 1e-9)
-  ok(`R0 pens açısı künyeli: ${r.fikstur.aci_deg}° = ölçülmüş Buğra develop-deficit`);
+// --- R0: TAŞINAN AÇI, op.suppress'in AYNI PANELDE ÖLÇTÜĞÜ SAYI MI? ------
+//
+// İki AYRI aracın çıktısı karşılaştırılıyor. rotate-op bir açı uydursa ya da
+// eski sabiti geri koysa, suppress-op'un ölçtüğü deficit ile ayrışır ve bu kol
+// kırmızı yanar. Tek bir aracın kendi kendini onaylaması değil.
+{
+  if (!existsSync(SUPPRESS)) {
+    fail(`R0 suppress-op bulunamadı: ${SUPPRESS}. rotate'in pensinin nereden geldiği ` +
+         `bağımsız olarak doğrulanamaz.`);
+  } else {
+    const s = JSON.parse(execFileSync(SUPPRESS, ["EU38"], { encoding: "utf8", maxBuffer: 64 << 20 }));
+    const esi = (s.kosumlar || []).find(
+      (k) => k.panel === r.panel && k.acildi && !k.kesisme_bekleniyor);
+    if (!esi) {
+      fail(`R0 suppress-op ${r.panel} panelinde açılmış bir kama bildirmiyor; rotate ise ` +
+           `${r.pens.aci_deg}° taşıdığını söylüyor. İki operatör aynı paneli görmüyor.`);
+    } else if (Math.abs(esi.kama_deg - r.pens.aci_deg) < EPS_ACI) {
+      ok(`R0 taşınan pens ÖLÇÜLMÜŞ: ${r.pens.aci_deg}° = op.suppress'in ${r.panel} ` +
+         `panelinde ölçtüğü develop-deficit (${esi.deficit_deg}°) — fikstür DEĞİL`);
+    } else {
+      fail(`R0 rotate ${r.pens.aci_deg}° taşıyor, op.suppress aynı panelde ${esi.kama_deg}° ` +
+           `ölçüyor. rotate pensini kendi uyduruyor.`);
+    }
+  }
+  console.log(`   ↳ 41.48° (Buğra Locket, flatten-research/16) YAN YANA: ölçülen ` +
+              `${r.pens.aci_deg}°, fark ${r.bugra_ile_fark_deg}° — TUTMUYOR, ayarlanmadı`);
+}
+
+// --- R0b: APEKS KÜNYESİ BİR EŞİK (HM1 buradan kırmızı) ------------------
+if (Math.abs(r.pens.apeks_frac - MOTOR_APEKS_FRAC) < 1e-9)
+  ok(`R0b apeks kesri motorun ilan ettiği değerde: ${r.pens.apeks_frac} ` +
+     `(${r.pens.apeks_kaynak})`);
 else
-  fail(`R0 pens açısı ${r.fikstur.aci_deg}°, künyeli sayı ${BUGRA_DEG}°. ` +
-       `Künyesiz sayı koda girmez (§3.10).`);
+  fail(`R0b apeks kesri ${r.pens.apeks_frac}, motorun ilan ettiği ${MOTOR_APEKS_FRAC}. ` +
+       `Motor tarafı kaymışsa künye ELLE yeniden okunur — bu kol tam olarak onun için var ` +
+       `(hakem mutasyonu HM1: künye bir yorum satırıydı ve bağlı değildi).`);
+
+// --- R9: SEVK EDİLEN GİYSİNİN KENDİ CEVABI, GİZLENMİYOR -----------------
+{
+  const sp = r.sevk_edilen_panel;
+  if (!sp) {
+    fail("R9 çıktı sevk edilen panelin cevabını taşımıyor. rotate'in ürüne DEĞMEDİĞİ " +
+         "gerçeği kapıdan düşerse, kart onu bir sonraki turda yeniden keşfeder.");
+  } else if (sp.suppress_acildi) {
+    fail(`R9 sevk edilen ${sp.panel} panelinde op.suppress AÇMIŞ (deficit ` +
+         `${sp.deficit_deg}°) ama planda ${sp.planda_pens_sayisi} pens var. İki kaynak ` +
+         `çelişiyor; K28 ya kapandı ya da ölçüm bozuldu — ikisi de hakemin işi.`);
+  } else {
+    ok(`R9 sevk edilen ${sp.panel}: deficit ${sp.deficit_deg}° → op.suppress REDDETTİ, ` +
+       `planda pens ${sp.planda_pens_sayisi}. Transfer motorun DİĞER gövdesinde koşuyor ` +
+       `ve bu her satırda yazılı (K28 kapanmadı, SAYIYA bağlandı).`);
+  }
+}
 
 // --- R1: en az iki AYRI hedef --------------------------------------------
 const t = r.transferler || [];
@@ -130,6 +211,32 @@ for (const x of t) {
     fail(`R7 ${ad} çevre hiç değişmedi (${x.cevre_once_mm} -> ${x.cevre_sonra_mm}). ` +
          `Pens "taşındı" diye işaretlenip geometri bırakılmış olabilir — bu bir transfer değil, ` +
          `bir etikettir.`);
+}
+
+// --- R8: APEKS KESRİ GERÇEKTEN MOTORDAN GEÇİYOR MU (HM1'in kök sorusu) ---
+//
+// R0b bir PİN'dir ve tek başına yetmez: doğru sayıyı basan bir SABİT de o kolu
+// geçer. Burada araç ikinci kez, `--apex-frac` ile koşuluyor — o değer
+// SheathOptions'a girip buildSeamPlan'dan dönüyor. Derinlik TAM oranında
+// oynamak zorunda. Kopyalanmış bir `constexpr` hiç oynamaz ve bu kol kırmızı
+// yanar; hakemin HM1'de bulduğu boşluk tam olarak burasıdır.
+{
+  const p2 = JSON.parse(execFileSync(TOOL, ["EU38", "--apex-frac", String(APEKS_PROBE)],
+                                     { encoding: "utf8", maxBuffer: 64 << 20 }));
+  const beklenenOran = APEKS_PROBE / MOTOR_APEKS_FRAC;
+  const olculenOran = p2.pens.apeks_derinlik_mm / r.pens.apeks_derinlik_mm;
+  if (Math.abs(p2.pens.apeks_frac - APEKS_PROBE) > 1e-9) {
+    fail(`R8 araca ${APEKS_PROBE} verildi, çıktısında apeks kesri ${p2.pens.apeks_frac}. ` +
+         `Kesir motora hiç ULAŞMIYOR; araç kendi sayısını taşıyor.`);
+  } else if (Math.abs(olculenOran - beklenenOran) < 1e-9) {
+    ok(`R8 apeks derinliği motorun alanıyla oynuyor: ${r.pens.apeks_derinlik_mm}mm ` +
+       `(${MOTOR_APEKS_FRAC}) -> ${p2.pens.apeks_derinlik_mm}mm (${APEKS_PROBE}), ` +
+       `oran ${olculenOran.toFixed(9)} = ${beklenenOran} — OKUNUYOR, kopyalanmıyor`);
+  } else {
+    fail(`R8 apeks derinliği ${r.pens.apeks_derinlik_mm} -> ${p2.pens.apeks_derinlik_mm}mm, ` +
+         `oran ${olculenOran.toFixed(9)}, beklenen ${beklenenOran}. Derinlik motorun ` +
+         `bodiceApexFrac alanının fonksiyonu DEĞİL — künye bir yorum satırı (HM1).`);
+  }
 }
 
 console.log();
