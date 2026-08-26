@@ -1,7 +1,10 @@
 # F-İNDİR — kullanıcı eve bir dosya götürsün 📥
 
 Halka 1'in ilk fazı. Etiket: `F-INDIR-oncesi` (faz öncesi), main'de çalışıldı,
-branch açılmadı (§3.5). Tek push.
+branch açılmadı (§3.5). Tek push: `ee1414c`.
+
+`F-INDIR-yesil` etiketi **atılmadı** — §3.5'e göre yeşil etiketi faz kapandığında
+**hakem** atar, sevkiyat oradan yürür. (Bir kez atıldı, aynı dakika geri alındı.)
 
 ## Faz neyi buldu ve ne yaptı
 
