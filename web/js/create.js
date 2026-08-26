@@ -1,27 +1,27 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=136';
-import { validateVision } from './spec-validate.js?v=136';
-import { CONTRACT } from './contract.gen.js?v=136';
-import { applyStatic, getLang, t } from './i18n.js?v=136';
-import { draft, grade, operatorProgram } from './engine.js?v=136';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=136';
-import { renderResult } from './render.js?v=136';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=137';
+import { validateVision } from './spec-validate.js?v=137';
+import { CONTRACT } from './contract.gen.js?v=137';
+import { applyStatic, getLang, t } from './i18n.js?v=137';
+import { draft, grade, operatorProgram } from './engine.js?v=137';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=137';
+import { renderResult } from './render.js?v=137';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=136';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=136';
-import { measureGarment } from './measure.js?v=136';
+} from './store.js?v=137';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=137';
+import { measureGarment } from './measure.js?v=137';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=136';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=137';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
-import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=136';
+import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=137';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -1045,13 +1045,26 @@ function downloadPanel(result) {
     const prog = await operatorProgram('EU38', 0);
     if (prog.error) return prog.error;
     opsMsg.appendChild(el('p', 'dl-ops-title', t('create.ops.head')));
-    for (const step of (prog.adimlar || [])) {
-      const line = el('p', step.uygulandi ? 'dl-ops-yes' : 'dl-ops-no',
-        `${step.op} · ${step.panel} — ${step.uygulandi ? t('create.ops.did') : t('create.ops.didnt')}`);
-      // The engine's own sentence, with the engine's own number in it. Not
-      // re-worded here: a second wording is a second truth.
-      line.appendChild(el('span', 'dl-ops-why', ` ${step.sebep}`));
-      opsMsg.appendChild(line);
+    // ⭐ BOTH DECLARED SURFACES, EACH BY NAME (F5-E İŞ 2, borç 68).
+    //
+    // This loop used to read a single `prog.adimlar`, and that single reading was
+    // the shipped cone. Measured consequence: `op.split` was the ONLY operator a
+    // shopper could ever see act — 2 applied against 26 refused — because on a
+    // cone op.suppress has nothing to absorb and op.rotate has nothing to move.
+    // The second surface is where they do act, and it is printed with the
+    // engine's OWN `yuzey` sentence rather than a wording invented here, so the
+    // reader can see WHICH garment each answer is about. Not a hidden dial: the
+    // shipped reading is still first and still says its own name.
+    for (const okuma of (prog.okumalar || [])) {
+      opsMsg.appendChild(el('p', 'dl-ops-surface', okuma.yuzey || okuma.etiket || ''));
+      for (const step of (okuma.adimlar || [])) {
+        const line = el('p', step.uygulandi ? 'dl-ops-yes' : 'dl-ops-no',
+          `${step.op} · ${step.panel} — ${step.uygulandi ? t('create.ops.did') : t('create.ops.didnt')}`);
+        // The engine's own sentence, with the engine's own number in it. Not
+        // re-worded here: a second wording is a second truth.
+        line.appendChild(el('span', 'dl-ops-why', ` ${step.sebep}`));
+        opsMsg.appendChild(line);
+      }
     }
     return null;
   });

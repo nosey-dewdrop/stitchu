@@ -21,6 +21,23 @@ std::string num(double v, int dp = 6) {
     return b;
 }
 
+// A contour as [[x,y],...] at ROUND-TRIP precision (borç 66 / K49). %.17g is the
+// shortest form guaranteed to read back as the same double, so the gate's
+// shoelace runs on the engine's own coordinates rather than on a rounded picture
+// of them — the difference matters because the epsilon it is judged against is
+// rotate_check's 1e-6 mm² and a 6-decimal print already exceeds it on a
+// 500 mm-wide panel.
+std::string contourJSON(const std::vector<Vec2>& c) {
+    std::string o = "[";
+    char b[64];
+    for (std::size_t i = 0; i < c.size(); ++i) {
+        if (i) o += ",";
+        std::snprintf(b, sizeof b, "[%.17g,%.17g]", c[i].x, c[i].y);
+        o += b;
+    }
+    return o + "]";
+}
+
 std::string quote(const std::string& s) {
     std::string o = "\"";
     for (char c : s) {
@@ -331,6 +348,12 @@ OpProgram runOperatorProgram(SeamPlan& plan) {
             ro.wedgeAfterDeg = rot.wedgeAfterDeg;
             ro.areaBeforeMM2 = rot.areaBeforeMM2;
             ro.areaAfterMM2 = rot.areaAfterMM2;
+            // borç 66 / K49 — the two boundaries travel with the step so the gate
+            // can measure them instead of believing the four numbers above.
+            ro.contourBefore = sup.contour;
+            ro.apexBeforeIdx = sup.apexIdx;
+            ro.contourAfter = rot.contour;
+            ro.apexAfterIdx = rot.apexIdx;
             ro.reason = "op.rotate: ayni pens apeks etrafinda YAN DIKISE tasindi. Aci " +
                         num(rot.wedgeBeforeDeg) + " -> " + num(rot.wedgeAfterDeg) +
                         " deg, alan " + num(rot.areaBeforeMM2) + " -> " +
@@ -461,6 +484,15 @@ std::string readingJSON(const std::string& etiket, const std::string& yuzey, Sea
               << ", \"kama_sonra_deg\": " << num(s.wedgeAfterDeg)
               << ", \"alan_once_mm2\": " << num(s.areaBeforeMM2)
               << ", \"alan_sonra_mm2\": " << num(s.areaAfterMM2);
+            if (s.applied) {
+                // borç 66 / K49 — RAW GEOMETRY, at round-trip precision. The gate
+                // walks these itself; the four numbers above are the claim, these
+                // two contours are the evidence, and they are not the same source.
+                o << ",\n     \"apeks_once\": " << s.apexBeforeIdx
+                  << ", \"apeks_sonra\": " << s.apexAfterIdx
+                  << ",\n     \"kontur_once\": " << contourJSON(s.contourBefore)
+                  << ",\n     \"kontur_sonra\": " << contourJSON(s.contourAfter);
+            }
         }
         o << "}" << (i + 1 == prog.steps.size() ? "" : ",") << "\n";
     }

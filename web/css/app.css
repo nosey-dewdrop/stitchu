@@ -126,6 +126,10 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
   color: var(--gray); border-left: 2px solid rgba(0,0,0,.12); }
 .dl-ops-yes { border-left-color: var(--accent); }
 .dl-ops-why { display: block; color: var(--gray); opacity: .85; }
+/* The SURFACE each block of answers is about (F5-E, borç 68). Two readings are
+   printed, each under the engine's own `yuzey` sentence, so an answer is never
+   read against the wrong garment. */
+.dl-ops-surface { font-size: 12px; margin: 14px 0 6px; color: var(--ink); font-weight: 600; }
 
 /* KÖKEN (F0): which fields the photo did not show. Sits above the buttons, in
    the same ink as the honest-refusal line — it is the same kind of sentence. */

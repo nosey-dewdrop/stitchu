@@ -565,9 +565,36 @@ std::string planJSONBinding(std::string size, double neckDropMM) {
 // The program runs on a COPY of the shipped plan: planJSON and flatJSON below
 // are untouched and the pattern the site ships today is byte-identical
 // (RULES 4, opt-in / default OFF).
+// ⭐ BOTH DECLARED SURFACES REACH THE BROWSER (GECE7 / F5-E İŞ 2, borç 68).
+//
+// This binding used to call `opsJSON`, which builds ONE reading — the shipped
+// bodice. The referee measured what that costs the user, and the number is the
+// whole reason this line changed:
+//
+//     reading        panels    applied  refused   operators that ACTED
+//     sevk_edilen     8 -> 10        2       26   op.split ONLY
+//     vucudu_izleyen  8 -> 16       30       10   op.split · op.suppress · op.rotate
+//
+// The shipped bodice is a CONE (skimBodice develops it exactly), so op.suppress
+// has nothing to absorb and op.rotate has nothing to move: on that surface their
+// honest answer is a REFUSAL, and it always will be. A browser wired to that one
+// reading lets a user divide a panel and NEVER open or move a dart — two of the
+// three operators are unreachable, which is "it is in the engine" wearing a
+// button (CLAUDE.md's only test).
+//
+// So the binding now calls `opsJSONAll`, which is what the native `plan-ops`
+// tool and `op_program_check` already read. This is NOT a hidden dial and not a
+// second engine: both readings come from the SAME buildSeamPlan on the SAME
+// body, each carries its own `etiket` and `yuzey` string, and the UI prints both
+// BY NAME. `skimBodice` is NOT turned off for the shipped garment — the shipped
+// reading is still there, first, unchanged and still refusing with its number.
+//
+// ⚠ AND THE SHIPPED READING STILL DOES NOT MOVE (RULES 4). `draftJSON`,
+// `planJSON` and `flatJSON` are untouched; this is an opt-in surface behind its
+// own button, and the pattern and the flat the site ships are byte-identical.
 std::string opsJSONBinding(std::string size, double neckDropMM) {
     try {
-        return opsJSON(size, neckDropMM);
+        return opsJSONAll(size, neckDropMM);
     } catch (const std::exception& e) {
         return std::string(R"({"error":")") + escape(e.what()) + "\"}";
     }

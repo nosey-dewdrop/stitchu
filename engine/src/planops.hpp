@@ -114,6 +114,31 @@ struct OpStep {
     // ---- op.rotate ---------------------------------------------------------
     double wedgeBeforeDeg = 0.0, wedgeAfterDeg = 0.0;
     double areaBeforeMM2 = 0.0, areaAfterMM2 = 0.0;
+    // ⭐ THE TWO CONTOURS THEMSELVES (GECE7 / F5-E İŞ 0, borç 66 / K49).
+    //
+    // The four numbers above are what `rotateDart()` SAYS about its own work, and
+    // a gate that reads only them is checking an IDENTITY ("this step was asked,
+    // applied and written back") rather than a CORRECTNESS ("the transfer moved
+    // cloth without manufacturing any"). The referee measured the difference:
+    // `theta * 0.90` in dartrotate.cpp burned `rotate_check` EXIT 1 (area
+    // 32473.1791 -> 36134.0402 mm², 3660.86 mm² of cloth out of nothing) and left
+    // `op_program_check` EXIT 0 — a K30-class hole standing on the product path.
+    //
+    // So the boundary the transfer ACTUALLY produced travels out with the step,
+    // and the gate re-derives the area and the wedge angle from it. Those two
+    // numbers then cannot agree with a lying report, because the report is no
+    // longer their source: `areaAfterMM2` is dartrotate's shoelace, and the
+    // gate's is the gate's own, walked over coordinates that were rotated.
+    //
+    // ⚠ NOT A SECOND GEOMETRY. Nothing here is computed; `contourBefore` is
+    // exactly what op.suppress handed op.rotate and `contourAfter` is exactly
+    // what op.rotate wrote into the plan (`pat.panels[pi].contour`). Both are
+    // printed at full double precision, so what the gate reads back IS what the
+    // engine held (a 6-decimal print would put the round-trip error above the
+    // 1e-6 mm² epsilon rotate_check already uses, and inventing a looser epsilon
+    // to cover a printing choice is exactly §3.10 / K29).
+    std::vector<Vec2> contourBefore, contourAfter;
+    std::size_t apexBeforeIdx = 0, apexAfterIdx = 0;
 };
 
 struct OpProgram {

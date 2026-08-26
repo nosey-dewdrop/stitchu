@@ -3,7 +3,7 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=136';
+import { VOCAB, canonical } from './vocab.gen.js?v=137';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -53,7 +53,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=136';
+      script.src = 'vendor/stitchu-engine.js?v=137';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -109,8 +109,18 @@ export async function seamPlanFlat(sizeLabel, neckDropMM = 0) {
  * Returns the engine's own answers, REFUSALS INCLUDED and each one carrying the
  * number it was refused on — the shipped bodice is a cone, op.suppress refuses
  * it (deficit −1.9628°) and that refusal IS the product's answer. A silent empty
- * result would be a §0B violation, so callers get `adimlar[]` where every step
- * has `uygulandi`, `plana_yazildi`, `ret_gerekcesi` and a `sebep`.
+ * result would be a §0B violation, so callers get steps where every one has
+ * `uygulandi`, `plana_yazildi`, `ret_gerekcesi` and a `sebep`.
+ *
+ * ⭐ TWO READINGS, NOT ONE (F5-E İŞ 2, borç 68). The shape is now
+ * `{ okumalar: [ { etiket, yuzey, adimlar[] }, … ] }`. Until this change the
+ * browser only ever built the shipped cone, and on a cone op.suppress and
+ * op.rotate can only ever REFUSE: the referee measured 2 applied / 26 refused,
+ * with `op.split` the only operator that ever acted. A user could divide a panel
+ * and never open or move a dart. The second reading is the body-following bodice
+ * where they do act (30 applied / 10 refused) — declared BY NAME on its own
+ * `yuzey` string, not a hidden dial, and the shipped reading is still first and
+ * still unchanged.
  *
  * The program runs on a COPY of the seam plan: the pattern and the flat this
  * page draws do not move.

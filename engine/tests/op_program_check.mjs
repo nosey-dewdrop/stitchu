@@ -62,6 +62,12 @@ const FIKSTUR = TOOL.endsWith(".json");
 
 const EPS_MM = 1e-9;    // mm — iki taraf aynı iki koordinatı birleştiriyor
 const EPS_ACI = 1e-6;   // derece — korunum kimliği
+// ⚠ OP8'İN İKİ EPSİLONU UYDURULMADI: ikisi de `rotate_check.mjs`'in KENDİ
+// sayıları (EPS_ALAN 1e-6 mm², EPS_ACI 1e-9 derece) ve buraya AYNEN alındı.
+// Emsal budur ve gevşetilemez (§3.10 / K29): rijit bir hareketin alanı ve
+// bastırdığı açı korunur, o yüzden beklenen sayı gürültü değil SIFIRDIR.
+const EPS_ALAN_R = 1e-6;   // mm²
+const EPS_ACI_R = 1e-9;    // derece
 
 let fails = 0;
 const fail = (m) => { console.log(`FAIL  ${m}`); fails++; };
@@ -216,6 +222,125 @@ for (const rd of okumalar) {
     ok(`OP7 ${rd.etiket}: ${bagli} yarımda kama ÇİFTE bağlı — sınırdan geri okunan açı adımın ` +
        `deficit'ine, ve o deficit op.split'in o yarım için ÖLÇTÜĞÜ paya eşit. Açıyı bir ` +
        `sabite çeviren mutasyon ikinci bağda yanar.`);
+}
+
+// --- OP8: ⭐ TRANSFERİN GEOMETRİSİ, PLANIN KENDİ KONTURUNDAN ---------------
+//
+// borç 66 / K49. OP1'in "soruldu, uygulandı, PLANA YAZILDI"sı bir KİMLİKTİR;
+// rijitlik bir DOĞRULUKTUR ve bu kapının sekiz kolunun sekizi de onu
+// sormuyordu. Hakem ölçtü (HM-J2): `dartrotate.cpp`'de transfer açısı
+// `theta * 0.90` yapılınca `rotate_check` EXIT 1 yanıyor (ALAN 32473.1791 →
+// 36134.0402 mm², 3660.86 mm² kumaş yoktan üretildi) ve `op_program_check`
+// EXIT 0 kalıyordu. Ürün yolundaki bir transfer kumaş üretti ve ürün kapısı
+// geçirdi — K30'un tam sınıfı.
+//
+// ⭐ VE BU KOL ADIMIN İLAN ETTİĞİ DÖRT SAYIYA BAKMIYOR. Onlar `rotateDart()`'ın
+// KENDİSİ hakkındaki beyanıdır; yalan söyleyen kod kendi beyanını da tutarlı
+// basar. Kol, transferin PLANA YAZDIĞI konturu yürüyor ve alanı ile kama
+// açısını KENDİ hesaplıyor — sonra ikisini de beyanla karşılaştırıyor. Üç bağ:
+//
+//   R2'  ALAN kimliği:  alan(kontur_sonra) == alan(kontur_once)   (rijitlik)
+//   R3'  AÇI kimliği :  kama(kontur_sonra) == kama(kontur_once)   (transfer
+//        bastırma MİKTARINI değiştiremez, yalnız yerini)
+//   R8'  BEYAN == ÖLÇÜM: adımın bastığı dört sayı, konturdan yeniden okunanla
+//        aynı olmak zorunda; değilse rapor geometriden kopmuştur.
+//
+// Epsilonlar rotate_check'in kendi epsilonlarıdır, bir bant değil bir SIFIR
+// beklentisidir, ve gevşetilemez.
+{
+  const kPi = Math.PI;
+  // C++ `contourAreaMM2` (dartsuppress.cpp) ile AYNI toplama sırası: aynı
+  // formülü başka bir sırayla yazmak, kimliği geometride değil kayan noktada
+  // kırar.
+  const alan = (c) => {
+    let a = 0;
+    for (let i = 0; i < c.length; i++) {
+      const p = c[i], q = c[(i + 1) % c.length];
+      a += p[0] * q[1] - q[0] * p[1];
+    }
+    return Math.abs(0.5 * a);
+  };
+  const isaretliAci = (o, from, to) => {
+    const a1 = Math.atan2(from[1] - o[1], from[0] - o[0]);
+    const a2 = Math.atan2(to[1] - o[1], to[0] - o[0]);
+    let d = a2 - a1;
+    while (d <= -kPi) d += 2 * kPi;
+    while (d > kPi) d -= 2 * kPi;
+    return d;
+  };
+  // dartrotate.cpp'nin kendi kama tanımı: apeksin iki komşusunun apeks
+  // etrafında gerdiği açı.
+  const kama = (c, ai) => {
+    const n = c.length;
+    return Math.abs(isaretliAci(c[ai], c[(ai + 1) % n], c[(ai + n - 1) % n])) * 180 / kPi;
+  };
+
+  console.log();
+  let olculen = 0;
+  for (const rd of okumalar) {
+    for (const s of (rd.adimlar || []).filter((q) => q.op === "op.rotate" && q.uygulandi)) {
+      const ad = `${rd.etiket} ${s.panel}`;
+      const co = s.kontur_once, cs = s.kontur_sonra;
+      if (!Array.isArray(co) || !Array.isArray(cs) || co.length < 5 || cs.length < 5) {
+        fail(`OP8 ${ad}: adım UYGULANDI ama plana yazdığı konturu TAŞIMIYOR. Kendi ilan ettiği ` +
+             `dört sayıdan başka kanıtı olmayan bir transfer, ölçülemez (borç 66 / K49).`);
+        continue;
+      }
+      if (!(Number.isInteger(s.apeks_once) && Number.isInteger(s.apeks_sonra) &&
+            s.apeks_once >= 0 && s.apeks_once < co.length &&
+            s.apeks_sonra >= 0 && s.apeks_sonra < cs.length)) {
+        fail(`OP8 ${ad}: apeks indeksi (${s.apeks_once} / ${s.apeks_sonra}) konturun dışında — ` +
+             `kama açısı hangi köşeden okunacağı SORULAMIYOR.`);
+        continue;
+      }
+      olculen++;
+      const aOnce = alan(co), aSonra = alan(cs);
+      const kOnce = kama(co, s.apeks_once), kSonra = kama(cs, s.apeks_sonra);
+      const dAlan = Math.abs(aSonra - aOnce), dAci = Math.abs(kSonra - kOnce);
+
+      if (dAlan < EPS_ALAN_R)
+        ok(`OP8/R2 ${ad}: ALAN korundu — plandan yeniden ölçülen ${aOnce.toFixed(6)} → ` +
+           `${aSonra.toFixed(6)} mm², fark ${dAlan.toExponential(3)}. Rijit bir hareket kumaş ` +
+           `ekleyemez/eksiltemez.`);
+      else
+        fail(`OP8/R2 ${ad}: ALAN ${aOnce.toFixed(6)} → ${aSonra.toFixed(6)} mm², fark ` +
+             `${dAlan.toFixed(6)} > ${EPS_ALAN_R}. Ürün yolundaki bir transfer KUMAŞ ÜRETTİ ` +
+             `(ya da yuttu); bu bir yer değiştirme değil.`);
+
+      if (dAci < EPS_ACI_R)
+        ok(`OP8/R3 ${ad}: AÇI korundu — plandan yeniden ölçülen ${kOnce.toFixed(9)}° → ` +
+           `${kSonra.toFixed(9)}°, fark ${dAci.toExponential(3)}. Transfer bastırma miktarını ` +
+           `değiştiremez, yalnız yerini.`);
+      else
+        fail(`OP8/R3 ${ad}: AÇI ${kOnce.toFixed(9)}° → ${kSonra.toFixed(9)}°, fark ` +
+             `${dAci.toFixed(9)}° > ${EPS_ACI_R}. Kama ürün yolunda BÜYÜDÜ/KÜÇÜLDÜ.`);
+
+      const beyan = [["kama_once_deg", s.kama_once_deg, kOnce, EPS_ACI, "°"],
+                     ["kama_sonra_deg", s.kama_sonra_deg, kSonra, EPS_ACI, "°"],
+                     ["alan_once_mm2", s.alan_once_mm2, aOnce, 1e-3, " mm²"],
+                     ["alan_sonra_mm2", s.alan_sonra_mm2, aSonra, 1e-3, " mm²"]];
+      // ⚠ Bu üçüncü bağın toleransı bir GEVŞETME değil, adımın kendi BASKI
+      // çözünürlüğüdür: `num()` altı basamak basıyor, yani beyanla ölçüm
+      // arasında yuvarlamadan gelen ≤5e-7 (açı) / ≤5e-7 (alan) zaten var.
+      // Kimliklerin kendisi (R2'/R3') yukarıda, ham konturdan, gevşetilmemiş
+      // epsilonla kuruldu.
+      const kopuk = beyan.filter(([, b, m, e]) => !(Math.abs(b - m) < e));
+      if (kopuk.length)
+        fail(`OP8/R8 ${ad}: adımın BEYANI plandaki konturdan kopuk — ` +
+             kopuk.map(([k, b, m, , u]) => `${k} ${b}${u} ilan edildi, konturdan ${m}${u} ` +
+                                           `ölçüldü`).join(" · ") +
+             `. Rapor geometriden bağımsız yazılıyor.`);
+      else
+        ok(`OP8/R8 ${ad}: adımın dört sayısı da plandaki konturdan yeniden okunanla aynı — ` +
+           `beyan bir ölçümdür, bir cümle değil.`);
+    }
+  }
+  if (!olculen)
+    fail(`OP8 hiçbir okumada UYGULANMIŞ bir op.rotate adımının geometrisi ölçülemedi. ` +
+         `Rijitliği hiç denetlenmeyen bir transfer, K49'un kapattığı deliği geri açar.`);
+  else
+    ok(`OP8 ${olculen} transferin ${olculen}'inde ALAN ve KAMA AÇISI planın KENDİ konturundan ` +
+       `yeniden ölçüldü (rotate_check'in R2/R3 kimlikleri artık ÜRÜN YOLUNDA da kurulu).`);
 }
 
 // --- OP1: ÜÇ OPERATÖR DE ÜRÜNE DEĞİYOR ------------------------------------
