@@ -1,0 +1,50 @@
+{
+  "_contract": "STITCHU MANKEN CIZELGESI v1 (GECE7 / F4, IS 2). KOSU-v7 §2 iki bedeni ayirir: kalip INSAN bedenine (gercek, payli, dikilebilir) degerlenir, teknik cizim MANKEN bedenine (ideal, sifir pay). Iki okuma AYNI dikis planindan cikar; ayrilan sey beden ve paydir. Bu dosya o ikinci bedenin TEK kaynagidir. Kapi: engine/tests/flat_convention_check.mjs bolum 1d (H6). Tuketici: contract/flat-convention-v1.json croquis capalari, engine/src/seamplan.cpp flatJSON bedenlendirme blogu.",
+  "version": 1,
+  "id": "stitchu-manken-v1",
+
+  "_karar": {
+    "kim": "BIZIM KARARIMIZ — uydurma DEGIL, ve bir yayina da atfedilmiyor. KOSU-v7 §F4 iki yol birakti: ya yayinlanmis bir manken cizelgesi kunyesiyle baglanir, ya da 'stitchu manken cizelgesi v1' acikca kendi kararimiz olarak ilan edilir. Ikincisi secildi, cunku birincisi denendi ve asagidaki satir cikti.",
+    "arastirma_sonucu": "YAYIN BULUNAMADI. Manken/croquis govdesinin gogus-bel-kalca cevrelerinin insan beden cizelgesinden KAC MM ince oldugunu veren otoriter bir yayin bulunamadi. KOSU-v7 §F4 bunu kendi metninde zaten yaziyor: 'Sayisal bel/gogus/kalca fark tablosu icin otoriter yayin BULUNAMADI'.",
+    "kunyesiz_zemin": "KOSU-v7 §F4 ayrica sunu tasiyor: moda illustrasyonu croquis'i 9 kafa, teknik cizim icin 7-8 kafaya cekilir. Bu bir ORAN iddiasi ve KUNYESI YOK (yazar/yayin/yil/sayfa/URL verilemedi), o yuzden BU DOSYADA HICBIR SAYIYI BESLEMIYOR (§3.10: kunyesi olmayan sayi koda giremez). Kayda gecmesinin tek sebebi, sonraki bir turda kunyesi bulunursa nereye baglanacaginin belli olmasi.",
+    "secilen_deger": "EN KISITLAYICI: fark SIFIR. Manken cevreleri insan cizelgesinin AYNISI. Gerekcesi tek cumlede: sifirdan baska her deger UYDURULMUS bir sayidir, cunku onu soyleyen bir yayin yok. Sifir hicbir sey eklemez — ve §0B md.3'un 'belirsizlikte en kisitlayici yorum' kurali burada 'incelme uydurma' demektir.",
+    "kime_gitti": "HAKEME, Damla'ya DEGIL (§3.4). Soru 'manken beli kalip belinden kac mm ince olsun' bir ZEVK karari ve KOSU-v7 F4 bolumu onu Damla'ya yaziyordu; K51 emsali bu cumlenin hakeme gittigini soyluyor. Ajan en kisitlayiciyi secti, gerekcesini GECE7/DAMLA.md'ye yazdi, kosu durmadi.",
+    "nasil_degisir": "Kunyeli bir yayin bulunursa ya da hakem baska bir sayi koyarsa: bu dosyanin farkGirthMM alanlari degisir, croquis capalari ayni aritmetikten YENIDEN turer, ve H6 kapisi farki kendi olcer. Tuketicilerde elle duzeltilecek hicbir sayi yok."
+  },
+
+  "insanCizelgesi": {
+    "_law": "MANKEN INSANDAN TUREYEN bir bedendir, ayri bir tablo DEGIL. Iki tablo tutmak iki kaynak demektir; burada tutulan sey tek bir DONUSUM. Insan tarafi contract/tables.json draft.euSizeChart, kaynagi burda style Damen Masstabellen (Koergroesse 168), status=verified.",
+    "yol": "contract/tables.json -> draft.euSizeChart",
+    "beden": "EU38"
+  },
+
+  "donusum": {
+    "_law": "ILAN EDILMIS TEK DONUSUM (KOSU-v7 §2). manken := insan cizelgesi + asagidaki farklar, dikis payi 0. Farklarin hepsi bugun 0.0 mm ve bu bir OLCUM degil bir KARAR; kaynagi _karar.secilen_deger.",
+    "birim": "mm, cevre farki (negatif = manken daha ince)",
+    "farkGirthMM": { "bustCM": 0.0, "waistCM": 0.0, "hipCM": 0.0 },
+    "dikisPayiMM": 0.0,
+    "cizgi": "dikis cizgisi (pay yok) — kalip tarafi kesim cizgisi cizer, manken tarafi cizmez"
+  },
+
+  "croquisCapalari": {
+    "_law": "Croquis'in her capasi ya bu dosyadaki bir cevreden ARITMETIKLE turer, ya da kaynaksiz oldugu ACIKCA yazilir. contract/flat-convention-v1.json bu degerleri KOPYALAMAZ, buradan okur; kapi ikisinin ayni sayi oldugunu her kosuda dogrular (H6).",
+    "unitMM": 3.0,
+    "toleranceMM": 2.0,
+    "turetilen": {
+      "chestX": { "formul": "manken bustCM * 10 / 4 / unitMM", "_neden": "duz serilmis kapali bir tup: gorunen genislik = cevre/2, yari-genislik = cevre/4. Geometri zorunlulugu, katsayi degil." },
+      "waistX": { "formul": "manken waistCM * 10 / 4 / unitMM" },
+      "hipX": { "formul": "manken hipCM * 10 / 4 / unitMM" },
+      "shoulderTipX": { "formul": "chestX * omuzGogusOrani", "omuzGogusOrani": 0.9570,
+        "kaynak": "OLCULDU — satin alinmis Bugra Locket EU38 'Back Body' parcasi, omuz/gogus yari-genislik orani 196.13/204.94. Olcum: GECE/log/F-E.bugra-olcum.txt. Bu oran BUYUKLUGU besler; sartin kendisi geometrik yasadir (set-in kollu giyside omuz ucu gogus hattinin disinda olamaz)." },
+      "shoulderTipY": { "formul": "neckDrop + (shoulderTipX - neckBase) * shoulderSlope" }
+    },
+    "kaynaksiz": {
+      "_law": "Bunlarin altinda bir yayin YOK ve oyle yazildi. Stiller arasi AYNILIKLARI zorunlu (H6 onu olcer); disaridan bir sayiya esitlikleri iddia EDILMIYOR.",
+      "chestY": 92.0,
+      "waistY": 150.0,
+      "neckBase": 30.0,
+      "neckDrop": 4.0,
+      "shoulderSlope": 0.32
+    }
+  }
+}

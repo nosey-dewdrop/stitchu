@@ -332,14 +332,31 @@ for (const yon of ["on", "arka"]) {
   }
 }
 
-// --- ilan: manken açık kalemi gizlenmiyor --------------------------------
+// --- ilan: flat hangi bedene değerleniyor --------------------------------
+//
+// ⚠ BU KOL F4'TE SERTLEŞTİ, GEVŞEMEDİ (GECE7 / F4, İŞ 2). F3'te sorulabilecek
+// tek şey "açık kalem gizleniyor mu" idi ve kol `ACIK_KALEM` metninde
+// "YAYIN BULUNAMADI" arıyordu — çünkü ilan edilecek bir manken çizelgesi
+// YOKTU. Artık var (contract/mannequin-chart-v1.json, id stitchu-manken-v1),
+// ve o cümleyi aramaya devam etmek kapıyı BAYAT bir dizeye bağlamak olurdu:
+// çizelge ilan edildikten sonra bile kırmızı yanardı, yani doğru işi
+// cezalandırırdı. Şimdi üç şey birden aranıyor ve üçü de F3'ün tek şartından
+// dar: çizelgenin ADI, dönüşümün kendisi, ve farkın KAYNAĞI. Sessizce
+// uydurulmuş bir manken farkı bu koldan geçemez, çünkü kaynağı ya bir künye
+// ya da açıkça "BİZİM KARARIMIZ" demek zorunda.
 {
   const bl = base.flat.bedenlendirme;
-  if (bl && String(bl.ACIK_KALEM || "").includes("YAYIN BULUNAMADI"))
-    ok("§2 dönüşümü İLAN EDİLİ: flat'in manken çizelgesi YAYIN BULUNAMADI, " +
-       "ayrışma F4'e yazılı (sessiz varsayılan yok)");
+  const cizelge = bl ? String(bl.cizelge || "") : "";
+  const donusum = bl ? String(bl.donusum || "") : "";
+  const kaynak = bl ? String(bl.fark_kaynagi || "") : "";
+  const kaynakBeyanli = /BIZIM KARARIMIZ|BİZİM KARARIMIZ|kunye|künye/i.test(kaynak);
+  if (cizelge && donusum && kaynakBeyanli)
+    ok(`§2 dönüşümü İLAN EDİLİ: flat "${cizelge}" bedenine değerleniyor, ` +
+       `dönüşüm "${donusum}", fark kaynağı beyanlı (sessiz varsayılan yok)`);
   else
-    fail("§2 dönüşümü ilan edilmemiş — flat hangi bedene değerlendiğini söylemiyor. " +
+    fail("§2 dönüşümü ilan edilmemiş — flat hangi bedene değerlendiğini, hangi " +
+         `dönüşümle ve farkın kaynağını söylemiyor (cizelge="${cizelge}", ` +
+         `donusum="${donusum}", fark_kaynagi beyanlı=${kaynakBeyanli}). ` +
          "Uydurulmuş bir manken, ilan edilmemiş bir manken kadar kötüdür.");
 }
 

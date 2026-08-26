@@ -42,6 +42,13 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
 const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
 const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
+// MANKEN CIZELGESI — ILAN EDILMIS, ve yolu bu dosyada yazili DEGIL: kanunun
+// kendisi soyluyor (referenceBody.mannequinChart). Yolu buraya sabitlemek ikinci
+// bir kaynak olurdu, ki bu dosyanin butun mesele ettigi sey odur.
+if (!LAW.referenceBody || !LAW.referenceBody.mannequinChart)
+  throw new Error('flat-convention-v1.json referenceBody.mannequinChart beyani YOK: '
+                + 'croquis hangi bedene capalandigini soylemiyor (KOSU-v7 §2, H6)');
+const MANKEN = JSON.parse(readFileSync(join(root, LAW.referenceBody.mannequinChart), 'utf8'));
 const { renderGarmentFlat } = await import(join(root, 'engine/tools/render-garment-flat.mjs'));
 
 const UNIT = LAW.scale.unitMM;
@@ -265,6 +272,110 @@ for (const r of rows) {
   }
 }
 if (!fails) OK('1b beyan == cizilen == kanun');
+
+// --- 1d. MANKEN CAPASI — H6 (GECE7 / F4, IS 2 + kapi md.6) ----------------
+//
+// NE OLCULUYOR VE NEDEN AYRI BIR KOL.
+// Bolum 1 stillerin BIRBIRINE benzedigini olcuyor: bes capanin stiller arasi
+// sapmasi <= toleranceMM. Bu gerekli ama yetmez — sekiz stil ayni YANLIS
+// mankene capalanmis olsa da bolum 1 yesil kalir. Eksik olan halka, capalarin
+// ILAN EDILMIS bir bedene baglanmasiydi, ve o beden 26 Agu'ya kadar YOKTU:
+// flat-convention-v1.json kendi agziyla "yayinlanmis bir manken cizelgesi YOK"
+// yaziyordu (KOSU-v7 §2 bunu madde 5'in kapanmamasinin teknik sebebi diye
+// isimlendiriyor).
+//
+// Simdi var: contract/mannequin-chart-v1.json, id stitchu-manken-v1, ve farki
+// SIFIR — BIZIM KARARIMIZ olarak ilan edilmis, uydurulmus degil (gerekce o
+// dosyanin _karar blogunda; sifirdan baska her deger kunyesiz bir sayi olurdu).
+//
+// H6'NIN TANIMI (KOSU-v7 §3.6): "manken capasi diger flatlerden farkli olan
+// flat sayisi". Burada iki parca halinde olculuyor ve ikisi de KIRMIZI dusurur:
+//   (a) ZINCIR KAPALI MI — croquis capalari manken cizelgesinden ARITMETIKLE
+//       turuyor mu, yoksa kanun dosyasinda elle yazilmis bir sayi mi. Turemiyorsa
+//       stiller birbirini tutsa bile hicbiri bir bedene bagli degildir.
+//   (b) H6 SAYISI — kac flat, o tek mankenin capalarindan toleransin disina
+//       dusuyor. Gate: 0.
+//
+// ⚠ VE BU SAYI BURADA BASILIYOR CUNKU hedef_kosu.mjs'de BASILAMAZ: o dosya
+// MUHURLU (F4 karti, DEGISMEZLER; blob 7e3683a94f50895563c2f36ea06b3d17e3497104)
+// ve H6 orada `deger: null` diye SABIT yazili (hedef_kosu.mjs:349), disaridan
+// beslenebilecegi bir kanca yok. F4 karti bu hali ongordu: "H6 ya bir SAYI
+// basar, ya olculemezligi bir KAPIYA baglanir". Baglandigi kapi burasidir.
+console.log('\n--- 1d. MANKEN CAPASI (H6) — capalar ILAN EDILMIS bir bedene bagli mi');
+{
+  const size = LAW.referenceBody.size;
+  const ch = TABLES.draft.euSizeChart;
+  const col = (f) => ch[size][ch._fields.indexOf(f)];
+  const D = MANKEN.donusum.farkGirthMM;
+  const CAP = MANKEN.croquisCapalari;
+  const L2 = LAW.croquis.landmarks;
+  console.log(`    manken cizelgesi: ${LAW.referenceBody.mannequinChart}  id=${MANKEN.id}  `
+    + `fark bustCM ${D.bustCM} / waistCM ${D.waistCM} / hipCM ${D.hipCM} mm, pay ${MANKEN.donusum.dikisPayiMM} mm`);
+
+  if (Math.abs(CAP.unitMM - UNIT) > 1e-12)
+    FAIL(`[1d] unitMM iki dosyada ayri: kanun ${UNIT}, manken cizelgesi ${CAP.unitMM} — iki kaynak`);
+
+  // (a) ZINCIR: her turetilen capa, mankenin kendi cevresinden yeniden hesaplanir
+  // ve kanun dosyasinda YAZAN sayiyla kiyaslanir. Tolerans 0.05 mm ve bu bir
+  // GEVSETME degil: kanun dosyasi capalari dort ondalikla yaziyor, yani yazili
+  // sabitin yuvarlamasi kadar bir fark aritmetigin kendisinden gelir. Croquis
+  // toleransinin (2 mm) kirkta biri.
+  const CHAIN_TOL_MM = 0.05;
+  const girthMM = (f) => col(f) * 10 + D[f];
+  const quarter = (f) => girthMM(f) / 4 / UNIT;
+  const shTipX = quarter('bustCM') * CAP.turetilen.shoulderTipX.omuzGogusOrani;
+  const K = CAP.kaynaksiz;
+  const zincir = [
+    ['chestX', quarter('bustCM'), L2.chestX.u, `manken bustCM ${(girthMM('bustCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+    ['waistX', quarter('waistCM'), L2.waistX.u, `manken waistCM ${(girthMM('waistCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+    ['hipX', quarter('hipCM'), L2.hipX.u, `manken hipCM ${(girthMM('hipCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+    ['shoulderTipX', shTipX, L2.shoulderTipX.u, `chestX x ${CAP.turetilen.shoulderTipX.omuzGogusOrani} (Bugra Locket EU38 olcumu)`],
+    ['shoulderTipY', K.neckDrop + (L2.shoulderTipX.u - K.neckBase) * K.shoulderSlope, L2.shoulderTipY.u,
+      `neckDrop ${K.neckDrop} + (shoulderTipX - ${K.neckBase}) x ${K.shoulderSlope}`],
+  ];
+  for (const [ad, hesap, yazan, nasil] of zincir) {
+    const dmm = Math.abs(hesap - yazan) * UNIT;
+    if (dmm > CHAIN_TOL_MM)
+      FAIL(`[1d zincir] ${ad}: kanun ${yazan}u, mankenden hesaplanan ${hesap.toFixed(4)}u — fark ${dmm.toFixed(4)} mm > ${CHAIN_TOL_MM} mm. Capa elle yazilmis, bir bedenden turemiyor. (${nasil})`);
+    else
+      OK(`1d zincir — ${ad} ${yazan}u == ${hesap.toFixed(4)}u (D ${dmm.toFixed(4)} mm) <- ${nasil}`);
+  }
+  // kaynaksiz capalar: iki dosyada AYNI sayi olmak zorunda, yoksa croquis'in
+  // yarisi bir bedene, yarisi baska bir yere bagli olur
+  for (const [ad, deger] of Object.entries(K)) {
+    if (ad.startsWith('_')) continue;
+    const yazan = ad === 'shoulderSlope' ? L2.shoulderSlope.value : (L2[ad] || {}).u;
+    if (!Number.isFinite(yazan)) { FAIL(`[1d zincir] kaynaksiz capa ${ad} kanun dosyasinda YOK`); continue; }
+    if (Math.abs(yazan - deger) > 1e-9)
+      FAIL(`[1d zincir] kaynaksiz capa ${ad}: kanun ${yazan}, manken cizelgesi ${deger} — iki kaynak`);
+  }
+
+  // (b) H6 — kac flat tek mankenden sapiyor
+  const capalar = [['shX', 'shoulderTipX'], ['shY', 'shoulderTipY'], ['chX', 'chestX'], ['chY', 'chestY']];
+  const sapanlar = [];
+  for (const r of rows) {
+    let enKotu = 0, hangi = '';
+    for (const [alan, isaret] of capalar) {
+      const d = Math.abs(r[alan] - L2[isaret].u) * UNIT;
+      if (d > enKotu) { enKotu = d; hangi = isaret; }
+    }
+    // dogal bel ailesi icin bel yuksekligi de bir capa; empire ailesi onu
+    // BILEREK kullanmiyor (bolum 1 bunu ayrica olcuyor), o yuzden disarida.
+    if ((r.attrs['data-waistline'] || 'natural') === 'natural') {
+      const d = Math.abs(r.waY - L2.waistY.u) * UNIT;
+      if (d > enKotu) { enKotu = d; hangi = 'waistY'; }
+    }
+    if (enKotu > TOL_MM + 1e-9) sapanlar.push({ r, enKotu, hangi });
+  }
+  const H6 = sapanlar.length;
+  console.log(`    H6 = ${H6}  (manken capasi tek cizelgeden sapan flat sayisi / ${rows.length} flat, n=${MATRIX.length} stil x on+arka)`);
+  for (const s of sapanlar)
+    console.log(`      SAPAN ${s.r.style}/${s.r.view}: en kotu ${s.hangi} ${s.enKotu.toFixed(2)} mm > ${TOL_MM} mm`);
+  if (H6 > 0)
+    FAIL(`[1d H6] ${H6} flat manken capasindan sapiyor (tolerans ${TOL_MM} mm) — flatlerin hepsi tek mankenden cikmiyor`);
+  else
+    OK(`1d H6 — ${H6}/${rows.length} flat sapiyor: ${rows.length} flat'in capasi tek ilan edilmis mankende (${MANKEN.id})`);
+}
 
 // --- 2. OLCEK BEYANI -------------------------------------------------------
 console.log('\n--- 2. OLCEK BEYANI');

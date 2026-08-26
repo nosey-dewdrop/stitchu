@@ -196,15 +196,26 @@ std::string flatJSON(const SeamPlan& plan) {
     o << "  \"sinif\": {\"garment\": " << quote(plan.garment())
       << ", \"shaping\": " << quote(plan.shaping())
       << ", \"fabric\": " << quote(plan.fabric()) << "},\n";
-    // §2's second transform, declared — INCLUDING the part that is not done.
+    // §2's second transform, DECLARED — and as of GECE7/F4 (IS 2) the open item
+    // it used to print is closed. It printed "YAYIN BULUNAMADI" because there was
+    // no mannequin chart at all; now there is one, it has an id, and its number
+    // is OUR DECISION rather than an attribution to a publication that does not
+    // exist. Zero difference is the most restrictive value available: any other
+    // number would be one nobody published (§3.10). The chart, the reasoning and
+    // the single place a future sourced number lands all live in
+    // contract/mannequin-chart-v1.json; nothing here is a second copy of it.
     o << "  \"bedenlendirme\": {\n";
     o << "    \"beden_kaynagi\": \"manken\",\n";
+    o << "    \"cizelge\": \"stitchu-manken-v1 (contract/mannequin-chart-v1.json)\",\n";
     o << "    \"dikis_payi_mm\": 0,\n";
     o << "    \"cizgi\": \"dikis (pay yok)\",\n";
-    o << "    \"ACIK_KALEM\": \"YAYIN BULUNAMADI — yayinlanmis bir manken cizelgesi "
-         "yok, uydurmak yasak (KOSU-v7 §2, contract/flat-convention-v1.json). Flat "
-         "BUGUN ayni insan cizelgesine degerleniyor; ayrisma F4'un isi. Ortak ata "
-         "(dugum) F3'te kuruldu, iki bedene degerleme F4'te kurulacak.\"\n";
+    o << "    \"donusum\": \"manken := insan cizelgesi + ilan edilmis fark, dikis payi 0\",\n";
+    o << "    \"fark_girth_mm\": 0.0,\n";
+    o << "    \"fark_kaynagi\": \"BIZIM KARARIMIZ (GECE7 / F4), bir yayin DEGIL. Manken "
+         "cevrelerinin insan cizelgesinden kac mm ince oldugunu veren otoriter bir yayin "
+         "BULUNAMADI, ve sifirdan baska her deger uydurulmus bir sayi olurdu (§3.10). "
+         "Gerekce + nasil degisecegi: contract/mannequin-chart-v1.json _karar blogu. "
+         "Kapi: flat_convention_check bolum 1d, H6.\"\n";
     o << "  },\n";
     o << "  \"ustZ_mm\": " << num(f.topZMM) << ",\n";
     o << "  \"altZ_mm\": " << num(f.bottomZMM) << ",\n";
