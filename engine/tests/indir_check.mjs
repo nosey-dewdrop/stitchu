@@ -62,16 +62,22 @@ globalThis.URL = { ...globalThis.URL, createObjectURL: () => 'blob:stub', revoke
 
 const { patternSVG, patternA4Pdf, patternA0Pdf, relayDXF, safeName, flatSVG, flatGaps, saveFlatSVG } =
   await import(join(ROOT, 'web/js/download.js'));
+const KOKEN = await import(join(ROOT, 'web/js/provenance.js'));
 
 const MM = 72 / 25.4;
 const OUT = join(ROOT, 'Logs', 'indir-check');
 mkdirSync(OUT, { recursive: true });
 
 const fails = [];
+const kfails = [];   // section 10 (KÖKEN) — its own exit code, see the tail
 const note = [];
 function check(name, cond, detail) {
   if (cond) note.push(`  ok   ${name}${detail ? ` — ${detail}` : ''}`);
   else fails.push(`  FAIL ${name}${detail ? ` — ${detail}` : ''}`);
+}
+function kcheck(name, cond, detail) {
+  if (cond) note.push(`  ok   [köken] ${name}${detail ? ` — ${detail}` : ''}`);
+  else kfails.push(`  FAIL [köken] ${name}${detail ? ` — ${detail}` : ''}`);
 }
 
 // EU38, the body create.html drafts a first-time visitor on.
@@ -252,6 +258,158 @@ check('the flat button is mounted in the download row',
   /row\.appendChild\(\s*flatBtn\s*\)/.test(createSrc),
   'a button that is built but never appended is the 26 Aug state with extra code');
 
+// ------------------------------------------------------------------- 10. KÖKEN
+// WHY THIS SECTION EXISTS (F0, 2026-08-26). The referee measured the phase this
+// gate had just passed and found the thing it did NOT ask:
+//
+//   H10 = %58.3   — 70 of 120 spec fields came from host defaults, not the photo
+//   H3  = 4       — four fields invented and never declared
+//   grep -rn "cikarildi|inferred|defaulted" web/js/create.js web/js/download.js
+//               -> 0 lines
+//
+// So the user was already carrying a pattern AND a flat home (sections 1-9),
+// and more than half of what they carried had never been in their photograph,
+// and nothing anywhere said so. §0B does not forbid inferring — the engine
+// fills every field on purpose — it forbids inferring IN SILENCE.
+//
+// What is measured here is therefore not "the spec has a new field". It is:
+// the label exists, it is legal, it CANNOT be faked or emptied without the file
+// refusing to be written, and it reaches the two surfaces the user actually
+// looks at — the flat's root element and the A4 cover — plus the result screen.
+//
+// FUTURE-PROOFING IS PART OF THE SHAPE, NOT DECORATION. `cikarildi` will be
+// split by F2 into H10a (impossible to see: back, inside, covered) and H10b
+// (visible but not read); only H10b is on the ratchet. F0 does not split it —
+// but a single-bucket schema would force F2 to unpick every call site, so the
+// record carries a second axis from day one and the gate proves it is settable.
+const AXES = Object.keys(SPEC);
+
+// (a) A record built the honest way: everything derived until proven otherwise.
+const rec = KOKEN.yeniKoken(AXES);
+kcheck('a fresh record labels every axis, and labels it derived',
+  KOKEN.dogrula(rec, AXES).length === 0 && KOKEN.alanlar(rec, 'cikarildi').length === AXES.length,
+  `${AXES.length} axes`);
+
+// (b) The photo takes two of them back. This is the only shape that matters:
+// what the photo showed must LEAVE the derived list, or the list is decoration.
+KOKEN.isaretle(rec, 'neckline', 'gorulen');
+KOKEN.isaretle(rec, 'skirtStyle', 'gorulen');
+const derived = KOKEN.ilanEdilecek(rec);
+kcheck('a photo reading leaves the derived list',
+  derived.length === AXES.length - 2 && !derived.includes('neckline') && !derived.includes('skirtStyle'),
+  `${derived.length}/${AXES.length} derived`);
+
+// (c) The bucket is SPLITTABLE (F2's H10a/H10b). Not split here — settable here.
+const iki = KOKEN.yeniKoken(['a', 'b']);
+KOKEN.isaretle(iki, 'a', 'cikarildi', 'gorunmez');   // H10a — cannot be photographed
+KOKEN.isaretle(iki, 'b', 'cikarildi', 'gorunur');    // H10b — visible, not read
+kcheck('the derived bucket can be split into H10a / H10b without a schema change',
+  KOKEN.dogrula(iki, ['a', 'b']).length === 0 &&
+  iki.a.gorunurluk === 'gorunmez' && iki.b.gorunurluk === 'gorunur');
+kcheck('F0 itself did NOT split it (that is F2 work)',
+  KOKEN.alanlar(rec, 'cikarildi').every((f) => rec[f].gorunurluk === 'bilinmiyor'));
+
+// (d) A LABEL CANNOT BE FAKED. An unknown tag is thrown out, not swallowed
+// (RULES invariant 1); a missing axis and a ghost axis are both violations.
+kcheck('an unknown origin tag is refused, not swallowed',
+  (() => { try { KOKEN.isaretle(rec, 'neckline', 'sanirim'); return false; } catch { return true; } })());
+const eksik = KOKEN.yeniKoken(AXES); delete eksik.fabric;
+kcheck('an axis with no origin label is a violation', KOKEN.dogrula(eksik, AXES).length === 1,
+  KOKEN.dogrula(eksik, AXES).join('; '));
+const hayalet = KOKEN.yeniKoken([...AXES, 'kolyeUcu']);
+kcheck('an origin label for an axis the spec does not have is a violation',
+  KOKEN.dogrula(hayalet, AXES).length === 1, KOKEN.dogrula(hayalet, AXES).join('; '));
+
+// (e) THE FLAT CARRIES IT, IN THE FILE. Offline, in Illustrator, with no site.
+const flatK = flatSVG(SPEC, rec, AXES);
+const attrOf = (k) => (new RegExp(`data-koken-${k}="([^"]*)"`).exec(flatK) || [])[1];
+kcheck('the flat root declares the origin count and the total',
+  attrOf('cikarildi') === String(derived.length) && attrOf('toplam') === String(AXES.length),
+  `cikarildi=${attrOf('cikarildi')} toplam=${attrOf('toplam')}`);
+kcheck('the flat root NAMES the derived axes, and the names match the count',
+  (attrOf('alanlar') || '').split(' ').filter(Boolean).join(' ') === derived.join(' '),
+  `${(attrOf('alanlar') || '').slice(0, 70)}…`);
+kcheck('stamping did not disturb the pen',
+  flatK.replace(/ data-koken-[a-z]+="[^"]*"/g, '') === flat,
+  'flat-core.js output must stay byte-identical — style_check diffs it against engine/STYLE-PIN');
+
+// (f) EMPTYING THE LIST DOES NOT PRODUCE A FILE. This is the reward-hack the
+// phase invites: drop the record, keep the download, look finished. Both
+// builders refuse, and the DOM saver writes nothing.
+kcheck('an emptied origin record hands out NO flat',
+  (() => { try { flatSVG(SPEC, {}, AXES); return false; } catch { return true; } })());
+kcheck('a half-labelled origin record hands out NO flat',
+  (() => { try { flatSVG(SPEC, eksik, AXES); return false; } catch { return true; } })());
+kcheck('an emptied origin record hands out NO A4 pack',
+  (() => { try { patternA4Pdf(pattern, 'Dress', {}, AXES); return false; } catch { return true; } })());
+const beforeK = saved.length;
+try { saveFlatSVG(SPEC, 'nope-flat.svg', {}, AXES); } catch { /* expected */ }
+kcheck('a refused stamp saves no file at all', saved.length === beforeK,
+  `${saved.length - beforeK} file(s) saved`);
+
+// (g) THE A4 COVER CARRIES IT ON PAPER, with every derived axis named — a
+// truncated list would be the same silence, shorter.
+const a4kBytes = patternA4Pdf(pattern, 'Dress', rec, AXES);
+const a4k = Buffer.from(a4kBytes).toString('latin1');
+kcheck('the A4 cover has an Origin block', /Origin \/ K/.test(a4k));
+kcheck('the A4 cover prints the derived count', a4k.includes(`${derived.length} of ${AXES.length} fields`),
+  `${derived.length} of ${AXES.length}`);
+const missingOnCover = derived.filter((f) => !a4k.includes(f));
+kcheck('the A4 cover names every derived axis', missingOnCover.length === 0,
+  missingOnCover.join(', ') || `${derived.length} names on the cover`);
+// The block is printed ABOVE the calibration square; if it ever pushes the
+// square off the sheet the pattern silently loses its scale check.
+let squareK = null;
+for (const m of a4k.matchAll(/([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+) re/g)) {
+  const w = Number(m[3]) / MM, h = Number(m[4]) / MM;
+  if (Math.abs(w - h) < 0.01 && Math.abs(w - 30) < 0.5) { squareK = { x: Number(m[1]) / MM, y: Number(m[2]) / MM, w }; break; }
+}
+kcheck('the origin block did not push the 3 cm square off the cover',
+  !!squareK && squareK.y > 0 && squareK.y + squareK.w < 297 && squareK.x > 0,
+  squareK ? `square at ${squareK.x.toFixed(1)}, ${squareK.y.toFixed(1)} mm` : 'square gone from the cover');
+
+// (h) THE RESULT SCREEN SAYS IT TOO, and the shipped page is the one that must
+// pass a record to the writers. A gate that only proves the module works is the
+// 26 Aug disease with a new name.
+kcheck('create.js labels origins as it writes the spec', /\bisaretle\(\s*koken\b/.test(createSrc));
+kcheck('create.js prints the derived list on the result screen',
+  /appendChild\(\s*kokenSatiri\s*\)/.test(createSrc),
+  'a sentence that is built but never appended is the 26 Aug state with extra code');
+for (const fn of ['saveFlatSVG', 'saveA4Pdf']) {
+  kcheck(`create.js hands the origin record to ${fn}`,
+    new RegExp(`${fn}\\([^)]*\\bkoken\\b`).test(createSrc),
+    'the file must leave with the record, not merely be able to carry one');
+}
+
+// (i) NO SILENT WRITE ON THE PHOTO PATH. Every assignment to a spec axis inside
+// the vision block must sit within one line of a labelling call. This is the
+// check that keeps the phase alive after the phase: the next axis someone wires
+// from the photo cannot arrive unlabelled.
+//
+// The label must NAME THE FIELD IT IS WRITTEN NEXT TO. An earlier version of
+// this check only asked whether SOME labelling call sat within one line, and a
+// mutation walked straight through it: `spec.neckline = seen.neckline` sitting
+// directly under `fotoSet('garment', …)` counted as labelled. Adjacency is not
+// provenance.
+const visionBlock = createSrc.slice(
+  createSrc.indexOf('applyMeasuredRatios(seen'), createSrc.indexOf('spec.seen = {'));
+// Not spec AXES: carrier fields the engine reads but no picker offers, and
+// which therefore have no origin of their own to declare.
+const CARRIER = new Set(['skirtLengthMM', 'photoFabric', 'frontPlacket', 'seen']);
+const lines = visionBlock.split('\n');
+const unlabelled = [];
+lines.forEach((ln, i) => {
+  for (const m of ln.matchAll(/\bspec\.([a-zA-Z]+)\s*=[^=]/g)) {
+    const field = m[1];
+    if (CARRIER.has(field)) continue;
+    const window = [ln, lines[i + 1] || ''].join(' ');
+    const named = new RegExp(`(isaretle\\(\\s*koken,\\s*|fotoSet\\(|konakSet\\()'${field}'`).test(window);
+    if (!named) unlabelled.push(`${field} (vision block line ${i + 1})`);
+  }
+});
+kcheck('no axis is written from the photo without an origin label NAMING IT',
+  unlabelled.length === 0, unlabelled.join(', ') || `${lines.length} lines scanned, ${CARRIER.size} carrier fields exempt`);
+
 // ------------------------------------------------------------------ artifacts
 const base = join(OUT, safeName('stitchu-dress-aline'));
 writeFileSync(`${base}.dxf`, dxf);
@@ -259,11 +417,18 @@ writeFileSync(`${base}.svg`, svg);
 writeFileSync(`${base}-a4.pdf`, a4);
 writeFileSync(`${base}-a0.pdf`, a0);
 writeFileSync(`${base}-flat.svg`, flat);
+writeFileSync(`${base}-flat-koken.svg`, flatK);
+writeFileSync(`${base}-a4-koken.pdf`, a4kBytes);
 
 console.log('İNDİR KAPISI — kullanıcı eve bir dosya götürüyor mu? (0 API çağrısı)');
 console.log(note.join('\n'));
 if (fails.length) console.log(fails.join('\n'));
 console.log('\nyazılan dosyalar (RULES invariant 3 — yol, "baktım" değil):');
-for (const f of ['.dxf', '.svg', '-a4.pdf', '-a0.pdf', '-flat.svg']) console.log(`  ${base}${f}`);
-console.log(`\nİNDİR KAPISI: ${fails.length ? `KIRMIZI — ${fails.length} kalem` : 'YEŞİL'}`);
+for (const f of ['.dxf', '.svg', '-a4.pdf', '-a0.pdf', '-flat.svg', '-flat-koken.svg', '-a4-koken.pdf']) console.log(`  ${base}${f}`);
+if (kfails.length) console.log(kfails.join('\n'));
+// EXIT 8 IS THE KÖKEN CODE (F0 card, gate item 4): a faked or emptied origin
+// label is a different failure from a missing file and reports as one, so a
+// mutation run can tell which door it broke.
+console.log(`\nİNDİR KAPISI: ${fails.length || kfails.length ? `KIRMIZI — ${fails.length} kalem + ${kfails.length} köken kalemi` : 'YEŞİL'}`);
+if (kfails.length) process.exit(8);
 process.exit(fails.length ? 1 : 0);

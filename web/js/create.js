@@ -19,6 +19,9 @@ import { measureGarment } from './measure.js?v=136';
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
 import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=136';
+// F0: KÖKEN. Every axis below carries where its value came from, and the two
+// files the user takes home carry the derived list by name. See provenance.js.
+import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=136';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -158,6 +161,52 @@ const spec = {
   cupSeam: 'none', yoke: 'none', boxPleat: 'none',
 };
 
+// ── KÖKEN (F0, 2026-08-26) ──────────────────────────────────────────────────
+// The axes above are a COMPLETE spec the moment this file loads: nothing is
+// blank, and that is deliberate (§0B — the engine fills every field, there is
+// no empty output). The cost is that a value the user's photo never showed
+// looks exactly like a value it did. Measured: 70 of 120 fields inferred,
+// %58.3, and no shipped surface said so. So every axis starts labelled
+// `cikarildi` — the honest default, because a field IS host-derived until
+// something proves otherwise — and is re-labelled at the exact line that
+// overwrites it: `gorulen` from the photo, `soruldu` from the user's own tap,
+// `zorunlu` when coherence forces it. `beden` rides along as an axis of its
+// own because §4C md.2 makes the EU38 demo body a derived value too: drafting
+// a stranger's dress on a standard body without saying so is the same lie in
+// centimetres.
+const KOKEN_ALANLARI = [...new Set([
+  ...Object.keys(spec), ...SPEC_GROUPS.map((g) => g.key), 'hemFlounce', 'beden',
+])];
+const koken = yeniKoken(KOKEN_ALANLARI);
+
+/**
+ * Write an axis FROM THE PHOTO. A missing / 'none' / empty reading is not a
+ * reading: the axis keeps its host default and stays labelled `cikarildi`.
+ * Returns whether the photo actually drove it, so a host gate can still veto
+ * the value without the label lying about where it came from.
+ */
+function fotoSet(field, value) {
+  if (value === null || value === undefined || value === 'none' || value === false || value === '') return false;
+  spec[field] = value;
+  isaretle(koken, field, 'gorulen');
+  return true;
+}
+
+/** An axis the user set with their own hand (a tap, or a style-page link). */
+const elleSet = (field, value) => { spec[field] = value; isaretle(koken, field, 'soruldu'); };
+
+/**
+ * A photo reading this host cannot carry. The read is NOT dropped in silence:
+ * the axis falls back to `bos` and is labelled `zorunlu` — buildability
+ * overrode what was seen (§4B md.2, §0B). Silence here is exactly the 2026-07-18
+ * puff sleeve, dropped without a word.
+ */
+function konakSet(field, value, hostable, bos = 'none') {
+  if (value && hostable) { spec[field] = value; isaretle(koken, field, 'gorulen'); return; }
+  spec[field] = bos;
+  if (value) isaretle(koken, field, 'zorunlu', 'bilinmiyor', 'fotoğrafta okundu, bu giysi taşıyamıyor');
+}
+
 // Preset from a style-library page: a link like create.html?garment=dress&
 // neckline=sweetheart carries that page's exact style into the flow, so a
 // visitor lands on the garment they were reading about, ready to print. Bridge
@@ -175,11 +224,12 @@ const spec = {
     const v = raw.trim();
     if (k === 'frontPlacket') { spec.frontPlacket = v === 'true' || v === '1' || v === 'on'; continue; }
     if (k === 'tieClosure') {
-      if (['none', 'backWaistBow', 'tieBack', 'frontNeckBow', 'cuffTies'].includes(v)) spec.tieClosure = v;
+      // A style-page link is the user's own choice, arriving one screen early.
+      if (['none', 'backWaistBow', 'tieBack', 'frontNeckBow', 'cuffTies'].includes(v)) elleSet('tieClosure', v);
       continue;
     }
     // Everything else must be a real option value for a real picker.
-    if (pickerVals[k] && pickerVals[k].has(v)) spec[k] = v;
+    if (pickerVals[k] && pickerVals[k].has(v)) elleSet(k, v);
   }
 })();
 
@@ -437,11 +487,14 @@ function showSpec() {
         // refused (then the enum-default path drives, exactly as before, and
         // the result screen says "standard proportions"). LLM = labels only.
         applyMeasuredRatios(seen, measureGarment(pixels));
-        spec.garment = seen.garment;
-        if (seen.neckline) spec.neckline = seen.neckline;
-        if (seen.sleeveStyle) spec.sleeveStyle = seen.sleeveStyle;
-        if (seen.sleeveLength) spec.sleeveLength = seen.sleeveLength;
-        if (seen.skirtStyle) spec.skirtStyle = seen.skirtStyle;
+        // Each fotoSet is a LABEL as much as an assignment: what the photo
+        // showed becomes `gorulen`, what it did not stays `cikarildi` and is
+        // named to the user on the result screen and inside both files.
+        fotoSet('garment', seen.garment);
+        fotoSet('neckline', seen.neckline);
+        fotoSet('sleeveStyle', seen.sleeveStyle);
+        fotoSet('sleeveLength', seen.sleeveLength);
+        fotoSet('skirtStyle', seen.skirtStyle);
         // Oran kablosu 2 — hemToWaistWidth's first consumer: the MEASURED
         // hem-to-waist width picks the skirt fullness class inside the
         // engine's existing enum (straight/aLine/gathered/halfCircle,
@@ -450,8 +503,13 @@ function showSpec() {
         // returns null and the label keeps driving). Placed BEFORE the host
         // gates below so backSlit/hemShape/pocket see the final skirt style.
         const fullness = pickSkirtFullness(seen);
+        // Spelled out rather than routed through fotoSet: photo_ratio_wire_check
+        // asserts THIS line verbatim on the product path, and loosening someone
+        // else's gate is not a phase agent's call (§3.8 md.4). The origin label
+        // rides on the next line instead, which is all F0 needs.
         if (fullness) spec.skirtStyle = fullness;
-        if (seen.length) spec.skirtLength = seen.length;
+        if (fullness) isaretle(koken, 'skirtStyle', 'gorulen');
+        fotoSet('skirtLength', seen.length);
         // Foto-oran kablosu: the measured ratios scale the hem to the WEARER's
         // own body — a continuous mm target next to the coarse mini/midi/maxi.
         // 0 = not trustworthy → the table drives, exactly as before. The seen
@@ -460,12 +518,20 @@ function showSpec() {
         photoSeen = seen;
         photoLenHandPicked = false;
         spec.skirtLengthMM = refreshSkirtLengthMM(spec.skirtLengthMM, photoSeen, values, photoLenHandPicked);
-        if (seen.topLength) spec.topLength = seen.topLength;
-        if (seen.shaping === 'princess' || seen.shaping === 'dart') spec.shaping = seen.shaping;
-        if (seen.waistline === 'natural' || seen.waistline === 'empire') spec.waistline = seen.waistline;
-        if (seen.fabric === 'woven' || seen.fabric === 'knit') spec.fabric = seen.fabric;
-        if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) spec.ruffle = seen.hemRuffle;
-        if (typeof seen.keyhole === 'boolean') spec.keyhole = seen.keyhole ? 'keyhole' : 'none';
+        fotoSet('topLength', seen.topLength);
+        if (seen.shaping === 'princess' || seen.shaping === 'dart') fotoSet('shaping', seen.shaping);
+        if (seen.waistline === 'natural' || seen.waistline === 'empire') fotoSet('waistline', seen.waistline);
+        if (seen.fabric === 'woven' || seen.fabric === 'knit') fotoSet('fabric', seen.fabric);
+        // A read of 'none' IS a reading here (the eye looked at the hem and saw
+        // no ruffle), so it is labelled `gorulen` by hand rather than through
+        // fotoSet, which treats 'none' as "nothing was read".
+        if (['none', 'single', 'tiered'].includes(seen.hemRuffle)) {
+          spec.ruffle = seen.hemRuffle; isaretle(koken, 'ruffle', 'gorulen');
+        }
+        // Same: `false` is a declaration of absence (§3.6 H3), not a silence.
+        if (typeof seen.keyhole === 'boolean') {
+          spec.keyhole = seen.keyhole ? 'keyhole' : 'none'; isaretle(koken, 'keyhole', 'gorulen');
+        }
         // Front button placket (düğme patı): the engine now draws the grown-on
         // button stand + buttons/buttonholes when the vision reads a front
         // button/placket closure (Loop 3), and R1.2 draws an ASYMMETRIC (off
@@ -482,7 +548,7 @@ function showSpec() {
         // when the closure location was ambiguous (the oov/details name it). A
         // symmetric front stand is Standard. Otherwise no placket.
         const placket = pickPlacket(seen, frontButtons);
-        spec.placketStyle = placket || 'none';
+        konakSet('placketStyle', placket, true);
         // Keep the legacy bool in sync so the honesty layer + any bool consumer
         // still fire for a symmetric front (asymmetric drives placketStyle only).
         spec.frontPlacket = placket === 'standard';
@@ -494,43 +560,47 @@ function showSpec() {
         // K1: the vision-word -> engine-word translation is contract data
         // (contract/tables.json mappings.sleeveHeadToSleeveCap), not an if-chain.
         const capWord = seen.sleeveHead && CONTRACT.mappings.sleeveHeadToSleeveCap[seen.sleeveHead];
-        if (capWord && capWord !== 'plain') spec.sleeveCap = capWord;
+        if (capWord && capWord !== 'plain') fotoSet('sleeveCap', capWord);
         // A gathered/puff/cap head needs an actual sleeve to sit on; if the vision
         // read a head but no sleeve style, give it a straight sleeve to carry it.
         if (spec.sleeveCap && spec.sleeveCap !== 'plain' && (!spec.sleeveStyle || spec.sleeveStyle === 'none')) {
+          // A head needs an arm to sit on: the sleeve is not a reading, it is a
+          // construction consequence of one.
           spec.sleeveStyle = 'straight';
+          isaretle(koken, 'sleeveStyle', 'zorunlu', 'bilinmiyor', 'kol başı okundu, taşıyacak kol gerekti');
         }
         // Fabric ties / sash / bow (bağ / kuşak / fiyonk, Loop 4b): the engine
         // now draws SIMPLE APPLIED ties as separate self-fabric strips + a
         // placement notch. A drawstring that GATHERS the fabric (needs a casing +
         // shirring) is NOT this, that stays honest. Map the vision closure/back
         // detail to a tie placement; leave it for the honesty layer otherwise.
-        spec.tieClosure = pickTiePlacement(seen);
+        konakSet('tieClosure', pickTiePlacement(seen), true);
         // Collar family (yaka, Loop 7/8): the engine now draws a SEPARATE collar
         // piece (stand/mock/flat/peter-pan/shirt), neck edge trued to the
         // neckline. A bias-bound / notched / sailor finish is NOT drafted and
         // stays honest (pickCollar returns null).
         const collar = pickCollar(seen);
-        if (collar) { spec.collarType = collar.type; spec.collarEdge = collar.edge; }
-        else { spec.collarType = 'none'; spec.collarEdge = 'round'; }
+        konakSet('collarType', collar && collar.type, true);
+        if (collar) fotoSet('collarEdge', collar.edge); else spec.collarEdge = 'round';
         // Edge finish (patch 3.10): bias binding is the default on every dress
         // (Damla's call). A real collar keeps a faced neck inside the engine
         // regardless; a collarless neck + sleeveless armholes finish with a thin
         // trued bias strip. The vision doesn't override this — it's a finish
         // choice, not a garment read.
         spec.edgeFinish = 'biasBinding';
+        isaretle(koken, 'edgeFinish', 'cikarildi', 'bilinmiyor', 'ev bitişi, fotoğraftan okunmadı');
         // Drawstring / shirred / smocked gathering (büzgü, Loop 8): the engine now
         // draws a SEPARATE gathered panel (+ a drawstring cord) whose gathered
         // edge is trued to the drafted zone edge. Map the vision yoke / drawstring
         // neckline / gathered bust to a gathering; leave it honest otherwise.
         const gather = pickGather(seen);
-        if (gather) { spec.gatherType = gather.type; spec.gatherZone = gather.zone; }
-        else { spec.gatherType = 'none'; spec.gatherZone = 'neckline'; }
+        konakSet('gatherType', gather && gather.type, true);
+        if (gather) fotoSet('gatherZone', gather.zone); else spec.gatherZone = 'neckline';
         // Open-back cutout (açık sırt oyuğu, Loop 9b): the engine now opens a
         // shaped cutout in the BACK piece + a facing trued to the opening. This is
         // INDEPENDENT of a tie-back (Loop 4b), a Tie Back Mini Dress gets both.
         const backOpen = pickBackOpening(seen);
-        spec.backOpening = backOpen || 'none';
+        konakSet('backOpening', backOpen, true);
         // Corset lace-up back (korse bağcıklı sırt): the engine now draws a CB
         // facing strip on each back edge + two trued eyelet columns + a lacing cord
         // (an eyelet-laced, open-gap, ADJUSTABLE back). Only a fitted (princess/dart)
@@ -540,7 +610,7 @@ function showSpec() {
         // and an open-back cutout (a faced hole) — this is criss-cross eyelet lacing.
         const laced = pickLaceUpBack(seen);
         const lacedHostable = !isSkirt(spec);
-        spec.laceUpBack = (laced && lacedHostable) ? 'corset' : 'none';
+        konakSet('laceUpBack', laced && 'corset', lacedHostable);
         // True wrap / surplice front (kruvaze, wrapfront.cpp): the engine now
         // reshapes the FRONT bodice into a crossed double front — each front laps
         // past CF into a diagonal wrap edge, cut 2 mirror-image, forming the surplice
@@ -550,7 +620,7 @@ function showSpec() {
         // to cinch it. Mirror the engine host gate exactly.
         const wrap = pickWrapFront(seen);
         const wrapHostable = !isSkirt(spec);
-        spec.wrapFront = (wrap && wrapHostable) ? 'surplice' : 'none';
+        konakSet('wrapFront', wrap && 'surplice', wrapHostable);
         // Back hem slit / walking vent (arka etek yırtmacı, Loop M1): the engine
         // cuts the back with a center-back seam and opens a walking slit from the
         // hem. Only a fitted straight/A-line skirt hosts one; a gathered/pleated
@@ -559,7 +629,7 @@ function showSpec() {
         const slit = pickHemSlit(seen);
         const slitHostable = !isTop(spec) &&
           (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine');
-        spec.backSlit = (slit && slitHostable) ? slit : 'none';
+        konakSet('backSlit', slit, slitHostable);
         // Ruffled shoulder straps (fırfırlı askı, queue #3): the engine now draws a
         // gathered self-fabric frill strip as a separate strap pair + a placement
         // notch. Only a sleeveless dress/top carries one; a sleeved/halter garment
@@ -568,14 +638,14 @@ function showSpec() {
         const straps = pickRuffledStraps(seen);
         const strapsHostable = (spec.sleeveStyle === 'none' || !spec.sleeveStyle) &&
           spec.neckline !== 'halter';
-        spec.ruffledStraps = (straps && strapsHostable) ? straps : 'none';
+        konakSet('ruffledStraps', straps, strapsHostable);
         // Peplum (bele takılan volan, R1.1): the engine now hangs a flared
         // circular flounce from the waist as a separate piece, inner arc trued to
         // the finished waist. Only a waisted top/dress hosts one; a pleated/
         // gathered/draped peplum stays honest (pickPeplum null). A skirt has no
         // waisted bodice → gate it out.
         const peplum = pickPeplum(seen);
-        spec.peplum = (peplum && !isSkirt(spec)) ? peplum : 'none';
+        konakSet('peplum', peplum, !isSkirt(spec));
         // All-around hem flounce (etek ucu volanı — dropped-waist tiered look): the
         // engine hangs a gathered flounce from the WHOLE hem (front + back) as a
         // separate strip, gathered edge trued to the finished hem. Only a dress/top
@@ -583,7 +653,7 @@ function showSpec() {
         // peplum (waist) or a back-only ruffle stays honest (pickHemFlounce null).
         const hemFlounce = pickHemFlounce(seen);
         const hemFlounceHostable = isDress(spec) || isTop(spec);
-        spec.hemFlounce = (hemFlounce && hemFlounceHostable) ? hemFlounce : 'none';
+        konakSet('hemFlounce', hemFlounce, hemFlounceHostable);
         // Pocket (cep, patch 3.12): the engine now draws a patch pocket (a
         // separate piece + a placement mark), a side-seam in-seam pocket (two bag
         // pieces + a mouth mark), and a SLASH pocket (a diagonal front-hip mouth +
@@ -597,7 +667,7 @@ function showSpec() {
         // honestly); the pocket then falls back to the honest missing note.
         const slashHostable = isDress(spec) ||
           (isSkirt(spec) && (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
-        spec.pocketStyle = (pocket === 'slash' && !slashHostable) ? 'none' : (pocket || 'none');
+        konakSet('pocketStyle', pocket, !(pocket === 'slash' && !slashHostable));
         // Cuff (manşet, patch 3.13): the engine now draws a button or ribbed band
         // at the wrist end of a full-length sleeve, the sleeve hem gathered in.
         // Only a real full-length sleeve (Straight, long/elbow) hosts one — a
@@ -607,7 +677,7 @@ function showSpec() {
         const cuffHostable = spec.sleeveStyle === 'straight' &&
           (spec.sleeveLength === 'long' || spec.sleeveLength === 'elbow') &&
           spec.sleeveCap !== 'cap';
-        spec.cuffStyle = (cuff && cuffHostable) ? cuff : 'none';
+        konakSet('cuffStyle', cuff, cuffHostable);
         // Hem shape (etek ucu şekli, patch 3.15+): the engine now reshapes the
         // fitted lower edge into a shirt-tail (sides up), a high-low (front short,
         // back long), a corset/basque POINT (center dips to a V), or an inverted
@@ -620,20 +690,20 @@ function showSpec() {
         const hemHostable = isTop(spec) ||
           ((isSkirt(spec) || isDress(spec)) &&
            (spec.skirtStyle === 'straight' || spec.skirtStyle === 'aLine'));
-        spec.hemShape = (hemShape && hemHostable) ? hemShape : 'straight';
+        konakSet('hemShape', hemShape, hemHostable, 'straight');
         // vocab 2026-07-17: back detail (arka pelerin/fırfır). A separate ruffle/
         // cape/flounce piece at the back neck. Only a dress/top hosts one.
         const backDet = pickBackDetail(seen);
-        spec.backDetail = (backDet && !isSkirt(spec)) ? backDet : 'none';
+        konakSet('backDetail', backDet, !isSkirt(spec));
         // vocab: exposed / visible zipper (görünür fermuar). A visible design zip.
-        spec.exposedZip = pickExposedZip(seen) || 'none';
+        konakSet('exposedZip', pickExposedZip(seen), true);
         // vocab: off-shoulder / bardot (omuz açık). The bodice top drops below the
         // shoulder onto an elastic casing (+ optional frill). Needs a plain (dart)
         // bodiced garment — a princess/skirt garment stays honest.
         const bardot = pickBardot(seen);
         const bardotHostable = !isSkirt(spec) && spec.neckline !== 'halter' &&
           spec.shaping !== 'princess';
-        spec.bardotStyle = (bardot && bardotHostable) ? bardot : 'none';
+        konakSet('bardotStyle', bardot, bardotHostable);
         // Cup seam (kup dikişi, cupseam.cpp): the engine now splits the princess
         // front into Upper Cup + Lower Cup + Front Body along a horizontal seam
         // through the bust apex — the strapless/bustier bust. The host-gate MIRRORS
@@ -645,7 +715,7 @@ function showSpec() {
           spec.shaping === 'princess' &&
           (spec.sleeveStyle === 'none' || spec.sleeveCap === 'cap') &&
           (spec.neckline === 'sweetheart' || spec.neckline === 'square' || spec.neckline === 'scoop');
-        spec.cupSeam = (pickCupSeam(seen) && cupSeamHostable) ? 'horizontal' : 'none';
+        konakSet('cupSeam', pickCupSeam(seen) && 'horizontal', cupSeamHostable);
         // Yoke split (roba — doll/babydoll/swing dress, yoke.cpp): the engine now
         // splits the front+back bodice into a Yoke + a lower Body along a horizontal
         // chest seam — plain (yoke:1) or gathered/shirred/smocked below (yoke:2).
@@ -654,14 +724,14 @@ function showSpec() {
         // engine refuses (a skirt) stays honest.
         const yokePick = pickYoke(seen);
         const yokeHostable = !isSkirt(spec);
-        spec.yoke = (yokePick && yokeHostable) ? (yokePick === 2 ? 'gathered' : 'plain') : 'none';
+        konakSet('yoke', yokePick && (yokePick === 2 ? 'gathered' : 'plain'), yokeHostable);
         // Center box pleat (orta ters kutu pili, boxpleat.cpp): a single inverted
         // fold behind the center-front panel — the swing/doll center fold. Host: a
         // dress/top (a skirt's CF panel is a different build). Composes with the yoke
         // above (a swing top is yoke + CF box pleat). No structured vision field
         // carries a box pleat, so pickBoxPleat reads only the free-text channel.
         const boxPleat = pickBoxPleat(seen);
-        spec.boxPleat = (boxPleat && !isSkirt(spec)) ? 'centerInverted' : 'none';
+        konakSet('boxPleat', boxPleat && 'centerInverted', !isSkirt(spec));
         // A drawn button row is DECORATIVE from vision (a functional row is the
         // placket path above); a visible run of buttons with no read closure reads
         // decorative. A front placket already drew a functional row, so only add a
@@ -669,8 +739,8 @@ function showSpec() {
         const buttonsRead = /button/.test(
           (Array.isArray(seen.outOfVocab) ? seen.outOfVocab.join(' ') : '') + ' ' + (seen.details || ''),
         );
-        spec.buttonRow = (buttonsRead && spec.placketStyle === 'none' && !spec.frontPlacket &&
-          !isSkirt(spec) && spec.neckline !== 'halter') ? 'decorative' : 'none';
+        konakSet('buttonRow', buttonsRead && 'decorative',
+          spec.placketStyle === 'none' && !spec.frontPlacket && !isSkirt(spec) && spec.neckline !== 'halter');
         if (typeof seen.fabricName === 'string' && seen.fabricName !== 'other') spec.photoFabric = seen.fabricName;
         // Structural fields the vision now reads but the engine cannot draw yet
         // (Loop 1 pipe: carried on the spec so later loops can consume them and
@@ -708,6 +778,12 @@ function showSpec() {
         // engine now REFUSES incoherent specs (e.g. a v-neck skirt) instead of
         // silently ignoring the field, so what the user can't see resets to
         // the group default (first option).
+        // Not a preference and not a reading: the engine REFUSES an incoherent
+        // spec, so this reset is a buildability requirement (§4B md.2) and it is
+        // labelled as one instead of quietly looking like a default.
+        if (spec[group.key] !== group.options[0][0]) {
+          isaretle(koken, group.key, 'zorunlu', 'bilinmiyor', 'bu giyside bu eksen yok');
+        }
         spec[group.key] = group.options[0][0];
         continue;
       }
@@ -718,7 +794,7 @@ function showSpec() {
         const b = el('button', 'choice', getLang() === 'tr' ? trOption : label);
         b.setAttribute('aria-pressed', String(spec[group.key] === value));
         b.addEventListener('click', () => {
-          spec[group.key] = value;
+          elleSet(group.key, value);   // the user's own hand -> `soruldu`
           // A hand-picked length is an explicit order: drop the photo-measured
           // mm override so mini/midi/maxi does exactly what it says. The latch
           // keeps it dropped across showSpec re-entries (measurement edits)
@@ -827,6 +903,13 @@ function showResult(result) {
   }
   screen.appendChild(nav);
 
+  // §4C md.2: whose body was this drafted to? A stranger who never typed a
+  // measurement gets the EU38 standard, and that is a DERIVED value like any
+  // other — in centimetres instead of enum words. Marked here, at the one place
+  // that knows the answer for certain, so the label cannot drift from the draft.
+  isaretle(koken, 'beden', usingDemo ? 'cikarildi' : 'soruldu', 'bilinmiyor',
+    usingDemo ? 'kendi ölçün girilmedi, EU38 standardına çizildi' : 'kendi ölçülerin');
+
   // Take it home. Placed ABOVE the grade panel on purpose: grading is a seller's
   // job, downloading is everyone's, and the phase this shipped in (F-İNDİR)
   // exists because the shopper's job was the one with no button.
@@ -855,6 +938,16 @@ function downloadPanel(result) {
   const title = draftedTitle(result);
   const msg = el('p', 'dl-msg', '');
 
+  // KÖKEN, ON THE RESULT SCREEN, BY NAME (F0 gate item 3). The `flatgap`
+  // precedent from F-İNDİR spelled out the one axis the pen could not cut; this
+  // is the same sentence widened to every axis the PHOTO did not show. It is
+  // printed before the buttons, not after a click: the user should know what
+  // they are taking home before they take it.
+  const derived = ilanEdilecek(koken);
+  const kokenSatiri = el('p', 'dl-koken', kokenCumlesi(koken, getLang() === 'tr'));
+  kokenSatiri.setAttribute('data-koken-cikarildi', String(derived.length));
+  panel.appendChild(kokenSatiri);
+
   // One handler shape for all four: disable, do the work, report the refusal in
   // words if it comes. A silent no-op button is the failure mode this phase was
   // opened to kill, so nothing here fails quietly (yasak 8).
@@ -876,7 +969,9 @@ function downloadPanel(result) {
 
   const row = el('div', 'dl-row');
   const pdfBtn = el('button', 'btn', t('create.dl.pdf'));
-  wire(pdfBtn, () => { saveA4Pdf(result.pattern, title, `${base}-a4.pdf`); return null; });
+  // The A4 pack carries the same list on its cover, so the answer survives
+  // being printed and read with no browser in the room.
+  wire(pdfBtn, () => { saveA4Pdf(result.pattern, title, `${base}-a4.pdf`, koken, KOKEN_ALANLARI); return null; });
   row.appendChild(pdfBtn);
 
   const svgBtn = el('button', 'btn', t('create.dl.svg'));
@@ -896,7 +991,8 @@ function downloadPanel(result) {
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
   wire(flatBtn, () => {
     const gaps = flatGaps(spec);   // throws exactly where saveFlatSVG would
-    saveFlatSVG(spec, `${base}-flat.svg`);
+    // The flat leaves with the origin record on its root element.
+    saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
     // Not a refusal — the file IS on their disk — so it does not go through the
     // refusal string. It is the honest footnote: drawn, but not yet cuttable.
     if (gaps.length) msg.textContent = t('create.dl.flatgap', { what: gaps.join(' · ') });

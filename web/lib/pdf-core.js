@@ -371,6 +371,22 @@ export function makePdfCore({ engine, sheet, body }) {
         `Cut or fold along the dashed page frame and tape edge to edge: the black corner squares and edge ticks complete across each joint, ` +
         `and a piece running off a page tells you which sheet it continues on. Verify the 3 cm square before cutting.`;
       for (const ln of wrap(asm, 9, A4.w - 2 * M)) { c.text(M, y, 9, INK, ln); y += 5.4; }
+      // ORIGIN (köken) — F0, 2026-08-26. Which fields of this pattern the
+      // user's photo actually showed, and which the engine derived. Measured
+      // before this block existed: %58.3 of the fields came from host defaults
+      // and no shipped surface said so, so the buyer could not tell their own
+      // dress from ours. §0B: inventing is not the offence, inventing SILENTLY
+      // is. Printed on paper on purpose — it must survive being opened offline.
+      if (s.koken) {
+        y += 6;
+        c.text(M, y, 12, NAVY, 'Origin / Köken'); y += 9;
+        const line = s.koken.alanlar.length
+          ? `${s.koken.alanlar.length} of ${s.koken.toplam} fields were NOT visible in the photo and were derived ` +
+            `from rules (the simplest reading was chosen): ${s.koken.alanlar.join(', ')}. ` +
+            `Everything else came from the photo or from your own picks.`
+          : `all ${s.koken.toplam} fields came from the photo or from your own picks; nothing was derived.`;
+        for (const ln of wrap(line, 9, A4.w - 2 * M)) { c.text(M, y, 9, INK, ln); y += 5.4; }
+      }
       calibration(c, M, y + 8);
       pdf.page(A4.w, A4.h, c.s);
     }
