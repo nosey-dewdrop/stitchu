@@ -81,7 +81,8 @@ struct SplitReport {
     std::string panel;
     // The only axis today. A split along the ring columns leaves a seam that
     // runs waist-to-far, which is what a princess / cup / panel seam is. A
-    // horizontal (row) split is the yoke case and needs the ROW profile plus a
+    // horizontal (row) split is the shoulder-band case and needs the ROW
+    // profile plus a
     // second correspondence between the two side seams; it is NOT implemented
     // and is not claimed to be — it stays in the queue with its own name.
     std::string axis = "vertical";
