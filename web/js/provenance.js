@@ -112,6 +112,71 @@ export function dogrula(koken, specAlanlari) {
   return ihlal;
 }
 
+/**
+ * H10a / H10b AYRIŞTIRMASI (F2, 2026-08-26 — Damla'nın 26 Ağu düzeltmesi).
+ *
+ * `cikarildi` kovası tek bir sayı olduğu sürece ne yükselebilir ne düşebilir,
+ * çünkü içinde iki ayrı şey var ve biri kusur DEĞİL:
+ *
+ *   H10a — fotoğrafta GÖRÜNMESİ MÜMKÜN OLMAYAN alan (arka, iç, örtülü, kadraj
+ *          dışı). Bir ön fotoğraftan arka kapamayı okumak mümkün değildir;
+ *          çıkarım burada doğru davranıştır. CIRCIRA BAĞLANMAZ.
+ *   H10b — GÖRÜNEN ama alınamayan alan. Kusur tam olarak budur, ve cırcır
+ *          yalnız buna bakar.
+ *
+ * AYRIM BİZİM GÖZÜMÜZDEN TÜREMEZ. `insanGorunurluk` bir İNSAN beyanıdır:
+ * alan adı -> true (fotoğrafta görünüyor) / false (görünmesi mümkün değil).
+ * Beyanı olmayan alan üçüncü kovada (`bilinmiyor`) kalır ve İKİ SAYIYA DA
+ * yazılmaz — bilmediğimizi bir kovaya doldurmak, sayıyı iki kat yanlış yapar.
+ * Üç kovanın toplamı her zaman `cikarildi` kovasının kendisidir; çağıran taraf
+ * bu eşitliği doğrulayabilsin diye `toplam` da dönüyor.
+ */
+export function ayristir(koken, insanGorunurluk = {}) {
+  const kova = { H10a: [], H10b: [], bilinmiyor: [], toplam: 0 };
+  for (const alan of alanlar(koken, 'cikarildi')) {
+    kova.toplam++;
+    const beyan = insanGorunurluk[alan];
+    if (beyan === true) kova.H10b.push(alan);
+    else if (beyan === false) kova.H10a.push(alan);
+    else kova.bilinmiyor.push(alan);
+  }
+  return kova;
+}
+
+/**
+ * ETİKETİN DOĞRULUĞU (F2 İŞ 3). Bugüne kadar ölçülen tek şey etiketin VAR
+ * olmasıydı; DOĞRU olması hiçbir kapıda ölçülmüyordu. §0B'nin reward-hacking
+ * maddesi tam bunu uyarıyor: *görünen bir alanı `cikarildi`/`gorunmez`
+ * işaretlemek bir hatadır*, çünkü kaydı görünmez ilan etmek o alanı H10a'ya
+ * kaçırır ve cırcırın göremeyeceği yere taşır.
+ *
+ * İki yönlü, ikisi de bir insan beyanına karşı:
+ *   - insan "görünüyor" demiş, kayıt `gorunmez` diyor  -> kusur H10a'ya kaçıyor
+ *   - insan "görünmesi mümkün değil" demiş, kayıt `gorunur` diyor -> uydurma
+ *     bir kusur H10b'ye yazılıyor
+ * Ayrıca insan "görünmesi mümkün değil" demişken kaydın o alanı `gorulen`
+ * sayması, görülemeyecek bir şeyi görmüş olma iddiasıdır (§3.6 H3'ün kardeşi).
+ *
+ * Dönen dizi BOŞSA etiketler insan beyanıyla çelişmiyor demektir.
+ */
+export function gorunurlukCelismesi(koken, insanGorunurluk = {}) {
+  const ihlal = [];
+  for (const [alan, gorunuyor] of Object.entries(insanGorunurluk)) {
+    const e = koken && koken[alan];
+    if (!e) { ihlal.push(`'${alan}' insan beyanı var, köken kaydı yok`); continue; }
+    if (gorunuyor === true && e.gorunurluk === 'gorunmez') {
+      ihlal.push(`'${alan}' insan GÖRÜNÜYOR dedi, kayıt gorunmez yazdı`);
+    }
+    if (gorunuyor === false && e.gorunurluk === 'gorunur') {
+      ihlal.push(`'${alan}' insan GÖRÜNEMEZ dedi, kayıt gorunur yazdı`);
+    }
+    if (gorunuyor === false && e.kaynak === 'gorulen') {
+      ihlal.push(`'${alan}' insan GÖRÜNEMEZ dedi, kayıt fotoğraftan okundu dedi`);
+    }
+  }
+  return ihlal;
+}
+
 /** Kullanıcının okuyacağı tek cümle. Sayı ve adlar aynı kayıttan gelir. */
 export function kokenCumlesi(koken, tr = false) {
   const liste = ilanEdilecek(koken);

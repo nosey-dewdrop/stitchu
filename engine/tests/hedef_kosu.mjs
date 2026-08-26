@@ -33,6 +33,12 @@ const VB = await import(join(ROOT, 'web/js/vision-bridge.js'));
 
 const TABAN_FILE = join(ROOT, 'contract', 'hedef-kosu-taban.json');
 const WRITE_TABAN = process.argv.includes('--taban');
+// --eksenler: H10'un SAYDIĞI eksenlerin adlarını ve gözün 12 ekseninde karşılığı
+// olup olmadığını dosyaya döker. Hakemin görünürlük şablonu bu dökümden üretilir
+// (vision/eval/gen-kaynak.py), çünkü ayrışma ancak H10'un saydığı eksenlerde bir
+// insan beyanı varsa yapılabilir — liste elle yazılırsa iki yerde iki doğru olur.
+const DUMP_AXES = process.argv.includes('--eksenler');
+const AXES_FILE = join(ROOT, 'vision', 'eval', 'h10-eksenleri.json');
 
 // ── MÜHÜRLÜ GİRDİ (§3.8 md.2) ───────────────────────────────────────────────
 // Faz ajanı bu iki yolu değiştiremez, foto ekleyemez, çıkaramaz.
@@ -97,6 +103,7 @@ for (const file of files) {
   const t0 = process.hrtime.bigint();
   const r = {
     file, judged: 0, agree: 0, hallucinated: [], outOfDict: [], inferred: 0, fieldsTotal: 0,
+    inferredA: 0, inferredB: 0, inferredUnknown: 0, etiketHatasi: [],
     pieces: 0, ok: false, flatBytes: 0, seamPairs: [], oov: (seen.outOfVocab || []).length,
   };
 
@@ -162,9 +169,40 @@ for (const file of files) {
   // yalnız gözün 12 alanı üzerinden değil. Bir alan ya fotoğraftan geldi
   // (declared) ya da host/köprü onu doldurdu (= çıkarıldı). §0B: çıkarım suç
   // değil, SESSİZ çıkarım suç; ama oranın tavanı var ve H2 ile birlikte okunur.
+  // H10a / H10b AYRIŞTIRMASI (F2, Damla'nın 26 Ağu düzeltmesi). Tek kova iki
+  // ayrı şey taşıyordu ve biri kusur DEĞİL. Ayrım bizim gözümüzden değil,
+  // ETİKET DOSYASININ görünürlük beyanından türer: göz bir alanı yargıladıysa
+  // ve değer verdiyse o alan FOTOĞRAFTA GÖRÜNÜYOR; `null` yazdıysa görünmüyor
+  // ("null = not visible/ambiguous", labels.json'un kendi başlığı). Gözün hiç
+  // yargılamadığı alan hakkında beyan YOKTUR ve üçüncü kovada kalır — bilmediğini
+  // bir kovaya doldurmak sayıyı iki kat yanlış yapar.
+  //
+  // ⚠ BEYAN BUGÜN MAKİNE BEYANI. labels.json "Fable, 2026-07-13, by eye" diyor;
+  // insan etiketi (§1F md.3, hakem doldurur — şablon vision/eval/labels-hakem-BOS.json)
+  // gelene kadar H10a/H10b tıpkı H2 gibi GEÇİCİDİR ve öyle basılır.
+  const SPEC_TO_EYE = Object.fromEntries(
+    Object.entries(FIELD_MAP).map(([lf, sf]) => [sf, lf]));
+  r.specAxes = Object.keys(spec);
   for (const k of Object.keys(spec)) {
     r.fieldsTotal++;
-    if (!declared.has(k)) r.inferred++;
+    if (declared.has(k)) {
+      // ETİKETİN DOĞRULUĞU (F2 İŞ 3). Ayrışmanın ÖN ŞARTI: bugüne kadar
+      // ölçülen tek şey etiketin VAR olmasıydı. Burada ölçülen, hat bir alanı
+      // "fotoğraftan geldi" diye işaretlerken insan/göz beyanının o alanı
+      // GÖRÜNMEZ ilan etmiş olması — yani görülemeyecek bir şeyi görmüş olma
+      // iddiası. Böyle bir alan H10b'den de H10a'dan da düşerdi, o yüzden
+      // ayrıştırılmış iki sayı bu sayı sıfır olmadan güvenilir değildir.
+      const lfd = SPEC_TO_EYE[k];
+      if (lfd !== undefined && lfd in label && label[lfd] === null) {
+        r.etiketHatasi.push(`${k}: beyan GÖRÜNMEZ, hat 'fotoğraftan geldi' işaretledi`);
+      }
+      continue;
+    }
+    r.inferred++;
+    const lf = SPEC_TO_EYE[k];
+    if (lf === undefined || !(lf in label)) r.inferredUnknown++;
+    else if (label[lf] === null) r.inferredA++;         // görünmesi mümkün değil
+    else r.inferredB++;                                 // görünüyor ama alınamadı
   }
 
   // H1: kalıp + flat sonuna kadar üretildi mi
@@ -200,6 +238,24 @@ for (const file of files) {
   rows.push(r);
 }
 
+if (DUMP_AXES) {
+  const SPEC_TO_EYE = Object.fromEntries(
+    Object.entries(FIELD_MAP).map(([lf, sf]) => [sf, lf]));
+  const seen = new Map();
+  for (const r of rows) for (const k of r.specAxes) seen.set(k, SPEC_TO_EYE[k] ?? null);
+  const eksenler = [...seen.keys()].sort();
+  writeFileSync(AXES_FILE, JSON.stringify({
+    _not: 'ÜRETİLMİŞTİR: node engine/tests/hedef_kosu.mjs --eksenler. Elle düzenlenmez. ' +
+      'H10 bu eksenleri sayar; `goz_ekseni` null ise o eksen hakkında bugün hiçbir ' +
+      'görünürlük beyanı YOKTUR ve alan H10a/H10b yerine H10x kovasına düşer.',
+    _kaynak_dosya: 'engine/tests/hedef_kosu.mjs',
+    eksenler, goz_ekseni: Object.fromEntries(seen),
+  }, null, 1) + '\n');
+  console.log(`H10 EKSENLERİ YAZILDI -> ${AXES_FILE}  (${eksenler.length} eksen, ` +
+    `${[...seen.values()].filter(Boolean).length}'inin göz karşılığı var)`);
+  process.exit(0);
+}
+
 // ── altı sayı (§3.6) ────────────────────────────────────────────────────────
 const n = rows.length;
 const done = rows.filter((r) => r.ok).length;
@@ -209,6 +265,17 @@ const H3 = rows.reduce((s, r) => s + r.hallucinated.length, 0);
 const OOD = rows.reduce((s, r) => s + r.outOfDict.length, 0);
 const FT = rows.reduce((s, r) => s + r.fieldsTotal, 0);
 const INF = rows.reduce((s, r) => s + r.inferred, 0);
+const INF_A = rows.reduce((s, r) => s + r.inferredA, 0);
+const INF_B = rows.reduce((s, r) => s + r.inferredB, 0);
+const INF_X = rows.reduce((s, r) => s + r.inferredUnknown, 0);
+const ETI = rows.reduce((s, r) => s + r.etiketHatasi.length, 0);
+// Ayrışma bir GEVŞETME değil, bir ölçüm bölmesidir: üç kova H10'un kendisini
+// tüketmezse bölme yanlıştır ve sayılar basılmadan önce bağırır (F2 kartı,
+// DEĞİŞMEZLER: "H10a + H10b = 70/120 çıkmıyorsa ayrışma yanlıştır").
+if (INF_A + INF_B + INF_X !== INF) {
+  console.error(`AYRIŞMA BOZUK: H10a ${INF_A} + H10b ${INF_B} + H10x ${INF_X} != H10 ${INF}`);
+  process.exit(2);
+}
 // H5: uzunluğu eşleşmeyen dikiş çifti. Eşik %4 cap ease (§1C, sleeve.hpp:12).
 const pairs = rows.flatMap((r) => r.seamPairs);
 const badPairs = pairs.filter((p) => p.a > 0 && Math.abs(p.diff / p.a) > 0.08).length;
@@ -228,6 +295,21 @@ const sayilar = {
                         birim: `${rows.reduce((s, r) => s + r.oov, 0)} outOfVocab terim + ${OOD} sözlükte olmayan alan okuması` },
   H9_cikarim_makullugu:{ deger: null,              n, birim: 'ÖLÇEMEDİM — görünmeyen alanda makullük hakemi yok', yon: 'yuksek' },
   H10_cikarildi_orani:{ deger: pct(INF, FT),       n, birim: `%${pct(INF, FT)} (${INF}/${FT} alan default'tan geldi)`, yon: 'tavan' },
+  // ── H10 AYRIŞTI (F2) ──────────────────────────────────────────────────────
+  // H10a cırcıra BAĞLANMAZ: bir ön fotoğraftan arka kapamayı okumak mümkün
+  // değil, orada çıkarım doğru davranıştır. H10b cırcıra bağlanır ve §0B tavanı
+  // ona uygulanır. H10x bir kova değil bir İTİRAF: gözün hiç yargılamadığı,
+  // yani hakkında beyan bulunmayan alan. Üçünün toplamı H10'un kendisidir.
+  H10a_gorunemez:     { deger: pct(INF_A, FT),     n, yon: 'yok',
+                        birim: `%${pct(INF_A, FT)} (${INF_A}/${FT}) — fotoğrafta GÖRÜNMESİ MÜMKÜN DEĞİL, cırcıra bağlı değil`,
+                        uyari: 'beyan bugün MAKİNE beyanı (labels.json, Fable) — insan etiketi gelene kadar GEÇİCİ' },
+  H10b_gorunen_alinamayan:{ deger: pct(INF_B, FT), n, yon: 'tavan',
+                        birim: `%${pct(INF_B, FT)} (${INF_B}/${FT}) — GÖRÜNEN ama alınamayan, §0B tavanı BUNA uygulanır`,
+                        uyari: 'beyan bugün MAKİNE beyanı (labels.json, Fable) — insan etiketi gelene kadar GEÇİCİ' },
+  H10x_beyan_yok:     { deger: pct(INF_X, FT),     n, yon: 'dusuk',
+                        birim: `%${pct(INF_X, FT)} (${INF_X}/${FT}) — gözün 12 ekseninde karşılığı yok, GÖRÜNÜRLÜK BEYANI YOK` },
+  H10e_etiket_hatasi: { deger: ETI,                n, yon: 'dusuk',
+                        birim: `${ETI} alan: beyan GÖRÜNMEZ derken hat 'fotoğraftan geldi' işaretledi (ayrışmanın ön şartı)` },
   // H11 CIRCIRA BAĞLI DEĞİL, TAVANA BAĞLI. Duvar saati ±0.3ms sallanıyor;
   // eşitlik cırcırına bağlanırsa kapı gürültüde kırmızı yanar ve herkes onu yok
   // saymayı öğrenir. §3.6'nın hedefi zaten bir tavan: toplam < 10 sn.
@@ -243,7 +325,8 @@ console.log('='.repeat(104));
 for (const r of rows) {
   console.log(w(r.file, 42), r.ok ? 'TAM ' : 'DÜŞTÜ',
     w(` panel ${r.pieces}`, 10), w(`isabet ${r.agree}/${r.judged}`, 15),
-    w(`çıkarıldı ${r.inferred}/${r.fieldsTotal}`, 18), `${r.ms.toFixed(0)}ms`,
+    w(`çıkarıldı ${r.inferred}/${r.fieldsTotal}`, 18),
+    w(`a${r.inferredA} b${r.inferredB} x${r.inferredUnknown}`, 12), `${r.ms.toFixed(0)}ms`,
     r.draftErr ? ` HATA ${r.draftErr}` : '');
 }
 console.log('='.repeat(104));
@@ -278,6 +361,14 @@ for (const [k, v] of Object.entries(sayilar)) {
 const t10 = taban.sayilar.H10_cikarildi_orani, t2 = taban.sayilar.H2_gorulen_isabet;
 if (t10 && t2 && sayilar.H10_cikarildi_orani.deger > t10.deger && sayilar.H2_gorulen_isabet.deger <= t2.deger) {
   gerileme.push(`H10 tavanı: çıkarıldı %${t10.deger} -> %${sayilar.H10_cikarildi_orani.deger} ama H2 yükselmedi (%${t2.deger} -> %${sayilar.H2_gorulen_isabet.deger})`);
+}
+// Ayrışmadan SONRA tavan H10b'ye uygulanır (Damla, 26 Ağu). Taban dosyasına
+// H10b'yi HAKEM yazar (§3.8 md.1); yazıldığı andan itibaren bu satır işler ve
+// o güne kadar sessizce doğru davranır, çünkü taban anahtarı yoksa kıyas yok.
+const t10b = taban.sayilar.H10b_gorunen_alinamayan;
+if (t10b && t2 && sayilar.H10b_gorunen_alinamayan.deger > t10b.deger &&
+    sayilar.H2_gorulen_isabet.deger <= t2.deger) {
+  gerileme.push(`H10b tavanı: görünen-alınamayan %${t10b.deger} -> %${sayilar.H10b_gorunen_alinamayan.deger} ama H2 yükselmedi`);
 }
 
 console.log('\n' + '-'.repeat(104));

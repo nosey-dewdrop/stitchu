@@ -5,9 +5,26 @@ into the worker's fixed vocabulary — tractable to own.
 
 ## v0 result (2026-07-13): zero-shot is NOT enough — measured, not guessed
 
-Eval corpus: real garment photos fetched from Wikimedia Commons (`fetch-eval.sh`),
-19 keepers eye-labeled by hand in `eval/labels.json` (nulls = not visible; junk
-search hits listed in `_dropped`, files kept on disk).
+Eval corpus: real garment photos fetched from Wikimedia Commons (`fetch-eval.sh`,
+since deleted; recovered from `0af5f83`), 19 keepers labeled in `eval/labels.json`
+(nulls = not visible).
+
+★ CORRECTED 2026-08-26 (GECE7/F2 İŞ 1). Two sentences here were false; both
+corrections are measured, not argued:
+
+- *"junk search hits … files kept on disk"* — they are **not** kept any more. The
+  10 `_dropped` files were deleted from disk and from the index; the pool is 19.
+  `engine/tests/py/test_kaynak_kunye.py` keeps them gone.
+- *"eye-labeled by hand"* — the labels are a **model's** labels, as `labels.json`'s
+  own header says (*"labeled by eye (Fable, 2026-07-13)"*). Every accuracy number
+  below, and `hedef_kosu`'s H2, is therefore a model scored against a model, and is
+  provisional until the referee fills `eval/labels-hakem-BOS.json` (§1F md.3).
+
+Per-file credit (Commons page, author, license, capture condition) now exists and is
+proved by sha256 identity, not by resemblance: `eval/recover-credits.py` →
+`eval/credits.json` → `dataset/hedef-10/KAYNAK.md`. **The filename is the SEARCH
+TERM, not the content** — the fetcher wrote `NN-<query slug>.jpg` whatever Commons
+returned, which is why `17-knit-sweater-mannequin.jpg` was a WW2 museum vitrine.
 
 Per-attribute accuracy vs the eye labels (`node vision/eval.js <file>`):
 

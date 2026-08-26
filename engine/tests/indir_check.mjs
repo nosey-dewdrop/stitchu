@@ -410,6 +410,103 @@ lines.forEach((ln, i) => {
 kcheck('no axis is written from the photo without an origin label NAMING IT',
   unlabelled.length === 0, unlabelled.join(', ') || `${lines.length} lines scanned, ${CARRIER.size} carrier fields exempt`);
 
+// (j) THE LABEL IS NOT ONLY PRESENT, IT IS TRUE (F2 İŞ 3).
+// Everything above measures that a label EXISTS, is legal, and reaches the file.
+// None of it measures whether the label is CORRECT. §0B's reward-hacking clause
+// names the exact hack this leaves open: marking a field that IS visible as
+// derived-and-invisible moves a real defect out of H10b — the bucket the ratchet
+// watches — and into H10a, which by Damla's 26 Aug ruling is not on the ratchet
+// at all. A split measured on top of a lying label is two wrong numbers instead
+// of one, which is why this is the PRECONDITION of H10a/H10b, not a follow-up.
+//
+// The judge is a HUMAN visibility statement (`alan -> true/false`), the same
+// statement the referee fills in vision/eval/labels-hakem-BOS.json. A record
+// that contradicts it is a violation in both directions, and claiming to have
+// READ an axis the human says cannot be photographed is a third.
+const gorunurBeyan = { a: true, b: false };
+const durust = KOKEN.yeniKoken(['a', 'b']);
+KOKEN.isaretle(durust, 'a', 'cikarildi', 'gorunur');    // visible, not read = H10b
+KOKEN.isaretle(durust, 'b', 'cikarildi', 'gorunmez');   // cannot be seen  = H10a
+kcheck('an origin record that agrees with the human statement is clean',
+  KOKEN.gorunurlukCelismesi(durust, gorunurBeyan).length === 0,
+  KOKEN.gorunurlukCelismesi(durust, gorunurBeyan).join('; '));
+
+const kacamak = KOKEN.yeniKoken(['a', 'b']);
+KOKEN.isaretle(kacamak, 'a', 'cikarildi', 'gorunmez');  // ⚠ human said VISIBLE
+KOKEN.isaretle(kacamak, 'b', 'cikarildi', 'gorunmez');
+kcheck('marking a VISIBLE axis invisible is caught (the H10b -> H10a escape)',
+  KOKEN.gorunurlukCelismesi(kacamak, gorunurBeyan).length === 1,
+  KOKEN.gorunurlukCelismesi(kacamak, gorunurBeyan).join('; ') || 'not caught');
+
+const sisirme = KOKEN.yeniKoken(['a', 'b']);
+KOKEN.isaretle(sisirme, 'a', 'cikarildi', 'gorunur');
+KOKEN.isaretle(sisirme, 'b', 'cikarildi', 'gorunur');   // ⚠ human said IMPOSSIBLE
+kcheck('marking an UNPHOTOGRAPHABLE axis visible is caught (H10b inflated)',
+  KOKEN.gorunurlukCelismesi(sisirme, gorunurBeyan).length === 1);
+
+const gormus = KOKEN.yeniKoken(['a', 'b']);
+KOKEN.isaretle(gormus, 'a', 'cikarildi', 'gorunur');
+KOKEN.isaretle(gormus, 'b', 'gorulen', 'gorunmez');     // ⚠ read the unreadable
+kcheck('claiming to have READ an axis the human says cannot be seen is caught',
+  KOKEN.gorunurlukCelismesi(gormus, gorunurBeyan).length === 1);
+
+kcheck('a human statement about an axis with no origin record at all is caught',
+  KOKEN.gorunurlukCelismesi(KOKEN.yeniKoken(['a']), gorunurBeyan).length === 1);
+
+// And the split itself: three buckets, and they must EXHAUST the derived bucket.
+// Two buckets that do not add back up to the one they came from is a rewrite of
+// the number, not a decomposition of it.
+const bolme = KOKEN.ayristir(kacamak, gorunurBeyan);
+const bolmeX = KOKEN.ayristir(KOKEN.yeniKoken(['a', 'b', 'c']), { a: true });
+kcheck('the derived bucket splits into H10a / H10b and the parts exhaust it',
+  bolme.H10a.length + bolme.H10b.length + bolme.bilinmiyor.length === bolme.toplam &&
+  bolme.toplam === KOKEN.alanlar(kacamak, 'cikarildi').length,
+  `H10a ${bolme.H10a.length} + H10b ${bolme.H10b.length} + bilinmiyor ${bolme.bilinmiyor.length} = ${bolme.toplam}`);
+kcheck('an axis with NO human statement lands in neither H10a nor H10b',
+  bolmeX.bilinmiyor.length === 2 && bolmeX.H10a.length === 0 && bolmeX.H10b.length === 1,
+  `a=${bolmeX.H10b.join(',')} bilinmiyor=${bolmeX.bilinmiyor.join(',')}`);
+
+// (k) THE GATE RUNS AT THE SHIPPED RECORD WIDTH (F2 İŞ 4, referee's K13).
+// The referee's H2-A mutation deleted one axis from create.js's spec defaults,
+// KOKEN_ALANLARI fell 38 -> 37, and this file still exited 0: every item above
+// runs on a 10-axis REFERENCE spec, not on the 38 axes that actually ship. So
+// the number the phase reports could be lowered by anyone, silently, and no gate
+// would notice. The floor below is a RATCHET, not a description: it may only be
+// raised, and raising it means the shipped record genuinely got wider.
+const SEVK_TABAN = 38;   // measured by the referee on F0-yesil, 2026-08-26
+const specBlock = createSrc.slice(createSrc.indexOf('\nconst spec = {'),
+  createSrc.indexOf('const KOKEN_ALANLARI'));
+const specKeys = [...specBlock.matchAll(/(?:^|[{,]\s*)([A-Za-z][A-Za-z0-9]*)\s*:/g)].map((m) => m[1]);
+const groupBlock = createSrc.slice(createSrc.indexOf('SPEC_GROUPS = ['),
+  createSrc.indexOf('\nconst spec = {'));
+const groupKeys = [...groupBlock.matchAll(/\bkey:\s*'([^']+)'/g)].map((m) => m[1]);
+const extraKeys = [...(createSrc.slice(createSrc.indexOf('const KOKEN_ALANLARI'),
+  createSrc.indexOf('const koken = yeniKoken')).matchAll(/'([^']+)'/g))].map((m) => m[1]);
+const SEVK_ALANLARI = [...new Set([...specKeys, ...groupKeys, ...extraKeys])];
+kcheck('the shipped origin record still covers at least the declared floor of axes',
+  SEVK_ALANLARI.length >= SEVK_TABAN,
+  `${SEVK_ALANLARI.length} axes parsed from create.js (floor ${SEVK_TABAN})`);
+kcheck('parsing found the three sources, not one of them',
+  specKeys.length > 0 && groupKeys.length > 0 && SEVK_ALANLARI.length > specKeys.length,
+  `spec ${specKeys.length} + groups ${groupKeys.length} + literals ${extraKeys.length} -> ${SEVK_ALANLARI.length}`);
+
+// Every item that mattered above, re-run at the SHIPPED width instead of 10.
+const sevkRec = KOKEN.yeniKoken(SEVK_ALANLARI);
+kcheck('a record at the shipped width validates, and every axis is labelled',
+  KOKEN.dogrula(sevkRec, SEVK_ALANLARI).length === 0 &&
+  KOKEN.alanlar(sevkRec, 'cikarildi').length === SEVK_ALANLARI.length,
+  `${SEVK_ALANLARI.length} axes`);
+const sevkFlat = flatSVG(SPEC, sevkRec, SEVK_ALANLARI);
+const sevkAttr = (k) => (new RegExp(`data-koken-${k}="([^"]*)"`).exec(sevkFlat) || [])[1];
+kcheck('the flat carries the SHIPPED axis count, not the reference one',
+  sevkAttr('toplam') === String(SEVK_ALANLARI.length) &&
+  (sevkAttr('alanlar') || '').split(' ').filter(Boolean).length === SEVK_ALANLARI.length,
+  `toplam=${sevkAttr('toplam')}`);
+const sevkA4 = Buffer.from(patternA4Pdf(pattern, 'Dress', sevkRec, SEVK_ALANLARI)).toString('latin1');
+const sevkMissing = SEVK_ALANLARI.filter((f) => !sevkA4.includes(f));
+kcheck('the A4 cover names every SHIPPED derived axis', sevkMissing.length === 0,
+  sevkMissing.join(', ') || `${SEVK_ALANLARI.length} names on the cover`);
+
 // ------------------------------------------------------------------ artifacts
 const base = join(OUT, safeName('stitchu-dress-aline'));
 writeFileSync(`${base}.dxf`, dxf);
