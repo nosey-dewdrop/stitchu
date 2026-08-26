@@ -814,3 +814,40 @@ bir dosya yolu (`engine/src/planops.cpp`), bir kapı çıkışı
 (`op_program_check` **EXIT 0**, 12.57 s), **yedi mutasyonun kırmızısı** —
 **HM-1r dahil** —, H5'in **önce 5 / sonra 5** paydası, ve `grep`'in ürün
 hattında bulduğu **sekiz satırdır**.
+
+---
+
+## KAPANIŞ KOŞUSU — İKİNCİ TAM `ctest`, KART VE LOGLAR COMMİTLENDİKTEN SONRA
+
+⚠ **Sebebi K12'nin tuzağı:** `vocab_reference_check` **commit'ten** okur, yani
+açılış koşusundaki yeşili F5-C'nin ağacına aitti. Kapanış koşusu **kendi
+commit'imin** üstünde koştu ve `vocab_reference_check` orada da **Passed**
+(4.84 s). Tam log: `GECE7/log/f5d.ctest.kapanis.txt`.
+
+```
+95% tests passed, 6 tests failed out of 126
+
+Total Test time (real) = 737.23 sec
+
+The following tests did not run:
+	111 - h10_gate_check (Disabled)
+
+The following tests FAILED:
+	  9 - flat_pattern_agree_check (Failed)
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	 99 - contract_check (Failed)
+	105 - figure_check (Failed)
+```
+
+**İki tam koşu, iki kez aynı altı ad, YEDİNCİ KIRMIZI YOK.** Süre **747.37 s** ve
+**737.23 s** (aynı gürültü bandı; hakemin F5-C ölçümü 717.75 s). `split_check`
+13.27 s · `op_program_check` 13.04 s · `pytest -q` **33 passed**.
+
+⚠ **rabadon bu oturumda ALTI yanlış pozitif verdi** — beşi
+`ctest-tail-hides-verdict` (hiçbirinde `ctest` yoktu: `cmake --build … | tail -2`,
+`grep … | tail -2`, `pytest -q | tail -2`), biri `red-base` (miras altı kırmızı +
+`DISABLED h10_gate_check`, K18). **`guard.json`'a DOKUNULMADI**; altısı da
+`rabadon wrong` ile deftere yazıldı. **Borç 61 artık dört değil BEŞ oturumdur
+açık ve bu oturumda tek başına altı kez ateşledi.**
