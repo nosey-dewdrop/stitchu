@@ -1325,3 +1325,147 @@ parça — **bir panelin BÖLÜNMESİ değil.** Eşleme **zayıf** ve öyle **DA
   sonrası koştu, EXIT 0 · 3/5).
 - Düzeltme hakemin kendi commit'i **`b282349`**; ajan `expressability_check.mjs`'e
   **tek bayt** yazmamıştı (`numstat` **0**).
+
+---
+
+## K51 — `golden_check`'in *"Damla'nın onayı"* ŞARTI KOŞUYU DURDURMAZ: ONAYI HAKEM VERİR — **VE HAKEM BU TURDA VERMEDİ** (DAMLA md.14 karara bağlandı)
+
+**§3.4 açıktır: Damla koşunun dışındadır.** `golden_check.sh:31`'in
+*"get Damla's approval BEFORE pinning"* cümlesi bir **ürün disiplinidir**, bir
+koşu kapısı değil; o onayı **hakem** verir ya da vermez. F5-E ajanının
+*"yetkim yok, hakeme geliyorum"*u **doğru davranıştı** (§3.4 ajana Damla'ya
+sormayı yasaklıyor), ama karar noktası orada bitmez — **burada bitiyor.**
+
+**HAKEM ÖNCE BEDELİ KENDİ ÖLÇTÜ, SONRA REDDETTİ. Prob hakemin kendi elidir**
+(`garment.cpp`'nin ortak `reanchorEdgeRoles` çoktan-noktasına iki dikdörtgen
+parça eklendi, ajanın sayısı **birebir** yeniden üretildi):
+
+```
+pin  : 23406 satir      dump : 29016 satir      fark: +5610
+diff hunk : 558 'a' (ekleme) · 3 'c' · 0 'd'
+eklenen 5625 satirin 5610'u  "Bridge probe" = YENI PARCANIN BASIMI
+kalan 15 satir + kaybolan 15 satir: BAYT BAYT AYNI (diff'in ekleme siniri)
+```
+
+> 🚨 **HÜKÜM — SAYIYLA: +5610 satırın `0`'ı DAVRANIŞ DEĞİŞİMİ, `5610`'u YENİDEN
+> BASIMDIR.** Mevcut hiçbir parçanın hiçbir koordinatı **kımıldamadı.** Yani bir
+> re-pin **bugün sevk edilen tek bir kalıbın tek bir baytını** oynatmazdı, ve
+> ajanın *"golden duvarı"* diye tarif ettiği şey **bir duvar değildir.**
+
+**BUNA RAĞMEN ONAY VERİLMEDİ, VE GEREKÇE GOLDEN DEĞİL — K52'DİR.** Re-pin'in
+ucuz olması, pinlenecek şeyin **doğru** olduğu anlamına gelmez: probun eklediği
+parçalar **başka bir bedenin** parçalarıdır. Bir kapıyı, altındaki gerçek
+onarılmadan yenilemek, kusuru **mühürlemektir**. **Dayanak: K52 + K53.**
+
+▸ `golden-reference.csv`'ye bu turda da **tek bayt yazılmadı**; hakemin probu
+  **geri alındı** ve `golden_check` **Passed** (ikili tabana döndü).
+▸ Ve `50 kırmızı` da bir bedel değil, **şartnamedir**: hakem kaynağa baktı —
+  `validator.cpp:1061` (`cutline`) ve `validator.cpp:1321` (`guideCoverage`)
+  **parça başına** koşuyor. Yani repo, inen kalıba giren her yeni panelden bir
+  **kesim çizgisi** ve bir **rehber adımı** istiyor. Bu `CLAUDE.md`'nin tek
+  testinin ta kendisidir ve **etrafından dolaşılacak bir şey değildir.**
+
+## K52 — İKİ NESNENİN ARASINDAKİ VÜCUT HARİTASI **UYDURULMAZ; F4'ÜN İŞİDİR** (DAMLA md.15 karara bağlandı)
+
+Hakem kaynağı kendi okudu, ajanın cümlesi **doğrulandı**:
+
+| | imza | aldığı vücut |
+|---|---|---|
+| inen **kalıp** | `garment.hpp:11` `draft(const GarmentSpec&, const BodyMeasurementsSnapshot&)` | **SERBEST ölçü** |
+| operatörlerin planı | `seamplan.hpp:83` `buildSeamPlan(const std::string& sizeLabel, …)` | **EU beden ETİKETİ** |
+
+`garment.cpp` altı operatör başlığının **hiçbirini** include etmiyor
+(hakemin kendi grep'i: **SIFIR SATIR**), ve `flatJSON`'un `bedenlendirme` bloğu
+bugün **`YAYIN BULUNAMADI`** basıyor. **Yayınlanmamış bir dönüşüme karşı köprü
+kurulamaz** (§3.10) — kurulursa `op.split`'in parçaları inen kalıba **başka bir
+bedenin parçaları** olarak girer.
+
+**KARAR: harita UYDURULMAZ.** *"En yakın bedeni seç"* yazmak, reponun daha önce
+ölçtüğü **üçüncü vücut kaynağı** kusurunu dördüncüye çıkarırdı. Ajan bunu
+yazmadı; **doğru davrandı.** Haritayı ilan etmek **K23'ün işidir ve K23 F4'e
+bağlıdır** — bu yüzden köprü F5'in değil, **F4'ün ardılıdır.**
+
+## K53 — 🚨 F5-E'NİN TEK ŞARTI **TATMİN EDİLEMEZDİ**: H5'İN PAYDASI KAPININ KENDİ KODUNDA **5'E KAPALI** (hakemin ölçümü, K47'nin sınıfı — İKİNCİ KEZ)
+
+Kart *"H5'in paydası 5'ten büyük olacak"* dedi. **Hakem ölçtü: motorda yapılacak
+hiçbir iş bu paydayı büyütemez.** `engine/tests/hedef_kosu.mjs` (**MÜHÜRLÜ**):
+
+```
+264  const armhole = (byRole.armhole_front||[]).concat(byRole.armhole_back||[]);
+265  const cap     = byRole.sleeve_cap || [];
+266  if (armhole.length && cap.length) {
+267    const A = armhole.reduce((s,e) => s+e.L, 0);      ← BÜTÜN kol oyuklari TEK sayiya
+268    const C = cap.reduce((s,e) => s+e.L, 0);          ← BÜTÜN kapaklar TEK sayiya
+269    r.seamPairs.push({ pair: 'armhole↔sleeve_cap', … });   ← SATIR BASINA TAM BIR ÇIFT
+333  const pairs = rows.flatMap((r) => r.seamPairs);
+```
+
+`push` bir **döngüde değil**, tek bir `if`'in içinde. Yani
+**`pairs.length` ≤ `rows.length`**, ve `rows.length` = `n` = **5**.
+
+**KANIT — İDDİA DEĞİL, KOŞUM:** hakemin probu `golden`'ın **5610 satırını
+birebir** yeniden üretti (yani parçalar gerçekten inen kalıba girdi, roller
+`reanchorEdgeRoles`'tan **sağ çıktı**), ve aynı koşumda:
+
+```
+H5_dikilebilirlik  0   n=5   0 eslesmeyen cift / 5 olculebilen cift    ← PAYDA 5. BUYUMEDI.
+H5_dikilebilirlik  0   n=10  0 eslesmeyen cift / 5 olculebilen cift    ← PAYDA 5. BUYUMEDI.
+```
+
+> 🚨 **Yani F5-E ajanının kartında yazan *"probda payda 5 → 10"* HAKEMİN
+> KOŞUMUNDA YENİDEN ÜRETİLEMEDİ.** Ajanın iki manşet ölçümü **aynı probdan
+> gelmiyor**: fiyatladığı prob (5610 · 50 kırmızı) hakemde **birebir** çıktı,
+> *"mekanizma çalışıyor"* dediği prob **çıkmadı**. Bu bir sahtecilik değil, bir
+> **karışıklıktır** — ama hükmü taşıyan sayı olduğu için burada düzeltiliyor.
+
+**KARAR:**
+1. **K48 md.2 OLDUĞU GİBİ ÖLÜDÜR.** *"Payda gerçek bir dikiş çiftiyle büyüsün"*
+   şartı, mühürlü kapının **tek-çift-per-satır** yapısı yüzünden ajanın
+   erişebileceği bir şey değildi. **F5-E ajanı imkânsız bir şartla suçlanamaz.**
+2. **PAYDAYI BÜYÜTMEK İÇİN KAPI DEĞİŞMELİ, VE O YALNIZ HAKEMİNDİR** (§3.8 md.1).
+   **Bu turda DEĞİŞTİRİLMEDİ**, çünkü doğru düzeltme bir gevşetme değil bir
+   **sertleştirmedir** ve F5'in değil **F4/F6'nın** hanesindedir → **borç 73.**
+3. **K47 ile aynı sınıf, ikinci kez:** kart, kendi mühürlediği dosyanın
+   imkânsız kıldığı bir şeyi şart koştu. Çelişki **ajanın değil, kartın** —
+   yani **önceki hakemindir.** Emsal K47'de kurulmuştu, burada tekrarlanıyor.
+
+## K54 — **F5 DURUYOR. HALKA 3 F4'TEN AÇILIYOR.** K48'in iki turluk tavanı **BİR turda** harcandı, gerekçe ölçülen üç sayıdır
+
+K48 *"ikinci turda da payda büyümezse F5 durur"* diyordu. **Hakem ikinci turu
+harcamıyor**, ve gerekçe bir tercih değil **üç ölçüm**:
+
+1. **K53:** payda **motordan büyütülemez** (kapının kendi kodu, `push` döngüsüz).
+   İkinci tur aynı duvara **aynı sayıyla** çarpardı.
+2. **K52:** köprünün içeriği **yayınlanmamış** — `draft()` serbest vücut,
+   `buildSeamPlan()` beden etiketi, arada harita **YOK**.
+3. **K23:** merkez-ön yayında **28.7714 mm**, motorun kendi sertifikalı
+   `flatten_check` bütçesinin (**strain <%0.5**) **7.6 KATI** — ve `flatJSON`'un
+   `bedenlendirme`si **`YAYIN BULUNAMADI`**.
+
+**Üçü de aynı yerde duruyor ve o yer F4'tür.** K48 md.3 bu hâli kendi metninde
+öngörmüştü: *"o durumda blokör bir operatör değil **F4'ün geometri işidir**."*
+Şart gerçekleşti; **tavanın ikinci turunu koşturmak, sonucu bilinen bir turu
+koşturmak olurdu** (§0: oyalama).
+
+**KARAR:**
+- **F5 KAPANMADI, DURDU.** Motorda **3** operatör var; kuyruktaki **5** ad
+  (`attach` · `derive` · `extend` · `gather` · `overlay`) **adlarıyla bekliyor**.
+  `op.attach` (F5-F) **iptal değil, ertelendi.**
+- **Halka 3 açılıyor: F4 → F6 → F7 → F8 → F9.** Sıradaki kart **`GECE7/F4.md`**.
+- **F5'in kapanış eşiği K48'de KALIYOR**, ama md.2 **K53 uyarınca yeniden
+  yazılacak** ve onu yazacak olan **F4'ten sonraki hakemdir.**
+- **K23 F4'e DEĞİŞMEZ olarak taşındı**, **F4'ün hanesi H6'dır** (§3.6), ve
+  §3.11 uyarınca F4'ün okuma listesine **§2** eklendi.
+
+## K55 — **BORÇ 69 KAPANDI: SAPMA HİÇ YOKTU, BİR `grep` ARTEFAKTIYDI**
+
+*"`grep -c add_test(NAME` **128**, `ctest` **127**"* iki karttır **DOĞRULANMADI**
+diye devrediyordu. Hakem ölçtü ve kök sebep **bir yorum satırıdır**:
+
+```
+engine/CMakeLists.txt:1036   # Saglayici ad kumesi `add_test(NAME …)` ∪ `git ls-files engine/tools`'tan cikar,
+```
+
+128 eşleşmenin **127'si gerçek `add_test`**, biri **kendi dokümantasyonu**.
+Adlar `ctest`in koştuğu 127 adla **birebir** örtüşüyor (`comm -23` **boş**),
+yinelenen ad **yok**. **Kayıp bir kapı YOKTU. Borç 69 SİLİNİYOR.**

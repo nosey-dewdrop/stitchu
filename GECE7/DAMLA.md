@@ -79,3 +79,19 @@ cevap gelince şef **yalnız o kalemi** yeniden koşturur.
 | 15 | 🚨 **İKİ NESNE İKİ AYRI BEDENDE DEĞERLENİYOR VE ARALARINDA YAYINLANMIŞ BİR HARİTA YOK.** `draft(spec, measurements)` (`web/js/engine.js:265`) **serbest bir vücut** alıyor (`bust/waist/hip/shoulder/...`), `buildSeamPlan(sizeLabel)` ise bir **EU beden ETİKETİ** istiyor ve etiketsiz çalışmıyor. Yani `op.split`'in doğurduğu parçalar `DraftedPattern`'e girse bile **başka bir bedenin parçaları** olarak girerdi. Bu tam olarak K23'ün açık borcudur: `flatJSON`'un `bedenlendirme` bloğu bugün **`YAYIN BULUNAMADI`** basıyor. | **VÜCUT HARİTASI UYDURULMADI.** "En yakın bedeni seç" diye bir eşleme yazmak, reponun daha önce ölçtüğü **üçüncü vücut kaynağı** kusurunu dördüncüye çıkarırdı. Köprü bu yüzden **kurulmadı**, ve gerekçe bir cümle değil iki dosya + iki satır olarak yazıldı. Haritayı ilan etmek **F4'ün geometri işidir** (K23/K48 md.3). |
 
 **Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:** `?v` damgası bu kartta **136 → 137**'ye çekildi ve `pages.yml:23` `branches: [main]` yüzünden **bu push canlıya çıkacak**. `site-health.mjs` yeşil (127 sayfa, 2604 iç bağlantı, tek sürüm) ama **canlıda hiç tıklanmadı** — onuncu faz, **DOĞRULANMADI**.
+
+---
+
+## ✅ md.14 ve md.15 KARARA BAĞLANDI — F5-E hakemi, §3.4 (Damla'ya GİTMEDİ)
+
+| # | Karar | Nerede |
+|---|---|---|
+| **14** | **`golden_check`'in *"get Damla's approval"* cümlesi koşuyu durdurmaz — onayı HAKEM verir.** Hakem probu **kendi eliyle** kurup bedeli ölçtü (**pin 23406 → dump 29016, +5610**; **`0` davranış değişimi · `5610` yeniden basım** — 3 `'c'` hunk'ının 15 satırı iki tarafta **bayt bayt aynı**), yani re-pin bugün sevk edilen **tek bir kalıbın tek bir baytını** oynatmazdı. **BUNA RAĞMEN ONAY VERİLMEDİ** — gerekçe golden değil md.15'tir: ucuz bir re-pin, pinlenecek şeyin **doğru** olduğu anlamına gelmez. `golden-reference.csv`'ye **tek bayt yazılmadı.** | **K51** |
+| **15** | **Vücut haritası UYDURULMAZ; F4'ün işidir.** Hakem imzaları kendi okudu: `garment.hpp:11` `draft(…, BodyMeasurementsSnapshot)` **serbest vücut** · `seamplan.hpp:83` `buildSeamPlan(sizeLabel)` **EU beden etiketi** · `garment.cpp`'de altı operatör başlığı için **SIFIR SATIR** · `bedenlendirme` **`YAYIN BULUNAMADI`**. Ajanın *"en yakın beden UYDURULMADI"* kararı **doğruydu** ve korundu. Harita **K23'ün işidir, K23 F4'e bağlıdır** → **Halka 3 açıldı.** | **K52** |
+
+▸ **Ve hakem üçüncü bir şey ölçtü, kart bunu sormamıştı:** kartın tek şartı
+(*"H5'in paydası 5'ten büyük olacak"*) **tatmin edilemezdi** — `hedef_kosu.mjs`
+satır başına **en fazla bir çift** üretiyor, yani payda bir ölçüm değil bir
+**TAVAN**. → **K53**, ve F5 bu yüzden **durdu** (**K54**).
+
+**Damla isterse sonradan bakar ve değiştirir — koşu onu beklemedi (§3.4).**
