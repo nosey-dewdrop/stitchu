@@ -22,7 +22,41 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | F-İNDİR | **`F-INDIR-yesil`** ✅ | 2 tur koştu, `ee1414c`+`072705c` → `cce710d`+`fac2993` | 2 tur koştu | ✅ **GEÇTİ** (2. tur) — kart `GECE7/F-INDIR.md`, hüküm `GECE7/HAKEM-F-INDIR.md` |
 | F0 | ⛔ etiket YOK | 1 tur koştu, `cd3bea3` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; kart `GECE7/F0.md`, hüküm `GECE7/HAKEM-F0.md` |
 | **F0 (2. tur)** | **`F0-yesil`** ✅ | 1 tur koştu, `68ba288`+`3d6dc7e` | 1 tur koştu | ✅ **GEÇTİ** — vocab yeşil, 6 kırmızı; hüküm `GECE7/HAKEM-F0.md` (2. tur bölümü) |
-| F2 | — | — | — | ← **AÇILDI**, SIRADAKİ — kart `GECE7/F2.md`; İLK işi §1F fotoğraf havuzu |
+| F2 | — | 1 tur koştu, `54f2a0b`+kart | ← **HAKEM BEKLİYOR** | 🕓 AJAN BİTİRDİ — kart `GECE7/F2.md` "AJAN KARTI" bölümü, mutasyon `GECE7/log/f2.mutasyon.txt` |
+
+### F2 ajanının bildirdiği (hakem doğrulayana kadar İDDİA)
+
+`ctest` **6 failed / 119** (tam miras altı, yedinci ad yok) · `hedef_kosu` /
+`indir_check` / `vocab_reference_check` üçü de Passed · `vocab` toplam **10276** /
+taban 10438, `hemFlounce` **26** (net etki 0 satır) · `python3 -m pytest -q`
+**23 passed** (bu koşuda İLK KEZ koşuldu — F-İNDİR ve F0 4 collection ERROR'ın
+üstünde yeşil bildirmişti) · cırcır **CIRCIR SAĞLAM**, altı sayı taban değerinde,
+**n=5 ve büyümedi** (mühürlü fixture 5 kayıt; §3.8 md.2 seti hakemin seçmesini
+emrediyor) · yedi mutasyonun yedisi doğru yerde kırmızı, hepsi geri alındı.
+
+**İŞ 1 bitti:** `_dropped` 10 dosya diskten+indeksten silindi, havuz **29 → 19**,
+19'un 19'unun künyesi **sha256 kimliğiyle** kanıtlandı (`vision/eval/credits.json`,
+sayfa `dataset/hedef-10/KAYNAK.md`), doğru cevap hücreleri hakeme **BOŞ** teslim
+edildi (`vision/eval/labels-hakem-BOS.json`, dolu hücre 0, ve dolu hücre bir
+pytest kapısını kırmızı yakıyor).
+
+**H10 AYRIŞTI — 0 + 0 + 70 = 70/120, n=5:** H10a **%0**, H10b **%0**,
+H10x (görünürlük beyanı YOK) **%58.3**. Kartın *"H10a + H10b = 70/120"* şartı
+**çıkmadı ve kartta gösterildi.** Ölçülen kök sebep: H10'un saydığı **24 eksenin
+13'ünün göz etiketinde sütunu bile yok** ve çıkarılan 70 alanın **70'i** tam
+olarak orada. Yani bugünkü etiket setiyle ayrışma **veri yokluğundan** yapılamıyor;
+mekanizma kurulu, kapılı (mutasyon M3/M4) ve şablona `gorunurluk` bloğu eklendi.
+Ayrıca yeni ölçüm **H10e = 4**: hat, beyanın GÖRÜNMEZ dediği 4 alanı "fotoğraftan
+geldi" işaretliyor — ayrışmanın ön şartı ve **kapatılmadı, ilan edildi**.
+
+**K13 KAPANDI:** hakemin H2-A mutasyonu (eksen `spec` varsayılanından silinir,
+`KOKEN_ALANLARI` 38→37) F0'da **EXIT 0** ile kaçıyordu, bugün **EXIT 8**
+(`indir_check` §10-(k) sevk edilen 38 eksen genişliğinde koşuyor).
+
+⚠ **Ajanın kendi ilan ettiği sapma:** *"fotoğrafta GÖRÜNEN alanları bir önceki
+fazdan daha çok mu alabiliyorum?"* → **HAYIR.** H2 %92.2 → %92.2, H10 %58.3 →
+%58.3; F2 çıkarım hattına tek satır dokunmadı (kartın SIRA MECBURİ bölümü İŞ 1'i
+her şeyin önüne koymuştu). Hakemin yargılayacağı asıl soru budur.
 
 > ▶ **KOŞU AÇILDI** (26 Ağu, Damla): Halka 1 → F-İNDİR → F0 → F2, sonra Halka 2
 > (F3 ⇄ F5), sonra Halka 3 (F4 → F6 → F7 → F8 → F9). **F9 kapanana kadar durulmaz.**
