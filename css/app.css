@@ -114,6 +114,19 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .dl-alt { display: inline-block; margin: 12px 0 0; font-size: 13px; color: var(--gray);
   background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
 .dl-msg { min-height: 20px; font-size: 13.5px; margin: 10px 0 0; color: var(--accent); }
+/* OPERATÖR PROGRAMI (GECE7 / F5-D): the engine's own answer to "what can
+   op.split / op.suppress / op.rotate do to this pattern", refusals included.
+   Deliberately the same quiet ink as .dl-koken and .dl-msg — a refusal here is
+   not an error state, it is the measured answer, and colouring it like a
+   failure would teach the shopper to ignore the one sentence that carries the
+   number. */
+.dl-ops { margin: 10px 0 0; max-width: 68ch; }
+.dl-ops-title { font-size: 13px; margin: 12px 0 8px; color: var(--accent); letter-spacing: .3px; }
+.dl-ops-yes, .dl-ops-no { font-size: 12.5px; line-height: 1.5; margin: 0 0 7px; padding: 0 0 0 10px;
+  color: var(--gray); border-left: 2px solid rgba(0,0,0,.12); }
+.dl-ops-yes { border-left-color: var(--accent); }
+.dl-ops-why { display: block; color: var(--gray); opacity: .85; }
+
 /* KÖKEN (F0): which fields the photo did not show. Sits above the buttons, in
    the same ink as the honest-refusal line — it is the same kind of sentence. */
 .dl-koken { font-size: 13px; line-height: 1.55; margin: 0 0 16px; padding: 10px 12px;

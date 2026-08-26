@@ -98,6 +98,28 @@ export async function seamPlanFlat(sizeLabel, neckDropMM = 0) {
   return JSON.parse(engine.flatJSON(String(sizeLabel), Number(neckDropMM) || 0));
 }
 
+/**
+ * ⭐ THE OPERATOR PROGRAM — op.split / op.suppress / op.rotate ON THIS GARMENT.
+ *
+ * Three sub-cards built three real operators and until F5-D a user could not
+ * reach any of them: `panelsplit.hpp`, `dartsuppress.hpp` and `dartrotate.hpp`
+ * appeared in ZERO lines of garment.cpp, wasm/bindings.cpp and web/js (the
+ * referee measured it three times, K46). This is the wire.
+ *
+ * Returns the engine's own answers, REFUSALS INCLUDED and each one carrying the
+ * number it was refused on — the shipped bodice is a cone, op.suppress refuses
+ * it (deficit −1.9628°) and that refusal IS the product's answer. A silent empty
+ * result would be a §0B violation, so callers get `adimlar[]` where every step
+ * has `uygulandi`, `plana_yazildi`, `ret_gerekcesi` and a `sebep`.
+ *
+ * The program runs on a COPY of the seam plan: the pattern and the flat this
+ * page draws do not move.
+ */
+export async function operatorProgram(sizeLabel, neckDropMM = 0) {
+  const engine = await loadEngine();
+  return JSON.parse(engine.opsJSON(String(sizeLabel), Number(neckDropMM) || 0));
+}
+
 // Grade a design across a standard EU size run (fromLabel..toLabel). Returns
 // { sizes: [{ size, draft: {pattern, issues} }, ...] }, the seller deliverable.
 export async function grade(spec, fromLabel, toLabel) {
