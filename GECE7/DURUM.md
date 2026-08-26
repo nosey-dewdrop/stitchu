@@ -9,7 +9,7 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 |---|---|---|
 | **0 — ISINMA** | disk + hedef koşusu tabanı | ✅ **BİTTİ** (şef koşturdu) |
 | **1 — AL DENE** | **F-İNDİR** → F0 → F2 | ✅ **KAPANDI** (F2 2. tur GEÇTİ, `F2-yesil`) |
-| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | ← **şimdi buradayız**, kart `GECE7/F3.md` |
+| **2 — MOTOR** | F3 ⇄ F5 (operatör başına alt-kart) | ← **şimdi buradayız**: F3 ✅ **GEÇTİ** (`F3-yesil`), sıra **F5-A**, kart `GECE7/F5.md` |
 | **3 — DERİNLİK** | F4 → F6 → F7 → F8 → F9 | bekliyor |
 
 **F1 Halka 0'a soğuruldu.** **F3B bu koşudan ÇIKARILDI**, H7 hedef koşusunda yok.
@@ -24,7 +24,50 @@ Hedef sabit: **fotoğraf + prompt → kalıp + flat.**
 | **F0 (2. tur)** | **`F0-yesil`** ✅ | 1 tur koştu, `68ba288`+`3d6dc7e` | 1 tur koştu | ✅ **GEÇTİ** — vocab yeşil, 6 kırmızı; hüküm `GECE7/HAKEM-F0.md` (2. tur bölümü) |
 | F2 | ⛔ etiket YOK | 1 tur koştu, `54f2a0b`+`3c1835f` | 1 tur koştu | ⛔ **KALDI** (1. tur) — yedinci kırmızı; hüküm `GECE7/HAKEM-F2.md`, 2. tur kartı `GECE7/F2.md` sonunda |
 | **F2 (2. tur)** | **`F2-yesil`** ✅ | 1 tur koştu, `6210bc2` | 1 tur koştu | ✅ **GEÇTİ** — 6 kırmızı, cevap anahtarı İNSAN, n=10, yedek-5 hakem koşturdu; hüküm `GECE7/HAKEM-F2.md` (2. tur bölümü). **HALKA 1 KAPANDI.** |
-| **F3** | — | açılmadı | — | 🔜 kart `GECE7/F3.md` — **Halka 2 açık**, F3 ⇄ F5 iç içe, F3B **çıkarıldı** |
+| **F3** | **`F3-yesil`** ✅ | 1 tur koştu, `76a4e24` | 1 tur koştu | ✅ **GEÇTİ** — tek nesne teslim, cevap anahtarı mühürlü; kart `GECE7/F3.md`, hüküm `GECE7/HAKEM-F3.md` |
+| **F5-A** | — | açılmadı | — | 🔜 kart `GECE7/F5.md` — **operatör alt-kartı** (`rotate`, K27). **F5 TEK KART DEĞİL: 6+ oturum** |
+
+## ✅ HAKEMİN HÜKMÜ — F3 (`76a4e24`, etiket `F3-yesil`)
+
+✅ **GEÇTİ** — hakem altı kapının altısını da kendi koşturdu: `ctest` **`95% tests passed, 6 tests failed out of 120`** (396.07 sn), altı ad tam olarak miras altı ve **yedinci kırmızı YOK**; `vocab` **`HUKUM: YESIL` 10306**/10438 · `indir_check` **EXIT 0** · `hedef_kosu` **EXIT 0 `CIRCIR SAĞLAM`** · `pytest` **33 passed** · ⭐ `tek_nesne_check` **EXIT 0** (7 hüküm); korunan **yedi dosyanın yedisi** `F3-oncesi`·`HEAD`·çalışma ağacında **bayt bayt aynı** (taban `cf2af8c7…` · `hedef_kosu.mjs` · `vocab` betiği ve tabanı · `labels-hakem.json` `c21964a8…` · `labels-hakem-BOS` · `flat_expresses_spec_check`) yani **taban KESİLMEDİ, eşik GEVŞETİLMEDİ**; **`indir_check`'in tek değişikliği `await` + yorum**, yargılayan satır (`saved.includes('dress-flat.svg')`) **tek bayt** kımıldamadı → §3.8 md.4 ihlali yok; **K12'nin amend'i davranış-nötr, reflog'dan ölçüldü** (`8197771..HEAD` = 13 **yorum** satırında `neckline`→`neck edge` + üç literal enum varsayılanının tek dizeye inmesi; `nodeId()` aynı dizeyi karıştırıyor ve hakemin bugünkü düğümü **`3f3869aaee8b56b1`** = amend öncesiyle aynı); **İŞ 0 YAPILMIŞ — hakem HM8'i KENDİ tekrarladı:** `01`'in `shaping`'i `deger`→`goremedim` taşındı, mühür kapısı **3 failed** (KIRMIZI) ama `hedef_kosu` **hâlâ EXIT 0** ve H2 **%95.2 → %97.6 bedava**, yani K19'un teşhisi ikinci kez doğrulandı ve anahtarı yakan **tek şey** F3'ün kapısı, geri alınınca blob `c21964a8…` ve **10 passed**; cırcırın **on bir sayısının hiçbiri kötüleşmedi** (H10b **%40.0 kımıldamadı**, §0B tavanı harcanmadı, **H6 istisnası kullanılmadı**); kapsam **20 dosya, hepsi kart içi** ve **`patterns_real/` PUSHLANMADI (0 dosya)**; tahmin 2–4 oturuma karşı **1 oturum**; hakemin **üç mutasyonu ajanın hiç dokunmadığı dosyalardan** koştu (bayat-ikili tuzağı `shasum` ile elendi): **HM-F1** (`bodysurface.cpp`) düğümü **`3f3869aa…`→`6ec8e172…`** oynattı = kimlik **süs değil**, **HM-F3** (`garmentshell.cpp`) ikiliyi kımıldatmadı = **HÜKÜM YOK**, ve 🚨 **HM-F2** (`shellprojection.cpp`, `projectBack := projectFront`) kapıyı **YEŞİL** bıraktı ve düğümü **hiç değiştirmedi** → **`nodeId()` siluetı hash'lemiyor, K3'ün `arka` kolu 0.0000'ı 0.0000 ile kıyaslıyor**; bu bir **kapı kapsamı**, bir yalan değil (kartın 6 no'lu şartı teslim edilip mutasyonla kanıtlandı) ve **ratchet'landı → K24**, F5-A'nın **İŞ 0**'ı; ⭐ ajanın hakeme bıraktığı 🔴 kalem **karara bağlandı → K23: çelişki YOK** — `flatJSON`'un ilan ettiği dönüşüm bugün **ÖZDEŞLİK** (`manken çizelgesi: YAYIN BULUNAMADI`) ve özdeşlik altında eşitlik **doğru tahmindir**, nitekim aynı koşuda bel **%0.0151** ve etek ucu **%0.0115** tutuyor; dolayısıyla `body_length`'in **%-3.7979**'u bir §2 artefaktı değil **gerçek bir ayrışma**: merkez-ön yayında **28.7714mm** = motorun kendi sertifikalı düzleştirme bütçesinin (`flatten_check` <%0.5) **7.6 katı** — **altı fazdır aranmayan kök sebep BULUNDU ve ADLANDIRILDI**, kapı **yeniden yazılmadı** (yayınlanmamış dönüşüme karşı kapı tanımlanmaz + hakem turunda 6-kırmızı tabanı oynatılmaz) ve **tetiği F4'e bağlandı**; **H1 kımıldamadı ama sapma değil → K25**: H1 **5/5 (n=5) ve 10/10 (n=10)**, iki `n`'de de **tavanda**, ve ilanı **ajan değil önceki HAKEM** yapmıştı — **`F3-yesil` atıldı ve pushlandı**, F5-A açıldı (kart `GECE7/F5.md`), gerekçe `GECE7/HAKEM-F3.md`, kararlar **K23–K27**.
+
+### Taban — DEĞİŞMEDİ (F3 tabana dokunmadı, blob `cf2af8c7…` üç uçta aynı)
+
+**CIRCIR SETİ (n=5)** — hakem kendi koşturdu:
+
+| H1 | H2 | H3 | H5 | H8 | H10 | H10a | H10b | H10e | H10x | H11 |
+|----|----|----|----|----|-----|------|------|------|------|-----|
+| 5/5 | %95.2 (40/42) | 2 | 0/5 çift | 31 | %58.3 | %17.5 | **%40.0** | 3 | %0.8 | 3.0 ms |
+
+**HEDEF SETİ (n=10), cırcırsız — bilgi:** H1 **10/10** · H2 %93.0 (66/71) · H3 2 ·
+H5 0 · H8 61 · H10 %64.4 · H10a %29.7 · H10b %33.1 · H10e 5 · H10x %1.7 · H11 2.1 ms.
+
+H4 / H6 / H9 **ÖLÇEMEDİM** (altı fazdır). **H10a cırcıra bağlı değil** (K21).
+**İki `n` harmanlanmaz** — H3 · H8 · H10e mutlak sayaçtır.
+Havuzda kullanılmayan **4 fotoğraf** kaldı (`11` `12` `30` `35`) — holdout tükeniyor.
+
+### Kapı sayıları — F3 sonrası
+
+| kapı | sayı |
+|---|---|
+| `ctest` | **6 failed out of 120** (miras altı, yedinci YOK) · `105 - h10_gate_check` DISABLED (K18) |
+| `vocab_reference_check` | `HUKUM: YESIL` — **10306** / taban **10438** (delta −132) |
+| `indir_check` | **EXIT 0** |
+| `hedef_kosu` | **EXIT 0**, `CIRCIR SAĞLAM` |
+| `pytest` | **33 passed** |
+| ⭐ `tek_nesne_check` | **EXIT 0** — düğüm `3f3869aaee8b56b1` → yaka+20mm `35eb8d7cf33be3ef` |
+| ⭐ `expressability_check.mjs` | **DİSKTE YOK** (CMakeLists'te 0 eşleşme) — F5'in kapısı, §4A |
+
+### 🚨 HAKEMİN BULDUĞU, KİMSENİN SORMADIĞI — TEK NESNE KAPISI SİLUETİ KAPSAMIYOR (K24)
+
+Hakemin mutasyonu **HM-F2**, ajanın **hiç dokunmadığı** `engine/src/shellprojection.cpp`'de:
+`projectBack := projectFront` (arka teknik çizim = ön teknik çizim) → ikili gerçekten
+kımıldadı (`2ccf4bc7…`→`60ea1cde…`) ama `tek_nesne_check` **EXIT 0** ve düğüm
+**`3f3869aaee8b56b1` DEĞİŞMEDİ**. `nodeId()` yalnız `surf.rings` + `topColXMM/ZMM`
+hash'liyor; inen SVG'nin `data-dugum`'u **çizilen siluetı bağlamıyor**. Ajanın 5
+mutasyonunun 5'i de **kendi yazdığı tek dosyadaydı** (`seamplan.cpp`) — sınırı bulmak
+§3.8 md.3'e göre hakemin işiydi. F3'ü düşürmedi, **F5-A'nın İŞ 0'ı** olarak zorunlu
+kılındı: kapı siluet kolu kazanır ve **HM-F2'de kırmızı yanar**.
 
 ## ✅ HAKEMİN HÜKMÜ — F2 (2. tur, `6210bc2`, etiket `F2-yesil`)
 

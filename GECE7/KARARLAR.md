@@ -463,3 +463,173 @@ H2 farkı −5.5 puan. **Ayar değil, ve gerekçe dört sayı:**
 **Terfi ısırıyor mu — ölçüldü (HM9):** taban `H10e` elle 2'ye çekildi →
 `CIRCIR KIRIK — H10e_etiket_hatasi: taban 2 -> şimdi 3`, **EXIT 1**; geri alınca
 EXIT 0. Yeni anahtarlar sessiz süs değil.
+
+---
+
+## K23 — `flat_pattern_agree_check` ⇄ §2 ÇELİŞMİYOR. KAPI YENİDEN YAZILMADI, KIRMIZI GERÇEK.
+
+**Soru (F3 ajanının kuyruğa yazdığı, kararı hakeme bıraktığı 🔴 kalem):**
+`flat_pattern_agree_check` bir **EŞİTLİK** kapısıdır (%1.5 tolerans) ve §2
+eşitliği açıkça reddediyor. Ajan "ya kapı §2'ye göre yeniden yazılır, ya §2 ona
+göre" dedi. **Bu kırmızının kök sebebi altı fazdır aranmamıştı.**
+
+**Hakem ölçtü. Ajanın öncülü YANLIŞ — çelişki YOK, ve bunu üç sayı söylüyor.**
+Hepsi kapının **aynı koşusundan**, EU38:
+
+| ölçü | flat mm | kalıp mm | fark % |
+|---|---|---|---|
+| `hem_circumference` | 1295.6000 | 1295.4506 | **%-0.0115** |
+| `waist_circumference` | 725.0000 | 724.8907 | **%-0.0151** |
+| `body_length` | 757.5584 | 728.7870 | **%-3.7979** ← tek ihlal |
+
+§2'nin çelişki üretmesi için iki tarafın **farklı bedenler** olması gerekir.
+Bugün değiller: `flatJSON`'un kendi ilan bloğu (`bedenlendirme`) manken
+çizelgesini **`YAYIN BULUNAMADI`** diye basıyor, yani **ilan edilmiş dönüşüm
+bugün ÖZDEŞLİKTİR** — ve özdeşlik altında **eşitlik doğru tahmindir.** Bel ve
+etek ucunun **%0.015 ve %0.011** ile tutması bunun ölçümüdür: aynı kapı, aynı
+koşu, aynı iki taraf. §2 bu kapıyı bugün ezmiyor.
+
+**Yani `body_length`'in %-3.7979'u bir §2 artefaktı değil, GERÇEK bir ayrışma:**
+- İki taraf da kendi metninde **aynı niceliği** ölçtüğünü yazıyor —
+  `pattern-measure.mjs:169` *"arc along the centre-front line … a length ALONG
+  the cloth, not a vertical height difference"*, `shellprojection.cpp`
+  `centreLineArc(surf, shoulder.h, hemZ, front)`. Aynı nicelik.
+- **28.7714mm** = motorun kendi sertifikalı düzleştirme bütçesinin **7.6 katı**
+  (`flatten_check` strain **<%0.5**).
+- Kapı zaten "iki farklı nicelik kıyaslanmaz" kanununu **biliyor ve uyguluyor**:
+  `body_height_projected` tam bu gerekçeyle **kapı dışına alınmış**, üç
+  `UNMEASURED` kaleminin gerekçesi de aynı cümle. Kapı gevşek değil, **eksik
+  onarılmış bir geometriyi gösteriyor.**
+
+**KARAR — kapı YENİDEN YAZILMADI. §3.8 md.1 yetkisi bilerek KULLANILMADI. İki dayanak:**
+1. **Yayınlanmamış bir dönüşüme karşı kapı tanımlanmaz.** Kapının §2 biçimi
+   ("eşitliği değil, ilan edilen dönüşümü doğrula") `bedenlendirme` bloğunu
+   okumak zorundadır; o bloğun bugünkü değeri `YAYIN BULUNAMADI`. Bugün yazılsa
+   kapı kendi konusunu uydurmuş olurdu (§3.10).
+2. Kapı tanımını bugün değiştirmek, bu koşudaki **her kartın karşısında
+   yargılandığı 6-kırmızı tabanını** oynatır. Bir hakem turunda taban oynatmak
+   sonraki fazların kıyasını siler.
+
+**TETİK — bu karar süresizce ertelenmez:** `flatJSON`'un manken çizelgesi
+**yayınlandığı gün** (F4'ün işi) bu kapı **yeniden yazılmak ZORUNDADIR**, çünkü
+o gün özdeşlik biter ve eşitlik yanlış tahmin olur. Yeniden yazan **hakemdir**,
+ve önceki/sonraki sayıyı yan yana yazar. F4'ün kartına bu satırla girer.
+
+**Kök sebep artık ADLI:** miras kırmızı `flat_pattern_agree_check` = merkez-ön
+hattının kabuk üstündeki yayı (757.5584mm) ile açılmış panelde ölçülen yayı
+(728.7870mm) arasında **28.7714mm** onarılmamış fark. Altı fazdır aranmayan şey
+bulundu; **kapatılmadı**, çünkü kapatmak geometri işidir ve F3'ün kartında yoktu.
+
+---
+
+## K24 — TEK NESNE KAPISI SİLUETİ KAPSAMIYOR (hakemin HM-F2'si), ve F5'ten önce KAPSAYACAK
+
+**Hakemin mutasyonu HM-F2, ajanın HİÇ DOKUNMADIĞI dosyada** (§3.8 md.3):
+`engine/src/shellprojection.cpp` → `projectBack` **`projectFront`'un kopyası**
+yapıldı (arka teknik çizim = ön teknik çizim, inandırıcı bir kopyala-yapıştır).
+
+```
+ikili gerçekten kımıldadı: 2ccf4bc7… -> 60ea1cde…   (bayat-ikili tuzağı elendi)
+tek_nesne_check  EXIT 0   -> YEŞİL
+düğüm            3f3869aaee8b56b1  -> DEĞİŞMEDİ
+```
+
+**Bulgu iki katmanlı:**
+1. `nodeId()` **siluetı hash'lemiyor** — yalnız `surf.rings` + `topColXMM/ZMM`.
+   İnen SVG'nin kökündeki `data-dugum` "bu flat bu nesneden çıktı" diyor ama
+   **çizilen siluetı bağlamıyor.**
+2. K3'ün **`arka` kolu ayırt edici değil**: yaka değişikliği siluetı zaten hiç
+   oynatmadığı için (F3'ün kendi bulduğu körlük) o kol **0.0000'ı 0.0000 ile**
+   kıyaslıyor, ve arka literally ön olsa bile 0.0000'ı 0.0000 ile kıyaslamaya
+   devam ediyor.
+
+**Ajan yalan söylemedi, ajanın 5 mutasyonunun 5'i de kendi yazdığı tek dosyadaydı**
+(`engine/src/seamplan.cpp`) — sınırı bulmak §3.8 md.3'e göre **hakemin işiydi** ve
+bulundu. Kapının **6 no'lu kart şartı** (yaka+20mm iki okumada da ölçülür ve
+aynı düğümden türer) **gerçekten teslim edildi ve mutasyonla kanıtlandı**;
+eksik olan, ajan kartının **düzyazı** cümlesi: *"flat'te değişip kalıpta
+değişmeyen (ya da tersi) SIFIR alan"* — bu **tek alanda** (`ust_sinir`), **tek
+spec değişikliği altında** ölçüldü; yayınlanan yedi siluet ölçüsü tek yönlülük
+için **hiç sınanmadı**. Kartın tablosu doğru, cümlesi geniş.
+
+**KARAR:** `tek_nesne_check` **F5'in İLK operatör alt-kartı kapanmadan ÖNCE**
+bir **siluet kolu** kazanır ve **HM-F2'de kırmızı yanmak zorundadır.**
+En kısıtlayıcı biçim, çünkü dayanağı ölçülmüş bir boşluktur:
+`nodeId()` `projectFront`/`projectBack` çıktısını da karıştırır **ya da** kapı
+arka siluetin ön siluetten ayrı olduğunu bir sayıyla gösterir. F5'in kartına
+kapı satırı olarak yazıldı. **Bugün kırmızı sayısını değiştirmez** (kapı yeşil
+kalır, kolu genişler) — bu yüzden şimdi zorunlu kılmak tabanı oynatmıyor.
+
+---
+
+## K25 — H1 KIMILDAMADI: SAPMA DEĞİL, ÇÜNKÜ H1 TAVANDA (aritmetik, mazeret değil)
+
+§3.6 F3'ün hanesine **H1**'i yazıyor. Hakem kendi koşturdu:
+**H1 = 5/5 (n=5) ve 10/10 (n=10)** — **iki `n`'de de tavan.** Doymuş bir sayı
+iyileştirilemez; §3.6'nın hanesi F3 açıldığı gün zaten kapanmıştı.
+
+**Önceden ilan edilmiş olması bu kez mazeret DEĞİL, kart dürüstlüğüdür — ve
+ayırt eden şu:** ilanı **ajan değil, F3 kartını yazan HAKEM** yaptı (kart §İŞ 3,
+"birinci sınıf havuzun 2/19'unu kapsıyor, hedef koşusunun sayıları bu fazda
+kımıldamayacak"). Ajanın kendi kartında "ben ilan etmiştim" demesi mazeret
+olurdu; önceki hakemin ilanı bir **tahmindir ve tuttu**.
+
+**H6 istisnası kullanılmadı** (H6 önce de sonra da ÖLÇEMEDİM) — yani F3 kendine
+tanınan tek gevşemeyi harcamadı. Cırcırın kalan on sayısının **hiçbiri
+kötüleşmedi**, hakem kendi koşturdu.
+
+---
+
+## K26 — `KOSU-v7.md` COMMİTLENMEMİŞ 423 SATIR TAŞIYOR (hakem bildiriyor, F3'ün suçu değil)
+
+`git diff --stat KOSU-v7.md` → **348 ekleme / 75 silme, çalışma ağacında.**
+F3'ün diffinde **yok** (dosya `F3-oncesi..HEAD` arasında hiç değişmedi), yani
+kirlilik F3'ten **önce** doğdu ve F3 kartı onu "bu koşunun kirliliği değil" diye
+doğru bildirdi.
+
+**Ama risk gerçek ve kimse yazmamış:** koşunun **anayasası** commitlenmemiş
+duruyor. Her kartın *"§X'i oku"* satırı, HEAD'deki sürümü **değil** çalışma
+ağacındaki sürümü işaret ediyor; bu 423 satır kaybolursa (`reset --hard`,
+disk, yeni klon) her fazın okuma listesi sessizce başka bir metne bakar.
+**En kısıtlayıcı karar: F5'in kartı bunu kapatmaz** (anayasayı hakem/şef
+commitler, faz ajanı değil) **ama F5 ajanı `KOSU-v7.md`'ye TEK BAYT yazmaz** —
+kirliliği büyütmek, sahibi belirsiz bir dosyayı daha da kurtarılamaz yapar.
+Dayanak: §3.8 md.1'in ruhu (taban/kanun yalnız hakemin).
+
+---
+
+## K27 — F5'İN İLK OPERATÖRÜ: `rotate` (pens transferi). Alt-kart F5-A.
+
+**Ajan operatör seçemez** (§3.4). Hakem seçti, dayanak **iki ölçüm**:
+
+1. **Yüzey hattında bugün YALNIZ BİR sınıf var ve adı `top/dart/woven`**
+   (F3'ün teslimi, `web/lib/flat-from-plan.js:131`). `rotate` **pens
+   transferidir**, yani **canlı dikiş planına karşı kanıtlanabilecek tek
+   operatör** odur. Diğer yedisi bugün ya kalemli eski hatta (`flat-core.js`)
+   ya da havuzda karşılığı olmayan bir sınıfa karşı kanıtlanmak zorunda kalır —
+   ki bu, F3'ün kurduğu tek nesneyi **kullanmayan** bir kanıttır.
+2. **§4A `rotate`'i kendi tablosunda "klasik kalıpçılığın ANA işlemi" diye
+   yazıyor** ve `rotate + slash-spread + merge` üçlüsünü kapalılığın şartı
+   sayıyor. Üçlünün ilki, sınıfın adında zaten duran `dart`'tır.
+
+Hedef uydurma değil, tanığı var: gerçek Buğra pensi **41.5° = develop-deficit
+41.48°** (`flatten-research/16`).
+
+**Ayrıca karara bağlandı — H8 İKİ SAYI OLARAK BASILIR.** Hakem
+`hedef_kosu.mjs:350-351`'i okudu: bugünkü H8 = `Σ outOfVocab terim +
+Σ sözlükte olmayan alan okuması` = **31 (n=5) / 61 (n=10)**. Bu bir **SÖZLÜK**
+sayacıdır; §4A'nın istediği ise *"N gerçek kalıbın kaçı operatör programına
+çevrilemedi"* — **başka bir niceliktir**. Bugünkü H8 **sözlüğü daraltarak**, tek
+operatör yazmadan düşürülebilir = §0B reward-hacking. Şart: her alt-kart
+**H8-sözlük** (cırcıra bağlı) ve **H8-ifade** (`expressability_check.mjs`,
+paydası **adlı** kalıp listesi) sayılarını **ayrı satırda** basar, harmanlamaz.
+
+**Ve H5 hanesi şarta bağlandı:** `hedef_kosu.mjs:254-255,348` kendi yorumunda
+*"kalıpta yalnız `armhole`/`sleeve_cap` rolleri ilan edili"* diyor; bugün
+**0 eşleşmeyen çift / 5 ölçülebilen çift** ve yeni fotoğrafların hiçbiri kollu
+kalıp üretmedi. **Payda büyümeden 0→0 bir kazanım değildir** — H5 iyileştirme
+hanesine yazılacaksa **ölçülebilen çift sayısı önce/sonra yan yana** yazılır.
+
+**`expressability_check.mjs` DİSKTE YOK** — hakem ölçtü: `find` 0 dosya,
+`engine/CMakeLists.txt` **0 eşleşme**. §4A onu F5'in kapısı sayıyor; **o betik
+yazılmadan F5 kapanmaz.**
