@@ -35,6 +35,12 @@
 // downloads as a clean "industry file" is how a shopper cuts fabric for a
 // garment the engine already knows does not close.
 
+// F0 (2026-08-26): KÖKEN. The files below used to leave without saying which of
+// their fields the user's photo actually showed — measured %58.3 inferred, and
+// zero lines anywhere on this path said so. The stamp is applied HERE, on the
+// shipped download path, and never inside flat-core.js: that pen is byte-diffed
+// against engine/STYLE-PIN by style_check, so the drawing must not move.
+import * as koken from './provenance.js?v=136';
 import { renderGarmentFlat } from '../lib/flat-core.js?v=136';
 import { pathD, bounds } from './sheet.js?v=136';
 import * as sheet from './sheet.js?v=136';
@@ -148,12 +154,21 @@ const pdfCore = makePdfCore({ engine: null, sheet, body: null });
  * assembly, 3 cm calibration square) + the tiled sheets with register marks.
  * `title` is what prints at the top. Returns Uint8Array of PDF bytes.
  */
-export function patternA4Pdf(pattern, title) {
+export function patternA4Pdf(pattern, title, kokenKaydi = null, specAlanlari = null) {
   if (!pattern || !pattern.pieces || !pattern.pieces.length) {
     throw new Error('pdf export: no drafted pieces to tile');
   }
+  // The cover carries the ORIGIN block when the caller has a record. It is
+  // validated first: an unlabelled or half-labelled record is refused, never
+  // printed as a shorter (and therefore flattering) list.
+  let ilan = null;
+  if (kokenKaydi) {
+    const ihlal = koken.dogrula(kokenKaydi, specAlanlari || Object.keys(kokenKaydi));
+    if (ihlal.length) throw new Error(`pdf export: köken kaydı geçersiz — ${ihlal.slice(0, 3).join('; ')}`);
+    ilan = { alanlar: koken.ilanEdilecek(kokenKaydi), toplam: koken.ozet(kokenKaydi).toplam };
+  }
   const { layout, sheets, used } = pdfCore.pack(pattern);
-  return pdfCore.a4Pdf({ style: title }, pattern, layout, sheets, used);
+  return pdfCore.a4Pdf({ style: title, koken: ilan }, pattern, layout, sheets, used);
 }
 
 /** Single-sheet A0 (print shop) for the same drafted pattern. */
@@ -194,7 +209,7 @@ export async function patternDXF(source) {
  * nothing to draw. Both are errors here, not silent blank files (RULES
  * invariant 1).
  */
-export function flatSVG(spec) {
+export function flatSVG(spec, kokenKaydi = null, specAlanlari = null) {
   if (!spec || typeof spec !== 'object' || !spec.garment) {
     throw new Error('flat export: the spec names no class to draw');
   }
@@ -202,7 +217,11 @@ export function flatSVG(spec) {
   if (!svg || svg.indexOf('<path') === -1) {
     throw new Error('flat export: the pen drew no geometry for this spec');
   }
-  return svg;
+  // F0: the origin label rides in the FILE, on the root element, so it survives
+  // being opened offline in Illustrator with no site around it. An invalid or
+  // emptied record throws inside damgala — a flat that cannot say where its
+  // fields came from is not written at all.
+  return kokenKaydi ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi)) : svg;
 }
 
 /**
@@ -238,12 +257,12 @@ export function saveSVG(pattern, filename) {
   saveBlob(filename, patternSVG(pattern), 'image/svg+xml');
 }
 
-export function saveFlatSVG(spec, filename) {
-  saveBlob(filename, flatSVG(spec), 'image/svg+xml');
+export function saveFlatSVG(spec, filename, kokenKaydi = null, specAlanlari = null) {
+  saveBlob(filename, flatSVG(spec, kokenKaydi, specAlanlari), 'image/svg+xml');
 }
 
-export function saveA4Pdf(pattern, title, filename) {
-  saveBlob(filename, patternA4Pdf(pattern, title), 'application/pdf');
+export function saveA4Pdf(pattern, title, filename, kokenKaydi = null, specAlanlari = null) {
+  saveBlob(filename, patternA4Pdf(pattern, title, kokenKaydi, specAlanlari), 'application/pdf');
 }
 
 export function saveA0Pdf(pattern, title, filename) {

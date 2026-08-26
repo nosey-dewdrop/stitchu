@@ -114,6 +114,11 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .dl-alt { display: inline-block; margin: 12px 0 0; font-size: 13px; color: var(--gray);
   background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
 .dl-msg { min-height: 20px; font-size: 13.5px; margin: 10px 0 0; color: var(--accent); }
+/* KÖKEN (F0): which fields the photo did not show. Sits above the buttons, in
+   the same ink as the honest-refusal line — it is the same kind of sentence. */
+.dl-koken { font-size: 13px; line-height: 1.55; margin: 0 0 16px; padding: 10px 12px;
+  color: var(--gray); background: rgba(0,0,0,.025); border-left: 2px solid var(--accent);
+  border-radius: 2px; max-width: 60ch; }
 .missing-card { margin: 22px 0 8px; padding: 20px 22px; border: 1px solid var(--seam-color, rgba(0,0,0,.12));
   border-radius: 4px; background: rgba(143,32,56,.03); max-width: 620px; }
 .missing-title { font-family: 'Didot','Bodoni 72',Georgia,serif; font-weight: 400; font-size: 20px; margin: 0 0 6px; color: var(--accent); }
