@@ -140,6 +140,19 @@ const TABAN_PAYDA = {
 // engine/CMakeLists.txt'in `add_test(NAME ...)` kayıtlarıyla karşılaştırır.
 // Sebep §0B: uygulanmış operatör kümesini şişirmek, H8-ifadeyi tek satır kod
 // yazmadan düşürmenin en ucuz yoludur — o yol burada KIRMIZI yanar.
+//
+// ⭐ F5-B HAKEMİ (K35) — PAY TARAFINDAKİ DELİK KAPATILDI. Kayıtlı olmak YETMEZ.
+// Hakem kendi mutasyonuyla (HM-A) ölçtü: `op.split`'in `motorda_kapi`'sini VAR
+// OLAN ama ALAKASIZ bir teste (`geometry`) göstermek kapıyı YEŞİL bırakıyor ve
+// H8-İFADE'yi motora TEK SATIR kod yazmadan **4/5 → 3/5** düşürüyordu. Ajanın
+// kendi mutasyonu (M8) yalnız OLMAYAN bir kapı adını deniyordu ve o yakalanıyordu;
+// yakalanmayan, var olan bir kapının ADINI ÖDÜNÇ ALMAKTI. Bu, F5-A hakeminin
+// PAYDA'da bulduğu deliğin (K31) PAY tarafındaki tam eşleniğidir.
+//
+// KAPATMA KURALI — UYDURULMADI, MEVCUT İKİ OPERATÖRDEN OKUNDU: motordaki iki
+// operatörün ikisi de `op.X -> X_check` yazıyor (op.rotate→rotate_check,
+// op.suppress→suppress_check). Kapı artık bu KONVANSİYONU şart koşuyor: bir
+// operatörün kapısı KENDİ adını taşımak zorunda. Ödünç alınan bir ad KIRMIZI yanar.
 const contract = JSON.parse(readFileSync(path.join(REPO, "contract/primitives-v1.json"), "utf8"));
 const cmake = readFileSync(path.join(REPO, "engine/CMakeLists.txt"), "utf8");
 const kayitliTestler = new Set([...cmake.matchAll(/add_test\s*\(\s*NAME\s+([A-Za-z0-9_]+)/g)]
@@ -158,6 +171,16 @@ for (const op of opAdlari) {
     fail(`${op} kendini "motorda var" ilan ediyor ve kapısı olarak "${kapi}" gösteriyor, ` +
          `ama engine/CMakeLists.txt'te öyle bir add_test YOK. Uygulanmamış bir operatörü ` +
          `uygulanmış saymak H8-ifadeyi bedavaya düşürür (§0B).`);
+    continue;
+  }
+  // ⭐ K35: kapı KENDİ operatörünün adını taşıyor mu? Var olan bir kapının adını
+  // ödünç almak, kayıtlılık şartını sağlar ama hiçbir şey kanıtlamaz (HM-A).
+  const beklenenKapi = `${op.slice("op.".length)}_check`;
+  if (kapi !== beklenenKapi) {
+    fail(`${op} kapısı olarak "${kapi}" gösteriyor; o test KAYITLI ama ${op}'in KENDİ ` +
+         `kapısı değil. Beklenen ad "${beklenenKapi}" (motordaki iki operatörün ikisi de ` +
+         `bu konvansiyonu yazıyor). VAR OLAN bir kapının adını ÖDÜNÇ ALMAK, operatörü ` +
+         `uygulamadan uygulanmış saymanın ve H8-ifadeyi bedavaya düşürmenin yoludur (§0B, K35).`);
     continue;
   }
   motorda.add(op);
