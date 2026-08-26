@@ -62,6 +62,34 @@ export function loadEngine() {
   return enginePromise;
 }
 
+// ---- THE SEAM PLAN, BOTH READINGS (GECE7 / F3) ----------------------------
+//
+// ONE object, two readings, and the browser gets them from the SAME wasm
+// functions the native seam-plan tool and the tek_nesne_check gate call. That
+// is not a convention: measured 2026-08-26, the wasm bundle and the native
+// binary print the SAME node id for EU38 (3f3869aaee8b56b1) and the same id
+// after a 20mm neck drop (35eb8d7cf33be3ef). Two engines would not.
+//
+// `dugum` is the shared-ancestor token. A flat and a pattern carrying the same
+// one came out of one object; carrying different ones, they did not — whatever
+// the surrounding prose says.
+//
+// An unknown size comes back as { error }. It is NOT normalised to EU38 here:
+// silently substituting a size is how somebody sews a garment for a body that
+// was never asked about (RULES invariant 1).
+
+/** The KALIP reading — human body, real seam allowance. What gets sewn. */
+export async function seamPlanPattern(sizeLabel, neckDropMM = 0) {
+  const engine = await loadEngine();
+  return JSON.parse(engine.planJSON(String(sizeLabel), Number(neckDropMM) || 0));
+}
+
+/** The FLAT reading — the technical drawing. What gets sold. */
+export async function seamPlanFlat(sizeLabel, neckDropMM = 0) {
+  const engine = await loadEngine();
+  return JSON.parse(engine.flatJSON(String(sizeLabel), Number(neckDropMM) || 0));
+}
+
 // Grade a design across a standard EU size run (fromLabel..toLabel). Returns
 // { sizes: [{ size, draft: {pattern, issues} }, ...] }, the seller deliverable.
 export async function grade(spec, fromLabel, toLabel) {

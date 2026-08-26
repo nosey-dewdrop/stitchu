@@ -999,11 +999,17 @@ function downloadPanel(result) {
   // the flat gates judge. It is a separate file because it answers a separate
   // question (what IS this), and it comes with the pen's own refusal: any axis
   // the engine cannot cut is named on screen, not swallowed.
+  // ⭐ GECE7 / F3: for top/dart/woven this button no longer serialises the pen's
+  // drawing. It asks the engine for the FLAT READING of the same seam plan the
+  // pattern was cut from (engine.flatJSON -> web/lib/flat-from-plan.js), so
+  // deepening the neckline moves the drawing and the pattern together instead
+  // of moving two objects that used to agree. The switch is SILENT: no counter,
+  // no badge, no "you are on the new line" — the shopper sees their garment.
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
-  wire(flatBtn, () => {
+  wire(flatBtn, async () => {
     const gaps = flatGaps(spec);   // throws exactly where saveFlatSVG would
     // The flat leaves with the origin record on its root element.
-    saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
+    await saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
     // Not a refusal — the file IS on their disk — so it does not go through the
     // refusal string. It is the honest footnote: drawn, but not yet cuttable.
     if (gaps.length) msg.textContent = t('create.dl.flatgap', { what: gaps.join(' · ') });

@@ -42,10 +42,11 @@
 // against engine/STYLE-PIN by style_check, so the drawing must not move.
 import * as koken from './provenance.js?v=136';
 import { renderGarmentFlat } from '../lib/flat-core.js?v=136';
+import { renderFlatFromPlan, planLineClass } from '../lib/flat-from-plan.js?v=136';
 import { pathD, bounds } from './sheet.js?v=136';
 import * as sheet from './sheet.js?v=136';
 import { makePdfCore } from '../lib/pdf-core.js?v=136';
-import { dxfRecipe, dxfSpec } from './engine.js?v=136';
+import { dxfRecipe, dxfSpec, seamPlanFlat } from './engine.js?v=136';
 
 // Drafting-table pastels + ink: the studio's own palette, kept so the exported
 // SVG looks like the pattern the user was looking at when they pressed save.
@@ -213,6 +214,14 @@ export function flatSVG(spec, kokenKaydi = null, specAlanlari = null) {
   if (!spec || typeof spec !== 'object' || !spec.garment) {
     throw new Error('flat export: the spec names no class to draw');
   }
+  if (planLineClass(spec)) {
+    // ⭐ F3: this class left the pen. It is not drawn here any more and there is
+    // no fallback to the croquis for it (yasak 3 — a class that moved does not
+    // keep a spare engine behind it). The seam-plan path is async because the
+    // engine is; use flatSVGAsync / saveFlatSVG.
+    throw new Error(
+      'flat export: top/dart/woven is on the seam-plan line — use flatSVGAsync');
+  }
   const svg = renderGarmentFlat([], spec);
   if (!svg || svg.indexOf('<path') === -1) {
     throw new Error('flat export: the pen drew no geometry for this spec');
@@ -229,7 +238,40 @@ export function flatSVG(spec, kokenKaydi = null, specAlanlari = null) {
  * Returned so the result screen can say it out loud instead of handing over a
  * flat that quietly drew something else (the 2026-07-18 puff precedent).
  */
+/**
+ * ⭐ THE FLAT, FROM THE SEAM PLAN (GECE7 / F3).
+ *
+ * For a class on the plan line the flat is PROJECTED from the same GarmentSurf
+ * the pattern is cut from, so a spec change that moves the pattern moves the
+ * drawing too. For every other class this is the pen, unchanged — the migration
+ * is per class on purpose (KOSU-v7 §F3), and it is SILENT: nothing here tells
+ * the user which line drew their garment.
+ *
+ * `sizeLabel` is the size the flat is valued at. ⚠ Today that is the same human
+ * chart the pattern uses, because there is no PUBLISHED mannequin chart and
+ * inventing one is forbidden (KOSU-v7 §2). The engine says so in the file's own
+ * `bedenlendirme.ACIK_KALEM`; splitting the two bodies is F4's work, not a
+ * number to nudge here.
+ */
+export async function flatSVGAsync(spec, kokenKaydi = null, specAlanlari = null,
+                                   sizeLabel = 'EU38') {
+  if (!spec || typeof spec !== 'object' || !spec.garment) {
+    throw new Error('flat export: the spec names no class to draw');
+  }
+  if (!planLineClass(spec)) return flatSVG(spec, kokenKaydi, specAlanlari);
+  const plan = await seamPlanFlat(sizeLabel, 0);
+  const svg = renderFlatFromPlan(plan);   // throws on an engine refusal
+  return kokenKaydi
+    ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
+    : svg;
+}
+
 export function flatGaps(spec) {
+  // A class on the seam-plan line has no PEN gaps to report: the geometry is
+  // computed, so there is no operator the pen is missing. Reporting the pen's
+  // gaps for a garment the pen did not draw would be a stale warning about
+  // another drawing.
+  if (planLineClass(spec)) return [];
   const m = /data-engine-gap="([^"]*)"/.exec(flatSVG(spec));
   return m && m[1] ? m[1].split(';').filter(Boolean) : [];
 }
@@ -257,8 +299,13 @@ export function saveSVG(pattern, filename) {
   saveBlob(filename, patternSVG(pattern), 'image/svg+xml');
 }
 
-export function saveFlatSVG(spec, filename, kokenKaydi = null, specAlanlari = null) {
-  saveBlob(filename, flatSVG(spec, kokenKaydi, specAlanlari), 'image/svg+xml');
+export async function saveFlatSVG(spec, filename, kokenKaydi = null,
+                                  specAlanlari = null, sizeLabel = 'EU38') {
+  // async because the seam-plan line has to wait for the engine. The pen path
+  // still resolves in the same tick; nothing got slower for the classes that
+  // have not moved.
+  saveBlob(filename, await flatSVGAsync(spec, kokenKaydi, specAlanlari, sizeLabel),
+           'image/svg+xml');
 }
 
 export function saveA4Pdf(pattern, title, filename, kokenKaydi = null, specAlanlari = null) {
