@@ -143,7 +143,14 @@ ve `:889` o değeri görünce Buğra'nın ease/princess paylarını sabit yükl�
 (`CupSeamBlock::bugra::corsetChestEase`). Motor Buğra'yı çizmiyor, **ezberliyor**.
 Madde 12'nin sorusu bu haliyle cevaplanamaz.
 
-**1.7 — REPO AJANI BOĞUYOR.** 214MB, 2069 dosya. `.git` 87MB · `patterns_real`
+**1.7 — REPO AJANI BOĞUYOR.** *(DÜZELTME: aşağıdaki sayılar **temiz klonun**
+sayılarıdır — yani git'in izlediği şey. Damla'nın diskindeki çalışma kopyası
+**6.2GB**, `.git` **334MB**; farkı izlenmeyen çöp yapıyor: `Logs/` 4.0GB
+(tek başına `Logs/katalog-2026-08-05` 3.8GB), `design_patterns/` 787MB,
+`new_flats/` 92MB. Bunlar git'te YOK, yani silmek `.git`'i küçültmez ama
+**diski anında açar**. F1'in "<30MB" kapısı yalnız izlenen dosyaya bakarsa
+bu 5GB'a hiç dokunmadan geçer — kapı bu yüzden değişti, aşağıda.)*
+214MB izlenen, 2069 dosya. `.git` 87MB · `patterns_real`
 65MB · `GECE/` 23MB / **743 dosya** · `reports/` 8.1MB / 277 dosya · `docs/`
 3.8MB. Üstelik içerik çelişkili: `contract/spec-grammar.json` ilk satırında
 "⛔ BU DOSYA HÜKÜM TAŞIMAZ, ölü 2B hattı" yazıyor ama hâlâ parser sözlüğü olarak
@@ -350,6 +357,51 @@ kaynağın LICENSE dosyasını kendi açar. Tablodan hatırlamak yetmez.
 
 ---
 
+## 1F. ÖLÇÜM SETİNİN GERÇEĞİ — 29 fotoğraf nereden geldi (ölçüldü, 26 Ağu)
+
+Doküman "10 fotoğrafı Damla seçer" diyordu ama hangi havuzdan, kim, ne zaman
+yazmıyordu. Havuz açıldı, içi şu:
+
+**Kaynak: Wikimedia Commons.** `vision/README.md:8` — "real garment photos
+fetched from Wikimedia Commons (`fetch-eval.sh`)". Yani telif temiz **ama
+koşulsuz değil**: Commons lisansları çoğunlukla atıf ister (CC-BY / CC-BY-SA),
+bazıları paylaş-aynı-lisansla. **Bugün repoda dosya başına lisans kaydı YOK**
+ve `fetch-eval.sh` de yok (silinmiş). Landing'de örnek olarak yayınlamadan
+önce her fotoğrafın Commons sayfası + lisansı + yazarı bir dosyaya yazılmalı.
+Yazılamayanlar **landing'e çıkmaz**, yalnız yerel ölçümde kalır.
+
+**Ve asıl mesele: doğru cevaplar makine tarafından üretilmiş.**
+`vision/eval/labels.json` kendi başlığında yazıyor: *"Ground truth labeled by
+eye (Fable, 2026-07-13) … **PARTIAL**: labeling paused mid-way."* Yani bugünkü
+**%92.2 doğruluk, bir modelin başka bir modelin tahminlerine ne kadar uyduğunu
+ölçüyor** — insan gerçeğine değil. Sayı bu haliyle **karta girmez**.
+
+**Havuzun gerçek büyüklüğü 29 değil, 19.** Ölçüldü: diskte 29 dosya, etiketli
+19 kayıt, `_dropped` listesinde **10 dosya** — gravür, karikatür, kurşun kalem
+çizimi, askeri müze, spor mağazası rafı, arkadan çekim, iki parçalı takım.
+Bunlar giysi fotoğrafı bile değil. Üstelik etiketli 19 kaydın alanlarının
+**42/230'u null** (görünmüyor/belirsiz).
+
+**F2'nin işi — sıra ve karar:**
+1. `_dropped` 10 dosya **diskten de silinir**; havuz 19'a iner.
+2. Kalan 19'un her biri için **Commons künyesi** (URL · yazar · lisans)
+   `dataset/hedef-10/KAYNAK.md`'ye yazılır. Künyesi bulunamayan dosya havuzdan
+   çıkar.
+3. **Doğru cevapları HAKEM etiketler.** Faz ajanı değil — kendi işini kendi
+   notlamasın. Hakem 19 fotoğrafı × 12 alanı gözden geçirir, `labels.json`'u
+   düzeltir, her düzeltmeyi kaydeder. Makine etiketi taban kalır, hakem
+   düzeltmesi üstüne yazılır. **Damla beklenmez.**
+4. Etiketlenen 19'dan **10'u mühürlenir** (`dataset/hedef-10/`), **5'i yedek**
+   olarak ayrılır ve ajan **hiç görmez** (§3.8), 4'ü artakalır.
+5. **Landing'in 3 örnek fotoğrafı bu 10'un içinden değil**, ayrıca seçilir —
+   mühürlü set ajana kapalı kalmalı, landing'deki fotoğraf ise herkese açık.
+
+Hakem etiketlemeden önceki her kartta *"doğruluk sayısı makine etiketine göre"*
+şerhi durur; hakem etiketledikten sonra H2 ve H9 yeniden hesaplanır ve şerh
+kalkar. Koşu hiçbir aşamada beklemez.
+
+---
+
 ## 2. MADDE 4 VE 5 — DÜZELTME (bu bölüm bir önceki taslağı EZER)
 
 Bir önceki taslakta F1 kapısı "flat'in beli = kalıbın beli, fark < 1mm" idi.
@@ -378,21 +430,82 @@ Oturmayan kısım manken bedeninin kendisi.
 
 ---
 
-## 3. ORKESTRASYON
+## 3. ORKESTRASYON — ŞEF İŞ YAPMAZ
 
-- **Faz ajanı**: tek faz, taze context, işi biter **ölür**. Sonraki fazı açmaz,
-  kendi hükmünü kendi vermez.
-- **Hakem**: ayrı ve daimi. Fazın kapı sayısını hakem doğrular.
-- **Tarafsız cevapçı**: Damla'nın **her** sorusu buraya gider. İşi yapan oturum
-  kendi işi hakkında Damla'ya cevap veremez. İlk seferinde değil, daima.
-- **Damla router değildir.** Faz açılış bloğunu yapıştırır, cevabı yapıştırır.
-  Karar sorusu dışında hiçbir şey taşımaz.
-- **Faz ajanının context'i**: `ENV.md` + `RULES.md` + bu dosyanın §1–§3'ü +
-  yalnız kendi faz bölümü. Başka hiçbir şey. `GECE/`, `reports/`, `devlog.md`,
-  `HEDEF.md`, `DAMLA-KUYRUK.md` **okunmaz** (F1'den sonra zaten çoğu olmayacak).
-- **Kart formatı: en fazla 30 satır**, tek dosya `GECE7/F<n>.md`, dört başlık:
-  `NE DEĞİŞTİ (dosya:satır)` · `KAPI (önce → sonra)` · `KULLANICI NE GÖRÜYOR
-  (URL)` · `AÇIK KALAN TEK ŞEY`. Başka hiçbir şey yazılmaz.
+**Bu bölüm önceki taslakları EZER.** Önceki hâlde şefe Halka 0'ı yaptırmış, bu
+dokümanın tamamını okutmuş ve alt-ajan çıktılarını okutmuştum. Üçü de "şef iş
+yapmaz" kuralının kendi ihlaliydi ve şefin context'i koşu başlamadan doldu.
+
+### 3.1 Roller
+
+| Rol | Nerede | Ne yapar | Context'i |
+|---|---|---|---|
+| **ŞEF** | tek kalıcı oturum | etiket atar · ajan salar · hakemin **tek satırlık** hükmünü okur · sıradaki fazı açar | **şişmemeli** |
+| **FAZ AJANI** | taze alt-ajan | tek fazı yapar, kartını yazar, **ölür** | şişebilir, umursanmaz |
+| **HAKEM** | ayrı taze alt-ajan | kapıları **kendi koşturur**, hüküm verir, **ölür** | şişebilir, umursanmaz |
+| **DAMLA** | — | yalnız karar sorularına cevap verir | — |
+
+**Alt-ajanların şişmesi sorun değil — nasılsa ölecekler.** Tek korunan şey
+şefin context'idir; şef şişiyorsa iş yapıyor demektir ve yapmamalıdır.
+
+### 3.2 ŞEFİN YAPAMAYACAKLARI — dört yasak
+
+1. **Kod okumaz, komut koşturmaz, dosya taramaz.** Halka 0 dahil **hiçbir iş**
+   şefin değildir; hepsi alt-ajana gider.
+2. **Bu dokümanı okumaz.** Yalnız §3 (bu bölüm) ve `GECE7/DURUM.md`. Faz
+   bölümlerini ajanlara **yol olarak** verir, içeriğini kendisi açmaz.
+3. **Alt-ajan çıktısını okumaz.** Ajan kartını `GECE7/F<n>.md`'ye yazar; şef o
+   dosyayı **açmaz**. Ajanın döndürdüğü uzun metni context'ine almaz.
+4. **Hüküm vermez.** Hükmü daima hakem verir.
+
+### 3.3 Bir fazın hayatı — şefin gördüğü her şey
+
+1. `GECE7/DURUM.md`'yi oku (bir sayfa: sıradaki faz · son kapı sayıları · son
+   hüküm · açık kuyruk).
+2. `git tag F<n>-oncesi`.
+3. **Faz ajanını sal.** Ona verilen tek şey yollardır:
+   *"`KOSU-v7.md`'nin §0, §0B, §1C, §1D, §3.5, §3.6, §3.8, §3.11, §4B, §4C
+   bölümlerini ve F<n> bölümünü oku."* Şef bu bölümleri okumaz.
+4. Ajan işini yapar, kartını yazar, **ölür**.
+5. **Hakemi sal.** Ona verilen: kart dosyasının yolu + F<n>'in kapı satırı.
+   Hakem kapı komutlarını **kendi koşturur**, hükmünü `GECE7/DURUM.md`'ye
+   **tek satır** yazar: `GEÇTİ` / `KALDI` / `GERİ AL` + sıradaki faza not.
+6. Şef yalnız o **tek satırı** okur ve davranır:
+   - **GEÇTİ** → `git tag F<n>-yesil` (site bu etiketten sevk edilir, §3.5),
+     sıradaki fazı aç.
+   - **KALDI** → aynı faz, **taze bir ajanla**, hakemin notuyla yeniden. Ölen
+     ajan dirilmez.
+   - **GERİ AL** → `git reset --hard F<n>-oncesi`, sebep `DURUM.md`'ye.
+7. 2. adıma dön. F9 kapanana kadar durma.
+
+Bu döngüde şefin context'ine giren toplam metin faz başına birkaç yüz kelimedir.
+
+### 3.4 DAMLA HİÇBİR ŞEY YAPMAZ — sorular hakeme gider
+
+Faz bölümlerindeki "Damla'ya soru" satırları **Damla'ya gitmez.** Damla ne
+soru cevaplar, ne dosyaya yazar, ne kart taşır, ne blok yapıştırır. Koşunun
+dışındadır.
+
+Bir faz karar gerektiren bir noktaya geldiğinde şef **hakemi** salar:
+
+> Sen HAKEM'sin. F<n> şu kararı gerektiriyor: [soru]. Bu koşuda iş yapmadın.
+> Repoya, ölçüm çıktısına ve `KOSU-v7.md` §0 (hedef) ile §0B md.3 (en
+> kısıtlayıcı yorum) ilkelerine bakarak **karar ver**. Kararını ve gerekçesini
+> `GECE7/KARARLAR.md`'ye tek satır yaz. Gerekçen bir sayıya ya da yayınlanmış
+> bir kaynağa dayansın; dayanamıyorsa en kısıtlayıcı seçeneği seç ve "dayanak
+> yok, en kısıtlayıcı seçildi" yaz.
+
+Şef o kararla devam eder. **Koşu hiçbir noktada beklemez.**
+
+Zevk kararları (manken beli kaç mm ince, hangi kumaşlar, landing dili) da
+hakemin: en kısıtlayıcı/en standart seçeneği seçer, `KARARLAR.md`'ye yazar.
+Damla isterse sonradan bakar ve değiştirir — ama koşu onu beklemez.
+
+### 3.4B Şef oturumu biterse
+
+Şef context'i yine de dolarsa (olmamalı): yeni oturum açılır ve tek cümle
+verilir — *"Sen ŞEF'sin. `KOSU-v7.md` §3'ü ve `GECE7/DURUM.md`'yi oku, kaldığın
+yerden devam et."* Bu routing değil, devam ettirmedir.
 
 ### 3.5 MAIN'DE ÇALIŞILIR — BRANCH YOK
 
@@ -418,18 +531,21 @@ sonunda** koşar.
 
 **HEDEF:** fotoğraf + prompt → kalıp + flat.
 
-**Hedef koşusu:** aynı 10 fotoğraf + 10 prompt, baştan sona hattan geçer
-(`npm run hedef` gibi tek komut, F2'de kurulur). Altı sayı basar:
+**Hedef koşusu:** aynı 10 fotoğraf + 10 prompt, baştan sona hattan geçer.
+**Ölçüldü: repoda kök `package.json` YOK**, yani `npm run hedef` diye bir şey
+kurulamaz. Reponun kendi düzeni `ctest` (118 `add_test`) + `engine/tests/*.mjs`.
+Hedef koşusu da öyle olur: `engine/tests/hedef_kosu.mjs` + `add_test` kaydı.
+Tek komut: `ctest --test-dir engine/build -R hedef_kosu`. Altı sayı basar:
 
 | # | Sayı | Ne demek |
 |---|------|----------|
 | H1 | **Tamamlanma** | 10 girdinin kaçı sonuna kadar gitti (kalıp + flat üretildi) |
-| H2 | **Görülen alanda isabet** | Fotoğrafta görünen alanların kaçı doğru okundu. **Gerçek doğruluk budur.** (bugün %92.2, **n=5**) |
+| H2 | **Görülen alanda isabet** | Fotoğrafta görünen alanların kaçı doğru okundu. **Gerçek doğruluk budur.** (bugün %92.2, **n=5**, ve **doğru cevaplar makine üretimi** — §1F, insan etiketi gelene kadar bu sayı geçicidir) |
 | H3 | **Uydurma alan** | Fotoğrafta yok, çıktıda var **ve ilan edilmemiş**. Sade arka çıkarımı (F0 md.6) ilan edildiği sürece H3'e girmez — cezalandırılan uydurmak değil, **sessizce** uydurmaktır. |
 | H4 | **Gereksiz dikiş** | Sebebi olmayan dikiş sayısı (F5'in dört sebebi) |
 | H5 | **Dikilebilirlik** | Uzunluğu eşleşmeyen dikiş çifti sayısı |
 | H6 | **Konvansiyon sapması** | Manken çapası diğer flatlerden farklı olan flat sayısı |
-| H7 | **Siluet örtüşmesi** | Kalıp dikilip mankene giydirilse fotoğraftaki giysiye ne kadar benziyor (maske IoU, %) |
+| ~~H7~~ | ~~Siluet örtüşmesi~~ | **v7'de yok** — F3B ertelendi, ayrı koşuda döner |
 | H8 | **İfade edilemeyen** | Gerçek kalıp/giysiden kaçı operatör programına çevrilemedi (§4A) |
 | H9 | **Çıkarılan alanda makullük** | Çıkarılan alanların kaçı (a) dikilebilir (b) önle tutuyor (c) en sade seçenek. Görünmeyen alanda "doğru" yoktur; ölçülen şey makullüktür. |
 | H11 | **Süre** | Fotoğraftan sonuç ekranına medyan ve en kötü süre. Hedef: toplam <10 sn, kumaş değişimi <1 sn. |
@@ -451,7 +567,6 @@ kendi tablosundan bilir:
 | F0 ön kapı | **H1** | kötüleşmez |
 | F2 kayıp nerede | **H1, H2, H3** | kötüleşmez |
 | F3 tek nesne | **H1** | H6 geçici bozulabilir, F4 kapatır (tek istisna, kartta yazılır) |
-| F3B kapalı döngü | **H7** | kötüleşmez |
 | F4 konvansiyon | **H6** | kötüleşmez |
 | F5 primitif katmanı | **H4, H5, H8** | kötüleşmez |
 | F6 kumaş | **H5** | kötüleşmez |
@@ -471,11 +586,11 @@ istisnadır ve o da yalnız "hiçbir şey kötüleşmedi" ile kapanır.
 Aşağıdaki faz listesi bir **niyet**tir, sözleşme değil. Bir faz bittiğinde:
 
 1. Ajan kartını yazar ve **ölür**.
-2. **Tarafsız hakem** karta ve hedef koşusunun altı sayısına bakar.
-3. Hakem, **sıradaki fazın kartını yeniden yazma yetkisine sahiptir**: sırayı
+2. **Hakem** (ayrı alt-ajan) karta ve hedef koşusunun sayılarına bakar.
+3. Hakem, **sıradaki fazın kartını yeniden yazdırma yetkisine sahiptir**: sırayı
    değiştirebilir, faz ekleyebilir, bir fazı ikiye bölebilir, bir fazı iptal
    edebilir. Tek şartı: gerekçesini **ölçülen bir sayıya** bağlamak.
-4. Değişen kart Damla'ya tek paragraf olarak gider; Damla yapıştırır.
+4. Şef değişen kartı kendisi yazar ve kendisi açar. Damla'ya gitmez.
 
 Sebep: bu koşuda bir fazın çıktısı bir sonrakinin girdisi. Plana körce uymak,
 F2'de öğrenilen şeyi F5'te kullanmamak demektir. **Hata bir sapma değil, bir
@@ -492,8 +607,8 @@ Ajan kendi kapısını yazarsa geçer. O yüzden:
    yazılır ve `contract/hedef-kosu.json`'a mühürlenir. **Sonraki hiçbir faz
    ajanı o dosyaya dokunamaz.** Değiştirmek gerekiyorsa hakem değiştirir ve
    değişiklikten önceki/sonraki sayıyı yan yana yazar.
-2. **Fotoğraf seti mühürlü.** Hedef koşusunun 10 fotoğrafı Damla tarafından
-   seçilir, `dataset/hedef-10/` altında durur, **faz ajanı değiştiremez, ekleme
+2. **Fotoğraf seti mühürlü.** Hedef koşusunun 10 fotoğrafı §1F'deki 19'luk
+   temizlenmiş havuzdan **hakem tarafından** seçilir, `dataset/hedef-10/` altında durur, **faz ajanı değiştiremez, ekleme
    yapamaz, çıkaramaz.** Ayrıca ajanın hiç görmediği **5 yedek fotoğraf** ayrı
    tutulur; hakem faz sonunda onları da koşar. On fotoğrafa özel kaçamak yazan
    bir ajan yedekte yakalanır.
@@ -531,7 +646,7 @@ v6'da bu vardı, v7'nin ilk taslağında düşmüştü. Geri kondu.
   yasaktır (yasak 1).
 - **Araştırma bulgusu künyesiyle yazılır**: yazar/kurum, yayın, yıl, bölüm, URL.
   Künyesi olmayan sayı koda giremez. Bulunamadıysa **"YAYIN BULUNAMADI"** yazılır
-  ve o zaman sayıyı **Damla** koyar, ajan değil.
+  ve sayıyı **hakem** koyar (en kısıtlayıcı değer), ajan değil.
 - Ajan bir sayıya ihtiyaç duyup künye bulamazsa **uydurmaz**: kalemi kuyruğa
   yazar, en kısıtlayıcı varsayımla devam eder (§0B md.3), kartında belirtir.
 - **Hakem araştırma yapabilir.** Bir faz kartındaki iddiadan şüphelenirse
@@ -545,10 +660,24 @@ v6'da bu vardı, v7'nin ilk taslağında düşmüştü. Geri kondu.
 Bu doküman uzun. v6'nın hastalığı buydu ve v7 aynı hastalığa yakalanabilir:
 ajan manifestoyu okuyup işe az dikkat ayırır.
 
-**Kural:** faz ajanı §0, §0B, §3, §4B, §4C ve **yalnız kendi faz bölümünü**
-okur. §1 (ölçülen zemin) yalnız kendi fazını ilgilendiren maddeleri. §4A'yı
-yalnız F5. §1E'yi yalnız dışarıdan kod alacak faz.
-Şef, faz açılış bloğunu verirken bu listeyi **daraltır**; genişletemez.
+**TEK OKUMA LİSTESİ** (§6.2 ile aynıdır; iki liste yazmıştım, çelişiyordu —
+düzeltildi). Her faz ajanı şunları okur, fazlası değil:
+
+`ENV.md` · `RULES.md` · **§0** (hedef) · **§0B** (provenance) · **§1C** (zaten
+var — tekrar yazma) · **§1D** (yasaklı iddialar) · **§3.5** · **§3.6** ·
+**§3.8** · **§3.11** · **§4B** (edge case) · **§4C** (ürün kararları) ·
+**yalnız kendi faz bölümü**.
+
+Ek olarak yalnız ilgili faz: **§4A** → F5 · **§1E** (lisans) → dışarıdan kod
+alacak faz · **§2** (flat≠kalıp) → F3, F4.
+
+**§1C ve §1D pazarlıksızdır ve her ajana verilir** (toplam ~40 satır). Sebebi
+somut: §1C olmadan ajan **bitmiş işi yeniden yazar** — DXF ihracını, PDF
+kalibrasyon karesini, cap ease'i, flat konvansiyonunu sıfırdan kurmaya kalkar.
+§1D olmadan yanlış negatif-pay formülünü koda sokar. Bunlar saat ve para yakar.
+
+Şef bu listeyi **daraltamaz da genişletemez**; sabittir. Ve şef bu bölümlerin
+kendisini **okumaz** — ajana yalnız bölüm adlarını söyler (§3.2 md.2).
 
 ### 3.12 FAZ BÜYÜKLÜĞÜ VE BÖLÜNME — dürüst tahmin
 
@@ -578,7 +707,61 @@ tutarlar. Planı okurken bunu böyle okumak lazım: v7 on bir eşit faz değil,
 
 ## 4. FAZLAR
 
-Her fazda: teslimat bir URL, kapı bir sayı, Damla'ya soru bir tane.
+Her fazda: teslimat bir URL, kapı bir sayı, karar noktası hakeme gider — **ve o soru
+koşuyu durdurmaz**, şef kuyruğa yazıp en kısıtlayıcı varsayımla devam eder (§3.4).
+
+### HALKA YAPISI — 11 eşit faz değil, 3 halka (26 Ağu düzeltmesi)
+
+§3.12 zaten "iki büyük iş + dokuz destek fazı" diyordu ama listeyi on bir eşit
+faz gibi diziyordu. Düzeltildi:
+
+| Halka | Fazlar | Bittiğinde ne olur |
+|---|---|---|
+| **0 — ISINMA** (faz değil, ön şart) | disk temizliği + **hedef koşusunun tabanı** | Ratchet'in ölçeceği bir taban doğar |
+| **1 — AL DENE** | **F-İNDİR** → F0 ön kapı → F2 görme | **Yabancı eve dosya götürüyor.** Motor hâlâ eski hatta ama ürün satılabilir. |
+| **2 — MOTOR** | F3 ⇄ F5 (iç içe, operatör başına alt-kart) | Flat kalıbın izdüşümü olur, sınırsızlık kapanır |
+| **3 — DERİNLİK** | F4 → F6 → F7 → F8 → F9 | Manken · kumaş · edit · Buğra · vitrin |
+
+**F3B (kapalı döngü / IoU) bu koşudan ÇIKARILDI.** Değerli ama: sunucuda XPBD +
+segmentasyon koşturmak hem GPU hem hafta yakar, hem de daha sallanan bir motoru
+ölçer. Halka 2 bittikten sonra **ayrı bir koşu**. H7 hedef koşusundan da
+çıkarıldı.
+
+**RATCHET'İN TABANI HALKA 0'DA DOĞAR — F2'de değil.** Önceki hâlde hedef koşusu
+F2'de kuruluyordu, yani F1 ve F0 "hiçbir sayı kötüleşmeyecek" şartıyla koşacaktı
+ve o şart **ölçülemezdi**; hakem koşturamaz, "GEÇTİ" der, kilit ilk iki fazda
+boşta döner. Artık taban Halka 0'da basılır.
+
+---
+
+### F-İNDİR — kullanıcı eve bir dosya götürsün  📥 KOŞUNUN İLK ÜRÜN FAZI
+
+**Ölçüldü, 26 Ağu:** `web/js/create.js` içinde `download` / `dxf` geçen satır
+sayısı **0**. Sonuç ekranında yalnız `printPattern` var (`create.js:797`), o da
+`window.print()` tabanlı. İndirme `studio.html`'de duruyor: `studio.js` 28 kez
+geçiyor, gerçek `downloadSVG()` (`:299`) ve `dl-dxf` butonu (`:153`) orada.
+
+**Yani kullanıcı kalıbı ekranda görüyor ama eve bir şey götüremiyor.**
+"Al dene" cümlesini kuran mesafe bir mimari borç değil — bir indirme butonu.
+Planın en derine gömdüğü kalem, ürünün önündeki en kısa mesafeymiş.
+
+**Kullanıcı ne alıyor:** `create.html` sonuç ekranında üç buton — **DXF indir**
+· **SVG indir** · **PDF indir** (A4 döşeli + A0, `pdf-core.mjs` zaten üretiyor,
+§1C) — artı kumaşa özel rehber metni.
+
+**İş:** `studio.js`'teki indirme yolu `create.js`'e taşınır (kopyalanmaz —
+ortak modüle çıkarılır, iki doğru bırakılmaz). PDF `window.print()` yerine
+`pdf-core.mjs`'in ürettiği dosyaya bağlanır.
+
+**KAPI:** tarayıcıda `create.html`'den fotoğraf/form ile kalıp üret → üç dosya
+da inisin → DXF bir CAD'de açılsın, PDF'te 3cm kalibrasyon karesi 3cm ölçsün.
+Üçünden biri inmiyorsa faz kapanmaz.
+
+**Tahmin:** 1 gece. **Karar gerektiren nokta (hakeme gider, §3.4):** yok.
+
+**Sapma sorusu:** bir yabancı eve dosya götürebiliyor mu? Bu fazdan sonra evet.
+
+---
 
 ### F1 — TARAMA VE TEMİZLİK  🧹 KOŞUNUN İLK FAZI
 
@@ -599,6 +782,15 @@ dxf): `web/collections/pdf` 48 · `reports/gate/...` yüzlerce · `GECE/log/V4-E
 değil, hiçbirini Damla onaylamadı.**
 
 **İş:**
+- **SİLMEDEN ÖNCE BAĞIMLILIK TARAMASI — pazarlıksız.** Her silme adayı yol için
+  önce `grep -rl "<yol>" engine/tests engine/tools engine/src web/js backend`
+  koşulur. **Okuyan varsa silinmez.** Ölçüldü, en az bir gerçek çakışma var:
+  `engine/tests/recipe_wasm_parity_check.mjs:35` çalışma anında
+  `web/recipes/<dosya>.json` okuyor — bu dosyalar **veri**, üretilmiş görsel
+  değil, **silinmez**. Aynı klasördeki üretilmiş görseller silinir.
+  (`GECE/` ve `reports/` yolları testlerde yalnız **yorum satırı / kaynak
+  künyesi** olarak geçiyor, çalışma anında okunmuyor — ölçüldü, silinmeleri
+  testi bozmaz.)
 - **Tarama önce, silme sonra — ama ikisi aynı fazda.** Ajan `git ls-files`
   üstünde boyut sıralar, uzantıya göre üretilmiş dosyaları sayar, her klasör
   için **çağıranı var mı** diye grep'ler. Çıktı bir tablo DEĞİL, doğrudan bir
@@ -608,7 +800,16 @@ değil, hiçbirini Damla onaylamadı.**
 - İki doğru bırakan dosyalar silinir, biri kalır: `contract/spec-grammar.json`
   kendi başlığında "ÖLÜ 2B HATTI, hüküm taşımaz" diyor ama parser hâlâ okuyor →
   parser'ın gerçekten ihtiyacı olan alanlar `vocab.json`'a taşınır, dosya gider.
-- **Madde 13: onaylanmamış çıktılar silinir.** `web/assets/flats/*.svg`,
+- **KORUNANLAR — bunlar üretilmiş çıktı DEĞİL, silinmez:**
+  `vision/eval/photos` (**29 fotoğraf — ölçüm setinin GİRDİSİ**, F2 bunlarsız
+  koşamaz) · `web/assets/buttons`, favicon, og-card (arayüz varlıkları) ·
+  `web/recipes/*.json` (veri, test okuyor) · `contract/*.json` (kanun).
+- **Madde 13: onaylanmamış çıktılar silinir.** Ölçülen tam liste — F1'in ilk
+  taslağı bunların yarısını atlamıştı:
+  `web/collections/pdf` (48) · `engine/tools/flat-metre/out` (10) ·
+  `docs/archive/tools` (9) · `docs/archive/mocks/assets` (5) ·
+  `web/assets/flats/*.svg` (4) · ve `reports/` + `GECE/` altındaki ~300 görsel
+  (zaten klasör olarak siliniyor).
   `web/styles/*.html` (24 sayfa), `web/collections`, `web/recipes`, `web/patches`
   altındaki üretilmiş flat/kalıp görselleri — Damla hiçbirini onaylamadı, hepsi
   eski hattın ürünü. Silinir; F4'ten sonra yeniden üretilir.
@@ -620,19 +821,42 @@ değil, hiçbirini Damla onaylamadı.**
   alınmış kalıplar zaten repoda durmamalı; F8'in kör kontrolü için yerel yol
   ENV.md'de tarif edilir.
 
+- **`engine/golden-reference.csv` (2.3MB) — madde 13'ün kenar durumu.** Bu
+  dosya eski çıktıların dondurulmuş hâli, yani Damla'nın onaylamadığı
+  şeylerden biri. **Silinmez ama rolü daraltılır:** bir *onay* değil, bir
+  *değişim dedektörü*dür. F3 gibi büyük ameliyatlarda "farkında olmadan neyi
+  bozdum" sorusunu cevaplayan tek şey odur. **Kural:** hiçbir faz onu "doğru
+  çıktı" diye gösteremez; yalnız "değişti / değişmedi" için okunur. Bir faz
+  onu kasten güncelliyorsa gerekçesini karta yazar.
 - **`.git` 87MB ve silmekle küçülmez.** `patterns_real` (65MB) bugün silinse
   bile geçmişte durur; klonlayan herkes indirir. Küçültmenin tek yolu geçmiş
   yeniden yazımı (`git filter-repo`), ki **bütün commit hash'lerini değiştirir**.
   Tek kişilik, tek dallı bir repoda yapılabilir ama geri dönüşü yoktur.
-  **Karar Damla'nın** (aşağıdaki tek soru). Yapılmazsa `.git` 87MB kalır ve bu
-  kabul edilebilir — asıl acıtan çalışma kopyasıdır, o temizlenir.
+  **Karar hakemin.** Varsayılan: yapılmaz — riski faydasından büyük.
+  Yapılmazsa `.git` 87MB kalır ve bu kabul edilebilir — asıl acıtan çalışma kopyasıdır, o temizlenir.
+
+**Ön koşul — `engine/build` yoksa ctest koşmaz.** Temiz klonda bu dizin yok;
+fazın ilk işi gerekirse `cmake -S engine -B engine/build && cmake --build
+engine/build` ile yapılandırmak, ve **bu adımın süresini karta yazmak**
+(75 C++ test dosyası derleniyor, kısa değil).
 
 **KAPI:** `ctest` F1 öncesi kaç yeşil / kaç kırmızıysa, F1 sonrası **aynı**
 (tek bir testin bile rengi değişemez — bu faz kod davranışına dokunmaz).
-Çalışma kopyası `.git` hariç **< 30MB**. Kök dizindeki markdown ≤ 6.
-İzlenen üretilmiş görsel sayısı **516 → 0** (F4'ten sonra yeniden üretilecek).
+**Çalışma kopyası (izlenmeyen dosyalar DAHİL) `.git` hariç < 100MB** —
+bugün 6.2GB. Sadece izleneni ölçen kapı `Logs/` 4GB'a dokunmadan geçer, o
+yüzden `du -sh` ile ölçülür, `git ls-files` ile değil.
+`Logs/` · `design_patterns/` (787MB) · `new_flats/` (92MB) — üçü de git'te yok;
+**içerikleri açılıp bakılmadan silinmez**, ama çağıranı yoksa gider.
+Kök dizindeki markdown **14 → ≤ 6** (ajan `ls` çekince hangisinin hüküm
+taşıdığını bilemiyor: ANAYASA · HEDEF · DERSLER · ROADMAP · GECE-KOSUSU-v6 ·
+DAMLA-KUYRUK · devlog · linkedin `arsiv/`e taşınır).
+**Üretilmiş görsel: 516 → ≤ 40.** ("0" yazmıştım, **yanlıştı ve tehlikeliydi**:
+o 516'nın içinde `vision/eval/photos`'un 29 ölçüm fotoğrafı ve arayüz
+varlıkları da sayılıyor. Sıfıra indirmek F2'nin girdisini yok ederdi.)
+Kalan ≤40: 29 ölçüm fotoğrafı + arayüz varlıkları. **Üretilmiş tek bir flat
+veya kalıp görseli kalmayacak** — madde 13 budur.
 
-**Damla'ya soru — bir tane:** `.git` geçmişi yeniden yazılsın mı? (65MB telifli
+**Karar gerektiren nokta (hakeme gider, §3.4):** `.git` geçmişi yeniden yazılsın mı? (65MB telifli
 tarama + 23MB rapor geçmişte duruyor.) Yazılırsa klon 87MB'dan ~10MB'a iner ama
 bütün commit hash'leri değişir, geri dönüş yok. Yazılmazsa hiçbir şey bozulmaz,
 sadece klon ağır kalır. **Öneri: şimdilik yazma** — riski faydasından büyük,
@@ -645,8 +869,7 @@ altına taşınır, silinmez, hiçbir faz ajanı okumaz. Karar verildi, sorulmaz
 
 ### F0 — ÖN KAPI: yükleme, prompt, maliyet, hata  🚪 F1'den hemen sonra, çünkü ürünün yüzü bu
 
-Bu fazın kararları **verilmiştir**, Damla'ya sorulmaz; beğenmezse tek satırla
-değiştirir. Ölçülen mevcut durum:
+Bu fazın kararları **verilmiştir**; hiçbiri sorulmaz, hepsi uygulanır. Ölçülen mevcut durum:
 - `index.html`'de **yükleme yok**. Kullanıcı `create.html`'e gitmek zorunda.
 - Orada da `input type=file` **gizli** (`create.js:398-402`), bir butonun arkasında.
 - Analiz IP başına **3/dk + 15/gün**, draft **20/dk + 200/gün**, görsel 2.8MB,
@@ -711,8 +934,7 @@ tek cümle yazar, kalıp + flat iner. Hiçbir yere tıklamadan ne olduğunu anla
    15/IP, tek kullanıcıyı sınırlar; **binlerce IP'yi sınırlamaz.** Toplam gider
    ancak global bir sayaçla bağlanır: `RATE_LIMIT` KV'de `spend:<gün>`, günlük
    tavan aşılınca yeni analiz **kapanır** ve site örnek fotoğraf + elle seçim
-   yoluna düşer (ikisi de sıfır maliyet, ikisi de çalışır). Tavanın rakamını
-   Damla koyar. Kuyruk/worker havuzu **bu aşamada gereksiz** — asıl risk
+   yoluna düşer (ikisi de sıfır maliyet, ikisi de çalışır). Tavanı hakem koyar (varsayılan: günlük 5 USD). Kuyruk/worker havuzu **bu aşamada gereksiz** — asıl risk
    gecikme değil fatura, ve faturayı kesen şey kuyruk değil tavandır.
 10. **YENİDEN HESAPLAMA SINIRI — VLM bir kez, motor sonsuz.** Fotoğraf analizi
    **bir kez** koşar ve önbelleğe girer. Kumaş değiştirildiğinde **VLM tekrar
@@ -743,7 +965,7 @@ kamera açılıyor.
 **Kota: günlük 15 kalır** (Damla, 26 Ağu). Fren kotadan değil, hash önbelleği
 ve sıfır-maliyetli örnek yolundan gelir.
 
-**Anahtar durumu belirsiz** (Damla bakacak). Ajan bunu **varsaymaz**: fazın ilk
+**Anahtar durumu belirsiz.** Ajan bunu **varsaymaz** ve kimseyi beklemez: fazın ilk
 işi `/api/analyze`'a bir örnek görsel atıp dönen kodu kartına yazmaktır. 401/500
 dönerse F0 örnek fotoğraf yoluyla tamamlanır ve kart *"anahtar yok, kendi
 fotoğrafı hattı kapalı"* der — sessizce çalışıyormuş gibi yapmaz.
@@ -783,7 +1005,7 @@ kullanıcı tek tıkla düzeltebiliyor.
 ikisi de yükselmiş · `outOfVocab` terimlerinin **%0'ı sicilsiz kalmamış**
 (çözülmüş ya da `absent` işaretli) · bozuk JSON sayısı 0.
 
-**Damla'ya soru:** model yanlış gördüğünde kullanıcıya sorsun mu, yoksa en
+**Karar gerektiren nokta (hakeme gider, §3.4):** model yanlış gördüğünde kullanıcıya sorsun mu, yoksa en
 olası tahminle sessizce devam edip düzeltmeyi sonraya mı bıraksın? (Sormak
 doğruluğu artırır, akışı yavaşlatır.)
 
@@ -817,12 +1039,17 @@ derinleştiren tek bir değişikliği, **hem** kalıpta hem flat'te ölçülebil
 değişiklik üretiyor ve iki değişiklik **aynı dikiş planı düğümünden** türüyor.
 Flat'te değişip kalıpta değişmeyen (veya tersi) **sıfır** alan.
 
-**Damla'ya soru:** İlk sınıf `top/dart/woven` mi olsun, `dress/princess` mi?
+**Karar gerektiren nokta (hakeme gider, §3.4):** İlk sınıf `top/dart/woven` mi olsun, `dress/princess` mi?
 (Öneri: top — en az parça, en hızlı görünür sonuç.)
 
 ---
 
-### F3B — KAPALI DÖNGÜ: motor kendi hatasını kendi görsün  🔭 stack'i burada zorluyoruz
+### F3B — KAPALI DÖNGÜ  ⛔ BU KOŞUDAN ÇIKARILDI, AYRI KOŞUYA ERTELENDİ
+
+> Aşağıdaki tasarım geçerli ve değerli, **ama v7'de koşulmayacak** (halka
+> tablosu). Sebep: sunucuda XPBD + segmentasyon hem GPU hem hafta yakar ve
+> henüz sallanan bir motoru ölçer. Halka 2 bittikten sonra ayrı koşu.
+
 
 Madde 11: *"geometri motoru kusursuz değil, sorunların teşhis edilip gelişmesi
 gerekiyor."* Bugün motorun kendini kontrol etme yolu yok — kalıbı çiziyor,
@@ -864,7 +1091,7 @@ hazır, üretime uygun saf JS/WASM *cloth* kütüphanesi YOK, yazılacak.
 en büyük biriktiği tek bölge isimle raporlanıyor. Faz, o bölgeyi düzeltmeden
 kapanmaz (ölçüm tek başına teslimat değil).
 
-**Damla'ya soru:** IoU eşiği kullanıcıya gösterilsin mi, yoksa yalnız içeride mi
+**Karar gerektiren nokta (hakeme gider, §3.4):** IoU eşiği kullanıcıya gösterilsin mi, yoksa yalnız içeride mi
 tutulsun? (Göstermek dürüst ve güven verir; düşük sayı da satmayabilir.)
 
 **Sapma sorusu:** bir yabancı fotoğrafını yükleyip kalıbın fotoğrafa ne kadar
@@ -887,7 +1114,7 @@ vurgusu); **teknik çizim/flat için 7–8 kafaya** çekilir, çünkü üreticiy
 konuşan çizimde gerçekçi oran gerekir. Yani flat croquis'i illüstrasyon
 croquis'i DEĞİLDİR — bu, madde 4'ün sorduğu farkın yayınlanmış tarafıdır.
 Sayısal bel/göğüs/kalça fark tablosu için otoriter yayın **bulunamadı**; o
-kısım Damla'nın kararı.
+sayıyı hakem koyar (§3.10) ve `KARARLAR.md`'ye gerekçesiyle yazar.
 
 **İş:** ya yayınlanmış bir manken/croquis çizelgesi künyesiyle bağlanır, ya
 **"stitchu manken çizelgesi v1"** açıkça kendi kararımız olarak ilan edilir
@@ -896,9 +1123,9 @@ türetilir. F3 bittiğinde flat zaten kalıptan geliyor olacak; bu faz onu hangi
 bedene projekte ettiğini sabitler.
 
 **KAPI:** her flat'in manken çapaları tek çizelgeden okunuyor ·
-`flat_artifact_census` yeşil · 12 flat yan yana Damla'ya gösterilmiş.
+`flat_artifact_census` yeşil · 12 flat tek sayfaya basılmış ve hakem çapa sayılarını kendi ölçmüş.
 
-**Damla'ya soru:** manken beli kalıp belinden kaç mm ince olsun? Zevk kararı,
+**Karar gerektiren nokta (hakeme gider, §3.4):** manken beli kalıp belinden kaç mm ince olsun? Zevk kararı,
 ölçümle çıkmaz, senin vermen lazım.
 
 ---
@@ -950,7 +1177,8 @@ beklemeden, panel bölme operatörüyle çıkıyor.
   Sleeve çıkmaz.
 
 **Test betiği fiziksel olarak yazılır:** `engine/tests/expressability_check.mjs`
-+ `ctest` kaydı + `npm run test:operators`. H8'i **bu betik** hesaplar; ajanın
++ `engine/CMakeLists.txt`'e `add_test` kaydı (kök `package.json` yok, `npm run`
+kullanılamaz — §3.6). H8'i **bu betik** hesaplar; ajanın
 kartına yazdığı sayı değil. Betik yoksa H8 yoktur ve faz kapanmaz — "op'ları
 yazdık, H8 sıfır" cümlesi kapı değildir.
 
@@ -963,7 +1191,7 @@ boş sıfır dikiş.
 merge · derive · asymmetry · ease-region` eklenmeden isim çözmeye başlanmaz —
 eksik operatörle çözülen isim yarım çözülür ve geri gelir.
 
-**Damla'ya soru:** 40+ ismin hangisiyle başlansın? (Öneri: `derive` + `rotate` —
+**Karar gerektiren nokta (hakeme gider, §3.4):** 40+ ismin hangisiyle başlansın? (Öneri: `derive` + `rotate` —
 Buğra'nın Collar Lining ve Front Side/Center parçaları doğrudan bu ikisinden
 çıkıyor, yani F8'in kör kontrolünü besliyor.)
 
@@ -1010,7 +1238,7 @@ büzgü oranı sayıları farklı) · 3 farklı rehber + kesim planı · ve **re
 her cümlenin bir sayıya bağlı olduğu** gösteriliyor. Kaynaksız tek cümle
 kalmayacak.
 
-**Damla'ya soru:** İlk üç kumaş hangileri? (Öneri: pamuklu dokuma · viskon/krep
+**Karar gerektiren nokta (hakeme gider, §3.4):** İlk üç kumaş hangileri? (Öneri: pamuklu dokuma · viskon/krep
 düşümlü · single jersey örme — üç ayrı davranış sınıfı.)
 
 ---
@@ -1034,7 +1262,7 @@ nesnesi üstünde çalıştığı için flat ve kalıp **birlikte** güncellenir
 **KAPI:** 3 edit (fiyonk ekle · yaka değiştir · boy uzat) · her birinde bölge
 dışındaki panellerin çıktısı **bayt-aynı** · flat ile kalıp ikisi de değişmiş.
 
-**Damla'ya soru:** Edit dili serbest metin mi, tıklanabilir bölge + kısa cümle
+**Karar gerektiren nokta (hakeme gider, §3.4):** Edit dili serbest metin mi, tıklanabilir bölge + kısa cümle
 mi? (Bölge seçimi lokaliteyi garantiler; serbest metin daha çok yanlış anlar.)
 
 ---
@@ -1060,7 +1288,7 @@ rehber, PDF iniyor, link paylaşılabiliyor. "Al dene" cümlesi burada kuruluyor
 raporlanıyor. **Bu sayı bir hedef değildir** — düşürmek için motor Buğra'ya göre
 ayarlanmaz. Kör kontrol ayar vidası değildir.
 
-**Damla'ya soru:** Sayfa herkese açık mı, davetli mi? (Açık = geri bildirim,
+**Karar gerektiren nokta (hakeme gider, §3.4):** Sayfa herkese açık mı, davetli mi? (Açık = geri bildirim,
 davetli = kontrollü ilk izlenim.)
 
 ---
@@ -1106,10 +1334,10 @@ sayı **o gün ölçülmüş** bir sayı.
 
 **KAPI:** landing'de kaynağı olmayan **sıfır** iddia · gösterilen her sayı
 `contract/hedef-kosu.json`'un ürettiği sayı · sayfa 320px'te bozulmuyor ·
-tanımadığı biri (Damla'nın seçtiği 3 kişi) yardımsız fotoğraf yükleyip çıktı
-indirebiliyor.
+hakem, ürünü hiç görmemiş bir alt-ajanı tarayıcı akışında adım adım yürütüp
+yardımsız çıktı indirilebildiğini doğrulamış.
 
-**Damla'ya soru:** Landing tek dil mi (TR) çift dil mi? (Flat/tech-pack alıcısı
+**Karar gerektiren nokta (hakeme gider, §3.4):** Landing tek dil mi (TR) çift dil mi? (Flat/tech-pack alıcısı
 global, giysi alıcısı yerel — iki model iki dil istiyor olabilir.)
 
 ---
@@ -1302,7 +1530,8 @@ kurulur (görsel değil, hash anahtar).
 **6. Örnek fotoğrafların ve ölçüm setinin hakları.** Landing'deki üç örnek
 fotoğraf ve 29'luk ölçüm seti **nereden geldiği yazılı** olacak. İnternetten
 alınmış bir fotoğraf landing'de yayınlanamaz. **Karar: landing örnekleri
-hakkı temiz olacak** (Damla'nın kendi çektiği / lisanslı / üretilmiş). Ölçüm
+hakkı temiz olacak** — künyesi (kaynak · yazar · lisans) yazılabilen görseller;
+künyesi çıkarılamayan landing'e çıkmaz. Ölçüm
 seti yalnız yerelde kalır, repoya girmez.
 
 **7. Telifli kalıplar hukuken temizlenir.** `patterns_real/` 65MB ve **hâlâ
@@ -1348,18 +1577,62 @@ uzantısı).
 
 ---
 
-## 6. AÇILIŞ BLOKLARI
+## 6. AÇILIŞ — DAMLA BUNU BİR KEZ YAPIŞTIRIR
 
-**6.1 Faz açılışı** (Damla `/clear` sonrası yapıştırır):
+### 6.1 Şef bloğu (tek sefer)
 
-> Sen F<n> ajanısın. Context'in: `ENV.md` + `RULES.md` + `KOSU-v7.md` §1–§3 ve
-> yalnız kendi faz bölümün. Başka bölüm, başka rapor, başka koşu dosyası okuma.
-> Kapı sayını **ölçmeden** kart yazma. İşini bitir, kartını `GECE7/F<n>.md`'ye
-> 30 satırı geçmeden yaz, push et, dur. Sonraki fazı açma, hükmünü kendin verme.
+> Sen ŞEF'sin — stitchu KOŞU v7'nin orkestratörü.
+>
+> **Oku:** yalnız `KOSU-v7.md` §3 ve `GECE7/DURUM.md` (yoksa oluştur).
+> Başka hiçbir bölüm okuma.
+>
+> **Yasakların:** kod okuma · komut koşturma · dosya tarama · bu dokümanın faz
+> bölümlerini okuma · alt-ajan çıktısını okuma · kendi hükmünü kendin verme.
+> **Halka 0 dahil bütün iş alt-ajana gider.**
+>
+> **Döngün (§3.3):** `DURUM.md` oku → `git tag F<n>-oncesi` → faz ajanını sal
+> (ona yalnız **yolları** ver) → ajan ölsün → hakemi sal → hakemin
+> `DURUM.md`'ye yazdığı **tek satır** hükmü oku → GEÇTİ/KALDI/GERİ AL'a göre
+> davran → sıradaki faz. F9 kapanana kadar durma.
+>
+> **Sıra:** §4'teki halka tablosu. Halka 0 (ısınma) → Halka 1 (F-İNDİR → F0 →
+> F2) → Halka 2 (F3 ⇄ F5 iç içe) → Halka 3 (F4 → F6 → F7 → F8 → F9).
+> **F3B koşulmayacak.**
+>
+> **Damla'ya hiçbir şey sorma, Damla'yı hiç anma.** Karar gerektiren her nokta
+> hakeme gider (§3.4); hakem karar verir, koşu devam eder.
 
-**6.2 Tarafsız cevapçı** (Damla soru sorduğunda şefin alt-ajana verdiği):
+### 6.2 Şefin faz ajanına vereceği blok
 
-> Damla'nın sorusuna cevap vereceksin. Bu koşuda hiçbir iş yapmadın ve
-> yapmayacaksın. Yalnız repodaki dosyalara ve test çıktılarına bak; faz
-> kartlarındaki "kapandı" cümlelerine inanma, iddiayı kendin koştur. Cevabını
-> ölçtüğün şeye dayandır; ölçemediğine "ölçemedim" de.
+> Sen F<n> ajanısın. **Oku:** `ENV.md` · `RULES.md` · `KOSU-v7.md`'nin §0, §0B,
+> §1C, §1D, §3.5, §3.6, §3.8, §3.11, §4B, §4C bölümleri · ve **yalnız F<n>
+> bölümü**. Başka bölüm, başka rapor, başka koşu dosyası okuma.
+> **§1C'yi atlama** — orada yazan işler ZATEN YAPILMIŞ; yeniden yazarsan saat
+> yakarsın ve hakem reddeder.
+> Main'de çalış, branch açma. Kapı sayını **ölçmeden** kart yazma.
+> Kartını `GECE7/F<n>.md`'ye 30 satırı geçmeden yaz, push et, **dur ve öl**.
+> Sonraki fazı açma, kendi hükmünü kendin verme. Uzun özet döndürme —
+> şef seni okumayacak, kartını hakem okuyacak.
+> [şef buraya hakemin bir önceki fazdan bıraktığı notu ekler]
+
+### 6.3 Şefin hakeme vereceği blok
+
+> Sen HAKEM'sin. Bu koşuda hiçbir iş yapmadın ve yapmayacaksın. Faz ajanının ne
+> düşündüğünü bilmiyorsun ve öğrenmeyeceksin.
+>
+> **Oku:** `GECE7/F<n>.md` kartı · `KOSU-v7.md` §3.6 ve §3.8 · F<n>'in kapı
+> satırı. Kartaki "kapandı/geçti" cümlelerine **inanma** — kapı komutlarını
+> **kendin koştur**. Ajanın hiç görmediği yedek fotoğrafları da koştur (§3.8).
+> İddiadan şüphelenirsen kaynağı kendin ara (§3.10); künye ölü linkse veya
+> kaynak o sayıyı söylemiyorsa kartı reddet.
+>
+> **Hükmünü `GECE7/DURUM.md`'ye TEK SATIR yaz:** `GEÇTİ` / `KALDI` / `GERİ AL`
+> + sıradaki faza not. Ayrıntıyı `GECE7/F<n>-R.md`'ye yaz; şef onu okumayacak.
+> Ölçemediğine "ölçemedim" de.
+
+### 6.4 Damla'nın işi
+
+**Yok.** Damla §6.1'deki bloğu bir kez yapıştırır ve koşudan çıkar. Kart
+taşımaz, soru cevaplamaz, dosyaya yazmaz. Karar gerektiren her nokta hakeme
+gider (§3.4). Damla isterse `GECE7/KARARLAR.md`'ye bakıp sonradan itiraz eder;
+koşu onu beklemez.
