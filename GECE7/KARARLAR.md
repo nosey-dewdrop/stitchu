@@ -986,3 +986,214 @@ listeleri **görülmedi**. **Ajan bunu kendi yazdı ve doğru davrandı.**
 
 **Bu bir faz şartı DEĞİLDİR:** F5-B kartı 4/5'i bir kapı yapmamıştı
 (*"Olmuyorsa sebebi yazılır, sayı zorlanmaz"*), o yüzden hüküm buna asılmıyor.
+
+---
+
+## K40 — BORÇ 44 / K38: YÜK **GERÇEKTEN BÖLÜNDÜ**, AMA BORÇ KAPANMADI — KIYASIN KENDİSİ DAYANAKSIZ
+
+**Hakem kendi koşturdu** (temiz Release, `split_check` SP8):
+`left_ftorso` **55.173533262° → 26.840105349° + 28.333427913°**, toplam
+**55.173533262°** (fark **0.000000000°**); `left_btorso` **56.668788492° →
+29.937360931° + 26.731427562°**. **Yük bölünüyor ve toplam korunuyor — ölçüldü.**
+
+Tavan **4.0× → 2.02× / 2.14×** indi ama **tutmuyor**, ve ajan **14'e ayar
+yapmadı** (§3.10). **Bu doğru davranıştı.**
+
+**KARAR:** borç 44 **KAPANMADI**, ama **yeniden adlandırıldı**. Ölçüm artık
+şunu söylüyor: sorun geometride değil, **kıyasın kendisinde**. `maxDartDeg = 14`
+motorun **çok-pensli** yerleşimine ait bir alandır ve **tek bir kamaya
+uygulanacağının yayınlanmış dayanağı GÖRÜLMEDİ** — yani bugün elimizde
+*"28.33 fazla"* diyen bir otorite **yok**, yalnızca **iki ayrı şeyi yan yana
+koyan bir satır** var.
+
+- İki sayı **yan yana basılmaya DEVAM eder**, eşitlenmez, ve **hiçbir kadran
+  14'e doğru çevrilmez** (K29 emsali).
+- Kapanma şartı **bir sayı değil bir künye**: ya tek-kama tavanı için
+  **yayınlanmış** bir dayanak bulunur, ya da satır *"kıyas dayanaksız"* diye
+  işaretlenir ve `maxDartDeg` bir **tavan** gibi okunmaktan çıkar.
+- **Dayanak yok → en kısıtlayıcı seçildi:** tavan **uydurulmaz**, sayı
+  **gizlenmez**. → **borç 54 AÇIK.**
+
+---
+
+## K41 — DAMLA md.12: `atFraction` **DURUR**, AMA **CİNSİNE GÖRE AYRILIR** (ürün kararı, hakemin)
+
+Ajan ölçtü: 15 preset `atFraction` taşıyor ve **taşıdıkları şey aynı cinsten
+değil** — `backSlit.vent`/`backSlit.slit`'te kesir **yırtmacın nereye kadar
+dikildiği** (gerçek ürün verisi), `waistline.natural`'da bir **bel landmark'ı**,
+kalanlarda **düz bir kadran**. Silmek yırtmaç boyunu atardı; okumak operatörü
+kadrana geri çevirirdi. Ajan **ikisini de yapmadı** ve kalemi hakeme bıraktı —
+**doğru davranış** (§3.8 md.1).
+
+**KARAR:**
+1. **Ajanın ara çözümü ONAYLANDI:** alan sözleşmede **DURUR**,
+   `motorda_tuketilmiyor: true` ile ve `splitPanel()` onu **okumaz**. Hakem
+   imzayı kaynaktan doğruladı: `SplitReport splitPanel(const SurfacePanel&)` —
+   **tek argüman**, ve `atFraction` motorda yalnız bir **ÇIKTI**
+   (`atFractionMeasured`). **Kapı bunu iddiaya bırakmıyor** (MS2/MS3 kırmızı).
+2. **AMA KALICI DEĞİL.** Ürün verisini (yırtmaç derinliği), hiçbir şeyin
+   okumadığı ve bir operatör parametresinin adını taşıyan bir alanda tutmak,
+   bilginin **yanlış isimde** durmasıdır. → **F5-D'nin İŞ 0'ı:** alan **cinsine
+   göre ayrılır** — yırtmaç derinliği **kendi adını taşıyan** bir ürün alanına
+   taşınır, `atFraction` yalnız **tüketilmeyen kadran** olarak kalır.
+   **Tek bir yargı silinmez, tek bir sayı atılmaz** (§5.5).
+3. **15 kesrin hiçbirinin yayınlanmış dayanağı YOK** → **hepsi
+   `YAYIN BULUNAMADI` damgası taşır**, ve bu damga **kaldırılmadan** hiçbiri bir
+   ürün varsayılanı olarak **dışarı söylenmez**. **Dayanak yok, en kısıtlayıcı
+   seçildi.**
+
+---
+
+## K42 — DAMLA md.13: DENGELİ-YÜK KESİMİ **KALIR**, AMA "PRENSES DİKİŞİ" **DENMEZ**
+
+Kesim sütunu, panelin kendi sütun-deficit profilinde `max(|C(c)|, |T−C(c)|)`'yi
+minimize eden iç sütundur — **eşik yok, kesir yok, tolerans yok**. Hakem
+`split_check` SP0'ın argmin'i **kendi** yeniden hesapladığını okudu ve üç ayrı
+kesir ölçtü: **16/32 · 11/32 · 13/32**. Ajan ayrıca doğru olanı yazdı: klasik
+kalıpçılıkta prenses dikişi genelde **büst noktasından**, yani **maksimum
+eğrilik** sütunundan geçer, ve iki kural EU38'de **farklı sütun** veriyor;
+panel dikişini dengeli-yük sütununa bağlayan **hiçbir yayın bulunamadı**.
+
+**KARAR — üç parça:**
+1. **Kural KALIR.** Dengeli kesim **bölmenin tanımıdır** ve borç 44'ün sayıyla
+   cevaplanabilmesini sağlayan **tek** şeydir. Bir kadran değil, bir aritmetik.
+2. **AMA ADI YASAK.** Bu kesim, hiçbir yüzeyde (kod yorumu hariç: sözleşme, ürün
+   metni, site, post) **"prenses dikişi"** ya da **"kup dikişi"** diye
+   adlandırılmaz — o adların **yayınlanmış** bir yeri var ve bizim sütunumuz o
+   yer değil. **Künye `YAYIN BULUNAMADI` olarak durur.**
+3. **F5-D ŞARTI — notu SAYIYA çevir:** `split-op` bundan sonra **maksimum
+   eğrilik sütununu da** dengeli sütunun **yanına basar**. İki kuralın farkı
+   böylece bir dipnot değil **ölçülen bir sayı** olur, ve alternatifi seçmek
+   isteyen biri aynı çıktıdan okur. **Ucuz, ve bilgi atmıyor.**
+
+---
+
+## K43 — 🚨 HAKEMİN MUTASYONU GERÇEK BİR DELİK BULDU: `split_check` **SIRALANMIŞ** BİR PROFİLİ GÖREMİYOR
+
+**HM-1 (hakem, `engine/src/surfacepattern.cpp`):** sütun profili **aynalandı**
+(`defCol[j]` → `defCol[cols - j]`). Profilin **çokluğu, toplamı ve iptali
+değişmez**; yalnız **sırası** değişir.
+
+**ÖLÇÜLDÜ:** kesim sütunları **16→15 · 11→20 · 13→18** kaydı — yani operatör
+paneli **kanıtlanabilir şekilde YANLIŞ yerden** böldü — ve
+**`split_check` EXIT 0, SIFIR `FAIL`.** Dokuz kolun **dokuzu da** geçti.
+
+**Sebep:** SP0 argmin'i **aracın kendi bastığı profilden** yeniden hesaplıyor,
+SP1 ise yalnız **TOPLAMI** motorun `developDeficitDeg`'ine bağlıyor. Toplam
+**sıraya duyarsızdır**. Yani kapı *"kesim, basılan profilin argmin'idir"*i
+doğruluyor ama *"basılan profil, panelin gerçek sütun geometrisidir, DOĞRU
+SIRADA"*yı **hiç doğrulamıyor**. `deficitColumnDeg`'i okuyan **başka hiçbir
+tüketici yok** (hakem `grep`'le doğruladı), yani **repoda bunu yakalayabilecek
+ikinci bir kapı da yok.**
+
+Bu, **K30'un tam sınıfıdır**: *kimlik kapılı, doğruluk kapısız* — ve bu kez
+kartın **kendi getirdiği yeni sayının** üstünde.
+
+**KARAR:** **hüküm bu delikten VERİLMEZ** ve sebebi ölçülü: temiz ağaçta profil
+**doğrudur** (SP1 üç panelde de `developDeficitDeg` ile birebir tutuyor, kesim
+sütunları 16/11/13 gerçek). Delik bir **yanlış sayı** değil, **eksik bir kapı**.
+Ve kapatmak bir **hakem tek satırı değildir** — kapının sıraya duyarlı, motordan
+gelen ikinci bir tutamağı yok; aracın **sütun başına sınır geometrisi** basması
+gerekir, ki o **faz işidir** (K31/K35 emsali burada uygulanamaz: onlar kapı
+tarafında tek satırdı).
+
+→ **F5-D'nin ZORUNLU İŞ 0'ı, borç 56.** Emsal: borç 43/44/47/48 aynen böyle
+devredildi ve **hepsi kapandı**.
+
+---
+
+## K44 — İKİ ÖLÇÜLEN KÖR NOKTA DAHA (hakem mutasyonu), VE AĞ **TAMAMEN** KÖR DEĞİL
+
+Üçü de ajanın **hiç yazmadığı** dosyalarda (`git numstat` **BOŞ**, hakem
+doğruladı), üçünde de **ikili kımıldadı**:
+
+| mut | dosya (dokunulmamış) | değişiklik | sonuç |
+|---|---|---|---|
+| **HM-2** | `engine/src/bodysurface.cpp` | `kAspectBust` **1.35 → 1.42** | `split_check` · `tek_nesne_check` · `flatten_check` · `surface_pattern_check` · `garment_shell_check` · `walkgate_check` · `garment_armhole_check` · `closed_garment_check` **HEPSİ YEŞİL** (tek kırmızı `sizechart_source_check` = **miras**) |
+| **HM-3** | `engine/src/seamplan.cpp` | `kCapMM` **60.0 → 90.0** (tüketicisi var: `BodySurface(...)`) | **YEDİ kapının YEDİSİ de YEŞİL** |
+| **HM-4** | `engine/src/flatten.cpp` | gevşetme adımı **× 0.55** | ⭐ **`walkgate_check` KIRMIZI** |
+
+**KARAR:** **HM-4 hükmü kurtarıyor** — kapı ağı bir tiyatro değil, gerçek bir
+gevşetmeyi **yakalıyor**. Ama **VÜCUT-GİRDİSİ sabitleri kapısız**: ilan edilmiş
+bir gövde oranı ve bir kapak ölçüsü **serbestçe kaydırılabiliyor** ve inen
+nesne sessizce değişiyor. ⚠ `kAspectBust`/`kNapeHeightFraction` gibi alanlar
+kaynakta zaten **`ASSUMPTION:`** diye işaretli — yani **künyesiz oldukları
+biliniyor**, üstelik **kapısızlar**. → **borç 57 AÇIK**, F5-D'nin şartı değil,
+**Halka 3'ün (F4) konusu** — orası zaten manken çizelgesine bakıyor (K23).
+
+---
+
+## K45 — 🚨 F5 **15 OPERATÖRDE DEĞİL, KUYRUK BOŞALINCA** KAPANIR (§3.7, hakem kartı yeniden yazdı)
+
+**Soru:** kalan 12 operatör tek tek mi koşulacak (12 alt-kart ≈ 12 oturum), yoksa
+F5 ölçülen bir eşikte mi kapanacak?
+
+**DAYANAK — ÖLÇÜLEN SAYI, hakemin kendi `expressability_check` koşusundan:**
+
+```
+   3 giysi  op.attach          1 giysi  op.derive · op.extend · op.gather · op.overlay
+```
+
+Mühürlü payda (`TABAN_PAYDA`, 5 giysi) topu topu **8 ayrı operatör** adlandırıyor;
+**3'ü motorda**, **5'i kuyrukta**. Kalan **7 operatör** — `asymmetry` ·
+`ease-region` · `flare` · `fold` · `merge` · `pleat` · `slash-spread` — paydanın
+**HİÇBİR giysisini** bloke etmiyor. Onları koşmak **ölçülebilir hiçbir sayıyı
+kımıldatmaz**: 12 alt-kartın **7'si sıfır** getirir.
+
+Ve bu bir kestirme değil, **§4A'nın kendi kapanış testi**: *"Sınırsızlık = bu
+kuyruğun boşalması."* Kapanış **operatör sayısına** değil **kuyruğa** bağlanmış.
+
+**KARAR:**
+1. **F5'in kapanış eşiği: H8-İFADE = 0/5** mühürlü payda üzerinde. Kalan
+   alt-kart sayısı **12 değil, 5** (`attach` · `extend` · `derive` · `overlay` ·
+   `gather`) — ve `attach` **tek başına 3 giysi** taşıdığı için eğri
+   **3/5 → 2/5 → 1/5 → 0/5** diye iner.
+2. **Kalan 7 operatör SİLİNMEZ, KUYRUKTA ADIYLA DURUR** (§4A, §5.5). Payda
+   büyürse (yeni giysi eklenirse) geri gelirler; **payda hakemindir** (K31).
+3. 🚨 **AMA "SINIRSIZ" KELİMESİ YASAK.** §4A açıkça yazıyor:
+   **rotate + slash-spread + merge** üçlüsü olmadan o kelime kullanılamaz.
+   `rotate` **var**, `slash-spread` ve `merge` **YOK** ve paydanın kuyruğunda da
+   yoklar. → **H8-ifade 0/5'e inse bile** hiçbir yüzeyde *"sınırsız"* /
+   *"unlimited"* / *"her kalıbı çıkarır"* **denmez**. Bilgi silinmiyor, **iddia
+   yasaklanıyor**.
+
+---
+
+## K46 — 🚨 F5-D **`op.attach` DEĞİL**: ÜÇ ALT-KARTTIR OPERATÖR GERÇEKLİĞİ KAPANIYOR, **ÜRÜN YOLU KAPANMIYOR**
+
+§3.6 F5'e **üç** sayı verdi: **H4 · H5 · H8**. Üç alt-karttan sonra, ölçülen:
+
+| sayı | F5 öncesi | F5-A | F5-B | **F5-C** |
+|---|---|---|---|---|
+| **H8-ifade** | — | 5/5 | 4/5 | **3/5** ⭐ kımıldayan **tek** sayı |
+| **H5** | 0/5 | 0/5 | 0/5 | **0/5** — payda **üç kez** büyümedi |
+| **H4** | ÖLÇEMEDİM | ÖLÇEMEDİM | ÖLÇEMEDİM | **ÖLÇEMEDİM** (dokuz fazdır) |
+
+**KÖK SEBEP TEK VE HAKEM ONU ÖLÇTÜ.** `hedef_kosu.mjs` H5'i
+`d.pattern.pieces[].edgeRoles` üzerinden sayıyor — yani **`draftJSON` hattından**.
+H4'ün `reason` katmanı **aynı hat**. Ve hakem üç operatörün **üçünü de** ürün
+hattında aradı:
+
+```
+panelsplit.hpp   -> yalnız  src/panelsplit.cpp · tools/split-op.cpp
+dartsuppress.hpp -> yalnız  src/*.cpp · tools/suppress-op.cpp · tools/rotate-op.cpp
+dartrotate.hpp   -> yalnız  src/dartrotate.cpp · tools/rotate-op.cpp
+```
+
+**`garment.cpp` · `wasm/bindings.cpp` · `web/js/*` → ÜÇÜNDE DE SIFIR SATIR.**
+Üç operatör **gerçek**, üçü de **kapılı**, ve **hiçbirine kullanıcı
+dokunamıyor.** Borç 45 (F5-B) ve borç 49 (F5-C) **aynı cepheyi** iki kez yazdı;
+bu üçüncüsü.
+
+**KARAR — F5-D operatör kartı DEĞİL, BAĞLAMA kartıdır:**
+1. **`op.attach` F5-E'ye kaydı.** Gerekçe bir tercih değil bir sayı: dördüncü
+   üst üste **yalnız H8**'i kımıldatan kart, F5'in üç sayısından **ikisini
+   dördüncü kez** yerinde bırakırdı.
+2. **F5-D'nin hanesi H5 ve H4'tür**, ve ikisi de **aynı** işle açılır: operatör
+   çıktısının `SeamPlan`'a ve `draftJSON`'a **geri yazılması**. Bu tek iş
+   **borç 45 + 49 + 51'i birlikte** kapatır.
+3. **Ve koşunun sabit hedefi budur** — *"fotoğraf + prompt → kalıp + flat"* —
+   `CLAUDE.md`'nin tek testiyle aynı: **kullanıcının dokunamadığı bir operatör,
+   satın alınabilir bir nesneyle bitmiyor.**
+4. ⚠ **Kabul edilen bedel, gizlenmiyor:** bu karar H8-ifade eğrisini **bir kart
+   geciktirir** (3/5 bir alt-kart daha 3/5 kalır). **Ölçülerek kabul edildi.**
