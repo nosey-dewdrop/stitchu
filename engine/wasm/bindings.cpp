@@ -9,6 +9,7 @@
 #include "../src/dxf.hpp"
 #include "../src/garment.hpp"
 #include "../src/recipe.hpp"
+#include "../src/seamplan.hpp"
 #include "../src/sizechart.hpp"
 #include "../src/guiderefs.hpp"
 #include "../src/specparse.hpp"
@@ -522,6 +523,45 @@ std::string dxfSpecJSON(val specObj, val bodyObj) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// ⭐ THE SEAM PLAN AT THE BOUNDARY (GECE7 / F3)
+//
+// Two readings of ONE object. The bodies of these functions are NOT copied out
+// of tools/shell-flat.cpp or tools/surface-pattern.cpp — that would be the
+// fourth time this run produced "two rights in two places", after the L0 double
+// source, H3's declaration channel sitting apart from its measurement line, and
+// KAYNAK.md being generated from credits.json. Everything below delegates to
+// src/seamplan.cpp, which is the same translation unit the native seam-plan
+// tool and the tek_nesne_check gate call. If the browser and the gate ever
+// disagree, one of them is not calling the engine.
+//
+// `size` is an EU label. An unknown one throws out of buildSeamPlan and comes
+// back as {"error": ...} — never a silent EU38 (RULES 1).
+//
+// neckDropMM: the drop-the-neck-edge dial, in millimetres, the same mapping
+// tools/seam-plan.cpp documents (surfacepattern.cpp:1321 adds the coefficient,
+// so deeper is a LARGER coefficient; 1cm of coefficient is 10mm of drop at
+// every size, exact, no fitted constant).
+std::string planJSONBinding(std::string size, double neckDropMM) {
+    try {
+        SheathOptions opt;
+        opt.frontNeckDropCoefCM += neckDropMM / 10.0;
+        return planJSON(buildSeamPlan(size, opt));
+    } catch (const std::exception& e) {
+        return std::string(R"({"error":")") + escape(e.what()) + "\"}";
+    }
+}
+
+std::string flatJSONBinding(std::string size, double neckDropMM) {
+    try {
+        SheathOptions opt;
+        opt.frontNeckDropCoefCM += neckDropMM / 10.0;
+        return flatJSON(buildSeamPlan(size, opt));
+    } catch (const std::exception& e) {
+        return std::string(R"({"error":")") + escape(e.what()) + "\"}";
+    }
+}
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
@@ -530,4 +570,6 @@ EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("draftRecipeJSON", &draftRecipeJSON);
     emscripten::function("dxfRecipeJSON", &dxfRecipeJSON);
     emscripten::function("dxfSpecJSON", &dxfSpecJSON);
+    emscripten::function("planJSON", &planJSONBinding);
+    emscripten::function("flatJSON", &flatJSONBinding);
 }

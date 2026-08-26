@@ -1,0 +1,104 @@
+====================================================================================================
+GECE7 / F3 — İŞ 0 MUTASYON KANITI: cevap anahtarı mührü
+Kapı: engine/tests/py/test_cevap_anahtari_muhru.py
+Mühür: contract/hedef-kosu-taban.json -> _cevap_anahtari_MUHRU (hakem yazdı, ajan okur)
+====================================================================================================
+
+[0] MUTASYONSUZ TABAN — kapı yeşil olmalı
+    pytest (mühür kapısı)    EXIT 0   | 10 passed in 0.03s
+    hedef_kosu               EXIT 0   | (Use `node --trace-warnings ...` to show where the warning was created)
+
+[M1] KAÇIŞ 1 — `deger` -> `goremedim` (hakemin HM8'inin AYNISI)
+     01-a-line-cocktail-dress-mannequin.jpg: `shaping` yargısı `deger`den silindi, `goremedim`e eklendi.
+     BEKLENEN: H2 %95.2 (40/42) -> %97.6 (40/41) BEDAVA yükselir, kapı KIRMIZI yanar.
+    pytest (mühür kapısı)    EXIT 1   | 3 failed, 7 passed in 0.04s
+    hedef_kosu               EXIT 0   | (Use `node --trace-warnings ...` to show where the warning was created)
+     SONUÇ: kapı EXIT 1  ->  KIRMIZI (tuttu)
+
+[M2] KAÇIŞ 2 — `deger` -> `null` (payda küçültmenin sessiz hâli)
+     01-a-line-cocktail-dress-mannequin.jpg: `neckline` yargısı `null` yapıldı. Hücre sayısı SABİT kalır,
+     enum 143 -> 142 ve null 33 -> 34 kayar. Sayım ayrıştırılmasa görülemezdi.
+    pytest (mühür kapısı)    EXIT 1   | 2 failed, 8 passed in 0.03s
+     SONUÇ: kapı EXIT 1  ->  KIRMIZI (tuttu)
+
+[M3] KAÇIŞ 3 — BİR YARGININ DEĞERİ DEĞİŞTİ (hat neyse ona uydurma)
+     01-a-line-cocktail-dress-mannequin.jpg: `shaping` 'dart' -> 'princess' — yani hattın BUGÜNKÜ hatası
+     cevap yapıldı. ÜÇ SAYIM DA KIMILDAMAZ; yalnız bayt kımıldar.
+    pytest (mühür kapısı)    EXIT 1   | 1 failed, 9 passed in 0.03s
+    hedef_kosu               EXIT 0   | (Use `node --trace-warnings ...` to show where the warning was created)
+     SONUÇ: kapı EXIT 1  ->  KIRMIZI (tuttu)
+
+[M4] YAN YÜZEY — `gorunurluk` hücresi çevrildi (§0B tavanının altından geçme)
+     01-a-line-cocktail-dress-mannequin.jpg: `shaping` görünürlüğü true -> false. H10b'nin payı düşer,
+     yani 'görünen ama alınamayan' sessizce 'görünemez'e taşınır.
+    pytest (mühür kapısı)    EXIT 1   | 2 failed, 8 passed in 0.03s
+     SONUÇ: kapı EXIT 1  ->  KIRMIZI (tuttu)
+
+[M5] MÜHRÜN KENDİSİ — bir satırı KOMPLE silmek
+     01-a-line-cocktail-dress-mannequin.jpg satırı anahtardan çıkarıldı (19 -> 18 fotoğraf).
+    pytest (mühür kapısı)    EXIT 1   | 4 failed, 6 passed in 0.04s
+     SONUÇ: kapı EXIT 1  ->  KIRMIZI (tuttu)
+
+[SON] GERİ ALINDI MI — ağaç mutasyon öncesiyle bayt bayt aynı olmalı
+     git diff --stat vision/eval/labels-hakem.json  ->  BOŞ (temiz)
+    pytest (mühür kapısı)    EXIT 0   | 10 passed in 0.02s
+    hedef_kosu               EXIT 0   | (Use `node --trace-warnings ...` to show where the warning was created)
+
+====================================================================================================
+HÜKÜM: 5 mutasyonun 5'i KIRMIZI yaktı (EXIT 1/1/1/1/1), geri alındı, taban YEŞİL (EXIT 0).
+Kapı kırmızı olabiliyor => kapıdır (§3.8 md.3).
+====================================================================================================
+
+
+====================================================================================================
+GECE7 / F3 — TEK NESNE KAPISI MUTASYON KANITI
+Kapı : engine/tests/tek_nesne_check.mjs
+Konu : engine/src/seamplan.cpp — flat ile kalıbın ortak atası
+====================================================================================================
+
+[0] MUTASYONSUZ TABAN
+     kapı EXIT 0  ->  YEŞİL
+
+[MF1] DÜĞÜM BAĞI KOPARILDI — iki okuma ayrı kimlik basıyor
+     flatJSON'un düğümüne fazladan bir belirteç karıştırıldı. Geometri AYNI
+     kalır; değişen tek şey iki okumanın artık aynı nesneden geldiğini
+     SÖYLEYEMEMESİ. K1 tam olarak bunu sorar.
+     kapı EXIT 1  ->  KIRMIZI (tuttu)
+     ilk ihlal: FAIL  K1 taban: AYRI DÜĞÜM — kalıp 3f3869aaee8b56b1 · flat 3f3869aaee8b56b1X. İki okuma iki ayrı nesneden çıkıyor; ortak ata YOK.
+
+[MF2] DÜĞÜM SABİTLENDİ — kimlik bir süse çevrildi
+     nodeId() artık her spec için aynı dizeyi döndürüyor. K1 BEDAVAYA geçer
+     (iki okuma da aynı sabiti basar); onu yakalayan tek şey K2'dir.
+     kapı EXIT 1  ->  KIRMIZI (tuttu)
+     ilk ihlal: FAIL  K2 düğüm SABİT (deadbeefdeadbeef) — spec değişti, düğüm değişmedi. Sabit bir dize K1'i bedavaya geçirir; düğüm bir kimlik değil süs olur.
+
+[MF3] FLAT'İN İÇ EĞRİSİ KÖRLEŞTİRİLDİ — üst sınır düz bir çizgiye çevrildi
+     Flat'in üst sınırı artık kalıbın ÇÖZÜLMÜŞ yüksekliğini (topColZMM)
+     okumuyor, sabit bir yüksekliğe düşürülüyor. Bu, F3 ÖNCESİNİN tam
+     hâlidir: kalıp yaka değişikliğinde oynar, flat oynamaz.
+     Beklenen: K3 'AYRIŞMA' + K4 sapma.
+     kapı EXIT 1  ->  KIRMIZI (tuttu)
+     ilk ihlal: FAIL  K3 on   flat Δ=0.0000mm · kalıp Δ=8.7794mm — AYRIŞMA: kalıp oynadı, FLAT DURDU. Bir tarafta görünüp diğerinde görünmeyen değişiklik, iki nesne d
+
+[MF4] ARKA, ÖNÜN AYNASI SAYILDI — inandırıcı bir kopyala-yapıştır
+     Üst sınırın iki yarısı da ÖN yarıdan yazılıyor. Ön yaka değişikliği
+     böylece arkayı da oynatır; kalıpta ise arka gövde paneli KIMILDAMAZ.
+     Yani bu kez ayrışma ters yönden gelir — flat oynar, kalıp durur.
+     kapı EXIT 1  ->  KIRMIZI (tuttu)
+     ilk ihlal: FAIL  K3 arka flat Δ=51.1587mm · kalıp Δ=0.0000mm — AYRIŞMA: flat oynadı, KALIP DURDU. Bir tarafta görünüp diğerinde görünmeyen değişiklik, iki nesne 
+
+[MF5] §2 İLANI SİLİNDİ — flat hangi bedene değerlendiğini söylemiyor
+     Manken çizelgesinin YAYIN BULUNAMADI olduğunu söyleyen satır çıkarıldı.
+     Geometri aynı; kaybolan tek şey DÜRÜSTLÜK. Uydurulmuş bir manken kadar
+     kötü olan şey, ilan edilmemiş bir mankendir.
+     kapı EXIT 1  ->  KIRMIZI (tuttu)
+     ilk ihlal: FAIL  §2 dönüşümü ilan edilmemiş — flat hangi bedene değerlendiğini söylemiyor. Uydurulmuş bir manken, ilan edilmemiş bir manken kadar kötüdür.
+
+[SON] GERİ ALINDI MI — ağaç mutasyon öncesiyle bayt bayt aynı olmalı
+     engine/src/seamplan.cpp bayt bayt mutasyon oncesi mi?  ->  EVET (temiz)
+     kapı EXIT 0  ->  YEŞİL
+
+====================================================================================================
+HÜKÜM: 5/5 mutasyon KIRMIZI yaktı — MF1, MF2, MF3, MF4, MF5
+        geri alındı, taban YEŞİL (EXIT 0).
+====================================================================================================

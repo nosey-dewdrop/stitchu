@@ -1426,6 +1426,7 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         const std::vector<double>& tH = layers[0].topH;
         double prevX[2] = {-1.0, -1.0}, prevZ[2] = {0.0, 0.0};
         pat.topColXMM.assign(NR + 1, 0.0);
+        pat.topColZMM.assign(NR + 1, 0.0);
         for (int j = 0; j <= NR; ++j) {
             const double phi = 2 * kPi * j / NR;
             const Vec3 p = surf.at(tH[j], phi);
@@ -1434,6 +1435,12 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
             // the same evaluation the carry number is read off — published, not
             // recomputed, so a consumer cannot drift from it
             pat.topColXMM[j] = p.x;
+            // ...and its HEIGHT, from the same solved point, for the same
+            // reason (GECE7/F3). x alone is half a curve; the flat needs both
+            // coordinates to draw the neckline, and taking the second one from
+            // anywhere else would be the second parallel model this file's own
+            // comments spend a page warning about.
+            pat.topColZMM[j] = p.z;
             bestX[half2] = std::max(bestX[half2], x);
             // bracket: consecutive columns of the same half straddling xTarget
             if (prevX[half2] >= 0.0 &&
@@ -2234,6 +2241,11 @@ SurfacePattern buildSheathPattern(const BodySurface& body, const SheathOptions& 
         }
         pat.backOpeningMM = run;
     }
+    // THE SHELL TRAVELS WITH THE PATTERN (GECE7/F3). Not a copy of "a shell
+    // like this one" — the very object the panels above were cut from, so the
+    // flat line projects the pattern's own surface instead of rebuilding one
+    // that merely agrees today. See SurfacePattern::surf.
+    pat.surf = surf;
     return pat;
 }
 

@@ -64,12 +64,75 @@ open(dst, "wb").write(data + b"\x00" + leb(len(payload)) + payload)
 PY
 }
 
+# ---- ENGINE SOURCES: ONE LIST, USED TWICE (GECE7 / F3) ----------------------
+# This file compiles the engine TWICE — once for the browser bundle and once for
+# the Cloudflare Worker — and until now it carried the source list twice, as two
+# literal copies of the same 35 filenames. The F3 card calls that what it is: a
+# TRAP, and a measured one. Miss one copy and the site and the worker ship
+# DIFFERENT ENGINES, which is the same "two rights" defect the single-waist-ring
+# law exists to kill, only in the build system.
+#
+# It is not defended with a gate, because a list that cannot differ needs no gate.
+ENGINE_SRCS=(
+  src/geometry.cpp
+  src/volume.cpp
+  src/curvefit.cpp
+  src/surfacepattern.cpp
+  src/bodysurface.cpp
+  src/garmentshell.cpp
+  src/flatten.cpp
+  src/shellprojection.cpp
+  src/drape.cpp
+  src/seamplan.cpp
+  src/bodice.cpp
+  src/skirt.cpp
+  src/ruffle.cpp
+  src/keyhole.cpp
+  src/placket.cpp
+  src/tie.cpp
+  src/collar.cpp
+  src/gather.cpp
+  src/openback.cpp
+  src/laceupback.cpp
+  src/wrapfront.cpp
+  src/slit.cpp
+  src/strap.cpp
+  src/peplum.cpp
+  src/hemflounce.cpp
+  src/cupseam.cpp
+  src/locket.cpp
+  src/yoke.cpp
+  src/boxpleat.cpp
+  src/pocket.cpp
+  src/neckext.cpp
+  src/cuff.cpp
+  src/hem.cpp
+  src/shoulder.cpp
+  src/buttonrow.cpp
+  src/exposedzip.cpp
+  src/backdetail.cpp
+  src/offshoulder.cpp
+  src/sleeve.cpp
+  src/garment.cpp
+  src/wearability.cpp
+  src/validator.cpp
+  src/recipe.cpp
+  src/dxf.cpp
+)
+
+# ⭐ F3 İŞ 1 — THE SURFACE LINE IS IN THE BUNDLE.
+# surfacepattern · bodysurface · garmentshell · flatten · shellprojection ·
+# drape were all ON DISK and in NEITHER list, so the browser ran an engine that
+# could not build a garment shell at all — planJSON/flatJSON had nothing to call.
+# volume + curvefit come with them (garmentshell.hpp -> volume.hpp,
+# shellprojection.hpp -> curvefit.hpp); seamplan is the shared reading layer.
+
 # -fexceptions + DISABLE_EXCEPTION_CATCHING=0: the boundary throws
 # std::invalid_argument on an unknown spec value and catches it INSIDE
 # draftJSON/gradeJSON (returns {"error": ...}); without these flags a C++ throw
 # aborts the whole module instead of reaching that catch.
 em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/laceupback.cpp src/wrapfront.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/hemflounce.cpp src/cupseam.cpp src/locket.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp src/recipe.cpp src/dxf.cpp \
+  "${ENGINE_SRCS[@]}" \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine -sSINGLE_FILE=1 \
@@ -108,7 +171,7 @@ echo "copied to web/vendor/ (stamped $STAMP)"
 # The wasm still arrives pre-compiled via instantiateWasm, so nothing is fetched
 # or compiled at runtime either. Verified end-to-end in wrangler dev + live.
 em++ -O2 -std=c++17 -fexceptions -sDISABLE_EXCEPTION_CATCHING=0 \
-  src/geometry.cpp src/bodice.cpp src/skirt.cpp src/ruffle.cpp src/keyhole.cpp src/placket.cpp src/tie.cpp src/collar.cpp src/gather.cpp src/openback.cpp src/laceupback.cpp src/wrapfront.cpp src/slit.cpp src/strap.cpp src/peplum.cpp src/hemflounce.cpp src/cupseam.cpp src/locket.cpp src/yoke.cpp src/boxpleat.cpp src/pocket.cpp src/neckext.cpp src/cuff.cpp src/hem.cpp src/shoulder.cpp src/buttonrow.cpp src/exposedzip.cpp src/backdetail.cpp src/offshoulder.cpp src/sleeve.cpp src/garment.cpp src/wearability.cpp src/validator.cpp src/recipe.cpp src/dxf.cpp \
+  "${ENGINE_SRCS[@]}" \
   wasm/bindings.cpp \
   -lembind \
   -sMODULARIZE=1 -sEXPORT_NAME=createStitchuEngine \

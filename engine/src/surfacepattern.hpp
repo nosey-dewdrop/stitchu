@@ -279,6 +279,47 @@ struct SurfacePattern {
     // Signed, not |x|: the sign is the only thing that separates the two sides
     // of the garment, and a consumer that wants the magnitude can take it.
     std::vector<double> topColXMM;
+
+    // ---- THE TOP BOUNDARY'S HEIGHT, PUBLISHED (GECE7 / F3) ----
+    //
+    // topColXMM published HALF of a curve. A boundary column has two
+    // coordinates and only x was handed out, so a consumer holding the array
+    // knew how far across each column sat and not how high — which is to say it
+    // could not draw the neckline at all. That is not an omission in the
+    // abstract: it is the measured reason the FLAT could not follow the
+    // pattern. Deepening the front neckline by 20mm moves the front torso
+    // panel's perimeter 1069.4947 -> 1075.6429mm and its top edge
+    // 573.488 -> 561.513mm (EU38, measured), while the flat's silhouette
+    // does not move by a single micron — because the silhouette is the shell's
+    // extreme x and the neckline is INTERIOR to it (shellprojection.hpp says so
+    // in its own words: "what differs between a front and a back technical
+    // drawing is the interior (neckline depth, seams, closures), which this
+    // file does not draw").
+    //
+    // So the interior curve is published from the ONE place that already solves
+    // it — the same fixed-point solve, the same loop, the same columns as
+    // topColXMM — instead of being re-derived on the flat side from the ZONE
+    // MODEL (TopProfile::zAt). Re-deriving it is not a shortcut, it is the
+    // known bug: the zone model and the surface disagree by -9.4 to -9.7mm at
+    // the shoulder point in all eight sizes (docs/H1.0-KAPI.md § 4.1), and a
+    // second parallel model of one boundary is the exact class of error the
+    // single-waist-ring law was written to kill.
+    //
+    // Same length and same indexing as topColXMM (NR+1, phi ascending, column
+    // NR repeating column 0). Together the two arrays ARE the top boundary
+    // orthographically projected: (x, z) per column, which is what a flat draws.
+    std::vector<double> topColZMM;
+
+    // ---- THE SHELL THIS PATTERN WAS CUT FROM, CARRIED WITH IT ----
+    //
+    // buildGarmentSurf is deterministic, so a second caller could rebuild "the
+    // same" shell from the same body and options and be right — today. That is
+    // precisely the shape of claim F3 exists to stop making: `flat == kalıp`
+    // held by CONVENTION between two call sites rather than by construction.
+    // Carrying the shell here makes the flat's projection read the very object
+    // the panels were cut from; the two cannot drift because there is nothing
+    // to drift from. The cost is one copy of five rings and a handful of dials.
+    GarmentSurf surf;
 };
 
 struct SheathOptions {

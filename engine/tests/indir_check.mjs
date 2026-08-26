@@ -246,8 +246,14 @@ check('a spec with nothing to draw is refused, not blank',
   'an empty file that opens is worse than an error');
 
 // The saver itself, through the same DOM stub the DXF refusal branch uses.
+// AWAITED since GECE7/F3: saveFlatSVG became async because a class on the
+// seam-plan line has to wait for the wasm engine to answer. Nothing about what
+// this line JUDGES changed — it still asks whether a file reaches the user's
+// disk — but an un-awaited promise would have made it read `0 file(s) saved`
+// forever, which is how a green gate stops meaning anything. It caught the
+// signature change on the first run and that is the gate working.
 const beforeFlat = saved.length;
-saveFlatSVG(SPEC, 'dress-flat.svg');
+await saveFlatSVG(SPEC, 'dress-flat.svg');
 check('the flat actually saves a file', saved.includes('dress-flat.svg'),
   `${saved.length - beforeFlat} file(s) saved`);
 

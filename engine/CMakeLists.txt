@@ -13,6 +13,7 @@ add_library(engine
     src/surfacepattern.cpp
     src/curvefit.cpp
     src/shellprojection.cpp
+    src/seamplan.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -129,6 +130,16 @@ add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_D
 # diskte yoksa kapı SKIP değil KIRMIZI düşer; `null` gelen ölçü atlanmaz,
 # UNMEASURED olarak sayılır ve kapıyı düşürür.
 add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs)
+
+# tek_nesne_check (GECE7 / F3, 2026-08-26): flat ile kalıp AYNI DİKİŞ PLANINDAN
+# mı çıkıyor. ⚠ Bu kapı flat_pattern_agree_check'in EŞİTLİK sorusunu SORMAZ ve
+# sormamalı — KOSU-v7 §2: flat 36 ile kalıp 36 farklı bedenlerdir, eşitlik
+# kuran kapı yanlıştır. Burada ölçülen tek kaynak + tek ilan edilmiş dönüşüm:
+# yakayı 20mm derinleştiren TEK spec değişikliği iki okumayı da, aynı düğümden,
+# aynı bölgede oynatıyor mu (ön oynar, arka durur, iki tarafta da).
+add_test(NAME tek_nesne_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/tek_nesne_check.mjs
+                 $<TARGET_FILE:seam-plan>)
 
 # sewability_check (V5-A) ve draft_math_check (V5-D), ctest'e V5-E'de BAĞLANDI.
 # İkisi de RATCHET'li: eşikler (Aldrich/Threads bantları, çentik kesim-çizgisi
@@ -771,6 +782,11 @@ target_link_libraries(surface-pattern PRIVATE engine)
 # SAME GarmentSurf the pattern is cut from, instead of drawn from a 2D croquis.
 add_executable(shell-flat tools/shell-flat.cpp)
 target_link_libraries(shell-flat PRIVATE engine)
+
+# seam-plan: the ONE seam plan printed in its two readings (kalıp / flat), so
+# the F3 gate interrogates the shipped engine instead of a re-implementation.
+add_executable(seam-plan tools/seam-plan.cpp)
+target_link_libraries(seam-plan PRIVATE engine)
 
 # waistfold-probe: DIAGNOSTIC, not a gate and not in ctest. Re-runs the sheath
 # with solver knobs that carry no geometric meaning and prints the waist fold,
