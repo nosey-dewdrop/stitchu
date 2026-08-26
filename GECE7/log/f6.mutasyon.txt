@@ -1,0 +1,91 @@
+F6 MUTASYON LOGU — 2026-08-27 02:53
+HEAD: 92013a0   etiket: F6-oncesi
+TEMIZ AGAC: fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL) · fabric_ease_check EXIT 0 (YESIL)
+
+================================================================
+M1 — engine/src/bodice.hpp
+  bel ease'i kumastan KOPARILIYOR (hep dokuma degeri). Beklenen: jersey'in beli poplin'inkiyle esitlenir -> fabric_catalog_check KIRMIZI.
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> 26e8b27478f6b91eb2be798a  (KIMILDADI)
+  fabric_catalog_check      : EXIT 1 (KIRMIZI)
+  guide_completeness_check  : EXIT 0 (YESIL)
+  fabric_ease_check         : EXIT 1 (KIRMIZI)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+M2 — contract/guide-sources.json
+  kayitli kaynagin izin verdigi sayilar SILINIYOR. Beklenen: rehberin bastigi ISO numaralari dayanaksiz kalir -> guide_completeness_check KIRMIZI.
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> a986a4747ce5fb19437104e9  ⚠ KIMILDAMADI (kaynak JSON/JS olabilir; kapi yine de kosuluyor)
+  fabric_catalog_check      : EXIT 0 (YESIL)
+  guide_completeness_check  : EXIT 1 (KIRMIZI)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+M3 — engine/src/garment.cpp
+  motor rehberi HIC KURMUYOR. Beklenen: zorunlu bolumler eksik -> guide_completeness_check KIRMIZI.
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> bf08332f9a7ec85d54af16ab  (KIMILDADI)
+  fabric_catalog_check      : EXIT 1 (KIRMIZI)
+  guide_completeness_check  : EXIT 1 (KIRMIZI)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+M4 — engine/src/fabricease.hpp
+  TOPARLANMA SARTI kaldiriliyor: D3107 asgarisini tutmayan kumas yine negatif pay aliyor. Beklenen: fabric_catalog_check KIRMIZI (LEG 5).
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> 4e26b7c040a0bf9d8a03b99b  (KIMILDADI)
+  fabric_catalog_check      : EXIT 1 (KIRMIZI)
+  guide_completeness_check  : EXIT 0 (YESIL)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+M5 — web/js/fabric-catalog.js
+  tarayici kopyasindaki bir sayi kontrattan KAYIYOR. Beklenen: fabric_catalog_check KIRMIZI (LEG 8).
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> a986a4747ce5fb19437104e9  ⚠ KIMILDAMADI (kaynak JSON/JS olabilir; kapi yine de kosuluyor)
+  fabric_catalog_check      : EXIT 1 (KIRMIZI)
+  guide_completeness_check  : EXIT 0 (YESIL)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+M6 — contract/fabric-catalog-v1.json
+  kontrattaki yayinlanmis esik motorunkinden AYRISIYOR. Beklenen: fabric_catalog_check KIRMIZI (LEG 2).
+  numstat (F6-oncesi..HEAD): []
+  ikili: a986a4747ce5fb19437104e9 -> a986a4747ce5fb19437104e9  ⚠ KIMILDAMADI (kaynak JSON/JS olabilir; kapi yine de kosuluyor)
+  fabric_catalog_check      : EXIT 1 (KIRMIZI)
+  guide_completeness_check  : EXIT 0 (YESIL)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL)
+
+================================================================
+KAPANIS — temiz agac geri:
+  fabric_catalog_check      : EXIT 0 (YESIL)
+  guide_completeness_check  : EXIT 0 (YESIL)
+  fabric_ease_check         : EXIT 0 (YESIL)
+  git status --porcelain:
+     M backend/engine/stitchu-worker.js
+     M backend/engine/stitchu-worker.wasm
+     M engine/CMakeLists.txt
+     M engine/src/fabricease.hpp
+     M engine/src/measurements.hpp
+     M engine/src/rehber.hpp
+     M engine/tests/guide_completeness_check.cpp
+     M engine/wasm/bindings.cpp
+     M web/js/create.js
+     M web/js/engine.js
+     M web/js/i18n.js
+     M web/js/render.js
+     M web/vendor/stitchu-engine.js
+    ?? GECE7/log/f6.mutasyon.sh
+    ?? GECE7/log/f6.mutasyon.txt
+    ?? contract/fabric-catalog-v1.json
+    ?? engine/tests/fabric_catalog_check.cpp
+    ?? patterns_real/BUGRA-DEFTER.md
+    ?? patterns_real/geometry/
+    ?? patterns_real/tools/bugra-geometry-2026-07-23.json
+    ?? web/js/fabric-catalog.js

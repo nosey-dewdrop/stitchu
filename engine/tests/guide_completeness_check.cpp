@@ -215,6 +215,21 @@ int main() {
         else checked++;
     }
 
+    // LEG 1b (F6) — THE OTHER HALF OF THE SAME LAW. Until F6 the engine emitted
+    // the rehber on the JSON surface and NO PAGE EVER PRINTED IT, which by this
+    // gate's own law meant it did not exist. Emitting is not printing; the result
+    // screen has to render both the text AND the basis, because a sentence whose
+    // reason is hidden reads exactly like a sentence that has none.
+    {
+        const std::string render = slurp(root + "/web/js/render.js");
+        if (render.empty()) fail("web/js/render.js not readable at " + root);
+        else if (render.find("p.rehber") == std::string::npos ||
+                 render.find("a.basis") == std::string::npos)
+            fail("web/js/render.js no longer prints the rehber with its basis — the advice "
+                 "would exist in JSON and nowhere a buyer can read it");
+        else checked++;
+    }
+
     const std::vector<double> bands = {0.0, 12.5, 38.0, 63.0, 88.0};
     for (const auto& size : euSizeChart()) {
         if (size.label != "EU34" && size.label != "EU38" && size.label != "EU48") continue;
@@ -248,6 +263,41 @@ int main() {
         GarmentSpec spec;
         spec.fabric = fab;
         auditDraft(spec, euSizeChart()[2].body, std::string("undeclared/") + raw(fab), registry);
+    }
+
+    // F6 — THE OTHER THREE NUMBERS. The sweep above only ever declares stretch,
+    // so the recovery / drape / bolt-width sentences would never be audited. These
+    // axes exercise all of their branches: recovery that PASSES the published
+    // minimum, recovery that FAILS it, growth over the maximum, drape declared,
+    // and a bolt narrower and wider than the 140 cm reference. They are fixtures,
+    // not a claim about any real fabric — the fabric numbers live in
+    // contract/fabric-catalog-v1.json and are audited by fabric_catalog_check.
+    {
+        struct Case { const char* label; Fabric cls; double stretch, r15, r30, growth, gsm, bl, width; };
+        const Case cases[] = {
+            {"f6/recovery-passes", Fabric::Knit,  50.0, 78.0, 88.0,  2.5, 150.0, 11.0, 165.0},
+            {"f6/recovery-fails",  Fabric::Knit,  50.0, 70.0, 80.0,  2.5, 150.0, 11.0, 165.0},
+            {"f6/growth-over",     Fabric::Knit,  50.0, 90.0, 95.0,  9.0, 150.0, 11.0, 165.0},
+            {"f6/stiff-woven",     Fabric::Woven,  0.0,   -1,   -1,   -1, 120.0, 22.0, 112.0},
+            {"f6/drapey-woven",    Fabric::Woven,  0.0,   -1,   -1,   -1, 110.0, 13.0, 140.0},
+            {"f6/no-drape-narrow", Fabric::Woven,  0.0,   -1,   -1,   -1,    -1,   -1,  90.0},
+        };
+        for (const auto& c : cases) {
+            FabricAxis f(c.cls, c.stretch);
+            f.recovery15sPct = c.r15;
+            f.recovery30minPct = c.r30;
+            f.growthPct = c.growth;
+            f.weightGSM = c.gsm;
+            f.bendingLengthMM = c.bl;
+            f.widthCM = c.width;
+            for (const auto garment : {GarmentType::Dress, GarmentType::Top, GarmentType::Skirt}) {
+                GarmentSpec spec;
+                spec.garment = garment;
+                spec.fabric = f;
+                auditDraft(spec, euSizeChart()[2].body,
+                           std::string(c.label) + "/" + raw(garment), registry);
+            }
+        }
     }
 
     std::printf("guide_completeness_check: %d checks, %d failures\n", checked, failures);

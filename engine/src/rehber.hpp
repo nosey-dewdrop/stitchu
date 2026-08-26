@@ -103,6 +103,61 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                 ";lowPct=" + num(w.lowPct, 1) + ";highPct=" + num(w.highPct, 1));
     }
 
+    // 2b — RECOVERY (F6). The second axis, and the one that decides whether the
+    // negative branch is allowed at all. Printed only when the spec DECLARED it,
+    // because an advice about a number nobody measured is filler.
+    if (fabric.recoveryDeclared()) {
+        const bool ok = FabricBand::recoveryQualifies(fabric);
+        std::string decl;
+        std::string basis = "computed:";
+        if (fabric.recovery15sPct >= 0.0) {
+            decl += num(fabric.recovery15sPct, 1) + "% after 15 seconds";
+            basis += "recovery15sPct=" + num(fabric.recovery15sPct, 1) + ";";
+        }
+        if (fabric.recovery30minPct >= 0.0) {
+            if (!decl.empty()) decl += " and ";
+            decl += num(fabric.recovery30minPct, 1) + "% after 30 minutes";
+            basis += "recovery30minPct=" + num(fabric.recovery30minPct, 1) + ";";
+        }
+        if (fabric.growthPct >= 0.0) {
+            if (!decl.empty()) decl += ", with ";
+            decl += num(fabric.growthPct, 1) + "% growth";
+            basis += "growthPct=" + num(fabric.growthPct, 1) + ";";
+        }
+        basis += "growthMaxPct=" + num(FabricBand::kGrowthMaxPct, 1) +
+                 ";recovery15sMinPct=" + num(FabricBand::kRecovery15sMinPct, 1) +
+                 ";recovery30minMinPct=" + num(FabricBand::kRecovery30minMinPct, 1) + ";astm=3107";
+        add("fabric.recovery",
+            std::string("Recovery: this fabric was declared at ") + decl +
+                ". The published minimums are " + num(FabricBand::kRecovery15sMinPct, 1) +
+                "% at 15 seconds, " + num(FabricBand::kRecovery30minMinPct, 1) +
+                "% at 30 minutes and at most " + num(FabricBand::kGrowthMaxPct, 1) +
+                "% growth (ASTM D3107). This one " +
+                (ok ? "meets them, which is why the pattern is allowed to be cut smaller than the body."
+                    : "does NOT meet them, so the pattern was NOT cut smaller than the body even though "
+                      "the fabric stretches — a fabric that does not spring back would be permanently tight.") +
+                " Stretch and recovery are two different measurements; do not read one off the other.",
+            basis);
+    }
+
+    // 2c — DRAPE (F6). FAST-2 rigidity, computed from the buyer's own two
+    // measurements. ⚠ It is PRINTED and it does NOT move the draft: a publication
+    // mapping rigidity to a gather ratio was searched for and NOT FOUND
+    // (contract/fabric-catalog-v1.json `drape_rule`). Saying so out loud is the
+    // point — a silently invented multiplier is exactly what §3.10 forbids.
+    if (fabric.drapeDeclared()) {
+        const double br = fabric.bendingRigidityUNm();
+        add("fabric.drape",
+            "Drape: " + num(fabric.weightGSM, 1) + " g/m2 weighed against a bending length of " +
+                num(fabric.bendingLengthMM, 1) + " mm gives a bending rigidity of " + num(br, 3) +
+                " uNm (FAST-2). That is how stiff the cloth is, and it is what decides whether a "
+                "gather stands out or falls in soft folds. This number is reported, not designed "
+                "into these pieces: the gather ratio here is the pattern's own, because no published "
+                "table maps rigidity to a gather ratio. Sew a test gather before you cut the real one.",
+            "computed:weightGSM=" + num(fabric.weightGSM, 1) + ";bendingLengthMM=" +
+                num(fabric.bendingLengthMM, 1) + ";bendingRigidityUNm=" + num(br, 3) + ";fast=2");
+    }
+
     // 3 — NEEDLE. UNL "Sewing With Knits" (knowledge/stitchu.db fabrics row 5).
     if (knit) {
         add("sew.needle",
@@ -175,12 +230,18 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
             "computed:facingPieces=" + num(facingPieces));
     }
 
-    // 8 — CUT PLAN + YARDAGE, straight off the draft's own estimate.
+    // 8 — CUT PLAN + YARDAGE, straight off the draft's own estimate. F6: the
+    // yardage now follows the DECLARED bolt width — a narrower bolt needs more
+    // length for the same pieces, which is arithmetic, not a table.
+    const double widthCM = fabric.widthDeclared() ? fabric.widthCM : FabricBand::kRefWidthCM;
+    const double meters = FabricBand::metersAtWidth(pattern.fabricMeters140, fabric);
     add("cut.yardage",
-        "Fabric: " + num(pattern.fabricMeters140, 1) +
-            " m at 140 cm wide, folded lengthwise. Buy a little over if your fabric has "
+        "Fabric: " + num(meters, 1) + " m at " + num(widthCM, 0) +
+            " cm wide, folded lengthwise. Buy a little over if your fabric has "
             "a nap or a one-way print.",
-        "computed:fabricMeters140=" + num(pattern.fabricMeters140, 1) + ";widthCM=140");
+        "computed:fabricMeters140=" + num(pattern.fabricMeters140, 1) + ";widthCM=" +
+            num(widthCM, 0) + ";metersAtWidth=" + num(meters, 1) + ";refWidthCM=" +
+            num(FabricBand::kRefWidthCM, 0));
     add("cut.pieces",
         "Cut plan: " + num(static_cast<int>(pattern.pieces.size())) + " pattern piece(s), " +
             num(onFold) + " of them on the fabric fold. Follow each piece's own cut note.",

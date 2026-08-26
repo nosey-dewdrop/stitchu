@@ -40,6 +40,7 @@
 // EXACTLY — the golden surface cannot move unless a spec declares a stretch.
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 #include "measurements.hpp"
 
@@ -123,10 +124,56 @@ inline constexpr double easeAt(Girth g, double stretchPct) {
     return a[kAnchorCount - 1].ease;
 }
 
+// ── RECOVERY IS A CONDITION, NOT A MULTIPLIER (F6, 2026-08-27) ──────────────
+// §1D: no authoritative publication combines stretch + recovery + growth into one
+// formula, so this file does not contain one. What IS published is a set of
+// MINIMUMS, and a minimum is a yes/no. ASTM D3107 (contract/fabric-catalog-v1.json
+// `standards.astm-d3107`, thresholds carried from KOSU-v7.md §F6 — the standard's
+// body is paywalled and the three numbers are marked DOĞRULANMADI-YARIM there):
+//     growth   at most  3 %
+//     recovery at least 75 % after 15 s, 85 % after 30 min
+// A fabric that fails those does not give the stretch back. Cutting it SMALLER
+// than the body would make the garment permanently tight, so the negative branch
+// is refused outright: the ease is clamped at 0. The positive branch is untouched
+// (a fabric that sags does not need LESS room).
+//
+// ⚠ THE GAP IS DECLARED, NOT HIDDEN: a spec that says nothing about recovery does
+// not fire this rule at all, so an undeclared knit still takes negative ease
+// unmeasured. Closing that would move every legacy knit draft (RULES 4 / golden).
+inline constexpr double kGrowthMaxPct        = 3.0;
+inline constexpr double kRecovery15sMinPct   = 75.0;
+inline constexpr double kRecovery30minMinPct = 85.0;
+
+// true  = the axis is silent (rule does not apply) OR it meets every published
+//         minimum it declared.
+// false = it declared a number and that number fails D3107 -> no negative ease.
+inline constexpr bool recoveryQualifies(const FabricAxis& f) {
+    if (!f.recoveryDeclared()) return true;
+    if (f.growthPct >= 0.0 && f.growthPct > kGrowthMaxPct) return false;
+    if (f.recovery15sPct >= 0.0 && f.recovery15sPct < kRecovery15sMinPct) return false;
+    if (f.recovery30minPct >= 0.0 && f.recovery30minPct < kRecovery30minMinPct) return false;
+    return true;
+}
+
 // Ease for a declared axis. An UNDECLARED stretch falls back to the word, and
 // the word's default sits exactly on a legacy anchor -> byte-identical draft.
 inline constexpr double easeFor(Girth g, const FabricAxis& f) {
-    return easeAt(g, f.effectiveStretchPct());
+    const double e = easeAt(g, f.effectiveStretchPct());
+    if (e < 0.0 && !recoveryQualifies(f)) return 0.0;
+    return e;
+}
+
+// ── FABRIC WIDTH -> YARDAGE (F6) ────────────────────────────────────────────
+// The engine's one yardage number is metres at 140 cm. A narrower bolt needs
+// proportionally more length for the same total piece area; this is arithmetic,
+// not a publication (catalog `width_rule`). A bolt that IS 140 cm reproduces the
+// legacy number exactly, and an undeclared width does not enter here at all.
+inline constexpr double kRefWidthCM = 140.0;
+inline double metersAtWidth(double meters140, const FabricAxis& f) {
+    if (!f.widthDeclared()) return meters140;
+    const double m = meters140 * (kRefWidthCM / f.widthCM);
+    // Same 0.1 m rounding the engine already publishes yardage in.
+    return std::floor(m * 10.0 + 0.5) / 10.0;
 }
 
 // Published rule: above 76% stretch the darts drop out — the fabric absorbs the

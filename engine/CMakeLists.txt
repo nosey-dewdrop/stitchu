@@ -515,6 +515,14 @@ target_compile_definitions(guide_completeness_check PRIVATE
     STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 add_test(NAME guide_completeness_check COMMAND guide_completeness_check)
 
+# KUMAŞ KATALOĞU (F6 İŞ 1): one spec, three fabrics, three MEASURED patterns.
+# The repo root is handed in so the gate can read the catalog it audits against.
+add_executable(fabric_catalog_check tests/fabric_catalog_check.cpp)
+target_link_libraries(fabric_catalog_check PRIVATE engine)
+target_compile_definitions(fabric_catalog_check PRIVATE
+    STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+add_test(NAME fabric_catalog_check COMMAND fabric_catalog_check)
+
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)

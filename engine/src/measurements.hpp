@@ -87,9 +87,34 @@ enum class Fabric { Woven, Knit };
 // Implicitly convertible BOTH ways with Fabric on purpose: every existing call
 // site that passes or compares a bare `Fabric` keeps compiling and keeps meaning
 // the same thing.
+// ── F6 (2026-08-27): THE AXIS IS FOUR NUMBERS, NOT ONE ──────────────────────
+// Stretch alone cannot decide the cut. contract/fabric-catalog-v1.json names the
+// four physical numbers the F6 card asks for and where each one comes from:
+//   stretchPct        ASTM D2594 (knit) / D3107 (woven)   -> ease, incl. negative
+//   recovery + growth ASTM D3107 minimums                 -> a CONDITION on the
+//                     negative branch, never a multiplier (§1D forbids a combined
+//                     formula, and this file does not contain one)
+//   weightGSM + bendingLengthMM  FAST-2                   -> bending rigidity
+//                     (drape). Computed and PRINTED; it does NOT move the draft,
+//                     because a rigidity -> gather-ratio publication was searched
+//                     for and NOT FOUND (catalog `drape_rule`).
+//   widthCM           the bolt                            -> yardage + cut plan
+// EVERY one of them defaults to "undeclared" (< 0) and an undeclared axis drafts
+// byte-identically to before, so the golden surface cannot move unless a spec
+// actually declares a number (RULES 4).
 struct FabricAxis {
     Fabric cls = Fabric::Woven;
     double stretchPct = -1.0;  // < 0 = undeclared
+    // D3107 recovery/growth. < 0 = undeclared -> the recovery CONDITION does not
+    // fire and the draft is unchanged. This gap is declared in the catalog.
+    double recovery15sPct = -1.0;
+    double recovery30minPct = -1.0;
+    double growthPct = -1.0;
+    // FAST-2 inputs. < 0 = undeclared -> no rigidity number is printed.
+    double weightGSM = -1.0;
+    double bendingLengthMM = -1.0;
+    // Bolt width in cm. < 0 = undeclared -> the legacy 140 cm yardage stands.
+    double widthCM = -1.0;
 
     constexpr FabricAxis() = default;
     constexpr FabricAxis(Fabric f) : cls(f) {}  // NOLINT(google-explicit-constructor)
@@ -104,6 +129,21 @@ struct FabricAxis {
         return declared() ? (stretchPct > 100.0 ? 100.0 : stretchPct)
                           : (cls == Fabric::Knit ? 12.5 : 0.0);
     }
+    // Did this spec say anything at all about how the fabric comes BACK?
+    constexpr bool recoveryDeclared() const {
+        return recovery15sPct >= 0.0 || recovery30minPct >= 0.0 || growthPct >= 0.0;
+    }
+    constexpr bool drapeDeclared() const {
+        return weightGSM > 0.0 && bendingLengthMM > 0.0;
+    }
+    // FAST-2: BR (uNm) = mass (g/m2) * bending length (mm)^3 * 9.807e-6.
+    // Returns < 0 when the two inputs were not measured — never a guessed value.
+    constexpr double bendingRigidityUNm() const {
+        return drapeDeclared()
+                   ? weightGSM * bendingLengthMM * bendingLengthMM * bendingLengthMM * 9.807e-6
+                   : -1.0;
+    }
+    constexpr bool widthDeclared() const { return widthCM > 0.0; }
 };
 enum class SkirtLength { Mini, Midi, Maxi };
 enum class SleeveStyle { None, Straight, Balloon };
