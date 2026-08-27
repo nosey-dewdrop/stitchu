@@ -1,0 +1,595 @@
+{
+ "_ne": "AL DENE — on gercek fotograf, on bankali goru okumasi.",
+ "_uretildi": "engine/tools/gen-al-dene.py — ELLE YAZILMAZ.",
+ "_kaynak": {
+  "goru": [
+   "vision/eval/live-2026-08-22.json",
+   "vision/eval/live-hedef10-2026-08-26.json"
+  ],
+  "kunye": "vision/eval/credits.json",
+  "set": "contract/hedef-kosu-taban.json _olcum_seti.hedef_10"
+ },
+ "_sifir_api": "Bu sayfa VLM cagirmaz (§3.9). Etiketler bankali; olcum (measure.js) ziyaretcinin tarayicisinda GERCEKTEN kosar, ayni goruntu uzerinde.",
+ "_holdout": "Hakemin holdout dortlusu (11 12 30 35) ve yedek besi (10 14 15 34 36) BU DOSYADA YOKTUR ve buradan erisilemez (K16).",
+ "ornekler": [
+  {
+   "dosya": "01-a-line-cocktail-dress-mannequin.jpg",
+   "no": "01",
+   "seen": {
+    "garment": "dress",
+    "neckline": "vNeck",
+    "sleeveStyle": "straight",
+    "sleeveLength": "long",
+    "skirtStyle": "straight",
+    "length": "midi",
+    "topLength": null,
+    "shaping": "princess",
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "wool",
+    "closure": {
+     "type": "zipper",
+     "location": "centerBack"
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": "plain",
+    "yoke": {
+     "type": "none",
+     "location": null
+    },
+    "backDetail": "none",
+    "ratios": {
+     "hemToWaistWidth": 1.05,
+     "lengthToWidth": 2.15,
+     "neckDepthToLength": 0.14,
+     "neckWidthToShoulder": 0.42,
+     "sleeveLenToGarment": 0.52,
+     "waistYToLength": 0.34,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "asymmetric draped pleated overlay at hip",
+     "diagonal cascading pleated flounce",
+     "waistband seam"
+    ],
+    "details": "Fitted long-sleeve wool dress with natural waist seam over a straight underskirt; a dramatic diagonally-draped, finely knife-pleated flounce overlay cascades asymmetrically across the hip from waist to below the knee."
+   },
+   "kunye": {
+    "author": "Rijksmuseum",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3AJapon_met_geplisseerde_volant_Cocktailjapon_van_zwarte_wol_met_brede_geplisseerde_volan_over_de_rok.%2C_BK-1986-56-A.jpg",
+    "sha256": "93e7778274f23143502968f6008e34f98f55328a3c776382cb0359efeedea681"
+   }
+  },
+  {
+   "dosya": "02-ball-gown-exhibit.jpg",
+   "no": "02",
+   "seen": {
+    "garment": "dress",
+    "neckline": "boat",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "straight",
+    "length": "maxi",
+    "topLength": null,
+    "shaping": "princess",
+    "waistline": "empire",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "lace",
+    "closure": {
+     "type": "hookEye",
+     "location": "centerBack"
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": "plain",
+    "yoke": {
+     "type": "none",
+     "location": null
+    },
+    "backDetail": "none",
+    "ratios": {
+     "hemToWaistWidth": 1.15,
+     "lengthToWidth": 2.7,
+     "neckDepthToLength": 0.06,
+     "neckWidthToShoulder": 0.62,
+     "sleeveLenToGarment": 0.12,
+     "waistYToLength": 0.24,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "beaded empire waist sash",
+     "metallic floral embroidery appliqué",
+     "beaded tassel drops",
+     "lace overlay bodice and sleeves",
+     "sequin/crystal shoulder embellishment"
+    ],
+    "details": "Edwardian-style evening gown with lace overlay bodice, high beaded empire waistband, short lace sleeves, and heavy silver metallic floral embroidery running vertically down a cream satin column skirt."
+   },
+   "kunye": {
+    "author": "Jeff Kubina from Columbia, Maryland",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3ASmithsonian_National_Museum_of_American_History_-_Helen_Tafts_Inaugural_Ball_Gown_%283425466584%29.jpg",
+    "sha256": "cd223af9a92ff42b02d2009929c9a5d4707fcf44d07de319ce7e6f7baa5c1693"
+   }
+  },
+  {
+   "dosya": "03-wedding-dress-mannequin.jpg",
+   "no": "03",
+   "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "long",
+    "skirtStyle": "straight",
+    "length": "maxi",
+    "topLength": null,
+    "shaping": "princess",
+    "waistline": "empire",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "satin",
+    "closure": {
+     "type": "zipper",
+     "location": "centerBack"
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": "plain",
+    "yoke": {
+     "type": "none",
+     "location": null
+    },
+    "backDetail": "none",
+    "ratios": {
+     "hemToWaistWidth": 1.35,
+     "lengthToWidth": 2.9,
+     "neckDepthToLength": 0.04,
+     "neckWidthToShoulder": 0.36,
+     "sleeveLenToGarment": 0.55,
+     "waistYToLength": 0.22,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "lace applique bodice overlay",
+     "empire seam lace trim band",
+     "flared bell lace cuffs",
+     "lace-bordered bib panel"
+    ],
+    "details": "Empire-waist bridal column gown in satin with a lace-appliqued bodice, a scalloped lace trim marking the high empire seam, and long straight sleeves ending in flared lace cuffs; veil, pillbox cap and floor train are styling and excluded."
+   },
+   "kunye": {
+    "author": "Geoff Charles",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3AMannequin_wearing_a_wedding_dress_%281561525%29.jpg",
+    "sha256": "9f7d461ae0a6040abeedc9ad20b6c8d824e2f1828432e5611eef742c0066c4f1"
+   }
+  },
+  {
+   "dosya": "04-babydoll-dress.jpg",
+   "no": "04",
+   "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "long",
+    "skirtStyle": "pleated",
+    "length": "mini",
+    "topLength": null,
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "wool",
+    "closure": null,
+    "collar": {
+     "type": "peterPan",
+     "name": "scalloped peter pan collar"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": "plain",
+    "yoke": null,
+    "backDetail": null,
+    "ratios": {
+     "hemToWaistWidth": 1.9,
+     "lengthToWidth": 1.7,
+     "neckDepthToLength": 0.05,
+     "neckWidthToShoulder": 0.4,
+     "sleeveLenToGarment": 0.55,
+     "waistYToLength": 0.45,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "dropped waist",
+     "scalloped collar edge",
+     "white contrast cuffs",
+     "front hip welt pockets",
+     "knife pleated skirt",
+     "neck ribbon tie"
+    ],
+    "details": "Grey wool drop-waist dress with a white scalloped peter pan collar and matching turn-back cuffs, a small dark neck ribbon at center front, two welt pockets at the dropped waistline, and a full knife-pleated mini skirt."
+   },
+   "kunye": {
+    "author": "BunnyHutVintage",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3AScalloped_babydoll_dress.jpg",
+    "sha256": "af2e1f1593144cf920962e3bdec9c752fcacadc4824c27d842b56e0226e1bd01"
+   }
+  },
+  {
+   "dosya": "05-empire-waist-gown.jpg",
+   "no": "05",
+   "seen": {
+    "garment": "dress",
+    "neckline": "square",
+    "sleeveStyle": "straight",
+    "sleeveLength": "elbow",
+    "skirtStyle": "gathered",
+    "length": "maxi",
+    "topLength": null,
+    "shaping": "princess",
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "satin",
+    "closure": {
+     "type": "none",
+     "location": null
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": "plain",
+    "yoke": null,
+    "backDetail": null,
+    "ratios": {
+     "hemToWaistWidth": 2.6,
+     "lengthToWidth": 2.7,
+     "neckDepthToLength": 0.05,
+     "neckWidthToShoulder": 0.55,
+     "sleeveLenToGarment": 0.28,
+     "waistYToLength": 0.33,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "robe à la française open front over petticoat",
+     "pointed bodice front (stomacher)",
+     "peplum at waist",
+     "engageantes / tiered ruffled elbow cuffs",
+     "self-fabric ruched robings trimming front opening",
+     "applied floral trim garlands",
+     "open-front overskirt revealing matching underskirt",
+     "vertical pinstripe woven pattern"
+    ],
+    "details": "18th-century sacque/robe à la française approximated as a princess-seamed natural-waist gown; ivory striped silk with open robe front over a satin petticoat, pointed stomacher bodice, ruched robings and passementerie floral garlands, and tiered ruffled elbow sleeves."
+   },
+   "kunye": {
+    "author": "Unknown author Unknown author",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3ADress%2C_court%2C_3194.jpg",
+    "sha256": "8fa1cbdde98b25004682c04d45c3c3b8a467e74df559ddf9bf4e7665df850d3c"
+   }
+  },
+  {
+   "dosya": "13-keyhole-neckline-dress.jpg",
+   "no": "13",
+   "seen": {
+    "garment": "dress",
+    "neckline": "mandarin",
+    "sleeveStyle": "none",
+    "sleeveLength": null,
+    "skirtStyle": null,
+    "length": null,
+    "topLength": null,
+    "shaping": null,
+    "waistline": null,
+    "fabric": "woven",
+    "hemRuffle": null,
+    "keyhole": true,
+    "fabricName": "brocade",
+    "closure": {
+     "type": "buttons",
+     "location": "centerFront"
+    },
+    "collar": {
+     "type": "mandarin",
+     "name": "mandarin stand collar"
+    },
+    "straps": null,
+    "cupSeams": null,
+    "sleeveHead": null,
+    "yoke": null,
+    "backDetail": null,
+    "ratios": {
+     "hemToWaistWidth": null,
+     "lengthToWidth": null,
+     "neckDepthToLength": null,
+     "neckWidthToShoulder": 0.42,
+     "sleeveLenToGarment": 0,
+     "waistYToLength": null,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "qipao/cheongsam",
+     "asymmetric diagonal front closure",
+     "decorative frog fastenings",
+     "contrast red piping trim"
+    ],
+    "details": "Sleeveless floral-print brocade cheongsam with a mandarin collar, teardrop keyhole cut-out below the neck, diagonal right-side closure fastened with Chinese frog buttons and red piped edges; neckline field maps mandarin to the collar's stand shape."
+   },
+   "kunye": {
+    "author": "Jakob Montrasio from Shanghai, China",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3AChinese_woman_in_Qipao_%28neckline%29.jpg",
+    "sha256": "4f12f170296bb392e215dccdfaededc604e4b486b681c15f28cc854f73b86945"
+   }
+  },
+  {
+   "dosya": "31-denim-skirt.jpg",
+   "no": "31",
+   "seen": {
+    "garment": "skirt",
+    "neckline": null,
+    "sleeveStyle": null,
+    "sleeveLength": null,
+    "skirtStyle": "straight",
+    "length": "midi",
+    "topLength": null,
+    "shaping": null,
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": null,
+    "fabricName": "denim",
+    "closure": {
+     "type": "buttons",
+     "location": "centerFront"
+    },
+    "collar": null,
+    "straps": null,
+    "cupSeams": null,
+    "sleeveHead": null,
+    "yoke": {
+     "type": "shoulderYoke",
+     "location": "waist"
+    },
+    "backDetail": null,
+    "ratios": {
+     "hemToWaistWidth": 1.05,
+     "lengthToWidth": 1.4,
+     "neckDepthToLength": null,
+     "neckWidthToShoulder": null,
+     "sleeveLenToGarment": null,
+     "waistYToLength": null,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "front slit at hem",
+     "five-pocket jean styling",
+     "belt loops",
+     "curved yoke seam",
+     "coin pocket",
+     "frayed raw hem",
+     "topstitched contrast seams"
+    ],
+    "details": "A denim pencil skirt constructed from repurposed jeans with a waistband, button-and-zip fly closure, five-pocket detailing, contrast topstitching, a center-front slit and a frayed raw hem."
+   },
+   "kunye": {
+    "author": "Housing Works Thrift Shops from New York, NY, USA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3A7_For_All_Mankind_Denim_Skirt_%283182146721%29.jpg",
+    "sha256": "2ea5f0b64be09db40a2d0b4ea2703d855281d2895df2b1a7b080d728bb363a5b"
+   }
+  },
+  {
+   "dosya": "32-sleeveless-dress-mannequin.jpg",
+   "no": "32",
+   "seen": {
+    "garment": "dress",
+    "neckline": "vNeck",
+    "sleeveStyle": "none",
+    "sleeveLength": null,
+    "skirtStyle": "aLine",
+    "length": "maxi",
+    "topLength": null,
+    "shaping": "dart",
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "brocade",
+    "closure": {
+     "type": "zipper",
+     "location": "centerFront"
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": false,
+    "sleeveHead": null,
+    "yoke": {
+     "type": "none",
+     "location": null
+    },
+    "backDetail": null,
+    "ratios": {
+     "hemToWaistWidth": 1.9,
+     "lengthToWidth": 2.6,
+     "neckDepthToLength": 0.09,
+     "neckWidthToShoulder": 0.4,
+     "sleeveLenToGarment": 0,
+     "waistYToLength": 0.34,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "front waist bow tie",
+     "asymmetric handkerchief hem",
+     "center front zipper"
+    ],
+    "details": "Sleeveless red floral brocade dress with V-neck, natural waist seam accented by a small bow, fitted bodice with darts, and a flared skirt falling to a dramatic asymmetric pointed/handkerchief hem."
+   },
+   "kunye": {
+    "author": "Photographer for the Rhode Island School of Design Museum of Art",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3A1965_Marimekko_dress_designed_by_Annika_Rimala.jpg",
+    "sha256": "b5c78190aa5aabd539aa4608aebb655dda48923c4dd1f906c90b5b6d98f53c6b"
+   }
+  },
+  {
+   "dosya": "37-tunic-blouse.jpg",
+   "no": "37",
+   "seen": {
+    "garment": "top",
+    "neckline": "scoop",
+    "sleeveStyle": "none",
+    "sleeveLength": null,
+    "skirtStyle": null,
+    "length": null,
+    "topLength": "tunic",
+    "shaping": null,
+    "waistline": null,
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "cotton poplin",
+    "closure": {
+     "type": "none",
+     "location": null
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": null,
+    "cupSeams": null,
+    "sleeveHead": null,
+    "yoke": {
+     "type": "shoulderYoke",
+     "location": "shoulder"
+    },
+    "backDetail": "none",
+    "ratios": {
+     "hemToWaistWidth": 1.0,
+     "lengthToWidth": 0.9,
+     "neckDepthToLength": 0.08,
+     "neckWidthToShoulder": 0.2,
+     "sleeveLenToGarment": 0.0,
+     "waistYToLength": null,
+     "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+     "embroidered yoke panel",
+     "geometric brocade weave at shoulders and chest",
+     "rectangular construction (huipil)",
+     "side-seam whipstitch join",
+     "zigzag embroidered center front seam",
+     "scalloped embroidered hem edge on yoke panel"
+    ],
+    "details": "Traditional Mexican huipil: a rectangular woven cotton tunic with a densely brocade/embroidered upper yoke in red, yellow and green geometric bands, plain undyed body panels seamed at the sides, and a simple slit neck opening."
+   },
+   "kunye": {
+    "author": "Gift in memory of Elizabeth Ege Freudenheim",
+    "license": "No restrictions",
+    "license_url": "//commons.wikimedia.org/wiki/File:Maya._Woman%27s_Blouse_or_Huipil,_2005.15.1.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3AMaya._Woman%27s_Blouse_or_Huipil%2C_2005.15.1.jpg",
+    "sha256": "9cce49534ec12613545786a1864a1ca0d1b2b3cf33860652210df26fb2f707be"
+   }
+  },
+  {
+   "dosya": "38-evening-gown-museum.jpg",
+   "no": "38",
+   "seen": {
+    "garment": "dress",
+    "neckline": "cowl",
+    "sleeveStyle": "none",
+    "sleeveLength": null,
+    "skirtStyle": "pleated",
+    "length": "maxi",
+    "topLength": null,
+    "shaping": "princess",
+    "waistline": "natural",
+    "fabric": "woven",
+    "hemRuffle": "none",
+    "keyhole": false,
+    "fabricName": "satin",
+    "closure": {
+     "type": "zipper",
+     "location": "centerBack"
+    },
+    "collar": {
+     "type": "none",
+     "name": "none"
+    },
+    "straps": {
+     "type": "wide",
+     "count": 2
+    },
+    "cupSeams": false,
+    "sleeveHead": null,
+    "yoke": {
+     "type": "none",
+     "location": null
+    },
+    "backDetail": "none",
+    "ratios": {
+     "hemToWaistWidth": 2.6,
+     "lengthToWidth": 2.9,
+     "neckDepthToLength": 0.06,
+     "neckWidthToShoulder": 0.6,
+     "sleeveLenToGarment": 0,
+     "waistYToLength": 0.32,
+     "strapWidthToShoulder": 0.2
+    },
+    "outOfVocab": [
+     "velvet bodice",
+     "draped satin overskirt swag",
+     "asymmetric wrapped drape front",
+     "underlying pleated skirt panel",
+     "contrasting bodice/skirt fabrics"
+    ],
+    "details": "Couture gown with a fitted wine velvet bodice and a satin skirt combining an asymmetric draped/swagged overskirt over a finely knife-pleated underskirt sweeping to a floor train."
+   },
+   "kunye": {
+    "author": "Photographer working for Rhode Island School of Design Museum of Art",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "commons_page": "https://commons.wikimedia.org/wiki/File%3ACharles_James_red_velvet_and_satin_evening_gown%2C_1955_03.jpg",
+    "sha256": "18586d7b54a0bd0f82cb6cf03198be195f71a4b64bbf3370b3e7b01a962fed1d"
+   }
+  }
+ ]
+}
