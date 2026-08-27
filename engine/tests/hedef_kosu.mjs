@@ -503,6 +503,28 @@ console.log(`H10e ETİKET HATALARI (${tumEtiket.length}):`);
 for (const e of tumEtiket) console.log('  ✗', e);
 if (!tumEtiket.length) console.log('  (yok)');
 
+// ── 🚨 H5'İN KÖR NOKTASI, ARTIK GERÇEKTEN BASILIYOR (GECE7 / F9 hakemi, borç 73)
+//
+// Bu blok on bir karttır YOKTU. `r.korNokta` yukarıda (satır ~282) hesaplanıyordu
+// ve dosyanın hiçbir yerinde OKUNMUYORDU — `grep -n korNokta` tek bir satır
+// döndürüyor, atamanın kendisi. Yani yanındaki yorumun "kör nokta burada SAYIYLA
+// basılıyor ki gizli kalmasın" cümlesi ÖLÇÜLDÜ VE YANLIŞTI: hesaplanıp
+// düşürülüyordu, tek karakteri bile ekrana çıkmıyordu.
+//
+// Borç 73'ün KÖKÜ bununla kapanmıyor ve kapanamaz: `sleeve_cap` motorda TEK ve
+// BÖLÜNMEMİŞ bir yay (sleeve.cpp:194, locket.cpp:379), o yüzden kapağın hangi
+// yarısının ön oyuğa gittiğini söyleyen bir beyan YOK ve uydurmak §3.10 ihlali.
+// Kapanan, borç 73'ün GÖRÜNÜR yarısı: H5 = 0 diyen her sayfanın yanında, o
+// sıfırın ön ile arkayı topladığı ve ±eşit iki sapmanın burada KUSURSUZ
+// okunacağı artık bir SAYIYLA duruyor.
+const korlar = rows.filter((r) => r.korNokta);
+console.log(`\nH5 KÖR NOKTASI (${korlar.length}/${rows.length} kalıpta ölçülebildi) — "0 eşleşmeyen çift" bunu GÖRMÜYOR:`);
+for (const r of korlar) {
+  const k = r.korNokta;
+  console.log(`  ⚠ ${w(r.file, 42)} ${k.pair}  ön ${k.on} mm · arka ${k.arka} mm  (fark ${(k.on - k.arka).toFixed(2)} mm) — ${k.neden}`);
+}
+if (!korlar.length) console.log('  (hiçbir kalıpta armhole+sleeve_cap rolü birlikte ilan edilmedi)');
+
 // ── CIRCIR (§3.6): altı sayının hiçbiri kötüleşemez ─────────────────────────
 if (WRITE_TABAN || !existsSync(TABAN_FILE)) {
   writeFileSync(TABAN_FILE, JSON.stringify({
