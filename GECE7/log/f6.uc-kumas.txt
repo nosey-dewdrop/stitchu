@@ -1,0 +1,23 @@
+fabric_catalog_check: one spec, three fabrics, three measured patterns
+
+  AYNI SPEC, UC KUMAS (EU38, dart-shaped gathered dress, straight sleeve)
+  kumas               bel(mm)   oyuk(mm)  buzgu(mm)   metraj  parca   rijitlik
+  cotton-poplin      735.0000   404.2593   354.3624      2.5      6    12.5310
+  viscose-crepe      735.0000   404.2593   354.3624      2.0      6     2.3701
+  single-jersey      672.2800   376.5741   325.3685      1.7      6     1.9580
+
+  FARK (kumas 1 = cotton-poplin):
+  viscose-crepe    bel    +0.0000  oyuk    +0.0000  buzgu    +0.0000  metraj   -0.5
+  single-jersey    bel   -62.7200  oyuk   -27.6852  buzgu   -28.9938  metraj   -0.8
+
+  RECOVERY SARTI: 88% -> bel 672.2800 mm  |  84% (D3107 alti) -> bel 700.0000 mm  (fark +27.7200 mm)
+
+  REHBER (ayni spec, uc kumas):
+  cotton-poplin    13 cumle, dayanaksiz 0, recovery=yok, drape=VAR
+     -> Fabric: 2.5 m at 112 cm wide, folded lengthwise. Buy a little over if your fabric has a nap or a one-way print.
+  viscose-crepe    13 cumle, dayanaksiz 0, recovery=yok, drape=VAR
+     -> Fabric: 2.0 m at 140 cm wide, folded lengthwise. Buy a little over if your fabric has a nap or a one-way print.
+  single-jersey    15 cumle, dayanaksiz 0, recovery=VAR, drape=VAR
+     -> Fabric: 1.7 m at 165 cm wide, folded lengthwise. Buy a little over if your fabric has a nap or a one-way print.
+
+fabric_catalog_check: 56 checks, 0 failures

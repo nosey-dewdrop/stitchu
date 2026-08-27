@@ -113,3 +113,21 @@ oturtulmuş **kaynaklı** bir sayıdır. Eşik gevşetilmedi, kapı susturulmad�
 hangi bedene değerlendiğini yayınladı, ama `draft(spec, measurements)`'ın
 **serbest vücudu** ile `buildSeamPlan(sizeLabel)`'ın **EU beden etiketi**
 arasındaki köprü **hâlâ kurulmadı** ve `garment.cpp`'de hâlâ **sıfır satır**.
+
+---
+
+## F6 — HAKEME GİDEN İKİ KALEM (ajan karar veremez, §3.4/§3.10)
+
+| # | Kalem | Ajan ne yaptı (en kısıtlayıcı) |
+|---|---|---|
+| 17 | **"İLK ÜÇ KUMAŞ HANGİLERİ?"** `KOSU-v7.md` F6 bunu *"karar gerektiren nokta, hakeme gider"* diye yazıyordu ve yanında bir **öneri** taşıyordu: pamuklu dokuma · viskon/krep düşümlü · single jersey. Kart (`GECE7/F6.md`) bu soruyu ajana kapattı: *"Ajan bunu alır, gerekçesini DAMLA.md'ye yazar ve KOŞU DURMAZ."* | **ÖNERİ AYNEN ALINDI.** Gerekçe: üçü **üç ayrı davranış sınıfı** — sert dokuma (rijitlik **12.5310 µNm**), düşümlü dokuma (**2.3701 µNm**, poplinin ~1/5'i), esneyen örme (**%50 esneme**). Liste `contract/fabric-catalog-v1.json` `fabrics` bloğunda ve **hakem başka bir üçlü koyarsa değişecek TEK yer orası**: `fabric_catalog_check` kataloğu **okuyor**, sayıları içinde taşımıyor. **Damla'ya sorulmadı, koşu durmadı.** |
+| 18 | 🚨 **"EĞİLME RİJİTLİĞİ BÜZGÜ ORANINI NE KADAR OYNATIR?"** `KOSU-v7.md` §F6 rijitliğin *"büzgünün ve kloşun nasıl döküleceğini"* belirlediğini yazıyor ve dördünün de büzgü oranını **beslediğini** söylüyor. Yön yazılı, **SAYI YAZILI DEĞİL.** Arandı: rijitliği (µNm) bir büzgü oranına bağlayan künyeli bir yayın **BULUNAMADI**. Bulunanların hepsi ticari atölye/blog yazısıydı, kumaş **AĞIRLIĞINA** göre 1.5:1 / 2:1 / 3:1 diyorlar, ve ikisi de (threadsmagazine.com, blog.fabrics-store.com) **HTTP 403** verdi — yani tek bir cümle bile **birebir alıntılanamadı**. | **EN KISITLAYICI SEÇİLDİ: çarpan 1.0 — rijitlik çizime DOKUNMUYOR.** Hesaplanıyor (FAST-2, formülün künyesi tam), rehbere **basılıyor**, ve rehberin kendi cümlesi bunu **açıkça söylüyor**: *"This number is reported, not designed into these pieces… because no published table maps rigidity to a gather ratio."* Bedeli ölçüldü ve **gizlenmedi**: iki DOKUMA kumaş, esnemeleri eşit olduğu için **AYNI bel (735.0000 mm) ve AYNI kol oyuğu (404.2593 mm)** veriyor; ayrıştıkları yer **kumaş eni** (metraj 2.5 ↔ 2.0 m) ve **rehber**. **Bu sayıyı hakem koyar, ajan değil** (§3.10). Kayıt: `contract/fabric-catalog-v1.json` `drape_rule`. |
+
+**Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:** ASTM D3107'nin ÜÇ EŞİĞİ
+(growth ≤ **%3**, toparlanma ≥ **%75**/15sn · **%85**/30dk) standardın **kendi
+gövdesinden doğrulanamadı** — metin ücretli. Doğrulanan şey `store.astm.org`
+kapak sayfasının **scope alıntısı**: yöntemin stretch, growth **ve** recovery'yi
+ölçtüğü ve iki gerilim seçeneği (1.35 kg / 1.8 kg). Üç sayı `KOSU-v7.md` §F6'nın
+kendi yayınlanmış zemininden alındı ve **talimat oldukları için** uygulandı —
+`fabricease.hpp`'nin esneme bandında kurulan emsalin aynısı. Katalogda
+**DOĞRULANMADI-YARIM** damgalı. Standardın gövdesini gören hakem sayıyı değiştirir.
