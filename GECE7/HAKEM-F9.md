@@ -251,3 +251,71 @@ açıyorum.**
    farkı olabilir; ÖLÇMEDİM. DOĞRULANMADI.**
 
 ---
+
+## 4. AJANIN KENDİ ALEYHİNE YAZDIĞI İKİ KALEM — **HÜKÜM** (§3.4)
+
+Ajan beş kalemi kendi aleyhine yazdı. **İkisi benim hükmümü istiyor. İkisini de
+ölçtüm, ikisinde de ajan DOĞRU.**
+
+### 4a. 🔴 **§4C md.7'nin "ölçüm tablosu" kolu BUGÜN KARŞILANMIYOR — ONAYLIYORUM, VE AJANIN YAZDIĞINDAN GENİŞ**
+
+**Ölçtüm:**
+```
+curl https://stitchu.noseydewdrop.com/lib/flat-tables.gen.js  -> HTTP 200, 76.961 bayt
+   içinde "patterns_real" / "Buğra" geçen satır sayısı: 10
+curl https://stitchu.noseydewdrop.com/atolye.html             -> HTTP 200
+   atolye.html:911  "patterns_real/geometry/geometry-full.json -- satın alınmış Buğra 'Locket Top'"
+```
+
+**CANLI, PUBLIC bir sayfada duran şey, kelimesi kelimesine:**
+> `"_source": "patterns_real/geometry/geometry-full.json -> rings[pattern=locket_top,`
+> `piece='Back Body', sizeGuess='38']. … Ölçüm: GECE/log/F-E.bugra-olcum.txt."`
+
+ve türetilmiş skalerin kendisi:
+> `"OLCULDU — satin alinmis Bugra Locket EU38 'Back Body' parcasinda omuz/gogus`
+> `yari-genislik orani 196.13/204.94 = 0.9570"`
+
+**§4C md.7'nin cümlesi:** *"repoda durmaz, **dağıtılmaz**, **çıktıya sızmaz**."*
+İkinci ve üçüncü şart **bugün canlıda ihlal.** Ölçüm tablosu satın alınmış
+kalıptan **çıkarılmış iki milimetre değerini** ve **yolun adını** yayınlıyor.
+
+**AJANIN KAPIYA BAĞLAMAMA GEREKÇESİ ÖLÇÜLEBİLİR VE DOĞRU.** `vitrin_check` md.5'in
+(a) kolunu okudum: aradığı desen `(?:href|src|fetch\()` ile başlıyor — yani
+**yalnız BAĞLANTI**. `"_source": "patterns_real/…"` bir `href`/`src`/`fetch`
+değil, **serbest bir dizge**, ve kapıdan geçiyor. Bağlasaydı **ALTINCI KIRMIZI**
+olurdu ve faz kapısı md.1 gereği **faz kapanmazdı.**
+
+**HÜKMÜM — ÜÇ PARÇA:**
+1. **BU BİR İHLALDİR ve F9'un hükmünü ÇEVİRMEZ.** Sebep ölçülü: ihlal
+   `87fc9d5`'ten, **F0'dan çok önce** geliyor ve F9 kartı **açıkça** *"repoyu
+   private yapmak ya da geçmişi kazımak BU KARTIN İŞİ DEĞİL"* diyor. Bir vitrin
+   kartına bir mimari ihlali yükleyip §3.12'yi taşırmak, koşunun on yedi fazdır
+   kaçındığı hata olur.
+2. **AJAN DOĞRU DAVRANDI: KAPATMADI, YAZDI.** Kapıya bağlayıp altıncı kırmızıyı
+   üretmek yerine **hükmü hakeme getirmek** kartın kendi talimatıdır
+   (*"bildirmek ucuz, gizlemek pahalı"*). **Bu kalem ajanın LEHİNEDİR.**
+3. 🚨 **BUNU BİR BORÇ OLARAK KAPATMIYORUM — DAMLA'YA GÖNDERİYORUM**, çünkü çözümü
+   teknik değil **ticari**: türetilmiş skaleri sayfadan çıkarmak `flat-core.js`'in
+   croquis'ini kaynaksız bırakır (`_previous` bloğu: kaynaksız 78.0u değeri
+   **geometrik olarak imkânsızdı**, omuz ucu büstün dışındaydı), yani *"kaynağı
+   sil"* burada *"yanlış sayıya dön"* demek. **KAPANIS.md'nin en üstünde.**
+
+### 4b. **K42 YALNIZ VİTRİNE UYGULANMIŞ — ONAYLIYORUM, VE SAYIYI KENDİM SAYDIM**
+
+```
+git grep -l "princess seam|prenses dikiş" HEAD -- web/   ->  22 dosya
+git grep -o "princess seam|prenses dikiş" HEAD -- web/   ->  98 geçiş
+git grep -l "princess"                    HEAD -- web/   ->  53 dosya
+grep -o "princess"  (canlı index.html)                   ->   0
+```
+
+**Ajanın *"20 dosya ~100 kez"*i doğru; gerçek sayı 22 / 98.** Landing'de **sıfır**.
+
+**HÜKMÜM: F9 İÇİN YETERLİ, KOŞU İÇİN DEĞİL.**
+K42 bir **adlandırma** yasasıdır ve F9 bir **vitrin** kartıdır; vitrin **temiz**.
+Kalan 98 geçiş `web/styles/princess-seams.html` ve 21 koleksiyon sayfasında —
+bunlar **sitemap'te** (125 indekslenebilir sayfa), yani yabancı onlara da
+ulaşıyor. Ama orada kelime bir **giysi terimi** olarak geçiyor, **bu kesimin adı**
+olarak değil; **K42'nin yasakladığı ikincisidir.** Ayrımı yapmadan toplu `sed`
+atmak K42'yi **yanlış yere uygular** ve 156 dosyalık diff'i ikiye katlar.
+**Borç 102 olarak açıyorum.**
