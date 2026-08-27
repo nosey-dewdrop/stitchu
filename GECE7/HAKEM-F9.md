@@ -319,3 +319,255 @@ ulaşıyor. Ama orada kelime bir **giysi terimi** olarak geçiyor, **bu kesimin 
 olarak değil; **K42'nin yasakladığı ikincisidir.** Ayrımı yapmadan toplu `sed`
 atmak K42'yi **yanlış yere uygular** ve 156 dosyalık diff'i ikiye katlar.
 **Borç 102 olarak açıyorum.**
+
+---
+
+## 5. FAZ KAPISI — **KENDİ PRISTINE RELEASE KOŞUM** (§3.8 · K32 · K33)
+
+`realpath == pwd` ✅ (`/Users/damummyphus/damla_projects_2026/stitchu`)
+`CMAKE_BUILD_TYPE:STRING=Release` ✅ · `cmake --build engine/build -j8` **rc=0**
+
+⚠ **`ctest`in son satırları KOPYALANDI, ÖZETLENMEDİ:**
+
+```
+96% tests passed, 5 tests failed out of 132
+
+Total Test time (real) = 741.57 sec
+
+The following tests FAILED:
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	102 - contract_check (Failed)
+	108 - figure_check (Failed)
+
+The following tests did not run:
+	114 - h10_gate_check (Disabled)
+```
+
+| kart şartı | benim ölçtüğüm | hüküm |
+|---|---|---|
+| kırmızı **≤ 5** | **5** | ✅ |
+| kalanlar **bu beş addan** | `flat_artifact_census` · `style_check` · `sizechart_source_check` · `contract_check` · `figure_check` | ✅ **ALTINCI AD YOK** |
+| kayıtlı **132 → 133** | **133** kayıtlı, **132** koşan | ✅ **BİR KAPI EKLENDİ, SIFIR SİLİNDİ** |
+| DISABLED **1 → 1** | `114 - h10_gate_check (Disabled)` | ✅ (K18) |
+| kartın eklediği maliyet | F8 **722.09 sn** → F9 **741.57 sn** = **+19.48 sn** | ✅ `vitrin_check`in bedeli (üreteci yeniden koşturuyor) |
+
+**Sekiz faz kapısının sekizi de kendi koşumda:** `vocab_reference_check`
+**HÜKÜM: YEŞİL** · `indir_check` **EXIT 0** · `hedef_kosu` **EXIT 0, CIRCIR
+SAĞLAM** · `pytest` **33 passed** · `bugra_parity_check` **EXIT 0** ·
+`al_dene_check` **EXIT 0** · `landing_truth_check` **YEŞİL** ·
+`vitrin_check` **EXIT 0** — hepsi süitin içinde ve hiçbiri kırmızı adlar
+arasında değil. `site-health` **OK**, tek sürüm `?v=141`.
+
+### CIRCIR — **HİÇBİRİ KÖTÜLEŞMEDİ, KENDİ KOŞUMDA** (§3.6)
+
+| sayı | kartın tabanı | **benim ölçtüğüm** | hüküm |
+|---|---|---|---|
+| **H1** | 5/5 (n=5) · **10/10 (n=10)** | **5/5 · 10/10** | ✅ **TAVAN TUTTU — F9'un ön şartı** |
+| H2 | %95.2 (40/42, n=5) · %93 (66/71, n=10) | **%95.2 · %93** | ✅ |
+| H3 | 2 · 2 | **2 · 2** | ✅ |
+| **H4** | **ÖLÇEMEDİM** | **ÖLÇEMEDİM (on yedinci faz)** | ⚠ uydurulmadı |
+| **H5** | pay **0** / payda **5** | **0 / 5** (n=5 ve n=10) | ✅ pay 0'da |
+| **H6** | 0 / 16 (**n=8 stil**) | **0 / 16 (n=8)** | ✅ `n` harmanlanmadı |
+| H8-sözlük | 31 (n=5) · 61 (n=10) | **31 · 61** | ✅ |
+| **H8-ifade** | **pay 4/5**, payda 5 mühürlü | betik **`H8-İFADE = 1 / 5`** basıyor = **ÇEVRİLEMEYEN 1**, yani **ÇEVRİLEN 4/5** | ✅ **K66 İŞARET TUZAĞINA DÜŞMEDİM — açıkça yazıyorum: PAY (çevrilen) = 4/5** |
+| H10 | %58.3 · %64.4 | **%58.3 · %64.4** | ✅ |
+| H10a | %17.5 · %29.7 | **%17.5 · %29.7** | ✅ cırcıra bağlı değil (K21) |
+| **H10b** | **%40.0** (48/120) · %33.1 (79/239) | **%40.0 · %33.1** | ✅ **§0B tavanı YÜKSELMEDİ** |
+| H10e | 3 · 5 | **3 · 5** | ✅ |
+| H10x | %0.8 · %1.7 | **%0.8 · %1.7** | ✅ |
+| H11 | medyan 2.9 ms | **4.0 ms (n=5) · 2.4 ms (n=10)**, en kötü 48.7 | ✅ **<10 sn tavanı** (duvar saati, yayınlanmıyor) |
+
+`CIRCIR SAĞLAM — hiçbir sayı kötüleşmedi.`
+
+---
+
+## 6. KENDİ MUTASYONLARIM — **BEŞ, DÖRDÜ AJANIN HİÇ AÇMADIĞI DOSYADAN** (§3.8 md.3)
+
+Betik `GECE7/log/f9.hakem.mutasyon.sh`, ham log `f9.hakem.mutasyon.txt`.
+**Commit'ten SONRA koşuldu** (borç 89, HEAD `6ad91ae`), `git checkout --`
+kullanılmadı (`cp` ile yedeklendi), her turun başında `numstat` basıldı,
+C++ turunda **her iki derlemenin `rc`'si ve iki `shasum`** yazıldı (borç 80).
+
+| # | dosya | ajan açtı mı? | mutasyon | sonuç |
+|---|---|---|---|---|
+| **HM-1** | `web/al-dene.html` | 48+/12− (açtı — **kartın emrettiği mutasyon**) | künye YAZAR bağlantısı `<a>` → `<span>` | **`al_dene_check` EXIT 1**, on fotoğrafın **onunda da** `the author's name links to the source page` FAIL. `vitrin_check` EXIT 0 (doğru: onun işi değil). Geri → **EXIT 0** |
+| **HM-2** | `engine/tools/bugra/bugra-parity.mjs` | **numstat BOŞ** | `topLength: 'hip'` → `'tunic'` (**F8'in HM-3'ü**) | **`bugra_parity_check` EXIT 1**, iki kalem: *"the harness uses the SHORTEST offered length that goes below the waist — not the flattering one — harness 'tunic' · kural 'hip'"* ve *"the gate re-drafts at the SAME length the harness drafts at"*. Geri → **EXIT 0** |
+| **HM-3** | `contract/layers/shape-ratios.json` | **numstat BOŞ** | bir beden düşürüldü (8 → 7) | **`vitrin_check` EXIT 1** — üreteç yeniden koştu, sayfadaki sayı **bayatladı**. Geri → **EXIT 0** |
+| **HM-4** | `vision/eval/credits.json` | **numstat BOŞ** | bir fotoğrafın `sha256`'sının ilk karakteri | **`al_dene_check` EXIT 1**: `byte-identical to the credited original — 93e7778274f2 vs a3e7778274f2`. Geri → **EXIT 0** |
+| **HM-5** | `engine/src/bodice.cpp` | **numstat BOŞ** | BOAT yaka eğrisinin kontrol noktası `w*0.85` → `w*0.65` (**gerçek geometri**) | `cmake --build` **rc=0** · `build-wasm` **rc=0** · **İKİLİ KIMILDADI: dist `762e7286`→`80da170f`, vendor `a0bb1844`→`eb63782f`** · **`golden_check` EXIT 1** (*"engine output differs from the REPO PIN"*). Geri: iki derleme de **rc=0**, ikili **tam olarak** `762e7286`/`a0bb1844`'e döndü, `golden` **EXIT 0** |
+
+**BAYAT İKİLİ YOK, ZAYIF MUTASYON YOK.** HM-5'te ikilinin hem gittiği hem
+**bayt bayt geri geldiği** `shasum`la gösterildi.
+
+### 🚨 6a. HM-5'İN YAN BULGUSU — **HEDEF KOŞUSU GERÇEK BİR GEOMETRİ KUSURUNU GÖRMEDİ**
+
+HM-5 canlı motorun **BOAT yaka eğrisini** bozdu, `golden_check` bunu yakaladı —
+ama **`hedef_kosu` aynı bozuk ikiliyle EXIT 0 verdi ve `CIRCIR SAĞLAM` bastı.**
+H1 hâlâ 10/10, H2 hâlâ %93. Bu **bir kusur değil**, cırcırın **ne olduğunun
+ölçülmüş sınırı**: H1 *"kalıp + flat üretildi mi"*yi sorar, *"doğru mu"*yu
+değil, ve H2 **alan yargılarını** karşılaştırır, **milimetreleri** değil.
+Geometrinin bekçisi `golden_check`'tir. **Bunu yazıyorum çünkü landing'in
+"10/10" cümlesi bir DOĞRULUK cümlesi sanılabilir — değil, bir TAMAMLANMA
+cümlesidir, ve canlı sayfa da tam böyle yazıyor** (*"went in and came out the
+far end as a pattern and a flat"*). **Sayfa doğru, ama bu sınır bir yerde
+adıyla durmuyordu.**
+
+---
+
+## 7. `?v=141` CANLIYA NE GÖNDERDİ? (kart md.8)
+
+`.github/workflows/pages.yml:23` `branches: [main]` + `paths: ['web/**']` →
+`57410b7`/`b45dbd4`/`f8a18e1`'in **web/ dokunan her biri canlıya çıktı.**
+Ölçtüm:
+
+```
+https://stitchu.noseydewdrop.com/                 HTTP 200   ?v=141
+https://stitchu.noseydewdrop.com/al-dene.html     HTTP 200
+https://stitchu.noseydewdrop.com/data/al-dene.json?v=141      HTTP 200
+canlı web/vendor/stitchu-engine.js sha  a0bb1844
+repo  web/vendor/stitchu-engine.js sha  a0bb1844   <-- BAYT BAYT AYNI
+```
+
+**Canlı wasm paketi repodakiyle birebir.** `site-health` **OK**, **tek sürüm**.
+`?v` bumplandı ve cırcır **aynı commit'te** yeniden mühürlendi (K21).
+
+⚠ **KENDİ BULDUĞUM: SEVK EDİLEN `web/vendor` PAKETİ F8'DEN BERİ DEĞİŞTİ.**
+F8 `5e1958dc` ölçmüştü; bugün `a0bb1844`. Değişiklik **yalnız `dxf.hpp`'nin
+YORUMUNDAN** geldi (borç 100), ve `dist` **tam olarak** `762e7286`'da kaldı.
+Yani **`engine/dist` yeniden üretilebilir, `web/vendor` DEĞİL** — bir yorumun
+satır sayısı sevk edilen paketin baytlarını oynatıyor (muhtemelen gömülü
+`__LINE__`/assert dizgeleri). **Sayı değişmedi** (`golden` `a3ec26a6`, `hedef_kosu`
+yeşil), ama *"ikili bayt bayt aynı"* bir daha **`web/vendor` için söylenemez**.
+**BORÇ 103.**
+
+---
+
+## 8. BORÇ 73 — **ON BİR KARTTIR HAKEM MASASINDA. GÖRÜNÜR YARISINI KAPATTIM.**
+
+Kart *"son şans; yaparsan önce/sonra yaz"* dedi. **Yaptım, ve sebebi on bir
+kartın hiçbirinin bakmadığı bir yerdeydi.**
+
+**ÖNCE (ölçüm, iddia değil):**
+```
+grep -n korNokta engine/tests/hedef_kosu.mjs
+282:      r.korNokta = { pair: 'armhole↔sleeve_cap', on: …, arka: …, neden: … }
+```
+**TEK SATIR — ATAMANIN KENDİSİ.** `r.korNokta` dosyanın hiçbir yerinde
+**okunmuyordu**. Yanındaki yorum şunu iddia ediyordu: *"Kör nokta burada
+SAYIYLA basılıyor ki gizli kalmasın."* **O CÜMLE F4'ten beri YANLIŞTI** — kör
+nokta hesaplanıp **düşürülüyordu**, ekrana **tek karakteri** çıkmıyordu.
+Borç 73'ün azaltıcı önlemi **ölü koddu ve kimse ölçmemişti.**
+
+**SONRA:**
+```
+H5 KÖR NOKTASI (5/10 kalıpta ölçülebildi) — "0 eşleşmeyen çift" bunu GÖRMÜYOR:
+  ⚠ 01-a-line-cocktail-dress-mannequin.jpg  armhole↔sleeve_cap  ön 214.97 mm · arka 196.03 mm  (fark 18.94 mm)
+  ⚠ 02-ball-gown-exhibit.jpg                armhole↔sleeve_cap  ön 190.19 mm · arka 180.95 mm  (fark  9.24 mm)
+  ⚠ 03-wedding-dress-mannequin.jpg          armhole↔sleeve_cap  ön 214.97 mm · arka 196.03 mm  (fark 18.94 mm)
+  ⚠ 04-babydoll-dress.jpg                   armhole↔sleeve_cap  ön 214.97 mm · arka 196.03 mm  (fark 18.94 mm)
+  ⚠ 05-empire-waist-gown.jpg                armhole↔sleeve_cap  ön 214.97 mm · arka 196.03 mm  (fark 18.94 mm)
+```
+
+🚨 **VE BASILDIĞI AN BİR SAYI GÖRÜNDÜ: ÖN OYUK ARKA OYUKTAN 18.94 mm UZUN**
+(beşte dördünde; beşincisinde 9.24 mm). **H5 = "0 eşleşmeyen çift" bunu
+göremiyor** ve göremediği tam olarak borç 73'ün cümlesiydi: ön +19 / arka −19
+olan bir giysi o sıfırda **KUSURSUZ** okunur.
+
+**KÖK AÇIK KALDI VE ADIYLA YAZILDI:** `sleeve_cap` motorda **TEK ve BÖLÜNMEMİŞ**
+bir yay (`sleeve.cpp:194`, `locket.cpp:379`); kapağın hangi yarısının ön oyuğa
+gittiğini söyleyen **bir beyan yok** ve uydurmak **§3.10 ihlali**. Kapatmanın
+tek yolu **motorun kapağı omuz çentiğinde ikiye ilan etmesi** — o bir **faz
+işi**, bir kapı düzeltmesi değil. **Borç 73 AÇIK KALIYOR, ama artık KÖR DEĞİL.**
+
+**HİÇBİR EŞİK GEVŞETİLMEDİ, HİÇBİR TABAN KESİLMEDİ.** H5'in kendisi **0/5**'te
+duruyor, `CIRCIR SAĞLAM`, `vitrin_check` · `landing_truth_check` · `gen-vitrin`
+ayrıştırıcısı **EXIT 0** (yeni blok iki cırcır bloğunun **DIŞINA**, `H10e`
+bloğundan sonra basılıyor).
+
+⚠ **BUNUN BEDELİ VAR VE YAZIYORUM:** `engine/tests/hedef_kosu.mjs`'in blob'u
+**`7370b86d` → değişti.** Bölüm 0'daki tablo o satırda **artık geçerli değil**;
+değiştiren **hakemdir** (§3.8 md.1'in kendi izni), faz ajanı **değil**, ve
+değişiklik **yalnız bir `console.log` bloğudur** — tek bir eşik, tek bir sayı,
+tek bir karşılaştırma dokunulmadı.
+
+---
+
+## 9. SAPMA SORUSU — **ÜÇ BACAK, ÜÇÜ DE ÖLÇÜLDÜ**
+
+> *"Bir yabancı bu siteye gelip **ne aldığını anlayabiliyor**, **kalıp + flat
+> indirebiliyor** ve **parasını verebiliyor** mu?"*
+
+### 9a. **NE ALDIĞINI ANLIYOR MU? — EVET.** ✅
+
+Canlı düz metni okudum. Beş saniyelik yüzeyde: *"A photo goes in. A **pattern**,
+a **flat** and a **sewing guide** come out."* + `10/10` + `8 fixed sizes` +
+`on-device`. Ve ürünün **üç sınırı da indirmeden ÖNCE** sayfada:
+**strapless + sebebi**, **beş kırmızı adıyla**, *"a pattern that validates is
+not the same as a pattern that sews up"*.
+
+### 9b. **KALIP + FLAT İNDİREBİLİYOR MU? — MOTOR TARAFINDA EVET, TARAYICIDA DOĞRULANMADI.** ⚠
+
+`indir_check` **EXIT 0** (`KOKEN_ALANLARI` 39, edit kolu 9 kalem), inen PDF
+**1:1** (kalibrasyon karesi **30.000 mm**), dört spec **dört ayrı DXF hash**,
+`al_dene_check` **EXIT 0**, `H1 10/10`. Zincirin her halkası bir kapının
+altında. 🚨 **AMA GERÇEK BİR TARAYICIDA HİÇ TIKLANMADI — on yedinci faz
+(borç 96). Bu makinede `chromium`/`google-chrome` YOK, Playwright/Puppeteer
+YOK.** *"Yabancı gerçekten indirebiliyor"* cümlesi bugün **DOĞRULANMADI**, ve
+kapanışın en üstüne öyle yazıyorum.
+
+### 9c. **PARASINI VEREBİLİYOR MU? — HAYIR. ÖLÇTÜM: SIFIR ÖDEME YOLU.** 🔴
+
+```
+canlı index.html'deki "stripe" geçişleri: 5  -> BEŞİ DE bir kumaş DOKUSU
+                                            değişkeni (index.html:472 const stripe=…)
+ödeme sağlayıcısı (stripe/gumroad/lemonsqueezy/checkout): web/ + backend/'de YOK
+"Join the Beta" / "Become a Beta Partner" -> href="#top", betaemail alanına odaklanıyor
+```
+
+**Tek dönüşüm bir E-POSTA BEKLEME LİSTESİ.** Bir yabancı bugün stitchu'ya
+**para veremez.** **Bu F9'un kusuru DEĞİL** — kart açıkça *"Bu kart FİYAT KOYMAZ
+ve ÖDEME KURMAZ"* diyor — ama **koşunun sapma sorusunun üçte biri bugün HAYIR**
+ve kapanışa öyle yazılıyor.
+
+### 9d. **SAPMA SORUSUNUN BİRİNCİ YARISI — SAYFA *"YABANCI FOTOĞRAF YÜKLENEMİYOR"* DİYOR MU?**
+
+## 🚨 **HAYIR — VE KARTIN VARSAYIMI YANLIŞ ÇIKTI. ÖLÇTÜM.**
+
+Kart *"§3.9'un doğru sonucu, sıfır ücretli API"* diyerek sayfanın yabancı
+fotoğrafı **reddettiğini** varsayıyor. **Reddetmiyor.** Ölçtüm:
+
+```
+web/js/config.js:4   BACKEND_URL = 'https://stitchu-api.damummyphus.workers.dev'
+web/js/analyze.js:5  photoAvailable = () => Boolean(BACKEND_URL)     -> TRUE
+web/js/create.js:779 if (photoAvailable()) { … dosya seçici + "upload" düğmesi }
+```
+
+`BACKEND_URL` **canlıda dolu**, yani yükleme bloğu **gizlenmiyor, GÖSTERİLİYOR.**
+Ve Worker **ayakta ve sitenin Origin'ini kabul ediyor** — ücret harcamadan
+sınadım:
+
+```
+GET  /api/analyze                              -> 401 {"error":"Unauthorized"}
+POST /api/analyze  (Origin: stitchu.nosey…, gövde {} — GÖRSEL YOK)
+                                               -> 400 {"error":"Invalid request"}
+```
+
+**400, 401 değil.** Yani Worker sitenin isteğini **kabul ediyor** ve modele
+gitmeden **önce doğruluyor**. Sonuç: **bir yabancı bugün canlı sayfaya kendi
+fotoğrafını yükleyebilir ve bu Damla'nın hesabından ücretli bir Claude vision
+çağrısı harcar.**
+
+**Vitrin bunu ÖRTMÜYOR ama İLAN DA ETMİYOR:** canlı landing *"upload a photo"*u
+**iki kez** yazıyor ve *"if you upload a photo, that call is the only thing that
+leaves the page"* diyor — **doğru cümleler**, ama **hiçbir yerde bu yolun
+Damla'ya PARAYA MAL OLDUĞU, bir kotası olduğu ya da kapatılabileceği
+yazmıyor.** `analyze.js` 429 için bir mesaj taşıyor (*"Too many photos right
+now"*), yani **bir kota VAR** — ama **sayısı yayınlanmıyor ve ben ölçmedim.**
+
+⚠ **§3.9 İHLALİ DEĞİL:** §3.9 **koşuya** (ajan/kapı/hakem) sıfır ücretli çağrı
+şart koşuyor ve koşu boyunca **sıfır** harcandı — `al_dene` yolu bankalı,
+`hedef_kosu` mühürlü fixture. **Ücret riski KOŞUDA değil, CANLI SİTEDE ve
+TANIMADIĞIN İNSANLARDA.** **Bu bir iş kararıdır → DAMLA'YA.**
+⚠ **Uçtan uca gerçek bir yükleme YAPILMADI** (para harcardı). **DOĞRULANMADI.**
