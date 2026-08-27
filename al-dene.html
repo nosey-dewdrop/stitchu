@@ -19,8 +19,8 @@
 <meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
 <meta name="twitter:title" content="stitchu · try it on ten real photographs">
 <meta name="twitter:description" content="Ten real garment photographs, ten drafted patterns, downloadable.">
-<link rel="stylesheet" href="css/theme-transitions.css?v=140">
-<link rel="stylesheet" href="css/shared-header.css?v=140">
+<link rel="stylesheet" href="css/theme-transitions.css?v=141">
+<link rel="stylesheet" href="css/shared-header.css?v=141">
 <style>
   :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; --cherry:#8f2038; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -39,8 +39,17 @@
   .shot img{width:100%;height:100%;object-fit:cover;display:block}
   .cap{border-top:1px dashed var(--bb-line);padding:9px 11px;display:flex;flex-direction:column;gap:3px}
   .cn{font-size:12.5px;color:var(--navy)}
-  .cc{font-size:10.5px;color:#5b7089;line-height:1.35}
   .go{font-size:11px;letter-spacing:.6px;color:var(--cherry);margin-top:3px}
+  /* 🚨 THE CREDIT SITS OUTSIDE THE CARD LINK ON PURPOSE (GECE7/F9, borç 99).
+     While it lived inside <a class="card"> its links could not exist at all —
+     a nested <a> is invalid HTML — so clicking a photographer's name opened the
+     drafting page instead of their work. Attribution that does not reach the
+     author is not attribution. */
+  .cardwrap{display:flex;flex-direction:column}
+  .cc{font-size:10.5px;color:#5b7089;line-height:1.4;padding:7px 11px 0;
+      border:1px solid var(--bb-line);border-top:none;background:#fff}
+  .cc a{color:#3f74a8}
+  .cc .sa{display:block;margin-top:3px;color:#6b7f96}
 
   .note{background:var(--bb-pale);border:1px solid var(--bb-line);border-radius:3px;padding:18px 22px;margin-top:26px}
   .note h3{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:19px;font-weight:400;color:var(--navy);margin:0 0 8px}
@@ -86,7 +95,7 @@
     <p data-en="The garment is DESCRIBED — sleeveless, A-line, sweetheart neckline, gathered waist. That description was read by a vision model once, and the answer was recorded. Clicking replays the recording; it does not call the model again, and it costs nothing. It is the same recording the project's own regression test runs against, so this page and that test can never disagree about what the model said." data-tr="Giysi TARİF ediliyor — kolsuz, A kesim, kalp yaka, büzgülü bel. O tarif bir kez bir görü modeli tarafından okundu ve cevap kaydedildi. Tıklamak kaydı yeniden oynatıyor; modeli tekrar çağırmıyor ve hiçbir maliyeti yok. Bu, projenin kendi regresyon testinin karşı koştuğu kaydın aynısı, yani bu sayfa ile o test modelin ne dediği konusunda asla ayrışamaz.">The garment is DESCRIBED — sleeveless, A-line, sweetheart neckline, gathered waist. That description was read by a vision model once, and the answer was recorded. Clicking replays the recording; it does not call the model again, and it costs nothing. It is the same recording the project's own regression test runs against, so this page and that test can never disagree about what the model said.</p>
     <p data-en="The garment is then MEASURED and DRAFTED, and none of that is a recording. The proportions are measured off the photograph's own pixels in your browser, and the pattern is drafted from them by a deterministic C++ engine — every curve, every seam allowance, every notch, the cutting layout and the metreage. Pick a different standard size and the whole pattern is redrafted for it. Nothing on the result screen was drawn by hand or corrected afterwards." data-tr="Sonra giysi ÖLÇÜLÜYOR ve ÇİZİLİYOR ve bunların hiçbiri kayıt değil. Oranlar fotoğrafın kendi pikselleri üzerinden senin tarayıcında ölçülüyor, kalıp da onlardan deterministik bir C++ motoruyla çiziliyor — her eğri, her dikiş payı, her çentik, kesim planı ve metraj. Başka bir standart beden seç, kalıp baştan onun için çizilsin. Sonuç ekranındaki hiçbir şey elle çizilmedi ya da sonradan düzeltilmedi.">The garment is then MEASURED and DRAFTED, and none of that is a recording. The proportions are measured off the photograph's own pixels in your browser, and the pattern is drafted from them by a deterministic C++ engine — every curve, every seam allowance, every notch, the cutting layout and the metreage. Pick a different standard size and the whole pattern is redrafted for it. Nothing on the result screen was drawn by hand or corrected afterwards.</p>
     <p data-en="Where the engine cannot draw something the photograph shows, it says so on the result screen instead of drawing something else. That list is part of the output." data-tr="Motor fotoğrafta görünen bir şeyi çizemiyorsa, başka bir şey çizmek yerine sonuç ekranında bunu söylüyor. O liste de çıktının bir parçası.">Where the engine cannot draw something the photograph shows, it says so on the result screen instead of drawing something else. That list is part of the output.</p>
-    <p data-en="Every photograph below is somebody else's work, used under the licence named on its card, and every one of them links back to its source page." data-tr="Aşağıdaki her fotoğraf başkasının emeği, kartında adı yazan lisansla kullanılıyor ve her biri kaynak sayfasına geri bağlanıyor.">Every photograph below is somebody else's work, used under the licence named on its card, and every one of them links back to its source page.</p>
+    <p data-en="Every photograph below is somebody else's work. Under each one, outside the link that opens the drafting page, the photographer's name links to the source page and the licence name links to the licence itself, so you can check the terms rather than take our word for them. Nine of the ten are Creative Commons — three CC0, three CC BY and three CC BY-SA, and the three BY-SA ones say ShareAlike in as many words. The tenth is a museum rights statement, &quot;No restrictions&quot;, which is not a CC licence and is not called one here." data-tr="Aşağıdaki her fotoğraf başkasının emeği. Her birinin altında, çizim sayfasını açan bağlantının dışında, fotoğrafçının adı kaynak sayfasına ve lisansın adı lisansın kendisine bağlanıyor; şartları bize güvenerek değil kendin okuyarak görebilirsin. Onun dokuzu Creative Commons — üç CC0, üç CC BY, üç CC BY-SA, ve BY-SA olan üçü ShareAlike'ı adıyla yazıyor. Onuncusu bir müze hak beyanı, &quot;No restrictions&quot;; bu bir CC lisansı değil ve burada öyle anılmıyor.">Every photograph below is somebody else's work. Under each one, outside the link that opens the drafting page, the photographer's name links to the source page and the licence name links to the licence itself, so you can check the terms rather than take our word for them. Nine of the ten are Creative Commons — three CC0, three CC BY and three CC BY-SA, and the three BY-SA ones say ShareAlike in as many words. The tenth is a museum rights statement, "No restrictions", which is not a CC licence and is not called one here.</p>
   </div>
 
   <h2 data-en="Can I use my own photograph?" data-tr="Kendi fotoğrafımı kullanabilir miyim?">Can I use my own photograph?</h2>
@@ -100,7 +109,7 @@
   <span><a href="index.html" data-en="Home" data-tr="Ana Sayfa">Home</a> · <a href="benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a> · <a href="patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a> · <a href="api.html">API</a> · <a href="privacy.html" data-en="Privacy" data-tr="Gizlilik">Privacy</a> · @nosey-dewdrop</span>
 </footer>
 
-<script src="js/shared-header.js?v=140"></script>
+<script src="js/shared-header.js?v=141"></script>
 <script type="module">
 // The ten cards are BUILT FROM web/data/al-dene.json, never typed here.
 // That file is generated by engine/tools/gen-al-dene.py out of three sealed
@@ -113,17 +122,19 @@
 const grid = document.getElementById('grid');
 const status = document.getElementById('status');
 try {
-  const res = await fetch('data/al-dene.json?v=140');
+  const res = await fetch('data/al-dene.json?v=141');
   if (!res.ok) throw new Error(res.status);
   const data = await res.json();
   for (const ex of data.ornekler) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cardwrap';
     const a = document.createElement('a');
     a.className = 'card';
     a.href = `create.html?ornek=${encodeURIComponent(ex.no)}`;
     const shot = document.createElement('div');
     shot.className = 'shot';
     const img = document.createElement('img');
-    img.src = `ornek/${ex.dosya}?v=140`;
+    img.src = `ornek/${ex.dosya}?v=141`;
     img.loading = 'lazy';
     img.alt = ex.seen.details || ex.dosya;
     shot.appendChild(img);
@@ -136,18 +147,43 @@ try {
     const words = [ex.seen.garment, ex.seen.neckline, ex.seen.skirtStyle, ex.seen.sleeveStyle]
       .filter((w) => w && w !== 'none');
     name.textContent = words.join(' · ');
-    const credit = document.createElement('span');
-    credit.className = 'cc';
-    credit.textContent = `${ex.kunye.author} · ${ex.kunye.license}`;
     const go = document.createElement('span');
     go.className = 'go';
     go.textContent = 'draft this →';
     cap.appendChild(name);
-    cap.appendChild(credit);
     cap.appendChild(go);
     a.appendChild(shot);
     a.appendChild(cap);
-    grid.appendChild(a);
+    wrap.appendChild(a);
+
+    // ── THE CREDIT. Built OUTSIDE the card link, with real anchors.
+    // Author -> the source page the photograph was taken from.
+    // Licence name -> the licence's own deed, so a reader can check the terms
+    // rather than trust the two words printed here.
+    // BY-SA additionally names ShareAlike, because that is a condition of use
+    // and a licence name alone does not communicate it.
+    const credit = document.createElement('div');
+    credit.className = 'cc';
+    const http = (u) => (String(u || '').startsWith('//') ? 'https:' + u : String(u || ''));
+    const src = document.createElement('a');
+    src.href = ex.kunye.commons_page;
+    src.rel = 'noopener';
+    src.textContent = ex.kunye.author;
+    const lic = document.createElement('a');
+    lic.href = http(ex.kunye.license_url);
+    lic.rel = 'license noopener';
+    lic.textContent = ex.kunye.license;
+    credit.appendChild(src);
+    credit.appendChild(document.createTextNode(' · '));
+    credit.appendChild(lic);
+    if (/BY-SA/i.test(ex.kunye.license)) {
+      const sa = document.createElement('span');
+      sa.className = 'sa';
+      sa.textContent = 'ShareAlike: a modified copy of this photograph must carry the same licence.';
+      credit.appendChild(sa);
+    }
+    wrap.appendChild(credit);
+    grid.appendChild(wrap);
   }
   status.textContent = `${data.ornekler.length} photographs · ` +
     'garment labels replayed from a recording, proportions measured and pattern drafted live';
