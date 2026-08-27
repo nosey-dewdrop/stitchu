@@ -1,0 +1,59 @@
+HEAD: 57410b7
+ağaç: 0 kirli iz (0 olmalı)
+
+========================================
+M1 — web/al-dene.html: künyedeki kaynak bağlantısı düşürülüyor (veri EL DEĞMEDEN)
+========================================
+--- git diff --numstat HEAD -- web/al-dene.html (BOŞ = bu kartta hiç açılmadı) ---
+--- (bitti) ---
+   diff satırı: 0+/1-
+   al_dene_check       -> EXIT 1
+   vitrin_check        -> EXIT 0
+   al_dene_check (geri) -> EXIT 0
+
+========================================
+M2 — engine/tools/bugra/bugra-parity.mjs: topLength 'hip' -> 'tunic' (HAKEMİN HM-3'Ü)
+========================================
+--- git diff --numstat HEAD -- engine/tools/bugra/bugra-parity.mjs (BOŞ = bu kartta hiç açılmadı) ---
+--- (bitti) ---
+   diff satırı: 1+/1-
+   bugra_parity_check  -> EXIT 1
+   bugra_parity (geri) -> EXIT 0
+
+========================================
+M3 — web/index.html: üretilmiş sayı ELLE 10/10 -> 9/10 yapılıyor
+========================================
+   diff satırı: 1+/1-
+   vitrin_check        -> EXIT 1
+   landing_truth_check -> EXIT 0
+
+========================================
+M4 — web/index.html: K45'in yasak kelimesi geri konuyor
+========================================
+   diff satırı: 1+/1-
+   vitrin_check        -> EXIT 1
+
+========================================
+M5 — web/index.html: vitrinden patterns_real/ altına bir bağlantı
+========================================
+   diff satırı: 1+/1-
+   vitrin_check        -> EXIT 1
+
+========================================
+M6 — engine/src/dxf.cpp: dikiş katmanı (L14) sessizce iç çizgi katmanına (L8) çevriliyor
+========================================
+--- git diff --numstat HEAD -- engine/src/dxf.cpp (BOŞ = bu kartta hiç açılmadı) ---
+--- (bitti) ---
+   diff satırı: 2+/2-
+   cmake --build rc=0
+   build-wasm rc=0  dist 3135418a  vendor 345c90e0
+   dxf_check           -> EXIT 1
+   indir_check         -> EXIT 1
+   geri: cmake --build rc=0
+   geri: build-wasm rc=0  dist 762e7286  vendor a0bb1844
+   dxf_check   (geri)  -> EXIT 1
+
+========================================
+AĞAÇ GERİ ALINDI MI?
+========================================
+ M web/vendor/stitchu-engine.js
