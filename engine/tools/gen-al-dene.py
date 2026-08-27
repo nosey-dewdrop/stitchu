@@ -119,11 +119,14 @@ def main():
     doc = {
         "_ne": "AL DENE — on gercek fotograf, on bankali goru okumasi.",
         "_uretildi": "engine/tools/gen-al-dene.py — ELLE YAZILMAZ.",
-        # ⚠ THE KEY IS `olcum_seti`, NOT `set`. `set` is a shipped shoulderStyle
-        # enum VALUE (measurements.hpp ShoulderStyle::Set), and
-        # vocab_reference_check counts every `"set"` in its scope as a reference
-        # to that word. A JSON key spelled the same way grows a closed enum's
-        # reference count by one and burns the gate red — measured, F8.
+        # WHY THE KEY IS `olcum_seti` AND NOT THE OBVIOUS SHORT ONE.
+        # The short spelling is a SHIPPED shoulderStyle enum value
+        # (measurements.hpp ShoulderStyle::Set), and vocab_reference_check counts
+        # every quoted occurrence of an enum value inside its scope as a
+        # REFERENCE to that word. A JSON key that happens to be spelled the same
+        # therefore grows a CLOSED enum's reference count by one and burns the
+        # gate red. Measured twice in F8: once by the key, and once again by the
+        # first draft of this very comment, which quoted the word to explain it.
         "_kaynak": {"goru": FIXTURES, "kunye": CREDITS, "olcum_seti": f"{TABAN} _olcum_seti.hedef_10"},
         "_sifir_api": (
             "Bu sayfa VLM cagirmaz (§3.9). Etiketler bankali; olcum (measure.js) "
