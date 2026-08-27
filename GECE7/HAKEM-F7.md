@@ -380,5 +380,27 @@ F7'nin açtığı yüzeyin bir sonraki kartta pinlenmesi gereken kısmı. İkisi
 
 ---
 
+## 12. İKİNCİ TAM `ctest` — **HAKEMİN KENDİ COMMİT'İNDE**
+
+Hüküm commit'lendikten (`4603771`) sonra süit **bir kez daha** koştu:
+
+```
+96% tests passed, 5 tests failed out of 129
+Total Test time (real) = 741.29 sec
+The following tests FAILED:
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	102 - contract_check (Failed)
+	108 - figure_check (Failed)
+```
+
+**AYNI BEŞ AD, ALTINCI YOK.** Hakemin dört yeni dosyası (`HAKEM-F7.md` ·
+`F8.md` · iki mutasyon logu) **yeni bir kırmızı doğurmadı.**
+`vocab_reference_check` **kendi commit'imde de `HUKUM: YESIL`** (10336/10438 —
+K12 kapıyı **commit'ten** okur) · `pytest` **33 passed**.
+
+---
+
 **Sonraki kart:** `GECE7/F8.md` — **AL DENE + BUĞRA KÖR KONTROLÜ.**
 **Etiket:** `F7-yesil`.
