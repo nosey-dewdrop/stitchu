@@ -413,7 +413,50 @@ std::vector<ValidationIssue> sleeveIssues(
     // seam), because that cap is still perfectly sewable as long as its ease
     // stays in the window. So the convergence check only counts when the ease is
     // ALSO out of window — i.e. the solver genuinely failed, not the arm forced it.
-    const bool easeInWindow = ease >= capEaseMin && ease <= capEaseMax;
+    //
+    // ⭐ BORÇ 86 (GECE7 / F7) — THE WINDOW WAS A *WOVEN* WINDOW AND IT REFUSED
+    // THE ENGINE'S OWN KNIT DRAFT. MEASURED, NOT ARGUED:
+    //
+    //   fabric:'knit', fabricStretchPct:50, straight sleeve
+    //     -> draftJSON  1 issue  "[cap] Sleeve: cap ease 0.0% outside the 1-9% window"
+    //     -> dxfSpecJSON  0 BYTES.  The user downloaded an EMPTY FILE.
+    //   fabricStretchPct:25 -> "cap ease 1.0% ..." — same refusal, and the same
+    //     spec with sleeveStyle:'none' drafts clean (DXF 29373 B). So nothing is
+    //     wrong with the sleeve geometry; two tables inside the engine DISAGREED:
+    //
+    //     fabricease.hpp kCap  says the cap ease target IS 0.00 from 38% stretch
+    //       up ("a knit cap is set FLAT" — Aldrich knit block / UNL, cited there),
+    //     validator.hpp capEaseMin says the floor is 0.01 FOR EVERY FABRIC.
+    //
+    //     The solver converged EXACTLY on the number the engine asked it for, and
+    //     then the engine refused its own answer. That is not a sewability
+    //     verdict, it is a contradiction, and it shipped an empty DXF.
+    //
+    // ⚠ THE 1-9% WINDOW IS *NOT* LOOSENED (F7 card, §3.8 md.4). Two things move
+    // and both are read off numbers the engine already publishes:
+    //
+    // (1) FLOOR = min(woven floor, THIS FABRIC's own declared target), never
+    //     below 0. woven target 4% -> min(1%,4%) = 1%, UNCHANGED. stable-knit
+    //     target 2% -> 1%, UNCHANGED. knit >=38% target 0% -> 0%. A cap can
+    //     still never be SHORTER than the armhole: the clamp at 0 keeps that.
+    //
+    // (2) CONVERGENCE SLACK. `ease` is only known to +-convergenceTolerance mm
+    //     spread over the armhole; judging it to infinite precision against a
+    //     hard edge makes this gate stricter than the solver's own guarantee,
+    //     and that is what refuses the 25% case (target 1.0196%, measured
+    //     0.998% — 0.08 mm short on a 390 mm armhole, inside the solver's own
+    //     0.5 mm). So a cap that sits within the solver's tolerance OF THE
+    //     ENGINE'S DECLARED TARGET is CONVERGED, not out of window.
+    //     THIS CLAUSE IS PROVABLY INERT ON WOVEN, it is not a loosening: the
+    //     woven target is 4%, dead centre of [1%,9%], so a measured ease outside
+    //     the window is >=3% away from the target while the slack is
+    //     0.5/404 = 0.124%. 0.124% < 3%: the clause can never fire there.
+    const double easeFloor = std::max(0.0, std::min(capEaseMin, capEase));
+    const double easeSlack =
+        armholeDrawn > 0.0 ? SleeveBlock::convergenceTolerance / armholeDrawn : 0.0;
+    const bool convergedOnTarget = std::fabs(ease - capEase) <= easeSlack;
+    const bool easeInWindow =
+        (ease >= easeFloor && ease <= capEaseMax) || convergedOnTarget;
     if (std::fabs(capLength - target) > capLengthTolerance && !easeInWindow) {
         issues.push_back({"cap", sleeve->name,
             fmt("cap seam %.1f vs %s armhole %.1f (%d named edge(s)) + %.0f%% ease = %.1f — "
@@ -424,7 +467,10 @@ std::vector<ValidationIssue> sleeveIssues(
     }
     if (!easeInWindow) {
         issues.push_back({"cap", sleeve->name,
-            fmt("cap ease %.1f%% outside the %.0f-%.0f%% window", ease * 100, capEaseMin * 100, capEaseMax * 100)});
+            fmt("cap ease %.2f%% outside the %.2f-%.0f%% window this fabric declares "
+                "(target %.2f%%, solver slack %.2f%%)",
+                ease * 100, easeFloor * 100, capEaseMax * 100, capEase * 100,
+                easeSlack * 100)});
     }
     // Biceps floor: the sleeve must be at least as wide as the biceps girth +
     // ease, or it binds / won't close at the underarm. The cap chord (capLeft ->

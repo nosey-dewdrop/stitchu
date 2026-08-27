@@ -486,6 +486,19 @@ struct GarmentSpec {
     // hosts one; a skirt-only or cut-2 front is refused honestly.
     // See boxpleat.hpp / FORMULAS.md "Center inverted box pleat".
     int boxPleat = 0; // BoxPleat enum value; 0 = None
+    // ⭐ THE EDIT LAYER (GECE7 / F7) — the two operators that run AFTER the draft,
+    // on the object the user downloads. Both are OPT-IN and OFF by default, so a
+    // spec that declares neither draws byte-identically (RULES 4, golden_check).
+    //   editExtendMM  "10 cm uzat" — mm of cloth inserted AT THE HEM, along the
+    //                 grain, on the front AND back hem pieces (the same amount,
+    //                 or the side seams stop matching). 0 = off.
+    //   editAttach    "fiyonk ekle" — AttachComponent enum; 0 = None, 1 = Bow.
+    //                 Appends a real piece + a matched notch pair whose anchor is
+    //                 MEASURED at half the host hem edge's own arc length, and
+    //                 adds the component's own measured bolt run to the metreage.
+    // See patternedit.hpp.
+    double editExtendMM = 0;
+    int editAttach = 0; // AttachComponent enum value; 0 = None
     // Opt-in corset lace-up back (korse bağcıklı sırt): an eyelet-laced CENTER-BACK
     // closure — the two back halves leave an open gap spanned by a cord that
     // criss-crosses between two columns of eyelets (one down each back edge). Adds

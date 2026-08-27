@@ -38,6 +38,28 @@ enum class TiePlacement {
 
 namespace TieBlock {
 
+// The FINISHED dimensions of one tie/bow, in mm, plus how many are cut. The
+// numbers live here (not at each call site) so a second consumer cannot fork a
+// copy of them: `op.attach` (patternedit.cpp) hangs the SAME bow this block
+// already ships, and therefore adds no patternmaking number of its own.
+struct Finished {
+    double widthMM = 0;
+    double lengthMM = 0;
+    int count = 0;
+};
+
+// The decorative centre-front waist bow (TiePlacement::FrontWaistBow) — the
+// figures FORMULAS.md "Fabric ties / sashes" already carries and this block has
+// always drawn. Extracted VERBATIM, so `apply()` stays byte-identical.
+Finished finishedBow();
+
+// One self-fabric tie strip, cut as a rectangle folded lengthwise into a tube.
+// `finishedW` / `finishedL` are FINISHED dimensions; the cut rectangle is
+// (2*finishedW + 2*SA) wide x (finishedL + 2*SA) long. Exposed so op.attach
+// draws the same component instead of a second, drifting copy of it.
+PatternPiece strip(const std::string& name, const std::string& role,
+                   double finishedW, double finishedL, int count);
+
 // Appends the tie piece(s) for `placement` (a self-fabric strip cut as a
 // rectangle, with a placement notch on the matching body piece) and a guide
 // step. `waistMM` is the body waist circumference (sizes the back sash length).

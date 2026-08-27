@@ -240,6 +240,23 @@ GarmentSpec buildSpec(const val& o) {
     spec.locketTop = enumIntField(o, "locketTop", kLocketTop, kLocketTopCount);
     spec.yoke = enumIntField(o, "yoke", kYoke, kYokeCount);
     spec.boxPleat = enumIntField(o, "boxPleat", kBoxPleat, kBoxPleatCount);
+    // ⭐ EDIT KATMANI (GECE7 / F7) — the two fields that carry "10 cm uzat" and
+    // "fiyonk ekle" across the wire. Both are UNDECLARED by default and an
+    // undeclared edit leaves the draft byte-identical (RULES 4). An out-of-range
+    // component is REFUSED by name, never clamped (RULES invariant 1): a shopper
+    // who asks for a component the engine does not have must be told so, not
+    // handed a garment with a silently different thing on it.
+    {
+        const val v = o["editExtendMM"];
+        if (!v.isUndefined() && !v.isNull()) {
+            const double d = v.as<double>();
+            if (!std::isfinite(d))
+                throw std::invalid_argument("editExtendMM is not a finite number of mm");
+            spec.editExtendMM = d;
+        }
+        static constexpr const char* kAttach[] = {"none", "bow"};
+        spec.editAttach = enumIntField(o, "editAttach", kAttach, 2);
+    }
     validateSpecCross(spec); // incoherent combination -> error, not a silent skip
     return spec;
 }

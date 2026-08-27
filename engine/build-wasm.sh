@@ -92,6 +92,7 @@ ENGINE_SRCS=(
   src/dartsuppress.cpp
   src/panelsplit.cpp
   src/planops.cpp
+  src/patternedit.cpp
   src/bodice.cpp
   src/skirt.cpp
   src/ruffle.cpp

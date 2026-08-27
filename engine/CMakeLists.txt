@@ -18,6 +18,7 @@ add_library(engine
     src/dartsuppress.cpp
     src/panelsplit.cpp
     src/planops.cpp
+    src/patternedit.cpp
     src/bodysurface.cpp
     src/garmentshell.cpp
     src/bodice.cpp
@@ -522,6 +523,24 @@ target_link_libraries(fabric_catalog_check PRIVATE engine)
 target_compile_definitions(fabric_catalog_check PRIVATE
     STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 add_test(NAME fabric_catalog_check COMMAND fabric_catalog_check)
+
+# ⭐ EDIT KATMANI (GECE7 / F7, §4A · K35) — op.extend ve op.attach'in KENDI
+# kapilari. K35 sarti: bir operatorun kapisi KENDI adini tasir (`op.X -> X_check`);
+# var olan bir kapinin adini odunc almak `expressability_check`te kirmizi yanar.
+#
+# Ikisi de INDIRILEN nesne uzerinde olcer: ayni spec iki kez cizilir (edit KAPALI
+# ve ACIK) ve fark DRAWN komutlardan geri turetilir — operatorun kendi raporu
+# okunmaz (K30/K49 dersi). extend_check ayrica "bolge disindaki cikti bayt-ayni"
+# sartini komut komut yargilar; attach_check centigin ELLE YAZILMADIGINI, yani
+# ev sahibi kenarin kendi yay ortasinda oldugunu, kenari kendisi yurüyerek
+# dogrular ve o noktanin kutu ortasi OLMADIGINI ayrica olcer (§3.10).
+add_executable(extend_check tests/extend_check.cpp)
+target_link_libraries(extend_check PRIVATE engine)
+add_test(NAME extend_check COMMAND extend_check)
+
+add_executable(attach_check tests/attach_check.cpp)
+target_link_libraries(attach_check PRIVATE engine)
+add_test(NAME attach_check COMMAND attach_check)
 
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)

@@ -20,8 +20,8 @@ constexpr double SA = constants::kSeamAllowanceMM; // seam allowance per edge (c
 // lengthwise fold self-lines it. The piece IS the cut rectangle (SA baked into
 // the cut note, like the ruffle strip), drawn at finished size with the fold
 // line + seam lines marked.
-PatternPiece tieStrip(const std::string& name, const std::string& role,
-                      double finishedW, double finishedL, int count) {
+PatternPiece stripImpl(const std::string& name, const std::string& role,
+                       double finishedW, double finishedL, int count) {
     const double cutW = 2 * finishedW + 2 * SA;
     const double cutL = finishedL + 2 * SA;
 
@@ -113,6 +113,17 @@ Point waistEdgeAnchor(PatternPiece* piece) {
 
 } // namespace
 
+PatternPiece strip(const std::string& name, const std::string& role,
+                   double finishedW, double finishedL, int count) {
+    return stripImpl(name, role, finishedW, finishedL, count);
+}
+
+// ⭐ EXTRACTED, NOT INVENTED (GECE7 / F7). These are the three literals the
+// FrontWaistBow case below has always used; they now live in ONE place because
+// op.attach hangs the same bow. `apply()` reads them back, so the drawn piece
+// is byte-identical to what it was before the extraction.
+Finished finishedBow() { return Finished{28, 380, 2}; }
+
 bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
     if (placement == TiePlacement::None) return true;
 
@@ -203,9 +214,10 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
         }
         case TiePlacement::FrontWaistBow: {
             // A decorative front bow at the CF waist.
-            finishedW = 28;
-            finishedL = 380;
-            count = 2;
+            const Finished f = finishedBow();
+            finishedW = f.widthMM;
+            finishedL = f.lengthMM;
+            count = f.count;
             name = "Front Waist Bow (ön bel fiyonku)";
             role = "attach at the centre-front waist and knot into a bow";
             bodyIdx = findPieceIndex(pattern, {"Bodice Center Front", "Bodice Front",
@@ -216,7 +228,7 @@ bool apply(DraftedPattern& pattern, TiePlacement placement, double waistMM) {
             return true;
     }
 
-    pattern.pieces.push_back(tieStrip(name, role, finishedW, finishedL, count));
+    pattern.pieces.push_back(strip(name, role, finishedW, finishedL, count));
 
     // Placement notch on the body piece so the sewer knows where the tie is
     // caught. Resolve the pointer NOW, after the push_back above, so it points at

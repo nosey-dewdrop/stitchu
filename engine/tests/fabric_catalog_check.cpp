@@ -319,6 +319,27 @@ int main() {
         fail("the jersey draft is not measurably smaller in the waist than the poplin draft — "
              "the published stretch band is not reaching the draft");
     else ok();
+    // ⭐ BORÇ 88 (GECE7 / F7) — OYUK AND BÜZGÜ WERE PRINTED, NOT GATED.
+    // The F6 card asked for "bel · oyuk · büzgü" and only BEL had a condition
+    // above; the other two columns were pretty-printed and nothing could make
+    // them red. The referee found it with his own mutation (HM-1) and named it.
+    // The two conditions below are the SAME condition the waist already carries,
+    // applied to the two columns that were free: a negative-ease knit must come
+    // out measurably smaller than the woven on the armhole it is drafted with,
+    // and on the skirt edge it gathers onto that waist. Both floors are 1.0 mm
+    // — the same floor the waist leg uses, not a new number — and both are far
+    // under the measured separation (oyuk −27.6852 mm, büzgü −28.9938 mm), so
+    // the gate judges DIRECTION and PRESENCE, never a fitted constant.
+    if (!(got[2].armholeMM < got[0].armholeMM - 1.0))
+        fail("the jersey draft is not measurably smaller in the ARMHOLE than the poplin draft — "
+             "the fabric axis reaches the waist but stops before the armhole the sleeve is "
+             "set into (borç 88: this column used to be printed and never judged)");
+    else ok();
+    if (!(got[2].gatherMM < got[0].gatherMM - 1.0))
+        fail("the jersey draft gathers the SAME width of cloth onto a smaller waist as the "
+             "poplin does — the gathered edge is not following the fabric axis "
+             "(borç 88: this column used to be printed and never judged)");
+    else ok();
     // And every fabric must ask for its own metreage, because every bolt is its
     // own width.
     if (!(got[0].meters > got[1].meters && got[1].meters > got[2].meters))

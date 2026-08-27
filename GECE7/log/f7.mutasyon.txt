@@ -1,0 +1,79 @@
+
+================ M1 — engine/src/patternedit.cpp : op.extend'in mm'sini YUT (hem yarısı kadar taşı) ================
+--- git diff --numstat F7-oncesi..HEAD  (mutasyon ÇALIŞMA AĞACINDA, commit YOK) ---
+--- (yukarısı BOŞSA mutasyon commit'lenmemiştir, doğru) ---
+10ef9565f1d96c137cee872f9d16ad3898420e63  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/extend_check
+175:    hem.to.y += mm * 0.5;
+40717b2201b9961db4a53a3044e5f13fbb08f952  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/extend_check
+extend_check EXIT=1
+attach_check EXIT=0
+error: pathspec 'engine/src/patternedit.cpp' did not match any file(s) known to git
+geri alindi, extend_check EXIT=1
+
+================ M2 — engine/src/patternedit.cpp : op.attach'in ÇENTİĞİNİ ELLE YAZ (kutu ortası) ================
+--- git diff --numstat F7-oncesi..HEAD  (mutasyon ÇALIŞMA AĞACINDA, commit YOK) ---
+--- (yukarısı BOŞSA mutasyon commit'lenmemiştir, doğru) ---
+f590ef5b4f186a051d28c6314b8eaee81c383250  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/attach_check
+287:                { const Rect _b = boundingBox({PathCommand::move(from), pattern.pieces[hi].commands[h]}); crossNotch(pattern.pieces[hi].notches, Point{_b.x + _b.width / 2, _b.y + _b.height / 2}); }
+53c8f5da3c7e4fb5a0c15bcf0d9e3f615577b251  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/attach_check
+attach_check EXIT=1
+extend_check EXIT=1
+error: pathspec 'engine/src/patternedit.cpp' did not match any file(s) known to git
+geri alindi, attach_check EXIT=1
+
+================ M3 — engine/src/validator.cpp : BORÇ 86'nın tabanını geri al (zemin yine 0.01) ================
+--- git diff --numstat F7-oncesi..HEAD  (mutasyon ÇALIŞMA AĞACINDA, commit YOK) ---
+--- (yukarısı BOŞSA mutasyon commit'lenmemiştir, doğru) ---
+756783b7ee3e40978b6436aaf88e675e1572a9e9  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/../dist/stitchu-engine.js
+455:    const double easeFloor = capEaseMin;
+458:    const bool convergedOnTarget = false;
+24da62ef637c8ae27b123d0ccee41b202ad6f292  /Users/damummyphus/damla_projects_2026/stitchu/engine/dist/stitchu-engine.js
+indir_check EXIT=1
+56c9f16701b3c0c1c40a314fd0b3655483f480c8  /Users/damummyphus/damla_projects_2026/stitchu/engine/dist/stitchu-engine.js
+geri alindi, indir_check EXIT=1
+
+================ M4 — engine/tests/fabric_catalog_check.cpp DEĞİL, MOTOR: borç 88'in oyuk kolunu aç ================
+Kapak yerine OYUĞU kumaş ekseninden kopar (bodice.cpp armhole ease'i sabitle).
+--- git diff --numstat F7-oncesi..HEAD  (mutasyon ÇALIŞMA AĞACINDA, commit YOK) ---
+--- (yukarısı BOŞSA mutasyon commit'lenmemiştir, doğru) ---
+ec44725acc65275054a3f1536e41e56543f864df  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/fabric_catalog_check
+91:inline double chestEaseFor(const FabricAxis& f) { (void)f; return chestEase; }
+195:    // ease band. false (default) keeps chestEaseFor/waistEaseFor byte-identical.
+5a8bb5908d8454ffc5da31811ac52a138a5d68de  /Users/damummyphus/damla_projects_2026/stitchu/engine/build/fabric_catalog_check
+  [FAIL] the jersey draft is not measurably smaller in the ARMHOLE than the poplin draft — the fabric axis reaches the waist but stops before the armhole the sleeve is set into (borç 88: this column used to be printed and never judged)
+fabric_catalog_check: 60 checks, 1 failures
+fabric_catalog_check EXIT=1
+geri alindi, fabric_catalog_check EXIT=0
+
+================ M5 — contract/primitives-v1.json : op.extend'in kapısını ÖDÜNÇ AL (K35) ================
+--- git diff --numstat F7-oncesi..HEAD  (mutasyon ÇALIŞMA AĞACINDA, commit YOK) ---
+--- (yukarısı BOŞSA mutasyon commit'lenmemiştir, doğru) ---
+365:      "motorda_kapi": "geometry",
+FAIL  op.extend kapısı olarak "geometry" gösteriyor; o test KAYITLI ama op.extend'in KENDİ kapısı değil. Beklenen ad "extend_check" (motordaki iki operatörün ikisi de bu konvansiyonu yazıyor). VAR OLAN bir kapının adını ÖDÜNÇ ALMAK, operatörü uygulamadan uygulanmış saymanın ve H8-ifadeyi bedavaya düşürmenin yoludur (§0B, K35).
+H8-İFADE = 2 / 5  (n=5, payda ADLI: bugra-locket-top, bugra-buttoned-corset-bustier, stitchu-sheath-eu38, freesewing-bella, freesewing-aaron)
+FAIL expressability_check — 1 ihlal
+expressability_check EXIT=1
+H8-İFADE = 3 / 5  (n=5, payda ADLI: bugra-locket-top, bugra-buttoned-corset-bustier, stitchu-sheath-eu38, freesewing-bella, freesewing-aaron)
+geri alindi, expressability_check EXIT=0
+
+================ SON: git status ================
+ M contract/generated-paths.sha256
+ M engine/CMakeLists.txt
+ M engine/build-wasm.sh
+ M engine/src/garment.cpp
+ M engine/src/measurements.hpp
+ M engine/src/tie.cpp
+ M engine/src/tie.hpp
+ M engine/tests/fabric_catalog_check.cpp
+ M engine/tests/indir_check.mjs
+ M engine/wasm/bindings.cpp
+ M web/api.html
+ M web/benchmark.html
+ M web/closet.html
+ M web/collection-60s70s.html
+ M web/collections/babydoll.html
+ M web/collections/good-collars.html
+ M web/collections/index.html
+ M web/collections/little-frocks.html
+ M web/collections/mod-mini.html
+ M web/collections/retro-dresses.html

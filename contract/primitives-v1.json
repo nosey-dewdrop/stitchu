@@ -197,7 +197,7 @@
           "varsayilan": 1.0,
           "motorda_tuketilmiyor": true,
           "kunye": "YAYIN BULUNAMADI",
-          "not": "\u2b50 K41 / F5-D IS 0b: YIRTMACIN NEREYE KADAR DIKILDIGI, KENDI ADIYLA. Bu sayi arka-yirtmac presetlerinin ikisinde de (contract/vocab-resolution-v1.json, vent 0.75 / slit 0.6) `op.split.atFraction` alaninda duruyordu ve orada YANLIS ISIMDEYDI: bir BOLME YERI degil, bir DIKISIN nereye kadar dikildigi \u2014 yani gercek URUN verisi (yirtmac derinligi). Hakem K41'de 'alan durur ama CINSINE GORE AYRILIR' dedi; ayrim budur. 1.0 = dikis boydan boya dikilir; 0.75 = ust dortte ucu dikilir, alt dortte biri ACIK kalir ve yirtmac odur. \u26a0 MOTORDA TUKETICISI YOK ve dayanagi GORULMEDI (\u00a73.10: YAYIN BULUNAMADI); bir urun varsayilani olarak DISARI SOYLENMEZ. Tek bir yargi silinmedi, tek bir sayi atilmadi (\u00a75.5) \u2014 sayi ayni sayi, artik dogru ismin altinda duruyor."
+          "not": "⭐ K41 / F5-D IS 0b: YIRTMACIN NEREYE KADAR DIKILDIGI, KENDI ADIYLA. Bu sayi arka-yirtmac presetlerinin ikisinde de (contract/vocab-resolution-v1.json, vent 0.75 / slit 0.6) `op.split.atFraction` alaninda duruyordu ve orada YANLIS ISIMDEYDI: bir BOLME YERI degil, bir DIKISIN nereye kadar dikildigi — yani gercek URUN verisi (yirtmac derinligi). Hakem K41'de 'alan durur ama CINSINE GORE AYRILIR' dedi; ayrim budur. 1.0 = dikis boydan boya dikilir; 0.75 = ust dortte ucu dikilir, alt dortte biri ACIK kalir ve yirtmac odur. ⚠ MOTORDA TUKETICISI YOK ve dayanagi GORULMEDI (§3.10: YAYIN BULUNAMADI); bir urun varsayilani olarak DISARI SOYLENMEZ. Tek bir yargi silinmedi, tek bir sayi atilmadi (§5.5) — sayi ayni sayi, artik dogru ismin altinda duruyor."
         },
         "notchFractions": {
           "tip": "kesir[]",
@@ -362,7 +362,16 @@
         }
       },
       "sureklilik": "deltaMM surekli oldugu icin iki tarif arasi her ara deger gecerlidir (yasa 3). 'mini ile midi arasi' bu operatorle cizilir.",
-      "motorda_kapi": null
+      "motorda_kapi": "extend_check",
+      "olculen": {
+        "nerede": "engine/src/patternedit.cpp — extendOne(); urun yolu engine/src/garment.cpp, DraftedPattern uzerinde, kesim cizgisi pasindan ONCE",
+        "hangi_mm": "EU38 dokuma A-line elbise, 100.0 mm istendi: Skirt Front boy 662.0000 -> 762.0000 mm, Skirt Back 662.0000 -> 762.0000 mm. Etek ucunun KENDI yay uzunlugu 300.5727 -> 300.5727 mm (TASIMA, sekil degismedi). Cevre her ikisinde +200.0000 mm = 2 x istenen (eklenen iki dikey parca).",
+        "yon": "GRAIN. Yan dikisi izlemek klosu da buyuturdu: 'uzat' istegi sessizce 'genislet' olurdu. En kisitlayici okuma secildi (§0B md.3).",
+        "uzatma_cizgisinin_yeri": "YAYIN BULUNAMADI — ticari bir kalibin lengthen/shorten cizgisinin bu blok icin nereye dustugunu soyleyen bir yayin gorulmedi. En az degistiren yer secildi: etek ucunun KENDISI, yani her cizilmis landmark'in ALTI. Hicbir landmark kimildamiyor.",
+        "bolge_disi": "Etek ucu kenarindan ONCEKI ve SONRAKI her komut BAYT-AYNI (extend_check LEG 4, komut komut). Kol (ev sahibi olmayan parca) bayt-ayni (LEG 6).",
+        "opt_in": "editExtendMM == 0 iken patternedit.cpp hic kosmaz; golden bayt-birebir (LEG 1 + golden_check).",
+        "mutasyon": "M1: hem.to.y += mm -> mm*0.5 (ikili 10ef9565 -> 40717b22) => extend_check EXIT 1."
+      }
     },
     "op.split": {
       "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu. ⭐ BOLME YERI PARAMETRE DEGIL: motorda splitPanel() kesim sutununu panelin KENDI olculen sutun-deficit profilinden (SurfacePanel::deficitColumnDeg) argmin ile okur ve profil duzse REDDEDER. Bir atFraction parametresi bolmeyi bir KADRANA geri cevirirdi; suppressPanel()'in aci parametresi olmamasi emsaldir.",
@@ -383,7 +392,7 @@
           "tip": "kesir",
           "aralik": "0..1",
           "motorda_tuketilmiyor": true,
-          "not": "🚨 BU ALAN BOLME YERINI BELIRLEMEZ VE MOTORDA HICBIR TUKETICISI YOKTUR. splitPanel() imzasi tek bir SurfacePanel alir; kesim sutununu panelin KENDI olculen sutun-deficit profilinden argmin ile okur ve bu alani OKUMAZ (kapi: split_check SP0, argmin'i kendisi yeniden hesaplar; mutasyon MS2 bolme yerini bir sabite cevirince KIRMIZI yanar). Alan burada duruyor cunku contract/vocab-resolution-v1.json'daki 15 preset onu tasiyor ve tasidigi sey her zaman bir 'bolme yeri' DEGIL: waistline.natural'da bel landmark'i, omuz-bandi / kup / prenses presetlerinde ise duz bir KADRAN. Silmek yirtmac boyunu atmak olurdu (bilgi atmak, bilgi vermemekten beterdir); okumak operatoru kadrana geri cevirirdi. Ikisi de yapilmadi: alan DECLARED, TUKETILMEYEN ve KUNYESIZ olarak isaretlendi. ⚠ 15 kesrin hicbirinin yayinlanmis dayanagi GORULMEDI (KOSU-v7 §3.10: YAYIN BULUNAMADI). Hangi presetin kesri gercek urun verisi hangisi kadran — bu bir URUN karari ve HAKEMIN (GECE7/DAMLA.md'ye yazildi). \u2b50 F5-D IS 0b (K41) GUNCELLEMESI: arka-yirtmac presetlerinin tasidigi iki kesir ARTIK BURADA DEGIL \u2014 0.75 ve 0.6 yirtmacin nereye kadar DIKILDIGIni soyluyordu, yani bir bolme yeri degil bir DIKISIN ozelligiydi, ve `seam.sewnToFraction` alanina KENDI ADIYLA tasindi. Geriye kalan 13 preset'te bu alan duz bir KADRANDIR ve oyle kalir: DECLARED, TUKETILMEYEN, KUNYESIZ. 13'unun de dayanagi GORULMEDI (YAYIN BULUNAMADI) ve hicbiri bir urun varsayilani olarak disari soylenmez."
+          "not": "🚨 BU ALAN BOLME YERINI BELIRLEMEZ VE MOTORDA HICBIR TUKETICISI YOKTUR. splitPanel() imzasi tek bir SurfacePanel alir; kesim sutununu panelin KENDI olculen sutun-deficit profilinden argmin ile okur ve bu alani OKUMAZ (kapi: split_check SP0, argmin'i kendisi yeniden hesaplar; mutasyon MS2 bolme yerini bir sabite cevirince KIRMIZI yanar). Alan burada duruyor cunku contract/vocab-resolution-v1.json'daki 15 preset onu tasiyor ve tasidigi sey her zaman bir 'bolme yeri' DEGIL: waistline.natural'da bel landmark'i, omuz-bandi / kup / prenses presetlerinde ise duz bir KADRAN. Silmek yirtmac boyunu atmak olurdu (bilgi atmak, bilgi vermemekten beterdir); okumak operatoru kadrana geri cevirirdi. Ikisi de yapilmadi: alan DECLARED, TUKETILMEYEN ve KUNYESIZ olarak isaretlendi. ⚠ 15 kesrin hicbirinin yayinlanmis dayanagi GORULMEDI (KOSU-v7 §3.10: YAYIN BULUNAMADI). Hangi presetin kesri gercek urun verisi hangisi kadran — bu bir URUN karari ve HAKEMIN (GECE7/DAMLA.md'ye yazildi). ⭐ F5-D IS 0b (K41) GUNCELLEMESI: arka-yirtmac presetlerinin tasidigi iki kesir ARTIK BURADA DEGIL — 0.75 ve 0.6 yirtmacin nereye kadar DIKILDIGIni soyluyordu, yani bir bolme yeri degil bir DIKISIN ozelligiydi, ve `seam.sewnToFraction` alanina KENDI ADIYLA tasindi. Geriye kalan 13 preset'te bu alan duz bir KADRANDIR ve oyle kalir: DECLARED, TUKETILMEYEN, KUNYESIZ. 13'unun de dayanagi GORULMEDI (YAYIN BULUNAMADI) ve hicbiri bir urun varsayilani olarak disari soylenmez."
         },
         "seamRatio": {
           "tip": "oran",
@@ -475,7 +484,18 @@
           ]
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "attach_check",
+      "olculen": {
+        "nerede": "engine/src/patternedit.cpp — runEditProgram()'in op.attach kolu; urun yolu engine/src/garment.cpp",
+        "yeni_parca": "EU38 dokuma A-line elbise + editAttach=1: parca 6 -> 7. Yeni parca 'Bow (fiyonk, op.attach)' kendi kesim notunu, kapali konturunu, grain'ini VE kesim cizgisini tasiyor (yani edit, garment.cpp'nin kesim-cizgisi pasindan ONCE kostu).",
+        "centik_grafigi": "CIFT centik: ev sahibi 'Skirt Front' 4 komutluk bir arti centik KAZANDI, bilesen kendi 4 komutunu tasiyor. Tek tarafli bir isaret ESLESME degildir.",
+        "capa_olculdu": "Ev sahibi etek ucu kenari 300.5727 mm; capa o kenarin KENDI yay uzunlugunun yarisinda (150.2863 mm) yurunerek bulundu -> (150.2401, 647.1705). Kutu ortasi (149.8500, 641.0000) — arada 6.1829 mm, YANI AYNI NOKTA DEGIL. Elle bir sayi YAZILMADI (§3.10); attach_check LEG 5 kenari kendisi yuruyup yeniden turetiyor ve iki noktanin ayrildigini ayrica olcuyor.",
+        "metraj": "2.0000 -> 2.4000 m. Eklenen metre bilesenin KENDI olculen bolt kosusu (86.0 x 410.0 mm kesim dikdortgeni), duz bir sabit DEGIL.",
+        "bilesenin_olculeri": "UYDURULMADI: TieBlock::finishedBow() — tie.cpp'nin FORMULAS.md 'Fabric ties / sashes' kunyesiyle zaten sevk ettigi 28 x 380 mm, 2 adet. Bu operator YENI hicbir kalipcilik sayisi eklemiyor.",
+        "ev_sahibi_konturu": "DOKUNULMADI (attach_check LEG 7). Asmak bir parca asar, giysiyi yeniden cizmez.",
+        "opt_in": "editAttach == 0 iken hic kosmaz; golden bayt-birebir (LEG 1 + golden_check).",
+        "mutasyon": "M2: capa yay-ortasi yerine KUTU ortasina yazildi (ikili f590ef5b -> 53c8f5da) => attach_check EXIT 1."
+      }
     }
   },
   "bilesenler": {

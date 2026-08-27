@@ -184,6 +184,42 @@ if (typeof engine.dxfSpecJSON === 'function') {
   check('unusable body hands out NO dxf', !!noBody.error && !noBody.dxf, JSON.stringify(noBody).slice(0, 120));
 }
 
+// ------------------------------------------- 6B. BORÇ 86 — KNIT × SLEEVED DXF
+// ⭐ THE F6 REFEREE DOWNLOADED THE THREE SHOWCASE FABRICS AND ONE OF THEM CAME
+// HOME EMPTY. Same spec, three fabrics: cotton-poplin 28746 B, viscose-crepe
+// 28746 B, single-jersey **0 B**. The engine's own refusal was
+// "[cap] Sleeve: cap ease 0.0% outside the 1-9% window", and NO GATE SAW IT:
+// this file only ever ran WOVEN, and fabric_catalog_check reads the pattern out
+// of draftJSON without looking at `issues`. So the one number a shopper
+// actually holds — the size of the file on their disk — was unmeasured on two
+// thirds of the fabric axis the previous phase shipped.
+//
+// This leg runs the axis the phase before shipped, ON THE DOWNLOAD PATH, and it
+// judges BYTES, not a status word. `sleeveStyle:'straight'` is deliberate: the
+// SLEEVELESS knit drafted clean all along (29373 B) and that is exactly why the
+// hole stayed open for a phase.
+if (typeof engine.dxfSpecJSON === 'function') {
+  const KUMASLAR = [
+    ['dokuma (poplin/krep)', { fabric: 'woven', fabricStretchPct: -1 }],
+    ['örme, beyansız', { fabric: 'knit', fabricStretchPct: -1 }],
+    ['örme %25 (stable üstü)', { fabric: 'knit', fabricStretchPct: 25 }],
+    ['örme %50 (single jersey)', { fabric: 'knit', fabricStretchPct: 50 }],
+  ];
+  for (const [ad, ov] of KUMASLAR) {
+    const kolluWire = { ...wire, ...ov, sleeveStyle: 'straight', sleeveLength: 'short' };
+    const d = JSON.parse(engine.draftJSON(kolluWire, BODY));
+    const x = JSON.parse(engine.dxfSpecJSON(kolluWire, BODY));
+    const bytes = (x.dxf || '').length;
+    check(`kollu ${ad}: taslak temiz`, !d.error && !(d.issues || []).length,
+      d.error || (d.issues || []).join(' | ') || '0 issue');
+    check(`kollu ${ad}: DXF BOŞ DEĞİL`, bytes > 0 && !x.error,
+      x.error || `${bytes} bayt`);
+    check(`kollu ${ad}: DXF gerçekten R12`,
+      (x.dxf || '').includes('ENTITIES') && (x.dxf || '').trimEnd().endsWith('EOF'),
+      `${bytes} bayt`);
+  }
+}
+
 // --------------------------------------------- 7. THE REFUSAL REACHES THE USER
 // The engine refusing is only half of invariant 1; the page must not save
 // anything either, and must say why.

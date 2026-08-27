@@ -29,6 +29,7 @@
 #include "slit.hpp"
 #include "sleeve.hpp"
 #include "strap.hpp"
+#include "patternedit.hpp"
 #include "tie.hpp"
 #include "wrapfront.hpp"
 
@@ -1056,6 +1057,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         buttonRowOpens || exposedZipOpens || wrapOpens;
     annotateTechnical(pattern,
         /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
+
+    // ⭐ THE EDIT LAYER (GECE7 / F7) — op.extend / op.attach, HERE and not
+    // earlier. It runs after every drafting post-pass and after the technical
+    // annotation, but BEFORE the cutting lines and the edge re-anchoring below,
+    // so an extended outline gets its own offset cut line and an attached piece
+    // enters the cut plan on the same terms as a drafted one. Opt-in and OFF by
+    // default: with editExtendMM == 0 and editAttach == 0 this call does nothing
+    // at all and the golden dump is byte-identical (RULES 4).
+    runEditProgram(pattern, spec, m);
 
     // CUTTING LINES (last, so every post-pass piece is covered): each real
     // piece gets its sewing line offset outward by its seam allowance — cut on

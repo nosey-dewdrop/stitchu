@@ -93,6 +93,19 @@ export const STRINGS = {
   // ⭐ OPERATÖR PROGRAMI (GECE7 / F5-D). Bir RET burada bir hata mesajı DEĞİL,
   // motorun ölçülmüş cevabıdır: sevk edilen gövde bir konidir ve op.suppress onu
   // reddeder. Cümle bunu bir kusur gibi değil, bir cevap gibi söyler.
+  // EDIT SATIRI (GECE7 / F7). Soru formundaki her baslik "?" ile biter.
+  'create.edit.lengthen': { en: 'Lengthen by (cm)', tr: 'Su kadar uzat (cm)' },
+  'create.edit.bow': { en: 'Add a bow', tr: 'Fiyonk ekle' },
+  'create.edit.apply': { en: 'Apply the edit and redraw', tr: 'Editi uygula, yeniden ciz' },
+  'create.edit.badnum': { en: 'Lengthening takes a number of centimetres, 0 or more.',
+                          tr: 'Uzatma 0 ya da daha buyuk bir santimetre sayisi ister.' },
+  'create.edit.head': { en: 'What actually moved:', tr: 'Ne oynadi:' },
+  'create.edit.length': { en: 'Piece length {once} mm -> {sonra} mm',
+                          tr: 'Parca boyu {once} mm -> {sonra} mm' },
+  'create.edit.pieces': { en: 'Pieces to cut {once} -> {sonra}',
+                          tr: 'Kesilecek parca {once} -> {sonra}' },
+  'create.edit.yardage': { en: 'Fabric {once} m -> {sonra} m',
+                           tr: 'Kumas {once} m -> {sonra} m' },
   'create.ops.run': { en: 'What can the operators do to this pattern?',
                       tr: 'Operatörler bu kalıba ne yapabilir?' },
   'create.ops.head': { en: 'The engine answered, panel by panel:',

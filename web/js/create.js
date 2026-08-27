@@ -1,27 +1,27 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, photoAvailable } from './analyze.js?v=138';
-import { validateVision } from './spec-validate.js?v=138';
-import { CONTRACT } from './contract.gen.js?v=138';
-import { applyStatic, getLang, t } from './i18n.js?v=138';
-import { draft, grade, operatorProgram } from './engine.js?v=138';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=138';
-import { renderResult } from './render.js?v=138';
+import { analyzePhoto, photoAvailable } from './analyze.js?v=139';
+import { validateVision } from './spec-validate.js?v=139';
+import { CONTRACT } from './contract.gen.js?v=139';
+import { applyStatic, getLang, t } from './i18n.js?v=139';
+import { draft, grade, operatorProgram } from './engine.js?v=139';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=139';
+import { renderResult } from './render.js?v=139';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=138';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=138';
-import { measureGarment } from './measure.js?v=138';
+} from './store.js?v=139';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=139';
+import { measureGarment } from './measure.js?v=139';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=138';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=139';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
-import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=138';
+import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=139';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -1047,6 +1047,68 @@ function downloadPanel(result) {
   // ⚠ NO COUNTER, NO BADGE (F3's rule, kept). The panel names the operator and
   // the panel it acted on; it does not tell the shopper which internal line they
   // are on.
+  // ⭐ EDİT SATIRI (GECE7 / F7) — indirdiğin şeyi düzenle, yeniden indir.
+  //
+  // Bu ekran on iki fazdır tek yönlüydü: kalıp çıkıyor, dosya iniyor, bitiyor.
+  // Madde 2'nin istediği şey bu değil. Burada kullanıcı ÇİZİLMİŞ kalıbın üstünde
+  // iki şey söyleyebiliyor — "şu kadar uzat" ve "fiyonk ekle" — ve dört indirme
+  // düğmesi de bundan sonra BAŞKA bir dosya veriyor.
+  //
+  // ⚠ VE CEVAP SAYIYLA GELİYOR. Uygulandıktan sonra ekran ne değiştiğini ölçüyle
+  // yazıyor: hangi parçanın boyu kaç mm oynadı, kaç parça oldu, metraj ne oldu.
+  // "Edit uygulandı" cümlesi bir cevap değildir; motorun kendi ölçtüğü mm'dir.
+  const editMsg = el('div', 'dl-ops');
+  const editRow = el('div', 'dl-edit');
+  const uzatLabel = el('label', 'dl-edit-label', t('create.edit.lengthen'));
+  const uzat = el('input', 'dl-edit-num');
+  uzat.type = 'number'; uzat.min = '0'; uzat.max = '150'; uzat.step = '1'; uzat.value = '0';
+  uzatLabel.appendChild(uzat);
+  editRow.appendChild(uzatLabel);
+  const fiyonkLabel = el('label', 'dl-edit-label', t('create.edit.bow'));
+  const fiyonk = el('input', 'dl-edit-check');
+  fiyonk.type = 'checkbox';
+  fiyonkLabel.insertBefore(fiyonk, fiyonkLabel.firstChild);
+  editRow.appendChild(fiyonkLabel);
+  const editBtn = el('button', 'dl-alt', t('create.edit.apply'));
+  wire(editBtn, async () => {
+    editMsg.textContent = '';
+    const cm = Number(uzat.value);
+    if (!Number.isFinite(cm) || cm < 0) return t('create.edit.badnum');
+    // ÖNCE ölç, sonra yaz: the same three numbers, before and after, off the
+    // engine's own draft rather than off this file's expectations.
+    const oncePiece = result.pattern.pieces.length;
+    const onceMeters = result.pattern.fabricMeters140;
+    const boyOf = (p) => {
+      const pc = (p.pieces || []).find((x) => x.name === 'Skirt Front' || x.name === 'Bodice Front');
+      if (!pc) return null;
+      const ys = (pc.commands || []).filter((c) => c.type !== 'close').map((c) => c.y);
+      return ys.length ? Math.max(...ys) - Math.min(...ys) : null;
+    };
+    const onceBoy = boyOf(result.pattern);
+    spec.editExtendMM = cm * 10;
+    spec.editAttach = fiyonk.checked ? 1 : 0;
+    const yeni = await draft(spec, values);
+    if (yeni.error || !yeni.pattern) return yeni.error || (yeni.issues && yeni.issues[0]) || '';
+    result.pattern = yeni.pattern;
+    result.issues = yeni.issues;
+    const sonraBoy = boyOf(yeni.pattern);
+    editMsg.appendChild(el('p', 'dl-ops-title', t('create.edit.head')));
+    if (onceBoy !== null && sonraBoy !== null)
+      editMsg.appendChild(el('p', 'dl-ops-yes', t('create.edit.length', {
+        once: onceBoy.toFixed(1), sonra: sonraBoy.toFixed(1),
+      })));
+    editMsg.appendChild(el('p', 'dl-ops-yes', t('create.edit.pieces', {
+      once: String(oncePiece), sonra: String(yeni.pattern.pieces.length),
+    })));
+    editMsg.appendChild(el('p', 'dl-ops-yes', t('create.edit.yardage', {
+      once: String(onceMeters), sonra: String(yeni.pattern.fabricMeters140),
+    })));
+    return null;
+  });
+  editRow.appendChild(editBtn);
+  panel.appendChild(editRow);
+  panel.appendChild(editMsg);
+
   const opsMsg = el('div', 'dl-ops');
   const opsBtn = el('button', 'dl-alt', t('create.ops.run'));
   wire(opsBtn, async () => {
