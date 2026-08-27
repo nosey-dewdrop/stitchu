@@ -3,10 +3,10 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=138';
+import { VOCAB, canonical } from './vocab.gen.js?v=139';
 // KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying its
 // four measured numbers. `unset` overlays nothing.
-import { applyFabricPreset } from './fabric-catalog.js?v=138';
+import { applyFabricPreset } from './fabric-catalog.js?v=139';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -56,7 +56,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=138';
+      script.src = 'vendor/stitchu-engine.js?v=139';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -220,6 +220,18 @@ export function engineSpec(rawSpec) {
     cupSeam: cupSeamValue(spec),
     yoke: yokeValue(spec),
     boxPleat: boxPleatValue(spec),
+    // ⭐ EDİT KATMANI (GECE7 / F7) — "10 cm uzat" ve "fiyonk ekle" burada,
+    // motora giden TEK boğazda. İkisi de OPT-IN: bildirilmemiş bir edit
+    // taslağı bayt-birebir bırakır (RULES 4).
+    //   editExtendMM  etek ucuna GRAIN yönünde eklenen mm (0 = kapalı).
+    //                 Negatif değer kısaltma demektir ve motor onu bir SAYIYLA
+    //                 reddeder; burada 0'a kırpılmaz, olduğu gibi geçer, çünkü
+    //                 sessizce yutulan bir istek kullanıcıya yalan söyler.
+    //   editAttach    0 = yok, 1 = fiyonk. Yeni bir PARÇA doğar, çift çentik
+    //                 düşer ve metraj değişir (patternedit.hpp).
+    editExtendMM: (typeof spec.editExtendMM === 'number' && Number.isFinite(spec.editExtendMM))
+      ? spec.editExtendMM : 0,
+    editAttach: spec.editAttach === 'bow' || spec.editAttach === 1 ? 1 : 0,
   };
 }
 
