@@ -143,13 +143,13 @@ const SPEC_GROUPS = [
   { key: 'shaping', label: 'shaping', trLabel: 'form', options: [['dart', 'darts', 'pens'], ['princess', 'princess seams', 'prenses dikiş']], for: (s) => !isSkirt(s) || s.skirtStyle === 'aLine' || s.skirtStyle === 'straight' },
   { key: 'fabric', label: 'fabric', trLabel: 'kumaş', options: [['woven', 'woven (no stretch)', 'dokuma (esnemez)'], ['knit', 'knit / stretch', 'örgü / streç']], for: () => true },
   // F6 — KUMAŞ KATALOĞU. The woven/knit word above decides SEWING (needle,
-  // stitch, whether a zip is needed). It cannot decide the CUT, because "knit"
+  // stitch, whether a zip is needed). It cannot decide the CUT, because the word knit
   // covers a 5%-stretch ponte and a 90%-stretch swim knit. This dial hands the
   // engine the four MEASURED numbers instead (crosswise stretch, D3107
   // recovery/growth, FAST-2 drape inputs, bolt width) from
-  // contract/fabric-catalog-v1.json. `unset` overlays nothing and the draft is
+  // the kumaş catalog in contract/. `unset` overlays nothing and the draft is
   // exactly what it was before the catalog existed.
-  { key: 'fabricPreset', label: 'fabric (measured)', trLabel: 'kumaş (ölçülmüş)', options: [['unset', 'use the word above', 'yukarıdaki kelime geçerli'], ['cotton-poplin', 'cotton poplin — 0% stretch, 112 cm', 'pamuklu poplin — %0 esneme, 112 cm'], ['viscose-crepe', 'viscose crepe — 0% stretch, drapey, 140 cm', 'viskon krep — %0 esneme, düşümlü, 140 cm'], ['single-jersey', 'single jersey — 50% stretch, 165 cm', 'single jersey — %50 esneme, 165 cm']], for: () => true },
+  { key: 'fabricPreset', label: 'material (measured)', trLabel: 'kumaş (ölçülmüş)', options: [['unset', 'use the word above', 'yukarıdaki kelime geçerli'], ['cotton-poplin', 'cotton poplin — 0% stretch, 112 cm', 'pamuklu poplin — %0 esneme, 112 cm'], ['viscose-crepe', 'viscose crepe — 0% stretch, drapey, 140 cm', 'viskon krep — %0 esneme, düşümlü, 140 cm'], ['single-jersey', 'single jersey — 50% stretch, 165 cm', 'single jersey — %50 esneme, 165 cm']], for: () => true },
 ];
 // Foto-anı bug fix (2026-07-27): the last validated vision reading + whether
 // the user hand-picked a length AFTER it. The photo mm is a ratio x body — it
