@@ -1,7 +1,7 @@
 {
   "_role": "KUMAŞ KATALOĞU v1 (F6, 2026-08-27). Kumaş ekseni `woven|knit` iki kelimeydi. Kalıbı belirleyen DÖRT fiziksel sayı bu dosyada yaşar: esneme % · toparlanma/growth % · eğilme rijitliği (düşüm) · kumaş eni. Motor bu dosyayı OKUMAZ (C++'ta JSON okuyucu yok); dosya KANUNDUR ve `fabric_catalog_check` her satırını motorun sabitleriyle karşılaştırır — ikisi ayrışırsa kapı kırmızı yanar.",
 
-  "_yasa": "§1D: esneme + toparlanma + growth'u TEK formülde birleştiren otoriter bir yayın BULUNAMADI. Bu dosyada da yok. Negatif pay yalnız esnemeden okunur (aşağıdaki bant tablosu); toparlanma/growth bir ÇARPAN değil bir ŞARTTIR — yayınlanmış asgariyi tutmayan kumaşta negatif pay HİÇ alınmaz. `(1 - 1/StretchRatio)` gibi bir formül bu repoda yasaktır.",
+  "_yasa": "§1D: esneme + toparlanma + growth'u TEK formülde birleştiren otoriter bir yayın BULUNAMADI. Bu dosyada da yok. Negatif pay yalnız esnemeden okunur (aşağıdaki bant tablosu); toparlanma/growth bir ÇARPAN değil bir ŞARTTIR — HAKEMİN eşiğini (`esikler_hakem_karari`, K63; yayınlanmış bir asgari DEĞİL, çünkü öyle bir yayın yok) tutmayan kumaşta negatif pay HİÇ alınmaz. `(1 - 1/StretchRatio)` gibi bir formül bu repoda yasaktır.",
 
   "standards": {
     "astm-d2594": {
@@ -12,7 +12,7 @@
       "url": "https://store.astm.org/d2594_d2594m-21.html",
       "alinti": "covers the measurement of fabric stretch and fabric growth of knitted fabrics intended for applications requiring low-power stretch properties",
       "ne_veriyor": "ÖRME kumaşın esneme % ve growth % ölçüm YÖNTEMİ.",
-      "not": "⚠ D2594 esneme ve GROWTH ölçer; bir toparlanma ASGARİSİ yayınlamaz. Örme için toparlanma eşiği YAYIN BULUNAMADI → en kısıtlayıcı olarak D3107'nin dokuma eşiği uygulanır (aşağıda)."
+      "not": "⚠ D2594 esneme ve GROWTH ölçer, bir EŞİK yayınlamaz — D3107 gibi o da yalnız bir YÖNTEMDİR. Örme için toparlanma eşiği YAYIN BULUNAMADI → eşik `esikler_hakem_karari`'ndan gelir (K63, hakemin kararı, bir yayın değil)."
     },
     "astm-d3107": {
       "kurum": "ASTM International",
@@ -22,9 +22,8 @@
       "url": "https://store.astm.org/d3107-07r19.html",
       "alinti": "These test methods cover the determination of the amount of fabric stretch, fabric growth, and fabric recovery of fabrics woven in whole or in part from stretch yarns after a specified tension and extension.",
       "alinti_2": "These test methods allow the use of two tension options commonly used in the textile industry; 1.35 kg (3 lb) and 1.8 kg (4 lb).",
-      "ne_veriyor": "Üç niceliğin ADI ve ölçüm yöntemi: stretch · growth · recovery.",
-      "esikler": { "growthMaxPct": 3.0, "recovery15sMinPct": 75.0, "recovery30minMinPct": 85.0 },
-      "esik_kunyesi": "⚠ DOĞRULANMADI-YARIM. Standardın metni ücretlidir; yukarıdaki `alinti`/`alinti_2` store.astm.org kapak sayfasından BİREBİR doğrulandı, ama üç EŞİK SAYISI (3 / 75 / 85) standardın gövdesinden teyit EDİLEMEDİ. Sayılar `KOSU-v7.md` §F6'nın kendi yayınlanmış zemininden alındı ve TALİMAT oldukları için uygulandı — `engine/src/fabricease.hpp`'nin bant tablosunda kurulan emsalin aynısı (kartın bandı uygulanır, çapraz kaynak ortalanmaz). Hakem standardın gövdesini görürse sayıyı O düzeltir."
+      "ne_veriyor": "Üç niceliğin ADI ve ölçüm YÖNTEMİ: stretch · growth · recovery. BİR EŞİK VERMEZ.",
+      "esik_vermez": "🚨 HAKEM AÇTI VE DOĞRULADI (F6 hakemi, 2026-08-27, store.astm.org kapak sayfası): D3107 bir TEST YÖNTEMİDİR. Üç niceliğin nasıl ölçüleceğini tanımlar; hiçbir kabul eşiği, hiçbir asgari toparlanma, hiçbir azami growth YAYINLAMAZ — pass/fail'i ürün şartnamesine bırakır. Ajanın kartı üç sayıyı bu standarda atfediyordu ve o atıf YANLIŞTI. Sayılar KALDI (aşağıdaki `esikler_hakem_karari`), ama artık BURAYA atfedilmiyorlar. Aynı hüküm D2594 için de geçerli (o da yalnız yöntem)."
     },
     "fast-2": {
       "kurum": "CSIRO / Minazio, P.",
@@ -44,6 +43,15 @@
     }
   },
 
+  "esikler_hakem_karari": {
+    "_ad": "🚨 TOPARLANMA/GROWTH EŞİKLERİ — HAKEMİN KARARIDIR, BİR YAYIN DEĞİL (K63, F6 hakemi, 2026-08-27).",
+    "_neden_burada": "§3.10: künyesi olmayan sayıyı HAKEM koyar, ajan değil. Ajan üç sayıyı `standards.astm-d3107`'nin içine `esikler` diye koymuş ve DOĞRULANMADI-YARIM damgalamıştı — dürüst, ama yer YANLIŞTI: hakem kapak sayfasını açtı, D3107 (ve D2594) yalnız YÖNTEM yayınlıyor, EŞİK yayınlamıyor. Bir test yönteminin altında duran eşik, okuyan herkese o standardın sözü gibi görünür. Blok buraya taşındı ve atıf kesildi.",
+    "_dayanak": "DAYANAK YOK, EN KISITLAYICI SEÇİLDİ. Toparlanma/growth için otoriter bir kabul eşiği ARANDI ve BULUNAMADI (D3107 ve D2594 kapak sayfaları hakem tarafından açıldı: ikisi de test yöntemi, ikisi de eşiksiz). Üç sayı `KOSU-v7.md` §F6'nın kendi zemininden geliyor ve HAKEM tarafından benimsendi, çünkü hepsi KISITLAYICI yönde çalışıyor: eşiği yükseltmek daha çok kumaşta negatif payı KESER, düşürmek daha çok kumaşta negatif paya İZİN VERİR. Şüphede kesmek doğru taraftır.",
+    "esikler": { "growthMaxPct": 3.0, "recovery15sMinPct": 75.0, "recovery30minMinPct": 85.0 },
+    "_kod": "engine/src/fabricease.hpp kGrowthMaxPct / kRecovery15sMinPct / kRecovery30minMinPct; kapı fabric_catalog_check LEG 2 ikisini karşılaştırır.",
+    "_degisirse": "Kabul eşiği yayınlayan bir standart (ör. bir performans şartnamesi) bulunursa değişecek TEK yer burasıdır; motor ve rehber cümlesi buradan döner."
+  },
+
   "bands": {
     "_kaynak": "KOSU-v7.md §F6 (talimat) — engine/src/fabricease.hpp'de kodlanmış, `fabric_ease_check` koruyor.",
     "stable":   { "lowPct": 0.0,  "highPct": 25.0 },
@@ -54,7 +62,7 @@
 
   "recovery_rule": {
     "_ad": "TOPARLANMA BİR ÇARPAN DEĞİL, BİR ŞART.",
-    "_kural": "Bir spec toparlanma/growth İLAN EDİYORSA ve ilan D3107'nin asgarisini tutmuyorsa (recovery30min < 85% VEYA recovery15s < 75% VEYA growth > 3%), o kumaşta NEGATİF pay alınmaz: bant tablosundan gelen negatif ease 0'a kırpılır. Pozitif ease'e dokunulmaz.",
+    "_kural": "Bir spec toparlanma/growth İLAN EDİYORSA ve ilan HAKEMİN eşiğini (`esikler_hakem_karari`, K63 — bir yayın DEĞİL) tutmuyorsa (recovery30min < 85% VEYA recovery15s < 75% VEYA growth > 3%), o kumaşta NEGATİF pay alınmaz: bant tablosundan gelen negatif ease 0'a kırpılır. Pozitif ease'e dokunulmaz.",
     "_gerekce": "Yüksek esneme + düşük toparlanma = giysi bir gün sonra sarkar (KOSU-v7 §F6). Esnemeyi geri vermeyen kumaşı küçültmek, giysiyi kalıcı olarak dar yapar. En kısıtlayıcı yorum: küçültme YOK.",
     "_ilan_etmeyen": "Toparlanma İLAN EDİLMEMİŞSE kural ATEŞLEMEZ ve çizim eskisi gibi kalır (RULES 4: yeni özellik opt-in, golden bayt-birebir). Bu bir BOŞLUK ve burada adıyla duruyor: ilan edilmemiş bir örme, toparlanması ölçülmeden negatif pay alabiliyor.",
     "_kod": "engine/src/fabricease.hpp `recoveryQualifies()` + `easeFor()`"
@@ -64,7 +72,7 @@
     "_ad": "🚨 YAYIN BULUNAMADI — EĞİLME RİJİTLİĞİ BÜZGÜ ORANINI BU KOŞUDA OYNATMIYOR.",
     "_arandi": "Eğilme rijitliğini (µNm) bir büzgü oranına bağlayan künyeli bir yayın arandı ve bulunamadı. Bulunanların hepsi ticari blog/atölye yazısıydı (kumaş AĞIRLIĞINA göre 1.5:1 / 2:1 / 3:1 diyorlar) ve ikisi de (threadsmagazine.com, blog.fabrics-store.com) doğrudan çekilemedi (HTTP 403), yani alıntı BİREBİR doğrulanamadı. Künyesiz sayı koda girmez (§3.10).",
     "_karar": "En kısıtlayıcı: rijitlik HESAPLANIR, YAZDIRILIR, künyesiyle (FAST-2) rehbere basılır — ama çizime dokunmaz. Çarpan 1.0.",
-    "_hakeme": "Bu sayıyı AJAN koymaz (§3.10). Rijitlik→büzgü oranı haritası hakemin kalemidir. Konana kadar iki DOKUMA kumaş, esnemeleri eşitse, AYNI bel ve AYNI kol oyuğu verir — ve bu tabloda ölçülmüş olarak duruyor."
+    "_hakem_karari": "🚨 K62 (F6 hakemi, 2026-08-27) — HAKEM KENDİ ARAMASINI YAPTI VE O DA BULAMADI: eğilme rijitliğini bir büzgü oranına bağlayan künyeli bir yayın yok. KARAR: ÇARPAN 1.0 KALIR, ve bu artık bir boşluk değil bir KARARDIR (K23'ün %1.5'i gibi: karardan gelir, yayından değil). BEDELİ AÇIKÇA KABUL EDİLDİ: esnemeleri eşit iki DOKUMA kumaş AYNI bel (735.0000 mm) ve AYNI kol oyuğu (404.2593 mm) verir; ayrıştıkları yer kumaş eni (metraj 2.5 ↔ 2.0 m) ve rehberdir. Bu ayrışmama HAKEMİN kararının sonucudur, ajanın eksiği DEĞİL — F6'nın hanesinde ajanın aleyhine sayılmaz. Değişecek tek yer bu blok."
   },
 
   "width_rule": {
@@ -124,8 +132,7 @@
 
   "_yayin_bulunamadi": [
     "eğilme rijitliği (µNm) → büzgü oranı haritası — `drape_rule`",
-    "ÖRME kumaş için toparlanma ASGARİSİ (D2594 growth ölçer, eşik yayınlamaz) — en kısıtlayıcı olarak D3107'nin dokuma eşiği uygulandı",
-    "ASTM D3107'nin üç eşik SAYISI (3 / 75 / 85) standardın gövdesinden teyit edilemedi (metin ücretli) — kapak sayfasının scope alıntısı doğrulandı, eşikler KOSU-v7 §F6'dan",
+    "toparlanma/growth için KABUL EŞİĞİ — ne D3107 ne D2594 eşik yayınlar, ikisi de yalnız YÖNTEMDİR (hakem kapak sayfalarını açtı, K63). Üç sayı (3 / 75 / 85) HAKEMİN kararıdır ve `esikler_hakem_karari` bloğunda öyle duruyor; hiçbir standarda atfedilmiyor",
     "kumaş eni → parça yerleşimi (nesting) kuralı: metraj ölçeklendi, YERLEŞİM yeniden çözülmedi"
   ]
 }

@@ -126,13 +126,15 @@ inline constexpr double easeAt(Girth g, double stretchPct) {
 
 // ── RECOVERY IS A CONDITION, NOT A MULTIPLIER (F6, 2026-08-27) ──────────────
 // §1D: no authoritative publication combines stretch + recovery + growth into one
-// formula, so this file does not contain one. What IS published is a set of
-// MINIMUMS, and a minimum is a yes/no. ASTM D3107 (the kumaş catalog's
-// `standards.astm-d3107`, thresholds carried from KOSU-v7.md §F6 — the standard's
-// body is paywalled and the three numbers are marked DOĞRULANMADI-YARIM there):
+// formula, so this file does not contain one. 🚨 AND (F6 REFEREE, K63) NEITHER IS
+// THERE A PUBLISHED MINIMUM: the referee opened store.astm.org and ASTM D3107 and
+// D2594 are TEST METHODS — they define how stretch, growth and recovery are
+// measured and publish NO acceptance threshold. The three numbers below are the
+// REFEREE'S decision (contract/fabric-catalog-v1.json `esikler_hakem_karari`),
+// taken as the most restrictive available and attributed to nobody else:
 //     growth   at most  3 %
 //     recovery at least 75 % after 15 s, 85 % after 30 min
-// Cloth that fails those does not give the stretch back. Cutting it SMALLER
+// Cloth that fails that floor does not give the stretch back. Cutting it SMALLER
 // than the body would make the garment permanently tight, so the negative branch
 // is refused outright: the ease is clamped at 0. The positive branch is untouched
 // (cloth that sags does not need LESS room).

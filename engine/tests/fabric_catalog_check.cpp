@@ -181,7 +181,9 @@ int main() {
 
     // ── LEG 1: the provenance blocks are still there ────────────────────────
     for (const char* must : {"_olcum_kunyesi", "_yayin_bulunamadi", "drape_rule",
-                             "recovery_rule", "width_rule", "astm-d3107", "fast-2"}) {
+                             "recovery_rule", "width_rule", "astm-d3107", "fast-2",
+                             /* F6 referee K63 */ "esikler_hakem_karari", "esik_vermez",
+                             /* F6 referee K62 */ "_hakem_karari"}) {
         if (doc.find(must) == std::string::npos)
             fail(std::string("catalog has lost the block '") + must +
                  "' — every number in it would then be an unattributed number");
@@ -191,7 +193,7 @@ int main() {
     // ── LEG 2: the published thresholds are the SAME on both sides ──────────
     size_t b = 0, e = 0;
     if (!objectSpan(doc, "esikler", b, e)) {
-        fail("catalog has no `esikler` block — the D3107 minimums are unstated");
+        fail("catalog has no `esikler` block — the referee's recovery/growth floor (K63) is unstated");
     } else {
         struct { const char* field; double engine; } t[] = {
             {"growthMaxPct", FabricBand::kGrowthMaxPct},

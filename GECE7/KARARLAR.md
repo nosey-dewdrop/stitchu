@@ -1671,3 +1671,139 @@ sayıları sessizce **eski motoru** ölçer.
 düştü — bir delik değil, bir **yol farkı**. Bundan sonraki her hakem, cırcırı
 hedefleyen bir mutasyonu **JS/kontrat tarafında** ya da **wasm'ı yeniden
 derleyerek** kurmak zorundadır.
+
+---
+
+## K62 — 🔴 **RİJİTLİK → BÜZGÜ ORANI: HAKEM DE ARADI, HAKEM DE BULAMADI. ÇARPAN 1.0 BİR BOŞLUK DEĞİL, BİR KARARDIR** (DAMLA md.18 karara bağlandı)
+
+Ajan sayıyı **koymadı ve hakeme bıraktı** — §3.10'un tam olarak istediği şey.
+Hakem kendi aramasını yaptı (`bending rigidity gather ratio fabric published`),
+dönen kalemlerin **hiçbiri** bir eğilme rijitliğini (µNm) bir büzgü oranına
+bağlamıyor: KES-F ⇄ FAST karşılaştırmaları, rijitlik ölçüm yöntemleri, "fullness
+· stiffness · roughness tutum değerini birlikte etkiler" gibi **nitel** cümleler.
+Ajanın 403 alan iki blogu (threadsmagazine, fabrics-store) kumaş **AĞIRLIĞINA**
+göre 1.5:1 / 2:1 / 3:1 diyor — o da bir yayın değil ve zaten alıntılanamadı.
+
+**KARAR — HAKEMİN SAYISI: ÇARPAN 1.0. Rijitlik hesaplanır, rehbere basılır,
+ÇİZİME DOKUNMAZ.** *Dayanak yok, en kısıtlayıcı seçildi.* Uydurulacak her çarpan
+üç kalıbın **geometrisini** künyesiz bir sayıya bağlardı ve golden'ı oynatırdı.
+
+🚨 **VE BUNUN BEDELİ HAKEMİN HANESİNE YAZILIR, AJANIN DEĞİL.** Kart *"3 ÖLÇÜLEBİLİR
+farklı kalıp"* istiyordu; ölçüm **2 farklı kalıp + 3 farklı kesim planı** verdi
+(poplin ↔ krep: bel **735.0000 = 735.0000**, oyuk **404.2593 = 404.2593**; hakem
+kendi koşumunda **DXF ve SVG'yi bayt bayt** karşılaştırdı — `b549b895444f989b` ⇄
+`b549b895444f989b`, **birebir aynı dosya**). İki dokumanın berabere kalması
+**ajanın eksiği değil, bu kararın sonucudur**: onları ayıracak tek eksen düşüm,
+ve düşümün haritasını **hakem de bulamadı.** K58'in emsali birebir geçerli —
+tatmin edilemez bir şart, ajanın hanesine yazılmaz.
+
+**Değişecek tek yer:** `contract/fabric-catalog-v1.json` `drape_rule._hakem_karari`.
+
+---
+
+## K63 — 🚨 **ASTM D3107 O ÜÇ SAYIYI SÖYLEMİYOR. ATIF YANLIŞTI VE HAKEM KESTİ; SAYILAR KALDI, ARTIK HAKEMİNDİR**
+
+§3.10: *"Künye ölü linkse veya kaynak o sayıyı söylemiyorsa kart reddedilir."*
+Hakem künyeyi **açtı** (`store.astm.org/d3107-07r19.html` ve
+`.../d2594_d2594m-21.html`, ikisi de canlı, ikisinin de scope'u birebir çıktı).
+
+**BULGU:** D3107 bir **TEST YÖNTEMİDİR**. Scope birebir: *"These test methods
+cover the determination of the amount of fabric stretch, fabric growth, and
+fabric recovery…"* — **nasıl ölçüleceğini** tanımlar, **hiçbir kabul eşiği
+yayınlamaz**; pass/fail'i ürün şartnamesine bırakır. **D2594 de aynı** (ajan bunu
+D2594 için kendi kataloğunda zaten yazmıştı, ama aynı mantığı D3107'ye
+uygulamadan geçti). Yani **growth ≤ %3 · toparlanma ≥ %75/15sn · %85/30dk**
+sayıları **o standardın sözü değil.**
+
+**KART REDDEDİLMİYOR, ÇÜNKÜ AJAN İDDİA ETMEDİ.** Katalogda
+**`DOĞRULANMADI-YARIM`** damgası, `_yayin_bulunamadi` listesinde ayrı bir kalem
+ve `GECE7/DAMLA.md`'de §5.5 dökümü vardı: *"üç eşik standardın kendi gövdesinden
+doğrulanamadı… standardın gövdesini gören hakem sayıyı değiştirir."* **Bildirmek
+ucuz, gizlemek pahalı** — ajan bildirdi.
+
+🚨 **AMA BİR ŞEY GERÇEKTEN YANLIŞTI VE BİR YABANCININ OKUDUĞU SAYFADAYDI.**
+`rehber.hpp` şu cümleyi basıyordu: *"The published minimums are 75.0% at 15
+seconds, 85.0% at 30 minutes and at most 3.0% growth (ASTM D3107)."*
+**Kaynaksız bir cümleden beteri, YANLIŞ kaynaklı bir cümledir** — İŞ 2'nin kapısı
+dayanağın **varlığını** sayıyor, **doğruluğunu** değil. Hakem düzeltti (§3.8 md.1).
+
+| | ÖNCE | **SONRA (hakem)** |
+|---|---|---|
+| rehber cümlesi | *"The **published** minimums are … **(ASTM D3107)**"* | *"Measure it with ASTM D3107 (woven) or D2594 (knit) — those methods define the test but **publish no pass mark, so the floor below is OURS, not theirs**: at least …"* |
+| dayanak damgası | `…;astm=3107` | `…;karar=K63;yontem=astm-d3107;yontem2=astm-d2594` |
+| eşiklerin yeri | `standards.astm-d3107.esikler` | **`esikler_hakem_karari.esikler`** (üst düzey, atfı kesik) |
+| `astm-d3107` bloğu | `esik_kunyesi` (DOĞRULANMADI-YARIM) | **`esik_vermez`** — hakemin birincil kaynak hükmü |
+| `fabric_catalog_check` LEG 1 | 7 zorunlu blok | **10** (`esikler_hakem_karari` · `esik_vermez` · `_hakem_karari` eklendi) |
+| kapı sayacı | 56 kontrol | **59 kontrol, 0 hata** |
+
+**SAYILAR DEĞİŞMEDİ (3 / 75 / 85) ve gerekçesi *"kartta öyle yazıyordu"* DEĞİL:**
+üçü de **kısıtlayıcı yönde** çalışıyor — eşiği yükseltmek daha çok kumaşta negatif
+payı **keser**, düşürmek daha çok kumaşta negatif paya **izin verir**. Şüphede
+kesmek doğru taraftır. *Dayanak yok, en kısıtlayıcı seçildi.*
+**Motor sabitleri (`fabricease.hpp`) tek bayt oynamadı → hiçbir çizim kımıldamadı.**
+
+▸ **YAN KANIT — İŞ 2'NİN KAPISI GERÇEKTEN SIKI.** Hakem düzeltilmiş cümleye
+*"or D2594 (knit)"* yazdığı anda `guide_completeness_check` **EXIT 1** verdi:
+*"prints the number 2594 which this draft did not compute and no cited source
+carries — an invented number"*, **9 fikstürün 9'unda**. Kapı, **hakemin kendi
+kalemini** yakaladı. Dayanak damgasına `yontem2=astm-d2594` eklenince yeşil.
+Bu, ajanın M2/M3 mutasyonlarından **bağımsız** bir kırmızı kanıtıdır.
+
+---
+
+## K64 — **İŞ 3 YAPILMADI VE YAPILMAMASI DOĞRUDUR. BORÇ 82 GERÇEK, AMA HAKEM DE PAYDAYA DOKUNMUYOR** (F4 hakeminin tuzağı, ikinci kez)
+
+Ajanın ölçümü **doğrulandı**, hakem satırı kendi gözüyle okudu
+(`engine/tests/hedef_kosu.mjs:264-266`): çift **rol ADIYLA** kuruluyor —
+`byRole.armhole_front` + `byRole.armhole_back` **karşısında** `byRole.sleeve_cap` —
+ve `push` **tek bir `if` bloğunun içinde, döngüsüz**. Motor kapağı
+`sleeve_cap_front`/`sleeve_cap_back` diye ilan etse **bu satır onları GÖRMEZ.**
+🚨 **Kartın *"paydayı büyüten tek yol MOTOR, bu dosya DEĞİL"* cümlesinin yarısı
+ÇÜRÜK.** Ajan bunu **kendi aleyhine** yazdı (borç 82) ve mühürlü dosyaya
+dokunmadı — **yetkisi yoktu, doğru davrandı.**
+
+**HAKEM DE DOKUNMUYOR, VE SEBEBİ K59'UN AYNISI.** Payda 5→10 yapmak için kapağın
+omuz çentiğinde ikiye ilan edilmesi gerek; kapaktaki tek çentik
+`sleeve.cpp:230-231` `capHalf*0.60` / `capHeight*0.42` — **künyesiz iki sabit** ve
+üstelik **büzgü** çentiği, ön/arka denge çentiği değil. Buğra'nın **ölçülmüş**
+çentikleri (`127/412/446`, arka oyuk `arc 87`) **Lower/Upper Sleeve**'in, temel
+kapağın değil. Paydayı bugün büyütmek **künyesiz bir sayıya** bağlamak olurdu
+(§3.10 ihlali) ya da F4 hakeminin **ayna** tuzağı olurdu — **cırcır süsü.**
+**Borç 73'ün kör noktası** (ön +20 / arka −20 mm kusursuz okunur) aynı sebeple
+kapanmadı ve `korNokta` olarak **sayısıyla basılmaya devam ediyor.**
+`hedef_kosu.mjs` blob **`7370b86d…` — koşu sonunda birebir aynı.**
+
+**F7'YE TAŞINIYOR:** payda 5'in sebebi artık **iki adresli** — motor (rol tek) ve
+**kapının kendi kodu** (döngüsüz, ada bağlı). İkisi birden çözülmeden 5 kımıldamaz.
+
+---
+
+## K65 — 🚨 **HAKEMİN KENDİ ÖLÇÜMÜ: ÖRME + KOLLU BİR ELBİSENİN DXF'İ BOŞ İNİYOR. MİRAS KUSUR, AMA F6'NIN VİTRİN KUMAŞI TAM O TUZAĞA BASIYOR**
+
+Sapma sorusu *"inen nesneyi ölç"* diyordu. Hakem indirdi ve **üç kumaşın
+üçünü de bayt bayt** karşılaştırdı (`engine/dist` — yani **cırcırın koştuğu**
+ikili, borç 80):
+
+| kumaş | DXF | SVG | hüküm |
+|---|---|---|---|
+| `cotton-poplin` | 28746 B · `b549b895444f989b` | 10204 B · `7e90b32e4d2704c4` | — |
+| `viscose-crepe` | 28746 B · `b549b895444f989b` | 10204 B · `7e90b32e4d2704c4` | **iki dokuma BİREBİR AYNI DOSYA** (K62) |
+| `single-jersey` | **0 B** · `e3b0c442…` (boş) | 9749 B · `16c8d8f930ef55e4` | 🚨 **DXF İNMİYOR** |
+
+Sebep motorun kendi reddi: `dxfSpecJSON` → **`[cap] Sleeve: cap ease 0.0%
+outside the 1-9% window`**, ve `draftJSON` aynı spec için **1 issue** dönüyor.
+Örmenin negatif payı kol oyuğunu **404.2593 → 376.5741 mm** küçültüyor, kapak
+onunla birlikte küçülmüyor, cap ease **sıfıra çöküyor.**
+
+**MİRAS, F6'NIN ÜRETTİĞİ DEĞİL — ÖLÇÜLDÜ:** `fabricease.hpp`'nin **bant tablosu
+(`easeAt`) tek bayt oynamadı**; hakem beş hâl koşturdu ve `fabric:'knit',
+fabricStretchPct:50` (**F6-öncesi de kurulabilen** bir spec) **aynı kırmızıyı**
+veriyor, `stretchPct:25` bile veriyor (cap ease %1.0). Kolsuz hâl **temiz** (DXF
+20885 B). Yani kusur **örme × kollu** kesişiminde ve **F6'dan eskidir.**
+
+🚨 **AMA HİÇBİR KAPI GÖRMÜYOR:** `fabric_catalog_check` kalıbı `draftJSON`'dan
+okuyor ve `issues`'a **bakmıyor**; `indir_check` yalnız **dokuma** koşuyor.
+Ve F6'nın **üç vitrin kumaşından biri** tam olarak bu hâl.
+**KARAR:** kapıya bugün **eklenmiyor** — eklemek **ALTINCI kırmızı** olurdu ve
+suçu yanlış karta yazardı (§3.8 md.4 ruhu). **Borç 86 olarak açılıyor ve F7'nin
+kartına DEĞİŞMEZ değil, İŞ olarak giriyor.**

@@ -1,0 +1,70 @@
+F6 HAKEM MUTASYON LOGU — 2026-08-27 03:45
+HEAD: 7866ff5   etiket: F6-oncesi   realpath: /Users/damummyphus/damla_projects_2026/stitchu
+TEMIZ AGAC: fabric_catalog_check EXIT 0 (YESIL) · guide_completeness_check EXIT 0 (YESIL) · fabric_ease_check EXIT 0 (YESIL)
+TEMIZ AGAC(JS): indir_check EXIT 0 (YESIL) · hedef_kosu EXIT 0 (YESIL)
+
+================================================================
+HM-1 — engine/src/skirt.cpp  [cpp]
+  etegin bel cevresi kumas payindan koparildi -> jersey ile poplin ayni beli almali
+  numstat (F6-oncesi..HEAD): []
+  ikili: 2ab983f6eec9a3601600cbfb -> e62310494b19d0f466cf2732  (KIMILDADI)
+  fabric_catalog_check     : EXIT 0 (YESIL)
+  guide_completeness_check : EXIT 0 (YESIL)
+  fabric_ease_check        : EXIT 0 (YESIL)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · fabric_ease_check EXIT 0 (YESIL)
+
+================================================================
+HM-2 — engine/src/bodice.cpp  [cpp]
+  bedenin bel payi kumastan koparildi -> negatif pay kalibin beline inmemeli
+  numstat (F6-oncesi..HEAD): []
+  ikili: 2ab983f6eec9a3601600cbfb -> 3cd9e9480a21e730d6cd8d56  (KIMILDADI)
+  fabric_catalog_check     : EXIT 1 (KIRMIZI)
+  guide_completeness_check : EXIT 0 (YESIL)
+  fabric_ease_check        : EXIT 1 (KIRMIZI)
+  GERI ALINDI -> fabric_catalog_check EXIT 0 (YESIL) · fabric_ease_check EXIT 0 (YESIL)
+
+================================================================
+HM-3 — web/js/provenance.js  [js]
+  koken dogrulayicisinin adi degistirildi -> indir kapisi kokeni okuyamamali
+  numstat (F6-oncesi..HEAD): []
+  ikili: JS kaynagi, derleme yok — kapi dogrudan dosyayi okuyor
+  indir_check  : EXIT 1 (KIRMIZI)
+  hedef_kosu   : EXIT 0 (YESIL)
+  GERI ALINDI -> indir_check EXIT 0 (YESIL) · hedef_kosu EXIT 0 (YESIL)
+
+================================================================
+HM-4 — web/lib/flat-core.js  [js]
+  croquis omuz capasi 0 -> 2 kaydirildi (flat-core.js:316) -> H6 (0/16 flat) yanmali
+  numstat (F6-oncesi..HEAD): []
+  ikili: JS kaynagi, derleme yok — kapi dogrudan dosyayi okuyor
+  indir_check  : EXIT 0 (YESIL)
+  hedef_kosu   : EXIT 0 (YESIL)
+  GERI ALINDI -> indir_check EXIT 0 (YESIL) · hedef_kosu EXIT 0 (YESIL)
+
+================================================================
+HM-4b — web/lib/flat-core.js  [js]  (HM-4 HUKUMSUZ dustu: shoulderY BASLANGIC NOKTASI,
+         hepsini birlikte kaydiriyor, sapma uretmiyor. Gercek capa shoulderW.)
+  numstat (F6-oncesi..HEAD): []
+  kaynak kimildadi (croquis omuz ucu x, +2u)
+  H6                       : 16
+  hedef_kosu               : EXIT 1 (KIRMIZI)
+  flat_convention_check    : EXIT 1 (KIRMIZI)
+  GERI ALINDI -> H6 0 · flat_convention_check EXIT 0
+
+================================================================
+HM-1b — engine/src/skirt.cpp  [cpp]  (HM-1 YESIL kaldi; SAYININ kimildadigini ayrica olcuyorum)
+  numstat (F6-oncesi..HEAD): []
+  ONCE:
+  AYNI SPEC, UC KUMAS (EU38, dart-shaped gathered dress, straight sleeve)
+  kumas               bel(mm)   oyuk(mm)  buzgu(mm)   metraj  parca   rijitlik
+  cotton-poplin      735.0000   404.2593   354.3624      2.5      6    12.5310
+  viscose-crepe      735.0000   404.2593   354.3624      2.0      6     2.3701
+  single-jersey      672.2800   376.5741   325.3685      1.7      6     1.9580
+  SONRA:
+  AYNI SPEC, UC KUMAS (EU38, dart-shaped gathered dress, straight sleeve)
+  kumas               bel(mm)   oyuk(mm)  buzgu(mm)   metraj  parca   rijitlik
+  cotton-poplin      735.0000   404.2593   354.3624      2.5      6    12.5310
+  viscose-crepe      735.0000   404.2593   354.3624      2.0      6     2.3701
+  single-jersey      672.2800   376.5741   325.3685      1.7      6     1.9580
+  fabric_catalog_check: EXIT 0 (YESIL)
+  GERI ALINDI -> EXIT 0

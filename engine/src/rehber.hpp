@@ -138,13 +138,21 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
         }
         basis += "growthMaxPct=" + num(FabricBand::kGrowthMaxPct, 1) +
                  ";recovery15sMinPct=" + num(FabricBand::kRecovery15sMinPct, 1) +
-                 ";recovery30minMinPct=" + num(FabricBand::kRecovery30minMinPct, 1) + ";astm=3107";
+                 ";recovery30minMinPct=" + num(FabricBand::kRecovery30minMinPct, 1) +
+                 ";karar=K63;yontem=astm-d3107;yontem2=astm-d2594";
+        // 🚨 F6 HAKEMİ (K63): bu cümle eskiden üç sayıyı "the published minimums …
+        // (ASTM D3107)" diye basıyordu. Hakem kaynağı açtı: D3107 bir TEST
+        // YÖNTEMİDİR, kabul eşiği YAYINLAMAZ (D2594 de öyle). Atıf kesildi;
+        // sayılar kaldı ve kimin koyduğu SÖYLENİYOR. Yöntem adı duruyor çünkü
+        // ölçümü GERÇEKTEN o tanımlıyor — söylenmeyen tek şey artık bir yalan değil.
         add("fabric.recovery",
             std::string("Recovery: this cloth was declared at ") + decl +
-                ". The published minimums are " + num(FabricBand::kRecovery15sMinPct, 1) +
+                ". Measure it with ASTM D3107 (woven) or D2594 (knit) — those methods define "
+                "the test but publish no pass mark, so the floor below is OURS, not theirs: at least " +
+                num(FabricBand::kRecovery15sMinPct, 1) +
                 "% at 15 seconds, " + num(FabricBand::kRecovery30minMinPct, 1) +
                 "% at 30 minutes and at most " + num(FabricBand::kGrowthMaxPct, 1) +
-                "% growth (ASTM D3107). This one " +
+                "% growth. This one " +
                 (ok ? "meets them, which is why the pattern is allowed to be cut smaller than the body."
                     : "does NOT meet them, so the pattern was NOT cut smaller than the body even though "
                       "it stretches — cloth that does not spring back would be permanently tight.") +
