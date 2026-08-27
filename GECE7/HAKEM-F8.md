@@ -403,6 +403,11 @@ SINANMADI** · sevk edilen giysi **HÂLÂ STRAPLESS** ve `CLAUDE.md` onu
 **PUBLIC** (K10) · holdout **4 fotoğraf, harcanmadı** · borç **61** rabadon
 **on beşinci oturum**.
 
+▸ ⚠ **borç 61 — ON ALTINCI OTURUM:** rabadon hakemin turunda **bir kez daha yanlış**
+ateşledi (`ctest-tail-hides-verdict`, komutta **`ctest` yokken** — kırpılan şey
+`pytest -q`'nün *"33 passed"* satırıydı, yani kuralın koruduğu şeyin **tersi**).
+**`rabadon wrong` ile kaydedildi, `guard.json`'a DOKUNULMADI.**
+
 **Hakemin açtığı üç kalem: 98 · 99 · 100.**
 **Kararlar: K70 · K71 · K72 · K73** (`GECE7/KARARLAR.md`).
 **Sonraki kart: `GECE7/F9.md`** — vitrin, landing, ilk müşteri.
