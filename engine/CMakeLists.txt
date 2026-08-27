@@ -1138,3 +1138,19 @@ add_test(NAME bugra_parity_check COMMAND ${NODE_EXECUTABLE}
 # indir_check olcuyor. Buradaki iddia o iki olcumun BAGLANDIGIdir.
 add_test(NAME al_dene_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/al_dene_check.mjs)
+
+# vitrin_check (GECE7 / F9) — VITRIN OLCULUR, PROVA OKUNMAZ.
+# landing_truth_check "bu sayisal cumle var olan bir aleti aniyor mu" diye
+# soruyor ve iyi bir soru; soramadigi iki sey burada olculuyor:
+#   1. SAYI BUGUNKU SAYI MI. engine/tools/gen-vitrin.mjs burada YENIDEN kosuyor
+#      ve ciktisi web/data/vitrin.json ile ve sayfalarin data-v ogeleriyle
+#      BIREBIR ayni olmak zorunda. "1 of 5 exact, 47 of 51 fields" gercek bir
+#      alet adi tasiyordu ve cevap anahtari degistikten haftalar sonra canliydi.
+#   2. URUN NE YAPAMIYOR, SAYFA SOYLUYOR MU. Sevk edilen giysi STRAPLESS
+#      (CLAUDE.md: balensiz durmaz, listelenemez) ve suitte BES kirmizi var —
+#      ikisi de sayfada ADIYLA gecmek zorunda.
+# Ayrica: "unlimited"/"sinirsiz" kelimesi YASAK (K45, motorda slash-spread ve
+# merge YOK) · patterns_real/ altina TEK BAGLANTI cikmaz ve web/ altindaki hicbir
+# dosya satin alinmis bir kalibin BAYT KOPYASI olamaz (§4C md.7).
+add_test(NAME vitrin_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/vitrin_check.mjs)

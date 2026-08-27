@@ -6,13 +6,13 @@
 // engine, and draws whatever geometry comes back. Change a value, the whole
 // pattern is re-evaluated from formulas; the SVG is an export format, nothing
 // more (PIPELINE: "resim yoktur, model vardır").
-import { draftRecipe, loadEngine } from './engine.js?v=140';
+import { draftRecipe, loadEngine } from './engine.js?v=141';
 // The take-it-home path lives in ONE module for the whole site (download.js).
 // It used to live here, and only here, which is why create.html could not offer
 // a single file — see the header of download.js.
 import {
   layoutPieces, pieceSVG, escapeXML, saveSVG, saveDXF, saveA4Pdf,
-} from './download.js?v=140';
+} from './download.js?v=141';
 
 const $ = (id) => document.getElementById(id);
 
@@ -304,7 +304,7 @@ function downloadFactoryPack() {
   const pack = state.doc ? factoryPackFor(state.doc.id) : null;
   if (!pack) return;
   const a = document.createElement('a');
-  a.href = `factory/${pack.file}?v=140`;
+  a.href = `factory/${pack.file}?v=141`;
   a.download = pack.file;
   a.click();
 }
@@ -324,7 +324,7 @@ function downloadPDF() {
 
 // ------------------------------------------------------------------ startup
 async function loadRecipe(entry) {
-  const res = await fetch(`recipes/${entry.file}?v=140`);
+  const res = await fetch(`recipes/${entry.file}?v=141`);
   if (!res.ok) throw new Error(`recipe fetch failed: HTTP ${res.status}`);
   state.text = await res.text();
   state.doc = JSON.parse(state.text); // form metadata only; the engine re-parses
@@ -345,7 +345,7 @@ async function init() {
   // re-evaluation itself, not the one-off engine download.
   const warmup = loadEngine().catch(() => {});
   try {
-    const res = await fetch('recipes/index.json?v=140');
+    const res = await fetch('recipes/index.json?v=141');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state.recipes = (await res.json()).recipes;
   } catch (e) {
@@ -355,7 +355,7 @@ async function init() {
   // Factory-pack index (optional): the pre-built graded size runs per recipe.
   // A missing index just leaves the factory button disabled, never a crash.
   try {
-    const fres = await fetch('factory/index.json?v=140');
+    const fres = await fetch('factory/index.json?v=141');
     if (fres.ok) state.factory = (await fres.json()).packs || [];
   } catch { state.factory = []; }
   for (const r of state.recipes) {

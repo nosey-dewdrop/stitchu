@@ -172,6 +172,112 @@ check('the data file says out loud that it is generated',
   /gen-al-dene\.py/.test(JSON.stringify(data._uretildi || '')),
   String(data._uretildi || ''));
 
+// ── 6. 🚨 THE CREDIT THE PAGE ACTUALLY PRINTS (GECE7 / F9 İŞ 0, borç 99) ────
+//
+// Section 2 above checks that the DATA carries a source URL. That is a real
+// check and it was passing on the day a live, public page told its readers
+// "every one of them links back to its source page" while printing the credit
+// as PLAIN TEXT with no anchor at all — inside an <a> that went to the drafting
+// page, so a reader who clicked a photographer's name landed on our product.
+// The data was right; the markup dropped it. Six photographs' licence terms
+// were unmet for as long as that shipped, three of them ShareAlike.
+//
+// So this arm does not read the data and does not read the source as a string
+// either. It EXECUTES THE PAGE'S OWN RENDERING CODE against a tiny DOM and
+// measures the element tree that comes out. A regex over the script would pass
+// on a page that builds the anchor and never appends it; an executed tree
+// cannot. There is no browser and no network here: the module's `fetch` is
+// handed the real web/data/al-dene.json off disk.
+{
+  const src = read('web/al-dene.html');
+  const mod = /<script type="module">([\s\S]*?)<\/script>/.exec(src);
+  if (!mod) {
+    check('the page still builds its cards in a module script', false, 'script bulunamadı');
+  } else {
+    // ── the smallest DOM that can hold the answer ──
+    const mk = (tag) => ({
+      tag, className: '', children: [], attrs: {}, _text: '',
+      set textContent(v) { this._text = String(v); this.children.length = 0; },
+      get textContent() {
+        return this.children.length
+          ? this.children.map((c) => c.textContent).join('')
+          : this._text;
+      },
+      appendChild(c) { this.children.push(c); return c; },
+    });
+    const grid = mk('div'), status = mk('p');
+    const doc = {
+      getElementById: (id) => (id === 'grid' ? grid : id === 'status' ? status : null),
+      createElement: mk,
+      createTextNode: (t) => { const n = mk('#text'); n._text = String(t); return n; },
+    };
+    const fakeFetch = async (u) => ({
+      ok: true, status: 200,
+      json: async () => JSON.parse(read('web/data/' + String(u).split('/').pop().split('?')[0])),
+    });
+    const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;
+    let ran = true;
+    try {
+      await new AsyncFn('document', 'fetch', mod[1])(doc, fakeFetch);
+    } catch (e) {
+      ran = false;
+      check('the page\'s own card-building code runs', false, String(e && e.message || e));
+    }
+    if (ran) {
+      const flat = (n, out = []) => { out.push(n); n.children.forEach((c) => flat(c, out)); return out; };
+      // DESCENDANTS only — the card itself is an <a>, and counting it would
+      // make "no anchor inside the card" impossible to satisfy.
+      const anchorsIn = (n) => n.children.flatMap((c) => flat(c)).filter((x) => x.tag === 'a');
+      const tops = grid.children;
+      check('the page rendered one wrapper per photograph',
+        tops.length === (data.ornekler || []).length, `${tops.length} kart`);
+
+      const norm = (u) => (String(u || '').startsWith('//') ? 'https:' + u : String(u || ''));
+      for (const [i, top] of tops.entries()) {
+        const ex = data.ornekler[i];
+        if (!ex) break;
+        const cardLinks = top.children.filter((c) => c.tag === 'a' && c.className === 'card');
+        const credits = top.children.filter((c) => /\bcc\b/.test(c.className));
+        // ⭐ THE STRUCTURAL CLAIM. A credit INSIDE the card link cannot carry an
+        // anchor at all — nested <a> is invalid HTML — so this is not style, it
+        // is the reason the links were missing in the first place.
+        check(`"${ex.dosya}": the credit is rendered OUTSIDE the card link`,
+          cardLinks.length === 1 && credits.length === 1 &&
+          anchorsIn(cardLinks[0]).length === 0,
+          credits.length ? `kart içi <a> sayısı ${cardLinks.length ? anchorsIn(cardLinks[0]).length : '-'}` : 'künye bloğu YOK');
+        if (!credits.length) continue;
+        const links = anchorsIn(credits[0]);
+        const hrefs = links.map((a) => a.href);
+        check(`"${ex.dosya}": the author's name links to the source page`,
+          links.some((a) => a.href === ex.kunye.commons_page && a.textContent === ex.kunye.author),
+          hrefs.join(' | ') || 'hiç bağlantı yok');
+        check(`"${ex.dosya}": the licence name links to the licence itself`,
+          links.some((a) => a.href === norm(ex.kunye.license_url) && a.textContent === ex.kunye.license),
+          norm(ex.kunye.license_url));
+        check(`"${ex.dosya}": no credit link leads back into our own product`,
+          !hrefs.some((h) => /create\.html/.test(String(h))), hrefs.join(' | '));
+        // ⭐ SHAREALIKE IS A CONDITION, NOT A NAME. Three of the ten are BY-SA
+        // and a reader who only sees "CC BY-SA 2.0" has not been told what it
+        // obliges them to do.
+        if (/BY-SA/i.test(ex.kunye.license))
+          check(`"${ex.dosya}": ShareAlike is stated in words, not just in the licence code`,
+            /ShareAlike/i.test(credits[0].textContent), credits[0].textContent.slice(0, 90));
+      }
+
+      // ⚠ #37 IS NOT A CC LICENCE. "No restrictions" is a rights statement a
+      // museum publishes; calling it CC would be a licence claim we cannot make.
+      const ccCount = (data.ornekler || []).filter((e) => /^CC/i.test(e.kunye.license)).length;
+      check('the page does not call all ten Creative Commons — nine are, one is a rights statement',
+        ccCount === 9 && !/ten CC|all ten .{0,20}Creative Commons/i.test(src),
+        `${ccCount} CC + ${(data.ornekler || []).length - ccCount} hak beyanı`);
+      check('and the page says out loud which is which',
+        /Nine of the ten are Creative Commons/.test(src) && /No restrictions/.test(src) &&
+        /not a CC licence/.test(src),
+        'sayfa metni sayıyı ve istisnayı adıyla yazıyor');
+    }
+  }
+}
+
 console.log('AL DENE KAPISI — bir yabancı tek sayfadan dosya alabiliyor mu? (0 API çağrısı)');
 console.log(note.join('\n'));
 if (fails.length) console.log(fails.join('\n'));

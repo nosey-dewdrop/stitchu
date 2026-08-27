@@ -8,7 +8,8 @@ exported from), flattened here with the SAME 24-step cubic formula the C++ motor
 uses (geometry.cpp:flattenCubic). No fabricated numbers: expected == motor's
 own flattened samples; actual == what ezdxf reads out of the file.
 
-Layer contract (AAMA-250 / ASTM D6673):
+Layer contract (ASTM D6673-10, WITHDRAWN 2019, not replaced; predecessor
+ANSI/AAMA-292 — there is no "AAMA-250", GECE7/F9 borç 100):
   1  boundary/cut   <- piece.cutLine       14  sew line   <- piece.commands
   7  grainline      <- piece.grainline      4  notch      <- piece.notches
   6  mirror line    <- piece.foldLine       (cut on fold, ASTM D6673 layer 6)

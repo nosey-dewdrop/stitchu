@@ -1,0 +1,51 @@
+{
+  "_uretildi": "engine/tools/gen-vitrin.mjs — ELLE YAZILMAZ. Sayılar engine/tests/hedef_kosu.mjs koşusundan gelir.",
+  "_yasa": [
+    "web/index.html BU DOSYADAN okur ve kendi hanesinde tek rakam taşımaz.",
+    "engine/tests/vitrin_check.mjs bu üreteci YENİDEN koşturur ve bayat sayıyı KIRMIZI yakar.",
+    "HER SAYININ YANINDA n VARDIR (§3.6). İKİ n HARMANLANMAZ: H6 farklı bir paydadan gelir."
+  ],
+  "kaynak": "engine/tests/hedef_kosu.mjs",
+  "H1": {
+    "deger": "10/10",
+    "n": 10,
+    "cumle": "10/10 girdi kalıp+flat üretti"
+  },
+  "H2": {
+    "deger": "%93",
+    "kesir": "66/71",
+    "n": 10,
+    "cumle": "%93 (66/71 alan yargısı)"
+  },
+  "H3": {
+    "deger": "2",
+    "n": 10,
+    "cumle": "2 ilan edilmemiş uydurma alan"
+  },
+  "H5": {
+    "deger": "0",
+    "n": 10,
+    "cumle": "0 eşleşmeyen çift / 5 ölçülebilen çift"
+  },
+  "H6": {
+    "deger": "0",
+    "n": 8,
+    "cumle": "0 flat manken çapasından sapıyor / 16 flat (n=8 stil × ön+arka)",
+    "uyari": "H6 bu koşunun fotoğraflarından gelmez; paydası flat_convention_check'in 8 stillik matrisidir."
+  },
+  "H11": {
+    "tavan_sn": 10,
+    "n": null,
+    "cumle": "hedef_kosu her koşuda medyan çizim süresini ölçer ve bu tavana karşı yargılar",
+    "uyari": "ÖLÇÜLEN MEDYAN YAYINLANMAZ: duvar saati sayısıdır, koşudan koşuya oynar, bayatlığı gürültüden ayırt edilemez."
+  },
+  "beden": {
+    "sayi": 8,
+    "liste": "EU34, EU36, EU38, EU40, EU42, EU44, EU46, EU48",
+    "kaynak": "contract/layers/shape-ratios.json"
+  },
+  "olcemedim": [
+    "H4",
+    "H9"
+  ]
+}

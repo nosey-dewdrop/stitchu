@@ -202,6 +202,64 @@ check('a CROPPED bustier has no below-cup body panel — the harness reasoning h
   !croppedNames.has('Front Body Center Front') && !croppedNames.has('Front Body Side Front'),
   `cropped: ${croppedNames.size} piece(s)`);
 
+// ── 4. 🚨 THE REAL TUNING SCREW, GATED (GECE7 / F9 İŞ 4, borç 98) ──────────
+//
+// The referee's HM-3 set the harness's `topLength` from 'hip' to 'tunic' — the
+// length that FLATTERS the deviations — and this gate stayed rc=0, green. §1.6
+// says the blind check is not a tuning screw, and until today that sentence was
+// a comment in a file rather than a condition anybody enforced. The deviations
+// move by up to 48 points across the three lengths, so whoever picks the length
+// picks the answer.
+//
+// 🚨 THE DEVIATION PERCENTAGES ARE STILL NOT GATED, AND MUST NOT BE. Gating them
+// is exactly the thing §1.6 forbids: it would make the engine chase a purchased
+// pattern. What is gated is the SELECTION RULE — "the shortest length the engine
+// offers that goes below the waist" — which is a property of the garment class
+// Buğra cut, not of how well we happen to match it.
+//
+// The rule is measured, not asserted. For every length in the vocabulary the
+// engine is asked to draft, and a length "goes below the waist" if it produces
+// a below-cup body panel — the engine's own division, the same fact check 3
+// above already relies on. Among the lengths that qualify, the rule takes the
+// SHORTEST, measured as the lowest hem the draft reaches.
+{
+  const declared = vocab.fields.topLength.values;
+  const hemOf = (d) => Math.max(...(d.pattern ? d.pattern.pieces : [])
+    .flatMap((p) => p.commands.map((c) => (c.y ?? -Infinity))));
+  const measured = [];
+  for (const v of declared) {
+    const d = JSON.parse(engine.draftJSON({ ...SPEC, topLength: v }, BODY));
+    const names = new Set((d.pattern ? d.pattern.pieces : []).map((p) => p.name));
+    measured.push({
+      v,
+      belowWaist: names.has('Front Body Center Front') || names.has('Front Body Side Front'),
+      hem: hemOf(d),
+    });
+  }
+  const qualifying = measured.filter((m) => m.belowWaist && Number.isFinite(m.hem));
+  check('at least one offered length goes below the waist — otherwise the rule is empty',
+    qualifying.length > 0,
+    measured.map((m) => `${m.v}:${m.belowWaist ? 'kup-altı VAR' : 'yok'} hem ${m.hem.toFixed(1)}`).join(' · '));
+  const rule = qualifying.slice().sort((a, b) => a.hem - b.hem)[0];
+
+  // What the harness ACTUALLY drafts, read out of its source rather than
+  // assumed: the gate and the tool disagreeing silently is the hole HM-3 walked
+  // through, and it walked through it because this gate hard-coded 'hip' in its
+  // own SPEC and never compared the two.
+  const bustierCall = draftCalls.find((b) => /garment\s*:\s*'top'/.test(b) && /cupSeam/.test(b));
+  const chosen = bustierCall ? (/topLength\s*:\s*'([^']+)'/.exec(bustierCall) || [])[1] : undefined;
+  check('the harness declares a topLength for the bustier and the gate can read it',
+    !!chosen && declared.includes(chosen), String(chosen));
+  check('the harness uses the SHORTEST offered length that goes below the waist — not the flattering one',
+    !!rule && chosen === rule.v,
+    `harness '${chosen}' · kural '${rule ? rule.v : '-'}' · ` +
+    `ölçülen: ${measured.map((m) => `${m.v} hem ${m.hem.toFixed(1)}${m.belowWaist ? ' (kup-altı)' : ''}`).join(', ')}`);
+  // And the gate's own SPEC must be the same length, or arms 1-3 above are
+  // measuring a different garment from the one the tool reports on.
+  check('the gate re-drafts at the SAME length the harness drafts at',
+    SPEC.topLength === chosen, `kapı '${SPEC.topLength}' · harness '${chosen}'`);
+}
+
 console.log('BUĞRA PARİTE KAPISI — satın alınmış kalıbın parça listesi çıkıyor mu? (0 API çağrısı)');
 console.log(note.join('\n'));
 if (fails.length) console.log(fails.join('\n'));
