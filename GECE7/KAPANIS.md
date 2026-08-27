@@ -93,7 +93,9 @@ kadar **yalnız dosya (model A) mı** satılacak? F9 ikincisini vitrin etti.
 
 ## 1.4 ⚠ **rabadon ON YEDİ OTURUMDUR YANLIŞ ATEŞLİYOR** (borç 61)
 
-`ctest-tail-hides-verdict` bu oturumda **iki kez** yanlış ateşledi. İkincisi
+`ctest-tail-hides-verdict` **bu tek oturumda ÜÇ KEZ** yanlış ateşledi (bir kart
+dosyasını `sed` ile okurken · `du -ch | tail -1` üzerinde · `git diff | tail -2`
+üzerinde — **üçünde de komutta `ctest` kelimesi hiç geçmiyor**). Ortadaki
 `du -ch … | tail -1` üzerindeydi — **komutta `ctest` kelimesi hiç geçmiyor**;
 `patterns_real/`'ın bayt toplamını sayıyordum. Kuralın kendi künyesi sebebi
 yazıyor: rabadon her kuralı **AYRIŞTIRILMIŞ BİR SEGMENT** yüzeyine karşı
