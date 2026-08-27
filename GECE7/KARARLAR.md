@@ -2146,3 +2146,115 @@ katmandaydı: kusur yorumun anlattığından **daha pahalıydı**.
 *"(Withdrawn 2019)"*). Sayılar değişmiyor, fiilî değişim biçimi olarak yaşıyor,
 ama bir yabancıya yalnız *"ASTM D6673"* demek **eksik** — **K63'ün dersi tam buydu.**
 **ŞART (F9):** iki cümle düzeltilir. **Sayı değişmez.**
+
+---
+
+# F9 HAKEMİ — K74…K78 (koşunun SON kararları, 2026-08-27)
+
+## K74 — **§4C md.7'nin "ölçüm tablosu" kolu BUGÜN İHLAL. HÜKÜM: ONAYLANDI, KAPI YOK, DAMLA'YA.**
+
+Ajan bunu **kendi aleyhine** yazdı; hakem **bağımsız ölçtü ve DOĞRU buldu**:
+```
+https://stitchu.noseydewdrop.com/lib/flat-tables.gen.js   HTTP 200, 76.961 bayt
+   -> "_source": "patterns_real/geometry/geometry-full.json -> rings[...]"
+   -> "OLCULDU — satin alinmis Bugra Locket EU38 'Back Body' ... 196.13/204.94 = 0.9570"
+https://stitchu.noseydewdrop.com/atolye.html              HTTP 200  (:911 aynı yolu anıyor)
+```
+§4C md.7: *"repoda durmaz, **dağıtılmaz**, **çıktıya sızmaz**."* İkinci ve
+üçüncü şart **canlıda ihlal**.
+
+**KARAR — üç parça:**
+1. **İhlal GERÇEK, ama F9'un hükmünü ÇEVİRMEZ.** Kaynağı `87fc9d5`, **F0'dan
+   önce**; F9 kartı bu tamiri **açıkça yasaklıyor** (*"repoyu private yapmak ya
+   da geçmişi kazımak BU KARTIN İŞİ DEĞİL"*). Vitrin kartına mimari ihlal
+   yüklemek §3.12'yi taşırır.
+2. **AJAN DOĞRU DAVRANDI.** `vitrin_check` md.5'in (a) kolu yalnız `href|src|
+   fetch` arıyor; `_source` serbest bir dizge olduğu için geçiyor. Bağlamak
+   **ALTINCI KIRMIZI** üretirdi ve faz kapanmazdı. Kapatmak yerine **hükmü
+   hakeme getirmek** kartın kendi talimatıdır. **Bu kalem ajanın LEHİNEDİR.**
+3. 🚨 **BORÇ OLARAK KAPATILMIYOR — DAMLA'YA GİDİYOR** (`KAPANIS.md` §1.1),
+   çünkü çözümü teknik değil ticari: skaleri sayfadan çıkarmak croquis'i
+   **kaynaksız** bırakır ve kaynaksız eski değer (78.0u) **geometrik olarak
+   imkânsızdı** — *"kaynağı sil"* burada *"yanlış sayıya dön"* demek.
+
+## K75 — **K42 YALNIZ VİTRİNE UYGULANDI. HÜKÜM: F9 İÇİN YETERLİ, KOŞU İÇİN DEĞİL.**
+
+Hakem saydı: **22 dosya, 98 geçiş** (`princess seam` / `prenses dikiş`) `web/`
+altında; **canlı landing'de 0**. K42 bir **adlandırma** yasası, F9 bir **vitrin**
+kartı — **vitrin temiz.** Kalan geçişlerin çoğu `web/styles/princess-seams.html`
+ve koleksiyon sayfalarında ve orada kelime bir **giysi terimi**, **bu kesimin
+adı** değil; **K42'nin yasakladığı ikincisidir.** Ayrım yapılmadan toplu `sed`
+K42'yi **yanlış yere uygular**. **BORÇ 102 açıldı.**
+
+## K76 — **BORÇ 73: GÖRÜNÜR YARISI KAPANDI. KÖK AÇIK. `hedef_kosu.mjs`'İ HAKEM DEĞİŞTİRDİ.**
+
+**Borç 73 on bir karttır hakem masasındaydı ve on bir kart da yanlış yere baktı.**
+Ölçüm:
+```
+grep -n korNokta engine/tests/hedef_kosu.mjs   ->  TEK SATIR (282), ATAMANIN KENDİSİ
+```
+`r.korNokta` **hiçbir yerde okunmuyordu.** Yanındaki yorumun *"kör nokta burada
+SAYIYLA basılıyor ki gizli kalmasın"* cümlesi **F4'ten beri YANLIŞTI** —
+hesaplanıp **düşürülüyordu**.
+
+**KARAR:** hakem (§3.8 md.1'in kendi izniyle, faz ajanı değil) **yalnız bir
+`console.log` bloğu** ekledi. Sonuç ilk kez göründü:
+**ön oyuk 214.97 mm · arka oyuk 196.03 mm · fark 18.94 mm** (beşte dördünde;
+beşincisi 9.24 mm). **H5 = "0 eşleşmeyen çift" bunu GÖRMÜYOR** ve göremediği
+tam olarak borç 73'ün cümlesiydi.
+
+**KÖK AÇIK KALIYOR ve adıyla yazıldı:** `sleeve_cap` motorda **TEK ve
+BÖLÜNMEMİŞ** bir yay (`sleeve.cpp:194`, `locket.cpp:379`); hangi yarısının ön
+oyuğa gittiğini söyleyen **beyan yok**, uydurmak **§3.10 ihlali**. Kapatmanın
+tek yolu **motorun kapağı omuz çentiğinde ikiye ilan etmesi** — bir **faz işi**.
+
+**BEDELİ YAZILIYOR:** `engine/tests/hedef_kosu.mjs` blob'u **`7370b86d`'den
+değişti**. **Hiçbir eşik gevşetilmedi, hiçbir taban kesilmedi**, H5 **0/5**'te,
+`CIRCIR SAĞLAM`, `vitrin_check`/`landing_truth_check`/`gen-vitrin` ayrıştırıcısı
+**EXIT 0** (yeni blok iki cırcır bloğunun **DIŞINA** basılıyor).
+
+## K77 — **ÜÇ YENİ BORÇ AÇILDI (F9 hakemi)**
+
+- **101** — `dxf.hpp:54-55` katman tablosunu **`D6673-10 §3.1.4`/`§3.1.5`** diye
+  anıyor. **Birincil ASTM metninde tablo §4.3'tedir** (§3 *Terminology*).
+  Borç 100 iki cümleyi düzeltirken **üçüncü bir yanlış bölüm numarası** bıraktı,
+  ve bu tam da bir **künye kesinliği** kartıydı. Sayı taşımıyor, hükmü çevirmiyor.
+- **102** — K42 (bkz. K75).
+- **103** — 🚨 **`web/vendor/stitchu-engine.js` YENİDEN ÜRETİLEBİLİR DEĞİL.**
+  F8 `5e1958dc` ölçmüştü, bugün **`a0bb1844`**, ve değişikliğin tek kaynağı
+  `dxf.hpp`'nin **YORUMU**. `engine/dist` **tam olarak `762e7286`'da kaldı**
+  (hakemin HM-5'i gidip **bayt bayt geri geldiğini** gösterdi). Sayı değişmedi
+  (`golden` `a3ec26a6`, `hedef_kosu` yeşil), ama ***"ikili bayt bayt aynı"* bir
+  daha `web/vendor` için SÖYLENEMEZ.**
+
+## K78 — 🚨 **KARTIN 9. MADDESİNİN VARSAYIMI ÖLÇÜMLE ÇÜRÜDÜ: SAYFA YABANCI FOTOĞRAFI REDDETMİYOR.**
+
+Kart, §3.9'un doğru sonucunun *"yabancı fotoğraf yüklenemiyor"* olduğunu
+varsayıyordu. **Hakem ölçtü — öyle değil:**
+```
+web/js/config.js:4   BACKEND_URL = 'https://stitchu-api.damummyphus.workers.dev'   (DOLU)
+web/js/analyze.js:5  photoAvailable = () => Boolean(BACKEND_URL)   ->  TRUE
+web/js/create.js:779 if (photoAvailable()) { ... yükleme düğmesi GÖSTERİLİYOR }
+
+GET  /api/analyze                                        -> 401 {"error":"Unauthorized"}
+POST /api/analyze  (Origin: stitchu.nosey…, gövde {}, GÖRSEL YOK)
+                                                         -> 400 {"error":"Invalid request"}
+```
+**400, 401 değil** — Worker sitenin isteğini **kabul ediyor** ve modele gitmeden
+**önce doğruluyor**. Yani **bir yabancı bugün canlı sayfaya kendi fotoğrafını
+yükleyebilir ve bu Damla'nın hesabından ücretli bir çağrı harcar.**
+
+**KARAR:**
+1. **§3.9 İHLAL EDİLMEDİ.** §3.9 **KOŞUYA** sıfır ücretli çağrı şart koşuyor ve
+   koşu boyunca **sıfır** harcandı (`al_dene` bankalı, `hedef_kosu` mühürlü
+   fixture, hakem yalnız **görselsiz** bir 400 probu attı). **Risk KOŞUDA değil,
+   CANLI SİTEDE ve tanımadığın insanlarda.**
+2. **VİTRİN ÖRTMÜYOR AMA İLAN DA ETMİYOR.** Canlı landing *"upload a photo"*u
+   iki kez yazıyor ve doğru yazıyor; ama **bu yolun Damla'ya paraya mal olduğu,
+   bir kotası olduğu ya da kapatılabileceği hiçbir yerde yazmıyor.**
+   `analyze.js` bir 429 mesajı taşıyor, yani **bir kota VAR — sayısı
+   yayınlanmıyor ve hakem ölçmedi.**
+3. 🚨 **BU BİR İŞ KARARIDIR → DAMLA'YA.** Hakem **hiçbir şeyi değiştirmedi**;
+   `BACKEND_URL`'i boşaltmak fotoğraf yolunu **tamamen** öldürürdü ve bu bir
+   ürün kararıdır.
+⚠ **Uçtan uca gerçek bir yükleme YAPILMADI** (para harcardı). **DOĞRULANMADI.**
