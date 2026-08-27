@@ -1807,3 +1807,171 @@ Ve F6'nın **üç vitrin kumaşından biri** tam olarak bu hâl.
 **KARAR:** kapıya bugün **eklenmiyor** — eklemek **ALTINCI kırmızı** olurdu ve
 suçu yanlış karta yazardı (§3.8 md.4 ruhu). **Borç 86 olarak açılıyor ve F7'nin
 kartına DEĞİŞMEZ değil, İŞ olarak giriyor.**
+
+---
+
+## K66 — **H8-İFADENİN TABANI 3/5 DEĞİL 2/5. KARTIN TABLOSU YANLIŞTI, AJAN KENDİ ALEYHİNE BİLDİRDİ, HAKEM AJANI HAKLI BULDU**
+
+**Karar:** `H8_ifade`nin F6 sonrası tabanı **PAY = 2/5**'tir (çevrilen giysi
+sayısı), 3/5 değil. F7'nin şartı *"pay 3 → en az 4"* idi; gerçekleşen
+**2 → 4**, yani kazanç **+1 değil +2**.
+
+**Gerekçe — ölçüm, iddia değil.** `GECE7/F7.md` satır 41
+`bugra-buttoned-corset-bustier`'i **✅ ÇEVRİLDİ** listelemişti. Ajan bunu
+**kendi aleyhine** bildirdi (kart §HANE, "KARTIN TABLOSUNDA BİR SATIR YANLIŞTI").
+Hakem `F6-yesil`'i ayrı bir git worktree'ye açtı ve **mühürlü** betiği
+(`expressability_check.mjs`, blob `04c61f03` — iki uçta **aynı bayt**) orada
+koşturdu:
+
+```
+F6-yesil → operatör kümesi: MOTORDA 3 (op.suppress, op.rotate, op.split)
+           ÇEVRİLEMEDİ bugra-locket-top             (attach·derive·overlay·gather)
+           ÇEVRİLEMEDİ bugra-buttoned-corset-bustier (attach)      ← KART ✅ DİYORDU
+           ÇEVRİLEMEDİ freesewing-aaron              (extend·attach)
+           ÇEVRİLDİ    stitchu-sheath-eu38 · freesewing-bella
+           H8-İFADE = 3 / 5   (bu sayı ÇEVRİLEMEYENİ sayar)
+```
+
+**Ajan haklıydı.** Kartı yazan hakem (yani bu koşunun bir önceki hakemi)
+paydadaki bir satırı yanlış işaretlemişti.
+
+⚠ **VE BURADA BİR TUZAK VAR, ADIYLA YAZILIYOR:** betiğin bastığı `H8-İFADE = X/5`
+**ÇEVRİLEMEYENİ** sayar; kartın *"hane"* dediği **ÇEVRİLENİ**. **İkisi ters
+işaretlidir.** Bundan sonra her kart hangisini kastettiğini **açıkça** yazacak.
+Bu turda ikisi de aynı yöne gitti (pay 2→4, basılan 3→1), o yüzden hüküm
+etkilenmedi — **ama etkilenebilirdi.**
+
+**Sonuç:** taban **2/5** olarak kayda geçti. Payda **5**, **mühürlü**,
+**büyütülmedi ve daraltılmadı** (K17/K31).
+
+---
+
+## K67 — 🚨 **BORÇ 92: "YAYIN BULUNAMADI" YANLIŞTI — YAYIN VAR, HAKEM AÇTI. SAYI KONDU, AMA F7'NİN YERLEŞİMİ AYAKTA KALIYOR**
+
+**Karar (iki parçalı):**
+
+**(1) SAYI KONDU.** Uzat/kısalt çizgisinin yeri **bel (rise) ile etek ucunun tam
+ortasıdır** — panelin merkez çizgisi boyunca **%50**. Bugünkü EU38 A-line etek
+paneli için (**662.0000 mm**) bu **331.0000 mm**'dir.
+
+**KÜNYE — ve bu bir blog cümlesi değil, bir kalıp yayıncısının kendi dokümanı:**
+> *"In general, the best location for lengthening or shortening a dress or shirt
+> is halfway between the bottom of the armhole and the hem. **For pants or a
+> skirt, the best spot is halfway between the rise/crotch and the hem.**"*
+> — Oliver + S, *"Lengthening and Shortening a Pattern"*,
+> `oliverands.com/community/blog/2010/02/lengthening-and-shortening-a-pattern.html`
+
+Gerekçesini de aynı sayfa veriyor:
+> *"By adding or subtracting length in the middle of the piece, you won't affect
+> the hem or the general silhouette as much as you would if you added to the
+> bottom of the piece."*
+
+▸ **GÜVEN: MED.** Bu bir kalıp şirketinin yayınlanmış dokümanıdır, **Aldrich
+değildir**; `knowledge/drafting-math-eu38.md`'de bu soruya cevap veren satır
+**yok** ve Aldrich bu spesifik soru için **açılmadı**. Daha sert bir künye
+çıkarsa sayı **değişir**.
+
+**(2) F7'NİN ETEK-UCU YERLEŞİMİ BU TURDA AYAKTA KALIYOR, VE SEBEBİ ÖLÇÜLDÜ.**
+Hakem, yayının **istediği amacın** F7'nin yerleşiminde **fiilen sağlandığını**
+ölçtü:
+
+| yayının koruduğunu söylediği şey | F7'nin ölçülen sonucu |
+|---|---|
+| *"won't affect the hem"* | etek ucu yayı **300.5727 → 300.5727 mm** — **tek basamak oynamadı** |
+| *"...or the general silhouette"* | etek ucu **eni 299.7000 → 299.7000 mm** — **kloş büyümedi** |
+| — | etek ucu dışındaki **her komut BAYT-AYNI**; `Sleeve` · `Bodice Front` · `Bodice Back` **BAYT-AYNI** |
+
+Ve yayının kendi reçetesinin bir **bedeli** var, aynı sayfada yazıyor:
+> *"If the edge is curved, you may need to blend the edge, subtracting a bit from
+> one line and adding to the other."*
+
+**Blend etmek çizili bir çizgiyi OYNATIR.** Yani %50 yerleşimi, yayının kendi
+tarifiyle uygulandığında **F7'nin bugün oynatmadığı** landmarkları oynatır ve
+`extend_check` **LEG 4**'ü (*"etek ucu dışındaki her komut bayt-aynı"*) kırmızı
+yakar.
+
+**Bu yüzden:** sayı **331.0000 mm olarak İLAN EDİLDİ ve kayda geçti**, ama
+taşıma **emredilmedi**. Taşıma yapılacaksa `extend_check` LEG 4'ün *"etek ucu
+dışında"* şartı *"EKLENEN ARALIK dışında"* diye yeniden yazılmalıdır — bu bir
+kapı tasarımı işidir ve **F8+**'in kuyruğundadır.
+
+▸ **AJANIN DAVRANIŞI YİNE DE DOĞRUYDU:** *"YAYIN BULUNAMADI"* yazıp **en
+kısıtlayıcıyı** seçmek §3.10'un tam olarak istediği şeydi. Ajanın tek eksiği
+**aramanın kendisiydi**, hükmü değil. **Borç 92 KAPANDI.**
+
+---
+
+## K68 — 🚨 **BORÇ 93: ÖRME KAPAK ÇAPASI KAPISIZ, VE F7'NİN ZEMİNİ ARTIK ONU OKUYOR** (hakemin kendi mutasyonu, HM-1b)
+
+**Karar:** F7'nin borç-86 düzeltmesi **`1-9%` penceresini GEVŞETMEDİ** — bu
+doğrulandı, üç ayrı yoldan. **Ama zeminin adresini bir sabitten bir TABLOYA
+taşıdı, ve o tablonun örme satırları hiçbir kapıyla pinli değil.**
+
+**Ölçüm.** `validator.cpp` artık `easeFloor = max(0, min(capEaseMin, capEase))`
+yazıyor; `capEase` `fabricease.hpp`'nin `kCap` satırından geliyor:
+```cpp
+inline constexpr AnchorRow kCap = {
+    Anchor{0.0, 0.04}, {12.5, 0.02}, {38.0, 0.00}, {63.0, 0.00}, {88.0, 0.00}};
+```
+`sleeve.hpp:18-21` bunlardan **YALNIZ İKİSİNİ** mühürlüyor —
+`easeAt(SleeveCap, 0.0) == capEase` ve `easeAt(SleeveCap, kKnitDefaultPct=12.5)
+== knitCapEase`. **`{38.0, ...}` · `{63.0, ...}` · `{88.0, ...}` MÜHÜRSÜZ.**
+`fabric_ease_check`'in pinlediği tablo (`:68-74`) **göğüs ve bel** payıdır,
+**kapak değil**.
+
+**HM-1 (dokuma çapası 0.04 → 0.004):** **KOD DERLENMEDİ** —
+`static_assert ... "woven cap anchor drifted"`. Bir kapıdan **daha sert** mühür.
+→ **Dokuma penceresi gevşetilemez. Ajanın "dokumada atıl" iddiası DOĞRU.**
+
+**HM-1b (örme ≥%38 çapası 0.00 → 0.05):** **derleme rc=0**, wasm yeniden
+derlendi ve **ikili gerçekten kımıldadı** (`756783b7` → **`b3c896a0`** → geri
+`756783b7`), **ve yedi kapı da YEŞİL kaldı**: `fabric_ease_check` ·
+`fabric_catalog_check` · `sleeve_check` · `extend_check` · `attach_check` ·
+`indir_check` · `hedef_kosu`.
+
+**Bu bir F7 KUSURU DEĞİL, F7'nin AÇTIĞI YÜZEYİN pinlenmemiş kısmıdır:** F7'den
+önce o çapa yalnız **hedefi** sürüyordu ve arkasında sert **0.01 zemini**
+duruyordu; F7'den sonra **zeminin kendisi**. Yeni sorumluluk, yeni mühür ister.
+
+**F8'in işi (tek satırlık):** `sleeve.hpp`'ye üç `static_assert` daha, ya da
+`fabric_ease_check`'in tablosuna bir **kapak** sütunu. **Sayı UYDURULMAZ** —
+bugünkü değerler pinlenir, o kadar.
+
+---
+
+## K69 — 🚨 **BORÇ 94: TARAYICI EDİT YOLU KAPISIZ. SAPMA SORUSUNUN CEVABI BUGÜN BİR KAPIYA BAĞLI DEĞİL** (hakemin kendi mutasyonu, HM-2b)
+
+**Karar:** `op.extend` ve `op.attach` **motorda gerçek ve ölçülü** — bu
+doğrulandı, hakemin kendi indirmesiyle (4/4 ayrı DXF hash, +100.0000 mm,
+parça 6→7, metraj 2.0→2.4). **Ama kullanıcının editinin motora geçtiği JS
+teli hiçbir kapı tarafından yargılanmıyor.**
+
+**Ölçüm (HM-2b).** `web/js/engine.js:232-233` — kullanıcının editinin motora
+geçtiği **TEK** yer — şu hâle getirildi:
+```js
+editExtendMM: 0,      // kullanicinin "10 cm uzat"i copte
+editAttach: 0,        // kullanicinin "fiyonk ekle"si copte
+```
+**BEŞ KAPI DA YEŞİL KALDI:** `indir_check` · `hedef_kosu` ·
+`expressability_check` · `extend_check` · `attach_check`.
+
+**Sebep yapısal, ve suçlu bir ihmal değil bir sınır:**
+- `extend_check` / `attach_check` **C++**'tır ve `GarmentSpec`'i **kendileri**
+  kurar — JS telinden **hiç geçmezler**.
+- `indir_check` **hiçbir edit alanı set etmez**; 6B bölümü kumaş eksenini ölçer.
+
+**BU BİR ŞART İHLALİ DEĞİLDİR.** Kart §İŞ 1 sürücüyü **kendi eliyle**
+*"`engine/dist/stitchu-engine.js` üzerinden sür"* diye yazdı ve ajan tam olarak
+onu yaptı; web tarafını da **iddia etmeden** bildirdi (*"bir insan onu
+tıklamadı"*). Ama **sapma sorusu** (*"indirdiğimi düzenleyip yeniden
+indirebiliyor muyum?"*) bugün **bir kapıya bağlı değil**, ve bu yazılmalı.
+
+▸ **Hakem ayrıca ölçtü, ve bu iyi haber:** canlı `vendor/stitchu-engine.js`'in
+sha1'i **`3de441e8`** = repodaki dosyanın sha1'i, yani **bayt bayt aynı**;
+canlı `js/create.js` **`editExtendMM` ve `editAttach` taşıyor**;
+`stitchu.noseydewdrop.com` **HTTP 200**, `?v=139`. **Hat gerçekten yayında** —
+yalnız **kapısı yok** ve **hâlâ tıklanmadı**.
+
+**F8'in işi:** `indir_check`'e bir **edit kolu** — aynı spec'i iki kez indir
+(edit'siz / edit'li), **hash'lerinin farklı olduğunu** ve edit'linin **fazladan
+bir parça** taşıdığını yargıla. **Tek fonksiyon.**
