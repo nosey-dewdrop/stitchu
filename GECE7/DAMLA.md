@@ -151,3 +151,26 @@ motorun **iki** arka panelinin genişlikleri toplanıp Buğra'nın **bir** parç
 kıyaslanıyordu. Bire bir eşlendiğinde aynı çizim `Back Center 405×210 ↔ 498×148`
 ve `Back Side 284×108 ↔ 252×106` (**+%13 / +%2**, tablodaki **en iyi** uyum)
 okuyor. Kartın *"kovalama"* dediği sayı, kovalanacak bir sayı değilmiş.
+
+---
+
+## F8 — HAKEMİN CEVABI (md.19 ve md.20 KAPANDI, Damla'ya gitmedi — §3.4)
+
+| # | Kalem | **HAKEMİN KARARI** |
+|---|---|---|
+| **19** | Sayfa açık mı davetli mi? | ✅ **AÇIK — ajanın seçimi ONAYLANDI (K72).** Gerekçe bir sayıya bağlı: `pages.yml:23 branches:[main]` **her push'u zaten canlıya çıkarıyor**, yani bu boru hattında *"davetli"* diye bir hâl yok — olabilecek tek şey **linksiz**, ve linksiz bir sayfa ne geri bildirim verir ne ilk izlenimi korur, yalnız **ölçülemez** olur. Gerçek koruma **yüzeyde ve KAPILI**: fotoğraf yükletilmiyor, hesap istenmiyor, **sıfır ücretli API** (M7 kırmızı yakıyor), holdout `11·12·30·35` sayfaya **çıkamıyor** (M6 kırmızı yakıyor). |
+| **20** | §1.6 *"`vocab.json`'dan `bugra` çıkarılır"* ⇄ §0B *"sözlük daraltılmaz"* | ✅ **HİÇBİR ŞEY SÖKÜLMEZ (K70).** §1.6 bir **SİLME** yasası değil bir **KULLANMAMA** yasasıdır: metnin kendi cümlesi *"motor ezberlemeden çizer"* — bir **davranış** iddiası, bir **envanter** iddiası değil. Silmek `cupseam.cpp`'nin ~300 satırını ve `locket.cpp`'nin `bugra::` bloğunu sökerdi (DEĞİŞMEZLER yasaklıyor) **ve** kapalı bir enum'u daraltırdı (§0B'nin adıyla saydığı vektör; `vocab_reference_check` tam bunu korumak için var ve F8'de bir enum referansı **bir arttı** diye kırmızı yandı). Ajan **en kısıtlayıcıyı seçti ve KULLANMAMAYI KAPILADI** — doğru davranış. ⚠ **Ama kol EKSİK:** hakemin HM-3'ü harness'ın `topLength`'ini değiştirince kapı **yeşil kaldı** → **borç 98, F9'un işi.** |
+
+**Yeni bir kalem SORULMUYOR.** Hakemin F8 turunda açtığı üç kalem (98 · 99 · 100)
+karar değil **iş**tir ve `GECE7/F9.md`'ye yazıldı.
+
+**Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:** `nosey-dewdrop/stitchu`
+**hâlâ PUBLIC** (`gh repo view --json isPrivate` → `false`, hakem yeniden
+ölçtü) ve `patterns_real/` altında **41 takipli telifli dosya** var — satın
+alınmış Buğra kalıplarının A0/A4/US Letter PDF'leri dahil. `KOSU-v7.md`
+**§4C md.7** bunu kendi cümlesiyle yasaklıyor (*"repoda durmaz, dağıtılmaz"*).
+**Bu koşunun ürettiği bir ihlal DEĞİL** (`87fc9d5`, F0'dan önce) ve **K10 ile
+zaten bildirildi**, ama **hâlâ açık ve F9 bir VİTRİN kartı.** Düzeltmenin iki
+yolu da **Damla kararı**: repoyu private yapmak **canlı siteyi öldürür**
+(ücretsiz hesapta Pages kapanır), `filter-repo` kazısı ise `CLAUDE.md`'de
+Damla kararı olarak mühürlü. **Hakem tek taraflı yapmadı.**

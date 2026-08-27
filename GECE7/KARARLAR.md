@@ -1975,3 +1975,174 @@ yalnız **kapısı yok** ve **hâlâ tıklanmadı**.
 **F8'in işi:** `indir_check`'e bir **edit kolu** — aynı spec'i iki kez indir
 (edit'siz / edit'li), **hash'lerinin farklı olduğunu** ve edit'linin **fazladan
 bir parça** taşıdığını yargıla. **Tek fonksiyon.**
+
+---
+
+## K70 — **DAMLA md.20: §1.6'nın "`vocab.json`'dan `bugra` değerleri çıkarılır"ı, §0B'nin "sözlük daraltılmaz"ına YENİLİR. §1.6 bir SİLME değil bir KULLANMAMA yasasıdır ve artık KAPILI**
+
+**Ajan karar veremedi ve doğru yaptı** (§3.4): aynı kartın iki satırı çarpışıyordu.
+*"`cupSeam: bugra` ve `locketTop: bugra` çıkarılır"* (§1.6) ⇄ *"sözlük daraltmak
+§0B ihlali"* + *"F0..F7'nin işi SÖKÜLMEZ"* (DEĞİŞMEZLER). **Karar hakemindir.**
+
+**KARAR: HİÇBİR ŞEY SÖKÜLMEZ. §1.6 KULLANIM YASAĞI OLARAK OKUNUR VE O YASAK KAPILANIR.**
+
+**Gerekçe, üçü de sayıya bağlı:**
+
+1. **Silmenin bedeli ölçüldü ve kartın kendi yasalarını ihlal ediyor.** İki
+   değeri `vocab.json`'dan çıkarmak `cupseam.cpp`'nin ~300 satırlık hilal
+   konstrüksiyonunu ve `locket.cpp`'nin `bugra::` bloğunu **sökerdi** — F3/F5'in
+   sevk edilmiş işi. DEĞİŞMEZLER bunu **açıkça** yasaklıyor.
+2. **Ve kapalı bir enum'u daraltmak §0B'nin adıyla saydığı vektördür.** Bu
+   koşuda `vocab_reference_check` **tam olarak bunu** korumak için var (K2/K11/K12)
+   ve F8'de o kapı bir enum değerinin referansı **bir arttı** diye kırmızı yandı;
+   aynı kapının korumaya çalıştığı şeyi hakem eliyle **azaltmak** tutarsız olurdu.
+3. **§1.6'nın KORUDUĞU ŞEY silme değil.** Metnin kendi cümlesi: *"Motor
+   ezberlemeden, yalnız fotoğraf + prompt ile çizer."* Bu bir **davranış**
+   iddiasıdır, bir **envanter** iddiası değil. Ajan ölçtü ve doğru çıktı: harness
+   bugün de o preset'lerden **geçmiyordu**, yalnız **hiçbir kapı bunu
+   ölçmüyordu**. Şimdi ölçüyor (`bugra_parity_check` §2 kolu, ajanın M4'ü
+   `cupSeam: 1 → 2` yapınca **EXIT 1** + parça eksiği **0 → 6**).
+
+▸ **DAMLA'YA GİTMEZ, KOŞU DURMAZ. DAMLA md.20 KAPANDI.**
+▸ ⚠ **Ve bu karar bir tavan değil bir zemin: kolun EKSİK olduğu K73'te (borç 98).**
+
+---
+
+## K71 — 🚨 **§0B: BİR SAYIYI ÖLÇÜM ALETİNİ ONARARAK DÜŞÜRMEK MEŞRUDUR — İKİ ŞARTLA. VE F8'İN HANESİ BİR MOTOR KAZANIMI OLARAK YAZILMAZ**
+
+**Soru:** `bugra-parity` bustier parça eksiği **3 → 0** oldu ve motora **tek satır
+C++ yazılmadı**. Kazanç motorda değil, aletin onarımındaydı. §0B (reward hacking)
+bunu men eder mi?
+
+**KARAR: MEŞRU, AMA İKİ ŞARTA BAĞLI, VE HANE "MOTOR KAZANIMI" DİYE KAYDEDİLMEZ.**
+
+**ŞART 1 — ONARIM, ALETİ DAHA KOLAY DEĞİL DAHA DOĞRU ÖLÇER HÂLE GETİRMİŞ OLACAK,
+VE BU BAĞIMSIZ DOĞRULANABİLİR OLACAK.** Burada karşılanıyor, hakem kendi koşturdu:
+
+| ne | ölçüm |
+|---|---|
+| `GROUPS` arka toplaması kaldırıldı | Buğra'nın arkası harness'ın **kendi `NAMED` tablosunda** iki kayıt (`Back Center` 521×178 · `Back Side` 281×120); motorun arkası da iki panel. Toplama **hiçbir yerde var olmayan** 405×318'lik bir parça imal ediyordu. **Tek başına 3 → 2.** ✅ |
+| `topLength: cropped → hip` | Buğra'nın korsesi longline (`Front Center` **327 mm**, kupların ALTINDA). `cropped` bir üstün kup-altı paneli **yoktur** ve bu motorun **kendi kapısında ilan edildi** (`bugra_parity_check`: *"a CROPPED bustier has no below-cup body panel"*, YEŞİL). **2 → 0.** ✅ |
+
+**ŞART 2 — ONARIM SONRASI SAYI, BİR SAYAÇ DEĞİL BİR YAPI TARAFINDAN TAŞINACAK.**
+Karşılanıyor, ve **kanıtı hakemin kendi mutasyonu**: sahte bir bölme (`Top Side
+Back`'in konturu = `Top Center Back`'inki, `cupseam.cpp`, ajanın **hiç açmadığı**
+dosya, `numstat` BOŞ, ikili `762e7286 → 371ad9f4`) **`MOTOR EKSİĞİ: 0` basmaya
+devam ediyor** ama kapı **EXIT 1** veriyor: *"696.9 vs 696.9 cm2"*. **Sayı
+kandırılabilir, kol kandırılamıyor.** ✅
+
+**AMA — ÜÇ KAYIT DÜŞÜLÜR, ÜÇÜ DE HANENİN ALEYHİNE:**
+
+1. 🚨 **F8'İN HANESİ BİR MOTOR KAZANIMI DEĞİLDİR VE ÖYLE ANILMAZ.** Motorun
+   yeteneği bugün F7'deki neyse odur; değişen, ona **doğru sorunun sorulması**dır.
+   Bu **değerli** bir iştir (kartı yazan önceki hakemin teşhisi çürüdü) ama
+   *"motor üç parça daha çizebiliyor"* **DENMEZ**.
+2. **`cropped → hip` bir ALET ONARIMI DEĞİL, SORUNUN DEĞİŞTİRİLMESİDİR** ve bu
+   yüzden bir **serbestlik derecesi**dir: hakem ölçtü, üç uzunluk arasında sapma
+   **48 puana kadar** oynuyor (`Front Center` −%33 ↔ +%4). Serbestlik derecesi
+   **kapılanmadıkça** meşruiyet ajanın niyetine dayanır, ve niyet bir kapı
+   değildir. → **borç 98 / K73.**
+3. **Ajanın *"kendi aleyhime kötü olanı seçtim"* iddiası ABARTILI.** Hakem altı
+   satırın altısını topladı: mutlak sapma **`hip` 295 puan · `tunic` 312 puan**
+   — **toplamda `hip` DAHA İYİ**. Ve kartın *"tablodaki EN İYİ uyum"* dediği
+   `Back Side` **+%13/+%2** hücresi **`cropped` koşusundandır**; sevk edilen
+   `hip`'te o satır **+%85/+%25** okuyor. ⚖ **Gizlenen sayı YOK** — ajan sevk
+   edilen altı çiftin altısını da kartın sonunda yazdı, ve §1.6 sapmayı zaten
+   hane olmaktan men ediyor. **Kusur ÇERÇEVELEME, saklama değil; hükmü çevirmez.**
+
+▸ **KURAL, GENEL HÂLİYLE:** *"Ölçüm aletini onararak bir sayıyı düşürmek, onarımın
+DOĞRULUĞU aletin dışından gösterilebiliyorsa ve düşen sayı bir MUTASYONLA
+kırılabilen bir yapıya bağlanıyorsa meşrudur. Bu iki şart yoksa §0B ihlalidir.
+Meşru olduğu hâlde bile, kazanç ÖLÇÜLEN NESNEYE değil ÖLÇÜME yazılır."*
+
+---
+
+## K72 — **DAMLA md.19: AL DENE SAYFASI AÇIK. Ajanın seçimi ONAYLANDI**
+
+`KOSU-v7.md` §F8 bunu hakeme bırakmıştı (*"Açık = geri bildirim, davetli =
+kontrollü ilk izlenim"*). **KARAR: AÇIK — ve ajanın gerekçesi bir sayıya bağlı,
+o yüzden kabul ediliyor.**
+
+`.github/workflows/pages.yml:23` `branches: [main]` + `paths: ['web/**']` →
+**her push zaten canlıya çıkıyor.** Bu boru hattında *"davetli"* diye bir hâl
+**yoktur**; olabilecek tek şey **linksiz** bir sayfadır, ve linksiz bir sayfa ne
+geri bildirim verir ne ilk izlenimi korur — yalnızca **ölçülemez** olur. Yani
+"davetli" seçeneği burada bir koruma değil, bir **görünmezlik**tir.
+
+Gerçek koruma **yüzeyde** ve **kapılı**: fotoğraf yükletilmiyor, hesap
+istenmiyor, **sıfır ücretli API çağrısı** (§3.9 — `al_dene_check`, ajanın M7'si
+kırmızı yakıyor), ve **holdout `11·12·30·35` ile yedek beş `10·14·15·34·36`
+sayfaya çıkamıyor** (K16 — ajanın M6'sı `LEAKED: 11-…` ile kırmızı yakıyor).
+
+▸ **DAMLA md.19 KAPANDI.** ⚠ **AMA açık bir sayfanın bedeli var ve F8 onu
+ödemedi: borç 99 (K73) canlı ve public bir sayfada duruyor.**
+
+---
+
+## K73 — 🚨 **HAKEMİN AÇTIĞI ÜÇ KALEM: 98 (KÖR KONTROLÜN AYAR VİDASI KAPISIZ) · 99 (CANLI SAYFA KENDİ HAKKINDA YALAN SÖYLÜYOR + ALTI FOTOĞRAFIN CC ŞARTLARI KARŞILANMIYOR) · 100 (D6673 KÜNYESİNDE İKİ DÜZELTME)**
+
+### borç 98 — **`topLength` KAPISIZ, ve o harness'taki TEK gerçek ayar vidasıdır**
+
+Hakemin mutasyonu (**HM-3**), `bugra-parity.mjs` `topLength 'hip' → 'tunic'`:
+
+```
+node engine/tests/bugra_parity_check.mjs  ->  rc=0
+BUĞRA PARİTE KAPISI: YEŞİL
+```
+
+**Hiçbir kapı görmüyor.** Kapının kör-kontrol kolu yalnız `cupSeam` / `locketTop`
+ezber preset'lerini okuyor. Oysa uzunluk seçimi sapmaları **48 puana kadar**
+oynatıyor. Ajanın *"kör kontrol ayar vidası değildir, o yüzden kötü olanı
+seçtim"* disiplini bugün bir **YORUM**, bir kapı değil.
+**ŞART (F9):** `bugra_parity_check` harness'ın `draft()` çağrısındaki
+`topLength`'i **kaynaktan okuyup** ilan edilen kurala (*"belden uzun olan EN KISA
+uzunluk"*) karşı yargılar. **Mutasyonla kanıtlanır.**
+
+### borç 99 — 🔴 **CANLI, PUBLIC SAYFA KENDİSİ HAKKINDA YANLIŞ BİR CÜMLE TAŞIYOR, VE ALTI FOTOĞRAFIN LİSANS ŞARTLARI KARŞILANMIYOR** (§1E)
+
+Canlı metin (`curl` ile doğrulandı, `?v=140`, HTTP 200):
+
+> *"…and every one of them **links back to its source page**."*
+
+`web/al-dene.html:139-141` künyeyi **düz metin** basıyor
+(`credit.textContent = author · license`) — **kaynak bağlantısı YOK, lisans URI
+YOK**, ve künye `create.html`'e giden bir `<a class="card">`'ın **içinde**.
+Veri her ikisini de taşıyor (`kunye.commons_page`, `kunye.license_url`); **sayfa
+onları düşürüyor.**
+
+| lisans | fotoğraf | eksik |
+|---|---|---|
+| CC BY-SA 4.0 / 2.0 | **03 · 02 · 31** | kaynak bağlantısı · lisans URI · **ShareAlike bildirimi** |
+| CC BY 2.0 | **04 · 05 · 13** | kaynak bağlantısı · lisans URI |
+| CC0 | 01 · 32 · 38 | — (şart yok) |
+| *"No restrictions"* | **37** | ⚠ **CC LİSANSI DEĞİL** — kartın *"on CC lisanslı fotoğraf"* cümlesi yanlış, **dokuz** |
+
+⚠ `al_dene_check` **VERİNİN** künye taşıdığını doğruluyor, **SAYFANIN onu
+BASTIĞINI** doğrulamıyor: kapı gerçek ama **yanlış tarafı** ölçüyor.
+
+🚨 **BU, `landing_truth_check`'İN VAR OLMA SEBEBİ OLAN KUSUR SINIFIDIR** ve ajan
+bu kartta o sınıftan **bir başkasını kendi yakalayıp kökten kapattı** (MTM
+cümlesi). Farkı ağırlaştırıyor: MTM cümlesi ÜRÜN hakkında yalan söylüyordu, bu
+cümle **SAYFANIN KENDİSİ** hakkında yalan söylüyor ve bedelini **fotoğrafçılar**
+ödüyor. **Canlı ve PUBLIC.**
+
+**ŞART (F9 İŞ 0, BAŞKA HİÇBİR ŞEYDEN ÖNCE):** her kartın künyesi
+**`commons_page`'e bağlanır**, lisans adı **`license_url`'e bağlanır**, BY-SA
+olanlar **ShareAlike'ı adıyla** yazar, künye kartı saran `<a>`'nın **dışına**
+alınır; `37` *"CC"* diye anılmaz. **Ve bir KAPI bunu sayfanın DOM'unda ölçer** —
+verisinde değil. Cümle ancak **doğru olduktan sonra** sayfada kalır.
+
+### borç 100 — **`dxf.hpp`'nin yeni yorumunda bir cümle yanlış, ve yanlışlığı kusuru KÜÇÜLTÜYOR**
+
+Hakem künyeyi açtı (§3.10). Yayınlanmış DXF-ASTM katman tablosu (Patro 0.3.0,
+**canlı**) ajanın **iki sayısını da doğruluyor**: **L8 = "Internal line(s)"**,
+**L14 = "Sew line(s)"**, ve 1/4/6/7/15 de birebir tutuyor. **Kart REDDEDİLMİYOR.**
+
+Ama `dxf.hpp` *"pensimiz konvansiyonun **tanımlamadığı** bir katmandaydı"* diyor.
+**L11 TANIMLI: "Internal cutout(s)"** — parçanın içinden **kesilip çıkarılan**
+delik. Yani pensler tanımsız bir katmanda değil, **"burayı kes ve at"** diyen bir
+katmandaydı: kusur yorumun anlattığından **daha pahalıydı**.
+▸ Ve: **ASTM D6673-10 2019'da GERİ ÇEKİLDİ** (`store.astm.org` başlığı:
+*"(Withdrawn 2019)"*). Sayılar değişmiyor, fiilî değişim biçimi olarak yaşıyor,
+ama bir yabancıya yalnız *"ASTM D6673"* demek **eksik** — **K63'ün dersi tam buydu.**
+**ŞART (F9):** iki cümle düzeltilir. **Sayı değişmez.**
