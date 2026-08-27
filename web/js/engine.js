@@ -3,10 +3,10 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=139';
+import { VOCAB, canonical } from './vocab.gen.js?v=140';
 // KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying its
 // four measured numbers. `unset` overlays nothing.
-import { applyFabricPreset } from './fabric-catalog.js?v=139';
+import { applyFabricPreset } from './fabric-catalog.js?v=140';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -56,7 +56,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=139';
+      script.src = 'vendor/stitchu-engine.js?v=140';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);

@@ -40,13 +40,13 @@
 // zero lines anywhere on this path said so. The stamp is applied HERE, on the
 // shipped download path, and never inside flat-core.js: that pen is byte-diffed
 // against engine/STYLE-PIN by style_check, so the drawing must not move.
-import * as koken from './provenance.js?v=139';
-import { renderGarmentFlat } from '../lib/flat-core.js?v=139';
-import { renderFlatFromPlan, planLineClass } from '../lib/flat-from-plan.js?v=139';
-import { pathD, bounds } from './sheet.js?v=139';
-import * as sheet from './sheet.js?v=139';
-import { makePdfCore } from '../lib/pdf-core.js?v=139';
-import { dxfRecipe, dxfSpec, seamPlanFlat } from './engine.js?v=139';
+import * as koken from './provenance.js?v=140';
+import { renderGarmentFlat } from '../lib/flat-core.js?v=140';
+import { renderFlatFromPlan, planLineClass } from '../lib/flat-from-plan.js?v=140';
+import { pathD, bounds } from './sheet.js?v=140';
+import * as sheet from './sheet.js?v=140';
+import { makePdfCore } from '../lib/pdf-core.js?v=140';
+import { dxfRecipe, dxfSpec, seamPlanFlat } from './engine.js?v=140';
 
 // Drafting-table pastels + ink: the studio's own palette, kept so the exported
 // SVG looks like the pattern the user was looking at when they pressed save.

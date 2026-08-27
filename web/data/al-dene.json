@@ -7,7 +7,7 @@
    "vision/eval/live-hedef10-2026-08-26.json"
   ],
   "kunye": "vision/eval/credits.json",
-  "set": "contract/hedef-kosu-taban.json _olcum_seti.hedef_10"
+  "olcum_seti": "contract/hedef-kosu-taban.json _olcum_seti.hedef_10"
  },
  "_sifir_api": "Bu sayfa VLM cagirmaz (§3.9). Etiketler bankali; olcum (measure.js) ziyaretcinin tarayicisinda GERCEKTEN kosar, ayni goruntu uzerinde.",
  "_holdout": "Hakemin holdout dortlusu (11 12 30 35) ve yedek besi (10 14 15 34 36) BU DOSYADA YOKTUR ve buradan erisilemez (K16).",

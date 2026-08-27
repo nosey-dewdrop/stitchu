@@ -119,7 +119,12 @@ def main():
     doc = {
         "_ne": "AL DENE — on gercek fotograf, on bankali goru okumasi.",
         "_uretildi": "engine/tools/gen-al-dene.py — ELLE YAZILMAZ.",
-        "_kaynak": {"goru": FIXTURES, "kunye": CREDITS, "set": f"{TABAN} _olcum_seti.hedef_10"},
+        # ⚠ THE KEY IS `olcum_seti`, NOT `set`. `set` is a shipped shoulderStyle
+        # enum VALUE (measurements.hpp ShoulderStyle::Set), and
+        # vocab_reference_check counts every `"set"` in its scope as a reference
+        # to that word. A JSON key spelled the same way grows a closed enum's
+        # reference count by one and burns the gate red — measured, F8.
+        "_kaynak": {"goru": FIXTURES, "kunye": CREDITS, "olcum_seti": f"{TABAN} _olcum_seti.hedef_10"},
         "_sifir_api": (
             "Bu sayfa VLM cagirmaz (§3.9). Etiketler bankali; olcum (measure.js) "
             "ziyaretcinin tarayicisinda GERCEKTEN kosar, ayni goruntu uzerinde."

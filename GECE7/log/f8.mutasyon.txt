@@ -1,0 +1,148 @@
+
+========================================
+TUR 0 — MUTASYONSUZ TABAN (her sayı buradan okunur)
+========================================
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+dist shasum: 762e7286  web/vendor: 5e1958dc
+   bugra_parity_check -> EXIT 0
+   al_dene_check -> EXIT 0
+   indir_check -> EXIT 0
+   dxf_check -> EXIT 0
+
+========================================
+M1 — borç 93: kCap'in %38 ÇAPASI 0.00 -> 0.05 (hakemin HM-1b'sinin AYNISI)
+========================================
+F7'de bu mutasyon derlendi, ikiliyi kımıldattı ve YEDİ KAPI DA YEŞİL kaldı.
+F8'in iddiası: artık DERLENMEZ. Beklenen: cmake --build rc != 0.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    95:inline constexpr AnchorRow kCap = {
+    96-    Anchor{0.0, 0.04}, {12.5, 0.02}, {38.0, 0.05}, {63.0, 0.00}, {88.0, 0.00}};
+    97-
+   cmake --build rc=2   <<< DERLEME DÜŞTÜ — bu tur HÜKÜM TAŞIR ancak beklenen buysa
+   cmake --build rc=0   
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M2 — borç 94: TARAYICI EDİT TELİ SESSİZCE YUTUYOR (hakemin HM-2b'sinin AYNISI)
+========================================
+F7'de BEŞ KAPI DA YEŞİL kaldı. F8'in iddiası: indir_check KIRMIZI yanar.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    232:    editExtendMM: (typeof spec.editExtendMM === 'number' && Number.isFinite(spec.editExtendMM))
+    234:    editAttach: 0,
+   indir_check (BEKLENEN: EXIT 1) -> EXIT 1
+         FAIL the browser wire CARRIES a declared edit into the engine — extend=0 attach=0
+         FAIL four edit states download four DISTINCT DXF files — 34d26bfac9430174 · 34d26bfac9430174 · 34d26bfac9430174 · 34d26bfac9430174
+         FAIL op.extend alone changes the downloaded file — 34d26bfac9430174 -> 34d26bfac9430174
+         FAIL op.attach alone changes the downloaded file — 34d26bfac9430174 -> 34d26bfac9430174
+         FAIL op.attach adds exactly ONE piece to the downloaded pattern — 5 -> 5 pieces
+         FAIL the attached piece reaches the DXF, not just the piece list — 55 -> 55 POLYLINE
+   al_dene_check -> EXIT 0
+   indir_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M3 — DXF: DİKİŞ ÇİZGİSİ ESKİ YANLIŞ KATMANA (14 -> 8) GERİ DÖNÜYOR
+========================================
+Bu tam olarak bugün düzeltilen kusur. Beklenen: dxf_check ve indir_check kırmızı.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    50:    static constexpr const char* kSeamline    = "8";   // sew line
+    54:    static constexpr const char* kInternal    = "8";   // internal lines (darts, fold lines)
+   cmake --build rc=0   
+   dxf_check (BEKLENEN: EXIT != 0) -> EXIT 8
+       	 96 - dxf_check (Failed)
+       Errors while running CTest
+       Output from these tests are in: /Users/damummyphus/damla_projects_2026/stitchu/engine/build/Testing/Temporary/LastTest.log
+       Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+   build-wasm rc=0   dist shasum: 3135418a  web/vendor: cf45695b
+   indir_check (BEKLENEN: EXIT 1) -> EXIT 1
+         FAIL DXF carries layer 14
+   cmake --build rc=0   
+   build-wasm rc=0   dist shasum: 762e7286  web/vendor: 5e1958dc
+   dxf_check (geri alındı) -> EXIT 0
+   indir_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M4 — KÖR KONTROL AYAR VİDASINA ÇEVRİLİYOR: harness ezber preset'i seçiyor
+========================================
+bugra-parity'nin bustier draft'ı cupSeam: 1 (horizontal) yerine 2 (bugra).
+garment.cpp:568 o değeri görünce Buğra'nın KENDİ ölçülen ease/princess
+paylarını sabit yüklüyor — yani kıyas Buğra'yı Buğra'nın ezberiyle kıyaslar.
+Beklenen: bugra_parity_check KIRMIZI.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+   bugra_parity_check (BEKLENEN: EXIT 1) -> EXIT 1
+         FAIL BUSTIER: every piece Buğra cut has an engine piece — MOTOR EKSİĞİ = 6
+         FAIL draft call 1 does NOT select a memorised Buğra preset — cupSeam=2 locketTop=-
+   bugra_parity_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M5 — 'PARÇA DEĞİL AD' SALDIRISI: bölme sahte, iki parça AYNI kontur
+========================================
+Kartın 2. şartı: 'Bir parçaya Front Side yazıp listeyi kapatmak SAPMADIR.'
+Burada Front Body Side Front'un konturu Center'ınkiyle DEĞİŞTİRİLİYOR:
+parça sayısı ve eşleşme aynı kalır, MOTOR EKSİĞİ hâlâ 0 basar.
+Beklenen: bugra_parity_check'in ANTI-NAMING kolu KIRMIZI yanar.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    M5 enjekte edildi (garment.cpp)
+   cmake --build rc=0   
+   build-wasm rc=0   dist shasum: ad4d0f58  web/vendor: 1c4828de
+   bugra_parity_check (BEKLENEN: EXIT 1) -> EXIT 1
+         ok   the tool prints a machine-readable piece-deficit for the bustier — MOTOR EKSİĞİ: corset_bustier = N
+         FAIL the bustier drafts clean — 2 issue(s)
+         FAIL "Front Body Center Front" and "Front Body Side Front" are a real division, not one shape named twice — 210.2 vs 210.2 cm2
+         MOTOR EKSİĞİ: corset_bustier = 0
+   cmake --build rc=0   
+   build-wasm rc=0   dist shasum: 762e7286  web/vendor: 5e1958dc
+   bugra_parity_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M6 — AL DENE: HOLDOUT SIZDIRILIYOR (hakemin 11 numarası sayfaya konuyor)
+========================================
+Dokuz karttır harcanmamış bir holdout fotoğrafını yayına almak GERİ ALINAMAZ.
+Beklenen: al_dene_check KIRMIZI.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    holdout 11 sayfaya eklendi
+   al_dene_check (BEKLENEN: EXIT 1) -> EXIT 1
+         FAIL the page ships EXACTLY the sealed ten, in the sealed order — 11 shipped
+         FAIL no holdout or reserve photograph is published on the page — LEAKED: 11-flamenco-dress-ruffles.jpg
+         FAIL web/ornek/11-flamenco-dress-ruffles.jpg ships — missing
+         FAIL every published reading is byte-equal to the banked fixture the ratchet runs on — 11-flamenco-dress-ruffles.jpg: not in any fixture
+   al_dene_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+M7 — AL DENE: ÖRNEK YOLU PARA HARCAMAYA BAŞLIYOR (§3.9)
+========================================
+analyzeBankedPhoto Worker'a gidiyor. Beklenen: al_dene_check KIRMIZI.
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+    banked reader artik BACKEND_URL'e gidiyor
+   al_dene_check (BEKLENEN: EXIT 1) -> EXIT 1
+         FAIL the banked reader never touches BACKEND_URL — an example that spends money is not an example
+   al_dene_check (geri alındı) -> EXIT 0
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+
+========================================
+KAPANIŞ — ağaç mutasyon öncesiyle aynı olmalı
+========================================
+--- git diff --numstat HEAD (BOŞ olmalı: mutasyon ÖNCESİ ağaç temiz) ---
+--- (bitti) ---
+dist shasum: 762e7286  web/vendor: 5e1958dc
+git status (takipli):
+(boş = mutasyonların hiçbiri ağaçta iz bırakmadı)

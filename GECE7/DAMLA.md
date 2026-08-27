@@ -131,3 +131,23 @@ kapak sayfasının **scope alıntısı**: yöntemin stretch, growth **ve** recov
 kendi yayınlanmış zemininden alındı ve **talimat oldukları için** uygulandı —
 `fabricease.hpp`'nin esneme bandında kurulan emsalin aynısı. Katalogda
 **DOĞRULANMADI-YARIM** damgalı. Standardın gövdesini gören hakem sayıyı değiştirir.
+
+---
+
+## F8 — HAKEME GİDEN İKİ KALEM (ajan karar veremez, §3.4/§3.10)
+
+| # | Kalem | Ajan ne yaptı (en kısıtlayıcı) |
+|---|---|---|
+| 19 | **"AL DENE SAYFASI HERKESE AÇIK MI, DAVETLİ Mİ?"** `KOSU-v7.md` §F8 bunu kendi metninde *"karar gerektiren nokta, hakeme gider (§3.4)"* diye yazıyor: *"Açık = geri bildirim, davetli = kontrollü ilk izlenim."* | **AÇIK, AMA HİÇBİR ŞEY YÜKLETMEDEN — ve bu, iki seçeneğin KESİŞİMİ olduğu için en kısıtlayıcı olan.** Sayfa `web/al-dene.html` adresinde herkese açık ve `index.html`'den bağlı, çünkü `pages.yml:23 branches:[main]` zaten **her push'u canlıya çıkarıyor**: "davetli" bir sayfa bu boru hattında var olamaz, yalnız **linksiz** olabilir, ve linksiz bir sayfa geri bildirim de vermez ilk izlenimi de korumaz — sadece ölçülemez. Kısıtlama **yüzeydedir**: sayfa hiç kimseden **fotoğraf yüklemesini istemiyor**, hesap açtırmıyor ve **tek kuruş API harcamıyor** (§3.9) — on fotoğrafın onu da **bankalı**, ve `analyzeBankedPhoto` `BACKEND_URL`'e **hiç dokunmuyor** (kapı: `al_dene_check`, mutasyonla kanıtlı, `f8.mutasyon.txt` M7). Yani "kontrollü ilk izlenim"in korumak istediği şey — bir yabancının bozuk bir yükleme yolunda takılıp kalması — **yol yayına açılmayarak** korunuyor, sayfa saklanarak değil. 🚨 **HOLDOUT SAYFAYA KONMADI ve KONAMAZ:** `al_dene_check` `11 · 12 · 30 · 35` ile yedek beşi (`10 · 14 · 15 · 34 · 36`) **adıyla** reddediyor (mutasyon M6 kırmızı yaktı). **Damla'ya sorulmadı, koşu durmadı.** |
+| 20 | 🚨 **"`vocab.json`'dan `cupSeam: bugra` ve `locketTop: bugra` ÇIKARILIR" (§1.6) — İKİ KURAL ÇARPIŞIYOR.** Kart İŞ 2'nin ilk cümlesi bu çıkarmayı istiyor. Ama aynı kartın cırcır tablosu **H8-sözlük** satırında *"kötüleşemez. **Sözlük daraltmak §0B ihlali**"* yazıyor, DEĞİŞMEZLER'de de *"F0..F7'nin işi SÖKÜLMEZ"* var. O iki değeri silmek `CupSeam::Bugra` + `LocketTop::Bugra` enum'larını, `cupseam.cpp`'nin ~300 satırlık hilal konstrüksiyonunu ve `locket.cpp`'nin `bugra::` bloğunu söker; `vocab_reference_check` **satır sayar** ve tabanı **kesilemez**. | **SÖZLÜK DARALTILMADI; EZBERİN KULLANILMAMASI KAPILANDI.** Ölçüldü: `bugra-parity.mjs` bustier'i zaten `cupSeam: 1` (**horizontal**) ile çiziyor, locket'ı ise `locketTop` alanına **hiç dokunmadan** — yani kör kontrol o ezber preset'lerinden **bugün de geçmiyordu**, ama bunu **hiçbir kapı ölçmüyordu**. §1.6'nın istediği şey (motor Buğra'yı **ezberlemeden** çizsin) **davranıştır**, kelimenin varlığı değil. Yeni kapı `bugra_parity_check` harness'ın `draft()` çağrılarını **kaynaktan okuyor** ve ezber indeksini **ad ya da sayı** olarak seçmeyi reddediyor. Mutasyonla kanıtlandı (`f8.mutasyon.txt` M4): `cupSeam: 2` yapılınca kapı **EXIT 1**, ve parça eksiği **0 → 6**'ya fırlıyor. 🚨 **KARAR HAKEMİN:** iki değeri gerçekten silmek istiyorsa bu, sözlüğü daraltacağı için **§0B'yi ve H8-sözlük cırcırını hakemin kendi eliyle açması** demektir; ajan iki kuralın hangisinin üstün olduğuna karar veremez, ve en kısıtlayıcı olan **hiçbir şeyi sökmemektir**. **Damla'ya sorulmadı, koşu durmadı.** |
+
+**Bilgi (§5.5) — sorulmuyor ama bilinmesi gereken:** F8'in hanesi (`bugra-parity`
+bustier parça eksiği **3 → 0**) **motora tek satır yazılmadan** kapandı, çünkü
+eksiklik motorda değil **ölçüm aletindeydi** — harness `topLength: 'cropped'`
+çiziyordu ve Buğra'nın korsesi **longline**. Bunun bir sonucu daha var ve kart
+onu ayrı bir kalem olarak sayıyordu: `Top Back`'in **%115 kısa-kenar sapması**
+bir *"konstrüksiyon farkı"* **değil**, aynı harness kusurunun ikinci yüzü —
+motorun **iki** arka panelinin genişlikleri toplanıp Buğra'nın **bir** parçasıyla
+kıyaslanıyordu. Bire bir eşlendiğinde aynı çizim `Back Center 405×210 ↔ 498×148`
+ve `Back Side 284×108 ↔ 252×106` (**+%13 / +%2**, tablodaki **en iyi** uyum)
+okuyor. Kartın *"kovalama"* dediği sayı, kovalanacak bir sayı değilmiş.
