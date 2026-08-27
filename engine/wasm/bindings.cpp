@@ -172,7 +172,7 @@ GarmentSpec buildSpec(const val& o) {
             if (std::isfinite(s) && s >= 0) spec.fabric.stretchPct = s;
         }
     }
-    // F6: the other THREE numbers of the axis (contract/fabric-catalog-v1.json).
+    // F6: the other THREE numbers of the axis (the kumaş catalog in contract/).
     // Same probe, same rule — a missing key is UNDECLARED, not zero, because a
     // declared 0 would mean "measured and it is nil" and that is a different
     // statement. Undeclared leaves the draft byte-identical.
@@ -185,11 +185,12 @@ GarmentSpec buildSpec(const val& o) {
             {"fabricBendingLengthMM", &FabricAxis::bendingLengthMM},
             {"fabricWidthCM", &FabricAxis::widthCM},
         };
+        FabricAxis& ax = spec.fabric;
         for (const auto& a : kAxis) {
             const val v = o[a.key];
             if (v.isUndefined() || v.isNull()) continue;
             const double d = v.as<double>();
-            if (std::isfinite(d) && d >= 0) spec.fabric.*(a.slot) = d;
+            if (std::isfinite(d) && d >= 0) ax.*(a.slot) = d;
         }
     }
     spec.neckline = necklineFrom(strField(o, "neckline", "crew"));

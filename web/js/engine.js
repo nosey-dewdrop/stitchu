@@ -4,7 +4,7 @@
 let enginePromise = null;
 
 import { VOCAB, canonical } from './vocab.gen.js?v=138';
-// KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying the
+// KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying its
 // four measured numbers. `unset` overlays nothing.
 import { applyFabricPreset } from './fabric-catalog.js?v=138';
 
@@ -160,7 +160,7 @@ function axisNum(v) {
 }
 
 export function engineSpec(rawSpec) {
-  // F6: a chosen fabric preset is folded in HERE, at the single chokepoint every
+  // F6: a chosen kumaş preset is folded in HERE, at the single chokepoint every
   // caller already goes through, so the pattern the browser downloads and the
   // pattern the API returns are drafted from the same numbers.
   const spec = applyFabricPreset(rawSpec);
@@ -173,7 +173,7 @@ export function engineSpec(rawSpec) {
     fabricStretchPct: (typeof spec.fabricStretchPct === 'number' && spec.fabricStretchPct >= 0)
       ? Math.min(spec.fabricStretchPct, 100) : -1,
     // F6: the other three numbers of the axis. -1 = undeclared (contract/
-    // fabric-catalog-v1.json). Recovery/growth are a CONDITION on the negative
+    // the kumaş catalog). Recovery/growth are a CONDITION on the negative
     // branch; weight+bending length give the FAST-2 drape number; width drives
     // the yardage. An undeclared number never reaches the draft.
     fabricRecovery15sPct: axisNum(spec.fabricRecovery15sPct),

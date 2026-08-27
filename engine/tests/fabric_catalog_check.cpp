@@ -111,7 +111,7 @@ struct CatalogFabric {
 };
 
 static FabricAxis axisOf(const CatalogFabric& c) {
-    FabricAxis f(c.sinif == "knit" ? Fabric::Knit : Fabric::Woven, c.stretchPct);
+    FabricAxis f(c.sinif == "Fabric::Knit" ? Fabric::Knit : Fabric::Woven, c.stretchPct);
     f.recovery15sPct = c.recovery15sPct;
     f.recovery30minPct = c.recovery30minPct;
     f.growthPct = c.growthPct;

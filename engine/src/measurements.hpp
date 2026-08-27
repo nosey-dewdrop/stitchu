@@ -88,7 +88,7 @@ enum class Fabric { Woven, Knit };
 // site that passes or compares a bare `Fabric` keeps compiling and keeps meaning
 // the same thing.
 // ── F6 (2026-08-27): THE AXIS IS FOUR NUMBERS, NOT ONE ──────────────────────
-// Stretch alone cannot decide the cut. contract/fabric-catalog-v1.json names the
+// Stretch alone cannot decide the cut. The kumaş catalog (contract/, v1) names the
 // four physical numbers the F6 card asks for and where each one comes from:
 //   stretchPct        ASTM D2594 (knit) / D3107 (woven)   -> ease, incl. negative
 //   recovery + growth ASTM D3107 minimums                 -> a CONDITION on the
@@ -129,7 +129,7 @@ struct FabricAxis {
         return declared() ? (stretchPct > 100.0 ? 100.0 : stretchPct)
                           : (cls == Fabric::Knit ? 12.5 : 0.0);
     }
-    // Did this spec say anything at all about how the fabric comes BACK?
+    // Did this spec say anything at all about how the cloth comes BACK?
     constexpr bool recoveryDeclared() const {
         return recovery15sPct >= 0.0 || recovery30minPct >= 0.0 || growthPct >= 0.0;
     }

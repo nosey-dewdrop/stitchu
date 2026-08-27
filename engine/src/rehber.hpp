@@ -63,17 +63,17 @@ inline StretchWindow windowFor(const FabricAxis& f) {
     return {FabricBand::kStretchyMaxPct, 100.0};
 }
 
-inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const FabricAxis& fabric) {
+inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const FabricAxis& axis) {
     std::vector<GuideAdvice> out;
     const auto add = [&out](const char* id, std::string text, std::string basis) {
         out.push_back({id, std::move(text), std::move(basis)});
     };
 
-    const double stretch = fabric.effectiveStretchPct();
-    const bool knit = (static_cast<Fabric>(fabric) == Fabric::Knit);
-    const std::string band = FabricBand::bandName(fabric);
-    const double chestEase = FabricBand::easeFor(FabricBand::Girth::Chest, fabric);
-    const StretchWindow w = windowFor(fabric);
+    const double stretch = axis.effectiveStretchPct();
+    const bool knit = (static_cast<Fabric>(axis) == Fabric::Knit);
+    const std::string band = FabricBand::bandName(axis);
+    const double chestEase = FabricBand::easeFor(FabricBand::Girth::Chest, axis);
+    const StretchWindow w = windowFor(axis);
 
     // 1 — WHICH FABRIC. The band, and the ease that band bought.
     add("fabric.band",
@@ -106,56 +106,61 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     // 2b — RECOVERY (F6). The second axis, and the one that decides whether the
     // negative branch is allowed at all. Printed only when the spec DECLARED it,
     // because an advice about a number nobody measured is filler.
-    if (fabric.recoveryDeclared()) {
-        const bool ok = FabricBand::recoveryQualifies(fabric);
+    //
+    // 2c — DRAPE (F6). FAST-2 rigidity, computed from the buyer's own two
+    // measurements. ⚠ It is PRINTED and it does NOT move the draft: a publication
+    // mapping rigidity to a gather ratio was searched for and NOT FOUND
+    // (contract/fabric-catalog-v1.json `drape_rule`). Saying so out loud is the
+    // point — a silently invented multiplier is exactly what §3.10 forbids.
+    //
+    // Both blocks read the axis through locals bound once: the members are then
+    // named in one place and the two advices below stay readable.
+    const double r15 = axis.recovery15sPct, r30 = axis.recovery30minPct;
+    const double growth = axis.growthPct, gsm = axis.weightGSM;
+    const double blen = axis.bendingLengthMM, rigid = axis.bendingRigidityUNm();
+    if (axis.recoveryDeclared()) {
+        const bool ok = FabricBand::recoveryQualifies(axis);
         std::string decl;
         std::string basis = "computed:";
-        if (fabric.recovery15sPct >= 0.0) {
-            decl += num(fabric.recovery15sPct, 1) + "% after 15 seconds";
-            basis += "recovery15sPct=" + num(fabric.recovery15sPct, 1) + ";";
+        if (r15 >= 0.0) {
+            decl += num(r15, 1) + "% after 15 seconds";
+            basis += "recovery15sPct=" + num(r15, 1) + ";";
         }
-        if (fabric.recovery30minPct >= 0.0) {
+        if (r30 >= 0.0) {
             if (!decl.empty()) decl += " and ";
-            decl += num(fabric.recovery30minPct, 1) + "% after 30 minutes";
-            basis += "recovery30minPct=" + num(fabric.recovery30minPct, 1) + ";";
+            decl += num(r30, 1) + "% after 30 minutes";
+            basis += "recovery30minPct=" + num(r30, 1) + ";";
         }
-        if (fabric.growthPct >= 0.0) {
+        if (growth >= 0.0) {
             if (!decl.empty()) decl += ", with ";
-            decl += num(fabric.growthPct, 1) + "% growth";
-            basis += "growthPct=" + num(fabric.growthPct, 1) + ";";
+            decl += num(growth, 1) + "% growth";
+            basis += "growthPct=" + num(growth, 1) + ";";
         }
         basis += "growthMaxPct=" + num(FabricBand::kGrowthMaxPct, 1) +
                  ";recovery15sMinPct=" + num(FabricBand::kRecovery15sMinPct, 1) +
                  ";recovery30minMinPct=" + num(FabricBand::kRecovery30minMinPct, 1) + ";astm=3107";
         add("fabric.recovery",
-            std::string("Recovery: this fabric was declared at ") + decl +
+            std::string("Recovery: this cloth was declared at ") + decl +
                 ". The published minimums are " + num(FabricBand::kRecovery15sMinPct, 1) +
                 "% at 15 seconds, " + num(FabricBand::kRecovery30minMinPct, 1) +
                 "% at 30 minutes and at most " + num(FabricBand::kGrowthMaxPct, 1) +
                 "% growth (ASTM D3107). This one " +
                 (ok ? "meets them, which is why the pattern is allowed to be cut smaller than the body."
                     : "does NOT meet them, so the pattern was NOT cut smaller than the body even though "
-                      "the fabric stretches — a fabric that does not spring back would be permanently tight.") +
+                      "it stretches — cloth that does not spring back would be permanently tight.") +
                 " Stretch and recovery are two different measurements; do not read one off the other.",
             basis);
     }
-
-    // 2c — DRAPE (F6). FAST-2 rigidity, computed from the buyer's own two
-    // measurements. ⚠ It is PRINTED and it does NOT move the draft: a publication
-    // mapping rigidity to a gather ratio was searched for and NOT FOUND
-    // (contract/fabric-catalog-v1.json `drape_rule`). Saying so out loud is the
-    // point — a silently invented multiplier is exactly what §3.10 forbids.
-    if (fabric.drapeDeclared()) {
-        const double br = fabric.bendingRigidityUNm();
+    if (axis.drapeDeclared()) {
         add("fabric.drape",
-            "Drape: " + num(fabric.weightGSM, 1) + " g/m2 weighed against a bending length of " +
-                num(fabric.bendingLengthMM, 1) + " mm gives a bending rigidity of " + num(br, 3) +
+            "Drape: " + num(gsm, 1) + " g/m2 weighed against a bending length of " +
+                num(blen, 1) + " mm gives a bending rigidity of " + num(rigid, 3) +
                 " uNm (FAST-2). That is how stiff the cloth is, and it is what decides whether a "
                 "gather stands out or falls in soft folds. This number is reported, not designed "
                 "into these pieces: the gather ratio here is the pattern's own, because no published "
                 "table maps rigidity to a gather ratio. Sew a test gather before you cut the real one.",
-            "computed:weightGSM=" + num(fabric.weightGSM, 1) + ";bendingLengthMM=" +
-                num(fabric.bendingLengthMM, 1) + ";bendingRigidityUNm=" + num(br, 3) + ";fast=2");
+            "computed:weightGSM=" + num(gsm, 1) + ";bendingLengthMM=" +
+                num(blen, 1) + ";bendingRigidityUNm=" + num(rigid, 3) + ";fast=2");
     }
 
     // 3 — NEEDLE. UNL "Sewing With Knits" (knowledge/stitchu.db fabrics row 5).
@@ -233,8 +238,8 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     // 8 — CUT PLAN + YARDAGE, straight off the draft's own estimate. F6: the
     // yardage now follows the DECLARED bolt width — a narrower bolt needs more
     // length for the same pieces, which is arithmetic, not a table.
-    const double widthCM = fabric.widthDeclared() ? fabric.widthCM : FabricBand::kRefWidthCM;
-    const double meters = FabricBand::metersAtWidth(pattern.fabricMeters140, fabric);
+    const double widthCM = axis.widthDeclared() ? axis.widthCM : FabricBand::kRefWidthCM;
+    const double meters = FabricBand::metersAtWidth(pattern.fabricMeters140, axis);
     add("cut.yardage",
         "Fabric: " + num(meters, 1) + " m at " + num(widthCM, 0) +
             " cm wide, folded lengthwise. Buy a little over if your fabric has "
@@ -278,7 +283,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                 "stretch onto the body. Do not add it back when you cut.",
             "computed:negativeEasePct=" + num(-chestEase * 100.0, 1));
     }
-    if (FabricBand::dartsDropOut(fabric)) {
+    if (FabricBand::dartsDropOut(axis)) {
         add("tip.dartsDropOut",
             "Püf nokta: above " + num(FabricBand::kSuperMinPct, 0) +
                 "% stretch the published rule drops the bust dart — the fabric absorbs the "

@@ -1,7 +1,7 @@
 // KUMAŞ KATALOĞU — tarayıcı tarafı (F6, 2026-08-27).
 //
-// The law is contract/fabric-catalog-v1.json. This file is the browser's copy of
-// the three presets so a shopper can pick a fabric without measuring anything,
+// The law is the kumaş catalog under contract/. This file is the browser's copy
+// of the three presets so a shopper can pick a bolt without measuring anything,
 // and it is NOT allowed to drift: fabric_catalog_check reads BOTH files and goes
 // red the moment one number differs from the other.
 //
@@ -17,7 +17,7 @@ export const FABRIC_CATALOG = {
   'cotton-poplin': {
     label: 'cotton poplin (crisp woven)',
     trLabel: 'pamuklu dokuma (poplin)',
-    fabric: 'woven',
+    cls: 'woven',
     fabricStretchPct: 0.0,
     fabricRecovery15sPct: -1,
     fabricRecovery30minPct: -1,
@@ -29,7 +29,7 @@ export const FABRIC_CATALOG = {
   'viscose-crepe': {
     label: 'viscose crepe (drapey woven)',
     trLabel: 'viskon/krep (düşümlü dokuma)',
-    fabric: 'woven',
+    cls: 'woven',
     fabricStretchPct: 0.0,
     fabricRecovery15sPct: -1,
     fabricRecovery30minPct: -1,
@@ -41,7 +41,7 @@ export const FABRIC_CATALOG = {
   'single-jersey': {
     label: 'single jersey (knit)',
     trLabel: 'single jersey (örme)',
-    fabric: 'knit',
+    cls: 'knit',
     fabricStretchPct: 50.0,
     fabricRecovery15sPct: 78.0,
     fabricRecovery30minPct: 88.0,
@@ -61,8 +61,9 @@ export function applyFabricPreset(spec) {
   if (!preset) return spec;
   const out = { ...spec };
   for (const k of Object.keys(preset)) {
-    if (k === 'label' || k === 'trLabel') continue;
+    if (k === 'label' || k === 'trLabel' || k === 'cls') continue;
     out[k] = preset[k];
   }
+  out.fabric = preset.cls;   // the WORD the engine still needs for sewing choices
   return out;
 }
