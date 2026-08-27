@@ -27,7 +27,11 @@ const WEB = join(here, '../../web');
 // Every page that MUST carry the canonical header.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
   'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html',
-  'collections/index.html', 'api.html', 'privacy.html', 'studio.html'];
+  'collections/index.html', 'api.html', 'privacy.html', 'studio.html',
+  // GECE7 / F8: the AL DENE page. A page that ships with a hand-edited copy of
+  // the header drifts silently, and this one is the entry point a stranger is
+  // handed, so it is the worst page to let drift.
+  'al-dene.html'];
 // Generated page classes. `patterns/` is NOT one of them any more: commit
 // af49514 deleted the whole fake pattern gallery (67 svgs + 22 product pages)
 // on purpose — it presented output that fails the buyable-object test. This

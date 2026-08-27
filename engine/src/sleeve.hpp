@@ -19,6 +19,38 @@ static_assert(FabricBand::easeAt(FabricBand::Girth::Biceps, 0.0) == bicepsEase, 
 static_assert(FabricBand::easeAt(FabricBand::Girth::Biceps, FabricBand::kKnitDefaultPct) == knitBicepsEase, "knit biceps anchor drifted");
 static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 0.0) == capEase, "woven cap anchor drifted");
 static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, FabricBand::kKnitDefaultPct) == knitCapEase, "knit cap anchor drifted");
+// ⭐ borç 93 / K68 — THE THREE HIGH-STRETCH CAP ANCHORS WERE UNSEALED, AND F7
+// PUT THEM UNDER LOAD. Until F7 the cap axis only drove the sleeve's TARGET cap
+// ease and a hard `capEaseMin = 0.01` floor stood behind it; F7's borç-86 fix
+// made the floor itself `min(capEaseMin, capEase)`, i.e. the floor now READS
+// these anchors. The F7 referee measured the hole (HM-1b): moving kCap's 38%
+// anchor 0.00 -> 0.05 rebuilt clean, MOVED the wasm bundle (756783b7 ->
+// b3c896a0) and left all SEVEN phase gates green. The woven and stable-knit
+// anchors above were already compile-time sealed and that seal is exactly what
+// refused the referee's HM-1; the >= 38% band had no equivalent. It does now.
+//
+// 🚨 NO NUMBER IS INVENTED HERE (§3.10 · CLAUDE.md "patternmaking sayılarını
+// tahmin etme"). fabricease.hpp's kCap already ships {38.0, 0.00} {63.0, 0.00}
+// {88.0, 0.00}; these lines pin TODAY'S SHIPPED VALUE and nothing else. The
+// reading behind the zero is fabric_ease_check's own published band table
+// (moderate / stretchy / super): a knit that stretches takes no cap ease,
+// because the cap eases itself in. Moving the value stays possible — it just
+// stops being possible ACCIDENTALLY.
+inline constexpr double highStretchCapEase = 0.00;  // knit >= 38% stretch: the cap eases itself in
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 38.0) == highStretchCapEase,
+              "knit >=38% cap anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 63.0) == highStretchCapEase,
+              "knit >=63% cap anchor drifted");
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 88.0) == highStretchCapEase,
+              "knit >=88% cap anchor drifted");
+// And the CONSEQUENCE F7 introduced, pinned as its own sentence rather than
+// left as a comment: `min(capEaseMin, capEase)` can only ever move the floor
+// DOWN from capEaseMin. An anchor that rose ABOVE the woven value would make
+// that expression stop being a floor at all, silently. The compiler says so.
+static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 38.0) <= capEase &&
+              FabricBand::easeAt(FabricBand::Girth::SleeveCap, 63.0) <= capEase &&
+              FabricBand::easeAt(FabricBand::Girth::SleeveCap, 88.0) <= capEase,
+              "cap ease axis is no longer monotone-down across the knit band");
 inline double bicepsEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::Biceps, f); }
 inline double capEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::SleeveCap, f); }
 

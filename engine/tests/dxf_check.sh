@@ -4,7 +4,8 @@
 #   1. Determinizm: dxf-export aynı reçete+gövde+param için İKİ koşu bayt-özdeş
 #      (tarih/handle/rastgelelik yok — model in → aynı dosya out).
 #   2. Yapı: üretilen .dxf STANDART bir araçla (ezdxf) açılır; AAMA/ASTM
-#      layer'ları (1 sınır, 8 dikiş, 7 grainline, 4 çentik, 11 iç, 15 metin)
+#      layer'ları (1 sınır, 14 dikiş, 7 grainline, 4 çentik, 8 iç, 15 metin —
+#      GECE7/F8: dikiş 8->14, iç 11->8, ASTM D6673'te L8 iç çizgi L14 dikiş)
 #      LAYER tablosunda tanımlı; $INSUNITS = mm.
 #   3. mm paritesi: her layer'ın her vertex'i motorun KENDİ geometrisiyle
 #      (recipe-json-dump JSON'u, aynı 24-adım flatten) ≤ 1e-4 mm eşit — sahte

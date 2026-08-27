@@ -112,11 +112,34 @@ const GROUPS = {
   corset_bustier: [
     { motor: ['Upper Cup Center Front', 'Upper Cup Side Front'], bugra: 'Upper Cup' },
     { motor: ['Lower Cup Center Front', 'Lower Cup Side Front'], bugra: 'Lower Cup' },
-    { motor: ['Top Center Back', 'Top Side Back'], bugra: 'Back Center' }, // Bugra arka: fold tek parça + yan
+    // ⭐ GECE7 / F8 — THE BACK LUMP WAS REMOVED, AND IT WAS MANUFACTURING BOTH A
+    // MISSING PIECE AND THE 115% NUMBER THE CARD ASKS ABOUT.
+    //
+    // It used to read: { motor: ['Top Center Back','Top Side Back'], bugra: 'Back Center' }
+    // i.e. the motor's TWO back panels were summed into one row and compared
+    // against ONE of Bugra's TWO back pieces. Two consequences, both measured:
+    //   1. `Back Side` could never be matched, so it printed as MOTOR EKSİĞİ —
+    //      even though the motor drafts `Top Side Back` and always has.
+    //   2. Summing two widths and taking the taller height invents a piece that
+    //      exists nowhere: 405x318 against Bugra's 498x148 = the -19% / 115%
+    //      row. Mapped one-to-one the same draft reads
+    //      Back Center 405x210 vs 498x148 and Back Side 284x108 vs 252x106
+    //      (+13% / +2% — the closest agreement anywhere in this table).
+    // Bugra's back is two pieces; the motor's back is two pieces; they are
+    // compared as two pieces. See MAP below.
   ],
 };
 const MAP = {
-  corset_bustier: {},
+  corset_bustier: {
+    // ⭐ GECE7 / F8. The three "MOTOR EKSİĞİ" rows this tool printed until today
+    // were an artifact of the harness, not a gap in the engine, and the proof is
+    // that closing them needed ZERO engine changes — see the draft() call at the
+    // bottom of this file and the note there about garment LENGTH.
+    'Front Body Center Front': 'Front Center',
+    'Front Body Side Front': 'Front Side',
+    'Top Center Back': 'Back Center',
+    'Top Side Back': 'Back Side',
+  },
   locket_top: {
     'Top Front': 'Front Body', 'Top Back': 'Back Body',
     'Sleeve': null,               // Bugra 2 parçalı (Upper+Lower) — motor tek parça = YAPISAL FARK
@@ -165,13 +188,42 @@ function compare(key, motorPieces, title) {
     usedGt.add(gt.name);
     row(mp.name.slice(0, 34), mp.w, mp.h, gt.midW ?? gt.w, gt.midH ?? gt.h);
   }
-  for (const n of NAMED[key]) if (!usedGt.has(n.name))
+  const eksik = [];
+  for (const n of NAMED[key]) if (!usedGt.has(n.name)) {
+    eksik.push(n.name);
     console.log(`  (motor karşılığı yok)              ----x----   ${String(Math.round(n.midW ?? n.w)).padStart(4)}x${String(Math.round(n.midH ?? n.h)).padStart(4)}   <- Bugra ${n.name} — MOTOR EKSİĞİ`);
+  }
+  // ⭐ MACHINE-READABLE, because a number a gate cannot read is a number that
+  // drifts. bugra_parity_check greps exactly this line (GECE7 / F8).
+  console.log(`  MOTOR EKSİĞİ: ${key} = ${eksik.length}${eksik.length ? ` (${eksik.join(' · ')})` : ''}`);
+  return eksik;
 }
 
+// ⭐⭐ GECE7 / F8 — `topLength` WAS 'cropped' AND THAT IS THE WHOLE "PARÇA EKSİĞİ".
+//
+// Bugra's Buttoned Corset Bustier is a LONGLINE corset: its `Front Center` panel
+// measures 327 mm and its `Front Side` 271 mm (mid size, read out of
+// bugra-geometry.json by the NAMED table above), and those panels hang BELOW the
+// cups. A `cropped` top ends at the waist and therefore has no below-cup panel to
+// draft at all — so the harness was asking the engine for a cropped bustier and
+// then reporting the missing waist-to-hem panels as an engine gap. They were a
+// description gap. Measured, same engine, same commit, nothing else changed:
+//
+//   cropped -> Upper Cup C/S · Lower Cup C/S · Top Center Back · Top Side Back
+//   hip     -> ... plus Front Body Center Front · Front Body Side Front
+//
+// 🚨 WHICH LENGTH, AND WHY IT IS *NOT* THE FLATTERING ONE (§1.6, "kör kontrol
+// ayar vidası değildir"). The engine offers cropped | hip | tunic. `tunic` gives
+// visibly BETTER agreement on exactly the two panels at stake (Front Center
+// +4%/+6%, Front Side +11%/+2%) than `hip` does (-33%/+4%, -34%/+4%). `hip` is
+// chosen anyway, because the only defensible rule that does not read the answer
+// off Bugra's ruler is "the SHORTEST length the engine offers that is longer than
+// the waist" — the garment class, not the fit. Picking `tunic` would be tuning
+// the blind check to the pattern it is supposed to be blind to. The worse number
+// is reported below rather than hidden.
 const bustier = draft({ garment: 'top', shaping: 'princess', neckline: 'sweetheart',
-  sleeveStyle: 'none', topLength: 'cropped', cupSeam: 1 }, 'BUSTIER');
-if (bustier) compare('corset_bustier', bustier, 'CORSET BUSTIER (motor: sweetheart princess strapless + cupSeam)');
+  sleeveStyle: 'none', topLength: 'hip', cupSeam: 1 }, 'BUSTIER');
+if (bustier) compare('corset_bustier', bustier, 'CORSET BUSTIER (motor: sweetheart princess longline + cupSeam)');
 
 const locket = draft({ garment: 'top', shaping: 'dart', neckline: 'crew',
   sleeveStyle: 'straight', collarType: 5, frontPlacket: true }, 'LOCKET');

@@ -1111,3 +1111,30 @@ add_test(NAME hedef_kosu COMMAND ${NODE_EXECUTABLE}
 # Sıfır API çağrısı, sıfır kuruş: saf geometri, VLM'e hiç gitmez.
 add_test(NAME indir_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/indir_check.mjs)
+
+# bugra_parity_check (GECE7 / F8, §1.6) — KÖR KONTROL BİR KAPI OLDU.
+# `tools/bugra/bugra-parity.mjs` fazlardır satın alınmış iki Buğra kalıbının
+# GERÇEK mm geometrisine karşı bir sayı basıyordu ve o sayıyı hiçbir build
+# okumuyordu. Bu kapı okuyor: bustier'in PARÇA EKSİĞİ 0 · eşlenen parçalar ad
+# değil GERÇEK bölme (Center/Side konturları ayrı, alanları ayrı) · ve kontrol
+# KÖR kalıyor (harness `cupSeam: bugra` / `locketTop: bugra` ezber değerlerini
+# seçmiyor — garment.cpp:568/593 o değerleri görünce Buğra'nın kendi ease ve
+# princess paylarını sabit yüklüyor).
+# ⚠ SAPMA YÜZDESİ KAPILANMAZ (§1.6 "kör kontrol ayar vidası değildir") — motoru
+# satın alınmış bir kalıba göre ayarlamak tam olarak bu kıyasın öldürdüğü şeydir.
+# ⚠ locket-top'un DÖRT eksiği bir hedef değil, PİNLENMİŞ bir kayıt (K54).
+add_test(NAME bugra_parity_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/bugra_parity_check.mjs)
+
+# al_dene_check (GECE7 / F8) — "AL DENE" bir cumle degil, bir yol.
+# Sayfanin ON fotografi contract/hedef-kosu-taban.json'un MUHURLU onudur ·
+# hakemin holdout dortlusu (11 12 30 35) ve yedek besi (10 14 15 34 36) BURADA
+# YOKTUR (K16) · sevk edilen jpeg'ler kredilendirilen dosyalarla BAYT AYNI
+# (yeniden kodlanmis bir kopya measure.js'te farkli olculur) · bankali okumalar
+# circirin fixture'lariyla BAYT AYNI (H1 10/10 iddiasi ancak boyle bu sayfaya
+# baglanir) · ve ornek yolu PARA HARCAMIYOR (analyzeBankedPhoto BACKEND_URL'e
+# hic dokunmuyor, §3.9).
+# ⚠ "10/10 ciziliyor"u BU KAPI OLCMEZ — hedef_kosu H1 olcuyor; "PDF iniyor"u
+# indir_check olcuyor. Buradaki iddia o iki olcumun BAGLANDIGIdir.
+add_test(NAME al_dene_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/al_dene_check.mjs)

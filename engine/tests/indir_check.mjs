@@ -127,12 +127,111 @@ if (typeof engine.dxfSpecJSON === 'function') {
 check('DXF is an R12 document', dxf.includes('SECTION') && dxf.includes('ENTITIES') && dxf.trimEnd().endsWith('EOF'));
 // ASTM D6673 layer names the native dxf-export writes; if the spec door wrote
 // its own geometry instead of calling dxf::exportPattern these would be absent.
-for (const layer of ['1', '8']) {
+// ⭐ GECE7 / F8: the sew line is layer 14, not 8. It shipped as 8 (and internal
+// lines as 11) since the exporter was written; ASTM D6673 assigns L8 to INTERNAL
+// LINES and L14 to the SEW LINE, so a cutting room keyed on the layer name was
+// reading our stitching line as a marking. engine/src/dxf.hpp carries the note.
+for (const layer of ['1', '14']) {
   check(`DXF carries layer ${layer}`, new RegExp(`^\\s*8\\r?\\n${layer}\\r?$`, 'm').test(dxf));
 }
+// The old numbers must be GONE, not merely joined by the new ones — a rename
+// that leaves the wrong layer behind fixes nothing for the shop floor. Layer 8
+// is now legal again as INTERNAL, so only 11 is asserted absent; 8 is asserted
+// not to carry the piece OUTLINES, which is what the reference spec's polyline
+// count proves below.
+check('DXF no longer declares the retired layer 11',
+  !/^\s*2\r?\n11\r?$/m.test(dxf), 'layer 11 was never an ASTM internal-line layer');
 const polylines = (dxf.match(/\nPOLYLINE\r?\n/g) || []).length;
 check('DXF has one polyline run per drafted piece or more',
   polylines >= pattern.pieces.length, `${polylines} POLYLINE vs ${pattern.pieces.length} pieces`);
+
+// ---------------------------------------------------- 2b. THE EDIT WIRE (borç 94 / K69)
+//
+// WHY THIS ARM EXISTS, AND WHY IT IS IN *THIS* FILE.
+//
+// The F7 referee's HM-2b set web/js/engine.js:232-233 to `editExtendMM: 0` /
+// `editAttach: 0` — i.e. a shopper types "lengthen by 10 cm", the browser
+// SWALLOWS it, and the file they download is the unedited one. FIVE gates stayed
+// green: indir_check, hedef_kosu, expressability_check, extend_check,
+// attach_check. The reason is structural and worth writing down so it is not
+// re-introduced: extend_check and attach_check are C++ and build their own
+// GarmentSpec, so the JS wire is not on their path at all; and this file used to
+// hand-write `wire` above (see the comment there) and never set a single edit
+// field, so the one gate that DOES download a file never asked the question.
+//
+// So the arm below does the one thing none of them did: it builds the wire with
+// the BROWSER'S OWN engineSpec() and then downloads twice. If engineSpec ever
+// drops the user's edit on the floor, the two downloads become the same bytes
+// and this goes red. That is the whole gate; everything else here is detail.
+//
+// ⚠ RULES invariant 4 is asserted in the same breath: with no edit declared the
+// wire must read 0/0 and the file must be the SAME BYTES as the hand-written
+// reference wire above. "Opt-in and default OFF" is not a promise here, it is a
+// byte comparison.
+const { createHash } = await import('node:crypto');
+const sha = (s) => createHash('sha256').update(s).digest('hex').slice(0, 16);
+const ENGINE_JS = await import(join(ROOT, 'web/js/engine.js'));
+check('web/js/engine.js exports the browser wire builder',
+  typeof ENGINE_JS.engineSpec === 'function',
+  'engineSpec() is the ONLY place a user edit crosses into the engine');
+
+if (typeof ENGINE_JS.engineSpec === 'function' && typeof engine.dxfSpecJSON === 'function') {
+  const wireOff = ENGINE_JS.engineSpec({ ...SPEC });
+  const wireExtend = ENGINE_JS.engineSpec({ ...SPEC, editExtendMM: 100 });
+  const wireAttach = ENGINE_JS.engineSpec({ ...SPEC, editAttach: 'bow' });
+  const wireBoth = ENGINE_JS.engineSpec({ ...SPEC, editExtendMM: 100, editAttach: 'bow' });
+
+  // (a) The wire itself. This single line is what HM-2b broke.
+  check('the browser wire CARRIES a declared edit into the engine',
+    wireExtend.editExtendMM === 100 && wireAttach.editAttach === 1 &&
+    wireBoth.editExtendMM === 100 && wireBoth.editAttach === 1,
+    `extend=${wireExtend.editExtendMM} attach=${wireAttach.editAttach}`);
+  check('the browser wire is OPT-IN: an undeclared edit reads 0/0 (RULES 4)',
+    wireOff.editExtendMM === 0 && wireOff.editAttach === 0,
+    `extend=${wireOff.editExtendMM} attach=${wireOff.editAttach}`);
+
+  const dxfOf = (w) => {
+    const o = JSON.parse(engine.dxfSpecJSON(w, BODY));
+    return o.error ? '' : (o.dxf || '');
+  };
+  const piecesOf = (w) => {
+    const o = JSON.parse(engine.draftJSON(w, BODY));
+    return (o.pattern && o.pattern.pieces) ? o.pattern.pieces.length : -1;
+  };
+
+  const dOff = dxfOf(wireOff), dExt = dxfOf(wireExtend);
+  const dAtt = dxfOf(wireAttach), dBoth = dxfOf(wireBoth);
+
+  // (b) The edit-off browser wire and the hand-written reference wire are the
+  //     SAME DOWNLOAD. Two doors, one file — otherwise this arm would only be
+  //     testing a second engine nobody ships.
+  check('the browser wire and the reference wire download the same bytes',
+    dOff.length > 0 && dOff === dxf, `${sha(dOff)} vs ${sha(dxf)}`);
+
+  // (c) FOUR SPECS, FOUR DISTINCT FILES. Each operator is separated, so a
+  //     mutation that kills only one of them cannot hide behind the other.
+  const hashes = [dOff, dExt, dAtt, dBoth].map(sha);
+  check('four edit states download four DISTINCT DXF files',
+    new Set(hashes).size === 4, hashes.join(' · '));
+  check('op.extend alone changes the downloaded file',
+    dExt.length > 0 && dExt !== dOff, `${sha(dOff)} -> ${sha(dExt)}`);
+  check('op.attach alone changes the downloaded file',
+    dAtt.length > 0 && dAtt !== dOff, `${sha(dOff)} -> ${sha(dAtt)}`);
+
+  // (d) And the attached thing is a real PIECE on the cutting table, not a
+  //     drawing: the piece count goes up by exactly one, and the extra POLYLINE
+  //     runs are in the file that carries it.
+  const nOff = piecesOf(wireOff), nAtt = piecesOf(wireAttach), nExt = piecesOf(wireExtend);
+  check('op.attach adds exactly ONE piece to the downloaded pattern',
+    nOff > 0 && nAtt === nOff + 1, `${nOff} -> ${nAtt} pieces`);
+  check('op.extend adds NO piece — it lengthens the ones already there',
+    nExt === nOff, `${nOff} -> ${nExt} pieces`);
+  check('the attached piece reaches the DXF, not just the piece list',
+    (dAtt.match(/\nPOLYLINE\r?\n/g) || []).length >
+    (dOff.match(/\nPOLYLINE\r?\n/g) || []).length,
+    `${(dOff.match(/\nPOLYLINE\r?\n/g) || []).length} -> ` +
+    `${(dAtt.match(/\nPOLYLINE\r?\n/g) || []).length} POLYLINE`);
+}
 
 // --------------------------------------------------------------------- 3. SVG
 const svg = patternSVG(pattern);

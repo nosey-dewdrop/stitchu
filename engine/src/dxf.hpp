@@ -27,13 +27,31 @@ namespace dxf {
 // AAMA-250 / ASTM D6673 layer names for sewn-products piece exchange. These are
 // the de-facto interchange layers (piece boundary, seamline, grainline, notch,
 // internal, annotation); a receiving CAD keys off the NAME, not the color.
+//
+// ⭐ TWO NUMBERS WERE WRONG UNTIL GECE7 / F8, AND THEY WERE WRONG IN THE
+// EXPENSIVE DIRECTION. Shipped until today: kSeamline = "8", kInternal = "11".
+// In the ASTM D6673 / AAMA-250 layer assignment L8 is INTERNAL LINES and L14 is
+// the SEW LINE; L11 is not the internal-line layer at all. So every DXF this
+// engine has ever exported told a cutting room that our stitching line was an
+// internal marking, and put our darts on a layer the convention does not
+// define. A shop that keys off the layer name — which is the whole point of
+// writing named layers — would sew the wrong line or drop it.
+//
+// This is a RENAME, not a geometry change: the same polylines, the same mm, the
+// same vertices, moved onto the layer whose published meaning they already had.
+// The three readers that spell the numbers out rather than including this
+// header move with it: tools/dxf-verify.py (the ezdxf parity harness behind
+// dxf_check), tests/indir_check.mjs (the download gate) and tests/dxf_check.sh's
+// own header comment. Everything inside the engine goes through the symbols
+// below and needed no edit — which is why the bug survived: nothing in C++ ever
+// wrote "8" by hand, so nothing in C++ could notice it meant the wrong thing.
 struct Layers {
     static constexpr const char* kBoundary   = "1";   // cut line (piece boundary)
-    static constexpr const char* kSeamline    = "8";   // sewing line
+    static constexpr const char* kSeamline    = "14";  // sew line
     static constexpr const char* kGrainline   = "7";   // grainline
     static constexpr const char* kNotch       = "4";   // balance notches
     static constexpr const char* kFold        = "6";   // mirror line (cut on fold)
-    static constexpr const char* kInternal    = "11";  // darts, fold lines (markings)
+    static constexpr const char* kInternal    = "8";   // internal lines (darts, fold lines)
     static constexpr const char* kAnnotation  = "15";  // piece-name text
 };
 
