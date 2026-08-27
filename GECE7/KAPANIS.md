@@ -110,9 +110,11 @@ KENDİ kaynağında** — stitchu'dan düzeltilemez. **Damla'nın kararı.**
 | # | faz | hüküm | etiket |
 |---|---|---|---|
 | 0 | **HALKA 0 — ISINMA** | ✅ şef koşturdu; disk 145→149 GB, hedef koşusu tabanı kuruldu (n=5) | `halka0-yesil` |
-| 1 | **F-İNDİR** | ✅ GEÇTİ | `F-INDIR-yesil` |
-| 2 | **F0** | ✅ GEÇTİ | `F0-yesil` |
-| 3 | **F2** | ✅ GEÇTİ (**2. turda**) — Halka 1 kapandı | `F2-yesil` |
+| 1 | **F-İNDİR** | ✅ GEÇTİ (**2. turda** koştu) | `F-INDIR-yesil` |
+| 2a | **F0** (1. tur) | ⛔ **KALDI** — yedinci kırmızı | **etiket YOK** |
+| 2b | **F0** (2. tur) | ✅ GEÇTİ | `F0-yesil` |
+| 3a | **F2** (1. tur) | ⛔ **KALDI** — yedinci kırmızı | **etiket YOK** |
+| 3b | **F2** (2. tur) | ✅ GEÇTİ — **Halka 1 KAPANDI** | `F2-yesil` |
 | 4 | **F3** | ✅ GEÇTİ | `F3-yesil` |
 | 5 | **F5-A** | ✅ GEÇTİ | `F5A-yesil` |
 | 6 | **F5-B** | ✅ GEÇTİ | `F5B-yesil` |
@@ -125,7 +127,10 @@ KENDİ kaynağında** — stitchu'dan düzeltilemez. **Damla'nın kararı.**
 | 13 | **F8** | ✅ GEÇTİ — bustier parça eksiği **3 → 0**; ajan **kartın kendi teşhisini çürüttü** (K71) | `F8-yesil` |
 | 14 | **F9** | ✅ **GEÇTİ — KOŞUNUN SON HÜKMÜ** | **`F9-yesil`** |
 
-**On dört faz, on dört yeşil, sıfır GERİ AL.** F2 tek başına ikinci tur gördü.
+**On dört faz kartı, on dört yeşil etiket, SIFIR *GERİ AL*.**
+⚠ Ama **on altı hüküm** verildi: **F0 ve F2 birer *KALDI* aldı** ve ikinci turda
+geçti (`F-İNDİR` de iki tur koştu). *"On dört fazın hepsi ilk turda geçti"*
+**yanlış olur** ve burada öyle yazılmıyor.
 
 ## 2.1 HEDEF KOŞUSUNUN SAYILARI: **AÇILIŞ → KAPANIŞ** (`n`'siyle)
 
