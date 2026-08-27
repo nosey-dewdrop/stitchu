@@ -571,3 +571,40 @@ now"*), yani **bir kota VAR** — ama **sayısı yayınlanmıyor ve ben ölçmed
 `hedef_kosu` mühürlü fixture. **Ücret riski KOŞUDA değil, CANLI SİTEDE ve
 TANIMADIĞIN İNSANLARDA.** **Bu bir iş kararıdır → DAMLA'YA.**
 ⚠ **Uçtan uca gerçek bir yükleme YAPILMADI** (para harcardı). **DOĞRULANMADI.**
+
+---
+
+## 10. İŞ 5 — MİRAS ÜÇLÜNÜN ÜÇ CÜMLESİ. **KAPILARIN ÇIKTISINI KENDİM OKUDUM.**
+
+Kart yalnız iki şey istedi: **bugünkü çıktıyı oku** ve her biri için **tek cümle**
+yaz — *ürün kusuru mu, kapı bayatlığı mı?* **Üçünü de kendi süitimden okudum ve
+ajanın üç cümlesinin üçü de DOĞRU:**
+
+| kapı | **kapının BUGÜN bastığı satır (benim koşum)** | ajanın hükmü | benim hükmüm |
+|---|---|---|---|
+| `style_check` | `FAIL: pinlenmiş stil 0 — engine/STYLE-PIN yok/boş, 31 stilin hepsi korumasız` | *"ikisi de değil: eksik bir İNSAN KARARI"* | ✅ **DOĞRU.** Kapı bozuk bir çizim ölçmüyor, **pin olmadan koşmayı reddediyor** |
+| `sizechart_source_check` | `sourced: 3 -> bustCM, waistCM, hipCM` · `UNSOURCED: 4 -> shoulderCM, backLengthCM, armLengthCM, neckCM` | *"ÜRÜN kusuru"* | ✅ **DOĞRU.** 4 sütun × 8 beden = **40 sayı** bir alıcının vücuduna basılıyor, arkasında yayın yok |
+| `figure_check` | 31 stilin **30'u** `ok … OK taban/band`; tek düşen `dress_bandeau_circle` (**tabansız — pin yok**) | *"`style_check` ile aynı sınıf: eksik pin"* | ✅ **DOĞRU** |
+
+Ve üçü de **canlıda, `benchmark.html`'de, EN ve TR, *"NEVER TRACED"* / *"HİÇ
+İZLENMEDİ"* diye** yayında — **iki ilan edilmiş kırmızıyla karıştırılmadan**
+(`contract_check` Damla-ilanlı, `flat_artifact_census` hakem-ilanlı, K58).
+`vitrin_check` md.2 bunu **kapılıyor** ve HM-3 kolun yandığını gösterdi.
+✅ **İŞ 5 KARŞILANDI.**
+
+---
+
+## 11. AJANIN BEŞ ÖZ-BİLDİRİMİ — **HÜKÜM**
+
+F6 dört, F7 iki, F8 üç kalemi kendi aleyhine yazmıştı. **F9 ajanı BEŞ yazdı** —
+koşunun en yükseği. İkisini §4'te karara bağladım; üçü de **doğrulandı**:
+**#37'nin CC olmadığı**, **`vitrin_check`in bir cümlenin doğruluğunu
+bilemeyeceği**, **L15 sapmasının düzeltilmeyip kaydedildiği**.
+**Bildirmek yine işe yaradı** — ve bu kartta ajanın en sert kalemi (**§4C md.7**)
+hükmü **çevirmedi ama Damla'nın masasına bir iş kararı koydu**, ki kartın kendi
+tarifi tam buydu.
+
+⚠ **AMA BENİM ÜÇ KALEMİM AJANIN LİSTESİNDE YOKTU** ve üçünü de kendim buldum:
+**#37'nin lisans bağlantısı kendine gidiyor** (§1e) · **`dxf.hpp`'nin üçüncü
+yanlış bölüm numarası** (§3a, borç 101) · **`web/vendor` yeniden üretilebilir
+değil** (§7, borç 103). **Beş öz-bildirim iyi bir sayı, ama tam bir sayı değil.**
