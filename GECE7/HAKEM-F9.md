@@ -608,3 +608,87 @@ tarifi tam buydu.
 **#37'nin lisans bağlantısı kendine gidiyor** (§1e) · **`dxf.hpp`'nin üçüncü
 yanlış bölüm numarası** (§3a, borç 101) · **`web/vendor` yeniden üretilebilir
 değil** (§7, borç 103). **Beş öz-bildirim iyi bir sayı, ama tam bir sayı değil.**
+
+---
+
+## 12. YENİDEN BELGELEME — **KENDİ DEĞİŞİKLİĞİMDEN SONRA TAM SÜİT, İKİNCİ KEZ**
+
+Borç 73 için `hedef_kosu.mjs`'e dokundum, o yüzden **süiti baştan koşturdum**.
+⚠ **Son satırlar KOPYALANDI, ÖZETLENMEDİ:**
+
+```
+96% tests passed, 5 tests failed out of 132
+
+Total Test time (real) = 780.07 sec
+
+The following tests FAILED:
+	 20 - flat_artifact_census (Failed)
+	 21 - style_check (Failed)
+	 28 - sizechart_source_check (Failed)
+	102 - contract_check (Failed)
+	108 - figure_check (Failed)
+
+The following tests did not run:
+	114 - h10_gate_check (Disabled)
+```
+
+**HAKEMİN KENDİ DÜZELTMESİ SIFIR YENİ KIRMIZI ÜRETTİ.** Aynı beş ad, **altıncı
+yok**, DISABLED **1**, koşan **132**, kayıtlı **133**. (741.57 → 780.07 sn; fark
+`op_fixture`in duvar saati salınımı, 373.69 → 400.56 sn.)
+
+---
+
+# 🏁 HÜKÜM: **GEÇTİ.** `F9-yesil`
+
+**Gerekçe, hepsi benim ölçtüğüm:**
+
+1. **Kart dışına taşılmadı.** On bir değişmezin **on biri** blob blob el
+   değmemiş; `KOSU-v7.md` · taban · K19 cevap anahtarı · `golden` · `patterns_real`
+   diffte **sıfır satır**; `--taban` ve `repin-golden.sh` **koşulmadı**; holdout
+   `11·12·30·35` **on birinci karttır harcanmadı**.
+2. **İŞ 0 (borç 99) KAPANDI ve canlı sayfada doğrulandı** — künye kartın
+   **dışında**, **iç içe `<a>` yok**, yazar → Commons dosya sayfası (HTTP 200),
+   lisans → deed (HTTP 200), **üç BY-SA ShareAlike'ı adıyla** yazıyor, **#37
+   artık CC sayılmıyor**. Kapı **sayfanın kendi render modülünü** bir DOM
+   shim'ine karşı **fiilen koşturuyor** ve **kendi mutasyonumla** (HM-1,
+   bağlantı → düz metin) **on fotoğrafın onunda da kırmızı yandı**.
+3. **İŞ 1 karşılandı:** landing'de kaynağı olmayan iddia **0**; her sayı
+   üreteçten, yanında **`n`**, ve **iki `n` harmanlanmamış**; **H2 başlık
+   yapılmamış** ve overfit riski sayfada **adıyla** reddedilmiş; **H4/H9
+   uydurulmamış**; **H11 kasten yayınlanmamış**.
+4. **İŞ 2 karşılandı:** strapless **adıyla + sebebiyle**, beş kırmızı **adıyla**
+   ve **ilan edilmiş / hiç izlenmemiş** diye **ayrı**, `patterns_real/` vitrine
+   ulaşmıyor (bağlantı **0**, bayt-kopya **0**, takipli **41 → 41**).
+5. **İŞ 3 karşılandı:** yalnız **model A** vitrin edildi, B **silinmedi
+   ertelendi**, **K45'in yasak kelimesi canlıdan kalktı** (`F9-oncesi`'nde
+   **1**, bugün `web/` altında **0**), *"F5'i bitirdim"* **denmedi**.
+6. **İŞ 4 karşılandı:** borç **98** kapandı ve **F8'in HM-3'ünü tekrarladım —
+   artık EXIT 1**; borç **100**'ün üç iddiasının üçü de **birincil ASTM
+   metniyle** doğrulandı, **L15 sapması gizlenmeyip KAYDEDİLDİ**, **tek sayı
+   değişmedi**, `golden` **`a3ec26a6`**.
+7. **İŞ 5 karşılandı:** üç izlenmemiş kırmızının üçünün de bugünkü çıktısı
+   okundu ve üç cümle **canlıda**.
+8. **Sekiz faz kapısının sekizi de yeşil, kendi pristine Release koşumda, İKİ
+   KEZ:** `5 tests failed out of 132`, **miras beş**, **ALTINCI YOK**, kayıtlı
+   **132 → 133** (**bir kapı eklendi, sıfır silindi**), DISABLED **1 → 1**.
+9. **Cırcırın hiçbir sayısı kötüleşmedi**, **H1 10/10 tavanı tuttu**,
+   `CIRCIR SAĞLAM`.
+10. **Beş mutasyonun beşi de yandı**, dördü ajanın **`numstat`'ı BOŞ** olan
+    dosyalarından, biri **gerçek C++ geometrisi** — ikili **kımıldadı ve bayt
+    bayt geri geldi**, iki derlemenin de **`rc=0`**'ı yazılı. **Bayat ikili yok,
+    zayıf mutasyon yok.**
+
+**Hükmü çevirmeyen ama kayda geçen dört kalem:** #37'nin lisans bağlantısı
+kendine gidiyor (§1e) · `dxf.hpp`'nin üçüncü yanlış bölüm numarası (**borç 101**)
+· `web/vendor` yeniden üretilebilir değil (**borç 103**) · K42 `web/` genelinde
+uygulanmadı (**borç 102**).
+
+**VE HÜKÜM BİR KUTLAMA DEĞİL.** Aynı koşuda ölçtüm ki:
+**(a)** `patterns_real/`'ın 41 telifli dosyası **PUBLIC bir repoda anonim HTTP
+200** veriyor ve türetilmiş Buğra skalerleri **canlı bir sayfada** duruyor
+(K74 → **DAMLA**); **(b)** canlı site **yabancı fotoğraf yüklemeyi kabul ediyor**
+ve o yol **para harcıyor**, sayfa bunu **söylemiyor** (K78 → **DAMLA**);
+**(c)** borç 73'ün azaltıcı önlemi **on bir karttır ölü koddu** ve basılınca
+**ön/arka oyuk arasında 18.94 mm'lik bir asimetri** göründü; **(d)** ürün
+**on yedi fazdır gerçek bir tarayıcıda hiç açılmadı** — ve kapanışın **en üstünde**
+duran cümle budur: **DOĞRULANMADI.**
