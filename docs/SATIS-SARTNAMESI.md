@@ -46,14 +46,14 @@ croquis rayından değil; SVG `data-scale="1"` / `data-source="GarmentSurf"` ta�
 ölçüsüz-stilize değil. Ama bu bir **siluet dış hattıdır, teknik çizim değildir**: kol, kol
 oyuğu, yaka, iç dikiş çizgileri YOK (kontur omuz halkasından etek ucuna iniyor), ön ve arka
 görünüm birbirinin aynı, marka rengi/çizgi hiyerarşisi hiç kurulmadı. Aşağıdaki beş kutucuğun
-hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/ARCHITECTURE.md` §11.
+hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `docs/ARCHITECTURE.md` §11.
 
 - [ ] ÖN + ARKA flat, tek karo (viewBox front+back yan yana, emsal: 496 genişlik oranı).
       → **YOK.** ⚠ **25 AĞU (V10) — BU SATIRIN ÖLÇÜMÜ BAYATLADI, KUTUCUK AÇIK KALIYOR.**
       Aynı komut bugün: `find . -name "*flat*.svg" -path "./web/*"` → `web/assets/flats/
       flat-sleeve-{straight,balloon,cap,none}.svg`, yani **artık boş dönmüyor**. Dördü de
-      kanuna bağlı kalemin (`engine/tools/render-garment-flat.mjs`) çıktısı, `GECE/log/
-      V7-E.png/`'den kopyalandı ve landing sayfasına kondu (`GECE/V10-C.md` §3). Yani
+      kanuna bağlı kalemin (`engine/tools/render-garment-flat.mjs`) çıktısı; landing
+      sayfasına kondu. Yani
       *"`web/` tarafına hiçbir şey sevk edilmedi"* cümlesi **artık doğru değil** ve silinmiyor,
       düzeltiliyor. **AMA kutucuk yine de işaretlenemez:** sevk edilenler KOL çizimleri, istenen
       nesne ÖN+ARKA tek karo; ön/arka yan yana viewBox düzeni hâlâ yok. Bugünkü giysinin
@@ -61,7 +61,7 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       (`shell-flat EU38 --svg`), ama ön ve arka aynı eğri ve tek karo düzeni yok.
       ⚠ 24 Ağu (V4): "ön ve arka aynı eğri" cümlesi **`shell-flat` için** doğruluğunu
       koruyor ve sebebi ölçüldü — arka, önün x-işareti çevrilmiş kopyası, fark
-      **0.000000000 mm** (`GECE/V4-K.md` §2d). Çizim kaleminde durum başka: 8 stilin
+      **0.000000000 mm** (sayan kapı: `node engine/tests/flat_convention_check.mjs`). Çizim kaleminde durum başka: 8 stilin
       8'inde ön ve arka AYNI SVG'de, aynı ölçekte, `data-view="front"`/`"back"` ile
       basılıyor ve iç fark (yaka/kapama) 3.39–211.91 mm arası gerçek bir fark. Yine de
       `web/` tarafına sevk YOK, tek karo düzeni de yok → kutucuk açık.
@@ -75,15 +75,15 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       Üretim kalemi (`engine/tools/render-garment-flat.mjs`) 8 stilde beş çizgi sınıfının
       beşini de kullanıyor ve beşi de kanunda beyanlı bir sınıfa EŞİT çıkıyor
       (`2|none` outline · `1.4|none` seam · `1|4 3` topstitch · `1|1 3` hidden · `1|none` mark
-      — sayım `GECE/V4-K.md` §2c). Beyan edilen oranlar da artık kapıda okunuyor
+      — sayan kapı: `node engine/tests/flat_convention_check.mjs`). Beyan edilen oranlar da artık kapıda okunuyor
       (`flat_convention_check` 3b; tolerans ISO 128-2:2020 md. 5.2'nin ±0,1d'sinden türer,
       uydurulmuş bir eşik değil). **AMA:** (a) bu çıktıların hiçbiri `web/`'e sevk edilmedi
       — ⚠ **25 AĞU (V10): bu şık da bayatladı**, aynı kalemin dört kol çizimi
-      `web/assets/flats/` altında ve landing sayfasında duruyor (`GECE/V10-C.md` §3);
+      `web/assets/flats/` altında ve landing sayfasında duruyor;
       `gusto-lint` onlara **koşulmadı**, yani sevk oldu ama ölçüm hâlâ yok,
       (b) zevk panosunun 9 stil hücresi bu kalemden DEĞİL, referans kalemden çıkıyor ve
       onun ağırlık tablosu `{.65, 1.05, 1.4, 1.5, 1.9}`, mürekkebi `#111` — yani panoya
-      bakan biri `lineClasses`'ı görmüyor (`GECE/V4-D.md` §1 ve §3). `gusto-lint` bu yeni
+      bakan biri `lineClasses`'ı görmüyor. `gusto-lint` bu yeni
       çıktılara **koşulmadı**. Kutucuk bu yüzden işaretlenmedi.
 - [ ] Marka rengi: navy `#1f3a5f` gövde, seam `#5c7aa0` iç; başka renk yok.
       → ölçülecek flat yok (yukarısı).
@@ -95,7 +95,7 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       `engine/flat-engine/styles.json`'dan TÜRÜYOR, yani **kısmi pinleme yeşil saymaz**;
       sözlükteki her stil pinlenmeden kapı kırmızı kalır, sahipsiz pin de FAIL sayılır.
       Kuralın gerçekten böyle davrandığı mutasyonla gösterildi (pin yok / tek pin / tam
-      kapsam üç hâli): `GECE/log/V1-E.mutasyon.txt`. `engine/STYLE-PIN/` **hâlâ dizin
+      kapsam üç hâli). `engine/STYLE-PIN/` **hâlâ dizin
       olarak YOK**, yani pinli stil yok. Bu kutucuk hâlâ işaretlenemez — ama sebebi
       "kapı boş" değil, "kalem kararı hiç verilmedi": pin bir ölçüm değil bir KARARDIR,
       ve `scripts/repin-style.sh` onayı yalnız Damla'nın terminale elle yazdığı cümleden
@@ -224,7 +224,7 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `GECE/V3-A.md`, `docs/A
       `:172 buildPrintPages` üzerinden tarayıcıda kuruluyor ve girdisi `draftJSON`.
       `draftJSON` sınırında dikiş grafiği **YOK** — 112 parçada
       `seams`/`seamGraph`/`edges`/`edgeNames`/`pairs`/`stitches` alan sayısı **0**
-      (sayan alet: `node engine/tests/sewability_check.mjs`, teşhis `GECE/V5-A.md`).
+      (sayan alet: `node engine/tests/sewability_check.mjs`).
       Yani bu satır `printpack.py` paketi için ayakta, web indirmesi için **DOĞRULANMADI**:
       web PDF'inin montaj sırası sayfası taşıyıp taşımadığı ölçülmedi.
       ⚠ **25 AĞU (V7) — ALTI ALAN ADI HÂLÂ 0, AMA ARTEFAKT YEDİNCİ BİR ALAN KAZANDI.**
@@ -277,7 +277,7 @@ artefaktta adlandırılmış bir kenar değil; yarım alet `engine/src/wearabili
 NATIVE'de duruyor, JS artefaktına inmiyor). Yani şartnamenin "alıcıya söylenmeyen şey paketi
 satılamaz kılar" ilkesi burada **ters yönden** ihlal ediliyor: söylüyoruz ama ölçmüyoruz,
 kontrolü alıcıya devrediyoruz. Zemin sayıları var (ANSUR II kadın baş çevresi P5/P50/P95 =
-532/560/597 mm, `GECE/V5-R.md` §D), ama giysi için yayınlanmış **minimum baş geçiş açıklığı
+532/560/597 mm), ama giysi için yayınlanmış **minimum baş geçiş açıklığı
 YOK** — dolaşan "57 cm" kuralı tek kaynaksız bloga dayanıyor ve **DOĞRULANMADI**. Kutucuk
 açılmadı, eşik uydurulmadı.
 

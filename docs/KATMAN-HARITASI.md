@@ -1,7 +1,7 @@
 # KATMAN HARİTASI — kim kimi okur, kim kimi OKUYAMAZ? (2026-08-10)
 
-> Amaç: her arıza TEK katmana mühürlenebilsin. Teşhis harnesi `engine-check/harness/run-all.sh`;
-> yasak-okuma zabıtası `scripts/katman-lint.py`. Kural: her katman sadece bir ALTININ
+> Amaç: her arıza TEK katmana mühürlenebilsin. Yasak-okuma zabıtası
+> `scripts/katman-lint.py`. Kural: her katman sadece bir ALTININ
 > KONTRAT ÇIKTISINI okur — içini asla.
 
 ## Katmanlar?
@@ -39,13 +39,13 @@
 5. **Kabuk siluetinde belde teğet kırığı var:** bel yüksekliğinin üstünde skim zarfı, altında
    halka interpolasyonu, aralarında hiçbir teğet koşulu yok. Sayıyı basan kapı
    `node engine/tests/flat_artifact_census.mjs` (sınıf 3). Kalçadaki köşe yuvarlaması emsali
-   denendi, bel halkasını şişirdiği için geri alındı — ölçüm `GECE/V3-D.md` §2.
+   denendi, bel halkasını şişirdiği için geri alındı.
 
 6. **L3a KENDİ İÇİNDE İKİYE BÖLÜNMÜŞ, kanun yalnız birine ulaşıyor (24 Ağu, V4).** Konvansiyon
    kanunu (`contract/flat-convention-v1.json`) yalnız ÜRETİM kalemini bağlıyor; canlı sitenin
    31 stili ve zevk panosunun 10 hücresinin 9'u REFERANS kalemden çıkıyor.
    O gecenin iki kök düzeltmesinden sonra panonun 10 stil hücresinin 10'u da eski commit'in
-   çıktısıyla **bayt bayt aynı** çıktı — 24 Ağu 2026'da `cmp` ile ölçüldü, `GECE/V4-D.md` §1 —
+   çıktısıyla **bayt bayt aynı** çıktı — 24 Ağu 2026'da `cmp` ile ölçüldü —
    yani kanuna uygunluk kapısını geçen bir onarım, alıcının
    gördüğü çizimde hiç görünmeyebiliyor. Sayan aletler: `node engine/tests/flat_convention_check.mjs`
    (üretim kalemi, 8 stil) ve `node engine/tools/flat-board.mjs <dizin> --eski <dizin>`.
@@ -59,7 +59,7 @@
    ÇİFTİ eşleşmesi bu katmandan **sorulamıyor**. Ek olarak `notches` **tipsiz tek kanal**
    (`type` yalnız `move`/`line`), yani kenar çentiği / katlama / iç işaret ayrımı artefakttan
    çıkarılamıyor. Sayan kapı: `node engine/tests/sewability_check.mjs` — cevaplayamadığı her
-   soruyu ADIYLA `ABSENT:` diye basıyor (bugün 7). Teşhis `GECE/V5-A.md`.
+   soruyu ADIYLA `ABSENT:` diye basıyor (bugün 7).
    ⚠ **KISMEN AŞILDI 25 Ağu (V7-C/V7-D):** artefakt artık YEDİNCİ bir alan taşıyor —
    `edgeRoles` — ve orada **dört kenar ROLÜ** var (`armhole_front`, `armhole_back`,
    `sleeve_cap`, `sleeve_underarm`). Rol bir uzunluk TAŞIMAZ, kenarı ADRESLER
@@ -72,7 +72,7 @@
 8. **L0 ↔ L3b: `shoulderCM` hem KAYNAKSIZ hem KULLANILMIYOR (25 Ağu, V5).** `contract/tables.json`
    alıcıya on beden için `shoulderCM` yayınlıyor (`_sources` status **NONE**, bekçisi kırmızı:
    `sizechart_source_check`), ama L3b geometrisi o girdiden **bağımsız**: `body.shoulder`
-   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor — 25 Ağu 2026'da ölçüldü, `GECE/V5-D.md`.
+   20…80 cm arasında değiştirildiğinde draftJSON bayt bayt aynı kalıyor — 25 Ağu 2026'da ölçüldü.
    Motor omzu kendi çiziyor ve Aldrich'in yayınlanmış omuz boyundan ön −8.30 mm / arka
    −18.18 mm kısa düşüyor. Yani L0'ın bu kolonu ne besliyor ne de doğrulanabiliyor.
    ⚠ Aynı kesişimin `neckCM` için de var olduğu iki çıktı yan yana konarak görüldü ama
@@ -97,7 +97,7 @@
    `engine/dist/stitchu-engine.js` ile `web/vendor/stitchu-engine.js` arasındaki tek fark
    127 baytlık kaynak-damgası yorumu (`vendor.includes(dist)` = true), ve `V7-E` PNG'leri o
    bayttan üretildi. Takipli wasm artefaktında ham dizgi sayımı: `Sleeve` 16 · `sleeveStyle` 5,
-   buna karşılık `surfacepattern` / `SheathOptions` / `shoulderSeam` **0** (`GECE/V7-F.md` §2.3).
+   buna karşılık `surfacepattern` / `SheathOptions` / `shoulderSeam` **0** (sayan alet: `grep -c`).
 
 10. **EDİTLEME BİR KATMAN DEĞİL, L3b ARTEFAKTININ ÜSTÜNE OTURUYOR — VE ORASI PANELDEN İNCE DEĞİL (25 Ağu, V6).**
     "Yakayı değiştir, gerisi yerinde kalsın" hükmünü bugün `engine/tools/spec-diff.mjs`
@@ -128,7 +128,7 @@
     üreteci ve `--check` bekçisi yok, `contract/generated-paths.sha256`'da geçmiyor;
     `_bolge_kaynagi`'nın "composition.json'dan birebir taşındı" cümlesi 22 bileşenin
     3'ünde YANLIŞ ölçüldü ve `fieldZones`'un 41 alanının 21'i hiçbir bileşenden
-    gelmiyor (`GECE/V6-B.md` §3). Kapı doğrulanmamış bir iddiayı ölçüyor.
+    gelmiyor (sayan kapı: `node engine/tests/edit_locality_check.mjs`). Kapı doğrulanmamış bir iddiayı ölçüyor.
 
 11. **★ KENAR KİMLİĞİ L3b'ye GİRDİ — AMA OYUĞU YENİDEN ÇİZEN ÜÇ PAS'TA HÂLÂ YOK (25 Ağu, V7).**
     `PatternPiece` artık kenar ROLÜ taşıyor (md.7'deki `edgeRoles`). Rol, kenarı ÇİZEN kod
@@ -139,7 +139,7 @@
     `node engine/tests/sleeve_cap_ease_check.mjs`: oyuk yayını (`armhole_front` +
     `armhole_back`) kapak yayıyla (`sleeve_cap`) karşılaştırır ve **ikisini de ÇİZİLEN
     kenardan** ölçer — eskiden yargı skaler `bodice.armholeLength` kopyasının kendisiyle
-    karşılaştırılmasıydı (teşhis `GECE/V7-A.md`, onarım `GECE/V7-C.md` + `GECE/V7-D.md`).
+    karşılaştırılmasıydı.
     ★ **BORÇ, GİZLENMİYOR:** adlandırılmış oyuk YOKSA `validator.cpp:333-352` hâlâ eski
     skalere düşüyor — gerekçe orada yazılı (adın hiç olmaması ÜRETİCİDEKİ borçtur, o
     taslağın kusuru değil; reddetmek doğru çizilmiş kalıba sahte "dikilemez" derdi). Adın

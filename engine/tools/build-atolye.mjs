@@ -126,7 +126,7 @@ ${CSS}
       olcum icin ayni nesne: iki kenarli egri bant. Her kenar <b>5 sayiyla</b>
       (uzunluk + 4 egrilik katsayisi) <b>0.01&ndash;0.05 mm</b>'ye yeniden cizildi.
       Adi olmayan parca da cizildi. Demek ki ad geometri tasimiyor.
-      <span class="src">curve-research/03-band-ingredients.py</span></p>
+      <span class="src">olculdu 2026-07-31</span></p>
 
       <p><b>Curutuldu.</b> "Yaka tipi diye bir sey yok, tek egrilik kadrani hepsini verir"
       &mdash; yanlis. Yatan yakanin boyun kenari gomlegin yakasindan kopyalanir ve omuz

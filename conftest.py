@@ -13,12 +13,13 @@ looked at. The cause is not failing code; it is that NONE of the four
                                                       when its deps are installed. Its own
                                                       header names its interpreter:
                                                       core/third_party/garmentcode/.venv/bin/python
-  vision-student/test_onnx_load.py                    a CLI smoke script (argparse + main()),
-                                                      needs onnx + onnxruntime
 
 They are ignored here BY NAME, each with the reason above, and none of them is
 weakened or deleted: they keep being run by their own documented routes
-(engine-check/harness/run-all.sh, the GarmentCode venv). Nothing a gate used to
+(engine-check/harness/run-all.sh, the GarmentCode venv). A fourth entry named
+vision-student/test_onnx_load.py was dropped on 2026-08-29 because the H1 "depo
+temiz" pass took that file out of the tree; a collect_ignore line for a file
+that does not exist is a claim about a path, and this repo does not keep those. Nothing a gate used to
 judge stopped being judged — pytest never judged them, it only crashed on them.
 
 What pytest DOES judge from here on is engine/tests/py/, which is a real suite
@@ -30,5 +31,4 @@ collect_ignore = [
     "core/third_party/garmentcode/test_garmentcode.py",
     "core/third_party/garmentcode/test_garment_sim.py",
     "engine/pattern-bridge/test_seamdeed.py",
-    "vision-student/test_onnx_load.py",
 ]

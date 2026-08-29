@@ -6,7 +6,7 @@
 // peterPan|shirt|crescent|...). Bunlar tabak isimleri. Asagidaki liste
 // malzemedir: her biri SUREKLI bir sayidir, iki tarif arasi bir yer vardir.
 //
-// KANITLANAN (olcum: curve-research/03-band-ingredients.py, kaynak
+// KANITLANAN (olculdu 2026-07-31, kaynak
 // patterns_real/geometry/geometry-full.json -- satin alinmis Bugra "Locket Top"
 // A0 PDF'i, beden 38, mm-kalibre. Motor ciktisi DEGIL):
 //   Ayni kalibin uc parcasi -- uretici defterinde ikisinin adi var, ucuncusunun
@@ -353,7 +353,7 @@ function compile(s) {
   M.forEach(([k]) => { if (k !== 'size' && k !== 'hemLevel') over[k] = s[k]; });
   over.size = SIZES[s.size];
 
-  // KALEM SINIRI (olculdu 2026-07-31, curve-research grid'i):
+  // KALEM SINIRI (olculdu 2026-07-31):
   // puffSleeve() kol boyunu p.sleeveLen'den SUREKLI okuyor; plainSleeve() ise
   // p.sleeveLength enum'undan {cap:9, short:17, elbow:28, long:42}. Yani kapak
   // yuksekligi 0 iken "kol boyu" kadrani hicbir sey yapmiyordu -- uc farkli

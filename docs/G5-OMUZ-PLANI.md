@@ -9,7 +9,7 @@
 > ölçülecek kenar bulamıyor ve sebebiyle `null` dönüyor (`engine/tools/pattern-measure.mjs`).
 > Kapı bu sayıyı 3'te ratchet'liyor: G5 kod olarak indikçe yalnız düşebilir. Aynı boşluk
 > `body_length` farkının ayrıştırılamayan kısmının da kaynağı (kabuğun yayı OMUZ halkasından,
-> kalıbınki strapless üst serbest kenardan başlıyor — `GECE/V3-D.md` §3, ayrıştırılmadı).
+> kalıbınki strapless üst serbest kenardan başlıyor — ayrıştırılmadı).
 > Bu oturumda 2. maddedeki "GarmentSurf'e 4. halka" işi YAPILMADI; `GarmentSurf` yalnızca
 > `engine/src/surfacepattern.hpp`'ye yayınlandı, halka sayısı değişmedi.
 >
@@ -20,8 +20,7 @@
 > `contract/flat-convention-v1.json`, türetme `chestX 73.3333u × 0.9570`.
 > ⚠ "78.0u kaynaksız, devralınmış" etiketi **KORUNUYOR**: 78.0u'yu basan bir alet repoda
 > BULUNAMADI, yalnız yerine geçen 70.1799u kaynaklı. 0.9570 satın alınmış Buğra Locket EU38
-> `Back Body` parçasında ölçülen omuz/göğüs yarı-genişlik oranı (196.13/204.94,
-> `GECE/log/F-E.bugra-olcum.txt`) — yani bu sayfanın "SAYI KURALI" bölümünün istediği türden
+> `Back Body` parçasında ölçülen omuz/göğüs yarı-genişlik oranı (196.13/204.94) — yani bu sayfanın "SAYI KURALI" bölümünün istediği türden
 > bir landmark paritesi, tahmin değil. Üstüne bir kapı satırı kondu
 > (`flat_convention_check` md. 1c: omuz ucu x ≤ göğüs x) ve şartın kendisi bir GEOMETRİK
 > YASADIR (set-in kol oyuğu omuz ucu ile koltukaltını paylaşır), "Buğra'ya benzerlik" bir
@@ -29,7 +28,7 @@
 > **Bu, aşağıdaki 1-3. maddelerin HİÇBİRİNİ kapatmaz:** düzeltilen şey çizimin manken
 > çapasıdır, `GarmentSurf`'ün omuz halkası değil. Kalıp tarafı hâlâ STRAPLESS, `shoulder_width`
 > hâlâ `null`, `flat_pattern_agree_check`'in UNMEASURED sayacı hâlâ 3. Ölçüm ve mutasyon
-> kanıtı: `GECE/V4-A.md`.
+> kanıtı `node engine/tests/flat_pattern_agree_check.mjs` çıktısında.
 > ⚠ Aynı croquis'in `waistY`, `chestY` ve `shoulderSlope 0.32` değerleri hâlâ `source: ACIK`
 > — `shoulderTipY` tamamen o kaynaksız eğimden türüyor, yani omuz ucunun **x'i** kaynaklı,
 > **y'si** değil.
@@ -74,7 +73,7 @@
    (ASTM D6673-10 §1.1 parça-parça karşılığı açıkça kapsam dışı bırakıyor ve standart
    2019'da geri çekildi); apparel'e özel yayınlanmış tek sayı CLO3D'nin 3 mm'si ve biz
    onun 3.8× altındayız. Eşik korunacaksa gerekçesi *"reponun kendi ölçüm gürültüsünün
-   üstünde seçilmiş ev değeri"* diye yazılır, kaynak diye değil. Döküm `GECE/V5-R.md` §A.
+   üstünde seçilmiş ev değeri"* diye yazılır, kaynak diye değil.
    ⚠ Repo **iki** tolerans taşıyor — `engine/src/surfacepattern.cpp:19` 0.79375 ve
    `engine/src/validator.hpp:23` `pairedSeamTolerance = 3.0` — hangisinin hangi kapıda
    koştuğu **haritalanmadı**.
@@ -93,8 +92,7 @@
    - `ön_oyuk_yay ≤ arka_oyuk_yay` (kesim çizgisinde)
    - `ön_oyuk_yay/kiriş > arka_oyuk_yay/kiriş`
    **BÜYÜKLÜK ŞART DEĞİL, REPORTED.** Fark 8 bedende −13.83 → −1.50mm, yani **9 kat**
-   daralıyor (basan alet `flatten-research/18-armscye-front-back.py`, tutanağı
-   `knowledge/armscye-on-arka-2026-08-17.md` § tablo satır 45-52):
+   daralıyor (basan alet `node engine/tools/bugra/overlay-png.mjs`, tutanağı `knowledge/armscye-on-arka-2026-08-17.md` § tablo satır 45-52):
    bu bir kanun değil, ölçülen giysinin grade'i. Sayıyı şart yapmak referansı
    kural yapmaktır (Damla 28 Tem: *"Buğra bir REFERANS, kural değil"*).
    ⚠ **Tanık sayısı 1** (`locket_top`); `corset_bustier` strapless, oyuğu yok.
@@ -102,8 +100,8 @@
    ★ **25 Ağu (V5-B): o fark tablosunu basan alet artık VAR** —
    `node engine/tools/bugra/overlay-png.mjs locket --size=36`. Motor parçasını Buğra'nın
    aynı beden halkasıyla 1:1 mm üst üste basıyor (döndürme/en-iyi-oturtma/ölçek YOK) ve
-   parça başına Δbbox · Δçevre · sapma med/p95/max çıkarıyor; levhalar
-   `GECE/log/V5-B2.overlay/` ve `GECE/log/V5-B2.corset/` (mutlak yollar `GECE/V5-B.md`'de).
+   parça başına Δbbox · Δçevre · sapma med/p95/max çıkarıyor; levhaları aletin
+   kendisi `--out` ile yazar.
    **Bu bir KAPI DEĞİL, alet** — aletin kendi başlığı da öyle diyor; buradaki hiçbir
    sayıdan "kalıp yanlış" hükmü çıkarılmaz (Buğra referans, kural değil).
    G5 kapandığında bu tablo *"kapı"* yapılacaksa eşiği ayrıca kararlaştırılmalı, bugün yok.

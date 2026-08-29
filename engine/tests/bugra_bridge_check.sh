@@ -19,6 +19,12 @@ trap 'rm -rf "$OUT"' EXIT
 TR="$ROOT/patterns_real/geometry/ring-trace-locket-front-38.json"
 GEOM="$ROOT/patterns_real/geometry/geometry-full.json"
 TOOLS="$ROOT/engine/tools/tracer"
+# H1 "depo temiz" (2026-08-29): reports/ became a run-archive dump and left the
+# tracked tree entirely. These two files were never a run printout — they are
+# this gate's PINNED REFERENCE, the thing md.1 diffs against — so they moved to
+# engine/tests/pins/ instead of dying with the archive. A pin lives next to the
+# gate that reads it.
+PINS="$ROOT/engine/tests/pins/kopru-v1"
 
 # 1) yeniden üretim ×2 + pin karşılaştırması
 python3 "$TOOLS/ring2recipe.py" "$TR" "$GEOM" "$BIN" \
@@ -29,8 +35,8 @@ cmp "$OUT/recipe1.json" "$OUT/recipe2.json"
 cmp "$OUT/fit1.json" "$OUT/fit2.json"
 cmp "$OUT/defter1.txt" "$OUT/defter2.txt"
 cmp "$OUT/recipe1.json" "$ROOT/recipes/bugra-locket-top-front-38.json"
-cmp "$OUT/fit1.json" "$ROOT/reports/gate/kopru-v1/fit-locket-front-38.json"
-cmp "$OUT/defter1.txt" "$ROOT/reports/gate/kopru-v1/fit-defteri-locket-front-38.txt"
+cmp "$OUT/fit1.json" "$PINS/fit-locket-front-38.json"
+cmp "$OUT/defter1.txt" "$PINS/fit-defteri-locket-front-38.txt"
 echo "1) yeniden uretim: 2 kosu + repo pini bayt-ozdes"
 
 # 2) çizim determinizmi (fit gövdesi + extend fit dosyasından, gizli eşleme yok)

@@ -161,13 +161,16 @@ check('no file under web/ is a byte-copy of a purchased pattern file',
   copies.length === 0, copies.slice(0, 5).join(' · ') || `${prCount} telifli dosya tarandı`);
 
 // (c) and the tracked count has not grown — the card's own invariant, measured
-// rather than promised.
+// rather than promised. H1 "depo temiz" (2026-08-29) tightened it from 41 to
+// ZERO: the purchased files left the public git for good — HEAD tree AND
+// history — while staying on disk behind the .gitignore rule. That is what
+// CLAUDE.md has claimed since July. The number may fall, never rise.
 let tracked = null;
 try {
   tracked = execSync('git ls-files patterns_real | wc -l', { cwd: ROOT, encoding: 'utf8' }).trim();
 } catch { /* git yoksa hüküm verilmez, aşağıda yazılır */ }
-check('patterns_real/ still tracks exactly 41 files — nothing was added',
-  tracked === null || Number(tracked) === 41,
+check('patterns_real/ tracks ZERO files — the paid IP is out of the public git',
+  tracked === null || Number(tracked) === 0,
   tracked === null ? 'git okunamadı — HÜKÜM YOK' : `${tracked} takipli`);
 
 console.log('VİTRİN KAPISI — sayfa bugünkü ürünü mü anlatıyor? (0 API çağrısı)');
