@@ -7,6 +7,12 @@
 //          npx wrangler secret put APP_TOKEN         (any long random string)
 
 import { handleDraft, handleGrade } from './draft.js';
+// G1 (KOSU-v8) — the wallet fuse. Kept in a WASM-free module so the whole
+// guard is drivable from plain node; see guard.js for what was measured and
+// why the Origin check alone would not have closed the leak.
+import {
+  originAllowed, turnstilePassed, spendBudgetExhausted, withCors,
+} from './guard.js';
 
 const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
 // Vision-capable current model (default teacher).
@@ -21,13 +27,35 @@ const RATE_LIMIT_PER_MIN = 20;
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders() });
+      return withCors(new Response(null, { status: 204 }), request, env);
     }
+    // Every answer leaves through withCors, so the reflected Access-Control
+    // header is decided in exactly ONE place and can never drift back to '*'.
+    return withCors(await route(request, env), request, env);
+  },
+};
 
+async function route(request, env) {
+  {
     const url = new URL(request.url);
     const ip = request.headers.get('cf-connecting-ip') || 'unknown';
 
+    // Our own benchmark tool holds the BENCH_BYPASS secret and calls from a
+    // terminal, so it has no Origin and no app token. It is authenticated by
+    // the secret itself, which is stronger than either, and it still pays the
+    // daily spend cap like everyone else.
+    const bypass = !!env.BENCH_BYPASS && matchesSecret(
+      request.headers.get('x-sb-bench') || '', env.BENCH_BYPASS);
+
     try {
+      // G1: the public tier is the web app's tier. A caller with no app token
+      // asking for a public endpoint must come from one of our own pages. This
+      // is the cheap filter, not the fuse — see the ALLOWED_ORIGINS comment.
+      if (!request.headers.get('x-app-token') && !bypass &&
+          url.pathname.startsWith('/api/') &&
+          !originAllowed(request, env)) {
+        return withCors(jsonResponse({ error: 'forbidden_origin' }, 403), request, env);
+      }
       // ---- Public stitch wall: no app token — a public web page cannot keep
       // a secret. Guarded by strict rate limits + validation. The landing
       // dropped the wall (party trick later), so the endpoints sleep behind
@@ -116,15 +144,11 @@ export default {
         if (env.PUBLIC_ANALYZE !== 'on') {
           return jsonResponse({ error: 'Photo analysis is not open yet' }, 403);
         }
-        // Internal benchmark bypass: our own measurement tool (engine/tools/
-        // benchmark-58.mjs) sends a secret bypass header so a 54-photo run does
-        // not crawl behind the public cost fuse. The secret lives ONLY as a
-        // wrangler secret (BENCH_BYPASS) and in a gitignored local file — it is
-        // never in the repo, never logged, and skips ONLY the rate-limit fuse.
-        // Real public users (no header, or a wrong one) hit the 3/min + 15/day
-        // limit exactly as before. Constant-length compare, no early-out.
-        const bypass = !!env.BENCH_BYPASS && matchesSecret(
-          request.headers.get('x-sb-bench') || '', env.BENCH_BYPASS);
+        // `bypass` is the run-wide check made at the top of route(): our own
+        // benchmark tool (engine/tools/benchmark-58.mjs) proves itself with the
+        // BENCH_BYPASS secret, which lives only as a wrangler secret and in a
+        // gitignored local file. It skips the per-IP fuse and Turnstile — it is
+        // not a browser and cannot solve a challenge — but NOT the spend cap.
         if (!bypass &&
             (await rateLimited(env, `puban:${ip}`, 3) ||
              await rateLimitedDaily(env, `pubanday:${ip}`, 15))) {
@@ -134,10 +158,33 @@ export default {
         if (length > 2_800_000) {
           return jsonResponse({ error: 'Image too large' }, 413);
         }
+        // The body is parsed HERE, once, because the Turnstile token rides in it
+        // and a Request body can only be read a single time. handleAnalyze takes
+        // the parsed object rather than re-reading the stream.
+        let body;
+        try { body = await request.json(); } catch {
+          return jsonResponse({ error: 'Invalid request' }, 400);
+        }
+        // G1 layer 2 — the one curl cannot forge. Checked BEFORE the spend cap
+        // is decremented so a flood of unverified callers cannot burn the day's
+        // budget just by being refused.
+        if (!bypass && !(await turnstilePassed(body?.turnstileToken, env, ip))) {
+          return jsonResponse({
+            error: 'verification_failed',
+            detail: 'Could not verify this request came from a browser.',
+          }, 403);
+        }
+        // G1 layer 3 — the wallet. Counted for the bench tool too.
+        if (await spendBudgetExhausted(env)) {
+          return jsonResponse({
+            error: 'analysis_paused',
+            detail: "Photo analysis has hit today's limit. Pick the garment below instead.",
+          }, 429);
+        }
         // A model override is honoured ONLY when the bench bypass proved this is
         // our own internal tool (never for a public user). Falls back to MODEL.
         const overrideModel = bypass ? pickModel(request.headers.get('x-sb-model')) : null;
-        return handleAnalyze(request, env, overrideModel);
+        return handleAnalyze(request, env, overrideModel, body);
       }
 
       // ---- Authenticated app endpoints (shared-secret app token).
@@ -151,6 +198,11 @@ export default {
       }
 
       if (url.pathname === '/api/analyze' && request.method === 'POST') {
+        // The app token proves WHO is calling; it does not make the call free.
+        // The wallet fuse is deliberately tier-blind — see spendBudgetExhausted.
+        if (await spendBudgetExhausted(env)) {
+          return jsonResponse({ error: 'analysis_paused' }, 429);
+        }
         return handleAnalyze(request, env, pickModel(request.headers.get('x-sb-model')));
       }
       if (url.pathname === '/api/draft' && request.method === 'POST') {
@@ -166,8 +218,8 @@ export default {
     } catch (err) {
       return jsonResponse({ error: 'Internal error' }, 500);
     }
-  },
-};
+  }
+}
 
 // Constant-length, constant-time-ish secret compare. Returns false immediately
 // on a length mismatch (length is not secret), otherwise XORs every byte so the
@@ -293,10 +345,15 @@ function pickModel(requested) {
   return requested && MODEL_WHITELIST.has(requested) ? requested : null;
 }
 
-async function handleAnalyze(request, env, overrideModel = null) {
-  let body;
-  try { body = await request.json(); } catch {
-    return jsonResponse({ error: 'Invalid request' }, 400);
+// `preParsed` is supplied by the public path, which had to read the body itself
+// to reach the Turnstile token (a Request body reads once). The authenticated
+// path passes nothing and this reads the stream as before.
+async function handleAnalyze(request, env, overrideModel = null, preParsed = null) {
+  let body = preParsed;
+  if (!body) {
+    try { body = await request.json(); } catch {
+      return jsonResponse({ error: 'Invalid request' }, 400);
+    }
   }
   const imageBase64 = body.image;
   const mediaType = IMAGE_TYPES.includes(body.mediaType) ? body.mediaType : 'image/jpeg';
@@ -403,14 +460,7 @@ async function handleWaitlist(request, env) {
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, x-app-token, x-sb-bench',
-  };
-}

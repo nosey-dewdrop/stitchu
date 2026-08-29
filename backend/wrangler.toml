@@ -9,18 +9,35 @@ type = "CompiledWasm"
 globs = ["**/*.wasm"]
 
 [vars]
-# Public photo analysis for the web app (throttled hard in worker.js).
+# Public photo analysis for the web app. Guarded by G1 (backend/guard.js):
+# allowed-Origin filter + Turnstile + a global daily spend cap. Before 27 Aug
+# 2026 "on" meant genuinely open — a curl with NO Origin header at all reached
+# the body validator and spent Anthropic money, and no counter anywhere knew
+# the daily total. Measured, not assumed; see guard.js.
 PUBLIC_ANALYZE = "on"
 # Public pattern-draft API (own engine, no LLM cost — safe to open, throttled).
 PUBLIC_DRAFT = "on"
+# G1 wallet fuse: hard ceiling on Anthropic calls per UTC day, ALL tiers counted
+# in the same number (public, app-token and benchmark alike) — the one guarantee
+# that does not depend on the caller being honest about who they are. Raise it
+# deliberately for a bench run:  npx wrangler deploy --var DAILY_ANALYZE_CAP:1000
+DAILY_ANALYZE_CAP = "300"
 
 # Secrets (set via wrangler secret put — never commit these):
-#   CLAUDE_API_KEY   your Anthropic sk-ant- key
-#   APP_TOKEN        any long random string, also placed in the app's Secrets.swift
+#   CLAUDE_API_KEY     your Anthropic sk-ant- key
+#   APP_TOKEN          any long random string, also in the app's Secrets.swift
+#   TURNSTILE_SECRET   Cloudflare Turnstile secret (dashboard -> Turnstile ->
+#                      Add widget -> Invisible). REQUIRED: unbound, the public
+#                      analyze path refuses every call — by design, fail closed.
+#                      Its public half goes in web/js/config.js as
+#                      TURNSTILE_SITE_KEY, and BOTH must be set or the photo
+#                      button stays hidden.
+#   BENCH_BYPASS       internal benchmark tool's shared secret (optional)
 
 # Rate-limit KV. Create with: npx wrangler kv namespace create RATE_LIMIT
-# then paste the returned id below. (Optional — the Worker runs without it,
-# just with no rate limiting.)
+# then paste the returned id below.
+# NO LONGER OPTIONAL: the daily spend cap is stored here, and guard.js fails
+# CLOSED without it — an uncounted spend is exactly the bug G1 closed.
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
 id = "2927eef779f343eea0fea0bd348fde9e"

@@ -250,6 +250,19 @@ add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_c
 # eşleşen styleKey yokken plain dart/scoop REFERANS tank'e degrade OLMAMALI (ikame).
 add_test(NAME bridge_guard COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/bridge_guard.mjs)
 
+# wallet_fuse_check (KOSU-v8 / G1): kimse Damla'nın parasını harcayamaz.
+# 27 Ağu 2026'da CANLI ölçüldü: /api/analyze, Origin başlığı HİÇ OLMAYAN bir
+# curl'e de gövde doğrulayıcısını (400) döndürüyordu — yani var olan bütün
+# kapılardan geçmişti; worker.js'te Origin mantığı yoktu ve ACAO '*' idi. Tek
+# fren IP başına 3/dk + 15/gün, global tavan sıfır. Kapı üç katmanı ayrı ayrı
+# sınar (Origin · Turnstile · günlük harcama tavanı) ve ÖZELLİKLE Origin'in tek
+# başına yetmediğini kilitler: doğru Origin'i taklit eden curl katman 1'i geçer,
+# o yüzden KOSU-v8'in "Origin'i reddetmeye çevir" reçetesi tek başına kaçağı
+# kapatmıyordu. Altı mutasyonun altısı da kırmızıya çevirdi (Origin'siz izin ·
+# secret'sız geçiş · KV'siz sınırsız harcama · tavan×1000 · ACAO '*' ·
+# Cloudflare'in hükmünü yoksay). Muhafızlar backend/guard.js'te, WASM'siz.
+add_test(NAME wallet_fuse_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/wallet_fuse_check.mjs)
+
 # 27 Tem kopuk kablo mandalları (json-el adli raporu): dört sessiz kopukluk.
 # api_wire_check: skirtLengthMM API yolunda motora ULAŞIR (backend normalize
 # spec taşır, web=backend aynı mm, 353!=1100 kalıp, 0/atlanmış default aynı).
