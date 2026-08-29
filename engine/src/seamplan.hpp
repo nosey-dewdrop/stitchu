@@ -43,6 +43,7 @@
 #include <vector>
 
 #include "bodysurface.hpp"
+#include "measurements.hpp"
 #include "surfacepattern.hpp"
 
 namespace stitchu {
@@ -76,11 +77,39 @@ struct SeamPlan {
     // did not, whatever their prose claims. This is what makes "same seam plan"
     // a measurement instead of a sentence.
     std::string nodeId() const;
+
+    // ⭐ THE AXES THIS PLAN COULD NOT CARRY (H2).
+    //
+    // The spec has ~40 axes; SheathOptions has a field for a handful of them.
+    // Before H2 the surface line took TWO SCALARS (a size label and a neck-drop
+    // in mm) and everything else the shopper said was simply not there — not
+    // refused, not reported, just absent. That is the silent-default failure
+    // RULES invariant 1 exists to stop, wearing a different hat: an axis the
+    // engine cannot express must be named, not dropped.
+    //
+    // Every entry is "<axis>=<value>" for an axis the shopper actually MOVED
+    // (an axis left at its default was not asked for, so naming it would be
+    // noise, not honesty). Both readings print the list and create.js puts it
+    // on the screen — an unsupported axis nobody can read is not declared.
+    std::vector<std::string> desteklenmeyen;
 };
 
 // Builds the plan for a size label from the EU chart. Throws
 // std::invalid_argument on an unknown size — never a silent default (RULES 1).
 SeamPlan buildSeamPlan(const std::string& sizeLabel, const SheathOptions& opt = {});
+
+// THE SPEC -> SURFACE DIALS MAP (H2). `opt` is what the surface line can honour
+// of this spec; `desteklenmeyen` names every axis it cannot, by axis and value.
+struct SurfaceSpecMap {
+    SheathOptions opt;
+    std::vector<std::string> desteklenmeyen;
+};
+SurfaceSpecMap mapSpecToSurface(const GarmentSpec& spec);
+
+// The spec-driven entry point: one spec + one size label in, one plan out,
+// carrying the refused axes. This is what the wasm boundary calls, so a spec
+// change (a deeper neckline) moves BOTH readings instead of neither.
+SeamPlan buildSeamPlanForSpec(const std::string& sizeLabel, const GarmentSpec& spec);
 
 // THE PATTERN READING — human body, real seam allowance, cut lines. This is
 // what gets sewn.

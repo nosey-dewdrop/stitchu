@@ -146,6 +146,19 @@ add_test(NAME tek_nesne_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/tek_nesne_check.mjs
                  $<TARGET_FILE:seam-plan> $<TARGET_FILE:shell-audit>)
 
+# ⭐ spec_reaches_surface (H2): SEÇTİĞİM YAKAYI ÇİZİYOR MU?
+# tek_nesne_check yukarıda iki okumanın TEK NESNEDEN çıktığını ölçer — ama o
+# nesneyi kendi kurar (native seam-plan aracı, -n 20 bayrağıyla). Kimse SPEC'in
+# oraya ulaştığını ölçmüyordu, ve ulaşmıyordu: planJSON/flatJSON iki skaler
+# alıyordu ve site yaka düşüşünü her çağrıda 0 geçiyordu. Bu kapı ÜRÜN YOLUNU
+# koşar (engine/dist/stitchu-engine.js — web/js/engine.js'in yüklediği baytın
+# kendisi): aynı bedende scoop ve vNeck İKİ AYRI flat vermek zorunda, ön orta
+# tam 35 / 60 mm düşmek zorunda (bodice.cpp'nin kendi tablosu), ve yüzeyin
+# taşıyamadığı her eksen `desteklenmeyen_eksenler`de ADIYLA + ekranda olmak
+# zorunda. Bayat bir bundle'la geçilemez: hash farkı motorun kendi çıktısından.
+add_test(NAME spec_reaches_surface
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/spec-reaches-surface.mjs)
+
 # rotate_check (GECE7 / F5-A, K27): op.rotate — pens transferi. Rijit hareketin
 # korunan üç niceliği (ALAN, PENS AÇISI, TRUE BACAKLAR) birebir ölçülür; çevre
 # EŞİTLİK olarak DEĞİL bir KİMLİK olarak yargılanır

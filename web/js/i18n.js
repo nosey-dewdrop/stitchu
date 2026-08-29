@@ -90,6 +90,14 @@ export const STRINGS = {
     en: 'The flat is drawn, but the engine cannot yet cut: {what}',
     tr: 'Teknik çizim çizildi, ama motorun henüz kesemediği var: {what}',
   },
+  // ⭐ H2 — THE AXES THE SURFACE LINE REFUSED, ON SCREEN.
+  // The engine now receives the whole spec and answers with the axes it could
+  // not put on a dial. A refusal the shopper cannot read is not a refusal, so
+  // the list is printed by name, with the value that was asked for.
+  'create.dl.flataxes': {
+    en: 'The flat is drawn from the seam plan; these axes did not reach it: {what}',
+    tr: 'Teknik çizim dikiş planından çizildi; şu eksenler ona ulaşmadı: {what}',
+  },
   // ⭐ OPERATÖR PROGRAMI (GECE7 / F5-D). Bir RET burada bir hata mesajı DEĞİL,
   // motorun ölçülmüş cevabıdır: sevk edilen gövde bir konidir ve op.suppress onu
   // reddeder. Cümle bunu bir kusur gibi değil, bir cevap gibi söyler.

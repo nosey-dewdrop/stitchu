@@ -8,6 +8,7 @@
 #include "constants.gen.hpp"
 #include "shellprojection.hpp"
 #include "sizechart.hpp"
+#include "vocab.gen.hpp"
 
 namespace stitchu {
 namespace {
@@ -41,6 +42,17 @@ std::string quote(const std::string& s) {
         out += c;
     }
     return out + "\"";
+}
+
+// The refused-axis list as a JSON array of strings. One writer, used by BOTH
+// readings, so the two can never publish the same refusal in two spellings.
+std::string axesJSON(const std::vector<std::string>& axes) {
+    std::string out = "[";
+    for (size_t i = 0; i < axes.size(); ++i) {
+        if (i) out += ", ";
+        out += quote(axes[i]);
+    }
+    return out + "]";
 }
 
 // FNV-1a over the plan's defining numbers. Not a security hash and not claimed
@@ -127,6 +139,178 @@ SeamPlan buildSeamPlan(const std::string& sizeLabel, const SheathOptions& opt) {
 }
 
 // ---------------------------------------------------------------------------
+// ⭐ H2 — THE SPEC REACHES THE SURFACE
+//
+// TWO SCALARS is what this line used to receive: `buildSeamPlan(size, opt)`
+// with only `frontNeckDropCoefCM` ever filled, from a `neckDropMM` number the
+// UI hard-coded to 0. So the photo, the prompt and every picker on create.html
+// drove the 2D formula line (GarmentDrafter::draft) and drove NOTHING here: the
+// 3D surface line — the one the research is about — was compiled into the
+// bundle and unreachable. The flat a shopper downloaded was the same flat for a
+// crew and for a v-neck, to the byte.
+//
+// The map below is deliberately SMALL and the refusals are deliberately LOUD.
+// SheathOptions carries a handful of dials; the spec carries ~40 axes. Anything
+// this function cannot put on a dial is pushed onto `desteklenmeyen` BY NAME,
+// and both readings print that list. A silent constant would be exactly the
+// defect being closed.
+// ---------------------------------------------------------------------------
+namespace {
+
+// THE NECKLINE NUMBERS ARE NOT NEW HERE. They are the 2D line's own drafting
+// table, engine/src/bodice.cpp `frontNeckDepth()` / `neckWidthMultiplier()`,
+// read as this file needs them. Inventing a second set of neckline depths for
+// the surface line would put two rights in two places — the error class the
+// single-source law exists to kill — so instead the constants are copied ONCE,
+// with a gate: engine/tests/spec-reaches-surface.mjs re-reads bodice.cpp's
+// switch and FAILS if a single number here disagrees with it.
+//
+// `frontNeckDepth` is written as `neckW + k`, i.e. it is an opening measured
+// off the neck WIDTH, so the only part of it this surface can honour is the
+// part that does not need neckW: the difference k - k(crew). That difference is
+// millimetres of extra drop, and `frontNeckDropCoefCM` is exactly a drop dial
+// (surfacepattern.cpp adds the coefficient; 1 cm of coefficient is 10 mm of
+// drop at every size). Boat is the one entry written as a BARE mm number rather
+// than neckW + k, so no such difference exists for it and it is refused.
+struct NecklineDraft {
+    double plusNeckWMM;   // bodice.cpp: frontNeckDepth = neckW + this
+    bool absoluteDepth;   // ...except boat, which is this many mm, full stop
+    double widthMult;     // bodice.cpp: neckWidthMultiplier
+    bool crewCurve;       // bodice.cpp: neckCommands draws the crew/scoop cubic
+};
+
+NecklineDraft necklineDraft(Neckline n) {
+    switch (n) {
+        case Neckline::Crew:       return {15, false, 1.00, true};
+        case Neckline::Scoop:      return {50, false, 1.00, true};
+        case Neckline::VNeck:      return {75, false, 1.00, false};
+        case Neckline::Square:     return {40, false, 1.00, false};
+        case Neckline::Boat:       return {28, true,  1.85, false};
+        case Neckline::Sweetheart: return {50, false, 1.20, false};
+        case Neckline::Halter:     return {65, false, 1.00, false};
+        case Neckline::Cowl:       return {90, false, 1.40, false};
+        case Neckline::PussyBow:   return {15, false, 1.00, true};
+    }
+    return {15, false, 1.00, true};
+}
+
+}  // namespace
+
+SurfaceSpecMap mapSpecToSurface(const GarmentSpec& spec) {
+    SurfaceSpecMap out;              // opt starts at the shipped defaults
+    const GarmentSpec base;          // an untouched spec: what "not asked for" is
+    auto ret = [&out](const std::string& axis, const std::string& value) {
+        out.desteklenmeyen.push_back(axis + "=" + value);
+    };
+    auto retInt = [&](const char* axis, int v, const char* const* names, int count) {
+        if (v == 0) return;          // 0 is None/off on every int axis
+        ret(axis, (v > 0 && v < count) ? names[v] : std::to_string(v));
+    };
+
+    // ---- THE CLASS. buildSheathPattern builds ONE garment class and says so in
+    // SeamPlan::sinif ("top/dart/woven"). A spec naming another class is not
+    // drawn differently; it is refused so nobody reads a top as a dress.
+    if (spec.garment != GarmentType::Top) ret("garment", raw(spec.garment));
+    if (spec.shaping != Shaping::Dart) ret("shaping", raw(spec.shaping));
+    if (spec.fabric.cls != Fabric::Woven) ret("fabric", raw(spec.fabric.cls));
+    if (spec.fabric.stretchPct >= 0.0) ret("fabricStretchPct", num(spec.fabric.stretchPct, 2));
+    if (spec.fabric.recoveryDeclared()) ret("fabricRecovery", "beyan edildi");
+    if (spec.fabric.drapeDeclared()) ret("fabricDrape", "beyan edildi");
+    if (spec.fabric.widthCM >= 0.0) ret("fabricWidthCM", num(spec.fabric.widthCM, 2));
+
+    // ---- NECKLINE — the axis H2 exists to connect.
+    const NecklineDraft nd = necklineDraft(spec.neckline);
+    const NecklineDraft crew = necklineDraft(Neckline::Crew);
+    if (nd.absoluteDepth) {
+        ret("neckline.derinlik", std::string(raw(spec.neckline)) +
+                                     " (mutlak mm, boyun genisligine gore degil)");
+    } else {
+        out.opt.frontNeckDropCoefCM += (nd.plusNeckWMM - crew.plusNeckWMM) / 10.0;
+    }
+    // The two parts of a neckline this surface has no dial for. It carries ONE
+    // top boundary sampled once over the circle (surfacepattern.hpp's second
+    // law), so a neckline WIDTH multiplier has nowhere to land, and the boundary
+    // is a solved curve rather than a drawn one, so a V or a square corner
+    // cannot be spelled. Both are named rather than silently drawn as a scoop.
+    if (nd.widthMult != crew.widthMult)
+        ret("neckline.genislik", std::string(raw(spec.neckline)) + " (x" +
+                                     num(nd.widthMult, 2) + " boyun genisligi)");
+    if (!nd.crewCurve)
+        ret("neckline.sekil", std::string(raw(spec.neckline)) +
+                                  " (yuzey yalnizca derinlik tasiyor)");
+
+    // ---- SKIRT SWEEP. hemSweepOverHipMM is the A-line dial and hemSweepMM = 0
+    // is the straight sheath the same field documents. The other four skirt
+    // words are cut constructions (gathered / half-circle / pleated / gored),
+    // not a sweep number, so they are refused instead of flattened into one.
+    switch (spec.skirtStyle) {
+        case SkirtStyle::ALine:
+            break;                                   // the shipped default
+        case SkirtStyle::Straight:
+            out.opt.hemSweepOverHipMM = -1.0;        // < 0 = fall back to...
+            out.opt.hemSweepMM = 0.0;                // ...0 = straight sheath
+            break;
+        default:
+            ret("skirtStyle", raw(spec.skirtStyle));
+            break;
+    }
+
+    // ---- EVERYTHING ELSE, BY NAME. An axis left at its default was not asked
+    // for; an axis the shopper MOVED and this surface cannot carry is listed.
+    if (spec.waistline != base.waistline) ret("waistline", raw(spec.waistline));
+    if (spec.sleeveStyle != base.sleeveStyle) ret("sleeveStyle", raw(spec.sleeveStyle));
+    if (spec.sleeveLength != base.sleeveLength) ret("sleeveLength", raw(spec.sleeveLength));
+    if (spec.skirtLength != base.skirtLength) ret("skirtLength", raw(spec.skirtLength));
+    if (spec.skirtLengthMM != base.skirtLengthMM)
+        ret("skirtLengthMM", num(spec.skirtLengthMM, 1));
+    if (spec.topLength != base.topLength) ret("topLength", raw(spec.topLength));
+    if (spec.ruffleHem) ret("ruffleHem", "true");
+    if (spec.keyhole) ret("keyhole", "true");
+    if (spec.frontPlacket) ret("frontPlacket", "true");
+    if (spec.editExtendMM != base.editExtendMM)
+        ret("editExtendMM", num(spec.editExtendMM, 1));
+    if (spec.editAttach != base.editAttach) ret("editAttach", "bow");
+    retInt("tieClosure", spec.tieClosure, vocab::kTieClosure, vocab::kTieClosureCount);
+    retInt("sleeveCap", static_cast<int>(spec.sleeveCap), vocab::kSleeveCap, vocab::kSleeveCapCount);
+    retInt("collarType", spec.collarType, vocab::kCollarType, vocab::kCollarTypeCount);
+    retInt("collarEdge", spec.collarEdge, vocab::kCollarEdge, vocab::kCollarEdgeCount);
+    retInt("gatherType", spec.gatherType, vocab::kGatherType, vocab::kGatherTypeCount);
+    // gatherZone only means anything when gatherType fired; naming a zone for a
+    // garment with no gathering would be a refusal of something nobody asked.
+    if (spec.gatherType != 0)
+        retInt("gatherZone", spec.gatherZone, vocab::kGatherZone, vocab::kGatherZoneCount);
+    retInt("backOpening", spec.backOpening, vocab::kBackOpening, vocab::kBackOpeningCount);
+    retInt("laceUpBack", spec.laceUpBack, vocab::kLaceUpBack, vocab::kLaceUpBackCount);
+    retInt("wrapFront", spec.wrapFront, vocab::kWrapFront, vocab::kWrapFrontCount);
+    retInt("backSlit", spec.backSlit, vocab::kBackSlit, vocab::kBackSlitCount);
+    retInt("ruffledStraps", spec.ruffledStraps, vocab::kRuffledStraps, vocab::kRuffledStrapsCount);
+    retInt("peplum", spec.peplum, vocab::kPeplum, vocab::kPeplumCount);
+    retInt("hemFlounce", spec.hemFlounce, vocab::kHemFlounce, vocab::kHemFlounceCount);
+    retInt("placketStyle", spec.placketStyle, vocab::kPlacketStyle, vocab::kPlacketStyleCount);
+    retInt("edgeFinish", spec.edgeFinish, vocab::kEdgeFinish, vocab::kEdgeFinishCount);
+    retInt("pocketStyle", spec.pocketStyle, vocab::kPocketStyle, vocab::kPocketStyleCount);
+    retInt("cuffStyle", spec.cuffStyle, vocab::kCuffStyle, vocab::kCuffStyleCount);
+    retInt("hemShape", spec.hemShape, vocab::kHemShape, vocab::kHemShapeCount);
+    retInt("shoulderStyle", spec.shoulderStyle, vocab::kShoulderStyle, vocab::kShoulderStyleCount);
+    retInt("buttonRow", spec.buttonRow, vocab::kButtonRow, vocab::kButtonRowCount);
+    retInt("exposedZip", spec.exposedZip, vocab::kExposedZip, vocab::kExposedZipCount);
+    retInt("backDetail", spec.backDetail, vocab::kBackDetail, vocab::kBackDetailCount);
+    retInt("bardotStyle", spec.bardotStyle, vocab::kBardotStyle, vocab::kBardotStyleCount);
+    retInt("cupSeam", spec.cupSeam, vocab::kCupSeam, vocab::kCupSeamCount);
+    retInt("locketTop", spec.locketTop, vocab::kLocketTop, vocab::kLocketTopCount);
+    retInt("yoke", spec.yoke, vocab::kYoke, vocab::kYokeCount);
+    retInt("boxPleat", spec.boxPleat, vocab::kBoxPleat, vocab::kBoxPleatCount);
+    return out;
+}
+
+SeamPlan buildSeamPlanForSpec(const std::string& sizeLabel, const GarmentSpec& spec) {
+    const SurfaceSpecMap m = mapSpecToSurface(spec);
+    SeamPlan plan = buildSeamPlan(sizeLabel, m.opt);
+    plan.desteklenmeyen = m.desteklenmeyen;
+    return plan;
+}
+
+// ---------------------------------------------------------------------------
 // KALIP — human body, real seam allowance
 // ---------------------------------------------------------------------------
 std::string planJSON(const SeamPlan& plan) {
@@ -139,6 +323,7 @@ std::string planJSON(const SeamPlan& plan) {
     o << "  \"sinif\": {\"garment\": " << quote(plan.garment())
       << ", \"shaping\": " << quote(plan.shaping())
       << ", \"fabric\": " << quote(plan.fabric()) << "},\n";
+    o << "  \"desteklenmeyen_eksenler\": " << axesJSON(plan.desteklenmeyen) << ",\n";
     // THE DECLARED TRANSFORM (§2). Stated in the output, not in a comment
     // somewhere, because a transform nobody can read is not declared.
     o << "  \"bedenlendirme\": {\n";
@@ -196,6 +381,10 @@ std::string flatJSON(const SeamPlan& plan) {
     o << "  \"sinif\": {\"garment\": " << quote(plan.garment())
       << ", \"shaping\": " << quote(plan.shaping())
       << ", \"fabric\": " << quote(plan.fabric()) << "},\n";
+    // ⭐ THE REFUSED AXES (H2). Printed on the SAME surface as the geometry,
+    // BEFORE the early return below, because a refusal that only exists on the
+    // happy path is not a refusal. web/js/create.js prints this list on screen.
+    o << "  \"desteklenmeyen_eksenler\": " << axesJSON(plan.desteklenmeyen) << ",\n";
     // §2's second transform, DECLARED — and as of GECE7/F4 (IS 2) the open item
     // it used to print is closed. It printed "YAYIN BULUNAMADI" because there was
     // no mannequin chart at all; now there is one, it has an id, and its number

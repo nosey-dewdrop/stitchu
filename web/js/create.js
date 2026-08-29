@@ -1086,10 +1086,17 @@ function downloadPanel(result) {
   wire(flatBtn, async () => {
     const gaps = flatGaps(spec);   // throws exactly where saveFlatSVG would
     // The flat leaves with the origin record on its root element.
-    await saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
+    const eksenler = await saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
     // Not a refusal — the file IS on their disk — so it does not go through the
     // refusal string. It is the honest footnote: drawn, but not yet cuttable.
     if (gaps.length) msg.textContent = t('create.dl.flatgap', { what: gaps.join(' · ') });
+    // ⭐ H2 — AND THE SURFACE LINE'S OWN REFUSALS, ON SCREEN. The engine now
+    // reads the whole spec; every axis it could not put on a dial comes back in
+    // `desteklenmeyen_eksenler` and is printed here by name. Swallowing it would
+    // rebuild the exact silence H2 was opened to end.
+    if (eksenler && eksenler.length) {
+      msg.textContent = t('create.dl.flataxes', { what: eksenler.join(' · ') });
+    }
     return null;
   });
   row.appendChild(flatBtn);

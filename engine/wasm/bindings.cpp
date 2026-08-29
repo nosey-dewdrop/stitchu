@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include <vector>
 
 #include "../src/dxf.hpp"
 #include "../src/garment.hpp"
@@ -577,15 +578,56 @@ std::string dxfSpecJSON(val specObj, val bodyObj) {
 // `size` is an EU label. An unknown one throws out of buildSeamPlan and comes
 // back as {"error": ...} — never a silent EU38 (RULES 1).
 //
-// neckDropMM: the drop-the-neck-edge dial, in millimetres, the same mapping
-// tools/seam-plan.cpp documents (surfacepattern.cpp:1321 adds the coefficient,
-// so deeper is a LARGER coefficient; 1cm of coefficient is 10mm of drop at
-// every size, exact, no fitted constant).
-std::string planJSONBinding(std::string size, double neckDropMM) {
+// ⭐ H2 — THE SPEC REACHES THE SURFACE LINE.
+//
+// MEASURED DEFECT, and it was structural rather than a bug: these two bindings
+// took `(std::string size, double neckDropMM)`. TWO SCALARS. `draftJSON` above
+// takes the WHOLE spec object and runs the 2D formula line, so the photo, the
+// prompt and every picker on create.html moved the pattern and moved NOTHING on
+// the 3D surface line — the flat a shopper downloaded was byte-identical for a
+// crew and for a v-neck. The surface hattı was compiled into the bundle
+// (build-wasm.sh ENGINE_SRCS) and unreachable from the product.
+//
+// So both bindings now take the SAME two objects draftJSON takes, parse the
+// spec through the SAME buildSpec (one vocabulary, one set of refusals), and
+// hand it to seamplan.cpp's `buildSeamPlanForSpec`. Nothing is mapped here:
+// the dial map lives next to the dials, in the same translation unit the native
+// seam-plan tool and the gates call.
+//
+// THE SIZE COMES OFF bodyObj.size, and it is REQUIRED. The surface line is
+// valued on a published EU chart entry (buildSeamPlan -> euSize), not on a free
+// body, so a missing label is refused by name instead of silently becoming
+// EU38 (RULES invariant 1). Any OTHER key on bodyObj is a measurement this line
+// does not read, and it is named in `desteklenmeyen_eksenler` rather than
+// quietly ignored — the shopper's own bust is not what the flat is drawn at.
+std::string surfaceSize(const val& bodyObj, std::vector<std::string>& refused) {
+    const val v = bodyObj["size"];
+    if (v.isUndefined() || v.isNull())
+        throw std::invalid_argument(
+            "invalid body: 'size' is missing - the surface line is valued at a "
+            "published EU size label (e.g. \"EU38\"), and it is not guessed");
+    const val keys = val::global("Object").call<val>("keys", bodyObj);
+    const int n = keys["length"].as<int>();
+    for (int i = 0; i < n; ++i) {
+        const std::string key = keys[i].as<std::string>();
+        if (key == "size") continue;
+        refused.push_back("body." + key + "=okunmadi (yuzey hatti EU cizelgesinden deger alir)");
+    }
+    return v.as<std::string>();
+}
+
+SeamPlan surfacePlan(const val& specObj, const val& bodyObj) {
+    std::vector<std::string> bodyRefused;
+    const std::string size = surfaceSize(bodyObj, bodyRefused);
+    SeamPlan plan = buildSeamPlanForSpec(size, buildSpec(specObj));
+    plan.desteklenmeyen.insert(plan.desteklenmeyen.end(), bodyRefused.begin(),
+                               bodyRefused.end());
+    return plan;
+}
+
+std::string planJSONBinding(val specObj, val bodyObj) {
     try {
-        SheathOptions opt;
-        opt.frontNeckDropCoefCM += neckDropMM / 10.0;
-        return planJSON(buildSeamPlan(size, opt));
+        return planJSON(surfacePlan(specObj, bodyObj));
     } catch (const std::exception& e) {
         return std::string(R"({"error":")") + escape(e.what()) + "\"}";
     }
@@ -638,11 +680,9 @@ std::string opsJSONBinding(std::string size, double neckDropMM) {
     }
 }
 
-std::string flatJSONBinding(std::string size, double neckDropMM) {
+std::string flatJSONBinding(val specObj, val bodyObj) {
     try {
-        SheathOptions opt;
-        opt.frontNeckDropCoefCM += neckDropMM / 10.0;
-        return flatJSON(buildSeamPlan(size, opt));
+        return flatJSON(surfacePlan(specObj, bodyObj));
     } catch (const std::exception& e) {
         return std::string(R"({"error":")") + escape(e.what()) + "\"}";
     }
