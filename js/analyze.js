@@ -1,8 +1,65 @@
 // Photo -> garment spec via the Worker (Claude vision behind our proxy).
 // Downscales client-side so no full-resolution photo ever leaves the device.
-import { BACKEND_URL } from './config.js?v=141';
+import { BACKEND_URL, TURNSTILE_SITE_KEY } from './config.js?v=141';
 
-export const photoAvailable = () => Boolean(BACKEND_URL);
+// Both halves must be configured. Without a Turnstile site key the Worker will
+// refuse the call anyway (G1), so offering the button would be a lie — the
+// garment pickers below are the honest path until the key is set.
+export const photoAvailable = () => Boolean(BACKEND_URL) && Boolean(TURNSTILE_SITE_KEY);
+
+// ---- G1 layer 2: prove a browser is asking ---------------------------------
+//
+// An invisible Turnstile widget, rendered once, executed per analysis. Tokens
+// are single-use and expire in ~300s, so a fresh one is minted for every photo
+// rather than cached. If anything here fails we throw rather than calling the
+// Worker without a token: a refusal the user can read beats a 403 they cannot.
+let turnstileWidget = null;
+
+function loadTurnstileScript() {
+  if (window.turnstile) return Promise.resolve();
+  const existing = document.querySelector('script[data-turnstile]');
+  if (existing) return existing._loading;
+  const script = document.createElement('script');
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async = true;
+  script.defer = true;
+  script.dataset.turnstile = '1';
+  script._loading = new Promise((resolve, reject) => {
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Verification could not load, pick the garment below instead.'));
+  });
+  document.head.appendChild(script);
+  return script._loading;
+}
+
+async function turnstileToken() {
+  await loadTurnstileScript();
+  if (turnstileWidget === null) {
+    const host = document.createElement('div');
+    host.style.display = 'none';
+    document.body.appendChild(host);
+    turnstileWidget = window.turnstile.render(host, {
+      sitekey: TURNSTILE_SITE_KEY,
+      size: 'invisible',
+    });
+  } else {
+    // A widget holds one token at a time; reset before asking for the next.
+    window.turnstile.reset(turnstileWidget);
+  }
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error('Verification timed out, pick the garment below instead.')),
+      20000,
+    );
+    window.turnstile
+      .execute(turnstileWidget, { size: 'invisible' })
+      .then((token) => { clearTimeout(timer); resolve(token); })
+      .catch(() => {
+        clearTimeout(timer);
+        reject(new Error('Verification failed, pick the garment below instead.'));
+      });
+  });
+}
 
 // Downscales once; the SAME canvas feeds both consumers: the base64 JPEG for
 // the label read (Worker) and the raw RGBA pixels for the deterministic ratio
@@ -25,13 +82,23 @@ async function downscale(file) {
 // the caller can measure ratios from the same image the labels came from.
 export async function analyzePhoto(file) {
   const { image, pixels } = await downscale(file);
+  const token = await turnstileToken();
   const res = await fetch(BACKEND_URL + '/api/analyze', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ image, mediaType: 'image/jpeg' }),
+    body: JSON.stringify({ image, mediaType: 'image/jpeg', turnstileToken: token }),
   });
   if (res.status === 403) throw new Error('Photo analysis opens at launch, pick the garment below for now.');
-  if (res.status === 429) throw new Error('Too many photos right now, try again in a minute.');
+  // 429 is now two different sentences: the per-IP fuse ("slow down") and the
+  // global daily spend cap ("the wallet is closed until tomorrow"). Telling the
+  // visitor to retry in a minute when the cap is what fired would be a lie.
+  if (res.status === 429) {
+    let paused = false;
+    try { paused = (await res.clone().json())?.error === 'analysis_paused'; } catch { /* body not JSON */ }
+    throw new Error(paused
+      ? 'Photo reading is closed for today, pick the garment below instead.'
+      : 'Too many photos right now, try again in a minute.');
+  }
   if (!res.ok) throw new Error('The photo could not be analyzed, pick the garment below instead.');
 
   const data = await res.json();
