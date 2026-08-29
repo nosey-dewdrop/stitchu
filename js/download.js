@@ -258,12 +258,35 @@ export async function flatSVGAsync(spec, kokenKaydi = null, specAlanlari = null,
   if (!spec || typeof spec !== 'object' || !spec.garment) {
     throw new Error('flat export: the spec names no class to draw');
   }
-  if (!planLineClass(spec)) return flatSVG(spec, kokenKaydi, specAlanlari);
-  const plan = await seamPlanFlat(sizeLabel, 0);
+  return (await flatPlanSVG(spec, kokenKaydi, specAlanlari, sizeLabel)).svg;
+}
+
+/**
+ * ⭐ H2 — THE SAME FLAT, PLUS WHAT THE SURFACE LINE COULD NOT CARRY.
+ *
+ * `seamPlanFlat` now takes the WHOLE spec (it used to take a size label and a
+ * neck drop the site always passed as 0, so the shopper's neckline never
+ * reached this line at all). The engine answers with the drawing AND with
+ * `desteklenmeyen_eksenler` — every axis it refused, by name. That list is
+ * returned here rather than swallowed, because create.js has to put it on the
+ * screen: an axis the engine refused and nobody can read is not refused.
+ *
+ * `axes` is [] on the pen path — the pen reports its gaps through flatGaps().
+ */
+export async function flatPlanSVG(spec, kokenKaydi = null, specAlanlari = null,
+                                  sizeLabel = 'EU38') {
+  if (!planLineClass(spec)) {
+    return { svg: flatSVG(spec, kokenKaydi, specAlanlari), axes: [] };
+  }
+  const plan = await seamPlanFlat(spec, { size: sizeLabel });
+  if (plan.error) throw new Error(plan.error);
   const svg = renderFlatFromPlan(plan);   // throws on an engine refusal
-  return kokenKaydi
-    ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
-    : svg;
+  return {
+    svg: kokenKaydi
+      ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
+      : svg,
+    axes: Array.isArray(plan.desteklenmeyen_eksenler) ? plan.desteklenmeyen_eksenler : [],
+  };
 }
 
 export function flatGaps(spec) {
@@ -304,8 +327,13 @@ export async function saveFlatSVG(spec, filename, kokenKaydi = null,
   // async because the seam-plan line has to wait for the engine. The pen path
   // still resolves in the same tick; nothing got slower for the classes that
   // have not moved.
-  saveBlob(filename, await flatSVGAsync(spec, kokenKaydi, specAlanlari, sizeLabel),
-           'image/svg+xml');
+  //
+  // H2: returns the axes the surface line REFUSED, so the caller can print
+  // them. The file is written first — a refused axis is a footnote about a real
+  // file, not a reason to hand the shopper nothing.
+  const { svg, axes } = await flatPlanSVG(spec, kokenKaydi, specAlanlari, sizeLabel);
+  saveBlob(filename, svg, 'image/svg+xml');
+  return axes;
 }
 
 export function saveA4Pdf(pattern, title, filename, kokenKaydi = null, specAlanlari = null) {

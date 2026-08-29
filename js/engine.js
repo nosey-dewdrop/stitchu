@@ -89,16 +89,30 @@ export function loadEngine() {
 // silently substituting a size is how somebody sews a garment for a body that
 // was never asked about (RULES invariant 1).
 
+// ⭐ H2 — BOTH READINGS NOW TAKE THE SPEC.
+//
+// They used to take (sizeLabel, neckDropMM): two scalars, and the site passed
+// 0 for the drop from every call site. So the shopper's neckline, skirt style
+// and fabric drove `draftJSON` (the 2D formula line) and drove NOTHING here —
+// the flat was byte-identical for a crew and for a v-neck. The signature is now
+// the SAME (spec, body) pair draftJSON takes, so one spec moves one object and
+// both readings come out of it.
+//
+// `body.size` is the published EU label the surface is valued at and it is
+// REQUIRED — a missing one comes back as { error }, not as a silent EU38.
+// Every axis the surface line cannot carry comes back in
+// `desteklenmeyen_eksenler`, and create.js prints it on screen.
+
 /** The KALIP reading — human body, real seam allowance. What gets sewn. */
-export async function seamPlanPattern(sizeLabel, neckDropMM = 0) {
+export async function seamPlanPattern(spec, body) {
   const engine = await loadEngine();
-  return JSON.parse(engine.planJSON(String(sizeLabel), Number(neckDropMM) || 0));
+  return JSON.parse(engine.planJSON(spec, body));
 }
 
 /** The FLAT reading — the technical drawing. What gets sold. */
-export async function seamPlanFlat(sizeLabel, neckDropMM = 0) {
+export async function seamPlanFlat(spec, body) {
   const engine = await loadEngine();
-  return JSON.parse(engine.flatJSON(String(sizeLabel), Number(neckDropMM) || 0));
+  return JSON.parse(engine.flatJSON(spec, body));
 }
 
 /**
