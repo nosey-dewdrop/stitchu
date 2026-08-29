@@ -144,3 +144,18 @@ core/third_party/.rabadon/
 # the drawing path's own venv (numpy/scipy/matplotlib/svgpathtools/pyyaml,
 # no GarmentCode): recreated with python3 -m venv + pip install
 engine/pattern-bridge/.venv/
+
+# run archives and gate outputs — regenerable, never shared history.
+# reports/ and Logs/ were a run-log dump: every gate run left a dated .md/.txt
+# and a render folder in the tree, so a new reader met the archive before the
+# product. The whole of both folders is now ignored, not just single entries.
+reports/
+# engine/imitate/tur-<N>.json is written by tur.mjs at the end of every imitate
+# round; teshis-rapor.json is written by teshis.mjs. Both are a run's printout,
+# the durable result is engine/imitate/learned/.
+engine/imitate/tur-*.json
+engine/imitate/teshis-rapor.json
+# flat-metre rasterises the flats to out/*.png and writes metre-sonuc.json on
+# every measurement run (rasterize.mjs + flat-metre.py). Pure run artefacts.
+engine/tools/flat-metre/out/
+engine/tools/flat-metre/metre-sonuc.json
