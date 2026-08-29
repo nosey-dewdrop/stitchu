@@ -1,9 +1,0 @@
-# Student CV training skeleton. Tested with Python 3.11 on Apple Silicon (MPS).
-# torch>=2.2 has MPS support; onnxruntime-web consumes what onnx exports here.
-torch>=2.2
-torchvision>=0.17
-onnx>=1.15
-onnxscript>=0.7    # required by torch>=2.13 onnx exporter (dynamo path)
-onnxruntime>=1.17
-pillow>=10.0
-numpy>=1.24

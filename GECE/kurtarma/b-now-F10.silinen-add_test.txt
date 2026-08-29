@@ -1,2 +1,0 @@
-add_test([=[landing_truth_check]=] "/Users/damummyphus/damla_projects_2026/stitchu/engine/tests/landing_truth_check.sh")
-set_tests_properties([=[landing_truth_check]=] PROPERTIES  _BACKTRACE_TRIPLES "/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;707;add_test;/Users/damummyphus/damla_projects_2026/stitchu/engine/CMakeLists.txt;0;")

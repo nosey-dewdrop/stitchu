@@ -78,6 +78,16 @@ const REDIRECTS = [
        + 'page is an honest successor. Stub removed rather than repointed: a redirect into a '
        + '404 lands the visitor in the same place as a plain 404 and lies on the way.',
   },
+  {
+    stub: 'web/collection-60s70s.html',
+    target: null,
+    why: 'H1 "depo temiz": the 60s/70s vitrine and web/collections/ were the showcase for flats '
+       + 'Damla rejected, and both are removed. Its producer gen-vintage-page.mjs is removed in '
+       + 'the same commit (it could not run anyway: af49514 deleted the meta.json it reads), so '
+       + 'the page had no producer and no successor. Not repointed: every candidate destination '
+       + '(collections/, patterns/) is itself deleted, and aiming old links at web/index.html '
+       + 'would invent a destination for a page that was a gallery, not a landing page.',
+  },
 ];
 
 const stubHTML = (targetRel, canonical) => `<!DOCTYPE html>

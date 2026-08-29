@@ -1,9 +1,0 @@
-# V10-J MUTASYON — landing_truth_check L2'ye eklenen İKİ yeni kalıp.
-# Fikstür: git worktree /tmp/v10j-fix (web/ DIŞINDA), gate --dir=/tmp/v10j-fix/web.
-# Enjeksiyon: fikstür index.html <body> altına tek <p data-tr="...">.
-# 'sayilan' = kapının L2 dökümünde o KALIP ADIYLA bastığı hit sayısı.
-#
-MUT  [ölçülerine göre (TR)]  exit=1  sayilan=1  HÜKÜM: FAIL — L1 937/937 · L2 1/0 AŞTI · L3 0/0 · L4 0/0 · L5 4/4
-GERI [ölçülerine göre (TR)]  exit=0  HÜKÜM: YEŞİL — L1 937/937 · L2 0/0 · L3 0/0 · L4 0/0 · L5 4/4
-MUT  [kişiye özel (TR)]  exit=1  sayilan=1  HÜKÜM: FAIL — L1 937/937 · L2 1/0 AŞTI · L3 0/0 · L4 0/0 · L5 4/4
-GERI [kişiye özel (TR)]  exit=0  HÜKÜM: YEŞİL — L1 937/937 · L2 0/0 · L3 0/0 · L4 0/0 · L5 4/4

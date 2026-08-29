@@ -66,6 +66,15 @@ design_patterns/
 # screenshots were tracked before this rule; gitignore shields the new files.
 new_flats/
 
+# purchased Bugra A0/A4 pattern PDFs + the traced geometry taken off them (paid
+# IP). CLAUDE.md has said "never push, gitignore'da" since July while the tree
+# actually carried 41 tracked files; H1 "depo temiz" closes that contradiction.
+# The files STAY ON DISK — they are the blind-control input for a later phase —
+# they just leave the public git. Removing them from HEAD is not enough on its
+# own: the blobs were scrubbed out of history in the same pass with
+#   git filter-repo --path patterns_real --invert-paths
+patterns_real/
+
 # fashion-flat template images (Zoe Hong / Shutterstock, copyrighted) — local-only
 # calibration source. The MEASURED RATIOS live in contract/figure-bands.json with
 # source attribution; the raster stays out of the public repo (same rule as benchmark-58).

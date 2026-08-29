@@ -1,8 +1,0 @@
-=== F10 MUTASYON KANITI (sef kosturdu, 22 Agu) ===
-mutasyon: landing-yalan
-komut: perl -0pi -e 's|</body>|<p>seams match to 0.00 mm across a 70,200-draft matrix.</p></body>|' web/index.html
-temiz agac        -> landing_truth_check A=0 B=0 C=0 YESIL, exit 0
-mutasyon sonrasi  -> landing_truth_check A=2 B=0 C=0 FAIL,  exit 1
-                     (yakalanan: "0.00 mm" ve "70,200-draft", ikisi de beyansiz)
-geri alindi       -> exit 0
-yani kapi bos degil: sayfaya beyansiz bir sayi girerse oluyor.

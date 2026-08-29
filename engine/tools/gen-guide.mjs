@@ -5,7 +5,9 @@
 // The garment content is drawn from knowledge/sewing-guide.md (fabric weight/
 // drape logic + the 9-phase construction order); every fabric fact traces to the
 // Extension fibre guides already in web/data/fabrics.json. The index page is
-// hand-authored (web/guide/index.html) and NOT touched by this script.
+// emitted by this script too (see INDEX_SECTIONS at the bottom); it was
+// hand-authored until H1 "depo temiz", which is why guard.json's
+// generated-web-html rule had no producer to point at for that one path.
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -226,9 +228,7 @@ function head(p) {
   <nav class="sh-nav">
     <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
     <a href="index.html" class="sh-active" data-en="guide" data-tr="rehber">guide</a>
-    <a href="../styles/index.html" data-en="styles" data-tr="stiller">styles</a>
     <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
-    <a href="../patches.html" data-en="Patch Notes" data-tr="Yama Notları">Patch Notes</a>
     <a href="../api.html" data-en="API" data-tr="API">API</a>
     <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
   </nav>
@@ -281,11 +281,11 @@ function foot(p, ctaHref, ctaLabel) {
     <a class="sb-btn sb-primary" href="${ctaHref}">${esc(ctaLabel)}</a>
     <a class="cta2" href="index.html">Back to the sewing guide →</a>
   </div>
-  <p class="also">Every fabric fact is sourced (Extension fibre guides); the order is the standard tailoring sequence from Aldrich, Armstrong and the Reader's Digest guide. When the engine cannot draft a detail it says so on the <a href="../patches.html">result and the patch notes</a>, never a silent guess.</p>
+  <p class="also">Every fabric fact is sourced (Extension fibre guides); the order is the standard tailoring sequence from Aldrich, Armstrong and the Reader's Digest guide. When the engine cannot draft a detail it says so on the result, never a silent guess.</p>
 </div>
 <footer>
   <span>stitchu · the pattern-making engine</span>
-  <span><a href="../index.html">home</a> · <a href="index.html">sewing guide</a> · <a href="../styles/index.html">styles</a> · <a href="../privacy.html">privacy</a></span>
+  <span><a href="../index.html">home</a> · <a href="index.html">sewing guide</a> · <a href="../privacy.html">privacy</a></span>
 </footer>
 <script src="../js/shared-header.js?${V}"></script>
 </body>
@@ -332,4 +332,148 @@ for (const p of PAGES) {
   writeFileSync(join(OUT, `${p.slug}.html`), body);
   n++;
 }
+
+// --------------------------------------------------------------- INDEX PAGE
+// H1 "depo temiz": web/guide/index.html USED TO BE HAND-AUTHORED, and this file
+// said so in its own header — which made guard.json's generated-web-html rule
+// ("web/guide/*.html is generated; change the generator, not the HTML") FALSE
+// for this one path, exactly the contradiction TUR 18 hit on web/blog/index.html.
+// It surfaced the moment the nav had to lose its links to the deleted
+// web/styles/ and web/patches.html: the guard rightly DENIED the hand-edit and
+// there was no producer to run. So the path is given its producer here.
+//
+// The card list is DECLARED DATA, not prose: every entry must name a slug that
+// exists in PAGES above, and a card pointing at a page this script does not
+// emit is FATAL. A dead link therefore cannot be written into the index.
+const INDEX_SECTIONS = [
+  ['Start here', [
+    ['choosing-fabric', 'Choosing fabric: weight and drape',
+      'The one rule that picks the cloth: a shape that stands away from the body wants a fabric that holds its shape; a shape that falls close wants one that drapes. What that means in grams.'],
+    ['construction-order', 'The order to sew, and why',
+      'Build flat for as long as you can. The nine-phase sequence every garment follows, and why setting a sleeve too early or hemming too soon costs you.'],
+  ]],
+  ['By garment', [
+    ['fitted-dress', 'A fitted dress',
+      'Princess or dart, natural waist, clean lines. The fabric that holds the fit, and the flat-to-tube order that keeps the seams crisp.'],
+    ['babydoll-dress', 'A babydoll / gathered dress',
+      'Empire waist, gathers, ruffles. The soft-medium cloth that fills the gathers without turning them into cardboard, plus how to gather evenly.'],
+    ['a-line-skirt', 'An A-line or straight skirt',
+      'A shape that stands away wants a crisp medium woven. Fabric, the short flat-then-close order, and the walking vent detail.'],
+    ['collared-top', 'A collared / button top',
+      'A collar stand and a placket only stand up on a fabric that presses sharp. The crisp cloth, the interfacing that matters as much, and the order.'],
+  ]],
+];
+
+const emitted = new Set(PAGES.map((p) => p.slug));
+for (const [, cards] of INDEX_SECTIONS) {
+  for (const [slug] of cards) {
+    if (!emitted.has(slug)) {
+      console.error(`FATAL gen-guide: index card "${slug}" names a page this script does not emit`);
+      process.exit(1);
+    }
+  }
+}
+
+let idx = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%272%27 fill=%27%231f3a5f%27/%3E%3Cline x1=%276%27 y1=%2716%27 x2=%2726%27 y2=%2716%27 stroke=%27%23fff%27 stroke-width=%273%27 stroke-dasharray=%275 4%27/%3E%3C/svg%3E">
+<title>Sewing guide, which fabric and which order · stitchu</title>
+<meta name="description" content="Once the pattern is drafted: which fabric to use and why (weight and drape), and the order to sew it in. A companion for every garment the stitchu engine drafts.">
+<link rel="canonical" href="https://stitchu.noseydewdrop.com/guide/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="stitchu">
+<meta property="og:title" content="Sewing guide, which fabric and which order · stitchu">
+<meta property="og:description" content="Which fabric to use and why, and the order to sew a garment together. A companion for every pattern the stitchu engine drafts.">
+<meta property="og:url" content="https://stitchu.noseydewdrop.com/guide/">
+<meta property="og:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://stitchu.noseydewdrop.com/assets/og-card.png">
+<meta name="twitter:title" content="Sewing guide, which fabric and which order · stitchu">
+<meta name="twitter:description" content="Which fabric to use and why, and the order to sew a garment together.">
+<link rel="stylesheet" href="../css/theme-transitions.css?${V}">
+<link rel="stylesheet" href="../css/shared-header.css?${V}">
+<link rel="stylesheet" href="../css/shared-button.css?${V}">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"stitchu","item":"https://stitchu.noseydewdrop.com/"},{"@type":"ListItem","position":2,"name":"Sewing guide","item":"https://stitchu.noseydewdrop.com/guide/"}]}</script>
+<style>
+  :root{ --bb:#8fbfe8; --bb-deep:#3f74a8; --bb-pale:#dceaf7; --bb-line:#bcd7ee; --navy:#1f3a5f; --ink:#2b4a6b; --visne:#8f2038; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Helvetica,Arial,sans-serif;color:var(--navy);background:#fff;line-height:1.55;overflow-x:hidden}
+  a{color:var(--bb-deep)}
+  .brandpatch{position:relative;display:inline-block;box-sizing:border-box;padding:4px 12px;background:#1f3a5f;border:1px solid #1f3a5f;border-radius:2px;font-family:'Didot','Bodoni 72',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.5px;line-height:1;color:#fff;text-decoration:none;white-space:nowrap;vertical-align:middle;transition:background .18s}
+  .brandpatch::after{content:"";position:absolute;inset:4px;border:1.5px dashed rgba(255,255,255,.85);border-radius:2px;opacity:.9;pointer-events:none;transition:inset .18s}
+  .brandpatch:hover{background:#2b4f7a}
+  .brandpatch:hover::after{inset:5px}
+  .sh-nav a:hover,.sh-nav a.sh-active{border-bottom-color:var(--bb-deep)}
+  .wrap{max-width:840px;margin:0 auto;padding:14px 32px 90px}
+  .crumbs{font-size:12px;color:#5b7089;letter-spacing:.4px;margin-bottom:20px}
+  .crumbs a{text-decoration:none;color:var(--bb-deep)}
+  h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:38px;line-height:1.14;font-weight:400;margin:10px 0 14px;max-width:24ch;color:var(--navy)}
+  h1 em{font-style:italic}
+  .lead{font-size:15px;color:var(--ink);max-width:64ch;margin-bottom:34px}
+  h2{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:24px;font-weight:400;margin:40px 0 12px;color:var(--navy)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:14px 0 6px}
+  .card{display:block;background:#fff;border:1px solid var(--bb-line);border-radius:3px;padding:18px 20px;text-decoration:none;color:var(--navy);box-shadow:0 6px 20px rgba(63,116,168,.09);transition:border-color .18s,box-shadow .18s}
+  .card:hover{border-color:var(--bb-deep);box-shadow:0 10px 30px rgba(63,116,168,.18)}
+  .card .nm{font-family:'Didot',Georgia,serif;font-size:19px;margin-bottom:6px;color:var(--navy)}
+  .card .ds{font-size:12.5px;color:var(--ink);line-height:1.45}
+  .fact{font-size:13.5px;color:var(--ink);max-width:66ch;margin-bottom:12px}
+  .actions{margin-top:36px;display:flex;align-items:baseline;flex-wrap:wrap;gap:16px}
+  .cta2{display:inline-block;font-size:13px;letter-spacing:.4px;color:var(--bb-deep);text-decoration:none;border-bottom:1px dashed var(--bb);padding-bottom:2px}
+  .cta2:hover{border-bottom-color:var(--bb-deep)}
+  footer{padding:26px 40px;font-size:12px;color:#5b7089;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--bb-line);margin-top:40px}
+  footer a{color:var(--navy);text-decoration:none}
+</style>
+</head>
+<body>
+<header class="sh-header">
+  <a class="brandpatch" href="../index.html">stitchu</a>
+  <nav class="sh-nav">
+    <a href="../create.html" data-en="Create" data-tr="Çiz">Create</a>
+    <a href="index.html" class="sh-active" data-en="guide" data-tr="rehber">guide</a>
+    <a href="../benchmark.html" data-en="Benchmark" data-tr="Kıyaslama">Benchmark</a>
+    <a href="../api.html" data-en="API" data-tr="API">API</a>
+    <span class="sh-lang"><button id="lang-en">EN</button><span>·</span><button id="lang-tr">TR</button></span>
+  </nav>
+</header>
+<div class="wrap">
+  <p class="crumbs"><a href="../index.html">stitchu</a> / sewing guide</p>
+  <h1>You drafted it. <em>Now sew it.</em></h1>
+  <p class="lead">The pattern is only half the job. The other half is which fabric to use and why, and the order to put it together. Every page here is built on one rule set, the same one the result screen and the printed cover use, so the advice never contradicts itself. Fabric facts are sourced (Extension fibre guides); the construction order is the standard tailoring sequence from Aldrich, Armstrong and the Reader's Digest guide.</p>
+`;
+for (const [heading, cards] of INDEX_SECTIONS) {
+  idx += `
+  <h2>${esc(heading)}</h2>
+  <div class="grid">`;
+  for (const [slug, nm, ds] of cards) {
+    idx += `
+    <a class="card" href="${slug}.html">
+      <div class="nm">${esc(nm)}</div>
+      <div class="ds">${esc(ds)}</div>
+    </a>`;
+  }
+  idx += `
+  </div>
+`;
+}
+idx += `
+  <div class="actions">
+    <a class="sb-btn sb-primary" href="../create.html">Draft a pattern, true-scale A4, free</a>
+  </div>
+</div>
+<footer>
+  <span>stitchu · the pattern-making engine</span>
+  <span><a href="../index.html">home</a> · <a href="index.html">sewing guide</a> · <a href="../privacy.html">privacy</a></span>
+</footer>
+<script src="../js/shared-header.js?${V}"></script>
+</body>
+</html>
+`;
+writeFileSync(join(OUT, 'index.html'), idx);
+n++;
+
 console.log(`gen-guide: wrote ${n} pages to web/guide/`);

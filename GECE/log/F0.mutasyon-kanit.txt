@@ -1,3 +1,0 @@
-[mutasyon F0] --- uretilmis-dosya-elle -> generated_ratchet_check
-[mutasyon F0] uretilmis-dosya-elle: TAMAM -- nesne bozulunca 'generated_ratchet_check' kirmiziya dondu
-[mutasyon F0] MUTASYON GECTI -- kapi gercekten bir NESNE olcuyor

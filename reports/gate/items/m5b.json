@@ -1,4 +1,0 @@
-{ "slug": "m5", "label": "5 · Fit-and-flare 60s elbise (F2 kalem)", "flatSvgPath": "reports/gate/f2render/m5-flat.svg",
-  "family": "fitFlare", "terms": ["empire waist"], "props": { "skirtFull": 2.0, "waistNip": 0.08 },
-  "pieces": 6, "garmentKind": "dress",
-  "note": "F2 kalem: prenses dikişli oturan gövde + açılan etek, anatomik seam + 3 katman." }

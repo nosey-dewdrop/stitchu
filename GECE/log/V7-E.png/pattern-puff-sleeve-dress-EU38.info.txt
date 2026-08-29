@@ -1,6 +1,0 @@
-garment: A-line straight-sleeve dress
-pieces: 10 (Bodice Center Front | Bodice Side Front | Bodice Center Back | Bodice Side Back | Bias binding (neckline) | Skirt Center Front | Skirt Side Front | Skirt Center Back | Skirt Side Back | Puff Sleeve)
-paper pieces: 9
-cols: 3  rows: 9  printed sheets: 27
-fabric: 2.8 m @140cm
-issues: []

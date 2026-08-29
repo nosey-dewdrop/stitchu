@@ -1,4 +1,0 @@
-{ "slug": "m1", "label": "1 · Prenses fitted elbise (F2 kalem)", "flatSvgPath": "reports/gate/f2render/m1-flat.svg",
-  "family": "princess", "terms": ["princess seam"], "props": { "waistNip": 0.09, "bustProject": 0.5 },
-  "pieces": 6, "garmentKind": "dress",
-  "note": "F2 düzeltmesi: iç prenses dikişi artık oyuntu→apex→bel anatomik S (parantez gitti); çizgi 3 katman (kontur 2.0/dikiş 1.4/işaret 1.0). gusto line_hierarchy 0.667→1.0, overall 0.933→0.97." }

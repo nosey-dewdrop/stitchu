@@ -1,4 +1,0 @@
-{ "slug": "__wrap_dress_pending__", "label": "2 · Wrap elbise",
-  "family": "wrap", "terms": ["gathered"], "props": { "skirtFull": 1.9, "drape": 1.2 },
-  "pieces": 5, "garmentKind": "dress",
-  "note": "Hedef F1: sarma (wrap) elbise — çapraz ön, bel bağı. Mevcut render YOK, F1 primitifi (FlaredAppendage + tie) üretecek." }

@@ -25,9 +25,12 @@ const here = dirname(fileURLToPath(import.meta.url));
 const WEB = join(here, '../../web');
 
 // Every page that MUST carry the canonical header.
+// H1 "depo temiz" removed patches.html, collection-60s70s.html and
+// collections/index.html from the site; they are dropped here in the same
+// commit so this tool reports a real drift instead of a stale expectation.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html',
-  'collections/index.html', 'api.html', 'privacy.html', 'studio.html',
+  'showcase.html', 'signature.html',
+  'api.html', 'privacy.html', 'studio.html',
   // GECE7 / F8: the AL DENE page. A page that ships with a hand-edited copy of
   // the header drifts silently, and this one is the entry point a stranger is
   // handed, so it is the worst page to let drift.
@@ -38,8 +41,10 @@ const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
 // tool kept reading that directory and CRASHED at readdirSync (ENOENT), so
 // scripts/deploy.sh proof #2 has been unrunnable ever since. A missing or
 // empty declared dir is now a LOUD failure — never a crash, never a silent
-// skip (Tur 9 katman-lint class).
-const REQUIRED_DIRS = ['styles'];
+// skip (Tur 9 katman-lint class). `styles/` left the same way in H1 "depo
+// temiz" (the style library and its producer were deleted together), so the
+// one surviving generated page class is `guide/`.
+const REQUIRED_DIRS = ['guide'];
 let dirFail = 0;
 const subdirPages = REQUIRED_DIRS.flatMap((d) => {
   let names;

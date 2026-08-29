@@ -1,8 +1,0 @@
-olculen       : commit HEAD (e2f7aba)
-taban commit  : 94870917d17c686780c0d5f275850292c0393374
-taban toplam  : 10418
-bugun toplam  : 10418 (delta +0)
-
-
-vocab_reference_check: 37 eksen + 92 kelime olculdu
-HUKUM: YESIL — hicbir sayi tabanin ustune cikmadi.

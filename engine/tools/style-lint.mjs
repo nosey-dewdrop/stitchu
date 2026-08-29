@@ -37,10 +37,14 @@ const weOurAllow = (allow.weOur || []).map((s) => s.toLowerCase());
 
 // ---- file list -------------------------------------------------------------
 const htmlFiles = [];
+// patches.html and collection-60s70s.html (and the styles/ + collections/ page
+// classes below) were deleted by H1 "depo temiz"; the existsSync guard already
+// skipped them silently, so the stale names are dropped here rather than left
+// to read as pages this lint still covers.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'patches.html', 'showcase.html', 'collection-60s70s.html', 'signature.html', 'api.html', 'privacy.html', 'studio.html'];
+  'showcase.html', 'signature.html', 'api.html', 'privacy.html', 'studio.html'];
 for (const f of mainPages) if (existsSync(join(WEB, f))) htmlFiles.push(f);
-for (const sub of ['styles', 'patterns', 'guide', 'blog', 'collections']) {
+for (const sub of ['patterns', 'guide', 'blog']) {
   const dir = join(WEB, sub);
   if (!existsSync(dir)) continue;
   for (const f of readdirSync(dir)) if (f.endsWith('.html')) htmlFiles.push(`${sub}/${f}`);
