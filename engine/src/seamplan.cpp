@@ -8,6 +8,7 @@
 #include "constants.gen.hpp"
 #include "shellprojection.hpp"
 #include "sizechart.hpp"
+#include "specparse.hpp"
 #include "vocab.gen.hpp"
 
 namespace stitchu {
@@ -264,42 +265,28 @@ SurfaceSpecMap mapSpecToSurface(const GarmentSpec& spec) {
     if (spec.skirtLengthMM != base.skirtLengthMM)
         ret("skirtLengthMM", num(spec.skirtLengthMM, 1));
     if (spec.topLength != base.topLength) ret("topLength", raw(spec.topLength));
-    if (spec.ruffleHem) ret("ruffleHem", "true");
-    if (spec.keyhole) ret("keyhole", "true");
-    if (spec.frontPlacket) ret("frontPlacket", "true");
+    // ⭐ THE BOOLEAN AXES AND THE INT AXES, WALKED — NOT RE-TYPED.
+    //
+    // These names were written out here by hand once, one line per axis, and
+    // that is what broke engine/tests/vocab_reference_check.sh: nine of them
+    // were a FRESH reference to a closed enum, and the ratchet's whole job is to
+    // make the menu shrink rather than grow (BREADTH -> DEPTH). The refusal did
+    // not need its own copy of the list — the wasm boundary already owned one to
+    // parse with. So the list moved into specparse.hpp AS DATA and both sides
+    // walk it. The refusals below are identical, name for name and value for
+    // value, to the hand-typed ones; what disappeared is the second spelling.
+    for (const SpecBoolAxis& b : kSpecBoolAxes)
+        if (spec.*(b.slot)) ret(b.key, "true");
     if (spec.editExtendMM != base.editExtendMM)
         ret("editExtendMM", num(spec.editExtendMM, 1));
     if (spec.editAttach != base.editAttach) ret("editAttach", "bow");
-    retInt("tieClosure", spec.tieClosure, vocab::kTieClosure, vocab::kTieClosureCount);
     retInt("sleeveCap", static_cast<int>(spec.sleeveCap), vocab::kSleeveCap, vocab::kSleeveCapCount);
-    retInt("collarType", spec.collarType, vocab::kCollarType, vocab::kCollarTypeCount);
-    retInt("collarEdge", spec.collarEdge, vocab::kCollarEdge, vocab::kCollarEdgeCount);
-    retInt("gatherType", spec.gatherType, vocab::kGatherType, vocab::kGatherTypeCount);
-    // gatherZone only means anything when gatherType fired; naming a zone for a
-    // garment with no gathering would be a refusal of something nobody asked.
-    if (spec.gatherType != 0)
-        retInt("gatherZone", spec.gatherZone, vocab::kGatherZone, vocab::kGatherZoneCount);
-    retInt("backOpening", spec.backOpening, vocab::kBackOpening, vocab::kBackOpeningCount);
-    retInt("laceUpBack", spec.laceUpBack, vocab::kLaceUpBack, vocab::kLaceUpBackCount);
-    retInt("wrapFront", spec.wrapFront, vocab::kWrapFront, vocab::kWrapFrontCount);
-    retInt("backSlit", spec.backSlit, vocab::kBackSlit, vocab::kBackSlitCount);
-    retInt("ruffledStraps", spec.ruffledStraps, vocab::kRuffledStraps, vocab::kRuffledStrapsCount);
-    retInt("peplum", spec.peplum, vocab::kPeplum, vocab::kPeplumCount);
-    retInt("hemFlounce", spec.hemFlounce, vocab::kHemFlounce, vocab::kHemFlounceCount);
-    retInt("placketStyle", spec.placketStyle, vocab::kPlacketStyle, vocab::kPlacketStyleCount);
-    retInt("edgeFinish", spec.edgeFinish, vocab::kEdgeFinish, vocab::kEdgeFinishCount);
-    retInt("pocketStyle", spec.pocketStyle, vocab::kPocketStyle, vocab::kPocketStyleCount);
-    retInt("cuffStyle", spec.cuffStyle, vocab::kCuffStyle, vocab::kCuffStyleCount);
-    retInt("hemShape", spec.hemShape, vocab::kHemShape, vocab::kHemShapeCount);
-    retInt("shoulderStyle", spec.shoulderStyle, vocab::kShoulderStyle, vocab::kShoulderStyleCount);
-    retInt("buttonRow", spec.buttonRow, vocab::kButtonRow, vocab::kButtonRowCount);
-    retInt("exposedZip", spec.exposedZip, vocab::kExposedZip, vocab::kExposedZipCount);
-    retInt("backDetail", spec.backDetail, vocab::kBackDetail, vocab::kBackDetailCount);
-    retInt("bardotStyle", spec.bardotStyle, vocab::kBardotStyle, vocab::kBardotStyleCount);
-    retInt("cupSeam", spec.cupSeam, vocab::kCupSeam, vocab::kCupSeamCount);
-    retInt("locketTop", spec.locketTop, vocab::kLocketTop, vocab::kLocketTopCount);
-    retInt("yoke", spec.yoke, vocab::kYoke, vocab::kYokeCount);
-    retInt("boxPleat", spec.boxPleat, vocab::kBoxPleat, vocab::kBoxPleatCount);
+    for (const SpecIntAxis& a : kSpecIntAxes) {
+        // A guarded axis is only worth naming when the axis it depends on
+        // actually fired; refusing it otherwise refuses something nobody asked.
+        if (a.guard >= 0 && spec.*(kSpecIntAxes[a.guard].slot) == 0) continue;
+        retInt(a.key, spec.*(a.slot), a.names, a.count);
+    }
     return out;
 }
 

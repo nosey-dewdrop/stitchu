@@ -206,41 +206,20 @@ GarmentSpec buildSpec(const val& o) {
         spec.skirtLengthMM = (std::isfinite(lenMM) && lenMM > 0) ? lenMM : 0;
     }
     spec.topLength = topLengthFrom(strField(o, "topLength", "hip"));
-    spec.ruffleHem = boolField(o, "ruffleHem");
     const int tiers = intField(o, "ruffleTiers");
     spec.ruffleTiers = tiers ? tiers : 1; // engine clamps 1..5
-    spec.keyhole = boolField(o, "keyhole");
-    spec.frontPlacket = boolField(o, "frontPlacket");
+    // ⭐ ONE LIST, WALKED TWICE (H2 second pass). The axis names used to be typed
+    // out here AND again in seamplan.cpp's refusal list, and a second hand-typed
+    // reference to a closed enum is exactly what vocab_reference_check counts as
+    // the menu GROWING. The names now live in specparse.hpp as data; this loop
+    // reads them, and mapSpecToSurface's refusal walks the very same rows.
+    for (const SpecBoolAxis& b : kSpecBoolAxes) spec.*(b.slot) = boolField(o, b.key);
     // Every int enum range-checked against the generated vocabulary; an
     // out-of-range value is an error, never a silent None/default.
-    spec.tieClosure = enumIntField(o, "tieClosure", kTieClosure, kTieClosureCount);
+    for (const SpecIntAxis& a : kSpecIntAxes)
+        spec.*(a.slot) = enumIntField(o, a.key, a.names, a.count);
     spec.sleeveCap = static_cast<SleeveCap>(
         enumIntField(o, "sleeveCap", kSleeveCap, kSleeveCapCount));
-    spec.collarType = enumIntField(o, "collarType", kCollarType, kCollarTypeCount);
-    spec.collarEdge = enumIntField(o, "collarEdge", kCollarEdge, kCollarEdgeCount);
-    spec.gatherType = enumIntField(o, "gatherType", kGatherType, kGatherTypeCount);
-    spec.gatherZone = enumIntField(o, "gatherZone", kGatherZone, kGatherZoneCount);
-    spec.backOpening = enumIntField(o, "backOpening", kBackOpening, kBackOpeningCount);
-    spec.laceUpBack = enumIntField(o, "laceUpBack", kLaceUpBack, kLaceUpBackCount);
-    spec.wrapFront = enumIntField(o, "wrapFront", kWrapFront, kWrapFrontCount);
-    spec.backSlit = enumIntField(o, "backSlit", kBackSlit, kBackSlitCount);
-    spec.ruffledStraps = enumIntField(o, "ruffledStraps", kRuffledStraps, kRuffledStrapsCount);
-    spec.peplum = enumIntField(o, "peplum", kPeplum, kPeplumCount);
-    spec.hemFlounce = enumIntField(o, "hemFlounce", kHemFlounce, kHemFlounceCount);
-    spec.placketStyle = enumIntField(o, "placketStyle", kPlacketStyle, kPlacketStyleCount);
-    spec.edgeFinish = enumIntField(o, "edgeFinish", kEdgeFinish, kEdgeFinishCount);
-    spec.pocketStyle = enumIntField(o, "pocketStyle", kPocketStyle, kPocketStyleCount);
-    spec.cuffStyle = enumIntField(o, "cuffStyle", kCuffStyle, kCuffStyleCount);
-    spec.hemShape = enumIntField(o, "hemShape", kHemShape, kHemShapeCount);
-    spec.shoulderStyle = enumIntField(o, "shoulderStyle", kShoulderStyle, kShoulderStyleCount);
-    spec.buttonRow = enumIntField(o, "buttonRow", kButtonRow, kButtonRowCount);
-    spec.exposedZip = enumIntField(o, "exposedZip", kExposedZip, kExposedZipCount);
-    spec.backDetail = enumIntField(o, "backDetail", kBackDetail, kBackDetailCount);
-    spec.bardotStyle = enumIntField(o, "bardotStyle", kBardotStyle, kBardotStyleCount);
-    spec.cupSeam = enumIntField(o, "cupSeam", kCupSeam, kCupSeamCount);
-    spec.locketTop = enumIntField(o, "locketTop", kLocketTop, kLocketTopCount);
-    spec.yoke = enumIntField(o, "yoke", kYoke, kYokeCount);
-    spec.boxPleat = enumIntField(o, "boxPleat", kBoxPleat, kBoxPleatCount);
     // ⭐ EDIT KATMANI (GECE7 / F7) — the two fields that carry "10 cm uzat" and
     // "fiyonk ekle" across the wire. Both are UNDECLARED by default and an
     // undeclared edit leaves the draft byte-identical (RULES 4). An out-of-range
