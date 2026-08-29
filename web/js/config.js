@@ -14,10 +14,12 @@ export const BACKEND_URL = 'https://stitchu-api.damummyphus.workers.dev'; // e.g
 // safe direction: an unconfigured key hides the feature instead of shipping an
 // unprotected wallet. The Worker refuses too, independently.
 //
-// To turn it on: Cloudflare dashboard -> Turnstile -> Add widget (Invisible),
-// paste the site key here and `npx wrangler secret put TURNSTILE_SECRET`.
+// Widget "stitchu-analyze", created 29 Aug 2026 on Damla's Cloudflare account:
+// mode invisible, bound to exactly the two live hostnames guard.js allows
+// (stitchu.noseydewdrop.com, nosey-dewdrop.github.io). The secret half is on
+// the Worker as TURNSTILE_SECRET and appears in no file.
 // Cloudflare's always-passes TEST pair, for gate runs only:
 //   site 1x00000000000000000000AA / secret 1x0000000000000000000000000000000AA
-export const TURNSTILE_SITE_KEY = '';
+export const TURNSTILE_SITE_KEY = '0x4AAAAAAEg0S7wJw3WSbzpj';
 
 export const THREADS = ['#3EB8AF', '#C4767B', '#B8963E', '#7A8450', '#3E5C76', '#7E5A75'];
