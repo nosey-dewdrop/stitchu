@@ -681,8 +681,17 @@ H5 ve H6 karşılıklı bağlı. H5'in distorsiyon eşiği H6'nın kumaş verisi
 
 Fazlar bittikçe buraya yazılır.
 
-```
-## H1 — Depo temiz — <durum>
-ölçülen:   eşik:   commit:
-hakem notu:
-```
+## H1 — Depo temiz — GEÇTİ (KART YANLIŞ ×1, KALDI ×1)
+ölçülen: 799 · 0 · 0   eşik: ≤800 · 0 · 0   commit: `f57fb75`
+hakem notu: 1397 dosya silindi, `engine/src` ve `web/js` diff'te hiç yok, hiçbir kapı gevşetilmedi, yeni kırmızı kapı yok.
+
+**Kartın iki revizyonu.**
+1. *KART YANLIŞ (hakem).* Orijinal kabul komutunun ikinci ölçümü (`git log --all --diff-filter=A --name-only | grep -c patterns_real`) commit MESAJI gövdesini de sayıyordu; 17 isabetin 17'si eski hakem raporlarının düz metniydi, dosya yolu değil. Bu haliyle kart ajanı asla sıfırlanamayacak bir sayının peşine düşürüyordu. Hakem ölçümü yol/nesne düzeyine çekti (`git rev-list --all --objects | grep -c 'patterns_real/'`) ve **üçüncü bir eşik ekledi** (`git ls-files reports Logs` = 0), çünkü `reports/gate/` silinmişti ama `reports/` (13 dosya) ve `Logs/` (1) takipte kalmıştı. 800 eşiği aynen korundu; hiçbir yer gevşetilmedi.
+2. *KALDI (hakem).* Üç sayı tuttu ama `vision-student/` ağacı silinirken canlı bir build product gitti: `vision-student/vocab.py`, `engine/CMakeLists.txt:1037`'deki `vocab_source_check` ctest'inin denetlediği dosya. Hakem kapıyı koştu: `FAIL: vision-student/vocab.py missing`. İkinci ajan dosyayı üreticisinden yeniden üretti ve canlı tüketicisi olan 6 dosya daha geri geldi (`model.py`, `infer_cascade.py`, `engine-check/harness/` ×4).
+
+**Ölçülen yan sonuçlar.** ctest 133 kapıda 4 kırmızı — `flat_artifact_census`, `style_check`, `sizechart_source_check`, `figure_check`. Dördü de bu koşudan ÖNCE kırmızıydı, gerekçeleri kendi commit başlıklarında yazılı, script'lerine ve girdilerine bu koşuda dokunulmadı. `vitrin_check` sıkıldı (patterns_real "tam 41 takipli" → "0 takipli"). `bugra_bridge_check`'in silinen pini `reports/gate/kopru-v1/` → `engine/tests/pins/kopru-v1/` taşındı, aynı bayt. `site-health` 0 ölü iç link (311 href/src + 16 sitemap URL diskte doğrulandı). `patterns_real/` diskte 66MB, `.gitignore:76`'da, git'te 0.
+
+**Damla'nın bilmesi gereken üç şey.**
+- `patterns_real/` history'den kazındığı için **yerel `main` GitHub'daki `main` ile ortak geçmişe sahip değil.** Bir sonraki push force-push olmak zorunda. Kart push'u yasakladı, yapılmadı.
+- **Uzak repo hâlâ kirli:** GitHub'daki `nosey-dewdrop/stitchu` main'inde 41 `patterns_real/` dosyası duruyor. "patterns_real git history'den çıktı" cümlesi bugün sadece yerelde doğru.
+- `stitchu/CLAUDE.md` hâlâ `HEDEF.md`'yi "reponun en üst otoritesi" ilan ediyor ve silinen `GECE*/`, `flatten-research/`, `reports/gate/` yollarına atıf yapıyor. CLAUDE.md gitignore'da olduğu için kapıya takılmadı. KOSU-v8 o dosyaların yerini alıyor.
