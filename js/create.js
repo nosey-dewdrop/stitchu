@@ -18,7 +18,7 @@ import { measureGarment } from './measure.js?v=141';
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatGaps } from './download.js?v=141';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG } from './download.js?v=141';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
 import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=141';
@@ -1084,16 +1084,18 @@ function downloadPanel(result) {
   // no badge, no "you are on the new line" — the shopper sees their garment.
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
   wire(flatBtn, async () => {
-    const gaps = flatGaps(spec);   // throws exactly where saveFlatSVG would
     // The flat leaves with the origin record on its root element.
-    const eksenler = await saveFlatSVG(spec, `${base}-flat.svg`, koken, KOKEN_ALANLARI);
-    // Not a refusal — the file IS on their disk — so it does not go through the
-    // refusal string. It is the honest footnote: drawn, but not yet cuttable.
-    if (gaps.length) msg.textContent = t('create.dl.flatgap', { what: gaps.join(' · ') });
-    // ⭐ H2 — AND THE SURFACE LINE'S OWN REFUSALS, ON SCREEN. The engine now
-    // reads the whole spec; every axis it could not put on a dial comes back in
+    const eksenler = await saveFlatSVG(spec, { size: FLAT_BEDEN }, `${base}-flat.svg`,
+                                       koken, KOKEN_ALANLARI);
+    // ⭐ H2/H3 — THE SURFACE LINE'S OWN REFUSALS, ON SCREEN. The engine reads
+    // the whole spec; every axis it could not put on a dial comes back in
     // `desteklenmeyen_eksenler` and is printed here by name. Swallowing it would
-    // rebuild the exact silence H2 was opened to end.
+    // rebuild the exact silence H2 was opened to end. This is now the ONLY gap
+    // list on the screen: the pen's `data-engine-gap` stamp died with the pen
+    // (H3), so there is no second vocabulary of missing things.
+    //
+    // Not a refusal — the file IS on their disk — so it does not go through the
+    // refusal string. It is the honest footnote: drawn, but not carried.
     if (eksenler && eksenler.length) {
       msg.textContent = t('create.dl.flataxes', { what: eksenler.join(' · ') });
     }
@@ -1186,9 +1188,9 @@ function downloadPanel(result) {
   const opsBtn = el('button', 'dl-alt', t('create.ops.run'));
   wire(opsBtn, async () => {
     opsMsg.textContent = '';
-    // EU38 is the size the FLAT is valued at on this screen (download.js's own
-    // default), so the two readings answer about one garment rather than two.
-    const prog = await operatorProgram('EU38', 0);
+    // The same size the FLAT is valued at on this screen, so the two readings
+    // answer about one garment rather than two.
+    const prog = await operatorProgram(FLAT_BEDEN, 0);
     if (prog.error) return prog.error;
     opsMsg.appendChild(el('p', 'dl-ops-title', t('create.ops.head')));
     // ⭐ BOTH DECLARED SURFACES, EACH BY NAME (F5-E İŞ 2, borç 68).
@@ -1236,6 +1238,13 @@ function downloadPanel(result) {
 // and shoulderWidthCM = 0. Offering them here would be offering a size the
 // engine cannot shape. If shape-ratios.json grows, this list grows with it.
 const EU_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'EU46', 'EU48'];
+
+// The size the RESULT SCREEN's flat and operator panel are valued at. Written
+// once, here, because H3 made the flat require a body: `download.js` used to
+// carry a default 'EU38' of its own and a default in the exporter is exactly
+// the silent size RULES invariant 1 forbids. The engine now refuses a body with
+// no size, so this screen has to name one — and it names it in ONE place.
+const FLAT_BEDEN = 'EU38';
 
 // A seller-facing panel under the result: pick a size range, generate the run,
 // print all sizes as one document. Honest states, errors say so, no fake run.

@@ -205,7 +205,7 @@ export function kokenAttrs(koken) {
 }
 
 /**
- * Köken etiketini bir SVG belgesinin KÖKÜNE basar. Kalem (flat-core.js) hiç
+ * Köken etiketini bir SVG belgesinin KÖKÜNE basar. Çizici hiç
  * değişmez — style_check o kalemi bayt bayt pine diff'liyor ve bu faz o pini
  * kımıldatmaz; damga sevk edilen indirme yolunda vurulur.
  * Kayıt boş/bozuksa DOSYA YAZILMAZ: köken etiketi olmayan bir flat, bu fazın

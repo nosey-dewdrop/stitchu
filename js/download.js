@@ -16,11 +16,10 @@
 //        strings print.js and render-pages.mjs draw.
 //   PDF  pdf-core.js, the SAME builder engine/tools/gen-collection-pattern.mjs
 //        writes the published packs with, including the 3 cm calibration square.
-//   FLAT flat-core.js, the production technical-flat pen — the SAME module
-//        engine/tests/flat_convention_check.mjs and flat_expresses_spec_check.mjs
-//        judge. It used to live under engine/tools/ and could not run in a
-//        browser at all (five readFileSync calls); that path is now a one-line
-//        re-export of this one file.
+//   FLAT flat-from-plan.js over engine.flatJSON — the orthographic projection
+//        of the very GarmentSurf the pattern is cut from. As of H3 this is the
+//        ONLY flat line: the croquis pen is deleted, so
+//        the drawing and the pattern cannot be two objects that drift.
 //
 // WHY THE FLAT IS HERE AT ALL (F-İNDİR, 2nd round, 2026-08-26). The referee
 // measured the first round's own claim: all ten exports wrote a PATTERN, `grep
@@ -38,11 +37,9 @@
 // F0 (2026-08-26): KÖKEN. The files below used to leave without saying which of
 // their fields the user's photo actually showed — measured %58.3 inferred, and
 // zero lines anywhere on this path said so. The stamp is applied HERE, on the
-// shipped download path, and never inside flat-core.js: that pen is byte-diffed
-// against engine/STYLE-PIN by style_check, so the drawing must not move.
+// shipped download path, on the root element of the finished document.
 import * as koken from './provenance.js?v=141';
-import { renderGarmentFlat } from '../lib/flat-core.js?v=141';
-import { renderFlatFromPlan, planLineClass } from '../lib/flat-from-plan.js?v=141';
+import { renderFlatFromPlan } from '../lib/flat-from-plan.js?v=141';
 import { pathD, bounds } from './sheet.js?v=141';
 import * as sheet from './sheet.js?v=141';
 import { makePdfCore } from '../lib/pdf-core.js?v=141';
@@ -200,103 +197,53 @@ export async function patternDXF(source) {
 }
 
 /**
- * The FINISHED-GARMENT technical flat (front + back line art) as one SVG
- * document, drawn from the spec — never from the pattern pieces. That is the
- * pen's own law and it is not a shortcut: mirroring a sleeveless armhole reads
- * as a fake long sleeve (web/lib/flat-core.js, header).
+ * ⭐ THE FLAT — ONE FUNCTION, ONE LINE, EVERY CLASS (H3).
  *
- * It refuses rather than draws a lie: a spec the pen cannot express carries a
- * `data-engine-gap` stamp naming the MISSING OPERATOR, and an empty spec has
- * nothing to draw. Both are errors here, not silent blank files (RULES
- * invariant 1).
+ * WHAT DIED HERE AND WHY IT HAD TO. Until H3 this file held TWO drawings of one
+ * garment: a 74KB croquis pen that drew hand-authored curves off the spec's
+ * WORDS, and this one, the orthographic
+ * projection of the very GarmentSurf the pattern is cut from. Which one a
+ * shopper got was decided by `planLineClass`, a three-word allow-list: top +
+ * dart + woven took the projection, and a dress, a skirt or anything knitted
+ * took the pen. So on three of the four classes the technical drawing and the
+ * pattern were two different objects — they agreed until somebody edited one.
+ * At EU38 the pen said the waist was 700.0mm and the pattern said 724.89mm.
+ *
+ * There is no pen any more, there is no allow-list, and there is no fallback:
+ * every class is drawn from its own seam plan. What the surface line CANNOT
+ * carry for this spec is not drawn as something else and it is not swallowed —
+ * it comes back in `desteklenmeyen_eksenler`, by axis name, and create.js puts
+ * it on the screen.
+ *
+ * `body` is the wearer, and `body.size` is REQUIRED: the engine refuses a
+ * missing size rather than defaulting to EU38 (RULES invariant 1), and this
+ * function does not paper over that refusal.
+ *
+ * Returns { svg, desteklenmeyen_eksenler }. It THROWS rather than hand out a
+ * lie: an engine error, a missing silhouette or a missing top boundary all
+ * stop the export instead of writing a quietly-blank file.
  */
-export function flatSVG(spec, kokenKaydi = null, specAlanlari = null) {
+export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null) {
   if (!spec || typeof spec !== 'object' || !spec.garment) {
     throw new Error('flat export: the spec names no class to draw');
   }
-  if (planLineClass(spec)) {
-    // ⭐ F3: this class left the pen. It is not drawn here any more and there is
-    // no fallback to the croquis for it (yasak 3 — a class that moved does not
-    // keep a spare engine behind it). The seam-plan path is async because the
-    // engine is; use flatSVGAsync / saveFlatSVG.
-    throw new Error(
-      'flat export: top/dart/woven is on the seam-plan line — use flatSVGAsync');
+  if (!body || typeof body !== 'object' || !body.size) {
+    throw new Error('flat export: no size — the flat is valued at a body, not at a default');
   }
-  const svg = renderGarmentFlat([], spec);
-  if (!svg || svg.indexOf('<path') === -1) {
-    throw new Error('flat export: the pen drew no geometry for this spec');
-  }
-  // F0: the origin label rides in the FILE, on the root element, so it survives
-  // being opened offline in Illustrator with no site around it. An invalid or
-  // emptied record throws inside damgala — a flat that cannot say where its
-  // fields came from is not written at all.
-  return kokenKaydi ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi)) : svg;
-}
-
-/**
- * What the pen could NOT express for this spec, by the missing operator's name.
- * Returned so the result screen can say it out loud instead of handing over a
- * flat that quietly drew something else (the 2026-07-18 puff precedent).
- */
-/**
- * ⭐ THE FLAT, FROM THE SEAM PLAN (GECE7 / F3).
- *
- * For a class on the plan line the flat is PROJECTED from the same GarmentSurf
- * the pattern is cut from, so a spec change that moves the pattern moves the
- * drawing too. For every other class this is the pen, unchanged — the migration
- * is per class on purpose (KOSU-v7 §F3), and it is SILENT: nothing here tells
- * the user which line drew their garment.
- *
- * `sizeLabel` is the size the flat is valued at. ⚠ Today that is the same human
- * chart the pattern uses, because there is no PUBLISHED mannequin chart and
- * inventing one is forbidden (KOSU-v7 §2). The engine says so in the file's own
- * `bedenlendirme.ACIK_KALEM`; splitting the two bodies is F4's work, not a
- * number to nudge here.
- */
-export async function flatSVGAsync(spec, kokenKaydi = null, specAlanlari = null,
-                                   sizeLabel = 'EU38') {
-  if (!spec || typeof spec !== 'object' || !spec.garment) {
-    throw new Error('flat export: the spec names no class to draw');
-  }
-  return (await flatPlanSVG(spec, kokenKaydi, specAlanlari, sizeLabel)).svg;
-}
-
-/**
- * ⭐ H2 — THE SAME FLAT, PLUS WHAT THE SURFACE LINE COULD NOT CARRY.
- *
- * `seamPlanFlat` now takes the WHOLE spec (it used to take a size label and a
- * neck drop the site always passed as 0, so the shopper's neckline never
- * reached this line at all). The engine answers with the drawing AND with
- * `desteklenmeyen_eksenler` — every axis it refused, by name. That list is
- * returned here rather than swallowed, because create.js has to put it on the
- * screen: an axis the engine refused and nobody can read is not refused.
- *
- * `axes` is [] on the pen path — the pen reports its gaps through flatGaps().
- */
-export async function flatPlanSVG(spec, kokenKaydi = null, specAlanlari = null,
-                                  sizeLabel = 'EU38') {
-  if (!planLineClass(spec)) {
-    return { svg: flatSVG(spec, kokenKaydi, specAlanlari), axes: [] };
-  }
-  const plan = await seamPlanFlat(spec, { size: sizeLabel });
+  const plan = await seamPlanFlat(spec, body);
   if (plan.error) throw new Error(plan.error);
   const svg = renderFlatFromPlan(plan);   // throws on an engine refusal
   return {
+    // F0: the origin label rides in the FILE, on the root element, so it
+    // survives being opened offline in Illustrator with no site around it. An
+    // invalid or emptied record throws inside damgala — a flat that cannot say
+    // where its fields came from is not written at all.
     svg: kokenKaydi
       ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
       : svg,
-    axes: Array.isArray(plan.desteklenmeyen_eksenler) ? plan.desteklenmeyen_eksenler : [],
+    desteklenmeyen_eksenler:
+      Array.isArray(plan.desteklenmeyen_eksenler) ? plan.desteklenmeyen_eksenler : [],
   };
-}
-
-export function flatGaps(spec) {
-  // A class on the seam-plan line has no PEN gaps to report: the geometry is
-  // computed, so there is no operator the pen is missing. Reporting the pen's
-  // gaps for a garment the pen did not draw would be a stale warning about
-  // another drawing.
-  if (planLineClass(spec)) return [];
-  const m = /data-engine-gap="([^"]*)"/.exec(flatSVG(spec));
-  return m && m[1] ? m[1].split(';').filter(Boolean) : [];
 }
 
 // --------------------------------------------------------------- DOM savers
@@ -322,18 +269,16 @@ export function saveSVG(pattern, filename) {
   saveBlob(filename, patternSVG(pattern), 'image/svg+xml');
 }
 
-export async function saveFlatSVG(spec, filename, kokenKaydi = null,
-                                  specAlanlari = null, sizeLabel = 'EU38') {
-  // async because the seam-plan line has to wait for the engine. The pen path
-  // still resolves in the same tick; nothing got slower for the classes that
-  // have not moved.
+export async function saveFlatSVG(spec, body, filename, kokenKaydi = null,
+                                  specAlanlari = null) {
+  // async because there is only one line left and it goes through the engine.
   //
-  // H2: returns the axes the surface line REFUSED, so the caller can print
-  // them. The file is written first — a refused axis is a footnote about a real
-  // file, not a reason to hand the shopper nothing.
-  const { svg, axes } = await flatPlanSVG(spec, kokenKaydi, specAlanlari, sizeLabel);
+  // Returns the axes the surface line REFUSED, so the caller can print them. The
+  // file is written FIRST — a refused axis is a footnote about a real file on
+  // the shopper's disk, not a reason to hand them nothing.
+  const { svg, desteklenmeyen_eksenler } = await flatSVG(spec, body, kokenKaydi, specAlanlari);
   saveBlob(filename, svg, 'image/svg+xml');
-  return axes;
+  return desteklenmeyen_eksenler;
 }
 
 export function saveA4Pdf(pattern, title, filename, kokenKaydi = null, specAlanlari = null) {
