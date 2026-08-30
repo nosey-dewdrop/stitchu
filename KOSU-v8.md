@@ -713,3 +713,30 @@ hakem notu: Testin dürüstlüğü mutasyonla kanıtlandı — bağlantı satır
 **Açık kalanlar (ajan adıyla bildirdi).** `neckline` ekseninin yalnız DERİNLİĞİ bağlandı; GENİŞLİK çarpanı (boat 1.85 / sweetheart 1.2 / cowl 1.4) ve EĞRİ ŞEKLİ yüzeyin tek üst-sınır yasasına sığmıyor, ikisi de ekranda reddediliyor. `skirtLength` / `topLength` bağlanmadı: `hemDropBelowHipMM` kalçadan, spec'inki belden ölçüyor, dönüşüm için bel-kalça derinliği gerek — uydurulmadı, reddedildi. `opsJSON` bindingi hâlâ iki skaler alıyor. `seamPlanPattern` export'unun `web/` altında çağıranı yok, yani `planJSON` yolu kapıda ölçülüyor ama ürün ekranına bağlı değil. `saveFlatSVG` beden etiketini almıyor, `'EU38'` varsayılanına düşüyor — "spec ulaşmıyor" onarıldı, "beden ulaşmıyor" duruyor.
 
 **Dosya bütçesi kritik.** `git ls-files` = **800**, eşik ≤800. H1 tam sınırda. Yeni takipli dosya eklemek H1'i kırmızıya döndürür; sonraki her faz ya ölü dosya silecek ya da eklemeden çözecek.
+
+## H3 — Flat kalıptan — KART YANLIŞ (KALDI ×1'den sonra)
+ölçülen: dört sınıfta fark 0.0000mm, üç mutasyonun üçü de kırmızı   eşik: ≤0.1mm + kapı iki taraflı   commit: `8f79342` (kart yeniden yazıldı, faz baştan koşuyor)
+
+**Ne tuttu.** Croquis kalemi öldü (`flat-core.js` 74KB + `flat-tables.gen.js` 77KB silindi, `planLineClass` ve `flatGaps` yok), dört sınıf da yüzey hattından çiziliyor, `seamPlanFlat(sizeLabel, 0)` sabit çağrısı ölü. Kapı iki taraflı oldu ve bu tautoloji değil — hakem üç mutasyon koştu, üçü de kırmızı düştü ve M2/M3'te sütunlardan yalnız biri oynadı:
+
+| mutasyon | ne değişti | kalıp mm | çizim mm | sonuç |
+|---|---|---|---|---|
+| M1 | `flat-from-plan.js` `X = x0 + x*1.001` | 289.4348 sabit | 289.7242 | 12 FAIL |
+| M2 | `halfWidthAt` → `sec.a + d + 1.0` | 289.4348 sabit | 291.4348 | 12 FAIL |
+| M3 | `GarmentSurf::at` → `px + 1.0` | 291.4348 | 289.4348 sabit | 12 FAIL |
+
+İki yol gerçekten ayrı: çizim `halfWidthAt` → `project()` → `fitCubics` → SVG → kapı kübikleri bisection'la yeniden çözüyor; kalıp `GarmentSurf::at(h,0)` → `Section::offsetPoint` → `planJSON.halkalar`.
+
+**Neden kart yanlış.** Önceki hakemin altı kalma sebebinin dördü kapandı (tek taraflılık · düşen kapı `flat_tables_check` yerine `flat_mirror_check` girdi, net +1 · süre gizlemesi geri alındı · iki yeni kırmızı yeşile döndü). İkisi kapanmadı ve hakem bunun **kartın kendi çelişkisi** olduğunu ölçtü: kart croquis kalemini sildiriyor, ama o kalemi ölçen şartların canlı kalmasını istiyor — imkânsız. `flat_expresses_spec_check`'in 3× artışı geri alınmadı, ölçü birimi değiştirilerek "3" diye okutuldu; `flat_geometry_sellable_check`'in 5 uyuyan şartı `ba8106c8`'de canlıydı. Kartın emretmediği tek gerçek kusur: üç çizgi sınıfı kanundan silinmek yerine kanuna `drawnBy: null` muafiyeti yazılarak korundu — ürünün eksiği kanuna yazıldı.
+
+**Hakemin eklediği dört madde (yalnız zorlaştırma).**
+1. `contract/flat-convention-v1.json`'dan `mark` · `topstitch` · `hidden` sınıfları SİLİNİR (muafiyet değil). `UNUSED_CLASS_RATCHET` onlarla birlikte silinir. Sınıf geri geldiğinde kanuna geri yazılır ve kapı onu sıfır toleransla çizilmiş görmek zorunda kalır.
+2. `flat_geometry_sellable_check`'te `DORMANT_RATCHET` SİLİNİR. Her uyuyan şart kendi eksenine bağlanır, o eksen `desteklenmeyen_eksenler`'den düştüğü an KIRMIZI düşer.
+3. `flat_expresses_spec_check` eksen kuralını korur **ve** toplam UNEXPRESSED sayısına sert tavan koyar: bugün ölçülen 15, cırcırlı, yalnız düşebilir.
+4. H11 kırmızı ve adıyla kalır; `r.ms`'ten hiçbir süre düşülmez.
+
+**Kanun düzeltmesi meşru sayıldı.** `unitMM 3.0 → 1.0` gevşetme değil: sevk edilen çizim gerçekten mm biriminde (`data-scale="1:1"`), croquis birimi `croquisUnitMM` adıyla saklandı ve 1d zincir kapısı onu hâlâ yargılıyor.
+
+**H11 açık borç.** `hedef_kosu` kırmızı, adıyla ilan edildi: n=5 medyanı **15598.7ms**, tavan 10000ms. Maliyet `flatJSON`'ın tam `SurfacePattern` (ARAP düzleştirme) inşası; flat aslında yalnız `pat.surf` + `pat.topColZMM` istiyor. "Düzleştirmeyi atla" gerçek çözüm ama kalıp hattına ameliyat, H3'ün işi değil.
+
+**Damla'nın bilmesi gereken — ürün ifade gücünde geriledi.** Yüzey hattı bugün `garment=dress`, `fabric=knit`, `skirtStyle=gathered`, `sleeveStyle`, `collarType`, `neckline.derinlik/genislik/sekil` eksenlerini adıyla reddediyor. "Puf kollu elbise" isteyen alıcı askısız bir tüp + bir red listesi görüyor. Dört sınıf birebir aynı sayıları veriyor (elbise = etek = top = örme), yani bir eteğin de göğüs çizgisi çiziliyor. CLAUDE.md'nin "strapless haliyle LİSTELEME" hükmü hâlâ geçerli; H3 bunu değiştirmedi, görünür kıldı.
