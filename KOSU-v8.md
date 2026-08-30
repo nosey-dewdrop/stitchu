@@ -740,3 +740,22 @@ hakem notu: Testin dürüstlüğü mutasyonla kanıtlandı — bağlantı satır
 **H11 açık borç.** `hedef_kosu` kırmızı, adıyla ilan edildi: n=5 medyanı **15598.7ms**, tavan 10000ms. Maliyet `flatJSON`'ın tam `SurfacePattern` (ARAP düzleştirme) inşası; flat aslında yalnız `pat.surf` + `pat.topColZMM` istiyor. "Düzleştirmeyi atla" gerçek çözüm ama kalıp hattına ameliyat, H3'ün işi değil.
 
 **Damla'nın bilmesi gereken — ürün ifade gücünde geriledi.** Yüzey hattı bugün `garment=dress`, `fabric=knit`, `skirtStyle=gathered`, `sleeveStyle`, `collarType`, `neckline.derinlik/genislik/sekil` eksenlerini adıyla reddediyor. "Puf kollu elbise" isteyen alıcı askısız bir tüp + bir red listesi görüyor. Dört sınıf birebir aynı sayıları veriyor (elbise = etek = top = örme), yani bir eteğin de göğüs çizgisi çiziliyor. CLAUDE.md'nin "strapless haliyle LİSTELEME" hükmü hâlâ geçerli; H3 bunu değiştirmedi, görünür kıldı.
+
+## H3 — Flat kalıptan (yeniden yazılmış kart) — GEÇTİ
+ölçülen: dört sınıfta 0.0000mm, üç mutasyon kırmızı, dört ek maddenin dördü kanıt-mutasyonlu   eşik: ≤0.1mm + iki taraflılık + dört madde   commit: `3693297`
+hakem notu: Dört maddenin dördü de iddia değil — üçü ayrı mutasyonla, biri bayt karşılaştırmasıyla doğrulandı.
+
+**Dört maddenin denetimi.**
+1. `mark`·`topstitch`·`hidden` kanundan **silindi** (muafiyet değil), `ratios` 3→1, `UNUSED_CLASS_RATCHET` kodda yok. Kanıt: `drawnBy:null`'lu `mark` geri konunca kapı **2 FAIL**, sıfır tolerans.
+2. `grep DORMANT` → 0 sonuç. Şart sayısı 5→7 (S2a/S2b/S2c ayrıldı), her biri kendi eksenine kilitli. Kanıt: `seamplan.cpp`'de `shoulderStyle` reddi kaldırılıp yeniden derlenince `[UYANDI] S1`, 1 ihlal. Eski tavanla bu YEŞİL basardı.
+3. `UNEXPRESSED_TAVANI = 15`, ölçülen 15, cırcırlı. Kanıt: vocab'a bir `shoulderStyle` değeri eklenince 16 > 15 FAIL — üstelik eksen kuralı o sırada yeşil kaldı, yani kapatılan delik tam buydu.
+4. `hedef_kosu.mjs` bayt-aynı, `r.ms` çıkarması yok. H11 adıyla kırmızı: `taban 3.7 → şimdi 20650.6`.
+
+**Kapı sayısı sabit.** `add_test` 138 = 138, `engine/CMakeLists.txt` bu kartta hiç değişmedi. Kırmızı liste tam beş. `site-health` 0 ölü link. `git ls-files` 794.
+
+**Damla'ya üç açık kalem.**
+- **`h10_gate_check` ctest'te DISABLED**, koşmuyor (136 tanımlı, 135 koşuyor). Bu H3'te olmadı — `047b8a61`'de devre dışı bırakılmış, gerekçesi dosyada yazılı ("sevk edilen giysiyi değil, hattın dışında duran bir hattı yargılıyordu"), yerine `garment_armhole_check` geçmiş. Beş-kırmızı listesi bunu kapsamıyor çünkü kırmızı değil, hiç koşmuyor. Ayrı bir hakem konusu olarak açıkta.
+- **"Dört sınıf çiziliyor" cümlesi dışarı söylenirse yanlış olur.** Elbise/top/örme aynı düğümü paylaşıyor (`6b359a7c…`), yalnız etek farklı (`1bb00db9…`). `garment=dress` ve `fabric=knit` adıyla reddedildiği için üçü bayt bayt aynı çizimi üretiyor. Bugün sevk edilen **iki** siluet var, dört değil.
+- **Yedi uyuyan şart + 15 ifade edilmeyen değer + `--all` kanadında 3/6 UNMEASURED — üç ayrı kapıda aynı tek eksik.** Hepsi G5'e bağlı: omuz · yaka · kol oyuğu · kol.
+
+**Ölçülmedi (DOĞRULANMADI).** `render-listing-sheet.mjs` silinen `mark` sınıfını okuyordu; artık kanunun en ince sınıfını türetiyor, o da `seam` 1.4. Satış sayfası görselindeki cetvel çubuğu %40 kalınlaştı. Kapı kırmızı düşmüyor ama görsel çıktı değişti ve kimse göze bakarak doğrulamadı.
