@@ -85,6 +85,13 @@ hiçbiri bununla işaretlenemez. Ölçüm ve sınırlar: `docs/ARCHITECTURE.md` 
       onun ağırlık tablosu `{.65, 1.05, 1.4, 1.5, 1.9}`, mürekkebi `#111` — yani panoya
       bakan biri `lineClasses`'ı görmüyor. `gusto-lint` bu yeni
       çıktılara **koşulmadı**. Kutucuk bu yüzden işaretlenmedi.
+      ⚠ **30 AĞU (H3-C) — YUKARIDAKİ BEŞ SINIF ARTIK ÜÇ DEĞİL İKİ.** O beş sınıfı
+      çizen kalem (`render-garment-flat.mjs` → `flat-core.js`) H3'te silindi; sevk
+      edilen çizim yüzeyin projeksiyonu ve iki eğri çiziyor (siluet + üst sınır).
+      `mark` · `topstitch` · `hidden` **kanundan silindi** (muafiyet değil, silme:
+      ürünün eksiği kanuna yazılmıştı) ve onları sayan `UNUSED_CLASS_RATCHET`
+      tavanı da kaldırıldı. Bugünkü kanun: `outline` 2.0 + `seam` 1.4, ikisi de
+      `drawnBy` beyan ediyor, tolerans SIFIR. Yukarıdaki paragraf 24 Ağu kaydıdır.
 - [ ] Marka rengi: navy `#1f3a5f` gövde, seam `#5c7aa0` iç; başka renk yok.
       → ölçülecek flat yok (yukarısı).
 - [ ] STYLE-PIN uyumlu (`style_check` ctest).

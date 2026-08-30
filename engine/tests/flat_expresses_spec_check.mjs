@@ -39,6 +39,10 @@
 // artık eksen başına elle yazılmış bir kova sayısı DEĞİL (7/6/2 öyleydi ve üçü de
 // tam tavandaydı — lastik damga). Tavan tek bir sayı: motorun BÜTÜNÜYLE
 // reddettiği EKSEN sayısı. Gerekçe dosyanın sonunda, cırcır bloğunda.
+// ★ H3-C: eksen kuralı KORUNDU, ÜSTÜNE toplam UNEXPRESSED DEĞER sayısına sert
+//   bir cırcır kondu (bugün 15). Sebep: bir eksen bütünüyle reddedilince o
+//   eksendeki değer sayısına hiçbir tavan kalmıyordu — sözlüğe on kelime eklemek
+//   borcu on büyütür, kapı hiçbir şey demezdi. Ayrıntı yine cırcır bloğunda.
 //
 // EŞANLAM İSTİSNASI (uydurma değil, BEYANLI): engine/vocab.json kol alanının
 // beyanlı eşanlamları (`puff->balloon`, `set-in->straight`, ...) AYNI çizmek
@@ -414,6 +418,41 @@ if (butunuyleRed > REDDEDILEN_EKSEN_TAVANI) {
      "Sabitlemek ayri ve bilincli bir commit'tir (REDDEDILEN_EKSEN_TAVANI).");
 } else {
   OK(`CIRCIR — butunuyle reddedilen eksen ${butunuyleRed} = tavan ${REDDEDILEN_EKSEN_TAVANI} (kol · yaka · omuz = G5). Sayi yalniz dusebilir.`);
+}
+
+// ---------------------------------------------------------------------------
+// ⭐ H3-C — IFADE EDILMEYEN DEGER SAYISINA SERT TAVAN (EKSEN KURALININ USTUNE)
+// ---------------------------------------------------------------------------
+// KAPATILAN DELIK. Yukaridaki eksen kurali dogru ama TEK BASINA EKSIK, ve eksigi
+// tam olarak sudur: bir eksen BUTUNUYLE reddedildigi anda o eksendeki ifade
+// edilmeyen deger sayisina HICBIR TAVAN KALMIYOR. `hepsi === true` dali onu bir
+// SONUC sayip yesile basiyor; yani engine/vocab.json'a bugun on yeni kol kelimesi
+// eklense UNEXPRESSED 15'ten 25'e cikar ve kapi hicbir sey demez. "Kelime saymak
+// yerine eksen saymak" tam da bunun icin secilmisti — ama sozluge kelime eklemek
+// urunun kapsamini BUYUTMEZ, borcunu buyutur.
+//
+// O yuzden eksen kurali KORUNDU (yukarisi silinmedi, dokunulmadi) ve USTUNE
+// toplam ifade edilmeyen DEGER sayisina sert bir circir kondu. Bu sayi bir
+// tolerans degil, BUGUN OLCULEN BORCUN kendisi:
+//     sleeveStyle 7 + collarType 6 + shoulderStyle 2 = 15
+// Yalniz DUSEBILIR. Yukselmesinin iki yolu var ve ikisi de kirmizidir:
+//   (1) sozluge/sicile yeni bir deger eklenip cizilmemesi (borc buyudu),
+//   (2) bugun ifade edilen bir degerin ifade edilemez hale gelmesi (gerileme).
+// Dusmesinin tek yolu: o degeri GERCEKTEN CIZMEK. Tavani sabitlemek ayri ve
+// bilincli bir commit'tir.
+const UNEXPRESSED_TAVANI = 15;
+const toplamUnexpressed = Object.values(GOT).reduce((s, [res]) => s + res.unexpressed.length, 0);
+const dokum = Object.entries(GOT).map(([axis, [res]]) => `${axis} ${res.unexpressed.length}`).join(' + ');
+console.log(`    ifade edilmeyen DEGER (toplam): ${toplamUnexpressed}  = ${dokum}   (sert tavan ${UNEXPRESSED_TAVANI})`);
+if (toplamUnexpressed > UNEXPRESSED_TAVANI) {
+  FAIL(`CIRCIR — ifade edilmeyen deger ${toplamUnexpressed} > sert tavan ${UNEXPRESSED_TAVANI}: BORC BUYUDU. ` +
+       'Ya sozluge/sicile cizilmeyen bir deger eklendi, ya ifade edilen bir deger geriledi. ' +
+       'Ekseni butunuyle reddetmek bu sayiyi mesru kilmaz.');
+} else if (toplamUnexpressed < UNEXPRESSED_TAVANI) {
+  OK(`CIRCIR — ifade edilmeyen deger ${toplamUnexpressed} < sert tavan ${UNEXPRESSED_TAVANI}: TAVAN DUSTU. ` +
+     "Sabitlemek ayri ve bilincli bir commit'tir (UNEXPRESSED_TAVANI).");
+} else {
+  OK(`CIRCIR — ifade edilmeyen deger ${toplamUnexpressed} = sert tavan ${UNEXPRESSED_TAVANI}. Sayi yalniz dusebilir.`);
 }
 
 console.log('');

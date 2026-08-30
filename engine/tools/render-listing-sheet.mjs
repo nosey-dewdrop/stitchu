@@ -57,7 +57,15 @@ const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8
 const INK = LAW.ink.color;
 const PAPER = LAW.ink.paper;
 const UNIT_MM = LAW.scale.unitMM;          // mm of real garment per flat user unit
-const MARK = LAW.lineClasses.classes.mark.width;
+// SHEET FURNITURE WEIGHT — DERIVED FROM THE LAW, NEVER NAMED (H3-C).
+// Until 2026-08-30 this read `lineClasses.classes.mark.width` (1.0). `mark` was a
+// class the law declared but the shipped drawing never drew, and H3-C deleted it:
+// the law now declares only what is shipped. The furniture (scale bar + ticks) is
+// not a garment line at all, but flat_sellable_check requires every stroke on the
+// sheet to land on a declared class, so it rides the THINNEST class the law still
+// carries. Reading it as a minimum rather than by name means deleting or adding a
+// class moves this number with the law instead of breaking the tool.
+const FURNITURE_W = Math.min(...Object.values(LAW.lineClasses.classes).map((c) => c.width));
 
 // --- published Etsy geometry -------------------------------------------------
 export const ETSY = {
@@ -140,7 +148,7 @@ export function renderListingSheet(flatSvgText, opts = {}) {
   const BAR_MM = 200;
   const barLen = BAR_MM / sheetUnitMM;
   const barX = colX0, barY = BAR_Y;
-  const SW = MARK * k; // sheet furniture rides the same line class as the flat
+  const SW = FURNITURE_W * k; // sheet furniture rides the thinnest declared class
 
   const t = (x, y, s, size, anchor = 'middle', weight = '400', ls = 0) =>
     `<text x="${n(x)}" y="${n(y)}" text-anchor="${anchor}" font-family="${F}" ` +

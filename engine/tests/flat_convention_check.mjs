@@ -46,14 +46,20 @@
 //   bir ölçek beyanı artık belgenin kendi geometrisiyle çelişir. (Çizilen çizginin
 //   KALIBIN mm'sini tutup tutmadığı ayrı bir kapının işi: --all, 0.1mm.)
 //
-// ★ 3. ÖLÜ BEYAN — GEVŞETME DEĞİL, CIRCIR. Eski kapı "beyan edilmiş her sınıf en
-//   az bir kez kullanılmış olmalı" diyordu ve croquis kalemi beş sınıfın beşini de
-//   çiziyordu (pens, buton, fermuar hattı, sırt açıklığı...). Yüzey hattının bugün
-//   çizdiği iki eğri var: siluet ve üst sınır. Üç sınıf (`mark`, `topstitch`,
-//   `hidden`) bugün KULLANILMIYOR. Bu bir kusurdur ve kapı onu SAYAR, ADIYLA
-//   BASAR ve sayıyı 3'te CIRCIRLAR: 3'ün üstüne çıkarsa KIRMIZI, düşerse yeşil
-//   kalır ve tavanı düşürmek ayrı ve bilinçli bir commit'tir. Kullanılmayan sınıfı
-//   kanundan SİLMEK de kapıyı geçirmez — silinen sınıf `ratios` beyanını kırar.
+// ★ 3. ÖLÜ BEYAN — TAVAN KALDIRILDI, TOLERANS SIFIR (H3-C).
+//   ⛔ ÖNCEKİ HÂLİ VE NEDEN BİR BOŞLUKTU. 30 Ağustos'a kadar burada
+//   `UNUSED_CLASS_RATCHET = 3` duruyordu: kanun `mark` · `topstitch` · `hidden`
+//   sınıflarını `drawnBy: null` diye beyan ediyor, kapı da onları sayıp üçte
+//   cırcırlıyordu. Yani ÜRÜNÜN EKSİĞİ KANUNA YAZILMIŞTI ve kapı o eksiğe üç
+//   kişilik bir yer ayırıyordu. Bir tavan sayısı, tanımı gereği, o kadar boşluk
+//   demektir.
+//   ⭐ ONARIM KANUNU KÜÇÜLTMEK OLDU, KAPIYI GEVŞETMEK DEĞİL. Üç sınıf kanundan
+//   SİLİNDİ (muafiyet değil, silme; `ratios`'taki iki oran da onlarla gitti) ve
+//   bu sayı buradan kaldırıldı. Bugünkü hüküm tek cümle ve eşiksiz: KANUNDAKİ HER
+//   SINIF `drawnBy` BEYAN ETMEK VE GERÇEKTEN ÇİZİLMİŞ OLMAK ZORUNDA. `drawnBy`
+//   yazmayan ya da null yazan bir sınıf kırmızıdır — artık "bilinçli çizilmeyen"
+//   diye bir kova yok. Bir sınıf geri geldiğinde kanuna geri yazılacak ve kapı
+//   onu SIFIR toleransla çizilmiş görmek zorunda kalacak.
 //
 // ANTI-HACK: bu kapı hiçbir sabiti çiziciden import etmez. Çizicinin BASTIĞI SVG'yi
 // parse eder. flat-from-plan.js'deki mürekkep/ağırlık sabitleri kanunun aynasıdır
@@ -75,10 +81,6 @@ const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
 const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
 const INK = LAW.ink.color.toLowerCase();
 const SIZE = process.env.V3C_SIZE || 'EU38';
-
-// KULLANILMAYAN ÇİZGİ SINIFI CIRCIRI — bir TOLERANS değil, bir SAYIM tavanı.
-// Bugün: mark · topstitch · hidden. Yalnız düşebilir.
-const UNUSED_CLASS_RATCHET = 3;
 
 let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
@@ -380,54 +382,29 @@ const used = new Set();
 }
 const unused = Object.keys(CLASSES).filter((c) => !used.has(c));
 console.log(`    kullanilan sinif: ${[...used].sort().join(', ') || '(hic)'}`);
-console.log(`    KULLANILMAYAN   : ${unused.join(', ') || '(yok)'}   (circir tavani ${UNUSED_CLASS_RATCHET})`);
-// ⭐ H3-B — "OLU BEYAN" ARTIK SADECE SAYILMIYOR, KANUNA BAGLANIYOR.
-// H3'un ilk kosusu buraya `UNUSED_CLASS_RATCHET = 3` diye bir sayi koydu; ondan
-// once tolerans SIFIRDI (beyan edilen her sinif kullanilacak). Hakem bunu bir
-// gevsetme olarak yazdi. Sayiyi 0'a geri yazmak mumkun degildi — yuzey hatti
-// bugun gercekten iki egri ciziyor — ama sayiyi TEK BASINA birakmak da dogru
-// degildi. Onarim: her sinif kanunda `drawnBy` BEYAN EDER.
-//   drawnBy: "<data-curve adi>"  -> o sinif CIZILMEK ZORUNDA, tolerans SIFIR.
-//   drawnBy: null + `_neden`     -> bilincli olarak cizilmiyor, gerekcesi YAZILI.
-// Boylece bir sinifin sessizce olmesi imkansiz: ya kanunda `drawnBy` durur ve
-// sifir toleransa carpar, ya birileri kanunu acip gerekce yazar (gorunur bir
-// diff). Circir sayisi da artik `drawnBy: null` beyanlarinin sayisidir, elle
-// secilmis bir tolerans degil.
-{
-  const before = fails;
-  const beyansiz = [];
-  for (const [cname, c] of Object.entries(CLASSES)) {
-    if (!('drawnBy' in c)) { beyansiz.push(cname); continue; }
-    if (c.drawnBy === null) {
-      if (!c._neden || String(c._neden).length < 30) {
-        FAIL(`[3 olu beyan] '${cname}' kanunda drawnBy:null ama GEREKCESI (_neden) yok/bos — ` +
-             'cizilmeyen bir sinif yazili bir gerekce tasimak zorunda');
-      } else if (used.has(cname)) {
-        OK(`3 olu beyan — '${cname}' kanunda drawnBy:null ama CIZILIYOR: tavan DUSTU, kanunu guncelle`);
-      }
-      continue;
-    }
-    if (!used.has(cname)) {
-      FAIL(`[3 olu beyan] '${cname}' kanunda drawnBy="${c.drawnBy}" beyan ediyor ama cizimde HIC ` +
-           'kullanilmiyor — TOLERANS SIFIR: beyan edilen bir cizgi sinifi cizilmek zorunda');
-    } else {
-      OK(`3 olu beyan — '${cname}' drawnBy="${c.drawnBy}" ve gercekten ciziliyor (sifir tolerans)`);
-    }
+console.log(`    KULLANILMAYAN   : ${unused.join(', ') || '(yok)'}   (tolerans SIFIR — tavan YOK)`);
+// ⭐ H3-C — TAVAN KALDIRILDI. TEK HUKUM, ESIKSIZ:
+//   KANUNDAKI HER SINIF `drawnBy` BEYAN EDER VE GERCEKTEN CIZILIR.
+// `drawnBy` yazmayan da, `drawnBy: null` yazan da KIRMIZIDIR — "bilincli
+// cizilmeyen sinif" diye bir kova artik yok, cunku o kova bir tavandi ve tavan
+// kadar bosluk demekti (bkz. dosyanin basi, ★ 3). Bir sinifi kanundan silmek de
+// bedava degil: `ratios` beyani onu isaret ediyorsa 3b kirmizi duser, yani silme
+// de yazma da gorunur bir diff birakir.
+for (const [cname, c] of Object.entries(CLASSES)) {
+  if (!('drawnBy' in c) || c.drawnBy === null) {
+    FAIL(`[3 olu beyan] '${cname}' kanunda 'drawnBy' beyan ETMIYOR (${JSON.stringify(c.drawnBy)}) — ` +
+         'kanun yalniz SEVK EDILENI beyan eder: cizilmeyen bir sinif kanunda duramaz, SILINIR');
+    continue;
   }
-  if (beyansiz.length) {
-    FAIL(`[3 olu beyan] ${beyansiz.length} sinif kanunda 'drawnBy' BEYAN ETMIYOR (${beyansiz.join(', ')}) — ` +
-         'beyansiz sinif circiri kor birakir');
+  if (!used.has(cname)) {
+    FAIL(`[3 olu beyan] '${cname}' kanunda drawnBy="${c.drawnBy}" beyan ediyor ama cizimde HIC ` +
+         'kullanilmiyor — TOLERANS SIFIR: beyan edilen bir cizgi sinifi cizilmek zorunda');
+  } else {
+    OK(`3 olu beyan — '${cname}' drawnBy="${c.drawnBy}" ve gercekten ciziliyor (sifir tolerans)`);
   }
-  const bilincli = Object.values(CLASSES).filter((c) => c.drawnBy === null).length;
-  console.log(`    kanunda bilincli cizilmeyen (drawnBy:null): ${bilincli}   (circir tavani ${UNUSED_CLASS_RATCHET})`);
-  if (bilincli > UNUSED_CLASS_RATCHET) {
-    FAIL(`[3 olu beyan] bilincli cizilmeyen sinif ${bilincli} > tavan ${UNUSED_CLASS_RATCHET} — circir kirildi. ` +
-         'Sinifi kanundan silmek cikis DEGIL: ratios beyani kirilir.');
-  } else if (bilincli < UNUSED_CLASS_RATCHET) {
-    OK(`3 olu beyan — bilincli cizilmeyen ${bilincli} < tavan ${UNUSED_CLASS_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir.`);
-  } else if (fails === before) {
-    OK(`3 olu beyan — bilincli cizilmeyen ${bilincli} = tavan ${UNUSED_CLASS_RATCHET}, ucunun de gerekcesi kanunda YAZILI. Sayi yalniz dusebilir.`);
-  }
+}
+if (unused.length) {
+  FAIL(`[3 olu beyan] cizimde kullanilmayan ${unused.length} sinif kanunda duruyor (${unused.join(', ')})`);
 }
 
 // --- 3b. BEYAN EDILEN ORANLAR (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d) --

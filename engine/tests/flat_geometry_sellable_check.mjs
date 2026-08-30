@@ -22,7 +22,7 @@
 // giysi inşa ediyor — omuz dikişi yok, kol oyuğu yok, kol yok (repo kaydındaki
 // açık G5 boşluğunun kendisi; CLAUDE.md "SIRADAKİ: G5").
 //
-// ★ BU YÜZDEN ŞARTLAR SİLİNMEDİ, UYUTULDU — VE UYKU BİR CIRCIRA BAĞLANDI.
+// ★ BU YÜZDEN ŞARTLAR SİLİNMEDİ, UYUTULDU — VE HER UYKU KENDİ EKSENİNE KİLİTLİ.
 //   Bir şartın konusu bugün yoksa onu yeşile boyamak da kırmızıya boyamak da
 //   yalandır. Doğru olan şudur: şartın konusu olan EKSENİN motor tarafından
 //   ADIYLA REDDEDİLDİĞİNİ her koşuda DOĞRULAMAK. Yani "kol yok" cümlesi kapının
@@ -30,13 +30,24 @@
 //   (`flatJSON(...).desteklenmeyen_eksenler`). Motor bir gün kolu SEVK ETTİĞİNDE
 //   o eksen redde düşmez, uyuyan şart UYANIR ve — henüz ölçüm kodu yazılmadığı
 //   için — KAPI KIRMIZI DÜŞER. Şart böylece kaybolmuyor, sevkiyata KİLİTLENİYOR.
-//   Uyuyan şart sayısı 5'te CIRCIRLI: artamaz, yalnız düşebilir.
 //
-//   S1 omuz ucu göğüs çizgisinin içinde   → uyuyor (omuz/kol oyuğu sevk edilmedi)
-//   S2b etek merdiveni (boy arttıkça...)  → uyuyor (topLength ekseni reddediliyor)
-//   S4 kol oyuğu içbükey                  → uyuyor
-//   S5 kol iki ucu da gövdeyle paylaşır   → uyuyor
-//   S6 puff eti toplanmış + manşet        → uyuyor
+//   ⛔ TAVAN KALDIRILDI (H3-C). 30 Ağustos'a kadar burada `DORMANT_RATCHET = 5`
+//   duruyordu ve o sayı, bugünkü uyuyan şart sayısına eşitlenmiş bir tavandı.
+//   İki zararı vardı ve ikisi de ölçüldü. (a) TAVAN SAYISI = BOŞLUK: "5'e kadar
+//   uyuyabilir" demek, bir şartın uykuya çekilmesine yer ayırmak demektir; oysa
+//   her şart zaten KENDİ ekseninin reddine kilitli, o kilit bir sayıya ihtiyaç
+//   duymuyor. (b) Tavan, şartları BİRLEŞTİRMEYE İTİYORDU: S2a+S2b+S2c üç ayrı
+//   şart oldukları hâlde, "üç satır yazmak tavanı 5'ten 7'ye çıkarırdı" diye tek
+//   satırda toplanmışlardı — yani defterin kendisi tavanı korumak için
+//   eğiliyordu. Tavan silindi, üç şart AYRILDI, ve borç yedi satırda yazılı.
+//
+//   S1  omuz ucu göğüs çizgisinin içinde   → shoulderStyle reddine kilitli
+//   S2a hiçbir üst kalçasından geniş bitmez → topLength reddine kilitli
+//   S2b etek merdiveni (boy arttıkça...)   → topLength reddine kilitli
+//   S2c belde/crop'ta biten üst bustten geniş olamaz → topLength reddine kilitli
+//   S4  kol oyuğu içbükey                  → sleeveStyle reddine kilitli
+//   S5  kol iki ucu da gövdeyle paylaşır   → sleeveStyle reddine kilitli
+//   S6  puff eti toplanmış + manşet        → sleeveStyle reddine kilitli
 //
 // ★ UYANIK ŞARTLAR — ÇİZİLEN SİLUETTEN ÖLÇÜLÜR, EŞİKSİZ EŞİTSİZLİK:
 //   G1  BEL GERÇEKTEN DARALIYOR: çizilen bel yarı-genişliği, çizilen göğüs VE
@@ -88,9 +99,6 @@ const SSP = LAW.croquis.sideSeamProfile;
 const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
 const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
 const SIZE = process.env.V3C_SIZE || 'EU38';
-
-// UYUYAN ŞART CIRCIRI — bir tolerans değil, bir SAYIM tavanı. Yalnız düşebilir.
-const DORMANT_RATCHET = 5;
 
 let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
@@ -378,22 +386,23 @@ for (const c of cizimler) {
 // eksen SEVK EDİLMİŞ demektir; uyuyan şart uyanır ve ölçüm kodu yazılana kadar
 // KIRMIZI düşer. Bu bir gevşetme değil, sevkiyata kilitli bir borçtur.
 console.log('\n--- UYUYAN SARTLAR (konusu sevk edilmemis; her biri bir REDDE kilitli)');
+//
+// ⭐ H3-C — UC SART AYRILDI. S2a/S2b/S2c H3-B'de TEK SATIRDA toplanmisti ve
+// gerekcesi dosyanin kendi sozleriyle suydu: "uc satir olarak yazmak circir
+// tavanini 5'ten 7'ye cikarirdi". Yani defter, borcu kucuk gostermek icin degil
+// ama TAVANI KORUMAK icin egilmisti. Tavan silindiginde o gerekce de yok oldu:
+// uc sart uc ayri hukumdur (S2a bir TAVAN, S2b bir MERDIVEN, S2c bir ORAN), uc
+// ayri olcum kodu isterler, o yuzden uc ayri satirda ve UCU DE ayni eksene —
+// `topLength` — kilitli. Eksen sevk edilir edilmez UCU BIRDEN uyanir.
+// S3 bu listede DEGIL: o geri kondu ve yukarida CANLI olcuyor.
 const UYUYAN = [
-  ['S1  omuz ucu gogus cizgisinin icinde', 'shoulderStyle', { shoulderStyle: 1 }],
-  // ⭐ S2a + S2b + S2c TEK SATIRDA VE TEK EKSENE KILITLI (H3-B). Ucunun de konusu
-  // AYNI eksendir: `topLength`. S2a "hicbir UST vucudun kalcasindan genis
-  // bitemez", S2c "belde/crop'ta biten bir UST bustten genis olamaz", S2b "etek
-  // genisligi boyla artar" — ucu de "belden once biten bir ust" diye bir nesnenin
-  // var olmasini gerektiriyor, ve `topLength` reddedildigi surece oyle bir nesne
-  // CIZILEMIYOR (dort sinif da elbise boyunda bir A hat cikiyor). Uc satir olarak
-  // yazmak circir tavanini 5'ten 7'ye cikarirdi, yani BORCU BUYUK GOSTERIRDI;
-  // tek satir ayni borcu tasiyor ve `topLength` sevk edilir edilmez UCU BIRDEN
-  // uyanip kirmizi duser. S3 bu listede DEGIL: o geri kondu ve yukarida CANLI
-  // olcuyor (bollukla duzeltilmis cizelge orani).
-  ['S2a+S2b+S2c etek orani/merdiveni',    'topLength',     { garment: 'top', topLength: 'crop' }],
-  ['S4  kol oyugu icbukey',                'sleeveStyle',   { sleeveStyle: 'straight' }],
-  ['S5  kol iki ucunu da govdeyle paylasir', 'sleeveStyle', { sleeveStyle: 'straight' }],
-  ['S6  puff eti toplanmis + manset',      'sleeveStyle',   { sleeveStyle: 'balloon' }],
+  ['S1  omuz ucu gogus cizgisinin icinde',   'shoulderStyle', { shoulderStyle: 1 }],
+  ['S2a ust kalcasindan genis bitemez',      'topLength',     { garment: 'top', topLength: 'crop' }],
+  ['S2b etek merdiveni (boy arttikca)',      'topLength',     { garment: 'top', topLength: 'crop' }],
+  ['S2c belde biten ust bustten genis degil', 'topLength',    { garment: 'top', topLength: 'crop' }],
+  ['S4  kol oyugu icbukey',                  'sleeveStyle',   { sleeveStyle: 'straight' }],
+  ['S5  kol iki ucunu da govdeyle paylasir', 'sleeveStyle',   { sleeveStyle: 'straight' }],
+  ['S6  puff eti toplanmis + manset',        'sleeveStyle',   { sleeveStyle: 'balloon' }],
 ];
 const TABAN = { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' };
 let uyuyan = 0;
@@ -412,13 +421,15 @@ for (const [sart, eksen, yama] of UYUYAN) {
          'olcum kodu HALA YAZILMADI. Sartin borcu simdi odenecek (F-E, S1/S2b/S4/S5/S6).');
   }
 }
-console.log(`    uyuyan sart: ${uyuyan}  (circir tavani ${DORMANT_RATCHET})`);
-if (uyuyan > DORMANT_RATCHET) {
-  FAIL(`[circir] uyuyan sart ${uyuyan} > tavan ${DORMANT_RATCHET} — uyuyan sart sayisi ARTAMAZ`);
-} else if (uyuyan < DORMANT_RATCHET) {
-  OK(`circir — uyuyan ${uyuyan} < tavan ${DORMANT_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir (DORMANT_RATCHET).`);
-} else {
-  OK(`circir — uyuyan ${uyuyan} = tavan ${DORMANT_RATCHET} (G5 sevk edilmedi: omuz/yaka/oyuk yok). Sayi yalniz dusebilir.`);
+// ⛔ TAVAN YOK (H3-C). Burada `DORMANT_RATCHET` kiyasi duruyordu; silindi.
+// Sayi ARTIK BIR KAPI DEGIL, BIR ILANDIR: her sartin kapisi yukarida, kendi
+// ekseninin reddinde. Bir sart uyanirsa o satir ZATEN kirmizi duser; toplami
+// bir tavana vurmak, o tavanin buyuklugu kadar bosluk acmaktan baska bir sey
+// yapmiyordu. Odenmemis borc gizlenmiyor, sayilip basiliyor.
+console.log(`    uyuyan sart: ${uyuyan}/${UYUYAN.length}  (TAVAN YOK — her sart kendi ekseninin reddine kilitli)`);
+if (uyuyan === UYUYAN.length) {
+  OK(`uyuyan ${uyuyan}/${UYUYAN.length} — yedisinin de ekseni ADIYLA reddedilmis durumda (G5 sevk edilmedi: omuz/yaka/oyuk/kol yok). ` +
+     'Odenmemis olcum borcu: 7 sart.');
 }
 
 // ---------------------------------------------------------------------------
