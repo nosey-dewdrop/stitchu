@@ -12,7 +12,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
-const { renderGarmentFlatAsync } = await import(join(root, 'engine/tools/render-garment-flat.mjs'));
+// H3 (2026-08-30): köprünün ARDINDAKİ croquis kalemi silindi. Bu kapının sorusu
+// DEĞİŞMEDİ, sadece "düşme"nin şekli değişti: eskiden eşleşmeyen spec sessizce
+// şematik bir çizime düşüyordu ve kapı onu 940×680 OLMAMASINDAN tanıyordu; artık
+// eşleşmeyen spec `null` döner. Yani ikame ARTIK MÜMKÜN DEĞİL, ve kapı hâlâ
+// referans kalemin YANLIŞ stile düşmesini arıyor.
+const { renderReferenceFlat } = await import(join(root, 'engine/tools/reference-flat.mjs'));
 
 let fails = 0;
 const fail = (m) => { console.error('FAIL:', m); fails += 1; };
@@ -33,9 +38,9 @@ const princessCases = [
   { name: 'scoop princess top (id63 sınıfı)', spec: { garment: 'top', neckline: 'scoop', shaping: 'princess', topLength: 'hip', waistline: 'natural', closure: { type: 'zipper' } } },
 ];
 for (const c of princessCases) {
-  const flat = await renderGarmentFlatAsync(null, c.spec);
-  const isRef = flat.includes('940 680');
-  // düşme = REFERANS kalem plain tank (princess çizmiyor). Fallback (940×680 değil) OK
+  const flat = await renderReferenceFlat(c.spec);
+  const isRef = flat !== null;
+  // düşme = REFERANS kalem plain tank (princess çizmiyor). Eşleşmeme (null) OK
   // (compile ÜRETİLEMEZ der). Referans + princess çizmiyor = sessiz ikame.
   if (isRef && !drewPrincess(flat)) fail(`${c.name}: princess spec REFERANS plain tank'e DÜŞTÜ (len ${flat.length}, princess dikişi yok) — sessiz ikame yasak`);
 }
@@ -46,16 +51,16 @@ const strapCases = [
   { name: 'spaghetti square top', spec: { garment: 'top', neckline: 'square', shaping: 'dart', straps: { type: 'spaghetti' } }, wantRef: true },
 ];
 for (const c of strapCases) {
-  const flat = await renderGarmentFlatAsync(null, c.spec);
-  const isRef = flat.includes('940 680');
-  const isPlain = flat.length < PLAIN_MAX;
+  const flat = await renderReferenceFlat(c.spec);
+  const isRef = flat !== null;
+  const isPlain = isRef && flat.length < PLAIN_MAX;
   if (isPlain) fail(`${c.name}: straps object cami yerine plain'e DÜŞTÜ (len ${flat.length}) — straps-object köprü bug'ı geri geldi`);
-  if (c.wantRef && !isRef) fail(`${c.name}: cami stiline eşleşmedi (referans kalem 940×680 değil)`);
+  if (c.wantRef && !isRef) fail(`${c.name}: cami stiline eşleşmedi (referans kalem yanıt vermedi)`);
 }
 
 // 3) NEGATİF kontrol: gerçekten plain (princess DEĞİL, straps yok) top plain kalmalı (yanlış alarm yok).
-const plainOk = await renderGarmentFlatAsync(null, { garment: 'top', neckline: 'crew', shaping: 'dart', straps: { type: 'none' } });
-if (plainOk.length >= PLAIN_MAX && !plainOk.includes('940 680')) {
+const plainOk = await renderReferenceFlat({ garment: 'top', neckline: 'crew', shaping: 'dart', straps: { type: 'none' } });
+if (plainOk && plainOk.length >= PLAIN_MAX) {
   // plain crew tank referans kalemden (top_crew_dart) gelebilir; sadece fallback-şişme yanlışsa uyar
 }
 

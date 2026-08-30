@@ -2,7 +2,7 @@
 // DERLEYİCİ FAZ 3 — SENTEZ. compile(spec) → {flat, kalıp}. TEK GİRİŞ NOKTASI.
 // Damla direktifi 2026-07-22.
 //
-// Referans motor TEK HAKİKAT: flat = render-garment-flat köprüsü (referans kalem
+// Referans motor TEK HAKİKAT: flat = reference-flat köprüsü (referans kalem
 // _engine-full.mjs). Cerrahi kopya YOK, 2. renderer YOK. Kalıp = draftJSON (WASM
 // motor). İkisini tek fonksiyonda birleştirir.
 //
@@ -101,11 +101,13 @@ export async function compile(rawSpec, opts = {}) {
 
   // 2) FLAT — referans kalem köprüsü (tek hakikat). referenceStyle verilmişse onu
   // kullan, yoksa köprü spec'ten çıkarır. Fallback'e düşerse ÜRETİLEMEZ (köprü eksiği).
-  const { renderGarmentFlatAsync } = await import('../tools/render-garment-flat.mjs');
+  // H3: köprünün ardındaki croquis fallback'i SİLİNDİ. Eşleşme yoksa cevap `null`
+  // — yani bu dosyanın zaten verdiği hüküm (fallback = ÜRETİLEMEZ) artık motorun
+  // kendi cevabı, sonradan tanınan bir şekil değil.
+  const { renderReferenceFlat } = await import('../tools/reference-flat.mjs');
   const flatSpec = opts.referenceStyle ? { ...spec, referenceStyle: opts.referenceStyle } : spec;
-  const flat = await renderGarmentFlatAsync(null, flatSpec);
-  const isReference = flat.includes('940 680');
-  if (!isReference) {
+  const flat = await renderReferenceFlat(flatSpec);
+  if (flat === null) {
     // köprüden geçmedi = fallback şematik. İkame/yaklaşık YASAK → boşluk raporu.
     return { ok: false, uretilemez: true, eksik_primitif: ['kopru-eslesmesi-yok'],
              not: 'spec köprüden geçmedi (fallback şematik) — bu spec için referans stil eşlemesi eksik', anlasilan: spec };

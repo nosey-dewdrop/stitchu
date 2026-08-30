@@ -1,5 +1,5 @@
 {
-  "_contract": "FLAT KONVANSIYONU v1 (F-D, 2026-08-23). Damla: 'flatlerin hepsi ayni convention'da degil, hepsinin AYNI MODELDEN CIKMA gibi olmasi lazim' + 'flat tarz sorunu degil, CS hesap ve matematik isidir'. Bu dosya flat cizim kanununun TEK kaynagi. Kapi: engine/tests/flat_convention_check.mjs. Uretim kalemi: engine/tools/render-garment-flat.mjs. DEGERLERI BURADAN OKUR, kendi kopyasini tutmaz.",
+  "_contract": "FLAT KONVANSIYONU v1 (F-D, 2026-08-23). Damla: 'flatlerin hepsi ayni convention'da degil, hepsinin AYNI MODELDEN CIKMA gibi olmasi lazim' + 'flat tarz sorunu degil, CS hesap ve matematik isidir'. H3 (2026-08-30): BU DOSYA ARTIK URETIM CIZIMININ KANUNU DEGIL. Croquis kalemi (web/lib/flat-core.js) ve onun kapisi (flat_convention_check) silindi; kullaniciya giden teknik cizim artik kalibin kesildigi yuzeyin projeksiyonudur (engine.flatJSON -> web/lib/flat-from-plan.js, kapi flat_pattern_agree_check --all). Dosya SILINMEDI cunku iki canli tuketicisi kaldi ve onlar buradan OKUR, kendi kopyasini tutmaz: engine/tools/render-listing-sheet.mjs (1:3 listeleme sayfasi olcegi) ve engine/tools/bugra/overlay-png.mjs. Manken capasi hukmu (H6) buradan flat_pattern_agree_check --all'a tasindi.",
   "version": 1,
 
   "scale": {

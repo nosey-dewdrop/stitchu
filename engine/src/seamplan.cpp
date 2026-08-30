@@ -318,6 +318,31 @@ std::string planJSON(const SeamPlan& plan) {
     o << "    \"dikis_payi_mm\": " << num(constants::kSeamAllowanceMM, 1) << ",\n";
     o << "    \"cizgi\": \"kesim (dikis cizgisi + pay)\"\n";
     o << "  },\n";
+    // ⭐ THE THREE BODY LINES, PUBLISHED BY THE PATTERN (H3).
+    //
+    // Before this block the KALIP reading handed out panels and one waist ring,
+    // and there was NO level at which the pattern and the drawing could be put
+    // side by side: a bust line is an interior curve of a developed panel with no
+    // vertex, no edge and no stitch (tools/pattern-measure.mjs says so and prints
+    // null for it), so "the flat agrees with the pattern at the bust" was a
+    // sentence nobody could measure. It is measurable now, and it is measured:
+    // engine/tests/flat_pattern_agree_check.mjs --all evaluates the DRAWN
+    // silhouette (the SVG web/lib/flat-from-plan.js writes) at these three
+    // heights and requires 0.1mm.
+    //
+    // Not a new measurement: shellprojection.cpp's own halfWidthAt/girthAt, the
+    // same pair the silhouette is sampled with.
+    {
+        const std::vector<RingLine> lines = patternRingLines(pat);
+        o << "  \"halkalar\": [";
+        for (size_t i = 0; i < lines.size(); ++i) {
+            o << "{\"ad\": " << quote(lines[i].ad) << ", \"z_mm\": " << num(lines[i].zMM)
+              << ", \"yari_genislik_mm\": " << num(lines[i].halfWidthMM)
+              << ", \"cevre_mm\": " << num(lines[i].girthMM) << "}"
+              << (i + 1 == lines.size() ? "" : ", ");
+        }
+        o << "],\n";
+    }
     o << "  \"halka_cevresi_mm\": " << num(pat.ringGirthMM) << ",\n";
     o << "  \"bodice_bel_mm\": " << num(pat.bodiceWaistSumMM) << ",\n";
     o << "  \"etek_bel_mm\": " << num(pat.skirtWaistSumMM) << ",\n";
@@ -391,7 +416,7 @@ std::string flatJSON(const SeamPlan& plan) {
          "cevrelerinin insan cizelgesinden kac mm ince oldugunu veren otoriter bir yayin "
          "BULUNAMADI, ve sifirdan baska her deger uydurulmus bir sayi olurdu (§3.10). "
          "Gerekce + nasil degisecegi: contract/mannequin-chart-v1.json _karar blogu. "
-         "Kapi: flat_convention_check bolum 1d, H6.\"\n";
+         "Kapi: flat_pattern_agree_check --all, H6.\"\n";
     o << "  },\n";
     o << "  \"ustZ_mm\": " << num(f.topZMM) << ",\n";
     o << "  \"altZ_mm\": " << num(f.bottomZMM) << ",\n";

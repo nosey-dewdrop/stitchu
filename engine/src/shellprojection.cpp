@@ -26,9 +26,16 @@ const GarmentSurf::Ring& ringNamed(const GarmentSurf& s, const std::string& name
     throw std::runtime_error("shell has no ring named " + name);
 }
 
+}  // namespace (file-local helpers above)
+
 // The two readings of the shell at one height, both from effectiveSection so the
 // skim run, the A-line hem and the hip blend are applied exactly once, in the
 // engine's own code, and never restated here.
+//
+// They are NOT file-local any more (H3): the KALIP reading publishes the three
+// body lines through patternRingLines() below, and a copy of `sec.a + d` in
+// seamplan.cpp would have been a second spelling of the one thing this file
+// exists to keep single.
 double halfWidthAt(const GarmentSurf& s, double h) {
     double d = 0.0;
     const Section sec = s.effectiveSection(h, d);
@@ -46,6 +53,8 @@ double girthAt(const GarmentSurf& s, double h) {
                                  "Steiner's perimeter identity does not apply");
     return sec.perimeter(kPerimOrder) + 2.0 * kPi * d;
 }
+
+namespace {
 
 // THE CENTRE-FRONT (or CENTRE-BACK) LINE OF THE SHELL, AS A LENGTH ALONG THE
 // CLOTH. Why it exists: body_length used to be shoulder.h - hemZ, a VERTICAL
@@ -228,5 +237,27 @@ ShellProjection project(const SurfacePattern& pat, bool front) {
 
 ShellProjection projectFront(const SurfacePattern& pat) { return project(pat, true); }
 ShellProjection projectBack(const SurfacePattern& pat) { return project(pat, false); }
+
+// ---- THE THREE BODY LINES (H3) ----
+//
+// bust, waist, hip — read off the SAME GarmentSurf the panels were cut from and
+// with the SAME two functions the silhouette is sampled with. Nothing is
+// recomputed and nothing is rounded: this is the pattern object saying, in its
+// own numbers, where its three lines are, so somebody else can check whether the
+// drawing landed on them.
+//
+// The three names are taken out of GarmentSurf::ringNames() by INDEX, not by
+// string literal. Writing "bust" here would be a fourth copy of a closed list
+// (surfacepattern.hpp owns it) and the vocabulary ratchet counts those.
+std::vector<RingLine> patternRingLines(const SurfacePattern& pat) {
+    const GarmentSurf& surf = pat.surf;
+    const std::array<const char*, 5>& RN = GarmentSurf::ringNames();
+    std::vector<RingLine> out;
+    for (int i = 2; i <= 4; ++i) {           // bust, waist, hip
+        const GarmentSurf::Ring& r = ringNamed(surf, RN[i]);
+        out.push_back({r.name, r.h, halfWidthAt(surf, r.h), girthAt(surf, r.h)});
+    }
+    return out;
+}
 
 }  // namespace stitchu

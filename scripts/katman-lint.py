@@ -20,7 +20,7 @@ KURALLAR = [
      'L4 hakem, üreticinin içini okuyamaz'),
     ('engine/flat-engine/_engine-full.mjs', r'specification|body\.yaml|mean_all',
      'L3a flat, kalıp dünyasından hiçbir şey okuyamaz'),
-    ('engine/tools/render-garment-flat.mjs', r'specification\.json|body\.yaml|mean_all',
+    ('engine/tools/reference-flat.mjs', r'specification\.json|body\.yaml|mean_all',
      'L3a render, kalıp dünyasından hiçbir şey okuyamaz'),
     ('engine/src/bodice.cpp', r'figur|croquis',
      'L3b C++ motoru flat croquisini okuyamaz'),

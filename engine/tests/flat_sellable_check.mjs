@@ -37,8 +37,31 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
 const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
 const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
-const { renderGarmentFlat } = await import(join(root, 'engine/tools/render-garment-flat.mjs'));
+// ===========================================================================
+// H3 (2026-08-30) — KAPI SILINMEDI, SARILAN CIZIM DEGISTI.
+// ===========================================================================
+// Bu kapinin sorusu degismedi: SATTIGIMIZ SEYIN LISTELEME GORSELI ETSY'NIN
+// YAYINLANMIS GEOMETRISINDEN gecer mi. 30 Agustos'a kadar sarilan flat croquis
+// kalemininkiydi (`render-garment-flat.mjs` -> `web/lib/flat-core.js`); H3 o
+// kalemi sildi ve kullaniciya giden cizim artik kalibin kesildigi yuzeyin
+// projeksiyonu (engine.flatJSON -> web/lib/flat-from-plan.js). Sarmalayici
+// (render-listing-sheet.mjs) ayni sarmalayicidir ve HICBIR esigi gevsetilmedi.
+// Tek gercek degisiklik olcegin KAYNAGIDIR: sayfa artik 1:3'u bir sabitten
+// okumuyor, cizimin kendi `data-unit-mm` beyanini soruyor (o beyanin kapisi
+// flat_convention_check §2). Sabit kalsaydi, alicinin gordugu tek boyut bilgisi
+// olan olcek cubugu UC KAT yanlis etiketlenirdi.
+const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
+const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
+const SIZE = process.env.V3C_SIZE || 'EU38';
+const engine = await (await import(BUNDLE)).default();
+const { renderFlatFromPlan } = await import(FLAT_MOD);
 const { renderListingSheet, ETSY } = await import(join(root, 'engine/tools/render-listing-sheet.mjs'));
+/** Sevk edilen hattin cizimi. Fikstur degil: create.js'in cagirdigi iki adim. */
+function renderShippedFlat(spec) {
+  const F = JSON.parse(engine.flatJSON(spec, { size: SIZE }));
+  if (F.error) throw new Error(`flatJSON reddetti: ${F.error}`);
+  return renderFlatFromPlan(F);
+}
 
 let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
@@ -48,17 +71,14 @@ const NOTE = (m) => console.log(`note  ${m}`);
 const INK = LAW.ink.color.toLowerCase();
 const CLASSES = Object.entries(LAW.lineClasses.classes);
 
-// Same style matrix as flat_convention_check: a gate that only ever sees one
-// garment is a demo, not a gate.
+// Ayni sinif matrisi: kartin saydigi dort sinif + sevk edilen ikinci klos
+// kelimesi. Tek giysi goren kapi kapi degil, demodur.
 const MATRIX = [
-  ['princess_scoop_dress', { garment: 'dress', neckline: 'scoop', shaping: 'princess', skirtStyle: 'aLine', skirtLength: 'midi', closure: 'backZip' }],
-  ['boat_shift_dress', { garment: 'dress', neckline: 'boat', shaping: 'shift', skirtStyle: 'straight', skirtLength: 'mini' }],
-  ['vneck_empire_dress', { garment: 'dress', neckline: 'vNeck', waistline: 'empire', shaping: 'darts', skirtStyle: 'gathered', skirtLength: 'maxi' }],
-  ['square_gathered_dress', { garment: 'dress', neckline: 'square', shaping: 'darts', skirtStyle: 'gathered', skirtLength: 'midi', gatherType: 2, gatherZone: 2 }],
-  ['crew_sleeved_top', { garment: 'top', neckline: 'crew', shaping: 'darts', topLength: 'hip', sleeveStyle: 'set', sleeveLength: 'short' }],
-  ['sweetheart_crop_top', { garment: 'top', neckline: 'sweetheart', shaping: 'princess', topLength: 'crop' }],
-  ['scoop_tunic_placket', { garment: 'top', neckline: 'scoop', shaping: 'darts', topLength: 'tunic', frontPlacket: 1 }],
-  ['cowl_openback_top', { garment: 'top', neckline: 'cowl', shaping: 'shift', topLength: 'waist', backOpening: 1 }],
+  ['elbise a-line', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['elbise duz', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'straight', neckline: 'scoop' }],
+  ['etek a-line', { garment: 'skirt', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'crew', sleeveStyle: 'none' }],
+  ['top a-line', { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['orme a-line', { garment: 'top', shaping: 'dart', fabric: 'knit', skirtStyle: 'aLine', neckline: 'scoop' }],
 ];
 
 const SIZES = Object.keys(TABLES.draft.euSizeChart).filter((k) => /^EU\d+$/.test(k));
@@ -145,8 +165,16 @@ console.log(`         [L]  contract/flat-convention-v1.json   [K10] contract/tab
 
 let worstSafe = 1;
 for (const [name, spec] of MATRIX) {
-  const flat = renderGarmentFlat(null, spec);
+  let flat;
+  try { flat = renderShippedFlat(spec); }
+  catch (e) { FAIL(`${name}: sevk edilen cizim uretilemedi — ${e.message}`); continue; }
   const sheet = renderListingSheet(flat, { title: name.replace(/_/g, ' ') });
+  // OLCEK KAYNAGI: cizimin KENDI beyani. Kapinin kendi kopyasi yok.
+  const flatUnitMM = parseFloat((/<svg\b[^>]*\sdata-unit-mm="([^"]*)"/.exec(flat) || [])[1]);
+  if (!Number.isFinite(flatUnitMM) || flatUnitMM <= 0) {
+    FAIL(`${name}: flat kokunde data-unit-mm beyani YOK — sayfa olcegi turetilemez`);
+    continue;
+  }
 
   const vb = sheet.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
   if (!vb) { FAIL(`${name}: sheet has no viewBox`); continue; }
@@ -179,8 +207,8 @@ for (const [name, spec] of MATRIX) {
   if (![kFlat, unitMM, barMM, barU].every(Number.isFinite)) {
     FAIL(`${name}: sheet does not declare flat-scale / unit-mm / scale-bar`);
   } else {
-    const expUnit = LAW.scale.unitMM / kFlat;
-    if (Math.abs(unitMM - expUnit) / expUnit > 0.005) FAIL(`${name}: declared sheet-unit-mm ${unitMM} != law unitMM ${LAW.scale.unitMM} / flat-scale ${kFlat} = ${expUnit.toFixed(4)}`);
+    const expUnit = flatUnitMM / kFlat;
+    if (Math.abs(unitMM - expUnit) / expUnit > 0.005) FAIL(`${name}: declared sheet-unit-mm ${unitMM} != flat data-unit-mm ${flatUnitMM} / flat-scale ${kFlat} = ${expUnit.toFixed(4)}`);
     const drawnMM = barU * unitMM;
     if (Math.abs(drawnMM - barMM) / barMM > 0.005) FAIL(`${name}: scale bar is drawn ${barU.toFixed(2)} u = ${drawnMM.toFixed(1)} mm but LABELLED ${barMM} mm — the sheet lies about size`);
   }
@@ -237,7 +265,7 @@ if (existsSync(CHROME)) {
   const { tmpdir } = await import('node:os');
   const d = mkdtempSync(join(tmpdir(), 'sellable-'));
   const sv = join(d, 's.svg'), pg = join(d, 's.png');
-  writeFileSync(sv, renderListingSheet(renderGarmentFlat(null, MATRIX[0][1]), { title: 'gate' }));
+  writeFileSync(sv, renderListingSheet(renderShippedFlat(MATRIX[0][1]), { title: 'gate' }));
   const r = rasterise(sv, pg, ETSY.minShortSidePx);
   if (Math.min(r.W, r.H) < ETSY.minShortSidePx) FAIL(`raster short side ${Math.min(r.W, r.H)} < Etsy minimum ${ETSY.minShortSidePx}`);
   else OK(`raster ${r.W}x${r.H}, short side ${Math.min(r.W, r.H)} >= Etsy minimum ${ETSY.minShortSidePx} [E1]`);

@@ -13,7 +13,11 @@
 # WHAT IS DELIBERATELY NOT HERE: the C++ ctest suite. Reason, declared rather
 # than hidden — the suite needs a full cmake build and today carries FIVE
 # declared reds (h10_gate_check, style_check, figure_check, preview_truth_check,
-# contract_check). Wiring it with an -E exclusion list would put a maintained
+# contract_check). style_check STAYS on this list after H3 (2026-08-30): the pen
+# it byte-diffs against engine/STYLE-PIN is the READ-ONLY REFERENCE pen
+# (engine/flat-engine/_engine-full.mjs), not the deleted croquis pen, and 0 of its
+# 31 styles are pinned. Deleting a red gate does not make it green — it deletes
+# the measurement. Wiring the suite with an -E exclusion list would put a maintained
 # lie in CI: the list would rot into a mute button. ctest stays where it is
 # measured honestly and in full, on both numbers: the local rabadon pushGate.
 # See HEDEF.md § SAYAÇ.

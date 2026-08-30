@@ -132,4 +132,31 @@ struct ShellProjection {
 ShellProjection projectFront(const SurfacePattern& pat);
 ShellProjection projectBack(const SurfacePattern& pat);
 
+// ---- THE THREE BODY LINES, AS THE PATTERN'S OWN OBJECT HOLDS THEM (H3) ----
+//
+// bust / waist / hip: the levels a technical drawing is read at, and the levels
+// a shopper holds a tape at. They are published from the KALIP reading so the
+// FLAT reading's drawn silhouette can be held next to them and asked the only
+// question H3 exists for: is the drawing this pattern, or a second object that
+// happens to look like it (engine/tests/flat_pattern_agree_check.mjs --all).
+//
+// This is NOT a second measurement of the shell. `halfWidthMM` and `girthMM` are
+// the SAME two functions the silhouette itself is sampled with — one authority,
+// exposed rather than re-typed, because a second spelling of `sec.a + d` in
+// seamplan.cpp is precisely the class of drift the whole file was written
+// against. The ring names come from GarmentSurf::ringNames(), never from
+// literals here.
+struct RingLine {
+    std::string ad;         // the ring's own name: bust / waist / hip
+    double zMM = 0.0;       // the height the line sits at, body z
+    double halfWidthMM = 0.0;   // silhouette half-width: section semi-axis + ease
+    double girthMM = 0.0;       // the ring's circumference (Steiner-exact)
+};
+std::vector<RingLine> patternRingLines(const SurfacePattern& pat);
+
+// The two readings of the shell at one height. Exposed (they used to be file
+// -local) so patternRingLines and project() cannot drift apart.
+double halfWidthAt(const GarmentSurf& s, double h);
+double girthAt(const GarmentSurf& s, double h);
+
 }  // namespace stitchu

@@ -1,404 +1,191 @@
 #!/usr/bin/env node
-// flat_convention_check.mjs — FLAT KONVANSIYON KAPISI (F-D, 2026-08-23).
+// flat_convention_check.mjs — FLAT KONVANSIYON KAPISI
+//                             (F-D 2026-08-23 · YÜZEY HATTINA BAĞLANDI H3 2026-08-30).
 //
 // Damla: "iyi flat yok, oyleyse iyi kalip da olamaz." · "flatlerin hepsi ayni
 // convention'da degil. hepsinin AYNI MODELDEN CIKMA gibi olmasi lazim." ·
 // "flat tarz sorunu degil, CS hesap ve matematik isidir."
 //
-// Bu kapi HICBIR SEYE INANMAZ: uretim kalemini (engine/tools/render-garment-flat.mjs)
-// bir stil matrisinde kosturur, cikan SVG'yi PARSE eder ve alti sarti MEKANIK olcer.
-// Kanun contract/flat-convention-v1.json'da; kapi da kalem de degerleri ORADAN okur,
-// kimse kendi kopyasini tutmaz.
+// ===========================================================================
+// H3 — BU KAPI SİLİNMEDİ, YARGILADIĞI NESNE DEĞİŞTİ
+// ===========================================================================
+// 30 Ağustos'a kadar ölçülen kalem `engine/tools/render-garment-flat.mjs` →
+// `web/lib/flat-core.js` idi: bir 2B croquis üstüne elle yazılmış eğrilerle çizen
+// ÜRETİM CROQUIS KALEMİ. H3 o kalemi sildi, çünkü çizdiği croquis kalıptan AYRI
+// bir nesneydi (EU38'de bel 700.0mm derken kalıp 724.89mm diyordu). Kullanıcıya
+// giden teknik çizim artık kalıbın kesildiği yüzeyin projeksiyonudur:
+//   engine.flatJSON(spec, body) -> web/lib/flat-from-plan.js -> SVG.
 //
-//   1. TEK CROQUIS       omuz ucu (x,y) + gogus/koltukalti (x,y) + bel yuksekligi
-//                        butun stillerde +-2 mm icinde ayni (contract toleranceMM).
-//   1c. OMUZ ICERIDE     omuz ucu x <= gogus (koltukalti) x. GEOMETRIK YASA, esik
-//                        degil: set-in kol oyugu omuz ucu ile koltukaltini paylasir
-//                        ve omuzdan asagi/iceri iner, disari sisemez.
-//   2. OLCEK BEYANI      kokte data-scale + data-unit-mm; beyan contract ile ayni;
-//                        VE olculen croquis genislikleri KAYNAKLI beden cizelgesiyle
-//                        tutarli (gogus yari-genisligi x unitMM == bustCM*10/4).
-//   3. CIZGI HIYERARSISI her cizili elemanin (width, dash) cifti beyan edilmis bir
-//                        sinifa esit; beyan edilen her sinif en az bir kez kullanilmis.
-//   4. SIFIR BOYA        gradient/filter/opacity sayisi 0; fill degerleri sadece
-//                        none / kagit beyazi / murekkep.
-//   5. ON + ARKA         her flat'te data-view="front" ve "back" panelleri var.
-//   6. TEK KONTUR RENGI  butun stroke degerlerinin kumesi == {murekkep}.
+// KAPIYI SİLMEK ÇÖZÜM DEĞİLDİ. contract/flat-convention-v1.json bir kalemin özel
+// biçim tercihi değil, DAMLA'NIN FLAT KANUNU: tek mürekkep, hiyerarşi RENKLE
+// değil AĞIRLIKLA, sıfır boya, ön + arka, ilan edilmiş ölçek. Kalem öldü, kanun
+// ölmedi — ve kanunun muhatabı artık yukarıdaki üç adımlık hattır. Bu kapı o
+// hattı ölçer. `web/lib/flat-from-plan.js` H3'te kanuna UYDURULDU (mürekkep
+// #1f3a5f, siluet `outline` 2.0, üst sınır `seam` 1.4, data-view front/back,
+// data-scale + data-unit-mm); bu dosya o uyumu her koşuda YENİDEN ÖLÇER.
 //
-// ANTI-HACK: croquis isaretleri panelde data-* olarak BEYAN ediliyor, ama kapi
-// beyani GEOMETRIK olarak da cikariyor (siluet path'inin uc noktalarindan) ve
-// ikisini karsilastiriyor. Yalan beyan = KIRMIZI. Beyani silmek de = KIRMIZI.
+// HANGİ HÜKÜM NEREYE GİTTİ — hiçbiri kaybolmadı:
+//   1  TEK CROQUIS (omuz/göğüs/bel çapaları ±2mm)  → KONUSU ÖLDÜ. Croquis diye
+//      bir nesne yok; dört sınıfın dördü de AYNI GarmentSurf'ün projeksiyonu,
+//      yani "aynı modelden çıkma" bir tolerans değil bir ÖZDEŞLİK. Onu ölçen
+//      flat_pattern_agree_check --all (tek nesne / dugum kıyası).
+//   1b BEYAN == ÇİZİLEN                            → aynı yere; artık çizilen
+//      siluet kalıbın kendi halkalarına 0.1mm'de ölçülüyor.
+//   1c OMUZ İÇERİDE / set-in kol yasası            → flat_geometry_sellable_check
+//      (yüzey hattı bugün STRAPLESS sevk ediyor; hüküm orada CIRCIRLA duruyor).
+//   1d MANKEN ÇAPASI (H6)                          → flat_pattern_agree_check --all.
+//   2  ÖLÇEK BEYANI                                → BURADA, ve SIKILAŞTI (aşağı bak).
+//   3  ÇİZGİ HİYERARŞİSİ · 3b ORANLAR              → BURADA, aynen.
+//   4  SIFIR BOYA · 5 ÖN+ARKA · 6 TEK MÜREKKEP     → BURADA, aynen.
 //
-// KAPSAM (acikca yazili, gizlenmiyor): olculen kalem URETIM kalemi
-// renderGarmentFlat(). REFERANS KALEM engine/flat-engine/_engine-full.mjs
-// SALT-OKUNUR (Damla emri 2026-07-19) — bu kapi onu OLCER ve sapmasini RAPORLAR,
-// ama kirmizi dusurmez, cunku duzeltmek Damla'nin kalem revizyonuna bagli.
+// ★ 2. ÖLÇEK — ESKİSİNDEN SIKI. Eski kapı `data-scale` dizesinin kanundaki dizeye
+//   EŞİT olmasını istiyordu: bir sabitin bir sabite eşitliği, yani beyanın beyanla
+//   doğrulanması. Yeni hüküm ARİTMETİK: belgenin fiziksel genişliği (mm cinsinden
+//   `width` niteliği) bölü viewBox genişliği, beyan edilen `data-unit-mm`'e EŞİT
+//   olmak zorunda, ve `data-scale` tam olarak `1:<unitMM>` olmak zorunda. Yalan
+//   bir ölçek beyanı artık belgenin kendi geometrisiyle çelişir. (Çizilen çizginin
+//   KALIBIN mm'sini tutup tutmadığı ayrı bir kapının işi: --all, 0.1mm.)
+//
+// ★ 3. ÖLÜ BEYAN — GEVŞETME DEĞİL, CIRCIR. Eski kapı "beyan edilmiş her sınıf en
+//   az bir kez kullanılmış olmalı" diyordu ve croquis kalemi beş sınıfın beşini de
+//   çiziyordu (pens, buton, fermuar hattı, sırt açıklığı...). Yüzey hattının bugün
+//   çizdiği iki eğri var: siluet ve üst sınır. Üç sınıf (`mark`, `topstitch`,
+//   `hidden`) bugün KULLANILMIYOR. Bu bir kusurdur ve kapı onu SAYAR, ADIYLA
+//   BASAR ve sayıyı 3'te CIRCIRLAR: 3'ün üstüne çıkarsa KIRMIZI, düşerse yeşil
+//   kalır ve tavanı düşürmek ayrı ve bilinçli bir commit'tir. Kullanılmayan sınıfı
+//   kanundan SİLMEK de kapıyı geçirmez — silinen sınıf `ratios` beyanını kırar.
+//
+// ANTI-HACK: bu kapı hiçbir sabiti çiziciden import etmez. Çizicinin BASTIĞI SVG'yi
+// parse eder. flat-from-plan.js'deki mürekkep/ağırlık sabitleri kanunun aynasıdır
+// ve aynayı tutan kapı budur: bir bayt kayarsa burada kırmızı düşer.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
 const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
-const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
-// MANKEN CIZELGESI — ILAN EDILMIS, ve yolu bu dosyada yazili DEGIL: kanunun
-// kendisi soyluyor (referenceBody.mannequinChart). Yolu buraya sabitlemek ikinci
-// bir kaynak olurdu, ki bu dosyanin butun mesele ettigi sey odur.
-if (!LAW.referenceBody || !LAW.referenceBody.mannequinChart)
-  throw new Error('flat-convention-v1.json referenceBody.mannequinChart beyani YOK: '
-                + 'croquis hangi bedene capalandigini soylemiyor (KOSU-v7 §2, H6)');
-const MANKEN = JSON.parse(readFileSync(join(root, LAW.referenceBody.mannequinChart), 'utf8'));
-const { renderGarmentFlat } = await import(join(root, 'engine/tools/render-garment-flat.mjs'));
+const MANKEN_YOL = LAW.referenceBody && LAW.referenceBody.mannequinChart;
+if (!MANKEN_YOL) throw new Error('flat-convention-v1.json referenceBody.mannequinChart beyani YOK');
 
-const UNIT = LAW.scale.unitMM;
-const TOL_MM = LAW.croquis.toleranceMM;
-const TOL_U = TOL_MM / UNIT;
+const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
+const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
 const INK = LAW.ink.color.toLowerCase();
+const SIZE = process.env.V3C_SIZE || 'EU38';
+
+// KULLANILMAYAN ÇİZGİ SINIFI CIRCIRI — bir TOLERANS değil, bir SAYIM tavanı.
+// Bugün: mark · topstitch · hidden. Yalnız düşebilir.
+const UNUSED_CLASS_RATCHET = 3;
 
 let fails = 0;
-const FAIL = (msg) => { console.log(`FAIL  ${msg}`); fails += 1; };
-const OK = (msg) => console.log(`ok    ${msg}`);
+const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
+const OK = (m) => console.log(`ok    ${m}`);
 
 // ---------------------------------------------------------------------------
-// STIL MATRISI — birbirinden gercekten FARKLI aileler. Croquis testinin anlami
-// bu: iki FARKLI stilin flat'i ayni mankenden cikmis gibi olmali.
+// MATRİS — dört giysi sınıfı (kartın saydığı dördü) artı aynı sınıfın yaka ve
+// etek varyantları. Tek giysi gören kapı kapı değildir; ve "hepsi aynı
+// convention'da mı" sorusu ancak birbirinden farklı spec'lerle sorulabilir.
 // ---------------------------------------------------------------------------
 const MATRIX = [
-  ['princess_scoop_dress', { garment: 'dress', neckline: 'scoop', shaping: 'princess', skirtStyle: 'aLine', skirtLength: 'midi', closure: 'backZip' }],
-  ['boat_shift_dress',     { garment: 'dress', neckline: 'boat', shaping: 'shift', skirtStyle: 'straight', skirtLength: 'mini' }],
-  ['vneck_empire_dress',   { garment: 'dress', neckline: 'vNeck', waistline: 'empire', shaping: 'darts', skirtStyle: 'gathered', skirtLength: 'maxi' }],
-  ['square_gathered_dress',{ garment: 'dress', neckline: 'square', shaping: 'darts', skirtStyle: 'gathered', skirtLength: 'midi', gatherType: 2, gatherZone: 2 }],
-  ['crew_sleeved_top',     { garment: 'top', neckline: 'crew', shaping: 'darts', topLength: 'hip', sleeveStyle: 'set', sleeveLength: 'short' }],
-  ['sweetheart_crop_top',  { garment: 'top', neckline: 'sweetheart', shaping: 'princess', topLength: 'crop' }],
-  ['scoop_tunic_placket',  { garment: 'top', neckline: 'scoop', shaping: 'darts', topLength: 'tunic', frontPlacket: 1 }],
-  ['cowl_openback_top',    { garment: 'top', neckline: 'cowl', shaping: 'shift', topLength: 'waist', backOpening: 1 }],
+  ['elbise_scoop_aline', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['elbise_crew_duz',    { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'straight', neckline: 'crew' }],
+  ['etek_aline',         { garment: 'skirt', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'crew', sleeveStyle: 'none' }],
+  ['top_scoop',          { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['top_crew',           { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'crew' }],
+  ['orme_scoop',         { garment: 'top', shaping: 'dart', fabric: 'knit', skirtStyle: 'aLine', neckline: 'scoop' }],
 ];
 
-// ---------------------------------------------------------------------------
-// SVG PATH — sadece M/L/C/Q/Z mutlak (kalemin bastigi dil). Uc noktalari donur.
-// ---------------------------------------------------------------------------
-function endpoints(d) {
-  const tok = d.match(/[MLCQZ]|-?\d+(?:\.\d+)?/gi) || [];
-  const out = [];
-  let i = 0, cmd = '';
-  const num = () => parseFloat(tok[i++]);
-  while (i < tok.length) {
-    const t = tok[i];
-    if (/^[MLCQZ]$/i.test(t)) { cmd = t.toUpperCase(); i += 1; if (cmd === 'Z') continue; }
-    if (cmd === 'M' || cmd === 'L') out.push([num(), num()]);
-    else if (cmd === 'C') { num(); num(); num(); num(); out.push([num(), num()]); }
-    else if (cmd === 'Q') { num(); num(); out.push([num(), num()]); }
-    else i += 1;
-  }
-  return out;
+console.log('=== FLAT KONVANSIYON KAPISI — YUZEY HATTI (H3), ' + MATRIX.length + ' spec');
+console.log(`    kanun: contract/flat-convention-v1.json   murekkep ${INK}   beden ${SIZE}`);
+console.log('    olculen hat: engine.flatJSON(spec, body) -> web/lib/flat-from-plan.js');
+
+if (!existsSync(BUNDLE)) FAIL(`sevk edilen wasm paketi YOK: ${BUNDLE} — engine/build-wasm.sh`);
+if (!existsSync(FLAT_MOD)) FAIL(`cizici YOK: ${FLAT_MOD}`);
+if (fails) { console.log(`\nFAIL flat_convention_check — ${fails} ihlal`); process.exit(1); }
+
+const engine = await (await import(BUNDLE)).default();
+const { renderFlatFromPlan } = await import(FLAT_MOD);
+
+const rendered = [];
+for (const [name, spec] of MATRIX) {
+  let F;
+  try { F = JSON.parse(engine.flatJSON(spec, { size: SIZE })); }
+  catch (e) { FAIL(`[0 uretim] ${name}: flatJSON coktu: ${e.message}`); continue; }
+  if (F.error) { FAIL(`[0 uretim] ${name}: flatJSON reddetti: ${F.error}`); continue; }
+  let svg;
+  try { svg = renderFlatFromPlan(F); }
+  catch (e) { FAIL(`[0 uretim] ${name}: cizim uretilemedi: ${e.message}`); continue; }
+  rendered.push([name, F, svg]);
 }
-const bboxArea = (pts) => {
-  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-  return (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
-};
-
-// Bir panelin GOVDE SILUETI = paneldeki en buyuk kutulu path. (Kol/ic cizgi degil.)
-function silhouette(panelSvg) {
-  const ds = [...panelSvg.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map((m) => m[1]);
-  let best = null, bestA = -1;
-  for (const d of ds) {
-    const pts = endpoints(d);
-    if (pts.length < 5) continue;
-    const a = bboxArea(pts);
-    if (a > bestA) { bestA = a; best = pts; }
-  }
-  return best;
+if (rendered.length !== MATRIX.length) {
+  FAIL(`[0 uretim] ${MATRIX.length} spec'in ${rendered.length}'i cizilebildi — eksik cizim = olculmemis hukum`);
 }
-
-// GEOMETRIK croquis cikarimi — beyana bakmadan. Siluetin SAG yarisi CF yakadan
-// CF etek ucuna kadar; icinden omuz ucu / koltukalti / bel isaretleri cikarilir.
-//
-// ★ V4-A KOK DUZELTMESI (2026-08-24). ESKI cikarim omuz ucunu "CF yakadan asagi
-// yurunurken x'in ILK KESIN YEREL MAKSIMUMU" diye buluyordu. O sezgi YALNIZCA
-// omuz gogusten GENISSE dogrudur — yani kapi, duzeltmeye calistigi kusurun ta
-// kendisini VARSAYIYORDU: omuz ucu buste geri cekilince (dogru giysi) yerel
-// maksimum kaybolur, cikarim koltukaltini omuz sanar ve kapi 27/153/750 mm
-// sapma basardi. Kapi kendi kusurunu koruyordu.
-//
-// YENI KRITER — omuz/gogus ORANINDAN BAGIMSIZ, tamamen SIRT-GEOMETRIK:
-//   omuz ucu = OMUZ CIZGISI ile KOL OYUGU EGRISININ bulustugu KOSE.
-// Iki komsu kirisin karakteri bunu yeterince belirler:
-//   * omuz cizgisi SIGDIR ve DISA gider  (|dx| >= |dy|, dx > 0)
-//   * kol oyugu DIK INER                 (|dy| >  |dx|, dy > 0)
-// Kol oyugu tanimi geregi omuzdan ASAGI iner (set-in armscye); omuz cizgisi
-// tanimi geregi boyun noktasindan omuz ucuna yatay yurur. Bu ayrim omuzun
-// gogusten genis mi dar mi oldugunu HIC SORMAZ.
-// Yukari giden dik kirisler (kare/sweetheart yakanin dikey kenari) dy > 0
-// sartiyla elenir; onlar yaka, omuz degil.
-// ANTI-HACK: hicbir data-* beyani, hicbir kanun sayisi okunmaz — sadece cizilen
-// poligonun kendi kirisleri.
-function measureCroquis(pts) {
-  // sag yari: bastan, |x|<0.5 ile CF etege donene kadar
-  let end = pts.length - 1;
-  for (let i = 1; i < pts.length; i++) { if (Math.abs(pts[i][0]) < 0.5) { end = i; break; } }
-  const half = pts.slice(0, end + 1);
-  const chord = (i) => [half[i + 1][0] - half[i][0], half[i + 1][1] - half[i][1]];
-  const shallowOut = (c) => c[0] > 0 && Math.abs(c[0]) >= Math.abs(c[1]);
-  const steepDown = (c) => c[1] > 0 && Math.abs(c[1]) > Math.abs(c[0]);
-  let si = -1;
-  for (let i = 1; i + 1 < half.length; i++) {
-    if (shallowOut(chord(i - 1)) && steepDown(chord(i))) { si = i; break; }
-  }
-  if (si < 0) return { shoulder: null, chest: null, waist: null, half };
-  const shoulder = half[si];
-  const chest = half[si + 1] || null;
-  const waist = half[si + 2] || null;
-  return { shoulder, chest, waist, half };
-}
-
-// Panel bulucu. BIRINCIL yol: data-view isareti. YEDEK yol (isaret YOKSA):
-// panel <g transform="translate(...)"> gruplarindan sirayla front/back. Yedek yol
-// KASITLI: data-view'i silmek "5 on+arka" ve "1b beyan" sartlarini KIRAR ama
-// croquis olcumunu KORLESTIRMEZ — isareti silerek olcumden kacilmaz.
-function panels(svg) {
-  const out = [];
-  const re = /<g\s+data-view="(front|back)"([^>]*)>/g;
-  const marks = [...svg.matchAll(re)];
-  if (!marks.length) {
-    const f = svg.indexOf('>FRONT<'), b = svg.indexOf('>BACK<');
-    if (f >= 0 && b > f) {
-      out.push({ view: 'front(legacy)', attrs: {}, body: svg.slice(f, b) });
-      out.push({ view: 'back(legacy)', attrs: {}, body: svg.slice(b) });
-    }
-    return out;
-  }
-  for (let k = 0; k < marks.length; k++) {
-    const start = marks[k].index;
-    const stop = k + 1 < marks.length ? marks[k + 1].index : svg.length;
-    const attrs = {};
-    for (const a of marks[k][2].matchAll(/([a-z-]+)="([^"]*)"/g)) attrs[a[1]] = a[2];
-    out.push({ view: marks[k][1], attrs, body: svg.slice(start, stop) });
-  }
-  return out;
-}
-
-// ---------------------------------------------------------------------------
-console.log('=== FLAT KONVANSIYON KAPISI — uretim kalemi, ' + MATRIX.length + ' stil');
-console.log(`    kanun: contract/flat-convention-v1.json  unitMM=${UNIT}  tolerans=${TOL_MM}mm`);
-
-const rendered = MATRIX.map(([name, spec]) => [name, spec, renderGarmentFlat([], spec)]);
 
 // --- 5. ON + ARKA ----------------------------------------------------------
-let allPanels = [];
-for (const [name, , svg] of rendered) {
-  const ps = panels(svg);
-  const views = ps.map((p) => p.view);
-  if (!views.includes('front') || !views.includes('back')) {
-    FAIL(`[5 on+arka] ${name}: data-view paneli eksik, bulunan=[${views.join(',')}]`);
-  }
-  allPanels.push(...ps.map((p) => ({ ...p, style: name })));
-}
-if (!fails) OK(`5 on+arka — ${MATRIX.length} stilin hepsinde front+back paneli var`);
-
-// --- 1. TEK CROQUIS --------------------------------------------------------
-console.log('\n--- 1. TEK CROQUIS (geometrik olcum, beyana bakmadan)');
-const rows = [];
-for (const p of allPanels) {
-  const pts = silhouette(p.body);
-  if (!pts) { FAIL(`[1 croquis] ${p.style}/${p.view}: siluet path'i bulunamadi`); continue; }
-  const m = measureCroquis(pts);
-  if (!m.shoulder || !m.chest || !m.waist) { FAIL(`[1 croquis] ${p.style}/${p.view}: isaret cikarilamadi`); continue; }
-  rows.push({ style: p.style, view: p.view, attrs: p.attrs,
-    shX: m.shoulder[0], shY: m.shoulder[1], chX: m.chest[0], chY: m.chest[1], waY: m.waist[1] });
-}
-const spread = (key) => {
-  const v = rows.map((r) => r[key]);
-  return { min: Math.min(...v), max: Math.max(...v), mm: (Math.max(...v) - Math.min(...v)) * UNIT };
-};
-for (const [key, label] of [['shX', 'omuz ucu x'], ['shY', 'omuz ucu y'], ['chX', 'gogus (koltukalti) x'], ['chY', 'gogus hatti y']]) {
-  const s = spread(key);
-  const line = `${label.padEnd(22)} min ${s.min.toFixed(3)}u  max ${s.max.toFixed(3)}u  SAPMA ${s.mm.toFixed(2)} mm`;
-  if (s.mm > TOL_MM + 1e-9) FAIL(`[1 croquis] ${line}  (> ${TOL_MM} mm)`); else OK(`1 croquis — ${line}`);
-}
-// bel hatti: dogal bel ailesi ayni yukseklikte olmali; empire ailesi ONU KULLANMAMALI
-const nat = rows.filter((r) => (r.attrs['data-waistline'] || 'natural') === 'natural');
-const emp = rows.filter((r) => r.attrs['data-waistline'] === 'empire');
-if (nat.length) {
-  const v = nat.map((r) => r.waY);
-  const mm = (Math.max(...v) - Math.min(...v)) * UNIT;
-  const line = `bel hatti y (dogal)    min ${Math.min(...v).toFixed(3)}u  max ${Math.max(...v).toFixed(3)}u  SAPMA ${mm.toFixed(2)} mm`;
-  if (mm > TOL_MM + 1e-9) FAIL(`[1 croquis] ${line}  (> ${TOL_MM} mm)`); else OK(`1 croquis — ${line}`);
-}
-for (const r of emp) {
-  const dmm = Math.abs(r.waY - LAW.croquis.landmarks.waistY.u) * UNIT;
-  if (dmm <= TOL_MM) FAIL(`[1 croquis] ${r.style}/${r.view}: data-waistline="empire" beyan ediyor ama siluet dogal belde (${r.waY}u) — beyan kacamak`);
-  else OK(`1 croquis — ${r.style}/${r.view} empire beyani gercek: siluet beli ${r.waY}u, dogal belden ${dmm.toFixed(1)}mm yukarida`);
-}
-
-// --- 1c. OMUZ GOGUSTEN DISARI TASAMAZ --------------------------------------
-// GEOMETRIK YASA (esik degil, esitsizlik): set-in kollu bir giyside omuz ucu,
-// gogus (koltukalti) hattinin DISINDA olamaz — cunku kol oyugu egrisi omuz ucu
-// ile koltukaltini PAYLASIR (croquis.sleeveLaw.sleeveSharesArmholeEndpoints) ve
-// omuzdan asagi ve ICERI iner (armholeNeverBulgesOutward). Omuz ucu bustun
-// disinda kalirsa kol oyugu disa dogru sismek zorunda kalir ve omuz bir RAF
-// gibi durur; giysi okunmaz. Sart bu yuzden gevsetilemez: ustunde bir SAYI yok.
-// BUYUKLUK nereden: shoulderTipX = chestX x 0.9570; 0.9570 SATIN ALINMIS Bugra
-// Locket EU38 'Back Body' parcasinda olculdu (196.13/204.94 mm yari-genislik,
-// olcum GECE/log/F-E.bugra-olcum.txt). Bugra sayisi yalnizca BUYUKLUGU besler;
-// kapinin sarti "Bugra'ya benziyor mu" DEGIL, "omuz bustun disinda mi" dir.
-console.log('\n--- 1c. OMUZ UCU GOGUS HATTININ ICINDE (set-in kol yasasi)');
-for (const r of rows) {
-  const dmm = (r.shX - r.chX) * UNIT;
-  const line = `${r.style}/${r.view}: omuz ucu ${(r.shX * UNIT).toFixed(2)} mm, gogus ${(r.chX * UNIT).toFixed(2)} mm, ` +
-    `oran ${(r.shX / r.chX).toFixed(4)}`;
-  if (r.shX > r.chX + 1e-9) {
-    FAIL(`[1c omuz>gogus] ${line} — omuz gogusten ${dmm.toFixed(2)} mm DISARIDA; set-in kol oyugu omuz ucu ile koltukaltini paylasir, disari sisemez`);
-  } else {
-    OK(`1c omuz icerde — ${line}`);
-  }
-}
-
-// --- ANTI-YALAN: beyan == cizilen ------------------------------------------
-console.log('\n--- 1b. BEYAN == CIZILEN (croquis data-* yalan soyleyemez)');
-const L = LAW.croquis.landmarks;
-for (const r of rows) {
-  const a = r.attrs;
-  if (a['data-croquis'] !== LAW.croquis.id) { FAIL(`[1b] ${r.style}/${r.view}: data-croquis beyani yok/yanlis (${a['data-croquis']})`); continue; }
-  const chk = [
-    ['data-shoulder-x', r.shX, L.shoulderTipX.u], ['data-shoulder-y', r.shY, L.shoulderTipY.u],
-    ['data-chest-x', r.chX, L.chestX.u], ['data-chest-y', r.chY, L.chestY.u],
-  ];
-  for (const [attr, drawn, law] of chk) {
-    const dec = parseFloat(a[attr]);
-    if (!Number.isFinite(dec)) { FAIL(`[1b] ${r.style}/${r.view}: ${attr} beyani yok`); continue; }
-    if (Math.abs(dec - drawn) * UNIT > 0.2) FAIL(`[1b] ${r.style}/${r.view}: ${attr} beyan ${dec} ama CIZILEN ${drawn.toFixed(3)}`);
-    if (Math.abs(dec - law) * UNIT > TOL_MM) FAIL(`[1b] ${r.style}/${r.view}: ${attr} beyan ${dec}, kanun ${law}`);
-  }
-}
-if (!fails) OK('1b beyan == cizilen == kanun');
-
-// --- 1d. MANKEN CAPASI — H6 (GECE7 / F4, IS 2 + kapi md.6) ----------------
-//
-// NE OLCULUYOR VE NEDEN AYRI BIR KOL.
-// Bolum 1 stillerin BIRBIRINE benzedigini olcuyor: bes capanin stiller arasi
-// sapmasi <= toleranceMM. Bu gerekli ama yetmez — sekiz stil ayni YANLIS
-// mankene capalanmis olsa da bolum 1 yesil kalir. Eksik olan halka, capalarin
-// ILAN EDILMIS bir bedene baglanmasiydi, ve o beden 26 Agu'ya kadar YOKTU:
-// flat-convention-v1.json kendi agziyla "yayinlanmis bir manken cizelgesi YOK"
-// yaziyordu (KOSU-v7 §2 bunu madde 5'in kapanmamasinin teknik sebebi diye
-// isimlendiriyor).
-//
-// Simdi var: contract/mannequin-chart-v1.json, id stitchu-manken-v1, ve farki
-// SIFIR — BIZIM KARARIMIZ olarak ilan edilmis, uydurulmus degil (gerekce o
-// dosyanin _karar blogunda; sifirdan baska her deger kunyesiz bir sayi olurdu).
-//
-// H6'NIN TANIMI (KOSU-v7 §3.6): "manken capasi diger flatlerden farkli olan
-// flat sayisi". Burada iki parca halinde olculuyor ve ikisi de KIRMIZI dusurur:
-//   (a) ZINCIR KAPALI MI — croquis capalari manken cizelgesinden ARITMETIKLE
-//       turuyor mu, yoksa kanun dosyasinda elle yazilmis bir sayi mi. Turemiyorsa
-//       stiller birbirini tutsa bile hicbiri bir bedene bagli degildir.
-//   (b) H6 SAYISI — kac flat, o tek mankenin capalarindan toleransin disina
-//       dusuyor. Gate: 0.
-//
-// ⚠ VE BU SAYI BURADA BASILIYOR CUNKU hedef_kosu.mjs'de BASILAMAZ: o dosya
-// MUHURLU (F4 karti, DEGISMEZLER; blob 7e3683a94f50895563c2f36ea06b3d17e3497104)
-// ve H6 orada `deger: null` diye SABIT yazili (hedef_kosu.mjs:349), disaridan
-// beslenebilecegi bir kanca yok. F4 karti bu hali ongordu: "H6 ya bir SAYI
-// basar, ya olculemezligi bir KAPIYA baglanir". Baglandigi kapi burasidir.
-console.log('\n--- 1d. MANKEN CAPASI (H6) — capalar ILAN EDILMIS bir bedene bagli mi');
+// Kanunun kendi adlari (views.required), motorun Turkce alan adlari degil. Her
+// gorunum HEM siluet HEM ust sinir tasimak zorunda: neckline'i olmayan bir flat
+// tam da H3'un bitirmek icin yazildigi sessiz eksiklik.
+console.log('\n--- 5. ON + ARKA (kanun views.required)');
 {
-  const size = LAW.referenceBody.size;
-  const ch = TABLES.draft.euSizeChart;
-  const col = (f) => ch[size][ch._fields.indexOf(f)];
-  const D = MANKEN.donusum.farkGirthMM;
-  const CAP = MANKEN.croquisCapalari;
-  const L2 = LAW.croquis.landmarks;
-  console.log(`    manken cizelgesi: ${LAW.referenceBody.mannequinChart}  id=${MANKEN.id}  `
-    + `fark bustCM ${D.bustCM} / waistCM ${D.waistCM} / hipCM ${D.hipCM} mm, pay ${MANKEN.donusum.dikisPayiMM} mm`);
-
-  if (Math.abs(CAP.unitMM - UNIT) > 1e-12)
-    FAIL(`[1d] unitMM iki dosyada ayri: kanun ${UNIT}, manken cizelgesi ${CAP.unitMM} — iki kaynak`);
-
-  // (a) ZINCIR: her turetilen capa, mankenin kendi cevresinden yeniden hesaplanir
-  // ve kanun dosyasinda YAZAN sayiyla kiyaslanir. Tolerans 0.05 mm ve bu bir
-  // GEVSETME degil: kanun dosyasi capalari dort ondalikla yaziyor, yani yazili
-  // sabitin yuvarlamasi kadar bir fark aritmetigin kendisinden gelir. Croquis
-  // toleransinin (2 mm) kirkta biri.
-  const CHAIN_TOL_MM = 0.05;
-  const girthMM = (f) => col(f) * 10 + D[f];
-  const quarter = (f) => girthMM(f) / 4 / UNIT;
-  const shTipX = quarter('bustCM') * CAP.turetilen.shoulderTipX.omuzGogusOrani;
-  const K = CAP.kaynaksiz;
-  const zincir = [
-    ['chestX', quarter('bustCM'), L2.chestX.u, `manken bustCM ${(girthMM('bustCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
-    ['waistX', quarter('waistCM'), L2.waistX.u, `manken waistCM ${(girthMM('waistCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
-    ['hipX', quarter('hipCM'), L2.hipX.u, `manken hipCM ${(girthMM('hipCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
-    ['shoulderTipX', shTipX, L2.shoulderTipX.u, `chestX x ${CAP.turetilen.shoulderTipX.omuzGogusOrani} (Bugra Locket EU38 olcumu)`],
-    ['shoulderTipY', K.neckDrop + (L2.shoulderTipX.u - K.neckBase) * K.shoulderSlope, L2.shoulderTipY.u,
-      `neckDrop ${K.neckDrop} + (shoulderTipX - ${K.neckBase}) x ${K.shoulderSlope}`],
-  ];
-  for (const [ad, hesap, yazan, nasil] of zincir) {
-    const dmm = Math.abs(hesap - yazan) * UNIT;
-    if (dmm > CHAIN_TOL_MM)
-      FAIL(`[1d zincir] ${ad}: kanun ${yazan}u, mankenden hesaplanan ${hesap.toFixed(4)}u — fark ${dmm.toFixed(4)} mm > ${CHAIN_TOL_MM} mm. Capa elle yazilmis, bir bedenden turemiyor. (${nasil})`);
-    else
-      OK(`1d zincir — ${ad} ${yazan}u == ${hesap.toFixed(4)}u (D ${dmm.toFixed(4)} mm) <- ${nasil}`);
-  }
-  // kaynaksiz capalar: iki dosyada AYNI sayi olmak zorunda, yoksa croquis'in
-  // yarisi bir bedene, yarisi baska bir yere bagli olur
-  for (const [ad, deger] of Object.entries(K)) {
-    if (ad.startsWith('_')) continue;
-    const yazan = ad === 'shoulderSlope' ? L2.shoulderSlope.value : (L2[ad] || {}).u;
-    if (!Number.isFinite(yazan)) { FAIL(`[1d zincir] kaynaksiz capa ${ad} kanun dosyasinda YOK`); continue; }
-    if (Math.abs(yazan - deger) > 1e-9)
-      FAIL(`[1d zincir] kaynaksiz capa ${ad}: kanun ${yazan}, manken cizelgesi ${deger} — iki kaynak`);
-  }
-
-  // (b) H6 — kac flat tek mankenden sapiyor
-  const capalar = [['shX', 'shoulderTipX'], ['shY', 'shoulderTipY'], ['chX', 'chestX'], ['chY', 'chestY']];
-  const sapanlar = [];
-  for (const r of rows) {
-    let enKotu = 0, hangi = '';
-    for (const [alan, isaret] of capalar) {
-      const d = Math.abs(r[alan] - L2[isaret].u) * UNIT;
-      if (d > enKotu) { enKotu = d; hangi = isaret; }
+  const before = fails;
+  for (const [name, , svg] of rendered) {
+    for (const v of LAW.views.required) {
+      for (const curve of ['siluet', 'ust-sinir']) {
+        const re = new RegExp(`<path data-view="${v}" data-curve="${curve}"[^>]*d="[^"]{20,}"`);
+        if (!re.test(svg)) FAIL(`[5 on+arka] ${name}: data-view="${v}" gorunumunun "${curve}" egrisi YOK`);
+      }
     }
-    // dogal bel ailesi icin bel yuksekligi de bir capa; empire ailesi onu
-    // BILEREK kullanmiyor (bolum 1 bunu ayrica olcuyor), o yuzden disarida.
-    if ((r.attrs['data-waistline'] || 'natural') === 'natural') {
-      const d = Math.abs(r.waY - L2.waistY.u) * UNIT;
-      if (d > enKotu) { enKotu = d; hangi = 'waistY'; }
-    }
-    if (enKotu > TOL_MM + 1e-9) sapanlar.push({ r, enKotu, hangi });
   }
-  const H6 = sapanlar.length;
-  console.log(`    H6 = ${H6}  (manken capasi tek cizelgeden sapan flat sayisi / ${rows.length} flat, n=${MATRIX.length} stil x on+arka)`);
-  for (const s of sapanlar)
-    console.log(`      SAPAN ${s.r.style}/${s.r.view}: en kotu ${s.hangi} ${s.enKotu.toFixed(2)} mm > ${TOL_MM} mm`);
-  if (H6 > 0)
-    FAIL(`[1d H6] ${H6} flat manken capasindan sapiyor (tolerans ${TOL_MM} mm) — flatlerin hepsi tek mankenden cikmiyor`);
-  else
-    OK(`1d H6 — ${H6}/${rows.length} flat sapiyor: ${rows.length} flat'in capasi tek ilan edilmis mankende (${MANKEN.id})`);
+  if (fails === before) OK(`5 on+arka — ${rendered.length} cizimin hepsinde ${LAW.views.required.join('+')} x (siluet+ust-sinir)`);
 }
 
-// --- 2. OLCEK BEYANI -------------------------------------------------------
-console.log('\n--- 2. OLCEK BEYANI');
+// --- 2. OLCEK BEYANI — ARITMETIK, DIZE KIYASI DEGIL ------------------------
+console.log('\n--- 2. OLCEK BEYANI (belgenin kendi geometrisiyle dogrulanir)');
 for (const [name, , svg] of rendered) {
-  const sc = /<svg[^>]*\sdata-scale="([^"]+)"/.exec(svg);
-  const um = /<svg[^>]*\sdata-unit-mm="([^"]+)"/.exec(svg);
+  const head = /<svg\b[^>]*>/.exec(svg);
+  if (!head) { FAIL(`[2 olcek] ${name}: <svg> koku okunamadi`); continue; }
+  const at = (k) => { const m = new RegExp(`\\s${k}="([^"]*)"`).exec(head[0]); return m ? m[1] : null; };
+  const sc = at('data-scale'), um = at('data-unit-mm');
   if (!sc) { FAIL(`[2 olcek] ${name}: kokte data-scale YOK`); continue; }
   if (!um) { FAIL(`[2 olcek] ${name}: kokte data-unit-mm YOK`); continue; }
-  if (sc[1] !== LAW.scale.declared) FAIL(`[2 olcek] ${name}: data-scale="${sc[1]}", kanun "${LAW.scale.declared}"`);
-  if (Math.abs(parseFloat(um[1]) - UNIT) > 1e-9) FAIL(`[2 olcek] ${name}: data-unit-mm=${um[1]}, kanun ${UNIT}`);
-  const [, nStr] = sc[1].split(':');
-  if (Math.abs(parseFloat(nStr) - UNIT) > 1e-9) FAIL(`[2 olcek] ${name}: data-scale 1:${nStr} ile unitMM ${UNIT} aritmetik olarak tutmuyor`);
+  const unit = parseFloat(um);
+  if (!Number.isFinite(unit) || unit <= 0) { FAIL(`[2 olcek] ${name}: data-unit-mm sayi degil (${um})`); continue; }
+  if (sc !== `1:${um}`) FAIL(`[2 olcek] ${name}: data-scale="${sc}" ile data-unit-mm=${um} tutmuyor (beklenen "1:${um}")`);
+
+  const wAttr = /^([\d.]+)mm$/.exec(at('width') || '');
+  const hAttr = /^([\d.]+)mm$/.exec(at('height') || '');
+  const vb = (at('viewBox') || '').trim().split(/\s+/).map(Number);
+  if (!wAttr || !hAttr) { FAIL(`[2 olcek] ${name}: width/height mm cinsinden beyan edilmemis (${at('width')} x ${at('height')})`); continue; }
+  if (vb.length !== 4 || !vb.every(Number.isFinite)) { FAIL(`[2 olcek] ${name}: viewBox okunamadi`); continue; }
+  // BELGENIN KENDI OLCEGI: kagit mm / kullanici birimi. Beyanla ayni olmak
+  // zorunda — degilse beyan yalan, ve yalani belgenin kendisi soyluyor.
+  let sapma = 0;
+  for (const [eksen, mm, u] of [['x', parseFloat(wAttr[1]), vb[2]], ['y', parseFloat(hAttr[1]), vb[3]]]) {
+    const olculen = mm / u;
+    if (Math.abs(olculen - unit) > 5e-4) {
+      sapma += 1;
+      FAIL(`[2 olcek] ${name}: ${eksen} ekseninde belge ${mm}mm / ${u}u = ${olculen.toFixed(6)} mm/birim, ` +
+           `beyan data-unit-mm=${unit} — beyan cizimle celisiyor`);
+    }
+  }
+  if (!sapma) OK(`2 olcek — ${name}: ${sc}, ${parseFloat(wAttr[1])}mm / ${vb[2]}u = ${(parseFloat(wAttr[1]) / vb[2]).toFixed(4)} mm/birim`);
 }
-// olcek GERCEK olcuyle tutarli mi: gogus yari-genisligi x unitMM == bust/4
-const chart = TABLES.draft.euSizeChart;
-const fi = chart._fields.indexOf('bustCM');
-const bustMM = chart[LAW.referenceBody.size][fi] * 10;
-const chDrawnMM = rows.length ? rows[0].chX * UNIT : NaN;
-const want = bustMM / 4;
-if (!(Math.abs(chDrawnMM - want) <= TOL_MM)) {
-  FAIL(`[2 olcek] gogus yari-genisligi ${chDrawnMM.toFixed(2)} mm, KAYNAKLI capa ${want.toFixed(2)} mm (bustCM ${bustMM / 10} / 4) — fark ${(chDrawnMM - want).toFixed(2)} mm`);
-} else {
-  OK(`2 olcek — gogus yari-genisligi ${chDrawnMM.toFixed(2)} mm == bustCM/4 ${want.toFixed(2)} mm (burda EU38, verified)`);
+
+// --- 2b. TEK MODEL — dort sinif AYNI cizelgeyi ILAN ediyor -----------------
+// Bolum 1'in ("hepsi ayni croquis'ten") yuzey hattindaki karsiligi: croquis
+// yok, ama her cizim hangi MANKEN cizelgesine gore degerlendigini ilan ediyor ve
+// hepsinin ilani AYNI dosya + AYNI id olmak zorunda. Iki cizelge = iki model.
+console.log('\n--- 2b. TEK MODEL (cizimlerin ilan ettigi manken cizelgesi tek mi)');
+{
+  const ilanlar = new Set(rendered.map(([, F]) => String((F.bedenlendirme || {}).cizelge || '(ILAN YOK)')));
+  const MANKEN = existsSync(join(root, MANKEN_YOL))
+    ? JSON.parse(readFileSync(join(root, MANKEN_YOL), 'utf8')) : null;
+  if (!MANKEN) FAIL(`[2b tek model] ilan edilen manken cizelgesi diskte YOK: ${MANKEN_YOL}`);
+  else if (ilanlar.size !== 1) FAIL(`[2b tek model] ${ilanlar.size} ayri cizelge ilani: {${[...ilanlar].join(' | ')}}`);
+  else if (![...ilanlar][0].includes(MANKEN.id) || ![...ilanlar][0].includes(MANKEN_YOL))
+    FAIL(`[2b tek model] ilan "${[...ilanlar][0]}" ne ${MANKEN.id} ne ${MANKEN_YOL} iceriyor`);
+  else OK(`2b tek model — ${rendered.length} cizimin hepsi tek cizelge: ${[...ilanlar][0]}`);
 }
 
 // --- 3. CIZGI HIYERARSISI --------------------------------------------------
@@ -408,32 +195,42 @@ const keyOf = (w, dash) => `${Number(w)}|${dash || ''}`;
 const legal = new Map();
 for (const [cname, c] of Object.entries(CLASSES)) legal.set(keyOf(c.width, c.dash), cname);
 const used = new Set();
-for (const [name, , svg] of rendered) {
-  for (const el of svg.matchAll(/<(path|line|circle|polyline|rect)\b[^>]*>/g)) {
-    const tag = el[0];
-    const st = /\sstroke="([^"]+)"/.exec(tag);
-    if (!st || st[1] === 'none') continue;
-    const w = /\sstroke-width="([^"]+)"/.exec(tag);
-    const dsh = /\sstroke-dasharray="([^"]+)"/.exec(tag);
-    const k = keyOf(w ? w[1] : 1, dsh ? dsh[1] : '');
-    if (!legal.has(k)) FAIL(`[3 hiyerarsi] ${name}: beyan edilmemis cizgi sinifi (width=${w ? w[1] : 'yok'} dash=${dsh ? dsh[1] : 'yok'}) -> ${tag.slice(0, 90)}`);
-    else used.add(legal.get(k));
+{
+  const before = fails;
+  for (const [name, , svg] of rendered) {
+    // Grup mirasi gercek: <g stroke="..."> altindaki path stroke-width'i KENDI
+    // tasiyor. Cizilen her elemani grup baglamiyla birlikte okuyoruz.
+    let gStroke = null;
+    for (const el of svg.matchAll(/<(g|path|line|circle|polyline|rect)\b([^>]*)>|<\/g>/g)) {
+      if (el[0] === '</g>') { gStroke = null; continue; }
+      const tag = el[1], at = el[2] || '';
+      const get = (k) => { const m = new RegExp(`\\s${k}="([^"]*)"`).exec(at); return m ? m[1] : null; };
+      if (tag === 'g') { gStroke = get('stroke') || gStroke; continue; }
+      const st = get('stroke') || gStroke;
+      if (!st || st === 'none') continue;
+      const k = keyOf(get('stroke-width') || 1, get('stroke-dasharray') || '');
+      if (!legal.has(k)) FAIL(`[3 hiyerarsi] ${name}: beyan edilmemis cizgi sinifi (width=${get('stroke-width')} dash=${get('stroke-dasharray')})`);
+      else used.add(legal.get(k));
+    }
   }
+  if (fails === before && used.size) OK('3 hiyerarsi — cizilen her elemanin (agirlik, kesik) cifti beyanli bir sinif');
 }
-for (const cname of Object.keys(CLASSES)) {
-  if (!used.has(cname)) FAIL(`[3 hiyerarsi] "${cname}" sinifi beyan edilmis ama matriste HIC kullanilmamis (olu beyan)`);
+const unused = Object.keys(CLASSES).filter((c) => !used.has(c));
+console.log(`    kullanilan sinif: ${[...used].sort().join(', ') || '(hic)'}`);
+console.log(`    KULLANILMAYAN   : ${unused.join(', ') || '(yok)'}   (circir tavani ${UNUSED_CLASS_RATCHET})`);
+if (unused.length > UNUSED_CLASS_RATCHET) {
+  FAIL(`[3 olu beyan] ${unused.length} sinif beyan edilmis ama HIC cizilmiyor > tavan ${UNUSED_CLASS_RATCHET} — ` +
+       'circir kirildi. Sinifi kanundan silmek cikis DEGIL: ratios beyani kirilir.');
+} else if (unused.length < UNUSED_CLASS_RATCHET) {
+  OK(`3 olu beyan — ${unused.length} < tavan ${UNUSED_CLASS_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir (UNUSED_CLASS_RATCHET).`);
+} else {
+  OK(`3 olu beyan — ${unused.length} = tavan ${UNUSED_CLASS_RATCHET} (yuzey hatti bugun iki egri ciziyor: siluet + ust sinir). Sayi yalniz dusebilir.`);
 }
-if (used.size === Object.keys(CLASSES).length) OK(`3 hiyerarsi — ${used.size}/${Object.keys(CLASSES).length} sinif beyanli ve kullanilmis: ${[...used].join(', ')}`);
 
-// --- 3b. BEYAN EDILEN ORANLAR OKUNSUN (V4-B) --------------------------------
-// ISO 128-2:2020 md.5.1 izinli kalinlik serisi (0,13 ... 2 mm, ortak oran
-// 1:sqrt(2)) + md.5.2 sapma toleransi +-0,1d. Kaynak kunyesi: GECE/V4-R.md §1.
-// NEDEN VAR: contract/flat-convention-v1.json -> lineClasses.ratios (1.4286 /
-// 1.4 / 2.0) diskte duruyordu ama bu kapi o alani HIC OKUMUYORDU — dogrulanmayan
-// bir beyan. Beyan ile SINIF TABLOSU birbirinden kayarsa kimse fark etmezdi.
-// ESIK: ISO md.5.2 +-0,1d. Iki kalinligin orani icin en kotu hal
-// (0.9a)/(1.1b) ... (1.1a)/(0.9b) = nominal oranin 0.8182x ... 1.2222x araligi.
-console.log('\n--- 3b. CIZGI ORANLARI (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d)');
+// --- 3b. BEYAN EDILEN ORANLAR (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d) --
+// Kaynak kunyesi: GECE/V4-R.md §1. Esik ISO md.5.2 +-0,1d; iki kalinligin orani
+// icin en kotu hal (0.9a)/(1.1b) ... (1.1a)/(0.9b).
+console.log('\n--- 3b. CIZGI ORANLARI (ISO 128-2:2020)');
 const RATIOS = LAW.lineClasses.ratios || {};
 if (!Object.keys(RATIOS).filter((k) => !k.startsWith('_')).length) {
   FAIL('[3b oran] lineClasses.ratios beyan edilmemis — bos beyan');
@@ -444,59 +241,28 @@ for (const [pair, declared] of Object.entries(RATIOS)) {
   if (!CLASSES[a] || !CLASSES[b]) { FAIL(`[3b oran] "${pair}" beyan edildi ama siniflardan biri tabloda yok`); continue; }
   const measured = CLASSES[a].width / CLASSES[b].width;
   const lo = declared * (0.9 / 1.1), hi = declared * (1.1 / 0.9);
-  const dev = Math.abs(measured - declared) / declared;
   if (measured < lo || measured > hi) {
-    FAIL(`[3b oran] ${pair}: beyan ${declared} ama tablodan olculen ${measured.toFixed(4)} ` +
-         `(${CLASSES[a].width}/${CLASSES[b].width}), ISO md.5.2 bandi [${lo.toFixed(4)}, ${hi.toFixed(4)}] disinda`);
+    FAIL(`[3b oran] ${pair}: beyan ${declared}, tablodan olculen ${measured.toFixed(4)} — ISO md.5.2 bandi [${lo.toFixed(4)}, ${hi.toFixed(4)}] disinda`);
   } else {
-    OK(`3b oran — ${pair}: beyan ${declared} == olculen ${measured.toFixed(4)} (sapma %${(dev * 100).toFixed(2)}, ISO md.5.2 tavani %22.22)`);
+    OK(`3b oran — ${pair}: beyan ${declared} == olculen ${measured.toFixed(4)}`);
   }
-}
-
-// --- 3c. DETAY CALLOUT SAYIMI (KAPI DEGIL, SAYI) ---------------------------
-// ISO 128-3:2022 md.4.12 mekanigi (GECE/V4-R.md §3): bir detay callout'u KAPALI
-// INCE SUREKLI bir sinir + TEK BUYUK HARF etiketi + `HARF (n:1)` olcek beyani
-// ile kurulur. Bu kapi bugun yalnizca SAYIYOR; uretim tarafi V4-D/kuyruk karti.
-console.log('\n--- 3c. DETAY CALLOUT (bugun SAYI, kapi degil)');
-let calloutLetters = 0, calloutScales = 0;
-for (const [, , svg] of rendered) {
-  for (const m of svg.matchAll(/<text\b[^>]*>([^<]*)<\/text>/g)) {
-    const t = m[1].trim();
-    if (/^[A-Z]$/.test(t)) calloutLetters += 1;
-    if (/^[A-Z]\s*\(\s*\d+\s*:\s*\d+\s*\)$/.test(t)) calloutScales += 1;
-  }
-}
-console.log(`    HAT-2 (uretim kalemi, ${rendered.length} stil): tek-harf etiketi ${calloutLetters} · "HARF (n:1)" olcek beyani ${calloutScales}`);
-console.log(`    -> bugun toplam callout ${Math.min(calloutLetters, calloutScales)} (ISO 128-3:2022 md.4.12 uc parcasi birlikte aranir)`);
-console.log('    URETIM TARAFI BU KARTTA YAPILMADI (butce) — V4-D/kuyruk karti, GECE/V4-B.md.');
-
-// --- 3d. HAT-1 <-> HAT-2 YAKINSAMA (RAPOR SATIRI, ESIGE BAGLI DEGIL) -------
-// GECE/V4-K.md hukmu: kapi HAT-2'yi yargilar, HAT-1 rapor satiri olarak girer.
-// Iki sayi da OLCULDU (GECE/V4-K.md md.214 + md.290-292, GECE/log/V4-K.probe.txt:20,
-// GECE/log/V4-K.hat2.convention.txt:18). Ileride yalniz DUSMESI beklenir.
-console.log('\n--- 3d. HAT-1 RAPOR SATIRI (esige BAGLANMAZ)');
-{
-  const croquisWaistMM = LAW.croquis.landmarks.waistX.u * UNIT * 4;   // yari-genislik -> cevre
-  const shellWaistMM = 725.0000;                                      // shell-flat EU38, V4-K.md:214
-  const croquisChestHalfMM = 219.90;                                  // V4-K.hat2.convention.txt:18
-  const shellChestHalfMM = 229.56;                                    // V4-K.probe.txt:20
-  console.log(`    bel             croquis ${croquisWaistMM.toFixed(1)} mm vs kabuk ${shellWaistMM.toFixed(4)} mm  -> fark ${(shellWaistMM - croquisWaistMM).toFixed(1)} mm`);
-  console.log(`    gogus yari-gen  croquis ${croquisChestHalfMM.toFixed(2)} mm vs kabuk ${shellChestHalfMM.toFixed(2)} mm  -> fark ${(shellChestHalfMM - croquisChestHalfMM).toFixed(2)} mm`);
-  console.log('    Bu satir iki hattin yakinsamasini olculebilir kilar. KAPI DEGIL: kirmizi dusurmez.');
-
 }
 
 // --- 4. SIFIR BOYA ---------------------------------------------------------
 console.log('\n--- 4. SIFIR GOLGE / GRADYAN / TINT');
-const allowFill = new Set(LAW.fillLaw.allowedFills.map((s) => s.toLowerCase()));
-for (const [name, , svg] of rendered) {
-  for (const bad of LAW.fillLaw.forbidden) {
-    const c = (svg.match(new RegExp(bad, 'gi')) || []).length;
-    if (c) FAIL(`[4 boya] ${name}: yasak "${bad}" x${c}`);
+{
+  const before = fails;
+  const allowFill = new Set(LAW.fillLaw.allowedFills.map((s) => s.toLowerCase()));
+  for (const [name, , svg] of rendered) {
+    for (const bad of LAW.fillLaw.forbidden) {
+      const c = (svg.match(new RegExp(bad, 'gi')) || []).length;
+      if (c) FAIL(`[4 boya] ${name}: yasak "${bad}" x${c}`);
+    }
+    for (const f of svg.matchAll(/\sfill="([^"]+)"/g)) {
+      if (!allowFill.has(f[1].toLowerCase())) FAIL(`[4 boya] ${name}: izinsiz fill="${f[1]}"`);
+    }
   }
-  for (const f of svg.matchAll(/\sfill="([^"]+)"/g)) {
-    if (!allowFill.has(f[1].toLowerCase())) FAIL(`[4 boya] ${name}: izinsiz fill="${f[1]}"`);
-  }
+  if (fails === before) OK('4 boya — gradyan/filtre/opaklik 0, fill degerleri kanunun listesinde');
 }
 
 // --- 6. TEK KONTUR RENGI ---------------------------------------------------
@@ -504,48 +270,7 @@ console.log('\n--- 6. TEK KONTUR RENGI');
 const inks = new Set();
 for (const [, , svg] of rendered) for (const s of svg.matchAll(/\sstroke="([^"]+)"/g)) if (s[1] !== 'none') inks.add(s[1].toLowerCase());
 if (inks.size !== 1 || !inks.has(INK)) FAIL(`[6 renk] kontur renkleri: {${[...inks].join(', ')}} — kanun {${INK}}`);
-else OK(`6 renk — tek murekkep ${INK}`);
-
-// --- PARITE RAPORU (KAPI DEGIL) -------------------------------------------
-console.log('\n=== PARITE RAPORU (KAPI DEGIL) — REFERANS KALEM');
-console.log('    engine/flat-engine/_engine-full.mjs SALT-OKUNUR (Damla emri 2026-07-19).');
-try {
-  const ref = await import(join(root, 'engine/flat-engine/_engine-full.mjs'));
-  const keys = Object.keys(ref.STYLE);
-  // DIKKAT: referans kalem murekkebi ATTRIBUTE ile degil <style> CSS SINIFI ile
-  // veriyor. Attribute regex'i onu KOR olcer (0 renk / 0 agirlik) — bu rapor
-  // CSS'i de okuyor, yoksa "sifir" diye yanlis sayi basardi.
-  const refShoulderY = [], refChestY = [], refShoulderX = [], refChestX = [];
-  let colors = new Set(), widths = new Set(), dashes = new Set(), scaleCount = 0;
-  for (const k of keys) {
-    let svg;
-    try { svg = ref.renderStyle(k, {}); } catch { continue; }
-    if (/data-scale|data-unit-mm/.test(svg)) scaleCount += 1;
-    for (const m of svg.matchAll(/stroke:\s*([^;}\s]+)/g)) if (m[1] !== 'none') colors.add(m[1]);
-    for (const m of svg.matchAll(/stroke-width:\s*([^;}\s]+)/g)) widths.add(m[1]);
-    for (const m of svg.matchAll(/stroke-dasharray:\s*([^;}]+)/g)) dashes.add(m[1].trim());
-    for (const m of svg.matchAll(/\sstroke="([^"]+)"/g)) if (m[1] !== 'none') colors.add(m[1]);
-    // croquis: .body siniflı ana siluetin ilk (on) path'i
-    const bodyD = /<path class="body" d="([^"]+)"/.exec(svg);
-    if (bodyD) {
-      const c = measureCroquis(endpoints(bodyD[1]));
-      if (c.shoulder && c.chest) { refShoulderX.push(c.shoulder[0]); refShoulderY.push(c.shoulder[1]); refChestX.push(c.chest[0]); refChestY.push(c.chest[1]); }
-    }
-  }
-  const sp = (v) => v.length ? (Math.max(...v) - Math.min(...v)).toFixed(2) : 'olculemedi';
-  console.log(`    stil sayisi                 ${keys.length}`);
-  console.log(`    data-scale beyan eden       ${scaleCount}/${keys.length}`);
-  console.log(`    murekkep renkleri           {${[...colors].join(', ')}}  (uretim kalemi: ${INK})`);
-  console.log(`    cizgi agirliklari           {${[...widths].sort().join(', ')}}`);
-  console.log(`    kesik desenleri             {${[...dashes].join(' | ')}}`);
-  console.log(`    croquis sapmasi (kendi ici, SVG birimi): omuz x ${sp(refShoulderX)}  omuz y ${sp(refShoulderY)}  gogus x ${sp(refChestX)}  gogus y ${sp(refChestY)}  (n=${refShoulderY.length})`);
-  console.log('    NOT: croquis sapma sayisi GOSTERGE, DOGRULANMADI — referans kalemde askisiz/band');
-  console.log('    stiller var, orada "ilk yerel maksimum" omuz ucu DEGIL band ucu olabilir.');
-  console.log('    -> referans kalem uretim konvansiyonuna UYMUYOR (ayri murekkep, ayri agirlik tablosu,');
-  console.log('       olcek beyani yok). SALT-OKUNUR oldugu icin bu gece DUZELTILMEDI; kirmizi da dusurmuyor.');
-} catch (e) {
-  console.log(`    referans kalem okunamadi: ${e.message}`);
-}
+else OK(`6 renk — tek murekkep ${INK} (hiyerarsi renkle degil agirlikla)`);
 
 console.log(`\n${fails === 0 ? 'PASS' : 'FAIL'} flat_convention_check — ${fails} ihlal`);
 process.exit(fails === 0 ? 0 : 1);

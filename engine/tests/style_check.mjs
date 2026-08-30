@@ -114,13 +114,33 @@ if (orphans.length) {
   console.log('  ya da anahtar yanlış yazıldı. Sahipsiz pin hiçbir şeyi korumaz.');
 }
 
-// ── 5. BYTE DIFF — pinli her stil üretim yolundan yeniden koşulur ───────────
-const { renderGarmentFlatAsync } = await import('../tools/render-garment-flat.mjs');
+// ── 5. BYTE DIFF — pinli her stil KALEMİN KENDİSİNDEN yeniden koşulur ───────
+//
+// H3 (2026-08-30) — YARGILANAN KALEM DEĞİŞMEDİ, ÇAĞRI YOLU DEĞİŞTİ.
+// Bu satır 30 Ağustos'a kadar `renderGarmentFlatAsync` çağırıyordu. O fonksiyon
+// İKİ kalemdi: önce REFERANS kalemi (engine/flat-engine/_engine-full.mjs, Damla'nın
+// "kalemim" dediği, styles.json'un sözlüğü olduğu kalem) dener, eşleşme yoksa
+// croquis üretim kalemine (web/lib/flat-core.js) DÜŞERDİ. H3 croquis kalemini sildi.
+// Bu kapının hükmü ondan hiç etkilenmedi: kapsamı `styles.json` — yani referans
+// kalemin sözlüğü — ve pinlenen SVG'yi hep referans kalem basıyordu; düşüş dalı bu
+// stiller için zaten hiç çalışmıyordu. Tek doğru çağrı yolu bu yüzden köprünün
+// kendisidir: engine/tools/reference-flat.mjs.
+//
+// null = EŞLEŞME YOK ve bu bir KIRMIZI'dır, bir atlama değil: sözlükte adı olan
+// bir stilin kalemden çizim alamaması, kapının koruduğu şeyin ta kendisinin
+// kaybolduğu anlamına gelir.
+const { renderReferenceFlat } = await import('../tools/reference-flat.mjs');
 
 for (const styleKey of styleKeys.filter((k) => pinnedKeys.has(k))) {
   const file = `${styleKey}.svg`;
   const pinned = readFileSync(join(PIN_DIR, file), 'utf8');
-  const fresh = await renderGarmentFlatAsync([], { style: styleKey });
+  const fresh = await renderReferenceFlat({ referenceStyle: styleKey });
+  if (fresh == null) {
+    failed++;
+    console.log(`style_check FAIL: ${styleKey} — referans kalem bu stil için çizim VERMEDİ (null).`);
+    console.log('  Sözlükte adı var, kalemde karşılığı yok: pin neyi koruduğunu bilmiyor.');
+    continue;
+  }
   if (fresh === pinned) {
     console.log(`style_check PASS: ${styleKey} byte-identical to pin (${pinned.length} chars)`);
   } else {

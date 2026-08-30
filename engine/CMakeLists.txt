@@ -101,40 +101,71 @@ add_test(NAME generated_ratchet_check
 add_test(NAME bundle_fresh_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/bundle_fresh_check.sh)
 
-# flat_convention_check (F-D, 2026-08-23): "flatlerin hepsi aynı convention'da
-# değil — hepsinin AYNI MODELDEN ÇIKMA gibi olması lazım" (Damla). Üretim
-# kalemini 8 farklı stilde koşturur, SVG'yi PARSE eder, altı şartı MEKANİK ölçer:
-# tek croquis ±2mm · data-scale beyanlı + kaynaklı beden çizelgesiyle tutarlı ·
-# çizgi ağırlık sınıfları beyanlı ve kullanılmış · gradient/gölge/tint 0 ·
-# ön+arka · tek kontur rengi. Kanun: contract/flat-convention-v1.json.
+# ⛔ H3 (2026-08-30) — CROQUIS KALEMİ ÖLDÜ; KAPILARI SİLİNMEDİ, YÜZEY HATTINA BAĞLANDI.
+#
+# H3'ün ilk koşusu bu beş kapıyı SİLMİŞTİ. Kapı silmek çözüm değildir: kırmızı bir
+# kapıyı silmek onu yeşil yapmaz, ÖLÇÜMÜ yok eder. Beşinin de yargıladığı NESNE
+# web/lib/flat-core.js idi (croquis üretim kalemi) ve o kalem gerçekten öldü — ama
+# yargıladıkları HÜKÜMLER Damla'nın flat kanunudur, kalemin özel tercihi değil. Her
+# biri bugün kullanıcıya giden çizimi (engine.flatJSON -> web/lib/flat-from-plan.js)
+# ölçüyor. Hangi hükmün nereye taşındığı her dosyanın kendi başlığında yazılı.
+# ÖLEN tek şey ÜRETEÇLERDİ (kapı değil, alet): render-garment-flat.mjs (kalemin
+# kendisi), gen-flat-tables.mjs + onun flat_tables_check kapısı (silinen
+# web/lib/flat-tables.gen.js aynasının üreteci ve o aynanın bekçisi),
+# gen-gore-grid / gen-wrap-grid (kalemin ızgara basıcıları), flat-board.mjs.
+#
+# flat_convention_check (F-D 2026-08-23 · H3'te yüzey hattına bağlandı): Damla
+# "flatlerin hepsi aynı convention'da değil — hepsinin AYNI MODELDEN ÇIKMA gibi
+# olması lazım". Sevk edilen çizimi 6 spec'te koşturur, SVG'yi PARSE eder:
+# ölçek beyanı belgenin kendi mm/birim aritmetiğiyle DOĞRULANIR (eski kapı iki
+# sabiti kıyaslıyordu — bu SIKILAŞTIRMADIR) · tek mürekkep · beyanlı çizgi
+# sınıfları + ISO 128-2 oranları · gradient/gölge/tint 0 · ön+arka x (siluet+üst
+# sınır) · dört sınıfın hepsi TEK manken çizelgesini ilan ediyor. Croquis çapası
+# hükmü (§1d/H6) flat_pattern_agree_check --all'a taşındı, kaybolmadı.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
 
-# flat_expresses_spec_check (V4-B, 2026-08-24): konvansiyon "hepsi aynı MANKEN"
-# demektir, "hepsi aynı ÇİZİM" değil. Ölçüldü: kalem sleeveStyle set/raglan/puff
-# için BAYT BAYT aynı flat'i, collarType 1/2/3 için de aynısını basıyordu —
-# RULES invariant 1'in yasakladığı sessiz çökertme (emsal: CLAUDE.md, sleeveStyle
-# 'puff' silently dropped, 2026-07-18). Kapsamı contract/garment-spec-v2.json
-# SİCİLİ belirler (salt okunur): `shipped` olan her değer ölçülebilir biçimde
-# FARKLI bir flat üretmek zorunda; olmayan değer ADIYLA reddedilmek VE
-# çizilmemek zorunda. Fark ölçüsü sha değil GEOMETRİ (çizen eleman kümesi +
-# kontur uzunluğu), yargı eşitlik/eşitsizlik — gevşetilecek eşik yok.
+# flat_expresses_spec_check (V4-B 2026-08-24 · H3'te yüzey hattına bağlandı):
+# konvansiyon "hepsi aynı MANKEN" demektir, "hepsi aynı ÇİZİM" değil. Emsal:
+# sleeveStyle 'puff' silently dropped (2026-07-18). Damga (`data-engine-gap`)
+# kalemle öldü; yerine motorun kendi reddi geçti (`desteklenmeyen_eksenler`, H2)
+# ve hüküm İKİ YÖNLÜ bir EŞDEĞERLİĞE dönüştü — "adıyla reddedildi ⟺ çizim tabanla
+# özdeş". Sol taraf sağsız = sessiz çökertme (eski kusur); sağ taraf solsuz =
+# YALAN REDDİ, ki eski kapı onu HİÇ göremezdi. Değer alanı beş kaynaktan
+# TÜRETİLİR, elle yazılmaz. UNEXPRESSED sayıları eksen başına CIRCIRLI.
 add_test(NAME flat_expresses_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_expresses_spec_check.mjs)
 
-# flat_geometry_sellable_check (F-E, 2026-08-23): "flat ETSY'LİK Mİ" kapısının
-# GEOMETRİ yarısı. F-D konvansiyonu tutar (tek croquis, tek mürekkep, ölçek);
-# bu kapı çizilenin bir GİYSİ gibi davranıp davranmadığını tutar: kol gövdeyle
-# uçlarını paylaşıyor mu, kol oyuğu içbükey mi, puff'ın eti toplanmış mı, etek
-# boyla genişliyor mu. Eşikler SATIN ALINMIŞ Buğra Locket EU38 kalıbından ve
-# kaynaklı beden çizelgesinden; motorun kendi çıktısından TÜRETİLEN eşik yok.
+# flat_geometry_sellable_check (F-E 2026-08-23 · H3'te yüzey hattına bağlandı):
+# çizilenin bir GİYSİ gibi davranıp davranmadığı. Yüzey hattı bugün STRAPLESS
+# sevk ediyor (açık G5), yani omuz/kol/oyuk şartlarının (S1/S4/S5/S6) ve etek
+# merdiveninin (S2a/S2b) KONUSU yok. Silinmediler: her biri konusu olan EKSENİN
+# motor tarafından ADIYLA REDDEDİLDİĞİNE kilitlendi. Motor o ekseni sevk ettiği
+# gün şart UYANIR ve ölçüm kodu yazılana kadar kapı KIRMIZI düşer — uyuyan şart
+# sayısı CIRCIRLI, artamaz. UYANIK şartlar çizilen siluetten ölçülür: bel gerçekten
+# daralıyor (yön KAYNAKLI çizelgeden okunur, eşik yok) · siluet belden aşağı
+# daralmaz · beyan edilen kloş (aLine/straight) gerçekten çizilmiş · üst sınır
+# siluetin İÇİNDE (croquis kaleminin hiç yargılanmayan körlüğü).
 add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
 
-# flat_pattern_agree_check (V3-C kanat (a), 2026-08-24): aynı bedenden üretilen
+# flat_sellable_check (F-E 2026-08-23 · H3'te yüzey hattına bağlandı ve İLK KEZ
+# ctest'e KAYDEDİLDİ): "flatlerin testi SATILIR MI, ETSY'LİK Mİ" (Damla, SSB-10).
+# Etsy'nin yayınlanmış geometrisi: 4:3 yükleme · 570x456 = 5:4 ortalanmış arama
+# kırpması · en kısa kenar 2000px. Sevk edilen çizimi listeleme sayfasına sardırır
+# ve bütün mürekkebin güvenli kutuda kaldığını, ölçek çubuğunun ÇİZİLEN uzunluğunun
+# ETİKETİYLE aynı olduğunu, kaynaksız hiçbir beden sütununun basılmadığını (K10)
+# ölçer. Kayıtsız bir kapı kapı değildir; H3'e kadar yeşil koşuyordu ama kimse
+# koşmuyordu — kaydetmek bir SIKILAŞTIRMADIR.
+add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
+
+# flat_pattern_agree_check (V3-C kanat (a), 2026-08-24 · H3 2026-08-30 --all): aynı bedenden üretilen
 # TEKNİK ÇİZİM (shell-flat) ile KALIP (surface-pattern + tools/pattern-measure.mjs)
 # altı ölçüde %1.5 içinde mi. ★ %1.5 YAYINDAN DEĞİL KARARDAN — GECE/V3-R.md
 # "EŞİK 2": technical flat ↔ kalıp uyumu için yayınlanmış formül YOK. Ölçüm aleti
 # diskte yoksa kapı SKIP değil KIRMIZI düşer; `null` gelen ölçü atlanmaz,
 # UNMEASURED olarak sayılır ve kapıyı düşürür.
-add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs)
+# --all (H3): dört sınıfın (elbise · etek · top · örme) hepsinde flat'in ÇİZİLMİŞ
+# siluetini kalıbın kendi bel/göğüs/kalça çizgisine 0.1mm'de tutar, kalemin her
+# izini repoda arar ve manken çizelgesi beyanını (H6) doğrular.
+add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs --all)
 
 # tek_nesne_check (GECE7 / F3, 2026-08-26): flat ile kalıp AYNI DİKİŞ PLANINDAN
 # mı çıkıyor. ⚠ Bu kapı flat_pattern_agree_check'in EŞİTLİK sorusunu SORMAZ ve
@@ -256,7 +287,14 @@ add_test(NAME sleeve_cap_ease_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 add_test(NAME flat_artifact_census COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_artifact_census.mjs)
 
 # style_check: GOLDEN-PIN'in görsel kardeşi. Damla "kalemim" dediği her flat
-# render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler. node script.
+# render'ı REPO PİNİNE (engine/STYLE-PIN/<style>.svg) diff'ler; hüküm listesi pin
+# dizininden DEĞİL engine/flat-engine/styles.json'dan gelir, yani "0 pin = 0 şart"
+# yeşile düşemez. ⚠ Bu kapı BUGÜN KIRMIZI ve öyle kalması DOĞRUDUR: 31 stilin 0'ı
+# pinli. H3 (2026-08-30) onu silmedi — kırmızı bir kapıyı silmek onu yeşil yapmaz,
+# ölçümü yok eder. Yargıladığı kalem zaten croquis kalemi DEĞİL, REFERANS kalemdi
+# (engine/flat-engine/_engine-full.mjs, salt-okunur); çağrı yolu ölen ikili
+# `renderGarmentFlatAsync`'ten köprüye taşındı: engine/tools/reference-flat.mjs.
+# Tek dürüst yeşile çıkış: Damla render'a bakar, scripts/repin-style.sh pinler.
 add_test(NAME style_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/style_check.mjs)
 
 # bridge_guard: köprü sessiz-düşürme yasağı (2026-07-23). princess/straps spec
@@ -803,14 +841,6 @@ add_test(NAME specv2_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR
 # degistirirse tablo bayatlar ve test KIRMIZI olur. Hukum tabloya yazilmaz,
 # hesaplanir — elle "guncellendi" denemez.
 add_test(NAME specv1v2_map_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-spec-v1v2-map.mjs --check)
-
-# flat_tables_check (F-INDIR 2. tur, 2026-08-26): the flat pen moved into the
-# published root (web/lib/flat-core.js) so a shopper can download a technical
-# flat, and it can no longer readFileSync the five contract tables it reasons
-# from. They are emitted as web/lib/flat-tables.gen.js. A generated mirror with
-# no gate on it IS a second truth; this gate re-emits it from contract/ +
-# engine/vocab.json and fails when the committed module drifts by one byte.
-add_test(NAME flat_tables_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-flat-tables.mjs --check)
 
 # K2 flat render lint (2026-07-19): every flat style record in styles.json is
 # rendered headlessly and checked for self-intersection, inconsistent winding

@@ -1,5 +1,5 @@
 {
-  "_contract": "STITCHU MANKEN CIZELGESI v1 (GECE7 / F4, IS 2). KOSU-v7 §2 iki bedeni ayirir: kalip INSAN bedenine (gercek, payli, dikilebilir) degerlenir, teknik cizim MANKEN bedenine (ideal, sifir pay). Iki okuma AYNI dikis planindan cikar; ayrilan sey beden ve paydir. Bu dosya o ikinci bedenin TEK kaynagidir. Kapi: engine/tests/flat_convention_check.mjs bolum 1d (H6). Tuketici: contract/flat-convention-v1.json croquis capalari, engine/src/seamplan.cpp flatJSON bedenlendirme blogu.",
+  "_contract": "STITCHU MANKEN CIZELGESI v1 (GECE7 / F4, IS 2). KOSU-v7 §2 iki bedeni ayirir: kalip INSAN bedenine (gercek, payli, dikilebilir) degerlenir, teknik cizim MANKEN bedenine (ideal, sifir pay). Iki okuma AYNI dikis planindan cikar; ayrilan sey beden ve paydir. Bu dosya o ikinci bedenin TEK kaynagidir. Kapi: engine/tests/flat_pattern_agree_check.mjs --all (H6). H3 (2026-08-30) oncesi kapi flat_convention_check bolum 1d idi ve hukmu CROQUIS CAPALARI uzerinden veriyordu; croquis kalemi silindi, hukum silinmedi — ayni sayi (H6) artik yuzey hattinin kendi `bedenlendirme` blogu uzerinden dort giysi sinifinda olculuyor. Tuketici: engine/src/seamplan.cpp flatJSON bedenlendirme blogu.",
   "version": 1,
   "id": "stitchu-manken-v1",
 

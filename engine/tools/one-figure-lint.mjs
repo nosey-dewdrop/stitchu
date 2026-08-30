@@ -16,7 +16,8 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { renderGarmentFlatAsync } from './render-garment-flat.mjs';
+// H3: croquis kalemi silindi; bu lint zaten yalnız `referenceStyle` gönderiyordu.
+import { renderReferenceFlat } from './reference-flat.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const ST = JSON.parse(readFileSync(join(root, 'engine/flat-engine/styles.json'), 'utf8')).styles;
@@ -56,7 +57,8 @@ function profile(segs) {
 const wAt = (prof, y) => { let b = null; for (const p of prof) if (b === null || Math.abs(p.y - y) < Math.abs(b.y - y)) b = p; return b; };
 
 async function landmarks(key) {
-  const svg = await renderGarmentFlatAsync(null, { referenceStyle: key });
+  const svg = await renderReferenceFlat({ referenceStyle: key });
+  if (!svg) return null;                                // referans stili yok — ikame YOK
   const m = svg.match(/<path class="body" d="([^"]+)"/);
   if (!m) return null;
   const prof = profile(parsePath(m[1]));

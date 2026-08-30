@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// flat_geometry_sellable_check.mjs — ETSY KAPISI / GEOMETRİ YARISI (F-E, 2026-08-23).
+// flat_geometry_sellable_check.mjs — ETSY KAPISI / GEOMETRİ YARISI
+//   (F-E 2026-08-23 · YÜZEY HATTINA BAĞLANDI H3 2026-08-30).
 //
-// Damla, 23 Ağu, bugünkü flat'e bakarak beş kusur saydı:
+// Damla, 23 Ağu, o günkü flat'e bakarak beş kusur saydı:
 //   1. Kollar gövdeden KOPUK — arada beyaz boşluk, kol oyuğu çizgisi yok
 //   2. Puff kol alttan düz kesik ve sivriliyor — manşet/lastik bitişi yok
 //   3. Bel yok — gövde düz iniyor, oturmalı üst değil
@@ -11,32 +12,70 @@
 // Bu kapı bu kusurların MEKANİK OLARAK ÖLÇÜLEBİLEN kısmını tutar. Zevk kısmı
 // (çizginin karakteri, "ay evet" hissi) kapıya GİRMEZ → `DAMLA-KUYRUK.md`.
 //
+// ===========================================================================
+// H3 — KAPI SİLİNMEDİ; ÖLÇÜLEN ÇİZİM DEĞİŞTİ, VE HÜKÜMLERİN YARISI UYUYOR
+// ===========================================================================
+// 30 Ağustos'a kadar ölçülen çizim croquis kalemininkiydi (`render-garment-flat`
+// → `web/lib/flat-core.js`). O kalem KOL ve OMUZ da çiziyordu, o yüzden altı
+// şartın altısının da bir konusu vardı. H3 kalemi sildi: kullanıcıya giden çizim
+// artık kalıbın kesildiği yüzeyin projeksiyonu, ve o yüzey BUGÜN STRAPLESS bir
+// giysi inşa ediyor — omuz dikişi yok, kol oyuğu yok, kol yok (repo kaydındaki
+// açık G5 boşluğunun kendisi; CLAUDE.md "SIRADAKİ: G5").
+//
+// ★ BU YÜZDEN ŞARTLAR SİLİNMEDİ, UYUTULDU — VE UYKU BİR CIRCIRA BAĞLANDI.
+//   Bir şartın konusu bugün yoksa onu yeşile boyamak da kırmızıya boyamak da
+//   yalandır. Doğru olan şudur: şartın konusu olan EKSENİN motor tarafından
+//   ADIYLA REDDEDİLDİĞİNİ her koşuda DOĞRULAMAK. Yani "kol yok" cümlesi kapının
+//   kanaati değil, motorun kendi çıktısından okunan bir OLGU
+//   (`flatJSON(...).desteklenmeyen_eksenler`). Motor bir gün kolu SEVK ETTİĞİNDE
+//   o eksen redde düşmez, uyuyan şart UYANIR ve — henüz ölçüm kodu yazılmadığı
+//   için — KAPI KIRMIZI DÜŞER. Şart böylece kaybolmuyor, sevkiyata KİLİTLENİYOR.
+//   Uyuyan şart sayısı 5'te CIRCIRLI: artamaz, yalnız düşebilir.
+//
+//   S1 omuz ucu göğüs çizgisinin içinde   → uyuyor (omuz/kol oyuğu sevk edilmedi)
+//   S2b etek merdiveni (boy arttıkça...)  → uyuyor (topLength ekseni reddediliyor)
+//   S4 kol oyuğu içbükey                  → uyuyor
+//   S5 kol iki ucu da gövdeyle paylaşır   → uyuyor
+//   S6 puff eti toplanmış + manşet        → uyuyor
+//
+// ★ UYANIK ŞARTLAR — ÇİZİLEN SİLUETTEN ÖLÇÜLÜR, EŞİKSİZ EŞİTSİZLİK:
+//   G1  BEL GERÇEKTEN DARALIYOR: çizilen bel yarı-genişliği, çizilen göğüs VE
+//       kalça yarı-genişliğinden KESİN KÜÇÜK. (Damla'nın 3. kusuru: "bel yok —
+//       gövde düz iniyor".)
+//       ★ NEDEN BİR ORAN EŞİĞİ DEĞİL, BİR SIRALAMA. Kaynaklı çizelge ÇEVRE
+//         verir (bel 70 / büst 88 cm); çizim ise bir ORTOGRAFİK İZDÜŞÜMÜN
+//         YARI-GENİŞLİĞİNİ verir. Kesit bir elips olduğu için yarı-genişlik
+//         oranı ile çevre oranı AYNI SAYI DEĞİLDİR (derinlik halkadan halkaya
+//         değişir), ve croquis kaleminin "düz serilmiş tüp" varsayımı (yarı-gen
+//         = çevre/4) yüzey hattında GEÇERSİZDİR. İki niceliği eşitmiş gibi
+//         kıyaslamak uydurma bir eşik olurdu. Kıyaslanabilen tek şey YÖNDÜR ve
+//         kapı tam onu tutar: çizelgenin sıralaması (bel < büst, bel < kalça)
+//         çizimde de geçerli olmak zorunda. Yön çizelgeden OKUNUR, buraya
+//         yazılmaz — çizelge bir gün başka bir sıra verirse kapı onu izler.
+//   G2  ETEK TAVANI: `top` sınıfında çizilen etek yarı-genişliği, çizilen KALÇA
+//       yarı-genişliğini AŞAMAZ — bir üst vücudun kalçasından geniş bitemez.
+//       (4. kusur: "etek ucu kavisi abartılı".) Aynı gerekçeyle bu da çizim-içi
+//       bir eşitsizliktir, uydurma bir orana değil kalçanın kendi çizgisine bağlı.
+//   G3  ÜST SINIR SİLUETİN İÇİNDE: yaka/üst kenarın hiçbir noktası, kendi
+//       yüksekliğindeki siluet yarı-genişliğinin DIŞINDA olamaz. Dışına taşan bir
+//       yaka giysinin sahip olmadığı bir kenar çizer. (5. kusurun ölçülebilen
+//       yarısı; croquis kalemi bunu hiç yargılamıyordu.)
+//   G4  ÜST SINIR VAR VE BOŞ DEĞİL: sessizce kaybolan bir yaka H3'ün bitirmek
+//       için yazıldığı körlüğün ta kendisi.
+//
 // ★ HİÇBİR EŞİK BİZİM ÇIKTIMIZDAN TÜRETİLMEDİ (ORTAK.md md.3). İki dış kaynak:
-//   [B] SATIN ALINMIŞ Buğra Locket EU38 kalıbı — `patterns_real/geometry/
-//       geometry-full.json`, Arka Beden parçası, ring size 38. Arka seçildi:
-//       arka-orta kenarı tam dikey (90.00°, 413.97 mm düz koşu) ve pens/placket
-//       dış konturu kirletmiyor. Ölçüm dökümü: GECE/log/F-E.bugra-olcum.txt.
-//       Ölçülen yarı-genişlikler (arka-ortadan, mm):
-//           omuz 196.13 · göğüs(max) 204.94 · bel(min) 157.46 · etek 179.22
-//       Göğüse normalize: 0.9570 / 1.0000 / 0.7683 / 0.8745
-//   [C] contract/flat-convention-v1.json — F-D'nin flat kanunu (croquis, mürekkep,
-//       çizgi sınıfları) + F-E'nin eklediği sideSeamProfile & sleeveLaw. Yeniden
-//       BEYAN EDİLMEZ, sadece OKUNUR.
+//   [B] SATIN ALINMIŞ Buğra Locket EU38 kalıbı — `contract/flat-convention-v1.json`
+//       croquis.sideSeamProfile._normalizedToChest, ölçüm dökümü
+//       GECE/log/F-E.bugra-olcum.txt. RAPOR satırı olarak basılır (kapı değil:
+//       Buğra'nın 38'i burda'nın 40'ı, mutlak mm kıyaslanamaz).
+//   [C] contract/tables.json draft.euSizeChart — KAYNAKLI beden çizelgesi.
+//       G1 ve G2'nin eşitsizlikleri buradan gelir.
 //
-// KAPI, KANUNUN DEĞERİNE DEĞİL ÇOĞUNLUKLA EŞİTSİZLİĞE bakar. Eşitsizliklerin
-// gevşetilecek bir sayısı yoktur; ya sağlanır ya sağlanmaz:
-//   S1  omuz ucu GÖĞÜS ÇİZGİSİNİN İÇİNDE  (shoulderHalf < chestHalf)
-//   S2  oturan bir ÜSTÜN eteği GÖĞÜSTEN GENİŞ OLAMAZ (hemHalf < chestHalf)
-//   S3  bel gerçekten daralıyor: waistHalf <= KAYNAKLI çizelgenin waist/bust'ı
-//   S4  kol oyuğu İÇBÜKEY: eğri kendi iki ucunun dışına taşmaz
-//   S5  kol, gövdeyle İKİ UCU DA paylaşır (omuz ucu + koltukaltı), boşluk 0.00 mm
-//   S6  PUFF kolun eti EN GENİŞ yerinden DAR + manşet bandı + büzgü tırtığı var
-//
-// ANTI-HACK: kapı hiçbir sabiti kalemden import etmez. Kalemin BASTIĞI SVG'yi
-// parse eder, path'leri 400 adımda ÖRNEKLER ve ölçümü o örnekten çıkarır. Kalem
-// bir sayıyı beyan edip başka bir şey çizerse kapı çizileni görür.
+// ANTI-HACK: kapı hiçbir sabiti çiziciden import etmez. Çizicinin BASTIĞI SVG'yi
+// parse eder, siluet yolunu 400 adımda örnekler ve ölçümü o örnekten çıkarır.
+// Motorun yan kanaldan verdiği `olculer` bloğu OKUNMAZ.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,24 +83,33 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
 const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
 const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
-const { renderGarmentFlat } = await import(join(root, 'engine/tools/render-garment-flat.mjs'));
-
-const UNIT = LAW.scale.unitMM;
 const SSP = LAW.croquis.sideSeamProfile;
-const CQ = LAW.croquis.landmarks;
-const TOL_MM = LAW.croquis.toleranceMM;
+
+const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
+const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
+const SIZE = process.env.V3C_SIZE || 'EU38';
+
+// UYUYAN ŞART CIRCIRI — bir tolerans değil, bir SAYIM tavanı. Yalnız düşebilir.
+const DORMANT_RATCHET = 5;
 
 let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
 const OK = (m) => console.log(`ok    ${m}`);
 
+if (!existsSync(BUNDLE)) FAIL(`sevk edilen wasm paketi YOK: ${BUNDLE}`);
+if (!existsSync(FLAT_MOD)) FAIL(`cizici YOK: ${FLAT_MOD}`);
+if (fails) { console.log(`\nFAIL flat_geometry_sellable_check — ${fails} ihlal`); process.exit(1); }
+
+const engine = await (await import(BUNDLE)).default();
+const { renderFlatFromPlan } = await import(FLAT_MOD);
+
 // ---------------------------------------------------------------------------
-// SVG path (M/L/C/Q/Z, mutlak) -> yoğun nokta dizisi. Kalemin bastığı dil bu.
+// SVG path (M/L/C/Z, mutlak) -> yoğun nokta dizisi.
 // ---------------------------------------------------------------------------
 function samplePath(d, per = 40) {
-  const tok = d.match(/[MLCQZ]|-?\d+(?:\.\d+)?/gi) || [];
-  const pts = []; let i = 0, cmd = '', cur = [0, 0], start = [0, 0];
-  const num = () => parseFloat(tok[i++]);
+  const tok = d.trim().split(/[\s,]+/);
+  const pts = []; let i = 0, cur = [0, 0], start = [0, 0];
+  const num = () => { const v = Number(tok[i++]); if (!Number.isFinite(v)) throw new Error(`yol: sayi degil '${tok[i - 1]}'`); return v; };
   const cub = (p0, c1, c2, p1) => {
     for (let k = 1; k <= per; k++) {
       const t = k / per, u = 1 - t;
@@ -69,284 +117,272 @@ function samplePath(d, per = 40) {
                 u * u * u * p0[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * p1[1]]);
     }
   };
-  const quad = (p0, c, p1) => {
-    for (let k = 1; k <= per; k++) {
-      const t = k / per, u = 1 - t;
-      pts.push([u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0],
-                u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1]]);
-    }
-  };
   while (i < tok.length) {
-    const t = tok[i];
-    if (/^[MLCQZ]$/i.test(t)) {
-      cmd = t.toUpperCase(); i += 1;
-      if (cmd === 'Z') { pts.push(start.slice()); continue; }
-    }
-    if (cmd === 'M') { cur = [num(), num()]; start = cur.slice(); pts.push(cur.slice()); }
-    else if (cmd === 'L') { const p = [num(), num()]; pts.push(p.slice()); cur = p; }
-    else if (cmd === 'C') { const c1 = [num(), num()], c2 = [num(), num()], p = [num(), num()]; cub(cur, c1, c2, p); cur = p; }
-    else if (cmd === 'Q') { const c = [num(), num()], p = [num(), num()]; quad(cur, c, p); cur = p; }
-    else i += 1;
+    const c = tok[i++];
+    if (c === 'M') { cur = [num(), num()]; start = cur.slice(); pts.push(cur.slice()); }
+    else if (c === 'L') { const p = [num(), num()]; pts.push(p.slice()); cur = p; }
+    else if (c === 'C') { const c1 = [num(), num()], c2 = [num(), num()], p = [num(), num()]; cub(cur, c1, c2, p); cur = p; }
+    else if (c === 'Z') { pts.push(start.slice()); cur = start.slice(); }
+    else throw new Error(`yol: taninmayan komut '${c}'`);
   }
   return pts;
 }
-const bbox = (pts) => {
-  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-  return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
-};
-// Bir YÜKSEKLİKTEKİ yarı-genişlik. Bant içinde "en büyük |x|" ARAMAZ (o, işaretin
-// biraz üstündeki daha geniş noktayı yakalayıp beli olduğundan geniş gösterirdi);
-// silüeti bir POLİGON sayıp y doğrusuyla KESİŞİMLERİNİ interpole eder ve en
-// dıştaki kesişimi döner. Tam sayı, bant yok.
-function halfWidthAt(pts, y) {
-  let best = null;
+// Bir YÜKSEKLİKTEKİ yarı-genişlik: siluet bir POLİGON sayılıp y doğrusuyla
+// KESİŞİMLERİ interpole edilir; (en sağ − en sol) / 2 döner. Bant yok, tam sayı.
+//
+// ⚠ MUTLAK |x| ALINMAZ. Paneller sayfada YAN YANA yerleştirilmiştir (ön solda,
+// arka sağda), yani bir panelin x koordinatları 0 etrafında simetrik DEĞİL. |x|
+// almak arka panelin yarı-genişliğini sayfa ofseti kadar şişirirdi — ve şişmiş
+// bir sayı bu kapıyı hem yanlış kırmızıya hem yanlış yeşile düşürebilir.
+function halfWidthAt(pts, yIn) {
+  const ys = pts.map((p) => p[1]);
+  const ymin = Math.min(...ys), ymax = Math.max(...ys);
+  // ⚠ SAYISAL KENETLEME — BİR ÖLÇÜM TOLERANSI DEĞİL, YAZI ÇÖZÜNÜRLÜĞÜ.
+  // Çizici her koordinatı DÖRT ondalıkla basıyor (flat-from-plan.js toFixed(4)),
+  // yani bir mikronun onda biri kadar yuvarlama kaçınılmaz. Bir halka giysinin
+  // TAM ucunda durabilir — düz kılıfta kalça çizgisi eteğin ta kendisidir
+  // (altZ_mm = hip.z_mm) — ve o hâlde sorgulanan y, yazılmış poligonun dışına
+  // 1e-4 mm düşebilir. Kenetleme yalnız bu büyüklükte ve yalnız uçlarda çalışır;
+  // gerçek bir "kesişim yok" hâlini (halka giysinin dışında) GİZLEMEZ.
+  let y = yIn;
+  if (y > ymax && y - ymax < 1e-3) y = ymax;
+  if (y < ymin && ymin - y < 1e-3) y = ymin;
+  const xs = [];
   for (let i = 0; i + 1 < pts.length; i++) {
     const a = pts[i], b = pts[i + 1];
-    if ((a[1] - y) * (b[1] - y) > 0 || Math.abs(b[1] - a[1]) < 1e-12) continue;
+    if (Math.abs(b[1] - a[1]) < 1e-12) {
+      // YATAY SEGMENT ATLANMAZ. Etek ucu tam da budur: siluetin kapanış L'i
+      // yataydır ve düz kılıfta ölçülmek istenen çizgi ORASIDIR. Atlamak,
+      // ölçülecek tek kesiti kör etmek olurdu.
+      if (Math.abs(a[1] - y) < 1e-9) { xs.push(a[0], b[0]); }
+      continue;
+    }
+    if ((a[1] - y) * (b[1] - y) > 0) continue;
     const t = (y - a[1]) / (b[1] - a[1]);
-    const x = Math.abs(a[0] + t * (b[0] - a[0]));
-    best = Math.max(best ?? 0, x);
+    xs.push(a[0] + t * (b[0] - a[0]));
   }
-  return best;
+  if (xs.length < 2) return null;
+  return (Math.max(...xs) - Math.min(...xs)) / 2;
 }
-// ETEK yarı-genişliği = silüetin ALT %8'indeki en dış nokta (etek KÖŞESİ).
-// En alt nokta değil: en alt nokta orta-öndeki sarkma çukurudur, etek köşesi değil.
+// ETEK yarı-genişliği = siluetin ALT %8'indeki en geniş kesit (etek KÖŞESİ).
+// En alt nokta değil: en alt nokta orta-öndeki sarkma çukurudur.
 function hemHalf(pts) {
-  const b = bbox(pts), lo = b.y0 + (b.y1 - b.y0) * 0.92;
-  let best = 0;
-  for (const p of pts) if (p[1] >= lo) best = Math.max(best, Math.abs(p[0]));
-  return best;
+  const ys = pts.map((p) => p[1]);
+  const y0 = Math.min(...ys), y1 = Math.max(...ys), lo = y0 + (y1 - y0) * 0.92;
+  const band = pts.filter((p) => p[1] >= lo).map((p) => p[0]);
+  if (band.length < 2) return 0;
+  return (Math.max(...band) - Math.min(...band)) / 2;
 }
-function panels(svg) {
-  const out = [];
-  const marks = [...svg.matchAll(/<g\s+data-view="(front|back)"([^>]*)>/g)];
-  for (let k = 0; k < marks.length; k++) {
-    const stop = k + 1 < marks.length ? marks[k + 1].index : svg.length;
-    out.push({ view: marks[k][1], body: svg.slice(marks[k].index, stop) });
-  }
-  return out;
-}
-function pathsOf(panelSvg, attr) {
-  const re = attr
-    ? new RegExp(`<path[^>]*data-part="${attr}"[^>]*\\sd="([^"]+)"`, 'g')
-    : /<path[^>]*\sd="([^"]+)"/g;
-  return [...panelSvg.matchAll(re)].map((m) => m[1]);
-}
-// gövde silüeti = paneldeki en büyük kutulu path (F-D kapısıyla aynı tanım)
-function silhouette(panelSvg) {
-  let best = null, bestA = -1;
-  for (const d of pathsOf(panelSvg)) {
-    const pts = samplePath(d, 8);
-    if (pts.length < 12) continue;
-    const b = bbox(pts), a = (b.x1 - b.x0) * (b.y1 - b.y0);
-    if (a > bestA) { bestA = a; best = d; }
-  }
-  return best ? samplePath(best, 40) : null;
-}
+const pathD = (svg, view, curve) => {
+  const m = new RegExp(`<path data-view="${view}" data-curve="${curve}"[^>]*\\sd="([^"]*)"`).exec(svg);
+  return m ? m[1] : null;
+};
 
+// ---------------------------------------------------------------------------
+// MATRİS — kartın saydığı dört sınıf. Sınıflar arası GEOMETRİ farkı olmaması bir
+// kusur değil, ilan edilmiş bir REDDİR (`desteklenmeyen_eksenler`); kapı yine de
+// dördünü de ayrı ayrı ölçer, çünkü bir gün ayrışacaklar.
 // ---------------------------------------------------------------------------
 const MATRIX = [
-  ['locket_puff_top',    { garment: 'top', neckline: 'crew', shaping: 'darts', topLength: 'crop', sleeveStyle: 'set', sleeveLength: 'short', sleeveCap: 2, collarType: 4, frontPlacket: 1 }],
-  ['crew_sleeved_top',   { garment: 'top', neckline: 'crew', shaping: 'darts', topLength: 'hip', sleeveStyle: 'set', sleeveLength: 'short' }],
-  ['scoop_tunic_placket',{ garment: 'top', neckline: 'scoop', shaping: 'darts', topLength: 'tunic', frontPlacket: 1 }],
-  ['sweetheart_crop_top',{ garment: 'top', neckline: 'sweetheart', shaping: 'princess', topLength: 'crop' }],
-  ['princess_scoop_dress', { garment: 'dress', neckline: 'scoop', shaping: 'princess', skirtStyle: 'aLine', skirtLength: 'midi', closure: 'backZip' }],
+  ['elbise',     { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['etek',       { garment: 'skirt', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'crew', sleeveStyle: 'none' }],
+  ['top',        { garment: 'top',   shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['orme',       { garment: 'top',   shaping: 'dart', fabric: 'knit',  skirtStyle: 'aLine', neckline: 'scoop' }],
+  // G2b'nin iki dalini da olcmek icin: `straight` sevk edilen ikinci klos
+  // kelimesidir (hemSweepMM = 0). Tek dal kosan bir sart yarim sarttir.
+  ['elbise_duz', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'straight', neckline: 'scoop' }],
 ];
-const rendered = MATRIX.map(([name, spec]) => [name, spec, renderGarmentFlat([], spec)]);
 
-console.log('=== ETSY KAPISI / GEOMETRİ — üretim kalemi, ' + MATRIX.length + ' stil');
-console.log(`    kanun : contract/flat-convention-v1.json  unitMM=${UNIT}`);
-console.log(`    ölçüt : Buğra Locket EU38 Arka Beden — ${JSON.stringify(SSP._normalizedToChest)}`);
-console.log(`    kaynak: ${SSP._source.split('.')[0]}`);
-
-// ---------------------------------------------------------------------------
-// S1 + S2 + S3 — YAN DİKİŞ PROFİLİ
-// ---------------------------------------------------------------------------
-console.log('\n--- S1/S2/S3 YAN DİKİŞ PROFİLİ (çizilen silüetten ölçüldü)');
 const chartF = TABLES.draft.euSizeChart._fields;
-const eu38 = TABLES.draft.euSizeChart[LAW.referenceBody.size];
-const chartWaistOverBust = eu38[chartF.indexOf('waistCM')] / eu38[chartF.indexOf('bustCM')];
-const chartHipOverBust = eu38[chartF.indexOf('hipCM')] / eu38[chartF.indexOf('bustCM')];
-const s1Violations = [];
-const hemLadder = new Map();   // topLength -> etek/göğüs oranı (S2b merdiveni)
+const chart = TABLES.draft.euSizeChart[SIZE];
+const chartCM = (f) => chart[chartF.indexOf(f)];
+// SIRALAMA ÇİZELGEDEN OKUNUR, BURAYA YAZILMAZ.
+const CHART_BEL_DAR_BUST = chartCM('waistCM') < chartCM('bustCM');
+const CHART_BEL_DAR_KALCA = chartCM('waistCM') < chartCM('hipCM');
 
-console.log(`    ${'stil/görünüm'.padEnd(28)} ${'omuz/göğüs'.padStart(11)} ${'bel/göğüs'.padStart(10)} ${'etek/göğüs'.padStart(11)}`);
-for (const [name, spec, svg] of rendered) {
-  for (const p of panels(svg)) {
-    const pts = silhouette(p.body);
-    if (!pts) { FAIL(`[S1] ${name}/${p.view}: silüet path'i bulunamadı`); continue; }
-    const hShoulder = halfWidthAt(pts, CQ.shoulderTipY.u);
-    const hChest = halfWidthAt(pts, CQ.chestY.u);
-    const hWaist = halfWidthAt(pts, CQ.waistY.u);
-    const hHem = hemHalf(pts);
-    if (hShoulder == null || hChest == null || !hHem) { FAIL(`[S1] ${name}/${p.view}: işaret yüksekliğinde kesişim yok`); continue; }
-    const rSh = hShoulder / hChest, rWa = hWaist == null ? NaN : hWaist / hChest, rHe = hHem / hChest;
-    console.log(`    ${(name + '/' + p.view).padEnd(28)} ${rSh.toFixed(4).padStart(11)} ${(Number.isNaN(rWa) ? '—' : rWa.toFixed(4)).padStart(10)} ${rHe.toFixed(4).padStart(11)}`);
+console.log(`=== ETSY KAPISI / GEOMETRI — YUZEY HATTI (H3), ${MATRIX.length} sinif, beden ${SIZE}`);
+console.log('    olculen hat : engine.flatJSON(spec, body) -> web/lib/flat-from-plan.js');
+console.log(`    kaynakli siralama (contract/tables.json draft.euSizeChart.${SIZE}): ` +
+            `bel ${chartCM('waistCM')} ${CHART_BEL_DAR_BUST ? '<' : '>='} bust ${chartCM('bustCM')} · ` +
+            `bel ${CHART_BEL_DAR_KALCA ? '<' : '>='} kalca ${chartCM('hipCM')} cm`);
 
-    // S1 — RAPOR, KAPI DEĞİL (bu gece). Şart: omuz ucu göğüs çizgisinin İÇİNDE
-    // olmalı; set-in kollu hiçbir giyside omuz noktası büstün dışında olamaz.
-    // Bugün İHLAL EDİLİYOR ve bu KAPATILMADI — çünkü croquis'i düzeltmek mevcut
-    // flat_convention_check'in landmark çıkarımını da değiştirmeyi gerektiriyor
-    // (o çıkarım omuzun göğüsten GENİŞ olduğunu, yani kusurun kendisini varsayıyor)
-    // ve ORTAK.md md.5 "var olan teste dokunma" diyor. Karar Damla'da:
-    // DAMLA-KUYRUK.md K-FE-1. Eşik gevşetilmedi — ŞART HİÇ KAPI YAPILMADI, ve
-    // ihlal her koşuda EKRANA BASILIYOR ki sessizce kaybolmasın.
-    if (!(rSh < 1.0)) s1Violations.push(`${name}/${p.view}: omuz/göğüs ${rSh.toFixed(4)} >= 1.0 (Buğra ${SSP._normalizedToChest.shoulder})`);
+const cizimler = [];
+for (const [ad, spec] of MATRIX) {
+  let F;
+  try { F = JSON.parse(engine.flatJSON(spec, { size: SIZE })); }
+  catch (e) { FAIL(`[0] ${ad}: flatJSON coktu: ${e.message}`); continue; }
+  if (F.error) { FAIL(`[0] ${ad}: flatJSON reddetti: ${F.error}`); continue; }
+  let P;
+  try { P = JSON.parse(engine.planJSON(spec, { size: SIZE })); }
+  catch (e) { FAIL(`[0] ${ad}: planJSON coktu: ${e.message}`); continue; }
+  let svg;
+  try { svg = renderFlatFromPlan(F); } catch (e) { FAIL(`[0] ${ad}: cizim uretilemedi: ${e.message}`); continue; }
+  cizimler.push({ ad, spec, F, P, svg });
+}
+if (cizimler.length !== MATRIX.length) FAIL(`[0] ${MATRIX.length} sinifin ${cizimler.length}'i cizilebildi`);
 
-    const isDress = spec.garment === 'dress';
-    if (!isDress) {
-      // S2a — TAVAN: hiçbir üst, vücudun KALÇASINDAN geniş bitemez. Sayı kaynaklı
-      // çizelgeden (burda EU38 hip/bust), bizim çıktımızdan değil.
-      if (!(rHe <= chartHipOverBust + 1e-6)) {
-        FAIL(`[S2a] ${name}/${p.view}: etek/göğüs ${rHe.toFixed(4)} > kaynaklı kalça/büst ${chartHipOverBust.toFixed(4)}`);
-      }
-      // S2c — BEL/CROP boyunda biten bir üst büstten GENİŞ olamaz: doğal belin
-      // hemen altında vücut hâlâ büstten dardır.
-      const tl = spec.topLength || 'hip';
-      if ((tl === 'crop' || tl === 'waist') && !(rHe < 1.0)) {
-        FAIL(`[S2c] ${name}/${p.view}: '${tl}' boy, etek/göğüs ${rHe.toFixed(4)} >= 1.0 — belde biten üst büstten GENİŞ (Buğra etek oranı ${SSP._normalizedToChest.hem})`);
-      }
-      const prev = hemLadder.get(tl);
-      if (prev != null && Math.abs(prev - rHe) > 1e-6) FAIL(`[S2b] '${tl}' iki stilde iki farklı etek oranı verdi (${prev} vs ${rHe})`);
-      hemLadder.set(tl, rHe);
-    }
-
-    // S3 — oturan gövdede bel, KAYNAKLI çizelgenin bel/büst oranından geniş olamaz.
-    const fitted = spec.shaping === 'princess' || spec.shaping === 'darts' || spec.waistline === 'empire';
-    if (fitted && !Number.isNaN(rWa) && !(rWa <= chartWaistOverBust + 1e-6)) {
-      FAIL(`[S3] ${name}/${p.view}: bel/göğüs ${rWa.toFixed(4)} > kaynaklı çizelge ${chartWaistOverBust.toFixed(4)} (burda EU38 ${eu38[chartF.indexOf('waistCM')]}/${eu38[chartF.indexOf('bustCM')]})`);
-    }
+// ---------------------------------------------------------------------------
+// G1 + G2 — YAN DİKİŞ PROFİLİ, ÇİZİLEN SİLUETTEN
+// ---------------------------------------------------------------------------
+console.log('\n--- G1/G2 YAN DIKIS PROFILI (cizilen siluetten olculdu)');
+console.log(`    ${'sinif/gorunum'.padEnd(20)} ${'gogus mm'.padStart(10)} ${'bel mm'.padStart(10)} ${'kalca mm'.padStart(10)} ${'etek mm'.padStart(10)}`);
+for (const c of cizimler) {
+  const halkalar = Array.isArray(c.P.halkalar) ? c.P.halkalar : [];
+  const zOf = (ad) => (halkalar.find((h) => h.ad === ad) || {}).z_mm;
+  if (![zOf('bust'), zOf('waist'), zOf('hip')].every(Number.isFinite)) {
+    FAIL(`[G1] ${c.ad}: kalip bel/gogus/kalca cizgilerini yayinlamiyor`); continue;
   }
-}
+  for (const view of LAW.views.required) {
+    const d = pathD(c.svg, view, 'siluet');
+    if (!d) { FAIL(`[G1] ${c.ad}/${view}: siluet yolu YOK`); continue; }
+    let pts;
+    try { pts = samplePath(d, 40); } catch (e) { FAIL(`[G1] ${c.ad}/${view}: yol ayristirilamadi: ${e.message}`); continue; }
+    // SVG y asagi sayar; siluetin EN UST noktasi kabugun ustZ_mm'sidir. Yerlesim
+    // sabitleri KOPYALANMAZ: cizimin kendi en ust y'si capa.
+    const yTop = Math.min(...pts.map((p) => p[1]));
+    const w = (ad) => halfWidthAt(pts, yTop + (c.F.ustZ_mm - zOf(ad)));
+    const hBust = w('bust'), hWaist = w('waist'), hHip = w('hip'), hHem = hemHalf(pts);
+    if (hBust == null || hWaist == null || hHip == null || !hHem) { FAIL(`[G1] ${c.ad}/${view}: isaret yuksekliginde kesisim yok`); continue; }
+    console.log(`    ${(c.ad + '/' + view).padEnd(20)} ${(2 * hBust).toFixed(4).padStart(10)} ${(2 * hWaist).toFixed(4).padStart(10)} ` +
+                `${(2 * hHip).toFixed(4).padStart(10)} ${(2 * hHem).toFixed(4).padStart(10)}`);
 
-// S2b — ETEK MERDİVENİ. Damla'nın 3. ("bel yok") ve 4. ("etek ucu kavisi abartılı")
-// kusurlarının tek kök sebebi: eski kalem HER üste aynı etek genişliğini (kalça)
-// veriyordu, boydan bağımsız. O yüzden bel daralıp hemen kalçaya açılıyor, crop
-// boyda o açılma 24 birime sıkışıp kâse kavisi üretiyordu. Bu şart o eşitliği
-// YASAKLAR: etek genişliği boyla KESİN ARTAR.
-console.log('\n--- S2b ETEK MERDİVENİ (boy arttıkça etek genişler)');
-const order = ['crop', 'waist', 'hip', 'tunic'].filter((k) => hemLadder.has(k));
-console.log('    ' + order.map((k) => `${k} ${hemLadder.get(k).toFixed(4)}`).join('  <  '));
-for (let i = 0; i + 1 < order.length; i++) {
-  const a = hemLadder.get(order[i]), b = hemLadder.get(order[i + 1]);
-  if (!(a < b - 1e-6)) FAIL(`[S2b] '${order[i]}' etek oranı ${a.toFixed(4)} >= '${order[i + 1]}' ${b.toFixed(4)} — etek boydan BAĞIMSIZ, bel okunmaz`);
-}
-if (order.length < 2) FAIL('[S2b] merdiven ölçülemedi: matriste en az iki farklı topLength gerekli');
-if (!fails) OK('S2/S3 — on panelde yan dikiş profili giysi gibi, etek merdiveni monoton');
-
-// --- S1 AÇIK KALEM (KAPI DEĞİL) -------------------------------------------
-console.log('\n--- S1 OMUZ UCU BÜSTÜN İÇİNDE Mİ? (AÇIK KALEM — KAPI DEĞİL, K-FE-1)');
-if (!s1Violations.length) console.log('    ihlal yok.');
-else {
-  console.log(`    ${s1Violations.length} panelde İHLAL — omuz ucu göğüs yarı-genişliğinin DIŞINDA:`);
-  for (const v of s1Violations) console.log(`      ${v}`);
-  const shMM = CQ.shoulderTipX.u * UNIT, chMM = CQ.chestX.u * UNIT;
-  console.log(`    croquis: shoulderTipX ${shMM.toFixed(1)} mm (omuzdan omuza ${(2*shMM/10).toFixed(1)} cm) > chestX ${chMM.toFixed(1)} mm`);
-  console.log(`    Buğra oranıyla olması gereken: ${(CQ.chestX.u*SSP._normalizedToChest.shoulder).toFixed(4)}u = ${(CQ.chestX.u*SSP._normalizedToChest.shoulder*UNIT).toFixed(2)} mm`);
-  console.log('    KAPI YAPILMADI: croquis düzeltilince flat_convention_check.mjs measureCroquis()');
-  console.log('    kırılıyor (o çıkarım omuzun göğüsten geniş olmasına dayanıyor = kusurun kendisi).');
-  console.log('    Mevcut teste dokunmak ORTAK.md md.5 ile yasak. Karar Damla\'da: DAMLA-KUYRUK K-FE-1.');
-}
-
-// ---------------------------------------------------------------------------
-// S4 — KOL OYUĞU İÇBÜKEY (eğri kendi iki ucunun dışına taşmaz)
-// ---------------------------------------------------------------------------
-console.log('\n--- S4 KOL OYUĞU İÇBÜKEY');
-const shTipX = CQ.shoulderTipX.u, shTipY = CQ.shoulderTipY.u, chX = CQ.chestX.u, chY = CQ.chestY.u;
-const scyeCeil = Math.max(shTipX, chX);
-for (const [name, , svg] of rendered) {
-  for (const p of panels(svg)) {
-    const pts = silhouette(p.body);
-    if (!pts) continue;
-    // kol oyuğu bandı: omuz ucu yüksekliği ile koltukaltı yüksekliği arasındaki
-    // SAĞ yarı noktaları (x > 0). Beyana bakılmadan, çizilenden.
-    const scye = pts.filter((q) => q[0] > 0 && q[1] >= shTipY - 0.5 && q[1] <= chY + 0.5);
-    if (!scye.length) { FAIL(`[S4] ${name}/${p.view}: kol oyuğu bandında nokta yok`); continue; }
-    const maxX = Math.max(...scye.map((q) => q[0]));
-    const over = (maxX - scyeCeil) * UNIT;
-    if (over > 0.05) FAIL(`[S4] ${name}/${p.view}: oyuk max x ${maxX.toFixed(3)}u, tavan ${scyeCeil.toFixed(3)}u — DIŞARI ${over.toFixed(2)} mm taşıyor`);
-  }
-}
-if (!fails) OK(`S4 — oyuk hiçbir panelde kendi uçlarının dışına taşmıyor (tavan ${scyeCeil.toFixed(3)}u)`);
-
-// ---------------------------------------------------------------------------
-// S5 + S6 — KOL: UÇLAR PAYLAŞILIYOR + PUFF ETİ TOPLANMIŞ
-// ---------------------------------------------------------------------------
-// KUANTLAMA TOLERANSI — GEVŞETME DEĞİL, KALEMİN YAZI ÇÖZÜNÜRLÜĞÜ. Kalem her
-// koordinatı 0.1 kullanıcı birimine yuvarlayarak basıyor (render-garment-flat.mjs
-// `n()`), yani SVG'de temsil edilebilen en küçük fark 0.1u = 0.3 mm. İki ucun
-// "aynı nokta" olması bu yazıda en fazla yarım adım = 0.05u = 0.15 mm sapabilir.
-// Eşik bundan büyük seçilirse gerçek bir kopukluğu gizler; küçük seçilirse
-// matematiği değil YAZIYI yargılar. Tam yarım adım alındı.
-const QUANT = 0.05 * UNIT;   // 0.15 mm
-console.log(`\n--- S5/S6 KOL  (uç özdeşliği toleransı ${QUANT.toFixed(2)} mm = kalemin yarım yazı adımı)`);
-let sleeveSeen = 0, puffSeen = 0;
-for (const [name, spec, svg] of rendered) {
-  if (!spec.sleeveStyle || spec.sleeveStyle === 'none') continue;
-  for (const p of panels(svg)) {
-    const ds = pathsOf(p.body, 'sleeve');
-    if (!ds.length) { FAIL(`[S5] ${name}/${p.view}: data-part="sleeve" path'i YOK`); continue; }
-    sleeveSeen += 1;
-    const pts = samplePath(ds[0], 40);
-    const a = pts[0], z = pts[pts.length - 1];
-    const dTip = Math.hypot(a[0] - shTipX, a[1] - shTipY) * UNIT;
-    const dUnd = Math.hypot(z[0] - chX, z[1] - chY) * UNIT;
-    if (dTip > QUANT) FAIL(`[S5] ${name}/${p.view}: kol omuz ucundan ${dTip.toFixed(2)} mm KOPUK (${a[0].toFixed(2)},${a[1].toFixed(2)} vs ${shTipX},${shTipY})`);
-    if (dUnd > QUANT) FAIL(`[S5] ${name}/${p.view}: kol koltukaltından ${dUnd.toFixed(2)} mm KOPUK (${z[0].toFixed(2)},${z[1].toFixed(2)} vs ${chX},${chY})`);
-
-    if (spec.sleeveCap === 2) {                       // PUFF
-      puffSeen += 1;
-      const b = bbox(pts);
-      const wMax = b.x1;                               // en geniş yarı-genişlik
-      const hemY = b.y1;
-      const hemXs = pts.filter((q) => q[1] >= hemY - 2.0).map((q) => q[0]);
-      const wHem = Math.max(...hemXs);
-      const ratio = wHem / wMax;
-      console.log(`    ${(name + '/' + p.view).padEnd(28)} puff: en geniş ${(wMax * UNIT).toFixed(1)} mm · et ${(wHem * UNIT).toFixed(1)} mm · oran ${ratio.toFixed(4)}`);
-      const puffMax = LAW.croquis.sleeveLaw.puffHemOverWidestMax;
-      if (!(ratio <= puffMax + 1e-9)) {
-        FAIL(`[S6] ${name}/${p.view}: puff eti/en geniş ${ratio.toFixed(4)} > ${puffMax} (Buğra Alt Kol ölçümü) — bu bir boru, puff değil`);
-      }
-      if (!pathsOf(p.body, 'cuff-band').length) FAIL(`[S6] ${name}/${p.view}: puff kolda manşet bandı (data-part="cuff-band") YOK`);
-      // büzgü tırtığı: mark sınıfında, etin 3 birim üstünde duran kısa çizgiler
-      const markW = LAW.lineClasses.classes.mark.width;
-      const ticks = [...p.body.matchAll(/<line[^>]*stroke-width="([^"]+)"[^>]*\/>/g)]
-        .filter((m) => Number(m[1]) === Number(markW))
-        .map((m) => { const y = /y1="(-?[\d.]+)"/.exec(m[0]); return y ? parseFloat(y[1]) : null; })
-        .filter((y) => y != null && y > hemY - 3 * 4 && y < hemY + 4);
-      if (ticks.length < 3) FAIL(`[S6] ${name}/${p.view}: manşette büzgü tırtığı ${ticks.length} < 3`);
+    // G1 — SIRALAMA. Yon cizelgeden okunur; buyukluk cizimden. Esik yok.
+    if (CHART_BEL_DAR_BUST && !(hWaist < hBust - 1e-9)) {
+      FAIL(`[G1] ${c.ad}/${view}: cizilen bel ${(2 * hWaist).toFixed(4)}mm >= gogus ${(2 * hBust).toFixed(4)}mm, ` +
+           `oysa cizelge beli bustten DAR ilan ediyor (${chartCM('waistCM')} < ${chartCM('bustCM')} cm) — BEL YOK`);
+    }
+    if (CHART_BEL_DAR_KALCA && !(hWaist < hHip - 1e-9)) {
+      FAIL(`[G1] ${c.ad}/${view}: cizilen bel ${(2 * hWaist).toFixed(4)}mm >= kalca ${(2 * hHip).toFixed(4)}mm, ` +
+           `oysa cizelge beli kalcadan DAR ilan ediyor (${chartCM('waistCM')} < ${chartCM('hipCM')} cm) — BEL YOK`);
+    }
+    // G2a — SİLUET BELDEN AŞAĞI DARALMAZ. Bir giysi belin altında sıkışamaz:
+    // vücut orada genişliyor. Sıralama, eşik değil.
+    if (!(hWaist <= hHip + 1e-6 && hHip <= hHem + 1e-6)) {
+      FAIL(`[G2a] ${c.ad}/${view}: siluet belden asagi DARALIYOR — bel ${(2 * hWaist).toFixed(4)} ` +
+           `kalca ${(2 * hHip).toFixed(4)} etek ${(2 * hHem).toFixed(4)} mm (monoton olmali)`);
+    }
+    // G2b — ETEK KLOŞU BEYAN EDİLEN KLOŞTUR. Damla'nın 4. kusuru ("etek ucu
+    // kavisi abartılı") yüzey hattında bir kavis değil bir SAYIDIR: spec'in
+    // skirtStyle kelimesi. `straight` düz kılıf demektir (hemSweepMM = 0,
+    // engine/src/seamplan.cpp), yani etek KALÇAYLA AYNI genişlikte biter;
+    // `aLine` sevk edilen açılmadır, yani etek kalçadan GENİŞ biter. Kapı
+    // beyanı çizimde arar: kelimeyi söyleyip başka bir etek çizmek yasak.
+    // Eşik yok — biri eşitlik (0.1mm, --all'ın kendi toleransı), diğeri
+    // eşitsizlik. Kaynak: spec'in kendi kelimesi, uydurma bir oran değil.
+    const st = String(c.spec.skirtStyle || '');
+    if (st === 'straight' && Math.abs(hHem - hHip) > 0.05) {
+      FAIL(`[G2b] ${c.ad}/${view}: skirtStyle="straight" (duz kilif, hemSweep 0) beyan edildi ama ` +
+           `etek ${(2 * hHem).toFixed(4)}mm ile kalca ${(2 * hHip).toFixed(4)}mm arasinda ` +
+           `${(2 * (hHem - hHip)).toFixed(4)}mm fark cizildi`);
+    }
+    if (st === 'aLine' && !(hHem > hHip + 0.05)) {
+      FAIL(`[G2b] ${c.ad}/${view}: skirtStyle="aLine" beyan edildi ama etek ${(2 * hHem).toFixed(4)}mm ` +
+           `kalcadan ${(2 * hHip).toFixed(4)}mm genis DEGIL — beyan edilen klos cizilmemis`);
     }
   }
 }
-if (sleeveSeen === 0) FAIL('[S5] matriste hiç kollu panel ölçülmedi — kapı boş koştu');
-if (puffSeen === 0) FAIL('[S6] matriste hiç puff kol ölçülmedi — kapı boş koştu');
-if (!fails) OK(`S5/S6 — ${sleeveSeen} kollu panel uçlarını gövdeyle paylaşıyor, ${puffSeen} puff eti toplanmış`);
+
+// ---------------------------------------------------------------------------
+// G3 + G4 — ÜST SINIR (YAKA/OMUZ HATTI) SİLUETİN İÇİNDE
+// ---------------------------------------------------------------------------
+// Croquis kaleminin HİÇ yargılanmayan yanı buydu: üst sınır siluete İÇSELDİR,
+// yani siluet ölçümüne görünmez. Ölçüldü (H3, shellprojection.hpp): ön yakayı
+// 20mm derinleştirmek kalıbın ön gövde panelinin çevresini 6.15mm oynatıyor,
+// siluetini 0.0000mm. Flat yalan söylemiyordu, KÖRDÜ. Bu şart o körlüğü kapatır.
+console.log('\n--- G3/G4 UST SINIR SILUETIN ICINDE');
+for (const c of cizimler) {
+  for (const view of LAW.views.required) {
+    const dSil = pathD(c.svg, view, 'siluet');
+    const dUst = pathD(c.svg, view, 'ust-sinir');
+    if (!dUst || dUst.trim().length < 20) { FAIL(`[G4] ${c.ad}/${view}: ust sinir YOK/BOS — sessizce kaybolan yaka`); continue; }
+    let sil, ust;
+    try { sil = samplePath(dSil, 40); ust = samplePath(dUst, 40); }
+    catch (e) { FAIL(`[G3] ${c.ad}/${view}: yol ayristirilamadi: ${e.message}`); continue; }
+    // Panel merkezi bir kez hesaplanir: siluet nokta nokta degismez ve dongu
+    // icinde yeniden taramak olcumu degistirmeden kapiyi dakikalarca yavaslatir.
+    const silXs = sil.map((q) => q[0]);
+    const cx = (Math.min(...silXs) + Math.max(...silXs)) / 2;
+    let enKotu = 0, nerede = null;
+    for (const p of ust) {
+      const h = halfWidthAt(sil, p[1]);
+      if (h == null) continue;                    // siluetin disinda bir yukseklik: asagida ayrica yakalanir
+      const tasma = Math.abs(p[0] - cx) - h;
+      if (tasma > enKotu) { enKotu = tasma; nerede = p; }
+    }
+    if (enKotu > 0.05) {
+      FAIL(`[G3] ${c.ad}/${view}: ust sinir siluetin ${enKotu.toFixed(3)} mm DISINA tasiyor ` +
+           `(nokta ${nerede[0].toFixed(2)},${nerede[1].toFixed(2)}) — giysinin sahip olmadigi bir kenar`);
+    } else {
+      OK(`G3/G4 — ${c.ad}/${view}: ust sinir ${ust.length} noktada siluetin icinde (en kotu tasma ${enKotu.toFixed(4)} mm)`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// UYUYAN ŞARTLAR — HER BİRİ BİR REDDEDİLMİŞ EKSENE KİLİTLİ
+// ---------------------------------------------------------------------------
+// Her satır: [şart, o şartın konusu olan eksen, o ekseni isteyen spec yaması].
+// Kapı, yamalı spec'te motorun o ekseni ADIYLA reddettiğini doğrular. Reddetmezse
+// eksen SEVK EDİLMİŞ demektir; uyuyan şart uyanır ve ölçüm kodu yazılana kadar
+// KIRMIZI düşer. Bu bir gevşetme değil, sevkiyata kilitli bir borçtur.
+console.log('\n--- UYUYAN SARTLAR (konusu sevk edilmemis; her biri bir REDDE kilitli)');
+const UYUYAN = [
+  ['S1  omuz ucu gogus cizgisinin icinde', 'shoulderStyle', { shoulderStyle: 1 }],
+  ['S2b etek merdiveni (boy arttikca...)', 'topLength',     { garment: 'top', topLength: 'crop' }],
+  ['S4  kol oyugu icbukey',                'sleeveStyle',   { sleeveStyle: 'straight' }],
+  ['S5  kol iki ucunu da govdeyle paylasir', 'sleeveStyle', { sleeveStyle: 'straight' }],
+  ['S6  puff eti toplanmis + manset',      'sleeveStyle',   { sleeveStyle: 'balloon' }],
+];
+const TABAN = { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' };
+let uyuyan = 0;
+for (const [sart, eksen, yama] of UYUYAN) {
+  let F;
+  try { F = JSON.parse(engine.flatJSON({ ...TABAN, ...yama }, { size: SIZE })); }
+  catch (e) { F = { error: e.message }; }
+  const red = F.error
+    ? (String(F.error).includes(eksen) ? [`${eksen}=parse reddi`] : [])
+    : (F.desteklenmeyen_eksenler || []).filter((r) => r.startsWith(`${eksen}=`));
+  if (red.length) {
+    uyuyan += 1;
+    console.log(`    UYUYOR  ${sart.padEnd(40)} <- ${red.join(' · ')}`);
+  } else {
+    FAIL(`[UYANDI] ${sart}: '${eksen}' ekseni ARTIK REDDEDILMIYOR — sevk edildi, ama bu sart icin ` +
+         'olcum kodu HALA YAZILMADI. Sartin borcu simdi odenecek (F-E, S1/S2b/S4/S5/S6).');
+  }
+}
+console.log(`    uyuyan sart: ${uyuyan}  (circir tavani ${DORMANT_RATCHET})`);
+if (uyuyan > DORMANT_RATCHET) {
+  FAIL(`[circir] uyuyan sart ${uyuyan} > tavan ${DORMANT_RATCHET} — uyuyan sart sayisi ARTAMAZ`);
+} else if (uyuyan < DORMANT_RATCHET) {
+  OK(`circir — uyuyan ${uyuyan} < tavan ${DORMANT_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir (DORMANT_RATCHET).`);
+} else {
+  OK(`circir — uyuyan ${uyuyan} = tavan ${DORMANT_RATCHET} (G5 sevk edilmedi: omuz/yaka/oyuk yok). Sayi yalniz dusebilir.`);
+}
 
 // ---------------------------------------------------------------------------
 // PARİTE RAPORU (KAPI DEĞİL) — Buğra ile bizim profil, yan yana
 // ---------------------------------------------------------------------------
-console.log('\n=== PARİTE RAPORU (KAPI DEĞİL) — Buğra Locket EU38 vs bizim locket flat');
-{
-  const svg = rendered[0][2];
-  const p = panels(svg).find((q) => q.view === 'back');
-  const pts = silhouette(p.body);
-  const hCh = halfWidthAt(pts, CQ.chestY.u);
+console.log('\n=== PARITE RAPORU (KAPI DEGIL) — Bugra Locket EU38 vs yuzey hatti');
+if (cizimler.length) {
+  const c = cizimler[0];
+  const halkalar = c.P.halkalar || [];
+  const pts = samplePath(pathD(c.svg, LAW.views.required[1], 'siluet'), 40);
+  const yTop = Math.min(...pts.map((p) => p[1]));
+  const yOf = (z) => yTop + (c.F.ustZ_mm - z);
+  const hCh = halfWidthAt(pts, yOf((halkalar.find((h) => h.ad === 'bust') || {}).z_mm));
   const rows = [
-    ['omuz', halfWidthAt(pts, CQ.shoulderTipY.u) / hCh, SSP._normalizedToChest.shoulder],
-    ['göğüs', 1.0, 1.0],
-    ['bel', halfWidthAt(pts, CQ.waistY.u) / hCh, SSP._normalizedToChest.waist],
+    ['gogus', 1.0, 1.0],
+    ['bel', halfWidthAt(pts, yOf((halkalar.find((h) => h.ad === 'waist') || {}).z_mm)) / hCh, SSP._normalizedToChest.waist],
     ['etek', hemHalf(pts) / hCh, SSP._normalizedToChest.hem],
   ];
   for (const [lbl, ours, theirs] of rows) {
-    console.log(`    ${lbl.padEnd(8)} bizim ${ours.toFixed(4)}   Buğra ${theirs.toFixed(4)}   fark ${((ours - theirs) * 100).toFixed(2)} puan`);
+    console.log(`    ${lbl.padEnd(8)} bizim ${ours.toFixed(4)}   Bugra ${theirs.toFixed(4)}   fark ${((ours - theirs) * 100).toFixed(2)} puan`);
   }
-  console.log('    NOT: etek satırı BOY’a bağlıdır (Buğra’nın eteği belden 124.2 mm aşağıda,');
-  console.log('         bizim crop 72 mm) — sayı eşitlenmez, YÖN eşitlenir. Kapı oranı değil');
-  console.log('         "üst büstten geniş olamaz" eşitsizliğini tutuyor.');
-  console.log(`    NOT: Buğra’nın KENDİ beden çizelgesi EU38 = büst 920 / bel 720 / kalça 980 mm;`);
-  console.log('         burda EU38 = 880 / 700 / 940. Buğra’nın 38’i burda’nın 40’ı. Bu yüzden');
-  console.log('         MUTLAK mm değil, sadece ORAN ölçüt olarak kullanıldı.');
+  console.log('    OMUZ satiri YOK: yuzey hatti strapless sevk ediyor, omuz ucu diye bir nokta cizilmiyor.');
+  console.log(`    NOT: Bugra'nin KENDI beden cizelgesi EU38 = bust 920 / bel 720 / kalca 980 mm;`);
+  console.log(`         burda ${SIZE} = ${chart[chartF.indexOf('bustCM')] * 10} / ${chart[chartF.indexOf('waistCM')] * 10} / ${chart[chartF.indexOf('hipCM')] * 10}.`);
+  console.log('         Bugra\'nin 38\'i burda\'nin 40\'i. Bu yuzden MUTLAK mm degil, sadece ORAN olcut.');
 }
 
-console.log(`\n${fails === 0 ? 'PASS' : 'FAIL'} flat_geometry_sellable_check — ${fails} ihlal · tolerans ${TOL_MM} mm`);
+console.log(`\n${fails === 0 ? 'PASS' : 'FAIL'} flat_geometry_sellable_check — ${fails} ihlal`);
 process.exit(fails === 0 ? 0 : 1);

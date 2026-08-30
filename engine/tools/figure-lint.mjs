@@ -14,7 +14,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { renderGarmentFlatAsync } from './render-garment-flat.mjs';
+// H3: the croquis pen is deleted; the reference pen (which is what this lint
+// always wanted — it only ever passes `referenceStyle`) is reached directly and
+// REFUSES rather than falling back to a schematic.
+import { renderReferenceFlat } from './reference-flat.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const FB = JSON.parse(readFileSync(join(root, 'contract/figure-bands.json'), 'utf8'));
@@ -52,7 +55,8 @@ function widthAt(segs, y) {
   return best;
 }
 export async function waistBust(styleKey) {
-  const svg = await renderGarmentFlatAsync(null, { referenceStyle: styleKey });
+  const svg = await renderReferenceFlat({ referenceStyle: styleKey });
+  if (!svg) return null;                                // referans stili yok — ikame YOK
   const m = svg.match(/<path class="body" d="([^"]+)"/);
   if (!m) return null;                                  // band top vs. — gövde path'siz, dürüst atla
   const segs = parsePath(m[1]);

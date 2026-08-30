@@ -57,10 +57,21 @@ const require = createRequire(import.meta.url);
 // gate can turn red — measured: an early mutation that made saveDXF swallow the
 // engine's refusal left this file GREEN.
 const saved = [];
-globalThis.document = { createElement: () => ({ click() { saved.push(this.download); } }) };
+globalThis.document = {
+  createElement: () => ({ click() { saved.push(this.download); } }),
+  // ⭐ H3: THE ENGINE LOADER RUNS HERE TOO, ON THE SHIPPED BYTES. The flat is no
+  // longer drawn by a synchronous pen; it is the projection of the seam plan, so
+  // web/js/download.js now goes through web/js/engine.js, which loads the wasm
+  // bundle with a <script> tag. Stubbing `head.appendChild` to fire `onload` is
+  // what lets THE SHIPPED LOADER — not a re-implementation of it — run in node.
+  // The module it resolves to is `engine` below: engine/dist/stitchu-engine.js,
+  // the same file web/vendor/ is a copy of (ctest bundle_fresh_check).
+  head: { appendChild: (el) => { queueMicrotask(() => el.onload && el.onload()); } },
+};
+globalThis.window = { createStitchuEngine: () => Promise.resolve(engine) };
 globalThis.URL = { ...globalThis.URL, createObjectURL: () => 'blob:stub', revokeObjectURL: () => {} };
 
-const { patternSVG, patternA4Pdf, patternA0Pdf, relayDXF, safeName, flatSVG, flatGaps, saveFlatSVG } =
+const { patternSVG, patternA4Pdf, patternA0Pdf, relayDXF, safeName, flatSVG, saveFlatSVG } =
   await import(join(ROOT, 'web/js/download.js'));
 const KOKEN = await import(join(ROOT, 'web/js/provenance.js'));
 
@@ -352,45 +363,61 @@ check('the result screen mounts the panel',
 // --------------------------------------------------------------------- 9. FLAT
 // The other half of the target sentence. Everything above is the PATTERN — the
 // pieces you cut. The flat is the finished garment as worn: what the thing IS.
-// It is drawn from the SPEC by web/lib/flat-core.js, the same pen the flat gates
-// (flat_convention_check, flat_expresses_spec_check) judge. Before this round
-// that pen could not run in a browser at all (five readFileSync calls), so no
-// shipped page had ever printed a pixel of it.
-const flat = flatSVG(SPEC);
+//
+// ⭐ H3 (2026-08-30): IT IS DRAWN FROM THE SEAM PLAN, NOT FROM A SECOND PEN.
+// Until H3 this section exercised web/lib/flat-core.js, a croquis pen that drew
+// off the spec's WORDS, and only top/dart/woven took the projection of the
+// GarmentSurf the pattern is cut from. The pen is deleted. `flatSVG` is now one
+// async function, it takes the WEARER as well as the spec, and it answers with
+// the drawing AND with every axis the surface line refused.
+const FLAT_BODY = { size: 'EU38' };
+const { svg: flat, desteklenmeyen_eksenler: flatAxes } = await flatSVG(SPEC, FLAT_BODY);
 check('flat is an SVG document', flat.trimStart().startsWith('<svg') && flat.trimEnd().endsWith('</svg>'));
-check('flat draws both views', /<text[^>]*>FRONT<\/text>/.test(flat) && /<text[^>]*>BACK<\/text>/.test(flat),
-  'a technical flat without a back view is half a tech pack (contract/flat-convention-v1.json views.required)');
+check('flat draws both views', /<text[^>]*>FRONT /.test(flat) && /<text[^>]*>BACK /.test(flat),
+  'a technical flat without a back view is half a tech pack');
 const flatPaths = (flat.match(/<path/g) || []).length;
 check('flat carries real geometry', flatPaths >= 4, `${flatPaths} <path> elements`);
 // NOT the pattern under another name. If someone ever wires this button to
 // patternSVG the file still downloads, still opens, and is silently wrong.
 check('flat is a different drawing from the pattern', flat !== svg && !flat.includes('cutInstruction'),
   'the flat must not be the pattern sheet renamed');
-// The pattern SVG is millimetres of paper; the flat is a croquis-scaled view.
-check('flat is not dimensioned as cut paper', !/width="[\d.]+mm"/.test(flat),
-  'a flat printed at "true mm" would invite someone to cut it');
+// ⭐ REPLACES the old "not dimensioned as cut paper" line, and it is STRICTER.
+// That check enforced a CROQUIS convention (the pen drew at an arbitrary scale,
+// so a mm width would have invited someone to cut it). The surface flat is
+// deliberately 1:1 in millimetres, so the old assertion would now be enforcing a
+// dead law. What replaces it is the thing H3 actually claims: the file must name
+// the seam plan it came out of, so a flat opened offline in Illustrator can be
+// held next to a pattern and asked whether the two are one object.
+check('the flat names the seam plan it was projected from',
+  /data-source="SeamPlan"/.test(flat) && /data-dugum="[0-9a-f]{8,}"/.test(flat),
+  'a drawing that cannot say which object it came from is a second object');
 
-// NAMED REFUSAL, not a silent redraw. `sleeveStyle: straight` is expressible to
-// the reading vocabulary but the v2 registry has no shipped operator for it, and
-// the 2026-07-18 precedent in CLAUDE.md is a puff sleeve that was silently
-// dropped. The pen stamps the axis; create.js prints the stamp.
-const gaps = flatGaps({ ...SPEC, sleeveStyle: 'straight' });
-check('the flat names what the engine cannot cut', gaps.length > 0, gaps.join(' · ') || 'no stamp');
+// NAMED REFUSAL, not a silent redraw. The 2026-07-18 precedent in CLAUDE.md is a
+// puff sleeve that was silently dropped. `sleeveStyle: straight` is a real word
+// in the spec vocabulary and the surface line has no dial for it, so it must come
+// back BY NAME. The pen's `data-engine-gap` stamp died with the pen; this is the
+// one remaining vocabulary of missing things.
+const { desteklenmeyen_eksenler: gaps } =
+  await flatSVG({ ...SPEC, sleeveStyle: 'straight' }, FLAT_BODY);
+check('the flat names what the engine cannot carry', gaps.some((a) => a.startsWith('sleeveStyle')),
+  gaps.join(' · ') || 'no refused axis');
 check('a spec with nothing to draw is refused, not blank',
-  (() => { try { flatSVG({}); return false; } catch { return true; } })(),
+  await (async () => { try { await flatSVG({}, FLAT_BODY); return false; } catch { return true; } })(),
   'an empty file that opens is worse than an error');
+// AND A BODY WITH NO SIZE IS REFUSED TOO (RULES invariant 1). The old signature
+// carried a default 'EU38' inside the exporter, i.e. a silent size.
+check('a body with no size is refused, not defaulted to EU38',
+  await (async () => { try { await flatSVG(SPEC, {}); return false; } catch { return true; } })(),
+  'a silent default size is a garment valued at a body nobody asked for');
 
 // The saver itself, through the same DOM stub the DXF refusal branch uses.
-// AWAITED since GECE7/F3: saveFlatSVG became async because a class on the
-// seam-plan line has to wait for the wasm engine to answer. Nothing about what
-// this line JUDGES changed — it still asks whether a file reaches the user's
-// disk — but an un-awaited promise would have made it read `0 file(s) saved`
-// forever, which is how a green gate stops meaning anything. It caught the
-// signature change on the first run and that is the gate working.
 const beforeFlat = saved.length;
-await saveFlatSVG(SPEC, 'dress-flat.svg');
+const savedAxes = await saveFlatSVG(SPEC, FLAT_BODY, 'dress-flat.svg');
 check('the flat actually saves a file', saved.includes('dress-flat.svg'),
   `${saved.length - beforeFlat} file(s) saved`);
+check('the saver hands the refused axes back to the caller', Array.isArray(savedAxes),
+  'an axis the engine refused and nobody can read is not refused');
+console.log(`      (reddedilen eksenler, sevk spec'i: ${flatAxes.join(' · ') || 'yok'})`);
 
 // And it is offered, not merely buildable — the 26 Aug disease in its own terms.
 check('create.js calls saveFlatSVG', /\bsaveFlatSVG\s*\(/.test(createSrc),
@@ -462,7 +489,7 @@ kcheck('an origin label for an axis the spec does not have is a violation',
   KOKEN.dogrula(hayalet, AXES).length === 1, KOKEN.dogrula(hayalet, AXES).join('; '));
 
 // (e) THE FLAT CARRIES IT, IN THE FILE. Offline, in Illustrator, with no site.
-const flatK = flatSVG(SPEC, rec, AXES);
+const { svg: flatK } = await flatSVG(SPEC, FLAT_BODY, rec, AXES);
 const attrOf = (k) => (new RegExp(`data-koken-${k}="([^"]*)"`).exec(flatK) || [])[1];
 kcheck('the flat root declares the origin count and the total',
   attrOf('cikarildi') === String(derived.length) && attrOf('toplam') === String(AXES.length),
@@ -470,21 +497,21 @@ kcheck('the flat root declares the origin count and the total',
 kcheck('the flat root NAMES the derived axes, and the names match the count',
   (attrOf('alanlar') || '').split(' ').filter(Boolean).join(' ') === derived.join(' '),
   `${(attrOf('alanlar') || '').slice(0, 70)}…`);
-kcheck('stamping did not disturb the pen',
+kcheck('stamping did not disturb the drawing',
   flatK.replace(/ data-koken-[a-z]+="[^"]*"/g, '') === flat,
-  'flat-core.js output must stay byte-identical — style_check diffs it against engine/STYLE-PIN');
+  'the origin stamp is a label on the root element; it must not move one coordinate');
 
 // (f) EMPTYING THE LIST DOES NOT PRODUCE A FILE. This is the reward-hack the
 // phase invites: drop the record, keep the download, look finished. Both
 // builders refuse, and the DOM saver writes nothing.
 kcheck('an emptied origin record hands out NO flat',
-  (() => { try { flatSVG(SPEC, {}, AXES); return false; } catch { return true; } })());
+  await (async () => { try { await flatSVG(SPEC, FLAT_BODY, {}, AXES); return false; } catch { return true; } })());
 kcheck('a half-labelled origin record hands out NO flat',
-  (() => { try { flatSVG(SPEC, eksik, AXES); return false; } catch { return true; } })());
+  await (async () => { try { await flatSVG(SPEC, FLAT_BODY, eksik, AXES); return false; } catch { return true; } })());
 kcheck('an emptied origin record hands out NO A4 pack',
   (() => { try { patternA4Pdf(pattern, 'Dress', {}, AXES); return false; } catch { return true; } })());
 const beforeK = saved.length;
-try { saveFlatSVG(SPEC, 'nope-flat.svg', {}, AXES); } catch { /* expected */ }
+try { await saveFlatSVG(SPEC, FLAT_BODY, 'nope-flat.svg', {}, AXES); } catch { /* expected */ }
 kcheck('a refused stamp saves no file at all', saved.length === beforeK,
   `${saved.length - beforeK} file(s) saved`);
 
@@ -637,7 +664,7 @@ kcheck('a record at the shipped width validates, and every axis is labelled',
   KOKEN.dogrula(sevkRec, SEVK_ALANLARI).length === 0 &&
   KOKEN.alanlar(sevkRec, 'cikarildi').length === SEVK_ALANLARI.length,
   `${SEVK_ALANLARI.length} axes`);
-const sevkFlat = flatSVG(SPEC, sevkRec, SEVK_ALANLARI);
+const { svg: sevkFlat } = await flatSVG(SPEC, FLAT_BODY, sevkRec, SEVK_ALANLARI);
 const sevkAttr = (k) => (new RegExp(`data-koken-${k}="([^"]*)"`).exec(sevkFlat) || [])[1];
 kcheck('the flat carries the SHIPPED axis count, not the reference one',
   sevkAttr('toplam') === String(SEVK_ALANLARI.length) &&

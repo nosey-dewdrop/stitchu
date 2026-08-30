@@ -6,7 +6,8 @@
 // WHY A SECOND ARTIFACT INSTEAD OF CHANGING THE FLAT
 // --------------------------------------------------
 // The FLAT is a law-governed technical drawing: one croquis, one ink, declared
-// 1:3 scale (contract/flat-convention-v1.json, gate flat_convention_check).
+// 1:3 scale (contract/flat-convention-v1.json; H3 sonrasi o dosyanin kalan iki
+// canli tuketicisinden biri bu dosyadir, kapisi degil).
 // The LISTING SHEET is what a buyer actually sees in Etsy search. They are not
 // the same object and they answer to different published rules. Rewriting the
 // flat to satisfy Etsy would have broken the F-D law; wrapping it does not.
@@ -82,9 +83,20 @@ function openFlat(svgText) {
   const vb = svgText.match(/viewBox="([\d.\-\s]+)"/);
   if (!vb) throw new Error('flat svg has no viewBox');
   const [, , w, h] = vb[1].trim().split(/\s+/).map(Number);
+  const head = /<svg\b[^>]*>/.exec(svgText);
+  const at = (k) => { const m = new RegExp(`\\s${k}="([^"]*)"`).exec(head ? head[0] : ''); return m ? m[1] : null; };
+  // ⭐ THE SCALE COMES FROM THE DRAWING, NOT FROM A CONSTANT IN THIS FILE (H3).
+  // Until 2026-08-30 this tool assumed every flat was the croquis pen's 1:3
+  // schematic and read `unitMM` off the law. The croquis pen is deleted and the
+  // shipped flat is the surface line's 1:1 projection, so a hard-coded 3.0 would
+  // have mislabelled the scale bar by a factor of three on the one artefact whose
+  // whole job is to tell a buyer how big the garment is. The drawing declares its
+  // own unit (`data-unit-mm`, gated by flat_convention_check §2); the sheet asks.
+  const declared = parseFloat(at('data-unit-mm'));
+  const unitMM = Number.isFinite(declared) && declared > 0 ? declared : UNIT_MM;
   let inner = svgText.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
   inner = inner.replace(/<rect\b[^>]*\/>/, ''); // the paper rect only
-  return { w, h, inner };
+  return { w, h, inner, unitMM, source: at('data-source'), dugum: at('data-dugum') };
 }
 
 export function renderListingSheet(flatSvgText, opts = {}) {
@@ -119,9 +131,10 @@ export function renderListingSheet(flatSvgText, opts = {}) {
   const BAR_Y = artY + artH + 46;
   const TAB_Y0 = BAR_Y + 50;
 
-  // The sheet applies a uniform factor k to a 1:3 drawing, so one SHEET unit is
-  // UNIT_MM/k real millimetres. Declared, not assumed — the gate re-derives it.
-  const sheetUnitMM = UNIT_MM / k;
+  // The sheet applies a uniform factor k to the flat, so one SHEET unit is
+  // flat.unitMM/k real millimetres — the flat's OWN declared unit, not a constant
+  // here. Declared, not assumed: the gate re-derives it from the same declaration.
+  const sheetUnitMM = flat.unitMM / k;
 
   // scale bar: a round real length, drawn at its true sheet length.
   const BAR_MM = 200;
@@ -174,7 +187,12 @@ export function renderListingSheet(flatSvgText, opts = {}) {
     `data-sheet="etsy-listing-v1" data-upload-aspect="4:3" ` +
     `data-thumb-safe-aspect="5:4" data-flat-scale="${n(k)}" ` +
     `data-sheet-unit-mm="${n(sheetUnitMM)}" data-scale-bar-mm="${BAR_MM}" ` +
-    `data-scale-bar-units="${n(barLen)}" data-croquis="${LAW.croquis.id}" ` +
+    `data-scale-bar-units="${n(barLen)}" data-flat-unit-mm="${n(flat.unitMM)}" ` +
+    // THE PROVENANCE OF THE DRAWING TRAVELS WITH THE SHEET (H3). It used to be
+    // `data-croquis`, the id of a croquis that no longer exists; what identifies
+    // the shipped flat now is the seam plan node it was projected from.
+    `data-flat-source="${esc(flat.source || 'BEYAN YOK')}" ` +
+    `data-flat-dugum="${esc(flat.dugum || 'BEYAN YOK')}" ` +
     `data-size-rows="${SIZES.length}" data-size-cols="${VERIFIED.length}"`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" ` +

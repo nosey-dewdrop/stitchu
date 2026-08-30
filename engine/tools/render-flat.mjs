@@ -8,7 +8,6 @@
 //   render-vintage6070.mjs 2026-08-17'de SİLİNDİ (ikisi de af49514'te silinmiş olan
 //   web/patterns/ dizinine yazıyordu; sıfır canlı çağıranları kalmıştı).
 import { pathD, bounds, shelfPack } from '../../web/js/sheet.js';
-import { renderGarmentFlat } from './render-garment-flat.mjs';
 
 const NAVY = '#1f3a5f';
 const CUT = '#8fbfe8';
@@ -75,13 +74,10 @@ export function renderScattered(pieces) {
   return svgDoc(layout.stripW, layout.stripH, inner);
 }
 
-// The clean FRONT + BACK flat technical sketch (the page/collection HERO) is the
-// ASSEMBLED garment silhouette, not a cutting layout. It is built in
-// render-garment-flat.mjs by mirroring the drafted on-fold halves and stitching
-// the bodice over the skirt. render-flat.mjs re-exports it as renderFrontBack so
-// the existing generators keep calling the same name. `spec` carries the garment
-// params (neckline, sleeveStyle, collarType, frontPlacket, tie, closure, ...) so
-// the interior detail lines (darts/princess seams/button row/zip/tie) are drawn.
-export function renderFrontBack(pieces, spec = {}) {
-  return renderGarmentFlat(pieces, spec);
-}
+// ⛔ renderFrontBack SİLİNDİ (H3, 2026-08-30) — ÇAĞIRANI YOKTU VE KALEMİ YOK.
+// Bu, croquis kalemine (web/lib/flat-core.js -> render-garment-flat.mjs) tek
+// satırlık bir yeniden-ihraç idi. Kalem H3'te silindi; ölçüldü, repoda
+// `renderFrontBack` yazan başka TEK BİR SATIR yok. Yerine bir şey konmadı ve
+// konmamalı: bitmiş giysinin teknik çizimi artık TEK bir yerden çıkıyor —
+// engine.flatJSON -> web/lib/flat-from-plan.js — ve o çizim kalıbın kesildiği
+// yüzeyin projeksiyonudur. Buraya ikinci bir çizici koymak yasak 3'tür.

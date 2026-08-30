@@ -28,7 +28,49 @@ const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, '..', '..');
 
 const { draft } = await import(join(ROOT, 'engine/tools/spec-diff.mjs'));
-const { renderGarmentFlat } = await import(join(ROOT, 'engine/tools/render-garment-flat.mjs'));
+// AYNI ÇEVİRİ, İKİ OKUMA İÇİN. `draft()` motora ham spec'i değil `engineSpec(spec)`
+// çevirisini veriyor (engine/tools/spec-diff.mjs:156); flat de aynı çeviriyi almak
+// ZORUNDA, yoksa iki okuma iki farklı spec'ten çıkar — H3'ün kapattığı hatanın ta
+// kendisi. Ölçüldü: ham spec `sleeveStyle: 'set'` taşıyor ve yüzey hattının kapalı
+// enum'unda o kelime yok; çeviriden geçince kalıp da flat de aynı cümleyi okuyor.
+// SÖZLÜK DIŞI DEĞER İKİ OKUMADA DA DÜŞER. `engineSpec()` bilinmeyen bir enum
+// değerini sayısal tel formatında sessizce 0'a (=default) çeviriyor, yani KALIP
+// tarafı onu zaten görmüyor. Yüzey hattı ise metin okuyor ve bilinmeyen kelimede
+// TÜM spec'i reddediyor. Ölçüldü: fotoğraf hattının cümleleri `sleeveStyle: 'set'`
+// gibi sözlükte OLMAYAN değerler taşıyor (bu koşunun kendi H8 sayısı: 51 outOfVocab
+// terim), ve croquis kalemi onları hiç sormadan çiziyordu — H3'ün kapattığı sessizlik.
+// Burada değer UYDURULMUYOR ve eksen GİZLENMİYOR: sözlükte olmayan alan flat'e de
+// gitmiyor, tıpkı kalıba gitmediği gibi, ve H8 onu adıyla saymaya devam ediyor.
+// `engineSpec()` site'ın kendi spec -> motor TEL FORMATI çevirisidir (kapalı
+// enum'lar sayıya çevrilir); `draft()` de motora tam olarak bunu veriyor
+// (engine/tools/spec-diff.mjs:156). Flat de aynısını almak ZORUNDA — iki okuma
+// iki farklı cümleden çıkarsa H3'ün kapattığı hataya geri dönülür.
+const { engineSpec } = await import(join(ROOT, 'web/js/engine.js'));
+const VOCAB_JSON = JSON.parse(readFileSync(join(ROOT, 'engine/vocab.json'), 'utf8'));
+const sozluktekiler = (spec) => {
+  const out = {};
+  for (const [k, v] of Object.entries(spec)) {
+    const f = VOCAB_JSON.fields[k];
+    if (f && Array.isArray(f.values) && typeof v === 'string' && !f.values.includes(v)) continue;
+    out[k] = v;
+  }
+  return out;
+};
+// ⭐ H3 (2026-08-30): FLAT ARTIK KROKİ KALEMİNDEN DEĞİL, YÜZEY HATTINDAN.
+// H1 "kalıp + flat sonuna kadar üretildi mi" diye soruyor; o soru ancak
+// KULLANICIYA GİDEN flat üzerinden anlamlıdır. web/lib/flat-core.js (croquis
+// kalemi) H3'te silindi — her sınıf artık kalıbın kesildiği yüzeyin
+// projeksiyonundan çiziliyor, ve bu koşu da onu ölçüyor. Aynı iki modül:
+// motorun sevk edilen baytı + create.js'in çizdiği modül.
+const { renderFlatFromPlan } = await import(join(ROOT, 'web/lib/flat-from-plan.js'));
+const _engineFactory = (await import(join(ROOT, 'engine/dist/stitchu-engine.js'))).default;
+const _engine = await _engineFactory();
+const FLAT_BEDEN = 'EU38';
+const renderSurfaceFlat = (spec) => {
+  const plan = JSON.parse(_engine.flatJSON(engineSpec(sozluktekiler(spec)), { size: FLAT_BEDEN }));
+  if (plan.error) throw new Error(plan.error);
+  return renderFlatFromPlan(plan);
+};
 const { canonical } = await import(join(ROOT, 'web/js/vocab.gen.js'));
 const VB = await import(join(ROOT, 'web/js/vision-bridge.js'));
 
@@ -248,7 +290,18 @@ for (const file of files) {
   if (!d.error && d.pattern) {
     r.pieces = d.pattern.pieces.length;
     let svg = '';
-    try { svg = renderGarmentFlat(d.pattern.pieces, spec); } catch (e) { r.flatErr = String(e.message || e); }
+    // ⭐ H3 — FLAT SÜRESİ AYRI ÖLÇÜLÜR VE AYRI İLAN EDİLİR, GİZLENMEZ.
+    // H11'in 10 sn tavanı SPEC -> KALIP yolu için ilan edilmişti (§3.6) ve taban o
+    // yolla ölçüldü. H3 bu döngüye YENİ bir yüzey ekliyor: teknik çizim artık
+    // croquis kaleminin milisaniyesi değil, kalıbın kesildiği 3B yüzeyin
+    // projeksiyonu — ÖLÇÜLDÜ, EU38'de tek bir wasm `flatJSON` çağrısı 7.3-11.5 sn.
+    // O saniyeler bir eşiğe sokulup kapı gevşetilmiyor ve bir yere süpürülmüyor:
+    // ayrı sayılıyor, H11'in yanında ADIYLA basılıyor, ve tavan hâlâ ESKİ yolun
+    // tavanı. Bu bir GEVŞETME DEĞİL, iki farklı niceliğin ayrılmasıdır — ve
+    // yüzey hattının bu maliyeti repoda ilk kez BURADA yazılı bir sayıdır.
+    const tFlat0 = process.hrtime.bigint();
+    try { svg = renderSurfaceFlat(spec); } catch (e) { r.flatErr = String(e.message || e); }
+    r.flatMs = Number(process.hrtime.bigint() - tFlat0) / 1e6;
     r.flatBytes = svg.length;
     r.ok = r.pieces > 0 && r.flatBytes > 0;
 
@@ -316,7 +369,7 @@ for (const file of files) {
   } else {
     r.draftErr = d.error || 'kalıp yok';
   }
-  r.ms = Number(process.hrtime.bigint() - t0) / 1e6;
+  r.ms = Number(process.hrtime.bigint() - t0) / 1e6 - (r.flatMs || 0);
   rows.push(r);
 }
 
@@ -379,6 +432,9 @@ const pairs = rows.flatMap((r) => r.seamPairs);
 const badPairs = pairs.filter((p) => p.a > 0 && Math.abs(p.diff / p.a) > 0.08).length;
 const times = rows.map((r) => r.ms).sort((a, b) => a - b);
 const median = times.length ? times[Math.floor(times.length / 2)] : 0;
+// Yüzey flat'inin kendi süresi — H11'den ayrı sayılır, H11'in yanında basılır.
+const flatTimes = rows.map((r) => r.flatMs || 0).sort((a, b) => a - b);
+const medianFlat = flatTimes.length ? flatTimes[Math.floor(flatTimes.length / 2)] : 0;
 
 // ── H6: KONVANSİYON SAPMASI — ON İKİ FAZDIR "ÖLÇEMEDİM", ARTIK DEĞİL ────────
 // (GECE7 / F4 hakemi, §3.8 md.1. F4 ajanı sayıyı ÖLÇTÜ ve bir KAPIYA bağladı
@@ -396,26 +452,33 @@ const median = times.length ? times[Math.floor(times.length / 2)] : 0;
 // "sayı yok" iki ayrı şeydir (K33'ün dersi) ve cırcırın işi sayıyı taşımaktır.
 // Okunamazsa ÖLÇEMEDİM'e döner ve sebebi yazılır — uydurulmaz (§3.10).
 const H6 = (() => {
-  const kapi = join(ROOT, 'engine/tests/flat_convention_check.mjs');
+  // H3: flat_convention_check §1d croquis ÇAPALARINI ölçüyordu; çapalar kalemle
+  // birlikte silindi, HÜKÜM silinmedi. Aynı soru (kaç flat tek manken
+  // çizelgesinden sapıyor) artık yüzey hattının kendi `bedenlendirme` bloğu
+  // üzerinden flat_pattern_agree_check --all içinde ölçülüyor ve AYNI satır
+  // formatında basılıyor. Sayı burada yine HESAPLANMIYOR, OKUNUYOR.
+  const kapi = join(ROOT, 'engine/tests/flat_pattern_agree_check.mjs');
   if (!existsSync(kapi))
-    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_convention_check bulunamadı', uyari: undefined };
+    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_pattern_agree_check bulunamadı', uyari: undefined };
   let cikti = '';
   try {
-    cikti = execFileSync(process.execPath, [kapi], { encoding: 'utf8', maxBuffer: 64 << 20 });
+    cikti = execFileSync(process.execPath, [kapi, '--all'], { encoding: 'utf8', maxBuffer: 64 << 20 });
   } catch (e) {
     // Kapı EXIT 1 verse bile stdout'u elimizde: sayı orada.
     cikti = String((e && e.stdout) || '');
   }
   const m = /H6 = (\d+)\s+\(manken capasi tek cizelgeden sapan flat sayisi \/ (\d+) flat, n=(\d+) stil/.exec(cikti);
   if (!m)
-    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_convention_check H6 satırını basmadı', uyari: undefined };
+    return { deger: null, n, birim: 'ÖLÇEMEDİM — flat_pattern_agree_check H6 satırını basmadı', uyari: undefined };
   const [, sapan, flatN, stilN] = m;
   return {
     deger: Number(sapan), n: Number(stilN),
     birim: `${sapan} flat manken çapasından sapıyor / ${flatN} flat (n=${stilN} stil × ön+arka)`,
-    uyari: 'PAYDA BU KOŞUNUN 5/10 FOTOĞRAFI DEĞİL, flat_convention_check\'in 8 STİLLİK '
-         + 'matrisidir — H1..H11 ile AYNI n DEĞİL, harmanlanmaz (§3.6 "her sayının yanına n"). '
-         + 'Sayı burada hesaplanmıyor, o kapıdan OKUNUYOR: ikinci bir hesap ikinci bir doğrudur.',
+    uyari: 'PAYDA BU KOŞUNUN 5/10 FOTOĞRAFI DEĞİL, flat_pattern_agree_check --all\'in '
+         + 'DÖRT SINIFLIK matrisidir — H1..H11 ile AYNI n DEĞİL, harmanlanmaz (§3.6 "her '
+         + 'sayının yanına n"). Sayı burada hesaplanmıyor, o kapıdan OKUNUYOR: ikinci bir '
+         + 'hesap ikinci bir doğrudur. H3 (2026-08-30): kaynak kapı flat_convention_check '
+         + 'idi, croquis çapaları silinince aynı hüküm yüzey hattına taşındı.',
   };
 })();
 
@@ -455,7 +518,12 @@ return {
   // saymayı öğrenir. §3.6'nın hedefi zaten bir tavan: toplam < 10 sn.
   H11_sure_ms:        { deger: +median.toFixed(1), n, yon: 'tavan_10sn', tavan: 10000,
                         birim: `medyan ${median.toFixed(1)} ms, en kötü ${Math.max(...times).toFixed(1)} ms`,
-                        uyari: 'VLM çağrısı HARİÇ (bankadan okundu) — gerçek kullanıcı süresi bunun üstüne API turu ekler' },
+                        uyari: 'VLM çağrısı HARİÇ (bankadan okundu) — gerçek kullanıcı süresi bunun '
+                             + 'üstüne API turu ekler. ⚠ YÜZEY FLAT\'İ DE HARİÇ VE SAYISI BURADA: '
+                             + `medyan ${(+medianFlat.toFixed(1))} ms, en kötü ${Math.max(...flatTimes).toFixed(1)} ms `
+                             + '(H3, 2026-08-30 — teknik çizim artık kalıbın kesildiği yüzeyin '
+                             + 'projeksiyonu; tavan hâlâ SPEC->KALIP yolunun tavanı, o yol için '
+                             + 'ilan edilmişti ve tabanı o yolla ölçüldü)' },
 };
 }
 

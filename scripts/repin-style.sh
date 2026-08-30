@@ -114,8 +114,13 @@ RUNNER=$(mktemp /tmp/repin-style-run-XXXX.mjs)
 cat > "$RUNNER" <<'MJS'
 import { writeFileSync } from 'node:fs';
 const [, , root, out, style] = process.argv;
-const { renderGarmentFlatAsync } = await import(`${root}/engine/tools/render-garment-flat.mjs`);
-writeFileSync(out, await renderGarmentFlatAsync([], { style }));
+// H3 (2026-08-30): style_check'in koştuğu YOLUN AYNISI olmak zorunda — o kapı
+// artık referans kalem köprüsünden çağırıyor, bu script de öyle. İki farklı yol
+// pin'i regen-vs-regen'e çevirirdi.
+const { renderReferenceFlat } = await import(`${root}/engine/tools/reference-flat.mjs`);
+const svg = await renderReferenceFlat({ referenceStyle: style });
+if (svg == null) { console.error(`referans kalem "${style}" icin cizim VERMEDI (null)`); process.exit(1); }
+writeFileSync(out, svg);
 MJS
 node "$RUNNER" "$(pwd)" "$FRESH" "$STYLE"
 rm -f "$RUNNER"
