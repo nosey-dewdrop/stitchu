@@ -110,9 +110,21 @@ add_test(NAME bundle_fresh_check
 # biri bugün kullanıcıya giden çizimi (engine.flatJSON -> web/lib/flat-from-plan.js)
 # ölçüyor. Hangi hükmün nereye taşındığı her dosyanın kendi başlığında yazılı.
 # ÖLEN tek şey ÜRETEÇLERDİ (kapı değil, alet): render-garment-flat.mjs (kalemin
-# kendisi), gen-flat-tables.mjs + onun flat_tables_check kapısı (silinen
-# web/lib/flat-tables.gen.js aynasının üreteci ve o aynanın bekçisi),
-# gen-gore-grid / gen-wrap-grid (kalemin ızgara basıcıları), flat-board.mjs.
+# kendisi), gen-flat-tables.mjs (silinen web/lib/flat-tables.gen.js aynasının
+# üreteci), gen-gore-grid / gen-wrap-grid (kalemin ızgara basıcıları),
+# flat-board.mjs (ve gen-taste-pool.mjs; ikisinin de TEK flat kalemi silinen
+# kalemdi, import satırları ayakta kalamazdı).
+#
+# ⛔ AMA BİR KAPI GERÇEKTEN DÜŞTÜ VE BU BİR HATAYDI: flat_tables_check.
+# `ba8106c8`'de add_test'ti, ilk H3 koşusunda add_test olmaktan çıktı — üreteci
+# silinince kapısı da silindi. Hükmü ise nesnesinden bağımsızdı: "kapısı olmayan
+# ÜRETİLMİŞ bir ayna, İKİNCİ BİR DOĞRUDUR." Bugün sevk edilen çizici de tarayıcıya
+# gidiyor, o da contract/'ı readFileSync EDEMİYOR, ve kanunun mürekkebini +
+# ağırlıklarını KENDİ İÇİNE yazıyor. Boşluk bırakılmadı: aşağıdaki flat_mirror_check
+# aynı hükmü YÜZEY HATTININ ayna sabitlerine uyguluyor (ve pdf-core.js'te beyansız
+# duran bir #1f3a5f'i ilk koşusunda yakaladı).
+add_test(NAME flat_mirror_check COMMAND node
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_mirror_check.mjs)
 #
 # flat_convention_check (F-D 2026-08-23 · H3'te yüzey hattına bağlandı): Damla
 # "flatlerin hepsi aynı convention'da değil — hepsinin AYNI MODELDEN ÇIKMA gibi

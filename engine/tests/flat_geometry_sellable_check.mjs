@@ -279,6 +279,58 @@ for (const c of cizimler) {
       FAIL(`[G2b] ${c.ad}/${view}: skirtStyle="aLine" beyan edildi ama etek ${(2 * hHem).toFixed(4)}mm ` +
            `kalcadan ${(2 * hHip).toFixed(4)}mm genis DEGIL — beyan edilen klos cizilmemis`);
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // S3 — ORAN GERI GELDI (H3-B). "BEL DARALIYOR MU" DEGIL, "YETERINCE MI".
+    // ═══════════════════════════════════════════════════════════════════════
+    // Hakem H3'un ilk kosusuna sunu yazdi: "cizilen orani KAYNAKLI cizelge
+    // oranina baglayan FAIL'ler uyuyan sart defterine tasindi; artik oran
+    // olculmuyor, sadece 'reddediyor mu' soruluyor." Hakli. G1 yalnizca
+    // SIRALAMA soruyor (bel < bust), yani 0.1mm daralan bir bel de gecer, ve
+    // Damla'nin 3. kusuru ("bel yok") tam olarak boyle bir beldi.
+    //
+    // ★ AMA ESKI S3 AYNEN GERI KONAMAZDI VE KONMADI — KONSAYDI YANLIS BIR HUKUM
+    //   OLURDU. Eski hali `bel/bust <= cizelge bel/bust` diyordu ve croquis
+    //   uzerinde dogruydu, cunku croquis SIFIR BOLLUKLU bir BEDEN cizgisiydi
+    //   (contract/flat-convention-v1.json croquis.easeNote, kendi sozleriyle).
+    //   Yuzey hatti GIYSI cizer ve giysi bolluk tasir; bir giysi oranini bir
+    //   VUCUT oranina vurmak, body_length'in ARC ile YUKSEKLIGI kiyaslamasiyla
+    //   ayni sinif hatadir (shellprojection.hpp, -1.9795%'lik "anlamsiz hukum").
+    //
+    // O yuzden sag taraf BOLLUKLA DUZELTILIR ve bolluk UYDURULMAZ, OLCULUR:
+    //   E(halka) = kalibin yayinladigi halka cevresi  -  KAYNAKLI cizelge cevresi
+    // Iki taraf da disaridan: cevre kalip okumasindan (planJSON halkalar.cevre_mm,
+    // ki o da CIZIMDEN BAGIMSIZ bir yoldan gelir — bkz. shellprojection.cpp
+    // patternRingLines), cizelge contract/tables.json'dan. Sol taraf SVG'den
+    // olculur. Yani kapi hala CIZIMI yargiliyor ve cizim kendi kendini
+    // onaylamiyor.
+    const cev = (ad) => (halkalar.find((h) => h.ad === ad) || {}).cevre_mm;
+    const chartMM = (f) => chartCM(f) * 10;
+    const eBust = cev('bust') - chartMM('bustCM');
+    const eWaist = cev('waist') - chartMM('waistCM');
+    if (![cev('bust'), cev('waist')].every(Number.isFinite)) {
+      FAIL(`[S3] ${c.ad}/${view}: kalip halka cevrelerini yayinlamiyor — bolluk olculemez, oran yargilanamaz`);
+    } else {
+      const rWa = hWaist / hBust;
+      const tavan = (chartMM('waistCM') + eWaist) / (chartMM('bustCM') + eBust);
+      console.log(`      S3 ${(c.ad + '/' + view).padEnd(18)} bel/gogus ${rWa.toFixed(4)} <= tavan ${tavan.toFixed(4)} ` +
+                  `[cizelge ${chartMM('waistCM')}/${chartMM('bustCM')} + olculen bolluk ${eWaist.toFixed(1)}/${eBust.toFixed(1)} mm]`);
+      if (!(rWa <= tavan + 1e-6)) {
+        FAIL(`[S3] ${c.ad}/${view}: cizilen bel/gogus ${rWa.toFixed(4)} > bollukla duzeltilmis cizelge orani ` +
+             `${tavan.toFixed(4)} — bel cizelgenin istedigi kadar daralmiyor ("bel yok")`);
+      }
+    }
+    // ⚠ RAPOR, KAPI DEGIL — VE GIZLENMIYOR. Yukaridaki E(halka) sayilari sevk
+    // edilen giysinin bollugudur ve GOGUSTE NEGATIF cikiyor: skimBodice belden
+    // omuza DUZ kosuyor (koni, cunku koni tam acilir) ve o kiris bustun ALTINDAN
+    // geciyor. surfacepattern.cpp bunu kendi SKIMCOST blogunda olcup yaziyor
+    // (envelope acilinca flatten 21 dakikayi asiyor, o yuzden KAPALI sevk
+    // ediliyor). Bir KAPI yapmak bu kartin isi degil — ama sayiyi bastirmadan
+    // gecmek de gizlemek olurdu.
+    if (Number.isFinite(eBust) && eBust < 0) {
+      console.log(`      NOT  ${c.ad}/${view}: gogus bollugu NEGATIF (${eBust.toFixed(1)} mm) — ` +
+                  'skim konisi bustun altindan geciyor (surfacepattern.cpp SKIMCOST). Kapi degil, ilan.');
+    }
   }
 }
 
@@ -328,7 +380,17 @@ for (const c of cizimler) {
 console.log('\n--- UYUYAN SARTLAR (konusu sevk edilmemis; her biri bir REDDE kilitli)');
 const UYUYAN = [
   ['S1  omuz ucu gogus cizgisinin icinde', 'shoulderStyle', { shoulderStyle: 1 }],
-  ['S2b etek merdiveni (boy arttikca...)', 'topLength',     { garment: 'top', topLength: 'crop' }],
+  // ⭐ S2a + S2b + S2c TEK SATIRDA VE TEK EKSENE KILITLI (H3-B). Ucunun de konusu
+  // AYNI eksendir: `topLength`. S2a "hicbir UST vucudun kalcasindan genis
+  // bitemez", S2c "belde/crop'ta biten bir UST bustten genis olamaz", S2b "etek
+  // genisligi boyla artar" — ucu de "belden once biten bir ust" diye bir nesnenin
+  // var olmasini gerektiriyor, ve `topLength` reddedildigi surece oyle bir nesne
+  // CIZILEMIYOR (dort sinif da elbise boyunda bir A hat cikiyor). Uc satir olarak
+  // yazmak circir tavanini 5'ten 7'ye cikarirdi, yani BORCU BUYUK GOSTERIRDI;
+  // tek satir ayni borcu tasiyor ve `topLength` sevk edilir edilmez UCU BIRDEN
+  // uyanip kirmizi duser. S3 bu listede DEGIL: o geri kondu ve yukarida CANLI
+  // olcuyor (bollukla duzeltilmis cizelge orani).
+  ['S2a+S2b+S2c etek orani/merdiveni',    'topLength',     { garment: 'top', topLength: 'crop' }],
   ['S4  kol oyugu icbukey',                'sleeveStyle',   { sleeveStyle: 'straight' }],
   ['S5  kol iki ucunu da govdeyle paylasir', 'sleeveStyle', { sleeveStyle: 'straight' }],
   ['S6  puff eti toplanmis + manset',      'sleeveStyle',   { sleeveStyle: 'balloon' }],

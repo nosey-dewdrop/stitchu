@@ -65,7 +65,9 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '../..');
-const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
+const LAW_YOL = 'contract/flat-convention-v1.json';
+const LAW = JSON.parse(readFileSync(join(root, LAW_YOL), 'utf8'));
+const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
 const MANKEN_YOL = LAW.referenceBody && LAW.referenceBody.mannequinChart;
 if (!MANKEN_YOL) throw new Error('flat-convention-v1.json referenceBody.mannequinChart beyani YOK');
 
@@ -152,6 +154,17 @@ for (const [name, , svg] of rendered) {
   const unit = parseFloat(um);
   if (!Number.isFinite(unit) || unit <= 0) { FAIL(`[2 olcek] ${name}: data-unit-mm sayi degil (${um})`); continue; }
   if (sc !== `1:${um}`) FAIL(`[2 olcek] ${name}: data-scale="${sc}" ile data-unit-mm=${um} tutmuyor (beklenen "1:${um}")`);
+  // ⭐ KANUNLA KIYAS — GERI ALINDI (H3-B). H3'un ilk kosusunda bu iki satir
+  // SILINMISTI ve geriye yalnizca belgenin KENDI ic tutarliligi kalmisti: cizim
+  // kendi beyanini kendi geometrisiyle onayliyor, ama kanun dosyasi neyi
+  // buyuruyor diye kimse sormuyordu. Hakem sonucu olctu — kanun `unitMM 3.0 /
+  // "1:3"` diyordu, sevk edilen cizim `1:1` beyan ediyordu, ve o celiskiyi olcen
+  // TEK satir yoktu. Aritmetik kontrol (asagida) SILINMEDI, bu iki satir onun
+  // USTUNE geldi: hem beyan kanuna esit, hem belge beyani dogruluyor.
+  if (Math.abs(unit - LAW.scale.unitMM) > 1e-12)
+    FAIL(`[2 olcek] ${name}: data-unit-mm=${unit}, kanun ${LAW_YOL} scale.unitMM=${LAW.scale.unitMM} — cizim kanunu tutmuyor`);
+  if (sc !== LAW.scale.declared)
+    FAIL(`[2 olcek] ${name}: data-scale="${sc}", kanun scale.declared="${LAW.scale.declared}"`);
 
   const wAttr = /^([\d.]+)mm$/.exec(at('width') || '');
   const hAttr = /^([\d.]+)mm$/.exec(at('height') || '');
@@ -188,6 +201,156 @@ console.log('\n--- 2b. TEK MODEL (cizimlerin ilan ettigi manken cizelgesi tek mi
   else OK(`2b tek model — ${rendered.length} cizimin hepsi tek cizelge: ${[...ilanlar][0]}`);
 }
 
+// --- 1d. ZINCIR — KANUNUN CAPALARI BIR BEDENDEN TUREMEK ZORUNDA ------------
+//
+// ⭐ GERI ALINDI (H3-B). Bu kapi H3'un ilk kosusunda SILINMISTI ve silinme
+// gerekcesi ilk bakista dogru gorunuyor: yargiladigi seyin croquis oldugu, croquis
+// kaleminin de oldugu. AMA BU KAPI KALEMI HIC OKUMUYORDU. Iki SOZLESME DOSYASINI
+// birbirine vuruyor: contract/flat-convention-v1.json'un croquis capalari ile
+// contract/mannequin-chart-v1.json'un ilan ettigi bedeni. Ikisi de diskte duruyor,
+// ikisi de canli tuketicisi olan dosyalar (render-listing-sheet.mjs, bugra/
+// overlay-png.mjs), ve capalarin elle yazilmis bir sayiya kaymasi hala mumkun.
+// Kalemi olen bir hukmu, kalemi okumayan bir kapiyi silerek "tasimak" olmuyor.
+//
+// Birim: LAW.scale.croquisUnitMM. Sevk edilen cizimin olcegi (scale.unitMM = 1.0)
+// DEGIL — capalar croquis biriminde yazildi ve orada yargilanirlar. Iki birimin
+// ayri adlari olmasi H3-B'nin onarimidir; once tek bir `unitMM` vardi ve o tek
+// sayi hem olu croquis'i hem sevk edilen cizimi temsil etmeye calisiyordu.
+//
+// Tolerans 0.05 mm ve bu bir GEVSETME degil: kanun capalari dort ondalikla
+// yaziyor, yani yazili sabitin yuvarlamasi kadar bir fark aritmetigin kendisinden
+// gelir. Croquis toleransinin (2 mm) kirkta biri.
+console.log('\n--- 1d. ZINCIR (kanunun capalari manken cizelgesinden turuyor mu)');
+{
+  const CHAIN_TOL_MM = 0.05;
+  const UNIT = LAW.scale.croquisUnitMM;
+  const MANKEN = existsSync(join(root, MANKEN_YOL))
+    ? JSON.parse(readFileSync(join(root, MANKEN_YOL), 'utf8')) : null;
+  if (!Number.isFinite(UNIT) || UNIT <= 0) {
+    FAIL(`[1d zincir] ${LAW_YOL} scale.croquisUnitMM beyani YOK/sayi degil (${UNIT}) — capalarin birimi belirsiz`);
+  } else if (!MANKEN) {
+    FAIL(`[1d zincir] manken cizelgesi diskte YOK: ${MANKEN_YOL}`);
+  } else {
+    const size = LAW.referenceBody.size;
+    const ch = TABLES.draft.euSizeChart;
+    const col = (f) => ch[size][ch._fields.indexOf(f)];
+    const D = MANKEN.donusum.farkGirthMM;
+    const CAP = MANKEN.croquisCapalari;
+    const L2 = LAW.croquis.landmarks;
+    console.log(`    manken ${MANKEN.id} · beden ${size} · birim ${UNIT} mm/u · tolerans ${CHAIN_TOL_MM} mm`);
+    if (Math.abs(CAP.unitMM - UNIT) > 1e-12) {
+      FAIL(`[1d zincir] unitMM iki dosyada ayri: kanun croquisUnitMM ${UNIT}, manken cizelgesi ${CAP.unitMM} — iki kaynak`);
+    }
+    const girthMM = (f) => col(f) * 10 + D[f];
+    const quarter = (f) => girthMM(f) / 4 / UNIT;
+    const K = CAP.kaynaksiz;
+    const zincir = [
+      ['chestX', quarter('bustCM'), L2.chestX.u, `manken bustCM ${(girthMM('bustCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+      ['waistX', quarter('waistCM'), L2.waistX.u, `manken waistCM ${(girthMM('waistCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+      ['hipX', quarter('hipCM'), L2.hipX.u, `manken hipCM ${(girthMM('hipCM') / 10).toFixed(2)} / 4 / ${UNIT}`],
+      ['shoulderTipX', quarter('bustCM') * CAP.turetilen.shoulderTipX.omuzGogusOrani, L2.shoulderTipX.u,
+        `chestX x ${CAP.turetilen.shoulderTipX.omuzGogusOrani} (Bugra Locket EU38 olcumu)`],
+      ['shoulderTipY', K.neckDrop + (L2.shoulderTipX.u - K.neckBase) * K.shoulderSlope, L2.shoulderTipY.u,
+        `neckDrop ${K.neckDrop} + (shoulderTipX - ${K.neckBase}) x ${K.shoulderSlope}`],
+    ];
+    for (const [ad, hesap, yazan, nasil] of zincir) {
+      const dmm = Math.abs(hesap - yazan) * UNIT;
+      if (dmm > CHAIN_TOL_MM) {
+        FAIL(`[1d zincir] ${ad}: kanun ${yazan}u, mankenden hesaplanan ${hesap.toFixed(4)}u — fark ` +
+             `${dmm.toFixed(4)} mm > ${CHAIN_TOL_MM} mm. Capa elle yazilmis, bir bedenden turemiyor. (${nasil})`);
+      } else {
+        OK(`1d zincir — ${ad} ${yazan}u == ${hesap.toFixed(4)}u (D ${dmm.toFixed(4)} mm) <- ${nasil}`);
+      }
+    }
+    // Kaynaksiz capalar iki dosyada AYNI sayi olmak zorunda, yoksa croquis'in
+    // yarisi bir bedene, yarisi baska bir yere bagli olur.
+    for (const [ad, deger] of Object.entries(K)) {
+      if (ad.startsWith('_')) continue;
+      const yazan = ad === 'shoulderSlope' ? L2.shoulderSlope.value : (L2[ad] || {}).u;
+      if (!Number.isFinite(yazan)) { FAIL(`[1d zincir] kaynaksiz capa ${ad} kanun dosyasinda YOK`); continue; }
+      if (Math.abs(yazan - deger) > 1e-9)
+        FAIL(`[1d zincir] kaynaksiz capa ${ad}: kanun ${yazan}, manken cizelgesi ${deger} — iki kaynak`);
+    }
+  }
+}
+
+// --- 1b. BEYAN == CIZILEN (GERI ALINDI, H3-B) ------------------------------
+//
+// Eski hukum: "croquis data-* yalan soyleyemez" — SVG'nin bastigi her beyan,
+// cizilen seyin gercek bir olcusu olmak zorunda (esik 0.2 mm). H3'un ilk kosusu
+// bu bolumu sildi cunku beyan edilen sey croquis CAPALARIYDI ve croquis oldu.
+// Ama hukum "capalar dogru olsun" degil, BEYAN YALAN SOYLEYEMEZ'di, ve sevk
+// edilen cizim hala bes sey beyan ediyor: dugum · beden · sinif · olcek · birim.
+// Ucu burada, ikisi §2'de yargilaniyor. Geometrik beyan-cizim kiyasi ise 0.2 mm
+// yerine 0.1 mm'ye SIKISTI ve ayri bir kapiya tasindi
+// (flat_pattern_agree_check --all: cizilen siluet, kalibin kendi halkalarina).
+console.log('\n--- 1b. BEYAN == CIZILEN (SVG kokundeki data-* motorun kendi cevabini tutmak zorunda)');
+{
+  const before = fails;
+  for (const [name, F, svg] of rendered) {
+    const head = /<svg\b[^>]*>/.exec(svg);
+    const at = (k) => { const m = new RegExp(`\\s${k}="([^"]*)"`).exec(head ? head[0] : ''); return m ? m[1] : null; };
+    const bekle = {
+      'data-dugum': String(F.dugum),
+      'data-size': String(F.beden),
+      'data-sinif': `${F.sinif.garment}/${F.sinif.shaping}/${F.sinif.fabric}`,
+    };
+    for (const [k, v] of Object.entries(bekle)) {
+      const got = at(k);
+      if (got === null) FAIL(`[1b] ${name}: SVG kokunde ${k} beyani YOK — kimligi olmayan cizim`);
+      else if (got !== v) FAIL(`[1b] ${name}: ${k}="${got}" ama motor "${v}" diyor — BEYAN YALAN`);
+    }
+  }
+  if (fails === before) OK(`1b beyan == cizilen — ${rendered.length} cizimin dugum/beden/sinif beyani motorun cevabiyla ayni`);
+}
+
+// --- 1e. EMPIRE-BEL DURUSTLUGU (GERI ALINDI, H3-B) -------------------------
+//
+// Eski kapinin hukmu: `waistline="empire"` beyan eden bir flat'in siluet beli
+// DOGAL belden yukarida olmak zorunda — degilse beyan bir kacamak. H3'un ilk
+// kosusunda bu satirlar silindi, cunku `data-waistline` diye bir nitelik basan
+// kalem oldu. Ama HUKUM bir niteligin degil, bir DURUSTLUGUN hukmuydu ve yuzey
+// hattinda AYNEN sorulabiliyor — sadece cevabin ikinci bir mesru sikki var:
+//
+//     "empire" DENDI  =>  ya cizim DEGISIR, ya eksen ADIYLA REDDEDILIR.
+//
+// Ucuncu sik (cizim degismez VE red yok) sessiz cokertmedir ve kirmizidir; bu,
+// flat_expresses_spec_check'in uc eksende kurdugu esdegerligin ayni ifadesidir,
+// burada `waistline` ekseninde. Olculdu: motor bugun `waistline=empire`'i
+// ADIYLA reddediyor, yani sik 2 gecerli ve cizimin DEGISMEMESI sart.
+console.log('\n--- 1e. EMPIRE-BEL DURUSTLUGU (beyan ya cizimi oynatir ya adiyla reddedilir)');
+{
+  const EKSEN = 'waistline', DEGER = 'empire';
+  const TABAN_SPEC = MATRIX[0][1];
+  const oku = (spec) => {
+    let F;
+    try { F = JSON.parse(engine.flatJSON(spec, { size: SIZE })); }
+    catch (e) { return { hata: e.message }; }
+    if (F.error) return { hata: F.error };
+    try { return { svg: renderFlatFromPlan(F), red: F.desteklenmeyen_eksenler || [] }; }
+    catch (e) { return { hata: e.message }; }
+  };
+  const a = oku(TABAN_SPEC);
+  const b = oku({ ...TABAN_SPEC, [EKSEN]: DEGER });
+  if (a.hata) FAIL(`[1e empire] taban cizilemedi: ${a.hata}`);
+  else if (b.hata) FAIL(`[1e empire] '${DEGER}' cizilemedi ve ADIYLA reddedilmedi: ${b.hata}`);
+  else {
+    const ozdes = a.svg === b.svg;
+    const adiyla = b.red.some((r) => r.startsWith(`${EKSEN}=`) && r.includes(DEGER));
+    if (ozdes && !adiyla) {
+      FAIL(`[1e empire] '${EKSEN}=${DEGER}' beyan edildi, cizim TABANLA BAYT BAYT AYNI, ve motor bu ekseni ` +
+           `ADIYLA REDDETMIYOR (red=[${b.red.join(' · ') || 'bos'}]) — beyan kacamak, SESSIZ COKERTME`);
+    } else if (!ozdes && adiyla) {
+      FAIL(`[1e empire] '${EKSEN}=${DEGER}' ADIYLA REDDEDILDI ([${b.red.join(' · ')}]) ama cizim yine de ` +
+           'DEGISTI — reddedilen bir eksen uygulanmis olamaz (YALAN REDDI)');
+    } else if (adiyla) {
+      OK(`1e empire — '${EKSEN}=${DEGER}' adiyla reddedildi ve cizim tabanla ozdes kaldi (durust red)`);
+    } else {
+      OK(`1e empire — '${EKSEN}=${DEGER}' cizimi gercekten oynatiyor (beyan kacamak degil)`);
+    }
+  }
+}
+
 // --- 3. CIZGI HIYERARSISI --------------------------------------------------
 console.log('\n--- 3. CIZGI HIYERARSISI');
 const CLASSES = LAW.lineClasses.classes;
@@ -218,13 +381,53 @@ const used = new Set();
 const unused = Object.keys(CLASSES).filter((c) => !used.has(c));
 console.log(`    kullanilan sinif: ${[...used].sort().join(', ') || '(hic)'}`);
 console.log(`    KULLANILMAYAN   : ${unused.join(', ') || '(yok)'}   (circir tavani ${UNUSED_CLASS_RATCHET})`);
-if (unused.length > UNUSED_CLASS_RATCHET) {
-  FAIL(`[3 olu beyan] ${unused.length} sinif beyan edilmis ama HIC cizilmiyor > tavan ${UNUSED_CLASS_RATCHET} — ` +
-       'circir kirildi. Sinifi kanundan silmek cikis DEGIL: ratios beyani kirilir.');
-} else if (unused.length < UNUSED_CLASS_RATCHET) {
-  OK(`3 olu beyan — ${unused.length} < tavan ${UNUSED_CLASS_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir (UNUSED_CLASS_RATCHET).`);
-} else {
-  OK(`3 olu beyan — ${unused.length} = tavan ${UNUSED_CLASS_RATCHET} (yuzey hatti bugun iki egri ciziyor: siluet + ust sinir). Sayi yalniz dusebilir.`);
+// ⭐ H3-B — "OLU BEYAN" ARTIK SADECE SAYILMIYOR, KANUNA BAGLANIYOR.
+// H3'un ilk kosusu buraya `UNUSED_CLASS_RATCHET = 3` diye bir sayi koydu; ondan
+// once tolerans SIFIRDI (beyan edilen her sinif kullanilacak). Hakem bunu bir
+// gevsetme olarak yazdi. Sayiyi 0'a geri yazmak mumkun degildi — yuzey hatti
+// bugun gercekten iki egri ciziyor — ama sayiyi TEK BASINA birakmak da dogru
+// degildi. Onarim: her sinif kanunda `drawnBy` BEYAN EDER.
+//   drawnBy: "<data-curve adi>"  -> o sinif CIZILMEK ZORUNDA, tolerans SIFIR.
+//   drawnBy: null + `_neden`     -> bilincli olarak cizilmiyor, gerekcesi YAZILI.
+// Boylece bir sinifin sessizce olmesi imkansiz: ya kanunda `drawnBy` durur ve
+// sifir toleransa carpar, ya birileri kanunu acip gerekce yazar (gorunur bir
+// diff). Circir sayisi da artik `drawnBy: null` beyanlarinin sayisidir, elle
+// secilmis bir tolerans degil.
+{
+  const before = fails;
+  const beyansiz = [];
+  for (const [cname, c] of Object.entries(CLASSES)) {
+    if (!('drawnBy' in c)) { beyansiz.push(cname); continue; }
+    if (c.drawnBy === null) {
+      if (!c._neden || String(c._neden).length < 30) {
+        FAIL(`[3 olu beyan] '${cname}' kanunda drawnBy:null ama GEREKCESI (_neden) yok/bos — ` +
+             'cizilmeyen bir sinif yazili bir gerekce tasimak zorunda');
+      } else if (used.has(cname)) {
+        OK(`3 olu beyan — '${cname}' kanunda drawnBy:null ama CIZILIYOR: tavan DUSTU, kanunu guncelle`);
+      }
+      continue;
+    }
+    if (!used.has(cname)) {
+      FAIL(`[3 olu beyan] '${cname}' kanunda drawnBy="${c.drawnBy}" beyan ediyor ama cizimde HIC ` +
+           'kullanilmiyor — TOLERANS SIFIR: beyan edilen bir cizgi sinifi cizilmek zorunda');
+    } else {
+      OK(`3 olu beyan — '${cname}' drawnBy="${c.drawnBy}" ve gercekten ciziliyor (sifir tolerans)`);
+    }
+  }
+  if (beyansiz.length) {
+    FAIL(`[3 olu beyan] ${beyansiz.length} sinif kanunda 'drawnBy' BEYAN ETMIYOR (${beyansiz.join(', ')}) — ` +
+         'beyansiz sinif circiri kor birakir');
+  }
+  const bilincli = Object.values(CLASSES).filter((c) => c.drawnBy === null).length;
+  console.log(`    kanunda bilincli cizilmeyen (drawnBy:null): ${bilincli}   (circir tavani ${UNUSED_CLASS_RATCHET})`);
+  if (bilincli > UNUSED_CLASS_RATCHET) {
+    FAIL(`[3 olu beyan] bilincli cizilmeyen sinif ${bilincli} > tavan ${UNUSED_CLASS_RATCHET} — circir kirildi. ` +
+         'Sinifi kanundan silmek cikis DEGIL: ratios beyani kirilir.');
+  } else if (bilincli < UNUSED_CLASS_RATCHET) {
+    OK(`3 olu beyan — bilincli cizilmeyen ${bilincli} < tavan ${UNUSED_CLASS_RATCHET}: tavan DUSTU. Sabitlemek ayri ve bilincli bir commit'tir.`);
+  } else if (fails === before) {
+    OK(`3 olu beyan — bilincli cizilmeyen ${bilincli} = tavan ${UNUSED_CLASS_RATCHET}, ucunun de gerekcesi kanunda YAZILI. Sayi yalniz dusebilir.`);
+  }
 }
 
 // --- 3b. BEYAN EDILEN ORANLAR (ISO 128-2:2020 md.5.1 seri / md.5.2 +-0,1d) --

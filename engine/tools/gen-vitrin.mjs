@@ -37,8 +37,28 @@ const OUT = join(ROOT, 'web/data/vitrin.json');
 export const PAGES = ['web/index.html', 'web/benchmark.html'];
 
 export function build() {
-  const out = execFileSync(process.execPath, [join(ROOT, 'engine/tests/hedef_kosu.mjs')],
-    { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, cwd: ROOT });
+  // ⭐ KIRIK CIRCIR DA YAYINLANIR (H3-B, 2026-08-30). Bu çağrı `execFileSync`
+  // olduğu için hedef_kosu EXIT 1 verdiğinde fırlatıyordu ve vitrin ÜRETİLMİYORDU
+  // — yani cırcır kırıldığı anda sitede DÜNÜN YEŞİL SAYILARI donup kalıyordu.
+  // Bu bir koruma değil, gizlemenin ta kendisi: kötüleşen tek sayı, sitenin
+  // güncellenmesini durdurarak kendini görünmez yapıyor.
+  //
+  // Somut vaka: H3 teknik çizimi yüzey hattına bağladı ve H11 (süre) tavanı
+  // AŞTI. İlk koşu bunu `r.ms`'ten flat süresini ÇIKARARAK gizlemişti; çıkarma
+  // geri alındı, sayı kırmızı, ve artık o kırmızı sayı VİTRİNE de yazılıyor.
+  // Kapı gevşemedi — hedef_kosu hâlâ EXIT 1 veriyor ve ctest'te KIRMIZI. Değişen
+  // tek şey: vitrin artık BUGÜNÜN sayısını taşıyor, dünün yeşilini değil.
+  // Çıktı hiç gelmediyse (koşu çöktü) yine fırlatılır: sayı yoksa vitrin yok.
+  let out;
+  try {
+    out = execFileSync(process.execPath, [join(ROOT, 'engine/tests/hedef_kosu.mjs')],
+      { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, cwd: ROOT });
+  } catch (e) {
+    out = String((e && e.stdout) || '');
+    if (!out.trim()) throw e;
+    console.log('⚠ hedef_kosu EXIT ' + (e.status ?? '?') + ' verdi (cırcır kırık). ' +
+                'Sayılar yine de BU koşudan alınıyor — kırık cırcır sitede dünün yeşilini dondurmaz.');
+  }
 
   // The two blocks are delimited by the ratchet's own headings. Splitting on
   // them rather than scanning the whole text is what keeps the two `n`s apart:
@@ -79,6 +99,14 @@ export function build() {
   const taban = JSON.parse(readFileSync(join(ROOT, 'contract/hedef-kosu-taban.json'), 'utf8'));
   const tavanMs = taban.sayilar.H11_sure_ms.tavan;
   if (typeof tavanMs !== 'number') throw new Error('taban H11 tavanı sayı değil');
+  // Aşılma, koşunun KENDİ bastığı satırdan okunur; burada yeniden ölçülmez.
+  // ★ VE `n5` BLOĞUNDAN, çünkü cırcırın yargıladığı set MÜHÜRLÜ BEŞLİDİR
+  // (contract/hedef-kosu-taban.json). İki blok iki ayrı paydadır ve
+  // harmanlanmaz (§3.6): 30 Ağu koşusunda n=5 medyanı 15340.2 ms, n=10 medyanı
+  // 6596.4 ms basıyor. Tavanı KIRAN, cırcırın kendi setidir; n=10'dan okumak
+  // kırmızıyı yeşil gösterirdi.
+  const H11row = row('n5', 'H11_sure_ms');
+  const H11asildi = Number(H11row.deger) > tavanMs;
 
   // The engine's published size set, read from the contract the size picker is
   // built from — not counted by hand.
@@ -103,10 +131,17 @@ export function build() {
     H3: { deger: H3.deger, n: H3.n, cumle: H3.birim },
     H5: { deger: H5.deger, n: H5.n, cumle: H5.birim },
     H6: { deger: H6.deger, n: H6.n, cumle: H6.birim,
-          uyari: 'H6 bu koşunun fotoğraflarından gelmez; paydası flat_convention_check\'in 8 stillik matrisidir.' },
-    H11: { tavan_sn: tavanMs / 1000, n: null,
-           cumle: 'hedef_kosu her koşuda medyan çizim süresini ölçer ve bu tavana karşı yargılar',
-           uyari: 'ÖLÇÜLEN MEDYAN YAYINLANMAZ: duvar saati sayısıdır, koşudan koşuya oynar, bayatlığı gürültüden ayırt edilemez.' },
+          uyari: 'H6 bu koşunun fotoğraflarından gelmez; paydası flat_pattern_agree_check --all\'in '
+               + 'dört sınıflık matrisidir (H3, 30 Ağu 2026: kaynak kapı flat_convention_check idi).' },
+    // ⭐ TAVANIN AŞILIP AŞILMADIĞI BİR GÜRÜLTÜ DEĞİL, BİR OLGUDUR (H3-B).
+    // Ölçülen medyan hâlâ yayınlanmıyor ve gerekçesi aşağıda duruyor — ama
+    // "tavan aşıldı mı" sorusunun cevabı bir duvar saati sayısı değil, bir
+    // EVET/HAYIR. Aşıldığı hâlde vitrinin yalnız tavanı göstermesi, kötü haberi
+    // vitrinden çıkarmak olurdu.
+    H11: { tavan_sn: tavanMs / 1000, n: null, asildi: H11asildi,
+           cumle: 'hedef_kosu her koşuda medyan çizim süresini ölçer ve bu tavana karşı yargılar'
+                + (H11asildi ? ' — BU KOŞUDA TAVAN AŞILDI' : ''),
+           uyari: 'ÖLÇÜLEN MEDYAN YAYINLANMAZ: duvar saati sayısıdır, koşudan koşuya oynar, bayatlığı gürültüden ayırt edilemez. Aşılıp aşılmadığı ise oynamaz, o yüzden `asildi` yayınlanır.' },
     beden: { sayi: sizes.length, liste: sizes.join(', '),
              kaynak: 'contract/layers/shape-ratios.json' },
     olcemedim: ['H4', 'H9'],

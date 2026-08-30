@@ -35,7 +35,10 @@
 //   UNEXPRESSED   — çizim tabanla ÖZDEŞ, AMA motor o ekseni ADIYLA reddediyor
 //                   (`desteklenmeyen_eksenler`) ya da değeri adıyla parse
 //                   reddine uğratıyor. Damgasız/adsız özdeşlik = KIRMIZI.
-// UNEXPRESSED bir gevşetme değil, DÜRÜSTLÜKTÜR ve RATCHET'lı — yalnız düşebilir.
+// UNEXPRESSED bir gevşetme değil, DÜRÜSTLÜKTÜR ve CIRCIRLIDIR. ★ H3-B: cırcır
+// artık eksen başına elle yazılmış bir kova sayısı DEĞİL (7/6/2 öyleydi ve üçü de
+// tam tavandaydı — lastik damga). Tavan tek bir sayı: motorun BÜTÜNÜYLE
+// reddettiği EKSEN sayısı. Gerekçe dosyanın sonunda, cırcır bloğunda.
 //
 // EŞANLAM İSTİSNASI (uydurma değil, BEYANLI): engine/vocab.json kol alanının
 // beyanlı eşanlamları (`puff->balloon`, `set-in->straight`, ...) AYNI çizmek
@@ -350,22 +353,67 @@ for (const v2 of Object.keys(SICIL.topology.sleeve.values)) {
 }
 
 // ---------------------------------------------------------------------------
-// RATCHET — UNEXPRESSED sayisi BUGUN OLCULEN degerle tavanlanir, yalniz DUSER.
+// CIRCIR — SAYI ARTIK ELLE YAZILMIYOR (H3-B). TAVAN 15 DEGIL, 3.
 // ---------------------------------------------------------------------------
-// Emsal: V3'un `UNMEASURED 3/6, ratchet tavani 3`. Tavanlar 30 Agu H3 turunda
-// OLCULDU (asagidaki sayilar kapinin kendi ciktisidir, elle sayilmadi). Bu kova
-// DURUSTLUKTUR, gevsetme degil: bugun ifade edilemeyeni yesile boyamak yerine
-// SAYIYA bagliyoruz. Artiran commit kapida kirmizi duser.
-const RATCHET = { [F_SLEEVE]: 7, [F_COLLAR]: 6, [F_SHOULDER]: 2 };
-const GOT = { [F_SLEEVE]: sleeveRes, [F_COLLAR]: collarRes, [F_SHOULDER]: shoulderRes };
+// ⛔ ONCEKI HALI VE NEDEN GEVSETMEYDI. H3'un ilk kosusunda burada su duruyordu:
+//     const RATCHET = { sleeveStyle: 7, collarType: 6, shoulderStyle: 2 };
+// Ondan onceki taban {0, 4, 1} idi. Yani izin verilen "ifade edilemeyen" toplami
+// 5'ten 15'e cikmisti (3 kat) ve UCU DE TAM TAVANDAYDI — tavani bugunku olcume
+// esitlemek, kapiyi bir LASTIK DAMGAYA cevirir: tek bir degerin bile kaybi
+// yakalanmaz, cunku tavan zaten oradadir, ve sayinin nereden geldigini kimse
+// turetemez. Hakem bunu adiyla yazdi.
+//
+// ⭐ ONARIM: SAYIYI DUSURMEK DEGIL, SAYIYI KALDIRMAK. 7/6/2 SAHTE BIR SECIMDI
+//   ama {0,4,1}'i geri yazmak da dogru degildi: o sayilar CROQUIS KALEMININ
+//   olcumuydu ve o kalem sahte bir kol ciziyordu — kalibi olmayan bir kol.
+//   Yuzey hattinda bu uc eksenin durumu bir SAYI degil, bir OLGU: motor uclerini
+//   de ADIYLA reddediyor (G5 sevk edilmedi). O yuzden circir artik su:
+//
+//       TAVAN = MOTORUN BUTUNUYLE REDDETTIGI EKSEN SAYISI (bugun 3)
+//
+//   ve axis basina UNEXPRESSED sayisi TURETILIR: butunuyle reddedilen bir eksende
+//   varsayilan disindaki HER degerin UNEXPRESSED olmasi bir SONUCTUR, secim
+//   degil — ve kapi bunu ayrica SART kosuyor (bir deger ifade edilmisse eksen
+//   "butunuyle reddedilmis" degildir ve tavan dusmustur). Butunuyle reddedilmemis
+//   bir eksende ise tolerans SIFIRDIR: tek bir UNEXPRESSED bile kirmizi duser.
+//
+//   Boylece: (a) elle yazilmis tek bir kova sayisi kalmadi; (b) sozluge yeni bir
+//   kol kelimesi eklemek tavani BUYUTMUYOR (tavan kelime saymiyor, eksen sayiyor);
+//   (c) G5 sevk edilip kol cizilmeye baslayinca eksen listeden duser ve tavan
+//   3 -> 2'ye iner; (d) bir ekseni sessizce dusurmek imkansiz, cunku o zaman
+//   "butunuyle reddedilmis" olmaz ve sifir toleransa carpar.
+const REDDEDILEN_EKSEN_TAVANI = 3;   // bugun: kol · yaka · omuz (hepsi G5)
+const GOT = { [F_SLEEVE]: [sleeveRes, SLEEVE_DOMAIN], [F_COLLAR]: [collarRes, COLLAR_DOMAIN],
+              [F_SHOULDER]: [shoulderRes, SHOULDER_DOMAIN] };
 console.log('');
-console.log('--- RATCHET (UNEXPRESSED yalniz DUSEBILIR)');
-for (const [axis, cap] of Object.entries(RATCHET)) {
-  const got = GOT[axis].unexpressed;
-  const line = `${axis} UNEXPRESSED ${got.length}/${cap}` + (got.length ? `  [${got.join(' · ')}]` : '');
-  if (got.length > cap) FAIL(`RATCHET ${line} — TAVAN ASILDI`);
-  else if (got.length < cap) OK(`RATCHET ${line} — tavan DUSTU, sabitlemek ayri ve bilincli bir commit'tir`);
-  else OK(`RATCHET ${line}`);
+console.log('--- CIRCIR (tavan = butunuyle reddedilen EKSEN sayisi; kova sayilari TURETILIR)');
+let butunuyleRed = 0;
+for (const [axis, [res, domain]] of Object.entries(GOT)) {
+  // Varsayilan deger kovalanmaz (tabanin kendisidir), o yuzden payda domain-1.
+  const yargilanan = domain.length - 1;
+  const got = res.unexpressed;
+  const hepsi = got.length === yargilanan;
+  const line = `${axis} UNEXPRESSED ${got.length}/${yargilanan}` + (got.length ? `  [${got.join(' · ')}]` : '');
+  if (hepsi) {
+    butunuyleRed += 1;
+    OK(`CIRCIR ${line} — eksen BUTUNUYLE reddedilmis (G5 sevk edilmedi); sayi bir SONUC, tavan degil`);
+  } else if (got.length === 0) {
+    OK(`CIRCIR ${line} — eksenin her degeri IFADE EDILDI, hicbir borc yok`);
+  } else {
+    FAIL(`CIRCIR ${line} — eksen NE butunuyle reddedilmis NE butunuyle ifade edilmis. ` +
+         'Kismi bir eksende tolerans SIFIRDIR: motor bu ekseni tasiyabildigini gosterdigine gore, ' +
+         'kalan degerler ya cizilecek ya da AYRI eksenler olarak adiyla reddedilecek.');
+  }
+}
+console.log(`    butunuyle reddedilen eksen: ${butunuyleRed}  (circir tavani ${REDDEDILEN_EKSEN_TAVANI})`);
+if (butunuyleRed > REDDEDILEN_EKSEN_TAVANI) {
+  FAIL(`CIRCIR — butunuyle reddedilen eksen ${butunuyleRed} > tavan ${REDDEDILEN_EKSEN_TAVANI}: ` +
+       'urun bir eksen KAYBETTI');
+} else if (butunuyleRed < REDDEDILEN_EKSEN_TAVANI) {
+  OK(`CIRCIR — butunuyle reddedilen eksen ${butunuyleRed} < tavan ${REDDEDILEN_EKSEN_TAVANI}: tavan DUSTU. ` +
+     "Sabitlemek ayri ve bilincli bir commit'tir (REDDEDILEN_EKSEN_TAVANI).");
+} else {
+  OK(`CIRCIR — butunuyle reddedilen eksen ${butunuyleRed} = tavan ${REDDEDILEN_EKSEN_TAVANI} (kol · yaka · omuz = G5). Sayi yalniz dusebilir.`);
 }
 
 console.log('');

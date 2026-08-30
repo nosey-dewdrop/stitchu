@@ -46,10 +46,11 @@ const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8
 // kalemi sildi ve kullaniciya giden cizim artik kalibin kesildigi yuzeyin
 // projeksiyonu (engine.flatJSON -> web/lib/flat-from-plan.js). Sarmalayici
 // (render-listing-sheet.mjs) ayni sarmalayicidir ve HICBIR esigi gevsetilmedi.
-// Tek gercek degisiklik olcegin KAYNAGIDIR: sayfa artik 1:3'u bir sabitten
-// okumuyor, cizimin kendi `data-unit-mm` beyanini soruyor (o beyanin kapisi
-// flat_convention_check §2). Sabit kalsaydi, alicinin gordugu tek boyut bilgisi
-// olan olcek cubugu UC KAT yanlis etiketlenirdi.
+// Olcek: sayfa 1:3'u bir sabitten okumayi biraktı, ama KANUNU da birakmadi —
+// H3-B'de capa `LAW.scale.unitMM`'e GERI baglandi ve cizimin kendi beyaninin
+// kanuna esitligi ayrica sart kosuldu. (H3'un ilk kosusu capayi yalnizca cizimin
+// beyanina tasimisti; hakem "kendi kendini onayliyor" dedi ve hakliydi. Kanunun
+// kendisi de bu commit'te duzeltildi: 1:3 yaziyordu, urun 1:1 basiyordu.)
 const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
 const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
 const SIZE = process.env.V3C_SIZE || 'EU38';
@@ -71,14 +72,24 @@ const NOTE = (m) => console.log(`note  ${m}`);
 const INK = LAW.ink.color.toLowerCase();
 const CLASSES = Object.entries(LAW.lineClasses.classes);
 
-// Ayni sinif matrisi: kartin saydigi dort sinif + sevk edilen ikinci klos
-// kelimesi. Tek giysi goren kapi kapi degil, demodur.
+// ⭐ MATRIS 8'E GERI CIKARILDI (H3-B). H3'un ilk kosusu bunu 8'den 5'e dusurdu ve
+// hakem bunu bir GEVSETME olarak yazdi — hakli: bir kapinin gordugu giysi sayisi
+// onun kapsamidir. Dusmesinin SEBEBI gercekti (eski 8 spec `shaping:'darts'`,
+// `sleeveStyle:'set'`, `topLength:'crop'` gibi yuzey hattinin KAPALI ENUM'unda
+// hic olmayan kelimeler tasiyordu; croquis kalemi onlari sormadan cizerdi, yuzey
+// hatti ADIYLA reddediyor), ama cozumu matrisi kucultmek degil YENIDEN KURMAKTI.
+// Asagidaki sekizi olculerek secildi: her biri motorun kapali enum'undan gecen,
+// gercekten cizilen bir spec, ve ikisi de birbirinden farkli (uc giysi sinifi x
+// iki kumas x iki klos x bes yaka). Reddedilen eksenler yine ADIYLA raporlanir.
 const MATRIX = [
-  ['elbise a-line', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
-  ['elbise duz', { garment: 'dress', shaping: 'dart', fabric: 'woven', skirtStyle: 'straight', neckline: 'scoop' }],
-  ['etek a-line', { garment: 'skirt', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'crew', sleeveStyle: 'none' }],
-  ['top a-line', { garment: 'top', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine', neckline: 'scoop' }],
-  ['orme a-line', { garment: 'top', shaping: 'dart', fabric: 'knit', skirtStyle: 'aLine', neckline: 'scoop' }],
+  ['elbise scoop a-line',  { garment: 'dress', shaping: 'dart',     fabric: 'woven', skirtStyle: 'aLine',    neckline: 'scoop' }],
+  ['elbise vneck duz',     { garment: 'dress', shaping: 'dart',     fabric: 'woven', skirtStyle: 'straight', neckline: 'vNeck' }],
+  ['elbise princess kare', { garment: 'dress', shaping: 'princess', fabric: 'woven', skirtStyle: 'aLine',    neckline: 'square' }],
+  ['etek a-line',          { garment: 'skirt', shaping: 'dart',     fabric: 'woven', skirtStyle: 'aLine',    neckline: 'crew', sleeveStyle: 'none' }],
+  ['etek duz',             { garment: 'skirt', shaping: 'dart',     fabric: 'woven', skirtStyle: 'straight', neckline: 'crew', sleeveStyle: 'none' }],
+  ['top scoop a-line',     { garment: 'top',   shaping: 'dart',     fabric: 'woven', skirtStyle: 'aLine',    neckline: 'scoop' }],
+  ['top princess boat',    { garment: 'top',   shaping: 'princess', fabric: 'woven', skirtStyle: 'straight', neckline: 'boat' }],
+  ['orme sweetheart',      { garment: 'top',   shaping: 'dart',     fabric: 'knit',  skirtStyle: 'aLine',    neckline: 'sweetheart' }],
 ];
 
 const SIZES = Object.keys(TABLES.draft.euSizeChart).filter((k) => /^EU\d+$/.test(k));
@@ -169,10 +180,20 @@ for (const [name, spec] of MATRIX) {
   try { flat = renderShippedFlat(spec); }
   catch (e) { FAIL(`${name}: sevk edilen cizim uretilemedi — ${e.message}`); continue; }
   const sheet = renderListingSheet(flat, { title: name.replace(/_/g, ' ') });
-  // OLCEK KAYNAGI: cizimin KENDI beyani. Kapinin kendi kopyasi yok.
+  // OLCEK CAPASI — KANUNA GERI BAGLANDI (H3-B). H3'un ilk kosusunda capa
+  // `LAW.scale.unitMM`'den cizimin KENDI beyanina tasinmisti; hakem bunu adiyla
+  // yazdi ("kendi kendini onayliyor") ve hakliydi: beyanini kendi beyaniyla
+  // dogrulayan bir belge hicbir sey dogrulamaz. Simdi UCU birden tutuyor —
+  // cizimin beyani KANUNA esit olmak zorunda, sayfanin birimi de o kanundan
+  // turemek zorunda. (Kanunun kendisi de bu commit'te duzeltildi: 1:3 yaziyordu,
+  // sevk edilen cizim 1:1 basiyordu; celiskiyi kapatan kapi flat_convention_check §2.)
   const flatUnitMM = parseFloat((/<svg\b[^>]*\sdata-unit-mm="([^"]*)"/.exec(flat) || [])[1]);
   if (!Number.isFinite(flatUnitMM) || flatUnitMM <= 0) {
     FAIL(`${name}: flat kokunde data-unit-mm beyani YOK — sayfa olcegi turetilemez`);
+    continue;
+  }
+  if (Math.abs(flatUnitMM - LAW.scale.unitMM) > 1e-12) {
+    FAIL(`${name}: flat data-unit-mm=${flatUnitMM}, kanun scale.unitMM=${LAW.scale.unitMM} — cizim kanunun olceginde degil`);
     continue;
   }
 
@@ -207,8 +228,8 @@ for (const [name, spec] of MATRIX) {
   if (![kFlat, unitMM, barMM, barU].every(Number.isFinite)) {
     FAIL(`${name}: sheet does not declare flat-scale / unit-mm / scale-bar`);
   } else {
-    const expUnit = flatUnitMM / kFlat;
-    if (Math.abs(unitMM - expUnit) / expUnit > 0.005) FAIL(`${name}: declared sheet-unit-mm ${unitMM} != flat data-unit-mm ${flatUnitMM} / flat-scale ${kFlat} = ${expUnit.toFixed(4)}`);
+    const expUnit = LAW.scale.unitMM / kFlat;
+    if (Math.abs(unitMM - expUnit) / expUnit > 0.005) FAIL(`${name}: declared sheet-unit-mm ${unitMM} != law unitMM ${LAW.scale.unitMM} / flat-scale ${kFlat} = ${expUnit.toFixed(4)}`);
     const drawnMM = barU * unitMM;
     if (Math.abs(drawnMM - barMM) / barMM > 0.005) FAIL(`${name}: scale bar is drawn ${barU.toFixed(2)} u = ${drawnMM.toFixed(1)} mm but LABELLED ${barMM} mm — the sheet lies about size`);
   }

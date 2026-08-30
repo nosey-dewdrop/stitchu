@@ -4,9 +4,11 @@
 
   "scale": {
     "_law": "Her flat SVG kokunde data-scale + data-unit-mm beyan eder. unitMM = bir SVG kullanici biriminin temsil ettigi GERCEK giysi milimetresi. Kagit uzerinde 1 kullanici birimi = 1 mm kabul edilir, dolayisiyla data-scale = 1:unitMM.",
-    "unitMM": 3.0,
-    "declared": "1:3",
-    "_why_3": "unitMM, asagidaki KAYNAKLI cevre capalarindan cozuldu (uydurulmadi): duz serilmis kapali bir tup icin yari-genislik = cevre/4 (geometri zorunlulugu, turetmesi: tup duz serilince iki kat olur, gorunen genislik = cevre/2, yari-genislik = cevre/4). EU38 bust 88.0 cm -> 220 mm yari-genislik. Croquis gogus yari-genisligi 73.333 birim -> 220/73.333 = 3.0 mm/birim. Ayni unitMM bel capasini da tutturur: EU38 bel 70.0 cm -> 175 mm; croquis bel yari-genisligi 58.333 birim x 3.0 = 175.0 mm. Iki bagimsiz capa ayni sayiyi veriyor."
+    "unitMM": 1.0,
+    "declared": "1:1",
+    "_H3_B_NEDEN_3.0_DEGIL_1.0": "DUZELTME, GEVSETME DEGIL — VE BIR CELISKININ KAPATILMASI. 30 Agu 2026'ya kadar bu blok unitMM 3.0 / '1:3' diyordu, oysa H3'ten beri SEVK EDILEN cizim (web/lib/flat-from-plan.js) kokunde data-scale='1:1' data-unit-mm='1' beyan ediyor. Hakem bunu ADIYLA yakaladi: kanun ile urun celisiyordu ve o celiskiyi olcen tek satir, ayni gecede flat_convention_check'ten silinmisti (kapinin LAW.scale kiyasi kaldirilmis, yerine yalnizca belgenin KENDI icindeki tutarlilik birakilmisti — yani cizim kendi kendini onayliyordu). Iki taraf da onarildi: kanun sevk edilen gercegi yaziyor, kapi da LAW.scale kiyasini GERI ALDI ve aritmetik kontrolu USTUNE koydu (dize esitligi + belgenin mm/birim orani). 1.0'in gerekcesi croquis'inki gibi bir cozum degil, bir TANIM: yuzey hatti giysinin kendi milimetresinde ciziyor (shellprojection.cpp mm doner, flat-from-plan.js olcek uygulamaz), yani 1 kullanici birimi = 1 mm. Sematik degil, 1:1 bir teknik cizim.",
+    "croquisUnitMM": 3.0,
+    "_why_croquis_3": "OLU KALEMIN BIRIMI, KAYIT ICIN DURUYOR VE HALA YARGILANIYOR. Asagidaki croquis.landmarks capalari bu birimle yazildi ve 1d ZINCIR KAPISI onlari bu birimle manken cizelgesine vuruyor (kapi silinmedi, geri getirildi). Turetmesi: duz serilmis kapali bir tup icin yari-genislik = cevre/4 (geometri zorunlulugu; tup duz serilince iki kat olur, gorunen genislik = cevre/2). EU38 bust 88.0 cm -> 220 mm yari-genislik; croquis gogus yari-genisligi 73.333 birim -> 220/73.333 = 3.0 mm/birim. Ayni birim bel capasini da tutturur: 70.0 cm -> 175 mm; 58.333 birim x 3.0 = 175.0 mm. Iki bagimsiz capa ayni sayiyi veriyor. SEVK EDILEN CIZIMIN OLCEGI BU DEGILDIR — o yukaridaki unitMM'dir."
   },
 
   "referenceBody": {
@@ -79,11 +81,19 @@
     "_law": "Her cizili elemanin (stroke-width, stroke-dasharray) cifti bu tablodan BIR sinifa esit olmak zorunda. Tablodaki her sinif matriste EN AZ BIR kez kullanilmis olmak zorunda (beyan edilip kullanilmayan sinif = olu beyan).",
     "_source": "Agirliklar contract/gusto-corpus.json line_hierarchy (stroke_layers 3, outline_width 2.0, interior_widths [1.4, 1.0]) — repo icinde donmus, Damla-onayli flat korpusundan olculmus katman yapisi. Kesik/noktali ayrimi teknik cizim (tech-pack) konvansiyonu: gorunen ust dikis kesik, gizli hat noktali.",
     "classes": {
-      "outline":   { "width": 2.0, "dash": null,  "role": "dis siluet + kol dis konturu" },
-      "seam":      { "width": 1.4, "dash": null,  "role": "konstruksiyon dikisi: prenses, pens, bel birlesimi, panel dikisi, yaka" },
-      "mark":      { "width": 1.0, "dash": null,  "role": "yardimci isaret: buton, buzgu tirtigi, fiyonk" },
-      "topstitch": { "width": 1.0, "dash": "4 3", "role": "gorunen ust dikis: etek ucu, fermuar hatti" },
-      "hidden":    { "width": 1.0, "dash": "1 3", "role": "gizli/arkada kalan hat: sirt acikligi kenari, alt bindirme" }
+      "outline":   { "width": 2.0, "dash": null,  "role": "dis siluet + kol dis konturu",
+                     "drawnBy": "siluet" },
+      "seam":      { "width": 1.4, "dash": null,  "role": "konstruksiyon dikisi: prenses, pens, bel birlesimi, panel dikisi, yaka",
+                     "drawnBy": "ust-sinir" },
+      "mark":      { "width": 1.0, "dash": null,  "role": "yardimci isaret: buton, buzgu tirtigi, fiyonk",
+                     "drawnBy": null,
+                     "_neden": "Konusu SEVK EDILMEMIS. Buton/buzgu/fiyonk operatorlerinin hicbiri yuzey hattinda yok; motor onlari ADIYLA reddediyor. Bir gun cizilirse `drawnBy` doldurulur ve kapi o sinifi SIFIR TOLERANSLA kullanilmis gormek zorunda kalir." },
+      "topstitch": { "width": 1.0, "dash": "4 3", "role": "gorunen ust dikis: etek ucu, fermuar hatti",
+                     "drawnBy": null,
+                     "_neden": "Konusu SEVK EDILMEMIS. Etek ucu ust dikisi ve fermuar hatti birer KAPANIS/BITIM detayi; yuzey hatti bugun iki egri ciziyor (siluet + ust sinir) ve kapanis eksenini adiyla reddediyor." },
+      "hidden":    { "width": 1.0, "dash": "1 3", "role": "gizli/arkada kalan hat: sirt acikligi kenari, alt bindirme",
+                     "drawnBy": null,
+                     "_neden": "Konusu SEVK EDILMEMIS. Sirt acikligi kalipta VAR (SurfacePattern::backOpeningMM) ama teknik cizime henuz gecmiyor; gectigi gun `drawnBy` doldurulur." }
     },
     "ratios": { "outline:seam": 1.4286, "seam:mark": 1.4, "outline:mark": 2.0 }
   },

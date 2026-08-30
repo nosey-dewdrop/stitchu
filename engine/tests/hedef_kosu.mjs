@@ -369,7 +369,15 @@ for (const file of files) {
   } else {
     r.draftErr = d.error || 'kalıp yok';
   }
-  r.ms = Number(process.hrtime.bigint() - t0) / 1e6 - (r.flatMs || 0);
+  // ⛔ ÇIKARMA GERİ ALINDI (H3-B, 2026-08-30). Burada `- (r.flatMs || 0)` yazıyordu.
+  // Bağımsız hakem ölçtü: çıkarma VARKEN H11 3.5ms (yeşil), çıkarma KALDIRILINCA
+  // 18977ms, en kötü 25736ms — tavanın 1.9 katı. Yani tavan gevşetilmemiş, ÖLÇÜ
+  // kırpılmıştı; kullanıcının beklediği saniyeler paydadan düşülüyordu. Bir tavanı
+  // sayıyı küçülterek geçmek, tavanı büyütmekten beterdir çünkü görünmez.
+  // H11 bu satırla KIRMIZI düşer ve düşmesi doğrudur: yüzey flat'i gerçekten pahalı
+  // (tek `flatJSON` çağrısı EU38'de ölçülen 6.7-8.5 sn wasm, 4.5 sn native) ve o
+  // maliyet kullanıcının ekranında duruyor. Sayı raporda ADIYLA ilan edilir.
+  r.ms = Number(process.hrtime.bigint() - t0) / 1e6;
   rows.push(r);
 }
 
@@ -519,11 +527,12 @@ return {
   H11_sure_ms:        { deger: +median.toFixed(1), n, yon: 'tavan_10sn', tavan: 10000,
                         birim: `medyan ${median.toFixed(1)} ms, en kötü ${Math.max(...times).toFixed(1)} ms`,
                         uyari: 'VLM çağrısı HARİÇ (bankadan okundu) — gerçek kullanıcı süresi bunun '
-                             + 'üstüne API turu ekler. ⚠ YÜZEY FLAT\'İ DE HARİÇ VE SAYISI BURADA: '
-                             + `medyan ${(+medianFlat.toFixed(1))} ms, en kötü ${Math.max(...flatTimes).toFixed(1)} ms `
-                             + '(H3, 2026-08-30 — teknik çizim artık kalıbın kesildiği yüzeyin '
-                             + 'projeksiyonu; tavan hâlâ SPEC->KALIP yolunun tavanı, o yol için '
-                             + 'ilan edilmişti ve tabanı o yolla ölçüldü)' },
+                             + 'üstüne API turu ekler. ⚠ YÜZEY FLAT\'İ DAHİL VE AYRICA BASILIYOR: '
+                             + `medyan ${(+medianFlat.toFixed(1))} ms, en kötü ${Math.max(...flatTimes).toFixed(1)} ms. `
+                             + 'H3-B (2026-08-30): flat süresi bir süre paydadan ÇIKARILIYORDU ve H11 '
+                             + 'o çıkarma sayesinde yeşildi; çıkarma geri alındı. Tavan aşılıyorsa '
+                             + 'sayı KIRMIZI basılır — teknik çizim artık kalıbın kesildiği yüzeyin '
+                             + 'projeksiyonu ve o maliyet kullanıcının ekranında duruyor.' },
 };
 }
 

@@ -5,9 +5,10 @@
 //
 // WHY A SECOND ARTIFACT INSTEAD OF CHANGING THE FLAT
 // --------------------------------------------------
-// The FLAT is a law-governed technical drawing: one croquis, one ink, declared
-// 1:3 scale (contract/flat-convention-v1.json; H3 sonrasi o dosyanin kalan iki
-// canli tuketicisinden biri bu dosyadir, kapisi degil).
+// The FLAT is a law-governed technical drawing: one ink, and a scale it DECLARES
+// (contract/flat-convention-v1.json scale.declared; H3-B'de "1:3" -> "1:1" olarak
+// duzeltildi, cunku sevk edilen cizim yuzeyin 1:1 projeksiyonu. H3 sonrasi o
+// dosyanin kalan iki canli tuketicisinden biri bu dosyadir, kapisi degil).
 // The LISTING SHEET is what a buyer actually sees in Etsy search. They are not
 // the same object and they answer to different published rules. Rewriting the
 // flat to satisfy Etsy would have broken the F-D law; wrapping it does not.
@@ -31,8 +32,7 @@
 //
 // WHAT THE SHEET ADDS THAT THE BARE FLAT HAS NOTHING OF
 // ------------------------------------------------------
-// The bare flat carries its scale ONLY in data-scale="1:3" — a machine
-// attribute. A human buyer sees no size, no measurement, no size chart, no
+// The bare flat carries its scale ONLY in `data-scale` — a machine attribute. A human buyer sees no size, no measurement, no size chart, no
 // garment name: the F-D shot renders exactly two words, "FRONT" and "BACK".
 // The sheet renders, as visible ink: garment name, size range, a scale bar
 // whose drawn length is a round real-world length, and the size chart.

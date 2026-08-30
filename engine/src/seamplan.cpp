@@ -330,8 +330,12 @@ std::string planJSON(const SeamPlan& plan) {
     // silhouette (the SVG web/lib/flat-from-plan.js writes) at these three
     // heights and requires 0.1mm.
     //
-    // Not a new measurement: shellprojection.cpp's own halfWidthAt/girthAt, the
-    // same pair the silhouette is sampled with.
+    // ⚠ AND IT IS NOT THE SILHOUETTE'S OWN READING (H3-B). `yari_genislik_mm`
+    // comes through GarmentSurf::at() — the function the panel meshes are built
+    // with — precisely BECAUSE the drawing comes through halfWidthAt(). Feeding
+    // both columns from one function made the gate one-sided: a referee added
+    // 1.0mm inside halfWidthAt(), both columns moved, and the gate stayed green.
+    // Gerekce tam metin: shellprojection.cpp patternRingLines().
     {
         const std::vector<RingLine> lines = patternRingLines(pat);
         o << "  \"halkalar\": [";

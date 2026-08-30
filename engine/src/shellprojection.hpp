@@ -134,18 +134,24 @@ ShellProjection projectBack(const SurfacePattern& pat);
 
 // ---- THE THREE BODY LINES, AS THE PATTERN'S OWN OBJECT HOLDS THEM (H3) ----
 //
-// bust / waist / hip: the levels a technical drawing is read at, and the levels
-// a shopper holds a tape at. They are published from the KALIP reading so the
-// FLAT reading's drawn silhouette can be held next to them and asked the only
-// question H3 exists for: is the drawing this pattern, or a second object that
-// happens to look like it (engine/tests/flat_pattern_agree_check.mjs --all).
+// The three body levels (GarmentSurf::ringNames() entries 2..4) are the levels a
+// technical drawing is read at, and the levels a shopper holds a tape at. They
+// are published from the KALIP reading so the FLAT reading's drawn silhouette can
+// be held next to them and asked the only question H3 exists for: is the drawing
+// this pattern, or a second object that happens to look like it
+// (engine/tests/flat_pattern_agree_check.mjs --all).
 //
-// This is NOT a second measurement of the shell. `halfWidthMM` and `girthMM` are
-// the SAME two functions the silhouette itself is sampled with — one authority,
-// exposed rather than re-typed, because a second spelling of `sec.a + d` in
-// seamplan.cpp is precisely the class of drift the whole file was written
-// against. The ring names come from GarmentSurf::ringNames(), never from
-// literals here.
+// ★ `halfWidthMM` IS DELIBERATELY NOT halfWidthAt() (H3-B). Reading both columns
+// out of one function made the gate one-sided and a referee proved it: with
+// halfWidthAt() returning `sec.a + d + 1.0` the gate stayed green at 0 violations
+// because both columns moved together. The pattern column therefore comes through
+// GarmentSurf::at() — the function every panel VERTEX is built with
+// (surfacepattern.cpp buildGrid) — while the drawing column keeps coming through
+// halfWidthAt() and out the far end of the SVG. Analytically the two are the same
+// number (at phi = 0 the outward normal is horizontal and offsetPoint returns
+// exactly (a + d, 0)); computationally they are two paths, so their agreement is
+// evidence instead of a tautology. `girthMM` stays as it was: nothing compares
+// it across the two readings, so it has no side to be on.
 struct RingLine {
     std::string ad;         // the ring's own name: bust / waist / hip
     double zMM = 0.0;       // the height the line sits at, body z

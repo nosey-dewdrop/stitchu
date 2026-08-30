@@ -32,10 +32,10 @@ const GarmentSurf::Ring& ringNamed(const GarmentSurf& s, const std::string& name
 // skim run, the A-line hem and the hip blend are applied exactly once, in the
 // engine's own code, and never restated here.
 //
-// They are NOT file-local any more (H3): the KALIP reading publishes the three
-// body lines through patternRingLines() below, and a copy of `sec.a + d` in
-// seamplan.cpp would have been a second spelling of the one thing this file
-// exists to keep single.
+// They are NOT file-local any more (H3): girthAt() is published for consumers
+// that need a circumference. halfWidthAt() is the DRAWING's reading only —
+// patternRingLines() below deliberately does not call it, for the reason spelled
+// out there.
 double halfWidthAt(const GarmentSurf& s, double h) {
     double d = 0.0;
     const Section sec = s.effectiveSection(h, d);
@@ -247,15 +247,42 @@ ShellProjection projectBack(const SurfacePattern& pat) { return project(pat, fal
 // drawing landed on them.
 //
 // The three names are taken out of GarmentSurf::ringNames() by INDEX, not by
-// string literal. Writing "bust" here would be a fourth copy of a closed list
+// string literal. Writing them here would be a fourth copy of a closed list
 // (surfacepattern.hpp owns it) and the vocabulary ratchet counts those.
+//
+// ★ AND THE HALF-WIDTH IS **NOT** halfWidthAt(). THAT IS THE WHOLE POINT (H3-B).
+//
+// It used to be, and an independent referee measured what that cost: he changed
+// halfWidthAt() to `sec.a + d + 1.0`, rebuilt the wasm, and
+// flat_pattern_agree_check --all stayed GREEN with 0 violations. Both columns of
+// the table moved together — 289.4348 -> 291.4348 — and the difference stayed at
+// 0.0000mm. The gate was not measuring the geometry at all; it was measuring one
+// function against itself through two printers. A pattern whose lines are a
+// millimetre wrong would have shipped under a green gate.
+//
+// So the KALIP column is read the way the PANELS are read: through
+// GarmentSurf::at(), the very function buildGrid() evaluates for every single
+// vertex of every panel mesh (surfacepattern.cpp:678, and :341 already spells
+// this exact idiom `fabs(surf.at(z, 0.0).x)` for a half-width). phi = 0 is where
+// the outward normal is horizontal, so at(h, 0).x IS the silhouette's extreme x
+// — analytically the same quantity as `sec.a + d`, arrived at by the offset
+// curve instead of by the closed form.
+//
+// TWO PATHS, ON PURPOSE, AND THE AGREEMENT IS NOW EVIDENCE:
+//   drawing column : effectiveSection -> sec.a + d  (halfWidthAt, project())
+//                    -> fitCubics -> flatJSON -> web/lib/flat-from-plan.js -> SVG
+//                    -> the gate re-solves the drawn cubics by bisection
+//   pattern column : effectiveSection -> Section::offsetPoint(d, 0) -> at().x
+//                    -> planJSON halkalar
+// Touch either end and the 0.1mm gate goes red; that is what a two-sided gate
+// means and it is proven by mutation in both directions, not asserted here.
 std::vector<RingLine> patternRingLines(const SurfacePattern& pat) {
     const GarmentSurf& surf = pat.surf;
     const std::array<const char*, 5>& RN = GarmentSurf::ringNames();
     std::vector<RingLine> out;
-    for (int i = 2; i <= 4; ++i) {           // bust, waist, hip
+    for (int i = 2; i <= 4; ++i) {           // the three body levels, ringNames() order
         const GarmentSurf::Ring& r = ringNamed(surf, RN[i]);
-        out.push_back({r.name, r.h, halfWidthAt(surf, r.h), girthAt(surf, r.h)});
+        out.push_back({r.name, r.h, std::fabs(surf.at(r.h, 0.0).x), girthAt(surf, r.h)});
     }
     return out;
 }
