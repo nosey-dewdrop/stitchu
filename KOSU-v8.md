@@ -695,3 +695,21 @@ hakem notu: 1397 dosya silindi, `engine/src` ve `web/js` diff'te hiç yok, hiçb
 - `patterns_real/` history'den kazındığı için **yerel `main` GitHub'daki `main` ile ortak geçmişe sahip değil.** Bir sonraki push force-push olmak zorunda. Kart push'u yasakladı, yapılmadı.
 - **Uzak repo hâlâ kirli:** GitHub'daki `nosey-dewdrop/stitchu` main'inde 41 `patterns_real/` dosyası duruyor. "patterns_real git history'den çıktı" cümlesi bugün sadece yerelde doğru.
 - `stitchu/CLAUDE.md` hâlâ `HEDEF.md`'yi "reponun en üst otoritesi" ilan ediyor ve silinen `GECE*/`, `flatten-research/`, `reports/gate/` yollarına atıf yapıyor. CLAUDE.md gitignore'da olduğu için kapıya takılmadı. KOSU-v8 o dosyaların yerini alıyor.
+
+## H2 — Tek motor: spec yüzey hattına ulaştı — GEÇTİ (KALDI ×1)
+ölçülen: scoop `c74c00575aef3a16` ≠ vNeck `fddd03acb9b75fdc`, 44 ok / 0 FAIL   eşik: 2 farklı hash   commit: `03ec115`
+hakem notu: Testin dürüstlüğü mutasyonla kanıtlandı — bağlantı satırı `+= 0.0` yapılınca geometri kilitlendi ve kapı 5 FAIL verdi.
+
+**Ne bağlandı.** `planJSON` / `flatJSON` artık `(std::string size, double neckDropMM)` değil `(val specObj, val bodyObj)`. Beden etiketi `body.size`'dan ZORUNLU — yoksa `{error}`, sessiz EU38 yok (`EU99` → `unknown size: EU99`). Yaka derinliği `bodice.cpp`'nin kendi `frontNeckDepth` tablosundan geliyor: crew'a göre ön orta düşüşü scoop'ta **tam 35.0000mm**, vNeck'te **60.0000mm**; ön yay 705.4293 → 761.4654 → 804.8303mm. Kalıp da oynadı (`21bd0909…` vs `cfea6ffb…`, 8 panelin geometrisi).
+
+**Reddetme gerçek, sessiz sabit yok.** Taşınamayan ~35 eksen `<eksen>=<değer>` olarak dönüyor ve `create.js:1098`'de DOM'a basılıyor (`msg.textContent`, console.log değil). Hakem dokuzunu tek tek süpürerek doğruladı: `boxPleat=centerInverted`, `cupSeam=horizontal`, `edgeFinish=facing`, `hemFlounce=gathered`, `laceUpBack=corset`, `locketTop=bugra`, `shoulderStyle=dropped`, `keyhole=true`, `wrapFront=surplice`. Varsayılan spec hiçbir şey reddetmiyor.
+
+**KALDI'nın sebebi ve çözümü.** İlk denemede `seamplan.cpp`'ye elle yazılan 9 kapalı-enum adı `vocab_reference_check` cırcırını kırdı (`FAIL: 9 artan`) — cırcır BREADTH→DEPTH yönünü koruyor, H2 ise reddetmek için enum adlarını saymak zorundaydı. İkinci denemede eksen listesi VERİYE çevrildi: `engine/src/specparse.hpp` içinde `kSpecIntAxes` (26 satır) + `kSpecBoolAxes` (3 satır), hem `buildSpec` hem `mapSpecToSurface` aynı tabloyu dolaşıyor. Kapı YEŞİL, taban kesilmedi, reddetme listesi bayt bayt aynı kaldı.
+
+**Sınır kararı.** `engine/src/specparse.hpp` DOKUNULABİLİR'de adı geçmiyordu. Hakem zorunlu dokunuş saydı: menü listesinin tek sahibi wasm parse hattı, tabloyu `seamplan.hpp`'ye koymak bir geometri başlığına parse tablosu yüklerdi. Tek dosya, +79 satır, saf veri, davranış değişimi sıfır.
+
+**Hakemin kart notu (kayda geçti, eşik değişmedi).** Kartın harfi harfine K1 eşiği — "iki farklı flat hash" — mutasyon altında TEK BAŞINA geçiyordu, çünkü sadece ret etiketi farklıydı, geometri aynıydı. Testin kendi K2/K4/K5 kontrolleri o kaçışı kapatıyor, yani uygulanan kapı karttan SIKI. Sonraki kartlarda "hash farklı" tek başına eşik olarak kullanılmayacak.
+
+**Açık kalanlar (ajan adıyla bildirdi).** `neckline` ekseninin yalnız DERİNLİĞİ bağlandı; GENİŞLİK çarpanı (boat 1.85 / sweetheart 1.2 / cowl 1.4) ve EĞRİ ŞEKLİ yüzeyin tek üst-sınır yasasına sığmıyor, ikisi de ekranda reddediliyor. `skirtLength` / `topLength` bağlanmadı: `hemDropBelowHipMM` kalçadan, spec'inki belden ölçüyor, dönüşüm için bel-kalça derinliği gerek — uydurulmadı, reddedildi. `opsJSON` bindingi hâlâ iki skaler alıyor. `seamPlanPattern` export'unun `web/` altında çağıranı yok, yani `planJSON` yolu kapıda ölçülüyor ama ürün ekranına bağlı değil. `saveFlatSVG` beden etiketini almıyor, `'EU38'` varsayılanına düşüyor — "spec ulaşmıyor" onarıldı, "beden ulaşmıyor" duruyor.
+
+**Dosya bütçesi kritik.** `git ls-files` = **800**, eşik ≤800. H1 tam sınırda. Yeni takipli dosya eklemek H1'i kırmızıya döndürür; sonraki her faz ya ölü dosya silecek ya da eklemeden çözecek.
