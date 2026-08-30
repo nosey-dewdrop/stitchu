@@ -759,3 +759,31 @@ hakem notu: Dört maddenin dördü de iddia değil — üçü ayrı mutasyonla, 
 - **Yedi uyuyan şart + 15 ifade edilmeyen değer + `--all` kanadında 3/6 UNMEASURED — üç ayrı kapıda aynı tek eksik.** Hepsi G5'e bağlı: omuz · yaka · kol oyuğu · kol.
 
 **Ölçülmedi (DOĞRULANMADI).** `render-listing-sheet.mjs` silinen `mark` sınıfını okuyordu; artık kanunun en ince sınıfını türetiyor, o da `seam` 1.4. Satış sayfası görselindeki cetvel çubuğu %40 kalınlaştı. Kapı kırmızı düşmüyor ama görsel çıktı değişti ve kimse göze bakarak doğrulamadı.
+
+## H0 — Girdi masası — GEÇTİ
+ölçülen: 43 fotoğraf · 5 kumaş satırı · 15 aday flat · `git ls-files GIRDI` = 0   eşik: ≥15 · ≥5 kaynaklı · 15 flat · git'te 0   commit: `2ffa8fb`
+hakem notu: `secim.html` hakemin kendi elinde `file://` üzerinden çalıştı — 15 sağlam görsel, 0 kırık, doğru içerikli `secim.json`, 0 konsol hatası.
+
+**Telif temiz.** `git ls-files GIRDI` = 0, history taraması da 0 (`git log --all --diff-filter=A --name-only | grep -c '^GIRDI/'`). `git check-ignore -v` ile kural etkin doğrulandı (`.gitignore:2:GIRDI/`). Tek bir telifli dosya ne ağaçta ne geçmişte.
+
+**İçerik gerçek, hakem tek tek açtı.** 43 JPEG, hepsi V&A IIIF'ten gerçek görüntü (1050×1400), 0-byte/HTML/placeholder yok, **künyesiz dosya 0** — 43/43 satır `dosya | tasarımcı | yıl | nesne | V&A URL | IIIF URL` taşıyor. Yıl bandı 1967-1977; Ossie Clark + Biba + Mary Quant. Kumaş tablosunda **kaynaksız tek rakam yok**: yazılan her g/m² ve en cm satıcı ürün sayfası URL'i + alıntılanan cümleyle geliyor, streç/recovery/bending length sütunlarının tamamı `ÖLÇÜLMEDİ` etiketli ve gerekçesi yazılı (ASTM D2594/D3107/D1388 için kamuya açık ölçüm yok, standartlar ücretli).
+
+**`secim.html` — Damla'nın tek işi, çalışıyor.** Chrome headless, sunucusuz: 15 img / 0 kırık · 15 checkbox · başlangıçta düğme kapalı, 5 seçilince açılıyor, 4'e düşünce kapanıyor · inen `secim.json` işaretlenen beşle birebir · konsol hatası 0 · sayfada tek yazı düğmenin sayacı, açıklama/form yok. Görünüm: beyaz zeminde 4 sütunlu ızgara, her karede siyah-beyaz teknik çizim, seçilen kare siyah çerçeveye dönüyor.
+
+**Aday flat'ler gerçekten teknik flat.** Hakem dördünü açtı: line drawing, fotoğraf/illüstrasyon değil. Aile: kaftan maxi, empire, prenses A-line, akışkan maxi.
+
+**Damla'nın bilmesi gerekenler.**
+- **Aday havuzu dar kaynaklı:** 15'in 12'si tek satıcıdan (Deer&Doe), 3'ü Folkwear/Helen's Closet. "İyi flat" hedefi büyük ölçüde tek stüdyonun çizim dilinden gelecek.
+- **Dosya adları güvenilmez, görsele bak.** `08-empire-buzgu-etek.png` aslında flutter kollu V yaka midi; `07-uzun-kol-akiskan-etek.png` kısa/puf kollu. Adlar ajanın etiketi, `KAYNAKLAR.md`'deki ürün adları doğru.
+- **Laura Ashley yok** — V&A'da görselli kayıt yok, Met'teki 3 kayıt public-domain değil.
+- **`-arka` sonekli 16 dosyanın arka olduğu DOĞRULANMADI** — V&A ikinci kareyi "arka" diye etiketlemiyor, KAYNAKLAR.md bunu dürüstçe not ediyor.
+- **1968-76 dönemin kendi teknik flat'i bulunamadı.** 19 kalıp zarfı toplandı ama zarflar illüstrasyon; üstlerindeki çizim bloğunu otomatik kırpma yanlış bölgeyi kesti, atıldı. Adaylar bugünkü satıcıların aynı ailedeki çizimleri.
+- **Yerel dal uzaktan ayrışmış:** `origin/main` = `68f4c99`, yerel HEAD onun ardılı değil. Sonraki push çakışacak.
+
+---
+
+# ⛔ SERT DURAK 1 — H4 DAMLA'YI BEKLİYOR
+
+`GIRDI/iyi-flat/secim.json` yok. H4'ün manken çizelgesinin tek kaynağı o dosya; uydurma bir çizelgeyle devam etmek §0.7 gereği yasak.
+
+**Damla'nın işi:** `GIRDI/iyi-flat/secim.html` dosyasını çift tıkla, beş flat işaretle, düğmeye bas. İnen `secim.json`'u `GIRDI/iyi-flat/` içine koy. Başka bir şey yok.
