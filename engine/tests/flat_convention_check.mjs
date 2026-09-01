@@ -100,7 +100,7 @@ const MATRIX = [
   ['orme_scoop',         { garment: 'top', shaping: 'dart', fabric: 'knit', skirtStyle: 'aLine', neckline: 'scoop' }],
 ];
 
-console.log('=== FLAT KONVANSIYON KAPISI — YUZEY HATTI (H3), ' + MATRIX.length + ' spec');
+console.log('=== ARASTIRMA HATTI (sevk disi) — FLAT KONVANSIYON KAPISI — YUZEY HATTI (H3), ' + MATRIX.length + ' spec');
 console.log(`    kanun: contract/flat-convention-v1.json   murekkep ${INK}   beden ${SIZE}`);
 console.log('    olculen hat: engine.flatJSON(spec, body) -> web/lib/flat-from-plan.js');
 

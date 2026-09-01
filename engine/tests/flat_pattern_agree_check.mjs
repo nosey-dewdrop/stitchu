@@ -76,7 +76,9 @@ let fails = 0;
 const FAIL = (m) => { console.log(`FAIL  ${m}`); fails += 1; };
 const OK = (m) => console.log(`ok    ${m}`);
 
-console.log('=== KANAT (a) — FLAT ↔ KALIP UYUMU · beden ' + SIZE);
+console.log('=== ARASTIRMA HATTI (sevk disi) — KANAT (a) — FLAT ↔ KALIP UYUMU · beden ' + SIZE);
+console.log('    olculen hat 3B yuzey hattidir (shell-flat / surface-pattern), sevk edilen cizim DEGIL;');
+console.log('    sevk edilen hattin kapisi: engine/tests/cizim_giysi_mi.mjs');
 console.log(`    tolerans %${TOL_PCT} — YAYINDAN DEĞİL, KARARDAN (GECE/V3-R.md "EŞİK 2": yayınlanmış formül YOK)`);
 console.log(`    flat  tarafı: engine/build/shell-flat ${SIZE}`);
 console.log(`    kalıp tarafı: node ${MEASURE_TOOL.replace(root + '/', '')} <pattern.json>`);

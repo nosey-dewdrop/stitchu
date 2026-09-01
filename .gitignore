@@ -162,3 +162,8 @@ engine/imitate/teshis-rapor.json
 # every measurement run (rasterize.mjs + flat-metre.py). Pure run artefacts.
 engine/tools/flat-metre/out/
 engine/tools/flat-metre/metre-sonuc.json
+
+# KOSU/ciktilar png+svg: kosu sirasinda uretilebilir cikti (cizim hattindan
+# yeniden basilir) — depo butcesi (git ls-files <= 800) icin takipten cikti.
+KOSU/ciktilar/*.png
+KOSU/ciktilar/*.svg

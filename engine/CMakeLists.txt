@@ -126,7 +126,10 @@ add_test(NAME bundle_fresh_check
 add_test(NAME flat_mirror_check COMMAND node
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_mirror_check.mjs)
 #
-# flat_convention_check (F-D 2026-08-23 · H3'te yüzey hattına bağlandı): Damla
+# flat_convention_check — ARASTIRMA HATTI (sevk disi): 3B yüzey hattını
+# (flatJSON -> flat-from-plan.js) ölçer, sevk edilen çizimi DEĞİL (o kapı
+# cizim_giysi_mi). Silinmedi, kapatılmadı, eşiği değişmedi.
+# (F-D 2026-08-23 · H3'te yüzey hattına bağlandı): Damla
 # "flatlerin hepsi aynı convention'da değil — hepsinin AYNI MODELDEN ÇIKMA gibi
 # olması lazım". Sevk edilen çizimi 6 spec'te koşturur, SVG'yi PARSE eder:
 # ölçek beyanı belgenin kendi mm/birim aritmetiğiyle DOĞRULANIR (eski kapı iki
@@ -135,6 +138,7 @@ add_test(NAME flat_mirror_check COMMAND node
 # sınır) · dört sınıfın hepsi TEK manken çizelgesini ilan ediyor. Croquis çapası
 # hükmü (§1d/H6) flat_pattern_agree_check --all'a taşındı, kaybolmadı.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
+set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
 
 # cizim_giysi_mi (2026-09-01): "BUTONA BASIYORUM, KOL-YAKA-PENSLI BIR CIZIM
 # INIYOR." Sevk edilen teknik cizim artik 3B YUZEY hattinin projeksiyonu degil,
@@ -180,7 +184,11 @@ add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_D
 # koşmuyordu — kaydetmek bir SIKILAŞTIRMADIR.
 add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
 
-# flat_pattern_agree_check (V3-C kanat (a), 2026-08-24 · H3 2026-08-30 --all): aynı bedenden üretilen
+# flat_pattern_agree_check — ARASTIRMA HATTI (sevk disi): shell-flat ile
+# surface-pattern'ü, yani 3B yüzey hattını ölçer; sevk edilen çizim hattının
+# (draftJSON -> flat-from-pattern.js) kapısı cizim_giysi_mi'dir. Silinmedi,
+# kapatılmadı, eşiği değişmedi.
+# (V3-C kanat (a), 2026-08-24 · H3 2026-08-30 --all): aynı bedenden üretilen
 # TEKNİK ÇİZİM (shell-flat) ile KALIP (surface-pattern + tools/pattern-measure.mjs)
 # altı ölçüde %1.5 içinde mi. ★ %1.5 YAYINDAN DEĞİL KARARDAN — GECE/V3-R.md
 # "EŞİK 2": technical flat ↔ kalıp uyumu için yayınlanmış formül YOK. Ölçüm aleti
@@ -190,6 +198,7 @@ add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests
 # siluetini kalıbın kendi bel/göğüs/kalça çizgisine 0.1mm'de tutar, kalemin her
 # izini repoda arar ve manken çizelgesi beyanını (H6) doğrular.
 add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs --all)
+set_tests_properties(flat_pattern_agree_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
 
 # tek_nesne_check (GECE7 / F3, 2026-08-26): flat ile kalıp AYNI DİKİŞ PLANINDAN
 # mı çıkıyor. ⚠ Bu kapı flat_pattern_agree_check'in EŞİTLİK sorusunu SORMAZ ve

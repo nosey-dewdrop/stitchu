@@ -37,6 +37,11 @@
 //      kalibin KENDI panellerinin ayni yerdeki yarim genislikleriyle 0.1 mm'de
 //      tutmak zorunda. (Belde olculen sey DIKILMIS beldir: pensler kapalidir,
 //      ve kapanan miktar kalibin kendi pens bacaklarindan cikar.)
+//  (g2) UC-CIZGI MUTABAKATI (H3R): gogus/bel/kalca uc cizgide cizim ile
+//      draftJSON kalibi <= 0.1 mm — bel PENS-KAPALI olculur ve kalip tarafinin
+//      kapali olcumu bu dosyanin icinde, web/lib'e dokunmadan, draftJSON'un
+//      kendi verisinden yeniden kurulur. Elbise + etek + top + orme dort
+//      sinifin dordu de olculmek zorunda; bos gecen sinif KIRMIZI.
 //  (h) AYNA. Her gorunum x = 0'a gore simetrik olmak zorunda; siluet yarim
 //      cizilip aynalandigi icin bu bir tolerans degil bir OZDESLIK, esik 1e-6.
 //
@@ -345,6 +350,202 @@ console.log('\n--- (g) cizilen genislik == kalibin genisligi (0.1 mm)');
   if (!bad) OK(`(g) tek panelli onlerde cizilen yarim genislik == kalibin yarim genisligi; prenses onlerde birlestirme kacigi < 0.79375 mm (reponun uretim dikis toleransi) ve dikis cizili`);
 }
 
+// --------------------------------------------------------------- (g2) UC-CIZGI MUTABAKATI
+// Gogus / bel / kalca UC cizgide cizim ile draftJSON kalibi 0.1 mm'de tutmak
+// zorunda — ve BEL, PENS-KAPALI olculur: cizici pensleri kapatarak ciziyor
+// (flat-from-pattern.js sewPanel), o yuzden kalip tarafinda da AYNI kapali
+// olcum burada, web/lib'e HIC dokunmadan, draftJSON'un kendi komut/marking
+// verisinden yeniden kurulur. Iki taraf ayni sayiyi vermek zorunda; cizim
+// tarafina atilacak tek eksenlik bir kaydirma (orn. x*1.001) bu siki KIRMIZI
+// dusurur — mutasyon disiplini kaniti bu satirlarin uzerinde kosuldu.
+// Kapsam: elbise + etek + top + orme (dort sinif). Prenses (g)'deki gerekceyle
+// disarida: on IKI panelden kurulur ve kendi sert olcusuyle (dikis kacigi)
+// yargilanir.
+console.log('\n--- (g2) uc-cizgi mutabakati: gogus/bel/kalca, cizim <-> kalip <= 0.1 mm (bel PENS-KAPALI)');
+{
+  const TOL = 0.1;
+  // yerel mm aritmetigi — web/lib'den import YOK, kalip tarafi bagimsiz olculur
+  const vsub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+  const vnorm = (a) => Math.hypot(a[0], a[1]);
+  const vlerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const rot = (p, c, th) => {
+    const s = Math.sin(th), co = Math.cos(th), d = vsub(p, c);
+    return [c[0] + d[0] * co - d[1] * s, c[1] + d[0] * s + d[1] * co];
+  };
+  const bez = (p, t) => {
+    const u = 1 - t, a = u * u * u, b = 3 * u * u * t, cc = 3 * u * t * t, dd = t * t * t;
+    return [a * p[0][0] + b * p[1][0] + cc * p[2][0] + dd * p[3][0],
+            a * p[0][1] + b * p[1][1] + cc * p[2][1] + dd * p[3][1]];
+  };
+  function segsOf(cmds) {
+    const out = []; let cur = null, start = null;
+    for (const c of cmds) {
+      if (c.type === 'move') { cur = [c.x, c.y]; start = cur; continue; }
+      if (c.type === 'close') {
+        if (cur && start && vnorm(vsub(cur, start)) > 1e-7) {
+          out.push([cur, vlerp(cur, start, 1 / 3), vlerp(cur, start, 2 / 3), start]);
+        }
+        cur = start; continue;
+      }
+      if (!cur) cur = [0, 0];
+      const p3 = [c.x, c.y];
+      if (c.type === 'line') out.push([cur, vlerp(cur, p3, 1 / 3), vlerp(cur, p3, 2 / 3), p3]);
+      else if (c.type === 'curve') out.push([cur, [c.cp1x, c.cp1y], [c.cp2x, c.cp2y], p3]);
+      else continue;
+      cur = p3;
+    }
+    return out;
+  }
+  const sample = (segs, per = 40) => {
+    const out = [];
+    segs.forEach((s, k) => { for (let j = k === 0 ? 0 : 1; j <= per; j++) out.push(bez(s, j / per)); });
+    return out;
+  };
+  const nearest = (P, q) => {
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < P.length; i++) { const d = vnorm(vsub(P[i], q)); if (d < bd) { bd = d; best = i; } }
+    return best;
+  };
+  const dartsOf = (piece) => {
+    const polys = []; let cur = null;
+    for (const c of piece.markings || []) {
+      if (c.type === 'move') { cur = [[c.x, c.y]]; polys.push(cur); continue; }
+      if (c.type === 'close' || !cur) continue;
+      cur.push([c.x, c.y]);
+    }
+    return polys.filter((p) => p.length >= 3);
+  };
+  // Pensi KAPAT: bacaklarin arasindaki aciyla, apeks etrafinda, kenarin
+  // yan-dikis tarafini dondur. flat-from-pattern.js closeDart'in yaptigi
+  // OPERASYONUN kendisi — kod degil, tanim ortak: pens kapatmak budur.
+  function closeDartL(pts, dart, outboardAtStart) {
+    const apex = dart[1], legA = dart[0], legB = dart[dart.length - 1];
+    let i1 = nearest(pts, legA), i2 = nearest(pts, legB);
+    if (i1 > i2) { const t = i1; i1 = i2; i2 = t; }
+    if (i2 - i1 < 1) return null;
+    const ang = (i) => Math.atan2(pts[i][1] - apex[1], pts[i][0] - apex[0]);
+    const th = outboardAtStart ? ang(i2) - ang(i1) : ang(i1) - ang(i2);
+    if (!isFinite(th)) return null;
+    if (outboardAtStart) return pts.slice(0, i1 + 1).map((p) => rot(p, apex, th)).concat(pts.slice(i2 + 1));
+    return pts.slice(0, i1 + 1).concat(pts.slice(i2).map((p) => rot(p, apex, th)));
+  }
+  // Panelin pens kenarini bul (beden: alt/hem kenari, etek: ust/bel kenari),
+  // ustundeki TUM pensleri dis uctan iceri dogru kapat, kapali noktalari dondur.
+  function closedEdge(piece, kind) {
+    const segs = segsOf(piece.commands);
+    if (!segs.length) return null;
+    const all = segs.flat();
+    const yTop = Math.min(...all.map((p) => p[1]));
+    const yBot = Math.max(...all.map((p) => p[1]));
+    const H = yBot - yTop || 1;
+    let edge, outboardAtStart;
+    if (kind === 'hem') {                      // beden/top: pens kenari = hem (yan -> orta)
+      let hemIdx = -1;
+      for (let k = 0; k < segs.length; k++) if (Math.abs(segs[k][3][1] - yBot) < 1.0) hemIdx = k;
+      if (hemIdx < 0) return null;
+      edge = [segs[hemIdx]]; outboardAtStart = true;
+    } else {                                   // etek: pens kenari = ust/bel (orta -> yan)
+      let t = 0;
+      while (t < segs.length && Math.max(...segs[t].map((p) => p[1])) < yTop + 0.08 * H) t++;
+      if (!t) return null;
+      edge = segs.slice(0, t); outboardAtStart = false;
+    }
+    let pts0 = sample(edge, 40);
+    const darts = dartsOf(piece)
+      .map((d) => ({ d, at: nearest(pts0, d[0]) }))
+      .filter(({ d }) => Math.min(vnorm(vsub(pts0[nearest(pts0, d[0])], d[0])),
+                                  vnorm(vsub(pts0[nearest(pts0, d[d.length - 1])], d[d.length - 1]))) <= 8)
+      .sort((a, b) => (outboardAtStart ? a.at - b.at : b.at - a.at));
+    let n = 0;
+    for (const { d } of darts) { const r = closeDartL(pts0, d, outboardAtStart); if (r) { pts0 = r; n++; } }
+    return { pts: pts0, kapatilan: n };
+  }
+  const pieceMaxX = (p) => Math.max(...p.commands.filter((k) => k.type !== 'close')
+    .flatMap((k) => [k.x, k.cp1x, k.cp2x].filter((v) => typeof v === 'number')));
+  const pieceMaxY = (p) => Math.max(...p.commands.filter((k) => k.type !== 'close')
+    .flatMap((k) => [k.y].filter((v) => typeof v === 'number')));
+
+  let bad = 0;
+  const sayilan = { elbise: 0, etek: 0, top: 0, orme: 0 };
+  for (const c of cizimler) {
+    if ((c.spec.shaping || 'dart') === 'princess') continue;   // (g)'deki kapsam karari
+    const drafted = JSON.parse(engine.draftJSON(engineSpec(c.spec), bodyForSize(BEDEN)));
+    const P = drafted.pattern.pieces;
+    const bodice = P.find((p) => /^(Bodice Front|Top Front)$/.test(p.name));
+    const skirt = P.find((p) => /^(Skirt Front|Skirt Center Front|Front)$/.test(p.name));
+    const sil = byRol(c.ps, 'siluet').find((p) => p.view === 'front');
+    if (!sil) { FAIL(`(g2) ${c.ad}: on siluet yok`); bad++; continue; }
+    const silPts = pts(sil.d);
+    const belYollari = byRol(c.ps, 'bel-dikisi').filter((p) => p.view === 'front' && p.yan === 'sag');
+    const satir = [];
+    const kiyas = (ad, kalipMM, cizimMM) => {
+      const fark = Math.abs(cizimMM - kalipMM);
+      satir.push(`${ad} kalip ${kalipMM.toFixed(4)} / cizim ${cizimMM.toFixed(4)} (fark ${fark.toFixed(4)})`);
+      if (!(fark <= TOL)) { FAIL(`(g2) ${c.ad}: ${ad} cizim ${cizimMM.toFixed(4)} mm, kalip ${kalipMM.toFixed(4)} mm, fark ${fark.toFixed(4)} > ${TOL}`); bad++; }
+    };
+
+    if (bodice) {
+      // GOGUS: beden panelinin en genis noktasi == siluetin beden bolgesindeki
+      // en genis nokta (kontrol noktalari dahil; pens kapanisi bel ucunu
+      // oynatir, koltukalti ucunu oynatmaz — rampSegs ust ucu sabit tutar).
+      const bodBot = pieceMaxY(bodice);
+      kiyas('gogus', pieceMaxX(bodice),
+            Math.max(...silPts.filter((p) => p[1] <= bodBot + 0.5).map((p) => p[0])));
+      // BEL (elbise/orme) ya da ETEK UCU=KALCA HIZASI (top): pens-KAPALI kenar.
+      const kapali = closedEdge(bodice, 'hem');
+      if (!kapali) { FAIL(`(g2) ${c.ad}: beden pens kenari bulunamadi`); bad++; }
+      else if (skirt) {
+        // elbisede kapali beden beli cizimde bel-dikisi olarak DURUYOR
+        if (belYollari.length !== 1) { FAIL(`(g2) ${c.ad}: cizimde ${belYollari.length} bel-dikisi, beklenen 1`); bad++; }
+        else kiyas(`bel(pens-kapali,${kapali.kapatilan} pens)`,
+                   Math.max(...kapali.pts.map((p) => p[0])),
+                   Math.max(...pts(belYollari[0].d).map((p) => p[0])));
+      } else {
+        // top'ta kapali hem siluetin kendisinde; kalibin kapali uc noktasi
+        // cizimde 0.1 mm icinde AYNEN var olmak zorunda (nokta uyeligi)
+        const uc = kapali.pts.reduce((a, b) => (b[0] > a[0] ? b : a));
+        const en = Math.min(...silPts.map((p) => vnorm(vsub(p, uc))));
+        satir.push(`etek-ucu(pens-kapali,${kapali.kapatilan} pens) kalip ucu [${uc[0].toFixed(4)}, ${uc[1].toFixed(4)}] cizimde en yakin ${en.toFixed(4)}`);
+        if (!(en <= TOL)) { FAIL(`(g2) ${c.ad}: pens-kapali etek ucu kalipta [${uc[0].toFixed(4)}, ${uc[1].toFixed(4)}] ama cizimdeki en yakin nokta ${en.toFixed(4)} mm uzakta`); bad++; }
+      }
+    }
+    if (skirt) {
+      if (bodice) {
+        // KALCA/ETEK BOLGESI: etegin en genis noktasi (duz etekte kalca, A'da
+        // etek ucu) == siluetin bel alti bolgesindeki en genis nokta. Pens
+        // kapanisi etegin ALT ucunu oynatmaz (rampSegs: delta belde, etekte 0).
+        const bodBot = pieceMaxY(bodice);
+        kiyas('kalca/etek', pieceMaxX(skirt),
+              Math.max(...silPts.filter((p) => p[1] >= bodBot + 1.0).map((p) => p[0])));
+      } else {
+        // etek sinifi: kalca/etek = butun siluetin en genisi
+        kiyas('kalca/etek', pieceMaxX(skirt), Math.max(...silPts.map((p) => p[0])));
+        // BEL pens-KAPALI: cizimdeki ust bel-dikisi (alttaki, kemer derinligi
+        // kadar asagi ofsetlenmis dikis izi cizgisidir)
+        const kapali = closedEdge(skirt, 'top');
+        if (!kapali) { FAIL(`(g2) ${c.ad}: etek pens kenari bulunamadi`); bad++; }
+        else if (belYollari.length < 1) { FAIL(`(g2) ${c.ad}: cizimde bel-dikisi yok`); bad++; }
+        else {
+          const ort = (p) => pts(p.d).reduce((s, q) => s + q[1], 0) / pts(p.d).length;
+          const ust = belYollari.reduce((a, b) => (ort(b) < ort(a) ? b : a));
+          kiyas(`bel(pens-kapali,${kapali.kapatilan} pens)`,
+                Math.max(...kapali.pts.map((p) => p[0])),
+                Math.max(...pts(ust.d).map((p) => p[0])));
+        }
+      }
+    }
+    const sinif = c.spec.garment === 'dress' ? (c.spec.fabric === 'knit' ? 'orme' : 'elbise')
+                : c.spec.garment === 'skirt' ? 'etek' : 'top';
+    sayilan[sinif]++;
+    console.log(`      ${c.ad.padEnd(24)} ${satir.join(' · ')}`);
+  }
+  // dort sinifin dordu de OLCULMUS olmak zorunda — bos gecen sinif = olculmemis hukum
+  for (const [s, n] of Object.entries(sayilan)) {
+    if (!n) { FAIL(`(g2) ${s} sinifinda hic spec olculmedi`); bad++; }
+  }
+  if (!bad) OK(`(g2) ${Object.values(sayilan).reduce((a, b) => a + b, 0)} spec'te (elbise ${sayilan.elbise} · etek ${sayilan.etek} · top ${sayilan.top} · orme ${sayilan.orme}) gogus/bel/kalca cizim == kalip, 0.1 mm'de, bel pens-kapali`);
+}
+
 // --------------------------------------------------------------- (h) AYNA
 console.log('\n--- (h) ayna: her gorunum x = 0 etrafinda simetrik');
 {
@@ -421,4 +622,4 @@ for (const c of cizimler) {
 }
 
 if (fails) { console.log(`\nFAIL cizim_giysi_mi — ${fails} ihlal`); process.exit(1); }
-console.log(`\nok cizim_giysi_mi — ${cizimler.length} spec, (a)-(h) hepsi yesil`);
+console.log(`\nok cizim_giysi_mi — ${cizimler.length} spec, (a)-(i) + (g2) uc-cizgi mutabakati hepsi yesil`);
