@@ -152,6 +152,17 @@ set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SE
 # olcemez oldugu iki hukmun yeni kaynaga BAGLANMIS halidir — silinmediler.
 add_test(NAME cizim_giysi_mi COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/cizim_giysi_mi.mjs)
 
+# manken_insan_ayrim_check (F6-konvansiyon 2026-09-02): flat 38 != kalip 38.
+# Kalip INSAN cizelgesine cizilir (dikilebilir), flat MANKEN bedenine — ve o
+# manken artik OLCULMUS: 5 referans flat (KOSU/ciktilar/flat-secim.md), bel/gogus
+# orani pikselden (KOSU/flat-olcum.py), contract/mannequin-chart-v1.json v2.
+# Kapi: kaynak zinciri (olcum -> cizelge -> canli capa turetmesi) + EU38'de
+# flat bel != kalip bel (fark > 0, tam cizelge sayisi) + dort giysi sinifinda
+# ayni cizelge (<= %1) + dosya ustunde ilan (data-manken-*). Donusum tek yerde:
+# web/lib/flat-from-pattern.js mankenWarp; cizim_giysi_mi (g/g2) ozdesligi o
+# ilani tersine cevirerek DONUSUM ONCESI olcmeye devam eder (gevsetilmedi).
+add_test(NAME manken_insan_ayrim_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/manken_insan_ayrim_check.mjs)
+
 # flat_expresses_spec_check (V4-B 2026-08-24 · H3'te yüzey hattına bağlandı):
 # konvansiyon "hepsi aynı MANKEN" demektir, "hepsi aynı ÇİZİM" değil. Emsal:
 # sleeveStyle 'puff' silently dropped (2026-07-18). Damga (`data-engine-gap`)

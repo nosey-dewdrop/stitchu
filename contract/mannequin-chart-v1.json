@@ -26,6 +26,38 @@
     "cizgi": "dikis cizgisi (pay yok) — kalip tarafi kesim cizgisi cizer, manken tarafi cizmez"
   },
 
+  "v2": {
+    "_law": "F6-KONVANSIYON (2026-09-02). v1'in 'fark SIFIR' karari OLCUMLE degisti: 5 referans flat secildi (GIRDI/iyi-flat/adaylar, secim gerekceleri KOSU/ciktilar/flat-secim.md), bel/gogus yari-genislik orani dogrudan pikselden olculdu (uretici KOSU/flat-olcum.py, cikti KOSU/ciktilar/flat-olcum.json; asagidaki olcum blogu o dosyanin kayit kopyasidir). Damla'nin 4. maddesi: kalip DIKILEBILIR gercek beden, flat daha IDEAL kadin bedeni. Olculen gercek sasirtti: referans flatlerin beli bizim pens-kapali cizimimizden DAHA YUMUSAK (oran 0.858, bizimki 0.806) — ideal beden burada 'daha dar' degil 'daha az kum saati' demek. Donusum TEK YERDE uygulanir: web/lib/flat-from-pattern.js manken donusumu; kalip tarafina DOKUNULMAZ. Kapi: engine/tests/manken_insan_ayrim_check.mjs. Bu blok v1'in yanina EKLENDI, v1 alanlari yerinde duruyor cunku tuketicileri (seamplan.cpp bedenlendirme + H6) ayri bir hat.",
+    "olcum": {
+      "uretici": "KOSU/flat-olcum.py (esik 160, siluet = penceredeki en dis murekkep cifti)",
+      "belGogusOrani": {
+        "13-yuksek-bel-a-line.png": 0.893048,
+        "14-uzun-kol-maxi.png": 0.823232
+      },
+      "belPX": { "13": 334, "14": 163, "06": 145, "07": 142, "09": 166 },
+      "gogusPX": { "13": 374, "14": 198, "06": null, "07": null, "09": null },
+      "_sinir": "gogus yalnizca kolsuz iki capada olculebildi (kollu flatte kol govdeyi orter); kalca 5/5'te OLCULMEDI (bel alti her adayda etek klosu — olculen sey manken kalcasi olmazdi). Gogus ve kalca icin en kisitlayici deger: fark 0."
+    },
+    "oran": {
+      "belGogus": 0.85814,
+      "_kaynak": "iki capanin ortalamasi (0.893048 + 0.823232) / 2 — KOSU/ciktilar/flat-olcum.json oranlar.ortalama. n=2 SINIRI ADIYLA: kollu uc referansta gogus olculemedi; Damla baska referans isaretlerse olcum yeniden kosulur, bu sayi degisir."
+    },
+    "capa": {
+      "_law": "Donusum sabiti EU38'de, motorun KENDI capa sinifindan turetildi ve o turetme kapida her kosuda yeniden yapilir (elle duzeltilecek sayi yok).",
+      "spec": { "garment": "dress", "shaping": "dart", "fabric": "woven", "neckline": "crew", "sleeveStyle": "none", "skirtStyle": "aLine", "skirtLength": "midi" },
+      "beden": "EU38",
+      "kalipGogusYarimMM": 245.0965,
+      "kalipBelKapaliYarimMM": 197.5854,
+      "_turetme": "farkCeyrekMM = kalipGogusYarimMM * oran.belGogus - kalipBelKapaliYarimMM = 245.0965 * 0.85814 - 197.5854 = 12.7417 (bel kapali = pens-kapali, cizim_giysi_mi g2 aritmetigi)"
+    },
+    "donusum": {
+      "farkCeyrekMM": 12.7417,
+      "kalcaDerinlikMM": 200,
+      "_law": "ILAN EDILMIS TEK DONUSUM. Flat, bel hattinda yari-genisligini farkCeyrekMM kadar ACAR (cevre farki 4x = 50.97 mm): carpan m(y) = 1 + d(y)/Wbel, d(y) gogus hattinda 0'dan bele dogru dogrusal buyur, belde farkCeyrekMM, belden kalcaDerinlikMM asagida tekrar 0 (kalca ve gogus insan cizelgesinde: olcum blogundaki en-kisitlayici karar). Wbel = o cizimin KENDI donusum-oncesi bel yari-genisligi ve SVG'ye data-manken-bel-yarim-mm olarak basilir — kapi donusumu tersine cevirip kalipla OZDESLIGI olcer. kalcaDerinlikMM kaynagi: engine/src/bodice.cpp:708 hipBlendDepth = 200 (bel-kalca cizim derinligi, etek blogu ile ayni).",
+      "yon": "POZITIF = flat beli kaliptan genis. Isaret olcumden geldi, zevkten degil; hakem baska deger koyarsa yalniz bu blok degisir."
+    }
+  },
+
   "croquisCapalari": {
     "_law": "Croquis'in her capasi ya bu dosyadaki bir cevreden ARITMETIKLE turer, ya da kaynaksiz oldugu ACIKCA yazilir. contract/flat-convention-v1.json bu degerleri KOPYALAMAZ, buradan okur; kapi ikisinin ayni sayi oldugunu her kosuda dogrular (H6).",
     "unitMM": 3.0,

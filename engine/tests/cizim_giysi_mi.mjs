@@ -37,6 +37,11 @@
 //      kalibin KENDI panellerinin ayni yerdeki yarim genislikleriyle 0.1 mm'de
 //      tutmak zorunda. (Belde olculen sey DIKILMIS beldir: pensler kapalidir,
 //      ve kapanan miktar kalibin kendi pens bacaklarindan cikar.)
+//      F6'dan beri ozdeslik DONUSUM ONCESI olculur: flat, ilan edilmis manken
+//      donusumu tasir (contract/mannequin-chart-v1.json v2), kapi onu dosyanin
+//      kendi ilanindan tersine cevirir; carpan ayrica manken_insan_ayrim_check
+//      kapisinda kaynagina vurulur. Ayni beden verildiginde donusumden
+//      arindirilmis cizim kalibin TA KENDISI olmak zorunda — 0.1 mm, gevseme yok.
 //  (g2) UC-CIZGI MUTABAKATI (H3R): gogus/bel/kalca uc cizgide cizim ile
 //      draftJSON kalibi <= 0.1 mm — bel PENS-KAPALI olculur ve kalip tarafinin
 //      kapali olcumu bu dosyanin icinde, web/lib'e dokunmadan, draftJSON'un
@@ -124,7 +129,14 @@ function paths(svg) {
     const a = m[1];
     const g = (k) => { const r = new RegExp(`${k}="([^"]*)"`).exec(a); return r ? r[1] : null; };
     out.push({ rol: g('data-rol'), view: g('data-view'), yan: g('data-yan'), d: g('d') || '',
-               w: parseFloat(g('stroke-width') || '0') });
+               w: parseFloat(g('stroke-width') || '0'),
+               manken: g('data-manken-fark-ceyrek-mm') === null ? null : {
+                 fark: parseFloat(g('data-manken-fark-ceyrek-mm')),
+                 Wbel: parseFloat(g('data-manken-bel-yarim-mm')),
+                 bustY: parseFloat(g('data-manken-bust-y')),
+                 belY: parseFloat(g('data-manken-bel-y')),
+                 kalcaY: parseFloat(g('data-manken-kalca-y')),
+               } });
   }
   return out;
 }
@@ -137,6 +149,44 @@ function pts(d) {
   const out = [];
   for (let i = 0; i + 1 < nums.length; i += 2) out.push([parseFloat(nums[i]), parseFloat(nums[i + 1])]);
   return out;
+}
+
+// F6-KONVANSIYON: cizim artik MANKEN donusumu tasiyor (flat 38 != kalip 38,
+// contract/mannequin-chart-v1.json v2). Donusum dosyanin KENDI ustunde ilan
+// edilir (siluet path'inin data-manken-* nitelikleri) ve buradaki hukumler
+// "donusum ONCESI ozdeslik" olarak olculur: ilan edilen carpan m(y) = 1 +
+// d(y)/Wbel tersine cevrilir, kalan her sey ayni 0.1 mm'de kalipla ayni olmak
+// zorunda. Bu bir gevsetme DEGIL: carpanin kendisi ayrica hem kanuna (asagida)
+// hem kaynak olcumune (engine/tests/manken_insan_ayrim_check.mjs) vurulur.
+const MANKEN_LAW = JSON.parse(readFileSync(join(ROOT, 'contract/mannequin-chart-v1.json'), 'utf8'));
+const MANKEN_FARK = MANKEN_LAW.v2.donusum.farkCeyrekMM;
+function mankenTers(sil) {
+  const m = sil && sil.manken;
+  if (!m || !isFinite(m.fark) || m.fark === 0) return (p) => p;
+  const dOf = (y) => {
+    if (y >= m.kalcaY) return 0;
+    if (y <= m.belY) {
+      if (m.belY - m.bustY <= 1e-3) return m.fark;   // etek: tepe duz (bust == bel)
+      return y <= m.bustY ? 0 : m.fark * (y - m.bustY) / (m.belY - m.bustY);
+    }
+    return m.fark * (m.kalcaY - y) / (m.kalcaY - m.belY);
+  };
+  return (p) => [p[0] / (1 + dOf(p[1]) / m.Wbel), p[1]];
+}
+// ilan zorunlu: kanunun farki sifir degilken on siluette ne donusum ilani ne de
+// adli bir RED varsa, cizici donusumu SESSIZCE atlamis demektir — kirmizi.
+function mankenIlanKontrol(ad, c, sil) {
+  if (!MANKEN_FARK) return true;
+  if (sil.manken) {
+    if (Math.abs(sil.manken.fark - MANKEN_FARK) > 1e-9) {
+      FAIL(`(manken) ${ad}: cizim fark ${sil.manken.fark} ilan ediyor, kanun ${MANKEN_FARK} diyor`);
+      return false;
+    }
+    return true;
+  }
+  if (/manken donusumu:/.test(c.svg)) return true;   // adiyla reddedilmis
+  FAIL(`(manken) ${ad}: kanunun farki ${MANKEN_FARK} ama on siluette ne data-manken-* ilani ne adli red var`);
+  return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -320,7 +370,9 @@ console.log('\n--- (g) cizilen genislik == kalibin genisligi (0.1 mm)');
         .flatMap((k) => [k.x, k.cp1x, k.cp2x].filter((v) => typeof v === 'number'))));
     const sil = byRol(c.ps, 'siluet').find((p) => p.view === 'front');
     if (!sil) { FAIL(`(g) ${c.ad}: on siluet yok`); bad++; continue; }
-    const cizimMax = Math.max(...pts(sil.d).map((p) => p[0]));
+    if (!mankenIlanKontrol(c.ad, c, sil)) { bad++; continue; }
+    const ters = mankenTers(sil);                       // donusum ONCESI olcum
+    const cizimMax = Math.max(...pts(sil.d).map((p) => ters(p)[0]));
     if (Math.abs(cizimMax - kalipMax) > 0.1) {
       FAIL(`(g) ${c.ad}: cizim ${cizimMax.toFixed(4)} mm, kalip ${kalipMax.toFixed(4)} mm, fark ${(cizimMax - kalipMax).toFixed(4)} mm`);
       bad++;
@@ -475,7 +527,9 @@ console.log('\n--- (g2) uc-cizgi mutabakati: gogus/bel/kalca, cizim <-> kalip <=
     const skirt = P.find((p) => /^(Skirt Front|Skirt Center Front|Front)$/.test(p.name));
     const sil = byRol(c.ps, 'siluet').find((p) => p.view === 'front');
     if (!sil) { FAIL(`(g2) ${c.ad}: on siluet yok`); bad++; continue; }
-    const silPts = pts(sil.d);
+    if (!mankenIlanKontrol(c.ad, c, sil)) { bad++; continue; }
+    const ters = mankenTers(sil);                       // donusum ONCESI olcum
+    const silPts = pts(sil.d).map(ters);
     const belYollari = byRol(c.ps, 'bel-dikisi').filter((p) => p.view === 'front' && p.yan === 'sag');
     const satir = [];
     const kiyas = (ad, kalipMM, cizimMM) => {
@@ -499,7 +553,7 @@ console.log('\n--- (g2) uc-cizgi mutabakati: gogus/bel/kalca, cizim <-> kalip <=
         if (belYollari.length !== 1) { FAIL(`(g2) ${c.ad}: cizimde ${belYollari.length} bel-dikisi, beklenen 1`); bad++; }
         else kiyas(`bel(pens-kapali,${kapali.kapatilan} pens)`,
                    Math.max(...kapali.pts.map((p) => p[0])),
-                   Math.max(...pts(belYollari[0].d).map((p) => p[0])));
+                   Math.max(...pts(belYollari[0].d).map((p) => ters(p)[0])));
       } else {
         // top'ta kapali hem siluetin kendisinde; kalibin kapali uc noktasi
         // cizimde 0.1 mm icinde AYNEN var olmak zorunda (nokta uyeligi)
@@ -530,7 +584,7 @@ console.log('\n--- (g2) uc-cizgi mutabakati: gogus/bel/kalca, cizim <-> kalip <=
           const ust = belYollari.reduce((a, b) => (ort(b) < ort(a) ? b : a));
           kiyas(`bel(pens-kapali,${kapali.kapatilan} pens)`,
                 Math.max(...kapali.pts.map((p) => p[0])),
-                Math.max(...pts(ust.d).map((p) => p[0])));
+                Math.max(...pts(ust.d).map((p) => ters(p)[0])));
         }
       }
     }

@@ -58,11 +58,84 @@ const INK = '#1f3a5f';   // contract/flat-convention-v1.json ink.color
 const W_OUTLINE = 2.0;   // contract/flat-convention-v1.json lineClasses.classes.outline.width
 const W_SEAM = 1.4;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
 
+// ===========================================================================
+// THE MANNEQUIN TRANSFORM (F6-konvansiyon) — flat 38 is NOT pattern 38
+// ===========================================================================
+// The pattern is drafted on the REAL body chart and stays sewable; the flat is
+// the same garment drawn on the IDEAL figure every vendor flat implies. That
+// figure was MEASURED, not invented: five reference flats were chosen
+// (KOSU/ciktilar/flat-secim.md), their waist/bust half-width ratio read off the
+// pixels (KOSU/flat-olcum.py -> flat-olcum.json), and the result was the
+// OPPOSITE of the wasp-waist guess — the references sit at 0.858 where our
+// dart-closed drawing sat at 0.806. So the transform OPENS the waist. Bust and
+// hip stay on the human chart: the references' bust was only measurable on the
+// two sleeveless anchors and their hip on none (every candidate flares below
+// the waist), and the most constraining value for an unmeasured axis is zero.
+//
+// It is ONE transform, multiplicative in x, ramped in y (a tent: 0 at the bust
+// line, full at the waist, 0 again at hip depth), and it is INVERTIBLE from the
+// file alone: the multiplier is m(y) = 1 + d(y)/Wbel with Wbel PUBLISHED on the
+// silhouette path (data-manken-bel-yarim-mm), so every gate can undo it and
+// judge the pre-transform drawing against the pattern at full 0.1 mm strength.
+// The sleeve and the collar are NOT warped: both anchor at or above the bust
+// line where d = 0, and a sleeve is a tube hanging in front of the body — the
+// mannequin's waist is not inside it.
+const MANKEN_FARK_CEYREK_MM = 12.7417; // contract/mannequin-chart-v1.json v2.donusum.farkCeyrekMM
+const MANKEN_KALCA_DERINLIK_MM = 200;  // contract/mannequin-chart-v1.json v2.donusum.kalcaDerinlikMM
+
+/**
+ * Build the warp for one view. `half` is the assembled right-half silhouette
+ * (pre-transform), `bustY` the underarm level (null when the garment has no
+ * armhole — a skirt), `waistPt` the point where the garment's waist meets its
+ * side: a dress's waist-seam side end, a skirt's top-edge side end, a top's
+ * side-seam pinch (the drafted waistlineWidth, read back off the sewn seam).
+ * Returns { map, ... } or { sebep } when the waist cannot be anchored — a
+ * refusal by name, never a silent identity.
+ */
+function mankenWarp(half, bustY, waistPt) {
+  const F = MANKEN_FARK_CEYREK_MM;
+  if (!(Math.abs(F) > 0)) return null;
+  if (!waistPt) {
+    return { sebep: 'manken donusumu: bel noktasi yok (dikilen kenardan bel cikarilamadi) — cizim donussuz basildi, bir sonraki adim: bu sinifa bel noktasi tasit' };
+  }
+  const pts = samplePoly(half, 6);
+  const yTop = Math.min(...pts.map((p) => p[1]));
+  const yBot = Math.max(...pts.map((p) => p[1]));
+  const waistY = waistPt[1];
+  const Wbel = waistPt[0];
+  if (!(Wbel > 1)) return { sebep: 'manken donusumu: bel yari-genisligi olculemedi — cizim donussuz basildi' };
+  // A garment with no armhole (a skirt) has nothing above its waist to protect:
+  // the ramp then starts at the silhouette's own top, which for a skirt IS the
+  // waist give or take the edge's slope.
+  if (bustY == null) bustY = Math.min(yTop, waistY);
+  else if (!(waistY > bustY + 1e-3)) {
+    return { sebep: 'manken donusumu: bel hizasi gogus hattinin ustunde cikti — cizim donussuz basildi, bir sonraki adim: bu spec icin bel noktasini kontrol et' };
+  }
+  const hipY = Math.min(waistY + MANKEN_KALCA_DERINLIK_MM, yBot);
+  // A tent with a degenerate top (a skirt: bust level == waist level) is FLAT
+  // above the waist — the same rule, at the same 1e-3 threshold, that every
+  // reader of the published attributes applies, so forward and inverse agree
+  // even after the attributes' 4-decimal rounding.
+  const dOf = (y) => {
+    if (y >= hipY) return 0;
+    if (y <= waistY) {
+      if (waistY - bustY <= 1e-3) return F;
+      return y <= bustY ? 0 : F * (y - bustY) / (waistY - bustY);
+    }
+    return F * (hipY - y) / (hipY - waistY);
+  };
+  const map = (p) => {
+    const d = dOf(p[1]);
+    return d ? [p[0] * (1 + d / Wbel), p[1]] : p;
+  };
+  return { map, farkCeyrekMM: F, bustY, waistY, hipY, belYarimMM: Wbel };
+}
+
 import {
   add, sub, scale, norm, unit, lerp, rotAbout,
   segsFromCommands, polysFromCommands, samplePoly, polyLength, chainLength,
   cumFrac, atFrac, nearestIdx, mapSegs, reverseSegs, mirrorSegs, rampSegs,
-  pathD, polyD, segsFromPoly, bbox,
+  pathD, polyD, segsFromPoly, bbox, densifySegs,
 } from './flat-geom.js?v=141';
 
 // ---------------------------------------------------------------------------
@@ -451,7 +524,7 @@ function buildView(P, which) {
   let half = [];          // the right half of the silhouette, top to bottom
   const interior = [];    // [rol, segsOrPts, isPoly]
 
-  let waistJoinY = null, S = null, U = null;
+  let waistJoinY = null, S = null, U = null, warpWaistPt = null;
 
   if (bod) {
     let d = decompose(bod.piece);
@@ -488,8 +561,17 @@ function buildView(P, which) {
     if (skirtP) {
       // The bodice hem becomes the WAIST SEAM: an interior line, not an edge.
       waistJoinY = sewn.edgePts[sewn.edgePts.length - 1][1];
+      // The mannequin tent pegs where the waist seam MEETS the side seam: that
+      // is the point the gates measure, so it must carry the full fark exactly.
+      warpWaistPt = sewn.edgePts[0];
       interior.push(['bel-dikisi', sewn.edgePts, true]);
     } else {
+      // A top draws no waist seam; its waist is the side seam's own pinch —
+      // the drafted waistlineWidth, read back off the sewn side seam.
+      if (sewn.side.length) {
+        const sp = samplePoly(sewn.side, 24);
+        warpWaistPt = sp.reduce((a, b) => (b[0] < a[0] ? b : a));
+      }
       half = half.concat(segsFromPoly(sewn.edgePts));
       out.notes.hemPts = sewn.edgePts;
       out.notes.hemSA = bod.piece.seamAllowance;
@@ -527,6 +609,7 @@ function buildView(P, which) {
     out.notes.skirtDY = oy;
     const mv = (p) => [p[0], p[1] + oy];
     const waistSide = mv(sewn.edgePts[sewn.edgePts.length - 1]);
+    if (!bod) warpWaistPt = waistSide;   // a skirt's waist IS its top edge
     if (out.notes.bodiceWaistSide) {
       // The bodice waist and the skirt waist are one seam and they do not land
       // on the same point: the residual is PRINTED (data-bel-kacigi-mm) rather
@@ -582,11 +665,36 @@ function buildView(P, which) {
 
   if (!half.length) { out.sebep.push(`${which}: siluet bos`); return out; }
 
+  // F6-konvansiyon: the mannequin transform (mankenWarp above), applied to the
+  // BODY silhouette and its interior seam lines only, after assembly and before
+  // mirroring — the mirror and every published residual stay derived. Its
+  // parameters ride on the silhouette path so any reader can invert it.
+  const MK = mankenWarp(half, U ? U[1] : null, warpWaistPt);
+  let mkAttr = '';
+  if (MK && MK.sebep) out.sebep.push(`${which}: ${MK.sebep}`);
+  else if (MK && MK.map) {
+    mkAttr = ` data-manken-fark-ceyrek-mm="${MK.farkCeyrekMM}"` +
+      ` data-manken-bel-yarim-mm="${MK.belYarimMM.toFixed(4)}"` +
+      (MK.bustY == null ? '' : ` data-manken-bust-y="${MK.bustY.toFixed(4)}"`) +
+      ` data-manken-bel-y="${MK.waistY.toFixed(4)}" data-manken-kalca-y="${MK.hipY.toFixed(4)}"`;
+    // Densify first (EXACT subdivision): the warp lands on control points, and
+    // a control-sparse curve would only feel the tent where its controls sit.
+    // ONLY segments the tent touches are split — outside it the warp is the
+    // identity and the original control points (whose hull the pattern-side
+    // gates measure) must survive byte-for-byte.
+    const dens = (segs) => segs.flatMap((sg) => {
+      const ys = sg.p.map((q) => q[1]);
+      return (Math.min(...ys) < MK.hipY && Math.max(...ys) > MK.bustY) ? densifySegs([sg]) : [sg];
+    });
+    half = mapSegs(dens(half), MK.map);
+    for (const e of interior) e[1] = e[2] ? e[1].map(MK.map) : mapSegs(dens(e[1]), MK.map);
+  }
+
   // The half is drawn out and the mirror is DERIVED. A garment drawn twice is
   // two garments.
   const closed = half.concat(mirrorSegs(half));
   const flipY = P.flipY;
-  push('siluet', pathD(closed, flipY, true), W_OUTLINE, ` data-view="${F ? 'front' : 'back'}"`,
+  push('siluet', pathD(closed, flipY, true), W_OUTLINE, ` data-view="${F ? 'front' : 'back'}"${mkAttr}`,
        closed.flatMap((s) => s.p));
 
   for (const [rol, geom, isPoly] of interior) {

@@ -1,0 +1,127 @@
+{
+ "_ne": "F6-konvansiyon: 5 referans flatin piksel olcumu. Uretici: KOSU/flat-olcum.py",
+ "esik": 160,
+ "flatler": {
+  "13-yuksek-bel-a-line.png": {
+   "pencereX": [
+    119,
+    875
+   ],
+   "not": "kolsuz fitted beden + bel dikisi + A etek; gogus DOGRUDAN olculur (kol yok)",
+   "bel": {
+    "satirY": 517,
+    "solX": 384,
+    "sagX": 718,
+    "genislikPX": 334,
+    "bant": [
+     420,
+     580
+    ]
+   },
+   "gogus": {
+    "satirY": 344,
+    "solX": 364,
+    "sagX": 738,
+    "genislikPX": 374,
+    "bant": [
+     300,
+     420
+    ]
+   },
+   "belGogusOrani": 0.893048
+  },
+  "14-uzun-kol-maxi.png": {
+   "pencereX": [
+    30,
+    470
+   ],
+   "not": "askili fitted mini (Pauline gorunum A); gogus DOGRUDAN olculur (kol yok)",
+   "bel": {
+    "satirY": 306,
+    "solX": 165,
+    "sagX": 328,
+    "genislikPX": 163,
+    "bant": [
+     262,
+     340
+    ]
+   },
+   "gogus": {
+    "satirY": 216,
+    "solX": 148,
+    "sagX": 346,
+    "genislikPX": 198,
+    "bant": [
+     206,
+     262
+    ]
+   },
+   "belGogusOrani": 0.823232
+  },
+  "06-a-line-puff-kol-varyant.png": {
+   "pencereX": [
+    111,
+    475
+   ],
+   "not": "puf kollu dart elbise (Eleanor A); kol govdeyi ortuyor, gogus OLCULEMEDI",
+   "bel": {
+    "satirY": 258,
+    "solX": 201,
+    "sagX": 346,
+    "genislikPX": 145,
+    "bant": [
+     230,
+     300
+    ]
+   },
+   "gogus": "OLCULEMEDI — kol govdeyi ortuyor (kollu flatte kol alti govde satiri gercek gogus hatti DEGILDIR, yanlis olcmektense olcmemek secildi)"
+  },
+  "07-uzun-kol-akiskan-etek.png": {
+   "pencereX": [
+    51,
+    443
+   ],
+   "not": "puf kollu akiskan maxi (Celia A); kol govdeyi ortuyor, gogus OLCULEMEDI",
+   "bel": {
+    "satirY": 213,
+    "solX": 207,
+    "sagX": 349,
+    "genislikPX": 142,
+    "bant": [
+     194,
+     240
+    ]
+   },
+   "gogus": "OLCULEMEDI — kol govdeyi ortuyor (kollu flatte kol alti govde satiri gercek gogus hatti DEGILDIR, yanlis olcmektense olcmemek secildi)"
+  },
+  "09-a-line-puff-kol-midi.png": {
+   "pencereX": [
+    50,
+    450
+   ],
+   "not": "balon kollu midi (Lilas A); kol govdeyi ortuyor, gogus OLCULEMEDI",
+   "bel": {
+    "satirY": 309,
+    "solX": 167,
+    "sagX": 333,
+    "genislikPX": 166,
+    "bant": [
+     306,
+     350
+    ]
+   },
+   "gogus": "OLCULEMEDI — kol govdeyi ortuyor (kollu flatte kol alti govde satiri gercek gogus hatti DEGILDIR, yanlis olcmektense olcmemek secildi)"
+  }
+ },
+ "oranlar": {
+  "_ne": "bel/gogus yari-genislik orani — yalnizca gogsu dogrudan olculebilen kolsuz flatlerden",
+  "kaynakFlatler": {
+   "13-yuksek-bel-a-line.png": 0.893048,
+   "14-uzun-kol-maxi.png": 0.823232
+  },
+  "ortalama": 0.85814,
+  "n": 2,
+  "sinir": "n=2 — kollu uc referansta gogus olculemedigi icin oran iki kolsuz referanstan geliyor; Damla baska referans isaretlerse bu dosya yeniden kosulur ve contract v2 guncellenir"
+ },
+ "kalca": "OLCULMEDI — bes referansin besinde de bel alti giysi klosu (A etek) govdeyi ortuyor; olculecek sey mankenin kalcasi degil etegin klosu olurdu. En kisitlayici deger: fark 0 (contract v2 kalcayi ve gogsu insan cizelgesinde birakir, yalniz bel donusur)"
+}
