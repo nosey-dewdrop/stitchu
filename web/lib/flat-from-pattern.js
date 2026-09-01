@@ -724,7 +724,12 @@ export function renderFlatFromPattern(draft, meta = {}) {
   const yLo = Math.min(...boxes.map((b) => b.y0)), yHi = Math.max(...boxes.map((b) => b.y1));
   const wHalf = Math.max(...boxes.map((b) => Math.max(Math.abs(b.x0), Math.abs(b.x1))));
   const pad = 40, gap = 90, panelW = 2 * wHalf, h = yHi - yLo;
-  const W = 2 * pad + 2 * panelW + gap, H = 2 * pad + h + 30;
+  // F3-arka: an invented back needs two more caption lines under BACK; the
+  // frame grows to hold them so the declaration is never clipped out of the
+  // viewBox. `capY` is the FRONT/BACK caption baseline — identical to the old
+  // H-12 when no arka claim rides, so every other export stays byte-same.
+  const capY = 2 * pad + h + 18;
+  const W = 2 * pad + 2 * panelW + gap, H = capY + 12 + (meta.arka === 'uydurma' ? 36 : 0);
   const cx = [pad + wHalf, pad + panelW + gap + wHalf];
 
   const parts = [];
@@ -737,7 +742,11 @@ export function renderFlatFromPattern(draft, meta = {}) {
     `viewBox="0 0 ${W.toFixed(4)} ${H.toFixed(4)}" data-scale="1:1" data-unit-mm="1" ` +
     `data-source="DraftedPattern" data-dugum="${meta.dugum || ''}" data-size="${meta.beden || ''}" ` +
     `data-sinif="${(meta.sinif && meta.sinif.garment) || ''}/${(meta.sinif && meta.sinif.shaping) || ''}/` +
-    `${(meta.sinif && meta.sinif.fabric) || ''}">`);
+    `${(meta.sinif && meta.sinif.fabric) || ''}"` +
+    // F3-arka: the back view's ORIGIN, on the root so it survives offline.
+    // Absent when the caller carries no köken record (null): a drawing must not
+    // claim "seen" or "invented" about a back nobody recorded.
+    (meta.arka ? ` data-arka-koken="${meta.arka}"` : '') + '>');
 
   drawn.forEach((v, i) => {
     parts.push(`  <g fill="none" stroke="${INK}" transform="translate(${cx[i].toFixed(4)},${(pad - yLo).toFixed(4)})">`);
@@ -748,8 +757,18 @@ export function renderFlatFromPattern(draft, meta = {}) {
   });
 
   parts.push(`  <g font-family="sans-serif" font-size="14" text-anchor="middle" fill="${INK}">`);
-  parts.push(`    <text x="${cx[0].toFixed(4)}" y="${(H - 12).toFixed(4)}">FRONT ${meta.beden || ''}</text>`);
-  if (drawn.length > 1) parts.push(`    <text x="${cx[1].toFixed(4)}" y="${(H - 12).toFixed(4)}">BACK ${meta.beden || ''}</text>`);
+  parts.push(`    <text x="${cx[0].toFixed(4)}" y="${capY.toFixed(4)}">FRONT ${meta.beden || ''}</text>`);
+  if (drawn.length > 1) parts.push(`    <text x="${cx[1].toFixed(4)}" y="${capY.toFixed(4)}">BACK ${meta.beden || ''}</text>`);
+  // F3-arka: an INVENTED back says so ON the drawing, in the ink, next to the
+  // view it is about — not in metadata a viewer never opens. Damla's rule: with
+  // only a front photo the back is invented (plain back, neck mirroring the
+  // front, a zip only when it will not slip on) and the invention is DECLARED.
+  if (drawn.length > 1 && meta.arka === 'uydurma') {
+    parts.push(`  <g font-family="sans-serif" text-anchor="middle" fill="${INK}">`);
+    parts.push(`    <text x="${cx[1].toFixed(4)}" y="${(capY + 16).toFixed(4)}" font-size="13" font-weight="bold">ARKA: UYDURMA / BACK: INVENTED</text>`);
+    parts.push(`    <text x="${cx[1].toFixed(4)}" y="${(capY + 30).toFixed(4)}" font-size="10">arka fotograf yok — duz sirt, boyun on yakanin aynasi, gecmiyorsa fermuar</text>`);
+    parts.push('  </g>');
+  }
   parts.push('  </g>');
   // The bodice waist and the skirt waist are ONE seam and, with both panels'
   // darts closed, they do not land on the same point. That residual is a fact

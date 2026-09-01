@@ -1215,6 +1215,17 @@ add_test(NAME hedef_kosu COMMAND ${NODE_EXECUTABLE}
 add_test(NAME indir_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/indir_check.mjs)
 
+# arka_koken_check (F3-arka — 2026-09-01): ARKA YÜZ NEREDEN GELDİ, SÖYLENİYOR MU?
+# Damla'nın cümlesi: arka fotoğraf VARSA okunur ve tasarlanır; SADECE ön varsa
+# sistem arkayı UYDURUR ve uydurduğunu İLAN eder — en sade dikilebilir arka
+# (düz sırt, boyun ön yakanın aynası, geçmiyorsa fermuar), akış DURMAZ.
+# Ölçtükleri (sevk edilen modüllerin kendisi üstünde): sadece-ön fixture'da arka
+# alanlarının %100'ü uydurma|soruldu ve uydurma etiketlerinin %100'ü inen flat
+# SVG'nin kökünde adıyla + "ARKA: UYDURMA" ibaresi çizimde okunur; arka-foto
+# fixture'da %100 gorulen; ürün yolu (create.js/download.js) gerçekten bağlı.
+add_test(NAME arka_koken_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/arka_koken_check.mjs)
+
 # bugra_parity_check (GECE7 / F8, §1.6) — KÖR KONTROL BİR KAPI OLDU.
 # `tools/bugra/bugra-parity.mjs` fazlardır satın alınmış iki Buğra kalıbının
 # GERÇEK mm geometrisine karşı bir sayı basıyordu ve o sayıyı hiçbir build
