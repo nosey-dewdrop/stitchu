@@ -68,7 +68,13 @@ export const STRINGS = {
   'create.spec.photo': { en: 'or start from a photo', tr: 'ya da fotoğraftan başla' },
   'create.spec.photobtn': { en: 'Upload a garment photo', tr: 'Kıyafet fotoğrafı yükle' },
   'create.spec.reading': { en: 'reading the garment…', tr: 'kıyafet okunuyor…' },
-  'create.spec.checkpicks': { en: 'Check the picks below, fix anything I got wrong.', tr: 'Aşağıdaki seçimleri kontrol et, yanlışım varsa düzelt.' },
+  // F3-arka: the optional back-photo door + the two honest sentences. The
+  // invented-back sentence DECLARES, it does not ask — the flow never stops.
+  'create.spec.arkabtn': { en: 'Add a back photo (optional)', tr: 'Arka fotoğraf ekle (isteğe bağlı)' },
+  'create.spec.arkareading': { en: 'reading the back…', tr: 'arka okunuyor…' },
+  'create.spec.arkauydurma': { en: 'No back photo, so the back is INVENTED and labelled so: plain back, neck mirroring the front, a zip only if it will not slip on. Add a back photo or pick the back yourself to change it.', tr: 'Arka fotoğraf yok, arka UYDURULDU ve öyle etiketlendi: düz sırt, boyun ön yakanın aynası, geçmiyorsa fermuar. Değiştirmek için arka fotoğraf ekle ya da arkayı kendin seç.' },
+  'create.spec.arkagorulen': { en: 'The back photo was read — the back fields now come from it.', tr: 'Arka fotoğraf okundu — arka alanları artık ondan geliyor.' },
+  'create.spec.checkpicks':{ en: 'Check the picks below, fix anything I got wrong.', tr: 'Aşağıdaki seçimleri kontrol et, yanlışım varsa düzelt.' },
   'create.spec.ratiobelirsiz': { en: 'I could not read these proportions confidently, the pattern uses the standard table for them:', tr: 'Bu oranları emin okuyamadım, kalıp onlar için standart tabloyu kullandı:' },
   'create.draft': { en: 'Draft my pattern', tr: 'Kalıbımı çiz' },
   'create.drafting': { en: 'drafting your pattern…', tr: 'kalıbın çiziliyor…' },

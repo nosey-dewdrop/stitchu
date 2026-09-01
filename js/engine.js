@@ -402,7 +402,7 @@ export function patternDugum(patternJSONText) {
  * validator-blocked draft comes back as a throw with the engine's own words, so
  * a blocked pattern can never leave as a picture that looks fine.
  */
-export async function flatDrawing(spec, body) {
+export async function flatDrawing(spec, body, arka = null) {
   const engine = await loadEngine();
   const beden = body && body.size ? String(body.size) : null;
   const m = beden ? bodyForSize(beden) : body;
@@ -418,6 +418,10 @@ export async function flatDrawing(spec, body) {
   const svg = renderFlatFromPattern(drafted, {
     beden: beden || '', dugum,
     sinif: { garment: es.garment, shaping: es.shaping, fabric: es.fabric },
+    // F3-arka: 'gorulen' | 'uydurma' | 'soruldu' | 'cikarildi' | null.
+    // null = the caller carries no köken record; the drawing then claims
+    // nothing about the back either way (research/legacy paths stay byte-same).
+    arka,
   });
   return { svg, dugum, beden: beden || '', issues: drafted.issues || [] };
 }

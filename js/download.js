@@ -46,6 +46,9 @@ import { pathD, bounds } from './sheet.js?v=141';
 import * as sheet from './sheet.js?v=141';
 import { makePdfCore } from '../lib/pdf-core.js?v=141';
 import { dxfRecipe, dxfSpec, flatDrawing } from './engine.js?v=141';
+// F3-arka: the back view of the flat says where the back CAME FROM. An invented
+// back (front photo only) is stamped on the drawing itself — see arka-koken.js.
+import { arkaDurumu } from '../lib/arka-koken.js?v=141';
 
 // Drafting-table pastels + ink: the studio's own palette, kept so the exported
 // SVG looks like the pattern the user was looking at when they pressed save.
@@ -238,7 +241,13 @@ export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null
   // 4 paths at 7.5-30.9 SECONDS a call. The drafted pattern already carries the
   // armhole, the cap, the darts and the collar as named mm geometry in 18 ms.
   // The surface line is still in the tree and still gated; it is off THIS path.
-  const drawn = await flatDrawing(spec, body);   // throws on an engine refusal
+  // F3-arka: the BACK view carries its own origin. Derived from the same köken
+  // record the root stamp uses, so the caption and the attribute cannot drift
+  // from the declared list. No record (studio path) -> no claim either way.
+  const arka = kokenKaydi
+    ? arkaDurumu(kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
+    : null;
+  const drawn = await flatDrawing(spec, body, arka);   // throws on an engine refusal
   const svg = drawn.svg;
   return {
     // F0: the origin label rides in the FILE, on the root element, so it

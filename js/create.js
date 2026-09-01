@@ -27,6 +27,11 @@ import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js
 // ADIYLA ekrana düşer (sessiz düşme 0), en yakın Edge/Panel/Stitch primitifine
 // işaret eder. Öncelik kuralı: prompt, fotoğraf okumasını EZER (madde 3).
 import { parsePrompt, birlestir } from './prompt-parse.js?v=141';
+// F3-arka: ARKA YÜZÜN KÖKENİ (Damla'nın cümlesi): arka fotoğraf VARSA okunur
+// ve tasarlanır; SADECE ön varsa sistem arkayı UYDURUR ve uydurduğunu İLAN
+// eder — en sade dikilebilir arka, akış DURMAZ. Mantık web/lib/arka-koken.js'te
+// saf durur ki arka_koken_check kapısı onu node'da aynen koşabilsin.
+import { arkaDamgala, arkaOkumasi } from '../lib/arka-koken.js?v=141';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -174,6 +179,11 @@ let photoLenHandPicked = false;
 // `gorulen`).
 let promptParsed = null;
 let promptText = '';
+
+// F3-arka: bir ARKA fotoğraf okundu mu. Module level, photoSeen ile aynı
+// sebepten: sonradan analiz edilen bir ön fotoğraf, okunmuş arkayı sessizce
+// "uydurma"ya düşürmemeli. Yeni arka fotoğraf her zaman tazeler.
+let arkaFotoVar = false;
 
 /** Apply the stored prompt onto the spec + origin record. Priority rule F1/3. */
 function uygulaPrompt() {
@@ -813,6 +823,13 @@ function showSpec() {
       // `soruldu`; fotoğrafın çakışmayan alanları `gorulen` kalır. buildSeen-
       // Record'dan ÖNCE koşar ki dürüstlük kaydı nihai spec'i anlatsın.
       uygulaPrompt();
+      // F3-arka: ön fotoğraf arkayı GÖREMEZ. Arka fotoğraf yoksa arka alanları
+      // en sade dikilebilir arkaya çekilir ve `uydurma` damgası yer — vision'ın
+      // ön kareden "gördüm" sandığı bir arka okuma da dahil. Arka fotoğraf
+      // varsa alanlar `gorulen` kalır. `soruldu` (el/prompt) dokunulmazdır ve
+      // akış hiçbir dalda DURMAZ (soru sorulmaz). buildSeenRecord'dan ÖNCE
+      // koşar ki dürüstlük kaydı nihai (sadeleşmiş) arkayı anlatsın.
+      const arkaUydurulan = arkaDamgala(koken, spec, KOKEN_ALANLARI, arkaFotoVar, isaretle);
       spec.seen = { ...buildSeenRecord(spec, seen), ratiosMeasured: seen.ratiosMeasured === true };
       // F2-vision: name the ratios the measurement could not read confidently
       // — the pattern used the standard table for them, and saying so is the
@@ -820,7 +837,30 @@ function showSpec() {
       const belirsizler = oranDurum === 'belirsiz' ? uncertainRatioNames(seen) : [];
       status.textContent = (seen.details ? seen.details + ', ' : '') +
         (belirsizler.length ? t('create.spec.ratiobelirsiz') + ' ' + belirsizler.join(', ') + '. ' : '') +
+        // F3-arka İLANI, adıyla: uydurulan arka ekranda söylenir, akış durmaz.
+        (arkaUydurulan.length ? t('create.spec.arkauydurma') + ' ' : '') +
         t('create.spec.checkpicks');
+      rebuild();
+  }
+
+  // F3-arka: İKİNCİ KAPI — arka fotoğraf. İsteğe bağlıdır ve sorulmaz: akış
+  // onsuz da yürür (arka o zaman uydurulur ve ilan edilir). Verildiğinde YALNIZ
+  // arka eksenleri okunur — ön fotoğrafın/kullanıcının ön okuması ezilmez.
+  // Eksen listesi ve host kapıları arkaOkumasi'nda (web/lib/arka-koken.js);
+  // pick fonksiyonları buradan verilir ki ürün yolu ile kapı aynı kodu koşsun.
+  async function ingestArkaReading(seenRaw, status) {
+      const { clean: seen, report: schemaStrikes } = validateVision(seenRaw);
+      if (schemaStrikes.length) console.warn('arka vision schema strikes:', schemaStrikes);
+      for (const o of arkaOkumasi(seen, spec, {
+        pickBackOpening, pickLaceUpBack, pickBackDetail, pickHemSlit, isSkirt, isTop,
+      })) {
+        konakSet(o.alan, o.deger, o.hostable);
+      }
+      arkaFotoVar = true;
+      // Damga: arka artık GÖRÜLDÜ. Elle/promptla seçilmiş (`soruldu`) alanlar
+      // yine dokunulmaz — kullanıcının açık sözü fotoğrafın üstünde (F1 md.3).
+      arkaDamgala(koken, spec, KOKEN_ALANLARI, true, isaretle);
+      status.textContent = t('create.spec.arkagorulen') + ' ' + t('create.spec.checkpicks');
       rebuild();
   }
 
@@ -899,8 +939,32 @@ function showSpec() {
       pick.disabled = false;
     });
     row.appendChild(pick);
+    // F3-arka: arka fotoğraf düğmesi. İSTEĞE BAĞLI ve sormayan bir kapı: akış
+    // onsuz durmaz, o zaman arka uydurulur ve uydurulduğu ilan edilir.
+    const arkaPick = el('button', 'choice', t('create.spec.arkabtn'));
+    const arkaFile = document.createElement('input');
+    arkaFile.type = 'file';
+    arkaFile.accept = 'image/*';
+    arkaFile.style.display = 'none';
+    arkaPick.addEventListener('click', () => arkaFile.click());
+    arkaFile.addEventListener('change', async () => {
+      if (!arkaFile.files[0]) return;
+      arkaPick.disabled = true;
+      status.textContent = '';
+      const loader = sewingLoader(t('create.spec.arkareading'));
+      status.appendChild(loader);
+      try {
+        const { reading: seenRaw } = await analyzePhoto(arkaFile.files[0]);
+        await ingestArkaReading(seenRaw, status);
+      } catch (err) {
+        status.textContent = err.message;
+      }
+      arkaPick.disabled = false;
+    });
+    row.appendChild(arkaPick);
     photoBlock.appendChild(row);
     photoBlock.appendChild(file);
+    photoBlock.appendChild(arkaFile);
     photoBlock.appendChild(status);
     screen.appendChild(photoBlock);
   }
