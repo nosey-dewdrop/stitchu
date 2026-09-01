@@ -479,7 +479,23 @@ export function missingFeatures(seen, lang) {
     if (seen.tieDrawn && tieTerm(label)) continue;
     if (label && !already.includes(norm(label))) {
       already.push(norm(label));
-      push(label, null);
+      // F2-vision: the oov verdict (vision-bridge resolveOutOfVocab, data:
+      // contract/vision-tasima-v1.json) rides on seen.oovKarar — a REJECTED
+      // term prints its reason + the nearest sewable suggestion by name
+      // ("bunu henüz dikemiyorum: … — en yakın: …"), a MAPPED term that still
+      // reached this line names the axis it landed on. No bare label, no
+      // silent drop.
+      const karar = Array.isArray(seen.oovKarar)
+        ? seen.oovKarar.find((k) => k && k.term === raw) : null;
+      let note = null;
+      if (karar && karar.durum === 'reddedildi' && karar.sebep && karar.oneri) {
+        note = { applied: null, note: `${karar.sebep[L]} — ${karar.oneri[L]}` };
+      } else if (karar && karar.durum === 'eslendi') {
+        note = { applied: null, note: (L === 'tr'
+          ? `en yakın motor ekseni: ${karar.eksen}.${karar.deger}`
+          : `nearest engine axis: ${karar.eksen}.${karar.deger}`) };
+      }
+      push(label, note);
     }
   }
 

@@ -587,3 +587,440 @@ export const VISION_SCHEMA = {
     }
   }
 };
+
+// F2-vision: photo-reading carriage contract (embedded from
+// contract/vision-tasima-v1.json — ratio wires + out-of-vocab mapping).
+export const VISION_TASIMA = {
+  "_baslik": "F2-vision (2026-09-01) — FOTOGRAF OKUMASININ MOTORA TASINMA SOZLESMESI. Iki tablo: (1) oranKablolari — measure.js'in 7 surekli oraninin her biri motorun HANGI ekseniyle kaliba iner; esik sayilarinin kaynagi motorun KENDI cizdigi mm'ler (engine/tools/vision-esik-olc.mjs, EU38 demo govde, sayilar her kalemin 'kaynak' alaninda) — hicbir esik tahmin degildir. (2) oovEsleme — sozluk disi (outOfVocab) kelimenin motor eksenine esleme DENEMESI; eslesen eksen contract/vocab-resolution-v1.json uzerinden Edge/Panel/Stitch (contract/primitives-v1.json) demetine COZULUR, eslesmeyen ADIYLA reddedilir ve yaninda en yakin cizilebilir oneri tasir. Tuketici: web/js/vision-bridge.js (applyRatioAxes / resolveOutOfVocab). Kapi: engine/tests/vision_tasima_check.mjs (ctest: vision_tasima_check).",
+  "_yasa": [
+    "1. Sessiz dusme yok: her outOfVocab kelimesi ya 'eslendi' ya 'reddedildi' cikar; uc yol yok.",
+    "2. Reddin yaninda kullanicinin atabilecegi bir sonraki adim (oneri) durur.",
+    "3. Dusuk guvenli oran ATILMAZ: 'belirsiz' etiketiyle tasinir, kalip tablonun (en kisitlayici) degerini kullanir, etiket ekranda kalir.",
+    "4. Esik sayisi ancak motorun kendi cizdigi mm'den ya da motor sabitinden (dosya:satir) gelir. Kaynaksiz sayi bu dosyaya giremez.",
+    "5. Yapisal etiket surekli orani EZER (pickSkirtFullness emsali): pili/dikis gibi bir genislik oraninin GOREMEYECEGI yapiyi yalnizca etiket okur."
+  ],
+  "oranKablolari": {
+    "_not": "mm kestirimi pickSkirtLengthMM'in kopru yontemiyle: L_mm = lengthToWidth x bustFlatMM (bustFlat = bust x 10 x 1.08 / 2). Oran sadece seen.ratiosMeasured === true iken tuketilir (olcum tanigi, photo_ratio_wire_check).",
+    "lengthToWidth": {
+      "eksen": "skirtLengthMM",
+      "tip": "surekli mm",
+      "kaynak": "mevcut kablo — vision-bridge.js pickSkirtLengthMM (2026-07-27), motor bandi 250-1200mm (measurements.hpp skirtLengthMM)"
+    },
+    "hemToWaistWidth": {
+      "eksen": "skirtStyle",
+      "tip": "sinif",
+      "kaynak": "mevcut kablo — vision-bridge.js SKIRT_FULLNESS_TABLE (esikler motorun EU38'de cizdigi etek stillerinin orta noktalari)"
+    },
+    "waistYToLength": {
+      "eksen": "waistline",
+      "tip": "sinif",
+      "esikMM": 375.5,
+      "siniflar": {
+        "altinda": "empire",
+        "ustunde": "natural"
+      },
+      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38): natural Bodice Front boyu 445.0mm, empire 306.0mm; esik orta nokta (445+306)/2"
+    },
+    "neckDepthToLength": {
+      "eksen": "neckline",
+      "tip": "sinif (yalniz yuvarlak aile: crew/scoop/boat)",
+      "esikMM": 92,
+      "siniflar": {
+        "altinda": "crew",
+        "ustunde": "scoop"
+      },
+      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38): crew CF yaka derinligi 74.5mm, scoop 109.5mm (bodice.cpp:34-35 neckW+15 / neckW+50); esik orta nokta"
+    },
+    "neckWidthToShoulder": {
+      "eksen": "neckline",
+      "tip": "sinif (yalniz yuvarlak aile)",
+      "esikOran": 0.4377,
+      "siniflar": {
+        "ustunde": "boat"
+      },
+      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38): crew yaka-yarim/omuz-uc 59.5/164.08 = 0.3626, boat 110.075/214.655 = 0.5128 (bodice.cpp:24 boat carpani 1.85); esik orta nokta"
+    },
+    "strapWidthToShoulder": {
+      "eksen": "ruffledStraps",
+      "tip": "sinif (yalniz askili okuma)",
+      "esikMM": 15,
+      "siniflar": {
+        "altinda": "spaghetti",
+        "ustunde": "wide"
+      },
+      "kaynak": "motor sabitleri: spaghetti bitmis genislik 8mm (strap.hpp:40), genis aski bitmis genislik 22mm (constants.gen.hpp:33 kStrapFinishedWidthMM); esik orta nokta. Omuz mm kestirimi: body.shoulder x 10"
+    },
+    "sleeveLenToGarment": {
+      "eksen": "sleeveLength",
+      "tip": "sinif",
+      "esiklerMM": [
+        283.5,
+        448.4
+      ],
+      "siniflar": [
+        "short",
+        "elbow",
+        "long"
+      ],
+      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38 duz kol): short parca boyu 227.0mm, elbow 340.0mm, long 556.8mm; esikler ardil orta noktalar. measure.js v1 bu orani durustce null verir (sleeve_not_separable_from_silhouette_v1) — kablo, oran OLCULEBILDIGI gun icin haziri bekler ve fixture okumalarla test edilir"
+    }
+  },
+  "oovEsleme": {
+    "_not": "Kurallar SIRAYLA denenir; ilk eslesen kazanir (reddedilen-ozel kurallar eslenen-genel kurallardan ONCE durur: 'welt pocket' cep kurali yakalamadan reddedilir). 'eslendi' kuralin cozumu contract/vocab-resolution-v1.json '<eksen>.<deger>' anahtarindadir — primitif demeti orada, burada kopyasi tutulmaz. 'reddedildi' kurali sebep + en yakin cizilebilir oneri tasir.",
+    "kurallar": [
+      {
+        "ad": "weltCep",
+        "ara": "(welt|besom|bound|jetted|cargo|flap|kangaroo)\\s*pocket|zip(per)?\\s*pocket",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "the engine cannot draft this pocket construction yet",
+          "tr": "motor bu cep yapısını henüz çizemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a patch or side-seam pocket",
+          "tr": "en yakın dikebildiği: aplike (patch) ya da yan dikiş cebi"
+        }
+      },
+      {
+        "ad": "fransizManset",
+        "ara": "(french|elastic|casing)\\s*cuff",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a French / elastic-casing cuff is a construction the engine cannot draft yet",
+          "tr": "Fransız / lastikli manşet motorun henüz çizemediği bir yapı"
+        },
+        "oneri": {
+          "en": "closest it can sew: a barrel button cuff",
+          "tr": "en yakın dikebildiği: düğmeli manşet"
+        }
+      },
+      {
+        "ad": "kapusonWatteau",
+        "ara": "hood|watteau|shoulder cape",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a hood / watteau / shoulder cape is not draftable yet",
+          "tr": "kapüşon / watteau / omuz pelerini henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a back-neck cape piece",
+          "tr": "en yakın dikebildiği: arka pelerin parçası"
+        }
+      },
+      {
+        "ad": "klapaYaka",
+        "ara": "(notched|sailor|lapel).{0,12}collar|\\blapel\\b",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "tailored notched/sailor/lapel collars are not draftable yet",
+          "tr": "klapa / bahriyeli / erkek yaka henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a shirt or flat collar",
+          "tr": "en yakın dikebildiği: gömlek ya da yatık yaka"
+        }
+      },
+      {
+        "ad": "kalipliKup",
+        "ara": "(moulded|molded|foam|padded)\\s*(cup|bra)",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a moulded/padded cup has no seam to draft",
+          "tr": "kalıplı/dolgulu kap çizilecek bir dikiş taşımıyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a horizontal seamed cup",
+          "tr": "en yakın dikebildiği: yatay kup dikişi"
+        }
+      },
+      {
+        "ad": "piliPeplum",
+        "ara": "(pleated|draped|tiered)\\s*peplum",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "only the circular flared peplum is draftable",
+          "tr": "yalnız dairesel volan peplum çizilebiliyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a full/half circular peplum",
+          "tr": "en yakın dikebildiği: tam/yarım dairesel peplum"
+        }
+      },
+      {
+        "ad": "mendilEtekUcu",
+        "ara": "handkerchief|asymmetric(al)?\\s*hem|diagonal\\s*hem",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a handkerchief / asymmetric hem is not draftable yet",
+          "tr": "mendil ucu / asimetrik etek ucu henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a shirt-tail or high-low hem",
+          "tr": "en yakın dikebildiği: yuvarlak (shirttail) ya da önü kısa arkası uzun etek ucu"
+        }
+      },
+      {
+        "ad": "bicakPili",
+        "ara": "(knife|accordion|sunburst|sunray)\\s*pleat",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "distributed knife/accordion pleating is not draftable yet",
+          "tr": "dağıtık bıçak/akordeon pili henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: a pleated skirt style or a single center box pleat",
+          "tr": "en yakın dikebildiği: pileli etek stili ya da tek orta kutu pili"
+        }
+      },
+      {
+        "ad": "ayrilanFermuar",
+        "ara": "(separating|two[\\s-]?way)\\s*zip(per)?",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a separating / two-way zip is not draftable yet",
+          "tr": "ayrılan / çift yönlü fermuar henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: an exposed CF/CB zipper",
+          "tr": "en yakın dikebildiği: görünür ön/arka fermuar"
+        }
+      },
+      {
+        "ad": "tekOmuz",
+        "ara": "one[\\s-]?shoulder",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a one-shoulder cut is not draftable yet",
+          "tr": "tek omuz kesim henüz çizilemiyor"
+        },
+        "oneri": {
+          "en": "closest it can sew: an off-shoulder (bardot) band",
+          "tr": "en yakın dikebildiği: düşük omuz (bardot) bandı"
+        }
+      },
+      {
+        "ad": "anvelopEtekCeket",
+        "ara": "wrap[\\s-]?skirt|wrap\\s*(coat|jacket)|kimono|cardigan|\\brobe\\b",
+        "durum": "reddedildi",
+        "sebep": {
+          "en": "a wrap skirt / wrap outerwear is a different build",
+          "tr": "anvelop etek / dış giyim farklı bir yapı"
+        },
+        "oneri": {
+          "en": "closest it can sew: a surplice wrap FRONT on a dress/top",
+          "tr": "en yakın dikebildiği: elbise/üstte kruvaze ön"
+        }
+      },
+      {
+        "ad": "buzgu",
+        "ara": "drawstring|shirr|smock|gather",
+        "durum": "eslendi",
+        "eksen": "gatherType",
+        "deger": "shirred",
+        "cozum": "vocab-resolution-v1.json: gatherType.shirred"
+      },
+      {
+        "ad": "yaka",
+        "ara": "peter\\s?-?pan|mandarin|mock neck|stand(ing)?\\s*collar|shirt\\s*collar|\\bcollar\\b",
+        "durum": "eslendi",
+        "eksen": "collarType",
+        "deger": "peterPan",
+        "cozum": "vocab-resolution-v1.json: collarType.*"
+      },
+      {
+        "ad": "acikSirt",
+        "ara": "open.?back|back.?cutout|backless",
+        "durum": "eslendi",
+        "eksen": "backOpening",
+        "deger": "round",
+        "cozum": "vocab-resolution-v1.json: backOpening.*"
+      },
+      {
+        "ad": "korseBagcik",
+        "ara": "corset|lace-?up|laced|eyelet|grommet",
+        "durum": "eslendi",
+        "eksen": "laceUpBack",
+        "deger": "corset",
+        "cozum": "vocab-resolution-v1.json: laceUpBack.corset"
+      },
+      {
+        "ad": "kruvazeOn",
+        "ara": "surplice|cross[\\s-]?over|faux[\\s-]?wrap|kruvaze|\\bwrap\\b",
+        "durum": "eslendi",
+        "eksen": "wrapFront",
+        "deger": "surplice",
+        "cozum": "vocab-resolution-v1.json: wrapFront.surplice"
+      },
+      {
+        "ad": "yirtmac",
+        "ara": "\\bslit\\b|\\bvent\\b|kick\\s*pleat",
+        "durum": "eslendi",
+        "eksen": "backSlit",
+        "deger": "slit",
+        "cozum": "vocab-resolution-v1.json: backSlit.*"
+      },
+      {
+        "ad": "firfirliAski",
+        "ara": "(ruffled?|frilled?|flutter)\\s*(shoulder\\s*)?strap",
+        "durum": "eslendi",
+        "eksen": "ruffledStraps",
+        "deger": "ruffled",
+        "cozum": "vocab-resolution-v1.json: ruffledStraps.ruffled"
+      },
+      {
+        "ad": "spagettiAski",
+        "ara": "spaghetti\\s*strap|cami\\s*strap",
+        "durum": "eslendi",
+        "eksen": "ruffledStraps",
+        "deger": "spaghetti",
+        "cozum": "vocab-resolution-v1.json: ruffledStraps.spaghetti"
+      },
+      {
+        "ad": "genisAski",
+        "ara": "(wide|thick)\\s*strap",
+        "durum": "eslendi",
+        "eksen": "ruffledStraps",
+        "deger": "wide",
+        "cozum": "vocab-resolution-v1.json: ruffledStraps.wide"
+      },
+      {
+        "ad": "peplum",
+        "ara": "peplum|waist\\s*(flounce|frill)",
+        "durum": "eslendi",
+        "eksen": "peplum",
+        "deger": "full",
+        "cozum": "vocab-resolution-v1.json: peplum.*"
+      },
+      {
+        "ad": "etekUcuVolani",
+        "ara": "(flounce|ruffle|frill|volan|tier(ed)?).{0,20}(hem|bottom|skirt)|(hem|bottom|dropped[\\s-]?waist).{0,20}(flounce|ruffle|frill|tier)",
+        "durum": "eslendi",
+        "eksen": "hemFlounce",
+        "deger": "gathered",
+        "cozum": "vocab-resolution-v1.json: hemFlounce.gathered"
+      },
+      {
+        "ad": "cep",
+        "ara": "pocket",
+        "durum": "eslendi",
+        "eksen": "pocketStyle",
+        "deger": "patch",
+        "cozum": "vocab-resolution-v1.json: pocketStyle.*"
+      },
+      {
+        "ad": "manset",
+        "ara": "\\bcuff\\b",
+        "durum": "eslendi",
+        "eksen": "cuffStyle",
+        "deger": "button",
+        "cozum": "vocab-resolution-v1.json: cuffStyle.*"
+      },
+      {
+        "ad": "etekUcuSekli",
+        "ara": "shirt[\\s-]?tail|shirttail|high[\\s-]?low|mullet|curved hem|corset hem|basque",
+        "durum": "eslendi",
+        "eksen": "hemShape",
+        "deger": "shirttail",
+        "cozum": "vocab-resolution-v1.json: hemShape.*"
+      },
+      {
+        "ad": "asimetrikPat",
+        "ara": "(asymmetric|asymmetrical|offset|off[\\s-]?cent|diagonal).{0,20}(button|placket|closure|front)",
+        "durum": "eslendi",
+        "eksen": "placketStyle",
+        "deger": "asymmetric",
+        "cozum": "vocab-resolution-v1.json: placketStyle.asymmetric"
+      },
+      {
+        "ad": "dugmeSirasi",
+        "ara": "button",
+        "durum": "eslendi",
+        "eksen": "buttonRow",
+        "deger": "decorative",
+        "cozum": "vocab-resolution-v1.json: buttonRow.*"
+      },
+      {
+        "ad": "arkaDetay",
+        "ara": "(back|caped?).{0,15}(cape|ruffle|frill|flounce|cascade)|pelerin",
+        "durum": "eslendi",
+        "eksen": "backDetail",
+        "deger": "cape",
+        "cozum": "vocab-resolution-v1.json: backDetail.*"
+      },
+      {
+        "ad": "gorunurFermuar",
+        "ara": "(exposed|visible|statement|contrast)\\s*zip(per)?",
+        "durum": "eslendi",
+        "eksen": "exposedZip",
+        "deger": "centerBack",
+        "cozum": "vocab-resolution-v1.json: exposedZip.*"
+      },
+      {
+        "ad": "omuzAcik",
+        "ara": "off[\\s-]?shoulder|bardot",
+        "durum": "eslendi",
+        "eksen": "bardotStyle",
+        "deger": "plain",
+        "cozum": "vocab-resolution-v1.json: bardotStyle.*"
+      },
+      {
+        "ad": "kupDikisi",
+        "ara": "cup seam|bra[\\s-]?cup|bustier cup|seamed cup|underbust seam",
+        "durum": "eslendi",
+        "eksen": "cupSeam",
+        "deger": "horizontal",
+        "cozum": "vocab-resolution-v1.json: cupSeam.horizontal"
+      },
+      {
+        "ad": "roba",
+        "ara": "\\byoke\\b|babydoll|baby doll|swing dress",
+        "durum": "eslendi",
+        "eksen": "yoke",
+        "deger": "plain",
+        "cozum": "vocab-resolution-v1.json: yoke.*"
+      },
+      {
+        "ad": "kutuPili",
+        "ara": "(box|inverted)[\\s-]*pleat",
+        "durum": "eslendi",
+        "eksen": "boxPleat",
+        "deger": "centerInverted",
+        "cozum": "vocab-resolution-v1.json: boxPleat.centerInverted"
+      },
+      {
+        "ad": "fiyonkKusak",
+        "ara": "\\b(bow|sash|ties?|ribbon)\\b",
+        "durum": "eslendi",
+        "eksen": "tieClosure",
+        "deger": "backWaistBow",
+        "cozum": "vocab-resolution-v1.json: tieClosure.*"
+      },
+      {
+        "ad": "degaje",
+        "ara": "cowl",
+        "durum": "eslendi",
+        "eksen": "neckline",
+        "deger": "cowl",
+        "cozum": "vocab-resolution-v1.json: neckline.cowl"
+      },
+      {
+        "ad": "kadinFularYaka",
+        "ara": "pussy[\\s-]?bow|tie[\\s-]?neck",
+        "durum": "eslendi",
+        "eksen": "neckline",
+        "deger": "pussyBow",
+        "cozum": "vocab-resolution-v1.json: neckline.pussyBow"
+      }
+    ],
+    "bilinmeyen": {
+      "sebep": {
+        "en": "I cannot sew this yet — the word is outside the pattern engine's vocabulary",
+        "tr": "bunu henüz dikemiyorum — kelime kalıp motorunun sözlüğü dışında"
+      },
+      "oneri": {
+        "en": "the pattern still sews without it; the closest drawable details live on the spec screen (Edge/Panel/Stitch primitives, contract/primitives-v1.json)",
+        "tr": "kalıp onsuz da dikiliyor; en yakın çizilebilir detaylar spec ekranındaki eksenlerde (Edge/Panel/Stitch primitifleri, contract/primitives-v1.json)"
+      }
+    }
+  }
+};

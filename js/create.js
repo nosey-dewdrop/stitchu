@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=141';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord } from './vision-bridge.js?v=141';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord, applyRatioAxes, uncertainRatioNames } from './vision-bridge.js?v=141';
 import { measureGarment } from './measure.js?v=141';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
@@ -530,7 +530,12 @@ function showSpec() {
       // with the measurement, or with null when the measurement honestly
       // refused (then the enum-default path drives, exactly as before, and
       // the result screen says "standard proportions"). LLM = labels only.
-      applyMeasuredRatios(seen, measureGarment(pixels));
+      // F2-vision: the return is kept — 'belirsiz' means the measurement RAN
+      // but under the confidence margin; the numbers are carried on seen
+      // (ratiosUncertain), the draft uses the standard table (the most
+      // constraining value), and the status sentence below names the ratios
+      // it could not read confidently. Nulling-and-forgetting is gone.
+      const oranDurum = applyMeasuredRatios(seen, measureGarment(pixels));
       // Each fotoSet is a LABEL as much as an assignment: what the photo
       // showed becomes `gorulen`, what it did not stays `cikarildi` and is
       // named to the user on the result screen and inside both files.
@@ -575,6 +580,14 @@ function showSpec() {
       // Same: `false` is a declaration of absence (§3.6 H3), not a silence.
       if (typeof seen.keyhole === 'boolean') {
         spec.keyhole = seen.keyhole ? 'keyhole' : 'none'; isaretle(koken, 'keyhole', 'gorulen');
+      }
+      // F2-vision ORAN KABLOLARI: the four NEW measured-ratio wires (waistline,
+      // round-family neckline, strap width class, sleeve length class) — one
+      // shared function, the same one vision_tasima_check runs, so the product
+      // path and the gate cannot drift. Each fires only on a trusted
+      // measurement (seen.ratiosMeasured) and lands as `gorulen`.
+      for (const w of applyRatioAxes(spec, seen, values)) {
+        isaretle(koken, w.eksen, 'gorulen');
       }
       // Front button placket (düğme patı): the engine now draws the grown-on
       // button stand + buttons/buttonholes when the vision reads a front
@@ -801,7 +814,13 @@ function showSpec() {
       // Record'dan ÖNCE koşar ki dürüstlük kaydı nihai spec'i anlatsın.
       uygulaPrompt();
       spec.seen = { ...buildSeenRecord(spec, seen), ratiosMeasured: seen.ratiosMeasured === true };
-      status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
+      // F2-vision: name the ratios the measurement could not read confidently
+      // — the pattern used the standard table for them, and saying so is the
+      // difference between a fallback and a silent lie.
+      const belirsizler = oranDurum === 'belirsiz' ? uncertainRatioNames(seen) : [];
+      status.textContent = (seen.details ? seen.details + ', ' : '') +
+        (belirsizler.length ? t('create.spec.ratiobelirsiz') + ' ' + belirsizler.join(', ') + '. ' : '') +
+        t('create.spec.checkpicks');
       rebuild();
   }
 
