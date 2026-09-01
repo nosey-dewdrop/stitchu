@@ -1,0 +1,33 @@
+{
+  "_not": "F2-vision fixture — outOfVocab TELI: 8 sozluk-disi terim. Beklenen: her terime TEK karar (eslendi ya da adiyla reddedildi + en yakin oneri), sessiz dusen 0. 'crochet lace overlay' hicbir kurala uymaz -> 'bilinmeyen' reddi (o da adiyla + oneriyle).",
+  "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "length": "midi",
+    "waistline": "natural",
+    "fabric": "woven",
+    "straps": null,
+    "closure": null,
+    "collar": null,
+    "details": "",
+    "outOfVocab": [
+      "drawstring neckline",
+      "welt pocket",
+      "french cuff",
+      "patch pocket",
+      "peter pan collar",
+      "handkerchief hem",
+      "watteau train hood",
+      "crochet lace overlay"
+    ]
+  },
+  "olcum": {
+    "ok": false,
+    "confidence": 0.3,
+    "ratios": null,
+    "ratioNull": null
+  }
+}

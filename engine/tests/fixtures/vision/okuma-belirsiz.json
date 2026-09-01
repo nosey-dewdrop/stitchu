@@ -1,0 +1,38 @@
+{
+  "_not": "F2-vision fixture — dusuk guvenli olcum (0.52, esik 0.6 altinda ama measure.js'in kendi 0.45 tabaninin ustunde). Eski davranis: oranlar sessizce null'lanip ATILIRDI. Yeni davranis: 'belirsiz' — sayilar seen.ratiosUncertain'da tasinir, kullaniciya adiyla soylenir, kalip standart tabloyu (en kisitlayici degeri) kullanir.",
+  "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "length": "midi",
+    "waistline": "natural",
+    "fabric": "woven",
+    "straps": null,
+    "closure": null,
+    "collar": null,
+    "details": "midi dress, busy background",
+    "outOfVocab": []
+  },
+  "olcum": {
+    "ok": true,
+    "confidence": 0.52,
+    "ratios": {
+      "lengthToWidth": 2.1,
+      "hemToWaistWidth": 1.9,
+      "waistYToLength": 0.38,
+      "neckDepthToLength": null,
+      "neckWidthToShoulder": null,
+      "sleeveLenToGarment": null,
+      "strapWidthToShoulder": null,
+      "shoulderToHemProfile": [1, 0.97, 0.9, 0.84, 0.8, 0.79, 0.82, 0.88, 0.95, 1.1, 1.3, 1.5, 1.7]
+    },
+    "ratioNull": {
+      "neckDepthToLength": "neck_dip_below_noise_floor",
+      "neckWidthToShoulder": "neck_dip_below_noise_floor",
+      "sleeveLenToGarment": "sleeve_not_separable_from_silhouette_v1",
+      "strapWidthToShoulder": "no_strap_band_separable"
+    }
+  }
+}

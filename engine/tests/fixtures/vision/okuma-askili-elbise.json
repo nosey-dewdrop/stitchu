@@ -1,0 +1,36 @@
+{
+  "_not": "F2-vision fixture — KAYITLI ornek okuma (canli Claude cagrisi YOK). Askili (kolsuz) midi elbise; olcum guvenilir (0.82 >= 0.6 esigi). Oran degerleri EU38 demo govdeye gore secildi: lengthToWidth 2.33 -> L~1107mm (motorun kendi natural midi toplami), waistY 0.402 -> 445mm = natural, neckDepth 0.0673 -> 74.5mm = crew, neckWidth 0.36 -> yuvarlak dar, strap 0.022 -> 8.1mm = spaghetti. vision_tasima_check her orani esigin OBUR yanina itip kalip hashinin degistigini olcer.",
+  "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "none",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "length": "midi",
+    "waistline": "natural",
+    "fabric": "woven",
+    "straps": { "type": "spaghetti" },
+    "closure": null,
+    "collar": null,
+    "yoke": null,
+    "backDetail": null,
+    "cupSeams": false,
+    "details": "sleeveless midi dress with thin straps",
+    "outOfVocab": []
+  },
+  "olcum": {
+    "ok": true,
+    "confidence": 0.82,
+    "ratios": {
+      "lengthToWidth": 2.33,
+      "hemToWaistWidth": 1.4,
+      "waistYToLength": 0.402,
+      "neckDepthToLength": 0.0673,
+      "neckWidthToShoulder": 0.36,
+      "sleeveLenToGarment": null,
+      "strapWidthToShoulder": 0.022,
+      "shoulderToHemProfile": [1, 0.98, 0.9, 0.82, 0.78, 0.76, 0.78, 0.82, 0.86, 0.9, 0.94, 0.97, 1]
+    },
+    "ratioNull": { "sleeveLenToGarment": "sleeve_not_separable_from_silhouette_v1" }
+  }
+}

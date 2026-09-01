@@ -200,11 +200,18 @@ if (applyMeasuredRatios(seenC, { ok: false, confidence: 0.3, ratios: null }) !==
 if (seenC.ratios !== null) fail('olcum reddetti ama LLM ratios yasiyor — enum-default yolu kirildi');
 if (pickSkirtLengthMM(seenC, USER) !== 0) fail('olcumsuz seen mm uretti');
 if (pickSkirtFullness(seenC) !== null) fail('olcumsuz seen fullness uretti');
-// esik alti confidence ayni kapiya carpar.
+// esik alti confidence: F2-vision (2026-09-01) BILINCLI GUNCELLEME. Eskiden
+// 'standard' doner ve sayilar atilirdi; simdi 'belirsiz' doner — sayilar
+// ETIKETLE tasinir (ratiosUncertain), ama KAPI AYNI KAPI: ratiosMeasured
+// false kalir, hicbir tuketici belirsiz sayiyi drafta sokamaz (asagida
+// dogrudan olculuyor). Kapi gevsetilmedi; sessiz atma, adli tasimaya dondu.
 const seenLow = { garment: 'dress', ratios: null };
-if (applyMeasuredRatios(seenLow, { ok: true, confidence: MEASURE_MIN_CONFIDENCE - 0.01, ratios: { ...LLM_ECHO } }) !== 'standard') {
-  fail('esik alti confidence olcum diye gecti');
-}
+const lowDurum = applyMeasuredRatios(seenLow, { ok: true, confidence: MEASURE_MIN_CONFIDENCE - 0.01, ratios: { ...LLM_ECHO } });
+if (lowDurum !== 'belirsiz') fail(`esik alti confidence 'belirsiz' donmedi (${lowDurum})`);
+if (seenLow.ratiosMeasured !== false) fail('esik alti confidence olcum diye gecti (ratiosMeasured true)');
+if (!seenLow.ratiosUncertain) fail('esik alti oranlar atildi — F2 belirsiz tasima kirik');
+if (pickSkirtLengthMM(seenLow, USER) !== 0) fail('belirsiz oran mm uretti — draft kapisi delik');
+if (pickSkirtFullness(seenLow) !== null) fail('belirsiz oran fullness uretti — draft kapisi delik');
 
 // 2) YAPISAL YASAK: ratiosMeasured tanigi olmadan (ham LLM seen'i) tuketici yok.
 const rawLLM = { garment: 'dress', waistline: 'natural', ratios: { lengthToWidth: 2.2, hemToWaistWidth: 2.2 } };

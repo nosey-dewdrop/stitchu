@@ -1,0 +1,33 @@
+{
+  "_not": "F2-vision fixture — KAYITLI ornek okuma. Kollu elbise: sleeveLenToGarment TASIYAN okuma (measure.js v1 bu orani canli olcumde durustce null verir; kablo, tasiyan okuma geldigi gun icin bekler — bu fixture o gunu temsil eder). 0.205 * 1107mm ~ 227mm = motorun short kol parcasi.",
+  "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "length": "midi",
+    "waistline": "natural",
+    "fabric": "woven",
+    "straps": null,
+    "closure": null,
+    "collar": null,
+    "details": "short sleeved midi dress",
+    "outOfVocab": []
+  },
+  "olcum": {
+    "ok": true,
+    "confidence": 0.78,
+    "ratios": {
+      "lengthToWidth": 2.33,
+      "hemToWaistWidth": 1.4,
+      "waistYToLength": 0.402,
+      "neckDepthToLength": 0.0673,
+      "neckWidthToShoulder": 0.36,
+      "sleeveLenToGarment": 0.205,
+      "strapWidthToShoulder": null,
+      "shoulderToHemProfile": [1, 0.98, 0.9, 0.82, 0.78, 0.76, 0.78, 0.82, 0.86, 0.9, 0.94, 0.97, 1]
+    },
+    "ratioNull": { "strapWidthToShoulder": "no_strap_band_separable" }
+  }
+}

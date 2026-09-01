@@ -4,6 +4,13 @@
 // the SAME logic — a copy that drifts is how 'puff' once counted as FULL.
 // Pure functions of the vision `seen` object; no DOM, no engine.
 
+// F2-vision (2026-09-01): the carriage contract — ratio→axis wires and the
+// out-of-vocab mapping table live as DATA in contract/vision-tasima-v1.json
+// (embedded here through the same generated module every other cross-layer
+// value rides). Numbers in it are the engine's own drafted mm (provenance in
+// each entry); no threshold is invented in this file.
+import { VISION_TASIMA } from './contract.gen.js?v=141';
+
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
 // whose gathered edge is trued to the drafted zone edge, for a drawstring/tie
@@ -498,19 +505,49 @@ export function pickBoxPleat(seen) {
 // - anything else -> seen.ratios = null, ratiosMeasured = false: every ratio
 //   consumer below returns its honest default and the enum path drives,
 //   exactly as before the photo-ratio wire existed.
-// Returns 'measured' | 'standard' so the result screen can say which one
-// happened. Runs AFTER validateVision (the schema gate) in create.js.
+// Returns 'measured' | 'belirsiz' | 'standard' so the result screen can say
+// which one happened. Runs AFTER validateVision (the schema gate) in create.js.
 // measure.js refuses below its own 0.45 floor; the wiring demands a margin on
 // top because a wrong ratio silently reshapes the pattern, which is worse
 // than falling back to the standard table.
+//
+// F2-vision (2026-09-01) — THE NULLING IS GONE. A measurement that ran but
+// landed under the confidence margin used to be THROWN AWAY (seen.ratios =
+// null, no trace). It is now CARRIED as 'belirsiz': seen.ratiosUncertain keeps
+// the measured numbers + confidence, the user is told BY NAME which ratios
+// were not read confidently, and the PATTERN uses the most constraining value
+// — the standard table itself (every consumer still gates on
+// seen.ratiosMeasured === true, so an uncertain ratio never reshapes the
+// draft; it only stops being invisible). The LLM anchor-echo door stays shut:
+// only the deterministic pixel measurement's own numbers ride this channel.
 export const MEASURE_MIN_CONFIDENCE = 0.6;
 export function applyMeasuredRatios(seen, measured) {
-  const trusted = !!(measured && measured.ok === true && measured.ratios &&
-    typeof measured.confidence === 'number' &&
-    measured.confidence >= MEASURE_MIN_CONFIDENCE);
+  const ran = !!(measured && measured.ratios &&
+    typeof measured.confidence === 'number');
+  const trusted = ran && measured.ok === true &&
+    measured.confidence >= MEASURE_MIN_CONFIDENCE;
   seen.ratios = trusted ? measured.ratios : null;
   seen.ratiosMeasured = trusted;
+  if (!trusted && ran) {
+    // The measurement produced numbers but not enough confidence: keep them
+    // labelled, never consumed by the draft.
+    seen.ratiosUncertain = measured.ratios;
+    seen.ratiosUncertainConfidence = measured.confidence;
+    return 'belirsiz';
+  }
+  seen.ratiosUncertain = null;
+  seen.ratiosUncertainConfidence = null;
   return trusted ? 'measured' : 'standard';
+}
+
+// The ratio names of a 'belirsiz' carry, for the screen sentence ("bu oranı
+// emin okuyamadım: …"). Only numeric fields count — an honest null inside the
+// measurement (e.g. sleeve not separable) is a different sentence and already
+// carries its own reason in ratioNull.
+export function uncertainRatioNames(seen) {
+  const r = seen && seen.ratiosUncertain;
+  if (!r) return [];
+  return Object.keys(r).filter((k) => typeof r[k] === 'number' && Number.isFinite(r[k]));
 }
 
 // Oran kablosu 2 (2026-07-27): the first consumer of the MEASURED
@@ -593,6 +630,147 @@ export function refreshSkirtLengthMM(currentMM, photoSeen, body, handPicked) {
   return pickSkirtLengthMM(photoSeen, body);
 }
 
+// ── F2-vision ORAN KABLOLARI (2026-09-01) ──────────────────────────────────
+// The photo measurement returns SEVEN continuous ratios (measure.js worker
+// schema) and until F2 only two of them ever reached the engine
+// (lengthToWidth → skirtLengthMM, hemToWaistWidth → skirt fullness). The five
+// below now land on the engine's own axes through the SAME bridge estimate
+// pickSkirtLengthMM already uses (ratio × the wearer's body → mm), against
+// thresholds that are the engine's own drafted millimetres
+// (contract/vision-tasima-v1.json oranKablolari, provenance per entry).
+// Every consumer gates on seen.ratiosMeasured === true — an LLM ratios{} or a
+// 'belirsiz' low-confidence read never reshapes the draft (photo_ratio_wire).
+const ORAN = VISION_TASIMA.oranKablolari;
+
+// Bridge estimate of the photographed garment's total length in mm (shoulder →
+// hem), the same formula pickSkirtLengthMM documents: flat bust width ≈
+// (bust + wearing ease) / 2, 1.08 is the photo-scaling bridge estimate only.
+function garmentLengthEstMM(seen, body) {
+  if (!seen || seen.ratiosMeasured !== true) return 0;
+  const r = seen.ratios;
+  if (!r || typeof r.lengthToWidth !== 'number' || !(r.lengthToWidth > 0)) return 0;
+  if (!body || !(body.bust > 0)) return 0;
+  return r.lengthToWidth * (body.bust * 10 * 1.08 / 2);
+}
+
+// waistYToLength → waistline (natural | empire). The measured waist (narrowest
+// row) depth from the shoulder, in mm, against the midpoint of where the
+// engine's own natural (445mm) and empire (306mm) bodices put the waist seam.
+// A dress only — a top/skirt has no waist seam class to pick.
+export function pickWaistlineFromRatio(seen, body) {
+  if (!seen || seen.ratiosMeasured !== true || seen.garment !== 'dress') return null;
+  const r = seen.ratios;
+  if (!r || typeof r.waistYToLength !== 'number' || !(r.waistYToLength > 0)) return null;
+  const L = garmentLengthEstMM(seen, body);
+  if (!(L > 0)) return null;
+  const waistMM = r.waistYToLength * L;
+  return waistMM < ORAN.waistYToLength.esikMM ? 'empire' : 'natural';
+}
+
+// neckDepthToLength + neckWidthToShoulder → neckline, ONLY inside the round
+// family (crew/scoop/boat). A structural label (vNeck, sweetheart, halter, …)
+// OUTRANKS the ratio — depth cannot see a shape, only how far it drops
+// (contract yasa 5). Width first (boat is the wide-and-shallow special case,
+// engine crew 0.3626 vs boat 0.5128), then depth picks crew vs scoop against
+// the engine's own drafted CF drops (74.5 vs 109.5mm).
+const ROUND_FAMILY = ['crew', 'scoop', 'boat'];
+export function pickNecklineFromRatios(seen, body) {
+  if (!seen || seen.ratiosMeasured !== true) return null;
+  if (!ROUND_FAMILY.includes(seen.neckline)) return null;
+  const r = seen.ratios || {};
+  if (typeof r.neckWidthToShoulder === 'number' &&
+      r.neckWidthToShoulder > ORAN.neckWidthToShoulder.esikOran) return 'boat';
+  if (typeof r.neckDepthToLength === 'number' && r.neckDepthToLength > 0) {
+    const L = garmentLengthEstMM(seen, body);
+    if (L > 0) {
+      return (r.neckDepthToLength * L) < ORAN.neckDepthToLength.esikMM ? 'crew' : 'scoop';
+    }
+  }
+  return null;
+}
+
+// strapWidthToShoulder → ruffledStraps (spaghetti | wide). Only when the vision
+// actually saw straps (a sleeved / strapless garment has none to width-class),
+// and a structural 'ruffled' read outranks the width (a frill is a build the
+// width cannot see). Thresholds: the engine's own finished strap widths, 8mm
+// spaghetti (strap.hpp:40) vs 22mm wide (constants.gen.hpp:33), midpoint 15.
+export function pickStrapWidthClass(seen, body) {
+  if (!seen || seen.ratiosMeasured !== true) return null;
+  if (!seen.straps || !seen.straps.type || seen.straps.type === 'none') return null;
+  if (seen.straps.type === 'ruffled') return null; // structural read wins
+  const r = seen.ratios || {};
+  if (typeof r.strapWidthToShoulder !== 'number' || !(r.strapWidthToShoulder > 0)) return null;
+  if (!body || !(body.shoulder > 0)) return null;
+  const strapMM = r.strapWidthToShoulder * body.shoulder * 10;
+  return strapMM < ORAN.strapWidthToShoulder.esikMM ? 'spaghetti' : 'wide';
+}
+
+// sleeveLenToGarment → sleeveLength (short | elbow | long). measure.js v1
+// honestly nulls this ratio (sleeve_not_separable_from_silhouette_v1); the wire
+// exists so a reading that DOES carry it (a banked fixture, a future separable
+// measurement) lands on the engine instead of dying in the bridge. Thresholds:
+// the engine's own drafted sleeve piece lengths 227/340/556.8mm, midpoints.
+export function pickSleeveLengthFromRatio(seen, body) {
+  if (!seen || seen.ratiosMeasured !== true) return null;
+  if (!seen.sleeveStyle || seen.sleeveStyle === 'none') return null;
+  const r = seen.ratios || {};
+  if (typeof r.sleeveLenToGarment !== 'number' || !(r.sleeveLenToGarment > 0)) return null;
+  const L = garmentLengthEstMM(seen, body);
+  if (!(L > 0)) return null;
+  const sleeveMM = r.sleeveLenToGarment * L;
+  const [e1, e2] = ORAN.sleeveLenToGarment.esiklerMM;
+  if (sleeveMM < e1) return 'short';
+  if (sleeveMM < e2) return 'elbow';
+  return 'long';
+}
+
+// The ONE call product and measurement share for the four NEW wires (the two
+// old wires — fullness and skirtLengthMM — keep their own asserted lines in
+// create.js; photo_ratio_wire_check pins them verbatim and loosening someone
+// else's gate is not this phase's call). Applies each pick to the spec and
+// returns the applied list so origins can be labelled. vision_tasima_check
+// asserts create.js calls THIS function on the product path.
+export function applyRatioAxes(spec, seen, body) {
+  const applied = [];
+  const wl = pickWaistlineFromRatio(seen, body);
+  if (wl) { spec.waistline = wl; applied.push({ oran: 'waistYToLength', eksen: 'waistline', deger: wl }); }
+  const nl = pickNecklineFromRatios(seen, body);
+  if (nl) { spec.neckline = nl; applied.push({ oran: 'neckDepthToLength/neckWidthToShoulder', eksen: 'neckline', deger: nl }); }
+  const st = pickStrapWidthClass(seen, body);
+  if (st) { spec.ruffledStraps = st; applied.push({ oran: 'strapWidthToShoulder', eksen: 'ruffledStraps', deger: st }); }
+  const sl = pickSleeveLengthFromRatio(seen, body);
+  if (sl) { spec.sleeveLength = sl; applied.push({ oran: 'sleeveLenToGarment', eksen: 'sleeveLength', deger: sl }); }
+  return applied;
+}
+
+// ── F2-vision OOV TELİ (2026-09-01) ────────────────────────────────────────
+// Every out-of-vocab term the vision reported gets EXACTLY ONE verdict:
+// 'eslendi' (a data rule in contract/vision-tasima-v1.json maps it onto an
+// engine axis, whose primitive bundle lives in vocab-resolution-v1.json) or
+// 'reddedildi' (by name, with the reason and the nearest sewable suggestion).
+// There is no third path — an unmatched term falls into the 'bilinmeyen'
+// rejection, never silence. `spec` (optional) lets the verdict also say
+// whether the mapped axis actually FIRED on this garment (a host gate may have
+// honestly refused; the term then still shows with its axis named).
+export function resolveOutOfVocab(seen, spec) {
+  const terms = Array.isArray(seen && seen.outOfVocab)
+    ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()) : [];
+  const tbl = VISION_TASIMA.oovEsleme;
+  return terms.map((term) => {
+    for (const rule of tbl.kurallar) {
+      if (!new RegExp(rule.ara, 'i').test(term)) continue;
+      if (rule.durum === 'eslendi') {
+        const drawn = !!(spec && spec[rule.eksen] && spec[rule.eksen] !== 'none' &&
+          spec[rule.eksen] !== 'straight' && spec[rule.eksen] !== false);
+        return { term, durum: 'eslendi', kural: rule.ad, eksen: rule.eksen,
+          deger: rule.deger, cozum: rule.cozum, cizildi: drawn };
+      }
+      return { term, durum: 'reddedildi', kural: rule.ad, sebep: rule.sebep, oneri: rule.oneri };
+    }
+    return { term, durum: 'reddedildi', kural: 'bilinmeyen', sebep: tbl.bilinmeyen.sebep, oneri: tbl.bilinmeyen.oneri };
+  });
+}
+
 // ── DÜRÜSTLÜK BAYRAKLARI (F-I, 2026-08-23) ─────────────────────────────────
 // `spec.seen`: vision'ın GÖRDÜĞÜ yapısal alanlar + motorun onları ÇİZİP
 // çizmediğini söyleyen bayraklar. missing.js'in tek girdisi budur; create.js
@@ -605,6 +783,18 @@ export function buildSeenRecord(spec, seen) {
     // table (measurement honestly refused). The result screen prints
     // the matching one-line note; no third (silent) state exists.
     ratiosMeasured: seen.ratiosMeasured === true,
+    // F2-vision: a low-confidence measurement is CARRIED, not thrown — the
+    // numbers + confidence ride here so the result screen can name the ratios
+    // it could not read confidently ("bu oranı emin okuyamadım"). The draft
+    // itself used the standard table (the most constraining value); the label
+    // is the difference between honest and silent.
+    ratiosUncertain: seen.ratiosUncertain || null,
+    ratiosUncertainConfidence: (typeof seen.ratiosUncertainConfidence === 'number')
+      ? seen.ratiosUncertainConfidence : null,
+    // F2-vision: one verdict per out-of-vocab term — mapped onto an axis or
+    // rejected by name with the nearest sewable suggestion. missing.js prints
+    // the rejections; zero silent drops (vision_tasima_check counts).
+    oovKarar: resolveOutOfVocab(seen, spec),
     closure: seen.closure || null,
     collar: seen.collar || null,
     straps: seen.straps || null,

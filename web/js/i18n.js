@@ -69,6 +69,7 @@ export const STRINGS = {
   'create.spec.photobtn': { en: 'Upload a garment photo', tr: 'Kıyafet fotoğrafı yükle' },
   'create.spec.reading': { en: 'reading the garment…', tr: 'kıyafet okunuyor…' },
   'create.spec.checkpicks': { en: 'Check the picks below, fix anything I got wrong.', tr: 'Aşağıdaki seçimleri kontrol et, yanlışım varsa düzelt.' },
+  'create.spec.ratiobelirsiz': { en: 'I could not read these proportions confidently, the pattern uses the standard table for them:', tr: 'Bu oranları emin okuyamadım, kalıp onlar için standart tabloyu kullandı:' },
   'create.draft': { en: 'Draft my pattern', tr: 'Kalıbımı çiz' },
   'create.drafting': { en: 'drafting your pattern…', tr: 'kalıbın çiziliyor…' },
   'create.engineerror': { en: 'The engine failed to load. Refresh and try again.', tr: 'Motor yüklenemedi. Sayfayı yenileyip tekrar dene.' },

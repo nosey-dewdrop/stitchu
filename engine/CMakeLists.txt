@@ -365,6 +365,14 @@ add_test(NAME compile_dialect_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 # yapısal ölü (ratiosMeasured tanığı). Aynı foto + farklı gövde -> farklı mm;
 # farklı L/W -> farklı spec (mm + fullness sınıfı); tablo + veto deterministik.
 add_test(NAME photo_ratio_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/photo_ratio_wire_check.mjs)
+# vision_tasima_check (F2-vision, 2026-09-01): FOTOGRAF OKUMASI MOTORA TAM
+# ULASIR. 7 sürekli oranın HER BİRİ motor ekseninde iner (fixture okumada oran
+# değişince kalıp hashi değişir; eşikler motorun KENDİ çizdiği mm'lerden,
+# contract/vision-tasima-v1.json, testte yeniden türetilir); düşük güvenli
+# ölçüm ATILMAZ 'belirsiz' etiketiyle taşınır ve kalıp standart tabloyu (en
+# kısıtlayıcı değeri) kullanır; outOfVocab'ın %100'ü ya eksene eşlenir ya
+# adıyla + en yakın dikilebilir öneriyle reddedilir — sessiz düşme 0.
+add_test(NAME vision_tasima_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/vision_tasima_check.mjs)
 # prompt_spec_check (F1): YAZIYLA TARİF hattı. 8 metin → geçerli spec → ≥6
 # farklı kalıp; çatışmada PROMPT kazanır (kullanıcının açık isteği, `soruldu`);
 # anlaşılmayan kelime adıyla + en yakın Edge/Panel/Stitch primitifi önerisiyle
