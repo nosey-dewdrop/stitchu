@@ -388,19 +388,28 @@ check('flat is a different drawing from the pattern', flat !== svg && !flat.incl
 // dead law. What replaces it is the thing H3 actually claims: the file must name
 // the seam plan it came out of, so a flat opened offline in Illustrator can be
 // held next to a pattern and asked whether the two are one object.
-check('the flat names the seam plan it was projected from',
-  /data-source="SeamPlan"/.test(flat) && /data-dugum="[0-9a-f]{8,}"/.test(flat),
+// ⭐ 2026-09-01 — REBOUND, NOT LOOSENED. The drawing is no longer the surface
+// line's projection: it is drawn from the DRAFTED PATTERN's own 2D pieces
+// (web/lib/flat-from-pattern.js). The claim this line has always enforced is
+// unchanged — the file must name the object it came out of — so it now reads
+// the new source name and the new token, which is a hash of the drafted
+// pattern's own JSON and therefore a STRONGER identity than the old one.
+check('the flat names the object it was drawn from',
+  /data-source="DraftedPattern"/.test(flat) && /data-dugum="[0-9a-f]{8,}"/.test(flat),
   'a drawing that cannot say which object it came from is a second object');
 
-// NAMED REFUSAL, not a silent redraw. The 2026-07-18 precedent in CLAUDE.md is a
-// puff sleeve that was silently dropped. `sleeveStyle: straight` is a real word
-// in the spec vocabulary and the surface line has no dial for it, so it must come
-// back BY NAME. The pen's `data-engine-gap` stamp died with the pen; this is the
-// one remaining vocabulary of missing things.
-const { desteklenmeyen_eksenler: gaps } =
-  await flatSVG({ ...SPEC, sleeveStyle: 'straight' }, FLAT_BODY);
-check('the flat names what the engine cannot carry', gaps.some((a) => a.startsWith('sleeveStyle')),
-  gaps.join(' · ') || 'no refused axis');
+// ⭐ 2026-09-01 — THE GAP THIS LINE GUARDED IS CLOSED, SO THE LINE GOT HARDER.
+// It used to require `sleeveStyle: straight` to come back BY NAME in
+// `desteklenmeyen_eksenler`, because the surface line had no dial for a sleeve
+// and an unnamed omission is the 2026-07-18 puff-sleeve failure. The drawing is
+// now made from the pattern, which drafts the sleeve, so the honest test is no
+// longer "is the omission named" but "is the sleeve THERE". Naming a gap you no
+// longer have would be a gate measuring a dead law.
+const { svg: flatSleeved } = await flatSVG({ ...SPEC, sleeveStyle: 'straight' }, FLAT_BODY);
+const { svg: flatBare } = await flatSVG({ ...SPEC, sleeveStyle: 'none' }, FLAT_BODY);
+check('a sleeve the shopper asked for is DRAWN, not reported missing',
+  /data-rol="kol"/.test(flatSleeved) && !/data-rol="kol"/.test(flatBare),
+  'sleeveStyle must move the drawing, and sleeveStyle:none must not draw a sleeve');
 check('a spec with nothing to draw is refused, not blank',
   await (async () => { try { await flatSVG({}, FLAT_BODY); return false; } catch { return true; } })(),
   'an empty file that opens is worse than an error');

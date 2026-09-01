@@ -1076,23 +1076,26 @@ function downloadPanel(result) {
   // the flat gates judge. It is a separate file because it answers a separate
   // question (what IS this), and it comes with the pen's own refusal: any axis
   // the engine cannot cut is named on screen, not swallowed.
-  // ⭐ GECE7 / F3: for top/dart/woven this button no longer serialises the pen's
-  // drawing. It asks the engine for the FLAT READING of the same seam plan the
-  // pattern was cut from (engine.flatJSON -> web/lib/flat-from-plan.js), so
-  // deepening the neckline moves the drawing and the pattern together instead
-  // of moving two objects that used to agree. The switch is SILENT: no counter,
-  // no badge, no "you are on the new line" — the shopper sees their garment.
+  // ⭐ 2026-09-01: THIS BUTTON'S DRAWING NOW COMES OFF THE PATTERN.
+  // It used to be the 3D surface line's projection (engine.flatJSON ->
+  // web/lib/flat-from-plan.js). That line has no sleeve, no collar and no dart
+  // in its types, so what downloaded was a torso outline whatever the shopper
+  // picked — and it took 7.5 to 30.9 SECONDS. The drawing is now assembled from
+  // the drafted pattern's own 2D panels (engine.draftJSON ->
+  // web/lib/flat-from-pattern.js) in single-digit milliseconds, with the
+  // armhole, the cap, the darts and the collar all coming out of the very
+  // geometry the shopper is about to cut. The switch is SILENT: no counter, no
+  // badge, no "you are on the new line" — the shopper sees their garment.
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
   wire(flatBtn, async () => {
     // The flat leaves with the origin record on its root element.
     const eksenler = await saveFlatSVG(spec, { size: FLAT_BEDEN }, `${base}-flat.svg`,
                                        koken, KOKEN_ALANLARI);
-    // ⭐ H2/H3 — THE SURFACE LINE'S OWN REFUSALS, ON SCREEN. The engine reads
-    // the whole spec; every axis it could not put on a dial comes back in
-    // `desteklenmeyen_eksenler` and is printed here by name. Swallowing it would
-    // rebuild the exact silence H2 was opened to end. This is now the ONLY gap
-    // list on the screen: the pen's `data-engine-gap` stamp died with the pen
-    // (H3), so there is no second vocabulary of missing things.
+    // REFUSALS, ON SCREEN — the wire is kept even though the list is empty
+    // today. The pattern line carries every axis create.html offers, so there is
+    // no axis to report; the day one cannot be drawn, the drawer names it and
+    // this line prints it rather than letting the omission be silent, which is
+    // the failure H2 was opened to end.
     //
     // Not a refusal — the file IS on their disk — so it does not go through the
     // refusal string. It is the honest footnote: drawn, but not carried.

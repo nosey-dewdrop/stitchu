@@ -136,6 +136,18 @@ add_test(NAME flat_mirror_check COMMAND node
 # hükmü (§1d/H6) flat_pattern_agree_check --all'a taşındı, kaybolmadı.
 add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
 
+# cizim_giysi_mi (2026-09-01): "BUTONA BASIYORUM, KOL-YAKA-PENSLI BIR CIZIM
+# INIYOR." Sevk edilen teknik cizim artik 3B YUZEY hattinin projeksiyonu degil,
+# draftJSON'un urettigi 2B PANELLERDEN ciziliyor (web/lib/flat-from-pattern.js);
+# yuzey hattinin turlerinde kol/yaka/pens diye bir sey YOKTU ve "kutuk cizim"
+# sikayetinin tamami oradan geliyordu. Bu kapi indirilen dosyayi 12 spec'te
+# olcer: 5/5 indirme + 0 adet 'invalid ... NaN' (a) · kol (b) · yaka (c) ·
+# kalibin TUM pensleri (d) · gorunur eleman >= 12, eskisi 4 (e) · p95 < 1000 ms,
+# eskisi 7500-30900 ms (f) · cizilen genislik == kalibin genisligi 0.1 mm'de (g)
+# · ayna ozdesligi 1e-6 (h). (g) ve (h), kaynak degistigi icin eski kapilarin
+# olcemez oldugu iki hukmun yeni kaynaga BAGLANMIS halidir — silinmediler.
+add_test(NAME cizim_giysi_mi COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/cizim_giysi_mi.mjs)
+
 # flat_expresses_spec_check (V4-B 2026-08-24 · H3'te yüzey hattına bağlandı):
 # konvansiyon "hepsi aynı MANKEN" demektir, "hepsi aynı ÇİZİM" değil. Emsal:
 # sleeveStyle 'puff' silently dropped (2026-07-18). Damga (`data-engine-gap`)

@@ -184,9 +184,16 @@ check("create.js writes the refused axes into the screen message",
   "a list that is fetched and never printed is the silence H2 was opened to end");
 check("the sentence exists in both languages", /'create\.dl\.flataxes'/.test(i18nSrc) &&
   /Teknik çizim dikiş planından çizildi/.test(i18nSrc));
-check("web/js/engine.js passes the SPEC, not two scalars",
-  /engine\.flatJSON\(spec, body\)/.test(readFileSync(path.join(ROOT, "web", "js", "engine.js"), "utf8")),
-  "the whole defect was that this call took a size label and a zero");
+// ⭐ 2026-09-01 — SIKILASTIRILDI, GEVSETILMEDI. Bu satir `engine.flatJSON(spec,
+// body)` dizesini ariyordu ve o dizeyi buluyordu; bulmadigi sey, GECEN SPEC'IN
+// CEVRILMEMIS OLDUGUYDU. WASM siniri eksen kelimelerini TAMSAYI olarak alir
+// (`engineSpec` cevirir); ham spec verilince her kelime NaN'a donuyor ve motor
+// "invalid tieClosure NaN" diye reddediyordu — olculdu, create.html'den flat
+// indirme 5/5 cokuyordu. Yani "iki skaler degil, spec geciyor" hukmu dogru ama
+// YETERSIZDI. Hukum artik: spec geciyor VE engineSpec'ten geciyor.
+check("web/js/engine.js passes the SPEC, and passes it THROUGH engineSpec",
+  /engine\.flatJSON\(engineSpec\(spec\), body\)/.test(readFileSync(path.join(ROOT, "web", "js", "engine.js"), "utf8")),
+  "iki skaler degildi ama cevrilmemis de olamaz: ham spec wasm sinirinda NaN olur");
 
 // --------------------------------------------------------------------- K5
 // ONE SOURCE. seamplan.cpp's neckline table is bodice.cpp's frontNeckDepth /
