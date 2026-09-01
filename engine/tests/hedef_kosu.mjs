@@ -62,14 +62,42 @@ const sozluktekiler = (spec) => {
 // kalemi) H3'te silindi — her sınıf artık kalıbın kesildiği yüzeyin
 // projeksiyonundan çiziliyor, ve bu koşu da onu ölçüyor. Aynı iki modül:
 // motorun sevk edilen baytı + create.js'in çizdiği modül.
-const { renderFlatFromPlan } = await import(join(ROOT, 'web/lib/flat-from-plan.js'));
+// ⭐ F5-parca (2026-09-02, hakem borcu): FLAT = KULLANICIYA GIDEN FLAT.
+// create.js 2026-09-01'de indirilen flat'i YUZEY hattindan (flatJSON ->
+// flat-from-plan) KALIP hattina (draftJSON -> web/lib/flat-from-pattern.js)
+// tasidi — kullanicinin ekranindaki cizim artik o, tek haneli milisaniyede.
+// Bu kosu hala eski yuzey hattini olcuyordu ve H11 tavanini 19-30 SANIYEYLE
+// deliyordu: kullanicinin YASAMADIGI bir maliyet tavani kirmizi tutuyordu,
+// kullanicinin yasadigi cizim ise hic olculmuyordu. Yuzey hatti SEVK DISI
+// arastirma hattidir (flatJSON tipi kol/yaka/pens tasimaz); olcum sevk edilen
+// modulle ayni cagridan gecer: web/js/engine.js flatDrawing (ayni engineSpec
+// cevirisi, ayni wasm draftJSON, ayni kalem).
+// flatDrawing'in kendisi cagrilamiyor: loadEngine() DOM'dan <script> enjekte
+// eder ve node'da 'document is not defined' atar (olculdu). Ayni fonksiyonun
+// birlestirdigi MODULLER birebir kullanilir: engineSpec cevirisi + bodyForSize
+// + patternDugum (web/js/engine.js) ve renderFlatFromPattern (create.js'in
+// cizdigi sevk modulu, web/lib/flat-from-pattern.js) + motorun sevk edilen
+// wasm bayti (engine/dist). Zincir taklit edilmiyor, DOM'lu yukleyici asiliyor.
+const { bodyForSize, patternDugum } = await import(join(ROOT, 'web/js/engine.js'));
+const { renderFlatFromPattern } = await import(join(ROOT, 'web/lib/flat-from-pattern.js'));
 const _engineFactory = (await import(join(ROOT, 'engine/dist/stitchu-engine.js'))).default;
 const _engine = await _engineFactory();
 const FLAT_BEDEN = 'EU38';
-const renderSurfaceFlat = (spec) => {
-  const plan = JSON.parse(_engine.flatJSON(engineSpec(sozluktekiler(spec)), { size: FLAT_BEDEN }));
-  if (plan.error) throw new Error(plan.error);
-  return renderFlatFromPlan(plan);
+const renderSurfaceFlat = async (spec) => {
+  const es = engineSpec(sozluktekiler(spec));
+  const m = bodyForSize(FLAT_BEDEN);
+  const text = _engine.draftJSON(es, {
+    bust: m.bust, waist: m.waist, hip: m.hip, shoulder: m.shoulder,
+    backLength: m.backLength, armLength: m.armLength, neck: m.neck,
+    upperBust: m.upperBust || 0,
+  });
+  const drafted = JSON.parse(text);
+  if (drafted.error) throw new Error(drafted.error);
+  return renderFlatFromPattern(drafted, {
+    beden: FLAT_BEDEN, dugum: patternDugum(text),
+    sinif: { garment: es.garment, shaping: es.shaping, fabric: es.fabric },
+    arka: null,
+  });
 };
 const { canonical } = await import(join(ROOT, 'web/js/vocab.gen.js'));
 const VB = await import(join(ROOT, 'web/js/vision-bridge.js'));
@@ -300,7 +328,7 @@ for (const file of files) {
     // tavanı. Bu bir GEVŞETME DEĞİL, iki farklı niceliğin ayrılmasıdır — ve
     // yüzey hattının bu maliyeti repoda ilk kez BURADA yazılı bir sayıdır.
     const tFlat0 = process.hrtime.bigint();
-    try { svg = renderSurfaceFlat(spec); } catch (e) { r.flatErr = String(e.message || e); }
+    try { svg = await renderSurfaceFlat(spec); } catch (e) { r.flatErr = String(e.message || e); }
     r.flatMs = Number(process.hrtime.bigint() - tFlat0) / 1e6;
     r.flatBytes = svg.length;
     r.ok = r.pieces > 0 && r.flatBytes > 0;
@@ -530,9 +558,10 @@ return {
                              + 'üstüne API turu ekler. ⚠ YÜZEY FLAT\'İ DAHİL VE AYRICA BASILIYOR: '
                              + `medyan ${(+medianFlat.toFixed(1))} ms, en kötü ${Math.max(...flatTimes).toFixed(1)} ms. `
                              + 'H3-B (2026-08-30): flat süresi bir süre paydadan ÇIKARILIYORDU ve H11 '
-                             + 'o çıkarma sayesinde yeşildi; çıkarma geri alındı. Tavan aşılıyorsa '
-                             + 'sayı KIRMIZI basılır — teknik çizim artık kalıbın kesildiği yüzeyin '
-                             + 'projeksiyonu ve o maliyet kullanıcının ekranında duruyor.' },
+                             + 'o çıkarma sayesinde yeşildi; çıkarma geri alındı. F5 (2026-09-02): ölçülen '
+                             + 'flat artık KULLANICIYA GİDEN kalıp-hattı çizimi (draftJSON -> '
+                             + 'flat-from-pattern.js, create.js 2026-09-01 geçişi) — 19-30 sn süren yüzey '
+                             + 'hattı SEVK DIŞI araştırma hattıdır ve bu koşunun paydasında değildir.' },
 };
 }
 

@@ -298,6 +298,10 @@ std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
         out += R"(,"markings":)" + commandsJSON(piece.markings);
         out += R"(,"notches":)" + commandsJSON(piece.notches);
         if (!piece.closure.empty()) out += R"(,"closure":")" + escape(piece.closure) + "\"";
+        // F5-parca: her parca gerekcesiyle sevk edilir; bitirme seritleri
+        // siniflariyla ayrilir (kesim sayimina girmezler ama listede dururlar).
+        out += R"(,"gerekce":")" + escape(piece.gerekce) + "\"";
+        out += R"(,"sinif":")" + std::string(piece.bitirme ? "bitirme" : "kesim") + "\"";
         out += R"(,"cutLine":)" + commandsJSON(piece.cutLine);
         out += R"(,"onFold":)" + std::string(piece.onFold ? "true" : "false");
         out += R"(,"foldLine":)" + commandsJSON(piece.foldLine);

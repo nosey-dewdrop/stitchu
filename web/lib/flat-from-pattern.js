@@ -665,8 +665,11 @@ function gather(pattern) {
       arka: wrap(pick(ps, /^(Bodice|Top) Side Back$/)),
     },
     skirt: {
-      on:   wrap(pick(ps, /^(Skirt Front|Skirt Center Front|Front)$/)),
-      arka: wrap(pick(ps, /^(Skirt Back|Skirt Center Back|Back)$/)),
+      // F5-parca: a zipperless simple dress carries ONE merged skirt piece
+      // ("Skirt Front & Back", cut 2 on fold) — measured identical quarters,
+      // so the SAME piece honestly draws both views.
+      on:   wrap(pick(ps, /^(Skirt Front|Skirt Center Front|Front|Skirt Front & Back|Front & Back)$/)),
+      arka: wrap(pick(ps, /^(Skirt Back|Skirt Center Back|Back|Skirt Front & Back|Front & Back)$/)),
     },
     skirtSide: {
       on:   wrap(pick(ps, /^Skirt Side Front$/)),

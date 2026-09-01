@@ -1110,6 +1110,9 @@ Result<DraftedPattern> draftRecipe(
             piece.foldLine = onFold ? foldLineOf(piece.commands)
                                     : std::vector<PathCommand>{};
         }
+        // F5-parca: the recipe path's pieces carry a gerekce too — same pass,
+        // same law as the motor path (kosulsuz parca 0).
+        GarmentDrafter::fillGerekce(pattern);
         return R::Ok(std::move(pattern));
     } catch (const RecipeError& e) {
         return R::Err(e.msg);

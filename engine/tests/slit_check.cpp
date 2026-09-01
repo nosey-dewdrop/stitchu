@@ -187,7 +187,12 @@ int main() {
         GarmentSpec withSlit = d; withSlit.backSlit = static_cast<int>(HemSlit::Vent);
         const DraftedPattern p0 = GarmentDrafter::draft(d, m0());
         const DraftedPattern p1 = GarmentDrafter::draft(withSlit, m0());
-        check(p1.pieces.size() == p0.pieces.size(), "slit adds no piece atop tie + open-back");
+        // F5-parca: the tie-back opens the dress, so the ZIPPERLESS base merges
+        // its skirt to one "Front & Back" piece; asking for a vent is exactly
+        // the reason the back must be a separate CB-seam panel again, so the
+        // count may rise by that ONE named split — never more.
+        check(p1.pieces.size() <= p0.pieces.size() + 1,
+              "slit adds at most the CB-split back panel (F5 merge undone by the vent)");
         check(PatternValidator::issues(withSlit, m0(), p1).empty(), "combined draft valid");
         bool tie = false, facing = false;
         for (const auto& pc : p1.pieces) {

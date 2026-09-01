@@ -30,5 +30,18 @@ inline constexpr double kGatherRatio_smocked = 3;
     X("EU50", 116, 98, 122, 41, 43, 61, 40) \
     X("EU52", 122, 104, 128, 42, 43.5, 61.5, 41)
 
+// contract/parca-gecis-v1.json — geçiş kuralı + pens eskalasyonu (F5-parca).
+// Baş çevresi referansı: theknitwit.org "minimum neck opening = head circumference / stretch ratio".
+inline constexpr double kHeadCircumferenceMM = 510;
+// Tek pens ağzı tavanı (anicka.design, KAYNAK ZAYIF — blog): üstü iki pense bölünür.
+inline constexpr double kMaxSingleDartMouthMM = 30;
+// Supresyon dağılım bandı (anicka.design, KAYNAK ZAYIF) — KAYIT, tele bağlı değil
+// (contract dosyasındaki _uygulama notu: Aldrich pens derinliği kararıyla çelişir).
+inline constexpr double kSuppressionSideShare = 0.6;
+inline constexpr double kSuppressionDartShare = 0.4;
+// FBA -> prenses bandı (curvysewingcollective, KAYNAK ZAYIF) — KAYIT.
+inline constexpr double kFbaPrincessMinMM = 25;
+inline constexpr double kFbaPrincessMaxMM = 50;
+
 } // namespace contract
 } // namespace stitchu

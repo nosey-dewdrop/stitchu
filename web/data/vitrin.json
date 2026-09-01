@@ -36,8 +36,8 @@
   "H11": {
     "tavan_sn": 10,
     "n": null,
-    "asildi": true,
-    "cumle": "hedef_kosu her koşuda medyan çizim süresini ölçer ve bu tavana karşı yargılar — BU KOŞUDA TAVAN AŞILDI",
+    "asildi": false,
+    "cumle": "hedef_kosu her koşuda medyan çizim süresini ölçer ve bu tavana karşı yargılar",
     "uyari": "ÖLÇÜLEN MEDYAN YAYINLANMAZ: duvar saati sayısıdır, koşudan koşuya oynar, bayatlığı gürültüden ayırt edilemez. Aşılıp aşılmadığı ise oynamaz, o yüzden `asildi` yayınlanır."
   },
   "beden": {

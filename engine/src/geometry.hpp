@@ -104,6 +104,16 @@ struct PatternPiece {
     // NAMED EDGES (see EdgeRole). Empty on a piece whose drafting code names
     // nothing — an absent name is reported as absent, never invented later.
     std::vector<EdgeRole> edgeRoles;
+    // GEREKCE (F5-parca, 2026-09-02): why this piece EXISTS, in the engine's own
+    // words — "on govde", "fermuar: yaka 36.0cm < bas 51.0cm", "iki pens: tek
+    // pens agzi 5.1cm > 3.0cm". A piece with no reason is an error at the gate
+    // (parca_sayisi_check): kosulsuz parca 0. Filled by the drafting block that
+    // creates the piece, or by GarmentDrafter::fillGerekce for role pieces.
+    std::string gerekce;
+    // BITIRME class (F5-parca): a finishing strip (bias binding) is not a cut
+    // PATTERN piece — it does not enter the cut-piece count, but it stays in
+    // the list with its own gerekce. false = kesim parcasi (counted).
+    bool bitirme = false;
 };
 
 // The commands of one named edge as a standalone path: a Move to `role.start`
@@ -170,6 +180,14 @@ struct DraftedPattern {
     // piece), so it never enters the golden dump.
     double sleeveArmholeLenMM = 0.0;
     double sleeveArmholeDepthMM = 0.0;
+    // F5-parca: the DRESS block's own donning decision (gecis kurali,
+    // contract/parca-gecis-v1.json). true = the narrowest passage (neck opening
+    // stretched by the declared fabric, and the finished dress waist) is
+    // narrower than the head reference, so the garment carries an invisible CB
+    // zipper. `cbZipperGerekce` is the sentence WITH the numbers, stamped onto
+    // the back pieces by annotateTechnical. Metadata only (not a piece).
+    bool cbZipper = false;
+    std::string cbZipperGerekce;
 };
 
 // Flatten one cubic to `steps` segments; returns steps+1 points incl. `from`.

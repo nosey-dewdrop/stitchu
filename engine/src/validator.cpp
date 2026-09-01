@@ -593,8 +593,11 @@ std::vector<ValidationIssue> skirtIssues(
         // EXCEPT a gore panel, which is one of `goreCount` identical panels each
         // carrying waistShare of the finished waist, so it counts `goreCount`
         // times (SkirtBlock::goreCount).
+        // F5-parca: a merged "Front & Back" piece is cut twice on the fold —
+        // it carries the front AND the back, i.e. FOUR quarters, not two.
         const double multiplier = (spec.skirtStyle == SkirtStyle::Gore)
-                                      ? static_cast<double>(SkirtBlock::goreCount) : 2.0;
+                                      ? static_cast<double>(SkirtBlock::goreCount)
+                                      : (contains(piece->name, "Front & Back") ? 4.0 : 2.0);
         sewnWaist += (*waist - dartIntake(*piece)) * multiplier;
     }
 
@@ -718,7 +721,10 @@ std::vector<ValidationIssue> skirtIssues(
     // half-circle panel) must be cut 2 so a center back seam exists. A gored
     // skirt is exempt — it is built from `goreCount` vertical panels, so a panel
     // seam always lands at the center back for the zipper to continue into.
-    if (spec.garment == GarmentType::Dress && spec.skirtStyle != SkirtStyle::Gore) {
+    // F5-parca: the CB-seam requirement follows the MEASURED zipper decision
+    // (draft.cbZipper, gecis kurali) — a zipperless dress needs no CB seam.
+    if (spec.garment == GarmentType::Dress && spec.skirtStyle != SkirtStyle::Gore &&
+        draft.cbZipper) {
         const PatternPiece* zipCarrier = nullptr;
         for (const auto* piece : skirtPieces) {
             if (hasSuffix(piece->name, "Back")) { zipCarrier = piece; break; }
@@ -1361,10 +1367,15 @@ std::vector<ValidationIssue> issues(
             options.neckline = spec.neckline;
             options.shaping = spec.shaping;
             options.fabric = spec.fabric;
-            if (spec.shaping == Shaping::Princess) {
-                options.extendBelowWaist = belowWaist(spec.topLength);
-                options.hipHalfQuarter = (m.hipMM() / 4) * 1.04;
-            }
+            // F5-parca: the top block passes extendBelowWaist for EVERY shaping
+            // (garment.cpp TopBlock::draft), and the dart-escalation decision
+            // (iki pens / prenses) reads the side-take that depends on it. The
+            // reference bodice must be drafted with the SAME inputs or the two
+            // disagree about which half went princess. Princess-only was the
+            // old mirror; it survived only because nothing downstream depended
+            // on the delta before the escalation existed.
+            options.extendBelowWaist = belowWaist(spec.topLength);
+            options.hipHalfQuarter = (m.hipMM() / 4) * 1.04;
             if (spec.neckline != Neckline::Halter &&
                 static_cast<ShoulderStyle>(spec.shoulderStyle) == ShoulderStyle::Dropped)
                 options.shoulderStyle = ShoulderStyle::Dropped;

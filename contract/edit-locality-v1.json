@@ -1,44 +1,104 @@
 {
   "_baslik": "stitchu EDIT LOCALITY contract, F-I (2026-08-23)",
   "_yasa": "Damla'nın sözü: 'midjourney gibi editleme olacak: fiyonk ekle şuraya, uzatma, kısaltma, yakayı değiştirme'. Bir spec DIFF bir BÖLGEYE dokunur. Bölgenin DIŞINDA kalan panel, düzenlemeden sonra BAYT-AYNI kalmak zorundadır. Bu dosya o bölgeleri İLAN EDER; kapı (engine/tests/edit_locality_check.mjs) motorun ilana uyup uymadığını ÖLÇER. İlan motorun çıktısından türetilmez — giysi anatomisinden ve contract/composition.json'un yayınlanmış conflictClass alanından gelir (ORTAK.md md.3).",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "_nasil": "zoneOf(field) -> bölge(ler). Bölgenin 'untouchable' listesindeki isim kalıbına uyan HER parça, DIFF uygulandıktan sonra JSON olarak bayt-aynı olmalı. Kalıp = JS RegExp, parça adına uygulanır. Bir alan birden çok bölgeye aitse untouchable listeleri KESİŞTİRİLİR (bir bölgede serbest olan panel serbesttir).",
   "zones": {
     "neckZone": {
       "ne": "yaka oyuğu, yaka parçası, ön/arka boyun bitişi",
-      "untouchable": ["^Skirt", "Sleeve", "Cuff", "Pocket", "Peplum", "Hem Flounce", "Ruffle strip"]
+      "untouchable": [
+        "^Skirt",
+        "Sleeve",
+        "Cuff",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce",
+        "Ruffle strip"
+      ]
     },
     "shoulderZone": {
       "ne": "omuz dikişi, omuz noktası, askı",
-      "untouchable": ["^Skirt", "Cuff", "Pocket", "Peplum", "Hem Flounce"]
+      "untouchable": [
+        "^Skirt",
+        "Cuff",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce"
+      ]
     },
     "sleeveZone": {
       "ne": "kol, kol kapağı, manşet",
-      "untouchable": ["^Skirt", "^Bodice", "^Top ", "Collar", "Pocket", "Peplum", "Hem Flounce"]
+      "untouchable": [
+        "^Skirt",
+        "^Bodice",
+        "^Top ",
+        "Collar",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce"
+      ]
     },
     "waistZone": {
       "ne": "bel dikişi, kemer, bele takılan parça",
-      "untouchable": ["Sleeve", "Cuff", "Collar", "Bias binding", "Neck Facing"]
+      "untouchable": [
+        "Sleeve",
+        "Cuff",
+        "Collar",
+        "Bias binding",
+        "Neck Facing"
+      ]
     },
     "hemZone": {
       "ne": "etek ucu, boy, yırtmaç, volan",
-      "untouchable": ["^Bodice", "^Top ", "Sleeve", "Cuff", "Collar", "Bias binding", "Neck Facing", "Yoke"]
+      "untouchable": [
+        "^Bodice",
+        "^Top ",
+        "Sleeve",
+        "Cuff",
+        "Collar",
+        "Bias binding",
+        "Neck Facing",
+        "Yoke"
+      ]
     },
     "cfZone": {
       "ne": "ön orta: pat, düğme, kuşgözü, ön bağ, keyhole",
-      "untouchable": ["Back", "Sleeve", "Cuff", "Collar"]
+      "untouchable": [
+        "Back",
+        "Sleeve",
+        "Cuff",
+        "Collar"
+      ]
     },
     "backZone": {
       "ne": "arka: sırt oyuğu, bağcık, arka fermuar, arka detay",
-      "untouchable": ["Front", "Sleeve", "Cuff"]
+      "untouchable": [
+        "^(Bodice|Top) (Center |Side )?Front",
+        "Front Body",
+        "Sleeve",
+        "Cuff"
+      ],
+      "_f5_gerekce": "F5-parca (2026-09-02): eski liste 'Front' kalibiyla ETEK panellerini de koruyordu. Etek arka fermuara BAGLIDIR: gorunmez CB fermuar govdeden etege devam eder (garment.cpp), ve sirti acan her ozellik (bagcik, sirt oyugu, arka bag) fermuari dusurur — fermuarsiz etek tek kalip 'Skirt Front & Back' olarak birlesir (gecis kurali, contract/parca-gecis-v1.json). Yani bir SIRT editi etegin parca yapisini MESRU olarak degistirir; onu dokunulmaz ilan etmek dogru davranisi yasaklamakti. Govde on panelleri + kol + manset dokunulmaz kalir."
     },
     "sideSeamZone": {
       "ne": "yan dikiş (in-seam cep)",
-      "untouchable": ["Collar", "Sleeve", "Cuff", "Peplum", "Bias binding"]
+      "untouchable": [
+        "Collar",
+        "Sleeve",
+        "Cuff",
+        "Peplum",
+        "Bias binding"
+      ]
     },
     "surface": {
       "ne": "panel yüzeyi (yama cep)",
-      "untouchable": ["Collar", "Sleeve", "Cuff", "Bias binding", "Neck Facing"]
+      "untouchable": [
+        "Collar",
+        "Sleeve",
+        "Cuff",
+        "Bias binding",
+        "Neck Facing"
+      ]
     },
     "global": {
       "ne": "giysinin tamamını yeniden kuran alan (garment, shaping, fabric) — LOKALLİK İDDİASI YOK",
@@ -47,46 +107,140 @@
   },
   "_bolge_kaynagi": "composition.json'daki her bileşenin conflictClass'ı buraya BİREBİR taşındı; '|' ve '+' ayraçları bölge listesine açıldı. Temel alanlar (neckline/sleeve*/skirt*/topLength/waistline) composition.json'da bileşen değil, bölgeleri anatomiden yazıldı ve gerekçesi yanlarında.",
   "fieldZones": {
-    "shoulderStyle": ["shoulderZone"],
-    "keyhole": ["cfZone"],
-    "placketStyle": ["cfZone"],
-    "frontPlacket": ["cfZone"],
-    "tieClosure": ["cfZone", "backZone", "waistZone"],
-    "collarType": ["neckZone"],
-    "collarEdge": ["neckZone"],
-    "gatherType": ["neckZone"],
-    "gatherZone": ["neckZone"],
-    "backOpening": ["backZone"],
-    "laceUpBack": ["backZone"],
-    "backSlit": ["backZone", "hemZone"],
-    "ruffledStraps": ["shoulderZone"],
-    "peplum": ["waistZone"],
-    "pocketStyle": ["surface", "sideSeamZone"],
-    "cuffStyle": ["sleeveZone"],
-    "hemShape": ["hemZone"],
-    "ruffle": ["hemZone"],
-    "hemFlounce": ["hemZone"],
-    "bardotStyle": ["shoulderZone", "neckZone"],
-    "buttonRow": ["cfZone"],
-    "exposedZip": ["cfZone", "backZone"],
-    "backDetail": ["backZone"],
-    "sleeveCap": ["sleeveZone", "shoulderZone"],
-    "edgeFinish": ["neckZone"],
-    "wrapFront": ["cfZone"],
-    "boxPleat": ["cfZone"],
-    "yoke": ["shoulderZone", "neckZone"],
-    "cupSeam": ["neckZone", "cfZone"],
-    "neckline": ["neckZone", "shoulderZone"],
-    "sleeveStyle": ["sleeveZone", "shoulderZone"],
-    "sleeveLength": ["sleeveZone"],
-    "skirtStyle": ["hemZone", "waistZone"],
-    "skirtLength": ["hemZone"],
-    "skirtLengthMM": ["hemZone"],
-    "topLength": ["hemZone"],
-    "waistline": ["waistZone"],
-    "garment": ["global"],
-    "shaping": ["global"],
-    "fabric": ["global"],
-    "photoFabric": ["global"]
+    "shoulderStyle": [
+      "shoulderZone"
+    ],
+    "keyhole": [
+      "cfZone"
+    ],
+    "placketStyle": [
+      "cfZone"
+    ],
+    "frontPlacket": [
+      "cfZone"
+    ],
+    "tieClosure": [
+      "cfZone",
+      "backZone",
+      "waistZone"
+    ],
+    "collarType": [
+      "neckZone"
+    ],
+    "collarEdge": [
+      "neckZone"
+    ],
+    "gatherType": [
+      "neckZone"
+    ],
+    "gatherZone": [
+      "neckZone"
+    ],
+    "backOpening": [
+      "backZone"
+    ],
+    "laceUpBack": [
+      "backZone"
+    ],
+    "backSlit": [
+      "backZone",
+      "hemZone"
+    ],
+    "ruffledStraps": [
+      "shoulderZone"
+    ],
+    "peplum": [
+      "waistZone"
+    ],
+    "pocketStyle": [
+      "surface",
+      "sideSeamZone"
+    ],
+    "cuffStyle": [
+      "sleeveZone"
+    ],
+    "hemShape": [
+      "hemZone"
+    ],
+    "ruffle": [
+      "hemZone"
+    ],
+    "hemFlounce": [
+      "hemZone"
+    ],
+    "bardotStyle": [
+      "shoulderZone",
+      "neckZone"
+    ],
+    "buttonRow": [
+      "cfZone"
+    ],
+    "exposedZip": [
+      "cfZone",
+      "backZone"
+    ],
+    "backDetail": [
+      "backZone"
+    ],
+    "sleeveCap": [
+      "sleeveZone",
+      "shoulderZone"
+    ],
+    "edgeFinish": [
+      "neckZone"
+    ],
+    "wrapFront": [
+      "cfZone"
+    ],
+    "boxPleat": [
+      "cfZone"
+    ],
+    "yoke": [
+      "shoulderZone",
+      "neckZone"
+    ],
+    "cupSeam": [
+      "neckZone",
+      "cfZone"
+    ],
+    "neckline": [
+      "neckZone",
+      "shoulderZone"
+    ],
+    "sleeveStyle": [
+      "sleeveZone",
+      "shoulderZone"
+    ],
+    "sleeveLength": [
+      "sleeveZone"
+    ],
+    "skirtStyle": [
+      "hemZone",
+      "waistZone"
+    ],
+    "skirtLength": [
+      "hemZone"
+    ],
+    "skirtLengthMM": [
+      "hemZone"
+    ],
+    "topLength": [
+      "hemZone"
+    ],
+    "waistline": [
+      "waistZone"
+    ],
+    "garment": [
+      "global"
+    ],
+    "shaping": [
+      "global"
+    ],
+    "fabric": [
+      "global"
+    ],
+    "photoFabric": [
+      "global"
+    ]
   }
 }

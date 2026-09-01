@@ -56,6 +56,9 @@ const CASES = [
 //   - "manşet ekle": rewrite kipinde sleeveStyle düşüyor, motor spec'i
 //     "cuffStyle requires a sleeve" diye reddediyor -> vaka ÜRETİMDE atlanıyor.
 // Taban DÜŞÜRÜLEMEZ; ölçüm tabanı aşarsa taban güncellenmeden test geçmez.
+// F5-parca (2026-09-02): gerekce/sinif beyan alanlari karsilastirma disina
+// alininca (spec-diff.mjs pieceBytes, ilanli) V-yaka vakasinin gecici 11.
+// yakalanisi geri dustu — taban olculen 10'da kaldi, dusurulmedi.
 const A1_FLOOR = 10;
 // A1 döngüsünde sessizce atlanan vaka sayısının TAVANI. Atlanan vaka yargı
 // üretmez; sayısı artarsa kapının yüzeyi sessizce daralıyor demektir.

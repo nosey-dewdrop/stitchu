@@ -8,6 +8,37 @@ required for behavior changes).
 
 ## Pin history
 
+### 2026-09-02 — 25116 lines, md5 e98bdbede2a6a8d43e97c434810f9168 (HAKEM/DAMLA ONAYI BEKLIYOR, F5-parca)
+- Label: "f5-parca: kosullu fermuar (gecis kurali contract/parca-gecis-v1.json),
+  pens eskalasyonu (iki pens >3cm, prenses >6cm), birlesik etek kalibi
+  fermuarsiz elbisede; engine_check 70200/70200 yesil".
+- Divergence: F5-parca calisma agaci (bu commit). Uc davranis degisti, ucu de
+  kasitli ve kapili:
+  1. PENS ESKALASYONU (bodice.cpp makePiece): tek pens agzi 30mm'i asinca
+     intake IKI pense bolunur (1/3-2/3, skirt.cpp emsali) — OUTLINE byte-ayni,
+     yalniz markings degisir. Esikler contract/parca-gecis-v1.json (kaynak
+     zayif etiketli, anicka.design + curvysewingcollective). PRENSESE OTOMATIK
+     GECIS ILK DENEMEDEN GERI ALINDI (ayni gun): recipe_dress_golden_check
+     motor pinine BYTE paritesi ister, motorun tek basina prensese kacmasi
+     pariteyi kirdi (26616-satirlik ara pin bu yuzden 25116'ya indi).
+     Satir artisi 23406 -> 25116: iki pensin fazladan marking satirlari.
+  2. KOSULLU FERMUAR (garment.cpp DressBlock + wearability::gecisKurali):
+     elbisenin CB fermuari olculen karara baglandi — yaka acikligi (strec
+     dahil) ve bel gecisi bas referansi 510mm'i (theknitwit) asiyorsa fermuar
+     ve CB dikisi dusuyor; dokuma dar yakali elbise fermuarini SAYILI gerekceyle
+     tutuyor ("fermuar: yaka 36.0cm < bas 51.0cm").
+  3. BIRLESIK ETEK (skirt.cpp merged): fermuarsiz, prensessiz, arkaya ozel
+     ozelliksiz elbise etegi tek kalip "Skirt Front & Back" (cut 2 on fold) —
+     iki ceyrek olculerek ozdes (ayni argumanlar, yalniz pens boyu 90/130
+     birlestirmede 90'a esitlenir).
+- Evidence: engine_check ALL PASS (70200 draft, 15 govde x 4680 spec);
+  fit_proof ALL PASS; fba_check 72/72; wearable_check/closed_garment/compose/
+  capability/suppress/sewable_census/recipe goldens YESIL; yeni kapi
+  parca_sayisi_check (A-line kolsuz orme = 3 kesim parcasi, duz etek = 2,
+  duz kollu = 4, her parca gerekceli, kosulsuz parca 0).
+- Onay: hakem raporunda KARAR GEREKEN olarak isaretli (faz ajani Damla'ya
+  soramaz); onaysiz kalirsa geri alma tek commit revert.
+
 ### 2026-08-24 — 23406 lines, md5 d5b5f28b2ef41a776b14699e9220982a (DAMLA ONAYI BEKLIYOR, K-V1A)
 - Label: "scye derinligi Aldrich p.11'e baglandi (52ae85c) — depth = 0.10*bust
   + 122mm + nape ofseti, kaynaksiz backLength*0.44 kolonu terk edildi; bagimsiz

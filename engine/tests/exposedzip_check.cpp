@@ -41,7 +41,10 @@ int main() {
         GarmentSpec ez = dress; ez.exposedZip = static_cast<int>(ExposedZip::CenterFront);
         const DraftedPattern d0 = GarmentDrafter::draft(none, m0());
         const DraftedPattern d1 = GarmentDrafter::draft(ez, m0());
-        check(d0.pieces.size() == d1.pieces.size(), "exposed zip adds no new piece");
+        // F5-parca: an exposed zip is a DONNING opening, so the invisible CB
+        // zipper falls away and the zipperless skirt merges to one "Front &
+        // Back" piece — the count may DROP by one, it must never RISE.
+        check(d1.pieces.size() <= d0.pieces.size(), "exposed zip adds no new piece (it may drop the CB-zip skirt split, F5)");
         bool tagged = false, opened = false, teeth = false;
         for (const auto& p : d1.pieces) {
             if (p.name.find("Front") != std::string::npos &&

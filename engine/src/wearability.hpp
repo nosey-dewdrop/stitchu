@@ -79,5 +79,21 @@ double finishedNeckOpeningMM(const GarmentSpec& spec, const DraftedPattern& draf
 // test so it can assert the head-entry rule fires only on a sealed garment.
 bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft);
 
+// ── GECIS KURALI (F5-parca, 2026-09-02, contract/parca-gecis-v1.json) ────────
+// A garment needs an opening/zipper only when its narrowest PASSAGE is narrower
+// than the head reference (theknitwit: minimum neck opening = head circumference
+// / stretch ratio; StretchRatio = 1 + strec%/100, same source as the fabric
+// catalog's negative-ease formula). Passages judged: the finished neck opening,
+// and — on a dress — the finished waist circumference. DECLARED LIMIT (written
+// in the contract too): the rule does not measure the shoulder/bust passage.
+// `dressWaistMM <= 0` = no waist passage to judge (not a dress).
+// An unmeasurable neck opening (< 0) takes the MOST RESTRICTIVE branch: zipper.
+struct GecisKarari {
+    bool fermuar = true;        // true = an opening/zipper is required
+    std::string gerekce;        // the sentence WITH the numbers, either way
+};
+GecisKarari gecisKurali(const GarmentSpec& spec, double neckOpeningMM,
+                        double dressWaistMM);
+
 } // namespace Wearability
 } // namespace stitchu

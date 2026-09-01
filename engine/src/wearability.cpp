@@ -2,7 +2,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <optional>
+
+#include "contract.gen.hpp"
 
 #include "buttonrow.hpp"
 #include "exposedzip.hpp"
@@ -47,6 +50,49 @@ std::optional<double> halfNeckLength(const PatternPiece& piece, size_t k) {
 
 } // namespace
 
+GecisKarari gecisKurali(const GarmentSpec& spec, double neckOpeningMM,
+                        double dressWaistMM) {
+    GecisKarari k;
+    const double bas = contract::kHeadCircumferenceMM;
+    char buf[256];
+    if (neckOpeningMM < 0) {
+        // Unmeasurable opening -> most restrictive branch, named (no silent default).
+        k.fermuar = true;
+        std::snprintf(buf, sizeof buf,
+            "fermuar: yaka acikligi olculemedi -> en kisitlayici varsayim (bas %.1fcm gecisi kanitlanamadi)",
+            bas / 10.0);
+        k.gerekce = buf;
+        return k;
+    }
+    // StretchRatio = 1 + strec%/100 (contract/parca-gecis-v1.json, mislope kaynagi).
+    // Undeclared stretch uses the fabric WORD's own band (woven 0, knit 12.5) —
+    // fabricease.hpp anchors, no invented number.
+    const double ratio = 1.0 + spec.fabric.effectiveStretchPct() / 100.0;
+    const double yaka = neckOpeningMM * ratio;
+    const double bel = dressWaistMM > 0 ? dressWaistMM * ratio : -1.0;
+    if (yaka < bas) {
+        k.fermuar = true;
+        std::snprintf(buf, sizeof buf, "fermuar: yaka %.1fcm%s < bas %.1fcm",
+                      yaka / 10.0, ratio > 1.0 ? " (strec dahil)" : "", bas / 10.0);
+        k.gerekce = buf;
+        return k;
+    }
+    if (bel > 0 && bel < bas) {
+        k.fermuar = true;
+        std::snprintf(buf, sizeof buf, "fermuar: bel gecisi %.1fcm%s < bas %.1fcm",
+                      bel / 10.0, ratio > 1.0 ? " (strec dahil)" : "", bas / 10.0);
+        k.gerekce = buf;
+        return k;
+    }
+    k.fermuar = false;
+    const double enDar = (bel > 0 && bel < yaka) ? bel : yaka;
+    std::snprintf(buf, sizeof buf,
+        "fermuarsiz: en dar gecis %.1fcm%s >= bas %.1fcm (contract/parca-gecis-v1.json)",
+        enDar / 10.0, ratio > 1.0 ? " (strec dahil)" : "", bas / 10.0);
+    k.gerekce = buf;
+    return k;
+}
+
 double finishedNeckOpeningMM(const GarmentSpec& spec, const DraftedPattern& draft) {
     const PatternPiece* front = centerPiece(draft, true);
     const PatternPiece* back = centerPiece(draft, false);
@@ -63,9 +109,12 @@ double finishedNeckOpeningMM(const GarmentSpec& spec, const DraftedPattern& draf
 }
 
 bool hasDonningOpening(const GarmentSpec& spec, const DraftedPattern& draft) {
-    // A dress always gets an invisible center-back zipper (garment.cpp inserts it
-    // through bodice + skirt), so it never has to pass over the head.
-    if (spec.garment == GarmentType::Dress) return true;
+    // F5-parca: a dress carries an invisible CB zipper only when the gecis
+    // kurali said so (DressBlock sets draft.cbZipper from the measured neck
+    // opening + waist passage against the head reference). A zipperless dress
+    // falls through to the other checks like any garment — its way in IS the
+    // neck opening, which the rule proved wide enough.
+    if (spec.garment == GarmentType::Dress && draft.cbZipper) return true;
     // A halter closes at the nape — the neck loop opens there.
     if (spec.neckline == Neckline::Halter) return true;
     // A front button placket is a real front opening.

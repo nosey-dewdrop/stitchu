@@ -77,22 +77,34 @@ static void hosted(const char* label, GarmentSpec spec) {
     const DraftedPattern dPlain = GarmentDrafter::draft(plain, m0());
     const DraftedPattern dWrap = GarmentDrafter::draft(wrap, m0());
 
-    // Same piece COUNT (the wrap reshapes an existing panel; it adds no piece).
-    check(dWrap.pieces.size() == dPlain.pieces.size(), "same piece count (front reshaped, none added)");
+    // Piece COUNT: the wrap reshapes an existing panel and adds none. F5-parca:
+    // a wrap front IS a donning opening, so on a DRESS the invisible CB zipper
+    // falls away and the zipperless skirt merges to one "Front & Back" piece —
+    // the count may DROP by one there, it must never RISE.
+    const bool dress = spec.garment == GarmentType::Dress;
+    check(dress ? dWrap.pieces.size() <= dPlain.pieces.size()
+                : dWrap.pieces.size() == dPlain.pieces.size(),
+          dress ? "piece count never rises (CB-zip skirt split may drop, F5)"
+                : "same piece count (front reshaped, none added)");
 
     // Every NON-front piece outline is byte-identical (the wrap touches only the
-    // front center panel + its neck facing cut note).
+    // front center panel + its neck facing cut note). F5-parca: on a dress the
+    // SKIRT pieces legitimately change class (merged, no CB split) because the
+    // wrap removed the zipper — compare by NAME, skip skirt pieces on a dress.
     bool othersSame = true;
-    for (size_t i = 0; i < dPlain.pieces.size() && i < dWrap.pieces.size(); ++i) {
-        const std::string& n = dPlain.pieces[i].name;
+    for (const auto& pp : dPlain.pieces) {
+        const std::string& n = pp.name;
         const bool isFrontBody = (n.find("Front") != std::string::npos &&
                                   n.find("Skirt") == std::string::npos &&
                                   n.find("Facing") == std::string::npos);
         if (isFrontBody) continue; // the wrap intentionally reshapes this
-        if (i < dWrap.pieces.size())
-            othersSame = othersSame && sameCommands(dPlain.pieces[i].commands, dWrap.pieces[i].commands);
+        if (dress && n.find("Skirt") != std::string::npos) continue; // F5: merge
+        const PatternPiece* other = nullptr;
+        for (const auto& wp : dWrap.pieces) if (wp.name == n) { other = &wp; break; }
+        if (!other) continue;
+        othersSame = othersSame && sameCommands(pp.commands, other->commands);
     }
-    check(othersSame, "every non-front piece outline byte-identical (back/skirt/sleeves untouched)");
+    check(othersSame, "every non-front piece outline byte-identical (back/sleeves untouched; dress skirt merge exempt, F5)");
 
     const PatternPiece* fPlain = frontCenter(dPlain);
     const PatternPiece* fWrap = frontCenter(dWrap);

@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "contract.gen.hpp"  // F5-parca: pens eskalasyonu esikleri contract'tan okunur
 #include "shoulder.hpp"
 #include "validator.hpp"  // kinkAngleDegrees — motorun kendi kink kurali
 
@@ -538,16 +539,29 @@ HalfBodice makePiece(
 
     std::vector<PathCommand> markings;
     if (dartWidth > 0) {
-        const double dartCenterX = centerTakeIn + waistSpan * 0.5;
-        // Put the dart legs on the drafted waist curve.
-        const double legAX = dartCenterX - dartWidth / 2;
-        const double legBX = dartCenterX + dartWidth / 2;
-        const Point legA{legAX, waistCurveY(legAX, sideWaist, waistCurve)};
-        const Point legB{legBX, waistCurveY(legBX, sideWaist, waistCurve)};
-        const Point apex{dartCenterX, std::min(legA.y, legB.y) - dartLength};
-        markings.push_back(PathCommand::move(legA));
-        markings.push_back(PathCommand::line(apex));
-        markings.push_back(PathCommand::line(legB));
+        // Draw one dart with its legs on the drafted waist curve.
+        const auto oneDart = [&](double dartCenterX, double width, double length) {
+            const double legAX = dartCenterX - width / 2;
+            const double legBX = dartCenterX + width / 2;
+            const Point legA{legAX, waistCurveY(legAX, sideWaist, waistCurve)};
+            const Point legB{legBX, waistCurveY(legBX, sideWaist, waistCurve)};
+            const Point apex{dartCenterX, std::min(legA.y, legB.y) - length};
+            markings.push_back(PathCommand::move(legA));
+            markings.push_back(PathCommand::line(apex));
+            markings.push_back(PathCommand::line(legB));
+        };
+        // F5-parca PENS ESKALASYONU (contract/parca-gecis-v1.json, kaynak zayif
+        // etiketiyle anicka.design): tek pens agzi tavani asarsa intake IKI
+        // pense bolunur — 1/3 ve 2/3 hizasi, yandaki biraz kisa (skirt.cpp
+        // draftQuarter emsali, ayni kural ayni sekilde). Toplam intake, sewnWaist
+        // ve cerceve DEGISMEZ: outline byte-ayni kalir, yalniz pens cizimi boluni.
+        if (dartWidth > contract::kMaxSingleDartMouthMM) {
+            const double each = dartWidth / 2;
+            oneDart(centerTakeIn + waistSpan / 3.0, each, dartLength);
+            oneDart(centerTakeIn + waistSpan * 2.0 / 3.0, each, dartLength * 0.82);
+        } else {
+            oneDart(centerTakeIn + waistSpan * 0.5, dartWidth, dartLength);
+        }
     }
 
     PatternPiece piece;
@@ -1101,6 +1115,15 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         bShoulderDrop + (bArmholeY - bShoulderDrop) * princessArmholeShare >
         backApexY - princessApexClearance;
     const bool smallBody = m.bustMM() < princessSmallBustMM;
+    // F5-parca: pens eskalasyonu "iki pens YA DA prenses" der (contract/
+    // parca-gecis-v1.json); bu motor IKI PENS kolunu uygular (makePiece,
+    // tavan ustu intake 1/3-2/3'e bolunur, outline degismez). PRENSESE OTOMATIK
+    // gecis BILEREK baglanmadi: recipe hatti (RECETE-SPEC §6) ayni govdeyi
+    // kendi yorumlayicisiyla cizer ve recipe_dress_golden_check motoru pinli
+    // subset'e BYTE kiyaslar — motor tek basina prensese kacarsa parite kirilir.
+    // FBA->prenses bandi contract'ta KAYIT olarak durur (kaynak zayif); tele
+    // baglamak recipe yorumlayicisiyla birlikte ayri bir faz isidir (F5 raporu
+    // KARAR GEREKEN maddesi).
     const bool backPrincess = shaping == Shaping::Princess && backDart >= minPrincessIntake &&
                               (!halter || !backCramped) &&
                               !(smallBody && backDart < princessCleanIntakeMM);
@@ -1307,7 +1330,11 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         draft.backWaistCenterArc = backSplit.centerArc;
     } else {
         draft.back = back.piece;
-        draft.backSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)
+        // F5-parca: "princess" artik yalniz spec'ten degil ESKALASYONDAN da
+        // gelebilir; yarim karisik moddaysa (biri prenses biri pens) pens
+        // yarimin RAPORLANAN yan dikisi de cizilecek uzatilmis egridir —
+        // hipotenus raporlamak 300mm'lik sahte sideseam kirmizisi yakar.
+        draft.backSideSeam = ((frontPrincess || backPrincess) && extendBelowWaist > 0)
             ? extendedDartSideLen(backWaistlineWidth, backWidth, bArmholeY, bSeamSideY + deltaBack)
             : back.sideSeam;
         draft.backSewnWaist = back.sewnWaist;
@@ -1324,11 +1351,31 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
         draft.frontWaistCenterArc = frontSplit.centerArc;
     } else {
         draft.front = front.piece;
-        draft.frontSideSeam = (shaping == Shaping::Princess && extendBelowWaist > 0)
+        draft.frontSideSeam = ((frontPrincess || backPrincess) && extendBelowWaist > 0)
             ? extendedDartSideLen(frontWaistlineWidth, frontWidth, fArmholeY, fSeamSideY + deltaFront)
             : front.sideSeam;
         draft.frontSewnWaist = front.sewnWaist;
         draft.frontStraightWaist = front.straightWaist;
+    }
+    // F5-parca GEREKCE: her parca nicin var, sayisiyla. Kosulsuz parca yok.
+    {
+        char g[160];
+        draft.front.gerekce = "on govde";
+        draft.back.gerekce = "arka govde";
+        if (frontPrincess) {
+            draft.frontSide.gerekce = "prenses yan paneli: spec prenses istedi (supresyon dikiste)";
+        } else if (frontDart > contract::kMaxSingleDartMouthMM) {
+            std::snprintf(g, sizeof g, "on govde; iki pens: tek pens agzi %.1fcm > %.1fcm tavani (contract/parca-gecis-v1.json)",
+                          frontDart / 10.0, contract::kMaxSingleDartMouthMM / 10.0);
+            draft.front.gerekce = g;
+        }
+        if (backPrincess) {
+            draft.backSide.gerekce = "prenses yan paneli: spec prenses istedi (supresyon dikiste)";
+        } else if (backDart > contract::kMaxSingleDartMouthMM) {
+            std::snprintf(g, sizeof g, "arka govde; iki pens: tek pens agzi %.1fcm > %.1fcm tavani (contract/parca-gecis-v1.json)",
+                          backDart / 10.0, contract::kMaxSingleDartMouthMM / 10.0);
+            draft.back.gerekce = g;
+        }
     }
     draft.backWaistHalf = backWaistTarget;
     draft.frontWaistHalf = frontWaistTarget;

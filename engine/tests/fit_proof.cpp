@@ -57,7 +57,15 @@ int main() {
 
         const PatternPiece* front = find(d, "Bodice Front");
         const PatternPiece* back = find(d, "Bodice Back");
-        if (!check(front && back, std::string(b.name) + ": bodice front + back drafted")) continue;
+        // F5-parca: a half whose waist intake exceeds 2x the single-dart cap is
+        // ESCALATED to princess even in dart mode (contract/parca-gecis-v1.json)
+        // — the "fuller" body does exactly that, so its pieces are Center/Side.
+        const bool frontEsc = !front && find(d, "Bodice Center Front") && find(d, "Bodice Side Front");
+        const bool backEsc = !back && find(d, "Bodice Center Back") && find(d, "Bodice Side Back");
+        if (!check((front || frontEsc) && (back || backEsc),
+                   std::string(b.name) + ": bodice front + back drafted" +
+                   ((frontEsc || backEsc) ? " (pens eskalasyonu: prenses panelleri)" : "")))
+            continue;
 
         // --- Finished BUST girth, RE-MEASURED off the drafted OUTLINE polygon
         // (not the engine's chest scalars). The dart-bodice outline lays the
@@ -68,7 +76,8 @@ int main() {
         // round, straight from the geometry a sewist would cut. This avoids the
         // naive max-span read (which catches the SHOULDER on a wide-shoulder body)
         // by reading the exact underarm vertex, so it measures the RIGHT line.
-        if (front->commands.size() > 3 && back->commands.size() > 3 &&
+        if (front && back &&
+            front->commands.size() > 3 && back->commands.size() > 3 &&
             front->commands[3].type == CmdType::Curve && back->commands[3].type == CmdType::Curve) {
             const double finishedBust = (front->commands[3].to.x + back->commands[3].to.x) * 2.0;
             const double chestEase = BodiceBlock::chestEaseFor(Fabric::Woven);
@@ -90,6 +99,16 @@ int main() {
             check(finishedBust > m.bustMM() * 0.99,
                 std::string(b.name) + ": finished bust " + std::to_string((int)finishedBust) +
                 " mm clears the bare bust " + std::to_string((int)m.bustMM()) + " mm");
+        } else if (frontEsc || backEsc) {
+            // Princess halves have no single underarm vertex to read; the drawn
+            // frame widths are the engine's own chest scalars (their equality
+            // with the panels is proven by the princess construction gates).
+            // DECLARED LIMIT: this branch reads the scalar, not the outline.
+            const double finishedBust = (bod.frontChestWidth + bod.backChestWidth) * 2.0;
+            check(finishedBust > m.bustMM() * 0.99,
+                std::string(b.name) + ": finished bust " + std::to_string((int)finishedBust) +
+                " mm clears the bare bust " + std::to_string((int)m.bustMM()) +
+                " mm (prenses eskalasyonu — skalar cerceve okundu)");
         } else {
             check(false, std::string(b.name) + ": bodice outline has the expected underarm-vertex layout");
         }

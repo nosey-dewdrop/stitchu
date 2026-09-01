@@ -31,6 +31,7 @@
 #include "strap.hpp"
 #include "patternedit.hpp"
 #include "tie.hpp"
+#include "wearability.hpp"  // F5-parca: gecis kurali (fermuar karari)
 #include "wrapfront.hpp"
 
 namespace stitchu {
@@ -163,7 +164,8 @@ bool nameHas(const PatternPiece& pc, const char* s) {
 // invisible center-back zipper (a dress; hasDonningOpening already true).
 // Public kernel service (declared in garment.hpp) so the recipe path runs the
 // SAME pass on its independently drawn pieces (RECETE-SPEC §6).
-void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper) {
+void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper,
+                                       const std::string& zipGerekce) {
     const bool sleeved = [&] {
         for (const auto& pc : pattern.pieces)
             if (nameHas(pc, "Sleeve")) return true;
@@ -237,7 +239,68 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
                 pc.notches.push_back(PathCommand::line({cbX + 12, y}));
             }
             pc.closure = "invisible zipper (center back)";
+            // F5-parca: the closure's reason (with the measured numbers) rides
+            // on the piece itself — a zipper without a sentence is a kosulsuz
+            // parca ozelligi and the gate rejects it.
+            if (!zipGerekce.empty()) {
+                pc.gerekce = pc.gerekce.empty() ? zipGerekce : pc.gerekce + "; " + zipGerekce;
+            }
         }
+    }
+}
+
+// F5-parca: her parca nicin var — rol tabanli doldurma. Ozgul (sayili)
+// gerekceler kaynaginda yazilir (bodice eskalasyonu, fermuar, birlesik etek);
+// bu gecis yalniz BOS kalani doldurur ve bitirme seritlerini siniflar, boylece
+// listede gerekcesiz (= kosulsuz) parca kalmaz. parca_sayisi_check kapisidir.
+void GarmentDrafter::fillGerekce(DraftedPattern& pattern) {
+    const auto has = [](const PatternPiece& pc, const char* w) {
+        return pc.name.find(w) != std::string::npos;
+    };
+    for (auto& pc : pattern.pieces) {
+        if (has(pc, "Bias binding") || has(pc, "Binding")) {
+            pc.bitirme = true;
+            if (pc.gerekce.empty())
+                pc.gerekce = "bitirme seridi: ham kenar (yaka/kol oyugu) bantla temizlenir — kesim parcasi sayimina girmez";
+            continue;
+        }
+        if (!pc.gerekce.empty()) continue;
+        if (has(pc, "Sleeve") || has(pc, "Cap "))
+            pc.gerekce = "kol: spec kol istedi (kol oyugu kapakla dikilir)";
+        else if (has(pc, "Waistband"))
+            pc.gerekce = "bitirme bandi: bel kenarini temizler ve tasir";
+        else if (has(pc, "Facing"))
+            pc.gerekce = "temizleme parcasi (facing): ham kenar icten cevrilir";
+        else if (has(pc, "Collar"))
+            pc.gerekce = "yaka: spec yaka istedi";
+        else if (has(pc, "Cuff"))
+            pc.gerekce = "manset: spec manset istedi";
+        else if (has(pc, "Pocket"))
+            pc.gerekce = "cep: spec cep istedi";
+        else if (has(pc, "Ruffle") || has(pc, "Flounce") || has(pc, "Peplum") ||
+                 has(pc, "Cape") || has(pc, "Tier"))
+            pc.gerekce = "susleme/volan parcasi: spec istedi (" + pc.name + ")";
+        else if (has(pc, "Tie") || has(pc, "Sash") || has(pc, "Cord") || has(pc, "Strap"))
+            pc.gerekce = "baglama/aski parcasi: spec istedi (" + pc.name + ")";
+        else if (has(pc, "Side Front") || has(pc, "Side Back"))
+            pc.gerekce = "prenses yan paneli: supresyon dikise tasindi";
+        else if (has(pc, "Skirt") && has(pc, "Front & Back"))
+            pc.gerekce = "etek on+arka tek kalip: fermuar yok ve iki ceyrek ozdes (cut 2 on fold)";
+        else if (has(pc, "Skirt"))
+            pc.gerekce = has(pc, "Back") ? "arka etek: bel dikisinden etege"
+                                         : "on etek: bel dikisinden etege";
+        else if (has(pc, "Front & Back"))
+            pc.gerekce = "on+arka tek kalip: iki panel ozdes (cut 2)";
+        else if (has(pc, "Front"))
+            pc.gerekce = pattern.garment.find("skirt") != std::string::npos
+                ? "on etek paneli" : "on govde";
+        else if (has(pc, "Back"))
+            pc.gerekce = pattern.garment.find("skirt") != std::string::npos
+                ? "arka etek paneli" : "arka govde";
+        else if (has(pc, "Upper Cup") || has(pc, "Lower Cup") || has(pc, "Cup"))
+            pc.gerekce = "kap dikisi paneli: cupSeam spec'ten";
+        else
+            pc.gerekce = "spec ozelligi parcasi: " + pc.name + " (spec'in actigi blok ekledi)";
     }
 }
 
@@ -285,17 +348,62 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     join.backSeamArc = bodice.backPrincess ? bodice.backWaistCenterArc : 0;
     const Shaping shaping = resolveShaping(spec, m);
     const bool useJoin = shaping == Shaping::Princess;
+    // ── F5-parca: GECIS KURALI — fermuar KOSULSUZ degil, olculen karar ──────
+    // (contract/parca-gecis-v1.json). Once giysinin KENDI acikligi var mi diye
+    // bakilir (GarmentDrafter'in backAlreadyOpens listesinin aynisi, ayni spec
+    // eksenlerinden); yoksa cizilen yaka acikligi + dikilen bel cevresi bas
+    // referansiyla yargilanir. Karar ve gerekcesi kaliba yazilir.
+    const auto tiePl5 = static_cast<TiePlacement>(spec.tieClosure);
+    const bool opensElsewhere =
+        OpenBackBlock::opensForDonning(static_cast<BackOpening>(spec.backOpening)) ||
+        LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack)) ||
+        WrapFrontBlock::opensForDonning(static_cast<WrapFront>(spec.wrapFront)) ||
+        spec.frontPlacket || spec.neckline == Neckline::Halter ||
+        tiePl5 == TiePlacement::TieBack || tiePl5 == TiePlacement::BackWaist ||
+        tiePl5 == TiePlacement::BackWaistBow || tiePl5 == TiePlacement::WrapFront ||
+        spec.buttonRow == static_cast<int>(ButtonRow::Functional) ||
+        spec.exposedZip != static_cast<int>(ExposedZip::None);
+    Wearability::GecisKarari gecis;
+    if (opensElsewhere) {
+        gecis.fermuar = false;
+        gecis.gerekce = "fermuarsiz: giysinin kendi acikligi giydiriyor (halter/placket/sirt acikligi/wrap)";
+    } else {
+        DraftedPattern neckProbe;
+        neckProbe.pieces = {bodice.front, bodice.back};
+        gecis = Wearability::gecisKurali(
+            spec, Wearability::finishedNeckOpeningMM(spec, neckProbe), bodiceSewnWaist);
+    }
+    const bool needZip = gecis.fermuar;
+    // Fermuarsiz + prenses degil + basit stil + arkaya ozel bir ozellik yoksa
+    // etegin on/arka ceyregi TEK kaliptir. Arkayi ayri tutan her sart ayni
+    // zamanda o parcanin gerekcesidir (yirtmac CB dikis ister, cep on panele
+    // islenir, hem sekli/volani on-arka ayri boler).
+    const bool skirtMerged = !needZip && !useJoin &&
+        (spec.skirtStyle == SkirtStyle::ALine || spec.skirtStyle == SkirtStyle::Straight ||
+         spec.skirtStyle == SkirtStyle::Gathered || spec.skirtStyle == SkirtStyle::Pleated) &&
+        spec.backSlit == static_cast<int>(HemSlit::None) &&
+        spec.pocketStyle == static_cast<int>(PocketStyle::None) &&
+        spec.hemShape == static_cast<int>(HemShape::Straight) &&
+        spec.hemFlounce == static_cast<int>(HemFlounce::None);
     std::vector<PatternPiece> skirtPieces = SkirtBlock::pieces(
         m, spec.skirtStyle, spec.skirtLength, /*includeWaistband=*/false, bodiceSewnWaist,
-        shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr, spec.skirtLengthMM);
+        shaping, spec.fabric, skirtExtra, useJoin ? &join : nullptr, spec.skirtLengthMM,
+        skirtMerged);
     for (auto& piece : skirtPieces) {
         const std::string original = piece.name;
         // Half-circle panels already carry the word; avoid "Skirt Skirt Panel".
         if (original.rfind("Skirt", 0) != 0) piece.name = "Skirt " + original;
         // The invisible zipper continues from the bodice center back into the
-        // skirt, so the skirt back needs a CB seam (no fold).
-        if (original == "Back" || original == "Center Back") {
+        // skirt, so the skirt back needs a CB seam (no fold) — ONLY when the
+        // gecis kurali actually asked for a zipper (F5-parca).
+        if (needZip && (original == "Back" || original == "Center Back")) {
             piece.cutInstruction = "cut 2 (center back seam)";
+        }
+        // Arkayi ayri tutan sebep parcanin gerekcesine yazilir.
+        if (!skirtMerged && (original == "Back" || original == "Center Back")) {
+            piece.gerekce = needZip
+                ? "arka etek ayri: fermuar CB dikisinde devam eder"  // sayili cumleyi annotate basar
+                : "arka etek ayri: arkaya ozel ozellik/kesim (prenses, yirtmac, hem sekli ya da stil)";
         }
     }
     // Halter: shoulders bare by construction — sleeves are impossible, and one
@@ -363,13 +471,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         // back top edge. Ends stay free at the CB for the zipper, like facings.
         steps.push_back("Sew the bodice side seams.");
         steps.push_back("Sew the bias strip ends together as needed and press it in half lengthwise along the marked fold line.");
-        steps.push_back("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge — leaving the last 2 cm free at each center back edge (the zipper goes there later). Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
+        steps.push_back(std::string("Bind the raw edges with the bias strip in one continuous run where you can — up one strap, around the neckline, up the other strap, then each underarm sweep and the back top edge") +
+            (needZip ? " — leaving the last 2 cm free at each center back edge (the zipper goes there later)" : "") +
+            ". Stretch the binding VERY slightly on the inner curves so it lies flat; trim the excess as you go.");
         steps.push_back("Run a stay tape or clear elastic inside the back top edge binding so the low back hugs the body instead of gaping.");
         steps.push_back("Close the straps at the nape: try the dress on, pin the strap ends to length, then sew hooks (or a button) — or extend the binding into ties if you prefer a tied halter.");
     } else if (biasNeck) {
         steps.push_back("Sew the bodice shoulder seams and press them open.");
         steps.push_back("Prepare the neckline bias strip: join the ends as needed and press it in half lengthwise along the marked fold line.");
-        steps.push_back("Bind the neckline with the bias strip, right sides together and raw edges even, leaving the last 2 cm free at each center back edge (the zipper goes there later). Ease the strip gently around the curves. Trim to 6 mm, turn the folded edge to the inside and topstitch or slipstitch it down.");
+        steps.push_back(std::string("Bind the neckline with the bias strip, right sides together and raw edges even") +
+            (needZip ? ", leaving the last 2 cm free at each center back edge (the zipper goes there later)" : "") +
+            ". Ease the strip gently around the curves. Trim to 6 mm, turn the folded edge to the inside and topstitch or slipstitch it down.");
         steps.push_back("Sew the bodice side seams.");
         if (sleeveless) {
             steps.push_back("Finish each armhole the same way with its bias strip: press it in half, bind the armhole right sides together, ease around the curve, then turn and topstitch it to the inside.");
@@ -377,7 +489,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     } else {
         steps.push_back("Sew the bodice shoulder seams and press them open.");
         steps.push_back("Sew the front and back neck facings together at the shoulders; finish the facing's outer edge (zigzag, overlock or turn 5 mm and stitch).");
-        steps.push_back("Attach the facing to the neckline right sides together, leaving the last 2 cm free at each center back edge (the zipper goes there later). Trim to 6 mm, clip into the curve every 2 cm.");
+        steps.push_back(std::string("Attach the facing to the neckline right sides together") +
+            (needZip ? ", leaving the last 2 cm free at each center back edge (the zipper goes there later)" : "") +
+            ". Trim to 6 mm, clip into the curve every 2 cm.");
         steps.push_back("Understitch: press the seam allowance toward the facing and stitch it to the facing 2 mm from the seam — this keeps the facing rolled inside. Turn, press, tack at the shoulder seams.");
         steps.push_back("Sew the bodice side seams.");
         if (sleeveless) {
@@ -391,18 +505,28 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Form the knife pleats along the marked line pairs (fold on the second line of each pair, bring it to the first, all pleats toward the center), baste across the top and press.");
     }
     if (spec.skirtStyle == SkirtStyle::HalfCircle) {
-        steps.push_back("Place the two skirt panel seams at center front and center back (cut the panels flat, not on fold) so the zipper can continue into the back seam.");
+        steps.push_back(std::string("Place the two skirt panel seams at center front and center back (cut the panels flat, not on fold)") +
+            (needZip ? " so the zipper can continue into the back seam." : "."));
     }
     if (princess && (spec.skirtStyle == SkirtStyle::ALine || spec.skirtStyle == SkirtStyle::Straight)) {
         steps.push_back("Sew each skirt gore seam (center panel to side panel, matching the tip notch), pressing toward the center.");
     }
-    steps.push_back(std::string("Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the ") +
+    steps.push_back(std::string(needZip
+            ? "Sew the skirt seams (leave the center back seam open where the zipper will go), then join bodice to skirt at the "
+            : "Sew the skirt seams, then join bodice to skirt at the ") +
         (empire ? "underbust seam (the empire line sits right under the bust)" : "waist seam") + ", matching side seams" +
         std::string(princess ? " and lining the gore seams up with the bodice princess seams as closely as possible" : "") + ".");
-    steps.push_back(std::string("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.") +
-        (spec.fabric == Fabric::Knit ? " (Very stretchy knit? Baste the back seam closed first and test pulling the dress on — you may be able to skip the zipper and just sew the seam.)" : ""));
-    steps.push_back(std::string("Fold the free ") + ((halter || biasNeck) ? "binding" : "facing") +
-        " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
+    if (needZip) {
+        steps.push_back(std::string("Insert an invisible zipper in the center back through bodice and skirt: install the zipper BEFORE closing the seam below it, then close the rest of the seam.") +
+            (spec.fabric == Fabric::Knit ? " (Very stretchy knit? Baste the back seam closed first and test pulling the dress on — you may be able to skip the zipper and just sew the seam.)" : ""));
+        steps.push_back(std::string("Fold the free ") + ((halter || biasNeck) ? "binding" : "facing") +
+            " ends back over the zipper tape and hand-tack them down so the edge sits clean against the zipper.");
+    } else {
+        // F5-parca: no zipper, and the guide says WHY with the measured number
+        // instead of silently dropping the step (gecis.gerekce carries it).
+        steps.push_back("No zipper: this dress pulls on over the head — the measured opening clears the head reference (" +
+            gecis.gerekce + "). Sew the center back seam fully closed.");
+    }
     if (!sleeveless) {
         if (spec.sleeveCap == SleeveCap::Cap) {
             steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
@@ -440,6 +564,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     pattern.pieces.insert(pattern.pieces.end(), facings.begin(), facings.end());
     pattern.pieces.insert(pattern.pieces.end(), skirtPieces.begin(), skirtPieces.end());
     pattern.pieces.insert(pattern.pieces.end(), sleeves.begin(), sleeves.end());
+    // F5-parca: the donning decision + its sentence ride on the pattern; the
+    // annotate pass stamps the glyph and the gerekce from HERE (single source).
+    pattern.cbZipper = needZip;
+    pattern.cbZipperGerekce = gecis.gerekce;
     pattern.fabricAdviceKey = "dress";
     pattern.fabricMeters140 = roundToPlaces(meters, 1);
     pattern.guideSteps = steps;
@@ -1055,8 +1183,16 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         LaceUpBackBlock::opensForDonning(static_cast<LaceUpBack>(spec.laceUpBack)) ||
         spec.frontPlacket || spec.neckline == Neckline::Halter || tieOpensBack ||
         buttonRowOpens || exposedZipOpens || wrapOpens;
+    // F5-parca: the zipper is no longer unconditional on a dress. DressBlock
+    // measured the gecis kurali (neck opening + waist passage vs the head
+    // reference, contract/parca-gecis-v1.json) and already folded the
+    // opensElsewhere list in; pattern.cbZipper is that single decision.
+    // backAlreadyOpens stays as the safety belt: a post-pass opening added
+    // after the dress block can only ever REMOVE the zipper, never add one.
     annotateTechnical(pattern,
-        /*dressZipper=*/spec.garment == GarmentType::Dress && !backAlreadyOpens);
+        /*dressZipper=*/spec.garment == GarmentType::Dress && pattern.cbZipper &&
+            !backAlreadyOpens,
+        pattern.cbZipperGerekce);
 
     // ⭐ THE EDIT LAYER (GECE7 / F7) — op.extend / op.attach, HERE and not
     // earlier. It runs after every drafting post-pass and after the technical
@@ -1099,6 +1235,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // FINISHED draft. Metadata only: no geometry is touched here, so the golden
     // dump is unaffected. Damla: kalıp + flat + REHBER, all three in the output.
     pattern.rehber = rehber::build(pattern, spec.fabric);
+    // F5-parca: gerekcesiz parca kalmaz (rol tabanli doldurma; ozgul sayili
+    // gerekceler kaynaklarinda yazildi). Kapi: parca_sayisi_check.
+    fillGerekce(pattern);
     return pattern;
 }
 

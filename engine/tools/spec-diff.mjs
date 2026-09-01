@@ -168,7 +168,16 @@ export async function draft(spec, body = BODY) {
 // localityReport'un ihlal bastığını ölçer. Karşılaştırma bayttan panel
 // varlığına indirilirse A4 KIRMIZI düşer (V6-B'de bu yönde diş YOKTU).
 export const LOCALITY_GRANULARITY = 'bayt';
-export const pieceBytes = (p) => JSON.stringify(p);
+// F5-parca: `gerekce` ve `sinif` KUMAŞ DEĞİL, panelin üstünde taşınan beyan
+// metnidir — ve gerekçe ÖLÇÜLEN sayıyı içerir ("fermuar: yaka 36.0cm < baş
+// 51.0cm"). Yaka oyuğunu değiştiren bir edit o sayıyı değiştirmek ZORUNDADIR;
+// bunu lokallik ihlali saymak, doğru cümleyi yasaklamak olur. GEOMETRİ + kesim
+// notu + kapanış + çentikler bayt bayt karşılaştırılmaya devam eder (A4 bunu
+// ölçer); yalnız iki beyan alanı karşılaştırma dışıdır ve bu satırda İLANLIDIR.
+export const pieceBytes = (p) => {
+  const { gerekce, sinif, ...rest } = p;
+  return JSON.stringify(rest);
+};
 export const sha = (s) => createHash('sha256').update(s).digest('hex').slice(0, 12);
 
 // ── 5. LOKALLİK RAPORU ──────────────────────────────────────────────────────

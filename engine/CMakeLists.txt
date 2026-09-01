@@ -298,6 +298,9 @@ add_test(NAME expressability_check
 # engine/tests/v5-ratchet-baseline.json (künye + ölçüm tarihi + basan komut).
 # Gerekçe: bağlanmayan kapı çürür; kırmızı AD eklemek RULES 9 ihlali olurdu.
 add_test(NAME sewability_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/sewability_check.mjs)
+# F5-parca: gorseldeki kadar parca — gecis kurali (kosullu fermuar), pens
+# eskalasyonu, her parcada gerekce, bitirme seritleri ayri sinif.
+add_test(NAME parca_sayisi_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/parca_sayisi_check.mjs)
 add_test(NAME draft_math_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/draft_math_check.mjs)
 
 # sleeve_cap_ease_check (V7-D, 2026-08-25): oyuk yayı ↔ kapak yayı, İKİSİ DE

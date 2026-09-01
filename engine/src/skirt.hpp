@@ -59,7 +59,13 @@ std::vector<PatternPiece> pieces(
     FabricAxis fabric = Fabric::Woven,
     double lengthExtraMM = 0,
     const SkirtJoin* join = nullptr,
-    double lengthOverrideMM = 0);
+    double lengthOverrideMM = 0,
+    // F5-parca: true = the DRESS block proved no CB zipper is needed and no
+    // spec feature needs a distinct back panel, so front+back collapse to ONE
+    // identical piece ("Front & Back", cut 2 on fold). Only the simple styles
+    // (aLine/straight non-princess, gathered, pleated) honor it; the rest
+    // ignore the flag (their panel structure is not a front/back mirror).
+    bool merged = false);
 
 PatternPiece waistbandPiece(double waistMM, FabricAxis fabric = Fabric::Woven);
 
