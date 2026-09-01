@@ -1,7 +1,7 @@
 {
-  "_role": "KUMAŞ KATALOĞU v1 (F6, 2026-08-27). Kumaş ekseni `woven|knit` iki kelimeydi. Kalıbı belirleyen DÖRT fiziksel sayı bu dosyada yaşar: esneme % · toparlanma/growth % · eğilme rijitliği (düşüm) · kumaş eni. Motor bu dosyayı OKUMAZ (C++'ta JSON okuyucu yok); dosya KANUNDUR ve `fabric_catalog_check` her satırını motorun sabitleriyle karşılaştırır — ikisi ayrışırsa kapı kırmızı yanar.",
+  "_role": "KUMAŞ KATALOĞU v1 (F6 kuruldu 2026-08-27; F4-kumas yeniden yazdı 2026-09-01). Beş kumaş GIRDI/kumaslar.md'den gelir (70's ailesi, her sayının yanında yayınlayan satıcı sayfası). Motor bu dosyayı OKUMAZ (C++'ta JSON okuyucu yok); dosya KANUNDUR ve `fabric_catalog_check` her satırını motorun sabitleriyle karşılaştırır — ikisi ayrışırsa kapı kırmızı yanar. Kaynağı olmayan sayı bu dosyaya GİREMEZ: ölçülmemiş her alan null + OLCULMEDI etiketi taşır.",
 
-  "_yasa": "§1D: esneme + toparlanma + growth'u TEK formülde birleştiren otoriter bir yayın BULUNAMADI. Bu dosyada da yok. Negatif pay yalnız esnemeden okunur (aşağıdaki bant tablosu); toparlanma/growth bir ÇARPAN değil bir ŞARTTIR — HAKEMİN eşiğini (`esikler_hakem_karari`, K63; yayınlanmış bir asgari DEĞİL, çünkü öyle bir yayın yok) tutmayan kumaşta negatif pay HİÇ alınmaz. `(1 - 1/StretchRatio)` gibi bir formül bu repoda yasaktır.",
+  "_yasa": "F4-kumas (2026-09-01) GÜNCELLEDİ: eski §1D 'negatif pay formülü yasak' diyordu, gerekçesi 'otoriter yayın BULUNAMADI' idi. Kaynak BULUNDU ve doğrulandı (aşağıda `negative_ease_rule.kaynaklar`): negatif ease % = (1 − 1/StretchRatio) × 100. Yasak, kendi gerekçesiyle birlikte düştü. DEĞİŞMEYEN: toparlanma/growth bir ÇARPAN değil bir ŞARTTIR (`recovery_rule`), ve formül tek başına kalıbı KÜÇÜLTMEZ — o kumaşın YETENEĞİDİR; kalıbın aldığı pay ürün sınıfı tavanıyla kırpılır (`negative_ease_rule.tavanlar`).",
 
   "standards": {
     "astm-d2594": {
@@ -12,7 +12,7 @@
       "url": "https://store.astm.org/d2594_d2594m-21.html",
       "alinti": "covers the measurement of fabric stretch and fabric growth of knitted fabrics intended for applications requiring low-power stretch properties",
       "ne_veriyor": "ÖRME kumaşın esneme % ve growth % ölçüm YÖNTEMİ.",
-      "not": "⚠ D2594 esneme ve GROWTH ölçer, bir EŞİK yayınlamaz — D3107 gibi o da yalnız bir YÖNTEMDİR. Örme için toparlanma eşiği YAYIN BULUNAMADI → eşik `esikler_hakem_karari`'ndan gelir (K63, hakemin kararı, bir yayın değil)."
+      "not": "⚠ D2594 esneme ve GROWTH ölçer, bir EŞİK yayınlamaz — D3107 gibi o da yalnız bir YÖNTEMDİR. Örme için toparlanma eşiği YAYIN BULUNAMADI → eşik `esikler_hakem_karari`'ndan gelir (K63, hakemin kararı, bir yayın değil). Beş katalog kumaşının HİÇBİRİ için bu standarda göre yayınlanmış ölçüm yok (GIRDI/kumaslar.md bunu turuyla belgeledi) — o yüzden strec alanları sınıf-tipik bant + OLCULMEDI etiketi taşır."
     },
     "astm-d3107": {
       "kurum": "ASTM International",
@@ -21,9 +21,8 @@
       "bolum": "Scope",
       "url": "https://store.astm.org/d3107-07r19.html",
       "alinti": "These test methods cover the determination of the amount of fabric stretch, fabric growth, and fabric recovery of fabrics woven in whole or in part from stretch yarns after a specified tension and extension.",
-      "alinti_2": "These test methods allow the use of two tension options commonly used in the textile industry; 1.35 kg (3 lb) and 1.8 kg (4 lb).",
       "ne_veriyor": "Üç niceliğin ADI ve ölçüm YÖNTEMİ: stretch · growth · recovery. BİR EŞİK VERMEZ.",
-      "esik_vermez": "🚨 HAKEM AÇTI VE DOĞRULADI (F6 hakemi, 2026-08-27, store.astm.org kapak sayfası): D3107 bir TEST YÖNTEMİDİR. Üç niceliğin nasıl ölçüleceğini tanımlar; hiçbir kabul eşiği, hiçbir asgari toparlanma, hiçbir azami growth YAYINLAMAZ — pass/fail'i ürün şartnamesine bırakır. Ajanın kartı üç sayıyı bu standarda atfediyordu ve o atıf YANLIŞTI. Sayılar KALDI (aşağıdaki `esikler_hakem_karari`), ama artık BURAYA atfedilmiyorlar. Aynı hüküm D2594 için de geçerli (o da yalnız yöntem)."
+      "esik_vermez": "🚨 HAKEM AÇTI VE DOĞRULADI (F6 hakemi, 2026-08-27, store.astm.org kapak sayfası): D3107 bir TEST YÖNTEMİDİR. Üç niceliğin nasıl ölçüleceğini tanımlar; hiçbir kabul eşiği yayınlamaz — pass/fail'i ürün şartnamesine bırakır. Aynı hüküm D2594 için de geçerli."
     },
     "fast-2": {
       "kurum": "CSIRO / Minazio, P.",
@@ -33,7 +32,7 @@
       "url": "https://www.emerald.com/insight/content/doi/10.1108/09556229510087146/full/html",
       "formul": "Bending_Rigidity (uNm) = Agirlik (g/m2) * Egilme_Boyu (mm)^3 * 9.807e-6",
       "ne_veriyor": "DÜŞÜM sayısı: tartı + basit bir eğilme testinden hesaplanır, yani kullanıcı kendi kumaşını girebilir.",
-      "not": "FAST-2 eğilme boyunu ölçer ve rijitliği eğilme boyu + birim alan ağırlığından HESAPLAR; rijitlik algılanan sertlikle ilişkilidir. Formül `KOSU-v7.md` §F6'da da birebir yazılıdır."
+      "not": "Beş katalog kumaşının hiçbirinin bending length'i yayınlanmamış (ASTM D1388 cantilever ölçümü gerekir, GIRDI/kumaslar.md turuyla belgeledi) → beşinde de bendingLengthMM null, rijitlik HESAPLANAMAZ, davranış BAĞLANMAZ."
     },
     "unl-knits": {
       "kurum": "University of Nebraska-Lincoln Extension",
@@ -43,17 +42,33 @@
     }
   },
 
+  "negative_ease_rule": {
+    "_ad": "NEGATİF PAY — KAYNAKLI FORMÜL + ÜRÜN SINIFI TAVANI (F4-kumas, 2026-09-01).",
+    "formul": "negatif ease % = (1 − 1/StretchRatio) × 100, StretchRatio = 1 + strec/100. Bu, kumaşın GERİ VEREBİLECEĞİ azami küçültmedir (yetenek), kalıbın otomatik aldığı pay DEĞİL.",
+    "birim": "Ease YÜZDE parametredir, cm değil: yüzde vücutla ölçeklenir, sabit cm ölçeklenmez.",
+    "yon": "Yatay (kumaş eni yönü, crosswise) ve dikey (boy yönü, lengthwise) strec AYRI sayılardır ve katalogda ayrı taşınır. Motor bugün yalnız YATAY streci çevre (bel/göğüs/kalça/pazu) payına bağlar; DİKEY strec taşınır ama hiçbir boy ölçüsüne bağlı davranışı yok — boyuna negatif pay çizen yayınlanmış bir blok bulunamadı, uydurulmadı (`_yayin_bulunamadi`).",
+    "tavanlar": "Kalıbın ALDIĞI pay = min(formül yeteneği, ürün sınıfı tavanı). Sınıf bantları: tişört/oturan elbise %0–5, tayt %15–20, mayo ~%30. Bu motorun çizdiği her şey tişört/oturan-elbise sınıfıdır → bağlı tavan %5 (engine/src/fabricease.hpp kNegEaseCeilingFittedPct); tayt/mayo tavanları burada kayıtlı, hiçbir çizilen ürün sınıfı kullanmıyor.",
+    "doyma": "Tavanın üstünde daha çok strec daha küçük kalıp KESMEZ: moderate/stretchy/super bantlarının üçünde de formül yeteneği (%27.5 / %38.7 / %46.8) tavanı aştığı için çizilen pay −%5'te doyar. Motorun negatif çapaları bu kanuna static_assert ile mühürlü.",
+    "reddetme": "Kumaşın streci kalıbın istediği negatif payı geri veremiyorsa (formül yeteneği < alınan pay) motor ADIYLA reddeder ve bir sonraki adımı söyler: gereken asgari strec sayısı + katalogdan en yakın dikilebilir öneri (engine/src/validator.cpp 'FABRIC CAPABILITY GATE'). Bugün tavan %5 ve bant ancak ~%24 strec üstünde negatife geçtiği için bu kapı matematiksel olarak ateşleyemez — güvenlik ağıdır, tavan ya da çapa formülsüz oynadığı gün kırmızı yanar.",
+    "dusuk_recovery": "Düşük/ölçülmemiş toparlanma → bandın ALT ucu seçilir (satıcı beyanı hangi banda düşüyorsa o bandın alt kenarı). NİCEL bir eşik literatürde YOK — bu en kısıtlayıcı yorumdur: alt uç, banttaki en az küçültmeyi verir, geri vermeyen kumaşı fazla küçültme riskini keser. `cotton-modal-jersey.stretchPct` bu kuralla 50.0'dır, satıcının 70'i değil.",
+    "kaynaklar": {
+      "formul": "https://mislope.com/blogs/negative-ease-design/what-is-the-stretch-ratio-of-a-fabric-and-how-do-you-calculate-negative-ease-percentage",
+      "strec_bantlari": "https://blog.treasurie.com/stretch-factor-fabrics-tutorial/ (%10-25 düşük / %25-50 orta / %50-75 yüksek)",
+      "urun_sinifi_tavanlari": "https://dartsewing.com/knit-stretch (tişört %0-5, tayt %15-20, mayo ~%30)",
+      "yuzde_orantililik": "https://blog.cashmerette.com/2019/02/what-is-negative-ease-and-how-does-it-work.html"
+    }
+  },
+
   "esikler_hakem_karari": {
     "_ad": "🚨 TOPARLANMA/GROWTH EŞİKLERİ — HAKEMİN KARARIDIR, BİR YAYIN DEĞİL (K63, F6 hakemi, 2026-08-27).",
-    "_neden_burada": "§3.10: künyesi olmayan sayıyı HAKEM koyar, ajan değil. Ajan üç sayıyı `standards.astm-d3107`'nin içine `esikler` diye koymuş ve DOĞRULANMADI-YARIM damgalamıştı — dürüst, ama yer YANLIŞTI: hakem kapak sayfasını açtı, D3107 (ve D2594) yalnız YÖNTEM yayınlıyor, EŞİK yayınlamıyor. Bir test yönteminin altında duran eşik, okuyan herkese o standardın sözü gibi görünür. Blok buraya taşındı ve atıf kesildi.",
-    "_dayanak": "DAYANAK YOK, EN KISITLAYICI SEÇİLDİ. Toparlanma/growth için otoriter bir kabul eşiği ARANDI ve BULUNAMADI (D3107 ve D2594 kapak sayfaları hakem tarafından açıldı: ikisi de test yöntemi, ikisi de eşiksiz). Üç sayı `KOSU-v7.md` §F6'nın kendi zemininden geliyor ve HAKEM tarafından benimsendi, çünkü hepsi KISITLAYICI yönde çalışıyor: eşiği yükseltmek daha çok kumaşta negatif payı KESER, düşürmek daha çok kumaşta negatif paya İZİN VERİR. Şüphede kesmek doğru taraftır.",
+    "_dayanak": "DAYANAK YOK, EN KISITLAYICI SEÇİLDİ. Toparlanma/growth için otoriter bir kabul eşiği ARANDI ve BULUNAMADI (D3107 ve D2594 kapak sayfaları hakem tarafından açıldı: ikisi de test yöntemi, ikisi de eşiksiz). Üç sayı HAKEM tarafından benimsendi, çünkü hepsi KISITLAYICI yönde çalışıyor: eşiği yükseltmek daha çok kumaşta negatif payı KESER. Şüphede kesmek doğru taraftır.",
     "esikler": { "growthMaxPct": 3.0, "recovery15sMinPct": 75.0, "recovery30minMinPct": 85.0 },
     "_kod": "engine/src/fabricease.hpp kGrowthMaxPct / kRecovery15sMinPct / kRecovery30minMinPct; kapı fabric_catalog_check LEG 2 ikisini karşılaştırır.",
-    "_degisirse": "Kabul eşiği yayınlayan bir standart (ör. bir performans şartnamesi) bulunursa değişecek TEK yer burasıdır; motor ve rehber cümlesi buradan döner."
+    "_degisirse": "Kabul eşiği yayınlayan bir standart bulunursa değişecek TEK yer burasıdır; motor ve rehber cümlesi buradan döner."
   },
 
   "bands": {
-    "_kaynak": "KOSU-v7.md §F6 (talimat) — engine/src/fabricease.hpp'de kodlanmış, `fabric_ease_check` koruyor.",
+    "_kaynak": "https://blog.treasurie.com/stretch-factor-fabrics-tutorial/ (%10-25 düşük / %25-50 orta / %50-75 yüksek; F4-kumas doğruladı) — kenarlar motorun kStableMaxPct/kModerateMaxPct/kStretchyMaxPct sabitleriyle aynı, `fabric_ease_check` koruyor. UNL 4-inch testi çapraz kaynak (kenarları farklı, ortalanmadı).",
     "stable":   { "lowPct": 0.0,  "highPct": 25.0 },
     "moderate": { "lowPct": 25.0, "highPct": 50.0 },
     "stretchy": { "lowPct": 50.0, "highPct": 75.0 },
@@ -62,17 +77,17 @@
 
   "recovery_rule": {
     "_ad": "TOPARLANMA BİR ÇARPAN DEĞİL, BİR ŞART.",
-    "_kural": "Bir spec toparlanma/growth İLAN EDİYORSA ve ilan HAKEMİN eşiğini (`esikler_hakem_karari`, K63 — bir yayın DEĞİL) tutmuyorsa (recovery30min < 85% VEYA recovery15s < 75% VEYA growth > 3%), o kumaşta NEGATİF pay alınmaz: bant tablosundan gelen negatif ease 0'a kırpılır. Pozitif ease'e dokunulmaz.",
-    "_gerekce": "Yüksek esneme + düşük toparlanma = giysi bir gün sonra sarkar (KOSU-v7 §F6). Esnemeyi geri vermeyen kumaşı küçültmek, giysiyi kalıcı olarak dar yapar. En kısıtlayıcı yorum: küçültme YOK.",
-    "_ilan_etmeyen": "Toparlanma İLAN EDİLMEMİŞSE kural ATEŞLEMEZ ve çizim eskisi gibi kalır (RULES 4: yeni özellik opt-in, golden bayt-birebir). Bu bir BOŞLUK ve burada adıyla duruyor: ilan edilmemiş bir örme, toparlanması ölçülmeden negatif pay alabiliyor.",
+    "_kural": "Bir spec toparlanma/growth İLAN EDİYORSA ve ilan HAKEMİN eşiğini (`esikler_hakem_karari`, K63 — bir yayın DEĞİL) tutmuyorsa (recovery30min < 85% VEYA recovery15s < 75% VEYA growth > 3%), o kumaşta NEGATİF pay alınmaz: negatif ease 0'a kırpılır. Pozitif ease'e dokunulmaz.",
+    "_gerekce": "Yüksek esneme + düşük toparlanma = giysi bir gün sonra sarkar. Esnemeyi geri vermeyen kumaşı küçültmek, giysiyi kalıcı olarak dar yapar. En kısıtlayıcı yorum: küçültme YOK.",
+    "_ilan_etmeyen": "Toparlanma İLAN EDİLMEMİŞSE kural ATEŞLEMEZ (RULES 4: yeni özellik opt-in, golden bayt-birebir). Bu bir BOŞLUK ve burada adıyla duruyor: beş katalog kumaşının hiçbirinin recovery'si ölçülmedi (GIRDI/kumaslar.md), yani jarse toparlanması ölçülmeden negatif pay alıyor. Kısmi telafi `negative_ease_rule.dusuk_recovery`: strec zaten bandın ALT ucundan yazıldı.",
     "_kod": "engine/src/fabricease.hpp `recoveryQualifies()` + `easeFor()`"
   },
 
   "drape_rule": {
-    "_ad": "🚨 YAYIN BULUNAMADI — EĞİLME RİJİTLİĞİ BÜZGÜ ORANINI BU KOŞUDA OYNATMIYOR.",
-    "_arandi": "Eğilme rijitliğini (µNm) bir büzgü oranına bağlayan künyeli bir yayın arandı ve bulunamadı. Bulunanların hepsi ticari blog/atölye yazısıydı (kumaş AĞIRLIĞINA göre 1.5:1 / 2:1 / 3:1 diyorlar) ve ikisi de (threadsmagazine.com, blog.fabrics-store.com) doğrudan çekilemedi (HTTP 403), yani alıntı BİREBİR doğrulanamadı. Künyesiz sayı koda girmez (§3.10).",
-    "_karar": "En kısıtlayıcı: rijitlik HESAPLANIR, YAZDIRILIR, künyesiyle (FAST-2) rehbere basılır — ama çizime dokunmaz. Çarpan 1.0.",
-    "_hakem_karari": "🚨 K62 (F6 hakemi, 2026-08-27) — HAKEM KENDİ ARAMASINI YAPTI VE O DA BULAMADI: eğilme rijitliğini bir büzgü oranına bağlayan künyeli bir yayın yok. KARAR: ÇARPAN 1.0 KALIR, ve bu artık bir boşluk değil bir KARARDIR (K23'ün %1.5'i gibi: karardan gelir, yayından değil). BEDELİ AÇIKÇA KABUL EDİLDİ: esnemeleri eşit iki DOKUMA kumaş AYNI bel (735.0000 mm) ve AYNI kol oyuğu (404.2593 mm) verir; ayrıştıkları yer kumaş eni (metraj 2.5 ↔ 2.0 m) ve rehberdir. Bu ayrışmama HAKEMİN kararının sonucudur, ajanın eksiği DEĞİL — F6'nın hanesinde ajanın aleyhine sayılmaz. Değişecek tek yer bu blok."
+    "_ad": "🚨 OLCULMEDI + YAYIN BULUNAMADI — DÜŞÜM (bending/drape) BU KOŞUDA HİÇBİR DAVRANIŞA BAĞLI DEĞİL.",
+    "_olcum": "Beş kumaşın hiçbirinin bending length'i yayınlanmamış (ASTM D1388 cantilever ölçümü gerekir; satıcılar düşümü kelimeyle anlatıyor — GIRDI/kumaslar.md). Katalogda beşinde de bendingLengthMM = null, OLCULMEDI. Rijitlik hesaplanamaz, rehbere basılmaz.",
+    "_arandi": "Ayrıca eğilme rijitliğini bir büzgü/klos oranına bağlayan künyeli bir yayın arandı ve bulunamadı (F6 turu + F4-kumas turu). Künyesiz sayı koda girmez.",
+    "_hakem_karari": "🚨 K62 (F6 hakemi, 2026-08-27) — HAKEM KENDİ ARAMASINI YAPTI VE O DA BULAMADI: rijitlik→büzgü haritası yayınsız. KARAR: çizime dokunmaz, çarpan 1.0. F4-kumas bunu korudu ve bir adım geri çekti: girdiler de ölçülmediği için sayı artık hesaplanmıyor bile. Değişecek tek yer bu blok."
   },
 
   "width_rule": {
@@ -83,56 +98,102 @@
   },
 
   "fabrics": {
-    "_secim": "Üç AYRI DAVRANIŞ SINIFI. Liste `KOSU-v7.md` §F6'nın kendi önerisidir; ajan onu ALDI ve koşu durmadı (§3.4/K51/K57). Gerekçe GECE7/DAMLA.md md.17.",
-    "_sinif_notu": "`sinif` motorun kendi enum uyesini adiyla tasir (`Fabric::Woven` / `Fabric::Knit`), kelimeyi degil: katalog KAPALI enuma yeni bir deger EKLEMIYOR, var olan ikisini kullaniyor. `fabric_catalog_check` bu alani okur.",
-    "_olcum_kunyesi": "🚨 Aşağıdaki YEDİ sayının hiçbiri bir yayından alınmadı ve öyle iddia EDİLMİYOR. Bunlar bir KUMAŞ TOPUNUN kendi ölçüleridir; ürünün gerçek akışında D2594 / D3107 / FAST-2'yi KULLANICI kendi topunda koşturur ve dört sayıyı girer. Katalogdaki üç kayıt, o dört sayının BİRİM ve MERTEBESİNİ taşıyan ön-ayarlardır ve her birinde bandın EN KISITLAYICI ucu seçilmiştir (en dar en, en düşük toparlanma, bandın alt esnemesi). Hakem başka sayı koyarsa değişecek tek yer burasıdır.",
+    "_secim": "GIRDI/kumaslar.md'nin beş kumaşı (70's ailesi — Biba/Ossie Clark ağırlık bandının bugün satın alınabilen eşdeğerleri). F6'nın üç uydurma ön-ayarı (poplin/eski-krep/eski-jarse) SİLİNDİ: sayıları satıcı sayfasız mertebe tahminiydi, bu beşinin ağırlık/en sayılarıysa yayınlanmış.",
+    "_sinif_notu": "`sinif` motorun kendi enum üyesini adıyla taşır (`Fabric::Woven` / `Fabric::Knit`); katalog KAPALI enuma yeni değer EKLEMİYOR. `fabric_catalog_check` bu alanı okur.",
+    "_olcum_kunyesi": "🚨 KÜNYE: weightGSM ve widthCM SATICI TEKNİK SAYFASINDAN (her kayıttaki `kaynak` URL'i; ölçülerek değil, satıcı toleransı bilinmiyor). stretchPct/stretchLengthwisePct HİÇBİR kumaşta ölçülmedi (D2594/D3107 raporu yok) → SINIF-TİPİK bant değeri, her kayıtta `stretch_etiket` ile: esneme ipliksiz dokuma = 0, elastanlı örme = satıcı beyanının düştüğü treasurie bandının ALT ucu (`negative_ease_rule.dusuk_recovery`). recovery/growth/bendingLength beşinde de null = OLCULMEDI. Kullanıcı kendi topunu ölçerse (D2594/D3107/D1388) kendi sayısını girer; bu kayıtlar birim ve mertebe taşıyan ön-ayarlardır.",
 
-    "cotton-poplin": {
-      "ad": "pamuklu dokuma (poplin)",
+    "viscose-crepe": {
+      "ad": "krep — %100 viskon krep (Blackbird Fabrics 'Viscose Crepe')",
       "sinif": "Fabric::Woven",
       "stretchPct": 0.0,
+      "stretchLengthwisePct": 0.0,
+      "stretch_etiket": "sınıf-tipik (esneme ipliksiz dokuma ~%0), OLCULMEDI",
       "recovery15sPct": null,
       "recovery30minPct": null,
       "growthPct": null,
-      "weightGSM": 120.0,
-      "bendingLengthMM": 22.0,
-      "widthCM": 112.0,
-      "bendingRigidityUNm": 12.531,
-      "not": "Esnemesiz dokuma: D3107 toparlanma ölçümü UYGULANMAZ (esneme ipliği yok), o yüzden null. Negatif pay zaten yok. Sert/gövdeli: üç kaydın en yüksek rijitliği."
+      "weightGSM": 140.0,
+      "bendingLengthMM": null,
+      "widthCM": 140.0,
+      "bendingRigidityUNm": null,
+      "kaynak": "https://www.blackbirdfabrics.com/en-us/products/viscose-crepe-eggshell — '100% Viscose', '140cm / 55\"', '140gsm / 4.1oz'",
+      "not": "Dokuma, esneme ipliği yok: D3107 uygulanmaz, negatif pay yok. Düşüm OLCULMEDI (bending null), bağlı davranış yok."
     },
 
-    "viscose-crepe": {
-      "ad": "viskon/krep (düşümlü dokuma)",
+    "cotton-modal-jersey": {
+      "ad": "jarse — %57.5 pamuk / %37.5 modal / %5 elastan tek katlı örme (Blackbird Fabrics 'Cotton Modal Jersey Knit')",
+      "sinif": "Fabric::Knit",
+      "stretchPct": 50.0,
+      "stretchLengthwisePct": 50.0,
+      "stretch_etiket": "sınıf-tipik, OLCULMEDI — satıcı beyanı '4 way stretch, 70% cross / 60% along grain' D2594 DEĞİL (yöntem/yük/numune yazmıyor); iki yön de treasurie yüksek bandına (50-75) düşüyor, recovery ölçülmediği için bandın ALT ucu (50.0) yazıldı (negative_ease_rule.dusuk_recovery)",
+      "recovery15sPct": null,
+      "recovery30minPct": null,
+      "growthPct": null,
+      "weightGSM": 200.0,
+      "bendingLengthMM": null,
+      "widthCM": 148.0,
+      "bendingRigidityUNm": null,
+      "kaynak": "https://www.blackbirdfabrics.com/en-us/products/cotton-modal-jersey-knit-black — '57.5% Cotton / 37.5% Modal / 5% Spandex', '148cm / 58\"', '200gsm / 5.9oz'",
+      "not": "Kataloğun tek örmesi. 50.0% strec → moderate/stretchy sınırı → negatif pay tavanda (−%5, negative_ease_rule.doyma). Recovery İLAN EDİLMEDİ → recovery_rule ateşlemiyor (boşluk, orada adıyla duruyor)."
+    },
+
+    "viscose-challis": {
+      "ad": "viskon — %100 viskon challis (Lady McElroy 'Shelly Viscose Challis')",
       "sinif": "Fabric::Woven",
       "stretchPct": 0.0,
+      "stretchLengthwisePct": 0.0,
+      "stretch_etiket": "sınıf-tipik (esneme ipliksiz dokuma ~%0), OLCULMEDI",
       "recovery15sPct": null,
       "recovery30minPct": null,
       "growthPct": null,
       "weightGSM": 110.0,
-      "bendingLengthMM": 13.0,
-      "widthCM": 140.0,
-      "bendingRigidityUNm": 2.3701,
-      "not": "Aynı esneme sınıfı, ÇOK farklı düşüm: rijitlik poplinin ~1/5'i. `drape_rule` YAYIN BULUNAMADI olduğu için bu fark bugün KALIBA inmiyor; kataloğa ve rehbere iniyor, metraja eninden iniyor."
+      "bendingLengthMM": null,
+      "widthCM": 139.7,
+      "bendingRigidityUNm": null,
+      "kaynak": "https://stonemountainfabric.com/product/me-4069-sc-w/ — '100% viscose', '55\"' (=139.7 cm çevrildi), '110 GSM'",
+      "not": "Krep ile aynı esneme sınıfı; ayrıştıkları eksenler ağırlık (110 vs 140 gsm — bağlı davranış yok, drape_rule) ve en (139.7 vs 140 — metraja iner, yuvarlamada çakışabilir)."
     },
 
-    "single-jersey": {
-      "ad": "single jersey (örme)",
-      "sinif": "Fabric::Knit",
-      "stretchPct": 50.0,
-      "recovery15sPct": 78.0,
-      "recovery30minPct": 88.0,
-      "growthPct": 2.5,
-      "weightGSM": 150.0,
-      "bendingLengthMM": 11.0,
-      "widthCM": 165.0,
-      "bendingRigidityUNm": 1.958,
-      "not": "50.0% = `moderate` bandının ÜST ucu (en kısıtlayıcı: bandın içinde en az negatif pay veren nokta değil, bandın ilan edilen ucu). Toparlanma 88% ≥ 85% ve growth 2.5% ≤ 3% → D3107 asgarisini TUTAR → negatif pay alınır. Toparlanma 84.0 yazılsaydı kural ateşler ve negatif pay 0'a kırpılırdı."
+    "cotton-lawn": {
+      "ad": "pamuklu lawn — %100 pamuk lawn (Blackbird Fabrics 'Cotton Lawn', Big Dots baskı)",
+      "sinif": "Fabric::Woven",
+      "stretchPct": 0.0,
+      "stretchLengthwisePct": 0.0,
+      "stretch_etiket": "sınıf-tipik (esneme ipliksiz dokuma ~%0), OLCULMEDI",
+      "recovery15sPct": null,
+      "recovery30minPct": null,
+      "growthPct": null,
+      "weightGSM": 87.0,
+      "bendingLengthMM": null,
+      "widthCM": 142.0,
+      "bendingRigidityUNm": null,
+      "kaynak": "https://www.blackbirdfabrics.com/en-us/products/big-dots-printed-cotton-lawn-black-white — '100% Cotton', '142cm / 56\"', '87gsm / 2.5oz'",
+      "not": "En hafif kumaş (87 gsm). Dokuma, negatif pay yok; jarse ile yan yana basılan ürün çifti bu ikisidir (KOSU/ciktilar/kumas-farki.svg)."
+    },
+
+    "cotton-velveteen": {
+      "ad": "kadife — %100 pamuk velveteen, kısa hav (Stone Mountain & Daughter 'Lush Cotton Velveteen')",
+      "sinif": "Fabric::Woven",
+      "stretchPct": 0.0,
+      "stretchLengthwisePct": 0.0,
+      "stretch_etiket": "sınıf-tipik (esneme ipliksiz dokuma ~%0), OLCULMEDI",
+      "recovery15sPct": null,
+      "recovery30minPct": null,
+      "growthPct": null,
+      "weightGSM": 230.0,
+      "bendingLengthMM": null,
+      "widthCM": 106.7,
+      "bendingRigidityUNm": null,
+      "kaynak": "https://stonemountainfabric.com/product/lush-velveteen-black/ — '100% cotton', '42 inches' (=106.7 cm çevrildi), '230 GSM'",
+      "not": "En dar top (106.7 cm) → en çok metraj (width_rule). En ağır kumaş; hav yönü kesim planına girmedi (yayın aranmadı, bu koşunun kapsamı dışı, adıyla açık)."
     }
   },
 
   "_yayin_bulunamadi": [
-    "eğilme rijitliği (µNm) → büzgü oranı haritası — `drape_rule`",
-    "toparlanma/growth için KABUL EŞİĞİ — ne D3107 ne D2594 eşik yayınlar, ikisi de yalnız YÖNTEMDİR (hakem kapak sayfalarını açtı, K63). Üç sayı (3 / 75 / 85) HAKEMİN kararıdır ve `esikler_hakem_karari` bloğunda öyle duruyor; hiçbir standarda atfedilmiyor",
-    "kumaş eni → parça yerleşimi (nesting) kuralı: metraj ölçeklendi, YERLEŞİM yeniden çözülmedi"
+    "eğilme rijitliği (µNm) → büzgü/klos oranı haritası — `drape_rule` (K62; üstelik girdiler de OLCULMEDI)",
+    "toparlanma/growth için KABUL EŞİĞİ — D3107/D2594 yalnız yöntem (K63); üç sayı hakemin kararı `esikler_hakem_karari`'nda",
+    "düşük recovery için NİCEL strec indirimi — yalnız 'bandın alt ucu' en-kısıtlayıcı yorumu (`negative_ease_rule.dusuk_recovery`)",
+    "DİKEY (boy yönü) strec → boy ölçüsüne negatif pay çizen blok — dikey strec taşınıyor, davranışa bağlanmıyor",
+    "kumaş eni → parça yerleşimi (nesting) kuralı: metraj ölçeklenir, YERLEŞİM yeniden çözülmez",
+    "beş kumaşın D2594/D3107 strec-recovery ölçümü ve D1388 bending ölçümü — kamuya açık rapor yok (GIRDI/kumaslar.md)"
   ]
 }

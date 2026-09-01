@@ -627,13 +627,20 @@ target_compile_definitions(guide_completeness_check PRIVATE
     STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 add_test(NAME guide_completeness_check COMMAND guide_completeness_check)
 
-# KUMAŞ KATALOĞU (F6 İŞ 1): one spec, three fabrics, three MEASURED patterns.
-# The repo root is handed in so the gate can read the catalog it audits against.
+# KUMAŞ KATALOĞU (F6 İŞ 1; F4-kumas: beş kumaş): one spec, the catalog's fabrics,
+# MEASURED patterns. Repo root handed in so the gate reads the catalog it audits.
 add_executable(fabric_catalog_check tests/fabric_catalog_check.cpp)
 target_link_libraries(fabric_catalog_check PRIVATE engine)
 target_compile_definitions(fabric_catalog_check PRIVATE
     STITCHU_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 add_test(NAME fabric_catalog_check COMMAND fabric_catalog_check)
+
+# KUMAŞ -> KALIP (F4-kumas, 2026-09-01): aynı elbise, kataloğun BEŞ kumaşı —
+# en az üç FARKLI kalıp hashi, %40+ örme bel kenarında ölçülebilir dar (mm),
+# katalogda kaynaksız sayı 0. SEVK EDİLEN wasm paketinden koşar
+# (web/vendor/stitchu-engine.js): motor değişip paket derlenmezse bayat kalır —
+# o sürüklenmeyi bundle_fresh_check ayrıca kırmızı yakar.
+add_test(NAME kumas_kalip_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/kumas_kalip_check.mjs)
 
 # ⭐ EDIT KATMANI (GECE7 / F7, §4A · K35) — op.extend ve op.attach'in KENDI
 # kapilari. K35 sarti: bir operatorun kapisi KENDI adini tasir (`op.X -> X_check`);

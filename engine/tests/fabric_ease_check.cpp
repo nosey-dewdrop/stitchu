@@ -55,10 +55,18 @@ static void fail(const std::string& msg) {
 static void ok() { checked++; }
 
 // ── THE PUBLISHED BAND, restated independently of the engine ────────────────
-// F-H card §İŞ 1: dokuma ~0 (pozitif ease zorunlu) · stable knit %0–25 ·
-// orta %26–50 (~%3) · esnek %51–75 (~%5) · süper %76+ (~%10, pens kalkar).
-// Negative ease is the TEMPERED published figure, never stretch/(1+stretch)
-// (recovery) — so the moderate band is −3%, not −23%.
+// Positive side: the two legacy engine anchors (woven / stable knit defaults,
+// golden surface). Negative side (F4-kumas, 2026-09-01, SOURCED — replaces the
+// F-H card's unsourced −3/−5/−10 guesses):
+//   capability = (1 − 1/StretchRatio) × 100   (mislope negative-ease formula)
+//   taken      = min(capability, product-class ceiling)
+// The engine's one product class is the fitted tee/dress, ceiling 5%
+// (dartsewing.com/knit-stretch: tee 0–5%, leggings 15–20%, swim ~30%).
+// Restated HERE as literal arithmetic, not read from fabricease.hpp:
+// capability at the three midpoints is 27.5% / 38.7% / 46.8%, all above the
+// 5% ceiling, so all three negative anchors SATURATE at −5%. Past the ceiling
+// more stretch does not cut a smaller tee — the saturation is the law, not a
+// collapsed axis.
 struct BandPoint {
     const char* name;
     double stretchPct;   // band midpoint, where the published figure is pinned
@@ -68,10 +76,16 @@ struct BandPoint {
 static const std::vector<BandPoint> kBand = {
     {"woven",       0.0,  0.11,  0.05},
     {"stable knit", 12.5, 0.04,  0.02},
-    {"moderate",    38.0, -0.03, -0.03},
+    {"moderate",    38.0, -0.05, -0.05},
     {"stretchy",    63.0, -0.05, -0.05},
-    {"super",       88.0, -0.10, -0.10},
+    {"super",       88.0, -0.05, -0.05},
 };
+// The saturation above is CHECKED arithmetic, not a copied constant: the
+// formula capability at each negative midpoint must exceed the ceiling.
+static_assert((1.0 - 1.0 / 1.38) * 100.0 > 5.0 &&
+              (1.0 - 1.0 / 1.63) * 100.0 > 5.0 &&
+              (1.0 - 1.0 / 1.88) * 100.0 > 5.0,
+              "a band midpoint cannot give the 5% ceiling back - saturation would over-ask");
 
 // Drafted chest girth proxy: the bodice's own audit widths. Only RATIOS between
 // two fabrics are used, so the construction offset between "chest width" and
@@ -169,12 +183,18 @@ int main() {
                 const double chest = draftedChest(m, f, shaping);
                 const double waist = draftedWaist(m, f, shaping);
 
-                // B — strictly smaller at every step up the band.
-                if (!(chest < prevChest - 1e-9)) {
+                // B — smaller at every step up the band UNTIL the product-class
+                // ceiling saturates, then EXACTLY equal (F4-kumas: past the
+                // ceiling more stretch does not cut a smaller fitted garment).
+                const bool saturated =
+                    kBand[i].chestEase == kBand[i - 1].chestEase && kBand[i].chestEase < 0.0;
+                if (saturated ? (chest != prevChest)
+                              : !(chest < prevChest - 1e-9)) {
                     char buf[256];
                     std::snprintf(buf, sizeof buf,
-                                  "EU%d %s: chest did NOT shrink going to band '%s' (%.4f -> %.4f)",
-                                  eu, raw(shaping), kBand[i].name, prevChest, chest);
+                                  "EU%d %s: band '%s' broke the ceiling law (%.4f -> %.4f, %s)",
+                                  eu, raw(shaping), kBand[i].name, prevChest, chest,
+                                  saturated ? "must be EQUAL (saturated)" : "must SHRINK");
                     fail(buf);
                 } else {
                     ok();
@@ -215,14 +235,22 @@ int main() {
                 ok();
             }
 
-            // E — four declared bands, four DIFFERENT drafts.
+            // E — the axis must separate wherever the LAW separates it: any two
+            // bands whose published ease differs must draft differently, and any
+            // two saturated bands must draft IDENTICALLY (a difference there
+            // would be a number nobody sourced).
             std::vector<double> distinct;
             for (const auto& b : kBand) distinct.push_back(draftedChest(m, FabricAxis(Fabric::Knit, b.stretchPct), shaping));
             for (size_t i = 0; i < distinct.size(); ++i)
-                for (size_t j = i + 1; j < distinct.size(); ++j)
-                    if (std::fabs(distinct[i] - distinct[j]) < 1e-6)
+                for (size_t j = i + 1; j < distinct.size(); ++j) {
+                    const bool wantEqual = kBand[i].chestEase == kBand[j].chestEase;
+                    if (!wantEqual && std::fabs(distinct[i] - distinct[j]) < 1e-6)
                         fail(std::string("bands '") + kBand[i].name + "' and '" + kBand[j].name +
-                             "' draft the same chest — the axis collapsed back to two words");
+                             "' draft the same chest — the axis collapsed where the law separates");
+                    if (wantEqual && std::fabs(distinct[i] - distinct[j]) > 1e-9)
+                        fail(std::string("bands '") + kBand[i].name + "' and '" + kBand[j].name +
+                             "' draft DIFFERENT chests above the saturated ceiling — an unsourced number");
+                }
             ok();
         }
     }

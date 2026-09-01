@@ -1,34 +1,34 @@
-// fabric_catalog_check — KAPI (F6, 2026-08-27).
+// fabric_catalog_check — KAPI (F6, 2026-08-27; F4-kumas 2026-09-01: the catalog
+// became the FIVE sourced fabrics of GIRDI/kumaslar.md and every unmeasured
+// field became null+OLCULMEDI instead of an invented number).
 //
-// CLAIM UNDER TEST, in the card's own words: "aynı spec · 3 kumaş · 3 ÖLÇÜLEBİLİR
-// farklı kalıp. Fark bir cümle değil bir SAYI." So this gate does not check that a
-// fabric axis exists (fabric_ease_check already does that). It drafts ONE spec on
-// the THREE fabrics contract/fabric-catalog-v1.json names, prints bel / kol oyuğu /
-// büzgü / metraj in mm and m for each, and refuses to pass if the catalog and the
+// CLAIM UNDER TEST: aynı spec, katalogdaki BEŞ kumaş, ölçülebilir farklı kalıp.
+// Fark bir cümle değil bir SAYI. This gate drafts ONE spec on every fabric
+// contract/fabric-catalog-v1.json names, prints bel / kol oyuğu / büzgü /
+// metraj in mm and m for each, and refuses to pass if the catalog and the
 // engine ever stop saying the same thing.
 //
-// The catalog is READ, not restated. That is the opposite choice from
-// fabric_ease_check (which restates the band on purpose so it does not prove the
-// engine agrees with itself) and it is deliberate: here the catalog is the LAW and
-// the engine is the thing being audited against it. If someone edits a number in
-// the JSON and not in the header, or in the header and not in the JSON, this gate
-// goes red — which is the only way a contract file is a contract and not a README.
+// The catalog is READ, not restated: here the catalog is the LAW and the
+// engine is the thing being audited against it.
 //
-// SIX LEGS
-//   1  THE CATALOG PARSES and carries all four physical numbers for all three
-//      fabrics, plus the provenance blocks that say where each came from. A
-//      catalog whose `_olcum_kunyesi` / `_yayin_bulunamadi` blocks are gone is a
-//      catalog that has started claiming publications it does not have.
-//   2  THE PUBLISHED THRESHOLDS AGREE: the D3107 minimums in the JSON are the
-//      same three numbers fabricease.hpp clamps on.
-//   3  FAST-2 IS THE FORMULA, NOT A TABLE: the rigidity the engine computes from
-//      (weight, bending length) equals the rigidity written in the catalog.
-//   4  THREE DRAFTS, MEASURED. bel · kol oyuğu · büzgü · metraj for each fabric,
-//      printed with the fabric's name, and NOT ALL THREE IDENTICAL.
-//   5  RECOVERY REALLY BITES. The same jersey with its recovery dropped below the
-//      published minimum must lose its negative ease — if that clamp does nothing,
-//      the second axis is decoration.
-//   6  WIDTH REALLY BITES. A narrower bolt asks for more metres, monotonically.
+// LEGS
+//   1  THE CATALOG PARSES and carries its provenance blocks. A catalog whose
+//      `_olcum_kunyesi` / `_yayin_bulunamadi` blocks are gone is a catalog
+//      that has started claiming publications it does not have.
+//   2  THE PUBLISHED THRESHOLDS AGREE: the referee's recovery/growth minimums
+//      in the JSON are the same three numbers fabricease.hpp clamps on.
+//   3  DRAPE IS HONEST: none of the five bolts has a published bending length,
+//      so the catalog must say null and the axis must compute NO rigidity —
+//      an invented drape number here is exactly what the card forbids.
+//   4  FIVE DRAFTS, MEASURED. The knit must be measurably smaller than a woven
+//      in bel, kol oyuğu and büzgü; yardage must follow bolt width among the
+//      equal-area wovens.
+//   5  RECOVERY REALLY BITES. The jersey with a declared failing recovery must
+//      lose its negative ease.
+//   6  WIDTH ARITHMETIC and the reference width no-op.
+//   7  FIVE REHBERS: no drape sentence without a measured input, recovery
+//      sentence follows declaration, yardage quotes each bolt's own width.
+//   8  THE BROWSER'S COPY MAY NOT DRIFT.
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -106,7 +106,8 @@ struct CatalogFabric {
     std::string id;
     std::string ad;
     std::string sinif;
-    double stretchPct = -1, recovery15sPct = -1, recovery30minPct = -1, growthPct = -1;
+    double stretchPct = -1, stretchLengthwisePct = -1;
+    double recovery15sPct = -1, recovery30minPct = -1, growthPct = -1;
     double weightGSM = -1, bendingLengthMM = -1, widthCM = -1, bendingRigidityUNm = -1;
 };
 
@@ -171,7 +172,7 @@ static Measured measure(const FabricAxis& f, const BodyMeasurementsSnapshot& m) 
 }
 
 int main() {
-    std::printf("fabric_catalog_check: one spec, three fabrics, three measured patterns\n");
+    std::printf("fabric_catalog_check: one spec, five fabrics, measured patterns\n");
     const std::string root = STITCHU_REPO_ROOT;
     const std::string doc = slurp(root + "/contract/fabric-catalog-v1.json");
     if (doc.empty()) {
@@ -183,7 +184,10 @@ int main() {
     for (const char* must : {"_olcum_kunyesi", "_yayin_bulunamadi", "drape_rule",
                              "recovery_rule", "width_rule", "astm-d3107", "fast-2",
                              /* F6 referee K63 */ "esikler_hakem_karari", "esik_vermez",
-                             /* F6 referee K62 */ "_hakem_karari"}) {
+                             /* F6 referee K62 */ "_hakem_karari",
+                             /* F4-kumas: sourced formula + ceilings + refusal */
+                             "negative_ease_rule", "dusuk_recovery", "stretch_etiket",
+                             "kaynak", "OLCULMEDI"}) {
         if (doc.find(must) == std::string::npos)
             fail(std::string("catalog has lost the block '") + must +
                  "' — every number in it would then be an unattributed number");
@@ -215,8 +219,9 @@ int main() {
         }
     }
 
-    // ── read the three fabrics ──────────────────────────────────────────────
-    const char* kIds[3] = {"cotton-poplin", "viscose-crepe", "single-jersey"};
+    // ── read the five fabrics (GIRDI/kumaslar.md, F4-kumas) ─────────────────
+    const char* kIds[5] = {"viscose-crepe", "cotton-modal-jersey", "viscose-challis",
+                           "cotton-lawn", "cotton-velveteen"};
     std::vector<CatalogFabric> fabrics;
     for (const char* id : kIds) {
         size_t fb = 0, fe = 0;
@@ -234,13 +239,16 @@ int main() {
         }
         struct { const char* field; double* slot; bool required; } rows[] = {
             {"stretchPct", &c.stretchPct, true},
+            {"stretchLengthwisePct", &c.stretchLengthwisePct, true},
             {"recovery15sPct", &c.recovery15sPct, false},
             {"recovery30minPct", &c.recovery30minPct, false},
             {"growthPct", &c.growthPct, false},
             {"weightGSM", &c.weightGSM, true},
-            {"bendingLengthMM", &c.bendingLengthMM, true},
+            // OLCULMEDI for all five bolts (no published D1388) — null, never a
+            // number nobody measured. LEG 3 asserts the honesty.
+            {"bendingLengthMM", &c.bendingLengthMM, false},
             {"widthCM", &c.widthCM, true},
-            {"bendingRigidityUNm", &c.bendingRigidityUNm, true},
+            {"bendingRigidityUNm", &c.bendingRigidityUNm, false},
         };
         for (const auto& r : rows) {
             double v = 0; bool isNull = false;
@@ -250,17 +258,38 @@ int main() {
         }
         fabrics.push_back(c);
     }
-    if (fabrics.size() != 3) {
-        std::printf("  [FAIL] the catalog must name exactly three fabrics; read %zu\n", fabrics.size());
+    if (fabrics.size() != 5) {
+        std::printf("  [FAIL] the catalog must name exactly five fabrics; read %zu\n", fabrics.size());
+        return 1;
+    }
+    // The one knit and a woven baseline, found by class, not by index.
+    int knitIdx = -1, wovenIdx = -1;
+    for (size_t i = 0; i < fabrics.size(); ++i) {
+        if (fabrics[i].sinif == "Fabric::Knit" && knitIdx < 0) knitIdx = static_cast<int>(i);
+        if (fabrics[i].sinif == "Fabric::Woven" && wovenIdx < 0) wovenIdx = static_cast<int>(i);
+    }
+    if (knitIdx < 0 || wovenIdx < 0) {
+        std::printf("  [FAIL] the catalog must carry at least one knit and one woven\n");
         return 1;
     }
 
-    // ── LEG 3: FAST-2 is computed, not copied ───────────────────────────────
+    // ── LEG 3: DRAPE IS HONEST — no measured input, no invented rigidity ────
+    // None of the five bolts has a published bending length (ASTM D1388 —
+    // GIRDI/kumaslar.md documents the search). So the catalog must carry null,
+    // the axis must refuse to compute a rigidity, and if a bending length IS
+    // ever measured and added, the written rigidity must be FAST-2 of the
+    // inputs, not a copied table value.
     for (const auto& c : fabrics) {
         const FabricAxis f = axisOf(c);
         const double br = f.bendingRigidityUNm();
-        if (br < 0) { fail(c.id + ": drape inputs are not declared, so no rigidity"); continue; }
-        // The catalog writes 4 significant places; agree to that.
+        if (c.bendingLengthMM < 0) {
+            if (br >= 0) fail(c.id + ": bending length is OLCULMEDI but the axis computes a rigidity");
+            else if (c.bendingRigidityUNm >= 0)
+                fail(c.id + ": catalog writes a rigidity with no measured bending length — an unsourced number");
+            else ok();
+            continue;
+        }
+        if (br < 0) { fail(c.id + ": drape inputs declared but no rigidity computed"); continue; }
         if (std::fabs(br - c.bendingRigidityUNm) > 5e-4) {
             char buf[224];
             std::snprintf(buf, sizeof buf,
@@ -275,7 +304,7 @@ int main() {
     if (!eu38) { std::printf("  [FAIL] size chart has no EU38\n"); return 1; }
     const BodyMeasurementsSnapshot m = eu38->body;
 
-    std::printf("\n  AYNI SPEC, UC KUMAS (EU38, dart-shaped gathered dress, straight sleeve)\n");
+    std::printf("\n  AYNI SPEC, BES KUMAS (EU38, dart-shaped gathered dress, straight sleeve)\n");
     std::printf("  %-16s %10s %10s %10s %8s %6s %10s\n",
                 "kumas", "bel(mm)", "oyuk(mm)", "buzgu(mm)", "metraj", "parca", "rijitlik");
     std::vector<Measured> got;
@@ -314,10 +343,10 @@ int main() {
     else ok();
 
     // The knit MUST separate from the wovens on the sourced axis: it declares
-    // 50% stretch and passes D3107, so its bel is smaller than a woven's.
-    if (!(got[2].waistMM < got[0].waistMM - 1.0))
-        fail("the jersey draft is not measurably smaller in the waist than the poplin draft — "
-             "the published stretch band is not reaching the draft");
+    // 50% stretch (class-typical band floor), so its bel is smaller than a woven's.
+    if (!(got[knitIdx].waistMM < got[wovenIdx].waistMM - 1.0))
+        fail("the jersey draft is not measurably smaller in the waist than the woven draft — "
+             "the sourced negative-ease law is not reaching the draft");
     else ok();
     // ⭐ BORÇ 88 (GECE7 / F7) — OYUK AND BÜZGÜ WERE PRINTED, NOT GATED.
     // The F6 card asked for "bel · oyuk · büzgü" and only BEL had a condition
@@ -330,26 +359,55 @@ int main() {
     // — the same floor the waist leg uses, not a new number — and both are far
     // under the measured separation (oyuk −27.6852 mm, büzgü −28.9938 mm), so
     // the gate judges DIRECTION and PRESENCE, never a fitted constant.
-    if (!(got[2].armholeMM < got[0].armholeMM - 1.0))
-        fail("the jersey draft is not measurably smaller in the ARMHOLE than the poplin draft — "
+    if (!(got[knitIdx].armholeMM < got[wovenIdx].armholeMM - 1.0))
+        fail("the jersey draft is not measurably smaller in the ARMHOLE than the woven draft — "
              "the fabric axis reaches the waist but stops before the armhole the sleeve is "
              "set into (borç 88: this column used to be printed and never judged)");
     else ok();
-    if (!(got[2].gatherMM < got[0].gatherMM - 1.0))
+    if (!(got[knitIdx].gatherMM < got[wovenIdx].gatherMM - 1.0))
         fail("the jersey draft gathers the SAME width of cloth onto a smaller waist as the "
-             "poplin does — the gathered edge is not following the fabric axis "
+             "woven does — the gathered edge is not following the fabric axis "
              "(borç 88: this column used to be printed and never judged)");
     else ok();
-    // And every fabric must ask for its own metreage, because every bolt is its
-    // own width.
-    if (!(got[0].meters > got[1].meters && got[1].meters > got[2].meters))
-        fail("yardage is not monotonic in bolt width (112 < 140 < 165 cm must give "
-             "more metres < fewer metres)");
-    else ok();
+    // And every bolt must ask for its own metreage. The comparison is made ONLY
+    // among the WOVENS: they draft the same piece area (equal stretch class), so
+    // any yardage difference is pure width arithmetic. Comparing the knit here
+    // would conflate area (negative ease) with width. Ties are legal — the
+    // engine rounds to 0.1 m, and 139.7 vs 140.0 cm can land on the same figure.
+    for (size_t i = 0; i < fabrics.size(); ++i) {
+        for (size_t j = 0; j < fabrics.size(); ++j) {
+            if (fabrics[i].sinif != "Fabric::Woven" || fabrics[j].sinif != "Fabric::Woven") continue;
+            if (fabrics[i].widthCM < fabrics[j].widthCM - 1e-9 && got[i].meters < got[j].meters) {
+                char buf[192];
+                std::snprintf(buf, sizeof buf,
+                              "%s (%.1f cm) asks for FEWER metres than %s (%.1f cm) — a narrower "
+                              "bolt can never need less cloth for the same pieces",
+                              fabrics[i].id.c_str(), fabrics[i].widthCM,
+                              fabrics[j].id.c_str(), fabrics[j].widthCM);
+                fail(buf);
+            }
+        }
+    }
+    ok();
+    // The narrowest woven (velveteen, 106.7 cm) must STRICTLY ask for more than
+    // the widest woven (lawn, 142 cm) — the ordering above allows ties, this
+    // pins that the axis is not flat.
+    {
+        int nar = wovenIdx, wid = wovenIdx;
+        for (size_t i = 0; i < fabrics.size(); ++i) {
+            if (fabrics[i].sinif != "Fabric::Woven") continue;
+            if (fabrics[i].widthCM < fabrics[nar].widthCM) nar = static_cast<int>(i);
+            if (fabrics[i].widthCM > fabrics[wid].widthCM) wid = static_cast<int>(i);
+        }
+        if (!(got[nar].meters > got[wid].meters))
+            fail("the narrowest bolt does not ask for more metres than the widest — "
+                 "the width axis never reached the yardage");
+        else ok();
+    }
 
     // ── LEG 5: the recovery condition really bites ──────────────────────────
     {
-        FabricAxis good = axisOf(fabrics[2]);
+        FabricAxis good = axisOf(fabrics[knitIdx]);
         FabricAxis bad = good;
         bad.recovery30minPct = FabricBand::kRecovery30minMinPct - 1.0;  // 84 %
         const double eGood = FabricBand::easeFor(FabricBand::Girth::Chest, good);
@@ -362,8 +420,8 @@ int main() {
             ok();
             const Measured mGood = measure(good, m);
             const Measured mBad = measure(bad, m);
-            std::printf("  RECOVERY SARTI: 88%% -> bel %.4f mm  |  84%% (D3107 alti) -> bel %.4f mm  "
-                        "(fark %+.4f mm)\n",
+            std::printf("  RECOVERY SARTI: ilan yok (OLCULMEDI) -> bel %.4f mm  |  84%% ilan "
+                        "(esik alti) -> bel %.4f mm  (fark %+.4f mm)\n",
                         mGood.waistMM, mBad.waistMM, mBad.waistMM - mGood.waistMM);
             if (std::fabs(mBad.waistMM - mGood.waistMM) < 1e-6)
                 fail("the recovery clamp changes the ease but not the drafted waist");
@@ -395,10 +453,11 @@ int main() {
         else ok();
     }
 
-    // ── LEG 7: THREE FABRICS -> THREE REHBERS, and every sentence still has a
-    // basis. guide_completeness_check owns the general law; what is proven HERE
-    // is that the three catalog fabrics do not share one frozen paragraph.
-    std::printf("\n  REHBER (ayni spec, uc kumas):\n");
+    // ── LEG 7: FIVE FABRICS -> honest rehbers. guide_completeness_check owns
+    // the general law; what is proven HERE: no drape sentence without a measured
+    // input, recovery sentence follows the declaration, yardage quotes each
+    // bolt's own width, and the knit does not share the wovens' paragraph.
+    std::printf("\n  REHBER (ayni spec, bes kumas):\n");
     std::vector<std::string> texts;
     for (const auto& c : fabrics) {
         GarmentSpec s = theSpec();
@@ -421,11 +480,14 @@ int main() {
         if (noBasis != 0)
             fail(c.id + ": " + std::to_string(noBasis) + " rehber sentence(s) with NO basis");
         else ok();
-        // Every catalog fabric declares weight + bending length, so every one of
-        // them owes the buyer the drape number.
-        if (!hasDrape) fail(c.id + ": declares FAST-2 inputs but prints no drape advice");
+        // No bolt has a measured bending length (OLCULMEDI), so NO fabric may
+        // print a drape number — a drape sentence here would be an invented one.
+        const bool wantDrape = axisOf(c).bendingRigidityUNm() >= 0.0;
+        if (hasDrape != wantDrape)
+            fail(c.id + (wantDrape ? ": declares FAST-2 inputs but prints no drape advice"
+                                   : ": prints a drape sentence with NO measured bending length"));
         else ok();
-        // Only the jersey declares recovery, and it must say so.
+        // Recovery: none of the five declares it, and the sentence must follow.
         const bool wantRecovery = axisOf(c).recoveryDeclared();
         if (wantRecovery != hasRecovery)
             fail(c.id + ": recovery advice presence does not follow the declaration");
@@ -438,9 +500,17 @@ int main() {
                  std::string(want) + ")");
         else ok();
     }
-    if (texts.size() == 3 && (texts[0] == texts[1] || texts[1] == texts[2] || texts[0] == texts[2]))
-        fail("two of the three fabrics printed the IDENTICAL rehber — one frozen paragraph");
-    else ok();
+    // The knit must not share a paragraph with any woven. Two WOVENS are allowed
+    // to coincide when every bound axis coincides after rounding (crepe 140.0 vs
+    // challis 139.7 cm: same quoted width, same 0.1 m yardage; weight differs
+    // but weight has no bound behaviour without a bending length — that gap is
+    // declared in the catalog, not hidden here).
+    for (size_t i = 0; i < texts.size(); ++i) {
+        if (static_cast<int>(i) == knitIdx) continue;
+        if (texts[i] == texts[knitIdx])
+            fail(fabrics[i].id + ": a woven printed the IDENTICAL rehber to the knit");
+        else ok();
+    }
 
     // ── LEG 8: THE BROWSER'S COPY MAY NOT DRIFT ────────────────────────────
     // web/js/fabric-catalog.js carries the same twelve numbers so a shopper can
@@ -467,6 +537,7 @@ int main() {
                 const size_t stop = web.find("},", k);
                 struct { const char* key; double want; } rows[] = {
                     {"fabricStretchPct", c.stretchPct},
+                    {"fabricStretchLengthwisePct", c.stretchLengthwisePct},
                     {"fabricRecovery15sPct", c.recovery15sPct},
                     {"fabricRecovery30minPct", c.recovery30minPct},
                     {"fabricGrowthPct", c.growthPct},

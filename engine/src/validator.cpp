@@ -1287,6 +1287,39 @@ std::vector<ValidationIssue> issues(
         result.push_back({"pieces", draft.garment, "no pieces drafted"});
         return result;
     }
+
+    // ── FABRIC CAPABILITY GATE (F4-kumas, 2026-09-01) ────────────────────────
+    // A draft may not take MORE negative ease than the fabric's declared stretch
+    // can give back: capability = (1 − 1/StretchRatio) × 100 (mislope, cited in
+    // fabricease.hpp). Refused BY NAME, with the nearest sewable next step (the
+    // minimum stretch that would carry this draft), never silently clamped.
+    // With the fitted-class ceiling at 5% and the band only going negative above
+    // ~24% declared stretch, this cannot fire today (capability at 24% is ~19%);
+    // it is the safety net that goes red the day the ceiling or an anchor moves
+    // without the formula moving with it.
+    if (spec.fabric.declared()) {
+        const double s = spec.fabric.effectiveStretchPct();
+        const double capability = FabricBand::maxNegEasePctFor(s);
+        const struct { const char* name; FabricBand::Girth g; } girths[] = {
+            {"chest", FabricBand::Girth::Chest},
+            {"waist", FabricBand::Girth::WaistBodice},
+            {"skirt waist", FabricBand::Girth::WaistSkirt},
+            {"hip", FabricBand::Girth::HipSkirt},
+            {"biceps", FabricBand::Girth::Biceps},
+        };
+        for (const auto& row : girths) {
+            const double taken = -FabricBand::easeFor(row.g, spec.fabric) * 100.0;
+            if (taken > capability + 1e-9) {
+                result.push_back({"fabric", draft.garment,
+                    fmt("%s draft takes %.1f%% negative ease but a %.0f%% stretch fabric can only "
+                        "give back %.1f%% — declare a fabric with at least %.0f%% stretch "
+                        "(catalog: cotton-modal-jersey) or keep this fabric and a positive-ease draft",
+                        row.name, taken, s, capability,
+                        FabricBand::requiredStretchPctFor(taken))});
+            }
+        }
+        if (!result.empty()) return result;
+    }
     if (!std::isfinite(draft.fabricMeters140) || draft.fabricMeters140 <= 0 || draft.fabricMeters140 > 30) {
         result.push_back({"fabric", draft.garment,
             fmt("fabric estimate %.1f m is not sane", draft.fabricMeters140)});

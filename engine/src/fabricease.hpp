@@ -24,11 +24,24 @@
 // card's "moderate" ends. The CARD's band is the one implemented (it is the
 // instruction); UNL is recorded here as the cross-reference, NOT averaged in.
 //
-// RECOVERY — why the negative branch is NOT a raw formula. A fabric that stretches
-// 50% could in principle be cut 1/1.5 = 33% smaller. It is not, and no published
-// draft does that: RECOVERY (how much of that stretch the fabric gives back) and
-// the wearer's comfort cap the reduction an order of magnitude lower. The −3/−5/
-// −10% above ARE the tempered figures. Nothing here divides by (1+stretch).
+// NEGATIVE EASE — SOURCED FORMULA + PRODUCT-CLASS CEILING (F4-kumas, 2026-09-01).
+// The MOST a fabric can be reduced is what its stretch can give back:
+//     max negative ease % = (1 − 1/StretchRatio) × 100,  StretchRatio = 1 + s/100
+// (mislope.com/blogs/negative-ease-design/what-is-the-stretch-ratio-of-a-fabric-
+// and-how-do-you-calculate-negative-ease-percentage — verified F4-kumas). Ease
+// is a PERCENT of the girth, never a cm constant: a percent scales with the
+// body, a cm does not (blog.cashmerette.com/2019/02/what-is-negative-ease-and-
+// how-does-it-work.html). What a garment actually TAKES is capped far below
+// that capability by its PRODUCT CLASS (dartsewing.com/knit-stretch): fitted
+// tee/dress 0–5%, leggings 15–20%, swimwear ~30%. Everything this engine
+// drafts is the fitted tee/dress class, so the wired ceiling is 5%; the other
+// two ceilings are recorded in contract/fabric-catalog-v1.json and no drafted
+// product class uses them yet. Drafted negative ease = min(formula capability,
+// class ceiling) — the negative anchors below are pinned to that law by
+// static_assert, they are no longer free numbers. (This REPLACES the F-H card's
+// unsourced −3/−5/−10 guesses; the old "(1−1/StretchRatio) is banned" clause in
+// the catalog fell WITH ITS OWN REASON — the reason was "no source found", and
+// the source is now found and verified.)
 //
 // ANCHOR PLACEMENT. Each published figure is pinned at the MIDPOINT of its band
 // and the engine interpolates linearly between anchors, so ease is continuous in
@@ -69,6 +82,31 @@ static_assert(FabricAxis(Fabric::Knit).effectiveStretchPct() == kKnitDefaultPct,
 // published figure is ONE garment-wide negative ease, so the regions converge.
 enum class Girth { Chest, WaistBodice, WaistSkirt, HipSkirt, Biceps, SleeveCap };
 
+// ── SOURCED NEGATIVE-EASE LAW (F4-kumas) ────────────────────────────────────
+// Capability: the largest reduction a fabric of stretch `s` % can give back.
+//   (1 − 1/StretchRatio) × 100, StretchRatio = 1 + s/100  (mislope, cited above)
+inline constexpr double maxNegEasePctFor(double stretchPct) {
+    return (1.0 - 1.0 / (1.0 + stretchPct / 100.0)) * 100.0;
+}
+// Product-class ceilings (dartsewing.com/knit-stretch). The engine drafts ONE
+// product class today — fitted tee/dress — so only the first is wired. The
+// other two are recorded in the catalog and deliberately unused.
+inline constexpr double kNegEaseCeilingFittedPct = 5.0;   // tee/fitted dress 0–5%
+// (leggings 15–20%, swim ~30% — contract/fabric-catalog-v1.json negative_ease_rule)
+
+// What the draft TAKES: never more than the fabric can give, never more than
+// the product class wears.
+inline constexpr double boundNegEasePctFor(double stretchPct) {
+    const double cap = maxNegEasePctFor(stretchPct);
+    return cap < kNegEaseCeilingFittedPct ? cap : kNegEaseCeilingFittedPct;
+}
+// Inverse: the stretch a fabric must declare before a −e% draft is sewable.
+// From the same formula: s = e/(100−e)×100. Used by the validator's refusal
+// so "pick a stretchier fabric" comes with the NUMBER, not a shrug.
+inline constexpr double requiredStretchPctFor(double negEasePct) {
+    return negEasePct >= 100.0 ? 1e9 : negEasePct / (100.0 - negEasePct) * 100.0;
+}
+
 struct Anchor {
     double stretchPct;
     double ease;  // fraction of the body girth
@@ -78,16 +116,40 @@ inline constexpr int kAnchorCount = 5;
 using AnchorRow = std::array<Anchor, kAnchorCount>;
 
 // Band midpoints: woven 0, stable 12.5, moderate 38, stretchy 63, super 88.
+// The two LEFT anchors are the legacy engine numbers (golden surface, above).
+// The three NEGATIVE anchors are NOT free numbers any more: each is
+// −min(maxNegEasePctFor(midpoint), class ceiling)/100 — the sourced law — and
+// the static_asserts after the rows stop the build if a row drifts from it.
+// At all three midpoints the formula capability (27.5% / 38.7% / 46.8%)
+// exceeds the fitted-class ceiling, so the drafted value saturates at −5%:
+// past the ceiling MORE stretch does not cut a smaller garment, which is why
+// a 50% and a 75% knit tee are cut the same (dartsewing product bands).
+inline constexpr double kNegAnchorEase = -kNegEaseCeilingFittedPct / 100.0;
 inline constexpr AnchorRow kChest = {
-    Anchor{0.0, 0.11}, {12.5, 0.04}, {38.0, -0.03}, {63.0, -0.05}, {88.0, -0.10}};
+    Anchor{0.0, 0.11}, {12.5, 0.04},
+    {38.0, kNegAnchorEase}, {63.0, kNegAnchorEase}, {88.0, kNegAnchorEase}};
 inline constexpr AnchorRow kWaistBodice = {
-    Anchor{0.0, 0.05}, {12.5, 0.02}, {38.0, -0.03}, {63.0, -0.05}, {88.0, -0.10}};
+    Anchor{0.0, 0.05}, {12.5, 0.02},
+    {38.0, kNegAnchorEase}, {63.0, kNegAnchorEase}, {88.0, kNegAnchorEase}};
 inline constexpr AnchorRow kWaistSkirt = {
-    Anchor{0.0, 0.02}, {12.5, 0.01}, {38.0, -0.03}, {63.0, -0.05}, {88.0, -0.10}};
+    Anchor{0.0, 0.02}, {12.5, 0.01},
+    {38.0, kNegAnchorEase}, {63.0, kNegAnchorEase}, {88.0, kNegAnchorEase}};
 inline constexpr AnchorRow kHipSkirt = {
-    Anchor{0.0, 0.02}, {12.5, 0.01}, {38.0, -0.03}, {63.0, -0.05}, {88.0, -0.10}};
+    Anchor{0.0, 0.02}, {12.5, 0.01},
+    {38.0, kNegAnchorEase}, {63.0, kNegAnchorEase}, {88.0, kNegAnchorEase}};
 inline constexpr AnchorRow kBiceps = {
-    Anchor{0.0, 0.15}, {12.5, 0.06}, {38.0, -0.03}, {63.0, -0.05}, {88.0, -0.10}};
+    Anchor{0.0, 0.15}, {12.5, 0.06},
+    {38.0, kNegAnchorEase}, {63.0, kNegAnchorEase}, {88.0, kNegAnchorEase}};
+// The law, enforced: every negative anchor equals min(formula, ceiling), and
+// the formula really is the binding side below the ceiling's crossover.
+static_assert(kNegAnchorEase == -boundNegEasePctFor(38.0) / 100.0 &&
+              kNegAnchorEase == -boundNegEasePctFor(63.0) / 100.0 &&
+              kNegAnchorEase == -boundNegEasePctFor(88.0) / 100.0,
+              "negative anchors drifted from min((1-1/StretchRatio)x100, class ceiling)");
+static_assert(maxNegEasePctFor(38.0) > kNegEaseCeilingFittedPct &&
+              maxNegEasePctFor(63.0) > kNegEaseCeilingFittedPct &&
+              maxNegEasePctFor(88.0) > kNegEaseCeilingFittedPct,
+              "a band midpoint fell below the ceiling - the saturated anchors would over-ask the fabric");
 // CAP ease is not body ease: it is the sleeve-head length eased into the armhole
 // seam. You cannot ease MORE into a stretchy knit head — a knit cap is set flat
 // (Aldrich knit block, UNL). So it decays to 0 and stops; it never goes negative,

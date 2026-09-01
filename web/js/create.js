@@ -162,7 +162,7 @@ const SPEC_GROUPS = [
   // check L1). The four measured numbers are printed on the RESULT page instead,
   // each next to the basis it stands on. `unset` overlays nothing and the draft is
   // exactly what it was before the catalog existed.
-  { key: 'fabricPreset', label: 'material (measured)', trLabel: 'kumaş (ölçülmüş)', options: [['unset', 'use the word above', 'yukarıdaki kelime geçerli'], ['cotton-poplin', 'cotton poplin (crisp woven)', 'pamuklu poplin (sert dokuma)'], ['viscose-crepe', 'viscose crepe (drapey woven)', 'viskon krep (düşümlü dokuma)'], ['single-jersey', 'single jersey (stretch knit)', 'single jersey (esneyen örme)']], for: () => true },
+  { key: 'fabricPreset', label: 'material (catalog)', trLabel: 'kumaş (katalog)', options: [['unset', 'use the word above', 'yukarıdaki kelime geçerli'], ['viscose-crepe', 'viscose crepe (drapey woven, 140 gsm)', 'krep — %100 viskon (140 gsm)'], ['cotton-modal-jersey', 'cotton-modal jersey (stretch knit, 200 gsm)', 'jarse — pamuk/modal/elastan örme (200 gsm)'], ['viscose-challis', 'viscose challis (fluid woven, 110 gsm)', 'viskon challis (110 gsm)'], ['cotton-lawn', 'cotton lawn (light woven, 87 gsm)', 'pamuklu lawn (87 gsm)'], ['cotton-velveteen', 'cotton velveteen (heavy woven, 230 gsm)', 'kadife — pamuk velveteen (230 gsm)']], for: () => true },
 ];
 // Foto-anı bug fix (2026-07-27): the last validated vision reading + whether
 // the user hand-picked a length AFTER it. The photo mm is a ratio x body — it
