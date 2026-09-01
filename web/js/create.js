@@ -22,6 +22,11 @@ import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG } from '.
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
 import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=141';
+// F1: PROMPT GİRİŞİ. Serbest metin ("puf kollu mini elbise") deterministik
+// parser'la aynı spec eksenlerine iner — LLM yok, ağ yok. Anlaşılmayan kelime
+// ADIYLA ekrana düşer (sessiz düşme 0), en yakın Edge/Panel/Stitch primitifine
+// işaret eder. Öncelik kuralı: prompt, fotoğraf okumasını EZER (madde 3).
+import { parsePrompt, birlestir } from './prompt-parse.js?v=141';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -161,6 +166,27 @@ const SPEC_GROUPS = [
 // level so every re-entry into the spec screen re-derives it (see showSpec).
 let photoSeen = null;
 let photoLenHandPicked = false;
+
+// F1: the last APPLIED prompt parse + its raw text. Module level for the same
+// reason photoSeen is: a photo analyzed AFTER the prompt must not silently
+// undo the user's written ask — ingestReading re-applies it (madde 3: the
+// prompt is the explicit ask, label `soruldu`; untouched photo axes stay
+// `gorulen`).
+let promptParsed = null;
+let promptText = '';
+
+/** Apply the stored prompt onto the spec + origin record. Priority rule F1/3. */
+function uygulaPrompt() {
+  if (!promptParsed) return;
+  const { zorunlu } = birlestir(spec, promptParsed);
+  for (const f of Object.keys(promptParsed.eksenler)) isaretle(koken, f, 'soruldu');
+  for (const f of zorunlu) {
+    isaretle(koken, f, 'zorunlu', 'bilinmiyor', 'kol başı/boyu istendi, taşıyacak kol gerekti');
+  }
+  // A written length is an explicit order, same latch as a hand-picked one:
+  // drop the photo-measured mm so mini/midi/maxi does exactly what it says.
+  if (promptParsed.eksenler.skirtLength) { spec.skirtLengthMM = 0; photoLenHandPicked = true; }
+}
 
 const spec = {
   garment: 'dress', neckline: 'crew', sleeveStyle: 'none', sleeveLength: 'short',
@@ -769,9 +795,59 @@ function showSpec() {
       // `ratiosMeasured` BURADA açıkça yazılı kalır: photo_ratio_wire_check
       // ölçüm tanığının ÜRÜN yolunda görünür olmasını şart koşuyor, ve kapı
       // gevşetilmedi. Değeri buildSeenRecord'unkiyle birebir aynı ifade.
+      // F1 ÖNCELİK KURALI (madde 3): daha önce yazılmış bir prompt varsa
+      // fotoğrafın okumasını EZER — kullanıcının açık isteği kazanır, etiketi
+      // `soruldu`; fotoğrafın çakışmayan alanları `gorulen` kalır. buildSeen-
+      // Record'dan ÖNCE koşar ki dürüstlük kaydı nihai spec'i anlatsın.
+      uygulaPrompt();
       spec.seen = { ...buildSeenRecord(spec, seen), ratiosMeasured: seen.ratiosMeasured === true };
       status.textContent = (seen.details ? seen.details + ', ' : '') + t('create.spec.checkpicks');
       rebuild();
+  }
+
+  // ---- F1: PROMPT PATH — describe the garment in words, with or without a
+  // photo. Deterministic (web/js/prompt-parse.js): the words land on the SAME
+  // spec axes the pickers hold, so the user sees and can fix every read below.
+  // Zero API calls, zero cost. A word the parser does not know is printed BY
+  // NAME with a pointer to the nearest Edge/Panel/Stitch primitive — nothing
+  // is dropped in silence.
+  {
+    const promptBlock = el('div', 'spec-group');
+    promptBlock.style.marginTop = '30px';
+    promptBlock.appendChild(el('div', 'group-label', t('create.spec.prompt')));
+    const ta = document.createElement('textarea');
+    ta.rows = 2;
+    ta.placeholder = t('create.spec.promptph');
+    ta.style.cssText = 'width:100%;box-sizing:border-box;font:inherit;padding:10px;' +
+      'border:1px solid var(--bb-line, #ccc);resize:vertical;background:transparent';
+    ta.value = promptText;
+    const pRow = el('div', 'choice-row');
+    const pBtn = el('button', 'choice', t('create.spec.promptbtn'));
+    const pStatus = el('div', 'field-error', '');
+    pStatus.style.color = 'var(--gray)';
+    pBtn.addEventListener('click', () => {
+      pStatus.textContent = '';
+      const parsed = parsePrompt(ta.value);
+      if (parsed.bos) { pStatus.textContent = t('create.spec.promptempty'); return; }
+      promptParsed = parsed;
+      promptText = ta.value;
+      uygulaPrompt();
+      const okList = Object.entries(parsed.eksenler)
+        .map(([f, e]) => `${e.kelime} → ${f}: ${e.value}`).join(' · ');
+      if (okList) pStatus.appendChild(el('div', '', t('create.spec.promptok', { what: okList })));
+      for (const u of parsed.anlasilmadi) {
+        const line = el('div', '', t('create.spec.promptunknown', { word: u.kelime, hint: u.oneri }));
+        line.style.color = '#8f2038';
+        pStatus.appendChild(line);
+      }
+      if (!okList && !parsed.anlasilmadi.length) pStatus.textContent = t('create.spec.promptempty');
+      rebuild();
+    });
+    promptBlock.appendChild(ta);
+    pRow.appendChild(pBtn);
+    promptBlock.appendChild(pRow);
+    promptBlock.appendChild(pStatus);
+    screen.appendChild(promptBlock);
   }
 
   // Photo path: upload -> AI reads the garment -> picks below get prefilled,

@@ -365,6 +365,12 @@ add_test(NAME compile_dialect_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tes
 # yapısal ölü (ratiosMeasured tanığı). Aynı foto + farklı gövde -> farklı mm;
 # farklı L/W -> farklı spec (mm + fullness sınıfı); tablo + veto deterministik.
 add_test(NAME photo_ratio_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/photo_ratio_wire_check.mjs)
+# prompt_spec_check (F1): YAZIYLA TARİF hattı. 8 metin → geçerli spec → ≥6
+# farklı kalıp; çatışmada PROMPT kazanır (kullanıcının açık isteği, `soruldu`);
+# anlaşılmayan kelime adıyla + en yakın Edge/Panel/Stitch primitifi önerisiyle
+# döner (sessiz düşme 0); /api/analyze'in metin hali (backend/analyze-core.js)
+# lokal doğrulanır ve foto istemi tek kaynaktan, bayt bayt korunur.
+add_test(NAME prompt_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/prompt_spec_check.mjs)
 
 # sizechart_source_check: KAYNAK BEYANI KAPISI (TUR 18B, 2026-08-17). The 70
 # numbers of contract/tables.json draft.euSizeChart are the whole body of the

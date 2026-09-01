@@ -88,9 +88,13 @@ for (const [name, m, lw, hw] of [
 }
 
 // ---- 0) SEMA MANDALI: worker ratios{} 7 alaninin HEPSI olcum ciktisinda ----
-// (goz kolu v1, 2026-07-28). Anahtar listesi worker.js kaynagından okunur:
-// worker semasi degisirse bu test bilincli guncellenene kadar kirmizi.
-const workerSrc = readFileSync(join(root, 'backend/worker.js'), 'utf8');
+// (goz kolu v1, 2026-07-28). Anahtar listesi istem kaynagindan okunur:
+// sema degisirse bu test bilincli guncellenene kadar kirmizi.
+// F1 (2026-09-01) BILINCLI GUNCELLEME: istem literali worker.js'ten
+// backend/analyze-core.js'e tasindi (metin-analiz ayni semayi paylassin diye,
+// tek kaynak). Sema METNI degismedi — prompt_spec_check foto istemini bayt
+// bayt kilitliyor; buradaki mandal ayni 7 anahtari yeni kaynaktan okur.
+const workerSrc = readFileSync(join(root, 'backend/analyze-core.js'), 'utf8');
 const ratiosLine = workerSrc.match(/"ratios": \{([^}]*)\}/);
 if (!ratiosLine) fail('worker.js ratios{} satiri bulunamadi — sema mandali kör');
 const workerKeys = [...(ratiosLine ? ratiosLine[1] : '').matchAll(/"(\w+)": number \| null/g)].map((m2) => m2[1]);
