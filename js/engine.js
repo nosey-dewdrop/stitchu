@@ -103,16 +103,27 @@ export function loadEngine() {
 // Every axis the surface line cannot carry comes back in
 // `desteklenmeyen_eksenler`, and create.js prints it on screen.
 
+// ⛔ BOTH READINGS TAKE THE SPEC THROUGH engineSpec(), LIKE EVERY OTHER CALL.
+// They did not, and it was not cosmetic: the WASM boundary takes the axis words
+// as INTEGERS (`intValue` above turns 'none' into 0, 'bow' into 1, ...). Handing
+// it the raw shopper spec meant every one of those fields arrived as a string,
+// came back out of `numField` as NaN, and the engine refused by name —
+// "invalid tieClosure NaN". Measured 2026-09-01: the flat download failed 5
+// times out of 5 from create.html and nothing downloaded at all. Lines 156, 311
+// and 328 of this same file had always called engineSpec(); these two were the
+// two that did not.
 /** The KALIP reading — human body, real seam allowance. What gets sewn. */
 export async function seamPlanPattern(spec, body) {
   const engine = await loadEngine();
-  return JSON.parse(engine.planJSON(spec, body));
+  return JSON.parse(engine.planJSON(engineSpec(spec), body));
 }
 
-/** The FLAT reading — the technical drawing. What gets sold. */
+/** The FLAT reading — the 3D SURFACE line. Kept for research and cross-checking
+ *  against the drawing; NOT what the shopper downloads any more (see
+ *  flatDrawing below and the header of web/lib/flat-from-pattern.js). */
 export async function seamPlanFlat(spec, body) {
   const engine = await loadEngine();
-  return JSON.parse(engine.flatJSON(spec, body));
+  return JSON.parse(engine.flatJSON(engineSpec(spec), body));
 }
 
 /**
@@ -338,4 +349,75 @@ export async function draft(spec, measurements) {
     return { error: msg, pattern: null, issues: [msg] };
   }
   return JSON.parse(json);
+}
+
+// ---------------------------------------------------------------------------
+// THE TECHNICAL DRAWING — FROM THE PATTERN, NOT FROM THE SURFACE
+// ---------------------------------------------------------------------------
+// The shipped flat is drawn from draftJSON's own 2D pieces. The reasoning, the
+// measurements behind it and what it replaced are in web/lib/flat-from-pattern.js
+// and are not restated here.
+import { CONTRACT } from './contract.gen.js?v=141';
+import { renderFlatFromPattern } from '../lib/flat-from-pattern.js?v=141';
+
+/** The published EU chart body, from the SAME contract table the engine's own
+ *  size chart is generated from. An unknown label is refused by name — a
+ *  silently substituted size is a garment sewn for a body nobody asked about
+ *  (RULES invariant 1). */
+export function bodyForSize(label) {
+  const chart = CONTRACT.draft.euSizeChart, fields = CONTRACT.draft.euSizeChartFields;
+  const row = chart[label];
+  if (!Array.isArray(row)) {
+    throw new Error(`unknown size '${label}' (valid: ${Object.keys(chart).join(', ')})`);
+  }
+  const g = (n) => row[fields.indexOf(n)];
+  return { bust: g('bustCM'), waist: g('waistCM'), hip: g('hipCM'), shoulder: g('shoulderCM'),
+           backLength: g('backLengthCM'), armLength: g('armLengthCM'), neck: g('neckCM') };
+}
+
+/**
+ * The shared-ancestor token, computed over the DRAFTED PATTERN ITSELF.
+ *
+ * The surface line's `dugum` was a hash of the surface's own inputs. This one is
+ * stronger and needs no second implementation to trust: two files carrying the
+ * same token were written from the same drafted geometry, byte for byte, so a
+ * flat and a pattern that disagree cannot both carry it. FNV-1a, 64 bit, over
+ * the engine's own JSON text.
+ */
+export function patternDugum(patternJSONText) {
+  let h = 0xcbf29ce484222325n;
+  const s = String(patternJSONText);
+  for (let i = 0; i < s.length; i++) {
+    h ^= BigInt(s.charCodeAt(i) & 0xff);
+    h = (h * 0x100000001b3n) & 0xffffffffffffffffn;
+  }
+  return h.toString(16).padStart(16, '0');
+}
+
+/**
+ * THE TECHNICAL FLAT for one spec at one published size.
+ *
+ * `body` is either a measured body (bust/waist/... in cm) or `{ size: 'EU38' }`.
+ * Returns { svg, dugum, beden, issues }. It REFUSES rather than draw a lie: a
+ * validator-blocked draft comes back as a throw with the engine's own words, so
+ * a blocked pattern can never leave as a picture that looks fine.
+ */
+export async function flatDrawing(spec, body) {
+  const engine = await loadEngine();
+  const beden = body && body.size ? String(body.size) : null;
+  const m = beden ? bodyForSize(beden) : body;
+  const es = engineSpec(spec);
+  const text = engine.draftJSON(es, {
+    bust: m.bust, waist: m.waist, hip: m.hip, shoulder: m.shoulder,
+    backLength: m.backLength, armLength: m.armLength, neck: m.neck,
+    upperBust: m.upperBust || 0,
+  });
+  const drafted = JSON.parse(text);
+  if (drafted.error) throw new Error(drafted.error);
+  const dugum = patternDugum(text);
+  const svg = renderFlatFromPattern(drafted, {
+    beden: beden || '', dugum,
+    sinif: { garment: es.garment, shaping: es.shaping, fabric: es.fabric },
+  });
+  return { svg, dugum, beden: beden || '', issues: drafted.issues || [] };
 }

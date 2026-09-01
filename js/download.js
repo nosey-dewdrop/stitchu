@@ -16,10 +16,12 @@
 //        strings print.js and render-pages.mjs draw.
 //   PDF  pdf-core.js, the SAME builder engine/tools/gen-collection-pattern.mjs
 //        writes the published packs with, including the 3 cm calibration square.
-//   FLAT flat-from-plan.js over engine.flatJSON — the orthographic projection
-//        of the very GarmentSurf the pattern is cut from. As of H3 this is the
-//        ONLY flat line: the croquis pen is deleted, so
-//        the drawing and the pattern cannot be two objects that drift.
+//   FLAT flat-from-pattern.js over engine.draftJSON — the drafted pattern's own
+//        2D panels, sewn up into the finished garment. It is drawn from the very
+//        geometry the other three exports cut, so the drawing and the pattern
+//        cannot be two objects that drift. (Until 2026-09-01 it was the 3D
+//        surface line's projection; that line has no sleeve, no collar and no
+//        dart in its types, and it cost 7.5-30.9 seconds a call.)
 //
 // WHY THE FLAT IS HERE AT ALL (F-İNDİR, 2nd round, 2026-08-26). The referee
 // measured the first round's own claim: all ten exports wrote a PATTERN, `grep
@@ -39,11 +41,11 @@
 // zero lines anywhere on this path said so. The stamp is applied HERE, on the
 // shipped download path, on the root element of the finished document.
 import * as koken from './provenance.js?v=141';
-import { renderFlatFromPlan } from '../lib/flat-from-plan.js?v=141';
+
 import { pathD, bounds } from './sheet.js?v=141';
 import * as sheet from './sheet.js?v=141';
 import { makePdfCore } from '../lib/pdf-core.js?v=141';
-import { dxfRecipe, dxfSpec, seamPlanFlat } from './engine.js?v=141';
+import { dxfRecipe, dxfSpec, flatDrawing } from './engine.js?v=141';
 
 // Drafting-table pastels + ink: the studio's own palette, kept so the exported
 // SVG looks like the pattern the user was looking at when they pressed save.
@@ -230,9 +232,14 @@ export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null
   if (!body || typeof body !== 'object' || !body.size) {
     throw new Error('flat export: no size — the flat is valued at a body, not at a default');
   }
-  const plan = await seamPlanFlat(spec, body);
-  if (plan.error) throw new Error(plan.error);
-  const svg = renderFlatFromPlan(plan);   // throws on an engine refusal
+  // ⭐ 2026-09-01 — THE DRAWING NOW COMES OFF THE PATTERN.
+  // It used to be the 3D surface line's projection, and that line has no sleeve,
+  // no collar and no dart in its types: 24 specs collapsed to 7 silhouettes and
+  // 4 paths at 7.5-30.9 SECONDS a call. The drafted pattern already carries the
+  // armhole, the cap, the darts and the collar as named mm geometry in 18 ms.
+  // The surface line is still in the tree and still gated; it is off THIS path.
+  const drawn = await flatDrawing(spec, body);   // throws on an engine refusal
+  const svg = drawn.svg;
   return {
     // F0: the origin label rides in the FILE, on the root element, so it
     // survives being opened offline in Illustrator with no site around it. An
@@ -241,8 +248,12 @@ export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null
     svg: kokenKaydi
       ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
       : svg,
-    desteklenmeyen_eksenler:
-      Array.isArray(plan.desteklenmeyen_eksenler) ? plan.desteklenmeyen_eksenler : [],
+    // The pattern line carries every axis the shopper can pick — that is what
+    // it is FOR — so there is no list of axes the drawing had to drop. What it
+    // could not draw for a particular spec is named inside the file as a
+    // `cizilemeyen:` comment by the drawer itself, never swallowed.
+    desteklenmeyen_eksenler: [],
+    dugum: drawn.dugum,
   };
 }
 
