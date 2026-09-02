@@ -29,7 +29,9 @@ const WEB = join(here, '../../web');
 // collections/index.html from the site; they are dropped here in the same
 // commit so this tool reports a real drift instead of a stale expectation.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'showcase.html', 'signature.html',
+  // F10-vitrin: signature.html deleted (dead page — its only inbound link was
+  // one landing line); the stale name is dropped in the same commit.
+  'showcase.html',
   'api.html', 'privacy.html', 'studio.html',
   // GECE7 / F8: the AL DENE page. A page that ships with a hand-edited copy of
   // the header drifts silently, and this one is the entry point a stranger is

@@ -67,6 +67,13 @@ export const STRINGS = {
   'create.spec.promptempty': { en: 'Nothing to read yet — type a few words about the garment.', tr: 'Okunacak bir şey yok — giysiyi birkaç kelimeyle yaz.' },
   'create.spec.photo': { en: 'or start from a photo', tr: 'ya da fotoğraftan başla' },
   'create.spec.photobtn': { en: 'Upload a garment photo', tr: 'Kıyafet fotoğrafı yükle' },
+  // F10-vitrin: the privacy sentence ON the upload door, not only on the
+  // privacy page. The photo does NOT stay on the device — the engine does, the
+  // vision does not — and saying so before the click is the honest order.
+  'create.spec.photoprivacy': {
+    en: 'The photo is sent to the stitchu server and forwarded to the Anthropic API for garment reading; it is not stored. The pattern itself is drafted in your browser.',
+    tr: 'Fotoğraf stitchu sunucusuna gönderilir ve giysi okuması için Anthropic API\'ye iletilir; saklanmaz. Kalıbın kendisi tarayıcında çizilir.',
+  },
   'create.spec.reading': { en: 'reading the garment…', tr: 'kıyafet okunuyor…' },
   // F3-arka: the optional back-photo door + the two honest sentences. The
   // invented-back sentence DECLARES, it does not ask — the flow never stops.
@@ -111,6 +118,14 @@ export const STRINGS = {
     en: 'The flat is drawn from the seam plan; these axes did not reach it: {what}',
     tr: 'Teknik çizim dikiş planından çizildi; şu eksenler ona ulaşmadı: {what}',
   },
+  // F10-vitrin (hakem borcu c): the sewing guide the shopper takes home, wired
+  // to the result screen instead of sitting pure in web/lib. The refusal is
+  // named: no catalog fabric, no needle table, no invented numbers.
+  'create.dl.rehber': { en: 'HTML, sewing guide (Turkish)', tr: 'HTML, dikiş rehberi (Türkçe)' },
+  'create.dl.rehberfabric': {
+    en: 'pick a catalog fabric above first — without one the guide refuses to invent needle and stitch settings',
+    tr: 'önce yukarıdan katalog kumaşı seç — kumaşsız rehber iğne ve dikiş ayarı uydurmayı reddeder',
+  },
   // ⭐ OPERATÖR PROGRAMI (GECE7 / F5-D). Bir RET burada bir hata mesajı DEĞİL,
   // motorun ölçülmüş cevabıdır: sevk edilen gövde bir konidir ve op.suppress onu
   // reddeder. Cümle bunu bir kusur gibi değil, bir cevap gibi söyler.
@@ -129,8 +144,10 @@ export const STRINGS = {
                            tr: 'Degisecek bir sey yok — en az bir alana deger girin.' },
   // BOLGE KAPISI (contract/edit-locality-v1.json): bolge disi panel bayt-ayni
   // degilse edit REDDEDILIR ve kalip degismez — sessiz bozulma yok.
-  'create.edit.locality': { en: 'Zone check: {n} out-of-zone panels stayed byte-identical.',
-                            tr: 'Bolge kontrolu: bolge disi {n} panel bayt bayt ayni kaldi.' },
+  // "byte-identical" landing_truth_check L2'nin duran-iddia listesinde; kullanıcı
+  // cümlesi aynı hükmü yasaklı kalıba girmeden söylüyor (F10-vitrin).
+  'create.edit.locality': { en: 'Zone check: {n} out-of-zone panels did not move by a single byte.',
+                            tr: 'Bolge kontrolu: bolge disi {n} panel tek bayt oynamadi.' },
   'create.edit.localityfail': {
     en: 'REFUSED: the edit leaked outside its declared zone — {list}. The pattern was not changed.',
     tr: 'REDDEDILDI: edit ilan ettigi bolgenin disina tasti — {list}. Kalip degistirilmedi.',

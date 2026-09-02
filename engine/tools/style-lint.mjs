@@ -42,7 +42,8 @@ const htmlFiles = [];
 // skipped them silently, so the stale names are dropped here rather than left
 // to read as pages this lint still covers.
 const mainPages = ['index.html', 'create.html', 'closet.html', 'benchmark.html',
-  'showcase.html', 'signature.html', 'api.html', 'privacy.html', 'studio.html'];
+  // signature.html deleted in F10-vitrin (dead page); stale name dropped.
+  'showcase.html', 'api.html', 'privacy.html', 'studio.html'];
 for (const f of mainPages) if (existsSync(join(WEB, f))) htmlFiles.push(f);
 for (const sub of ['patterns', 'guide', 'blog']) {
   const dir = join(WEB, sub);

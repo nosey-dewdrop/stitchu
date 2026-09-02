@@ -1315,3 +1315,21 @@ add_test(NAME al_dene_check COMMAND ${NODE_EXECUTABLE}
 # dosya satin alinmis bir kalibin BAYT KOPYASI olamaz (§4C md.7).
 add_test(NAME vitrin_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/vitrin_check.mjs)
+# NOT (F10-vitrin, 2026-09-02): vitrin_check'in 2. maddesindeki "STRAPLESS +
+# BES kirmizi" iddialari OLCULDU ve bayatti — motor EU38'de set-in kollu bir
+# beden ciziyor (engineSpec 'cap'i adiyla reddediyor) ve bes kirmizinin biri
+# (contract_check) yesile donmus. Kapi ayni commit'te olculen gercege gore
+# yeniden kesildi; gerekce testin kendi basliginda.
+
+# vitrin_gercek_check (F10-vitrin) — VITRIN GERCEGI SOYLER.
+# vitrin_check hedef_kosu sayilarini muhurler; bu kapi MOTORUN KENDI CIZIMINI
+# muhurler: engine/tools/gen-landing-motor.mjs burada yeniden kosar ve
+#   1. web/data/landing-motor.json + web/assets/motor/*.svg + sayfadaki
+#      data-motor degerleri bugunku draftJSON kosusuyla BAYT-AYNI olmak zorunda
+#      ("10 pieces A-LINE DRESS" sinifi elle sayi bir daha yasayamaz);
+#   2. landing'de saglayicisiz elle rakam 0 (izinli jetonlar kapida adiyla);
+#   3. olu sayfalar (atolye/signature) olu kalir, site-health exit 0;
+#   4. fotografin stitchu sunucusu uzerinden Anthropic API'ye gittigi yukleme
+#      ekraninda + gizlilik sayfasinda YAZILI kalir ("cihazinda kalir" yasak).
+add_test(NAME vitrin_gercek_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/vitrin_gercek_check.mjs)

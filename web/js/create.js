@@ -926,6 +926,12 @@ function showSpec() {
     const photoBlock = el('div', 'spec-group');
     photoBlock.style.marginTop = '30px';
     photoBlock.appendChild(el('div', 'group-label', t('create.spec.photo')));
+    // F10-vitrin: the privacy sentence at the door. The photo leaves the page —
+    // stitchu server -> Anthropic API — and the user reads that BEFORE clicking,
+    // not in a policy afterwards. privacy.html carries the same sentence.
+    const privNote = el('div', '', t('create.spec.photoprivacy'));
+    privNote.style.cssText = 'font-size:12px;color:var(--gray,#5b7089);margin:4px 0 8px;max-width:60ch';
+    photoBlock.appendChild(privNote);
     const row = el('div', 'choice-row');
     const pick = el('button', 'choice', t('create.spec.photobtn'));
     const status = el('div', 'field-error', '');
@@ -1303,6 +1309,32 @@ function downloadPanel(result) {
     return null;
   });
   row.appendChild(flatBtn);
+
+  // F10-vitrin (hakem borcu c): THE GUIDE, ON THE RESULT SCREEN. rehber-tr.js
+  // sat pure in web/lib with a gate (uctan_uca_check) and no wire to the page —
+  // the shopper the guide was written for could not reach it. Same wire() shape
+  // as the other four: the refusal is printed, never swallowed. The one named
+  // refusal is fabric: the guide builder throws on a fabric with no catalog
+  // entry rather than inventing needle numbers, so 'unset' is refused here with
+  // the next step in the sentence.
+  const rehberBtn = el('button', 'btn', t('create.dl.rehber'));
+  wire(rehberBtn, async () => {
+    if (!spec.fabricPreset || spec.fabricPreset === 'unset') return t('create.dl.rehberfabric');
+    const { rehberHTML } = await import('../lib/rehber-tr.js?v=141');
+    const resp = await fetch('data/sewing-guide.json?v=141');
+    if (!resp.ok) throw new Error('sewing-guide.json okunamadı (HTTP ' + resp.status + ')');
+    const guideData = await resp.json();
+    const html = rehberHTML(result.pattern, spec, spec.fabricPreset, guideData,
+      { baslik: title, beden: FLAT_BEDEN, kokenSatiri: kokenCumlesi(koken, true) });
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${base}-rehber.html`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    return null;
+  });
+  row.appendChild(rehberBtn);
   panel.appendChild(row);
 
   // ⭐ THE OPERATOR PROGRAM, ON THE RESULT SCREEN (GECE7 / F5-D, K46).

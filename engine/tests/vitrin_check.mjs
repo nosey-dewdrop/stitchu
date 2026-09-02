@@ -87,11 +87,17 @@ if (fresh) {
     filled.length >= 3, `${filled.length} data-v element(s)`);
 }
 
-// ── 2. THE FIVE RED CHECKS ARE NAMED, NOT COUNTED ──────────────────────────
+// ── 2. THE RED CHECKS ARE NAMED, NOT COUNTED ───────────────────────────────
 // The names come from the phase card, spelled out here rather than derived: a
 // derivation that read them out of a build directory would pass on a machine
 // with no build, which is the one place the claim matters least.
-const REDS = ['contract_check', 'flat_artifact_census', 'style_check',
+// ⭐ F10-vitrin (2026-09-02, MEASURED): `ctest -R` on the five card names came
+// back 4 red / 1 green — contract_check PASSES now (patterns_real tracks zero
+// files since H1 "depo temiz", which this very gate's own check (c) asserts).
+// Keeping contract_check on the required-red list would force the page to
+// claim a red that is green, so the list is recut to the measured four and the
+// benchmark page names the closed red as closed.
+const REDS = ['flat_artifact_census', 'style_check',
   'sizechart_source_check', 'figure_check'];
 const vitrinPages = ['web/index.html', 'web/benchmark.html'].map(read).join('\n');
 for (const r of REDS)
@@ -105,16 +111,23 @@ check('the page separates the deliberately-red from the never-traced',
   /never had (?:their|its) cause traced|kök sebebi hiç aranmadı|never been traced/i.test(vitrinPages),
   'iki ilan edilmiş kırmızı (K58) üç izlenmemişle aynı cümlede toplanamaz');
 
-// ── 3. THE STRAPLESS LIMIT IS DECLARED BEFORE THE DOWNLOAD ─────────────────
+// ── 3. THE HONEST LIMITS ARE DECLARED BEFORE THE DOWNLOAD ──────────────────
+// ⭐ F10-vitrin (2026-09-02): the strapless requirement was retired on a
+// MEASUREMENT, not a mood — engine.draftJSON at EU38 returns Bodice Front,
+// Bodice Back, Skirt Front, Skirt Back and a set-in Sleeve, and engineSpec
+// refuses 'cap' by name ("invalid sleeveStyle 'cap' (valid: none, straight,
+// balloon)"). A bodice that carries a drafted sleeve is not strapless, so a
+// page forced to say "strapless" would be forced to lie. What the page must
+// still declare, before the download: the muslin limit (a validated pattern is
+// not a sewn-up pattern) and the refusal law (a word outside the vocabulary is
+// refused by name, incl. the cap sleeve missing from the sleeve row).
 const index = read('web/index.html');
-check('the landing page says the shipped garment is strapless',
-  /\bstrapless\b/i.test(index) && /askısız/i.test(index), 'EN ve TR');
-check('and it says WHY, in the words of the thing that measures it',
-  /boning/i.test(index) && /flat_pattern_agree_check/.test(index),
-  'balensiz durmaz + kapının adı');
-check('and it says what is actually handed over is a file, not a sewn garment',
-  /does not hand you a sewn garment/i.test(index),
-  '§4.1 model A — satılan bir dosya');
+check('the landing page declares the muslin limit before the download',
+  /not the same as a pattern that sews up/i.test(index) &&
+  /dikilip biten bir kalıp demek değildir/.test(index), 'EN ve TR');
+check('and it names a real refusal instead of drawing something close',
+  /refuse[sd]? (the word )?by name/i.test(index) && /cap sleeve/i.test(index),
+  'kapak kol motorda yok ve sayfa bunu adıyla söylüyor');
 
 // ── 4. THE BANNED WORD (K45) ───────────────────────────────────────────────
 const banned = [];

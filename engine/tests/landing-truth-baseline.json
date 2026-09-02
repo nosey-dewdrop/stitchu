@@ -7,31 +7,31 @@
     "--no-baseline: tabanı yok sayan HARD-0 kipi; §4.2 kırmızı kanıtı bu kiple alınır (GECE/log/V10-B.red-before.txt).",
     "--dir=<yol>: hedef dizin. Mutasyon fikstürü `web/` DIŞINDA koşar (kart V10-B yasağı: web/ altına tek bayt yazma)."
   ],
-  "_note": "V10-L: taban HEAD'de (ade83dc) yeniden kesildi; eski kesim c72f650'deydi. L1'in faz içindeki düşüşü 1074->937 = -137 ve bunun 10'u SİLİNDİ (sayısal blok 1116->1106), 127'si JETONLA AKLANDI (sağlayıcılı blok 42->169); muhasebe GECE/log/V10-L.muhasebe.txt. L1 sağlayıcı eşleşmesi SUBSTRING'dir (engine/tests/landing_truth_check.mjs:53-54): blokta alet adı durması sayının o aletten çıktığını göstermez, kapı sayının DOĞRULUĞUNU ölçmez — HEAD'de 102 blok yalnız golden_check/engine_check jetonuyla aklanıyor (ör. web/patches/1-5.html:82 '14/54'), sonda: '12.5 mm' cümlesi 938/937 KIRMIZI, aynı cümle + '(site-health)' 937/937 YEŞİL. L2 artık iki dilli: 34 kalıbın 20'si İngilizce, 14'ü Türkçe (V10-I 12, V10-J 2); L4 bu fazda hiçbir borç taşımadı, faz öncesi 9b306f9'da da 0'dı, yani beş denetimden biri fiilen ölü.",
-  "olcumCommit": "ade83dc000ff157ec0ff612eec39125b057c7a5c",
-  "olcumTarihi": "2026-08-25",
+  "_note": "F10-vitrin: elle sayili sahte kanit SVG'leri silindi, landing sayilari gen-landing-motor.mjs'e baglandi, atolye/signature silindi; L1 937 -> 87",
+  "olcumCommit": "cbc65779bc8783c298fd507297bd3efc1b3e5e74",
+  "olcumTarihi": "2026-09-02",
   "kapsam": {
     "dizin": "web",
-    "html": 127,
-    "js": 26,
-    "iddiaBlogu": 18780,
+    "html": 16,
+    "js": 30,
+    "iddiaBlogu": 7483,
     "atlananScope": {
-      "style": 127,
-      "script": 344,
-      "comment": 64,
-      "svgdata": 2774,
-      "jscomment": 1448
+      "style": 15,
+      "script": 40,
+      "comment": 2,
+      "svgdata": 296,
+      "jscomment": 2226
     },
     "saglayiciEvreni": {
-      "testAdi": 117,
-      "aletAdi": 138,
-      "eslesebilirJeton": 390,
-      "ctest": "ctest -N 116 ad · CMakeLists 117 ad · yalnız-ctest 0 · yalnız-cmake 1 [h10_gate_check]"
+      "testAdi": 148,
+      "aletAdi": 128,
+      "eslesebilirJeton": 401,
+      "ctest": "ctest -N 147 ad · CMakeLists 148 ad · yalnız-ctest 0 · yalnız-cmake 1 [h10_gate_check]"
     }
   },
   "L1": {
-    "taban": 937,
-    "sayisalBlok": 1106,
+    "taban": 87,
+    "sayisalBlok": 98,
     "yontem": "sayı+birim taşıyan iddia bloğu; blok içinde add_test adı ∪ engine/tools dosya adı ∪ GECE|Logs|reports/ yolu YOKSA sağlayıcısız"
   },
   "L2": {
@@ -41,8 +41,8 @@
   "L3": {
     "taban": 0,
     "isaretliBlok": 1,
-    "isaretliCumle": 30,
-    "muafYoklukBeyani": 5,
+    "isaretliCumle": 14,
+    "muafYoklukBeyani": 2,
     "muafiyet": "ADLANDIRILMIŞ: V10-R §2 C2c vizyon bloğunun neyin canlı OLMADIĞINI saymasını ZORUNLU kılar; böyle bir cümle zorunlu olarak şimdiki zamandır. Muafiyet kurala gömülü değil, ayrı ve SAYILIYOR."
   },
   "L4": {
@@ -67,17 +67,17 @@
     "secimListeleri": [
       {
         "dosya": "js/create.js",
-        "satirNo": 817,
+        "satirNo": 1517,
         "ad": "EU_SIZES",
         "n": 8
       }
     ]
   },
   "_neden0Degil": {
-    "L1": "937 sağlayıcısız sayısal blok, taban da 937 — yani L1 TAM TAVANDA, payı SIFIR. Tek bir yeni sayısal cümle kapıyı kırar; bu sağlamlık değil, kazadır. 0 olmamasının sebebi: kapı ÖLÇER, ONARMAZ; onarım web/ altına yazmayı gerektirir, bu kart web/'e tek bayt yazamaz. Onaracak kart: V10-C (paralel, web/ onarımı). ★ Bunun tamamlayıcısı olan 169 'sağlayıcılı' bloğun 102'si YALNIZ golden_check/engine_check substring'iyle aklanıyor (ölçüm: GECE/log/V10-L.muhasebe.txt §5; ör. web/patches/1-5.html:82 '14/54' — bu sayıyı golden_check basmaz). En yoğun dosyalar kapı çıktısında ADIYLA basılıyor.",
-    "L2": "0 yasak-vaat hit'i — ama bu 0 bugün 34 kalıpla ölçülmüş bir 0'dır (20 İngilizce + 14 Türkçe; TR kalıpları V10-I'de 12, V10-J'de 2 EKLENDİ, hiçbiri silinmedi). Aynı kapı faz öncesi ağaçta (9b306f9) 829 hit sayıyor. Kalan borç kalıbın DIŞINDA kalan MTM dilidir — V10-A §1 bunu YALAN diye hükme bağladı (motorun kümesi 8 sabit beden, contract/layers/shape-ratios.json). Yeni kaçış cümlesi bulunursa kalıp EKLENİR. Onaracak kart: V10-C.",
-    "L3": "0 vizyon ihlali. DÜZELTME: bu alanın eski metni 'data-vision=\"1\" taşıyan blok SIFIR' diyordu ve aynı dosyanın L3.isaretliBlok alanıyla ÇELİŞİYORDU. Ölçülen: işaretli blok 1, işaretli cümle 30, MUAF yokluk-beyanı 5, ihlal 0 — yani vizyon dili İŞARETLENMİŞ ve o tek blok temiz. Kalan borç: kapı yalnız işaretli bloğu ve VISION_WORD geçen işaretsiz bloğu görür; işaretlenmemiş, kelimesiz vizyon cümlesi görünmez. Onaracak kart: V10-C.",
-    "L4": "0 — ve bu 0 bir başarı değil, ÖLÜ DENETİM işaretidir: L4 bu fazda hiçbir borç taşımadı, hiçbir şey yakalamadı; faz öncesinde (9b306f9) de 0'dı (ölçüm: GECE/log/V10-L.muhasebe.txt §1 ve §8). Beş denetimden biri fiilen ölü — site-health.mjs faz boyunca tek koşuda bile exit≠0 vermedi.",
-    "L5": "4 kaçak EU etiketi, hepsi tek dosyada: web/js/contract.gen.js:28 EU50 · :29 EU52 · :104 EU50 · :113 EU52. Motorun kümesi contract/layers/shape-ratios.json'da 8 beden (EU34–EU48). DÜZELTME: bu alanın eski metni 'web/js/create.js:810 EU_SIZES 10 beden' diyordu; ölçüldü, YANLIŞ — EU_SIZES web/js/create.js:817'de ve 8 beden taşıyor (secimListeleri alanı da n:8 diyor), üstküme seçim 0. 0 olmamasının sebebi: onarım web/ altına yazmayı gerektirir, bu kart yazamaz. Onaracak kart: V10-C."
+    "L1": "87 sağlayıcısız sayısal blok. Kapı ÖLÇER, ONARMAZ; onarım web/ altına yazmayı gerektirir, bu kart web/'e tek bayt yazamaz. Onaracak kart: V10-C (paralel, web/ onarımı). En yoğun dosyalar kapı çıktısında ADIYLA basılıyor.",
+    "L2": "0 yasak-vaat hit'i. Ağırlığı MTM dili (\"your own measurements\" vb.) — V10-A §1 bunu YALAN diye hükme bağladı (motorun kümesi 8 sabit beden). Onaracak kart: V10-C.",
+    "L3": "0 vizyon ihlali. Bugün sitede data-vision=\"1\" taşıyan blok SIFIR; yani vizyon dili hiç işaretlenmemiş. Onaracak kart: V10-C.",
+    "L4": "0. site-health.mjs bugün exit 0 veriyor; bu sayı 0 ise L4 borcu YOKTUR.",
+    "L5": "4. web/ EU50 ve EU52 etiketlerini taşıyor, contract/layers/shape-ratios.json sizes kümesi 8 beden (EU34–EU48). Zincir V10-A §5'te satır satır yazılı (web/js/create.js:810 EU_SIZES 10 beden). Onaracak kart: V10-C."
   }
 }

@@ -93,7 +93,12 @@ const FLAT_TO_DRAFT = {
 // The circle skirt drafts as ONE piece "Skirt Panel (quarter circle)" (two cut
 // from a half-circle → a full circle); the worn flat shows it as the silhouette's
 // flared lower half, so it belongs to the body outline, NOT a separate flat part.
-const BODY_RE = /^(Bodice|Skirt|Top) (Front|Back)$|^Skirt Panel \(quarter circle\)$/; // the silhouette itself (Top = the top-garment bodice block)
+// F10-vitrin: `Skirt Front & Back` eklendi — F5'in geçiş kuralı fermuarsız
+// giyside CB dikişini düşürüp ön+arka eteği TEK parça kesiyor (parca_sayisi
+// kanunu); o parça da siluetin kendisidir, ayrı bir flat organı değil. Bu alet
+// F5'ten sonra o adı öğrenmemişti ve wrap_dress'i "temsilsiz parça" diye
+// yakıyordu — kusur üründe değil, bayat ölçü aletindeydi.
+const BODY_RE = /^(Bodice|Skirt|Top) (Front|Back)$|^Skirt Front & Back$|^Skirt Panel \(quarter circle\)$/; // the silhouette itself (Top = the top-garment bodice block)
 const INTERNAL_RE = /Bias binding|Neck Facing|Armhole Facing/;   // inside the garment, invisible worn
 const PIECE_TO_FLAT = [
   { re: /Sleeve/, part: 'sleeve' },
@@ -179,7 +184,12 @@ function draftLandmarks(pat) {
   const bf = pat.pieces.find((x) => x.name === 'Bodice Front' || x.name === 'Top Front')
     || joinSplitFront(pat, 'Bodice Center Front', 'Bodice Side Front')
     || joinSplitFront(pat, 'Top Center Front', 'Top Side Front');
+  // 'Skirt Front & Back' = F5 geçiş kuralının CB'siz tek etek parçası; katta
+  // ön yarım gibi durur (fold), max x = etek ucu yarımı, max y = etek boyu —
+  // 'Skirt Front' ile aynı yasa, aynı payda. Adı öğretilmediği sürece
+  // hemSweepHalf/skirtLen ÖLÇÜLMEDİ diye yanıyordu (wrap_dress).
   const sf = pat.pieces.find((x) => x.name === 'Skirt Front')
+    || pat.pieces.find((x) => x.name === 'Skirt Front & Back')
     || joinSplitFront(pat, 'Skirt Center Front', 'Skirt Side Front');
   const sl = pat.pieces.find((x) => /Sleeve/.test(x.name));
   const panel = pat.pieces.find((x) => /Panel/.test(x.name));
