@@ -81,13 +81,37 @@
     "_law": "Her cizili elemanin (stroke-width, stroke-dasharray) cifti bu tablodan BIR sinifa esit olmak zorunda. Tablodaki her sinif matriste EN AZ BIR kez kullanilmis olmak zorunda (beyan edilip kullanilmayan sinif = olu beyan). Her sinif `drawnBy` ile HANGI EGRIYI cizdigini beyan eder; `drawnBy` yazmayan ya da null yazan bir sinif KANUNDA DURAMAZ.",
     "_source": "Agirliklar contract/gusto-corpus.json line_hierarchy (stroke_layers 3, outline_width 2.0, interior_widths [1.4, 1.0]) — repo icinde donmus, Damla-onayli flat korpusundan olculmus katman yapisi. Kesik/noktali ayrimi teknik cizim (tech-pack) konvansiyonu: gorunen ust dikis kesik, gizli hat noktali. NOT (H3-C): korpus UC katman olcmustu; kanun bugun IKI sinif beyan ediyor cunku sevk edilen cizim iki egri ciziyor. Ucuncu katman (1.0) korpusta duruyor, kanunda DEGIL — kanun korpusu degil SEVKIYATI beyan eder.",
     "_H3_C_UC_SINIF_NEDEN_SILINDI": "KANUN YALNIZ SEVK EDILENI BEYAN EDER. 30 Agu 2026'ya kadar burada `mark` (1.0), `topstitch` (1.0 kesik) ve `hidden` (1.0 noktali) siniflari `drawnBy: null` + bir `_neden` metniyle duruyordu, ve flat_convention_check onlari `UNUSED_CLASS_RATCHET = 3` diye bir tavanda sayiyordu. Hakem bunu adiyla yakaladi: URUNUN EKSIGI KANUNA YAZILMISTI. Bir cizgi sinifinin 'bugun cizilmiyor' olmasi kanunun onu beyan etmesi icin bir sebep degil, ETMEMESI icin bir sebeptir; ve 'bilincli cizilmeyen sinif sayisi' diye bir tavan, kanunun icine acilmis uc kisilik bir bosluktur. Dogrusu kanunun KUCULMESI: uc sinif SILINDI (muafiyet degil, silme), `ratios` beyanindan onlara bakan iki oran (`seam:mark`, `outline:mark`) da silindi, ve kapidaki tavan (`UNUSED_CLASS_RATCHET`) kaldirildi. Bugun kanunda kalan iki sinifin ikisi de `drawnBy` beyan ediyor ve ikisi de SIFIR TOLERANSLA cizilmis olmak zorunda. Bir sinif geri gelirse (buton/ust dikis/gizli hat operatoru sevk edilirse) kanuna GERI YAZILACAK ve kapi onu ayni sifir toleransla cizilmis gormek zorunda kalacak — yani geri yazmanin bedeli, cizmek.",
+    "_FLAT_ESTETIK_NEDEN_1.0": "2026-09-02'ye kadar seam 1.4 idi (gusto korpusunun ic katmani). FLAT-ESTETIK fazi cizgi hiyerarsisini tech-pack konvansiyonuna cekti: kontur : ic dikis : topstitch = 4 : 2 : 1 (Techpacker flat sketch basics; duz cizgi = dikis, KESIK cizgi = topstitch). 2.0 : 1.0 : 0.5. Topstitch sinifi BU tabloya YAZILMADI cunku bu tablo flat_convention_check'te ARASTIRMA hattinin (flat-from-plan.js) ciziminde sifir toleransla CIZILMIS olmak zorunda ve o hat topstitch cizmiyor; topstitch yalniz sevk hattinda cizilir ve kanunu sevkPoz.topstitch'te, kapisi cizim_giysi_mi (i)'de durur.",
     "classes": {
       "outline":   { "width": 2.0, "dash": null,  "role": "dis siluet + kol dis konturu",
                      "drawnBy": "siluet" },
-      "seam":      { "width": 1.4, "dash": null,  "role": "konstruksiyon dikisi: prenses, pens, bel birlesimi, panel dikisi, yaka",
+      "seam":      { "width": 1.0, "dash": null,  "role": "konstruksiyon dikisi: prenses, pens, bel birlesimi, panel dikisi, yaka",
                      "drawnBy": "ust-sinir" }
     },
-    "ratios": { "outline:seam": 1.4286 }
+    "ratios": { "outline:seam": 2.0 }
+  },
+
+  "sevkPoz": {
+    "_law": "SEVK EDILEN CIZIMIN POZ VE ORAN KANUNU (FLAT-ESTETIK, 2026-09-02). Damla flat'e bakti, 'cok cirkin' dedi; uc kok kusur teshis edildi (kol kanat gibi yukari aciliyor, omuz boyundan kol ucuna tek uzun diyagonal, yaka orani kalibin orani). Endustri yasasi tanim, zevk degil: teknik flat MASAYA DUZ SERILMIS giysidir. KALIP OLCULERI (genislik/uzunluk, mm) KALIPTAN GELMEYE DEVAM EDER; bu blok yalniz POZU (acilari) ve ORAN SINIRLARINI koyar. Uygulanan her deger siluet path'inde data-* olarak ILAN edilir; kapi engine/tests/cizim_giysi_mi.mjs (b)+(j).",
+    "kolAcisiDeg": { "min": 20, "max": 40, "taban": 30,
+      "_tabanNeden": "cizicinin kirpma tabani bandin ORTASI (30), kenari degil — olculdu: pozlu omuz 22 dereceye kadar egimli ve balon/buzgulu kolun ucgen tohumu ~20.6 derece; ikisi ayni hizada tek kesintisiz diyagonal okunuyor (Damla'nin 'kanat' kusurunun ta kendisi). 30+'da kol omuz cizgisinden gorunur bicimde KIRILIP sarkar. Kapinin tolerans bandi 20-40 olarak kalir.",
+      "_kaynak": "Adstronaut tech pack rehberi ('laying perfectly flat') + Techpacker flat sketch basics: kol ASLA omuz yatayinin ustune cikmaz, omuz ucundan asagi-disari yataydan 20-40 derece sarkar; uzun kolda bilek kalca/etek hizasina duser. Aci kalibin kendi ucgen cozumunden TOHUMLANIR (iki farkli kol iki farkli aci verir), banda kirpilir; data-kol-aci = uygulanan aci, yatayin ALTINA dogru derece.",
+      "_urlNot": "kaynak adlari Damla'nin FLAT-ESTETIK brifinden; URL'ler bu oturumda tek tek dogrulanmadi (cevrimici dogrulama yapilmadi) — DOGRULANMADI etiketi yalnizca URL'lere, banda degil" },
+    "omuzEgimiDeg": { "min": 15, "max": 22,
+      "_kaynak": "sewingladyblog omuz acisi ~15 derece; tech-pack konvansiyonu 15-22. Kalibin kendi egimi EU38'de 22.0-25.6 olculdu; band ustunu asan degerler 22'ye kirpilir." },
+    "omuzGogusOran": { "min": 0.85, "max": 0.90,
+      "_kaynak": "omuz genisligi = 0.85-0.90 x gogus genisligi (tech-pack konvansiyonu, Damla brifi). Kalibin kendi omuz ucu EU38 matrisinde 0.67-0.81'de oturuyor (dikilebilir omuz dikisinin yeri) — flat POZU icin banda cekilir, kol evi kavisi omuz ucundan kalibin KENDI koltukalti noktasina (U, gogus genisligini tasiyan nokta) icbukey cizilir. NOT: Bugra Locket EU38 kesim cizgisinde 0.9570 olculmustu (croquis.landmarks.shoulderTipX) — o KALIP olcusu, bu FLAT pozu; ikisi ayni sey degil.",
+      "armholeKavis": "icbukey kubik: omuz ucundan cikarken dikeye yakin (c1 = S + [0.06dx, 0.45dy]), koltukaltina girerken yataya yakin (c2 = [U.x - 0.32dx, U.y]) — Techpacker: 'be considerate of the armhole curvature'; sivri kanat kosesi yasak" },
+    "yaka": {
+      "genislikOverOmuz": { "min": 0.36, "max": 0.42, "hedef": 0.39,
+        "_kaynak": "yaka genisligi = ~0.39 x omuz genisligi (Print Phase neckline spec, Damla brifi); band kirpma icin +-0.03" },
+      "onDerinlikOverGenislik": { "min": 0.42, "maxKapi": 1.25,
+        "_kaynak": "crew/scoop on derinlik = 0.42-0.46 x yaka genisligi (Print Phase neckline spec, London Pattern Cutter tech pack). UYGULAMA TABAN OLARAK: cizici yalniz ALT siniri dayatir (0.42'den sig yaka konvansiyonel tabana indirilir); kalibin daha derin cizdigi scoop/vNeck KENDI derinligini korur, cunku derinlik musterinin sectigi STIL eksenidir ve onu 0.46'ya kirpmak her yakayi crew'a cevirirdi (EU38 olculdu: konvansiyonel genislikte crew 0.50, scoop 0.73, vNeck 0.90). Kapinin tavani 1.25 stil siniridir: ondan derini yaka degil yirtmac okunur." },
+      "arkaDususOverOn": { "min": 0.20, "max": 0.30,
+        "_kaynak": "arka yaka dususu ~2 cm = on derinligin %20-30'u (London Pattern Cutter tech pack) — arka gorunuste neredeyse duz sig kavis. EU38 kalip arka dususu 21.0 mm; crew onunde band 14.9-22.4, dokunulmadan geciyor." }
+    },
+    "topstitch": { "width": 0.5, "dash": "4 2", "drawnBy": "dikis-izi",
+      "_kaynak": "kontur : ic dikis : topstitch = 4:2:1 ve KESIK cizgi = topstitch (tech-pack cizgi konvansiyonu). Etek ucu / manset / biye topstitch'i kenara paralel KESIK cizgidir; eskiden cift duz cizgi gibi basiliyordu. Sinifin kapisi cizim_giysi_mi (i): dikis-izi rolu bu (agirlik, kesik) ciftiyle cizilmek ZORUNDA, baska hicbir rol kesik cizemez." }
   },
 
   "fillLaw": {

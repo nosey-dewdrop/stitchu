@@ -39,11 +39,12 @@
 // drawing prints is the number the pattern was cut to. This is the property the
 // surface line could never have, because it was a different object.
 //
-// Three things are constructed rather than copied, and each is named where it
+// Four things are constructed rather than copied, and each is named where it
 // happens: closing the darts (the sewn waist is narrower than the flat panel),
-// swinging the sleeve out (one degree of freedom the pattern does not fix, and
-// it is SOLVED from the pattern's own three lengths, not chosen), and bending
-// the collar onto the neckline.
+// posing the top edge (shoulder/neck/armhole to the convention bands —
+// poseBodice, FLAT-ESTETIK), hanging the sleeve (lengths from the pattern,
+// angle seeded by the pattern and clamped to the 20-40 degree convention
+// band), and bending the collar onto the neckline.
 //
 // ===========================================================================
 // THE FLAT LAW STILL BINDS (contract/flat-convention-v1.json)
@@ -56,7 +57,47 @@
 // to the browser.
 const INK = '#1f3a5f';   // contract/flat-convention-v1.json ink.color
 const W_OUTLINE = 2.0;   // contract/flat-convention-v1.json lineClasses.classes.outline.width
-const W_SEAM = 1.4;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
+const W_SEAM = 1.0;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
+
+// ===========================================================================
+// THE FLAT POSE CONVENTION (contract/flat-convention-v1.json sevkPoz)
+// ===========================================================================
+// FLAT-ESTETIK (2026-09-02). Damla looked at the shipped flats and said "cok
+// cirkin", and she was right about all three named faults: the sleeves opened
+// up and out like wings, the shoulder ran as one long diagonal from the neck to
+// the sleeve tip, and the neckline proportions were the panel's, not a flat's.
+// The industry convention is not taste, it is a definition: a technical flat is
+// the garment LAID FLAT ON A TABLE. Laid flat, the sleeve hangs from the
+// shoulder tip DOWN and out (never above the shoulder horizontal), the shoulder
+// is a SHORT line a few degrees off horizontal, and the armhole is a concave
+// curve from the shoulder tip into the underarm, with the sleeve behind it.
+//
+// WHAT STAYS THE PATTERN'S AND WHAT BECOMES CONVENTION — the line is exact:
+// every LENGTH and WIDTH (chest, waist, hip, sleeve length, cuff width, hem)
+// is still read off the drafted pattern in millimetres; the convention sets
+// only the POSE (angles) and the PROPORTION BANDS (shoulder/chest, neck
+// width/shoulder, neck depth/width). Where the drafted value already sits in
+// the band it passes through untouched; where it does not, it is clamped to
+// the band's edge and the applied value is PUBLISHED on the path as data-*
+// attributes, so the gate (engine/tests/cizim_giysi_mi.mjs, section j) can
+// judge the drawing without re-deriving anything. The neck DEPTH keeps its
+// style: only the floor is conventional, a drafted scoop or V stays deeper.
+const KOL_ACI_MIN_DEG = 20;    // contract/flat-convention-v1.json sevkPoz.kolAcisiDeg.min
+const KOL_ACI_TABAN_DEG = 30;  // contract/flat-convention-v1.json sevkPoz.kolAcisiDeg.taban
+const KOL_ACI_MAX_DEG = 40;    // contract/flat-convention-v1.json sevkPoz.kolAcisiDeg.max
+const OMUZ_EGIM_MIN_DEG = 15;  // contract/flat-convention-v1.json sevkPoz.omuzEgimiDeg.min
+const OMUZ_EGIM_MAX_DEG = 22;  // contract/flat-convention-v1.json sevkPoz.omuzEgimiDeg.max
+const OMUZ_ORAN_MIN = 0.85;    // contract/flat-convention-v1.json sevkPoz.omuzGogusOran.min
+const OMUZ_ORAN_MAX = 0.90;    // contract/flat-convention-v1.json sevkPoz.omuzGogusOran.max
+const YAKA_GEN_MIN = 0.36;     // contract/flat-convention-v1.json sevkPoz.yaka.genislikOverOmuz.min
+const YAKA_GEN_MAX = 0.42;     // contract/flat-convention-v1.json sevkPoz.yaka.genislikOverOmuz.max
+const YAKA_DER_MIN = 0.42;     // contract/flat-convention-v1.json sevkPoz.yaka.onDerinlikOverGenislik.min
+const ARKA_YAKA_MIN = 0.20;    // contract/flat-convention-v1.json sevkPoz.yaka.arkaDususOverOn.min
+const ARKA_YAKA_MAX = 0.30;    // contract/flat-convention-v1.json sevkPoz.yaka.arkaDususOverOn.max
+const W_TOPSTITCH = 0.5;       // contract/flat-convention-v1.json sevkPoz.topstitch.width
+const DASH_TOPSTITCH = '4 2';  // contract/flat-convention-v1.json sevkPoz.topstitch.dash
+
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 // ===========================================================================
 // THE MANNEQUIN TRANSFORM (F6-konvansiyon) — flat 38 is NOT pattern 38
@@ -374,25 +415,108 @@ function sewPanel(piece, edge, sideSegs, outboardAtStart) {
 }
 
 // ---------------------------------------------------------------------------
+// 2b. THE POSED TOP EDGE — neck, shoulder and armhole, in convention pose
+// ---------------------------------------------------------------------------
+// The drafted panel's own top edge is a PATTERN shape: the shoulder tip sits at
+// 0.67-0.81 of the chest half-width (measured over the shipped matrix at EU38)
+// because that is where a sewable shoulder seam lands after ease and slope.
+// Drawn as-is it reads as one long raglan-like diagonal — Damla's second fault.
+// A flat draws the GARMENT WORN AND LAID FLAT: shoulder tip at 0.85-0.90 of the
+// chest, a short shoulder line at 15-22 degrees, and a concave armhole from the
+// tip into the pattern's own underarm point. The underarm point U is NOT moved:
+// it carries the chest width the (g)/(g2) gates hold to 0.1 mm.
+//
+// The drafted neck curve is kept as a SHAPE (a V stays a V, a scoop a scoop)
+// and rescaled to convention proportions: width to the 0.36-0.42 band of the
+// shoulder width, depth clamped only from BELOW (a drafted scoop or V keeps its
+// own deeper drop — the depth axis is a style the shopper chose; erasing it
+// would redraw every neckline as a crew). The back drop is 20-30% of the front
+// depth (the ~2 cm convention), so the back view reads as the near-flat curve
+// every vendor flat shows. Every applied value rides on the silhouette path as
+// data-* attributes; the gate reads those and verifies the declared shoulder
+// tip is a real point of the drawn path — a declaration cannot lie.
+function poseBodice(d, U, which, poz) {
+  if (!d.shoulder.length || !U) return null;
+  const N0 = d.shoulder[0].p[0];                          // drafted neck-side point
+  const S0 = d.shoulder[d.shoulder.length - 1].p[3];      // drafted shoulder tip
+  const xChest = U[0];
+  if (!(xChest > 1) || !(U[1] > N0[1] + 1)) return null;
+  const xS = clamp(S0[0], OMUZ_ORAN_MIN * xChest, OMUZ_ORAN_MAX * xChest);
+  const egim = clamp(Math.atan2(S0[1] - N0[1], S0[0] - N0[0]) * 180 / Math.PI,
+                     OMUZ_EGIM_MIN_DEG, OMUZ_EGIM_MAX_DEG);
+  let neckSegs = [], nX2 = N0[0], genOran = null, derOran = null;
+  if (d.neck.length) {
+    const cT = d.neck[0].p[0];                            // centre top (x ~ 0, or the CB stand-off)
+    const nX = N0[0], nD = cT[1] - N0[1];
+    nX2 = clamp(nX, YAKA_GEN_MIN * xS, YAKA_GEN_MAX * xS);
+    let nD2 = nD;
+    if (which === 'on') {
+      // floor only: convention sets the shallowest honest crew, style keeps depth
+      nD2 = Math.max(nD, YAKA_DER_MIN * 2 * nX2);
+      poz.onDerinlikMM = nD2;
+      derOran = nD2 / (2 * nX2);
+    } else if (poz.onDerinlikMM > 0) {
+      nD2 = clamp(nD, ARKA_YAKA_MIN * poz.onDerinlikMM, ARKA_YAKA_MAX * poz.onDerinlikMM);
+      derOran = nD2 / poz.onDerinlikMM;
+    }
+    // scale about the centre edge x and the neck-side y, so the curve still
+    // starts on the centre line (or the drafted CB stand-off) and still ends
+    // at the shoulder's neck point
+    const x0 = cT[0];
+    const sx = Math.abs(nX - x0) > 1e-6 ? (nX2 - x0) / (nX - x0) : 1;
+    const sy = Math.abs(nD) > 1e-6 ? nD2 / nD : 1;
+    neckSegs = mapSegs(d.neck, (p) => [x0 + (p[0] - x0) * sx, N0[1] + (p[1] - N0[1]) * sy]);
+    genOran = nX2 / xS;
+  }
+  const N2 = [nX2, N0[1]];
+  const S2 = [xS, N0[1] + Math.tan(egim * Math.PI / 180) * (xS - nX2)];
+  if (!(U[1] > S2[1] + 1) || !(U[0] > S2[0] + 1)) return null;   // pose cannot close — draw the pattern
+  const dx = U[0] - S2[0], dy = U[1] - S2[1];
+  // concave armhole: near-vertical leaving the shoulder tip, near-horizontal
+  // entering the underarm — Techpacker: "be considerate of the armhole curvature".
+  // The drafted armhole's outermost CONTROL point can sit slightly outside the
+  // underarm point (measured: +0.7 to +2.6 mm on the sleeveless drafts at EU38
+  // — the convex turn into the underarm). That hull maximum IS the pattern's
+  // declared chest width and the (g)/(g2) gates hold the drawing to it at
+  // 0.1 mm, so the posed curve's second control carries it verbatim.
+  const armMaxX = Math.max(...d.armhole.flatMap((s) => s.p.map((q) => q[0])));
+  const c2x = Math.max(U[0] - 0.32 * dx, armMaxX);
+  const armSeg = { i: -1, p: [S2, [S2[0] + 0.06 * dx, S2[1] + 0.45 * dy], [c2x, U[1]], U] };
+  const attrs = ` data-omuz-egim-deg="${egim.toFixed(2)}" data-omuz-oran="${(xS / xChest).toFixed(4)}"` +
+    ` data-omuz-uc="${S2[0].toFixed(4)} ${S2[1].toFixed(4)}"` +
+    (genOran == null ? '' : ` data-yaka-gen-oran="${genOran.toFixed(4)}"`) +
+    (derOran == null ? '' : (which === 'on'
+      ? ` data-yaka-derinlik-oran="${derOran.toFixed(4)}"`
+      : ` data-arka-yaka-oran="${derOran.toFixed(4)}"`));
+  return { neckSegs, shoulderSegs: segsFromPoly([N2, S2]), armSeg, S2, attrs };
+}
+
+// ---------------------------------------------------------------------------
 // 3. THE SLEEVE — the one degree of freedom, and it is solved, not picked
 // ---------------------------------------------------------------------------
 // Sewn in and laid flat, a sleeve is a folded tube hanging off the armhole. The
-// pattern fixes three lengths and two anchor points and leaves exactly one
-// thing free, the arm angle:
+// pattern fixes three lengths and two anchor points:
 //
-//   S  shoulder tip   = the armhole edge's start point   (edgeRoles)
+//   S  shoulder tip   = the posed shoulder tip (poseBodice)
 //   U  underarm point = the armhole edge's end point     (edgeRoles)
 //   Lf fold length    = cap apex -> hem centre, along the grain
 //   Lu underarm seam  = the sleeve's own sleeve_underarm edge  (edgeRoles)
 //   Lh half hem       = hem centre -> underarm seam
 //
-// With the fold line and the underarm seam parallel (they are, to the taper),
-// the hem closes the figure, and |(Lf - Lu)*d - (U - S)| = Lh has ONE outward
-// solution for the direction d. So the arm angle is read off the sleeve, not
-// chosen to look nice: a puff sleeve and a long straight sleeve come out at
-// different angles because their cap heights differ. When the triangle does not
-// close (a sleeve so short the hem cannot reach), we say so by name instead of
-// drawing a plausible sleeve — `sebep` travels out with the drawing.
+// The one thing left free is the ARM ANGLE, and FLAT-ESTETIK moved its source:
+// it used to be solved from the closing triangle alone, and the solutions
+// ranged 16.5-41.5 degrees at EU38 — the shallow ones drew the arm nearly in
+// line with the shoulder diagonal, the "wings" Damla named. The industry
+// convention is a definition, not taste (Adstronaut "laying perfectly flat",
+// Techpacker flat sketch basics): the sleeve hangs from the shoulder tip DOWN
+// and out, 20-40 degrees below the horizontal, wrist near hip on a long
+// sleeve. So the triangle solve still SEEDS the angle (two different sleeves
+// still land at two different angles) but the result is clamped to the
+// convention band, and the published data-kol-aci is the applied angle in
+// degrees BELOW horizontal. Lf and the hem half-width Lh stay the pattern's
+// exact millimetres; the hem is drawn perpendicular to the fold at exactly Lh,
+// and the underarm curve is carried over by the similarity that pins its two
+// endpoints (scale published as data-kol-olcek, as before).
 function sleeveGeometry(sleeve, S, U) {
   const segs = segsFromCommands(sleeve.commands);
   const roles = sleeve.edgeRoles || [];
@@ -417,23 +541,34 @@ function sleeveGeometry(sleeve, S, U) {
   const hemSeg = segs.filter((s) => Math.abs(s.p[0][1] - yHem) < 0.5 && Math.abs(s.p[3][1] - yHem) < 0.5);
   const Lh = hemSeg.length ? chainLength(hemSeg) / 2 : Math.abs(unders[0].endX - apex[0]);
 
+  if (!(Lf > 1e-6)) return { sebep: 'kol katlanma boyu olculemedi' };
+
+  // Seed the angle from the pattern's own closing triangle when it closes;
+  // then clamp to the convention band. The outward root is the one pointing
+  // away from the centre front (larger cosine); an arm folded across the body
+  // is the other root and is never the answer for a flat.
   const v = sub(U, S), Lv = norm(v);
   const dL = Lf - Lu;
-  if (dL <= 1e-6 || Lv < 1e-6) return { sebep: 'kol katlanma boyu koltukalti dikisinden kisa' };
-  const cosPhi = (dL * dL + Lv * Lv - Lh * Lh) / (2 * dL * Lv);
-  if (!(cosPhi >= -1 && cosPhi <= 1)) {
-    return { sebep: `kol ucgeni kapanmiyor (Lf=${Lf.toFixed(1)} Lu=${Lu.toFixed(1)} Lh=${Lh.toFixed(1)} |SU|=${Lv.toFixed(1)})` };
+  let deg = (KOL_ACI_MIN_DEG + KOL_ACI_MAX_DEG) / 2;
+  if (dL > 1e-6 && Lv > 1e-6) {
+    const cosPhi = (dL * dL + Lv * Lv - Lh * Lh) / (2 * dL * Lv);
+    if (cosPhi >= -1 && cosPhi <= 1) {
+      const phi = Math.acos(cosPhi), av = Math.atan2(v[1], v[0]);
+      const a = Math.cos(av - phi) >= Math.cos(av + phi) ? av - phi : av + phi;
+      deg = a * 180 / Math.PI;
+    }
   }
-  const phi = Math.acos(cosPhi);
-  const av = Math.atan2(v[1], v[0]);
-  // Two branches; the outward one is the one whose hem centre lands further from
-  // the centre front than the shoulder tip does. An arm folded across the body
-  // is the other root and is never the answer for a flat.
-  const cand = [av - phi, av + phi].map((a) => {
-    const d = [Math.cos(a), Math.sin(a)];
-    return { d, out: add(S, scale(d, Lf)), inn: add(U, scale(d, Lu)) };
-  });
-  const pick = cand[0].out[0] >= cand[1].out[0] ? cand[0] : cand[1];
+  // The drawing floor is the band's MIDPOINT, not its edge, and the reason is
+  // measured: the posed shoulder slopes at up to 22 deg, and a gathered/balloon
+  // sleeve's triangle seed lands at ~20.6 deg — the two read as ONE unbroken
+  // diagonal from neck to wrist, which is exactly the wing Damla named. At 30+
+  // the sleeve visibly BREAKS off the shoulder line and hangs ("uzun kolda
+  // bilek kalca/etek hizasina duser"). The gate's tolerance band stays 20-40.
+  const aci = clamp(deg, KOL_ACI_TABAN_DEG, KOL_ACI_MAX_DEG);
+  const th0 = aci * Math.PI / 180;
+  const dvec = [Math.cos(th0), Math.sin(th0)];              // down-outward, y counts down
+  const out = add(S, scale(dvec, Lf));                      // fold end, at the pattern's own length
+  const inn = add(out, scale([-dvec[1], dvec[0]], Lh));     // hem, perpendicular, pattern's own width
 
   // The fold line and the hem are straight and are drawn straight. The underarm
   // seam is NOT: a balloon sleeve bulges there and a straight line would erase
@@ -445,7 +580,7 @@ function sleeveGeometry(sleeve, S, U) {
   let a0 = uPts[0], a1 = uPts[uPts.length - 1];
   // uSeg runs from the underarm point down to the hem, or the reverse.
   if (a0[1] > a1[1]) { const t = a0; a0 = a1; a1 = t; uPts.reverse(); }
-  const va = sub(a1, a0), vb = sub(pick.inn, U);
+  const va = sub(a1, a0), vb = sub(inn, U);
   const la = norm(va), lb = norm(vb);
   const k = la < 1e-6 ? 1 : lb / la;
   const th = Math.atan2(vb[1], vb[0]) - Math.atan2(va[1], va[0]);
@@ -454,8 +589,7 @@ function sleeveGeometry(sleeve, S, U) {
     const d0 = sub(p, a0);
     return [U[0] + d0[0] * cs - d0[1] * sn, U[1] + d0[0] * sn + d0[1] * cs];
   });
-  return { S, U, out: pick.out, inn: pick.inn, d: pick.d, Lf, Lu, Lh, under, olcek: k,
-           angleDeg: Math.atan2(pick.d[1], pick.d[0]) * 180 / Math.PI };
+  return { S, U, out, inn, d: dvec, Lf, Lu, Lh, under, olcek: k, angleDeg: aci };
 }
 
 // ---------------------------------------------------------------------------
@@ -516,11 +650,17 @@ function buildView(P, which) {
   // body alone would need is not a layout detail: before this was tracked, a
   // long sleeve ran off the page and the two views overlapped.
   const boxPts = [];
-  const push = (rol, d, w, extra = '', pts = null) => {
+  const push = (rol, d, w, extra = '', pts = null, dash = null) => {
     if (!d) return;
-    out.paths.push({ rol, d, w, extra });
+    out.paths.push({ rol, d, w, extra, dash });
     if (pts) for (const p of pts) boxPts.push(p);
   };
+  // Line hierarchy is the convention's 4:2:1 — outline 2.0, construction seam
+  // 1.0, topstitch 0.5 DASHED. A solid line is a seam, a dashed line is a
+  // topstitch; the hem/cuff stitch lines used to print as a doubled solid
+  // contour and read as a drawing error.
+  const wOf = (rol) => (rol === 'dikis-izi' ? W_TOPSTITCH : W_SEAM);
+  const dashOf = (rol) => (rol === 'dikis-izi' ? DASH_TOPSTITCH : null);
   let half = [];          // the right half of the silhouette, top to bottom
   const interior = [];    // [rol, segsOrPts, isPoly]
 
@@ -539,19 +679,31 @@ function buildView(P, which) {
     // A bodice's dart edge is its hem: on a dress that hem IS the waist seam.
     const sewn = sewPanel(bod.piece, d.hem, d.side, true);
     out.notes.bodiceDarts = sewn.dartCount;
-    half = half.concat(d.neck, d.shoulder);
     if (d.armhole.length) {
       S = d.armhole[0].p[0];
       U = d.armhole[d.armhole.length - 1].p[3];
     }
-    // The sleeve takes over the silhouette between S and U; the armhole itself
-    // becomes an interior seam, which is exactly what a set-in sleeve looks like.
-    // The armhole always stays on the body outline. A set-in sleeve is its own
-    // closed shape hung off it, which is how every one of the fifteen vendor
+    // FLAT-ESTETIK: the top edge is drawn in CONVENTION POSE (poseBodice) —
+    // short 15-22 deg shoulder at 0.85-0.90 of the chest, neck rescaled to the
+    // convention bands, concave armhole into the pattern's own underarm point.
+    // The armhole always stays on the body outline; a set-in sleeve is its own
+    // shape hung off it, which is how every one of the fifteen vendor
     // references in GIRDI/iyi-flat/adaylar is drawn, and it means the armhole
-    // line exists exactly ONCE in the file.
-    half = half.concat(d.armhole);
-    out.notes.armholePts = samplePoly(d.armhole, 24);
+    // line exists exactly ONCE in the file. When the pose cannot be built the
+    // drafted edges are drawn as-is and the fallback is named in `sebep`.
+    const poz = U ? poseBodice(d, U, which, P.poz) : null;
+    if (poz) {
+      half = half.concat(poz.neckSegs, poz.shoulderSegs, [poz.armSeg]);
+      S = poz.S2;
+      out.notes.pozAttr = poz.attrs;
+      out.notes.armholePts = samplePoly([poz.armSeg], 24);
+      out.notes.neck = samplePoly(poz.neckSegs, 24);
+    } else {
+      out.sebep.push(`${which}: konvansiyon pozu kurulamadi — kalibin kendi ust kenari basildi`);
+      half = half.concat(d.neck, d.shoulder, d.armhole);
+      out.notes.armholePts = samplePoly(d.armhole, 24);
+      out.notes.neck = samplePoly(d.neck, 24);
+    }
     if (P.sleeve && S && U) {
       const g = sleeveGeometry(P.sleeve, S, U);
       if (g.sebep) out.sebep.push(`${which} kol: ${g.sebep}`);
@@ -580,7 +732,6 @@ function buildView(P, which) {
     // is where the stitch line is on the finished garment.
     for (const leg of sewn.legs) interior.push(['pens', leg, true]);
     out.notes.bodiceWaistSide = sewn.edgePts[0];
-    out.notes.neck = samplePoly(d.neck, 24);
     out.notes.hollow = [0, d.yTop];
     // A centre back is a SEAM, not a fold: the back panel's centre edge stands
     // off the mirror line (8.47 mm at EU38) and drawing it is what stops the two
@@ -652,7 +803,11 @@ function buildView(P, which) {
   // is drawn there.
   if (!out.notes.sleeve && out.notes.armholePts && P.neckFinish &&
       /armhole/i.test(P.neckFinish.name)) {
-    const sl = stitchLine(out.notes.armholePts, P.neckFinish.seamAllowance, [-1e4, out.notes.armholePts[0][1]]);
+    // "turn and topstitch it to the INSIDE": the stitch line sits on the BODY
+    // side of the armhole edge, so the offset points toward the centre — away
+    // from a far point OUTSIDE the armhole. (It used to point away from the
+    // centre and the dashed line ran outside the outline; seen on 03-kolsuz.)
+    const sl = stitchLine(out.notes.armholePts, P.neckFinish.seamAllowance, [1e4, out.notes.armholePts[0][1]]);
     if (sl) interior.push(['dikis-izi', sl, true]);
   }
   // The neckline's, when a facing or a binding is what finishes it. With a
@@ -694,7 +849,8 @@ function buildView(P, which) {
   // two garments.
   const closed = half.concat(mirrorSegs(half));
   const flipY = P.flipY;
-  push('siluet', pathD(closed, flipY, true), W_OUTLINE, ` data-view="${F ? 'front' : 'back'}"${mkAttr}`,
+  push('siluet', pathD(closed, flipY, true), W_OUTLINE,
+       ` data-view="${F ? 'front' : 'back'}"${mkAttr}${out.notes.pozAttr || ''}`,
        closed.flatMap((s) => s.p));
 
   for (const [rol, geom, isPoly] of interior) {
@@ -703,8 +859,8 @@ function buildView(P, which) {
     const dLeft = isPoly ? polyD(mir, flipY) : pathD(mir, flipY);
     const gp = isPoly ? geom : geom.flatMap((s) => s.p);
     const mp = isPoly ? mir : mir.flatMap((s) => s.p);
-    push(rol, dRight, W_SEAM, ` data-view="${F ? 'front' : 'back'}" data-yan="sag"`, gp);
-    push(rol, dLeft, W_SEAM, ` data-view="${F ? 'front' : 'back'}" data-yan="sol"`, mp);
+    push(rol, dRight, wOf(rol), ` data-view="${F ? 'front' : 'back'}" data-yan="sag"`, gp, dashOf(rol));
+    push(rol, dLeft, wOf(rol), ` data-view="${F ? 'front' : 'back'}" data-yan="sol"`, mp, dashOf(rol));
   }
 
   // The sleeve: fold line, hem, and the sleeve's own underarm curve. Open, not
@@ -719,9 +875,9 @@ function buildView(P, which) {
     const depth = P.cuff ? stripDepth(P.cuff) : (P.sleeve.seamAllowance || 0);
     if (depth > 0) {
       const c = [sub(g.out, scale(g.d, depth)), sub(g.inn, scale(g.d, depth))];
-      push('dikis-izi', polyD(c, flipY), W_SEAM, ` data-view="${F ? 'front' : 'back'}" data-yan="sag"`, c);
+      push('dikis-izi', polyD(c, flipY), W_TOPSTITCH, ` data-view="${F ? 'front' : 'back'}" data-yan="sag"`, c, DASH_TOPSTITCH);
       const cm = c.map((p) => [-p[0], p[1]]);
-      push('dikis-izi', polyD(cm, flipY), W_SEAM, ` data-view="${F ? 'front' : 'back'}" data-yan="sol"`, cm);
+      push('dikis-izi', polyD(cm, flipY), W_TOPSTITCH, ` data-view="${F ? 'front' : 'back'}" data-yan="sol"`, cm, DASH_TOPSTITCH);
     }
     push('kol', polyD(shape, flipY), W_OUTLINE, attr('sag'), shape);
     push('kol', polyD(shape.map((p) => [-p[0], p[1]]), flipY), W_OUTLINE, attr('sol'),
@@ -823,7 +979,9 @@ export function renderFlatFromPattern(draft, meta = {}) {
     return d && d.neck.length ? chainLength(d.neck) : 0;
   };
   const lf = neckLen('on'), lb = neckLen('arka');
-  const P = { ...g, flipY: (y) => y, collarSplit: (lf + lb) > 0 ? lf / (lf + lb) : 0.5 };
+  // `poz` is the one cross-view channel: the front view publishes its posed
+  // neck depth there and the back view reads it (back drop = 20-30% of front).
+  const P = { ...g, flipY: (y) => y, collarSplit: (lf + lb) > 0 ? lf / (lf + lb) : 0.5, poz: {} };
 
   const views = ['on', 'arka'].map((w) => buildView(P, w));
   const drawn = views.filter((v) => v.paths.length);
@@ -862,7 +1020,8 @@ export function renderFlatFromPattern(draft, meta = {}) {
   drawn.forEach((v, i) => {
     parts.push(`  <g fill="none" stroke="${INK}" transform="translate(${cx[i].toFixed(4)},${(pad - yLo).toFixed(4)})">`);
     for (const p of v.paths) {
-      parts.push(`    <path data-rol="${p.rol}"${p.extra} stroke-width="${p.w}" d="${p.d}"/>`);
+      parts.push(`    <path data-rol="${p.rol}"${p.extra} stroke-width="${p.w}"` +
+                 `${p.dash ? ` stroke-dasharray="${p.dash}"` : ''} d="${p.d}"/>`);
     }
     parts.push('  </g>');
   });

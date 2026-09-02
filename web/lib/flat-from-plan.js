@@ -52,7 +52,7 @@
 // is a second truth" is no longer just a sentence.
 const INK = '#1f3a5f';   // contract/flat-convention-v1.json ink.color
 const W_OUTLINE = 2.0;   // contract/flat-convention-v1.json lineClasses.classes.outline.width
-const W_SEAM = 1.4;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
+const W_SEAM = 1.0;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
 
 /** SVG path data for one closed silhouette, mirrored about x = 0. */
 function siluetPath(yariKontur, x0, topZ) {

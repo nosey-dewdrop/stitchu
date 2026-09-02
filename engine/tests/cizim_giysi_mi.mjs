@@ -130,6 +130,7 @@ function paths(svg) {
     const g = (k) => { const r = new RegExp(`${k}="([^"]*)"`).exec(a); return r ? r[1] : null; };
     out.push({ rol: g('data-rol'), view: g('data-view'), yan: g('data-yan'), d: g('d') || '',
                w: parseFloat(g('stroke-width') || '0'),
+               dash: g('stroke-dasharray'), attr: a,
                manken: g('data-manken-fark-ceyrek-mm') === null ? null : {
                  fark: parseFloat(g('data-manken-fark-ceyrek-mm')),
                  Wbel: parseFloat(g('data-manken-bel-yarim-mm')),
@@ -158,6 +159,10 @@ function pts(d) {
 // d(y)/Wbel tersine cevrilir, kalan her sey ayni 0.1 mm'de kalipla ayni olmak
 // zorunda. Bu bir gevsetme DEGIL: carpanin kendisi ayrica hem kanuna (asagida)
 // hem kaynak olcumune (engine/tests/manken_insan_ayrim_check.mjs) vurulur.
+// FLAT-ESTETIK: sevk edilen cizimin poz/oran kanunu ayni kanun dosyasinin
+// sevkPoz blogunda durur; (b) kol acisi bandini, (i) topstitch sinifini,
+// (j) omuz/yaka bandlarini ORADAN okur — burada kopyasi yok.
+const FLAT_LAW = JSON.parse(readFileSync(join(ROOT, 'contract/flat-convention-v1.json'), 'utf8'));
 const MANKEN_LAW = JSON.parse(readFileSync(join(ROOT, 'contract/mannequin-chart-v1.json'), 'utf8'));
 const MANKEN_FARK = MANKEN_LAW.v2.donusum.farkCeyrekMM;
 function mankenTers(sil) {
@@ -254,11 +259,21 @@ console.log('\n--- (b) sleeveStyle != none -> KOL');
   }
   const kollu = cizimler.filter((c) => (c.spec.sleeveStyle || 'none') !== 'none');
   if (!bad) OK(`(b) ${kollu.length} kollu spec'in hepsinde KOL var, ${cizimler.length - kollu.length} kolsuzun hicbirinde yok`);
-  // Aci uydurulmus bir sabit degil, kola gore degisiyor: iki farkli kol ayni
-  // aciyi veriyorsa cizici kolu okumuyor demektir.
-  const acilar = new Set(cizimler.flatMap((c) => (/data-kol-aci="(-?[\d.]+)"/g, [...c.svg.matchAll(/data-kol-aci="(-?[\d.]+)"/g)].map((m) => m[1]))));
-  check('(b) kol acisi kalibin kendi olculerinden cikiyor (sabit degil)', acilar.size >= 2,
-        `${acilar.size} farkli aci: ${[...acilar].join(' ')}`);
+  // FLAT-ESTETIK: aci artik konvansiyon bandindadir (kalibin kendi ucgen
+  // cozumunden tohumlanir, banda kirpilir; data-kol-aci = yatayin ALTINA dogru
+  // derece). Eski 'iki farkli aci' sarti KALDI (kirpma sonrasi da iki farkli
+  // kol iki farkli aci veriyor, olculdu) ve ustune BAND sarti geldi. Kolun
+  // gercekten omuz yatayinin altinda sarktigi ayrica (j)'de GEOMETRIDEN olculur.
+  const BAND = FLAT_LAW.sevkPoz.kolAcisiDeg;
+  const acilar = cizimler.flatMap((c) => [...c.svg.matchAll(/data-kol-aci="(-?[\d.]+)"/g)].map((m) => parseFloat(m[1])));
+  const farkli = new Set(acilar.map((a) => a.toFixed(2)));
+  const bandDisi = acilar.filter((a) => !(a >= BAND.min && a <= BAND.max));
+  check(`(b) kol acisi konvansiyon bandinda [${BAND.min}, ${BAND.max}] deg (yatayin altina dogru)`,
+        acilar.length > 0 && bandDisi.length === 0,
+        `${acilar.length} aci, ${farkli.size} farkli: ${[...farkli].join(' ')}` +
+        (bandDisi.length ? ` — BAND DISI: ${bandDisi.join(' ')}` : ''));
+  check('(b) kol acisi kalibin kendi olculerinden tohumlaniyor (sabit degil)', farkli.size >= 2,
+        `${farkli.size} farkli aci`);
 }
 
 // --------------------------------------------------------------- (c) YAKA
@@ -629,10 +644,14 @@ console.log('\n--- (h) ayna: her gorunum x = 0 etrafinda simetrik');
 // diskten okunuyor — burada yeniden yazilan bir kopyasi YOK.
 console.log('\n--- (i) flat kanunu (contract/flat-convention-v1.json) sevk edilen cizimde');
 {
-  const LAW = JSON.parse(readFileSync(join(ROOT, 'contract/flat-convention-v1.json'), 'utf8'));
+  const LAW = FLAT_LAW;
   const INK = String(LAW.ink.color).toLowerCase();
-  const AGIRLIKLAR = new Set(Object.values(LAW.lineClasses.classes)
-    .map((c) => Number(c.width)).filter((n) => isFinite(n)));
+  // sevk hattinin uc sinifi: kanunun iki ortak sinifi + sevkPoz.topstitch
+  // (o sinif lineClasses tablosunda DEGIL — gerekcesi kanunun kendi
+  // _FLAT_ESTETIK blogunda: arastirma hatti topstitch cizmiyor).
+  const TS = LAW.sevkPoz.topstitch;
+  const AGIRLIKLAR = new Set([...Object.values(LAW.lineClasses.classes)
+    .map((c) => Number(c.width)).filter((n) => isFinite(n)), Number(TS.width)]);
   let bad = 0;
   for (const c of cizimler) {
     // tek murekkep
@@ -646,6 +665,19 @@ console.log('\n--- (i) flat kanunu (contract/flat-convention-v1.json) sevk edile
     for (const p of gorunur(c.ps)) if (!AGIRLIKLAR.has(p.w)) {
       FAIL(`(i) ${c.ad}: ${p.rol} cizgisi ${p.w} kalinliginda, kanunda boyle bir sinif yok (${[...AGIRLIKLAR].join(', ')})`);
       bad++;
+    }
+    // KESIK cizgi = topstitch, duz cizgi = dikis (sevkPoz.topstitch): dikis-izi
+    // rolu tam (width, dash) ciftiyle cizilir, baska hicbir rol kesik cizemez.
+    for (const p of gorunur(c.ps)) {
+      if (p.rol === TS.drawnBy) {
+        if (p.dash !== TS.dash || p.w !== Number(TS.width)) {
+          FAIL(`(i) ${c.ad}: ${p.rol} (${p.w}, "${p.dash}") — kanun topstitch (${TS.width}, "${TS.dash}") diyor`);
+          bad++;
+        }
+      } else if (p.dash) {
+        FAIL(`(i) ${c.ad}: ${p.rol} kesikli cizilmis ("${p.dash}") — kesik cizgi yalniz topstitch (${TS.drawnBy})`);
+        bad++;
+      }
     }
     // on + arka
     const views = new Set(gorunur(c.ps).map((p) => p.view));
@@ -664,6 +696,74 @@ console.log('\n--- (i) flat kanunu (contract/flat-convention-v1.json) sevk edile
     }
   }
   if (!bad) OK(`(i) ${cizimler.length} cizimin hepsi kanuna uyuyor — tek murekkep ${INK}, agirliklar {${[...AGIRLIKLAR].join(', ')}}, ${LAW.views.required.join('+')}, olcek aritmetikle dogrulandi`);
+}
+
+// --------------------------------------------------------------- (j) FLAT POZ KONVANSIYONU
+// FLAT-ESTETIK (2026-09-02): teknik flat MASAYA DUZ SERILMIS giysidir. Uc kok
+// kusurun kapisi (contract/flat-convention-v1.json sevkPoz):
+//   j1  KOL SARKIK: kol path'i omuz ucundan baslar; HICBIR noktasi onun ustune
+//       (daha kucuk y'ye) cikamaz — kanat yasak. Bu ILANDAN degil GEOMETRIDEN
+//       olculur, cunku aciyi dogru ilan edip kolu yanlis cizmek mumkundur.
+//   j2  OMUZ KISA + EGIMLI: siluetin ilan ettigi omuz egimi ve omuz/gogus orani
+//       kanun bandinda; ilan edilen omuz ucu GERCEKTEN cizilen path'in bir
+//       noktasi (ilan yalan soyleyemez — manken ilaniyla ayni disiplin).
+//   j3  YAKA ORANDA: yaka genisligi / omuz bandi, on derinlik / genislik
+//       (taban konvansiyon, tavan stil siniri) ve arka dusus / on derinlik.
+// Govdesiz siniflar (etek) yargilanmaz ama SAYILIR: govdeli hicbir spec poz
+// ilani olmadan gecemez.
+console.log('\n--- (j) flat poz konvansiyonu (sevkPoz): kol sarkik, omuz kisa+egimli, yaka oranda');
+{
+  const SP = FLAT_LAW.sevkPoz;
+  let bad = 0, govdeli = 0;
+  const attrNum = (p, k) => { const m = new RegExp(`${k}="(-?[\\d.]+)"`).exec(p.attr); return m ? parseFloat(m[1]) : null; };
+  const bandCheck = (ad, deger, lo, hi, ne) => {
+    if (deger === null) { FAIL(`(j) ${ad}: ${ne} ilani YOK`); bad++; return; }
+    if (!(deger >= lo && deger <= hi)) { FAIL(`(j) ${ad}: ${ne} ${deger} — band [${lo}, ${hi}] disi`); bad++; }
+  };
+  for (const c of cizimler) {
+    // j1 — kol omuz yatayinin ALTINDA (geometri, her kol path'inde)
+    for (const p of byRol(c.ps, 'kol')) {
+      const P = pts(p.d);
+      if (P.length < 2) continue;
+      const yS = P[0][1];
+      const ust = P.filter((q) => q[1] < yS - 1e-3);
+      if (ust.length) {
+        FAIL(`(j1) ${c.ad}/${p.view}/${p.yan}: kol omuz yatayinin USTUNE cikiyor — ` +
+             `${ust.length} nokta, en yukarisi y=${Math.min(...ust.map((q) => q[1])).toFixed(2)} < omuz y=${yS.toFixed(2)}`);
+        bad++;
+      }
+    }
+    if ((c.spec.garment || '') === 'skirt') continue;
+    govdeli++;
+    for (const view of ['front', 'back']) {
+      const sil = byRol(c.ps, 'siluet').find((p) => p.view === view);
+      if (!sil) continue;
+      const ad = `${c.ad}/${view}`;
+      // j2 — omuz
+      bandCheck(ad, attrNum(sil, 'data-omuz-egim-deg'), SP.omuzEgimiDeg.min, SP.omuzEgimiDeg.max, 'omuz egimi (deg)');
+      bandCheck(ad, attrNum(sil, 'data-omuz-oran'), SP.omuzGogusOran.min, SP.omuzGogusOran.max, 'omuz/gogus orani');
+      const uc = /data-omuz-uc="(-?[\d.]+) (-?[\d.]+)"/.exec(sil.attr);
+      if (!uc) { FAIL(`(j2) ${ad}: data-omuz-uc ilani yok`); bad++; }
+      else {
+        const q = [parseFloat(uc[1]), parseFloat(uc[2])];
+        const en = Math.min(...pts(sil.d).map((r) => Math.hypot(r[0] - q[0], r[1] - q[1])));
+        if (en > 0.05) { FAIL(`(j2) ${ad}: ilan edilen omuz ucu cizilen siluette YOK (en yakin ${en.toFixed(3)} mm)`); bad++; }
+      }
+      // j3 — yaka
+      bandCheck(ad, attrNum(sil, 'data-yaka-gen-oran'),
+                SP.yaka.genislikOverOmuz.min, SP.yaka.genislikOverOmuz.max, 'yaka genislik/omuz orani');
+      if (view === 'front') {
+        bandCheck(ad, attrNum(sil, 'data-yaka-derinlik-oran'),
+                  SP.yaka.onDerinlikOverGenislik.min, SP.yaka.onDerinlikOverGenislik.maxKapi, 'on yaka derinlik/genislik orani');
+      } else {
+        bandCheck(ad, attrNum(sil, 'data-arka-yaka-oran'),
+                  SP.yaka.arkaDususOverOn.min, SP.yaka.arkaDususOverOn.max, 'arka yaka dusus/on orani');
+      }
+    }
+  }
+  if (!govdeli) { FAIL('(j) hic govdeli spec olculmedi'); }
+  else if (!bad) OK(`(j) ${govdeli} govdeli spec'te poz kanunda: kol sarkik (geometri), omuz egim/oran bandda, ` +
+                    'omuz ucu ilani cizili noktayla ozdes, yaka oranlari bandda');
 }
 
 // --------------------------------------------------------------- OZET

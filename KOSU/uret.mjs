@@ -63,7 +63,11 @@ function png(svgPath, pngPath, w, h) {
   writeFileSync(join(d, 'i.html'),
     `<html><body style="margin:0;background:#fff"><img src="a.svg" style="width:${w}px;display:block"></body></html>`);
   try {
+    // --user-data-dir izole: profil verilmeyince headless Chrome, ACIK duran
+    // kullanici Chrome'unun SingletonLock'una takilip suresiz asili kaliyordu
+    // (2026-09-02'de olculdu: 9 PNG'lik kosu 20+ dk asili kaldi, uc kez).
     execFileSync(CHROME, ['--headless', '--disable-gpu', '--hide-scrollbars',
+      `--user-data-dir=${d}/profil`,
       `--screenshot=${pngPath}`, `--window-size=${w},${h}`,
       '--no-sandbox', '--default-background-color=FFFFFF', `file://${d}/i.html`],
       { stdio: 'ignore', timeout: 60000 });
