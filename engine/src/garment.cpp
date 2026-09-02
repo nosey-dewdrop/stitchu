@@ -528,11 +528,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
             gecis.gerekce + "). Sew the center back seam fully closed.");
     }
     if (!sleeveless) {
-        if (spec.sleeveCap == SleeveCap::Cap) {
+        const SleeveCap capStyle = spec.sleeveCap;
+        if (capStyle == SleeveCap::Cap) {
             steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
         } else {
             steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
-            if (spec.sleeveCap != SleeveCap::Plain) {
+            if (capStyle != SleeveCap::Plain) {
                 // M1-puf: the old sentence described the DELETED hand-drawn crown
                 // markings ("between the two crown notches ... the length below the
                 // notches matches the armhole 1:1"). That is no longer what the
@@ -540,10 +541,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 // operator, at the measured Bugra ratio, and the gather marks are
                 // stamped along that edge. The guide now says what the piece is.
                 steps.push_back(std::string("Puff/gathered head (buzgu): the whole cap edge is drawn ") +
-                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) / 10)) + "." +
-                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) % 10)) +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(capStyle) - 1) * 1000) / 10)) + "." +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(capStyle) - 1) * 1000) % 10)) +
                     "% longer than the armhole it goes into — that surplus is GATHERED, not eased. Run two rows of gathering along the cap edge, draw them up until the cap measures the armhole, and distribute the fullness evenly between the gather marks so it " +
-                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
+                    (capStyle == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
             }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
@@ -658,11 +659,12 @@ std::vector<std::string> guide(const GarmentSpec& spec, bool halter, bool biasNe
     } else if (sleeveless) {
         steps.push_back("Finish each armhole with a self-cut bias strip: cut a 3 cm wide strip on the bias from the leftover fabric (the fabric estimate already includes it), bind the armhole edge and topstitch it to the inside.");
     } else {
-        if (spec.sleeveCap == SleeveCap::Cap) {
+        const SleeveCap capStyle = spec.sleeveCap;
+        if (capStyle == SleeveCap::Cap) {
             steps.push_back("Cap sleeve: this is a short wing, not a full sleeve — there is no underarm seam to sew. Finish the outer (curved) edge with a narrow hem or bias facing, then ease the cap edge into the armhole between the notches exactly like a set-in sleeve and stitch it in. The wing simply covers the top of the shoulder and stops at the underarm.");
         } else {
             steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");
-            if (spec.sleeveCap != SleeveCap::Plain) {
+            if (capStyle != SleeveCap::Plain) {
                 // M1-puf: the old sentence described the DELETED hand-drawn crown
                 // markings ("between the two crown notches ... the length below the
                 // notches matches the armhole 1:1"). That is no longer what the
@@ -670,10 +672,10 @@ std::vector<std::string> guide(const GarmentSpec& spec, bool halter, bool biasNe
                 // operator, at the measured Bugra ratio, and the gather marks are
                 // stamped along that edge. The guide now says what the piece is.
                 steps.push_back(std::string("Puff/gathered head (buzgu): the whole cap edge is drawn ") +
-                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) / 10)) + "." +
-                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) % 10)) +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(capStyle) - 1) * 1000) / 10)) + "." +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(capStyle) - 1) * 1000) % 10)) +
                     "% longer than the armhole it goes into — that surplus is GATHERED, not eased. Run two rows of gathering along the cap edge, draw them up until the cap measures the armhole, and distribute the fullness evenly between the gather marks so it " +
-                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
+                    (capStyle == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
             }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {

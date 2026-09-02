@@ -14,12 +14,48 @@ const EdgeRole* findRole(const PatternPiece& piece, const std::string& role) {
     return nullptr;
 }
 
-bool samePoint(Point a, Point b, double tol = 1e-6) {
-    return std::fabs(a.x - b.x) <= tol && std::fabs(a.y - b.y) <= tol;
+// ★ THE SLASH-AND-SPREAD, ANISOTROPIC (M1-puf round 2).
+//
+// The first cut applied ONE similarity about the chord midpoint, so the chord
+// grew with the arc: at ratio 1.29 the sleeve's biceps line grew 24% too, and a
+// biceps is a BODY measurement, not gather allowance. `sleeveLaw._a3` ("fullness
+// at the top, the cloth drawn in below") is exactly what that broke.
+//
+// What replaces it moves the cloth the way a puff pattern actually moves it:
+// the CHORD IS HELD (both endpoints are fixed, so the biceps line, the two
+// underarm corners and the whole seam below them are untouched, and the outline
+// stays closed with no retargeting at all), and only the component PERPENDICULAR
+// to the chord — the cap's sagitta direction — is multiplied, by the factor that
+// makes the drawn arc equal the target. That factor is SOLVED, not stated,
+// because arc length is not linear in it.
+//
+// ⚠ THIS IS A DECLARED DEPARTURE FROM THE BUGRA MEASUREMENT, NOT A COPY OF IT,
+// and the numbers are in contract/tables.json draft.gatherRatios._anizotropiNot:
+// Bugra's Upper Sleeve grows the chord 1.459x and the sagitta 1.227x at EU38
+// (knowledge/cap-ease-isareti-2026-08-17.md §2.1), i.e. its outer layer gets
+// WIDER than the arm — which it is allowed to be, because it is a separate
+// layer laid over a Lower Sleeve that still carries the biceps. Our sleeve is
+// ONE piece and must carry the biceps itself, so it keeps chord 1.000 and puts
+// the whole surplus in the sagitta. Same gather ratio, different distribution,
+// said out loud.
+Point spreadPerp(Point p, Point origin, Point u, Point n, double k) {
+    const double a = (p.x - origin.x) * u.x + (p.y - origin.y) * u.y;
+    const double b = (p.x - origin.x) * n.x + (p.y - origin.y) * n.y;
+    return {origin.x + a * u.x + k * b * n.x, origin.y + a * u.y + k * b * n.y};
 }
 
-Point scaleAbout(Point p, Point c, double s) {
-    return {c.x + (p.x - c.x) * s, c.y + (p.y - c.y) * s};
+// Arc length the edge would have if the perpendicular component were scaled k x.
+double perpLength(const std::vector<PathCommand>& edge, Point origin, Point u,
+                  Point n, double k) {
+    std::vector<PathCommand> t = edge;
+    for (PathCommand& c : t) {
+        c.to = spreadPerp(c.to, origin, u, n, k);
+        if (c.type == CmdType::Curve) {
+            c.cp1 = spreadPerp(c.cp1, origin, u, n, k);
+            c.cp2 = spreadPerp(c.cp2, origin, u, n, k);
+        }
+    }
+    return pathLength(t);
 }
 
 // Even-arc-length points + unit tangents along a standalone edge path
@@ -121,53 +157,61 @@ BuzguResult gatherEdge(PatternPiece& piece, const std::string& role,
         res.reason = "buzgu reddedildi: '" + role + "' kenarinin cizili boyu 0 mm";
         return res;
     }
-    const double s = target / res.beforeMM;
-    if (!(s > kMinScale) || !(s < kMaxScale)) {
-        res.reason = "buzgu reddedildi: istenen oran bu kenarda " + std::to_string(s) +
+    const double arcRatio = target / res.beforeMM;
+    if (!(arcRatio > kMinScale) || !(arcRatio < kMaxScale)) {
+        res.reason = "buzgu reddedildi: istenen oran bu kenarda " + std::to_string(arcRatio) +
                      " katlik bir yayma demek (izin " + std::to_string(kMinScale) + "-" +
                      std::to_string(kMaxScale) + "); kenar zaten " +
                      std::to_string(res.beforeMM / finishedMM) + " kat cizili";
         return res;
     }
 
-    // --- the similarity, about the chord midpoint of the edge itself --------
-    const Point mid{(r.start.x + r.end.x) / 2, (r.start.y + r.end.y) / 2};
-    const Point oldStart = r.start, oldEnd = r.end;
-    for (int i = r.firstCommand; i <= r.lastCommand; ++i) {
-        PathCommand& c = piece.commands[static_cast<size_t>(i)];
-        c.to = scaleAbout(c.to, mid, s);
-        if (c.type == CmdType::Curve) {
-            c.cp1 = scaleAbout(c.cp1, mid, s);
-            c.cp2 = scaleAbout(c.cp2, mid, s);
+    // --- the spread: chord HELD, sagitta solved ----------------------------
+    const double chord = distance(r.start, r.end);
+    if (!(chord > 1e-6)) {
+        res.reason = "buzgu reddedildi: '" + role +
+                     "' kenarinin kirisi 0 mm — yonu olmayan bir kenar yayilamaz";
+        return res;
+    }
+    const Point u{(r.end.x - r.start.x) / chord, (r.end.y - r.start.y) / chord};
+    const Point n{-u.y, u.x};
+    // Solve k. perpLength is monotone increasing in k (every sample's distance
+    // from the chord grows, the along-chord component is fixed), so bisection is
+    // exact to the tolerance and cannot land on the wrong branch.
+    double lo = 1.0, hi = 1.0;
+    while (perpLength(before, r.start, u, n, hi) < target) {
+        hi *= 2.0;
+        if (hi > kMaxPerp) {
+            res.reason = "buzgu reddedildi: kiris sabit tutulunca bu kenar hedefe ulasamiyor — "
+                         "sagitta " + std::to_string(kMaxPerp) +
+                         " katina cikarilsa bile yay " +
+                         std::to_string(perpLength(before, r.start, u, n, kMaxPerp)) +
+                         " mm, hedef " + std::to_string(target) + " mm";
+            return res;
         }
     }
-    const Point newStart = scaleAbout(oldStart, mid, s);
-    const Point newEnd = scaleAbout(oldEnd, mid, s);
-    // Retarget every command OUTSIDE the edge that ended on one of the two
-    // moved endpoints, so the outline stays closed. On a sleeve that is two
-    // commands, not one: the opening Move (the cap's left corner) AND the
-    // closing underarm curve, which comes back to that same corner. Retargeting
-    // only the command before the edge would leave the outline open at the end.
-    for (size_t i = 0; i < piece.commands.size(); ++i) {
-        if (static_cast<int>(i) >= r.firstCommand && static_cast<int>(i) <= r.lastCommand) continue;
-        PathCommand& c = piece.commands[i];
-        if (c.type == CmdType::Close) continue;
-        if (samePoint(c.to, oldStart)) c.to = newStart;
-        else if (samePoint(c.to, oldEnd)) c.to = newEnd;
+    for (int i = 0; i < 80; ++i) {
+        const double mid = (lo + hi) / 2;
+        if (perpLength(before, r.start, u, n, mid) < target) lo = mid; else hi = mid;
     }
-    // Every role anchored on the two moved endpoints follows them (the sleeve's
-    // two underarm seams share the cap's corners); indices are untouched, so no
-    // name is lost.
-    for (auto& role2 : piece.edgeRoles) {
-        if (samePoint(role2.start, oldStart)) role2.start = newStart;
-        else if (samePoint(role2.start, oldEnd)) role2.start = newEnd;
-        if (samePoint(role2.end, oldStart)) role2.end = newStart;
-        else if (samePoint(role2.end, oldEnd)) role2.end = newEnd;
+    const double k = (lo + hi) / 2;
+    for (int i = r.firstCommand; i <= r.lastCommand; ++i) {
+        PathCommand& c = piece.commands[static_cast<size_t>(i)];
+        c.to = spreadPerp(c.to, r.start, u, n, k);
+        if (c.type == CmdType::Curve) {
+            c.cp1 = spreadPerp(c.cp1, r.start, u, n, k);
+            c.cp2 = spreadPerp(c.cp2, r.start, u, n, k);
+        }
     }
+    // The two endpoints are FIXED POINTS of this map (their perpendicular
+    // component is 0), so nothing outside the edge moves, the outline stays
+    // closed, and every other edge role keeps its own coordinates. That is the
+    // second reason to hold the chord: the previous similarity had to retarget
+    // neighbouring commands and rewrite four role endpoints to stay closed.
 
     const std::vector<PathCommand> after = edgePathOf(piece, *findRole(piece, role));
     res.flatMM = after.empty() ? 0.0 : pathLength(after);
-    res.scale = s;
+    res.scale = k;
     if (!after.empty() && notchCount > 0) {
         stampMarks(piece, after, notchCount);
         res.notches = notchCount;

@@ -112,6 +112,13 @@ const M = [
   ['ust_kolsuz',              { garment: 'top',   shaping: 'dart', fabric: 'woven', neckline: 'crew',  sleeveStyle: 'none',     topLength: 'hip' }],
   ['ust_balon_uzun_kol',      { garment: 'top',   shaping: 'dart', fabric: 'woven', neckline: 'vNeck', sleeveStyle: 'balloon',  sleeveLength: 'long',  topLength: 'hip' }],
   ['ust_duz_kol_mock',        { garment: 'top',   shaping: 'dart', fabric: 'woven', neckline: 'crew',  sleeveStyle: 'straight', sleeveLength: 'short', topLength: 'cropped', collarType: 'mock' }],
+  // BUZGULU KAPAK, IKI SATIR (M1-puf tur 2). Bu matriste `sleeveCap` ekseni HIC
+  // yoktu: 14 spec'in hicbiri puf/yumusak kapak degildi, yani buzgu operatorunun
+  // cizime ne yaptigini bu kapi hic gormedi — (j) poz kanunu ve (c) sleeveLaw
+  // buzgulu kolu yargilamadan yesil yaniyordu. Bir elbise + bir ust, cunku iki
+  // sinifin omuz/kol cercevesi ayri kod yolundan geciyor.
+  ['elbise_puf_kol',          { garment: 'dress', shaping: 'dart', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'short', sleeveCap: 'puffed', skirtStyle: 'aLine', skirtLength: 'midi' }],
+  ['ust_puf_kol',             { garment: 'top',   shaping: 'dart', fabric: 'woven', neckline: 'crew',  sleeveStyle: 'straight', sleeveLength: 'short', sleeveCap: 'puffed', topLength: 'cropped' }],
   ['elbise_prenses_duz_kol',  { garment: 'dress', shaping: 'princess', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi' }],
   ['ust_prenses_kolsuz',      { garment: 'top',   shaping: 'princess', fabric: 'woven', neckline: 'crew',  sleeveStyle: 'none', topLength: 'hip' }],
   ['etek_aline',              { garment: 'skirt', shaping: 'dart', fabric: 'woven', skirtStyle: 'aLine',    skirtLength: 'midi' }],
@@ -722,14 +729,36 @@ console.log('\n--- (j) flat poz konvansiyonu (sevkPoz): kol sarkik, omuz kisa+eg
   };
   for (const c of cizimler) {
     // j1 — kol omuz yatayinin ALTINDA (geometri, her kol path'inde)
+    //      ISTISNA, ADIYLA: buzgulu kapak (sevkPoz.buzgu.omuzUstuKubbe). Kolun
+    //      kendisi buzgulu oldugunu path uzerinde ILAN ediyor
+    //      (data-buzgu-kapak-oran); ilan yoksa istisna da yok.
+    // j4 — YATAY RAF: kubbe bedava degil. Kol dis konturunun omuz yatayina
+    //      yapisik yatay uzanimi, kolun yatay acikliginin
+    //      sevkPoz.buzgu.yatayRafOranMax'ini gecemez. Bu hukum HER kolda
+    //      calisir (buzgulu ya da degil), cunku duz kolda olculen deger 0.00.
+    const RAF = SP.buzgu.yatayRafOranMax;
     for (const p of byRol(c.ps, 'kol')) {
       const P = pts(p.d);
       if (P.length < 2) continue;
       const yS = P[0][1];
+      const buzgulu = /data-buzgu-kapak-oran="/.test(p.attr);
       const ust = P.filter((q) => q[1] < yS - 1e-3);
-      if (ust.length) {
+      if (ust.length && !buzgulu) {
         FAIL(`(j1) ${c.ad}/${p.view}/${p.yan}: kol omuz yatayinin USTUNE cikiyor — ` +
              `${ust.length} nokta, en yukarisi y=${Math.min(...ust.map((q) => q[1])).toFixed(2)} < omuz y=${yS.toFixed(2)}`);
+        bad++;
+      }
+      const xs = P.map((q) => q[0]);
+      const acik = Math.max(...xs) - Math.min(...xs);
+      let raf = 0;
+      for (let i = 1; i < P.length; i++)
+        if (Math.abs(P[i][1] - yS) <= RAF.tolMM && Math.abs(P[i - 1][1] - yS) <= RAF.tolMM)
+          raf += Math.abs(P[i][0] - P[i - 1][0]);
+      const oran = acik > 1e-6 ? raf / acik : 0;
+      if (oran > RAF.deger) {
+        FAIL(`(j4) ${c.ad}/${p.view}/${p.yan}: kol omuz yatayinda YATAY RAF — ` +
+             `${raf.toFixed(1)} / ${acik.toFixed(1)} mm = ${(oran * 100).toFixed(0)}%, ` +
+             `kanun tavani ${(RAF.deger * 100).toFixed(0)}%`);
         bad++;
       }
     }
@@ -762,8 +791,9 @@ console.log('\n--- (j) flat poz konvansiyonu (sevkPoz): kol sarkik, omuz kisa+eg
     }
   }
   if (!govdeli) { FAIL('(j) hic govdeli spec olculmedi'); }
-  else if (!bad) OK(`(j) ${govdeli} govdeli spec'te poz kanunda: kol sarkik (geometri), omuz egim/oran bandda, ` +
-                    'omuz ucu ilani cizili noktayla ozdes, yaka oranlari bandda');
+  else if (!bad) OK(`(j) ${govdeli} govdeli spec'te poz kanunda: kol sarkik (geometri; buzgulu kapak ` +
+                    `omuzUstuKubbe istisnasiyla), yatay raf <= ${(SP.buzgu.yatayRafOranMax.deger * 100).toFixed(0)}%, ` +
+                    'omuz egim/oran bandda, omuz ucu ilani cizili noktayla ozdes, yaka oranlari bandda');
 }
 
 // --------------------------------------------------------------- (k) YAKA PARCASI

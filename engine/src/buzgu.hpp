@@ -16,15 +16,16 @@
 // make its drawn arc length equal `ratio x finishedMM` (the length of the edge
 // it will be sewn ONTO), and let the rest of the piece follow geometrically.
 //
-// HOW IT MOVES THE CLOTH. Slash-and-spread, expressed as one exact similarity:
-// scale the edge (endpoints, on-curve points and Bézier handles alike) about
-// the MIDPOINT OF ITS OWN CHORD by a factor s. A similarity multiplies every
-// arc length by exactly s, so `s = target / drawn` hits the target to floating
-// point — no bisection, no tolerance. The edge's two endpoints travel outward
-// along the chord, which is the whole point: on a sleeve cap the two underarm
-// corners move apart and the crown rises, so the SLEEVE ITSELF becomes fuller,
-// which is what a puff is. Neighbouring commands are retargeted onto the moved
-// endpoints, so the outline stays closed and continuous.
+// HOW IT MOVES THE CLOTH. Slash-and-spread, ANISOTROPIC: the edge's own chord
+// is HELD (both endpoints are fixed points of the map) and only the component
+// perpendicular to that chord is multiplied, by a factor solved by bisection so
+// the drawn arc equals the target. On a sleeve cap the chord IS THE BICEPS LINE,
+// and a biceps is a body measurement, not gather allowance — the first cut of
+// this file used one uniform similarity and grew the biceps 24% along with the
+// crown, which is precisely the fault `sleeveLaw._a3` names ("fullness at the
+// top, cloth drawn in below"). Holding the chord also means nothing outside the
+// edge moves: the outline stays closed with no retargeting, and the underarm
+// seams keep their drafted length.
 //
 // WHAT IT REFUSES, BY NAME (never a silent default): an edge whose role is not
 // on the piece; a finished length that could not be measured; a ratio that is
@@ -58,9 +59,14 @@ struct BuzguResult {
 namespace BuzguBlock {
 
 // Refusal guards. A slash-and-spread that shrinks an edge is not a gather, and
-// one that quadruples it is not a garment; both are refused with the number.
+// one that quadruples it is not wearable cloth; both are refused with the number.
 inline constexpr double kMinScale = 1.0;
 inline constexpr double kMaxScale = 3.0;
+// And the sagitta search ceiling. Holding the chord means the whole surplus has
+// to come out of the cap's height, so the solved perpendicular factor is always
+// LARGER than the arc ratio; a cap that cannot reach its target inside this
+// ceiling is refused with both numbers rather than half-gathered.
+inline constexpr double kMaxPerp = 8.0;
 
 // Gathers the edge named `role` on `piece` so its drawn arc length becomes
 // `ratio * finishedMM`, and stamps `notchCount` evenly spaced gather marks

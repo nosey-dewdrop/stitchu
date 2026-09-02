@@ -386,7 +386,17 @@ std::vector<ValidationIssue> sleeveIssues(
     // length below the notches is unchanged; the biceps floor still holds because
     // the widened crown is >= the base width. Guard the gather is neither absent
     // (looks plain) nor runaway (unsewable).
-    if (spec.sleeveCap != SleeveCap::Plain) {
+    // ⛔ AND IT IS THE GATHERED CAPS ONLY, BY NAME (M1-puf round 2). The first
+    // cut of this gate said `!= Plain`, which quietly swept SleeveCap::Cap in
+    // with the two gathered heads. A cap sleeve is not gathered and never was —
+    // sleeve.hpp's own sentence is "its head is the ordinary set-in cap ...
+    // matches the armhole 1:1"; it is a WING, and the wing is on the OUTER edge,
+    // not on the head. capBuzguRatio(Cap) is 0, so the equality below demanded a
+    // -100% surplus and turned two shipped styles (dress_square_princess_circle,
+    // dress_boat_princess_circle) red in preview_truth_check. Naming the two
+    // gathered caps is not a loosening: Cap goes back to the ordinary cap-ease
+    // window below, which is a TIGHTER band than the one it was being judged by.
+    if (spec.sleeveCap == SleeveCap::Gathered || spec.sleeveCap == SleeveCap::Puffed) {
         // ⭐ M1-puf TIGHTENED THIS, IT DID NOT LOOSEN IT. The old test compared
         // the surplus against a band derived from the INVENTED spread fraction
         // (lo = frac*0.5, hi = frac*2.5 + 0.20 — a 0.45 spread accepted anything
