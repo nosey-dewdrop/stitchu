@@ -1024,3 +1024,263 @@ export const VISION_TASIMA = {
     }
   }
 };
+
+// F7-edit: edit-locality contract (embedded from contract/edit-locality-v1.json)
+// — zones + untouchable panel patterns + field->zone map, so the create screen
+// runs the SAME locality judgement the gate (edit_locality_check.mjs) runs.
+export const EDIT_LOCALITY = {
+  "zones": {
+    "neckZone": {
+      "ne": "yaka oyuğu, yaka parçası, ön/arka boyun bitişi",
+      "untouchable": [
+        "^Skirt",
+        "Sleeve",
+        "Cuff",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce",
+        "Ruffle strip"
+      ]
+    },
+    "shoulderZone": {
+      "ne": "omuz dikişi, omuz noktası, askı",
+      "untouchable": [
+        "^Skirt",
+        "Cuff",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce"
+      ]
+    },
+    "sleeveZone": {
+      "ne": "kol, kol kapağı, manşet",
+      "untouchable": [
+        "^Skirt",
+        "^Bodice",
+        "^Top ",
+        "Collar",
+        "Pocket",
+        "Peplum",
+        "Hem Flounce"
+      ]
+    },
+    "waistZone": {
+      "ne": "bel dikişi, kemer, bele takılan parça",
+      "untouchable": [
+        "Sleeve",
+        "Cuff",
+        "Collar",
+        "Bias binding",
+        "Neck Facing"
+      ]
+    },
+    "hemZone": {
+      "ne": "etek ucu, boy, yırtmaç, volan",
+      "untouchable": [
+        "^Bodice",
+        "^Top ",
+        "Sleeve",
+        "Cuff",
+        "Collar",
+        "Bias binding",
+        "Neck Facing",
+        "Yoke"
+      ]
+    },
+    "cfZone": {
+      "ne": "ön orta: pat, düğme, kuşgözü, ön bağ, keyhole",
+      "untouchable": [
+        "Back",
+        "Sleeve",
+        "Cuff",
+        "Collar"
+      ]
+    },
+    "backZone": {
+      "ne": "arka: sırt oyuğu, bağcık, arka fermuar, arka detay",
+      "untouchable": [
+        "^(Bodice|Top) (Center |Side )?Front",
+        "Front Body",
+        "Sleeve",
+        "Cuff"
+      ],
+      "_f5_gerekce": "F5-parca (2026-09-02): eski liste 'Front' kalibiyla ETEK panellerini de koruyordu. Etek arka fermuara BAGLIDIR: gorunmez CB fermuar govdeden etege devam eder (garment.cpp), ve sirti acan her ozellik (bagcik, sirt oyugu, arka bag) fermuari dusurur — fermuarsiz etek tek kalip 'Skirt Front & Back' olarak birlesir (gecis kurali, contract/parca-gecis-v1.json). Yani bir SIRT editi etegin parca yapisini MESRU olarak degistirir; onu dokunulmaz ilan etmek dogru davranisi yasaklamakti. Govde on panelleri + kol + manset dokunulmaz kalir."
+    },
+    "sideSeamZone": {
+      "ne": "yan dikiş (in-seam cep)",
+      "untouchable": [
+        "Collar",
+        "Sleeve",
+        "Cuff",
+        "Peplum",
+        "Bias binding"
+      ]
+    },
+    "surface": {
+      "ne": "panel yüzeyi (yama cep)",
+      "untouchable": [
+        "Collar",
+        "Sleeve",
+        "Cuff",
+        "Bias binding",
+        "Neck Facing"
+      ]
+    },
+    "global": {
+      "ne": "giysinin tamamını yeniden kuran alan (garment, shaping, fabric) — LOKALLİK İDDİASI YOK",
+      "untouchable": []
+    }
+  },
+  "fieldZones": {
+    "shoulderStyle": [
+      "shoulderZone"
+    ],
+    "keyhole": [
+      "cfZone"
+    ],
+    "placketStyle": [
+      "cfZone"
+    ],
+    "frontPlacket": [
+      "cfZone"
+    ],
+    "tieClosure": [
+      "cfZone",
+      "backZone",
+      "waistZone"
+    ],
+    "collarType": [
+      "neckZone"
+    ],
+    "collarEdge": [
+      "neckZone"
+    ],
+    "gatherType": [
+      "neckZone"
+    ],
+    "gatherZone": [
+      "neckZone"
+    ],
+    "backOpening": [
+      "backZone"
+    ],
+    "laceUpBack": [
+      "backZone"
+    ],
+    "backSlit": [
+      "backZone",
+      "hemZone"
+    ],
+    "ruffledStraps": [
+      "shoulderZone"
+    ],
+    "peplum": [
+      "waistZone"
+    ],
+    "pocketStyle": [
+      "surface",
+      "sideSeamZone"
+    ],
+    "cuffStyle": [
+      "sleeveZone"
+    ],
+    "hemShape": [
+      "hemZone"
+    ],
+    "ruffle": [
+      "hemZone"
+    ],
+    "hemFlounce": [
+      "hemZone"
+    ],
+    "bardotStyle": [
+      "shoulderZone",
+      "neckZone"
+    ],
+    "buttonRow": [
+      "cfZone"
+    ],
+    "exposedZip": [
+      "cfZone",
+      "backZone"
+    ],
+    "backDetail": [
+      "backZone"
+    ],
+    "sleeveCap": [
+      "sleeveZone",
+      "shoulderZone"
+    ],
+    "edgeFinish": [
+      "neckZone"
+    ],
+    "wrapFront": [
+      "cfZone"
+    ],
+    "boxPleat": [
+      "cfZone"
+    ],
+    "yoke": [
+      "shoulderZone",
+      "neckZone"
+    ],
+    "cupSeam": [
+      "neckZone",
+      "cfZone"
+    ],
+    "neckline": [
+      "neckZone",
+      "shoulderZone"
+    ],
+    "sleeveStyle": [
+      "sleeveZone",
+      "shoulderZone"
+    ],
+    "sleeveLength": [
+      "sleeveZone"
+    ],
+    "skirtStyle": [
+      "hemZone",
+      "waistZone"
+    ],
+    "skirtLength": [
+      "hemZone"
+    ],
+    "skirtLengthMM": [
+      "hemZone"
+    ],
+    "topLength": [
+      "hemZone"
+    ],
+    "waistline": [
+      "waistZone"
+    ],
+    "garment": [
+      "global"
+    ],
+    "shaping": [
+      "global"
+    ],
+    "fabric": [
+      "global"
+    ],
+    "photoFabric": [
+      "global"
+    ],
+    "editExtendMM": [
+      "hemZone"
+    ],
+    "editShortenMM": [
+      "hemZone"
+    ],
+    "editSleeveExtendMM": [
+      "sleeveZone"
+    ],
+    "editNeckDeepenMM": [
+      "neckZone"
+    ],
+    "editAttach": [
+      "hemZone"
+    ]
+  }
+};

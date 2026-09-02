@@ -116,10 +116,25 @@ export const STRINGS = {
   // reddeder. Cümle bunu bir kusur gibi değil, bir cevap gibi söyler.
   // EDIT SATIRI (GECE7 / F7). Soru formundaki her baslik "?" ile biter.
   'create.edit.lengthen': { en: 'Lengthen by (cm)', tr: 'Su kadar uzat (cm)' },
+  // F7-edit: uc mm alani daha, ayni satirda. Kisaltma uzatmanin negatifi
+  // DEGILDIR (motor ikisini ayri operator olarak soyler), o yuzden ayri alan.
+  'create.edit.shorten': { en: 'Shorten by (cm)', tr: 'Su kadar kisalt (cm)' },
+  'create.edit.sleeve': { en: 'Lengthen the sleeve by (cm)', tr: 'Kolu su kadar uzat (cm)' },
+  'create.edit.neck': { en: 'Deepen the neckline by (cm)', tr: 'Yakayi su kadar derinlestir (cm)' },
   'create.edit.bow': { en: 'Add a bow', tr: 'Fiyonk ekle' },
   'create.edit.apply': { en: 'Apply the edit and redraw', tr: 'Editi uygula, yeniden ciz' },
-  'create.edit.badnum': { en: 'Lengthening takes a number of centimetres, 0 or more.',
-                          tr: 'Uzatma 0 ya da daha buyuk bir santimetre sayisi ister.' },
+  'create.edit.badnum': { en: 'An edit takes a number of centimetres, 0 or more.',
+                          tr: 'Edit 0 ya da daha buyuk bir santimetre sayisi ister.' },
+  'create.edit.nothing': { en: 'Nothing to edit — give at least one field a value.',
+                           tr: 'Degisecek bir sey yok — en az bir alana deger girin.' },
+  // BOLGE KAPISI (contract/edit-locality-v1.json): bolge disi panel bayt-ayni
+  // degilse edit REDDEDILIR ve kalip degismez — sessiz bozulma yok.
+  'create.edit.locality': { en: 'Zone check: {n} out-of-zone panels stayed byte-identical.',
+                            tr: 'Bolge kontrolu: bolge disi {n} panel bayt bayt ayni kaldi.' },
+  'create.edit.localityfail': {
+    en: 'REFUSED: the edit leaked outside its declared zone — {list}. The pattern was not changed.',
+    tr: 'REDDEDILDI: edit ilan ettigi bolgenin disina tasti — {list}. Kalip degistirilmedi.',
+  },
   'create.edit.head': { en: 'What actually moved:', tr: 'Ne oynadi:' },
   'create.edit.length': { en: 'Piece length {once} mm -> {sonra} mm',
                           tr: 'Parca boyu {once} mm -> {sonra} mm' },

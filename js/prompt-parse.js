@@ -276,6 +276,48 @@ export function parsePrompt(text) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// F7-edit: SAYILI EDİT KALIPLARI — "yakayı 2cm derinleştir", "boyu 3 cm uzat",
+// "kolu 2cm uzat", "2cm kısalt". Bunlar eksen-değer çifti DEĞİL, mm taşıyan
+// operatörlerdir (patternedit.cpp), o yüzden kelime tablosuna girmezler: sayı
+// kullanıcının kendi sayısıdır, sözlük değeri değil. Alan adları
+// contract/edit-locality-v1.json fieldZones'ta İLANLIDIR; bölge kapısı
+// (edit_locality_check.mjs) her birini ölçer. Birim yazılmadıysa cm okunur
+// (kalıpçının konuştuğu birim); mm yazan mm alır.
+const MIKTAR = '(\\d+(?:[.,]\\d+)?)\\s*(cm|mm)?';
+const EDIT_PATTERNS = [
+  { field: 'editNeckDeepenMM', re: new RegExp(`(?:yakayi|yaka(?:\\s+oyugunu)?)\\s+${MIKTAR}\\s+derinlestir\\w*`) },
+  { field: 'editNeckDeepenMM', re: new RegExp(`deepen\\s+(?:the\\s+)?neck(?:line)?\\s+by\\s+${MIKTAR}`) },
+  { field: 'editSleeveExtendMM', re: new RegExp(`(?:kolu|kollari)\\s+${MIKTAR}\\s+uzat\\w*`) },
+  { field: 'editSleeveExtendMM', re: new RegExp(`lengthen\\s+(?:the\\s+)?sleeves?\\s+by\\s+${MIKTAR}`) },
+  { field: 'editShortenMM', re: new RegExp(`(?:boyu\\s+|etegi\\s+)?${MIKTAR}\\s+kisalt\\w*`) },
+  { field: 'editShortenMM', re: new RegExp(`shorten\\s+(?:it\\s+|the\\s+\\w+\\s+)?by\\s+${MIKTAR}`) },
+  { field: 'editExtendMM', re: new RegExp(`(?:boyu\\s+|etegi\\s+)?${MIKTAR}\\s+uzat\\w*`) },
+  { field: 'editExtendMM', re: new RegExp(`lengthen\\s+(?:it\\s+|the\\s+\\w+\\s+)?by\\s+${MIKTAR}`) },
+];
+
+/**
+ * Sayılı edit kalıplarını metinden çeker. Döner: { alanlar, kalan }.
+ * alanlar[field] = { mm, kelime }; kalan = eşleşen ifadeler ÇIKARILMIŞ metin
+ * (parsePrompt'a o verilir ki "derinlestir" anlaşılmadı diye düşmesin).
+ * Aynı alan iki kez yazılırsa İLK okuma kalır, ikincisi kalan metinde kalır ve
+ * parsePrompt onu adıyla raporlar — sessiz üzerine yazma yok.
+ */
+export function parseEditPrompt(text) {
+  let kalan = fold(text);
+  const alanlar = {};
+  for (const { field, re } of EDIT_PATTERNS) {
+    const m = kalan.match(re);
+    if (!m || alanlar[field]) continue;
+    const sayi = Number(m[1].replace(',', '.'));
+    if (!Number.isFinite(sayi) || sayi <= 0) continue;
+    const birim = m[2] === 'mm' ? 1 : 10;
+    alanlar[field] = { mm: sayi * birim, kelime: m[0].trim() };
+    kalan = kalan.replace(m[0], ' ');
+  }
+  return { alanlar, kalan };
+}
+
 /**
  * Apply a parse onto a spec. THE PRIORITY RULE LIVES HERE (F1 madde 3): the
  * prompt is the user's explicit ask, so it overwrites whatever the photo read
