@@ -1246,6 +1246,22 @@ add_test(NAME hedef_kosu COMMAND ${NODE_EXECUTABLE}
 add_test(NAME indir_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/indir_check.mjs)
 
+# uctan_uca_check (F9 — 2026-09-02): GERÇEK FOTOĞRAF -> TAM PAKET.
+# Hedef cümlenin son yarısı uçtan uca: bankalı bir fotoğraf OKUMASINDAN
+# (engine/tests/fixtures/analyze-biba-O122999.json — başlığı canlı API'nin
+# neden çağrılamadığını adıyla söyler: canli API DOGRULANMADI) başlar, ürünün
+# kendi köprüsüyle (vision-bridge pick*) spec kurar, sevk edilen wasm ile
+# kalıbı çizer ve kullanıcının indirdiği ÜÇ dosyayı üretip yargılar:
+#   A4 kalıp PDF'i — 100 mm kalibrasyon karesi `re` operatöründen GERİ OKUNUR
+#     ("kare var" değil, "kare 100.000 mm") + dikiş payı mm İLANI + köken bloğu;
+#   flat SVG — köken damgaları kök elementte, düğüm tokeni kalıpla ortak atadan;
+#   Türkçe rehber — dikiş payı mm, motorun kendi inşa adımları (guide-tr.js),
+#     iğne/dikiş bölümü (kaynaklı ya da adıyla KAYNAK-YOK), kesim planı, kumaş
+#     sayıları kaynağıyla; kaynaksız tavsiye cümlesi 0 (inşa gereği, süs değil).
+# Sıfır API çağrısı, sıfır kuruş.
+add_test(NAME uctan_uca_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/uctan_uca_check.mjs)
+
 # arka_koken_check (F3-arka — 2026-09-01): ARKA YÜZ NEREDEN GELDİ, SÖYLENİYOR MU?
 # Damla'nın cümlesi: arka fotoğraf VARSA okunur ve tasarlanır; SADECE ön varsa
 # sistem arkayı UYDURUR ve uydurduğunu İLAN eder — en sade dikilebilir arka

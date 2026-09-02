@@ -167,3 +167,5 @@ engine/tools/flat-metre/metre-sonuc.json
 # yeniden basilir) — depo butcesi (git ls-files <= 800) icin takipten cikti.
 KOSU/ciktilar/*.png
 KOSU/ciktilar/*.svg
+# F9 paket-01: uctan uca kosunun urun paketi, PAKET_DIR ile yeniden basilir
+KOSU/ciktilar/paket-01/

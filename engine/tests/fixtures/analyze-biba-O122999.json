@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "durum": "canli API DOGRULANMADI — LOKAL okuma fixture'i",
+    "neden": "F9 kosusunda canli /api/analyze cagrilamadi: App/Stitchu/Secrets.swift diskte YOK (sadece Secrets.example.txt), benchmark-58/.benchmark-token YOK, public yol Turnstile fail-closed (CLI'dan gecmez). Para disiplini: 0 canli cagri yapildi.",
+    "nasil_uretildi": "backend/analyze-core.js imagePrompt()'un birebir metni (IMAGE_INTRO + SPEC_JSON + IMAGE_RULES) uygulanarak fotograf F9 ajani tarafindan okundu ve cevap ayni SPEC_JSON semasinda yazildi. Sema alanlari ve degerleri analyze-core.js'in kapali enum'larindan; sema disi hicbir alan yok.",
+    "fotograf": "GIRDI/hedef-fotograflar/biba-O122999-dress.jpg",
+    "kunye": "Biba | 1971 | Dress — viyella | https://collections.vam.ac.uk/item/O122999/",
+    "tarih": "2026-09-02"
+  },
+  "seen": {
+    "garment": "dress",
+    "neckline": "crew",
+    "sleeveStyle": "balloon",
+    "sleeveLength": "long",
+    "skirtStyle": "aLine",
+    "length": "mini",
+    "topLength": null,
+    "shaping": null,
+    "waistline": null,
+    "fabric": "woven",
+    "hemRuffle": "single",
+    "keyhole": false,
+    "fabricName": "wool",
+    "closure": null,
+    "collar": null,
+    "straps": null,
+    "cupSeams": null,
+    "sleeveHead": "gathered",
+    "yoke": null,
+    "backDetail": null,
+    "ratios": {
+      "hemToWaistWidth": 1.45,
+      "lengthToWidth": 1.9,
+      "neckDepthToLength": 0.05,
+      "neckWidthToShoulder": 0.42,
+      "sleeveLenToGarment": 0.55,
+      "waistYToLength": null,
+      "strapWidthToShoulder": null
+    },
+    "outOfVocab": [
+      "deep gathered sleeve cuffs",
+      "short front neck slit"
+    ],
+    "details": "Soft brushed woven (viyella, a wool/cotton twill) in an all-over paisley print; A-line falling from a high round neck with a short centre-front slit, full bishop-style sleeves gathered into deep cuffs, and a flounce layer at the hem; hem sits at the knee (mini/midi boundary, mini reported from the measured lengthToWidth)."
+  }
+}
