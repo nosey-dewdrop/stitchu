@@ -9,7 +9,7 @@
 // (embedded here through the same generated module every other cross-layer
 // value rides). Numbers in it are the engine's own drafted mm (provenance in
 // each entry); no threshold is invented in this file.
-import { VISION_TASIMA } from './contract.gen.js?v=141';
+import { VISION_TASIMA } from './contract.gen.js?v=143';
 
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
