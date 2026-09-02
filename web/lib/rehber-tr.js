@@ -19,9 +19,9 @@
 // needle section for a woven says KAYNAK-YOK and tells the sewist what to do
 // about it, instead of inventing a number.
 
-import { GUIDE_TR } from '../js/guide-tr.js?v=143';
-import { FABRIC_CATALOG } from '../js/fabric-catalog.js?v=143';
-import { fabricProfile } from '../js/sewing.js?v=143';
+import { GUIDE_TR } from '../js/guide-tr.js?v=144';
+import { FABRIC_CATALOG } from '../js/fabric-catalog.js?v=144';
+import { fabricProfile } from '../js/sewing.js?v=144';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

@@ -1,37 +1,37 @@
 // Create flow: measurements (one per screen) -> garment spec -> WASM draft ->
 // result. Photo -> AI analysis joins this flow when the Worker URL is live;
 // until then the spec picker IS the flow (same manual path the iOS app had).
-import { analyzePhoto, analyzeBankedPhoto, photoAvailable } from './analyze.js?v=143';
-import { validateVision } from './spec-validate.js?v=143';
-import { CONTRACT, EDIT_LOCALITY } from './contract.gen.js?v=143';
-import { applyStatic, getLang, t } from './i18n.js?v=143';
-import { draft, grade, operatorProgram } from './engine.js?v=143';
-import { printPattern, printGrade, printGradeNested } from './print.js?v=143';
-import { renderResult } from './render.js?v=143';
+import { analyzePhoto, analyzeBankedPhoto, photoAvailable } from './analyze.js?v=144';
+import { validateVision } from './spec-validate.js?v=144';
+import { CONTRACT, EDIT_LOCALITY } from './contract.gen.js?v=144';
+import { applyStatic, getLang, t } from './i18n.js?v=144';
+import { draft, grade, operatorProgram } from './engine.js?v=144';
+import { printPattern, printGrade, printGradeNested } from './print.js?v=144';
+import { renderResult } from './render.js?v=144';
 import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
-} from './store.js?v=143';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord, applyRatioAxes, uncertainRatioNames } from './vision-bridge.js?v=143';
-import { measureGarment } from './measure.js?v=143';
+} from './store.js?v=144';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord, applyRatioAxes, uncertainRatioNames } from './vision-bridge.js?v=144';
+import { measureGarment } from './measure.js?v=144';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG } from './download.js?v=143';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG } from './download.js?v=144';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
-import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=143';
+import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=144';
 // F1: PROMPT GİRİŞİ. Serbest metin ("puf kollu mini elbise") deterministik
 // parser'la aynı spec eksenlerine iner — LLM yok, ağ yok. Anlaşılmayan kelime
 // ADIYLA ekrana düşer (sessiz düşme 0), en yakın Edge/Panel/Stitch primitifine
 // işaret eder. Öncelik kuralı: prompt, fotoğraf okumasını EZER (madde 3).
-import { parsePrompt, parseEditPrompt, birlestir } from './prompt-parse.js?v=143';
+import { parsePrompt, parseEditPrompt, birlestir } from './prompt-parse.js?v=144';
 // F3-arka: ARKA YÜZÜN KÖKENİ (Damla'nın cümlesi): arka fotoğraf VARSA okunur
 // ve tasarlanır; SADECE ön varsa sistem arkayı UYDURUR ve uydurduğunu İLAN
 // eder — en sade dikilebilir arka, akış DURMAZ. Mantık web/lib/arka-koken.js'te
 // saf durur ki arka_koken_check kapısı onu node'da aynen koşabilsin.
-import { arkaDamgala, arkaOkumasi } from '../lib/arka-koken.js?v=143';
+import { arkaDamgala, arkaOkumasi } from '../lib/arka-koken.js?v=144';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -1011,12 +1011,12 @@ function showSpec() {
     ornekStatus.appendChild(sewingLoader('reading the example photo'));
     (async () => {
       try {
-        const res = await fetch('data/al-dene.json?v=143');
+        const res = await fetch('data/al-dene.json?v=144');
         if (!res.ok) throw new Error('The examples list could not be loaded.');
         const data = await res.json();
         const ex = (data.ornekler || []).find((o) => o.no === String(ornekNo));
         if (!ex) throw new Error(`There is no example ${ornekNo}.`);
-        const { reading, pixels } = await analyzeBankedPhoto(`ornek/${ex.dosya}?v=143`, ex.seen);
+        const { reading, pixels } = await analyzeBankedPhoto(`ornek/${ex.dosya}?v=144`, ex.seen);
         await ingestReading(reading, pixels, ornekStatus);
         // The credit rides WITH the result, not in a footer nobody reads: these
         // are other people's photographs under a named licence.
@@ -1320,8 +1320,8 @@ function downloadPanel(result) {
   const rehberBtn = el('button', 'btn', t('create.dl.rehber'));
   wire(rehberBtn, async () => {
     if (!spec.fabricPreset || spec.fabricPreset === 'unset') return t('create.dl.rehberfabric');
-    const { rehberHTML } = await import('../lib/rehber-tr.js?v=143');
-    const resp = await fetch('data/sewing-guide.json?v=143');
+    const { rehberHTML } = await import('../lib/rehber-tr.js?v=144');
+    const resp = await fetch('data/sewing-guide.json?v=144');
     if (!resp.ok) throw new Error('sewing-guide.json okunamadı (HTTP ' + resp.status + ')');
     const guideData = await resp.json();
     const html = rehberHTML(result.pattern, spec, spec.fabricPreset, guideData,
