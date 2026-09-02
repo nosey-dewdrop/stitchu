@@ -14,45 +14,42 @@ const EdgeRole* findRole(const PatternPiece& piece, const std::string& role) {
     return nullptr;
 }
 
-// ★ THE SLASH-AND-SPREAD, ANISOTROPIC (M1-puf round 2).
+// ★ THE SLASH-AND-SPREAD, TWO COMPONENTS, THE BAND AS THE CEILING (round 3).
 //
-// The first cut applied ONE similarity about the chord midpoint, so the chord
-// grew with the arc: at ratio 1.29 the sleeve's biceps line grew 24% too, and a
-// biceps is a BODY measurement, not gather allowance. `sleeveLaw._a3` ("fullness
-// at the top, the cloth drawn in below") is exactly what that broke.
+// Round 1 used ONE similarity about the chord midpoint, so the chord grew with
+// the arc: at ratio 1.29 the sleeve's biceps line grew 24% too.
+// Round 2 over-corrected and HELD the chord, which forced the entire 1.29 into
+// the sagitta: EU38 cap height 202.7 mm against an Aldrich band of 130-150 mm,
+// and the engine's own `sleeve_check` went red 45 times with "crown wider than
+// plain (217 > 217)" — its law is that a gathered crown IS wider.
 //
-// What replaces it moves the cloth the way a puff pattern actually moves it:
-// the CHORD IS HELD (both endpoints are fixed, so the biceps line, the two
-// underarm corners and the whole seam below them are untouched, and the outline
-// stays closed with no retargeting at all), and only the component PERPENDICULAR
-// to the chord — the cap's sagitta direction — is multiplied, by the factor that
-// makes the drawn arc equal the target. That factor is SOLVED, not stated,
-// because arc length is not linear in it.
-//
-// ⚠ THIS IS A DECLARED DEPARTURE FROM THE BUGRA MEASUREMENT, NOT A COPY OF IT,
-// and the numbers are in contract/tables.json draft.gatherRatios._anizotropiNot:
-// Bugra's Upper Sleeve grows the chord 1.459x and the sagitta 1.227x at EU38
-// (knowledge/cap-ease-isareti-2026-08-17.md §2.1), i.e. its outer layer gets
-// WIDER than the arm — which it is allowed to be, because it is a separate
-// layer laid over a Lower Sleeve that still carries the biceps. Our sleeve is
-// ONE piece and must carry the biceps itself, so it keeps chord 1.000 and puts
-// the whole surplus in the sagitta. Same gather ratio, different distribution,
-// said out loud.
-Point spreadPerp(Point p, Point origin, Point u, Point n, double k) {
+// Round 3 is the measured witness's own split, with the published band as a
+// hard ceiling. The Bugra Locket's gathered Upper Sleeve is its Lower cap with
+// the chord x1.459 and the sagitta x1.227 (knowledge/cap-ease-isareti-2026-08-17.md
+// §2.1): BOTH grow, and the chord grows MORE. So:
+//   * the sagitta is filled first, up to `perpMax` (a cap-height ceiling the
+//     caller states from a published band — never invented here);
+//   * the remainder goes into the chord, solved by bisection so the drawn arc
+//     equals the target to floating point.
+// The width the chord gains is not arm girth: it is gather allowance standing
+// on the biceps line, drawn up on the thread into the same armhole. The engine's
+// own gate says the same thing in one line — sleeve_check "crown >= biceps".
+Point spreadAniso(Point p, Point origin, Point u, Point n, double kc, double kp) {
     const double a = (p.x - origin.x) * u.x + (p.y - origin.y) * u.y;
     const double b = (p.x - origin.x) * n.x + (p.y - origin.y) * n.y;
-    return {origin.x + a * u.x + k * b * n.x, origin.y + a * u.y + k * b * n.y};
+    return {origin.x + kc * a * u.x + kp * b * n.x,
+            origin.y + kc * a * u.y + kp * b * n.y};
 }
 
-// Arc length the edge would have if the perpendicular component were scaled k x.
-double perpLength(const std::vector<PathCommand>& edge, Point origin, Point u,
-                  Point n, double k) {
+// Arc length the edge would have under the two-component map.
+double anisoLength(const std::vector<PathCommand>& edge, Point origin, Point u,
+                   Point n, double kc, double kp) {
     std::vector<PathCommand> t = edge;
     for (PathCommand& c : t) {
-        c.to = spreadPerp(c.to, origin, u, n, k);
+        c.to = spreadAniso(c.to, origin, u, n, kc, kp);
         if (c.type == CmdType::Curve) {
-            c.cp1 = spreadPerp(c.cp1, origin, u, n, k);
-            c.cp2 = spreadPerp(c.cp2, origin, u, n, k);
+            c.cp1 = spreadAniso(c.cp1, origin, u, n, kc, kp);
+            c.cp2 = spreadAniso(c.cp2, origin, u, n, kc, kp);
         }
     }
     return pathLength(t);
@@ -107,16 +104,96 @@ std::vector<EdgeSample> walkEdge(const std::vector<PathCommand>& edge, int count
 // The gather mark itself: a short tick ACROSS the seam line, the standard
 // pattern notation for "gather between these marks". Length is one seam
 // allowance, so it scales with the piece's own drafted allowance.
-void stampMarks(PatternPiece& piece, const std::vector<PathCommand>& edge, int count) {
+//
+// WHICH LAYER (round 3). `gatherEdge` MOVES the cloth, so the piece it hands
+// back is already a different drawn piece; its gather marks are a drawn sewing
+// instruction like a dart or a fold line and go into `markings`, where a
+// pattern's instructions live and where the engine's own `sleeve_check` looks
+// for them ("crown gather marks present"). `markGatheredEdge` is the opposite
+// contract — it promises not to move a single point — so ITS marks stay in the
+// technical `notches` layer, and every ungathered piece stays byte-identical in
+// the golden dump (which reads commands + markings).
+void stampMarks(std::vector<PathCommand>& into, const PatternPiece& piece,
+                const std::vector<PathCommand>& edge, int count) {
     const double half = std::max(4.0, piece.seamAllowance * 0.4);
     for (const EdgeSample& s : walkEdge(edge, count)) {
         const Point n{-s.t.y, s.t.x};   // normal to the seam
-        piece.notches.push_back(PathCommand::move({s.p.x - n.x * half, s.p.y - n.y * half}));
-        piece.notches.push_back(PathCommand::line({s.p.x + n.x * half, s.p.y + n.y * half}));
+        into.push_back(PathCommand::move({s.p.x - n.x * half, s.p.y - n.y * half}));
+        into.push_back(PathCommand::line({s.p.x + n.x * half, s.p.y + n.y * half}));
     }
 }
 
 } // namespace
+
+BuzguFrame solveFrame(const std::vector<PathCommand>& edge, Point start, Point end,
+                      double targetMM, double perpMax) {
+    BuzguFrame f;
+    if (edge.size() < 2) {
+        f.reason = "buzgu cercevesi reddedildi: kenar bos";
+        return f;
+    }
+    f.beforeMM = pathLength(edge);
+    const double chord = distance(start, end);
+    if (!(chord > 1e-6)) {
+        f.reason = "buzgu cercevesi reddedildi: kenarin kirisi 0 mm";
+        return f;
+    }
+    if (!(perpMax >= 1.0)) {
+        f.reason = "buzgu cercevesi reddedildi: sagitta tavani " +
+                   std::to_string(perpMax) + " — 1'den kucuk bir tavan kapagi ALCALTIR";
+        return f;
+    }
+    const Point u{(end.x - start.x) / chord, (end.y - start.y) / chord};
+    const Point n{-u.y, u.x};
+    // THE ORIGIN IS THE CHORD MIDPOINT, NOT AN ENDPOINT. Round 2 could anchor
+    // anywhere because it never scaled along the chord; the moment the chord
+    // grows, an endpoint anchor pushes the whole cap sideways — the first draw
+    // of round 3 produced a sleeve whose left underarm point had not moved and
+    // whose right one had moved twice as far, a bat wing. About the midpoint
+    // both underarm points travel outward by the same distance.
+    const Point mid{(start.x + end.x) / 2, (start.y + end.y) / 2};
+
+    // 1. SAGITTA FIRST, up to the caller's published ceiling. If the target is
+    //    reached before the ceiling, the chord is not touched at all.
+    double kp = 1.0;
+    if (anisoLength(edge, mid, u, n, 1.0, perpMax) >= targetMM) {
+        double lo = 1.0, hi = perpMax;
+        for (int i = 0; i < 80; ++i) {
+            const double t = (lo + hi) / 2;
+            if (anisoLength(edge, mid, u, n, 1.0, t) < targetMM) lo = t; else hi = t;
+        }
+        kp = (lo + hi) / 2;
+        f.ok = true;
+        f.chordScale = 1.0;
+        f.perpScale = kp;
+        f.arcMM = anisoLength(edge, mid, u, n, 1.0, kp);
+        return f;
+    }
+    // 2. The ceiling binds: the sagitta sits ON the band top and the REST of the
+    //    gather goes into the chord.
+    kp = perpMax;
+    double lo = 1.0, hi = 1.0;
+    while (anisoLength(edge, mid, u, n, hi, kp) < targetMM) {
+        hi *= 1.5;
+        if (hi > kMaxChord) {
+            f.reason = "buzgu cercevesi reddedildi: sagitta tavani " +
+                       std::to_string(perpMax) + " katta dolduruldu, kiris " +
+                       std::to_string(kMaxChord) + " katina cikarilsa bile yay " +
+                       std::to_string(anisoLength(edge, mid, u, n, kMaxChord, kp)) +
+                       " mm, hedef " + std::to_string(targetMM) + " mm";
+            return f;
+        }
+    }
+    for (int i = 0; i < 80; ++i) {
+        const double t = (lo + hi) / 2;
+        if (anisoLength(edge, mid, u, n, t, kp) < targetMM) lo = t; else hi = t;
+    }
+    f.ok = true;
+    f.chordScale = (lo + hi) / 2;
+    f.perpScale = kp;
+    f.arcMM = anisoLength(edge, mid, u, n, f.chordScale, kp);
+    return f;
+}
 
 double edgeLengthMM(const PatternPiece& piece, const std::string& role) {
     const EdgeRole* r = findRole(piece, role);
@@ -124,7 +201,8 @@ double edgeLengthMM(const PatternPiece& piece, const std::string& role) {
 }
 
 BuzguResult gatherEdge(PatternPiece& piece, const std::string& role,
-                       double finishedMM, double ratio, int notchCount) {
+                       double finishedMM, double ratio, int notchCount,
+                       double perpMax) {
     BuzguResult res;
     res.finishedMM = finishedMM;
     res.ratio = ratio;
@@ -166,54 +244,49 @@ BuzguResult gatherEdge(PatternPiece& piece, const std::string& role,
         return res;
     }
 
-    // --- the spread: chord HELD, sagitta solved ----------------------------
+    // --- the spread: sagitta to the ceiling, the rest into the chord -------
+    const BuzguFrame f = solveFrame(before, r.start, r.end, target, perpMax);
+    if (!f.ok) { res.reason = f.reason; return res; }
     const double chord = distance(r.start, r.end);
-    if (!(chord > 1e-6)) {
-        res.reason = "buzgu reddedildi: '" + role +
-                     "' kenarinin kirisi 0 mm — yonu olmayan bir kenar yayilamaz";
-        return res;
-    }
     const Point u{(r.end.x - r.start.x) / chord, (r.end.y - r.start.y) / chord};
     const Point n{-u.y, u.x};
-    // Solve k. perpLength is monotone increasing in k (every sample's distance
-    // from the chord grows, the along-chord component is fixed), so bisection is
-    // exact to the tolerance and cannot land on the wrong branch.
-    double lo = 1.0, hi = 1.0;
-    while (perpLength(before, r.start, u, n, hi) < target) {
-        hi *= 2.0;
-        if (hi > kMaxPerp) {
-            res.reason = "buzgu reddedildi: kiris sabit tutulunca bu kenar hedefe ulasamiyor — "
-                         "sagitta " + std::to_string(kMaxPerp) +
-                         " katina cikarilsa bile yay " +
-                         std::to_string(perpLength(before, r.start, u, n, kMaxPerp)) +
-                         " mm, hedef " + std::to_string(target) + " mm";
-            return res;
-        }
-    }
-    for (int i = 0; i < 80; ++i) {
-        const double mid = (lo + hi) / 2;
-        if (perpLength(before, r.start, u, n, mid) < target) lo = mid; else hi = mid;
-    }
-    const double k = (lo + hi) / 2;
+    const Point mid{(r.start.x + r.end.x) / 2, (r.start.y + r.end.y) / 2};
+    const Point oldStart = r.start, oldEnd = r.end;
+    const Point newStart = spreadAniso(oldStart, mid, u, n, f.chordScale, f.perpScale);
+    const Point newEnd   = spreadAniso(oldEnd,   mid, u, n, f.chordScale, f.perpScale);
+
     for (int i = r.firstCommand; i <= r.lastCommand; ++i) {
         PathCommand& c = piece.commands[static_cast<size_t>(i)];
-        c.to = spreadPerp(c.to, r.start, u, n, k);
+        c.to = spreadAniso(c.to, mid, u, n, f.chordScale, f.perpScale);
         if (c.type == CmdType::Curve) {
-            c.cp1 = spreadPerp(c.cp1, r.start, u, n, k);
-            c.cp2 = spreadPerp(c.cp2, r.start, u, n, k);
+            c.cp1 = spreadAniso(c.cp1, mid, u, n, f.chordScale, f.perpScale);
+            c.cp2 = spreadAniso(c.cp2, mid, u, n, f.chordScale, f.perpScale);
         }
     }
-    // The two endpoints are FIXED POINTS of this map (their perpendicular
-    // component is 0), so nothing outside the edge moves, the outline stays
-    // closed, and every other edge role keeps its own coordinates. That is the
-    // second reason to hold the chord: the previous similarity had to retarget
-    // neighbouring commands and rewrite four role endpoints to stay closed.
+    // RETARGETING. When the chord grows the two endpoints move, so every OTHER
+    // command and every OTHER named edge that lands on them has to follow, or
+    // the outline tears open. Only points that sat EXACTLY on an endpoint are
+    // moved (0.001 mm) — the rest of the piece keeps its drafted coordinates,
+    // which is what makes this a slash-and-spread of the head and not a rescale
+    // of the sleeve.
+    auto snap = [&](Point& p) {
+        if (distance(p, oldStart) < 1e-3) p = newStart;
+        else if (distance(p, oldEnd) < 1e-3) p = newEnd;
+    };
+    for (int i = 0; i < static_cast<int>(piece.commands.size()); ++i) {
+        if (i >= r.firstCommand && i <= r.lastCommand) continue;
+        PathCommand& c = piece.commands[static_cast<size_t>(i)];
+        snap(c.to);
+        if (c.type == CmdType::Curve) { snap(c.cp1); snap(c.cp2); }
+    }
+    for (EdgeRole& e : piece.edgeRoles) { snap(e.start); snap(e.end); }
 
     const std::vector<PathCommand> after = edgePathOf(piece, *findRole(piece, role));
     res.flatMM = after.empty() ? 0.0 : pathLength(after);
-    res.scale = k;
+    res.scale = f.chordScale;
+    res.perpScale = f.perpScale;
     if (!after.empty() && notchCount > 0) {
-        stampMarks(piece, after, notchCount);
+        stampMarks(piece.markings, piece, after, notchCount);
         res.notches = notchCount;
     }
     res.ok = true;
@@ -242,13 +315,14 @@ BuzguResult markGatheredEdge(PatternPiece& piece, const std::string& role,
     }
     res.ratio = res.flatMM / finishedMM;
     res.scale = 1.0;
+    res.perpScale = 1.0;
     if (!(res.ratio > 1.0)) {
         res.reason = "buzgu isareti reddedildi: kenar hedefinden uzun degil (oran " +
                      std::to_string(res.ratio) + ") — burada buzgu YOK";
         return res;
     }
     if (notchCount > 0) {
-        stampMarks(piece, edge, notchCount);
+        stampMarks(piece.notches, piece, edge, notchCount);
         res.notches = notchCount;
     }
     res.ok = true;

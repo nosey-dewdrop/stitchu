@@ -48,8 +48,16 @@ namespace bugra {
 // total girth and suppression are unchanged (bodice.hpp sideSeamShiftMM).
 inline constexpr double sideSeamShiftMM = 12;
 // Upper Sleeve (the gathered crown band; ring 505x207 incl 10 mm SA):
-inline constexpr double crownWidthFactor = 1.50; // tip span / fitted cap width (the gather)
-inline constexpr double crownDepthShare = 1.00;  // tip drop / fitted cap height
+// ⛔ crownWidthFactor 1.50 / crownDepthShare 1.00 ARE GONE (M1-puf round 3,
+// 2026-09-03). They were the tip span and tip drop written by hand, and the
+// crown they drew ran into the armhole with a 34.00% surplus against the
+// engine's declared, measured buzgu of 29.00% — locket_check named it. 34% is
+// the Bugra CUT-line band's low end (+34.2...+43.2%); the engine measures the
+// SEWING line, where the same pattern reads +29.0%. Both numbers are real; the
+// two constants were quietly mixing the two lines. The tips are now SOLVED by
+// BuzguBlock::solveFrame from that 29.0% (contract/tables.json
+// draft.gatherRatios.sleeveCapPuffed) against this draft's own armhole, so the
+// two-layer Bugra puff and the one-piece puff sleeve obey one law.
 inline constexpr double bandCenterShare = 0.87;  // band lower edge at centre, share of tip drop
 inline constexpr double bandSagMM = 45;          // band lower edge sags below the tips near the ends
 // Lower Sleeve (ring 326x170 incl SA):

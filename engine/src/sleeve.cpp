@@ -265,8 +265,42 @@ std::vector<PatternPiece> draft(
     // ---------------------------------------------------------------------
     if (cap != SleeveCap::Plain && cap != SleeveCap::Cap) {
         BuzguResult r = BuzguBlock::gatherEdge(
-            sleeve, "sleeve_cap", armholeLength, capBuzguRatio(cap), capBuzguNotchCount);
+            sleeve, "sleeve_cap", armholeLength, capBuzguRatio(cap), capBuzguNotchCount,
+            capBuzguPerpMax(cap));
         if (capBuzgu) *capBuzgu = r;
+        // RE-ANCHOR THE CROWN. The spread is taken about the cap's own chord, so
+        // a raised cap pushes the crown ABOVE y = 0 — and the whole sleeve block
+        // is written in a frame whose origin IS the crown point (the grainline,
+        // the cuff, every consumer of commands[0].to reads the cap height off
+        // it). Sliding the piece back down by exactly the rise restores that
+        // frame: the crown returns to 0, the biceps line ends up at
+        // capHeight x perpScale, and the distance from the biceps line to the
+        // hem — the part of the sleeve that covers the arm — is untouched.
+        if (r.ok) {
+            const double crownY = sleeve.commands[1].to.y;  // the cap apex
+            if (crownY < 0) translatePiece(sleeve, 0, -crownY);
+
+            // RE-ANCHOR THE UNDERARM SEAMS ONTO THE WIDENED CORNERS. The rule
+            // is not new — it is the one stated 40 lines above, where capSideX
+            // is built: "the underarm control point nearest the cap must not
+            // sit INSIDE the cap corner, or the seam overshoots inward and the
+            // cubic loops back on itself." The büzgü moves the corner outward
+            // AFTER that rule was applied, so it has to be applied again with
+            // the corner the piece now has. Without this the drawn piece grows
+            // a needle-thin spike at each underarm (seen on the first draw of
+            // KOSU/ciktilar/puf-kol.png) — the exact loop-back the rule names.
+            const Point cL = sleeve.commands[0].to, cR = sleeve.commands[2].to;
+            const Point hR = sleeve.commands[static_cast<size_t>(hemIndex) - 1].to;
+            const Point hL = sleeve.commands[static_cast<size_t>(hemIndex)].to;
+            const double side = std::max(capSideX, std::fabs(cR.x));
+            const double hHalf = std::fabs(hR.x);
+            PathCommand& ur = sleeve.commands[static_cast<size_t>(underarmRightIndex)];
+            ur.cp1 = {side, cR.y + (hR.y - cR.y) * 0.4};
+            ur.cp2 = {hHalf * 1.05, hR.y - (hR.y - cR.y) * 0.2};
+            PathCommand& ul = sleeve.commands[static_cast<size_t>(underarmLeftIndex)];
+            ul.cp1 = {-hHalf * 1.05, hL.y - (hL.y - cL.y) * 0.2};
+            ul.cp2 = {-side, cL.y + (hL.y - cL.y) * 0.4};
+        }
         // A refusal is NOT swallowed: the piece keeps its plain cap and the
         // caller is told, by name, that this sleeve is not gathered. Drawing a
         // sleeve called "Puff Sleeve" with a plain cap and saying nothing is

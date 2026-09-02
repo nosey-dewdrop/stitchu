@@ -102,7 +102,10 @@ for (const k of KOLONLAR) {
   const front = /<g[^>]*data-view="front"[\s\S]*?<\/g>/.exec(svg);
   veri.push({ ...k, kol, oyuk, kapak, oran: kapak / oyuk, bb: bbox(kol.commands),
               flat: svg, frontOnly: front ? front[0] : null,
-              isaret: (kol.notches || []).length / 2 });
+              isaret: ((kol.notches || []).length + (kol.markings || []).length) / 2,
+              // Kapak buzgu isaretleri `markings`e, etek buzgusu `notches`a
+              // basilir (buzgu.cpp stampMarks). Ikisi de cizilir.
+              tik: [...(kol.notches || []), ...(kol.markings || [])] });
 }
 
 // ── çizim ──────────────────────────────────────────────────────────────────
@@ -132,8 +135,7 @@ veri.forEach((v, i) => {
   const dx = ox + PAD + ((COLW - 2 * PAD) - v.bb.w * S) / 2 - v.bb.x * S;
   inner += `<g transform="translate(${dx} ${gy}) scale(${S})">` +
     `<path d="${pathOf(v.kol.commands)}" fill="none" stroke="${col}" stroke-width="${(vurgu ? 2.4 : 1.4) / S}"/>` +
-    ((v.kol.notches && v.kol.notches.length)
-      ? `<path d="${pathOf(v.kol.notches)}" fill="none" stroke="${col}" stroke-width="${1.6 / S}"/>` : '') +
+    (v.tik.length ? `<path d="${pathOf(v.tik)}" fill="none" stroke="${col}" stroke-width="${1.6 / S}"/>` : '') +
     `</g>`;
 
   // 3) ÖLÇÜLEN SAYILAR (motorun o anki çıktısından)
@@ -142,7 +144,7 @@ veri.forEach((v, i) => {
     `kapak yayi         ${v.kapak.toFixed(1)} mm`,
     `kol oyugu          ${v.oyuk.toFixed(1)} mm`,
     `kapak / oyuk       ${v.oran.toFixed(4)}`,
-    `buzgu isareti      ${v.isaret}`,
+    `parca isareti      ${v.isaret}`,
   ];
   satir.forEach((s, j) => {
     inner += `<text x="${ox + PAD}" y="${H - 96 + j * 17}" font-family="monospace" font-size="12" fill="#333">${s}</text>`;
@@ -159,7 +161,10 @@ const out = join(ROOT, 'KOSU/ciktilar');
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'puf-kol.svg'), svg);
 const { Resvg } = await import(join(ROOT, 'engine/tools/node_modules/@resvg/resvg-js/index.js'));
-const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1720 } }).render().asPng();
+// 2x: buzgu taragi 0.5 pt cizgidir, 1720 px'te dort figure sigmiyordu ve
+// "buzgu cizildi" iddiasi gorulemiyordu. Damla'nin gozune giden dosya, iddiayi
+// tasiyacak cozunurlukte basilir.
+const png = new Resvg(svg, { fitTo: { mode: 'width', value: 3440 } }).render().asPng();
 writeFileSync(join(out, 'puf-kol.png'), png);
 console.log('KOSU/ciktilar/puf-kol.png', png.length, 'bayt');
 for (const v of veri)

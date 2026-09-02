@@ -58,6 +58,9 @@
 const INK = '#1f3a5f';   // contract/flat-convention-v1.json ink.color
 const W_OUTLINE = 2.0;   // contract/flat-convention-v1.json lineClasses.classes.outline.width
 const W_SEAM = 1.0;      // contract/flat-convention-v1.json lineClasses.classes.seam.width
+// Gather-comb spacing as a share of the gathered seam, MEASURED off
+// GIRDI/iyi-flat/adaylar/09 (13 ticks over an 82 px comb = 6.3 px apart).
+const BUZGU_TARAK_ARALIK_ORAN = 0.077; // contract/flat-convention-v1.json sevkPoz.buzgu.tarak.aralikOran
 
 // ===========================================================================
 // THE FLAT POSE CONVENTION (contract/flat-convention-v1.json sevkPoz)
@@ -568,6 +571,13 @@ function buzguOku(P) {
 /** Gather marks: short ticks ACROSS a seam, the standard notation. `pts` is the
  *  drawn seam polyline, `adet` how many marks (the pattern's own count).
  *  Returns an array of two-point segments in drawing coordinates. */
+function poliUzunluk(pts) {
+  if (!Array.isArray(pts) || pts.length < 2) return 0;
+  let L = 0;
+  for (let i = 1; i < pts.length; i++) L += norm(sub(pts[i], pts[i - 1]));
+  return L;
+}
+
 function buzguIsaretleri(pts, adet, uzunlukMM) {
   if (!Array.isArray(pts) || pts.length < 2 || adet < 1) return [];
   const kum = [0];
@@ -1375,31 +1385,45 @@ function buildView(P, which) {
     push('kol', polyD(shape.map((p) => [-p[0], p[1]]), flipY), W_OUTLINE, attr('sol'),
          shape.map((p) => [-p[0], p[1]]));
 
-    // BÜZGÜ MARKS. Short ticks across the gathered seam — the standard notation
-    // for "the fullness is drawn up here". Count = the pattern's own gather
-    // marks on that edge (sleeve.notches, stamped by the büzgü operator), so
-    // the drawing and the pattern say the same number. Class: 0.5 SOLID — the
-    // thinnest weight of the 4:2:1 hierarchy, and solid because the law
-    // reserves the DASHED 0.5 for `dikis-izi` (topstitch) alone.
-    const isaretAdet = Math.max(1, Math.floor(((P.sleeve.notches || []).length) / 2 /
-                                (bz.kapak && bz.etek ? 2 : 1)) || 1);
+    // BÜZGÜ COMB. Short ticks across the gathered seam — the standard notation
+    // for "the fullness is drawn up here". Class: 0.5 SOLID — the thinnest
+    // weight of the 4:2:1 hierarchy, and solid because the law reserves the
+    // DASHED 0.5 for `dikis-izi` (topstitch) alone.
+    //
+    // ⭐ DENSITY IS MEASURED, AND IT IS NOT THE PATTERN'S NOTCH COUNT (2026-09-03).
+    // Round 2 drew THREE ticks here, because it took the count from the pattern
+    // piece's own gather marks. Three ticks is a notch drawing, not a gather:
+    // reference 09 runs a comb of THIRTEEN ticks over 87% of the cap seam
+    // (measured px-by-px, contract flat-convention-v1 sevkPoz.buzgu.tarak).
+    // Two different quantities were being equated — the pattern's three marks
+    // are the Bugra Lower Sleeve's measured ALIGNMENT notches (a sewing
+    // instruction), the drawing's comb is a NOTATION density. The count below
+    // comes from the measured spacing so the comb covers the seam the way the
+    // reference does; the pattern's own count is untouched and still rides on
+    // the piece.
+    const isaretAdet = Math.max(1, Math.round(1 / BUZGU_TARAK_ARALIK_ORAN) - 1);
     const tikMM = Math.max(6, (P.sleeve.seamAllowance || 15) * 0.7);
-    const bzAttr = (yan, tur, o) =>
+    // The comb declares the seam it sits on, in drawn mm, so its COVERAGE is a
+    // measurement and not an arithmetic identity: the gate compares the span of
+    // the marks against this length (contract sevkPoz.buzgu.tarak.kapsamaOranMin).
+    const bzAttr = (yan, tur, o, dikisMM) =>
       ` data-view="${F ? 'front' : 'back'}" data-yan="${yan}"` +
-      ` data-buzgu="${tur}" data-buzgu-oran="${o.toFixed(4)}"`;
-    const bzPush = (segler, tur, o) => {
+      ` data-buzgu="${tur}" data-buzgu-oran="${o.toFixed(4)}"` +
+      ` data-buzgu-dikis-mm="${dikisMM.toFixed(2)}"`;
+    const bzPush = (segler, tur, o, dikisMM) => {
       for (const [a, b] of segler) {
-        push('buzgu', polyD([a, b], flipY), W_TOPSTITCH, bzAttr('sag', tur, o), [a, b]);
+        push('buzgu', polyD([a, b], flipY), W_TOPSTITCH, bzAttr('sag', tur, o, dikisMM), [a, b]);
         const m = [[-a[0], a[1]], [-b[0], b[1]]];
-        push('buzgu', polyD(m, flipY), W_TOPSTITCH, bzAttr('sol', tur, o), m);
+        push('buzgu', polyD(m, flipY), W_TOPSTITCH, bzAttr('sol', tur, o, dikisMM), m);
       }
     };
     if (bz.kapak && out.notes.armholePts) {
-      bzPush(buzguIsaretleri(out.notes.armholePts, isaretAdet, tikMM), 'kapak', bz.kapak.oran);
+      bzPush(buzguIsaretleri(out.notes.armholePts, isaretAdet, tikMM), 'kapak', bz.kapak.oran,
+             poliUzunluk(out.notes.armholePts));
     }
     if (bz.etek && depth > 0) {
       const c = [sub(g.out, scale(g.d, depth)), sub(g.inn, scale(g.d, depth))];
-      bzPush(buzguIsaretleri(c, isaretAdet, tikMM), 'etek', bz.etek.oran);
+      bzPush(buzguIsaretleri(c, isaretAdet, tikMM), 'etek', bz.etek.oran, poliUzunluk(c));
     }
   }
 

@@ -28,17 +28,33 @@
 //       eşitlenmez.
 //   (c) İŞARETLER. Büzgü işaretleri kapak kenarı boyunca EŞİT dağılmış
 //       (aralıklar birbirine %1 içinde) ve sayısı contract'taki ölçülmüş sayı.
+//       HANGİ KATMANDA: `gatherEdge` cloth'u OYNATIR, yani verdiği parça zaten
+//       başka bir parçadır; işaretleri `markings`e basar — bir kalıbın çizili
+//       dikiş talimatlarının durduğu yere, ve motorun kendi C++ kapısı
+//       `sleeve_check`'in "crown gather marks present" derken baktığı yere.
+//       `markGatheredEdge` tek nokta oynatmamaya söz verdiği için ONUN işareti
+//       teknik `notches` katmanında kalır (golden bayt-aynılığı korunur).
 //   (d) FLAT. Sevk edilen çizimde büzgü çizgileri VAR (data-rol="buzgu", kanunun
 //       ilan ettiği ağırlık/kesik çiftiyle) ve puf kol büzgüsüzden ÖLÇÜLEBİLİR
 //       biçimde daha dolgun (kol path'inin kapladığı alan).
 //   (e) İKİ KATMAN + REDDETME. İki katmanlı puf (Buğra emsali: dış büzgülü
 //       Upper + gerçek set-in Lower) ÇİZİLİYOR; ve motorun çizemediği bir
 //       konakta ADIYLA reddediyor, sessizce tek katman çizmiyor.
+//   (f) MOTORUN KENDİ C++ KAPISI. (2026-09-03, hakem maddesi 4.) Bu dosyanın
+//       ilk hali yalnız wasm/JS hattını ölçüyordu ve yeşil yanarken motorun
+//       kendi `sleeve_check`'i AYNI özellik için 45 kez kırmızıydı ve TERS
+//       şeyi söylüyordu ("crown wider than plain" — büzgülü taç düz taçtan
+//       GENİŞ olmalı). Bir kapı, ölçtüğü hattı kendi seçemez. Artık bu kapı
+//       derlenmiş `sleeve_check` ve `locket_check` ikililerini KOŞAR ve
+//       çıkışlarını şart koşar; ayrıca aynı iki hükmü (taç düz taçtan geniş,
+//       kapak yüksekliği yayınlanmış Aldrich bandı 130-150 mm içinde) çizilen
+//       kalıptan bağımsız olarak da ölçer.
 //
 // ANTI-HACK: bu kapı motordan tek bir sabit import etmez. Ölçtüğü her sayı ya
 // wasm paketinin bastığı kalıptan ya da sevk edilen SVG'den okunur; beklenen
 // değerler contract/tables.json'dan (kaynağıyla) gelir.
 import { readFileSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -173,8 +189,11 @@ console.log('\n--- (c) ISARETLER: kapak kenari boyunca esit dagilmis');
   const role = (s.edgeRoles || []).find((r) => r.role === 'sleeve_cap');
   const poly = edgePoly(s, role.first, role.last);
   const total = polyLen(poly);
-  // Her işaret bir Move + bir Line; ortası tikin orta noktası.
-  const nots = s.notches || [];
+  // Her işaret bir Move + bir Line; ortası tikin orta noktası. Kapak büzgüsü
+  // `markings`e basılır (yukarıdaki (c) notu), ve düz kolun markings'i taban:
+  // ARADAKİ FARK büzgü işaretleridir, sayısı bu dosyada değil operatörde durur.
+  const taban = (kol(dDuz.pattern).markings || []).length;
+  const nots = (s.markings || []).slice(taban);
   const merkez = [];
   for (let i = 0; i + 1 < nots.length; i += 2)
     merkez.push([(nots[i].x + nots[i + 1].x) / 2, (nots[i].y + nots[i + 1].y) / 2]);
@@ -205,12 +224,15 @@ console.log('\n--- (c) ISARETLER: kapak kenari boyunca esit dagilmis');
     if (enKotu > 0.01) FAIL(`(c) isaret araliklari esit degil: ${araliklar.map((v) => v.toFixed(1)).join(' / ')} mm (en kotu sapma %${(enKotu * 100).toFixed(2)})`);
     else OK(`(c) ${merkez.length} isaret, araliklar ${araliklar.map((v) => v.toFixed(1)).join(' / ')} mm (sapma %${(enKotu * 100).toFixed(2)})`);
   }
-  // Balon + puf İKİ UÇLU: hem kapakta hem etekte işaret var.
+  // Balon + puf İKİ UÇLU: kapakta VE etekte işaret var — ve ikisi ayrı
+  // operatör çağrısından geldiği için ayrı katmanlarda durur (kapak markings,
+  // etek notches). "İki uçlu" = ikisi de dolu.
   const b = kol(dBalonPuf.pattern);
-  const bn = (b.notches || []).length / 2;
-  const only = (kol(dBalon.pattern).notches || []).length / 2;
-  if (!(bn > only && only > 0)) FAIL(`(c) balon iki-uclu degil: buzgusuz kapakta ${only}, puf kapakta ${bn} isaret`);
-  else OK(`(c) balon iki-uclu: etek buzgusu ${only} isaret, kapak buzgusuyle toplam ${bn}`);
+  const etek = (b.notches || []).length / 2;
+  const kapak = ((b.markings || []).length - (kol(dBalon.pattern).markings || []).length) / 2;
+  if (!(etek > 0 && kapak > 0))
+    FAIL(`(c) balon iki-uclu degil: etek ${etek}, kapak ${kapak} isaret`);
+  else OK(`(c) balon iki-uclu: etek buzgusu ${etek} isaret + kapak buzgusu ${kapak} isaret`);
 }
 
 // ===================================================================== (d) FLAT
@@ -266,6 +288,34 @@ console.log('\n--- (d) FLAT: buzgu cizgileri var, kol olculebilir bicimde dolgun
     FAIL(`(d) puf kol dolgun degil: alan ${aPuf.toFixed(0)} vs duz ${aDuz.toFixed(0)} mm2 (x${(aPuf / aDuz).toFixed(3)})`);
   else OK(`(d) puf kol alani ${aPuf.toFixed(0)} mm2, duz kol ${aDuz.toFixed(0)} mm2 — x${(aPuf / aDuz).toFixed(3)} dolgun`);
   if (aBalonPuf > 0) OK(`(d) balon+puf kol alani ${aBalonPuf.toFixed(0)} mm2`);
+
+  // TARAK KAPSAMASI (hakem maddesi 5). Uc dik tik bir centik cizimidir, buzgu
+  // degil: referans 09'da tarak kapak dikisinin 0.87'sini kapliyor. Kapsama
+  // TAUTOLOJI olmasin diye cizici, taragin uzerinde durdugu dikisin cizili
+  // boyunu path'e yaziyor (data-buzgu-dikis-mm); burada isaretlerin ACIKLIGI
+  // o boyla kiyaslanir.
+  const TARAK = LAW.sevkPoz.buzgu.tarak;
+  const kapakTik = [...svgPuf.matchAll(/<path([^>]*data-buzgu="kapak"[^>]*)>/g)]
+    .map((m) => m[1])
+    .filter((a) => /data-yan="sag"/.test(a) && /data-view="front"/.test(a))
+    .map((a) => {
+      const d = /d="([^"]+)"/.exec(a)[1].match(/-?\d+\.?\d*/g).map(Number);
+      return [(d[0] + d[2]) / 2, (d[1] + d[3]) / 2];
+    });
+  const dikisMM = Number((/data-buzgu-dikis-mm="([\d.]+)"/.exec(svgPuf) || [])[1]);
+  if (!(kapakTik.length > 1) || !(dikisMM > 0)) {
+    FAIL(`(d) tarak olculemedi: ${kapakTik.length} tik, dikis ${dikisMM} mm`);
+  } else {
+    const xs = kapakTik.map((p) => p[0]), ys = kapakTik.map((p) => p[1]);
+    const aciklik = Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+    const kapsama = aciklik / dikisMM;
+    const bek = Math.round(1 / TARAK.aralikOran) - 1;
+    if (kapakTik.length !== bek)
+      FAIL(`(d) tarak ${kapakTik.length} tik cizdi, kanunun araligi (${TARAK.aralikOran}) ${bek} istiyor`);
+    else if (kapsama < TARAK.kapsamaOranMin)
+      FAIL(`(d) tarak kapak dikisinin ${(kapsama * 100).toFixed(0)}%'ini kapliyor, taban %${TARAK.kapsamaOranMin * 100}`);
+    else OK(`(d) tarak ${kapakTik.length} tik, kapak dikisinin %${(kapsama * 100).toFixed(0)}'ini kapliyor (taban %${TARAK.kapsamaOranMin * 100}, referans 09'da %87)`);
+  }
 }
 
 // ============================================================== (e) IKI KATMAN
@@ -303,6 +353,53 @@ console.log('\n--- (e) IKI KATMAN: Bugra emsali cizilir, olmayan konakta ADIYLA 
   if (katman > 0) FAIL('(e) konak degilken de iki katman cizilmis');
   else if (!red) FAIL(`(e) konak degilken SESSIZ tek katman cizildi — adiyla reddetmedi. rehber: ${(r.pattern.guideSteps || []).slice(-2).join(' | ')}`);
   else OK(`(e) konak degilken adiyla reddetti: "${red.slice(0, 110)}..."`);
+}
+
+// =========================================== (f) MOTORUN KENDI C++ KAPILARI
+// Hakem maddesi 4. Bu dosyanin ilk hali wasm hattini olcup yesil basiyordu,
+// motorun kendi `sleeve_check`'i ise ayni ozellik icin 45 kez kirmiziydi. Bir
+// kapi, olctugu hatti kendi secemez: burada C++ kapilari KOSULUR.
+console.log('\n--- (f) MOTORUN KENDI C++ KAPILARI: sleeve_check + locket_check');
+{
+  for (const [ad, sart] of [['sleeve_check', /all sleeve checks pass/],
+                            ['locket_check', /ALL LOCKET CHECKS PASS/]]) {
+    const bin = join(ROOT, 'engine/build', ad);
+    if (!existsSync(bin)) { FAIL(`(f) ${ad} derlenmemis (${bin}) — kapi olculemedi`); continue; }
+    const r = spawnSync(bin, { encoding: 'utf8' });
+    const out = `${r.stdout || ''}${r.stderr || ''}`;
+    const kirmizi = out.split('\n').filter((l) => /\[FAIL\]|FAILED/.test(l));
+    if (!sart.test(out))
+      FAIL(`(f) ${ad} KIRMIZI (${kirmizi.length} satir): ${kirmizi.slice(0, 3).join(' | ')}`);
+    else OK(`(f) ${ad} yesil (${out.split('\n').filter((l) => /\[PASS\]/.test(l)).length} hukum)`);
+  }
+  // Ve ayni iki hukum, cizilen kaliptan bagimsiz olarak.
+  const kirisMM = (p) => {
+    const c = p.commands.filter((x) => x.type !== 'close');
+    return Math.max(...c.map((x) => x.x)) - Math.min(...c.map((x) => x.x));
+  };
+  const duz = kol(dDuz.pattern), puf = kol(dPuf.pattern), yum = kol(dYum.pattern);
+  for (const [ad, p] of [['puffed', puf], ['gathered', yum]]) {
+    const k = kirisMM(p), k0 = kirisMM(duz);
+    if (!(k > k0 + 5)) FAIL(`(f) ${ad} taci duz tactan genis degil (${k.toFixed(1)} vs ${k0.toFixed(1)} mm)`);
+    else OK(`(f) ${ad} taci duz tactan genis: ${k.toFixed(1)} > ${k0.toFixed(1)} mm (x${(k / k0).toFixed(3)})`);
+  }
+  // Kapak yuksekligi = tacin y=0'indan bicep hattina. Aldrich EU38 bandi
+  // 13-15cm (knowledge/cap-ease-isareti-2026-08-17.md 2. bolum) — motor bu
+  // bedende cizdigi kalibi o bandin USTUNE cikaramaz.
+  // Kapak yuksekligi = tacin tepesi (y minimum) ile bicep hattinin (kapak
+  // kenarinin kirisi, yani parcanin ilk noktasi) arasi — `sleeve_check`'in
+  // capTopY'siyle ayni okuma.
+  const capH = (p) => {
+    const c = p.commands.filter((x) => x.type !== 'close');
+    return p.commands[0].y - Math.min(...c.map((x) => x.y));
+  };
+  for (const [ad, p, band] of [['duz', duz, true], ['puffed', puf, true], ['gathered', yum, true]]) {
+    void band;
+    const h = capH(p);
+    if (!(h >= 130 && h <= 150))
+      FAIL(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(1)} mm — yayinlanmis Aldrich bandi 130-150 mm disinda`);
+    else OK(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(1)} mm, Aldrich bandi 130-150 mm icinde`);
+  }
 }
 
 console.log(fail ? `\nBUZGU KATMAN: ${fail} FAIL` : '\nBUZGU KATMAN: hepsi yesil');

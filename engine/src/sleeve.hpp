@@ -83,6 +83,26 @@ inline double capBuzguRatio(SleeveCap c) {
     return c == SleeveCap::Puffed ? contract::kGatherRatio_sleeveCapPuffed
          : c == SleeveCap::Gathered ? contract::kGatherRatio_sleeveCapGathered : 0.0;
 }
+// ⭐ WHERE THE GATHER GOES — THE CAP-HEIGHT CEILING (round 3, 2026-09-03).
+//
+// The ratio above says HOW MUCH surplus. This says WHERE it may sit. Round 2
+// put all of it in the cap height and produced an EU38 cap 202.7 mm tall
+// against a published band of 130-150 mm, and turned `sleeve_check` red 45
+// times ("crown wider than plain (217 > 217)"). The ceiling here is that
+// published band's TOP, and nothing above it:
+//
+//   PUFFED   contract kGatherRatio_sleeveCapPuffedLift — Aldrich's EU38 sleeve
+//            cap-height band top 150.0 mm over the engine's own drafted EU38
+//            plain cap height 136.49 mm. A puff head may rise to the top of the
+//            band; the surplus that does not fit under it goes into the chord,
+//            which is what the measured Bugra puff does too (chord x1.459).
+//   GATHERED 1.0 — a soft gathered head keeps the drafted cap HEIGHT and puts
+//            the whole gather on the biceps line. This is not a pick either:
+//            `sleeve_check`'s own law for this style is "cap height unchanged
+//            (soft gather)", and that is the difference between the two styles.
+inline double capBuzguPerpMax(SleeveCap c) {
+    return c == SleeveCap::Puffed ? contract::kGatherRatio_sleeveCapPuffedLift : 1.0;
+}
 // Gather marks along the gathered cap. THREE, and the number is measured, not
 // picked: the Bugra Locket's Lower Sleeve carries exactly three notches with no
 // counterpart on the plain cap — arc 127, 412, 446 — and CLAUDE.md names them

@@ -1078,6 +1078,14 @@ target_link_libraries(shell-audit PRIVATE engine)
 add_executable(waistfold-probe tools/waistfold-probe.cpp)
 target_link_libraries(waistfold-probe PRIVATE engine)
 
+# puf-probe: DIAGNOSTIC, not a gate and not in ctest. One line per stress body
+# carrying the plain sleeve cap's chord, sagitta and armhole. It is the tool
+# that measured the number contract/tables.json
+# draft.gatherRatios._sleeveCapPuffedLiftSource cites (EU38 plain cap height
+# 136.98 mm), so the cited measurement can be re-run instead of trusted.
+add_executable(puf-probe tools/puf-probe.cpp)
+target_link_libraries(puf-probe PRIVATE engine)
+
 # arapconv-probe: DIAGNOSTIC, not a gate and not in ctest. One line per size
 # carrying the three numbers the ARAP convergence stop has to move together —
 # the waist turn angle, the h3c mm residual, and the worst panel strain.

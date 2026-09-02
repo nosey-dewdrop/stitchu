@@ -328,8 +328,36 @@ bool apply(DraftedPattern& pattern, const GarmentSpec& spec,
         // the same S-cap family, spread wider by the measured Bugra factor so
         // the surplus GATHERS into the armhole; the band's lower edge scoops up
         // under the crown and gathers onto the Lower Sleeve.
-        const double tipX = bugra::crownWidthFactor * capHalf;
-        const double tipY = bugra::crownDepthShare * capH;
+        //
+        // ⭐ THE CROWN COMES FROM THE BUZGU OPERATOR NOW (M1-puf round 3).
+        // Until 2026-09-03 the tips were two hand-set constants — crownWidthFactor
+        // 1.50 and crownDepthShare 1.00 — and the crown they drew ran into the
+        // armhole with a 34.00% surplus while the engine's declared, MEASURED
+        // buzgu for a gathered head is 29.00%. The validator said so in its own
+        // words: "[cap] Upper Sleeve: gathered-head surplus 34.00% is not the
+        // declared buzgu 29.00% (buzgu operator did not run, or the cap was
+        // rewritten after it)". It had not run. 34% is the Bugra CUT-line
+        // surplus band's low end (+34.2...+43.2%); the engine works on the SEWING
+        // line, where the same measurement reads +29.0%.
+        // So the two-layer Bugra puff and the one-piece puff sleeve now spread by
+        // the SAME law and the same numbers: sagitta to the published cap-height
+        // ceiling, the remainder into the chord, solved so the drawn crown is
+        // exactly ratio x this draft's own armhole.
+        const std::vector<PathCommand> unitCrown{
+            PathCommand::move({-capHalf, capH}),
+            capCubic({-capHalf, capH}, {0, 0}, true),
+            capCubic({0, 0}, {capHalf, capH}, false)};
+        const BuzguFrame crownFrame = BuzguBlock::solveFrame(
+            unitCrown, {-capHalf, capH}, {capHalf, capH},
+            pattern.sleeveArmholeLenMM * SleeveBlock::capBuzguRatio(SleeveCap::Puffed),
+            SleeveBlock::capBuzguPerpMax(SleeveCap::Puffed));
+        if (!crownFrame.ok) return refuse(pattern, "gathered crown frame");
+        // capCubic's control points are affine in its two endpoints, so scaling
+        // x and y independently commutes with drawing it: rebuilding the cap at
+        // (capHalf x chordScale, capH x perpScale) IS the spread the operator
+        // solved, crown re-anchored at the origin.
+        const double tipX = crownFrame.chordScale * capHalf;
+        const double tipY = crownFrame.perpScale * capH;
         const Point tipL{-tipX, tipY}, tipR{tipX, tipY}, crown{0, 0};
         const double cY = bugra::bandCenterShare * tipY;
         const PathCommand crownL = capCubic(tipL, crown, true);

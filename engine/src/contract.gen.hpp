@@ -17,6 +17,7 @@ inline constexpr double kGatherRatio_shirred = 2;
 inline constexpr double kGatherRatio_smocked = 3;
 inline constexpr double kGatherRatio_sleeveCapPuffed = 1.29;
 inline constexpr double kGatherRatio_sleeveCapGathered = 1.235;
+inline constexpr double kGatherRatio_sleeveCapPuffedLift = 1.095;
 
 // draft.euSizeChart — standard bodies (sizechart.hpp expands this X-macro).
 // Columns: bustCM, waistCM, hipCM, shoulderCM, backLengthCM, armLengthCM, neckCM
