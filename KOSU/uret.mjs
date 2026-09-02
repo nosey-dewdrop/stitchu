@@ -73,7 +73,10 @@ function png(svgPath, pngPath, w, h) {
       `--user-data-dir=${d}/profil`,
       `--screenshot=${pngPath}`, `--window-size=${w},${h}`,
       '--no-sandbox', '--default-background-color=FFFFFF', `file://${d}/i.html`],
-      { stdio: 'ignore', timeout: 60000 });
+      // killSignal SIGKILL (2026-09-02 hakem karari 4): timeout'un varsayilan
+      // SIGTERM'ini headless Chrome bazen yutup PNG basina 60 sn surundugu
+      // icin; SIGKILL yutulamaz.
+      { stdio: 'ignore', timeout: 60000, killSignal: 'SIGKILL' });
     return true;
   } catch { return false; } finally { rmSync(d, { recursive: true, force: true }); }
 }
