@@ -19,7 +19,7 @@
 // (contract/primitives-v1.json). parse() returns the arithmetic
 // (hesap.toplam === eslesen + stop + anlasilmayan) so a gate can prove the
 // zero-silence property instead of trusting it.
-import { VOCAB, canonical } from './vocab.gen.js?v=141';
+import { VOCAB, canonical } from './vocab.gen.js?v=143';
 
 // Axes create.js holds that predate the generated vocabulary (see
 // backend/spec-core.js ENUMS — the same two conveniences, same values).

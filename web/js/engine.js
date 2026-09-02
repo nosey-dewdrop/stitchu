@@ -3,10 +3,10 @@
 // means the validator blocked the draft, callers must not show a PDF.
 let enginePromise = null;
 
-import { VOCAB, canonical } from './vocab.gen.js?v=141';
+import { VOCAB, canonical } from './vocab.gen.js?v=143';
 // KUMAŞ KATALOĞU (F6): the three presets a shopper can pick, each carrying its
 // four measured numbers. `unset` overlays nothing.
-import { applyFabricPreset } from './fabric-catalog.js?v=141';
+import { applyFabricPreset } from './fabric-catalog.js?v=143';
 
 // Int-enum lookup against the generated vocabulary (engine/vocab.json).
 // ABSENT (undefined/null/'') means "the default" and maps to 0 — absence is
@@ -56,7 +56,7 @@ export function loadEngine() {
   if (!enginePromise) {
     enginePromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'vendor/stitchu-engine.js?v=141';
+      script.src = 'vendor/stitchu-engine.js?v=143';
       script.onload = () => window.createStitchuEngine().then(resolve, reject);
       script.onerror = () => reject(new Error('engine failed to load'));
       document.head.appendChild(script);
@@ -366,8 +366,8 @@ export async function draft(spec, measurements) {
 // The shipped flat is drawn from draftJSON's own 2D pieces. The reasoning, the
 // measurements behind it and what it replaced are in web/lib/flat-from-pattern.js
 // and are not restated here.
-import { CONTRACT } from './contract.gen.js?v=141';
-import { renderFlatFromPattern } from '../lib/flat-from-pattern.js?v=141';
+import { CONTRACT } from './contract.gen.js?v=143';
+import { renderFlatFromPattern } from '../lib/flat-from-pattern.js?v=143';
 
 /** The published EU chart body, from the SAME contract table the engine's own
  *  size chart is generated from. An unknown label is refused by name — a

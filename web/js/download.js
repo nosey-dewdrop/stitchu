@@ -40,15 +40,15 @@
 // their fields the user's photo actually showed — measured %58.3 inferred, and
 // zero lines anywhere on this path said so. The stamp is applied HERE, on the
 // shipped download path, on the root element of the finished document.
-import * as koken from './provenance.js?v=141';
+import * as koken from './provenance.js?v=143';
 
-import { pathD, bounds } from './sheet.js?v=141';
-import * as sheet from './sheet.js?v=141';
-import { makePdfCore } from '../lib/pdf-core.js?v=141';
-import { dxfRecipe, dxfSpec, flatDrawing } from './engine.js?v=141';
+import { pathD, bounds } from './sheet.js?v=143';
+import * as sheet from './sheet.js?v=143';
+import { makePdfCore } from '../lib/pdf-core.js?v=143';
+import { dxfRecipe, dxfSpec, flatDrawing } from './engine.js?v=143';
 // F3-arka: the back view of the flat says where the back CAME FROM. An invented
 // back (front photo only) is stamped on the drawing itself — see arka-koken.js.
-import { arkaDurumu } from '../lib/arka-koken.js?v=141';
+import { arkaDurumu } from '../lib/arka-koken.js?v=143';
 
 // Drafting-table pastels + ink: the studio's own palette, kept so the exported
 // SVG looks like the pattern the user was looking at when they pressed save.
