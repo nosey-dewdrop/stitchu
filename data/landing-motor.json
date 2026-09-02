@@ -1,0 +1,40 @@
+{
+  "_uretildi": "engine/tools/gen-landing-motor.mjs — ELLE YAZILMAZ. Sayılar motorun kendi draftJSON çıktısından, çizimler aynı koşudan.",
+  "_yasa": [
+    "web/index.html sayı taşıyan iddialarını bu dosyadan (data-motor) ya da web/data/vitrin.json'dan (data-v) okur.",
+    "engine/tests/vitrin_gercek_check.mjs bu üreteci yeniden koşturur; sapmış sayı/çizim KIRMIZI."
+  ],
+  "kaynak": "engine.draftJSON (wasm) + contract/layers/shape-ratios.json + web/js/fabric-catalog.js",
+  "dress": {
+    "spec": {
+      "garment": "dress",
+      "skirtStyle": "aLine",
+      "sleeveStyle": "straight"
+    },
+    "beden": "EU38",
+    "parcalar": 5,
+    "parcaAdlari": "Bodice Front · Bodice Back · Skirt Front · Skirt Back · Sleeve",
+    "kumasM": 2,
+    "adimlar": 14
+  },
+  "alineKnit": {
+    "spec": {
+      "garment": "dress",
+      "skirtStyle": "aLine",
+      "sleeveStyle": "none",
+      "fabric": "knit",
+      "fabricStretchPct": 50
+    },
+    "beden": "EU38",
+    "parcalar": 3
+  },
+  "beden": {
+    "sayi": 8,
+    "liste": "EU34, EU36, EU38, EU40, EU42, EU44, EU46, EU48",
+    "kaynak": "contract/layers/shape-ratios.json"
+  },
+  "kumas": {
+    "sayi": 5,
+    "kaynak": "web/js/fabric-catalog.js (contract/fabric-catalog-v1.json)"
+  }
+}

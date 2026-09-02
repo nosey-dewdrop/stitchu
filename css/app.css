@@ -123,7 +123,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .dl-ops { margin: 10px 0 0; max-width: 68ch; }
 .dl-ops-title { font-size: 13px; margin: 12px 0 8px; color: var(--accent); letter-spacing: .3px; }
 .dl-ops-yes, .dl-ops-no { font-size: 12.5px; line-height: 1.5; margin: 0 0 7px; padding: 0 0 0 10px;
-  color: var(--gray); border-left: 2px solid rgba(0,0,0,.12); }
+  color: var(--gray); border-left: 1px solid rgba(0,0,0,.12); }
 .dl-ops-yes { border-left-color: var(--accent); }
 .dl-ops-why { display: block; color: var(--gray); opacity: .85; }
 /* The SURFACE each block of answers is about (F5-E, borç 68). Two readings are
@@ -134,7 +134,7 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 /* KÖKEN (F0): which fields the photo did not show. Sits above the buttons, in
    the same ink as the honest-refusal line — it is the same kind of sentence. */
 .dl-koken { font-size: 13px; line-height: 1.55; margin: 0 0 16px; padding: 10px 12px;
-  color: var(--gray); background: rgba(0,0,0,.025); border-left: 2px solid var(--accent);
+  color: var(--gray); background: rgba(0,0,0,.025); border-left: 1px solid var(--accent);
   border-radius: 2px; max-width: 60ch; }
 .missing-card { margin: 22px 0 8px; padding: 20px 22px; border: 1px solid var(--seam-color, rgba(0,0,0,.12));
   border-radius: 4px; background: rgba(143,32,56,.03); max-width: 620px; }
