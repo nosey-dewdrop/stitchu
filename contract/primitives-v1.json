@@ -373,6 +373,60 @@
         "mutasyon": "M1: hem.to.y += mm -> mm*0.5 (ikili 10ef9565 -> 40717b22) => extend_check EXIT 1."
       }
     },
+    "op.shorten": {
+      "tanim": "Etek ucundan bir grain-paraleli bant CIKARMA — op.extend'in negatifi DEGIL: uzatma etek ucunun altina kumas ekler (hicbir landmark kimildamaz), kisaltma ise iki komsu dikisi KENDI CIZILI dogrultusunda geri kirpar ve etek ucunu iki kirpma noktasina tasiyan afin haritayla yukari alir. Sonuc kagit uzerindeki lengthen/shorten cizgisini katlamakla ayni: A-line'in aci/klosu korunur, etek agzi kendiliginden daralir. Komsu kenar duz cizgi degilse (egri) kirpma noktasi cozulmeden kisaltma YAPILMAZ, ret ADIYLA doner.",
+      "parametreler": {
+        "deltaMM": {
+          "tip": "mm",
+          "aralik": "0 < mm < min(komsu kenarlarin olculen dikey dusumu)",
+          "not": "sinir sabit degil, iki komsu kenarin CIZILEN dusumunden okunur; asan istek olculen sayiyla reddedilir"
+        }
+      },
+      "motorda_kapi": "shorten_check",
+      "olculen": {
+        "nerede": "engine/src/patternedit.cpp — shortenOne(); urun yolu garment.cpp, kesim cizgisi pasindan ONCE",
+        "hangi_mm": "EU38 dokuma A-line elbise, 20.0 mm istendi: Skirt Front/Back boy 662.0000 -> 642.0000 mm (tam mm), etek ucu yayi 310.7441 -> 307.9739 mm (daralma = A-line kirpmasinin dogru sonucu), cevre 1836.1156 -> 1793.1535 mm.",
+        "bolge_disi": "Etek ucu ve ona biten komsu kenar DISINDA her komut bayt-ayni; kol bayt-ayni (shorten_check, komut komut).",
+        "opt_in": "editShortenMM == 0 iken hic kosmaz; golden bayt-birebir.",
+        "ret": "negatif mm ('kisaltma uzatma degildir') ve olculen siniri asan mm, kalibi OYNATMADAN adiyla reddedilir ve rapor drafta 'edit' anahtariyla biner (shorten_check bunu olcer)"
+      }
+    },
+    "op.sleeveExtend": {
+      "tanim": "op.extend'in grain-dususu, KOL parcasinin kendi en alt kenarina (kol agzi/bilek) uygulanir. Ayni yasa: kenar TASINIR (yay uzunlugu degismez), iki dikey mm parcasi eklenir, kol agzindan onceki/sonraki her komut bayt-ayni kalir.",
+      "parametreler": {
+        "deltaMM": {
+          "tip": "mm",
+          "aralik": "> 0",
+          "not": "negatif = kisaltma istegi, ayri operatordur, sessizce cevrilmez"
+        }
+      },
+      "motorda_kapi": "sleeveExtend_check",
+      "olculen": {
+        "nerede": "engine/src/patternedit.cpp — extendOne(op.sleeveExtend, 'kol agzi'); ev sahibi kSleeveHosts (sleeve.cpp'nin kendi adlari)",
+        "hangi_mm": "EU38 dokuma uzun kollu elbise, 20.0 mm istendi: Sleeve boy 556.8000 -> 576.8000 mm, kol agzi yayi 248.4000 -> 248.4000 mm (TASIMA), cevre 1515.3650 -> 1555.3650 mm (+2x mm).",
+        "bolge_disi": "Govde + etek bayt-ayni (sleeveExtend_check).",
+        "opt_in": "editSleeveExtendMM == 0 iken hic kosmaz; golden bayt-birebir.",
+        "ret": "kolsuz kalipta 'bu kalipta kol YOK — once sleeveStyle secin' cumlesiyle, kalibi oynatmadan reddedilir (sonraki adim cumlenin icinde)"
+      }
+    },
+    "op.neckDeepen": {
+      "tanim": "CF yaka noktasini kumas katinda mm kadar asagi alma. Nokta konturun KENDI MOVE ankrajidir (on govde CF yaka noktasindan cizilmeye baslar ve CF kenari ayni noktaya kapanir — ikisi de motorda OLCULUR, varsayilmaz). Yaka egrisinin CF tegeti noktayla birlikte tasinir, omuz ucu HIC kimildamaz. Bias yaka seridi OLCULEN yeni yay kadar uzatilir ve kesim notuna uzatildigi yazilir; yakali/pervazli (Collar / Neck Facing) kalipta eski egriye kesilmis ikinci parca dikilemez kalacagi icin ret ADIYLA doner.",
+      "parametreler": {
+        "deltaMM": {
+          "tip": "mm",
+          "aralik": "0 < mm < CF kenarinin olculen payi",
+          "not": "pay CF kenarinin kendi geometrisinden (egri kontrol noktasi / cizgi baslangici) okunur; asan istek olculen sayiyla reddedilir"
+        }
+      },
+      "motorda_kapi": "neckDeepen_check",
+      "olculen": {
+        "nerede": "engine/src/patternedit.cpp — neckDeepenOne(); ev sahibi kNeckHostsFront, serit 'Bias binding (neckline)'",
+        "hangi_mm": "EU38 dokuma crew yakali elbise, 20.0 mm istendi: CF derinlik 76.4126 -> 96.4126 mm (tam mm), yarim yaka yayi 104.3631 -> 120.4971 mm, bias serit +32.2679 mm = 2 x yay farki (kumas katinda cizilen yarim on).",
+        "bolge_disi": "Yaka egrisi + CF kenari DISINDA govdenin her komutu, etek ve kol bayt-ayni (neckDeepen_check, komut komut).",
+        "opt_in": "editNeckDeepenMM == 0 iken hic kosmaz; golden bayt-birebir.",
+        "ret": "yakali/pervazli kalipta parca adiyla ('yakada X parcasi var ... once collarType/edgeFinish kapatin') ve negatif mm'de reddedilir, kalip oynamaz"
+      }
+    },
     "op.split": {
       "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu. ⭐ BOLME YERI PARAMETRE DEGIL: motorda splitPanel() kesim sutununu panelin KENDI olculen sutun-deficit profilinden (SurfacePanel::deficitColumnDeg) argmin ile okur ve profil duzse REDDEDER. Bir atFraction parametresi bolmeyi bir KADRANA geri cevirirdi; suppressPanel()'in aci parametresi olmamasi emsaldir.",
       "kaynak_fikir": "GarmentCode Edge.subdivide_param + Interface.substitute — knowledge/TEKNOLOJI-2026-08-23.md:70-71, 355. Kesim yeri kurali bizim: C(c)=sum sutun[0..c] icin max(|C(c)|,|T-C(c)|) minimize eden ic sutun.",

@@ -1201,7 +1201,14 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // enters the cut plan on the same terms as a drafted one. Opt-in and OFF by
     // default: with editExtendMM == 0 and editAttach == 0 this call does nothing
     // at all and the golden dump is byte-identical (RULES 4).
-    runEditProgram(pattern, spec, m);
+    // The program's report is KEPT (F7-edit): a refused edit used to die here
+    // as a discarded return value, i.e. the user asked, the engine said no, and
+    // nobody heard the no. Only a declared edit writes the field, so a no-edit
+    // draft's JSON stays byte-identical.
+    {
+        const EditProgram editProg = runEditProgram(pattern, spec, m);
+        if (!editProg.steps.empty()) pattern.editProgramJSON = editJSON(editProg);
+    }
 
     // CUTTING LINES (last, so every post-pass piece is covered): each real
     // piece gets its sewing line offset outward by its seam allowance — cut on

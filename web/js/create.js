@@ -3,7 +3,7 @@
 // until then the spec picker IS the flow (same manual path the iOS app had).
 import { analyzePhoto, analyzeBankedPhoto, photoAvailable } from './analyze.js?v=141';
 import { validateVision } from './spec-validate.js?v=141';
-import { CONTRACT } from './contract.gen.js?v=141';
+import { CONTRACT, EDIT_LOCALITY } from './contract.gen.js?v=141';
 import { applyStatic, getLang, t } from './i18n.js?v=141';
 import { draft, grade, operatorProgram } from './engine.js?v=141';
 import { printPattern, printGrade, printGradeNested } from './print.js?v=141';
@@ -26,7 +26,7 @@ import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js
 // parser'la aynı spec eksenlerine iner — LLM yok, ağ yok. Anlaşılmayan kelime
 // ADIYLA ekrana düşer (sessiz düşme 0), en yakın Edge/Panel/Stitch primitifine
 // işaret eder. Öncelik kuralı: prompt, fotoğraf okumasını EZER (madde 3).
-import { parsePrompt, birlestir } from './prompt-parse.js?v=141';
+import { parsePrompt, parseEditPrompt, birlestir } from './prompt-parse.js?v=141';
 // F3-arka: ARKA YÜZÜN KÖKENİ (Damla'nın cümlesi): arka fotoğraf VARSA okunur
 // ve tasarlanır; SADECE ön varsa sistem arkayı UYDURUR ve uydurduğunu İLAN
 // eder — en sade dikilebilir arka, akış DURMAZ. Mantık web/lib/arka-koken.js'te
@@ -886,13 +886,24 @@ function showSpec() {
     pStatus.style.color = 'var(--gray)';
     pBtn.addEventListener('click', () => {
       pStatus.textContent = '';
-      const parsed = parsePrompt(ta.value);
-      if (parsed.bos) { pStatus.textContent = t('create.spec.promptempty'); return; }
-      promptParsed = parsed;
-      promptText = ta.value;
-      uygulaPrompt();
-      const okList = Object.entries(parsed.eksenler)
-        .map(([f, e]) => `${e.kelime} → ${f}: ${e.value}`).join(' · ');
+      // F7-edit: sayili edit kaliplari ("yakayi 2cm derinlestir") ONCE cekilir;
+      // parsePrompt kalan metni okur ki "derinlestir" anlasilmadi diye dusmesin.
+      const editParsed = parseEditPrompt(ta.value);
+      const parsed = parsePrompt(editParsed.kalan);
+      const editList = Object.entries(editParsed.alanlar);
+      if (parsed.bos && !editList.length) { pStatus.textContent = t('create.spec.promptempty'); return; }
+      if (!parsed.bos) {
+        promptParsed = parsed;
+        promptText = ta.value;
+        uygulaPrompt();
+      }
+      // mm alanlari dogrudan spec'e yazilir; draft aninda patternedit.cpp kosar
+      // ve cevabini (uygulanan/reddedilen) kendi cumlesiyle sonuc ekranina basar.
+      for (const [f, e] of editList) spec[f] = e.mm;
+      const okList = [
+        ...Object.entries(parsed.eksenler).map(([f, e]) => `${e.kelime} → ${f}: ${e.value}`),
+        ...editList.map(([f, e]) => `${e.kelime} → ${f}: ${e.mm}mm`),
+      ].join(' · ');
       if (okList) pStatus.appendChild(el('div', '', t('create.spec.promptok', { what: okList })));
       for (const u of parsed.anlasilmadi) {
         const line = el('div', '', t('create.spec.promptunknown', { word: u.kelime, hint: u.oneri }));
@@ -1176,6 +1187,34 @@ function showResult(result) {
 // serialized four ways, no second draft and no re-render. A blocked draft never
 // reaches here (showResult only calls this when issues is empty), and the DXF
 // path refuses again inside the engine for the same reason.
+// F7-edit BOLGE YARGISI, tarayicida — kapinin (edit_locality_check.mjs)
+// kostugu yargiyla ayni veri: contract/edit-locality-v1.json, contract.gen.js
+// uzerinden gomulu. Bir alan birden cok bolgeye aitse untouchable listeleri
+// KESISTIRILIR; `gerekce`/`sinif` beyan alanlari karsilastirma disidir (spec-diff
+// pieceBytes ile ayni ilan). Ihlal = bolge disi panelin baytlarinin degismesi.
+function editLocalityReport(before, after, fields) {
+  const zones = new Set();
+  for (const f of fields) for (const z of (EDIT_LOCALITY.fieldZones[f] || [])) zones.add(z);
+  const lists = [...zones].map((z) => (EDIT_LOCALITY.zones[z] ? EDIT_LOCALITY.zones[z].untouchable : []));
+  const pats = (lists.length ? lists.reduce((a, b) => a.filter((p) => b.includes(p))) : [])
+    .map((p) => new RegExp(p));
+  const bytes = (p) => { const { gerekce, sinif, ...rest } = p; return JSON.stringify(rest); };
+  const b = new Map(before.pieces.map((p) => [p.name, bytes(p)]));
+  const a = new Map(after.pieces.map((p) => [p.name, bytes(p)]));
+  const names = new Set([...b.keys(), ...a.keys()]);
+  const violations = [];
+  let checked = 0;
+  for (const n of names) {
+    if (!pats.some((r) => r.test(n))) continue;
+    checked++;
+    const bv = b.get(n); const av = a.get(n);
+    if (bv === av) continue;
+    violations.push(bv === undefined ? `${n} (bolge disi DOGDU)`
+      : av === undefined ? `${n} (bolge disi KAYBOLDU)` : `${n} (baytlari degisti)`);
+  }
+  return { violations, checked, zones: [...zones] };
+}
+
 function downloadPanel(result) {
   const panel = el('div', 'dl-panel');
   panel.appendChild(el('h2', 'dl-title', t('create.dl.title')));
@@ -1296,11 +1335,20 @@ function downloadPanel(result) {
   // "Edit uygulandı" cümlesi bir cevap değildir; motorun kendi ölçtüğü mm'dir.
   const editMsg = el('div', 'dl-ops');
   const editRow = el('div', 'dl-edit');
-  const uzatLabel = el('label', 'dl-edit-label', t('create.edit.lengthen'));
-  const uzat = el('input', 'dl-edit-num');
-  uzat.type = 'number'; uzat.min = '0'; uzat.max = '150'; uzat.step = '1'; uzat.value = '0';
-  uzatLabel.appendChild(uzat);
-  editRow.appendChild(uzatLabel);
+  // F7-edit: dort mm alani + fiyonk — hepsi ayni "uygula" dugmesinden gecer ve
+  // hepsi ANCHOR + YAY OLCUMUYLE calisir (patternedit.cpp); piksel tahmini yok.
+  const numInput = (labelKey) => {
+    const label = el('label', 'dl-edit-label', t(labelKey));
+    const input = el('input', 'dl-edit-num');
+    input.type = 'number'; input.min = '0'; input.max = '150'; input.step = '0.5'; input.value = '0';
+    label.appendChild(input);
+    editRow.appendChild(label);
+    return input;
+  };
+  const uzat = numInput('create.edit.lengthen');
+  const kisalt = numInput('create.edit.shorten');
+  const kolUzat = numInput('create.edit.sleeve');
+  const yakaDerin = numInput('create.edit.neck');
   const fiyonkLabel = el('label', 'dl-edit-label', t('create.edit.bow'));
   const fiyonk = el('input', 'dl-edit-check');
   fiyonk.type = 'checkbox';
@@ -1309,23 +1357,48 @@ function downloadPanel(result) {
   const editBtn = el('button', 'dl-alt', t('create.edit.apply'));
   wire(editBtn, async () => {
     editMsg.textContent = '';
-    const cm = Number(uzat.value);
-    if (!Number.isFinite(cm) || cm < 0) return t('create.edit.badnum');
-    // ÖNCE ölç, sonra yaz: the same three numbers, before and after, off the
-    // engine's own draft rather than off this file's expectations.
-    const oncePiece = result.pattern.pieces.length;
-    const onceMeters = result.pattern.fabricMeters140;
+    const wanted = {
+      editExtendMM: Number(uzat.value) * 10,
+      editShortenMM: Number(kisalt.value) * 10,
+      editSleeveExtendMM: Number(kolUzat.value) * 10,
+      editNeckDeepenMM: Number(yakaDerin.value) * 10,
+      editAttach: fiyonk.checked ? 1 : 0,
+    };
+    for (const v of Object.values(wanted)) {
+      if (!Number.isFinite(v) || v < 0) return t('create.edit.badnum');
+    }
+    // Hangi alanlar oynuyor? Bolge yargisi yalniz onlarin ILAN ETTIGI bolgelerle
+    // kosar (contract/edit-locality-v1.json fieldZones, contract.gen.js uzerinden).
+    const touched = Object.keys(wanted).filter((f) => (spec[f] || 0) !== wanted[f]);
+    if (!touched.length) return t('create.edit.nothing');
+    const onceki = {};
+    for (const f of touched) onceki[f] = spec[f];
+    // ONCE olc, sonra yaz: ayni uc sayi, motorun kendi taslagından.
+    const oncePattern = result.pattern;
+    const oncePiece = oncePattern.pieces.length;
+    const onceMeters = oncePattern.fabricMeters140;
     const boyOf = (p) => {
       const pc = (p.pieces || []).find((x) => x.name === 'Skirt Front' || x.name === 'Bodice Front');
       if (!pc) return null;
       const ys = (pc.commands || []).filter((c) => c.type !== 'close').map((c) => c.y);
       return ys.length ? Math.max(...ys) - Math.min(...ys) : null;
     };
-    const onceBoy = boyOf(result.pattern);
-    spec.editExtendMM = cm * 10;
-    spec.editAttach = fiyonk.checked ? 1 : 0;
+    const onceBoy = boyOf(oncePattern);
+    for (const f of touched) spec[f] = wanted[f];
     const yeni = await draft(spec, values);
-    if (yeni.error || !yeni.pattern) return yeni.error || (yeni.issues && yeni.issues[0]) || '';
+    if (yeni.error || !yeni.pattern) {
+      for (const f of touched) spec[f] = onceki[f];
+      return yeni.error || (yeni.issues && yeni.issues[0]) || '';
+    }
+    // ⭐ BOLGE KAPISI (edit-locality-v1): dokunulan alanlarin bolgesi DISINDA
+    // kalan her panel bayt-ayni kalmak zorunda. Ihlalde edit REDDEDILIR, spec
+    // geri alinir ve ihlal ADIYLA soylenir — sessiz bozulma yok. Ayni yargiyi
+    // node'da engine/tests/edit_locality_check.mjs kosar.
+    const rapor = editLocalityReport(oncePattern, yeni.pattern, touched);
+    if (rapor.violations.length) {
+      for (const f of touched) spec[f] = onceki[f];
+      return t('create.edit.localityfail', { list: rapor.violations.join('; ') });
+    }
     result.pattern = yeni.pattern;
     result.issues = yeni.issues;
     const sonraBoy = boyOf(yeni.pattern);
@@ -1340,6 +1413,16 @@ function downloadPanel(result) {
     editMsg.appendChild(el('p', 'dl-ops-yes', t('create.edit.yardage', {
       once: String(onceMeters), sonra: String(yeni.pattern.fabricMeters140),
     })));
+    if (rapor.checked > 0)
+      editMsg.appendChild(el('p', 'dl-ops-yes', t('create.edit.locality', { n: String(rapor.checked) })));
+    // MOTORUN KENDI CUMLESI, adim adim: uygulanan VE reddedilen. Bir RET burada
+    // hata degil, motorun olculmus cevabidir ("kol YOK — once sleeveStyle secin").
+    for (const step of ((yeni.pattern.edit && yeni.pattern.edit.adimlar) || [])) {
+      const line = el('p', step.uygulandi ? 'dl-ops-yes' : 'dl-ops-no',
+        `${step.op} \u00b7 ${step.parca} — `);
+      line.appendChild(el('span', 'dl-ops-why', step.uygulandi ? step.sebep : step.ret_gerekcesi));
+      editMsg.appendChild(line);
+    }
     return null;
   });
   editRow.appendChild(editBtn);

@@ -188,6 +188,11 @@ struct DraftedPattern {
     // the back pieces by annotateTechnical. Metadata only (not a piece).
     bool cbZipper = false;
     std::string cbZipperGerekce;
+    // F7-edit: the edit program's own report (patternedit.cpp editJSON), set
+    // ONLY when the spec declared an edit — so a no-edit draft's JSON stays
+    // byte-identical. This is how a refused edit reaches the screen BY NAME
+    // instead of dying as a discarded return value. Metadata only (no piece).
+    std::string editProgramJSON;
 };
 
 // Flatten one cubic to `steps` segments; returns steps+1 points incl. `from`.

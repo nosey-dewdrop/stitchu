@@ -227,12 +227,23 @@ GarmentSpec buildSpec(const val& o) {
     // who asks for a component the engine does not have must be told so, not
     // handed a garment with a silently different thing on it.
     {
-        const val v = o["editExtendMM"];
-        if (!v.isUndefined() && !v.isNull()) {
-            const double d = v.as<double>();
-            if (!std::isfinite(d))
-                throw std::invalid_argument("editExtendMM is not a finite number of mm");
-            spec.editExtendMM = d;
+        // F7-edit: the four mm edit fields, one loop — the same finite check
+        // and the same "undeclared means byte-identical" law for each.
+        const struct { const char* key; double GarmentSpec::* slot; } kEditMM[] = {
+            {"editExtendMM", &GarmentSpec::editExtendMM},
+            {"editShortenMM", &GarmentSpec::editShortenMM},
+            {"editSleeveExtendMM", &GarmentSpec::editSleeveExtendMM},
+            {"editNeckDeepenMM", &GarmentSpec::editNeckDeepenMM},
+        };
+        for (const auto& f : kEditMM) {
+            const val v = o[f.key];
+            if (!v.isUndefined() && !v.isNull()) {
+                const double d = v.as<double>();
+                if (!std::isfinite(d))
+                    throw std::invalid_argument(std::string(f.key) +
+                                                " is not a finite number of mm");
+                spec.*(f.slot) = d;
+            }
         }
         static constexpr const char* kAttach[] = {"none", "bow"};
         spec.editAttach = enumIntField(o, "editAttach", kAttach, 2);
@@ -251,6 +262,10 @@ std::string draftedJSON(const GarmentSpec& spec, const BodyMeasurementsSnapshot&
     std::string out = R"({"pattern":{"garment":")" + escape(draft.garment) + "\"";
     out += R"(,"fabricAdviceKey":")" + escape(draft.fabricAdviceKey) + "\"";
     out += R"(,"fabricMeters140":)" + num(draft.fabricMeters140);
+    // F7-edit: the edit program's own report (applied AND refused steps, each
+    // with its measured sentence). Emitted ONLY when an edit was declared, so
+    // every no-edit draft's JSON is byte-identical to before this key existed.
+    if (!draft.editProgramJSON.empty()) out += R"(,"edit":)" + draft.editProgramJSON;
     out += R"(,"guideSteps":[)";
     for (size_t i = 0; i < draft.guideSteps.size(); ++i) {
         if (i) out += ",";

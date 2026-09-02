@@ -78,7 +78,7 @@ namespace stitchu {
 enum class AttachComponent { None, Bow };
 
 struct EditStep {
-    std::string op;        // "op.extend" | "op.attach"
+    std::string op;        // "op.extend" | "op.shorten" | "op.sleeveExtend" | "op.neckDeepen" | "op.attach"
     std::string piece;     // the HOST piece, by name
     bool applied = false;
     bool writtenBack = false;
@@ -93,6 +93,11 @@ struct EditStep {
     double perimeterBeforeMM = 0.0, perimeterAfterMM = 0.0;
     // The two segments the operator inserted, measured back off the result.
     double insertedAMM = 0.0, insertedBMM = 0.0;
+
+    // ---- op.neckDeepen, measured off the drawn neck curve -----------------
+    double neckArcBeforeMM = 0.0, neckArcAfterMM = 0.0;   // half-arc (drawn, on fold)
+    double cfDepthBeforeMM = 0.0, cfDepthAfterMM = 0.0;   // CF neck point y
+    double bindingDeltaMM = 0.0;                          // strip lengthened by
 
     // ---- op.attach --------------------------------------------------------
     std::string component;          // the name the new piece entered under

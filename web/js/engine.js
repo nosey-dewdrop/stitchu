@@ -256,6 +256,15 @@ export function engineSpec(rawSpec) {
     //                 düşer ve metraj değişir (patternedit.hpp).
     editExtendMM: (typeof spec.editExtendMM === 'number' && Number.isFinite(spec.editExtendMM))
       ? spec.editExtendMM : 0,
+    // F7-edit: üç mm alanı daha, aynı yasayla — sonlu sayı olduğu gibi geçer,
+    // negatifi motor ADIYLA reddeder (kısaltma ≠ negatif uzatma; patternedit.cpp
+    // ikisini ayrı operatör olarak kendi cümlesiyle söyler).
+    editShortenMM: (typeof spec.editShortenMM === 'number' && Number.isFinite(spec.editShortenMM))
+      ? spec.editShortenMM : 0,
+    editSleeveExtendMM: (typeof spec.editSleeveExtendMM === 'number' && Number.isFinite(spec.editSleeveExtendMM))
+      ? spec.editSleeveExtendMM : 0,
+    editNeckDeepenMM: (typeof spec.editNeckDeepenMM === 'number' && Number.isFinite(spec.editNeckDeepenMM))
+      ? spec.editNeckDeepenMM : 0,
     editAttach: spec.editAttach === 'bow' || spec.editAttach === 1 ? 1 : 0,
   };
 }

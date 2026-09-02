@@ -141,9 +141,12 @@ Point edgeMidpointByArc(Point from, const PathCommand& edge, double* edgeLenMM, 
 namespace {
 
 // ---- op.extend on ONE piece ------------------------------------------------
-EditStep extendOne(PatternPiece& piece, double mm) {
+// `edgeLabel` names the edge in the measured sentence: the same grain-drop
+// serves the garment hem ("etek ucu") and the sleeve wrist ("kol agzi").
+EditStep extendOne(PatternPiece& piece, double mm, const char* opName = "op.extend",
+                   const char* edgeLabel = "etek ucu") {
     EditStep st;
-    st.op = "op.extend";
+    st.op = opName;
     st.piece = piece.name;
     st.requestedMM = mm;
     if (!(mm > 0.0)) {
@@ -154,7 +157,7 @@ EditStep extendOne(PatternPiece& piece, double mm) {
     }
     const int h = hemCommandIndex(piece);
     if (h < 0) {
-        st.refusal = "parca bir kontur tasimiyor; etek ucu SORULAMAZ";
+        st.refusal = std::string("parca bir kontur tasimiyor; ") + edgeLabel + " SORULAMAZ";
         st.reason = "SORULAMADI: konturda kenar yok.";
         return st;
     }
@@ -189,8 +192,8 @@ EditStep extendOne(PatternPiece& piece, double mm) {
     st.heightAfterMM = boundingBox(piece.commands).height;
     st.applied = true;
     st.writtenBack = true;
-    st.reason = "op.extend: etek ucu GRAIN yonunde " + num(mm, 4) +
-                " mm asagi tasindi. Etek ucunun kendi yay uzunlugu " +
+    st.reason = std::string(opName) + ": " + edgeLabel + " GRAIN yonunde " + num(mm, 4) +
+                " mm asagi tasindi. Kenarin kendi yay uzunlugu " +
                 num(st.hemLenBeforeMM, 4) + " -> " + num(st.hemLenAfterMM, 4) +
                 " mm (TASIMA, sekil degismedi); parcanin boyu " +
                 num(st.heightBeforeMM, 4) + " -> " + num(st.heightAfterMM, 4) +
@@ -200,6 +203,179 @@ EditStep extendOne(PatternPiece& piece, double mm) {
                 "sessizce 'genislet' olurdu (§0B md.3, en kisitlayici okuma).";
     return st;
 }
+
+// ---- op.shorten on ONE piece -----------------------------------------------
+// NOT extendOne with a minus sign. Shortening REMOVES a grain-parallel band at
+// the hem: the two edges adjacent to the hem are trimmed back ALONG THEIR OWN
+// DRAWN DIRECTION (so an A-line's flare angle survives and its sweep narrows,
+// which is what folding out a lengthen/shorten line does on paper), and the hem
+// edge itself is carried up by the affine map that sends its two old endpoints
+// to the two trimmed ones. Exact for line-adjacent hems; a curve-adjacent hem
+// is REFUSED BY NAME rather than approximated.
+EditStep shortenOne(PatternPiece& piece, double mm) {
+    EditStep st;
+    st.op = "op.shorten";
+    st.piece = piece.name;
+    st.requestedMM = mm;
+    if (!(mm > 0.0)) {
+        st.refusal = "kisaltma mm'si pozitif degil; negatif kisaltma UZATMAKTIR ve o ayri bir "
+                     "operatordur (op.extend), sessizce cevrilmez — uzatmak icin uzat alanini kullanin";
+        st.reason = "KISALTILMADI: istenen " + num(mm, 4) + " mm.";
+        return st;
+    }
+    const int h = hemCommandIndex(piece);
+    if (h < 1 || static_cast<std::size_t>(h) + 1 >= piece.commands.size()) {
+        st.refusal = "etek ucunun iki yaninda kirpilacak kenar yok (kontur cok kisa); "
+                     "bu parca kisaltilamaz";
+        st.reason = "KISALTILMADI: komsu kenar bulunamadi.";
+        return st;
+    }
+    const PathCommand& prev = piece.commands[h - 1];
+    const PathCommand& next = piece.commands[h + 1];
+    if (prev.type != CmdType::Line || next.type != CmdType::Line) {
+        st.refusal = "etek ucuna komsu kenarlardan biri duz cizgi degil (egri); kirpma noktasi "
+                     "egri uzerinde COZULMEDEN kisaltma yapilmaz — once etek stilini duz kenarli "
+                     "bir stile alin ya da daha kucuk bir boy secin";
+        st.reason = "KISALTILMADI: komsu kenar egri.";
+        return st;
+    }
+    const Point P = startOf(piece.commands, h - 1);  // prev line runs P -> A
+    const Point A = prev.to;                          // hem start
+    const Point B = piece.commands[h].to;             // hem end; next line runs B -> Q
+    const Point Q = next.to;
+    const double dropA = A.y - P.y;
+    const double riseB = B.y - Q.y;
+    if (!(dropA > mm) || !(riseB > mm)) {
+        st.refusal = "istenen kisaltma komsu kenarin kendi dusumunden buyuk (yan " +
+                     num(dropA, 4) + " mm, on/arka orta " + num(riseB, 4) + " mm, istenen " +
+                     num(mm, 4) + " mm); bu kadar kisaltmak parcayi yok eder — daha kucuk bir "
+                     "mm isteyin";
+        st.reason = "KISALTILMADI: olculen sinir asildi.";
+        return st;
+    }
+    st.hemCmdIndex = h;
+    st.hemLenBeforeMM = cmdLength(A, piece.commands[h]);
+    st.perimeterBeforeMM = perimeterOf(piece.commands);
+    st.heightBeforeMM = boundingBox(piece.commands).height;
+
+    // Trim points, ON the two drawn lines (vertical parameterisation is exact
+    // because both guards above force a strictly descending / ascending line).
+    const double tA = mm / dropA;
+    const Point A2{A.x + (P.x - A.x) * tA, A.y - mm};
+    const double tB = mm / riseB;
+    const Point B2{B.x + (Q.x - B.x) * tB, B.y - mm};
+
+    piece.commands[h - 1].to = A2;
+    PathCommand& hem = piece.commands[h];
+    const double spanX = B.x - A.x;
+    const auto mapX = [&](double x) {
+        if (std::abs(spanX) < 1e-9) return x + (A2.x - A.x);
+        return A2.x + (x - A.x) * (B2.x - A2.x) / spanX;
+    };
+    if (hem.type == CmdType::Curve) {
+        hem.cp1 = Point{mapX(hem.cp1.x), hem.cp1.y - mm};
+        hem.cp2 = Point{mapX(hem.cp2.x), hem.cp2.y - mm};
+    }
+    hem.to = B2;
+
+    st.hemLenAfterMM = cmdLength(A2, hem);
+    st.perimeterAfterMM = perimeterOf(piece.commands);
+    st.heightAfterMM = boundingBox(piece.commands).height;
+    st.applied = true;
+    st.writtenBack = true;
+    st.reason = "op.shorten: etek ucu " + num(mm, 4) +
+                " mm yukari alindi; iki komsu dikis kendi CIZILI dogrultusunda kirpildi "
+                "(yani A-line'in aci/kloşu korunur, etek agzi kendiliginden daralir). Etek ucu "
+                "yay uzunlugu " + num(st.hemLenBeforeMM, 4) + " -> " + num(st.hemLenAfterMM, 4) +
+                " mm; parca boyu " + num(st.heightBeforeMM, 4) + " -> " +
+                num(st.heightAfterMM, 4) + " mm; cevre " + num(st.perimeterBeforeMM, 4) +
+                " -> " + num(st.perimeterAfterMM, 4) + " mm.";
+    return st;
+}
+
+// ---- op.neckDeepen on ONE front piece ---------------------------------------
+// The CF neck point is the outline's own MOVE anchor (the front bodice is drawn
+// from the CF neck point, round the neck to the shoulder, and the closing CF
+// edge returns to that same point — both facts are CHECKED below, not assumed).
+// Deepening moves that anchor down the fold by mm; the neck curve's CF-side
+// control point moves with it so the curve still meets the fold at the same
+// angle, and the shoulder end does not move at all.
+EditStep neckDeepenOne(PatternPiece& piece, double mm) {
+    EditStep st;
+    st.op = "op.neckDeepen";
+    st.piece = piece.name;
+    st.requestedMM = mm;
+    if (!(mm > 0.0)) {
+        st.refusal = "derinlestirme mm'si pozitif degil; yakayi YUKSELTMEK ayri bir islemdir ve "
+                     "sessizce yapilmaz — oyugu kucultmek icin neckline eksenini degistirin";
+        st.reason = "DERINLESTIRILMEDI: istenen " + num(mm, 4) + " mm.";
+        return st;
+    }
+    if (piece.commands.size() < 4 || piece.commands[0].type != CmdType::Move) {
+        st.refusal = "parca konturu MOVE ile baslamiyor; CF yaka noktasi nesneden okunamiyor";
+        st.reason = "DERINLESTIRILMEDI: kontur okunamadi.";
+        return st;
+    }
+    // Last drawn command (before Close): must return to the move anchor.
+    int L = -1;
+    for (int i = static_cast<int>(piece.commands.size()) - 1; i >= 1; --i)
+        if (piece.commands[i].type != CmdType::Close) { L = i; break; }
+    const Point M = piece.commands[0].to;
+    if (L < 2 || std::abs(piece.commands[L].to.x - M.x) > 1e-6 ||
+        std::abs(piece.commands[L].to.y - M.y) > 1e-6) {
+        st.refusal = "kontur CF yaka noktasina kapanmiyor (son kenar " +
+                     num(piece.commands[L < 0 ? 0 : L].to.x, 4) + "," +
+                     num(piece.commands[L < 0 ? 0 : L].to.y, 4) + " != " + num(M.x, 4) + "," +
+                     num(M.y, 4) + "); bu cizimde yaka derinlestirme desteklenmiyor";
+        st.reason = "DERINLESTIRILMEDI: CF kapanisi bulunamadi.";
+        return st;
+    }
+    PathCommand& neck = piece.commands[1];
+    if (neck.type != CmdType::Curve && neck.type != CmdType::Line) {
+        st.refusal = "ilk kenar yaka oyugu olarak okunamadi (ne egri ne cizgi)";
+        st.reason = "DERINLESTIRILMEDI: yaka kenari yok.";
+        return st;
+    }
+    // Depth room, MEASURED on the CF edge itself: how far down the fold the
+    // neck point may travel before it runs into the CF edge's own geometry.
+    PathCommand& cf = piece.commands[L];
+    const double room = (cf.type == CmdType::Curve ? cf.cp2.y : startOf(piece.commands, L).y) - M.y;
+    if (!(mm < room)) {
+        st.refusal = "istenen derinlik CF kenarinin olculen payindan buyuk (" + num(mm, 4) +
+                     " mm istendi, pay " + num(room, 4) + " mm); yaka govdeye tasar — daha "
+                     "kucuk bir mm isteyin";
+        st.reason = "DERINLESTIRILMEDI: olculen sinir asildi.";
+        return st;
+    }
+    st.cfDepthBeforeMM = M.y;
+    st.neckArcBeforeMM = cmdLength(M, neck);
+    st.perimeterBeforeMM = perimeterOf(piece.commands);
+
+    piece.commands[0].to.y += mm;
+    if (neck.type == CmdType::Curve) neck.cp1.y += mm;  // CF tangent travels with the point
+    cf.to.y += mm;
+
+    st.cfDepthAfterMM = piece.commands[0].to.y;
+    st.neckArcAfterMM = cmdLength(piece.commands[0].to, neck);
+    st.perimeterAfterMM = perimeterOf(piece.commands);
+    st.applied = true;
+    st.writtenBack = true;
+    st.reason = "op.neckDeepen: CF yaka noktasi kumas katinda " + num(mm, 4) +
+                " mm asagi alindi (" + num(st.cfDepthBeforeMM, 4) + " -> " +
+                num(st.cfDepthAfterMM, 4) + " mm); omuz ucu HIC kimildamadi, egrinin CF "
+                "tegeti noktayla birlikte tasindi. Yarim yaka yayi " +
+                num(st.neckArcBeforeMM, 4) + " -> " + num(st.neckArcAfterMM, 4) + " mm.";
+    return st;
+}
+
+// The front piece that CARRIES the neckline, priority order — the same
+// name-for-name discipline as kHemHosts above.
+const char* const kNeckHostsFront[] = {
+    "Bodice Front", "Top Center Front", "Top Front", "Front Body"};
+
+// Sleeve pieces, by their drafted names (sleeve.cpp:249-252 + cap).
+const char* const kSleeveHosts[] = {
+    "Sleeve", "Balloon Sleeve", "Puff Sleeve", "Gathered-Head Sleeve"};
 
 }  // namespace
 
@@ -235,6 +411,128 @@ EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
                 if (st.applied) prog.applied++; else prog.refused++;
                 prog.steps.push_back(st);
             }
+        }
+    }
+
+    // ---- op.shorten ------------------------------------------------------
+    if (spec.editShortenMM != 0.0) {
+        const int fi = findPieceIndex(pattern, kHemHostsFront,
+                                      sizeof kHemHostsFront / sizeof kHemHostsFront[0]);
+        const int bi = findPieceIndex(pattern, kHemHostsBack,
+                                      sizeof kHemHostsBack / sizeof kHemHostsBack[0]);
+        if (fi < 0 && bi < 0) {
+            EditStep st;
+            st.op = "op.shorten";
+            st.piece = "(yok)";
+            st.requestedMM = spec.editShortenMM;
+            st.refusal = "bu kalipta etek ucunu tasiyan bir parca YOK (ne etek ne govde) — "
+                         "kisaltilacak kenar nesnenin kendisinden okunamiyor";
+            st.reason = "KISALTILMADI: ev sahibi parca bulunamadi.";
+            prog.refused++;
+            prog.steps.push_back(st);
+        } else {
+            // FRONT and BACK are shortened by the SAME mm, or the side seams
+            // stop matching — the same law op.extend already carries.
+            for (int idx : {fi, bi}) {
+                if (idx < 0) continue;
+                EditStep st = shortenOne(pattern.pieces[idx], spec.editShortenMM);
+                if (st.applied) prog.applied++; else prog.refused++;
+                prog.steps.push_back(st);
+            }
+        }
+    }
+
+    // ---- op.sleeveExtend -------------------------------------------------
+    if (spec.editSleeveExtendMM != 0.0) {
+        const int si = findPieceIndex(pattern, kSleeveHosts,
+                                      sizeof kSleeveHosts / sizeof kSleeveHosts[0]);
+        if (si < 0) {
+            EditStep st;
+            st.op = "op.sleeveExtend";
+            st.piece = "(yok)";
+            st.requestedMM = spec.editSleeveExtendMM;
+            st.refusal = "bu kalipta kol YOK — uzatilacak kol agzi nesnenin kendisinden "
+                         "okunamiyor; once bir kol secin (sleeveStyle: straight ya da balloon)";
+            st.reason = "UZATILMADI: kol parcasi bulunamadi.";
+            prog.refused++;
+            prog.steps.push_back(st);
+        } else {
+            EditStep st = extendOne(pattern.pieces[si], spec.editSleeveExtendMM,
+                                    "op.sleeveExtend", "kol agzi");
+            if (st.applied) prog.applied++; else prog.refused++;
+            prog.steps.push_back(st);
+        }
+    }
+
+    // ---- op.neckDeepen ---------------------------------------------------
+    if (spec.editNeckDeepenMM != 0.0) {
+        EditStep st;
+        // A collared or faced neckline carries a SECOND piece drafted off the
+        // old curve; deepening the hole without redrafting that piece would
+        // ship two parts that no longer sew together. Refused BY NAME, with the
+        // next step in the sentence (no silent mismatch).
+        std::string blocker;
+        for (const auto& pc : pattern.pieces)
+            if (pc.name.find("Collar") != std::string::npos ||
+                pc.name.find("Neck Facing") != std::string::npos) { blocker = pc.name; break; }
+        const int ni = findPieceIndex(pattern, kNeckHostsFront,
+                                      sizeof kNeckHostsFront / sizeof kNeckHostsFront[0]);
+        if (!blocker.empty()) {
+            st.op = "op.neckDeepen";
+            st.piece = blocker;
+            st.requestedMM = spec.editNeckDeepenMM;
+            st.refusal = "yakada '" + blocker + "' parcasi var; oyuk derinlesince o parca eski "
+                         "egriye gore kesilmis kalir ve ikisi dikilemez — once collarType/"
+                         "edgeFinish'i kapatin (bias binding'e donun), sonra derinlestirin";
+            st.reason = "DERINLESTIRILMEDI: yaka parcasi engeli.";
+            prog.refused++;
+            prog.steps.push_back(st);
+        } else if (ni < 0) {
+            st.op = "op.neckDeepen";
+            st.piece = "(yok)";
+            st.requestedMM = spec.editNeckDeepenMM;
+            st.refusal = "bu kalipta yakayi tasiyan bir on govde parcasi YOK — derinlestirilecek "
+                         "oyuk nesnenin kendisinden okunamiyor (etek-tek kalipta yaka yoktur)";
+            st.reason = "DERINLESTIRILMEDI: ev sahibi parca bulunamadi.";
+            prog.refused++;
+            prog.steps.push_back(st);
+        } else {
+            st = neckDeepenOne(pattern.pieces[ni], spec.editNeckDeepenMM);
+            if (st.applied) {
+                // The bias binding strip is cut to the MEASURED edge; the edge
+                // just grew, so the strip grows by the same measured amount
+                // (x2: the drawn front is half a fold). Appended to the cut
+                // note in words — a lengthened strip with an old total would be
+                // a silent lie on the cutting table.
+                const double fold =
+                    pattern.pieces[ni].cutInstruction.find("on fold") != std::string::npos
+                        ? 2.0 : 1.0;
+                const double delta = (st.neckArcAfterMM - st.neckArcBeforeMM) * fold;
+                for (auto& pc : pattern.pieces) {
+                    if (pc.name != "Bias binding (neckline)") continue;
+                    double maxX = 0.0;
+                    for (const auto& c : pc.commands)
+                        if (c.type != CmdType::Close) maxX = std::max(maxX, c.to.x);
+                    for (auto& c : pc.commands)
+                        if (c.type != CmdType::Close && std::abs(c.to.x - maxX) < 1e-6)
+                            c.to.x += delta;
+                    for (auto& c : pc.markings)
+                        if (c.type != CmdType::Close && std::abs(c.to.x - maxX) < 1e-6)
+                            c.to.x += delta;
+                    pc.cutInstruction += " | op.neckDeepen: strip lengthened by " +
+                                         num(delta, 1) + " mm (measured off the deepened "
+                                         "neck curve); the totals above are superseded";
+                    st.bindingDeltaMM = delta;
+                    break;
+                }
+                st.reason += st.bindingDeltaMM != 0.0
+                    ? " Bias serit ayni olcumle " + num(st.bindingDeltaMM, 4) + " mm uzatildi."
+                    : " (Bu kalipta bias yaka seridi yok; uzatilacak serit de yok.)";
+                prog.applied++;
+            } else {
+                prog.refused++;
+            }
+            prog.steps.push_back(st);
         }
     }
 
@@ -340,9 +638,10 @@ EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
 std::string editJSON(const EditProgram& prog) {
     std::ostringstream o;
     o << "{\n  \"okuma\": \"edit_programi\",\n";
-    o << "  \"kaynak\": \"engine/src/patternedit.cpp — op.extend / op.attach INDIRILEN "
-         "kalibin uzerinde kosar. Opt-in: editExtendMM == 0 ve editAttach == 0 iken bu "
-         "dosya HIC KOSMAZ ve golden bayt-birebirdir (RULES 4).\",\n";
+    o << "  \"kaynak\": \"engine/src/patternedit.cpp — op.extend / op.shorten / "
+         "op.sleeveExtend / op.neckDeepen / op.attach INDIRILEN kalibin uzerinde kosar. "
+         "Opt-in: bes edit alani da 0 iken bu dosya HIC KOSMAZ ve golden bayt-birebirdir "
+         "(RULES 4).\",\n";
     o << "  \"parca_once\": " << prog.piecesBefore << ", \"parca_sonra\": " << prog.piecesAfter
       << ",\n";
     o << "  \"uygulanan\": " << prog.applied << ", \"reddedilen\": " << prog.refused << ",\n";
@@ -354,7 +653,16 @@ std::string editJSON(const EditProgram& prog) {
           << ", \"plana_yazildi\": " << (s.writtenBack ? "true" : "false")
           << ", \"ret_gerekcesi\": " << quote(s.refusal) << ",\n";
         o << "     \"sebep\": " << quote(s.reason);
-        if (s.op == "op.extend") {
+        if (s.op == "op.neckDeepen") {
+            o << ",\n     \"istenen_mm\": " << num(s.requestedMM, 6)
+              << ", \"cf_derinlik_once_mm\": " << num(s.cfDepthBeforeMM, 6)
+              << ", \"cf_derinlik_sonra_mm\": " << num(s.cfDepthAfterMM, 6)
+              << ",\n     \"yarim_yaka_yayi_once_mm\": " << num(s.neckArcBeforeMM, 6)
+              << ", \"yarim_yaka_yayi_sonra_mm\": " << num(s.neckArcAfterMM, 6)
+              << ",\n     \"bias_serit_uzatma_mm\": " << num(s.bindingDeltaMM, 6)
+              << ", \"cevre_once_mm\": " << num(s.perimeterBeforeMM, 6)
+              << ", \"cevre_sonra_mm\": " << num(s.perimeterAfterMM, 6);
+        } else if (s.op == "op.extend" || s.op == "op.shorten" || s.op == "op.sleeveExtend") {
             o << ",\n     \"istenen_mm\": " << num(s.requestedMM, 6)
               << ", \"etek_ucu_kenar_indeksi\": " << s.hemCmdIndex
               << ",\n     \"etek_ucu_once_mm\": " << num(s.hemLenBeforeMM, 6)

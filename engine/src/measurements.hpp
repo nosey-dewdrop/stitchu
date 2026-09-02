@@ -499,6 +499,26 @@ struct GarmentSpec {
     // See patternedit.hpp.
     double editExtendMM = 0;
     int editAttach = 0; // AttachComponent enum value; 0 = None
+    // ⭐ F7-edit (2026-09-02) — three more opt-in operators on the drafted
+    // pattern, same law as the two above (0 = off, byte-identical draft):
+    //   editShortenMM      "3 cm kisalt" — mm of cloth REMOVED at the hem, along
+    //                      the grain, front AND back (the same amount, or the
+    //                      side seams stop matching). NOT editExtendMM negated:
+    //                      shortening trims the two adjacent seam lines along
+    //                      their own drawn direction and refuses by name when
+    //                      those edges are not straight lines.
+    //   editSleeveExtendMM "kolu 2 cm uzat" — op.extend's grain-drop applied to
+    //                      the sleeve piece's own lowest edge (the wrist).
+    //                      Refused by name when the draft has no sleeve.
+    //   editNeckDeepenMM   "yakayi 2 cm derinlestir" — the CF neck point moves
+    //                      down the fold by mm; the neck curve's CF tangent
+    //                      moves with it, the shoulder end stays anchored. The
+    //                      bias binding strip is lengthened by the MEASURED new
+    //                      arc. Refused by name on a collared/faced neckline.
+    // See patternedit.hpp.
+    double editShortenMM = 0;
+    double editSleeveExtendMM = 0;
+    double editNeckDeepenMM = 0;
     // Opt-in corset lace-up back (korse bağcıklı sırt): an eyelet-laced CENTER-BACK
     // closure — the two back halves leave an open gap spanned by a cord that
     // criss-crosses between two columns of eyelets (one down each back edge). Adds

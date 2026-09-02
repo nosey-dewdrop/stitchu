@@ -674,6 +674,16 @@ add_executable(attach_check tests/attach_check.cpp)
 target_link_libraries(attach_check PRIVATE engine)
 add_test(NAME attach_check COMMAND attach_check)
 
+# F7-edit: uc operatorun kendi kapilari — tek binary, uc add_test (K35: her
+# kapi kendi operatorunun adini tasir). Olcumler CIZILEN komutlardan iki kez
+# turetilir; operatorun raporu yalniz RETLERIN adiyla durdugunu dogrulamak
+# icin okunur (ret bir cevaptir ve ekrana o rapordan cikar).
+add_executable(editops_check tests/editops_check.cpp)
+target_link_libraries(editops_check PRIVATE engine)
+add_test(NAME shorten_check COMMAND editops_check shorten)
+add_test(NAME sleeveExtend_check COMMAND editops_check sleeveExtend)
+add_test(NAME neckDeepen_check COMMAND editops_check neckDeepen)
+
 add_executable(guide_check tests/guide_check.cpp)
 target_link_libraries(guide_check PRIVATE engine)
 add_test(NAME guide_check COMMAND guide_check)

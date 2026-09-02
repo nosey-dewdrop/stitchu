@@ -22,7 +22,7 @@
 //       9/12'ye düşmek yetmiyordu. A4 + A1 tabanı o açığı kapatır.)
 import {
   runEdit, applyDiff, draft, localityReport, touchedZones, untouchablePatterns, BODY,
-  LOCALITY_GRANULARITY,
+  LOCALITY_GRANULARITY, LOCALITY, ROOT,
 } from '../tools/spec-diff.mjs';
 
 const BASE = {
@@ -64,10 +64,25 @@ const A1_FLOOR = 10;
 // üretmez; sayısı artarsa kapının yüzeyi sessizce daralıyor demektir.
 const A1_SKIP_CAP = 1;
 
+// ── F7-edit: MM-EDİT VAKALARI (--all-zones) ─────────────────────────────────
+// patternedit.cpp'nin beş opt-in operatörü, ekranın (create.js) gönderdiği
+// AYNI alan adlarıyla. Bunlar A1 döngüsüne GİRMEZ: rewrite kipi mm alanı +
+// garment dışındaki her şeyi düşürür ve üretim zaten reddeder — o boşluk A1'in
+// ölçtüğü şey değildir. Lokallik yargısı ise birebir aynı kapıdan geçer.
+const MM_CASES = [
+  ['yakayı 2cm derinleştir', { field: 'editNeckDeepenMM', value: 20 }],
+  ['boyu 3cm uzat', { field: 'editExtendMM', value: 30 }],
+  ['boyu 2cm kısalt', { field: 'editShortenMM', value: 20 }],
+  ['kolu 2cm uzat', { field: 'editSleeveExtendMM', value: 20 }],
+  ['fiyonk ekle (etek ucu)', { field: 'editAttach', value: 1 }],
+];
+const ALL_ZONES = process.argv.includes('--all-zones');
+
 let fail = 0;
 const line = (ok, s) => { if (!ok) fail++; console.log(`${ok ? 'OK  ' : 'FAIL'} ${s}`); };
 
-for (const [ad, op] of CASES) {
+const coveredZones = new Set();
+for (const [ad, op] of [...CASES, ...(ALL_ZONES ? MM_CASES : [])]) {
   const diff = { why: ad, ops: [{ op: 'set', ...op }] };
   const r = await runEdit(BASE, diff);
   if (r.stage !== 'tamam') { line(false, `${ad}: ${r.stage} aşamasında reddedildi -> ${r.rejected.join(' / ')}`); continue; }
@@ -76,9 +91,42 @@ for (const [ad, op] of CASES) {
     line(false, `${ad}: bölge dışı yargılanan panel YOK (bölge ${r.zones.join('+')}, kalıp: ${r.after.pattern.pieces.map((p) => p.name).join(', ')})`);
     continue;
   }
-  line(r.locality.violations.length === 0,
+  const ok = r.locality.violations.length === 0;
+  if (ok) for (const z of r.zones) coveredZones.add(z);
+  line(ok,
     `${ad} [${r.zones.join('+')}] bölge dışı ${r.locality.checked} panel bayt-aynı: ${r.locality.held.join(', ')}` +
     (r.locality.violations.length ? ` | İHLAL: ${r.locality.violations.join('; ')}` : ''));
+}
+
+// ── --all-zones: KAPSAM + EKRAN TELİ ────────────────────────────────────────
+// (1) Sözleşmedeki global-olmayan HER bölge en az bir GEÇEN vakayla ölçülmüş
+//     olmalı — ölçülmemiş bölge, lokallik iddiası olmayan bölgedir.
+// (2) En az 4 edit tipi create ekranından erişilebilir olmalı: create.js'in
+//     DOM'a bastığı alanlar (statik tel kontrolü — alan adı + i18n etiketi) ve
+//     create.html'in create.js'i yüklediği, dosyanın kendisinden okunur.
+if (ALL_ZONES) {
+  console.log('--- --all-zones: bölge kapsamı + create ekranı teli');
+  const nonGlobal = Object.keys(LOCALITY.zones).filter((z) => z !== 'global');
+  for (const z of nonGlobal) {
+    line(coveredZones.has(z), `bölge ${z}: ${coveredZones.has(z) ? 'geçen vakayla ölçüldü' : 'HİÇBİR GEÇEN VAKA DOKUNMADI'}`);
+  }
+  const { readFileSync: rf } = await import('node:fs');
+  const { join: j } = await import('node:path');
+  const createJs = rf(j(ROOT, 'web', 'js', 'create.js'), 'utf8');
+  const createHtml = rf(j(ROOT, 'web', 'create.html'), 'utf8');
+  line(createHtml.includes('js/create.js'), 'create.html js/create.js modülünü yüklüyor');
+  const editFields = ['editExtendMM', 'editShortenMM', 'editSleeveExtendMM', 'editNeckDeepenMM'];
+  // create.js ekran girdilerini `wanted = { editX: Number(input.value)*10 }`
+  // haritasına, oradan `spec[f] = wanted[f]` ile spec'e yazar; alan adı o
+  // haritada geçmek VE yazma teli var olmak zorunda.
+  const writes = createJs.includes('spec[f] = wanted[f]');
+  let wired = 0;
+  for (const f of editFields) {
+    const has = createJs.includes(`${f}:`) && writes;
+    if (has) wired++;
+    line(has, `create.js '${f}' alanını ekran girdisinden spec'e yazıyor`);
+  }
+  line(wired >= 4, `create ekranından erişilebilir edit tipi ${wired} >= 4`);
 }
 
 // ── A1: aynı diff'i tüm spec'i yeniden yazacak şekilde uygula -> KIRMIZI ────

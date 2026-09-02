@@ -241,6 +241,22 @@
     ],
     "photoFabric": [
       "global"
+    ],
+    "editExtendMM": [
+      "hemZone"
+    ],
+    "editShortenMM": [
+      "hemZone"
+    ],
+    "editSleeveExtendMM": [
+      "sleeveZone"
+    ],
+    "editNeckDeepenMM": [
+      "neckZone"
+    ],
+    "editAttach": [
+      "hemZone"
     ]
-  }
+  },
+  "_f7_edit": "F7-edit (2026-09-02): patternedit.cpp'nin bes opt-in operatoru de birer duzenlenebilir ALAN olarak ilan edildi (mm alanlari sayi tasir, sozluk degeri degil). Bolgeleri anatomiden: uzat/kisalt/fiyonk etek ucunda calisir (hemZone; fiyonk ev sahibi on etek ucu parcasidir, patternedit.cpp kHemHostsFront), kol agzi sleeveZone, yaka oyugu neckZone. Kapi (edit_locality_check.mjs --all-zones) bu ilanlari mm-edit vakalariyla OLCER."
 }
