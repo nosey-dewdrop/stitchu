@@ -180,6 +180,8 @@ import {
   cumFrac, atFrac, nearestIdx, mapSegs, mirrorSegs, rampSegs,
   pathD, polyD, segsFromPoly, bbox, densifySegs,
 } from './flat-geom.js?v=144';
+// The büzgü / ease threshold is a MEASURED contract value, not a local constant.
+import { CONTRACT } from '../js/contract.gen.js?v=144';
 
 // ---------------------------------------------------------------------------
 // 1. PANEL DECOMPOSITION — which drafted edge is which garment edge
@@ -491,6 +493,100 @@ function poseBodice(d, U, which, poz) {
       ? ` data-yaka-derinlik-oran="${derOran.toFixed(4)}"`
       : ` data-arka-yaka-oran="${derOran.toFixed(4)}"`));
   return { neckSegs, shoulderSegs: segsFromPoly([N2, S2]), armSeg, S2, attrs };
+}
+
+// ---------------------------------------------------------------------------
+// 2b. BÜZGÜ — READ OFF THE PATTERN, NEVER ASSUMED (M1-puf, 2026-09-02)
+// ---------------------------------------------------------------------------
+// A gathered seam is a seam whose two sides are drawn to DIFFERENT lengths. So
+// the drawing does not need to be told that a sleeve is a puff, and must not be:
+// it measures the pattern's own `sleeve_cap` edge against the pattern's own
+// `armhole_front` + `armhole_back` edges. If the cap is longer, the surplus IS
+// the gather, in millimetres, and it came from the draft.
+//
+// WHERE THE THRESHOLD COMES FROM. Every set-in cap is drawn a little longer
+// than its armhole — that is cap EASE (3-5%), which is worked in smooth and
+// must not be drawn as gathering. The line between ease and gather is not a
+// number this file picks: it is the LOWEST MEASURED gather ratio in the
+// contract (draft.gatherRatios.sleeveCapGathered, 1.235, measured on the
+// purchased Bugra Locket). Below it, ease; at or above it, büzgü.
+const BUZGU_ESIK = CONTRACT.draft.gatherRatios.sleeveCapGathered;
+
+/** Arc length of every edge on `piece` carrying `role`, in the pattern's mm. */
+function rolBoyu(piece, role) {
+  if (!piece || !Array.isArray(piece.edgeRoles) || !piece.commands) return 0;
+  const segs = segsFromCommands(piece.commands);
+  let toplam = 0;
+  for (const r of piece.edgeRoles) {
+    if (r.role !== role) continue;
+    const kesit = segs.filter((s) => s.i >= r.first && s.i <= r.last);
+    if (kesit.length) toplam += chainLength(kesit);
+  }
+  return toplam;
+}
+
+/** The two büzgü readings a sleeve can carry, both measured off the draft.
+ *  `kapak` = cap edge vs the armhole it is sewn into.
+ *  `etek`  = sleeve hem vs the cuff band it is gathered onto.
+ *  Each is null when the pattern does not carry the edges to measure — a
+ *  missing reading is named in `sebep`, never replaced by a guess. */
+function buzguOku(P) {
+  const okuma = { kapak: null, etek: null, sebep: [] };
+  const sl = P.sleeve;
+  if (!sl) return okuma;
+  const capMM = rolBoyu(sl, 'sleeve_cap');
+  // The armhole is summed over EVERY piece that names a share of it. A princess
+  // bodice splits it between the Center and the Side panel, and reading only
+  // the Center halved the armhole — which made a PLAIN princess sleeve measure
+  // as a 2:1 gather and printed a puff nobody asked for (caught by
+  // cizim_giysi_mi (j1)). Whichever pieces carry the name, all of them count.
+  const ahPieces = [P.bodice.on, P.bodice.arka,
+                    P.bodiceSide && P.bodiceSide.on, P.bodiceSide && P.bodiceSide.arka]
+    .filter(Boolean).map((w) => w.piece);
+  let ahMM = 0;
+  for (const pc of ahPieces) ahMM += rolBoyu(pc, 'armhole_front') + rolBoyu(pc, 'armhole_back');
+  if (capMM > 0 && ahMM > 0) {
+    const oran = capMM / ahMM;
+    if (oran >= BUZGU_ESIK) okuma.kapak = { capMM, hedefMM: ahMM, oran, fazlaMM: capMM - ahMM };
+  } else if (capMM > 0) {
+    okuma.sebep.push('kol kapagi buzgusu olculemedi: kalipta armhole_front/armhole_back kenari yok');
+  }
+  const hemMM = rolBoyu(sl, 'sleeve_hem');
+  // The cuff band's own finished length is its long side; the piece is drafted
+  // as a rectangle whose width IS that length.
+  if (hemMM > 0 && P.cuff) {
+    const b = bbox(segsFromCommands(P.cuff.commands));
+    const mansetMM = Math.max(b.x1 - b.x0, 0) - 2 * (P.cuff.seamAllowance || 0);
+    if (mansetMM > 0) {
+      const oran = hemMM / mansetMM;
+      if (oran > 1.0) okuma.etek = { capMM: hemMM, hedefMM: mansetMM, oran, fazlaMM: hemMM - mansetMM };
+    }
+  }
+  return okuma;
+}
+
+/** Gather marks: short ticks ACROSS a seam, the standard notation. `pts` is the
+ *  drawn seam polyline, `adet` how many marks (the pattern's own count).
+ *  Returns an array of two-point segments in drawing coordinates. */
+function buzguIsaretleri(pts, adet, uzunlukMM) {
+  if (!Array.isArray(pts) || pts.length < 2 || adet < 1) return [];
+  const kum = [0];
+  for (let i = 1; i < pts.length; i++) kum.push(kum[i - 1] + norm(sub(pts[i], pts[i - 1])));
+  const toplam = kum[kum.length - 1];
+  if (!(toplam > EPS)) return [];
+  const out = [];
+  for (let n = 0; n < adet; n++) {
+    const hedef = toplam * (n + 1) / (adet + 1);
+    let i = 1;
+    while (i + 1 < kum.length && kum[i] < hedef) i++;
+    const span = kum[i] - kum[i - 1];
+    const u = span > EPS ? (hedef - kum[i - 1]) / span : 0;
+    const p = lerp(pts[i - 1], pts[i], u);
+    const t = unit(sub(pts[i], pts[i - 1]));
+    const nrm = [-t[1], t[0]];
+    out.push([add(p, scale(nrm, uzunlukMM / 2)), sub(p, scale(nrm, uzunlukMM / 2))]);
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -1186,9 +1282,81 @@ function buildView(P, which) {
   // closed, because its fourth side is the armhole the body already drew.
   if (out.notes.sleeve) {
     const g = out.notes.sleeve;
-    const shape = [g.S, g.out].concat(g.under.slice().reverse());
+    const bz = P.buzgu || { kapak: null, etek: null };
+    // ★ THE PUFF, DRAWN AS THE CONSEQUENCE OF ITS OWN SURPLUS (M1-puf).
+    //
+    // Until today a puff sleeve printed as the same straight cone as a plain
+    // one (KOSU/ciktilar/kusur-listesi.md A1: "balon kol PUF hacmi yok ... kol
+    // dogru sarkik ama 'balon' degil 'genis duz' okunuyor"). The reason was not
+    // taste: the outer contour was a STRAIGHT segment S -> out, and a straight
+    // segment cannot hold surplus cloth.
+    //
+    // Laid flat, a gathered cap's surplus has exactly one place to go: the
+    // outer contour bows away from the body. So the contour is drawn as a
+    // circular arc on the SAME chord (S -> out, the pattern's own fold length)
+    // whose ARC LENGTH is that chord plus this half's share of the measured
+    // surplus, (capMM - armholeMM) / 2. Nothing here is chosen — the chord is
+    // the pattern's, the surplus is the pattern's, and the bulge is the only
+    // circular arc that joins them. A plain cap (ease, below BUZGU_ESIK) is
+    // never gathered, so its contour stays the straight line it always was.
+    // The references draw exactly this (GIRDI/iyi-flat/adaylar/09, 04, 06).
+    const yay = (A, B, fazlaMM) => {
+      const kiris = norm(sub(B, A));
+      if (!(kiris > EPS) || !(fazlaMM > 0)) return [A, B];
+      // DIRECTION: away from the fold line, on the outboard side (+x on this
+      // half, which is the half that is drawn — the other is its mirror). That
+      // is where a puff's fullness sits.
+      //
+      // ⚖ AND IT IS CAPPED BY THE LAW, NOT BY TASTE. sevkPoz's own sentence is
+      // "kol ASLA omuz yatayinin ustune cikmaz" (kolAcisiDeg._kaynak; gate
+      // cizim_giysi_mi (j1) enforces it). A perpendicular bulge on a fold line
+      // hanging at 30-38 deg points mostly UP, so the first cut of this curve
+      // climbed over the shoulder and (j1) went red. The curve was wrong, not
+      // the gate: every point is now clamped to the shoulder horizontal, and
+      // the AMPLITUDE IS RE-SOLVED AFTER THE CLAMP, so the drawn edge still
+      // measures chord + surplus. Clamping without re-solving would have been
+      // the quiet version of losing the millimetres.
+      const d = unit(sub(B, A));
+      let dik = [d[1], -d[0]];
+      if (dik[0] < 0) dik = [-dik[0], -dik[1]];
+      // The push direction is the BISECTOR of "perpendicular to the fold" and
+      // "straight outboard". Both pure choices were drawn and rejected by eye:
+      // the perpendicular alone points mostly UP on a fold line hanging at
+      // 30-38 deg, so the clamp below flattened the whole cap into a square
+      // shoulder shelf; straight outboard alone made the contour turn back on
+      // itself before the hem corner (the fold line already runs outboard, so
+      // the bump's falling tail cancelled it and printed an S). The bisector
+      // rises half as much — the clamp barely engages — and keeps the contour
+      // running outward all the way to the tip.
+      const nrm = unit(add(dik, [1, 0]));
+      const N = 28;
+      // Zero at both seam ends, crest at t = 0.5^(1/0.75) ~ 0.40 — fullest near
+      // the armhole where the gathers are, tapering to the hem, which is the
+      // shape of every reference puff (GIRDI/iyi-flat/adaylar/04, 06, 09).
+      const bump = (t) => (1 - Math.cos(2 * Math.PI * Math.pow(t, 0.75))) / 2;
+      const cizgi = (amp) => {
+        const pts = [];
+        for (let i = 0; i <= N; i++) {
+          const t = i / N;
+          const p = add(lerp(A, B, t), scale(nrm, amp * bump(t)));
+          pts.push([p[0], Math.max(p[1], A[1])]);   // never above the shoulder line
+        }
+        return pts;
+      };
+      const boy = (amp) => { const q = cizgi(amp); let L = 0; for (let i = 1; i < q.length; i++) L += norm(sub(q[i], q[i - 1])); return L; };
+      const hedef = kiris + fazlaMM;
+      let lo = 0, hi = Math.max(kiris, fazlaMM) * 6;
+      if (boy(hi) < hedef) return cizgi(hi);
+      for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (boy(mid) < hedef) lo = mid; else hi = mid; }
+      return cizgi((lo + hi) / 2);
+    };
+    const ustKenar = bz.kapak ? yay(g.S, g.out, bz.kapak.fazlaMM / 2) : [g.S, g.out];
+    const shape = ustKenar.concat(g.under.slice().reverse());
     const attr = (yan) => ` data-view="${F ? 'front' : 'back'}" data-yan="${yan}"` +
-      ` data-kol-aci="${g.angleDeg.toFixed(2)}" data-kol-olcek="${g.olcek.toFixed(4)}"`;
+      ` data-kol-aci="${g.angleDeg.toFixed(2)}" data-kol-olcek="${g.olcek.toFixed(4)}"` +
+      (bz.kapak ? ` data-buzgu-kapak-oran="${bz.kapak.oran.toFixed(4)}"` +
+                  ` data-buzgu-kapak-fazla-mm="${bz.kapak.fazlaMM.toFixed(2)}"` : '') +
+      (bz.etek ? ` data-buzgu-etek-oran="${bz.etek.oran.toFixed(4)}"` : '');
     // The cuff seam, or failing that the sleeve hem's stitch line. The depth is
     // the drafted cuff piece's own short side, not a drawn-in number.
     const depth = P.cuff ? stripDepth(P.cuff) : (P.sleeve.seamAllowance || 0);
@@ -1201,6 +1369,33 @@ function buildView(P, which) {
     push('kol', polyD(shape, flipY), W_OUTLINE, attr('sag'), shape);
     push('kol', polyD(shape.map((p) => [-p[0], p[1]]), flipY), W_OUTLINE, attr('sol'),
          shape.map((p) => [-p[0], p[1]]));
+
+    // BÜZGÜ MARKS. Short ticks across the gathered seam — the standard notation
+    // for "the fullness is drawn up here". Count = the pattern's own gather
+    // marks on that edge (sleeve.notches, stamped by the büzgü operator), so
+    // the drawing and the pattern say the same number. Class: 0.5 SOLID — the
+    // thinnest weight of the 4:2:1 hierarchy, and solid because the law
+    // reserves the DASHED 0.5 for `dikis-izi` (topstitch) alone.
+    const isaretAdet = Math.max(1, Math.floor(((P.sleeve.notches || []).length) / 2 /
+                                (bz.kapak && bz.etek ? 2 : 1)) || 1);
+    const tikMM = Math.max(6, (P.sleeve.seamAllowance || 15) * 0.7);
+    const bzAttr = (yan, tur, o) =>
+      ` data-view="${F ? 'front' : 'back'}" data-yan="${yan}"` +
+      ` data-buzgu="${tur}" data-buzgu-oran="${o.toFixed(4)}"`;
+    const bzPush = (segler, tur, o) => {
+      for (const [a, b] of segler) {
+        push('buzgu', polyD([a, b], flipY), W_TOPSTITCH, bzAttr('sag', tur, o), [a, b]);
+        const m = [[-a[0], a[1]], [-b[0], b[1]]];
+        push('buzgu', polyD(m, flipY), W_TOPSTITCH, bzAttr('sol', tur, o), m);
+      }
+    };
+    if (bz.kapak && out.notes.armholePts) {
+      bzPush(buzguIsaretleri(out.notes.armholePts, isaretAdet, tikMM), 'kapak', bz.kapak.oran);
+    }
+    if (bz.etek && depth > 0) {
+      const c = [sub(g.out, scale(g.d, depth)), sub(g.inn, scale(g.d, depth))];
+      bzPush(buzguIsaretleri(c, isaretAdet, tikMM), 'etek', bz.etek.oran);
+    }
   }
 
   // The collar: sized by the pattern's own collar piece, shaped by the
@@ -1243,7 +1438,7 @@ function pick(pieces, re) { return pieces.find((p) => re.test(p.name)) || null; 
 function gather(pattern) {
   const ps = pattern.pieces || [];
   const wrap = (p) => (p ? { piece: p } : null);
-  return {
+  const P = {
     bodice: {
       on:   wrap(pick(ps, /^(Bodice Front|Bodice Center Front|Top Front|Top Center Front)$/)),
       arka: wrap(pick(ps, /^(Bodice Back|Bodice Center Back|Top Back|Top Center Back)$/)),
@@ -1273,6 +1468,9 @@ function gather(pattern) {
     waistband: pick(ps, /^Waistband$/),
     neckFinish: pick(ps, /(Neck Facing|Bias binding)/),
   };
+  // BÜZGÜ is read once, off the assembled pieces, and shared by both views.
+  P.buzgu = buzguOku(P);
+  return P;
 }
 
 // ---------------------------------------------------------------------------

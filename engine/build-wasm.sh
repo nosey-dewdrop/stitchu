@@ -122,6 +122,7 @@ ENGINE_SRCS=(
   src/backdetail.cpp
   src/offshoulder.cpp
   src/sleeve.cpp
+  src/buzgu.cpp
   src/garment.cpp
   src/wearability.cpp
   src/validator.cpp

@@ -14,7 +14,9 @@ export const CONTRACT = {
     "gatherRatios": {
       "drawstring": 1.8,
       "shirred": 2,
-      "smocked": 3
+      "smocked": 3,
+      "sleeveCapPuffed": 1.29,
+      "sleeveCapGathered": 1.235
     },
     "euSizes": [
       "EU34",

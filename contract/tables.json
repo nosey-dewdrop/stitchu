@@ -8,7 +8,11 @@
       "_note": "flat cut width / finished gathered width (FORMULAS.md, Drawstring / shirred / smocked gathering). The flat engine's per-style gatherRatio recipe values are DRAWING ink density, a different quantity; its real cut number (panelCutWidth) must derive from THESE ratios.",
       "drawstring": 1.8,
       "shirred": 2.0,
-      "smocked": 3.0
+      "smocked": 3.0,
+      "_sleeveCapNote": "BUZGULU KAPAK ORANLARI (M1-puf, 2026-09-02). Yukaridaki uc oran AYRI bir panel parcasinin kesim genisligidir; asagidaki ikisi parcanin KENDI kenarina uygulanan buzgudur (engine/src/buzgu.cpp, sleeve.cpp). Ikisi ayni tabloda durur cunku ikisi de ayni buyukluk: cizili kenar boyu / dikilecegi kenarin boyu.",
+      "_sleeveCapSource": "OLCULDU, satin alinmis Bugra Locket kalibi. Upper Sleeve (dis buzgulu katman) ust kenarinin KENDI kol oyuguna gore fazlaligi, DIKIS cizgisinde: 8 bedende +23.5 ... +29.9%, EU38'de 604.16 vs 468.33 mm = +29.0%. Kaynak: knowledge/cap-ease-isareti-2026-08-17.md ('Dikis cizgisinde Upper'in ust kenari oyuktan +23.5...+29.9% uzun ... Bu bir ease degil, buzgudur'). sleeveCapPuffed = EU38'de olculen deger. sleeveCapGathered = AYNI 8-beden bandinin EN DUSUK ucu, yani olculen ailenin en az dolgun uyesi (yumusak buzgulu kapak); secilmis degil, olculmus alt sinir. Kesim cizgisi fazlaligi (+34.2...+43.2%) buraya YAZILMADI: motor dikis cizgisinde calisir. Bu iki oran, sleeve.cpp'de 2026-09-02'ye kadar duran KAYNAKSIZ puffedSpreadFrac=0.45 / gatheredSpreadFrac=0.20 ciftinin yerine gecti.",
+      "sleeveCapPuffed": 1.290,
+      "sleeveCapGathered": 1.235
     },
     "euSizes": ["EU34", "EU36", "EU38", "EU40", "EU42", "EU44", "EU46", "EU48", "EU50", "EU52"],
     "euSizeChart": {

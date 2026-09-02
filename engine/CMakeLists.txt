@@ -50,6 +50,7 @@ add_library(engine
     src/backdetail.cpp
     src/offshoulder.cpp
     src/sleeve.cpp
+    src/buzgu.cpp
     src/garment.cpp
     src/wearability.cpp
     src/validator.cpp
@@ -151,6 +152,21 @@ set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SE
 # · ayna ozdesligi 1e-6 (h). (g) ve (h), kaynak degistigi icin eski kapilarin
 # olcemez oldugu iki hukmun yeni kaynaga BAGLANMIS halidir — silinmediler.
 add_test(NAME cizim_giysi_mi COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/cizim_giysi_mi.mjs)
+
+# buzgu_katman_check (M1-puf 2026-09-02): BUZGULU KENAR OPERATORU. Motorun
+# bilinen tek gercek eksigiydi — KOSU/ciktilar/kusur-listesi.md A1 ("balon kol
+# PUF hacmi yok, kok neden KALIP/motor") ve CLAUDE.md'nin olcumu (satin alinmis
+# Bugra Locket'in Upper Sleeve'i kendi oyuguna %29 FAZLALIKLA giriyor = buzgu,
+# ease degil). Bir parcanin KENDI kenarini uzatan operator yoktu; puf,
+# kaynaksiz `puffedSpreadFrac = 0.45` ile taci genisletiyordu. Kapi bes hukmu
+# olcer: (a) opt-in — buzgusuz spec'te operator hic kosmamis gibi, kol disindaki
+# her parca bayt-ayni · (b) cizili kapak yayi = ilan edilen oran x cizili kol
+# oyugu yayi, %1 · (c) buzgu isaretleri kenar boyunca esit dagilmis · (d) sevk
+# edilen cizimde buzgu cizgileri kanunun sinifiyla var, oran ILAN ediliyor, ve
+# puf kol duz kolun 1.05 katindan dolgun · (e) iki katmanli puf (Bugra emsali)
+# ciziliyor ve konak degilken ADIYLA reddediyor. Oranlar contract/tables.json
+# draft.gatherRatios.sleeveCap* (kaynagiyla olculmus), esik bu dosyada degil.
+add_test(NAME buzgu_katman_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/buzgu_katman_check.mjs)
 
 # manken_insan_ayrim_check (F6-konvansiyon 2026-09-02): flat 38 != kalip 38.
 # Kalip INSAN cizelgesine cizilir (dikilebilir), flat MANKEN bedenine — ve o

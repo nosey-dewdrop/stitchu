@@ -533,8 +533,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         } else {
             steps.push_back("Sew each sleeve seam. Run gathering stitches between the cap notches, ease the cap into the armhole and set the sleeves in.");
             if (spec.sleeveCap != SleeveCap::Plain) {
-                steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
-                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+                // M1-puf: the old sentence described the DELETED hand-drawn crown
+                // markings ("between the two crown notches ... the length below the
+                // notches matches the armhole 1:1"). That is no longer what the
+                // engine draws: the WHOLE cap edge is gathered, by the buzgu
+                // operator, at the measured Bugra ratio, and the gather marks are
+                // stamped along that edge. The guide now says what the piece is.
+                steps.push_back(std::string("Puff/gathered head (buzgu): the whole cap edge is drawn ") +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) / 10)) + "." +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) % 10)) +
+                    "% longer than the armhole it goes into — that surplus is GATHERED, not eased. Run two rows of gathering along the cap edge, draw them up until the cap measures the armhole, and distribute the fullness evenly between the gather marks so it " +
+                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
             }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {
@@ -654,8 +663,17 @@ std::vector<std::string> guide(const GarmentSpec& spec, bool halter, bool biasNe
         } else {
             steps.push_back("Sew each sleeve seam, ease the cap between the notches and set the sleeves in.");
             if (spec.sleeveCap != SleeveCap::Plain) {
-                steps.push_back(std::string("Puff/gathered head: run two rows of gathering along the marked crown line between the two crown notches, then pull them up to fit the armhole between those notches so the extra fullness ") +
-                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + " — the length below the notches matches the armhole 1:1, so ease only the crown.");
+                // M1-puf: the old sentence described the DELETED hand-drawn crown
+                // markings ("between the two crown notches ... the length below the
+                // notches matches the armhole 1:1"). That is no longer what the
+                // engine draws: the WHOLE cap edge is gathered, by the buzgu
+                // operator, at the measured Bugra ratio, and the gather marks are
+                // stamped along that edge. The guide now says what the piece is.
+                steps.push_back(std::string("Puff/gathered head (buzgu): the whole cap edge is drawn ") +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) / 10)) + "." +
+                    std::to_string(static_cast<long>(std::lround((SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1) * 1000) % 10)) +
+                    "% longer than the armhole it goes into — that surplus is GATHERED, not eased. Run two rows of gathering along the cap edge, draw them up until the cap measures the armhole, and distribute the fullness evenly between the gather marks so it " +
+                    (spec.sleeveCap == SleeveCap::Puffed ? "stands up over the shoulder" : "sits as a soft gather") + ". Then set the sleeve in as usual.");
             }
         }
         if (spec.sleeveStyle == SleeveStyle::Balloon) {

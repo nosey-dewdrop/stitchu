@@ -387,14 +387,18 @@ std::vector<ValidationIssue> sleeveIssues(
     // the widened crown is >= the base width. Guard the gather is neither absent
     // (looks plain) nor runaway (unsewable).
     if (spec.sleeveCap != SleeveCap::Plain) {
-        const double spreadFrac = SleeveBlock::capSpreadFrac(spec.sleeveCap);
-        // Arc grows a bit more than the chord spread; accept a wide band.
-        const double lo = spreadFrac * 0.5;   // must actually be gathered
-        const double hi = spreadFrac * 2.5 + 0.20; // but not runaway
-        if (ease < lo || ease > hi) {
+        // ⭐ M1-puf TIGHTENED THIS, IT DID NOT LOOSEN IT. The old test compared
+        // the surplus against a band derived from the INVENTED spread fraction
+        // (lo = frac*0.5, hi = frac*2.5 + 0.20 — a 0.45 spread accepted anything
+        // from 22% to 132%), i.e. an invented number judging its own output.
+        // The büzgü operator now STATES the ratio (buzgu.cpp lengthens the cap
+        // edge to exactly ratio x armhole), so the check is an equality: the
+        // drawn surplus must be the declared gather, to 1%.
+        const double declared = SleeveBlock::capBuzguRatio(spec.sleeveCap) - 1.0;
+        if (std::fabs(ease - declared) > 0.01) {
             issues.push_back({"cap", sleeve->name,
-                fmt("gathered-head surplus %.1f%% outside the expected %.0f-%.0f%% gather band",
-                    ease * 100, lo * 100, hi * 100)});
+                fmt("gathered-head surplus %.2f%% is not the declared buzgu %.2f%% (buzgu operator did not run, or the cap was rewritten after it)",
+                    ease * 100, declared * 100)});
         }
         const double bicepsEstimate =
             m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(spec.fabric));

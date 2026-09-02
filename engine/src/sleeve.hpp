@@ -1,5 +1,6 @@
 #pragma once
 // Set-in sleeve block, cap fitted by bisection to the armhole. See FORMULAS.md.
+#include "buzgu.hpp"
 #include "fabricease.hpp"
 #include "geometry.hpp"
 #include "measurements.hpp"
@@ -54,19 +55,40 @@ static_assert(FabricBand::easeAt(FabricBand::Girth::SleeveCap, 38.0) <= capEase 
 inline double bicepsEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::Biceps, f); }
 inline double capEaseFor(const FabricAxis& f) { return FabricBand::easeFor(FabricBand::Girth::SleeveCap, f); }
 
-// Gathered / puff sleeve HEAD (Loop 6). The classic slash-and-spread adds
-// fullness across the crown ONLY (above the notches); the length below the
-// notches stays matched 1:1 to the armhole. VERIFIED invariant (dresspatternmaking,
-// M.Müller): cap-height RAISE == the total spread for a puff. The gather ratio
-// (finished crown arc / original crown arc) is the fullness the spread produces.
-//   Gathered (soft, high-street): spread ~0.20*W, cap NOT raised.
-//   Puffed  (full, couture gigot): spread ~0.45*W, cap raised by the spread.
-inline constexpr double gatheredSpreadFrac = 0.20; // added crown width / cap width
-inline constexpr double puffedSpreadFrac   = 0.45;
-inline double capSpreadFrac(SleeveCap c) {
-    return c == SleeveCap::Puffed ? puffedSpreadFrac
-         : c == SleeveCap::Gathered ? gatheredSpreadFrac : 0.0;
+// GATHERED / PUFF HEAD — A BÜZGÜ, NOT AN INVENTED SPREAD (M1-puf, 2026-09-02).
+//
+// ⛔ WHAT WAS HERE UNTIL TODAY, AND WHY IT WENT. Two constants:
+//     gatheredSpreadFrac = 0.20   // added crown width / cap width
+//     puffedSpreadFrac   = 0.45
+// Neither had a source. They were not "the gather ratio" of anything — they
+// were a chosen widening, and the surplus that reached the armhole was
+// WHATEVER FELL OUT of that widening. So the one number that decides whether a
+// sleeve reads as a puff (how much longer than the armhole the cap is drawn)
+// was never stated, never measured and never checked; the validator could only
+// judge it against a band derived from the same invented number.
+//
+// ⭐ WHAT REPLACED THEM. The quantity that defines a gathered seam, stated
+// directly: BUZGU ORANI = drawn cap arc / armhole it is sewn onto. Both values
+// are MEASURED on the purchased Bugra Locket (contract/tables.json
+// draft.gatherRatios._sleeveCapSource, from knowledge/cap-ease-isareti-2026-08-17.md):
+// the Upper Sleeve's top edge runs into its own armhole with +23.5 ... +29.9%
+// surplus across 8 sizes, +29.0% at EU38. That surplus is a gather, not ease.
+//   Puffed   1.290 — the EU38 measured value.
+//   Gathered 1.235 — the LOW end of the same measured band (the least full
+//                    member of the measured family), not a taste pick.
+// The operator that applies it is engine/src/buzgu.cpp; sleeve.cpp drafts the
+// PLAIN armhole-fitted cap first and then gathers that named edge, so the
+// number above is what the drawn edge actually measures, to floating point.
+inline double capBuzguRatio(SleeveCap c) {
+    return c == SleeveCap::Puffed ? contract::kGatherRatio_sleeveCapPuffed
+         : c == SleeveCap::Gathered ? contract::kGatherRatio_sleeveCapGathered : 0.0;
 }
+// Gather marks along the gathered cap. THREE, and the number is measured, not
+// picked: the Bugra Locket's Lower Sleeve carries exactly three notches with no
+// counterpart on the plain cap — arc 127, 412, 446 — and CLAUDE.md names them
+// "buzgulu Upper Sleeve hizalama isaretleri", i.e. the marks that distribute
+// the gathered layer's fullness. The engine draws the same count.
+inline constexpr int capBuzguNotchCount = 3;
 
 // Cap sleeve (kısa kanat cap, R1.2). A cap sleeve is NOT a short straight sleeve
 // — it is a little WING that covers the top of the shoulder and dies away at the
@@ -79,6 +101,10 @@ inline constexpr double capWingDepth = constants::kCapWingDepthMM; // wing drop 
 
 // Returns the sleeve pieces (sleeve + cuff for balloon); empty for sleeveless.
 // `cap` adds a gathered/puff head; Plain keeps the classic set-in cap exactly.
+// `capBuzgu` / `hemBuzgu` (optional) report what the büzgü operator actually
+// did to the cap edge and to the balloon hem — including a NAMED refusal. A
+// caller that passes them can put the numbers in the sewing guide; a caller
+// that does not is unaffected, and a Plain cap never touches them.
 std::vector<PatternPiece> draft(
     const BodyMeasurementsSnapshot& m,
     SleeveStyle style,
@@ -86,7 +112,9 @@ std::vector<PatternPiece> draft(
     double armholeLength,
     double armholeDepth,
     FabricAxis fabric = Fabric::Woven,
-    SleeveCap cap = SleeveCap::Plain);
+    SleeveCap cap = SleeveCap::Plain,
+    BuzguResult* capBuzgu = nullptr,
+    BuzguResult* hemBuzgu = nullptr);
 
 } // namespace SleeveBlock
 } // namespace stitchu

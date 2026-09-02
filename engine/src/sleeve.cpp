@@ -46,7 +46,9 @@ std::vector<PatternPiece> draft(
     double armholeLength,
     double armholeDepth,
     FabricAxis fabric,
-    SleeveCap cap
+    SleeveCap cap,
+    BuzguResult* capBuzgu,
+    BuzguResult* hemBuzgu
 ) {
     if (style == SleeveStyle::None) return {};
 
@@ -94,17 +96,18 @@ std::vector<PatternPiece> draft(
         }
     }
 
-    // GATHERED / PUFF HEAD (Loop 6). Slash-and-spread across the crown: the cap
-    // is widened by `spread` and the top point is drawn HIGHER so the extra arc
-    // is gathered/eased into the SAME armhole (crown gather between the notches;
-    // the underarm-to-notch length still matches the armhole 1:1). VERIFIED rule
-    // (dresspatternmaking / M.Müller): a puff RAISES the cap by the spread amount;
-    // a plain gathered head keeps the height. The biceps/hem width below is left
-    // on the fitted base `width` so the sleeve still clears the arm. See FORMULAS.
-    const double spread = capSpreadFrac(cap) * width;      // 0 when Plain / Cap
-    const double capWidth = width + spread;                // widened crown
-    const double capRise = (cap == SleeveCap::Puffed) ? spread : 0.0;
-    capHeight += capRise;                                  // Plain/Cap: +0 → identical
+    // GATHERED / PUFF HEAD — DRAFTED PLAIN HERE, GATHERED AT THE END (M1-puf).
+    //
+    // Until 2026-09-02 this spot widened the crown by an INVENTED fraction of
+    // the sleeve width (`capSpreadFrac`, 0.20 / 0.45, no source) and raised the
+    // cap by the same amount, and whatever surplus that produced over the
+    // armhole was the "gather". Both constants are gone. The cap drawn below is
+    // the PLAIN armhole-fitted cap in every case; when `cap` asks for a gather,
+    // the finished piece's own `sleeve_cap` edge is handed to the büzgü
+    // operator (buzgu.cpp) at the bottom of this function with a MEASURED ratio.
+    // That is why the crown is not widened here: a gather is a property of the
+    // finished EDGE, and the operator is the only thing allowed to state it.
+    const double capWidth = width;
 
     // CAP SLEEVE WING (R1.2). A cap sleeve keeps the ordinary set-in cap head
     // (the same cap curve, fitted to the armhole above so it sets in 1:1) but has
@@ -203,7 +206,13 @@ std::vector<PatternPiece> draft(
     // only one of them would hide the pair a consumer has to compare.
     sleeveRoles.push_back({"sleeve_underarm", underarmRightIndex, underarmRightIndex,
                            capRight, hemRight});
+    const int hemIndex = static_cast<int>(commands.size());
     commands.push_back(PathCommand::line(hemLeft));
+    // NAME THE HEM (M1-puf). It was the one unnamed edge on the piece, and it is
+    // exactly the edge a balloon sleeve gathers into its cuff — so without a name
+    // the second gather of a two-ended sleeve could not even be addressed, let
+    // alone measured. Naming it costs no geometry (edgeRoles are not drawn).
+    sleeveRoles.push_back({"sleeve_hem", hemIndex, hemIndex, hemRight, hemLeft});
     const int underarmLeftIndex = static_cast<int>(commands.size());
     commands.push_back(PathCommand::curve(
         capLeft,
@@ -220,26 +229,12 @@ std::vector<PatternPiece> draft(
         PathCommand::move({width * 0.18, capHeight * 0.18}),
         PathCommand::line({width * 0.18, capHeight * 0.05}),
     };
-    // Puff/gathered head: mark the crown gather span. The gather runs between the
-    // two crown notches ACROSS the top (the underarm-to-notch length stays matched
-    // to the armhole, so the sleeve still sets in). Notches sit at ±capWidth*0.30
-    // — roughly the 7.5–9 cm-from-underarm placement on a real cap — with a dashed
-    // gather line across the crown at the notch height so the sewer knows exactly
-    // where to run the two gathering rows and ease the fullness in.
-    if (cap != SleeveCap::Plain) {
-        const double gx = capHalf * 0.60;          // crown notch x
-        const double gy = capHeight * 0.42;        // notch depth from the top edge
-        // left crown notch
-        markings.push_back(PathCommand::move({-gx, gy + capHeight * 0.10}));
-        markings.push_back(PathCommand::line({-gx, gy - capHeight * 0.02}));
-        // right crown notch
-        markings.push_back(PathCommand::move({gx, gy + capHeight * 0.10}));
-        markings.push_back(PathCommand::line({gx, gy - capHeight * 0.02}));
-        // gather line across the crown, dipping toward the raised top
-        markings.push_back(PathCommand::move({-gx, gy}));
-        markings.push_back(PathCommand::curve(
-            {gx, gy}, {-gx * 0.4, gy * 0.35}, {gx * 0.4, gy * 0.35}));
-    }
+    // ⛔ THE HAND-DRAWN "gather span" THAT USED TO SIT HERE IS GONE (M1-puf).
+    // It drew two crown notches at ±capHalf*0.60 and a dashed arc between them —
+    // three more numbers with no source, placed on a crown whose width was
+    // itself invented. The gather marks are now stamped BY the operator, evenly
+    // along the edge it actually lengthened, so their position is a consequence
+    // of the gather instead of a decoration next to it.
     if (balloon) {
         markings.push_back(PathCommand::move({-hemHalf, hemY - 25}));
         markings.push_back(PathCommand::line({hemHalf, hemY - 25}));
@@ -258,11 +253,40 @@ std::vector<PatternPiece> draft(
     sleeve.grainline = Grainline{{0, capHeight * 0.4}, {0, hemY - 40}};
     sleeve.seamAllowance = constants::kSeamAllowanceMM;
 
-    if (!balloon) return {sleeve};
-
     // Cuff band: wrist-ish circumference derived from biceps estimate.
     const double cuffLength = bicepsEstimate * 0.62 + 20;
     const double cuffHeight = 60;
+
+    // ---------------------------------------------------------------------
+    // BÜZGÜ (M1-puf). The sleeve above is the plain armhole-fitted draft. Now
+    // the two edges that a gathered sleeve actually gathers are handed to the
+    // operator — the CAP into the armhole, and (balloon) the HEM into the cuff.
+    // Both are named edges, so both are addressed rather than guessed at.
+    // ---------------------------------------------------------------------
+    if (cap != SleeveCap::Plain && cap != SleeveCap::Cap) {
+        BuzguResult r = BuzguBlock::gatherEdge(
+            sleeve, "sleeve_cap", armholeLength, capBuzguRatio(cap), capBuzguNotchCount);
+        if (capBuzgu) *capBuzgu = r;
+        // A refusal is NOT swallowed: the piece keeps its plain cap and the
+        // caller is told, by name, that this sleeve is not gathered. Drawing a
+        // sleeve called "Puff Sleeve" with a plain cap and saying nothing is
+        // exactly the silent default this engine is not allowed to have — so
+        // the piece is renamed to what it IS.
+        if (!r.ok && cap == SleeveCap::Puffed) sleeve.name = "Sleeve (buzgu uygulanamadi)";
+    }
+    // A balloon hem is drafted WIDER than its cuff already (hemHalf on the
+    // fitted width vs a cuff at 0.62 x biceps). So its gather is a MEASUREMENT,
+    // not a change: markGatheredEdge stamps the marks and reports the ratio the
+    // draft itself produced. Overwriting it with the Bugra cap ratio would
+    // replace a real number with a borrowed one — and would SHRINK this hem.
+    if (balloon) {
+        BuzguResult h = BuzguBlock::markGatheredEdge(
+            sleeve, "sleeve_hem", cuffLength, capBuzguNotchCount);
+        if (hemBuzgu) *hemBuzgu = h;
+    }
+
+    if (!balloon) return {sleeve};
+
     PatternPiece cuff;
     cuff.name = "Sleeve Cuff";
     cuff.cutInstruction = "cut 2, interface";
