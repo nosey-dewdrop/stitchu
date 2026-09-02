@@ -175,7 +175,7 @@ function mankenWarp(half, bustY, waistPt) {
 }
 
 import {
-  add, sub, scale, norm, unit, lerp, rotAbout,
+  EPS, add, sub, scale, norm, unit, lerp, rotAbout,
   segsFromCommands, polysFromCommands, samplePoly, polyLength, chainLength,
   cumFrac, atFrac, nearestIdx, mapSegs, mirrorSegs, rampSegs,
   pathD, polyD, segsFromPoly, bbox, densifySegs,
@@ -622,13 +622,23 @@ function sleeveGeometry(sleeve, S, U) {
 //          at the piece's mean depth, ROUNDED at the centre front: the width
 //          eases in over one depth of arc on a quarter-circle profile, which
 //          is what draws the classic bebe-yaka lobe.
-//   gomlek (shirt stand + blade)   — the fall lies on the garment and comes to
-//          a POINT one CF opening past the mirror line (a zero-width tip ON
-//          CF made the two mirrored flaps cross in a small X, 2026-09-02):
-//          width ramps linearly from the tip over the blade's own point
-//          length, so the flaps leave the classic V opening; the stand shows
-//          as a short arc behind the neck at HALF its measured height (the
-//          full height arched shoulder-to-shoulder read as a dome).
+//   gomlek (shirt stand + blade)   — TWO pointed leaves meeting near CF plus
+//          a visible stand crescent behind the neck. The first cut of this
+//          (2026-09-02) offset the whole neckline like a band and the judge
+//          read it as a cape draped shoulder-to-shoulder, its contour showing
+//          25 curvature sign flips in 74 points. The leaf is now BUILT from
+//          its landmarks — shoulder neck point, a V corner on the neckline
+//          one CF opening from the mirror, a tip dropped one blade depth onto
+//          the chest — with the outer edge one Catmull-Rom curve through
+//          points held one blade depth off the neckline. Smooth by
+//          construction, judged by gate (k3).
+//
+// SMOOTHNESS. The old drawing offset each of 36 samples along the tangent of
+// whichever polyline SEGMENT contained it (atFrac): a piecewise-constant
+// tangent, so the offset edge inherited a normal that JUMPED at every sample.
+// That is the measured wobble. Offsets now walk an even-arc-length resample
+// with central-difference tangents (smoothBand), which is the standard
+// discrete estimator with a continuous turn along the curve.
 function collarMeasures(piece) {
   if (!piece) return null;
   const segs = segsFromCommands(piece.commands);
@@ -670,61 +680,176 @@ function collarPlan(g, neckMM) {
   };
 }
 
+/** Even-arc-length resample of a polyline with central-difference tangents.
+ *  Returns { p: [pts], n: [unit normals] } with the normal ORIENTED away from
+ *  `away` (so `+w` moves onto the garment when `away` is the neck hollow). */
+function smoothBand(pts, N, away) {
+  const nc = cumFrac(pts);
+  const P = [];
+  for (let k = 0; k <= N; k++) P.push(atFrac(pts, nc, k / N).p);
+  const nrm = [];
+  for (let k = 0; k <= N; k++) {
+    const a = P[Math.max(0, k - 1)], b = P[Math.min(N, k + 1)];
+    let n = unit([-(b[1] - a[1]), b[0] - a[0]]);
+    if (n[0] * (P[k][0] - away[0]) + n[1] * (P[k][1] - away[1]) < 0) n = scale(n, -1);
+    nrm.push(n);
+  }
+  return { p: P, n: nrm };
+}
+
+/** One quadratic Bezier, sampled. A quadratic's curvature CANNOT change sign —
+ *  which is exactly the property the smoothness gate (k3) wants from a collar
+ *  arc — so every free-standing collar curve here is quadratic or circular. */
+function quadArc(a, c, b, M = 14) {
+  const out = [];
+  for (let k = 0; k <= M; k++) {
+    const t = k / M, u = 1 - t;
+    out.push([u * u * a[0] + 2 * u * t * c[0] + t * t * b[0],
+              u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]);
+  }
+  return out;
+}
+
+/** Circular arc through three points (constant curvature, zero inflections).
+ *  Falls back to the polyline itself when they are near-collinear. */
+function arc3(a, q, b, M = 20) {
+  const d = 2 * (a[0] * (q[1] - b[1]) + q[0] * (b[1] - a[1]) + b[0] * (a[1] - q[1]));
+  if (Math.abs(d) < 1e-6) return [a, q, b];
+  const s = (p) => p[0] * p[0] + p[1] * p[1];
+  const cx = (s(a) * (q[1] - b[1]) + s(q) * (b[1] - a[1]) + s(b) * (a[1] - q[1])) / d;
+  const cy = (s(a) * (b[0] - q[0]) + s(q) * (a[0] - b[0]) + s(b) * (q[0] - a[0])) / d;
+  const th = (p) => Math.atan2(p[1] - cy, p[0] - cx);
+  const r = Math.hypot(a[0] - cx, a[1] - cy);
+  let t0 = th(a), t1 = th(b), tq = th(q);
+  // walk the side that contains q
+  const wrap = (x) => ((x % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  let sweep = wrap(t1 - t0);
+  if (wrap(tq - t0) > sweep) sweep -= 2 * Math.PI;
+  const out = [];
+  for (let k = 0; k <= M; k++) {
+    const t = t0 + sweep * (k / M);
+    out.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
+  }
+  return out;
+}
+
+/** Chaikin corner cutting, endpoints pinned. Kills the resample aliasing that
+ *  the even-arc-length walk leaves on a polyline-of-a-curve (sub-degree
+ *  alternating turns — the judged wobble of the 2026-09-02 shirt collar). */
+function chaikin(pts, iters = 2) {
+  let P = pts;
+  for (let it = 0; it < iters; it++) {
+    const out = [P[0]];
+    for (let i = 0; i + 1 < P.length; i++) {
+      out.push(lerp(P[i], P[i + 1], 0.25), lerp(P[i], P[i + 1], 0.75));
+    }
+    out.push(P[P.length - 1]);
+    P = out;
+  }
+  return P;
+}
+
+/** Standard offset cleanup: an offset pushed toward the hollow side folds into
+ *  a small loop wherever the offset depth exceeds the local curvature radius
+ *  (measured on the stand collar's back neckline, 2026-09-02 — gate k2 caught
+ *  the crossing). The loop is cut at its own intersection point. */
+function trimLoops(pts, win = 10) {
+  const X = (a, b, c, d) => {
+    const r = [b[0] - a[0], b[1] - a[1]], q = [d[0] - c[0], d[1] - c[1]];
+    const den = r[0] * q[1] - r[1] * q[0];
+    if (Math.abs(den) < EPS) return null;
+    const t = ((c[0] - a[0]) * q[1] - (c[1] - a[1]) * q[0]) / den;
+    const u = ((c[0] - a[0]) * r[1] - (c[1] - a[1]) * r[0]) / den;
+    return t > 1e-9 && t < 1 - 1e-9 && u > 1e-9 && u < 1 - 1e-9
+      ? [a[0] + t * r[0], a[1] + t * r[1]] : null;
+  };
+  const P = pts.slice();
+  for (let i = 0; i + 1 < P.length; i++) {
+    for (let j = i + 2; j < Math.min(P.length - 1, i + win); j++) {
+      const p = X(P[i], P[i + 1], P[j], P[j + 1]);
+      if (p) { P.splice(i + 1, j - i, p); break; }
+    }
+  }
+  return P;
+}
+
 /** The drawn collar for one view: an array of { pts, kapali } polylines in the
  *  view's own frame, right half only (the mirror is derived like everything
- *  else). `neckPts` runs centre -> shoulder; `hollow` is the neck hollow. */
-function yakaKonvansiyon(Y, neckPts, hollow, F) {
-  const nc = cumFrac(neckPts);
+ *  else). `neckPts` runs centre -> shoulder; `hollow` is the neck hollow;
+ *  `shPts` is the posed shoulder line (neck point -> shoulder tip), used to
+ *  keep a lying collar's edge from poking past the shoulder seam — the thin
+ *  wedge artefact the judge named on the 2026-09-02 prints. */
+function yakaKonvansiyon(Y, neckPts, hollow, F, shPts) {
   const L = polyLength(neckPts);
   const D = Y.derinlikMM;
   if (!(L > 5) || !(D > 0.5)) return null;
-  const yon = Y.tur === 'dik' ? -1 : 1;   // -1 toward the hollow (stands), +1 onto the garment (lies)
-  let wOf, g0 = 0;
-  if (Y.tur === 'dik' || !F) wOf = () => D;                       // back view: the collar runs unbroken across CB
-  else if (Y.tur === 'yatik') {
+  const N = 48;
+  const B = smoothBand(neckPts, N, hollow);        // normals point ONTO the garment
+  // Clamp for lying cloth: nothing drawn past the shoulder seam. The garment
+  // side of that line is where the neckline's own CF point is.
+  let shClamp = (q) => q;
+  if (shPts && shPts.length >= 2) {
+    const A = shPts[0], Sv = sub(shPts[shPts.length - 1], A);
+    const side = (p) => Sv[0] * (p[1] - A[1]) - Sv[1] * (p[0] - A[0]);
+    const ref = side(B.p[0]) >= 0 ? 1 : -1;        // CF deep point = garment side
+    shClamp = (q) => {
+      if (side(q) * ref >= 0) return q;
+      const t = ((q[0] - A[0]) * Sv[0] + (q[1] - A[1]) * Sv[1]) / (Sv[0] * Sv[0] + Sv[1] * Sv[1]);
+      return add(A, scale(Sv, Math.max(0, Math.min(1, t))));
+    };
+  }
+  if (Y.tur === 'gomlek' && F) {
+    // THE SHIRT COLLAR, FRONT: two pointed leaves + a visible stand crescent.
+    // Landmarks first, curves through them — not an offset of the neckline.
+    const NP = B.p[N];                                   // shoulder neck point
+    const gap = Math.min(0.4, (YAKA_CF_ACIKLIK * D) / L);
+    const at = (g) => B.p[Math.round(g * N)];
+    const nAt = (g) => B.n[Math.round(g * N)];
+    const V = at(gap);                                   // V corner ON the neckline
+    const T = shClamp(add(V, scale(nAt(gap), 1.05 * D)));         // the point, on the chest
+    // outer edge: ONE circular arc from the tip to a visible roll at the
+    // shoulder, bulging one blade depth off the neckline — constant curvature,
+    // so it cannot carry an inflection for (k3) to count
+    const rib = (g, w) => shClamp(add(at(g), scale(nAt(g), w * D)));
+    const E = rib(1, 0.4);                               // roll line at the shoulder
+    const outer = arc3(T, rib(0.55, 0.85), E, 22);
+    // inner edge: the neckline itself, shoulder -> V corner
+    const iV = Math.round(gap * N);
+    const leaf = chaikin(B.p.slice(iV).reverse()).concat([T], outer.slice(1));
+    const shapes = [{ pts: leaf.map((q) => [Math.max(0, q[0]), q[1]]), kapali: true }];
+    if (Y.standMM > 1) {
+      // the stand behind the neck: a thin crescent from the neck point to the
+      // mirror line, visible height a convention fraction of the measured
+      // stand (full height read as a dome, 2026-09-02). Drawn as a CLOSED
+      // band of two quadratics so it reads as cloth, not as a stray line.
+      const h = Y.standMM * YAKA_STAND_GORUNUR;
+      const ust = quadArc(NP, [NP[0] * 0.45, NP[1] - h * 1.15], [0, NP[1] - h]);
+      const alt = quadArc(NP, [NP[0] * 0.42, NP[1] - h * 0.5], [0, NP[1] - h * 0.45]);
+      shapes.push({ pts: ust.concat(alt.reverse().slice(0, -1)), kapali: true });
+    }
+    return shapes;
+  }
+  // BAND COLLARS: a stand runs toward the hollow, everything else lies on the
+  // garment; the back view of every type runs unbroken across CB.
+  const yon = Y.tur === 'dik' ? -1 : 1;
+  const clampFn = yon > 0 ? shClamp : (q) => q;         // standing cloth may rise over the shoulder line
+  let wOf;
+  if (Y.tur !== 'yatik' || !F) wOf = () => D;
+  else {
     // rounded CF lobe: quarter-circle ease over one depth of arc
     wOf = (t) => (t < D ? D * Math.sqrt(Math.max(0, 2 * (t / D) - (t / D) * (t / D))) : D);
-  } else {
-    // pointed CF flap: it STARTS one CF opening past the mirror line — a
-    // zero-width tip on CF itself made the two mirrored flaps cross in a small
-    // X (measured on the 2026-09-02 print of 09, judged then). The tip sits on
-    // the neckline, the width ramps linearly over the blade's own point length.
-    const uc = Math.max(Y.ucMM, D);
-    const gap = YAKA_CF_ACIKLIK * D;
-    g0 = Math.min(0.4, gap / L);
-    wOf = (t) => (t < gap ? 0 : (t - gap < uc ? D * ((t - gap) / uc) : D));
   }
-  const N = 36, spine = [], edge = [];
+  let spine = [], edge = [];
   for (let k = 0; k <= N; k++) {
-    const g = g0 + (k / N) * (1 - g0);
-    const o = atFrac(neckPts, nc, g);
-    let n = unit([-o.tan[1], o.tan[0]]);
-    if ((n[0] * (o.p[0] - hollow[0]) + n[1] * (o.p[1] - hollow[1])) * yon < 0) n = scale(n, -1);
-    const q = add(o.p, scale(n, wOf(g * L)));
-    spine.push(o.p);
+    const q = clampFn(add(B.p[k], scale(B.n[k], yon * wOf((k / N) * L))));
+    spine.push(B.p[k]);
     // NOTHING crosses the mirror line in a half-frame drawing: a standing
     // band's CF cap sits ON it, a lying collar's lobe at worst touches it
     edge.push([Math.max(0, q[0]), q[1]]);
   }
-  const shapes = [{ pts: spine.concat(edge.reverse()), kapali: true }];
-  if (Y.tur === 'gomlek' && F && Y.standMM > 1) {
-    // the stand, seen behind the neck: a short arc from the neck point up to
-    // the mirror line. Risen by HALF the measured stand height (convention
-    // constant, contract yakaParcasi.standGorunurOverDerinlik): the full
-    // height arched shoulder-to-shoulder read as a dome/hood, while in every
-    // vendor reference the stand shows as a small CB strip.
-    const NP = neckPts[neckPts.length - 1];                     // shoulder-side neck point
-    const h = Y.standMM * YAKA_STAND_GORUNUR, M = 12, arc = [];
-    const E = [0, NP[1] - h];                                    // CF top of the stand
-    const C = [NP[0] * 0.45, NP[1] - h * 1.15];                  // control, over the neck
-    for (let k = 0; k <= M; k++) {
-      const t = k / M, u = 1 - t;
-      arc.push([u * u * NP[0] + 2 * u * t * C[0] + t * t * E[0],
-                u * u * NP[1] + 2 * u * t * C[1] + t * t * E[1]]);
-    }
-    shapes.push({ pts: arc, kapali: false });
-  }
-  return shapes;
+  spine = chaikin(spine);
+  edge = chaikin(trimLoops(edge));
+  return [{ pts: spine.concat(edge.reverse()), kapali: true }];
 }
 
 // ---------------------------------------------------------------------------
@@ -788,11 +913,13 @@ function buildView(P, which) {
       out.notes.pozAttr = poz.attrs;
       out.notes.armholePts = samplePoly([poz.armSeg], 24);
       out.notes.neck = samplePoly(poz.neckSegs, 24);
+      out.notes.shoulder = samplePoly(poz.shoulderSegs, 4);
     } else {
       out.sebep.push(`${which}: konvansiyon pozu kurulamadi — kalibin kendi ust kenari basildi`);
       half = half.concat(d.neck, d.shoulder, d.armhole);
       out.notes.armholePts = samplePoly(d.armhole, 24);
       out.notes.neck = samplePoly(d.neck, 24);
+      out.notes.shoulder = samplePoly(d.shoulder, 4);
     }
     if (P.sleeve && S && U) {
       const g = sleeveGeometry(P.sleeve, S, U);
@@ -985,7 +1112,7 @@ function buildView(P, which) {
   // convention (section 4). The piece length and the drafted neckline length
   // ride on every collar path so the (k) gate can hold them together.
   if (P.yakaPlan && out.notes.neck && out.notes.neck.length > 1) {
-    const sh = yakaKonvansiyon(P.yakaPlan, out.notes.neck, out.notes.hollow, F);
+    const sh = yakaKonvansiyon(P.yakaPlan, out.notes.neck, out.notes.hollow, F, out.notes.shoulder);
     if (sh) {
       const attr = (yan) => ` data-view="${F ? 'front' : 'back'}" data-yan="${yan}"` +
         ` data-yaka-tur="${P.yakaPlan.tur}"` +

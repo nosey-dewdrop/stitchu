@@ -784,7 +784,7 @@ console.log('\n--- (j) flat poz konvansiyonu (sevkPoz): kol sarkik, omuz kisa+eg
 //       2026-09-02: 09'un iki aynali yapragi CF'de kucuk X'le birbirinin
 //       ustunden geciyordu ve path-BASINA test bunu goremiyordu — kapi kor
 //       noktasiydi, genisletildi.
-console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini kesmiyor (ayna cifti dahil)');
+console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini kesmiyor (ayna cifti dahil) + titrek degil (k3)');
 {
   const segsOf = (P, kapali) => {
     const pts2 = P.filter((p, i) => i === 0 || Math.hypot(p[0] - P[i - 1][0], p[1] - P[i - 1][1]) > 1e-6);
@@ -821,6 +821,27 @@ console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini
   };
   const attrNum = (p, k) => { const m = new RegExp(`${k}="(-?[\\d.]+)"`).exec(p.attr); return m ? parseFloat(m[1]) : null; };
   const TOL_ORAN = FLAT_LAW.sevkPoz.yakaParcasi.boyToleransOran;   // kanun, kopya degil
+  // k3 PURUZSUZLUK (2026-09-02 hakem karari 2): sevk edilen 09'un gomlek
+  // yakasi (k)'nin butun hukumlerinden yesildi ama konturu titrekti — 74
+  // noktada 25 egrilik isaret degisimi. Kapi puruzsuzlugu olcmuyordu, kor
+  // noktaydi. Hukum: minDonusDeg'den buyuk donuslerin isaret degisimi sayisi
+  // tavani asamaz. Sayilar kanundan (contract yakaParcasi.puruzsuzluk).
+  const PUR = FLAT_LAW.sevkPoz.yakaParcasi.puruzsuzluk;
+  const isaretDegisimi = (P, kapali) => {
+    const segs2 = segsOf(P, kapali);
+    const minRad = (PUR.minDonusDeg * Math.PI) / 180;
+    let onceki = 0, sayi = 0;
+    for (let i = 0; i + 1 < segs2.length; i++) {
+      const a = segs2[i], b = segs2[i + 1];
+      const u = [a[1][0] - a[0][0], a[1][1] - a[0][1]], v = [b[1][0] - b[0][0], b[1][1] - b[0][1]];
+      const donus = Math.atan2(u[0] * v[1] - u[1] * v[0], u[0] * v[0] + u[1] * v[1]);
+      if (Math.abs(donus) < minRad) continue;                     // olcum cozunurlugu alti
+      const s = Math.sign(donus);
+      if (onceki !== 0 && s !== onceki) sayi++;
+      onceki = s;
+    }
+    return sayi;
+  };
   let bad = 0, yakali = 0;
   for (const c of cizimler) {
     if ((c.spec.collarType || 'none') === 'none') continue;
@@ -840,6 +861,12 @@ console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini
       const P = pts(p.d);
       const kes = kesisiyor(P, kapali);
       if (kes) { FAIL(`(k2) ${ad}: yaka konturu kendini kesiyor (kenar ${kes[0]} x kenar ${kes[1]})`); bad++; }
+      const salinim = isaretDegisimi(P, kapali);
+      if (salinim > PUR.isaretDegisimiTavan) {
+        FAIL(`(k3) ${ad}: yaka konturu titrek — ${salinim} egrilik isaret degisimi ` +
+             `(>${PUR.minDonusDeg} deg donuslerde), tavan ${PUR.isaretDegisimiTavan}`);
+        bad++;
+      }
       if (p.yan === 'sag') {   // sol zaten sag'in aynasi: cift bir kez olculur
         const kesA = kesisiyorAyna(P, kapali);
         if (kesA) { FAIL(`(k2b) ${ad}: aynali yaka cifti birbirini kesiyor (kenar ${kesA[0]} x ayna kenar ${kesA[1]})`); bad++; }
@@ -847,7 +874,7 @@ console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini
     }
   }
   if (!yakali) FAIL('(k) hic yakali spec olculmedi');
-  else if (!bad) OK(`(k) ${yakali} yakali spec'te yaka parcasi boyu yaka cizgisiyle ±%5 icinde ve hicbir yaka konturu (ayna cifti dahil) kesismiyor`);
+  else if (!bad) OK(`(k) ${yakali} yakali spec'te yaka parcasi boyu yaka cizgisiyle ±%5 icinde, hicbir yaka konturu (ayna cifti dahil) kesismiyor ve hicbiri titrek degil (k3 isaret-degisimi tavani ${PUR.isaretDegisimiTavan})`);
 }
 
 // --------------------------------------------------------------- OZET
