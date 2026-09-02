@@ -50,14 +50,37 @@ static void run(const char* label, GarmentSpec base, const BodyMeasurementsSnaps
     const DraftedPattern dPlain = GarmentDrafter::draft(plain, m);
     const DraftedPattern dBtn = GarmentDrafter::draft(buttoned, m);
 
-    check(dBtn.pieces.size() == dPlain.pieces.size(), "no extra piece (grown-on stand)");
+    // F5-parca (48871b3e): the CB zipper is a MEASURED decision (gecis kurali).
+    // A plain woven dress whose neck is narrower than the head reference keeps
+    // the zipper and a SPLIT skirt; the placket IS a donning opening, so the
+    // buttoned dress drops the zipper and its skirt merges into one
+    // "Skirt Front & Back" (cut 2 on fold). That -1 is the declared zipper
+    // coupling (contract/edit-locality-v1.json 1.1.0), not a placket leak —
+    // judged here by NAME so it can never hide another missing piece.
+    const bool zipFlip = dPlain.cbZipper && !dBtn.cbZipper;
+    if (zipFlip) {
+        std::printf("      gecis kurali: plain '%s' | placket '%s'\n",
+                    dPlain.cbZipperGerekce.c_str(), dBtn.cbZipperGerekce.c_str());
+        check(dBtn.pieces.size() + 1 == dPlain.pieces.size(),
+              "no extra piece; the -1 is the zipperless skirt merge (F5 gecis kurali)");
+        check(find(dPlain, "Skirt Front") && find(dPlain, "Skirt Back") &&
+                  find(dBtn, "Skirt Front & Back"),
+              "piece delta is exactly the declared skirt merge (split -> one on fold)");
+    } else {
+        check(dBtn.pieces.size() == dPlain.pieces.size(), "no extra piece (grown-on stand)");
+    }
 
     // Every piece EXCEPT the front center is byte-identical; the front grows.
+    // Matched by NAME; under the zip flip the skirt pieces are the declared
+    // merge (judged above), so they are excluded from the parity walk.
     const PatternPiece* frontP = frontCenter(dPlain);
     bool othersSame = true, frontChanged = false;
     for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
-        const bool isFront = frontP && dPlain.pieces[i].name == frontP->name;
-        const bool eq = sameCommands(dPlain.pieces[i].commands, dBtn.pieces[i].commands);
+        const PatternPiece& pp = dPlain.pieces[i];
+        const bool isFront = frontP && pp.name == frontP->name;
+        if (zipFlip && pp.name.rfind("Skirt", 0) == 0) continue;
+        const PatternPiece* q = find(dBtn, pp.name);
+        const bool eq = q && sameCommands(pp.commands, q->commands);
         if (isFront) frontChanged = !eq;
         else othersSame = othersSame && eq;
     }

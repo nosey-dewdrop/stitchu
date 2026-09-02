@@ -84,14 +84,46 @@ static void hosted(const char* label, GarmentSpec spec) {
     const DraftedPattern dPlain = GarmentDrafter::draft(plain, m0());
     const DraftedPattern dLu = GarmentDrafter::draft(lu, m0());
 
-    // Exactly one extra piece: the lacing cord.
-    check(dLu.pieces.size() == dPlain.pieces.size() + 1, "exactly 1 extra piece (the lacing cord)");
+    // F5-parca (48871b3e): the CB zipper is a MEASURED decision (gecis kurali).
+    // A plain woven dress keeps a zipper + SPLIT skirt; the laced back IS a
+    // donning opening, so the laced dress drops the zipper and its skirt merges
+    // into one "Skirt Front & Back" (cut 2 on fold). Net: +1 cord -1 merge =
+    // same count. The declared zipper coupling (contract/edit-locality-v1.json
+    // 1.1.0) is judged by NAME so it can never hide a locality leak.
+    const bool zipFlip = dPlain.cbZipper && !dLu.cbZipper;
+    auto findByName = [](const DraftedPattern& d, const std::string& n) -> const PatternPiece* {
+        for (const auto& p : d.pieces) if (p.name == n) return &p;
+        return nullptr;
+    };
+    // A princess skirt (gore join) never merges, so the flip can land two ways:
+    // merged (count stays, split -> one on fold) or zipper-drop only (count +1,
+    // every outline still byte-identical — the zipper lives in notches/labels).
+    const bool skirtMerged = zipFlip && !findByName(dPlain, "Skirt Front & Back") &&
+                             findByName(dLu, "Skirt Front & Back") != nullptr;
+    if (zipFlip) {
+        std::printf("      gecis kurali: plain '%s' | laced '%s'%s\n",
+                    dPlain.cbZipperGerekce.c_str(), dLu.cbZipperGerekce.c_str(),
+                    skirtMerged ? " (etek birlesti)" : " (etek ayrik kaldi)");
+    }
+    if (skirtMerged) {
+        check(dLu.pieces.size() == dPlain.pieces.size(),
+              "exactly 1 extra piece (+1 cord, -1 declared skirt merge, F5 gecis kurali)");
+        check(findByName(dPlain, "Skirt Front") && findByName(dPlain, "Skirt Back") != nullptr,
+              "the -1 is exactly the declared skirt merge (split -> one on fold)");
+    } else {
+        check(dLu.pieces.size() == dPlain.pieces.size() + 1, "exactly 1 extra piece (the lacing cord)");
+    }
 
     // Every existing piece OUTLINE byte-identical (the lace-up only adds markings
-    // to the back + a cord piece; it never reshapes an outline).
+    // to the back + a cord piece; it never reshapes an outline). Matched by NAME;
+    // only a merged skirt's pieces are the declared swap and skipped.
     bool outlinesSame = true;
-    for (size_t i = 0; i < dPlain.pieces.size(); ++i)
-        outlinesSame = outlinesSame && sameCommands(dPlain.pieces[i].commands, dLu.pieces[i].commands);
+    for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
+        const PatternPiece& pp = dPlain.pieces[i];
+        if (skirtMerged && pp.name.rfind("Skirt", 0) == 0) continue;
+        const PatternPiece* q = findByName(dLu, pp.name);
+        outlinesSame = outlinesSame && q && sameCommands(pp.commands, q->commands);
+    }
     check(outlinesSame, "every existing piece OUTLINE byte-identical");
 
     // The cord piece is present + named + is a strip (cut 1, self-fabric fold).

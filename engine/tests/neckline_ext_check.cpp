@@ -67,8 +67,25 @@ int main() {
         const DraftedPattern dCowl = GarmentDrafter::draft(cowl, m);
 
         // Same piece COUNT — cowl adds no piece, only re-marks the front.
-        check(dCowl.pieces.size() == dScoop.pieces.size(),
-              "cowl adds no extra piece (re-mark only)");
+        // F5-parca (48871b3e): the CB zipper is a MEASURED decision. The scoop
+        // dress needs one (neck < head reference) and keeps a SPLIT skirt; the
+        // cowl's drape excess widens the measured opening past the head
+        // reference, so the zipper falls away and the skirt merges into one
+        // "Skirt Front & Back". That -1 is the declared zipper coupling
+        // (contract/edit-locality-v1.json 1.1.0), judged by NAME.
+        const bool zipFlip = dScoop.cbZipper && !dCowl.cbZipper;
+        if (zipFlip) {
+            std::printf("      gecis kurali: scoop '%s' | cowl '%s'\n",
+                        dScoop.cbZipperGerekce.c_str(), dCowl.cbZipperGerekce.c_str());
+            check(dCowl.pieces.size() + 1 == dScoop.pieces.size(),
+                  "cowl adds no extra piece (re-mark only; -1 is the declared zipperless skirt merge)");
+            check(findPiece(dScoop, "Skirt Front") && findPiece(dScoop, "Skirt Back") &&
+                      findPiece(dCowl, "Skirt Front & Back"),
+                  "the -1 is exactly the declared skirt merge (split -> one on fold)");
+        } else {
+            check(dCowl.pieces.size() == dScoop.pieces.size(),
+                  "cowl adds no extra piece (re-mark only)");
+        }
 
         const PatternPiece* fScoop = findPiece(dScoop, "Bodice Center Front");
         const PatternPiece* fCowl = findPiece(dCowl, "Bodice Center Front");

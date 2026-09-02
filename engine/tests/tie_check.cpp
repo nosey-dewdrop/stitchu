@@ -31,6 +31,12 @@ static bool sameCommands(const std::vector<PathCommand>& a, const std::vector<Pa
     return true;
 }
 
+static const PatternPiece* find(const DraftedPattern& d, const std::string& name) {
+    for (const auto& p : d.pieces)
+        if (p.name == name) return &p;
+    return nullptr;
+}
+
 static bool isRectangle(const PatternPiece& p, double& w, double& h) {
     // Outline: Move + 3 Line + Close, axis-aligned rectangle from the origin.
     if (p.commands.size() != 5) return false;
@@ -50,13 +56,35 @@ static void run(const char* label, GarmentSpec base, TiePlacement placement,
     const DraftedPattern dPlain = GarmentDrafter::draft(plain, m);
     const DraftedPattern dTie = GarmentDrafter::draft(tied, m);
 
-    check(dTie.pieces.size() == dPlain.pieces.size() + 1, "exactly one extra tie piece");
+    // F5-parca (48871b3e): the CB zipper is a MEASURED decision (gecis kurali).
+    // The plain woven dress keeps a zipper + SPLIT skirt; a back/waist tie IS a
+    // donning opening, so the tied dress drops the zipper and its skirt merges
+    // into one "Skirt Front & Back" (cut 2 on fold). Net: +1 tie -1 merge = same
+    // count. The declared zipper coupling (contract/edit-locality-v1.json 1.1.0)
+    // is judged by NAME so it can never hide a locality leak.
+    const bool zipFlip = dPlain.cbZipper && !dTie.cbZipper;
+    if (zipFlip) {
+        std::printf("      gecis kurali: plain '%s' | tied '%s'\n",
+                    dPlain.cbZipperGerekce.c_str(), dTie.cbZipperGerekce.c_str());
+        check(dTie.pieces.size() == dPlain.pieces.size(),
+              "exactly one extra tie piece (+1 tie, -1 declared skirt merge, F5 gecis kurali)");
+        check(find(dPlain, "Skirt Front") && find(dPlain, "Skirt Back") &&
+                  find(dTie, "Skirt Front & Back"),
+              "the -1 is exactly the declared skirt merge (split -> one on fold)");
+    } else {
+        check(dTie.pieces.size() == dPlain.pieces.size() + 1, "exactly one extra tie piece");
+    }
 
     // Every ORIGINAL piece outline is byte-identical (the tie only adds markings
-    // to one of them, never touches an outline).
+    // to one of them, never touches an outline). Matched by NAME; under the zip
+    // flip the skirt pieces are the declared merge (judged above) and skipped.
     bool outlinesSame = true;
-    for (size_t i = 0; i < dPlain.pieces.size(); ++i)
-        outlinesSame = outlinesSame && sameCommands(dPlain.pieces[i].commands, dTie.pieces[i].commands);
+    for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
+        const PatternPiece& pp = dPlain.pieces[i];
+        if (zipFlip && pp.name.rfind("Skirt", 0) == 0) continue;
+        const PatternPiece* q = find(dTie, pp.name);
+        outlinesSame = outlinesSame && q && sameCommands(pp.commands, q->commands);
+    }
     check(outlinesSame, "every existing piece outline byte-identical");
 
     check(PatternValidator::issues(plain, m, dPlain).empty(), "base draft valid");
@@ -74,9 +102,12 @@ static void run(const char* label, GarmentSpec base, TiePlacement placement,
     std::printf("      tie rectangle %.0f x %.0f mm; note: %s\n", w, h, tie.cutInstruction.c_str());
 
     // A placement notch (extra markings) lands on some ORIGINAL body piece.
+    // Matched by NAME (the merged skirt has no same-named plain counterpart).
     bool notchAdded = false;
-    for (size_t i = 0; i < dPlain.pieces.size(); ++i)
-        if (dTie.pieces[i].markings.size() > dPlain.pieces[i].markings.size()) notchAdded = true;
+    for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
+        const PatternPiece* q = find(dTie, dPlain.pieces[i].name);
+        if (q && q->markings.size() > dPlain.pieces[i].markings.size()) notchAdded = true;
+    }
     check(notchAdded, "placement notch added to a body piece");
     std::printf("\n");
 }

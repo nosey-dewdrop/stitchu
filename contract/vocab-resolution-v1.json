@@ -1936,8 +1936,8 @@
      }
     }
    ],
-   "engineEffect": "reshape",
-   "note": "CF kenari merkezin OTESINE uzatilir, panel aynali 2 kesilir. Kruvaze bir isim degil, bir uzatma."
+   "engineEffect": "newPanel",
+   "note": "CF kenari merkezin OTESINE uzatilir, panel aynali 2 kesilir. Kruvaze bir isim degil, bir uzatma. F5-parca gecis kurali: wrap bir giydirme acikligidir, referans elbisenin gizli CB fermuari duser ve fermuarsiz etek tek kaliba birlesir ('Skirt Front & Back') — parca listesi degisir, olculen etki newPanel."
   },
   "backSlit.none": {
    "status": "sentinel",
@@ -2810,8 +2810,8 @@
      }
     }
    ],
-   "engineEffect": "reshape",
-   "note": "Gorunur fermuar = bir dikisin acilabilir hale gelmesi; konum bir landmark."
+   "engineEffect": "newPanel",
+   "note": "Gorunur fermuar = bir dikisin acilabilir hale gelmesi; konum bir landmark. F5-parca gecis kurali: gorunur fermuar bir giydirme acikligidir, referans elbisenin gizli CB fermuari duser ve fermuarsiz etek tek kaliba birlesir ('Skirt Front & Back') — parca listesi degisir, olculen etki newPanel."
   },
   "exposedZip.centerBack": {
    "status": "resolved",
@@ -2838,8 +2838,8 @@
      }
     }
    ],
-   "engineEffect": "reshape",
-   "note": "Ayni demet, baska landmark."
+   "engineEffect": "newPanel",
+   "note": "Ayni demet, baska landmark. F5-parca gecis kurali: gizli CB fermuar duser, etek tek kaliba birlesir — olculen etki newPanel."
   },
   "backDetail.none": {
    "status": "sentinel",

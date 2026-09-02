@@ -57,18 +57,47 @@ static void base(const char* label, GarmentSpec spec, BackOpening shape,
     const DraftedPattern dPlain = GarmentDrafter::draft(plain, m0());
     const DraftedPattern dOb = GarmentDrafter::draft(ob, m0());
 
-    check(dOb.pieces.size() == dPlain.pieces.size() + 1, "exactly 1 extra facing piece");
+    // F5-parca (48871b3e): the CB zipper is a MEASURED decision (gecis kurali).
+    // A plain woven dress keeps a zipper + SPLIT skirt; a back shape that opens
+    // for donning (low-V) drops the zipper and the skirt merges into one
+    // "Skirt Front & Back" (cut 2 on fold). Net: +1 facing -1 merge = same
+    // count. The declared zipper coupling (contract/edit-locality-v1.json
+    // 1.1.0) is judged by NAME so it can never hide a locality leak. (The old
+    // positional facing lookup pieces[plain.size()] read past the vector end
+    // exactly here — the facing is now found by NAME.)
+    const bool zipFlip = dPlain.cbZipper && !dOb.cbZipper;
+    auto findByName = [](const DraftedPattern& d, const std::string& n) -> const PatternPiece* {
+        for (const auto& p : d.pieces) if (p.name == n) return &p;
+        return nullptr;
+    };
+    if (zipFlip) {
+        std::printf("      gecis kurali: plain '%s' | open-back '%s'\n",
+                    dPlain.cbZipperGerekce.c_str(), dOb.cbZipperGerekce.c_str());
+        check(dOb.pieces.size() == dPlain.pieces.size(),
+              "exactly 1 extra facing piece (+1 facing, -1 declared skirt merge, F5 gecis kurali)");
+        check(findByName(dPlain, "Skirt Front") && findByName(dPlain, "Skirt Back") &&
+                  findByName(dOb, "Skirt Front & Back"),
+              "the -1 is exactly the declared skirt merge (split -> one on fold)");
+    } else {
+        check(dOb.pieces.size() == dPlain.pieces.size() + 1, "exactly 1 extra facing piece");
+    }
 
     bool outlinesSame = true;
-    for (size_t i = 0; i < dPlain.pieces.size(); ++i)
-        outlinesSame = outlinesSame && sameCommands(dPlain.pieces[i].commands, dOb.pieces[i].commands);
+    for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
+        const PatternPiece& pp = dPlain.pieces[i];
+        if (zipFlip && pp.name.rfind("Skirt", 0) == 0) continue;
+        const PatternPiece* q = findByName(dOb, pp.name);
+        outlinesSame = outlinesSame && q && sameCommands(pp.commands, q->commands);
+    }
     check(outlinesSame, "every existing piece OUTLINE byte-identical");
 
     check(PatternValidator::issues(plain, m0(), dPlain).empty(), "base draft valid");
     check(PatternValidator::issues(ob, m0(), dOb).empty(), "open-back draft valid");
 
-    const PatternPiece& facing = dOb.pieces[dPlain.pieces.size()];
-    check(facing.name == facingName, "facing piece named '" + facingName + "'");
+    const PatternPiece* facingP = findByName(dOb, facingName);
+    check(facingP != nullptr, "facing piece named '" + facingName + "'");
+    if (!facingP) { std::printf("\n"); return; }
+    const PatternPiece& facing = *facingP;
     check(facing.seamAllowance == 0, "facing sewn on the marked line (SA 0)");
 
     // Find the back piece and the opening marking added to it.
